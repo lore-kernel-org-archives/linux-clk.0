@@ -2,125 +2,137 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E325C001E0
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jul 2023 08:46:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23ABDC001DF
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jul 2023 08:55:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231636AbjGYIq1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Jul 2023 04:46:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60934 "EHLO
+        id S230351AbjGYIy6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Jul 2023 04:54:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231787AbjGYIqA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jul 2023 04:46:00 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B02773A9E
-        for <linux-clk@vger.kernel.org>; Tue, 25 Jul 2023 01:44:42 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-3fbc59de009so42814975e9.3
-        for <linux-clk@vger.kernel.org>; Tue, 25 Jul 2023 01:44:42 -0700 (PDT)
+        with ESMTP id S232725AbjGYIw7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jul 2023 04:52:59 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FC54172E
+        for <linux-clk@vger.kernel.org>; Tue, 25 Jul 2023 01:52:02 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-3fbfa811667so39292725e9.1
+        for <linux-clk@vger.kernel.org>; Tue, 25 Jul 2023 01:52:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1690274677; x=1690879477;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lvR6rub+9duf7nx9W/8a24Rc1YmvAVHDfFG2zjK3XY0=;
-        b=NOysYy1wO/LZrUx0c4Xsn14mxW1p458xRIILlfmpfqmLJA98us6St9qYLuLGMs83ou
-         J0rRRwwb9DTnknXVlzrR/MXRJaFn3CFwJZi9ywlEDUAdYVadyF3OSdNHd+L/mV68a7IG
-         9mv0g62qydKd6nZ00Mng35Uk7IfG5uHhDsIg3P01dcTIIVCJ5hHwrq5d93pEpZhAFW5/
-         mS86OTF5g6vgFdEePwHXiGcLNnE7Kn+YfrGQBw7ECdS5S1vLV+0CqHQ5gvP0boNoc8p5
-         enhb0NaBcGksFZQhtXQgO56YqkZCbTYYeg4SzhP6nu6Fq2BT5hSWEW6f6bhh2nTr701B
-         e+Cw==
+        d=linaro.org; s=google; t=1690275120; x=1690879920;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SO2fJhdIilzQKSUOeloEP2TDsXS2dBpxn1k7xAINQDE=;
+        b=Sa6/7jmR6HjLFfJOReKmBDHqp0oS7SanRctcQNx34dqi05GjH7X5j5Urm5cm/f97/c
+         LBXeln34oj+AaQTNQpcQPpkQiSf/C+8XprS0/5cua/cNGmjXQ2KWKIlXlRGqEUsoqw6i
+         6pWZLkduJ8BA7ijAUsLE4T6fvOQmSdAHROxi4T7WNwLIn3zxEbli1WTH4YpVjvULxnaU
+         1Xb0VjHWhDQoA43vGGpWGTD4KG/ztapc/nLqvxXlJbqwwy6j+Ynf8yvpw83WW5T9SLyF
+         7W1SqFBxn83aYAQ+St5WhbpOi0f2vS8L4q1LZxx1g5M9KASHz2FR+0ezk3mybESegiWd
+         OSXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690274677; x=1690879477;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lvR6rub+9duf7nx9W/8a24Rc1YmvAVHDfFG2zjK3XY0=;
-        b=L824PVmOES52isPXziI3IeNu9Q82jJcjAcQfLObl1Gq1QP/L99NAthD8HXxN0p9PII
-         fxjJBrnklMmbFwdMo8Ffjx1VPo6VL8IJidpshBJ6hiVFax+FBbBPF8OcDE5EXaiYADim
-         8LZFPYPQ7JzZdNsdnbnOnXd2dnULwnIK5LbWX/2On3E1kJ2zeInKUZDpQiCyP0gqEfbl
-         A4HxwCQKv71q5jqWPJsZWXNwbxhio21XjtQRFvA7cZGAVqgUDd+rJSo+iL3n6SYgpINJ
-         BCnG7em0vLxZSgbIGF2wvaUknoh+XWRGnop9pAEXCZQs43IxNo1EZu63JIHsn14KGqtV
-         aJnQ==
-X-Gm-Message-State: ABy/qLa1uMqZvF6of+Ukacj1GXyryXIO2Ge064rxz2ZKx4YqDqdIDuYn
-        eZBaSv8o2NIavzJMkx/2J1L4m09Qt/qtq2UjwLgnuA==
-X-Google-Smtp-Source: APBJJlEAskAc1V3TVk77zXM/5qcda9+gxdB2bskSYs/Vo2nBJ+b++XWTh6JXNuwv0wXDXA4O2ZfNig==
-X-Received: by 2002:a05:600c:ac8:b0:3fb:9ef2:157 with SMTP id c8-20020a05600c0ac800b003fb9ef20157mr8136776wmr.28.1690274677481;
-        Tue, 25 Jul 2023 01:44:37 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1690275120; x=1690879920;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SO2fJhdIilzQKSUOeloEP2TDsXS2dBpxn1k7xAINQDE=;
+        b=BdYez1RIioGDm0IUuBCvkwSu1wb21F7NPkKIn6mqZdAfCBU0fzRfGtZMhsgMFVzEks
+         pG8ZEHu74Aa9x1WGunaYNgUaAYXhEc26IXjIoAdfa9h9OJ8jjJXq+MiQ8JACqj8W8Kac
+         Lkli20NurgrXuBJH4wY3AZF1lA7WacZV06tOiltx135MW0UAw06Q8TmDNRsKmwOOcKSj
+         /l0faitsrjSovkXly0oDHaZCT0qMwbhTTy4W33IhGH9teW4zjWvt9yJiGpzGexMZtr7h
+         Rpa4liG5iYFIz5qw4Lo9hjSFuEuwVyEMfqiccmie7ddcLL3Ms97RcphhLdZ4WwgldjrR
+         Sd4A==
+X-Gm-Message-State: ABy/qLY+iVO+1GV6pyqewu0EscK7EpolsIxiWFd/b+KFvZZMpQTY3w76
+        DdnYtqA0WtOV6XH4SOosE9AeRPdNLqUmGYLQrU4VLA==
+X-Google-Smtp-Source: APBJJlGddeMpp0ssush6Q0wqtfS47dG4nR00hXv48WU3nXs23OHZlCKw4jpcwuiHKEP/SG7rKaXHFw==
+X-Received: by 2002:a05:6000:1204:b0:317:6855:dc24 with SMTP id e4-20020a056000120400b003176855dc24mr1284761wrx.21.1690275120494;
+        Tue, 25 Jul 2023 01:52:00 -0700 (PDT)
 Received: from [192.168.1.101] (abxj221.neoplus.adsl.tpnet.pl. [83.9.3.221])
-        by smtp.gmail.com with ESMTPSA id y15-20020a7bcd8f000000b003fbdd5d0758sm12370627wmj.22.2023.07.25.01.44.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Jul 2023 01:44:37 -0700 (PDT)
-Message-ID: <fda13f70-1062-c3dc-b3ed-c7f1ad9a07db@linaro.org>
-Date:   Tue, 25 Jul 2023 10:44:35 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/7] arm64: dts: qcom: msm8976: Split lpass region
-Content-Language: en-US
-To:     Adam Skladowski <a39.skl@gmail.com>
-Cc:     phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
-        Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        AngeloGioacchino Del Regno <kholk11@gmail.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230723160827.22660-1-a39.skl@gmail.com>
- <20230723160827.22660-7-a39.skl@gmail.com>
+        by smtp.gmail.com with ESMTPSA id r5-20020a5d52c5000000b003143bb5ecd5sm15672475wrv.69.2023.07.25.01.51.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jul 2023 01:52:00 -0700 (PDT)
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20230723160827.22660-7-a39.skl@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Date:   Tue, 25 Jul 2023 10:51:56 +0200
+Subject: [PATCH] clk: qcom: dispcc-sc8280xp: Use ret registers on GDSCs
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20230725-topic-8280_dispcc_gdsc-v1-1-236590060531@linaro.org>
+X-B4-Tracking: v=1; b=H4sIACuNv2QC/x2NWwqDMBAAryL73UAeiNKrlCLJZqMLEkO2LQXx7
+ l36OQPDnCDUmQTuwwmdPix8VAV3GwC3WFcynJXBWx/s5EfzOhqjmf1sl8zSEJc1C5rk4lQCja4
+ EBI1TFDKpx4qb5vW97ypbp8Lf/+3xvK4fo7t4CX0AAAA=
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1690275119; l=1704;
+ i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
+ bh=3kl4LXmb8XT+BmJFp1ldVHzPBlPIncVLnyDnPvEkf+U=;
+ b=OUIRvNEgX4mC28YR+Lg3sgPwTO4sdyfWZs7WgYm63ie8AJiVdyBxq3nOkWtMbdnUlSjXvW1VN
+ to8vJ7tWhJZDCNh9fljTcFCgpy9PbRI09R5iqleWDk5lgCbrZrXqRH4
+X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23.07.2023 18:08, Adam Skladowski wrote:
-> Some devices like Sony Loire uses Broadcom module over sdc3 however others
-> utilize qcom WCNSS, split shared region based on downstream pil-tz loader.
-> 
-> Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
-> ---
-Looks like 0x1800000 is the generic configuration:
+The DISP_CC GDSCs have not been instructed to use the ret registers.
+Fix that.
 
-https://git.codelinaro.org/clo/la/kernel/msm-3.10/-/blob/LA.BR.1.3.7.c26-05300-8976.0/arch/arm/boot/dts/qcom/msm8976.dtsi#L93-98
+Fixes: 4a66e76fdb6d ("clk: qcom: Add SC8280XP display clock controller")
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+---
+ drivers/clk/qcom/dispcc-sc8280xp.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Konrad
+diff --git a/drivers/clk/qcom/dispcc-sc8280xp.c b/drivers/clk/qcom/dispcc-sc8280xp.c
+index 167470beb369..30f636b9f0ec 100644
+--- a/drivers/clk/qcom/dispcc-sc8280xp.c
++++ b/drivers/clk/qcom/dispcc-sc8280xp.c
+@@ -3057,7 +3057,7 @@ static struct gdsc disp0_mdss_gdsc = {
+ 		.name = "disp0_mdss_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
+-	.flags = HW_CTRL,
++	.flags = HW_CTRL | RETAIN_FF_ENABLE,
+ };
+ 
+ static struct gdsc disp1_mdss_gdsc = {
+@@ -3069,7 +3069,7 @@ static struct gdsc disp1_mdss_gdsc = {
+ 		.name = "disp1_mdss_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
+-	.flags = HW_CTRL,
++	.flags = HW_CTRL | RETAIN_FF_ENABLE,
+ };
+ 
+ static struct gdsc disp0_mdss_int2_gdsc = {
+@@ -3081,7 +3081,7 @@ static struct gdsc disp0_mdss_int2_gdsc = {
+ 		.name = "disp0_mdss_int2_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
+-	.flags = HW_CTRL,
++	.flags = HW_CTRL | RETAIN_FF_ENABLE,
+ };
+ 
+ static struct gdsc disp1_mdss_int2_gdsc = {
+@@ -3093,7 +3093,7 @@ static struct gdsc disp1_mdss_int2_gdsc = {
+ 		.name = "disp1_mdss_int2_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
+-	.flags = HW_CTRL,
++	.flags = HW_CTRL | RETAIN_FF_ENABLE,
+ };
+ 
+ static struct gdsc *disp0_cc_sc8280xp_gdscs[] = {
+
+---
+base-commit: 1e25dd7772483f477f79986d956028e9f47f990a
+change-id: 20230725-topic-8280_dispcc_gdsc-b1a7f3e51f3c
+
+Best regards,
+-- 
+Konrad Dybcio <konrad.dybcio@linaro.org>
+
