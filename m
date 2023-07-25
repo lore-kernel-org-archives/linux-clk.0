@@ -2,101 +2,214 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 994AAC0015E
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jul 2023 07:40:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39CB8C0015E
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jul 2023 07:41:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232699AbjGYHky (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Jul 2023 03:40:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53404 "EHLO
+        id S232695AbjGYHl0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Jul 2023 03:41:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232691AbjGYHkm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jul 2023 03:40:42 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE67F3A8F
-        for <linux-clk@vger.kernel.org>; Tue, 25 Jul 2023 00:39:11 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-3fbc244d307so51133905e9.1
-        for <linux-clk@vger.kernel.org>; Tue, 25 Jul 2023 00:39:10 -0700 (PDT)
+        with ESMTP id S232734AbjGYHlP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jul 2023 03:41:15 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A69641BEE
+        for <linux-clk@vger.kernel.org>; Tue, 25 Jul 2023 00:40:01 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-977e0fbd742so830542866b.2
+        for <linux-clk@vger.kernel.org>; Tue, 25 Jul 2023 00:40:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1690270749; x=1690875549;
+        d=linaro.org; s=google; t=1690270800; x=1690875600;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=P8UQFLBCaasG8A55VnOOgztoAfNPrHKcEGLSk6FLvxs=;
-        b=JWVj1LM3YPTfXn7UBImfHwDLK13AoXYJrC2R3TJ9aXPuC8mhS3NtTBXB2qnqfX4TcZ
-         AqeFzv83YIB+8okYPCmTdhSEHLQffiOtVWi37ApM/Ttjcfos4rnJJi8tbt784/O4NI9D
-         H6fhW4TAClwuy1NIF7VQNp1ho31KuKBJZjhn3EbP+k2gSmBrrcT7AgI8vmkowYt+lqEP
-         owP/gQuk21j8V8c3qfnGmQYy9LLgJ4wew4OBIbFcEvgdoLEuNLkoDMvZSQlswd5bzZ4U
-         ITgFjtvHIOhlj92CxpQmRuhec62UC2OfJrbyIliuw+mbGB38fbTiDVH89TSzYq1Vix8j
-         a5JQ==
+        bh=DrHfPZx3m7ETdKsggeDbNp4hUSj5sbEikKTzBEPpJZo=;
+        b=M4BL6Vzj6qPiA0kpPiwDs5DA8QbI7iWtNGRxzHNfKLOm90271SME9alsDDcYQFxwv3
+         KZ1isUhITNnPXPuQo9iQuee381kWbfyMI7XN7jQRSP/vJEhgr2PQDXBjlHd8nNATY0r5
+         E1/h71XLyIVU6nEoYker+c7vep4pEOA7L2IodD2p72vG1jFaaolXLBy9IOS1/2zhkQgG
+         ofuUOnTfJkIZ5RIZKtUX3diBDAL8FFXlh2cuMWLTmKbGpgVJIHQhvLQ3goWTb4+ZzlwW
+         xK8d5Vzgw4Xvn9L2qiwaB4W38T71zYvGVJRQVW7pAaqgj1c5BqT6QvNF96XXx18Z3MC1
+         J9lw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690270749; x=1690875549;
+        d=1e100.net; s=20221208; t=1690270800; x=1690875600;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=P8UQFLBCaasG8A55VnOOgztoAfNPrHKcEGLSk6FLvxs=;
-        b=M2Il9ZJwbsyVSOdv2uDazSo/m6BJ/WWbD3Jdluo1pt9SbHy1KAwfubeNRGfh9ScafJ
-         2MjlaT7hHLFa8PvWzFjGPQdHNezGXlueEzX8EMV60x9OE4KM7Rk7Q9OinkLpqjf9ZG31
-         DONliNRaeFNb+HX/lxs8tLR7YFec+EW3kYtZoqMETe4LmB0kU5XEnjIYOOI5LwJwgT4q
-         fLXA6XY59aQD63ZVCzBgY/Y6gI+yJUHs8kooN5dwcwBxc6IfK+0SU/fOm4QDoSKI/qhb
-         uc3fE7JeLBg2ZqjX3d5pnUaY5rcEbevMT17JP3KQ2jFAay9JglK47TY+dOhP6vHOfQaU
-         gWZA==
-X-Gm-Message-State: ABy/qLZg4cQtTqK7su03DScUONcMOW4G+z6otI+TX2rMicAemWC9ZFFH
-        wKlNdDVYr04rDid84CG1P/OHMQ==
-X-Google-Smtp-Source: APBJJlH/14Pha0XHA8IGhMCFwljBc6NXEHbItnzb4KlqltW0ukTZIn9wF3COQo7AeZEllJcA65PeLg==
-X-Received: by 2002:a1c:770f:0:b0:3fc:d5:dc14 with SMTP id t15-20020a1c770f000000b003fc00d5dc14mr10053398wmi.5.1690270748740;
-        Tue, 25 Jul 2023 00:39:08 -0700 (PDT)
+        bh=DrHfPZx3m7ETdKsggeDbNp4hUSj5sbEikKTzBEPpJZo=;
+        b=laVWh10tp1ymfOK6VWAQ1AlyMIqZPbpdHwBXplUpwGgmyEFMpkbzYUzMMVlPR2O8/0
+         f0ymW3ToRsZKlaj4ZyjDEVP90WasVELcKUsSgmnj7KS5BIVqC7jGTpfKqOYVhWGzHqMG
+         yTfCEYhan5+u8pw9X1nkBTgAY8q527W63HclaMCxnKS9p3225S+x/CljTk6AiiXNvxnw
+         rt3QdS8mrAAc57DSd2oXM7gyHNKRrlKtoc/BKsknhSYz71XbZHzmsngdRUMV/Gdgv9no
+         7jdef57vw9dG9KFwb/wQVzuY2ZdnNI//nz/+MjD4qPmzBstuHpEmBGdYWert5+PRZme3
+         e2Nw==
+X-Gm-Message-State: ABy/qLZSWeiMlNK+3rekgWDU3uQLV0ndAAIxPUcmlq3ARHpqMbLU31cY
+        oz9yLTcGbLczvkBykPxE7Nn7bQ==
+X-Google-Smtp-Source: APBJJlFEWtBoJHCaLUCiJnxrCzyyTztNzwfHwUzo9iTlF+mQeheI/8NYatU7cCMbzB3HSzm8DvyVNQ==
+X-Received: by 2002:a17:906:8476:b0:994:54af:e27d with SMTP id hx22-20020a170906847600b0099454afe27dmr11362150ejc.29.1690270800268;
+        Tue, 25 Jul 2023 00:40:00 -0700 (PDT)
 Received: from linaro.org ([82.78.74.213])
-        by smtp.gmail.com with ESMTPSA id k21-20020a7bc415000000b003fbdf8292a7sm12432609wmi.46.2023.07.25.00.39.07
+        by smtp.gmail.com with ESMTPSA id c21-20020a170906341500b00992b2c55c67sm7862383ejb.156.2023.07.25.00.39.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jul 2023 00:39:08 -0700 (PDT)
-Date:   Tue, 25 Jul 2023 10:39:06 +0300
+        Tue, 25 Jul 2023 00:39:59 -0700 (PDT)
+Date:   Tue, 25 Jul 2023 10:39:58 +0300
 From:   Abel Vesa <abel.vesa@linaro.org>
 To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
 Cc:     abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
         shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
         festevam@gmail.com, linux-imx@nxp.com, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH 2/2] clk: imx: imx8ulp: update SPLL2 type
-Message-ID: <ZL98GkzrCUStU2BW@linaro.org>
+        Ye Li <ye.li@nxp.com>, Peng Fan <peng.fan@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>
+Subject: Re: [PATCH 1/2] clk: imx: pllv4: Fix SPLL2 MULT range
+Message-ID: <ZL98Tgpb29HLXYDr@linaro.org>
 References: <20230625123340.4067536-1-peng.fan@oss.nxp.com>
- <20230625123340.4067536-2-peng.fan@oss.nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230625123340.4067536-2-peng.fan@oss.nxp.com>
+In-Reply-To: <20230625123340.4067536-1-peng.fan@oss.nxp.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23-06-25 20:33:40, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
+On 23-06-25 20:33:39, Peng Fan (OSS) wrote:
+> From: Ye Li <ye.li@nxp.com>
 > 
 > The SPLL2 on iMX8ULP is different with other frac PLLs, it can
-> support VCO from 650Mhz to 1Ghz. Following the changes to pllv4,
-> use the new type IMX_PLLV4_IMX8ULP_1GHZ.
+> support VCO from 650Mhz to 1Ghz. According to RM, the MULT is
+> using a range from 27 to 54, not some fixed values. If using
+> current PLL implementation, some clock rate can't be supported.
 > 
-> Fixes: c43a801a5789 ("clk: imx: Add clock driver for imx8ulp")
+> Fix the issue by adding new type for the SPLL2 and use MULT range
+> to replace MULT table
+> 
+> Fixes: 5f0601c47c33 ("clk: imx: Update the pllv4 to support imx8ulp")
+> Reviewed-by: Peng Fan <peng.fan@nxp.com>
+> Reviewed-by: Jacky Bai <ping.bai@nxp.com>
+> Signed-off-by: Ye Li <ye.li@nxp.com>
 > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+
+LGTM.
 
 Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
 
 > ---
->  drivers/clk/imx/clk-imx8ulp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/clk/imx/clk-pllv4.c | 46 +++++++++++++++++++++++++++++--------
+>  drivers/clk/imx/clk.h       |  1 +
+>  2 files changed, 37 insertions(+), 10 deletions(-)
 > 
-> diff --git a/drivers/clk/imx/clk-imx8ulp.c b/drivers/clk/imx/clk-imx8ulp.c
-> index e308c88cb801..1b04e2fc78ad 100644
-> --- a/drivers/clk/imx/clk-imx8ulp.c
-> +++ b/drivers/clk/imx/clk-imx8ulp.c
-> @@ -167,7 +167,7 @@ static int imx8ulp_clk_cgc1_init(struct platform_device *pdev)
->  	clks[IMX8ULP_CLK_SPLL2_PRE_SEL]	= imx_clk_hw_mux_flags("spll2_pre_sel", base + 0x510, 0, 1, pll_pre_sels, ARRAY_SIZE(pll_pre_sels), CLK_SET_PARENT_GATE);
->  	clks[IMX8ULP_CLK_SPLL3_PRE_SEL]	= imx_clk_hw_mux_flags("spll3_pre_sel", base + 0x610, 0, 1, pll_pre_sels, ARRAY_SIZE(pll_pre_sels), CLK_SET_PARENT_GATE);
+> diff --git a/drivers/clk/imx/clk-pllv4.c b/drivers/clk/imx/clk-pllv4.c
+> index 6e7e34571fc8..9b136c951762 100644
+> --- a/drivers/clk/imx/clk-pllv4.c
+> +++ b/drivers/clk/imx/clk-pllv4.c
+> @@ -44,11 +44,15 @@ struct clk_pllv4 {
+>  	u32		cfg_offset;
+>  	u32		num_offset;
+>  	u32		denom_offset;
+> +	bool		use_mult_range;
+>  };
 >  
-> -	clks[IMX8ULP_CLK_SPLL2] = imx_clk_hw_pllv4(IMX_PLLV4_IMX8ULP, "spll2", "spll2_pre_sel", base + 0x500);
-> +	clks[IMX8ULP_CLK_SPLL2] = imx_clk_hw_pllv4(IMX_PLLV4_IMX8ULP_1GHZ, "spll2", "spll2_pre_sel", base + 0x500);
->  	clks[IMX8ULP_CLK_SPLL3] = imx_clk_hw_pllv4(IMX_PLLV4_IMX8ULP, "spll3", "spll3_pre_sel", base + 0x600);
->  	clks[IMX8ULP_CLK_SPLL3_VCODIV] = imx_clk_hw_divider("spll3_vcodiv", "spll3", base + 0x604, 0, 6);
+>  /* Valid PLL MULT Table */
+>  static const int pllv4_mult_table[] = {33, 27, 22, 20, 17, 16};
 >  
+> +/* Valid PLL MULT range, (max, min) */
+> +static const int pllv4_mult_range[] = {54, 27};
+> +
+>  #define to_clk_pllv4(__hw) container_of(__hw, struct clk_pllv4, hw)
+>  
+>  #define LOCK_TIMEOUT_US		USEC_PER_MSEC
+> @@ -94,17 +98,30 @@ static unsigned long clk_pllv4_recalc_rate(struct clk_hw *hw,
+>  static long clk_pllv4_round_rate(struct clk_hw *hw, unsigned long rate,
+>  				 unsigned long *prate)
+>  {
+> +	struct clk_pllv4 *pll = to_clk_pllv4(hw);
+>  	unsigned long parent_rate = *prate;
+>  	unsigned long round_rate, i;
+>  	u32 mfn, mfd = DEFAULT_MFD;
+>  	bool found = false;
+>  	u64 temp64;
+> -
+> -	for (i = 0; i < ARRAY_SIZE(pllv4_mult_table); i++) {
+> -		round_rate = parent_rate * pllv4_mult_table[i];
+> -		if (rate >= round_rate) {
+> +	u32 mult;
+> +
+> +	if (pll->use_mult_range) {
+> +		temp64 = (u64)rate;
+> +		do_div(temp64, parent_rate);
+> +		mult = temp64;
+> +		if (mult >= pllv4_mult_range[1] &&
+> +		    mult <= pllv4_mult_range[0]) {
+> +			round_rate = parent_rate * mult;
+>  			found = true;
+> -			break;
+> +		}
+> +	} else {
+> +		for (i = 0; i < ARRAY_SIZE(pllv4_mult_table); i++) {
+> +			round_rate = parent_rate * pllv4_mult_table[i];
+> +			if (rate >= round_rate) {
+> +				found = true;
+> +				break;
+> +			}
+>  		}
+>  	}
+>  
+> @@ -138,14 +155,20 @@ static long clk_pllv4_round_rate(struct clk_hw *hw, unsigned long rate,
+>  	return round_rate + (u32)temp64;
+>  }
+>  
+> -static bool clk_pllv4_is_valid_mult(unsigned int mult)
+> +static bool clk_pllv4_is_valid_mult(struct clk_pllv4 *pll, unsigned int mult)
+>  {
+>  	int i;
+>  
+>  	/* check if mult is in valid MULT table */
+> -	for (i = 0; i < ARRAY_SIZE(pllv4_mult_table); i++) {
+> -		if (pllv4_mult_table[i] == mult)
+> +	if (pll->use_mult_range) {
+> +		if (mult >= pllv4_mult_range[1] &&
+> +		    mult <= pllv4_mult_range[0])
+>  			return true;
+> +	} else {
+> +		for (i = 0; i < ARRAY_SIZE(pllv4_mult_table); i++) {
+> +			if (pllv4_mult_table[i] == mult)
+> +				return true;
+> +		}
+>  	}
+>  
+>  	return false;
+> @@ -160,7 +183,7 @@ static int clk_pllv4_set_rate(struct clk_hw *hw, unsigned long rate,
+>  
+>  	mult = rate / parent_rate;
+>  
+> -	if (!clk_pllv4_is_valid_mult(mult))
+> +	if (!clk_pllv4_is_valid_mult(pll, mult))
+>  		return -EINVAL;
+>  
+>  	if (parent_rate <= MAX_MFD)
+> @@ -227,10 +250,13 @@ struct clk_hw *imx_clk_hw_pllv4(enum imx_pllv4_type type, const char *name,
+>  
+>  	pll->base = base;
+>  
+> -	if (type == IMX_PLLV4_IMX8ULP) {
+> +	if (type == IMX_PLLV4_IMX8ULP ||
+> +	    type == IMX_PLLV4_IMX8ULP_1GHZ) {
+>  		pll->cfg_offset = IMX8ULP_PLL_CFG_OFFSET;
+>  		pll->num_offset = IMX8ULP_PLL_NUM_OFFSET;
+>  		pll->denom_offset = IMX8ULP_PLL_DENOM_OFFSET;
+> +		if (type == IMX_PLLV4_IMX8ULP_1GHZ)
+> +			pll->use_mult_range = true;
+>  	} else {
+>  		pll->cfg_offset = PLL_CFG_OFFSET;
+>  		pll->num_offset = PLL_NUM_OFFSET;
+> diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+> index af19d9f6aed0..adb7ad649a0d 100644
+> --- a/drivers/clk/imx/clk.h
+> +++ b/drivers/clk/imx/clk.h
+> @@ -45,6 +45,7 @@ enum imx_pll14xx_type {
+>  enum imx_pllv4_type {
+>  	IMX_PLLV4_IMX7ULP,
+>  	IMX_PLLV4_IMX8ULP,
+> +	IMX_PLLV4_IMX8ULP_1GHZ,
+>  };
+>  
+>  enum imx_pfdv2_type {
 > -- 
 > 2.37.1
 > 
