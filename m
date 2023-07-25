@@ -2,127 +2,101 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EE4DC0015E
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jul 2023 07:40:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 994AAC0015E
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jul 2023 07:40:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232677AbjGYHkQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Jul 2023 03:40:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54548 "EHLO
+        id S232699AbjGYHky (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Jul 2023 03:40:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232684AbjGYHkB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jul 2023 03:40:01 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9923F46B3
-        for <linux-clk@vger.kernel.org>; Tue, 25 Jul 2023 00:38:28 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-3fd0f000f1cso33083545e9.1
-        for <linux-clk@vger.kernel.org>; Tue, 25 Jul 2023 00:38:28 -0700 (PDT)
+        with ESMTP id S232691AbjGYHkm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jul 2023 03:40:42 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE67F3A8F
+        for <linux-clk@vger.kernel.org>; Tue, 25 Jul 2023 00:39:11 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-3fbc244d307so51133905e9.1
+        for <linux-clk@vger.kernel.org>; Tue, 25 Jul 2023 00:39:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1690270699; x=1690875499;
+        d=linaro.org; s=google; t=1690270749; x=1690875549;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VxsCzm5RQIamWdmro27uzpmZ8ZKj+Vx+dNKcKbhIWm4=;
-        b=VNJN+YRzIQwAxkO8ldTOQbeO/eKcNHQlB34EjQRnnSp8YCmuvpx8tQwIpE1RCbUmSK
-         0OeYzQzUoez35eBdk7PkrRHE3PmqtFjjm3GPgB3x8ebANcIcrZGf6P0IbIO4RBlWSxsx
-         18Mn3ByqF04IPUAmeJVohrudVXQcP6dGY8204AJLQ+XDt+mUnCMpGUEYvq8Yzhwe/zPj
-         3uATH1Kr+CYRgSYXaTlXlq98bZXxBKif/5IY55iuadzEORvZ51sy6nmcjo6QsRaLfYaz
-         XZum559pAAlIvSJhaKUi5r8NUZUin/YqOExCfr0nxTE3WE+9o2BAwxCTVViZdfUsdKAo
-         iCoQ==
+        bh=P8UQFLBCaasG8A55VnOOgztoAfNPrHKcEGLSk6FLvxs=;
+        b=JWVj1LM3YPTfXn7UBImfHwDLK13AoXYJrC2R3TJ9aXPuC8mhS3NtTBXB2qnqfX4TcZ
+         AqeFzv83YIB+8okYPCmTdhSEHLQffiOtVWi37ApM/Ttjcfos4rnJJi8tbt784/O4NI9D
+         H6fhW4TAClwuy1NIF7VQNp1ho31KuKBJZjhn3EbP+k2gSmBrrcT7AgI8vmkowYt+lqEP
+         owP/gQuk21j8V8c3qfnGmQYy9LLgJ4wew4OBIbFcEvgdoLEuNLkoDMvZSQlswd5bzZ4U
+         ITgFjtvHIOhlj92CxpQmRuhec62UC2OfJrbyIliuw+mbGB38fbTiDVH89TSzYq1Vix8j
+         a5JQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690270699; x=1690875499;
+        d=1e100.net; s=20221208; t=1690270749; x=1690875549;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VxsCzm5RQIamWdmro27uzpmZ8ZKj+Vx+dNKcKbhIWm4=;
-        b=ImMBNCsUYAMDVRhnsFj4nZsFqZ78vZeIowxLHDVGA0vxQmX9ru8ZQcsMiR5QvGB1ph
-         tAj+wjW+Z2ZHUbBKCIJjgyubsFuWCDvmoTsV0V2QoTj2Uq+/ug6Wc+NxVNFoQv6ncPtW
-         EiR/XzkSeIUHcCglFQeA+oFL5910i7xPjr/R2uj7ciKYTyMaRYyeviqMJUzPtkCg5EIM
-         VaiyybyZUcWxHWedeDIx1HO8uL0Jcxl5vQlW2ZtM9ijkMRXN4/GRHJ/IWzxB8hriCz9Q
-         imIwdTdUxXRdjhVmAKhvD/lNoFKwfCjUHEU/UQ5ubbSnMw4TS1Erl2q8frc+aEi40+gY
-         z9JQ==
-X-Gm-Message-State: ABy/qLY+jS6YVEy16l7oQkTFSjz5DWQgCCCiyivwu4X0a3w21jKc2Pa1
-        umk3Y/zoAacwffuelR06Kiuzaw==
-X-Google-Smtp-Source: APBJJlHWryPLjXX3GsNyLOK/hhAcGss6uPd3Zou77FJ+aPVeBzYZRLH0IBgEnOVqhcEDjoAAveJZhA==
-X-Received: by 2002:a05:600c:224a:b0:3fa:9741:5b73 with SMTP id a10-20020a05600c224a00b003fa97415b73mr1242984wmm.10.1690270699308;
-        Tue, 25 Jul 2023 00:38:19 -0700 (PDT)
+        bh=P8UQFLBCaasG8A55VnOOgztoAfNPrHKcEGLSk6FLvxs=;
+        b=M2Il9ZJwbsyVSOdv2uDazSo/m6BJ/WWbD3Jdluo1pt9SbHy1KAwfubeNRGfh9ScafJ
+         2MjlaT7hHLFa8PvWzFjGPQdHNezGXlueEzX8EMV60x9OE4KM7Rk7Q9OinkLpqjf9ZG31
+         DONliNRaeFNb+HX/lxs8tLR7YFec+EW3kYtZoqMETe4LmB0kU5XEnjIYOOI5LwJwgT4q
+         fLXA6XY59aQD63ZVCzBgY/Y6gI+yJUHs8kooN5dwcwBxc6IfK+0SU/fOm4QDoSKI/qhb
+         uc3fE7JeLBg2ZqjX3d5pnUaY5rcEbevMT17JP3KQ2jFAay9JglK47TY+dOhP6vHOfQaU
+         gWZA==
+X-Gm-Message-State: ABy/qLZg4cQtTqK7su03DScUONcMOW4G+z6otI+TX2rMicAemWC9ZFFH
+        wKlNdDVYr04rDid84CG1P/OHMQ==
+X-Google-Smtp-Source: APBJJlH/14Pha0XHA8IGhMCFwljBc6NXEHbItnzb4KlqltW0ukTZIn9wF3COQo7AeZEllJcA65PeLg==
+X-Received: by 2002:a1c:770f:0:b0:3fc:d5:dc14 with SMTP id t15-20020a1c770f000000b003fc00d5dc14mr10053398wmi.5.1690270748740;
+        Tue, 25 Jul 2023 00:39:08 -0700 (PDT)
 Received: from linaro.org ([82.78.74.213])
-        by smtp.gmail.com with ESMTPSA id j6-20020a05600c1c0600b003fc3b03caa5sm780232wms.1.2023.07.25.00.38.17
+        by smtp.gmail.com with ESMTPSA id k21-20020a7bc415000000b003fbdf8292a7sm12432609wmi.46.2023.07.25.00.39.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jul 2023 00:38:18 -0700 (PDT)
-Date:   Tue, 25 Jul 2023 10:38:17 +0300
+        Tue, 25 Jul 2023 00:39:08 -0700 (PDT)
+Date:   Tue, 25 Jul 2023 10:39:06 +0300
 From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Marco Felsch <m.felsch@pengutronix.de>
-Cc:     aford173@gmail.com, adrian.alonso@nxp.com,
-        rasmus.villemoes@prevas.dk, bli@bang-olufsen.dk, linux-imx@nxp.com,
-        linux-clk@vger.kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, abelvesa@kernel.org
-Subject: Re: [PATCH] clk: imx: pll14xx: align pdiv with reference manual
-Message-ID: <ZL976QadmcinquUk@linaro.org>
-References: <CAHCN7x+fs7k0y8Sps+0N7NUPVto8UhZD9E8DbVEuDRPv6bdDMg@mail.gmail.com>
- <20230714134938.2124861-1-m.felsch@pengutronix.de>
+To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc:     abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH 2/2] clk: imx: imx8ulp: update SPLL2 type
+Message-ID: <ZL98GkzrCUStU2BW@linaro.org>
+References: <20230625123340.4067536-1-peng.fan@oss.nxp.com>
+ <20230625123340.4067536-2-peng.fan@oss.nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230714134938.2124861-1-m.felsch@pengutronix.de>
+In-Reply-To: <20230625123340.4067536-2-peng.fan@oss.nxp.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23-07-14 15:49:38, Marco Felsch wrote:
-> The PLL14xx hardware can be found on i.MX8M{M,N,P} SoCs and always come
-> with a 6-bit pre-divider. Neither the reference manuals nor the
-> datasheets of these SoCs do mention any restrictions. Furthermore the
-> current code doesn't respect the restrictions from the comment too.
+On 23-06-25 20:33:40, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
 > 
-> Therefore drop the restriction and align the max pre-divider (pdiv)
-> value to 63 to get more accurate frequencies.
+> The SPLL2 on iMX8ULP is different with other frac PLLs, it can
+> support VCO from 650Mhz to 1Ghz. Following the changes to pllv4,
+> use the new type IMX_PLLV4_IMX8ULP_1GHZ.
 > 
-> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-
-I'm OK with this:
+> Fixes: c43a801a5789 ("clk: imx: Add clock driver for imx8ulp")
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
 Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
 
 > ---
-> Hi Adam,
+>  drivers/clk/imx/clk-imx8ulp.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> here is the patch I made for setting the exact video-pll settings.
-> 
-> Regards,
->   Marco
-> 
-> 
->  drivers/clk/imx/clk-pll14xx.c | 11 +++++------
->  1 file changed, 5 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
-> index 7150c59bbfc95..dc6bc21dff41f 100644
-> --- a/drivers/clk/imx/clk-pll14xx.c
-> +++ b/drivers/clk/imx/clk-pll14xx.c
-> @@ -139,11 +139,10 @@ static void imx_pll14xx_calc_settings(struct clk_pll14xx *pll, unsigned long rat
->  	/*
->  	 * Fractional PLL constrains:
->  	 *
-> -	 * a) 6MHz <= prate <= 25MHz
-> -	 * b) 1 <= p <= 63 (1 <= p <= 4 prate = 24MHz)
-> -	 * c) 64 <= m <= 1023
-> -	 * d) 0 <= s <= 6
-> -	 * e) -32768 <= k <= 32767
-> +	 * a) 1 <= p <= 63
-> +	 * b) 64 <= m <= 1023
-> +	 * c) 0 <= s <= 6
-> +	 * d) -32768 <= k <= 32767
->  	 *
->  	 * fvco = (m * 65536 + k) * prate / (p * 65536)
->  	 */
-> @@ -186,7 +185,7 @@ static void imx_pll14xx_calc_settings(struct clk_pll14xx *pll, unsigned long rat
->  	}
+> diff --git a/drivers/clk/imx/clk-imx8ulp.c b/drivers/clk/imx/clk-imx8ulp.c
+> index e308c88cb801..1b04e2fc78ad 100644
+> --- a/drivers/clk/imx/clk-imx8ulp.c
+> +++ b/drivers/clk/imx/clk-imx8ulp.c
+> @@ -167,7 +167,7 @@ static int imx8ulp_clk_cgc1_init(struct platform_device *pdev)
+>  	clks[IMX8ULP_CLK_SPLL2_PRE_SEL]	= imx_clk_hw_mux_flags("spll2_pre_sel", base + 0x510, 0, 1, pll_pre_sels, ARRAY_SIZE(pll_pre_sels), CLK_SET_PARENT_GATE);
+>  	clks[IMX8ULP_CLK_SPLL3_PRE_SEL]	= imx_clk_hw_mux_flags("spll3_pre_sel", base + 0x610, 0, 1, pll_pre_sels, ARRAY_SIZE(pll_pre_sels), CLK_SET_PARENT_GATE);
 >  
->  	/* Finally calculate best values */
-> -	for (pdiv = 1; pdiv <= 7; pdiv++) {
-> +	for (pdiv = 1; pdiv <= 63; pdiv++) {
->  		for (sdiv = 0; sdiv <= 6; sdiv++) {
->  			/* calc mdiv = round(rate * pdiv * 2^sdiv) / prate) */
->  			mdiv = DIV_ROUND_CLOSEST(rate * (pdiv << sdiv), prate);
+> -	clks[IMX8ULP_CLK_SPLL2] = imx_clk_hw_pllv4(IMX_PLLV4_IMX8ULP, "spll2", "spll2_pre_sel", base + 0x500);
+> +	clks[IMX8ULP_CLK_SPLL2] = imx_clk_hw_pllv4(IMX_PLLV4_IMX8ULP_1GHZ, "spll2", "spll2_pre_sel", base + 0x500);
+>  	clks[IMX8ULP_CLK_SPLL3] = imx_clk_hw_pllv4(IMX_PLLV4_IMX8ULP, "spll3", "spll3_pre_sel", base + 0x600);
+>  	clks[IMX8ULP_CLK_SPLL3_VCODIV] = imx_clk_hw_divider("spll3_vcodiv", "spll3", base + 0x604, 0, 6);
+>  
 > -- 
-> 2.39.2
+> 2.37.1
 > 
