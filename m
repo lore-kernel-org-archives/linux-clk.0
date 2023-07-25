@@ -2,127 +2,80 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3383EC001DF
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jul 2023 20:13:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B3BDEB64DD
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jul 2023 22:53:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229574AbjGYUNQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Jul 2023 16:13:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52122 "EHLO
+        id S229779AbjGYWxQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Jul 2023 18:53:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229606AbjGYUNO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jul 2023 16:13:14 -0400
+        with ESMTP id S229721AbjGYWxC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jul 2023 18:53:02 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B38B61FCF;
-        Tue, 25 Jul 2023 13:13:13 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 433AB4208
+        for <linux-clk@vger.kernel.org>; Tue, 25 Jul 2023 15:51:32 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2A2DB618CC;
-        Tue, 25 Jul 2023 20:13:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A78CC433C7;
-        Tue, 25 Jul 2023 20:13:10 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BE61F61826
+        for <linux-clk@vger.kernel.org>; Tue, 25 Jul 2023 22:50:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B75A7C433C7;
+        Tue, 25 Jul 2023 22:49:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690315992;
-        bh=/oB+WbRmcJ8xryE+2WxCR9Kz6yQKxMihN6JK4Kun4Qs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BjZe8mvL40hjXlWwA8cBP1WjvlLsIxnZrWCdd2RdwQefC+RnbmnhebJ2+RvQTbR1N
-         HKTGsecWj/7oQXfU0oAVP99AkoOfOYuPgiTCMfUvVpkLFtn4ALbSwhbT6w2uexLxuJ
-         qoZC+gPCbEDfOIhtlCy8bATwxZcWcYKDwXz0M/iHYWEgWrqUY9CHIwVzvrnA0h+nxr
-         facSA5+3smH8Wb8Pt3IkV7vml/UZHcSauq7Oai7ZdvtSinntGhU/1B2GJ670JiCEEo
-         54zIRa/UbgOOVT/cHZpPX5kOR5jYvm5y1isI2mFU0GqYBHLAM3HIRLD4F0r5LipZB7
-         sNZI2gUj+YFjA==
-Date:   Tue, 25 Jul 2023 21:13:08 +0100
-From:   Conor Dooley <conor@kernel.org>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v3] dt-bindings: clock: tegra124-dfll: Convert to
- json-schema
-Message-ID: <20230725-ferocity-landfall-3cb67f60f039@spud>
-References: <20230725162046.1426970-1-thierry.reding@gmail.com>
+        s=k20201202; t=1690325400;
+        bh=yCYXB/co0y66KfJ5siP/ruQ0G4HPzFeuKJ1ydF2sdcg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=nON4It2PJgV7wEINj51T8CkZ9jRF1X43G12KRSmLJ7POrAXcdM8vSHja5dY00Rm+q
+         l6tkt6hmOFSMc4WolozDrpQapu5FYESr2JEJwyqhx1IeqMc+FKj43BdWnBMfCZdyZw
+         2fwdwm2coM+xXbOCKr131y9fkJ8VT51zBS5OwSJvHsLXpuADOwUCa0KUeO9I9ezBKZ
+         PbnSNQ6BpntKs/MJBRwVFGTgN0ybn+q7D3sYrEaM5PgqZ4LaHCBw1O2kz/WvJtaXy9
+         w6sYnyrBXqKOHCL2gMmjdDx2aYbBrywJnpRPRkJAsYymRuuW2dFFL/gqpYXHeBxtiY
+         bJOsnrtisaWQA==
+Date:   Tue, 25 Jul 2023 15:49:58 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Jiri Pirko <jiri@resnulli.us>
+Cc:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
+        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "Michalik, Michal" <michal.michalik@intel.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
+        mschmidt <mschmidt@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Bart Van Assche <bvanassche@acm.org>
+Subject: Re: [PATCH 09/11] ice: implement dpll interface to control cgu
+Message-ID: <20230725154958.46b44456@kernel.org>
+In-Reply-To: <ZLpzwMQrqp7mIMFF@nanopsycho>
+References: <20230720091903.297066-1-vadim.fedorenko@linux.dev>
+        <20230720091903.297066-10-vadim.fedorenko@linux.dev>
+        <ZLk/9zwbBHgs+rlb@nanopsycho>
+        <DM6PR11MB46572F438AADB5801E58227A9B3EA@DM6PR11MB4657.namprd11.prod.outlook.com>
+        <ZLo0ujuLMF2NrMog@nanopsycho>
+        <DM6PR11MB46576153E0E28BA4C283A30A9B3FA@DM6PR11MB4657.namprd11.prod.outlook.com>
+        <ZLpzwMQrqp7mIMFF@nanopsycho>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="pxEfUobMQuzGKX1s"
-Content-Disposition: inline
-In-Reply-To: <20230725162046.1426970-1-thierry.reding@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Fri, 21 Jul 2023 14:02:08 +0200 Jiri Pirko wrote:
+> So it is not a mode! Mode is either "automatic" or "manual". Then we
+> have a state to indicate the state of the state machine (unlocked, locked,
+> holdover, holdover-acq). So what you seek is a way for the user to
+> expliticly set the state to "unlocked" and reset of the state machine.
 
---pxEfUobMQuzGKX1s
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
++1 for mixing the state machine and config.
+Maybe a compromise would be to rename the config mode?
+Detached? Standalone?
 
-Hey,
-
-On Tue, Jul 25, 2023 at 06:20:46PM +0200, Thierry Reding wrote:
-> +  nvidia,pwm-to-pmic:
-> +    description: Use PWM to control regulator rather then I2C.
-> +    $ref: /schemas/types.yaml#/definitions/flag
-
-> +  # required properties for PWM mode
-> +  nvidia,pwm-period-nanoseconds:
-> +    description: period of PWM square wave in nanoseconds.
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    minimum: 1000
-> +    maximum: 1000000000
-> +
-> +  nvidia,pwm-tristate-microvolts:
-> +    description: Regulator voltage in micro volts when PWM control is
-> +      disabled and the PWM output is tristated. Note that this voltage
-> +      is configured in hardware, typically via a resistor divider.
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    minimum: 0
-> +    maximum: 3300000
-> +
-> +  nvidia,pwm-min-microvolts:
-> +    description: Regulator voltage in micro volts when PWM control is
-> +      enabled and PWM output is low. Hence, this is the minimum output
-> +      voltage that the regulator supports when PWM control is enabled.
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    minimum: 0
-> +    maximum: 3300000
-> +
-> +  nvidia,pwm-voltage-step-microvolts:
-> +    description: |
-> +      Voltage increase in micro volts corresponding to a 1/33th increase
-> +      in duty cycle. Eg the voltage for 2/33th duty cycle would be:
-> +
-> +        nvidia,pwm-min-microvolts + nvidia,pwm-voltage-step-microvolts * 2
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    minimum: 0
-> +    maximum: 1000000
-> +
-> +  pinctrl-names:
-> +    items:
-> +      # I/O pad configuration when PWM control is enabled
-> +      - const: dvfs_pwm_enable
-> +      # I/O pad configuration when PWM control is disabled
-> +      - const: dvfs_pwm_disable
-
-Should "nvidia,pwm-to-pmic" not have a dependencies thing like:
-"nvidia,suspend-mode": ["nvidia,core-pwr-off-time", "nvidia,cpu-pwr-off-time"]
-to ensure that the required properties are set?
-
-Thanks,
-Conor.
-
---pxEfUobMQuzGKX1s
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZMAs1AAKCRB4tDGHoIJi
-0qbKAP9H3kAVy3HAtlhFPpBLwA29CcRle6CooaM/arRX/t0cYgD/bAIM71Tq7E/H
-73GhoaZL0kN2VCjX84kVKzfmdSwFPwU=
-=eksT
------END PGP SIGNATURE-----
-
---pxEfUobMQuzGKX1s--
+> Please don't mix config and state. I think we untangled this in the past
+> :/
+> 
+> Perhaps you just need an extra cmd like DPLL_CMD_DEVICE_STATE_RESET cmd
+> to hit this button.
