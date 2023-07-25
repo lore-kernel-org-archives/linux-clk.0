@@ -2,91 +2,178 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2768CC001DE
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jul 2023 16:32:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45B97C00528
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jul 2023 17:51:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229603AbjGYQcS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Jul 2023 12:32:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60498 "EHLO
+        id S231211AbjGYRvu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Jul 2023 13:51:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230089AbjGYQcP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jul 2023 12:32:15 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C40CF13D;
-        Tue, 25 Jul 2023 09:32:13 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id a640c23a62f3a-977e0fbd742so911580166b.2;
-        Tue, 25 Jul 2023 09:32:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690302732; x=1690907532;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9rkfJmJDchPlVP0Sck1alECQIstmUhrdozhhrt9tbbQ=;
-        b=efJOysIm1P/TUTRD2/BOXezS0dk/1n8akM6muFJBdygwY3SnkF0C1Cl9oylLvTyHdi
-         w3BhjUypOKebJCVlMOT2GwQSo7NOMs5mCTNo/iG+bZs2XG0KiaYL3wr1LpkJdKajm91n
-         Y2d0OBOxHsQtBoTjRWgoEAV+EKd+DX9eXsHKxdddDdInMoMrVZujgZygKDizLgkMyut1
-         eZcXBnQvuNerewJpK6On0KEoQiVKNO2XDjpWYZ/Bln16TxYHMt9/sgC+fyc5hr7jdFuZ
-         znltZtg4eA1vJDLRY+2DnXRNYfi3fFQBGE5ppug674JI+wcpZPPproqcjdjSXSJcxj6h
-         d/sQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690302732; x=1690907532;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9rkfJmJDchPlVP0Sck1alECQIstmUhrdozhhrt9tbbQ=;
-        b=fLTCZVc0Dh3GYtzm6fgOSMjwWEOW/8rmA0Br6YD93d0NYumxTMsnUxUU3qdy2cV/6r
-         xlnK4fgyaGh8s/Gfg7eVFpueHh05QjAgCiz0LxqtCOCEn0J0UwSniQsx1NZJoF2f3zxQ
-         Cad0fxEWQf89KFRF5JbMFDYYo/rn0f7W+UWVZlFJu38Xj/QPXefMd8WW9KAmS5UHLqjl
-         DYrDn2iOjBH7pJGZaUVRCz+pdywv/TrWug/k/siPJtvqLbx2OyusfYoWwxqsfCAdEG80
-         5mrTVIi0LoKI61hWFWwFK4pMzVnIdmO9whDJBzpv3K2oCpSNKNHsYBtGdedlqZwL/SCk
-         4GCw==
-X-Gm-Message-State: ABy/qLbLH7+T5BaY+R5EsypmLPoAyoCP3HffpP41jPHo+cGI4+9YaItJ
-        SmZv/pRIa0R3WbX0ft5sYvs=
-X-Google-Smtp-Source: APBJJlF5a8Tp0tdX5CGtjdqU7mmsbaTimBXTdWG/XO7FRKSqi4KyPUw2yV0VzZf/EzIwobDWeujRag==
-X-Received: by 2002:a17:906:328f:b0:993:f611:7c95 with SMTP id 15-20020a170906328f00b00993f6117c95mr12102365ejw.39.1690302731847;
-        Tue, 25 Jul 2023 09:32:11 -0700 (PDT)
-Received: from localhost (p200300e41f1bd600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1b:d600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id h20-20020a170906399400b00991d54db2acsm8399282eje.44.2023.07.25.09.32.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jul 2023 09:32:11 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: (subset) [PATCH v2 1/2] dt-bindings: clock: tegra124-dfll: Convert to json-schema
-Date:   Tue, 25 Jul 2023 18:32:08 +0200
-Message-ID: <169030265763.1427964.6521590596582713282.b4-ty@nvidia.com>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230721131322.2991364-1-thierry.reding@gmail.com>
-References: <20230721131322.2991364-1-thierry.reding@gmail.com>
+        with ESMTP id S231129AbjGYRvt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jul 2023 13:51:49 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D8FC4F7;
+        Tue, 25 Jul 2023 10:51:46 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="6.01,230,1684767600"; 
+   d="scan'208";a="174453190"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 26 Jul 2023 02:51:46 +0900
+Received: from localhost.localdomain (unknown [10.226.92.3])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 008E24002645;
+        Wed, 26 Jul 2023 02:51:42 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Russell King <linux@armlinux.org.uk>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        linux-renesas-soc@vger.kernel.org,
+        kernel test robot <lkp@intel.com>
+Subject: [PATCH] clk: Fix undefined reference to `clk_rate_exclusive_{get,put}'
+Date:   Tue, 25 Jul 2023 18:51:40 +0100
+Message-Id: <20230725175140.361479-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+The COMMON_CLK config is not enabled in some of the architectures.
+This causes below build issues:
 
+pwm-rz-mtu3.c:(.text+0x114):
+undefined reference to `clk_rate_exclusive_put'
+pwm-rz-mtu3.c:(.text+0x32c):
+undefined reference to `clk_rate_exclusive_get'
 
-On Fri, 21 Jul 2023 15:13:21 +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> Convert the Tegra124 (and later) DFLL bindings from the free-form text
-> format to json-schema.
-> 
-> 
+Fix these issues by moving clk_rate_exclusive_{get,put} inside COMMON_CLK
+code block, as clk.c is enabled by COMMON_CLK.
 
-Applied, thanks!
+Fixes: 55e9b8b7b806 ("clk: add clk_rate_exclusive api")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/all/202307251752.vLfmmhYm-lkp@intel.com/
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ include/linux/clk.h | 80 ++++++++++++++++++++++-----------------------
+ 1 file changed, 40 insertions(+), 40 deletions(-)
 
-[2/2] dt-bindings: clock: tegra: Document Tegra132 compatible
-      commit: a640358defd84c71640b68065eb0ce359722e145
-
-Best regards,
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 1ef013324237..06f1b292f8a0 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -183,6 +183,39 @@ int clk_get_scaled_duty_cycle(struct clk *clk, unsigned int scale);
+  */
+ bool clk_is_match(const struct clk *p, const struct clk *q);
+ 
++/**
++ * clk_rate_exclusive_get - get exclusivity over the rate control of a
++ *                          producer
++ * @clk: clock source
++ *
++ * This function allows drivers to get exclusive control over the rate of a
++ * provider. It prevents any other consumer to execute, even indirectly,
++ * opereation which could alter the rate of the provider or cause glitches
++ *
++ * If exlusivity is claimed more than once on clock, even by the same driver,
++ * the rate effectively gets locked as exclusivity can't be preempted.
++ *
++ * Must not be called from within atomic context.
++ *
++ * Returns success (0) or negative errno.
++ */
++int clk_rate_exclusive_get(struct clk *clk);
++
++/**
++ * clk_rate_exclusive_put - release exclusivity over the rate control of a
++ *                          producer
++ * @clk: clock source
++ *
++ * This function allows drivers to release the exclusivity it previously got
++ * from clk_rate_exclusive_get()
++ *
++ * The caller must balance the number of clk_rate_exclusive_get() and
++ * clk_rate_exclusive_put() calls.
++ *
++ * Must not be called from within atomic context.
++ */
++void clk_rate_exclusive_put(struct clk *clk);
++
+ #else
+ 
+ static inline int clk_notifier_register(struct clk *clk,
+@@ -236,6 +269,13 @@ static inline bool clk_is_match(const struct clk *p, const struct clk *q)
+ 	return p == q;
+ }
+ 
++static inline int clk_rate_exclusive_get(struct clk *clk)
++{
++	return 0;
++}
++
++static inline void clk_rate_exclusive_put(struct clk *clk) {}
++
+ #endif
+ 
+ #ifdef CONFIG_HAVE_CLK_PREPARE
+@@ -583,38 +623,6 @@ struct clk *devm_clk_get_optional_enabled(struct device *dev, const char *id);
+  */
+ struct clk *devm_get_clk_from_child(struct device *dev,
+ 				    struct device_node *np, const char *con_id);
+-/**
+- * clk_rate_exclusive_get - get exclusivity over the rate control of a
+- *                          producer
+- * @clk: clock source
+- *
+- * This function allows drivers to get exclusive control over the rate of a
+- * provider. It prevents any other consumer to execute, even indirectly,
+- * opereation which could alter the rate of the provider or cause glitches
+- *
+- * If exlusivity is claimed more than once on clock, even by the same driver,
+- * the rate effectively gets locked as exclusivity can't be preempted.
+- *
+- * Must not be called from within atomic context.
+- *
+- * Returns success (0) or negative errno.
+- */
+-int clk_rate_exclusive_get(struct clk *clk);
+-
+-/**
+- * clk_rate_exclusive_put - release exclusivity over the rate control of a
+- *                          producer
+- * @clk: clock source
+- *
+- * This function allows drivers to release the exclusivity it previously got
+- * from clk_rate_exclusive_get()
+- *
+- * The caller must balance the number of clk_rate_exclusive_get() and
+- * clk_rate_exclusive_put() calls.
+- *
+- * Must not be called from within atomic context.
+- */
+-void clk_rate_exclusive_put(struct clk *clk);
+ 
+ /**
+  * clk_enable - inform the system when the clock source should be running.
+@@ -974,14 +982,6 @@ static inline void clk_bulk_put_all(int num_clks, struct clk_bulk_data *clks) {}
+ 
+ static inline void devm_clk_put(struct device *dev, struct clk *clk) {}
+ 
+-
+-static inline int clk_rate_exclusive_get(struct clk *clk)
+-{
+-	return 0;
+-}
+-
+-static inline void clk_rate_exclusive_put(struct clk *clk) {}
+-
+ static inline int clk_enable(struct clk *clk)
+ {
+ 	return 0;
 -- 
-Thierry Reding <treding@nvidia.com>
+2.25.1
+
