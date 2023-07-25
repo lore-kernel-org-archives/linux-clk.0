@@ -2,694 +2,803 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51202C001DE
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jul 2023 13:56:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15FF4C001DE
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jul 2023 14:04:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231934AbjGYN4Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Jul 2023 09:56:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49474 "EHLO
+        id S232197AbjGYOEp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Jul 2023 10:04:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231898AbjGYN4E (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jul 2023 09:56:04 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46B5A2D45;
-        Tue, 25 Jul 2023 06:55:44 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6042B6173D;
-        Tue, 25 Jul 2023 13:55:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F3CDC433C8;
-        Tue, 25 Jul 2023 13:55:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690293342;
-        bh=fl4HIb+86jtuhAB0Qf4QdxGXDYeYq9eYkA4VJRlQ82M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=vMePHsnK/xPJYSs83nmI8f+QBvuqXTS7jYuhSdK+H0y3RQHBbAOeIlKLNOOT/ytu3
-         0WmNvBFEYS3kyH9Yb+J08SAXRfDNm6U6HTCm5e2m6hontZFnTht70MktVFzMyaCAoz
-         7lS8nR+slZ8ARzMaOM0SFL909xuKZ9DnpyEQyvDxMaGOb10LfI/EQAevyIF15BuJDF
-         5nOMhLI2Csw11/PgGc+SG71pSnXt2qIGSV7RGzXTUdQ6CMeUN8EuRDJ7y0rN38zDvx
-         qHgbygtH4BFhovqb5XjIt3iZH2esikl/XDVe5fjMTw2FNivQPc5Rqu1+qmB3xHG/Nr
-         RdHcVBDvmk39g==
-Date:   Tue, 25 Jul 2023 15:55:39 +0200
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Frank Oltmanns <frank@oltmanns.dev>
-Cc:     Andre Przywara <andre.przywara@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Roman Beranek <me@crly.cz>,
-        Samuel Holland <samuel@sholland.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH 1/2] clk: sunxi-ng: nkm: consider alternative parent
- rates when finding rate
-Message-ID: <q4mwg2dhwaxofbaaiyao7nmyfh4mat4ic2avxbzpmwhq6fmzyx@dflrio4loms5>
-References: <2bvcukogzhcdbfsrruylgw5fbezaqjpcojqaambfoiv5fc2upy@ffumn5sevbeb>
- <875y7y1f0d.fsf@oltmanns.dev>
- <sijbhopoxuw5wodyry3smg7tm4wzoc7k6xakt4qdvxqsok32mv@u7rh4dct5ya6>
- <87a5x41w5r.fsf@oltmanns.dev>
- <unoskbtcteluxj7g3xkwc7ngcmglvcbm5ah25m7huhqxwd4dj3@nmfxbedwyu54>
- <87bkhbhnol.fsf@oltmanns.dev>
- <yj6ss64s7p2uaslodj5zklrwhegz54bgh4l4wmldv6cccggepz@yombds4hij3c>
- <87pm4xg2ub.fsf@oltmanns.dev>
- <ycdinzk5633ig5r3ao3czn4p53j32fir4jjsgue3pvi7rcovkn@sptpsyt72ir7>
- <871qgzqa08.fsf@oltmanns.dev>
+        with ESMTP id S232192AbjGYOEo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jul 2023 10:04:44 -0400
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D300106;
+        Tue, 25 Jul 2023 07:04:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1690293882; x=1721829882;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=sEHFvVe7XYYCGY6n7AtK+Dbf8TO5wHmGbK4JLItUm+g=;
+  b=NHzLF5O+ufGdJ26uuYHjkqlyQQPZCmWyBvAARVFmXyUe1fKRQiUftLL0
+   MT9Gt2N7z5gSRjf928MYbl+RbuGI6FB/Y39fhKxVk7sMqCmC/xKj72nKP
+   p7eFjBKWB2kWcNZ69Xu8k6YpayEY+Pr2E5JUrs3BzcUu60DRvv0SQinmR
+   7IAIRemgJC0tq7TllWsID/TANljzdDmTXIPKwquVX8nP0Ei7DuudACveJ
+   Jy8ecQ9mfBL4kJ0P0ia/T/DaIV+GklgfpoY4hAOK6dEQuVvAjTrzIwb6+
+   bVK+KAJPUBQ9YsgiK6zSUYpYDbgOHypsGNQeCw6P55NgT1Dh50icO0I1q
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10782"; a="365192932"
+X-IronPort-AV: E=Sophos;i="6.01,230,1684825200"; 
+   d="scan'208";a="365192932"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2023 07:01:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10782"; a="839875641"
+X-IronPort-AV: E=Sophos;i="6.01,230,1684825200"; 
+   d="scan'208";a="839875641"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by fmsmga002.fm.intel.com with ESMTP; 25 Jul 2023 07:01:37 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.27; Tue, 25 Jul 2023 07:01:37 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.27 via Frontend Transport; Tue, 25 Jul 2023 07:01:37 -0700
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.108)
+ by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.27; Tue, 25 Jul 2023 07:01:37 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=golxgQMs1CT9/dfedDuAeRuAT2xh606LUTV03hFSMuIfVJLTe4UFniZFbgZuUbrsKY2zb11SEncbcG2WDfrpjiwtSuSO8qdCdEFcMRpF86Sa61wzWxmBxEojYKEe0rmh44pVxrdhMhpURu1MN3tysufr5SOxzX2C3RMzn1mY2l9gf+BZa0IpjPmCSu2m7SkTgH0juFd/GT3w/T+Ci3PuMvVCT2R9xcmlR0UGwfbkW0iBBO4lg+elvXsrBfrO1+koxDCOh85+Xmu/PdoVppXepyOEDdNE8ruOxTTK+MJR3UWVwDskML+UB3nOsWb09QWgthpcSPS3I1/SkKPWKrWDBQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/HVGxq1qLQc/CjnbXj9xiNuM3INCDExs/hfR8YjVkT0=;
+ b=Upl+YSkOi+TcOaPPJzv2H7JiR1ntHDVgWdR5dBZdHgml72wOEqvAYgkjcaiBw6TcGQQbSFz4flkuzWa01FgTLfsDO4AdBC2yJQ65g5vL8Jnm3u/rNVZbFZPeWYKJYbRbp36cWmqG5KSj3hp8nFXy/RqhJCzcyl6AwiZd/8YCsWk6e8/OmQKBneM3xPbLwXRVnU6I4LWofAjCRoHFfIsmOAAAOyKdr4xQ3RSEabhswokbkONTHL9YPEmEIRmpfv/u66w7S/KZ/6dWHgWJIhQ3RD8SHC4DWV7YCV5ndzEgJi+Y9OMaywGT+NqWh0jKPKE2H5PG2TSfU3T9kjAV8s9OZQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from DM6PR11MB4657.namprd11.prod.outlook.com (2603:10b6:5:2a6::7) by
+ DM4PR11MB7302.namprd11.prod.outlook.com (2603:10b6:8:109::22) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6609.33; Tue, 25 Jul 2023 14:01:33 +0000
+Received: from DM6PR11MB4657.namprd11.prod.outlook.com
+ ([fe80::c3cd:b8d0:5231:33a8]) by DM6PR11MB4657.namprd11.prod.outlook.com
+ ([fe80::c3cd:b8d0:5231:33a8%5]) with mapi id 15.20.6609.032; Tue, 25 Jul 2023
+ 14:01:33 +0000
+From:   "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+To:     Jiri Pirko <jiri@resnulli.us>
+CC:     "kuba@kernel.org" <kuba@kernel.org>,
+        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "Michalik, Michal" <michal.michalik@intel.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
+        mschmidt <mschmidt@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Bart Van Assche <bvanassche@acm.org>
+Subject: RE: [PATCH 09/11] ice: implement dpll interface to control cgu
+Thread-Topic: [PATCH 09/11] ice: implement dpll interface to control cgu
+Thread-Index: AQHZuut81WSQCKaWlUanjhbbmuUufa/CsZmAgAARQbCAARKGAIAAIjuQgAAo5gCAAA2wkIAAMNUAgAA4eDCAAMCPAIADo+2ggAErQoCAACfLUA==
+Date:   Tue, 25 Jul 2023 14:01:33 +0000
+Message-ID: <DM6PR11MB465734F6AD226A39DE8574419B03A@DM6PR11MB4657.namprd11.prod.outlook.com>
+References: <ZLk/9zwbBHgs+rlb@nanopsycho>
+ <DM6PR11MB46572F438AADB5801E58227A9B3EA@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <ZLo0ujuLMF2NrMog@nanopsycho>
+ <DM6PR11MB46576153E0E28BA4C283A30A9B3FA@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <ZLpzwMQrqp7mIMFF@nanopsycho>
+ <DM6PR11MB46579CC7E6D314BFDE47E4EE9B3FA@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <ZLqoMhxHq3m4dp1u@nanopsycho>
+ <DM6PR11MB46571D843FB903AC050E2F129B3FA@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <ZLt5GPRls7UL4zGx@nanopsycho>
+ <DM6PR11MB465713389A234771BD29DF149B02A@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <ZL+B48Om/cf61/Vq@nanopsycho>
+In-Reply-To: <ZL+B48Om/cf61/Vq@nanopsycho>
+Accept-Language: pl-PL, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM6PR11MB4657:EE_|DM4PR11MB7302:EE_
+x-ms-office365-filtering-correlation-id: 9999afab-e35e-48d1-76ae-08db8d17a773
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: O/ZpDJh9E12pm4YkWJtx8W0iVGWrvOcSGRJp2UPYQsIQnOTuoSxDe8Xai0+uy3bawMTAm2LCYFC/IG9LAGl7GOupmgV+XhkoyYJqYOl7H1PXUiJEgBFF2j10e/eq4S2POBLQ8vq3e68yZS7q+SXeFoT5bYg0QKKsiYLO7r1or7MZ1wYtyW6Ho9WcGS5rnvL269Uxt1bsYNpBYa1wcZ+vZXnmQPI18NnfR9AfL6qqPyOhC2hvTtHGEJv+SbCFXK4JXyNBnjGWE7ziwg1Kz4fSl70ueAEIA8UcchIC8TTrBdX0hnKewCbljwKK3QRMckzUQ1fH58GONtKge8J2XKYK3fSNCChazrVQyXal8ggRe9Ae08xFw8BWRtaOyi159Ws8NXgEhMY/31fPQx2zgVqZL7w3OqTObNT1BbGif/87k31MkEjBY91d453t/aVviYWX7Ui73r53R21qVr3O1UWro4Ci3+CH1V4dZJCGNYXMN1gZ9It8lmmxjd2xtTSnY7cVJJGaq9lfe+mUwqXDSneGiPlmRq4NeJjhMLAo4bTTxvJ8LdJsxr0Eo+qlzmTnBE9BeVWuzTzgPvbap3ZEsvYhJhCPWRMAMr9HL1RAdCy+gwlXQyFWuhMn+bxNkj+HilYr
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR11MB4657.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(396003)(376002)(366004)(136003)(39860400002)(346002)(451199021)(7696005)(9686003)(478600001)(54906003)(71200400001)(186003)(6506007)(30864003)(2906002)(41300700001)(66476007)(66446008)(64756008)(4326008)(6916009)(76116006)(5660300002)(52536014)(7416002)(8676002)(8936002)(316002)(66556008)(66946007)(122000001)(38100700002)(82960400001)(33656002)(38070700005)(86362001)(83380400001)(55016003)(579004);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?Z34yjie47SI+4cqGWsMSNhu4HYSIJmcBymeEEgUIruD09ltY6VZ4VaCRY7y3?=
+ =?us-ascii?Q?p2qCaUn6QHALOdG4zFC3LF8byPL2+/eKYVyzastEIaLXXWfLpmKKr0205plS?=
+ =?us-ascii?Q?pbsSlUlnltEcwzbRwabcjXeKllSLwI1SamuBRxJlgFEXGvwWL7cSfLTjeqpi?=
+ =?us-ascii?Q?6saO8Go24UPdTUfzM6h5zmn84DLgHmz5BYyGjp0EZKX0HxQaaTMzPwfwvfvd?=
+ =?us-ascii?Q?F8kV3Zs9W3SIawVs19wNtzxNUhwBNAoHlh7rTCuj+RhdXI6d89HJZmQOAMU1?=
+ =?us-ascii?Q?YNVqIs8JLEiYbmf2TdOiRGdEe72P+2PEMq/JmYIUY7aRbkL+bXm+POf3EVJ+?=
+ =?us-ascii?Q?3b53TbgZU34uJ3ec6GtWAXDcfu5F1MYteLxiRddBL7+P/n4WYxL00xY5sXKF?=
+ =?us-ascii?Q?geG3cdpihe5afdm5uKt1New9axPCLcUNNIH+QJ8d4Fca6jiYOMWTEqHdppVf?=
+ =?us-ascii?Q?GERMQRjJrXeRw1RtJ3A9D7MF6rgVWhjjP0PbEVWOj92lCOEY1sPo4zRdP3nW?=
+ =?us-ascii?Q?IxW1u1d6lRTQFQhO8jWqJhYcDp9hfW4yC+XJJ6HYFxFBCopIWZtKjjzjm8pI?=
+ =?us-ascii?Q?HGYvGa9YWVqkqMLj/hJf8yFVx10GdqpYoJoH/PU1bi53k6gxIso78/LYTKG+?=
+ =?us-ascii?Q?qbejxttAi5vupi9vjB2BfaLFkaBmIyFf0cieptW8k1NsIMKQfup/aXOZ3rAx?=
+ =?us-ascii?Q?nyJNFOUlKvCrRqnZ/MFqPVN2WkCaBusksQlrghualyVlXELb69JmZGGSbow/?=
+ =?us-ascii?Q?hPjXzz/1PUTp68bx35DfCoady2WtIkd6sduD+p+jyzoompmiXCmzs5p2xijl?=
+ =?us-ascii?Q?ZhS00IdsSuhoFyzhud1zbnME2Bf194YR7iwMEdQ6TqDRRaaYsW0jdp1kFLKB?=
+ =?us-ascii?Q?ZdsEw1sR1FrQO0NR0lrG4gldSDQGH3g4wAF9FqZKlcr4w+L6Qxx9xzi9hyla?=
+ =?us-ascii?Q?+WKg4z+LKdt8TTunT0oh48M8pVFXTgfsx8+CRjxQTCPire3cynPKSgZCZBdT?=
+ =?us-ascii?Q?VDy4h4cgARRKik5U962C7tlFfPtNHtt9nFCJnO8albRAJZU05pZnB0a5gM5B?=
+ =?us-ascii?Q?2BiZhuWUEQU2k1yEF8ekZUHXQcmfjneV//UTm8ZcTSIYdsLasCux0wi7SmIZ?=
+ =?us-ascii?Q?W5NBVG99p2Msj1pcZ9HrmzMmLFthNKVt/RxOis3YPEciRs/w52wL6vb6yOUX?=
+ =?us-ascii?Q?sDr+iWV9n/2ZlV7fd0daNlRgznazYSBzUzat6QL88aPvg24QC8S4cZrfE89n?=
+ =?us-ascii?Q?79af99XSZfTc8MJqlkgU0M4Uap8QILGgpKENl9z/DYR1AsdSg2rQIqts2W5g?=
+ =?us-ascii?Q?cxpNYctqk1SsE8eLTnGQ2AXooCTWaFokAaphTHz9/KigoAlSybOuZQnlpu6g?=
+ =?us-ascii?Q?2NYD5JPVr5kacX++jB0sjN21V5RgnDJCRAX5s7anbHvgEMGFfYcYzmMUyegg?=
+ =?us-ascii?Q?tJ4XZQ9Esy+4/92FlymhCq48ZcWmPriGBIce6BxlXRjq7LEDXIelMDu50+Ak?=
+ =?us-ascii?Q?a3uDI6rqsae0opMDuyslJVShhbS2UGSvj/B1HM9fpXCbUhffYVp+mcO4UZQw?=
+ =?us-ascii?Q?SLqrKYXb9mAQrshPMaZHueydq60lWSsRqHZtUvvlWw3OauTHL6xU0CpwBoKV?=
+ =?us-ascii?Q?8rvjfD58OEaRQUKdj7erF9uACiERHPJNrpcLhHw+eWev0FA/BaXi4kX9qukt?=
+ =?us-ascii?Q?8mSxDA=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="7svm22ujx3ixvmbt"
-Content-Disposition: inline
-In-Reply-To: <871qgzqa08.fsf@oltmanns.dev>
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR11MB4657.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9999afab-e35e-48d1-76ae-08db8d17a773
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jul 2023 14:01:33.6084
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: tF+QVLq0YzoM/hXk9q0bZuQXbb2fwiw8cGA4U9wXuPLV2/mR2DhZhC0fDAIOcB6Q40H3H0XNcAdQQW058DGIy5FbETB3gOXlZaFH17ULcJE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB7302
+X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
---7svm22ujx3ixvmbt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, Jul 23, 2023 at 10:59:03AM +0200, Frank Oltmanns wrote:
-> Hi Maxime,
->=20
-> On 2023-07-17 at 16:06:02 +0200, Maxime Ripard <mripard@kernel.org> wrote:
-> > [[PGP Signed Part:Undecided]]
-> > On Wed, Jul 12, 2023 at 06:39:56AM +0200, Frank Oltmanns wrote:
-> >> Hi Maxime,
-> >>
-> >> On 2023-06-19 at 20:05:44 +0200, Maxime Ripard <maxime@cerno.tech> wro=
+>From: Jiri Pirko <jiri@resnulli.us>
+>Sent: Tuesday, July 25, 2023 10:04 AM
+>
+>Mon, Jul 24, 2023 at 05:03:55PM CEST, arkadiusz.kubalewski@intel.com wrote=
+:
+>>>From: Jiri Pirko <jiri@resnulli.us>
+>>>Sent: Saturday, July 22, 2023 8:37 AM
+>>>
+>>>Fri, Jul 21, 2023 at 09:48:18PM CEST, arkadiusz.kubalewski@intel.com wro=
 te:
-> >> > [[PGP Signed Part:Undecided]]
-> >> > On Mon, Jun 19, 2023 at 10:16:26AM +0200, Frank Oltmanns wrote:
-> >> >> Hi Maxime,
-> >> >>
-> >> >> the essence of my following ramblings:
-> >> >>  - I do think it is reasonable that nkm is asking its parent for the
-> >> >>    rate that nkm actually needs from said parent to fulfill the req=
-uest.
-> >> >>  - I don't think nkm should make assumptions about the rounding
-> >> >>    behaviour of the parent.
-> >> >
-> >> > I guess we agree :)
-> >> >
-> >> > And I would go even further and say that we shouldn't make *any*
-> >> > assumption about the behaviour of the parent.
-> >> >
-> >> >> The reason is, that I want to prevent users of ccu_nkm from making
-> >> >> mistakes when defining their clocks (which includes the parent of t=
-heir
-> >> >> nkm clock).
-> >> >>
-> >> >> Please read below the details on why I think that.
-> >> >>
-> >> >> [...]
-> >> >>
-> >> >> >> No. I didn't. My assumption is: If ccu_nkm_find_best is asked fo=
-r the
-> >> >> >> best rate for rate =3D 449035712, it should try to include 44903=
-5712 in
-> >> >> >> its candidates, agreed?
-> >> >> >>
-> >> >> >> Example 1:
-> >> >> >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >> >> >> rate=3D449035712, n=3D11, k=3D3, m=3D16:
-> >> >> >> We should as for a parent rate of 217714285, because:
-> >> >> >> 217714285 * 11 * 3 / 16 =3D 449035712
-> >> >> >>
-> >> >> >> How do we get from 449035712 to 217714285, you ask?
-> >> >> >>
-> >> >> >>       DIV_ROUND_UP(rate * m, n * k)
-> >> >> >
-> >> >> > Why are we rounding up? I don't think the hardware will round up =
-there.
-> >> >>
-> >> >> Being a "software guy" it is also my understanding that the hardware
-> >> >> does not round up here (or round down for that matter).
-> >> >
-> >> > That's my understanding as well.
-> >> >
-> >> >> But anyway, my concern is the rate's representation *in software*. =
-The
-> >> >> clk drivers are using unsigned long to represent the actual rate. T=
-his
-> >> >> is not a lossless representation. In other words, the value (i.e. t=
-he
-> >> >> software representation) of that rate is, of course, a "lie". The
-> >> >> hardware clock is running at some rate that is hopefully close to w=
-hat
-> >> >> we represent in software, but still it's an abstraction.
-> >> >>
-> >> >> For example, the user (e.g. in my example a panel) asks us for a ra=
-te
-> >> >> that is represented in softwares as 449035712. Given the values n=
-=3D11,
-> >> >> k=3D3, m=3D16, we can *only* represent this value in software if th=
-e parent
-> >> >> gives us a rate that is represented in software as 217714285. There=
-fore,
-> >> >> I think it is reasonable to ask the parent for that rate (217714285=
-).
-> >> >
-> >> > I somewhat agree, but I still don't think it's worth rounding up.
-> >> >
-> >> > If we don't round up (and assuming the parent itself won't round the
-> >> > clock), we end up with a rate of 449035710 using the dividers you
-> >> > mentioned. It's a .0000005% deviation (I hope I didn't screw up the
-> >> > number of 0s). It's negligible for all practical purposes, and it's =
-not
-> >> > worth making the code inconsistent and eyebrow raising.
-> >> >
-> >> >> >> Do you agree that we should ask the parent for 217714285 in case=
- we want
-> >> >> >> a rate of 449035712 and we're currently evaluating the case n=3D=
-11, k=3D3,
-> >> >> >> m=3D16?
-> >> >> >>
-> >> >> >> We should not ask for a parent rate of 217714284, because:
-> >> >> >> 217714284 * 11 * 3 / 16 =3D 449035710
-> >> >> >>
-> >> >> >> Example 2:
-> >> >> >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >> >> >> rate=3D500000000, n=3D11, k=3D3, m=3D16:
-> >> >> >> Here we should not ask the parent for
-> >> >> >>       DIV_ROUND_UP(rate * m, n * k)
-> >> >> >> because that would be 242424243.
-> >> >> >>
-> >> >> >> 242424243 * 11 * 3 / 16 =3D 500000001
-> >> >> >>
-> >> >> >> We (the NKM clock, not the parent!) would overshoot (please see =
-at the
-> >> >> >> end of this mail, why (for now) I don't want to support overshoo=
-ting in
-> >> >> >> the NKM clock).
-> >> >> >>
-> >> >> >> Instead we should as for a parent rate of 242424242, because:
-> >> >> >> 242424242 * 11 * 3 / 16 =3D 499999999
-> >> >> >>
-> >> >> >> In conclusion, there are cases, where we (the NKM clock) have to=
- ask the
-> >> >> >> parent for
-> >> >> >>       DIV_ROUND_UP(rate * m, n * k)
-> >> >> >> And there are also cases, where we have to ask the parent for
-> >> >> >>       rate * m / (n * k)
-> >> >> >
-> >> >> > I mean, I think you're overthinking this.
-> >> >> >
-> >> >> > If you never round up and mimic how the hardware behaves, and tes=
-t all
-> >> >> > combination, then eventually you'll find the closest rate.
-> >> >> >
-> >> >> > If you don't because the parent doesn't look for the closest rate=
-, then
-> >> >> > the parent should be changed too.
-> >> >> >
-> >> >> > It really is that simple.
-> >> >> >
-> >> >> >> This is what the code is trying to do. Maybe it's easier to look=
- at V2
-> >> >> >> because I extracted the calcultion of the optimal parent rate in=
-to a
-> >> >> >> separate function hoping that this makes things clearer.
-> >> >> >>
-> >> >> >> Let me stress this: When calculating the optimal rate for the pa=
-rent,
-> >> >> >> I'm not making any assumptions here about how the PARENT clock r=
-ounds.
-> >> >> >> In fact, I assume that the parent could be perfect and always pr=
-ovides
-> >> >> >> the rate it is asked for. I only take into account how the nkm c=
-lock
-> >> >> >> rounds.
-> >> >> >
-> >> >> > At the very least, you assume that the parent rounding can be "wr=
-ong"
-> >> >> > and try to work around that.
-> >> >>
-> >> >> No. I'm not assuming anything about the parent. But I *know* that i=
-f we
-> >> >> (nkm) want to get a rate that is represented in softwares as 449035=
-712
-> >> >> and given the values n=3D11, k=3D3, m=3D16, we (nkm) must get the r=
-ate from
-> >> >> the parent that the parent represents in software as 217714285, bec=
-ause
-> >> >> I know that we (nkm) calculate *our* (nkm) rate using
-> >> >>     parent * n * k / m
-> >> >>
-> >> >> So if (!) we want to give the user the rate that they ask for, why =
-not
-> >> >> ask the parent for the rate that we need (217714285)?
-> >> >>
-> >> >> I admit that I'm making assumptions here. My assumptions are that we
-> >> >>  a. want to at least try to give the user what they asked for
-> >> >>  b. without making assumptions about the parent's behaviour.
-> >> >>
-> >> >> Those assumptions could of course be wrong, but, honestly, I would =
-find
-> >> >> that confusing.
-> >> >
-> >> > I guess my point leans more towards the "social" side than the
-> >> > mathematical one. If I followed you so far, the precision you expect=
- to
-> >> > gain is in the <1Hz range (and I've been in sick leave for a while, =
-so
-> >> > sorry if I didn't before). The rate is in the 100MHz range.
-> >> >
-> >> > So the precision gain is pretty much nothing. Sure, it's closer from=
- a
-> >> > mathematical standpoint. But there's zero benefit from it.
-> >> >
-> >> > However, it comes at the cost of a code that is definitely more
-> >> > complicated (or less naive, depending on how you look at it I guess =
-:))
-> >> > and will be harder to figure out for someone that jumps into the dri=
-ver.
-> >> >
-> >> > So the trade-off doesn't really make fixing it worth it to me.
-> >> >
-> >> >> >> > you ask the parent to compute whatever is closest to that opti=
-mal parent
-> >> >> >> > rate.
-> >> >> >> >
-> >> >> >> > It's the parent responsibility now. It's the parent decision t=
-o figure
-> >> >> >> > out what "the closest" means, if it can change rate, if it has=
- any range
-> >> >> >> > limitation, etc. You can't work around that.
-> >> >> >> >
-> >> >> >> > What you actually want there is the parent to actually provide=
- the
-> >> >> >> > closest rate, even if it means overshooting.
-> >> >> >> >
-> >> >> >>
-> >> >> >> I want to ask the parent for a rate, that would actually result =
-in the
-> >> >> >> rate that nkm_find_best was asked for. Are you asking me to inst=
-ead ask
-> >> >> >> the parent for a rate that doesn't fit that criterion?
-> >> >> >
-> >> >> > No. I'm asking to call clk_hw_round_rate(parent_hw, rate * m / (n=
- * k))
-> >> >> > and use whatever value it returned.
-> >> >> >
-> >> >> > If it requires changing the parent clock to improve its round_rate
-> >> >> > behaviour, then do that too.
-> >> >> >
-> >> >>
-> >> >> Hmmm... Okay. So you *are* saying, that I should make changes to the
-> >> >> parent so that we do not need to request the exact rate we want fro=
-m the
-> >> >> parent. But I really don't understand why.
-> >> >
-> >> > No, sorry. I initially thought that you were working around "divider"
-> >> > rounding issue (as opposed to integer like you mentionned above) with
-> >> > the parent not providing its optimal rate, and you adjusting based on
-> >> > that offset.
-> >> >
-> >> >> As I wrote above, I'm not making any assumptions of how and if the
-> >> >> parent rounds. My code is rounding *prior* to asking the parent. Yo=
-ur
-> >> >> proposal on the other hand *requires* changing the parent to round
-> >> >> closest where mine does not.
-> >> >>
-> >> >> My concern is, that we could then end up with the situation that so=
-meone
-> >> >> defines an nkm clock in their SoC which has CLK_SET_RATE_PARENT set=
-, but
-> >> >> does not set the ROUND_CLOSEST flag on the parent, because it's not
-> >> >> immediately apparent why they should do that.
-> >> >
-> >> > It's going to happen, and probably happens at the moment already,
-> >> > because not only the NKM clocks are affected, but virtually all of t=
-hem,
-> >> > and most don't use ROUND_CLOSEST.
-> >> >
-> >> > And to some extent, it's fine. We would handle it like any other bug=
-: if
-> >> > we ever encounter one, we'll write a fix, backport it to stable and =
-all
-> >> > will be fine.
-> >> >
-> >> > You can't figure out all the use-cases we'll require in the future
-> >> > anyway.
-> >> >
-> >> >> Let's assume that hypothetical board were the A64, the nkm clock we=
-re pll-mipi,
-> >> >> and the parent were pll-video0 and we "forget" to set ROUND_CLOSEST=
- on
-> >> >> pll-video0:
-> >> >>
-> >> >> When pll-mipi nkm clock is asked via determine_rate() for a rate of
-> >> >> 449064000 it would return 449035712 and a parent rate of 217714285
-> >> >> (using n=3D11, k=3D3, m=3D16, but those details aren't returned by
-> >> >> determine_rate()).
-> >> >>
-> >> >> Eventually, determine_rate() will be called again, but this time fo=
-r a
-> >> >> rate of 449035712. The user already knows that we can provide that,
-> >> >> because we told them (see previous paragraph). But since we're
-> >> >> truncating when calculating the rate that we'd like the parent to
-> >> >> provide, we end up asking the parent for 217714284 when we actually=
- need
-> >> >> it to provide 217714285. So we now *require* the parent to find the
-> >> >> closest and additionally we must *hope* that the parent is incapabl=
-e of
-> >> >> providing the rate that we asked for.
-> >> >
-> >> > I mean... yeah. It's what abstraction is all about. For all we know,=
- the
-> >> > parent to pll-mipi could be a crystal that can't change its frequency
-> >> > and we should deal with that. Or it could be an ideal clock that alw=
-ays
-> >> > returns the rate you ask for. Or a firmware clock that behaves like =
-an
-> >> > ideal clock but lies about it :)
-> >> >
-> >> > It's that clock responsibility to do its best to provide the rate we=
- ask
-> >> > for.
-> >> >
-> >> > And if we need to make it behave better, then it's fine too. So your
-> >> > example is indeed true, but it's more of a case of "let's send anoth=
-er
-> >> > patch" rather than trying to figure out all possible cases and try to
-> >> > figure things out accordingly. Because you won't be able to figure o=
-ut
-> >> > all possible cases for the current SoCs and the next ones, and the
-> >> > workloads that people are going to run on those SoCs anyway.
-> >> >
-> >> >> >> If you carefully look at ccu_mp, you will see that it would igno=
-re
-> >> >> >> cases when its parent had rounded up. ccu_nkm is no different.
-> >> >> >> Teaching all of sunxi-ng's clocks to respect ROUND_CLOSEST is a
-> >> >> >> totally different beast. For now, sunxi-ng always expects roundi=
+>>>>>From: Jiri Pirko <jiri@resnulli.us>
+>>>>>Sent: Friday, July 21, 2023 5:46 PM
+>>>>>
+>>>>>Fri, Jul 21, 2023 at 03:36:17PM CEST, arkadiusz.kubalewski@intel.com
+>>>>>wrote:
+>>>>>>>From: Jiri Pirko <jiri@resnulli.us>
+>>>>>>>Sent: Friday, July 21, 2023 2:02 PM
+>>>>>>>
+>>>>>>>Fri, Jul 21, 2023 at 01:17:59PM CEST, arkadiusz.kubalewski@intel.com
+>>>>>>>wrote:
+>>>>>>>>>From: Jiri Pirko <jiri@resnulli.us>
+>>>>>>>>>Sent: Friday, July 21, 2023 9:33 AM
+>>>>>>>>>
+>>>>>>>>>Thu, Jul 20, 2023 at 07:31:14PM CEST, arkadiusz.kubalewski@intel.c=
+om
+>>>>>>>>>wrote:
+>>>>>>>>>>>From: Jiri Pirko <jiri@resnulli.us>
+>>>>>>>>>>>Sent: Thursday, July 20, 2023 4:09 PM
+>>>>>>>>>>>
+>>>>>>>>>>>Thu, Jul 20, 2023 at 11:19:01AM CEST, vadim.fedorenko@linux.dev
+>>>>>>>>>>>wrote:
+>>>>>>>>>>>>From: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+>>>>>>>>>>>
+>>>>>>>>>>>[...]
+>>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>>>+/**
+>>>>>>>>>>>>+ * ice_dpll_pin_enable - enable a pin on dplls
+>>>>>>>>>>>>+ * @hw: board private hw structure
+>>>>>>>>>>>>+ * @pin: pointer to a pin
+>>>>>>>>>>>>+ * @pin_type: type of pin being enabled
+>>>>>>>>>>>>+ * @extack: error reporting
+>>>>>>>>>>>>+ *
+>>>>>>>>>>>>+ * Enable a pin on both dplls. Store current state in pin-flag=
+s.
+>>>>>>>>>>>>+ *
+>>>>>>>>>>>>+ * Context: Called under pf->dplls.lock
+>>>>>>>>>>>>+ * Return:
+>>>>>>>>>>>>+ * * 0 - OK
+>>>>>>>>>>>>+ * * negative - error
+>>>>>>>>>>>>+ */
+>>>>>>>>>>>>+static int
+>>>>>>>>>>>>+ice_dpll_pin_enable(struct ice_hw *hw, struct ice_dpll_pin *pi=
+n,
+>>>>>>>>>>>>+		    enum ice_dpll_pin_type pin_type,
+>>>>>>>>>>>>+		    struct netlink_ext_ack *extack)
+>>>>>>>>>>>>+{
+>>>>>>>>>>>>+	u8 flags =3D 0;
+>>>>>>>>>>>>+	int ret;
+>>>>>>>>>>>>+
+>>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>>I don't follow. Howcome you don't check if the mode is freerun
+>>>>>>>>>>>here or
+>>>>>>>>>>>not? Is it valid to enable a pin when freerun mode? What happens=
+?
+>>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>>Because you are probably still thinking the modes are somehow
+>>>>>>>>>>connected
+>>>>>>>>>>to the state of the pin, but it is the other way around.
+>>>>>>>>>>The dpll device mode is a state of DPLL before pins are even
+>>>>>>>>>>considered.
+>>>>>>>>>>If the dpll is in mode FREERUN, it shall not try to synchronize o=
+r
+>>>>>>>>>>monitor
+>>>>>>>>>>any of the pins.
+>>>>>>>>>>
+>>>>>>>>>>>Also, I am probably slow, but I still don't see anywhere in this
+>>>>>>>>>>>patchset any description about why we need the freerun mode. Wha=
+t
+>>>>>>>>>>>is
+>>>>>>>>>>>diffrerent between:
+>>>>>>>>>>>1) freerun mode
+>>>>>>>>>>>2) automatic mode & all pins disabled?
+>>>>>>>>>>
+>>>>>>>>>>The difference:
+>>>>>>>>>>Case I:
+>>>>>>>>>>1. set dpll to FREERUN and configure the source as if it would be=
+ in
+>>>>>>>>>>AUTOMATIC
+>>>>>>>>>>2. switch to AUTOMATIC
+>>>>>>>>>>3. connecting to the valid source takes ~50 seconds
+>>>>>>>>>>
+>>>>>>>>>>Case II:
+>>>>>>>>>>1. set dpll to AUTOMATIC, set all the source to disconnected
+>>>>>>>>>>2. switch one valid source to SELECTABLE
+>>>>>>>>>>3. connecting to the valid source takes ~10 seconds
+>>>>>>>>>>
+>>>>>>>>>>Basically in AUTOMATIC mode the sources are still monitored even =
+when
+>>>>>>>>>>they
+>>>>>>>>>>are not in SELECTABLE state, while in FREERUN there is no such
+>>>>>>>>>>monitoring,
+>>>>>>>>>>so in the end process of synchronizing with the source takes much
+>>>>>>>>>>longer as
+>>>>>>>>>>dpll need to start the process from scratch.
+>>>>>>>>>
+>>>>>>>>>I believe this is implementation detail of your HW. How you do it =
+is up
+>>>>>>>>>to you. User does not have any visibility to this behaviour, there=
+fore
+>>>>>>>>>makes no sense to expose UAPI that is considering it. Please drop =
+it at
+>>>>>>>>>least for the initial patchset version. If you really need it late=
+r on
+>>>>>>>>>(which I honestly doubt), you can send it as a follow-up patchset.
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>>And we will have the same discussion later.. But implementation is
+>>>>>>>>already
+>>>>>>>>there.
+>>>>>>>
+>>>>>>>Yeah, it wouldn't block the initial submission. I would like to see =
+this
+>>>>>>>merged, so anything which is blocking us and is totally optional (as
+>>>>>>>this freerun mode) is better to be dropped.
+>>>>>>>
+>>>>>>
+>>>>>>It is not blocking anything. Most of it was defined and available for
+>>>>>>long time already. Only ice implementing set_mode is a new part.
+>>>>>>No clue what is the problem you are implying here.
+>>>>>
+>>>>>Problem is that I believe you freerun mode should not exist. I believe
+>>>>>it is wrong.
+>>>>>
+>>>>>
+>>>>>>
+>>>>>>>
+>>>>>>>>As said in our previous discussion, without mode_set there is no
+>>>>>>>>point to
+>>>>>>>>have
+>>>>>>>>command DEVICE_SET at all, and there you said that you are ok with
+>>>>>>>>having
+>>>>>>>>the
+>>>>>>>>command as a placeholder, which doesn't make sense, since it is not
+>>>>>>>>used.
+>>>>>>>
+>>>>>>>I don't see any problem in having enum value reserved. But it does n=
+ot
+>>>>>>>need to be there at all. You can add it to the end of the list when
+>>>>>>>needed. No problem. This is not an argument.
+>>>>>>>
+>>>>>>
+>>>>>>The argument is that I already implemented and tested, and have the n=
+eed
+>>>>>>for the
+>>>>>>existence to set_mode to configure DPLL, which is there to switch the
+>>>>>>mode
+>>>>>>between AUTOMATIC and FREERUN.
+>>>>>>
+>>>>>>>
+>>>>>>>>
+>>>>>>>>Also this is not HW implementation detail but a synchronizer chip
+>>>>>>>>feature,
+>>>>>>>>once dpll is in FREERUN mode, the measurements like phase offset
+>>>>>>>>between
+>>>>>>>>the
+>>>>>>>>input and dpll's output won't be available.
+>>>>>>>>
+>>>>>>>>For the user there is a difference..
+>>>>>>>>Enabling the FREERUN mode is a reset button on the dpll's state
+>>>>>>>>machine,
+>>>>>>>>where disconnecting sources is not, as they are still used,
+>>>>>>>>monitored and
+>>>>>>>>measured.
+>>>>>>>
+>>>>>>>So it is not a mode! Mode is either "automatic" or "manual". Then we
+>>>>>>>have a state to indicate the state of the state machine (unlocked,
+>>>>>>>locked,
+>>>>>>>holdover, holdover-acq). So what you seek is a way for the user to
+>>>>>>>expliticly set the state to "unlocked" and reset of the state machin=
+e.
+>>>>>>>
+>>>>>>>Please don't mix config and state. I think we untangled this in the
+>>>>>>>past
+>>>>>>>:/
+>>>>>>
+>>>>>>I don't mix anything, this is the way dpll works, which means mode of
+>>>>>>dpll.
+>>>>>
+>>>>>You do. You want to force-change the state yet you mangle the mode in.
+>>>>>The fact that some specific dpll implemented it as mode does not mean =
+it
+>>>>>has to be exposed like that to user. We have to find the right
+>>>>>abstraction.
+>>>>>
+>>>>
+>>>>Just to make it clear:
+>>>>
+>>>>AUTOMATIC:
+>>>>- inputs monitored, validated, phase measurements available
+>>>>- possible states: unlocked, locked, locked-ho-acq, holdover
+>>>>
+>>>>FREERUN:
+>>>>- inputs not monitored, not validated, no phase measurements available
+>>>>- possible states: unlocked
+>>>
+>>>This is your implementation of DPLL. Others may have it done
+>>>differently. But the fact the input is monitored or not, does not make
+>>>any difference from user perspective.
+>>>
+>>>When he has automatic mode and does:
+>>>1) disconnect all pins
+>>>2) reset state    (however you implement it in the driver is totaly up
+>>>		   to the device, you may go to your freerun dpll mode
+>>>		   internally and to automatic back, up to you)
+>>> -> state will go to unlocked
+>>>
+>>>The behaviour is exactly the same, without any special mode.
+>>
+>>In this case there is special reset button, which doesn't exist in
+>>reality, actually your suggestion to go into FREERUN and back to AUTOMATI=
+C
+>>to pretend the some kind of reset has happened, where in reality dpll wen=
+t
+>>to
+>>FREERUN and AUTOMATIC.
+>
+>There are 3 pin states:
+>disconnected
+>connected
+>selectable
+>
+>When the last source disconnects, go to your internal freerun.
+>When some source gets selectable or connected, go to your internal
+>automatic mode.
+>
+
+This would make the driver to check if all the sources are disconnected
+each time someone disconnects a source. Which in first place is not
+efficient, but also dpll design already allows different driver instances t=
+o
+control separated sources, which in this case would force a driver to imple=
+ment
+additional communication between the instances just to allow such hidden
+FREERUN mode.
+Which seems another argument not to do this in the way you are proposing:
+inefficient and unnecessarily complicated.
+
+We know that you could also implement FREERUN mode by disconnecting all the
+sources, even if HW doesn't support it explicitly.
+
+>From user perspactive, the mode didn't change.
+>
+
+The user didn't change the mode, the mode shall not change.
+You wrote to do it silently, so user didn't change the mode but it would ha=
+ve
+changed, and we would have pretended the different working mode of DPLL doe=
+sn't
+exist.
+
+>From user perepective, this is exacly the behaviour he requested.
+>
+
+IMHO this is wrong and comes from the definition of pin state DISCONNECTED,
+which is not sharp, for our HW means that the input will not be considered
+as valid input, but is not disconnecting anything, as input is still
+monitored and measured.
+Shall we have additional mode like PIN_STATE_NOT_SELECTABLE? As it is not
+possible to actually disconnect a pin..
+
+>
+>>For me it seems it seems like unnecessary complication of user's life.
+>>The idea of FREERUN mode is to run dpll on its system clock, so all the
+>>"external" dpll sources shall be disconnected when dpll is in FREERUN.
+>
+>Yes, that is when you set all pins to disconnect. no mode change needed.
+>
+
+We don't disconnect anything, we used a pin state DISCONNECTED as this seem=
+ed
+most appropriate.
+
+>
+>>Let's assume your HW doesn't have a FREERUN, can't you just create it by
+>>disconnecting all the sources?
+>
+>Yep, that's what we do.
+>
+
+No, you were saying that the mode doesn't exist and that your hardware does=
+n't
+support it. At the same time it can be achieved by manually disconnecting a=
+ll
+the sources.
+
+>
+>>BTW, what chip are you using on mlx5 for this?
+>>I don't understand why the user would have to mangle state of all the pin=
+s
+>>just
+>>to stop dpll's work if he could just go into FREERUN and voila. Also what=
+ if
+>>user doesn't want change the configuration of the pins at all, and he jus=
+t
+>>want
+>>to desynchronize it's dpll for i.e. testing reason.
+>
+>I tried to explain multiple times. Let the user have clean an abstracted
+>api, with clear semantics. Simple as that. Your internal freerun mode is
+>just something to abstract out, it is not needed to expose it.
+>
+
+Our hardware can support in total 4 modes, and 2 are now supported in ice.
+I don't get the idea for abstraction of hardware switches, modes or
+capabilities, and having those somehow achievable through different
+functionalities.
+
+I think we already discussed this long enough to make a decision..
+Though I am not convinced by your arguments, and you are not convinced by m=
+ine.
+
+Perhaps someone else could step in and cut the rope, so we could go further
+with this?
+
+Thank you!
+Arkadiusz
+
+
+>
+>>
+>>>
+>>>We are talking about UAPI here. It should provide the abstraction, leavi=
 ng
-> >> >> >> down.
-> >> >> >
-> >> >> > Then change that?
-> >> >>
-> >> >> You told me that both over- and undershooting are fine when
-> >> >> determining the rate, *but also* "it's a bit context specific which=
- one
-> >> >> we should favour. If we were to do anything, it would be to support=
- both
-> >> >> and let the clock driver select which behaviour it wants." (see
-> >> >> https://lore.kernel.org/all/flngzi4henkzcpzwdexencdkw77h52g3nduup7p=
-wctpwfiuznk@eewnnut5mvsq/)
-> >> >>
-> >> >> So, I can't just change NKM's parent's default behavior (which is a=
-n NM
-> >> >> clock in my case), because, if I understand correctly, I would have=
- to
-> >> >> introduce a "ROUND_CLOSEST" flag for NM clocks.
-> >> >
-> >> > Sure
-> >> >
-> >> >> But then I feel like I would have to document somewhere that when
-> >> >> setting CLK_SET_RATE_PARENT for an NKM clock, that the parent clock
-> >> >> needs to ROUND_CLOSEST, in order to avoid drifting away from the
-> >> >> requested rate in the successive calls that are made to
-> >> >> ccu_nkm_determine_rate(), which I tried to explain above and in pre=
-vious
-> >> >> messages.
-> >> >
-> >> > That's kind of what I meant too. Whether "drifting away" is an issue=
- is
-> >> > context specific too. for some clocks it just doesn't matter. Nobody
-> >> > ever complained that the register clock of the MMC controller was
-> >> > drifting away, because it doesn't affect the system in the slightest.
-> >> >
-> >> > The video clock tree (and possibly others) will be affected though, =
-and
-> >> > we'll indeed need to add that flag. But we're doing it all the time =
-(and
-> >> > sometimes get it wrong) for things like which clocks should be left
-> >> > enabled for example.
-> >>
-> >> I'm afraid we have to re-visit this decision. I found a case, where the
-> >> drifting causes a problem.
-> >
-> > I'm sure it can cause a lot of issues everywhere. My point was that the
-> > solution is to add the flag so the issue goes away, and not to try to
-> > workaround a driver that might or not have the flag. We should assume
-> > it's properly set, and properly set it.
->=20
-> I want you to be aware that this might result in a situation that will
-> waste many hours of development time for people trying to use the
-> SET_PARENT_RATE flag on NKM clocks in their SoCs. Because it has
-> surprising side effects that I lay out below.
->=20
-> How do we tell developers that they *must* use CCU_ROUND closest on the
-> whole clk branch starting at whe nkm clock's parent if they want to use
-> SET_PARENT_RATE on a NKM clock.
-
-That's exagerating the issue a bit. They will get from their parent the
-lower, closest, rate than they ask for that it can meet. This is what
-the framework has always guaranteed.
-
-You want to change that, fine. But now of course the parent might have
-to overshoot its target to meet that requirement. So the parent driver
-needs to be modified as such. That's very much the expectation.
-
-> They must do it from the beginning or they will need to start chasing
-> errors. This could easily prevented by applying this patch [1].
->=20
-> Because, if they don't the following will happen:
->=20
-> >> Setting pll-mipi's SET_PARENT_RATE flag, but not setting the tree's
-> >> CCU_FEATURE_CLOSEST_RATE flag results in the following tree:
-> >>
-> >>     clock                     rate
-> >>     -----------------------------------
-> >>     pll-video0                201000000
-> >>        hdmi-phy-clk            50250000
-> >>        hdmi                   201000000
-> >>        tcon1                  201000000
-> >>        pll-mipi               414562500
-> >>           tcon0               414562500
-> >>              tcon-data-clock  138187500
-> >>
-> >> Note, that tcon-data-clock's rate is garbage. It should be tcon0/4, but
-> >> it is tcon0/3.
->=20
-> ^
-> |
-> Now, *that* is surprising, isn't it? Well at least for me it was. I set
-> the SET_PARENT_RATE on pll-mipi and suddenly tcon-data-clock is garbage.
-> How can that be?
->=20
-> Ok, let's start debugging:
->=20
-> >>
-> >> I added some logging to ccu_find_best*() to understand, as to why that
-> >> is:
-> >>
-> >>     ccu_nkm_find_best_with_parent_adj: rate=3D414600000, best_rate=3D4=
-14577776, best_parent_rate=3D282666666, n=3D11, k=3D2, m=3D15
-> >>     ccu_nkm_find_best_with_parent_adj: rate=3D414600000, best_rate=3D4=
-14577776, best_parent_rate=3D282666666, n=3D11, k=3D2, m=3D15
-> >>     ccu_nkm_find_best_with_parent_adj: rate=3D414577776, best_rate=3D4=
-14562500, best_parent_rate=3D201000000, n=3D11, k=3D3, m=3D16
-> >>     ccu_nkm_find_best_with_parent_adj: rate=3D414562500, best_rate=3D4=
-14562500, best_parent_rate=3D201000000, n=3D11, k=3D3, m=3D16
-> >>     ccu_nkm_find_best: rate=3D414562500, best_rate=3D414562500, parent=
-_rate=3D201000000, n=3D11, k=3D3, m=3D16
-> >>
-> >> We can see that the rate is drifting over the successive calls. We've
-> >> seen it before and deemed it no big deal.
-> >>
-> >> To highlight the issue a bit more, I added some logging at the end of
-> >> sun4i_dclk_round_rate() and sun4i_dclk_set_rate.
-> >>
-> >>     ccu_nkm_find_best_with_parent_adj: rate=3D414600000, best_rate=3D4=
-14577776, best_parent_rate=3D282666666, n=3D11, k=3D2, m=3D15
-> >>     sun4i_dclk_round_rate: rate=3D103650000, best_rate=3D103644444, be=
-st_parent=3D414577776, best_div=3D4
-> >>     ccu_nkm_find_best_with_parent_adj: rate=3D414600000, best_rate=3D4=
-14577776, best_parent_rate=3D282666666, n=3D11, k=3D2, m=3D15
-> >>     sun4i_dclk_round_rate: rate=3D103650000, best_rate=3D103644444, be=
-st_parent=3D414577776, best_div=3D4
-> >>
-> >> Here we can see that sun4i_dclk now has determined that 103644444 is i=
-ts
-> >> best rate, based on the parent rate of 414577776.
-> >>
-> >> But now, the nkm clock pll-mipi changes its mind and thinks that it
-> >> cannot provide 414577776 any more, instead it wants to provide
-> >> 414562500.
-> >
-> > That's a bit surprising, but not entirely.
->=20
-> The drifting itself is not suprising at all to me. It is the topic of
-> this whole mail thread. :-)
->=20
-> > For example, one of the
-> > parent clock of our parent might have changed rate between our
-> > round_rate and set_rate calls.
->=20
-> That's not the reason here. The reason is that I added the
-> SET_PARENT_RATE flag, but did not add CCU_FEATURE_ROUND_CLOSEST to
-> pll-mipi's parent and all its descendants.
->=20
-> *I* know, that I shouldn't do that. But will Jane and Joe SoC-Developer?
-
-How many Jane and Joe SoC-developer are writing a clock driver without
-any knowledge of how the clock framework operates?
-
-> How do we tell them? Will the necessary documentation really be easier
-> to maintain than the 24 line patch [1] I submitted?
-
-We have different perspectives on the issue. Yours is that it should be
-absolutely correct even if it isn't. I get where you're coming from.
-
-The thing is, from mine, yes, it's going to be much easier to maintain.
-Those 24 lines of code are fairly intricate, I had to exchange literally
-dozen of mails to get what it was about. Do you really expect us + Jane
-and Joe kernel developer to do as much when they read and try to
-understand that code? Let alone review another patch that would affect
-that code.
-
-And for all I know, you might be gone as soon as that patch is merged so
-we wouldn't get your help either.
-
-FWIW, I'm open to adding that flag everywhere it's needed, not just on
-the A64.
-
-> Again, without the patch NKM clocks are making assumptions about the
-> parent clock. They now depend on:
->  a. The parent clock rounding to the closest requested rate.
-
-It doesn't depend on anything, really. It depends on the parent to
-provide a rate as close as possible to what was requested, but that was
-always the case.
-
->  b. The parent clock not supporting the rate the NKM requests.
-
-I'm not sure what you mean by that.
-
-> If either of the two is not true, it will break tcon-data-clock.
->=20
-> > Why does it change its mind?
->=20
-> Because the parent does not round to the closest rate.
-
-And it doesn't round to the closest rate because it's not expected to,
-or asked to.
-
-> This is what happens, if the parent does not fulfill the two
-> requirements:
->=20
->   1. tcon0 (or someone else, this is just an example) asks the NKM clock
->      (pll-mipi) for rate A (e.g. 414600000).
->   2. The NKM clock tries out all combinations of N, K, and M and each
->      time asks the parent for a rate, that is close to the "optimal"
->      parent rate.
->   3. At some point the NKM clock asks its parent for rate B (282681818).
->   4. The parent will respond that it doesn't support rate B, but rate B'
->      (282666666) could be used.
->   5. Using that information, NKM tells the clk framework that it can't
->      provide rate A (414600000), but it could provide A' (414577776).
->   6. The clk framework tells tcon0 that. tcon0 agrees and says: "Fine,
->      clk framework, let's go with rate A'."
->   7. clk framework asks the NKM clock, for rate A' (414577776).
->   8. Like in step 2 the NKM goes through all combinations and asks the
->      parent for a rate that is optimal to the "optimal" parent rate.
->   9. Without the patch [1] at some point the NKM clock will ask the
->      parent for B'' (282666665) (!) due to integer rounding.
->  11. The parent will respond that it doesn't support rate B'', but rate
->      B''' could be used. (I don't know what rate that is, but it's now
->      so bad that the previous combination of N, K, and M is no longer
->      the best combination.)
->  12. Using that information, NKM tells the clk framework that it can't
->      provide rate A' (414577776), but it could provide A'' (414562500).
->      That's what I meant, that the nkm clock "changed its mind".
->=20
-> Actually, steps 7-12 are performed a few times and each time the rate
-> could get a little bit worse. Not by much, so you said it's not worth
-> adding patch [1], because "there's zero benefit from it". [2]
->=20
-> The new information I'm trying to convey here, is that tcon0 has based
-> its round_rate result on A' because the clk framework told it so.
-> Apparently, the clk framework expects that when a clock claims it can
-> provide rate A' when asked for rate A, that it will also respond with A'
-> when asked for A'.
-
-Yeah, that sounds reasonable. I'm afraid tackling this for all our
-clocks would be a major overhaul so I would consider this to be out of
-scope if we ever want to get this series merged.
-
-> I don't think that's an unreasonable requirement for clocks [footnote
-> A]. But the NKM clock does not always fulfill it, if it can set its
-> parent rate but doesn't have patch [1].
->=20
-> This is not some kind of race condition as you described above. It
-> happens 100% of the time when a clock (tcon0) asks an nkm clock
-> (pll-mipi) for an "unfortunate" rate and the nkm's parent (pll-video0)
-> does not support rounding up.
-
-Which, again, has a super simple fix now.
-
-> "Unfortunate" is a rate where the best parent rate can not be calculated
-> by the simple formula:
->     rate * m / (n * k)
->=20
-> You wrote in [2]:
-> > We're back to the trade-off I was mentioning earlier. I'm not against
-> > it on principle. However, if it's not absolutely required, then I
-> > don't think it's a good idea to merge it.
-> >
-> > Especially if it's to workaround a parent flag missing. A clock flag
-> > patch is easy to read, write, understand, review, merge and maintain.
-> > It's basically a nop to merge provided the commit log is decent
-> > enough.
->=20
-> I'm at a point where I have to disagree that a clock flag patch is easy
-> to write and understand. You asked me, why the clock is changing its
-> mind and we had already discussed it a lot. I don't see why this
-> discussion would be different in 6 months or 2 years. IMO the discussion
-> we're having is not a "nop". And for a developer to find out that they
-> need to set the parent's ROUND_CLOSEST flag is not a "nop" either.
-
-You're talking about identifying a given problem. I was talking about
-finding, writing, merging and maintaining a solution for it. I know all
-too well how difficult identifying clock issues can be.
-
-> The patch [1] makes the life of SoC developers easier
-
-Unless they have to debug or modify it.
-
-> while it makes the nkm clock maintainer's life harder.
-
-Let's not create any undue opposition, there's no need to. Developers
-end up doing some part of the maintenance when they identify and fix
-bugs and maintainers are usually the most active developers. It's not
-like either are in some kind of ivory tower.
-
-> So the question is, how much easier is the developer's life (a lot,
-> IMO) and how much harder is the maintainer's life (a little, IMO).
-
-We strongly disagree on that.
-
-> In conclusion, for me applying patch [1] is the best option we have. It
-> not only prevents but also documents the issue in a clean way.
-
-And I disagree with that too. It might be for you, but all that is subjecti=
-ve.
-
-Maxime
-
---7svm22ujx3ixvmbt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZL/UWwAKCRDj7w1vZxhR
-xZVYAQCKQ1ykIboH/BetnbmWQcP9CUTUZ2UK/IV0NrDheMIYHAD7BBekYl8nRswh
-4iE9VY4PmLWaIslwe5jHGHAOBt5OPAw=
-=J0WM
------END PGP SIGNATURE-----
-
---7svm22ujx3ixvmbt--
+>>>the
+>>>internal implementation behind the curtain. What is important is:
+>>>1) clear configuration knobs
+>>>2) the outcome (hw behaviour)
+>>>
+>>>
+>>>
+>>>>
+>>>>>
+>>>>>>
+>>>>>>>
+>>>>>>>Perhaps you just need an extra cmd like DPLL_CMD_DEVICE_STATE_RESET =
+cmd
+>>>>>>>to hit this button.
+>>>>>>>
+>>>>>>
+>>>>>>As already said there are measurement in place in AUTOMATIC, there ar=
+e
+>>>>>>no
+>>>>>>such
+>>>>>>thing in FREERUN. Going into FREERUN resets the state machine of dpll
+>>>>>>which
+>>>>>>is a side effect of going to FREERUN.
+>>>>>>
+>>>>>>>
+>>>>>>>
+>>>>>>>>So probably most important fact that you are missing here: assuming=
+ the
+>>>>>>>>user
+>>>>>>>>disconnects the pin that dpll was locked with, our dpll doesn't go =
+into
+>>>>>>>>UNLOCKED
+>>>>>>>>state but into HOLDOVER.
+>>>>>>>>
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>>Isn't the behaviour of 1) and 2) exactly the same? If no, why?
+>>>>>>>>>>>This
+>>>>>>>>>>>needs to be documented, please.
+>>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>>Sure will add the description of FREERUN to the docs.
+>>>>>>>>>
+>>>>>>>>>No, please drop it from this patchset. I have no clue why you
+>>>>>>>>>readded
+>>>>>>>>>it in the first place in the last patchset version.
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>>mode_set was there from the very beginning.. now implemented in ice
+>>>>>>>>driver
+>>>>>>>>as it should.
+>>>>>>>
+>>>>>>>I don't understand the fixation on a callback to be implemented. Jus=
+t
+>>>>>>>remove it. It can be easily added when needed. No problem.
+>>>>>>>
+>>>>>>
+>>>>>>Well, I don't understand the fixation about removing it.
+>>>>>
+>>>>>It is needed only for your freerun mode, which is questionable. This
+>>>>>discussion it not about mode_set. I don't care about it, if it is
+>>>>>needed, should be there, if not, so be it.
+>>>>>
+>>>>>As you say, you need existance of your freerun mode to justify existen=
+ce
+>>>>>of mode_set(). Could you please, please drop both for now so we can
+>>>>>move on? I'm tired of this. Thanks!
+>>>>>
+>>>>
+>>>>Reason for dpll subsystem is to control the dpll. So the mode_set and
+>>>>different modes are there for the same reason.
+>>>>Explained this multiple times already, we need a way to let the user sw=
+itch
+>>>>to FREERUN, so all the activities on dpll are stopped.
+>>>>
+>>>>>
+>>>>>>set_mode was there for a long time, now the callback is properly
+>>>>>>implemented
+>>>>>>and you are trying to imply that this is not needed.
+>>>>>>We require it, as there is no other other way to stop AUTOMATIC mode =
+dpll
+>>>>>>to do its work.
+>>>>>>
+>>>>>>>
+>>>>>>>>
+>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>>Another question, I asked the last time as well, but was not hea=
+rd:
+>>>>>>>>>>>Consider example where you have 2 netdevices, eth0 and eth1, eac=
+h
+>>>>>>>>>>>connected with a single DPLL pin:
+>>>>>>>>>>>eth0 - DPLL pin 10 (DPLL device id 2)
+>>>>>>>>>>>eth1 - DPLL pin 11 (DPLL device id 2)
+>>>>>>>>>>>
+>>>>>>>>>>>You have a SyncE daemon running on top eth0 and eth1.
+>>>>>>>>>>>
+>>>>>>>>>>>Could you please describe following 2 flows?
+>>>>>>>>>>>
+>>>>>>>>>>>1) SyncE daemon selects eth0 as a source of clock
+>>>>>>>>>>>2) SyncE daemon selects eth1 as a source of clock
+>>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>>For mlx5 it goes like:
+>>>>>>>>>>>
+>>>>>>>>>>>DPLL device mode is MANUAL.
+>>>>>>>>>>>1)
+>>>>>>>>>>> SynceE daemon uses RTNetlink to obtain DPLL pin number of eth0
+>>>>>>>>>>>    -> pin_id: 10
+>>>>>>>>>>> SenceE daemon will use PIN_GET with pin_id 10 to get DPLL devic=
+e id
+>>>>>>>>>>>    -> device_id: 2
+>>>>>>>>>>
+>>>>>>>>>>Not sure if it needs to obtain the dpll id in this step, but it
+>>>>>>>>>>doesn't
+>>>>>>>>>>relate to the dpll interface..
+>>>>>>>>>
+>>>>>>>>>Sure it has to. The PIN_SET accepts pin_id and device_id attrs as
+>>>>>>>>>input.
+>>>>>>>>>You need to set the state on a pin on a certain DPLL device.
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>>The thing is pin can be connected to multiple dplls and SyncE daemo=
+n
+>>>>>>>>shall
+>>>>>>>>know already something about the dpll it is managing.
+>>>>>>>>Not saying it is not needed, I am saying this is not a moment the
+>>>>>>>>SyncE
+>>>>>>>>daemon
+>>>>>>>>learns it.
+>>>>>>>
+>>>>>>>Moment or not, it is needed for the cmd, that is why I have it there=
+.
+>>>>>>>
+>>>>>>>
+>>>>>>>>But let's park it, as this is not really relevant.
+>>>>>>>
+>>>>>>>Agreed.
+>>>>>>>
+>>>>>>>
+>>>>>>>>
+>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>>> SynceE daemon does PIN_SET cmd on pin_id 10, device_id 2 ->
+>>>>>>>>>>>state =3D
+>>>>>>>>>>>CONNECTED
+>>>>>>>>>>>
+>>>>>>>>>>>2)
+>>>>>>>>>>> SynceE daemon uses RTNetlink to obtain DPLL pin number of eth1
+>>>>>>>>>>>    -> pin_id: 11
+>>>>>>>>>>> SenceE daemon will use PIN_GET with pin_id 11 to get DPLL devic=
+e
+>>>>>>>>>>>id
+>>>>>>>>>>>    -> device_id: 2
+>>>>>>>>>>> SynceE daemon does PIN_SET cmd on pin_id 10, device_id 2 ->
+>>>>>>>>>>>state =3D
+>>>>>>>>>>>CONNECTED
+>>>>>>>>>>> (that will in HW disconnect previously connected pin 10, there
+>>>>>>>>>>>will be
+>>>>>>>>>>>  notification of pin_id 10, device_id -> state DISCONNECT)
+>>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>>This flow is similar for ice, but there are some differences,
+>>>>>>>>>>although
+>>>>>>>>>>they come from the fact, the ice is using AUTOMATIC mode and
+>>>>>>>>>>recovered
+>>>>>>>>>>clock pins which are not directly connected to a dpll (connected
+>>>>>>>>>>through
+>>>>>>>>>>the MUX pin).
+>>>>>>>>>>
+>>>>>>>>>>1)
+>>>>>>>>>>a) SyncE daemon uses RTNetlink to obtain DPLL pin number of eth0 =
+->
+>>>>>>>>>>pin_id: 13
+>>>>>>>>>>b) SyncE daemon uses PIN_GET to find a parent MUX type pin ->
+>>>>>>>>>>pin_id: 2
+>>>>>>>>>>   (in case of dpll_id is needed, would be find in this response
+>>>>>>>>>>also)
+>>>>>>>>>>c) SyncE daemon uses PIN_SET to set parent MUX type pin (pin_id:
+>>>>>>>>>>2) to
+>>>>>>>>>>   pin-state: SELECTABLE and highest priority (i.e. pin-prio:0,
+>>>>>>>>>>while
+>>>>>>>>>>all the
+>>>>>>>>>>   other pins shall be lower prio i.e. pin-prio:1)
+>>>>>>>>>
+>>>>>>>>>Yeah, for this you need pin_id 2 and device_id. Because you are
+>>>>>>>>>setting
+>>>>>>>>>state on DPLL device.
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>>>d) SyncE daemon uses PIN_SET to set state of pin_id:13 to
+>>>>>>>>>>CONNECTED
+>>>>>>>>>>with
+>>>>>>>>>>   parent pin (pin-id:2)
+>>>>>>>>>
+>>>>>>>>>For this you need pin_id and pin_parent_id because you set the
+>>>>>>>>>state on
+>>>>>>>>>a parent pin.
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>>Yeah, this is exactly why I initially was in favour of hiding all
+>>>>>>>>>the
+>>>>>>>>>muxes and magic around it hidden from the user. Now every userspac=
+e
+>>>>>>>>>app
+>>>>>>>>>working with this has to implement a logic of tracking pin and the
+>>>>>>>>>mux
+>>>>>>>>>parents (possibly multiple levels) and configure everything. But i=
+t
+>>>>>>>>>just
+>>>>>>>>>need a simple thing: "select this pin as a source" :/
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>>Jakub, isn't this sort of unnecessary HW-details complexicity expo=
+sure
+>>>>>>>>>in UAPI you were against in the past? Am I missing something?
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>>Multiple level of muxes possibly could be hidden in the driver, but=
+ the
+>>>>>>>>fact
+>>>>>>>>they exist is not possible to be hidden from the user if the DPLL i=
+s in
+>>>>>>>>AUTOMATIC mode.
+>>>>>>>>For MANUAL mode dpll the muxes could be also hidden.
+>>>>>>>>Yeah, we have in ice most complicated scenario of AUTOMATIC mode + =
+MUXED
+>>>>>>>>type
+>>>>>>>>pin.
+>>>>>>>
+>>>>>>>Sure, but does user care how complicated things are inside? The sync=
+E
+>>>>>>>daemon just cares for: "select netdev x as a source". However it is =
+done
+>>>>>>>internally is irrelevant to him. With the existing UAPI, the syncE
+>>>>>>>daemon needs to learn individual device dpll/pin/mux topology and
+>>>>>>>work with it.
+>>>>>>>
+>>>>>>
+>>>>>>This is dpll subsystem not SyncE one.
+>>>>>
+>>>>>SyncE is very legit use case of the UAPI. I would say perhaps the most
+>>>>>important.
+>>>>>
+>>>>
+>>>>But it is still a dpll subsystem.
+>>>>
+>>>>Thank you!
+>>>>Arkadiusz
+>>>>
+>>>>>
+>>>>>>
+>>>>>>>Do we need a dpll library to do this magic?
+>>>>>>>
+>>>>>>
+>>>>>>IMHO rather SyncE library :)
+>>>>>>
+>>>>>>Thank you!
+>>>>>>Arkadiusz
+>>>>>>
+>>>>>>>
+>>>>>>>>
+>>>>>>>>Thank you!
+>>>>>>>>Arkadiusz
+>>>>>>>>
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>>2) (basically the same, only eth1 would get different pin_id.)
+>>>>>>>>>>a) SyncE daemon uses RTNetlink to obtain DPLL pin number of eth0 =
+->
+>>>>>>>>>>pin_id: 14
+>>>>>>>>>>b) SyncE daemon uses PIN_GET to find parent MUX type pin ->
+>>>>>>>>>>pin_id: 2
+>>>>>>>>>>c) SyncE daemon uses PIN_SET to set parent MUX type pin (pin_id:
+>>>>>>>>>>2) to
+>>>>>>>>>>   pin-state: SELECTABLE and highest priority (i.e. pin-prio:0,
+>>>>>>>>>>while
+>>>>>>>>>>all the
+>>>>>>>>>>   other pins shall be lower prio i.e. pin-prio:1)
+>>>>>>>>>>d) SyncE daemon uses PIN_SET to set state of pin_id:14 to
+>>>>>>>>>>CONNECTED
+>>>>>>>>>>with
+>>>>>>>>>>   parent pin (pin-id:2)
+>>>>>>>>>>
+>>>>>>>>>>Where step c) is required due to AUTOMATIC mode, and step d)
+>>>>>>>>>>required
+>>>>>>>>>>due to
+>>>>>>>>>>phy recovery clock pin being connected through the MUX type pin.
+>>>>>>>>>>
+>>>>>>>>>>Thank you!
+>>>>>>>>>>Arkadiusz
+>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>>Thanks!
+>>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>>[...]
+>>>>>>>>
