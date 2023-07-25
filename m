@@ -2,137 +2,113 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23ABDC001DF
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jul 2023 08:55:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE57DC41513
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jul 2023 09:46:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230351AbjGYIy6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Jul 2023 04:54:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39804 "EHLO
+        id S232331AbjGYJqf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Jul 2023 05:46:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232725AbjGYIw7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jul 2023 04:52:59 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FC54172E
-        for <linux-clk@vger.kernel.org>; Tue, 25 Jul 2023 01:52:02 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-3fbfa811667so39292725e9.1
-        for <linux-clk@vger.kernel.org>; Tue, 25 Jul 2023 01:52:02 -0700 (PDT)
+        with ESMTP id S232128AbjGYJqe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jul 2023 05:46:34 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 724A711B;
+        Tue, 25 Jul 2023 02:46:30 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-313e742a787so3393289f8f.1;
+        Tue, 25 Jul 2023 02:46:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1690275120; x=1690879920;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SO2fJhdIilzQKSUOeloEP2TDsXS2dBpxn1k7xAINQDE=;
-        b=Sa6/7jmR6HjLFfJOReKmBDHqp0oS7SanRctcQNx34dqi05GjH7X5j5Urm5cm/f97/c
-         LBXeln34oj+AaQTNQpcQPpkQiSf/C+8XprS0/5cua/cNGmjXQ2KWKIlXlRGqEUsoqw6i
-         6pWZLkduJ8BA7ijAUsLE4T6fvOQmSdAHROxi4T7WNwLIn3zxEbli1WTH4YpVjvULxnaU
-         1Xb0VjHWhDQoA43vGGpWGTD4KG/ztapc/nLqvxXlJbqwwy6j+Ynf8yvpw83WW5T9SLyF
-         7W1SqFBxn83aYAQ+St5WhbpOi0f2vS8L4q1LZxx1g5M9KASHz2FR+0ezk3mybESegiWd
-         OSXw==
+        d=gmail.com; s=20221208; t=1690278389; x=1690883189;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=x1dn5lNZqmwY15rBpdBpJTcWOK1VivmrD2jmZ3IZxi4=;
+        b=Z51pyJ5/nycopIH5zIHEHDVQYAq2V7diulALk4BHl55COuR7x6J3JGUbbWKheci3xm
+         r/E9pwlUU3X/vKswxR1612lmt3jgGeAkK5G3sswsGwgGUMJoExBpw1iiunb4qPGV4vWn
+         L8RnuaU143TlsB1OPR9NN5V9HtbJxVHwiKOWB5i44PKcRKpD6v1PC6diyvYqiL7ca+TR
+         Zpr0I0PtBzXF/d2NnxjUBkIk1/0PFNiGZjKufaiWoBca0thMIkaE4qZyYY2/m1WD7pL/
+         lXdLZAjx6nf4QnTgNRz0gfeHhbMp/JaSAjCzIvQ46qXSJalSw54O7cCoKzTlinyTMB1Z
+         9RGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690275120; x=1690879920;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SO2fJhdIilzQKSUOeloEP2TDsXS2dBpxn1k7xAINQDE=;
-        b=BdYez1RIioGDm0IUuBCvkwSu1wb21F7NPkKIn6mqZdAfCBU0fzRfGtZMhsgMFVzEks
-         pG8ZEHu74Aa9x1WGunaYNgUaAYXhEc26IXjIoAdfa9h9OJ8jjJXq+MiQ8JACqj8W8Kac
-         Lkli20NurgrXuBJH4wY3AZF1lA7WacZV06tOiltx135MW0UAw06Q8TmDNRsKmwOOcKSj
-         /l0faitsrjSovkXly0oDHaZCT0qMwbhTTy4W33IhGH9teW4zjWvt9yJiGpzGexMZtr7h
-         Rpa4liG5iYFIz5qw4Lo9hjSFuEuwVyEMfqiccmie7ddcLL3Ms97RcphhLdZ4WwgldjrR
-         Sd4A==
-X-Gm-Message-State: ABy/qLY+iVO+1GV6pyqewu0EscK7EpolsIxiWFd/b+KFvZZMpQTY3w76
-        DdnYtqA0WtOV6XH4SOosE9AeRPdNLqUmGYLQrU4VLA==
-X-Google-Smtp-Source: APBJJlGddeMpp0ssush6Q0wqtfS47dG4nR00hXv48WU3nXs23OHZlCKw4jpcwuiHKEP/SG7rKaXHFw==
-X-Received: by 2002:a05:6000:1204:b0:317:6855:dc24 with SMTP id e4-20020a056000120400b003176855dc24mr1284761wrx.21.1690275120494;
-        Tue, 25 Jul 2023 01:52:00 -0700 (PDT)
-Received: from [192.168.1.101] (abxj221.neoplus.adsl.tpnet.pl. [83.9.3.221])
-        by smtp.gmail.com with ESMTPSA id r5-20020a5d52c5000000b003143bb5ecd5sm15672475wrv.69.2023.07.25.01.51.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jul 2023 01:52:00 -0700 (PDT)
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Tue, 25 Jul 2023 10:51:56 +0200
-Subject: [PATCH] clk: qcom: dispcc-sc8280xp: Use ret registers on GDSCs
+        d=1e100.net; s=20221208; t=1690278389; x=1690883189;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=x1dn5lNZqmwY15rBpdBpJTcWOK1VivmrD2jmZ3IZxi4=;
+        b=NW3n+SIdNP9xThCogwNDqBcy9AeTZr5+n95xDntktA0aqbxePNwqyFf0+gmQC1Mr7u
+         zFSkEpllE8q9ATGha5wgoW08e8j+CC19thMmXzDXjq6zVCK2ZPJvCYfVoq7VdIl3C9jv
+         hSWzKgcU7A9VTjfelsVxwejc14jfBzAWEsVhECqfXBZ3iJgjLasHM+31OKYJqc1Dvjdf
+         yayK9uxX3GkKVwXJxQhscGFGJm6l13VcEfB0tSH/wbZ3Wtvl1vN1st+PC2Nk+VACuxHu
+         //LSfDx0Gn60cPxoDcnuZw5TNZOY0FFpMLdOEaooUuwy6jWpsWvMOTfy8lozq4siTrrw
+         TYRw==
+X-Gm-Message-State: ABy/qLaguNYFuCjDKGd4WhS8xe8GFYKwO/VB/WQApipeTvmm9FKG4IIx
+        3M0+srKdRQzOlvPntBudjF8TGnxCkpTAqw==
+X-Google-Smtp-Source: APBJJlEssHXAU9u+CHEEFVKJsaYPTIj+RSJJ0AdcGXaasOWgN4UXMrXvvemxECzYlMn5VGYiBrXiIQ==
+X-Received: by 2002:adf:f8c7:0:b0:311:360e:ea3a with SMTP id f7-20020adff8c7000000b00311360eea3amr1706865wrq.34.1690278388631;
+        Tue, 25 Jul 2023 02:46:28 -0700 (PDT)
+Received: from [192.168.1.107] (ccx116.neoplus.adsl.tpnet.pl. [83.30.147.116])
+        by smtp.gmail.com with ESMTPSA id q17-20020adff511000000b0031272fced4dsm15728148wro.52.2023.07.25.02.46.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Jul 2023 02:46:28 -0700 (PDT)
+Message-ID: <6008bc09-7746-546f-2c00-9b9812854ff7@gmail.com>
+Date:   Tue, 25 Jul 2023 11:46:26 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230725-topic-8280_dispcc_gdsc-v1-1-236590060531@linaro.org>
-X-B4-Tracking: v=1; b=H4sIACuNv2QC/x2NWwqDMBAAryL73UAeiNKrlCLJZqMLEkO2LQXx7
- l36OQPDnCDUmQTuwwmdPix8VAV3GwC3WFcynJXBWx/s5EfzOhqjmf1sl8zSEJc1C5rk4lQCja4
- EBI1TFDKpx4qb5vW97ypbp8Lf/+3xvK4fo7t4CX0AAAA=
-To:     Andy Gross <agross@kernel.org>,
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 6/7] arm64: dts: qcom: msm8976: Split lpass region
+Content-Language: en-US
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc:     phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
         Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        AngeloGioacchino Del Regno <kholk11@gmail.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1690275119; l=1704;
- i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=3kl4LXmb8XT+BmJFp1ldVHzPBlPIncVLnyDnPvEkf+U=;
- b=OUIRvNEgX4mC28YR+Lg3sgPwTO4sdyfWZs7WgYm63ie8AJiVdyBxq3nOkWtMbdnUlSjXvW1VN
- to8vJ7tWhJZDCNh9fljTcFCgpy9PbRI09R5iqleWDk5lgCbrZrXqRH4
-X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230723160827.22660-1-a39.skl@gmail.com>
+ <20230723160827.22660-7-a39.skl@gmail.com>
+ <fda13f70-1062-c3dc-b3ed-c7f1ad9a07db@linaro.org>
+From:   Adam Skladowski <a39.skl@gmail.com>
+In-Reply-To: <fda13f70-1062-c3dc-b3ed-c7f1ad9a07db@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The DISP_CC GDSCs have not been instructed to use the ret registers.
-Fix that.
 
-Fixes: 4a66e76fdb6d ("clk: qcom: Add SC8280XP display clock controller")
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
----
- drivers/clk/qcom/dispcc-sc8280xp.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+On 25.07.2023 10:44, Konrad Dybcio wrote:
+> On 23.07.2023 18:08, Adam Skladowski wrote:
+>> Some devices like Sony Loire uses Broadcom module over sdc3 however others
+>> utilize qcom WCNSS, split shared region based on downstream pil-tz loader.
+>>
+>> Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
+>> ---
+> Looks like 0x1800000 is the generic configuration:
+>
+> https://git.codelinaro.org/clo/la/kernel/msm-3.10/-/blob/LA.BR.1.3.7.c26-05300-8976.0/arch/arm/boot/dts/qcom/msm8976.dtsi#L93-98
+>
+> Konrad
 
-diff --git a/drivers/clk/qcom/dispcc-sc8280xp.c b/drivers/clk/qcom/dispcc-sc8280xp.c
-index 167470beb369..30f636b9f0ec 100644
---- a/drivers/clk/qcom/dispcc-sc8280xp.c
-+++ b/drivers/clk/qcom/dispcc-sc8280xp.c
-@@ -3057,7 +3057,7 @@ static struct gdsc disp0_mdss_gdsc = {
- 		.name = "disp0_mdss_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
--	.flags = HW_CTRL,
-+	.flags = HW_CTRL | RETAIN_FF_ENABLE,
- };
- 
- static struct gdsc disp1_mdss_gdsc = {
-@@ -3069,7 +3069,7 @@ static struct gdsc disp1_mdss_gdsc = {
- 		.name = "disp1_mdss_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
--	.flags = HW_CTRL,
-+	.flags = HW_CTRL | RETAIN_FF_ENABLE,
- };
- 
- static struct gdsc disp0_mdss_int2_gdsc = {
-@@ -3081,7 +3081,7 @@ static struct gdsc disp0_mdss_int2_gdsc = {
- 		.name = "disp0_mdss_int2_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
--	.flags = HW_CTRL,
-+	.flags = HW_CTRL | RETAIN_FF_ENABLE,
- };
- 
- static struct gdsc disp1_mdss_int2_gdsc = {
-@@ -3093,7 +3093,7 @@ static struct gdsc disp1_mdss_int2_gdsc = {
- 		.name = "disp1_mdss_int2_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
--	.flags = HW_CTRL,
-+	.flags = HW_CTRL | RETAIN_FF_ENABLE,
- };
- 
- static struct gdsc *disp0_cc_sc8280xp_gdscs[] = {
+Yes, indeed however as you probably noticed this region isn't called lpass rather reloc.
 
----
-base-commit: 1e25dd7772483f477f79986d956028e9f47f990a
-change-id: 20230725-topic-8280_dispcc_gdsc-b1a7f3e51f3c
+Downstream sometimes tends to define pools of memory where loader will do its own job.
 
-Best regards,
--- 
-Konrad Dybcio <konrad.dybcio@linaro.org>
+If you read later wcnss/lpass both point to same shared memory which im not sure without reworks will work with mainline.
+
+On top it's not really that it will even hurt Loire at the end, if you browse around internet you can easily find gists
+from Pavel which have logs of pil-tz loading of lpass:
+
+https://gist.github.com/bartcubbins/c2ff215f39fe2b3ed5d3f8444bcec83b#file-gistfile1-txt-L1289
+
+As you can see even on loire where region is bigger it only loads first 0x1000000.
+Do we really need to complicate things just for everyone else for sake of not ending with one platform having to adjust
+or even not(it probably wouldn't even make a difference for loader as it will fit anyway)
+
+On the ending note i apologize if this msg gets broken formatting first time using thunderbird
+and after redesign im unable to find most options mentioned in guide.
+.
 
