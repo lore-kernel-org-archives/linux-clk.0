@@ -2,58 +2,58 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE57DC41513
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jul 2023 09:46:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D525C001DF
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jul 2023 10:04:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232331AbjGYJqf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Jul 2023 05:46:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51288 "EHLO
+        id S233571AbjGYKEB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Jul 2023 06:04:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232128AbjGYJqe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jul 2023 05:46:34 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 724A711B;
-        Tue, 25 Jul 2023 02:46:30 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-313e742a787so3393289f8f.1;
-        Tue, 25 Jul 2023 02:46:30 -0700 (PDT)
+        with ESMTP id S233803AbjGYKD3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jul 2023 06:03:29 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECE2A271B;
+        Tue, 25 Jul 2023 03:03:08 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-3144bf65ce9so4197033f8f.3;
+        Tue, 25 Jul 2023 03:03:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690278389; x=1690883189;
+        d=gmail.com; s=20221208; t=1690279387; x=1690884187;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=x1dn5lNZqmwY15rBpdBpJTcWOK1VivmrD2jmZ3IZxi4=;
-        b=Z51pyJ5/nycopIH5zIHEHDVQYAq2V7diulALk4BHl55COuR7x6J3JGUbbWKheci3xm
-         r/E9pwlUU3X/vKswxR1612lmt3jgGeAkK5G3sswsGwgGUMJoExBpw1iiunb4qPGV4vWn
-         L8RnuaU143TlsB1OPR9NN5V9HtbJxVHwiKOWB5i44PKcRKpD6v1PC6diyvYqiL7ca+TR
-         Zpr0I0PtBzXF/d2NnxjUBkIk1/0PFNiGZjKufaiWoBca0thMIkaE4qZyYY2/m1WD7pL/
-         lXdLZAjx6nf4QnTgNRz0gfeHhbMp/JaSAjCzIvQ46qXSJalSw54O7cCoKzTlinyTMB1Z
-         9RGg==
+        bh=e495hPVSSfsBudphKr6esdXlU/XthcZYmt9+fcJRM4U=;
+        b=sTY/fduZIMTMRloop5bzm5cPr8tIcvfTYGuNFIfmUmg6q+lyKMtZ98wxsi2G+aBe/v
+         SFtRPktXotZTp//Y4UDXKp/5xJIMy3rnKNxQKXB0+NyMkN23RMxsH28TGxfrJ8BGhxUK
+         qHNjv3e3HRekuAy+Eeu1SyXAEcbnDnMXHeqNxv5SiFxDJXRbgaZuWcAnCrxziJ5C+uYb
+         1ry2oxlQ/PIR/28h/jFMFkKoE7Iis2WwpVrHqO5hmukA8HeZQDA5Dm7rl3kcY/R7/EmG
+         OKxtz4MLLUa9h/nx6RpuRx7bCVQp7aXthiOfx7hGcVWVboYEcFPNy7vFuE53aO/2+lc2
+         vT9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690278389; x=1690883189;
+        d=1e100.net; s=20221208; t=1690279387; x=1690884187;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=x1dn5lNZqmwY15rBpdBpJTcWOK1VivmrD2jmZ3IZxi4=;
-        b=NW3n+SIdNP9xThCogwNDqBcy9AeTZr5+n95xDntktA0aqbxePNwqyFf0+gmQC1Mr7u
-         zFSkEpllE8q9ATGha5wgoW08e8j+CC19thMmXzDXjq6zVCK2ZPJvCYfVoq7VdIl3C9jv
-         hSWzKgcU7A9VTjfelsVxwejc14jfBzAWEsVhECqfXBZ3iJgjLasHM+31OKYJqc1Dvjdf
-         yayK9uxX3GkKVwXJxQhscGFGJm6l13VcEfB0tSH/wbZ3Wtvl1vN1st+PC2Nk+VACuxHu
-         //LSfDx0Gn60cPxoDcnuZw5TNZOY0FFpMLdOEaooUuwy6jWpsWvMOTfy8lozq4siTrrw
-         TYRw==
-X-Gm-Message-State: ABy/qLaguNYFuCjDKGd4WhS8xe8GFYKwO/VB/WQApipeTvmm9FKG4IIx
-        3M0+srKdRQzOlvPntBudjF8TGnxCkpTAqw==
-X-Google-Smtp-Source: APBJJlEssHXAU9u+CHEEFVKJsaYPTIj+RSJJ0AdcGXaasOWgN4UXMrXvvemxECzYlMn5VGYiBrXiIQ==
-X-Received: by 2002:adf:f8c7:0:b0:311:360e:ea3a with SMTP id f7-20020adff8c7000000b00311360eea3amr1706865wrq.34.1690278388631;
-        Tue, 25 Jul 2023 02:46:28 -0700 (PDT)
+        bh=e495hPVSSfsBudphKr6esdXlU/XthcZYmt9+fcJRM4U=;
+        b=Vq1mn55q6yOTAPWg801dFWKyMyWmXytta0iB7cda4GWJi4bAspyynzxDhK6UzJ5ZcY
+         GWIT/BK7ifKMaZ9b1vzTkn3sUMhPwomW0/bwAC1vL/8QtnBWrE+tvEfGwsOkavRau+XI
+         NZNtdKv9ocpz5q7dt0pc3YyeyyO8+KWyDdt8NMwIBVFQf5nSz2lBiMOhcicwGN2BMVwX
+         VpvIYFRPpxcNIOztlL8k9+PB9g6OStCK5AiUNT7jdzvG1/LHnPsUTGwnwkKNCsXVVb48
+         tnEz84QCBQjP/Z+SJqjwJVKiav9LuDRBF3o5+YfWxOA0ciN7Yzo2qb8XKo16XZQHhWBo
+         /eRQ==
+X-Gm-Message-State: ABy/qLZukXddgESCDPSIGURNx7bhURvYjJkqDCsVuoP6zOf2ngRaPktA
+        O+s8BaI/iV06AKCzf3XtjP0=
+X-Google-Smtp-Source: APBJJlHwOSqGMpMZWoR++iwvf5SMZvA1SjBkVklrwFyXMgWeIzARRW0DL+VeKsGY5CIZ/yKgJjuYYg==
+X-Received: by 2002:a05:6000:1151:b0:314:10d8:b491 with SMTP id d17-20020a056000115100b0031410d8b491mr8568115wrx.67.1690279387120;
+        Tue, 25 Jul 2023 03:03:07 -0700 (PDT)
 Received: from [192.168.1.107] (ccx116.neoplus.adsl.tpnet.pl. [83.30.147.116])
-        by smtp.gmail.com with ESMTPSA id q17-20020adff511000000b0031272fced4dsm15728148wro.52.2023.07.25.02.46.27
+        by smtp.gmail.com with ESMTPSA id w16-20020adfec50000000b003143867d2ebsm15879054wrn.63.2023.07.25.03.03.05
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Jul 2023 02:46:28 -0700 (PDT)
-Message-ID: <6008bc09-7746-546f-2c00-9b9812854ff7@gmail.com>
-Date:   Tue, 25 Jul 2023 11:46:26 +0200
+        Tue, 25 Jul 2023 03:03:06 -0700 (PDT)
+Message-ID: <80ce1710-38e3-2c6e-73b9-6b18c38b3ff3@gmail.com>
+Date:   Tue, 25 Jul 2023 12:03:04 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/7] arm64: dts: qcom: msm8976: Split lpass region
+Subject: Re: [PATCH v2 5/7] clk: qcom: hfpll: Add MSM8976 PLL data
 Content-Language: en-US
 To:     Konrad Dybcio <konrad.dybcio@linaro.org>
 Cc:     phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
@@ -69,10 +69,10 @@ Cc:     phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20230723160827.22660-1-a39.skl@gmail.com>
- <20230723160827.22660-7-a39.skl@gmail.com>
- <fda13f70-1062-c3dc-b3ed-c7f1ad9a07db@linaro.org>
+ <20230723160827.22660-6-a39.skl@gmail.com>
+ <411da19f-10f3-6dc1-a708-cdf06be9c4d8@linaro.org>
 From:   Adam Skladowski <a39.skl@gmail.com>
-In-Reply-To: <fda13f70-1062-c3dc-b3ed-c7f1ad9a07db@linaro.org>
+In-Reply-To: <411da19f-10f3-6dc1-a708-cdf06be9c4d8@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -80,35 +80,53 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On 25.07.2023 10:44, Konrad Dybcio wrote:
+On 25.07.2023 10:02, Konrad Dybcio wrote:
 > On 23.07.2023 18:08, Adam Skladowski wrote:
->> Some devices like Sony Loire uses Broadcom module over sdc3 however others
->> utilize qcom WCNSS, split shared region based on downstream pil-tz loader.
+>> Add PLL configuration for MSM8976 SoC, this SoC offers 3 HFPLL.
+>> Small cluster offers two presets for 652-902Mhz range and 902Mhz-1.47Ghz.
+>> For simplicity only add second range as smaller frequencies can be obtained
+>> via apcs divider or safe parent this also saves us
+>> a hassle of reconfiguring VCO bit and config_val.
+>> A72 and CCI cluster only use single frequency range with their
+>> outputs/post_dividers/vco_bits being static.
 >>
 >> Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
 >> ---
-> Looks like 0x1800000 is the generic configuration:
+> [...]
 >
-> https://git.codelinaro.org/clo/la/kernel/msm-3.10/-/blob/LA.BR.1.3.7.c26-05300-8976.0/arch/arm/boot/dts/qcom/msm8976.dtsi#L93-98
+>> +static const struct hfpll_data msm8976_a72 = {
+>> +	.mode_reg = 0x00,
+>> +	.l_reg = 0x04,
+>> +	.m_reg = 0x08,
+>> +	.n_reg = 0x0c,
+>> +	.user_reg = 0x10,
+>> +	.config_reg = 0x14,
+>> +	.config_val = 0x4e0405d,
+>> +	.status_reg = 0x1c,
+>> +	.lock_bit = 16,
+>> +
+>> +	.l_val = 0x3e,
+>> +	.user_val = 0x100109,
+>> +	.min_rate = 940800000UL,
+>> +	.max_rate = 1843200000UL,
+> 2016000000?
+
+We are using msm kernel as base not SODP ports.
+
+https://android.googlesource.com/kernel/msm/+/android-lego-6.0.1_r0.2/drivers/clk/qcom/clock-cpu-8976.c
+https://android.googlesource.com/kernel/msm.git/+/android-msm-lego-3.10-marshmallow-dr/arch/arm/boot/dts/qcom/msm8976.dtsi#349
+
+> [...]
+>>  static const struct of_device_id qcom_hfpll_match_table[] = {
+>>  	{ .compatible = "qcom,hfpll", &hdata },
+>> +	{ .compatible = "qcom,msm8976-hfpll-a53", &msm8976_a53 },
+>> +	{ .compatible = "qcom,msm8976-hfpll-a72", &msm8976_a72 },
+>> +	{ .compatible = "qcom,msm8976-hfpll-cci", &msm8976_cci },
+> .data = is missing
 >
 > Konrad
 
-Yes, indeed however as you probably noticed this region isn't called lpass rather reloc.
+Seems like i took "inspiration" from also not great code, albeit it does work somehow when printing inside init, will fix in v3 
 
-Downstream sometimes tends to define pools of memory where loader will do its own job.
-
-If you read later wcnss/lpass both point to same shared memory which im not sure without reworks will work with mainline.
-
-On top it's not really that it will even hurt Loire at the end, if you browse around internet you can easily find gists
-from Pavel which have logs of pil-tz loading of lpass:
-
-https://gist.github.com/bartcubbins/c2ff215f39fe2b3ed5d3f8444bcec83b#file-gistfile1-txt-L1289
-
-As you can see even on loire where region is bigger it only loads first 0x1000000.
-Do we really need to complicate things just for everyone else for sake of not ending with one platform having to adjust
-or even not(it probably wouldn't even make a difference for loader as it will fit anyway)
-
-On the ending note i apologize if this msg gets broken formatting first time using thunderbird
-and after redesign im unable to find most options mentioned in guide.
-.
+Thanks Angelo/Konrad
 
