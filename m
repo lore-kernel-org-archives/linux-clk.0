@@ -2,140 +2,127 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D0E0C00528
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jul 2023 07:36:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EE4DC0015E
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jul 2023 07:40:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232661AbjGYHgK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Jul 2023 03:36:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49790 "EHLO
+        id S232677AbjGYHkQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Jul 2023 03:40:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54548 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232662AbjGYHfE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jul 2023 03:35:04 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 163FA211B
-        for <linux-clk@vger.kernel.org>; Tue, 25 Jul 2023 00:34:20 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id ffacd0b85a97d-314313f127fso4075008f8f.1
-        for <linux-clk@vger.kernel.org>; Tue, 25 Jul 2023 00:34:20 -0700 (PDT)
+        with ESMTP id S232684AbjGYHkB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jul 2023 03:40:01 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9923F46B3
+        for <linux-clk@vger.kernel.org>; Tue, 25 Jul 2023 00:38:28 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-3fd0f000f1cso33083545e9.1
+        for <linux-clk@vger.kernel.org>; Tue, 25 Jul 2023 00:38:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1690270458; x=1690875258;
+        d=linaro.org; s=google; t=1690270699; x=1690875499;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UDGnj8E3hyVERnnPmi0+OR2KS7yE69P/gg3JEe0kCmw=;
-        b=TlcCv3r+21MtMVb5A8K/NLO8fQ8h8l+y4kP/EbvetnIgoXORNiqaD/6zqCXbDgouwv
-         owi575Vwe2Xj0CTVc4Zc0SbvuyuKkDLvgeLnoHLiTJBZSvFLIz4C55aMwO8DG9WEB4H2
-         042pg7XEaGwDkuNn+tPjJbNvLMYv6O5EFDJiwPnTNaLtPDuvfiGre2RKUDbc9k+lb+3Z
-         H0HYHrK4VVYLxDlSWNDWdAY2T1JV7/+9/qAcggtFcucW3O2WIFvGpDN1fb3b3X28QKbk
-         lQthahjxqe+w1A/F2Bpzvd/RZsPVsRk/8M3IukRIBCuv6Em7KolCyYXVn7V6rJUbj1bp
-         R2GQ==
+        bh=VxsCzm5RQIamWdmro27uzpmZ8ZKj+Vx+dNKcKbhIWm4=;
+        b=VNJN+YRzIQwAxkO8ldTOQbeO/eKcNHQlB34EjQRnnSp8YCmuvpx8tQwIpE1RCbUmSK
+         0OeYzQzUoez35eBdk7PkrRHE3PmqtFjjm3GPgB3x8ebANcIcrZGf6P0IbIO4RBlWSxsx
+         18Mn3ByqF04IPUAmeJVohrudVXQcP6dGY8204AJLQ+XDt+mUnCMpGUEYvq8Yzhwe/zPj
+         3uATH1Kr+CYRgSYXaTlXlq98bZXxBKif/5IY55iuadzEORvZ51sy6nmcjo6QsRaLfYaz
+         XZum559pAAlIvSJhaKUi5r8NUZUin/YqOExCfr0nxTE3WE+9o2BAwxCTVViZdfUsdKAo
+         iCoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690270458; x=1690875258;
+        d=1e100.net; s=20221208; t=1690270699; x=1690875499;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UDGnj8E3hyVERnnPmi0+OR2KS7yE69P/gg3JEe0kCmw=;
-        b=AA+bFbQj65OFcBSxko25SLc+ikyCaqKCypg/SF6Aq5P8FXjfu3jQ+s69cWKHFV25In
-         KHvY0URpK976jBXg8294TbhsNS1ObzTZJF0uM/zKGt6VJjGJT0eDXRgLTuoutgBAoa2t
-         JwK2ct3KoaD5oYxfe96yC+oaxPMlmt1tEbZAC1gbYGANJVhTavQKW4bnSKgbBycBvCCb
-         4ccFOuBinAni537pmYTKBpiKHudq/xEX8peiK5yvqAsUt6P1eqLT/dQailvrD/3vUGgR
-         v5gUlBMSLPa2cHKngkSpUKthPVYpKJ+uxK7p/UyAsEi7l6pNabUTnoISK3fkBApDhfFv
-         w+gQ==
-X-Gm-Message-State: ABy/qLbE1PawkQIRV+CcarIwfRANb3IR79Xe07Cg1V977YZ0h52zOAGt
-        xPbRgnFfPuudLlCEPCLJJ07jEg==
-X-Google-Smtp-Source: APBJJlGleX5XZxoJnhR1vJzLx6A099QP8YxZB9OyiN955KOB/2yaWckeRZ6hXvmNOT311YutWCoVDA==
-X-Received: by 2002:a5d:6204:0:b0:315:a17d:dbc6 with SMTP id y4-20020a5d6204000000b00315a17ddbc6mr7952152wru.14.1690270458478;
-        Tue, 25 Jul 2023 00:34:18 -0700 (PDT)
+        bh=VxsCzm5RQIamWdmro27uzpmZ8ZKj+Vx+dNKcKbhIWm4=;
+        b=ImMBNCsUYAMDVRhnsFj4nZsFqZ78vZeIowxLHDVGA0vxQmX9ru8ZQcsMiR5QvGB1ph
+         tAj+wjW+Z2ZHUbBKCIJjgyubsFuWCDvmoTsV0V2QoTj2Uq+/ug6Wc+NxVNFoQv6ncPtW
+         EiR/XzkSeIUHcCglFQeA+oFL5910i7xPjr/R2uj7ciKYTyMaRYyeviqMJUzPtkCg5EIM
+         VaiyybyZUcWxHWedeDIx1HO8uL0Jcxl5vQlW2ZtM9ijkMRXN4/GRHJ/IWzxB8hriCz9Q
+         imIwdTdUxXRdjhVmAKhvD/lNoFKwfCjUHEU/UQ5ubbSnMw4TS1Erl2q8frc+aEi40+gY
+         z9JQ==
+X-Gm-Message-State: ABy/qLY+jS6YVEy16l7oQkTFSjz5DWQgCCCiyivwu4X0a3w21jKc2Pa1
+        umk3Y/zoAacwffuelR06Kiuzaw==
+X-Google-Smtp-Source: APBJJlHWryPLjXX3GsNyLOK/hhAcGss6uPd3Zou77FJ+aPVeBzYZRLH0IBgEnOVqhcEDjoAAveJZhA==
+X-Received: by 2002:a05:600c:224a:b0:3fa:9741:5b73 with SMTP id a10-20020a05600c224a00b003fa97415b73mr1242984wmm.10.1690270699308;
+        Tue, 25 Jul 2023 00:38:19 -0700 (PDT)
 Received: from linaro.org ([82.78.74.213])
-        by smtp.gmail.com with ESMTPSA id r5-20020a5d52c5000000b003143bb5ecd5sm15439765wrv.69.2023.07.25.00.34.16
+        by smtp.gmail.com with ESMTPSA id j6-20020a05600c1c0600b003fc3b03caa5sm780232wms.1.2023.07.25.00.38.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jul 2023 00:34:17 -0700 (PDT)
-Date:   Tue, 25 Jul 2023 10:34:15 +0300
+        Tue, 25 Jul 2023 00:38:18 -0700 (PDT)
+Date:   Tue, 25 Jul 2023 10:38:17 +0300
 From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Oleksij Rempel <o.rempel@pengutronix.de>
-Cc:     Abel Vesa <abelvesa@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, kernel@pengutronix.de,
-        Peng Fan <peng.fan@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        Mark Brown <broonie@kernel.org>,
-        Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-        Marek Vasut <marex@denx.de>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-mmc@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] dt-bindings: clock: imx6ul: Support optional
- enet*_ref_pad clocks
-Message-ID: <ZL969wWEhZkWNLy5@linaro.org>
-References: <20230621093245.78130-1-o.rempel@pengutronix.de>
- <20230621093245.78130-5-o.rempel@pengutronix.de>
+To:     Marco Felsch <m.felsch@pengutronix.de>
+Cc:     aford173@gmail.com, adrian.alonso@nxp.com,
+        rasmus.villemoes@prevas.dk, bli@bang-olufsen.dk, linux-imx@nxp.com,
+        linux-clk@vger.kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, abelvesa@kernel.org
+Subject: Re: [PATCH] clk: imx: pll14xx: align pdiv with reference manual
+Message-ID: <ZL976QadmcinquUk@linaro.org>
+References: <CAHCN7x+fs7k0y8Sps+0N7NUPVto8UhZD9E8DbVEuDRPv6bdDMg@mail.gmail.com>
+ <20230714134938.2124861-1-m.felsch@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230621093245.78130-5-o.rempel@pengutronix.de>
+In-Reply-To: <20230714134938.2124861-1-m.felsch@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23-06-21 11:32:44, Oleksij Rempel wrote:
-> Extend the 'clocks' and 'clock-names' properties to support optional
-> 'enet1_ref_pad' and 'enet2_ref_pad' clocks to resolve the following
-> dtbs_check warning:
-> imx6ul-prti6g.dtb: clock-controller@20c4000: clocks: [[17], [18], [19], [20], [21]] is too long
-> imx6ul-prti6g.dtb: clock-controller@20c4000: clock-names: ['ckil', 'osc', 'ipp_di0', 'ipp_di1', 'enet1_ref_pad'] is too long
+On 23-07-14 15:49:38, Marco Felsch wrote:
+> The PLL14xx hardware can be found on i.MX8M{M,N,P} SoCs and always come
+> with a 6-bit pre-divider. Neither the reference manuals nor the
+> datasheets of these SoCs do mention any restrictions. Furthermore the
+> current code doesn't respect the restrictions from the comment too.
 > 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> ---
->  Documentation/devicetree/bindings/clock/imx6ul-clock.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
+> Therefore drop the restriction and align the max pre-divider (pdiv)
+> value to 63 to get more accurate frequencies.
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/imx6ul-clock.yaml b/Documentation/devicetree/bindings/clock/imx6ul-clock.yaml
-> index be54d4df5afa2..3b71ebc100bf6 100644
-> --- a/Documentation/devicetree/bindings/clock/imx6ul-clock.yaml
-> +++ b/Documentation/devicetree/bindings/clock/imx6ul-clock.yaml
-> @@ -28,18 +28,24 @@ properties:
->      const: 1
->  
->    clocks:
-> +    minItems: 4
->      items:
->        - description: 32k osc
->        - description: 24m osc
->        - description: ipp_di0 clock input
->        - description: ipp_di1 clock input
-> +      - description: Optional lenet1_ref_pad or enet2_ref_pad clocks
-> +      - description: Optional lenet1_ref_pad or enet2_ref_pad clocks
+> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
 
-s/lenet1_ref_pad/enet1_ref_pad/g
-
-with that:
+I'm OK with this:
 
 Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
 
+> ---
+> Hi Adam,
+> 
+> here is the patch I made for setting the exact video-pll settings.
+> 
+> Regards,
+>   Marco
+> 
+> 
+>  drivers/clk/imx/clk-pll14xx.c | 11 +++++------
+>  1 file changed, 5 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
+> index 7150c59bbfc95..dc6bc21dff41f 100644
+> --- a/drivers/clk/imx/clk-pll14xx.c
+> +++ b/drivers/clk/imx/clk-pll14xx.c
+> @@ -139,11 +139,10 @@ static void imx_pll14xx_calc_settings(struct clk_pll14xx *pll, unsigned long rat
+>  	/*
+>  	 * Fractional PLL constrains:
+>  	 *
+> -	 * a) 6MHz <= prate <= 25MHz
+> -	 * b) 1 <= p <= 63 (1 <= p <= 4 prate = 24MHz)
+> -	 * c) 64 <= m <= 1023
+> -	 * d) 0 <= s <= 6
+> -	 * e) -32768 <= k <= 32767
+> +	 * a) 1 <= p <= 63
+> +	 * b) 64 <= m <= 1023
+> +	 * c) 0 <= s <= 6
+> +	 * d) -32768 <= k <= 32767
+>  	 *
+>  	 * fvco = (m * 65536 + k) * prate / (p * 65536)
+>  	 */
+> @@ -186,7 +185,7 @@ static void imx_pll14xx_calc_settings(struct clk_pll14xx *pll, unsigned long rat
+>  	}
 >  
->    clock-names:
-> +    minItems: 4
->      items:
->        - const: ckil
->        - const: osc
->        - const: ipp_di0
->        - const: ipp_di1
-> +      - pattern: '^enet[12]_ref_pad$'
-> +      - pattern: '^enet[12]_ref_pad$'
->  
->  required:
->    - compatible
+>  	/* Finally calculate best values */
+> -	for (pdiv = 1; pdiv <= 7; pdiv++) {
+> +	for (pdiv = 1; pdiv <= 63; pdiv++) {
+>  		for (sdiv = 0; sdiv <= 6; sdiv++) {
+>  			/* calc mdiv = round(rate * pdiv * 2^sdiv) / prate) */
+>  			mdiv = DIV_ROUND_CLOSEST(rate * (pdiv << sdiv), prate);
 > -- 
 > 2.39.2
 > 
