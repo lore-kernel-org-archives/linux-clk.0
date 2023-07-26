@@ -2,58 +2,58 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 551FDC001B0
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Jul 2023 15:40:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92167C001B0
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Jul 2023 15:41:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234445AbjGZPkt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Jul 2023 11:40:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45768 "EHLO
+        id S234521AbjGZPlN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Jul 2023 11:41:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234476AbjGZPkp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jul 2023 11:40:45 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F72C2685
-        for <linux-clk@vger.kernel.org>; Wed, 26 Jul 2023 08:40:43 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id 2adb3069b0e04-4fe0d5f719dso2061309e87.2
-        for <linux-clk@vger.kernel.org>; Wed, 26 Jul 2023 08:40:43 -0700 (PDT)
+        with ESMTP id S234476AbjGZPlM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jul 2023 11:41:12 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1E152681
+        for <linux-clk@vger.kernel.org>; Wed, 26 Jul 2023 08:41:10 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-4fcd615d7d6so10694617e87.3
+        for <linux-clk@vger.kernel.org>; Wed, 26 Jul 2023 08:41:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1690386041; x=1690990841;
+        d=linaro.org; s=google; t=1690386069; x=1690990869;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=KplhcUyr+a1N4r+Y/pmyU6xHt5t27rt7tOY6RCWOd88=;
-        b=O55heUCWiODOAdA6MXYGkXM5ZIFZFbNEDUWx1/QfnXEUhImtO+edbK2y3mGrxPNc7D
-         /G40JHGGjzGxKXFVA85sv5rdydmIKt/1LJIzVUbG1WmQdA6yLbQ9VF88i5Axcjem7SSU
-         ETFItO7gti+Y/EnF6vhM16h2rkxRQp8u2to9rulwzGRD6y48XURH9EhNqPCAvtYVpQ6p
-         2I+2BluTQwHaFddUSWIPLBqE9whnq89t8VM/DjYGDgw2RQL8wPbfMczSxpT6iY+N000f
-         KCW+Qqxoktk1zXNzPsPZZw0Bt7WN5oZOHuJpdBw117+3qY4OH79ntLpfHxk5nyJZ0adg
-         WGBQ==
+        bh=lspuiTKxGPl7j3zN6foG0gANrbHRCSknpl5fapbBSQk=;
+        b=EHw23ByepeGBCexOes07Hu/K6F/NlA8JJRWdzYHIKy0ySrnu6K1mrIQz6MhquTdbOu
+         /u35XkOQWKL18HRQPDnk4AvVm9sE+hI2YjPPnUvl0cCgGRnlFKf/K8elEoH1qJa3NbKL
+         rovy2iW1ATOZtkqZk1KZrrr10kFkAKopD+M3W1Dv0mkjaK41gXrttJPHavrrm+wdtHgY
+         8Fp6w11xrnDyNra0wZ42Iq0rvdqyQnPwz+a+MJVre7LOk1HUmFBrZrJEuMYdCNasViF/
+         5Rks3opXZ3A8z+YgxoLRL8BbhaLTiSY/Uwsh0kWcbbeMirAaxHHdAIRHFV3Msyosbuj9
+         mGBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690386041; x=1690990841;
+        d=1e100.net; s=20221208; t=1690386069; x=1690990869;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KplhcUyr+a1N4r+Y/pmyU6xHt5t27rt7tOY6RCWOd88=;
-        b=kK/aUqHnrKEn92OOwBT13Hj9+L2K2BP0wJBnJR1bpVdQtqLP6Y9eJgnQlnbe6Q7pBZ
-         Zz7lpZRmZuapPIlcTOBOt7ieamlqHtsqZ9FJO3BJ1LHhbRR4/iM1Wo/rB+4YiO7PfqYy
-         mB1EXDkSya5PwOEbjULzPPKTBZmynAd/B29tkduVCIExSt/nv1o4Oo94fj3H0otXt7yr
-         EUHLxTwIGNCEBknDOt05ivkF4V40LxGo00H4tNY7t0AcpEShfx8pjpYh3l9hIuVdR9Ml
-         2geyhix4HvqBnXXXoHiTk9C2GcbgttyCuB+Tk8T1s6OAWN1e9NbkasOFUzO5dphETf0T
-         xNbQ==
-X-Gm-Message-State: ABy/qLY63IsorD5IOZDOIu3IdX+mP0Y0LXzf8yWq3A/6n5czFB1ajgjt
-        gj8eLS315ctyicNiSmf0hjAL2A==
-X-Google-Smtp-Source: APBJJlGhAJNUZpRYD34/PQXolEbfsK/i7MHHnLRA6vVEoDBbzdAdlCb2T96zve1VTQRDkV3pxITeFQ==
-X-Received: by 2002:a05:6512:15a5:b0:4f8:6e52:68ae with SMTP id bp37-20020a05651215a500b004f86e5268aemr1942920lfb.31.1690386041312;
-        Wed, 26 Jul 2023 08:40:41 -0700 (PDT)
+        bh=lspuiTKxGPl7j3zN6foG0gANrbHRCSknpl5fapbBSQk=;
+        b=bgbo3fiDUdYe2ZU0nHhQrcFqzZ3Pv2RlnBG3GTe2Pt++Uii2LoSxu3dFRz+uABuR1o
+         gAEvFkvacVMSLaeNF12RMFeFhfWivWFGBMHSrQwrABP+J/Qr5hWWI2wHIJBHNjk/oSWH
+         B997JRWq2yTbQ8KTjdMF/Y/GpR50/Pw4aWOqHUeWZeVRiagfg984VCZN+792hSKEzxGG
+         YAwUzNFp69N9F/3nNBcUb2a+3chv2UrMrB4+99x6eii49hRh00Lf4Wt7fjtl9R2GA0Up
+         AXC7Y46MUQ27J9d1eoUSqNZbQrjoZrWOB46QVYkvGwa0AjJOY4YX2BhjTrNA9LCDI8Ww
+         aFVQ==
+X-Gm-Message-State: ABy/qLbkU7eVY1mEJrGoT47gVvJU378+O7VnOsoZxhUwJxlhIvQQbFXJ
+        zcwHNzfA/3T/6M1bLgrn4i9RGQ==
+X-Google-Smtp-Source: APBJJlH4UGlitOcXYoqLf5xUMxwbnSm6R7p/LxoXekvEVVt6ZRyYjSJYGCNiKNWerSo4/3TNLlefyA==
+X-Received: by 2002:a19:915b:0:b0:4fb:8948:2b8e with SMTP id y27-20020a19915b000000b004fb89482b8emr1797720lfj.8.1690386069331;
+        Wed, 26 Jul 2023 08:41:09 -0700 (PDT)
 Received: from [192.168.1.101] (abxh240.neoplus.adsl.tpnet.pl. [83.9.1.240])
-        by smtp.gmail.com with ESMTPSA id m2-20020a195202000000b004fe0ec5596bsm460666lfb.54.2023.07.26.08.40.39
+        by smtp.gmail.com with ESMTPSA id m2-20020a195202000000b004fe0ec5596bsm460666lfb.54.2023.07.26.08.41.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Jul 2023 08:40:40 -0700 (PDT)
-Message-ID: <2e47ad4b-dd5c-d89f-185f-3465a6efa0e0@linaro.org>
-Date:   Wed, 26 Jul 2023 17:40:38 +0200
+        Wed, 26 Jul 2023 08:41:08 -0700 (PDT)
+Message-ID: <be9e1745-82aa-ece9-c387-fc19e4dd2eae@linaro.org>
+Date:   Wed, 26 Jul 2023 17:41:07 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 3/7] clk: qcom: gcc-qdu1000: Fix clkref clocks handling
+Subject: Re: [PATCH V4 7/7] clk: qcom: gcc-qdu1000: Update the RCGs ops
 Content-Language: en-US
 To:     Imran Shaik <quic_imrashai@quicinc.com>,
         Andy Gross <agross@kernel.org>,
@@ -72,7 +72,7 @@ Cc:     Bjorn Andersson <andersson@kernel.org>,
         Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
         Ajit Pandey <quic_ajipan@quicinc.com>
 References: <20230719041450.737929-1-quic_imrashai@quicinc.com>
- <20230719041450.737929-4-quic_imrashai@quicinc.com>
+ <20230719041450.737929-8-quic_imrashai@quicinc.com>
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
@@ -109,7 +109,7 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <20230719041450.737929-4-quic_imrashai@quicinc.com>
+In-Reply-To: <20230719041450.737929-8-quic_imrashai@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -117,10 +117,9 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 19.07.2023 06:14, Imran Shaik wrote:
-> Fix the gcc clkref clock ops and update the halt_check as per the
-> latest hw version of QDU1000 and QRU1000 SoCs.
+> Update the clock RCG ops to shared_ops to park them
+> at safe clock(XO) during disable.
 > 
-> Fixes: 1c9efb0bc040 ("clk: qcom: Add QDU1000 and QRU1000 GCC support")
 > Co-developed-by: Taniya Das <quic_tdas@quicinc.com>
 > Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
 > Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
