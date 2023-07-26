@@ -2,107 +2,69 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8574CC0015E
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Jul 2023 18:35:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AC67C001E0
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Jul 2023 18:45:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229572AbjGZSfI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Jul 2023 14:35:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36656 "EHLO
+        id S231636AbjGZSpo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Jul 2023 14:45:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229705AbjGZSfH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jul 2023 14:35:07 -0400
-Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [81.169.146.170])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED5A926A8;
-        Wed, 26 Jul 2023 11:35:04 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1690396503; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=QyOAP2eo59cwJDs6ShfwuykvNo0nk3ej712WKvJc1joiuh3WbOkXOCAqrbSQqB59TR
-    3FPuG1gRSZgpNfpxg/IGuw+kIjdpENBzBU6uGcodkH53vbds1hLYKDSZQIbEGVE/kNRZ
-    tRkNohR3mstsY9IDzB3hGwZXpC68CqY3vN/kMzAQvulmnqVYVZjv2vSWcOqih6Qs8bCW
-    tqAVHDRmskVWpWLxgI4dr5FoxMJYJ1nt3yt4R8Lo+b8A7jPWnclPsJYfYDTA5O3gKtsN
-    +j31FdQFFhdKVSKLznAwjKnD+yLt0AvKaS46aov/qxaNuqa/eX86hefnIE0f7aKj2HUF
-    /v+g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1690396503;
-    s=strato-dkim-0002; d=strato.com;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=kFXFMS4BMfM6mg4NHfeRlpd9uswdZDJ9dYi+CYWBFts=;
-    b=elmBU8C4lepOujV1sMO2CCUzp1UCWRfAUbXM+luLWa2bX3P0HFjwDcHH/ahIvj8o7d
-    E+qYwlMyX+qW1z0JvhhPkvhkvoAQz7dUKUV5sDYoZiRVXwnm5JxSD7fM9j1Eq3cZi7Ol
-    SPsK/xNvwmxUbV/fDhH3VZSWgw2FAgmkWX1lAwB8Gj0qoe83FPbJFjqmWiz5CD2cUhh/
-    1np0iPT0O43+xbN6RyZPw7w4UkUfDfTF6n5a0KuIIvnlRZxieHjHYOMF1j+FOC4x7a85
-    kE2NQczranv9euwevBmSM6JXzHE1dFd21h05lsnDiV4PRNz5xw40qVN68UGXWxeUv7bW
-    P69w==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo02
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1690396503;
-    s=strato-dkim-0002; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=kFXFMS4BMfM6mg4NHfeRlpd9uswdZDJ9dYi+CYWBFts=;
-    b=GNwFEvfNmkBtREQ7fHqaXyYaU4bODl8MmjNOj8dBNRAES2q2W3/nujjyzVVkz20ru4
-    OVXmD8Fz2YLztYWC8pyOZP3ZAl2Ia+mEscTS2oGwfdECh4maZQu3kjuw9GlDgA4Xw9VM
-    azjdWZp6Ee4nQT9CH0DBWO79t0eR6N0JqgKwP7bsiBsJh8UZHKPBXXbInxndSlAStxjd
-    iwfxcKtKO0I7sR9s8s5+qCq+1fOTqDnBuwrgH/KQNnJhCoSIdoopWG6j6btlmPXtFGYG
-    2zewzcrnUUrhrG55tZV8dE3YnLVL/ELtU9rQAomMbvkDTb2ZDTKw+r7+SFYR1VCmKbMA
-    gH1g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1690396503;
-    s=strato-dkim-0003; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=kFXFMS4BMfM6mg4NHfeRlpd9uswdZDJ9dYi+CYWBFts=;
-    b=8CfnZo4coMlBARC3w7wPitd/sME6CxTnKhmEanE0D3JyMEGAFHdUORQLTjS7aRkmSf
-    mzUHL3ks9FN0CTa71ZDg==
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u261EJF5OxJD4peA95vh"
-Received: from gerhold.net
-    by smtp.strato.de (RZmta 49.6.6 DYNA|AUTH)
-    with ESMTPSA id k61817z6QIZ38Le
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-    Wed, 26 Jul 2023 20:35:03 +0200 (CEST)
-Date:   Wed, 26 Jul 2023 20:35:01 +0200
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: qcom: reset: Increase max reset delay
-Message-ID: <ZMFmvp9UwCxpsLf7@gerhold.net>
-References: <20230726-topic-qcom_reset-v1-0-92de6d3e4c7c@linaro.org>
- <20230726-topic-qcom_reset-v1-1-92de6d3e4c7c@linaro.org>
- <ZMFkO5aAT5I5kBac@gerhold.net>
- <9ea4f4ed-8be0-859f-4f5d-d3bd0a727cb9@linaro.org>
+        with ESMTP id S231147AbjGZSpn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jul 2023 14:45:43 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 239452125;
+        Wed, 26 Jul 2023 11:45:42 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8ECE461C17;
+        Wed, 26 Jul 2023 18:45:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB1C0C433C8;
+        Wed, 26 Jul 2023 18:45:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1690397141;
+        bh=wjbAncjzdChPNXsbcDICv+H0kkp161w6++NSgxLMdxQ=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=SjvyVGQPAjQmGTgnpkeeOstVxYM9sOdgxQh6cxqTbenjQDpsDk5cumDO1mEk/ZJxn
+         s2w3XUJMSVTIeDH9OC7nfvfz+uU2YSUv7CBBoL244lLyg1KuEAXQI2HEezQ9oQD8uM
+         qVmvtc6O9lxhwT9O7rq/LsD38XkHcVCgaBAFL/5nPjY2Xun/jXVxPrsU/8FwRQpA56
+         2jJcXjaGanMEzHZhDfoPvNodbSnvQLQhHSM9k1D5KMKnwHzYxNHaeJzJXPZv5h86VT
+         PgV0P58qkJgvUHCKUCwl/b2xQlccYwe4pqSF6wkKrtoR6cCWU2ypZ+/3i3LnRYgNfS
+         uUddz/1ddVFUQ==
+Message-ID: <a5244f4c5a91c4c8e746b40f92359789.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9ea4f4ed-8be0-859f-4f5d-d3bd0a727cb9@linaro.org>
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20230724055440.100947-1-xingyu.wu@starfivetech.com>
+References: <20230724055440.100947-1-xingyu.wu@starfivetech.com>
+Subject: Re: [PATCH v1] reset: starfive: jh7110: Add StarFive STG/ISP/VOUT resets support
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        Xingyu Wu <xingyu.wu@starfivetech.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+To:     Conor Dooley <conor@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Xingyu Wu <xingyu.wu@starfivetech.com>,
+        linux-riscv@lists.infradead.org
+Date:   Wed, 26 Jul 2023 11:45:37 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jul 26, 2023 at 08:24:33PM +0200, Konrad Dybcio wrote:
-> On 26.07.2023 20:21, Stephan Gerhold wrote:
-> > On Wed, Jul 26, 2023 at 03:26:19PM +0200, Konrad Dybcio wrote:
-> >> u8 limits us to 255 microseconds of delay. Promote the delay variable to
-> >> u16 to hold bigger values.
-> >>
-> >> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> > 
-> > It would be clearer to change this together with an actual user that
-> > needs > 255us. AFAICT atm MSM8909 is the only user of this and it has
-> > just 15us.
-> Some LPASS resets ask for 500, but I'm still working on that driver.
-> 
+Quoting Xingyu Wu (2023-07-23 22:54:40)
+> Add new struct members and auxiliary_device_id of resets to support
+> System-Top-Group, Image-Signal-Process and Video-Output on the StarFive
+> JH7110 SoC.
+>=20
+> Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
+> Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+> Reviewed-by: Hal Feng <hal.feng@starfivetech.com>
+> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
+> ---
 
-Maybe send it together with that driver then? This feels close to the
-typical "no API changes without also adding the user" rule.
-
-Thanks,
-Stephan
+Applied to clk-next
