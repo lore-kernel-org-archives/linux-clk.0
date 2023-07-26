@@ -2,117 +2,95 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D073AC001DC
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Jul 2023 15:21:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7DD2C001DE
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Jul 2023 15:22:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234511AbjGZPV2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Jul 2023 11:21:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35056 "EHLO
+        id S232729AbjGZPWf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Jul 2023 11:22:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233822AbjGZPVG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jul 2023 11:21:06 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68A07BF
-        for <linux-clk@vger.kernel.org>; Wed, 26 Jul 2023 08:20:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1690384818;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=TfB4MnHU7wOaq39Gfi79NM8bvabdTimuYGs0f51W0MI=;
-        b=VkB5Y4HpiA/a95EdnxnygzTtsLC+5WR5I7cwgEvqsTc7OkLJKMUlphhER39mp7p9gNfpkM
-        kPZgzGGJ1JsQ0VjF/augzsTgdogSba0MkHjunIFnmuZAWHnljCjJZldOGpVHgBw7cu+ks1
-        TkX7zS5AyPiNNemTLvqzZYiz2XRpCJA=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-279-UShR-tWkMLmuk0K14vFepg-1; Wed, 26 Jul 2023 11:20:17 -0400
-X-MC-Unique: UShR-tWkMLmuk0K14vFepg-1
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-40631b647cfso10265721cf.1
-        for <linux-clk@vger.kernel.org>; Wed, 26 Jul 2023 08:20:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690384817; x=1690989617;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TfB4MnHU7wOaq39Gfi79NM8bvabdTimuYGs0f51W0MI=;
-        b=gYoxXHnEoBWc/thv4RdY9sSrq43TaVNaYP+il4FYott9XODylZG9LTznU0HW2hgOUn
-         FnKybeiM6LQboeHWrm13ICLqCe28s3jWrM0iv1/r/0I/ptHkjM6wKHufA0U3A+RG/KER
-         XiPtxAT87rskcCxspSeJl+CSD0ZyB55JhGwLHu8EooT8cOlkY8YLFrUq9GNwUK+tFNej
-         gqVzjlS6eFlEjkoNDfMb9+56obtOlnFTeGmHrK7YssTqhGG3M0UB35yQG487qRMq4gun
-         /BOVjWnOdl7Sz4dnObNp5VDnmoyYOef9bK+c1MZv+dfp+QclFVqwtAHFBllMw7a6J1bv
-         c5Ng==
-X-Gm-Message-State: ABy/qLY6cRo2A4iz+4De0h1jL36FugyGssoFaIo73vJH+ORMYbucT3TL
-        hECs8ERC9hnFjs58/d9cZsn6AVZHIdXDUDx7XIDsNMPzQffzyrRzOSYzuoSoxqPhfiLTt8ZOE+D
-        MO0HYqXCPJWoQSgFrJPan
-X-Received: by 2002:a05:6214:509b:b0:63d:2d7e:39f1 with SMTP id kk27-20020a056214509b00b0063d2d7e39f1mr1618582qvb.2.1690384816923;
-        Wed, 26 Jul 2023 08:20:16 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlE+h7yvFNeBANsn2r2QuvZPeWcHmYPmNYg397zB+UR7jYKmOTyAoiGJaCdczG6Mv8Nk/O/Fjw==
-X-Received: by 2002:a05:6214:509b:b0:63d:2d7e:39f1 with SMTP id kk27-20020a056214509b00b0063d2d7e39f1mr1618560qvb.2.1690384816586;
-        Wed, 26 Jul 2023 08:20:16 -0700 (PDT)
-Received: from gerbillo.redhat.com (146-241-225-81.dyn.eolo.it. [146.241.225.81])
-        by smtp.gmail.com with ESMTPSA id i5-20020a0cf485000000b0063d03e59e07sm2236356qvm.130.2023.07.26.08.20.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jul 2023 08:20:16 -0700 (PDT)
-Message-ID: <a3870a365d6f43491c8c82953d613c2e69311457.camel@redhat.com>
-Subject: Re: [PATCH 09/11] ice: implement dpll interface to control cgu
-From:   Paolo Abeni <pabeni@redhat.com>
-To:     Jakub Kicinski <kuba@kernel.org>, Jiri Pirko <jiri@resnulli.us>
-Cc:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
-        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        "Olech, Milena" <milena.olech@intel.com>,
-        "Michalik, Michal" <michal.michalik@intel.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
-        mschmidt <mschmidt@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Bart Van Assche <bvanassche@acm.org>
-Date:   Wed, 26 Jul 2023 17:20:12 +0200
-In-Reply-To: <20230725154958.46b44456@kernel.org>
-References: <20230720091903.297066-1-vadim.fedorenko@linux.dev>
-         <20230720091903.297066-10-vadim.fedorenko@linux.dev>
-         <ZLk/9zwbBHgs+rlb@nanopsycho>
-         <DM6PR11MB46572F438AADB5801E58227A9B3EA@DM6PR11MB4657.namprd11.prod.outlook.com>
-         <ZLo0ujuLMF2NrMog@nanopsycho>
-         <DM6PR11MB46576153E0E28BA4C283A30A9B3FA@DM6PR11MB4657.namprd11.prod.outlook.com>
-         <ZLpzwMQrqp7mIMFF@nanopsycho> <20230725154958.46b44456@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4 (3.46.4-1.fc37) 
+        with ESMTP id S232388AbjGZPWf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jul 2023 11:22:35 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F8F2FC;
+        Wed, 26 Jul 2023 08:22:33 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B122A61B3B;
+        Wed, 26 Jul 2023 15:22:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8F00C433C8;
+        Wed, 26 Jul 2023 15:22:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1690384952;
+        bh=9zDz3SagJCMaLUegWEGoTDA+cWb/pILa/bDTQy9G+xY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FQDxUytPwExrxnMDK1NoeR5aEUldj5zSKlNSNR6ZZCSMbwQjpQasj3kzix52ujS+4
+         L0W2QvjR865awdef3Owd2xrvr/BEMNLPJgblfqrYM/28fNdVf8hwHCMIQXfnrsjECw
+         7wWs18fNf5FWiIIHPxRcU/4iUGM/EqNubKYP4ISthJwOH1LnUQyTkP6gtOmXBA/yi5
+         gkBWeihHXrM/uHdrie0MZ/6z8SYYbmz74RIT0zKsUiN9JsCeLJIbOW5m25NPEqRfVR
+         +EEk9AR60RVgxJx9oJPZzY0ELPPRgvBfQdX9R3RIYOLGj/hq29H0hOReg4PE/4OWaG
+         XF6oKUslZC3ow==
+Received: (nullmailer pid 1471317 invoked by uid 1000);
+        Wed, 26 Jul 2023 15:22:28 -0000
+Date:   Wed, 26 Jul 2023 09:22:28 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Marijn Suijten <marijn.suijten@somainline.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        linux-arm-msm@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        ~postmarketos/upstreaming@lists.sr.ht, linux-clk@vger.kernel.org,
+        Rob Clark <robdclark@gmail.com>, linux-kernel@vger.kernel.org,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Lux Aliaga <they@mint.lgbt>, devicetree@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Krishna Manikandan <quic_mkrishn@quicinc.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Sean Paul <sean@poorly.run>, Daniel Vetter <daniel@ffwll.ch>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        freedreno@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        David Airlie <airlied@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Martin Botka <martin.botka@somainline.org>,
+        Jami Kettunen <jami.kettunen@somainline.org>
+Subject: Re: [PATCH v4 04/17] dt-bindings: display/msm: Remove DSI1 ports
+ from SM6350/SM6375 example
+Message-ID: <169038494815.1471241.4131859739067244773.robh@kernel.org>
+References: <20230723-sm6125-dpu-v4-0-a3f287dd6c07@somainline.org>
+ <20230723-sm6125-dpu-v4-4-a3f287dd6c07@somainline.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230723-sm6125-dpu-v4-4-a3f287dd6c07@somainline.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 2023-07-25 at 15:49 -0700, Jakub Kicinski wrote:
-> On Fri, 21 Jul 2023 14:02:08 +0200 Jiri Pirko wrote:
-> > So it is not a mode! Mode is either "automatic" or "manual". Then we
-> > have a state to indicate the state of the state machine (unlocked, lock=
-ed,
-> > holdover, holdover-acq). So what you seek is a way for the user to
-> > expliticly set the state to "unlocked" and reset of the state machine.
->=20
-> +1 for mixing the state machine and config.
-> Maybe a compromise would be to rename the config mode?
-> Detached? Standalone?
 
-For the records, I don't know the H/W details to any extents, but
-generally speaking it sounds reasonable to me that a mode change could
-cause a state change.
+On Sun, 23 Jul 2023 18:08:42 +0200, Marijn Suijten wrote:
+> Both SM6350 and SM6375 support only a single DSI link, and don't have a
+> corresponding dsi1 node in DTS.  Their examples should not suggest an
+> output interface port on the display-controller node to this inexistant
+> DSI host, with a dsi1_in label reference that doesn't exist in the
+> example either.
+> 
+> Fixes: 3b7502b0c205 ("dt-bindings: display/msm: Add SM6350 MDSS")
+> Fixes: 2a5c1021bc77 ("dt-bindings: display/msm: Add SM6375 MDSS")
+> Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
+> ---
+>  .../devicetree/bindings/display/msm/qcom,sm6350-mdss.yaml          | 7 -------
+>  .../devicetree/bindings/display/msm/qcom,sm6375-mdss.yaml          | 7 -------
+>  2 files changed, 14 deletions(-)
+> 
 
-e.g. switching an ethernet device autoneg mode could cause the link
-state to flip.
-
-So I'm ok with the existence of the freerun mode.
-
-I think it should be clarified what happens if pins are manually
-enabled in such mode. I expect ~nothing will change, but stating it
-clearly would help.
-
-Cheers,
-
-Paolo
+Acked-by: Rob Herring <robh@kernel.org>
 
