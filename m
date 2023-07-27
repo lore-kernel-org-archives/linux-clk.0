@@ -2,137 +2,222 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ABBFC04FE2
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Jul 2023 12:22:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E891DC04FDF
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Jul 2023 12:26:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233954AbjG0MWg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Jul 2023 08:22:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58768 "EHLO
+        id S233259AbjG0M0F (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Jul 2023 08:26:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233920AbjG0MWd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Jul 2023 08:22:33 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 612A82D68
-        for <linux-clk@vger.kernel.org>; Thu, 27 Jul 2023 05:22:20 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-99bdeae1d0aso49367466b.1
-        for <linux-clk@vger.kernel.org>; Thu, 27 Jul 2023 05:22:20 -0700 (PDT)
+        with ESMTP id S233208AbjG0MZu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Jul 2023 08:25:50 -0400
+Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A7B830C2
+        for <linux-clk@vger.kernel.org>; Thu, 27 Jul 2023 05:24:56 -0700 (PDT)
+Received: by mail-lj1-x22d.google.com with SMTP id 38308e7fff4ca-2b9338e4695so13139421fa.2
+        for <linux-clk@vger.kernel.org>; Thu, 27 Jul 2023 05:24:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1690460539; x=1691065339;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KBcPaBCD15GVUt1t8fe+n3lTCxT4h0u6r6X0oXlZlwc=;
-        b=e081yBpEl6WUyQ7DrRPgXBrwcqwu4Zlr+puzBZS56IJgd0T++PdR0LhMQQP9+eGBJh
-         vPp2ek8dutLOQ45EtSbH11eENOOFmTYHYPNub1vraSKWz5mXM8gJEBy/MTOuCXtqrXRC
-         tUa06KALw5Q4Qzz9oDT5BK81+Mk0yoWq7dvHwgQZvkgGS10I6gUXftd6LCfAUO6lE0aR
-         b2SefsYc+gYmH/yfi2HAGUuP460jJ89FaOtEgtKbWo3FteTCJhNTjwhDSeYxyEoVbNaR
-         WSg2mfD3JYetOQu43w+k9PyfmRvgcrMmw3lM9SteyO+TLxiNEr7Q8+oBstysJ//7cqW+
-         l73A==
+        d=linaro.org; s=google; t=1690460684; x=1691065484;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dM1dkUrxTZP0LCfoLzwjbnmeZ73oqlRwBBWQaUJPc/4=;
+        b=ZT0q62/Ws05TLE5nzjdkbyA3dQxNWG4eLH/vbeMz+hJTEBdzqb6uC7sYtdmIIMKDbV
+         a+DeEPndOlLMd1xm+7W+OdIUK+JK0+GMmvgZFZMiPk/mJm8KP71zOfCLMAL4tg8BWyL9
+         J3Q9t2zoLWH9Vp4X5W4k83zmqbD/RiyDyVqM5R8yyy83jY30IByXpcSjWBKgnVJXVf5f
+         lWhFNfAyWe0sB+EPTAvXVRPl25pgGdrV72B+zqueSR9EBxf6dkjEQIwMDLGKumVWU7ZH
+         jg39w/Pk+oAechsDOZeE4pNGAeI7guzrqfp2z/NHdQIyslq+3N69KPgnTpmzPbZ59sBM
+         M3Eg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690460539; x=1691065339;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KBcPaBCD15GVUt1t8fe+n3lTCxT4h0u6r6X0oXlZlwc=;
-        b=SLTiFpZDoM5ufLxekBz7nbypcZzLN/iP3aLhUiI2iMPHWy9oemlYPQcclCg9AOQYjh
-         JbrQgJu4G2uA9AL27vcnnJPGs9W8pv+g0hiQn6ajeRKWyAY7wK5GfkJkTCPvsOSx+TkB
-         5YsGvOjopoDh+I4dqoymNyVlU8KbkyHzrkKyVP+GcKRfBB7xYe25IYQy9dPjG2rVe8QB
-         2ZQd/r8usUv6QhwM8gt5asItyvc9I0QzPhCeb5jhv2Lq0x5EA+9gg8T5WTcgnh3NhAcq
-         ce+HIku6QL4aEaJgyJIE01HWqmPdq50mPpOAZ1vrK1nefOEt4KHkdjRCnbf2Wn2cL+Tz
-         GkFA==
-X-Gm-Message-State: ABy/qLZayW/sWUT4k5z5K0rYT2a/H08ATZbGQvPMWecf2l4m9+VgAveN
-        mQWE+sRNl7u/HnHOGJBpLxpBWA==
-X-Google-Smtp-Source: APBJJlG8c4LaXOrZrh8NyuL1H8V9TCwkuizDCvPywRcH0BHTiQ4d0Yy80J1WZnSmA2GAgK4iabH5rA==
-X-Received: by 2002:a17:907:a075:b0:99b:64ca:6999 with SMTP id ia21-20020a170907a07500b0099b64ca6999mr1967077ejc.7.1690460538803;
-        Thu, 27 Jul 2023 05:22:18 -0700 (PDT)
-Received: from umbar.unikie.fi ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id v23-20020a1709067d9700b00993860a6d37sm717844ejo.40.2023.07.27.05.22.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jul 2023 05:22:18 -0700 (PDT)
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Krishna Manikandan <quic_mkrishn@quicinc.com>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>
-Cc:     ~postmarketos/upstreaming@lists.sr.ht,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Martin Botka <martin.botka@somainline.org>,
-        Jami Kettunen <jami.kettunen@somainline.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, Lux Aliaga <they@mint.lgbt>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v4 00/17] drm/msm: Add SM6125 MDSS/DPU hardware and enable Sony Xperia 10 II panel
-Date:   Thu, 27 Jul 2023 15:22:15 +0300
-Message-Id: <169046051039.1413710.12901529844343078449.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230723-sm6125-dpu-v4-0-a3f287dd6c07@somainline.org>
-References: <20230723-sm6125-dpu-v4-0-a3f287dd6c07@somainline.org>
+        d=1e100.net; s=20221208; t=1690460684; x=1691065484;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dM1dkUrxTZP0LCfoLzwjbnmeZ73oqlRwBBWQaUJPc/4=;
+        b=WQLWwPkQht9Ve9SgzRqRBhFtOymBrXPTplCWvNWbYBNhCw8tzDp8KA12WNYdWpxmKf
+         Juue35E7Wo1UQjg3BI09NAi9hkO4n6SiEHXh6xwAPHjWn0Iqy7e880y7b7fQglT8sOAC
+         Guj0x168gNuGBhqRhyEuD6A3R/6UVpOq7plBeivJ3tX9zSfOv+/x2GDSfque1tSwNhbJ
+         UCMag5LfA76JMR3n1FajYbGfyFjhuFQHFFcpOtpS/v4/zo8Kn8MTCtaaJll/a8tFwQLr
+         vOGKtdgQMNG5iN+F+LF3sfWjPR7z+2f39TruYnehYZWUFT293Xa9kFhMSA8t9ORz5khw
+         8xpg==
+X-Gm-Message-State: ABy/qLbqIUe3HoajwIoSKm4UT+eaQGbpt1dfJAlci8IVHBpd07mKaN3V
+        XxwnrQDNMPinJ7TdcqCbrBs96g==
+X-Google-Smtp-Source: APBJJlGh70K+MIn7fYVMGvP4ZpEm8iCKX+iWp15lCHVIMc9Gx4e1SlOUav0TkN6/elkL3YftSZJFhg==
+X-Received: by 2002:a2e:91c2:0:b0:2b9:4b2e:5420 with SMTP id u2-20020a2e91c2000000b002b94b2e5420mr1602856ljg.52.1690460684271;
+        Thu, 27 Jul 2023 05:24:44 -0700 (PDT)
+Received: from [10.10.15.130] ([192.130.178.91])
+        by smtp.gmail.com with ESMTPSA id o21-20020a17090637d500b009937e7c4e54sm710367ejc.39.2023.07.27.05.24.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Jul 2023 05:24:43 -0700 (PDT)
+Message-ID: <c246ab77-0dcd-e6a1-bbec-0924c0923a75@linaro.org>
+Date:   Thu, 27 Jul 2023 15:24:41 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v2] dt-bindings: qcom: Update RPMHPD entries for some SoCs
+Content-Language: en-GB
+To:     Rohit Agarwal <quic_rohiagar@quicinc.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Rob Herring <robh@kernel.org>
+Cc:     mathieu.poirier@linaro.org, mchehab@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, quic_vgarodia@quicinc.com,
+        konrad.dybcio@linaro.org, agross@kernel.org,
+        freedreno@lists.freedesktop.org, daniel@ffwll.ch,
+        dri-devel@lists.freedesktop.org, jonathan@marek.ca,
+        conor+dt@kernel.org, robh+dt@kernel.org, airlied@gmail.com,
+        linux-mmc@vger.kernel.org, quic_tdas@quicinc.com,
+        stanimir.k.varbanov@gmail.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, andersson@kernel.org,
+        mturquette@baylibre.com, linux-remoteproc@vger.kernel.org,
+        sean@poorly.run, ulf.hansson@linaro.org,
+        devicetree@vger.kernel.org, vladimir.zapolskiy@linaro.org,
+        rfoss@kernel.org, mani@kernel.org, linux-media@vger.kernel.org,
+        sboyd@kernel.org, quic_abhinavk@quicinc.com,
+        bhupesh.sharma@linaro.org, linux-arm-msm@vger.kernel.org,
+        marijn.suijten@somainline.org, neil.armstrong@linaro.org,
+        robdclark@gmail.com
+References: <1690448953-23425-1-git-send-email-quic_rohiagar@quicinc.com>
+ <169045659774.1058731.6391693092002547810.robh@kernel.org>
+ <fa84ec4f-bdb9-dace-c56a-46174a9b47ee@quicinc.com>
+ <2edb92b8-a6a8-c115-757c-daccef6be5f0@linaro.org>
+ <432ab1d3-0f9e-4072-ff4d-6362886584b8@quicinc.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <432ab1d3-0f9e-4072-ff4d-6362886584b8@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-On Sun, 23 Jul 2023 18:08:38 +0200, Marijn Suijten wrote:
-> Bring up the SM6125 DPU now that all preliminary series (such as INTF
-> TE) have been merged (for me to test the hardware properly), and most
-> other conflicting work (barring ongoing catalog *improvements*) has made
-> its way in as well or is still being discussed.
+On 27/07/2023 15:21, Rohit Agarwal wrote:
 > 
-> The second part of the series complements that by immediately utilizing
-> this hardware in DT, and even enabling the MDSS/DSI nodes complete with
-> a 6.0" 1080x2520 panel for Sony's Seine PDX201 (Xperia 10 II).
+> On 7/27/2023 5:15 PM, Krzysztof Kozlowski wrote:
+>> On 27/07/2023 13:19, Rohit Agarwal wrote:
+>>> On 7/27/2023 4:46 PM, Rob Herring wrote:
+>>>> On Thu, 27 Jul 2023 14:39:13 +0530, Rohit Agarwal wrote:
+>>>>> Update the RPMHPD references with new bindings defined in rpmhpd.h
+>>>>> for Qualcomm SoCs SM8[2345]50.
+>>>>>
+>>>>> Signed-off-by: Rohit Agarwal <quic_rohiagar@quicinc.com>
+>>>>> ---
+>>>>>    
+>>>>> Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml   | 
+>>>>> 4 ++--
+>>>>>    
+>>>>> Documentation/devicetree/bindings/clock/qcom,sm8350-videocc.yaml  | 
+>>>>> 4 ++--
+>>>>>    
+>>>>> Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml    | 
+>>>>> 4 ++--
+>>>>>    
+>>>>> Documentation/devicetree/bindings/clock/qcom,sm8450-dispcc.yaml   | 
+>>>>> 4 ++--
+>>>>>    
+>>>>> Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml  | 
+>>>>> 4 ++--
+>>>>>    
+>>>>> Documentation/devicetree/bindings/clock/qcom,sm8550-dispcc.yaml   | 
+>>>>> 4 ++--
+>>>>>    
+>>>>> Documentation/devicetree/bindings/clock/qcom,videocc.yaml         | 
+>>>>> 4 ++--
+>>>>>    
+>>>>> .../devicetree/bindings/display/msm/qcom,sm8250-dpu.yaml          | 
+>>>>> 4 ++--
+>>>>>    
+>>>>> .../devicetree/bindings/display/msm/qcom,sm8250-mdss.yaml         | 
+>>>>> 8 ++++----
+>>>>>    
+>>>>> .../devicetree/bindings/display/msm/qcom,sm8350-dpu.yaml          | 
+>>>>> 4 ++--
+>>>>>    
+>>>>> .../devicetree/bindings/display/msm/qcom,sm8350-mdss.yaml         | 
+>>>>> 6 +++---
+>>>>>    
+>>>>> .../devicetree/bindings/display/msm/qcom,sm8450-dpu.yaml          | 
+>>>>> 4 ++--
+>>>>>    
+>>>>> .../devicetree/bindings/display/msm/qcom,sm8450-mdss.yaml         | 
+>>>>> 8 ++++----
+>>>>>    
+>>>>> .../devicetree/bindings/display/msm/qcom,sm8550-dpu.yaml          | 
+>>>>> 4 ++--
+>>>>>    
+>>>>> .../devicetree/bindings/display/msm/qcom,sm8550-mdss.yaml         | 
+>>>>> 8 ++++----
+>>>>>    
+>>>>> Documentation/devicetree/bindings/media/qcom,sm8250-venus.yaml    | 
+>>>>> 4 ++--
+>>>>>    
+>>>>> Documentation/devicetree/bindings/mmc/sdhci-msm.yaml              | 
+>>>>> 4 ++--
+>>>>>    
+>>>>> Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml | 
+>>>>> 6 +++---
+>>>>>    18 files changed, 44 insertions(+), 44 deletions(-)
+>>>>>
+>>>> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+>>>> on your patch (DT_CHECKER_FLAGS is new in v5.13):
+>>>>
+>>>> yamllint warnings/errors:
+>>>>
+>>>> dtschema/dtc warnings/errors:
+>>>> Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.example.dts:21:18: fatal error: dt-bindings/power/qcom,rpmhpd.h: No such file or directory
+>>>>      21 |         #include <dt-bindings/power/qcom,rpmhpd.h>
+>>>>         |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>>> compilation terminated.
+>>>> make[2]: *** [scripts/Makefile.lib:419: 
+>>>> Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.example.dtb] Error 1
+>>>> make[2]: *** Waiting for unfinished jobs....
+>>>> make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1500: 
+>>>> dt_binding_check] Error 2
+>>>> make: *** [Makefile:234: __sub-make] Error 2
+>>>>
+>>>> doc reference errors (make refcheckdocs):
+>>>>
+>>>> See 
+>>>> https://patchwork.ozlabs.org/project/devicetree-bindings/patch/1690448953-23425-1-git-send-email-quic_rohiagar@quicinc.com
+>>>>
+>>>> The base for the series is generally the latest rc1. A different 
+>>>> dependency
+>>>> should be noted in *this* patch.
+>>>>
+>>>> If you already ran 'make dt_binding_check' and didn't see the above
+>>>> error(s), then make sure 'yamllint' is installed and dt-schema is up to
+>>>> date:
+>>>>
+>>>> pip3 install dtschema --upgrade
+>>>>
+>>>> Please check and re-submit after running the above command yourself. 
+>>>> Note
+>>>> that DT_SCHEMA_FILES can be set to your schema file to speed up 
+>>>> checking
+>>>> your schema. However, it must be unset to test all examples with 
+>>>> your schema.
+>>> This should be ignored as the patch that creates the new header is
+>>> already applied.
+>>> Please follow this series
+>>>
+>>> https://lore.kernel.org/all/1689744162-9421-1-git-send-email-quic_rohiagar@quicinc.com/
+>> Please mention the dependency in patch changelog ---, so it is obvious
+>> for people applying it and also for the bot.
+> Sure. Will send a cover letter for this patch mentioning the changelogs 
+> and will
+> keep the version as v2 since there no change at all in the patch.
+
+What would be the merge strategy? Even if you split it per subsystem, I 
+probably can not pick up display parts. Is there an immutable branch 
+with the new header? Otherwise I can either ack Bjorn picking up this 
+patch or it will have to wait for the next cycle.
+
 > 
-> [...]
+> Thanks,
+> Rohit.
+>> Best regards,
+>> Krzysztof
+>>
 
-Applied, thanks!
-
-[01/17] drm/msm/dsi: Drop unused regulators from QCM2290 14nm DSI PHY config
-        https://gitlab.freedesktop.org/lumag/msm/-/commit/a7e3fda5948a
-[02/17] arm64: dts: qcom: sm6125: Pad APPS IOMMU address to 8 characters
-        https://gitlab.freedesktop.org/lumag/msm/-/commit/b7d35a8eae54
-[03/17] arm64: dts: qcom: sm6125: Sort spmi_bus node numerically by reg
-        https://gitlab.freedesktop.org/lumag/msm/-/commit/2be52ca96a71
-[04/17] dt-bindings: display/msm: Remove DSI1 ports from SM6350/SM6375 example
-        https://gitlab.freedesktop.org/lumag/msm/-/commit/4be2c19261fc
-[05/17] dt-bindings: clock: qcom,dispcc-sm6125: Require GCC PLL0 DIV clock
-        https://gitlab.freedesktop.org/lumag/msm/-/commit/4f86e343f3c6
-[06/17] dt-bindings: clock: qcom,dispcc-sm6125: Allow power-domains property
-        https://gitlab.freedesktop.org/lumag/msm/-/commit/91043642f28c
-[07/17] dt-bindings: display/msm: dsi-controller-main: Document SM6125
-        https://gitlab.freedesktop.org/lumag/msm/-/commit/cf5859476e5d
-[08/17] dt-bindings: display/msm: sc7180-dpu: Describe SM6125
-        https://gitlab.freedesktop.org/lumag/msm/-/commit/04a664dffd19
-[09/17] dt-bindings: display/msm: Add SM6125 MDSS
-        https://gitlab.freedesktop.org/lumag/msm/-/commit/3bde3b8f8a04
-[10/17] drm/msm/dpu: Add SM6125 support
-        https://gitlab.freedesktop.org/lumag/msm/-/commit/76c5dffd0bc4
-[11/17] drm/msm/mdss: Add SM6125 support
-        https://gitlab.freedesktop.org/lumag/msm/-/commit/de50357565d3
-[12/17] dt-bindings: msm: dsi-phy-14nm: Document SM6125 variant
-        https://gitlab.freedesktop.org/lumag/msm/-/commit/cdac445883cc
-[13/17] drm/msm/dsi: Reuse QCM2290 14nm DSI PHY configuration for SM6125
-        https://gitlab.freedesktop.org/lumag/msm/-/commit/7638d8059ace
-
-Best regards,
 -- 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+With best wishes
+Dmitry
+
