@@ -2,102 +2,209 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A342CC04FDF
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Jul 2023 12:28:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7EA0C001DC
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Jul 2023 12:29:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233301AbjG0M2a (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Jul 2023 08:28:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60294 "EHLO
+        id S233955AbjG0M3l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Jul 2023 08:29:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234288AbjG0M14 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Jul 2023 08:27:56 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BE32421F
-        for <linux-clk@vger.kernel.org>; Thu, 27 Jul 2023 05:27:14 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-4fb863edcb6so1592723e87.0
-        for <linux-clk@vger.kernel.org>; Thu, 27 Jul 2023 05:27:14 -0700 (PDT)
+        with ESMTP id S233960AbjG0M3V (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Jul 2023 08:29:21 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 641D419B;
+        Thu, 27 Jul 2023 05:28:52 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id 2adb3069b0e04-4fe0e34f498so1490131e87.2;
+        Thu, 27 Jul 2023 05:28:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1690460831; x=1691065631;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DbBc/Xp5vDhN57+nyWdnfZit+Hhf7+7jO6GicfM9MZY=;
-        b=SKk5HURndFjmfQs/6/dI4mSdYP1Ma7B9aBTIJFoRTdIBlRIMcmuDR5FNLHh5k+HNkk
-         PjvB2BConz/Mr/IDFLR/wHDEioT9km4Gbh/B+VVp1M6kNhqChbihwJ0QsDAwOOppOJp0
-         2xB3jqxayJbYjNxxFP3/ZeToVAPfXJzjWL5fLres+d1jdf7wgHjwpBNk1mCiOS4fzKy3
-         72qqCwLbHmLcX+4Nn0W4CsvUd4sZ8SiGEYMN3mNSyoAYPYtrA23FYcIRd0Ogcog9Xfh0
-         uKl1yK/gjLnSlj/8FD3WFQii3iC0/JDipq4d1rN5E6Auc/x7kttZbQxCfzR/DDPsS7pZ
-         /6Eg==
+        d=gmail.com; s=20221208; t=1690460931; x=1691065731;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=QicXffWXscfgWhv0wb3ebSf1Uk8ERzfc9bWF4vPDeBQ=;
+        b=nWVAjPy6GwLcObHrSsBfmcry2p/jRNEVhwYZal07Zn4taKsmuisO2dCX9avM9t/t5L
+         ibWyBSBMgnuAzJHyOD/o4pBbPC59pljroAhqBs8EAAkn+Mdie8UuVlSLbm1lZrPGwZwq
+         tW0G32h8Ejst7cEVm7TYvucMteewOEOADSVlfFKMrdllOai2rGUo6xoNKZmF1TBgPdG3
+         /VYFXn0No1ofpf/MbRu5WNh3uAD7sihI+u5taIqtmQv33BJq8p572HjYUuEVAO8LqPgR
+         yxDFXNw7vFHGoLZ7zI4Wsv9X06E+zoc6RcyUxdWzOXgFymzLlfsAIsDepeWCM0RARIsX
+         Xo9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690460831; x=1691065631;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20221208; t=1690460931; x=1691065731;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DbBc/Xp5vDhN57+nyWdnfZit+Hhf7+7jO6GicfM9MZY=;
-        b=B7KzrrnIiTOSwPPOhLxEm3xiVklJhK8fSl70VEsvc58Fobgy64xFkVpGf+9hbsp8Ja
-         t9Os/MHyEgJR+0y+5zAqFd2qBQ5+KB20jz/KWb8UenPz3yv8R5f0gv8+ceIyoK4nOgPh
-         +XlGZxne4e1FhWK87/kAQwcZd72xpLkjW6DGAsEVGLxvQr4yQuOeaN1uV1qUQ0ZRyzv1
-         a7N9B0LmLdwoSrAgEYmsFM+PByHqYVkz2y8C1Uc8s0PL6VOHefckmOW6lU6pZM4zyTxQ
-         FJuVyxOiCO2GHUJ/f5o8abw7Vu8aX91nCTdgrqTvU0yfmtw1RARKy4q00RiEgT9veNTy
-         8Bkw==
-X-Gm-Message-State: ABy/qLbhpJROxitRDWhZ11ZoanOcCXLaowVuOvy9u23uyJqk+X2L14xR
-        DPUjLanyZjYtInwp0Lzeyvkigw==
-X-Google-Smtp-Source: APBJJlHSr8IB03GxRhMBlFdFfdlZPoqNJpO9iIuq9aU4JtzQR+GUoz8bwVuMY1X2x4tOPFXaa5Gerw==
-X-Received: by 2002:a05:6512:1591:b0:4f8:58ae:8ea8 with SMTP id bp17-20020a056512159100b004f858ae8ea8mr1930432lfb.58.1690460831464;
-        Thu, 27 Jul 2023 05:27:11 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.223.104])
-        by smtp.gmail.com with ESMTPSA id s25-20020a056402165900b0051d9dbf5edfsm594934edx.55.2023.07.27.05.27.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Jul 2023 05:27:10 -0700 (PDT)
-Message-ID: <e9a4e015-7e25-92be-9a7a-8e5dcf3848fa@linaro.org>
-Date:   Thu, 27 Jul 2023 14:27:08 +0200
+        bh=QicXffWXscfgWhv0wb3ebSf1Uk8ERzfc9bWF4vPDeBQ=;
+        b=WBa91XNOtzv9TnGerfq0pJgONfqoepYjCjdcus8ISLNErlJU8EiKZR973D9yqfq3YP
+         yi2qg8EZsOM9S/IvxjxAbGn8SDpZDJJf63gYJk18XybF4/DSVulFSDBPLfLDOp66BaqX
+         l86lG2HtPzR+4QTZOIaTN/mrWq0mYNNvnPjcLLmGZZVpe6gdm3pal38kVNiARat9DNQr
+         LMJ8Sqrutg8acGS1bCB5GhcjjXFHidlYYH4DSblKl9L3LafcEX8amzePt/WXOrG+GNg+
+         uf3GIoWb3JCf+B6tyAy0Ll7D7M86gp2ih4urvJExltSdHCBvrKm2V6Vt2SFK3FjugqEy
+         7weA==
+X-Gm-Message-State: ABy/qLZWm4by6EfJs23AyRmmlyL5zpq2AIKEYxuAU4BPUaMgzZ36Zd9L
+        S03vv18GZmxhTaaYsuBYIFWapAY7U6k=
+X-Google-Smtp-Source: APBJJlEwAfMbK7LByxz28+r5fm2o2zVJfTBsjNMM0GRF6lbIsUAGmNqBHQbtJClRf0GxW53OjPTs5g==
+X-Received: by 2002:a05:6512:2fa:b0:4f8:554f:36aa with SMTP id m26-20020a05651202fa00b004f8554f36aamr1365190lfq.29.1690460930353;
+        Thu, 27 Jul 2023 05:28:50 -0700 (PDT)
+Received: from mobilestation ([93.157.254.210])
+        by smtp.gmail.com with ESMTPSA id d28-20020ac2545c000000b004fb86662871sm283013lfn.233.2023.07.27.05.28.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jul 2023 05:28:49 -0700 (PDT)
+Date:   Thu, 27 Jul 2023 15:28:47 +0300
+From:   Serge Semin <fancer.lancer@gmail.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     wuyonggang001@208suo.com, mturquette@baylibre.com,
+        sboyd@kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: baikal-t1: Using div64_ Ul replaces do_ Div()
+ function
+Message-ID: <vnps4c6o6nsvazyggdqhhqedwsf7vrucc2kpiwpuozi7e2e7tc@celmt367ov73>
+References: <20230612033904.34921-1-zhanglibing@cdjrlc.com>
+ <0dc9409b662180ed29cbc281f0f076b7@208suo.com>
+ <fcd37e67fba625da304fdaf07e0ab0db@208suo.com>
+ <CAMuHMdX0xP5Gugo7uF5Wqk9_ny6-4fOWYRm41KicOo26kC6m+g@mail.gmail.com>
+ <nt6kbounehvfqo4hpfj3wbr7baukuhr22dafvoykgyehs4imsp@pc6bajyo6ugn>
+ <CAMuHMdUHDK9CCJPoMgLQBrXjk9VWszYF17dUU=9JtQ8XX=QAPA@mail.gmail.com>
+ <2xp54apmm6o5np34obv5muus5d2lpoo7fn6ozuzzj6p4f2whot@c3pji7twevci>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v2] dt-bindings: qcom: Update RPMHPD entries for some SoCs
-Content-Language: en-US
-To:     Rohit Agarwal <quic_rohiagar@quicinc.com>,
-        Rob Herring <robh@kernel.org>
-Cc:     mathieu.poirier@linaro.org, mchehab@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, quic_vgarodia@quicinc.com,
-        konrad.dybcio@linaro.org, agross@kernel.org,
-        freedreno@lists.freedesktop.org, daniel@ffwll.ch,
-        dri-devel@lists.freedesktop.org, jonathan@marek.ca,
-        conor+dt@kernel.org, robh+dt@kernel.org, airlied@gmail.com,
-        linux-mmc@vger.kernel.org, quic_tdas@quicinc.com,
-        stanimir.k.varbanov@gmail.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, andersson@kernel.org,
-        mturquette@baylibre.com, dmitry.baryshkov@linaro.org,
-        linux-remoteproc@vger.kernel.org, sean@poorly.run,
-        ulf.hansson@linaro.org, devicetree@vger.kernel.org,
-        vladimir.zapolskiy@linaro.org, rfoss@kernel.org, mani@kernel.org,
-        linux-media@vger.kernel.org, sboyd@kernel.org,
-        quic_abhinavk@quicinc.com, bhupesh.sharma@linaro.org,
-        linux-arm-msm@vger.kernel.org, marijn.suijten@somainline.org,
-        neil.armstrong@linaro.org, robdclark@gmail.com
-References: <1690448953-23425-1-git-send-email-quic_rohiagar@quicinc.com>
- <169045659774.1058731.6391693092002547810.robh@kernel.org>
- <fa84ec4f-bdb9-dace-c56a-46174a9b47ee@quicinc.com>
- <2edb92b8-a6a8-c115-757c-daccef6be5f0@linaro.org>
- <432ab1d3-0f9e-4072-ff4d-6362886584b8@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <432ab1d3-0f9e-4072-ff4d-6362886584b8@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2xp54apmm6o5np34obv5muus5d2lpoo7fn6ozuzzj6p4f2whot@c3pji7twevci>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 27/07/2023 14:21, Rohit Agarwal wrote:
->>> https://lore.kernel.org/all/1689744162-9421-1-git-send-email-quic_rohiagar@quicinc.com/
->> Please mention the dependency in patch changelog ---, so it is obvious
->> for people applying it and also for the bot.
-> Sure. Will send a cover letter for this patch mentioning the changelogs 
-> and will
-> keep the version as v2 since there no change at all in the patch.
+Hi Geert, Stephen
 
-There is no need for cover letter for one patch.
+On Mon, Jul 24, 2023 at 05:11:23PM +0300, Serge Semin wrote:
+> On Mon, Jul 24, 2023 at 03:38:49PM +0200, Geert Uytterhoeven wrote:
+> > Hi Serge,
+> > 
+> > On Mon, Jul 24, 2023 at 3:13 PM Serge Semin <fancer.lancer@gmail.com> wrote:
+> > > On Mon, Jul 24, 2023 at 12:04:19PM +0200, Geert Uytterhoeven wrote:
+> > > > On Wed, Jun 14, 2023 at 8:07 AM <wuyonggang001@208suo.com> wrote:
+> > > > > Fix the following coccicheck warning:
+> > > > >
+> > > > > drivers/clk/baikal-t1/ccu-pll.c:81:1-7: WARNING: do_div() does a
+> > > > > 64-by-32 division, please consider using div64_ul instead.
+> > > > >
+> > > > > Signed-off-by: Yonggang Wu <wuyonggang001@208suo.com>
+> > > >
+> > > > Thanks for your patch, which is now commit b93d1331ea266dea
+> > > > ("clk: baikal-t1: Using div64_ Ul replaces do_ Div() function")
+> > > > in clk/clk-next.
+> > > >
+> > > > > b/drivers/clk/baikal-t1/ccu-pll.c
+> > > > > index 13ef28001439..d41735c6956a 100644
+> > > > > --- a/drivers/clk/baikal-t1/ccu-pll.c
+> > > > > +++ b/drivers/clk/baikal-t1/ccu-pll.c
+> > 
+> > > > > @@ -78,9 +78,9 @@ static inline unsigned long ccu_pll_calc_freq(unsigned
+> > > > > long ref_clk,
+> > > > >   {
+> > > > >       u64 tmp = ref_clk;
+> > > > >
+> > >
+> > > > > -    do_div(tmp, nr);
+> > > > > +    div64_ul(tmp, nr);
+> > > > >       tmp *= nf;
+> > > > > -    do_div(tmp, od);
+> > > > > +    div64_ul(tmp, od);
+> > > > >
+> > > > >       return tmp;
+> > > >
+> > > > Likewise.
+> > >
+> > > Right. This will also break the driver.
 
-Best regards,
-Krzysztof
+No news from Yonggang meanwhile the patch will certainly break the
+driver. Is it still possible to drop it from the clk-cleanup and
+clk-next branches then before it gets to the mainline kernel?
 
+-Serge(y)
+
+> > >
+> > > > But as ref_clk is unsigned long, there is no need to use div64_ul()
+> > > > for the first division, and this can be simplified to:
+> > > >
+> > > >     u64 tmp = (u64)(ref_clk / nr) * nf;
+> > > >     return div64_ul(tmp, od);
+> > >
+> > > Absolutely right. My intention of using the do_div() anyway was for
+> > > the sake of the code unification.
+> > >
+> > > >
+> > > > To avoid loss of precision, it might be better to reverse the order
+> > > > of the division and multiplication:
+> > > >
+> > >
+> > > >     u64 tmp = (u64)ref_clk * nf / nr;
+> > >
+> > > Alas exactly this code will cause the compilation error on the 32-bit
+> > > platform:
+> > > ccu-pll.c:(.text+0x458): undefined reference to `__udivdi3'
+> > >
+> > > That's why I am using the do_div() here. I would have rather used the
+> > > div64_ul() instead as this patch suggests, but I haven't known about its
+> > > existence up to this moment.
+> > 
+> > Bummer, that was a silly mistake on my side...
+> > (Initially, I didn't write the cast to u64 there, as all of ref_clk, nf, and nr
+> >  are unsigned long.  Then I realized "ref_clk * nf" might overflow on
+> >  32-bit, thus requiring a 64-bit result. And I added the cast...)
+> > 
+> > > Anyway my intention of dividing before multiplying had twofold
+> > > justification. Firstly I didn't want to use the "/" operator and
+> > > do_div() macro in the statements used to implement the same formulae.
+> > > Since I couldn't use the operator I decided to use the macro only for
+> > > the code unification. Secondly the PLL is designed in a way so the
+> > > signal is first divided by NR, then multiplied by NF and then divided
+> > > by OD. That's why I decided to preserve the same order in the
+> > > calculations here. I assumed back then that the NR-divider performs
+> > > the integer division in the analog circuitry. I have doubts now that
+> > > my assumption was correct since it's analog device and most likely
+> > > divides the source signal with no integer rounding-up. So using the
+> > > order suggested by you would have likely given a more exact result.
+> > >
+> > > >
+> > > > But doing that requires intimate knowledge about the range of nf to
+> > > > avoid overflow, so I leave that to Serge.
+> > >
+> > > nr: 1 - 2^6
+> > > nf: 1 - 2^13
+> > > ref_clk: normally 25'000'000 Hz.
+> > > Using "unsigned long"/u32 multiplication will give the integer
+> > > overflow. Meanwhile the u64 arithmetics will be more than enough here.
+> > >
+> > > So to speak the next alteration seems more correct here:
+> > > +return div64_ul(div64_ul((u64)ref_clk * nf, nr), od);
+> > >
+> > > What do you think?
+> > 
+> 
+> > Given the ranges above, nr and nf can be u32 instead of unsigned long.
+> > So perhaps it makes sense to use the mul_u64_u32_div() helper?
+> > 
+> >     return div64_ul(mul_u64_u32_div(ref_clk, nf, nr), of);
+> 
+> Just a day of discoveries today.) Didn't know about the
+> mul_u64_u32_div() existence either. Thanks for suggestion. Anyway
+> seeing "unsigned long" is 32-bits wide on my platform, nr/nf/od will
+> always be within the specified ranges, why not. Although using two
+> div64_ul()'s seems a bit more readable. But it might be just because
+> of me not being used to the mul_u64_u32_div() prototype notation.
+> 
+> -Serge(y)
+> 
+> > 
+> > Gr{oetje,eeting}s,
+> > 
+> >                         Geert
+> > 
+> > -- 
+> > Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> > 
+> > In personal conversations with technical people, I call myself a hacker. But
+> > when I'm talking to journalists I just say "programmer" or something like that.
+> >                                 -- Linus Torvalds
