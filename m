@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A159FEB64DD
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Jul 2023 05:40:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2156C001E0
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Jul 2023 05:40:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232245AbjG0FkO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Jul 2023 01:40:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58486 "EHLO
+        id S231367AbjG0FkX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Jul 2023 01:40:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232246AbjG0Fju (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Jul 2023 01:39:50 -0400
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BB84423C
-        for <linux-clk@vger.kernel.org>; Wed, 26 Jul 2023 22:38:19 -0700 (PDT)
-Received: by mail-pl1-x62b.google.com with SMTP id d9443c01a7336-1b8ad907ba4so3569835ad.0
-        for <linux-clk@vger.kernel.org>; Wed, 26 Jul 2023 22:38:19 -0700 (PDT)
+        with ESMTP id S231931AbjG0FkH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Jul 2023 01:40:07 -0400
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C0172D47
+        for <linux-clk@vger.kernel.org>; Wed, 26 Jul 2023 22:38:31 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id d9443c01a7336-1bbc06f830aso3471175ad.0
+        for <linux-clk@vger.kernel.org>; Wed, 26 Jul 2023 22:38:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1690436233; x=1691041033;
+        d=tuxon.dev; s=google; t=1690436247; x=1691041047;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rMrH2veSKJpQGvEe5VG+6yf2IP3UM7TTWUkhUdnFvBE=;
-        b=m9WxlI86VXkvIJaFZfBm9fikWzK2MXmSLJNO1gZJ2uRq6s8IzrMtlcTgZMgvEj+600
-         sSBdKIlxf26m7GzYTWJMR04vM45e48dNkTtVN4IlXE3+FsqLJO67ubZqHx16RGzcOicG
-         LP0JtY7a/pKBRoXgfDsPEi5Ny2Y4fbyvDNgxv23T4eqeqKGxXsjfPQcbqZwfsqzR+sp+
-         nMdgyVT8zAITbTAZXsml2cdZPeguyd/OIboLKr55+OGZUL9wJOyj2+29lwzL/WuygTsI
-         yjONzfNg8PiHWPPCx+Y+We/eE+UysNO0nQoux9GQ4o1VBvfwWopHWj0ILfUmlRRSiRVD
-         ZD6A==
+        bh=R0MCABlKnn4W9o3M4XSOlKm6XX3ypG2eLBBMZazV5aU=;
+        b=nSsgtq6GND/KRpXTCP6YcWA+uA/ZLZDk70vsMiY9jZtEYLHnW8HOnsHyzGgp9BWYrN
+         yG1oLeeKD38YXZfm+r/9OtAajFL8T64g1OdK2SMlGqNymUDHHrmS3dzJdawJpxAE6HD9
+         m87dfNdpWlHAa1Lqkl2XtjyslgOQpOdMMfhJwhLyldvDqaaHeAipDf/UW8mImDFT2MoG
+         QG86Usv2Dlu4HA+jYw9znLlCCRyH3R0k2AQq9r0bYH+laHUbvmEeq5jHuTAIY/XRZkEX
+         Nni5Qo5N9kay+wvtJlQuHVDNH1bSUA3aFm7vK/cVRuXz+BtpjaISH/Q3AVwmlnMG5yo3
+         cdcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690436233; x=1691041033;
+        d=1e100.net; s=20221208; t=1690436247; x=1691041047;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rMrH2veSKJpQGvEe5VG+6yf2IP3UM7TTWUkhUdnFvBE=;
-        b=XZ+u4CtTq7EWxIBBmfZL7vTdLUS3ygKHxXp/XC/QeFSOB9OEuFPFgraHd6JDwDG31H
-         azCNhOi1FonGqvcCqe06JHLO1UstdNHclJHrOfWftf/EPrAiygiCntcWKLsu0/MugDWk
-         wHko0h/PhMjxk884vWTNEeIDNkDvXEVXpUAlhOsBGXXASzaNkqSA5BTjk2hMDPTtziUg
-         YIl7uCd05TUMctss361EZn5A0Z2oHRSJ87cYgV1iT4dAhK5tvHyDc/Tidm1/WO742kKg
-         4shx3KGKfyiX7vk0yA9lQdJTsmFz0FrW+Vuq2d0bRpfGaTUoY7DlBvUuonq6TBII0Rvw
-         MBMg==
-X-Gm-Message-State: ABy/qLakgxxTf7cafF88V1Dsk2sXxQaYQN3GjiLHlPLnMENcJzbmrKwh
-        fPHC0P9+ra3B+4jGZ5VskHDvRMDAP39oOFTi6UNa5tov
-X-Google-Smtp-Source: APBJJlE/b2NsE/TFI2LCOh8FQAgahRyUACaBkgzFTkwLVBYX122bL58KV0FwOFGGcwnKGd+Ib2/Stw==
-X-Received: by 2002:a17:902:bcc9:b0:1b1:7362:9a18 with SMTP id o9-20020a170902bcc900b001b173629a18mr3093097pls.27.1690436232704;
-        Wed, 26 Jul 2023 22:37:12 -0700 (PDT)
+        bh=R0MCABlKnn4W9o3M4XSOlKm6XX3ypG2eLBBMZazV5aU=;
+        b=P1ll0k8iCWV+scm0lp0BcmlMN9CINidhxCQllZneVSQRUvvw60KrRHDbGdns3KU5EI
+         fJMEj/InIeFUDk/9xbaq2DRhJ8B9KslmgkuVY6v3sCeQYsbN9+f9MLEr2eUwJuFQ6uj5
+         R5u912gfy57ctg8FqXskfvMtM1hg7/Lo7O9nJ5PdFm0a6H0HxK1JyPPAp4/milR6aEN5
+         2s5JJkQoP2yRm8N1l8e82aXx0ca/nT+zOCMLtSBE+mmYX5qZFSNakD0H4ZEb4uFURHC7
+         e3l/y6vzXz3ulPKrNCxR4sx+MReDVg/Wn3U5SdKNTTp2eI2sS9cZujzUaGFGgHuwyn/S
+         Hh7g==
+X-Gm-Message-State: ABy/qLaNR7jeN0H8HtC3jtToMYhOZ0IWAM4Rto18BHqPhGVfq7bXRDvx
+        tWY+P5mWgLihbqboAehEOeaUMA==
+X-Google-Smtp-Source: APBJJlHlq1g/jxGnxtE5kc0Zu6/vUpuzTqsqYM1q0IAdRpnngQGqQf7SqFxL1bbqjNqkdtAbei9jUg==
+X-Received: by 2002:a17:902:d50b:b0:1bb:c896:1da3 with SMTP id b11-20020a170902d50b00b001bbc8961da3mr2356971plg.24.1690436247121;
+        Wed, 26 Jul 2023 22:37:27 -0700 (PDT)
 Received: from localhost.localdomain ([82.78.167.79])
-        by smtp.gmail.com with ESMTPSA id 21-20020a170902c11500b001bb889530adsm319059pli.217.2023.07.26.22.37.06
+        by smtp.gmail.com with ESMTPSA id 21-20020a170902c11500b001bb889530adsm319059pli.217.2023.07.26.22.37.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jul 2023 22:37:12 -0700 (PDT)
+        Wed, 26 Jul 2023 22:37:26 -0700 (PDT)
 From:   Claudiu Beznea <claudiu.beznea@tuxon.dev>
 To:     mturquette@baylibre.com, sboyd@kernel.org,
         nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
@@ -56,9 +56,9 @@ To:     mturquette@baylibre.com, sboyd@kernel.org,
 Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, varshini.rajendran@microchip.com,
         Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Subject: [PATCH 39/42] clk: at91: clk-smd: remove parent_names support
-Date:   Thu, 27 Jul 2023 08:31:53 +0300
-Message-Id: <20230727053156.13587-40-claudiu.beznea@tuxon.dev>
+Subject: [PATCH 41/42] clk: at91: clk-usb: remove parent_names support
+Date:   Thu, 27 Jul 2023 08:31:55 +0300
+Message-Id: <20230727053156.13587-42-claudiu.beznea@tuxon.dev>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230727053156.13587-1-claudiu.beznea@tuxon.dev>
 References: <20230727053156.13587-1-claudiu.beznea@tuxon.dev>
@@ -69,106 +69,290 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 Remove parent_names support as parent_hw support is now available on all
-platforms using clk-smd driver.
+platforms using clk-usb driver.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 ---
- drivers/clk/at91/at91sam9x5.c | 2 +-
- drivers/clk/at91/clk-smd.c    | 7 ++-----
- drivers/clk/at91/dt-compat.c  | 2 +-
- drivers/clk/at91/pmc.h        | 2 +-
- drivers/clk/at91/sama5d3.c    | 2 +-
- drivers/clk/at91/sama5d4.c    | 2 +-
- 6 files changed, 7 insertions(+), 10 deletions(-)
+ drivers/clk/at91/at91rm9200.c  |  2 +-
+ drivers/clk/at91/at91sam9260.c |  2 +-
+ drivers/clk/at91/at91sam9g45.c |  2 +-
+ drivers/clk/at91/at91sam9n12.c |  2 +-
+ drivers/clk/at91/at91sam9x5.c  |  2 +-
+ drivers/clk/at91/clk-usb.c     | 35 ++++++++++++----------------------
+ drivers/clk/at91/dt-compat.c   |  6 +++---
+ drivers/clk/at91/pmc.h         |  8 ++++----
+ drivers/clk/at91/sam9x60.c     |  2 +-
+ drivers/clk/at91/sama5d2.c     |  2 +-
+ drivers/clk/at91/sama5d3.c     |  2 +-
+ drivers/clk/at91/sama5d4.c     |  2 +-
+ 12 files changed, 28 insertions(+), 39 deletions(-)
 
-diff --git a/drivers/clk/at91/at91sam9x5.c b/drivers/clk/at91/at91sam9x5.c
-index f278bee3417c..93165263502e 100644
---- a/drivers/clk/at91/at91sam9x5.c
-+++ b/drivers/clk/at91/at91sam9x5.c
-@@ -232,7 +232,7 @@ static void __init at91sam9x5_pmc_setup(struct device_node *np,
+diff --git a/drivers/clk/at91/at91rm9200.c b/drivers/clk/at91/at91rm9200.c
+index 4b8a9c27cc9e..05060b72acab 100644
+--- a/drivers/clk/at91/at91rm9200.c
++++ b/drivers/clk/at91/at91rm9200.c
+@@ -163,7 +163,7 @@ static void __init at91rm9200_pmc_setup(struct device_node *np)
+ 
+ 	at91rm9200_pmc->chws[PMC_MCK] = hw;
+ 
+-	usbck_hw = at91rm9200_clk_register_usb(regmap, "usbck", NULL,
++	usbck_hw = at91rm9200_clk_register_usb(regmap, "usbck",
+ 					       at91rm9200_pmc->chws[PMC_PLLBCK], usb_div);
+ 	if (IS_ERR(usbck_hw))
+ 		goto err_free;
+diff --git a/drivers/clk/at91/at91sam9260.c b/drivers/clk/at91/at91sam9260.c
+index 71002ada33dd..2b0ffcee9e40 100644
+--- a/drivers/clk/at91/at91sam9260.c
++++ b/drivers/clk/at91/at91sam9260.c
+@@ -436,7 +436,7 @@ static void __init at91sam926x_pmc_setup(struct device_node *np,
+ 
+ 	at91sam9260_pmc->chws[PMC_MCK] = hw;
+ 
+-	usbck_hw = at91rm9200_clk_register_usb(regmap, "usbck", NULL,
++	usbck_hw = at91rm9200_clk_register_usb(regmap, "usbck",
+ 					       at91sam9260_pmc->chws[PMC_PLLBCK], usb_div);
+ 	if (IS_ERR(usbck_hw))
+ 		goto err_free;
+diff --git a/drivers/clk/at91/at91sam9g45.c b/drivers/clk/at91/at91sam9g45.c
+index bf5951097fca..1e5262b678f5 100644
+--- a/drivers/clk/at91/at91sam9g45.c
++++ b/drivers/clk/at91/at91sam9g45.c
+@@ -182,7 +182,7 @@ static void __init at91sam9g45_pmc_setup(struct device_node *np)
+ 
+ 	parent_hws[0] = at91sam9g45_pmc->chws[PMC_PLLACK];
+ 	parent_hws[1] = at91sam9g45_pmc->chws[PMC_UTMI];
+-	usbck_hw = at91sam9x5_clk_register_usb(regmap, "usbck", NULL, parent_hws, 2);
++	usbck_hw = at91sam9x5_clk_register_usb(regmap, "usbck", parent_hws, 2);
  	if (IS_ERR(usbck_hw))
  		goto err_free;
  
--	smdck_hw = at91sam9x5_clk_register_smd(regmap, "smdclk", NULL, parent_hws, 2);
-+	smdck_hw = at91sam9x5_clk_register_smd(regmap, "smdclk", parent_hws, 2);
- 	if (IS_ERR(smdck_hw))
+diff --git a/drivers/clk/at91/at91sam9n12.c b/drivers/clk/at91/at91sam9n12.c
+index fa7daab2793b..9b4e28b9f21b 100644
+--- a/drivers/clk/at91/at91sam9n12.c
++++ b/drivers/clk/at91/at91sam9n12.c
+@@ -207,7 +207,7 @@ static void __init at91sam9n12_pmc_setup(struct device_node *np)
+ 
+ 	at91sam9n12_pmc->chws[PMC_MCK] = hw;
+ 
+-	usbck_hw = at91sam9n12_clk_register_usb(regmap, "usbck", NULL,
++	usbck_hw = at91sam9n12_clk_register_usb(regmap, "usbck",
+ 						at91sam9n12_pmc->chws[PMC_PLLBCK]);
+ 	if (IS_ERR(usbck_hw))
+ 		goto err_free;
+diff --git a/drivers/clk/at91/at91sam9x5.c b/drivers/clk/at91/at91sam9x5.c
+index 994010f1cf03..1968dd69fbf7 100644
+--- a/drivers/clk/at91/at91sam9x5.c
++++ b/drivers/clk/at91/at91sam9x5.c
+@@ -228,7 +228,7 @@ static void __init at91sam9x5_pmc_setup(struct device_node *np,
+ 
+ 	parent_hws[0] = at91sam9x5_pmc->chws[PMC_PLLACK];
+ 	parent_hws[1] = at91sam9x5_pmc->chws[PMC_UTMI];
+-	usbck_hw = at91sam9x5_clk_register_usb(regmap, "usbck", NULL, parent_hws, 2);
++	usbck_hw = at91sam9x5_clk_register_usb(regmap, "usbck", parent_hws, 2);
+ 	if (IS_ERR(usbck_hw))
  		goto err_free;
  
-diff --git a/drivers/clk/at91/clk-smd.c b/drivers/clk/at91/clk-smd.c
-index 2c8432cc2fe6..b182c11386ea 100644
---- a/drivers/clk/at91/clk-smd.c
-+++ b/drivers/clk/at91/clk-smd.c
-@@ -111,7 +111,7 @@ static const struct clk_ops at91sam9x5_smd_ops = {
+diff --git a/drivers/clk/at91/clk-usb.c b/drivers/clk/at91/clk-usb.c
+index 21f50914c63e..37ea588cb534 100644
+--- a/drivers/clk/at91/clk-usb.c
++++ b/drivers/clk/at91/clk-usb.c
+@@ -221,7 +221,7 @@ static const struct clk_ops at91sam9n12_usb_ops = {
  
- struct clk_hw * __init
- at91sam9x5_clk_register_smd(struct regmap *regmap, const char *name,
--			    const char **parent_names, struct clk_hw **parent_hws,
-+			    struct clk_hw **parent_hws,
- 			    u8 num_parents)
+ static struct clk_hw * __init
+ _at91sam9x5_clk_register_usb(struct regmap *regmap, const char *name,
+-			     const char **parent_names, struct clk_hw **parent_hws,
++			     struct clk_hw **parent_hws,
+ 			     u8 num_parents, u32 usbs_mask)
  {
- 	struct at91sam9x5_clk_smd *smd;
-@@ -125,10 +125,7 @@ at91sam9x5_clk_register_smd(struct regmap *regmap, const char *name,
+ 	struct at91sam9x5_clk_usb *usb;
+@@ -235,10 +235,7 @@ _at91sam9x5_clk_register_usb(struct regmap *regmap, const char *name,
  
  	init.name = name;
- 	init.ops = &at91sam9x5_smd_ops;
+ 	init.ops = &at91sam9x5_usb_ops;
 -	if (parent_hws)
 -		init.parent_hws = (const struct clk_hw **)parent_hws;
 -	else
 -		init.parent_names = parent_names;
 +	init.parent_hws = (const struct clk_hw **)parent_hws;
  	init.num_parents = num_parents;
- 	init.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE;
+ 	init.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE |
+ 		     CLK_SET_RATE_PARENT;
+@@ -260,26 +257,25 @@ _at91sam9x5_clk_register_usb(struct regmap *regmap, const char *name,
+ 
+ struct clk_hw * __init
+ at91sam9x5_clk_register_usb(struct regmap *regmap, const char *name,
+-			    const char **parent_names, struct clk_hw **parent_hws,
++			    struct clk_hw **parent_hws,
+ 			    u8 num_parents)
+ {
+-	return _at91sam9x5_clk_register_usb(regmap, name, parent_names,
+-					    parent_hws, num_parents, SAM9X5_USBS_MASK);
++	return _at91sam9x5_clk_register_usb(regmap, name, parent_hws,
++					    num_parents, SAM9X5_USBS_MASK);
+ }
+ 
+ struct clk_hw * __init
+ sam9x60_clk_register_usb(struct regmap *regmap, const char *name,
+-			 const char **parent_names, struct clk_hw **parent_hws,
++			 struct clk_hw **parent_hws,
+ 			 u8 num_parents)
+ {
+-	return _at91sam9x5_clk_register_usb(regmap, name, parent_names,
+-					    parent_hws, num_parents,
+-					    SAM9X60_USBS_MASK);
++	return _at91sam9x5_clk_register_usb(regmap, name, parent_hws,
++					    num_parents, SAM9X60_USBS_MASK);
+ }
+ 
+ struct clk_hw * __init
+ at91sam9n12_clk_register_usb(struct regmap *regmap, const char *name,
+-			     const char *parent_name, struct clk_hw *parent_hw)
++			     struct clk_hw *parent_hw)
+ {
+ 	struct at91sam9x5_clk_usb *usb;
+ 	struct clk_hw *hw;
+@@ -292,10 +288,7 @@ at91sam9n12_clk_register_usb(struct regmap *regmap, const char *name,
+ 
+ 	init.name = name;
+ 	init.ops = &at91sam9n12_usb_ops;
+-	if (parent_hw)
+-		init.parent_hws = (const struct clk_hw **)&parent_hw;
+-	else
+-		init.parent_names = &parent_name;
++	init.parent_hws = (const struct clk_hw **)&parent_hw;
+ 	init.num_parents = 1;
+ 	init.flags = CLK_SET_RATE_GATE | CLK_SET_RATE_PARENT;
+ 
+@@ -399,8 +392,7 @@ static const struct clk_ops at91rm9200_usb_ops = {
+ 
+ struct clk_hw * __init
+ at91rm9200_clk_register_usb(struct regmap *regmap, const char *name,
+-			    const char *parent_name, struct clk_hw *parent_hw,
+-			    const u32 *divisors)
++			    struct clk_hw *parent_hw, const u32 *divisors)
+ {
+ 	struct at91rm9200_clk_usb *usb;
+ 	struct clk_hw *hw;
+@@ -413,10 +405,7 @@ at91rm9200_clk_register_usb(struct regmap *regmap, const char *name,
+ 
+ 	init.name = name;
+ 	init.ops = &at91rm9200_usb_ops;
+-	if (parent_hw)
+-		init.parent_hws = (const struct clk_hw **)&parent_hw;
+-	else
+-		init.parent_names = &parent_name;
++	init.parent_hws = (const struct clk_hw **)&parent_hw;
+ 	init.num_parents = 1;
+ 	init.flags = CLK_SET_RATE_PARENT;
  
 diff --git a/drivers/clk/at91/dt-compat.c b/drivers/clk/at91/dt-compat.c
-index 90d92a410097..294e3b0e8a9d 100644
+index dc8eb6036643..285ede5d6702 100644
 --- a/drivers/clk/at91/dt-compat.c
 +++ b/drivers/clk/at91/dt-compat.c
-@@ -964,7 +964,7 @@ static void __init of_at91sam9x5_clk_smd_setup(struct device_node *np)
+@@ -1065,7 +1065,7 @@ static void __init of_at91sam9x5_clk_usb_setup(struct device_node *np)
  	if (IS_ERR(regmap))
  		return;
  
--	hw = at91sam9x5_clk_register_smd(regmap, name, NULL, parent_hws,
-+	hw = at91sam9x5_clk_register_smd(regmap, name, parent_hws,
+-	hw = at91sam9x5_clk_register_usb(regmap, name, NULL, parent_hws,
++	hw = at91sam9x5_clk_register_usb(regmap, name, parent_hws,
  					 num_parents);
  	if (IS_ERR(hw))
  		return;
+@@ -1099,7 +1099,7 @@ static void __init of_at91sam9n12_clk_usb_setup(struct device_node *np)
+ 	if (IS_ERR(regmap))
+ 		return;
+ 
+-	hw = at91sam9n12_clk_register_usb(regmap, name, NULL, parent_hw);
++	hw = at91sam9n12_clk_register_usb(regmap, name, parent_hw);
+ 	if (IS_ERR(hw))
+ 		return;
+ 
+@@ -1136,7 +1136,7 @@ static void __init of_at91rm9200_clk_usb_setup(struct device_node *np)
+ 	of_node_put(parent_np);
+ 	if (IS_ERR(regmap))
+ 		return;
+-	hw = at91rm9200_clk_register_usb(regmap, name, NULL, parent_hw, divisors);
++	hw = at91rm9200_clk_register_usb(regmap, name, parent_hw, divisors);
+ 	if (IS_ERR(hw))
+ 		return;
+ 
 diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
-index a0b49dd3749f..131ef55d3e47 100644
+index bdb2dfb8fa86..5e65f5b59536 100644
 --- a/drivers/clk/at91/pmc.h
 +++ b/drivers/clk/at91/pmc.h
-@@ -237,7 +237,7 @@ at91_clk_register_sam9260_slow(struct regmap *regmap,
+@@ -247,18 +247,18 @@ at91_clk_register_system(struct regmap *regmap, const char *name,
  
  struct clk_hw * __init
- at91sam9x5_clk_register_smd(struct regmap *regmap, const char *name,
+ at91sam9x5_clk_register_usb(struct regmap *regmap, const char *name,
 -			    const char **parent_names, struct clk_hw **parent_hws,
 +			    struct clk_hw **parent_hws,
  			    u8 num_parents);
+ struct clk_hw * __init
+ at91sam9n12_clk_register_usb(struct regmap *regmap, const char *name,
+-			     const char *parent_name, struct clk_hw *parent_hw);
++			     struct clk_hw *parent_hw);
+ struct clk_hw * __init
+ sam9x60_clk_register_usb(struct regmap *regmap, const char *name,
+-			 const char **parent_names, struct clk_hw **parent_hws,
++			 struct clk_hw **parent_hws,
+ 			 u8 num_parents);
+ struct clk_hw * __init
+ at91rm9200_clk_register_usb(struct regmap *regmap, const char *name,
+-			    const char *parent_name, struct clk_hw *parent_hw,
++			    struct clk_hw *parent_hw,
+ 			    const u32 *divisors);
  
  struct clk_hw * __init
-diff --git a/drivers/clk/at91/sama5d3.c b/drivers/clk/at91/sama5d3.c
-index 021e012fe202..239806dcd03d 100644
---- a/drivers/clk/at91/sama5d3.c
-+++ b/drivers/clk/at91/sama5d3.c
-@@ -211,7 +211,7 @@ static void __init sama5d3_pmc_setup(struct device_node *np)
+diff --git a/drivers/clk/at91/sam9x60.c b/drivers/clk/at91/sam9x60.c
+index f344cbbc9c25..b3dfdcbc950f 100644
+--- a/drivers/clk/at91/sam9x60.c
++++ b/drivers/clk/at91/sam9x60.c
+@@ -302,7 +302,7 @@ static void __init sam9x60_pmc_setup(struct device_node *np)
+ 	parent_hws[0] = sam9x60_pmc->chws[PMC_PLLACK];
+ 	parent_hws[1] = sam9x60_pmc->chws[PMC_UTMI];
+ 	parent_hws[2] = main_osc_hw;
+-	usbck_hw = sam9x60_clk_register_usb(regmap, "usbck", NULL, parent_hws, 3);
++	usbck_hw = sam9x60_clk_register_usb(regmap, "usbck", parent_hws, 3);
  	if (IS_ERR(usbck_hw))
  		goto err_free;
  
--	smdck_hw = at91sam9x5_clk_register_smd(regmap, "smdclk", NULL, parent_hws, 2);
-+	smdck_hw = at91sam9x5_clk_register_smd(regmap, "smdclk", parent_hws, 2);
- 	if (IS_ERR(smdck_hw))
+diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
+index 0fce17af769e..fa14c6f7d37a 100644
+--- a/drivers/clk/at91/sama5d2.c
++++ b/drivers/clk/at91/sama5d2.c
+@@ -288,7 +288,7 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
+ 
+ 	parent_hws[0] = sama5d2_pmc->chws[PMC_PLLACK];
+ 	parent_hws[1] = sama5d2_pmc->chws[PMC_UTMI];
+-	usbck_hw = at91sam9x5_clk_register_usb(regmap, "usbck", NULL, parent_hws, 2);
++	usbck_hw = at91sam9x5_clk_register_usb(regmap, "usbck", parent_hws, 2);
+ 	if (IS_ERR(usbck_hw))
+ 		goto err_free;
+ 
+diff --git a/drivers/clk/at91/sama5d3.c b/drivers/clk/at91/sama5d3.c
+index c00380ed0000..0713a6b21c8a 100644
+--- a/drivers/clk/at91/sama5d3.c
++++ b/drivers/clk/at91/sama5d3.c
+@@ -207,7 +207,7 @@ static void __init sama5d3_pmc_setup(struct device_node *np)
+ 
+ 	parent_hws[0] = sama5d3_pmc->chws[PMC_PLLACK];
+ 	parent_hws[1] = sama5d3_pmc->chws[PMC_UTMI];
+-	usbck_hw = at91sam9x5_clk_register_usb(regmap, "usbck", NULL, parent_hws, 2);
++	usbck_hw = at91sam9x5_clk_register_usb(regmap, "usbck", parent_hws, 2);
+ 	if (IS_ERR(usbck_hw))
  		goto err_free;
  
 diff --git a/drivers/clk/at91/sama5d4.c b/drivers/clk/at91/sama5d4.c
-index e196ec80570f..f193460495c0 100644
+index 0d2a834a5903..d0bd025876ac 100644
 --- a/drivers/clk/at91/sama5d4.c
 +++ b/drivers/clk/at91/sama5d4.c
-@@ -234,7 +234,7 @@ static void __init sama5d4_pmc_setup(struct device_node *np)
+@@ -228,7 +228,7 @@ static void __init sama5d4_pmc_setup(struct device_node *np)
  
  	parent_hws[0] = sama5d4_pmc->chws[PMC_PLLACK];
  	parent_hws[1] = sama5d4_pmc->chws[PMC_UTMI];
--	smdck_hw = at91sam9x5_clk_register_smd(regmap, "smdclk", NULL, parent_hws, 2);
-+	smdck_hw = at91sam9x5_clk_register_smd(regmap, "smdclk", parent_hws, 2);
- 	if (IS_ERR(smdck_hw))
+-	usbck_hw = at91sam9x5_clk_register_usb(regmap, "usbck", NULL, parent_hws, 2);
++	usbck_hw = at91sam9x5_clk_register_usb(regmap, "usbck", parent_hws, 2);
+ 	if (IS_ERR(usbck_hw))
  		goto err_free;
  
 -- 
