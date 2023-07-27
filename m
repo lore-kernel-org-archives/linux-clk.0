@@ -2,142 +2,221 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A6B9C001DC
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Jul 2023 05:39:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFD11C04FDF
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Jul 2023 05:39:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232347AbjG0Fj0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Jul 2023 01:39:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53566 "EHLO
+        id S232371AbjG0Fj2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Jul 2023 01:39:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231907AbjG0Fiu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Jul 2023 01:38:50 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F4AE30C5;
-        Wed, 26 Jul 2023 22:37:46 -0700 (PDT)
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36R5FnFU027445;
-        Thu, 27 Jul 2023 05:36:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=date : from : to :
- cc : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=qcppdkim1; bh=LnO6JVSt8v4KBBrvn0hKrjbS5yc5Y5fnC+BDhyBGdv4=;
- b=Ers8qz/M4XD2XWeBZ4t4RRfcPqQrtuy0tPDwm1aVRlEkdSQfCeWB9D14M5s2GKWcvtvB
- ejYg2LiZ1FtXS3zXYbzK8F2t0EA0c9RUECkg5nOWAfGsTlVI1BPB0hzBUfSuVzVlFJ6p
- 4A1Y+k8pHhwrKu3MPTlfK/cak0TFBZvAyQPPscXV/jGTsozlpYRo0Az1tROMNgBpVv+h
- it1F1mv4PnZWzVhR/pWnf5mwt9Qg0hmmPGhhQR3fqvVRD8xumW+owCSkjcCW42slgu4w
- UXNr091WFXd8iSa47K29vzzc7r0U3ABg9MZH/jnM66J6ujxwJI74k/rJsBF5NAc8L203 kg== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3s3b0g0q3f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 27 Jul 2023 05:36:30 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36R5aT1t009107
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 27 Jul 2023 05:36:29 GMT
-Received: from hu-pkondeti-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.30; Wed, 26 Jul 2023 22:36:19 -0700
-Date:   Thu, 27 Jul 2023 11:06:16 +0530
-From:   Pavan Kondeti <quic_pkondeti@quicinc.com>
-To:     Rohit Agarwal <quic_rohiagar@quicinc.com>
-CC:     <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <andersson@kernel.org>, <agross@kernel.org>,
-        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <conor+dt@kernel.org>, <robdclark@gmail.com>,
-        <quic_abhinavk@quicinc.com>, <dmitry.baryshkov@linaro.org>,
-        <sean@poorly.run>, <marijn.suijten@somainline.org>,
-        <airlied@gmail.com>, <daniel@ffwll.ch>,
-        <stanimir.k.varbanov@gmail.com>, <quic_vgarodia@quicinc.com>,
-        <mchehab@kernel.org>, <ulf.hansson@linaro.org>,
-        <mathieu.poirier@linaro.org>, <jonathan@marek.ca>,
-        <vladimir.zapolskiy@linaro.org>, <quic_tdas@quicinc.com>,
-        <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
-        <bhupesh.sharma@linaro.org>, <mani@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-media@vger.kernel.org>,
-        <linux-mmc@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
-Subject: Re: [PATCH] dt-bindings: qcom: Update RPMHPD entries for some SoCs
-Message-ID: <edac596d-2b3d-4632-9468-4af863aff6f4@quicinc.com>
-References: <1690433470-24102-1-git-send-email-quic_rohiagar@quicinc.com>
+        with ESMTP id S231894AbjG0Fiv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Jul 2023 01:38:51 -0400
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A57C3C02
+        for <linux-clk@vger.kernel.org>; Wed, 26 Jul 2023 22:37:47 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id d9443c01a7336-1bb81809ca8so4398945ad.3
+        for <linux-clk@vger.kernel.org>; Wed, 26 Jul 2023 22:37:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1690436203; x=1691041003;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wrKKqV0HQO2EhBMgbawQJpGyCpTF7In/U2sRYiMWbK8=;
+        b=D5aKsLXGy2j6jm8tkzlTTceO4RSJRpKu2I3aRV4a0QzXpd5bjWkf+kAqE3F3BaNRfX
+         DxaJ8Pde3fczdc/xBBGN/rAm0qcu8nBsr5/DMRo2EY6KhqcJL6B8It06mbh1wmECKQi+
+         lXciwovoIn1XmRc1i3qlC0eKwscXTiOGxSvgnOBGDjs5uCo8FJuiENt0wdOflwftWEM6
+         Z4bsbLB42Al2coRZvmXCMI4Of6jh6UC9ad+64wVD6PdAzwwvKuhWmE64zJU8vA6FZKfe
+         eYFe0JJzcc+6TnQCAASwcDr20VpiO+it/Nl6pKOtUzOyZiIhmtbWNVsEaL65+KXKLIgN
+         69Lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690436203; x=1691041003;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wrKKqV0HQO2EhBMgbawQJpGyCpTF7In/U2sRYiMWbK8=;
+        b=XQqDMKu2c9UW/HImciJdc7JiCnYDCSw+wnzojSwskFS0+lsG+WZGgR13aKaBpdRz82
+         OffngLIdNob1ELJ01a5QMY8rbAhzfL39indglJQlLgu1WWrruORiXEIzNUVCXL1zTV1R
+         i8CjbmsbqgP1c7MPO/J7nXgGpIfXmCNVFe64/Yn9cg2TtTKOnyqI79ngV5zNq+yGdVc7
+         HfUcom6IInihE/xL/H0OeFlkIDHeGin1NwudwBUBwkYMCuCSmk5EPlaUBp+dPrY/AKmP
+         XPRgq4ZaE2NLb8cc+dF2n3JmqahoJp5WeJXSVJRtt4cGVY/4gGb5c5adu4nf23NSHGNP
+         IwdQ==
+X-Gm-Message-State: ABy/qLb1ojLx7FH2lXAqv7TR0CDT0hE9FmYgNdNdKNrhzSvNxS/3GMj+
+        YsKWLReK7NcA19dPUQQfJp5habCUdPyk1IyMTaiiGUXh
+X-Google-Smtp-Source: APBJJlE+dM7AhEcN3LsCBRnRDe2BI9iVnvhfO+ozfURw/g7mC/rtS5q2NMPSSbrQGFnSw/NceZ2jnQ==
+X-Received: by 2002:a17:902:b413:b0:1b8:2c6f:3248 with SMTP id x19-20020a170902b41300b001b82c6f3248mr3913704plr.39.1690436202969;
+        Wed, 26 Jul 2023 22:36:42 -0700 (PDT)
+Received: from localhost.localdomain ([82.78.167.79])
+        by smtp.gmail.com with ESMTPSA id 21-20020a170902c11500b001bb889530adsm319059pli.217.2023.07.26.22.36.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jul 2023 22:36:42 -0700 (PDT)
+From:   Claudiu Beznea <claudiu.beznea@tuxon.dev>
+To:     mturquette@baylibre.com, sboyd@kernel.org,
+        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+        mripard@kernel.org
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, varshini.rajendran@microchip.com,
+        Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Subject: [PATCH 35/42] clk: at91: clk-plldiv: remove parent_names support
+Date:   Thu, 27 Jul 2023 08:31:49 +0300
+Message-Id: <20230727053156.13587-36-claudiu.beznea@tuxon.dev>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230727053156.13587-1-claudiu.beznea@tuxon.dev>
+References: <20230727053156.13587-1-claudiu.beznea@tuxon.dev>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <1690433470-24102-1-git-send-email-quic_rohiagar@quicinc.com>
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 57CqSPJ2zRgDhBnuohIC8xe-8JXgN930
-X-Proofpoint-ORIG-GUID: 57CqSPJ2zRgDhBnuohIC8xe-8JXgN930
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-07-26_08,2023-07-26_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 impostorscore=0 malwarescore=0 bulkscore=0 mlxlogscore=722
- mlxscore=0 adultscore=0 clxscore=1011 lowpriorityscore=0 spamscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2306200000 definitions=main-2307270049
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jul 27, 2023 at 10:21:10AM +0530, Rohit Agarwal wrote:
-> Update the RPMHPD references with new bindings defined in rpmhpd.h
-> for Qualcomm SoCs SM8[2345]50.
-> 
-> Signed-off-by: Rohit Agarwal <quic_rohiagar@quicinc.com>
-> ---
->  Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml    | 3 ++-
->  Documentation/devicetree/bindings/clock/qcom,sm8350-videocc.yaml   | 3 ++-
->  Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml     | 3 ++-
->  Documentation/devicetree/bindings/clock/qcom,sm8450-dispcc.yaml    | 3 ++-
->  Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml   | 3 ++-
->  Documentation/devicetree/bindings/clock/qcom,sm8550-dispcc.yaml    | 3 ++-
->  Documentation/devicetree/bindings/clock/qcom,videocc.yaml          | 3 ++-
->  Documentation/devicetree/bindings/display/msm/qcom,sm8250-dpu.yaml | 3 ++-
->  .../devicetree/bindings/display/msm/qcom,sm8250-mdss.yaml          | 7 ++++---
->  Documentation/devicetree/bindings/display/msm/qcom,sm8350-dpu.yaml | 3 ++-
->  .../devicetree/bindings/display/msm/qcom,sm8350-mdss.yaml          | 5 +++--
->  Documentation/devicetree/bindings/display/msm/qcom,sm8450-dpu.yaml | 3 ++-
->  .../devicetree/bindings/display/msm/qcom,sm8450-mdss.yaml          | 7 ++++---
->  Documentation/devicetree/bindings/display/msm/qcom,sm8550-dpu.yaml | 3 ++-
->  .../devicetree/bindings/display/msm/qcom,sm8550-mdss.yaml          | 7 ++++---
->  Documentation/devicetree/bindings/media/qcom,sm8250-venus.yaml     | 3 ++-
->  Documentation/devicetree/bindings/mmc/sdhci-msm.yaml               | 3 ++-
->  Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml  | 5 +++--
->  18 files changed, 44 insertions(+), 26 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
-> index d6774db..d6b81c0 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
-> @@ -83,6 +83,7 @@ examples:
->    - |
->      #include <dt-bindings/clock/qcom,rpmh.h>
->      #include <dt-bindings/power/qcom-rpmpd.h>
-> +    #include <dt-bindings/power/qcom,rpmhpd.h>
->      clock-controller@af00000 {
->        compatible = "qcom,sm8250-dispcc";
->        reg = <0x0af00000 0x10000>;
-> @@ -103,7 +104,7 @@ examples:
->        #clock-cells = <1>;
->        #reset-cells = <1>;
->        #power-domain-cells = <1>;
-> -      power-domains = <&rpmhpd SM8250_MMCX>;
-> +      power-domains = <&rpmhpd RPMHPD_MMCX>;
->        required-opps = <&rpmhpd_opp_low_svs>;
->      };
->  ...
+Remove parent_names support as parent_hw support is now available on all
+platforms using clk-plldiv driver.
 
-Does this file still need to include old header? The same is applicable
-to some of the other files in the patch also. 
+Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+---
+ drivers/clk/at91/at91sam9g45.c |  2 +-
+ drivers/clk/at91/at91sam9n12.c |  2 +-
+ drivers/clk/at91/at91sam9x5.c  |  2 +-
+ drivers/clk/at91/clk-plldiv.c  | 11 +++--------
+ drivers/clk/at91/dt-compat.c   |  2 +-
+ drivers/clk/at91/pmc.h         |  2 +-
+ drivers/clk/at91/sama5d2.c     |  2 +-
+ drivers/clk/at91/sama5d3.c     |  2 +-
+ drivers/clk/at91/sama5d4.c     |  2 +-
+ 9 files changed, 11 insertions(+), 16 deletions(-)
 
-We also discussed on the other thread [1] to move the regulator level 
-definitions to new header. should this change be done after that, so that 
-we don't end up touching the very same files again?
+diff --git a/drivers/clk/at91/at91sam9g45.c b/drivers/clk/at91/at91sam9g45.c
+index ca585440c54f..2bda11df7f0d 100644
+--- a/drivers/clk/at91/at91sam9g45.c
++++ b/drivers/clk/at91/at91sam9g45.c
+@@ -146,7 +146,7 @@ static void __init at91sam9g45_pmc_setup(struct device_node *np)
+ 	if (IS_ERR(hw))
+ 		goto err_free;
+ 
+-	hw = at91_clk_register_plldiv(regmap, "plladivck", NULL, hw);
++	hw = at91_clk_register_plldiv(regmap, "plladivck", hw);
+ 	if (IS_ERR(hw))
+ 		goto err_free;
+ 
+diff --git a/drivers/clk/at91/at91sam9n12.c b/drivers/clk/at91/at91sam9n12.c
+index 2109b8cdf4ad..0c22b82ef368 100644
+--- a/drivers/clk/at91/at91sam9n12.c
++++ b/drivers/clk/at91/at91sam9n12.c
+@@ -172,7 +172,7 @@ static void __init at91sam9n12_pmc_setup(struct device_node *np)
+ 	if (IS_ERR(hw))
+ 		goto err_free;
+ 
+-	hw = at91_clk_register_plldiv(regmap, "plladivck", NULL, hw);
++	hw = at91_clk_register_plldiv(regmap, "plladivck", hw);
+ 	if (IS_ERR(hw))
+ 		goto err_free;
+ 
+diff --git a/drivers/clk/at91/at91sam9x5.c b/drivers/clk/at91/at91sam9x5.c
+index 4cbb72a29f14..c2c5e9fe669c 100644
+--- a/drivers/clk/at91/at91sam9x5.c
++++ b/drivers/clk/at91/at91sam9x5.c
+@@ -194,7 +194,7 @@ static void __init at91sam9x5_pmc_setup(struct device_node *np,
+ 	if (IS_ERR(hw))
+ 		goto err_free;
+ 
+-	hw = at91_clk_register_plldiv(regmap, "plladivck", NULL, hw);
++	hw = at91_clk_register_plldiv(regmap, "plladivck", hw);
+ 	if (IS_ERR(hw))
+ 		goto err_free;
+ 
+diff --git a/drivers/clk/at91/clk-plldiv.c b/drivers/clk/at91/clk-plldiv.c
+index 1d5a0a6d299d..e4efb4ccab33 100644
+--- a/drivers/clk/at91/clk-plldiv.c
++++ b/drivers/clk/at91/clk-plldiv.c
+@@ -72,7 +72,7 @@ static const struct clk_ops plldiv_ops = {
+ 
+ struct clk_hw * __init
+ at91_clk_register_plldiv(struct regmap *regmap, const char *name,
+-			 const char *parent_name, struct clk_hw *parent_hw)
++			 struct clk_hw *parent_hw)
+ {
+ 	struct clk_plldiv *plldiv;
+ 	struct clk_hw *hw;
+@@ -85,13 +85,8 @@ at91_clk_register_plldiv(struct regmap *regmap, const char *name,
+ 
+ 	init.name = name;
+ 	init.ops = &plldiv_ops;
+-	if (parent_hw) {
+-		init.parent_hws = (const struct clk_hw **)&parent_hw;
+-		init.num_parents = 1;
+-	} else {
+-		init.parent_names = parent_name ? &parent_name : NULL;
+-		init.num_parents = parent_name ? 1 : 0;
+-	}
++	init.parent_hws = parent_hw ? (const struct clk_hw **)&parent_hw : NULL;
++	init.num_parents = parent_hw ? 1 : 0;
+ 	init.flags = CLK_SET_RATE_GATE;
+ 
+ 	plldiv->hw.init = &init;
+diff --git a/drivers/clk/at91/dt-compat.c b/drivers/clk/at91/dt-compat.c
+index 13e251e59853..85193e4656b9 100644
+--- a/drivers/clk/at91/dt-compat.c
++++ b/drivers/clk/at91/dt-compat.c
+@@ -805,7 +805,7 @@ of_at91sam9x5_clk_plldiv_setup(struct device_node *np)
+ 	if (IS_ERR(regmap))
+ 		return;
+ 
+-	hw = at91_clk_register_plldiv(regmap, name, NULL, parent_hw);
++	hw = at91_clk_register_plldiv(regmap, name, parent_hw);
+ 	if (IS_ERR(hw))
+ 		return;
+ 
+diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
+index 5fd1e76b3ec7..eed88a480b11 100644
+--- a/drivers/clk/at91/pmc.h
++++ b/drivers/clk/at91/pmc.h
+@@ -207,7 +207,7 @@ at91_clk_register_pll(struct regmap *regmap, const char *name,
+ 		      const struct clk_pll_characteristics *characteristics);
+ struct clk_hw * __init
+ at91_clk_register_plldiv(struct regmap *regmap, const char *name,
+-			 const char *parent_name, struct clk_hw *parent_hw);
++			 struct clk_hw *parent_hw);
+ 
+ struct clk_hw * __init
+ sam9x60_clk_register_div_pll(struct regmap *regmap, spinlock_t *lock,
+diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
+index b99a8bb9bf9a..75d5b1a3733b 100644
+--- a/drivers/clk/at91/sama5d2.c
++++ b/drivers/clk/at91/sama5d2.c
+@@ -226,7 +226,7 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
+ 	if (IS_ERR(hw))
+ 		goto err_free;
+ 
+-	hw = at91_clk_register_plldiv(regmap, "plladivck", NULL, hw);
++	hw = at91_clk_register_plldiv(regmap, "plladivck", hw);
+ 	if (IS_ERR(hw))
+ 		goto err_free;
+ 
+diff --git a/drivers/clk/at91/sama5d3.c b/drivers/clk/at91/sama5d3.c
+index 35a9dfd0e66d..a50e82460e70 100644
+--- a/drivers/clk/at91/sama5d3.c
++++ b/drivers/clk/at91/sama5d3.c
+@@ -173,7 +173,7 @@ static void __init sama5d3_pmc_setup(struct device_node *np)
+ 	if (IS_ERR(hw))
+ 		goto err_free;
+ 
+-	hw = at91_clk_register_plldiv(regmap, "plladivck", NULL, hw);
++	hw = at91_clk_register_plldiv(regmap, "plladivck", hw);
+ 	if (IS_ERR(hw))
+ 		goto err_free;
+ 
+diff --git a/drivers/clk/at91/sama5d4.c b/drivers/clk/at91/sama5d4.c
+index ae76c59c7d42..b6b41ceae13c 100644
+--- a/drivers/clk/at91/sama5d4.c
++++ b/drivers/clk/at91/sama5d4.c
+@@ -188,7 +188,7 @@ static void __init sama5d4_pmc_setup(struct device_node *np)
+ 	if (IS_ERR(hw))
+ 		goto err_free;
+ 
+-	hw = at91_clk_register_plldiv(regmap, "plladivck", NULL, hw);
++	hw = at91_clk_register_plldiv(regmap, "plladivck", hw);
+ 	if (IS_ERR(hw))
+ 		goto err_free;
+ 
+-- 
+2.39.2
 
-[1]
-https://lore.kernel.org/all/a4zztrn6jhblozdswba7psqtvjt5l765mfr3yl4llsm5gsyqef@7x6q7yabydvm/
