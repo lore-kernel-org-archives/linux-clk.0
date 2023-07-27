@@ -2,341 +2,229 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF127C00528
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Jul 2023 10:12:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FB9EC001DC
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Jul 2023 10:29:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233472AbjG0KMA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Jul 2023 06:12:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47966 "EHLO
+        id S233553AbjG0K3K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Jul 2023 06:29:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233313AbjG0KL5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Jul 2023 06:11:57 -0400
-Received: from mail-m12739.qiye.163.com (mail-m12739.qiye.163.com [115.236.127.39])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D146010FA;
-        Thu, 27 Jul 2023 03:11:48 -0700 (PDT)
-Received: from localhost.localdomain (unknown [58.22.7.114])
-        by mail-m12739.qiye.163.com (Hmail) with ESMTPA id B08E14A01DE;
-        Thu, 27 Jul 2023 18:11:42 +0800 (CST)
-From:   Elaine Zhang <zhangqing@rock-chips.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org,
-        kever.yang@rock-chips.com, zhangqing@rock-chips.com,
-        heiko@sntech.de
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        huangtao@rock-chips.com
-Subject: [PATCH v1 1/2] clk: rockchip: add support for gate link
-Date:   Thu, 27 Jul 2023 18:11:38 +0800
-Message-Id: <20230727101139.23048-2-zhangqing@rock-chips.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230727101139.23048-1-zhangqing@rock-chips.com>
-References: <20230727101139.23048-1-zhangqing@rock-chips.com>
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-        tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ05DGFZOQh1DHkxNHUhPQ05VEwETFh
-        oSFyQUDg9ZV1kYEgtZQVlOQ1VJSVVMVUpKT1lXWRYaDxIVHRRZQVlPS0hVSk1PSU5JVUpLS1VKQl
-        kG
-X-HM-Tid: 0a8996d536abb212kuuub08e14a01de
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Myo6EBw5Ez0CEjpLDgJIGUlJ
-        TQgaCj9VSlVKTUJLT05JTEtITklLVTMWGhIXVQETGhUcChIVHDsJFBgQVhgTEgsIVRgUFkVZV1kS
-        C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUJOSUk3Bg++
+        with ESMTP id S231978AbjG0K2Z (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Jul 2023 06:28:25 -0400
+Received: from out-87.mta0.migadu.com (out-87.mta0.migadu.com [91.218.175.87])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0703B1FF3
+        for <linux-clk@vger.kernel.org>; Thu, 27 Jul 2023 03:28:20 -0700 (PDT)
+Message-ID: <fd03a5f4-151a-bc7d-429c-c045745da523@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1690453697;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=cdNMArdaFWVI5SKSPm1vQyJoyF/bmKiSh+QjqHSwJY0=;
+        b=NriIWc+uIleh+ze4o2J+UOpT04I4WThX6gf3dXAI8lj9M09YHk1OVVkXck++hhTRBTGk8E
+        4eD11Z3y+oNLibSGtUV+HnOmq1OsvnARyeqfL2Wx9+gW02TZ+HZXRAkKi1tB/Rw4BihKB4
+        GLLXJpQFGs6Ro14ZLlvr9uCoX7+GCBs=
+Date:   Thu, 27 Jul 2023 11:28:12 +0100
+MIME-Version: 1.0
+Subject: Re: [PATCH 09/11] ice: implement dpll interface to control cgu
+Content-Language: en-US
+To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+Cc:     Jonathan Lemon <jonathan.lemon@gmail.com>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "Michalik, Michal" <michal.michalik@intel.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
+        mschmidt <mschmidt@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Bart Van Assche <bvanassche@acm.org>
+References: <ZLo0ujuLMF2NrMog@nanopsycho>
+ <DM6PR11MB46576153E0E28BA4C283A30A9B3FA@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <ZLpzwMQrqp7mIMFF@nanopsycho>
+ <DM6PR11MB46579CC7E6D314BFDE47E4EE9B3FA@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <ZLqoMhxHq3m4dp1u@nanopsycho>
+ <DM6PR11MB46571D843FB903AC050E2F129B3FA@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <ZLt5GPRls7UL4zGx@nanopsycho>
+ <DM6PR11MB465713389A234771BD29DF149B02A@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <ZL+B48Om/cf61/Vq@nanopsycho>
+ <DM6PR11MB465734F6AD226A39DE8574419B03A@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <ZMC/TRSYqMQ57Rf7@nanopsycho>
+ <DM6PR11MB46576A241EA1519BC559B5C09B00A@DM6PR11MB4657.namprd11.prod.outlook.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <DM6PR11MB46576A241EA1519BC559B5C09B00A@DM6PR11MB4657.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Recent Rockchip SoCs have a new hardware block called Native Interface
-Unit (NIU), which gates clocks to devices behind them. These effectively
-need two parent clocks.
-Use GATE_LINK to handle this.
+On 26/07/2023 22:11, Kubalewski, Arkadiusz wrote:
+>> From: Jiri Pirko <jiri@resnulli.us>
+>> Sent: Wednesday, July 26, 2023 8:38 AM
+>>
+> 
+> [...]
+>   
+>>>>>>>
+>>>>>>> Just to make it clear:
+>>>>>>>
+>>>>>>> AUTOMATIC:
+>>>>>>> - inputs monitored, validated, phase measurements available
+>>>>>>> - possible states: unlocked, locked, locked-ho-acq, holdover
+>>>>>>>
+>>>>>>> FREERUN:
+>>>>>>> - inputs not monitored, not validated, no phase measurements available
+>>>>>>> - possible states: unlocked
+>>>>>>
+>>>>>> This is your implementation of DPLL. Others may have it done
+>>>>>> differently. But the fact the input is monitored or not, does not make
+>>>>>> any difference from user perspective.
+>>>>>>
+>>>>>> When he has automatic mode and does:
+>>>>>> 1) disconnect all pins
+>>>>>> 2) reset state    (however you implement it in the driver is totaly up
+>>>>>> 		   to the device, you may go to your freerun dpll mode
+>>>>>> 		   internally and to automatic back, up to you)
+>>>>>> -> state will go to unlocked
+>>>>>>
+>>>>>> The behaviour is exactly the same, without any special mode.
+>>>>>
+>>>>> In this case there is special reset button, which doesn't exist in
+>>>>> reality, actually your suggestion to go into FREERUN and back to AUTOMATIC
+>>>>> to pretend the some kind of reset has happened, where in reality dpll went
+>>>>> to
+>>>>> FREERUN and AUTOMATIC.
+>>>>
+>>>> There are 3 pin states:
+>>>> disconnected
+>>>> connected
+>>>> selectable
+>>>>
+>>>> When the last source disconnects, go to your internal freerun.
+>>>> When some source gets selectable or connected, go to your internal
+>>>> automatic mode.
+>>>>
+>>>
+>>> This would make the driver to check if all the sources are disconnected
+>>> each time someone disconnects a source. Which in first place is not
+>>> efficient, but also dpll design already allows different driver instances
+>>> to
+>>> control separated sources, which in this case would force a driver to
+>>> implement
+>>> additional communication between the instances just to allow such hidden
+>>> FREERUN mode.
+>>> Which seems another argument not to do this in the way you are proposing:
+>>> inefficient and unnecessarily complicated.
+>>>
+>>> We know that you could also implement FREERUN mode by disconnecting all
+>>> the
+>>> sources, even if HW doesn't support it explicitly.
+>>>
+>>> >From user perspactive, the mode didn't change.
+>>>>
+>>>
+>>> The user didn't change the mode, the mode shall not change.
+>>> You wrote to do it silently, so user didn't change the mode but it would
+>> have
+>>> changed, and we would have pretended the different working mode of DPLL
+>> doesn't
+>>> exist.
+>>>
+>>> >From user perepective, this is exacly the behaviour he requested.
+>>>>
+>>>
+>>> IMHO this is wrong and comes from the definition of pin state DISCONNECTED,
+>>> which is not sharp, for our HW means that the input will not be considered
+>>> as valid input, but is not disconnecting anything, as input is still
+>>> monitored and measured.
+>>> Shall we have additional mode like PIN_STATE_NOT_SELECTABLE? As it is not
+>>> possible to actually disconnect a pin..
+>>>
+>>>>
+>>>>> For me it seems it seems like unnecessary complication of user's life.
+>>>>> The idea of FREERUN mode is to run dpll on its system clock, so all the
+>>>>> "external" dpll sources shall be disconnected when dpll is in FREERUN.
+>>>>
+>>>> Yes, that is when you set all pins to disconnect. no mode change needed.
+>>>>
+>>>
+>>> We don't disconnect anything, we used a pin state DISCONNECTED as this
+>>> seemed
+>>> most appropriate.
+>>>
+>>>>
+>>>>> Let's assume your HW doesn't have a FREERUN, can't you just create it by
+>>>>> disconnecting all the sources?
+>>>>
+>>>> Yep, that's what we do.
+>>>>
+>>>
+>>> No, you were saying that the mode doesn't exist and that your hardware
+>>> doesn't
+>>> support it. At the same time it can be achieved by manually disconnecting
+>>> all
+>>> the sources.
+>>>
+>>>>
+>>>>> BTW, what chip are you using on mlx5 for this?
+>>>>> I don't understand why the user would have to mangle state of all the pins
+>>>>> just
+>>>>> to stop dpll's work if he could just go into FREERUN and voila. Also what
+>>>>> if
+>>>>> user doesn't want change the configuration of the pins at all, and he just
+>>>>> want
+>>>>> to desynchronize it's dpll for i.e. testing reason.
+>>>>
+>>>> I tried to explain multiple times. Let the user have clean an abstracted
+>>>> api, with clear semantics. Simple as that. Your internal freerun mode is
+>>>> just something to abstract out, it is not needed to expose it.
+>>>>
+>>>
+>>> Our hardware can support in total 4 modes, and 2 are now supported in ice.
+>>> I don't get the idea for abstraction of hardware switches, modes or
+>>> capabilities, and having those somehow achievable through different
+>>> functionalities.
+>>>
+>>> I think we already discussed this long enough to make a decision..
+>>> Though I am not convinced by your arguments, and you are not convinced by
+>>> mine.
+>>>
+>>> Perhaps someone else could step in and cut the rope, so we could go further
+>>> with this?
+>>
+>> Or, even better, please drop this for the initial patchset and have this
+>> as a follow-up. Thanks!
+>>
+>>
+> 
+> On the responses from Jakub and Paolo, they supported the idea of having
+> such mode.
+> 
+> Although Jakub have asked if there could be better name then FREERUN, also
+> suggested DETACHED and STANDALONE.
+> For me DETACHED seems pretty good, STANDALONE a bit too far..
+> I am biased by the FREERUN from chip docs and don't have strong opinion
+> on any of those..
+> 
+> Any suggestions?
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
----
- drivers/clk/rockchip/Makefile        |   1 +
- drivers/clk/rockchip/clk-gate-link.c | 191 +++++++++++++++++++++++++++
- drivers/clk/rockchip/clk.c           |   7 +
- drivers/clk/rockchip/clk.h           |  22 +++
- 4 files changed, 221 insertions(+)
- create mode 100644 drivers/clk/rockchip/clk-gate-link.c
+It looks like we have a kind of split-brain situation, and my thoughts 
+are following:
+Even though right now we don't have any hardware supporting 
+freerun/standalone mode, I do really like the idea to have it. It will 
+be used in monitoring implementations where we refer to internal 
+oscillator (Rb/Cs) as a source of truth to compare with the signal on 
+the other pins. We can name it DETACHED if it sounds better.
 
-diff --git a/drivers/clk/rockchip/Makefile b/drivers/clk/rockchip/Makefile
-index 36894f6a7022..87cc39d54f72 100644
---- a/drivers/clk/rockchip/Makefile
-+++ b/drivers/clk/rockchip/Makefile
-@@ -13,6 +13,7 @@ clk-rockchip-y += clk-inverter.o
- clk-rockchip-y += clk-mmc-phase.o
- clk-rockchip-y += clk-muxgrf.o
- clk-rockchip-y += clk-ddr.o
-+clk-rockchip-y += clk-gate-link.o
- clk-rockchip-$(CONFIG_RESET_CONTROLLER) += softrst.o
- 
- obj-$(CONFIG_CLK_PX30)          += clk-px30.o
-diff --git a/drivers/clk/rockchip/clk-gate-link.c b/drivers/clk/rockchip/clk-gate-link.c
-new file mode 100644
-index 000000000000..70d38677b8e1
---- /dev/null
-+++ b/drivers/clk/rockchip/clk-gate-link.c
-@@ -0,0 +1,191 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2023 Fuzhou Rockchip Electronics Co., Ltd
-+ */
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/module.h>
-+#include <linux/slab.h>
-+#include <linux/io.h>
-+#include <linux/err.h>
-+#include <linux/string.h>
-+#include "clk.h"
-+
-+/**
-+ * struct clk_gate_link - gating link clock
-+ *
-+ * @hw:		handle between common and hardware-specific interfaces
-+ * @reg:	register controlling gate
-+ * @bit_idx:	single bit controlling gate
-+ * @flags:	hardware-specific flags
-+ * @lock:	register lock
-+ * @link:	links clk
-+ */
-+struct clk_gate_link {
-+	struct clk_hw hw;
-+	void __iomem	*reg;
-+	u8		bit_idx;
-+	u8		flags;
-+	spinlock_t	*lock;
-+	struct clk	*link;
-+};
-+
-+#define to_clk_gate_link(_hw) container_of(_hw, struct clk_gate_link, hw)
-+
-+static inline u32 clk_gate_readl(struct clk_gate_link *gate)
-+{
-+	if (gate->flags & CLK_GATE_BIG_ENDIAN)
-+		return ioread32be(gate->reg);
-+
-+	return readl(gate->reg);
-+}
-+
-+static inline void clk_gate_writel(struct clk_gate_link *gate, u32 val)
-+{
-+	if (gate->flags & CLK_GATE_BIG_ENDIAN)
-+		iowrite32be(val, gate->reg);
-+	else
-+		writel(val, gate->reg);
-+}
-+
-+/*
-+ * It works on following logic:
-+ *
-+ * For enabling clock, enable = 1
-+ *	set2dis = 1	-> clear bit	-> set = 0
-+ *	set2dis = 0	-> set bit	-> set = 1
-+ *
-+ * For disabling clock, enable = 0
-+ *	set2dis = 1	-> set bit	-> set = 1
-+ *	set2dis = 0	-> clear bit	-> set = 0
-+ *
-+ * So, result is always: enable xor set2dis.
-+ */
-+static void clk_gate_endisable(struct clk_hw *hw, int enable)
-+{
-+	struct clk_gate_link *gate = to_clk_gate_link(hw);
-+	int set = gate->flags & CLK_GATE_SET_TO_DISABLE ? 1 : 0;
-+	unsigned long flags;
-+	u32 reg;
-+
-+	set ^= enable;
-+
-+	if (gate->lock)
-+		spin_lock_irqsave(gate->lock, flags);
-+	else
-+		__acquire(gate->lock);
-+
-+	if (gate->flags & CLK_GATE_HIWORD_MASK) {
-+		reg = BIT(gate->bit_idx + 16);
-+		if (set)
-+			reg |= BIT(gate->bit_idx);
-+	} else {
-+		reg = clk_gate_readl(gate);
-+
-+		if (set)
-+			reg |= BIT(gate->bit_idx);
-+		else
-+			reg &= ~BIT(gate->bit_idx);
-+	}
-+
-+	clk_gate_writel(gate, reg);
-+
-+	if (gate->lock)
-+		spin_unlock_irqrestore(gate->lock, flags);
-+	else
-+		__release(gate->lock);
-+}
-+
-+static int clk_gate_link_enable(struct clk_hw *hw)
-+{
-+	struct clk_gate_link *gate = to_clk_gate_link(hw);
-+
-+	clk_gate_endisable(hw, 1);
-+	clk_enable(gate->link);
-+
-+	return 0;
-+}
-+
-+static void clk_gate_link_disable(struct clk_hw *hw)
-+{
-+	struct clk_gate_link *gate = to_clk_gate_link(hw);
-+
-+	clk_gate_endisable(hw, 0);
-+	clk_disable(gate->link);
-+}
-+
-+static int clk_gate_link_is_enabled(struct clk_hw *hw)
-+{
-+	u32 reg;
-+	struct clk_gate_link *gate = to_clk_gate_link(hw);
-+
-+	reg = clk_gate_readl(gate);
-+
-+	/* if a set bit disables this clk, flip it before masking */
-+	if (gate->flags & CLK_GATE_SET_TO_DISABLE)
-+		reg ^= BIT(gate->bit_idx);
-+
-+	reg &= BIT(gate->bit_idx);
-+
-+	return reg ? 1 : 0;
-+}
-+
-+const struct clk_ops clk_gate_link_ops = {
-+	.enable = clk_gate_link_enable,
-+	.disable = clk_gate_link_disable,
-+	.is_enabled = clk_gate_link_is_enabled,
-+};
-+EXPORT_SYMBOL_GPL(clk_gate_link_ops);
-+
-+struct clk *rockchip_clk_register_gate_link(struct rockchip_clk_provider *ctx,
-+					    const char *name, const char *parent_name,
-+					    unsigned int link_id, u8 flags,
-+					    void __iomem *gate_offset, u8 gate_shift,
-+					    u8 gate_flags, spinlock_t *lock)
-+{
-+	struct clk_gate_link *gate;
-+	struct clk_init_data init = {};
-+	struct clk **clks;
-+	struct clk *clk_link;
-+
-+	if (gate_flags & CLK_GATE_HIWORD_MASK) {
-+		if (gate_shift > 15) {
-+			pr_err("gate bit exceeds LOWORD field\n");
-+			return ERR_PTR(-ENOMEM);
-+		}
-+	}
-+
-+	/* allocate the gate */
-+	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-+	if (!gate) {
-+		pr_err("gate kzalloc field\n");
-+		return ERR_PTR(-ENOMEM);
-+	}
-+
-+	clks = ctx->clk_data.clks;
-+	gate->link = clks[link_id];
-+
-+	init.name = name;
-+	init.ops = &clk_gate_link_ops;
-+	init.flags = flags;
-+	init.parent_names = parent_name ? &parent_name : NULL;
-+	init.num_parents = 1;
-+
-+	/* struct clk_gate assignments */
-+	gate->reg = gate_offset;
-+	gate->bit_idx = gate_shift;
-+	gate->flags = gate_flags;
-+	gate->lock = lock;
-+	gate->hw.init = &init;
-+
-+	clk_link = clk_register(NULL, &gate->hw);
-+	if (IS_ERR(clk_link)) {
-+		kfree(gate);
-+		pr_err("%s clk_register field\n", name);
-+		return ERR_CAST(clk_link);
-+	}
-+	clk_prepare(gate->link);
-+
-+	return clk_link;
-+}
-+EXPORT_SYMBOL_GPL(rockchip_clk_register_gate_link);
-diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-index 4059d9365ae6..d981ef6c5487 100644
---- a/drivers/clk/rockchip/clk.c
-+++ b/drivers/clk/rockchip/clk.c
-@@ -509,6 +509,13 @@ void rockchip_clk_register_branches(struct rockchip_clk_provider *ctx,
- 				ctx->reg_base + list->gate_offset,
- 				list->gate_shift, list->gate_flags, &ctx->lock);
- 			break;
-+
-+		case branch_gate_link:
-+			clk = rockchip_clk_register_gate_link(ctx, list->name,
-+				list->parent_names[0], list->link_id, flags,
-+				ctx->reg_base + list->gate_offset,
-+				list->gate_shift, list->gate_flags, &ctx->lock);
-+			break;
- 		case branch_composite:
- 			clk = rockchip_clk_register_branch(list->name,
- 				list->parent_names, list->num_parents,
-diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-index 758ebaf2236b..b49e3cede33a 100644
---- a/drivers/clk/rockchip/clk.h
-+++ b/drivers/clk/rockchip/clk.h
-@@ -517,6 +517,7 @@ enum rockchip_clk_branch_type {
- 	branch_divider,
- 	branch_fraction_divider,
- 	branch_gate,
-+	branch_gate_link,
- 	branch_mmc,
- 	branch_inverter,
- 	branch_factor,
-@@ -529,6 +530,7 @@ struct rockchip_clk_branch {
- 	enum rockchip_clk_branch_type	branch_type;
- 	const char			*name;
- 	const char			*const *parent_names;
-+	unsigned int			link_id;
- 	u8				num_parents;
- 	unsigned long			flags;
- 	int				muxdiv_offset;
-@@ -842,6 +844,20 @@ struct rockchip_clk_branch {
- 		.gate_flags	= gf,				\
- 	}
- 
-+#define GATE_LINK(_id, cname, pname, _linkid, f, o, b, gf) \
-+	{							\
-+		.id		= _id,				\
-+		.branch_type	= branch_gate_link,		\
-+		.name		= cname,			\
-+		.parent_names	= (const char *[]){ pname },	\
-+		.num_parents	= 1,				\
-+		.link_id	= _linkid,			\
-+		.flags		= f,				\
-+		.gate_offset	= o,				\
-+		.gate_shift	= b,				\
-+		.gate_flags	= gf,				\
-+	}
-+
- #define MMC(_id, cname, pname, offset, shift)			\
- 	{							\
- 		.id		= _id,				\
-@@ -1002,6 +1018,12 @@ struct clk *rockchip_clk_register_halfdiv(const char *name,
- 					  unsigned long flags,
- 					  spinlock_t *lock);
- 
-+struct clk *rockchip_clk_register_gate_link(struct rockchip_clk_provider *ctx,
-+					    const char *name, const char *parent_name,
-+					    unsigned int link_id, u8 flags,
-+					    void __iomem *gate_offset, u8 gate_shift,
-+					    u8 gate_flags, spinlock_t *lock);
-+
- #ifdef CONFIG_RESET_CONTROLLER
- void rockchip_register_softrst_lut(struct device_node *np,
- 				   const int *lookup_table,
--- 
-2.17.1
+> 
+> Thank you!
+> Arkadiusz
+> 
+> [...]
 
