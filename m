@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFD11C04FDF
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Jul 2023 05:39:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A05CEB64DD
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Jul 2023 05:39:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232371AbjG0Fj2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Jul 2023 01:39:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53468 "EHLO
+        id S232168AbjG0Fje (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Jul 2023 01:39:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231894AbjG0Fiv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Jul 2023 01:38:51 -0400
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A57C3C02
-        for <linux-clk@vger.kernel.org>; Wed, 26 Jul 2023 22:37:47 -0700 (PDT)
-Received: by mail-pl1-x630.google.com with SMTP id d9443c01a7336-1bb81809ca8so4398945ad.3
-        for <linux-clk@vger.kernel.org>; Wed, 26 Jul 2023 22:37:46 -0700 (PDT)
+        with ESMTP id S232178AbjG0FjG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Jul 2023 01:39:06 -0400
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A8DA4219
+        for <linux-clk@vger.kernel.org>; Wed, 26 Jul 2023 22:37:54 -0700 (PDT)
+Received: by mail-pl1-x635.google.com with SMTP id d9443c01a7336-1bba2318546so4687265ad.1
+        for <linux-clk@vger.kernel.org>; Wed, 26 Jul 2023 22:37:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1690436203; x=1691041003;
+        d=tuxon.dev; s=google; t=1690436218; x=1691041018;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wrKKqV0HQO2EhBMgbawQJpGyCpTF7In/U2sRYiMWbK8=;
-        b=D5aKsLXGy2j6jm8tkzlTTceO4RSJRpKu2I3aRV4a0QzXpd5bjWkf+kAqE3F3BaNRfX
-         DxaJ8Pde3fczdc/xBBGN/rAm0qcu8nBsr5/DMRo2EY6KhqcJL6B8It06mbh1wmECKQi+
-         lXciwovoIn1XmRc1i3qlC0eKwscXTiOGxSvgnOBGDjs5uCo8FJuiENt0wdOflwftWEM6
-         Z4bsbLB42Al2coRZvmXCMI4Of6jh6UC9ad+64wVD6PdAzwwvKuhWmE64zJU8vA6FZKfe
-         eYFe0JJzcc+6TnQCAASwcDr20VpiO+it/Nl6pKOtUzOyZiIhmtbWNVsEaL65+KXKLIgN
-         69Lg==
+        bh=rFDKIrER1Q8EDEuXgmXxXy7qiRoYOQyJHV+mlKGKhyM=;
+        b=Q5pItotCSKZWCFdXRGzjghrjkFi3Z+sL99/EwD3Ud+0lavJWRnFGQcG6R/iJ0c0TXT
+         ic/vw6K4bWiQE6uKkhkm3GJFvQyyQK2EfHDZu622BFd72xzRH53btHPRiPzreyUVh/iz
+         lm5zXMA1QdQ0lC4Dx8qpxKISW74rUgtQeRe3s5m8APoc9Kw7Txf4YfsMMN/xrF91WMIj
+         boLQeStCa0Rvxfk9p16kl10ebs4CovIh1JwOtMxDkxCTasP5WYdA7GI3vbvVljYvUyj2
+         thyshFC6UF1wuFcrV+p5KZwTitrW4H5GTyZ5Ift67NF5kW+oi7mIOhKan6DBuHdfLTjR
+         63wA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690436203; x=1691041003;
+        d=1e100.net; s=20221208; t=1690436218; x=1691041018;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wrKKqV0HQO2EhBMgbawQJpGyCpTF7In/U2sRYiMWbK8=;
-        b=XQqDMKu2c9UW/HImciJdc7JiCnYDCSw+wnzojSwskFS0+lsG+WZGgR13aKaBpdRz82
-         OffngLIdNob1ELJ01a5QMY8rbAhzfL39indglJQlLgu1WWrruORiXEIzNUVCXL1zTV1R
-         i8CjbmsbqgP1c7MPO/J7nXgGpIfXmCNVFe64/Yn9cg2TtTKOnyqI79ngV5zNq+yGdVc7
-         HfUcom6IInihE/xL/H0OeFlkIDHeGin1NwudwBUBwkYMCuCSmk5EPlaUBp+dPrY/AKmP
-         XPRgq4ZaE2NLb8cc+dF2n3JmqahoJp5WeJXSVJRtt4cGVY/4gGb5c5adu4nf23NSHGNP
-         IwdQ==
-X-Gm-Message-State: ABy/qLb1ojLx7FH2lXAqv7TR0CDT0hE9FmYgNdNdKNrhzSvNxS/3GMj+
-        YsKWLReK7NcA19dPUQQfJp5habCUdPyk1IyMTaiiGUXh
-X-Google-Smtp-Source: APBJJlE+dM7AhEcN3LsCBRnRDe2BI9iVnvhfO+ozfURw/g7mC/rtS5q2NMPSSbrQGFnSw/NceZ2jnQ==
-X-Received: by 2002:a17:902:b413:b0:1b8:2c6f:3248 with SMTP id x19-20020a170902b41300b001b82c6f3248mr3913704plr.39.1690436202969;
-        Wed, 26 Jul 2023 22:36:42 -0700 (PDT)
+        bh=rFDKIrER1Q8EDEuXgmXxXy7qiRoYOQyJHV+mlKGKhyM=;
+        b=X2vaeHAxKQXA4G2c/ZZwen3mu7rA6a2ak2xK2K5USq58MouP4dg2mqSFKRPWH+500g
+         8V3v91bMo+fGQLz13YqsStQoH7yhxfoJk39TNdb1Ygm2W+7KYneAnftz92TDkeUDDPDo
+         vtc4sjybuhgUbJbZiRrKckFpe39sSrqR/SPl2nVs2RTrifqygenAJONCOmXoF9N6Mp5h
+         0rzJI9DCPrdyOhp7ELHj4ay+a2aM+RSl/cpT4jK3qaUVyylX/4oyDzSMkUtY2EdKuGsR
+         uS/eaQSIGoHyfmiKystCKlZy/07U6aCK18hrA5fVXF5zb6GgJmRvXAYdLUMEp2+Ftd0U
+         EWrQ==
+X-Gm-Message-State: ABy/qLanJgMwRUweEAHn2Bx4HxCiOaMGHkniKa96eMKT0cwJTaGvgF1O
+        rK/Ty3HHOXSSehY9xxKsKlOljg==
+X-Google-Smtp-Source: APBJJlFsafDnT8kkWkk3yUqoJROLuqetgWn4uUQXGuwpxasw70Gtt8yiGSgxsI8WlcWcysUugjf0SA==
+X-Received: by 2002:a17:902:f681:b0:1b6:b805:5ae3 with SMTP id l1-20020a170902f68100b001b6b8055ae3mr4943140plg.3.1690436218328;
+        Wed, 26 Jul 2023 22:36:58 -0700 (PDT)
 Received: from localhost.localdomain ([82.78.167.79])
-        by smtp.gmail.com with ESMTPSA id 21-20020a170902c11500b001bb889530adsm319059pli.217.2023.07.26.22.36.36
+        by smtp.gmail.com with ESMTPSA id 21-20020a170902c11500b001bb889530adsm319059pli.217.2023.07.26.22.36.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jul 2023 22:36:42 -0700 (PDT)
+        Wed, 26 Jul 2023 22:36:58 -0700 (PDT)
 From:   Claudiu Beznea <claudiu.beznea@tuxon.dev>
 To:     mturquette@baylibre.com, sboyd@kernel.org,
         nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
@@ -56,9 +56,9 @@ To:     mturquette@baylibre.com, sboyd@kernel.org,
 Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, varshini.rajendran@microchip.com,
         Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Subject: [PATCH 35/42] clk: at91: clk-plldiv: remove parent_names support
-Date:   Thu, 27 Jul 2023 08:31:49 +0300
-Message-Id: <20230727053156.13587-36-claudiu.beznea@tuxon.dev>
+Subject: [PATCH 37/42] clk: at91: clk-sam9x60-pll: remove parent_names support
+Date:   Thu, 27 Jul 2023 08:31:51 +0300
+Message-Id: <20230727053156.13587-38-claudiu.beznea@tuxon.dev>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230727053156.13587-1-claudiu.beznea@tuxon.dev>
 References: <20230727053156.13587-1-claudiu.beznea@tuxon.dev>
@@ -69,154 +69,148 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 Remove parent_names support as parent_hw support is now available on all
-platforms using clk-plldiv driver.
+platforms using clk-sam9x60-pll driver.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 ---
- drivers/clk/at91/at91sam9g45.c |  2 +-
- drivers/clk/at91/at91sam9n12.c |  2 +-
- drivers/clk/at91/at91sam9x5.c  |  2 +-
- drivers/clk/at91/clk-plldiv.c  | 11 +++--------
- drivers/clk/at91/dt-compat.c   |  2 +-
- drivers/clk/at91/pmc.h         |  2 +-
- drivers/clk/at91/sama5d2.c     |  2 +-
- drivers/clk/at91/sama5d3.c     |  2 +-
- drivers/clk/at91/sama5d4.c     |  2 +-
- 9 files changed, 11 insertions(+), 16 deletions(-)
+ drivers/clk/at91/clk-sam9x60-pll.c | 16 ++++------------
+ drivers/clk/at91/pmc.h             |  6 ++----
+ drivers/clk/at91/sam9x60.c         |  8 ++++----
+ drivers/clk/at91/sama7g5.c         |  4 ++--
+ 4 files changed, 12 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/clk/at91/at91sam9g45.c b/drivers/clk/at91/at91sam9g45.c
-index ca585440c54f..2bda11df7f0d 100644
---- a/drivers/clk/at91/at91sam9g45.c
-+++ b/drivers/clk/at91/at91sam9g45.c
-@@ -146,7 +146,7 @@ static void __init at91sam9g45_pmc_setup(struct device_node *np)
- 	if (IS_ERR(hw))
- 		goto err_free;
- 
--	hw = at91_clk_register_plldiv(regmap, "plladivck", NULL, hw);
-+	hw = at91_clk_register_plldiv(regmap, "plladivck", hw);
- 	if (IS_ERR(hw))
- 		goto err_free;
- 
-diff --git a/drivers/clk/at91/at91sam9n12.c b/drivers/clk/at91/at91sam9n12.c
-index 2109b8cdf4ad..0c22b82ef368 100644
---- a/drivers/clk/at91/at91sam9n12.c
-+++ b/drivers/clk/at91/at91sam9n12.c
-@@ -172,7 +172,7 @@ static void __init at91sam9n12_pmc_setup(struct device_node *np)
- 	if (IS_ERR(hw))
- 		goto err_free;
- 
--	hw = at91_clk_register_plldiv(regmap, "plladivck", NULL, hw);
-+	hw = at91_clk_register_plldiv(regmap, "plladivck", hw);
- 	if (IS_ERR(hw))
- 		goto err_free;
- 
-diff --git a/drivers/clk/at91/at91sam9x5.c b/drivers/clk/at91/at91sam9x5.c
-index 4cbb72a29f14..c2c5e9fe669c 100644
---- a/drivers/clk/at91/at91sam9x5.c
-+++ b/drivers/clk/at91/at91sam9x5.c
-@@ -194,7 +194,7 @@ static void __init at91sam9x5_pmc_setup(struct device_node *np,
- 	if (IS_ERR(hw))
- 		goto err_free;
- 
--	hw = at91_clk_register_plldiv(regmap, "plladivck", NULL, hw);
-+	hw = at91_clk_register_plldiv(regmap, "plladivck", hw);
- 	if (IS_ERR(hw))
- 		goto err_free;
- 
-diff --git a/drivers/clk/at91/clk-plldiv.c b/drivers/clk/at91/clk-plldiv.c
-index 1d5a0a6d299d..e4efb4ccab33 100644
---- a/drivers/clk/at91/clk-plldiv.c
-+++ b/drivers/clk/at91/clk-plldiv.c
-@@ -72,7 +72,7 @@ static const struct clk_ops plldiv_ops = {
+diff --git a/drivers/clk/at91/clk-sam9x60-pll.c b/drivers/clk/at91/clk-sam9x60-pll.c
+index ff65f7b916f0..787ab36ecdba 100644
+--- a/drivers/clk/at91/clk-sam9x60-pll.c
++++ b/drivers/clk/at91/clk-sam9x60-pll.c
+@@ -609,8 +609,7 @@ static const struct clk_ops sam9x60_div_pll_ops_chg = {
  
  struct clk_hw * __init
- at91_clk_register_plldiv(struct regmap *regmap, const char *name,
--			 const char *parent_name, struct clk_hw *parent_hw)
-+			 struct clk_hw *parent_hw)
+ sam9x60_clk_register_frac_pll(struct regmap *regmap, spinlock_t *lock,
+-			      const char *name, const char *parent_name,
+-			      struct clk_hw *parent_hw, u8 id,
++			      const char *name, struct clk_hw *parent_hw, u8 id,
+ 			      const struct clk_pll_characteristics *characteristics,
+ 			      const struct clk_pll_layout *layout, u32 flags)
  {
- 	struct clk_plldiv *plldiv;
- 	struct clk_hw *hw;
-@@ -85,13 +85,8 @@ at91_clk_register_plldiv(struct regmap *regmap, const char *name,
+@@ -629,10 +628,7 @@ sam9x60_clk_register_frac_pll(struct regmap *regmap, spinlock_t *lock,
+ 		return ERR_PTR(-ENOMEM);
  
  	init.name = name;
- 	init.ops = &plldiv_ops;
--	if (parent_hw) {
+-	if (parent_name)
+-		init.parent_names = &parent_name;
+-	else
 -		init.parent_hws = (const struct clk_hw **)&parent_hw;
--		init.num_parents = 1;
--	} else {
--		init.parent_names = parent_name ? &parent_name : NULL;
--		init.num_parents = parent_name ? 1 : 0;
--	}
-+	init.parent_hws = parent_hw ? (const struct clk_hw **)&parent_hw : NULL;
-+	init.num_parents = parent_hw ? 1 : 0;
- 	init.flags = CLK_SET_RATE_GATE;
- 
- 	plldiv->hw.init = &init;
-diff --git a/drivers/clk/at91/dt-compat.c b/drivers/clk/at91/dt-compat.c
-index 13e251e59853..85193e4656b9 100644
---- a/drivers/clk/at91/dt-compat.c
-+++ b/drivers/clk/at91/dt-compat.c
-@@ -805,7 +805,7 @@ of_at91sam9x5_clk_plldiv_setup(struct device_node *np)
- 	if (IS_ERR(regmap))
- 		return;
- 
--	hw = at91_clk_register_plldiv(regmap, name, NULL, parent_hw);
-+	hw = at91_clk_register_plldiv(regmap, name, parent_hw);
- 	if (IS_ERR(hw))
- 		return;
- 
-diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
-index 5fd1e76b3ec7..eed88a480b11 100644
---- a/drivers/clk/at91/pmc.h
-+++ b/drivers/clk/at91/pmc.h
-@@ -207,7 +207,7 @@ at91_clk_register_pll(struct regmap *regmap, const char *name,
- 		      const struct clk_pll_characteristics *characteristics);
- struct clk_hw * __init
- at91_clk_register_plldiv(struct regmap *regmap, const char *name,
--			 const char *parent_name, struct clk_hw *parent_hw);
-+			 struct clk_hw *parent_hw);
++	init.parent_hws = (const struct clk_hw **)&parent_hw;
+ 	init.num_parents = 1;
+ 	if (flags & CLK_SET_RATE_GATE)
+ 		init.ops = &sam9x60_frac_pll_ops;
+@@ -695,8 +691,7 @@ sam9x60_clk_register_frac_pll(struct regmap *regmap, spinlock_t *lock,
  
  struct clk_hw * __init
  sam9x60_clk_register_div_pll(struct regmap *regmap, spinlock_t *lock,
-diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
-index b99a8bb9bf9a..75d5b1a3733b 100644
---- a/drivers/clk/at91/sama5d2.c
-+++ b/drivers/clk/at91/sama5d2.c
-@@ -226,7 +226,7 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
+-			     const char *name, const char *parent_name,
+-			     struct clk_hw *parent_hw, u8 id,
++			     const char *name, struct clk_hw *parent_hw, u8 id,
+ 			     const struct clk_pll_characteristics *characteristics,
+ 			     const struct clk_pll_layout *layout, u32 flags,
+ 			     u32 safe_div)
+@@ -720,10 +715,7 @@ sam9x60_clk_register_div_pll(struct regmap *regmap, spinlock_t *lock,
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	init.name = name;
+-	if (parent_hw)
+-		init.parent_hws = (const struct clk_hw **)&parent_hw;
+-	else
+-		init.parent_names = &parent_name;
++	init.parent_hws = (const struct clk_hw **)&parent_hw;
+ 	init.num_parents = 1;
+ 	if (flags & CLK_SET_RATE_GATE)
+ 		init.ops = &sam9x60_div_pll_ops;
+diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
+index 7d2524109776..fe86cca2776e 100644
+--- a/drivers/clk/at91/pmc.h
++++ b/drivers/clk/at91/pmc.h
+@@ -211,16 +211,14 @@ at91_clk_register_plldiv(struct regmap *regmap, const char *name,
+ 
+ struct clk_hw * __init
+ sam9x60_clk_register_div_pll(struct regmap *regmap, spinlock_t *lock,
+-			     const char *name, const char *parent_name,
+-			     struct clk_hw *parent_hw, u8 id,
++			     const char *name, struct clk_hw *parent_hw, u8 id,
+ 			     const struct clk_pll_characteristics *characteristics,
+ 			     const struct clk_pll_layout *layout, u32 flags,
+ 			     u32 safe_div);
+ 
+ struct clk_hw * __init
+ sam9x60_clk_register_frac_pll(struct regmap *regmap, spinlock_t *lock,
+-			      const char *name, const char *parent_name,
+-			      struct clk_hw *parent_hw, u8 id,
++			      const char *name, struct clk_hw *parent_hw, u8 id,
+ 			      const struct clk_pll_characteristics *characteristics,
+ 			      const struct clk_pll_layout *layout, u32 flags);
+ 
+diff --git a/drivers/clk/at91/sam9x60.c b/drivers/clk/at91/sam9x60.c
+index 897a8f2d6102..68abd0fd47db 100644
+--- a/drivers/clk/at91/sam9x60.c
++++ b/drivers/clk/at91/sam9x60.c
+@@ -238,7 +238,7 @@ static void __init sam9x60_pmc_setup(struct device_node *np)
+ 	sam9x60_pmc->chws[PMC_MAIN] = hw;
+ 
+ 	hw = sam9x60_clk_register_frac_pll(regmap, &pmc_pll_lock, "pllack_fracck",
+-					   NULL, sam9x60_pmc->chws[PMC_MAIN],
++					   sam9x60_pmc->chws[PMC_MAIN],
+ 					   0, &plla_characteristics,
+ 					   &pll_frac_layout,
+ 					   /*
+@@ -251,7 +251,7 @@ static void __init sam9x60_pmc_setup(struct device_node *np)
+ 		goto err_free;
+ 
+ 	hw = sam9x60_clk_register_div_pll(regmap, &pmc_pll_lock, "pllack_divck",
+-					  NULL, hw, 0, &plla_characteristics,
++					  hw, 0, &plla_characteristics,
+ 					  &pll_div_layout,
+ 					   /*
+ 					    * This feeds CPU. It should not
+@@ -264,14 +264,14 @@ static void __init sam9x60_pmc_setup(struct device_node *np)
+ 	sam9x60_pmc->chws[PMC_PLLACK] = hw;
+ 
+ 	hw = sam9x60_clk_register_frac_pll(regmap, &pmc_pll_lock, "upllck_fracck",
+-					   NULL, main_osc_hw, 1,
++					   main_osc_hw, 1,
+ 					   &upll_characteristics,
+ 					   &pll_frac_layout, CLK_SET_RATE_GATE);
  	if (IS_ERR(hw))
  		goto err_free;
  
--	hw = at91_clk_register_plldiv(regmap, "plladivck", NULL, hw);
-+	hw = at91_clk_register_plldiv(regmap, "plladivck", hw);
- 	if (IS_ERR(hw))
- 		goto err_free;
+ 	hw = sam9x60_clk_register_div_pll(regmap, &pmc_pll_lock, "upllck_divck",
+-					  NULL, hw, 1, &upll_characteristics,
++					  hw, 1, &upll_characteristics,
+ 					  &pll_div_layout,
+ 					  CLK_SET_RATE_GATE |
+ 					  CLK_SET_PARENT_GATE |
+diff --git a/drivers/clk/at91/sama7g5.c b/drivers/clk/at91/sama7g5.c
+index baec84bd5d06..0d81a955e686 100644
+--- a/drivers/clk/at91/sama7g5.c
++++ b/drivers/clk/at91/sama7g5.c
+@@ -1074,7 +1074,7 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
  
-diff --git a/drivers/clk/at91/sama5d3.c b/drivers/clk/at91/sama5d3.c
-index 35a9dfd0e66d..a50e82460e70 100644
---- a/drivers/clk/at91/sama5d3.c
-+++ b/drivers/clk/at91/sama5d3.c
-@@ -173,7 +173,7 @@ static void __init sama5d3_pmc_setup(struct device_node *np)
- 	if (IS_ERR(hw))
- 		goto err_free;
- 
--	hw = at91_clk_register_plldiv(regmap, "plladivck", NULL, hw);
-+	hw = at91_clk_register_plldiv(regmap, "plladivck", hw);
- 	if (IS_ERR(hw))
- 		goto err_free;
- 
-diff --git a/drivers/clk/at91/sama5d4.c b/drivers/clk/at91/sama5d4.c
-index ae76c59c7d42..b6b41ceae13c 100644
---- a/drivers/clk/at91/sama5d4.c
-+++ b/drivers/clk/at91/sama5d4.c
-@@ -188,7 +188,7 @@ static void __init sama5d4_pmc_setup(struct device_node *np)
- 	if (IS_ERR(hw))
- 		goto err_free;
- 
--	hw = at91_clk_register_plldiv(regmap, "plladivck", NULL, hw);
-+	hw = at91_clk_register_plldiv(regmap, "plladivck", hw);
- 	if (IS_ERR(hw))
- 		goto err_free;
- 
+ 				hw = sam9x60_clk_register_frac_pll(regmap,
+ 					&pmc_pll_lock, sama7g5_plls[i][j].n,
+-					NULL, parent_hw, i,
++					parent_hw, i,
+ 					sama7g5_plls[i][j].c,
+ 					sama7g5_plls[i][j].l,
+ 					sama7g5_plls[i][j].f);
+@@ -1083,7 +1083,7 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
+ 			case PLL_TYPE_DIV:
+ 				hw = sam9x60_clk_register_div_pll(regmap,
+ 					&pmc_pll_lock, sama7g5_plls[i][j].n,
+-					NULL, sama7g5_plls[i][0].hw, i,
++					sama7g5_plls[i][0].hw, i,
+ 					sama7g5_plls[i][j].c,
+ 					sama7g5_plls[i][j].l,
+ 					sama7g5_plls[i][j].f,
 -- 
 2.39.2
 
