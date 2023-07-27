@@ -2,83 +2,125 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2BC9C04A6A
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Jul 2023 16:43:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77F18C0015E
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Jul 2023 17:15:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229961AbjG0Qnb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Jul 2023 12:43:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54734 "EHLO
+        id S232798AbjG0RPR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Jul 2023 13:15:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229526AbjG0Qna (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Jul 2023 12:43:30 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE6BF1BF2;
-        Thu, 27 Jul 2023 09:43:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1690476210; x=1722012210;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=1CLEKciZ7vMQwlx5CCt/8Pv6yTX7KNyg6xp32XDo6iM=;
-  b=ATUGjFxcMen1KlNtdZ3vBxwV8Rwud7+eGTEjOI314zXwFDY9FG1PAetu
-   n117ehh+cy3lubkW4DYiouRDz7J2PQwpRntUKoyBv9y1nyQbNcUAdVGPk
-   LAYpnGrBSQ11bI93ygKJY1xq0at1IGX2HJSCml0Om3X9CL4o4eHB52Ulr
-   gAdT8/NQaedeX6zMcCJZK6+xSs0kwkXVRkYWerRlCzLfQt0nMS64xiJjz
-   md2LdDECJvp1hDiGO0h41Ng+uJJhzObF1AWAd125s+gIsLKz50OdSfqOg
-   xRg4/qkqi1Qnt+CgGKoq17MrhKxjbMs7NWc7LmB9/8fcAfpsxdoS7x5ZK
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10784"; a="367244204"
-X-IronPort-AV: E=Sophos;i="6.01,235,1684825200"; 
-   d="scan'208";a="367244204"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jul 2023 09:42:42 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10784"; a="704252007"
-X-IronPort-AV: E=Sophos;i="6.01,235,1684825200"; 
-   d="scan'208";a="704252007"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga006.jf.intel.com with ESMTP; 27 Jul 2023 09:42:39 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1qP44T-00CV3h-1v;
-        Thu, 27 Jul 2023 19:42:37 +0300
-Date:   Thu, 27 Jul 2023 19:42:37 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Duje =?utf-8?Q?Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        afaerber@suse.com
-Subject: Re: [PATCH v2 3/9] clk: mmp: Switch to use struct u32_fract instead
- of custom one
-Message-ID: <ZMKefY+LMqahz/bO@smile.fi.intel.com>
-References: <20230727162909.6031-1-duje.mihanovic@skole.hr>
- <20230727162909.6031-4-duje.mihanovic@skole.hr>
+        with ESMTP id S232810AbjG0RPA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Jul 2023 13:15:00 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C4FF3A9A
+        for <linux-clk@vger.kernel.org>; Thu, 27 Jul 2023 10:14:55 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id 2adb3069b0e04-4fe0bb9500aso2128723e87.1
+        for <linux-clk@vger.kernel.org>; Thu, 27 Jul 2023 10:14:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1690478093; x=1691082893;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iSpTHH/r1JxU23dgkFFzwt7+DPhsvuwAB7Ss8YvVGLg=;
+        b=qv+50epRJW2m0RTQy24stBR7Ea6w4jVRUZlsjKhN/t5rJRrulcqqJzDeLkWfL/8N1X
+         Cl86IJZG5FGTz6SXAIncvYXWm6Fm8DbuUSk/5ojAr4dJ/0c5YPKN2I6D7Iy5w+stYGGA
+         Skqu66Q4X7EmBIQ5811GQNsamCAzKoDbW0XUAePqr506lMRvMD49+YE16ZJv6pIeTpyP
+         KYyXjBdWoJrZeZf/IQSRMqXdNzmuc1/PQnQ/E+8NFnZwR2+Mj8JkbdPchwB+Hxt/Frnn
+         DLH/CdihVw0vlyWRR+SLWw+wqP5VzgNaaiE6ojbWk4sF4N346J3LLACw8rnAafKh2Cnc
+         bqww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690478093; x=1691082893;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iSpTHH/r1JxU23dgkFFzwt7+DPhsvuwAB7Ss8YvVGLg=;
+        b=Gs4rBJwpQUB8XXaucMojd3JcfKWWS1SJ/8SOLV/kj9/00e0/zZwC+O4ZHxTvkkPhkv
+         1PcvTVe8+KjOUg4YclnC+LcHa9jpa2m/PTusJYOJgDTPPGLvY89n4FtHpMtVZ/6FNW/O
+         GJ5dR3JzqMJoMbhTP7zcuOvO/e7Rl8/VW7ubje0azmcECUAUbNquRML9/ZRQ5l0JyI4d
+         kuKyAimCTsnumLrMUL4ylJPnvh0NE+xC9EjWPjGAN+vfx2QxFrumHM0Cdh5XYZN/jU5S
+         MWXBniEL+mQa+sdlh3fgGDBc5P2Imx5T4vneCEteqCE15IIEcUclP+QKcRYNRQtR5NKn
+         zw5g==
+X-Gm-Message-State: ABy/qLahpCdZnEyKrIifGe7haCyj9PUvVw/Ua/WNganN8EqWFBkdS0kE
+        buDFr9JMTsZtSsIb8StXrZC0hQ==
+X-Google-Smtp-Source: APBJJlFu9VD0E0i2KH9s/aAi/qiNd2Vbshj9rmBQFUbqvoo6crNI0X2M5zMLVxEuNt4ntJsMxvXN0g==
+X-Received: by 2002:a05:6512:31c8:b0:4fb:79b5:5512 with SMTP id j8-20020a05651231c800b004fb79b55512mr2543259lfe.66.1690478093616;
+        Thu, 27 Jul 2023 10:14:53 -0700 (PDT)
+Received: from [192.168.1.101] (abxi99.neoplus.adsl.tpnet.pl. [83.9.2.99])
+        by smtp.gmail.com with ESMTPSA id w3-20020ac25983000000b004fb745fd22fsm396321lfn.32.2023.07.27.10.14.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jul 2023 10:14:53 -0700 (PDT)
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Date:   Thu, 27 Jul 2023 19:14:52 +0200
+Subject: [PATCH v2] clk: qcom: reset: Use the correct type of sleep/delay
+ based on length
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230727162909.6031-4-duje.mihanovic@skole.hr>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230726-topic-qcom_reset-v2-1-4a6e1b1d0439@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAAumwmQC/32NQQ6CMBAAv2J6dk0phIIn/2GIKcsKm2CLWyQaw
+ t+tPMDjTDKZVUUSpqjOh1UJLRw5+ATmeFA4ON8TcJdYGW1ybU0Jc5gY4YnhcROKNENRVLZGnVc
+ WS5Wy1kWCVpzHIYX+NY5JTkJ3fu+fa5N44DgH+ezbJfvZP4clAw216ajscirQ4mVk7yScgvSq2
+ bbtC7Upw0XGAAAA
+To:     Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mike Turquette <mturquette@linaro.org>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1690478092; l=1491;
+ i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
+ bh=xqeqeSVrD0FBd4SOIFWeQ28YnpPrZTJ5YRxUYScajcU=;
+ b=9sr4XmOp/nvWERoHxxSOCtWnpIp7SRhiQaK9RL70JkydIWtsE/EDWgOxa94U8MeYcBjq8s8gf
+ OtpNeD7j0kWCvQVcTDzKi+WnZU6s51PcElo3QvVSYPF9YTxz86PEvdT
+X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jul 27, 2023 at 06:29:01PM +0200, Duje Mihanović wrote:
-> From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> The struct mmp_clk_factor_tbl repeats the generic struct u32_fract.
-> Kill the custom one and use the generic one instead.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Based on the length of the delay (see: [1]), use the correct sleep/delay
+functions.
 
-I believe you missed your own Tested-by here.
+[1] https://www.kernel.org/doc/Documentation/timers/timers-howto.txt
 
-> Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
+Fixes: 2cb8a39b6781 ("clk: qcom: reset: Allow specifying custom reset delay")
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+---
+Let the toggle include a bigger delay and make sure it's using the
+correct function to achieve that.
+---
+Changes in v2:
+- Drop the "allow bigger delay" until there's a user
+- Use fsleep instead of open-coding effectively the same
+- Fix the fixes tag
+- Link to v1: https://lore.kernel.org/r/20230726-topic-qcom_reset-v1-0-92de6d3e4c7c@linaro.org
+---
+ drivers/clk/qcom/reset.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/clk/qcom/reset.c b/drivers/clk/qcom/reset.c
+index 0e914ec7aeae..e45e32804d2c 100644
+--- a/drivers/clk/qcom/reset.c
++++ b/drivers/clk/qcom/reset.c
+@@ -16,7 +16,8 @@ static int qcom_reset(struct reset_controller_dev *rcdev, unsigned long id)
+ 	struct qcom_reset_controller *rst = to_qcom_reset_controller(rcdev);
+ 
+ 	rcdev->ops->assert(rcdev, id);
+-	udelay(rst->reset_map[id].udelay ?: 1); /* use 1 us as default */
++	fsleep(rst->reset_map[id].udelay ?: 1); /* use 1 us as default */
++
+ 	rcdev->ops->deassert(rcdev, id);
+ 	return 0;
+ }
+
+---
+base-commit: 451cc82bd11eb6a374f4dbcfc1cf007eafea91ab
+change-id: 20230726-topic-qcom_reset-44879c0387c6
+
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Konrad Dybcio <konrad.dybcio@linaro.org>
 
