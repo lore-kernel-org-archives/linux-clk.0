@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E005EEB64DD
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Jul 2023 05:35:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49DB0EB64DD
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Jul 2023 05:35:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231911AbjG0FfQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Jul 2023 01:35:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53556 "EHLO
+        id S231858AbjG0Ffc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Jul 2023 01:35:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231824AbjG0Fex (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Jul 2023 01:34:53 -0400
-Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 085993590
-        for <linux-clk@vger.kernel.org>; Wed, 26 Jul 2023 22:34:26 -0700 (PDT)
-Received: by mail-pf1-x431.google.com with SMTP id d2e1a72fcca58-686efb9ee0cso603119b3a.3
-        for <linux-clk@vger.kernel.org>; Wed, 26 Jul 2023 22:34:26 -0700 (PDT)
+        with ESMTP id S231986AbjG0Fe4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Jul 2023 01:34:56 -0400
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54BFC30DF
+        for <linux-clk@vger.kernel.org>; Wed, 26 Jul 2023 22:34:34 -0700 (PDT)
+Received: by mail-pl1-x62b.google.com with SMTP id d9443c01a7336-1b8b4749013so4382745ad.2
+        for <linux-clk@vger.kernel.org>; Wed, 26 Jul 2023 22:34:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1690436065; x=1691040865;
+        d=tuxon.dev; s=google; t=1690436072; x=1691040872;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kid366wiUoXwgFB76gRtzNPUPTmnA2Hry2ysnz0JRIc=;
-        b=iTwFAaZoQR0slAJQ6ZFA/OIw+wZMhPqKMeCFKKIIIz6uKqzdUa+gbJasrMqdi9lWEq
-         hBecxsx7vGEPk7T+2ns7Wrt6FXL6w2JgAUWH0ysS6/qSMRS/yy8g5MYf4w9CzdrC0GCV
-         h4ZoAnSYM/gy1yDYzORz6Q0DeDA9BKWE/fSnhW/xelNXOtNKNqp/la9Fiqc7Mx9VxKig
-         jbbHK5r4tYpfdJ2UE+u6xg0W6mc1+163RQ7vcRaUp7jQvv1Q719naD4ehEfChm64WjXn
-         jhvCxUOncdCEqipYRVj8QdunhyxuaoxLD37GgrEWsFciZ95NbgIq5ccR5H2NcKxt5Exm
-         lY9Q==
+        bh=ebMv2zCUuI7+v0WKO0rdWUfZu6i4M/aH4M1ZWTbcC5E=;
+        b=UESfxiMcGDxlM1+U0+b3DvIMqaPqSBSzUy3qM/gkfnnNlkWAG3ZdIzl53O0z4qltun
+         Wl/n+L6woG9wbC3LMG3mtRaejY5DGnpaqLKSvRN9Rw3k8nLKJg3Y49JO0chE1iXgG1YB
+         nNNBIDDYt2qO0F9ettcIpre/DqAds659sTcWeJm/E+rTrvvX6dThgvGHB/o57lkUJFG9
+         DHK6Unam/w1yTXcjLk3krIxIdDZvFslyF3c6yillKuUBGh91LxQ7aWQITjc9n4KV2ddT
+         hyp6s5V8DI/vhTaTeaq6h+/mexJOq3Z6zy6CF7VlBcLVSNp/3cURn4TcWHk8mO77eaCN
+         j2hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690436065; x=1691040865;
+        d=1e100.net; s=20221208; t=1690436072; x=1691040872;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kid366wiUoXwgFB76gRtzNPUPTmnA2Hry2ysnz0JRIc=;
-        b=JHOjJGaImYFIKLg9P40amRfJNi9ghFE9oV6MvVPdqEdBWjMNXO+Bllr1bTlm4iHPX+
-         NFik69SWBez6ydZsfclXfx2tUHjuS6M2CEb4MAmRYbfdLAH9fk/e5PHvaAqU+3FixShE
-         5z+L0mFLjrxRp/6LY+Kvac3pcwCcp01lG3Nc66TlOakZwz1Aau08tpTPu8ly9oJxTEcC
-         L/knKj0DlgzMpkcbzfwkzl9Tm9pN8HP6uIhb5RWamn4xXy5oSOrHafDDIrhp1X4Nq227
-         CYA3SEVp/geFpePs3/MXW4h38Twk/XRUA8HZgtemOGzUn6IwRrSjjRxuDs30j25kbW5n
-         UU8w==
-X-Gm-Message-State: ABy/qLbVbqNSa3onzoR9Yf2HmTGg9ZC3LhVdNb8CFYlLiaOaokCn/H1p
-        qzSiYzwA7MAy+/b4Y+6RavPeDQ==
-X-Google-Smtp-Source: APBJJlH0XNbuHwIiz8HkLlyy1CZ4I1oM876K9F2n/xW/gkzLy9fK4Ym4GPsj3gVktULHuk9bYJI2AQ==
-X-Received: by 2002:a17:902:ec8c:b0:1ab:11c8:777a with SMTP id x12-20020a170902ec8c00b001ab11c8777amr5186878plg.13.1690436065269;
-        Wed, 26 Jul 2023 22:34:25 -0700 (PDT)
+        bh=ebMv2zCUuI7+v0WKO0rdWUfZu6i4M/aH4M1ZWTbcC5E=;
+        b=aPpyzKE/iDCXcCMY47vtGTqXjxCvwAEhFUnsgb40zuGAC0pBg5zFySI84jbLgwJfFp
+         E7V6BmyHbYiKpvr7LlE0eoVamYlRfiFdGKvLDsQT4LYLodiOGACZhtF9YojRSTtNJbo0
+         vSAmbcjNqzR8MVHJjG4uDGkniDKfxy8waO/SpcTKqyjec3csmrMqmsK1aTDi/QKrGIEL
+         m36cYQjbIyGqfpZew1C2SdrkQ6DFtpFkOWKlo7CuxCiGQl7HNyvUKH73H8d4gXbButHx
+         KpxfN53ZZ5ComVmdcAbvW7xwIFjli1V4tkVPqhikUTcVgWkadkefhdoJPtv11Z3eM4zK
+         AGQQ==
+X-Gm-Message-State: ABy/qLZhVNe5HOHznhg47MayKx4BhmwMBvQCFPT1vjv4UNlc+kuyMgRP
+        5rVdg2l0s4BUH7s9KVaWRJGPVg==
+X-Google-Smtp-Source: APBJJlH/rWJB689lBz7rTzs6xmQVeNVmFZwhaM3Q5OCgAtFY95fFTFrJS86LuDHuBedkbLwcj1MiDw==
+X-Received: by 2002:a17:903:22d1:b0:1b8:b2c6:7e8d with SMTP id y17-20020a17090322d100b001b8b2c67e8dmr4820694plg.66.1690436072684;
+        Wed, 26 Jul 2023 22:34:32 -0700 (PDT)
 Received: from localhost.localdomain ([82.78.167.79])
-        by smtp.gmail.com with ESMTPSA id 21-20020a170902c11500b001bb889530adsm319059pli.217.2023.07.26.22.34.18
+        by smtp.gmail.com with ESMTPSA id 21-20020a170902c11500b001bb889530adsm319059pli.217.2023.07.26.22.34.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jul 2023 22:34:25 -0700 (PDT)
+        Wed, 26 Jul 2023 22:34:32 -0700 (PDT)
 From:   Claudiu Beznea <claudiu.beznea@tuxon.dev>
 To:     mturquette@baylibre.com, sboyd@kernel.org,
         nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
@@ -56,9 +56,9 @@ To:     mturquette@baylibre.com, sboyd@kernel.org,
 Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, varshini.rajendran@microchip.com,
         Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Subject: [PATCH 16/42] clk: at91: at91rm9200: switch to parent_hw and parent_data
-Date:   Thu, 27 Jul 2023 08:31:30 +0300
-Message-Id: <20230727053156.13587-17-claudiu.beznea@tuxon.dev>
+Subject: [PATCH 17/42] clk: at91: at91rm9200: fix checkpatch.pl check
+Date:   Thu, 27 Jul 2023 08:31:31 +0300
+Message-Id: <20230727053156.13587-18-claudiu.beznea@tuxon.dev>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230727053156.13587-1-claudiu.beznea@tuxon.dev>
 References: <20230727053156.13587-1-claudiu.beznea@tuxon.dev>
@@ -68,215 +68,29 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Switch AT91RM9200 clocks to use parent_hw and parent_data. Having
-parent_hw instead of parent names improves to clock registration
-speed and re-parenting.
+Fix the following checkpatch.pl check:
+drivers/clk/at91/at91rm9200.c:100: CHECK: Alignment should match open parenthesis
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 ---
- drivers/clk/at91/at91rm9200.c | 96 ++++++++++++++++++++---------------
- 1 file changed, 55 insertions(+), 41 deletions(-)
+ drivers/clk/at91/at91rm9200.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/clk/at91/at91rm9200.c b/drivers/clk/at91/at91rm9200.c
-index 623e232ec9c6..87fd7b1609bd 100644
+index 87fd7b1609bd..a862a0a18972 100644
 --- a/drivers/clk/at91/at91rm9200.c
 +++ b/drivers/clk/at91/at91rm9200.c
-@@ -1,4 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0
-+#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/mfd/syscon.h>
- #include <linux/slab.h>
-@@ -11,7 +12,7 @@ static DEFINE_SPINLOCK(rm9200_mck_lock);
- 
- struct sck {
- 	char *n;
--	char *p;
-+	struct clk_hw *parent_hw;
- 	u8 id;
- };
- 
-@@ -39,13 +40,13 @@ static const struct clk_pll_characteristics rm9200_pll_characteristics = {
- 	.out = rm9200_pll_out,
- };
- 
--static const struct sck at91rm9200_systemck[] = {
--	{ .n = "udpck", .p = "usbck",    .id = 1 },
--	{ .n = "uhpck", .p = "usbck",    .id = 4 },
--	{ .n = "pck0",  .p = "prog0",    .id = 8 },
--	{ .n = "pck1",  .p = "prog1",    .id = 9 },
--	{ .n = "pck2",  .p = "prog2",    .id = 10 },
--	{ .n = "pck3",  .p = "prog3",    .id = 11 },
-+static struct sck at91rm9200_systemck[] = {
-+	{ .n = "udpck", .id = 1 },
-+	{ .n = "uhpck", .id = 4 },
-+	{ .n = "pck0",  .id = 8 },
-+	{ .n = "pck1",  .id = 9 },
-+	{ .n = "pck2",  .id = 10 },
-+	{ .n = "pck3",  .id = 11 },
- };
- 
- static const struct pck at91rm9200_periphck[] = {
-@@ -76,25 +77,29 @@ static const struct pck at91rm9200_periphck[] = {
- 
- static void __init at91rm9200_pmc_setup(struct device_node *np)
- {
--	const char *slowxtal_name, *mainxtal_name;
-+	struct clk_hw *slow_xtal_hw, *main_xtal_hw, *main_osc_hw;
-+	struct clk_hw *parent_hws[6], *usbck_hw, *hw;
-+	static struct clk_parent_data parent_data;
-+	const char *main_xtal_name = "main_xtal";
- 	struct pmc_data *at91rm9200_pmc;
- 	u32 usb_div[] = { 1, 2, 0, 0 };
--	const char *parent_names[6];
- 	struct regmap *regmap;
--	struct clk_hw *hw;
-+	struct clk *clk;
- 	int i;
- 	bool bypass;
- 
--	i = of_property_match_string(np, "clock-names", "slow_xtal");
--	if (i < 0)
-+	clk = of_clk_get_by_name(np, "slow_xtal");
-+	if (IS_ERR(clk))
+@@ -106,8 +106,8 @@ static void __init at91rm9200_pmc_setup(struct device_node *np)
  		return;
--
--	slowxtal_name = of_clk_get_parent_name(np, i);
--
--	i = of_property_match_string(np, "clock-names", "main_xtal");
--	if (i < 0)
-+	slow_xtal_hw = __clk_get_hw(clk);
-+	if (!slow_xtal_hw)
-+		return;
-+	clk = of_clk_get_by_name(np, main_xtal_name);
-+	if (IS_ERR(clk))
-+		return;
-+	main_xtal_hw = __clk_get_hw(clk);
-+	if (!main_xtal_hw)
+ 
+ 	at91rm9200_pmc = pmc_data_allocate(PMC_PLLBCK + 1,
+-					    nck(at91rm9200_systemck),
+-					    nck(at91rm9200_periphck), 0, 4);
++					   nck(at91rm9200_systemck),
++					   nck(at91rm9200_periphck), 0, 4);
+ 	if (!at91rm9200_pmc)
  		return;
--	mainxtal_name = of_clk_get_parent_name(np, i);
  
- 	regmap = device_node_to_regmap(np);
- 	if (IS_ERR(regmap))
-@@ -108,18 +113,20 @@ static void __init at91rm9200_pmc_setup(struct device_node *np)
- 
- 	bypass = of_property_read_bool(np, "atmel,osc-bypass");
- 
--	hw = at91_clk_register_main_osc(regmap, "main_osc", mainxtal_name, NULL,
--					bypass);
--	if (IS_ERR(hw))
-+	parent_data.name = main_xtal_name;
-+	parent_data.fw_name = main_xtal_name;
-+	main_osc_hw = at91_clk_register_main_osc(regmap, "main_osc", NULL, &parent_data,
-+						 bypass);
-+	if (IS_ERR(main_osc_hw))
- 		goto err_free;
- 
--	hw = at91_clk_register_rm9200_main(regmap, "mainck", "main_osc", NULL);
-+	hw = at91_clk_register_rm9200_main(regmap, "mainck", NULL, main_osc_hw);
- 	if (IS_ERR(hw))
- 		goto err_free;
- 
- 	at91rm9200_pmc->chws[PMC_MAIN] = hw;
- 
--	hw = at91_clk_register_pll(regmap, "pllack", "mainck", NULL, 0,
-+	hw = at91_clk_register_pll(regmap, "pllack", NULL, at91rm9200_pmc->chws[PMC_MAIN], 0,
- 				   &at91rm9200_pll_layout,
- 				   &rm9200_pll_characteristics);
- 	if (IS_ERR(hw))
-@@ -127,7 +134,7 @@ static void __init at91rm9200_pmc_setup(struct device_node *np)
- 
- 	at91rm9200_pmc->chws[PMC_PLLACK] = hw;
- 
--	hw = at91_clk_register_pll(regmap, "pllbck", "mainck", NULL, 1,
-+	hw = at91_clk_register_pll(regmap, "pllbck", NULL, at91rm9200_pmc->chws[PMC_MAIN], 1,
- 				   &at91rm9200_pll_layout,
- 				   &rm9200_pll_characteristics);
- 	if (IS_ERR(hw))
-@@ -135,20 +142,19 @@ static void __init at91rm9200_pmc_setup(struct device_node *np)
- 
- 	at91rm9200_pmc->chws[PMC_PLLBCK] = hw;
- 
--	parent_names[0] = slowxtal_name;
--	parent_names[1] = "mainck";
--	parent_names[2] = "pllack";
--	parent_names[3] = "pllbck";
-+	parent_hws[0] = slow_xtal_hw;
-+	parent_hws[1] = at91rm9200_pmc->chws[PMC_MAIN];
-+	parent_hws[2] = at91rm9200_pmc->chws[PMC_PLLACK];
-+	parent_hws[3] = at91rm9200_pmc->chws[PMC_PLLBCK];
- 	hw = at91_clk_register_master_pres(regmap, "masterck_pres", 4,
--					   parent_names, NULL,
-+					   NULL, parent_hws,
- 					   &at91rm9200_master_layout,
- 					   &rm9200_mck_characteristics,
- 					   &rm9200_mck_lock);
- 	if (IS_ERR(hw))
- 		goto err_free;
- 
--	hw = at91_clk_register_master_div(regmap, "masterck_div",
--					  "masterck_pres", NULL,
-+	hw = at91_clk_register_master_div(regmap, "masterck_div", NULL, hw,
- 					  &at91rm9200_master_layout,
- 					  &rm9200_mck_characteristics,
- 					  &rm9200_mck_lock, CLK_SET_RATE_GATE, 0);
-@@ -157,21 +163,22 @@ static void __init at91rm9200_pmc_setup(struct device_node *np)
- 
- 	at91rm9200_pmc->chws[PMC_MCK] = hw;
- 
--	hw = at91rm9200_clk_register_usb(regmap, "usbck", "pllbck", NULL, usb_div);
--	if (IS_ERR(hw))
-+	usbck_hw = at91rm9200_clk_register_usb(regmap, "usbck", NULL,
-+					       at91rm9200_pmc->chws[PMC_PLLBCK], usb_div);
-+	if (IS_ERR(usbck_hw))
- 		goto err_free;
- 
--	parent_names[0] = slowxtal_name;
--	parent_names[1] = "mainck";
--	parent_names[2] = "pllack";
--	parent_names[3] = "pllbck";
-+	parent_hws[0] = slow_xtal_hw;
-+	parent_hws[1] = at91rm9200_pmc->chws[PMC_MAIN];
-+	parent_hws[2] = at91rm9200_pmc->chws[PMC_PLLACK];
-+	parent_hws[3] = at91rm9200_pmc->chws[PMC_PLLBCK];
- 	for (i = 0; i < 4; i++) {
- 		char name[6];
- 
- 		snprintf(name, sizeof(name), "prog%d", i);
- 
- 		hw = at91_clk_register_programmable(regmap, name,
--						    parent_names, NULL, 4, i,
-+						    NULL, parent_hws, 4, i,
- 						    &at91rm9200_programmable_layout,
- 						    NULL);
- 		if (IS_ERR(hw))
-@@ -180,9 +187,16 @@ static void __init at91rm9200_pmc_setup(struct device_node *np)
- 		at91rm9200_pmc->pchws[i] = hw;
- 	}
- 
-+	/* Set systemck parent hws. */
-+	at91rm9200_systemck[0].parent_hw = usbck_hw;
-+	at91rm9200_systemck[1].parent_hw = usbck_hw;
-+	at91rm9200_systemck[2].parent_hw = at91rm9200_pmc->pchws[0];
-+	at91rm9200_systemck[3].parent_hw = at91rm9200_pmc->pchws[1];
-+	at91rm9200_systemck[4].parent_hw = at91rm9200_pmc->pchws[2];
-+	at91rm9200_systemck[5].parent_hw = at91rm9200_pmc->pchws[3];
- 	for (i = 0; i < ARRAY_SIZE(at91rm9200_systemck); i++) {
- 		hw = at91_clk_register_system(regmap, at91rm9200_systemck[i].n,
--					      at91rm9200_systemck[i].p, NULL,
-+					      NULL, at91rm9200_systemck[i].parent_hw,
- 					      at91rm9200_systemck[i].id, 0);
- 		if (IS_ERR(hw))
- 			goto err_free;
-@@ -193,7 +207,7 @@ static void __init at91rm9200_pmc_setup(struct device_node *np)
- 	for (i = 0; i < ARRAY_SIZE(at91rm9200_periphck); i++) {
- 		hw = at91_clk_register_peripheral(regmap,
- 						  at91rm9200_periphck[i].n,
--						  "masterck_div", NULL,
-+						  NULL, at91rm9200_pmc->chws[PMC_MCK],
- 						  at91rm9200_periphck[i].id);
- 		if (IS_ERR(hw))
- 			goto err_free;
 -- 
 2.39.2
 
