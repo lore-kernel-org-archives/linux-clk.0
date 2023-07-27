@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D0DDC04FDF
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Jul 2023 05:38:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65797C001DC
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Jul 2023 05:38:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231708AbjG0FiN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Jul 2023 01:38:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54002 "EHLO
+        id S232196AbjG0FiZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Jul 2023 01:38:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232065AbjG0Fhy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Jul 2023 01:37:54 -0400
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5682630E8
-        for <linux-clk@vger.kernel.org>; Wed, 26 Jul 2023 22:37:03 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id d9443c01a7336-1bbd03cb7c1so3416335ad.3
-        for <linux-clk@vger.kernel.org>; Wed, 26 Jul 2023 22:37:03 -0700 (PDT)
+        with ESMTP id S232304AbjG0FiC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Jul 2023 01:38:02 -0400
+Received: from mail-oa1-x2a.google.com (mail-oa1-x2a.google.com [IPv6:2001:4860:4864:20::2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B7B735A8
+        for <linux-clk@vger.kernel.org>; Wed, 26 Jul 2023 22:37:13 -0700 (PDT)
+Received: by mail-oa1-x2a.google.com with SMTP id 586e51a60fabf-1bb717ece50so482652fac.0
+        for <linux-clk@vger.kernel.org>; Wed, 26 Jul 2023 22:37:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1690436160; x=1691040960;
+        d=tuxon.dev; s=google; t=1690436153; x=1691040953;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tZjA/S5rkAI45EIQ8pwCaKfyj6nPmHrCItt9RJLE9cc=;
-        b=nTtP8b9CSgkFgg32JpTd5UHEzmEllvNl41ff0GI36YGsZVfI3unXLhJLIfWPqssdfD
-         jdyh/9kZ7JDeSIlZYrP+ViHnPDab+yF29x9F+0BoSRprtm7GLcATD59n2LpAg5+fyX05
-         RAhZrJe6gy/RJ7pM+LD8SCXqw5xKJq4uiwmEqXvBPJ7zK5uoHuebdv5a0sLJl7oyf6YM
-         MuPXrerqClkfQtsWkKFmtpoJ88AluPHl4mR09XuwWWu+Z+lidskXoYFVxW054tmzrVwc
-         qFdeVFs5yZ55zdlhcnmPbfUN2gdQmRfuerF6raRQ9lQV5JlbgwjBQGzRKhVh43An3lY/
-         9jow==
+        bh=Xp28KzPE+ieFfhPUt9Jo6e3yDprwJgBDl/Tw7iUm9QY=;
+        b=l/wz+kw1GJMRBj7tsp/sNDXv0czPU+bDH78cW2IpD0LbCvy5qy5joTEc9WIdlIY6Gu
+         lFKHVnKW+Q5XNjpyLx6wSaIA6o2HFfv3AXsTThRRubOhxNWOvBy6wCEaXsMZ3cvK69Lq
+         h/Q1XGjpLy6hJ0A2Unz0Hc7e2oPT9Qp+9yd5RBN2KxQk82BIt5BB/FLHUVJKWEWdfJnY
+         N7wTns67f6gHWF83hOnmvr9weAGtquUqGSd6c4dq01r+ZJylJZcPXoouZ3FQxgNW0nmL
+         3ZocZsftwM8BMXRduAJn5W9c2sby7WUB8k8zHcLkEo9XxBWoNUqUO90p6Y9lSS7LKoZB
+         FNiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690436160; x=1691040960;
+        d=1e100.net; s=20221208; t=1690436153; x=1691040953;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tZjA/S5rkAI45EIQ8pwCaKfyj6nPmHrCItt9RJLE9cc=;
-        b=mHIGOZqxDZeLRLfPmsY28Onu8BJrhOt9BNH8H2i8bAjt3+1kL079Nh7UrsJSAiHN/g
-         BzuySHsFGSKAHpktUOOCCYy+alnHmThJSRhpOPa5EBXYJKb91Aa1x3ORGWJ4+1Jouj3R
-         qzDqilnNEMRjIbpoN71oQbDn0/czfP9JDcmmk9Z42gAaCX2K5/YwHBcTEIKV7gpDxQy+
-         EMtKglJ/lCGHzBFXGgJ0/rK0J6xCByrPUzeU3AGWflA5AdHuIs7QIUhqM3/2GJwEB8sd
-         fR3vV8uYpsTRWFUPY+T8GXlnKLkXR++YbFhy4LSUjaqEUul6IvMI55DUJKfvhU1bny17
-         ZG7g==
-X-Gm-Message-State: ABy/qLaB/sKp32ln12/REtwR+P8Od8lFuTI5eZ2tslRCauWGRWbsVDi2
-        UocTYSCX8/BPiFISzgQKpjU0Hw==
-X-Google-Smtp-Source: APBJJlEnqTGNOQscpftBLsei9noqgRw7/LuMRVXVScuPebiJkYEppzbJfbM+vcPjAU02zFrFT8/1Pg==
-X-Received: by 2002:a17:902:db09:b0:1ba:fe63:6616 with SMTP id m9-20020a170902db0900b001bafe636616mr3831454plx.6.1690436160099;
-        Wed, 26 Jul 2023 22:36:00 -0700 (PDT)
+        bh=Xp28KzPE+ieFfhPUt9Jo6e3yDprwJgBDl/Tw7iUm9QY=;
+        b=YIE+9UyoIyxph6UAXSNYiYLA+ruE3bvpVyqB8MudJ4slqnHWKbgsMFXm9fb6bEWTbr
+         vsH7p8tN+dQHX8job/2oSLYvq1RSQUPDLNRjUukRDnnUCVFmh8aCG0nCdg1Zf9TVNVZE
+         4eh2Kxz3O1MzfB3UmGuOsrWsXInkujTywlIH4gJJNzc2ZjpL+CJwuO3rP/V3at7R68py
+         MOF6PYBf1JuHAYoepJu44PRtYbDT6HrUS7bdVmAR/RnVYwARyGmjzqDOpNt4Tx01cAzy
+         nHOkNZ03PzbS13F+IwtCmxpOwfx1EeMoym8HyFknyCQmspYVgl4r/p7A6/DfwkOfNM90
+         QeVQ==
+X-Gm-Message-State: ABy/qLaoBE8QVKMz49/iV/oqK7Cdxzdj0mIvcH1xBakFjjC3zSeOavKX
+        fxC6ZbnSWsFOS2K9/FQp0ogZhJv3xwjQMXd7V6Hg8LmH
+X-Google-Smtp-Source: APBJJlGFr3EU/A5Eka8jw779q9ZR6uM8cgVvTe3C2t7dO4LjZxg11yMbDuHGcm0iPCelU8t20dYJdQ==
+X-Received: by 2002:a05:6871:68a:b0:1b7:6039:4c97 with SMTP id l10-20020a056871068a00b001b760394c97mr1923408oao.16.1690436152911;
+        Wed, 26 Jul 2023 22:35:52 -0700 (PDT)
 Received: from localhost.localdomain ([82.78.167.79])
-        by smtp.gmail.com with ESMTPSA id 21-20020a170902c11500b001bb889530adsm319059pli.217.2023.07.26.22.35.53
+        by smtp.gmail.com with ESMTPSA id 21-20020a170902c11500b001bb889530adsm319059pli.217.2023.07.26.22.35.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jul 2023 22:35:59 -0700 (PDT)
+        Wed, 26 Jul 2023 22:35:52 -0700 (PDT)
 From:   Claudiu Beznea <claudiu.beznea@tuxon.dev>
 To:     mturquette@baylibre.com, sboyd@kernel.org,
         nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
@@ -56,9 +56,9 @@ To:     mturquette@baylibre.com, sboyd@kernel.org,
 Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, varshini.rajendran@microchip.com,
         Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Subject: [PATCH 29/42] clk: at91: clk-h32mx: remove parent_names support
-Date:   Thu, 27 Jul 2023 08:31:43 +0300
-Message-Id: <20230727053156.13587-30-claudiu.beznea@tuxon.dev>
+Subject: [PATCH 28/42] clk: at91: clk-generated: remove parent_names support
+Date:   Thu, 27 Jul 2023 08:31:42 +0300
+Message-Id: <20230727053156.13587-29-claudiu.beznea@tuxon.dev>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230727053156.13587-1-claudiu.beznea@tuxon.dev>
 References: <20230727053156.13587-1-claudiu.beznea@tuxon.dev>
@@ -69,98 +69,119 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 Remove parent_names support as parent_hw support is now available on all
-platforms using clk-h32mx driver.
+platforms using clk-generated driver.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 ---
- drivers/clk/at91/clk-h32mx.c | 11 +++--------
- drivers/clk/at91/dt-compat.c |  2 +-
- drivers/clk/at91/pmc.h       |  2 +-
- drivers/clk/at91/sama5d2.c   |  2 +-
- drivers/clk/at91/sama5d4.c   |  2 +-
- 5 files changed, 7 insertions(+), 12 deletions(-)
+ drivers/clk/at91/clk-generated.c | 10 +++-------
+ drivers/clk/at91/dt-compat.c     |  2 +-
+ drivers/clk/at91/pmc.h           |  3 +--
+ drivers/clk/at91/sam9x60.c       |  2 +-
+ drivers/clk/at91/sama5d2.c       |  2 +-
+ drivers/clk/at91/sama7g5.c       |  2 +-
+ 6 files changed, 8 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/clk/at91/clk-h32mx.c b/drivers/clk/at91/clk-h32mx.c
-index d7cdade56454..0e139bf731ec 100644
---- a/drivers/clk/at91/clk-h32mx.c
-+++ b/drivers/clk/at91/clk-h32mx.c
-@@ -83,7 +83,7 @@ static const struct clk_ops h32mx_ops = {
- 
+diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
+index 4b4edeecc889..042553c7118a 100644
+--- a/drivers/clk/at91/clk-generated.c
++++ b/drivers/clk/at91/clk-generated.c
+@@ -318,8 +318,7 @@ static void clk_generated_startup(struct clk_generated *gck)
  struct clk_hw * __init
- at91_clk_register_h32mx(struct regmap *regmap, const char *name,
--			const char *parent_name, struct clk_hw *parent_hw)
-+			struct clk_hw *parent_hw)
- {
- 	struct clk_sama5d4_h32mx *h32mxclk;
- 	struct clk_init_data init = {};
-@@ -95,13 +95,8 @@ at91_clk_register_h32mx(struct regmap *regmap, const char *name,
+ at91_clk_register_generated(struct regmap *regmap, spinlock_t *lock,
+ 			    const struct clk_pcr_layout *layout,
+-			    const char *name, const char **parent_names,
+-			    struct clk_hw **parent_hws,
++			    const char *name, struct clk_hw **parent_hws,
+ 			    u32 *mux_table, u8 num_parents, u8 id,
+ 			    const struct clk_range *range,
+ 			    int chg_pid)
+@@ -329,7 +328,7 @@ at91_clk_register_generated(struct regmap *regmap, spinlock_t *lock,
+ 	struct clk_hw *hw;
+ 	int ret;
+ 
+-	if (!(parent_names || parent_hws))
++	if (!parent_hws)
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	gck = kzalloc(sizeof(*gck), GFP_KERNEL);
+@@ -338,10 +337,7 @@ at91_clk_register_generated(struct regmap *regmap, spinlock_t *lock,
  
  	init.name = name;
- 	init.ops = &h32mx_ops;
--	if (parent_hw) {
--		init.parent_hws = (const struct clk_hw **)&parent_hw;
--		init.num_parents = 1;
--	} else {
--		init.parent_names = parent_name ? &parent_name : NULL;
--		init.num_parents = parent_name ? 1 : 0;
--	}
-+	init.parent_hws = parent_hw ? (const struct clk_hw **)&parent_hw : NULL;
-+	init.num_parents = parent_hw ? 1 : 0;
- 	init.flags = CLK_SET_RATE_GATE;
- 
- 	h32mxclk->hw.init = &init;
+ 	init.ops = &generated_ops;
+-	if (parent_hws)
+-		init.parent_hws = (const struct clk_hw **)parent_hws;
+-	else
+-		init.parent_names = parent_names;
++	init.parent_hws = (const struct clk_hw **)parent_hws;
+ 	init.num_parents = num_parents;
+ 	init.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE;
+ 	if (chg_pid >= 0)
 diff --git a/drivers/clk/at91/dt-compat.c b/drivers/clk/at91/dt-compat.c
-index 816a7ee353d6..058b65c2d88d 100644
+index 91bc2fada6ec..816a7ee353d6 100644
 --- a/drivers/clk/at91/dt-compat.c
 +++ b/drivers/clk/at91/dt-compat.c
-@@ -234,7 +234,7 @@ static void __init of_sama5d4_clk_h32mx_setup(struct device_node *np)
- 	if (!parent_hw)
- 		return;
+@@ -198,7 +198,7 @@ static void __init of_sama5d2_clk_generated_setup(struct device_node *np)
  
--	hw = at91_clk_register_h32mx(regmap, name, NULL, parent_hw);
-+	hw = at91_clk_register_h32mx(regmap, name, parent_hw);
- 	if (IS_ERR(hw))
- 		return;
- 
+ 		hw = at91_clk_register_generated(regmap, &pmc_pcr_lock,
+ 						 &dt_pcr_layout, name,
+-						 NULL, parent_hws, NULL,
++						 parent_hws, NULL,
+ 						 num_parents, id, &range,
+ 						 chg_pid);
+ 		if (IS_ERR(hw))
 diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
-index 87ba2586d5e5..11f7ab4d1ad8 100644
+index 711b55a6b0ab..87ba2586d5e5 100644
 --- a/drivers/clk/at91/pmc.h
 +++ b/drivers/clk/at91/pmc.h
-@@ -149,7 +149,7 @@ at91_clk_register_generated(struct regmap *regmap, spinlock_t *lock,
- 
+@@ -143,8 +143,7 @@ at91_clk_register_audio_pll_pmc(struct regmap *regmap, const char *name,
  struct clk_hw * __init
- at91_clk_register_h32mx(struct regmap *regmap, const char *name,
--			const char *parent_name, struct clk_hw *parent_hw);
-+			struct clk_hw *parent_hw);
+ at91_clk_register_generated(struct regmap *regmap, spinlock_t *lock,
+ 			    const struct clk_pcr_layout *layout,
+-			    const char *name, const char **parent_names,
+-			    struct clk_hw **parent_hws, u32 *mux_table,
++			    const char *name, struct clk_hw **parent_hws, u32 *mux_table,
+ 			    u8 num_parents, u8 id,
+ 			    const struct clk_range *range, int chg_pid);
  
- struct clk_hw * __init
- at91_clk_i2s_mux_register(struct regmap *regmap, const char *name,
+diff --git a/drivers/clk/at91/sam9x60.c b/drivers/clk/at91/sam9x60.c
+index 930b4515a1dd..43997f686b87 100644
+--- a/drivers/clk/at91/sam9x60.c
++++ b/drivers/clk/at91/sam9x60.c
+@@ -363,7 +363,7 @@ static void __init sam9x60_pmc_setup(struct device_node *np)
+ 		hw = at91_clk_register_generated(regmap, &pmc_pcr_lock,
+ 						 &sam9x60_pcr_layout,
+ 						 sam9x60_gck[i].n,
+-						 NULL, parent_hws, NULL, 6,
++						 parent_hws, NULL, 6,
+ 						 sam9x60_gck[i].id,
+ 						 &sam9x60_gck[i].r, INT_MIN);
+ 		if (IS_ERR(hw))
 diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
-index 2d4bf9e1a79c..93c646e0b6ef 100644
+index 3920de445eca..2d4bf9e1a79c 100644
 --- a/drivers/clk/at91/sama5d2.c
 +++ b/drivers/clk/at91/sama5d2.c
-@@ -280,7 +280,7 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
+@@ -371,7 +371,7 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
+ 		hw = at91_clk_register_generated(regmap, &pmc_pcr_lock,
+ 						 &sama5d2_pcr_layout,
+ 						 sama5d2_gck[i].n,
+-						 NULL, parent_hws, NULL, 6,
++						 parent_hws, NULL, 6,
+ 						 sama5d2_gck[i].id,
+ 						 &sama5d2_gck[i].r,
+ 						 sama5d2_gck[i].chg_pid);
+diff --git a/drivers/clk/at91/sama7g5.c b/drivers/clk/at91/sama7g5.c
+index 16e458be8304..b2d27193741b 100644
+--- a/drivers/clk/at91/sama7g5.c
++++ b/drivers/clk/at91/sama7g5.c
+@@ -1235,7 +1235,7 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
  
- 	sama5d2_pmc->chws[PMC_MCK] = hw;
- 
--	hw = at91_clk_register_h32mx(regmap, "h32mxck", NULL, sama5d2_pmc->chws[PMC_MCK]);
-+	hw = at91_clk_register_h32mx(regmap, "h32mxck", sama5d2_pmc->chws[PMC_MCK]);
- 	if (IS_ERR(hw))
- 		goto err_free;
- 
-diff --git a/drivers/clk/at91/sama5d4.c b/drivers/clk/at91/sama5d4.c
-index ac7565b26dce..b4375cb1c3f3 100644
---- a/drivers/clk/at91/sama5d4.c
-+++ b/drivers/clk/at91/sama5d4.c
-@@ -220,7 +220,7 @@ static void __init sama5d4_pmc_setup(struct device_node *np)
- 
- 	sama5d4_pmc->chws[PMC_MCK] = hw;
- 
--	hw = at91_clk_register_h32mx(regmap, "h32mxck", NULL, sama5d4_pmc->chws[PMC_MCK]);
-+	hw = at91_clk_register_h32mx(regmap, "h32mxck", sama5d4_pmc->chws[PMC_MCK]);
- 	if (IS_ERR(hw))
- 		goto err_free;
- 
+ 		hw = at91_clk_register_generated(regmap, &pmc_pcr_lock,
+ 						 &sama7g5_pcr_layout,
+-						 sama7g5_gck[i].n, NULL,
++						 sama7g5_gck[i].n,
+ 						 parent_hws, mux_table,
+ 						 num_parents,
+ 						 sama7g5_gck[i].id,
 -- 
 2.39.2
 
