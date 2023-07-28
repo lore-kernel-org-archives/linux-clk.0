@@ -2,217 +2,130 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 082B3C41513
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Jul 2023 07:43:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B90BC41513
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Jul 2023 07:57:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234390AbjG1Hnx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Jul 2023 03:43:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35612 "EHLO
+        id S234535AbjG1H5w (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Jul 2023 03:57:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233750AbjG1Hnw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Jul 2023 03:43:52 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C99EB6;
-        Fri, 28 Jul 2023 00:43:51 -0700 (PDT)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36S62CoO009561;
-        Fri, 28 Jul 2023 06:35:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=qcppdkim1;
- bh=q8DCUXejvrxrBsmlj5ksQRW0+XixJo9Je9crSxDJwmc=;
- b=gqG4cU7WBBlepGx1jqeDjRhfSP/ah1OMtORTdnRCK8Xe3/BMw3DkJv2uk250/PNiqd6X
- B6GWuev+8JoF4PxF7BOatU1hLMpqJyBfrLcM8VTdm8MCFJgsdfIeXt93vMb/CRKa0yhy
- gbdIaFeWDElOu92gQxvwX/HQ4PhNKzlWj15gZ3KxnuJlE47ZvQ40TQBObcIHoUfAnpsr
- mVY4PgEZ3vpDfH0EeUbXZ+6nYNf15Uy9BKznmLtpCfaZJiB4C/ZHvM0+Onse6RSFpWLw
- eAAeIDsIuI/7LcW+XWy+69SiYFWnGI5bJVV4JLDBTcDf4FqXI6sfT4Y8NkIUmex5AtNY Fg== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3s468r0783-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 28 Jul 2023 06:35:30 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36S6ZSfe008729
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 28 Jul 2023 06:35:28 GMT
-Received: from hu-mmanikan-blr.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.30; Thu, 27 Jul 2023 23:35:22 -0700
-From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-To:     <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <mathieu.poirier@linaro.org>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <conor+dt@kernel.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <quic_eberman@quicinc.com>, <kvalo@kernel.org>,
-        <quic_mmanikan@quicinc.com>, <loic.poulain@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-CC:     <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
-        <quic_kathirav@quicinc.com>, <quic_anusha@quicinc.com>,
-        <quic_varada@quicinc.com>
-Subject: [PATCH v4 08/11] remoteproc: qcom: q6v5: Add multipd interrupts support
-Date:   Fri, 28 Jul 2023 12:04:09 +0530
-Message-ID: <20230728063412.1641856-9-quic_mmanikan@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230728063412.1641856-1-quic_mmanikan@quicinc.com>
-References: <20230728063412.1641856-1-quic_mmanikan@quicinc.com>
+        with ESMTP id S234536AbjG1H5q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Jul 2023 03:57:46 -0400
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F101835A9
+        for <linux-clk@vger.kernel.org>; Fri, 28 Jul 2023 00:57:43 -0700 (PDT)
+Received: by mail-lj1-x229.google.com with SMTP id 38308e7fff4ca-2b9338e4695so27463371fa.2
+        for <linux-clk@vger.kernel.org>; Fri, 28 Jul 2023 00:57:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1690531062; x=1691135862;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=j0egf4lvYdcuItu5sen9yx+hMceloBrv5HDtWkj+EBQ=;
+        b=dS3PNhWJYTk9cprQeaGLT67v18rkYMVG8OD1eutt+f164WQIPznvCQMs7Si18TZqga
+         41LKjZwbhGquP/773V+3Vgg+t5yUvegeP4iKWSKuv2M+Hf++5IGdh6BZruuA+Tal36xD
+         6M6l1dohtyWMfZdJpQsIdrhHjoYPlkg71FMgddsgM2IVxZa7wMjQAPJO7REo247krxQ9
+         BhS8nE+gdvHKQleh2noz0hKehulWCCFpLKNZCZVlkGPHyE/O7/D1kqPveRZMDz/vE8uw
+         xfsNZ9h9/JbSN4iosvgAdkXzl3uZe3stDsJlYoq2UW3aJIRXtF/93v31NK9c9JAkRucj
+         sT5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690531062; x=1691135862;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j0egf4lvYdcuItu5sen9yx+hMceloBrv5HDtWkj+EBQ=;
+        b=H9eTI6+tnssX1izLNl2c1VnZijyHNPdebCRefRUJaSFptxFMEpHDJMtMtxqYX09Da2
+         9nSVqhEwHajzI5IMx+D5eDzQA/Yeh9N0K3+FO9hhlIg2Grm2muc9pH795V7JhPNoyb7b
+         ZkBke7GhB/eNSjK9uc/xNp74uL6yP9KgcahHA1x0Q7fDZOf183x2jGutsdqZTJRu4fUy
+         p6RnTNjVIA12Lp4A6ebr8dYybfabh8pPp7+kWMWFRALMsTGVIXQdTaX/W2LGarT4V03w
+         +aqKnXqF0UHiJ9RijG5rDh3f5hw1fksO4+YBzkyAu53EYHAGU5ZksTfdFzZpfQmkdePC
+         4OAQ==
+X-Gm-Message-State: ABy/qLZvf83sFelaR4R/B1aLKI6/mkYPjfGZl43KsUA2tS780ILBKaEB
+        yOg60kKGQEG/CTXC22wrBEvRwg==
+X-Google-Smtp-Source: APBJJlExEQ4pj7ugLoNByUG8EtzPoAPNQAMl1O8D7AkLZ3lHhZRhnffSaaDkTHoh4VybbisqyXWvzw==
+X-Received: by 2002:a2e:8052:0:b0:2b7:2066:10e1 with SMTP id p18-20020a2e8052000000b002b7206610e1mr1073206ljg.0.1690531062110;
+        Fri, 28 Jul 2023 00:57:42 -0700 (PDT)
+Received: from [192.168.1.101] (abxi112.neoplus.adsl.tpnet.pl. [83.9.2.112])
+        by smtp.gmail.com with ESMTPSA id b9-20020a2e9889000000b002b9b90474c7sm812128ljj.129.2023.07.28.00.57.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jul 2023 00:57:41 -0700 (PDT)
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Date:   Fri, 28 Jul 2023 09:57:38 +0200
+Subject: [PATCH v3] clk: qcom: reset: Use the correct type of sleep/delay
+ based on length
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 7_fmshPnMu6TDiOP9wx4J5sxyPQLMgJN
-X-Proofpoint-ORIG-GUID: 7_fmshPnMu6TDiOP9wx4J5sxyPQLMgJN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-07-27_10,2023-07-26_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxlogscore=913
- bulkscore=0 adultscore=0 malwarescore=0 spamscore=0 suspectscore=0
- mlxscore=0 priorityscore=1501 lowpriorityscore=0 impostorscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2306200000 definitions=main-2307280059
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230726-topic-qcom_reset-v3-1-5958facd5db2@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAPF0w2QC/4WNywrCMBQFf0Wy9kpepK0r/0NE0uTaBmpSkxqU0
+ n837c6NLufAmZlJwugwkeNuJhGzSy74AmK/I6bXvkNwtjDhlAtacQVTGJ2Bhwn3a8SEE0hZV42
+ hoq6MIuXW6oTQRu1NX47+OQxlHCPe3GvrnC+Fe5emEN9bNrN1/VHIDCg03KKyAqWpzGlwXsdwC
+ LEjqy3zfwYODKRWyFpmqRTNl2FZlg8k00lNCAEAAA==
+To:     Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mike Turquette <mturquette@linaro.org>,
+        Stephan Gerhold <stephan.gerhold@kernkonzept.com>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1690531060; l=1668;
+ i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
+ bh=KmWdb1cFJ5NCkxYQVBMw/8dqUkNhoXKd6PZJInnl0sk=;
+ b=5ex5l4lNbpCLd6R/8kOSv9yzeJmaFT0DCt2kcnOoNuiA0y2TM42MwY7xpad/DVo/0JpqjJo5P
+ ADVi7622fQhClBiG34qwptIDGxNnP2l+BEjaVBhjtu5DNOwN4gIIkff
+X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In multipd model, root & user pd remoteproc's interrupts are
-different. User pd needs additional interrupts like spawn.
-Instead of going with qcom_q6v5_init(), we defined a new
-function to register userpd rproc interrupts in mpd driver.
-Since userpd rproc uses some of common interrupts like fatal,
-ready, static is removed from ISR handler and used in userpd
-interrupt registration.
+Use the fsleep() helper that (based on the length of the delay, see: [1])
+chooses the correct sleep/delay functions.
 
-Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+[1] https://www.kernel.org/doc/Documentation/timers/timers-howto.txt
+
+Fixes: 2cb8a39b6781 ("clk: qcom: reset: Allow specifying custom reset delay")
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
-Changes in v4:
-	- Rebased on linux-next
-
+Let the toggle include a bigger delay and make sure it's using the
+correct function to achieve that.
+---
 Changes in v3:
-	- Rebased on linux-next
+- Improve the commit message
+- Link to v2: https://lore.kernel.org/r/20230726-topic-qcom_reset-v2-1-4a6e1b1d0439@linaro.org
 
- drivers/remoteproc/qcom_q6v5.c | 37 +++++++++++++++++++++++++++++++---
- drivers/remoteproc/qcom_q6v5.h | 11 ++++++++++
- 2 files changed, 45 insertions(+), 3 deletions(-)
+Changes in v2:
+- Drop the "allow bigger delay" until there's a user
+- Use fsleep instead of open-coding effectively the same
+- Fix the fixes tag
+- Link to v1: https://lore.kernel.org/r/20230726-topic-qcom_reset-v1-0-92de6d3e4c7c@linaro.org
+---
+ drivers/clk/qcom/reset.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
-index 192c7aa0e39e..d535f3365865 100644
---- a/drivers/remoteproc/qcom_q6v5.c
-+++ b/drivers/remoteproc/qcom_q6v5.c
-@@ -118,7 +118,7 @@ static irqreturn_t q6v5_wdog_interrupt(int irq, void *data)
- 	return IRQ_HANDLED;
+diff --git a/drivers/clk/qcom/reset.c b/drivers/clk/qcom/reset.c
+index 0e914ec7aeae..e45e32804d2c 100644
+--- a/drivers/clk/qcom/reset.c
++++ b/drivers/clk/qcom/reset.c
+@@ -16,7 +16,8 @@ static int qcom_reset(struct reset_controller_dev *rcdev, unsigned long id)
+ 	struct qcom_reset_controller *rst = to_qcom_reset_controller(rcdev);
+ 
+ 	rcdev->ops->assert(rcdev, id);
+-	udelay(rst->reset_map[id].udelay ?: 1); /* use 1 us as default */
++	fsleep(rst->reset_map[id].udelay ?: 1); /* use 1 us as default */
++
+ 	rcdev->ops->deassert(rcdev, id);
+ 	return 0;
  }
- 
--static irqreturn_t q6v5_fatal_interrupt(int irq, void *data)
-+irqreturn_t q6v5_fatal_interrupt(int irq, void *data)
- {
- 	struct qcom_q6v5 *q6v5 = data;
- 	size_t len;
-@@ -139,7 +139,7 @@ static irqreturn_t q6v5_fatal_interrupt(int irq, void *data)
- 	return IRQ_HANDLED;
- }
- 
--static irqreturn_t q6v5_ready_interrupt(int irq, void *data)
-+irqreturn_t q6v5_ready_interrupt(int irq, void *data)
- {
- 	struct qcom_q6v5 *q6v5 = data;
- 
-@@ -183,7 +183,16 @@ static irqreturn_t q6v5_handover_interrupt(int irq, void *data)
- 	return IRQ_HANDLED;
- }
- 
--static irqreturn_t q6v5_stop_interrupt(int irq, void *data)
-+irqreturn_t q6v5_spawn_interrupt(int irq, void *data)
-+{
-+	struct qcom_q6v5 *q6v5 = data;
-+
-+	complete(&q6v5->spawn_done);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+irqreturn_t q6v5_stop_interrupt(int irq, void *data)
- {
- 	struct qcom_q6v5 *q6v5 = data;
- 
-@@ -220,6 +229,28 @@ int qcom_q6v5_request_stop(struct qcom_q6v5 *q6v5, struct qcom_sysmon *sysmon)
- }
- EXPORT_SYMBOL_GPL(qcom_q6v5_request_stop);
- 
-+/**
-+ * qcom_q6v5_request_spawn() - request the remote processor to spawn
-+ * @q6v5:      reference to qcom_q6v5 context
-+ *
-+ * Return: 0 on success, negative errno on failure
-+ */
-+int qcom_q6v5_request_spawn(struct qcom_q6v5 *q6v5)
-+{
-+	int ret;
-+
-+	ret = qcom_smem_state_update_bits(q6v5->spawn_state,
-+					  BIT(q6v5->spawn_bit), BIT(q6v5->spawn_bit));
-+
-+	ret = wait_for_completion_timeout(&q6v5->spawn_done, 5 * HZ);
-+
-+	qcom_smem_state_update_bits(q6v5->spawn_state,
-+				    BIT(q6v5->spawn_bit), 0);
-+
-+	return ret == 0 ? -ETIMEDOUT : 0;
-+}
-+EXPORT_SYMBOL_GPL(qcom_q6v5_request_spawn);
-+
- /**
-  * qcom_q6v5_panic() - panic handler to invoke a stop on the remote
-  * @q6v5:	reference to qcom_q6v5 context
-diff --git a/drivers/remoteproc/qcom_q6v5.h b/drivers/remoteproc/qcom_q6v5.h
-index 5a859c41896e..4e1bb1a68284 100644
---- a/drivers/remoteproc/qcom_q6v5.h
-+++ b/drivers/remoteproc/qcom_q6v5.h
-@@ -18,21 +18,27 @@ struct qcom_q6v5 {
- 
- 	struct qcom_smem_state *state;
- 	struct qmp *qmp;
-+	struct qcom_smem_state *shutdown_state;
-+	struct qcom_smem_state *spawn_state;
- 
- 	struct icc_path *path;
- 
- 	unsigned stop_bit;
-+	unsigned shutdown_bit;
-+	unsigned spawn_bit;
- 
- 	int wdog_irq;
- 	int fatal_irq;
- 	int ready_irq;
- 	int handover_irq;
- 	int stop_irq;
-+	int spawn_irq;
- 
- 	bool handover_issued;
- 
- 	struct completion start_done;
- 	struct completion stop_done;
-+	struct completion spawn_done;
- 
- 	int crash_reason;
- 
-@@ -50,7 +56,12 @@ void qcom_q6v5_deinit(struct qcom_q6v5 *q6v5);
- int qcom_q6v5_prepare(struct qcom_q6v5 *q6v5);
- int qcom_q6v5_unprepare(struct qcom_q6v5 *q6v5);
- int qcom_q6v5_request_stop(struct qcom_q6v5 *q6v5, struct qcom_sysmon *sysmon);
-+int qcom_q6v5_request_spawn(struct qcom_q6v5 *q6v5);
- int qcom_q6v5_wait_for_start(struct qcom_q6v5 *q6v5, int timeout);
- unsigned long qcom_q6v5_panic(struct qcom_q6v5 *q6v5);
-+irqreturn_t q6v5_fatal_interrupt(int irq, void *data);
-+irqreturn_t q6v5_ready_interrupt(int irq, void *data);
-+irqreturn_t q6v5_spawn_interrupt(int irq, void *data);
-+irqreturn_t q6v5_stop_interrupt(int irq, void *data);
- 
- #endif
+
+---
+base-commit: 451cc82bd11eb6a374f4dbcfc1cf007eafea91ab
+change-id: 20230726-topic-qcom_reset-44879c0387c6
+
+Best regards,
 -- 
-2.34.1
+Konrad Dybcio <konrad.dybcio@linaro.org>
 
