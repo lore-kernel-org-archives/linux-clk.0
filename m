@@ -2,137 +2,110 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C54A7C0015E
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Jul 2023 15:59:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9307C0015E
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Jul 2023 16:05:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236174AbjG1P7v (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Jul 2023 11:59:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46806 "EHLO
+        id S236350AbjG1QFL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Jul 2023 12:05:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234529AbjG1P7u (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Jul 2023 11:59:50 -0400
-Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAD9E110;
-        Fri, 28 Jul 2023 08:59:48 -0700 (PDT)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-        by mailout.nyi.internal (Postfix) with ESMTP id 42D155C00BE;
-        Fri, 28 Jul 2023 11:59:45 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute6.internal (MEProxy); Fri, 28 Jul 2023 11:59:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-        :cc:content-type:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; t=1690559985; x=1690646385; bh=qe
-        prRb5ewEtA801/sByp5QkC5fP6Mty2WClCI4vUDyY=; b=GQgIcy4Pj5IML3N/U+
-        muKPT/yi2mD0T9FSsMKqUPLjbTKA/2rj9ALRX8jCqneWSJM36GXeopCXKNSVXBzq
-        Nu2zUEJCHDPQ2O2/yx0yWPHy4ikGSfMT3VXOZSCwEY46P/UNAjDSsac4bXlkHvNE
-        MNXQ9hwmYVAHtkRmF7MiHR/rXa3HiG/KdOSusFIMeTClTXrrgaayaL4L0DO9izQm
-        vJA7XKrN74xm4y2qXGDjrq06Rn7+OfRPYXIYyyk6eQxrhv9669kTMu0q74z37Pzf
-        n6dVzAyANj4suvYmcNIys2HmTUeNl7EeZ4sI3JcxCnY3ZsP85mBEnWmSYaRNxIOI
-        mGYg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; t=1690559985; x=1690646385; bh=qeprRb5ewEtA8
-        01/sByp5QkC5fP6Mty2WClCI4vUDyY=; b=fqd+s0ENlYsKTRcjseNDnt5Za3Fxp
-        r+wf+9KV/9zCpAPXpDD0r9bKp2LsJY8PGLgeHZ1crURsURghk4PFGfioDGq14SRX
-        q0fcHkLQaHjvMqYpddp+xdbJlN7i1uUyC8FzigDrWahYAqVUD/b3Ej2aDDbPgfmz
-        1eYOfhZuRucmnbgNsReFyniIlwwvsBykugsbWzjeC+FO3bReIvZGR6Ypj/yLXUVa
-        UHvyB4ebn5p5j8xRpUiKJ6EVEjZ31qNWW2Vu1skcH0eiqkhlNAx7clHh2bo+INlp
-        +ZyP/PO+eRjJ1qUD1BPlpy91/kEYFfUUNPZcb45JcKe9Pey6v2ckoaTZA==
-X-ME-Sender: <xms:8OXDZAWfjZKaeFGK9DxQo2r5IelHq7-EXGnliym7ZC1j0MlCEdYLaQ>
-    <xme:8OXDZElPvdmk2uyEBiHAEMKvcC5N9mgZk-OMx4OEM4yXiaRVf2WR-SKuH87Ejcu92
-    ROd7yiIKJGLnZONJ5g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrieeigdelvdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
-    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
-    hnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:8OXDZEawgidolfxWA1zuJA-NjZvZ9DTXiwcUqy3Y-b0GAasNoQR5bQ>
-    <xmx:8OXDZPVdb7bc06N5Jc4FRQ6c2jY8Jeh_G3C0My5ieDI_mVqo3YQAmQ>
-    <xmx:8OXDZKnj9Auv7CKFQuB0xS406pKEqQj2t1HnjDKNJ6hPOT204DObKA>
-    <xmx:8eXDZNGgebKPDnDW7VjiBpIHriNK8L5WWfqVUbRBa6skv3tyx9m_-Q>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id F3CC1B60089; Fri, 28 Jul 2023 11:59:43 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.9.0-alpha0-592-ga9d4a09b4b-fm-defalarms-20230725.001-ga9d4a09b
-Mime-Version: 1.0
-Message-Id: <0808604b-a26e-43b8-83da-2c3dc12446d2@app.fastmail.com>
-In-Reply-To: <20230517154525.ljoamjlfhpejtizm@viti.kaiser.cx>
-References: <20230516153109.514251-1-arnd@kernel.org>
- <20230516153109.514251-6-arnd@kernel.org>
- <CAOMZO5B0stW2X6YqPTTKDpCOAzPDvm=4HT8jfBAgbTy11gnKgg@mail.gmail.com>
- <4e026f08-d733-4b01-ab47-e921d041e74e@app.fastmail.com>
- <20230517154525.ljoamjlfhpejtizm@viti.kaiser.cx>
-Date:   Fri, 28 Jul 2023 17:59:20 +0200
-From:   "Arnd Bergmann" <arnd@arndb.de>
-To:     "Martin Kaiser" <martin@kaiser.cx>
-Cc:     "Fabio Estevam" <festevam@gmail.com>,
-        "Arnd Bergmann" <arnd@kernel.org>, soc@kernel.org,
-        "Russell King" <linux@armlinux.org.uk>,
-        "Bartosz Golaszewski" <brgl@bgdev.pl>,
-        "Hartley Sweeten" <hsweeten@visionengravers.com>,
-        "Alexander Sverdlin" <alexander.sverdlin@gmail.com>,
-        "Andre Przywara" <andre.przywara@arm.com>,
-        "Shawn Guo" <shawnguo@kernel.org>,
-        "Sascha Hauer" <s.hauer@pengutronix.de>,
-        "Pengutronix Kernel Team" <kernel@pengutronix.de>,
-        "NXP Linux Team" <linux-imx@nxp.com>,
-        "Vladimir Zapolskiy" <vz@mleia.com>,
-        "Aaro Koskinen" <aaro.koskinen@iki.fi>,
-        "Janusz Krzysztofik" <jmkrzyszt@gmail.com>,
-        "Tony Lindgren" <tony@atomide.com>, "Andrew Lunn" <andrew@lunn.ch>,
-        "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>,
-        "Gregory Clement" <gregory.clement@bootlin.com>,
-        "Daniel Mack" <daniel@zonque.org>,
-        "Haojian Zhuang" <haojian.zhuang@gmail.com>,
-        "Robert Jarzmik" <robert.jarzmik@free.fr>,
-        "Viresh Kumar" <vireshk@kernel.org>,
-        "Shiraz Hashim" <shiraz.linux.kernel@gmail.com>,
-        "Sudeep Holla" <sudeep.holla@arm.com>,
-        "Lorenzo Pieralisi" <lpieralisi@kernel.org>,
-        "Linus Walleij" <linus.walleij@linaro.org>,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        "Stephen Boyd" <sboyd@kernel.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Alan Stern" <stern@rowland.harvard.edu>,
+        with ESMTP id S230473AbjG1QFK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Jul 2023 12:05:10 -0400
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B32E53C1D;
+        Fri, 28 Jul 2023 09:05:06 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 47AE9FF802;
+        Fri, 28 Jul 2023 16:04:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1690560303;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=DOwouwDm/Kasz+cImp4ZpLSYmghBWaSXArlXLO1rpH0=;
+        b=ljouRWt14CzNxKdUZLfGcvVcD/MG5DdymZazb90A1RiBoJhkZfx33QMCamA/nq64KgQViJ
+        5j94ziGUbCxvMyciw8LIg6YwFQkSf7yHDnrs3zIfxUjdSzdBKykEKG0kWvz/aV8i05xP78
+        mqj89PddP7bz5a6JA8nBI8sawR22k7xKkRbiJMjIfLhDef/HPbnKzJyS+UFodCJ+DT53ZN
+        A4VJB+/3Z1hacM8uhegA536VPmo5HTtstM9AcUBZ8j7k+5ooOrDw8+C3Kc1ufE3I2crSNT
+        VFHW+ZQvhNQgc6+HqrnlnydP17EiBNygti/FGEhzRdi0EfCxPi4SUnCrthjHlQ==
+Date:   Fri, 28 Jul 2023 18:04:43 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Conor Dooley <conor@kernel.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Varshini Rajendran <varshini.rajendran@microchip.com>,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, nicolas.ferre@microchip.com,
+        alexandre.belloni@bootlin.com, claudiu.beznea@microchip.com,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        herbert@gondor.apana.org.au, davem@davemloft.net, vkoul@kernel.org,
+        andi.shyti@kernel.org, tglx@linutronix.de, maz@kernel.org,
+        lee@kernel.org, ulf.hansson@linaro.org, tudor.ambarus@linaro.org,
+        richard@nod.at, vigneshr@ti.com, edumazet@google.com,
+        kuba@kernel.org, pabeni@redhat.com, linus.walleij@linaro.org,
+        sre@kernel.org, p.zabel@pengutronix.de, olivia@selenic.com,
+        a.zummo@towertech.it, radu_nicolae.pirea@upb.ro,
+        richard.genoud@gmail.com, gregkh@linuxfoundation.org,
+        lgirdwood@gmail.com, broonie@kernel.org, wim@linux-watchdog.org,
+        linux@roeck-us.net, linux@armlinux.org.uk,
+        durai.manickamkr@microchip.com, andrew@lunn.ch,
+        jerry.ray@microchip.com, andre.przywara@arm.com, mani@kernel.org,
+        alexandre.torgue@st.com, gregory.clement@bootlin.com,
+        arnd@arndb.de, rientjes@google.com, deller@gmx.de,
+        42.hyeyoo@gmail.com, vbabka@suse.cz, mripard@kernel.org,
+        mihai.sain@microchip.com, codrin.ciubotariu@microchip.com,
+        eugen.hristev@collabora.com, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        linux-clk@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH 05/13] ARM: imx: remove unused mx25_revision()
-Content-Type: text/plain
+        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
+        dmaengine@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
+        netdev@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-serial@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-usb@vger.kernel.org,
+        linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH v3 00/50] Add support for sam9x7 SoC family
+Message-ID: <20230728180443.55363550@xps-13>
+In-Reply-To: <20230728-floss-stark-889158f968ea@spud>
+References: <20230728102223.265216-1-varshini.rajendran@microchip.com>
+        <c0792cfd-db4f-7153-0775-824912277908@linaro.org>
+        <20230728-floss-stark-889158f968ea@spud>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, May 17, 2023, at 17:45, Martin Kaiser wrote:
-> Thus wrote Arnd Bergmann (arnd@arndb.de):
->
->> I think either way is ok to address the warning. If we wanted to do this
->> properly, the mx{25,27,31,35,5}_revision functions could all be removed
->> and the logic hooked up to imx_set_soc_revision() in the same way that
->> they already use mxc_set_cpu_type() for drivers/soc/imx/soc-imx.c.
->
->> I'll leave it up to you, if you want to merge Martin's patches or
->> a replacement for the soc-imx driver through the imx tree for 6.5,
->> I'll drop my patch from this series, otherwise I'll keep it for now
->> and we can still do it better at later point.
->
-> I suggest we merge my patches for imx25 first and then clean up all the
-> older imx families to use the common functions.
->
-> I've just rebased the patches against today's linux-next. My understanding
-> is that they have to go through the clk tree.
+Hi Conor,
 
-This never happened, right? I see that mx25_revision() is still in the
-tree without any users, so I can't easily turn on the warning by default
-yet. Should I just go ahead and remove it for 5.6, or do you expect to
-have your patch ready in time for the merge window?
+conor@kernel.org wrote on Fri, 28 Jul 2023 16:50:24 +0100:
 
-       Arnd
+> On Fri, Jul 28, 2023 at 01:32:12PM +0200, Krzysztof Kozlowski wrote:
+> > On 28/07/2023 12:22, Varshini Rajendran wrote: =20
+> > > This patch series adds support for the new SoC family - sam9x7.
+> > >  - The device tree, configs and drivers are added
+> > >  - Clock driver for sam9x7 is added
+> > >  - Support for basic peripherals is added
+> > >  - Target board SAM9X75 Curiosity is added
+> > >  =20
+> >=20
+> > Your threading is absolutely broken making it difficult to review and a=
+pply. =20
+>=20
+> I had a chat with Varshini today, they were trying to avoid sending the
+> patches to a massive CC list, but didn't set any in-reply-to header.
+> For the next submission whole series could be sent to the binding &
+> platform maintainers and the individual patches additionally to their
+> respective lists/maintainers. Does that sound okay to you, or do you
+> think it should be broken up?
+
+I usually prefer receiving the dt-bindings *and* the driver changes, so
+I can give my feedback on the description side, as well as looking at
+the implementation and see if that really matches what was discussed
+with you :)
+
+Thanks,
+Miqu=C3=A8l
