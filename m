@@ -2,107 +2,113 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02035C41513
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Jul 2023 11:46:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1BAFC04A94
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Jul 2023 12:00:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234466AbjG1Lq5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Jul 2023 07:46:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44506 "EHLO
+        id S236367AbjG1MAm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Jul 2023 08:00:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234911AbjG1Lq4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Jul 2023 07:46:56 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E06BD30FC
-        for <linux-clk@vger.kernel.org>; Fri, 28 Jul 2023 04:46:54 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-99bd1d0cf2fso284955766b.3
-        for <linux-clk@vger.kernel.org>; Fri, 28 Jul 2023 04:46:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1690544813; x=1691149613;
-        h=content-transfer-encoding:in-reply-to:references:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4bicTEmA20kGYFXTbpbqy5uA1OeKR6hkby2ZwK7htZc=;
-        b=bP9CWebw0nGNornjyAQacJRr0lD0PWRhFUu4NKQD6kJ6xR9eAFnPqEMkQUGJcpTHS5
-         FvF65D3cZXKcR1q/qBnr9JWrDxg4qwbEQseYJvmAs+QgQB69PnrpzIYhwvWwbK5PjLen
-         3GQkvvWyIV+7z9CMLlBVSF/NZEaga6fLuYgLbc0deePAdXbuRLhncr8ZxCUJmXsfSava
-         rc6RODfUCfsgtW4EwWYNGgvCtExFFdan5QRenln+jvdoYjt0XSdtY50qyul04rUBmAzt
-         DdbDruzn9N2fBykx+7h7xcMC0AL/2Xu4kh0jTeuMe7QfWTwobfJfiL7Xk3qV95rmKHbM
-         cabQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690544813; x=1691149613;
-        h=content-transfer-encoding:in-reply-to:references:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4bicTEmA20kGYFXTbpbqy5uA1OeKR6hkby2ZwK7htZc=;
-        b=JI0O/KM6Z5RxLR+5aukgqkuZfuVK5O3QMinrkEnjmZCv1aW1DGPsan7kXjyrFQ8Nhu
-         mxkg3BxdJFoZH2y7pJUPBqhx1qf4DJBNRfUFR+wBSO4/NaevlawsN7Hc6yWvcCIOpWFn
-         kcJlILF6l2HLU9q9jxuqHTSNEvr30CSXp4z8o+hZPDfvFNyygcpqWYa2YnbLtnI1dzTo
-         sXnKSHcfBCimzUsN7sXlBDWcDSDmH9lnPx8Wu/s8H3WiP1Jz4JdncMLEyuGCFhBRTpix
-         eqTs7vHbHH57XWXM6xdWVKwhLsMJ1FYXoehjUoq+Hzf1Thrg3DCMeTcCUd4V5VddVzxL
-         gcYg==
-X-Gm-Message-State: ABy/qLavB1s60otz3FXMLBInyfhQJLqMI+MAUCREN7XfdoluoXIdmwux
-        9wfChPRR3ZMX+QhkALLC6Wq0Rw==
-X-Google-Smtp-Source: APBJJlF4wX6IOyDsRHCOEf58T3NtRs74ijHx4d1kMWbOieFVhht66Yi45FbbkoL1b1Xdk3CUf6XDfg==
-X-Received: by 2002:a17:907:7628:b0:978:928:3b99 with SMTP id jy8-20020a170907762800b0097809283b99mr1826331ejc.46.1690544813353;
-        Fri, 28 Jul 2023 04:46:53 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.223.104])
-        by smtp.gmail.com with ESMTPSA id lu20-20020a170906fad400b00993664a9987sm1961196ejb.103.2023.07.28.04.46.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Jul 2023 04:46:52 -0700 (PDT)
-Message-ID: <46927d97-72a1-8815-38d3-828797c0f3dd@linaro.org>
-Date:   Fri, 28 Jul 2023 13:46:51 +0200
+        with ESMTP id S235840AbjG1MAg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Jul 2023 08:00:36 -0400
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FEFC35B5
+        for <linux-clk@vger.kernel.org>; Fri, 28 Jul 2023 04:59:51 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:12b0:7b7e:d1ff:7873])
+        by xavier.telenet-ops.be with bizsmtp
+        id Sbzp2A00f0d1nm801bzpmK; Fri, 28 Jul 2023 13:59:49 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtp (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1qPM88-002mJ0-AH;
+        Fri, 28 Jul 2023 13:59:49 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1qPM8L-00AqPi-DR;
+        Fri, 28 Jul 2023 13:59:49 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v6.6
+Date:   Fri, 28 Jul 2023 13:59:48 +0200
+Message-Id: <cover.1690545478.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v3 05/50] dt-bindings: clk: at91: add sam9x7 clock
- controller
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Varshini Rajendran <varshini.rajendran@microchip.com>,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-        claudiu.beznea@microchip.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <20230728102350.265520-1-varshini.rajendran@microchip.com>
- <f7186a62-19a1-5d72-ee1b-255b81fb8abe@linaro.org>
-In-Reply-To: <f7186a62-19a1-5d72-ee1b-255b81fb8abe@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 28/07/2023 13:40, Krzysztof Kozlowski wrote:
-> On 28/07/2023 12:23, Varshini Rajendran wrote:
->> Add bindings for SAM9X7's pmc.
->>
->> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
->> ---
->>  .../devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml          | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml b/Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml
->> index c1bdcd9058ed..ce0d99503645 100644
->> --- a/Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml
->> +++ b/Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml
->> @@ -43,6 +43,7 @@ properties:
->>                - atmel,sama5d4-pmc
->>                - microchip,sam9x60-pmc
->>                - microchip,sama7g5-pmc
->> +              - microchip,sam9x7-pmc
->>            - const: syscon
-> 
-> Where is the change in allOf:if:then:? No need for it? Why? Where is the
-> driver change?
-> 
-> Please do not send huge series to 50 different people and subsystems.
-> With your lack of threading it is so difficult to review.
+	Hi Mike, Stephen,
 
-You already got this comment and not much improved:
-https://lore.kernel.org/all/f2f8cabf-ca4d-c6f3-5561-b24334be89d1@linaro.org/
+The following changes since commit 06c2afb862f9da8dc5efa4b6076a0e48c3fbaaa5:
 
-Best regards,
-Krzysztof
+  Linux 6.5-rc1 (2023-07-09 13:53:13 -0700)
 
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v6.6-tag1
+
+for you to fetch changes up to dec57795efc4585d5bbca913af6683c5cce2a647:
+
+  clk: renesas: r8a77965: Add 3DGE and ZG support (2023-07-27 14:32:46 +0200)
+
+----------------------------------------------------------------
+clk: renesas: Updates for v6.6
+
+  - Add graphics clock support on RZ/G2M, RZ/G2N, RZ/G2E, and R-Car H3,
+    M3-W, and M3-N SoCs,
+  - Add Clocked Serial Interface (CSI) clocks on RZ/V2M,
+  - Add PWM (MTU3) clock and reset on RZ/G2UL and RZ/Five,
+  - Miscellaneous fixes and improvements.
+
+Thanks for pulling!
+
+----------------------------------------------------------------
+Adam Ford (4):
+      clk: renesas: rcar-gen3: Add support for ZG clock
+      clk: renesas: r8a774a1: Add 3DGE and ZG support
+      clk: renesas: r8a774e1: Add 3DGE and ZG support
+      clk: renesas: r8a774b1: Add 3DGE and ZG support
+
+Biju Das (1):
+      clk: renesas: r9a07g043: Add MTU3a clock and reset entry
+
+Christophe JAILLET (1):
+      clk: renesas: rzg2l: Simplify .determine_rate()
+
+Fabrizio Castro (1):
+      clk: renesas: r9a09g011: Add CSI related clocks
+
+Geert Uytterhoeven (4):
+      clk: renesas: emev2: Remove obsolete clkdev registration
+      clk: renesas: r8a7795: Add 3DGE and ZG support
+      clk: renesas: r8a7796: Add 3DGE and ZG support
+      clk: renesas: r8a77965: Add 3DGE and ZG support
+
+ drivers/clk/renesas/clk-emev2.c         |  3 ---
+ drivers/clk/renesas/r8a774a1-cpg-mssr.c |  2 ++
+ drivers/clk/renesas/r8a774b1-cpg-mssr.c |  2 ++
+ drivers/clk/renesas/r8a774e1-cpg-mssr.c |  2 ++
+ drivers/clk/renesas/r8a7795-cpg-mssr.c  |  2 ++
+ drivers/clk/renesas/r8a7796-cpg-mssr.c  |  2 ++
+ drivers/clk/renesas/r8a77965-cpg-mssr.c |  2 ++
+ drivers/clk/renesas/r9a07g043-cpg.c     |  3 +++
+ drivers/clk/renesas/r9a09g011-cpg.c     | 15 ++++++++++++++
+ drivers/clk/renesas/rcar-gen3-cpg.c     | 35 +++++++++++++++++++++++++++++----
+ drivers/clk/renesas/rcar-gen3-cpg.h     |  1 +
+ drivers/clk/renesas/rzg2l-cpg.c         |  8 +-------
+ 12 files changed, 63 insertions(+), 14 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
