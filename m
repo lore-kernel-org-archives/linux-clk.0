@@ -2,143 +2,164 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92CDBC001E0
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Jul 2023 19:24:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDCF5C0015E
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Jul 2023 19:59:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233142AbjG1TYB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Jul 2023 15:24:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45418 "EHLO
+        id S231887AbjG1T7N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Jul 2023 15:59:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229622AbjG1TYA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Jul 2023 15:24:00 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0EA410E
-        for <linux-clk@vger.kernel.org>; Fri, 28 Jul 2023 12:23:55 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id 2adb3069b0e04-4f95bf5c493so4208611e87.3
-        for <linux-clk@vger.kernel.org>; Fri, 28 Jul 2023 12:23:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1690572234; x=1691177034;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SY1d5wIa9BD5pCOeSuyG+d8qQoBVP3BuAzu1zPc3yfQ=;
-        b=t8rQkGIstOW6a6z8cMNQd9WBVULdESVi8SDCs1uf8BnFolNWX52IQi1ULrDAlP1Af/
-         KYqQNHO27RfSUFmrjU/TjquMc+idWbFIVwHB1a5Sr0C6mhjVepidY/6I5F7/qkQezgU6
-         FiJvIUGi279ClgpIRuJGzmtKMxSTbH68Rzh1/vdu2KAnzAZ4mZ55emrpTCsWyzT3q0MU
-         Mv5q8JQTSNO4qF9u+hbqccPkuZEICkOydbh8UWOCUGJrIaek3kpAijaSDPv14HQoqARq
-         yAsLoN6ElCHgMeAEvwQotDmrJZvGGeULNBtzQVIEYdhx5I6iezVTj/lkv2vxssCjbL67
-         3iGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690572234; x=1691177034;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SY1d5wIa9BD5pCOeSuyG+d8qQoBVP3BuAzu1zPc3yfQ=;
-        b=MMJ9F0/3Ow+h8nGywUscdr7E4dHwJr6GfWdSYpBi4C8RHP4k8o8OGcuzpRA3zLH83W
-         gAvIlIorcOtmaZUbQWXTzrqQpxgzV6pZx/iqYOQ5OuS9ero8ys8Qw/FNOqcbd4njUnJg
-         VDADhcI9ln17fxTvBuXXR3zUC5FNbl/XNPUFO4XLmtEnjBDfCxIn5nduQB18IPeBfkP8
-         DtIRIiGSkCpc2+Jwoi3hu14+WF3Wk9TXEXQ8xs4yTM2zb/BkLNZizMhXpDEFVCQ7P6+q
-         S+Jp+vSQ8X+fuNZk6GPedeuwBAZq7Gs4Dkn4qOCkYlg+oR0aRbo81ED69xML3KiqGyWq
-         7Ozg==
-X-Gm-Message-State: ABy/qLYLhLABcybdoYxf6avifrGjHYPR4iXy3GCRwuWY34BtrvAn2Xoz
-        VCztKffGstYZuXywotbKx7eCkg==
-X-Google-Smtp-Source: APBJJlE0EIoIyaW+mBuBlMDJko+t32lLNfXRPm97KFU2nTzguN8Xe/zlkzbh5MXdsnendkHwZDuXcg==
-X-Received: by 2002:a05:6512:2106:b0:4f7:6017:8fb with SMTP id q6-20020a056512210600b004f7601708fbmr2056218lfr.26.1690572233897;
-        Fri, 28 Jul 2023 12:23:53 -0700 (PDT)
-Received: from [192.168.1.101] (abyk53.neoplus.adsl.tpnet.pl. [83.9.30.53])
-        by smtp.gmail.com with ESMTPSA id u24-20020ac243d8000000b004fe142afd1esm918892lfl.152.2023.07.28.12.23.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Jul 2023 12:23:53 -0700 (PDT)
-Message-ID: <c1726d77-ef6e-e224-3c3e-2f982fd29b79@linaro.org>
-Date:   Fri, 28 Jul 2023 21:23:51 +0200
+        with ESMTP id S231859AbjG1T7M (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Jul 2023 15:59:12 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79F8C3C1D;
+        Fri, 28 Jul 2023 12:59:11 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 03970621EC;
+        Fri, 28 Jul 2023 19:59:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CC75C433C7;
+        Fri, 28 Jul 2023 19:59:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1690574350;
+        bh=gyKknie8tn5HcYLMA+5Ehd9Wff0dg0xZdRYDgv4F5eY=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=PG1Cwi7DPql2YaACT2lH04ILxdWm7kJDt6rKuokj0cMxUg3gtHKsY/S2pT6jLquUl
+         utOl9cUz0P3lZglFbA964eomldiIAi1cdP4RFDMS6i54dUUd8YN/5jQLQ86vgGxCqs
+         XSmP2MilBhvXRyvVi/ct7JmscOTqBi4pl2Isw3RAjEsFjl/wKTWJ54ELcIojMGw2Bo
+         j32FQZwkbj6x3o6JBlRV7VuBBXB+yjmWPy+SdwZjViAnLflMIkte7Vu/hvlRQb/h1q
+         ut0nBXGBjohte5UQ3wvWGVSKYepBHDH52KnZ5O0c4JyEwYRWGrrL8yF7yAlVhMcYwM
+         kelvITv3KYJZw==
+Message-ID: <35de4ce57cc5cde96495dc245cdf8382.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: gcc-sm8250: Fix gcc_sdcc2_apps_clk_src
-Content-Language: en-US
-To:     Patrick Whewell <patrick.whewell@sightlineapplications.com>
-Cc:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        William Gray <william.gray@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20230723162245.35033-1-mmyangfl@gmail.com>
+References: <20230723162245.35033-1-mmyangfl@gmail.com>
+Subject: Re: [PATCH v5 00/13] clk: hisilicon: Migrate devm APIs
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     David Yang <mmyangfl@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>,
-        Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230728191423.13837-1-patrick.whewell@sightlineapplications.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20230728191423.13837-1-patrick.whewell@sightlineapplications.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        linux-kernel@vger.kernel.org
+To:     David Yang <mmyangfl@gmail.com>, linux-clk@vger.kernel.org
+Date:   Fri, 28 Jul 2023 12:59:07 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 28.07.2023 21:14, Patrick Whewell wrote:
-> Set .flags = CLK_OPS_PARENT_ENABLE to fix "gcc_sdcc2_apps_clk_src: rcg
-> didn't update its configuration" error.
-> 
-> Signed-off-by: Patrick Whewell <patrick.whewell@sightlineapplications.com>
-> Fixes: 3e5770921a88 ("clk: qcom: gcc: Add global clock controller driver for SM8250")
-> ---
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Quoting David Yang (2023-07-23 09:22:25)
+> Migrate devm APIs for HiSilicon clock drivers and remove redundant codes.
+>=20
+> This series is a partial improvement of [1]
+>=20
 
-You could also mention that the error is caused by GPLL9 (the one
-providing the highest frequency in the freq table) not being on
-by default.
+Thanks for resending. Can you fix these checkpatch and compilation errors?
 
-And ultra nit: your s-o-b should go last
+	WARNING: Macros with flow control statements should be avoided
+	#581: FILE: drivers/clk/hisilicon/clk.c:165:
+	+#define hisi_clk_register_fn(fn, type, stmt) \
+	+int fn(struct device *dev, const struct type *clks, \
+	+       size_t num, struct hisi_clock_data *data) \
+	+{ \
+	+       void __iomem *base =3D data->base; \
+	+\
+	+       for (int i =3D 0; i < num; i++) { \
+	+               const struct type *p_clk =3D &clks[i]; \
+	+               struct clk_hw *clk =3D stmt; \
+	+\
+	+               if (IS_ERR(clk)) { \
+	+                       pr_err("%s: failed to register clock %s\n", \
+	+                              __func__, p_clk->name); \
+	+                       return PTR_ERR(clk); \
+	+               } \
+	+\
+	+               if (p_clk->alias) \
+	+                       clk_hw_register_clkdev(clk, p_clk->alias, NULL); \
+	+\
+	+               data->clk_data->hws[p_clk->id] =3D clk; \
+	+       } \
+	+\
+	+       return 0; \
+	+} \
+	+EXPORT_SYMBOL_GPL(fn);
 
-Konrad
->  drivers/clk/qcom/gcc-sm8250.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/clk/qcom/gcc-sm8250.c b/drivers/clk/qcom/gcc-sm8250.c
-> index b6cf4bc88d4d..d3c75bb55946 100644
-> --- a/drivers/clk/qcom/gcc-sm8250.c
-> +++ b/drivers/clk/qcom/gcc-sm8250.c
-> @@ -721,6 +721,7 @@ static struct clk_rcg2 gcc_sdcc2_apps_clk_src = {
->  		.name = "gcc_sdcc2_apps_clk_src",
->  		.parent_data = gcc_parent_data_4,
->  		.num_parents = ARRAY_SIZE(gcc_parent_data_4),
-> +		.flags = CLK_OPS_PARENT_ENABLE,
->  		.ops = &clk_rcg2_floor_ops,
->  	},
->  };
+	WARNING: macros should not use a trailing semicolon
+	#581: FILE: drivers/clk/hisilicon/clk.c:165:
+	+#define hisi_clk_register_fn(fn, type, stmt) \
+	+int fn(struct device *dev, const struct type *clks, \
+	+       size_t num, struct hisi_clock_data *data) \
+	+{ \
+	+       void __iomem *base =3D data->base; \
+	+\
+	+       for (int i =3D 0; i < num; i++) { \
+	+               const struct type *p_clk =3D &clks[i]; \
+	+               struct clk_hw *clk =3D stmt; \
+	+\
+	+               if (IS_ERR(clk)) { \
+	+                       pr_err("%s: failed to register clock %s\n", \
+	+                              __func__, p_clk->name); \
+	+                       return PTR_ERR(clk); \
+	+               } \
+	+\
+	+               if (p_clk->alias) \
+	+                       clk_hw_register_clkdev(clk, p_clk->alias, NULL); \
+	+\
+	+               data->clk_data->hws[p_clk->id] =3D clk; \
+	+       } \
+	+\
+	+       return 0; \
+	+} \
+	+EXPORT_SYMBOL_GPL(fn);
+
+These look like instead of macros just write the functions out.
+
+	total: 0 errors, 2 warnings, 1002 lines checked
+	in patch 'clk: hisilicon: Migrate devm APIs' (74cb486e14c6)
+	WARNING: Prefer "GPL" over "GPL v2" - see commit bf7fbeeae6db ("module: Cu=
+re the MODULE_LICENSE "GPL" vs. "GPL v2" bogosity")
+	#174: FILE: drivers/clk/hisilicon/clk-hix5hd2.c:337:
+	+MODULE_LICENSE("GPL v2");
+
+	total: 0 errors, 1 warnings, 150 lines checked
+	in patch 'clk: hisilicon: hix5hd2: Convert into platform driver module' (f=
+40d4d59c265)
+	WARNING: DT compatible string "hisilicon,hip04-clock" appears un-documente=
+d -- check ./Documentation/devicetree/bindings/
+	#46: FILE: drivers/clk/hisilicon/clk-hip04.c:33:
+	+       { .compatible =3D "hisilicon,hip04-clock",
+
+	total: 0 errors, 1 warnings, 51 lines checked
+	in patch 'clk: hisilicon: hip04: Convert into platform driver module' (fc9=
+19e7f3f7b)
+	WARNING: Prefer "GPL" over "GPL v2" - see commit bf7fbeeae6db ("module: Cu=
+re the MODULE_LICENSE "GPL" vs. "GPL v2" bogosity")
+	#353: FILE: drivers/clk/hisilicon/clk-hi6220.c:299:
+	+MODULE_LICENSE("GPL v2");
+
+	total: 0 errors, 1 warnings, 324 lines checked
+	in patch 'clk: hisilicon: hi6220: Convert into platform driver module' (85=
+c1694448a3)
+	WARNING: Prefer "GPL" over "GPL v2" - see commit bf7fbeeae6db ("module: Cu=
+re the MODULE_LICENSE "GPL" vs. "GPL v2" bogosity")
+	#298: FILE: drivers/clk/hisilicon/clk-hi3670.c:917:
+	+MODULE_LICENSE("GPL v2");
+
+	total: 0 errors, 1 warnings, 278 lines checked
+	in patch 'clk: hisilicon: hi3670: Convert into module' (934dee9208ea)
+	WARNING: Prefer "GPL" over "GPL v2" - see commit bf7fbeeae6db ("module: Cu=
+re the MODULE_LICENSE "GPL" vs. "GPL v2" bogosity")
+	#251: FILE: drivers/clk/hisilicon/clk-hi3660.c:550:
+	+MODULE_LICENSE("GPL v2");
+
+	total: 0 errors, 1 warnings, 231 lines checked
+	in patch 'clk: hisilicon: hi3660: Convert into module' (1ac1cef160ff)
+
+	drivers/clk/hisilicon/clk-hi3559a.c: In function =E2=80=98hi3559av100_shub=
+_default_clk_set=E2=80=99:
+	drivers/clk/hisilicon/clk-hi3559a.c:628:53: error: =E2=80=98SZ_4K=E2=80=99=
+ undeclared (first use in this function)
+	  628 |         crg_base =3D devm_ioremap(dev, CRG_BASE_ADDR, SZ_4K);
+	      |                                                     ^~~~~
