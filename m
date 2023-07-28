@@ -2,55 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1233AC0015E
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Jul 2023 10:32:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45C1CC41513
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Jul 2023 10:32:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235914AbjG1Kcg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Jul 2023 06:32:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59316 "EHLO
+        id S234775AbjG1Kcj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Jul 2023 06:32:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235934AbjG1KcT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Jul 2023 06:32:19 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DF494C29;
-        Fri, 28 Jul 2023 03:30:30 -0700 (PDT)
+        with ESMTP id S234346AbjG1Kc1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Jul 2023 06:32:27 -0400
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 162A05584;
+        Fri, 28 Jul 2023 03:30:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1690540230; x=1722076230;
-  h=from:to:cc:subject:date:message-id:mime-version:
+  t=1690540233; x=1722076233;
+  h=from:to:subject:date:message-id:mime-version:
    content-transfer-encoding;
-  bh=EDSMF3KpdZJFrM1zcY0RzUGcphR/aMUmi1WoZ4tRDvM=;
-  b=zIuHWuW1iH04d4EBB7qEEsSC0pzfHvRn1EORTdvbRFjNwlagBFkJHx1D
-   eyFjQtTcp0yyJW27LoMxsDqpi32L3ZhFgpt01bogtUqKZfOOtzepaLXnm
-   GACQnLu2ptAYYIoTe+raMVA/Ujq9r0ZrtkfsRAlKmuZz1zSHMLYKrO+jE
-   yqBgV4rOToyqWcsGOiWQVuFE06sGlssi5i2J6YmtYVYlIANRGjPn4Z8/2
-   dwnS8qyC/7W7Z9FbPYy73qBsnqlOyhvkvy4+dPh33myOXTYn4Fo6Aynk8
-   3dJfcoqgyhqZZMVTLGkuKkTMee4VROYLb2l1YB54L3q+evJQQ7Wy8yrTs
-   w==;
+  bh=+9RuzNpYmHyqf7fIjBX42rka1JAIk57K6KkiNE8I2wU=;
+  b=bPO5meYIKfMiK7y3y7VOhDAynBAglYcOKp3HT74UBn+KxwxHsL+/ye5H
+   Ag6G8bO1ihKQi4BBCCUOzKmAerjDLfXDSQn9lJ5HDT9b/ragBaRnOMZPE
+   v0Xpq7tuePBuNx17t51yfAr3Ivu2sZyZ5dPVGjo+mbVFGdRVJ/0b/gq8z
+   kJEbWZYxXWubplH+1KhdqkWJCoOZbUo9wgVOp/9HwGwOGyO1/+J882chE
+   UX95UfxZhUeOO5SIApkk88UrdNnfbUGbH28GDFoDPVyogiyF1ThnRfAI6
+   ELEoSswDRLquYW1+SDYhT5yrS+ABmPlLGNzIrG4I7sFW3BZVnZrqFF1rV
+   g==;
 X-IronPort-AV: E=Sophos;i="6.01,237,1684825200"; 
-   d="scan'208";a="163712909"
+   d="scan'208";a="225813731"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 28 Jul 2023 03:29:54 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 28 Jul 2023 03:29:44 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Fri, 28 Jul 2023 03:29:52 -0700
+ 15.1.2507.21; Fri, 28 Jul 2023 03:29:34 -0700
 Received: from che-lt-i67070.amer.actel.com (10.10.115.15) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.21 via Frontend Transport; Fri, 28 Jul 2023 03:29:47 -0700
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2507.21 via Frontend Transport; Fri, 28 Jul 2023 03:29:30 -0700
 From:   Varshini Rajendran <varshini.rajendran@microchip.com>
 To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <conor+dt@kernel.org>, <nicolas.ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <claudiu.beznea@microchip.com>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <claudiu.beznea@microchip.com>, <varshini.rajendran@microchip.com>,
+        <mripard@kernel.org>, <linux-clk@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
-CC:     <varshini.rajendran@microchip.com>
-Subject: [PATCH v3 40/50] clk: at91: sam9x7: Allow PLLs to be exported and referenced in DT
-Date:   Fri, 28 Jul 2023 15:59:43 +0530
-Message-ID: <20230728102943.267342-1-varshini.rajendran@microchip.com>
+Subject: [PATCH v3 38/50] clk: at91: sam9x7: add support for HW PLL freq dividers
+Date:   Fri, 28 Jul 2023 15:59:28 +0530
+Message-ID: <20230728102928.267237-1-varshini.rajendran@microchip.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -59,29 +57,110 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Allow PLLADIV2 and LVDSPLL to be referenced as a PMC_TYPE_CORE
-clock from phandle in DT.
+Add support for hardware dividers for PLL IDs in sam9x7 SoC. The system
+PLL - PLLA and the system PLL divided by 2 - PLLADIV2 with PLL ID 0 and
+4 respectively, both have a hardware divider /2. This has to taken into
+account in the software to obtain the right frequencies. Support for the
+same is added in the PLL driver.
+
+fcorepllack -----> HW Div = 2 -+--> fpllack
+                               |
+                               +--> HW Div = 2 ---> fplladiv2ck
+
+In this case the corepll freq is 1600 MHz. So, the plla freq is 800 MHz
+after the hardware divider and the plladiv2 freq is 400 MHz after the
+hardware divider (Given that the DIVPMC is 0).
 
 Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
 ---
- include/dt-bindings/clock/at91.h | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/clk/at91/clk-sam9x60-pll.c | 38 ++++++++++++++++++++++++++----
+ drivers/clk/at91/pmc.h             |  1 +
+ 2 files changed, 34 insertions(+), 5 deletions(-)
 
-diff --git a/include/dt-bindings/clock/at91.h b/include/dt-bindings/clock/at91.h
-index 3e3972a814c1..6ede88c3992d 100644
---- a/include/dt-bindings/clock/at91.h
-+++ b/include/dt-bindings/clock/at91.h
-@@ -38,6 +38,10 @@
- #define PMC_CPU			(PMC_MAIN + 9)
- #define PMC_MCK1		(PMC_MAIN + 10)
+diff --git a/drivers/clk/at91/clk-sam9x60-pll.c b/drivers/clk/at91/clk-sam9x60-pll.c
+index b0314dfd7393..1f80759309c0 100644
+--- a/drivers/clk/at91/clk-sam9x60-pll.c
++++ b/drivers/clk/at91/clk-sam9x60-pll.c
+@@ -73,9 +73,15 @@ static unsigned long sam9x60_frac_pll_recalc_rate(struct clk_hw *hw,
+ {
+ 	struct sam9x60_pll_core *core = to_sam9x60_pll_core(hw);
+ 	struct sam9x60_frac *frac = to_sam9x60_frac(core);
++	unsigned long freq;
  
-+/* SAM9X7 */
-+#define PMC_PLLADIV2		(PMC_MAIN + 11)
-+#define PMC_LVDSPLL		(PMC_MAIN + 12)
+-	return parent_rate * (frac->mul + 1) +
++	freq = parent_rate * (frac->mul + 1) +
+ 		DIV_ROUND_CLOSEST_ULL((u64)parent_rate * frac->frac, (1 << 22));
 +
- #ifndef AT91_PMC_MOSCS
- #define AT91_PMC_MOSCS		0		/* MOSCS Flag */
- #define AT91_PMC_LOCKA		1		/* PLLA Lock */
++	if (core->layout->div2)
++		freq >>= 1;
++
++	return freq;
+ }
+ 
+ static int sam9x60_frac_pll_set(struct sam9x60_pll_core *core)
+@@ -432,6 +438,12 @@ static unsigned long sam9x60_div_pll_recalc_rate(struct clk_hw *hw,
+ 	return DIV_ROUND_CLOSEST_ULL(parent_rate, (div->div + 1));
+ }
+ 
++static unsigned long sam9x60_fixed_div_pll_recalc_rate(struct clk_hw *hw,
++						       unsigned long parent_rate)
++{
++	return parent_rate >> 1;
++}
++
+ static long sam9x60_div_pll_compute_div(struct sam9x60_pll_core *core,
+ 					unsigned long *parent_rate,
+ 					unsigned long rate)
+@@ -606,6 +618,16 @@ static const struct clk_ops sam9x60_div_pll_ops_chg = {
+ 	.restore_context = sam9x60_div_pll_restore_context,
+ };
+ 
++static const struct clk_ops sam9x60_fixed_div_pll_ops = {
++	.prepare = sam9x60_div_pll_prepare,
++	.unprepare = sam9x60_div_pll_unprepare,
++	.is_prepared = sam9x60_div_pll_is_prepared,
++	.recalc_rate = sam9x60_fixed_div_pll_recalc_rate,
++	.round_rate = sam9x60_div_pll_round_rate,
++	.save_context = sam9x60_div_pll_save_context,
++	.restore_context = sam9x60_div_pll_restore_context,
++};
++
+ struct clk_hw * __init
+ sam9x60_clk_register_frac_pll(struct regmap *regmap, spinlock_t *lock,
+ 			      const char *name, const char *parent_name,
+@@ -725,10 +747,16 @@ sam9x60_clk_register_div_pll(struct regmap *regmap, spinlock_t *lock,
+ 	else
+ 		init.parent_names = &parent_name;
+ 	init.num_parents = 1;
+-	if (flags & CLK_SET_RATE_GATE)
+-		init.ops = &sam9x60_div_pll_ops;
+-	else
+-		init.ops = &sam9x60_div_pll_ops_chg;
++
++	if (layout->div2) {
++		init.ops = &sam9x60_fixed_div_pll_ops;
++	} else {
++		if (flags & CLK_SET_RATE_GATE)
++			init.ops = &sam9x60_div_pll_ops;
++		else
++			init.ops = &sam9x60_div_pll_ops_chg;
++	}
++
+ 	init.flags = flags;
+ 
+ 	div->core.id = id;
+diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
+index bb9da35198d9..91d1c6305d95 100644
+--- a/drivers/clk/at91/pmc.h
++++ b/drivers/clk/at91/pmc.h
+@@ -64,6 +64,7 @@ struct clk_pll_layout {
+ 	u8 frac_shift;
+ 	u8 div_shift;
+ 	u8 endiv_shift;
++	u8 div2;
+ };
+ 
+ extern const struct clk_pll_layout at91rm9200_pll_layout;
 -- 
 2.25.1
 
