@@ -2,59 +2,59 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0E6DC41513
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3995C04E69
 	for <linux-clk@archiver.kernel.org>; Fri, 28 Jul 2023 08:27:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234141AbjG1I0p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Jul 2023 04:26:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60000 "EHLO
+        id S234549AbjG1I0q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Jul 2023 04:26:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234819AbjG1IZy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Jul 2023 04:25:54 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3254A422C
-        for <linux-clk@vger.kernel.org>; Fri, 28 Jul 2023 01:24:37 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-99454855de1so247059966b.2
-        for <linux-clk@vger.kernel.org>; Fri, 28 Jul 2023 01:24:37 -0700 (PDT)
+        with ESMTP id S234930AbjG1IZ5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Jul 2023 04:25:57 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25B6E44AB
+        for <linux-clk@vger.kernel.org>; Fri, 28 Jul 2023 01:24:43 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-99bcc0adab4so264787366b.2
+        for <linux-clk@vger.kernel.org>; Fri, 28 Jul 2023 01:24:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1690532675; x=1691137475;
+        d=linaro.org; s=google; t=1690532681; x=1691137481;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=6xZMW8v9WDlw5tXvogvREezExsu09Z2EBvflkVtH5j0=;
-        b=lvuGezwBo7w6YoCoMR2ywp7hjte4FF8EiqJz0bhyi6O9yeMvQ4Gt0UTRflgv/oq67+
-         hiuHmjO8G4Lkzu9WL58EdPdzdRFZnbJcxXDrgo58liQRD3BDtBsdCOG3OVkRQq5Pn0Nb
-         iu3y3Yy9XW4pOYzypJ0Jbd96Df63y0WIoUNGEB3onWAp8cX3RvJ3eyJwXCudnqgh23sV
-         W+MtsCMgaWDIXP0kw/+5zmrY2EkyEXCg9vZw28AFuQfTyR+k9OkX1DrVHNY0pNueGG2z
-         sZHHFaIp2y5UhNP7OtZSZgu8tGCmyifcLUdZICPGhVD7BxfEij6j6Efdinci4cCqIC+1
-         uleQ==
+        bh=Df84DLjQzTST+Wx1syJJBagX+Grc0aFXo//Y3+fJ4/4=;
+        b=UNX0EWZodz6z44m4UbrqRts4mrhwEixobbNDmz2osNfS8YJrBZJyZ7tKMvZo5qr8gH
+         gvU/xLEL9IOqPiBV4MhYnF4b9of4BaAMSl4FGRHdGt9WN3W98cw6OdoFZFvMLQtH5SpA
+         grXCDaUU+PRF00poXEcEA3FKD3yIw8tsPgpKY1Q5L4n+jLnGxDwZAE73Fc2ovNTScLjo
+         pZG269kX1k9SN/SQQevOxqweoCZcsbW5Njn2whjGRamOc6F+UoaU6+zn3mBMhTeuMUz6
+         JjTuIb7qTspMFRTTunDyWfQjjI15/1xI2zFd3zN3G+n1kai1Jhse7owmimXWXDBp1XeP
+         WkZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690532675; x=1691137475;
+        d=1e100.net; s=20221208; t=1690532681; x=1691137481;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6xZMW8v9WDlw5tXvogvREezExsu09Z2EBvflkVtH5j0=;
-        b=QrlQWh0RDpy1aAk4bsqkP1MMiSxXXgMVZpI3rU7FoTgdQ4oZO2EZbgqwGYoyAzTnLh
-         +5E6gUGU7HgnHUz32domrDRBsWdFnky37akBAkPFrjx1LVI90bU9LqVcgjCzeWo1DcRK
-         s/ShFv5YYjeGSYb0kqPbqMMwkGkROZRlOHCi1EQa5ahsP70m0iDVgpNazOhNBIRS6ZBM
-         aSDWRTD+OsVW4pcRCOOdmE2WPYxXXMrskY0NeeFCLpPMdEHE4e/ei9gVo5jJnEp8nCeB
-         JHjjRZ7ncV3NIxRMS18gj7jLQBAj/Yn5kOeqjVO2fo+RN9O1OgdvV0gda7jlxWLrPjiB
-         xwOQ==
-X-Gm-Message-State: ABy/qLbsAAFuCJ2mqswQB6Sli8GpYdpwMfaosnHT/mFP1Qn1GxmDJHrK
-        WTRqd80ZdpAXi4kxStqv8HepuA==
-X-Google-Smtp-Source: APBJJlEdbpuC1Nw6chKfD8DpvTXtK/jYFNYuoDSG1/AORvF94aI8p6IXkC/PwQhjZ0y2M9Wm+58Y4A==
-X-Received: by 2002:a17:907:7611:b0:99b:ddac:d9d9 with SMTP id jx17-20020a170907761100b0099bddacd9d9mr1333134ejc.53.1690532675673;
-        Fri, 28 Jul 2023 01:24:35 -0700 (PDT)
+        bh=Df84DLjQzTST+Wx1syJJBagX+Grc0aFXo//Y3+fJ4/4=;
+        b=NyQY+kFcdhY/OcbkQP0R4hABLxW7FyYgHqsrntHwEjH7CKrmzOyQGIvj5k7QwG45n7
+         uSScVaeswa0gp7FR9fyAOhaeu13r3Ct7rUc9CbvLp3vWcBWSl4Us5+rzAlmAg5CWNByz
+         q0R5X19+aOEXY6f5HHOYzv2MEWv2gfIeZ5lKdn6sATehlH78T98xYY1CFbzUgs+ACLmh
+         5TLQBmRzNzxx5qU1zwpYGb70lU6YnYBO3RnZh9G2Mhz1CAwmaySLnvdXwBhNy6D0NTC2
+         ht+xQSXrahY9Z/27nFcw3NYlaF2RRAovU2T+1OOqdZo8w0mYuoyUgIupLhAm31HhwFRS
+         0rTw==
+X-Gm-Message-State: ABy/qLb0w2/OVLdhS75VAGsAGKePwHeeUVD+TW5rNeMgEWcJ5C/7s6JS
+        qjj/qTR/QdHNfmaR/OhK0HUDYA==
+X-Google-Smtp-Source: APBJJlFzx8p6kp4wW9AYKiYy9ISWMqGs4aUDmdejJV6KnUYhZ+VQIrTJ9btaRPUSyLxNnHC7vz16Lg==
+X-Received: by 2002:a17:906:77c2:b0:99b:db4f:68b8 with SMTP id m2-20020a17090677c200b0099bdb4f68b8mr1451319ejn.76.1690532681640;
+        Fri, 28 Jul 2023 01:24:41 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.223.104])
-        by smtp.gmail.com with ESMTPSA id by24-20020a170906a2d800b00993b381f808sm1760451ejb.38.2023.07.28.01.24.33
+        by smtp.gmail.com with ESMTPSA id pv24-20020a170907209800b0099bccb03eadsm1730616ejb.205.2023.07.28.01.24.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Jul 2023 01:24:35 -0700 (PDT)
-Message-ID: <65098077-8876-6acb-c3e8-2f582745fe82@linaro.org>
-Date:   Fri, 28 Jul 2023 10:24:32 +0200
+        Fri, 28 Jul 2023 01:24:41 -0700 (PDT)
+Message-ID: <bc03ab1b-27d2-4a84-7f70-c3124a96806a@linaro.org>
+Date:   Fri, 28 Jul 2023 10:24:38 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.13.0
-Subject: Re: [PATCH v4 04/11] dt-bindings: clock: qcom: gcc-ipq5332: remove q6
+Subject: Re: [PATCH v4 05/11] dt-bindings: clock: qcom: gcc-ipq9574: remove q6
  bring up clock macros
 Content-Language: en-US
 To:     Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
@@ -70,9 +70,9 @@ Cc:     quic_srichara@quicinc.com, quic_sjaganat@quicinc.com,
         quic_kathirav@quicinc.com, quic_anusha@quicinc.com,
         quic_varada@quicinc.com
 References: <20230728063412.1641856-1-quic_mmanikan@quicinc.com>
- <20230728063412.1641856-5-quic_mmanikan@quicinc.com>
+ <20230728063412.1641856-6-quic_mmanikan@quicinc.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230728063412.1641856-5-quic_mmanikan@quicinc.com>
+In-Reply-To: <20230728063412.1641856-6-quic_mmanikan@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -84,7 +84,6 @@ On 28/07/2023 08:34, Manikanta Mylavarapu wrote:
 > so remove them.
 > 
 > Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-> ---
 
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
