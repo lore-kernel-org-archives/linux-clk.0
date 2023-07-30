@@ -2,100 +2,82 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAA3CC001DC
-	for <linux-clk@archiver.kernel.org>; Sun, 30 Jul 2023 16:27:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82CEAC001DC
+	for <linux-clk@archiver.kernel.org>; Sun, 30 Jul 2023 16:41:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229501AbjG3Q1T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 30 Jul 2023 12:27:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33488 "EHLO
+        id S229459AbjG3Qlx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 30 Jul 2023 12:41:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229487AbjG3Q1S (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 30 Jul 2023 12:27:18 -0400
+        with ESMTP id S229379AbjG3Qlw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 30 Jul 2023 12:41:52 -0400
 Received: from viti.kaiser.cx (viti.kaiser.cx [IPv6:2a01:238:43fe:e600:cd0c:bd4a:7a3:8e9f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30E4910D7;
-        Sun, 30 Jul 2023 09:27:15 -0700 (PDT)
-Received: from martin by viti.kaiser.cx with local (Exim 4.89)
-        (envelope-from <martin@viti.kaiser.cx>)
-        id 1qQ9Fi-0003fq-1p; Sun, 30 Jul 2023 18:26:42 +0200
-Date:   Sun, 30 Jul 2023 18:26:42 +0200
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07C2391;
+        Sun, 30 Jul 2023 09:41:51 -0700 (PDT)
+Received: from ipservice-092-217-095-237.092.217.pools.vodafone-ip.de ([92.217.95.237] helo=martin-debian-2.paytec.ch)
+        by viti.kaiser.cx with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <martin@kaiser.cx>)
+        id 1qQ9UH-0003mQ-0f; Sun, 30 Jul 2023 18:41:45 +0200
 From:   Martin Kaiser <martin@kaiser.cx>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Fabio Estevam <festevam@gmail.com>,
-        Arnd Bergmann <arnd@kernel.org>, soc@kernel.org,
-        Russell King <linux@armlinux.org.uk>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Hartley Sweeten <hsweeten@visionengravers.com>,
-        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-        Andre Przywara <andre.przywara@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Tony Lindgren <tony@atomide.com>, Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        linux-clk@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH 05/13] ARM: imx: remove unused mx25_revision()
-Message-ID: <20230730162642.ib6hfbw5zgeked6h@viti.kaiser.cx>
-References: <20230516153109.514251-1-arnd@kernel.org>
- <20230516153109.514251-6-arnd@kernel.org>
- <CAOMZO5B0stW2X6YqPTTKDpCOAzPDvm=4HT8jfBAgbTy11gnKgg@mail.gmail.com>
- <4e026f08-d733-4b01-ab47-e921d041e74e@app.fastmail.com>
- <20230517154525.ljoamjlfhpejtizm@viti.kaiser.cx>
- <0808604b-a26e-43b8-83da-2c3dc12446d2@app.fastmail.com>
+To:     Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>
+Subject: [PATCH v6 0/2] ARM: imx25: print silicon revision at startup
+Date:   Sun, 30 Jul 2023 18:39:26 +0200
+Message-Id: <20230730163928.70637-1-martin@kaiser.cx>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20220602080344.208702-1-martin@kaiser.cx>
+References: <20220602080344.208702-1-martin@kaiser.cx>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0808604b-a26e-43b8-83da-2c3dc12446d2@app.fastmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-Sender: Martin Kaiser <martin@viti.kaiser.cx>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Arnd,
+Resurrect the unused function to print the imx25 silicon revision at
+startup.
 
-Arnd Bergmann (arnd@arndb.de) wrote:
+This patch set is blocking Arnd's work on enabling -Werror=missing-prototypes.
 
-> >> I'll leave it up to you, if you want to merge Martin's patches or
-> >> a replacement for the soc-imx driver through the imx tree for 6.5,
-> >> I'll drop my patch from this series, otherwise I'll keep it for now
-> >> and we can still do it better at later point.
-
-> > I suggest we merge my patches for imx25 first and then clean up all the
-> > older imx families to use the common functions.
-
-> > I've just rebased the patches against today's linux-next. My understanding
-> > is that they have to go through the clk tree.
-
-> This never happened, right? I see that mx25_revision() is still in the
-> tree without any users, so I can't easily turn on the warning by default
-> yet. Should I just go ahead and remove it for 5.6, or do you expect to
-> have your patch ready in time for the merge window?
-
-sorry for delaying your series.
-
-So far, there's been no response to my patches from the clk maintainers.
-Let me resend the patches one final time. If we don't hear anything back
-within a week or so, feel free to remove mx25_revision (and probably all
-of arch/arm/mach-imx/cpu-imx25.c) for the 6.6 merge window.
+I'd really appreciate a response from the clk maintainers if these (trivial)
+patches are ok.
 
 Thanks,
 Martin
+
+changes in v6:
+- rebase against today's linux-next
+- add Acked-by from Arnd
+
+changes in v5:
+- rebase against today's linux-next
+
+changes in v4:
+- rebase against today's linux-next
+- add Fabio's Reviewed-by tags
+
+changes in v3:
+- rebase against today's linux-next
+
+changes in v2:
+- drop the patch about silicon revision 1.2. It has already been merged
+  by Shawn Guo.
+- send the changeset to the clk maintainers
+
+
+
+Martin Kaiser (2):
+  clk: imx25: print silicon revision during init
+  clk: imx25: make __mx25_clocks_init return void
+
+ drivers/clk/imx/clk-imx25.c | 5 +++--
+ include/soc/imx/revision.h  | 1 +
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+-- 
+2.39.2
+
