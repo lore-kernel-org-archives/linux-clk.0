@@ -2,61 +2,60 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82DA9C04A94
-	for <linux-clk@archiver.kernel.org>; Mon, 31 Jul 2023 10:54:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF429C001E0
+	for <linux-clk@archiver.kernel.org>; Mon, 31 Jul 2023 10:54:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232396AbjGaKyi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 31 Jul 2023 06:54:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40856 "EHLO
+        id S229861AbjGaKys (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 31 Jul 2023 06:54:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230023AbjGaKyI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Jul 2023 06:54:08 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D0902110
-        for <linux-clk@vger.kernel.org>; Mon, 31 Jul 2023 03:52:39 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-4fe27849e6aso2774343e87.1
-        for <linux-clk@vger.kernel.org>; Mon, 31 Jul 2023 03:52:38 -0700 (PDT)
+        with ESMTP id S231233AbjGaKyL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Jul 2023 06:54:11 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DC792D4D
+        for <linux-clk@vger.kernel.org>; Mon, 31 Jul 2023 03:52:41 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-4fb7589b187so7170931e87.1
+        for <linux-clk@vger.kernel.org>; Mon, 31 Jul 2023 03:52:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1690800757; x=1691405557;
+        d=linaro.org; s=google; t=1690800759; x=1691405559;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=fB3U8vshaXGTQDVy4zCZyIQDygwXYLYWLuqWZPmvE6A=;
-        b=cawrlLWOIpMlWCMp3hV/w0GWzGyNJ+4BzXfUro5Ga9kDxtYP+q8BsOihYGxVHB49Qa
-         qn18Yz/WhnJVrociJaEtwu2gHq5X63NkPh0LTPaCHumF5AH4JJBWhcawTKCplw7KwtX6
-         tu2EDePQibknZA5FvV1sShHWA4q3WfgdBI9NifyYV90QqPMBrwajxv3BcJOLWNnfvp5U
-         5lbjryLA1VufmUer+/1P9eiay6hJp8w4eM01iZ3B2Ajw2d4lEQ8Q0Yo1ZiAE2wQGHqJ2
-         fkxQ5uoF3q4sEJ/gSU5c+JcePCTC9TlKCGjpbXpqg/Lp9/jU2VnbGpD8RnDJSLPwAgf0
-         LJNg==
+        bh=gc7oZvOcJDkiBa4MtO2BaU3uRCE2+ug+vLU72IFcWhs=;
+        b=bIqvKa9J4ZM/+I3R6xWgQFrmjvvV+uJ/u1tgBCxtFS8pVMHw/b07zhzK8/IOhrWmIQ
+         E4mI+yqQcbuETW08+GWh23k0i/rE2qiI62L+oOArgtC9p1Mcx28teRe2DKXTACqfbDD9
+         /P5gY7nuGr3e4Xz2BQcpy4b3tnDoOsf5Vs6GxBJ3oDJJRDga3wpiR5lGqxLrtTnoPe6W
+         jI6YXQVQqnAnGKU/xISR1UWhl5hjbnfNi1oUI/G5CfMxGCmpi3bnIpIvsCgCoTvgTRHK
+         yMuANpwWKmsAVPUwmgG8Z8U5Ey9LTj68G/M5CZX4c75cWnFVvLD+Y1teSdlGQ+eDTmbK
+         hXWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690800757; x=1691405557;
+        d=1e100.net; s=20221208; t=1690800759; x=1691405559;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fB3U8vshaXGTQDVy4zCZyIQDygwXYLYWLuqWZPmvE6A=;
-        b=Bttn9+ldVwBfw+zZ1IH+FngQTDRXn4PuyTDqYp3aKqD0YGLvJHtc1RvWno9lBUq3q5
-         x5xTWkZB9XRHypLcJxRtUPKA/1HfHdkMMp7HN+9v6ApFa/ATT0Hn96f9i8VVE0gCynYI
-         SvvpHcYDZ/LOOQ01lY/TxlUqMqjhI6nQ6XLl3RqRFwMkIPNQ+/Gg0g10rCWQwqHI7+5w
-         btMpqsCpyPMFqG41jhjp1BbwHEvZ+nr9GknAFSJ/XdSQ81UErrAYmP58mnfeSNlh1S4A
-         NKR3hHp8zlMa25bGIvOiym6vwXIMaHLxTOWzjKpnNpDKfbZPy0sSqx04JfJf1TRKfja9
-         FyMA==
-X-Gm-Message-State: ABy/qLZ1sh1VfUSSAIsdDZmwuW389E4PoPJqCC/4CIMU8X4grPyURWkD
-        X1Vec2RBiRXus8JIXRRARlOHig==
-X-Google-Smtp-Source: APBJJlFqJY03v3hVPBUk7kCLDJ77BOkgCKN94dZ7P3pr7iS0QsyPGAj/AtcK/gqP57ki4etw525tow==
-X-Received: by 2002:a05:6512:6c4:b0:4fd:c83b:a093 with SMTP id u4-20020a05651206c400b004fdc83ba093mr6483544lff.1.1690800757039;
-        Mon, 31 Jul 2023 03:52:37 -0700 (PDT)
+        bh=gc7oZvOcJDkiBa4MtO2BaU3uRCE2+ug+vLU72IFcWhs=;
+        b=DY1LHDQY1q2gcZBNpHUwVduqodiiTza9e3rM77ekSRH3IlJK7UY2W/HgbbhE7QCv1S
+         T+60m+vTmGoQOgpMaWrWs4b/hJQhNYFd0V45d7/xBB7Q5sb6M8QWrdOzEet9cVtezqxn
+         Y6Y1qnyEeZ9Y2JhVx/JHDm4O9BzLUEL5Ir9ErW9yFEGweOqk7f3m4slMrCjOAlQAddNf
+         OGuvTnuV0CQAOxymWp9AKxzFETgyrm+w5aJoznxUg/k5qnBW2h8ngEvEZI4HdvFSs279
+         6g9HD+/wS65rj337ZBUYIJPy5UK3x+rWggFlpI/8euVuSQiZhIqPCwgO5Bzw3z8+2MBq
+         glHg==
+X-Gm-Message-State: ABy/qLZ7Yiet/MTZV/1gWdy3H1Aly8JWZaAAyIWbTtnvbmm5+7ZgDvHb
+        gAwMs4p3a/EvcNUVzcMYSnZh0g==
+X-Google-Smtp-Source: APBJJlFtP05xjKYxQtPgx4aQW0AWXPSXMdyogsxALLHLhvmfipAVQ/5mIQQjJl25MsYFyYEzQEbVJg==
+X-Received: by 2002:ac2:58c9:0:b0:4f8:7513:8cb0 with SMTP id u9-20020ac258c9000000b004f875138cb0mr5392571lfo.2.1690800759450;
+        Mon, 31 Jul 2023 03:52:39 -0700 (PDT)
 Received: from [192.168.1.101] (abyk53.neoplus.adsl.tpnet.pl. [83.9.30.53])
-        by smtp.gmail.com with ESMTPSA id p13-20020a05651238cd00b004fdc7ec5cbesm2016936lft.300.2023.07.31.03.52.35
+        by smtp.gmail.com with ESMTPSA id p13-20020a05651238cd00b004fdc7ec5cbesm2016936lft.300.2023.07.31.03.52.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Jul 2023 03:52:36 -0700 (PDT)
+        Mon, 31 Jul 2023 03:52:38 -0700 (PDT)
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Mon, 31 Jul 2023 12:52:21 +0200
-Subject: [PATCH v2 05/10] interconnect: qcom: qcm2290: Hook up
- MAS_APPS_PROC's bus clock
+Date:   Mon, 31 Jul 2023 12:52:22 +0200
+Subject: [PATCH v2 06/10] interconnect: qcom: qcm2290: Set AB coefficients
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230726-topic-icc_coeff-v2-5-8c91c6c76076@linaro.org>
+Message-Id: <20230726-topic-icc_coeff-v2-6-8c91c6c76076@linaro.org>
 References: <20230726-topic-icc_coeff-v2-0-8c91c6c76076@linaro.org>
 In-Reply-To: <20230726-topic-icc_coeff-v2-0-8c91c6c76076@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
@@ -69,72 +68,53 @@ Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         Konrad Dybcio <konrad.dybcio@linaro.org>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1690800744; l=2199;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1690800744; l=1336;
  i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=wbL0knkbb9r2z/rU8oFtpvr0ZnPgIjvL/nER+Pi+b14=;
- b=F54RLC1nkOXm1+NJ9KBW35GMKssUAl/upy5JEMNXbvCl5C58zJHTCq9IxqTACqRZbGMShABx8
- F9eBe1EmhCyD8mGy/I8USvUDuSNKiMRPlF8oFfpATmduKCPgQXVzbES
+ bh=gKAcxl1xTWi9i07xf8cB7oRhF8MPHDTJc+D4hon02Tw=;
+ b=BBXibxbz5bWOvHTUGXbskyvTu2s2coTcN4lWpRlNt+MQgabHigfgQ5abPKfbysUBzTdLIX56m
+ UGV56QaibM1BQepWJ0xXFG5BYjHru3LhVwtGA2ee0Jl3Z+ABcT3AcII
 X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
  pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This single node has its own clock which seems to be responsible for
-transactions between CPUSS (CPU + some stuff) and the GNOC.
-
-Define it and hook it up.
+Some buses need additional manual adjustments atop the usual
+calculations. Fill in the missing coefficients.
 
 Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- drivers/interconnect/qcom/icc-rpm-clocks.c | 6 ++++++
- drivers/interconnect/qcom/icc-rpm.h        | 1 +
- drivers/interconnect/qcom/qcm2290.c        | 3 +++
- 3 files changed, 10 insertions(+)
+ drivers/interconnect/qcom/qcm2290.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/interconnect/qcom/icc-rpm-clocks.c b/drivers/interconnect/qcom/icc-rpm-clocks.c
-index 63c82a91bbc7..ac1677de7dfd 100644
---- a/drivers/interconnect/qcom/icc-rpm-clocks.c
-+++ b/drivers/interconnect/qcom/icc-rpm-clocks.c
-@@ -25,6 +25,12 @@ const struct rpm_clk_resource bimc_clk = {
- };
- EXPORT_SYMBOL_GPL(bimc_clk);
- 
-+const struct rpm_clk_resource mem_1_clk = {
-+	.resource_type = QCOM_SMD_RPM_MEM_CLK,
-+	.clock_id = 1,
-+};
-+EXPORT_SYMBOL_GPL(mem_1_clk);
-+
- const struct rpm_clk_resource bus_0_clk = {
- 	.resource_type = QCOM_SMD_RPM_BUS_CLK,
- 	.clock_id = 0,
-diff --git a/drivers/interconnect/qcom/icc-rpm.h b/drivers/interconnect/qcom/icc-rpm.h
-index 1a26a7b82166..dc8e37c0a263 100644
---- a/drivers/interconnect/qcom/icc-rpm.h
-+++ b/drivers/interconnect/qcom/icc-rpm.h
-@@ -152,6 +152,7 @@ extern const struct rpm_clk_resource bimc_clk;
- extern const struct rpm_clk_resource bus_0_clk;
- extern const struct rpm_clk_resource bus_1_clk;
- extern const struct rpm_clk_resource bus_2_clk;
-+extern const struct rpm_clk_resource mem_1_clk;
- extern const struct rpm_clk_resource mmaxi_0_clk;
- extern const struct rpm_clk_resource mmaxi_1_clk;
- extern const struct rpm_clk_resource qup_clk;
 diff --git a/drivers/interconnect/qcom/qcm2290.c b/drivers/interconnect/qcom/qcm2290.c
-index 3c3b24264a5b..52a6eb32e832 100644
+index 52a6eb32e832..42fa01c66e73 100644
 --- a/drivers/interconnect/qcom/qcm2290.c
 +++ b/drivers/interconnect/qcom/qcm2290.c
-@@ -112,6 +112,9 @@ static struct qcom_icc_node mas_appss_proc = {
- 	.qos.qos_mode = NOC_QOS_MODE_FIXED,
- 	.qos.prio_level = 0,
- 	.qos.areq_prio = 0,
-+	.bus_clk_desc = &mem_1_clk,
-+	.ab_coeff = 159,
-+	.ib_coeff = 96,
- 	.mas_rpm_id = 0,
- 	.slv_rpm_id = -1,
- 	.num_links = ARRAY_SIZE(mas_appss_proc_links),
+@@ -1201,6 +1201,7 @@ static const struct qcom_icc_desc qcm2290_bimc = {
+ 	.regmap_cfg = &qcm2290_bimc_regmap_config,
+ 	/* M_REG_BASE() in vendor msm_bus_bimc_adhoc driver */
+ 	.qos_offset = 0x8000,
++	.ab_coeff = 153,
+ };
+ 
+ static struct qcom_icc_node * const qcm2290_cnoc_nodes[] = {
+@@ -1327,6 +1328,7 @@ static const struct qcom_icc_desc qcm2290_mmnrt_virt = {
+ 	.bus_clk_desc = &mmaxi_0_clk,
+ 	.regmap_cfg = &qcm2290_snoc_regmap_config,
+ 	.qos_offset = 0x15000,
++	.ab_coeff = 142,
+ };
+ 
+ static struct qcom_icc_node * const qcm2290_mmrt_virt_nodes[] = {
+@@ -1342,6 +1344,7 @@ static const struct qcom_icc_desc qcm2290_mmrt_virt = {
+ 	.bus_clk_desc = &mmaxi_1_clk,
+ 	.regmap_cfg = &qcm2290_snoc_regmap_config,
+ 	.qos_offset = 0x15000,
++	.ab_coeff = 139,
+ };
+ 
+ static const struct of_device_id qcm2290_noc_of_match[] = {
 
 -- 
 2.41.0
