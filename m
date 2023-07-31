@@ -2,93 +2,118 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85979C001DF
-	for <linux-clk@archiver.kernel.org>; Mon, 31 Jul 2023 12:59:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57923C001DC
+	for <linux-clk@archiver.kernel.org>; Mon, 31 Jul 2023 13:01:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230265AbjGaM7V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 31 Jul 2023 08:59:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42952 "EHLO
+        id S232880AbjGaNBw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 31 Jul 2023 09:01:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230206AbjGaM7U (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Jul 2023 08:59:20 -0400
-Received: from mxout70.expurgate.net (mxout70.expurgate.net [91.198.224.70])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19A5310B;
-        Mon, 31 Jul 2023 05:59:19 -0700 (PDT)
-Received: from [127.0.0.1] (helo=localhost)
-        by relay.expurgate.net with smtp (Exim 4.92)
-        (envelope-from <prvs=6590db4e63=fe@dev.tdt.de>)
-        id 1qQSUW-00ETpd-V1; Mon, 31 Jul 2023 14:59:17 +0200
-Received: from [195.243.126.94] (helo=securemail.tdt.de)
-        by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <fe@dev.tdt.de>)
-        id 1qQSUW-00FHa9-Gu; Mon, 31 Jul 2023 14:59:16 +0200
-Received: from securemail.tdt.de (localhost [127.0.0.1])
-        by securemail.tdt.de (Postfix) with ESMTP id EED1D240049;
-        Mon, 31 Jul 2023 14:59:14 +0200 (CEST)
-Received: from mail.dev.tdt.de (unknown [10.2.4.42])
-        by securemail.tdt.de (Postfix) with ESMTP id 9FEC7240040;
-        Mon, 31 Jul 2023 14:59:14 +0200 (CEST)
-Received: from mail.dev.tdt.de (localhost [IPv6:::1])
-        by mail.dev.tdt.de (Postfix) with ESMTP id E4EF0313F9;
-        Mon, 31 Jul 2023 14:59:13 +0200 (CEST)
+        with ESMTP id S232686AbjGaNBr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Jul 2023 09:01:47 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96784170E
+        for <linux-clk@vger.kernel.org>; Mon, 31 Jul 2023 06:01:35 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id 4fb4d7f45d1cf-51d95aed33aso5986684a12.3
+        for <linux-clk@vger.kernel.org>; Mon, 31 Jul 2023 06:01:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1690808493; x=1691413293;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1gHj3euc6IvaK2yxym4XFdLcoLwgJrcjksU1YEUljLA=;
+        b=fC80ReJK3iWMlaL+BbSA0nCiL93bEX6P7tRt7ANtyVDgcScDhV+o3sOQoy97CaO4Fc
+         tEL/xlWU0W0zhd1/GwwwfMA5AWJ1HFiLG1ILv44KuhGNkLxL0geNm6hFfep1aInXufV3
+         138c9aHzw6SZ4hEp3lRsfcdYOL1ek71Xh1vgWdZSFwfyn0IjCYRHNVDg1TowaF4vxIby
+         lShV/V8NVkLgnHdR1yV9dY0AReAgr7d/ExE/Mr8OFKXkLr/B0HczfGsEHpyXE4iTVlf+
+         1y3p4DoYLUKZ74N85qMABPpsvNuABVHgZsj006Rx4ELfASa3hz7++2+jlUYJAlliXf/l
+         mTuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690808493; x=1691413293;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1gHj3euc6IvaK2yxym4XFdLcoLwgJrcjksU1YEUljLA=;
+        b=SE5wAGNArMG1W884eMkUWYRneTGB/dp/p1PXLglMSytFpcRKLHx7sPjNkhJqpsUi1p
+         Mg/3hK9xQVCNGZa5KetahjcLnN60m40UHcYvmbN8fAF4cTwd2RMYeRJT1PIALlA7CIvj
+         0EAV+Ru2h4oHsxRXO5Z/BRDbQY8luHveHq4gd+NcsXB66UV5YwTZGp2M2LdXLrTdtOb4
+         YSy+Lymxl9AKuFG5T3Z+6B0RfvARbFhjmSnEuiywhHppwJf/dRIxLwYQcFSUDNbzg7vD
+         PFYkm7Yz3MxgC4PR5RoUAfRYqi2DImIYYhzZh0yXlZcJt9xuOuC1ApSUok1k1iVx34E6
+         /jcw==
+X-Gm-Message-State: ABy/qLZcT6gulRz4Y9JCohG3qRJ8gqWhi7TiEMjAn4omYnK8z+hj+NPB
+        uPAT9zgMjS+SUPoo6kC8hISpag==
+X-Google-Smtp-Source: APBJJlE+ddWgOsEvgPYwNxVC0LAn5r9swW2mMYAuK5RtUFhMlMdwzlsTYxQuUFXrZJsb+tcQd4wSZA==
+X-Received: by 2002:a17:906:3011:b0:99c:20f0:deaf with SMTP id 17-20020a170906301100b0099c20f0deafmr815244ejz.77.1690808493404;
+        Mon, 31 Jul 2023 06:01:33 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.222.183])
+        by smtp.gmail.com with ESMTPSA id z7-20020a170906074700b0099293cdbc98sm6207575ejb.145.2023.07.31.06.01.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 31 Jul 2023 06:01:32 -0700 (PDT)
+Message-ID: <75cbeeed-84c9-7637-b2a7-b37d87f5872e@linaro.org>
+Date:   Mon, 31 Jul 2023 15:01:31 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 31 Jul 2023 14:59:13 +0200
-From:   Florian Eckert <fe@dev.tdt.de>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.1
+Subject: Re: [PATCH 2/2] dt-bindings: clock: intel,cgu-lgm: add
+ mxl,control-gate option
+Content-Language: en-US
+To:     Florian Eckert <fe@dev.tdt.de>
 Cc:     mturquette@baylibre.com, sboyd@kernel.org, yzhu@maxlinear.com,
         rtanwar@maxlinear.com, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, Eckert.Florian@googlemail.com
-Subject: Re: [PATCH 2/2] dt-bindings: clock: intel,cgu-lgm: add
- mxl,control-gate option
-In-Reply-To: <780aa090-3a97-abab-271f-59790df29cc4@linaro.org>
 References: <20230731100349.184553-1-fe@dev.tdt.de>
  <20230731100349.184553-3-fe@dev.tdt.de>
  <780aa090-3a97-abab-271f-59790df29cc4@linaro.org>
-Message-ID: <11386dd27487075a9a0b1a2aa7794951@dev.tdt.de>
-X-Sender: fe@dev.tdt.de
-User-Agent: Roundcube Webmail/1.3.17
-X-purgate-ID: 151534::1690808356-C34280DF-A4239018/0/0
-X-purgate-type: clean
-X-purgate: clean
+ <11386dd27487075a9a0b1a2aa7794951@dev.tdt.de>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <11386dd27487075a9a0b1a2aa7794951@dev.tdt.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Thanks for your reply,
+On 31/07/2023 14:59, Florian Eckert wrote:
+> Thanks for your reply,
+> 
+>> You described the desired Linux feature or behavior, not the actual
+>> hardware. The bindings are about the latter, so instead you need to
+>> rephrase the property and its description to match actual hardware
+>> capabilities/features/configuration etc.
+> 
+> You have correctly identified that this is not a hardware configuration,
+> but a driver configuration. Currently, the driver is configured so that
+> the gates cannot be switched via the clk subsystem callbacks. When
+> registering the data structures from the driver, I have to pass a flag
+> GATE_CLK_HW so that the gate is managed by the driver.
+> 
+> I didn't want to always change the source of the driver when it has to 
+> take
+> care of the GATE, so I wanted to map this via the dts.
+> 
+> I have a board support package from Maxlinear for the Lightning Mountain 
+> Soc
+> with other drivers that are not upstream now. Some of them use the
+> clock framework some of them does not.
+> 
+> Due to missing documents it is not possible to send these drivers 
+> upstream.
 
-> You described the desired Linux feature or behavior, not the actual
-> hardware. The bindings are about the latter, so instead you need to
-> rephrase the property and its description to match actual hardware
-> capabilities/features/configuration etc.
+So when you upstream them, the binding becomes wrong or not needed?
+Sorry, bindings are entirely independent of OS, so using this as an
+argument is clear no-go.
 
-You have correctly identified that this is not a hardware configuration,
-but a driver configuration. Currently, the driver is configured so that
-the gates cannot be switched via the clk subsystem callbacks. When
-registering the data structures from the driver, I have to pass a flag
-GATE_CLK_HW so that the gate is managed by the driver.
+> Strictly speaking, this is about the gptc and the watchdog.
+> 
+> Since it is a buildin_platform driver, it can also not work via
+> module parameters.
 
-I didn't want to always change the source of the driver when it has to 
-take
-care of the GATE, so I wanted to map this via the dts.
+None of this explains any hardware related part of this binding. You
+created now policy for one specific OS. Devicetree, which is OS
+independent, is not for such purposes.
 
-I have a board support package from Maxlinear for the Lightning Mountain 
-Soc
-with other drivers that are not upstream now. Some of them use the
-clock framework some of them does not.
+Best regards,
+Krzysztof
 
-Due to missing documents it is not possible to send these drivers 
-upstream.
-Strictly speaking, this is about the gptc and the watchdog.
-
-Since it is a buildin_platform driver, it can also not work via
-module parameters.
-
-Best regards
-
-Florian
