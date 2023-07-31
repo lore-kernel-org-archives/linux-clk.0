@@ -2,99 +2,120 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 148D3C04A94
-	for <linux-clk@archiver.kernel.org>; Mon, 31 Jul 2023 07:10:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E1FAC001DC
+	for <linux-clk@archiver.kernel.org>; Mon, 31 Jul 2023 08:20:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231259AbjGaHKa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 31 Jul 2023 03:10:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49812 "EHLO
+        id S231497AbjGaIUZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 31 Jul 2023 04:20:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230434AbjGaHKD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Jul 2023 03:10:03 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C13DB1725
-        for <linux-clk@vger.kernel.org>; Mon, 31 Jul 2023 00:08:30 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-99bc9e3cbf1so874020066b.0
-        for <linux-clk@vger.kernel.org>; Mon, 31 Jul 2023 00:08:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1690787293; x=1691392093;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mG/2HxcAIk6z1uz1JvaPUjuQBhvN09rQwMA4D+YrQLk=;
-        b=f07lG0sqQE8vuiqGwtRI3plpKUYZSrIcqOkwXmS+k6MUUPb+JRvmy96RtLmLTICRmw
-         zqEOZ2qBW/QEIjGtF27s33hpHx+8zAizl9taILHTNMIjr2GjxkzmEF7IMRZ5aLqjy1eL
-         2QMBVyCXXsKBxEJz0jCCtss9aUgAe1bTiyKs1G0sFAUQNscRl151oowsGsa3Q5vPQkSB
-         sxE6b8h8xMYu2QLfmCnPTQkNE4xuhs31rxSHNsYGQCegl2GprVz/79wB7lc6ChCCTZA2
-         EGT+9R6O1l+tz1ERLIKSmU3mFfNznRLhJul5IoBJ+KEjaAhLbJeG6RdkdnGuLO15EOu+
-         jo9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690787293; x=1691392093;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mG/2HxcAIk6z1uz1JvaPUjuQBhvN09rQwMA4D+YrQLk=;
-        b=cGLm5MROgp7Mx3gjH5JUR09pLB8deBibyFGBM2eYEjg9wgahPqVrh37TEBcVAfxn5v
-         feIHyi+x9qc1z9ZXncKbxL/YYDcwnXizxpsEuy047fFCLw1waHXibtO0Nejc8Zx3dmfy
-         OnQ70qZuLNPWpCjjHQATuStQLFUZQ1Fq+i8EJ5VVnkVIptz6XHxOKrgUxGlHn/0fwj2w
-         28a0Apt/4nAKqiJ3rkUEWNO3yJDCXk0Zl+Idy4iaLtPnra1eOgLt2RsNoJyfyrRvTm56
-         u71VwJ8dbapfQK+XxjaA9YDvGB4RUv7rPPH0cewDv83eYPmz0Kqy1e/WHQjEoONNUkVc
-         G8Ow==
-X-Gm-Message-State: ABy/qLbZ+n68VP9XR1d4HcMfIWDwd/oxJn3Tm+f3KX93CP6u5n5aK3VS
-        LvsbAXB7XLeF98O+tWYT6wtWYA==
-X-Google-Smtp-Source: APBJJlEDszrkZwqPnS0BlylIsnDkBmB9OkzdNsVs94MxLXP2D2hJAu5Mba7Z+RIWI5Agr6jCLrV7JA==
-X-Received: by 2002:a17:907:a052:b0:994:1880:dc32 with SMTP id gz18-20020a170907a05200b009941880dc32mr6644297ejc.17.1690787291452;
-        Mon, 31 Jul 2023 00:08:11 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.222.183])
-        by smtp.gmail.com with ESMTPSA id h19-20020a17090634d300b0098e422d6758sm5697057ejb.219.2023.07.31.00.08.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 31 Jul 2023 00:08:11 -0700 (PDT)
-Message-ID: <e3d692d9-82a3-22d0-7fa0-4e89876ef8f4@linaro.org>
-Date:   Mon, 31 Jul 2023 09:08:07 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.1
-Subject: Re: [PATCH v2 4/9] dt-bindings: clock: Add Marvell PXA1908 clock
- bindings
-Content-Language: en-US
-To:     =?UTF-8?Q?Duje_Mihanovi=c4=87?= <duje.mihanovic@skole.hr>,
+        with ESMTP id S231561AbjGaIT5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Jul 2023 04:19:57 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A116F19B3
+        for <linux-clk@vger.kernel.org>; Mon, 31 Jul 2023 01:18:07 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qQO6P-0007Qm-Am; Mon, 31 Jul 2023 10:18:05 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qQO6O-00056Y-7m; Mon, 31 Jul 2023 10:18:04 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qQO6N-009FeO-HY; Mon, 31 Jul 2023 10:18:03 +0200
+Date:   Mon, 31 Jul 2023 10:18:03 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        ~postmarketos/upstreaming@lists.sr.ht
-Cc:     phone-devel@vger.kernel.org, afaerber@suse.com
-References: <20230727162909.6031-1-duje.mihanovic@skole.hr>
- <20230727162909.6031-5-duje.mihanovic@skole.hr>
- <fe60d09a-aa79-f3b9-cf9d-e8ae8ff58d09@linaro.org>
- <2897221.e9J7NaK4W3@radijator>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <2897221.e9J7NaK4W3@radijator>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        linux-clk@vger.kernel.org, kernel@pengutronix.de,
+        Wolfram Sang <wsa@kernel.org>
+Subject: Re: [PATCH] clk: versaclock3: Switch to use i2c_driver's probe
+ callback
+Message-ID: <20230731081803.vua6hyxhofasvrsm@pengutronix.de>
+References: <20230721071846.111663-1-u.kleine-koenig@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="slme77pfiokahsua"
+Content-Disposition: inline
+In-Reply-To: <20230721071846.111663-1-u.kleine-koenig@pengutronix.de>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 30/07/2023 23:18, Duje Mihanović wrote:
-> On Friday, July 28, 2023 9:18:44 AM CEST Krzysztof Kozlowski wrote:
->>> +/* axi (apmu) peripherals */
->>> +#define PXA1908_CLK_CCIC1		9
->>> +#define PXA1908_CLK_ISP			14
->>
->> Why do you have gaps between IDs? The clock IDs are supposed to be
->> continuous, otherwise it is not an ID.
-> 
-> Similarly to the PXA1928 clock driver, each clock's ID is its register offset 
-> divided by 4. Should I use continuous IDs and put the register offsets in the 
-> clock driver instead?
 
-Either that or drop the bindings file, because otherwise what is the
-point of having it in the bindings?
+--slme77pfiokahsua
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best regards,
-Krzysztof
+Hello,
 
+[Cc: +=3D Wolfram]
+
+On Fri, Jul 21, 2023 at 09:18:46AM +0200, Uwe Kleine-K=F6nig wrote:
+> The previous mass switch of clk drivers done in commit 62279db5a323
+> ("clk: Switch i2c drivers back to use .probe()") was based on v6.4-rc1
+> Since then this driver was added which needs to be converted back in the
+> same way before eventually .probe_new() can be dropped from struct
+> i2c_driver.
+>=20
+> Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+> ---
+> Hello,
+>=20
+> this driver appeared in next today. It would be great if this patch
+> could be added on top to not interfere with the quest to remove
+> .probe_new directly after v6.6-rc1.
+
+my eventual plan is to send the patch removing .probe_new() around
+v6.6-rc1 with the intention to get it into next early during the merge
+window. So if this patch doesn't make it in before v6.6-rc1, I'd send it
+together with the change dropping .probe_new() for Wolfram to apply as
+in today's next-20230731 there are only two drivers left making use of
+=2Eprobe_new (and the maintainer of the other driver already agreed to fix
+their driver with a patch going in via i2c, too).
+
+So in my order of preference, the options here are:
+
+ - patch is applied via clk before v6.6-rc1
+ - patch is applied via i2c together with change dropping .probe_new()
+   with a clk maintainer's Ack.
+ - patch is ignored and goes in without an Ack via i2c.
+
+My current WIP branch based on v6.5-rc4 is available at
+
+	https://git.pengutronix.de/git/ukl/linux i2c-probe-new
+
+if you want to take a look. (And even if you don't want, it's there :-)
+
+Thanks
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--slme77pfiokahsua
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmTHbjoACgkQj4D7WH0S
+/k7HNwf7ByVoN4u5woHpoUxjh2+49Lu2JmYtoUVZJdDhjuF0bEqX+1st0AtWfX8S
+BXrAqfAAL7XsheAeXQ5PaVzMm1kZB7dp4/rQr34a4afoouWIWA/7W704bIi0lXmX
++xl5EWV3ZwmwOO158vUI/l4nx4HtsVDuLFKUvGiF0edWJi5ekoSBQknHC0Udzv3X
+K+QBYG/6xNc6AmttQL0EOGAR+LVIUMdvd/8qzp0WBhXIhfjvye2HBHZYRZOJKA45
+5f4LLdluBcL4x1TzcwjFUy5m1OpgTEuoaL/z3/fYS3lHr+vY72aB236ZQjgEinK/
+lpeyWd5W1j0L2nHMZQe0ThwPTUT32w==
+=sGMC
+-----END PGP SIGNATURE-----
+
+--slme77pfiokahsua--
