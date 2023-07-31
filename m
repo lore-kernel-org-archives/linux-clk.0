@@ -2,105 +2,124 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F5E6C001DE
-	for <linux-clk@archiver.kernel.org>; Mon, 31 Jul 2023 04:28:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14BE9C41513
+	for <linux-clk@archiver.kernel.org>; Mon, 31 Jul 2023 05:04:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229545AbjGaE21 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 31 Jul 2023 00:28:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40302 "EHLO
+        id S229613AbjGaFEi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 31 Jul 2023 01:04:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229523AbjGaE20 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Jul 2023 00:28:26 -0400
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52B66E6C
-        for <linux-clk@vger.kernel.org>; Sun, 30 Jul 2023 21:28:25 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id d9443c01a7336-1bbc87ded50so24703595ad.1
-        for <linux-clk@vger.kernel.org>; Sun, 30 Jul 2023 21:28:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1690777704; x=1691382504;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5A36sJfoTWTZxxRtlkUpT4+tRtDcKRqPwRCEoULd4eU=;
-        b=b5DQ6Rlyi7Lq9BXtLOOwalkREoNbb87b7unENttOCjxE8BVeLJiZVLColztFw+ksZi
-         T5RO9eNtw8w4tbxo8yjiH8JdzdVbiLrXtczhvTfIZrpykQ7oQia1ZRmOGhd2hBXjrtZT
-         V8fl0WKyk3tkCepVejzvfjyVLsuOV988AmZX4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690777704; x=1691382504;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5A36sJfoTWTZxxRtlkUpT4+tRtDcKRqPwRCEoULd4eU=;
-        b=XjpjQlhM9Kzvmmrk9gv+tcUAIlfqC2ATSz4tI+JU0LHWN+9VlL6nQPX/9vu9lhZl4F
-         IMUezXSoh/99E8gtZ+/sn+JEmFFgoubSy9pt90jHyl6bqAk4hxcI9j30FIYDCNFr3We3
-         rVvi1un3gJduEFmD854bfgSMZT2OwGvADX0MytSrrPSowhDVCVZqOdzX8j3AVp7vX20N
-         68cdq+kKtqTVyxeFzB23FYw6SehjgQ+P/cxXnlwQYxiF7fqpwN5oxGeHuBOaOwFR033W
-         Z5aov5Z3U+P5FJZlBqcfWTgJ13+doX6CoX0b7csesOEuJ1Acg1jO+r7Xa4oJ9I36qjom
-         yNRQ==
-X-Gm-Message-State: ABy/qLaOdTTgaLu7/aTtSdROr6KJaxTYqSMwItRDqQipljEspB0zXFla
-        dkjvX/P0vgO7o6WpaL+gFO9UXA==
-X-Google-Smtp-Source: APBJJlGW73mZDqZnkyjN83Bmi8SBbMUxpBxQv5ILrRrZFjgWoHlYdewLdEqjUMKHtrkbxW8SlUceaA==
-X-Received: by 2002:a17:902:d4c3:b0:1b8:b3f0:3d57 with SMTP id o3-20020a170902d4c300b001b8b3f03d57mr9821918plg.31.1690777704531;
-        Sun, 30 Jul 2023 21:28:24 -0700 (PDT)
-Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:fd7a:6af2:fca:ff71])
-        by smtp.gmail.com with ESMTPSA id t15-20020a170902b20f00b001b9df8f14d7sm7349096plr.267.2023.07.30.21.28.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Jul 2023 21:28:24 -0700 (PDT)
-From:   Chen-Yu Tsai <wenst@chromium.org>
-To:     Neil Armstrong <neil.armstrong@linaro.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Chen-Yu Tsai <wenst@chromium.org>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: meson: meson8b: Simplify notifier clock lookup
-Date:   Mon, 31 Jul 2023 12:27:53 +0800
-Message-ID: <20230731042807.1322972-1-wenst@chromium.org>
-X-Mailer: git-send-email 2.41.0.487.g6d72f3e995-goog
+        with ESMTP id S229379AbjGaFEg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Jul 2023 01:04:36 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5CB51BF;
+        Sun, 30 Jul 2023 22:04:34 -0700 (PDT)
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36V4iGxL018972;
+        Mon, 31 Jul 2023 05:04:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=TcMnLnc/KdAeHdH42ftkVYIT3tPuoTwENsJK/nuaSqk=;
+ b=GRf1z0MfbJtNriUXrz4cYj2TAoZANx1ilpD9+hlD0aVCbhvCjsnotgvMWAzyBiGMKCjg
+ pM3pS3yQpE7aNf8DarZ9kV/7Hv+JJ7iMtwf4eDJZN7H6iRwVuf2G+cYKy4WwfepL0Otc
+ TmRcoDXfHaz9qzhtGJhJpAkEcflpv62PsJ9pRj+U0ZHGpbAsBd/xD8bCIXtvEYph7Ehr
+ iT/1xw0Ux8SpwLZaREjYJX+MHI69cE9A0ibLYZoWDy6DLAo2j6mWbNfC8tImU2sVfDlQ
+ +itxwczyf0GB3ZvUbJ3T3i3W+KJXqg1wxdt2yFyxe8f5Y+3Rx0mz+A38pnha0xyPFKXQ Ng== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3s4uat2n6y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 31 Jul 2023 05:04:30 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36V54TKS031441
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 31 Jul 2023 05:04:29 GMT
+Received: from [10.201.206.238] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Sun, 30 Jul
+ 2023 22:04:22 -0700
+Message-ID: <58e66ef8-25ff-9d66-da41-52f686480dc0@quicinc.com>
+Date:   Mon, 31 Jul 2023 10:34:19 +0530
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Subject: Re: [PATCH v4 09/11] remoteproc: qcom: Add Hexagon based multipd
+ rproc driver
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <mathieu.poirier@linaro.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <conor+dt@kernel.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <quic_eberman@quicinc.com>, <kvalo@kernel.org>,
+        <loic.poulain@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC:     <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
+        <quic_kathirav@quicinc.com>, <quic_anusha@quicinc.com>,
+        <quic_varada@quicinc.com>
+References: <20230728063412.1641856-1-quic_mmanikan@quicinc.com>
+ <20230728063412.1641856-10-quic_mmanikan@quicinc.com>
+ <117f6341-55d7-601b-203f-8a09dd4bb22f@linaro.org>
+Content-Language: en-US
+From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In-Reply-To: <117f6341-55d7-601b-203f-8a09dd4bb22f@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: ZzqXozlKprTkbGbxntLcEqOIZPGLW9q8
+X-Proofpoint-GUID: ZzqXozlKprTkbGbxntLcEqOIZPGLW9q8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-07-27_10,2023-07-26_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
+ priorityscore=1501 mlxlogscore=903 suspectscore=0 spamscore=0
+ lowpriorityscore=0 mlxscore=0 bulkscore=0 impostorscore=0 adultscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2306200000 definitions=main-2307310046
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The driver registers a clock notifier by first getting the name of one
-of its clocks it just registered, then uses the name to look up the
-clock. The lookup is not needed, since each clock provider already
-has a clock attached to it. Use that instead to get rid of a
-__clk_lookup() call.
-
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
----
-Found this could be simplified while looking through some clk core code.
 
 
- drivers/clk/meson/meson8b.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+On 7/28/2023 1:57 PM, Krzysztof Kozlowski wrote:
+> On 28/07/2023 08:34, Manikanta Mylavarapu wrote:
+>> +
+>> +static int q6_get_inbound_irq(struct qcom_q6v5 *q6,
+>> +			      struct platform_device *pdev,
+>> +			      const char *int_name,
+>> +			      int index, int *pirq,
+>> +			      irqreturn_t (*handler)(int irq, void *data))
+>> +{
+>> +	int ret, irq;
+>> +	char *interrupt, *tmp = (char *)int_name;
+>> +	struct q6_wcss *wcss = q6->rproc->priv;
+>> +
+>> +	irq = platform_get_irq(pdev, index);
+>> +	if (irq < 0) {
+>> +		if (irq != -EPROBE_DEFER)
+> 
+> Still not good... I think I am saying this the third time: drop this
+> eprobe defer dance. It is not needed. Just open the definition of
+> dev_err_probe().
+> 
+Yeah, somehow it's missed. I will drop.
 
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index 827e78fb16a8..c4336ac012bf 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -3793,7 +3793,6 @@ static void __init meson8b_clkc_init_common(struct device_node *np,
- {
- 	struct meson8b_clk_reset *rstc;
- 	struct device_node *parent_np;
--	const char *notifier_clk_name;
- 	struct clk *notifier_clk;
- 	struct regmap *map;
- 	int i, ret;
-@@ -3847,9 +3846,7 @@ static void __init meson8b_clkc_init_common(struct device_node *np,
- 	 * tricky programming sequence will be handled by the forthcoming
- 	 * coordinated clock rates mechanism once that feature is released.
- 	 */
--	notifier_clk_name = clk_hw_get_name(&meson8b_cpu_scale_out_sel.hw);
--	notifier_clk = __clk_lookup(notifier_clk_name);
--	ret = clk_notifier_register(notifier_clk, &meson8b_cpu_nb_data.nb);
-+	ret = clk_notifier_register(meson8b_cpu_scale_out_sel.hw.clk, &meson8b_cpu_nb_data.nb);
- 	if (ret) {
- 		pr_err("%s: failed to register the CPU clock notifier\n",
- 		       __func__);
--- 
-2.41.0.487.g6d72f3e995-goog
+Thanks & Regards,
+Manikanta.
 
+>> +			return dev_err_probe(&pdev->dev, irq,
+>> +					     "failed to retrieve %s IRQ: %d\n",
+>> +					     int_name, irq);
+>> +	}
+>> +
+> 
+> 
+> 
+> Best regards,
+> Krzysztof
+> 
