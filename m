@@ -2,181 +2,130 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EC5CC001DF
-	for <linux-clk@archiver.kernel.org>; Mon, 31 Jul 2023 11:00:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3CBBC001DF
+	for <linux-clk@archiver.kernel.org>; Mon, 31 Jul 2023 11:01:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229557AbjGaLAe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 31 Jul 2023 07:00:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49528 "EHLO
+        id S229802AbjGaLBw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 31 Jul 2023 07:01:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229915AbjGaLAd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Jul 2023 07:00:33 -0400
-Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29E5E199
-        for <linux-clk@vger.kernel.org>; Mon, 31 Jul 2023 04:00:29 -0700 (PDT)
-Received: by mail-pl1-x634.google.com with SMTP id d9443c01a7336-1bbc64f9a91so36605435ad.0
-        for <linux-clk@vger.kernel.org>; Mon, 31 Jul 2023 04:00:29 -0700 (PDT)
+        with ESMTP id S229872AbjGaLBu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Jul 2023 07:01:50 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8538F12A
+        for <linux-clk@vger.kernel.org>; Mon, 31 Jul 2023 04:01:45 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id 2adb3069b0e04-4fe383c1a26so1076477e87.1
+        for <linux-clk@vger.kernel.org>; Mon, 31 Jul 2023 04:01:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=edgeble-ai.20221208.gappssmtp.com; s=20221208; t=1690801228; x=1691406028;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rP1HvhmILSDZxBxnehc/orNHE8euRpEXGakH0zc2A7k=;
-        b=vu53Q9UAlOg6BDlJrkAy6fQOvq8rg045i4qiJrtblnnk3iOqoYyWZ7uOZjYd2EeZgx
-         P5AyemhYD2+unRxsl+Z4PWruWaLgXb0jgcpcdFiHhsl1aQ9WP5MXMz9arwajyizMCs42
-         dR9X7rcvjJeaZ/g76zi9zAw6lllsNtaWFzaIJHWCswRIFZgxplvbsWOV9rO9HbX2UeCX
-         HMBtbR8j84mTk3Il76l66YygZjIWaQOnW+76w2ntsSVkcySJlSeZ9EE939VatbsO74Yu
-         JOngwf0ht//eV7beeWzxcxb4n207cpIwwT3l47asgL3cqlQnpTa1UavhhqNRPzW1eDAn
-         DfQw==
+        d=linaro.org; s=google; t=1690801304; x=1691406104;
+        h=content-transfer-encoding:in-reply-to:autocrypt:references:cc:to
+         :from:content-language:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=LW5VB7qFVO9sNI/Xk6NRtf7lETmgtQbluRtmgiCSPs0=;
+        b=lXdvBOO7c8AfHI2MkFwa1f9eQSD1yDK7rTQVm0DA3+VKvkyGHPgdll4Qipml6e+rTF
+         +eUMF6R4902ZS83ccNONjDMZwW6qNVlHd3hzpTtFvek/+dvgSyN23CkqaH189upmFBBm
+         xi6/+te9H3SATz9AbuqB7g9pOmWNVwnLzVlk+q6mXq2m2fvSgd9bpZxS98awi5TeVNPl
+         FWu4/or+i/WeOrT1y8t9UEXCLu+VFja4PTdLhKSiPCMu8Ytd5J3hDjalh+Lt+l17U/7d
+         veJg5mx3QnAu/fRvaQbkNU0sZM2okVsxtjZpyjqXs766NyAGJ6EAmwF3cfUm1PYJUHbf
+         VCVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690801228; x=1691406028;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rP1HvhmILSDZxBxnehc/orNHE8euRpEXGakH0zc2A7k=;
-        b=LnPQ9da7tq2r95Kej5f56Zxs3bo3T47UrWzPyJQ4WpRVMhXT/ViBmumSEphZ5kkXT2
-         tbT6wrbo1ik6Ynbs8R+1RmFG+YGIqeqOoN0nClYUCaWt5kgqK03nVPMNSHUpdc7G0FNw
-         ztMrmGPgjdeNM4f5TZYjyVGU/+ZXr7W2zDeJObVgJz2z0DaFZsIRdughg3ITtBIYvVjQ
-         end/KLycXmYiV35hsEwfSul1fea7D3/bM3sUKESmwmS4QcEQMQwZoiJzVL9Ip3cVwRDQ
-         7xpg/gmkrj9huZVZA/lt4werZuruFFYZD/HZ1dQbARkf8LOFrgzUmHJXYq06B4FJacQR
-         gnUQ==
-X-Gm-Message-State: ABy/qLbHoHvIJ7MKX8Pbv3T2ms/MMgsNL/TsKdRgAO9BsjUo35voaM+W
-        gasdBNSwwrmUsk+l5LQKwACJ0Q==
-X-Google-Smtp-Source: APBJJlH8SyBbLB03Bth3Pd8z8lX9ED3lmZv12VgI5f3Sa1hnE8Ivym4zh3nPE9tU5JbnHWoZUfS4bQ==
-X-Received: by 2002:a17:902:dac4:b0:1b8:8dbd:e1a0 with SMTP id q4-20020a170902dac400b001b88dbde1a0mr10540287plx.13.1690801228399;
-        Mon, 31 Jul 2023 04:00:28 -0700 (PDT)
-Received: from localhost.localdomain ([49.205.243.15])
-        by smtp.gmail.com with ESMTPSA id t14-20020a1709028c8e00b001b1a2c14a4asm8281096plo.38.2023.07.31.04.00.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Jul 2023 04:00:27 -0700 (PDT)
-From:   Jagan Teki <jagan@edgeble.ai>
-To:     Heiko Stuebner <heiko@sntech.de>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org
-Cc:     Jagan Teki <jagan@edgeble.ai>, linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH 02/14] clk: rockchip: rv1126: Add PD_VO clock tree
-Date:   Mon, 31 Jul 2023 16:30:00 +0530
-Message-Id: <20230731110012.2913742-3-jagan@edgeble.ai>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230731110012.2913742-1-jagan@edgeble.ai>
-References: <20230731110012.2913742-1-jagan@edgeble.ai>
+        d=1e100.net; s=20221208; t=1690801304; x=1691406104;
+        h=content-transfer-encoding:in-reply-to:autocrypt:references:cc:to
+         :from:content-language:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LW5VB7qFVO9sNI/Xk6NRtf7lETmgtQbluRtmgiCSPs0=;
+        b=laOLmDlN8gBck4SCD+P6A1JJCf0iWeTRbqJxGi6t3hHEBTbd+RGrnPct31+613C+ZH
+         /5Qz5IIYAogofXBeU7XCUfwOEp0UCsW7wEVCELKO/q3rp5KjnpWYnBoeyb2NXbkpaxt9
+         ixW+Z7UdL8MuorArTRHwcK9rWXB3IMVWLjdGluYT0GF+vRUzDFzm+eijQCfUqNEJAgcJ
+         ceoUmj5cJYcBo1/+jhwm1dL6SMXJwZ5fwoR1MuhNYuxR3LM9hdiNUuB9XJVdjGt5iGKi
+         /AHTcC1v9JfY7jhg/sdxaeuijavH2e9yOMoX070gqHW4LBYVTAMdqMWotW16SffBmXYy
+         BUag==
+X-Gm-Message-State: ABy/qLbwsq2/Eb0sHuNU0M9otozzLyPEdnkQC8xa2cR5GxYDGAcw1Ukm
+        DaDCSvUKJneDlUlgwgzA9zPivg==
+X-Google-Smtp-Source: APBJJlEi4EXjtuy8Ky+SAZvAP9BlSHnxtEorHuvm3tDq5FiVPqwVmE53O96mBn07kMMaoyivnBoa5Q==
+X-Received: by 2002:ac2:4da5:0:b0:4fb:85ad:b6e2 with SMTP id h5-20020ac24da5000000b004fb85adb6e2mr4694600lfe.50.1690801303712;
+        Mon, 31 Jul 2023 04:01:43 -0700 (PDT)
+Received: from [192.168.1.101] (abyk53.neoplus.adsl.tpnet.pl. [83.9.30.53])
+        by smtp.gmail.com with ESMTPSA id r12-20020ac252ac000000b004fb7ac67bbdsm2045292lfm.41.2023.07.31.04.01.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 31 Jul 2023 04:01:43 -0700 (PDT)
+Message-ID: <0ca1922a-5d21-2c00-7514-6f90a9d2cb03@linaro.org>
+Date:   Mon, 31 Jul 2023 13:01:41 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] clk: qcom: gcc-msm8996: Use read-only RCG ops for RPM
+ bus clocks
+Content-Language: en-US
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+To:     Bjorn Andersson <andersson@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Stephan Gerhold <stephan@gerhold.net>
+References: <20230612-topic-rcg2_ro-v1-0-e7d824aeb628@linaro.org>
+ <20230612-topic-rcg2_ro-v1-2-e7d824aeb628@linaro.org>
+ <20230613175626.aesimqz2alcqjtok@ripper>
+ <e3f69e9d-7c23-d5cd-e203-f1e435ba063a@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <e3f69e9d-7c23-d5cd-e203-f1e435ba063a@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-PD_VO clock tree diagram in RV1126 is connected to
-- BIU_VO
-- VOP
-- RGA
-- IEP
-- DSIHOST
+On 13.06.2023 19:54, Konrad Dybcio wrote:
+> 
+> 
+> On 13.06.2023 19:56, Bjorn Andersson wrote:
+>> On Mon, Jun 12, 2023 at 11:22:48AM +0200, Konrad Dybcio wrote:
+>>> The config/periph/system NoC clocks are wholly controlled by the
+>>> RPM firmware and Linux should never ever alter their configuration.
+>>>
+>>
+>> Does Linux need to know about them?
+> Not really, but it allows us to get rates of their children.
+> 
+> We can get rid of them if one can argue debugcc is enough. Unless
+> we need clk_get_rate for some reason.
+> 
+Any opinions?
 
-Add entire PD_VO clock tree for rv1126.
-
-Signed-off-by: Jagan Teki <jagan@edgeble.ai>
----
-Cc: linux-clk@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-
- drivers/clk/rockchip/clk-rv1126.c | 59 +++++++++++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
-
-diff --git a/drivers/clk/rockchip/clk-rv1126.c b/drivers/clk/rockchip/clk-rv1126.c
-index 5c6f1ce34a2f..fc19c5522490 100644
---- a/drivers/clk/rockchip/clk-rv1126.c
-+++ b/drivers/clk/rockchip/clk-rv1126.c
-@@ -175,6 +175,7 @@ PNAME(mux_i2s2_p)			= { "mclk_i2s2_div", "mclk_i2s2_fracdiv", "i2s2_mclkin", "xi
- PNAME(mux_i2s2_out2io_p)		= { "mclk_i2s2", "xin12m" };
- PNAME(mux_gpll_cpll_xin24m_p)		= { "gpll", "cpll", "xin24m" };
- PNAME(mux_audpwm_p)			= { "sclk_audpwm_div", "sclk_audpwm_fracdiv", "xin24m" };
-+PNAME(mux_dclk_vop_p)			= { "dclk_vop_div", "dclk_vop_fracdiv", "xin24m" };
- PNAME(mux_usb480m_gpll_p)		= { "usb480m", "gpll" };
- PNAME(clk_gmac_src_m0_p)		= { "clk_gmac_div", "clk_gmac_rgmii_m0" };
- PNAME(clk_gmac_src_m1_p)		= { "clk_gmac_div", "clk_gmac_rgmii_m1" };
-@@ -259,6 +260,10 @@ static struct rockchip_clk_branch rv1126_audpwm_fracmux __initdata =
- 	MUX(SCLK_AUDPWM_MUX, "mclk_audpwm_mux", mux_audpwm_p, CLK_SET_RATE_PARENT,
- 			RV1126_CLKSEL_CON(36), 8, 2, MFLAGS);
- 
-+static struct rockchip_clk_branch rv1126_dclk_vop_fracmux __initdata =
-+	MUX(DCLK_VOP_MUX, "dclk_vop_mux", mux_dclk_vop_p, CLK_SET_RATE_PARENT,
-+	    RV1126_CLKSEL_CON(47), 10, 2, MFLAGS);
-+
- static struct rockchip_clk_branch rv1126_clk_pmu_branches[] __initdata = {
- 	/*
- 	 * Clock-Architecture Diagram 2
-@@ -714,6 +719,49 @@ static struct rockchip_clk_branch rv1126_clk_branches[] __initdata = {
- 			RV1126_CLKSEL_CON(72), 8, 1, MFLAGS, 0, 7, DFLAGS,
- 			RV1126_CLKGATE_CON(11), 1, GFLAGS),
- 
-+	/*
-+	 * Clock-Architecture Diagram 9
-+	 */
-+	/* PD_VO */
-+	COMPOSITE(ACLK_PDVO, "aclk_pdvo", mux_gpll_cpll_p, 0,
-+		  RV1126_CLKSEL_CON(45), 7, 1, MFLAGS, 0, 5, DFLAGS,
-+		  RV1126_CLKGATE_CON(14), 0, GFLAGS),
-+	COMPOSITE_NOMUX(HCLK_PDVO, "hclk_pdvo", "aclk_pdvo", 0,
-+			RV1126_CLKSEL_CON(45), 8, 5, DFLAGS,
-+			RV1126_CLKGATE_CON(14), 1, GFLAGS),
-+	COMPOSITE_NOMUX(PCLK_PDVO, "pclk_pdvo", "aclk_pdvo", 0,
-+			RV1126_CLKSEL_CON(46), 8, 5, DFLAGS,
-+			RV1126_CLKGATE_CON(14), 2, GFLAGS),
-+	GATE(ACLK_RGA, "aclk_rga", "aclk_pdvo", 0,
-+	     RV1126_CLKGATE_CON(14), 6, GFLAGS),
-+	GATE(HCLK_RGA, "hclk_rga", "hclk_pdvo", 0,
-+	     RV1126_CLKGATE_CON(14), 7, GFLAGS),
-+	COMPOSITE(CLK_RGA_CORE, "clk_rga_core", mux_gpll_cpll_p, 0,
-+		  RV1126_CLKSEL_CON(46), 7, 1, MFLAGS, 0, 5, DFLAGS,
-+		  RV1126_CLKGATE_CON(14), 8, GFLAGS),
-+	GATE(ACLK_VOP, "aclk_vop", "aclk_pdvo", 0,
-+	     RV1126_CLKGATE_CON(14), 9, GFLAGS),
-+	GATE(HCLK_VOP, "hclk_vop", "hclk_pdvo", 0,
-+	     RV1126_CLKGATE_CON(14), 10, GFLAGS),
-+	COMPOSITE(DCLK_VOP_DIV, "dclk_vop_div", mux_gpll_cpll_p, 0,
-+		  RV1126_CLKSEL_CON(47), 8, 1, MFLAGS, 0, 8, DFLAGS,
-+		  RV1126_CLKGATE_CON(14), 11, GFLAGS),
-+	COMPOSITE_FRACMUX(DCLK_VOP_FRACDIV, "dclk_vop_fracdiv", "dclk_vop_div",
-+			  CLK_SET_RATE_PARENT, RV1126_CLKSEL_CON(48), 0,
-+			  RV1126_CLKGATE_CON(14), 12, GFLAGS,
-+			  &rv1126_dclk_vop_fracmux),
-+	GATE(DCLK_VOP, "dclk_vop", "dclk_vop_mux", 0,
-+	     RV1126_CLKGATE_CON(14), 13, GFLAGS),
-+	GATE(PCLK_DSIHOST, "pclk_dsihost", "pclk_pdvo", 0,
-+	     RV1126_CLKGATE_CON(14), 14, GFLAGS),
-+	GATE(ACLK_IEP, "aclk_iep", "aclk_pdvo", 0,
-+	     RV1126_CLKGATE_CON(12), 7, GFLAGS),
-+	GATE(HCLK_IEP, "hclk_iep", "hclk_pdvo", 0,
-+	     RV1126_CLKGATE_CON(12), 8, GFLAGS),
-+	COMPOSITE(CLK_IEP_CORE, "clk_iep_core", mux_gpll_cpll_p, 0,
-+		  RV1126_CLKSEL_CON(54), 7, 1, MFLAGS, 0, 5, DFLAGS,
-+		  RV1126_CLKGATE_CON(12), 9, GFLAGS),
-+
- 	/*
- 	 * Clock-Architecture Diagram 12
- 	 */
-@@ -905,6 +953,17 @@ static struct rockchip_clk_branch rv1126_clk_branches[] __initdata = {
- 	GATE(0, "pclk_pdaudio_niu", "hclk_pdaudio", CLK_IGNORE_UNUSED,
- 			RV1126_CLKGATE_CON(9), 3, GFLAGS),
- 
-+	/*
-+	 * Clock-Architecture Diagram 9
-+	 */
-+	/* PD_VO */
-+	GATE(0, "aclk_pdvo_niu", "aclk_pdvo", CLK_IGNORE_UNUSED,
-+	     RV1126_CLKGATE_CON(14), 3, GFLAGS),
-+	GATE(0, "hclk_pdvo_niu", "hclk_pdvo", CLK_IGNORE_UNUSED,
-+	     RV1126_CLKGATE_CON(14), 4, GFLAGS),
-+	GATE(0, "pclk_pdvo_niu", "pclk_pdvo", CLK_IGNORE_UNUSED,
-+	     RV1126_CLKGATE_CON(14), 5, GFLAGS),
-+
- 	/*
- 	 * Clock-Architecture Diagram 12
- 	 */
--- 
-2.25.1
-
+Konrad
