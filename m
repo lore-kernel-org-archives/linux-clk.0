@@ -2,37 +2,37 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94BF7C0015E
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Aug 2023 20:53:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2E21C0015E
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Aug 2023 20:55:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229837AbjHAUxj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Aug 2023 16:53:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33822 "EHLO
+        id S229725AbjHAUzf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Aug 2023 16:55:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229872AbjHAUxi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Aug 2023 16:53:38 -0400
+        with ESMTP id S229694AbjHAUzd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Aug 2023 16:55:33 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B85C1FF0;
-        Tue,  1 Aug 2023 13:53:37 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52AB91BFD;
+        Tue,  1 Aug 2023 13:55:33 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 121A561707;
-        Tue,  1 Aug 2023 20:53:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A708C433C7;
-        Tue,  1 Aug 2023 20:53:33 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DDF5461708;
+        Tue,  1 Aug 2023 20:55:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20E4DC433C7;
+        Tue,  1 Aug 2023 20:55:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690923216;
-        bh=obhqLQxptseI0LHMuZyhYQYBOS6OSCE3jVqB3HSrzgw=;
+        s=k20201202; t=1690923332;
+        bh=mm3PCHxbwsPxpNKZvF47Eq/nkX3Fl3n17TT37Rm9fuE=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HOEc0TLIPtm4ZvN3lzLjFSbZQU62W4m1Im2JRaopeOR2nHBPcEGqM3rfUqVxG8ivp
-         1jY8d/Cypozuwzb+9bVwkfWZju8q2OnU2FtRM9NDmWtLazQ/9iJKm9LdQKK/LNlU4m
-         E9nvf9CLwIc3PaTvAUr2LcK2TH6AZw+t+RZhNfzIw8un7/SZmhrWypL4KR4oc/m7xY
-         yUIge0NBxC72hLMNZ4G7p8e0TnbZ7bceG/9lCcTglIG8K2AxXAMclIHJaNN8mCcWGv
-         euVUzvyKTava5ISdpq5TBDaf5zWN2lYlPvd5W8GJqrMwJvk3r0L7TNSUTNm5F6Hvwp
-         NQflERAPP9iZw==
-Date:   Tue, 1 Aug 2023 21:53:31 +0100
+        b=jYJpB5TgdglczH9pMWcLYolh/Bqraj/YkJIzZJ6u9wmVzHEAljC4hSb3/OOtTBEeQ
+         EsZX7mJyjmZxjeTjWjaln+MUKFSZ80TGplGDRT6Sz511UieJb2dEQsB5MKBcH668p3
+         M5INEcXObtUmfMbhpNhSbqV8+vZRliTza71Q2BgeIIJKNIJKSHClQTrKKD1tLaTLix
+         pW3eaZgd6gdfB7+bilYeAhhEnOWeFrKL9hyjFgg4oiTwoe4P2qm7rBgLSDiXA9HV9S
+         bpoOHzAjZtxMyEZtynw7xr1VA+fiTW2T7ling1zFYpU8eXfSzQ9pFlJG2/mtsvcWa0
+         /tLfgYwkOrNvQ==
+Date:   Tue, 1 Aug 2023 21:55:26 +0100
 From:   Conor Dooley <conor@kernel.org>
 To:     niravkumar.l.rabara@intel.com
 Cc:     adrian.ho.yin.ng@intel.com, andrew@lunn.ch, conor+dt@kernel.org,
@@ -42,32 +42,32 @@ Cc:     adrian.ho.yin.ng@intel.com, andrew@lunn.ch, conor+dt@kernel.org,
         netdev@vger.kernel.org, p.zabel@pengutronix.de,
         richardcochran@gmail.com, robh+dt@kernel.org, sboyd@kernel.org,
         wen.ping.teh@intel.com
-Subject: Re: [PATCH v2 1/5] dt-bindings: intel: Add Intel Agilex5 compatible
-Message-ID: <20230801-blatancy-chill-efee6e93f2e0@spud>
+Subject: Re: [PATCH v2 2/5] dt-bindings: reset: add reset IDs for Agilex5
+Message-ID: <20230801-roast-frigidly-4ea82386bb3d@spud>
 References: <20230618132235.728641-1-niravkumar.l.rabara@intel.com>
  <20230801010234.792557-1-niravkumar.l.rabara@intel.com>
- <20230801010234.792557-2-niravkumar.l.rabara@intel.com>
+ <20230801010234.792557-3-niravkumar.l.rabara@intel.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="yUkJXzVAcuN13gRW"
+        protocol="application/pgp-signature"; boundary="7JizuF9tmWfj3Hnb"
 Content-Disposition: inline
-In-Reply-To: <20230801010234.792557-2-niravkumar.l.rabara@intel.com>
+In-Reply-To: <20230801010234.792557-3-niravkumar.l.rabara@intel.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---yUkJXzVAcuN13gRW
+--7JizuF9tmWfj3Hnb
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 01, 2023 at 09:02:30AM +0800, niravkumar.l.rabara@intel.com wro=
+On Tue, Aug 01, 2023 at 09:02:31AM +0800, niravkumar.l.rabara@intel.com wro=
 te:
 > From: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
 >=20
-> Agilex5 is a new SoCFPGA in Intel Agilex SoCFPGA Family,
-> include compatible string for Agilex5 SoCFPGA board.
+> Add reset ID definitions required for Intel Agilex5 SoCFPGA, re-use
+> altr,rst-mgr-s10.h as common header file similar S10 & Agilex.
 >=20
 > Reviewed-by: Dinh Nguyen <dinguyen@kernel.org>
 > Signed-off-by: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
@@ -78,39 +78,44 @@ Cheers,
 Conor.
 
 > ---
->  Documentation/devicetree/bindings/arm/intel,socfpga.yaml | 5 +++++
->  1 file changed, 5 insertions(+)
+>  include/dt-bindings/reset/altr,rst-mgr-s10.h | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 >=20
-> diff --git a/Documentation/devicetree/bindings/arm/intel,socfpga.yaml b/D=
-ocumentation/devicetree/bindings/arm/intel,socfpga.yaml
-> index 4b4dcf551eb6..2ee0c740eb56 100644
-> --- a/Documentation/devicetree/bindings/arm/intel,socfpga.yaml
-> +++ b/Documentation/devicetree/bindings/arm/intel,socfpga.yaml
-> @@ -21,6 +21,11 @@ properties:
->                - intel,socfpga-agilex-n6000
->                - intel,socfpga-agilex-socdk
->            - const: intel,socfpga-agilex
-> +      - description: Agilex5 boards
-> +        items:
-> +          - enum:
-> +              - intel,socfpga-agilex5-socdk
-> +          - const: intel,socfpga-agilex5
+> diff --git a/include/dt-bindings/reset/altr,rst-mgr-s10.h b/include/dt-bi=
+ndings/reset/altr,rst-mgr-s10.h
+> index 70ea3a09dbe1..04c4d0c6fd34 100644
+> --- a/include/dt-bindings/reset/altr,rst-mgr-s10.h
+> +++ b/include/dt-bindings/reset/altr,rst-mgr-s10.h
+> @@ -63,12 +63,15 @@
+>  #define I2C2_RESET		74
+>  #define I2C3_RESET		75
+>  #define I2C4_RESET		76
+> -/* 77-79 is empty */
+> +#define I3C0_RESET		77
+> +#define I3C1_RESET		78
+> +/* 79 is empty */
+>  #define UART0_RESET		80
+>  #define UART1_RESET		81
+>  /* 82-87 is empty */
+>  #define GPIO0_RESET		88
+>  #define GPIO1_RESET		89
+> +#define WATCHDOG4_RESET		90
 > =20
->  additionalProperties: true
-> =20
+>  /* BRGMODRST */
+>  #define SOC2FPGA_RESET		96
 > --=20
 > 2.25.1
 >=20
 
---yUkJXzVAcuN13gRW
+--7JizuF9tmWfj3Hnb
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZMlwygAKCRB4tDGHoIJi
-0vuEAP4uO+JAx0MD0FfkTsZr5gB6MYd9JQhZhpnnnCBxyuFFBwD8DyO4Tugog9dy
-Fi7aNet1WmUff9KNVUbPD2zxc564OQ8=
-=B376
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZMlxPgAKCRB4tDGHoIJi
+0j/yAQCN8amnEfhB4tqnW7rRuRVU+vga9lWTHsdxnAi7KxIfGQD/RzRlxKV2gbZF
+zkFsLzoFDmLwFyZ0m+gs10g7xmc8zww=
+=DGyl
 -----END PGP SIGNATURE-----
 
---yUkJXzVAcuN13gRW--
+--7JizuF9tmWfj3Hnb--
