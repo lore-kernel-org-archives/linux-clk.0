@@ -2,135 +2,109 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1A0BC001DF
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Aug 2023 15:40:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A16CFC00528
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Aug 2023 16:28:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234945AbjHAPkV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Aug 2023 11:40:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56784 "EHLO
+        id S229495AbjHAQ2H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Aug 2023 12:28:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234895AbjHAPkU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Aug 2023 11:40:20 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82B44268C;
-        Tue,  1 Aug 2023 08:40:06 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0C14E6160B;
-        Tue,  1 Aug 2023 15:40:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D72CC433C7;
-        Tue,  1 Aug 2023 15:40:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690904405;
-        bh=klmMPEz2Sc5ebK9RxVataknn1VmV0r0n29W0Xjb+SIQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ei77t9mG/nwd0RL5hlLXxxr/Xgb9x/wpiJKztP0f4ZqwQbEafzbf2Rmybyj/MLbOw
-         M9Q1ygcojiSHdSSGhxfKh5tGFEV9PNY5k3NJC5tDihaaWI/3gK+xev+4kTMKUFJBjF
-         k8asJbv3XMr0V7RobdhKHYvzKuifAm7aPR+qlnfjLqK6zipplNyHOqHKmj2dh4Urb2
-         Ag1OG2S9X5pFPSsmtn6ZQXUoHHCP8Lscd3xWIMiBW13BPfsvdAafGf2WDlniU4PNcr
-         rBZKouXX838EMKlc95osOFJeBkykbXfMDIJMhHVCNNALU2UBJRzjnmG0LDsVOFibGn
-         kjINjwGwo2IjA==
-Date:   Tue, 1 Aug 2023 16:40:00 +0100
-From:   Conor Dooley <conor@kernel.org>
-To:     "Datta, Shubhrajyoti" <shubhrajyoti.datta@amd.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "git (AMD-Xilinx)" <git@amd.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "Simek, Michal" <michal.simek@amd.com>,
-        "conor+dt@kernel.org" <conor+dt@kernel.org>,
-        "krzysztof.kozlowski+dt@linaro.org" 
-        <krzysztof.kozlowski+dt@linaro.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>
-Subject: Re: [PATCH v3] dt-bindings: clock: versal: Convert the
- xlnx,zynqmp-clk.txt to yaml
-Message-ID: <20230801-overlook-underarm-eb9f85126f2b@spud>
-References: <20230724111843.18706-1-shubhrajyoti.datta@amd.com>
- <c735bf62-9d06-c46f-fe80-d9fc88ab847f@linaro.org>
- <BY5PR12MB490240C12A3CB180A0EE97C7810AA@BY5PR12MB4902.namprd12.prod.outlook.com>
+        with ESMTP id S229457AbjHAQ2G (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Aug 2023 12:28:06 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E40B1133
+        for <linux-clk@vger.kernel.org>; Tue,  1 Aug 2023 09:28:04 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <afa@pengutronix.de>)
+        id 1qQsDv-00018q-Q3; Tue, 01 Aug 2023 18:27:51 +0200
+Received: from [2a0a:edc0:0:1101:1d::54] (helo=dude05.red.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <afa@pengutronix.de>)
+        id 1qQsDu-000QYa-SP; Tue, 01 Aug 2023 18:27:50 +0200
+Received: from afa by dude05.red.stw.pengutronix.de with local (Exim 4.96)
+        (envelope-from <afa@pengutronix.de>)
+        id 1qQsDt-00Dkrt-2z;
+        Tue, 01 Aug 2023 18:27:49 +0200
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+To:     Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>
+Cc:     Ahmad Fatoum <a.fatoum@pengutronix.de>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: imx: composite-8m: avoid glitches when set_rate would be a no-op
+Date:   Tue,  1 Aug 2023 18:27:31 +0200
+Message-Id: <20230801162731.3278396-1-a.fatoum@pengutronix.de>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="vYisucghWkDCvANw"
-Content-Disposition: inline
-In-Reply-To: <BY5PR12MB490240C12A3CB180A0EE97C7810AA@BY5PR12MB4902.namprd12.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: afa@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Reconfiguring the clock divider to the exact same value is observed
+on an i.MX8MN to often cause a short clock pause, probably because
+the divider restarts counting from the time the register is written.
 
---vYisucghWkDCvANw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This issue doesn't show up normally, because the clock framework will
+take care to not call set_rate when the clock rate is the same.
+However, when we configure an upstream clock (e.g. an audio_pll), the
+common code will call set_rate with the newly calculated rate on all
+children. As the new rate is different, we enter set_rate and compute
+the same divider values, write them back and cause the glitch (e.g.
+on a SAI's MCLK).
 
-On Tue, Aug 01, 2023 at 07:17:20AM +0000, Datta, Shubhrajyoti wrote:
-> [AMD Official Use Only - General]
->=20
-> > -----Original Message-----
-> > From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > Sent: Friday, July 28, 2023 12:26 PM
-> > To: Datta, Shubhrajyoti <shubhrajyoti.datta@amd.com>;
-> > devicetree@vger.kernel.org
-> > Cc: git (AMD-Xilinx) <git@amd.com>; linux-clk@vger.kernel.org; Simek,
-> > Michal <michal.simek@amd.com>; conor+dt@kernel.org;
-> > krzysztof.kozlowski+dt@linaro.org; robh+dt@kernel.org; sboyd@kernel.org;
-> > mturquette@baylibre.com
-> > Subject: Re: [PATCH v3] dt-bindings: clock: versal: Convert the xlnx,zy=
-nqmp-
-> > clk.txt to yaml
-> >
-> > Caution: This message originated from an External Source. Use proper
-> > caution when opening attachments, clicking links, or responding.
-> >
-> >
-> > On 24/07/2023 13:18, Shubhrajyoti Datta wrote:
-> > > Convert the xlnx,zynqmp-clk.txt to yaml.
-> > > versal-clk.yaml already exists that's why ZynqMP is converted and
-> > > merged.
-> > >
-> > > Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
-> >
-> >
-> > > +
-> > > +  - if:
-> > > +      properties:
-> > > +        compatible:
-> > > +          contains:
-> > > +            enum:
-> > > +              - xlnx,zynqmp-clk
-> > > +
-> > > +    then:
-> > > +      properties:
-> > > +        clocks:
-> > > +          items:
-> > > +            - description: PS reference clock
-> > > +            - description: reference clock for video system
-> > > +            - description: alternative PS reference clock
-> > > +            - description: auxiliary reference clock
-> > > +            - description: transceiver reference clock
-> > > +            - description: (E)MIO clock source  (Optional clock)
-> > > +            - description: GEM emio clock  (Optional clock)
-> > > +            - description: Watchdog external clock (Optional clock)
-> >
-> > This is 8 items, not 7 as your top-level property says.
-> >
-> Fixed it below
+To avoid the glitch, we skip writing the same value back again.
 
-Can you send that as a real v4 please?
+Fixes: d3ff9728134e ("clk: imx: Add imx composite clock")
+Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+---
+ drivers/clk/imx/clk-composite-8m.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
---vYisucghWkDCvANw
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-composite-8m.c
+index cbf0d7955a00..3e9a092e136c 100644
+--- a/drivers/clk/imx/clk-composite-8m.c
++++ b/drivers/clk/imx/clk-composite-8m.c
+@@ -97,7 +97,7 @@ static int imx8m_clk_composite_divider_set_rate(struct clk_hw *hw,
+ 	int prediv_value;
+ 	int div_value;
+ 	int ret;
+-	u32 val;
++	u32 orig, val;
+ 
+ 	ret = imx8m_clk_composite_compute_dividers(rate, parent_rate,
+ 						&prediv_value, &div_value);
+@@ -106,13 +106,15 @@ static int imx8m_clk_composite_divider_set_rate(struct clk_hw *hw,
+ 
+ 	spin_lock_irqsave(divider->lock, flags);
+ 
+-	val = readl(divider->reg);
+-	val &= ~((clk_div_mask(divider->width) << divider->shift) |
+-			(clk_div_mask(PCG_DIV_WIDTH) << PCG_DIV_SHIFT));
++	orig = readl(divider->reg);
++	val = orig & ~((clk_div_mask(divider->width) << divider->shift) |
++		       (clk_div_mask(PCG_DIV_WIDTH) << PCG_DIV_SHIFT));
+ 
+ 	val |= (u32)(prediv_value  - 1) << divider->shift;
+ 	val |= (u32)(div_value - 1) << PCG_DIV_SHIFT;
+-	writel(val, divider->reg);
++
++	if (val != orig)
++		writel(val, divider->reg);
+ 
+ 	spin_unlock_irqrestore(divider->lock, flags);
+ 
+-- 
+2.39.2
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZMknUAAKCRB4tDGHoIJi
-0k//AP9TMX38cZrgrWN3V5dlTomMpJh6nuq+gG0RuiNTASwMAwEArDDUtwMCJBpv
-k3eN5/Y6pcG2KjKurjAUwzhFr1ZYmwU=
-=1N/A
------END PGP SIGNATURE-----
-
---vYisucghWkDCvANw--
