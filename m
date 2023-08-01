@@ -2,63 +2,72 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A038C00528
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Aug 2023 19:18:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59991C04A6A
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Aug 2023 19:45:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229766AbjHATSq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Aug 2023 15:18:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49872 "EHLO
+        id S232144AbjHATpg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Aug 2023 15:45:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229650AbjHATSp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Aug 2023 15:18:45 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74C811BF5;
-        Tue,  1 Aug 2023 12:18:44 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E512B616BF;
-        Tue,  1 Aug 2023 19:18:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 341FAC433C8;
-        Tue,  1 Aug 2023 19:18:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690917523;
-        bh=qowmyx7qyYO1UJKvfD1fnYIELO95ZZkMKXJeQVTxmmQ=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=UTZT4d393BEYbKTTMdUCo2FH8HZw+gFUG0nZWQmn2PK2+pl0pfsUbCiiPTT2JOsnA
-         YcyphCZ6g0sol5ThGEMTutWaV0WL9XeT/MibgPc1kVtyhmf4SIVmqSMw8xE7CEDwTM
-         bchfPxwVWA8cW4NJr4C5SHx21PGSXYb9VrhOtWme46vgJU9YAhKNvNwp6L9EndiirM
-         1iJiGDAWlfAku5EWnMJDSy9ASYz05YpgufkDYSKYmUsCxotdoSW6HMDsDgsENYE0Qh
-         +Fj8OrbidYbTNOraM4o96K7cy7pJV6IpfesUjsAUVD+VzXTjJn4GJYcY+dbkkERdgN
-         2i6W6Ogocc4SA==
-Message-ID: <02abeb64fb360245791b467b371f1491.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S230212AbjHATpe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Aug 2023 15:45:34 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C8FA2115
+        for <linux-clk@vger.kernel.org>; Tue,  1 Aug 2023 12:45:29 -0700 (PDT)
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1qQvIz-0000UE-5A; Tue, 01 Aug 2023 21:45:17 +0200
+Received: from mfe by ptx.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1qQvIy-0002VK-3Q; Tue, 01 Aug 2023 21:45:16 +0200
+Date:   Tue, 1 Aug 2023 21:45:16 +0200
+From:   Marco Felsch <m.felsch@pengutronix.de>
+To:     Ahmad Fatoum <a.fatoum@pengutronix.de>
+Cc:     Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: imx: composite-8m: avoid glitches when set_rate
+ would be a no-op
+Message-ID: <20230801194516.h6gxj2lqmmmls62k@pengutronix.de>
+References: <20230801162731.3278396-1-a.fatoum@pengutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230801085352.22873-2-quic_luoj@quicinc.com>
-References: <20230801085352.22873-1-quic_luoj@quicinc.com> <20230801085352.22873-2-quic_luoj@quicinc.com>
-Subject: Re: [PATCH 1/3] clk: Add the flag CLK_ENABLE_MUTEX_LOCK of enabling clock
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        quic_srichara@quicinc.com, Luo Jie <quic_luoj@quicinc.com>
-To:     Luo Jie <quic_luoj@quicinc.com>, agross@kernel.org,
-        andersson@kernel.org, conor+dt@kernel.org,
-        konrad.dybcio@linaro.org, krzysztof.kozlowski+dt@linaro.org,
-        mturquette@baylibre.com, p.zabel@pengutronix.de, robh+dt@kernel.org
-Date:   Tue, 01 Aug 2023 12:18:40 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230801162731.3278396-1-a.fatoum@pengutronix.de>
+User-Agent: NeoMutt/20180716
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Luo Jie (2023-08-01 01:53:50)
-> Support the clock controller where the HW register is
-> accessed by MDIO bus, the spin lock can't be used because
-> of sleep during the MDIO operation.
->=20
-> Add the flag CLK_ENABLE_MUTEX_LOCK to hint clock framework
-> to use mutex lock instead of the spin lock.
+On 23-08-01, Ahmad Fatoum wrote:
+> Reconfiguring the clock divider to the exact same value is observed
+> on an i.MX8MN to often cause a short clock pause, probably because
+> the divider restarts counting from the time the register is written.
+> 
+> This issue doesn't show up normally, because the clock framework will
+> take care to not call set_rate when the clock rate is the same.
+> However, when we configure an upstream clock (e.g. an audio_pll), the
+> common code will call set_rate with the newly calculated rate on all
+> children. As the new rate is different, we enter set_rate and compute
+> the same divider values, write them back and cause the glitch (e.g.
+> on a SAI's MCLK).
+> 
+> To avoid the glitch, we skip writing the same value back again.
+> 
+> Fixes: d3ff9728134e ("clk: imx: Add imx composite clock")
+> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
 
-Why can't you enable the MDIO bus clk in .prepare()?
+Reviewed-by: Marco Felsch <m.felsch@pengutronix.de>
