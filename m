@@ -2,119 +2,151 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAAE1C0015E
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Aug 2023 10:36:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42C4AC04A94
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Aug 2023 11:00:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232784AbjHAKgl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Aug 2023 06:36:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52488 "EHLO
+        id S234224AbjHALAf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Aug 2023 07:00:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232284AbjHAKge (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Aug 2023 06:36:34 -0400
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B07DFE9;
-        Tue,  1 Aug 2023 03:36:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1690886193; x=1722422193;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=71D94zn0r09sDIOSC/l60WT+v/gYihO1La2/Jx5ioYc=;
-  b=Mn5wPl4rHmyp0bg1Bs4XdsH/wMabJc6vLpYPexrw9Nxd7clQm09W426I
-   EZCubDzYDCKkOQlSeWdZU1fS5BFwsP9cFArGjtofKVFEvYzmuvHBNKSoG
-   Bub6LZdij8osCjxWozupqYr2JSX2m+LASemaX2JAdh3q0ce9sXRaJ3JE6
-   F38mhld9rKlRhch/WrdsCPj+DzESDNBqVSLEC8HDBbMXP4SxiJPZUjiuP
-   lApCQXm6QJIccm4rFuhcCEe7D/tNMFYuQ7+CHVIA/MTSgOzEgCNkbyRKk
-   TkrSjGX6TcYVq+9nVWzTofcDK4P5zNy1geTFUMujMBnEE8w9Yyjzb8rft
-   w==;
-X-IronPort-AV: E=Sophos;i="6.01,246,1684792800"; 
-   d="scan'208";a="32226641"
-Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 01 Aug 2023 12:36:25 +0200
-Received: from localhost.localdomain (SCHIFFERM-M2.tq-net.de [10.121.49.20])
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPA id 30605280086;
-        Tue,  1 Aug 2023 12:36:25 +0200 (CEST)
-From:   Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To:     Santosh Shilimkar <ssantosh@kernel.org>,
+        with ESMTP id S234233AbjHALAH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Aug 2023 07:00:07 -0400
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 675545B91;
+        Tue,  1 Aug 2023 03:54:51 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1690887236; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=aAT1gmpYcoMWWL66IjQC0kMJ2YgmRmX/z+QHnQPdM9usmzWv3BMdMKNqfffpdSMpe2
+    X5+uylcHSa/sWOPxMoDiIh7ctMyWvVA2NrMNqmVx4l9DAk63X93VFSN4n+Eke+5WCSPL
+    APILRndDrhKEZZ64eYAIikxB0bsmoSFiG59U+nFyhfsJKqwDZc4yVZRD6985h8WEVvo4
+    60itvMrvdiL1h+fuq9UKhk14eLaanxiOajO4gA4fQrCD6KbRYQY7B8eh9a6uZ7cldwcB
+    sasxH6Jis2llu4NuoospbHo1YBeA/MIhT34f4pU2eAEg9vcU07KSWzZxZHROMmZLCHcn
+    wemg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1690887236;
+    s=strato-dkim-0002; d=strato.com;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=qdtofX9rV/JabxOSUq7lzbOdfyHanm5MJ6uMGz3vtho=;
+    b=CAd/JrKD0OV4YhJSBstyLz7bM9tqLgPAG68VmuAtlFL2NmO2OlSQIel/WJLRVJFI0I
+    pSiVCRhxLCP9fd1Rv54lNAP0kwHClrJ/AD+xJhS1zGRgbMhol77dicVX1nomi+dBaLu0
+    dgIo4zcDn6hFSHs4GNcIfxlgARhzbbfWnz4gYhtn/1mW9E8KWIRnBXAEdfuVCtIo5SFN
+    2IXrqHb2KlloYBIfMRULFVvdny8FZjzVhIwqgjHwqe+CRiJPaS1Ie6DaYsY2WS/Q30f5
+    6YsziMfod9Tg+hj6m6P1+HMMP4rDG3jclwNPC9APmCRagMYAuLXPvuYi/FPLsqRczWRJ
+    z50g==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1690887236;
+    s=strato-dkim-0002; d=gerhold.net;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=qdtofX9rV/JabxOSUq7lzbOdfyHanm5MJ6uMGz3vtho=;
+    b=fD9ZyExGq8EC+DerHWU60ByTVFgHkclD+ih/ph9KhGBQSx45CU/Z+vr6IyuFhvU2xg
+    Wrm8LWHIsj8CFk7Y0+YkWVpQ4TkSC7MQjNxSzVG8Y7LfMJCdW6yVUedJAoK6wt4w2DRS
+    2rD7aOR+E75r2VO80LFyidSg3tuFxRw2f886j7cl7xD3fJz4jiLSpQUg414Em7oTUfFE
+    ujF3aUgfscmxd8DJh009323bdixj28rYcHgVG4GHFyFUjQC84hOCuqEpZuhp53lHkjPJ
+    mTKZekUal0Ag/ofCM0s9u5IjQsn8wQA0SYzd3P9tJYKm2mDhTjYsO32S0oOuEtnGZ97D
+    2lMA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1690887235;
+    s=strato-dkim-0003; d=gerhold.net;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=qdtofX9rV/JabxOSUq7lzbOdfyHanm5MJ6uMGz3vtho=;
+    b=oUr5y0ARyOTGFGaAUODubKciTgdGIK9FoaP6DMy3CLqVK2g/c09mVlIHQbEpaFmeV3
+    xaJIFH1Ag8Sxvm4zDfBw==
+X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u261EJF5OxJD4paA8p+L1A=="
+Received: from gerhold.net
+    by smtp.strato.de (RZmta 49.6.6 DYNA|AUTH)
+    with ESMTPSA id k61817z71ArtNj7
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+    Tue, 1 Aug 2023 12:53:55 +0200 (CEST)
+Date:   Tue, 1 Aug 2023 12:53:48 +0200
+From:   Stephan Gerhold <stephan@gerhold.net>
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Jai Luthra <j-luthra@ti.com>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux@ew.tq-group.com,
-        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Subject: [PATCH 3/3] clk: keystone: syscon-clk: use of_clk_hw_simple_get() for audio refclk
-Date:   Tue,  1 Aug 2023 12:36:09 +0200
-Message-Id: <fe46b97cb6b53ad20397c1569dbbfc2b15239b29.1690885413.git.matthias.schiffer@ew.tq-group.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1690885413.git.matthias.schiffer@ew.tq-group.com>
-References: <cover.1690885413.git.matthias.schiffer@ew.tq-group.com>
+        Stephen Boyd <sboyd@kernel.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 01/10] interconnect: qcom: icc-rpm: Add AB/IB
+ calculations coefficients
+Message-ID: <ZMjkPLqBiWW8CpAU@gerhold.net>
+References: <20230726-topic-icc_coeff-v2-0-8c91c6c76076@linaro.org>
+ <20230726-topic-icc_coeff-v2-1-8c91c6c76076@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230726-topic-icc_coeff-v2-1-8c91c6c76076@linaro.org>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The binding documentation for ti,am62-audio-refclk specifies that it has 0
-clock cells (and Device Trees using the binding as documented have already
-existed in vendor kernels for some time). Fix the driver to use
-of_clk_hw_simple_get() instead of of_clk_hw_onecell_get(), as attempting
-to reference the clock in the Device Tree will fail otherwise.
+On Mon, Jul 31, 2023 at 12:52:17PM +0200, Konrad Dybcio wrote:
+> Presumably due to the hardware being so complex, some nodes (or busses)
+> have different (usually higher) requirements for bandwidth than what
+> the usual calculations would suggest.
+> 
+> Looking at the available downstream files, it seems like AB values are
+> adjusted per-bus and IB values are adjusted per-node.
+> With that in mind, introduce percentage-based coefficient struct members
+> and use them in the calculations.
+> 
+> One thing to note is that the IB coefficient is inverse (100/ib_percent)
+> which feels a bit backwards, but it's necessary for precision..
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> ---
+>  drivers/interconnect/qcom/icc-rpm.c | 14 +++++++++++---
+>  drivers/interconnect/qcom/icc-rpm.h |  6 ++++++
+>  2 files changed, 17 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/interconnect/qcom/icc-rpm.c b/drivers/interconnect/qcom/icc-rpm.c
+> index 2c16917ba1fd..a837d20af79e 100644
+> --- a/drivers/interconnect/qcom/icc-rpm.c
+> +++ b/drivers/interconnect/qcom/icc-rpm.c
+> @@ -298,7 +298,8 @@ static int qcom_icc_bw_aggregate(struct icc_node *node, u32 tag, u32 avg_bw,
+>   */
+>  static void qcom_icc_bus_aggregate(struct icc_provider *provider, u64 *agg_clk_rate)
+>  {
+> -	u64 agg_avg_rate, agg_rate;
+> +	struct qcom_icc_provider *qp = to_qcom_provider(provider);
+> +	u64 agg_avg_rate, agg_peak_rate, agg_rate;
+>  	struct qcom_icc_node *qn;
+>  	struct icc_node *node;
+>  	int i;
+> @@ -315,8 +316,15 @@ static void qcom_icc_bus_aggregate(struct icc_provider *provider, u64 *agg_clk_r
+>  			else
+>  				agg_avg_rate = qn->sum_avg[i];
+>  
+> -			agg_rate = max_t(u64, agg_avg_rate, qn->max_peak[i]);
+> -			do_div(agg_rate, qn->buswidth);
+> +			if (qp->ab_coeff)
+> +				agg_avg_rate = mult_frac(qp->ab_coeff, agg_avg_rate, 100);
 
-Fixes: 6acab96ee337 ("clk: keystone: syscon-clk: Add support for audio refclk")
-Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
----
- drivers/clk/keystone/syscon-clk.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+agg_avg_rate * (qp->ab_coeff / 100) would feel more logical to me (even
+if it should be the same), i.e.
 
-diff --git a/drivers/clk/keystone/syscon-clk.c b/drivers/clk/keystone/syscon-clk.c
-index 9626a877e072..a539dbf2f48e 100644
---- a/drivers/clk/keystone/syscon-clk.c
-+++ b/drivers/clk/keystone/syscon-clk.c
-@@ -28,6 +28,7 @@ struct ti_syscon_gate_clk_data {
- 	const struct ti_syscon_gate_clk_entry *clks;
- 	size_t num_clks;
- 	bool needs_parent;
-+	bool simple; /* Use of_clk_hw_simple_get() rather than onecell */
- };
- 
- static struct
-@@ -129,6 +130,10 @@ static int ti_syscon_gate_clk_probe(struct platform_device *pdev)
- 		return dev_err_probe(dev, PTR_ERR(regmap),
- 				     "failed to get regmap\n");
- 
-+	if (data->simple && data->num_clks != 1)
-+		return dev_err_probe(dev, -EINVAL,
-+				     "simple clocks must have exactly 1 entry\n");
-+
- 	num_parents = of_clk_get_parent_count(dev->of_node);
- 	if (data->needs_parent && num_parents == 0)
- 		return dev_err_probe(dev, -EINVAL,
-@@ -151,8 +156,12 @@ static int ti_syscon_gate_clk_probe(struct platform_device *pdev)
- 				 data->clks[i].name);
- 	}
- 
--	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
--					   hw_data);
-+	if (data->simple)
-+		return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get,
-+						   hw_data->hws[0]);
-+	else
-+		return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-+						   hw_data);
- }
- 
- #define TI_SYSCON_CLK_GATE(_name, _offset, _bit_idx)	\
-@@ -208,6 +217,7 @@ static const struct ti_syscon_gate_clk_data am62_audio_clk_data = {
- 	.clks = am62_audio_clks,
- 	.num_clks = ARRAY_SIZE(am62_audio_clks),
- 	.needs_parent = true,
-+	.simple = true,
- };
- 
- static const struct of_device_id ti_syscon_gate_clk_ids[] = {
--- 
-TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht München, HRB 105018
-Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
-https://www.tq-group.com/
+	agg_avg_rate = mult_frac(agg_avg_rate, qp->ab_coeff, 100);
 
+Not sure why you swapped them.
+
+> +
+> +			if (qp->ib_coeff)
+> +				agg_peak_rate = mult_frac(100, qn->max_peak[i], qp->ib_coeff);
+
+	agg_peak_rate = mult_frac(qn->max_peak[i], 100, qp->ib_coeff);
+
+Anyway, looks like you need to avoid mult_frac anyway for ARM32 compat :/
+
+arm-none-eabi-ld: drivers/interconnect/qcom/icc-rpm.o: in function `qcom_icc_calc_rate':
+drivers/interconnect/qcom/icc-rpm.c:310: undefined reference to `__aeabi_uldivmod'
+arm-none-eabi-ld: drivers/interconnect/qcom/icc-rpm.c:312: undefined reference to `__aeabi_uldivmod'
+
+Thanks,
+Stephan
