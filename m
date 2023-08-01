@@ -2,72 +2,62 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59991C04A6A
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Aug 2023 19:45:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD694C0015E
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Aug 2023 20:36:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232144AbjHATpg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Aug 2023 15:45:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35720 "EHLO
+        id S231769AbjHAUg7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Aug 2023 16:36:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230212AbjHATpe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Aug 2023 15:45:34 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C8FA2115
-        for <linux-clk@vger.kernel.org>; Tue,  1 Aug 2023 12:45:29 -0700 (PDT)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1qQvIz-0000UE-5A; Tue, 01 Aug 2023 21:45:17 +0200
-Received: from mfe by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1qQvIy-0002VK-3Q; Tue, 01 Aug 2023 21:45:16 +0200
-Date:   Tue, 1 Aug 2023 21:45:16 +0200
-From:   Marco Felsch <m.felsch@pengutronix.de>
-To:     Ahmad Fatoum <a.fatoum@pengutronix.de>
-Cc:     Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: imx: composite-8m: avoid glitches when set_rate
- would be a no-op
-Message-ID: <20230801194516.h6gxj2lqmmmls62k@pengutronix.de>
-References: <20230801162731.3278396-1-a.fatoum@pengutronix.de>
+        with ESMTP id S229636AbjHAUg5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Aug 2023 16:36:57 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F23852101
+        for <linux-clk@vger.kernel.org>; Tue,  1 Aug 2023 13:36:56 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 80C2E616D4
+        for <linux-clk@vger.kernel.org>; Tue,  1 Aug 2023 20:36:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8AEDC433CA;
+        Tue,  1 Aug 2023 20:36:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1690922215;
+        bh=C3Q3fpNul09zgv9Lt6WpMg8m6tEKp9nwXBI/SgNW4ck=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=X+WmOvEgmUvBmnsWOGqaQHxod1LrsbDcWgVLYNdNj7AYGqDwTOGQKgKoYRU136Zsx
+         kLgzEsLhgp/usDhedMH82EVS9YYuIRUf0hV2ylrfWBYCjOuYi/PkMmBQQ5Ks1maXd2
+         lZlYt6JRW+SI4/0KNRR6Y7I93iGHv7+NGWQhH57WlYW7gSxpt7ct5gNSzB0QsuiOdL
+         Zol4BzN7gTWEeQAYZgxoxhytJxvNlg3l4XwG0WUCgf3mEMujUQfPiLfxbCc/2EEki7
+         ZRTHCD5IMf7qlV3H4y9OTPxZ2Vrh3rxBFefwiT3HyMVMT0LCuyeEnIyOGgcAyVBuAm
+         8aEeMsfLOCM1A==
+Message-ID: <8822a688a478a8b2812c52abeee7321b.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230801162731.3278396-1-a.fatoum@pengutronix.de>
-User-Agent: NeoMutt/20180716
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20230721071846.111663-1-u.kleine-koenig@pengutronix.de>
+References: <20230721071846.111663-1-u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH] clk: versaclock3: Switch to use i2c_driver's probe callback
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
+        kernel@pengutronix.de
+To:     Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Date:   Tue, 01 Aug 2023 13:36:53 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23-08-01, Ahmad Fatoum wrote:
-> Reconfiguring the clock divider to the exact same value is observed
-> on an i.MX8MN to often cause a short clock pause, probably because
-> the divider restarts counting from the time the register is written.
-> 
-> This issue doesn't show up normally, because the clock framework will
-> take care to not call set_rate when the clock rate is the same.
-> However, when we configure an upstream clock (e.g. an audio_pll), the
-> common code will call set_rate with the newly calculated rate on all
-> children. As the new rate is different, we enter set_rate and compute
-> the same divider values, write them back and cause the glitch (e.g.
-> on a SAI's MCLK).
-> 
-> To avoid the glitch, we skip writing the same value back again.
-> 
-> Fixes: d3ff9728134e ("clk: imx: Add imx composite clock")
-> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+Quoting Uwe Kleine-K=C3=B6nig (2023-07-21 00:18:46)
+> The previous mass switch of clk drivers done in commit 62279db5a323
+> ("clk: Switch i2c drivers back to use .probe()") was based on v6.4-rc1
+> Since then this driver was added which needs to be converted back in the
+> same way before eventually .probe_new() can be dropped from struct
+> i2c_driver.
+>=20
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+> ---
 
-Reviewed-by: Marco Felsch <m.felsch@pengutronix.de>
+Applied to clk-next
