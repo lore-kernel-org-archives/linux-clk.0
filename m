@@ -2,283 +2,135 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF474C00528
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Aug 2023 14:50:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25C8DC001DF
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Aug 2023 15:12:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231970AbjHAOux (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Aug 2023 10:50:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34742 "EHLO
+        id S231709AbjHAPMj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Aug 2023 11:12:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232271AbjHAOuw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Aug 2023 10:50:52 -0400
-Received: from mgamail.intel.com (unknown [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52171122;
-        Tue,  1 Aug 2023 07:50:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1690901451; x=1722437451;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=rWm4JCgihsFm4r3h7JFxMUVneJGmmNknhKKkj+dNq/g=;
-  b=gPNkEp+pAHq9lE40YvXw6zPsmVsC89U3tfEFkpwnN2bk1Ijksfn0Eb1T
-   /OoD9BbrlKCChqq2+EBsV97BMLSzep1pUmQLBG9wlKeqgT4nivBG1JTCg
-   EJnj84ufaB7BJ834ODTU5aubYa1BiuFMFM3XCc5kONsuml7b5YtI04Vf4
-   gg68ebJDnCdk29y0Gu3asl8TjSJ7AvUdHT8PrPg/dRiR9qZIIePsOizxh
-   qixQoW3jq1lk/WE7zbW+cTViSbDpqE4nyfXgPwj4mv+k8Qu1sXJhdIcTC
-   bGTNP1eZLx1yjRokhOEeX//wM7fG29cLKXBbm6nJy4L0M5iEgCRU8L8aS
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10789"; a="400265783"
-X-IronPort-AV: E=Sophos;i="6.01,247,1684825200"; 
-   d="scan'208";a="400265783"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2023 07:50:50 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10789"; a="678692455"
-X-IronPort-AV: E=Sophos;i="6.01,247,1684825200"; 
-   d="scan'208";a="678692455"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by orsmga003.jf.intel.com with ESMTP; 01 Aug 2023 07:50:50 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.27; Tue, 1 Aug 2023 07:50:49 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.27; Tue, 1 Aug 2023 07:50:49 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.27 via Frontend Transport; Tue, 1 Aug 2023 07:50:49 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.103)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.27; Tue, 1 Aug 2023 07:50:49 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IEew9/cQEuMxWoD3I4jMfdxnNqfcMORzyYI5Q3YuMwnDOSb7Yb9ad/X/zj/9beQWaSDvGyIAFsuU1Bd/MmOk+joqksghVYI86YxwfQ5qSREnRQ4/sAD+mQTh7Sk4H9XQbHyaiTlwELvpy4kT67wAyf4A+uUvoO1Mh88xE4DwOHOrYGoFTegN/gGLr2YSHdyiPDDo76yvDtwSX/X4s2h08CwivvLnMZHIhwpPiVWWPT+HxZsFeE4LMTwAKh1o9Rg8h/twC2Dbsiv+XF3y5gdFxCeYqyLA9tKNpzS0A/jmz7w3Tkqi8P1LJrZFRXzVFB1wyA5bDONOfqKOXfhLWFqw0w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3a+5jVGFgIqgx1+RiGGqZ9msUxrG8xL/hoov186ayI4=;
- b=Sv5bcVWNZ+QSDDyA/zND5GAreCz0zdNsenJIn/sq93ahePdZgSm6/gDo7v9DK6gmxhrvV/g/GNlv/96NIf9V7wNk/3bDJ+BbWxnLUtytbzhDMmyc/skgd65NzMYBjCkjHN3jookBJRHnXHpsFMmA13kNdGllesMJfyEy2v74veajUUzhJ4Y6zznmaeThqrkLBAMgjn44lfySTWkxDDfO+6RwmIEbspfYP3YTe5o7mi5NBnwo8K2ivl/zqqpmt4q8VioIqKunnUTKyfIGau+9EzCuI/rTgoJfb1mrh91ND+KigcZQ/BsOQDIUtcS1MeHVnxhK5QGAuc5it9lBFswMew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from DM6PR11MB4657.namprd11.prod.outlook.com (2603:10b6:5:2a6::7) by
- CH3PR11MB8658.namprd11.prod.outlook.com (2603:10b6:610:1c5::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6631.39; Tue, 1 Aug
- 2023 14:50:45 +0000
-Received: from DM6PR11MB4657.namprd11.prod.outlook.com
- ([fe80::c3cd:b8d0:5231:33a8]) by DM6PR11MB4657.namprd11.prod.outlook.com
- ([fe80::c3cd:b8d0:5231:33a8%5]) with mapi id 15.20.6631.043; Tue, 1 Aug 2023
- 14:50:45 +0000
-From:   "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-To:     Jiri Pirko <jiri@resnulli.us>
-CC:     Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "Olech, Milena" <milena.olech@intel.com>,
-        "Michalik, Michal" <michal.michalik@intel.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
-        mschmidt <mschmidt@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Bart Van Assche <bvanassche@acm.org>
-Subject: RE: [PATCH 09/11] ice: implement dpll interface to control cgu
-Thread-Topic: [PATCH 09/11] ice: implement dpll interface to control cgu
-Thread-Index: AQHZuut81WSQCKaWlUanjhbbmuUufa/EGiaAgAu/VDCABANBgIABtWkA
-Date:   Tue, 1 Aug 2023 14:50:44 +0000
-Message-ID: <DM6PR11MB4657C0DA91583D92697324BC9B0AA@DM6PR11MB4657.namprd11.prod.outlook.com>
-References: <20230720091903.297066-1-vadim.fedorenko@linux.dev>
- <20230720091903.297066-10-vadim.fedorenko@linux.dev>
- <ZLpuaxMJ+8rWAPwi@nanopsycho>
- <DM6PR11MB46571657F0DF87765DAB32FE9B06A@DM6PR11MB4657.namprd11.prod.outlook.com>
- <ZMem35OUQiQmB9Vd@nanopsycho>
-In-Reply-To: <ZMem35OUQiQmB9Vd@nanopsycho>
-Accept-Language: pl-PL, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM6PR11MB4657:EE_|CH3PR11MB8658:EE_
-x-ms-office365-filtering-correlation-id: 6528e0fc-bd1b-4f7d-ebcd-08db929eaf79
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: yPojwZFLDIYrFVkNY1uCsqUim1h82ZcmEv5aQYAmyRnrs5zYCTYkTpJnufTbkRiodltGOwbP/pQRk5h02+ELHVmEHx8A2iN7RFEP2IFeokADhzkrE4uj4WZ7Ld1I86+uNSlberGExzBTOX+hEuxC9rvRWAW0OLZT7PvAWTBZrh9qONuJghfgJ+vLmcG3kIotX0CkFm/myBqP/+ef8qRgopQjzrjvLY8m0WJvD6yG3zKELQt+LPdHlIq4Sn2xoSMlGbE8R1Z0TW+GevvGqaGR0jbSK0B6lHONENU1xZndN7FTppvEGqUAc3a/GevJBOyLTtF254juWSh9aaXxu9HzRLMiNEBrhRU68LHVuXjn2RRqrQx+F9rAW7K33a29k7G8eFZhT4JN0+jo9n6EwiF3Y/0twLRpdp6YMq/+2YLFkfl1dJqKbiHdaZLQiLUo834fOP04vJgatOxegv4vligJFUqQ8gbLHcp6OiuDTRuYEJs+cv+GmRT6AuHInYrhUdVovCbUEpjyw91K6iK+N1PHzT8dLb5gLabOFP6ppLgXRlHH2aEYfQsahHenqo4n7rrxYLiQpyEI7/lmywYgisSgjoYkChJpb9SvztdZWI7mZX4XHmDIs5r5IigRWm065DfJ
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR11MB4657.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(396003)(346002)(376002)(39860400002)(136003)(366004)(451199021)(38100700002)(66476007)(86362001)(8676002)(8936002)(316002)(64756008)(5660300002)(4326008)(66446008)(6916009)(54906003)(7416002)(122000001)(33656002)(52536014)(76116006)(66946007)(66556008)(82960400001)(41300700001)(38070700005)(478600001)(2906002)(71200400001)(9686003)(7696005)(6506007)(26005)(83380400001)(186003)(55016003);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?6oSVZ93JBVDSL2GZaDVHXv1LJ6TLtcgFxoOFk92X98z06nwto9JlfutDcRxc?=
- =?us-ascii?Q?E3OleFrKrCuVWRR1GC5qqIIqHQBytBqYJOLBUf7CiZadlGMkWjjelOJs4q4H?=
- =?us-ascii?Q?9hLFRQ9XOuF4kA2E7ehJo2OhJuMgyfxEGBk8t3UIoqUfsn1/KJssuJGYfnpp?=
- =?us-ascii?Q?25dULBPYzleONeD56YVrpcZ5UtGyBm3wGPHKNfxDuCBwWGujfptFWScIeYv7?=
- =?us-ascii?Q?6ktzgFF6IQJ8BioxXFBC4OHPmoy74UwIXLGwWNq2FRifQ7Q6+pHXqh4JOP8A?=
- =?us-ascii?Q?T80AmvMMpG5rGAoIPITpL84nB2WP9XdIy9iDDl1PoE1mfwKHgEkto/8CUnFE?=
- =?us-ascii?Q?yzzVP2u5a4QzjqXbpI9e0m79Ul3FvzOYi/kXNOzp9TOM6V4HS7ovb/uokHvh?=
- =?us-ascii?Q?gryb11dHO594aZbzFHge/7radq6xyCAuSUMF4O27kAqiHUGKA/A7NQV6D76Q?=
- =?us-ascii?Q?SHxyA0LL4kEmIn+primUVK7SS47HAYnW8bfB9GHNk2MZXLBzSvvKhP0vbNeU?=
- =?us-ascii?Q?HPLjU0wvT/kZ1KHUKmT3UiUv1CdzOkd5MF9Mi22powIojD7CsRxeDhueXmR1?=
- =?us-ascii?Q?OoMIG/WsRSbyQFUcxO2UssdQCC0M1Bz5cVsPp5U77PWsd0d/BdqMMbQt1Jv1?=
- =?us-ascii?Q?77xCoraLSLFEJ3pI2BXwb7XBbLEAuDGTBYDc0sAzeEMeQwLWG7VzUEDCZ/BC?=
- =?us-ascii?Q?6lm8Ja33hNTd/T1gmtLwV8DfRDHEsWIVbEcXMDN3rUNNMqkyvGLHEF2q2EWT?=
- =?us-ascii?Q?ImrnkbKGrfIEtUicvbG2/v19jb5O8yMlNWbyQXMnFfxlZVp/PT1WuTfS1UVu?=
- =?us-ascii?Q?1pEh9GOZfaBtCHolaNIGhwAxjcsUgArL8MSkjkCShIdMcOkqwqgWuW7x2KIA?=
- =?us-ascii?Q?tQNU2GAm5OixlpjRxVwzwAE86gxeS9HOZVWoVMNzWC9pLd7HQ5exvweMiw4v?=
- =?us-ascii?Q?fye3eJbyoTmKoIjZHD1dvdFdZ6wgrHX6rpQsMRZko24FmHbBIrX6mriRtTao?=
- =?us-ascii?Q?P/jeyRlOFAwC0DgG13mhRjeClcZK36qgn8ya3ud6Wg1gEoLyHbjsMTUaRo2r?=
- =?us-ascii?Q?7liP1c+mfBQbUNh5wj8fsDWQUgiELd7SzgbM4/C+bYJJ8KEQIyrbFHT0K6F7?=
- =?us-ascii?Q?2eL70b+Gsre8EFyYZpGYmPiDs2eQRpR4qzwOnwrZMyTpnI1789RzOVj1usiR?=
- =?us-ascii?Q?HTO6EZAWJJeEAitqMKPUHhm7N5u4sNcW5jJT5bSyq3hf9b4GOX3MI22QtasX?=
- =?us-ascii?Q?r68QBthi0y30yn0gCUcSLg54JxeKZOQAY/61Bkb94mbKABQzDDuPkd7vtcun?=
- =?us-ascii?Q?JfBxAC9+UJDg+pyBNmH1EoIA26s7/IJdCw64567SKshL2/rRnlkKu8O8PtqX?=
- =?us-ascii?Q?1nzalZGBmZZT4+T25geyJ1oQDVYDZqpnTdKnU0uoYVIadj9zasKciMK2/pWe?=
- =?us-ascii?Q?pVZKSaeT5b0D2wdMeXhmg53rckp46A4B2NgIXBo/bhOWoIPSgEvIDAA1yAEx?=
- =?us-ascii?Q?1IgVdHwmEcZiBk4hpNstGVIrNPVfnUdeTMrhc9NbOwMwzcOY5z5R5ofzZDm4?=
- =?us-ascii?Q?9YXqzVmc9Z+B1MBOAdKmzUF/jmqHbTt4o18EvyJPuUxXJYu7+WmgIsvY0DsM?=
- =?us-ascii?Q?YA=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        with ESMTP id S231416AbjHAPMi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Aug 2023 11:12:38 -0400
+Received: from out-110.mta1.migadu.com (out-110.mta1.migadu.com [IPv6:2001:41d0:203:375::6e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55F8E10FE
+        for <linux-clk@vger.kernel.org>; Tue,  1 Aug 2023 08:12:37 -0700 (PDT)
+Message-ID: <092b8bd3-e24d-4be2-0a7d-22b845ba069a@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1690902753;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=FN9V8XQ7ny8iOhMwulo6jvLHZzXxY6GfaAvXHYKvoZs=;
+        b=Up6YV6vXulLtFQflo/SJ44XC+vBzvR3hbWWVaqRdN4mVbN0QSC61YLYuYoJgkqtLNAqWcG
+        1CTOjmlCkGYQfveAupmZEuP3TveUMk/fBzxm8lUuRnC6zbCt3eEbNz98mExwsVpxYcne4T
+        uB5+E+C1mbde1Te843Z6MzzAUuHvduk=
+Date:   Tue, 1 Aug 2023 16:12:27 +0100
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR11MB4657.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6528e0fc-bd1b-4f7d-ebcd-08db929eaf79
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Aug 2023 14:50:44.9418
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Ze52gx0UKV62KOmLJMZj19e2sLvTCe76IfxhPdtlYEZb0HxxE54kBsnyuTlLxBiqUVvL8+GFTkgNuMGcvhT/QEpFWAiEvQH2sOxu8TGwPDg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB8658
-X-OriginatorOrg: intel.com
+Subject: Re: [PATCH net-next 07/11] netdev: expose DPLL pin handle for
+ netdevice
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Vadim Fedorenko <vadim.fedorenko@linux.dev>
+To:     Jiri Pirko <jiri@resnulli.us>, Jiri Pirko <jiri@nvidia.com>
+Cc:     Milena Olech <milena.olech@intel.com>,
+        Michal Michalik <michal.michalik@intel.com>,
+        linux-arm-kernel@lists.infradead.org, poros@redhat.com,
+        mschmidt@redhat.com, netdev@vger.kernel.org,
+        linux-clk@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>
+References: <20230720091903.297066-1-vadim.fedorenko@linux.dev>
+ <20230720091903.297066-8-vadim.fedorenko@linux.dev>
+ <4f2e91c7-e2e8-6b3a-fc14-8f44503fb6be@linux.dev>
+In-Reply-To: <4f2e91c7-e2e8-6b3a-fc14-8f44503fb6be@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
->From: Jiri Pirko <jiri@resnulli.us>
->Sent: Monday, July 31, 2023 2:20 PM
->
->Sat, Jul 29, 2023 at 01:03:59AM CEST, arkadiusz.kubalewski@intel.com wrote=
-:
->>>From: Jiri Pirko <jiri@resnulli.us>
->>>Sent: Friday, July 21, 2023 1:39 PM
->>>
->>>Thu, Jul 20, 2023 at 11:19:01AM CEST, vadim.fedorenko@linux.dev wrote:
->>>>From: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+On 01/08/2023 14:23, Vadim Fedorenko wrote:
+> On 20/07/2023 10:18, Vadim Fedorenko wrote:
+>> From: Jiri Pirko <jiri@nvidia.com>
 >>
->
->[...]
->
->
->>>>+static int ice_dpll_cb_lock(struct ice_pf *pf, struct netlink_ext_ack
->>>>*extack)
->>>>+{
->>>>+	int i;
->>>>+
->>>>+	for (i =3D 0; i < ICE_DPLL_LOCK_TRIES; i++) {
->>>>+		if (!test_bit(ICE_FLAG_DPLL, pf->flags)) {
->>>
->>>And again, as I already told you, this flag checking is totally
->>>pointless. See below my comment to ice_dpll_init()/ice_dpll_deinit().
->>>
+>> In case netdevice represents a SyncE port, the user needs to understand
+>> the connection between netdevice and associated DPLL pin. There might me
+>> multiple netdevices pointing to the same pin, in case of VF/SF
+>> implementation.
 >>
->>This is not pointless, will explain below.
+>> Add a IFLA Netlink attribute to nest the DPLL pin handle, similar to
+>> how it is implemented for devlink port. Add a struct dpll_pin pointer
+>> to netdev and protect access to it by RTNL. Expose netdev_dpll_pin_set()
+>> and netdev_dpll_pin_clear() helpers to the drivers so they can set/clear
+>> the DPLL pin relationship to netdev.
 >>
->>>
->>>
+>> Note that during the lifetime of struct dpll_pin the pin handle does not
+>> change. Therefore it is save to access it lockless. It is drivers
+>> responsibility to call netdev_dpll_pin_clear() before dpll_pin_put().
 >>
->>[...]
+>> Signed-off-by: Jiri Pirko <jiri@nvidia.com>
+>> Signed-off-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+>> Signed-off-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+>> ---
+>> RFC v9->v0:
+>> - rearrange function definition according to usage
+>> v8->v9:
+>> - net_device->dpll_pin is only valid if IS_ENABLED(CONFIG_DPLL) fix the
+>>    code in net/core/rtnetlink.c to respect that.
+>> - move dpll_msg_add_pin_handle to "dpll: netlink" patch + export the
+>>    function with this patch
 >>
->
->[...]
->
->
->>>>+void ice_dpll_deinit(struct ice_pf *pf)
->>>>+{
->>>>+	bool cgu =3D ice_is_feature_supported(pf, ICE_F_CGU);
->>>>+
->>>>+	if (!test_bit(ICE_FLAG_DPLL, pf->flags))
->>>>+		return;
->>>>+	clear_bit(ICE_FLAG_DPLL, pf->flags);
->>>>+
->>>>+	ice_dpll_deinit_pins(pf, cgu);
->>>>+	ice_dpll_deinit_dpll(pf, &pf->dplls.pps, cgu);
->>>>+	ice_dpll_deinit_dpll(pf, &pf->dplls.eec, cgu);
->>>>+	ice_dpll_deinit_info(pf);
->>>>+	if (cgu)
->>>>+		ice_dpll_deinit_worker(pf);
->>>
->>>Could you please order the ice_dpll_deinit() to be symmetrical to
->>>ice_dpll_init()? Then, you can drop ICE_FLAG_DPLL flag entirely, as the
->>>ice_dpll_periodic_work() function is the only reason why you need it
->>>currently.
->>>
+>>   drivers/dpll/dpll_netlink.c  | 19 ++++++++++++++++---
+>>   include/linux/dpll.h         | 20 ++++++++++++++++++++
+>>   include/linux/netdevice.h    | 20 ++++++++++++++++++++
+>>   include/uapi/linux/if_link.h |  2 ++
+>>   net/core/dev.c               | 22 ++++++++++++++++++++++
+>>   net/core/rtnetlink.c         | 35 +++++++++++++++++++++++++++++++++++
+>>   6 files changed, 115 insertions(+), 3 deletions(-)
 >>
->>Not true.
->>The feature flag is common approach in ice. If the feature was successful=
-ly
->
->The fact that something is common does not necessarily mean it is
->correct. 0 value argument.
->
+>> diff --git a/drivers/dpll/dpll_netlink.c b/drivers/dpll/dpll_netlink.c
+>> index c44dda78737d..e4a9bd767b92 100644
+>> --- a/drivers/dpll/dpll_netlink.c
+>> +++ b/drivers/dpll/dpll_netlink.c
+>> @@ -37,6 +37,18 @@ dpll_msg_add_dev_handle(struct sk_buff *msg, struct 
+>> dpll_device *dpll)
+>>       return 0;
+>>   }
+>> +/**
+>> + * dpll_msg_pin_handle_size - get size of pin handle attribute for 
+>> given pin
+>> + * @pin: pin pointer
+>> + *
+>> + * Return: byte size of pin handle attribute for given pin.
+>> + */
+>> +size_t dpll_msg_pin_handle_size(struct dpll_pin *pin)
+>> +{
+>> +    return pin ? nla_total_size(4) : 0; /* DPLL_A_PIN_ID */
+>> +}
+>> +EXPORT_SYMBOL_GPL(dpll_msg_pin_handle_size);
+>> +
+>>   /**
+>>    * dpll_msg_add_pin_handle - attach pin handle attribute to a given 
+>> message
+>>    * @msg: pointer to sk_buff message to attach a pin handle
+>> @@ -54,6 +66,7 @@ int dpll_msg_add_pin_handle(struct sk_buff *msg, 
+>> struct dpll_pin *pin)
+>>           return -EMSGSIZE;
+>>       return 0;
+>>   }
+>> +EXPORT_SYMBOL_GPL(dpll_msg_add_pin_handle);
+> 
+> Jiri, could you please remind me what is the reason to export this 
+> function? Because I cannot
+> any usage of this function in drivers.
+> 
 
-Like using functions that unwrap netlink attributes as unsigned when
-they are in fact enums with possibility of being signed?
+Ah, found it, sorry for the noise.
 
-This is about consistent approach in ice driver.
+> 
+> [....]
 
->
->>initialized the flag is set. It allows to determine if deinit of the feat=
-ure
->>is required on driver unload.
->>
->>Right now the check for the flag is not only in kworker but also in each
->>callback, if the flag were cleared the data shall be not accessed by
->>callbacks.
->
->Could you please draw me a scenario when this could actually happen?
->It is just a matter of ordering. Unregister dpll device/pins before you
->cleanup the related resources and you don't need this ridiculous flag.
->
-
-Flag allows to determine if dpll was successfully initialized and do proper
-deinit on rmmod only if it was initialized. That's all.
-
->
->>I know this is not required, but it helps on loading and unloading the
->>driver,
->>thanks to that, spam of pin-get dump is not slowing the driver
->>load/unload.
->
->? Could you plese draw me a scenario how such thing may actually happen?
-
-First of all I said it is not required.
-
-I already draw you this with above sentence.
-You need spam pin-get asynchronously and unload driver, what is not clear?
-Basically mutex in dpll is a bottleneck, with multiple requests waiting for
-mutex there is low change of driver getting mutex when doing unregisters.
-
-We actually need to redesign the mutex in dpll core/netlink, but I guess af=
-ter
-initial submission.
-
-Thank you!
-Arkadiusz
-
->
->Thanks!
->
->
->>
->>>
->>>>+	mutex_destroy(&pf->dplls.lock);
->>>>+}
->
->
->[...]
