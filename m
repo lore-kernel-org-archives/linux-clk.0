@@ -2,154 +2,231 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 347ACC00528
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Aug 2023 20:58:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99A95C04A6A
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Aug 2023 21:03:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232606AbjHAU6D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Aug 2023 16:58:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35316 "EHLO
+        id S229974AbjHAVDf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Aug 2023 17:03:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229694AbjHAU5y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Aug 2023 16:57:54 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C4B0B4;
-        Tue,  1 Aug 2023 13:57:53 -0700 (PDT)
+        with ESMTP id S229738AbjHAVDe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Aug 2023 17:03:34 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFCE7129;
+        Tue,  1 Aug 2023 14:03:32 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C713D61704;
-        Tue,  1 Aug 2023 20:57:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E32C1C433C7;
-        Tue,  1 Aug 2023 20:57:46 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8380E61703;
+        Tue,  1 Aug 2023 21:03:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAA65C433C7;
+        Tue,  1 Aug 2023 21:03:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690923472;
-        bh=MZpsgZkrTs9N2DXeSvVULBbBTbC/2zrygwHEmp8YujM=;
+        s=k20201202; t=1690923811;
+        bh=bRaGNrdA6mbdebRWZ2SiPpqLmfPgqs4lfhQeF0BLc0U=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=k5zvTHcaV4FqvE9jjvKUtp/xndGtvumroKOColDoaHHgiuq4X1+XKbmp++w7LWLQ8
-         cVR2WGZ3SHE7NWqWskw88lRJ8hO3IK6X4//+uqggtlZpbIgWBfl3cY43X4Lzee8cgm
-         pEGPmTmWwovy18PICv9IEzeR9ywuTsxY5zOfhwg9R8UlHzgxExjVhO463h3Gdn+NMD
-         nF+lycPEvbrtmpei2B3YOb06JSwAU7VwCx/lG6DIoFk70sACLCJtS0YwJ+ndkcd21x
-         2p3JctnekTWlWkhLSYWsnmXkgc9sWJtmAfXpKjj2rbk9ikS37d0tdq8WmxayEsNAkc
-         doM2vHgGHLIrQ==
-Date:   Tue, 1 Aug 2023 21:57:43 +0100
+        b=imAVNwWen4mh/Ge3YFUWnaKno6Mcx5CIXBKgLyHteuv1ghPJU6NbOqmn6H4BD85aM
+         twdhdhlWvE2ZYvLnRd2kaYVKewzwlC6XLohkYndvG5DPep3h8JNSHhwk5pWL2tZ8FC
+         7uO97ngHFzlW3mNpYtaynGUwAF5DOZ6LGIZf3SPaDAtx91ZUQ4HQo4QDcv9z+qmfB9
+         8EdYr7TRSZckoXMJtOm8NRpmt2Qs6G0euV5THS5KM0MKlUSTl6E/VuzJg+3/xQDU8q
+         P6jEB9Amn5jmVuZHjV8DRrD0dcz8wzvEl88S3RxJH//AOLKBMCZhazNHMU54jptEtC
+         /Y7LpXGTwtGtA==
+Date:   Tue, 1 Aug 2023 22:03:27 +0100
 From:   Conor Dooley <conor@kernel.org>
-To:     niravkumar.l.rabara@intel.com
-Cc:     adrian.ho.yin.ng@intel.com, andrew@lunn.ch, conor+dt@kernel.org,
-        devicetree@vger.kernel.org, dinguyen@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        netdev@vger.kernel.org, p.zabel@pengutronix.de,
-        richardcochran@gmail.com, robh+dt@kernel.org, sboyd@kernel.org,
-        wen.ping.teh@intel.com
-Subject: Re: [PATCH v2 3/5] dt-bindings: clock: add Intel Agilex5 clock
- manager
-Message-ID: <20230801-handball-glorifier-e55d44a2b638@spud>
-References: <20230618132235.728641-1-niravkumar.l.rabara@intel.com>
- <20230801010234.792557-1-niravkumar.l.rabara@intel.com>
- <20230801010234.792557-4-niravkumar.l.rabara@intel.com>
+To:     =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Lee Jones <lee@kernel.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
+Subject: Re: [PATCH] dt-bindings: mfd/clock: YAML for Broadcom PMU with ILP
+ clock
+Message-ID: <20230801-jinx-uncheck-b51220682e75@spud>
+References: <20230731203309.30278-1-zajec5@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="UYgz3o3mOFvMlDjf"
+        protocol="application/pgp-signature"; boundary="srXFNgO/DHLJcu1C"
 Content-Disposition: inline
-In-Reply-To: <20230801010234.792557-4-niravkumar.l.rabara@intel.com>
+In-Reply-To: <20230731203309.30278-1-zajec5@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---UYgz3o3mOFvMlDjf
-Content-Type: text/plain; charset=us-ascii
+--srXFNgO/DHLJcu1C
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 01, 2023 at 09:02:32AM +0800, niravkumar.l.rabara@intel.com wro=
-te:
-> From: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
+On Mon, Jul 31, 2023 at 10:33:09PM +0200, Rafa=C5=82 Mi=C5=82ecki wrote:
+> From: Rafa=C5=82 Mi=C5=82ecki <rafal@milecki.pl>
 >=20
-> Add clock ID definitions for Intel Agilex5 SoCFPGA.
-> The registers in Agilex5 handling the clock is named as clock manager.
+> BCM53573 SoC has ILP clock that is part of the PMU block. So far PMU
+> itself didn't have a proper binding and ILP wasn't converted to
+> json-schema. Fix it up.
 >=20
-> Signed-off-by: Teh Wen Ping <wen.ping.teh@intel.com>
-> Reviewed-by: Dinh Nguyen <dinguyen@kernel.org>
-> Signed-off-by: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
+> Add custom binding for Broadcom's BCM53573 PMU and include ILP's
+> properties there (it's trivial and non-reusable binding).
+>=20
+> Signed-off-by: Rafa=C5=82 Mi=C5=82ecki <rafal@milecki.pl>
 > ---
->  .../bindings/clock/intel,agilex5-clkmgr.yaml  |  41 +++++++
->  .../dt-bindings/clock/intel,agilex5-clkmgr.h  | 100 ++++++++++++++++++
->  2 files changed, 141 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/intel,agilex5=
--clkmgr.yaml
->  create mode 100644 include/dt-bindings/clock/intel,agilex5-clkmgr.h
+>  .../bindings/clock/brcm,bcm53573-ilp.txt      | 36 ----------
+>  .../bindings/mfd/brcm,bcm53573-pmu.yaml       | 67 +++++++++++++++++++
+>  2 files changed, 67 insertions(+), 36 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/brcm,bcm53573=
+-ilp.txt
+>  create mode 100644 Documentation/devicetree/bindings/mfd/brcm,bcm53573-p=
+mu.yaml
 >=20
-> diff --git a/Documentation/devicetree/bindings/clock/intel,agilex5-clkmgr=
-=2Eyaml b/Documentation/devicetree/bindings/clock/intel,agilex5-clkmgr.yaml
+> diff --git a/Documentation/devicetree/bindings/clock/brcm,bcm53573-ilp.tx=
+t b/Documentation/devicetree/bindings/clock/brcm,bcm53573-ilp.txt
+> deleted file mode 100644
+> index 2ebb107331dd..000000000000
+> --- a/Documentation/devicetree/bindings/clock/brcm,bcm53573-ilp.txt
+> +++ /dev/null
+> @@ -1,36 +0,0 @@
+> -Broadcom BCM53573 ILP clock
+> -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
+> -
+> -This binding uses the common clock binding:
+> -    Documentation/devicetree/bindings/clock/clock-bindings.txt
+> -
+> -This binding is used for ILP clock (sometimes referred as "slow clock")
+> -on Broadcom BCM53573 devices using Cortex-A7 CPU.
+> -
+> -ILP's rate has to be calculated on runtime and it depends on ALP clock
+> -which has to be referenced.
+> -
+> -This clock is part of PMU (Power Management Unit), a Broadcom's device
+> -handing power-related aspects. Its node must be sub-node of the PMU
+> -device.
+> -
+> -Required properties:
+> -- compatible: "brcm,bcm53573-ilp"
+> -- clocks: has to reference an ALP clock
+> -- #clock-cells: should be <0>
+> -- clock-output-names: from common clock bindings, should contain clock
+> -		      name
+> -
+> -Example:
+> -
+> -pmu@18012000 {
+> -	compatible =3D "simple-mfd", "syscon";
+> -	reg =3D <0x18012000 0x00001000>;
+> -
+> -	ilp {
+> -		compatible =3D "brcm,bcm53573-ilp";
+> -		clocks =3D <&alp>;
+> -		#clock-cells =3D <0>;
+> -		clock-output-names =3D "ilp";
+> -	};
+> -};
+> diff --git a/Documentation/devicetree/bindings/mfd/brcm,bcm53573-pmu.yaml=
+ b/Documentation/devicetree/bindings/mfd/brcm,bcm53573-pmu.yaml
 > new file mode 100644
-> index 000000000000..60e57a9fb939
+> index 000000000000..5b0a12bf4fe4
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/intel,agilex5-clkmgr.yaml
-> @@ -0,0 +1,41 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +++ b/Documentation/devicetree/bindings/mfd/brcm,bcm53573-pmu.yaml
+> @@ -0,0 +1,67 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
 > +%YAML 1.2
 > +---
-> +$id: http://devicetree.org/schemas/clock/intel,agilex5-clkmgr.yaml#
+> +$id: http://devicetree.org/schemas/mfd/brcm,bcm53573-pmu.yaml#
 > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +title: Intel SoCFPGA Agilex5 clock manager
+> +title: Broadcom PMU
 > +
 > +maintainers:
-> +  - Dinh Nguyen <dinguyen@kernel.org>
+> +  - Rafa=C5=82 Mi=C5=82ecki <rafal@milecki.pl>
 > +
-> +description:
-> +  The Intel Agilex5 Clock Manager is an integrated clock controller, whi=
-ch
-> +  generates and supplies clock to all the modules.
+> +description: |
+> +  Broadcom PMU ("Power Management Unit"?) is a hardware block grouping s=
+maller
+
+Why the ? ? The text binding doesn't have one.
+
+> +  blocks. It contains few clocks and some shared registers (used to power
+> +  control more than 1 block).
 > +
 > +properties:
 > +  compatible:
-> +    const: intel,agilex5-clkmgr
+> +    items:
+> +      - const: brcm,bcm53573-pmu
+> +      - const: simple-mfd
+> +      - const: syscon
 > +
 > +  reg:
 > +    maxItems: 1
 > +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - '#clock-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
+> +  clock-controller-ilp:
 
-> +  # Clock controller node:
+The old text binding didn't have this "-ilp". Why not name the node in a
+standard manner & use "clock-controller" alone?
 
-This comment seems utterly pointless.
-Otherwise this looks okay to me.
+> +    description: ILP clock (sometimes referred as "slow clock")
+> +    type: object
+> +    allOf:
+> +      - $ref: /schemas/clock/clock.yaml
+> +      - properties:
+> +          compatible:
+> +            const: brcm,bcm53573-ilp
+> +          clocks:
+> +            description: ALP clock
+> +            maxItems: 1
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Is this description actually helpful, if it only has one clock?
 
 Thanks,
 Conor.
 
+> +          clock-output-names:
+> +            const: ilp
+> +          "#clock-cells":
+> +            const: 0
+> +        required:
+> +          - compatible
+> +          - clocks
+> +          - clock-output-names
+> +          - "#clock-cells"
+> +    unevaluatedProperties: false
+> +
+> +additionalProperties: false
+> +
+> +required:
+> +  - reg
+> +  - clock-controller-ilp
+> +
+> +examples:
 > +  - |
-> +    clkmgr: clock-controller@10d10000 {
-> +      compatible =3D "intel,agilex5-clkmgr";
-> +      reg =3D <0x10d10000 0x1000>;
-> +      #clock-cells =3D <1>;
+> +    pmu@18012000 {
+> +        compatible =3D "brcm,bcm53573-pmu", "simple-mfd", "syscon";
+> +        reg =3D <0x18012000 0x00001000>;
+> +
+> +        clock-controller-ilp {
+> +            compatible =3D "brcm,bcm53573-ilp";
+> +            clocks =3D <&alp>;
+> +            clock-output-names =3D "ilp";
+> +            #clock-cells =3D <0>;
+> +        };
 > +    };
-> +...
+> --=20
+> 2.35.3
+>=20
 
---UYgz3o3mOFvMlDjf
+--srXFNgO/DHLJcu1C
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZMlxxwAKCRB4tDGHoIJi
-0po0AQDZnIwfegUcCT3iU12bMW+7Rzx574ajligwACkn70tY7QD7BqfnIx/HSMTi
-r+m16KOx6UHod5DfGI/YVENWzFoUfwo=
-=GoDZ
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZMlzHwAKCRB4tDGHoIJi
+0joRAP4ur2Th01jv0W4HdWxgSoQD2yRF068Ch/1N/rMsrMZ4XgD/ezvzy0ukquz+
+6wI5D2o+BbR0neFQOuxqBKhTHXHxPQA=
+=li1M
 -----END PGP SIGNATURE-----
 
---UYgz3o3mOFvMlDjf--
+--srXFNgO/DHLJcu1C--
