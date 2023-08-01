@@ -2,123 +2,64 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3786EB64DD
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Aug 2023 08:09:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF894EB64DD
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Aug 2023 08:15:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229902AbjHAIJ6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Aug 2023 04:09:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60902 "EHLO
+        id S231156AbjHAIPW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Aug 2023 04:15:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229885AbjHAIJ5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Aug 2023 04:09:57 -0400
-Received: from mxout70.expurgate.net (mxout70.expurgate.net [194.37.255.70])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 069DB1AC;
-        Tue,  1 Aug 2023 01:09:53 -0700 (PDT)
-Received: from [127.0.0.1] (helo=localhost)
-        by relay.expurgate.net with smtp (Exim 4.92)
-        (envelope-from <prvs=6591581bf9=fe@dev.tdt.de>)
-        id 1qQkS0-00B9XJ-2b; Tue, 01 Aug 2023 10:09:52 +0200
-Received: from [195.243.126.94] (helo=securemail.tdt.de)
-        by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <fe@dev.tdt.de>)
-        id 1qQkRz-009Bil-Ku; Tue, 01 Aug 2023 10:09:51 +0200
-Received: from securemail.tdt.de (localhost [127.0.0.1])
-        by securemail.tdt.de (Postfix) with ESMTP id 36FF4240049;
-        Tue,  1 Aug 2023 10:09:51 +0200 (CEST)
-Received: from mail.dev.tdt.de (unknown [10.2.4.42])
-        by securemail.tdt.de (Postfix) with ESMTP id DD65A240040;
-        Tue,  1 Aug 2023 10:09:50 +0200 (CEST)
-Received: from mail.dev.tdt.de (localhost [IPv6:::1])
-        by mail.dev.tdt.de (Postfix) with ESMTP id 7358431526;
-        Tue,  1 Aug 2023 10:09:50 +0200 (CEST)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 01 Aug 2023 10:09:50 +0200
-From:   Florian Eckert <fe@dev.tdt.de>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, yzhu@maxlinear.com,
-        rtanwar@maxlinear.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Eckert.Florian@googlemail.com
-Subject: Re: [PATCH 2/2] dt-bindings: clock: intel,cgu-lgm: add
- mxl,control-gate option
-In-Reply-To: <75cbeeed-84c9-7637-b2a7-b37d87f5872e@linaro.org>
-References: <20230731100349.184553-1-fe@dev.tdt.de>
- <20230731100349.184553-3-fe@dev.tdt.de>
- <780aa090-3a97-abab-271f-59790df29cc4@linaro.org>
- <11386dd27487075a9a0b1a2aa7794951@dev.tdt.de>
- <75cbeeed-84c9-7637-b2a7-b37d87f5872e@linaro.org>
-Message-ID: <2053f32f262911061e3e56540e4b51d4@dev.tdt.de>
-X-Sender: fe@dev.tdt.de
-User-Agent: Roundcube Webmail/1.3.17
-X-purgate-ID: 151534::1690877392-E1EB7653-5A2FF43C/0/0
-X-purgate-type: clean
-X-purgate: clean
+        with ESMTP id S231590AbjHAIPV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Aug 2023 04:15:21 -0400
+Received: from mail-m12739.qiye.163.com (mail-m12739.qiye.163.com [115.236.127.39])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35E5E1FE5;
+        Tue,  1 Aug 2023 01:15:09 -0700 (PDT)
+Received: from localhost.localdomain (unknown [58.22.7.114])
+        by mail-m12739.qiye.163.com (Hmail) with ESMTPA id 56FD64A01C2;
+        Tue,  1 Aug 2023 16:15:04 +0800 (CST)
+From:   Elaine Zhang <zhangqing@rock-chips.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org,
+        kever.yang@rock-chips.com, zhangqing@rock-chips.com,
+        heiko@sntech.de
+Cc:     linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        linux-kernel@vger.kernel.org, huangtao@rock-chips.com
+Subject: [RESEND PATCH v1] clk: clk-fractional-divider: Export clk_fractional_divider_general_approximation API
+Date:   Tue,  1 Aug 2023 16:14:56 +0800
+Message-Id: <20230801081456.2551-1-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 2.17.1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+        tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGk0eSVZKHRpNHh5LTktNS0pVEwETFh
+        oSFyQUDg9ZV1kYEgtZQVlOQ1VJSVVMVUpKT1lXWRYaDxIVHRRZQVlPS0hVSk5MSUpJVUpLS1VKQl
+        kG
+X-HM-Tid: 0a89b02a3956b212kuuu56fd64a01c2
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PCI6HBw5LT0BKDZJPU40E05I
+        PSlPFBJVSlVKTUJLQ0xMTEtOSUpNVTMWGhIXVQETGhUcChIVHDsJFBgQVhgTEgsIVRgUFkVZV1kS
+        C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUpDT0g3Bg++
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Krzysztof,
+This is used by the Rockchip clk driver, export it to allow that
+driver to be compiled as a module.
 
->>> You described the desired Linux feature or behavior, not the actual
->>> hardware. The bindings are about the latter, so instead you need to
->>> rephrase the property and its description to match actual hardware
->>> capabilities/features/configuration etc.
->> 
->> You have correctly identified that this is not a hardware 
->> configuration,
->> but a driver configuration. Currently, the driver is configured so 
->> that
->> the gates cannot be switched via the clk subsystem callbacks. When
->> registering the data structures from the driver, I have to pass a flag
->> GATE_CLK_HW so that the gate is managed by the driver.
->> 
->> I didn't want to always change the source of the driver when it has to
->> take
->> care of the GATE, so I wanted to map this via the dts.
->> 
->> I have a board support package from Maxlinear for the Lightning 
->> Mountain
->> Soc
->> with other drivers that are not upstream now. Some of them use the
->> clock framework some of them does not.
->> 
->> Due to missing documents it is not possible to send these drivers
->> upstream.
-> 
-> So when you upstream them, the binding becomes wrong or not needed?
-> Sorry, bindings are entirely independent of OS, so using this as an
-> argument is clear no-go.
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+---
+ drivers/clk/clk-fractional-divider.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Yes, that would probably be the case, as the maxlinear drivers are at
-an early stage and are not yet upstreamable in my opinion. If I had the
-documents, I would take a closer look. But they are developing behind
-closed doors. Nothing can be contributed. Not until the drivers are
-hopefully upstream at some point as the cgu-lgm.
+diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
+index 479297763e70..44bf21c97034 100644
+--- a/drivers/clk/clk-fractional-divider.c
++++ b/drivers/clk/clk-fractional-divider.c
+@@ -142,6 +142,7 @@ void clk_fractional_divider_general_approximation(struct clk_hw *hw,
+ 			GENMASK(fd->mwidth - 1, 0), GENMASK(fd->nwidth - 1, 0),
+ 			m, n);
+ }
++EXPORT_SYMBOL_GPL(clk_fractional_divider_general_approximation);
+ 
+ static long clk_fd_round_rate(struct clk_hw *hw, unsigned long rate,
+ 			      unsigned long *parent_rate)
+-- 
+2.17.1
 
->> Strictly speaking, this is about the gptc and the watchdog.
->> 
->> Since it is a buildin_platform driver, it can also not work via
->> module parameters.
-> 
-> None of this explains any hardware related part of this binding. You
-> created now policy for one specific OS. Devicetree, which is OS
-> independent, is not for such purposes.
-
-Yes this would be the case. Maybe I need to patch the cgu-lgm.c [1]
-and send it upstream to restore the old behavior.
-Because the following commit has changed the behaviour [2].
-Unfortunately, it is also included in 5.15 stable branch.
-Which in my opinion should not have happened!
-
-Best regards,
-Florian
-
-[1] 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/x86/clk-lgm.c?h=v6.5-rc4
-[2] 
-https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/drivers/clk/x86/clk-cgu.c?h=v5.15.123&id=a0583edea4fdb7b5b87a077263dddab476e9f138
