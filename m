@@ -2,98 +2,83 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8C3FC00528
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Aug 2023 19:14:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF2FAC04A6A
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Aug 2023 19:16:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232282AbjHATOx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Aug 2023 15:14:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48060 "EHLO
+        id S230058AbjHATQr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Aug 2023 15:16:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231143AbjHATOw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Aug 2023 15:14:52 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9191F1BF0;
-        Tue,  1 Aug 2023 12:14:51 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2F965616A7;
-        Tue,  1 Aug 2023 19:14:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 824A8C433C7;
-        Tue,  1 Aug 2023 19:14:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690917290;
-        bh=RricL0NBD2SlXPu5D6K3MkV2NfI2Fl9g7qhLIB9lKzs=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ZmhBbI6q1rH8SwBWw7Bxp58j12JA0u4tagm4I1spQ4hymiK8n+VSfZn4bnDxGQ5eZ
-         zRTn75Ez47dqoWaZAC/USrqMPfbutYJpA39CcU3FzTLBDCEPbHVCDfqNZ5fHPNyVxi
-         F8p1YiI9Q3oxsyXvYMH07aFZjDm0ZBXeOqRDiHtNkE4yBNMT12zQQypoQw/I2MS8CT
-         9iVPIC5awUS2tzXak5s1SBNF9fSL0887T4zOFPmsLfd7I13Vvi5Ya20JsFXa6JB2fj
-         XC6b1TtXp+N/aGb6yueKNPuXaAKetcrrl1D/WntkFG00YSO5xydBVrzQ6jyiDJaa1k
-         EpxBXA8mJ1DRg==
-Message-ID: <54b4d761e5b16ffb798a89c1cea99714.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S229650AbjHATQq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Aug 2023 15:16:46 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99EAA1BF0;
+        Tue,  1 Aug 2023 12:16:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+        Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+        bh=/uG5YuIody+hzN8XW34EjJfYB8YBu85awJMxvbTsR0U=; b=nZb3jdNV9pDRrob/YUA4R2AdxT
+        d4OGUQW4mPOpYYhOlP6RZo5aMckUC+eMj/Osevp3aMAix17jcr2Cycvp9Vws7XQsaeWhGIRtZLccP
+        gjDnlTAhh6XRdRQ1aY18sZu/dLXlOgb5E/eaSIvPO5eamrxQ2VUUDzQUVOEEjXNOXPAkmfrQd4zRu
+        0amfY19Yu+U3xVl5jP960puoEx4uXkQWLIr7j7yGgWWKV1P8j6S4aJje2UQAzw+IykwFsmKkH6sVK
+        sGsCqVTuu4SRN+2EeJrqOGkPx9Es21MyLltzX3DHBOEjNu58FnemFiRD2esFkxrtWRn/G4sv2NE+e
+        /hhxWVZw==;
+Received: from [2601:1c2:980:9ec0::2764]
+        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1qQurK-0037O0-1t;
+        Tue, 01 Aug 2023 19:16:42 +0000
+Message-ID: <188bcc4c-7388-ca39-5c3c-629edd78cc9f@infradead.org>
+Date:   Tue, 1 Aug 2023 12:16:41 -0700
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <ZLvyn0xq3Msk+lxF@probook>
-References: <20230428190226.1304326-1-j.neuschaefer@gmx.net> <20230428190226.1304326-3-j.neuschaefer@gmx.net> <4e0a5db18ed7d37038e67be0f1ddcb08.sboyd@kernel.org> <ZLvyn0xq3Msk+lxF@probook>
-Subject: Re: [PATCH v8 2/2] clk: wpcm450: Add Nuvoton WPCM450 clock/reset controller driver
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Jonathan =?utf-8?q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        linux-clk@vger.kernel.org, openbmc@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Joel Stanley <joel@jms.id.au>
-To:     Jonathan =?utf-8?q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Date:   Tue, 01 Aug 2023 12:14:48 -0700
-User-Agent: alot/0.10
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH 3/3] clk: qcom: add clock controller driver for
+ qca8386/qca8084
+Content-Language: en-US
+To:     Luo Jie <quic_luoj@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, konrad.dybcio@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        p.zabel@pengutronix.de
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        quic_srichara@quicinc.com
+References: <20230801085352.22873-1-quic_luoj@quicinc.com>
+ <20230801085352.22873-4-quic_luoj@quicinc.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20230801085352.22873-4-quic_luoj@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jonathan Neusch=C3=A4fer (2023-07-22 08:15:43)
-> On Thu, Jul 20, 2023 at 05:02:15PM -0700, Stephen Boyd wrote:
-> > Quoting Jonathan Neusch=C3=A4fer (2023-04-28 12:02:26)
-> > > diff --git a/drivers/clk/clk-wpcm450.c b/drivers/clk/clk-wpcm450.c
-> [...]
-> > > +static unsigned long wpcm450_clk_pll_recalc_rate(struct clk_hw *hw,
-> > > +                                                unsigned long parent=
-_rate)
-> > > +{
-> > > +       struct wpcm450_clk_pll *pll =3D to_wpcm450_clk_pll(hw);
-[...]
->=20
-> > > +static const struct wpcm450_pll_data pll_data[] =3D {
-> > > +       { "pll0", { .name =3D "ref" }, REG_PLLCON0, 0 },
-> >=20
-> > This is new code, please don't use .name. Instead use .fw_name or .inde=
-x with preference to
-> > .index first and .hw if the pointer is available in this driver.
->=20
-> As far as I can see, .fw_name and .index depend on a struct device*
-> being passed to clk_hw_register, which won't be available unless I
-> actually convert the driver to a platform driver.
 
-You can call of_clk_hw_register(), but a conversion to a platform driver
-is preferred.
 
->=20
-> Not relying on .name would indeed be nice.
+On 8/1/23 01:53, Luo Jie wrote:
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index 263e55d75e3f..a17e8fa5a7e1 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -195,6 +195,14 @@ config IPQ_GCC_9574
+>  	  i2c, USB, SD/eMMC, etc. Select this for the root clock
+>  	  of ipq9574.
+>  
+> +config IPQ_NSSCC_QCA8K
+> +        tristate "QCA8K(QCA8386 or QCA8084) NSS Clock Controller"
+> +        help
 
-Cool.
+The 2 lines above should be indented with one tab (only; no spaces).
+
+> +          Support for NSS(Network SubSystem) clock controller on
+
+The line above should be indented with one tab + 2 spaces (like the following
+3 lines).
+
+> +	  qca8386/qca8084 chip.
+> +	  Say Y if you want to use network function of switch or PHY
+> +	  function. Select this for the root clock of qca8xxx.
+
+-- 
+~Randy
