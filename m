@@ -2,109 +2,118 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A16CFC00528
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Aug 2023 16:28:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80C8EC00528
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Aug 2023 17:19:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229495AbjHAQ2H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Aug 2023 12:28:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54296 "EHLO
+        id S231742AbjHARTK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Aug 2023 13:19:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229457AbjHAQ2G (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Aug 2023 12:28:06 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E40B1133
-        for <linux-clk@vger.kernel.org>; Tue,  1 Aug 2023 09:28:04 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <afa@pengutronix.de>)
-        id 1qQsDv-00018q-Q3; Tue, 01 Aug 2023 18:27:51 +0200
-Received: from [2a0a:edc0:0:1101:1d::54] (helo=dude05.red.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <afa@pengutronix.de>)
-        id 1qQsDu-000QYa-SP; Tue, 01 Aug 2023 18:27:50 +0200
-Received: from afa by dude05.red.stw.pengutronix.de with local (Exim 4.96)
-        (envelope-from <afa@pengutronix.de>)
-        id 1qQsDt-00Dkrt-2z;
-        Tue, 01 Aug 2023 18:27:49 +0200
-From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
-To:     Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>
-Cc:     Ahmad Fatoum <a.fatoum@pengutronix.de>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: imx: composite-8m: avoid glitches when set_rate would be a no-op
-Date:   Tue,  1 Aug 2023 18:27:31 +0200
-Message-Id: <20230801162731.3278396-1-a.fatoum@pengutronix.de>
-X-Mailer: git-send-email 2.39.2
+        with ESMTP id S232246AbjHARTJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Aug 2023 13:19:09 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1D3E2136;
+        Tue,  1 Aug 2023 10:19:06 -0700 (PDT)
+Received: from mercury (dyndsl-091-248-215-079.ewe-ip-backbone.de [91.248.215.79])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: sre)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id D2CB96606F8A;
+        Tue,  1 Aug 2023 18:19:04 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1690910344;
+        bh=JmWNk3Diy87M33B8/qg48ijXK4ta3WZHyEplai7DYaI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bhbFZ5yL8U86M4NFvrGhbmG/G7SLYNMhhWqB+buyo+Z7H6/TtpCd5vtaL5JzrFKAd
+         Qa+vvP02GpJvICl9MWH6Q8FdEh9ZKgSNedTMYjYHmawl2ieWVxpayPmsSugU0/HZn0
+         fVH9GQVjBo0Yoyn0ENC03i9gNxL7E+zsrClKQb6VuAZM7AoRB5qb8REq+Eysd+EoRk
+         QDGZ6X00+h008iHhILOw4tLyK3kFPpXaLlEdBa7RDMVwfq5OxJBcwiO7KjAvL+GDzm
+         jA3Z6FmPl0WtDKCIwaS3wVFOXFzYImZZBfsNx5hjoIHKIXckiN8bjSTq8oWrnHnhHx
+         7AcGesXTi/0PA==
+Received: by mercury (Postfix, from userid 1000)
+        id BB3891062B88; Tue,  1 Aug 2023 19:19:02 +0200 (CEST)
+Date:   Tue, 1 Aug 2023 19:19:02 +0200
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Elaine Zhang <zhangqing@rock-chips.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        kever.yang@rock-chips.com, heiko@sntech.de,
+        linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        linux-kernel@vger.kernel.org, huangtao@rock-chips.com
+Subject: Re: [PATCH v2 2/3] dt-bindings: clock: rk3588: export PCLK_VO1GRF
+ clk id
+Message-ID: <20230801171902.42zjwdarh7jma5pl@mercury.elektranox.org>
+References: <20230801074357.10770-1-zhangqing@rock-chips.com>
+ <20230801074357.10770-3-zhangqing@rock-chips.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: afa@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="lgnnwlnqehn6d4lc"
+Content-Disposition: inline
+In-Reply-To: <20230801074357.10770-3-zhangqing@rock-chips.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Reconfiguring the clock divider to the exact same value is observed
-on an i.MX8MN to often cause a short clock pause, probably because
-the divider restarts counting from the time the register is written.
 
-This issue doesn't show up normally, because the clock framework will
-take care to not call set_rate when the clock rate is the same.
-However, when we configure an upstream clock (e.g. an audio_pll), the
-common code will call set_rate with the newly calculated rate on all
-children. As the new rate is different, we enter set_rate and compute
-the same divider values, write them back and cause the glitch (e.g.
-on a SAI's MCLK).
+--lgnnwlnqehn6d4lc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-To avoid the glitch, we skip writing the same value back again.
+Hi,
 
-Fixes: d3ff9728134e ("clk: imx: Add imx composite clock")
-Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
----
- drivers/clk/imx/clk-composite-8m.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+On Tue, Aug 01, 2023 at 03:43:56PM +0800, Elaine Zhang wrote:
+> add PCLK_VO1GRF clk id.
+>=20
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> ---
 
-diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-composite-8m.c
-index cbf0d7955a00..3e9a092e136c 100644
---- a/drivers/clk/imx/clk-composite-8m.c
-+++ b/drivers/clk/imx/clk-composite-8m.c
-@@ -97,7 +97,7 @@ static int imx8m_clk_composite_divider_set_rate(struct clk_hw *hw,
- 	int prediv_value;
- 	int div_value;
- 	int ret;
--	u32 val;
-+	u32 orig, val;
- 
- 	ret = imx8m_clk_composite_compute_dividers(rate, parent_rate,
- 						&prediv_value, &div_value);
-@@ -106,13 +106,15 @@ static int imx8m_clk_composite_divider_set_rate(struct clk_hw *hw,
- 
- 	spin_lock_irqsave(divider->lock, flags);
- 
--	val = readl(divider->reg);
--	val &= ~((clk_div_mask(divider->width) << divider->shift) |
--			(clk_div_mask(PCG_DIV_WIDTH) << PCG_DIV_SHIFT));
-+	orig = readl(divider->reg);
-+	val = orig & ~((clk_div_mask(divider->width) << divider->shift) |
-+		       (clk_div_mask(PCG_DIV_WIDTH) << PCG_DIV_SHIFT));
- 
- 	val |= (u32)(prediv_value  - 1) << divider->shift;
- 	val |= (u32)(div_value - 1) << PCG_DIV_SHIFT;
--	writel(val, divider->reg);
-+
-+	if (val != orig)
-+		writel(val, divider->reg);
- 
- 	spin_unlock_irqrestore(divider->lock, flags);
- 
--- 
-2.39.2
+Fixes: f204a60e545c ("dt-bindings: clock: add rk3588 clock definitions")
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 
+-- Sebastian
+
+>  include/dt-bindings/clock/rockchip,rk3588-cru.h | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/include/dt-bindings/clock/rockchip,rk3588-cru.h b/include/dt=
+-bindings/clock/rockchip,rk3588-cru.h
+> index b5616bca7b44..864a321ab362 100644
+> --- a/include/dt-bindings/clock/rockchip,rk3588-cru.h
+> +++ b/include/dt-bindings/clock/rockchip,rk3588-cru.h
+> @@ -733,8 +733,9 @@
+>  #define ACLK_AV1_PRE			718
+>  #define PCLK_AV1_PRE			719
+>  #define HCLK_SDIO_PRE			720
+> +#define PCLK_VO1GRF			721
+> =20
+> -#define CLK_NR_CLKS			(HCLK_SDIO_PRE + 1)
+> +#define CLK_NR_CLKS			(PCLK_VO1GRF + 1)
+> =20
+>  /* scmi-clocks indices */
+> =20
+> --=20
+> 2.17.1
+>=20
+
+--lgnnwlnqehn6d4lc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmTJPnkACgkQ2O7X88g7
++pq0SA/8D5BwNKYQ1zyMBMxEg78h9su6o0/i2eyr05sjGRQh+BcFOkA3fdpIZshu
+q0o/RL5ygIOOHbh7sq7dZ9Gcfm+YOgb1jWFLti+XLRILBrmZaNNtKQhCI/rbe2Tx
+88oFQInz6mg7Qfu+Ge11kk0xorFFmPHRiGwyN6c+c7R2bzV3SCGS0qCpwUI5KLdl
+vOPySBx5Z/+tObdF2fQmro4XtLGDDrihN4No+NXVIFje5qOfs8JUk0uoEXJsC19N
+IQeatwjy1Z2EY6ezi6h/iK4HFl23kdqgW+nIthlyDq6TXLblaTMOR5+jI7hnINV3
+BSFNJWldBSp/V7p7PDnhfU8vluJEHRTlrKoVp47bK3NL3eq/fKh7Uf6Fs4BCgNzJ
+S8zd5rL/oDGBOqESlTBOCh3jYOXDNsaNjfolw3nWEbSvZixBhxtMciAotOoxUQc0
+5lmwYb8jtzI63HWpC0+jGmyp9TocGKXE9hRCofJgJzMGQfeX9edQyd1JyEK5jRIY
+sfvRLXF0e+cKduBn36G91I0VPrBE4CEzCWq5aA9hyQICJQ/RuV4iKOHMQsr6s1A8
+EliSWQNbmfeXzy4gDfrCjeZ1oLKRlOQL2qSW5uUQmCtDX9pzwmjoNt/AXL+jH05n
+viXHqSX9mYtyh3h9Z5JwpbWyio0lQ0h8xKZFxtfNeSe5zthgHjk=
+=nkHN
+-----END PGP SIGNATURE-----
+
+--lgnnwlnqehn6d4lc--
