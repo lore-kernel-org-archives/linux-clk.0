@@ -2,118 +2,432 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80C8EC00528
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Aug 2023 17:19:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 868B5C001DF
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Aug 2023 17:43:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231742AbjHARTK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Aug 2023 13:19:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58896 "EHLO
+        id S229519AbjHARnz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Aug 2023 13:43:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232246AbjHARTJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Aug 2023 13:19:09 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1D3E2136;
-        Tue,  1 Aug 2023 10:19:06 -0700 (PDT)
+        with ESMTP id S229452AbjHARnw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Aug 2023 13:43:52 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45BEE10C1;
+        Tue,  1 Aug 2023 10:43:51 -0700 (PDT)
 Received: from mercury (dyndsl-091-248-215-079.ewe-ip-backbone.de [91.248.215.79])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
         (Authenticated sender: sre)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id D2CB96606F8A;
-        Tue,  1 Aug 2023 18:19:04 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id B97486606EEE;
+        Tue,  1 Aug 2023 18:43:49 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1690910344;
-        bh=JmWNk3Diy87M33B8/qg48ijXK4ta3WZHyEplai7DYaI=;
+        s=mail; t=1690911829;
+        bh=zQkjvls0eCWFEOaz7N2t8qQp4hxcRcsCmrhhYhJkbrA=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bhbFZ5yL8U86M4NFvrGhbmG/G7SLYNMhhWqB+buyo+Z7H6/TtpCd5vtaL5JzrFKAd
-         Qa+vvP02GpJvICl9MWH6Q8FdEh9ZKgSNedTMYjYHmawl2ieWVxpayPmsSugU0/HZn0
-         fVH9GQVjBo0Yoyn0ENC03i9gNxL7E+zsrClKQb6VuAZM7AoRB5qb8REq+Eysd+EoRk
-         QDGZ6X00+h008iHhILOw4tLyK3kFPpXaLlEdBa7RDMVwfq5OxJBcwiO7KjAvL+GDzm
-         jA3Z6FmPl0WtDKCIwaS3wVFOXFzYImZZBfsNx5hjoIHKIXckiN8bjSTq8oWrnHnhHx
-         7AcGesXTi/0PA==
+        b=H+UPqpQKatxRJtS5p2Xm6IQcaz0PQGHFwpUkmzvBqiu0KiohYJVbH2ODd62EG2aVv
+         x5OGBED6RglxAjCVfgmrjmyt7gK6kvuGTzlj/AyoAX2sEPkxbd0+FWESmXkfIfg0ET
+         iivA9qI1kmpsV2QukFN6BTxpXybVlFmLmQPTevUrjpjyc2NNQfWpFZHKW76y9njFkF
+         WDPABort4GPa675SAInEl2WVwT3k7mcuipds2uVjmu4eITQIH1t9l/YI8mqoUzWvHU
+         NDWUSEgrv639mNGloX1van5l29O+ZBszsXYx+Z46MsxOSa2LgIaGLkkmbPpbjGU9NN
+         u/YuXxoYkJkmg==
 Received: by mercury (Postfix, from userid 1000)
-        id BB3891062B88; Tue,  1 Aug 2023 19:19:02 +0200 (CEST)
-Date:   Tue, 1 Aug 2023 19:19:02 +0200
+        id 4FBE31062BC5; Tue,  1 Aug 2023 19:43:47 +0200 (CEST)
+Date:   Tue, 1 Aug 2023 19:43:47 +0200
 From:   Sebastian Reichel <sebastian.reichel@collabora.com>
 To:     Elaine Zhang <zhangqing@rock-chips.com>
 Cc:     mturquette@baylibre.com, sboyd@kernel.org,
         kever.yang@rock-chips.com, heiko@sntech.de,
         linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
         linux-kernel@vger.kernel.org, huangtao@rock-chips.com
-Subject: Re: [PATCH v2 2/3] dt-bindings: clock: rk3588: export PCLK_VO1GRF
- clk id
-Message-ID: <20230801171902.42zjwdarh7jma5pl@mercury.elektranox.org>
+Subject: Re: [PATCH v2 1/3] clk: rockchip: add support for gate link
+Message-ID: <20230801174347.whzhqwzh7vdjqeap@mercury.elektranox.org>
 References: <20230801074357.10770-1-zhangqing@rock-chips.com>
- <20230801074357.10770-3-zhangqing@rock-chips.com>
+ <20230801074357.10770-2-zhangqing@rock-chips.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="lgnnwlnqehn6d4lc"
+        protocol="application/pgp-signature"; boundary="zhivbfvldrdlg66n"
 Content-Disposition: inline
-In-Reply-To: <20230801074357.10770-3-zhangqing@rock-chips.com>
+In-Reply-To: <20230801074357.10770-2-zhangqing@rock-chips.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---lgnnwlnqehn6d4lc
+--zhivbfvldrdlg66n
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-On Tue, Aug 01, 2023 at 03:43:56PM +0800, Elaine Zhang wrote:
-> add PCLK_VO1GRF clk id.
+On Tue, Aug 01, 2023 at 03:43:55PM +0800, Elaine Zhang wrote:
+> Recent Rockchip SoCs have a new hardware block called Native Interface
+> Unit (NIU), which gates clocks to devices behind them. These effectively
+> need two parent clocks.
+> Use GATE_LINK to handle this.
 >=20
 > Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 > ---
 
-Fixes: f204a60e545c ("dt-bindings: clock: add rk3588 clock definitions")
-Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+This looks better than the current upstream solution of just
+marking all linked clocks as criticial. I do have a few comments,
+though.
+
+>  drivers/clk/rockchip/Makefile        |   1 +
+>  drivers/clk/rockchip/clk-gate-link.c | 189 +++++++++++++++++++++++++++
+>  drivers/clk/rockchip/clk.c           |   7 +
+>  drivers/clk/rockchip/clk.h           |  22 ++++
+>  4 files changed, 219 insertions(+)
+>  create mode 100644 drivers/clk/rockchip/clk-gate-link.c
+>=20
+> diff --git a/drivers/clk/rockchip/Makefile b/drivers/clk/rockchip/Makefile
+> index 36894f6a7022..87cc39d54f72 100644
+> --- a/drivers/clk/rockchip/Makefile
+> +++ b/drivers/clk/rockchip/Makefile
+> @@ -13,6 +13,7 @@ clk-rockchip-y +=3D clk-inverter.o
+>  clk-rockchip-y +=3D clk-mmc-phase.o
+>  clk-rockchip-y +=3D clk-muxgrf.o
+>  clk-rockchip-y +=3D clk-ddr.o
+> +clk-rockchip-y +=3D clk-gate-link.o
+>  clk-rockchip-$(CONFIG_RESET_CONTROLLER) +=3D softrst.o
+> =20
+>  obj-$(CONFIG_CLK_PX30)          +=3D clk-px30.o
+> diff --git a/drivers/clk/rockchip/clk-gate-link.c b/drivers/clk/rockchip/=
+clk-gate-link.c
+> new file mode 100644
+> index 000000000000..06d25f00ec0c
+> --- /dev/null
+> +++ b/drivers/clk/rockchip/clk-gate-link.c
+> @@ -0,0 +1,189 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2023 Fuzhou Rockchip Electronics Co., Ltd
+> + */
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/module.h>
+> +#include <linux/slab.h>
+> +#include <linux/io.h>
+> +#include <linux/err.h>
+> +#include <linux/string.h>
+> +#include "clk.h"
+> +
+> +/**
+> + * struct clk_gate_link - gating link clock
+> + *
+> + * @hw:		handle between common and hardware-specific interfaces
+> + * @reg:	register controlling gate
+> + * @bit_idx:	single bit controlling gate
+> + * @flags:	hardware-specific flags
+> + * @lock:	register lock
+> + * @link:	links clk
+> + */
+> +struct clk_gate_link {
+> +	struct clk_hw hw;
+> +	void __iomem	*reg;
+> +	u8		bit_idx;
+> +	u8		flags;
+> +	spinlock_t	*lock;
+> +	struct clk	*link;
+> +};
+> +
+> +#define to_clk_gate_link(_hw) container_of(_hw, struct clk_gate_link, hw)
+> +
+> +static inline u32 clk_gate_readl(struct clk_gate_link *gate)
+> +{
+> +	if (gate->flags & CLK_GATE_BIG_ENDIAN)
+> +		return ioread32be(gate->reg);
+> +
+> +	return readl(gate->reg);
+> +}
+> +
+> +static inline void clk_gate_writel(struct clk_gate_link *gate, u32 val)
+> +{
+> +	if (gate->flags & CLK_GATE_BIG_ENDIAN)
+> +		iowrite32be(val, gate->reg);
+> +	else
+> +		writel(val, gate->reg);
+> +}
+
+Rockchip platform has no clocks using CLK_GATE_BIG_ENDIAN flag, so
+you can just use readl/writel. But by reusing clk-gate's function
+(see next comment) you don't need to directly read/write registers
+anyways.
+
+> +
+> +/*
+> + * It works on following logic:
+> + *
+> + * For enabling clock, enable =3D 1
+> + *	set2dis =3D 1	-> clear bit	-> set =3D 0
+> + *	set2dis =3D 0	-> set bit	-> set =3D 1
+> + *
+> + * For disabling clock, enable =3D 0
+> + *	set2dis =3D 1	-> set bit	-> set =3D 1
+> + *	set2dis =3D 0	-> clear bit	-> set =3D 0
+> + *
+> + * So, result is always: enable xor set2dis.
+> + */
+> +static void clk_gate_endisable(struct clk_hw *hw, int enable)
+> +{
+> +	struct clk_gate_link *gate =3D to_clk_gate_link(hw);
+> +	int set =3D gate->flags & CLK_GATE_SET_TO_DISABLE ? 1 : 0;
+> +	unsigned long flags;
+> +	u32 reg;
+> +
+> +	set ^=3D enable;
+> +
+> +	if (gate->lock)
+> +		spin_lock_irqsave(gate->lock, flags);
+> +	else
+> +		__acquire(gate->lock);
+> +
+> +	if (gate->flags & CLK_GATE_HIWORD_MASK) {
+> +		reg =3D BIT(gate->bit_idx + 16);
+> +		if (set)
+> +			reg |=3D BIT(gate->bit_idx);
+> +	} else {
+> +		reg =3D clk_gate_readl(gate);
+> +
+> +		if (set)
+> +			reg |=3D BIT(gate->bit_idx);
+> +		else
+> +			reg &=3D ~BIT(gate->bit_idx);
+> +	}
+> +
+> +	clk_gate_writel(gate, reg);
+> +
+> +	if (gate->lock)
+> +		spin_unlock_irqrestore(gate->lock, flags);
+> +	else
+> +		__release(gate->lock);
+> +}
+
+By changing "struct clk_gate_link" to look like this:
+
+struct clk_gate_link {
+    struct clk_gate gate;
+    struct clk	*link;
+}
+
+It can be casted to be a normal struct clk_gate, which
+means you can reuse clk_gate_endisable() (needs to be
+exported) and clk_gate_is_enabled().
+
+> +static int clk_gate_link_enable(struct clk_hw *hw)
+> +{
+> +	struct clk_gate_link *gate =3D to_clk_gate_link(hw);
+> +
+> +	clk_gate_endisable(hw, 1);
+> +	clk_enable(gate->link);
+> +
+> +	return 0;
+> +}
+> +
+> +static void clk_gate_link_disable(struct clk_hw *hw)
+> +{
+> +	struct clk_gate_link *gate =3D to_clk_gate_link(hw);
+> +
+> +	clk_gate_endisable(hw, 0);
+> +	clk_disable(gate->link);
+> +}
+> +
+> +static int clk_gate_link_is_enabled(struct clk_hw *hw)
+> +{
+> +	u32 reg;
+> +	struct clk_gate_link *gate =3D to_clk_gate_link(hw);
+> +
+> +	reg =3D clk_gate_readl(gate);
+> +
+> +	/* if a set bit disables this clk, flip it before masking */
+> +	if (gate->flags & CLK_GATE_SET_TO_DISABLE)
+> +		reg ^=3D BIT(gate->bit_idx);
+> +
+> +	reg &=3D BIT(gate->bit_idx);
+> +
+> +	return reg ? 1 : 0;
+> +}
+> +
+> +const struct clk_ops clk_gate_link_ops =3D {
+> +	.enable =3D clk_gate_link_enable,
+> +	.disable =3D clk_gate_link_disable,
+> +	.is_enabled =3D clk_gate_link_is_enabled,
+> +};
+> +EXPORT_SYMBOL_GPL(clk_gate_link_ops);
+
+I don't think they need to be exported?
+
+> +
+> +struct clk *rockchip_clk_register_gate_link(struct rockchip_clk_provider=
+ *ctx,
+> +					    const char *name, const char *parent_name,
+> +					    unsigned int link_id, u8 flags,
+> +					    void __iomem *gate_offset, u8 gate_shift,
+> +					    u8 gate_flags, spinlock_t *lock)
+> +{
+> +	struct clk_gate_link *gate;
+> +	struct clk_init_data init =3D {};
+> +	struct clk **clks;
+> +	struct clk *clk_link;
+> +
+> +	if (gate_flags & CLK_GATE_HIWORD_MASK) {
+> +		if (gate_shift > 15) {
+> +			pr_err("gate bit exceeds LOWORD field\n");
+> +			return ERR_PTR(-ENOMEM);
+> +		}
+> +	}
+> +
+> +	/* allocate the gate */
+> +	gate =3D kzalloc(sizeof(*gate), GFP_KERNEL);
+> +	if (!gate)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	clks =3D ctx->clk_data.clks;
+> +	gate->link =3D clks[link_id];
+> +
+> +	init.name =3D name;
+> +	init.ops =3D &clk_gate_link_ops;
+> +	init.flags =3D flags;
+> +	init.parent_names =3D parent_name ? &parent_name : NULL;
+> +	init.num_parents =3D 1;
+> +
+> +	/* struct clk_gate assignments */
+> +	gate->reg =3D gate_offset;
+> +	gate->bit_idx =3D gate_shift;
+> +	gate->flags =3D gate_flags;
+> +	gate->lock =3D lock;
+> +	gate->hw.init =3D &init;
+> +
+> +	clk_link =3D clk_register(NULL, &gate->hw);
+> +	if (IS_ERR(clk_link)) {
+> +		kfree(gate);
+> +		pr_err("%s clk_register field\n", name);
+> +		return ERR_CAST(clk_link);
+> +	}
+> +	clk_prepare(gate->link);
+
+So the linked clock will always be prepared? Can't we just extend clk_gate_=
+link_ops with
+
+=2Eprepare =3D clk_gate_link_prepare,
+=2Eunprepare =3D clk_gate_link_unprepare,
+
+int clk_gate_link_prepare(clk_gate_link_prepare) {
+    struct clk_gate_link *gate =3D to_clk_gate_link(hw);
+    return clk_prepare(gate->link);
+}
+
+void clk_gate_link_unprepare(clk_gate_link_prepare) {
+    struct clk_gate_link *gate =3D to_clk_gate_link(hw);
+    clk_unprepare(gate->link);
+}
+
+Greetings,
 
 -- Sebastian
 
->  include/dt-bindings/clock/rockchip,rk3588-cru.h | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->=20
-> diff --git a/include/dt-bindings/clock/rockchip,rk3588-cru.h b/include/dt=
--bindings/clock/rockchip,rk3588-cru.h
-> index b5616bca7b44..864a321ab362 100644
-> --- a/include/dt-bindings/clock/rockchip,rk3588-cru.h
-> +++ b/include/dt-bindings/clock/rockchip,rk3588-cru.h
-> @@ -733,8 +733,9 @@
->  #define ACLK_AV1_PRE			718
->  #define PCLK_AV1_PRE			719
->  #define HCLK_SDIO_PRE			720
-> +#define PCLK_VO1GRF			721
+> +
+> +	return clk_link;
+> +}
+> +EXPORT_SYMBOL_GPL(rockchip_clk_register_gate_link);
+> diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+> index 4059d9365ae6..d981ef6c5487 100644
+> --- a/drivers/clk/rockchip/clk.c
+> +++ b/drivers/clk/rockchip/clk.c
+> @@ -509,6 +509,13 @@ void rockchip_clk_register_branches(struct rockchip_=
+clk_provider *ctx,
+>  				ctx->reg_base + list->gate_offset,
+>  				list->gate_shift, list->gate_flags, &ctx->lock);
+>  			break;
+> +
+> +		case branch_gate_link:
+> +			clk =3D rockchip_clk_register_gate_link(ctx, list->name,
+> +				list->parent_names[0], list->link_id, flags,
+> +				ctx->reg_base + list->gate_offset,
+> +				list->gate_shift, list->gate_flags, &ctx->lock);
+> +			break;
+>  		case branch_composite:
+>  			clk =3D rockchip_clk_register_branch(list->name,
+>  				list->parent_names, list->num_parents,
+> diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+> index 758ebaf2236b..b49e3cede33a 100644
+> --- a/drivers/clk/rockchip/clk.h
+> +++ b/drivers/clk/rockchip/clk.h
+> @@ -517,6 +517,7 @@ enum rockchip_clk_branch_type {
+>  	branch_divider,
+>  	branch_fraction_divider,
+>  	branch_gate,
+> +	branch_gate_link,
+>  	branch_mmc,
+>  	branch_inverter,
+>  	branch_factor,
+> @@ -529,6 +530,7 @@ struct rockchip_clk_branch {
+>  	enum rockchip_clk_branch_type	branch_type;
+>  	const char			*name;
+>  	const char			*const *parent_names;
+> +	unsigned int			link_id;
+>  	u8				num_parents;
+>  	unsigned long			flags;
+>  	int				muxdiv_offset;
+> @@ -842,6 +844,20 @@ struct rockchip_clk_branch {
+>  		.gate_flags	=3D gf,				\
+>  	}
 > =20
-> -#define CLK_NR_CLKS			(HCLK_SDIO_PRE + 1)
-> +#define CLK_NR_CLKS			(PCLK_VO1GRF + 1)
+> +#define GATE_LINK(_id, cname, pname, _linkid, f, o, b, gf) \
+> +	{							\
+> +		.id		=3D _id,				\
+> +		.branch_type	=3D branch_gate_link,		\
+> +		.name		=3D cname,			\
+> +		.parent_names	=3D (const char *[]){ pname },	\
+> +		.num_parents	=3D 1,				\
+> +		.link_id	=3D _linkid,			\
+> +		.flags		=3D f,				\
+> +		.gate_offset	=3D o,				\
+> +		.gate_shift	=3D b,				\
+> +		.gate_flags	=3D gf,				\
+> +	}
+> +
+>  #define MMC(_id, cname, pname, offset, shift)			\
+>  	{							\
+>  		.id		=3D _id,				\
+> @@ -1002,6 +1018,12 @@ struct clk *rockchip_clk_register_halfdiv(const ch=
+ar *name,
+>  					  unsigned long flags,
+>  					  spinlock_t *lock);
 > =20
->  /* scmi-clocks indices */
-> =20
+> +struct clk *rockchip_clk_register_gate_link(struct rockchip_clk_provider=
+ *ctx,
+> +					    const char *name, const char *parent_name,
+> +					    unsigned int link_id, u8 flags,
+> +					    void __iomem *gate_offset, u8 gate_shift,
+> +					    u8 gate_flags, spinlock_t *lock);
+> +
+>  #ifdef CONFIG_RESET_CONTROLLER
+>  void rockchip_register_softrst_lut(struct device_node *np,
+>  				   const int *lookup_table,
 > --=20
 > 2.17.1
 >=20
 
---lgnnwlnqehn6d4lc
+--zhivbfvldrdlg66n
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmTJPnkACgkQ2O7X88g7
-+pq0SA/8D5BwNKYQ1zyMBMxEg78h9su6o0/i2eyr05sjGRQh+BcFOkA3fdpIZshu
-q0o/RL5ygIOOHbh7sq7dZ9Gcfm+YOgb1jWFLti+XLRILBrmZaNNtKQhCI/rbe2Tx
-88oFQInz6mg7Qfu+Ge11kk0xorFFmPHRiGwyN6c+c7R2bzV3SCGS0qCpwUI5KLdl
-vOPySBx5Z/+tObdF2fQmro4XtLGDDrihN4No+NXVIFje5qOfs8JUk0uoEXJsC19N
-IQeatwjy1Z2EY6ezi6h/iK4HFl23kdqgW+nIthlyDq6TXLblaTMOR5+jI7hnINV3
-BSFNJWldBSp/V7p7PDnhfU8vluJEHRTlrKoVp47bK3NL3eq/fKh7Uf6Fs4BCgNzJ
-S8zd5rL/oDGBOqESlTBOCh3jYOXDNsaNjfolw3nWEbSvZixBhxtMciAotOoxUQc0
-5lmwYb8jtzI63HWpC0+jGmyp9TocGKXE9hRCofJgJzMGQfeX9edQyd1JyEK5jRIY
-sfvRLXF0e+cKduBn36G91I0VPrBE4CEzCWq5aA9hyQICJQ/RuV4iKOHMQsr6s1A8
-EliSWQNbmfeXzy4gDfrCjeZ1oLKRlOQL2qSW5uUQmCtDX9pzwmjoNt/AXL+jH05n
-viXHqSX9mYtyh3h9Z5JwpbWyio0lQ0h8xKZFxtfNeSe5zthgHjk=
-=nkHN
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmTJRE4ACgkQ2O7X88g7
++pp6rA/+Ou6DeYKC1j1vZrGdNDBLAxOuNrhXfTX7/onXVUkSWp1/I/sVJJwbY4Sc
+5zhRbfYkAd0HKmsRfsLF3cCoQAUuRRVzMY4sqpk3P4Lf37vIhyrb7TDym2cSL+TM
+5WGZp36E7cnbQ0kTFNVnBD8bw7IjjnpaQfkStfWm6msliL86X2k1zqKf8D7+feGd
+mwJAPcHj/il+2475cWtJTG4NyJqyEKOKDVdu55Q5FOpDI1Sp0N3OCAyKwumtsBzp
+wE05hBwV//ECl7lWhJ2vEpz8snkyjiYze+P075X9KkgWt6nrRYtr95xxI6tdhs64
+6vVM23wFZ5cbwO64q6WRPw0CKn+8fM6n+hTF4ey8LEsmVQU6+RUBDTEJQjJxovoK
+NL2fs/rM9YDnw66VAYd/rIWuo+cs/N1+HHljn0Ib7MReaXARtm4cFhUxlE8Z91nM
+vgj3INOXoT1VU6Avp/VkQcoj5ZRhgE6cHAMzTKXiGcwSBp02jHoaDoE9Q4uu6zSi
+Ezi89PNP0NX/vJHcmYjtFReVUwbc3Dm5CN+WjyoIpr5ke33tEBpkblUb/ifMegbP
+LtbX+mXClk1ljeETm4owdqwC6iMV8TIcXqhoc/0sLr+ZL5g48ahT2264zMKCXZJP
+8CHMjZpYq+HUPBaH+wXawuZB8LMzWSVH74HMf+j+g6rIyuF0dKY=
+=ihge
 -----END PGP SIGNATURE-----
 
---lgnnwlnqehn6d4lc--
+--zhivbfvldrdlg66n--
