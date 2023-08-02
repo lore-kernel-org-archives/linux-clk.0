@@ -2,220 +2,120 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ADA6C001DF
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Aug 2023 06:57:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E1A1C41513
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Aug 2023 06:59:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231726AbjHBG5u (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Aug 2023 02:57:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49824 "EHLO
+        id S232486AbjHBG7H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Aug 2023 02:59:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231859AbjHBG5s (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Aug 2023 02:57:48 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADA391FF3
-        for <linux-clk@vger.kernel.org>; Tue,  1 Aug 2023 23:57:25 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-5222bc91838so9479187a12.0
-        for <linux-clk@vger.kernel.org>; Tue, 01 Aug 2023 23:57:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1690959444; x=1691564244;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HB8Dw00DZJ09mEmQijXfQQXA6sfh5AwCygh3j6F8AMc=;
-        b=lSzUBF6FWUxiw1oYdULIQmYbEwENFVJmgp4JHBGx1zI7B5KvQ4m1+HYCR3R505SGO+
-         Slnm+NLgpdt03o6b0L5LjdOksh6iuX/NfrVTmTR1r3wSyzLm1ZvZhs8JTUP/R0HGnXbt
-         +dId+PmCsdS9AeXUfXfuzB7uBR58pYzFlr4jLqg6SD6WkBW0X7fzWbq6Ap51X5SrY7f8
-         26Rfid8Vp4WklhfLbP86W/a8mULDm3JgxVAUpRVulNg8v5IMCFqe9SbxU29Q2s2n5LbS
-         BJ3qf3Q9gDvbLHRTwsNp/N0vzDrst27eU4f2XDPFe7aEPvC8jqnd3eLXFIifyDzPf3/W
-         8l9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690959444; x=1691564244;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HB8Dw00DZJ09mEmQijXfQQXA6sfh5AwCygh3j6F8AMc=;
-        b=JNCwOeJwfFEGePEWyunq1yadi4dpok10JS4gOPZNDQYkcgURgUCRUnm6vfk98eyBX5
-         aPZIxt0qeOBrmlGcW4Yk0Wdx242h7xZGNpoAGDcyDIveoVOswwS7xHFi/3MHWrLjpIc6
-         tforkfkahPXAOYrkjMAPbhbKl/f6JWMo4YtuqfZKOgrAK/yyVFPA7cjqJbnrRFsi/M4t
-         yzOJlGv0J3O3Z4ow0mvMmamU9hB5GfR2Y1PpILt8YKXB7uNcpVG7oigjcWferUCoZRyM
-         lOvgZ67ujWyuIwWIa+dTNhNj9y3XZ3cPZxqF37wqdujKO5UXdd/dDeFoxvCBq/XT3UaI
-         5Dgg==
-X-Gm-Message-State: ABy/qLbpuxV4Awo5xpQoBgZi8RVfODyarcOQIiJdFj/JgsH2kIFtCWqF
-        ngb8tvqph/2DdDLlyd6RUyMllA==
-X-Google-Smtp-Source: APBJJlGatQfPGX1zCA4O2oVLRP7VUG8QpcwUx9/zHINaPrjjZYEd6cJWoVD2Oc2hkHgdGZY7lcZQvQ==
-X-Received: by 2002:a17:906:3198:b0:98e:1156:1a35 with SMTP id 24-20020a170906319800b0098e11561a35mr3703590ejy.74.1690959444201;
-        Tue, 01 Aug 2023 23:57:24 -0700 (PDT)
-Received: from localhost ([212.23.236.67])
-        by smtp.gmail.com with ESMTPSA id mb5-20020a170906eb0500b00997cce73cc7sm8598409ejb.29.2023.08.01.23.57.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Aug 2023 23:57:23 -0700 (PDT)
-Date:   Wed, 2 Aug 2023 08:57:22 +0200
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-Cc:     Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "Olech, Milena" <milena.olech@intel.com>,
-        "Michalik, Michal" <michal.michalik@intel.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
-        mschmidt <mschmidt@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        with ESMTP id S232331AbjHBG7G (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Aug 2023 02:59:06 -0400
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B026710E;
+        Tue,  1 Aug 2023 23:59:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1690959546; x=1722495546;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=1VOVjYDQD8/gz+/pZmZ6WnPy9qqNJ4oQN6mKmeNp/84=;
+  b=a/DP8Y6M0mAdbQEYVYFd0eE/fi7LS0BmZwLtQqGWLQ8jL9khRIR/fFzz
+   4XFm04vK+ihgwGHMijnollMrYuKKX8I4zKB+LX7VuMtRnyBKGzKuGljME
+   vO1X4WpXn6P11wx2N4UTI9nMYMa6x9wmxMMBZuG26Veq42fvEf3ZBQ+21
+   tzfOBXg7+zIz5nb2G7Ckzj5tmnhzaNBWaFm2D7ILJZl5TRLLA3RqZ5uGk
+   Idlvp8BEuDUbJbzuugFl2wcc2zZPZuwB6PjfGHVjVrPDqTzIEeOuyLjCW
+   hlrr0v4srUez5sBxw3lxgEy5G3TxAnHmelfn2h9nrER4Qk1jYGjCi0pxA
+   Q==;
+X-IronPort-AV: E=Sophos;i="6.01,248,1684825200"; 
+   d="asc'?scan'208";a="227517769"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 01 Aug 2023 23:59:05 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.21; Tue, 1 Aug 2023 23:58:50 -0700
+Received: from wendy (10.10.115.15) by chn-vm-ex04.mchp-main.com
+ (10.10.85.152) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21 via Frontend
+ Transport; Tue, 1 Aug 2023 23:58:47 -0700
+Date:   Wed, 2 Aug 2023 07:58:12 +0100
+From:   Conor Dooley <conor.dooley@microchip.com>
+To:     "Rabara, Niravkumar L" <niravkumar.l.rabara@intel.com>
+CC:     Conor Dooley <conor@kernel.org>,
+        "Ng, Adrian Ho Yin" <adrian.ho.yin.ng@intel.com>,
+        "andrew@lunn.ch" <andrew@lunn.ch>,
+        "conor+dt@kernel.org" <conor+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "dinguyen@kernel.org" <dinguyen@kernel.org>,
+        "krzysztof.kozlowski+dt@linaro.org" 
+        <krzysztof.kozlowski+dt@linaro.org>,
         "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Bart Van Assche <bvanassche@acm.org>
-Subject: Re: [PATCH 09/11] ice: implement dpll interface to control cgu
-Message-ID: <ZMn+Uvu8B6IcCFoj@nanopsycho>
-References: <20230720091903.297066-1-vadim.fedorenko@linux.dev>
- <20230720091903.297066-10-vadim.fedorenko@linux.dev>
- <ZLpuaxMJ+8rWAPwi@nanopsycho>
- <DM6PR11MB46571657F0DF87765DAB32FE9B06A@DM6PR11MB4657.namprd11.prod.outlook.com>
- <ZMem35OUQiQmB9Vd@nanopsycho>
- <DM6PR11MB4657C0DA91583D92697324BC9B0AA@DM6PR11MB4657.namprd11.prod.outlook.com>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Turquette, Mike" <mturquette@baylibre.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        "richardcochran@gmail.com" <richardcochran@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "wen.ping.teh@intel.com" <wen.ping.teh@intel.com>
+Subject: Re: [PATCH v2 3/5] dt-bindings: clock: add Intel Agilex5 clock
+ manager
+Message-ID: <20230802-untreated-twice-932a7afbacfc@wendy>
+References: <20230618132235.728641-1-niravkumar.l.rabara@intel.com>
+ <20230801010234.792557-1-niravkumar.l.rabara@intel.com>
+ <20230801010234.792557-4-niravkumar.l.rabara@intel.com>
+ <20230801-handball-glorifier-e55d44a2b638@spud>
+ <DM6PR11MB3291BD9E538528059D199EBCA20BA@DM6PR11MB3291.namprd11.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="X5cmR5QgCpmYgaum"
 Content-Disposition: inline
-In-Reply-To: <DM6PR11MB4657C0DA91583D92697324BC9B0AA@DM6PR11MB4657.namprd11.prod.outlook.com>
+In-Reply-To: <DM6PR11MB3291BD9E538528059D199EBCA20BA@DM6PR11MB3291.namprd11.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Tue, Aug 01, 2023 at 04:50:44PM CEST, arkadiusz.kubalewski@intel.com wrote:
->>From: Jiri Pirko <jiri@resnulli.us>
->>Sent: Monday, July 31, 2023 2:20 PM
->>
->>Sat, Jul 29, 2023 at 01:03:59AM CEST, arkadiusz.kubalewski@intel.com wrote:
->>>>From: Jiri Pirko <jiri@resnulli.us>
->>>>Sent: Friday, July 21, 2023 1:39 PM
->>>>
->>>>Thu, Jul 20, 2023 at 11:19:01AM CEST, vadim.fedorenko@linux.dev wrote:
->>>>>From: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
->>>
->>
->>[...]
->>
->>
->>>>>+static int ice_dpll_cb_lock(struct ice_pf *pf, struct netlink_ext_ack
->>>>>*extack)
->>>>>+{
->>>>>+	int i;
->>>>>+
->>>>>+	for (i = 0; i < ICE_DPLL_LOCK_TRIES; i++) {
->>>>>+		if (!test_bit(ICE_FLAG_DPLL, pf->flags)) {
->>>>
->>>>And again, as I already told you, this flag checking is totally
->>>>pointless. See below my comment to ice_dpll_init()/ice_dpll_deinit().
->>>>
->>>
->>>This is not pointless, will explain below.
->>>
->>>>
->>>>
->>>
->>>[...]
->>>
->>
->>[...]
->>
->>
->>>>>+void ice_dpll_deinit(struct ice_pf *pf)
->>>>>+{
->>>>>+	bool cgu = ice_is_feature_supported(pf, ICE_F_CGU);
->>>>>+
->>>>>+	if (!test_bit(ICE_FLAG_DPLL, pf->flags))
->>>>>+		return;
->>>>>+	clear_bit(ICE_FLAG_DPLL, pf->flags);
->>>>>+
->>>>>+	ice_dpll_deinit_pins(pf, cgu);
->>>>>+	ice_dpll_deinit_dpll(pf, &pf->dplls.pps, cgu);
->>>>>+	ice_dpll_deinit_dpll(pf, &pf->dplls.eec, cgu);
->>>>>+	ice_dpll_deinit_info(pf);
->>>>>+	if (cgu)
->>>>>+		ice_dpll_deinit_worker(pf);
->>>>
->>>>Could you please order the ice_dpll_deinit() to be symmetrical to
->>>>ice_dpll_init()? Then, you can drop ICE_FLAG_DPLL flag entirely, as the
->>>>ice_dpll_periodic_work() function is the only reason why you need it
->>>>currently.
->>>>
->>>
->>>Not true.
->>>The feature flag is common approach in ice. If the feature was successfully
->>
->>The fact that something is common does not necessarily mean it is
->>correct. 0 value argument.
->>
->
->Like using functions that unwrap netlink attributes as unsigned when
->they are in fact enums with possibility of being signed?
+--X5cmR5QgCpmYgaum
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Looks this is bothering you, sorry about that.
+On Wed, Aug 02, 2023 at 03:06:51AM +0000, Rabara, Niravkumar L wrote:
+> > From: Conor Dooley <conor@kernel.org>
+> > On Tue, Aug 01, 2023 at 09:02:32AM +0800, niravkumar.l.rabara@intel.com
+> > wrote:
+
+> > > +examples:
+> >=20
+> > > +  # Clock controller node:
+> >=20
+> > This comment seems utterly pointless.
+> > Otherwise this looks okay to me.
+> >=20
+> > Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> >=20
+> > Thanks,
+> > Conor.
+> >=20
+>=20
+> Removed in [PATCH v3 3/5].
+
+To be clear, you don't need to send a v3 just for that - I gave you the
+reviewed-by after all.
 
 
->
->This is about consistent approach in ice driver.
->
->>
->>>initialized the flag is set. It allows to determine if deinit of the feature
->>>is required on driver unload.
->>>
->>>Right now the check for the flag is not only in kworker but also in each
->>>callback, if the flag were cleared the data shall be not accessed by
->>>callbacks.
->>
->>Could you please draw me a scenario when this could actually happen?
->>It is just a matter of ordering. Unregister dpll device/pins before you
->>cleanup the related resources and you don't need this ridiculous flag.
->>
->
->Flag allows to determine if dpll was successfully initialized and do proper
->deinit on rmmod only if it was initialized. That's all.
+--X5cmR5QgCpmYgaum
+Content-Type: application/pgp-signature; name="signature.asc"
 
-You are not answering my question. I asked about how the flag helps is
-you do unregister dpll devices/pins and you free related resources in
-the correct order. Because that is why you claim you need this flag.
+-----BEGIN PGP SIGNATURE-----
 
-I'm tired of this. Keep your driver tangled for all I care, I'm trying
-to help you, obviously you are not interested.
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZMn+gwAKCRB4tDGHoIJi
+0o2/AP4lW8VcXGN8U5mLA1eAOA0nQHnoT7R0w7am8jQclz5I0wEAwXt9GT4Jk4lk
+4+Zvf/M6iC4LLdyL8pgZ7CxYU0KI9QM=
+=tNAR
+-----END PGP SIGNATURE-----
 
-
->
->>
->>>I know this is not required, but it helps on loading and unloading the
->>>driver,
->>>thanks to that, spam of pin-get dump is not slowing the driver
->>>load/unload.
->>
->>? Could you plese draw me a scenario how such thing may actually happen?
->
->First of all I said it is not required.
->
->I already draw you this with above sentence.
->You need spam pin-get asynchronously and unload driver, what is not clear?
->Basically mutex in dpll is a bottleneck, with multiple requests waiting for
->mutex there is low change of driver getting mutex when doing unregisters.
-
-How exactly your flag helps you in this scenario? It does not.
-
-
->
->We actually need to redesign the mutex in dpll core/netlink, but I guess after
->initial submission.
-
-Why?
-
-
->
->Thank you!
->Arkadiusz
->
->>
->>Thanks!
->>
->>
->>>
->>>>
->>>>>+	mutex_destroy(&pf->dplls.lock);
->>>>>+}
->>
->>
->>[...]
+--X5cmR5QgCpmYgaum--
