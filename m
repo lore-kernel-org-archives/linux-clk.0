@@ -2,89 +2,70 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B7AFC04E69
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Aug 2023 18:43:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C03B9C001DF
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Aug 2023 19:09:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231159AbjHBSnh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Aug 2023 14:43:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43956 "EHLO
+        id S231355AbjHBTJl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Aug 2023 15:09:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231228AbjHBSng (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Aug 2023 14:43:36 -0400
-Received: from viti.kaiser.cx (viti.kaiser.cx [IPv6:2a01:238:43fe:e600:cd0c:bd4a:7a3:8e9f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBF1E1BC1;
-        Wed,  2 Aug 2023 11:43:35 -0700 (PDT)
-Received: from dslb-094-219-037-101.094.219.pools.vodafone-ip.de ([94.219.37.101] helo=martin-debian-2.paytec.ch)
-        by viti.kaiser.cx with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <martin@kaiser.cx>)
-        id 1qRGoh-0003Eh-8u; Wed, 02 Aug 2023 20:43:27 +0200
-From:   Martin Kaiser <martin@kaiser.cx>
-To:     Arnd Bergmann <arnd@arndb.de>, Abel Vesa <abelvesa@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Shawn Guo <shawnguo@kernel.org>, linux-imx@nxp.com,
-        Fabio Estevam <festevam@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>
-Subject: [PATCH v7 1/2] clk: imx25: print silicon revision during init
-Date:   Wed,  2 Aug 2023 20:40:45 +0200
-Message-Id: <20230802184046.153394-2-martin@kaiser.cx>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230802184046.153394-1-martin@kaiser.cx>
-References: <20230802184046.153394-1-martin@kaiser.cx>
+        with ESMTP id S231269AbjHBTJj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Aug 2023 15:09:39 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65F2326AE;
+        Wed,  2 Aug 2023 12:09:39 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id EEA7461A73;
+        Wed,  2 Aug 2023 19:09:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41A35C433C7;
+        Wed,  2 Aug 2023 19:09:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1691003378;
+        bh=YKlsStj3ezOkt0RWaJXuZ7tqMra0EQULwTm0YtT1O1I=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=BxoOGEVgCqbAnkuVPG4r70PXFYVmKk+LgZKjejuZD+9XmICZoqz+vPYJLel0E1B6o
+         q2mW1hNKaAIYNwWyrxVYTzK7rcU09oDYKY2+ZmvszEHpiBNjgQ764DuCtTqngdvIDu
+         JcOID4UUx5AYHu7cZ6qE2Ru4slL1l6zWldrGtIBLXnBU69uYZLRAYIo4FBoHHgdFpl
+         LFA3Ac1Y74LrcMQcnYBnUqpuSYXOeopyFnmvtSyR8hxTB0i1XGEwXXa4UsG8vVPcEb
+         H2v9KUBhuDO1Mf8/6XRLs2Z5HH2H/5U5mEpke4BBwEz7vE7ynvv8UAxKKsnNz6prd/
+         l7VLa+dsQ9gBw==
+Message-ID: <ccd0ea6c0c0165490279a357745b0f71.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20230728165923.108589-1-krzysztof.kozlowski@linaro.org>
+References: <20230728165923.108589-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] dt-bindings: clock: xlnx,versal-clk: drop select:false
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        stable@vger.kernel.org,
+        Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+To:     Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Michal Simek <michal.simek@amd.com>,
+        Rajan Vaja <rajan.vaja@xilinx.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 02 Aug 2023 12:09:36 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Print the imx25 silicon revision when the clocks are initialised.
+Quoting Krzysztof Kozlowski (2023-07-28 09:59:23)
+> select:false makes the schema basically ignored and not effective, which
+> is clearly not what we want for a device binding.
+>=20
+> Fixes: 352546805a44 ("dt-bindings: clock: Add bindings for versal clock d=
+river")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>=20
+> ---
 
-Use the same mechanism as for imx27, i.e. call mx25_revision.
-This function is unused at the moment.
-
-Signed-off-by: Martin Kaiser <martin@kaiser.cx>
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
----
- drivers/clk/imx/clk-imx25.c | 3 +++
- include/soc/imx/revision.h  | 1 +
- 2 files changed, 4 insertions(+)
-
-diff --git a/drivers/clk/imx/clk-imx25.c b/drivers/clk/imx/clk-imx25.c
-index cc013b343e62..bee3da2e21e1 100644
---- a/drivers/clk/imx/clk-imx25.c
-+++ b/drivers/clk/imx/clk-imx25.c
-@@ -13,6 +13,7 @@
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/of_irq.h>
-+#include <soc/imx/revision.h>
- 
- #include "clk.h"
- 
-@@ -220,6 +221,8 @@ static int __init __mx25_clocks_init(void __iomem *ccm_base)
- 
- 	imx_register_uart_clocks();
- 
-+	imx_print_silicon_rev("i.MX25", mx25_revision());
-+
- 	return 0;
- }
- 
-diff --git a/include/soc/imx/revision.h b/include/soc/imx/revision.h
-index b2a55dafaf0a..b122d2fc8881 100644
---- a/include/soc/imx/revision.h
-+++ b/include/soc/imx/revision.h
-@@ -22,6 +22,7 @@
- #define IMX_CHIP_REVISION_3_3		0x33
- #define IMX_CHIP_REVISION_UNKNOWN	0xff
- 
-+int mx25_revision(void);
- int mx27_revision(void);
- int mx31_revision(void);
- int mx35_revision(void);
--- 
-2.39.2
-
+Applied to clk-next
