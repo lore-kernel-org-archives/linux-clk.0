@@ -2,123 +2,129 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 747B5C00528
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Aug 2023 21:32:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FE01C001DF
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Aug 2023 22:02:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230220AbjHBVcL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Aug 2023 17:32:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37066 "EHLO
+        id S232372AbjHBWCH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Aug 2023 18:02:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229744AbjHBVcL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Aug 2023 17:32:11 -0400
+        with ESMTP id S233046AbjHBWCG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Aug 2023 18:02:06 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44C1F1734;
-        Wed,  2 Aug 2023 14:32:10 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 992DE2129;
+        Wed,  2 Aug 2023 15:02:04 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CCAE861B2A;
-        Wed,  2 Aug 2023 21:32:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91B50C433C7;
-        Wed,  2 Aug 2023 21:32:08 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2BE8361B13;
+        Wed,  2 Aug 2023 22:02:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19DF0C433C7;
+        Wed,  2 Aug 2023 22:02:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691011929;
-        bh=2PaiUpifeCse/HhykZzsGpNNXYxG9/8BdqoWXV5HhD0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=B7rkboeJ9wyO/0xDXw25KM79GOP/Sk2hWmAI6yRgz0OJU1LXNc2VZ2EcDlvmlMojT
-         oMLdl0v5KEOEh+JZGN/GPMZ9A8PTwps+ZAtjXriNCBvY8zOFKeQBRMh8LjXmxnh5Ww
-         xjYq4xPI7wQ3kWExVVDWvafRG5phJKYNgCZ44oZXgJ3lQTsG5VDSx1/Q2KWCjczcgb
-         XR1vQ7OJv3KOZXHPwylTLzLO9nJhm9AOovT8APRuHBt/bEGgzMajgP/pCPaPqpg82t
-         gNkvvLIHf7PYBKWX989l4eHHC58SdhW1/SRhRkg7ol9qzJfvCclAHdfThEQ6/AP+cv
-         di/Khv2+8EUWQ==
-Date:   Wed, 2 Aug 2023 14:32:06 -0700
-From:   Nathan Chancellor <nathan@kernel.org>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Sergio Paracuellos <sergio.paracuellos@gmail.com>,
-        Arnd Bergmann <arnd@kernel.org>, linux-clk@vger.kernel.org,
-        tsbogend@alpha.franken.de, sboyd@kernel.org,
-        mturquette@baylibre.com, linux-kernel@vger.kernel.org,
-        kernel test robot <lkp@intel.com>,
-        clang-built-linux <llvm@lists.linux.dev>
-Subject: Re: [PATCH] clk: ralink: mtmips: quiet unused variable warning
-Message-ID: <20230802213206.GA758420@dev-arch.thelio-3990X>
+        s=k20201202; t=1691013723;
+        bh=fq3cWmTxdhO7mpPCgQ+OwosSWhnsTUfvrL0qkaxNDpA=;
+        h=In-Reply-To:References:Date:From:To:Cc:Subject:From;
+        b=eSD9SlAQ7rbg2TqZs1FdP/PgGOmU65z7JePTWO3d5We+u4brrkJrxovT/SI3iyOfH
+         JVlReuJujc8BgIdt2O6XeN15kZioYenOejcdY77w8e4tTlm3xFWv/Kl2wrCWgTpnK/
+         xMUBul9dQML3TS5OySlpxJ8ulpn8KS6bqtzqHynqlQqszVJ7DqGwq+L/gbdaFDeRNR
+         YURr0fqvlcXrWgqxMdg88Nue82ApcIOJXN+06P8+9mtbkOrHS1hoipXzxiJUwb68we
+         5oDq6NOWnMAmho2iSu4YwnNhESZ3+5+6odzEzd6BR8jI++nV3CAImViHRlpztyyYMc
+         odpYoK+G8preg==
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailauth.nyi.internal (Postfix) with ESMTP id EDEBE27C0054;
+        Wed,  2 Aug 2023 18:02:01 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute6.internal (MEProxy); Wed, 02 Aug 2023 18:02:01 -0400
+X-ME-Sender: <xms:WNLKZNWVYqB1BnzgHH-kIgBALkBKjcpcgEFj8Y6Jv3OxnkdTlpWjHw>
+    <xme:WNLKZNlF6fozETDCORwW4f2s1qybZXkw59Jmf2JNSgxwqkjHle4SFCWOjR2W7E0w0
+    jdsq4r6jez1900NfVc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrkedugddthecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusehkvghrnhgvlhdrohhrgheqnecuggftrf
+    grthhtvghrnhepvdelhfduueevkeeujeeuhfevfedufeeuteduvdeijeffheffieeiteel
+    jeelffdtnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugdomhgvshhmthhprghuthhh
+    phgvrhhsohhnrghlihhthidquddvkeehudejtddvgedqvdekjedttddvieegqdgrrhhnug
+    eppehkvghrnhgvlhdrohhrghesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:WNLKZJYLgPNGXsizjVniNWNg24UkWht5ff6PSsu8gFJtTvXKk8CffA>
+    <xmx:WNLKZAUfGb_-TRwivRvE_HYi1UkciViGtHLnwmOYrO1sScwiq2iT4A>
+    <xmx:WNLKZHl3cBoEUeRDSPOF9qEAFDhR3rf-iccz98gWBpTrTYwc_tI0DQ>
+    <xmx:WdLKZFX4g4ANJBjULxrdbKClBBZLjFhKGhJw1UFDlOOlf0fu7odMRg>
+Feedback-ID: i36794607:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id D12B5B6008F; Wed,  2 Aug 2023 18:02:00 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-624-g7714e4406d-fm-20230801.001-g7714e440
+Mime-Version: 1.0
+Message-Id: <9a22ecee-ebb0-437e-bd2b-99b5c6944855@app.fastmail.com>
+In-Reply-To: <CAKwvOd=SvHUPd8+sWtqgxghPEciD5sqPiggZx+OOEqxtJrML6Q@mail.gmail.com>
 References: <20230802092647.3000666-1-sergio.paracuellos@gmail.com>
  <CAKwvOd=SvHUPd8+sWtqgxghPEciD5sqPiggZx+OOEqxtJrML6Q@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKwvOd=SvHUPd8+sWtqgxghPEciD5sqPiggZx+OOEqxtJrML6Q@mail.gmail.com>
+Date:   Thu, 03 Aug 2023 00:01:25 +0200
+From:   "Arnd Bergmann" <arnd@kernel.org>
+To:     "Nick Desaulniers" <ndesaulniers@google.com>,
+        "Sergio Paracuellos" <sergio.paracuellos@gmail.com>,
+        "Nathan Chancellor" <nathan@kernel.org>
+Cc:     linux-clk@vger.kernel.org,
+        "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+        "Stephen Boyd" <sboyd@kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, "kernel test robot" <lkp@intel.com>,
+        clang-built-linux <llvm@lists.linux.dev>
+Subject: Re: [PATCH] clk: ralink: mtmips: quiet unused variable warning
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Aug 02, 2023 at 02:26:43PM -0700, Nick Desaulniers wrote:
-> On Wed, Aug 2, 2023 at 2:26 AM Sergio Paracuellos
-> <sergio.paracuellos@gmail.com> wrote:
-> >
-> > When CONFIG_OF is disabled then the matching table is not referenced and
-> > the following warning appears:
-> >
-> > drivers/clk/ralink/clk-mtmips.c:821:34: warning: unused variable 'mtmips_of_match' [-Wunused-const-variable]
-> > 821 |   static const struct of_device_id mtmips_of_match[] = {
-> >     |                          ^
-> >
-> > Silence it declaring 'mtmips_of_match' with '__maybe_unused'.
-> >
-> > Fixes: 6f3b15586eef ("clk: ralink: add clock and reset driver for MTMIPS SoCs")
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes: https://lore.kernel.org/oe-kbuild-all/202307242310.CdOnd2py-lkp@intel.com/
-> > Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-> 
-> I think this is fine; Arnd or Nathan do you have a preference? or thoughts here?
-
-I do not have much of a preference either, I tend to agree with your
-reasoning for preferring the #ifdef but '__maybe_unused' is relatively
-easy to audit on a per-file basis and I think that is more common than
-the '#ifdef CONFIG_OF'.
-
-Small nit, I think __maybe_unused typically goes between the variable
-name and equals, like
-
-  static const struct of_device_id mtmips_of_match[] __maybe_unused = {
-
-but this is obviously fine. Regardless:
-
-Reviewed-by: Nathan Chancellor <nathan@kernel.org>
-
+On Wed, Aug 2, 2023, at 23:26, Nick Desaulniers wrote:
+> On Wed, Aug 2, 2023 at 2:26=E2=80=AFAM Sergio Paracuellos <sergio.para=
+cuellos@gmail.com> wrote:
+>>
+>> When CONFIG_OF is disabled then the matching table is not referenced =
+and
+>> the following warning appears:
+>>
+>> drivers/clk/ralink/clk-mtmips.c:821:34: warning: unused variable 'mtm=
+ips_of_match' [-Wunused-const-variable]
+>> 821 |   static const struct of_device_id mtmips_of_match[] =3D {
+>>     |                          ^
+>>
+>> Silence it declaring 'mtmips_of_match' with '__maybe_unused'.
+>>
+>> Fixes: 6f3b15586eef ("clk: ralink: add clock and reset driver for MTM=
+IPS SoCs")
+>> Reported-by: kernel test robot <lkp@intel.com>
+>> Closes: https://lore.kernel.org/oe-kbuild-all/202307242310.CdOnd2py-l=
+kp@intel.com/
+>> Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+>
+> I think this is fine; Arnd or Nathan do you have a preference? or thou=
+ghts here?
+>
 > If not, thanks for the patch.
 > Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-> 
+>
 > (I have a slight preference for wrapping the use in `#ifdef CONFIG_OF`
 > since with the approach used by this patch, if all users are removed
 > we will never get a warning for this var. But it's a weak preference;
 > it's more important to me that we don't have -Werror promote this
 > warning to a build breakage)
-> 
-> > ---
-> >  drivers/clk/ralink/clk-mtmips.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/clk/ralink/clk-mtmips.c b/drivers/clk/ralink/clk-mtmips.c
-> > index 1e7991439527..6716394b28a3 100644
-> > --- a/drivers/clk/ralink/clk-mtmips.c
-> > +++ b/drivers/clk/ralink/clk-mtmips.c
-> > @@ -820,7 +820,7 @@ static const struct mtmips_clk_data mt76x8_clk_data = {
-> >         .num_clk_periph = ARRAY_SIZE(mt76x8_pherip_clks),
-> >  };
-> >
-> > -static const struct of_device_id mtmips_of_match[] = {
-> > +static const __maybe_unused struct of_device_id mtmips_of_match[] = {
-> >         {
-> >                 .compatible = "ralink,rt2880-sysc",
-> >                 .data = &rt2880_clk_data,
-> > --
-> > 2.25.1
-> >
-> 
-> 
-> -- 
-> Thanks,
-> ~Nick Desaulniers
+
+I don't understand why there are two match tables in the same
+driver, with almost the same contents. I have not looked very
+closely here, but why can't we just drop the mtmips_clk_of_match[]
+table (the one without the .data fields) and use the same
+table for both? Is this because of the ralink,rt2880-reset entry
+that is missing in mtmips_of_match, or is that another bug?
+
+I also see that there is both a platform_driver instance for
+late probing and a list of CLK_OF_DECLARE_DRIVER() entries.
+Do we need both here?
+
+      Arnd
