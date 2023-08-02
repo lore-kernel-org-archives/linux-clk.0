@@ -2,36 +2,40 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CECD1C00528
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Aug 2023 12:13:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F1C9C41513
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Aug 2023 12:25:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234528AbjHBMNr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Aug 2023 08:13:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46692 "EHLO
+        id S233634AbjHBMZT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Aug 2023 08:25:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234208AbjHBMNj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Aug 2023 08:13:39 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 319132D79;
-        Wed,  2 Aug 2023 05:13:23 -0700 (PDT)
+        with ESMTP id S232119AbjHBMZT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Aug 2023 08:25:19 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 437F8269E;
+        Wed,  2 Aug 2023 05:25:17 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="6.01,249,1684767600"; 
-   d="scan'208";a="171674747"
+   d="scan'208";a="175356815"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 02 Aug 2023 21:13:22 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 02 Aug 2023 21:25:16 +0900
 Received: from localhost.localdomain (unknown [10.226.92.171])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id D028141CEA81;
-        Wed,  2 Aug 2023 21:13:19 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 0BF1D41D15EF;
+        Wed,  2 Aug 2023 21:25:12 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>, linux-clk@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Julia Lawall <julia.lawall@inria.fr>
-Subject: [PATCH v2] clk: vc3: Fix 64 by 64 division
-Date:   Wed,  2 Aug 2023 13:13:17 +0100
-Message-Id: <20230802121317.273091-1-biju.das.jz@bp.renesas.com>
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 0/3] Fix Versa3 clock mapping
+Date:   Wed,  2 Aug 2023 13:25:07 +0100
+Message-Id: <20230802122510.275420-1-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -39,39 +43,26 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Fix the below cocci warnings by replacing do_div()->div64_ul() and
-bound the result with a max value of U16_MAX.
+According to Table 3. ("Output Source") in the 5P35023 datasheet,
+the output clock mapping should be 0=REF, 1=SE1, 2=SE2, 3=SE3,
+4=DIFF1, 5=DIFF2. But the code uses inverse.
 
-cocci warnings:
-	drivers/clk/clk-versaclock3.c:404:2-8: WARNING: do_div() does a
-	64-by-32 division, please consider using div64_ul instead.
+This patch series aims to document clock-output-names in bindings and
+fix the mapping in driver.
 
-Reported-by: Julia Lawall <julia.lawall@inria.fr>
-Closes: https://lore.kernel.org/r/202307270841.yr5HxYIl-lkp@intel.com/
-Fixes: 6e9aff555db7 ("clk: Add support for versa3 clock driver")
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v1->v2:
- * Added fixes tag.
----
- drivers/clk/clk-versaclock3.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Biju Das (3):
+  dt-bindings: clock: versaclock3: Document clock-output-names
+  clk: vc3: Fix output clock mapping
+  arm64: dts: renesas: rz-smarc-common: Use versa3 clk for audio mclk
 
-diff --git a/drivers/clk/clk-versaclock3.c b/drivers/clk/clk-versaclock3.c
-index 4ceb7fcf7fcb..7ca413a5b1fb 100644
---- a/drivers/clk/clk-versaclock3.c
-+++ b/drivers/clk/clk-versaclock3.c
-@@ -401,9 +401,8 @@ static long vc3_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 		/* Determine best fractional part, which is 16 bit wide */
- 		div_frc = rate % *parent_rate;
- 		div_frc *= BIT(16) - 1;
--		do_div(div_frc, *parent_rate);
- 
--		vc3->div_frc = (u32)div_frc;
-+		vc3->div_frc = min_t(u64, div64_ul(div_frc, *parent_rate), U16_MAX);
- 		rate = (*parent_rate *
- 			(vc3->div_int * VC3_2_POW_16 + div_frc) / VC3_2_POW_16);
- 	} else {
+ .../bindings/clock/renesas,5p35023.yaml       | 14 ++--
+ .../boot/dts/renesas/rz-smarc-common.dtsi     | 14 ++--
+ arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi  | 23 +++++++
+ arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi | 23 +++++++
+ arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi | 27 ++++++++
+ drivers/clk/clk-versaclock3.c                 | 68 +++++++++----------
+ 6 files changed, 124 insertions(+), 45 deletions(-)
+
 -- 
 2.25.1
 
