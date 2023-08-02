@@ -2,110 +2,113 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1A3BC001DE
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Aug 2023 07:41:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41CEEC00528
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Aug 2023 08:11:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233378AbjHBHlD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Aug 2023 03:41:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40714 "EHLO
+        id S233730AbjHBILB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Aug 2023 04:11:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233320AbjHBHk2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Aug 2023 03:40:28 -0400
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 786634EE3;
-        Wed,  2 Aug 2023 00:38:34 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id 2adb3069b0e04-4fe1344b707so10394758e87.1;
-        Wed, 02 Aug 2023 00:38:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690961912; x=1691566712;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hG6+YQ0tUDz48/03f7Nyeq0JCf007nOGlw47CxNzErA=;
-        b=ho6VKHchKIecptzcDesrpXEbSnhlh14yTzt1/ddoGIW7N+NJKZi73ac7qQaztLtMuQ
-         3QoiUN1MGh6hWVL2JPeX8ztzaEn3Ez2KIrW716wfFxX5mdvzgNtFce36FMNNd9p6NvMP
-         Rp/9tSbD6nj7pmSAP5/fmbUJOCs+OymiKh5WJGapFqJmksqITXhs51ukWWtqL1g/t6fP
-         JYAULICCKGSO4OEfZjnQ1bJUXw8ibs7fUQLGWYKNTk7V1g6d5OgWk01X9RfAg8lrdJm7
-         ibdC5h8BZ/EdZT0PVlni5KF4lldYS1rGS1+DXHd4Ma3i3tD2LelgmtvLlz/ARI1DRtt3
-         93tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690961912; x=1691566712;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hG6+YQ0tUDz48/03f7Nyeq0JCf007nOGlw47CxNzErA=;
-        b=WpXmCVhdAwwTC9cHarq+daabZ+xapLUDaB4DxEpyIApQ58gyNJIJkjVoRyv7kLBHhS
-         oOLlP4xioIi0onH3p4qt8BMkzCGJ/iS9ld0tJ4WruJjxfb3VruAuk9D/l15O8dRWrjcG
-         HUDucE8stF/TrXxCUYyaaHFIUWnYTz9pr3eQU7i2dhF2tCRWWd0644SW9nAK0jY0eEmZ
-         H8WfdyfZo5XEPjWWg8qAfbw7DWU06UpdOIKIctjFkqhqkmX67EReqt5zChMxlqTrnvE+
-         E7w0HjeW39mLLaiZpn0WnIJ0X5zpyNFGJzOgLr/8eip7gqXK/6XeMZPuel5kSvTNG0Xk
-         LPrg==
-X-Gm-Message-State: ABy/qLZmxEUyblOZPNplT7/bqE4eOxI7kje/oTc8EmSjZ7mrS8KlPmfR
-        rvngA1hmLYkyARMx0aHP8gs=
-X-Google-Smtp-Source: APBJJlFyaHc0Ucy5XRq29FSH+BjvL/M0W/SK3cClfC4+ud7BbZuUQeiusKk9chXOhYjrMhIYGEFoKA==
-X-Received: by 2002:a05:6512:3711:b0:4f8:67aa:4f03 with SMTP id z17-20020a056512371100b004f867aa4f03mr3683942lfr.1.1690961911447;
-        Wed, 02 Aug 2023 00:38:31 -0700 (PDT)
-Received: from [192.168.26.149] (031011218106.poznan.vectranet.pl. [31.11.218.106])
-        by smtp.googlemail.com with ESMTPSA id x1-20020ac25dc1000000b004cc9042c9cfsm2169486lfq.158.2023.08.02.00.38.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Aug 2023 00:38:31 -0700 (PDT)
-Message-ID: <285f419e-f8f2-c8da-6064-2a51e92ca3bc@gmail.com>
-Date:   Wed, 2 Aug 2023 09:38:30 +0200
+        with ESMTP id S231796AbjHBILA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Aug 2023 04:11:00 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFCE819A;
+        Wed,  2 Aug 2023 01:10:58 -0700 (PDT)
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37262OjY020135;
+        Wed, 2 Aug 2023 08:10:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=smCHiQUBPz96P0liCJANi4we28VIWNrJWsESBimGYGw=;
+ b=WGZIvsp1fJAsdErDN61DSBB+Ah63jjJHnTuXCFtPy2LEcz6U4cJUq141CkH5YaPZQNAE
+ hPlkyX/NHNkAbyhc+voUHfisRbakCbb+fq+GpxAemLYMdfigsjcQU/yKJccRAqBdpXrU
+ 6yKJVuf2gal16o+FpxYWpBCd6szlzU3TWq400oZ/AlsoY5SMh1WBBGWD4gSUUIjGNIFa
+ C2dOrCvE/WFfjWj9QOtZtXxcNdqUpJYxGm45k2StK6i8q93vPKHcry6rmitMUsXB2vfZ
+ 66UPsB0ZXXRpVH/YCbeg/hrZ/UfxuxGXrBfA6Cn79snKo2UMylmbFSiA4Z3Piy4U3cFI Pw== 
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3s72gqt7ad-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 02 Aug 2023 08:10:53 +0000
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+        by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3728AqII004396
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 2 Aug 2023 08:10:52 GMT
+Received: from [10.216.21.225] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Wed, 2 Aug
+ 2023 01:10:46 -0700
+Message-ID: <1ea8fdc9-4e0c-19ff-f340-f746d0fed1fe@quicinc.com>
+Date:   Wed, 2 Aug 2023 13:40:37 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: ARM board lockups/hangs triggered by locks and mutexes
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH V4 4/7] clk: qcom: gcc-qdu1000: Update GCC clocks as per
+ the latest hw version
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC:     Bjorn Andersson <andersson@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Melody Olvera <quic_molvera@quicinc.com>,
+        "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>
+References: <20230719041450.737929-1-quic_imrashai@quicinc.com>
+ <20230719041450.737929-5-quic_imrashai@quicinc.com>
+ <b3175a93-0b41-49d7-ca29-bc4ca9b5c8fc@linaro.org>
 Content-Language: en-US
-From:   =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-To:     "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-        Waiman Long <longman@redhat.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        linux-clk@vger.kernel.org,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Network Development <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        OpenWrt Development List <openwrt-devel@lists.openwrt.org>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>
-References: <CACna6rxpzDWE5-gnmpgMgfzPmmHvEGTZk4GJvJ8jLSMazh2bVA@mail.gmail.com>
- <ZMmFeCBxhJOxZ575@shell.armlinux.org.uk>
- <60a553a2-85f3-d8c6-b070-ecd3089c3c5e@gmail.com>
-In-Reply-To: <60a553a2-85f3-d8c6-b070-ecd3089c3c5e@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From:   Imran Shaik <quic_imrashai@quicinc.com>
+In-Reply-To: <b3175a93-0b41-49d7-ca29-bc4ca9b5c8fc@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: WQGxo1FUvojrNRLOz21Ew7SbSaOTB5f9
+X-Proofpoint-ORIG-GUID: WQGxo1FUvojrNRLOz21Ew7SbSaOTB5f9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-08-02_03,2023-08-01_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=732 adultscore=0
+ phishscore=0 spamscore=0 lowpriorityscore=0 impostorscore=0 mlxscore=0
+ priorityscore=1501 malwarescore=0 bulkscore=0 clxscore=1015 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2306200000
+ definitions=main-2308020072
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2.08.2023 09:00, Rafał Miłecki wrote:
-> With your comment I decided to try CONFIG_PROVE_LOCKING anyway / again
-> and this time on 1 of my BCM53573 devices I got something very
-> interesting on the first boot.
-> 
-> FWIW following error:
-> Broadcom B53 (2) bcma_mdio-0-0:1e: failed to register switch: -517
-> is caused by invalid DT I sent fixes for just recently.
-> 
-> Please scroll through the first booting lines for the WARNING:
-> 
-> (...)
-> [    1.167234] bgmac_bcma bcma0:5: Found PHY addr: 30 (NOREGS)
-> [    1.173655] ------------[ cut here ]------------
-> [    1.178374] WARNING: CPU: 0 PID: 1 at kernel/locking/mutex.c:950 __mutex_lock+0x6b4/0x8a0
-> [    1.186721] DEBUG_LOCKS_WARN_ON(lock->magic != lock)
 
-Ah, that mutex WARNING comes from my Tenda AC9 device which happens to
-use a hacky OpenWrt downstream b53 driver. That driver uses wrong API
-(it behaves as PHY driver instead of MDIO driver). It results in probing
-against PHY device which isn't properly initialized.
 
-Long story short: above WARNING is just a noise. Ignore it please. Sorry
-for that.
+On 7/26/2023 9:12 PM, Konrad Dybcio wrote:
+> On 19.07.2023 06:14, Imran Shaik wrote:
+>> Update the GCC clocks as per the latest hw version of QDU1000 and
+>> QRU100 SoCs.
+>>
+>> Co-developed-by: Taniya Das <quic_tdas@quicinc.com>
+>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
+>> ---
+> [...]
+> 
+>> +	[GCC_GPLL1_OUT_EVEN] = &gcc_gpll1_out_even.clkr,
+> So, this clock was there before, but it was never registered with the
+> clock framework, even though it was referenced as a parent..
+> 
+> Sounds like a bug!
+> > Konrad
 
-Kernel compiled with CONFIG_PROVE_LOCKING still works fine on other
-devices and on Tenda AC9 after fixing PHY<->MDIO thing. That kernel
-option hides actual bug whatever it is.
+Yes, I will split this change adding the fixes tag and push another series.
+
+Thanks,
+Imran
