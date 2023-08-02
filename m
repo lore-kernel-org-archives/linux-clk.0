@@ -2,48 +2,74 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17578C001DE
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Aug 2023 09:17:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13E0AC001DE
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Aug 2023 09:22:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234119AbjHBJRS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Aug 2023 05:17:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35068 "EHLO
+        id S234061AbjHBJWR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Aug 2023 05:22:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234047AbjHBJQ4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Aug 2023 05:16:56 -0400
-Received: from mail11.truemail.it (mail11.truemail.it [IPv6:2001:4b7e:0:8::81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E68730F4;
-        Wed,  2 Aug 2023 02:16:26 -0700 (PDT)
-Received: from francesco-nb.int.toradex.com (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-        by mail11.truemail.it (Postfix) with ESMTPA id 617561F83F;
-        Wed,  2 Aug 2023 11:16:20 +0200 (CEST)
-Date:   Wed, 2 Aug 2023 11:16:13 +0200
-From:   Francesco Dolcini <francesco@dolcini.it>
-To:     Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Cc:     Santosh Shilimkar <ssantosh@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Jai Luthra <j-luthra@ti.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux@ew.tq-group.com
-Subject: Re: [PATCH 0/3] clk: keystone: syscon-clk: fixes for audio refclk
-Message-ID: <ZMoe3e4eF3Hll1e3@francesco-nb.int.toradex.com>
-References: <cover.1690885413.git.matthias.schiffer@ew.tq-group.com>
+        with ESMTP id S234100AbjHBJWK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Aug 2023 05:22:10 -0400
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FBB22D76;
+        Wed,  2 Aug 2023 02:22:07 -0700 (PDT)
+Received: from dggpemm500020.china.huawei.com (unknown [172.30.72.56])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4RG5xn2kCkzNmcH;
+        Wed,  2 Aug 2023 17:18:37 +0800 (CST)
+Received: from dggpemm500007.china.huawei.com (7.185.36.183) by
+ dggpemm500020.china.huawei.com (7.185.36.49) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.27; Wed, 2 Aug 2023 17:22:03 +0800
+Received: from huawei.com (10.175.103.91) by dggpemm500007.china.huawei.com
+ (7.185.36.183) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Wed, 2 Aug
+ 2023 17:22:02 +0800
+From:   Yang Yingliang <yangyingliang@huawei.com>
+To:     <linux-renesas-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC:     <geert+renesas@glider.be>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <magnus.damm@gmail.com>,
+        <yangyingliang@huawei.com>
+Subject: [PATCH -next] clk: renesas: r9a06g032: use for_each_compatible_node()
+Date:   Wed, 2 Aug 2023 17:19:20 +0800
+Message-ID: <20230802091920.3270703-1-yangyingliang@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1690885413.git.matthias.schiffer@ew.tq-group.com>
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.103.91]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemm500007.china.huawei.com (7.185.36.183)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Aug 01, 2023 at 12:36:06PM +0200, Matthias Schiffer wrote:
-> The actual fix is in patch 3; patches 1 and 2 are preparation and
-> related cleanup. I've added a Fixes: tag to all 3 patches, as they
-> need to be backported together.
+Use for_each_compatible_node() instead of open-coding it.
 
-Please see this https://lore.kernel.org/all/20230728222639.110409-1-francesco@dolcini.it/
-that was sent a few days ago. It fixes the same issue and it's already
-reviewed.
+Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+---
+ drivers/clk/renesas/r9a06g032-clocks.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Francesco
+diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
+index 55db63c7041a..9a50166c02b9 100644
+--- a/drivers/clk/renesas/r9a06g032-clocks.c
++++ b/drivers/clk/renesas/r9a06g032-clocks.c
+@@ -1269,11 +1269,10 @@ static void r9a06g032_clocks_del_clk_provider(void *data)
+ 
+ static void __init r9a06g032_init_h2mode(struct r9a06g032_priv *clocks)
+ {
+-	struct device_node *usbf_np = NULL;
++	struct device_node *usbf_np;
+ 	u32 usb;
+ 
+-	while ((usbf_np = of_find_compatible_node(usbf_np, NULL,
+-						  "renesas,rzn1-usbf"))) {
++	for_each_compatible_node(usbf_np, NULL, "renesas,rzn1-usbf") {
+ 		if (of_device_is_available(usbf_np))
+ 			break;
+ 	}
+-- 
+2.25.1
 
