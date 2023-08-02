@@ -2,74 +2,97 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13E0AC001DE
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Aug 2023 09:22:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7758EC001DE
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Aug 2023 09:26:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234061AbjHBJWR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Aug 2023 05:22:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39218 "EHLO
+        id S234100AbjHBJ0w (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Aug 2023 05:26:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234100AbjHBJWK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Aug 2023 05:22:10 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FBB22D76;
-        Wed,  2 Aug 2023 02:22:07 -0700 (PDT)
-Received: from dggpemm500020.china.huawei.com (unknown [172.30.72.56])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4RG5xn2kCkzNmcH;
-        Wed,  2 Aug 2023 17:18:37 +0800 (CST)
-Received: from dggpemm500007.china.huawei.com (7.185.36.183) by
- dggpemm500020.china.huawei.com (7.185.36.49) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.27; Wed, 2 Aug 2023 17:22:03 +0800
-Received: from huawei.com (10.175.103.91) by dggpemm500007.china.huawei.com
- (7.185.36.183) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Wed, 2 Aug
- 2023 17:22:02 +0800
-From:   Yang Yingliang <yangyingliang@huawei.com>
-To:     <linux-renesas-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>
-CC:     <geert+renesas@glider.be>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <magnus.damm@gmail.com>,
-        <yangyingliang@huawei.com>
-Subject: [PATCH -next] clk: renesas: r9a06g032: use for_each_compatible_node()
-Date:   Wed, 2 Aug 2023 17:19:20 +0800
-Message-ID: <20230802091920.3270703-1-yangyingliang@huawei.com>
+        with ESMTP id S229656AbjHBJ0v (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Aug 2023 05:26:51 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 986BBE7;
+        Wed,  2 Aug 2023 02:26:50 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id ffacd0b85a97d-3179ed1dfbbso3160621f8f.1;
+        Wed, 02 Aug 2023 02:26:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1690968409; x=1691573209;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fwoyyCSuhDlyEJpT+9RmMbXec0qXFgA7vWKF7hLqGbo=;
+        b=JzBvHdCsM3egtnmHaiRGiM4DHOnCHceRoF5WCIhTJLKJiuKiIH6XbbD0Qh29JMeWUj
+         H/sh4Q/0D7ITEst34Ox0wqTY5xbJZQaAFTWJKqqJGGN7fMRWoJ87EvCyDes1bOTdDpus
+         fyGyvuMvsSSpV+snkbcntAKC8lRdEUqDP9lf+sl7Mvw2yND7PIBHQyrYxI8ysvaQ6e6z
+         OCOdt/GlhQfoGzYBhK3W+QqwaahwDX3Ssy2enYurHlEvAOB1HPFpzb/VPQKbEkKO2uVy
+         QrMkAj5uTAzw1KxvSD9YbhX3JuAc5PmKbiozTXQXTgeDDCAYoGkfehgjRgGuTRvOcYVS
+         qPxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690968409; x=1691573209;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fwoyyCSuhDlyEJpT+9RmMbXec0qXFgA7vWKF7hLqGbo=;
+        b=boMwpyMBuFWdzdzKljgG91rEa2QaHIyByFpes0mr5tCogtz2EAlzSTM9Bb9nX3CGws
+         Alzr00tYU9qHiw/FiNKOEyY5K91Imt0G2ifw+YWG97yzyOjlOj3Z7jo4i7/wFPBSg+DG
+         6PJuprndIc+WcGYa11wKka0UHSmI5hEGwKMyyim8Ue3idBfLS9SKbAnvoPObObquBRTM
+         dj0dW52KUdCvMDkcOhw1jk6bEVTpTMZCRn1LHTfz8VvT50bfx5Cj3hyPbaLdsu/5CnZt
+         4V5nIikMLPoypG6E06DIXL4IrspT76wZGf+Z6+B4o37eLsjurEW/H8nRohiHKVbntg07
+         snbQ==
+X-Gm-Message-State: ABy/qLaFO2zSspyOHI6Ar4WBCnGTeKo2IL6VO1lY33+wTW+r9PBJE4/v
+        Weaz49o0xlE8qhV858LTNTyLd2ZzAgM=
+X-Google-Smtp-Source: APBJJlEb5zTBNuqlYSoO2JKsMjIf2j+Z4ACLA9XHiQDBSAUg5JRNZoUxSlX8phk1tCds1y3YMx5ozA==
+X-Received: by 2002:adf:f091:0:b0:317:6a83:767a with SMTP id n17-20020adff091000000b003176a83767amr4494392wro.51.1690968408538;
+        Wed, 02 Aug 2023 02:26:48 -0700 (PDT)
+Received: from localhost.localdomain (61.red-88-10-54.dynamicip.rima-tde.net. [88.10.54.61])
+        by smtp.gmail.com with ESMTPSA id o3-20020adfe803000000b003143b7449ffsm14732480wrm.25.2023.08.02.02.26.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Aug 2023 02:26:47 -0700 (PDT)
+From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
+To:     linux-clk@vger.kernel.org
+Cc:     tsbogend@alpha.franken.de, sboyd@kernel.org,
+        mturquette@baylibre.com, linux-kernel@vger.kernel.org,
+        ndesaulniers@google.com, kernel test robot <lkp@intel.com>
+Subject: [PATCH] clk: ralink: mtmips: quiet unused variable warning
+Date:   Wed,  2 Aug 2023 11:26:47 +0200
+Message-Id: <20230802092647.3000666-1-sergio.paracuellos@gmail.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.103.91]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpemm500007.china.huawei.com (7.185.36.183)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Use for_each_compatible_node() instead of open-coding it.
+When CONFIG_OF is disabled then the matching table is not referenced and
+the following warning appears:
 
-Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+drivers/clk/ralink/clk-mtmips.c:821:34: warning: unused variable 'mtmips_of_match' [-Wunused-const-variable]
+821 |   static const struct of_device_id mtmips_of_match[] = {
+    |                          ^
+
+Silence it declaring 'mtmips_of_match' with '__maybe_unused'.
+
+Fixes: 6f3b15586eef ("clk: ralink: add clock and reset driver for MTMIPS SoCs")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202307242310.CdOnd2py-lkp@intel.com/
+Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
 ---
- drivers/clk/renesas/r9a06g032-clocks.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/clk/ralink/clk-mtmips.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
-index 55db63c7041a..9a50166c02b9 100644
---- a/drivers/clk/renesas/r9a06g032-clocks.c
-+++ b/drivers/clk/renesas/r9a06g032-clocks.c
-@@ -1269,11 +1269,10 @@ static void r9a06g032_clocks_del_clk_provider(void *data)
+diff --git a/drivers/clk/ralink/clk-mtmips.c b/drivers/clk/ralink/clk-mtmips.c
+index 1e7991439527..6716394b28a3 100644
+--- a/drivers/clk/ralink/clk-mtmips.c
++++ b/drivers/clk/ralink/clk-mtmips.c
+@@ -820,7 +820,7 @@ static const struct mtmips_clk_data mt76x8_clk_data = {
+ 	.num_clk_periph = ARRAY_SIZE(mt76x8_pherip_clks),
+ };
  
- static void __init r9a06g032_init_h2mode(struct r9a06g032_priv *clocks)
- {
--	struct device_node *usbf_np = NULL;
-+	struct device_node *usbf_np;
- 	u32 usb;
- 
--	while ((usbf_np = of_find_compatible_node(usbf_np, NULL,
--						  "renesas,rzn1-usbf"))) {
-+	for_each_compatible_node(usbf_np, NULL, "renesas,rzn1-usbf") {
- 		if (of_device_is_available(usbf_np))
- 			break;
- 	}
+-static const struct of_device_id mtmips_of_match[] = {
++static const __maybe_unused struct of_device_id mtmips_of_match[] = {
+ 	{
+ 		.compatible = "ralink,rt2880-sysc",
+ 		.data = &rt2880_clk_data,
 -- 
 2.25.1
 
