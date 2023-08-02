@@ -2,264 +2,199 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9454C0015E
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Aug 2023 22:25:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63098EB64DD
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Aug 2023 01:25:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231887AbjHAWZU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Aug 2023 18:25:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43754 "EHLO
+        id S229693AbjHBBZg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Aug 2023 21:25:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231922AbjHAWZS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Aug 2023 18:25:18 -0400
-Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BEAFE70
-        for <linux-clk@vger.kernel.org>; Tue,  1 Aug 2023 15:25:16 -0700 (PDT)
-Received: by mail-pf1-x433.google.com with SMTP id d2e1a72fcca58-6874d1c8610so1443497b3a.0
-        for <linux-clk@vger.kernel.org>; Tue, 01 Aug 2023 15:25:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1690928716; x=1691533516;
-        h=in-reply-to:from:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=pddKELJvbwmk5O0RgoTOKL6eQxzzw3pKZfqHhN4oi6U=;
-        b=Li4b39VdGhllWgKE8Yqczl4hrEcSuJPCzDKeEmo4/XU/H8k8b4MiacF2kbqNxNkcvk
-         jh3SATj7vA46BQnPQDkjV9uxkGeexJWsm1yo/6wkovxzKuewyGMVCa1+yhrXPSLRXpl2
-         xbSHJkDF2189AehJzODt9TGQcFegqIUgHOroM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690928716; x=1691533516;
-        h=in-reply-to:from:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pddKELJvbwmk5O0RgoTOKL6eQxzzw3pKZfqHhN4oi6U=;
-        b=V2y/KgM/7o0zJpprhhrygRvG9JqbNNaXuQkaVdKDrIE8r4zLveJbCRBMNelk4Q0wF6
-         6P2wp7oN+prscpDxypvzLQbGHZ7YfV3m1Ihvisdgpn8isW6UyScFH5nHFYLq9DQ6yeIn
-         Ssg+0lYcaZ4eEnRQoIzdmmpAgQqzX1+9h5nm77E1RJB9Rj1DJQhqh7dXDgjnt1MMnYxp
-         sQnguLLe3ZiaSEby3FrtVJY0Sc5SOKRjKosb/3YE5E3/GP3/JQA7v2uyO6FemAo18szw
-         I/z3afeEYv943LHUDKTcv9tPrLPCeVmQRu31nJyBfmn32AwqRtk3tcFY/8frFxilmMp0
-         aoaA==
-X-Gm-Message-State: ABy/qLZ9V+D+BS3pRxH/sKd3M7isqCazO68L0BmqQmPn0POGbjg9eHh2
-        v9ZzKdBvVKfiRH9DAQbuUDxK1A==
-X-Google-Smtp-Source: APBJJlEN+EnFB28PvfkiYEJLKzgFgJRH1Z16xAA/wJRGmeKtk1J7iwtw5AJ+LtZKYQynaFLvUHiXQA==
-X-Received: by 2002:a05:6a21:7895:b0:132:1e76:6f02 with SMTP id bf21-20020a056a21789500b001321e766f02mr15774247pzc.34.1690928715632;
-        Tue, 01 Aug 2023 15:25:15 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id s4-20020aa78284000000b00679a4b56e41sm7536622pfm.43.2023.08.01.15.25.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Aug 2023 15:25:15 -0700 (PDT)
-Message-ID: <8fcbe485-ce6b-c500-56da-77cae0c872ff@broadcom.com>
-Date:   Tue, 1 Aug 2023 15:25:09 -0700
+        with ESMTP id S231229AbjHBBZd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Aug 2023 21:25:33 -0400
+Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-he1eur04on2057.outbound.protection.outlook.com [40.107.7.57])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67005269A;
+        Tue,  1 Aug 2023 18:25:31 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=JQc3DYT+dwOVbz6TImXhTL4EHSVgVvHS+a/Fo3OtGg6dIfG1xxvVwH3lH5711XX+1kxU13j0fqPmxAtTKRCWTUAxoCEa5HV9jLApqYEL254ICd7H2fzQH+F0pohAdAGOyb4/rYKYqk2cHD3uZz2lmJE3CGOemyFt8F5MSUNKjFNkhpl56TQmSOzTy1z5MkfhetKP8PUXqkb7sRHQNHG6fEbZkgPGNkSOCP8NaOoB/y9VPs6ClRQLr4y/52QbIDr3WmiztNJRKRJKLooO78jthlQemnSMJlIywSKrmERDDR+IGScfnKzztbiBlzb1pfPMwRKzgDrPyZrDEiDCrt2ylg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cxIDSCI9msoKyZ5L/931XlKP0XLcnvQ7Coporw/iTEY=;
+ b=lIzmjw1F9iYRcCJ8f+n3nxRbGMtTqArSBINdcR+G4+fF37raSuG335641PIxxVS5OEX52B5MYEk5dwWtvIjkPnWYvYk3h+bv9vGTO4Wy5UG42B8YrDfJ9JnM6LXvsMHZscsWOIrDdjaOf7lQL+n0Ob+ttBQBFuWwJcSxoE9M1rssD+DZTojcVPNa1YxEK7SxpMpdupL7yu1q+b0SxoXOHWXiS1VGBVdI3ob3rKGbsPQV+zI0qCZTUElofDU9ql+StoFOaFvVum/9a59Nqb4aDy2b4pT+5v5rry2ay8klodCnagp8wYseIdSHdmaApgQbJrmUTvRijwOYLY42ppmtRQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cxIDSCI9msoKyZ5L/931XlKP0XLcnvQ7Coporw/iTEY=;
+ b=DN0cZHQ0eXa/u70MKCuVchXJcMtU7miBocnnFCxwm8wUruW7RMUo6C/+3vn6KwrCdmYxrU9YVmheSXaGq2YKp+qqOXepaTSvj2DA+d+G1lmG86+Jbi8OizVzSqYFIb3V3gvilsJTCio64ouoKU61tT1yaCOx6rlDYkE0MD35cMo=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
+ by DBBPR04MB7929.eurprd04.prod.outlook.com (2603:10a6:10:1ec::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6631.45; Wed, 2 Aug
+ 2023 01:25:27 +0000
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::5d6a:ec53:f2a8:5b97]) by DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::5d6a:ec53:f2a8:5b97%6]) with mapi id 15.20.6631.045; Wed, 2 Aug 2023
+ 01:25:27 +0000
+Message-ID: <092bddfa-ff9d-ab57-63ed-e6c0f2e9b550@oss.nxp.com>
+Date:   Wed, 2 Aug 2023 09:25:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [PATCH] clk: imx: composite-8m: avoid glitches when set_rate
+ would be a no-op
+To:     Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20230801162731.3278396-1-a.fatoum@pengutronix.de>
+From:   Peng Fan <peng.fan@oss.nxp.com>
+In-Reply-To: <20230801162731.3278396-1-a.fatoum@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI1PR02CA0058.apcprd02.prod.outlook.com
+ (2603:1096:4:1f5::9) To DU0PR04MB9417.eurprd04.prod.outlook.com
+ (2603:10a6:10:358::11)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: ARM board lockups/hangs triggered by locks and mutexes
-To:     =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-        Waiman Long <longman@redhat.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        linux-clk@vger.kernel.org,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Network Development <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc:     OpenWrt Development List <openwrt-devel@lists.openwrt.org>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>
-References: <CACna6rxpzDWE5-gnmpgMgfzPmmHvEGTZk4GJvJ8jLSMazh2bVA@mail.gmail.com>
-From:   Florian Fainelli <florian.fainelli@broadcom.com>
-In-Reply-To: <CACna6rxpzDWE5-gnmpgMgfzPmmHvEGTZk4GJvJ8jLSMazh2bVA@mail.gmail.com>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-        boundary="00000000000075fed90601e40539"
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU0PR04MB9417:EE_|DBBPR04MB7929:EE_
+X-MS-Office365-Filtering-Correlation-Id: df7b065d-aae6-49d9-c6e6-08db92f75a11
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: byXJtxDqwyu348mtWu6aJfgPDTXmtaAUrgeC1K0HF1gZMbg+ztrvKwee4v/FHmbUAHH2mTU955OrZNZeHUPj/yQS+MCrGBh5mU0M5DREVZ8bo6T+5qDVe8g6v+sZ6ll8vRnYmuEs/YdVaY+IU0WXFWOKTNgkEBqzTPm818dAPJ5biVQROGtJZKyTogbuLyj1WzSXzYf45oih4BT6mgM7/2B+nMMG4f5VpeK51bE84gfN5Efco94il8VTQeVPto7NVtZbgHiKiiZmdwD9o7CYK4Nf88ZHHTyJ8wJ+kBvnaADFjZB4bTrqj6AlzVq8+gv9/hiJM4nsE3k2Akv264nB+e7E9DDl/t2LQnE7XuhPhYOsouwHRtaMiq182B+6GsMnrvt7IaM4Tr8CrARLzGnifOgsITlPmVzL2m5S2hl6joXKt6vK4ZtVEur8jJHwPB8B3sZjfBa6h4EvVzEuG72HzsLX77iTsIP1aQnJQTh6Z5VCKTFjT+Dq4pa97SN4PDDDa+m4LjSQ6iQYCcRrGTRBZlO/dRJVagvSP6Jg+pVfefNog+FaWa15zpdPI19E1Eo6R/IcSyc4sNMCYADduMll1tAgf21LZToYGsewYJ7WkqgXQ7fXGKYArlApddiDMxY15u+r/uV6Rejd3d/4kohEYVm+fgQYKr9FVn1q//M0Idw=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(376002)(366004)(136003)(396003)(346002)(451199021)(2616005)(186003)(6512007)(316002)(86362001)(478600001)(110136005)(38100700002)(66946007)(66556008)(66476007)(6666004)(6486002)(4326008)(31696002)(6506007)(53546011)(921005)(41300700001)(26005)(8676002)(5660300002)(8936002)(2906002)(7416002)(44832011)(83380400001)(31686004)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?YjBrck93aUNOVGlWc3E4M3I1K3VUT3BxZGxzeGJKVmR2SFJteXRnSjJlcHBp?=
+ =?utf-8?B?M3M0aHBZQlhleHJ6MjVjcFp1d1RSRlJWSjQ1NXgwMmwzMnpobktIUGZoU2N3?=
+ =?utf-8?B?c2srbUFMdGg4RVhsS0QrMzJmcVBzN3B5eEhqc0xMc0s5WUd2WU1VRkE2TGgw?=
+ =?utf-8?B?OWlrbXY5L2hFSDZJaGgxV1FYM0VyMmowaGo4U0RsMktQOXV1Y3QrUDVSZW1W?=
+ =?utf-8?B?b3FyNXVIZmpYQVkxSTlKbHQrRTFaMFlxbk4ydWxyc1c4NWJwL21TeDBvUGE2?=
+ =?utf-8?B?elBLR2VuaVprdTRoZjBsN1F2aTNaNGZNN0p6L2NFbjJXVWFPbVlxd0I0UWhU?=
+ =?utf-8?B?UmpTMnBwWWI4R01kVFk5M05KaURBUlB3ZCtxYU4wQ3pSSmo5YjBiU015U29X?=
+ =?utf-8?B?M0haMS8xUFFkUUlkTklyK2hEanFacS9wV2ZrWVlRN29ON29uSGVRdDgxblRy?=
+ =?utf-8?B?bmh3dng5Ykw5YjBlVmdNaDkxa1Bwc3pzVnFOcGpDK21md21IVEJxc09FS3ho?=
+ =?utf-8?B?VlAyMS9nZkZwNzRjOGJKb214ekwzTUFyR1RzbDUvUDEyRVpzMUorVVlQUm91?=
+ =?utf-8?B?OFFmZWpCZ1loM0p0MS9IOVZOSjFrL0dXRWNwdUh2Z1d0MG51Y2RCcGNFUlQw?=
+ =?utf-8?B?ZVNzek45dDlvdk8rMDRLQzFCVVlhNlJXdHdpNjcweFVWdVphMTgrQi9QUlAy?=
+ =?utf-8?B?MnJqV1B4QmRNNUNLSXlHb2VxcFVyMEhRZEY0QWp4Z2pqM2lOSEpkU0R0RGk4?=
+ =?utf-8?B?STFEZ0p6ajUyY3Z5RzcveHJ2TWFxVm15WExCbkZURkpuSG9jMXAxNkwyTFA0?=
+ =?utf-8?B?aFVOci9sYk1IcHk3Y2NmVzJuQWpXekRvcTJUMjQzMVByUnkzK0IvQ2VIekk5?=
+ =?utf-8?B?Uk9zYUJGYTdIb1FYRmkwUGsvM0tEY0VDdVd3bWZWbno0b1E0TGNwYk1Nbkt5?=
+ =?utf-8?B?QU9pN0RFM1dOMVhJWEt1RHpFVW1LM3BjY0I2R1o3MXlta1Y0L1F5T3MwNkl5?=
+ =?utf-8?B?NTJaN3JvU3BaYVBuZjFZL1p4VFNwWHdGcEt1d3FKL3dLN0RxODYyRU9nZ1o1?=
+ =?utf-8?B?R05Nc3Boc1NQa0U4Vmc0VDdtcEJhRXJpakx6Q2svbDJsZFhwelg0bDVGQUFo?=
+ =?utf-8?B?SktvcnJyNUIxZTMvSkJYclAvRDM1MlppeHdkL1Jzc1dlcjRRZlhkRFRBajRm?=
+ =?utf-8?B?ck8rSjF6UlB5WURSZ0FsZXczZVVCU242V3lrV0NHNTdqN1lVYTgvNVdpRlFE?=
+ =?utf-8?B?UG1EUUVKK0JQek5xUStCTDJyYlNVQ2JqR0grbmxadjZYUjYzRS9pZmQ2dlVp?=
+ =?utf-8?B?L2xacUhHZnVPVlgrT1o2c0JKbUd3NEJmNTY0WFQvWEF4WElFUStDL09TbGk0?=
+ =?utf-8?B?cEhLTGdDUTkwdTlMVitGY0YyWHlpbGhEOWEzazQvMDU5ekQ4OWJBa0NKV3Zh?=
+ =?utf-8?B?OVE4aE9hVFdYVnNFV2tldjNFMDhhd2lOUzdxVlR3Y3RFblBJNEIxdFByWU1T?=
+ =?utf-8?B?RlFNcFlYNFhXbTZrdGxYaHcyRHhqZkliK0s0TjF3REZ6TnkrbTlTM0hySk9G?=
+ =?utf-8?B?UG9sWHJRcHdCN3VwZ29NbTBmR3FWT1dORytDQk43bXM5TVRvQ3dRNEw1VU9L?=
+ =?utf-8?B?U1B1b2NEWGZHL1NJOHlHZHNUay9MRHdMQUVhdFNyQ00yTkVUcmdVcEc1MjBW?=
+ =?utf-8?B?SFB6L3h6djhDYUQ3dlFrVEhCcStmUERpamhjamFUZkJVQ29vdHJadXRIZkwr?=
+ =?utf-8?B?ZlkwQVJSeGgzQW03MytHbmwyZGNHWjc5d2trVm1SVWRrNFZPMUdFd2xpTDhl?=
+ =?utf-8?B?Q0pyM2xhdjYwNFFRYVlyWWRSQ3hzalAyZy9rL0RlbmhFeWltWTlkM1BFeUhT?=
+ =?utf-8?B?U2pZVG1WRFFycDkzWDFySGU2QktaRWgybEVJb0ZrbEY2eFM2dWpxU2s2dTlw?=
+ =?utf-8?B?TDkreXNkYnNTblNzSTdTS2NyVDJ6ODF5dmlHS3VLTExMRGNGcGk4ZGFtdm9S?=
+ =?utf-8?B?Wkt5WkFWS25PejVEZDFPWTBOWVF2UktLc2V3ZzRNRG14clgyTW54Z3JiK1lG?=
+ =?utf-8?B?ZXN2Z0FJUzhmdERtZ04zeG9WRUVBbjRpcGpHbVZNU2pxaEU1aldvQjQ1N0tx?=
+ =?utf-8?Q?KcsMbnb805bTw0L0fs5Lf3Juh?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: df7b065d-aae6-49d9-c6e6-08db92f75a11
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Aug 2023 01:25:27.2453
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: RrtPx/YOyK9hnxAse5GJOko0k6pSy9AsOoS0EkZYBKwEpduwrzTf5sS8DMa1InoKiLTUxBzc41zW7F+prXgYUQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7929
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
---00000000000075fed90601e40539
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-
-Hi Rafal,
-
-On 8/1/23 15:10, Rafał Miłecki wrote:
-> Hi,
-> 
-> Years ago I added support for Broadcom's BCM53573 SoCs. We released
-> firmwares based on Linux 4.4 (and later on 4.14) that worked almost
-> fine. There was one little issue we couldn't debug or fix: random hangs
-> and reboots. They were too rare to deal with (most devices worked fine
-> for weeks or months).
-> 
-> Recently I updated my stable kernel 5.4 and I started experiencing
-> stability issues on my own! After some uptime (usually from 0 to 20
-> minutes of close to zero activity) serial console hangs. I can't type
-> anything and I stop getting any messages. I've to wait about a minute
-> for watchdog to kick in and reboot device.
-> 
-> #####
-> 
-> I took that great chance and decided to track the regression.
-> 
-> Linux 5.4 stable branch worked stable up to the release v5.4.197.
-> Starting with v5.4.198 I started experiencing those stability issues. I
-> bisected it down to the commit 4460066eb248 ("ipv6: fix locking issues
-> with loops over idev->addr_list"):
-> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=linux-5.4.y&id=4460066eb2480b9e203c73755e12e2efc820a27e
-> 
-> With above commit reverted I was able to use stable 5.4 branch up to the
-> release v5.4.207. Starting with v5.4.208 it got unstable again. I
-> bisected it down to:
-> commit d0d583484d2e ("locking/refcount: Consolidate implementations of
-> refcount_t")
-> commit dab787c73f6e ("locking/refcount: Consolidate
-> REFCOUNT_{MAX,SATURATED} definitions")
-> commit 0d3182fbe689 ("locking/refcount: Move saturation warnings out of line")
-> commit 809554147d60 ("locking/refcount: Improve performance of generic
-> REFCOUNT_FULL code")
-> commit 9c9269977f03 ("locking/refcount: Move the bulk of the
-> REFCOUNT_FULL implementation into the <linux/refcount.h> header")
-> commit 04bff7d7b808 ("locking/refcount: Remove unused
-> refcount_*_checked() variants")
-> commit 513b19a43bec ("locking/refcount: Ensure integer operands are
-> treated as signed")
-> commit 68b4ee68e8c8 ("locking/refcount: Define constants for
-> saturation and max refcount values")
-> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=linux-5.4.y&id=d0d583484d2ed9f5903edbbfa7e2a68f78b950b0
-> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=linux-5.4.y&id=dab787c73f6e38d8e7ed3c1e683385e8f0fe28a2
-> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=linux-5.4.y&id=0d3182fbe689e3808c03b6cde6be98237f9e0a4a
-> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=linux-5.4.y&id=809554147d609163cfbaf815c443c575b538a7ef
-> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=linux-5.4.y&id=9c9269977f03ab9c448c8b71581a951e0eb4fb7b
-> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=linux-5.4.y&id=04bff7d7b8081c4bb2e8171be31d33df297eee5b
-> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=linux-5.4.y&id=513b19a43becee5f7af6d283bb9d3d241a8a21a8
-> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=linux-5.4.y&id=68b4ee68e8c8800cf8d6b61cc74b4031a0742a4c
-> (I didn't actually check above commits individually).
-> 
-> Reverting above locking/refcount commits worked fine for few releases:
-> up to the v5.4.219. Starting with v5.4.220 I got hangs again. I bisected
-> that down to the commit 131287ff833d ("once: add DO_ONCE_SLOW() for
-> sleepable contexts").
-> 
-> Reverting that extra commit from v5.4.238 allows me to run Linux for
-> hours again (currently 3 devices x 6 hours and counting). So I need in
-> total 10+1 reverts from 5.4 branch to get a stable kernel.
-> 
-> #####
-> 
-> I'm clueless at this point. Is that possible kernel has some locking bug
-> I can hit only using this specific SoC? BCM53573s have a single ARM
-> Cortex-A7 CPU running at 900 MHz. The only unusual thing about this hw I
-> can think of is a slow arch timer running at 36,8 kHz.
-
- From the look of it, it seems like the CPU might have bugs with atomics?
-
-Your log indicates that your Cortex-A7 is r0p5 which is described to be 
-susceptible to ARM_ERRATA_814220, do you have it enabled by any chance, 
-if not, can you enable it and see if makes any difference?
-
-> 
-> I tried compiling kernel with:
-> CONFIG_SOFTLOCKUP_DETECTOR=y
-> CONFIG_DETECT_HUNG_TASK=y
-> CONFIG_WQ_WATCHDOG=y
-> but it didn't change or report anything.
-> 
-> Unfortunately enabling *any* of following options:
-> CONFIG_DEBUG_RT_MUTEXES=y
-> CONFIG_DEBUG_SPINLOCK=y
-> CONFIG_DEBUG_MUTEXES=y
-> seems to make locksup/hangs go away. I tried for few hours.
-> 
-> Sadly I don't have access to JTAG or any low level debugging interface.
-> 
-> Does looking at commits I reported above give anyone a hint on what may
-> be going on maybe?
-> 
-
--- 
-Florian
 
 
---00000000000075fed90601e40539
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+On 8/2/2023 12:27 AM, Ahmad Fatoum wrote:
+> Reconfiguring the clock divider to the exact same value is observed
+> on an i.MX8MN to often cause a short clock pause, probably because
+> the divider restarts counting from the time the register is written.
+> 
+> This issue doesn't show up normally, because the clock framework will
+> take care to not call set_rate when the clock rate is the same.
+> However, when we configure an upstream clock (e.g. an audio_pll), the
+> common code will call set_rate with the newly calculated rate on all
+> children. As the new rate is different, we enter set_rate and compute
+> the same divider values, write them back and cause the glitch (e.g.
+> on a SAI's MCLK).
 
-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
-riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
-QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
-UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
-M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
-Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
-14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
-a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
-XzCCBVgwggRAoAMCAQICDBP8P9hKRVySg3Qv5DANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
-RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
-UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAxMjE4MTFaFw0yNTA5MTAxMjE4MTFaMIGW
-MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
-BgNVBAoTDUJyb2FkY29tIEluYy4xGTAXBgNVBAMTEEZsb3JpYW4gRmFpbmVsbGkxLDAqBgkqhkiG
-9w0BCQEWHWZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tMIIBIjANBgkqhkiG9w0BAQEFAAOC
-AQ8AMIIBCgKCAQEA+oi3jMmHltY4LMUy8Up5+1zjd1iSgUBXhwCJLj1GJQF+GwP8InemBbk5rjlC
-UwbQDeIlOfb8xGqHoQFGSW8p9V1XUw+cthISLkycex0AJ09ufePshLZygRLREU0H4ecNPMejxCte
-KdtB4COST4uhBkUCo9BSy1gkl8DJ8j/BQ1KNUx6oYe0CntRag+EnHv9TM9BeXBBLfmMRnWNhvOSk
-nSmRX0J3d9/G2A3FIC6WY2XnLW7eAZCQPa1Tz3n2B5BGOxwqhwKLGLNu2SRCPHwOdD6e0drURF7/
-Vax85/EqkVnFNlfxtZhS0ugx5gn2pta7bTdBm1IG4TX+A3B1G57rVwIDAQABo4IB3jCCAdowDgYD
-VR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZCaHR0cDovL3NlY3Vy
-ZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3J0MEEG
-CCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWdu
-MmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93
-d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNVHR8EQjBAMD6gPKA6
-hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNy
-bDAoBgNVHREEITAfgR1mbG9yaWFuLmZhaW5lbGxpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggr
-BgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUUwwfJ6/F
-KL0fRdVROal/Lp4lAF0wDQYJKoZIhvcNAQELBQADggEBAKBgfteDc1mChZjKBY4xAplC6uXGyBrZ
-kNGap1mHJ+JngGzZCz+dDiHRQKGpXLxkHX0BvEDZLW6LGOJ83ImrW38YMOo3ZYnCYNHA9qDOakiw
-2s1RH00JOkO5SkYdwCHj4DB9B7KEnLatJtD8MBorvt+QxTuSh4ze96Jz3kEIoHMvwGFkgObWblsc
-3/YcLBmCgaWpZ3Ksev1vJPr5n8riG3/N4on8gO5qinmmr9Y7vGeuf5dmZrYMbnb+yCBalkUmZQwY
-NxADYvcRBA0ySL6sZpj8BIIhWiXiuusuBmt2Mak2eEv0xDbovE6Z6hYyl/ZnRadbgK/ClgbY3w+O
-AfUXEZ0xggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52
-LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwT
-/D/YSkVckoN0L+QwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEICQwEu4WDP0ATx8W
-OI8/zYQJ8QtOKzMLI5xAYn/i4xdoMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcN
-AQkFMQ8XDTIzMDgwMTIyMjUxNlowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZI
-AWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEH
-MAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQCRHTfzcO0UzzyDQWQglUj4lXAzL8o5U/2A
-oxrz2DpOkz9RZE6ooDi4Qf/0VHzcu9mFPJbMxbk7KtKLMQChI/2yeOpCN+YYI4RnKRZt8DuIrlnY
-K+/Sgld1T5+Jrp/IF+NjSNSWTZLEzs5pUUgnbm+kNKxyPDtl1NGIc5cY49KOeblFDP+dgcTwjJDl
-RUpZaN63OA1yh10rsqyOCf1ItukGVBVGxVO9DEUK1h/V9DO3fwmuhfcv4jWZv+/zK3dolKjh0yIu
-AirHAM4i8rjjjJkAK3qIPYB5uzq2B/2dP4Qd6Z4oBhdswUXeObxH2n/11sDYOl8e74BynE/yPpYX
-tDEc
---00000000000075fed90601e40539--
+
+The CCM root has glitch-free mux. When upstream pll freq change,
+the child set rate will also touch the mux bit, since div and mux
+in one register, so the mux logic will also function.
+
+Per design, it is glitch free, so I not understand well why glitch.
+
+When you configure pll, the downstream sai clk should still not be 
+enabled, right?
+
+Thanks,
+Peng.
+
+> 
+> To avoid the glitch, we skip writing the same value back again.
+> 
+> Fixes: d3ff9728134e ("clk: imx: Add imx composite clock")
+> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+> ---
+>   drivers/clk/imx/clk-composite-8m.c | 12 +++++++-----
+>   1 file changed, 7 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-composite-8m.c
+> index cbf0d7955a00..3e9a092e136c 100644
+> --- a/drivers/clk/imx/clk-composite-8m.c
+> +++ b/drivers/clk/imx/clk-composite-8m.c
+> @@ -97,7 +97,7 @@ static int imx8m_clk_composite_divider_set_rate(struct clk_hw *hw,
+>   	int prediv_value;
+>   	int div_value;
+>   	int ret;
+> -	u32 val;
+> +	u32 orig, val;
+>   
+>   	ret = imx8m_clk_composite_compute_dividers(rate, parent_rate,
+>   						&prediv_value, &div_value);
+> @@ -106,13 +106,15 @@ static int imx8m_clk_composite_divider_set_rate(struct clk_hw *hw,
+>   
+>   	spin_lock_irqsave(divider->lock, flags);
+>   
+> -	val = readl(divider->reg);
+> -	val &= ~((clk_div_mask(divider->width) << divider->shift) |
+> -			(clk_div_mask(PCG_DIV_WIDTH) << PCG_DIV_SHIFT));
+> +	orig = readl(divider->reg);
+> +	val = orig & ~((clk_div_mask(divider->width) << divider->shift) |
+> +		       (clk_div_mask(PCG_DIV_WIDTH) << PCG_DIV_SHIFT));
+>   
+>   	val |= (u32)(prediv_value  - 1) << divider->shift;
+>   	val |= (u32)(div_value - 1) << PCG_DIV_SHIFT;
+> -	writel(val, divider->reg);
+> +
+> +	if (val != orig)
+> +		writel(val, divider->reg);
+>   
+>   	spin_unlock_irqrestore(divider->lock, flags);
+>   
