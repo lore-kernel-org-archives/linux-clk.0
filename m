@@ -2,120 +2,124 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04B3CC04A6A
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Aug 2023 10:28:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C814C04A6A
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Aug 2023 10:58:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234641AbjHCK2g (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Aug 2023 06:28:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59378 "EHLO
+        id S235408AbjHCK60 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Aug 2023 06:58:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235128AbjHCK2e (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Aug 2023 06:28:34 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A3D02D5F
-        for <linux-clk@vger.kernel.org>; Thu,  3 Aug 2023 03:28:28 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-99bccc9ec02so116212166b.2
-        for <linux-clk@vger.kernel.org>; Thu, 03 Aug 2023 03:28:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691058506; x=1691663306;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=i049ZInOq2yluY7bnih0rFbUzwff8GQ7+pLs9TQtg4c=;
-        b=SBnEj775OYQGYsstUJRhRWBZ+LMYPsAxiMuRgw6FuxZlyBi31UWblxpPdOH3lnhPWI
-         UjaRU3vAA/Od0zguMOpIOnoPVCl8aU+MbLhWoyfqValEr0VNRe3x2IEpbBGzdx6a0k7n
-         NdCP/A3zaZeh+5A+cCRZdTzd23JACuornyv+82pmdGHvGTY+TdcbHKMeKXRblZHwg4lN
-         tGkmv76brL+vM7Xjf+tv3oZhln56PnJyQI4JTffuyXwe67YrbvCqUbcY4jfzjeEr75B9
-         NzPSp97EFemO926P8VGO2K2PUb0M4n4gG/KHn4EoOGbsXw1sD3i1sxFwudtl/svNIdDV
-         DZZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691058506; x=1691663306;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=i049ZInOq2yluY7bnih0rFbUzwff8GQ7+pLs9TQtg4c=;
-        b=kN33K4bEyQCFFBPMCWFSMI6qpswKk2MBissTB1AZE7VBvdPbJXb0L9PJ7hkJ6SE7mu
-         DhYitzZnMV0r+sFLv2jEtyIUHrDhXF8iGTuOZcm2n93uPs//xvFmq3RgLZfNWAHIx+Pw
-         dM2ohYubE1MYPiv+0GucfXFCJvZmCved4ALftg7gznYMLUG9YeAJLY0mHIKmwsnOiDaI
-         /mL3ned6jHqWFx+On6aSR5UtINSprXC/mdVCn/6P/yjxkIPPEH9QXn5VzqVy4PhA3Cev
-         HMh8yixCj+Ds0U//hLaI/L72ERx/QNBI5CTyjiqOWpFaEv1+EmS+g5W2xoakxfBfrRhu
-         rtCw==
-X-Gm-Message-State: ABy/qLaxbfZwxQzsIQmRD+G6FiTLMyjBBGrxBAL47Gt06uOaBJdqHqwS
-        XAAO5uJiPSyu/k63/j8eHL0vxw==
-X-Google-Smtp-Source: AGHT+IGU0fbx2qHT6v2F9ZfYl+51nPklKjasjpEt33Gk06n04Bpcu4ndxE96TZ9OMlprDL2+kWBiFw==
-X-Received: by 2002:a17:906:51ca:b0:99c:56d1:7c71 with SMTP id v10-20020a17090651ca00b0099c56d17c71mr2732850ejk.26.1691058506577;
-        Thu, 03 Aug 2023 03:28:26 -0700 (PDT)
-Received: from localhost (h3221.n1.ips.mtn.co.ug. [41.210.178.33])
-        by smtp.gmail.com with ESMTPSA id i18-20020a170906115200b00992665694f7sm10291915eja.107.2023.08.03.03.28.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Aug 2023 03:28:26 -0700 (PDT)
-Date:   Thu, 3 Aug 2023 13:28:20 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     daniel@0x0f.com
-Cc:     linux-clk@vger.kernel.org
-Subject: [bug report] clk: mstar: MStar/SigmaStar MPLL driver
-Message-ID: <c1e89c69-3ddf-4a02-bd79-72872e42c01a@moroto.mountain>
+        with ESMTP id S232154AbjHCK6W (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Aug 2023 06:58:22 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF4201AB;
+        Thu,  3 Aug 2023 03:58:20 -0700 (PDT)
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3737707x007072;
+        Thu, 3 Aug 2023 10:58:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=qcppdkim1;
+ bh=JcecF8mLd6NgooXMFFgDYR6KkurfXYyV6RGucJK0uP4=;
+ b=g9KL8lPI9KK6HuJ9ZOPlXKOifD29ebDitYP+f5MaO9uSMzgbfACa2QXjGARvl6abPBrC
+ uU5wEjge8pa70tZu6DdOzjvk4o3PkmeylFT7D35uaQyaMg60IknhXhitSOkuBn3Hm0Xi
+ PA3Va0rIrPm4t7eNM6Ki/Txes1J1KVpm8r2fi+ha8Lv3elROmL9l0z78V+1eRXqDw7Ma
+ uSxeXPvdVEK36i+S7FUPkGG9y0okZaYBxosqHlpwP7t37ca6QG55AOjA2aS9DfTH9r4G
+ aAg00hqNkx9/RIG0qqF/8e93U5ZgeT+fTWRlPThGPXEr1zFNOig7UEBdVj5QuK/d6M4g nw== 
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3s87jhge0u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 03 Aug 2023 10:58:14 +0000
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+        by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 373AwD2p009255
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 3 Aug 2023 10:58:13 GMT
+Received: from hu-imrashai-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.30; Thu, 3 Aug 2023 03:58:07 -0700
+From:   Imran Shaik <quic_imrashai@quicinc.com>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC:     Taniya Das <quic_tdas@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Melody Olvera <quic_molvera@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        "Ajit Pandey" <quic_ajipan@quicinc.com>,
+        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Subject: [PATCH V5 0/8] Update GCC clocks for QDU1000 and QRU1000 SoCs
+Date:   Thu, 3 Aug 2023 16:27:33 +0530
+Message-ID: <20230803105741.2292309-1-quic_imrashai@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Vph3punzd6ZHJQrnQBMqYGsUhnOmwYUs
+X-Proofpoint-ORIG-GUID: Vph3punzd6ZHJQrnQBMqYGsUhnOmwYUs
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-08-03_09,2023-08-03_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 impostorscore=0
+ lowpriorityscore=0 suspectscore=0 mlxlogscore=990 spamscore=0 bulkscore=0
+ priorityscore=1501 mlxscore=0 malwarescore=0 phishscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2306200000
+ definitions=main-2308030098
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Daniel Palmer,
+Update GCC clocks and add support for GDSCs for QDU1000 and QRU1000 SoCs.
 
-The patch bef7a78da716: "clk: mstar: MStar/SigmaStar MPLL driver"
-from Feb 11, 2021 (linux-next), leads to the following Smatch static
-checker warning:
+Changes since v4:
+ - Updated the commit text as per the review comments
+ - Split the gcc_ddrss_ecpri_gsi_clk and gcc_gpll1_out_even clock changes
 
-	drivers/clk/mstar/clk-msc313-mpll.c:134 msc313_mpll_probe()
-	error: buffer overflow 'mpll->clk_data->hws' 7 <= 7
+Changes since v3:
+ - Split the gcc rcg ops changes as per the review comments
 
-drivers/clk/mstar/clk-msc313-mpll.c
-    106 
-    107         mpll->clk_data = devm_kzalloc(dev, struct_size(mpll->clk_data, hws,
-                                                                               ^^^
-    108                         ARRAY_SIZE(output_dividers)), GFP_KERNEL);
-                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-->hws has 7 elements
+Changes since v2:
+ - Split the gcc clkref clock changes as per the review comments
 
-    109         if (!mpll->clk_data)
-    110                 return -ENOMEM;
-    111 
-    112         clk_init.name = dev_name(dev);
-    113         clk_init.ops = &msc313_mpll_ops;
-    114         clk_init.parent_data = &mpll_parent;
-    115         clk_init.num_parents = 1;
-    116         mpll->clk_hw.init = &clk_init;
-    117 
-    118         ret = devm_clk_hw_register(dev, &mpll->clk_hw);
-    119         if (ret)
-    120                 return ret;
-    121 
-    122         mpll->clk_data->num = NUMOUTPUTS;
-    123         mpll->clk_data->hws[0] = &mpll->clk_hw;
-    124 
-    125         for (i = 0; i < ARRAY_SIZE(output_dividers); i++) {
-                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-i is 0-6.
+Changes since v1:
+ - Dropped the v2 variant compatible changes
+ - Update tha maintainers list
+ - Split the GCC driver patch as per the review comments
 
-    126                 outputname = devm_kasprintf(dev, GFP_KERNEL, "%s_div_%u",
-    127                                 clk_init.name, output_dividers[i]);
-    128                 if (!outputname)
-    129                         return -ENOMEM;
-    130                 divhw = devm_clk_hw_register_fixed_factor(dev, outputname,
-    131                                 clk_init.name, 0, 1, output_dividers[i]);
-    132                 if (IS_ERR(divhw))
-    133                         return PTR_ERR(divhw);
---> 134                 mpll->clk_data->hws[i + 1] = divhw;
+Previous series:
+v4 - https://patchwork.kernel.org/project/linux-arm-msm/list/?series=767111
+v3 - https://patchwork.kernel.org/project/linux-arm-msm/list/?series=763044
+v2 - https://patchwork.kernel.org/project/linux-arm-msm/list/?series=760862
+v1 - https://patchwork.kernel.org/project/linux-arm-msm/list/?series=757828
 
-Off by one.  Why is this i + 1 instead of just i?
+Imran Shaik (8):
+  dt-bindings: clock: Update GCC clocks for QDU1000 and QRU1000 SoCs
+  clk: qcom: gcc-qdu1000: Fix gcc_pcie_0_pipe_clk_src clock handling
+  clk: qcom: gcc-qdu1000: Fix clkref clocks handling
+  clk: qcom: gcc-qdu1000: Register gcc_gpll1_out_even clock
+  clk: qcom: gcc-qdu1000: Add gcc_ddrss_ecpri_gsi_clk support
+  clk: qcom: gcc-qdu1000: Add support for GDSCs
+  clk: qcom: gcc-qdu1000: Update the SDCC clock RCG ops
+  clk: qcom: gcc-qdu1000: Update the RCGs ops
 
-    135         }
-    136 
-    137         platform_set_drvdata(pdev, mpll);
-    138 
-    139         return devm_of_clk_add_hw_provider(&pdev->dev, of_clk_hw_onecell_get,
-    140                         mpll->clk_data);
-    141 }
+ .../bindings/clock/qcom,qdu1000-gcc.yaml      |   3 +-
+ drivers/clk/qcom/gcc-qdu1000.c                | 159 ++++++++++++------
+ include/dt-bindings/clock/qcom,qdu1000-gcc.h  |   4 +-
+ 3 files changed, 110 insertions(+), 56 deletions(-)
 
-regards,
-dan carpenter
+-- 
+2.25.1
+
