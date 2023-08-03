@@ -2,79 +2,123 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD4E5C00528
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Aug 2023 11:19:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A89B4C41513
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Aug 2023 12:04:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234709AbjHCLTd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Aug 2023 07:19:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55986 "EHLO
+        id S235728AbjHCMEK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Aug 2023 08:04:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234729AbjHCLTc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Aug 2023 07:19:32 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 203BF127;
-        Thu,  3 Aug 2023 04:19:27 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A802B61D4E;
-        Thu,  3 Aug 2023 11:19:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDD08C433C8;
-        Thu,  3 Aug 2023 11:19:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691061566;
-        bh=yhIowr8i6QfVKk14MdHInqF6hYvcJbNXDLSBxgbwMPI=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=OK7A0R11P2eqw35fQJAUdM9vmjmVDDtwXB6LIqNr+C/RjCYCrDpVcjcmjkMDCwUWl
-         xZ7F17QdwQ8oq8Bum8dp6fbjHDpAv8RnnxboF/7DTP/1s7TcffeBMp8Ajk/ZYsc4n9
-         qYkA6rog4VSbwIBORLT0ILQE9OG9LCLvu0MUAazV3hpF4UU5cyzX/qBhBkUEMKrcI1
-         AVpudaoYitA+TwumW2e7NRR8vDxlOtcVD87oFRFNAiNkxOP2hGcN8y8HQR+9pmGny7
-         EO8PAlvLwiMjiVmZnCkQQnqlzDhaVX4dwhW1LU43/Cti+iiZNZC2ilwF5kmBU96Tam
-         Ztwa6rfBsJy+w==
-Message-ID: <38b2779b-4cb8-3caf-f980-aa656277a7de@kernel.org>
-Date:   Thu, 3 Aug 2023 13:19:19 +0200
+        with ESMTP id S235315AbjHCMEJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Aug 2023 08:04:09 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17B662D6A
+        for <linux-clk@vger.kernel.org>; Thu,  3 Aug 2023 05:04:07 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-3fbea147034so8952885e9.0
+        for <linux-clk@vger.kernel.org>; Thu, 03 Aug 2023 05:04:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1691064245; x=1691669045;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Rfvt+EmrHZv1zbeX+XtXPk6Fy/0gOVGXRVeJ603Il6c=;
+        b=MyHUsgRRMHSkZ6qLbXroIG85T6WWK2ZHKgoQEtUUZ1od5FzypfMMuLf2df2pa9Ns0d
+         0RgOFw8RC8NzLVUWkTHp8sEEJuf2pMQ3njOFjsjfJ2+n3woo1xFIiDVQSAQPXIjK13fz
+         y/4Hzbf1atwfzMbiE5rKvMful6lMlBkSpgXAwjCL2vzV4WgS+6raJ00j6qBFYciWIlLV
+         iv9Ga0x1KWd/5GgEuVQFVuUItjfkUqQJAyuy41U7wPZJDAKwVCOixSy38CUX+UBdeJE5
+         aO6vSLt4ZSYOEXnDd1KMmO6dXXMilm71qTKRvVMazm227YmgO6PPCnjVIPykA/RowZty
+         M3yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691064245; x=1691669045;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Rfvt+EmrHZv1zbeX+XtXPk6Fy/0gOVGXRVeJ603Il6c=;
+        b=Th3sWSmxNPTZWEvGmUCz0qoKmPRzmtDHlRMe9+RfO/KkCdRmfomumwKwlWGNydeKyA
+         MkdVLhHjxeA1EWDIuxiJ435AvT9LVjfC+3gXoSQODB6MopRbMPfa/cWOv/F3MidrQrN3
+         dITvw4gXXIKg56Dn98I/7UlXBApUXzsQ+czqUkKWXyC5plhxtTUi/WLC5ksARMalIm/w
+         J4rN4j2tZWavQM1OcadFU8gCDQTIJRPooqbozxVO/hWpzaoxVBGBQ6WzT/ZkkQ6YOnPJ
+         EA1ynjwKIhASkGaZp+DrijtEadcIyLkCPgcwB3Fea0nMuwGmG5RBqNMmYVcOJYelw9Y3
+         gpnA==
+X-Gm-Message-State: ABy/qLYSKlfP5PqiYxp8TdZxIPlQQsaSF7hNMspsNWTs001c6B44wDz8
+        bCz+jG0pRzXaeF7NcAQm9s+GYA==
+X-Google-Smtp-Source: APBJJlHyl5WYI6N8c8ajSFmQT4ZqGANnisyCQEfMYfWWz8LEKIkaPLA4Ac14e/Ko1++3dxrq9AhIaQ==
+X-Received: by 2002:a05:600c:282:b0:3fc:85c:5ed2 with SMTP id 2-20020a05600c028200b003fc085c5ed2mr7182732wmk.11.1691064245559;
+        Thu, 03 Aug 2023 05:04:05 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id d10-20020a056000114a00b00317046f21f9sm21487465wrx.114.2023.08.03.05.04.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Aug 2023 05:04:05 -0700 (PDT)
+From:   Neil Armstrong <neil.armstrong@linaro.org>
+Date:   Thu, 03 Aug 2023 14:03:55 +0200
+Subject: [PATCH v7 1/9] dt-bindings: clk: g12a-clkc: add CTS_ENCL clock ids
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.1
-Subject: Re: [PATCH v3 3/4] dt-bindings: clock: rk3588: export PCLK_VO1GRF clk
- id
-To:     Elaine Zhang <zhangqing@rock-chips.com>, mturquette@baylibre.com,
-        sboyd@kernel.org, kever.yang@rock-chips.com, heiko@sntech.de
-Cc:     linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-kernel@vger.kernel.org, huangtao@rock-chips.com
-References: <20230802072038.29996-1-zhangqing@rock-chips.com>
- <20230802072038.29996-4-zhangqing@rock-chips.com>
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-In-Reply-To: <20230802072038.29996-4-zhangqing@rock-chips.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20230803-amlogic-v6-4-upstream-dsi-ccf-vim3-v7-1-762219fc5b28@linaro.org>
+References: <20230803-amlogic-v6-4-upstream-dsi-ccf-vim3-v7-0-762219fc5b28@linaro.org>
+In-Reply-To: <20230803-amlogic-v6-4-upstream-dsi-ccf-vim3-v7-0-762219fc5b28@linaro.org>
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Nicolas Belin <nbelin@baylibre.com>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        dri-devel@lists.freedesktop.org,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=761;
+ i=neil.armstrong@linaro.org; h=from:subject:message-id;
+ bh=OBDzXE6zqX89kc7pvzy4CIEH7gf5glqDzs5WzIgtsF0=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBky5evPqlyqm2PHjNKCgp/BXcAaRArzuGQt1FzLmzh
+ IYCgxKSJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZMuXrwAKCRB33NvayMhJ0TAlEA
+ C8/B9GuS3bdWQiUB/DwPVUIrv6jpMVkEuWwOY+3i31cD13nkHcb7O4C6Ld9WZbE94JrqeKg0/t9+iL
+ JsdOzdf6971IiUC5SwHTtSVEHjxPbFzkOubk/eeoTJkxGRF/MsYM0iAg+rvNzbeTaxVF/9AtKrwriM
+ 9OzyJBguvh9wmnESKYRY0cSLznjvA+GxVDPHIzAYHDPLX3LJJ0cfpAx8JjEzx0PNWRjww7FGpm+zVa
+ FYfy9EDQ6OQ06WQo9vNfskyh5SCBTWnFLvZbcb7/t0v7xncEuhNWtJvuyz6tWYw4yp/oFcmGXgjSFv
+ aUqluT8S0r4sfNH/DGkXvBBpzHMbaNx7Kbdl+eyrrYjP7yu5h+Ig8urwtnW/qiu/myoj4DhwUQwXGo
+ poOC5lpwnkbvAiFmFe3FGf8Hr2SEWuCelnjhfN8yBVKfAYzpJFN4jlCwUid2B/XPT0LDdnTjSnKmOC
+ mzH0kUPdwR7m0g6eUYMW/wEpW00uNwDQgyPbBViE/hZqPg1oXFYG2e/5f7MY7VeQr6IWEq8XPJg7aL
+ 2XYlxslPMFYDCrDabsNy/o5baT4C26V/H1IuYCheOZeS/WHq2kd392DxMb1XwS+Cj+5FsMbJJnBaMh
+ fjX9Kv43/zWgfJnIkL1GE7S7hAnc43MbnztJ7+TvF2D9S0bWJ5X8vEOlMhrg==
+X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
+ fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 02/08/2023 09:20, Elaine Zhang wrote:
-> add PCLK_VO1GRF clk id.
-> 
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> ---
+Add new CLK ids for the CTS_ENCL and CTS_ENCL_SEL clocks
+on G12A compatible SoCs.
 
-v3 and still no improvements:
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+ include/dt-bindings/clock/g12a-clkc.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC. It might happen, that command when run on an older
-kernel, gives you outdated entries. Therefore please be sure you base
-your patches on recent Linux kernel.
+diff --git a/include/dt-bindings/clock/g12a-clkc.h b/include/dt-bindings/clock/g12a-clkc.h
+index 387767f4e298..636d713f95ff 100644
+--- a/include/dt-bindings/clock/g12a-clkc.h
++++ b/include/dt-bindings/clock/g12a-clkc.h
+@@ -279,5 +279,7 @@
+ #define CLKID_MIPI_DSI_PXCLK_DIV		268
+ #define CLKID_MIPI_DSI_PXCLK_SEL		269
+ #define CLKID_MIPI_DSI_PXCLK			270
++#define CLKID_CTS_ENCL				271
++#define CLKID_CTS_ENCL_SEL			272
+ 
+ #endif /* __G12A_CLKC_H */
 
-You missed at least DT list (maybe more), so this won't be tested by
-automated tooling. Performing review on untested code might be a waste
-of time, thus I will skip this patch entirely till you follow the
-process allowing the patch to be tested.
-
-Please kindly resend and include all necessary To/Cc entries.
-
-
-Best regards,
-Krzysztof
+-- 
+2.34.1
 
