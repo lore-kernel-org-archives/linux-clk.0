@@ -2,72 +2,120 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 932BBC04A94
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Aug 2023 08:27:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04B3CC04A6A
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Aug 2023 10:28:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234578AbjHCI1T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Aug 2023 04:27:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48250 "EHLO
+        id S234641AbjHCK2g (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Aug 2023 06:28:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234539AbjHCI07 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Aug 2023 04:26:59 -0400
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07D7E128;
-        Thu,  3 Aug 2023 01:24:15 -0700 (PDT)
-Received: from dggpemm100007.china.huawei.com (unknown [172.30.72.55])
-        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4RGhdQ2DM5zyNJL;
-        Thu,  3 Aug 2023 16:21:30 +0800 (CST)
-Received: from dggpemm500007.china.huawei.com (7.185.36.183) by
- dggpemm100007.china.huawei.com (7.185.36.116) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.27; Thu, 3 Aug 2023 16:24:13 +0800
-Received: from huawei.com (10.175.103.91) by dggpemm500007.china.huawei.com
- (7.185.36.183) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Thu, 3 Aug
- 2023 16:24:13 +0800
-From:   Yang Yingliang <yangyingliang@huawei.com>
-To:     <linux-clk@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
-CC:     <andersson@kernel.org>, <dmitry.baryshkov@linaro.org>,
-        <neil.armstrong@linaro.org>, <agross@kernel.org>,
-        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <yangyingliang@huawei.com>
-Subject: [PATCH -next] clk: qcom: lcc-msm8960: change pxo_parent_data to static
-Date:   Thu, 3 Aug 2023 16:21:25 +0800
-Message-ID: <20230803082125.521849-1-yangyingliang@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S235128AbjHCK2e (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Aug 2023 06:28:34 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A3D02D5F
+        for <linux-clk@vger.kernel.org>; Thu,  3 Aug 2023 03:28:28 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-99bccc9ec02so116212166b.2
+        for <linux-clk@vger.kernel.org>; Thu, 03 Aug 2023 03:28:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1691058506; x=1691663306;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=i049ZInOq2yluY7bnih0rFbUzwff8GQ7+pLs9TQtg4c=;
+        b=SBnEj775OYQGYsstUJRhRWBZ+LMYPsAxiMuRgw6FuxZlyBi31UWblxpPdOH3lnhPWI
+         UjaRU3vAA/Od0zguMOpIOnoPVCl8aU+MbLhWoyfqValEr0VNRe3x2IEpbBGzdx6a0k7n
+         NdCP/A3zaZeh+5A+cCRZdTzd23JACuornyv+82pmdGHvGTY+TdcbHKMeKXRblZHwg4lN
+         tGkmv76brL+vM7Xjf+tv3oZhln56PnJyQI4JTffuyXwe67YrbvCqUbcY4jfzjeEr75B9
+         NzPSp97EFemO926P8VGO2K2PUb0M4n4gG/KHn4EoOGbsXw1sD3i1sxFwudtl/svNIdDV
+         DZZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691058506; x=1691663306;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=i049ZInOq2yluY7bnih0rFbUzwff8GQ7+pLs9TQtg4c=;
+        b=kN33K4bEyQCFFBPMCWFSMI6qpswKk2MBissTB1AZE7VBvdPbJXb0L9PJ7hkJ6SE7mu
+         DhYitzZnMV0r+sFLv2jEtyIUHrDhXF8iGTuOZcm2n93uPs//xvFmq3RgLZfNWAHIx+Pw
+         dM2ohYubE1MYPiv+0GucfXFCJvZmCved4ALftg7gznYMLUG9YeAJLY0mHIKmwsnOiDaI
+         /mL3ned6jHqWFx+On6aSR5UtINSprXC/mdVCn/6P/yjxkIPPEH9QXn5VzqVy4PhA3Cev
+         HMh8yixCj+Ds0U//hLaI/L72ERx/QNBI5CTyjiqOWpFaEv1+EmS+g5W2xoakxfBfrRhu
+         rtCw==
+X-Gm-Message-State: ABy/qLaxbfZwxQzsIQmRD+G6FiTLMyjBBGrxBAL47Gt06uOaBJdqHqwS
+        XAAO5uJiPSyu/k63/j8eHL0vxw==
+X-Google-Smtp-Source: AGHT+IGU0fbx2qHT6v2F9ZfYl+51nPklKjasjpEt33Gk06n04Bpcu4ndxE96TZ9OMlprDL2+kWBiFw==
+X-Received: by 2002:a17:906:51ca:b0:99c:56d1:7c71 with SMTP id v10-20020a17090651ca00b0099c56d17c71mr2732850ejk.26.1691058506577;
+        Thu, 03 Aug 2023 03:28:26 -0700 (PDT)
+Received: from localhost (h3221.n1.ips.mtn.co.ug. [41.210.178.33])
+        by smtp.gmail.com with ESMTPSA id i18-20020a170906115200b00992665694f7sm10291915eja.107.2023.08.03.03.28.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Aug 2023 03:28:26 -0700 (PDT)
+Date:   Thu, 3 Aug 2023 13:28:20 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     daniel@0x0f.com
+Cc:     linux-clk@vger.kernel.org
+Subject: [bug report] clk: mstar: MStar/SigmaStar MPLL driver
+Message-ID: <c1e89c69-3ddf-4a02-bd79-72872e42c01a@moroto.mountain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.103.91]
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemm500007.china.huawei.com (7.185.36.183)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The pxo_parent_data inroduced in commit bac4675a4d1b ("clk: qcom:
-drop lcc-mdm9615 in favour of lcc-msm8960") is only used in lcc-msm8960.c
-now, change it to static.
+Hello Daniel Palmer,
 
-Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
----
- drivers/clk/qcom/lcc-msm8960.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The patch bef7a78da716: "clk: mstar: MStar/SigmaStar MPLL driver"
+from Feb 11, 2021 (linux-next), leads to the following Smatch static
+checker warning:
 
-diff --git a/drivers/clk/qcom/lcc-msm8960.c b/drivers/clk/qcom/lcc-msm8960.c
-index c13a837a6d99..e725e7b9c456 100644
---- a/drivers/clk/qcom/lcc-msm8960.c
-+++ b/drivers/clk/qcom/lcc-msm8960.c
-@@ -22,7 +22,7 @@
- #include "clk-regmap-divider.h"
- #include "clk-regmap-mux.h"
- 
--struct clk_parent_data pxo_parent_data = {
-+static struct clk_parent_data pxo_parent_data = {
- 	.fw_name = "pxo", .name = "pxo_board",
- };
- 
--- 
-2.25.1
+	drivers/clk/mstar/clk-msc313-mpll.c:134 msc313_mpll_probe()
+	error: buffer overflow 'mpll->clk_data->hws' 7 <= 7
 
+drivers/clk/mstar/clk-msc313-mpll.c
+    106 
+    107         mpll->clk_data = devm_kzalloc(dev, struct_size(mpll->clk_data, hws,
+                                                                               ^^^
+    108                         ARRAY_SIZE(output_dividers)), GFP_KERNEL);
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+->hws has 7 elements
+
+    109         if (!mpll->clk_data)
+    110                 return -ENOMEM;
+    111 
+    112         clk_init.name = dev_name(dev);
+    113         clk_init.ops = &msc313_mpll_ops;
+    114         clk_init.parent_data = &mpll_parent;
+    115         clk_init.num_parents = 1;
+    116         mpll->clk_hw.init = &clk_init;
+    117 
+    118         ret = devm_clk_hw_register(dev, &mpll->clk_hw);
+    119         if (ret)
+    120                 return ret;
+    121 
+    122         mpll->clk_data->num = NUMOUTPUTS;
+    123         mpll->clk_data->hws[0] = &mpll->clk_hw;
+    124 
+    125         for (i = 0; i < ARRAY_SIZE(output_dividers); i++) {
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+i is 0-6.
+
+    126                 outputname = devm_kasprintf(dev, GFP_KERNEL, "%s_div_%u",
+    127                                 clk_init.name, output_dividers[i]);
+    128                 if (!outputname)
+    129                         return -ENOMEM;
+    130                 divhw = devm_clk_hw_register_fixed_factor(dev, outputname,
+    131                                 clk_init.name, 0, 1, output_dividers[i]);
+    132                 if (IS_ERR(divhw))
+    133                         return PTR_ERR(divhw);
+--> 134                 mpll->clk_data->hws[i + 1] = divhw;
+
+Off by one.  Why is this i + 1 instead of just i?
+
+    135         }
+    136 
+    137         platform_set_drvdata(pdev, mpll);
+    138 
+    139         return devm_of_clk_add_hw_provider(&pdev->dev, of_clk_hw_onecell_get,
+    140                         mpll->clk_data);
+    141 }
+
+regards,
+dan carpenter
