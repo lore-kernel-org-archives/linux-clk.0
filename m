@@ -2,53 +2,56 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AB01C04E69
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Aug 2023 16:35:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A373BC04E69
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Aug 2023 16:35:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234622AbjHCQfM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Aug 2023 12:35:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38766 "EHLO
+        id S237268AbjHCQfX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Aug 2023 12:35:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234161AbjHCQfM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Aug 2023 12:35:12 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8043310EA;
-        Thu,  3 Aug 2023 09:35:11 -0700 (PDT)
+        with ESMTP id S236679AbjHCQfV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Aug 2023 12:35:21 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FAE6E77;
+        Thu,  3 Aug 2023 09:35:17 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1578B61E3A;
-        Thu,  3 Aug 2023 16:35:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 812F8C43391;
-        Thu,  3 Aug 2023 16:35:09 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2CF9E61E3A;
+        Thu,  3 Aug 2023 16:35:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FB5EC43140;
+        Thu,  3 Aug 2023 16:35:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691080510;
-        bh=A4FwD5H+bb3JkGJFIRlgZUsJgmXQ78VpOP/Ybb8v82I=;
+        s=k20201202; t=1691080516;
+        bh=G3FOLIfaHoy9tzg1QvyqoSq0xb1ylVr9cA8Be/6Aa04=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NdI2p+cN1TPjrOsk/RL/6mVdf+dWKFxGBAIJgj/UM4NvSQsE+tplSqr6Mv3vN3ht3
-         1ZFcSuoa+mA1R91kCV3kWzWVk65nM3CbMmlS86IxOIbkCunqv1/J8l3ApZx5ZXXKeb
-         POKZUhHteclt2tMxaGk2M8Qz96RNZsbdMCEhwcqwUZ3nZ4t/GrYz3zZCwt2PGNxOMC
-         R7gXd+Oe4qpkjZthjLHtLQRD6PZk2a8ZfsbwibOqvEjh2CI2QBNZth2kI/nwrM/5Sv
-         2WXekoHbGTKkupiduIQNZfV0tlPYqFVgYgmZqJmMuAEb+6wZkdHJ+z/1Dh2KdE+Dwz
-         3+dkFfDsbQjSg==
+        b=gygehvme91Sf5H7MIi14MCcsctKtR+cWv0OE+Uz0LQ1P8P7nVl9dux0olAILFYH/B
+         M6fZxkw+FndYDyBKM9PBkoBWFD27ysd0/692IOdLKBzp17hWsz4UkI5Q4toMTj6iEn
+         +oUqp5b5wJ2f6FylU+Dkek75zNGO3831o7Zyg55qOCZE+oTK/gtoAuWZdPj3KQsBc+
+         N/e7SAlvO0Bfc8jDtX3Je7VkpuF5YdHwIeu24U+jegsVl4mPF+4gM9D6/ZjmCOH/ie
+         Rwso5e7W3KJzkaERGmkvNdhdbXJ9dxHcxeoiqpJ7i8ALOsy4ehtUMTxgCPzUK+OTFb
+         RuVPnYs6QgF/g==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Andy Gross <agross@kernel.org>,
+To:     Andy Gross <agross@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: fix some Kconfig corner cases
-Date:   Thu,  3 Aug 2023 09:38:00 -0700
-Message-ID: <169108064633.108343.3306502053661606417.b4-ty@kernel.org>
+        linux-kernel@vger.kernel.org,
+        Patrick Whewell <patrick.whewell@sightlineapplications.com>
+Cc:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        William Gray <william.gray@linaro.org>
+Subject: Re: [RESEND PATCH v2] clk: qcom: gcc-sm8250: Fix gcc_sdcc2_apps_clk_src
+Date:   Thu,  3 Aug 2023 09:38:06 -0700
+Message-ID: <169108064631.108343.8315312770270911785.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230801105718.3658612-1-arnd@kernel.org>
-References: <20230801105718.3658612-1-arnd@kernel.org>
+In-Reply-To: <20230802210359.408-1-patrick.whewell@sightlineapplications.com>
+References: <20230802210359.408-1-patrick.whewell@sightlineapplications.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -57,24 +60,17 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On Tue, 01 Aug 2023 12:56:32 +0200, Arnd Bergmann wrote:
-> The SM_GCC_8550 symbol and others can only be built for ARM64 or when
-> compile testing, but it gets selected by other drivers that can also be
-> built for 32-bit ARCH_QCOM when not compile testing, which results in
-> a Kconfig warning:
+On Wed, 02 Aug 2023 14:04:00 -0700, Patrick Whewell wrote:
+> GPLL9 is not on by default, which causes a "gcc_sdcc2_apps_clk_src: rcg
+> didn't update its configuration" error when booting. Set .flags =
+> CLK_OPS_PARENT_ENABLE to fix the error.
 > 
-> WARNING: unmet direct dependencies detected for SM_GCC_8550
->   Depends on [n]: COMMON_CLK [=y] && COMMON_CLK_QCOM [=m] && (ARM64 || COMPILE_TEST [=n])
->   Selected by [m]:
->   - SM_GPUCC_8550 [=m] && COMMON_CLK [=y] && COMMON_CLK_QCOM [=m]
->   - SM_VIDEOCC_8550 [=m] && COMMON_CLK [=y] && COMMON_CLK_QCOM [=m]
 > 
-> [...]
 
 Applied, thanks!
 
-[1/1] clk: qcom: fix some Kconfig corner cases
-      commit: b6bcd1c0c27e1f210228346e6d23a2ec0c263e8c
+[1/1] clk: qcom: gcc-sm8250: Fix gcc_sdcc2_apps_clk_src
+      commit: 783cb693828ce487cf0bc6ad16cbcf2caae6f8d9
 
 Best regards,
 -- 
