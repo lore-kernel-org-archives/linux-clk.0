@@ -2,67 +2,78 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA8FFC001DF
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Aug 2023 13:10:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48A66C41513
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Aug 2023 15:17:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236131AbjHCNKu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Aug 2023 09:10:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59788 "EHLO
+        id S236977AbjHCPRM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Aug 2023 11:17:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236137AbjHCNKa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Aug 2023 09:10:30 -0400
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2433255AD
-        for <linux-clk@vger.kernel.org>; Thu,  3 Aug 2023 06:08:48 -0700 (PDT)
-Received: by mail-lj1-x234.google.com with SMTP id 38308e7fff4ca-2b9cd6a554cso13515411fa.3
-        for <linux-clk@vger.kernel.org>; Thu, 03 Aug 2023 06:08:48 -0700 (PDT)
+        with ESMTP id S236976AbjHCPRL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Aug 2023 11:17:11 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47A141713
+        for <linux-clk@vger.kernel.org>; Thu,  3 Aug 2023 08:17:08 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id 2adb3069b0e04-4fe2503e3easo1839800e87.2
+        for <linux-clk@vger.kernel.org>; Thu, 03 Aug 2023 08:17:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691068067; x=1691672867;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=ULZh00shqSbFq5grqktN6+UDr7p6MpFnwW0/QE5bbfg=;
-        b=sLdx/pJYVtKsg1914OnlGaU0lQSpV9t8Qx9rathAPQshDkGnZmDQwacremsrENT7jL
-         TvV3cWkI7aq2/GTiZmYrMfRv/cOBlmDqXwfXxs3jrjHuE3pGZOp2+zndbf/WE+MUA/zj
-         TtCg2ON4AE7/VRnQ1nd5arOZQW/BGLvXyeRqvwRak4D2W+Atzq9p5/2k9NyA0X4NEwXF
-         IqO5roXHJQtUvxi2AX+wzVKsWiJPfKNthSZdRMXdy1qapagX/9q2fw5EnKD+E+vV9H7o
-         4dOPjvSDMz4q4EGBAGjwVbfgtoxAnhZe328VNEmw25x8AhO+teAc4YvSF4qIDMJIseVK
-         ClKg==
+        d=linaro.org; s=google; t=1691075826; x=1691680626;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TramLbKI90yPWYAVx7wulDWXQ7m/k8XvtzY338rmDp8=;
+        b=Qyyl59lOl2jB7Y3iHJGFCPEiaavBtVlAPUCEC8E1LwA4bgYeEJkfQyawjz02EtCksR
+         1sbZOb3+3+SP5nCmAZk5ikoqZC9sZczHGjg4H5R4FcQUy+/Zv+m82HptI11M6W9vFOpy
+         QX9ldeEFcZqkdCKc0iIuYqNJBRyFPgqP7SkGXCMGxV46Nax3c5Y7RbMF1EiIb/ReIck/
+         7ib5PRUvJE21TzdbYY/IiAQkKVjfKdhsPpVucUlXzoFraWwX62XFl3pMgOA2v1vHGs36
+         odQQmNC9B3BkudhI6Y1sE+w9R24RVwhkJ618dDdyPcyLF8EGcp1A02H7I6Y8mYJXjx+h
+         jWvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691068067; x=1691672867;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ULZh00shqSbFq5grqktN6+UDr7p6MpFnwW0/QE5bbfg=;
-        b=krVar4diIPehOPUZsrpCc9xg8cJ4kulrO5zEsSlNX+iPml1COWeTa37g/LKpcid/8Y
-         k+9X6uty3RriQpThisAZwQcdPXwbh3dR3pH/gqLmqR0RNZJh0HqR3bDU5qjn7K93IYkR
-         zB5tkeuNqhr7HYladSoTcpb/1vOgbRvoaE1H2Jak6TF6qOF1w4DK8Xvuui8cTmvs2eSj
-         HF/3fty0jjncUoX1bLB/pzaUdAOk5P4F/uVQFvI3HGw8a3sIP8r++KXFAaeLl06qyHYe
-         FaSg9LeUuf9s2ZLaWKzIqaxk2G/+tqjIvNGgKqkAZPH+I5J4fSo5I4MJ2L6v0171u+Ae
-         YCng==
-X-Gm-Message-State: ABy/qLalX0C+7oZLtOZhQpPLMTQq0eFRHjqsRuBrMtI5OAJZUosfwiwL
-        AhIzNSQuQChWZLkSNu6vEIlnYQ==
-X-Google-Smtp-Source: APBJJlHBhIkn4hiSwGB7dHFwA4x10f32wnddawjsgW3guqIEX0NirLgVtLxRbYeE+3PkWHqpc83xrQ==
-X-Received: by 2002:a2e:a312:0:b0:2b9:da28:c508 with SMTP id l18-20020a2ea312000000b002b9da28c508mr7519833lje.31.1691068067412;
-        Thu, 03 Aug 2023 06:07:47 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1691075826; x=1691680626;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TramLbKI90yPWYAVx7wulDWXQ7m/k8XvtzY338rmDp8=;
+        b=JpgNw5ROnqxGqHsfAhlpAtTutUgJ+x0LN/iDEV4qZxJAWoBE27euzxAzbV9RUSUXpP
+         IaBy7rorSXhEBa71FNjBBNBZWV/zccnNtrN+ffm1sFqi2S+OBw4aqFq1pMGMLH3kXLJd
+         GCHD076PN4SIHwfhS4SmwZQohLsCMchxr/NEs+C8R7fE3IVa0U7CCaiqicUVRWEJQuSW
+         Qn2gBnuEx6h4j4KZYe1EvPx7HZ+NW9/AJvKeDn6taNbp8F1Yi60o0NXUSFnX27KSMXec
+         KvHRMjkYahmQt63XKNyFBbhOQDoBzYjJYL0tC9sJYo4nQMWR7f9EBh7XjE8/b1oW4JJd
+         e6/w==
+X-Gm-Message-State: ABy/qLY/PwoTZX+WRLuhEqsqcEbAsv9ENGCHhCYR64ONIB8tZ/7snUjv
+        5ZLhcpaDENSK5TD3w5zIODMY1g==
+X-Google-Smtp-Source: APBJJlEBDu/5LdfPpr8nkqRHfmK4saE2beuXmAn53UeT+6XCtyNtJksY2JY0YlXuTZcAcDBIWKsuug==
+X-Received: by 2002:a05:6512:104e:b0:4fe:79c:7269 with SMTP id c14-20020a056512104e00b004fe079c7269mr8339745lfb.67.1691075826434;
+        Thu, 03 Aug 2023 08:17:06 -0700 (PDT)
 Received: from [192.168.1.101] (abyk53.neoplus.adsl.tpnet.pl. [83.9.30.53])
-        by smtp.gmail.com with ESMTPSA id z16-20020a2e9650000000b002b1b92910c8sm3175586ljh.86.2023.08.03.06.07.46
+        by smtp.gmail.com with ESMTPSA id z25-20020ac25df9000000b004fe37339f8esm7340lfq.149.2023.08.03.08.17.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Aug 2023 06:07:46 -0700 (PDT)
-Message-ID: <e598e278-8be8-13db-a11d-ae650cb91774@linaro.org>
-Date:   Thu, 3 Aug 2023 15:07:45 +0200
+        Thu, 03 Aug 2023 08:17:05 -0700 (PDT)
+Message-ID: <b7f0be32-df13-3993-bcea-75ff99166c0e@linaro.org>
+Date:   Thu, 3 Aug 2023 17:17:04 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next] clk: qcom: lcc-msm8960: change pxo_parent_data to
- static
-To:     Yang Yingliang <yangyingliang@huawei.com>,
-        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Cc:     andersson@kernel.org, dmitry.baryshkov@linaro.org,
-        neil.armstrong@linaro.org, agross@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org
-References: <20230803082125.521849-1-yangyingliang@huawei.com>
+Subject: Re: [PATCH V5 4/8] clk: qcom: gcc-qdu1000: Register
+ gcc_gpll1_out_even clock
 Content-Language: en-US
+To:     Imran Shaik <quic_imrashai@quicinc.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     Taniya Das <quic_tdas@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Melody Olvera <quic_molvera@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+References: <20230803105741.2292309-1-quic_imrashai@quicinc.com>
+ <20230803105741.2292309-5-quic_imrashai@quicinc.com>
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
@@ -99,19 +110,19 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <20230803082125.521849-1-yangyingliang@huawei.com>
+In-Reply-To: <20230803105741.2292309-5-quic_imrashai@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 3.08.2023 10:21, Yang Yingliang wrote:
-> The pxo_parent_data inroduced in commit bac4675a4d1b ("clk: qcom:
-> drop lcc-mdm9615 in favour of lcc-msm8960") is only used in lcc-msm8960.c
-> now, change it to static.
+On 3.08.2023 12:57, Imran Shaik wrote:
+> gcc_gpll1_out_even clock is referenced as a parent, but not registered
+> with the clock framework. Hence add support to register the same.
 > 
-> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+> Fixes: 1c9efb0bc040 ("clk: qcom: Add QDU1000 and QRU1000 GCC support")
+> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
 > ---
 Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
