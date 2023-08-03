@@ -2,56 +2,48 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A373BC04E69
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Aug 2023 16:35:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 538CBC05051
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Aug 2023 16:35:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237268AbjHCQfX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Aug 2023 12:35:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38912 "EHLO
+        id S234587AbjHCQfZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Aug 2023 12:35:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236679AbjHCQfV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Aug 2023 12:35:21 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FAE6E77;
-        Thu,  3 Aug 2023 09:35:17 -0700 (PDT)
+        with ESMTP id S237180AbjHCQfW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Aug 2023 12:35:22 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60B5B3C14;
+        Thu,  3 Aug 2023 09:35:19 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2CF9E61E3A;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D074D61E4A;
+        Thu,  3 Aug 2023 16:35:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 902C6C433CA;
         Thu,  3 Aug 2023 16:35:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FB5EC43140;
-        Thu,  3 Aug 2023 16:35:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691080516;
-        bh=G3FOLIfaHoy9tzg1QvyqoSq0xb1ylVr9cA8Be/6Aa04=;
+        s=k20201202; t=1691080518;
+        bh=+4zOGsxuHaUp3jo09CLrcNbGCjBlDvrtijuJCvNqSmY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gygehvme91Sf5H7MIi14MCcsctKtR+cWv0OE+Uz0LQ1P8P7nVl9dux0olAILFYH/B
-         M6fZxkw+FndYDyBKM9PBkoBWFD27ysd0/692IOdLKBzp17hWsz4UkI5Q4toMTj6iEn
-         +oUqp5b5wJ2f6FylU+Dkek75zNGO3831o7Zyg55qOCZE+oTK/gtoAuWZdPj3KQsBc+
-         N/e7SAlvO0Bfc8jDtX3Je7VkpuF5YdHwIeu24U+jegsVl4mPF+4gM9D6/ZjmCOH/ie
-         Rwso5e7W3KJzkaERGmkvNdhdbXJ9dxHcxeoiqpJ7i8ALOsy4ehtUMTxgCPzUK+OTFb
-         RuVPnYs6QgF/g==
+        b=bE7jxRSpjxH172XEKmCKdpBBvAvx9ZNwlDvR6Brnq18bv44FO+g+Cn6hC5CM+PEnW
+         vKLZZriGutPivNMuhDMdSYgjV8d2TPJB/hcWDmvGo4IHK2BH89x6DBtS+TxFQxqm+x
+         Hzd70Nqn/Drpee6RQ1zwy8S384tmt7clYO8Y6Sn4xtknC3jnPRAFKCFxbzi8YW4b7m
+         AziSk1GI4vDOX7ZN/EkSdAhIRae7rbpRcUTBr4T6BuAmkt0R8Db3BgHh4tHLRFItBc
+         jjq8gOyI2Tgu8vLXuo1glAMpYH/N5+O233ZgY8C6Zd6LW2+xXjWnO32woCQHOvkOmk
+         G0CXVWGDNsaPg==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Patrick Whewell <patrick.whewell@sightlineapplications.com>
-Cc:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        William Gray <william.gray@linaro.org>
-Subject: Re: [RESEND PATCH v2] clk: qcom: gcc-sm8250: Fix gcc_sdcc2_apps_clk_src
-Date:   Thu,  3 Aug 2023 09:38:06 -0700
-Message-ID: <169108064631.108343.8315312770270911785.b4-ty@kernel.org>
+To:     linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Yang Yingliang <yangyingliang@huawei.com>
+Cc:     dmitry.baryshkov@linaro.org, neil.armstrong@linaro.org,
+        agross@kernel.org, konrad.dybcio@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org
+Subject: Re: [PATCH -next] clk: qcom: lcc-msm8960: change pxo_parent_data to static
+Date:   Thu,  3 Aug 2023 09:38:08 -0700
+Message-ID: <169108064628.108343.10125718067545963164.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230802210359.408-1-patrick.whewell@sightlineapplications.com>
-References: <20230802210359.408-1-patrick.whewell@sightlineapplications.com>
+In-Reply-To: <20230803082125.521849-1-yangyingliang@huawei.com>
+References: <20230803082125.521849-1-yangyingliang@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -60,17 +52,17 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On Wed, 02 Aug 2023 14:04:00 -0700, Patrick Whewell wrote:
-> GPLL9 is not on by default, which causes a "gcc_sdcc2_apps_clk_src: rcg
-> didn't update its configuration" error when booting. Set .flags =
-> CLK_OPS_PARENT_ENABLE to fix the error.
+On Thu, 03 Aug 2023 16:21:25 +0800, Yang Yingliang wrote:
+> The pxo_parent_data inroduced in commit bac4675a4d1b ("clk: qcom:
+> drop lcc-mdm9615 in favour of lcc-msm8960") is only used in lcc-msm8960.c
+> now, change it to static.
 > 
 > 
 
 Applied, thanks!
 
-[1/1] clk: qcom: gcc-sm8250: Fix gcc_sdcc2_apps_clk_src
-      commit: 783cb693828ce487cf0bc6ad16cbcf2caae6f8d9
+[1/1] clk: qcom: lcc-msm8960: change pxo_parent_data to static
+      commit: e39d0fa7309bebdc19218276279b9f119d4e9f2b
 
 Best regards,
 -- 
