@@ -2,129 +2,98 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FE01C001DF
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Aug 2023 22:02:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56874C41513
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Aug 2023 06:21:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232372AbjHBWCH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Aug 2023 18:02:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53184 "EHLO
+        id S229834AbjHCGVj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Aug 2023 02:21:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233046AbjHBWCG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Aug 2023 18:02:06 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 992DE2129;
-        Wed,  2 Aug 2023 15:02:04 -0700 (PDT)
+        with ESMTP id S232083AbjHCGVh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Aug 2023 02:21:37 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49B15BA;
+        Wed,  2 Aug 2023 23:21:36 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2BE8361B13;
-        Wed,  2 Aug 2023 22:02:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19DF0C433C7;
-        Wed,  2 Aug 2023 22:02:02 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CCEDE61BF0;
+        Thu,  3 Aug 2023 06:21:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F1EFC433C7;
+        Thu,  3 Aug 2023 06:21:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691013723;
-        bh=fq3cWmTxdhO7mpPCgQ+OwosSWhnsTUfvrL0qkaxNDpA=;
-        h=In-Reply-To:References:Date:From:To:Cc:Subject:From;
-        b=eSD9SlAQ7rbg2TqZs1FdP/PgGOmU65z7JePTWO3d5We+u4brrkJrxovT/SI3iyOfH
-         JVlReuJujc8BgIdt2O6XeN15kZioYenOejcdY77w8e4tTlm3xFWv/Kl2wrCWgTpnK/
-         xMUBul9dQML3TS5OySlpxJ8ulpn8KS6bqtzqHynqlQqszVJ7DqGwq+L/gbdaFDeRNR
-         YURr0fqvlcXrWgqxMdg88Nue82ApcIOJXN+06P8+9mtbkOrHS1hoipXzxiJUwb68we
-         5oDq6NOWnMAmho2iSu4YwnNhESZ3+5+6odzEzd6BR8jI++nV3CAImViHRlpztyyYMc
-         odpYoK+G8preg==
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-        by mailauth.nyi.internal (Postfix) with ESMTP id EDEBE27C0054;
-        Wed,  2 Aug 2023 18:02:01 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute6.internal (MEProxy); Wed, 02 Aug 2023 18:02:01 -0400
-X-ME-Sender: <xms:WNLKZNWVYqB1BnzgHH-kIgBALkBKjcpcgEFj8Y6Jv3OxnkdTlpWjHw>
-    <xme:WNLKZNlF6fozETDCORwW4f2s1qybZXkw59Jmf2JNSgxwqkjHle4SFCWOjR2W7E0w0
-    jdsq4r6jez1900NfVc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrkedugddthecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusehkvghrnhgvlhdrohhrgheqnecuggftrf
-    grthhtvghrnhepvdelhfduueevkeeujeeuhfevfedufeeuteduvdeijeffheffieeiteel
-    jeelffdtnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugdomhgvshhmthhprghuthhh
-    phgvrhhsohhnrghlihhthidquddvkeehudejtddvgedqvdekjedttddvieegqdgrrhhnug
-    eppehkvghrnhgvlhdrohhrghesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:WNLKZJYLgPNGXsizjVniNWNg24UkWht5ff6PSsu8gFJtTvXKk8CffA>
-    <xmx:WNLKZAUfGb_-TRwivRvE_HYi1UkciViGtHLnwmOYrO1sScwiq2iT4A>
-    <xmx:WNLKZHl3cBoEUeRDSPOF9qEAFDhR3rf-iccz98gWBpTrTYwc_tI0DQ>
-    <xmx:WdLKZFX4g4ANJBjULxrdbKClBBZLjFhKGhJw1UFDlOOlf0fu7odMRg>
-Feedback-ID: i36794607:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id D12B5B6008F; Wed,  2 Aug 2023 18:02:00 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.9.0-alpha0-624-g7714e4406d-fm-20230801.001-g7714e440
-Mime-Version: 1.0
-Message-Id: <9a22ecee-ebb0-437e-bd2b-99b5c6944855@app.fastmail.com>
-In-Reply-To: <CAKwvOd=SvHUPd8+sWtqgxghPEciD5sqPiggZx+OOEqxtJrML6Q@mail.gmail.com>
-References: <20230802092647.3000666-1-sergio.paracuellos@gmail.com>
- <CAKwvOd=SvHUPd8+sWtqgxghPEciD5sqPiggZx+OOEqxtJrML6Q@mail.gmail.com>
-Date:   Thu, 03 Aug 2023 00:01:25 +0200
-From:   "Arnd Bergmann" <arnd@kernel.org>
-To:     "Nick Desaulniers" <ndesaulniers@google.com>,
-        "Sergio Paracuellos" <sergio.paracuellos@gmail.com>,
-        "Nathan Chancellor" <nathan@kernel.org>
-Cc:     linux-clk@vger.kernel.org,
-        "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
-        "Stephen Boyd" <sboyd@kernel.org>,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, "kernel test robot" <lkp@intel.com>,
-        clang-built-linux <llvm@lists.linux.dev>
-Subject: Re: [PATCH] clk: ralink: mtmips: quiet unused variable warning
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+        s=k20201202; t=1691043695;
+        bh=BMvagv46eboB4wxHgk5Bx5js/lPld9HalXVIRLAltfE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hLCPuc9+yNWN8PblNqN6rzZbusW2z+4N3SExL/FCBtW7zbRhtYa4HZCyVYNxKQ8yU
+         bFGbj+F5R0IY7UnLGIs90lWgwKwez2dSwZk7xY5XliZHRLoGynZZsLJ8QqKkQTC9C8
+         vx5er2nWjb7COBC5Z6HuToDETOarNg4jQZYHBrc/dG2arCgEGFHqJDTbqiBV1fAcw6
+         pAgup6bLxe8Yk5mswJV1pmzBnLbqfvNlVEYZzz7S2fDywrkwySrT20Rf+HAVRuAKyk
+         Igyj9u6c6s9lhh0JbvahvhsMLkt1QSyVT10VtZdnHFPpvG2zR+SKs3HvtmQdmAmBV+
+         8kvgaarj0WVIw==
+Date:   Thu, 3 Aug 2023 11:51:30 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Patrick Whewell <patrick.whewell@sightlineapplications.com>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        William Gray <william.gray@linaro.org>
+Subject: Re: [RESEND PATCH v2] clk: qcom: gcc-sm8250: Fix
+ gcc_sdcc2_apps_clk_src
+Message-ID: <ZMtHarMt5T1BMNZ1@matsya>
+References: <20230802210359.408-1-patrick.whewell@sightlineapplications.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230802210359.408-1-patrick.whewell@sightlineapplications.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Aug 2, 2023, at 23:26, Nick Desaulniers wrote:
-> On Wed, Aug 2, 2023 at 2:26=E2=80=AFAM Sergio Paracuellos <sergio.para=
-cuellos@gmail.com> wrote:
->>
->> When CONFIG_OF is disabled then the matching table is not referenced =
-and
->> the following warning appears:
->>
->> drivers/clk/ralink/clk-mtmips.c:821:34: warning: unused variable 'mtm=
-ips_of_match' [-Wunused-const-variable]
->> 821 |   static const struct of_device_id mtmips_of_match[] =3D {
->>     |                          ^
->>
->> Silence it declaring 'mtmips_of_match' with '__maybe_unused'.
->>
->> Fixes: 6f3b15586eef ("clk: ralink: add clock and reset driver for MTM=
-IPS SoCs")
->> Reported-by: kernel test robot <lkp@intel.com>
->> Closes: https://lore.kernel.org/oe-kbuild-all/202307242310.CdOnd2py-l=
-kp@intel.com/
->> Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
->
-> I think this is fine; Arnd or Nathan do you have a preference? or thou=
-ghts here?
->
-> If not, thanks for the patch.
-> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
->
-> (I have a slight preference for wrapping the use in `#ifdef CONFIG_OF`
-> since with the approach used by this patch, if all users are removed
-> we will never get a warning for this var. But it's a weak preference;
-> it's more important to me that we don't have -Werror promote this
-> warning to a build breakage)
+On 02-08-23, 14:04, Patrick Whewell wrote:
+> GPLL9 is not on by default, which causes a "gcc_sdcc2_apps_clk_src: rcg
+> didn't update its configuration" error when booting. Set .flags =
+> CLK_OPS_PARENT_ENABLE to fix the error.
 
-I don't understand why there are two match tables in the same
-driver, with almost the same contents. I have not looked very
-closely here, but why can't we just drop the mtmips_clk_of_match[]
-table (the one without the .data fields) and use the same
-table for both? Is this because of the ralink,rt2880-reset entry
-that is missing in mtmips_of_match, or is that another bug?
+Reviewed-by: Vinod Koul <vkoul@kernel.org>
 
-I also see that there is both a platform_driver instance for
-late probing and a list of CLK_OF_DECLARE_DRIVER() entries.
-Do we need both here?
+> 
+> Fixes: 3e5770921a88 ("clk: qcom: gcc: Add global clock controller driver for SM8250")
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Signed-off-by: Patrick Whewell <patrick.whewell@sightlineapplications.com>
+> ---
+> Changes in v2:
+>     - Updated commit messaage to mention GPLL9 not being on by default
+>       being the cause of error
+>     - Moved Signed-off-by line to the bottom.
+> 
+>  drivers/clk/qcom/gcc-sm8250.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/qcom/gcc-sm8250.c b/drivers/clk/qcom/gcc-sm8250.c
+> index b6cf4bc88d4d..d3c75bb55946 100644
+> --- a/drivers/clk/qcom/gcc-sm8250.c
+> +++ b/drivers/clk/qcom/gcc-sm8250.c
+> @@ -721,6 +721,7 @@ static struct clk_rcg2 gcc_sdcc2_apps_clk_src = {
+>  		.name = "gcc_sdcc2_apps_clk_src",
+>  		.parent_data = gcc_parent_data_4,
+>  		.num_parents = ARRAY_SIZE(gcc_parent_data_4),
+> +		.flags = CLK_OPS_PARENT_ENABLE,
+>  		.ops = &clk_rcg2_floor_ops,
+>  	},
+>  };
+> -- 
+> 2.25.1
 
-      Arnd
+-- 
+~Vinod
