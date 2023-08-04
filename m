@@ -2,386 +2,400 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED775C04A94
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Aug 2023 08:46:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00329C001DB
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Aug 2023 09:02:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229544AbjHDIqT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Aug 2023 04:46:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41352 "EHLO
+        id S229911AbjHDJCx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Aug 2023 05:02:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229460AbjHDIqS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Aug 2023 04:46:18 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C28D30EB
-        for <linux-clk@vger.kernel.org>; Fri,  4 Aug 2023 01:46:16 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-3fbc244d384so18044795e9.0
-        for <linux-clk@vger.kernel.org>; Fri, 04 Aug 2023 01:46:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691138774; x=1691743574;
-        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
-         :content-language:subject:reply-to:from:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=8/2epN71DffLwBWhZlwSr6qgtOgEJN1dllV/1/DX8b4=;
-        b=T1rvrGSHsbHhc2NkBJrzGuI/Z2XJzkQP8vMpV2km3yg17tnd2qj4b4KVA8viOkVK4y
-         UrqIIamqmT8WZmM9/H8KlAgYdCLWrwqfqyPNMMYfeRAojXhx1+dCLiYL/V/MpNaVNhxn
-         PfpxG9VqMHldniAan8t8+DiCTMk3Irn7ygCipIp0vigjzDZn3h/dl+ECBVvUSCPdHtSx
-         aXymiTv8WIxC0sW8TSNYy76XQFKlZRUhwpkeIyMzq8o7gBWnKgW8AJxHDRgmb2bjJnok
-         d3PymPfj/qHb4w9NdhNc/1XZ5CMZAA6JeA0xl7oKlU38TL1YJfpxrTm1kQvn5NpJQYQ4
-         aGIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691138774; x=1691743574;
-        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
-         :content-language:subject:reply-to:from:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8/2epN71DffLwBWhZlwSr6qgtOgEJN1dllV/1/DX8b4=;
-        b=JBkN0CMkqqEV9u3iQ108oPR0Z2MWdHYD9o7sq4BE52R2/Ex5FlgH8VUg1sUIxONxX7
-         kpShbShBRXHHMZfpAzLmMeBqFOwcB5T+RzDvFJ6Y5/ZzUJkNDNRF3vxMtdpHDHCnLfFw
-         3wohfxf3g4blQzyAlS204dUDL2lA9TixFawqbaoQJc019MSR+xTn9ux4S3QavfKEulv0
-         kgZRP6LZ4fqqd4diyYSfN7if6GvTxv1diytbXQHLMUJGs6V19tMOcYA7NntcoVm2qNKq
-         NZxSpaXxzjS8Nn2K1RO0CPHlr9reLt8TzdDhBf6fNGGDDn7aFNgPvq5jDym97qg8IV2m
-         s6EQ==
-X-Gm-Message-State: AOJu0YyuyvGOo286U4P+gbC3bg2cHpBXfMd9b3Ku8EpL0X9VRv9R16dh
-        bKxranX6kl70aKqpCbc+uW+zdw==
-X-Google-Smtp-Source: AGHT+IEXfc2HyMKRUwROboiBvMsrvQ2EBr3c0K0nVutboAbfHnMsN4bJm+HSXSoaklbeeraThsaQxA==
-X-Received: by 2002:a05:600c:208:b0:3fb:4055:1ddd with SMTP id 8-20020a05600c020800b003fb40551dddmr962143wmi.28.1691138774486;
-        Fri, 04 Aug 2023 01:46:14 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:b526:9083:f5a6:4af1? ([2a01:e0a:982:cbb0:b526:9083:f5a6:4af1])
-        by smtp.gmail.com with ESMTPSA id a25-20020a05600c225900b003fc00892c13sm1807034wmm.35.2023.08.04.01.46.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Aug 2023 01:46:13 -0700 (PDT)
-Message-ID: <cdc50fd9-fbc8-81b2-18b9-94be60eda375@linaro.org>
-Date:   Fri, 4 Aug 2023 10:46:12 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-From:   Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v7 3/9] clk: meson: add vclk driver
+        with ESMTP id S229649AbjHDJCR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Aug 2023 05:02:17 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AB53526A;
+        Fri,  4 Aug 2023 01:58:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1691139489; x=1722675489;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=R2vHJS4tAeUfKyf5nyjxTOXpiqJnALDnVSjxjGVMXho=;
+  b=JZTDHuNHd1P9KINynojeQq3DUEqIhK/zEmleSoKXQPL4+dmr+YhnwjhA
+   kk0l014e5gKugdyWEGiaD2vaciFfY+Dah74mxGZpCEaF7wnhp9nBLGpHA
+   QwSewScs51EdWdKASkmeRoGjizf0Y61FmNwYKWPXQSsNDFo7ShXoza7qZ
+   NV3aIzj425GoiXmLSSTyFdHtFPKWaTaG+AJb+xsjZmm3iuKttOUKp4jZ5
+   pkGRhcUjauAE27JMCB+Ag6fEtVos5AnqIJ6BZ2JioNMiQcVrk28z0c63+
+   DwF6tUhl23eobnDznTK1ojn80wReOgFDZwK1MXx8yIFb962xfqeABYNA0
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10791"; a="373757219"
+X-IronPort-AV: E=Sophos;i="6.01,254,1684825200"; 
+   d="scan'208";a="373757219"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2023 01:58:08 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10791"; a="853660051"
+X-IronPort-AV: E=Sophos;i="6.01,254,1684825200"; 
+   d="scan'208";a="853660051"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by orsmga004.jf.intel.com with ESMTP; 04 Aug 2023 01:58:08 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.27; Fri, 4 Aug 2023 01:58:08 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.27 via Frontend Transport; Fri, 4 Aug 2023 01:58:08 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.177)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.27; Fri, 4 Aug 2023 01:58:07 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Us3jlpuCXjZooo/Eb2QuKTICT1xTvqhN7KO1AfhUhqzE1uy0nlyQYTn8PkboxMasEeYsM+wc5+k4dE7m7p7TUTYpv31a3XZx1orE73IvOOVPdF51YKkuDjuMStqbeFA1bxp1qMOogiiWJoRcrCcJ2nb14Mrwe/Ap2+UFmoZg0A2/+hGMAk9Ac9HKFwhdusAdXsfJDwemWrLwycwEhkOJC6iOgZkLCQSTfcUDNTdJgh/GeTBE052v++z/6GmmWvuZrbPlY/M76AEgzqJH22j0VrQ+ITwBQMiu6/LLQPvIv93X7irBPj4ExJhGlhJg4dQbLQWsa4d10TRv3fHgauxBXA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Bgywg256AsJdpNqXOoHZ6/MEbpwnkCW3Eb1xRXREEe8=;
+ b=lY4yu39dkjh02l6VDhghF0gFj4K4ZX5QquwH/pnp9V7ZaRPYi/9bA19QBJAnwej89KIx3Qwp14mzbXS03Y6qdw3O+avJ0FNKj8mR70UNkUmPAnOXScb33yijOj01HhQLdW6ZmPgjq1YEbye11NzQp4O9+VfLxDwyAvzknqIR4I78IWOrVh0o3s758ayP2q1AUJJY79hPkQdsQNRkMggJZFYJ3Y4hDE45HVIDjsw9Nv5rpivVioqOL2UP/qwSTmG+B0eO1Ij/l5ZsB7bZvPs6SDq3sXGXCbVs7KwinmdXfqp98GX2010spG+GVboPtGdBorb/689Qj6mg4ERGiVDrtA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from DM6PR11MB4657.namprd11.prod.outlook.com (2603:10b6:5:2a6::7) by
+ CO1PR11MB5075.namprd11.prod.outlook.com (2603:10b6:303:9e::14) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6652.21; Fri, 4 Aug 2023 08:58:06 +0000
+Received: from DM6PR11MB4657.namprd11.prod.outlook.com
+ ([fe80::c3cd:b8d0:5231:33a8]) by DM6PR11MB4657.namprd11.prod.outlook.com
+ ([fe80::c3cd:b8d0:5231:33a8%5]) with mapi id 15.20.6652.021; Fri, 4 Aug 2023
+ 08:58:05 +0000
+From:   "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+To:     Jiri Pirko <jiri@resnulli.us>
+CC:     Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "Michalik, Michal" <michal.michalik@intel.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
+        mschmidt <mschmidt@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Bart Van Assche <bvanassche@acm.org>
+Subject: RE: [PATCH 09/11] ice: implement dpll interface to control cgu
+Thread-Topic: [PATCH 09/11] ice: implement dpll interface to control cgu
+Thread-Index: AQHZuut81WSQCKaWlUanjhbbmuUufa/EGiaAgAu/VDCABANBgIABtWkAgAEVMACAAJH3YIABEpoAgAGdQFA=
+Date:   Fri, 4 Aug 2023 08:58:05 +0000
+Message-ID: <DM6PR11MB4657DAB437CE3760FC1CE8C89B09A@DM6PR11MB4657.namprd11.prod.outlook.com>
+References: <20230720091903.297066-1-vadim.fedorenko@linux.dev>
+ <20230720091903.297066-10-vadim.fedorenko@linux.dev>
+ <ZLpuaxMJ+8rWAPwi@nanopsycho>
+ <DM6PR11MB46571657F0DF87765DAB32FE9B06A@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <ZMem35OUQiQmB9Vd@nanopsycho>
+ <DM6PR11MB4657C0DA91583D92697324BC9B0AA@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <ZMn+Uvu8B6IcCFoj@nanopsycho>
+ <DM6PR11MB46575671FF8CB35795EAA0669B0BA@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <ZMtfHn8es60MSMj+@nanopsycho>
+In-Reply-To: <ZMtfHn8es60MSMj+@nanopsycho>
+Accept-Language: pl-PL, en-US
 Content-Language: en-US
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Nicolas Belin <nbelin@baylibre.com>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        dri-devel@lists.freedesktop.org
-References: <20230803-amlogic-v6-4-upstream-dsi-ccf-vim3-v7-0-762219fc5b28@linaro.org>
- <20230803-amlogic-v6-4-upstream-dsi-ccf-vim3-v7-3-762219fc5b28@linaro.org>
- <1j5y5vp88v.fsf@starbuckisacylon.baylibre.com>
-Organization: Linaro Developer Services
-In-Reply-To: <1j5y5vp88v.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM6PR11MB4657:EE_|CO1PR11MB5075:EE_
+x-ms-office365-filtering-correlation-id: de82063f-4246-473b-6b8c-08db94c8eacf
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: skFXIcWcjgy7vIgV7vy6Vec8ZK25qZEtjtyULG8IbyE7paAOSRi5vfH997Vxub0THywTZhZ+gcfzQObGXuUYfrvipi3gD34zpyoCKSUvMbqTta9LmxUDaV+6JdN/XSHyF3674QhZGQEt3Lm1JE0uWCcQylSw6PHzW2L7oOz2QAGIo4hbIvKjD+jyMgWAV7hfh+7WpIj2qVVyAxZWd5jhAznFxgGtN6/u3ClJh4p1aEcAh5SKGB4eKKY8WJzUl15u1BSnnSYhkUCD7agMjmcATOazaxLdBBZl6I2CfKCyfBoUM/XSuyySlS8KuDOClDTObXwZvIIeCuONbdGUPmMuE0KXxpbOlcrEumWhwaQi+HB0kM5nLkXe+Hn9EjY/GwxnlEKQTHnqEkR9GZsqkyvbtCVP5yVmJDrE/ZkU/oPtraQwgLFlK96bWBMTTCVEJNpcy+veYqC7B4KggOfvwt7UBksaN6Yfeo3GEQLvx9QhD/b5fLYcb4/YMTzG4tJhBXJ2M9w876iSvh1YyL8mZgNIj4GRtO6nhny/jwlO47KJ4Yq4uRINTmCYFfJphd60pI4tYrBeF7ShVAzQKHe1XFbW8gVl8X1YiLLcjbgdao6Yj3xdo+M4yfnQS4e7nmZe5eEA
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR11MB4657.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(39860400002)(136003)(376002)(346002)(366004)(396003)(186006)(451199021)(1800799003)(7696005)(38070700005)(9686003)(86362001)(71200400001)(55016003)(6506007)(26005)(83380400001)(38100700002)(122000001)(82960400001)(33656002)(66556008)(66476007)(66446008)(64756008)(66946007)(4326008)(76116006)(6916009)(2906002)(316002)(5660300002)(7416002)(52536014)(41300700001)(8936002)(8676002)(478600001)(54906003);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?hks6t1DMuSM5VId9vleO43VUh+/9zgwIIlvi5OWnkCSwQwbUJ1ccrFqjd0QI?=
+ =?us-ascii?Q?JCHm8GXYfcPrPOsb17KjhzCn0oHy7uzgButXK+dbiiG4pifTuYX5uYDetFi+?=
+ =?us-ascii?Q?kU9saapjwgqYcgu4Sc0Xs3SWSuPyjA+pGPC87NyfEgkOV7NEP9U2PQv1UH/W?=
+ =?us-ascii?Q?sNO8l52ZfPnIma0ldX6cjRh2rKOJBhcid+ekFWkkNL1rQCBQU82ff6BceEjA?=
+ =?us-ascii?Q?MaDyR5yxGZ1JggA96ycT/6b5nqmV1dHusfal65ANnIIDPOZac6MAUSP1xWtP?=
+ =?us-ascii?Q?oEGlhrXnAw/+iuGA9xaGPlBoQQ122SxLJtxSD0pg/ifa1w4nTgrVOXIR5XGx?=
+ =?us-ascii?Q?U6bn4DngGEGvOCXX6hiLpWeFWkLfPjfuZiFdjA7ZYlgDfwjpEY10kOuh0Hsz?=
+ =?us-ascii?Q?4/HVTGVvk5gttuNEGLDMIUxUnWRYubdXBaw++6eh1Rfqy4YxEwKYd//PPeqL?=
+ =?us-ascii?Q?Eidy+7Gad3ktEsh14WUpBPKt387j/7WYUX0DG+dXn14JwO0peTuzbKULno5j?=
+ =?us-ascii?Q?0XkSFgKcRm/ns9rPn85Ptdh0hx+lmyu8zVyTO8KzVI/BX1yDCLUmfin4rmBY?=
+ =?us-ascii?Q?L5ZubIJb1BwpUSBGXVp2zsXbF7QWTp8n25BRNI+TLJOFwmi8qSaMkNHWQO8B?=
+ =?us-ascii?Q?oT1ySO8/jcczGUdtAuTGLR94Dp7uvI6NVDhoX52OmJlZ7ua1kfWbF+2eIFyD?=
+ =?us-ascii?Q?9C5ks9ulAUf5khmYG5xP0DmgOVGGiQuba9x1I/jF2cPf1n7DUZ2MFePg2HB5?=
+ =?us-ascii?Q?vdywGx8966zS9oZQXO4SqCjD2mtNc6SpQF38YR8SU5F/kp48EjuvyUIU3R5I?=
+ =?us-ascii?Q?7LqvoYiiVbxTwGp2pJEfX24iMeZdLIoVqvc1/B0vRybUGA/CEZbnEv10dtto?=
+ =?us-ascii?Q?DAsRvwXw24MgW5Y9B6J8P5LseRVHUIljFJl5fXMo3BbvOVEN5siay2nweap9?=
+ =?us-ascii?Q?YPR7NzOTgRpxZuHPVQUBBs2sSwmjZq3SikYEO0BoPRUTkwGXl5yGoHWkcAlR?=
+ =?us-ascii?Q?FGUWaWYBjR2Qzp1liaJ6UUK1nlNVXL1mKIBspwwwQb1VfezerXy9roHl1Zcx?=
+ =?us-ascii?Q?3sR1//Z7tYlNZnAnVQ9yTGuIYoTM5DYyOP2v5AooeDlt17fkNSv92wu0Ptvk?=
+ =?us-ascii?Q?ssV6kpb9Xo8QGlWTuCfWpktEaAHroPuqowZvB6lFmWWs6+aY+3SbVdoM2tiw?=
+ =?us-ascii?Q?1eHE3S7Pmh97adTUZAD02XSsCY5qR0wKzIUI6+rfGF1bPKj96Cez93EpJcdW?=
+ =?us-ascii?Q?GvtEZMDWxAYgFX66OZODZyf+mw4GbzwF0sPBO1W37qiMm5qheBpNgJCrNunu?=
+ =?us-ascii?Q?s7bowfdTPFgm/uRA5Kwd0EK09OdRmHtmVcLAQ1qh3UBIKpHScskCyFUKhs64?=
+ =?us-ascii?Q?mN5IuPYjT1hdJQ6H/QwMacfOuqnKTbsTuBrp36xPZkfH88VlcWLbvxxxBYWT?=
+ =?us-ascii?Q?AAKXJ+35+4Cfd3783MJ+/+aqjIo00qATKGugAG5QRuZtkPtu2btVnV/WxsKi?=
+ =?us-ascii?Q?uJ3ItQT1/tWFiClYmmUDopN2MOSCFUqhvjK2jHha5R0wZUs4GV65slFsVQW1?=
+ =?us-ascii?Q?wpfw+tw4W2RJ/7Aj0AMkxd9Bk65wNg8qNFijWDuuf7/yfckw+eWwLMbX8/a9?=
+ =?us-ascii?Q?sA=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR11MB4657.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: de82063f-4246-473b-6b8c-08db94c8eacf
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Aug 2023 08:58:05.6420
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: qLfxx+2+GhDvveVrzWDQ/b39IzanpPw4RzxZMud5q5JvReR27QA6S2d5yaMGqwhzkVVaq66BiCTp2781FZwzYQPy1nwxBd/8CFHxyQnB2KY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB5075
+X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 04/08/2023 09:33, Jerome Brunet wrote:
-> 
-> On Thu 03 Aug 2023 at 14:03, Neil Armstrong <neil.armstrong@linaro.org> wrote:
-> 
->> The VCLK and VCLK_DIV clocks have supplementary bits.
+>From: Jiri Pirko <jiri@resnulli.us>
+>Sent: Thursday, August 3, 2023 10:03 AM
+>
+>Wed, Aug 02, 2023 at 05:48:43PM CEST, arkadiusz.kubalewski@intel.com wrote=
+:
+>>>From: Jiri Pirko <jiri@resnulli.us>
+>>>Sent: Wednesday, August 2, 2023 8:57 AM
+>>>
+>>>Tue, Aug 01, 2023 at 04:50:44PM CEST, arkadiusz.kubalewski@intel.com
+>>>wrote:
+>>>>>From: Jiri Pirko <jiri@resnulli.us>
+>>>>>Sent: Monday, July 31, 2023 2:20 PM
+>>>>>
+>>>>>Sat, Jul 29, 2023 at 01:03:59AM CEST, arkadiusz.kubalewski@intel.com
+>>>>>wrote:
+>>>>>>>From: Jiri Pirko <jiri@resnulli.us>
+>>>>>>>Sent: Friday, July 21, 2023 1:39 PM
+>>>>>>>
+>>>>>>>Thu, Jul 20, 2023 at 11:19:01AM CEST, vadim.fedorenko@linux.dev
+>>>>>>>wrote:
+>>>>>>>>From: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+>>>>>>
+>>>>>
+>>>>>[...]
+>>>>>
+>>>>>
+>>>>>>>>+static int ice_dpll_cb_lock(struct ice_pf *pf, struct
+>>>>>>>>netlink_ext_ack
+>>>>>>>>*extack)
+>>>>>>>>+{
+>>>>>>>>+	int i;
+>>>>>>>>+
+>>>>>>>>+	for (i =3D 0; i < ICE_DPLL_LOCK_TRIES; i++) {
+>>>>>>>>+		if (!test_bit(ICE_FLAG_DPLL, pf->flags)) {
+>>>>>>>
+>>>>>>>And again, as I already told you, this flag checking is totally
+>>>>>>>pointless. See below my comment to ice_dpll_init()/ice_dpll_deinit()=
+.
+>>>>>>>
+>>>>>>
+>>>>>>This is not pointless, will explain below.
+>>>>>>
+>>>>>>>
+>>>>>>>
+>>>>>>
+>>>>>>[...]
+>>>>>>
+>>>>>
+>>>>>[...]
+>>>>>
+>>>>>
+>>>>>>>>+void ice_dpll_deinit(struct ice_pf *pf)
+>>>>>>>>+{
+>>>>>>>>+	bool cgu =3D ice_is_feature_supported(pf, ICE_F_CGU);
+>>>>>>>>+
+>>>>>>>>+	if (!test_bit(ICE_FLAG_DPLL, pf->flags))
+>>>>>>>>+		return;
+>>>>>>>>+	clear_bit(ICE_FLAG_DPLL, pf->flags);
+>>>>>>>>+
+>>>>>>>>+	ice_dpll_deinit_pins(pf, cgu);
+>>>>>>>>+	ice_dpll_deinit_dpll(pf, &pf->dplls.pps, cgu);
+>>>>>>>>+	ice_dpll_deinit_dpll(pf, &pf->dplls.eec, cgu);
+>>>>>>>>+	ice_dpll_deinit_info(pf);
+>>>>>>>>+	if (cgu)
+>>>>>>>>+		ice_dpll_deinit_worker(pf);
+>>>>>>>
+>>>>>>>Could you please order the ice_dpll_deinit() to be symmetrical to
+>>>>>>>ice_dpll_init()? Then, you can drop ICE_FLAG_DPLL flag entirely, as
+>>>>>>>the
+>>>>>>>ice_dpll_periodic_work() function is the only reason why you need it
+>>>>>>>currently.
+>>>>>>>
+>>>>>>
+>>>>>>Not true.
+>>>>>>The feature flag is common approach in ice. If the feature was
+>>>>>>successfully
+>>>>>
+>>>>>The fact that something is common does not necessarily mean it is
+>>>>>correct. 0 value argument.
+>>>>>
+>>>>
+>>>>Like using functions that unwrap netlink attributes as unsigned when
+>>>>they are in fact enums with possibility of being signed?
+>>>
+>>>Looks this is bothering you, sorry about that.
+>>>
 >>
->> The VCLK has a "SOFT RESET" bit to toggle after the whole
->> VCLK sub-tree rate has been set, this is implemented in
->> the gate enable callback.
+>>Just poining out.
 >>
->> The VCLK_DIV clocks as enable and reset bits used to disable
->> and reset the divider, associated with CLK_SET_RATE_GATE it ensures
->> the rate is set while the divider is disabled and in reset mode.
+>>>
+>>>>
+>>>>This is about consistent approach in ice driver.
+>>>>
+>>>>>
+>>>>>>initialized the flag is set. It allows to determine if deinit of the
+>>>>>>feature
+>>>>>>is required on driver unload.
+>>>>>>
+>>>>>>Right now the check for the flag is not only in kworker but also in
+>>>>>>each
+>>>>>>callback, if the flag were cleared the data shall be not accessed by
+>>>>>>callbacks.
+>>>>>
+>>>>>Could you please draw me a scenario when this could actually happen?
+>>>>>It is just a matter of ordering. Unregister dpll device/pins before yo=
+u
+>>>>>cleanup the related resources and you don't need this ridiculous flag.
+>>>>>
+>>>>
+>>>>Flag allows to determine if dpll was successfully initialized and do
+>>>>proper
+>>>>deinit on rmmod only if it was initialized. That's all.
+>>>
+>>>You are not answering my question. I asked about how the flag helps is
+>>>you do unregister dpll devices/pins and you free related resources in
+>>>the correct order. Because that is why you claim you need this flag.
+>>>
 >>
->> The VCLK_DIV enable bit isn't implemented as a gate since it's part
->> of the divider logic and vendor does this exact sequence to ensure
->> the divider is correctly set.
-> 
-> Unless there is reason, I'd prefer if this driver was using 'struct
-> parm', like the rest of amlogic custom clock drivers, for consistency.
+>>I do not claim such thing, actually opposite, I said it helps a bit
+>>but the reason for existence is different, yet you are still trying to
+>>imply me this.
+>>
+>>>I'm tired of this. Keep your driver tangled for all I care, I'm trying
+>>>to help you, obviously you are not interested.
+>>>
+>>
+>>With review you are doing great job and many thanks for that.
+>>
+>>Already said it multiple times, the main reason of flag existence is not =
+a
+>>use in the callback but to determine successful dpll initialization.
+>
+>So use it only for this, nothing else. Use it only to check during
+>cleanup that you need to do the cleanup as init was previously done.
+>
 
-Ack
+Ok, will do.
 
-thx,
-Neil
-
-> 
+>
+>>As there is no need to call unregister on anything if it was not
+>successfully
+>>registered.
 >>
->> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->> ---
->>   drivers/clk/meson/Kconfig  |   5 ++
->>   drivers/clk/meson/Makefile |   1 +
->>   drivers/clk/meson/vclk.c   | 146 +++++++++++++++++++++++++++++++++++++++++++++
->>   drivers/clk/meson/vclk.h   |  68 +++++++++++++++++++++
->>   4 files changed, 220 insertions(+)
+>>>
+>>>>
+>>>>>
+>>>>>>I know this is not required, but it helps on loading and unloading th=
+e
+>>>>>>driver,
+>>>>>>thanks to that, spam of pin-get dump is not slowing the driver
+>>>>>>load/unload.
+>>>>>
+>>>>>? Could you plese draw me a scenario how such thing may actually
+>>>>>happen?
+>>>>
+>>>>First of all I said it is not required.
+>>>>
+>>>>I already draw you this with above sentence.
+>>>>You need spam pin-get asynchronously and unload driver, what is not
+>>>>clear?
+>>>>Basically mutex in dpll is a bottleneck, with multiple requests waiting
+>>>>for
+>>>>mutex there is low change of driver getting mutex when doing
+>>>>unregisters.
+>>>
+>>>How exactly your flag helps you in this scenario? It does not.
+>>>
 >>
->> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
->> index 135da8f2d0b1..83f629515e96 100644
->> --- a/drivers/clk/meson/Kconfig
->> +++ b/drivers/clk/meson/Kconfig
->> @@ -30,6 +30,10 @@ config COMMON_CLK_MESON_VID_PLL_DIV
->>   	tristate
->>   	select COMMON_CLK_MESON_REGMAP
->>   
->> +config COMMON_CLK_MESON_VCLK
->> +	tristate
->> +	select COMMON_CLK_MESON_REGMAP
->> +
->>   config COMMON_CLK_MESON_CLKC_UTILS
->>   	tristate
->>   
->> @@ -140,6 +144,7 @@ config COMMON_CLK_G12A
->>   	select COMMON_CLK_MESON_EE_CLKC
->>   	select COMMON_CLK_MESON_CPU_DYNDIV
->>   	select COMMON_CLK_MESON_VID_PLL_DIV
->> +	select COMMON_CLK_MESON_VCLK
->>   	select MFD_SYSCON
->>   	help
->>   	  Support for the clock controller on Amlogic S905D2, S905X2 and S905Y2
->> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
->> index cd961cc4f4db..6efeb8c7bd2a 100644
->> --- a/drivers/clk/meson/Makefile
->> +++ b/drivers/clk/meson/Makefile
->> @@ -12,6 +12,7 @@ obj-$(CONFIG_COMMON_CLK_MESON_PLL) += clk-pll.o
->>   obj-$(CONFIG_COMMON_CLK_MESON_REGMAP) += clk-regmap.o
->>   obj-$(CONFIG_COMMON_CLK_MESON_SCLK_DIV) += sclk-div.o
->>   obj-$(CONFIG_COMMON_CLK_MESON_VID_PLL_DIV) += vid-pll-div.o
->> +obj-$(CONFIG_COMMON_CLK_MESON_VCLK) += vclk.o
->>   
->>   # Amlogic Clock controllers
->>   
->> diff --git a/drivers/clk/meson/vclk.c b/drivers/clk/meson/vclk.c
->> new file mode 100644
->> index 000000000000..0df84403b17f
->> --- /dev/null
->> +++ b/drivers/clk/meson/vclk.c
->> @@ -0,0 +1,146 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (c) 2023 Neil Armstrong <neil.armstrong@linaro.org>
->> + */
->> +
->> +#include <linux/module.h>
->> +#include "vclk.h"
->> +
->> +/* The VCLK gate has a supplementary reset bit to pulse after ungating */
->> +
->> +static int clk_regmap_vclk_enable(struct clk_hw *hw)
->> +{
->> +	struct clk_regmap *clk = to_clk_regmap(hw);
->> +	struct clk_regmap_vclk_data *vclk = clk_get_regmap_vclk_data(clk);
->> +
->> +	regmap_set_bits(clk->map, vclk->offset, BIT(vclk->enable_bit_idx));
->> +
->> +	/* Do a reset pulse */
->> +	regmap_set_bits(clk->map, vclk->offset, BIT(vclk->reset_bit_idx));
->> +	regmap_clear_bits(clk->map, vclk->offset, BIT(vclk->reset_bit_idx));
->> +
->> +	return 0;
->> +}
->> +
->> +static void clk_regmap_vclk_disable(struct clk_hw *hw)
->> +{
->> +	struct clk_regmap *clk = to_clk_regmap(hw);
->> +	struct clk_regmap_vclk_data *vclk = clk_get_regmap_vclk_data(clk);
->> +
->> +	regmap_clear_bits(clk->map, vclk->offset, BIT(vclk->enable_bit_idx));
->> +}
->> +
->> +static int clk_regmap_vclk_is_enabled(struct clk_hw *hw)
->> +{
->> +	struct clk_regmap *clk = to_clk_regmap(hw);
->> +	struct clk_regmap_vclk_data *vclk = clk_get_regmap_vclk_data(clk);
->> +	unsigned int val;
->> +
->> +	regmap_read(clk->map, vclk->offset, &val);
->> +
->> +	return val & BIT(vclk->enable_bit_idx) ? 1 : 0;
->> +}
->> +
->> +const struct clk_ops clk_regmap_vclk_ops = {
->> +	.enable = clk_regmap_vclk_enable,
->> +	.disable = clk_regmap_vclk_disable,
->> +	.is_enabled = clk_regmap_vclk_is_enabled,
->> +};
->> +EXPORT_SYMBOL_GPL(clk_regmap_vclk_ops);
->> +
->> +/* The VCLK Divider has supplementary reset & enable bits */
->> +
->> +static unsigned long clk_regmap_vclk_div_recalc_rate(struct clk_hw *hw,
->> +						     unsigned long prate)
->> +{
->> +	struct clk_regmap *clk = to_clk_regmap(hw);
->> +	struct clk_regmap_vclk_div_data *vclk = clk_get_regmap_vclk_div_data(clk);
->> +	unsigned int val;
->> +	int ret;
->> +
->> +	ret = regmap_read(clk->map, vclk->offset, &val);
->> +	if (ret)
->> +		/* Gives a hint that something is wrong */
->> +		return 0;
->> +
->> +	val >>= vclk->shift;
->> +	val &= clk_div_mask(vclk->width);
->> +
->> +	return divider_recalc_rate(hw, prate, val, vclk->table, vclk->flags,
->> +				   vclk->width);
->> +}
->> +
->> +static int clk_regmap_vclk_div_determine_rate(struct clk_hw *hw,
->> +					      struct clk_rate_request *req)
->> +{
->> +	struct clk_regmap *clk = to_clk_regmap(hw);
->> +	struct clk_regmap_vclk_div_data *vclk = clk_get_regmap_vclk_div_data(clk);
->> +
->> +	return divider_determine_rate(hw, req, vclk->table, vclk->width,
->> +				      vclk->flags);
->> +}
->> +
->> +static int clk_regmap_vclk_div_set_rate(struct clk_hw *hw, unsigned long rate,
->> +					unsigned long parent_rate)
->> +{
->> +	struct clk_regmap *clk = to_clk_regmap(hw);
->> +	struct clk_regmap_vclk_div_data *vclk = clk_get_regmap_vclk_div_data(clk);
->> +	unsigned int val;
->> +	int ret;
->> +
->> +	ret = divider_get_val(rate, parent_rate, vclk->table, vclk->width,
->> +			      vclk->flags);
->> +	if (ret < 0)
->> +		return ret;
->> +
->> +	val = (unsigned int)ret << vclk->shift;
->> +	return regmap_update_bits(clk->map, vclk->offset,
->> +				  clk_div_mask(vclk->width) << vclk->shift, val);
->> +};
->> +
->> +static int clk_regmap_vclk_div_enable(struct clk_hw *hw)
->> +{
->> +	struct clk_regmap *clk = to_clk_regmap(hw);
->> +	struct clk_regmap_vclk_div_data *vclk = clk_get_regmap_vclk_div_data(clk);
->> +
->> +	/* Unreset the divider when ungating */
->> +	regmap_clear_bits(clk->map, vclk->offset, BIT(vclk->reset_bit_idx));
->> +
->> +	return regmap_set_bits(clk->map, vclk->offset, BIT(vclk->enable_bit_idx));
->> +}
->> +
->> +static void clk_regmap_vclk_div_disable(struct clk_hw *hw)
->> +{
->> +	struct clk_regmap *clk = to_clk_regmap(hw);
->> +	struct clk_regmap_vclk_div_data *vclk = clk_get_regmap_vclk_div_data(clk);
->> +
->> +	/* Reset the divider when gating */
->> +	regmap_clear_bits(clk->map, vclk->offset, BIT(vclk->enable_bit_idx));
->> +
->> +	regmap_set_bits(clk->map, vclk->offset, BIT(vclk->reset_bit_idx));
->> +}
->> +
->> +static int clk_regmap_vclk_div_is_enabled(struct clk_hw *hw)
->> +{
->> +	struct clk_regmap *clk = to_clk_regmap(hw);
->> +	struct clk_regmap_vclk_div_data *vclk = clk_get_regmap_vclk_div_data(clk);
->> +	unsigned int val;
->> +
->> +	regmap_read(clk->map, vclk->offset, &val);
->> +
->> +	return val & BIT(vclk->enable_bit_idx) ? 1 : 0;
->> +}
->> +
->> +const struct clk_ops clk_regmap_vclk_div_ops = {
->> +	.recalc_rate = clk_regmap_vclk_div_recalc_rate,
->> +	.determine_rate = clk_regmap_vclk_div_determine_rate,
->> +	.set_rate = clk_regmap_vclk_div_set_rate,
->> +	.enable = clk_regmap_vclk_div_enable,
->> +	.disable = clk_regmap_vclk_div_disable,
->> +	.is_enabled = clk_regmap_vclk_div_is_enabled,
->> +};
->> +EXPORT_SYMBOL_GPL(clk_regmap_vclk_div_ops);
->> +
->> +MODULE_DESCRIPTION("Amlogic vclk clock driver");
->> +MODULE_AUTHOR("Neil Armstrong <neil.armstrong@linaro.org>");
->> +MODULE_LICENSE("GPL v2");
->> diff --git a/drivers/clk/meson/vclk.h b/drivers/clk/meson/vclk.h
->> new file mode 100644
->> index 000000000000..90786552a7f3
->> --- /dev/null
->> +++ b/drivers/clk/meson/vclk.h
->> @@ -0,0 +1,68 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/*
->> + * Copyright (c) 2023 Neil Armstrong <neil.armstrong@linaro.org>
->> + */
->> +
->> +#ifndef __VCLK_H
->> +#define __VCLK_H
->> +
->> +#include "clk-regmap.h"
->> +
->> +/**
->> + * struct clk_regmap_vclk_data - vclk regmap backed specific data
->> + *
->> + * @offset:		offset of the register controlling gate
->> + * @enable_bit_idx:	single bit controlling vclk enable
->> + * @reset_bit_idx:	single bit controlling vclk reset
->> + * @flags:		hardware-specific flags
->> + *
->> + * Flags:
->> + * Same as clk_gate except CLK_GATE_HIWORD_MASK which is ignored
->> + */
->> +struct clk_regmap_vclk_data {
->> +	unsigned int	offset;
->> +	u8		enable_bit_idx;
->> +	u8		reset_bit_idx;
->> +	u8		flags;
->> +};
->> +
->> +static inline struct clk_regmap_vclk_data *
->> +clk_get_regmap_vclk_data(struct clk_regmap *clk)
->> +{
->> +	return (struct clk_regmap_vclk_data *)clk->data;
->> +}
->> +
->> +extern const struct clk_ops clk_regmap_vclk_ops;
->> +
->> +/**
->> + * struct clk_regmap_vclk_div_data - vclk_div regmap back specific data
->> + *
->> + * @offset:	offset of the register controlling the divider
->> + * @shift:	shift to the divider bit field
->> + * @width:	width of the divider bit field
->> + * @enable_bit_idx:	single bit controlling vclk divider enable
->> + * @reset_bit_idx:	single bit controlling vclk divider reset
->> + * @table:	array of value/divider pairs, last entry should have div = 0
->> + *
->> + * Flags:
->> + * Same as clk_divider except CLK_DIVIDER_HIWORD_MASK which is ignored
->> + */
->> +struct clk_regmap_vclk_div_data {
->> +	unsigned int	offset;
->> +	u8		shift;
->> +	u8		width;
->> +	u8		enable_bit_idx;
->> +	u8		reset_bit_idx;
->> +	const struct clk_div_table      *table;
->> +	u8		flags;
->> +};
->> +
->> +static inline struct clk_regmap_vclk_div_data *
->> +clk_get_regmap_vclk_div_data(struct clk_regmap *clk)
->> +{
->> +	return (struct clk_regmap_vclk_div_data *)clk->data;
->> +}
->> +
->> +extern const struct clk_ops clk_regmap_vclk_div_ops;
->> +
->> +#endif /* __VCLK_H */
-> 
+>>In this scenario it helps because it fails the callbacks when dpll
+>>subsystem
+>>was partially initialized and callbacks can be already invoked, but in
+>>fact
+>>the dpll initialization is not yet finished in the driver, and there will
+>>always
+>>be the time between first and second dpll registration where we might wai=
+t
+>>for
+>>the mutex to become available on dpll core part.
+>
+>Draw it to me, please, where exatly there is a problem. I'm still
+>convinced that with the proper ordering of init/cleanup flows,
+>you'll get all you need, without any flag use.
+>
 
+But I never said there is some issue, was saying from the beginning
+"helping a bit" and "not required". Sorry I don't know how to draw this
+other than above.
+
+As agreed, will fix and use it only to deinit, let's move on, it is not
+required :)
+
+>
+>>
+>>>
+>>>>
+>>>>We actually need to redesign the mutex in dpll core/netlink, but I gues=
+s
+>>>>after
+>>>>initial submission.
+>>>
+>>>Why?
+>>>
+>>
+>>The global mutex for accessing the data works just fine, but it is slow.
+>>Maybe we could improve this by using rwlock instead.
+>
+>"it is slow" is quite vague description of what's wrong with the
+>locking.
+>
+
+I mean serialized access to dpll is something that might be the issue in th=
+e
+OS with multiple pins/devices and tools monitoring them, no hard data so fa=
+r.
+
+
+Thank you!
+Arkadiusz
+
+>
+>>
+>>Thank you!
+>>Arkadiusz
+>>
+>>>
+>>>>
+>>>>Thank you!
+>>>>Arkadiusz
+>>>>
+>>>>>
+>>>>>Thanks!
+>>>>>
+>>>>>
+>>>>>>
+>>>>>>>
+>>>>>>>>+	mutex_destroy(&pf->dplls.lock);
+>>>>>>>>+}
+>>>>>
+>>>>>
+>>>>>[...]
