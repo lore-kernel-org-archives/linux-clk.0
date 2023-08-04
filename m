@@ -2,109 +2,112 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2270C001DF
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Aug 2023 15:38:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1817DC001DB
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Aug 2023 16:31:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231137AbjHDPiT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Aug 2023 11:38:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40264 "EHLO
+        id S230291AbjHDQbZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Aug 2023 12:31:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231201AbjHDPiS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Aug 2023 11:38:18 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D357649CB;
-        Fri,  4 Aug 2023 08:38:16 -0700 (PDT)
+        with ESMTP id S230297AbjHDQbX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Aug 2023 12:31:23 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 288FF4C10;
+        Fri,  4 Aug 2023 09:31:19 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6A92F6202B;
-        Fri,  4 Aug 2023 15:38:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B15AC433C8;
-        Fri,  4 Aug 2023 15:38:12 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 74C21620A7;
+        Fri,  4 Aug 2023 16:31:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FE97C433CA;
+        Fri,  4 Aug 2023 16:31:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691163495;
-        bh=t4F+m0azHkadYsutPkh75iCV6olf/pJ7y0Pbspodwio=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=s3LWYBXP0DQCJ8gWTRlGS+DLuDNG91JnVUqj6fIwyYQ+K/ZrE+Mf+5akzN9HDNSsM
-         AlrELznaKCwhcSAZJBIdBxmoyVZYYz+BqXgKziIikEOcaTShqV9YhIuU/Qw+4xwOhV
-         dP3KswXwcY3JV6Xpd9idcxJLE/sHQJye5zPAIqwIVMW1uMYllspZXdh6XBYwjVzvQa
-         v3W9wiRmou7leVNioc8L1c1r+yrjoFid7gIEH7u+TptlFC4hBp+SU+dn4e4bBn5YX0
-         P4y/DADmXFXhRTNNa5dDHRmSzILx1OsbjX62EzkrsdGyGqtNb3dHbc0A7OMRJGHpzH
-         j6D+8RkWlFHtA==
-Date:   Fri, 4 Aug 2023 16:38:10 +0100
-From:   Conor Dooley <conor@kernel.org>
-To:     Elaine Zhang <zhangqing@rock-chips.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        kever.yang@rock-chips.com, heiko@sntech.de, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-kernel@vger.kernel.org, huangtao@rock-chips.com
-Subject: Re: [RESEND PATCH v3 3/4] dt-bindings: clock: rk3588: export
- PCLK_VO1GRF clk id
-Message-ID: <20230804-colonial-balsamic-c97491ebec12@spud>
-References: <20230804025101.28438-1-zhangqing@rock-chips.com>
+        s=k20201202; t=1691166677;
+        bh=jhplGazxUjW6Kin0V8iloOqTZLDJpCl1zEaHCyPA1fM=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=dLhqNsnSg4yY/9nwol2eZbD6+D9MExdUAVnK6eywfZwGbATOSzECNkUbkU6m102dD
+         L8sqC6Pl7aFvSrpx2iNtiZR79se8NCyOJLXJDSj0X6BneaMNDOUqYrH9go3QqpZgW4
+         FNddhvIIcdTxXW9o+FWts9XFbrg7+VHPsBJXSTcrzN6zZke+dSHg9j8B6suLZ1MMLF
+         Jf/M2/wBfWbLqZvKIoe4J9ML0pjYaDXQRaD8bO0G6tb4bVL7x/5UJ65VR4I2QMn7+/
+         2BtOE8OIHP6GfhevdMj1FP/5LwM/zw/EMLnUNug6u06iS9iTSrkbcZjAZ6zg40zZzr
+         EpvmfUxkeYKsg==
+Message-ID: <aba1b417-67ad-aec0-03ef-43da925c74da@kernel.org>
+Date:   Fri, 4 Aug 2023 19:31:11 +0300
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="lK93WBiQtkbGzRv8"
-Content-Disposition: inline
-In-Reply-To: <20230804025101.28438-1-zhangqing@rock-chips.com>
+Subject: Re: [PATCH v2 00/10] Fix up icc clock rate calculation on some
+ platforms
+Content-Language: en-US
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, quic_okukatla@quicinc.com
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20230726-topic-icc_coeff-v2-0-8c91c6c76076@linaro.org>
+From:   Georgi Djakov <djakov@kernel.org>
+In-Reply-To: <20230726-topic-icc_coeff-v2-0-8c91c6c76076@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Konrad,
 
---lK93WBiQtkbGzRv8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 31.07.23 13:52, Konrad Dybcio wrote:
+> Certain platforms require that some buses (or individual nodes) make
+> some additional changes to the clock rate formula, throwing in some
+> magic, Qualcomm-defined coefficients, to account for "inefficiencies".
 
-On Fri, Aug 04, 2023 at 10:51:01AM +0800, Elaine Zhang wrote:
-> add PCLK_VO1GRF clk id.
->=20
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> ---
->  include/dt-bindings/clock/rockchip,rk3588-cru.h | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->=20
-> diff --git a/include/dt-bindings/clock/rockchip,rk3588-cru.h b/include/dt=
--bindings/clock/rockchip,rk3588-cru.h
-> index b5616bca7b44..864a321ab362 100644
-> --- a/include/dt-bindings/clock/rockchip,rk3588-cru.h
-> +++ b/include/dt-bindings/clock/rockchip,rk3588-cru.h
-> @@ -733,8 +733,9 @@
->  #define ACLK_AV1_PRE			718
->  #define PCLK_AV1_PRE			719
->  #define HCLK_SDIO_PRE			720
-> +#define PCLK_VO1GRF			721
-> =20
-> -#define CLK_NR_CLKS			(HCLK_SDIO_PRE + 1)
-> +#define CLK_NR_CLKS			(PCLK_VO1GRF + 1)
-
-I only got this patch & not the rest of the series, so no idea what's
-going in those patches, but since CLK_NR_CLKS was put in a dt-binding
-header, is that value not now part of the ABI?
+Maybe some links to the downstream code would help to better check and
+understand this. Adding also Odelu in case he has any comments on the
+patches.
 
 Thanks,
-Conor.
+Georgi
 
-> =20
->  /* scmi-clocks indices */
-> =20
-> --=20
-> 2.17.1
->=20
+> Add the framework for it and utilize it on a couple SoCs.
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> ---
+> Changes in v2:
+> - Use the (arguably less favourable but necessary for precission) 100/x
+>    instead of x/100 for ib coefficient, update values in consequent
+>    patches to reflect that
+> - Rename "_percent" to "_coeff" because of /\
+> - Add the necessary code to support per-node clocks
+> - Add the necessary code to support per-node coefficients
+> - Hook up the CPUSS<->GNoC clock on QCM2290
+> - Update EBI node on QCM2290
+> - Link to v1: https://lore.kernel.org/r/20230726-topic-icc_coeff-v1-0-31616960818c@linaro.org
+> 
+> ---
+> Konrad Dybcio (10):
+>        interconnect: qcom: icc-rpm: Add AB/IB calculations coefficients
+>        interconnect: qcom: icc-rpm: Separate out clock rate calulcations
+>        interconnect: qcom: icc-rpm: Let nodes drive their own bus clock
+>        interconnect: qcom: icc-rpm: Check for node-specific rate coefficients
+>        interconnect: qcom: qcm2290: Hook up MAS_APPS_PROC's bus clock
+>        interconnect: qcom: qcm2290: Set AB coefficients
+>        interconnect: qcom: qcm2290: Update EBI channel configuration
+>        interconnect: qcom: sdm660: Set AB/IB coefficients
+>        interconnect: qcom: msm8996: Set AB/IB coefficients
+>        clk: qcom: smd-rpm: Move CPUSS_GNoC clock to interconnect
+> 
+>   drivers/clk/qcom/clk-smd-rpm.c             | 16 ++++--
+>   drivers/interconnect/qcom/icc-rpm-clocks.c |  6 ++
+>   drivers/interconnect/qcom/icc-rpm.c        | 92 ++++++++++++++++++++++++------
+>   drivers/interconnect/qcom/icc-rpm.h        | 15 +++++
+>   drivers/interconnect/qcom/msm8996.c        |  8 ++-
+>   drivers/interconnect/qcom/qcm2290.c        |  9 ++-
+>   drivers/interconnect/qcom/sdm660.c         |  4 ++
+>   7 files changed, 124 insertions(+), 26 deletions(-)
+> ---
+> base-commit: ec89391563792edd11d138a853901bce76d11f44
+> change-id: 20230726-topic-icc_coeff-b053d5409b9f
+> 
+> Best regards,
 
---lK93WBiQtkbGzRv8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZM0bYgAKCRB4tDGHoIJi
-0ivZAQCx292j0WpUPtQm1NKlAx/CxxoK2bk0EqWwWc0QshsvGwD/aj8I8l6Qv8Xn
-VBq+pNEmZJBYuho1YQFAV5jlcDIbmAM=
-=eTnE
------END PGP SIGNATURE-----
-
---lK93WBiQtkbGzRv8--
