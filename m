@@ -2,321 +2,141 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CF6CC04A94
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Aug 2023 10:07:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 729BFC00528
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Aug 2023 10:24:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231339AbjHDKHf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Aug 2023 06:07:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57252 "EHLO
+        id S230156AbjHDKYW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Aug 2023 06:24:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229951AbjHDKHJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Aug 2023 06:07:09 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E4D649FF
-        for <linux-clk@vger.kernel.org>; Fri,  4 Aug 2023 03:07:07 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-317715ec496so1710466f8f.3
-        for <linux-clk@vger.kernel.org>; Fri, 04 Aug 2023 03:07:06 -0700 (PDT)
+        with ESMTP id S229770AbjHDKYV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Aug 2023 06:24:21 -0400
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34B642118;
+        Fri,  4 Aug 2023 03:24:19 -0700 (PDT)
+Received: by mail-lj1-x233.google.com with SMTP id 38308e7fff4ca-2b974031aeaso29675181fa.0;
+        Fri, 04 Aug 2023 03:24:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1691143625; x=1691748425;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
-        bh=klbDsLcbssIZC1W6RhXqBdxY/IuELEv3DuGedgA5eC8=;
-        b=agyK7FVLVoIYjvTPrq2C1JXIerGnElJX2W2PuvJXMEKnB8HkWcBlCTn+m8s2PuiUjt
-         RuCAhhWhnouWxd4I98kiDSIFKPHSRzkGMWoU2I9DKvcUsFc/7Qj+hX7/kCiGqcEJmwVN
-         GjnkvyolVccIktZ69hvwXAqSK4Gcb65vKw92hW/4xwEDyAlAX4d7He2SAbhkPiIePxzl
-         y9yp8CGE4XlxsFM2Jkbzeifu1yUt0WRq3K+GStdEZ1ysBkwr7IO29cyo593poBdEU57+
-         m+SUuTKIStt3yo5A9Fy26P9C9HRjd+AlhQZN7s1ltu3NUGpwevwGGkpgg3X1TEqZKAEz
-         Vv9w==
+        d=gmail.com; s=20221208; t=1691144657; x=1691749457;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=+5Eyds8AZOTIj7eaREkCJcNrdRKcn3mEpCyJAFE/k2o=;
+        b=W2LLr/3DA539SuI2hMrjowb+HwvAs5rNWNx98+bCzT/02iOuwPjKE4M07arYKgcsi7
+         k0cYuPim2XRMEfvnCUIZPNOfxFNLbuuPR6KX0N/pX3wCMhCGA+4wlA7JjGQxM3GJT87j
+         hXOUSBVxIQHbFWyjoaIYlEJ7gFifMCKyhWNz3AZ+OINpPDJpX8BKxP2aFJYeBzQG3J8T
+         uDAi+NB46aFh52jvTgGC6xc/t367BHSOSFqbRrzRcz2fWJqA4CIHvipC9sK2CfV02iyn
+         mV4X3gL1dE2k/CyEDYZ4APJp9p6eecQXRwRGcq1ukLj7LTH+zKbGZKNc8KJqGHWJw/K1
+         PVKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691143625; x=1691748425;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=klbDsLcbssIZC1W6RhXqBdxY/IuELEv3DuGedgA5eC8=;
-        b=ZuHriKaS9EcHlTd62DLhbJ+JcRqiuKm0xXUal/3NAZEbaYeBhCYtKpSrKDQ5A5FvaX
-         NzM6LkeeMETaxolbKqUUVciHnFL9XCN+sX6wy/QPBwHRT+ZLWIooOZWQPRgzCsUQRGWD
-         0iHOafNJPVYvEMxpjIsk3ProGyw0B79g/gMHrTt/6TNyNh8TA+ttmlNCHQif8E0yY9Bd
-         PLdzvou+Mxr+nFMWr0y38yNunRlkKAcAfWQeryzFKmha2PgUuTHNrSvExCr8+jKZ/YG/
-         rUuvH67VbhyMCnRHlxkAzoNmdoi+Us6rkO5fpKrbQiqPbNfJoz4UNWZbLK5GtZPAMVj3
-         nfcg==
-X-Gm-Message-State: AOJu0YxLFo6c+I6zqVdLtVxnGsIrJKIivbPCe+YyIt3WPkAoSMk+6L2d
-        jhEdfQyfyz/+PIESDAgwiv7J2A==
-X-Google-Smtp-Source: AGHT+IE3TR/pQHzsEG8z5C8nmqBMTuqYmNIpXJqYn1NOZwVrxXcnd7FP7J82dM5yIVqspzDEgaqXNQ==
-X-Received: by 2002:adf:ea0a:0:b0:317:6348:8a9d with SMTP id q10-20020adfea0a000000b0031763488a9dmr1025869wrm.66.1691143625382;
-        Fri, 04 Aug 2023 03:07:05 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:aeaf:609a:5eef:39a8])
-        by smtp.gmail.com with ESMTPSA id d10-20020adffd8a000000b003143ba62cf4sm2087969wrr.86.2023.08.04.03.07.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Aug 2023 03:07:05 -0700 (PDT)
-References: <20230803-amlogic-v6-4-upstream-dsi-ccf-vim3-v7-0-762219fc5b28@linaro.org>
- <20230803-amlogic-v6-4-upstream-dsi-ccf-vim3-v7-4-762219fc5b28@linaro.org>
-User-agent: mu4e 1.8.13; emacs 28.2
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Neil Armstrong <neil.armstrong@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Nicolas Belin <nbelin@baylibre.com>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v7 4/9] clk: meson: g12a: make VCLK2 and ENCL clock path
- configurable by CCF
-Date:   Fri, 04 Aug 2023 12:04:34 +0200
-In-reply-to: <20230803-amlogic-v6-4-upstream-dsi-ccf-vim3-v7-4-762219fc5b28@linaro.org>
-Message-ID: <1jwmybnmt3.fsf@starbuckisacylon.baylibre.com>
+        d=1e100.net; s=20221208; t=1691144657; x=1691749457;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+5Eyds8AZOTIj7eaREkCJcNrdRKcn3mEpCyJAFE/k2o=;
+        b=R6hhlLM1p/sbySym6MV4xoeQIJJ76Y0JLw1jAvryTOJRfdOn+2ceNZ9OUbS8IyJX50
+         uMfQBGpatOZtrA6AUoCHxKZvvmktJyMvdGH7vsPkjLGQIB8t/+jc2FTzSGce3PAlM7XD
+         uaXkHLSoHBlt/PmioA5YacoVunu6gYCN0OT/8eDDhcHaoeLPdlAWuRl1M12NgKr8AXs5
+         51/1MJTr6S1ShNCOOQN/DaFUF7LZvZaiIKuav5y2BjUFdAyAlKM3BItw4R+Xch2I/f/l
+         iRGqBow5YDR7FXKPAFckXF8XjBs9wBN+WIS8i9TbM5AOQg0r5nTm0d8x6uRZAvG/CohO
+         FfIQ==
+X-Gm-Message-State: AOJu0Yy2NXWxoitoH8PFQsQgsVNim/NqpoO7MW2vfvmpWPamp82K4AfY
+        X7q4AjTs8pPHZbINIO/9WiY=
+X-Google-Smtp-Source: AGHT+IHO1gQu885p8yGW8WtJQSum+ZZNaqje43m9tQFcfdVHopqpLFBIWr7JgK1jWKtK1ZoU2wtEXg==
+X-Received: by 2002:a2e:9819:0:b0:2b8:36d4:7b0a with SMTP id a25-20020a2e9819000000b002b836d47b0amr1408664ljj.29.1691144657060;
+        Fri, 04 Aug 2023 03:24:17 -0700 (PDT)
+Received: from [192.168.26.149] (031011218106.poznan.vectranet.pl. [31.11.218.106])
+        by smtp.googlemail.com with ESMTPSA id u21-20020a2e8555000000b002b6ece2456csm389393ljj.121.2023.08.04.03.24.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Aug 2023 03:24:16 -0700 (PDT)
+Message-ID: <f46c3c30-77f9-b4fa-74fc-314b042ab82d@gmail.com>
+Date:   Fri, 4 Aug 2023 12:24:15 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: ARM board lockups/hangs triggered by locks and mutexes
+From:   =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+        Waiman Long <longman@redhat.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        linux-clk@vger.kernel.org,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Network Development <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc:     OpenWrt Development List <openwrt-devel@lists.openwrt.org>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>
+References: <CACna6rxpzDWE5-gnmpgMgfzPmmHvEGTZk4GJvJ8jLSMazh2bVA@mail.gmail.com>
+Content-Language: en-US
+In-Reply-To: <CACna6rxpzDWE5-gnmpgMgfzPmmHvEGTZk4GJvJ8jLSMazh2bVA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 2.08.2023 00:10, Rafał Miłecki wrote:
+> Reverting that extra commit from v5.4.238 allows me to run Linux for
+> hours again (currently 3 devices x 6 hours and counting). So I need in
+> total 10+1 reverts from 5.4 branch to get a stable kernel.
 
-On Thu 03 Aug 2023 at 14:03, Neil Armstrong <neil.armstrong@linaro.org> wrote:
+I switched back to OpenWrt's kernel 5.4 and applied all those reverts I
+found. Nothing. I was still getting hangs / lockups + reboots.
 
-> In order to setup the DSI clock, let's make the unused VCLK2 clock path
-> configuration via CCF.
->
-> The nocache option is removed from following clocks:
-> - vclk2_sel
-> - vclk2_input
-> - vclk2_div
-> - vclk2
-> - vclk_div1
-> - vclk2_div2_en
-> - vclk2_div4_en
-> - vclk2_div6_en
-> - vclk2_div12_en
-> - vclk2_div2
-> - vclk2_div4
-> - vclk2_div6
-> - vclk2_div12
-> - cts_encl_sel
->
-> vclk2 and vclk2_div uses the newly introduced vclk regmap driver
-> to handle the enable and reset bits.
->
-> In order to set a rate on cts_encl via the vclk2 clock path,
-> the NO_REPARENT flag is set on cts_encl_sel & vclk2_sel in order
-> to keep CCF from selection a parent.
-> The parents of cts_encl_sel & vclk2_sel are expected to be defined
-> in DT.
->
-> The following clock scheme is to be used for DSI:
->
-> xtal
-> \_ gp0_pll_dco
->    \_ gp0_pll
->       |- vclk2_sel
->       |  \_ vclk2_input
->       |     \_ vclk2_div
->       |        \_ vclk2
->       |           \_ vclk2_div1
->       |              \_ cts_encl_sel
->       |                 \_ cts_encl	-> to VPU LCD Encoder
->       |- mipi_dsi_pxclk_sel
->       \_ mipi_dsi_pxclk_div
->          \_ mipi_dsi_pxclk		-> to DSI controller
->
-> The mipi_dsi_pxclk_div is set as RO in order to use the same GP0
-> for mipi_dsi_pxclk and vclk2_input.
->
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
->  drivers/clk/meson/g12a.c | 43 ++++++++++++++++++++++++++-----------------
->  1 file changed, 26 insertions(+), 17 deletions(-)
->
-> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-> index 5d62134335c1..552c8efb1ad8 100644
-> --- a/drivers/clk/meson/g12a.c
-> +++ b/drivers/clk/meson/g12a.c
-> @@ -22,6 +22,7 @@
->  #include "clk-regmap.h"
->  #include "clk-cpu-dyndiv.h"
->  #include "vid-pll-div.h"
-> +#include "vclk.h"
->  #include "meson-eeclk.h"
->  #include "g12a.h"
->  
-> @@ -3165,7 +3166,7 @@ static struct clk_regmap g12a_vclk2_sel = {
->  		.ops = &clk_regmap_mux_ops,
->  		.parent_hws = g12a_vclk_parent_hws,
->  		.num_parents = ARRAY_SIZE(g12a_vclk_parent_hws),
-> -		.flags = CLK_SET_RATE_NO_REPARENT | CLK_GET_RATE_NOCACHE,
-> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT,
->  	},
->  };
->  
-> @@ -3193,7 +3194,7 @@ static struct clk_regmap g12a_vclk2_input = {
->  		.ops = &clk_regmap_gate_ops,
->  		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2_sel.hw },
->  		.num_parents = 1,
-> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-> +		.flags = CLK_SET_RATE_PARENT,
+After more bisecting and I found out it's because OpenWrt backported
+commit ad9b10d1eaad ("mtd: core: introduce of support for dynamic
+partitions"):
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=ad9b10d1eaada169bd764abcab58f08538877e26
 
-... oh, I see. Ignore the comment patch #2
+It didn't make any sense to me. That patch does nothing on my device and
+its code is only executed when booting.
 
->  	},
->  };
->  
-> @@ -3215,19 +3216,22 @@ static struct clk_regmap g12a_vclk_div = {
->  };
->  
->  static struct clk_regmap g12a_vclk2_div = {
-> -	.data = &(struct clk_regmap_div_data){
-> +	.data = &(struct clk_regmap_vclk_div_data){
->  		.offset = HHI_VIID_CLK_DIV,
->  		.shift = 0,
->  		.width = 8,
-> +		.enable_bit_idx = 16,
-> +		.reset_bit_idx = 17,
-> +		.flags = CLK_DIVIDER_ROUND_CLOSEST,
->  	},
->  	.hw.init = &(struct clk_init_data){
->  		.name = "vclk2_div",
-> -		.ops = &clk_regmap_divider_ops,
-> +		.ops = &clk_regmap_vclk_div_ops,
->  		.parent_hws = (const struct clk_hw *[]) {
->  			&g12a_vclk2_input.hw
->  		},
->  		.num_parents = 1,
-> -		.flags = CLK_GET_RATE_NOCACHE,
-> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
->  	},
->  };
->  
-> @@ -3246,16 +3250,17 @@ static struct clk_regmap g12a_vclk = {
->  };
->  
->  static struct clk_regmap g12a_vclk2 = {
-> -	.data = &(struct clk_regmap_gate_data){
-> +	.data = &(struct clk_regmap_vclk_data){
->  		.offset = HHI_VIID_CLK_CNTL,
-> -		.bit_idx = 19,
-> +		.enable_bit_idx = 19,
-> +		.reset_bit_idx = 15,
->  	},
->  	.hw.init = &(struct clk_init_data) {
->  		.name = "vclk2",
-> -		.ops = &clk_regmap_gate_ops,
-> +		.ops = &clk_regmap_vclk_ops,
->  		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2_div.hw },
->  		.num_parents = 1,
-> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
->  	},
->  };
->  
-> @@ -3339,7 +3344,7 @@ static struct clk_regmap g12a_vclk2_div1 = {
->  		.ops = &clk_regmap_gate_ops,
->  		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
->  		.num_parents = 1,
-> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-> +		.flags = CLK_SET_RATE_PARENT,
->  	},
->  };
->  
-> @@ -3353,7 +3358,7 @@ static struct clk_regmap g12a_vclk2_div2_en = {
->  		.ops = &clk_regmap_gate_ops,
->  		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
->  		.num_parents = 1,
-> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-> +		.flags = CLK_SET_RATE_PARENT,
->  	},
->  };
->  
-> @@ -3367,7 +3372,7 @@ static struct clk_regmap g12a_vclk2_div4_en = {
->  		.ops = &clk_regmap_gate_ops,
->  		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
->  		.num_parents = 1,
-> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-> +		.flags = CLK_SET_RATE_PARENT,
->  	},
->  };
->  
-> @@ -3381,7 +3386,7 @@ static struct clk_regmap g12a_vclk2_div6_en = {
->  		.ops = &clk_regmap_gate_ops,
->  		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
->  		.num_parents = 1,
-> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-> +		.flags = CLK_SET_RATE_PARENT,
->  	},
->  };
->  
-> @@ -3395,7 +3400,7 @@ static struct clk_regmap g12a_vclk2_div12_en = {
->  		.ops = &clk_regmap_gate_ops,
->  		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
->  		.num_parents = 1,
-> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-> +		.flags = CLK_SET_RATE_PARENT,
->  	},
->  };
->  
-> @@ -3461,6 +3466,7 @@ static struct clk_fixed_factor g12a_vclk2_div2 = {
->  			&g12a_vclk2_div2_en.hw
->  		},
->  		.num_parents = 1,
-> +		.flags = CLK_SET_RATE_PARENT,
->  	},
->  };
->  
-> @@ -3474,6 +3480,7 @@ static struct clk_fixed_factor g12a_vclk2_div4 = {
->  			&g12a_vclk2_div4_en.hw
->  		},
->  		.num_parents = 1,
-> +		.flags = CLK_SET_RATE_PARENT,
->  	},
->  };
->  
-> @@ -3487,6 +3494,7 @@ static struct clk_fixed_factor g12a_vclk2_div6 = {
->  			&g12a_vclk2_div6_en.hw
->  		},
->  		.num_parents = 1,
-> +		.flags = CLK_SET_RATE_PARENT,
->  	},
->  };
->  
-> @@ -3500,6 +3508,7 @@ static struct clk_fixed_factor g12a_vclk2_div12 = {
->  			&g12a_vclk2_div12_en.hw
->  		},
->  		.num_parents = 1,
-> +		.flags = CLK_SET_RATE_PARENT,
->  	},
->  };
->  
-> @@ -3561,7 +3570,7 @@ static struct clk_regmap g12a_cts_encl_sel = {
->  		.ops = &clk_regmap_mux_ops,
->  		.parent_hws = g12a_cts_parent_hws,
->  		.num_parents = ARRAY_SIZE(g12a_cts_parent_hws),
-> -		.flags = CLK_SET_RATE_NO_REPARENT | CLK_GET_RATE_NOCACHE,
-> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT,
->  	},
->  };
->  
-> @@ -3717,7 +3726,7 @@ static struct clk_regmap g12a_mipi_dsi_pxclk_sel = {
->  		.ops = &clk_regmap_mux_ops,
->  		.parent_hws = g12a_mipi_dsi_pxclk_parent_hws,
->  		.num_parents = ARRAY_SIZE(g12a_mipi_dsi_pxclk_parent_hws),
-> -		.flags = CLK_SET_RATE_NO_REPARENT,
-> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT,
->  	},
->  };
->  
-> @@ -3729,7 +3738,7 @@ static struct clk_regmap g12a_mipi_dsi_pxclk_div = {
->  	},
->  	.hw.init = &(struct clk_init_data){
->  		.name = "mipi_dsi_pxclk_div",
-> -		.ops = &clk_regmap_divider_ops,
-> +		.ops = &clk_regmap_divider_ro_ops,
->  		.parent_hws = (const struct clk_hw *[]) {
->  			&g12a_mipi_dsi_pxclk_sel.hw
->  		},
+It makes even less sense to me. Why such changes that should not affect
+anything actually break stability for BCM53573?
+
+I narrowed above patch even furher. It's actually enough to apply below
+diff to break kernel stability:
+
+diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
+index f69c5b94e..f10dd3af1 100644
+--- a/drivers/mtd/mtdcore.c
++++ b/drivers/mtd/mtdcore.c
+@@ -590,6 +590,25 @@ static int mtd_nvmem_add(struct mtd_info *mtd)
+  	return 0;
+  }
+
++static void mtd_check_of_node(struct mtd_info *mtd)
++{
++	struct device_node *partitions, *parent_dn;
++	struct mtd_info *parent;
++
++	/* Check if MTD already has a device node */
++	if (dev_of_node(&mtd->dev))
++		return;
++
++	/* Check if a partitions node exist */
++	parent = mtd_get_master(mtd);
++	parent_dn = dev_of_node(&parent->dev);
++	pr_info("[%s] mtd->name:%s parent_dn:%pOF\n", __func__, mtd->name, parent_dn);
++	if (!parent_dn)
++		return;
++
++	of_node_put(parent_dn);
++}
++
+  /**
+   *	add_mtd_device - register an MTD device
+   *	@mtd: pointer to new MTD device info structure
+@@ -673,6 +692,7 @@ int add_mtd_device(struct mtd_info *mtd)
+  	mtd->dev.devt = MTD_DEVT(i);
+  	dev_set_name(&mtd->dev, "mtd%d", i);
+  	dev_set_drvdata(&mtd->dev, mtd);
++	mtd_check_of_node(mtd);
+  	of_node_get(mtd_get_of_node(mtd));
+  	error = device_register(&mtd->dev);
+  	if (error) {
 
