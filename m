@@ -2,270 +2,235 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED6EDEB64DD
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Aug 2023 01:57:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 277F6EB64DD
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Aug 2023 02:05:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230143AbjHDB5W (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Aug 2023 21:57:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59114 "EHLO
+        id S229674AbjHDCFi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Aug 2023 22:05:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229992AbjHDB5V (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Aug 2023 21:57:21 -0400
-Received: from mail-m12739.qiye.163.com (mail-m12739.qiye.163.com [115.236.127.39])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 886551FF3;
-        Thu,  3 Aug 2023 18:57:19 -0700 (PDT)
-Received: from localhost.localdomain (unknown [58.22.7.114])
-        by mail-m12739.qiye.163.com (Hmail) with ESMTPA id EF4D64A01E0;
-        Fri,  4 Aug 2023 09:57:05 +0800 (CST)
-From:   Elaine Zhang <zhangqing@rock-chips.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org,
-        kever.yang@rock-chips.com, zhangqing@rock-chips.com,
-        heiko@sntech.de
-Cc:     linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-kernel@vger.kernel.org, huangtao@rock-chips.com
-Subject: [RESEND PATCH v3 2/4] clk: rockchip: add support for gate link
-Date:   Fri,  4 Aug 2023 09:57:01 +0800
-Message-Id: <20230804015701.23102-1-zhangqing@rock-chips.com>
-X-Mailer: git-send-email 2.17.1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-        tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ0hNQlZKQ0lMTkoaQx5DQkJVEwETFh
-        oSFyQUDg9ZV1kYEgtZQVlOQ1VJSVVMVUpKT1lXWRYaDxIVHRRZQVlPS0hVSk1PSU5JVUpLS1VKQl
-        kG
-X-HM-Tid: 0a89be434212b212kuuuef4d64a01e0
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Nyo6Hzo*KT1PKC9OQx8YAxkO
-        GjQwCk5VSlVKTUJKSkpPSUlNQ0hNVTMWGhIXVQETGhUcChIVHDsJFBgQVhgTEgsIVRgUFkVZV1kS
-        C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUxCTUo3Bg++
+        with ESMTP id S229613AbjHDCFh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Aug 2023 22:05:37 -0400
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2067.outbound.protection.outlook.com [40.107.21.67])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84650E69;
+        Thu,  3 Aug 2023 19:05:35 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=KDQqRC+upflFS/b5KshlRpaghK2sTDC0kGp70JuuFpocEK9/AfQQ8EI4/1N74W8a07HnFI2Wpd5n7YwJDog0lH9q5faC31O4b7RrDtrer797r7KdKZptgLbYcWAooQXeRfvHTP+l7efSbxpdWDeX5BNGPVPmovbt34RLd6YjlAvskKkvYQCvC8tOxDCz7mnUBA9nrA2rnTgmmDTrGkkZLpJLuXZC+qWAfAgXc5AonahAZXNK8HnePOXMDzSpz423hY9lPIrr55nFVcxmPjgytQwjU+aMSvQtNaKTR7+TtzdBqTKytYxxd1sYltxBzQcyS0aPW5NcOthxDWqnNxAHqg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TEB0vu/rhi4wL/E3hE7yq2oh+aC+wRjTKYp80yKG/2U=;
+ b=Xga3bedp69EdZijfZ/0q76RPP+AjaH0P48kMK7l8V4phBkM8mJ+q/kgthsBQdoCeFiwfRz81ujHT1bObZ1lY6dSqkuIfJmAxKn2EEsz9ODlZFxArUA5O0wUYAMQjUeVJ7OtnxLLHYAD6XdhEAcwg41nKtjtrm/8Arq2KkifIQSUS77NOzh5+KdejcNLFgBrElLj0/NjglbX+HbGwWyyb+Ycbsky0+jkTf3PxvAqHHaCyweVqA6UvIXiVKkjyoMzyrxEOu31dRatlytokRUSzMO2faw9XUxZCZgajaHXjg6CyQiByyXTKVwJouBnNxKm5010TY8MGjOtMjk1CXXJsmA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TEB0vu/rhi4wL/E3hE7yq2oh+aC+wRjTKYp80yKG/2U=;
+ b=P+cmuW+ytewRZ8gRuEawLok2TFbyzj+T+y0nURI0YoLHcH6DuXYidU0KLqdMKBLMDarUt4slG7JAaauXyKDhGHUT9nHNdJoqLCS6UvOd5TCX6wfooqUrTSR9PH+XdQBLF6CVTZYqQhdex+UoTqS5N+nT7YRBN5Epsw/jfixMg7o=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
+ by AS8PR04MB8785.eurprd04.prod.outlook.com (2603:10a6:20b:42c::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6631.47; Fri, 4 Aug
+ 2023 02:05:30 +0000
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::5d6a:ec53:f2a8:5b97]) by DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::5d6a:ec53:f2a8:5b97%6]) with mapi id 15.20.6631.046; Fri, 4 Aug 2023
+ 02:05:30 +0000
+Message-ID: <7b4aa0db-fd8b-902d-4f57-664a55a5f9f8@oss.nxp.com>
+Date:   Fri, 4 Aug 2023 10:05:09 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [PATCH] clk: imx: composite-8m: avoid glitches when set_rate
+ would be a no-op
+To:     Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20230801162731.3278396-1-a.fatoum@pengutronix.de>
+ <092bddfa-ff9d-ab57-63ed-e6c0f2e9b550@oss.nxp.com>
+ <51e3da0a-edee-a012-139c-f15feb67b973@pengutronix.de>
+From:   Peng Fan <peng.fan@oss.nxp.com>
+In-Reply-To: <51e3da0a-edee-a012-139c-f15feb67b973@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SI2PR02CA0046.apcprd02.prod.outlook.com
+ (2603:1096:4:196::15) To DU0PR04MB9417.eurprd04.prod.outlook.com
+ (2603:10a6:10:358::11)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU0PR04MB9417:EE_|AS8PR04MB8785:EE_
+X-MS-Office365-Filtering-Correlation-Id: 897c8e73-7cde-4ca8-2725-08db948f473c
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: rTGKloxMv0eH4VmP93OiZAV0tt/+QSCILzTBndHvp6p742MHlsKIukSPG4VEBy0voa4Kx8HXWkHxbVq/K7mvBUBXCu+BHFiBWCVHUncuaIB5BdSE6A4HQAxNSyMd27IO961tcpJkFKVh0aOkvgTYBG29jIgH5JCEorVfTPrRCk/ZYOVOvE3/hDFEiwn6PyPVCGQcjvsWrtCps52Ki7Wh+2mYWJI8u+xZg8MtNMcx0eC2RuiZqyqIII2WQ5xin2qtQ3eprhKER2sRAXh5F1WPgZDvl5XQ/ixF1DUig/z4ZV7Pyid0VD/5ZbqC7anf9u5RJAL+46vTD2phe68LEl0Ti8VZfd9DQ0R1koLHJd8s7i8kQbCCpAPfaFN6uFoS1Ka1iA9uFXpW1Nv7jW+aBp3DGZ1oE6AghzaVDdLMYmhdLjEOL3XMULcOJdjHzkwmBRncH0Hv6oFbUDXs25L6mxtD8kz/+WMbPtGcp8POSBIlo+HlAU4o1H6U8XIJyhlztfBXzUE+ilMXuUUlbvxFf6Ca/iF0wgd25kkldHdX1Gu5/WMAjDpqYWV/QL4dFOiN4wAfoOrqaSw9vWERK7b2xniUxBc/9boK6A6AHkgYyiaNYoy5rrkrmQiz+sCK/BownuvYerSnMcEt18DG3+LMz/nGSaB+pBlUx0ByrDFgehA4BO0=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(396003)(346002)(376002)(136003)(366004)(451199021)(1800799003)(186006)(31696002)(86362001)(31686004)(478600001)(110136005)(38100700002)(921005)(41300700001)(2616005)(6506007)(26005)(83380400001)(53546011)(6486002)(8936002)(44832011)(8676002)(6512007)(6666004)(7416002)(4326008)(316002)(5660300002)(66556008)(66476007)(66946007)(2906002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?a1B5MVY4b01aWU04SlZjb1ZSOWc1eStaeCtFSWtac25VcUtZUGk1K2wxazhs?=
+ =?utf-8?B?ZDQydWZCZDdHdGNoZTlneUZhSU1HMkR3bTJuVlptcytZVXFhQnRxK3FSZ3hi?=
+ =?utf-8?B?cFBUa3YydlRzN0NwL0VrYWdVNENKSWFraFNub0lzNVlZaXFESHRUZjBSU0Er?=
+ =?utf-8?B?NWRIbERnQVdpS1lHdTRNNWRTaXFadTF0MTJzZ0hDQ042TTZTaGFiQy9CVDFr?=
+ =?utf-8?B?bTNhRG43RnpuaUgzakZ3SUxTOHFpckJhVFpGbG9ETnUveDd0dm9lMm5XVjB4?=
+ =?utf-8?B?UDNYM25xRjlVZWhuNVBUelJFL294ZENhUFVIWjFNOFVhMmtCVDl3YzBhOCs0?=
+ =?utf-8?B?UmNqRTlUYXgxTlorNks3bEFjbnJ1RXQzNGhlYnJhQXB2c2laWHJ4SzNBbnBu?=
+ =?utf-8?B?eHNTWkxIbFIzbXo5WlVvc1lML1ZHUWNUdFYwLytTUjZCVnlaSHY2SDRUT3d3?=
+ =?utf-8?B?NHpwTUFwY21UVW9FRWZMWVBzaitHMXVONm9FOWpyYlc5K21ET1R5OXREK2dt?=
+ =?utf-8?B?Y3NyMW5Cd0krL3cxOEtObzk5TUx4RGxZUythbUdWTi9JTTB1ZVFSd1RwVTdY?=
+ =?utf-8?B?WG5hajJOSnpEYmNNYkc2U2UzRXhYWFZtTng1TFJXMUJzelpTODdCUGVxeTRN?=
+ =?utf-8?B?RXA1cjdvK3NlYUEyYmhzQUJnS2lxajd1YWsvMEtTNUduWVBMb29QRk5mV3Bn?=
+ =?utf-8?B?bUdqbDVnTEIvMVhqRCtvODNzakc1SEF6TjUySVlBZGZoS25OU1FIODFmS3d5?=
+ =?utf-8?B?Sm9md3FPQ2t3d2tkYnh2OEtmTUtmeFV4WWZteGZOakxROEgxU1p2RTlBaG11?=
+ =?utf-8?B?bUNXUzVUQUV3ODQvVThmbitNeW4vNmF2aU9EQUNtYnRlY3JSeDJZeW9vczRp?=
+ =?utf-8?B?RjdrNjRuNC9PUmQ4NTA0enhkQmxlN3BNbmxmeHZkNURYYlpVRm1EblpaN0pt?=
+ =?utf-8?B?bFRFUGg0ZnE1TWlITWxZQ0VOaWZYTWtFOSsrSFRaUXNDb1pWRFhQVzEyUy9t?=
+ =?utf-8?B?bnN3Q2NmakVFUVk4eUFLS0hxK1ptSlQyR0ZUb2lxTDJISUlFUExxQVZuME5K?=
+ =?utf-8?B?SG1qUzV0MlF0WWN4RXhGWmxESnZkV1pwRlg4aFlRRk5na3gxZW1Na3lBUFpK?=
+ =?utf-8?B?MzFNU09XdENqSjFtanBtRThGYjBiaTJ4R2lZY0hyRmcvbmZmd2tuYnFYVVlG?=
+ =?utf-8?B?Mi9vNGZTemNaV2FQTjJuSVpzWUZBS0pxRGpxbSswcldHWFRPdXRaWFg4M3l1?=
+ =?utf-8?B?aEU0RmUzekZ1NS9oVmpXY2pOTWVGVjdMNU9nNHFyZjVEMUlkQXlocGJINnRS?=
+ =?utf-8?B?dDU3ckl2cnByakplWkpVNEdrVzFWOC9pZmUyTkpUUE9WRGJNSWgyL3FraGdL?=
+ =?utf-8?B?bEtUejJ3Z0dCcUkwWGtJSUNqSGszdGt5N2wrbFJjSGhReEJyQ004MVJvYWNn?=
+ =?utf-8?B?ZXlXMy9SQXBqVktyYXBVTFFNM0lJdDQ4Z1hxYnpxZmZyV1lSL2N2Ny83ZHFG?=
+ =?utf-8?B?OU5RbGFLdjF3Y0JxaWNoN3hnZHNkQS9OaW0zaXVYKzRpZ2FxVTJYWUc2R2Vt?=
+ =?utf-8?B?S215cUk1dTZLVlZHcGRLZjdVWnFSNnFsQ1pGRXZEUUtsZk1ocXNFZG5TcW9v?=
+ =?utf-8?B?eHppdm9PNjNPUXM0WmwrUHBUYU9TelZ6a1BhZjlNRGlrWTRrZnQ3cm1kUVZw?=
+ =?utf-8?B?NjQxWWQrUTY4K0tQdDY0dWlxeFBjUkcxdnF1bHgyc083dTk4bU4xbDl1V2hU?=
+ =?utf-8?B?UWlVV2kzSmhxZE1yOFVJRk0wSDRHUi9qa3RITnZ4NW1zTTJ2SjZUZmo0RUl4?=
+ =?utf-8?B?S0RKNUc3disxQWRObXAyVmFBajZzdDBHM2ZHcGhJSHVPNjUveHlEUGxGZENP?=
+ =?utf-8?B?YWQ0YmMxaHFBU0U5ZGMvVFZYMnlMVk5WQmJtNTVsT0RKUWRuNDJsSURQdTgw?=
+ =?utf-8?B?T3lYV1cxSDJ2NGFndE1FRlhJZVBWdEloY1Y2QXBjYUtrMlkzNjBmdmNNcnZn?=
+ =?utf-8?B?WlhUeDYyQ2p6UFh5aHFIZ21reGxJSUgyc2JWL0dCSVJycExzdjhOaU9ucW44?=
+ =?utf-8?B?QUNneU9zVFNrbWYxMTlOSnczOWdTbU5qRUJVenR2RzhieEV2M3ZIamRESUtR?=
+ =?utf-8?Q?VVWYRKfE/vnsJEpGbANJd21+Y?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 897c8e73-7cde-4ca8-2725-08db948f473c
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Aug 2023 02:05:30.3740
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: DGGopzC+9Dduj842/6T9F1FiovqnM9IA8jVKqPyy9j4iLUVQd27LLfN2x7Mp2zhSqTqemT3E7A53Cd62etSQyQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8785
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Recent Rockchip SoCs have a new hardware block called Native Interface
-Unit (NIU), which gates clocks to devices behind them. These effectively
-need two parent clocks.
-Use GATE_LINK to handle this.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes:https://lore.kernel.org/oe-kbuild-all/202308040120.7KQxScIs-lkp@intel.com/
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
----
- drivers/clk/rockchip/Makefile        |   1 +
- drivers/clk/rockchip/clk-gate-link.c | 120 +++++++++++++++++++++++++++
- drivers/clk/rockchip/clk.c           |   7 ++
- drivers/clk/rockchip/clk.h           |  22 +++++
- 4 files changed, 150 insertions(+)
- create mode 100644 drivers/clk/rockchip/clk-gate-link.c
 
-diff --git a/drivers/clk/rockchip/Makefile b/drivers/clk/rockchip/Makefile
-index 36894f6a7022..87cc39d54f72 100644
---- a/drivers/clk/rockchip/Makefile
-+++ b/drivers/clk/rockchip/Makefile
-@@ -13,6 +13,7 @@ clk-rockchip-y += clk-inverter.o
- clk-rockchip-y += clk-mmc-phase.o
- clk-rockchip-y += clk-muxgrf.o
- clk-rockchip-y += clk-ddr.o
-+clk-rockchip-y += clk-gate-link.o
- clk-rockchip-$(CONFIG_RESET_CONTROLLER) += softrst.o
- 
- obj-$(CONFIG_CLK_PX30)          += clk-px30.o
-diff --git a/drivers/clk/rockchip/clk-gate-link.c b/drivers/clk/rockchip/clk-gate-link.c
-new file mode 100644
-index 000000000000..d4bbef4a067b
---- /dev/null
-+++ b/drivers/clk/rockchip/clk-gate-link.c
-@@ -0,0 +1,120 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2023 Fuzhou Rockchip Electronics Co., Ltd
-+ */
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/module.h>
-+#include <linux/slab.h>
-+#include <linux/io.h>
-+#include <linux/err.h>
-+#include <linux/string.h>
-+#include "clk.h"
-+
-+/**
-+ * struct clk_gate_link - gating link clock
-+ *
-+ * @gate: handle clk gate
-+ * @link: links clk
-+ */
-+struct clk_gate_link {
-+	struct clk_gate gate;
-+	struct clk	*link;
-+};
-+
-+#define to_clk_gate_link(_gate) container_of(_gate, struct clk_gate_link, gate)
-+
-+static int clk_gate_link_enable(struct clk_hw *hw)
-+{
-+	struct clk_gate_link *gate = to_clk_gate_link(to_clk_gate(hw));
-+
-+	clk_gate_endisable(hw, 1);
-+	clk_enable(gate->link);
-+
-+	return 0;
-+}
-+
-+static void clk_gate_link_disable(struct clk_hw *hw)
-+{
-+	struct clk_gate_link *gate = to_clk_gate_link(to_clk_gate(hw));
-+
-+	clk_gate_endisable(hw, 0);
-+	clk_disable(gate->link);
-+}
-+
-+static int clk_gate_link_is_enabled(struct clk_hw *hw)
-+{
-+	return clk_gate_is_enabled(hw);
-+}
-+
-+static int clk_gate_link_prepare(struct clk_hw *hw)
-+{
-+	struct clk_gate_link *gate = to_clk_gate_link(to_clk_gate(hw));
-+
-+	return clk_prepare(gate->link);
-+}
-+
-+static void clk_gate_link_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_gate_link *gate = to_clk_gate_link(to_clk_gate(hw));
-+
-+	clk_unprepare(gate->link);
-+}
-+
-+const struct clk_ops clk_gate_link_ops = {
-+	.prepare = clk_gate_link_prepare,
-+	.unprepare = clk_gate_link_unprepare,
-+	.enable = clk_gate_link_enable,
-+	.disable = clk_gate_link_disable,
-+	.is_enabled = clk_gate_link_is_enabled,
-+};
-+
-+struct clk *rockchip_clk_register_gate_link(struct rockchip_clk_provider *ctx,
-+					    const char *name, const char *parent_name,
-+					    unsigned int link_id, u8 flags,
-+					    void __iomem *gate_offset, u8 gate_shift,
-+					    u8 gate_flags, spinlock_t *lock)
-+{
-+	struct clk_gate_link *gate_link;
-+	struct clk_init_data init = {};
-+	struct clk **clks;
-+	struct clk *clk_link;
-+
-+	if (gate_flags & CLK_GATE_HIWORD_MASK) {
-+		if (gate_shift > 15) {
-+			pr_err("gate bit exceeds LOWORD field\n");
-+			return ERR_PTR(-ENOMEM);
-+		}
-+	}
-+
-+	/* allocate the gate */
-+	gate_link = kzalloc(sizeof(*gate_link), GFP_KERNEL);
-+	if (!gate_link)
-+		return ERR_PTR(-ENOMEM);
-+
-+	clks = ctx->clk_data.clks;
-+	gate_link->link = clks[link_id];
-+
-+	init.name = name;
-+	init.ops = &clk_gate_link_ops;
-+	init.flags = flags;
-+	init.parent_names = parent_name ? &parent_name : NULL;
-+	init.num_parents = 1;
-+
-+	/* struct clk_gate assignments */
-+	gate_link->gate.reg = gate_offset;
-+	gate_link->gate.bit_idx = gate_shift;
-+	gate_link->gate.flags = gate_flags;
-+	gate_link->gate.lock = lock;
-+	gate_link->gate.hw.init = &init;
-+
-+	clk_link = clk_register(NULL, &gate_link->gate.hw);
-+	if (IS_ERR(clk_link)) {
-+		kfree(gate_link);
-+		pr_err("%s clk_register field\n", name);
-+		return ERR_CAST(clk_link);
-+	}
-+
-+	return clk_link;
-+}
-+EXPORT_SYMBOL_GPL(rockchip_clk_register_gate_link);
-diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-index 4059d9365ae6..d981ef6c5487 100644
---- a/drivers/clk/rockchip/clk.c
-+++ b/drivers/clk/rockchip/clk.c
-@@ -509,6 +509,13 @@ void rockchip_clk_register_branches(struct rockchip_clk_provider *ctx,
- 				ctx->reg_base + list->gate_offset,
- 				list->gate_shift, list->gate_flags, &ctx->lock);
- 			break;
-+
-+		case branch_gate_link:
-+			clk = rockchip_clk_register_gate_link(ctx, list->name,
-+				list->parent_names[0], list->link_id, flags,
-+				ctx->reg_base + list->gate_offset,
-+				list->gate_shift, list->gate_flags, &ctx->lock);
-+			break;
- 		case branch_composite:
- 			clk = rockchip_clk_register_branch(list->name,
- 				list->parent_names, list->num_parents,
-diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-index 758ebaf2236b..b49e3cede33a 100644
---- a/drivers/clk/rockchip/clk.h
-+++ b/drivers/clk/rockchip/clk.h
-@@ -517,6 +517,7 @@ enum rockchip_clk_branch_type {
- 	branch_divider,
- 	branch_fraction_divider,
- 	branch_gate,
-+	branch_gate_link,
- 	branch_mmc,
- 	branch_inverter,
- 	branch_factor,
-@@ -529,6 +530,7 @@ struct rockchip_clk_branch {
- 	enum rockchip_clk_branch_type	branch_type;
- 	const char			*name;
- 	const char			*const *parent_names;
-+	unsigned int			link_id;
- 	u8				num_parents;
- 	unsigned long			flags;
- 	int				muxdiv_offset;
-@@ -842,6 +844,20 @@ struct rockchip_clk_branch {
- 		.gate_flags	= gf,				\
- 	}
- 
-+#define GATE_LINK(_id, cname, pname, _linkid, f, o, b, gf) \
-+	{							\
-+		.id		= _id,				\
-+		.branch_type	= branch_gate_link,		\
-+		.name		= cname,			\
-+		.parent_names	= (const char *[]){ pname },	\
-+		.num_parents	= 1,				\
-+		.link_id	= _linkid,			\
-+		.flags		= f,				\
-+		.gate_offset	= o,				\
-+		.gate_shift	= b,				\
-+		.gate_flags	= gf,				\
-+	}
-+
- #define MMC(_id, cname, pname, offset, shift)			\
- 	{							\
- 		.id		= _id,				\
-@@ -1002,6 +1018,12 @@ struct clk *rockchip_clk_register_halfdiv(const char *name,
- 					  unsigned long flags,
- 					  spinlock_t *lock);
- 
-+struct clk *rockchip_clk_register_gate_link(struct rockchip_clk_provider *ctx,
-+					    const char *name, const char *parent_name,
-+					    unsigned int link_id, u8 flags,
-+					    void __iomem *gate_offset, u8 gate_shift,
-+					    u8 gate_flags, spinlock_t *lock);
-+
- #ifdef CONFIG_RESET_CONTROLLER
- void rockchip_register_softrst_lut(struct device_node *np,
- 				   const int *lookup_table,
--- 
-2.17.1
+On 8/2/2023 2:30 PM, Ahmad Fatoum wrote:
+> Hello Peng,
+> 
+> On 02.08.23 03:25, Peng Fan wrote:
+>>
+>>
+>> On 8/2/2023 12:27 AM, Ahmad Fatoum wrote:
+>>> Reconfiguring the clock divider to the exact same value is observed
+>>> on an i.MX8MN to often cause a short clock pause, probably because
+>>> the divider restarts counting from the time the register is written.
+>>>
+>>> This issue doesn't show up normally, because the clock framework will
+>>> take care to not call set_rate when the clock rate is the same.
+>>> However, when we configure an upstream clock (e.g. an audio_pll), the
+>>> common code will call set_rate with the newly calculated rate on all
+>>> children. As the new rate is different, we enter set_rate and compute
+>>> the same divider values, write them back and cause the glitch (e.g.
+>>> on a SAI's MCLK).
+>>
+>>
+>> The CCM root has glitch-free mux. When upstream pll freq change,
+>> the child set rate will also touch the mux bit, since div and mux
+>> in one register, so the mux logic will also function.
+>>
+>> Per design, it is glitch free, so I not understand well why glitch.
+>>
+>> When you configure pll, the downstream sai clk should still not be enabled, right?
+> 
+>    - sai5 is running normally and divides Audio PLL out by 16.
+>    - audio_pll1 is increased by 32 Hz -> only kdiv changes, so no glitch
+>    - imx8m_clk_composite_divider_set_rate(sai5) is called with
+>      32 / 16 = 2 Hz more
+>    - imx8m_clk_composite_divider_set_rate computes same divider as before
+>      and writes register
+>    - divider starts counting from zero, so we have a longer clock pause
+>      than usual, e.g. 40ns -> 125ns, external MCLK consumer doesn't like that at all.
 
+Thanks for detailed explaination, I would expect write this down in 
+commit message.
+
+> 
+> So it's not a glitch in the transient high frequency sense, but rather a transient
+> low frequency period. I can reword the commit message to s/glitch/clock pause/
+> if you prefer.
+
+clock pause would be better, since the hardware design could avoid real 
+glitch.
+
+Thanks,
+Peng.
+
+> 
+> And yes, if mux is switched, we will probably get the same clock pause, but
+> that is not a problem for me currently, because we don't switch parents except
+> at boot up. Afterwards, only PLL is tuned.
+> 
+> Cheers,
+> Ahmad
+> 
+>>
+>> Thanks,
+>> Peng.
+>>
+>>>
+>>> To avoid the glitch, we skip writing the same value back again.
+>>>
+>>> Fixes: d3ff9728134e ("clk: imx: Add imx composite clock")
+>>> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+>>> ---
+>>>    drivers/clk/imx/clk-composite-8m.c | 12 +++++++-----
+>>>    1 file changed, 7 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-composite-8m.c
+>>> index cbf0d7955a00..3e9a092e136c 100644
+>>> --- a/drivers/clk/imx/clk-composite-8m.c
+>>> +++ b/drivers/clk/imx/clk-composite-8m.c
+>>> @@ -97,7 +97,7 @@ static int imx8m_clk_composite_divider_set_rate(struct clk_hw *hw,
+>>>        int prediv_value;
+>>>        int div_value;
+>>>        int ret;
+>>> -    u32 val;
+>>> +    u32 orig, val;
+>>>          ret = imx8m_clk_composite_compute_dividers(rate, parent_rate,
+>>>                            &prediv_value, &div_value);
+>>> @@ -106,13 +106,15 @@ static int imx8m_clk_composite_divider_set_rate(struct clk_hw *hw,
+>>>          spin_lock_irqsave(divider->lock, flags);
+>>>    -    val = readl(divider->reg);
+>>> -    val &= ~((clk_div_mask(divider->width) << divider->shift) |
+>>> -            (clk_div_mask(PCG_DIV_WIDTH) << PCG_DIV_SHIFT));
+>>> +    orig = readl(divider->reg);
+>>> +    val = orig & ~((clk_div_mask(divider->width) << divider->shift) |
+>>> +               (clk_div_mask(PCG_DIV_WIDTH) << PCG_DIV_SHIFT));
+>>>          val |= (u32)(prediv_value  - 1) << divider->shift;
+>>>        val |= (u32)(div_value - 1) << PCG_DIV_SHIFT;
+>>> -    writel(val, divider->reg);
+>>> +
+>>> +    if (val != orig)
+>>> +        writel(val, divider->reg);
+>>>          spin_unlock_irqrestore(divider->lock, flags);
+>>>    
+>>
+> 
