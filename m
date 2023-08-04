@@ -2,734 +2,118 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E3C6C04E69
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Aug 2023 13:35:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 237B7C41513
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Aug 2023 13:36:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231330AbjHDNfO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Aug 2023 09:35:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48022 "EHLO
+        id S231395AbjHDNgB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Aug 2023 09:36:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231137AbjHDNe4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Aug 2023 09:34:56 -0400
-Received: from mx.skole.hr (mx1.hosting.skole.hr [161.53.165.185])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F15D41BF9;
-        Fri,  4 Aug 2023 06:34:48 -0700 (PDT)
-Received: from mx1.hosting.skole.hr (localhost.localdomain [127.0.0.1])
-        by mx.skole.hr (mx.skole.hr) with ESMTP id 6E9DE83BBD;
-        Fri,  4 Aug 2023 15:34:47 +0200 (CEST)
-From:   =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Date:   Fri, 04 Aug 2023 15:32:37 +0200
-Subject: [PATCH v3 7/8] arm64: dts: Add DTS for Marvell PXA1908 and
- samsung,coreprimevelte
+        with ESMTP id S230258AbjHDNfr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Aug 2023 09:35:47 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B69E4EE5
+        for <linux-clk@vger.kernel.org>; Fri,  4 Aug 2023 06:35:15 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id ffacd0b85a97d-3178fa77b27so1813271f8f.2
+        for <linux-clk@vger.kernel.org>; Fri, 04 Aug 2023 06:35:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1691156113; x=1691760913;
+        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
+         :content-language:subject:reply-to:from:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=IL2AJxGdbMBYZwQaiXV29t4KoXB7Jg7IkcgZUQkDNUI=;
+        b=epRCAO2yPXPwYvAi1GgZHCKhfv84DCIM9+99WK1/2c9TlslGxxkNgeDjIrUAeN/Fe6
+         1k06bF5r89HcVt/6oaA44RPf6X/u7qpIgb/kQenNO+5p+wssn84D6xNPjnCC1QI6U30O
+         IpocouGfOvOJh/0FAA95TDyT3iEgB34Oj97lzXX/OoaUKZCWHb1zhUy0dJzm72hKKhHX
+         wynRKMo9C5H6+b4tY9tvLYnkdHFvNi9F0trQdtVfIEfPwYL9PBD7J3EecIpPME3Dhwof
+         sFfIoKxCFXLT5AIYD10vSb5BPpNbBlgT83Mr6Hxu8tou3htUcQMLIeu7ALw+4VVYKC4j
+         Deww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691156113; x=1691760913;
+        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
+         :content-language:subject:reply-to:from:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IL2AJxGdbMBYZwQaiXV29t4KoXB7Jg7IkcgZUQkDNUI=;
+        b=G8PssNheV6sCDtCdMH7HFfOeQE9Unpwlz84XoeqnSt8iVuHO7Hy2M/SuS91KWKEzeF
+         F/SIVL/YKgBAkn1+kdg7HGwCbBojZZNtScTlimV8A76WN7GInfVj+uOTLHIg1Ebq4E1g
+         /fG5M+VjuwvqDDiguN9qSfhOrqrle5dEqDFRn0YOzc+VPMR208FENQSHmVgG/gc+/JsB
+         6VKBFvDe79Yi4XKLvN2RjaxXl8Xdy99sOW5tMIT7WuviTVzSizoVkcx5zMEZOIQzf/Fi
+         WpBXb8kcJ1/pUPsnJPZFK9spPJ/MYt7YPwbNl5Zgu7tSif05oKkj8ZLqy3prFLQtOcGB
+         tgbg==
+X-Gm-Message-State: AOJu0YxdCpLfRNjOrOgVSr4YoTZ4yTWec+dP3cydid3xj1ni3lZsVP57
+        8sePugxxM9lyGxzFFHi0TaahoQ==
+X-Google-Smtp-Source: AGHT+IGFj2WJkLOCSreoMV4op68jFbpcQyR5ma8/Hp/gr6iIaCluzNOhufEIeNmZI5BQspwIpnn97Q==
+X-Received: by 2002:adf:fd03:0:b0:314:36c5:e4c0 with SMTP id e3-20020adffd03000000b0031436c5e4c0mr1472761wrr.11.1691156113348;
+        Fri, 04 Aug 2023 06:35:13 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:62a2:ed99:fec9:25cc? ([2a01:e0a:982:cbb0:62a2:ed99:fec9:25cc])
+        by smtp.gmail.com with ESMTPSA id y15-20020adff14f000000b0031766e99429sm2534654wro.115.2023.08.04.06.35.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Aug 2023 06:35:12 -0700 (PDT)
+Message-ID: <9adbbde6-a12c-2857-3103-1c012eed6f27@linaro.org>
+Date:   Fri, 4 Aug 2023 15:35:11 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20230804-pxa1908-lkml-v3-7-8e48fca37099@skole.hr>
-References: <20230804-pxa1908-lkml-v3-0-8e48fca37099@skole.hr>
-In-Reply-To: <20230804-pxa1908-lkml-v3-0-8e48fca37099@skole.hr>
-To:     Robert Jarzmik <robert.jarzmik@free.fr>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andy Shevchenko <andy@kernel.org>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+From:   Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v3 0/3] dt-bindings: second batch of dt-schema conversions
+ for Amlogic Meson bindings
+Content-Language: en-US
+To:     Jerome Brunet <jbrunet@baylibre.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Tony Luck <tony.luck@intel.com>,
-        "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-        =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-hardening@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        afaerber@suse.de
-X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=16489;
- i=duje.mihanovic@skole.hr; h=from:subject:message-id;
- bh=oUufXt0MP5S0TNaPjNqmOb2jja41pWx66XehgjkskYk=;
- b=owEBbQKS/ZANAwAIAZoRnrBCLZbhAcsmYgBkzP48qfzhsULMm2kQizPNcEO/eLvN+QM2jfE0U
- mER6fowX0iJAjMEAAEIAB0WIQRT351NnD/hEPs2LXiaEZ6wQi2W4QUCZMz+PAAKCRCaEZ6wQi2W
- 4RvED/4r/cOCutLHri3V/jL2kJk63qTV3Wwwbh1RKi4LgM7CFrmqtJlkP6X4asyUvnf/pCiGKyZ
- VejT043ewPFlrZH57pi3aNFHwIWvyGJVjECGXX+BqTu8c9dByM6aLmXJzeXbJmQDO0BCGBDeBPF
- HHNt0mBeaUMGbE7s/AbBk4omcCF9+DyeSRFkm281D+wKPQrR9xchosqk7uSvrNPyCsUcjvPQJHn
- PyTvlNfMVmhpTWOJDkjOz7ykKEvzaUKjDspQNhWevo153UznvfAOTeNN6jPu9Op3wntsA68wDMD
- kp3OE0t0sR2TrPalsZ6u6ch1rbfv5zmmWV0r97VJkrTRgjVmMXxWe67ENVyy4Evx4/jgxT3MAks
- SLTiAT33syiAUpo0nGbHOR7YLtPMd2Bb5c+0K6YaiRZoi3GkZoW4/TdzVSFyeIA2Lq15S07uATA
- PvVYIm5SNU++oqrnFWH3sr2rgHt1x1ODMIwehPdmnDtPsU6tlrpr4GahHJmcIw0sOMZhxTfNsDO
- 7mEGoArSyqHZVPRdd+PWUC7QDUQXlGiB6SVJwbdeYAlLkVuCQnfVEcRTmdNowwzkJZJ1qmyBC2f
- IeKC3RuiMH2ecz5XOnJpj0h5qb8XM7bhXrVHJtLO7MVCkZXQs3xxbc6/Hpr+7vgj5+tBykVzRDv
- vmaXfleYqr6DG1A==
-X-Developer-Key: i=duje.mihanovic@skole.hr; a=openpgp;
- fpr=53DF9D4D9C3FE110FB362D789A119EB0422D96E1
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>
+References: <20230706-b4-amlogic-bindings-convert-take2-v3-0-f63de6f12dcc@linaro.org>
+Organization: Linaro Developer Services
+In-Reply-To: <20230706-b4-amlogic-bindings-convert-take2-v3-0-f63de6f12dcc@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add DTS for Marvell PXA1908 SoC and Samsung Galaxy Core Prime Value
-Edition LTE, a smartphone based on said SoC.
+Hi Jerome,
 
-Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
----
- arch/arm64/boot/dts/marvell/Makefile               |   3 +
- .../dts/marvell/pxa1908-samsung-coreprimevelte.dts | 332 +++++++++++++++++++++
- arch/arm64/boot/dts/marvell/pxa1908.dtsi           | 292 ++++++++++++++++++
- 3 files changed, 627 insertions(+)
+On 06/07/2023 16:52, Neil Armstrong wrote:
+> Batch conversion of the following bindings:
+> - amlogic,gxbb-clkc.txt
+> - amlogic,gxbb-aoclkc.txt
+> 
 
-diff --git a/arch/arm64/boot/dts/marvell/Makefile b/arch/arm64/boot/dts/marvell/Makefile
-index 79ac09b58a89..263be6ec7567 100644
---- a/arch/arm64/boot/dts/marvell/Makefile
-+++ b/arch/arm64/boot/dts/marvell/Makefile
-@@ -27,3 +27,6 @@ dtb-$(CONFIG_ARCH_MVEBU) += cn9132-db-B.dtb
- dtb-$(CONFIG_ARCH_MVEBU) += cn9130-crb-A.dtb
- dtb-$(CONFIG_ARCH_MVEBU) += cn9130-crb-B.dtb
- dtb-$(CONFIG_ARCH_MVEBU) += ac5-98dx35xx-rd.dtb
-+
-+# MMP SoC Family
-+dtb-$(CONFIG_ARCH_MMP) += pxa1908-samsung-coreprimevelte.dtb
-diff --git a/arch/arm64/boot/dts/marvell/pxa1908-samsung-coreprimevelte.dts b/arch/arm64/boot/dts/marvell/pxa1908-samsung-coreprimevelte.dts
-new file mode 100644
-index 000000000000..59e5d6f15dd2
---- /dev/null
-+++ b/arch/arm64/boot/dts/marvell/pxa1908-samsung-coreprimevelte.dts
-@@ -0,0 +1,332 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+#include "pxa1908.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/linux-event-codes.h>
-+
-+/ {
-+	model = "Samsung Galaxy Core Prime VE LTE";
-+	compatible = "samsung,coreprimevelte", "marvell,pxa1908";
-+
-+	aliases {
-+		mmc0 = &sdh2; /* eMMC */
-+		mmc1 = &sdh0; /* SD card */
-+		serial0 = &uart0;
-+	};
-+
-+	chosen {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		stdout-path = "serial0:115200n8";
-+
-+		fb0: framebuffer@17177000 {
-+			compatible = "simple-framebuffer";
-+			reg = <0 0x17177000 0 (480 * 800 * 4)>;
-+			width = <480>;
-+			height = <800>;
-+			stride = <(480 * 4)>;
-+			format = "a8r8g8b8";
-+		};
-+	};
-+
-+	/* Bootloader fills this in */
-+	memory {
-+		device_type = "memory";
-+		reg = <0 0 0 0>;
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		framebuffer@17000000 {
-+			reg = <0 0x17000000 0 0x1800000>;
-+			no-map;
-+		};
-+
-+		gpu@9000000 {
-+			reg = <0 0x9000000 0 0x1000000>;
-+		};
-+
-+		/* Communications processor, aka modem */
-+		cp@3000000 {
-+			reg = <0 0x3000000 0 0x5000000>;
-+		};
-+
-+		cm3@a000000 {
-+			reg = <0 0xa000000 0 0x80000>;
-+		};
-+
-+		seclog@8000000 {
-+			reg = <0 0x8000000 0 0x100000>;
-+		};
-+
-+		ramoops@8100000 {
-+			compatible = "ramoops";
-+			reg = <0 0x8100000 0 0x40000>;
-+			record-size = <0x8000>;
-+			console-size = <0x20000>;
-+			max-reason = <5>;
-+		};
-+	};
-+
-+
-+	i2c-muic {
-+		compatible = "i2c-gpio";
-+		sda-gpios = <&gpio 30 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DRAIN)>;
-+		scl-gpios = <&gpio 29 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DRAIN)>;
-+		i2c-gpio,delay-us = <3>;
-+		i2c-gpio,timeout-ms = <100>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c_muic_pins>;
-+
-+		muic: extcon@14 {
-+			compatible = "siliconmitus,sm5504-muic";
-+			reg = <0x14>;
-+			interrupt-parent = <&gpio>;
-+			interrupts = <0 IRQ_TYPE_EDGE_FALLING>;
-+		};
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&gpio_keys_pins>;
-+		autorepeat;
-+
-+		key-home {
-+			label = "Home";
-+			linux,code = <KEY_HOME>;
-+			gpios = <&gpio 50 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		key-volup {
-+			label = "Volume Up";
-+			linux,code = <KEY_VOLUMEUP>;
-+			gpios = <&gpio 16 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		key-voldown {
-+			label = "Volume Down";
-+			linux,code = <KEY_VOLUMEDOWN>;
-+			gpios = <&gpio 17 GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+};
-+
-+&smmu {
-+	status = "okay";
-+};
-+
-+&pmx {
-+	pinctrl-single,gpio-range = <&range 55 55 0>,
-+				    <&range 110 32 0>,
-+				    <&range 52 1 0>;
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&board_pins_1 &board_pins_2 &board_pins_3>;
-+
-+	board_pins_1: pinmux-board-1 {
-+		pinctrl-single,pins = <
-+			0x160 0
-+			0x164 0
-+			0x168 0
-+			0x16c 0
-+		>;
-+		pinctrl-single,drive-strength = <0x1000 0x1800>;
-+		pinctrl-single,bias-pullup = <0x8000 0x8000 0 0xc000>;
-+		pinctrl-single,bias-pulldown = <0x8000 0x8000 0 0xa000>;
-+		pinctrl-single,input-schmitt = <0 0x30>;
-+		pinctrl-single,input-schmitt-enable = <0x40 0 0x40 0x40>;
-+		pinctrl-single,low-power-mode = <0x288 0x388>;
-+	};
-+
-+	board_pins_2: pinmux-board-2 {
-+		pinctrl-single,pins = <
-+			0x44 1
-+			0x48 1
-+			0x20 1
-+			0x18 1
-+			0x14 1
-+			0x10 1
-+			0xc 1
-+			0x8 1
-+			0x68 1
-+			0x58 0
-+			0x54 0
-+			0x7c 0
-+			0x6c 0
-+			0x70 0
-+			0x4c 1
-+			0x50 1
-+			0xac 0
-+			0x90 0
-+			0x8c 0
-+			0x88 0
-+			0x84 0
-+			0xc8 0
-+			0x128 0
-+			0x190 0
-+			0x194 0
-+			0x1a0 0
-+			0x114 0
-+			0x118 0
-+			0x1d8 0
-+			0x1e4 0
-+			0xe8 0
-+			0x100 0
-+			0x204 0
-+			0x210 0
-+			0x218 0
-+		>;
-+		pinctrl-single,bias-pullup = <0xc000 0xc000 0 0xc000>;
-+		pinctrl-single,bias-pulldown = <0x8000 0xa000 0x8000 0xc000>;
-+		pinctrl-single,low-power-mode = <0x288 0x388>;
-+	};
-+
-+	board_pins_3: pinmux-board-3 {
-+		pinctrl-single,pins = <
-+			0x260 0
-+			0x264 0
-+			0x268 0
-+			0x26c 0
-+			0x270 0
-+			0x274 0
-+			0x78 0
-+			0x74 0
-+			0xb0 1
-+		>;
-+		pinctrl-single,drive-strength = <0x1000 0x1800>;
-+		pinctrl-single,bias-pullup = <0 0xc000 0 0xc000>;
-+		pinctrl-single,bias-pulldown = <0 0xa000 0 0xa000>;
-+		pinctrl-single,input-schmitt = <0 0x30>;
-+		pinctrl-single,input-schmitt-enable = <0x40 0 0x40 0x40>;
-+		pinctrl-single,low-power-mode = <0 0x388>;
-+	};
-+
-+	uart0_pins: pinmux-uart0 {
-+		pinctrl-single,pins = <
-+			0x198 6
-+			0x19c 6
-+		>;
-+		pinctrl-single,drive-strength = <0x1000 0x1800>;
-+		pinctrl-single,bias-pullup = <0 0xc000 0 0xc000>;
-+		pinctrl-single,bias-pulldown = <0 0xa000 0 0xa000>;
-+		pinctrl-single,input-schmitt = <0 0x30>;
-+		pinctrl-single,input-schmitt-enable = <0x40 0 0x40 0x40>;
-+		pinctrl-single,low-power-mode = <0 0x388>;
-+	};
-+
-+	gpio_keys_pins: pinmux-gpio-keys {
-+		pinctrl-single,pins = <
-+			0x11c 0
-+			0x120 0
-+			0x1a4 0
-+		>;
-+		pinctrl-single,drive-strength = <0x1000 0x1800>;
-+		pinctrl-single,bias-pullup = <0xc000 0xc000 0 0xc000>;
-+		pinctrl-single,bias-pulldown = <0x8000 0xa0000 0x8000 0xa000>;
-+		pinctrl-single,input-schmitt = <0 0x30>;
-+		pinctrl-single,input-schmitt-enable = <0x40 0 0x40 0x40>;
-+		pinctrl-single,low-power-mode = <0 0x388>;
-+	};
-+
-+	i2c_muic_pins: pinmux-i2c-muic {
-+		pinctrl-single,pins = <
-+			0x154 0
-+			0x150 0
-+		>;
-+		pinctrl-single,drive-strength = <0x1000 0x1800>;
-+		pinctrl-single,bias-pullup = <0 0xc000 0 0xc000>;
-+		pinctrl-single,bias-pulldown = <0 0xa000 0 0xa000>;
-+		pinctrl-single,input-schmitt = <0 0x30>;
-+		pinctrl-single,input-schmitt-enable = <0x40 0 0x40 0x40>;
-+		pinctrl-single,low-power-mode = <0x288 0x388>;
-+	};
-+
-+	sdh0_pins_1: pinmux-sdh0-1 {
-+		pinctrl-single,pins = <
-+			0x108 0
-+		>;
-+		pinctrl-single,drive-strength = <0x1000 0x1800>;
-+		pinctrl-single,bias-pullup = <0xc000 0xc000 0 0xc000>;
-+		pinctrl-single,bias-pulldown = <0x8000 0xa000 0x8000 0xa000>;
-+		pinctrl-single,input-schmitt = <0 0x30>;
-+		pinctrl-single,input-schmitt-enable = <0x40 0 0x40 0x40>;
-+		pinctrl-single,low-power-mode = <0 0x388>;
-+	};
-+
-+	sdh0_pins_2: pinmux-sdh0-2 {
-+		pinctrl-single,pins = <
-+			0x94 0
-+			0x98 0
-+			0x9c 0
-+			0xa0 0
-+			0xa4 0
-+		>;
-+		pinctrl-single,drive-strength = <0x800 0x1800>;
-+		pinctrl-single,bias-pullup = <0xc000 0xc000 0 0xc000>;
-+		pinctrl-single,bias-pulldown = <0x8000 0xa000 0x8000 0xa000>;
-+		pinctrl-single,input-schmitt = <0 0x30>;
-+		pinctrl-single,input-schmitt-enable = <0x40 0 0x40 0x40>;
-+		pinctrl-single,low-power-mode = <0 0x388>;
-+	};
-+
-+	sdh0_pins_3: pinmux-sdh0-3 {
-+		pinctrl-single,pins = <
-+			0xa8 0
-+		>;
-+		pinctrl-single,drive-strength = <0x1000 0x1800>;
-+		pinctrl-single,bias-pullup = <0 0xc000 0 0xc000>;
-+		pinctrl-single,bias-pulldown = <0 0xa000 0 0xa000>;
-+		pinctrl-single,input-schmitt = <0 0x30>;
-+		pinctrl-single,input-schmitt-enable = <0x40 0 0x40 0x40>;
-+		pinctrl-single,low-power-mode = <0x208 0x388>;
-+	};
-+};
-+
-+&uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart0_pins>;
-+};
-+
-+&twsi0 {
-+	status = "okay";
-+};
-+
-+&twsi1 {
-+	status = "okay";
-+};
-+
-+&twsi2 {
-+	status = "okay";
-+};
-+
-+&twsi3 {
-+	status = "okay";
-+};
-+
-+&usb {
-+	extcon = <&muic>, <&muic>;
-+};
-+
-+&sdh2 {
-+	/* Disabled for now because initialization fails with -ETIMEDOUT. */
-+	status = "disabled";
-+	bus-width = <8>;
-+	non-removable;
-+	broken-cd;
-+	mmc-ddr-1_8v;
-+};
-+
-+&sdh0 {
-+	pinctrl-0 = <&sdh0_pins_1 &sdh0_pins_2 &sdh0_pins_3>;
-+	cd-gpios = <&gpio 11 0>;
-+	cd-inverted;
-+	bus-width = <4>;
-+	wp-inverted;
-+};
-diff --git a/arch/arm64/boot/dts/marvell/pxa1908.dtsi b/arch/arm64/boot/dts/marvell/pxa1908.dtsi
-new file mode 100644
-index 000000000000..59b3e609bb24
---- /dev/null
-+++ b/arch/arm64/boot/dts/marvell/pxa1908.dtsi
-@@ -0,0 +1,292 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/dts-v1/;
-+
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/marvell,pxa1908.h>
-+
-+/ {
-+	model = "Marvell Armada PXA1908";
-+	compatible = "marvell,pxa1908";
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+	interrupt-parent = <&gic>;
-+
-+	cpus {
-+		#address-cells = <2>;
-+		#size-cells = <0>;
-+
-+		cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			reg = <0 0>;
-+			enable-method = "psci";
-+		};
-+
-+		cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			reg = <0 1>;
-+			enable-method = "psci";
-+		};
-+
-+		cpu@2 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			reg = <0 2>;
-+			enable-method = "psci";
-+		};
-+
-+		cpu@3 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			reg = <0 3>;
-+			enable-method = "psci";
-+		};
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-0.2";
-+		method = "smc";
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			<GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			<GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			<GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		smmu: iommu@c0010000 {
-+			compatible = "arm,mmu-400";
-+			reg = <0 0xc0010000 0 0x10000>;
-+			#global-interrupts = <1>;
-+			#iommu-cells = <1>;
-+			interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
-+			status = "disabled";
-+		};
-+
-+		gic: interrupt-controller@d1df9000 {
-+			compatible = "arm,gic-400";
-+			reg = <0 0xd1df9000 0 0x1000>,
-+				<0 0xd1dfa000 0 0x2000>;
-+			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+		};
-+
-+		apb@d4000000 {
-+			compatible = "simple-bus";
-+			reg = <0 0xd4000000 0 0x200000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges = <0 0 0xd4000000 0x200000>;
-+
-+			pdma: dma-controller@0 {
-+				compatible = "marvell,pdma-1.0";
-+				reg = <0 0x10000>;
-+				interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
-+				dma-channels = <30>;
-+				#dma-cells = <2>;
-+			};
-+
-+			twsi1: i2c@10800 {
-+				compatible = "mrvl,mmp-twsi";
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				reg = <0x10800 0x64>;
-+				interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&apbc PXA1908_CLK_TWSI1>;
-+				mrvl,i2c-fast-mode;
-+				status = "disabled";
-+			};
-+
-+			twsi0: i2c@11000 {
-+				compatible = "mrvl,mmp-twsi";
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				reg = <0x11000 0x64>;
-+				interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&apbc PXA1908_CLK_TWSI0>;
-+				mrvl,i2c-fast-mode;
-+				status = "disabled";
-+			};
-+
-+			twsi3: i2c@13800 {
-+				compatible = "mrvl,mmp-twsi";
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				reg = <0x13800 0x64>;
-+				interrupts = <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&apbc PXA1908_CLK_TWSI3>;
-+				mrvl,i2c-fast-mode;
-+				status = "disabled";
-+			};
-+
-+			apbc: clock-controller@15000 {
-+				compatible = "marvell,pxa1908-apbc";
-+				reg = <0x15000 0x1000>;
-+				#clock-cells = <1>;
-+			};
-+
-+			uart0: serial@17000 {
-+				compatible = "mrvl,mmp-uart", "intel,xscale-uart";
-+				reg = <0x17000 0x1000>;
-+				interrupts = <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&apbc PXA1908_CLK_UART0>;
-+				reg-shift = <2>;
-+			};
-+
-+			uart1: serial@18000 {
-+				compatible = "mrvl,mmp-uart", "intel,xscale-uart";
-+				reg = <0x18000 0x1000>;
-+				interrupts = <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&apbc PXA1908_CLK_UART1>;
-+				reg-shift = <2>;
-+			};
-+
-+			gpio: gpio@19000 {
-+				compatible = "marvell,mmp-gpio";
-+				reg = <0x19000 0x800>;
-+				#address-cells = <1>;
-+				#size-cells = <1>;
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				clocks = <&apbc PXA1908_CLK_GPIO>;
-+				interrupts = <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>;
-+				interrupt-names = "gpio_mux";
-+				interrupt-controller;
-+				#interrupt-cells = <2>;
-+				ranges = <0 0x19000 0x800>;
-+
-+				gpio@0 {
-+					reg = <0x0 0x4>;
-+				};
-+
-+				gpio@4 {
-+					reg = <0x4 0x4>;
-+				};
-+
-+				gpio@8 {
-+					reg = <0x8 0x4>;
-+				};
-+
-+				gpio@100 {
-+					reg = <0x100 0x4>;
-+				};
-+			};
-+
-+			pmx: pinmux@1e000 {
-+				compatible = "pinconf-single";
-+				reg = <0x1e000 0x330>;
-+				#address-cells = <1>;
-+				#size-cells = <1>;
-+				#gpio-range-cells = <3>;
-+				ranges;
-+
-+				#pinctrl-cells = <1>;
-+				pinctrl-single,register-width = <32>;
-+				pinctrl-single,function-mask = <7>;
-+
-+				range: gpio-range {
-+					#pinctrl-single,gpio-range-cells = <3>;
-+				};
-+			};
-+
-+			uart2: serial@36000 {
-+				compatible = "mrvl,mmp-uart", "intel,xscale-uart";
-+				reg = <0x36000 0x1000>;
-+				interrupts = <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&apbcp PXA1908_CLK_UART2>;
-+				reg-shift = <2>;
-+			};
-+
-+			twsi2: i2c@37000 {
-+				compatible = "mrvl,mmp-twsi";
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				reg = <0x37000 0x64>;
-+				interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&apbcp PXA1908_CLK_TWSI2>;
-+				mrvl,i2c-fast-mode;
-+				status = "disabled";
-+			};
-+
-+			apbcp: clock-controller@3b000 {
-+				compatible = "marvell,pxa1908-apbcp";
-+				reg = <0x3b000 0x1000>;
-+				#clock-cells = <1>;
-+			};
-+
-+			mpmu: clock-controller@50000 {
-+				compatible = "marvell,pxa1908-mpmu";
-+				reg = <0x50000 0x1000>;
-+				#clock-cells = <1>;
-+			};
-+		};
-+
-+		axi@d4200000 {
-+			compatible = "simple-bus";
-+			reg = <0 0xd4200000 0 0x200000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges = <0 0 0xd4200000 0x200000>;
-+
-+			usbphy: phy@7000 {
-+				compatible = "marvell,pxa1928-usb-phy";
-+				reg = <0x7000 0x200>;
-+				clocks = <&apmu PXA1908_CLK_USB>;
-+				#phy-cells = <0>;
-+			};
-+
-+			usb: usb@8000 {
-+				compatible = "chipidea,usb2";
-+				reg = <0x8000 0x200>;
-+				interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&apmu PXA1908_CLK_USB>;
-+				phys = <&usbphy>;
-+				phy-names = "usb-phy";
-+			};
-+
-+			sdh0: mmc@80000 {
-+				compatible = "mrvl,pxav3-mmc";
-+				reg = <0x80000 0x120>;
-+				interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&apmu PXA1908_CLK_SDH0>;
-+				clock-names = "io";
-+				mrvl,clk-delay-cycles = <31>;
-+			};
-+
-+			sdh1: mmc@80800 {
-+				compatible = "mrvl,pxav3-mmc";
-+				reg = <0x80800 0x120>;
-+				interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&apmu PXA1908_CLK_SDH1>;
-+				clock-names = "io";
-+				mrvl,clk-delay-cycles = <31>;
-+			};
-+
-+			sdh2: mmc@81000 {
-+				compatible = "mrvl,pxav3-mmc";
-+				reg = <0x81000 0x120>;
-+				interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&apmu PXA1908_CLK_SDH2>;
-+				clock-names = "io";
-+				mrvl,clk-delay-cycles = <31>;
-+			};
-+
-+			apmu: clock-controller@82800 {
-+				compatible = "marvell,pxa1908-apmu";
-+				reg = <0x82800 0x400>;
-+				#clock-cells = <1>;
-+			};
-+		};
-+	};
-+};
+<snip>
 
--- 
-2.41.0
+> 
+> ---
+> Neil Armstrong (3):
+>        dt-bindings: clock: amlogic: convert amlogic,gxbb-clkc.txt to dt-schema
+>        dt-bindings: clock: amlogic: convert amlogic,gxbb-aoclkc.txt to dt-schema
 
+Do you plan to take patches 1 & 2 ?
+
+If you can, it would be simpler if you could take patch 3 in the same batch.
+
+Thanks,
+Neil
+
+>        dt-bindings: soc: amlogic: document System Control registers
+> 
+>   .../bindings/clock/amlogic,gxbb-aoclkc.txt         |  64 ---------
+>   .../bindings/clock/amlogic,gxbb-aoclkc.yaml        |  85 +++++++++++
+>   .../bindings/clock/amlogic,gxbb-clkc.txt           |  53 -------
+>   .../bindings/clock/amlogic,gxbb-clkc.yaml          |  37 +++++
+>   .../soc/amlogic/amlogic,meson-gx-hhi-sysctrl.yaml  | 160 +++++++++++++++++++++
+>   5 files changed, 282 insertions(+), 117 deletions(-)
+> ---
+> base-commit: e1f6a8eaf1c271a0158114a03e3605f4fba059ad
+> change-id: 20230209-b4-amlogic-bindings-convert-take2-e2caf8e1c13f
+> 
+> Best regards,
 
