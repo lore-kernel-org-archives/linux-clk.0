@@ -2,96 +2,128 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10800C00528
-	for <linux-clk@archiver.kernel.org>; Sat,  5 Aug 2023 01:21:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BF36EB64DD
+	for <linux-clk@archiver.kernel.org>; Sat,  5 Aug 2023 04:51:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229555AbjHEBVc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Aug 2023 21:21:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49060 "EHLO
+        id S229447AbjHEEvq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 5 Aug 2023 00:51:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229461AbjHEBVb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Aug 2023 21:21:31 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2958611B;
-        Fri,  4 Aug 2023 18:21:31 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B365360AEE;
-        Sat,  5 Aug 2023 01:21:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 041D4C433C7;
-        Sat,  5 Aug 2023 01:21:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691198490;
-        bh=5fV5ZuLIa4CvtbhPGd7l5Og6cHAhuYGsq6RLgVOLzlE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=nwzxuZyS4OZHf8K2cqFZ8meU6DUhAjVkvPZxgBdjEZmsg4H0nJc7fbIZyu0Ckqkah
-         84aQKkFayLfZVJLCepXBIrcdbqryk2IdZicrAQMAn5SFvk+rqiGW6FEnPAo1lLzzMN
-         1HE/jfnMATQDyeTz3hzpBjWvyNRi512pZrkug/az+WB6YtO7V730cZYiJSvfmCzYwj
-         4Jj4Bg7sLAgpIL/R3a7NvBptsQHVGTUO8D/9eGJSU9RVLPebzdTU+yMG3+J5lRZ9uw
-         bUhEcG3QzMHW1A2X6wqT73/yE+bXhXYeG6CqkWf4EXR2RcUFjwgnN05fmTQEME5lL/
-         5pltWh4Dew5aA==
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v6.5-rc4
-Date:   Fri,  4 Aug 2023 18:21:28 -0700
-Message-ID: <20230805012129.2619470-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.41.0.640.ga95def55d0-goog
+        with ESMTP id S229469AbjHEEvn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 5 Aug 2023 00:51:43 -0400
+Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8A354ED6
+        for <linux-clk@vger.kernel.org>; Fri,  4 Aug 2023 21:51:42 -0700 (PDT)
+Received: by mail-pg1-x529.google.com with SMTP id 41be03b00d2f7-564af1b3a9fso1278990a12.1
+        for <linux-clk@vger.kernel.org>; Fri, 04 Aug 2023 21:51:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=0x0f.com; s=google; t=1691211102; x=1691815902;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=gbgtCB+dOAL/DzPR70s7i6VCNzOXTUe2Hu+VGOpYqD0=;
+        b=L1UizfHMs8JegWzlReek7QLosNeMwx0v7qyCF93xiH/VTH6LZ0G0gRFm8SHf/IAFle
+         96lL6srpuO85BLhsgHS92+6PQgkT/CjT/mf3bNOdAL2xOlXk/OoLDZJ+q2Dc1t8xBF7w
+         grbJw7l6fB4o4UbaqxkFia0LavgrOCR/x/fUs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691211102; x=1691815902;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gbgtCB+dOAL/DzPR70s7i6VCNzOXTUe2Hu+VGOpYqD0=;
+        b=bSxotEDoUN55TNahniiHkEy7hv7SOUhDoYP74TlyDrLkdvWx4Jl/qgOLBh/wQaWs8k
+         b3wJszp0WKqlURoHmlF/TS2d2J+mqd2nGcLMAqIa2eXI9lsSrhJqwKx5a8Fypo3TJK1r
+         5EBaKOaEF34zm8WAnJ1gV22pZ9onViebnbaJbM9hHhRztZFMxh2fY8pHNSGk5HXj+sJ4
+         UwZgZ1fUGfoLvnLHRXOW3lXaigC8+aWL45nX4ADHI/mqKEU7NISNvOYH5bMXdL3KlHAm
+         w5EOaJX5/JIM0xBW/S3Zp3tL2Lb4d3bBiRCzz8FxvXm/XfZs6MApV1jx2nszWHXAbCz3
+         UJnA==
+X-Gm-Message-State: AOJu0YyrvtPwwiXb2W1cTuIN/Sgo3Hk7I4mPKI1bsYSDqaY9DXuaaci2
+        98kNj1UyhwuV1bU3Pjj1pZ4K69Y4uIM+UC6OAl+7/Q==
+X-Google-Smtp-Source: AGHT+IEBCdJVNWA3yX6kF4Qk8ek7RVxnJa5MFdkQ9iLj3i0xpkQaSp8M+g+EldFKI5RxVQJnzpZzkoS2vKTR1TFFjc8=
+X-Received: by 2002:a17:90b:3e88:b0:268:c5af:d253 with SMTP id
+ rj8-20020a17090b3e8800b00268c5afd253mr1873977pjb.8.1691211102079; Fri, 04 Aug
+ 2023 21:51:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <c1e89c69-3ddf-4a02-bd79-72872e42c01a@moroto.mountain>
+In-Reply-To: <c1e89c69-3ddf-4a02-bd79-72872e42c01a@moroto.mountain>
+From:   Daniel Palmer <daniel@0x0f.com>
+Date:   Sat, 5 Aug 2023 13:51:29 +0900
+Message-ID: <CAFr9PXn3rYJh3n2v9xauCe-sQ12WKkFOFZFXbscG5P1G9M=sRA@mail.gmail.com>
+Subject: Re: [bug report] clk: mstar: MStar/SigmaStar MPLL driver
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The following changes since commit 06c2afb862f9da8dc5efa4b6076a0e48c3fbaaa5:
+Hi Dan,
 
-  Linux 6.5-rc1 (2023-07-09 13:53:13 -0700)
+On Thu, 3 Aug 2023 at 19:28, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+>
+> Hello Daniel Palmer,
+>
+> The patch bef7a78da716: "clk: mstar: MStar/SigmaStar MPLL driver"
+> from Feb 11, 2021 (linux-next), leads to the following Smatch static
+> checker warning:
+>
+>         drivers/clk/mstar/clk-msc313-mpll.c:134 msc313_mpll_probe()
+>         error: buffer overflow 'mpll->clk_data->hws' 7 <= 7
+>
+> drivers/clk/mstar/clk-msc313-mpll.c
+>     106
+>     107         mpll->clk_data = devm_kzalloc(dev, struct_size(mpll->clk_data, hws,
+>                                                                                ^^^
+>     108                         ARRAY_SIZE(output_dividers)), GFP_KERNEL);
+>                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> ->hws has 7 elements
+>
+>     109         if (!mpll->clk_data)
+>     110                 return -ENOMEM;
+>     111
+>     112         clk_init.name = dev_name(dev);
+>     113         clk_init.ops = &msc313_mpll_ops;
+>     114         clk_init.parent_data = &mpll_parent;
+>     115         clk_init.num_parents = 1;
+>     116         mpll->clk_hw.init = &clk_init;
+>     117
+>     118         ret = devm_clk_hw_register(dev, &mpll->clk_hw);
+>     119         if (ret)
+>     120                 return ret;
+>     121
+>     122         mpll->clk_data->num = NUMOUTPUTS;
+>     123         mpll->clk_data->hws[0] = &mpll->clk_hw;
+>     124
+>     125         for (i = 0; i < ARRAY_SIZE(output_dividers); i++) {
+>                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> i is 0-6.
+>
+>     126                 outputname = devm_kasprintf(dev, GFP_KERNEL, "%s_div_%u",
+>     127                                 clk_init.name, output_dividers[i]);
+>     128                 if (!outputname)
+>     129                         return -ENOMEM;
+>     130                 divhw = devm_clk_hw_register_fixed_factor(dev, outputname,
+>     131                                 clk_init.name, 0, 1, output_dividers[i]);
+>     132                 if (IS_ERR(divhw))
+>     133                         return PTR_ERR(divhw);
+> --> 134                 mpll->clk_data->hws[i + 1] = divhw;
+>
+> Off by one.  Why is this i + 1 instead of just i?
+>
+>     135         }
+>     136
+>     137         platform_set_drvdata(pdev, mpll);
+>     138
+>     139         return devm_of_clk_add_hw_provider(&pdev->dev, of_clk_hw_onecell_get,
+>     140                         mpll->clk_data);
+>     141 }
+>
+> regards,
+> dan carpenter
 
-are available in the Git repository at:
+Interesting. Despite writing this code I don't remember now how it
+works so I need to refresh myself.
+I'll get back to you.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+Cheers,
 
-for you to fetch changes up to ae9b14582ad03abb3db66ba3f8dc5ca443ff54a1:
-
-  Merge tag 'clk-meson-fixes-v6.5-1' of https://github.com/BayLibre/clk-meson into clk-fixes (2023-07-26 11:47:57 -0700)
-
-----------------------------------------------------------------
-A few clk driver fixes for some SoC clk drivers:
-
- - Change a usleep() to udelay() to avoid scheduling while atomic
-   in the Amlogic PLL code
- - Revert a patch to the Mediatek MT8183 driver that caused an
-   out-of-bounds write
- - Return the right error value when devm_of_iomap() fails in
-   imx93_clocks_probe()
- - Constrain the Kconfig for the fixed mmio clk so that it depends on
-   HAS_IOMEM and can't be compiled on architectures such as s390
-
-----------------------------------------------------------------
-Baoquan He (1):
-      clk: fixed-mmio: make COMMON_CLK_FIXED_MMIO depend on HAS_IOMEM
-
-Chen-Yu Tsai (1):
-      clk: mediatek: mt8183: Add back SSPM related clocks
-
-Dmitry Rokosov (1):
-      clk: meson: change usleep_range() to udelay() for atomic context
-
-Geert Uytterhoeven (1):
-      clk: imx93: Propagate correct error in imx93_clocks_probe()
-
-Stephen Boyd (1):
-      Merge tag 'clk-meson-fixes-v6.5-1' of https://github.com/BayLibre/clk-meson into clk-fixes
-
- drivers/clk/Kconfig               |  1 +
- drivers/clk/imx/clk-imx93.c       |  2 +-
- drivers/clk/mediatek/clk-mt8183.c | 27 +++++++++++++++++++++++++++
- drivers/clk/meson/clk-pll.c       |  4 ++--
- 4 files changed, 31 insertions(+), 3 deletions(-)
-
--- 
-https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
-https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
+Daniel
