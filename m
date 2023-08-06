@@ -2,178 +2,110 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94B66C0015E
-	for <linux-clk@archiver.kernel.org>; Sun,  6 Aug 2023 13:57:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0999C001DE
+	for <linux-clk@archiver.kernel.org>; Sun,  6 Aug 2023 15:40:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230162AbjHFN5J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 6 Aug 2023 09:57:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47242 "EHLO
+        id S230013AbjHFPkq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 6 Aug 2023 11:40:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229498AbjHFN5I (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 6 Aug 2023 09:57:08 -0400
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0B4B102;
-        Sun,  6 Aug 2023 06:57:06 -0700 (PDT)
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4RJgxC5Jwjz9sbh;
-        Sun,  6 Aug 2023 15:57:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
-        s=MBO0001; t=1691330223;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=UWdULM/cMKhvgQZZICo8f8j2JPsZ03rAx8n6aRyuTRA=;
-        b=cRrsE4QE68olJg41DT12TrP6oz9WiyLfh3ctxU8hb6u72TCHbjPe9kNDHQEtpjCu5h4CrJ
-        G8sKs9jUK90tY8wNxFnRYBsd8ksnBchzceLuUYuW4BZ6KDans2C1W9qgmtgfk4V4FeGZaf
-        WSKB+PIQbC3x8SfejzP9l6fLvB9cBoLFe3ccIfsg6N+I9VWqkUB/OtaDlXNJpr/LcmZkma
-        ong5/6JgPHopQGK0/5/J/auUoD8jDqYB64gEgz9MIZ3aLTZ5zRMn8yf3seQSJrWaimAagW
-        srxG6/Q4OkM0Rb0EE0G8idbPWvLQvgbsFCV4KB0Eo0gRqB0Rkiw+V8y5h10KiA==
-References: <20230806-pll-mipi_set_rate_parent-v5-0-db4f5ca33fc3@oltmanns.dev>
- <20230806-pll-mipi_set_rate_parent-v5-2-db4f5ca33fc3@oltmanns.dev>
- <3752134.kQq0lBPeGt@jernej-laptop>
-From:   Frank Oltmanns <frank@oltmanns.dev>
-To:     Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@gmail.com>
-Cc:     Maxime Ripard <mripard@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Andre Przywara <andre.przywara@arm.com>,
-        Roman Beranek <me@crly.cz>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 02/11] clk: sunxi-ng: nkm: consider alternative
- parent rates when determining rate
-In-reply-to: <3752134.kQq0lBPeGt@jernej-laptop>
-Date:   Sun, 06 Aug 2023 15:57:00 +0200
-Message-ID: <87h6pc9sur.fsf@oltmanns.dev>
+        with ESMTP id S229510AbjHFPkp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 6 Aug 2023 11:40:45 -0400
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DFDD1989
+        for <linux-clk@vger.kernel.org>; Sun,  6 Aug 2023 08:40:42 -0700 (PDT)
+Received: by mail-lj1-x230.google.com with SMTP id 38308e7fff4ca-2b9db1de50cso56424311fa.3
+        for <linux-clk@vger.kernel.org>; Sun, 06 Aug 2023 08:40:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1691336440; x=1691941240;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NvrJhNF2ptJeK82ja3ZQd6T/ZNrSYQqFaROioQHlrZ8=;
+        b=Rbxl662yzahhaRZ96Ibb8CJ0bsgb9ziq7x+yyodzm3YsjHT+UWsDw5bVUfcruk7bRt
+         OiabEfA8365KOlfoMfaQ/UYBBDTqoUNAt5nWYTCJSki8MxLdCDduizpBY2KQrEuGOq6A
+         3p3qX3EsHOQ0BYxnQVzJ/oYuJzrCPM/KnW9ioxprAftXRO4QOIXkm4ku5y2ihKtLcjfk
+         cSqzu+yZZFyZ9mkeiLFPrm+q6HNOdBcvzkNvu3vKIXjT6jk3ioMBrQIGwyKnthBU/+YR
+         2qrXEg3ep43xHxnSombwVI+WVlXradB2g8Tcxxf+u0w0obTyB/3zD+wTVAho1mXz7qTT
+         CjLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691336440; x=1691941240;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NvrJhNF2ptJeK82ja3ZQd6T/ZNrSYQqFaROioQHlrZ8=;
+        b=B+CVzf7/9Pgp/baMB/NjRvyDfNpeQvMJudspjjqkH4veQmd3O4hhUu/djwXhMgDUiJ
+         xTAS9OM0V9jKWpBIRReNFt2rdZqOeat0OGMcCTwr7rQ9c+TgbMPUMFiXvdQQVX6huvj0
+         7JA7FjaR5BjCHZIDAfVNocVOUHa7+yunk25OgKsBgcxcGXLtLBsV5mdczQADam9KOLpU
+         +M9zPmW7FlvIXeqjtkW9k5gapz+oRTxfTL10vY67hPZxOxg5ge6D/sS2jVGM0siBx0du
+         +/Epnc8Z5r1UzXAdnQTnMGDxjc8J8yST6Cnb5KnkXDB/7TFTuaGJOJ4mr5zCPJUn6BuP
+         ulCg==
+X-Gm-Message-State: AOJu0YxlKVygzlVEFbW/VZGjG3WMLNvhSwUt2jfPxMSaIO8SZfCVqZUT
+        ChhD9eT1p8vTh3fTEclOiLrdVQ==
+X-Google-Smtp-Source: AGHT+IFNMyVbRJe9rPBqBTNx9wcpb/IUXe6XB58mQ1XqTq+4gtOHNPHNj6XJybnL/Vzg7a1MmWl+eg==
+X-Received: by 2002:a2e:95cc:0:b0:2b6:dc55:c3c7 with SMTP id y12-20020a2e95cc000000b002b6dc55c3c7mr5108273ljh.20.1691336440481;
+        Sun, 06 Aug 2023 08:40:40 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.222.245])
+        by smtp.gmail.com with ESMTPSA id u20-20020a05600c00d400b003fbb346279dsm7990880wmm.38.2023.08.06.08.40.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 06 Aug 2023 08:40:39 -0700 (PDT)
+Message-ID: <f920abc5-d627-fee5-4973-d57b099f7fc9@linaro.org>
+Date:   Sun, 6 Aug 2023 17:40:37 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Subject: Re: [PATCH v3 3/8] dt-bindings: clock: Add Marvell PXA1908 clock
+ bindings
+To:     =?UTF-8?Q?Duje_Mihanovi=c4=87?= <duje.mihanovic@skole.hr>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Andy Shevchenko <andy@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Tony Luck <tony.luck@intel.com>,
+        "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-hardening@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        afaerber@suse.de
+References: <20230804-pxa1908-lkml-v3-0-8e48fca37099@skole.hr>
+ <20230804-pxa1908-lkml-v3-3-8e48fca37099@skole.hr>
+ <609d5c1d-4ef7-22d5-d951-f32dbe410906@linaro.org>
+ <12276137.O9o76ZdvQC@radijator>
+Content-Language: en-US
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <12276137.O9o76ZdvQC@radijator>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 06/08/2023 12:12, Duje Mihanović wrote:
+> On Saturday, August 5, 2023 10:52:22 PM CEST Krzysztof Kozlowski wrote:
+>> On 04/08/2023 15:32, Duje Mihanović wrote:
+>>> Add dt bindings and documentation for the Marvell PXA1908 clock
+>>> controller.
+>>>
+>>> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-3-Clause */
+>>
+>> Any particular reason to use different BSD-3 than bindings? Not easy to
+>> spot this difference...
+> 
+> Not really, I can change it to BSD-2 if needed.
 
-On 2023-08-06 at 15:32:29 +0200, Jernej =C5=A0krabec <jernej.skrabec@gmail.=
-com> wrote:
-> Dne nedelja, 06. avgust 2023 ob 15:06:47 CEST je Frank Oltmanns napisal(a=
-):
->> In case the CLK_SET_RATE_PARENT flag is set, consider using a different
->> parent rate when determining a new rate.
->>
->> To find the best match for the requested rate, perform the following
->> steps for each NKM combination:
->>  - calculate the optimal parent rate,
->>  - find the best parent rate that the parent clock actually supports
->>  - use that parent rate to calculate the effective rate.
->>
->> In case the clk does not support setting the parent rate, use the same
->> algorithm as before.
->>
->> Acked-by: Maxime Ripard <mripard@kernel.org>
->> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
->> ---
->>  drivers/clk/sunxi-ng/ccu_nkm.c | 45
->> +++++++++++++++++++++++++++++++++++++++++- 1 file changed, 44
->> insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_n=
-km.c
->> index f267142e58b3..ea1b77e9b57f 100644
->> --- a/drivers/clk/sunxi-ng/ccu_nkm.c
->> +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
->> @@ -6,6 +6,7 @@
->>
->>  #include <linux/clk-provider.h>
->>  #include <linux/io.h>
->> +#include <linux/math.h>
->
-> Why do you need above include?
+Yes, please, keep the same license as other part of bindings.
 
-It's not needed. It's a leftover from an earlier version. I'll remove it
-in v6.
+Best regards,
+Krzysztof
 
-Thank you for your review,
-  Frank
-
->
-> Best regards,
-> Jernej
->
->>
->>  #include "ccu_gate.h"
->>  #include "ccu_nkm.h"
->> @@ -16,6 +17,45 @@ struct _ccu_nkm {
->>  	unsigned long	m, min_m, max_m;
->>  };
->>
->> +static unsigned long ccu_nkm_find_best_with_parent_adj(struct clk_hw
->> *parent_hw, +
->        unsigned long *parent, unsigned long rate,
->> +
-> struct _ccu_nkm *nkm)
->> +{
->> +	unsigned long best_rate =3D 0, best_parent_rate =3D *parent, tmp_parent
-> =3D
->> *parent; +	unsigned long best_n =3D 0, best_k =3D 0, best_m =3D 0;
->> +	unsigned long _n, _k, _m;
->> +
->> +	for (_k =3D nkm->min_k; _k <=3D nkm->max_k; _k++) {
->> +		for (_n =3D nkm->min_n; _n <=3D nkm->max_n; _n++) {
->> +			for (_m =3D nkm->min_m; _m <=3D nkm->max_m; _m++)
-> {
->> +				unsigned long tmp_rate;
->> +
->> +				tmp_parent =3D
-> clk_hw_round_rate(parent_hw, rate * _m / (_n * _k));
->> +
->> +				tmp_rate =3D tmp_parent * _n * _k /
-> _m;
->> +				if (tmp_rate > rate)
->> +					continue;
->> +
->> +				if ((rate - tmp_rate) < (rate -
-> best_rate)) {
->> +					best_rate =3D tmp_rate;
->> +					best_parent_rate =3D
-> tmp_parent;
->> +					best_n =3D _n;
->> +					best_k =3D _k;
->> +					best_m =3D _m;
->> +				}
->> +			}
->> +		}
->> +	}
->> +
->> +	nkm->n =3D best_n;
->> +	nkm->k =3D best_k;
->> +	nkm->m =3D best_m;
->> +
->> +	*parent =3D best_parent_rate;
->> +
->> +	return best_rate;
->> +}
->> +
->>  static unsigned long ccu_nkm_find_best(unsigned long parent, unsigned l=
-ong
->> rate, struct _ccu_nkm *nkm)
->>  {
->> @@ -124,7 +164,10 @@ static unsigned long ccu_nkm_round_rate(struct
->> ccu_mux_internal *mux, if (nkm->common.features &
->> CCU_FEATURE_FIXED_POSTDIV)
->>  		rate *=3D nkm->fixed_post_div;
->>
->> -	rate =3D ccu_nkm_find_best(*parent_rate, rate, &_nkm);
->> +	if (!clk_hw_can_set_rate_parent(&nkm->common.hw))
->> +		rate =3D ccu_nkm_find_best(*parent_rate, rate, &_nkm);
->> +	else
->> +		rate =3D ccu_nkm_find_best_with_parent_adj(parent_hw,
-> parent_rate, rate,
->> &_nkm);
->>
->>  	if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
->>  		rate /=3D nkm->fixed_post_div;
