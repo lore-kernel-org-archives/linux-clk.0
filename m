@@ -2,204 +2,130 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 757DBC001DE
-	for <linux-clk@archiver.kernel.org>; Sun,  6 Aug 2023 13:48:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D43B8C001B0
+	for <linux-clk@archiver.kernel.org>; Sun,  6 Aug 2023 13:56:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229618AbjHFNsN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 6 Aug 2023 09:48:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46248 "EHLO
+        id S229662AbjHFN4J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 6 Aug 2023 09:56:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229498AbjHFNsN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 6 Aug 2023 09:48:13 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C88FFE3;
-        Sun,  6 Aug 2023 06:48:11 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-98377c5d53eso506188566b.0;
-        Sun, 06 Aug 2023 06:48:11 -0700 (PDT)
+        with ESMTP id S229498AbjHFN4H (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 6 Aug 2023 09:56:07 -0400
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D54E102
+        for <linux-clk@vger.kernel.org>; Sun,  6 Aug 2023 06:56:06 -0700 (PDT)
+Received: by mail-pj1-x1029.google.com with SMTP id 98e67ed59e1d1-26928c430b2so1016519a91.0
+        for <linux-clk@vger.kernel.org>; Sun, 06 Aug 2023 06:56:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1691329690; x=1691934490;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20221208; t=1691330165; x=1691934965;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=j+Xsg9YY5Dq6KDm40Wq5sVdBaVtBYpXspCdRFB3jlUc=;
-        b=cW1U6kol2AVYOcg2TqCC4Wew5k3K69d4xm1LCQ8g2gzInHi8Q2Eh2pcMazj/ZOYgeu
-         EBjYTMj4HzMlW8M8JU4cgRq4JaNek6tYN5E7NtM9g3nBHPwbBnRn4OcZRzQNFPz3YFfa
-         BuATZYDVCYVI39obMpAT/vkiZy2u0X7EI4vqqqeBdEZ64UGGJVwu4I8TCBwUr4SfY/Nf
-         9QLSCpnVtc53LjzACQNojWDzAOcAk7TC3zzR+3AWuVgOvLiXL9VEZ4kQuumZerXRdjno
-         4IGQUCcvj8sn4jKvtJwND/UmNn7MVlUjNhkNzxEX+nSrHmIV3frjaN+wgGkESy3k17oW
-         NDjg==
+        bh=ea+g2e9gvw+PPJc+mSzJv9/cTWg8eVLiw5YSaIQrGzU=;
+        b=cBZnINrGMOk7Q2BkLklZRC65ZiJFeMiddxV3sERDeLjepiCWCdKV2d3QrSENkVQL9m
+         YIoaUsHccL6DArXTKZdmKPxIg6co+eMUqn/SWbplt9aW6ahc58aaOcoahMcdlM3S+uPs
+         FRD0sKXB/a9XZwPHI4qF/pSE1Gu8uIP3Wq4w5R3qQ37p7HSf+wEsuLV89KGC3pgYqWe/
+         BJ0VPUjUbUCuHEUFFf3FSRLhJoWjUv/FbJM8vP0kIs0oOzJidS314IJQq2gnCXZzRZ2E
+         AuFnHtcLuD98rJf6PgBEItIZSOCj+gCNeggW3aUttrxyoQA81GiFW2lM3jrb9OnPeaSj
+         SnLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691329690; x=1691934490;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20221208; t=1691330166; x=1691934966;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=j+Xsg9YY5Dq6KDm40Wq5sVdBaVtBYpXspCdRFB3jlUc=;
-        b=JfbXOkbIhGCQpBeSHVGL2ETs6lG9BL2IKeaLHO4vSU0eCqEdf0VVNTJIrrRF0SnOEZ
-         2uPL/ciIboC6a+r4+5tg8TtT92xMeJIuzE7XYgzBtBnHE7/J4Nz43sBrhJaJVe4RVbsJ
-         J4b3ydXIj8DHaJtej76BmnK+5f5UzGvpTRM/NzPk6sERMiEf0La7h9qsXigi/f6ZW4rW
-         0T5jcaYHAPReI77EyZ2mf2Eoy+XwLc7GdC3Ldjf41xKJfy6C8ndksSQdiJtOklVyzkID
-         p208iQo4K970mQNRFUM1WTeyVo+qiHUM/aWNzb0JldRqtFM+FuK02KAyIlTSuRLKJgJN
-         VfnA==
-X-Gm-Message-State: AOJu0YzsUuSVN4nrFvLxqNWRanfPbOjdvHs5/9qurVHg3OtK8Q/bFvMm
-        m2m1YOiF4o8E3aUtR/5AL+I=
-X-Google-Smtp-Source: AGHT+IEIvAXs0DV7ge7oOrAiLcptXmsCx2UmaHjaSTPXZOkGHv+2G25/3DKb5m3MRtq98l+13U/scQ==
-X-Received: by 2002:a17:906:3082:b0:99b:f4fa:805f with SMTP id 2-20020a170906308200b0099bf4fa805fmr5782462ejv.28.1691329690189;
-        Sun, 06 Aug 2023 06:48:10 -0700 (PDT)
-Received: from jernej-laptop.localnet (82-149-1-233.dynamic.telemach.net. [82.149.1.233])
-        by smtp.gmail.com with ESMTPSA id r13-20020a170906704d00b0098e34446464sm3946765ejj.25.2023.08.06.06.48.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Aug 2023 06:48:09 -0700 (PDT)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To:     Maxime Ripard <mripard@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Andre Przywara <andre.przywara@arm.com>,
-        Roman Beranek <me@crly.cz>, Frank Oltmanns <frank@oltmanns.dev>
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-        Frank Oltmanns <frank@oltmanns.dev>
-Subject: Re: [PATCH v5 10/11] clk: sunxi-ng: a64: select closest rate for pll-video0
-Date:   Sun, 06 Aug 2023 15:48:08 +0200
-Message-ID: <2162023.Icojqenx9y@jernej-laptop>
-In-Reply-To: <20230806-pll-mipi_set_rate_parent-v5-10-db4f5ca33fc3@oltmanns.dev>
-References: <20230806-pll-mipi_set_rate_parent-v5-0-db4f5ca33fc3@oltmanns.dev>
- <20230806-pll-mipi_set_rate_parent-v5-10-db4f5ca33fc3@oltmanns.dev>
+        bh=ea+g2e9gvw+PPJc+mSzJv9/cTWg8eVLiw5YSaIQrGzU=;
+        b=c/81xdJp4wF4kfKO+Zm3W0Pvksj+gHLwZ0Xu7ZDe2zXugBfrfHiIuMWqIz1MO7h7xs
+         1dfKlEVUlfjOHo3MOz2d4rZBSY+DIo+9ji8D9k+BZy8Fr7hKysmiDhido59/8B6JFXii
+         R0BEtkLWIuF+wpFD7tCvVZbEzk4R8naXyvDLkPJ9zWufZxcwTJiqOTzNiYZb7aEFvaRE
+         M+eBZXQK11IoArMKpVgpWBI3O6tJJrMHcpPMtHCmy8LvDrT1raFJQhHJXxsP5+m3CjaL
+         El2ahestZdcj8IgAeY6GSaKo2UbHSdV2//xQETSEgXbajZYMCn+tQ6dag+C66+XdoF4h
+         LjXA==
+X-Gm-Message-State: AOJu0YwdiqRBNRns1WnUwI2n7j9VMZi36g9YRUDOF66xr56EGj0jf1JZ
+        7JvyuH14z4CTfu4BenZQp6N6kI5q4LC8M73tZVk=
+X-Google-Smtp-Source: AGHT+IHqII7Ad6PXqmnEOHzr0aPOzNPMvg9hPpd9uyvuV4aVvm+KnTGynFyY+qFFn3yQeQ6EGZ30Fbpitcfxu7HQyhE=
+X-Received: by 2002:a17:90a:5385:b0:263:fbe5:2125 with SMTP id
+ y5-20020a17090a538500b00263fbe52125mr5288586pjh.15.1691330165521; Sun, 06 Aug
+ 2023 06:56:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <CAHCN7x+fs7k0y8Sps+0N7NUPVto8UhZD9E8DbVEuDRPv6bdDMg@mail.gmail.com>
+ <20230714134938.2124861-1-m.felsch@pengutronix.de>
+In-Reply-To: <20230714134938.2124861-1-m.felsch@pengutronix.de>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Sun, 6 Aug 2023 08:55:54 -0500
+Message-ID: <CAHCN7xKmGxtvE83nhZGVtqFaQNT+G4JGPOoiBSzqDVu1kBK5Rg@mail.gmail.com>
+Subject: Re: [PATCH] clk: imx: pll14xx: align pdiv with reference manual
+To:     Marco Felsch <m.felsch@pengutronix.de>
+Cc:     adrian.alonso@nxp.com, rasmus.villemoes@prevas.dk,
+        bli@bang-olufsen.dk, linux-imx@nxp.com, linux-clk@vger.kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, abelvesa@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dne nedelja, 06. avgust 2023 ob 15:06:55 CEST je Frank Oltmanns napisal(a):
-> Selecting the closest rate for pll-video0 instead of the closest rate
-> that is less than the requested rate has no downside for this clock,
-> while allowing for selecting a more suitable rate, e.g. for the
-> connected panels.
-> 
-> Furthermore, the algorithm that sets an NKM clock's parent benefits from
-> the closest rate. Without it, the NKM clock's rate might drift away from
-> the requested rate in the multiple successive calls to
-> ccu_nkm_determine_rate that the clk framework performs when setting a
-> clock rate.
-> 
-> Therefore, configure pll-video0 and, in consequence, all of its
-> descendents to select the closest rate.
-> 
-> Acked-by: Maxime Ripard <mripard@kernel.org>
-> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
+On Fri, Jul 14, 2023 at 8:49=E2=80=AFAM Marco Felsch <m.felsch@pengutronix.=
+de> wrote:
+>
+> The PLL14xx hardware can be found on i.MX8M{M,N,P} SoCs and always come
+> with a 6-bit pre-divider. Neither the reference manuals nor the
+> datasheets of these SoCs do mention any restrictions. Furthermore the
+> current code doesn't respect the restrictions from the comment too.
+>
+> Therefore drop the restriction and align the max pre-divider (pdiv)
+> value to 63 to get more accurate frequencies.
+>
 
-Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+Should this get a fixes tag since it appears to fix a bug?
 
-Best regards,
-Jernej
 
+> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
 > ---
->  drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 33
-> ++++++++++++++------------------- 1 file changed, 14 insertions(+), 19
-> deletions(-)
-> 
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-> b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c index a139a5c438d4..73c84d20f3ee
-> 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-> @@ -68,7 +68,7 @@ static SUNXI_CCU_NM_WITH_SDM_GATE_LOCK(pll_audio_base_clk,
-> "pll-audio-base", BIT(28),	/* lock */
->  				       CLK_SET_RATE_UNGATE);
-> 
-> -static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX(pll_video0_clk,
-> "pll-video0", +static
-> SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX_CLOSEST(pll_video0_clk,
-> "pll-video0", "osc24M", 0x010,
->  						192000000,	
-/* Minimum rate */
->  						1008000000,	
-/* Maximum rate */
-> @@ -181,6 +181,7 @@ static struct ccu_nkm pll_mipi_clk = {
->  		.hw.init	= CLK_HW_INIT("pll-mipi", "pll-video0",
->  					      &ccu_nkm_ops,
->  					      
-CLK_SET_RATE_UNGATE | CLK_SET_RATE_PARENT),
-> +		.features	= CCU_FEATURE_CLOSEST_RATE,
->  	},
->  };
-> 
-> @@ -531,24 +532,18 @@ static SUNXI_CCU_M_WITH_MUX_GATE(de_clk, "de",
-> de_parents,
-> 
->  static const char * const tcon0_parents[] = { "pll-mipi", "pll-video0-2x"
-> }; static const u8 tcon0_table[] = { 0, 2, };
-> -static SUNXI_CCU_MUX_TABLE_WITH_GATE(tcon0_clk, "tcon0", tcon0_parents,
-> +static SUNXI_CCU_MUX_TABLE_WITH_GATE_CLOSEST(tcon0_clk, "tcon0",
-> tcon0_parents, tcon0_table, 0x118, 24, 3, BIT(31),
->  				     CLK_SET_RATE_PARENT);
-> 
->  static const char * const tcon1_parents[] = { "pll-video0", "pll-video1" };
-> static const u8 tcon1_table[] = { 0, 2, };
-> -static struct ccu_div tcon1_clk = {
-> -	.enable		= BIT(31),
-> -	.div		= _SUNXI_CCU_DIV(0, 4),
-> -	.mux		= _SUNXI_CCU_MUX_TABLE(24, 2, tcon1_table),
-> -	.common		= {
-> -		.reg		= 0x11c,
-> -		.hw.init	= CLK_HW_INIT_PARENTS("tcon1",
-> -						      
-tcon1_parents,
-> -						      
-&ccu_div_ops,
-> -						      
-CLK_SET_RATE_PARENT),
-> -	},
-> -};
-> +static SUNXI_CCU_M_WITH_MUX_TABLE_GATE_CLOSEST(tcon1_clk, "tcon1",
-> tcon1_parents, +					       
-tcon1_table, 0x11c,
-> +					       0, 4,	/* M */
-> +					       24, 2,	/* mux 
-*/
-> +					       BIT(31),	/* gate 
-*/
-> +					       
-CLK_SET_RATE_PARENT);
-> 
->  static const char * const deinterlace_parents[] = { "pll-periph0",
-> "pll-periph1" }; static SUNXI_CCU_M_WITH_MUX_GATE(deinterlace_clk,
-> "deinterlace", deinterlace_parents, @@ -578,8 +573,8 @@ static
-> SUNXI_CCU_GATE(avs_clk,		"avs",		"osc24M", 
-0x144, BIT(31), 0);
-> 
->  static const char * const hdmi_parents[] = { "pll-video0", "pll-video1" };
-> -static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", hdmi_parents,
-> -				 0x150, 0, 4, 24, 2, BIT(31), 
-CLK_SET_RATE_PARENT);
-> +static SUNXI_CCU_M_WITH_MUX_GATE_CLOSEST(hdmi_clk, "hdmi", hdmi_parents,
-> +					 0x150, 0, 4, 24, 2, 
-BIT(31), CLK_SET_RATE_PARENT);
-> 
->  static SUNXI_CCU_GATE(hdmi_ddc_clk,	"hdmi-ddc",	"osc24M",
->  		      0x154, BIT(31), 0);
-> @@ -591,9 +586,9 @@ static SUNXI_CCU_M_WITH_MUX_GATE(mbus_clk, "mbus",
-> mbus_parents,
-> 
->  static const char * const dsi_dphy_parents[] = { "pll-video0",
-> "pll-periph0" }; static const u8 dsi_dphy_table[] = { 0, 2, };
-> -static SUNXI_CCU_M_WITH_MUX_TABLE_GATE(dsi_dphy_clk, "dsi-dphy",
-> -				       dsi_dphy_parents, 
-dsi_dphy_table,
-> -				       0x168, 0, 4, 8, 2, 
-BIT(15), CLK_SET_RATE_PARENT);
-> +static SUNXI_CCU_M_WITH_MUX_TABLE_GATE_CLOSEST(dsi_dphy_clk, "dsi-dphy",
-> +					       
-dsi_dphy_parents, dsi_dphy_table,
-> +					       0x168, 0, 4, 8, 
-2, BIT(15), CLK_SET_RATE_PARENT);
-> 
->  static SUNXI_CCU_M_WITH_GATE(gpu_clk, "gpu", "pll-gpu",
->  			     0x1a0, 0, 3, BIT(31), 
-CLK_SET_RATE_PARENT);
-
-
-
-
+> Hi Adam,
+>
+> here is the patch I made for setting the exact video-pll settings.
+>
+> Regards,
+>   Marco
+>
+>
+>  drivers/clk/imx/clk-pll14xx.c | 11 +++++------
+>  1 file changed, 5 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.=
+c
+> index 7150c59bbfc95..dc6bc21dff41f 100644
+> --- a/drivers/clk/imx/clk-pll14xx.c
+> +++ b/drivers/clk/imx/clk-pll14xx.c
+> @@ -139,11 +139,10 @@ static void imx_pll14xx_calc_settings(struct clk_pl=
+l14xx *pll, unsigned long rat
+>         /*
+>          * Fractional PLL constrains:
+>          *
+> -        * a) 6MHz <=3D prate <=3D 25MHz
+> -        * b) 1 <=3D p <=3D 63 (1 <=3D p <=3D 4 prate =3D 24MHz)
+> -        * c) 64 <=3D m <=3D 1023
+> -        * d) 0 <=3D s <=3D 6
+> -        * e) -32768 <=3D k <=3D 32767
+> +        * a) 1 <=3D p <=3D 63
+> +        * b) 64 <=3D m <=3D 1023
+> +        * c) 0 <=3D s <=3D 6
+> +        * d) -32768 <=3D k <=3D 32767
+>          *
+>          * fvco =3D (m * 65536 + k) * prate / (p * 65536)
+>          */
+> @@ -186,7 +185,7 @@ static void imx_pll14xx_calc_settings(struct clk_pll1=
+4xx *pll, unsigned long rat
+>         }
+>
+>         /* Finally calculate best values */
+> -       for (pdiv =3D 1; pdiv <=3D 7; pdiv++) {
+> +       for (pdiv =3D 1; pdiv <=3D 63; pdiv++) {
+>                 for (sdiv =3D 0; sdiv <=3D 6; sdiv++) {
+>                         /* calc mdiv =3D round(rate * pdiv * 2^sdiv) / pr=
+ate) */
+>                         mdiv =3D DIV_ROUND_CLOSEST(rate * (pdiv << sdiv),=
+ prate);
+> --
+> 2.39.2
+>
