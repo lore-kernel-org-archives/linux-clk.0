@@ -2,130 +2,178 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D43B8C001B0
-	for <linux-clk@archiver.kernel.org>; Sun,  6 Aug 2023 13:56:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94B66C0015E
+	for <linux-clk@archiver.kernel.org>; Sun,  6 Aug 2023 13:57:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229662AbjHFN4J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 6 Aug 2023 09:56:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47206 "EHLO
+        id S230162AbjHFN5J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 6 Aug 2023 09:57:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229498AbjHFN4H (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 6 Aug 2023 09:56:07 -0400
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D54E102
-        for <linux-clk@vger.kernel.org>; Sun,  6 Aug 2023 06:56:06 -0700 (PDT)
-Received: by mail-pj1-x1029.google.com with SMTP id 98e67ed59e1d1-26928c430b2so1016519a91.0
-        for <linux-clk@vger.kernel.org>; Sun, 06 Aug 2023 06:56:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1691330165; x=1691934965;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ea+g2e9gvw+PPJc+mSzJv9/cTWg8eVLiw5YSaIQrGzU=;
-        b=cBZnINrGMOk7Q2BkLklZRC65ZiJFeMiddxV3sERDeLjepiCWCdKV2d3QrSENkVQL9m
-         YIoaUsHccL6DArXTKZdmKPxIg6co+eMUqn/SWbplt9aW6ahc58aaOcoahMcdlM3S+uPs
-         FRD0sKXB/a9XZwPHI4qF/pSE1Gu8uIP3Wq4w5R3qQ37p7HSf+wEsuLV89KGC3pgYqWe/
-         BJ0VPUjUbUCuHEUFFf3FSRLhJoWjUv/FbJM8vP0kIs0oOzJidS314IJQq2gnCXZzRZ2E
-         AuFnHtcLuD98rJf6PgBEItIZSOCj+gCNeggW3aUttrxyoQA81GiFW2lM3jrb9OnPeaSj
-         SnLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691330166; x=1691934966;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ea+g2e9gvw+PPJc+mSzJv9/cTWg8eVLiw5YSaIQrGzU=;
-        b=c/81xdJp4wF4kfKO+Zm3W0Pvksj+gHLwZ0Xu7ZDe2zXugBfrfHiIuMWqIz1MO7h7xs
-         1dfKlEVUlfjOHo3MOz2d4rZBSY+DIo+9ji8D9k+BZy8Fr7hKysmiDhido59/8B6JFXii
-         R0BEtkLWIuF+wpFD7tCvVZbEzk4R8naXyvDLkPJ9zWufZxcwTJiqOTzNiYZb7aEFvaRE
-         M+eBZXQK11IoArMKpVgpWBI3O6tJJrMHcpPMtHCmy8LvDrT1raFJQhHJXxsP5+m3CjaL
-         El2ahestZdcj8IgAeY6GSaKo2UbHSdV2//xQETSEgXbajZYMCn+tQ6dag+C66+XdoF4h
-         LjXA==
-X-Gm-Message-State: AOJu0YwdiqRBNRns1WnUwI2n7j9VMZi36g9YRUDOF66xr56EGj0jf1JZ
-        7JvyuH14z4CTfu4BenZQp6N6kI5q4LC8M73tZVk=
-X-Google-Smtp-Source: AGHT+IHqII7Ad6PXqmnEOHzr0aPOzNPMvg9hPpd9uyvuV4aVvm+KnTGynFyY+qFFn3yQeQ6EGZ30Fbpitcfxu7HQyhE=
-X-Received: by 2002:a17:90a:5385:b0:263:fbe5:2125 with SMTP id
- y5-20020a17090a538500b00263fbe52125mr5288586pjh.15.1691330165521; Sun, 06 Aug
- 2023 06:56:05 -0700 (PDT)
+        with ESMTP id S229498AbjHFN5I (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 6 Aug 2023 09:57:08 -0400
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0B4B102;
+        Sun,  6 Aug 2023 06:57:06 -0700 (PDT)
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4RJgxC5Jwjz9sbh;
+        Sun,  6 Aug 2023 15:57:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
+        s=MBO0001; t=1691330223;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=UWdULM/cMKhvgQZZICo8f8j2JPsZ03rAx8n6aRyuTRA=;
+        b=cRrsE4QE68olJg41DT12TrP6oz9WiyLfh3ctxU8hb6u72TCHbjPe9kNDHQEtpjCu5h4CrJ
+        G8sKs9jUK90tY8wNxFnRYBsd8ksnBchzceLuUYuW4BZ6KDans2C1W9qgmtgfk4V4FeGZaf
+        WSKB+PIQbC3x8SfejzP9l6fLvB9cBoLFe3ccIfsg6N+I9VWqkUB/OtaDlXNJpr/LcmZkma
+        ong5/6JgPHopQGK0/5/J/auUoD8jDqYB64gEgz9MIZ3aLTZ5zRMn8yf3seQSJrWaimAagW
+        srxG6/Q4OkM0Rb0EE0G8idbPWvLQvgbsFCV4KB0Eo0gRqB0Rkiw+V8y5h10KiA==
+References: <20230806-pll-mipi_set_rate_parent-v5-0-db4f5ca33fc3@oltmanns.dev>
+ <20230806-pll-mipi_set_rate_parent-v5-2-db4f5ca33fc3@oltmanns.dev>
+ <3752134.kQq0lBPeGt@jernej-laptop>
+From:   Frank Oltmanns <frank@oltmanns.dev>
+To:     Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@gmail.com>
+Cc:     Maxime Ripard <mripard@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Samuel Holland <samuel@sholland.org>,
+        Andre Przywara <andre.przywara@arm.com>,
+        Roman Beranek <me@crly.cz>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 02/11] clk: sunxi-ng: nkm: consider alternative
+ parent rates when determining rate
+In-reply-to: <3752134.kQq0lBPeGt@jernej-laptop>
+Date:   Sun, 06 Aug 2023 15:57:00 +0200
+Message-ID: <87h6pc9sur.fsf@oltmanns.dev>
 MIME-Version: 1.0
-References: <CAHCN7x+fs7k0y8Sps+0N7NUPVto8UhZD9E8DbVEuDRPv6bdDMg@mail.gmail.com>
- <20230714134938.2124861-1-m.felsch@pengutronix.de>
-In-Reply-To: <20230714134938.2124861-1-m.felsch@pengutronix.de>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Sun, 6 Aug 2023 08:55:54 -0500
-Message-ID: <CAHCN7xKmGxtvE83nhZGVtqFaQNT+G4JGPOoiBSzqDVu1kBK5Rg@mail.gmail.com>
-Subject: Re: [PATCH] clk: imx: pll14xx: align pdiv with reference manual
-To:     Marco Felsch <m.felsch@pengutronix.de>
-Cc:     adrian.alonso@nxp.com, rasmus.villemoes@prevas.dk,
-        bli@bang-olufsen.dk, linux-imx@nxp.com, linux-clk@vger.kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, abelvesa@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Jul 14, 2023 at 8:49=E2=80=AFAM Marco Felsch <m.felsch@pengutronix.=
-de> wrote:
->
-> The PLL14xx hardware can be found on i.MX8M{M,N,P} SoCs and always come
-> with a 6-bit pre-divider. Neither the reference manuals nor the
-> datasheets of these SoCs do mention any restrictions. Furthermore the
-> current code doesn't respect the restrictions from the comment too.
->
-> Therefore drop the restriction and align the max pre-divider (pdiv)
-> value to 63 to get more accurate frequencies.
->
 
-Should this get a fixes tag since it appears to fix a bug?
+On 2023-08-06 at 15:32:29 +0200, Jernej =C5=A0krabec <jernej.skrabec@gmail.=
+com> wrote:
+> Dne nedelja, 06. avgust 2023 ob 15:06:47 CEST je Frank Oltmanns napisal(a=
+):
+>> In case the CLK_SET_RATE_PARENT flag is set, consider using a different
+>> parent rate when determining a new rate.
+>>
+>> To find the best match for the requested rate, perform the following
+>> steps for each NKM combination:
+>>  - calculate the optimal parent rate,
+>>  - find the best parent rate that the parent clock actually supports
+>>  - use that parent rate to calculate the effective rate.
+>>
+>> In case the clk does not support setting the parent rate, use the same
+>> algorithm as before.
+>>
+>> Acked-by: Maxime Ripard <mripard@kernel.org>
+>> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
+>> ---
+>>  drivers/clk/sunxi-ng/ccu_nkm.c | 45
+>> +++++++++++++++++++++++++++++++++++++++++- 1 file changed, 44
+>> insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_n=
+km.c
+>> index f267142e58b3..ea1b77e9b57f 100644
+>> --- a/drivers/clk/sunxi-ng/ccu_nkm.c
+>> +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+>> @@ -6,6 +6,7 @@
+>>
+>>  #include <linux/clk-provider.h>
+>>  #include <linux/io.h>
+>> +#include <linux/math.h>
+>
+> Why do you need above include?
 
+It's not needed. It's a leftover from an earlier version. I'll remove it
+in v6.
 
-> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-> ---
-> Hi Adam,
+Thank you for your review,
+  Frank
+
 >
-> here is the patch I made for setting the exact video-pll settings.
+> Best regards,
+> Jernej
 >
-> Regards,
->   Marco
->
->
->  drivers/clk/imx/clk-pll14xx.c | 11 +++++------
->  1 file changed, 5 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.=
-c
-> index 7150c59bbfc95..dc6bc21dff41f 100644
-> --- a/drivers/clk/imx/clk-pll14xx.c
-> +++ b/drivers/clk/imx/clk-pll14xx.c
-> @@ -139,11 +139,10 @@ static void imx_pll14xx_calc_settings(struct clk_pl=
-l14xx *pll, unsigned long rat
->         /*
->          * Fractional PLL constrains:
->          *
-> -        * a) 6MHz <=3D prate <=3D 25MHz
-> -        * b) 1 <=3D p <=3D 63 (1 <=3D p <=3D 4 prate =3D 24MHz)
-> -        * c) 64 <=3D m <=3D 1023
-> -        * d) 0 <=3D s <=3D 6
-> -        * e) -32768 <=3D k <=3D 32767
-> +        * a) 1 <=3D p <=3D 63
-> +        * b) 64 <=3D m <=3D 1023
-> +        * c) 0 <=3D s <=3D 6
-> +        * d) -32768 <=3D k <=3D 32767
->          *
->          * fvco =3D (m * 65536 + k) * prate / (p * 65536)
->          */
-> @@ -186,7 +185,7 @@ static void imx_pll14xx_calc_settings(struct clk_pll1=
-4xx *pll, unsigned long rat
->         }
->
->         /* Finally calculate best values */
-> -       for (pdiv =3D 1; pdiv <=3D 7; pdiv++) {
-> +       for (pdiv =3D 1; pdiv <=3D 63; pdiv++) {
->                 for (sdiv =3D 0; sdiv <=3D 6; sdiv++) {
->                         /* calc mdiv =3D round(rate * pdiv * 2^sdiv) / pr=
-ate) */
->                         mdiv =3D DIV_ROUND_CLOSEST(rate * (pdiv << sdiv),=
- prate);
-> --
-> 2.39.2
->
+>>
+>>  #include "ccu_gate.h"
+>>  #include "ccu_nkm.h"
+>> @@ -16,6 +17,45 @@ struct _ccu_nkm {
+>>  	unsigned long	m, min_m, max_m;
+>>  };
+>>
+>> +static unsigned long ccu_nkm_find_best_with_parent_adj(struct clk_hw
+>> *parent_hw, +
+>        unsigned long *parent, unsigned long rate,
+>> +
+> struct _ccu_nkm *nkm)
+>> +{
+>> +	unsigned long best_rate =3D 0, best_parent_rate =3D *parent, tmp_parent
+> =3D
+>> *parent; +	unsigned long best_n =3D 0, best_k =3D 0, best_m =3D 0;
+>> +	unsigned long _n, _k, _m;
+>> +
+>> +	for (_k =3D nkm->min_k; _k <=3D nkm->max_k; _k++) {
+>> +		for (_n =3D nkm->min_n; _n <=3D nkm->max_n; _n++) {
+>> +			for (_m =3D nkm->min_m; _m <=3D nkm->max_m; _m++)
+> {
+>> +				unsigned long tmp_rate;
+>> +
+>> +				tmp_parent =3D
+> clk_hw_round_rate(parent_hw, rate * _m / (_n * _k));
+>> +
+>> +				tmp_rate =3D tmp_parent * _n * _k /
+> _m;
+>> +				if (tmp_rate > rate)
+>> +					continue;
+>> +
+>> +				if ((rate - tmp_rate) < (rate -
+> best_rate)) {
+>> +					best_rate =3D tmp_rate;
+>> +					best_parent_rate =3D
+> tmp_parent;
+>> +					best_n =3D _n;
+>> +					best_k =3D _k;
+>> +					best_m =3D _m;
+>> +				}
+>> +			}
+>> +		}
+>> +	}
+>> +
+>> +	nkm->n =3D best_n;
+>> +	nkm->k =3D best_k;
+>> +	nkm->m =3D best_m;
+>> +
+>> +	*parent =3D best_parent_rate;
+>> +
+>> +	return best_rate;
+>> +}
+>> +
+>>  static unsigned long ccu_nkm_find_best(unsigned long parent, unsigned l=
+ong
+>> rate, struct _ccu_nkm *nkm)
+>>  {
+>> @@ -124,7 +164,10 @@ static unsigned long ccu_nkm_round_rate(struct
+>> ccu_mux_internal *mux, if (nkm->common.features &
+>> CCU_FEATURE_FIXED_POSTDIV)
+>>  		rate *=3D nkm->fixed_post_div;
+>>
+>> -	rate =3D ccu_nkm_find_best(*parent_rate, rate, &_nkm);
+>> +	if (!clk_hw_can_set_rate_parent(&nkm->common.hw))
+>> +		rate =3D ccu_nkm_find_best(*parent_rate, rate, &_nkm);
+>> +	else
+>> +		rate =3D ccu_nkm_find_best_with_parent_adj(parent_hw,
+> parent_rate, rate,
+>> &_nkm);
+>>
+>>  	if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+>>  		rate /=3D nkm->fixed_post_div;
