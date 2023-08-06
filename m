@@ -2,110 +2,165 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0999C001DE
-	for <linux-clk@archiver.kernel.org>; Sun,  6 Aug 2023 15:40:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A746C001DF
+	for <linux-clk@archiver.kernel.org>; Sun,  6 Aug 2023 17:13:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230013AbjHFPkq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 6 Aug 2023 11:40:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33148 "EHLO
+        id S229491AbjHFRNi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 6 Aug 2023 13:13:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229510AbjHFPkp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 6 Aug 2023 11:40:45 -0400
-Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DFDD1989
-        for <linux-clk@vger.kernel.org>; Sun,  6 Aug 2023 08:40:42 -0700 (PDT)
-Received: by mail-lj1-x230.google.com with SMTP id 38308e7fff4ca-2b9db1de50cso56424311fa.3
-        for <linux-clk@vger.kernel.org>; Sun, 06 Aug 2023 08:40:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691336440; x=1691941240;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NvrJhNF2ptJeK82ja3ZQd6T/ZNrSYQqFaROioQHlrZ8=;
-        b=Rbxl662yzahhaRZ96Ibb8CJ0bsgb9ziq7x+yyodzm3YsjHT+UWsDw5bVUfcruk7bRt
-         OiabEfA8365KOlfoMfaQ/UYBBDTqoUNAt5nWYTCJSki8MxLdCDduizpBY2KQrEuGOq6A
-         3p3qX3EsHOQ0BYxnQVzJ/oYuJzrCPM/KnW9ioxprAftXRO4QOIXkm4ku5y2ihKtLcjfk
-         cSqzu+yZZFyZ9mkeiLFPrm+q6HNOdBcvzkNvu3vKIXjT6jk3ioMBrQIGwyKnthBU/+YR
-         2qrXEg3ep43xHxnSombwVI+WVlXradB2g8Tcxxf+u0w0obTyB/3zD+wTVAho1mXz7qTT
-         CjLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691336440; x=1691941240;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NvrJhNF2ptJeK82ja3ZQd6T/ZNrSYQqFaROioQHlrZ8=;
-        b=B+CVzf7/9Pgp/baMB/NjRvyDfNpeQvMJudspjjqkH4veQmd3O4hhUu/djwXhMgDUiJ
-         xTAS9OM0V9jKWpBIRReNFt2rdZqOeat0OGMcCTwr7rQ9c+TgbMPUMFiXvdQQVX6huvj0
-         7JA7FjaR5BjCHZIDAfVNocVOUHa7+yunk25OgKsBgcxcGXLtLBsV5mdczQADam9KOLpU
-         +M9zPmW7FlvIXeqjtkW9k5gapz+oRTxfTL10vY67hPZxOxg5ge6D/sS2jVGM0siBx0du
-         +/Epnc8Z5r1UzXAdnQTnMGDxjc8J8yST6Cnb5KnkXDB/7TFTuaGJOJ4mr5zCPJUn6BuP
-         ulCg==
-X-Gm-Message-State: AOJu0YxlKVygzlVEFbW/VZGjG3WMLNvhSwUt2jfPxMSaIO8SZfCVqZUT
-        ChhD9eT1p8vTh3fTEclOiLrdVQ==
-X-Google-Smtp-Source: AGHT+IFNMyVbRJe9rPBqBTNx9wcpb/IUXe6XB58mQ1XqTq+4gtOHNPHNj6XJybnL/Vzg7a1MmWl+eg==
-X-Received: by 2002:a2e:95cc:0:b0:2b6:dc55:c3c7 with SMTP id y12-20020a2e95cc000000b002b6dc55c3c7mr5108273ljh.20.1691336440481;
-        Sun, 06 Aug 2023 08:40:40 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.222.245])
-        by smtp.gmail.com with ESMTPSA id u20-20020a05600c00d400b003fbb346279dsm7990880wmm.38.2023.08.06.08.40.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 06 Aug 2023 08:40:39 -0700 (PDT)
-Message-ID: <f920abc5-d627-fee5-4973-d57b099f7fc9@linaro.org>
-Date:   Sun, 6 Aug 2023 17:40:37 +0200
+        with ESMTP id S229458AbjHFRNh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 6 Aug 2023 13:13:37 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FF7DC2
+        for <linux-clk@vger.kernel.org>; Sun,  6 Aug 2023 10:13:36 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 117E460EAE
+        for <linux-clk@vger.kernel.org>; Sun,  6 Aug 2023 17:13:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DB64C433C7;
+        Sun,  6 Aug 2023 17:13:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1691342015;
+        bh=8VwOuLhwvYu1ICpyXAxr3nOtAto35ExIqTjSqrKxShA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=A7yDcOUAGy0TOQasoI8de3nHnwJ2aMJwoAgm5qc76YoNlTGrCKzDYGFSKUUCm2f7q
+         7GNh6F7t5sqjHV9GPTXeB+J+8OTqH17Xvfyca0Xk4Bt1DcMCbyJfOdiLU2bvzGGPnO
+         BH99LhiUgcBc9+VVqN8ybZurWn4PRoUG26Zf4hQRs8y8wWOkfrmxTWMxXBHZ3mZX+z
+         5AI4KriL1loB13bBFWQh6RCxSUjORPKOc7E2OFmydAJAQ/X563ATbBkbTTkhdFpX4D
+         JWdL/yJGiKpmELsGObQNWh9g348nszbZ47GNIBPKVUyFURGvioOqQfTzITiOlrIdI/
+         Cq40xjQ/3fxBw==
+Date:   Sun, 6 Aug 2023 19:13:30 +0200
+From:   Simon Horman <horms@kernel.org>
+To:     Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc:     Jakub Kicinski <kuba@kernel.org>, Jiri Pirko <jiri@resnulli.us>,
+        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Milena Olech <milena.olech@intel.com>,
+        Michal Michalik <michal.michalik@intel.com>,
+        linux-arm-kernel@lists.infradead.org, poros@redhat.com,
+        mschmidt@redhat.com, netdev@vger.kernel.org,
+        linux-clk@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
+        intel-wired-lan@lists.osuosl.org, Jiri Pirko <jiri@nvidia.com>
+Subject: Re: [PATCH net-next v2 8/9] ptp_ocp: implement DPLL ops
+Message-ID: <ZM/Uuhl4GwOWjku9@vergenet.net>
+References: <20230804190454.394062-1-vadim.fedorenko@linux.dev>
+ <20230804190454.394062-9-vadim.fedorenko@linux.dev>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [PATCH v3 3/8] dt-bindings: clock: Add Marvell PXA1908 clock
- bindings
-To:     =?UTF-8?Q?Duje_Mihanovi=c4=87?= <duje.mihanovic@skole.hr>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andy Shevchenko <andy@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Tony Luck <tony.luck@intel.com>,
-        "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-hardening@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        afaerber@suse.de
-References: <20230804-pxa1908-lkml-v3-0-8e48fca37099@skole.hr>
- <20230804-pxa1908-lkml-v3-3-8e48fca37099@skole.hr>
- <609d5c1d-4ef7-22d5-d951-f32dbe410906@linaro.org>
- <12276137.O9o76ZdvQC@radijator>
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <12276137.O9o76ZdvQC@radijator>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230804190454.394062-9-vadim.fedorenko@linux.dev>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 06/08/2023 12:12, Duje Mihanović wrote:
-> On Saturday, August 5, 2023 10:52:22 PM CEST Krzysztof Kozlowski wrote:
->> On 04/08/2023 15:32, Duje Mihanović wrote:
->>> Add dt bindings and documentation for the Marvell PXA1908 clock
->>> controller.
->>>
->>> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-3-Clause */
->>
->> Any particular reason to use different BSD-3 than bindings? Not easy to
->> spot this difference...
+On Fri, Aug 04, 2023 at 08:04:53PM +0100, Vadim Fedorenko wrote:
+> Implement basic DPLL operations in ptp_ocp driver as the
+> simplest example of using new subsystem.
 > 
-> Not really, I can change it to BSD-2 if needed.
+> Signed-off-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+> Signed-off-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+> Signed-off-by: Jiri Pirko <jiri@nvidia.com>
 
-Yes, please, keep the same license as other part of bindings.
+Hi Vadim,
 
-Best regards,
-Krzysztof
+...
 
+> diff --git a/drivers/ptp/Kconfig b/drivers/ptp/Kconfig
+> index 32dff1b4f891..e4da62ac9a9f 100644
+> --- a/drivers/ptp/Kconfig
+> +++ b/drivers/ptp/Kconfig
+> @@ -177,6 +177,7 @@ config PTP_1588_CLOCK_OCP
+>  	depends on COMMON_CLK
+>  	select NET_DEVLINK
+>  	select CRC16
+> +	select DPLL
+>  	help
+>  	  This driver adds support for an OpenCompute time card.
+>  
+> diff --git a/drivers/ptp/ptp_ocp.c b/drivers/ptp/ptp_ocp.c
+
+...
+
+> +static int ptp_ocp_dpll_frequency_set(const struct dpll_pin *pin,
+> +				      void *pin_priv,
+> +				      const struct dpll_device *dpll,
+> +				      void *dpll_priv, u64 frequency,
+> +				      struct netlink_ext_ack *extack)
+> +{
+> +	struct ptp_ocp_sma_connector *sma = pin_priv;
+> +	struct ptp_ocp *bp = dpll_priv;
+> +	const struct ocp_selector *tbl;
+> +	int sma_nr = (sma - bp->sma);
+> +	int val, i;
+> +
+> +	if (sma->fixed_fcn)
+> +		return -EOPNOTSUPP;
+> +
+> +	tbl = bp->sma_op->tbl[sma->mode];
+> +	for (i = 0; tbl[i].name; i++)
+> +		if (tbl[i].frequency == frequency)
+> +			return ptp_ocp_sma_store_val(bp, val, sma->mode, sma_nr);
+
+val appears to be used uninitialised here.
+
+As flagged by clang-16 W=1, and Smatch.
+
+> +	return -EINVAL;
+> +}
+
+...
+
+> @@ -4233,8 +4437,40 @@ ptp_ocp_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+>  
+>  	ptp_ocp_info(bp);
+>  	devlink_register(devlink);
+> -	return 0;
+>  
+> +	clkid = pci_get_dsn(pdev);
+> +	bp->dpll = dpll_device_get(clkid, 0, THIS_MODULE);
+> +	if (IS_ERR(bp->dpll)) {
+> +		dev_err(&pdev->dev, "dpll_device_alloc failed\n");
+> +		goto out;
+> +	}
+> +
+> +	err = dpll_device_register(bp->dpll, DPLL_TYPE_PPS, &dpll_ops, bp);
+> +	if (err)
+> +		goto out;
+> +
+> +	for (i = 0; i < OCP_SMA_NUM; i++) {
+> +		bp->sma[i].dpll_pin = dpll_pin_get(clkid, i, THIS_MODULE, &bp->sma[i].dpll_prop);
+> +		if (IS_ERR(bp->sma[i].dpll_pin))
+
+The function will return err.
+Should it be sett to an error value here?
+
+As flagged by Smatch.
+
+> +			goto out_dpll;
+> +
+> +		err = dpll_pin_register(bp->dpll, bp->sma[i].dpll_pin, &dpll_pins_ops,
+> +					&bp->sma[i]);
+> +		if (err) {
+> +			dpll_pin_put(bp->sma[i].dpll_pin);
+> +			goto out_dpll;
+> +		}
+> +	}
+> +	queue_delayed_work(system_power_efficient_wq, &bp->sync_work, HZ);
+> +
+> +	return 0;
+> +out_dpll:
+> +	while (i) {
+> +		--i;
+> +		dpll_pin_unregister(bp->dpll, bp->sma[i].dpll_pin, &dpll_pins_ops, &bp->sma[i]);
+> +		dpll_pin_put(bp->sma[i].dpll_pin);
+> +	}
+> +	dpll_device_put(bp->dpll);
+>  out:
+>  	ptp_ocp_detach(bp);
+>  out_disable:
+
+...
