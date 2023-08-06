@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0F67C001DE
-	for <linux-clk@archiver.kernel.org>; Sun,  6 Aug 2023 13:42:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB011C001DE
+	for <linux-clk@archiver.kernel.org>; Sun,  6 Aug 2023 13:43:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230339AbjHFNms (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 6 Aug 2023 09:42:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43928 "EHLO
+        id S229848AbjHFNnz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 6 Aug 2023 09:43:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230122AbjHFNmk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 6 Aug 2023 09:42:40 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CEB3CF;
-        Sun,  6 Aug 2023 06:42:37 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-99bcc0adab4so538004466b.2;
-        Sun, 06 Aug 2023 06:42:37 -0700 (PDT)
+        with ESMTP id S229592AbjHFNny (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 6 Aug 2023 09:43:54 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C172CF;
+        Sun,  6 Aug 2023 06:43:53 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id 4fb4d7f45d1cf-51e2a6a3768so5014510a12.0;
+        Sun, 06 Aug 2023 06:43:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1691329356; x=1691934156;
+        d=gmail.com; s=20221208; t=1691329432; x=1691934232;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3LoHGPu8IpfDYgrD6hmP69AEq8M3KHDNqeucyT7xavk=;
-        b=e31EXnHqqydR0vQ7KcOdhFsm9djEjHw2KOfQ3MAUdRmWPTth/JJGWamB+KTuVk/E9n
-         0hLyOXbCAkPIx0Ly6lrqrhAW/nMU0SKSnboLKsmWK2Vm06XBBCxbFlgd/A5VqEJJQ3oH
-         p0HG5B1wIKIgl3FMmYXo0NuZoCxHXX9EYo8BJvpOkwl9ulH0kfY7eC+ctrYagQH+GDnn
-         G9JE1qdlij9WzZWZx43qV5AtHUmAYUWk6qIKOkyLADrjQhD3l7hn12m/vPP82jR/KMW0
-         pwHB+Xet82ZSTe0vTuWXgpY+e8Ash5nEHc3CWcLqg2XjFt+6eu7f9Jejf+ddCwj0TfTs
-         OAyg==
+        bh=LahOmtw+dOqGhFwzPmluy7sMbX8L+Z01CVnjmnkuSGE=;
+        b=EQs5tl40ZqlRkOieUvmpt+4gweDpn3uaZuMfP/5OPhZkcxAMbtjuu55ZriQ/hNBd7O
+         gAw61tFcAkK/P7taebAR/DCYAqXAi/fHayaI1/+l8bSDplGZT569mM2lgoXECLKAUQWv
+         Zi7qe0lyAngrCZAmXm2pesi+iLRuzZwZ5PRJoEZpxleytAb5pwVECvER1ZCRLweVtoq5
+         HyEoiXVE4eopy22W3K8IfQ6PqyHq6K9W91kY8x+pNOj6RIrt8v9vkbrq3DjNemHqlPIv
+         cHRHpyA5mNLIcOMA80n4ZQl5kOEFJp+D/MTIA7IBtiswANmmEtgobgxRO0s5MxBLEbBs
+         BBxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691329356; x=1691934156;
+        d=1e100.net; s=20221208; t=1691329432; x=1691934232;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3LoHGPu8IpfDYgrD6hmP69AEq8M3KHDNqeucyT7xavk=;
-        b=ALFkrwSeIycV2vlYOkSRN5c7e0Lnbqikr7Sb/lHyA5HCGzSOi9IbNkatG2/k3CnmD8
-         h4CmTnZkFu6ot0LlR6yEHn9YxAQOiEOGkPjsQ0C674WC8t88KylaOqrTcXHhAmOJX3hY
-         F0s1kCKnobU3Gtsckb53oWlUJWZYjkO6Djp7ClRUks1odq75VEEeMaV9fUgiuLchSIq3
-         hSsReXfe8AMwV9lCcbv9gOJq2XrCHzpH0pURfg50bRMuO8VhWDEmyx0QsS9M+EXWZHZx
-         NRXBXziP96syIFjtjL0qEFhc2ajB0R2xNQ1TABtLjwHOp5GxSYX+90ZR/3V2QGZfLFcS
-         c+VQ==
-X-Gm-Message-State: AOJu0YzlcO1F3VGDJzR2shrglHwM3cxn6Ms7IpNQPUjeOljghfFvnRUH
-        YnEn5nuqrvAgP4SR65uXTpQ=
-X-Google-Smtp-Source: AGHT+IHt8eOgUZMwTJFbpuI4I0oAJPsetlSgPXbGhOvSfkEKVilaWQIYmTqAhEXpAUA4dllBBHhjGA==
-X-Received: by 2002:a17:906:3f48:b0:99b:ed53:5c12 with SMTP id f8-20020a1709063f4800b0099bed535c12mr5184402ejj.17.1691329356069;
-        Sun, 06 Aug 2023 06:42:36 -0700 (PDT)
+        bh=LahOmtw+dOqGhFwzPmluy7sMbX8L+Z01CVnjmnkuSGE=;
+        b=Pb+rko1kESwhWvbYwb3JO4Vl+o6mTtv876u47TLjUn8i0QBMdBsCJs4B2HRsziUUi5
+         r/WAu7v31BP4sjsfEf0vBntBDKVPdXDJR25+Xldwpq2x8Dg2n00L/tve2uuvHQ/Y5hBM
+         VM57ogxpFaeG7p/dYtCtx3bEkJY+buQlO2fJHKXwH0qcpETrai9K449McmQQNqHHSA1N
+         UDJcRjcysmmUa61KAe7/v/I/sPOu/fMrwz21j9a6Fz+ziS0EAu+26auLDUF5F4LiZAWK
+         mJWiLAZCxlCJeBVNby6ARL5ZaKG3nSQsgFTJeyzagQgO3/MZWZSCfg6Jl4D0sHXs2S01
+         EPVQ==
+X-Gm-Message-State: AOJu0YwjhZZhwqCcopOeT6eopsEfgNX6qr9qr97FhSCYmCe0EwHJ/8xb
+        kKozMOy1x3mHgW6KKulGK5E=
+X-Google-Smtp-Source: AGHT+IEBFtSKShfsGfbCpFMtiZEsrdUskRucT0bUssz2Grq5iCZlM9ACJ1wQ8XcSZrSneHMxv8mb6w==
+X-Received: by 2002:a17:906:319b:b0:99c:bb4d:f5a0 with SMTP id 27-20020a170906319b00b0099cbb4df5a0mr3426696ejy.14.1691329431999;
+        Sun, 06 Aug 2023 06:43:51 -0700 (PDT)
 Received: from jernej-laptop.localnet (82-149-1-233.dynamic.telemach.net. [82.149.1.233])
-        by smtp.gmail.com with ESMTPSA id c9-20020a170906d18900b0099bc038eb2bsm3898285ejz.58.2023.08.06.06.42.35
+        by smtp.gmail.com with ESMTPSA id oz13-20020a170906cd0d00b00992b71d8f19sm1359086ejb.133.2023.08.06.06.43.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Aug 2023 06:42:35 -0700 (PDT)
+        Sun, 06 Aug 2023 06:43:51 -0700 (PDT)
 From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
 To:     Maxime Ripard <mripard@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -59,12 +59,12 @@ To:     Maxime Ripard <mripard@kernel.org>,
 Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
         Frank Oltmanns <frank@oltmanns.dev>
-Subject: Re: [PATCH v5 09/11] clk: sunxi-ng: div: Support finding closest rate
-Date:   Sun, 06 Aug 2023 15:42:34 +0200
-Message-ID: <3570165.R56niFO833@jernej-laptop>
-In-Reply-To: <20230806-pll-mipi_set_rate_parent-v5-9-db4f5ca33fc3@oltmanns.dev>
+Subject: Re: [PATCH v5 11/11] clk: sunxi-ng: nkm: Prefer current parent rate
+Date:   Sun, 06 Aug 2023 15:43:50 +0200
+Message-ID: <1904467.taCxCBeP46@jernej-laptop>
+In-Reply-To: <20230806-pll-mipi_set_rate_parent-v5-11-db4f5ca33fc3@oltmanns.dev>
 References: <20230806-pll-mipi_set_rate_parent-v5-0-db4f5ca33fc3@oltmanns.dev>
- <20230806-pll-mipi_set_rate_parent-v5-9-db4f5ca33fc3@oltmanns.dev>
+ <20230806-pll-mipi_set_rate_parent-v5-11-db4f5ca33fc3@oltmanns.dev>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -72,13 +72,10 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dne nedelja, 06. avgust 2023 ob 15:06:54 CEST je Frank Oltmanns napisal(a):
-> Add initalization macros for divisor clocks with mux
-> (SUNXI_CCU_M_WITH_MUX) to support finding the closest rate. This clock
-> type requires the appropriate flags to be set in the .common structure
-> (for the mux part of the clock) and the .div part.
+Dne nedelja, 06. avgust 2023 ob 15:06:56 CEST je Frank Oltmanns napisal(a):
+> Similar to ccu_mp, if the current parent rate allows getting the ideal
+> rate, prefer to not change the parent clock's rate.
 > 
-> Acked-by: Maxime Ripard <mripard@kernel.org>
 > Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
 
 Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
@@ -87,91 +84,29 @@ Best regards,
 Jernej
 
 > ---
->  drivers/clk/sunxi-ng/ccu_div.h | 30 ++++++++++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
+>  drivers/clk/sunxi-ng/ccu_nkm.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/clk/sunxi-ng/ccu_div.h b/drivers/clk/sunxi-ng/ccu_div.h
-> index 948e2b0c0c3b..90d49ee8e0cc 100644
-> --- a/drivers/clk/sunxi-ng/ccu_div.h
-> +++ b/drivers/clk/sunxi-ng/ccu_div.h
-> @@ -143,6 +143,26 @@ struct ccu_div {
->  		},					
-		\
->  	}
+> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
+> index 896bb1ef8642..1e49444817cf 100644
+> --- a/drivers/clk/sunxi-ng/ccu_nkm.c
+> +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+> @@ -35,7 +35,8 @@ static unsigned long
+> ccu_nkm_find_best_with_parent_adj(struct ccu_common *common
 > 
-> +#define SUNXI_CCU_M_WITH_MUX_TABLE_GATE_CLOSEST(_struct, _name,		
-\
-> +						_parents, 
-_table,	\
-> +						_reg,		
-	\
-> +						_mshift, 
-_mwidth,	\
-> +						_muxshift, 
-_muxwidth,	\
-> +						_gate, 
-_flags)		\
-> +	struct ccu_div _struct = {					
-\
-> +		.enable	= _gate,				
-	\
-> +		.div	= _SUNXI_CCU_DIV_FLAGS(_mshift, _mwidth, 
-CLK_DIVIDER_ROUND_CLOSEST),
-> \ +		.mux	= _SUNXI_CCU_MUX_TABLE(_muxshift, _muxwidth, 
-_table), \
-> +		.common	= {					
-	\
-> +			.reg		= _reg,			
-	\
-> +			.hw.init	= CLK_HW_INIT_PARENTS(_name,	
-\
-> +							      
-_parents, \
-> +							      
-&ccu_div_ops, \
-> +							      
-_flags),	\
-> +			.features	= CCU_FEATURE_CLOSEST_RATE,	
-\
-> +		},						
-	\
-> +	}
-> +
->  #define SUNXI_CCU_M_WITH_MUX_GATE(_struct, _name, _parents, _reg,	\
->  				  _mshift, _mwidth, _muxshift, 
-_muxwidth, \
->  				  _gate, _flags)		
-	\
-> @@ -152,6 +172,16 @@ struct ccu_div {
->  					_muxshift, _muxwidth,	
-	\
->  					_gate, _flags)
+>  				tmp_rate = tmp_parent * _n * _k / 
+_m;
 > 
-> +#define SUNXI_CCU_M_WITH_MUX_GATE_CLOSEST(_struct, _name, _parents,	
-\
-> +					  _reg, _mshift, 
-_mwidth,	\
-> +					  _muxshift, _muxwidth,	
-	\
-> +					  _gate, _flags)	
-	\
-> +	SUNXI_CCU_M_WITH_MUX_TABLE_GATE_CLOSEST(_struct, _name,		
-\
-> +						_parents, 
-NULL,		\
-> +						_reg, 
-_mshift, _mwidth,	\
-> +						_muxshift, 
-_muxwidth,	\
-> +						_gate, 
-_flags)
-> +
->  #define SUNXI_CCU_M_WITH_MUX(_struct, _name, _parents, _reg,		
-\
->  			     _mshift, _mwidth, _muxshift, _muxwidth,	
-\
->  			     _flags)				
-	\
+> -				if (ccu_is_better_rate(common, 
+rate, tmp_rate, best_rate)) {
+> +				if (ccu_is_better_rate(common, 
+rate, tmp_rate, best_rate) ||
+> +				    (tmp_parent == *parent && 
+tmp_rate == best_rate)) {
+>  					best_rate = tmp_rate;
+>  					best_parent_rate = 
+tmp_parent;
+>  					best_n = _n;
 
 
 
