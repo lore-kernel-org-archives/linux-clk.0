@@ -2,97 +2,108 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B046C001DF
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Aug 2023 12:44:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8C49C001DB
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Aug 2023 13:45:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233774AbjHGMo5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Aug 2023 08:44:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42864 "EHLO
+        id S233416AbjHGNpl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Aug 2023 09:45:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58800 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231758AbjHGMon (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Aug 2023 08:44:43 -0400
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [IPv6:2001:67c:2050:0:465::202])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E3C2172C;
-        Mon,  7 Aug 2023 05:44:26 -0700 (PDT)
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4RKGGv3BnLz9sW7;
-        Mon,  7 Aug 2023 14:44:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
-        s=MBO0001; t=1691412263;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=eujE6oPZv+zmJCFxuwNd5VPBn5IlE6vd2cc/1IpSkXc=;
-        b=Y1z6Z9dbD+y1cpjLhNyi5Zd1auL26Zaea26L4auYxOnb7gY/t1T63Qn1SspKzzzaWFymKv
-        K/bqQXnYbTDFmS9MHm38d14vse6oAdAWh/UxdZthEgZVkCuI25ovn+rQdU9Z+kjuQz2RoD
-        pbohH+fLmF7Td9avv8QkGczZJOsGczso5j6KWRfr35yVS38LfgyI5ROYLZRoIdl0zjGsvx
-        xsCAiwrsQV0cbPY2imTw9jpLz0oZUWqhhZAmVeoGZpb2CiLyTZ9HwTddNEFTRP4A6LaftN
-        dSiqazAAqdEzi55CxIDcX/9jaSWqM/LYHvvaMiNDOrx0zEp5Uz0I23arZ+fUpg==
-From:   Frank Oltmanns <frank@oltmanns.dev>
-Date:   Mon, 07 Aug 2023 14:43:44 +0200
-Subject: [PATCH v6 11/11] clk: sunxi-ng: nkm: Prefer current parent rate
+        with ESMTP id S233118AbjHGNpa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Aug 2023 09:45:30 -0400
+Received: from mail-yw1-x1136.google.com (mail-yw1-x1136.google.com [IPv6:2607:f8b0:4864:20::1136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CCFB199B
+        for <linux-clk@vger.kernel.org>; Mon,  7 Aug 2023 06:45:02 -0700 (PDT)
+Received: by mail-yw1-x1136.google.com with SMTP id 00721157ae682-579de633419so41582177b3.3
+        for <linux-clk@vger.kernel.org>; Mon, 07 Aug 2023 06:45:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1691415901; x=1692020701;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kMUoL4hnGiYD5mlozK9nMbQkuwFZ1466myKRpxECfj8=;
+        b=c2hxnScmXyOJNNEwoKxei8znJecQS2wtI3TXpVfWBeONeEnG4vwx3hpcJpNe2AayPO
+         0AMVZyb/lJSbUeTXtOm1Pe21cRqHs/VtGvkHi8MJvRMFFglgz/80jxQAaCUUe/phOgl+
+         Qpm4Uk9oDmcOpnq7mI7TqxH1yYgAW7W51OpmZaeTlrdOKGOZyz/gild0J8SldxlJ8Vm+
+         tWG35Hf6tHY/F2mjV+O+qDQgjBmuR6DtLD7/o7uSnQ2NONh4YbEdfL1P+dwcdwJJnrKp
+         JkELJca+1W2nV5dANEMwy59TbI68sZY5P+DSD2wmKU1l6My7Ng/g6H72CJmoUzsZZFWh
+         6YCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691415901; x=1692020701;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kMUoL4hnGiYD5mlozK9nMbQkuwFZ1466myKRpxECfj8=;
+        b=bFFk6/I2OW1lCwJw+5pnLcFUWWA+AWRt+VtmFkMRwkvrkehLAGQx93jZlI7DWGf2VT
+         ul68AtUMhMu8LB4GF7MUtN8AJ3fesKKfKulhhvTPPYdAfXwCQjHrppsATToAqhGuI8Y1
+         36YULOcPfg3z3FUy9uT3Ea22WcTQ0FdSsazlIKAAQwLjMzEufyuik3dvNlLRMzO0Usek
+         s1vbP3fY9chU6txsq+eV9nL/Q7ZqM+rienWQE/DJiLTlU9GuX3J85dBi9QTA1F+slYvA
+         uMAeGpyITMM8wFUvjzzqult2BLhcux69Ndcyt+d2MdwkeJo67icm4xTlI9CQv5GzMN3p
+         OL3g==
+X-Gm-Message-State: AOJu0Yw6seAanou6lJVP5N/puuB75TcluEzicRuXVxK27ETa+XohFwg1
+        aDp6WB9PJlYWyAfRN7TPPcbbcFIAJwuuvq9GryY1Aw==
+X-Google-Smtp-Source: AGHT+IHx1ajT83sKAnSY+O0ambUwFc4zjHyYjGAv1pUY5pxl3rdlLFD2APpbEZ6FIFnRNRDlCKdb6Khb5uVyVETW/uM=
+X-Received: by 2002:a25:d70a:0:b0:d4c:a288:ef4 with SMTP id
+ o10-20020a25d70a000000b00d4ca2880ef4mr4049416ybg.44.1691415901373; Mon, 07
+ Aug 2023 06:45:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230807-pll-mipi_set_rate_parent-v6-11-f173239a4b59@oltmanns.dev>
-References: <20230807-pll-mipi_set_rate_parent-v6-0-f173239a4b59@oltmanns.dev>
-In-Reply-To: <20230807-pll-mipi_set_rate_parent-v6-0-f173239a4b59@oltmanns.dev>
-To:     Maxime Ripard <mripard@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Andre Przywara <andre.przywara@arm.com>,
-        Roman Beranek <me@crly.cz>
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-        Frank Oltmanns <frank@oltmanns.dev>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=975; i=frank@oltmanns.dev;
- h=from:subject:message-id; bh=nX7O6HIGcIL6L1G1S3ONo9eulQgwHWxaNoxqcrZCmdE=;
- b=owEB7QES/pANAwAIAZppogiUStPHAcsmYgBk0OcLfaRyp447JpXrEZFmI4EHjbwF9UWfiLNWq
- QOaFHIRNpmJAbMEAAEIAB0WIQQC/SV7f5DmuaVET5aaaaIIlErTxwUCZNDnCwAKCRCaaaIIlErT
- x60gC/9o+RMltX9ZY6ftQCMuJXLFJlqfRCHw9zBPZWmougN1+w6ltG1Tp0m/y2ITx6pTgi25D6+
- KD9Ipv4gUg0pfpZxgUbIibzgzLktFCj8nsWuwP6RoczbZf2cz5EC6uJPCppRY8n8VoCYJ3MQXCj
- AkFvx/V/K+DxWpCdqbaBhBXC04tGPbx/UehIXdK/1dgtg17uq4t3lM+2tCN9i413FTp9mbpR/1X
- a2Yb9ESG+SVVTmTUy1VkBBofGvCCN0Mymk/vGv2ofXjuAuo2xZ5Wy47wkKIvy+XV9VG+u6IY3Bi
- ltLW6QAHXbhdtcCFk4YCSakotisQcD7kTSmJc31x0LZq0LwzbJ3bfWVyLWkEwlNDxkA9SPQPOEE
- IXQ56SwHsSRbtoC5ovgn13hmyRv0o9W6nerBobz1bNYtciMCLURFL74OfvCueBeHym+XjUYp5fS
- KPWPeR89A3oydQ4e4zuHAgXaEELjn8CvW2H96XYViGCxkQZuBFiSMCAQWS1Y/BA+/ZY/Q=
-X-Developer-Key: i=frank@oltmanns.dev; a=openpgp;
- fpr=02FD257B7F90E6B9A5444F969A69A208944AD3C7
-X-Rspamd-Queue-Id: 4RKGGv3BnLz9sW7
+References: <20230630-topic-oxnas-upstream-remove-v2-0-fb6ab3dea87c@linaro.org>
+ <20230630-topic-oxnas-upstream-remove-v2-9-fb6ab3dea87c@linaro.org> <a9074f2d-ffa2-477f-e3b5-2c7d213ec72c@linaro.org>
+In-Reply-To: <a9074f2d-ffa2-477f-e3b5-2c7d213ec72c@linaro.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 7 Aug 2023 15:44:50 +0200
+Message-ID: <CACRpkdbMy=JWAgybtimQXJRQ7jsVZ1g-DfqjryjP31JT9f=Prg@mail.gmail.com>
+Subject: Re: [PATCH v2 09/15] pinctrl: pinctrl-oxnas: remove obsolete pinctrl driver
+To:     neil.armstrong@linaro.org
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Andy Shevchenko <andy@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-oxnas@groups.io,
+        Arnd Bergmann <arnd@arndb.de>,
+        Daniel Golle <daniel@makrotopia.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Similar to ccu_mp, if the current parent rate allows getting the ideal
-rate, prefer to not change the parent clock's rate.
+On Mon, Jul 31, 2023 at 4:44=E2=80=AFPM Neil Armstrong
+<neil.armstrong@linaro.org> wrote:
+> On 30/06/2023 18:58, Neil Armstrong wrote:
+> > Due to lack of maintenance and stall of development for a few years now=
+,
+> > and since no new features will ever be added upstream, remove support
+> > for OX810 and OX820 pinctrl & gpio.
+>
+> Do you plan to take patches 9, 10 & 11 or should I funnel them via a fina=
+l SoC PR ?
 
-Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
-Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
----
- drivers/clk/sunxi-ng/ccu_nkm.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+I tried to apply them to the pinctrl tree but that fails ...
+Could you rebase patches 9,10,11 onto my "devel" branch
+and send separately? Then I will apply them right away.
 
-diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
-index a714dcf0dfc1..eed64547ad42 100644
---- a/drivers/clk/sunxi-ng/ccu_nkm.c
-+++ b/drivers/clk/sunxi-ng/ccu_nkm.c
-@@ -34,7 +34,8 @@ static unsigned long ccu_nkm_find_best_with_parent_adj(struct ccu_common *common
- 
- 				tmp_rate = tmp_parent * _n * _k / _m;
- 
--				if (ccu_is_better_rate(common, rate, tmp_rate, best_rate)) {
-+				if (ccu_is_better_rate(common, rate, tmp_rate, best_rate) ||
-+				    (tmp_parent == *parent && tmp_rate == best_rate)) {
- 					best_rate = tmp_rate;
- 					best_parent_rate = tmp_parent;
- 					best_n = _n;
-
--- 
-2.41.0
-
+Yours,
+Linus Walleij
