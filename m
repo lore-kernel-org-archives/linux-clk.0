@@ -2,274 +2,280 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94549EB64DD
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Aug 2023 07:00:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE63FC41513
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Aug 2023 07:08:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231429AbjHGHAH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Aug 2023 03:00:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55342 "EHLO
+        id S231321AbjHGHII (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Aug 2023 03:08:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230226AbjHGHAB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Aug 2023 03:00:01 -0400
-Received: from mail-m12739.qiye.163.com (mail-m12739.qiye.163.com [115.236.127.39])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 386B21BB;
-        Sun,  6 Aug 2023 23:59:57 -0700 (PDT)
-Received: from localhost.localdomain (unknown [58.22.7.114])
-        by mail-m12739.qiye.163.com (Hmail) with ESMTPA id 64B674A01EE;
-        Mon,  7 Aug 2023 14:59:48 +0800 (CST)
-From:   Elaine Zhang <zhangqing@rock-chips.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org,
-        kever.yang@rock-chips.com, zhangqing@rock-chips.com,
-        heiko@sntech.de, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-kernel@vger.kernel.org, huangtao@rock-chips.com
-Subject: [RESEND PATCH v3 2/4] clk: rockchip: add support for gate link
-Date:   Mon,  7 Aug 2023 14:59:40 +0800
-Message-Id: <20230807065942.9937-3-zhangqing@rock-chips.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230807065942.9937-1-zhangqing@rock-chips.com>
-References: <20230807065942.9937-1-zhangqing@rock-chips.com>
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-        tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQh4dH1ZCQkofHUlLSh4ZQh1VEwETFh
-        oSFyQUDg9ZV1kYEgtZQVlOQ1VJSVVMVUpKT1lXWRYaDxIVHRRZQVlPS0hVSk1PSU5JVUpLS1VKQl
-        kG
-X-HM-Tid: 0a89cecb795cb212kuuu64b674a01ee
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NSI6LDo*Az1KLCEJSTQWCisx
-        AykwChdVSlVKTUJKSEJKTkNCSUNIVTMWGhIXVQETGhUcChIVHDsJFBgQVhgTEgsIVRgUFkVZV1kS
-        C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUNPTE83Bg++
+        with ESMTP id S231436AbjHGHHu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Aug 2023 03:07:50 -0400
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E085F172D
+        for <linux-clk@vger.kernel.org>; Mon,  7 Aug 2023 00:07:45 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id 2adb3069b0e04-4fe07f0636bso6732925e87.1
+        for <linux-clk@vger.kernel.org>; Mon, 07 Aug 2023 00:07:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1691392064; x=1691996864;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cWWnXKOt1mBeIEynylWCqyYZNRdvBS5hxgZ4awLikYQ=;
+        b=ZP2rNYEzKbJiw4/twCr06gCfoDpq1kXEI6dvZvET6awgzhG2NFhu6iJh6DPYZOiSd+
+         G65bI+0KemUsir2VCkGUiYsUnCrFBCQU7G9OO6XRwMZv+uTUITopgzAEseibWMrusxmw
+         0H2daFCmx0/bKK1kZmVFQO8Lse9Ru11dNVj4bIxT5MovDHvOFOCfT40GcZKt8ysiwBGd
+         C4UcSOCx5grh0r5U8dS/ebAG6CoGAU42FWq0VRF3cmn6WetA332g7r2eqRbkszi2SMpV
+         0VDM5rsXnpc0n3awdyb0FS+ggO6wYAUXnLi/Yszv22vnrJ/YOUa/gjVIiuXIwtdvzlJY
+         nOJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691392064; x=1691996864;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cWWnXKOt1mBeIEynylWCqyYZNRdvBS5hxgZ4awLikYQ=;
+        b=Eob6HwZJzKY/IgJq3/0bWi0jTatp7w/UYQwBBxzI+5zrrBsXiZmGS8BAhkVxdeIjjB
+         26O22ktg/t4F0VH7/mekANT5ulQ9259HP3HOpRlyP0AUD7d5Kw4cZA4ItjDyTA07FWt9
+         M/u7HVjiT7EXWXpebDcZr40mJFue1Z9AmRnhzx8T3T4LkJ7b6OjgVsHt3+d/b7xnlpE2
+         YVzf7r91g95GY4wagggFLzj4lTWxNfwJYHuggNeddLoXp6HKX8fZ68QSiH/CiZmzDxMa
+         svWoXa33lZ3VYTKig1JNUXccOXNjEDnX/V8jf0C+v9SBkGCxs+I3x5wvHdyAlnN1K7RX
+         nvVg==
+X-Gm-Message-State: AOJu0Ywn3UBMy2/lz9zV5ZoyDjKruNYPnhTrN7b4oSCaukuNr6kZoeJG
+        MMWHhnJam4dF1ohhQI5hzsJM8g==
+X-Google-Smtp-Source: AGHT+IHqu92CAl5eucjDnqV8FrzoalX0QSA+DPma7ktAhbEBbnPB9ME04dfagA2jYn4ZmDIGK40XTw==
+X-Received: by 2002:a05:6512:108b:b0:4fb:8bfd:32e4 with SMTP id j11-20020a056512108b00b004fb8bfd32e4mr5637893lfg.13.1691392063541;
+        Mon, 07 Aug 2023 00:07:43 -0700 (PDT)
+Received: from localhost ([212.23.236.67])
+        by smtp.gmail.com with ESMTPSA id u3-20020adfed43000000b0031759e6b43fsm9531115wro.39.2023.08.07.00.07.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Aug 2023 00:07:42 -0700 (PDT)
+Date:   Mon, 7 Aug 2023 09:07:41 +0200
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc:     Jakub Kicinski <kuba@kernel.org>,
+        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Milena Olech <milena.olech@intel.com>,
+        Michal Michalik <michal.michalik@intel.com>,
+        linux-arm-kernel@lists.infradead.org, poros@redhat.com,
+        mschmidt@redhat.com, netdev@vger.kernel.org,
+        linux-clk@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
+        intel-wired-lan@lists.osuosl.org
+Subject: Re: [PATCH net-next v2 7/9] ice: implement dpll interface to control
+ cgu
+Message-ID: <ZNCYPVX7p9Fe/lPY@nanopsycho>
+References: <20230804190454.394062-1-vadim.fedorenko@linux.dev>
+ <20230804190454.394062-8-vadim.fedorenko@linux.dev>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230804190454.394062-8-vadim.fedorenko@linux.dev>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Recent Rockchip SoCs have a new hardware block called Native Interface
-Unit (NIU), which gates clocks to devices behind them. These effectively
-need two parent clocks.
-Use GATE_LINK to handle this.
+Fri, Aug 04, 2023 at 09:04:52PM CEST, vadim.fedorenko@linux.dev wrote:
+>From: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes:https://lore.kernel.org/oe-kbuild-all/202308040120.7KQxScIs-lkp@intel.com/
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
----
- drivers/clk/rockchip/Makefile        |   1 +
- drivers/clk/rockchip/clk-gate-link.c | 120 +++++++++++++++++++++++++++
- drivers/clk/rockchip/clk.c           |   7 ++
- drivers/clk/rockchip/clk.h           |  22 +++++
- 4 files changed, 150 insertions(+)
- create mode 100644 drivers/clk/rockchip/clk-gate-link.c
+[...]
 
-diff --git a/drivers/clk/rockchip/Makefile b/drivers/clk/rockchip/Makefile
-index 36894f6a7022..87cc39d54f72 100644
---- a/drivers/clk/rockchip/Makefile
-+++ b/drivers/clk/rockchip/Makefile
-@@ -13,6 +13,7 @@ clk-rockchip-y += clk-inverter.o
- clk-rockchip-y += clk-mmc-phase.o
- clk-rockchip-y += clk-muxgrf.o
- clk-rockchip-y += clk-ddr.o
-+clk-rockchip-y += clk-gate-link.o
- clk-rockchip-$(CONFIG_RESET_CONTROLLER) += softrst.o
- 
- obj-$(CONFIG_CLK_PX30)          += clk-px30.o
-diff --git a/drivers/clk/rockchip/clk-gate-link.c b/drivers/clk/rockchip/clk-gate-link.c
-new file mode 100644
-index 000000000000..d4bbef4a067b
---- /dev/null
-+++ b/drivers/clk/rockchip/clk-gate-link.c
-@@ -0,0 +1,120 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2023 Fuzhou Rockchip Electronics Co., Ltd
-+ */
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/module.h>
-+#include <linux/slab.h>
-+#include <linux/io.h>
-+#include <linux/err.h>
-+#include <linux/string.h>
-+#include "clk.h"
-+
-+/**
-+ * struct clk_gate_link - gating link clock
-+ *
-+ * @gate: handle clk gate
-+ * @link: links clk
-+ */
-+struct clk_gate_link {
-+	struct clk_gate gate;
-+	struct clk	*link;
-+};
-+
-+#define to_clk_gate_link(_gate) container_of(_gate, struct clk_gate_link, gate)
-+
-+static int clk_gate_link_enable(struct clk_hw *hw)
-+{
-+	struct clk_gate_link *gate = to_clk_gate_link(to_clk_gate(hw));
-+
-+	clk_gate_endisable(hw, 1);
-+	clk_enable(gate->link);
-+
-+	return 0;
-+}
-+
-+static void clk_gate_link_disable(struct clk_hw *hw)
-+{
-+	struct clk_gate_link *gate = to_clk_gate_link(to_clk_gate(hw));
-+
-+	clk_gate_endisable(hw, 0);
-+	clk_disable(gate->link);
-+}
-+
-+static int clk_gate_link_is_enabled(struct clk_hw *hw)
-+{
-+	return clk_gate_is_enabled(hw);
-+}
-+
-+static int clk_gate_link_prepare(struct clk_hw *hw)
-+{
-+	struct clk_gate_link *gate = to_clk_gate_link(to_clk_gate(hw));
-+
-+	return clk_prepare(gate->link);
-+}
-+
-+static void clk_gate_link_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_gate_link *gate = to_clk_gate_link(to_clk_gate(hw));
-+
-+	clk_unprepare(gate->link);
-+}
-+
-+const struct clk_ops clk_gate_link_ops = {
-+	.prepare = clk_gate_link_prepare,
-+	.unprepare = clk_gate_link_unprepare,
-+	.enable = clk_gate_link_enable,
-+	.disable = clk_gate_link_disable,
-+	.is_enabled = clk_gate_link_is_enabled,
-+};
-+
-+struct clk *rockchip_clk_register_gate_link(struct rockchip_clk_provider *ctx,
-+					    const char *name, const char *parent_name,
-+					    unsigned int link_id, u8 flags,
-+					    void __iomem *gate_offset, u8 gate_shift,
-+					    u8 gate_flags, spinlock_t *lock)
-+{
-+	struct clk_gate_link *gate_link;
-+	struct clk_init_data init = {};
-+	struct clk **clks;
-+	struct clk *clk_link;
-+
-+	if (gate_flags & CLK_GATE_HIWORD_MASK) {
-+		if (gate_shift > 15) {
-+			pr_err("gate bit exceeds LOWORD field\n");
-+			return ERR_PTR(-ENOMEM);
-+		}
-+	}
-+
-+	/* allocate the gate */
-+	gate_link = kzalloc(sizeof(*gate_link), GFP_KERNEL);
-+	if (!gate_link)
-+		return ERR_PTR(-ENOMEM);
-+
-+	clks = ctx->clk_data.clks;
-+	gate_link->link = clks[link_id];
-+
-+	init.name = name;
-+	init.ops = &clk_gate_link_ops;
-+	init.flags = flags;
-+	init.parent_names = parent_name ? &parent_name : NULL;
-+	init.num_parents = 1;
-+
-+	/* struct clk_gate assignments */
-+	gate_link->gate.reg = gate_offset;
-+	gate_link->gate.bit_idx = gate_shift;
-+	gate_link->gate.flags = gate_flags;
-+	gate_link->gate.lock = lock;
-+	gate_link->gate.hw.init = &init;
-+
-+	clk_link = clk_register(NULL, &gate_link->gate.hw);
-+	if (IS_ERR(clk_link)) {
-+		kfree(gate_link);
-+		pr_err("%s clk_register field\n", name);
-+		return ERR_CAST(clk_link);
-+	}
-+
-+	return clk_link;
-+}
-+EXPORT_SYMBOL_GPL(rockchip_clk_register_gate_link);
-diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-index 4059d9365ae6..d981ef6c5487 100644
---- a/drivers/clk/rockchip/clk.c
-+++ b/drivers/clk/rockchip/clk.c
-@@ -509,6 +509,13 @@ void rockchip_clk_register_branches(struct rockchip_clk_provider *ctx,
- 				ctx->reg_base + list->gate_offset,
- 				list->gate_shift, list->gate_flags, &ctx->lock);
- 			break;
-+
-+		case branch_gate_link:
-+			clk = rockchip_clk_register_gate_link(ctx, list->name,
-+				list->parent_names[0], list->link_id, flags,
-+				ctx->reg_base + list->gate_offset,
-+				list->gate_shift, list->gate_flags, &ctx->lock);
-+			break;
- 		case branch_composite:
- 			clk = rockchip_clk_register_branch(list->name,
- 				list->parent_names, list->num_parents,
-diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-index 758ebaf2236b..b49e3cede33a 100644
---- a/drivers/clk/rockchip/clk.h
-+++ b/drivers/clk/rockchip/clk.h
-@@ -517,6 +517,7 @@ enum rockchip_clk_branch_type {
- 	branch_divider,
- 	branch_fraction_divider,
- 	branch_gate,
-+	branch_gate_link,
- 	branch_mmc,
- 	branch_inverter,
- 	branch_factor,
-@@ -529,6 +530,7 @@ struct rockchip_clk_branch {
- 	enum rockchip_clk_branch_type	branch_type;
- 	const char			*name;
- 	const char			*const *parent_names;
-+	unsigned int			link_id;
- 	u8				num_parents;
- 	unsigned long			flags;
- 	int				muxdiv_offset;
-@@ -842,6 +844,20 @@ struct rockchip_clk_branch {
- 		.gate_flags	= gf,				\
- 	}
- 
-+#define GATE_LINK(_id, cname, pname, _linkid, f, o, b, gf) \
-+	{							\
-+		.id		= _id,				\
-+		.branch_type	= branch_gate_link,		\
-+		.name		= cname,			\
-+		.parent_names	= (const char *[]){ pname },	\
-+		.num_parents	= 1,				\
-+		.link_id	= _linkid,			\
-+		.flags		= f,				\
-+		.gate_offset	= o,				\
-+		.gate_shift	= b,				\
-+		.gate_flags	= gf,				\
-+	}
-+
- #define MMC(_id, cname, pname, offset, shift)			\
- 	{							\
- 		.id		= _id,				\
-@@ -1002,6 +1018,12 @@ struct clk *rockchip_clk_register_halfdiv(const char *name,
- 					  unsigned long flags,
- 					  spinlock_t *lock);
- 
-+struct clk *rockchip_clk_register_gate_link(struct rockchip_clk_provider *ctx,
-+					    const char *name, const char *parent_name,
-+					    unsigned int link_id, u8 flags,
-+					    void __iomem *gate_offset, u8 gate_shift,
-+					    u8 gate_flags, spinlock_t *lock);
-+
- #ifdef CONFIG_RESET_CONTROLLER
- void rockchip_register_softrst_lut(struct device_node *np,
- 				   const int *lookup_table,
--- 
-2.17.1
 
+>+/**
+>+ * ice_dpll_deinit_worker - deinitialize dpll kworker
+>+ * @pf: board private structure
+>+ *
+>+ * Stop dpll's kworker, release it's resources.
+>+ */
+>+static void ice_dpll_deinit_worker(struct ice_pf *pf)
+>+{
+>+	struct ice_dplls *d = &pf->dplls;
+>+
+>+	kthread_cancel_delayed_work_sync(&d->work);
+>+	kthread_destroy_worker(d->kworker);
+>+}
+>+
+>+/**
+>+ * ice_dpll_init_worker - Initialize DPLLs periodic worker
+>+ * @pf: board private structure
+>+ *
+>+ * Create and start DPLLs periodic worker.
+>+ *
+>+ * Context: Shall be called after pf->dplls.lock is initialized and
+>+ * ICE_FLAG_DPLL flag is set.
+>+ * Return:
+>+ * * 0 - success
+>+ * * negative - create worker failure
+>+ */
+>+static int ice_dpll_init_worker(struct ice_pf *pf)
+>+{
+>+	struct ice_dplls *d = &pf->dplls;
+>+	struct kthread_worker *kworker;
+>+
+>+	ice_dpll_update_state(pf, &d->eec, true);
+>+	ice_dpll_update_state(pf, &d->pps, true);
+>+	kthread_init_delayed_work(&d->work, ice_dpll_periodic_work);
+>+	kworker = kthread_create_worker(0, "ice-dplls-%s",
+>+					dev_name(ice_pf_to_dev(pf)));
+>+	if (IS_ERR(kworker))
+>+		return PTR_ERR(kworker);
+>+	d->kworker = kworker;
+>+	d->cgu_state_acq_err_num = 0;
+>+	kthread_queue_delayed_work(d->kworker, &d->work, 0);
+>+
+>+	return 0;
+>+}
+>+
+
+[...]
+
+
+>+/**
+>+ * ice_dpll_deinit - Disable the driver/HW support for dpll subsystem
+>+ * the dpll device.
+>+ * @pf: board private structure
+>+ *
+>+ * Handles the cleanup work required after dpll initialization, freeing
+>+ * resources and unregistering the dpll, pin and all resources used for
+>+ * handling them.
+>+ *
+>+ * Context: Destroys pf->dplls.lock mutex.
+>+ */
+>+void ice_dpll_deinit(struct ice_pf *pf)
+>+{
+>+	bool cgu = ice_is_feature_supported(pf, ICE_F_CGU);
+>+
+>+	if (!test_bit(ICE_FLAG_DPLL, pf->flags))
+>+		return;
+>+	clear_bit(ICE_FLAG_DPLL, pf->flags);
+>+
+
+Please be symmetric with the init path and move ice_dpll_deinit_worker()
+call here.
+
+That would not only lead to nicer code, also, that will assure that the
+worker thread can only access initialized object.
+
+And as:
+1) worked thread can only access initialized objects
+2) dpll callbacks can only be called on initialized and registered objects
+
+You can remove the check for ICE_FLAG_DPLL flag from ice_dpll_cb_lock()
+as there would be no longer any possibility when this check could be
+evaluated as "true".
+
+Then, as an unexpected side effect (:O), ice_dpll_cb_lock() basically
+reduces to just calling mutex_lock(&pf->dplls.lock). So you can remove
+the thin wrappers of ice_dpll_cb_lock() and ice_dpll_cb_unlock() and
+instead of doing this obfuscation, you can call
+mutex_lock(&pf->dplls.lock) and mutex_unlock(&pf->dplls.lock) directly.
+
+That is what I'm trying to explain from the beginning. Is it clear now
+or do we need another iteration?
+
+Thanks!
+
+
+>+	ice_dpll_deinit_pins(pf, cgu);
+>+	ice_dpll_deinit_dpll(pf, &pf->dplls.pps, cgu);
+>+	ice_dpll_deinit_dpll(pf, &pf->dplls.eec, cgu);
+>+	ice_dpll_deinit_info(pf);
+>+	if (cgu)
+>+		ice_dpll_deinit_worker(pf);
+>+	mutex_destroy(&pf->dplls.lock);
+>+}
+>+
+>+/**
+>+ * ice_dpll_init - initialize support for dpll subsystem
+>+ * @pf: board private structure
+>+ *
+>+ * Set up the device dplls, register them and pins connected within Linux dpll
+>+ * subsystem. Allow userspace to obtain state of DPLL and handling of DPLL
+>+ * configuration requests.
+>+ *
+>+ * Context: Initializes pf->dplls.lock mutex.
+>+ */
+>+void ice_dpll_init(struct ice_pf *pf)
+>+{
+>+	bool cgu = ice_is_feature_supported(pf, ICE_F_CGU);
+>+	struct ice_dplls *d = &pf->dplls;
+>+	int err = 0;
+>+
+>+	err = ice_dpll_init_info(pf, cgu);
+>+	if (err)
+>+		goto err_exit;
+>+	err = ice_dpll_init_dpll(pf, &pf->dplls.eec, cgu, DPLL_TYPE_EEC);
+>+	if (err)
+>+		goto deinit_info;
+>+	err = ice_dpll_init_dpll(pf, &pf->dplls.pps, cgu, DPLL_TYPE_PPS);
+>+	if (err)
+>+		goto deinit_eec;
+>+	err = ice_dpll_init_pins(pf, cgu);
+>+	if (err)
+>+		goto deinit_pps;
+>+	mutex_init(&d->lock);
+>+	set_bit(ICE_FLAG_DPLL, pf->flags);
+
+Why can't you move the flag set to the end of this function and avoid
+calling clear_bi on the error path?
+
+If you can't, please fix the clear_bit() position (should be at the
+beginning of deinit_pins label section).
+
+
+>+	if (cgu) {
+>+		err = ice_dpll_init_worker(pf);
+>+		if (err)
+>+			goto deinit_pins;
+>+	}
+>+
+>+	return;
+>+
+>+deinit_pins:
+>+	ice_dpll_deinit_pins(pf, cgu);
+>+deinit_pps:
+>+	ice_dpll_deinit_dpll(pf, &pf->dplls.pps, cgu);
+>+deinit_eec:
+>+	ice_dpll_deinit_dpll(pf, &pf->dplls.eec, cgu);
+>+deinit_info:
+>+	ice_dpll_deinit_info(pf);
+>+err_exit:
+>+	clear_bit(ICE_FLAG_DPLL, pf->flags);
+>+	mutex_destroy(&d->lock);
+>+	dev_warn(ice_pf_to_dev(pf), "DPLLs init failure err:%d\n", err);
+>+}
+
+[...]
+
+
+>diff --git a/drivers/net/ethernet/intel/ice/ice_main.c b/drivers/net/ethernet/intel/ice/ice_main.c
+>index 2e80d5cd9f56..4adc74f1cb1f 100644
+>--- a/drivers/net/ethernet/intel/ice/ice_main.c
+>+++ b/drivers/net/ethernet/intel/ice/ice_main.c
+>@@ -4627,6 +4627,10 @@ static void ice_init_features(struct ice_pf *pf)
+> 	if (ice_is_feature_supported(pf, ICE_F_GNSS))
+> 		ice_gnss_init(pf);
+> 
+>+	if (ice_is_feature_supported(pf, ICE_F_CGU) ||
+>+	    ice_is_feature_supported(pf, ICE_F_PHY_RCLK))
+>+		ice_dpll_init(pf);
+>+
+> 	/* Note: Flow director init failure is non-fatal to load */
+> 	if (ice_init_fdir(pf))
+> 		dev_err(dev, "could not initialize flow director\n");
+>@@ -4653,6 +4657,9 @@ static void ice_deinit_features(struct ice_pf *pf)
+> 		ice_gnss_exit(pf);
+> 	if (test_bit(ICE_FLAG_PTP_SUPPORTED, pf->flags))
+> 		ice_ptp_release(pf);
+>+	if (ice_is_feature_supported(pf, ICE_F_PHY_RCLK) ||
+>+	    ice_is_feature_supported(pf, ICE_F_CGU))
+
+As you internally depend on ICE_FLAG_DPLL flag, this check is redundant. 
+
+
+>+		ice_dpll_deinit(pf);
+> }
+> 
+> static void ice_init_wakeup(struct ice_pf *pf)
+>-- 
+>2.27.0
+>
