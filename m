@@ -2,96 +2,123 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1718EB64DD
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Aug 2023 08:13:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B3AAEB64DD
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Aug 2023 08:22:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229562AbjHGINU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Aug 2023 04:13:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52936 "EHLO
+        id S230109AbjHGIWX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Aug 2023 04:22:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229921AbjHGINU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Aug 2023 04:13:20 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE830171A
-        for <linux-clk@vger.kernel.org>; Mon,  7 Aug 2023 01:13:18 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id ffacd0b85a97d-31765792c7cso3705847f8f.0
-        for <linux-clk@vger.kernel.org>; Mon, 07 Aug 2023 01:13:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1691395997; x=1692000797;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LLKodO4Y3hcUtlogMUbubeG9uU0/WvWNo//bCg4tNY0=;
-        b=tzJVjpGeQZRB+HyRUl/cxeBbmjjpAOY6w8Cwclu6Fxy6+mCDgYJvAdKt2BwUENwXy3
-         VxlMxFRi8Fv6Gzia94jeZsxwZtBoMJxLUWI2xrrgEGpXCh+l/5wmWiOir4WO+JPVjj7Q
-         6r8foa4HRp6deN+LK62yvKBuq6zKywhh2F0F5m5PsHX48OMs2yD56iSftOrzJQCTlPSi
-         9hvRdtTMOY6f4wvBrIR7uV+aaYpuVk9YMN0HYrcaE2+vu4NThj698t4i6/Sj2fp1YL5s
-         1QUOYgH0VGAeqjI/P01Vb6MdwCN2KvkPu8gwN5le43YKVHTVtDwrtybT7bCMMOM1sFI7
-         oF2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691395997; x=1692000797;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LLKodO4Y3hcUtlogMUbubeG9uU0/WvWNo//bCg4tNY0=;
-        b=QqF6N9I3QsPNxGgGcANqe9IGWkCshQe9Uj0D0Ae6b5AeO2CQMFDMLE2XYxJsAa0Amc
-         ydEcZ/rjrxwpdnqu0Y1chLrNhzRJoVCoEXSQLcVIJ1xEJ5a6b63nHbXhudbPPOIlRVMM
-         Q+7AcA+ZuyvyjLMYnjtS7PfQUY8KD1vGE9IOIFrc6grdi5BmL87F8mELxL6Rd4l4zr/t
-         HyYqOp7nafsg6QaCTBBnLAApBgr/7P7JkEIOE8OaNf6dF6WyLQpDjqeKpYOlAA9V9GzP
-         nJa0Ix066zSdg+iiBlGTrqRPGP0H34O+CWeKczDNzWvOgZT3vGOu6pRQMYEs3HfywyLx
-         buxQ==
-X-Gm-Message-State: AOJu0YwYoNgKoRzu/Tlu+WE7B7ACw2IXwF8NvqlGGZkvE1OK3V6imb0/
-        ukPMncl9bL6pis2fwDFFKjd3lg==
-X-Google-Smtp-Source: AGHT+IEh/NmRuU56UfaanfHAex34soIf/oqYQk+L702Ab/SKUXoKFvsY3POfIQesJkVPB9pf6BWhiw==
-X-Received: by 2002:a5d:4f02:0:b0:317:3d78:c313 with SMTP id c2-20020a5d4f02000000b003173d78c313mr5749499wru.60.1691395997351;
-        Mon, 07 Aug 2023 01:13:17 -0700 (PDT)
-Received: from localhost ([212.23.236.67])
-        by smtp.gmail.com with ESMTPSA id s9-20020adfecc9000000b0031416362e23sm9782645wro.3.2023.08.07.01.13.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Aug 2023 01:13:16 -0700 (PDT)
-Date:   Mon, 7 Aug 2023 10:13:15 +0200
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc:     Jakub Kicinski <kuba@kernel.org>,
-        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Milena Olech <milena.olech@intel.com>,
-        Michal Michalik <michal.michalik@intel.com>,
-        linux-arm-kernel@lists.infradead.org, poros@redhat.com,
-        mschmidt@redhat.com, netdev@vger.kernel.org,
-        linux-clk@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
-        intel-wired-lan@lists.osuosl.org
-Subject: Re: [PATCH net-next v2 3/9] dpll: core: Add DPLL framework base
- functions
-Message-ID: <ZNCnm9tPN1npIGUM@nanopsycho>
-References: <20230804190454.394062-1-vadim.fedorenko@linux.dev>
- <20230804190454.394062-4-vadim.fedorenko@linux.dev>
+        with ESMTP id S229914AbjHGIWW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Aug 2023 04:22:22 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55B2D10EF
+        for <linux-clk@vger.kernel.org>; Mon,  7 Aug 2023 01:22:21 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <afa@pengutronix.de>)
+        id 1qSvV9-00009U-TV; Mon, 07 Aug 2023 10:22:07 +0200
+Received: from [2a0a:edc0:0:1101:1d::54] (helo=dude05.red.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <afa@pengutronix.de>)
+        id 1qSvV8-001hda-UD; Mon, 07 Aug 2023 10:22:06 +0200
+Received: from afa by dude05.red.stw.pengutronix.de with local (Exim 4.96)
+        (envelope-from <afa@pengutronix.de>)
+        id 1qSvV8-009n6M-1f;
+        Mon, 07 Aug 2023 10:22:06 +0200
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+To:     Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>
+Cc:     Peng Fan <peng.fan@oss.nxp.com>,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] clk: imx: composite-8m: fix clock pauses when set_rate would be a no-op
+Date:   Mon,  7 Aug 2023 10:22:00 +0200
+Message-Id: <20230807082201.2332746-1-a.fatoum@pengutronix.de>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230804190454.394062-4-vadim.fedorenko@linux.dev>
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: afa@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Fri, Aug 04, 2023 at 09:04:48PM CEST, vadim.fedorenko@linux.dev wrote:
->DPLL framework is used to represent and configure DPLL devices
->in systems. Each device that has DPLL and can configure inputs
->and outputs can use this framework.
->
->Implement core framework functions for further interactions
->with device drivers implementing dpll subsystem, as well as for
->interactions of DPLL netlink framework part with the subsystem
->itself.
->
->Co-developed-by: Milena Olech <milena.olech@intel.com>
->Signed-off-by: Milena Olech <milena.olech@intel.com>
->Co-developed-by: Michal Michalik <michal.michalik@intel.com>
->Signed-off-by: Michal Michalik <michal.michalik@intel.com>
->Signed-off-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
->Co-developed-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
->Signed-off-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+Reconfiguring the clock divider to the exact same value is observed
+on an i.MX8MN to often cause a longer than usual clock pause, probably
+because the divider restarts counting whenever the register is rewritten.
 
-Thanks!
+This issue doesn't show up normally, because the clock framework will
+take care to not call set_rate when the clock rate is the same.
+However, when we reconfigure an upstream clock, the common code will
+call set_rate with the newly calculated rate on all children, e.g.:
 
-Signed-off-by: Jiri Pirko <jiri@nvidia.com>
+  - sai5 is running normally and divides Audio PLL out by 16.
+  - Audio PLL rate is increased by 32Hz (glitch-free kdiv change)
+  - rates for children are recalculated and rates are set recursively
+  - imx8m_clk_composite_divider_set_rate(sai5) is called with
+    32/16 = 2Hz more
+  - imx8m_clk_composite_divider_set_rate computes same divider as before
+  - divider register is written, so it restarts counting from zero and
+    MCLK is briefly paused, so instead of e.g. 40ns, MCLK is low for 120ns.
+
+Some external clock consumers can be upset by such unexpected clock pauses,
+so let's make sure we only rewrite the divider value when the value to be
+written is actually different.
+
+Fixes: d3ff9728134e ("clk: imx: Add imx composite clock")
+Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+---
+v1 -> v2:
+  - replace glitch with clock pause instead (Peng)
+  - describe how bug triggers in more detail (Peng)
+---
+ drivers/clk/imx/clk-composite-8m.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-composite-8m.c
+index cbf0d7955a00..3e9a092e136c 100644
+--- a/drivers/clk/imx/clk-composite-8m.c
++++ b/drivers/clk/imx/clk-composite-8m.c
+@@ -97,7 +97,7 @@ static int imx8m_clk_composite_divider_set_rate(struct clk_hw *hw,
+ 	int prediv_value;
+ 	int div_value;
+ 	int ret;
+-	u32 val;
++	u32 orig, val;
+ 
+ 	ret = imx8m_clk_composite_compute_dividers(rate, parent_rate,
+ 						&prediv_value, &div_value);
+@@ -106,13 +106,15 @@ static int imx8m_clk_composite_divider_set_rate(struct clk_hw *hw,
+ 
+ 	spin_lock_irqsave(divider->lock, flags);
+ 
+-	val = readl(divider->reg);
+-	val &= ~((clk_div_mask(divider->width) << divider->shift) |
+-			(clk_div_mask(PCG_DIV_WIDTH) << PCG_DIV_SHIFT));
++	orig = readl(divider->reg);
++	val = orig & ~((clk_div_mask(divider->width) << divider->shift) |
++		       (clk_div_mask(PCG_DIV_WIDTH) << PCG_DIV_SHIFT));
+ 
+ 	val |= (u32)(prediv_value  - 1) << divider->shift;
+ 	val |= (u32)(div_value - 1) << PCG_DIV_SHIFT;
+-	writel(val, divider->reg);
++
++	if (val != orig)
++		writel(val, divider->reg);
+ 
+ 	spin_unlock_irqrestore(divider->lock, flags);
+ 
+-- 
+2.39.2
+
