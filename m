@@ -2,108 +2,88 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8C49C001DB
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Aug 2023 13:45:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4145C001DB
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Aug 2023 14:28:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233416AbjHGNpl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Aug 2023 09:45:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58800 "EHLO
+        id S233786AbjHGO2Y convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Aug 2023 10:28:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233118AbjHGNpa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Aug 2023 09:45:30 -0400
-Received: from mail-yw1-x1136.google.com (mail-yw1-x1136.google.com [IPv6:2607:f8b0:4864:20::1136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CCFB199B
-        for <linux-clk@vger.kernel.org>; Mon,  7 Aug 2023 06:45:02 -0700 (PDT)
-Received: by mail-yw1-x1136.google.com with SMTP id 00721157ae682-579de633419so41582177b3.3
-        for <linux-clk@vger.kernel.org>; Mon, 07 Aug 2023 06:45:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691415901; x=1692020701;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kMUoL4hnGiYD5mlozK9nMbQkuwFZ1466myKRpxECfj8=;
-        b=c2hxnScmXyOJNNEwoKxei8znJecQS2wtI3TXpVfWBeONeEnG4vwx3hpcJpNe2AayPO
-         0AMVZyb/lJSbUeTXtOm1Pe21cRqHs/VtGvkHi8MJvRMFFglgz/80jxQAaCUUe/phOgl+
-         Qpm4Uk9oDmcOpnq7mI7TqxH1yYgAW7W51OpmZaeTlrdOKGOZyz/gild0J8SldxlJ8Vm+
-         tWG35Hf6tHY/F2mjV+O+qDQgjBmuR6DtLD7/o7uSnQ2NONh4YbEdfL1P+dwcdwJJnrKp
-         JkELJca+1W2nV5dANEMwy59TbI68sZY5P+DSD2wmKU1l6My7Ng/g6H72CJmoUzsZZFWh
-         6YCQ==
+        with ESMTP id S233769AbjHGO2X (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Aug 2023 10:28:23 -0400
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26988AA;
+        Mon,  7 Aug 2023 07:28:22 -0700 (PDT)
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-686bea20652so4553930b3a.1;
+        Mon, 07 Aug 2023 07:28:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691415901; x=1692020701;
+        d=1e100.net; s=20221208; t=1691418500; x=1692023300;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kMUoL4hnGiYD5mlozK9nMbQkuwFZ1466myKRpxECfj8=;
-        b=bFFk6/I2OW1lCwJw+5pnLcFUWWA+AWRt+VtmFkMRwkvrkehLAGQx93jZlI7DWGf2VT
-         ul68AtUMhMu8LB4GF7MUtN8AJ3fesKKfKulhhvTPPYdAfXwCQjHrppsATToAqhGuI8Y1
-         36YULOcPfg3z3FUy9uT3Ea22WcTQ0FdSsazlIKAAQwLjMzEufyuik3dvNlLRMzO0Usek
-         s1vbP3fY9chU6txsq+eV9nL/Q7ZqM+rienWQE/DJiLTlU9GuX3J85dBi9QTA1F+slYvA
-         uMAeGpyITMM8wFUvjzzqult2BLhcux69Ndcyt+d2MdwkeJo67icm4xTlI9CQv5GzMN3p
-         OL3g==
-X-Gm-Message-State: AOJu0Yw6seAanou6lJVP5N/puuB75TcluEzicRuXVxK27ETa+XohFwg1
-        aDp6WB9PJlYWyAfRN7TPPcbbcFIAJwuuvq9GryY1Aw==
-X-Google-Smtp-Source: AGHT+IHx1ajT83sKAnSY+O0ambUwFc4zjHyYjGAv1pUY5pxl3rdlLFD2APpbEZ6FIFnRNRDlCKdb6Khb5uVyVETW/uM=
-X-Received: by 2002:a25:d70a:0:b0:d4c:a288:ef4 with SMTP id
- o10-20020a25d70a000000b00d4ca2880ef4mr4049416ybg.44.1691415901373; Mon, 07
- Aug 2023 06:45:01 -0700 (PDT)
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Oe/CN6/jCuhHF6++Sm5t23zpKw7bQYwVaG0CyMWDU64=;
+        b=IN81SCZEftK27d5We2DHPjzrQEeT2zGY3K6/pxcPEks4D+WqaQich5jB1ncONuRTHL
+         uaI8QkYJBvTHkOTLYnT4lW9PpschWneGL9dAFB1mPu5NcL7WLMo4fT2klLB4XzOWOjq0
+         YctS0UG6o8H0zZ4RhsivDNe8pNcRIpCeyDDfzxrDXdXOx8yv8T+1U7rcGbshHDc/UdhF
+         kG1Y4z+wnA4its0zJUVUDRnw5gFCGBNSRY9obvdrO1MwCPB5Wo5r0gt96LkpIEV7CZCA
+         VrbzF6dYXwrFYZ1j+NmmgvJLalcy9as4qoxwZYhgNUidvPP/GFUQOkl4gmGdZ594SZrU
+         i5rA==
+X-Gm-Message-State: AOJu0Yw6/wzwNtFQHPBmazve2H2/HlF2zMT6uAP2eh71rA0+cM8kIkez
+        WrghRMIXgQ1gEO7pDVsGgCipiT6y6OE5eQ==
+X-Google-Smtp-Source: AGHT+IGZ1hjWySWWaW3ScwMcO4sFbu7Zt6hRol07Gi2rE0Ma3vw8pHXzlDY4y742ViM9HGzo1Yb98w==
+X-Received: by 2002:a05:6a20:3d83:b0:137:db14:e88b with SMTP id s3-20020a056a203d8300b00137db14e88bmr13899304pzi.29.1691418500397;
+        Mon, 07 Aug 2023 07:28:20 -0700 (PDT)
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com. [209.85.216.46])
+        by smtp.gmail.com with ESMTPSA id 18-20020a631252000000b0056428865aadsm4867689pgs.82.2023.08.07.07.28.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Aug 2023 07:28:20 -0700 (PDT)
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-267ffa7e441so3055236a91.1;
+        Mon, 07 Aug 2023 07:28:19 -0700 (PDT)
+X-Received: by 2002:a17:90a:ce96:b0:268:5bca:3bdf with SMTP id
+ g22-20020a17090ace9600b002685bca3bdfmr8841244pju.40.1691418499602; Mon, 07
+ Aug 2023 07:28:19 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230630-topic-oxnas-upstream-remove-v2-0-fb6ab3dea87c@linaro.org>
- <20230630-topic-oxnas-upstream-remove-v2-9-fb6ab3dea87c@linaro.org> <a9074f2d-ffa2-477f-e3b5-2c7d213ec72c@linaro.org>
-In-Reply-To: <a9074f2d-ffa2-477f-e3b5-2c7d213ec72c@linaro.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 7 Aug 2023 15:44:50 +0200
-Message-ID: <CACRpkdbMy=JWAgybtimQXJRQ7jsVZ1g-DfqjryjP31JT9f=Prg@mail.gmail.com>
-Subject: Re: [PATCH v2 09/15] pinctrl: pinctrl-oxnas: remove obsolete pinctrl driver
-To:     neil.armstrong@linaro.org
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+References: <20230807-pll-mipi_set_rate_parent-v6-0-f173239a4b59@oltmanns.dev> <20230807-pll-mipi_set_rate_parent-v6-2-f173239a4b59@oltmanns.dev>
+In-Reply-To: <20230807-pll-mipi_set_rate_parent-v6-2-f173239a4b59@oltmanns.dev>
+Reply-To: wens@csie.org
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Mon, 7 Aug 2023 22:28:08 +0800
+X-Gmail-Original-Message-ID: <CAGb2v67YWKbit+F1gOuZ2KFNjcD7NzwwKKpue=f8R2Se8Fg1ag@mail.gmail.com>
+Message-ID: <CAGb2v67YWKbit+F1gOuZ2KFNjcD7NzwwKKpue=f8R2Se8Fg1ag@mail.gmail.com>
+Subject: Re: [PATCH v6 02/11] clk: sunxi-ng: nkm: consider alternative parent
+ rates when determining rate
+To:     Frank Oltmanns <frank@oltmanns.dev>
+Cc:     Maxime Ripard <mripard@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andy Shevchenko <andy@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-oxnas@groups.io,
-        Arnd Bergmann <arnd@arndb.de>,
-        Daniel Golle <daniel@makrotopia.org>
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Andre Przywara <andre.przywara@arm.com>,
+        Roman Beranek <me@crly.cz>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jul 31, 2023 at 4:44=E2=80=AFPM Neil Armstrong
-<neil.armstrong@linaro.org> wrote:
-> On 30/06/2023 18:58, Neil Armstrong wrote:
-> > Due to lack of maintenance and stall of development for a few years now=
-,
-> > and since no new features will ever be added upstream, remove support
-> > for OX810 and OX820 pinctrl & gpio.
+On Mon, Aug 7, 2023 at 8:44 PM Frank Oltmanns <frank@oltmanns.dev> wrote:
 >
-> Do you plan to take patches 9, 10 & 11 or should I funnel them via a fina=
-l SoC PR ?
+> In case the CLK_SET_RATE_PARENT flag is set, consider using a different
+> parent rate when determining a new rate.
+>
+> To find the best match for the requested rate, perform the following
+> steps for each NKM combination:
+>  - calculate the optimal parent rate,
+>  - find the best parent rate that the parent clock actually supports
+>  - use that parent rate to calculate the effective rate.
+>
+> In case the clk does not support setting the parent rate, use the same
+> algorithm as before.
+>
+> Acked-by: Maxime Ripard <mripard@kernel.org>
+> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
 
-I tried to apply them to the pinctrl tree but that fails ...
-Could you rebase patches 9,10,11 onto my "devel" branch
-and send separately? Then I will apply them right away.
-
-Yours,
-Linus Walleij
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
