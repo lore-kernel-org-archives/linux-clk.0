@@ -2,138 +2,100 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10C35C04E69
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Aug 2023 11:10:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82F1CC001B0
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Aug 2023 12:44:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231830AbjHGLKY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Aug 2023 07:10:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47518 "EHLO
+        id S231204AbjHGMoK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Aug 2023 08:44:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231843AbjHGLKV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Aug 2023 07:10:21 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81CA2B3;
-        Mon,  7 Aug 2023 04:10:15 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id 2adb3069b0e04-4fe426521adso6817115e87.0;
-        Mon, 07 Aug 2023 04:10:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1691406613; x=1692011413;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=GwJ0VfQ+vMDvyOW9FkLQ8b9EFxXB9GwcO9Ph5XHR3Ew=;
-        b=BgZ4tJyQ2yIZtYNdUTua3Huk6DdFfMcLY1/cmRqBC+FafadmrFGITpMYQuzNHpvB8b
-         /EyCWXTTVFk04BYt2vOqyx6g+V5PkkYFXZOgKjuxce+12zYqCyssQZMzcPm8B0PSB4a+
-         kRz5DoCYfg+bNrOdFXTCz+rSvQlh5ruH83r6Pw6zZw9iBfCdPE1zFgvNyl0mnUnGHRwK
-         Wy0o1KuG/6d3/yU/LnUQQCN60HCklTq1K5eOxd9hYiixS2G9VlRadq6xTO27c0MJ668d
-         r+zgrMnEE6gx8WE8svH336pClAW8wQ6bm4Wqb4d3/K6r264FSNs0JHJQminlUZCVk5Iv
-         kSsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691406613; x=1692011413;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GwJ0VfQ+vMDvyOW9FkLQ8b9EFxXB9GwcO9Ph5XHR3Ew=;
-        b=bHbHDn65WKtZUCrS0H0zuIasY3SsikvNYzX+sOhPwNSzbK3RbPjneLMP+rSFlLPdBj
-         9BKhoovQwCu5wjhOfpwKXC8in6Xwx5ItYICcuQGpfFSNq4j9nVCjrPkMcmWH2MMs8oIB
-         un82kXWod7BMXHPg+uBVAvx8Ir4HtAAwXIJPi0q032cuaysNIjG5ktyQdl+dFe33vwds
-         W0V36gBTpu2OH5JNlshLsCb+cjH7oniAExBBrhyzH/Mv234fzhI2nCEtwGdK5zFrAFq6
-         i3TE5283DKiY7EG7wkYmlhQy5ilUNacUfRGHr2jAeniJWn5BHp7kMOV3aDDECxX2Ey83
-         YLoA==
-X-Gm-Message-State: AOJu0YzwSoWn2/wzTfr3+4XkmYoQj5ITjJTzzUy8vx+nzYfGZBS5Q4e5
-        n5cwDUVCoHLl3/bsUUx5Q0g=
-X-Google-Smtp-Source: AGHT+IGdJlKPNGSLi2wCWxWzcdq6Bhj1eY6HS9Agi105G0fdzX0qdgytZmZO9maDnyvykkjOlZG7pA==
-X-Received: by 2002:a05:6512:3e2:b0:4fb:89b3:3374 with SMTP id n2-20020a05651203e200b004fb89b33374mr5076716lfq.54.1691406613317;
-        Mon, 07 Aug 2023 04:10:13 -0700 (PDT)
-Received: from [192.168.26.149] (031011218106.poznan.vectranet.pl. [31.11.218.106])
-        by smtp.googlemail.com with ESMTPSA id f8-20020a19ae08000000b004fe7011072fsm143012lfc.58.2023.08.07.04.10.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Aug 2023 04:10:12 -0700 (PDT)
-Message-ID: <0f9d0cd6-d344-7915-7bc1-7a090b8305d2@gmail.com>
-Date:   Mon, 7 Aug 2023 13:10:11 +0200
+        with ESMTP id S229469AbjHGMoJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Aug 2023 08:44:09 -0400
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F3E4171A;
+        Mon,  7 Aug 2023 05:44:06 -0700 (PDT)
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4RKGGV62y8z9snG;
+        Mon,  7 Aug 2023 14:44:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
+        s=MBO0001; t=1691412242;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=J7xunkH+eplPFJS6xmeOR6PfO5HXKdfmXSQre18tglE=;
+        b=wksyKUBg7az1g+U5XnvWYd/eML/uU8VmHklspVcTEltUDIeq9HSnw7quA62rgsLdwt15dt
+        DLN/PpVQwxW1xhIMjkMIS4onN2JHloIm23efIV+30CTSPZY9HJzl7E6udVdOAU5BkEcEGj
+        FxKTO6H74F2f3hT5l3VRzuKFa8Sw4wCUfTyvzLgHxvMuDJDiVSdVHNO1QKqodY7k7J9WG7
+        m2FN4u7zH9hD0P0YPG1gt6tcx4wGRZe2QQJrUiFgMTFWBTmFYxl/zocoFDuxJkF05bvIBo
+        s7UqIkgQjXJKRhqR/9ODtpeaneuexzkYwQ7pCA3/bz7xp7ipa2pQd40NGMuWOA==
+From:   Frank Oltmanns <frank@oltmanns.dev>
+Date:   Mon, 07 Aug 2023 14:43:34 +0200
+Subject: [PATCH v6 01/11] clk: sunxi-ng: nkm: Use correct parameter name
+ for parent HW
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: ARM board lockups/hangs triggered by locks and mutexes
-From:   =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-        Waiman Long <longman@redhat.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        linux-clk@vger.kernel.org,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Network Development <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc:     OpenWrt Development List <openwrt-devel@lists.openwrt.org>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>
-References: <CACna6rxpzDWE5-gnmpgMgfzPmmHvEGTZk4GJvJ8jLSMazh2bVA@mail.gmail.com>
- <bd5feeb3-bc44-d4d2-7708-eea9243b49a4@gmail.com>
-Content-Language: en-US
-In-Reply-To: <bd5feeb3-bc44-d4d2-7708-eea9243b49a4@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230807-pll-mipi_set_rate_parent-v6-1-f173239a4b59@oltmanns.dev>
+References: <20230807-pll-mipi_set_rate_parent-v6-0-f173239a4b59@oltmanns.dev>
+In-Reply-To: <20230807-pll-mipi_set_rate_parent-v6-0-f173239a4b59@oltmanns.dev>
+To:     Maxime Ripard <mripard@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Andre Przywara <andre.przywara@arm.com>,
+        Roman Beranek <me@crly.cz>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+        Frank Oltmanns <frank@oltmanns.dev>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=993; i=frank@oltmanns.dev;
+ h=from:subject:message-id; bh=J6lNhQH93AkSfayEFm5nQRn8x5rZvQ+scqDM/7cL81I=;
+ b=owEB7QES/pANAwAIAZppogiUStPHAcsmYgBk0OcJeltk/PivTlSiWRcBOFYm7PZOWIMRYMGjM
+ RWzMMDnn26JAbMEAAEIAB0WIQQC/SV7f5DmuaVET5aaaaIIlErTxwUCZNDnCQAKCRCaaaIIlErT
+ x+VUC/47WWLIjW3u247is9gP9SM58/c6axgqxtcxPeRvU6HtetXfdf6vRMLsKUzAkEvqwnD4p8a
+ oHqCeKZAG0m1Syd6sXkNnV6liB0ALRuc82DS7a4MP/5VkNTniHW9TyoD3beDkmQbc7/HIRToCge
+ AP6m+y50vdArcvbYs0CeS7mjxQROtzSX0UhWivJtnEFn14MExhRD8abYLg6/CAxT6AqLxEGcShe
+ ngmQKu5RWj87VuoYmK7QSZJeP9kTVkJ/s+H9cl5W65yZ7RDpRKPxTfWeU0/JiJIPFOdqzZQlYX5
+ WVC7cTUN7ATNCxSDdiWplPATSYTlTtm6cKWnqsRQRzCk/gCnBSmxgei1ZqEfz+25JO6lnYe5z18
+ kMe5vc1b0frBSgjTChttKcVc+4eZA0Zcgy57DNjDtyBBDSgGb1mIgN697L8zMhNLAvKuiPgk0JR
+ 7+jymkS2o/CWeWeJvLyvNCFQpBFRq/ClWTo42eqgWkSH5LqMo2El29jstnLZlVkB+Tjco=
+X-Developer-Key: i=frank@oltmanns.dev; a=openpgp;
+ fpr=02FD257B7F90E6B9A5444F969A69A208944AD3C7
+X-Rspamd-Queue-Id: 4RKGGV62y8z9snG
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 4.08.2023 13:07, Rafał Miłecki wrote:
-> I triple checked that. Dropping a single unused function breaks kernel /
-> device stability on BCM53573!
-> 
-> AFAIK the only thing below diff actually affects is location of symbols
-> (I actually verified that by comparing System.map before and after -
-> over 22'000 of relocated symbols).
-> 
-> Can some unfortunate location of symbols cause those hangs/lockups?
+ccu_nkm_round_rate() takes a clk_hw as parameter "hw". Since "hw" is the
+nkm clock's parent clk_hw, not the clk_hw of the nkm clock itself,
+change the parameter name to "parent_hw" to make it more clear what
+we're dealing with.
 
-I performed another experiment. First I dropped mtd_check_of_node() to
-bring kernel back to the stable state.
+Acked-by: Maxime Ripard <mripard@kernel.org>
+Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
+---
+ drivers/clk/sunxi-ng/ccu_nkm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Then I started adding useless code to the mtdchar_unlocked_ioctl(). I
-ended up adding just enough to make sure all post-mtd symbols in
-System.map got the same offset as in case of backporting
-mtd_check_of_node().
+diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
+index a0978a50edae..f267142e58b3 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkm.c
++++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+@@ -106,7 +106,7 @@ static unsigned long ccu_nkm_recalc_rate(struct clk_hw *hw,
+ }
+ 
+ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
+-					struct clk_hw *hw,
++					struct clk_hw *parent_hw,
+ 					unsigned long *parent_rate,
+ 					unsigned long rate,
+ 					void *data)
 
-I started experiencing lockups/hangs again.
-
-I repeated the same test with adding dumb code to the brcm_nvram_probe()
-and verifying symbols offsets following brcm_nvram_probe one.
-
-I believe this confirms that this problem is about offset or alignment
-of some specific symbol(s). The remaining question is what symbols and
-how to fix or workaround that.
-
-Following dump change brings back lockups/hangs:
-
-diff --git a/drivers/mtd/mtdchar.c b/drivers/mtd/mtdchar.c
-index ee437af41..0a24dec55 100644
---- a/drivers/mtd/mtdchar.c
-+++ b/drivers/mtd/mtdchar.c
-@@ -1028,6 +1028,22 @@ static long mtdchar_unlocked_ioctl(struct file *file, u_int cmd, u_long arg)
-  {
-  	int ret;
-
-+	if (!file)
-+		pr_info("Missing\n");
-+	WARN_ON(!file);
-+	WARN_ON(cmd == 1234);
-+	WARN_ON(cmd == 5678);
-+	WARN_ON(cmd == 1234);
-+	WARN_ON(cmd == 5678);
-+	WARN_ON(cmd == 1234);
-+	WARN_ON(cmd == 5678);
-+	WARN_ON(cmd == 1234);
-+	WARN_ON(cmd == 5678);
-+	WARN_ON(cmd == 1234);
-+	WARN_ON(cmd == 5678);
-+	WARN_ON(cmd == 1234);
-+	WARN_ON(cmd == 5678);
-+
-  	mutex_lock(&mtd_mutex);
-  	ret = mtdchar_ioctl(file, cmd, arg);
-  	mutex_unlock(&mtd_mutex);
+-- 
+2.41.0
 
