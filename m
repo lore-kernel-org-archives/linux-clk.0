@@ -2,425 +2,242 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A77BCC25B4F
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Aug 2023 15:44:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04E60C001DE
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Aug 2023 18:35:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231230AbjHGPov (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Aug 2023 11:44:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36222 "EHLO
+        id S230491AbjHGSfB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Aug 2023 14:35:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231200AbjHGPot (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Aug 2023 11:44:49 -0400
-Received: from mx.skole.hr (mx2.hosting.skole.hr [161.53.165.186])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20170BD;
-        Mon,  7 Aug 2023 08:44:46 -0700 (PDT)
-Received: from mx2.hosting.skole.hr (localhost.localdomain [127.0.0.1])
-        by mx.skole.hr (mx.skole.hr) with ESMTP id 2942484BC1;
-        Mon,  7 Aug 2023 17:44:45 +0200 (CEST)
-From:   =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Date:   Mon, 07 Aug 2023 17:42:38 +0200
-Subject: [PATCH v4 4/8] clk: mmp: Add Marvell PXA1908 clock driver
+        with ESMTP id S229696AbjHGSfA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Aug 2023 14:35:00 -0400
+Received: from mail-oi1-x230.google.com (mail-oi1-x230.google.com [IPv6:2607:f8b0:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 974C0171A
+        for <linux-clk@vger.kernel.org>; Mon,  7 Aug 2023 11:34:59 -0700 (PDT)
+Received: by mail-oi1-x230.google.com with SMTP id 5614622812f47-3a1ebb85f99so4130218b6e.2
+        for <linux-clk@vger.kernel.org>; Mon, 07 Aug 2023 11:34:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1691433299; x=1692038099;
+        h=in-reply-to:from:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=V+fCUTgjbKIEPxHNDpxeFlx4JrlWKXiQtBizbN0NYpo=;
+        b=DrpK4EZNU49bdHJid0l6TiL2vg2/kAvDqkj7e5/mMbJMoADxTPmFFmhXzP3aOuxsMe
+         Wgkb3e5x6dgc2DVg/TgR24Pb3Z9vn0yali7jDG1lVPmiQYTUSo+meaiK245K4RHfjZA4
+         kEUBYouR5ztEFKQq7rf54uvgU29wasbKthu6I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691433299; x=1692038099;
+        h=in-reply-to:from:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V+fCUTgjbKIEPxHNDpxeFlx4JrlWKXiQtBizbN0NYpo=;
+        b=aaOnQ71n/ds2szPyw1Pb/7xmPc+UbDCdljIhmkVv4TBrQMB8oPWP0HPvWfV3Lj5kxF
+         8S4jgxGNhK78KOAIJRo8ZyPjfSUenqM8QBPFpN9y36fFrQhoqzp/9l6B04mo4SqojZWY
+         slI2XgAXWtwveT48YfTkxHAtlgBuggVbt+KjQHdd2hD828H+aylJEUs79C9WQsNJfO3I
+         jwO76qypqp8y6Kl6lXLG0QdQRD53q1s7AI1NJKUe7tCfdQthd631ULfwhx4EYtvuZKJ4
+         YhlpoeEZIpOP9/E38HKxUdkhU/vW8DnCbxM5d87TG2ZJEmCN164RdBl6grdC8mgBqISb
+         NzUQ==
+X-Gm-Message-State: AOJu0YwHggKRqEpFpe5AefKs87Bq2xA3NMgCtQADGfHuFtp/IHMkMKjb
+        QxzHFZE8LYubWQY3pN0uzq8C1w==
+X-Google-Smtp-Source: AGHT+IG9NAQtcjPFK4JNKNNlGMMfzZ4dN7Ep5MTuf1ABSqRKCB+eFAUP334SUsk+T0H1kNFyn9lV/g==
+X-Received: by 2002:aca:1905:0:b0:3a7:46d2:5203 with SMTP id l5-20020aca1905000000b003a746d25203mr9865896oii.51.1691433298823;
+        Mon, 07 Aug 2023 11:34:58 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id w70-20020a638249000000b0056368adf5e2sm5291227pgd.87.2023.08.07.11.34.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Aug 2023 11:34:58 -0700 (PDT)
+Message-ID: <ee134dae-8353-5735-e02d-e2cb1088c428@broadcom.com>
+Date:   Mon, 7 Aug 2023 11:34:55 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20230807-pxa1908-lkml-v4-4-cb387d73b452@skole.hr>
-References: <20230807-pxa1908-lkml-v4-0-cb387d73b452@skole.hr>
-In-Reply-To: <20230807-pxa1908-lkml-v4-0-cb387d73b452@skole.hr>
-To:     Robert Jarzmik <robert.jarzmik@free.fr>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andy Shevchenko <andy@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Tony Luck <tony.luck@intel.com>,
-        "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-        =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-hardening@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        afaerber@suse.de
-X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=13296;
- i=duje.mihanovic@skole.hr; h=from:subject:message-id;
- bh=sFY7I2+o5pECAtdTEvhlBxU5qqeGQ40fDdj0Aw2Hs04=;
- b=owEBbQKS/ZANAwAIAZoRnrBCLZbhAcsmYgBk0REyjQhn5UenmAczyo5vDIj4ZSpH3zI0UUcK8
- eFHRZpX32KJAjMEAAEIAB0WIQRT351NnD/hEPs2LXiaEZ6wQi2W4QUCZNERMgAKCRCaEZ6wQi2W
- 4WAzD/9U9ikurbkNMsmFDk30ExMpKwb0R2/NkV5wYg3b7K6BIS9yly2DaNDGyYozmterNNfFaU0
- N2cOYCVsEyjTkLnpbx6b3JBuZJ9Wc9c8LvSCOsF2yu7+ql7YAI61PBhSUcW2+xX8U9XbElSjrJS
- mZJgQ8wholocoyOCtesd+gccIxtGbIgcHfInbHdb38JDhJWMPgoHaRMUP9AjkRODJ8UgGZkuQOk
- Ry4iRp//pDGRMFD7orT/wDsuePdGbahut+AHirzwoQsJK55o7gXB0Jk83+Jnh9CHZvSTbnT4O6G
- w7twvKd25IuzLFE9d3Eiec0EPSuY/Z7TBkD6maYEx5GdN3Kzvc5AlVoZ8g/XumMPgFgIySWdpnq
- zg4ujgRgqyLYHDirT8NUckIPRQj8vxIyjfULgo63EDIFjd49diGDi4rSdt89kLclYWsvbidjfUm
- mkSoRoW756ZGrxWYyBgSWjCCQaqSHRGiRZ508e0uTQ6Cc3euHV/oRyXO6B8jWltoET2NAzaKpBH
- s1mdo7AhlO17JdxGgHY4eh5X1xX819LKnbOMxUmQ0v9XBDgmmqr7+nBLzs1asLvBIg3DCmgcO58
- XVNVhp6VorA161fSxk0GVXdtTntp1rvglq49Zvfu9cNfK1atvkvZmOvQQ5K5K76Aqo9UCD9g3PP
- MKg26YFkAGZ0unA==
-X-Developer-Key: i=duje.mihanovic@skole.hr; a=openpgp;
- fpr=53DF9D4D9C3FE110FB362D789A119EB0422D96E1
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: ARM board lockups/hangs triggered by locks and mutexes
+To:     =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+        Waiman Long <longman@redhat.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        linux-clk@vger.kernel.org,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Network Development <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc:     OpenWrt Development List <openwrt-devel@lists.openwrt.org>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>
+References: <CACna6rxpzDWE5-gnmpgMgfzPmmHvEGTZk4GJvJ8jLSMazh2bVA@mail.gmail.com>
+ <bd5feeb3-bc44-d4d2-7708-eea9243b49a4@gmail.com>
+ <0f9d0cd6-d344-7915-7bc1-7a090b8305d2@gmail.com>
+From:   Florian Fainelli <florian.fainelli@broadcom.com>
+In-Reply-To: <0f9d0cd6-d344-7915-7bc1-7a090b8305d2@gmail.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+        boundary="000000000000f4ddc006025980c9"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add driver for Marvell PXA1908 clock controller blocks. The SoC has
-numerous clock controller blocks, currently supporting APBC, APBCP, MPMU
-and APMU.
+--000000000000f4ddc006025980c9
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
----
- drivers/clk/mmp/Makefile         |   2 +-
- drivers/clk/mmp/clk-of-pxa1908.c | 323 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 324 insertions(+), 1 deletion(-)
+On 8/7/23 04:10, Rafał Miłecki wrote:
+> On 4.08.2023 13:07, Rafał Miłecki wrote:
+>> I triple checked that. Dropping a single unused function breaks kernel /
+>> device stability on BCM53573!
+>>
+>> AFAIK the only thing below diff actually affects is location of symbols
+>> (I actually verified that by comparing System.map before and after -
+>> over 22'000 of relocated symbols).
+>>
+>> Can some unfortunate location of symbols cause those hangs/lockups?
+> 
+> I performed another experiment. First I dropped mtd_check_of_node() to
+> bring kernel back to the stable state.
+> 
+> Then I started adding useless code to the mtdchar_unlocked_ioctl(). I
+> ended up adding just enough to make sure all post-mtd symbols in
+> System.map got the same offset as in case of backporting
+> mtd_check_of_node().
+> 
+> I started experiencing lockups/hangs again.
+> 
+> I repeated the same test with adding dumb code to the brcm_nvram_probe()
+> and verifying symbols offsets following brcm_nvram_probe one.
+> 
+> I believe this confirms that this problem is about offset or alignment
+> of some specific symbol(s). The remaining question is what symbols and
+> how to fix or workaround that.
 
-diff --git a/drivers/clk/mmp/Makefile b/drivers/clk/mmp/Makefile
-index cbcc2f8430a2..feacddb28fc4 100644
---- a/drivers/clk/mmp/Makefile
-+++ b/drivers/clk/mmp/Makefile
-@@ -15,4 +15,4 @@ obj-$(CONFIG_CPU_PXA168) += clk-pxa168.o
- obj-$(CONFIG_CPU_PXA910) += clk-pxa910.o
- obj-$(CONFIG_CPU_MMP2) += clk-mmp2.o
- 
--obj-y += clk-of-pxa1928.o
-+obj-$(CONFIG_ARCH_MMP) += clk-of-pxa1928.o clk-of-pxa1908.o
-diff --git a/drivers/clk/mmp/clk-of-pxa1908.c b/drivers/clk/mmp/clk-of-pxa1908.c
-new file mode 100644
-index 000000000000..520440cb082c
---- /dev/null
-+++ b/drivers/clk/mmp/clk-of-pxa1908.c
-@@ -0,0 +1,323 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+#include <linux/bits.h>
-+#include <linux/clk-provider.h>
-+#include <linux/of_address.h>
-+#include <linux/slab.h>
-+#include <linux/spinlock.h>
-+#include <linux/units.h>
-+
-+#include <dt-bindings/clock/marvell,pxa1908.h>
-+
-+#include "clk.h"
-+
-+#define APMU_CLK_GATE_CTRL	0x40
-+#define MPMU_UART_PLL		0x14
-+
-+#define APBC_UART0		0x0
-+#define APBC_UART1		0x4
-+#define APBC_GPIO		0x8
-+#define APBC_PWM0		0xc
-+#define APBC_PWM1		0x10
-+#define APBC_PWM2		0x14
-+#define APBC_PWM3		0x18
-+#define APBC_SSP0		0x1c
-+#define APBC_SSP1		0x20
-+#define APBC_IPC_RST		0x24
-+#define APBC_RTC		0x28
-+#define APBC_TWSI0		0x2c
-+#define APBC_KPC		0x30
-+#define APBC_SWJTAG		0x40
-+#define APBC_SSP2		0x4c
-+#define APBC_TWSI1		0x60
-+#define APBC_THERMAL		0x6c
-+#define APBC_TWSI3		0x70
-+
-+#define APBCP_UART2		0x1c
-+#define APBCP_TWSI2		0x28
-+#define APBCP_AICER		0x38
-+
-+#define APMU_CCIC1		0x24
-+#define APMU_ISP		0x38
-+#define APMU_DSI1		0x44
-+#define APMU_DISP1		0x4c
-+#define APMU_CCIC0		0x50
-+#define APMU_SDH0		0x54
-+#define APMU_SDH1		0x58
-+#define APMU_USB		0x5c
-+#define APMU_NF 		0x60
-+#define APMU_VPU		0xa4
-+#define APMU_GC 		0xcc
-+#define APMU_SDH2		0xe0
-+#define APMU_GC2D		0xf4
-+#define APMU_TRACE		0x108
-+#define APMU_DVC_DFC_DEBUG	0x140
-+
-+struct pxa1908_clk_unit {
-+	struct mmp_clk_unit unit;
-+	void __iomem *mpmu_base;
-+	void __iomem *apmu_base;
-+	void __iomem *apbc_base;
-+	void __iomem *apbcp_base;
-+	void __iomem *apbs_base;
-+	void __iomem *ciu_base;
-+};
-+
-+static struct mmp_param_fixed_rate_clk fixed_rate_clks[] = {
-+	{PXA1908_CLK_CLK32, "clk32", NULL, 0, 32768},
-+	{PXA1908_CLK_VCTCXO, "vctcxo", NULL, 0, 26 * HZ_PER_MHZ},
-+	{PXA1908_CLK_PLL1_624, "pll1_624", NULL, 0, 624 * HZ_PER_MHZ},
-+	{PXA1908_CLK_PLL1_416, "pll1_416", NULL, 0, 416 * HZ_PER_MHZ},
-+	{PXA1908_CLK_PLL1_499, "pll1_499", NULL, 0, 499 * HZ_PER_MHZ},
-+	{PXA1908_CLK_PLL1_832, "pll1_832", NULL, 0, 832 * HZ_PER_MHZ},
-+	{PXA1908_CLK_PLL1_1248, "pll1_1248", NULL, 0, 1248 * HZ_PER_MHZ},
-+};
-+
-+static struct mmp_param_fixed_factor_clk fixed_factor_clks[] = {
-+	{PXA1908_CLK_PLL1_D2, "pll1_d2", "pll1_624", 1, 2, 0},
-+	{PXA1908_CLK_PLL1_D4, "pll1_d4", "pll1_d2", 1, 2, 0},
-+	{PXA1908_CLK_PLL1_D6, "pll1_d6", "pll1_d2", 1, 3, 0},
-+	{PXA1908_CLK_PLL1_D8, "pll1_d8", "pll1_d4", 1, 2, 0},
-+	{PXA1908_CLK_PLL1_D12, "pll1_d12", "pll1_d6", 1, 2, 0},
-+	{PXA1908_CLK_PLL1_D13, "pll1_d13", "pll1_624", 1, 13, 0},
-+	{PXA1908_CLK_PLL1_D16, "pll1_d16", "pll1_d8", 1, 2, 0},
-+	{PXA1908_CLK_PLL1_D24, "pll1_d24", "pll1_d12", 1, 2, 0},
-+	{PXA1908_CLK_PLL1_D48, "pll1_d48", "pll1_d24", 1, 2, 0},
-+	{PXA1908_CLK_PLL1_D96, "pll1_d96", "pll1_d48", 1, 2, 0},
-+	{PXA1908_CLK_PLL1_32, "pll1_32", "pll1_d13", 2, 3, 0},
-+	{PXA1908_CLK_PLL1_208, "pll1_208", "pll1_d2", 2, 3, 0},
-+	{PXA1908_CLK_PLL1_117, "pll1_117", "pll1_624", 3, 16, 0},
-+};
-+
-+static struct mmp_clk_factor_masks uart_factor_masks = {
-+	.factor = 2,
-+	.num_mask = GENMASK(12, 0),
-+	.den_mask = GENMASK(12, 0),
-+	.num_shift = 16,
-+	.den_shift = 0,
-+};
-+
-+static struct u32_fract uart_factor_tbl[] = {
-+	{.numerator = 8125, .denominator = 1536},	/* 14.745MHz */
-+};
-+
-+static DEFINE_SPINLOCK(pll1_lock);
-+static struct mmp_param_general_gate_clk pll1_gate_clks[] = {
-+	{PXA1908_CLK_PLL1_D2_GATE, "pll1_d2_gate", "pll1_d2", 0, APMU_CLK_GATE_CTRL, 29, 0, &pll1_lock},
-+	{PXA1908_CLK_PLL1_416_GATE, "pll1_416_gate", "pll1_416", 0, APMU_CLK_GATE_CTRL, 27, 0, &pll1_lock},
-+	{PXA1908_CLK_PLL1_624_GATE, "pll1_624_gate", "pll1_624", 0, APMU_CLK_GATE_CTRL, 26, 0, &pll1_lock},
-+	{PXA1908_CLK_PLL1_832_GATE, "pll1_832_gate", "pll1_832", 0, APMU_CLK_GATE_CTRL, 30, 0, &pll1_lock},
-+	{PXA1908_CLK_PLL1_1248_GATE, "pll1_1248_gate", "pll1_1248", 0, APMU_CLK_GATE_CTRL, 28, 0, &pll1_lock},
-+};
-+
-+static void pxa1908_pll_init(struct pxa1908_clk_unit *pxa_unit)
-+{
-+	struct mmp_clk_unit *unit = &pxa_unit->unit;
-+
-+	mmp_register_fixed_rate_clks(unit, fixed_rate_clks,
-+					ARRAY_SIZE(fixed_rate_clks));
-+
-+	mmp_register_fixed_factor_clks(unit, fixed_factor_clks,
-+					ARRAY_SIZE(fixed_factor_clks));
-+
-+	mmp_clk_register_factor("uart_pll", "pll1_d4",
-+			CLK_SET_RATE_PARENT,
-+			pxa_unit->mpmu_base + MPMU_UART_PLL,
-+			&uart_factor_masks, uart_factor_tbl,
-+			ARRAY_SIZE(uart_factor_tbl), NULL);
-+
-+}
-+
-+static DEFINE_SPINLOCK(pwm0_lock);
-+static DEFINE_SPINLOCK(pwm2_lock);
-+
-+static DEFINE_SPINLOCK(uart0_lock);
-+static DEFINE_SPINLOCK(uart1_lock);
-+static DEFINE_SPINLOCK(uart2_lock);
-+
-+static const char * const uart_parent_names[] = {"pll1_117", "uart_pll"};
-+static const char * const ssp_parent_names[] = {"pll1_d16", "pll1_d48", "pll1_d24", "pll1_d12"};
-+
-+static struct mmp_param_gate_clk apbc_gate_clks[] = {
-+	{PXA1908_CLK_TWSI0, "twsi0_clk", "pll1_32", CLK_SET_RATE_PARENT, APBC_TWSI0, 0x7, 3, 0, 0, NULL},
-+	{PXA1908_CLK_TWSI1, "twsi1_clk", "pll1_32", CLK_SET_RATE_PARENT, APBC_TWSI1, 0x7, 3, 0, 0, NULL},
-+	{PXA1908_CLK_TWSI3, "twsi3_clk", "pll1_32", CLK_SET_RATE_PARENT, APBC_TWSI3, 0x7, 3, 0, 0, NULL},
-+	{PXA1908_CLK_GPIO, "gpio_clk", "vctcxo", CLK_SET_RATE_PARENT, APBC_GPIO, 0x7, 3, 0, 0, NULL},
-+	{PXA1908_CLK_KPC, "kpc_clk", "clk32", CLK_SET_RATE_PARENT, APBC_KPC, 0x7, 3, 0, MMP_CLK_GATE_NEED_DELAY, NULL},
-+	{PXA1908_CLK_RTC, "rtc_clk", "clk32", CLK_SET_RATE_PARENT, APBC_RTC, 0x87, 0x83, 0, MMP_CLK_GATE_NEED_DELAY, NULL},
-+	{PXA1908_CLK_PWM0, "pwm0_clk", "pwm01_apb_share", CLK_SET_RATE_PARENT, APBC_PWM0, 0x2, 2, 0, 0, &pwm0_lock},
-+	{PXA1908_CLK_PWM1, "pwm1_clk", "pwm01_apb_share", CLK_SET_RATE_PARENT, APBC_PWM1, 0x6, 2, 0, 0, NULL},
-+	{PXA1908_CLK_PWM2, "pwm2_clk", "pwm23_apb_share", CLK_SET_RATE_PARENT, APBC_PWM2, 0x2, 2, 0, 0, NULL},
-+	{PXA1908_CLK_PWM3, "pwm3_clk", "pwm23_apb_share", CLK_SET_RATE_PARENT, APBC_PWM3, 0x6, 2, 0, 0, NULL},
-+	{PXA1908_CLK_UART0, "uart0_clk", "uart0_mux", CLK_SET_RATE_PARENT, APBC_UART0, 0x7, 3, 0, 0, &uart0_lock},
-+	{PXA1908_CLK_UART1, "uart1_clk", "uart1_mux", CLK_SET_RATE_PARENT, APBC_UART1, 0x7, 3, 0, 0, &uart1_lock},
-+};
-+
-+static struct mmp_param_mux_clk apbc_mux_clks[] = {
-+	{0, "uart0_mux", uart_parent_names, ARRAY_SIZE(uart_parent_names), CLK_SET_RATE_PARENT, APBC_UART0, 4, 3, 0, &uart0_lock},
-+	{0, "uart1_mux", uart_parent_names, ARRAY_SIZE(uart_parent_names), CLK_SET_RATE_PARENT, APBC_UART1, 4, 3, 0, &uart1_lock},
-+	{0, "ssp0_mux", ssp_parent_names, ARRAY_SIZE(ssp_parent_names), 0, APBC_SSP0, 4, 3, 0, NULL},
-+	{0, "ssp2_mux", ssp_parent_names, ARRAY_SIZE(ssp_parent_names), 0, APBC_SSP2, 4, 3, 0, NULL},
-+};
-+
-+static void pxa1908_apb_periph_clk_init(struct pxa1908_clk_unit *pxa_unit)
-+{
-+	struct mmp_clk_unit *unit = &pxa_unit->unit;
-+
-+	mmp_clk_register_gate(NULL, "pwm01_apb_share", "pll1_d48",
-+			CLK_SET_RATE_PARENT,
-+			pxa_unit->apbc_base + APBC_PWM0,
-+			0x5, 1, 0, 0, &pwm0_lock);
-+	mmp_clk_register_gate(NULL, "pwm23_apb_share", "pll1_d48",
-+			CLK_SET_RATE_PARENT,
-+			pxa_unit->apbc_base + APBC_PWM2,
-+			0x5, 1, 0, 0, &pwm2_lock);
-+	mmp_register_mux_clks(unit, apbc_mux_clks, pxa_unit->apbc_base,
-+			ARRAY_SIZE(apbc_mux_clks));
-+	mmp_register_gate_clks(unit, apbc_gate_clks, pxa_unit->apbc_base,
-+			ARRAY_SIZE(apbc_gate_clks));
-+}
-+
-+static struct mmp_param_gate_clk apbcp_gate_clks[] = {
-+	{PXA1908_CLK_UART2, "uart2_clk", "uart2_mux", CLK_SET_RATE_PARENT, APBCP_UART2, 0x7, 0x3, 0x0, 0, &uart2_lock},
-+	{PXA1908_CLK_TWSI2, "twsi2_clk", "pll1_32", CLK_SET_RATE_PARENT, APBCP_TWSI2, 0x7, 0x3, 0x0, 0, NULL},
-+	{PXA1908_CLK_AICER, "ripc_clk", NULL, 0, APBCP_AICER, 0x7, 0x2, 0x0, 0, NULL},
-+};
-+
-+static struct mmp_param_mux_clk apbcp_mux_clks[] = {
-+	{0, "uart2_mux", uart_parent_names, ARRAY_SIZE(uart_parent_names), CLK_SET_RATE_PARENT, APBCP_UART2, 4, 3, 0, &uart2_lock},
-+};
-+
-+static void pxa1908_apb_p_periph_clk_init(struct pxa1908_clk_unit *pxa_unit)
-+{
-+	struct mmp_clk_unit *unit = &pxa_unit->unit;
-+
-+	mmp_register_mux_clks(unit, apbcp_mux_clks, pxa_unit->apbcp_base,
-+			ARRAY_SIZE(apbcp_mux_clks));
-+	mmp_register_gate_clks(unit, apbcp_gate_clks, pxa_unit->apbcp_base,
-+			ARRAY_SIZE(apbcp_gate_clks));
-+}
-+
-+static DEFINE_SPINLOCK(sdh0_lock);
-+static DEFINE_SPINLOCK(sdh1_lock);
-+static DEFINE_SPINLOCK(sdh2_lock);
-+
-+static const char * const sdh_parent_names[] = {"pll1_416", "pll1_624"};
-+
-+static struct mmp_clk_mix_config sdh_mix_config = {
-+	.reg_info = DEFINE_MIX_REG_INFO(3, 8, 2, 6, 11),
-+};
-+
-+static struct mmp_param_gate_clk apmu_gate_clks[] = {
-+	{PXA1908_CLK_USB, "usb_clk", NULL, 0, APMU_USB, 0x9, 0x9, 0x1, 0, NULL},
-+	{PXA1908_CLK_SDH0, "sdh0_clk", "sdh0_mix_clk", CLK_SET_RATE_PARENT | CLK_SET_RATE_UNGATE, APMU_SDH0, 0x12, 0x12, 0x0, 0, &sdh0_lock},
-+	{PXA1908_CLK_SDH1, "sdh1_clk", "sdh1_mix_clk", CLK_SET_RATE_PARENT | CLK_SET_RATE_UNGATE, APMU_SDH1, 0x12, 0x12, 0x0, 0, &sdh1_lock},
-+	{PXA1908_CLK_SDH2, "sdh2_clk", "sdh2_mix_clk", CLK_SET_RATE_PARENT | CLK_SET_RATE_UNGATE, APMU_SDH2, 0x12, 0x12, 0x0, 0, &sdh2_lock}
-+};
-+
-+static void pxa1908_axi_periph_clk_init(struct pxa1908_clk_unit *pxa_unit)
-+{
-+	struct mmp_clk_unit *unit = &pxa_unit->unit;
-+
-+	mmp_register_general_gate_clks(unit, pll1_gate_clks,
-+			pxa_unit->apmu_base, ARRAY_SIZE(pll1_gate_clks));
-+
-+	sdh_mix_config.reg_info.reg_clk_ctrl = pxa_unit->apmu_base + APMU_SDH0;
-+	mmp_clk_register_mix(NULL, "sdh0_mix_clk", sdh_parent_names,
-+			ARRAY_SIZE(sdh_parent_names), CLK_SET_RATE_PARENT,
-+			&sdh_mix_config, &sdh0_lock);
-+	sdh_mix_config.reg_info.reg_clk_ctrl = pxa_unit->apmu_base + APMU_SDH1;
-+	mmp_clk_register_mix(NULL, "sdh1_mix_clk", sdh_parent_names,
-+			ARRAY_SIZE(sdh_parent_names), CLK_SET_RATE_PARENT,
-+			&sdh_mix_config, &sdh1_lock);
-+	sdh_mix_config.reg_info.reg_clk_ctrl = pxa_unit->apmu_base + APMU_SDH2;
-+	mmp_clk_register_mix(NULL, "sdh2_mix_clk", sdh_parent_names,
-+			ARRAY_SIZE(sdh_parent_names), CLK_SET_RATE_PARENT,
-+			&sdh_mix_config, &sdh2_lock);
-+
-+	mmp_register_gate_clks(unit, apmu_gate_clks, pxa_unit->apmu_base,
-+			ARRAY_SIZE(apmu_gate_clks));
-+}
-+
-+static void __init pxa1908_apbc_clk_init(struct device_node *np)
-+{
-+	struct pxa1908_clk_unit *pxa_unit;
-+
-+	pxa_unit = kzalloc(sizeof(*pxa_unit), GFP_KERNEL);
-+	if (!pxa_unit)
-+		return;
-+
-+	pxa_unit->apbc_base = of_iomap(np, 0);
-+	if (!pxa_unit->apbc_base) {
-+		pr_err("failed to map apbc registers\n");
-+		kfree(pxa_unit);
-+		return;
-+	}
-+
-+	mmp_clk_init(np, &pxa_unit->unit, PXA1908_APBC_NR_CLKS);
-+
-+	pxa1908_apb_periph_clk_init(pxa_unit);
-+}
-+CLK_OF_DECLARE(pxa1908_apbc, "marvell,pxa1908-apbc", pxa1908_apbc_clk_init);
-+
-+static void __init pxa1908_apbcp_clk_init(struct device_node *np)
-+{
-+	struct pxa1908_clk_unit *pxa_unit;
-+
-+	pxa_unit = kzalloc(sizeof(*pxa_unit), GFP_KERNEL);
-+	if (!pxa_unit)
-+		return;
-+
-+	pxa_unit->apbcp_base = of_iomap(np, 0);
-+	if (!pxa_unit->apbcp_base) {
-+		pr_err("failed to map apbcp registers\n");
-+		kfree(pxa_unit);
-+		return;
-+	}
-+
-+	mmp_clk_init(np, &pxa_unit->unit, PXA1908_APBCP_NR_CLKS);
-+
-+	pxa1908_apb_p_periph_clk_init(pxa_unit);
-+}
-+CLK_OF_DECLARE(pxa1908_apbcp, "marvell,pxa1908-apbcp", pxa1908_apbcp_clk_init);
-+
-+static void __init pxa1908_mpmu_clk_init(struct device_node *np)
-+{
-+	struct pxa1908_clk_unit *pxa_unit;
-+
-+	pxa_unit = kzalloc(sizeof(*pxa_unit), GFP_KERNEL);
-+	if (!pxa_unit)
-+		return;
-+
-+	pxa_unit->mpmu_base = of_iomap(np, 0);
-+	if (!pxa_unit->mpmu_base) {
-+		pr_err("failed to map mpmu registers\n");
-+		kfree(pxa_unit);
-+		return;
-+	}
-+
-+	mmp_clk_init(np, &pxa_unit->unit, PXA1908_MPMU_NR_CLKS);
-+
-+	pxa1908_pll_init(pxa_unit);
-+}
-+CLK_OF_DECLARE(pxa1908_mpmu, "marvell,pxa1908-mpmu", pxa1908_mpmu_clk_init);
-+
-+static void __init pxa1908_apmu_clk_init(struct device_node *np)
-+{
-+	struct pxa1908_clk_unit *pxa_unit;
-+
-+	pxa_unit = kzalloc(sizeof(*pxa_unit), GFP_KERNEL);
-+	if (!pxa_unit)
-+		return;
-+
-+	pxa_unit->apmu_base = of_iomap(np, 0);
-+	if (!pxa_unit->apmu_base) {
-+		pr_err("failed to map apmu registers\n");
-+		kfree(pxa_unit);
-+		return;
-+	}
-+
-+	mmp_clk_init(np, &pxa_unit->unit, PXA1908_APMU_NR_CLKS);
-+
-+	pxa1908_axi_periph_clk_init(pxa_unit);
-+}
-+CLK_OF_DECLARE(pxa1908_apmu, "marvell,pxa1908-apmu", pxa1908_apmu_clk_init);
+In the config.gz file you attached in your first email, both 
+CONFIG_MTD_* and CONFIG_NVMEM_* so it is not like we are reaching into 
+module space for code and/or data and need veneers or anything, it is 
+part of the kernel image so we can assert the maximum distance between 
+instructions etc.
+
+Now is it just that specific mutex that is an issue, or do other mutexes 
+through the system do cause problems as well?
+
+Do we suspect the toolchain to be possibly problematic?
+
+> 
+> Following dump change brings back lockups/hangs:
+> 
+> diff --git a/drivers/mtd/mtdchar.c b/drivers/mtd/mtdchar.c
+> index ee437af41..0a24dec55 100644
+> --- a/drivers/mtd/mtdchar.c
+> +++ b/drivers/mtd/mtdchar.c
+> @@ -1028,6 +1028,22 @@ static long mtdchar_unlocked_ioctl(struct file 
+> *file, u_int cmd, u_long arg)
+>   {
+>       int ret;
+> 
+> +    if (!file)
+> +        pr_info("Missing\n");
+> +    WARN_ON(!file);
+> +    WARN_ON(cmd == 1234);
+> +    WARN_ON(cmd == 5678);
+> +    WARN_ON(cmd == 1234);
+> +    WARN_ON(cmd == 5678);
+> +    WARN_ON(cmd == 1234);
+> +    WARN_ON(cmd == 5678);
+> +    WARN_ON(cmd == 1234);
+> +    WARN_ON(cmd == 5678);
+> +    WARN_ON(cmd == 1234);
+> +    WARN_ON(cmd == 5678);
+> +    WARN_ON(cmd == 1234);
+> +    WARN_ON(cmd == 5678);
+> +
+>       mutex_lock(&mtd_mutex);
+>       ret = mtdchar_ioctl(file, cmd, arg);
+>       mutex_unlock(&mtd_mutex);
+> 
 
 -- 
-2.41.0
+Florian
 
 
+--000000000000f4ddc006025980c9
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
+QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
+UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
+M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
+Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
+14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
+a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
+XzCCBVgwggRAoAMCAQICDBP8P9hKRVySg3Qv5DANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
+RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
+UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAxMjE4MTFaFw0yNTA5MTAxMjE4MTFaMIGW
+MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
+BgNVBAoTDUJyb2FkY29tIEluYy4xGTAXBgNVBAMTEEZsb3JpYW4gRmFpbmVsbGkxLDAqBgkqhkiG
+9w0BCQEWHWZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tMIIBIjANBgkqhkiG9w0BAQEFAAOC
+AQ8AMIIBCgKCAQEA+oi3jMmHltY4LMUy8Up5+1zjd1iSgUBXhwCJLj1GJQF+GwP8InemBbk5rjlC
+UwbQDeIlOfb8xGqHoQFGSW8p9V1XUw+cthISLkycex0AJ09ufePshLZygRLREU0H4ecNPMejxCte
+KdtB4COST4uhBkUCo9BSy1gkl8DJ8j/BQ1KNUx6oYe0CntRag+EnHv9TM9BeXBBLfmMRnWNhvOSk
+nSmRX0J3d9/G2A3FIC6WY2XnLW7eAZCQPa1Tz3n2B5BGOxwqhwKLGLNu2SRCPHwOdD6e0drURF7/
+Vax85/EqkVnFNlfxtZhS0ugx5gn2pta7bTdBm1IG4TX+A3B1G57rVwIDAQABo4IB3jCCAdowDgYD
+VR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZCaHR0cDovL3NlY3Vy
+ZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3J0MEEG
+CCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWdu
+MmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93
+d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNVHR8EQjBAMD6gPKA6
+hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNy
+bDAoBgNVHREEITAfgR1mbG9yaWFuLmZhaW5lbGxpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggr
+BgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUUwwfJ6/F
+KL0fRdVROal/Lp4lAF0wDQYJKoZIhvcNAQELBQADggEBAKBgfteDc1mChZjKBY4xAplC6uXGyBrZ
+kNGap1mHJ+JngGzZCz+dDiHRQKGpXLxkHX0BvEDZLW6LGOJ83ImrW38YMOo3ZYnCYNHA9qDOakiw
+2s1RH00JOkO5SkYdwCHj4DB9B7KEnLatJtD8MBorvt+QxTuSh4ze96Jz3kEIoHMvwGFkgObWblsc
+3/YcLBmCgaWpZ3Ksev1vJPr5n8riG3/N4on8gO5qinmmr9Y7vGeuf5dmZrYMbnb+yCBalkUmZQwY
+NxADYvcRBA0ySL6sZpj8BIIhWiXiuusuBmt2Mak2eEv0xDbovE6Z6hYyl/ZnRadbgK/ClgbY3w+O
+AfUXEZ0xggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52
+LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwT
+/D/YSkVckoN0L+QwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIEWhoOXxk0RhVNuR
+uy7XDF/MMj9GpPcQi6ZqAl+HxMf/MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcN
+AQkFMQ8XDTIzMDgwNzE4MzQ1OVowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZI
+AWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEH
+MAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQAPQYgxCVsB8REBNkIw9FccqITUY58doMjY
+/cRDez2mWPU/N0+EQNMhS1BMuYm18MDgMin7Ymqr7HnsISJVa6k8+WBALE2r7L9y7g7cptOIdu4z
+X02dMvEZZPlPotYwHfWjY8VqOgXpivy5zULGDdhhBqo2mLeAKlULM6tk70aX54fonMKCqNPThWWN
+q+yglQ4cJuhoWj5ugsAPiF9/oknzOHSUPPspGN2L9BWvnUrCRxAH3NnFjIyBSobaln9KQyieOjbA
+6NKALXV641AkvQIrVRRS/5/VIgGA4r/6ECgOaa+6RGVtGOHS+GqvaBz/tRYnOdVXa5B3FI1oFINI
+HOqq
+--000000000000f4ddc006025980c9--
