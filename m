@@ -2,64 +2,63 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1777C001DB
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Aug 2023 18:00:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B57F6C04A6A
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Aug 2023 18:07:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235141AbjHHSAV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Aug 2023 14:00:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56362 "EHLO
+        id S229639AbjHHSHX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Aug 2023 14:07:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42524 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229839AbjHHR7t (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Aug 2023 13:59:49 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84CB12CC66
-        for <linux-clk@vger.kernel.org>; Tue,  8 Aug 2023 09:27:22 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-99bc9e3cbf1so5186366b.0
-        for <linux-clk@vger.kernel.org>; Tue, 08 Aug 2023 09:27:22 -0700 (PDT)
+        with ESMTP id S235267AbjHHSGr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Aug 2023 14:06:47 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A278F5FDEC
+        for <linux-clk@vger.kernel.org>; Tue,  8 Aug 2023 10:06:49 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-99c10ba30afso9858566b.1
+        for <linux-clk@vger.kernel.org>; Tue, 08 Aug 2023 10:06:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691511991; x=1692116791;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/O5Y0Ab6iaBrA/9OXoJTEQWxJ6aDOXFu3sTBHt6SbVg=;
-        b=RxcjKtkoMP3zx2UYFnn7tUCJPO7tr2N+LqPQ8hKtehuepiqMeQaW3DbFRoyNtPUYLT
-         8ZBAoaX1slzRZdX8GelKrmASsbfSIrpszMQQYsAlYt6HoTSv/C64pp7aYJxBvRtaLFN5
-         cYWp34vMIUeF5RAmX6hEy9gVvFjTFBGVP0GDxzW1ayXab4NtNdYWkmilp4lw68KwKyKm
-         chABHAk509fhxMp5s4QXP/5uVAQaFP0yVPdH2CT+bpD6KZ/d3q7nJwdQK4UA5TOfekW/
-         W6dIrjmagP6l9u99cKq9vREMejP+l8XiBYzZ5AWeR09wr9h7haSrWtTruSaua1iFHF8B
-         Imxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691511991; x=1692116791;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1691514408; x=1692119208;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=/O5Y0Ab6iaBrA/9OXoJTEQWxJ6aDOXFu3sTBHt6SbVg=;
-        b=c+UQxrcd3dj5ceUVm26mjeDHrLHkHl4GZ6AklWRlDI5FW1XVGAhUSBn53PkZjynh8K
-         X3yokAtvPoq7eboHMCdrnkJxFcL7MQXW7wgSilCaOZTtA/9jSxYdCqEk0RivKsOdX6Gz
-         9oqVLM4RY2c8aYtXV8vl0a41S7P/OmIv2A4qe2GmNLozCi2jhZd3j7/F1T+uYBCbNyBQ
-         buixBNobjcvmIZxm7oWbIbe4tfKI3tOWtcsReKfNEd7CHdZrdBiYoT0zMK9iQxfjhvo2
-         3Iv0QHFHD/6U4Pi5YwYsk4lDXq1PAFA0wmPbvoDuKGjyPmBh2hr6GAHLpmV1slvIlFxT
-         TLSA==
-X-Gm-Message-State: AOJu0YxCLlveSP1ls6SBcuerCpoc7p+jv6rNgwYwq4jNAa+rqSD0KcYa
-        WY3AsaIYh4hS+ibvSmxHDxPSWaf09OhdudgPROY=
-X-Google-Smtp-Source: AGHT+IEKsgqAUkiOiaAlo6saAvwqonIwJGWfF8xIR9IDr27vL2re2F5DITPtclAWx6uO1jWvHZY5mA==
-X-Received: by 2002:a05:6512:360d:b0:4fe:b97:e361 with SMTP id f13-20020a056512360d00b004fe0b97e361mr2685997lfs.18.1691495015550;
-        Tue, 08 Aug 2023 04:43:35 -0700 (PDT)
+        bh=m5cHR9R1zj6+fWN0kfJbhPUfhYqf7kqDHOcaH9ExP6c=;
+        b=fsEA177hsKHTpA69U0DmRpoL42q7QRy59QZbP8lw1XYbpWlnmIdDjQjcdagN0I6hTN
+         1iKdt/isJvKQjuIL7jFbBpmwP6AI5vFopu4kVv+ErQ8f2nvIJpnMopelvqX4byVVo7Tp
+         oetbrlQg5/wa8z9xym2z2ny+eTGhVmf4lpgfmK2VbASRwaJ3xue6KWKd7uDa/2GqxU3R
+         XJtxxSCRRky9RRMVdKUQ3+VqhQoGPyvDtDdcdiGb/fGnZ3DhCEfKW/INFipPdYhewV+U
+         ZhES/9/yBBEis632R0f9z8+Z/oy2QIrLuhHTQ0RH4AI5XVSq0BSoS8KeeJIziFZF0RQ2
+         U1wA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691514408; x=1692119208;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m5cHR9R1zj6+fWN0kfJbhPUfhYqf7kqDHOcaH9ExP6c=;
+        b=coIQAzco2os1BZ8qKA06fPOFdUQ8marRul/XAplb/cs+cyMh99QCtBlzYIPC7LzfSk
+         V8biGal8TUmyMklnuUcwO26NRDzR4bz/gg0H8gB2jeCy14VTX27+ULCbfs9lCFYkTrmf
+         LpUgmxaG8wn4V2bJPuw6zv03U/nn3WsAREVb0VEpzlZdNBTdROfZlhOiTTEHIknI/M/J
+         apll3w7dK4gPovKjvy75aLIHCM4vDcqSRWrjvAGQBzf0NqL5xt+776cpohgoe/HFARrc
+         JUr+tTQuGCoiKcN94E7zp04jorUnF7T+joj88qO2vg5AN1/HXvjc2Nd3G2YdPmIe7rns
+         2h/Q==
+X-Gm-Message-State: AOJu0YzVaj4xao+5eMmOgOESW0MG+tQVeCte/ftNEU6ENnABhe6H4IaK
+        JTZ5t1o51QWGqlHY+1ytB7EYh5cSqpdytBICwlU=
+X-Google-Smtp-Source: AGHT+IFa8hs7gdLp6TteRabPqqDMtp2xucJzNgO9gR2weT3XgRWhGg1PX/JaOpY6/dejTFD0ACc/DA==
+X-Received: by 2002:a05:6512:32a4:b0:4fb:fdf1:8b25 with SMTP id q4-20020a05651232a400b004fbfdf18b25mr3031231lfe.24.1691495025312;
+        Tue, 08 Aug 2023 04:43:45 -0700 (PDT)
 Received: from [192.168.1.101] (abxi185.neoplus.adsl.tpnet.pl. [83.9.2.185])
-        by smtp.gmail.com with ESMTPSA id j20-20020ac253b4000000b004fbdba4b075sm1861679lfh.57.2023.08.08.04.43.33
+        by smtp.gmail.com with ESMTPSA id j20-20020ac253b4000000b004fbdba4b075sm1861679lfh.57.2023.08.08.04.43.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Aug 2023 04:43:34 -0700 (PDT)
+        Tue, 08 Aug 2023 04:43:44 -0700 (PDT)
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Subject: [PATCH v3 00/10] Fix up icc clock rate calculation on some
- platforms
-Date:   Tue, 08 Aug 2023 13:43:31 +0200
-Message-Id: <20230726-topic-icc_coeff-v3-0-dee684d6cdd2@linaro.org>
+Date:   Tue, 08 Aug 2023 13:43:39 +0200
+Subject: [PATCH v3 08/10] interconnect: qcom: sdm660: Set AB/IB
+ coefficients
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAGMq0mQC/4WNywrCMBQFf6VkbSQPm7au/A8RSW4Te6EkJalBK
- f130+5ciMs5cGYWkmxEm8i5Wki0GRMGX0AeKgKD9g9LsS9MBBOSNULROUwIFAHuEKxz1LBa9vW
- JdaZzpLyMTpaaqD0M5eef41jGKVqHrz1zvRUeMM0hvvdq5tv6O5A5ZVRyxVWnWMtbuIzodQzHE
- B9kk2XxRyCKoIWOg4JGsUZ9CdZ1/QC5gVttBQEAAA==
+Message-Id: <20230726-topic-icc_coeff-v3-8-dee684d6cdd2@linaro.org>
+References: <20230726-topic-icc_coeff-v3-0-dee684d6cdd2@linaro.org>
+In-Reply-To: <20230726-topic-icc_coeff-v3-0-dee684d6cdd2@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Georgi Djakov <djakov@kernel.org>,
@@ -70,72 +69,62 @@ Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         Konrad Dybcio <konrad.dybcio@linaro.org>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1691495013; l=2722;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1691495013; l=1519;
  i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=XAhr1GRTTz11VXNGM0HJcweTRyuP6Ic8MAO173kSZZo=;
- b=uU3qPRoERGY/xei0GUD/LmqbFzELs1Kt4lOdOOMFgQzXC/ob46KMRct1oyF2A/us51ZC0pd+d
- 4CWXccEf7nzCol5TgXFeAIurv4W1u961WTfupsjOxliRUIydPuFqn7E
+ bh=EjLG3n/q4YI8bbEqplfHVOwV0syrmI4lAF1qcHGTJvw=;
+ b=EnNVF/Cr9uzLzEU4BBg3kNfteX8HGav2OxqYe3b702ezBcqQnBiKJXPeKjEEqpkCP0IXg0ZPZ
+ 0Il6GgQVQ25CyjPK0/MyGHqxPxzBT36JDWPV8X6rvNGRMAfLmNFuhLu
 X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
  pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Certain platforms require that some buses (or individual nodes) make
-some additional changes to the clock rate formula, throwing in some
-magic, Qualcomm-defined coefficients, to account for "inefficiencies".
-
-Add the framework for it and utilize it on a couple SoCs.
+Some buses and nodes need additional manual adjustments atop the usual
+calculations. Fill in the missing coefficients.
 
 Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
-Changes in v3:
-- Allocate the node bus clock on the stack, as dynamically allocating
-  it actually wastes memory on systems with 64-bit pointers..
-- Add the node bus clock struct member in the correct patch
-- Simplify using coefficients by only checking the node-level ones, and
-  setting them equal to the bus-specific ones at probe if absent
-- Fix building on arm32
-- Mention some references to the related downstream code
-- Link to v2: https://lore.kernel.org/r/20230726-topic-icc_coeff-v2-0-8c91c6c76076@linaro.org
+ drivers/interconnect/qcom/sdm660.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Changes in v2:
-- Use the (arguably less favourable but necessary for precission) 100/x
-  instead of x/100 for ib coefficient, update values in consequent
-  patches to reflect that
-- Rename "_percent" to "_coeff" because of /\
-- Add the necessary code to support per-node clocks
-- Add the necessary code to support per-node coefficients
-- Hook up the CPUSS<->GNoC clock on QCM2290
-- Update EBI node on QCM2290
-- Link to v1: https://lore.kernel.org/r/20230726-topic-icc_coeff-v1-0-31616960818c@linaro.org
+diff --git a/drivers/interconnect/qcom/sdm660.c b/drivers/interconnect/qcom/sdm660.c
+index 36962f7bd7bb..7392bebba334 100644
+--- a/drivers/interconnect/qcom/sdm660.c
++++ b/drivers/interconnect/qcom/sdm660.c
+@@ -602,6 +602,7 @@ static struct qcom_icc_node mas_mdp_p0 = {
+ 	.name = "mas_mdp_p0",
+ 	.id = SDM660_MASTER_MDP_P0,
+ 	.buswidth = 16,
++	.ib_coeff = 50,
+ 	.mas_rpm_id = 8,
+ 	.slv_rpm_id = -1,
+ 	.qos.ap_owned = true,
+@@ -621,6 +622,7 @@ static struct qcom_icc_node mas_mdp_p1 = {
+ 	.name = "mas_mdp_p1",
+ 	.id = SDM660_MASTER_MDP_P1,
+ 	.buswidth = 16,
++	.ib_coeff = 50,
+ 	.mas_rpm_id = 61,
+ 	.slv_rpm_id = -1,
+ 	.qos.ap_owned = true,
+@@ -1540,6 +1542,7 @@ static const struct qcom_icc_desc sdm660_bimc = {
+ 	.num_nodes = ARRAY_SIZE(sdm660_bimc_nodes),
+ 	.bus_clk_desc = &bimc_clk,
+ 	.regmap_cfg = &sdm660_bimc_regmap_config,
++	.ab_coeff = 153,
+ };
+ 
+ static struct qcom_icc_node * const sdm660_cnoc_nodes[] = {
+@@ -1659,6 +1662,7 @@ static const struct qcom_icc_desc sdm660_mnoc = {
+ 	.intf_clocks = mm_intf_clocks,
+ 	.num_intf_clocks = ARRAY_SIZE(mm_intf_clocks),
+ 	.regmap_cfg = &sdm660_mnoc_regmap_config,
++	.ab_coeff = 153,
+ };
+ 
+ static struct qcom_icc_node * const sdm660_snoc_nodes[] = {
 
----
-Konrad Dybcio (10):
-      interconnect: qcom: icc-rpm: Add AB/IB calculations coefficients
-      interconnect: qcom: icc-rpm: Separate out clock rate calulcations
-      interconnect: qcom: icc-rpm: Let nodes drive their own bus clock
-      interconnect: qcom: icc-rpm: Check for node-specific rate coefficients
-      interconnect: qcom: qcm2290: Hook up MAS_APPS_PROC's bus clock
-      interconnect: qcom: qcm2290: Set AB coefficients
-      interconnect: qcom: qcm2290: Update EBI channel configuration
-      interconnect: qcom: sdm660: Set AB/IB coefficients
-      interconnect: qcom: msm8996: Set AB/IB coefficients
-      clk: qcom: smd-rpm: Move CPUSS_GNoC clock to interconnect
-
- drivers/clk/qcom/clk-smd-rpm.c             | 16 +++++--
- drivers/interconnect/qcom/icc-rpm-clocks.c |  6 +++
- drivers/interconnect/qcom/icc-rpm.c        | 76 +++++++++++++++++++++++++-----
- drivers/interconnect/qcom/icc-rpm.h        | 15 ++++++
- drivers/interconnect/qcom/msm8996.c        |  8 +++-
- drivers/interconnect/qcom/qcm2290.c        |  9 +++-
- drivers/interconnect/qcom/sdm660.c         |  4 ++
- 7 files changed, 115 insertions(+), 19 deletions(-)
----
-base-commit: 71cd4fc492ec41e4acd85e98bbf7a13753fc1e03
-change-id: 20230726-topic-icc_coeff-b053d5409b9f
-
-Best regards,
 -- 
-Konrad Dybcio <konrad.dybcio@linaro.org>
+2.41.0
 
