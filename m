@@ -2,194 +2,152 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08864C001B0
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Aug 2023 19:21:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D053C04A6A
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Aug 2023 19:46:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235673AbjHHTVu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Aug 2023 15:21:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36944 "EHLO
+        id S230127AbjHHTqq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Aug 2023 15:46:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236074AbjHHTVe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Aug 2023 15:21:34 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46D5743CDC
-        for <linux-clk@vger.kernel.org>; Tue,  8 Aug 2023 09:45:01 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-3fe5c0e57d2so19378975e9.0
-        for <linux-clk@vger.kernel.org>; Tue, 08 Aug 2023 09:45:01 -0700 (PDT)
+        with ESMTP id S232631AbjHHTqR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Aug 2023 15:46:17 -0400
+Received: from mail-vk1-xa2d.google.com (mail-vk1-xa2d.google.com [IPv6:2607:f8b0:4864:20::a2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B6D5497A8
+        for <linux-clk@vger.kernel.org>; Tue,  8 Aug 2023 09:49:21 -0700 (PDT)
+Received: by mail-vk1-xa2d.google.com with SMTP id 71dfb90a1353d-4871396a94fso1742535e0c.1
+        for <linux-clk@vger.kernel.org>; Tue, 08 Aug 2023 09:49:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691513098; x=1692117898;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ga9ShVSfRDMx/t8+Pt2uOUsHlvwZxV8rq0HaCpReBAw=;
-        b=hPSkh6wt3Q2KWc5MW0B8dUcC2RQKGMH+Ru7idT0iARGAn0CJ2i6+2NU5nn+IKvR6+7
-         DLxVb40hEzb0HTtZIqDxpdvUQVMxBjLz+VZPqqSFEhGymFCOX1wtniSO2wdeGBBQUHCY
-         VmcqeGRnCTSb+by4vSpgfSosmkOJGdqcnfA6s3KNomn7HZlAc0M3M1NV41SDS8OpLFxm
-         1El9QyqYxmm7rbacpfxoqXWXCTvCCJE/ECmgOiNZrmzBNBNl0VH5YCVWuGSLk9B0zMnp
-         YMn1znTDx9+Dq3CU7GLh/0W1OlxS8IxGCiKJG+1Fi0FnFU8jfgA2YuVCIMsPJCyH6zh1
-         ym7g==
+        d=gmail.com; s=20221208; t=1691513360; x=1692118160;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3sXSwhyaI0ZZPhzdoq7cwPc4m+iIsmlIdeajHxsIfwk=;
+        b=nW+TLeGWt0Joi0cDQEpyv8XpsMZypizJVpWhTBrTsYgmj/UVR5g/dTbUHPYwiVbMWt
+         MPW+GmRsyr9mkDYk+YsMf6wkxTTE0NT02mLsXNw90l/FANK9EMaNm6yUTuc7yOUKcUZk
+         XP2oaBoMFqHZOAruZFDIxRI0jc77Oa6LLpVgfGwL1OW8UFD56sgbc+6MrZJruI76Kao/
+         SUnLWMtlpzCOjhDcmnNUsET8KIwb1lf4N7WI7laBZUWQEhm2zgOCZiuXbLxTRUleYrHA
+         oKGbN8ht+9EVLpHdz+88qXDir8Xa4Fy2SFlcS77ANBYOgF5m6+b/JWPS/HeBttZYYZ4S
+         WdQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691513098; x=1692117898;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20221208; t=1691513360; x=1692118160;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Ga9ShVSfRDMx/t8+Pt2uOUsHlvwZxV8rq0HaCpReBAw=;
-        b=VkQBEuB2Z1BrkMM/MjrArFt4/EMDdJ+2wpwIR42VQjeChcr99VHAePuFedNuzSXhgx
-         +XneFJCaxC9w194RMB/WNa52rXxhcxNsDT1MyPo+kxQxXXvisZaKRk3ikmMv30TxgFv5
-         ahMANiuBq+IyQK6+AUoNkRp4a4gy7Tj+aEOWtj4DqF7GTYG7Hn0wxn5VwE/BLjbTaMpy
-         ZeDHChXQWVSv3v2iLa0Uv149q5F1unC1ISWfWDQS8Z/CkX4lIoxy3iAPhJnQxxx7trSV
-         u+xo5BJqNLTxkVNxaFf8hn4DcWFKCoRsVyfytsqIHgyJrCChhofBXF6qehTKdCAbS0/a
-         HWmQ==
-X-Gm-Message-State: AOJu0YwO4c471CSmXhINEqfQz8dQtv0Cozta5Rs4CCKv6/2kf1XuJQmV
-        nHDSIk/5sMWm6ywLF8/gAfbb+HpJuooTILFghSc=
-X-Google-Smtp-Source: AGHT+IGoYdIOrAk32Xpjqu5lGI0d77DrpYLqBhLO0RsGUXKf+OwfLW2ec1eVNHj/KnbQGKFgnC4TGw==
-X-Received: by 2002:a05:6512:3d8e:b0:4f8:7568:e948 with SMTP id k14-20020a0565123d8e00b004f87568e948mr9356536lfv.51.1691483281731;
-        Tue, 08 Aug 2023 01:28:01 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.222.113])
-        by smtp.gmail.com with ESMTPSA id s18-20020adfeb12000000b0031779a6b451sm12861246wrn.83.2023.08.08.01.28.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Aug 2023 01:28:01 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH 10/11] clk: samsung: exynoautov9: do not define number of clocks in bindings
-Date:   Tue,  8 Aug 2023 10:27:37 +0200
-Message-Id: <20230808082738.122804-11-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230808082738.122804-1-krzysztof.kozlowski@linaro.org>
-References: <20230808082738.122804-1-krzysztof.kozlowski@linaro.org>
+        bh=3sXSwhyaI0ZZPhzdoq7cwPc4m+iIsmlIdeajHxsIfwk=;
+        b=CZwaDT3ThV8Vz50xKZQ6ut2zed59nCakkGqPOB6dvte2VbY9+G3OrSYBR5fDBbvOAy
+         N61J/7dKcaCb4w0v+4JDwRS2OM6B/vp+tC4hrZVuhKPArmKS8ItP+2XEz/nXOfGA6uX1
+         b2d/YW5FH9umlFxsYp2u5+TNT4K43F/ujanXQ10EPzceNr1cSON/BF8h78fAc1WvG3o2
+         05RkSJ079V1xmcFZC4dc46CfM4Wcw1oEIibGcNy7a2dSJXtl3qzaGTGg64EYLvoyGlAk
+         6gdjXEymqwS8Ogn9BS692fv1LCYAgPf5cpVPxBm/nSgqOoNxck050jieLBUjXvg6TrE+
+         A6oA==
+X-Gm-Message-State: AOJu0YwcBJ7jllDCNReQo1ptvM7Wnk9DtU4XOSVa2pUUWOXMiSZPJm+y
+        6k/wdjYWjFX1Wkf8dJMxFn4GxqpjIAa2BBHXzEACdWXc
+X-Google-Smtp-Source: AGHT+IE7W+ulJL3lYpeOm7DsC71eu861ltysH1dTV0waDoEv588kswbzOhxtg2c3V0PA0LppolHnwmuJ0v2isqD32RY=
+X-Received: by 2002:a05:6808:238f:b0:3a3:eab8:8c40 with SMTP id
+ bp15-20020a056808238f00b003a3eab88c40mr16363716oib.54.1691497174996; Tue, 08
+ Aug 2023 05:19:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230807084744.1184791-1-m.felsch@pengutronix.de> <20230807084744.1184791-2-m.felsch@pengutronix.de>
+In-Reply-To: <20230807084744.1184791-2-m.felsch@pengutronix.de>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Tue, 8 Aug 2023 07:19:23 -0500
+Message-ID: <CAHCN7xLdwNXXeEi82KN7QWgUqUCeFjxJgkdo0+GujJYo8qLXVQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] clk: imx: pll14xx: dynamically configure PLL for 393216000/361267200Hz
+To:     Marco Felsch <m.felsch@pengutronix.de>
+Cc:     abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
+        shawnguo@kernel.org, s.hauer@pengutronix.de,
+        rasmus.villemoes@prevas.dk, adrian.alonso@nxp.com,
+        a.fatoum@pengutronix.de, linux-clk@vger.kernel.org,
+        linux-imx@nxp.com, kernel@pengutronix.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Number of clocks supported by Linux drivers might vary - sometimes we
-add new clocks, not exposed previously.  Therefore this number of clocks
-should not be in the bindings, because otherwise we should not change
-it.
+On Mon, Aug 7, 2023 at 3:47=E2=80=AFAM Marco Felsch <m.felsch@pengutronix.d=
+e> wrote:
+>
+> From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+>
+> Since commit b09c68dc57c9 ("clk: imx: pll14xx: Support dynamic rates"),
+> the driver has the ability to dynamically compute PLL parameters to
+> approximate the requested rates. This is not always used, because the
+> logic is as follows:
+>
+>   - Check if the target rate is hardcoded in the frequency table
+>   - Check if varying only kdiv is possible, so switch over is glitch free
+>   - Compute rate dynamically by iterating over pdiv range
+>
+> If we skip the frequency table for the 1443x PLL, we find that the
+> computed values differ to the hardcoded ones. This can be valid if the
+> hardcoded values guarantee for example an earlier lock-in or if the
+> divisors are chosen, so that other important rates are more likely to
+> be reached glitch-free.
+>
+> For rates (393216000 and 361267200, this doesn't seem to be the case:
+> They are only approximated by existing parameters (393215995 and
+> 361267196 Hz, respectively) and they aren't reachable glitch-free from
+> other hardcoded frequencies. Dropping them from the table allows us
+> to lock-in to these frequencies exactly.
+>
+> This is immediately noticeable because they are the assigned-clock-rates
+> for IMX8MN_AUDIO_PLL1 and IMX8MN_AUDIO_PLL2, respectively and a look
+> into clk_summary so far showed that they were a few Hz short of the targe=
+t:
+>
+> imx8mn-board:~# grep audio_pll[12]_out /sys/kernel/debug/clk/clk_summary
+> audio_pll2_out           0        0        0   361267196 0     0  50000  =
+ N
+> audio_pll1_out           1        1        0   393215995 0     0  50000  =
+ Y
+>
+> and afterwards:
+>
+> imx8mn-board:~# grep audio_pll[12]_out /sys/kernel/debug/clk/clk_summary
+> audio_pll2_out           0        0        0   361267200 0     0  50000  =
+ N
+> audio_pll1_out           1        1        0   393216000 0     0  50000  =
+ Y
+>
+> This change is equivalent to adding following hardcoded values:
+>
+>   /*               rate     mdiv  pdiv  sdiv   kdiv */
+>   PLL_1443X_RATE(393216000, 655,    5,    3,  23593),
+>   PLL_1443X_RATE(361267200, 497,   33,    0, -16882),
+>
+> Fixes: 053a4ffe2988 ("clk: imx: imx8mm: fix audio pll setting")
+> Cc: stable@vger.kernel.org # v5.18+
+> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+> ---
+> v2:
+> - new patch
+>
+>  drivers/clk/imx/clk-pll14xx.c | 2 --
+>  1 file changed, 2 deletions(-)
+>
+> diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.=
+c
+> index dc6bc21dff41..0d58d85c375e 100644
+> --- a/drivers/clk/imx/clk-pll14xx.c
+> +++ b/drivers/clk/imx/clk-pll14xx.c
+> @@ -64,8 +64,6 @@ static const struct imx_pll14xx_rate_table imx_pll1443x=
+_tbl[] =3D {
+>         PLL_1443X_RATE(650000000U, 325, 3, 2, 0),
+>         PLL_1443X_RATE(594000000U, 198, 2, 2, 0),
+>         PLL_1443X_RATE(519750000U, 173, 2, 2, 16384),
+> -       PLL_1443X_RATE(393216000U, 262, 2, 3, 9437),
+> -       PLL_1443X_RATE(361267200U, 361, 3, 3, 17511),
 
-Define number of clocks per each clock controller inside the driver
-directly.
+Part of me wonders why we need the look-up table at all if the driver
+has been fixed to achieve better rates.  I don't know if there is a
+significant time in calculating the numbers as compared to the time it
+takes to search the table.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/clk/samsung/clk-exynosautov9.c | 29 ++++++++++++++++++--------
- 1 file changed, 20 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk-exynosautov9.c b/drivers/clk/samsung/clk-exynosautov9.c
-index ddef546be545..e9c06eb93e66 100644
---- a/drivers/clk/samsung/clk-exynosautov9.c
-+++ b/drivers/clk/samsung/clk-exynosautov9.c
-@@ -16,6 +16,17 @@
- #include "clk.h"
- #include "clk-exynos-arm64.h"
- 
-+/* NOTE: Must be equal to the last clock ID increased by one */
-+#define CLKS_NR_TOP			(GOUT_CLKCMU_PERIS_BUS + 1)
-+#define CLKS_NR_BUSMC			(CLK_GOUT_BUSMC_SPDMA_PCLK + 1)
-+#define CLKS_NR_CORE			(CLK_GOUT_CORE_CMU_CORE_PCLK + 1)
-+#define CLKS_NR_FSYS0			(CLK_GOUT_FSYS0_PCIE_GEN3B_4L_CLK + 1)
-+#define CLKS_NR_FSYS1			(CLK_GOUT_FSYS1_USB30_1_ACLK + 1)
-+#define CLKS_NR_FSYS2			(CLK_GOUT_FSYS2_UFS_EMBD1_UNIPRO + 1)
-+#define CLKS_NR_PERIC0			(CLK_GOUT_PERIC0_PCLK_11 + 1)
-+#define CLKS_NR_PERIC1			(CLK_GOUT_PERIC1_PCLK_11 + 1)
-+#define CLKS_NR_PERIS			(CLK_GOUT_WDT_CLUSTER1 + 1)
-+
- /* ---- CMU_TOP ------------------------------------------------------------ */
- 
- /* Register Offset definitions for CMU_TOP (0x1b240000) */
-@@ -941,7 +952,7 @@ static const struct samsung_cmu_info top_cmu_info __initconst = {
- 	.nr_fixed_factor_clks	= ARRAY_SIZE(top_fixed_factor_clks),
- 	.gate_clks		= top_gate_clks,
- 	.nr_gate_clks		= ARRAY_SIZE(top_gate_clks),
--	.nr_clk_ids		= TOP_NR_CLK,
-+	.nr_clk_ids		= CLKS_NR_TOP,
- 	.clk_regs		= top_clk_regs,
- 	.nr_clk_regs		= ARRAY_SIZE(top_clk_regs),
- };
-@@ -1001,7 +1012,7 @@ static const struct samsung_cmu_info busmc_cmu_info __initconst = {
- 	.nr_div_clks		= ARRAY_SIZE(busmc_div_clks),
- 	.gate_clks		= busmc_gate_clks,
- 	.nr_gate_clks		= ARRAY_SIZE(busmc_gate_clks),
--	.nr_clk_ids		= BUSMC_NR_CLK,
-+	.nr_clk_ids		= CLKS_NR_BUSMC,
- 	.clk_regs		= busmc_clk_regs,
- 	.nr_clk_regs		= ARRAY_SIZE(busmc_clk_regs),
- 	.clk_name		= "dout_clkcmu_busmc_bus",
-@@ -1059,7 +1070,7 @@ static const struct samsung_cmu_info core_cmu_info __initconst = {
- 	.nr_div_clks		= ARRAY_SIZE(core_div_clks),
- 	.gate_clks		= core_gate_clks,
- 	.nr_gate_clks		= ARRAY_SIZE(core_gate_clks),
--	.nr_clk_ids		= CORE_NR_CLK,
-+	.nr_clk_ids		= CLKS_NR_CORE,
- 	.clk_regs		= core_clk_regs,
- 	.nr_clk_regs		= ARRAY_SIZE(core_clk_regs),
- 	.clk_name		= "dout_clkcmu_core_bus",
-@@ -1299,7 +1310,7 @@ static const struct samsung_cmu_info fsys0_cmu_info __initconst = {
- 	.nr_mux_clks		= ARRAY_SIZE(fsys0_mux_clks),
- 	.gate_clks		= fsys0_gate_clks,
- 	.nr_gate_clks		= ARRAY_SIZE(fsys0_gate_clks),
--	.nr_clk_ids		= FSYS0_NR_CLK,
-+	.nr_clk_ids		= CLKS_NR_FSYS0,
- 	.clk_regs		= fsys0_clk_regs,
- 	.nr_clk_regs		= ARRAY_SIZE(fsys0_clk_regs),
- 	.clk_name		= "dout_clkcmu_fsys0_bus",
-@@ -1426,7 +1437,7 @@ static const struct samsung_cmu_info fsys1_cmu_info __initconst = {
- 	.nr_div_clks		= ARRAY_SIZE(fsys1_div_clks),
- 	.gate_clks		= fsys1_gate_clks,
- 	.nr_gate_clks		= ARRAY_SIZE(fsys1_gate_clks),
--	.nr_clk_ids		= FSYS1_NR_CLK,
-+	.nr_clk_ids		= CLKS_NR_FSYS1,
- 	.clk_regs		= fsys1_clk_regs,
- 	.nr_clk_regs		= ARRAY_SIZE(fsys1_clk_regs),
- 	.clk_name		= "dout_clkcmu_fsys1_bus",
-@@ -1493,7 +1504,7 @@ static const struct samsung_cmu_info fsys2_cmu_info __initconst = {
- 	.nr_mux_clks		= ARRAY_SIZE(fsys2_mux_clks),
- 	.gate_clks		= fsys2_gate_clks,
- 	.nr_gate_clks		= ARRAY_SIZE(fsys2_gate_clks),
--	.nr_clk_ids		= FSYS2_NR_CLK,
-+	.nr_clk_ids		= CLKS_NR_FSYS2,
- 	.clk_regs		= fsys2_clk_regs,
- 	.nr_clk_regs		= ARRAY_SIZE(fsys2_clk_regs),
- 	.clk_name		= "dout_clkcmu_fsys2_bus",
-@@ -1748,7 +1759,7 @@ static const struct samsung_cmu_info peric0_cmu_info __initconst = {
- 	.nr_div_clks		= ARRAY_SIZE(peric0_div_clks),
- 	.gate_clks		= peric0_gate_clks,
- 	.nr_gate_clks		= ARRAY_SIZE(peric0_gate_clks),
--	.nr_clk_ids		= PERIC0_NR_CLK,
-+	.nr_clk_ids		= CLKS_NR_PERIC0,
- 	.clk_regs		= peric0_clk_regs,
- 	.nr_clk_regs		= ARRAY_SIZE(peric0_clk_regs),
- 	.clk_name		= "dout_clkcmu_peric0_bus",
-@@ -2003,7 +2014,7 @@ static const struct samsung_cmu_info peric1_cmu_info __initconst = {
- 	.nr_div_clks		= ARRAY_SIZE(peric1_div_clks),
- 	.gate_clks		= peric1_gate_clks,
- 	.nr_gate_clks		= ARRAY_SIZE(peric1_gate_clks),
--	.nr_clk_ids		= PERIC1_NR_CLK,
-+	.nr_clk_ids		= CLKS_NR_PERIC1,
- 	.clk_regs		= peric1_clk_regs,
- 	.nr_clk_regs		= ARRAY_SIZE(peric1_clk_regs),
- 	.clk_name		= "dout_clkcmu_peric1_bus",
-@@ -2050,7 +2061,7 @@ static const struct samsung_cmu_info peris_cmu_info __initconst = {
- 	.nr_mux_clks		= ARRAY_SIZE(peris_mux_clks),
- 	.gate_clks		= peris_gate_clks,
- 	.nr_gate_clks		= ARRAY_SIZE(peris_gate_clks),
--	.nr_clk_ids		= PERIS_NR_CLK,
-+	.nr_clk_ids		= CLKS_NR_PERIS,
- 	.clk_regs		= peris_clk_regs,
- 	.nr_clk_regs		= ARRAY_SIZE(peris_clk_regs),
- 	.clk_name		= "dout_clkcmu_peris_bus",
--- 
-2.34.1
-
+adam
+>  };
+>
+>  struct imx_pll14xx_clk imx_1443x_pll =3D {
+> --
+> 2.39.2
+>
