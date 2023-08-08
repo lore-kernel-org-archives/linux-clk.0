@@ -2,120 +2,177 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC23CC001B0
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Aug 2023 16:37:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62B45C001B0
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Aug 2023 16:39:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230064AbjHHQhd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Aug 2023 12:37:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56360 "EHLO
+        id S233193AbjHHQjY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Aug 2023 12:39:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233045AbjHHQgJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Aug 2023 12:36:09 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3DEB14251
-        for <linux-clk@vger.kernel.org>; Tue,  8 Aug 2023 08:53:00 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-99bdf08860dso1467579466b.0
-        for <linux-clk@vger.kernel.org>; Tue, 08 Aug 2023 08:53:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691509973; x=1692114773;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gc7oZvOcJDkiBa4MtO2BaU3uRCE2+ug+vLU72IFcWhs=;
-        b=THHRDTGsKZT/AfWbz0lQjUSft5Heiaj5DC1lg6GbpWkm9e3We54K4tAHwk2BHtTx/u
-         I9e+kdjn0xjQIUYql9dKHnu/WTwpXuhs6Bd5dsIi893j7MJBTgUi0yP2meTRRIZK7DhL
-         tlxhyd6p1AJyGvBwEoaZ6MZGY2a5Wm14HR9z7KDCyprNdhTZvRVcBaCvGnPiiEc1WmlB
-         BN6rAyD4CCyUsqubup8CusD4MQk6wTDs8P0KzOTsM5BMMBu5TD81Ht7Zrca2JoOa3MJb
-         psHQ0399Sg2uPNMvrCJtmADgPW2eBddUHQJulhZIlXxD+7WlqkX2aHcyNW03ZYFwLspP
-         b9fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691509973; x=1692114773;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gc7oZvOcJDkiBa4MtO2BaU3uRCE2+ug+vLU72IFcWhs=;
-        b=UYWs55S+g8PNB6vLadr/Crep6FJH1fNp1PL5SRWFKCyLlJMd/X/8CEMitXaSyVwJd9
-         qSnl88xkEKaqzW6U5Z9Iulm+Xqd5+3Kpm2ekNDCtD+d42HWmL3INvKPNI8t6Eu9e+s9F
-         1u6TuWo8cQX/C3F9Ce2eHbuWOsJv7uO3oJHR5NciUOVsCaeHNKEsqejJAA5jFgx8pSfp
-         3Ao35BWeGQTbGDSyZIrUeLe9/RXPWARVjWdB5XcGfaJlkvz6+90kA6RXZDa4qSKGiHqg
-         HUPP9bKSGO7FW+hSuyyKd185nkV27DtoBYvFjY/O7tP0fVngdYSY2/YFQ+xS9flAd97G
-         7POw==
-X-Gm-Message-State: AOJu0YwWJQawRoZIc1LUCEDlauOfV3qK0YRZDTtGYLeup0Pls1KtTO8r
-        hdB7TSLq0+0hsoVuDp1nToblbk6sua1HR6vsr/o=
-X-Google-Smtp-Source: AGHT+IGIViV1UeCd6ELmCSkLWBe6UBi27tTfxw7uswsQ8FS8N7MqPD6g+EmoJwhsZKgDL3YjzXYphA==
-X-Received: by 2002:a05:6512:159c:b0:4fe:8be:6065 with SMTP id bp28-20020a056512159c00b004fe08be6065mr3416540lfb.5.1691495023110;
-        Tue, 08 Aug 2023 04:43:43 -0700 (PDT)
-Received: from [192.168.1.101] (abxi185.neoplus.adsl.tpnet.pl. [83.9.2.185])
-        by smtp.gmail.com with ESMTPSA id j20-20020ac253b4000000b004fbdba4b075sm1861679lfh.57.2023.08.08.04.43.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Aug 2023 04:43:42 -0700 (PDT)
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Tue, 08 Aug 2023 13:43:37 +0200
-Subject: [PATCH v3 06/10] interconnect: qcom: qcm2290: Set AB coefficients
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230726-topic-icc_coeff-v3-6-dee684d6cdd2@linaro.org>
-References: <20230726-topic-icc_coeff-v3-0-dee684d6cdd2@linaro.org>
-In-Reply-To: <20230726-topic-icc_coeff-v3-0-dee684d6cdd2@linaro.org>
+        with ESMTP id S232910AbjHHQio (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Aug 2023 12:38:44 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21B423A4D4;
+        Tue,  8 Aug 2023 08:54:05 -0700 (PDT)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3783gSnl003039;
+        Tue, 8 Aug 2023 05:14:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding : content-type; s=qcppdkim1;
+ bh=hhulJ2B+UKcn+t6Xuu7g05iIQSJ7dI3YjiyAFc3/tQ0=;
+ b=EXHZ/CG/MwUkzJtNaZ65srpw1AJ7InJeFCBh6NuAL9kks1LeDywOAueXAzunJkAfBN/1
+ sy/TDMHu4NydEkDhqq8tdK0kEiwRKZciwXutn+binMd5foGZ3XNCbTd1oVJzYkYjwcvP
+ xlqOLDgBXr9NjNUBUk0ty34jUhAS7BG4B7T6gI7mKLHIlYIArN4aG01mHyjeTZlUylZF
+ JTUFBOIPdjhAvyjwDWnRQgfLJswSiFX3r5VYBLx3vkLOzX6JSgmADeVrDuAFKWROSd5b
+ kfgNe1J4a3TO64UJ+PLoE+Q6+OUpu+13dg5QKkXgfdU/MhyEtkYRqqV+fyArmOJEOnwf ow== 
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3sbcacra0t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 08 Aug 2023 05:14:58 +0000
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3785EwBr026459
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 8 Aug 2023 05:14:58 GMT
+Received: from hu-imrashai-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.30; Mon, 7 Aug 2023 22:14:53 -0700
+From:   Imran Shaik <quic_imrashai@quicinc.com>
 To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1691495013; l=1336;
- i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=gKAcxl1xTWi9i07xf8cB7oRhF8MPHDTJc+D4hon02Tw=;
- b=/bhzfzY1MtFGMTp+JULsYOGnTOJIwGJE49F01H2p/MlyJ9JEx0rnCkANXo4at1X8Tkomohnvh
- OqvdFmQjUgZBW8klOIAOfgdxaBhjsxg6abuLyt5iCorjdgBVtxRUJaA
-X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>
+CC:     Taniya Das <quic_tdas@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>
+Subject: [PATCH 2/4] clk: qcom: branch: Add mem ops support for branch2 clocks
+Date:   Tue, 8 Aug 2023 10:44:05 +0530
+Message-ID: <20230808051407.647395-3-quic_imrashai@quicinc.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230808051407.647395-1-quic_imrashai@quicinc.com>
+References: <20230808051407.647395-1-quic_imrashai@quicinc.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 7VFvVykTlM4aO3g2PJ0GZYL7x06iTa_L
+X-Proofpoint-ORIG-GUID: 7VFvVykTlM4aO3g2PJ0GZYL7x06iTa_L
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-08-08_03,2023-08-03_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
+ priorityscore=1501 impostorscore=0 mlxscore=0 adultscore=0 malwarescore=0
+ mlxlogscore=999 bulkscore=0 lowpriorityscore=0 phishscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2306200000
+ definitions=main-2308080046
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Some buses need additional manual adjustments atop the usual
-calculations. Fill in the missing coefficients.
+From: Taniya Das <quic_tdas@quicinc.com>
 
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Clock CBCRs with memories need an update for memory before enable/disable
+of the clock. Add support for the mem ops to handle this sequence.
+
+Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
 ---
- drivers/interconnect/qcom/qcm2290.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/clk/qcom/clk-branch.c | 38 +++++++++++++++++++++++++++++++++++
+ drivers/clk/qcom/clk-branch.h |  4 ++++
+ 2 files changed, 42 insertions(+)
 
-diff --git a/drivers/interconnect/qcom/qcm2290.c b/drivers/interconnect/qcom/qcm2290.c
-index 52a6eb32e832..42fa01c66e73 100644
---- a/drivers/interconnect/qcom/qcm2290.c
-+++ b/drivers/interconnect/qcom/qcm2290.c
-@@ -1201,6 +1201,7 @@ static const struct qcom_icc_desc qcm2290_bimc = {
- 	.regmap_cfg = &qcm2290_bimc_regmap_config,
- 	/* M_REG_BASE() in vendor msm_bus_bimc_adhoc driver */
- 	.qos_offset = 0x8000,
-+	.ab_coeff = 153,
- };
+diff --git a/drivers/clk/qcom/clk-branch.c b/drivers/clk/qcom/clk-branch.c
+index fc4735f74f0f..95ffcd380039 100644
+--- a/drivers/clk/qcom/clk-branch.c
++++ b/drivers/clk/qcom/clk-branch.c
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright (c) 2013, The Linux Foundation. All rights reserved.
++ * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
+  */
  
- static struct qcom_icc_node * const qcm2290_cnoc_nodes[] = {
-@@ -1327,6 +1328,7 @@ static const struct qcom_icc_desc qcm2290_mmnrt_virt = {
- 	.bus_clk_desc = &mmaxi_0_clk,
- 	.regmap_cfg = &qcm2290_snoc_regmap_config,
- 	.qos_offset = 0x15000,
-+	.ab_coeff = 142,
- };
+ #include <linux/kernel.h>
+@@ -134,6 +135,43 @@ static void clk_branch2_disable(struct clk_hw *hw)
+ 	clk_branch_toggle(hw, false, clk_branch2_check_halt);
+ }
  
- static struct qcom_icc_node * const qcm2290_mmrt_virt_nodes[] = {
-@@ -1342,6 +1344,7 @@ static const struct qcom_icc_desc qcm2290_mmrt_virt = {
- 	.bus_clk_desc = &mmaxi_1_clk,
- 	.regmap_cfg = &qcm2290_snoc_regmap_config,
- 	.qos_offset = 0x15000,
-+	.ab_coeff = 139,
- };
++static int clk_branch2_mem_enable(struct clk_hw *hw)
++{
++	struct clk_branch *br = to_clk_branch(hw);
++	u32 val;
++	int count = 200;
++
++	regmap_update_bits(br->clkr.regmap, br->mem_enable_reg,
++			br->mem_enable_ack_bit, br->mem_enable_ack_bit);
++
++	regmap_read(br->clkr.regmap, br->mem_ack_reg, &val);
++
++	while (count-- > 0) {
++		if (val & br->mem_enable_ack_bit)
++			return clk_branch2_enable(hw);
++		udelay(1);
++		regmap_read(br->clkr.regmap, br->mem_ack_reg, &val);
++	}
++
++	return -EBUSY;
++}
++
++static void clk_branch2_mem_disable(struct clk_hw *hw)
++{
++	struct clk_branch *br = to_clk_branch(hw);
++
++	regmap_update_bits(br->clkr.regmap, br->mem_enable_reg,
++						br->mem_enable_ack_bit, 0);
++	return clk_branch2_disable(hw);
++}
++
++const struct clk_ops clk_branch2_mem_ops = {
++	.enable = clk_branch2_mem_enable,
++	.disable = clk_branch2_mem_disable,
++	.is_enabled = clk_is_enabled_regmap,
++};
++EXPORT_SYMBOL(clk_branch2_mem_ops);
++
+ const struct clk_ops clk_branch2_ops = {
+ 	.enable = clk_branch2_enable,
+ 	.disable = clk_branch2_disable,
+diff --git a/drivers/clk/qcom/clk-branch.h b/drivers/clk/qcom/clk-branch.h
+index 0cf800b9d08d..0ffda6bef00e 100644
+--- a/drivers/clk/qcom/clk-branch.h
++++ b/drivers/clk/qcom/clk-branch.h
+@@ -24,8 +24,11 @@
+ struct clk_branch {
+ 	u32	hwcg_reg;
+ 	u32	halt_reg;
++	u32	mem_enable_reg;
++	u32	mem_ack_reg;
+ 	u8	hwcg_bit;
+ 	u8	halt_bit;
++	u8	mem_enable_ack_bit;
+ 	u8	halt_check;
+ #define BRANCH_VOTED			BIT(7) /* Delay on disable */
+ #define BRANCH_HALT			0 /* pol: 1 = halt */
+@@ -85,6 +88,7 @@ extern const struct clk_ops clk_branch_ops;
+ extern const struct clk_ops clk_branch2_ops;
+ extern const struct clk_ops clk_branch_simple_ops;
+ extern const struct clk_ops clk_branch2_aon_ops;
++extern const struct clk_ops clk_branch2_mem_ops;
  
- static const struct of_device_id qcm2290_noc_of_match[] = {
-
+ #define to_clk_branch(_hw) \
+ 	container_of(to_clk_regmap(_hw), struct clk_branch, clkr)
 -- 
-2.41.0
+2.25.1
 
