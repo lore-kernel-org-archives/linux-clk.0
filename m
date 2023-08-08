@@ -2,132 +2,102 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6FA3C001DB
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Aug 2023 18:29:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0DA0C001B0
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Aug 2023 18:31:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235873AbjHHS3Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Aug 2023 14:29:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51790 "EHLO
+        id S235699AbjHHSbS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Aug 2023 14:31:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235870AbjHHS3F (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Aug 2023 14:29:05 -0400
+        with ESMTP id S235455AbjHHSbB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Aug 2023 14:31:01 -0400
 Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AE7C7A95
-        for <linux-clk@vger.kernel.org>; Tue,  8 Aug 2023 10:44:41 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-5230a22cfd1so7857511a12.1
-        for <linux-clk@vger.kernel.org>; Tue, 08 Aug 2023 10:44:41 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1986282F9
+        for <linux-clk@vger.kernel.org>; Tue,  8 Aug 2023 10:51:01 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-523225dd110so5986351a12.0
+        for <linux-clk@vger.kernel.org>; Tue, 08 Aug 2023 10:51:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691516680; x=1692121480;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dlY5pXEYcBgHeb5qjzLwZeG+1V5JyWmwzq+8kailYB8=;
-        b=q6BQSvBUUyzNzU8BC60uJUdGlgioG4XTeUve9NtaZnGmFx53ImMLhnr5Rzl2+85jvD
-         BtgN2gcjncTkIRwSZz7UI7kat8hl+5Eyc1WD4v7Ukf52j5lpf9Gt1vZF1AlPliN041gs
-         ML8PuWFQQWqRivGwXYLaU6kunSbw/cXxDsASXqCFc+mSIIjEIDYYCs5zAy6mQs2e9mza
-         aQ4SapH8nTpCWX4Wmv1cAWqi7hMd9f1QWwvEkdhTZPb7m+wIH6rpfrWJpYw3Yyselb+v
-         fbvPJEUp5rZcIzK4+a/fQ50VFTHLDAywmEml6mo/Fv1zhFkiNvVKPn40gcNUxlkzrqXE
-         WcbA==
+        d=linaro.org; s=google; t=1691517060; x=1692121860;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=U/ENPbWDACTq/gT25pwElyGsToVBQemAbfEgTyGefM8=;
+        b=DLisWEkyKLhJdEab7XpNHg0OcI/tDG4n3Llbj0Ahxh4JPs6ccSsan1vcolVvpI7PC7
+         WmnbuLrqMXsdg8DzKhuPY0ZGXewivAImdx0G0zThtlH1vf68GjnapR6yHrxT1buPGorV
+         EpZzjIUtNJSl4ng8AOG91rlk/HI5eS5/UqmdksvcI+i0tz3i25aXg/ISkl6sTnCRQ2/q
+         4gIYn2GbQAtHpva9urNvXRC+nTRERrbSvOhcA2gFKpdWLWJnH2kpwYuouiDR6t60pqVy
+         KK9ZTxb+0j7ZU6nIzbXNbmXSZ3cyxW4CRNgM74SD9cojoPoMfYd0LS2Q3FnOnCHSUrPy
+         LkhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691516680; x=1692121480;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dlY5pXEYcBgHeb5qjzLwZeG+1V5JyWmwzq+8kailYB8=;
-        b=G4SergPjt1hlioztNC/XNDgDTFevxOsNiyUZj60jpKIGUnx6cMeGoPYqgMrMjTXwBP
-         9F999bGrN0QXMpPzrlLS754c6KiGEfh9azhI0EQfnqDC/Piz4HcJfBa4EdQvnFjAOb6R
-         JijJiXkqCVkL4D4k9fmRPuX8/aQktVO4hjWSJfffvPRrbhFGDsvNAJhdx15g4nfhv2tz
-         nlfmT784XQR0YE/9DemTXEJd5TZB2uvHNH+Z0hDyZqflIpmY2vnn96gTStRG3h6WZgNa
-         UnFfU24w7YJJR+JT7kgk5ElTHE0E0QTPpp8Evbf0Mcd3wGJbVrQN6GJklhreufyEkAFa
-         VLdg==
-X-Gm-Message-State: AOJu0YyBkp1Z2Z3bUZO9dF7L78BJgKhgOK29IsPk2FqaCSd0E9Zv9Cx1
-        4GpYGxT1Vi3gjaI3IKBV3B3S4SqzJp+5FCpE0k8=
-X-Google-Smtp-Source: AGHT+IHh37iYuUiKI2GbU0AYhtJBCPFDqyHRg6hHZo0rvcAp0zMmu3aywLaX3w+vkrjWoKcJi+lCTw==
-X-Received: by 2002:a05:6512:20c1:b0:4f8:58af:ebd7 with SMTP id u1-20020a05651220c100b004f858afebd7mr6593359lfr.39.1691487897383;
-        Tue, 08 Aug 2023 02:44:57 -0700 (PDT)
-Received: from [192.168.1.101] (abxi185.neoplus.adsl.tpnet.pl. [83.9.2.185])
-        by smtp.gmail.com with ESMTPSA id i6-20020a056512006600b004fdba93b92asm1818884lfo.252.2023.08.08.02.44.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Aug 2023 02:44:56 -0700 (PDT)
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Tue, 08 Aug 2023 11:44:45 +0200
-Subject: [PATCH v2 5/6] clk: qcom: mmcc-msm8998: Fix the SMMU GDSC
+        d=1e100.net; s=20221208; t=1691517060; x=1692121860;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=U/ENPbWDACTq/gT25pwElyGsToVBQemAbfEgTyGefM8=;
+        b=BNmMf9E0jSrRiq8mggo2WbuCCuFsvVx+XVap8W88UA0sRcx6EsSYn4pCtiy+W9cmmT
+         bi1hzq3bEeHIgtthMDnesmJOADvPpXa7tOD18deRfUvQrvB2JGw6i4yiHJ8lrWJYQ3QL
+         Qk/fkADLsG/KNPrRHWEuQe7rVCD9L5OXpJGETaYqJCr4RYMFQD+SEeLvt1qEKlbEUVrV
+         EMBq44K+jDpcZ79edH0C/tS/2uCq/MzN5G3RSB97MFURQjUfLhP4AffCKUaFmqqpUohM
+         ZZhZWfLshifLYAKhyX/vT27NNdNQN47tExu/CQhZKyt8jqpCkhBFXllQHPPQ6PyH2zNd
+         YWEA==
+X-Gm-Message-State: AOJu0YxmdXVgY3sQepMZD/dhDYqbl423nemkSeCP9c7cGZOo3GPheXM4
+        324XeFmiyO8ar/o+lGlWuNkssHVVUEuDrzb1Ur8=
+X-Google-Smtp-Source: AGHT+IH20o5oXu1MzFaME7Vqm8k1vG/h5IULgofIK8nWT0wfuYK0Ryctno9bzeuLujRtR/SQOzZBWA==
+X-Received: by 2002:a17:906:d8:b0:99b:ca5d:1466 with SMTP id 24-20020a17090600d800b0099bca5d1466mr11379531eji.66.1691474329221;
+        Mon, 07 Aug 2023 22:58:49 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.222.113])
+        by smtp.gmail.com with ESMTPSA id e4-20020a1709062c0400b00982d0563b11sm3463474ejh.197.2023.08.07.22.58.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Aug 2023 22:58:48 -0700 (PDT)
+Message-ID: <9e235de6-972a-84e5-3e09-f0b07b10e28d@linaro.org>
+Date:   Tue, 8 Aug 2023 07:58:46 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230531-topic-8998_mmssclk-v2-5-34273e275c51@linaro.org>
-References: <20230531-topic-8998_mmssclk-v2-0-34273e275c51@linaro.org>
-In-Reply-To: <20230531-topic-8998_mmssclk-v2-0-34273e275c51@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Subject: Re: [PATCH v4 0/8] Initial Marvell PXA1908 support
+Content-Language: en-US
+To:     =?UTF-8?Q?Duje_Mihanovi=c4=87?= <duje.mihanovic@skole.hr>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Andy Shevchenko <andy@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        Imran Khan <kimran@codeaurora.org>,
-        Rajendra Nayak <quic_rjendra@quicinc.com>,
-        Joonwoo Park <joonwoop@codeaurora.org>,
-        Jeffrey Hugo <quic_jhugo@quicinc.com>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Jeffrey Hugo <quic_jhugo@quicinc.com>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Jami Kettunen <jami.kettunen@somainline.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1691487885; l=1105;
- i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=87zmBNCrKExC5fA2pDw1hJreUEORhjqL4+NYXqa3bgY=;
- b=VT9trWuRQROU5ByyIvzOsud1+jUCahMFSSwl7lXsHgNEroaV6TNcWL2Qi+2HDnBgH+uqXNQKx
- XLni2Mv9lxlCRZ/eHiiHKdcIHZUZoGsQGa7E5QjDCIxTVH8MTuWmOw8
-X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+        Kees Cook <keescook@chromium.org>,
+        Tony Luck <tony.luck@intel.com>,
+        "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-hardening@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        afaerber@suse.de,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+References: <20230807-pxa1908-lkml-v4-0-cb387d73b452@skole.hr>
+ <5723818.DvuYhMxLoT@radijator>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <5723818.DvuYhMxLoT@radijator>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The SMMU GDSC doesn't have to be ALWAYS-ON and shouldn't feature the
-HW_CTRL flag (it's separate from hw_ctrl_addr).  In addition to that,
-it should feature a cxc entry for bimc_smmu_axi_clk and be marked as
-votable.
+On 07/08/2023 23:02, Duje Mihanović wrote:
+> Patch 8/8 is missing because b4 lost connection to my SMTP server while 
+> sending it. Should I resend the whole series?
+> 
+>
 
-Fix all of these issues.
+Just send patch 8 manually setting in-reply-to= argument to git
+send-email. b4 maybe also has this option, I don't know.
 
-Fixes: d14b15b5931c ("clk: qcom: Add MSM8998 Multimedia Clock Controller (MMCC) driver")
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
----
- drivers/clk/qcom/mmcc-msm8998.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/qcom/mmcc-msm8998.c b/drivers/clk/qcom/mmcc-msm8998.c
-index d0a5440e2291..4fdc41e7d2a8 100644
---- a/drivers/clk/qcom/mmcc-msm8998.c
-+++ b/drivers/clk/qcom/mmcc-msm8998.c
-@@ -2627,11 +2627,13 @@ static struct gdsc camss_cpp_gdsc = {
- static struct gdsc bimc_smmu_gdsc = {
- 	.gdscr = 0xe020,
- 	.gds_hw_ctrl = 0xe024,
-+	.cxcs = (unsigned int []){ 0xe008 },
-+	.cxc_count = 1,
- 	.pd = {
- 		.name = "bimc_smmu",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
--	.flags = HW_CTRL | ALWAYS_ON,
-+	.flags = VOTABLE,
- };
- 
- static struct clk_regmap *mmcc_msm8998_clocks[] = {
-
--- 
-2.41.0
+Best regards,
+Krzysztof
 
