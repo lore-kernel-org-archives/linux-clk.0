@@ -2,117 +2,121 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A37D2C41513
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Aug 2023 17:36:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82A22C001DE
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Aug 2023 17:42:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232427AbjHHRf7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Aug 2023 13:35:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34624 "EHLO
+        id S232376AbjHHRma (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Aug 2023 13:42:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234752AbjHHRff (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Aug 2023 13:35:35 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 206B397D61;
-        Tue,  8 Aug 2023 09:15:31 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9308D624CF;
-        Tue,  8 Aug 2023 11:23:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FA69C433C7;
-        Tue,  8 Aug 2023 11:23:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691493810;
-        bh=9dfaHkQsTbz6SSdb5UJdAoztmVevINLHKGS/qmJt5n4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pq4dqwphkPXIi18+0GXMV9gShAYkiZK/k4OcBM8SwOG1LdpZXNrapZgz5t5c2/2jZ
-         8QBNNMX0AHJIw+39UDpWf+ogaSuEHSA0gCK0uZZoa0qabWv7wCx0okIcUArS5U+AV/
-         QD5lfhc4yo97Sy1uDKyThSEyQuFUb1rNGTbbj1+hLhWSnaFVz8cHEFFLssFyPh000Q
-         whMw26ZEUo1F4M1Qk4eJDgNAVejOjccjXCcw7w5c8+xyD8XarjeG5oqspA6AqVKiqu
-         Kvu+JbOvQhUpEu4qDi0MpLsS2NK6OmtNXhxfiAECuYIvjxUQe5pW9vR1N6g9qc4gcZ
-         h3BGYGhFBK8/g==
-Date:   Tue, 8 Aug 2023 12:23:23 +0100
-From:   Conor Dooley <conor@kernel.org>
-To:     Duje =?utf-8?Q?Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Cc:     Conor Dooley <conor+dt@kernel.org>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andy Shevchenko <andy@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Tony Luck <tony.luck@intel.com>,
-        "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-hardening@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        afaerber@suse.de
-Subject: Re: [PATCH v4 3/8] dt-bindings: clock: Add Marvell PXA1908 clock
- bindings
-Message-ID: <20230808-produce-thievish-3ce1b86a114b@spud>
-References: <20230807-pxa1908-lkml-v4-0-cb387d73b452@skole.hr>
- <2155917.irdbgypaU6@radijator>
- <20230808-quizzical-footwork-4846d6461f74@spud>
- <10320606.nUPlyArG6x@radijator>
+        with ESMTP id S234838AbjHHRl4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Aug 2023 13:41:56 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A1E74221
+        for <linux-clk@vger.kernel.org>; Tue,  8 Aug 2023 09:18:31 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-3fe4a89e8c4so33898645e9.3
+        for <linux-clk@vger.kernel.org>; Tue, 08 Aug 2023 09:18:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1691511471; x=1692116271;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
+        bh=mFOhD8TvrN3kEaAYXPGjF3oU27kR58bUIX2cHeJs6g4=;
+        b=DXpN+35+x6ub07pOtOPbDVyB/Cu5z5Sln5usVivcUFSczSLlPMdfGPm7sXnhe0Powu
+         33Q0IYCGbtc9+aXdpUnrqZMmhBBQ0BzYea12ss7BAQpkKvbZ1OlqMMVLeQITHi54Y9hW
+         Cb66D5cbGlmubI+RpXSy8tsjFNFzOxNg/huUx263xJEplblg8o5m8XuGm5C+TgMwO4ha
+         GitavVfiOHvT9l8J+5W22uwwbgF2nGkFosVRpWSDWkY0X/Gm8X22IHjvxygJkMVuoCLX
+         xrC43RO7IoiVrX2Wf8Zor9SmHqNvGNaQwrI1Up9iW5LGRPuZzy2ECUztQRrrkBEPEZYw
+         UgDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691511471; x=1692116271;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mFOhD8TvrN3kEaAYXPGjF3oU27kR58bUIX2cHeJs6g4=;
+        b=Gc+A0pjtMP18oHYGb57G7hO73Bb1jnvWighMlOkwWdmggh4cEeNLsrHz7n7xxdzhOn
+         VhsztHl5z7b1Y9DUBhVW9ehOcacXk912UdjjQmNhp/VDLREeJ/s5vQhGRJS+woveWKiD
+         m5FY4W+LK4TmtgU5xLBAzZxz1QixPmrylBZ4cYDqfjWk719sNDlFFzr562nG0Em5B2uZ
+         mxDHfWDnnSfPNynqFe6Ug6aJm5nk/Ylp9TYt360XPI2OMMMcJTQh5nhN01/vrYcPKh/m
+         FUdkEVVKyuSQqhwHgS2EHqeWY76N5RIVRBaH7Mtgj2jxwFzSN86n9KtRb2QGkQsEXo9k
+         6Crg==
+X-Gm-Message-State: AOJu0Yx9HdY45zS13qdBneJG5tN7Wiwl9z0q/kYnZKXDD5TnX5zJO3Tn
+        ix2wHLYUeEfEZ43PWi9B80Us1ppyWPihh+qGhSg=
+X-Google-Smtp-Source: AGHT+IFozB535bQ3dsOdzC8ibC2SVAdeAA6xH1Rr7AndjIWl+K+Gm3Yi/Og8fGDBzvdPVLlNGUdwCw==
+X-Received: by 2002:a05:6000:1247:b0:317:f4c2:a99d with SMTP id j7-20020a056000124700b00317f4c2a99dmr2600500wrx.53.1691501231461;
+        Tue, 08 Aug 2023 06:27:11 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:efd4:f3df:2c50:1776])
+        by smtp.gmail.com with ESMTPSA id r2-20020a5d4942000000b003063a92bbf5sm13729592wrs.70.2023.08.08.06.27.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Aug 2023 06:27:11 -0700 (PDT)
+References: <20230731042807.1322972-1-wenst@chromium.org>
+User-agent: mu4e 1.8.13; emacs 28.2
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Chen-Yu Tsai <wenst@chromium.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: meson: meson8b: Simplify notifier clock lookup
+Date:   Tue, 08 Aug 2023 15:21:46 +0200
+In-reply-to: <20230731042807.1322972-1-wenst@chromium.org>
+Message-ID: <1jpm3xoea9.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="PFsVVMVhVavFC5ld"
-Content-Disposition: inline
-In-Reply-To: <10320606.nUPlyArG6x@radijator>
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---PFsVVMVhVavFC5ld
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon 31 Jul 2023 at 12:27, Chen-Yu Tsai <wenst@chromium.org> wrote:
 
-On Tue, Aug 08, 2023 at 01:03:33PM +0200, Duje Mihanovi=C4=87 wrote:
-> On Tuesday, August 8, 2023 12:46:23 PM CEST Conor Dooley wrote:
-> > On Tue, Aug 08, 2023 at 12:41:22PM +0200, Duje Mihanovi=C4=87 wrote:
-> > > They are used by the clock driver when calling mmp_clk_init which the=
-n=20
-> uses
-> > > that as the size of a struct clk array it allocates. In retrospect, 5=
-0 for
-> > > each block may be too much as from what I can tell by reading the
-> > > mmp_register_* functions (number of clocks + 1) for each block should=
- be
-> > > enough, anything less than that causes a null pointer dereference som=
-etime
-> > > during clock initialization.
-> >=20
-> > I think you might have misread my question, I'm not really interested in
-> > the implementation detail of the driver. If these are not used in
-> > devicetree, remove them - otherwise they are being needlessly added to
-> > the ABI.
->=20
-> Should I also do this in the rest of the MMP clock drivers?
+> The driver registers a clock notifier by first getting the name of one
+> of its clocks it just registered, then uses the name to look up the
+> clock. The lookup is not needed, since each clock provider already
+> has a clock attached to it. Use that instead to get rid of a
+> __clk_lookup() call.
+>
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> ---
+> Found this could be simplified while looking through some clk core code.
+>
+>
+>  drivers/clk/meson/meson8b.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+>
+> diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+> index 827e78fb16a8..c4336ac012bf 100644
+> --- a/drivers/clk/meson/meson8b.c
+> +++ b/drivers/clk/meson/meson8b.c
+> @@ -3793,7 +3793,6 @@ static void __init meson8b_clkc_init_common(struct device_node *np,
+>  {
+>  	struct meson8b_clk_reset *rstc;
+>  	struct device_node *parent_np;
+> -	const char *notifier_clk_name;
+>  	struct clk *notifier_clk;
+>  	struct regmap *map;
+>  	int i, ret;
+> @@ -3847,9 +3846,7 @@ static void __init meson8b_clkc_init_common(struct device_node *np,
+>  	 * tricky programming sequence will be handled by the forthcoming
+>  	 * coordinated clock rates mechanism once that feature is released.
+>  	 */
+> -	notifier_clk_name = clk_hw_get_name(&meson8b_cpu_scale_out_sel.hw);
+> -	notifier_clk = __clk_lookup(notifier_clk_name);
+> -	ret = clk_notifier_register(notifier_clk, &meson8b_cpu_nb_data.nb);
+> +	ret = clk_notifier_register(meson8b_cpu_scale_out_sel.hw.clk, &meson8b_cpu_nb_data.nb);
 
-Krzysztof has just done it for all of the Samsung ones! I think it
-wouldn't be a bad idea to get rid of them else where & new additions
-should definitely be avoided.
+Hi Chen-Yu,
 
---PFsVVMVhVavFC5ld
-Content-Type: application/pgp-signature; name="signature.asc"
+Your patch seems valid, as CCF stands right now.
 
------BEGIN PGP SIGNATURE-----
+However, I believe there is a will to drop the 'struct clk' instance that
+automatically gets created with each 'struct clk_hw'. This change would
+not help going in this direction
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZNIlqwAKCRB4tDGHoIJi
-0hb5AQDFHqBxeGJ5Pql2GZJHm+5OVEKHSGgnIdm0oWZdW4UkmAD8CiCkuPlCdNPe
-eY4hEyptsolQmpK08Yltu36YIg7G8gE=
-=WiyK
------END PGP SIGNATURE-----
+Stephen, what do you think ? 
 
---PFsVVMVhVavFC5ld--
+>  	if (ret) {
+>  		pr_err("%s: failed to register the CPU clock notifier\n",
+>  		       __func__);
+
