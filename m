@@ -2,111 +2,173 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99126C001B0
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Aug 2023 17:00:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9426C001DB
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Aug 2023 17:02:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233890AbjHHRAv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Aug 2023 13:00:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35154 "EHLO
+        id S232151AbjHHRC4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Aug 2023 13:02:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41542 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233670AbjHHRAD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Aug 2023 13:00:03 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E32D62706
-        for <linux-clk@vger.kernel.org>; Tue,  8 Aug 2023 09:00:28 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-99cdb0fd093so312574866b.1
-        for <linux-clk@vger.kernel.org>; Tue, 08 Aug 2023 09:00:28 -0700 (PDT)
+        with ESMTP id S233843AbjHHRBz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Aug 2023 13:01:55 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8DA958F93
+        for <linux-clk@vger.kernel.org>; Tue,  8 Aug 2023 09:01:14 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-3fe12baec61so49485815e9.2
+        for <linux-clk@vger.kernel.org>; Tue, 08 Aug 2023 09:01:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691510398; x=1692115198;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rq9CGfMIPSDr9ZlL/JERcR7sYpgjvn+r29Kl2qTSWpE=;
-        b=vfo0i+LiAZi38xsroAnRMiOkDYYymf6/ozqTivpl/Lt+lPHwreovDxVnzdePaAudc4
-         111/2k78EMTUEz7t3xmFZqiJVoAY9QgYPCh/RkUg1qe4A1kKDF4tfOzfoxC038Lh9mY9
-         L8mP5XO/NpKZw7D1J/VeIB3yWfzUDFiDO5oC5Jh31kAI0aQDCZ9iidKY1nsvOtESFvvM
-         kjbNMYMIdB7JcwmcRmN/qCNZuVW8oElJGDHokUIINV4u1ZtvE8Gexk3EN9+g0Rfvzwqu
-         cpsbXObTYZ4RtigWrz/5CETPbaUNIeQTR9wWBxkovJlMuO1vi3rSye0DB4d7pS/jEaW6
-         sAJw==
+        d=linaro.org; s=google; t=1691510429; x=1692115229;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NiT0zdP9RcVMfv6FtcplHy2nGhazgGSIvo5WbDUA63E=;
+        b=c5GVFNFjq91jrG5jWGzEXEAeFbMvu/Omar7II7onIrOQVxnkF0ms9dEYGCs0U+PnBY
+         M+ZRfElrUU8xHvDfjCBYyV6gDA79l7iMkn+NkRZsSTZukgzoD51RMKB2gZSzpuwcubvU
+         3jI92JJBFjKvMX148FL+D/K34RuLuaqpLkeORbTMcnmOOjrChgGtkwi0PecOoMpFoBt/
+         +4eevC2CL/EPTLPBcsRQD/ffrhNANb8RNGSqDQY0yPTDEQKTOSVFm3SIHJMaMKFbNZJi
+         9pNRByc1Fa9BaeLqvfYesk9Q6iP8/ET7dF4DcN+REAzrDE7z8iSZZdhIW1Uo51iZeO+q
+         lFYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691510398; x=1692115198;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rq9CGfMIPSDr9ZlL/JERcR7sYpgjvn+r29Kl2qTSWpE=;
-        b=g7ufq8O1dE/Iz4ocT+vAdQmc5tuNnIUB/hYbXqsFKMDNcTzGr+PhX6LkcRloaJOgxV
-         ijtK0W1uT6Nyt6eMPMIMq3Y0FIy3rIPoWsN5j7rMsPToozDhCIUxLxEhCezraosOyVA0
-         YXD7Kp9drRCT+3ukZJDn/fnxwh/17Z79A4n07MvpMsZGhK9/tAWtPZv5kEjvwHh+/swl
-         27/cUTvhVqNxaMxT8DfwifWJ2gm+BJo+RMjLr142/7NzTm2POB/MV1ogUkKX0P+96FZK
-         rUILSm1RNwDEf8frAR1VQFzAKdSUWiBEKWtEAGRdZKBVlfMKuCXsuCZ4ntEBlbiHwafs
-         /iyQ==
-X-Gm-Message-State: AOJu0Yy28TR6B+2WCXzahu76M5GRrN2oilNcmpA9q4Eo+/wvDhK5OJyK
-        OmHp020oAYPo/YcHH3sMy3tqdB4mZuUcDnnDtEQ=
-X-Google-Smtp-Source: AGHT+IHxzkAXBfNJDNcknbZH6tlIYjJNFyXEZDfCnRpxQMJVfuN4V6svYqKu4KC6ef0+KBpYIwyrmA==
-X-Received: by 2002:a2e:9f4b:0:b0:2b9:3db7:322f with SMTP id v11-20020a2e9f4b000000b002b93db7322fmr8508153ljk.18.1691492178941;
-        Tue, 08 Aug 2023 03:56:18 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.222.113])
-        by smtp.gmail.com with ESMTPSA id o12-20020a05600c378c00b003fd2e89620asm17797634wmr.40.2023.08.08.03.56.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Aug 2023 03:56:18 -0700 (PDT)
-Message-ID: <d7cc1aec-17be-502d-47c1-3163a2766ee4@linaro.org>
-Date:   Tue, 8 Aug 2023 12:56:16 +0200
+        d=1e100.net; s=20221208; t=1691510429; x=1692115229;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NiT0zdP9RcVMfv6FtcplHy2nGhazgGSIvo5WbDUA63E=;
+        b=etgTqIeeo94LQuHsPR187y1RB9FHcxuU6p0iLHX1lJ+OVQND26BVkJMMgC5udyGO44
+         u7DhcUh+5Anz7szm7QVSpO2dYdUEgVuaSd7o3BoS7dVCydIarvRPJWK0dn0zP6Fvt3y6
+         n+qGDOfcIkpNY4Z/1qcULUO1PLm9CsP5F4mj5X/kdL63i88kjudNHJWUuGAzGYvizRAA
+         Z4JI67uxo9bWBEV8xyi4nqMv64yUNKvfUIpOMZjs7rY5mgua2+jUACpyjoUPTh+325+Z
+         LDTOgKr7Ht2pMEjnag6fEzYAutWyu09TeaeMWTsmMvWYFqluiH7IE/cRWNvGNT4UparS
+         A5fw==
+X-Gm-Message-State: AOJu0Yy2FCha5oylvAiYBBtU8lNlCXrty9h1R9n9DS9KEJ+Rj4PrTtXR
+        1wGUuewt0mm1J4S5PS5/gDEcSHRskz8L0UWwCvY=
+X-Google-Smtp-Source: AGHT+IF7FsNW05tchzFLg08e24E0C6uLzAZLbxhdVKl8LRAWeyHXHm2QOMKSVvO0FNrWGNxEl3ClCQ==
+X-Received: by 2002:ac2:4e88:0:b0:4fe:ecd:494f with SMTP id o8-20020ac24e88000000b004fe0ecd494fmr6969822lfr.33.1691495018085;
+        Tue, 08 Aug 2023 04:43:38 -0700 (PDT)
+Received: from [192.168.1.101] (abxi185.neoplus.adsl.tpnet.pl. [83.9.2.185])
+        by smtp.gmail.com with ESMTPSA id j20-20020ac253b4000000b004fbdba4b075sm1861679lfh.57.2023.08.08.04.43.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Aug 2023 04:43:37 -0700 (PDT)
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Date:   Tue, 08 Aug 2023 13:43:33 +0200
+Subject: [PATCH v3 02/10] interconnect: qcom: icc-rpm: Separate out clock
+ rate calulcations
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [PATCH 11/11] dt-bindings: clock: samsung: remove define with
- number of clocks
-Content-Language: en-US
-To:     Conor Dooley <conor@kernel.org>
-Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20230808082738.122804-1-krzysztof.kozlowski@linaro.org>
- <20230808082738.122804-12-krzysztof.kozlowski@linaro.org>
- <20230808-scarcity-sprung-c0c2abc2971f@spud>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230808-scarcity-sprung-c0c2abc2971f@spud>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20230726-topic-icc_coeff-v3-2-dee684d6cdd2@linaro.org>
+References: <20230726-topic-icc_coeff-v3-0-dee684d6cdd2@linaro.org>
+In-Reply-To: <20230726-topic-icc_coeff-v3-0-dee684d6cdd2@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1691495013; l=2930;
+ i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
+ bh=s1ZE4XHCfs1j0oOrUS6GpKQLQgPUfnNi7YQdZMNs0uA=;
+ b=BNLRtVUx+or/VTf6c67Fn8JQREAUM7KBMxBUw0bidTpwWnVF2uG46h/vQ7rWTJJxXrCyqlcrL
+ IOWQVTe2E5gCEsjBZnt/i0WfG9lrZKz3P7zP5BydAdzwZBurxpKPb6a
+X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 08/08/2023 12:53, Conor Dooley wrote:
-> On Tue, Aug 08, 2023 at 10:27:38AM +0200, Krzysztof Kozlowski wrote:
->> Number of clocks supported by Linux drivers might vary - sometimes we
->> add new clocks, not exposed previously.  Therefore this number of clocks
->> should not be in the bindings, because otherwise we should not change
->> it.
-> 
-> This sentence reads super awkwardly, not by any means important to
-> change, but I'd likely word it "Therefore these numbers of clocks should
-> not be in the bindings, as that prevents changing them".
+In preparation for also setting per-node clock rates, separate out the
+logic that computes it.
 
-That's better, thanks.
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+---
+ drivers/interconnect/qcom/icc-rpm.c | 53 +++++++++++++++++++++----------------
+ 1 file changed, 30 insertions(+), 23 deletions(-)
 
-> 
->> Remove it entirely from the bindings, once Linux drivers stopped
->> using them.
-> 
-> I figure there are no consumers in other projects then? If so,
+diff --git a/drivers/interconnect/qcom/icc-rpm.c b/drivers/interconnect/qcom/icc-rpm.c
+index 8b02aa8aa96a..8c1bfd65d774 100644
+--- a/drivers/interconnect/qcom/icc-rpm.c
++++ b/drivers/interconnect/qcom/icc-rpm.c
+@@ -291,6 +291,32 @@ static int qcom_icc_bw_aggregate(struct icc_node *node, u32 tag, u32 avg_bw,
+ 	return 0;
+ }
+ 
++static u64 qcom_icc_calc_rate(struct qcom_icc_provider *qp, struct qcom_icc_node *qn, int ctx)
++{
++	u64 agg_avg_rate, agg_peak_rate, agg_rate;
++
++	if (qn->channels)
++		agg_avg_rate = div_u64(qn->sum_avg[ctx], qn->channels);
++	else
++		agg_avg_rate = qn->sum_avg[ctx];
++
++	if (qp->ab_coeff) {
++		agg_avg_rate = agg_avg_rate * qp->ab_coeff;
++		agg_avg_rate = div_u64(agg_avg_rate, 100);
++	}
++
++	if (qp->ib_coeff) {
++		agg_peak_rate = qn->max_peak[ctx] * 100;
++		agg_peak_rate = div_u64(qn->max_peak[ctx], qp->ib_coeff);
++	} else {
++		agg_peak_rate = qn->max_peak[ctx];
++	}
++
++	agg_rate = max_t(u64, agg_avg_rate, agg_peak_rate);
++
++	return div_u64(agg_rate, qn->buswidth);
++}
++
+ /**
+  * qcom_icc_bus_aggregate - calculate bus clock rates by traversing all nodes
+  * @provider: generic interconnect provider
+@@ -299,10 +325,9 @@ static int qcom_icc_bw_aggregate(struct icc_node *node, u32 tag, u32 avg_bw,
+ static void qcom_icc_bus_aggregate(struct icc_provider *provider, u64 *agg_clk_rate)
+ {
+ 	struct qcom_icc_provider *qp = to_qcom_provider(provider);
+-	u64 agg_avg_rate, agg_peak_rate, agg_rate;
+ 	struct qcom_icc_node *qn;
+ 	struct icc_node *node;
+-	int i;
++	int ctx;
+ 
+ 	/*
+ 	 * Iterate nodes on the provider, aggregate bandwidth requests for
+@@ -310,27 +335,9 @@ static void qcom_icc_bus_aggregate(struct icc_provider *provider, u64 *agg_clk_r
+ 	 */
+ 	list_for_each_entry(node, &provider->nodes, node_list) {
+ 		qn = node->data;
+-		for (i = 0; i < QCOM_SMD_RPM_STATE_NUM; i++) {
+-			if (qn->channels)
+-				agg_avg_rate = div_u64(qn->sum_avg[i], qn->channels);
+-			else
+-				agg_avg_rate = qn->sum_avg[i];
+-
+-			if (qp->ab_coeff) {
+-				agg_avg_rate = agg_avg_rate * qp->ab_coeff;
+-				agg_avg_rate = div_u64(agg_avg_rate, 100);
+-			}
+-
+-			if (qp->ib_coeff) {
+-				agg_peak_rate = qn->max_peak[i] * 100;
+-				agg_peak_rate = div_u64(qn->max_peak[i], qp->ib_coeff);
+-			} else {
+-				agg_peak_rate = qn->max_peak[i];
+-			}
+-
+-			agg_rate = max_t(u64, agg_avg_rate, agg_peak_rate);
+-
+-			agg_clk_rate[i] = max_t(u64, agg_clk_rate[i], agg_rate);
++		for (ctx = 0; ctx < QCOM_SMD_RPM_STATE_NUM; ctx++) {
++			agg_clk_rate[ctx] = max_t(u64, agg_clk_rate[ctx],
++						  qcom_icc_calc_rate(qp, qn, ctx));
+ 		}
+ 	}
+ }
 
-Difficult to say, nothing known to me. Anyway these are not clock IDs,
-so if anyone actually relied on number of clocks in the bindings, they
-would have trouble in the first place.
-
-
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-
-
-Best regards,
-Krzysztof
+-- 
+2.41.0
 
