@@ -2,153 +2,141 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2569C001DE
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Aug 2023 15:59:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C995BC001DB
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Aug 2023 16:03:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231438AbjHHP7c (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Aug 2023 11:59:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47406 "EHLO
+        id S231605AbjHHQDU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Aug 2023 12:03:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229519AbjHHP6E (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Aug 2023 11:58:04 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BC3D5B92;
-        Tue,  8 Aug 2023 08:44:09 -0700 (PDT)
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3786rO8j020060;
-        Tue, 8 Aug 2023 06:59:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=W6IibI3rqiPbbuFuoeCCniA1LWD+eNWd6v3UOXuPKAI=;
- b=fYWCgQSjgqVuGLs65hNtI74mN0J6uQH0Mg0U2a182VZwuHh2K1ImyYA7rs24wdM9KLbV
- Kb4g7RPF/s4oVKHwOO7zE1jgeDUqS5EgkBOgHjqsMoMnYKBRQ0Zc6O2xxwidAVwAEmjP
- xCkNjEroUQAb4P02GcTGuhdwhxbCO+1xHcItNzghk84xgren4sgU2aQ2cFFWt1fb09be
- UpI+BaaSwCq/Aoal5ELUj0sfvURHKb24Tb7BFs/suZocmJ+IXyVC8uiQHd8pKvYQNaOo
- Y5BDzCdm659f6WLob6Yw7SDAICBGQO+x2WYvLmqNF/bdYYNZXMA+ZKB/SzcAEF+VIinA GQ== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3saxbbt54p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 08 Aug 2023 06:59:20 +0000
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3786x8dK012327
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 8 Aug 2023 06:59:08 GMT
-Received: from [10.253.9.41] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Mon, 7 Aug
- 2023 23:59:04 -0700
-Message-ID: <15c2fed5-d2b7-3b25-8aa6-95453afee716@quicinc.com>
-Date:   Tue, 8 Aug 2023 14:59:01 +0800
+        with ESMTP id S231659AbjHHQCG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Aug 2023 12:02:06 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B513F19E
+        for <linux-clk@vger.kernel.org>; Tue,  8 Aug 2023 08:40:33 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-51e2a6a3768so8009016a12.0
+        for <linux-clk@vger.kernel.org>; Tue, 08 Aug 2023 08:40:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1691509217; x=1692114017;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gAg8mzz6tXJyaH1tEofpHQ5TEsFiQj+ho2hy+w4Tmaw=;
+        b=mSKTnZOpoMTHi5LfGjE6kLZRbwS02BVOKHFnGld2olD1+Bjvmgs+8Y9uDePJsIh3NW
+         3fYAMgZqfuDkJ2mwbTtGlO4wThAvPIts/uwrAFjqJJVks6LFl6R55lMVd4uGFIhvj/zA
+         1Ro+40n5bqyTX/YMGrbcMcTJ2HoNUkjwMF7M++gnd811PvMDHV6HV6gXs5n9u4pzPBVV
+         ZFihRFt02GWyzWdB8VzVP7NT/PB2kOZrwGGa898jeS23gBbuE6FYHB1tUw5HW5whPts6
+         CqvIA7e+NV8CZDNKlOII0Xn50cplugXdXOejH391yQa6vTMLTmmcHhMDPMv3GEMBd25E
+         vsxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691509217; x=1692114017;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gAg8mzz6tXJyaH1tEofpHQ5TEsFiQj+ho2hy+w4Tmaw=;
+        b=FClnFiojTIB+QN6Id6xipGcXicMHv6VKCjKHWh4thvuj8lqOpIpbaW4AmMjVxR402E
+         vd/7caSDtM0Q97kJhRwacgODJ417S/4mRom6GHTGc7StYbzQfhU8pJiE+HZ0BcB3DTY6
+         N0zO14GfqV1leLZ7OPkpqQYpatL3y2wf25DDSLrG/aObESIJEnBF6dd61PK3DlGXTU4H
+         p4vOXkDCZA8HQt1UUAOWcuQPeSy7oAnj63f2DJW7YkvxNo2XqVPeIFFAV4cpxCZqgQKJ
+         T2Pi1rEUXAFxiQoazHquHfqTeuX0+uIA108GM8sXxbncc7bRPXjXq6me5gfAZkN8aPZs
+         gn6w==
+X-Gm-Message-State: AOJu0YwPqfbsizC+VPoSmmI8c7Z/vTDZYmqrWqxVMp+h69/OTQa4ZZM5
+        vYsglxIpbKd0iUCEZ5xWGwhAzITaXnRsT/qCI5A=
+X-Google-Smtp-Source: AGHT+IHZdXCtug2ljX6dDSj6oQkG8V1UJLNKTYOKnSjmV42sR9+Wv2CCmrrKVl5VAmfJlHe6DhBOLg==
+X-Received: by 2002:a05:6512:2018:b0:4fd:c771:ed86 with SMTP id a24-20020a056512201800b004fdc771ed86mr6615303lfb.67.1691487895251;
+        Tue, 08 Aug 2023 02:44:55 -0700 (PDT)
+Received: from [192.168.1.101] (abxi185.neoplus.adsl.tpnet.pl. [83.9.2.185])
+        by smtp.gmail.com with ESMTPSA id i6-20020a056512006600b004fdba93b92asm1818884lfo.252.2023.08.08.02.44.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Aug 2023 02:44:54 -0700 (PDT)
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Date:   Tue, 08 Aug 2023 11:44:44 +0200
+Subject: [PATCH v2 4/6] clk: qcom: mmcc-msm8998: Don't check halt bit on
+ some branch clks
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [PATCH 2/3] dt-bindings: clock: add qca8386/qca8084 clock and
- reset definitions
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <p.zabel@pengutronix.de>
-CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_srichara@quicinc.com>
-References: <20230801085352.22873-1-quic_luoj@quicinc.com>
- <20230801085352.22873-3-quic_luoj@quicinc.com>
- <ef996a7e-6eba-4366-c3ea-0d08f2768e98@linaro.org>
- <cf9788f0-a115-5ff9-1195-f4f302551e04@quicinc.com>
- <d1172ed6-ee3b-83b6-1656-c91e35fbc2df@linaro.org>
- <f25e1043-6dfa-2dcc-2948-88025f4881d8@quicinc.com>
- <1f20d778-cdae-d6d9-ac86-744dd45176d3@linaro.org>
-From:   Jie Luo <quic_luoj@quicinc.com>
-In-Reply-To: <1f20d778-cdae-d6d9-ac86-744dd45176d3@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 6lRNypmy0vf9QnMtd2t9BLMdQ74wz5Gq
-X-Proofpoint-GUID: 6lRNypmy0vf9QnMtd2t9BLMdQ74wz5Gq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-08-08_05,2023-08-03_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=862 bulkscore=0
- spamscore=0 clxscore=1015 impostorscore=0 malwarescore=0 phishscore=0
- priorityscore=1501 adultscore=0 suspectscore=0 mlxscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2306200000 definitions=main-2308080062
+Message-Id: <20230531-topic-8998_mmssclk-v2-4-34273e275c51@linaro.org>
+References: <20230531-topic-8998_mmssclk-v2-0-34273e275c51@linaro.org>
+In-Reply-To: <20230531-topic-8998_mmssclk-v2-0-34273e275c51@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        Imran Khan <kimran@codeaurora.org>,
+        Rajendra Nayak <quic_rjendra@quicinc.com>,
+        Joonwoo Park <joonwoop@codeaurora.org>,
+        Jeffrey Hugo <quic_jhugo@quicinc.com>,
+        Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Jeffrey Hugo <quic_jhugo@quicinc.com>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Jami Kettunen <jami.kettunen@somainline.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1691487885; l=1407;
+ i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
+ bh=haDOFYx+cWB8WYF0AFsxGiNUFhwDHpLSQyDe+vgkap0=;
+ b=ZrMZ0b0kru/BioU+kcPyTGDosiv5UYR3dvjZ97R7NYb1CKIWbtfb6OQL9uoCg1eDGTN2RtwgC
+ KnIylLEWD68BzoXZqSp7GXw9MgJJMQxVOqARg8YLk04oG4zFHl8Kfq8
+X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Some branch clocks are governed externally and we're only supposed to
+send a request concerning their shutdown, not actually ensure it happens.
 
+Use the BRANCH_HALT_SKIP define to skip checking the halt bit.
 
-On 8/8/2023 2:46 PM, Krzysztof Kozlowski wrote:
-> On 08/08/2023 08:31, Jie Luo wrote:
->>
->>
->> On 8/8/2023 1:57 PM, Krzysztof Kozlowski wrote:
->>> On 08/08/2023 07:19, Jie Luo wrote:
->>>>>> +properties:
->>>>>> +  compatible:
->>>>>> +    const: qcom,nsscc-qca8k
->>>>>
->>>>> SoC name is before IP block names. See:
->>>>> Documentation/devicetree/bindings/arm/qcom-soc.yaml
->>>>>
->>>>> qca8k is not SoC specific. I don't know what you are documenting here,
->>>>> but if this is a SoC, then follow SoC rules.
->>>>>
->>>>> If this is not SoC, it confuses me a bit to use GCC binding.
->>>>>
->>>>> Anyway, this was not tested, as pointed out by bot... Please test the
->>>>> code before sending.
->>>>>
->>>>> Best regards,
->>>>> Krzysztof
->>>>>
->>>>
->>>> Hi Krzysztof,
->>>>
->>>> Thanks for the review comments.
->>>> qca8383/qca8084 is a network chip that support switch mode and PHY mode,
->>>> the hardware register is accessed by MDIO bus, which is not a SOC.
->>>>
->>>> But it has the self-contained clock controller system, the clock
->>>> framework of qca8386/qca8084 is same as the GCC of ipq platform such as
->>>> ipq9574.
->>>
->>> OK
->>>
->>>>
->>>> would you help advise whether we can document it with the compatible
->>>> "qcom,qca8k-nsscc"?
->>>
->>> For example:
->>> qcom,qca8084-nsscc
->>>
->>> Best regards,
->>> Krzysztof
->>>
->> Thanks Krzysztof for the suggestion.
->>
->> i will document the compatible below.
->> "qcom,qca8084-nsscc" for the PHY mode of device.
->> "qcom,qca8386-nsscc" for the switch mode of device.
-> 
-> The clocks seem to be exactly the same for both, so use only one
-> compatible in the driver (the fallback) and oneOf in the bindings like:
-> 
-> https://elixir.bootlin.com/linux/v6.3-rc6/source/Documentation/devicetree/bindings/sound/nvidia,tegra210-ope.yaml#L31
-> 
-> Best regards,
-> Krzysztof
-> 
-Yes, it is the same driver for both.
-i will update this in the next patch set, thanks Krzysztof.
+Fixes: d14b15b5931c ("clk: qcom: Add MSM8998 Multimedia Clock Controller (MMCC) driver")
+Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+---
+ drivers/clk/qcom/mmcc-msm8998.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Jie.
+diff --git a/drivers/clk/qcom/mmcc-msm8998.c b/drivers/clk/qcom/mmcc-msm8998.c
+index c62aa270af1c..d0a5440e2291 100644
+--- a/drivers/clk/qcom/mmcc-msm8998.c
++++ b/drivers/clk/qcom/mmcc-msm8998.c
+@@ -2452,6 +2452,7 @@ static struct clk_branch fd_ahb_clk = {
+ 
+ static struct clk_branch mnoc_ahb_clk = {
+ 	.halt_reg = 0x5024,
++	.halt_check = BRANCH_HALT_SKIP,
+ 	.clkr = {
+ 		.enable_reg = 0x5024,
+ 		.enable_mask = BIT(0),
+@@ -2467,6 +2468,7 @@ static struct clk_branch mnoc_ahb_clk = {
+ 
+ static struct clk_branch bimc_smmu_ahb_clk = {
+ 	.halt_reg = 0xe004,
++	.halt_check = BRANCH_HALT_SKIP,
+ 	.hwcg_reg = 0xe004,
+ 	.hwcg_bit = 1,
+ 	.clkr = {
+@@ -2484,6 +2486,7 @@ static struct clk_branch bimc_smmu_ahb_clk = {
+ 
+ static struct clk_branch bimc_smmu_axi_clk = {
+ 	.halt_reg = 0xe008,
++	.halt_check = BRANCH_HALT_SKIP,
+ 	.hwcg_reg = 0xe008,
+ 	.hwcg_bit = 1,
+ 	.clkr = {
+
+-- 
+2.41.0
+
