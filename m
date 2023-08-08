@@ -2,216 +2,123 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29E0AC04A6A
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Aug 2023 18:12:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFADCC001DB
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Aug 2023 18:15:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235268AbjHHSMZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Aug 2023 14:12:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34190 "EHLO
+        id S235486AbjHHSP5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Aug 2023 14:15:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232845AbjHHSLz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Aug 2023 14:11:55 -0400
-Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE3126F486
-        for <linux-clk@vger.kernel.org>; Tue,  8 Aug 2023 10:15:48 -0700 (PDT)
-Received: by mail-pg1-x52e.google.com with SMTP id 41be03b00d2f7-564ca521549so3013169a12.1
-        for <linux-clk@vger.kernel.org>; Tue, 08 Aug 2023 10:15:48 -0700 (PDT)
+        with ESMTP id S234256AbjHHSP0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Aug 2023 14:15:26 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9D9F1E4F4
+        for <linux-clk@vger.kernel.org>; Tue,  8 Aug 2023 10:21:44 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-99bed101b70so847016566b.3
+        for <linux-clk@vger.kernel.org>; Tue, 08 Aug 2023 10:21:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691514946; x=1692119746;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=6S+a7yYbAbaMGNTQ39CoTTiQM46sZCpEJ7cTfZYNXGA=;
-        b=Lx5g90Y9FoTVVViMPXEL4bXWDJVCil+eGqVwHTyT4cg0PzhXdny4MdmsD1q12iqKem
-         26vh+T0JUf7vnMMPRHvajoabXdO3wFugYppfCwT8MTL4mdatDDO4tG9lzEuwSGvqfLUt
-         TcV9lYKMTmRFDN+or8svOrX2E69p8qsQMFhyFAEZ+LmxnROQfJMRHFNNY/M1xw35WOIg
-         Wu989wc4iaeCJH5V1aLGe0CLwufQlUlgnbos5xGmdBH330HeUbzdpEm8UUVLb3DLqWH3
-         mcMNUal5VffH335OADi3l82ayxcb8wyTB0SPvI0IJsBMbv1IbpsPNNAvzDQOD0BD/x9Q
-         P30w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691514946; x=1692119746;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1691515303; x=1692120103;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=6S+a7yYbAbaMGNTQ39CoTTiQM46sZCpEJ7cTfZYNXGA=;
-        b=Vt5ypSu4m3m1nTS/bCJkARKIZh7omuCvrZHrBGsOy5r5Bg5yZrb6IF9En/2Eu66Ggm
-         XhNp3RIk0zRvct9OWO1qgwfoNSvmozYaZeoEzTjG6jcGyc0/fPJ7hyJ0p54zcLmUD4wY
-         +ULWxcx45anbE3yjH8Zae1K6c+8vCUoXdxWvJ469fFpxe0sI3twZmO3GKziN3ctyEMu9
-         CMwd8hW+2NkQNMD6wKaPx4EVgJze+9JOGYRtATggTxf54Pj+vqvLCCBx0sI4ogp2940i
-         C1EXmM40AUA2cJb24DaGh6sBal36eRl7YbbyApESEg7jbEfeX8cf+aU6MtTwKCfHl2bT
-         8M2w==
-X-Gm-Message-State: AOJu0Yx5YOaS3k3IFRgVqg0/ZLZEZVu/XcxzPP/pAeLJbFXSTf0JXRpz
-        J7Fw4jJ2sxkw4LUy95JKoyCgAMNAds5bmqDddSoN2A==
-X-Google-Smtp-Source: AGHT+IGNaqV23dBBot7rOX2J7bjM37vOJ8eoGZABaopwO5OZt2zgCY1gyz5T/l8PD7NzJI9RShv6W3tBEWZXRJy+hew=
-X-Received: by 2002:a17:90b:2385:b0:262:e821:b3f8 with SMTP id
- mr5-20020a17090b238500b00262e821b3f8mr169486pjb.38.1691514945940; Tue, 08 Aug
- 2023 10:15:45 -0700 (PDT)
+        bh=X+614xtHjgD1nkm8xRBKqqyV2uZni5hqr1Y2F11sHVk=;
+        b=QbkktjXmb8Ofbkap/hW23U+ThcpD7d8vrnMs3qdtL93ozYTHKgofmUdcgapA8sDAN6
+         PPLETx080o8w3aeYeuUjnI4NksB2biYTgcUwt5rIs8ER7hAVTqSvsL++fI/Ql/+dSLc5
+         +/zZOMdBAXhMN/H5eI0fRa1axUfJ0/49kRaDEEsyCMbDM+GN9nC8IQQTJERjrN+gg+TR
+         V4N6FuEvwP9B1ddaQyamtOpCaDl1yg1sjMZaNN0TuD+FF2PLkJdT8HM4NYd7YPVrLSNB
+         AfvoOaWsge8eB5WleCuTgxmfKZyfzRTXmkGf1Y17+FUAHsmHAfs2SHMCtFX65Mcl1OV1
+         K18Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691515303; x=1692120103;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=X+614xtHjgD1nkm8xRBKqqyV2uZni5hqr1Y2F11sHVk=;
+        b=aQ/oD5g6wJdqiyRxcqJAAi+5RgYkL7My7V5M02C9EfTHw5uSuX4GuoGM+Qd/hJzTNa
+         p1vJL+rZk3fmP9IERbH+jKIbqCXYicQj9j8gu5zcK7fA8N8mJts/mLTr67whXQdCJBQ6
+         yNR02+Nb6WKtNuKrG0hsp3TQdr21uNlWPFHvmJxeSWNYM523qvajwb3vm1v9PRsWtvA8
+         CkyR/qtckcOlAnHKFLhm4baESRcDqJWM9Qd3ZuhRGVWYm6vlPE0nr/VT10lHAUQUTpMs
+         95rBOEOAH2e2DSTE2Qjugo1+07YcLlF0RJymRBcJRM2rZGNZ92+yHS3DEdwA15FZfTUL
+         zRQQ==
+X-Gm-Message-State: AOJu0YwaE1vUPLZMcEeFRZGJZCHBz1nPLQCugWfCAJu30DPKGrmoH5Sp
+        hq6u/uljml2c/EvW++hfUUsxinA/HlHnA3mRMNY=
+X-Google-Smtp-Source: AGHT+IFVMdcEkHvqjIMX5oEgG2oBE7nbsEMOVRk5VcpuTnRc1mcmt8mNUyLq7GYjCrQ3jyb2zmb5Gw==
+X-Received: by 2002:a05:6512:e9b:b0:4fe:5680:db1f with SMTP id bi27-20020a0565120e9b00b004fe5680db1fmr7912704lfb.53.1691487891249;
+        Tue, 08 Aug 2023 02:44:51 -0700 (PDT)
+Received: from [192.168.1.101] (abxi185.neoplus.adsl.tpnet.pl. [83.9.2.185])
+        by smtp.gmail.com with ESMTPSA id i6-20020a056512006600b004fdba93b92asm1818884lfo.252.2023.08.08.02.44.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Aug 2023 02:44:50 -0700 (PDT)
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Date:   Tue, 08 Aug 2023 11:44:42 +0200
+Subject: [PATCH v2 2/6] arm64: dts: qcom: msm8998: Add missing power domain
+ to MMSS SMMU
 MIME-Version: 1.0
-References: <20230808082738.122804-1-krzysztof.kozlowski@linaro.org> <20230808082738.122804-10-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230808082738.122804-10-krzysztof.kozlowski@linaro.org>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Tue, 8 Aug 2023 12:15:34 -0500
-Message-ID: <CAPLW+4=h7EvHwzkP84+z1T3o=PvBScsaBFsbG=Y+odYrjmVu1g@mail.gmail.com>
-Subject: Re: [PATCH 09/11] clk: samsung: exynos850: do not define number of
- clocks in bindings
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230531-topic-8998_mmssclk-v2-2-34273e275c51@linaro.org>
+References: <20230531-topic-8998_mmssclk-v2-0-34273e275c51@linaro.org>
+In-Reply-To: <20230531-topic-8998_mmssclk-v2-0-34273e275c51@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        Imran Khan <kimran@codeaurora.org>,
+        Rajendra Nayak <quic_rjendra@quicinc.com>,
+        Joonwoo Park <joonwoop@codeaurora.org>,
+        Jeffrey Hugo <quic_jhugo@quicinc.com>,
+        Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Jeffrey Hugo <quic_jhugo@quicinc.com>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Jami Kettunen <jami.kettunen@somainline.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1691487885; l=854;
+ i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
+ bh=/yznmFUOFfvt3H81R22ABUv0eOeLe9LUwSr+QNKzGV0=;
+ b=6ok/LWtlPH6zSyy5UMAq/t5bgWP3Ud7Ij9vBySuwjh3vMiS1gJVjxUKw6nLHyS95ARxX+LJAd
+ Ibm+ib3FKxpBIIhASbXVDOfZYxEwn1cNsRmJHG+sQTEmtuUOfL5elUO
+X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 8 Aug 2023 at 11:15, Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> Number of clocks supported by Linux drivers might vary - sometimes we
-> add new clocks, not exposed previously.  Therefore this number of clocks
-> should not be in the bindings, because otherwise we should not change
-> it.
->
-> Define number of clocks per each clock controller inside the driver
-> directly.
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
+The MMSS SMMU has its own power domain. Attach it so that we can drop
+the "keep it always-on" hack.
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+Fixes: 05ce21b54423 ("arm64: dts: qcom: msm8998: Configure the multimedia subsystem iommu")
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+---
+ arch/arm64/boot/dts/qcom/msm8998.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
->  drivers/clk/samsung/clk-exynos850.c | 35 ++++++++++++++++++++---------
->  1 file changed, 24 insertions(+), 11 deletions(-)
->
-> diff --git a/drivers/clk/samsung/clk-exynos850.c b/drivers/clk/samsung/clk-exynos850.c
-> index c32b2e6451a0..bdc1eef7d6e5 100644
-> --- a/drivers/clk/samsung/clk-exynos850.c
-> +++ b/drivers/clk/samsung/clk-exynos850.c
-> @@ -16,6 +16,19 @@
->  #include "clk.h"
->  #include "clk-exynos-arm64.h"
->
-> +/* NOTE: Must be equal to the last clock ID increased by one */
-> +#define CLKS_NR_TOP                    (CLK_DOUT_G3D_SWITCH + 1)
-> +#define CLKS_NR_APM                    (CLK_GOUT_SYSREG_APM_PCLK + 1)
-> +#define CLKS_NR_AUD                    (CLK_GOUT_AUD_CMU_AUD_PCLK + 1)
-> +#define CLKS_NR_CMGP                   (CLK_GOUT_SYSREG_CMGP_PCLK + 1)
-> +#define CLKS_NR_G3D                    (CLK_GOUT_G3D_SYSREG_PCLK + 1)
-> +#define CLKS_NR_HSI                    (CLK_GOUT_HSI_CMU_HSI_PCLK + 1)
-> +#define CLKS_NR_IS                     (CLK_GOUT_IS_SYSREG_PCLK + 1)
-> +#define CLKS_NR_MFCMSCL                        (CLK_GOUT_MFCMSCL_SYSREG_PCLK + 1)
-> +#define CLKS_NR_PERI                   (CLK_GOUT_WDT1_PCLK + 1)
-> +#define CLKS_NR_CORE                   (CLK_GOUT_SYSREG_CORE_PCLK + 1)
-> +#define CLKS_NR_DPU                    (CLK_GOUT_DPU_SYSREG_PCLK + 1)
-> +
->  /* ---- CMU_TOP ------------------------------------------------------------- */
->
->  /* Register Offset definitions for CMU_TOP (0x120e0000) */
-> @@ -485,7 +498,7 @@ static const struct samsung_cmu_info top_cmu_info __initconst = {
->         .nr_div_clks            = ARRAY_SIZE(top_div_clks),
->         .gate_clks              = top_gate_clks,
->         .nr_gate_clks           = ARRAY_SIZE(top_gate_clks),
-> -       .nr_clk_ids             = TOP_NR_CLK,
-> +       .nr_clk_ids             = CLKS_NR_TOP,
->         .clk_regs               = top_clk_regs,
->         .nr_clk_regs            = ARRAY_SIZE(top_clk_regs),
->  };
-> @@ -625,7 +638,7 @@ static const struct samsung_cmu_info apm_cmu_info __initconst = {
->         .nr_gate_clks           = ARRAY_SIZE(apm_gate_clks),
->         .fixed_clks             = apm_fixed_clks,
->         .nr_fixed_clks          = ARRAY_SIZE(apm_fixed_clks),
-> -       .nr_clk_ids             = APM_NR_CLK,
-> +       .nr_clk_ids             = CLKS_NR_APM,
->         .clk_regs               = apm_clk_regs,
->         .nr_clk_regs            = ARRAY_SIZE(apm_clk_regs),
->         .clk_name               = "dout_clkcmu_apm_bus",
-> @@ -908,7 +921,7 @@ static const struct samsung_cmu_info aud_cmu_info __initconst = {
->         .nr_gate_clks           = ARRAY_SIZE(aud_gate_clks),
->         .fixed_clks             = aud_fixed_clks,
->         .nr_fixed_clks          = ARRAY_SIZE(aud_fixed_clks),
-> -       .nr_clk_ids             = AUD_NR_CLK,
-> +       .nr_clk_ids             = CLKS_NR_AUD,
->         .clk_regs               = aud_clk_regs,
->         .nr_clk_regs            = ARRAY_SIZE(aud_clk_regs),
->         .clk_name               = "dout_aud",
-> @@ -1011,7 +1024,7 @@ static const struct samsung_cmu_info cmgp_cmu_info __initconst = {
->         .nr_gate_clks           = ARRAY_SIZE(cmgp_gate_clks),
->         .fixed_clks             = cmgp_fixed_clks,
->         .nr_fixed_clks          = ARRAY_SIZE(cmgp_fixed_clks),
-> -       .nr_clk_ids             = CMGP_NR_CLK,
-> +       .nr_clk_ids             = CLKS_NR_CMGP,
->         .clk_regs               = cmgp_clk_regs,
->         .nr_clk_regs            = ARRAY_SIZE(cmgp_clk_regs),
->         .clk_name               = "gout_clkcmu_cmgp_bus",
-> @@ -1107,7 +1120,7 @@ static const struct samsung_cmu_info g3d_cmu_info __initconst = {
->         .nr_div_clks            = ARRAY_SIZE(g3d_div_clks),
->         .gate_clks              = g3d_gate_clks,
->         .nr_gate_clks           = ARRAY_SIZE(g3d_gate_clks),
-> -       .nr_clk_ids             = G3D_NR_CLK,
-> +       .nr_clk_ids             = CLKS_NR_G3D,
->         .clk_regs               = g3d_clk_regs,
->         .nr_clk_regs            = ARRAY_SIZE(g3d_clk_regs),
->         .clk_name               = "dout_g3d_switch",
-> @@ -1209,7 +1222,7 @@ static const struct samsung_cmu_info hsi_cmu_info __initconst = {
->         .nr_mux_clks            = ARRAY_SIZE(hsi_mux_clks),
->         .gate_clks              = hsi_gate_clks,
->         .nr_gate_clks           = ARRAY_SIZE(hsi_gate_clks),
-> -       .nr_clk_ids             = HSI_NR_CLK,
-> +       .nr_clk_ids             = CLKS_NR_HSI,
->         .clk_regs               = hsi_clk_regs,
->         .nr_clk_regs            = ARRAY_SIZE(hsi_clk_regs),
->         .clk_name               = "dout_hsi_bus",
-> @@ -1341,7 +1354,7 @@ static const struct samsung_cmu_info is_cmu_info __initconst = {
->         .nr_div_clks            = ARRAY_SIZE(is_div_clks),
->         .gate_clks              = is_gate_clks,
->         .nr_gate_clks           = ARRAY_SIZE(is_gate_clks),
-> -       .nr_clk_ids             = IS_NR_CLK,
-> +       .nr_clk_ids             = CLKS_NR_IS,
->         .clk_regs               = is_clk_regs,
->         .nr_clk_regs            = ARRAY_SIZE(is_clk_regs),
->         .clk_name               = "dout_is_bus",
-> @@ -1450,7 +1463,7 @@ static const struct samsung_cmu_info mfcmscl_cmu_info __initconst = {
->         .nr_div_clks            = ARRAY_SIZE(mfcmscl_div_clks),
->         .gate_clks              = mfcmscl_gate_clks,
->         .nr_gate_clks           = ARRAY_SIZE(mfcmscl_gate_clks),
-> -       .nr_clk_ids             = MFCMSCL_NR_CLK,
-> +       .nr_clk_ids             = CLKS_NR_MFCMSCL,
->         .clk_regs               = mfcmscl_clk_regs,
->         .nr_clk_regs            = ARRAY_SIZE(mfcmscl_clk_regs),
->         .clk_name               = "dout_mfcmscl_mfc",
-> @@ -1625,7 +1638,7 @@ static const struct samsung_cmu_info peri_cmu_info __initconst = {
->         .nr_div_clks            = ARRAY_SIZE(peri_div_clks),
->         .gate_clks              = peri_gate_clks,
->         .nr_gate_clks           = ARRAY_SIZE(peri_gate_clks),
-> -       .nr_clk_ids             = PERI_NR_CLK,
-> +       .nr_clk_ids             = CLKS_NR_PERI,
->         .clk_regs               = peri_clk_regs,
->         .nr_clk_regs            = ARRAY_SIZE(peri_clk_regs),
->         .clk_name               = "dout_peri_bus",
-> @@ -1732,7 +1745,7 @@ static const struct samsung_cmu_info core_cmu_info __initconst = {
->         .nr_div_clks            = ARRAY_SIZE(core_div_clks),
->         .gate_clks              = core_gate_clks,
->         .nr_gate_clks           = ARRAY_SIZE(core_gate_clks),
-> -       .nr_clk_ids             = CORE_NR_CLK,
-> +       .nr_clk_ids             = CLKS_NR_CORE,
->         .clk_regs               = core_clk_regs,
->         .nr_clk_regs            = ARRAY_SIZE(core_clk_regs),
->         .clk_name               = "dout_core_bus",
-> @@ -1806,7 +1819,7 @@ static const struct samsung_cmu_info dpu_cmu_info __initconst = {
->         .nr_div_clks            = ARRAY_SIZE(dpu_div_clks),
->         .gate_clks              = dpu_gate_clks,
->         .nr_gate_clks           = ARRAY_SIZE(dpu_gate_clks),
-> -       .nr_clk_ids             = DPU_NR_CLK,
-> +       .nr_clk_ids             = CLKS_NR_DPU,
->         .clk_regs               = dpu_clk_regs,
->         .nr_clk_regs            = ARRAY_SIZE(dpu_clk_regs),
->         .clk_name               = "dout_dpu",
-> --
-> 2.34.1
->
+diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+index e40f6461f4fd..39db67211fae 100644
+--- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+@@ -2770,6 +2770,8 @@ mmss_smmu: iommu@cd00000 {
+ 				<GIC_SPI 261 IRQ_TYPE_LEVEL_HIGH>,
+ 				<GIC_SPI 262 IRQ_TYPE_LEVEL_HIGH>,
+ 				<GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
++
++			power-domains = <&mmcc BIMC_SMMU_GDSC>;
+ 		};
+ 
+ 		remoteproc_adsp: remoteproc@17300000 {
+
+-- 
+2.41.0
+
