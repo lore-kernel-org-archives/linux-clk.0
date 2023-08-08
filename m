@@ -2,127 +2,141 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17FAFC001B0
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Aug 2023 20:43:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B265C001B0
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Aug 2023 20:48:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233151AbjHHUn6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Aug 2023 16:43:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50140 "EHLO
+        id S235102AbjHHUsM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Aug 2023 16:48:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59454 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234583AbjHHUnn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Aug 2023 16:43:43 -0400
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3DDB12533
-        for <linux-clk@vger.kernel.org>; Tue,  8 Aug 2023 09:29:38 -0700 (PDT)
-Received: by mail-lj1-x232.google.com with SMTP id 38308e7fff4ca-2b9dc1bff38so91523311fa.1
-        for <linux-clk@vger.kernel.org>; Tue, 08 Aug 2023 09:29:38 -0700 (PDT)
+        with ESMTP id S231818AbjHHUsA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Aug 2023 16:48:00 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C059FF637
+        for <linux-clk@vger.kernel.org>; Tue,  8 Aug 2023 09:41:17 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-3fe12820bffso49991405e9.3
+        for <linux-clk@vger.kernel.org>; Tue, 08 Aug 2023 09:41:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691512153; x=1692116953;
+        d=linaro.org; s=google; t=1691512870; x=1692117670;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=4KW5W/BsMVq6+QNzWH4B7mMdqsIsqWz/fCs4TWl8ltY=;
-        b=s/1krStfVPO1jrPrXqOc+BfTUI6JXBdnb5QrihxXdXMQ+71oyAq8EerHSx3xVinmNC
-         gqsZL+LkNrE2FBJN110RkzDcHPqYv4SraO6TNA90D+n91HBC06PsY346On4P8QcQh1vs
-         FFWM7et+d5LWkGnGXOkGncSYSlmSTXApSQigjqmoqzy8okui7G7wUYMIllYTylTO1VG0
-         tcpKquk+lyvzp5meOHegqi+fW98z3WUoIo5YthFL4uux32drxbv/BtObsf+n1lIOq4Iv
-         uXke8I54bR461XSTwFKN/oVWcM6WvloK8QVqwsyHFT7h2XCCFWAZs064q5BSZP5XWoTA
-         TPvg==
+        bh=gCx8RlEOFx8UDQtGNW/6cgXaxJHTs4rAU1l6hTQLDFk=;
+        b=e7g/8GDj61ZhxtBwCw9TfQXWhzszcZ5L+bfAt389sLl5dTEizyxH2OZp02OkpbLIt2
+         73AFattt9Oo8N5QJ5qUgB/os7okshVzroSnXtKUqR4qnb+rVVlyhzo7t27+8d04Q7jeu
+         Oqv+bhjvAF1I7mqnLxHLLeGUhuKRPbD2zPMJFOtT5QZjwp4MOY/xZdT/5q8ZDkRuJJgK
+         oXFmYce4hAazBIvGD3ovzh1PWs249IDT/4GFgHFBhSnniH7qtKZzQd0DunulnS5+gNvw
+         UGkrdivUPCjV9eQ5pJ+ufRUCrbc1XIJCnZipOxkoWl3A/dNFCnmFFE2/QIKWAYjl5cwo
+         surQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691512153; x=1692116953;
+        d=1e100.net; s=20221208; t=1691512870; x=1692117670;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=4KW5W/BsMVq6+QNzWH4B7mMdqsIsqWz/fCs4TWl8ltY=;
-        b=T/TyfCRWcwsgzscsqN1pwGodRUKMQC95nJ36f7AkA4LTfO4/viyPdE/JbQXPa6lnOH
-         fHjwF/aB+P03ULpcvScwG+JKBbCk8H3hIAd7oaKZ4QLYXigu90fsv3yscnZ5mRrw+9xa
-         QYPrvOEHXL9/3weGpwWzs2RU6/t6/WiUr8BRz4IPrnfHfNzSfjHhIzRzFkDYTYfPsLR1
-         pyaq9VEah9uGyn69BRgqsjh870iR1s1S/ECpmbb7dzYa6LYhYnr8FG+pNvSmh4Sp6x1/
-         MSjuQBNNWQaM7FzmjDUG7hi3NW5INFyxoG1uHEQdCBz9rI1naX3n6kjM3XuU94yZ6xDN
-         aGzw==
-X-Gm-Message-State: AOJu0YyOMuHcPfEw1e47uW8GJtahxPg3e11QnUKqQx18+NN+X3DtzJ8F
-        lk/NulCKiGIotwN8HAmbUeMTbN9FJYivGXFZoUA=
-X-Google-Smtp-Source: AGHT+IG1IYYssFkGiczWRJXJ2hNd7aUPVrG4bPRpm+cL/fBJQfj5HgLT+UBhH2Xhh05RcC4OK+d9Kw==
-X-Received: by 2002:a19:6518:0:b0:4fd:d18e:be33 with SMTP id z24-20020a196518000000b004fdd18ebe33mr7634340lfb.26.1691487889572;
-        Tue, 08 Aug 2023 02:44:49 -0700 (PDT)
+        bh=gCx8RlEOFx8UDQtGNW/6cgXaxJHTs4rAU1l6hTQLDFk=;
+        b=DkzBl2g4qEqX7rr/iPPa+6cuf39RhUkrVbwU12QZAAv0MBY7zfhluZWMiO0gh7ZNWP
+         SpLIxWZE6cbb+BwgXZ6SYtoIxEILz1to13NOaGC4Zln0O27477n0Mf9Jy6KkIShaVRwj
+         qaOu1zjIGfZjWjC/3hX4zDSrxujDmZEefzgXFypG/BnXwWSMdZeyL3G3xFWtmkI3vhdd
+         l70ildb0AinL9hrFluMCVN1XGOxMbBhTapj4GS8z4H/L07ZIkcMMtVL5cEPFrHvHZ983
+         gBOLTXwQSVE25NV/CXWDfiZXqdRcPdJyKkpEubBrr5YCisx9tVs3h/uzRGGIG25H3y2J
+         i7jg==
+X-Gm-Message-State: AOJu0YwRhHKRUbhpLgVlKGbM2Rh9m+kga8ySmJ29ffiQzlUhPRBDD402
+        AGLKvtjvGGysA1XY/xbjekIFe+c4th/pMjDjrcg=
+X-Google-Smtp-Source: AGHT+IH+sPe9RaM9v5SJiPH9mGRNklcFtnmQjV71N3tInoFanoFMD5xKQLAj+RolMkFNtpIptv/IlA==
+X-Received: by 2002:a05:6512:2e4:b0:4fe:cca:c6f7 with SMTP id m4-20020a05651202e400b004fe0ccac6f7mr7807040lfq.48.1691495022052;
+        Tue, 08 Aug 2023 04:43:42 -0700 (PDT)
 Received: from [192.168.1.101] (abxi185.neoplus.adsl.tpnet.pl. [83.9.2.185])
-        by smtp.gmail.com with ESMTPSA id i6-20020a056512006600b004fdba93b92asm1818884lfo.252.2023.08.08.02.44.48
+        by smtp.gmail.com with ESMTPSA id j20-20020ac253b4000000b004fbdba4b075sm1861679lfh.57.2023.08.08.04.43.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Aug 2023 02:44:49 -0700 (PDT)
+        Tue, 08 Aug 2023 04:43:41 -0700 (PDT)
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Tue, 08 Aug 2023 11:44:41 +0200
-Subject: [PATCH v2 1/6] arm64: dts: qcom: msm8998: Drop bus clock reference
- from MMSS SMMU
+Date:   Tue, 08 Aug 2023 13:43:36 +0200
+Subject: [PATCH v3 05/10] interconnect: qcom: qcm2290: Hook up
+ MAS_APPS_PROC's bus clock
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230531-topic-8998_mmssclk-v2-1-34273e275c51@linaro.org>
-References: <20230531-topic-8998_mmssclk-v2-0-34273e275c51@linaro.org>
-In-Reply-To: <20230531-topic-8998_mmssclk-v2-0-34273e275c51@linaro.org>
+Message-Id: <20230726-topic-icc_coeff-v3-5-dee684d6cdd2@linaro.org>
+References: <20230726-topic-icc_coeff-v3-0-dee684d6cdd2@linaro.org>
+In-Reply-To: <20230726-topic-icc_coeff-v3-0-dee684d6cdd2@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>,
+        Georgi Djakov <djakov@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        Imran Khan <kimran@codeaurora.org>,
-        Rajendra Nayak <quic_rjendra@quicinc.com>,
-        Joonwoo Park <joonwoop@codeaurora.org>,
-        Jeffrey Hugo <quic_jhugo@quicinc.com>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Jeffrey Hugo <quic_jhugo@quicinc.com>
+        Stephen Boyd <sboyd@kernel.org>
 Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Jami Kettunen <jami.kettunen@somainline.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
         Konrad Dybcio <konrad.dybcio@linaro.org>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1691487885; l=994;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1691495013; l=2342;
  i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=3dPVka+1yoTBWJAX5iuBqo/JljLJGzd9OEipOW26gpY=;
- b=P/xfTwdFTTKmfRH1cHDGu0mhCVETc7DhmfzfJHr6hh8cV9OWxxp8ilKs4ThwIArS2RVFHOVnf
- uG9mGb1qwVACAbr6fd75bvJra8iZTVEziz1Kd1WLVE66/LQYZdFZUkQ
+ bh=baltAV4RoHwcQRz0/eW44USFJNd7n+E9JFHsU6Sjt+4=;
+ b=MAN7N0prQn1s1uUMDQ6ZtSNXTmx17gJ/z3RFDO/h4V4WTWklSZf/hJxh+ULsHiD442q2RovQ8
+ KHxzAyUUWgKBUDESPgVueFeDu76mSu4J0AXSNzBnfLgjMfDWMV8ZgAD
 X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
  pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The MMSS SMMU has been abusingly consuming the exposed RPM interconnect
-clock. Drop it.
+This single node has its own clock which seems to be responsible for
+transactions between CPUSS (CPU + some stuff) and the GNOC. See [1]
+for reference.
 
-Fixes: 05ce21b54423 ("arm64: dts: qcom: msm8998: Configure the multimedia subsystem iommu")
+Define it and hook it up.
+
+[1] https://android.googlesource.com/kernel/msm-extra/devicetree/+/02f8c342b23c20a5cf967df649814be37a08227c%5E%21/#F0
 Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/msm8998.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/interconnect/qcom/icc-rpm-clocks.c | 6 ++++++
+ drivers/interconnect/qcom/icc-rpm.h        | 1 +
+ drivers/interconnect/qcom/qcm2290.c        | 3 +++
+ 3 files changed, 10 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-index a41a34dbcc3c..e40f6461f4fd 100644
---- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-@@ -2743,10 +2743,10 @@ mmss_smmu: iommu@cd00000 {
+diff --git a/drivers/interconnect/qcom/icc-rpm-clocks.c b/drivers/interconnect/qcom/icc-rpm-clocks.c
+index 63c82a91bbc7..ac1677de7dfd 100644
+--- a/drivers/interconnect/qcom/icc-rpm-clocks.c
++++ b/drivers/interconnect/qcom/icc-rpm-clocks.c
+@@ -25,6 +25,12 @@ const struct rpm_clk_resource bimc_clk = {
+ };
+ EXPORT_SYMBOL_GPL(bimc_clk);
  
- 			clocks = <&mmcc MNOC_AHB_CLK>,
- 				 <&mmcc BIMC_SMMU_AHB_CLK>,
--				 <&rpmcc RPM_SMD_MMAXI_CLK>,
- 				 <&mmcc BIMC_SMMU_AXI_CLK>;
--			clock-names = "iface-mm", "iface-smmu",
--				      "bus-mm", "bus-smmu";
-+			clock-names = "iface-mm",
-+				      "iface-smmu",
-+				      "bus-smmu";
- 
- 			#global-interrupts = <0>;
- 			interrupts =
++const struct rpm_clk_resource mem_1_clk = {
++	.resource_type = QCOM_SMD_RPM_MEM_CLK,
++	.clock_id = 1,
++};
++EXPORT_SYMBOL_GPL(mem_1_clk);
++
+ const struct rpm_clk_resource bus_0_clk = {
+ 	.resource_type = QCOM_SMD_RPM_BUS_CLK,
+ 	.clock_id = 0,
+diff --git a/drivers/interconnect/qcom/icc-rpm.h b/drivers/interconnect/qcom/icc-rpm.h
+index 4abf99ce2690..a13768cfd231 100644
+--- a/drivers/interconnect/qcom/icc-rpm.h
++++ b/drivers/interconnect/qcom/icc-rpm.h
+@@ -152,6 +152,7 @@ extern const struct rpm_clk_resource bimc_clk;
+ extern const struct rpm_clk_resource bus_0_clk;
+ extern const struct rpm_clk_resource bus_1_clk;
+ extern const struct rpm_clk_resource bus_2_clk;
++extern const struct rpm_clk_resource mem_1_clk;
+ extern const struct rpm_clk_resource mmaxi_0_clk;
+ extern const struct rpm_clk_resource mmaxi_1_clk;
+ extern const struct rpm_clk_resource qup_clk;
+diff --git a/drivers/interconnect/qcom/qcm2290.c b/drivers/interconnect/qcom/qcm2290.c
+index 3c3b24264a5b..52a6eb32e832 100644
+--- a/drivers/interconnect/qcom/qcm2290.c
++++ b/drivers/interconnect/qcom/qcm2290.c
+@@ -112,6 +112,9 @@ static struct qcom_icc_node mas_appss_proc = {
+ 	.qos.qos_mode = NOC_QOS_MODE_FIXED,
+ 	.qos.prio_level = 0,
+ 	.qos.areq_prio = 0,
++	.bus_clk_desc = &mem_1_clk,
++	.ab_coeff = 159,
++	.ib_coeff = 96,
+ 	.mas_rpm_id = 0,
+ 	.slv_rpm_id = -1,
+ 	.num_links = ARRAY_SIZE(mas_appss_proc_links),
 
 -- 
 2.41.0
