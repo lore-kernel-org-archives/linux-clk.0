@@ -2,133 +2,292 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD1B7C001DB
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Aug 2023 19:50:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B70C6C001B0
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Aug 2023 20:29:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233824AbjHHTur (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Aug 2023 15:50:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46504 "EHLO
+        id S232336AbjHHU3I (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Aug 2023 16:29:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233253AbjHHTu1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Aug 2023 15:50:27 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B998A283
-        for <linux-clk@vger.kernel.org>; Tue,  8 Aug 2023 09:56:06 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id 4fb4d7f45d1cf-5230f8da574so3387549a12.3
-        for <linux-clk@vger.kernel.org>; Tue, 08 Aug 2023 09:56:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691513765; x=1692118565;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WLgWmZDXI+7PA/tCxKdChP7EEm6HakzsKLLishyTPzU=;
-        b=daT6x7usH5yEGyqaACnAp2ybRu712oHW4UBiomFwA4UrlvXR+5DRwqv9+yYoGZQhj+
-         u0u7LxgGkpmNdi/mEKCBPJ/ttEkxCiymuLgBK+ewqByxHTZjiu+oEoADVFlPEZUrz+F1
-         VpYmt/M6jiVQXYK0J2ebZL84x/7IST0Yrd1UaSC0jCly/tbweHki9wSRA28Ex6C9PVTr
-         pv3XvB08IAjsxBofnOlbGIIY2lGak3jkn9qe95ncTuKZHKotSyUSW7bzA22nXHbzjaHO
-         tECG4iw7ToaKR9i4HSt4emiLdv79qTP/lYMHneL2U5AFjw6UXNQnxIiAcuF/2pMBQCz8
-         3uvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691513765; x=1692118565;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WLgWmZDXI+7PA/tCxKdChP7EEm6HakzsKLLishyTPzU=;
-        b=GpdyIpUIuEaOIjov0hO3Z/WeBh4sEr8LjssFQuLQsSgvqrGPo0BZJOX9rmPmhI7gCR
-         6B9Tv7wlbiPrypHXyPlDiQv8JBhO0/fZDfWemP1xnK97pwhP8xm0QgZ+GViNrbuuvbx3
-         vLnK5MY03Evb5VCthq9GVm/wQpGEkK5uYV5brTZt/4bt7fmlP7MZ3qnF65PMxFYnSSMU
-         CUCRGfdaiMxE+Nhi2X4P4e1Z2FFaM4h3nD/3YVtq862M/MYjcz8maqb1nHbSrHtRWffE
-         N7OQL2au/9VlbNnnd/OUASQl2duTNd3fDFVJFZOyNbMZ0Eo9KWlGkMIvFeA8Fkvxpb5a
-         NoOQ==
-X-Gm-Message-State: AOJu0YzB0Hz+OIKI7EyrobHcvPEwsgJfyMiNP3rB81KqyqtlhAAif3LC
-        zrQ5k6vkF411ceP2bqENl1tt4jS4xWnKIvN9Buk=
-X-Google-Smtp-Source: AGHT+IHVBg/DZAg7RmIjwMmvomUbHWRV+0mz038UqS0mW12UPDmdNCW6SKK0tcZPJuO1Ju+eSdr14Q==
-X-Received: by 2002:a05:6512:1185:b0:4fe:45ca:f8e7 with SMTP id g5-20020a056512118500b004fe45caf8e7mr7216190lfr.57.1691495028083;
-        Tue, 08 Aug 2023 04:43:48 -0700 (PDT)
-Received: from [192.168.1.101] (abxi185.neoplus.adsl.tpnet.pl. [83.9.2.185])
-        by smtp.gmail.com with ESMTPSA id j20-20020ac253b4000000b004fbdba4b075sm1861679lfh.57.2023.08.08.04.43.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Aug 2023 04:43:47 -0700 (PDT)
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Tue, 08 Aug 2023 13:43:41 +0200
-Subject: [PATCH v3 10/10] clk: qcom: smd-rpm: Move CPUSS_GNoC clock to
- interconnect
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230726-topic-icc_coeff-v3-10-dee684d6cdd2@linaro.org>
-References: <20230726-topic-icc_coeff-v3-0-dee684d6cdd2@linaro.org>
-In-Reply-To: <20230726-topic-icc_coeff-v3-0-dee684d6cdd2@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>,
+        with ESMTP id S231926AbjHHU24 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Aug 2023 16:28:56 -0400
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB62F18548;
+        Tue,  8 Aug 2023 12:48:24 -0700 (PDT)
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4RL3dc4fFnz9th0;
+        Tue,  8 Aug 2023 21:48:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+        t=1691524100;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=m4T7txvwDZo66//eyFQ595Fov1LoPrHozn9oIy+lVAo=;
+        b=YnO/HK8tkEG9CJHVE7JePmlazpXHKf3I7BMpnZmLmqAwKlcAUZA43cUfnAD6Rsqcbgmv5G
+        kzLC9nKpRYKT0V6itVvHd7HHYwIJr7OBBFxSlb5AVFykJa09MrTke5tpBULviEnn47uJBJ
+        uTXAKk6f59l7/pUihWL0Z9F9lM/n6ufS1kf9MzquBfCagepmsNno1T++mbxr6iCvwpjtM5
+        axEBs7Fj+kJaii4kX2UYOecRd5Ry8UF5LvTodbFJQzd61jeSo6LAu6vZTPe9owjthSNX1c
+        CliHaKYY4X8OQ+LA1PRKWNIthVZbzBaW6DeH5Q7o0Gns1dy42WgY4NFTxRoofg==
+From:   Alexander Stein <alexander.stein@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+        t=1691524098;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=m4T7txvwDZo66//eyFQ595Fov1LoPrHozn9oIy+lVAo=;
+        b=yowgY7lJFF6fvylwiuC06d6Y3lNGcGHa8ogingXuw0VYUT68pjHbTH9CpRFC19G0TGOe7G
+        1NYj1r3i3pLQcgBIjeuou+BglETafxAjG5jxLDhxGcv84Doc1IXBxtIA9o4jDKYX90uYyH
+        h2nCT9jbn/4Uej//6v2jleyY35AE361yPkmLJziao38nYaf2C1i4lDQHYg3IGRV5dCbg3/
+        Dv7/IJ7KYj7XVtbhvpQjyfxqP956zJu1AlppcfGm7KWdz7CpGDVWLQLp1yu9zkfDuTb3DF
+        kinFdTZaeJLOA+aSSjb6DvEM829JVdhetMyXB7h1GBmSgEav85DEWakkSa/TIA==
+To:     Neil Armstrong <neil.armstrong@linaro.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1691495013; l=1855;
- i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=6rZrHWsPHWWpd+L+pVqcUMQuVU01TmS5LCQGYAT1X0Q=;
- b=jtBpHrfD+ymd4XqtHtbF/noRNPMY58C9Ej/e6oBO74GRvFvp0xnbWwQis4SQSnKJbpvuAezcV
- O1Vfy8GohTlAwg/NRNh5jnTxAmB6T34tNgUqWUBA1EdFDKu7EABgkpv
-X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Dmitry Rokosov <ddrokosov@sberdevices.ru>
+Cc:     Alexander Stein <alexander.stein@mailbox.org>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH 1/1] dt-bindings: clock: meson: Convert axg-audio-clkc to YAML format
+Date:   Tue,  8 Aug 2023 21:48:10 +0200
+Message-ID: <20230808194811.113087-1-alexander.stein@mailbox.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-META: 53b41qmsw6boj3pa8bbjec9dhakihip8
+X-MBO-RS-ID: 5b9ec271d505e8d7b17
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-As it turns out, it's yet another interconnect bus clock. Move it
-there. See [1] for reference.
+Convert Amlogic AXG Audio Clock Controller binding to yaml.
 
-[1] https://android.googlesource.com/kernel/msm-extra/devicetree/+/02f8c342b23c20a5cf967df649814be37a08227c%5E%21/#F0
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Signed-off-by: Alexander Stein <alexander.stein@mailbox.org>
 ---
- drivers/clk/qcom/clk-smd-rpm.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+As it is the same directory I picked the same maintainers as 
+Documentation/devicetree/bindings/clock/amlogic,a1-peripherals-clkc.yaml.
 
-diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-index 9b5411932594..4a23f6d3eddd 100644
---- a/drivers/clk/qcom/clk-smd-rpm.c
-+++ b/drivers/clk/qcom/clk-smd-rpm.c
-@@ -567,6 +567,16 @@ static const struct clk_smd_rpm *sm_qnoc_icc_clks[] = {
- 	&clk_smd_rpm_bus_2_snoc_clk,
- };
- 
-+static const struct clk_smd_rpm *qcm2290_icc_clks[] = {
-+	&clk_smd_rpm_bimc_clk,
-+	&clk_smd_rpm_bus_1_cnoc_clk,
-+	&clk_smd_rpm_mmnrt_clk,
-+	&clk_smd_rpm_mmrt_clk,
-+	&clk_smd_rpm_qup_clk,
-+	&clk_smd_rpm_bus_2_snoc_clk,
-+	&clk_smd_rpm_cpuss_gnoc_clk,
-+};
+I'm not 100% sure about the optional clocks constraints. As mentioned in
+the .txt version only pclk is mandatory, others are optional.
+
+ .../bindings/clock/amlogic,axg-audio-clkc.txt |  59 --------
+ .../clock/amlogic,axg-audio-clkc.yaml         | 136 ++++++++++++++++++
+ 2 files changed, 136 insertions(+), 59 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
+
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt
+deleted file mode 100644
+index 3a8948c04bc9..000000000000
+--- a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt
++++ /dev/null
+@@ -1,59 +0,0 @@
+-* Amlogic AXG Audio Clock Controllers
+-
+-The Amlogic AXG audio clock controller generates and supplies clock to the
+-other elements of the audio subsystem, such as fifos, i2s, spdif and pdm
+-devices.
+-
+-Required Properties:
+-
+-- compatible	: should be "amlogic,axg-audio-clkc" for the A113X and A113D,
+-		  "amlogic,g12a-audio-clkc" for G12A,
+-		  "amlogic,sm1-audio-clkc" for S905X3.
+-- reg		: physical base address of the clock controller and length of
+-		  memory mapped region.
+-- clocks	: a list of phandle + clock-specifier pairs for the clocks listed
+-		  in clock-names.
+-- clock-names	: must contain the following:
+-		  * "pclk" - Main peripheral bus clock
+-		  may contain the following:
+-		  * "mst_in[0-7]" - 8 input plls to generate clock signals
+-		  * "slv_sclk[0-9]" - 10 slave bit clocks provided by external
+-				      components.
+-		  * "slv_lrclk[0-9]" - 10 slave sample clocks provided by external
+-				       components.
+-- resets	: phandle of the internal reset line
+-- #clock-cells	: should be 1.
+-- #reset-cells  : should be 1 on the g12a (and following) soc family
+-
+-Each clock is assigned an identifier and client nodes can use this identifier
+-to specify the clock which they consume. All available clocks are defined as
+-preprocessor macros in the dt-bindings/clock/axg-audio-clkc.h header and can be
+-used in device tree sources.
+-
+-Example:
+-
+-clkc_audio: clock-controller@0 {
+-	compatible = "amlogic,axg-audio-clkc";
+-	reg = <0x0 0x0 0x0 0xb4>;
+-	#clock-cells = <1>;
+-
+-	clocks = <&clkc CLKID_AUDIO>,
+-		 <&clkc CLKID_MPLL0>,
+-		 <&clkc CLKID_MPLL1>,
+-		 <&clkc CLKID_MPLL2>,
+-		 <&clkc CLKID_MPLL3>,
+-		 <&clkc CLKID_HIFI_PLL>,
+-		 <&clkc CLKID_FCLK_DIV3>,
+-		 <&clkc CLKID_FCLK_DIV4>,
+-		 <&clkc CLKID_GP0_PLL>;
+-	clock-names = "pclk",
+-		      "mst_in0",
+-		      "mst_in1",
+-		      "mst_in2",
+-		      "mst_in3",
+-		      "mst_in4",
+-		      "mst_in5",
+-		      "mst_in6",
+-		      "mst_in7";
+-	resets = <&reset RESET_AUDIO>;
+-};
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
+new file mode 100644
+index 000000000000..629fa3a81cf7
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
+@@ -0,0 +1,136 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- static struct clk_smd_rpm *msm8909_clks[] = {
- 	[RPM_SMD_QPIC_CLK]		= &clk_smd_rpm_qpic_clk,
- 	[RPM_SMD_QPIC_CLK_A]		= &clk_smd_rpm_qpic_a_clk,
-@@ -1182,15 +1192,13 @@ static struct clk_smd_rpm *qcm2290_clks[] = {
- 	[RPM_SMD_PKA_A_CLK] = &clk_smd_rpm_pka_a_clk,
- 	[RPM_SMD_BIMC_GPU_CLK] = &clk_smd_rpm_bimc_gpu_clk,
- 	[RPM_SMD_BIMC_GPU_A_CLK] = &clk_smd_rpm_bimc_gpu_a_clk,
--	[RPM_SMD_CPUSS_GNOC_CLK] = &clk_smd_rpm_cpuss_gnoc_clk,
--	[RPM_SMD_CPUSS_GNOC_A_CLK] = &clk_smd_rpm_cpuss_gnoc_a_clk,
- };
- 
- static const struct rpm_smd_clk_desc rpm_clk_qcm2290 = {
- 	.clks = qcm2290_clks,
- 	.num_clks = ARRAY_SIZE(qcm2290_clks),
--	.icc_clks = sm_qnoc_icc_clks,
--	.num_icc_clks = ARRAY_SIZE(sm_qnoc_icc_clks)
-+	.icc_clks = qcm2290_icc_clks,
-+	.num_icc_clks = ARRAY_SIZE(qcm2290_icc_clks)
- };
- 
- static const struct of_device_id rpm_smd_clk_match_table[] = {
-
++title: Amlogic AXG Audio Clock Controller
++
++maintainers:
++  - Neil Armstrong <neil.armstrong@linaro.org>
++  - Jerome Brunet <jbrunet@baylibre.com>
++  - Jian Hu <jian.hu@jian.hu.com>
++  - Dmitry Rokosov <ddrokosov@sberdevices.ru>
++
++description:
++  The Amlogic AXG audio clock controller generates and supplies clock to the
++  other elements of the audio subsystem, such as fifos, i2s, spdif and pdm
++  devices.
++
++properties:
++  compatible:
++    enum:
++      - amlogic,axg-audio-clkc
++      - amlogic,g12a-audio-clkc
++      - amlogic,sm1-audio-clkc
++
++  '#clock-cells':
++    const: 1
++
++  '#reset-cells':
++    const: 1
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    minItems: 1
++    maxItems: 11
++
++  clock-names:
++    oneOf:
++      - const: pclk
++      - items:
++          - const: pclk
++          - const: mst_in0
++          - const: mst_in1
++          - const: mst_in2
++          - const: mst_in3
++          - const: mst_in4
++          - const: mst_in5
++          - const: mst_in6
++          - const: mst_in7
++      - items:
++          - const: pclk
++          - const: slv_sclk0
++          - const: slv_sclk1
++          - const: slv_sclk2
++          - const: slv_sclk3
++          - const: slv_sclk4
++          - const: slv_sclk5
++          - const: slv_sclk6
++          - const: slv_sclk7
++          - const: slv_sclk8
++          - const: slv_sclk9
++      - items:
++          - const: pclk
++          - const: slv_lrclk0
++          - const: slv_lrclk1
++          - const: slv_lrclk2
++          - const: slv_lrclk3
++          - const: slv_lrclk4
++          - const: slv_lrclk5
++          - const: slv_lrclk6
++          - const: slv_lrclk7
++          - const: slv_lrclk8
++          - const: slv_lrclk9
++
++  resets:
++    description: internal reset line
++
++required:
++  - compatible
++  - '#clock-cells'
++  - reg
++  - clocks
++  - clock-names
++  - resets
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - amlogic,g12a-audio-clkc
++              - amlogic,sm1-audio-clkc
++    then:
++      required:
++        - '#reset-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/axg-clkc.h>
++    #include <dt-bindings/reset/amlogic,meson-axg-reset.h>
++    apb {
++        #address-cells = <2>;
++        #size-cells = <2>;
++
++        clkc_audio: clock-controller@0 {
++        compatible = "amlogic,axg-audio-clkc";
++        reg = <0x0 0x0 0x0 0xb4>;
++        #clock-cells = <1>;
++
++        clocks = <&clkc CLKID_AUDIO>,
++            <&clkc CLKID_MPLL0>,
++            <&clkc CLKID_MPLL1>,
++            <&clkc CLKID_MPLL2>,
++            <&clkc CLKID_MPLL3>,
++            <&clkc CLKID_HIFI_PLL>,
++            <&clkc CLKID_FCLK_DIV3>,
++            <&clkc CLKID_FCLK_DIV4>,
++            <&clkc CLKID_GP0_PLL>;
++        clock-names = "pclk",
++            "mst_in0",
++            "mst_in1",
++            "mst_in2",
++            "mst_in3",
++            "mst_in4",
++            "mst_in5",
++            "mst_in6",
++            "mst_in7";
++        resets = <&reset RESET_AUDIO>;
++      };
++    };
 -- 
 2.41.0
 
