@@ -2,56 +2,63 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C3E3C04E69
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Aug 2023 16:58:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99126C001B0
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Aug 2023 17:00:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233856AbjHHQ64 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Aug 2023 12:58:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41488 "EHLO
+        id S233890AbjHHRAv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Aug 2023 13:00:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233772AbjHHQ6A (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Aug 2023 12:58:00 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 980C92139
-        for <linux-clk@vger.kernel.org>; Tue,  8 Aug 2023 08:43:23 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id 4fb4d7f45d1cf-522ab557632so7746222a12.0
-        for <linux-clk@vger.kernel.org>; Tue, 08 Aug 2023 08:43:23 -0700 (PDT)
+        with ESMTP id S233670AbjHHRAD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Aug 2023 13:00:03 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E32D62706
+        for <linux-clk@vger.kernel.org>; Tue,  8 Aug 2023 09:00:28 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-99cdb0fd093so312574866b.1
+        for <linux-clk@vger.kernel.org>; Tue, 08 Aug 2023 09:00:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691509379; x=1692114179;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=R/ysiPNWLR7wpbVD7YtHSC9xvbZhsi6ZL4lXHxj1M6c=;
-        b=IOwLj1mneFAFmJb1bLcT7ug6y77kpUrCnbqRDEGHrgd+gyXFFmyzrJ98AgXGMz1+jI
-         LRODVj2+/9ORKh6sq8ucJOt7XtWAbfcuuMdlUclpL1iEiu55Drxvv2LYLomA6DpclJ59
-         CtWE8zTv05rUBxxHL2HDc/cNNRJ4jBv6FP8SGDzD3niJrZkOx6QqkfxM16aHBud0TwT7
-         j77o/r827lYINM2tnJBiyoXGut0O/XqD5lI6oFVqW5UBD0mwiQMTW3VW7DG1Z9KNRdWb
-         8o7S/pz9ttflbfRzarES2ev16qoWDWxjg5YrXw2yACXy+dholq7ycJzUGbu+YPgH78KH
-         h3dg==
+        d=linaro.org; s=google; t=1691510398; x=1692115198;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rq9CGfMIPSDr9ZlL/JERcR7sYpgjvn+r29Kl2qTSWpE=;
+        b=vfo0i+LiAZi38xsroAnRMiOkDYYymf6/ozqTivpl/Lt+lPHwreovDxVnzdePaAudc4
+         111/2k78EMTUEz7t3xmFZqiJVoAY9QgYPCh/RkUg1qe4A1kKDF4tfOzfoxC038Lh9mY9
+         L8mP5XO/NpKZw7D1J/VeIB3yWfzUDFiDO5oC5Jh31kAI0aQDCZ9iidKY1nsvOtESFvvM
+         kjbNMYMIdB7JcwmcRmN/qCNZuVW8oElJGDHokUIINV4u1ZtvE8Gexk3EN9+g0Rfvzwqu
+         cpsbXObTYZ4RtigWrz/5CETPbaUNIeQTR9wWBxkovJlMuO1vi3rSye0DB4d7pS/jEaW6
+         sAJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691509379; x=1692114179;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R/ysiPNWLR7wpbVD7YtHSC9xvbZhsi6ZL4lXHxj1M6c=;
-        b=G8m92k/OJevRX4iR8fNw2mBWramUG/NxcdqlEaJjJpa5tvAZFwWcTQM7jCdRNasIPO
-         mKUp5KD5+9jjzk/6axZXYiMzcH7m/m3vs0YaWrc8A4Blchbz6PTRv9KYuh15xhbqvw8h
-         ZNxjDyUaJZkOzOaBRGq9l2HxPg4laeSh1AoIAnO5wxGHvtXWTMJLfMJWRMbKzsqdVKZV
-         x3wIWK8X2J+tKcD26f5MyXqNk0MimQSGctSu2soaGOfsPP8Z9A+073zDwJ+I6MyzQ1zs
-         5MQ7Pumzbn5m0tASu8bQ0PtAhi+CKcf4lKK+YPkmMtuyILChqp3ssdRHzFBCFMM5XN4h
-         TNgg==
-X-Gm-Message-State: AOJu0YyuIVBsi9bfAWMHx+DjSghCCXnnESeKi4L8k+B7iIqSvT/QFcF2
-        2XyQHj9fn783BJB/FSiNj6K6XvwAb7VI+oOptBU=
-X-Google-Smtp-Source: AGHT+IFQ1+reGKbu7+VQxeellkzInKFEL4NfkTVROJIeIltY/tZlYlFyqdoEIWGGNtTNFwjonuVnVw==
-X-Received: by 2002:a05:6512:2347:b0:4f9:5580:1894 with SMTP id p7-20020a056512234700b004f955801894mr8212298lfu.15.1691483274184;
-        Tue, 08 Aug 2023 01:27:54 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.222.113])
-        by smtp.gmail.com with ESMTPSA id s18-20020adfeb12000000b0031779a6b451sm12861246wrn.83.2023.08.08.01.27.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Aug 2023 01:27:53 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        d=1e100.net; s=20221208; t=1691510398; x=1692115198;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rq9CGfMIPSDr9ZlL/JERcR7sYpgjvn+r29Kl2qTSWpE=;
+        b=g7ufq8O1dE/Iz4ocT+vAdQmc5tuNnIUB/hYbXqsFKMDNcTzGr+PhX6LkcRloaJOgxV
+         ijtK0W1uT6Nyt6eMPMIMq3Y0FIy3rIPoWsN5j7rMsPToozDhCIUxLxEhCezraosOyVA0
+         YXD7Kp9drRCT+3ukZJDn/fnxwh/17Z79A4n07MvpMsZGhK9/tAWtPZv5kEjvwHh+/swl
+         27/cUTvhVqNxaMxT8DfwifWJ2gm+BJo+RMjLr142/7NzTm2POB/MV1ogUkKX0P+96FZK
+         rUILSm1RNwDEf8frAR1VQFzAKdSUWiBEKWtEAGRdZKBVlfMKuCXsuCZ4ntEBlbiHwafs
+         /iyQ==
+X-Gm-Message-State: AOJu0Yy28TR6B+2WCXzahu76M5GRrN2oilNcmpA9q4Eo+/wvDhK5OJyK
+        OmHp020oAYPo/YcHH3sMy3tqdB4mZuUcDnnDtEQ=
+X-Google-Smtp-Source: AGHT+IHxzkAXBfNJDNcknbZH6tlIYjJNFyXEZDfCnRpxQMJVfuN4V6svYqKu4KC6ef0+KBpYIwyrmA==
+X-Received: by 2002:a2e:9f4b:0:b0:2b9:3db7:322f with SMTP id v11-20020a2e9f4b000000b002b93db7322fmr8508153ljk.18.1691492178941;
+        Tue, 08 Aug 2023 03:56:18 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.222.113])
+        by smtp.gmail.com with ESMTPSA id o12-20020a05600c378c00b003fd2e89620asm17797634wmr.40.2023.08.08.03.56.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Aug 2023 03:56:18 -0700 (PDT)
+Message-ID: <d7cc1aec-17be-502d-47c1-3163a2766ee4@linaro.org>
+Date:   Tue, 8 Aug 2023 12:56:16 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Subject: Re: [PATCH 11/11] dt-bindings: clock: samsung: remove define with
+ number of clocks
+Content-Language: en-US
+To:     Conor Dooley <conor@kernel.org>
+Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Tomasz Figa <tomasz.figa@gmail.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
         Alim Akhtar <alim.akhtar@samsung.com>,
@@ -62,54 +69,44 @@ To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH 06/11] clk: samsung: exynos5420: do not define number of clocks in bindings
-Date:   Tue,  8 Aug 2023 10:27:33 +0200
-Message-Id: <20230808082738.122804-7-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230808082738.122804-1-krzysztof.kozlowski@linaro.org>
 References: <20230808082738.122804-1-krzysztof.kozlowski@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+ <20230808082738.122804-12-krzysztof.kozlowski@linaro.org>
+ <20230808-scarcity-sprung-c0c2abc2971f@spud>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230808-scarcity-sprung-c0c2abc2971f@spud>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Number of clocks supported by Linux drivers might vary - sometimes we
-add new clocks, not exposed previously.  Therefore this number of clocks
-should not be in the bindings, because otherwise we should not change
-it.
+On 08/08/2023 12:53, Conor Dooley wrote:
+> On Tue, Aug 08, 2023 at 10:27:38AM +0200, Krzysztof Kozlowski wrote:
+>> Number of clocks supported by Linux drivers might vary - sometimes we
+>> add new clocks, not exposed previously.  Therefore this number of clocks
+>> should not be in the bindings, because otherwise we should not change
+>> it.
+> 
+> This sentence reads super awkwardly, not by any means important to
+> change, but I'd likely word it "Therefore these numbers of clocks should
+> not be in the bindings, as that prevents changing them".
 
-Define number of clocks per each clock controller inside the driver
-directly.
+That's better, thanks.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/clk/samsung/clk-exynos5420.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+>> Remove it entirely from the bindings, once Linux drivers stopped
+>> using them.
+> 
+> I figure there are no consumers in other projects then? If so,
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 1e0cbf762408..199843f12ae5 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -139,6 +139,9 @@
- #define SRC_KFC			0x28200
- #define DIV_KFC0		0x28500
- 
-+/* NOTE: Must be equal to the last clock ID increased by one */
-+#define CLKS_NR			(CLK_DOUT_PCLK_DREX1 + 1)
-+
- /* Exynos5x SoC type */
- enum exynos5x_soc {
- 	EXYNOS5420,
-@@ -1587,7 +1590,7 @@ static void __init exynos5x_clk_init(struct device_node *np,
- 
- 	exynos5x_soc = soc;
- 
--	ctx = samsung_clk_init(NULL, reg_base, CLK_NR_CLKS);
-+	ctx = samsung_clk_init(NULL, reg_base, CLKS_NR);
- 	hws = ctx->clk_data.hws;
- 
- 	samsung_clk_of_register_fixed_ext(ctx, exynos5x_fixed_rate_ext_clks,
--- 
-2.34.1
+Difficult to say, nothing known to me. Anyway these are not clock IDs,
+so if anyone actually relied on number of clocks in the bindings, they
+would have trouble in the first place.
+
+
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+
+
+Best regards,
+Krzysztof
 
