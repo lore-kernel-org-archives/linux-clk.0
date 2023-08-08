@@ -2,156 +2,136 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B80EFC001DB
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Aug 2023 16:14:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 771D7C04FE2
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Aug 2023 16:23:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232136AbjHHQO0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Aug 2023 12:14:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57450 "EHLO
+        id S231569AbjHHQXJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Aug 2023 12:23:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232144AbjHHQNM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Aug 2023 12:13:12 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DE0C7EE8
-        for <linux-clk@vger.kernel.org>; Tue,  8 Aug 2023 08:47:18 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-3fe5eb84d43so16672245e9.3
-        for <linux-clk@vger.kernel.org>; Tue, 08 Aug 2023 08:47:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691509637; x=1692114437;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CCSujwELynCWj7HlDSXXF4+s6C7wX8tgmYY0fFjd99g=;
-        b=w0AGwZ9RZgYlJ/wVOC0xivR3LC7URVkQE/M3rlLaiplYdrb0ViVqHooXh809Y5w+qZ
-         JYyu8gRzAJkst4Yhmhia+2fDJmP4h0P6G5920SeHxP4DXhYXqKmE3uOittggCXK4J6UZ
-         WDVQtE9z1Ls3Qh02PvXHum4UD+AGatfn2woDZQMdb7YmWRDp+E9GqDWPMqp6y2y2gumO
-         5jHDO9uCISM7aNV5JXcgPpjnK/q6Qyv7Ya6VcNF28fxMmKsIBBKqa94vNifHEUh10O86
-         3KdGzftZT7YgsErIkoy3ME6PIGpXKhz87KhbAHj23GnrxcwqVd7nTUHUtTTk2WakAnfP
-         on+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691509637; x=1692114437;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CCSujwELynCWj7HlDSXXF4+s6C7wX8tgmYY0fFjd99g=;
-        b=HVszW1HcgWEus7BuQ6uB73pNwxjT9c6rtTkKlBeYHUxFsRH3wpIfQMtbYVVAbPOp2J
-         OPCGHOGOGwWSW/gYh/05+PZtBF1TBpy4AxVCQYc/D8iE7kOLrUbiO3CncAofQ423IdJY
-         onngFJWcS8oBL40BcWtU8jALXY1fSQDi3s1TWJ0D4slz5/4NrhMOOu634TClyWxv0r3g
-         DxoqayjlmySDFBMnMAB86jCNOLN3ENpimCeB6V+ZVRFtmmIcjPl97e1yjgEOcqZNnwlI
-         pSNUaPmVHTZEdeX6+CL5Ku7R+q5NWGC6+S84/QjB5yFTzJWRS5dPnlHbANgjjZvL5gax
-         zpig==
-X-Gm-Message-State: AOJu0Yybp6wc1iApdhn2pV6DN3vb/bX/nvwF1T6MqaiNFApIeymUxeWK
-        SouMv/7zj8LL9GfAsOkRsv1kPzvxRD/RMPVxlDM=
-X-Google-Smtp-Source: AGHT+IFn1hMW+EgRiv2I2+i74hLXUGlC6o94339U3IKqB9j27xcUBW7jI7TpyAbL5OCB6CRzA0e3dQ==
-X-Received: by 2002:a05:6512:2348:b0:4fb:94fd:6465 with SMTP id p8-20020a056512234800b004fb94fd6465mr9652271lfu.15.1691495020747;
-        Tue, 08 Aug 2023 04:43:40 -0700 (PDT)
-Received: from [192.168.1.101] (abxi185.neoplus.adsl.tpnet.pl. [83.9.2.185])
-        by smtp.gmail.com with ESMTPSA id j20-20020ac253b4000000b004fbdba4b075sm1861679lfh.57.2023.08.08.04.43.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Aug 2023 04:43:40 -0700 (PDT)
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Tue, 08 Aug 2023 13:43:35 +0200
-Subject: [PATCH v3 04/10] interconnect: qcom: icc-rpm: Check for
- node-specific rate coefficients
+        with ESMTP id S232549AbjHHQV5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Aug 2023 12:21:57 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8622A9ED7;
+        Tue,  8 Aug 2023 08:49:14 -0700 (PDT)
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3785fOg6029204;
+        Tue, 8 Aug 2023 06:31:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=29DOQZL4LXZv2685DSEWex4QGh2mQB++HdJnY7JXF4c=;
+ b=dIHO3fNOcTiHzrvrdX4P10Ry/niEWzJW5COkwOBIE94Ko1dr9sRHFEVUhXWaMSAceW0c
+ UrcIDvKrGxzIzdbNRRthEP7rjZwypXlkpkH+FCDqHT6z9XFTcpI168zYcGWLQnH7Yzc0
+ S3aH7CuIprkUElyQMwz/L40t23lWyd995VAY2lxr+b1pjgmNe8sdvGehOH1hV9nHSm4a
+ 7kyffr5TaZYlhJrEI26SK2Hxd37kkk/iFxkImrSodoxIHK95Eq/5ZBbGgjTnM8NdA7I3
+ 58md+hZON/rpTP6/qZiFUHBNqRI6bNhvstP7Vn9CxEvey1rVbFukLhd96Bms88S+tO+C Bw== 
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3sawbgab0g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 08 Aug 2023 06:31:48 +0000
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3786VlpU003395
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 8 Aug 2023 06:31:47 GMT
+Received: from [10.253.9.41] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Mon, 7 Aug
+ 2023 23:31:43 -0700
+Message-ID: <f25e1043-6dfa-2dcc-2948-88025f4881d8@quicinc.com>
+Date:   Tue, 8 Aug 2023 14:31:40 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Subject: Re: [PATCH 2/3] dt-bindings: clock: add qca8386/qca8084 clock and
+ reset definitions
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <p.zabel@pengutronix.de>
+CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_srichara@quicinc.com>
+References: <20230801085352.22873-1-quic_luoj@quicinc.com>
+ <20230801085352.22873-3-quic_luoj@quicinc.com>
+ <ef996a7e-6eba-4366-c3ea-0d08f2768e98@linaro.org>
+ <cf9788f0-a115-5ff9-1195-f4f302551e04@quicinc.com>
+ <d1172ed6-ee3b-83b6-1656-c91e35fbc2df@linaro.org>
+From:   Jie Luo <quic_luoj@quicinc.com>
+In-Reply-To: <d1172ed6-ee3b-83b6-1656-c91e35fbc2df@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230726-topic-icc_coeff-v3-4-dee684d6cdd2@linaro.org>
-References: <20230726-topic-icc_coeff-v3-0-dee684d6cdd2@linaro.org>
-In-Reply-To: <20230726-topic-icc_coeff-v3-0-dee684d6cdd2@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1691495013; l=2718;
- i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=V3/dsciTVIDrck+uRJI5qEMHITJaBEaelfYfVi/Pbmk=;
- b=HzD0DwK1CveDCoCgBnvGmh7+X1ivvay4l7unb30p+mPYrxkVVbvissbWZwoX5Pypq/qvJ59A/
- 2ftrhv03XzzAe0Vr0MkSGOjDXXchkt5u8Xwlk2Sm2i6KwTywyuIt62V
-X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: PY65P9qEFv7z6XBhPEane30M7CxqP_8D
+X-Proofpoint-GUID: PY65P9qEFv7z6XBhPEane30M7CxqP_8D
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-08-08_04,2023-08-03_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxlogscore=817
+ impostorscore=0 bulkscore=0 suspectscore=0 lowpriorityscore=0 phishscore=0
+ mlxscore=0 priorityscore=1501 malwarescore=0 adultscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2306200000
+ definitions=main-2308080057
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Some nodes may have different coefficients than the general values for
-bus they're attached to. Check for that and use them if present. See
-[1], [2] for reference.
 
-[1] https://github.com/sonyxperiadev/kernel/commit/7456d9779af9ad6bb9c7ee6f33d5c5a8d3648e24
-[2] https://github.com/artem/android_kernel_sony_msm8996/commit/bf7a8985dcaf0eab5bc2562d2d6775e7e29c0f30
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
----
- drivers/interconnect/qcom/icc-rpm.c | 14 ++++++++++----
- drivers/interconnect/qcom/icc-rpm.h |  5 +++++
- 2 files changed, 15 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/interconnect/qcom/icc-rpm.c b/drivers/interconnect/qcom/icc-rpm.c
-index 1d3af4e9ead8..9c40314e03b5 100644
---- a/drivers/interconnect/qcom/icc-rpm.c
-+++ b/drivers/interconnect/qcom/icc-rpm.c
-@@ -300,14 +300,14 @@ static u64 qcom_icc_calc_rate(struct qcom_icc_provider *qp, struct qcom_icc_node
- 	else
- 		agg_avg_rate = qn->sum_avg[ctx];
- 
--	if (qp->ab_coeff) {
--		agg_avg_rate = agg_avg_rate * qp->ab_coeff;
-+	if (qn->ab_coeff) {
-+		agg_avg_rate = agg_avg_rate * qn->ab_coeff;
- 		agg_avg_rate = div_u64(agg_avg_rate, 100);
- 	}
- 
--	if (qp->ib_coeff) {
-+	if (qn->ib_coeff) {
- 		agg_peak_rate = qn->max_peak[ctx] * 100;
--		agg_peak_rate = div_u64(qn->max_peak[ctx], qp->ib_coeff);
-+		agg_peak_rate = div_u64(qn->max_peak[ctx], qn->ib_coeff);
- 	} else {
- 		agg_peak_rate = qn->max_peak[ctx];
- 	}
-@@ -563,6 +563,12 @@ int qnoc_probe(struct platform_device *pdev)
- 	for (i = 0; i < num_nodes; i++) {
- 		size_t j;
- 
-+		if (!qnodes[i]->ab_coeff)
-+			qnodes[i]->ab_coeff = qp->ab_coeff;
-+
-+		if (!qnodes[i]->ib_coeff)
-+			qnodes[i]->ib_coeff = qp->ib_coeff;
-+
- 		node = icc_node_create(qnodes[i]->id);
- 		if (IS_ERR(node)) {
- 			ret = PTR_ERR(node);
-diff --git a/drivers/interconnect/qcom/icc-rpm.h b/drivers/interconnect/qcom/icc-rpm.h
-index f9ef16f570be..4abf99ce2690 100644
---- a/drivers/interconnect/qcom/icc-rpm.h
-+++ b/drivers/interconnect/qcom/icc-rpm.h
-@@ -103,6 +103,9 @@ struct qcom_icc_qos {
-  * @mas_rpm_id:	RPM id for devices that are bus masters
-  * @slv_rpm_id:	RPM id for devices that are bus slaves
-  * @qos: NoC QoS setting parameters
-+ * @ab_coeff: a percentage-based coefficient for compensating the AB calculations
-+ * @ib_coeff: an inverse-percentage-based coefficient for compensating the IB calculations
-+ * @bus_clk_rate: a pointer to an array containing bus clock rates in Hz
-  */
- struct qcom_icc_node {
- 	unsigned char *name;
-@@ -117,6 +120,8 @@ struct qcom_icc_node {
- 	int mas_rpm_id;
- 	int slv_rpm_id;
- 	struct qcom_icc_qos qos;
-+	u16 ab_coeff;
-+	u16 ib_coeff;
- 	u32 bus_clk_rate[QCOM_SMD_RPM_STATE_NUM];
- };
- 
+On 8/8/2023 1:57 PM, Krzysztof Kozlowski wrote:
+> On 08/08/2023 07:19, Jie Luo wrote:
+>>>> +properties:
+>>>> +  compatible:
+>>>> +    const: qcom,nsscc-qca8k
+>>>
+>>> SoC name is before IP block names. See:
+>>> Documentation/devicetree/bindings/arm/qcom-soc.yaml
+>>>
+>>> qca8k is not SoC specific. I don't know what you are documenting here,
+>>> but if this is a SoC, then follow SoC rules.
+>>>
+>>> If this is not SoC, it confuses me a bit to use GCC binding.
+>>>
+>>> Anyway, this was not tested, as pointed out by bot... Please test the
+>>> code before sending.
+>>>
+>>> Best regards,
+>>> Krzysztof
+>>>
+>>
+>> Hi Krzysztof,
+>>
+>> Thanks for the review comments.
+>> qca8383/qca8084 is a network chip that support switch mode and PHY mode,
+>> the hardware register is accessed by MDIO bus, which is not a SOC.
+>>
+>> But it has the self-contained clock controller system, the clock
+>> framework of qca8386/qca8084 is same as the GCC of ipq platform such as
+>> ipq9574.
+> 
+> OK
+> 
+>>
+>> would you help advise whether we can document it with the compatible
+>> "qcom,qca8k-nsscc"?
+> 
+> For example:
+> qcom,qca8084-nsscc
+> 
+> Best regards,
+> Krzysztof
+> 
+Thanks Krzysztof for the suggestion.
 
--- 
-2.41.0
+i will document the compatible below.
+"qcom,qca8084-nsscc" for the PHY mode of device.
+"qcom,qca8386-nsscc" for the switch mode of device.
 
+Jie.
