@@ -2,114 +2,109 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D52E3C001B0
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Aug 2023 15:57:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60E21C001B0
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Aug 2023 15:59:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230171AbjHHP5y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Aug 2023 11:57:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54556 "EHLO
+        id S231132AbjHHP7M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Aug 2023 11:59:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230123AbjHHP4U (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Aug 2023 11:56:20 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 220325B98
-        for <linux-clk@vger.kernel.org>; Tue,  8 Aug 2023 08:43:49 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-3fe4cdb72b9so30928715e9.0
-        for <linux-clk@vger.kernel.org>; Tue, 08 Aug 2023 08:43:49 -0700 (PDT)
+        with ESMTP id S229462AbjHHP5r (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Aug 2023 11:57:47 -0400
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A43AB5FDB
+        for <linux-clk@vger.kernel.org>; Tue,  8 Aug 2023 08:44:06 -0700 (PDT)
+Received: by mail-lj1-x22b.google.com with SMTP id 38308e7fff4ca-2b9e6cc93d8so93760911fa.0
+        for <linux-clk@vger.kernel.org>; Tue, 08 Aug 2023 08:44:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691509421; x=1692114221;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pZH8BihJHBp/DZtT1lzAgFgSWlR+gykQRY/CxVLX/NQ=;
-        b=oz5i2XuKHlo+sUB4WGkQ1oNxKocfFJGy0bXRnTxKMRWUXcM4/CU9eUXHUKIVrBEZpt
-         MQrnKjjLzaUC8a0FlRgoHxpPebpdfMNlTN/UhOkKM0KGxYFUZQe8qnmZmb5BRVablF3l
-         K4Y/Am+Atqr5l7B4ZKrK7xuZpGYovdj1PVFxWc7aW8954Gj70pa2CZUzbbfQVG5d+awn
-         fbI9IVGLgsiY/pAyGTQ3l4s3rk+gHhXL673xVFqR5Gd+9JJOl0uMh8q4fZtorJWByZma
-         N1qhIE0Uq12J1f2LL4A+YJv7TGAyCzGhH2ZGg4DOkcgYNN998sEq3LEO9vmiNuQSIoP+
-         amUQ==
+        d=linaro.org; s=google; t=1691509444; x=1692114244;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FFQCxsSM2uVo6fho+aJ/OGP5I8Vv4VqgpwCByYL+BHc=;
+        b=gfo7JzaXYyc1Pbgt4GIcVIWxjkAP8U8es4arxC5I7fknH1F8wpFHz/jv8CGcvRHw4T
+         pWotIfGWyp10JZmUrkLll98c6YifkqrZdGMuv4YDgWDkLIse5/fHwtd25+PLr841ksbq
+         e6FjW4yfyPfvPzwFu6Ec93GIBoYrUC5XbSVGfCcXI21aRjJx7nHLgc9fT59Qpl/di7f8
+         qcHfpjfWvIoJsMsjBlLDvsFyy/sesetMsLw9zvuf7hhk0mclCf/ZE81Irx7IJflqHC74
+         5LiWxddaJzie5t+l4EeyBq3BBU8JXjZTBvpU6e7e8fKFfo3bREnwkanTA/116FeTc4Ss
+         wLpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691509421; x=1692114221;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pZH8BihJHBp/DZtT1lzAgFgSWlR+gykQRY/CxVLX/NQ=;
-        b=fiq3drEme5yWmHieo4UpdOA4rVie63/tftzsHl1AqMeRaiVo04dRolVHHQa00n0yED
-         RAK6GZgGTK1Y3t58notaP9cqvaHX7N0Ppy6y1o5G92e1QAu9HdUklRgk5FOVVUf62FM1
-         PFtjbRdr5XSU+WX+4a/M28uAHXMqhk47cy9dhBXseKcohTHjnlbrdKydFepJ0P9tr00U
-         V3MrCcWpyNmJouWKVk+JlBbTRKFoDCTlOCHWA4JN8cNLew5xvuUDxTyEX+plo8Hhb4IY
-         vAYen/73OQTdEha90tzU0nkbw3VzkZ+FsNE+8GSGpjAJTSg0lKQctKd3czJY/F4zryPH
-         jpUQ==
-X-Gm-Message-State: AOJu0YzhGpJXLT9+9zNCTJ/ltux9DIpqwg0me4iqwKjbpAharU3mJwIU
-        z1VzCIdVskVZHB6iHqvTgFw9M/QlCIMGwxmeaaY=
-X-Google-Smtp-Source: AGHT+IHxIGUFAD12lJphQeKsQdF3PxwsoN29JQ5BiG4xlGacb03xttiIY8EXVTEebeJ/xuBM044S4Q==
-X-Received: by 2002:adf:ce90:0:b0:314:3b02:a8a8 with SMTP id r16-20020adfce90000000b003143b02a8a8mr7447482wrn.55.1691483268603;
-        Tue, 08 Aug 2023 01:27:48 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.222.113])
-        by smtp.gmail.com with ESMTPSA id s18-20020adfeb12000000b0031779a6b451sm12861246wrn.83.2023.08.08.01.27.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Aug 2023 01:27:47 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
+        d=1e100.net; s=20221208; t=1691509444; x=1692114244;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FFQCxsSM2uVo6fho+aJ/OGP5I8Vv4VqgpwCByYL+BHc=;
+        b=PRt3P5v54BB6HMLQfel7LcmMoivaJSCglY27XB/IOLw7z1+VuDzmdod3GPS8oW7+S6
+         fi0Qt+ibk0W7owmtuKw3sCdqJocgl9+w2x1yH6HlkL4sviF4AGAyC4Q3ejW9sGfdRtH4
+         Hfy1XDwKOpkN3amZ6RARvHLTfzyxPBaE5jQLPhwMyNwunGlwbKQcRZkmon7GiqReMkQP
+         AkeyJKDWl3lY1PCXw5YDo3DP6V+r2x8TCaCl0j93idCtYQBre+Qvi6WwxfrvIx/nFKH1
+         vFBBwhuiE5QhoO6XJHAkT0kTuZzdeAji49A7tjTDborrp9tD6s1k9poVLtWOOeAAAJ5/
+         JjPg==
+X-Gm-Message-State: AOJu0YwgiufXC5RzcNfrDiIp3NYAaNzUUv0mg2vyZTi0akCpwuhRb5ZQ
+        kRLxPmzZC8g9vJKfYbnMyH4K1xodg1zblR2kLh0=
+X-Google-Smtp-Source: AGHT+IGHV9+UYzYvn5Ls/Ez67OotAAo6suz5ZNdonadR1VetzpLzmLYFNFXgqtoLI29IJKXXrA9EdA==
+X-Received: by 2002:a17:906:220e:b0:99c:7333:199d with SMTP id s14-20020a170906220e00b0099c7333199dmr11376507ejs.30.1691507449835;
+        Tue, 08 Aug 2023 08:10:49 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.222.113])
+        by smtp.gmail.com with ESMTPSA id y25-20020a1709063a9900b0099bc80d5575sm6773608ejd.200.2023.08.08.08.10.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Aug 2023 08:10:49 -0700 (PDT)
+Message-ID: <f7f9b3a6-7ba3-3ac1-eb8f-4973d31690f4@linaro.org>
+Date:   Tue, 8 Aug 2023 17:10:46 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Subject: Re: [PATCH v2 6/6] dt-bindings: arm-smmu: Fix MSM8998 clocks
+ description
+Content-Language: en-US
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH 03/11] clk: samsung: exynos5250: do not define number of clocks in bindings
-Date:   Tue,  8 Aug 2023 10:27:30 +0200
-Message-Id: <20230808082738.122804-4-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230808082738.122804-1-krzysztof.kozlowski@linaro.org>
-References: <20230808082738.122804-1-krzysztof.kozlowski@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        Imran Khan <kimran@codeaurora.org>,
+        Rajendra Nayak <quic_rjendra@quicinc.com>,
+        Joonwoo Park <joonwoop@codeaurora.org>,
+        Jeffrey Hugo <quic_jhugo@quicinc.com>,
+        Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Jami Kettunen <jami.kettunen@somainline.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev
+References: <20230531-topic-8998_mmssclk-v2-0-34273e275c51@linaro.org>
+ <20230531-topic-8998_mmssclk-v2-6-34273e275c51@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230531-topic-8998_mmssclk-v2-6-34273e275c51@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Number of clocks supported by Linux drivers might vary - sometimes we
-add new clocks, not exposed previously.  Therefore this number of clocks
-should not be in the bindings, because otherwise we should not change
-it.
+On 08/08/2023 11:44, Konrad Dybcio wrote:
+> MSM8998 was abusingly referencing one of the internal bus clocks, that
+> were recently dropped from Linux (because the original implementation
+> did not make much sense), circumventing the interconnect framework.
 
-Define number of clocks per each clock controller inside the driver
-directly.
+Please mention here that effectively you are dropping bus-mm clock and
+the rest is the same as before. It's not possible to figure this out
+from the diff alone.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/clk/samsung/clk-exynos5250.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+With updated commit msg.
 
-diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
-index 92fb09922f28..8ebe6155d8b7 100644
---- a/drivers/clk/samsung/clk-exynos5250.c
-+++ b/drivers/clk/samsung/clk-exynos5250.c
-@@ -100,6 +100,9 @@
- #define PWR_CTRL2_CORE2_UP_RATIO		(1 << 4)
- #define PWR_CTRL2_CORE1_UP_RATIO		(1 << 0)
- 
-+/* NOTE: Must be equal to the last clock ID increased by one */
-+#define CLKS_NR					(CLK_MOUT_VPLLSRC + 1)
-+
- /* list of PLLs to be registered */
- enum exynos5250_plls {
- 	apll, mpll, cpll, epll, vpll, gpll, bpll,
-@@ -797,7 +800,7 @@ static void __init exynos5250_clk_init(struct device_node *np)
- 		panic("%s: unable to determine soc\n", __func__);
- 	}
- 
--	ctx = samsung_clk_init(NULL, reg_base, CLK_NR_CLKS);
-+	ctx = samsung_clk_init(NULL, reg_base, CLKS_NR);
- 	hws = ctx->clk_data.hws;
- 
- 	samsung_clk_of_register_fixed_ext(ctx, exynos5250_fixed_rate_ext_clks,
--- 
-2.34.1
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+
+Best regards,
+Krzysztof
 
