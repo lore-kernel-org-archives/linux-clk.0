@@ -2,118 +2,166 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD733C04A6A
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Aug 2023 16:45:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C5CFC001DB
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Aug 2023 16:49:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233421AbjHHQpf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Aug 2023 12:45:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56214 "EHLO
+        id S229481AbjHHQtj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Aug 2023 12:49:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233317AbjHHQoi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Aug 2023 12:44:38 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A58A16BE7;
-        Tue,  8 Aug 2023 08:56:10 -0700 (PDT)
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3784FSFh001613;
-        Tue, 8 Aug 2023 05:15:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=qcppdkim1;
- bh=lfcTAt6G52PFyMvl+jt86UgekCwkOtCLCvWH8CsbZpE=;
- b=jod/S4QyFJp9dZcCk05zuvB1OyT307eDXSHqMRv6OGpuN52FyX5FsW0RUJlQ5iCylXln
- YJKxT4oTC1CfIcZaf8YaKVE4HfHUTWY5rfEsoKn+ekoqVGzV3Kh8O0xwmdfWgN5flXTR
- F9tYTmtoqmDNfpu4yEi2uWdJQIiuWNnVMMVeLcdjcyXGfVTxlUptFRMi8cnBTn9+3LEa
- xrajTNjFsEAWKVU84YDYvYTVRpvDf14pAp2It3bO36dPm4g9IYC52GW+OHjojNNa8SQ2
- AdYDKSyY7xSjNYXWwmxcCSMmjewpJ1y/9u+tmCtYrkdvSeLBPl4mQFVCoT5I7C4+C2Ag Cg== 
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3sbcacra14-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 08 Aug 2023 05:15:08 +0000
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-        by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3785F8D5003566
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 8 Aug 2023 05:15:08 GMT
-Received: from hu-imrashai-hyd.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.30; Mon, 7 Aug 2023 22:15:03 -0700
-From:   Imran Shaik <quic_imrashai@quicinc.com>
-To:     Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>
-CC:     Taniya Das <quic_tdas@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Ajit Pandey <quic_ajipan@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>
-Subject: [PATCH 4/4] arm64: dts: qcom: qdu1000: Add ECPRI clock controller
-Date:   Tue, 8 Aug 2023 10:44:07 +0530
-Message-ID: <20230808051407.647395-5-quic_imrashai@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230808051407.647395-1-quic_imrashai@quicinc.com>
-References: <20230808051407.647395-1-quic_imrashai@quicinc.com>
+        with ESMTP id S232455AbjHHQst (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Aug 2023 12:48:49 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D5F446FF6
+        for <linux-clk@vger.kernel.org>; Tue,  8 Aug 2023 08:57:16 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id a640c23a62f3a-98377c5d53eso806118066b.0
+        for <linux-clk@vger.kernel.org>; Tue, 08 Aug 2023 08:57:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1691510196; x=1692114996;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7eF8Rl4Nrv0n3qIaC6c+71IiCQoHSuRD0COK5QFMyP0=;
+        b=Euf+YoCp70VpEkgTFxHqdfZB2w6nMSSJI99bI2EFbKljxFlYWyEgSSXkdzfeG308iQ
+         icMPQ25Rjjch8vHd3/HEhWpA/pa2r1fJXaQb69IdGT/+XVZ7ZcY4+Iqm8ZgtFIXAW98w
+         w/E7TMO04FFMe9LXI30/50zkJpB741zl6bBiC16zHukKre5xA1FR7klap5ufB0a8JBwp
+         4VJipf3NzN8gP7me3CVicRdbr3s/TplWPt229crkfb+QhuP0DNE/5wBk9L97sGjnuyns
+         dpE3mqFLiq562KBvmsmWRK3S75Delm7b9BQccIJtS181ipEpky2V0yGsIoUo0df0WgMG
+         nO+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691510196; x=1692114996;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7eF8Rl4Nrv0n3qIaC6c+71IiCQoHSuRD0COK5QFMyP0=;
+        b=NWMDKvAYAxQr1k3Car3g7XPqeujI0iHeitK5zWebWhI/o/38U9XNMywMRWKfv3de01
+         sPFohaB1ywtdi7fGnMsQwsi7Gdneeet5DRNYtbLzJncBCpGF9mnDXX/gUaEN3x6JzDNe
+         gJco1o1Ru0WiKAvHsEDjFrhvX4RAmDGlZmK6M0NmgTbcjWN3pChbsjAURg+T5+R0ayay
+         o5a1jucgw3orIJRtOhoJklpOHvDnk1A/P5W6VL2Vc631R+8kkFNppaC5qIPMRVi/cZAf
+         Me8Inti4RCmbWmM5bwGJSKAGXToogsgKWo8+j7Fknc45GjUQW5uc3ajRWM5zVVR0KHm8
+         /I/g==
+X-Gm-Message-State: AOJu0YxU1Uht4CyWX7zVScHMMKGI2a2hW7seV4/jKCtth8Eg4C2k/EQ+
+        cIAfJRG7Vkwcy1HlJBgTVzLn9d7vSyLWiFVSk0g=
+X-Google-Smtp-Source: AGHT+IEyDsRs/Zlk81B70tQzJ2VvCAwqqLNOe/n6dbEVxMV8oUWml9e5yDCmumsusfydc9mP+oYysw==
+X-Received: by 2002:a05:6512:1103:b0:4fe:279b:8a02 with SMTP id l3-20020a056512110300b004fe279b8a02mr9262600lfg.67.1691495019651;
+        Tue, 08 Aug 2023 04:43:39 -0700 (PDT)
+Received: from [192.168.1.101] (abxi185.neoplus.adsl.tpnet.pl. [83.9.2.185])
+        by smtp.gmail.com with ESMTPSA id j20-20020ac253b4000000b004fbdba4b075sm1861679lfh.57.2023.08.08.04.43.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Aug 2023 04:43:38 -0700 (PDT)
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Date:   Tue, 08 Aug 2023 13:43:34 +0200
+Subject: [PATCH v3 03/10] interconnect: qcom: icc-rpm: Let nodes drive
+ their own bus clock
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 8D-4n_fei29CHE7_p4RcNzS7QqD_7WuS
-X-Proofpoint-ORIG-GUID: 8D-4n_fei29CHE7_p4RcNzS7QqD_7WuS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-08-08_03,2023-08-03_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
- priorityscore=1501 impostorscore=0 mlxscore=0 adultscore=0 malwarescore=0
- mlxlogscore=871 bulkscore=0 lowpriorityscore=0 phishscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2306200000
- definitions=main-2308080046
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230726-topic-icc_coeff-v3-3-dee684d6cdd2@linaro.org>
+References: <20230726-topic-icc_coeff-v3-0-dee684d6cdd2@linaro.org>
+In-Reply-To: <20230726-topic-icc_coeff-v3-0-dee684d6cdd2@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1691495013; l=3111;
+ i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
+ bh=8JDjpAr7N9o+Ldc42lWfgA5mVZfE1TEXPiQOh91fLVQ=;
+ b=YVAatYh7xnAWvBz8CbkBbjpEVXXX/ocZeGoh4gETy6ScPffEddtOjrccwL7B7bBTyuuFZ4fhm
+ mJZhqrcP3X9CGIZcoGsq1+Yz4R+eRQNJc8oAC2ZeWOd3m7gnL20DT0x
+X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add device node for ECPRI clock controller on qcom QDU1000
-and QRU1000 SoCs.
+If this hardware couldn't get messier, some nodes are supposed to drive
+their own bus clock.. Presumably to connect to some intermediate
+interface between the node itself and the bus it's (supposed to be)
+connected to.
 
-Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
+Expand the node struct with the necessary data and hook up the
+allocations & calculations.
+
+Note that the node-specific AB/IB coefficients contribute (by design)
+to both the node-level and the bus-level aggregation.
+
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/qdu1000.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/interconnect/qcom/icc-rpm.c | 27 +++++++++++++++++++++++++++
+ drivers/interconnect/qcom/icc-rpm.h |  3 +++
+ 2 files changed, 30 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/qdu1000.dtsi b/arch/arm64/boot/dts/qcom/qdu1000.dtsi
-index 1c0e5d271e91..63930f944b65 100644
---- a/arch/arm64/boot/dts/qcom/qdu1000.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qdu1000.dtsi
-@@ -381,6 +381,20 @@ gcc: clock-controller@80000 {
- 			#power-domain-cells = <1>;
- 		};
+diff --git a/drivers/interconnect/qcom/icc-rpm.c b/drivers/interconnect/qcom/icc-rpm.c
+index 8c1bfd65d774..1d3af4e9ead8 100644
+--- a/drivers/interconnect/qcom/icc-rpm.c
++++ b/drivers/interconnect/qcom/icc-rpm.c
+@@ -414,6 +414,33 @@ static int qcom_icc_set(struct icc_node *src, struct icc_node *dst)
+ 		qp->bus_clk_rate[QCOM_SMD_RPM_SLEEP_STATE] = sleep_rate;
+ 	}
  
-+		ecpricc: clock-controller@280000 {
-+			compatible = "qcom,qdu1000-ecpricc";
-+			reg = <0x0 0x00280000 0x0 0x31c00>;
-+			clocks = <&rpmhcc RPMH_CXO_CLK>,
-+				<&gcc GCC_ECPRI_CC_GPLL0_CLK_SRC>,
-+				<&gcc GCC_ECPRI_CC_GPLL1_EVEN_CLK_SRC>,
-+				<&gcc GCC_ECPRI_CC_GPLL2_EVEN_CLK_SRC>,
-+				<&gcc GCC_ECPRI_CC_GPLL3_CLK_SRC>,
-+				<&gcc GCC_ECPRI_CC_GPLL4_CLK_SRC>,
-+				<&gcc GCC_ECPRI_CC_GPLL5_EVEN_CLK_SRC>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
++	/* Handle the node-specific clock */
++	if (!src_qn->bus_clk_desc)
++		return 0;
 +
- 		gpi_dma0: dma-controller@900000  {
- 			compatible = "qcom,qdu1000-gpi-dma", "qcom,sm6350-gpi-dma";
- 			reg = <0x0 0x900000 0x0 0x60000>;
++	active_rate = qcom_icc_calc_rate(qp, src_qn, QCOM_SMD_RPM_ACTIVE_STATE);
++	sleep_rate = qcom_icc_calc_rate(qp, src_qn, QCOM_SMD_RPM_SLEEP_STATE);
++
++	if (active_rate != src_qn->bus_clk_rate[QCOM_SMD_RPM_ACTIVE_STATE]) {
++		ret = qcom_icc_rpm_set_bus_rate(src_qn->bus_clk_desc, QCOM_SMD_RPM_ACTIVE_STATE,
++						active_rate);
++		if (ret)
++			return ret;
++
++		/* Cache the rate after we've successfully committed it to RPM */
++		src_qn->bus_clk_rate[QCOM_SMD_RPM_ACTIVE_STATE] = active_rate;
++	}
++
++	if (sleep_rate != src_qn->bus_clk_rate[QCOM_SMD_RPM_SLEEP_STATE]) {
++		ret = qcom_icc_rpm_set_bus_rate(src_qn->bus_clk_desc, QCOM_SMD_RPM_SLEEP_STATE,
++						sleep_rate);
++		if (ret)
++			return ret;
++
++		/* Cache the rate after we've successfully committed it to RPM */
++		src_qn->bus_clk_rate[QCOM_SMD_RPM_SLEEP_STATE] = sleep_rate;
++	}
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/interconnect/qcom/icc-rpm.h b/drivers/interconnect/qcom/icc-rpm.h
+index 5e7d6a4fd2f3..f9ef16f570be 100644
+--- a/drivers/interconnect/qcom/icc-rpm.h
++++ b/drivers/interconnect/qcom/icc-rpm.h
+@@ -97,6 +97,7 @@ struct qcom_icc_qos {
+  * @num_links: the total number of @links
+  * @channels: number of channels at this node (e.g. DDR channels)
+  * @buswidth: width of the interconnect between a node and the bus (bytes)
++ * @bus_clk_desc: a pointer to a rpm_clk_resource description of bus clocks
+  * @sum_avg: current sum aggregate value of all avg bw requests
+  * @max_peak: current max aggregate value of all peak bw requests
+  * @mas_rpm_id:	RPM id for devices that are bus masters
+@@ -110,11 +111,13 @@ struct qcom_icc_node {
+ 	u16 num_links;
+ 	u16 channels;
+ 	u16 buswidth;
++	const struct rpm_clk_resource *bus_clk_desc;
+ 	u64 sum_avg[QCOM_SMD_RPM_STATE_NUM];
+ 	u64 max_peak[QCOM_SMD_RPM_STATE_NUM];
+ 	int mas_rpm_id;
+ 	int slv_rpm_id;
+ 	struct qcom_icc_qos qos;
++	u32 bus_clk_rate[QCOM_SMD_RPM_STATE_NUM];
+ };
+ 
+ struct qcom_icc_desc {
+
 -- 
-2.25.1
+2.41.0
 
