@@ -2,123 +2,85 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFADCC001DB
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Aug 2023 18:15:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6675C04A94
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Aug 2023 18:16:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235486AbjHHSP5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Aug 2023 14:15:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38282 "EHLO
+        id S235428AbjHHSQq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Aug 2023 14:16:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234256AbjHHSP0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Aug 2023 14:15:26 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9D9F1E4F4
-        for <linux-clk@vger.kernel.org>; Tue,  8 Aug 2023 10:21:44 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-99bed101b70so847016566b.3
-        for <linux-clk@vger.kernel.org>; Tue, 08 Aug 2023 10:21:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691515303; x=1692120103;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=X+614xtHjgD1nkm8xRBKqqyV2uZni5hqr1Y2F11sHVk=;
-        b=QbkktjXmb8Ofbkap/hW23U+ThcpD7d8vrnMs3qdtL93ozYTHKgofmUdcgapA8sDAN6
-         PPLETx080o8w3aeYeuUjnI4NksB2biYTgcUwt5rIs8ER7hAVTqSvsL++fI/Ql/+dSLc5
-         +/zZOMdBAXhMN/H5eI0fRa1axUfJ0/49kRaDEEsyCMbDM+GN9nC8IQQTJERjrN+gg+TR
-         V4N6FuEvwP9B1ddaQyamtOpCaDl1yg1sjMZaNN0TuD+FF2PLkJdT8HM4NYd7YPVrLSNB
-         AfvoOaWsge8eB5WleCuTgxmfKZyfzRTXmkGf1Y17+FUAHsmHAfs2SHMCtFX65Mcl1OV1
-         K18Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691515303; x=1692120103;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=X+614xtHjgD1nkm8xRBKqqyV2uZni5hqr1Y2F11sHVk=;
-        b=aQ/oD5g6wJdqiyRxcqJAAi+5RgYkL7My7V5M02C9EfTHw5uSuX4GuoGM+Qd/hJzTNa
-         p1vJL+rZk3fmP9IERbH+jKIbqCXYicQj9j8gu5zcK7fA8N8mJts/mLTr67whXQdCJBQ6
-         yNR02+Nb6WKtNuKrG0hsp3TQdr21uNlWPFHvmJxeSWNYM523qvajwb3vm1v9PRsWtvA8
-         CkyR/qtckcOlAnHKFLhm4baESRcDqJWM9Qd3ZuhRGVWYm6vlPE0nr/VT10lHAUQUTpMs
-         95rBOEOAH2e2DSTE2Qjugo1+07YcLlF0RJymRBcJRM2rZGNZ92+yHS3DEdwA15FZfTUL
-         zRQQ==
-X-Gm-Message-State: AOJu0YwaE1vUPLZMcEeFRZGJZCHBz1nPLQCugWfCAJu30DPKGrmoH5Sp
-        hq6u/uljml2c/EvW++hfUUsxinA/HlHnA3mRMNY=
-X-Google-Smtp-Source: AGHT+IFVMdcEkHvqjIMX5oEgG2oBE7nbsEMOVRk5VcpuTnRc1mcmt8mNUyLq7GYjCrQ3jyb2zmb5Gw==
-X-Received: by 2002:a05:6512:e9b:b0:4fe:5680:db1f with SMTP id bi27-20020a0565120e9b00b004fe5680db1fmr7912704lfb.53.1691487891249;
-        Tue, 08 Aug 2023 02:44:51 -0700 (PDT)
-Received: from [192.168.1.101] (abxi185.neoplus.adsl.tpnet.pl. [83.9.2.185])
-        by smtp.gmail.com with ESMTPSA id i6-20020a056512006600b004fdba93b92asm1818884lfo.252.2023.08.08.02.44.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Aug 2023 02:44:50 -0700 (PDT)
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Tue, 08 Aug 2023 11:44:42 +0200
-Subject: [PATCH v2 2/6] arm64: dts: qcom: msm8998: Add missing power domain
- to MMSS SMMU
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230531-topic-8998_mmssclk-v2-2-34273e275c51@linaro.org>
-References: <20230531-topic-8998_mmssclk-v2-0-34273e275c51@linaro.org>
-In-Reply-To: <20230531-topic-8998_mmssclk-v2-0-34273e275c51@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+        with ESMTP id S234476AbjHHSQM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Aug 2023 14:16:12 -0400
+Received: from mx.skole.hr (mx2.hosting.skole.hr [161.53.165.186])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01F717A1E3;
+        Tue,  8 Aug 2023 10:22:46 -0700 (PDT)
+Received: from mx2.hosting.skole.hr (localhost.localdomain [127.0.0.1])
+        by mx.skole.hr (mx.skole.hr) with ESMTP id 6BCF385027;
+        Tue,  8 Aug 2023 12:14:32 +0200 (CEST)
+From:   =?UTF-8?q?Duje=20Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
+To:     Robert Jarzmik <robert.jarzmik@free.fr>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Andy Shevchenko <andy@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        Imran Khan <kimran@codeaurora.org>,
-        Rajendra Nayak <quic_rjendra@quicinc.com>,
-        Joonwoo Park <joonwoop@codeaurora.org>,
-        Jeffrey Hugo <quic_jhugo@quicinc.com>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Jeffrey Hugo <quic_jhugo@quicinc.com>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Jami Kettunen <jami.kettunen@somainline.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1691487885; l=854;
- i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=/yznmFUOFfvt3H81R22ABUv0eOeLe9LUwSr+QNKzGV0=;
- b=6ok/LWtlPH6zSyy5UMAq/t5bgWP3Ud7Ij9vBySuwjh3vMiS1gJVjxUKw6nLHyS95ARxX+LJAd
- Ibm+ib3FKxpBIIhASbXVDOfZYxEwn1cNsRmJHG+sQTEmtuUOfL5elUO
-X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+        Kees Cook <keescook@chromium.org>,
+        Tony Luck <tony.luck@intel.com>,
+        "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
+        =?UTF-8?q?Duje=20Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-hardening@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        afaerber@suse.de
+Subject: [PATCH v4 8/8] MAINTAINERS: add myself as Marvell PXA1908 maintainer
+Date:   Tue,  8 Aug 2023 12:13:06 +0200
+Message-ID: <20230808101313.13081-1-duje.mihanovic@skole.hr>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230807-pxa1908-lkml-v4-0-cb387d73b452@skole.hr>
+References: <20230807-pxa1908-lkml-v4-0-cb387d73b452@skole.hr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The MMSS SMMU has its own power domain. Attach it so that we can drop
-the "keep it always-on" hack.
+Add myself as the maintainer for Marvell PXA1908 SoC support.
 
-Fixes: 05ce21b54423 ("arm64: dts: qcom: msm8998: Configure the multimedia subsystem iommu")
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
 ---
- arch/arm64/boot/dts/qcom/msm8998.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+ MAINTAINERS | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-index e40f6461f4fd..39db67211fae 100644
---- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-@@ -2770,6 +2770,8 @@ mmss_smmu: iommu@cd00000 {
- 				<GIC_SPI 261 IRQ_TYPE_LEVEL_HIGH>,
- 				<GIC_SPI 262 IRQ_TYPE_LEVEL_HIGH>,
- 				<GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			power-domains = <&mmcc BIMC_SMMU_GDSC>;
- 		};
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0f966f05fb0d..6f5233f3904b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2299,6 +2299,15 @@ F:	drivers/irqchip/irq-mvebu-*
+ F:	drivers/pinctrl/mvebu/
+ F:	drivers/rtc/rtc-armada38x.c
  
- 		remoteproc_adsp: remoteproc@17300000 {
-
++ARM/Marvell PXA1908 SOC support
++M:	Duje Mihanović <duje.mihanovic@skole.hr>
++L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
++S:	Maintained
++T:	git https://gitlab.com/LegoLivesMatter/linux
++F:	arch/arm64/boot/dts/marvell/pxa1908*
++F:	drivers/clk/mmp/clk-of-pxa1908.c
++F:	include/dt-bindings/clock/marvell,pxa1908.h
++
+ ARM/Mediatek RTC DRIVER
+ M:	Eddie Huang <eddie.huang@mediatek.com>
+ M:	Sean Wang <sean.wang@mediatek.com>
 -- 
 2.41.0
+
 
