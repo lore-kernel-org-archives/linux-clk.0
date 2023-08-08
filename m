@@ -2,116 +2,158 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 037E1C001DB
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Aug 2023 16:08:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22935C41513
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Aug 2023 16:09:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231908AbjHHQIz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Aug 2023 12:08:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43826 "EHLO
+        id S232027AbjHHQJ5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Aug 2023 12:09:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231822AbjHHQHD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Aug 2023 12:07:03 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E955372BC
-        for <linux-clk@vger.kernel.org>; Tue,  8 Aug 2023 08:45:58 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-9936b3d0286so873807166b.0
-        for <linux-clk@vger.kernel.org>; Tue, 08 Aug 2023 08:45:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691509557; x=1692114357;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4FqN2Sq9j6IVseScqHZxUGnTrukPTjl33EKA90GBaFU=;
-        b=FzTB891reuZd7ZAAXqJa9TzXJfLBybQD37AwWXOA3kbX+6KFkZs2RtlNc93N1WHn8i
-         27Admr36v4NVCRs2ctoB0JFO/JwqcDVjN4tc4tFobwqgwEJU6UKVwkT4YNDS+WaA7/ZG
-         SFYINbr6amiTL8c7B6XztgTTwJsLH58kGF7L/BOI3smuHPrzj7U7Q1c9CQsFe1pQA0yL
-         XKOOo7sDHOLOok2DUbWeBA1JJOc/qaqgO1/il53a5FaEF2DD2vbEiia8jIpnPIaSdIuO
-         FT7TljE9ivmtOyx8ce8D9RMubiJs/2CNGkopgzZKGK3OB4FGoj2YWaY5jPueRYUEmS/H
-         W7/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691509557; x=1692114357;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4FqN2Sq9j6IVseScqHZxUGnTrukPTjl33EKA90GBaFU=;
-        b=iX0ZbcUzRwG6dDfgozOOSXuPnRwKMDpgChqGxJO6l/tkO8HidfpXsw3ZtWTq+CuYgu
-         wu4psTDZDf3O18p90DVrflUqTS3ZLEn9VmoIVfFc7q1tG/MMq84tx8J4esvgDAM9RMMv
-         B1C4X6Gw4WNzonKyOk7R2OKNVfazr7PHGSYJR/LqI7vKs7GiUdPvGLgdZIvKvy81f10e
-         gLQuWW+zECxsGzRRvNLlG2Vsb0pS/T4/jxIBnUyEz4GYMT++I4r+y64Sfa+p0+yhU9CM
-         7zm+DIG8r7lPXUDjzBG5QpIfvGvdac6zuZUeBqrmg8Jyo5PwZ7RRQSsmf63rzmVP46iO
-         HRKA==
-X-Gm-Message-State: AOJu0YwEDmGL/C9uS79T8Kq7XMgTXwHQnRBC3t9mEL93k5SxhK1Upgxd
-        4uElWH0blY1Rbm8iAWORTE4KdpPQ6lz6bqMyDH8=
-X-Google-Smtp-Source: AGHT+IFjkaP4oTfJ0Ri8v7HT5s6bsxs5Tqj1AvIF9Kb+lyIVxIbcmy/tMf8ddbWT77OvdXJajWXRUA==
-X-Received: by 2002:a05:6512:1598:b0:4fb:8bea:f5f6 with SMTP id bp24-20020a056512159800b004fb8beaf5f6mr10188044lfb.34.1691495024243;
-        Tue, 08 Aug 2023 04:43:44 -0700 (PDT)
-Received: from [192.168.1.101] (abxi185.neoplus.adsl.tpnet.pl. [83.9.2.185])
-        by smtp.gmail.com with ESMTPSA id j20-20020ac253b4000000b004fbdba4b075sm1861679lfh.57.2023.08.08.04.43.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Aug 2023 04:43:43 -0700 (PDT)
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Tue, 08 Aug 2023 13:43:38 +0200
-Subject: [PATCH v3 07/10] interconnect: qcom: qcm2290: Update EBI channel
- configuration
+        with ESMTP id S231835AbjHHQIX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Aug 2023 12:08:23 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC80E72B1;
+        Tue,  8 Aug 2023 08:46:15 -0700 (PDT)
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3784Emmx011882;
+        Tue, 8 Aug 2023 05:19:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=PIdgMZR8W+Ik6UeWAcjVFurIfmZejnHlq4mvtB1MIRY=;
+ b=HyW7PCKJacgBLG6Orka3HZgv2VdB/Qoiq6cGDeLrl6QaZ8CpgEgdpjmuyZL+X7PP3LI5
+ WqaGs2HCSq9eiKIuP4F2ZwIuOSG1aZDrG/C7VXU3X4FlbUpFj6CUBYBONSAG114ifopZ
+ KcfV69ckVlzFJI9r+Vy+VygrqSi5AfS+bB7iXjL1+QWoy5LtLGXOuoQMnh+iHvd+ZXmb
+ gDJoTGCiPtQsPGfnM/UWEe00ENoPn3tf4oYG/L1XYVrHYcN7fKWBDcup+nyWU2YPuZAF
+ 2+dLC4PvvkVDjPfPUvZcFA324t6xhAYt6R7NsBoupF4uNaErAswGroJfIHHAK3L34Wwo Qw== 
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3sb7bb8sqh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 08 Aug 2023 05:19:11 +0000
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3785J9qc031032
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 8 Aug 2023 05:19:10 GMT
+Received: from [10.253.9.41] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Mon, 7 Aug
+ 2023 22:19:06 -0700
+Message-ID: <cf9788f0-a115-5ff9-1195-f4f302551e04@quicinc.com>
+Date:   Tue, 8 Aug 2023 13:19:02 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Subject: Re: [PATCH 2/3] dt-bindings: clock: add qca8386/qca8084 clock and
+ reset definitions
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <p.zabel@pengutronix.de>
+CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_srichara@quicinc.com>
+References: <20230801085352.22873-1-quic_luoj@quicinc.com>
+ <20230801085352.22873-3-quic_luoj@quicinc.com>
+ <ef996a7e-6eba-4366-c3ea-0d08f2768e98@linaro.org>
+Content-Language: en-US
+From:   Jie Luo <quic_luoj@quicinc.com>
+In-Reply-To: <ef996a7e-6eba-4366-c3ea-0d08f2768e98@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230726-topic-icc_coeff-v3-7-dee684d6cdd2@linaro.org>
-References: <20230726-topic-icc_coeff-v3-0-dee684d6cdd2@linaro.org>
-In-Reply-To: <20230726-topic-icc_coeff-v3-0-dee684d6cdd2@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1691495013; l=1320;
- i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=+JCeGo0Q7sjfDzWjkGg+7ykqgtb42uWuVVMLb5STXRI=;
- b=kP/Ep84xH1Hu5VyTi/X5EdDQntTJIZBSHWF06vlxwCDpZi0bIpkqQ5Da38SWKULLxX6Ar2wu5
- ZB0IYGCkYwDBC4GBGBIEMmpmnalm/DCz4COpfhANKRfGNaIkAba4j/2
-X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: OLwaJZaka2cXgwYjJ3UdM-BCW9JfqH3y
+X-Proofpoint-ORIG-GUID: OLwaJZaka2cXgwYjJ3UdM-BCW9JfqH3y
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-08-08_03,2023-08-03_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
+ priorityscore=1501 mlxscore=0 adultscore=0 bulkscore=0 malwarescore=0
+ impostorscore=0 spamscore=0 phishscore=0 mlxlogscore=999 suspectscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2306200000 definitions=main-2308080046
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-QCM2290 can support two memory configurations: single-channel, 32-bit
-wide LPDDR3 @ up to 933MHz (bus clock) or dual-channel, 16-bit wide
-LPDDR4X @ up to 1804 MHz. The interconnect driver in its current form
-seems to gravitate towards the first one, however there are no LPDDR3-
-equipped boards upstream and we still don't have a great way to discern
-the DDR generations on the kernel side.
 
-To make DDR scaling possible on the only currently-supported 2290
-board, stick with the LPDDR4X config by default. The side effect on any
-potential LPDDR3 board would be that the requested bus clock rate is
-too high (but still capped to the firmware-configured FMAX).
 
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
----
- drivers/interconnect/qcom/qcm2290.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On 8/7/2023 2:52 PM, Krzysztof Kozlowski wrote:
+> On 01/08/2023 10:53, Luo Jie wrote:
+>> QCA8386/QCA8084 includes the clock & reset controller that is
+>> accessed by MDIO bus. Two work modes are supported, qca8386 works
+>> as switch mode, qca8084 works as PHY mode.
+>>
+>> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+>> ---
+>>   .../bindings/clock/qcom,nsscc-qca8k.yaml      |  59 ++++++++++
+>>   include/dt-bindings/clock/qcom,nsscc-qca8k.h  | 102 ++++++++++++++++++
+>>   include/dt-bindings/reset/qcom,nsscc-qca8k.h  |  76 +++++++++++++
+>>   3 files changed, 237 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/clock/qcom,nsscc-qca8k.yaml
+>>   create mode 100644 include/dt-bindings/clock/qcom,nsscc-qca8k.h
+>>   create mode 100644 include/dt-bindings/reset/qcom,nsscc-qca8k.h
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,nsscc-qca8k.yaml b/Documentation/devicetree/bindings/clock/qcom,nsscc-qca8k.yaml
+>> new file mode 100644
+>> index 000000000000..8fb77156070c
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,nsscc-qca8k.yaml
+>> @@ -0,0 +1,59 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/clock/qcom,nsscc-qca8k.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Qualcomm NSS Clock & Reset Controller on QCA8386/QCA8084
+>> +
+>> +maintainers:
+>> +  - Luo Jie <quic_luoj@quicinc.com>
+>> +
+>> +description: |
+>> +  Qualcomm NSS clock control module provides the clocks and resets
+>> +  on QCA8386(switch mode)/QCA8084(PHY mode)
+>> +
+>> +  See also::
+>> +    include/dt-bindings/clock/qcom,nsscc-qca8k.h
+>> +    include/dt-bindings/reset/qcom,nsscc-qca8k.h
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: qcom,nsscc-qca8k
+> 
+> SoC name is before IP block names. See:
+> Documentation/devicetree/bindings/arm/qcom-soc.yaml
+> 
+> qca8k is not SoC specific. I don't know what you are documenting here,
+> but if this is a SoC, then follow SoC rules.
+> 
+> If this is not SoC, it confuses me a bit to use GCC binding.
+> 
+> Anyway, this was not tested, as pointed out by bot... Please test the
+> code before sending.
+> 
+> Best regards,
+> Krzysztof
+> 
 
-diff --git a/drivers/interconnect/qcom/qcm2290.c b/drivers/interconnect/qcom/qcm2290.c
-index 42fa01c66e73..3bd7ad67c569 100644
---- a/drivers/interconnect/qcom/qcm2290.c
-+++ b/drivers/interconnect/qcom/qcm2290.c
-@@ -678,7 +678,8 @@ static struct qcom_icc_node mas_gfx3d = {
- static struct qcom_icc_node slv_ebi1 = {
- 	.name = "slv_ebi1",
- 	.id = QCM2290_SLAVE_EBI1,
--	.buswidth = 8,
-+	.buswidth = 4,
-+	.channels = 2,
- 	.mas_rpm_id = -1,
- 	.slv_rpm_id = 0,
- };
+Hi Krzysztof,
 
--- 
-2.41.0
+Thanks for the review comments.
+qca8383/qca8084 is a network chip that support switch mode and PHY mode,
+the hardware register is accessed by MDIO bus, which is not a SOC.
 
+But it has the self-contained clock controller system, the clock 
+framework of qca8386/qca8084 is same as the GCC of ipq platform such as 
+ipq9574.
+
+would you help advise whether we can document it with the compatible
+"qcom,qca8k-nsscc"?
+
+Jie.
