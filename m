@@ -2,234 +2,168 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE18CC001DB
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Aug 2023 15:45:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FB76C001DE
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Aug 2023 15:49:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229641AbjHHPpv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Aug 2023 11:45:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55708 "EHLO
+        id S230155AbjHHPtp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Aug 2023 11:49:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229491AbjHHPoV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Aug 2023 11:44:21 -0400
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFAA835A7
-        for <linux-clk@vger.kernel.org>; Tue,  8 Aug 2023 08:40:30 -0700 (PDT)
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-31781e15a0cso4568808f8f.3
-        for <linux-clk@vger.kernel.org>; Tue, 08 Aug 2023 08:40:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691509154; x=1692113954;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CB45NVRSn9gSPVDttebSyfdPepS0c3tfl3JEKTiBuv4=;
-        b=XdRcs8y9UK/xJdyNtVUQCUrGx7AOuyvwozgA/ainX3CIVb6T86chu19zHLGAkn9uvs
-         ZPOxyWWyU3BPUU6yH2qAFrqE9qbicFFTG9px7fxB8RMFwjp507OLPUExsoFb24WCnwMj
-         8sDJm2Aj6ojdDWaFxgB3wFoGDUPKlhnOeSTtrIy+34fcIREP5GJU9VLRW7Mxg9pr+fw0
-         8cVsFMrE2KF6b6akDRwt64qgG3X9Pl2e3pTP2YupLRRgMs+yy13Ole4DxpOofbW3shz2
-         70c/qLRXzxJzm7/6/6hWw0pUnc9h+dLDvaUBSjsFe+scDY33Hi9UPvn24Abk8/yslGH6
-         qBQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691509154; x=1692113954;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CB45NVRSn9gSPVDttebSyfdPepS0c3tfl3JEKTiBuv4=;
-        b=Fl9ejH31aA2QBYqJjNlRfMUJcMXqWK9qYKx1KdYHDSnaH9EJoS1t4+y+5xgd8ZKhCQ
-         Gv51wWNioTB3V4Dy0Qw3Tml7h5hh8ey67pYJGW8GdI/zyoZuTcGpBKaQ28zFdygMW17F
-         d54RTHJXrIjUeOlySSC/oJjXdI8Itq3M0HQwoSf8+kKKdI0xePGEATCwNmKLNdg6Jpon
-         WxtStVQ0H2JxtzIzJLUCjMafOvTDFvfbEkfXR2sWziNwB9ShVTY2KTcdbdlUuq2d7cu6
-         pAzOh/abTg2yjfWf+zG7vq+UBvdql5X4xTGr9vMCV4Hm1XRbMrzQOWMUXJwlIcuK02lQ
-         99sQ==
-X-Gm-Message-State: AOJu0YydKw+uyUTGQCwtoNeRL06NrHArFyaXmxmYZqM04wM21BXuGChP
-        9GOLsgZGt51Jhyvd7o8fD2Ep/ictav/To0Q4Fe8=
-X-Google-Smtp-Source: AGHT+IFqqvDHBiYwZ/PkcHQBY6WNsuuLlIALW+sDq2/o8VdcYFZEba+eEEwZXp7lsTHe/v2o4TxYlg==
-X-Received: by 2002:a05:6512:ad5:b0:4fb:8585:eefe with SMTP id n21-20020a0565120ad500b004fb8585eefemr9104319lfu.57.1691483270562;
-        Tue, 08 Aug 2023 01:27:50 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.222.113])
-        by smtp.gmail.com with ESMTPSA id s18-20020adfeb12000000b0031779a6b451sm12861246wrn.83.2023.08.08.01.27.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Aug 2023 01:27:49 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH 04/11] clk: samsung: exynos5260: do not define number of clocks in bindings
-Date:   Tue,  8 Aug 2023 10:27:31 +0200
-Message-Id: <20230808082738.122804-5-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230808082738.122804-1-krzysztof.kozlowski@linaro.org>
-References: <20230808082738.122804-1-krzysztof.kozlowski@linaro.org>
+        with ESMTP id S229940AbjHHPrv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Aug 2023 11:47:51 -0400
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2072c.outbound.protection.outlook.com [IPv6:2a01:111:f400:7e88::72c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02CC1449A;
+        Tue,  8 Aug 2023 08:41:42 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=iSmYWNvq/5iS0TOAhagSYQ5DYfQ+urLRgDQpeK6Vqfj6YfXks5YUudbZ/1UtbB/wMFV7V9ohEPytukzqid6g3w/ViG5BAC9a2iaKSxlSwoKFDFD58ksyCp7NHijJ9INEXgSRh3sWUMAHNhR/3RLpBROj+2ofPQjXkBYaOIBMKGZQdBhlAweJeNj45LsyEHXP+hjbv8bRkJxLQmvItFcji9qECCiDTvd329V/DqC7t2zgRGW8UQj2rANSS8LHPx8+KJvaKfRtcYXVwNAMZR1ydJWHqi+Eju4OF1S//u2UTzg28sa3GrAkImgg9P9Nw8ZudZxJqg0P62W1P3HzuV9OOQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3tJTc+fHpOtcAnoskc85D79MOXRSBS6n8l7z2Ixcarc=;
+ b=CPx8kx5Fzk4UMmj4zDJeEKY3DB3WpIYcI2OEBwZmviYW98QE36xzKGEKCJ7w/THe89sVhUx7Ve2qf8+rjW3yaHZTfXfv09mKFnuI7mA02ZvzW+zCxP/8aLSpxgv3996n/QRYwWd6v4EbxJO7sjMp8DyD7j5CTAli0/Pf1C/jkSZ3wUPZVfVjiAIdtYIU8dwdPt71g6oGlsSXqLUEvr6BWf5emQ8aQFNsBu4mbJbLM6yWtwBJjFYcSSCmNIsWCDFbmSNxsdwLLh4z/bUVhmZhIbTRTF6f7xA5pSrRiO3mKCSV+yzlJt1ZJsQ/kCZBipgeAPI3zB7n5FNPzD6ML02tzA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=maxlinear.com; dmarc=pass action=none
+ header.from=maxlinear.com; dkim=pass header.d=maxlinear.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maxlinear.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3tJTc+fHpOtcAnoskc85D79MOXRSBS6n8l7z2Ixcarc=;
+ b=hPqh7fT5XE1bGg1/b+t9hcWpkHdBonyScWB/WdMEtHP1lNk2+K5xoJgbzwm3VlIkTlYXy/xGZpesNHrdtWjmBZLEACS2W0KeOZE+XCnCrSZDCyRhnN9urHo3ikWa6wNxaGqtIlb3ffDRGF/hTmc0xPxKDYvmtux9XvsY/OKtDxw=
+Received: from SA1PR19MB4909.namprd19.prod.outlook.com (2603:10b6:806:1a7::17)
+ by PH7PR19MB7381.namprd19.prod.outlook.com (2603:10b6:510:276::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6631.47; Tue, 8 Aug
+ 2023 07:53:59 +0000
+Received: from SA1PR19MB4909.namprd19.prod.outlook.com
+ ([fe80::9280:31c3:37d0:d180]) by SA1PR19MB4909.namprd19.prod.outlook.com
+ ([fe80::9280:31c3:37d0:d180%5]) with mapi id 15.20.6652.026; Tue, 8 Aug 2023
+ 07:53:59 +0000
+From:   Yi xin Zhu <yzhu@maxlinear.com>
+To:     Florian Eckert <fe@dev.tdt.de>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        Rahul Tanwar <rtanwar@maxlinear.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "krzysztof.kozlowski+dt@linaro.org" 
+        <krzysztof.kozlowski+dt@linaro.org>,
+        "conor+dt@kernel.org" <conor+dt@kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "Eckert.Florian@googlemail.com" <Eckert.Florian@googlemail.com>
+Subject: Re: [PATCH 2/2] dt-bindings: clock: intel,cgu-lgm: add
+ mxl,control-gate option
+Thread-Topic: [PATCH 2/2] dt-bindings: clock: intel,cgu-lgm: add
+ mxl,control-gate option
+Thread-Index: AQHZw5ZWtVA6agmcPUuQ544KkXb1D6/TxtYAgAAPmYCADD1dAA==
+Date:   Tue, 8 Aug 2023 07:53:58 +0000
+Message-ID: <1f8e054d-6b7f-4e82-17de-e0df3ddacbff@maxlinear.com>
+References: <20230731100349.184553-1-fe@dev.tdt.de>
+ <20230731100349.184553-3-fe@dev.tdt.de>
+ <780aa090-3a97-abab-271f-59790df29cc4@linaro.org>
+ <11386dd27487075a9a0b1a2aa7794951@dev.tdt.de>
+In-Reply-To: <11386dd27487075a9a0b1a2aa7794951@dev.tdt.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=maxlinear.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA1PR19MB4909:EE_|PH7PR19MB7381:EE_
+x-ms-office365-filtering-correlation-id: 44b779e7-89d5-4806-08ab-08db97e49f9d
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: Z+AxOPMQwjV9B0q03oXmYOpXFprJNyElU2XSaYZNRAFWXv5R2t+3Zm5C5hNcUSsOZtRTAYArFGutKGajWROdCuOY4VCSF5kHa5Jk4FT9x7kccB6xTdnZtR1Ty4GcmiIRJVqAiPjI7hCAGdPDLyDZBz+/g4xtMVrhKQMUf6GBntDhOtz6yUyDAJqai/9GRuABk5IaoxxvmxIas0xeRLXeVHVEvFboSIWwN5i17c3AP9K0/eGbL3g75QgbFFoKTzddQZ7ScW0Cwp6Bs7XoV6xYSWyj80S0z5FsqIc4ROAxkHgm54kwmg/mqcKCCrz1I3PCqvP2tc+s8wj8LYvFOSV20xTd2HFdQB2zbXUTBl2W4ZjYZBDKMSMpRqUJ7QNxb19orVfrBo6QkXQeavQsufx7PRqzSwB5lq70Ogwdp7iNeLT7H/7387M2byrY2oXIwX0VZL1pkVz1wtk+dfrOtM79BqvResJTL0m9NraW8Jsr9ra7OHNni2DTugmcas9+BwimKkKKzCpnyR/u8SuZ45wVlVH5jVXMDxNdzdn/y5YFHWbuFn2BvjvBiWNeYu2gi5UT7Yd+BO3GR/bhk6MWH/c1YrGQ7vGvsme+/zDre14urzvBGp/gQ87U9f9KDqrnKCtiql0NJAFkw7rwPrT8oSmKWswCAFN1G+Ow80o/rgWgaizNUBFWYH+T3p485BXHlbsM/UgQRrNea5NXY5TOq1odYg==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR19MB4909.namprd19.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(136003)(346002)(396003)(366004)(39850400004)(376002)(1800799003)(451199021)(90011799007)(186006)(90021799007)(5660300002)(53546011)(6506007)(83380400001)(26005)(2616005)(8936002)(41300700001)(4326008)(66556008)(66476007)(91956017)(316002)(66446008)(66946007)(2906002)(64756008)(76116006)(8676002)(6486002)(7416002)(71200400001)(478600001)(122000001)(54906003)(110136005)(6512007)(38100700002)(31696002)(86362001)(36756003)(38070700005)(31686004)(45980500001);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?R2gwN1hUMW5iWi85TzFheC9ZYVdqM3ZmR0o3Qmh6UzJmbnJXUHR6ZzdjMCt5?=
+ =?utf-8?B?L3IwYmRxaG0yOEtuWGxrbWtFekxCN2RUMEo2cDdmVHcwWllFUENZdStHb1Nw?=
+ =?utf-8?B?ZFpvVzdmODBCWkV4SDZKYVJtdUlneTZjN0llRWdGU1hzeE96dmFNZHR2U2p4?=
+ =?utf-8?B?YUpTWElLZGFyeHlxSStuMDBCRkZSYUF2RTltVjZXYUJjbUpSQTJXRjgxSm9w?=
+ =?utf-8?B?aC9rc0hTU2NnY1ovVHBOV250SnZEQlBma2RHWG1CSkhoWXd4WmlpNU9WMVAz?=
+ =?utf-8?B?NTVHUEZkVkJ6NERqWGQreUxNeFJIb0dxd0VLSXBnSUdmZitSbk1jUXYvVlFF?=
+ =?utf-8?B?c2xUSHlzbFYvUVBiZFljN0dSVWlOcjZrbjFETThMYWdMNWRzVmdnenhUN1d3?=
+ =?utf-8?B?TTNWeHdHS1ZrUTFWcGJIcEp6TytGRjlBZjhVZElkWDZMTU03clRjOEpNdHBX?=
+ =?utf-8?B?MjVVWTlBYW81RzY2enJqSm1FQ2N4cnpMNHdPOVlHNGN1bVRCelZzR3R4aHRq?=
+ =?utf-8?B?VE5kd21ZcnQ3YmFJcGF4RXRhTVd4ZFA2UDFBOVZLV3VDYWdxZmlEUEYvZTha?=
+ =?utf-8?B?SWV6dlE1Nm1UV2NicUdlc1VReSt2SFVJZTdveDJlVFVpRS9MZTdGMnlSSk5w?=
+ =?utf-8?B?eDF0cll2dkFwMFBzMmlydjYxL1Urb0RURngwRm81cFpEU0hVNW4wYUxPeDNN?=
+ =?utf-8?B?WXIwVUQydXBLWGJPN2FBclV0VGZzQnhidk9ZVE50ZmZJRm5MbHNJaCtNV2E2?=
+ =?utf-8?B?Y0tWbjFWaUJZMHhYWUVSSW9zZ1RqSzdrTFkwYlJYQnJYdXVZUjZ4T28wWWJr?=
+ =?utf-8?B?bUN2QjRodmpNdktUY2VUQWl0dXczTVd5RXVyckYwOGVva2plZlpmZmN6bHM3?=
+ =?utf-8?B?T3VXV0lYUUVodTFZQVVTdWUwc1ZoekgvUkw5bEFrSWY5NjVueHVvSjROVlVK?=
+ =?utf-8?B?M2U1SitXd0x3R3lGRTlpRjR1QzJyS0gyV2ZCM01zUE9iVUxadjhOTWM1bXJJ?=
+ =?utf-8?B?aXRXTVNBSmJTeGcwRzhFZFdGYVBxMGdXUXh2S1RJS0JyZCswcW91aHYweVlz?=
+ =?utf-8?B?cnNQWnAxdzNXZldLbHd4QXEvSUkwTENqOWxRWm5qa0d6THFrK3d5anRFNjlI?=
+ =?utf-8?B?V2Z5ZWYrWXJEeTk3MlU0S0ZnVzR2SDZzK0RDWWZRM0pHb2JFM3d3dVRJckZo?=
+ =?utf-8?B?MVpSQUpzZm9YMmRMeTRPYUxVcWFEUzNIMjA5MnNJak5QQmJLaTFPSGFPOGhl?=
+ =?utf-8?B?NnRNWGZrUllCVHgrbnoycHhMa2o2Mk9ZaGJkZlRmK0x6akpPbTRBa2dUNzl1?=
+ =?utf-8?B?QXJmdlQwVld2RE81RWNDZ2xvWFErVEtYRTJzTkdXWWI2QzFHS2lGM2NyanhF?=
+ =?utf-8?B?RGQ1eThRTzFVaEJLYm1ZMGJjWkIvUll4R1p6SnBuR2o0VVY0OTZLcmRrVnhR?=
+ =?utf-8?B?NnlNMUdjbW9TbWFub1IyOHZPeFVvOTVFbHBaOHZDYnROSUhTUzhoOTlVakFs?=
+ =?utf-8?B?OHNBMFV1bTk5NlJLNU9ybUZVWjZGNVpIeXNTNUZ5aVZFNTRUcEIrajQ5YStt?=
+ =?utf-8?B?TTU1bGJkZ2RFYjA0dk1OZmc0Y0dHVjVpSkdScWdackF5eVplb2R4Z1FaTUg1?=
+ =?utf-8?B?N1A3N3RROG0yVWFGVlA2dnJyamZwNjVSVkZjaENHSnEzaGhuK1FoYWRnTXF5?=
+ =?utf-8?B?K1llNktzTFhGcHpsNDhhZEk5TjB0MVBLeTRNdnJxellKcVhFNFBUeDRXb1Ix?=
+ =?utf-8?B?dmtscWhlcHZLN3N0elllVHFyT3NDRkQ2YytRNTJmV1Bmand3Y3QzT0hBUjM3?=
+ =?utf-8?B?NDh2V3M2N1ZmN0dwVFNhbHVuUUphc1ZRS1VCdDA4L1Nhcm50bEkybHNGdDJS?=
+ =?utf-8?B?VTIzSGdCdkpOeFIyc0R0YmNsaHVCV1BScUgyMzRGZjYxdjR2MXZJaENHU2l3?=
+ =?utf-8?B?S0pTQzdCbEdlMkdIRkduNitQOC9YcGhoZndBbFp2NHBYZ2VjTEFuZnJVM243?=
+ =?utf-8?B?TUFSNEtXZWNWS1U0SER1bVZaQUU0SWgrUVI3cEorc1Q3MXNncFExZnJGU2Iw?=
+ =?utf-8?B?Ui94SGRiUFd3ZDgxTVR5SUFZd3ZRK0pNOE0wUXNTUHFmZCtNYld5WkFidFRt?=
+ =?utf-8?Q?U1wvsFT7trr10G/oJFucFVjQT?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <E9D996024607C54AA0E7FA91B69C23D1@namprd19.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: maxlinear.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR19MB4909.namprd19.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 44b779e7-89d5-4806-08ab-08db97e49f9d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Aug 2023 07:53:58.8849
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: dac28005-13e0-41b8-8280-7663835f2b1d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: VPb0jQ7F91RDp0xNq2GyMq7alRV3aS80Rau8VY5lYE9sOhCdlKR0ULmqpYryez+8fFFKSqnO+wEQKGnkXsCFSw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR19MB7381
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Number of clocks supported by Linux drivers might vary - sometimes we
-add new clocks, not exposed previously.  Therefore this number of clocks
-should not be in the bindings, because otherwise we should not change
-it.
-
-Define number of clocks per each clock controller inside the driver
-directly.
-
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/clk/samsung/clk-exynos5260.c | 41 +++++++++++++++++++---------
- 1 file changed, 28 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk-exynos5260.c b/drivers/clk/samsung/clk-exynos5260.c
-index e05d7323669a..16da6ef5ca0c 100644
---- a/drivers/clk/samsung/clk-exynos5260.c
-+++ b/drivers/clk/samsung/clk-exynos5260.c
-@@ -15,6 +15,21 @@
- 
- #include <dt-bindings/clock/exynos5260-clk.h>
- 
-+/* NOTE: Must be equal to the last clock ID increased by one */
-+#define CLKS_NR_TOP			(PHYCLK_USBDRD30_UDRD30_PHYCLOCK + 1)
-+#define CLKS_NR_EGL			(EGL_DOUT_EGL1 + 1)
-+#define CLKS_NR_KFC			(KFC_DOUT_KFC1 + 1)
-+#define CLKS_NR_MIF			(MIF_SCLK_LPDDR3PHY_WRAP_U0 + 1)
-+#define CLKS_NR_G3D			(G3D_CLK_G3D + 1)
-+#define CLKS_NR_AUD			(AUD_SCLK_I2S + 1)
-+#define CLKS_NR_MFC			(MFC_CLK_SMMU2_MFCM0 + 1)
-+#define CLKS_NR_GSCL			(GSCL_SCLK_CSIS0_WRAP + 1)
-+#define CLKS_NR_FSYS			(FSYS_PHYCLK_USBHOST20 + 1)
-+#define CLKS_NR_PERI			(PERI_SCLK_PCM1 + 1)
-+#define CLKS_NR_DISP			(DISP_MOUT_HDMI_PHY_PIXEL_USER + 1)
-+#define CLKS_NR_G2D			(G2D_CLK_SMMU3_G2D + 1)
-+#define CLKS_NR_ISP			(ISP_SCLK_UART_EXT + 1)
-+
- /*
-  * Applicable for all 2550 Type PLLS for Exynos5260, listed below
-  * DISP_PLL, EGL_PLL, KFC_PLL, MEM_PLL, BUS_PLL, MEDIA_PLL, G3D_PLL.
-@@ -135,7 +150,7 @@ static const struct samsung_cmu_info aud_cmu __initconst = {
- 	.nr_div_clks	= ARRAY_SIZE(aud_div_clks),
- 	.gate_clks	= aud_gate_clks,
- 	.nr_gate_clks	= ARRAY_SIZE(aud_gate_clks),
--	.nr_clk_ids	= AUD_NR_CLK,
-+	.nr_clk_ids	= CLKS_NR_AUD,
- 	.clk_regs	= aud_clk_regs,
- 	.nr_clk_regs	= ARRAY_SIZE(aud_clk_regs),
- };
-@@ -325,7 +340,7 @@ static const struct samsung_cmu_info disp_cmu __initconst = {
- 	.nr_div_clks	= ARRAY_SIZE(disp_div_clks),
- 	.gate_clks	= disp_gate_clks,
- 	.nr_gate_clks	= ARRAY_SIZE(disp_gate_clks),
--	.nr_clk_ids	= DISP_NR_CLK,
-+	.nr_clk_ids	= CLKS_NR_DISP,
- 	.clk_regs	= disp_clk_regs,
- 	.nr_clk_regs	= ARRAY_SIZE(disp_clk_regs),
- };
-@@ -389,7 +404,7 @@ static const struct samsung_cmu_info egl_cmu __initconst = {
- 	.nr_mux_clks	= ARRAY_SIZE(egl_mux_clks),
- 	.div_clks	= egl_div_clks,
- 	.nr_div_clks	= ARRAY_SIZE(egl_div_clks),
--	.nr_clk_ids	= EGL_NR_CLK,
-+	.nr_clk_ids	= CLKS_NR_EGL,
- 	.clk_regs	= egl_clk_regs,
- 	.nr_clk_regs	= ARRAY_SIZE(egl_clk_regs),
- };
-@@ -489,7 +504,7 @@ static const struct samsung_cmu_info fsys_cmu __initconst = {
- 	.nr_mux_clks	= ARRAY_SIZE(fsys_mux_clks),
- 	.gate_clks	= fsys_gate_clks,
- 	.nr_gate_clks	= ARRAY_SIZE(fsys_gate_clks),
--	.nr_clk_ids	= FSYS_NR_CLK,
-+	.nr_clk_ids	= CLKS_NR_FSYS,
- 	.clk_regs	= fsys_clk_regs,
- 	.nr_clk_regs	= ARRAY_SIZE(fsys_clk_regs),
- };
-@@ -580,7 +595,7 @@ static const struct samsung_cmu_info g2d_cmu __initconst = {
- 	.nr_div_clks	= ARRAY_SIZE(g2d_div_clks),
- 	.gate_clks	= g2d_gate_clks,
- 	.nr_gate_clks	= ARRAY_SIZE(g2d_gate_clks),
--	.nr_clk_ids	= G2D_NR_CLK,
-+	.nr_clk_ids	= CLKS_NR_G2D,
- 	.clk_regs	= g2d_clk_regs,
- 	.nr_clk_regs	= ARRAY_SIZE(g2d_clk_regs),
- };
-@@ -643,7 +658,7 @@ static const struct samsung_cmu_info g3d_cmu __initconst = {
- 	.nr_div_clks	= ARRAY_SIZE(g3d_div_clks),
- 	.gate_clks	= g3d_gate_clks,
- 	.nr_gate_clks	= ARRAY_SIZE(g3d_gate_clks),
--	.nr_clk_ids	= G3D_NR_CLK,
-+	.nr_clk_ids	= CLKS_NR_G3D,
- 	.clk_regs	= g3d_clk_regs,
- 	.nr_clk_regs	= ARRAY_SIZE(g3d_clk_regs),
- };
-@@ -776,7 +791,7 @@ static const struct samsung_cmu_info gscl_cmu __initconst = {
- 	.nr_div_clks	= ARRAY_SIZE(gscl_div_clks),
- 	.gate_clks	= gscl_gate_clks,
- 	.nr_gate_clks	= ARRAY_SIZE(gscl_gate_clks),
--	.nr_clk_ids	= GSCL_NR_CLK,
-+	.nr_clk_ids	= CLKS_NR_GSCL,
- 	.clk_regs	= gscl_clk_regs,
- 	.nr_clk_regs	= ARRAY_SIZE(gscl_clk_regs),
- };
-@@ -895,7 +910,7 @@ static const struct samsung_cmu_info isp_cmu __initconst = {
- 	.nr_div_clks	= ARRAY_SIZE(isp_div_clks),
- 	.gate_clks	= isp_gate_clks,
- 	.nr_gate_clks	= ARRAY_SIZE(isp_gate_clks),
--	.nr_clk_ids	= ISP_NR_CLK,
-+	.nr_clk_ids	= CLKS_NR_ISP,
- 	.clk_regs	= isp_clk_regs,
- 	.nr_clk_regs	= ARRAY_SIZE(isp_clk_regs),
- };
-@@ -959,7 +974,7 @@ static const struct samsung_cmu_info kfc_cmu __initconst = {
- 	.nr_mux_clks	= ARRAY_SIZE(kfc_mux_clks),
- 	.div_clks	= kfc_div_clks,
- 	.nr_div_clks	= ARRAY_SIZE(kfc_div_clks),
--	.nr_clk_ids	= KFC_NR_CLK,
-+	.nr_clk_ids	= CLKS_NR_KFC,
- 	.clk_regs	= kfc_clk_regs,
- 	.nr_clk_regs	= ARRAY_SIZE(kfc_clk_regs),
- };
-@@ -1015,7 +1030,7 @@ static const struct samsung_cmu_info mfc_cmu __initconst = {
- 	.nr_div_clks	= ARRAY_SIZE(mfc_div_clks),
- 	.gate_clks	= mfc_gate_clks,
- 	.nr_gate_clks	= ARRAY_SIZE(mfc_gate_clks),
--	.nr_clk_ids	= MFC_NR_CLK,
-+	.nr_clk_ids	= CLKS_NR_MFC,
- 	.clk_regs	= mfc_clk_regs,
- 	.nr_clk_regs	= ARRAY_SIZE(mfc_clk_regs),
- };
-@@ -1164,7 +1179,7 @@ static const struct samsung_cmu_info mif_cmu __initconst = {
- 	.nr_div_clks	= ARRAY_SIZE(mif_div_clks),
- 	.gate_clks	= mif_gate_clks,
- 	.nr_gate_clks	= ARRAY_SIZE(mif_gate_clks),
--	.nr_clk_ids	= MIF_NR_CLK,
-+	.nr_clk_ids	= CLKS_NR_MIF,
- 	.clk_regs	= mif_clk_regs,
- 	.nr_clk_regs	= ARRAY_SIZE(mif_clk_regs),
- };
-@@ -1370,7 +1385,7 @@ static const struct samsung_cmu_info peri_cmu __initconst = {
- 	.nr_div_clks	= ARRAY_SIZE(peri_div_clks),
- 	.gate_clks	= peri_gate_clks,
- 	.nr_gate_clks	= ARRAY_SIZE(peri_gate_clks),
--	.nr_clk_ids	= PERI_NR_CLK,
-+	.nr_clk_ids	= CLKS_NR_PERI,
- 	.clk_regs	= peri_clk_regs,
- 	.nr_clk_regs	= ARRAY_SIZE(peri_clk_regs),
- };
-@@ -1826,7 +1841,7 @@ static const struct samsung_cmu_info top_cmu __initconst = {
- 	.nr_gate_clks	= ARRAY_SIZE(top_gate_clks),
- 	.fixed_clks	= fixed_rate_clks,
- 	.nr_fixed_clks	= ARRAY_SIZE(fixed_rate_clks),
--	.nr_clk_ids	= TOP_NR_CLK,
-+	.nr_clk_ids	= CLKS_NR_TOP,
- 	.clk_regs	= top_clk_regs,
- 	.nr_clk_regs	= ARRAY_SIZE(top_clk_regs),
- };
--- 
-2.34.1
-
+T24gMzEvNy8yMDIzIDg6NTkgcG0sIEZsb3JpYW4gRWNrZXJ0IHdyb3RlOg0KPiBUaGlzIGVtYWls
+IHdhcyBzZW50IGZyb20gb3V0c2lkZSBvZiBNYXhMaW5lYXIuDQo+DQo+DQo+IFRoYW5rcyBmb3Ig
+eW91ciByZXBseSwNCj4NCj4+IFlvdSBkZXNjcmliZWQgdGhlIGRlc2lyZWQgTGludXggZmVhdHVy
+ZSBvciBiZWhhdmlvciwgbm90IHRoZSBhY3R1YWwNCj4+IGhhcmR3YXJlLiBUaGUgYmluZGluZ3Mg
+YXJlIGFib3V0IHRoZSBsYXR0ZXIsIHNvIGluc3RlYWQgeW91IG5lZWQgdG8NCj4+IHJlcGhyYXNl
+IHRoZSBwcm9wZXJ0eSBhbmQgaXRzIGRlc2NyaXB0aW9uIHRvIG1hdGNoIGFjdHVhbCBoYXJkd2Fy
+ZQ0KPj4gY2FwYWJpbGl0aWVzL2ZlYXR1cmVzL2NvbmZpZ3VyYXRpb24gZXRjLg0KPiBZb3UgaGF2
+ZSBjb3JyZWN0bHkgaWRlbnRpZmllZCB0aGF0IHRoaXMgaXMgbm90IGEgaGFyZHdhcmUgY29uZmln
+dXJhdGlvbiwNCj4gYnV0IGEgZHJpdmVyIGNvbmZpZ3VyYXRpb24uIEN1cnJlbnRseSwgdGhlIGRy
+aXZlciBpcyBjb25maWd1cmVkIHNvIHRoYXQNCj4gdGhlIGdhdGVzIGNhbm5vdCBiZSBzd2l0Y2hl
+ZCB2aWEgdGhlIGNsayBzdWJzeXN0ZW0gY2FsbGJhY2tzLiBXaGVuDQo+IHJlZ2lzdGVyaW5nIHRo
+ZSBkYXRhIHN0cnVjdHVyZXMgZnJvbSB0aGUgZHJpdmVyLCBJIGhhdmUgdG8gcGFzcyBhIGZsYWcN
+Cj4gR0FURV9DTEtfSFcgc28gdGhhdCB0aGUgZ2F0ZSBpcyBtYW5hZ2VkIGJ5IHRoZSBkcml2ZXIu
+DQo+DQo+IEkgZGlkbid0IHdhbnQgdG8gYWx3YXlzIGNoYW5nZSB0aGUgc291cmNlIG9mIHRoZSBk
+cml2ZXIgd2hlbiBpdCBoYXMgdG8NCj4gdGFrZQ0KPiBjYXJlIG9mIHRoZSBHQVRFLCBzbyBJIHdh
+bnRlZCB0byBtYXAgdGhpcyB2aWEgdGhlIGR0cy4NCj4NCj4gSSBoYXZlIGEgYm9hcmQgc3VwcG9y
+dCBwYWNrYWdlIGZyb20gTWF4bGluZWFyIGZvciB0aGUgTGlnaHRuaW5nIE1vdW50YWluDQo+IFNv
+Yw0KPiB3aXRoIG90aGVyIGRyaXZlcnMgdGhhdCBhcmUgbm90IHVwc3RyZWFtIG5vdy4gU29tZSBv
+ZiB0aGVtIHVzZSB0aGUNCj4gY2xvY2sgZnJhbWV3b3JrIHNvbWUgb2YgdGhlbSBkb2VzIG5vdC4N
+Cj4NCj4gRHVlIHRvIG1pc3NpbmcgZG9jdW1lbnRzIGl0IGlzIG5vdCBwb3NzaWJsZSB0byBzZW5k
+IHRoZXNlIGRyaXZlcnMNCj4gdXBzdHJlYW0uDQo+IFN0cmljdGx5IHNwZWFraW5nLCB0aGlzIGlz
+IGFib3V0IHRoZSBncHRjIGFuZCB0aGUgd2F0Y2hkb2cuDQo+DQo+IFNpbmNlIGl0IGlzIGEgYnVp
+bGRpbl9wbGF0Zm9ybSBkcml2ZXIsIGl0IGNhbiBhbHNvIG5vdCB3b3JrIHZpYQ0KPiBtb2R1bGUg
+cGFyYW1ldGVycy4NCg0KQ291bGQgeW91IHBsZWFzZSBnaXZlIG1vcmUgZGV0YWlscyBvbiB5b3Vy
+IHRhcmdldD8NCg0KSW4gd2hhdCBraW5kIG9mIGNvbmRpdGlvbiwgeW91IHdhbnQgdG8gY2hhbmdl
+IHRoZSBmbGFnPw0KDQpJbiBMR00gU29DLMKgIHNvbWUgZ2F0ZSBjbG9ja3MgY2FuIGJlIGNvdmVy
+ZWQgYnkgRVBVIChwb3dlciBtYW5hZ2VtZW50IA0KbW9kdWxlKS4NCg0KdGhhdCBpcyB0aGUgcmVh
+c29uIGNsb2NrIGRyaXZlciBpbnRyb2R1Y2VkIHRoZSBIVy9TVyBmbGFnIGRlZmluaXRpb24uDQoN
+Ckhvd2V2ZXIgZ3B0YyBhbmQgd2F0Y2hkb2cgYXJlIG5vdCBjb3ZlcmVkIGJ5IEVQVS7CoCBpdCBj
+YW4gb25seSBiZSANCmNvbnRyb2xsZWQgdmlhIGNsb2NrDQoNCmRyaXZlci7CoMKgIFNvIEknbSBu
+b3QgcXVpdGUgc3VyZSB0aGUgdGFyZ2V0IHRvIGNoYW5nZSB0aGUgZmxhZyBmb3IgdGhlc2UgDQp0
+d28gY2xvY2tzLg0KDQpJTUhPLMKgIGl0J3MgSFcgZml4ZWQgaW4gTEdNIFNvQy4NCg0KPg0KPiBC
+ZXN0IHJlZ2FyZHMNCj4NCj4gRmxvcmlhbg0KPg0KDQo=
