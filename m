@@ -2,60 +2,60 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 798BEC04A6A
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Aug 2023 15:40:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CD86C04A6A
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Aug 2023 15:48:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232625AbjHIPkf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Aug 2023 11:40:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58496 "EHLO
+        id S234510AbjHIPsB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Aug 2023 11:48:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232335AbjHIPkf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Aug 2023 11:40:35 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 035AB211D
-        for <linux-clk@vger.kernel.org>; Wed,  9 Aug 2023 08:40:33 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id 4fb4d7f45d1cf-5236a9788a7so908542a12.0
-        for <linux-clk@vger.kernel.org>; Wed, 09 Aug 2023 08:40:32 -0700 (PDT)
+        with ESMTP id S233522AbjHIPsB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Aug 2023 11:48:01 -0400
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0114C2681
+        for <linux-clk@vger.kernel.org>; Wed,  9 Aug 2023 08:38:43 -0700 (PDT)
+Received: by mail-lj1-x235.google.com with SMTP id 38308e7fff4ca-2b9cdbf682eso106371951fa.2
+        for <linux-clk@vger.kernel.org>; Wed, 09 Aug 2023 08:38:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691595631; x=1692200431;
+        d=linaro.org; s=google; t=1691595519; x=1692200319;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=/yC5xase6smHlx6Uy5irliycOyGMEybwCUwk9LUBQXs=;
-        b=t/wqd7+FII8iINHlG1eDUtpIETF3crH/5YRfn29MT/3ap33OUQN2dEGYsBCsN3Z17k
-         g9R1pf0KoxuHWQrnAttp6GA6d8mUEaecC+rZN+jAn08N7/+7CIqca2FgQxGI7oB9jdI0
-         ju+RHOvg7VRJYBXq9/pGNrw9GtqU7CWGkH1eua8S3E3LVRqBfdb2eos1XCwGUWSyKnAc
-         Ux1gFGoS5hOhKKB0CQXtOdKRQcGHlFBLufrhLowjQGYR8UA0wtydQuuOO8HgLRwPAz0d
-         NKclJ9eNcgSkgxpVAmhMS3JARTiAq+B677MptiYX1nru4Jbd5V0b/QKBXN1G5aIU/tYV
-         nP3Q==
+        bh=r707B4tVygZaMVBucHiTCFygPxl557dnSQW/UZnC7uU=;
+        b=OfOOw7Ha21cX+SrmOxpMaIRauiUgty3GCDD5tHf3R//xmOQmpMk3DI7KnmCF/uATwX
+         WPS6+SIz7fGfnN/kVipZDGgZTRwfJoaYOzYyzvGF7TIbYNRY1QJCL8gGL/cYIk+xVv/T
+         dKFqxukjYgUZP//nnFvnK6HoSUL65xHxPiYhk8eVkk5zYYhLFYUb4hQ4eVGfMyfKC5z+
+         Ciy1KJlQF9FyedEKpvxdiPIpIi0t2thhWdG6G/DhlAfwrxNufHrsz5kwZLeIttDMH6hw
+         XbxqJYLA0Uu+q5PM5CXPiiuNE5B28LBrzQv3yzuZrLhVdF2Px9tCLglV81NNJZaAkPPY
+         j8KQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691595631; x=1692200431;
+        d=1e100.net; s=20221208; t=1691595519; x=1692200319;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/yC5xase6smHlx6Uy5irliycOyGMEybwCUwk9LUBQXs=;
-        b=X/Qp/vSxhi2w2iLLUx0d0P/20UDuXvdqruLlixxncSs8sBEgwbwmHXP2S7YQtXfWtL
-         DHMnfVXeg0e52sc4H3Am/9zd8a8WQC5cUlSEglsQROE+f+PVGz6Gh5kV43yhH7wkMYBU
-         GlOiEBRCP7IvE0nzKJ6A2VHJ0v5hRRpHdAATFNZJrBpg7uqMu5jvHR5UePFn7Oh+IUAM
-         2mWYQtRudTKKN2AnWYU1IBUlI/meZeaZXLQFurPExh9i5JhNkGqE21umcnkiphhWCTZa
-         41La2CKtoJ9zjWvLbwN/y3PBOd3dbqxxFse2K8gBHLTw6AoAcbGryYxzKWJ8W6oQwwWL
-         Bbmg==
-X-Gm-Message-State: AOJu0YwZ5i10D22ntgoP/7crDs2b1l3UkwRrYOaQWJ/Bm5M7fsdkHc4v
-        OalqUkHLGo+I8nE58GqDRGHWmA==
-X-Google-Smtp-Source: AGHT+IF13UWe1MzHgutPF37GkytYBpFYpWtYYBuaRYhBQgtEtu8j0k3Zh1rX2Rf9+htNW51UD1J/9A==
-X-Received: by 2002:a17:907:2bf8:b0:99c:a2ca:4f54 with SMTP id gv56-20020a1709072bf800b0099ca2ca4f54mr2307609ejc.34.1691595631439;
-        Wed, 09 Aug 2023 08:40:31 -0700 (PDT)
+        bh=r707B4tVygZaMVBucHiTCFygPxl557dnSQW/UZnC7uU=;
+        b=hrU1iRET1ykEWH1Y+d5UdRJBHRghJAOAIifUMIZjt4KIxhwK/yOUuNgyCZU1fru0ZP
+         RWCsj40HOp5HPtn6cFu0QPmiexvYMw8W4zT1gPw76Pe3+lz+lwDEnBXf1FGAQElggUnQ
+         os0J5kJwj5uGcFe55nwyfVeGW8II5/9zL2si2Ppyj18zZKUNYiaUO9JBd+/XLiycSymW
+         t4efwUfA3bj2MNH6fuuYa56ifd+jFQ90mMGbRlCW59p1pinR8cOceG6ulAaP4SgqE6pn
+         SrQUqG5N+Vlom828i6CIqvp2roDl5ghZcfyuZ3brsflpdw3BR8/VE/TPI07F8BGHmwmR
+         QG5w==
+X-Gm-Message-State: AOJu0YxD4tc64hZxuZLq4Ll0HVhQbRxIhnROvLsfXZkNq8k0hLPlAWrG
+        n/o+vyoiExJDD5BLsB+HCgIMpw==
+X-Google-Smtp-Source: AGHT+IEwCkohKzjzb9m/9Gqa3Pcdu5zzc0ctCyzc48SRmLCFKPtbVms2jwuQZiO6czAxnYqiUKT8jg==
+X-Received: by 2002:a2e:6e18:0:b0:2b6:e2cd:20f5 with SMTP id j24-20020a2e6e18000000b002b6e2cd20f5mr2121599ljc.9.1691595519512;
+        Wed, 09 Aug 2023 08:38:39 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.222.113])
-        by smtp.gmail.com with ESMTPSA id fy2-20020a170906b7c200b00992eabc0ad8sm8074852ejb.42.2023.08.09.08.40.29
+        by smtp.gmail.com with ESMTPSA id h11-20020a170906854b00b0099cb1a2cab0sm6773292ejy.28.2023.08.09.08.38.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Aug 2023 08:40:30 -0700 (PDT)
-Message-ID: <e42b0248-f7a7-5615-0c8a-8255c8a4548c@linaro.org>
-Date:   Wed, 9 Aug 2023 17:40:28 +0200
+        Wed, 09 Aug 2023 08:38:39 -0700 (PDT)
+Message-ID: <18d2241a-98ab-6a57-1c4f-d961a4b37c6b@linaro.org>
+Date:   Wed, 9 Aug 2023 17:38:36 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.14.0
-Subject: Re: [PATCH v1 4/4] arm64: defconfig: Enable qca8k nss clock
- controller
+Subject: Re: [PATCH v1 3/4] clk: qcom: add clock controller driver for
+ qca8386/qca8084
 Content-Language: en-US
 To:     Luo Jie <quic_luoj@quicinc.com>, andersson@kernel.org,
         agross@kernel.org, konrad.dybcio@linaro.org,
@@ -66,9 +66,9 @@ Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         quic_srichara@quicinc.com
 References: <20230809080047.19877-1-quic_luoj@quicinc.com>
- <20230809080047.19877-5-quic_luoj@quicinc.com>
+ <20230809080047.19877-4-quic_luoj@quicinc.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230809080047.19877-5-quic_luoj@quicinc.com>
+In-Reply-To: <20230809080047.19877-4-quic_luoj@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -76,10 +76,126 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 09/08/2023 10:00, Luo Jie wrote:
-> Enable clock controller config for Qualcomm qca8386/qca8084 chip.
+> Add clock & reset controller driver for qca8386/qca8084.
+> 
+> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+> ---
+>  drivers/clk/qcom/Kconfig       |    8 +
+>  drivers/clk/qcom/Makefile      |    1 +
+>  drivers/clk/qcom/nsscc-qca8k.c | 2195 ++++++++++++++++++++++++++++++++
+>  3 files changed, 2204 insertions(+)
+>  create mode 100644 drivers/clk/qcom/nsscc-qca8k.c
+> 
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index 263e55d75e3f..d84705ff920d 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -195,6 +195,14 @@ config IPQ_GCC_9574
+>  	  i2c, USB, SD/eMMC, etc. Select this for the root clock
+>  	  of ipq9574.
+>  
+> +config IPQ_NSSCC_QCA8K
+> +	tristate "QCA8K(QCA8386 or QCA8084) NSS Clock Controller"
 
-Which boards or products in upstream kernel use it? We do not enable
-drivers which are not used/needed.
+Is it specific to some arch? We keep ARM or ARM64 for most of the entries.
+
+> +	help
+> +	  Support for NSS(Network SubSystem) clock controller on
+> +	  qca8386/qca8084 chip.
+> +	  Say Y if you want to use network features of switch or PHY
+> +	  device. Select this for the root clock of qca8k.
+> +
+>  config MSM_GCC_8660
+>  	tristate "MSM8660 Global Clock Controller"
+>  	depends on ARM || COMPILE_TEST
+
+...
+
+> +static int nss_cc_qca8k_probe(struct mdio_device *mdiodev)
+> +{
+> +	struct device *dev = &mdiodev->dev;
+> +	struct regmap *regmap;
+> +	struct qcom_reset_controller *reset;
+> +	struct qcom_cc_desc desc = nss_cc_qca8k_desc;
+> +	size_t num_clks = desc.num_clks;
+> +	struct clk_regmap **rclks = desc.clks;
+> +	struct qcom_cc *cc;
+> +	int ret, i;
+> +
+> +	cc = devm_kzalloc(dev, sizeof(*cc), GFP_KERNEL);
+> +	if (!cc)
+> +		return -ENOMEM;
+> +
+> +	cc->rclks = rclks;
+> +	cc->num_rclks = num_clks;
+> +	reset = &cc->reset;
+> +
+> +	regmap = devm_regmap_init(dev, NULL, mdiodev->bus, desc.config);
+> +
+
+Drop blank line.
+
+> +	if (IS_ERR(regmap)) {
+> +		dev_err(dev, "Failed to init MDIO regmap\n");
+
+All of error returns could be converted return dev_err_probe(), just to
+have smaller code. Not a requirement, though.
+
+> +		return PTR_ERR(regmap);
+> +	}
+> +
+> +	reset->rcdev.of_node = dev->of_node;
+> +	reset->rcdev.dev = dev;
+> +	reset->rcdev.ops = &qcom_reset_ops;
+> +	reset->rcdev.owner = dev->driver->owner;
+> +	reset->rcdev.nr_resets = desc.num_resets;
+> +	reset->regmap = regmap;
+> +	reset->reset_map = desc.resets;
+> +
+> +	ret = devm_reset_controller_register(dev, &reset->rcdev);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to register QCA8K reset controller: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	for (i = 0; i < num_clks; i++) {
+> +		if (!rclks[i])
+> +			continue;
+> +
+> +		ret = devm_clk_register_regmap(dev, rclks[i]);
+> +		if (ret) {
+> +			dev_err(dev, "Failed to regmap register for QCA8K clock: %d\n", ret);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	ret = devm_of_clk_add_hw_provider(dev, qcom_qca8k_clk_hw_get, cc);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to register provider for QCA8K clock: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	dev_info(dev, "Registered NSSCC QCA8K clocks\n");
+
+Drop the simple info for probe status. Kernel has other ways to do this.
+
+> +	return ret;
+> +}
+> +
+> +static const struct of_device_id nss_cc_qca8k_match_table[] = {
+> +	{ .compatible = "qcom,qca8085-nsscc" },
+> +	{ .compatible = "qcom,qca8084-nsscc" },
+> +	{ .compatible = "qcom,qca8082-nsscc" },
+> +	{ .compatible = "qcom,qca8386-nsscc" },
+> +	{ .compatible = "qcom,qca8385-nsscc" },
+> +	{ .compatible = "qcom,qca8384-nsscc" },
+
+You only need qca8084 here. Drop all other entries.
+
+> +	{ }
+> +};
+
+
 
 Best regards,
 Krzysztof
