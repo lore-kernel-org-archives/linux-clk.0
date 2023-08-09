@@ -2,29 +2,29 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBD3DC001E0
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Aug 2023 21:40:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75D81C04A94
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Aug 2023 21:40:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231402AbjHIVkq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Aug 2023 17:40:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49114 "EHLO
+        id S231659AbjHIVkr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Aug 2023 17:40:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231518AbjHIVkp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Aug 2023 17:40:45 -0400
-Received: from out-78.mta1.migadu.com (out-78.mta1.migadu.com [IPv6:2001:41d0:203:375::4e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 582D91BD9
-        for <linux-clk@vger.kernel.org>; Wed,  9 Aug 2023 14:40:43 -0700 (PDT)
+        with ESMTP id S231518AbjHIVkq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Aug 2023 17:40:46 -0400
+Received: from out-65.mta1.migadu.com (out-65.mta1.migadu.com [IPv6:2001:41d0:203:375::41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BAC51FC2
+        for <linux-clk@vger.kernel.org>; Wed,  9 Aug 2023 14:40:44 -0700 (PDT)
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1691617239;
+        t=1691617241;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=h+oeC/Z9kXk0DXuOwq2WJWWSemXHpzqdFgnKAO0w6PA=;
-        b=aL8W+TjmxivuS5gKoR//Q8ThhRIwqZjnvbJSbkYSFFskjq6Qy429DstPHB5qfK7hQvG9SA
-        yulf5p64gC+rGMHQDbWgG3jJzuz8U6K5x4SIzwlQLlYG4ZQFjp87LPcRzzzLE1sYAnH85Q
-        Q77v8QvnJcg3dxb+u3V8e8uMKsf+CkU=
+        bh=bkSKvE+Neo7MSfUItY6V6KCy4vWRLiy2cmsm3OYbVr4=;
+        b=ar4z6gDHtJdRhXltBEPllPAmxbxBuRIEXBCkl5mVX5YkyVg8MkvWzJ+frVwNo1xx4KQunY
+        Gua4MQFQ+myg1D1akD4F9H0KSYRvGtcqLFwl/qPQQmQ1p2CiiuipD48SsRqbONQ6eP3lf8
+        NW4KbPA+bpOWTPEMzgPVAf+vKw08Eg4=
 From:   Vadim Fedorenko <vadim.fedorenko@linux.dev>
 To:     Jakub Kicinski <kuba@kernel.org>, Jiri Pirko <jiri@resnulli.us>,
         Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
@@ -36,11 +36,10 @@ Cc:     Vadim Fedorenko <vadim.fedorenko@linux.dev>,
         linux-arm-kernel@lists.infradead.org, poros@redhat.com,
         mschmidt@redhat.com, netdev@vger.kernel.org,
         linux-clk@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
-        intel-wired-lan@lists.osuosl.org,
-        Bagas Sanjaya <bagasdotme@gmail.com>
-Subject: [PATCH net-next v3 1/9] dpll: documentation on DPLL subsystem interface
-Date:   Wed,  9 Aug 2023 22:40:19 +0100
-Message-Id: <20230809214027.556192-2-vadim.fedorenko@linux.dev>
+        intel-wired-lan@lists.osuosl.org, Jiri Pirko <jiri@nvidia.com>
+Subject: [PATCH net-next v3 3/9] dpll: core: Add DPLL framework base functions
+Date:   Wed,  9 Aug 2023 22:40:21 +0100
+Message-Id: <20230809214027.556192-4-vadim.fedorenko@linux.dev>
 In-Reply-To: <20230809214027.556192-1-vadim.fedorenko@linux.dev>
 References: <20230809214027.556192-1-vadim.fedorenko@linux.dev>
 MIME-Version: 1.0
@@ -50,471 +49,1144 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add documentation explaining common netlink interface to configure DPLL
-devices and monitoring events. Common way to implement DPLL device in
-a driver is also covered.
+DPLL framework is used to represent and configure DPLL devices
+in systems. Each device that has DPLL and can configure inputs
+and outputs can use this framework.
 
-Co-developed-by: Bagas Sanjaya <bagasdotme@gmail.com>
-Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+Implement core framework functions for further interactions
+with device drivers implementing dpll subsystem, as well as for
+interactions of DPLL netlink framework part with the subsystem
+itself.
+
+Co-developed-by: Milena Olech <milena.olech@intel.com>
+Signed-off-by: Milena Olech <milena.olech@intel.com>
+Co-developed-by: Michal Michalik <michal.michalik@intel.com>
+Signed-off-by: Michal Michalik <michal.michalik@intel.com>
 Signed-off-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Co-developed-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
 Signed-off-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+Signed-off-by: Jiri Pirko <jiri@nvidia.com>
 ---
 v2->v3:
-- no detached mode
+- no functional changes
 v1->v2:
-- add description of DETACHED mode
+- fix checkpatch errors
+- remove mentions of netlink notifications introduced in the
+  next patch
 
- Documentation/driver-api/dpll.rst  | 428 +++++++++++++++++++++++++++++
- Documentation/driver-api/index.rst |   1 +
- 2 files changed, 429 insertions(+)
- create mode 100644 Documentation/driver-api/dpll.rst
+ MAINTAINERS              |  11 +
+ drivers/Kconfig          |   2 +
+ drivers/Makefile         |   1 +
+ drivers/dpll/Kconfig     |   7 +
+ drivers/dpll/Makefile    |   9 +
+ drivers/dpll/dpll_core.c | 787 +++++++++++++++++++++++++++++++++++++++
+ drivers/dpll/dpll_core.h |  90 +++++
+ include/linux/dpll.h     | 133 +++++++
+ 8 files changed, 1040 insertions(+)
+ create mode 100644 drivers/dpll/Kconfig
+ create mode 100644 drivers/dpll/Makefile
+ create mode 100644 drivers/dpll/dpll_core.c
+ create mode 100644 drivers/dpll/dpll_core.h
+ create mode 100644 include/linux/dpll.h
 
-diff --git a/Documentation/driver-api/dpll.rst b/Documentation/driver-api/dpll.rst
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 6efcd8713682..7e2dfe3f26e6 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6315,6 +6315,17 @@ F:	Documentation/networking/device_drivers/ethernet/freescale/dpaa2/switch-drive
+ F:	drivers/net/ethernet/freescale/dpaa2/dpaa2-switch*
+ F:	drivers/net/ethernet/freescale/dpaa2/dpsw*
+ 
++DPLL SUBSYSTEM
++M:	Vadim Fedorenko <vadim.fedorenko@linux.dev>
++M:	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
++M:	Jiri Pirko <jiri@resnulli.us>
++L:	netdev@vger.kernel.org
++S:	Supported
++F:	Documentation/driver-api/dpll.rst
++F:	drivers/dpll/*
++F:	include/net/dpll.h
++F:	include/uapi/linux/dpll.h
++
+ DRBD DRIVER
+ M:	Philipp Reisner <philipp.reisner@linbit.com>
+ M:	Lars Ellenberg <lars.ellenberg@linbit.com>
+diff --git a/drivers/Kconfig b/drivers/Kconfig
+index 514ae6b24cb2..ce5f63918eba 100644
+--- a/drivers/Kconfig
++++ b/drivers/Kconfig
+@@ -243,4 +243,6 @@ source "drivers/hte/Kconfig"
+ 
+ source "drivers/cdx/Kconfig"
+ 
++source "drivers/dpll/Kconfig"
++
+ endmenu
+diff --git a/drivers/Makefile b/drivers/Makefile
+index 7241d80a7b29..6fea42a6dd05 100644
+--- a/drivers/Makefile
++++ b/drivers/Makefile
+@@ -195,3 +195,4 @@ obj-$(CONFIG_PECI)		+= peci/
+ obj-$(CONFIG_HTE)		+= hte/
+ obj-$(CONFIG_DRM_ACCEL)		+= accel/
+ obj-$(CONFIG_CDX_BUS)		+= cdx/
++obj-$(CONFIG_DPLL)		+= dpll/
+diff --git a/drivers/dpll/Kconfig b/drivers/dpll/Kconfig
 new file mode 100644
-index 000000000000..bc3b62fdc40b
+index 000000000000..a4cae73f20d3
 --- /dev/null
-+++ b/Documentation/driver-api/dpll.rst
-@@ -0,0 +1,428 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+===============================
-+The Linux kernel dpll subsystem
-+===============================
-+
-+DPLL
-+====
-+
-+PLL - Phase Locked Loop is an electronic circuit which syntonizes clock
-+signal of a device with an external clock signal. Effectively enabling
-+device to run on the same clock signal beat as provided on a PLL input.
-+
-+DPLL - Digital Phase Locked Loop is am integrated circuit which in
-+addition to plain PLL behavior incorporates a digital phase detector
-+and may have digital divider in the loop. As a result, the frequency on
-+DPLL's input and output may be configurable.
-+
-+Subsystem
-+=========
-+
-+The main purpose of dpll subsystem is to provide general interface
-+to configure devices that use any kind of Digital PLL and could use
-+different sources of input signal to synchronize to, as well as
-+different types of outputs.
-+The main interface is NETLINK_GENERIC based protocol with an event
-+monitoring multicast group defined.
-+
-+Device object
-+=============
-+
-+Single dpll device object means single Digital PLL circuit and bunch of
-+connected pins.
-+It reports the supported modes of operation and current status to the
-+user in response to the `do` request of netlink command
-+``DPLL_CMD_DEVICE_GET`` and list of dplls registered in the subsystem
-+with `dump` netlink request of the same command.
-+Changing the configuration of dpll device is done with `do` request of
-+netlink ``DPLL_CMD_DEVICE_SET`` command.
-+A device handle is ``DPLL_A_ID``, it shall be provided to get or set
-+configuration of particular device in the system. It can be obtained
-+with a ``DPLL_CMD_DEVICE_GET`` `dump` request or
-+a ``DPLL_CMD_DEVICE_ID_GET`` `do` request, where the one must provide
-+attributes that result in single device match.
-+
-+Pin object
-+==========
-+
-+A pin is amorphic object which represents either input or output, it
-+could be internal component of the device, as well as externally
-+connected.
-+The number of pins per dpll vary, but usually multiple pins shall be
-+provided for a single dpll device.
-+Pin's properties, capabilities and status is provided to the user in
-+response to `do` request of netlink ``DPLL_CMD_PIN_GET`` command.
-+It is also possible to list all the pins that were registered in the
-+system with `dump` request of ``DPLL_CMD_PIN_GET`` command.
-+Configuration of a pin can be changed by `do` request of netlink
-+``DPLL_CMD_PIN_SET`` command.
-+Pin handle is a ``DPLL_A_PIN_ID``, it shall be provided to get or set
-+configuration of particular pin in the system. It can be obtained with
-+``DPLL_CMD_PIN_GET`` `dump` request or ``DPLL_CMD_PIN_ID_GET`` `do`
-+request, where user provides attributes that result in single pin match.
-+
-+Pin selection
-+=============
-+
-+In general, selected pin (the one which signal is driving the dpll
-+device) can be obtained from ``DPLL_A_PIN_STATE`` attribute, and only
-+one pin shall be in ``DPLL_PIN_STATE_CONNECTED`` state for any dpll
-+device.
-+
-+Pin selection can be done either manually or automatically, depending
-+on hardware capabilities and active dpll device work mode
-+(``DPLL_A_MODE`` attribute). The consequence is that there are
-+differences for each mode in terms of available pin states, as well as
-+for the states the user can request for a dpll device.
-+
-+In manual mode (``DPLL_MODE_MANUAL``) the user can request or receive
-+one of following pin states:
-+
-+- ``DPLL_PIN_STATE_CONNECTED`` - the pin is used to drive dpll device
-+- ``DPLL_PIN_STATE_DISCONNECTED`` - the pin is not used to drive dpll
-+  device
-+
-+In automatic mode (``DPLL_MODE_AUTOMATIC``) the user can request or
-+receive one of following pin states:
-+
-+- ``DPLL_PIN_STATE_SELECTABLE`` - the pin shall be considered as valid
-+  input for automatic selection algorithm
-+- ``DPLL_PIN_STATE_DISCONNECTED`` - the pin shall be not considered as
-+  a valid input for automatic selection algorithm
-+
-+In automatic mode (``DPLL_MODE_AUTOMATIC``) the user can only receive
-+pin state ``DPLL_PIN_STATE_CONNECTED`` once automatic selection
-+algorithm locks a dpll device with one of the inputs.
-+
-+Shared pins
-+===========
-+
-+A single pin object can be attached to multiple dpll devices.
-+Then there are two groups of configuration knobs:
-+
-+1) Set on a pin - the configuration affects all dpll devices pin is
-+   registered to (i.e. ``DPLL_A_PIN_FREQUENCY``),
-+2) Set on a pin-dpll tuple - the configuration affects only selected
-+   dpll device (i.e. ``DPLL_A_PIN_PRIO``, ``DPLL_A_PIN_STATE``,
-+   ``DPLL_A_PIN_DIRECTION``).
-+
-+MUX-type pins
-+=============
-+
-+A pin can be MUX-type, it aggregates child pins and serves as a pin
-+multiplexer. One or more pins are registered with MUX-type instead of
-+being directly registered to a dpll device.
-+Pins registered with a MUX-type pin provide user with additional nested
-+attribute ``DPLL_A_PIN_PARENT`` for each parent they were registered
-+with.
-+If a pin was registered with multiple parent pins, they behave like a
-+multiple output multiplexer. In this case output of a
-+``DPLL_CMD_PIN_GET`` would contain multiple pin-parent nested
-+attributes with current state related to each parent, like::
-+
-+  'pin': [{
-+   {'clock-id': 282574471561216,
-+    'module-name': 'ice',
-+    'pin-dpll-caps': 4,
-+    'pin-id': 13,
-+    'pin-parent': [{'pin-id': 2, 'pin-state': 'connected'},
-+                   {'pin-id': 3, 'pin-state': 'disconnected'}],
-+    'pin-type': 'synce-eth-port'}
-+  }]
-+
-+Only one child pin can provide its signal to the parent MUX-type pin at
-+a time, the selection is done by requesting change of a child pin state
-+on desired parent, with the use of ``DPLL_A_PIN_PARENT`` nested
-+attribute. Example of netlink `set state on parent pin` message format:
-+
-+  ====================== =============================================
-+  ``DPLL_A_PIN_ID``      child pin id
-+  ``DPLL_A_PIN_PARENT``  nested attribute for requesting configuration
-+                         related to parent pin
-+    ``DPLL_A_PIN_ID``    parent pin id
-+    ``DPLL_A_PIN_STATE`` requested pin state on parent
-+  ====================== =============================================
-+
-+Pin priority
-+============
-+
-+Some devices might offer a capability of automatic pin selection mode
-+(enum value ``DPLL_MODE_AUTOMATIC`` of ``DPLL_A_MODE`` attribute).
-+Usually, automatic selection is performed on the hardware level, which
-+means only pins directly connected to the dpll can be used for automatic
-+input pin selection.
-+In automatic selection mode, the user cannot manually select a input
-+pin for the device, instead the user shall provide all directly
-+connected pins with a priority ``DPLL_A_PIN_PRIO``, the device would
-+pick a highest priority valid signal and use it to control the DPLL
-+device. Example of netlink `set priority on parent pin` message format:
-+
-+  =====================  =============================================
-+  ``DPLL_A_PIN_ID``      child pin id
-+  ``DPLL_A_PIN_PARENT``  nested attribute for requesting configuration
-+                         related to parent pin
-+    ``DPLL_A_ID``        parent dpll id
-+    ``DPLL_A_PIN_PRIO``  requested pin prio on parent dpll
-+  =====================  =============================================
-+
-+Child pin of MUX-type is not capable of automatic input pin selection,
-+in order to configure a input of a MUX-type pin, the user needs to
-+request desired pin state of the child pin on the parent pin,
-+as described in the ``MUX-type pins`` chapter.
-+
-+Configuration commands group
-+============================
-+
-+Configuration commands are used to get information about registered
-+dpll devices (and pins), as well as set configuration of device or pins.
-+As dpll devices must be abstracted and reflect real hardware,
-+there is no way to add new dpll device via netlink from user space and
-+each device should be registered by its driver.
-+
-+All netlink commands require ``GENL_ADMIN_PERM``. This is to prevent
-+any spamming/DoS from unauthorized userspace applications.
-+
-+List of netlink commands with possible attributes
-+=================================================
-+
-+All constants identifying command types use a ``DPLL_CMD_`` prefix and
-+suffix according to command purpose. All attributes use a ``DPLL_A_``
-+prefix and suffix according to attribute purpose:
-+
-+  ==================================== =================================
-+  ``DPLL_CMD_DEVICE_ID_GET``           command to get device ID
-+  ``DPLL_A_MODULE_NAME``               attr module name of registerer
-+    ``DPLL_A_CLOCK_ID``                attr Unique Clock Identifier
-+                                       (EUI-64), as defined by the
-+                                       IEEE 1588 standard
-+    ``DPLL_A_TYPE``                    attr type of dpll device
-+  ==================================== =================================
-+
-+  ==================================== =================================
-+  ``DPLL_CMD_DEVICE_GET``              command to get device info or
-+                                       dump list of available devices
-+    ``DPLL_A_ID``                      attr unique dpll device ID
-+    ``DPLL_A_MODULE_NAME``             attr module name of registerer
-+    ``DPLL_A_CLOCK_ID``                attr Unique Clock Identifier
-+                                       (EUI-64), as defined by the
-+                                       IEEE 1588 standard
-+    ``DPLL_A_MODE``                    attr selection mode
-+    ``DPLL_A_MODE_SUPPORTED``          attr available selection modes
-+    ``DPLL_A_LOCK_STATUS``             attr dpll device lock status
-+    ``DPLL_A_TEMP``                    attr device temperature info
-+    ``DPLL_A_TYPE``                    attr type of dpll device
-+  ==================================== =================================
-+
-+  ==================================== =================================
-+  ``DPLL_CMD_DEVICE_SET``              command to set dpll device config
-+    ``DPLL_A_ID``                      attr internal dpll device index
-+    ``DPLL_A_MODE``                    attr selection mode to configure
-+  ==================================== =================================
-+
-+  ==================================== =================================
-+  ``DPLL_CMD_PIN_ID_GET``              command to get pin ID
-+    ``DPLL_A_MODULE_NAME``             attr module name of registerer
-+    ``DPLL_A_CLOCK_ID``                attr Unique Clock Identifier
-+                                       (EUI-64), as defined by the
-+                                       IEEE 1588 standard
-+    ``DPLL_A_PIN_BOARD_LABEL``         attr pin board label provided
-+                                       by registerer
-+    ``DPLL_A_PIN_PANEL_LABEL``         attr pin panel label provided
-+                                       by registerer
-+    ``DPLL_A_PIN_PACKAGE_LABEL``       attr pin package label provided
-+                                       by registerer
-+    ``DPLL_A_PIN_TYPE``                attr type of a pin
-+  ==================================== =================================
-+
-+  ==================================== =================================
-+  ``DPLL_CMD_PIN_GET``                 command to get pin info or dump
-+                                       list of available pins
-+    ``DPLL_A_PIN_ID``                  attr unique a pin ID
-+    ``DPLL_A_MODULE_NAME``             attr module name of registerer
-+    ``DPLL_A_CLOCK_ID``                attr Unique Clock Identifier
-+                                       (EUI-64), as defined by the
-+                                       IEEE 1588 standard
-+    ``DPLL_A_PIN_BOARD_LABEL``         attr pin board label provided
-+                                       by registerer
-+    ``DPLL_A_PIN_PANEL_LABEL``         attr pin panel label provided
-+                                       by registerer
-+    ``DPLL_A_PIN_PACKAGE_LABEL``       attr pin package label provided
-+                                       by registerer
-+    ``DPLL_A_PIN_TYPE``                attr type of a pin
-+    ``DPLL_A_PIN_DIRECTION``           attr direction of a pin
-+    ``DPLL_A_PIN_FREQUENCY``           attr current frequency of a pin
-+    ``DPLL_A_PIN_FREQUENCY_SUPPORTED`` nested attr provides supported
-+                                       frequencies
-+      ``DPLL_A_PIN_ANY_FREQUENCY_MIN`` attr minimum value of frequency
-+      ``DPLL_A_PIN_ANY_FREQUENCY_MAX`` attr maximum value of frequency
-+    ``DPLL_A_PIN_PARENT_DEVICE``       nested attr for each parent device
-+                                       the pin is connected with
-+      ``DPLL_A_ID``                    attr provided if parent is dpll
-+                                       device
-+      ``DPLL_A_PIN_PRIO``              attr priority of pin on the
-+                                       dpll device
-+      ``DPLL_A_PIN_STATE``             attr state of pin on the parent
-+                                       dpll device
-+    ``DPLL_A_PIN_PARENT_PIN``          nested attr for each parent pin
-+                                       the pin is connected with
-+      ``DPLL_A_PIN_ID``                attr provided if parent is a pin
-+      ``DPLL_A_PIN_STATE``             attr state of pin on the parent
-+                                       pin
-+    ``DPLL_A_PIN_DPLL_CAPS``           attr bitmask of pin-dpll
-+                                       capabilities
-+  ==================================== =================================
-+
-+  ==================================== =================================
-+  ``DPLL_CMD_PIN_SET``                 command to set pins configuration
-+    ``DPLL_A_PIN_ID``                  attr unique a pin ID
-+    ``DPLL_A_PIN_DIRECTION``           attr requested direction of a pin
-+    ``DPLL_A_PIN_FREQUENCY``           attr requested frequency of a pin
-+    ``DPLL_A_PIN_PARENT_DEVICE``       nested attr for each parent
-+                                       device configuration of a pin
-+      ``DPLL_A_ID``                    attr parent dpll device id
-+      ``DPLL_A_PIN_PRIO``              attr requested priority of pin on
-+                                       the dpll device
-+      ``DPLL_A_PIN_STATE``             attr requested state of pin on
-+                                       the dpll device
-+    ``DPLL_A_PIN_PARENT_PIN``          nested attr for each parent pin
-+                                       configuration
-+      ``DPLL_A_PIN_ID``                attr parent pin id
-+      ``DPLL_A_PIN_STATE``             attr requested state of pin on
-+                                       parent pin
-+  ==================================== =================================
-+
-+Netlink dump requests
-+=====================
-+
-+The ``DPLL_CMD_DEVICE_GET`` and ``DPLL_CMD_PIN_GET`` commands are
-+capable of dump type netlink requests, in which case the response is in
-+the same format as for their ``do`` request, but every device or pin
-+registered in the system is returned.
-+
-+SET commands format
-+===================
-+
-+``DPLL_CMD_DEVICE_SET`` - to target a dpll device, the user provides
-+``DPLL_A_ID``, which is unique identifier of dpll device in the system,
-+as well as parameter being configured (``DPLL_A_MODE``).
-+
-+``DPLL_CMD_PIN_SET`` - to target a pin user has to provide a
-+``DPLL_A_PIN_ID``, which is unique identifier of a pin in the system.
-+Also configured pin parameters must be added.
-+If ``DPLL_A_PIN_DIRECTION`` or ``DPLL_A_PIN_FREQUENCY`` are configured,
-+this affects all the dpll device they are connected, that is why those
-+attributes shall not be enclosed in ``DPLL_A_PIN_PARENT``.
-+Other attributes:
-+``DPLL_A_PIN_PRIO`` or ``DPLL_A_PIN_STATE`` must be enclosed in
-+``DPLL_A_PIN_PARENT`` as their configuration relates to only one
-+parent dpll or parent pin.
-+Nested attribute of either ``DPLL_A_ID`` or ``DPLL_A_PIN_ID`` determines
-+if configuration was requested on a dpll device or on a pin
-+respectively.
-+In general, it is possible to configure multiple parameters at once, but
-+internally each parameter change will be invoked separately, where order
-+of configuration is not guaranteed by any means.
-+
-+Configuration pre-defined enums
-+===============================
-+
-+.. kernel-doc:: include/uapi/linux/dpll.h
-+
-+Notifications
-+=============
-+
-+dpll device can provide notifications regarding status changes of the
-+device, i.e. lock status changes, input/output changes or other alarms.
-+There is one multicast group that is used to notify user-space apps via
-+netlink socket: ``DPLL_MCGRP_MONITOR``
-+
-+Notifications messages:
-+
-+  ============================== =====================================
-+  ``DPLL_CMD_DEVICE_CREATE_NTF`` dpll device was created
-+  ``DPLL_CMD_DEVICE_DELETE_NTF`` dpll device was deleted
-+  ``DPLL_CMD_DEVICE_CHANGE_NTF`` dpll device has changed
-+  ``DPLL_CMD_PIN_CREATE_NTF``    dpll pin was created
-+  ``DPLL_CMD_PIN_DELETE_NTF``    dpll pin was deleted
-+  ``DPLL_CMD_PIN_CHANGE_NTF``    dpll pin has changed
-+  ============================== =====================================
-+
-+Events format is the same as for the corresponding get command.
-+Format of ``DPLL_CMD_DEVICE_`` events is the same as response of
-+``DPLL_CMD_DEVICE_GET``.
-+Format of ``DPLL_CMD_PIN_`` events is same as response of
-+``DPLL_CMD_PIN_GET``.
-+
-+Device driver implementation
-+============================
-+
-+Device is allocated by dpll_device_get() call. Second call with the
-+same arguments will not create new object but provides pointer to
-+previously created device for given arguments, it also increases
-+refcount of that object.
-+Device is deallocated by dpll_device_put() call, which first
-+decreases the refcount, once refcount is cleared the object is
-+destroyed.
-+
-+Device should implement set of operations and register device via
-+dpll_device_register() at which point it becomes available to the
-+users. Multiple driver instances can obtain reference to it with
-+dpll_device_get(), as well as register dpll device with their own
-+ops and priv.
-+
-+The pins are allocated separately with dpll_pin_get(), it works
-+similarly to dpll_device_get(). Function first creates object and then
-+for each call with the same arguments only the object refcount
-+increases. Also dpll_pin_put() works similarly to dpll_device_put().
-+
-+A pin can be registered with parent dpll device or parent pin, depending
-+on hardware needs. Each registration requires registerer to provide set
-+of pin callbacks, and private data pointer for calling them:
-+
-+- dpll_pin_register() - register pin with a dpll device,
-+- dpll_pin_on_pin_register() - register pin with another MUX type pin.
-+
-+Notifications of adding or removing dpll devices are created within
-+subsystem itself.
-+Notifications about registering/deregistering pins are also invoked by
-+the subsystem.
-+Notifications about status changes either of dpll device or a pin are
-+invoked in two ways:
-+
-+- after successful change was requested on dpll subsystem, the subsystem
-+  calls corresponding notification,
-+- requested by device driver with dpll_device_change_ntf() or
-+  dpll_pin_change_ntf() when driver informs about the status change.
-+
-+The device driver using dpll interface is not required to implement all
-+the callback operation. Neverthelessi, there are few required to be
-+implemented.
-+Required dpll device level callback operations:
-+
-+- ``.mode_get``,
-+- ``.lock_status_get``.
-+
-+Required pin level callback operations:
-+
-+- ``.state_on_dpll_get`` (pins registered with dpll device),
-+- ``.state_on_pin_get`` (pins registered with parent pin),
-+- ``.direction_get``.
-+
-+Every other operation handler is checked for existence and
-+``-EOPNOTSUPP`` is returned in case of absence of specific handler.
-+
-+SyncE enablement
-+================
-+For SyncE enablement it is required to allow control over dpll device
-+for a software application which monitors and configures the inputs of
-+dpll device in response to current state of a dpll device and its
-+inputs.
-+In such scenario, dpll device input signal shall be also configurable
-+to drive dpll with signal recovered from the PHY netdevice.
-+This is done by exposing a pin to the netdevice - attaching pin to the
-+netdevice itself with
-+``netdev_dpll_pin_set(struct net_device *dev, struct dpll_pin *dpll_pin)``.
-+Exposed pin id handle ``DPLL_A_PIN_ID`` is then identifiable by the user
-+as it is attached to rtnetlink respond to get ``RTM_NEWLINK`` command in
-+nested attribute ``IFLA_DPLL_PIN``.
-diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-api/index.rst
-index 1e16a40da3ba..f549a68951d7 100644
---- a/Documentation/driver-api/index.rst
-+++ b/Documentation/driver-api/index.rst
-@@ -114,6 +114,7 @@ available subsections can be seen below.
-    zorro
-    hte/index
-    wmi
-+   dpll
- 
- .. only::  subproject and html
- 
++++ b/drivers/dpll/Kconfig
+@@ -0,0 +1,7 @@
++# SPDX-License-Identifier: GPL-2.0-only
++#
++# Generic DPLL drivers configuration
++#
++
++config DPLL
++  bool
+diff --git a/drivers/dpll/Makefile b/drivers/dpll/Makefile
+new file mode 100644
+index 000000000000..2e5b27850110
+--- /dev/null
++++ b/drivers/dpll/Makefile
+@@ -0,0 +1,9 @@
++# SPDX-License-Identifier: GPL-2.0
++#
++# Makefile for DPLL drivers.
++#
++
++obj-$(CONFIG_DPLL)      += dpll.o
++dpll-y                  += dpll_core.o
++dpll-y                  += dpll_netlink.o
++dpll-y                  += dpll_nl.o
+diff --git a/drivers/dpll/dpll_core.c b/drivers/dpll/dpll_core.c
+new file mode 100644
+index 000000000000..2398acb92b43
+--- /dev/null
++++ b/drivers/dpll/dpll_core.c
+@@ -0,0 +1,787 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ *  dpll_core.c - DPLL subsystem kernel-space interface implementation.
++ *
++ *  Copyright (c) 2023 Meta Platforms, Inc. and affiliates
++ *  Copyright (c) 2023 Intel Corporation.
++ */
++
++#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++
++#include <linux/device.h>
++#include <linux/err.h>
++#include <linux/slab.h>
++#include <linux/string.h>
++
++#include "dpll_core.h"
++
++/* Mutex lock to protect DPLL subsystem devices and pins */
++DEFINE_MUTEX(dpll_lock);
++
++DEFINE_XARRAY_FLAGS(dpll_device_xa, XA_FLAGS_ALLOC);
++DEFINE_XARRAY_FLAGS(dpll_pin_xa, XA_FLAGS_ALLOC);
++
++#define ASSERT_DPLL_REGISTERED(d)	\
++	WARN_ON_ONCE(!xa_get_mark(&dpll_device_xa, (d)->id, DPLL_REGISTERED))
++#define ASSERT_DPLL_NOT_REGISTERED(d)	\
++	WARN_ON_ONCE(xa_get_mark(&dpll_device_xa, (d)->id, DPLL_REGISTERED))
++#define ASSERT_PIN_REGISTERED(p)	\
++	WARN_ON_ONCE(!xa_get_mark(&dpll_pin_xa, (p)->id, DPLL_REGISTERED))
++
++struct dpll_device_registration {
++	struct list_head list;
++	const struct dpll_device_ops *ops;
++	void *priv;
++};
++
++struct dpll_pin_registration {
++	struct list_head list;
++	const struct dpll_pin_ops *ops;
++	void *priv;
++};
++
++struct dpll_device *dpll_device_get_by_id(int id)
++{
++	if (xa_get_mark(&dpll_device_xa, id, DPLL_REGISTERED))
++		return xa_load(&dpll_device_xa, id);
++
++	return NULL;
++}
++
++static struct dpll_pin_registration *
++dpll_pin_registration_find(struct dpll_pin_ref *ref,
++			   const struct dpll_pin_ops *ops, void *priv)
++{
++	struct dpll_pin_registration *reg;
++
++	list_for_each_entry(reg, &ref->registration_list, list) {
++		if (reg->ops == ops && reg->priv == priv)
++			return reg;
++	}
++	return NULL;
++}
++
++static int
++dpll_xa_ref_pin_add(struct xarray *xa_pins, struct dpll_pin *pin,
++		    const struct dpll_pin_ops *ops, void *priv)
++{
++	struct dpll_pin_registration *reg;
++	struct dpll_pin_ref *ref;
++	bool ref_exists = false;
++	unsigned long i;
++	int ret;
++
++	xa_for_each(xa_pins, i, ref) {
++		if (ref->pin != pin)
++			continue;
++		reg = dpll_pin_registration_find(ref, ops, priv);
++		if (reg) {
++			refcount_inc(&ref->refcount);
++			return 0;
++		}
++		ref_exists = true;
++		break;
++	}
++
++	if (!ref_exists) {
++		ref = kzalloc(sizeof(*ref), GFP_KERNEL);
++		if (!ref)
++			return -ENOMEM;
++		ref->pin = pin;
++		INIT_LIST_HEAD(&ref->registration_list);
++		ret = xa_insert(xa_pins, pin->pin_idx, ref, GFP_KERNEL);
++		if (ret) {
++			kfree(ref);
++			return ret;
++		}
++		refcount_set(&ref->refcount, 1);
++	}
++
++	reg = kzalloc(sizeof(*reg), GFP_KERNEL);
++	if (!reg) {
++		if (!ref_exists) {
++			xa_erase(xa_pins, pin->pin_idx);
++			kfree(ref);
++		}
++		return -ENOMEM;
++	}
++	reg->ops = ops;
++	reg->priv = priv;
++	if (ref_exists)
++		refcount_inc(&ref->refcount);
++	list_add_tail(&reg->list, &ref->registration_list);
++
++	return 0;
++}
++
++static int dpll_xa_ref_pin_del(struct xarray *xa_pins, struct dpll_pin *pin,
++			       const struct dpll_pin_ops *ops, void *priv)
++{
++	struct dpll_pin_registration *reg;
++	struct dpll_pin_ref *ref;
++	unsigned long i;
++
++	xa_for_each(xa_pins, i, ref) {
++		if (ref->pin != pin)
++			continue;
++		reg = dpll_pin_registration_find(ref, ops, priv);
++		if (WARN_ON(!reg))
++			return -EINVAL;
++		if (refcount_dec_and_test(&ref->refcount)) {
++			list_del(&reg->list);
++			kfree(reg);
++			xa_erase(xa_pins, i);
++			WARN_ON(!list_empty(&ref->registration_list));
++			kfree(ref);
++		}
++		return 0;
++	}
++
++	return -EINVAL;
++}
++
++static int
++dpll_xa_ref_dpll_add(struct xarray *xa_dplls, struct dpll_device *dpll,
++		     const struct dpll_pin_ops *ops, void *priv)
++{
++	struct dpll_pin_registration *reg;
++	struct dpll_pin_ref *ref;
++	bool ref_exists = false;
++	unsigned long i;
++	int ret;
++
++	xa_for_each(xa_dplls, i, ref) {
++		if (ref->dpll != dpll)
++			continue;
++		reg = dpll_pin_registration_find(ref, ops, priv);
++		if (reg) {
++			refcount_inc(&ref->refcount);
++			return 0;
++		}
++		ref_exists = true;
++		break;
++	}
++
++	if (!ref_exists) {
++		ref = kzalloc(sizeof(*ref), GFP_KERNEL);
++		if (!ref)
++			return -ENOMEM;
++		ref->dpll = dpll;
++		INIT_LIST_HEAD(&ref->registration_list);
++		ret = xa_insert(xa_dplls, dpll->device_idx, ref, GFP_KERNEL);
++		if (ret) {
++			kfree(ref);
++			return ret;
++		}
++		refcount_set(&ref->refcount, 1);
++	}
++
++	reg = kzalloc(sizeof(*reg), GFP_KERNEL);
++	if (!reg) {
++		if (!ref_exists) {
++			xa_erase(xa_dplls, dpll->device_idx);
++			kfree(ref);
++		}
++		return -ENOMEM;
++	}
++	reg->ops = ops;
++	reg->priv = priv;
++	if (ref_exists)
++		refcount_inc(&ref->refcount);
++	list_add_tail(&reg->list, &ref->registration_list);
++
++	return 0;
++}
++
++static void
++dpll_xa_ref_dpll_del(struct xarray *xa_dplls, struct dpll_device *dpll,
++		     const struct dpll_pin_ops *ops, void *priv)
++{
++	struct dpll_pin_registration *reg;
++	struct dpll_pin_ref *ref;
++	unsigned long i;
++
++	xa_for_each(xa_dplls, i, ref) {
++		if (ref->dpll != dpll)
++			continue;
++		reg = dpll_pin_registration_find(ref, ops, priv);
++		if (WARN_ON(!reg))
++			return;
++		if (refcount_dec_and_test(&ref->refcount)) {
++			list_del(&reg->list);
++			kfree(reg);
++			xa_erase(xa_dplls, i);
++			WARN_ON(!list_empty(&ref->registration_list));
++			kfree(ref);
++		}
++		return;
++	}
++}
++
++struct dpll_pin_ref *dpll_xa_ref_dpll_first(struct xarray *xa_refs)
++{
++	struct dpll_pin_ref *ref;
++	unsigned long i = 0;
++
++	ref = xa_find(xa_refs, &i, ULONG_MAX, XA_PRESENT);
++	WARN_ON(!ref);
++	return ref;
++}
++
++static struct dpll_device *
++dpll_device_alloc(const u64 clock_id, u32 device_idx, struct module *module)
++{
++	struct dpll_device *dpll;
++	int ret;
++
++	dpll = kzalloc(sizeof(*dpll), GFP_KERNEL);
++	if (!dpll)
++		return ERR_PTR(-ENOMEM);
++	refcount_set(&dpll->refcount, 1);
++	INIT_LIST_HEAD(&dpll->registration_list);
++	dpll->device_idx = device_idx;
++	dpll->clock_id = clock_id;
++	dpll->module = module;
++	ret = xa_alloc(&dpll_device_xa, &dpll->id, dpll, xa_limit_16b,
++		       GFP_KERNEL);
++	if (ret) {
++		kfree(dpll);
++		return ERR_PTR(ret);
++	}
++	xa_init_flags(&dpll->pin_refs, XA_FLAGS_ALLOC);
++
++	return dpll;
++}
++
++/**
++ * dpll_device_get - find existing or create new dpll device
++ * @clock_id: clock_id of creator
++ * @device_idx: idx given by device driver
++ * @module: reference to registering module
++ *
++ * Get existing object of a dpll device, unique for given arguments.
++ * Create new if doesn't exist yet.
++ *
++ * Context: Acquires a lock (dpll_lock)
++ * Return:
++ * * valid dpll_device struct pointer if succeeded
++ * * ERR_PTR(X) - error
++ */
++struct dpll_device *
++dpll_device_get(u64 clock_id, u32 device_idx, struct module *module)
++{
++	struct dpll_device *dpll, *ret = NULL;
++	unsigned long index;
++
++	mutex_lock(&dpll_lock);
++	xa_for_each(&dpll_device_xa, index, dpll) {
++		if (dpll->clock_id == clock_id &&
++		    dpll->device_idx == device_idx &&
++		    dpll->module == module) {
++			ret = dpll;
++			refcount_inc(&ret->refcount);
++			break;
++		}
++	}
++	if (!ret)
++		ret = dpll_device_alloc(clock_id, device_idx, module);
++	mutex_unlock(&dpll_lock);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(dpll_device_get);
++
++/**
++ * dpll_device_put - decrease the refcount and free memory if possible
++ * @dpll: dpll_device struct pointer
++ *
++ * Context: Acquires a lock (dpll_lock)
++ * Drop reference for a dpll device, if all references are gone, delete
++ * dpll device object.
++ */
++void dpll_device_put(struct dpll_device *dpll)
++{
++	mutex_lock(&dpll_lock);
++	if (refcount_dec_and_test(&dpll->refcount)) {
++		ASSERT_DPLL_NOT_REGISTERED(dpll);
++		WARN_ON_ONCE(!xa_empty(&dpll->pin_refs));
++		xa_destroy(&dpll->pin_refs);
++		xa_erase(&dpll_device_xa, dpll->id);
++		WARN_ON(!list_empty(&dpll->registration_list));
++		kfree(dpll);
++	}
++	mutex_unlock(&dpll_lock);
++}
++EXPORT_SYMBOL_GPL(dpll_device_put);
++
++static struct dpll_device_registration *
++dpll_device_registration_find(struct dpll_device *dpll,
++			      const struct dpll_device_ops *ops, void *priv)
++{
++	struct dpll_device_registration *reg;
++
++	list_for_each_entry(reg, &dpll->registration_list, list) {
++		if (reg->ops == ops && reg->priv == priv)
++			return reg;
++	}
++	return NULL;
++}
++
++/**
++ * dpll_device_register - register the dpll device in the subsystem
++ * @dpll: pointer to a dpll
++ * @type: type of a dpll
++ * @ops: ops for a dpll device
++ * @priv: pointer to private information of owner
++ *
++ * Make dpll device available for user space.
++ *
++ * Context: Acquires a lock (dpll_lock)
++ * Return:
++ * * 0 on success
++ * * negative - error value
++ */
++int dpll_device_register(struct dpll_device *dpll, enum dpll_type type,
++			 const struct dpll_device_ops *ops, void *priv)
++{
++	struct dpll_device_registration *reg;
++	bool first_registration = false;
++
++	if (WARN_ON(!ops))
++		return -EINVAL;
++	if (WARN_ON(!ops->mode_get))
++		return -EINVAL;
++	if (WARN_ON(!ops->lock_status_get))
++		return -EINVAL;
++	if (WARN_ON(type < DPLL_TYPE_PPS || type > DPLL_TYPE_MAX))
++		return -EINVAL;
++
++	mutex_lock(&dpll_lock);
++	reg = dpll_device_registration_find(dpll, ops, priv);
++	if (reg) {
++		mutex_unlock(&dpll_lock);
++		return -EEXIST;
++	}
++
++	reg = kzalloc(sizeof(*reg), GFP_KERNEL);
++	if (!reg) {
++		mutex_unlock(&dpll_lock);
++		return -ENOMEM;
++	}
++	reg->ops = ops;
++	reg->priv = priv;
++	dpll->type = type;
++	first_registration = list_empty(&dpll->registration_list);
++	list_add_tail(&reg->list, &dpll->registration_list);
++	if (!first_registration) {
++		mutex_unlock(&dpll_lock);
++		return 0;
++	}
++
++	xa_set_mark(&dpll_device_xa, dpll->id, DPLL_REGISTERED);
++	mutex_unlock(&dpll_lock);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(dpll_device_register);
++
++/**
++ * dpll_device_unregister - unregister dpll device
++ * @dpll: registered dpll pointer
++ * @ops: ops for a dpll device
++ * @priv: pointer to private information of owner
++ *
++ * Unregister device, make it unavailable for userspace.
++ * Note: It does not free the memory
++ * Context: Acquires a lock (dpll_lock)
++ */
++void dpll_device_unregister(struct dpll_device *dpll,
++			    const struct dpll_device_ops *ops, void *priv)
++{
++	struct dpll_device_registration *reg;
++
++	mutex_lock(&dpll_lock);
++	ASSERT_DPLL_REGISTERED(dpll);
++	reg = dpll_device_registration_find(dpll, ops, priv);
++	if (WARN_ON(!reg)) {
++		mutex_unlock(&dpll_lock);
++		return;
++	}
++	list_del(&reg->list);
++	kfree(reg);
++
++	if (!list_empty(&dpll->registration_list)) {
++		mutex_unlock(&dpll_lock);
++		return;
++	}
++	xa_clear_mark(&dpll_device_xa, dpll->id, DPLL_REGISTERED);
++	mutex_unlock(&dpll_lock);
++}
++EXPORT_SYMBOL_GPL(dpll_device_unregister);
++
++static struct dpll_pin *
++dpll_pin_alloc(u64 clock_id, u32 pin_idx, struct module *module,
++	       const struct dpll_pin_properties *prop)
++{
++	struct dpll_pin *pin;
++	int ret;
++
++	pin = kzalloc(sizeof(*pin), GFP_KERNEL);
++	if (!pin)
++		return ERR_PTR(-ENOMEM);
++	pin->pin_idx = pin_idx;
++	pin->clock_id = clock_id;
++	pin->module = module;
++	if (WARN_ON(prop->type < DPLL_PIN_TYPE_MUX ||
++		    prop->type > DPLL_PIN_TYPE_MAX)) {
++		ret = -EINVAL;
++		goto err;
++	}
++	pin->prop = prop;
++	refcount_set(&pin->refcount, 1);
++	xa_init_flags(&pin->dpll_refs, XA_FLAGS_ALLOC);
++	xa_init_flags(&pin->parent_refs, XA_FLAGS_ALLOC);
++	ret = xa_alloc(&dpll_pin_xa, &pin->id, pin, xa_limit_16b, GFP_KERNEL);
++	if (ret)
++		goto err;
++	return pin;
++err:
++	xa_destroy(&pin->dpll_refs);
++	xa_destroy(&pin->parent_refs);
++	kfree(pin);
++	return ERR_PTR(ret);
++}
++
++/**
++ * dpll_pin_get - find existing or create new dpll pin
++ * @clock_id: clock_id of creator
++ * @pin_idx: idx given by dev driver
++ * @module: reference to registering module
++ * @prop: dpll pin properties
++ *
++ * Get existing object of a pin (unique for given arguments) or create new
++ * if doesn't exist yet.
++ *
++ * Context: Acquires a lock (dpll_lock)
++ * Return:
++ * * valid allocated dpll_pin struct pointer if succeeded
++ * * ERR_PTR(X) - error
++ */
++struct dpll_pin *
++dpll_pin_get(u64 clock_id, u32 pin_idx, struct module *module,
++	     const struct dpll_pin_properties *prop)
++{
++	struct dpll_pin *pos, *ret = NULL;
++	unsigned long i;
++
++	mutex_lock(&dpll_lock);
++	xa_for_each(&dpll_pin_xa, i, pos) {
++		if (pos->clock_id == clock_id &&
++		    pos->pin_idx == pin_idx &&
++		    pos->module == module) {
++			ret = pos;
++			refcount_inc(&ret->refcount);
++			break;
++		}
++	}
++	if (!ret)
++		ret = dpll_pin_alloc(clock_id, pin_idx, module, prop);
++	mutex_unlock(&dpll_lock);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(dpll_pin_get);
++
++/**
++ * dpll_pin_put - decrease the refcount and free memory if possible
++ * @pin: pointer to a pin to be put
++ *
++ * Drop reference for a pin, if all references are gone, delete pin object.
++ *
++ * Context: Acquires a lock (dpll_lock)
++ */
++void dpll_pin_put(struct dpll_pin *pin)
++{
++	mutex_lock(&dpll_lock);
++	if (refcount_dec_and_test(&pin->refcount)) {
++		xa_destroy(&pin->dpll_refs);
++		xa_destroy(&pin->parent_refs);
++		xa_erase(&dpll_pin_xa, pin->id);
++		kfree(pin);
++	}
++	mutex_unlock(&dpll_lock);
++}
++EXPORT_SYMBOL_GPL(dpll_pin_put);
++
++static int
++__dpll_pin_register(struct dpll_device *dpll, struct dpll_pin *pin,
++		    const struct dpll_pin_ops *ops, void *priv)
++{
++	int ret;
++
++	ret = dpll_xa_ref_pin_add(&dpll->pin_refs, pin, ops, priv);
++	if (ret)
++		return ret;
++	ret = dpll_xa_ref_dpll_add(&pin->dpll_refs, dpll, ops, priv);
++	if (ret)
++		goto ref_pin_del;
++	xa_set_mark(&dpll_pin_xa, pin->id, DPLL_REGISTERED);
++
++	return ret;
++
++ref_pin_del:
++	dpll_xa_ref_pin_del(&dpll->pin_refs, pin, ops, priv);
++	return ret;
++}
++
++/**
++ * dpll_pin_register - register the dpll pin in the subsystem
++ * @dpll: pointer to a dpll
++ * @pin: pointer to a dpll pin
++ * @ops: ops for a dpll pin ops
++ * @priv: pointer to private information of owner
++ *
++ * Context: Acquires a lock (dpll_lock)
++ * Return:
++ * * 0 on success
++ * * negative - error value
++ */
++int
++dpll_pin_register(struct dpll_device *dpll, struct dpll_pin *pin,
++		  const struct dpll_pin_ops *ops, void *priv)
++{
++	int ret;
++
++	if (WARN_ON(!ops) ||
++	    WARN_ON(!ops->state_on_dpll_get) ||
++	    WARN_ON(!ops->direction_get))
++		return -EINVAL;
++	if (ASSERT_DPLL_REGISTERED(dpll))
++		return -EINVAL;
++
++	mutex_lock(&dpll_lock);
++	if (WARN_ON(!(dpll->module == pin->module &&
++		      dpll->clock_id == pin->clock_id)))
++		ret = -EINVAL;
++	else
++		ret = __dpll_pin_register(dpll, pin, ops, priv);
++	mutex_unlock(&dpll_lock);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(dpll_pin_register);
++
++static void
++__dpll_pin_unregister(struct dpll_device *dpll, struct dpll_pin *pin,
++		      const struct dpll_pin_ops *ops, void *priv)
++{
++	dpll_xa_ref_pin_del(&dpll->pin_refs, pin, ops, priv);
++	dpll_xa_ref_dpll_del(&pin->dpll_refs, dpll, ops, priv);
++	if (xa_empty(&pin->dpll_refs))
++		xa_clear_mark(&dpll_pin_xa, pin->id, DPLL_REGISTERED);
++}
++
++/**
++ * dpll_pin_unregister - unregister dpll pin from dpll device
++ * @dpll: registered dpll pointer
++ * @pin: pointer to a pin
++ * @ops: ops for a dpll pin
++ * @priv: pointer to private information of owner
++ *
++ * Note: It does not free the memory
++ * Context: Acquires a lock (dpll_lock)
++ */
++void dpll_pin_unregister(struct dpll_device *dpll, struct dpll_pin *pin,
++			 const struct dpll_pin_ops *ops, void *priv)
++{
++	if (WARN_ON(xa_empty(&dpll->pin_refs)))
++		return;
++	if (WARN_ON(!xa_empty(&pin->parent_refs)))
++		return;
++
++	mutex_lock(&dpll_lock);
++	__dpll_pin_unregister(dpll, pin, ops, priv);
++	mutex_unlock(&dpll_lock);
++}
++EXPORT_SYMBOL_GPL(dpll_pin_unregister);
++
++/**
++ * dpll_pin_on_pin_register - register a pin with a parent pin
++ * @parent: pointer to a parent pin
++ * @pin: pointer to a pin
++ * @ops: ops for a dpll pin
++ * @priv: pointer to private information of owner
++ *
++ * Register a pin with a parent pin, create references between them and
++ * between newly registered pin and dplls connected with a parent pin.
++ *
++ * Context: Acquires a lock (dpll_lock)
++ * Return:
++ * * 0 on success
++ * * negative - error value
++ */
++int dpll_pin_on_pin_register(struct dpll_pin *parent, struct dpll_pin *pin,
++			     const struct dpll_pin_ops *ops, void *priv)
++{
++	struct dpll_pin_ref *ref;
++	unsigned long i, stop;
++	int ret;
++
++	if (WARN_ON(parent->prop->type != DPLL_PIN_TYPE_MUX))
++		return -EINVAL;
++
++	if (WARN_ON(!ops) ||
++	    WARN_ON(!ops->state_on_pin_get) ||
++	    WARN_ON(!ops->direction_get))
++		return -EINVAL;
++	if (ASSERT_PIN_REGISTERED(parent))
++		return -EINVAL;
++
++	mutex_lock(&dpll_lock);
++	ret = dpll_xa_ref_pin_add(&pin->parent_refs, parent, ops, priv);
++	if (ret)
++		goto unlock;
++	refcount_inc(&pin->refcount);
++	xa_for_each(&parent->dpll_refs, i, ref) {
++		ret = __dpll_pin_register(ref->dpll, pin, ops, priv);
++		if (ret) {
++			stop = i;
++			goto dpll_unregister;
++		}
++	}
++	mutex_unlock(&dpll_lock);
++
++	return ret;
++
++dpll_unregister:
++	xa_for_each(&parent->dpll_refs, i, ref)
++		if (i < stop)
++			__dpll_pin_unregister(ref->dpll, pin, ops, priv);
++	refcount_dec(&pin->refcount);
++	dpll_xa_ref_pin_del(&pin->parent_refs, parent, ops, priv);
++unlock:
++	mutex_unlock(&dpll_lock);
++	return ret;
++}
++EXPORT_SYMBOL_GPL(dpll_pin_on_pin_register);
++
++/**
++ * dpll_pin_on_pin_unregister - unregister dpll pin from a parent pin
++ * @parent: pointer to a parent pin
++ * @pin: pointer to a pin
++ * @ops: ops for a dpll pin
++ * @priv: pointer to private information of owner
++ *
++ * Context: Acquires a lock (dpll_lock)
++ * Note: It does not free the memory
++ */
++void dpll_pin_on_pin_unregister(struct dpll_pin *parent, struct dpll_pin *pin,
++				const struct dpll_pin_ops *ops, void *priv)
++{
++	struct dpll_pin_ref *ref;
++	unsigned long i;
++
++	mutex_lock(&dpll_lock);
++	dpll_xa_ref_pin_del(&pin->parent_refs, parent, ops, priv);
++	refcount_dec(&pin->refcount);
++	xa_for_each(&pin->dpll_refs, i, ref)
++		__dpll_pin_unregister(ref->dpll, pin, ops, priv);
++	mutex_unlock(&dpll_lock);
++}
++EXPORT_SYMBOL_GPL(dpll_pin_on_pin_unregister);
++
++static struct dpll_device_registration *
++dpll_device_registration_first(struct dpll_device *dpll)
++{
++	struct dpll_device_registration *reg;
++
++	reg = list_first_entry_or_null((struct list_head *)&dpll->registration_list,
++				       struct dpll_device_registration, list);
++	WARN_ON(!reg);
++	return reg;
++}
++
++void *dpll_priv(struct dpll_device *dpll)
++{
++	struct dpll_device_registration *reg;
++
++	reg = dpll_device_registration_first(dpll);
++	return reg->priv;
++}
++
++const struct dpll_device_ops *dpll_device_ops(struct dpll_device *dpll)
++{
++	struct dpll_device_registration *reg;
++
++	reg = dpll_device_registration_first(dpll);
++	return reg->ops;
++}
++
++static struct dpll_pin_registration *
++dpll_pin_registration_first(struct dpll_pin_ref *ref)
++{
++	struct dpll_pin_registration *reg;
++
++	reg = list_first_entry_or_null(&ref->registration_list,
++				       struct dpll_pin_registration, list);
++	WARN_ON(!reg);
++	return reg;
++}
++
++void *dpll_pin_on_dpll_priv(struct dpll_device *dpll,
++			    struct dpll_pin *pin)
++{
++	struct dpll_pin_registration *reg;
++	struct dpll_pin_ref *ref;
++
++	ref = xa_load(&dpll->pin_refs, pin->pin_idx);
++	if (!ref)
++		return NULL;
++	reg = dpll_pin_registration_first(ref);
++	return reg->priv;
++}
++
++void *dpll_pin_on_pin_priv(struct dpll_pin *parent,
++			   struct dpll_pin *pin)
++{
++	struct dpll_pin_registration *reg;
++	struct dpll_pin_ref *ref;
++
++	ref = xa_load(&pin->parent_refs, parent->pin_idx);
++	if (!ref)
++		return NULL;
++	reg = dpll_pin_registration_first(ref);
++	return reg->priv;
++}
++
++const struct dpll_pin_ops *dpll_pin_ops(struct dpll_pin_ref *ref)
++{
++	struct dpll_pin_registration *reg;
++
++	reg = dpll_pin_registration_first(ref);
++	return reg->ops;
++}
++
++static int __init dpll_init(void)
++{
++	int ret;
++
++	ret = genl_register_family(&dpll_nl_family);
++	if (ret)
++		goto error;
++
++	return 0;
++
++error:
++	mutex_destroy(&dpll_lock);
++	return ret;
++}
++
++static void __exit dpll_exit(void)
++{
++	genl_unregister_family(&dpll_nl_family);
++	mutex_destroy(&dpll_lock);
++}
++
++subsys_initcall(dpll_init);
++module_exit(dpll_exit);
+diff --git a/drivers/dpll/dpll_core.h b/drivers/dpll/dpll_core.h
+new file mode 100644
+index 000000000000..fdee185cc579
+--- /dev/null
++++ b/drivers/dpll/dpll_core.h
+@@ -0,0 +1,90 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ *  Copyright (c) 2023 Meta Platforms, Inc. and affiliates
++ *  Copyright (c) 2023 Intel and affiliates
++ */
++
++#ifndef __DPLL_CORE_H__
++#define __DPLL_CORE_H__
++
++#include <linux/dpll.h>
++#include <linux/list.h>
++#include <linux/refcount.h>
++#include "dpll_nl.h"
++
++#define DPLL_REGISTERED		XA_MARK_1
++
++/**
++ * struct dpll_device - stores DPLL device internal data
++ * @id:			unique id number for device given by dpll subsystem
++ * @device_idx:		id given by dev driver
++ * @clock_id:		unique identifier (clock_id) of a dpll
++ * @module:		module of creator
++ * @type:		type of a dpll
++ * @pin_refs:		stores pins registered within a dpll
++ * @refcount:		refcount
++ * @registration_list:	list of registered ops and priv data of dpll owners
++ **/
++struct dpll_device {
++	u32 id;
++	u32 device_idx;
++	u64 clock_id;
++	struct module *module;
++	enum dpll_type type;
++	struct xarray pin_refs;
++	refcount_t refcount;
++	struct list_head registration_list;
++};
++
++/**
++ * struct dpll_pin - structure for a dpll pin
++ * @id:			unique id number for pin given by dpll subsystem
++ * @pin_idx:		index of a pin given by dev driver
++ * @clock_id:		clock_id of creator
++ * @module:		module of creator
++ * @dpll_refs:		hold referencees to dplls pin was registered with
++ * @parent_refs:	hold references to parent pins pin was registered with
++ * @prop:		pointer to pin properties given by registerer
++ * @rclk_dev_name:	holds name of device when pin can recover clock from it
++ * @refcount:		refcount
++ **/
++struct dpll_pin {
++	u32 id;
++	u32 pin_idx;
++	u64 clock_id;
++	struct module *module;
++	struct xarray dpll_refs;
++	struct xarray parent_refs;
++	const struct dpll_pin_properties *prop;
++	char *rclk_dev_name;
++	refcount_t refcount;
++};
++
++/**
++ * struct dpll_pin_ref - structure for referencing either dpll or pins
++ * @dpll:		pointer to a dpll
++ * @pin:		pointer to a pin
++ * @registration_list:	list of ops and priv data registered with the ref
++ * @refcount:		refcount
++ **/
++struct dpll_pin_ref {
++	union {
++		struct dpll_device *dpll;
++		struct dpll_pin *pin;
++	};
++	struct list_head registration_list;
++	refcount_t refcount;
++};
++
++void *dpll_priv(struct dpll_device *dpll);
++void *dpll_pin_on_dpll_priv(struct dpll_device *dpll, struct dpll_pin *pin);
++void *dpll_pin_on_pin_priv(struct dpll_pin *parent, struct dpll_pin *pin);
++
++const struct dpll_device_ops *dpll_device_ops(struct dpll_device *dpll);
++struct dpll_device *dpll_device_get_by_id(int id);
++const struct dpll_pin_ops *dpll_pin_ops(struct dpll_pin_ref *ref);
++struct dpll_pin_ref *dpll_xa_ref_dpll_first(struct xarray *xa_refs);
++extern struct xarray dpll_device_xa;
++extern struct xarray dpll_pin_xa;
++extern struct mutex dpll_lock;
++#endif
+diff --git a/include/linux/dpll.h b/include/linux/dpll.h
+new file mode 100644
+index 000000000000..a1ecb0af19e9
+--- /dev/null
++++ b/include/linux/dpll.h
+@@ -0,0 +1,133 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ *  Copyright (c) 2023 Meta Platforms, Inc. and affiliates
++ *  Copyright (c) 2023 Intel and affiliates
++ */
++
++#ifndef __DPLL_H__
++#define __DPLL_H__
++
++#include <uapi/linux/dpll.h>
++#include <linux/device.h>
++#include <linux/netlink.h>
++
++struct dpll_device;
++struct dpll_pin;
++
++struct dpll_device_ops {
++	int (*mode_get)(const struct dpll_device *dpll, void *dpll_priv,
++			enum dpll_mode *mode, struct netlink_ext_ack *extack);
++	bool (*mode_supported)(const struct dpll_device *dpll, void *dpll_priv,
++			       const enum dpll_mode mode,
++			       struct netlink_ext_ack *extack);
++	int (*lock_status_get)(const struct dpll_device *dpll, void *dpll_priv,
++			       enum dpll_lock_status *status,
++			       struct netlink_ext_ack *extack);
++	int (*temp_get)(const struct dpll_device *dpll, void *dpll_priv,
++			s32 *temp, struct netlink_ext_ack *extack);
++};
++
++struct dpll_pin_ops {
++	int (*frequency_set)(const struct dpll_pin *pin, void *pin_priv,
++			     const struct dpll_device *dpll, void *dpll_priv,
++			     const u64 frequency,
++			     struct netlink_ext_ack *extack);
++	int (*frequency_get)(const struct dpll_pin *pin, void *pin_priv,
++			     const struct dpll_device *dpll, void *dpll_priv,
++			     u64 *frequency, struct netlink_ext_ack *extack);
++	int (*direction_set)(const struct dpll_pin *pin, void *pin_priv,
++			     const struct dpll_device *dpll, void *dpll_priv,
++			     const enum dpll_pin_direction direction,
++			     struct netlink_ext_ack *extack);
++	int (*direction_get)(const struct dpll_pin *pin, void *pin_priv,
++			     const struct dpll_device *dpll, void *dpll_priv,
++			     enum dpll_pin_direction *direction,
++			     struct netlink_ext_ack *extack);
++	int (*state_on_pin_get)(const struct dpll_pin *pin, void *pin_priv,
++				const struct dpll_pin *parent_pin,
++				void *parent_pin_priv,
++				enum dpll_pin_state *state,
++				struct netlink_ext_ack *extack);
++	int (*state_on_dpll_get)(const struct dpll_pin *pin, void *pin_priv,
++				 const struct dpll_device *dpll,
++				 void *dpll_priv, enum dpll_pin_state *state,
++				 struct netlink_ext_ack *extack);
++	int (*state_on_pin_set)(const struct dpll_pin *pin, void *pin_priv,
++				const struct dpll_pin *parent_pin,
++				void *parent_pin_priv,
++				const enum dpll_pin_state state,
++				struct netlink_ext_ack *extack);
++	int (*state_on_dpll_set)(const struct dpll_pin *pin, void *pin_priv,
++				 const struct dpll_device *dpll,
++				 void *dpll_priv,
++				 const enum dpll_pin_state state,
++				 struct netlink_ext_ack *extack);
++	int (*prio_get)(const struct dpll_pin *pin,  void *pin_priv,
++			const struct dpll_device *dpll,  void *dpll_priv,
++			u32 *prio, struct netlink_ext_ack *extack);
++	int (*prio_set)(const struct dpll_pin *pin, void *pin_priv,
++			const struct dpll_device *dpll, void *dpll_priv,
++			const u32 prio, struct netlink_ext_ack *extack);
++};
++
++struct dpll_pin_frequency {
++	u64 min;
++	u64 max;
++};
++
++#define DPLL_PIN_FREQUENCY_RANGE(_min, _max)	\
++	{					\
++		.min = _min,			\
++		.max = _max,			\
++	}
++
++#define DPLL_PIN_FREQUENCY(_val) DPLL_PIN_FREQUENCY_RANGE(_val, _val)
++#define DPLL_PIN_FREQUENCY_1PPS \
++	DPLL_PIN_FREQUENCY(DPLL_PIN_FREQUENCY_1_HZ)
++#define DPLL_PIN_FREQUENCY_10MHZ \
++	DPLL_PIN_FREQUENCY(DPLL_PIN_FREQUENCY_10_MHZ)
++#define DPLL_PIN_FREQUENCY_IRIG_B \
++	DPLL_PIN_FREQUENCY(DPLL_PIN_FREQUENCY_10_KHZ)
++#define DPLL_PIN_FREQUENCY_DCF77 \
++	DPLL_PIN_FREQUENCY(DPLL_PIN_FREQUENCY_77_5_KHZ)
++
++struct dpll_pin_properties {
++	const char *board_label;
++	const char *panel_label;
++	const char *package_label;
++	enum dpll_pin_type type;
++	unsigned long capabilities;
++	u32 freq_supported_num;
++	struct dpll_pin_frequency *freq_supported;
++};
++
++struct dpll_device
++*dpll_device_get(u64 clock_id, u32 dev_driver_id, struct module *module);
++
++void dpll_device_put(struct dpll_device *dpll);
++
++int dpll_device_register(struct dpll_device *dpll, enum dpll_type type,
++			 const struct dpll_device_ops *ops, void *priv);
++
++void dpll_device_unregister(struct dpll_device *dpll,
++			    const struct dpll_device_ops *ops, void *priv);
++
++struct dpll_pin
++*dpll_pin_get(u64 clock_id, u32 dev_driver_id, struct module *module,
++	      const struct dpll_pin_properties *prop);
++
++int dpll_pin_register(struct dpll_device *dpll, struct dpll_pin *pin,
++		      const struct dpll_pin_ops *ops, void *priv);
++
++void dpll_pin_unregister(struct dpll_device *dpll, struct dpll_pin *pin,
++			 const struct dpll_pin_ops *ops, void *priv);
++
++void dpll_pin_put(struct dpll_pin *pin);
++
++int dpll_pin_on_pin_register(struct dpll_pin *parent, struct dpll_pin *pin,
++			     const struct dpll_pin_ops *ops, void *priv);
++
++void dpll_pin_on_pin_unregister(struct dpll_pin *parent, struct dpll_pin *pin,
++				const struct dpll_pin_ops *ops, void *priv);
++
++#endif
 -- 
 2.27.0
 
