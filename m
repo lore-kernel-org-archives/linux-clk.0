@@ -2,99 +2,155 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 764C6C0015E
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Aug 2023 08:44:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2691EEB64DD
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Aug 2023 08:57:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229921AbjHIIoB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Aug 2023 04:44:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48146 "EHLO
+        id S231179AbjHII5H convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Aug 2023 04:57:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229772AbjHIIoB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Aug 2023 04:44:01 -0400
-Received: from pandora.armlinux.org.uk (unknown [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D387F0;
-        Wed,  9 Aug 2023 01:43:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=cKdDAwuN7ArSFpLCXAKyPip8XfBoVOsaEIFRLY8h5c4=; b=1WRK5YM/39NWfX9X9AYMRiU8TT
-        KRQCraZfpzMNslYyy7mhaOM4AsqzEmk4JsJQnfgsugI9D7bx3iry5jbZIOGzFqd3lDW1+oOYaTjKU
-        Uv3t4LFV27snMeyWZovjEzZoOwyyEhHOlFvWMY9IVXRTQyM0zpVaeTrqeTTB4ObTUw1ZGAJSFvPBH
-        dhDJrzuowtSaziHZWVcXnb0aheZlGya5bCVCdBCX65spwvexne8YWIxADbFua8bKikBhudLlaZTIG
-        tB+b3DU+BS6eQVLt5e4JponNufPSB6bOB8T6gmhb0HIkvnRFv+CcF+CnTj+9pXwtr+U0UMCWqyqhi
-        rDbJne6Q==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:36380)
-        by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.96)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1qTenI-0002Hc-2G;
-        Wed, 09 Aug 2023 09:43:52 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1qTenF-0000aY-Od; Wed, 09 Aug 2023 09:43:49 +0100
-Date:   Wed, 9 Aug 2023 09:43:49 +0100
-From:   "Russell King (Oracle)" <linux@armlinux.org.uk>
-To:     Oleksij Rempel <o.rempel@pengutronix.de>
-Cc:     Wei Fang <wei.fang@nxp.com>, Marek Vasut <marex@denx.de>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Eric Dumazet <edumazet@google.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, kernel@pengutronix.de,
-        linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH] net: phy: at803x: Improve hibernation support on start up
-Message-ID: <ZNNRxY4z7HroDurv@shell.armlinux.org.uk>
-References: <20230804175842.209537-1-marex@denx.de>
- <AM5PR04MB3139793206F9101A552FADA0880DA@AM5PR04MB3139.eurprd04.prod.outlook.com>
- <45b1ee70-8330-0b18-2de1-c94ddd35d817@denx.de>
- <AM5PR04MB31392C770BA3101BDFBA80318812A@AM5PR04MB3139.eurprd04.prod.outlook.com>
- <20230809043626.GG5736@pengutronix.de>
- <AM5PR04MB3139D8C0EBC9D2DFB0C778348812A@AM5PR04MB3139.eurprd04.prod.outlook.com>
- <20230809060836.GA13300@pengutronix.de>
+        with ESMTP id S231294AbjHII5A (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Aug 2023 04:57:00 -0400
+Received: from mxout70.expurgate.net (mxout70.expurgate.net [91.198.224.70])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39E011FD5;
+        Wed,  9 Aug 2023 01:56:55 -0700 (PDT)
+Received: from [127.0.0.1] (helo=localhost)
+        by relay.expurgate.net with smtp (Exim 4.92)
+        (envelope-from <prvs=659920474f=fe@dev.tdt.de>)
+        id 1qTezt-0049NZ-5v; Wed, 09 Aug 2023 10:56:53 +0200
+Received: from [195.243.126.94] (helo=securemail.tdt.de)
+        by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <fe@dev.tdt.de>)
+        id 1qTezs-0049La-Nb; Wed, 09 Aug 2023 10:56:52 +0200
+Received: from securemail.tdt.de (localhost [127.0.0.1])
+        by securemail.tdt.de (Postfix) with ESMTP id 46F1E240049;
+        Wed,  9 Aug 2023 10:56:52 +0200 (CEST)
+Received: from mail.dev.tdt.de (unknown [10.2.4.42])
+        by securemail.tdt.de (Postfix) with ESMTP id E6661240040;
+        Wed,  9 Aug 2023 10:56:51 +0200 (CEST)
+Received: from mail.dev.tdt.de (localhost [IPv6:::1])
+        by mail.dev.tdt.de (Postfix) with ESMTP id 8AA2028A3A;
+        Wed,  9 Aug 2023 10:56:50 +0200 (CEST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230809060836.GA13300@pengutronix.de>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Date:   Wed, 09 Aug 2023 10:56:50 +0200
+From:   Florian Eckert <fe@dev.tdt.de>
+To:     Yi xin Zhu <yzhu@maxlinear.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        Rahul Tanwar <rtanwar@maxlinear.com>, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Eckert.Florian@googlemail.com
+Subject: Re: [PATCH 2/2] dt-bindings: clock: intel,cgu-lgm: add
+ mxl,control-gate option
+In-Reply-To: <1f8e054d-6b7f-4e82-17de-e0df3ddacbff@maxlinear.com>
+References: <20230731100349.184553-1-fe@dev.tdt.de>
+ <20230731100349.184553-3-fe@dev.tdt.de>
+ <780aa090-3a97-abab-271f-59790df29cc4@linaro.org>
+ <11386dd27487075a9a0b1a2aa7794951@dev.tdt.de>
+ <1f8e054d-6b7f-4e82-17de-e0df3ddacbff@maxlinear.com>
+Message-ID: <a6a19b15858afcf8d7aa903ccca41d8f@dev.tdt.de>
+X-Sender: fe@dev.tdt.de
+User-Agent: Roundcube Webmail/1.3.17
+Content-Transfer-Encoding: 8BIT
+X-purgate: clean
+X-purgate-type: clean
+X-purgate-ID: 151534::1691571413-B3C290DF-64CA1DF2/0/0
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Aug 09, 2023 at 08:08:36AM +0200, Oleksij Rempel wrote:
-> If fully functional external clock provider is need to initialize the
-> MAC, just disabling this clock on already initialized HW without doing
-> proper re-initialization sequence is usually bad idea. HW may get some
-> glitch which will make troubleshooting a pain.
+>> I didn't want to always change the source of the driver when it has to
+>> take
+>> care of the GATE, so I wanted to map this via the dts.
+>> 
+>> I have a board support package from Maxlinear for the Lightning 
+>> Mountain
+>> Soc
+>> with other drivers that are not upstream now. Some of them use the
+>> clock framework some of them does not.
+>> 
+>> Due to missing documents it is not possible to send these drivers
+>> upstream.
+>> Strictly speaking, this is about the gptc and the watchdog.
+>> 
+>> Since it is a buildin_platform driver, it can also not work via
+>> module parameters.
+> 
+> Could you please give more details on your target?
 
-There are cases where the PHY sits on a MDIO bus that is created
-by the ethernet MAC driver, which means the PHY only exists during
-the ethernet MAC driver probe.
+We are currently putting our own board with the new Maxlinear URX85x
+into operation. From Maxlinear we have received a board support
+package BSP named UGW 9.1.45.
 
-I think that provided the clock is only obtained after we know the
-PHY is present, that would probably be fine - but doing it before
-the MDIO bus has been created will of course cause problems.
+Since we not only have Maxlinear devices, but also other SoC from
+other manufacturers, we cannot use the BSP. We therefore need to use
+OpenWrt vanilla (master, openwrt-23.05) to support all our devices
+with the same software stack.
 
-We've had these issues before with stmmac, so this "stmmac needs the
-PHY receive clock" is nothing new - it's had problems with system
-suspend/resume in the past, and I've made suggestions... and when
-there's been two people trying to work on it, I've attempted to get
-them to talk to each other which resulted in nothing further
-happening.
+We have therefore picked all the relevant software components
+from UGW and ported them to the next openwrt-23.05 stable release.
 
-Another solution could possibly be that we reserve bit 30 on the
-PHY dev_flags to indicate that the receive clock must always be
-provided. I suspect that would have an advantage in another
-situation - for EEE, there's a control bit which allows the
-receive clock to be stopped while the link is in low-power state.
-If the MAC always needs the receive clock, then obviously that
-should be blocked.
+Due to the last rebasing of the kernel by openwrt to 5.15.123 [1],
+this patch [2] has been included. After that change, the gptc and
+watchdog drivers can't find the cgu device tree handlers and
+stopped working!
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+> In what kind of condition, you want to change the flag?
+
+Since we don't have access to the latest internal MxL code base,
+we don't know what has been changed since then. Therefore we ended
+up with reverting your last change [2] to get the gptc and watchdog
+driver working again.
+
+> In LGM SoC,  some gate clocks can be covered by EPU (power management
+> module).
+
+We have already seen that in your BSP. But this driver is not integrated
+upstream and is unfortunately only maintained in the BSP :-(. So no one
+knows about that.
+
+> that is the reason clock driver introduced the HW/SW flag definition.
+
+Since we don't have a hardware description, but only your drivers, it
+is difficult for us to find out how everything fits together. In 
+addition,
+not all drivers are upstream, which makes it even more confusing for us.
+
+> However gptc and watchdog are not covered by EPU.  it can only be
+> controlled via clock
+> driver.   So I'm not quite sure the target to change the flag for these
+> two clocks.
+
+So only Maxlinear knows the internals, then this is up to you to make
+the right choice.
+
+The major problem is that not all relevant drivers are upstreamed.
+Mixing upstreamed and proprietary drivers definitely leads to 
+regressions.
+
+By the way, up to now the SoC is not selectable. There are patches 
+needed
+from your BSP for the kernel to make the SoC URX85x selectable with
+'make menuconfig'
+
+Can you *please* integrate them upstream, so that the patches do not 
+always have
+to be extracted and rebased from the BSP!
+
+We can discuss this in a separate thread.
+Thanks for your feedback
+
+Best regards
+
+Florian
+
+[1] 
+https://git.openwrt.org/?p=openwrt/openwrt.git;a=commit;h=7efec0acca80b231ab8e69729a4bdaf11ef84541
+[2] 
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/drivers/clk/x86/clk-cgu.c?h=linux-5.15.y&id=a0583edea4fdb7b5b87a077263dddab476e9f138
+
