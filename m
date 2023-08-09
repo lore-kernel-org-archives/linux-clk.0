@@ -2,125 +2,81 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13FC6C001DE
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Aug 2023 20:01:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65DB1C001DE
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Aug 2023 21:17:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232817AbjHIUBu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Aug 2023 16:01:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41228 "EHLO
+        id S231245AbjHIVR2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Aug 2023 17:17:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232333AbjHIUBt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Aug 2023 16:01:49 -0400
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82153121
-        for <linux-clk@vger.kernel.org>; Wed,  9 Aug 2023 13:01:48 -0700 (PDT)
-Received: by mail-lj1-x22c.google.com with SMTP id 38308e7fff4ca-2b9cd6a554cso2950591fa.3
-        for <linux-clk@vger.kernel.org>; Wed, 09 Aug 2023 13:01:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691611307; x=1692216107;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HQ1eCCRsmpVHZrS4sKtqBMzcWmBsYroCWh79xqLVR1E=;
-        b=YJovnMML6TndQtUyqCEzZyvehv6jNsQmsEF7U8GyBOtXa0iot6D9R3l1Na726bL0Y7
-         paSVLKK844P//I6+0rX2QXYe4NNidXlHK/OajPBITlWxeBw4iaxUJhmpfAxSRNlr8XAq
-         LOGpdrjQfyC7wt+RzN2Sk7KivCC+KMp969CxP5MARvJ9KTGWhBPWBW69gEHyrFbPPfk3
-         vNK9+Gv1Q+RKwFf2hTfYmSi+C6U2nir6fmLwKG92+yjRsq9V+oWQ0AXFKvHyoDzekn/A
-         lKpYHwHqkpCt4Fh9OHkKH3neKJaEUVcWpw8xo9jdIG3qjeNQ3ELN864kri5OrBJ9mCP1
-         BcRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691611307; x=1692216107;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HQ1eCCRsmpVHZrS4sKtqBMzcWmBsYroCWh79xqLVR1E=;
-        b=g5Vjq7Wjx9FQeP3T0OOqhgaAfoPBl636spkN1OjS/qnU6xMOUe1oK4BaTCFTWfiop8
-         dX8MU6YTvwiul/4a/Knw3avnG0FG32IWCxWOhv9Ml19JzK3RfwC9RJZHIso708smDRu0
-         QTfsWxv0TxUwp+tfEurmVyEnWJ+vk/SfPyuXKW4ZKTjaKdQw9DT6kTy4+KPEWkAVou20
-         KkYykYcY3h1LNiGdVqTOpMHr/Gt/WewkDNSliVTTkZCCRnSZx3a+AQzeUTsyFlat0eTF
-         BfGW9ce+fZA7oDsA/OkJBCZjmxnbL41gCSjJoEAxLak5Rw1mGRn5z3ALw0Bp76RCwsfH
-         eW5Q==
-X-Gm-Message-State: AOJu0YyyaXRSbVNL3NyyaK+EUgnSl3Ng/5GiqJ+c+e34LdG2cr33ggtI
-        YwVYn+rE+kqqB1W/uoIk4HScbg==
-X-Google-Smtp-Source: AGHT+IGcq1O1Od+Pz8nFE+WyuxFVXqKm3kdxHchi1rZJLDr/DAg8dEQC/PG/DjnEZap1rVkzSuHz8Q==
-X-Received: by 2002:a2e:3c0f:0:b0:2b6:e12f:267 with SMTP id j15-20020a2e3c0f000000b002b6e12f0267mr180202lja.5.1691611306686;
-        Wed, 09 Aug 2023 13:01:46 -0700 (PDT)
-Received: from [192.168.1.101] (abxi185.neoplus.adsl.tpnet.pl. [83.9.2.185])
-        by smtp.gmail.com with ESMTPSA id c19-20020a05651c015300b002b9358f5088sm2876186ljd.53.2023.08.09.13.01.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Aug 2023 13:01:46 -0700 (PDT)
-Message-ID: <7d9ac1c6-be2d-4fd6-ba56-3976ec847274@linaro.org>
-Date:   Wed, 9 Aug 2023 22:01:45 +0200
+        with ESMTP id S229478AbjHIVR2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Aug 2023 17:17:28 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D598610CA
+        for <linux-clk@vger.kernel.org>; Wed,  9 Aug 2023 14:17:27 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6AC9C64A07
+        for <linux-clk@vger.kernel.org>; Wed,  9 Aug 2023 21:17:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFE38C433C8;
+        Wed,  9 Aug 2023 21:17:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1691615846;
+        bh=deWueVbxWNfNyWjFH5/yNRM4pNhZhG/SmAXIlvbz0Rk=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=uM3fOpNbqfnWEAvJRsNzIMCebgtkrqWI2RuhX/x0lodSjbfbP1A6CL46Pri8+XOBD
+         POjlVhH+tYQ0pihO84nmwN4ky+07NYPD2vetdWdYV1QJTnXGPrOBjqA7bbD2VXV9fj
+         g+Q9GC+Go1GuwPXNXXn6JGJLBp7ctaSA9Fn0qrjBuIrv6/7Ri4TVBgUq7SeKMuTYhj
+         vA2ymYrbZrgnBI4jdS1B9aBYW+H/biIgOReFcUb+9HpcANg95UB1qUkblcpcgiaeYM
+         EKddb2Yv5gRtH5a6IZNwQvMjSlTfMsOV/IxAfgHYZ5PJFKlca5KpGN+T1jTFN3YCAt
+         q7IPcELhuRYeg==
+Message-ID: <d7f3c1fef7293d7da69620bed31d77a3.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] clk: qcom: Add ECPRICC driver support for QDU1000 and
- QRU1000
-Content-Language: en-US
-To:     Imran Shaik <quic_imrashai@quicinc.com>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>
-Cc:     Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Ajit Pandey <quic_ajipan@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>
-References: <20230808051407.647395-1-quic_imrashai@quicinc.com>
- <20230808051407.647395-4-quic_imrashai@quicinc.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20230808051407.647395-4-quic_imrashai@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1jh6p9o6cl.fsf@starbuckisacylon.baylibre.com>
+References: <1jh6p9o6cl.fsf@starbuckisacylon.baylibre.com>
+Subject: Re: [GIT PULL]: clk: meson: amlogic clock updates for v6.6
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>, linux-clk@vger.kernel.org,
+        linux-amlogic@lists.infradead.org
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Date:   Wed, 09 Aug 2023 14:17:24 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 8.08.2023 07:14, Imran Shaik wrote:
-> Add ECPRI Clock Controller (ECPRICC) support for QDU1000 and QRU1000 SoCs.
-> 
-> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
-> ---
-Please ensure inline hex is lowercase
+Quoting Jerome Brunet (2023-08-08 09:09:24)
+> Hi Stephen,
+>=20
+> Here are the amlogic clock updates for v6.6.
+> It is mainly about dt-bindings this cycle.
+> Instead of exposing clock ids as needed, it was decided to expose everyth=
+ing
+>=20
+> You might notice a patch on amlogic,meson-gx-hhi-sysctrl.yaml which is
+> not a clock controller. This syscon mainly hosts the gxbb clock
+> controller. Neil asked for this to be taken along with the rest of gxbb
+> clock schema to make things simpler. No risk of conflict there.
+>=20
+> The following changes since commit 06c2afb862f9da8dc5efa4b6076a0e48c3fbaa=
+a5:
+>=20
+>   Linux 6.5-rc1 (2023-07-09 13:53:13 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   https://github.com/BayLibre/clk-meson.git tags/clk-meson-v6.6-1
+>=20
+> for you to fetch changes up to 4d023beb3998a775dc5c3aa2c22efd3435e061e1:
+>=20
+>   dt-bindings: soc: amlogic: document System Control registers (2023-08-0=
+8 16:09:37 +0200)
+>=20
+> ----------------------------------------------------------------
 
-No GDSCs in this clock controller?
-
-Konrad
+Thanks. Pulled into clk-next
