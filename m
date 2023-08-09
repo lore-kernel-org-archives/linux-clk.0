@@ -2,105 +2,104 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54953C04E69
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Aug 2023 12:19:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F5FDC04A94
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Aug 2023 13:02:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232056AbjHIMTd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Aug 2023 08:19:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36246 "EHLO
+        id S232007AbjHINC3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Aug 2023 09:02:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232113AbjHIMTb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Aug 2023 08:19:31 -0400
-Received: from mx.skole.hr (mx1.hosting.skole.hr [161.53.165.185])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DECA2109;
-        Wed,  9 Aug 2023 05:19:29 -0700 (PDT)
-Received: from mx1.hosting.skole.hr (localhost.localdomain [127.0.0.1])
-        by mx.skole.hr (mx.skole.hr) with ESMTP id 25FAB82603;
-        Wed,  9 Aug 2023 14:19:18 +0200 (CEST)
-From:   =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Date:   Wed, 09 Aug 2023 14:18:22 +0200
-Subject: [PATCH 4/4] clk: pxa910: Move number of clocks to driver source
+        with ESMTP id S230226AbjHINC2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Aug 2023 09:02:28 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BD681FF5
+        for <linux-clk@vger.kernel.org>; Wed,  9 Aug 2023 06:02:27 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id 4fb4d7f45d1cf-5222c5d71b8so9511643a12.2
+        for <linux-clk@vger.kernel.org>; Wed, 09 Aug 2023 06:02:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1691586146; x=1692190946;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2UTPDU0KQX0RK3PFL4VZ/siqN/71SBG93gUP3ty/AHI=;
+        b=EKV2vY9KxdA/16++Yq3IXCAwhFYNW/5vtkUpWcl5whiTseN/z5MKtc8AmdpfPuzjJn
+         do15Q+6YXXVpJ2l9jYsLvF4Gbo2jVJKXW04eOFUNr44WEK8QpdqT3SNb38JUeEjjkwon
+         XJiqolrtWOpu9oe7+P1ckdTrZnB49bf59/ahl+IgSCF1JXEQ8psJ8907a6WgNz6DZuqR
+         a5KWy2AulAyKrCMMZVaRCh2bpvzk/DyUXL6xxtB0d2bJVK2lmDGO6VCj1By649Pamc1v
+         bdCQDd/h+UpxdO5Hq1cWCgWl/auPMFCcXyIbUV1Zwmk3dTr3S6Feo+eaOZ+4Lq3f1vGy
+         iQog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691586146; x=1692190946;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2UTPDU0KQX0RK3PFL4VZ/siqN/71SBG93gUP3ty/AHI=;
+        b=iaZYe9WaetFXzA3TPDMbK8CpXuRTvGk5MjwAaAoKN2gA4umUXaPmnSqykRljGLIBdS
+         94RyP+VjjKXrJ5QnDCOL4xLm3UBNnRB4ETjlz/imwjmB/Czemk3+7cMd/Dvn1A9hZvHm
+         e0z1CLeQVLSxP1W6b5K4gYwjomSOTnXzsIR6WJfZVCccOBVMpQTq//VlMddSgYghnL4/
+         S1pTmKukTyiZ2j4XjnBcoD7FFyUR/XMYD4GTuKTdhKBhvNyirWgbhr2aPHkP0dMec6zi
+         DS0RD6O/pztPN9xxMgDLuQDqxj96r6fL/8vnIpWAvJBLdCIOPGAbn1PPH0g9uLSBtHD8
+         BvpQ==
+X-Gm-Message-State: AOJu0YzahhDDqQJfBpmn5puVUYxPcAG25c9ks6SXQFXnJYILD/fjnGvP
+        PUazYgG8v/zCqZ+RblQ2F/IhZQ==
+X-Google-Smtp-Source: AGHT+IEidig6boVf6/NGmLXgeMbZejHvX6edJdvVWmAIRdrMFKINsNWdRvhNOytepsdCsN40c9Hz4A==
+X-Received: by 2002:a17:907:a041:b0:991:bf04:2047 with SMTP id gz1-20020a170907a04100b00991bf042047mr1986339ejc.14.1691586145679;
+        Wed, 09 Aug 2023 06:02:25 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.222.113])
+        by smtp.gmail.com with ESMTPSA id gl23-20020a170906e0d700b009894b476310sm7966706ejb.163.2023.08.09.06.02.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Aug 2023 06:02:25 -0700 (PDT)
+Message-ID: <a48b1a97-2286-d2f9-742e-d718adcf1eed@linaro.org>
+Date:   Wed, 9 Aug 2023 15:02:23 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20230809-mmp-nr-clks-v1-4-5f3cdbbb89b8@skole.hr>
-References: <20230809-mmp-nr-clks-v1-0-5f3cdbbb89b8@skole.hr>
-In-Reply-To: <20230809-mmp-nr-clks-v1-0-5f3cdbbb89b8@skole.hr>
-To:     Michael Turquette <mturquette@baylibre.com>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Subject: Re: [PATCH 1/1] dt-bindings: clock: meson: Convert axg-audio-clkc to
+ YAML format
+Content-Language: en-US
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Alexander Stein <alexander.stein@mailbox.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1446;
- i=duje.mihanovic@skole.hr; h=from:subject:message-id;
- bh=bly1aASdWUJrlcyrZt3WskO9eN5tVF6cUHmmrzJg8UU=;
- b=owEBbQKS/ZANAwAIAZoRnrBCLZbhAcsmYgBk04QNmYDh7YmjSg5s2ALFQwFpva0+VjPXx+Xpu
- UjoAsNRMNCJAjMEAAEIAB0WIQRT351NnD/hEPs2LXiaEZ6wQi2W4QUCZNOEDQAKCRCaEZ6wQi2W
- 4RCDD/4paakr48mXfzlpws91TeOR5Q4WRf+h/9Ca6KwgacTLoAWJYyn+XvZTpSiCqca1ufpvcOc
- b8YKDNsW8sDgdBDqEKBbN54TXz46+EpRSK3Veg0uaRgGGpKjUW1Fw1CprZftn8fXg0HeVw7w9ox
- H5xaje6WWP6IiABVykeCz+GbHMPBJOzoHeneCircT8p/n93lpbkoShDZ+BwI5omQuZS/2TCVpu2
- CccIlM/xH0h3oRIzy0oPRFCkhqxMvkrN9Kb+GJ/wpCT4yhY/iHtpiZMJ6G4JTiPndEdl1iWSwg8
- B+o0FS+DO5LBqrEv3D8ta/9iLf8IycyoiofOLcd1WJ4ybhcIWQ6V/39ESUhd5T72N50CQGtJ6JY
- E7mQgbZ81j89ojslCRatT0NzXrrR4KslwM8du9Y/Rmpn/3ziHVoIlh6igqKm+RzE4o8/4EVLeOj
- mpv+uTxib/fKk0uFXrLUCXbHwce8zQUsLrOrV/yNGitlaxTZGni/n2Ewy0lMC8eUAvFJ3GevBdz
- hcHfwsBZk3rcq2Ow1dK7UTHIw9WU7bVj4YLGZtU+TCF7FwEemY0AxJLXyXKFe5WmbfRL2r+B2wt
- tnB+eVK3NSmI6xdGKJwEGyGlAm20iqtD3dQPxT0MUiy885NSh4xT4JJxRw/GdHwPo2VFzkFv2Rj
- 7sLxBtQlgDYlXfg==
-X-Developer-Key: i=duje.mihanovic@skole.hr; a=openpgp;
- fpr=53DF9D4D9C3FE110FB362D789A119EB0422D96E1
+        Conor Dooley <conor+dt@kernel.org>,
+        Dmitry Rokosov <ddrokosov@sberdevices.ru>
+Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20230808194811.113087-1-alexander.stein@mailbox.org>
+ <f4c57e4b-674b-f870-b215-8b2f80a7c9eb@linaro.org>
+ <1j5y5obt0u.fsf@starbuckisacylon.baylibre.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <1j5y5obt0u.fsf@starbuckisacylon.baylibre.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The number of clocks should not be in the dt binding as it is not used
-by the respective device tree and thus needlessly bloats the ABI.
+On 09/08/2023 08:58, Jerome Brunet wrote:
+>>> +      required:
+>>> +        - '#reset-cells'
+>>
+>> else:
+>>   properties:
+>>     '#reset-cells': false
+>> ???
+>>
+>>
+>> You need to constrain the clocks per variant. Probably names are also
+>> specific to each one, so the list of names can be moved here and you
+>> keep just min/maxItems in the top level property.
+>>
+> 
+> input clock names and constraints are the same for all 3 variants.
 
-Move this number of clocks into the driver source.
+Then why do you have this huge, apparently unnecessary, oneOf? If it's
+the same, then drop the oneOf and make number of clocks fixed.
 
-Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
----
- drivers/clk/mmp/clk-of-pxa910.c            | 4 +++-
- include/dt-bindings/clock/marvell,pxa910.h | 1 -
- 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/mmp/clk-of-pxa910.c b/drivers/clk/mmp/clk-of-pxa910.c
-index 4d15bac987eb..7a38c424782e 100644
---- a/drivers/clk/mmp/clk-of-pxa910.c
-+++ b/drivers/clk/mmp/clk-of-pxa910.c
-@@ -44,6 +44,8 @@
- #define APMU_DFC	0x60
- #define MPMU_UART_PLL	0x14
- 
-+#define NR_CLKS		200
-+
- struct pxa910_clk_unit {
- 	struct mmp_clk_unit unit;
- 	void __iomem *mpmu_base;
-@@ -296,7 +298,7 @@ static void __init pxa910_clk_init(struct device_node *np)
- 		goto unmap_apbc_region;
- 	}
- 
--	mmp_clk_init(np, &pxa_unit->unit, PXA910_NR_CLKS);
-+	mmp_clk_init(np, &pxa_unit->unit, NR_CLKS);
- 
- 	pxa910_pll_init(pxa_unit);
- 
-diff --git a/include/dt-bindings/clock/marvell,pxa910.h b/include/dt-bindings/clock/marvell,pxa910.h
-index c9018ab354d0..6caa231de0c1 100644
---- a/include/dt-bindings/clock/marvell,pxa910.h
-+++ b/include/dt-bindings/clock/marvell,pxa910.h
-@@ -55,5 +55,4 @@
- #define PXA910_CLK_CCIC0_PHY		108
- #define PXA910_CLK_CCIC0_SPHY		109
- 
--#define PXA910_NR_CLKS			200
- #endif
-
--- 
-2.41.0
-
+Best regards,
+Krzysztof
 
