@@ -2,63 +2,63 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12E6CC001E0
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Aug 2023 19:21:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE536C001E0
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Aug 2023 19:21:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233564AbjHITVF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Aug 2023 15:21:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42056 "EHLO
+        id S233616AbjHITVM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Aug 2023 15:21:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233609AbjHITVE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Aug 2023 15:21:04 -0400
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6146D3C12
-        for <linux-clk@vger.kernel.org>; Wed,  9 Aug 2023 12:20:46 -0700 (PDT)
-Received: by mail-lj1-x236.google.com with SMTP id 38308e7fff4ca-2b9c66e2e36so1504991fa.1
-        for <linux-clk@vger.kernel.org>; Wed, 09 Aug 2023 12:20:46 -0700 (PDT)
+        with ESMTP id S233626AbjHITVL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Aug 2023 15:21:11 -0400
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 011FF26B8
+        for <linux-clk@vger.kernel.org>; Wed,  9 Aug 2023 12:20:55 -0700 (PDT)
+Received: by mail-lj1-x22c.google.com with SMTP id 38308e7fff4ca-2b9b904bb04so2823671fa.1
+        for <linux-clk@vger.kernel.org>; Wed, 09 Aug 2023 12:20:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691608827; x=1692213627;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sVxJJpzcYYfK3TLE6tHWcTq1QcT1ENtNn8bY1sBquA0=;
-        b=MiLKH6m5rUcLO0KU+eQGJ8iVBj+ZdABFkFF9JN0DDrPyRkchV6dUcT0Re4p8bZVcBR
-         H3UqZpJlEmyNRf8LQDATEmFttzf3uvaQFyrrswvMv57pec88Rm1I0TzBUZ6GlX7DqRl0
-         BiCEJ3tzJIcr7JMpp7g24c8jdIJFom6e1vE+hGzwq145Ao8ccJPwutTqDv42dNElKfxe
-         zScewUD1VLn98GboSmRdX6PO6SsiiFiQ4q74GaejrWGVaScrtL2kMqPEtJ+YpgH9pEHs
-         N2IRLthpwH3gmFvmUkQpcMHT7bVbIvwfUUpJm+Va78XDnGR70x4h4Xxr300qlnND6OoI
-         NM0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691608827; x=1692213627;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1691608834; x=1692213634;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=sVxJJpzcYYfK3TLE6tHWcTq1QcT1ENtNn8bY1sBquA0=;
-        b=PYHtGl8SnUUrKiMMaL1R4oQZ74jDGYelnPHGqnQRPwb8fnRQxUkd5eYhJtUrTLod8A
-         dmwZopjul9NXniJOfAf2GOBq8NdYABujWXvMiGQklVBvrjXEC3V4szwmW7iu9EHRgDPk
-         dYan/uDFAH3lJbVgD/FUX3jI62SQzKD/HZUmobW8XOoirmewMwXDnwgUyTfqfgn/vZL9
-         89zsmvKQtlRDN1I6b7t2tXCODLfrzl89UclAshKa6qdELGZwRieVyHtoKJW95sZGtcPK
-         c89udXypgzybwM6bsRKV/HJybmWY+WoXSyh8N+yjjcv2umC3qFBJ1WVF0aHWM7wxCcP7
-         HKSA==
-X-Gm-Message-State: AOJu0Yz3YWnNpBfDEqKxBKYZo54KwECAFrKj54yMPo521Z4VdKcfcnL7
-        gGNfG1vTV1wy5f1pRX3Gs3yrAQ==
-X-Google-Smtp-Source: AGHT+IE43WLrxARXDliqvvtib67PqUUwSMJq1m3RW4BtVCVyaQuyxqqa8JROBmHmorHk9IfL9klW+A==
-X-Received: by 2002:a2e:8841:0:b0:2b9:344c:181e with SMTP id z1-20020a2e8841000000b002b9344c181emr101477ljj.19.1691608826816;
-        Wed, 09 Aug 2023 12:20:26 -0700 (PDT)
+        bh=DE94Q6lf2K2gSTbQ4obZ5qNHgQeup5/EEo7g9MBB54w=;
+        b=hVZmOV05FAUjR8G8bAhpPHpxnHhQ6DhH1iewP44ue5XrvSdFh1IvsOVHkaiJ8DJSlG
+         OzOwcDv+13bnppTHDKixF9LK3nkTDiV+dt1xhzEyEn/hXtWbFalKXwbjBGPTqK7Ue3S8
+         VhYQt8NK97pnxqSmf/IX2GvUWhC0cKQylUtb4hwZV6v8kC75kW3GRNvdZMrY65f6fawZ
+         7C3wht1lSE7lEXy0viadI5LBdxGnHoIQCCj4TOjAruUiluS/U7PGpHbDEAzTBE2EGxXU
+         cjejMJpG/6Fpud7Gbupf9gt48u1dP6b6fYzfGYNA6pQ7TfjjTFSA/AKGBIr86y1dWgRQ
+         RZTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691608834; x=1692213634;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DE94Q6lf2K2gSTbQ4obZ5qNHgQeup5/EEo7g9MBB54w=;
+        b=B4XvoPHn3KvJL8dZBfbxZDVZCeAe66RrzLqordwt+7/EjjNwfYb9cFnS1PTBSsdVDE
+         956r4txFr2naXIAAZ9RBZkfSIELDn2o7kK2Vf0IItx2woxK2JAf/rkpVTAu7b/2Ozq/z
+         VkG9H5Y7F3LNH/eHraHrO0Nk1qOhRk09y5ljiYt9cEW8c2WO9emGIrOF0ULJWJzG3ZCt
+         T8nxGeObXoyl4C1XcCmgd8Hpbqs/YXorwxnp2uRxiUFCkep9CoHN/cZmiW3OhxYTlz7J
+         tsE+GhUabXUlP7Jv7Acw2yzvftgIsrEv+peY/s3xnAc848oBTX+qudP7iCEiivGe3xx+
+         AlDA==
+X-Gm-Message-State: AOJu0Yw/zr4FJuI0hyNdFZnsIuKf+ItQlBxXmhRxulAtyUjgJ9PRiDQu
+        oEcib43v9wdK5B4yfCu854wF1Q==
+X-Google-Smtp-Source: AGHT+IH91D5GnSETRj0u3DPt3bzPi4croUy1p68YiToywW5aS9a6UlkxNDxyQkW6FnSr1PCZ1vpbrw==
+X-Received: by 2002:a2e:8550:0:b0:2b9:b9c8:99 with SMTP id u16-20020a2e8550000000b002b9b9c80099mr104092ljj.22.1691608834133;
+        Wed, 09 Aug 2023 12:20:34 -0700 (PDT)
 Received: from [192.168.1.101] (abxi185.neoplus.adsl.tpnet.pl. [83.9.2.185])
-        by smtp.gmail.com with ESMTPSA id o3-20020a2e9b43000000b002b9ed203af1sm2863218ljj.132.2023.08.09.12.20.24
+        by smtp.gmail.com with ESMTPSA id o3-20020a2e9b43000000b002b9ed203af1sm2863218ljj.132.2023.08.09.12.20.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Aug 2023 12:20:26 -0700 (PDT)
+        Wed, 09 Aug 2023 12:20:33 -0700 (PDT)
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Subject: [PATCH v3 0/6] MMCC MSM8998 fixes
-Date:   Wed, 09 Aug 2023 21:20:23 +0200
-Message-Id: <20230531-topic-8998_mmssclk-v3-0-ba1b1fd9ee75@linaro.org>
+Date:   Wed, 09 Aug 2023 21:20:25 +0200
+Subject: [PATCH v3 2/6] arm64: dts: qcom: msm8998: Add missing power domain
+ to MMSS SMMU
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAPfm02QC/4WNSw7CIAAFr9KwFsOnpODKexhjgEJLRGigEk3Tu
- 0u7c6PLecmbWUA2yZkMTs0Ckikuuxgq0EMD9CjDYKDrKwOCCEWMYjjHyWnIheC3xyNn7e/Q9q0
- iVnWWawzqUclsoEoy6LFew9P7Ok7JWPfaS5dr5dHlOab3Hi54W382CoYIEsUkt1ogIfDZuyBTP
- MY0gM1XyH8HqQ7ako4a0jHNvh3run4AO4d7nQ4BAAA=
+Message-Id: <20230531-topic-8998_mmssclk-v3-2-ba1b1fd9ee75@linaro.org>
+References: <20230531-topic-8998_mmssclk-v3-0-ba1b1fd9ee75@linaro.org>
+In-Reply-To: <20230531-topic-8998_mmssclk-v3-0-ba1b1fd9ee75@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -83,62 +83,43 @@ Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
         linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+        Konrad Dybcio <konrad.dybcio@linaro.org>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1691608824; l=1754;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1691608824; l=906;
  i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=egThBZwSTxM3F3X+KJcsxzhYTfwA9D4NBQYRWl4CZm0=;
- b=29IaLLRfDw8KxdgD/8yLej6UnjeOxoOFQg2Fy0arvCcHBorncfoDdlbi9vHct9vX5d3QDFxeC
- STYvzYHj0b6C/3d2cqJyf1ulMPfLt4fUF2gyKMF3n9jLHzsV583BMGp
+ bh=EM5tWZgcQ/PtQiCuUMktQpuJVbPaCBzE0y/oEdPpoBk=;
+ b=DgG5WM7aCnxlKKTKRxJyT1NXqA7+tx0CEHA0dPTjvPgAtp5Ajxf5aVQKXXHPrMj6JtpuzIu7l
+ Adop0zBmFK0CA+8JhrdwrZpDm3sn/DQGCO1GR9TImxjwOVAXckjOEC3
 X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
  pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-8998 has a couple of issues related to its clock controllers. This series
-attemps to fix some of them.
+The MMSS SMMU has its own power domain. Attach it so that we can drop
+the "keep it always-on" hack.
 
-The DT patch should go in first for bisectability, otherwise
-clk/pd_ignore_unused will need to be used, as the SMMU GDSC is no longer
-considered always-on.
-
-This series results in less "clk stuck at 'on/off'" messages and should
-marginally reduce power consumption.
-
+Fixes: 05ce21b54423 ("arm64: dts: qcom: msm8998: Configure the multimedia subsystem iommu")
+Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
 Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
-Changes in v3:
-- Make the commit message more meaningful in patch 6 (krzk)
-- Pick up tags
-- Link to v2: https://lore.kernel.org/r/20230531-topic-8998_mmssclk-v2-0-34273e275c51@linaro.org
+ arch/arm64/boot/dts/qcom/msm8998.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Changes in v2:
-- Update bindings
-- Separate out the dt patch into two
-- Pick up tags
-- Link to v1: https://lore.kernel.org/r/20230531-topic-8998_mmssclk-v1-0-2b5a8fc90991@linaro.org
+diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+index e40f6461f4fd..39db67211fae 100644
+--- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+@@ -2770,6 +2770,8 @@ mmss_smmu: iommu@cd00000 {
+ 				<GIC_SPI 261 IRQ_TYPE_LEVEL_HIGH>,
+ 				<GIC_SPI 262 IRQ_TYPE_LEVEL_HIGH>,
+ 				<GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
++
++			power-domains = <&mmcc BIMC_SMMU_GDSC>;
+ 		};
+ 
+ 		remoteproc_adsp: remoteproc@17300000 {
 
----
-Konrad Dybcio (6):
-      arm64: dts: qcom: msm8998: Drop bus clock reference from MMSS SMMU
-      arm64: dts: qcom: msm8998: Add missing power domain to MMSS SMMU
-      clk: qcom: gcc-msm8998: Don't check halt bit on some branch clks
-      clk: qcom: mmcc-msm8998: Don't check halt bit on some branch clks
-      clk: qcom: mmcc-msm8998: Fix the SMMU GDSC
-      dt-bindings: arm-smmu: Fix MSM8998 clocks description
-
- .../devicetree/bindings/iommu/arm,smmu.yaml        | 41 ++++++++++++++++++++++
- arch/arm64/boot/dts/qcom/msm8998.dtsi              |  8 +++--
- drivers/clk/qcom/gcc-msm8998.c                     |  6 ++--
- drivers/clk/qcom/mmcc-msm8998.c                    |  7 +++-
- 4 files changed, 55 insertions(+), 7 deletions(-)
----
-base-commit: 21ef7b1e17d039053edaeaf41142423810572741
-change-id: 20230531-topic-8998_mmssclk-fd4b2fb7f8c1
-
-Best regards,
 -- 
-Konrad Dybcio <konrad.dybcio@linaro.org>
+2.41.0
 
