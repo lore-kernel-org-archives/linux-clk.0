@@ -2,155 +2,124 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2691EEB64DD
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Aug 2023 08:57:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E892EB64DD
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Aug 2023 12:19:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231179AbjHII5H convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Aug 2023 04:57:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38470 "EHLO
+        id S231754AbjHIMTW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Aug 2023 08:19:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231294AbjHII5A (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Aug 2023 04:57:00 -0400
-Received: from mxout70.expurgate.net (mxout70.expurgate.net [91.198.224.70])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39E011FD5;
-        Wed,  9 Aug 2023 01:56:55 -0700 (PDT)
-Received: from [127.0.0.1] (helo=localhost)
-        by relay.expurgate.net with smtp (Exim 4.92)
-        (envelope-from <prvs=659920474f=fe@dev.tdt.de>)
-        id 1qTezt-0049NZ-5v; Wed, 09 Aug 2023 10:56:53 +0200
-Received: from [195.243.126.94] (helo=securemail.tdt.de)
-        by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <fe@dev.tdt.de>)
-        id 1qTezs-0049La-Nb; Wed, 09 Aug 2023 10:56:52 +0200
-Received: from securemail.tdt.de (localhost [127.0.0.1])
-        by securemail.tdt.de (Postfix) with ESMTP id 46F1E240049;
-        Wed,  9 Aug 2023 10:56:52 +0200 (CEST)
-Received: from mail.dev.tdt.de (unknown [10.2.4.42])
-        by securemail.tdt.de (Postfix) with ESMTP id E6661240040;
-        Wed,  9 Aug 2023 10:56:51 +0200 (CEST)
-Received: from mail.dev.tdt.de (localhost [IPv6:::1])
-        by mail.dev.tdt.de (Postfix) with ESMTP id 8AA2028A3A;
-        Wed,  9 Aug 2023 10:56:50 +0200 (CEST)
+        with ESMTP id S229971AbjHIMTW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Aug 2023 08:19:22 -0400
+Received: from mx.skole.hr (mx2.hosting.skole.hr [161.53.165.186])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECAAE1BF7;
+        Wed,  9 Aug 2023 05:19:19 -0700 (PDT)
+Received: from mx2.hosting.skole.hr (localhost.localdomain [127.0.0.1])
+        by mx.skole.hr (mx.skole.hr) with ESMTP id C8B1783F5D;
+        Wed,  9 Aug 2023 14:19:17 +0200 (CEST)
+From:   =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
+Date:   Wed, 09 Aug 2023 14:18:21 +0200
+Subject: [PATCH 3/4] clk: pxa1928: Move number of clocks to driver source
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Date:   Wed, 09 Aug 2023 10:56:50 +0200
-From:   Florian Eckert <fe@dev.tdt.de>
-To:     Yi xin Zhu <yzhu@maxlinear.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        Rahul Tanwar <rtanwar@maxlinear.com>, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Eckert.Florian@googlemail.com
-Subject: Re: [PATCH 2/2] dt-bindings: clock: intel,cgu-lgm: add
- mxl,control-gate option
-In-Reply-To: <1f8e054d-6b7f-4e82-17de-e0df3ddacbff@maxlinear.com>
-References: <20230731100349.184553-1-fe@dev.tdt.de>
- <20230731100349.184553-3-fe@dev.tdt.de>
- <780aa090-3a97-abab-271f-59790df29cc4@linaro.org>
- <11386dd27487075a9a0b1a2aa7794951@dev.tdt.de>
- <1f8e054d-6b7f-4e82-17de-e0df3ddacbff@maxlinear.com>
-Message-ID: <a6a19b15858afcf8d7aa903ccca41d8f@dev.tdt.de>
-X-Sender: fe@dev.tdt.de
-User-Agent: Roundcube Webmail/1.3.17
-Content-Transfer-Encoding: 8BIT
-X-purgate: clean
-X-purgate-type: clean
-X-purgate-ID: 151534::1691571413-B3C290DF-64CA1DF2/0/0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20230809-mmp-nr-clks-v1-3-5f3cdbbb89b8@skole.hr>
+References: <20230809-mmp-nr-clks-v1-0-5f3cdbbb89b8@skole.hr>
+In-Reply-To: <20230809-mmp-nr-clks-v1-0-5f3cdbbb89b8@skole.hr>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1992;
+ i=duje.mihanovic@skole.hr; h=from:subject:message-id;
+ bh=vj5z83mXAuP8rLNNCZ7zCFdduTpLvT0Y/0PeXHVxG9c=;
+ b=owEBbQKS/ZANAwAIAZoRnrBCLZbhAcsmYgBk04QN4DPOcksfQN1gHtXTGtV42+LmKHM8ZFlac
+ 2wZJbxxaFSJAjMEAAEIAB0WIQRT351NnD/hEPs2LXiaEZ6wQi2W4QUCZNOEDQAKCRCaEZ6wQi2W
+ 4fPlEACJdM+yAEY20T/jBY5c8Rjo0lr9xJY+wRM9oVvSgMp+/z24JC5TKM7+tAi5YAZbC9R1JfL
+ dAafLE9setQy3CdSbVUkWncgpWK2qA5OoP7VUh8kbqR5JMPQ/W68mU1uPNb81/nb8L8uxdDwjgy
+ sID1eP/I7QSwpEKtVlGAYMd8C3lTlMVbdt3jLL1+iulNxmrFGieG48VGkmxttoq6HtkMLkaFZ3s
+ Wl6i/24WFK1PAQybk6YYEEk0chdd8GwBVVEyikqkvQdgB573jsURMR+QM2EYQrk0I5rD0bSpF3t
+ /NGYCR6UthmowqUwUFwnOa/rCbVfmTJkevGablipUIm7kES29dNpu3XJWySZEyLx3csAk2dliXI
+ 96w7l6hXG6bdfrmbHBI0+EKo+E/8GQ1or0CyDEs41exqOdITBi7AVyJAPM0fMYyVoU5nTlV7ll2
+ 2JQBNb1VutQawZW0tFmu23DtDlYv2RZ8CgNWxFlaBuii1VR51EK6m5lieWgWwlmj/SL1bZCTsmz
+ uJmADINBGQdbYjkGnWkewvKqGmpnsYLQYbT1LwRg+/X2vw2eaQRkXvJNSjLTqTyoxJLnxMkhCmu
+ 6zUAs/NzU0F7ZOyINDrmnDodzseKLFUHgh7S/e7EB+3l3HB1VW/GgBLsc5gLBG2Y5WHci75IMmc
+ oKlIDR72iSftwLg==
+X-Developer-Key: i=duje.mihanovic@skole.hr; a=openpgp;
+ fpr=53DF9D4D9C3FE110FB362D789A119EB0422D96E1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
->> I didn't want to always change the source of the driver when it has to
->> take
->> care of the GATE, so I wanted to map this via the dts.
->> 
->> I have a board support package from Maxlinear for the Lightning 
->> Mountain
->> Soc
->> with other drivers that are not upstream now. Some of them use the
->> clock framework some of them does not.
->> 
->> Due to missing documents it is not possible to send these drivers
->> upstream.
->> Strictly speaking, this is about the gptc and the watchdog.
->> 
->> Since it is a buildin_platform driver, it can also not work via
->> module parameters.
-> 
-> Could you please give more details on your target?
+The number of clocks should not be in the dt binding as it is not used
+by the respective device tree and thus needlessly bloats the ABI.
 
-We are currently putting our own board with the new Maxlinear URX85x
-into operation. From Maxlinear we have received a board support
-package BSP named UGW 9.1.45.
+Move this number of clocks into the driver source.
 
-Since we not only have Maxlinear devices, but also other SoC from
-other manufacturers, we cannot use the BSP. We therefore need to use
-OpenWrt vanilla (master, openwrt-23.05) to support all our devices
-with the same software stack.
+Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
+---
+ drivers/clk/mmp/clk-of-pxa1928.c            | 7 +++++--
+ include/dt-bindings/clock/marvell,pxa1928.h | 3 ---
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-We have therefore picked all the relevant software components
-from UGW and ported them to the next openwrt-23.05 stable release.
+diff --git a/drivers/clk/mmp/clk-of-pxa1928.c b/drivers/clk/mmp/clk-of-pxa1928.c
+index 2508a0d795f8..9def4b5f10e9 100644
+--- a/drivers/clk/mmp/clk-of-pxa1928.c
++++ b/drivers/clk/mmp/clk-of-pxa1928.c
+@@ -22,6 +22,9 @@
+ 
+ #define MPMU_UART_PLL	0x14
+ 
++#define APBC_NR_CLKS	48
++#define APMU_NR_CLKS	96
++
+ struct pxa1928_clk_unit {
+ 	struct mmp_clk_unit unit;
+ 	void __iomem *mpmu_base;
+@@ -235,7 +238,7 @@ static void __init pxa1928_apmu_clk_init(struct device_node *np)
+ 		return;
+ 	}
+ 
+-	mmp_clk_init(np, &pxa_unit->unit, PXA1928_APMU_NR_CLKS);
++	mmp_clk_init(np, &pxa_unit->unit, APMU_NR_CLKS);
+ 
+ 	pxa1928_axi_periph_clk_init(pxa_unit);
+ }
+@@ -256,7 +259,7 @@ static void __init pxa1928_apbc_clk_init(struct device_node *np)
+ 		return;
+ 	}
+ 
+-	mmp_clk_init(np, &pxa_unit->unit, PXA1928_APBC_NR_CLKS);
++	mmp_clk_init(np, &pxa_unit->unit, APBC_NR_CLKS);
+ 
+ 	pxa1928_apb_periph_clk_init(pxa_unit);
+ 	pxa1928_clk_reset_init(np, pxa_unit);
+diff --git a/include/dt-bindings/clock/marvell,pxa1928.h b/include/dt-bindings/clock/marvell,pxa1928.h
+index 5dca4820297f..0c708d3d3314 100644
+--- a/include/dt-bindings/clock/marvell,pxa1928.h
++++ b/include/dt-bindings/clock/marvell,pxa1928.h
+@@ -36,7 +36,6 @@
+ #define PXA1928_CLK_THSENS_CPU		0x26
+ #define PXA1928_CLK_THSENS_VPU		0x27
+ #define PXA1928_CLK_THSENS_GC		0x28
+-#define PXA1928_APBC_NR_CLKS		0x30
+ 
+ 
+ /* axi peripherals */
+@@ -53,6 +52,4 @@
+ #define PXA1928_CLK_GC3D		0x5d
+ #define PXA1928_CLK_GC2D		0x5f
+ 
+-#define PXA1928_APMU_NR_CLKS		0x60
+-
+ #endif
 
-Due to the last rebasing of the kernel by openwrt to 5.15.123 [1],
-this patch [2] has been included. After that change, the gptc and
-watchdog drivers can't find the cgu device tree handlers and
-stopped working!
+-- 
+2.41.0
 
-> In what kind of condition, you want to change the flag?
-
-Since we don't have access to the latest internal MxL code base,
-we don't know what has been changed since then. Therefore we ended
-up with reverting your last change [2] to get the gptc and watchdog
-driver working again.
-
-> In LGM SoC,  some gate clocks can be covered by EPU (power management
-> module).
-
-We have already seen that in your BSP. But this driver is not integrated
-upstream and is unfortunately only maintained in the BSP :-(. So no one
-knows about that.
-
-> that is the reason clock driver introduced the HW/SW flag definition.
-
-Since we don't have a hardware description, but only your drivers, it
-is difficult for us to find out how everything fits together. In 
-addition,
-not all drivers are upstream, which makes it even more confusing for us.
-
-> However gptc and watchdog are not covered by EPU.  it can only be
-> controlled via clock
-> driver.   So I'm not quite sure the target to change the flag for these
-> two clocks.
-
-So only Maxlinear knows the internals, then this is up to you to make
-the right choice.
-
-The major problem is that not all relevant drivers are upstreamed.
-Mixing upstreamed and proprietary drivers definitely leads to 
-regressions.
-
-By the way, up to now the SoC is not selectable. There are patches 
-needed
-from your BSP for the kernel to make the SoC URX85x selectable with
-'make menuconfig'
-
-Can you *please* integrate them upstream, so that the patches do not 
-always have
-to be extracted and rebased from the BSP!
-
-We can discuss this in a separate thread.
-Thanks for your feedback
-
-Best regards
-
-Florian
-
-[1] 
-https://git.openwrt.org/?p=openwrt/openwrt.git;a=commit;h=7efec0acca80b231ab8e69729a4bdaf11ef84541
-[2] 
-https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/drivers/clk/x86/clk-cgu.c?h=linux-5.15.y&id=a0583edea4fdb7b5b87a077263dddab476e9f138
 
