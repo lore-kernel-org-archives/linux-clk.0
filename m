@@ -2,28 +2,28 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E892EB64DD
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8521C001B0
 	for <linux-clk@archiver.kernel.org>; Wed,  9 Aug 2023 12:19:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231754AbjHIMTW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S231848AbjHIMTW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Wed, 9 Aug 2023 08:19:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56292 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229971AbjHIMTW (ORCPT
+        with ESMTP id S229612AbjHIMTW (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Aug 2023 08:19:22 -0400
 Received: from mx.skole.hr (mx2.hosting.skole.hr [161.53.165.186])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECAAE1BF7;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC3DD1BF0;
         Wed,  9 Aug 2023 05:19:19 -0700 (PDT)
 Received: from mx2.hosting.skole.hr (localhost.localdomain [127.0.0.1])
-        by mx.skole.hr (mx.skole.hr) with ESMTP id C8B1783F5D;
+        by mx.skole.hr (mx.skole.hr) with ESMTP id 8AC5D84170;
         Wed,  9 Aug 2023 14:19:17 +0200 (CEST)
 From:   =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Date:   Wed, 09 Aug 2023 14:18:21 +0200
-Subject: [PATCH 3/4] clk: pxa1928: Move number of clocks to driver source
+Date:   Wed, 09 Aug 2023 14:18:19 +0200
+Subject: [PATCH 1/4] clk: mmp2: Move number of clocks into driver source
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20230809-mmp-nr-clks-v1-3-5f3cdbbb89b8@skole.hr>
+Message-Id: <20230809-mmp-nr-clks-v1-1-5f3cdbbb89b8@skole.hr>
 References: <20230809-mmp-nr-clks-v1-0-5f3cdbbb89b8@skole.hr>
 In-Reply-To: <20230809-mmp-nr-clks-v1-0-5f3cdbbb89b8@skole.hr>
 To:     Michael Turquette <mturquette@baylibre.com>,
@@ -35,21 +35,21 @@ Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org,
         =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1992;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2846;
  i=duje.mihanovic@skole.hr; h=from:subject:message-id;
- bh=vj5z83mXAuP8rLNNCZ7zCFdduTpLvT0Y/0PeXHVxG9c=;
- b=owEBbQKS/ZANAwAIAZoRnrBCLZbhAcsmYgBk04QN4DPOcksfQN1gHtXTGtV42+LmKHM8ZFlac
- 2wZJbxxaFSJAjMEAAEIAB0WIQRT351NnD/hEPs2LXiaEZ6wQi2W4QUCZNOEDQAKCRCaEZ6wQi2W
- 4fPlEACJdM+yAEY20T/jBY5c8Rjo0lr9xJY+wRM9oVvSgMp+/z24JC5TKM7+tAi5YAZbC9R1JfL
- dAafLE9setQy3CdSbVUkWncgpWK2qA5OoP7VUh8kbqR5JMPQ/W68mU1uPNb81/nb8L8uxdDwjgy
- sID1eP/I7QSwpEKtVlGAYMd8C3lTlMVbdt3jLL1+iulNxmrFGieG48VGkmxttoq6HtkMLkaFZ3s
- Wl6i/24WFK1PAQybk6YYEEk0chdd8GwBVVEyikqkvQdgB573jsURMR+QM2EYQrk0I5rD0bSpF3t
- /NGYCR6UthmowqUwUFwnOa/rCbVfmTJkevGablipUIm7kES29dNpu3XJWySZEyLx3csAk2dliXI
- 96w7l6hXG6bdfrmbHBI0+EKo+E/8GQ1or0CyDEs41exqOdITBi7AVyJAPM0fMYyVoU5nTlV7ll2
- 2JQBNb1VutQawZW0tFmu23DtDlYv2RZ8CgNWxFlaBuii1VR51EK6m5lieWgWwlmj/SL1bZCTsmz
- uJmADINBGQdbYjkGnWkewvKqGmpnsYLQYbT1LwRg+/X2vw2eaQRkXvJNSjLTqTyoxJLnxMkhCmu
- 6zUAs/NzU0F7ZOyINDrmnDodzseKLFUHgh7S/e7EB+3l3HB1VW/GgBLsc5gLBG2Y5WHci75IMmc
- oKlIDR72iSftwLg==
+ bh=jzio94bMPZE326BZBJ//kdSwZfjLWKOcmB3+UHo+Y6I=;
+ b=owEBbQKS/ZANAwAIAZoRnrBCLZbhAcsmYgBk04QNW+bCaL13Qo6Q3f6WTyS/ST3aIFGeMhv+H
+ KXGPzNx2hiJAjMEAAEIAB0WIQRT351NnD/hEPs2LXiaEZ6wQi2W4QUCZNOEDQAKCRCaEZ6wQi2W
+ 4bjfD/40e/vQlW1KsWjOrmzM66PS+vGJOoBkdr1jghZMKOuHDgkfUI9ugV1DO3oJnnJy13l6Met
+ Oa9KKMbUCWFVBjUG2jAJOb8iiT/mzMOI4unO2KSLsdsU25tmzrbDxHmFHIwV+tgEz0J00p87xue
+ sDh82pG+GxJx6qkXMFFQU7Qgr68QzVHBJ/G7S07Cp0rl/uC/Eux7ZD1neWsjF/QwuGzvE+c9Zqc
+ DAPObkRFNhTVdhFVEF/WUOX8mRElC3mPEkGFQzgkS2OZRFHChL2MLUacVAOMcNAOGeRrJ64V1L2
+ f8UDs+HB1SqtVN9ksnA8+wcoe4vkwX49Nlu957vz/rlsF/VfWLt2W0OjCA66KQTSBqcEXNTiF49
+ aORkmgIS1CksbmUphU8Ub8aY3E4MdlARDtnxU/w6WxAQYbsEcBjGQqStBYidHZNQeQ/eAtuPLv5
+ OfLl7Sctposb76uq/Nj1Q2M8WXY5vaYM6tN0IXLNDJ/A59hi1rLDMvTXw6GhBAKr5xnlFna91jJ
+ MxqBoOjd/FnrjEOeEjVI7G2jYP+MDrpz8XLKRWRaDWAbaC5itIVUAagapbfSS7vNmle9i4jLz5u
+ 8GM2n3+KIQHssHZoXsNY13NR2UGokGgmRFhNRHj94cgm7Xq+WLAgLOVv5pihrIH35qewgDO+yo9
+ hEoBX2R/niAbp6Q==
 X-Developer-Key: i=duje.mihanovic@skole.hr; a=openpgp;
  fpr=53DF9D4D9C3FE110FB362D789A119EB0422D96E1
 Precedence: bulk
@@ -63,60 +63,75 @@ Move this number of clocks into the driver source.
 
 Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
 ---
- drivers/clk/mmp/clk-of-pxa1928.c            | 7 +++++--
- include/dt-bindings/clock/marvell,pxa1928.h | 3 ---
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/clk/mmp/clk-audio.c                    | 4 +++-
+ drivers/clk/mmp/clk-of-mmp2.c                  | 4 +++-
+ include/dt-bindings/clock/marvell,mmp2-audio.h | 1 -
+ include/dt-bindings/clock/marvell,mmp2.h       | 1 -
+ 4 files changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/mmp/clk-of-pxa1928.c b/drivers/clk/mmp/clk-of-pxa1928.c
-index 2508a0d795f8..9def4b5f10e9 100644
---- a/drivers/clk/mmp/clk-of-pxa1928.c
-+++ b/drivers/clk/mmp/clk-of-pxa1928.c
-@@ -22,6 +22,9 @@
+diff --git a/drivers/clk/mmp/clk-audio.c b/drivers/clk/mmp/clk-audio.c
+index 6fb1aa9487b5..0faa02dcb96a 100644
+--- a/drivers/clk/mmp/clk-audio.c
++++ b/drivers/clk/mmp/clk-audio.c
+@@ -55,6 +55,8 @@
+ #define SSPA_AUD_PLL_CTRL1_DIV_OCLK_PATTERN_MASK (0x7ff << 0)
+ #define SSPA_AUD_PLL_CTRL1_DIV_OCLK_PATTERN(x)	((x) << 0)
  
- #define MPMU_UART_PLL	0x14
- 
-+#define APBC_NR_CLKS	48
-+#define APMU_NR_CLKS	96
++#define CLK_AUDIO_NR_CLKS			3
 +
- struct pxa1928_clk_unit {
- 	struct mmp_clk_unit unit;
- 	void __iomem *mpmu_base;
-@@ -235,7 +238,7 @@ static void __init pxa1928_apmu_clk_init(struct device_node *np)
- 		return;
- 	}
+ struct mmp2_audio_clk {
+ 	void __iomem *mmio_base;
  
--	mmp_clk_init(np, &pxa_unit->unit, PXA1928_APMU_NR_CLKS);
-+	mmp_clk_init(np, &pxa_unit->unit, APMU_NR_CLKS);
+@@ -336,7 +338,7 @@ static int register_clocks(struct mmp2_audio_clk *priv, struct device *dev)
+ 	priv->clk_data.hws[MMP2_CLK_AUDIO_SYSCLK] = &priv->sysclk_gate.hw;
+ 	priv->clk_data.hws[MMP2_CLK_AUDIO_SSPA0] = &priv->sspa0_gate.hw;
+ 	priv->clk_data.hws[MMP2_CLK_AUDIO_SSPA1] = &priv->sspa1_gate.hw;
+-	priv->clk_data.num = MMP2_CLK_AUDIO_NR_CLKS;
++	priv->clk_data.num = CLK_AUDIO_NR_CLKS;
  
- 	pxa1928_axi_periph_clk_init(pxa_unit);
- }
-@@ -256,7 +259,7 @@ static void __init pxa1928_apbc_clk_init(struct device_node *np)
- 		return;
- 	}
+ 	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
+ 				      &priv->clk_data);
+diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.c
+index bcf60f43aa13..eaad36ee323d 100644
+--- a/drivers/clk/mmp/clk-of-mmp2.c
++++ b/drivers/clk/mmp/clk-of-mmp2.c
+@@ -78,6 +78,8 @@
+ #define MPMU_PLL_DIFF_CTRL	0x68
+ #define MPMU_PLL2_CTRL1		0x414
  
--	mmp_clk_init(np, &pxa_unit->unit, PXA1928_APBC_NR_CLKS);
-+	mmp_clk_init(np, &pxa_unit->unit, APBC_NR_CLKS);
++#define NR_CLKS		200
++
+ enum mmp2_clk_model {
+ 	CLK_MODEL_MMP2,
+ 	CLK_MODEL_MMP3,
+@@ -543,7 +545,7 @@ static void __init mmp2_clk_init(struct device_node *np)
  
- 	pxa1928_apb_periph_clk_init(pxa_unit);
- 	pxa1928_clk_reset_init(np, pxa_unit);
-diff --git a/include/dt-bindings/clock/marvell,pxa1928.h b/include/dt-bindings/clock/marvell,pxa1928.h
-index 5dca4820297f..0c708d3d3314 100644
---- a/include/dt-bindings/clock/marvell,pxa1928.h
-+++ b/include/dt-bindings/clock/marvell,pxa1928.h
-@@ -36,7 +36,6 @@
- #define PXA1928_CLK_THSENS_CPU		0x26
- #define PXA1928_CLK_THSENS_VPU		0x27
- #define PXA1928_CLK_THSENS_GC		0x28
--#define PXA1928_APBC_NR_CLKS		0x30
+ 	mmp2_pm_domain_init(np, pxa_unit);
  
+-	mmp_clk_init(np, &pxa_unit->unit, MMP2_NR_CLKS);
++	mmp_clk_init(np, &pxa_unit->unit, NR_CLKS);
  
- /* axi peripherals */
-@@ -53,6 +52,4 @@
- #define PXA1928_CLK_GC3D		0x5d
- #define PXA1928_CLK_GC2D		0x5f
+ 	mmp2_main_clk_init(pxa_unit);
  
--#define PXA1928_APMU_NR_CLKS		0x60
--
+diff --git a/include/dt-bindings/clock/marvell,mmp2-audio.h b/include/dt-bindings/clock/marvell,mmp2-audio.h
+index 20664776f497..9653e04dedc3 100644
+--- a/include/dt-bindings/clock/marvell,mmp2-audio.h
++++ b/include/dt-bindings/clock/marvell,mmp2-audio.h
+@@ -6,5 +6,4 @@
+ #define MMP2_CLK_AUDIO_SSPA0		1
+ #define MMP2_CLK_AUDIO_SSPA1		2
+ 
+-#define MMP2_CLK_AUDIO_NR_CLKS		3
+ #endif
+diff --git a/include/dt-bindings/clock/marvell,mmp2.h b/include/dt-bindings/clock/marvell,mmp2.h
+index f0819d66b230..88c2d716476f 100644
+--- a/include/dt-bindings/clock/marvell,mmp2.h
++++ b/include/dt-bindings/clock/marvell,mmp2.h
+@@ -91,5 +91,4 @@
+ #define MMP3_CLK_SDH4			126
+ #define MMP2_CLK_AUDIO			127
+ 
+-#define MMP2_NR_CLKS			200
  #endif
 
 -- 
