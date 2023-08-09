@@ -2,201 +2,280 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CD86C04A6A
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Aug 2023 15:48:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BB58C04A94
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Aug 2023 16:45:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234510AbjHIPsB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Aug 2023 11:48:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57134 "EHLO
+        id S229650AbjHIQpJ convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Aug 2023 12:45:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233522AbjHIPsB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Aug 2023 11:48:01 -0400
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0114C2681
-        for <linux-clk@vger.kernel.org>; Wed,  9 Aug 2023 08:38:43 -0700 (PDT)
-Received: by mail-lj1-x235.google.com with SMTP id 38308e7fff4ca-2b9cdbf682eso106371951fa.2
-        for <linux-clk@vger.kernel.org>; Wed, 09 Aug 2023 08:38:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691595519; x=1692200319;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=r707B4tVygZaMVBucHiTCFygPxl557dnSQW/UZnC7uU=;
-        b=OfOOw7Ha21cX+SrmOxpMaIRauiUgty3GCDD5tHf3R//xmOQmpMk3DI7KnmCF/uATwX
-         WPS6+SIz7fGfnN/kVipZDGgZTRwfJoaYOzYyzvGF7TIbYNRY1QJCL8gGL/cYIk+xVv/T
-         dKFqxukjYgUZP//nnFvnK6HoSUL65xHxPiYhk8eVkk5zYYhLFYUb4hQ4eVGfMyfKC5z+
-         Ciy1KJlQF9FyedEKpvxdiPIpIi0t2thhWdG6G/DhlAfwrxNufHrsz5kwZLeIttDMH6hw
-         XbxqJYLA0Uu+q5PM5CXPiiuNE5B28LBrzQv3yzuZrLhVdF2Px9tCLglV81NNJZaAkPPY
-         j8KQ==
+        with ESMTP id S230514AbjHIQpI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Aug 2023 12:45:08 -0400
+Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C58121BFE;
+        Wed,  9 Aug 2023 09:45:07 -0700 (PDT)
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-565f2567422so19530eaf.2;
+        Wed, 09 Aug 2023 09:45:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691595519; x=1692200319;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=r707B4tVygZaMVBucHiTCFygPxl557dnSQW/UZnC7uU=;
-        b=hrU1iRET1ykEWH1Y+d5UdRJBHRghJAOAIifUMIZjt4KIxhwK/yOUuNgyCZU1fru0ZP
-         RWCsj40HOp5HPtn6cFu0QPmiexvYMw8W4zT1gPw76Pe3+lz+lwDEnBXf1FGAQElggUnQ
-         os0J5kJwj5uGcFe55nwyfVeGW8II5/9zL2si2Ppyj18zZKUNYiaUO9JBd+/XLiycSymW
-         t4efwUfA3bj2MNH6fuuYa56ifd+jFQ90mMGbRlCW59p1pinR8cOceG6ulAaP4SgqE6pn
-         SrQUqG5N+Vlom828i6CIqvp2roDl5ghZcfyuZ3brsflpdw3BR8/VE/TPI07F8BGHmwmR
-         QG5w==
-X-Gm-Message-State: AOJu0YxD4tc64hZxuZLq4Ll0HVhQbRxIhnROvLsfXZkNq8k0hLPlAWrG
-        n/o+vyoiExJDD5BLsB+HCgIMpw==
-X-Google-Smtp-Source: AGHT+IEwCkohKzjzb9m/9Gqa3Pcdu5zzc0ctCyzc48SRmLCFKPtbVms2jwuQZiO6czAxnYqiUKT8jg==
-X-Received: by 2002:a2e:6e18:0:b0:2b6:e2cd:20f5 with SMTP id j24-20020a2e6e18000000b002b6e2cd20f5mr2121599ljc.9.1691595519512;
-        Wed, 09 Aug 2023 08:38:39 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.222.113])
-        by smtp.gmail.com with ESMTPSA id h11-20020a170906854b00b0099cb1a2cab0sm6773292ejy.28.2023.08.09.08.38.37
+        d=1e100.net; s=20221208; t=1691599506; x=1692204306;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=C/ppIpNykOtbP/6R4ynNuZ5RP4Dl5BB7MG8fQ5sVPJQ=;
+        b=dug6ehjpYFw/6LBU3X5wozNz4kGI1f1ZrDCceFL/DNDpnc0myiLAB81CgegcXRZDAK
+         Le5Aosiw2otd1LSybeJiRNtbPnemCcsHXCh3HyYPTNeHfZ2qeexvk7Edsapdzpi10Uq/
+         GVKHlSmc4rbzRPWA9UtmVP+2MYR/UdZhI4h/hBBQlvJKt9zcjhUgWkWFQLCaYM804uRd
+         h3UVHugeG/yoWqGV426LNR3UYsaJ8Pmf50AN0HtTrG7FTxhkHQa/Ytn/HN7rdJBWgQ9o
+         Y7ECzQlPOLZuWB+RH/MVdxlWjfnaTMRx8zbmseI/Dw9xrf8N3wbw/6bsFCGvjJwqj3h7
+         M3eQ==
+X-Gm-Message-State: AOJu0Yz4hu50TnUaZXTkPupVMurc6erlhdwQJR7OxEgNGGTA+0znAiTn
+        9oI5P1ev26ii2+Q8wGF47fPR46WQ8IoJiA==
+X-Google-Smtp-Source: AGHT+IGNqsYa4+7n1LqxxsnyecPYWwI5n++J5zwxUYCg7QRfLlne634IYMmgvC1EBm+Ts8m9Ubb0YA==
+X-Received: by 2002:a54:4018:0:b0:3a7:2f1d:ea4e with SMTP id x24-20020a544018000000b003a72f1dea4emr3224540oie.41.1691599506378;
+        Wed, 09 Aug 2023 09:45:06 -0700 (PDT)
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com. [209.85.161.45])
+        by smtp.gmail.com with ESMTPSA id o8-20020a0568080f8800b003a1d29f0549sm7219108oiw.15.2023.08.09.09.45.05
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Aug 2023 08:38:39 -0700 (PDT)
-Message-ID: <18d2241a-98ab-6a57-1c4f-d961a4b37c6b@linaro.org>
-Date:   Wed, 9 Aug 2023 17:38:36 +0200
+        Wed, 09 Aug 2023 09:45:05 -0700 (PDT)
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-56d6dfa8b52so18411eaf.3;
+        Wed, 09 Aug 2023 09:45:05 -0700 (PDT)
+X-Received: by 2002:a05:6808:211e:b0:3a3:ffb7:1dd4 with SMTP id
+ r30-20020a056808211e00b003a3ffb71dd4mr3716240oiw.6.1691599505466; Wed, 09 Aug
+ 2023 09:45:05 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [PATCH v1 3/4] clk: qcom: add clock controller driver for
- qca8386/qca8084
-Content-Language: en-US
-To:     Luo Jie <quic_luoj@quicinc.com>, andersson@kernel.org,
-        agross@kernel.org, konrad.dybcio@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        quic_srichara@quicinc.com
-References: <20230809080047.19877-1-quic_luoj@quicinc.com>
- <20230809080047.19877-4-quic_luoj@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230809080047.19877-4-quic_luoj@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20230807-pll-mipi_set_rate_parent-v6-0-f173239a4b59@oltmanns.dev>
+In-Reply-To: <20230807-pll-mipi_set_rate_parent-v6-0-f173239a4b59@oltmanns.dev>
+Reply-To: wens@csie.org
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Thu, 10 Aug 2023 00:44:53 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66dU2Ao9hBiwgu32i7_svqMT+Pz=BVnN0ZvmLhFm+jy6A@mail.gmail.com>
+Message-ID: <CAGb2v66dU2Ao9hBiwgu32i7_svqMT+Pz=BVnN0ZvmLhFm+jy6A@mail.gmail.com>
+Subject: Re: [PATCH v6 00/11] clk: sunxi-ng: Consider alternative parent rates
+ when determining NKM clock rate
+To:     Frank Oltmanns <frank@oltmanns.dev>
+Cc:     Maxime Ripard <mripard@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Andre Przywara <andre.przywara@arm.com>,
+        Roman Beranek <me@crly.cz>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 09/08/2023 10:00, Luo Jie wrote:
-> Add clock & reset controller driver for qca8386/qca8084.
-> 
-> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+On Mon, Aug 7, 2023 at 8:44 PM Frank Oltmanns <frank@oltmanns.dev> wrote:
+>
+> This patchset enables NKM clocks to consider alternative parent rates
+> and utilize this new feature to adjust the pll-video0 clock on Allwinner
+> A64.
+>
+> Furthermore, with this patchset pll-video0 considers rates that are
+> higher than the requested rate when finding the closest rate. In
+> consequence, higher rates are also considered by pll-video0's
+> descandents. In total, after applying this patchset, finding the closest
+> rate is supported by:
+>   - ccu_nm
+>   - ccu_nkm
+>   - ccu_mux
+>   - ccu_div
+>
+> This allows us to achieve an optimal rate for driving the board's panel.
+>
+> To provide some context, the clock structure involved in this process is
+> as follows:
+>     clock                       clock type
+>     --------------------------------------
+>     pll-video0                  ccu_nm
+>        pll-mipi                 ccu_nkm
+>           tcon0                 ccu_mux
+>              tcon-data-clock    sun4i_dclk
+>
+> The divider between tcon0 and tcon-data-clock is fixed at 4. Therefore,
+> in order to achieve a rate that closely matches the desired rate of the
+> panel, pll-mipi needs to operate at a specific rate.
+>
+> Tests
+> =====
+> So far, this has been successfully tested on the A64-based Pinephone
+> using three different panel rates:
+>
+>  1. A panel rate that can be matched exactly by pll-video0.
+>  2. A panel rate that requires pll-video0 to undershoot to get the
+>     closest rate.
+>  3. A panel rate that requires pll-video0 to overshoot to get the
+>     closest rate.
+>
+> Test records:
+>
+> Re 1:
+> -----
+> Panel requests tcon-data-clock of 103500000 Hz, i.e., pll-mipi needs to
+> run at 414000000 Hz. This results in the following clock rates:
+>    clock                            rate
+>    -------------------------------------
+>     pll-video0                 207000000
+>        hdmi-phy-clk             51750000
+>        hdmi                    207000000
+>        tcon1                   207000000
+>        pll-mipi                414000000
+>           tcon0                414000000
+>              tcon-data-clock   103500000
+>
+> The results of the find_best calls:
+> ccu_nkm_find_best_with_parent_adj: rate=414000000, best_rate=414000000, best_parent_rate=207000000, n=1, k=2, m=1
+> ccu_nkm_find_best_with_parent_adj: rate=414000000, best_rate=414000000, best_parent_rate=207000000, n=1, k=2, m=1
+> ccu_nkm_find_best_with_parent_adj: rate=414000000, best_rate=414000000, best_parent_rate=207000000, n=1, k=2, m=1
+> ccu_nkm_find_best_with_parent_adj: rate=414000000, best_rate=414000000, best_parent_rate=207000000, n=1, k=2, m=1
+> ccu_nkm_find_best: rate=414000000, best_rate=414000000, parent_rate=207000000, n=1, k=2, m=1
+>
+> Re 2:
+> -----
+> Panel requests tcon-data-clock of 103650000 Hz, i.e., pll-mipi needs to
+> run at 414600000 Hz. This results in the following clock rates:
+>    clock                            rate
+>    -------------------------------------
+>     pll-video0                 282666666
+>        hdmi-phy-clk             70666666
+>        hdmi                    282666666
+>        tcon1                   282666666
+>        pll-mipi                414577776
+>           tcon0                414577776
+>              tcon-data-clock   103644444
+>
+> The results of the find_best calls:
+> ccu_nkm_find_best_with_parent_adj: rate=414600000, best_rate=414577776, best_parent_rate=282666666, n=11, k=2, m=15
+> ccu_nkm_find_best_with_parent_adj: rate=414600000, best_rate=414577776, best_parent_rate=282666666, n=11, k=2, m=15
+> ccu_nkm_find_best_with_parent_adj: rate=414577776, best_rate=414577776, best_parent_rate=282666666, n=11, k=2, m=15
+> ccu_nkm_find_best_with_parent_adj: rate=414577776, best_rate=414577776, best_parent_rate=282666666, n=11, k=2, m=15
+> ccu_nkm_find_best: rate=414577776, best_rate=414577776, parent_rate=282666666, n=11, k=2, m=15
+>
+> Re 3:
+> -----
+> Panel requests tcon-data-clock of 112266000 Hz, i.e., pll-mipi needs to
+> run at 449064000 Hz. This results in the following clock rates:
+>    clock                            rate
+>    -------------------------------------
+>     pll-video0                 207272727
+>        hdmi-phy-clk             51818181
+>        hdmi                    207272727
+>        tcon1                   207272727
+>        pll-mipi                449090908
+>           tcon0                449090908
+>              tcon-data-clock   112272727
+>
+> The results of the find_best calls:
+> ccu_nkm_find_best_with_parent_adj: rate=449064000, best_rate=449090908, best_parent_rate=207272727, n=13, k=2, m=12
+> ccu_nkm_find_best_with_parent_adj: rate=449064000, best_rate=449090908, best_parent_rate=207272727, n=13, k=2, m=12
+> ccu_nkm_find_best_with_parent_adj: rate=449090908, best_rate=449090908, best_parent_rate=207272727, n=13, k=2, m=12
+> ccu_nkm_find_best_with_parent_adj: rate=449090908, best_rate=449090908, best_parent_rate=207272727, n=13, k=2, m=12
+> ccu_nkm_find_best: rate=449090908, best_rate=449090908, parent_rate=207272727, n=13, k=2, m=12
+>
+> Changelog:
+> ----------
+> Changes in v6:
+>  - Removed unnecessary #include from ccu_nkm.c
+>  - Link to v5: https://lore.kernel.org/r/20230806-pll-mipi_set_rate_parent-v5-0-db4f5ca33fc3@oltmanns.dev
+>
+> Changes in v5:
+>  - Remove the dedicated function for calculating the optimal parent rate
+>    for nkm clocks that was introduced in v2 and again in v4. Instead use
+>    a simple calculation and require the parent clock to select the
+>    closest rate to achieve optimal results.
+>  - Change the order of parameters of nkm_best_rate and
+>    nkm_best_rate_with_parent_adj as requested my Maxime Ripard.
+>  - Prefer to not reset the rate of the nkm clock's parent if the ideal
+>    rate can be reached using the parent's current rate, copying the
+>    behavior of ccu_mp.
+>  - Link to v4: https://lore.kernel.org/r/20230717-pll-mipi_set_rate_parent-v4-0-04acf1d39765@oltmanns.dev
+>
+> Changes in v4:
+>  - Re-introduce a dedicated function for calculating the optimal parent
+>    rate for nkm clocks that was introduced in v2 and removed in v3. It
+>    turned out that not having this functionality introduces a bug when
+>    the parent does not support finding the closest rate:
+>    https://lore.kernel.org/all/87pm4xg2ub.fsf@oltmanns.dev/
+>  - Incorporate review remarks:
+>     - Correcting the parameter name for ccu_nkm_round_rate()'s parent HW
+>       is now in a separate patch.
+>     - Use correct parameter order in ccu_nkm_find_best_with_parent_adj.
+>     - Add ccu_is_better_rate() and use it for determining the best rate
+>       for nm and nkm, as well as ccu_mux_helper_determine_rate.
+>     - Consistently introduce new macros for clock variants that support
+>       finding the closest rate instead of updating existing macros.
+>     - Use wrapper function for determining a ccu_mux's rate in order to
+>       support finding the closest rate.
+>  - Link to v3: https://lore.kernel.org/r/20230702-pll-mipi_set_rate_parent-v3-0-46dcb8aa9cbc@oltmanns.dev
+>
+> Changes in v3:
+>  - Use dedicated function for finding the best rate in cases where an
+>    nkm clock supports setting its parent's rate, streamlining it with
+>    the structure that is used in other sunxi-ng ccus such as ccu_mp
+>    (PATCH 1).
+>  - Therefore, remove the now obsolete comments that were introduced in
+>    v2 (PATCH 1).
+>  - Remove the dedicated function for calculating the optimal parent rate
+>    for nkm clocks that was introduced in v2. Instead use a simple
+>    calculation and require the parent clock to select the closest rate to
+>    achieve optimal results (PATCH 1).
+>  - Therefore, add support to set the closest rate for nm clocks (because
+>    pll-mipi's parent pll-video0 is an nm clock) and all clock types that
+>    are descendants of a64's pll-video0, i.e., nkm, mux, and div (PATCH 3
+>    et. seq.).
+>  - Link to v2: https://lore.kernel.org/all/20230611090143.132257-1-frank@oltmanns.dev/
+>
+> Changes in V2:
+>  - Move optimal parent rate calculation to dedicated function
+>  - Choose a parent rate that does not to overshoot requested rate
+>  - Add comments to ccu_nkm_find_best
+>  - Make sure that best_parent_rate stays at original parent rate in the unlikely
+>    case that all combinations overshoot.
+>
+> Link to V1:
+> https://lore.kernel.org/lkml/20230605190745.366882-1-frank@oltmanns.dev/
+>
 > ---
->  drivers/clk/qcom/Kconfig       |    8 +
->  drivers/clk/qcom/Makefile      |    1 +
->  drivers/clk/qcom/nsscc-qca8k.c | 2195 ++++++++++++++++++++++++++++++++
->  3 files changed, 2204 insertions(+)
->  create mode 100644 drivers/clk/qcom/nsscc-qca8k.c
-> 
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index 263e55d75e3f..d84705ff920d 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -195,6 +195,14 @@ config IPQ_GCC_9574
->  	  i2c, USB, SD/eMMC, etc. Select this for the root clock
->  	  of ipq9574.
->  
-> +config IPQ_NSSCC_QCA8K
-> +	tristate "QCA8K(QCA8386 or QCA8084) NSS Clock Controller"
+> Frank Oltmanns (11):
+>       clk: sunxi-ng: nkm: Use correct parameter name for parent HW
+>       clk: sunxi-ng: nkm: consider alternative parent rates when determining rate
+>       clk: sunxi-ng: a64: allow pll-mipi to set parent's rate
+>       clk: sunxi-ng: Add feature to find closest rate
+>       clk: sunxi-ng: Add helper function to find closest rate
+>       clk: sunxi-ng: nm: Support finding closest rate
+>       clk: sunxi-ng: nkm: Support finding closest rate
+>       clk: sunxi-ng: mux: Support finding closest rate
+>       clk: sunxi-ng: div: Support finding closest rate
+>       clk: sunxi-ng: a64: select closest rate for pll-video0
+>       clk: sunxi-ng: nkm: Prefer current parent rate
 
-Is it specific to some arch? We keep ARM or ARM64 for most of the entries.
+Whole series applied. There were some conflicts on patch 10 I had to
+fix up. I also took the liberty of realigning some of the lines.
+Please check if things are correct:
 
-> +	help
-> +	  Support for NSS(Network SubSystem) clock controller on
-> +	  qca8386/qca8084 chip.
-> +	  Say Y if you want to use network features of switch or PHY
-> +	  device. Select this for the root clock of qca8k.
-> +
->  config MSM_GCC_8660
->  	tristate "MSM8660 Global Clock Controller"
->  	depends on ARM || COMPILE_TEST
+https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git/commit/?h=sunxi/clk-for-6.6&id=bf8eb12f52c49e10ca1d86564bfa096e09c51c38
 
-...
+ChenYu
 
-> +static int nss_cc_qca8k_probe(struct mdio_device *mdiodev)
-> +{
-> +	struct device *dev = &mdiodev->dev;
-> +	struct regmap *regmap;
-> +	struct qcom_reset_controller *reset;
-> +	struct qcom_cc_desc desc = nss_cc_qca8k_desc;
-> +	size_t num_clks = desc.num_clks;
-> +	struct clk_regmap **rclks = desc.clks;
-> +	struct qcom_cc *cc;
-> +	int ret, i;
-> +
-> +	cc = devm_kzalloc(dev, sizeof(*cc), GFP_KERNEL);
-> +	if (!cc)
-> +		return -ENOMEM;
-> +
-> +	cc->rclks = rclks;
-> +	cc->num_rclks = num_clks;
-> +	reset = &cc->reset;
-> +
-> +	regmap = devm_regmap_init(dev, NULL, mdiodev->bus, desc.config);
-> +
-
-Drop blank line.
-
-> +	if (IS_ERR(regmap)) {
-> +		dev_err(dev, "Failed to init MDIO regmap\n");
-
-All of error returns could be converted return dev_err_probe(), just to
-have smaller code. Not a requirement, though.
-
-> +		return PTR_ERR(regmap);
-> +	}
-> +
-> +	reset->rcdev.of_node = dev->of_node;
-> +	reset->rcdev.dev = dev;
-> +	reset->rcdev.ops = &qcom_reset_ops;
-> +	reset->rcdev.owner = dev->driver->owner;
-> +	reset->rcdev.nr_resets = desc.num_resets;
-> +	reset->regmap = regmap;
-> +	reset->reset_map = desc.resets;
-> +
-> +	ret = devm_reset_controller_register(dev, &reset->rcdev);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to register QCA8K reset controller: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	for (i = 0; i < num_clks; i++) {
-> +		if (!rclks[i])
-> +			continue;
-> +
-> +		ret = devm_clk_register_regmap(dev, rclks[i]);
-> +		if (ret) {
-> +			dev_err(dev, "Failed to regmap register for QCA8K clock: %d\n", ret);
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	ret = devm_of_clk_add_hw_provider(dev, qcom_qca8k_clk_hw_get, cc);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to register provider for QCA8K clock: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	dev_info(dev, "Registered NSSCC QCA8K clocks\n");
-
-Drop the simple info for probe status. Kernel has other ways to do this.
-
-> +	return ret;
-> +}
-> +
-> +static const struct of_device_id nss_cc_qca8k_match_table[] = {
-> +	{ .compatible = "qcom,qca8085-nsscc" },
-> +	{ .compatible = "qcom,qca8084-nsscc" },
-> +	{ .compatible = "qcom,qca8082-nsscc" },
-> +	{ .compatible = "qcom,qca8386-nsscc" },
-> +	{ .compatible = "qcom,qca8385-nsscc" },
-> +	{ .compatible = "qcom,qca8384-nsscc" },
-
-You only need qca8084 here. Drop all other entries.
-
-> +	{ }
-> +};
-
-
-
-Best regards,
-Krzysztof
-
+>  drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 36 ++++++++++-------------
+>  drivers/clk/sunxi-ng/ccu_common.c     | 12 ++++++++
+>  drivers/clk/sunxi-ng/ccu_common.h     |  6 ++++
+>  drivers/clk/sunxi-ng/ccu_div.h        | 30 +++++++++++++++++++
+>  drivers/clk/sunxi-ng/ccu_mux.c        | 15 ++++++++--
+>  drivers/clk/sunxi-ng/ccu_mux.h        | 38 +++++++++++++++++-------
+>  drivers/clk/sunxi-ng/ccu_nkm.c        | 55 ++++++++++++++++++++++++++++++-----
+>  drivers/clk/sunxi-ng/ccu_nm.c         | 13 ++++-----
+>  drivers/clk/sunxi-ng/ccu_nm.h         | 48 ++++++++++++++++++++++++++++--
+>  9 files changed, 202 insertions(+), 51 deletions(-)
+> ---
+> base-commit: 6995e2de6891c724bfeb2db33d7b87775f913ad1
+> change-id: 20230626-pll-mipi_set_rate_parent-3363fc0d6e6f
+>
+> Best regards,
+> --
+> Frank Oltmanns <frank@oltmanns.dev>
+>
