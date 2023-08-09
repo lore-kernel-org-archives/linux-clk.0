@@ -2,55 +2,55 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C1F5C41513
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Aug 2023 19:57:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBB50C001B0
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Aug 2023 19:59:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231167AbjHIT5n (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Aug 2023 15:57:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53026 "EHLO
+        id S230074AbjHIT7r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Aug 2023 15:59:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46418 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230078AbjHIT5n (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Aug 2023 15:57:43 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BEB21718
-        for <linux-clk@vger.kernel.org>; Wed,  9 Aug 2023 12:57:41 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id 2adb3069b0e04-4fe11652b64so212885e87.0
-        for <linux-clk@vger.kernel.org>; Wed, 09 Aug 2023 12:57:41 -0700 (PDT)
+        with ESMTP id S231426AbjHIT7q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Aug 2023 15:59:46 -0400
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 524E41718
+        for <linux-clk@vger.kernel.org>; Wed,  9 Aug 2023 12:59:45 -0700 (PDT)
+Received: by mail-lj1-x236.google.com with SMTP id 38308e7fff4ca-2b9e6cc93d8so3607841fa.0
+        for <linux-clk@vger.kernel.org>; Wed, 09 Aug 2023 12:59:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691611060; x=1692215860;
+        d=linaro.org; s=google; t=1691611183; x=1692215983;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=RBodoJrBHAgz/TzgDtibSZ9qk+u2fN1KDY0bxZS/Y3Q=;
-        b=OjW53ClTqhx/xyhNIydqITOGL5K+qYj6dDyIB6iexWUa9VE1g+2Tmq7CAaTl6ykYnT
-         XQc1gvuG4tIxSOQUhn0QHFWOkrVmKTRGz451J35EGRNyM9kRlW7V+N3iqu3MljcQG3+5
-         TQEwqWvMUKQiw73wwvs7lkAGEWEEMBRzx8vSyRgBFoxYT4kG6KNQtfjZh6TSyNb+CMMi
-         PvKt+ychU6PzxxNdZwbF+nJ8vrkMojrQXTe/mFstpsMne876Rshwy2x2z5fgODeKJdTX
-         n1MTmcPFiMLi++8QbVeWE+ByyU8vxEh4ygB6ObwDdMjcwITLtJ7m8XRB4FV77Zw5Q8JU
-         xVAg==
+        bh=D6FUj+LMASIvlFO7A003cQAN8uYMLoKNwmsed17sZzg=;
+        b=Tq/MHFiRhJZQRaeiJQqB5B+MpW/wj6kc3gjJp10frqpYR/4fQGvIs4j9PctmP9nEX7
+         oe4//9aFHy2G0zWom+IBuuqlhRScgDim9c+em9KIkjAywooWmatBb4/C2ID+LAfD+w4H
+         vLDzJLCih3Mvz6rjKhOADrkf63tuBy918c764R8W+l5gHG0UCKPA1jwfJo5/dsiA1kAQ
+         xdoOXHC1fMwcUsy7SHJqNOkRGNUotwcFK3QUOIrb4EG1r80NZnRbn+Eyehsy+m3IDVWM
+         uCMCjq6a7WtBXmEVqyp8RTlfrq9/W9teOakZUbHrAJq2DowXRQLDWVgZbAqu4xvxsnim
+         SwtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691611060; x=1692215860;
+        d=1e100.net; s=20221208; t=1691611183; x=1692215983;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RBodoJrBHAgz/TzgDtibSZ9qk+u2fN1KDY0bxZS/Y3Q=;
-        b=hxgOAZljA2X1DH4FGKSRZS0wrQQRrXSjX/zckqaU9E+T+ol/MavgsV1JhCRWbpY477
-         qOUwfLk7fHvH6OM3l0XVilTJ2pGmzp/aKQBQRATKhW0evUFJGEc3wRrsYfJkBpQx7Br6
-         C+2ipfkgqhpi42/54ZSyRjgdwB3Hx3v+1rVPzScqeRMPnk++UOWP8v8fctNUo6bkAGsH
-         /5STV47AWoVaj3IWg54rbHW+b6iHbg5GKRyhqQYMfAFAaOH8NVEaonD3/PrUuJr8LVRx
-         yQsrJzu45Tdov5WdxAgNXIKNnCzICR0OoH1bPhRnWK92h/Ty/7uvjl6tJwmJxbidzwpO
-         2w7g==
-X-Gm-Message-State: AOJu0YyCcrAqoIIeT2xcth8GT2xKOKLRK/qzfjcA2fgdQlDW9PfdeZOq
-        C4O/Pq1i3B9YAyhJEAqfDcNUcg==
-X-Google-Smtp-Source: AGHT+IH0jp+tns6Qhe/MujFD3RwBs+BZQb4A+4Hk24LTkrmL2sjAulAvZW5dkSubYyxJiXZ+d6ILOQ==
-X-Received: by 2002:a19:770f:0:b0:4fb:820a:f87f with SMTP id s15-20020a19770f000000b004fb820af87fmr91778lfc.10.1691611059785;
-        Wed, 09 Aug 2023 12:57:39 -0700 (PDT)
+        bh=D6FUj+LMASIvlFO7A003cQAN8uYMLoKNwmsed17sZzg=;
+        b=Kkk3JlmrzkDUNsFH9/VKBpZN0OPdG/6MP8eAF84Cx1DM8CoKyUzFQZzRK17gH4fXe/
+         93MA4m98BeSU+O3dBAGnmYKGB8ZJiJnf8fk9lLnGxZ1o8/PXLph14O0pPrsDb2cQiONB
+         OlYfQTKbJEY0A5sz0Az5RzHmjojx2b/Ctz0rYLIQ0GUgUN39u9s5jE3nyP+VfQo6w4nM
+         H2iH6Zzy8RyI8Jwqp4kTnuZK7XtZrzWARQ8xrNRfKfCH0TS29JgSOWwFokebWtXXeHGv
+         GwmrMxQeOf+UgtLDnyhqTUmRRJbF+2Sqjs49i9c+9MFWgP4Fh5YARu3v84vIB8A3QXQw
+         zSiw==
+X-Gm-Message-State: AOJu0Ywf4Nn2vyqA/LTpbNYjlCTZydR0MOKwcdDhEFDqGveliztOJCL3
+        oz5y4y2GEJ5Mia4KeoFv6dZFZA==
+X-Google-Smtp-Source: AGHT+IGvnQXkDtl6/W7aBbRfwimSlZLADd8TE9E72tPLBndR9OihoOrNeulJS0h+E1obOwfdZZXPDA==
+X-Received: by 2002:a05:651c:1053:b0:2b9:b693:c906 with SMTP id x19-20020a05651c105300b002b9b693c906mr162862ljm.27.1691611183479;
+        Wed, 09 Aug 2023 12:59:43 -0700 (PDT)
 Received: from [192.168.1.101] (abxi185.neoplus.adsl.tpnet.pl. [83.9.2.185])
-        by smtp.gmail.com with ESMTPSA id t12-20020ac243ac000000b004fe0c0235ddsm2445518lfl.143.2023.08.09.12.57.38
+        by smtp.gmail.com with ESMTPSA id c19-20020a05651c015300b002b9358f5088sm2876186ljd.53.2023.08.09.12.59.42
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Aug 2023 12:57:39 -0700 (PDT)
-Message-ID: <98d0632c-7129-4e3a-aba7-e805e3281f91@linaro.org>
-Date:   Wed, 9 Aug 2023 21:57:37 +0200
+        Wed, 09 Aug 2023 12:59:43 -0700 (PDT)
+Message-ID: <1e8fb9ba-9b18-487d-aa2e-4b246ae5b352@linaro.org>
+Date:   Wed, 9 Aug 2023 21:59:41 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 2/4] clk: qcom: branch: Add mem ops support for branch2
@@ -123,11 +123,26 @@ On 8.08.2023 07:14, Imran Shaik wrote:
 > Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
 > Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
 > ---
-Could you expand the commit message a bit? What does this clock
-memory do?
-
-[..]
-
+>  drivers/clk/qcom/clk-branch.c | 38 +++++++++++++++++++++++++++++++++++
+>  drivers/clk/qcom/clk-branch.h |  4 ++++
+>  2 files changed, 42 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/clk-branch.c b/drivers/clk/qcom/clk-branch.c
+> index fc4735f74f0f..95ffcd380039 100644
+> --- a/drivers/clk/qcom/clk-branch.c
+> +++ b/drivers/clk/qcom/clk-branch.c
+> @@ -1,6 +1,7 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * Copyright (c) 2013, The Linux Foundation. All rights reserved.
+> + * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
+>   */
+>  
+>  #include <linux/kernel.h>
+> @@ -134,6 +135,43 @@ static void clk_branch2_disable(struct clk_hw *hw)
+>  	clk_branch_toggle(hw, false, clk_branch2_check_halt);
+>  }
+>  
 > +static int clk_branch2_mem_enable(struct clk_hw *hw)
 > +{
 > +	struct clk_branch *br = to_clk_branch(hw);
@@ -141,10 +156,10 @@ memory do?
 > +
 > +	while (count-- > 0) {
 > +		if (val & br->mem_enable_ack_bit)
-> +			return clk_branch2_enable(hw);
-> +		udelay(1);
-> +		regmap_read(br->clkr.regmap, br->mem_ack_reg, &val);
-> +	}
-readl_poll_timeout?
+One more comment, since the variable is named "ack bit", perhaps the
+value within could be a bit number and you could use BIT() here.
+
+Otherwise with you having chosen u8 for the type, there's not a whole
+lot of flexibility.
 
 Konrad
