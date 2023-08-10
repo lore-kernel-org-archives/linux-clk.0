@@ -2,117 +2,113 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A973C001B0
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Aug 2023 06:12:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0220BC001DB
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Aug 2023 06:43:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233395AbjHJGL5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Aug 2023 02:11:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46180 "EHLO
+        id S231596AbjHJGnM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Aug 2023 02:43:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233386AbjHJGL4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Aug 2023 02:11:56 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D06F310FE
-        for <linux-clk@vger.kernel.org>; Wed,  9 Aug 2023 23:11:55 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-3fe501e0b4cso4657195e9.1
-        for <linux-clk@vger.kernel.org>; Wed, 09 Aug 2023 23:11:55 -0700 (PDT)
+        with ESMTP id S229789AbjHJGnL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Aug 2023 02:43:11 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3693AEA
+        for <linux-clk@vger.kernel.org>; Wed,  9 Aug 2023 23:43:04 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-3fe45481edfso5235665e9.1
+        for <linux-clk@vger.kernel.org>; Wed, 09 Aug 2023 23:43:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691647914; x=1692252714;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=N48Tz5uXzvaHN9/qN3JfX8I4/w7VgPsbV3qQP+qe1tQ=;
-        b=NiaZ9rdNmufbECzZZ87B+yprLA3NRl/R2PzxygOJHcFGcy2WzIj3IcU4zInyho5e0/
-         c854lCFAyfPNxCY0Kt5FZOaF5CygOipP27pHXY3POE5Rm1jg3DB0Bqi7I/qk4L5DGk0r
-         QU/3x7skzZ4VIhjfIyqoLo+doKDiCpB9RlVfMj/pdUNerajvb6RuUoYpiThmHfBMiXtO
-         Eva5Zktvomy1Y3u1V2miFUaFd9j4gIqSLHPm/2D7A9tToV3ioY2wJACouLNeVZ2DZ9gJ
-         OjCSNhpc4rkqitywFihe7PizS9deLQVVoSO4A0oEdM4cU8Wb4KQx/zFCoVGYrqLn2BP4
-         nfXw==
+        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1691649783; x=1692254583;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yut2Z+a14yxMcDEXkZzdFPLfRVZ9Qb94p4k3EOO68Sk=;
+        b=1jfPBNHE0y4mAOO5VPnZKKKbCc0i2D7mzRSFE7xLau88UAVMFTX/eIuLcqpU9qIQqF
+         nTnGkB+J9fE04oWwgeY69dzIzbrmF5HkVCJfbjUZYUxWqtVAeGP/n/32olVrS/Kq9gP0
+         AdyrPcVcNQKU7lmrCLa6Q/x6Q3yOqy5Q/MuD0TDr8+p44PerbSjSQCyClZSUb61+HMwx
+         05UzRyUzxOz48sQV74+3TaRKFSxhTkC4j6c7aYvU5iK1WLq8pWDPehJlpEXtCwNaSitv
+         zCuNUMe+m53dt2TPiqkgm7G1h+L+qYGH7c+p+gc5KfR+yJdkbVBMsdUgF81bOGfrXvAa
+         imJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691647914; x=1692252714;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=N48Tz5uXzvaHN9/qN3JfX8I4/w7VgPsbV3qQP+qe1tQ=;
-        b=YJTuSKffVwFTKb5FtkwRFsra+bE3QToojZbzTG8eXgtGaPYaWwsLaBNlqj0ldnTos+
-         Rv0LoG81H0cG4fBpeReuCTs4L5GzobimfpHwEu8Ea4uo7N2aCkS7DvhwQIugridfZoS+
-         OmQAdl3Bnb8L1L9LwCg06wnvPzqUd945DGSThUMAscWd0ydoyc1xMWDC6uVXdtO6wOSJ
-         ubtCF79bAe12s8FgptxWsqiFj4VfEJHH1zjf+mavy+/wHo+tTFO5lx9WA4o4+dpHRTeI
-         zFIOFhzcNylYlUB/S/hwP2DTbw/r77PjZDLoPE/TelxxR4GDdPtyNI1obQaacyb1jIOK
-         vpOQ==
-X-Gm-Message-State: AOJu0YzCVECJJe7dayq4Gq6v9HUo1ZzoRk6peSyMssiaySzbC4FDd70I
-        TqqplK8cNlxksbHBGCCkj/QSXg==
-X-Google-Smtp-Source: AGHT+IEBBWdm106nH7ySkZ0gAbbGmz1kcDFv16EgML6LFboSZyVkgvF7ZYZlHBKZKyVm845g2SGOUg==
-X-Received: by 2002:a05:6000:12ce:b0:317:15f5:a1ca with SMTP id l14-20020a05600012ce00b0031715f5a1camr1282078wrx.10.1691647914293;
-        Wed, 09 Aug 2023 23:11:54 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.222.113])
-        by smtp.gmail.com with ESMTPSA id y7-20020a5d6147000000b00317e77106dbsm967610wrt.48.2023.08.09.23.11.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Aug 2023 23:11:53 -0700 (PDT)
-Message-ID: <5c852193-9298-af2e-2b7d-dbba29768fec@linaro.org>
-Date:   Thu, 10 Aug 2023 08:11:51 +0200
+        d=1e100.net; s=20221208; t=1691649783; x=1692254583;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yut2Z+a14yxMcDEXkZzdFPLfRVZ9Qb94p4k3EOO68Sk=;
+        b=QlfyqK0ftENvMBtE5ZgqYN+R1OjT/eDFJ4mQrVlyRJRMVLi3UWzaFdOKQSW5kb5Jg3
+         hluAIIM30uFlL2GX1eEF8F1ynevhRW6qUrY61bXyVNAeWlCW96OSlvfPRG1C+/SPTGiu
+         okKdJAq6ziVwJ9iXbHLbEa2fmPg28vNejyt3C+e9+rszS1TK4CvhuSbvriPeOs9KTa8s
+         t2gUllOIF+AGuEIi/yfh6OhkZRzF+G7/0HqoYCitFEWpmHdD4OM3ZtIWZJIbCJxnPt+Z
+         YHINTaotKQvHAYPNIQJktMRxVCQ4dwdrgpVHJx1tZySEh90PFxMxa3igfCH8gteVznyQ
+         kpEw==
+X-Gm-Message-State: AOJu0YyEeX5I7vQsiO+Hr021BhwNG6dHjhjb1ZDfFGnFvxLWhMuESrRJ
+        63NRPz2qhvrIuIOpimkMOwCyUQ==
+X-Google-Smtp-Source: AGHT+IEb+I3lyZINCDfzufoiEQMlOzN4F9fGAh7xM3gOhb0li7sIX6eV0rOgKMK5X7Ymolf57qXmPA==
+X-Received: by 2002:a05:600c:4fd5:b0:3fe:4d66:2d4b with SMTP id o21-20020a05600c4fd500b003fe4d662d4bmr1096237wmq.28.1691649782577;
+        Wed, 09 Aug 2023 23:43:02 -0700 (PDT)
+Received: from localhost ([212.23.236.67])
+        by smtp.gmail.com with ESMTPSA id b10-20020a5d550a000000b0031801aa34e2sm1066784wrv.9.2023.08.09.23.43.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Aug 2023 23:43:01 -0700 (PDT)
+Date:   Thu, 10 Aug 2023 08:43:00 +0200
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc:     Jakub Kicinski <kuba@kernel.org>,
+        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Milena Olech <milena.olech@intel.com>,
+        Michal Michalik <michal.michalik@intel.com>,
+        linux-arm-kernel@lists.infradead.org, poros@redhat.com,
+        mschmidt@redhat.com, netdev@vger.kernel.org,
+        linux-clk@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
+        intel-wired-lan@lists.osuosl.org
+Subject: Re: [PATCH net-next v3 7/9] ice: implement dpll interface to control
+ cgu
+Message-ID: <ZNSG9GwGhND0YsBr@nanopsycho>
+References: <20230809214027.556192-1-vadim.fedorenko@linux.dev>
+ <20230809214027.556192-8-vadim.fedorenko@linux.dev>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [PATCH 1/1] dt-bindings: clock: meson: Convert axg-audio-clkc to
- YAML format
-Content-Language: en-US
-To:     Alexander Stein <alexander.stein@mailbox.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Dmitry Rokosov <ddrokosov@sberdevices.ru>
-Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20230808194811.113087-1-alexander.stein@mailbox.org>
- <1j5y5obt0u.fsf@starbuckisacylon.baylibre.com>
- <a48b1a97-2286-d2f9-742e-d718adcf1eed@linaro.org> <8294548.NyiUUSuA9g@kongar>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <8294548.NyiUUSuA9g@kongar>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230809214027.556192-8-vadim.fedorenko@linux.dev>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 09/08/2023 20:44, Alexander Stein wrote:
-> Hi,
-> 
-> Am Mittwoch, 9. August 2023, 15:02:23 CEST schrieb Krzysztof Kozlowski:
->> On 09/08/2023 08:58, Jerome Brunet wrote:
->>>>> +      required:
->>>>> +        - '#reset-cells'
->>>>
->>>> else:
->>>>   properties:
->>>>     '#reset-cells': false
->>>> ???
->>>>
->>>>
->>>> You need to constrain the clocks per variant. Probably names are also
->>>> specific to each one, so the list of names can be moved here and you
->>>> keep just min/maxItems in the top level property.
->>>>
->>>
->>> input clock names and constraints are the same for all 3 variants.
->>
->> Then why do you have this huge, apparently unnecessary, oneOf? If it's
->> the same, then drop the oneOf and make number of clocks fixed.
-> 
-> But as far as I understand the number of clocks is not fixed. As Jerome pointed 
-> out in the other post, it can have any combination of clocks and range from 1 
-> up to 11, where 'pclk' is always 1st clock.
-> I currently have no idea how to constraint that, despite limiting the number 
-> of clock-names.
+Wed, Aug 09, 2023 at 11:40:25PM CEST, vadim.fedorenko@linux.dev wrote:
+>From: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
 
-The same as in all other clock controllers (was also present on my list
-of useful patterns - Variable length arrays (per variant)):
-https://elixir.bootlin.com/linux/v5.19-rc6/source/Documentation/devicetree/bindings/clock/samsung,exynos7-clock.yaml#L57
+[...]
 
-Best regards,
-Krzysztof
 
+>+/**
+>+ * ice_dpll_deinit - Disable the driver/HW support for dpll subsystem
+>+ * the dpll device.
+>+ * @pf: board private structure
+>+ *
+>+ * Handles the cleanup work required after dpll initialization, freeing
+>+ * resources and unregistering the dpll, pin and all resources used for
+>+ * handling them.
+>+ *
+>+ * Context: Destroys pf->dplls.lock mutex.
+>+ */
+>+void ice_dpll_deinit(struct ice_pf *pf)
+>+{
+>+	bool cgu = ice_is_feature_supported(pf, ICE_F_CGU);
+>+
+>+	if (!test_bit(ICE_FLAG_DPLL, pf->flags))
+>+		return;
+>+	if (cgu)
+>+		ice_dpll_deinit_worker(pf);
+>+	clear_bit(ICE_FLAG_DPLL, pf->flags);
+
+Clearing the flag after deinit worker somehow implicates that it needs
+to be set until here. That is not true.
+
+Please rather use test_and_clear_bit() instead of test_bit() which would
+takes care of the clear alongside with the check.
+
+With or without that.
+
+Signed-off-by: Jiri Pirko <jiri@nvidia.com>
+
+[...]
