@@ -2,180 +2,117 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4B9FC001B0
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Aug 2023 06:07:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A973C001B0
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Aug 2023 06:12:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232196AbjHJGHK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Aug 2023 02:07:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38696 "EHLO
+        id S233395AbjHJGL5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Aug 2023 02:11:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231610AbjHJGHJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Aug 2023 02:07:09 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA25B1728;
-        Wed,  9 Aug 2023 23:07:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1691647628; x=1723183628;
-  h=from:to:subject:date:message-id:references:in-reply-to:
-   content-id:content-transfer-encoding:mime-version;
-  bh=yde+7CfZGPJHeDapCdz6Kyn9EGKzFLaHahp+XhjkX/o=;
-  b=HOnr45eZ1MDlJFt3p4Zeplc7/pw5tk9y7Hy59YuiigSSCIA/cCniH0XA
-   JDsmA7sPBrj1Qt7G+hgLWPLQA+sUPbiszvdTuBr9b7lxU4u4zo45d0wE7
-   SN5Kpp0XvafdyAZvTgv4bCL8Eu0V67tnpJsnORLfSbWHhZQcjuZR4gVw7
-   wD0Z5Evs1AmzO28kEgUpMD2JrcLMHKQ+2oVBQjSnnh+lA/athKVeDlB53
-   eFYS0WAv4HDAFb+5TN45CTiUI9FlmMJ9m1vpZw07FezqlqF4Ka59gowby
-   atZ3va697OoiwfdL+q2z2A10csRagUO8FaAkaggjz/qmIphnU6A6yPub3
-   A==;
-X-IronPort-AV: E=Sophos;i="6.01,161,1684825200"; 
-   d="scan'208";a="165773383"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 09 Aug 2023 23:07:08 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Wed, 9 Aug 2023 23:07:07 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.87.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21 via Frontend Transport; Wed, 9 Aug 2023 23:07:07 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kIr2DJUvx2QbNY8yaPjv32sazmCqs6G4EdOPt/lvktKiZ1It6E1ebBddegYP8wEg78/GyKCTM5Zuns4ErFe3+qLFQSthBkW7QVWvRx7xaucSp9CGIMrWetZmWuCM87ruiVT8kSzqOSQR0poV33j/KwkpisT1lkBFdJMMGFgbyT5pvxD/C+Xk2IUfOkFqXiKZNPk6By4epibTn9ZFP5SjTAcTJ3uwQ6Y4xHuJDjq0zx+004bbMPzhTyar9DigEzfgu3pC8lS2AscmnFtFVdyA6HAwGaW8qm+A6vbPhc64ogroxsEoJSjALnaFpcFK8KRUVabH4D7jmE6l7nP/pyFUAw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yde+7CfZGPJHeDapCdz6Kyn9EGKzFLaHahp+XhjkX/o=;
- b=nnCIOVX01bnmCjoEO2V3LONp/QJTakXQyDAQBSpZRYpyUniS1mohTd9neoIsNv1A9Z6r54IlXy6ZY9yZIrB69ygO4HzkjqNx/pBWBAI0iQF5OzPZAitpVG9g0EZUdp+quXpnxNn4BELhhWctKOH04Sl3fcqhmh3eIIG9FK6uXCgbls3hqe/v2jxM7AzR0Zd93j89flg12avvW+ALwAsgEubrYqLZf4+4ehWnQqAd1N0WK2YTOZq218LFY509ugyW5uPniGBR0TBaac9WDg+PBJaGTTxM+06vps0rp6YvIdKnNLlIaGE6iWZeIUk34Bvm/r+0VvxyQ5OlO4ois2GV2g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
+        with ESMTP id S233386AbjHJGL4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Aug 2023 02:11:56 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D06F310FE
+        for <linux-clk@vger.kernel.org>; Wed,  9 Aug 2023 23:11:55 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-3fe501e0b4cso4657195e9.1
+        for <linux-clk@vger.kernel.org>; Wed, 09 Aug 2023 23:11:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector2-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yde+7CfZGPJHeDapCdz6Kyn9EGKzFLaHahp+XhjkX/o=;
- b=XLFmlQjOvkqWuh3iPJkK9N0zKVW3+G4/+ussFpzD8dalksjzecaVRja2b/jiK4FXPMXG197mdTJkqnJwZxS5XceK+WGlzanUNltB5ifMF/dQ+wMx4aEWvZ75y3g0ERejSHvkZpBZdTLCDV+AUae37MbBkTMTvGe2VlLHUXybhtI=
-Received: from SA0PR11MB4719.namprd11.prod.outlook.com (2603:10b6:806:95::17)
- by CY5PR11MB6344.namprd11.prod.outlook.com (2603:10b6:930:3b::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6652.30; Thu, 10 Aug
- 2023 06:07:05 +0000
-Received: from SA0PR11MB4719.namprd11.prod.outlook.com
- ([fe80::d60b:acac:9481:18e]) by SA0PR11MB4719.namprd11.prod.outlook.com
- ([fe80::d60b:acac:9481:18e%5]) with mapi id 15.20.6652.029; Thu, 10 Aug 2023
- 06:07:05 +0000
-From:   <Varshini.Rajendran@microchip.com>
-To:     <krzysztof.kozlowski@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <Nicolas.Ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 05/50] dt-bindings: clk: at91: add sam9x7 clock
- controller
-Thread-Topic: [PATCH v3 05/50] dt-bindings: clk: at91: add sam9x7 clock
- controller
-Thread-Index: AQHZwT2jCSX0WfI8jEav2hRLgd0xLK/PDigAgBQHSICAAAiCAIAAAVcA
-Date:   Thu, 10 Aug 2023 06:07:04 +0000
-Message-ID: <ced9143d-2325-45c7-7509-8439ac421007@microchip.com>
-References: <20230728102350.265520-1-varshini.rajendran@microchip.com>
- <f7186a62-19a1-5d72-ee1b-255b81fb8abe@linaro.org>
- <f97b2698-f482-622b-5f9d-02c3113db546@microchip.com>
- <3ff895eb-9675-9133-1b84-8d40b965e8da@linaro.org>
-In-Reply-To: <3ff895eb-9675-9133-1b84-8d40b965e8da@linaro.org>
-Accept-Language: en-GB, en-US
-Content-Language: en-GB
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microchip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA0PR11MB4719:EE_|CY5PR11MB6344:EE_
-x-ms-office365-filtering-correlation-id: 3f2145fc-cd3d-4824-27b3-08db99680576
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: oOCZtLzg3zudEbk8hZzIEjNpNc68kdMutTrvIXjPmc70O8hzO7rDTptpP8+Fdz4bQ+70uKnwDZWtJ2yBmvNtfFSGyESdRXwKEWyZJ1g54iqfSUJyffYVPZzQE1LnZhCsaPh7kln7LlGKg8sTXMUhRu0vYfAU+42mEARB+wIqIiVnqC0VPfiywn+ZbMtFRRbntslJWJ33Ify/RoW6tH8jVOKOIwSGeOoZ47UcLLh/7DCN7Jy24RBaxIiuBy3u3D7dgjsKJQoZETthoul6HS/QHiWTTgtEoBltxd4s28+xwFxXQGn2ZXe3FFOoHoEpkaXXpwzuR8/qauBBbqfZZupoh6uUceeVbDsOmE1uHYQsT5IVwaNLvHE7WeMSQFh8Ot9mCFMl/XreEx0uvrk6hHvSaYi72wNA7ScY61gynC2LCQDhwg3VZuWbt70skPAkf/5HM7r4L2OzmHuG3s0SmmfBdHQNueZlfJq5RHy3CJCMY4Yv9jx0wUFtHk2uNoUJAZNC/Uj9qmAHNyX+ax9Rymt7/mOJvme5WxAeQUvqT4iIOBWhFaMZX5tf7PEpPt7RSmxmiLpQfaSf3oz84DphYyv/mtsDEsKNzbzXssJMkF6MfOOdClTiphme0nA3Q59kGD/Qd+Wt0zinv2Oe1J/XA4n2rD8mjuB5sFqYg+0XeTSj5vc=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA0PR11MB4719.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(376002)(346002)(136003)(39860400002)(366004)(396003)(451199021)(1800799006)(186006)(36756003)(53546011)(2906002)(478600001)(26005)(6506007)(6512007)(71200400001)(6486002)(31696002)(86362001)(8936002)(8676002)(316002)(7416002)(64756008)(66476007)(66946007)(66446008)(66556008)(5660300002)(76116006)(91956017)(41300700001)(38070700005)(122000001)(38100700002)(921005)(31686004)(2616005)(110136005)(83380400001)(45980500001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?TlNoZG1uRkZIMks3UnovSXNXOHQvT3ZaQ2haMTdOeEd0LzlVbC9QSFRTdXJK?=
- =?utf-8?B?ZEZ6bE85RFpzK0dPdE4vMi9VN1ZzejhUamVXY0NsVnB2aGN6R0VUbFRLU3A1?=
- =?utf-8?B?OHpkUWdDZngvSUxNbmJuRFJ5RC9hOWpXRDBpWFpCYjBoVHZLNS9zYUQxUnNS?=
- =?utf-8?B?a0Jock5SVlFPM1RST1J0M0FJTTZwbTFkUHpLYndXS01PZ3dlb2lDM25jZG5q?=
- =?utf-8?B?ZVExZVRQQXF4eVlmM1c5VStWT3M0Mis3YjJpb2R4MUg3ZVl5RnhXVjltcHdX?=
- =?utf-8?B?T0YvMW9vME9TOXJVUEc1RTJmbnFxWVM2Z2VoNXE5dUJTblFoL3lhNDNyUFpH?=
- =?utf-8?B?TmtMOXA4c05lak01Tmt5Ryt3Z3BBWXBhVGFIbjJXVTJoWmdFZDBUTkE4Szh5?=
- =?utf-8?B?UWRuVHkzcUdYMHB4eS9jYVhNMWgwYWMwSE0yU3orQktGY3VuaFhwcGRrRXUw?=
- =?utf-8?B?RndHcGdQVXRCNUdNYjlFcXRLNUVXZkE3azhzMlJhRzVGNFYrSFR0UXlHNTh5?=
- =?utf-8?B?b1FSWXUwZ1FGd3pMNEdTRVE5WTNaSmx2NUJvOW5JTjRSSml6R21xNU82V1hW?=
- =?utf-8?B?bmRUWWFsbkJXQUFCTnRQUkxjbi8xZExZYWR0R2hSYlpINXZRM2M1KzJLdGkw?=
- =?utf-8?B?bHp4ckpyRnBjTVkxYjNNb3lFQVZmelUyaTNpUEVVcExiNEhnc3E5Y0NheUEr?=
- =?utf-8?B?ZjA2Q2VVaXRJejVBYVUrRUc4M0ttNXhGcFNja2o2QlFWUC9iNlI2N2NKUHUy?=
- =?utf-8?B?S2Z2RWZOMTFLRlc4MlMvd3JUdURjWWc2cnZVRHpkRHpETjlyNmdmc2xJd0l1?=
- =?utf-8?B?aTduNkluQmRDdFExTGhKUW5HckFuOWQzcFhGTkxCZ25veXNXZ2pIRTNGZm1o?=
- =?utf-8?B?QTl4VmtZbm5GamVudlFvTkdYT1YyNFYzSnlmd2xNd2ZQc3E4Y0dnT1JVMHU4?=
- =?utf-8?B?YmhCSThRM2k0dE1kZkZHa0RSZG5oOVZvMHFCdTdYTTZKWFBWMlFmLzM1bk5j?=
- =?utf-8?B?eUQwYTZaUVJ6KzUxbkE0UDVZQ0x4Q3ZyTGZLMkRxMW1XZ0FkS3NLT3EwQzRM?=
- =?utf-8?B?a09iZGhOdWtsdUM2Ny9xVVFleTlCVENIYzNHaGFBQWQrV3NVOStNS2xrVWIw?=
- =?utf-8?B?TEU4cTY0VVZ4OVN5eHlEYlNCcXE5cXJFZTNxTUNkQWtURG85N0crUGZScjM3?=
- =?utf-8?B?eXZTSHNzRWNoNDZGZ2NRZnFPRDN2Vk1DZCtDaWNQUUxqNmxaSHEyNmY3ZGZ6?=
- =?utf-8?B?UnJmYWg2bEtPaDZkNThvRWJSVVNSZmc3OHZHT1V3Qnl0QlRuRStkOUpNeXQ3?=
- =?utf-8?B?RmFFQk9ZVFNaN2p6T3dpY3RGNTA4S1g1LzhaeVBLRnN0OGY2Vk9UZ1IyUm1T?=
- =?utf-8?B?RzBsdXFzUVFTRGxkYVo2enZxNThhT3RoVkFFZkdTTGZxMWlFam5vWkZzTjRR?=
- =?utf-8?B?dE5ScTJqcGhzQzNDekYxdFZUT3gyYkJRZkNzSVJmL0hFa3ZtZnRZd3JqdGNM?=
- =?utf-8?B?SWttUUdTY1NNWWg4NzJQS2I2MnVwS1Q5V24vNGlFcUg1eHVFay9zQWdYUmtI?=
- =?utf-8?B?ZCtuejl6clhSNzBVRWRWMWI1clNnM0JWMlFOMUdPODl3V1Q4WXUxbkJ1TWdr?=
- =?utf-8?B?ME1GNWJMeWJYV3ZaVXBoKzZ6UkM0aGhTQTV6V2ZPb094M1JYVHZVcUhjeGxh?=
- =?utf-8?B?dHRkVmp1SjNhdGhGZnpXMVJwdXpValBJdk0rUnZNSXpaQlpzODRna0hWdi95?=
- =?utf-8?B?bHJZT0VpRFFWM3NnR1k2YXpPb1Ywb1dyb013NnhmcWpFVkdBNVd0OXZtaGo4?=
- =?utf-8?B?RENQR0JmY1R4YVdMRWF2ZTIrR2prYkRyOGVLNzAwcnd3d1NJekRwYjVMSnpa?=
- =?utf-8?B?ZFpzc2JzNTJ4c2pIWk0waVM1dG9NNEFmNjBCbXlOUUpzUnZWR1ZoUlUrT20w?=
- =?utf-8?B?UlJQMmFXSTNGWTllZkIralAxa2cxMEZSODlCbzg5RVg2OUlXVnZXNDhPT2ZC?=
- =?utf-8?B?SWNmQ2dNTkFOUHBxUnF0NXNBQ1dSQzlBRmplcWlrTTE2amdpMFBEZUd3eXgy?=
- =?utf-8?B?aUhxaTJWOXNQeEh0RXZTZHB4aUJmdmRGMzk4TmFqYURhMkZYbTkzN2NseE03?=
- =?utf-8?B?MHNRZWFoRmRRL0w5endncEZNQURmR2tuc0d4NXFHeDlXcEh1VExDSisydDBE?=
- =?utf-8?B?QkE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <6B9351D4D820514DB52A4BC29C0B2A70@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=linaro.org; s=google; t=1691647914; x=1692252714;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=N48Tz5uXzvaHN9/qN3JfX8I4/w7VgPsbV3qQP+qe1tQ=;
+        b=NiaZ9rdNmufbECzZZ87B+yprLA3NRl/R2PzxygOJHcFGcy2WzIj3IcU4zInyho5e0/
+         c854lCFAyfPNxCY0Kt5FZOaF5CygOipP27pHXY3POE5Rm1jg3DB0Bqi7I/qk4L5DGk0r
+         QU/3x7skzZ4VIhjfIyqoLo+doKDiCpB9RlVfMj/pdUNerajvb6RuUoYpiThmHfBMiXtO
+         Eva5Zktvomy1Y3u1V2miFUaFd9j4gIqSLHPm/2D7A9tToV3ioY2wJACouLNeVZ2DZ9gJ
+         OjCSNhpc4rkqitywFihe7PizS9deLQVVoSO4A0oEdM4cU8Wb4KQx/zFCoVGYrqLn2BP4
+         nfXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691647914; x=1692252714;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=N48Tz5uXzvaHN9/qN3JfX8I4/w7VgPsbV3qQP+qe1tQ=;
+        b=YJTuSKffVwFTKb5FtkwRFsra+bE3QToojZbzTG8eXgtGaPYaWwsLaBNlqj0ldnTos+
+         Rv0LoG81H0cG4fBpeReuCTs4L5GzobimfpHwEu8Ea4uo7N2aCkS7DvhwQIugridfZoS+
+         OmQAdl3Bnb8L1L9LwCg06wnvPzqUd945DGSThUMAscWd0ydoyc1xMWDC6uVXdtO6wOSJ
+         ubtCF79bAe12s8FgptxWsqiFj4VfEJHH1zjf+mavy+/wHo+tTFO5lx9WA4o4+dpHRTeI
+         zFIOFhzcNylYlUB/S/hwP2DTbw/r77PjZDLoPE/TelxxR4GDdPtyNI1obQaacyb1jIOK
+         vpOQ==
+X-Gm-Message-State: AOJu0YzCVECJJe7dayq4Gq6v9HUo1ZzoRk6peSyMssiaySzbC4FDd70I
+        TqqplK8cNlxksbHBGCCkj/QSXg==
+X-Google-Smtp-Source: AGHT+IEBBWdm106nH7ySkZ0gAbbGmz1kcDFv16EgML6LFboSZyVkgvF7ZYZlHBKZKyVm845g2SGOUg==
+X-Received: by 2002:a05:6000:12ce:b0:317:15f5:a1ca with SMTP id l14-20020a05600012ce00b0031715f5a1camr1282078wrx.10.1691647914293;
+        Wed, 09 Aug 2023 23:11:54 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.222.113])
+        by smtp.gmail.com with ESMTPSA id y7-20020a5d6147000000b00317e77106dbsm967610wrt.48.2023.08.09.23.11.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Aug 2023 23:11:53 -0700 (PDT)
+Message-ID: <5c852193-9298-af2e-2b7d-dbba29768fec@linaro.org>
+Date:   Thu, 10 Aug 2023 08:11:51 +0200
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA0PR11MB4719.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3f2145fc-cd3d-4824-27b3-08db99680576
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Aug 2023 06:07:05.0068
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: WAZ4rLAh5ceuxCBf/bh98gyvmsCyqjS9C8voUAkc4BpbQCXEZUhw9Qhj8qCAEtxQBdoXjKvIhoXnSQn2YZfTQzGKEoEfg/6vveWYoF5qEI5YkXzMfJZSsBwhkQVZjr/+
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR11MB6344
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Subject: Re: [PATCH 1/1] dt-bindings: clock: meson: Convert axg-audio-clkc to
+ YAML format
+Content-Language: en-US
+To:     Alexander Stein <alexander.stein@mailbox.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Dmitry Rokosov <ddrokosov@sberdevices.ru>
+Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20230808194811.113087-1-alexander.stein@mailbox.org>
+ <1j5y5obt0u.fsf@starbuckisacylon.baylibre.com>
+ <a48b1a97-2286-d2f9-742e-d718adcf1eed@linaro.org> <8294548.NyiUUSuA9g@kongar>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <8294548.NyiUUSuA9g@kongar>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-T24gMTAvMDgvMjMgMTE6MzIgYW0sIEtyenlzenRvZiBLb3psb3dza2kgd3JvdGU6DQo+IEVYVEVS
-TkFMIEVNQUlMOiBEbyBub3QgY2xpY2sgbGlua3Mgb3Igb3BlbiBhdHRhY2htZW50cyB1bmxlc3Mg
-eW91IGtub3cgdGhlIGNvbnRlbnQgaXMgc2FmZQ0KPiANCj4gT24gMTAvMDgvMjAyMyAwNzozMSwg
-VmFyc2hpbmkuUmFqZW5kcmFuQG1pY3JvY2hpcC5jb20gd3JvdGU6DQo+IG9uL2RldmljZXRyZWUv
-YmluZGluZ3MvY2xvY2svYXRtZWwsYXQ5MXJtOTIwMC1wbWMueWFtbA0KPiBiL0RvY3VtZW50YXRp
-b24vZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9jay9hdG1lbCxhdDkxcm05MjAwLXBtYy55YW1sDQo+
-Pj4+IGluZGV4IGMxYmRjZDkwNThlZC4uY2UwZDk5NTAzNjQ1IDEwMDY0NA0KPj4+PiAtLS0gYS9E
-b2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvY2xvY2svYXRtZWwsYXQ5MXJtOTIwMC1w
-bWMueWFtbA0KPj4+PiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvY2xv
-Y2svYXRtZWwsYXQ5MXJtOTIwMC1wbWMueWFtbA0KPj4+PiBAQCAtNDMsNiArNDMsNyBAQCBwcm9w
-ZXJ0aWVzOg0KPj4+PiAgICAgICAgICAgICAgICAgIC0gYXRtZWwsc2FtYTVkNC1wbWMNCj4+Pj4g
-ICAgICAgICAgICAgICAgICAtIG1pY3JvY2hpcCxzYW05eDYwLXBtYw0KPj4+PiAgICAgICAgICAg
-ICAgICAgIC0gbWljcm9jaGlwLHNhbWE3ZzUtcG1jDQo+Pj4+ICsgICAgICAgICAgICAgIC0gbWlj
-cm9jaGlwLHNhbTl4Ny1wbWMNCj4+Pj4gICAgICAgICAgICAgIC0gY29uc3Q6IHN5c2Nvbg0KPj4+
-DQo+Pj4gV2hlcmUgaXMgdGhlIGNoYW5nZSBpbiBhbGxPZjppZjp0aGVuOj8gTm8gbmVlZCBmb3Ig
-aXQ/IFdoeT8gV2hlcmUgaXMgdGhlDQo+Pj4gZHJpdmVyIGNoYW5nZT8NCj4+DQo+PiBIaSBLcnp5
-c3p0b2YsDQo+Pg0KPj4gVGhpcyBTb0MgaGFzIGEgbmV3IHBtYyBkcml2ZXIgYW5kIGlzIG5vdCBk
-ZXBlbmRlbnQgb24gYW55IG90aGVyDQo+PiBjb21wYXRpYmxlIGFzIGEgZmFsbGJhY2suIFNvIEkg
-dGhpbmsgYWRkaW5nIGl0IGluIHRoZSBlbnVtIG1ha2VzIHNlbnNlLg0KPiANCj4gVGhpcyBJIGRp
-ZCBub3QgcXVlc3Rpb24uDQo+IA0KPiBJIHdhcyBzcGVha2luZyBhYm91dCBhbGxPZjppZjp0aGVu
-OiBzZWN0aW9uLg0KDQpPa2F5LiBHb3QgeW91ciBwb2ludC4gSSB3aWxsIGZpeCB0aGF0IGluIHRo
-ZSBuZXh0IHZlcnNpb24uIFRoYW5rcyENCj4gDQo+IA0KPiBCZXN0IHJlZ2FyZHMsDQo+IEtyenlz
-enRvZg0KPiANCg0KLS0gDQpUaGFua3MgYW5kIFJlZ2FyZHMsDQpWYXJzaGluaSBSYWplbmRyYW4u
-DQoNCg==
+On 09/08/2023 20:44, Alexander Stein wrote:
+> Hi,
+> 
+> Am Mittwoch, 9. August 2023, 15:02:23 CEST schrieb Krzysztof Kozlowski:
+>> On 09/08/2023 08:58, Jerome Brunet wrote:
+>>>>> +      required:
+>>>>> +        - '#reset-cells'
+>>>>
+>>>> else:
+>>>>   properties:
+>>>>     '#reset-cells': false
+>>>> ???
+>>>>
+>>>>
+>>>> You need to constrain the clocks per variant. Probably names are also
+>>>> specific to each one, so the list of names can be moved here and you
+>>>> keep just min/maxItems in the top level property.
+>>>>
+>>>
+>>> input clock names and constraints are the same for all 3 variants.
+>>
+>> Then why do you have this huge, apparently unnecessary, oneOf? If it's
+>> the same, then drop the oneOf and make number of clocks fixed.
+> 
+> But as far as I understand the number of clocks is not fixed. As Jerome pointed 
+> out in the other post, it can have any combination of clocks and range from 1 
+> up to 11, where 'pclk' is always 1st clock.
+> I currently have no idea how to constraint that, despite limiting the number 
+> of clock-names.
+
+The same as in all other clock controllers (was also present on my list
+of useful patterns - Variable length arrays (per variant)):
+https://elixir.bootlin.com/linux/v5.19-rc6/source/Documentation/devicetree/bindings/clock/samsung,exynos7-clock.yaml#L57
+
+Best regards,
+Krzysztof
+
