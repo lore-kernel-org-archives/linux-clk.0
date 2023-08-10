@@ -2,70 +2,72 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C916C001B0
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Aug 2023 12:59:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 384C8C001DB
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Aug 2023 13:28:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233486AbjHJM73 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Aug 2023 08:59:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60240 "EHLO
+        id S233818AbjHJN2M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Aug 2023 09:28:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230458AbjHJM73 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Aug 2023 08:59:29 -0400
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80829E5D
-        for <linux-clk@vger.kernel.org>; Thu, 10 Aug 2023 05:59:28 -0700 (PDT)
-Received: by mail-lj1-x22b.google.com with SMTP id 38308e7fff4ca-2b9a828c920so13685641fa.1
-        for <linux-clk@vger.kernel.org>; Thu, 10 Aug 2023 05:59:28 -0700 (PDT)
+        with ESMTP id S234214AbjHJN2L (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Aug 2023 09:28:11 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCAA82106
+        for <linux-clk@vger.kernel.org>; Thu, 10 Aug 2023 06:28:10 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-4fe27849e6aso1368034e87.1
+        for <linux-clk@vger.kernel.org>; Thu, 10 Aug 2023 06:28:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691672367; x=1692277167;
+        d=linaro.org; s=google; t=1691674089; x=1692278889;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=wk+zm0d06jLEAReFRShjOq87rLOotXXr0iiPkZag8v8=;
-        b=B2ZGQfi0E7+mq4GCi8OBMFKMDMOjt4TrHm+hgbNq8F3Aqm3MAL3Jobc9Ha3MZWhOZy
-         111TJ7gn1uN2vB+eBX9mEtn05EE2WByZLoAvvsJPMqpTEYHLcmBNiZbub125LZQNEDPB
-         sSO97uANHNKYP2Mpxlsz6iZx/Q/X5hprkwqopbO+RJShvrATMHCY1C/GV56njdtl452a
-         46bBueehDI1O8D6ITJ1JJJoyTp/PFCTeGx7MFvFyUh1dTYZR0ZIW41VOyIJHIu/JBlLf
-         +2cfGm48gvtSDhQfggumQebIM6yzy9tVxKhw51JUz2pvCfE8/PLjkaVWYmuupsMi+6GM
-         t4mA==
+        bh=0rMBTd9PSe3rwX3ieHX+r33usF1/PKAmF1IGH8YWMF4=;
+        b=ClnRBdflS0jBD+We/IvZYyBjXKVRXBmPKmmB8gOzUWsE6IpwMj75cqBM80WxFKXz1R
+         rASleyX6u6n2tO2tgufcG2jIblbjjIr6+UAp2f437CO4oDdu65bdmr4oawZhohP+l+5k
+         SzvglO4FzJyE6n9WEOMMPdiB135C74MMNcjCG0JqAKj+nbkQdCAsIHhS20ep4P4kl4R5
+         hKIQO126Ozf/gj3dyixmTuoJVOs/M/PiW0pBR2qkvkZ9C7erTTa2Q/y/WC2hJvIOSjMx
+         4lI2jgutS8dDrgtRw828UKKGNLwsaxByHQeHMOlBl1oh0RK9JDjzLo+6hnDXG/a+0TlM
+         E8UA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691672367; x=1692277167;
+        d=1e100.net; s=20221208; t=1691674089; x=1692278889;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wk+zm0d06jLEAReFRShjOq87rLOotXXr0iiPkZag8v8=;
-        b=B5Y8aZWPZuKeL51toZH1g5AUoAwGPY8c3ka03c8xUe8BVClsSyXPs9g7wGZFiTuSA4
-         wtPz8loeCj7PBYf30s2Z4oE/y4utR9L2sHgmLXE+RZEUpyl/Q7YDZU3MxhnWdvnCZCZb
-         4fq9C77PkB4jvpsAyBi3JRvFjGKg5CfhVYPt5hVKhNZy3g3wZdy41mWIBr8wftBvZQxI
-         ioTweGm9h/vIyG/o1Jn8+O7FOMlNyOtpFhMQcZfX43z8FjF14/6YOaS7+G0aSCGzyeMu
-         J5YVU2cHmf9pDlWhUCsOFgwDHXV6jbdPijFKM2TXS1RpCvUuhgcpu7hMF9HyWVl9mcW4
-         Fufg==
-X-Gm-Message-State: AOJu0Yywa4ZRpkoGHWzTI3rjBfDBKieysLdJprNVGpebBoDmnE5KtIfR
-        Y8ygh2Ql9d9HA7qzH3fIdAOgNg==
-X-Google-Smtp-Source: AGHT+IHTsZWeX9PLzv0ARPxF/b9bUQFJCXF2d4FgPRJaPHGroko/PDHFHw8TSdTAoBpe9wcNjgif0A==
-X-Received: by 2002:a2e:8555:0:b0:2b6:ad79:a4fb with SMTP id u21-20020a2e8555000000b002b6ad79a4fbmr1937417ljj.1.1691672366726;
-        Thu, 10 Aug 2023 05:59:26 -0700 (PDT)
+        bh=0rMBTd9PSe3rwX3ieHX+r33usF1/PKAmF1IGH8YWMF4=;
+        b=S4aARuIPuH8yKAuTKcMEggLIn+0xaiamwirxY3aGgXR2z1ENQI8z6lb7ye3Ag7HM6+
+         JAR68GlJ7u1Br21t6pFYyz0DPQb9zlO3HYeQ9dWkpcurcAHwqx9p2hbyPr+M9SIN4MAi
+         Fe5R2mkaoebGGxA6hzu0fEScUQ2fCgdISaB2XfNAnmvX0IumdxfCqAnjjS80CE0To4Gm
+         Jj7vSdbsExjI8pVeEm8tfA+6+YlLqcAZy2S17IstbQ9ho/juxiWvxQ1rFngZnTymBy8p
+         /5bYqA7Q/acQgMFO+eq6Vtk5kja1I5iCRtQmouQD/A3WCmY+OPTxOnLLcMtiZUQeXljv
+         EKJw==
+X-Gm-Message-State: AOJu0Yz7PvRhjwYynZPwBnDyge7ZB2LNnEB6T0+vGwnfE7kbUzWidbpn
+        8//lCI6AmT4xvxmaeRu8nWZdrdE8FXAWvSW4fGU=
+X-Google-Smtp-Source: AGHT+IFo9WjiJajubGXckuI6bb8bjTQRG69K+zL0RmaeF6nfbWukq/YO7RpjAuDtXqeszPzJpICjyg==
+X-Received: by 2002:ac2:4a62:0:b0:4fe:c98:789a with SMTP id q2-20020ac24a62000000b004fe0c98789amr1772592lfp.37.1691674088978;
+        Thu, 10 Aug 2023 06:28:08 -0700 (PDT)
 Received: from [192.168.1.101] (abxi185.neoplus.adsl.tpnet.pl. [83.9.2.185])
-        by smtp.gmail.com with ESMTPSA id n12-20020a2e720c000000b002b9fdfdab75sm354562ljc.12.2023.08.10.05.59.25
+        by smtp.gmail.com with ESMTPSA id c27-20020ac244bb000000b004fb85ffc82csm286637lfm.10.2023.08.10.06.28.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Aug 2023 05:59:26 -0700 (PDT)
-Message-ID: <9dec09fa-a5a3-416c-9b4d-4b4c4e10320b@linaro.org>
-Date:   Thu, 10 Aug 2023 14:59:24 +0200
+        Thu, 10 Aug 2023 06:28:08 -0700 (PDT)
+Message-ID: <a4ccb1ec-5444-49bc-a3a3-832e554daeb6@linaro.org>
+Date:   Thu, 10 Aug 2023 15:28:07 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] clk: qcom: add clock controller driver for
- qca8386/qca8084
+Subject: Re: [PATCH v3 04/10] interconnect: qcom: icc-rpm: Check for
+ node-specific rate coefficients
 Content-Language: en-US
-To:     Luo Jie <quic_luoj@quicinc.com>, andersson@kernel.org,
-        agross@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, catalin.marinas@arm.com, will@kernel.org,
-        p.zabel@pengutronix.de
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        quic_srichara@quicinc.com
-References: <20230810115419.25539-1-quic_luoj@quicinc.com>
- <20230810115419.25539-4-quic_luoj@quicinc.com>
+To:     Stephan Gerhold <stephan@gerhold.net>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20230726-topic-icc_coeff-v3-0-dee684d6cdd2@linaro.org>
+ <20230726-topic-icc_coeff-v3-4-dee684d6cdd2@linaro.org>
+ <ZNSRHVC8Ay5YSLQi@gerhold.net>
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
@@ -102,57 +104,76 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <20230810115419.25539-4-quic_luoj@quicinc.com>
+In-Reply-To: <ZNSRHVC8Ay5YSLQi@gerhold.net>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 10.08.2023 13:54, Luo Jie wrote:
-> Add clock & reset controller driver for qca8386/qca8084.
+On 10.08.2023 09:26, Stephan Gerhold wrote:
+> On Tue, Aug 08, 2023 at 01:43:35PM +0200, Konrad Dybcio wrote:
+>> Some nodes may have different coefficients than the general values for
+>> bus they're attached to. Check for that and use them if present. See
+>> [1], [2] for reference.
+>>
+>> [1] https://github.com/sonyxperiadev/kernel/commit/7456d9779af9ad6bb9c7ee6f33d5c5a8d3648e24
+>> [2] https://github.com/artem/android_kernel_sony_msm8996/commit/bf7a8985dcaf0eab5bc2562d2d6775e7e29c0f30
+>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>> ---
+>>  drivers/interconnect/qcom/icc-rpm.c | 14 ++++++++++----
+>>  drivers/interconnect/qcom/icc-rpm.h |  5 +++++
+>>  2 files changed, 15 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/interconnect/qcom/icc-rpm.c b/drivers/interconnect/qcom/icc-rpm.c
+>> index 1d3af4e9ead8..9c40314e03b5 100644
+>> --- a/drivers/interconnect/qcom/icc-rpm.c
+>> +++ b/drivers/interconnect/qcom/icc-rpm.c
+>> @@ -300,14 +300,14 @@ static u64 qcom_icc_calc_rate(struct qcom_icc_provider *qp, struct qcom_icc_node
+>>  	else
+>>  		agg_avg_rate = qn->sum_avg[ctx];
+>>  
+>> -	if (qp->ab_coeff) {
+>> -		agg_avg_rate = agg_avg_rate * qp->ab_coeff;
+>> +	if (qn->ab_coeff) {
+>> +		agg_avg_rate = agg_avg_rate * qn->ab_coeff;
+>>  		agg_avg_rate = div_u64(agg_avg_rate, 100);
+>>  	}
+>>  
+>> -	if (qp->ib_coeff) {
+>> +	if (qn->ib_coeff) {
+>>  		agg_peak_rate = qn->max_peak[ctx] * 100;
+>> -		agg_peak_rate = div_u64(qn->max_peak[ctx], qp->ib_coeff);
+>> +		agg_peak_rate = div_u64(qn->max_peak[ctx], qn->ib_coeff);
+>>  	} else {
+>>  		agg_peak_rate = qn->max_peak[ctx];
+>>  	}
+>> @@ -563,6 +563,12 @@ int qnoc_probe(struct platform_device *pdev)
+>>  	for (i = 0; i < num_nodes; i++) {
+>>  		size_t j;
+>>  
+>> +		if (!qnodes[i]->ab_coeff)
+>> +			qnodes[i]->ab_coeff = qp->ab_coeff;
+>> +
+>> +		if (!qnodes[i]->ib_coeff)
+>> +			qnodes[i]->ib_coeff = qp->ib_coeff;
+>> +
+>>  		node = icc_node_create(qnodes[i]->id);
+>>  		if (IS_ERR(node)) {
+>>  			ret = PTR_ERR(node);
+>> diff --git a/drivers/interconnect/qcom/icc-rpm.h b/drivers/interconnect/qcom/icc-rpm.h
+>> index f9ef16f570be..4abf99ce2690 100644
+>> --- a/drivers/interconnect/qcom/icc-rpm.h
+>> +++ b/drivers/interconnect/qcom/icc-rpm.h
+>> @@ -103,6 +103,9 @@ struct qcom_icc_qos {
+>>   * @mas_rpm_id:	RPM id for devices that are bus masters
+>>   * @slv_rpm_id:	RPM id for devices that are bus slaves
+>>   * @qos: NoC QoS setting parameters
+>> + * @ab_coeff: a percentage-based coefficient for compensating the AB calculations
+>> + * @ib_coeff: an inverse-percentage-based coefficient for compensating the IB calculations
+>> + * @bus_clk_rate: a pointer to an array containing bus clock rates in Hz
 > 
-> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
-> ---
-
-> +struct qcom_cc {
-> +	struct qcom_reset_controller reset;
-> +	struct clk_regmap **rclks;
-> +	size_t num_rclks;
-> +};
-This all, including the probe func, is required because of the MDIO dance,
-I assume?
-
-Commonizing that would make more sense should more clocks like this appear
-in the future.
-
-[...]
-
-> +static struct clk_branch nss_cc_switch_core_clk = {
-> +	.halt_reg = 0x8,
-> +	.clkr = {
-> +		.enable_reg = 0x8,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(const struct clk_init_data) {
-> +			.name = "nss_cc_switch_core_clk",
-> +			.parent_hws = (const struct clk_hw *[]) {
-> +				&nss_cc_switch_core_clk_src.clkr.hw,
-> +			},
-> +			.num_parents = 1,
-> +			/* Can be disabled in PHY mode for power saving */
-Well it clearly cannot be disabled if it has the CLK_IS_CRITICAL flag :D
-
-What's the "PHY mode" you're talking about?
-
-> +			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
-> +			.ops = &clk_branch2_mdio_ops,
-> +		},
-> +	},
-> +};
-I see a whole bunch of CRITICAL clocks.. please make sure these clocks
-are actually necessary for Linux to know about (i.e. if we don't need
-to call any operations on them, we might just skip registering them
-with the driver).
+> Nitpick: The doc comment needs to be moved to the earlier patch as well. :)
+Gah :P
 
 Konrad
-
