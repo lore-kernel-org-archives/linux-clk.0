@@ -2,167 +2,130 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 734CBC001DE
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Aug 2023 07:26:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9464BC001DB
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Aug 2023 07:41:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231452AbjHJH01 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Aug 2023 03:26:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35736 "EHLO
+        id S230478AbjHJHlO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Aug 2023 03:41:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230414AbjHJH00 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Aug 2023 03:26:26 -0400
-Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [81.169.146.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1EAA1702;
-        Thu, 10 Aug 2023 00:26:24 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1691652383; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=KB2DFU30a1YvoNndtS4AuBaHreOKdEzNXF7atTki1SQVOS6AcJV7mtjBa3qYnPpc+v
-    /ovwVTh+WgObncaxjMK66INcGWANNIIGUf+HX1kY13ODB2HuHuAa8E8cRMTSvTX7hR9x
-    WsYYX7c02xhgWsPdKk9n79lCaFKUhbmFbkxnwz3TNLMY0bpScoEeG3wUj/qEWT3Oad86
-    +u9YIW1SKzAR2Zzw2KI3VDV6kJmbJFHk2r26Y9fcGIjd/+Jy5pmbzYQ6Fc7W2tbjAJH4
-    PlZSEwCMqBSQYlhP0SdBZ1rAOuuwUSKHi45x0Zm/5DFxmzPTpMobbjclbdmb2LetRdE5
-    4L5w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1691652383;
-    s=strato-dkim-0002; d=strato.com;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=0Rr3nfIUTBtmquynQXPg4wRDgxZJdkg5bZtxOSRKMjM=;
-    b=FwBOpL2uc84PQEk8F+HRnK7A+36zGi8UTQXVWXyxKi6GwOkeNBkhtz8L50r6UvrOy9
-    Flz7RBAWvq0eOHk87KuukXG1v8QNel8TBDl/le3toUnqM9DNQxGQZENwv4jhWF2JRwNg
-    85WVAxwXCI9b7N6Z7x6Z0H2Sw1kPoKJxuI96djK/nYsLzy6N6NYZaPE4qqvO6bG5T+I2
-    /O4ealQWqXaN9bh5MfYvzdgiijb6xN9Fuuz9gja7srtUqDnu5BVaU3y2+lhVxio/IH+1
-    8HLyY0VrOzjqTTItHxTKBprkcUJ40d+RsLeaM8JuQqAC09VH/fJfn3G1Z766tH51NGSF
-    SBWw==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo02
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1691652383;
-    s=strato-dkim-0002; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=0Rr3nfIUTBtmquynQXPg4wRDgxZJdkg5bZtxOSRKMjM=;
-    b=HVv47YHUI7kjPN20xBmlfMuuazP0Bxyp4SPgMkLSjuLcWakde4/VOo6yqLGBUo5e/j
-    lA4HRvCDE0rVgL+GOluqyl9mFflcOL3wjYmZ/4WjzdJTrnz8CIjgDhuHIAlBfBWM5eiL
-    tI5prdwfAbbykk9MpCKU218HC4FCviVkyOt2sNVByMHFVvP/csxwIRe3IWX8SB0APNEK
-    ssN3XX0+VtgB5J2E5liPPm/W9DkM4+FDhC+d2G2hHz+EIRRxWcDhffqP7WE5/Zjt0wke
-    QzeL/+0jFNbyYTIhhg9DsJlWiaiwKlwA0XXUdnasX5FI/b6+mpbQKAkmGPvE10Sc7op8
-    WndA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1691652383;
-    s=strato-dkim-0003; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=0Rr3nfIUTBtmquynQXPg4wRDgxZJdkg5bZtxOSRKMjM=;
-    b=SSDJJe8NJuJpJ4T5YsD7hbK2+ydI+quEBtRk97SSIMhj7OpOMqzV57LxUfnDr9k6PD
-    UGpbY7j4DEqqPlKLD7DQ==
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u261EJF5OxJD4peA8p+L1A=="
-Received: from gerhold.net
-    by smtp.strato.de (RZmta 49.6.6 DYNA|AUTH)
-    with ESMTPSA id k61817z7A7QMpUZ
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-    Thu, 10 Aug 2023 09:26:22 +0200 (CEST)
-Date:   Thu, 10 Aug 2023 09:26:21 +0200
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>,
+        with ESMTP id S231452AbjHJHlM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Aug 2023 03:41:12 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6E0C268E
+        for <linux-clk@vger.kernel.org>; Thu, 10 Aug 2023 00:40:57 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-3fe32016bc8so4898445e9.1
+        for <linux-clk@vger.kernel.org>; Thu, 10 Aug 2023 00:40:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1691653256; x=1692258056;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
+        bh=gE2eDLacDaK6AX9g7TV9Vf/L1NM82eB/CdmYKIBQ0yA=;
+        b=4f49vXO7A6Gc22laJ+7VCPltLWc7kgewzD7rQNR7bZkqGKS/AOyyISRqmG1WU0Ohi2
+         wHSBViH7T91diiDguLUk/9Zx7Y7AREAjuWTOcvAuvCAxmoJcBVF5ot4Qo+8ppO3RHIVe
+         zPqkQ8gIus+gqvKLI3Ek+GR9jWUObFmaGYkVcDPYYaTahfmlhUNSPCe6K9wqvcUzlF0W
+         JIoTjqnupVjQaAysnR1UBUyNiW4aSnyisHit2TbeKjzYtkENez+gesZ7l/le0oBcujOc
+         70oHShCnOBXZFZal4b/l6CH/37WPgsEBkxQyUkgUR0MWDIf18Z6crIAp9bVmsnwaZkxK
+         Iqlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691653256; x=1692258056;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gE2eDLacDaK6AX9g7TV9Vf/L1NM82eB/CdmYKIBQ0yA=;
+        b=lnTcTQt8JUZvTxbkEwAgWa57gLFX2iYKWDgC1Bm4NJoLtJ/KIUvuzXbSqcm+CIYOHX
+         3OrA4Cteb2OZRd06+CnOT7w6gNMBkKhfNkfFpHkPweOqFwjrVoAKyIHOBge/ZfY6TuG8
+         2AxoUOL7Z91obylZF7VkCqM3witVVkyq5w+hESoZ9IwdeoJ8ynCUL2YXbTWS6C3kWTfW
+         JNh7KV8QrX17FKQbziedlzG71MXdgqtfLnjao+N+cHe6u9FcWGqi53KQHuJWwaQXyAmh
+         wdW81ia30kjPncaXR2Td7E2CKNtzChIPEpIuXTvJsq/+vMedshBf+K9z7344CfF2T26g
+         zDng==
+X-Gm-Message-State: AOJu0YwlTx0mBEF6uOh91N1Q/u4q9Wa1HVH6yhKq80s4SBtTbUIm2K1q
+        S/6hnItBuJeIrPPSSm5aA50f/Q==
+X-Google-Smtp-Source: AGHT+IE8Ia4n/NlmCa7gXROhXWJu+aGPVlwNFSbpVUlGZ2/Xb3DQjt4SzY+WI2mGYzsua3kBvb0uow==
+X-Received: by 2002:a7b:cd09:0:b0:3f9:c8b2:dfbd with SMTP id f9-20020a7bcd09000000b003f9c8b2dfbdmr1136560wmj.19.1691653256226;
+        Thu, 10 Aug 2023 00:40:56 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:6d73:1494:dad2:6a13])
+        by smtp.gmail.com with ESMTPSA id c14-20020a05600c0ace00b003fe4548188bsm4113626wmr.48.2023.08.10.00.40.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Aug 2023 00:40:55 -0700 (PDT)
+References: <20230808194811.113087-1-alexander.stein@mailbox.org>
+ <1j5y5obt0u.fsf@starbuckisacylon.baylibre.com>
+ <a48b1a97-2286-d2f9-742e-d718adcf1eed@linaro.org>
+ <8294548.NyiUUSuA9g@kongar>
+ <5c852193-9298-af2e-2b7d-dbba29768fec@linaro.org>
+User-agent: mu4e 1.8.13; emacs 28.2
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alexander Stein <alexander.stein@mailbox.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 04/10] interconnect: qcom: icc-rpm: Check for
- node-specific rate coefficients
-Message-ID: <ZNSRHVC8Ay5YSLQi@gerhold.net>
-References: <20230726-topic-icc_coeff-v3-0-dee684d6cdd2@linaro.org>
- <20230726-topic-icc_coeff-v3-4-dee684d6cdd2@linaro.org>
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Dmitry Rokosov <ddrokosov@sberdevices.ru>
+Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/1] dt-bindings: clock: meson: Convert axg-audio-clkc
+ to YAML format
+Date:   Thu, 10 Aug 2023 09:32:09 +0200
+In-reply-to: <5c852193-9298-af2e-2b7d-dbba29768fec@linaro.org>
+Message-ID: <1jwmy39wfs.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230726-topic-icc_coeff-v3-4-dee684d6cdd2@linaro.org>
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Aug 08, 2023 at 01:43:35PM +0200, Konrad Dybcio wrote:
-> Some nodes may have different coefficients than the general values for
-> bus they're attached to. Check for that and use them if present. See
-> [1], [2] for reference.
-> 
-> [1] https://github.com/sonyxperiadev/kernel/commit/7456d9779af9ad6bb9c7ee6f33d5c5a8d3648e24
-> [2] https://github.com/artem/android_kernel_sony_msm8996/commit/bf7a8985dcaf0eab5bc2562d2d6775e7e29c0f30
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> ---
->  drivers/interconnect/qcom/icc-rpm.c | 14 ++++++++++----
->  drivers/interconnect/qcom/icc-rpm.h |  5 +++++
->  2 files changed, 15 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/interconnect/qcom/icc-rpm.c b/drivers/interconnect/qcom/icc-rpm.c
-> index 1d3af4e9ead8..9c40314e03b5 100644
-> --- a/drivers/interconnect/qcom/icc-rpm.c
-> +++ b/drivers/interconnect/qcom/icc-rpm.c
-> @@ -300,14 +300,14 @@ static u64 qcom_icc_calc_rate(struct qcom_icc_provider *qp, struct qcom_icc_node
->  	else
->  		agg_avg_rate = qn->sum_avg[ctx];
->  
-> -	if (qp->ab_coeff) {
-> -		agg_avg_rate = agg_avg_rate * qp->ab_coeff;
-> +	if (qn->ab_coeff) {
-> +		agg_avg_rate = agg_avg_rate * qn->ab_coeff;
->  		agg_avg_rate = div_u64(agg_avg_rate, 100);
->  	}
->  
-> -	if (qp->ib_coeff) {
-> +	if (qn->ib_coeff) {
->  		agg_peak_rate = qn->max_peak[ctx] * 100;
-> -		agg_peak_rate = div_u64(qn->max_peak[ctx], qp->ib_coeff);
-> +		agg_peak_rate = div_u64(qn->max_peak[ctx], qn->ib_coeff);
->  	} else {
->  		agg_peak_rate = qn->max_peak[ctx];
->  	}
-> @@ -563,6 +563,12 @@ int qnoc_probe(struct platform_device *pdev)
->  	for (i = 0; i < num_nodes; i++) {
->  		size_t j;
->  
-> +		if (!qnodes[i]->ab_coeff)
-> +			qnodes[i]->ab_coeff = qp->ab_coeff;
-> +
-> +		if (!qnodes[i]->ib_coeff)
-> +			qnodes[i]->ib_coeff = qp->ib_coeff;
-> +
->  		node = icc_node_create(qnodes[i]->id);
->  		if (IS_ERR(node)) {
->  			ret = PTR_ERR(node);
-> diff --git a/drivers/interconnect/qcom/icc-rpm.h b/drivers/interconnect/qcom/icc-rpm.h
-> index f9ef16f570be..4abf99ce2690 100644
-> --- a/drivers/interconnect/qcom/icc-rpm.h
-> +++ b/drivers/interconnect/qcom/icc-rpm.h
-> @@ -103,6 +103,9 @@ struct qcom_icc_qos {
->   * @mas_rpm_id:	RPM id for devices that are bus masters
->   * @slv_rpm_id:	RPM id for devices that are bus slaves
->   * @qos: NoC QoS setting parameters
-> + * @ab_coeff: a percentage-based coefficient for compensating the AB calculations
-> + * @ib_coeff: an inverse-percentage-based coefficient for compensating the IB calculations
-> + * @bus_clk_rate: a pointer to an array containing bus clock rates in Hz
 
-Nitpick: The doc comment needs to be moved to the earlier patch as well. :)
+On Thu 10 Aug 2023 at 08:11, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
 
->   */
->  struct qcom_icc_node {
->  	unsigned char *name;
-> @@ -117,6 +120,8 @@ struct qcom_icc_node {
->  	int mas_rpm_id;
->  	int slv_rpm_id;
->  	struct qcom_icc_qos qos;
-> +	u16 ab_coeff;
-> +	u16 ib_coeff;
->  	u32 bus_clk_rate[QCOM_SMD_RPM_STATE_NUM];
->  };
->  
-> 
-> -- 
-> 2.41.0
-> 
+> On 09/08/2023 20:44, Alexander Stein wrote:
+>> Hi,
+>> 
+>> Am Mittwoch, 9. August 2023, 15:02:23 CEST schrieb Krzysztof Kozlowski:
+>>> On 09/08/2023 08:58, Jerome Brunet wrote:
+>>>>>> +      required:
+>>>>>> +        - '#reset-cells'
+>>>>>
+>>>>> else:
+>>>>>   properties:
+>>>>>     '#reset-cells': false
+>>>>> ???
+>>>>>
+>>>>>
+>>>>> You need to constrain the clocks per variant. Probably names are also
+>>>>> specific to each one, so the list of names can be moved here and you
+>>>>> keep just min/maxItems in the top level property.
+>>>>>
+>>>>
+>>>> input clock names and constraints are the same for all 3 variants.
+>>>
+>>> Then why do you have this huge, apparently unnecessary, oneOf? If it's
+>>> the same, then drop the oneOf and make number of clocks fixed.
+>> 
+>> But as far as I understand the number of clocks is not fixed. As Jerome pointed 
+>> out in the other post, it can have any combination of clocks and range from 1 
+>> up to 11, where 'pclk' is always 1st clock.
+>> I currently have no idea how to constraint that, despite limiting the number 
+>> of clock-names.
+>
+> The same as in all other clock controllers (was also present on my list
+> of useful patterns - Variable length arrays (per variant)):
+> https://elixir.bootlin.com/linux/v5.19-rc6/source/Documentation/devicetree/bindings/clock/samsung,exynos7-clock.yaml#L57
+
+In the example provided, the number and list of clocks required by each
+controller variant is fixed, if I'm reading it correctly
+
+Here the controller (regardless of the variant) accepts a maximum 29
+clock inputs. Only pclk is required. It is valid to have any of 28
+optional clocks at index 2, 3, etc ...
+
+I guess the question is how do you recommend to model that ?
+I can think of 'Anyof' with all the optional clocks repeated 28 times
+but that would be fairly ugly.
+
+>
+> Best regards,
+> Krzysztof
+
