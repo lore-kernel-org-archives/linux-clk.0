@@ -2,154 +2,180 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EAD9C001B0
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Aug 2023 11:50:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 354ACC0015E
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Aug 2023 12:04:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234529AbjHKLuN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 11 Aug 2023 07:50:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45072 "EHLO
+        id S229683AbjHKMEc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 11 Aug 2023 08:04:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230010AbjHKLuM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Aug 2023 07:50:12 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D079BDC;
-        Fri, 11 Aug 2023 04:50:10 -0700 (PDT)
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37B5hH0u029807;
-        Fri, 11 Aug 2023 11:50:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=M6ocA0XsJ5bdriibaSgFS3W+em8rBoAQKGmiD2PZuMI=;
- b=p5c3hEUzetz26gzEi9j0viRg4TeeQFLf4wGmAv3yKLFVnrIcRjv8Jggb6hl8mQFQw9ai
- eHUu4UU+SGRg3EL9IoYBe8x79SqNqUHRb+qn13+n9fWPUyw6XxuLI/NKFRoBKnKLXLBH
- A+OAZVCHOQBxoWs85ZqxTVJyXV64ROhWb4H9RhhNVfkDECb0pV4pythfqWKHGK+78MRb
- GwM4nMMW/ELj5WuFZ6YTPgkBKWxTe/eJKBQDF4u1RxKJhUi8rdqbBSeDZixdF53xtgyo
- peSESZcsSJapyHYN77OpKGeiOPkadgjhqFhVQ/HqvoDG4+d8P18lpA7R6yDJipn0yGRb vw== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3sd9061f2m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 11 Aug 2023 11:50:00 +0000
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 37BBnxKX025728
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 11 Aug 2023 11:49:59 GMT
-Received: from [10.253.77.66] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Fri, 11 Aug
- 2023 04:49:56 -0700
-Message-ID: <9a55016f-0049-f185-f2be-d138fe33384b@quicinc.com>
-Date:   Fri, 11 Aug 2023 19:49:53 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [PATCH v3 3/3] clk: qcom: add clock controller driver for
- qca8386/qca8084
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>, <andersson@kernel.org>,
-        <agross@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <conor+dt@kernel.org>, <catalin.marinas@arm.com>,
-        <will@kernel.org>, <p.zabel@pengutronix.de>
-CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_srichara@quicinc.com>
-References: <20230810115419.25539-1-quic_luoj@quicinc.com>
- <20230810115419.25539-4-quic_luoj@quicinc.com>
- <9dec09fa-a5a3-416c-9b4d-4b4c4e10320b@linaro.org>
+        with ESMTP id S233932AbjHKMEb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Aug 2023 08:04:31 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FD56122;
+        Fri, 11 Aug 2023 05:04:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1691755470; x=1723291470;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=X5WeupHKUEouF6weUT8JQrDyAm6aUY7dx1thZYTSHrQ=;
+  b=gWNw3+JVVIGR1qizX+eizCns6E42DbaA5p9Lwz9Ow0KURZcBrx5bjlnp
+   /D16nNbrLr1kAWKr1SVrTESKZlx6+x3T3m+JuQvgnuCJNv34BsrYteqpZ
+   Y3OxDRAzEthdGm4kik6fjerSDYwx+srqIo322ocj4Jfh7LsHZCbV5se5T
+   wb9FUC8p9gMUhOdDq9zWaMrPSzcWAFyQJaDgjFLOGRkq7mGy7MYG+aqgW
+   20OMdjWx821XviwgCSD/O7PP9E5VV1qqmk+TQGIBLwLYRcq6DVZ3TWiQ5
+   WdTpWvgmEJUja/kY2sOaBsC+gbjGlxTfCYfykYiM1O2OHgGzeVdBWtiC1
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10798"; a="375375992"
+X-IronPort-AV: E=Sophos;i="6.01,165,1684825200"; 
+   d="scan'208";a="375375992"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2023 05:04:29 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10798"; a="762178581"
+X-IronPort-AV: E=Sophos;i="6.01,165,1684825200"; 
+   d="scan'208";a="762178581"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by orsmga008.jf.intel.com with ESMTP; 11 Aug 2023 05:04:29 -0700
+Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.27; Fri, 11 Aug 2023 05:04:28 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.27 via Frontend Transport; Fri, 11 Aug 2023 05:04:28 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.172)
+ by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.27; Fri, 11 Aug 2023 05:04:28 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RQV6yBaGUPaU0grlRQLOcGjtOQOVgpIZaxx9mQvGcXKhymOWAQqFFoNvvP4AazwJzY9xe9MdwruRq/44sngHK0NJ7QWL26iiUDjTXoNnPF6ITigf99H2SLPJCl5LhqfI//3NWHQ4OvawzMsbX4mTnsJCgjfS3LwRQa8JpH8C2jDLBBXnpmUVPm5bCM37Oy4bhJF/Q7GE/vI3jXwmSbKyn69PlSaAwihUZ9pbBfCaUvZgyKiX5rlzPkh5NqLlW81czL36dFqC4RahSGS4whXr+o94yx9Ca1k9DH28V2Fl04XtlcocoV8sLTjTTzEkU6p5aS0Ls52LeHyex87aaSuaXg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3/7Hl5KRTWsGxwxUKJEp1MzOcEKZzdpmqrbqg0jrQ78=;
+ b=lX+mb9iMKoIdqHhqVxBjJtOsaRodAmBKAZQFjyDkgMo6bwqwTaUJvqngq88wrtvqvHAuxV4F3Bz88QBCOu0ISTmoLvbZnXWEp1Ka4YlGn/4sNiN1N84TduZ5oCxFzQPBm2ekVOKABHc5MGAtN7Gw0/udjFCB9Bn3Hd/oSBFHE19x4adCY8OIfaz337ukCRx/NlC8HJnTnAixsn3SWtlCFiHZNZtkH45LhtcFgMyMkclgJ5RHll5SeR+aJoGHqKwefvWmxxtdIdFICyYImJMl9Fz/96EThQ8zWIKh6TqBmJzUALwFMyVKk0GDmn+84l/qspLUaZuyOWiOBmTjFQaj4w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from DM6PR11MB4657.namprd11.prod.outlook.com (2603:10b6:5:2a6::7) by
+ DM6PR11MB4643.namprd11.prod.outlook.com (2603:10b6:5:2a6::10) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6678.19; Fri, 11 Aug 2023 12:04:26 +0000
+Received: from DM6PR11MB4657.namprd11.prod.outlook.com
+ ([fe80::c3cd:b8d0:5231:33a8]) by DM6PR11MB4657.namprd11.prod.outlook.com
+ ([fe80::c3cd:b8d0:5231:33a8%5]) with mapi id 15.20.6678.019; Fri, 11 Aug 2023
+ 12:04:26 +0000
+From:   "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+To:     Jakub Kicinski <kuba@kernel.org>,
+        Vadim Fedorenko <vadim.fedorenko@linux.dev>
+CC:     Jiri Pirko <jiri@resnulli.us>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "Michalik, Michal" <michal.michalik@intel.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
+        mschmidt <mschmidt@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>
+Subject: RE: [PATCH net-next v3 6/9] ice: add admin commands to access cgu
+ configuration
+Thread-Topic: [PATCH net-next v3 6/9] ice: add admin commands to access cgu
+ configuration
+Thread-Index: AQHZywpuDwdiCNcDy0Whc5QLgHa0j6/kXt0AgACiFbA=
+Date:   Fri, 11 Aug 2023 12:04:26 +0000
+Message-ID: <DM6PR11MB4657E23C21C2E34C28C56F9B9B10A@DM6PR11MB4657.namprd11.prod.outlook.com>
+References: <20230809214027.556192-1-vadim.fedorenko@linux.dev>
+        <20230809214027.556192-7-vadim.fedorenko@linux.dev>
+ <20230810192102.2932d58f@kernel.org>
+In-Reply-To: <20230810192102.2932d58f@kernel.org>
+Accept-Language: pl-PL, en-US
 Content-Language: en-US
-From:   Jie Luo <quic_luoj@quicinc.com>
-In-Reply-To: <9dec09fa-a5a3-416c-9b4d-4b4c4e10320b@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: bteA0h2er0MyN4fLjz8TxWgHkUuaijO3
-X-Proofpoint-ORIG-GUID: bteA0h2er0MyN4fLjz8TxWgHkUuaijO3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-08-11_03,2023-08-10_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
- impostorscore=0 lowpriorityscore=0 priorityscore=1501 adultscore=0
- suspectscore=0 malwarescore=0 mlxscore=0 clxscore=1015 spamscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2306200000 definitions=main-2308110108
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM6PR11MB4657:EE_|DM6PR11MB4643:EE_
+x-ms-office365-filtering-correlation-id: be7af36b-ec0d-428c-30c8-08db9a631bff
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: QgUBjoSCfjhFlH3PGUNu4oMTSlIoMvJUVmI/sJ09wS46EQbSycjphyfERLQuQU/LOsmn+LNNvS17m36nNQ7Ys5XR5WvnegBFWVDKmIPeo5nygtzIKxYiblfqzhNPl6gJ0bsXeQrWj/bTMYAvgs0CWnzueSNMygp3csI9xeLEI9S2YIibR/NNc3u+B9SIiE6mfP/n9LPjbVbayzEVszC8gLuZIUBlrQHjTQ0HP6eR2kSbhtmJkN58FCYDmwO5a7PjP1K2Q6Q0VQ90pzGLjytKOaKLB9rLc8AmalnAnK6J6yB8X4MdcVQNNZDN+dlag5mw24XrAf9Ec+2pbiNFwNl/DgQB7d+/PPzmmXRUb62YMHK/2AT/8fF+QyhBhHpgnvFMv6A8ibPwNgP9iet5GpNWeifKye1PBTgO4A+b1uc4AzKdfeW++E10/JTUbhd5Jx/oRHVc2IW/FpUwdOm7FlEOkXnBC9hppu7zEcircaluvcnqyH3VHez/3qcaGUU6KoPU4q6fPXI/hsiIyChEHJOKIBSZ36QJmYtwp37jkPLJZj91mJTCqrzQMIfUHkDH+rAVsUQ7R5W/URTVQVeKr78XMOiWz44u0/R12w5enI+Ahoz+gQ4iJZnWKAQ15aH98BA/
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR11MB4657.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(396003)(376002)(346002)(136003)(39860400002)(366004)(451199021)(1800799006)(186006)(4744005)(2906002)(52536014)(7416002)(8676002)(8936002)(5660300002)(41300700001)(316002)(66946007)(66476007)(66446008)(66556008)(4326008)(64756008)(76116006)(110136005)(478600001)(71200400001)(7696005)(9686003)(83380400001)(26005)(33656002)(55016003)(6506007)(54906003)(122000001)(38100700002)(82960400001)(86362001)(38070700005);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?cgZnte33rekRQqbG9J0JVgJV7+ZQ4KSznzm4jdbI94kaOsIVKvAneckcrZiC?=
+ =?us-ascii?Q?XXcb+eptU1u3TZl76TshAAKsL/66Sb4ekr6DlYa+5i/f1b2hp/kID7zoShIA?=
+ =?us-ascii?Q?HqPunIBDYu65rSdZqS2J6KyYswGJeGaU65IvdEb5WVReKKEV4Vt8DbdaOTeA?=
+ =?us-ascii?Q?pcqnHrScq9C1aVVhQxHc39DmyS2O4MyA/F2H+B9SLVsyIo22/wTIlsRo07V2?=
+ =?us-ascii?Q?iV4zLMbzmnseHmud/lyJl3QuhuL8IjSS3LUDyZL4oOKUUi9pE/FQmrtIPUEq?=
+ =?us-ascii?Q?zYGi3qoosdDKZij7A0WkkuPwrCQNNXbrEZ3cNcA1T1T2NQS23XV3mXH/8QPQ?=
+ =?us-ascii?Q?xkpM1v2kR7t5uEJ6VtjeTIFq3JPJ+1n/sIKxmx9kJb+6Gu5TpbPJ7bnx1LlG?=
+ =?us-ascii?Q?hXZKFxGqXe6iJ+CcFRiSuJA0GIrBG9NE2cEKig4lCUwJt8av9YjzQ2C9Eemo?=
+ =?us-ascii?Q?7Gt4mG09rVL8P3rEZ65mSg7pUUuRDPXzeF5lBMDPK3L7LH0QcknsCC/TxtJ9?=
+ =?us-ascii?Q?BkzPmvssukLeLo4b94xQJe88A3Ay+awQwSVQSGvMmzAooYD/hxY2cJ5QZpC3?=
+ =?us-ascii?Q?9gCv8nQqGKdmbevjeOTSQjIkhTngMSP6dD8p9kdLNSCXop/Rs+zbrv9tOXaa?=
+ =?us-ascii?Q?929kRKC4x+A1yZXTage3287XMqZOPL8unR5mRnFBQhKB8w4Db4axmj3pHMSg?=
+ =?us-ascii?Q?gwkAI7ZcZmOhVQwb8R8fu11zdrId0CySt761xhw16SBVPJL0ymPEXM0/OeYq?=
+ =?us-ascii?Q?ySxk2tQgwfzSQK09KHt6TNzdrBQgxu/+sSK75xDJmb5YgcJhaP0J3zL8Fv2U?=
+ =?us-ascii?Q?POJutr12V6jr2lHTmh8tlMYfDnIFwdY5MtqfGBexA/U20sAbme0Ye27cSLm2?=
+ =?us-ascii?Q?fg9ue48dYEevrEkeiUHi1uxIkcDvSlDH+G+oNu4v5TOXDU6RsWwoVu3y/yO/?=
+ =?us-ascii?Q?fatClQgdcvmuw5Ty18OsxsbT1djd3L3Mrxcum1L+zeudfKnZNHwP3AyM6SJS?=
+ =?us-ascii?Q?UN0W+id/qnyJ++MnLE4wZ/K4FRMlGqbD6CYMAMQU/IK1X+Ji5aJ8MUAnevH3?=
+ =?us-ascii?Q?9GxskS5+G5dhhvw7fOo4ZJShluHmTZUfpaskSbx+DFQYM+UyggLxEc7EGcwz?=
+ =?us-ascii?Q?G1PaO2QjdcZ9ot6vhUpr1eKlzFBxJMP99IQFMkX8YsFGiBV/xSQUAdxJqsgq?=
+ =?us-ascii?Q?ud4wLXfUYYPoxYV1kvXbB55r1eTmZatBZ6A3e3pLX9Nbon8b27KM+NTLW2d7?=
+ =?us-ascii?Q?9uMIGcahlR2TCMKUvyLqxbYATTGuwnQ9Us/PJa4Mvns0mOiBC225auRUGzdw?=
+ =?us-ascii?Q?MkXpiWpgCU9knbjU2hmgcopouDX8tsgw49VhmbNGcWBEmbqGqLvCD1Yxq+gw?=
+ =?us-ascii?Q?ev4wGVwak3kHUOI1NuXWXMkAzG1FfdyfMh425gxLBwAX9F6eu2rbwSyPobr6?=
+ =?us-ascii?Q?a1Q8I94I0Lbls7I6wqhIhlNwdt5FkUvvgQZZGmEScYpG24IKAKZSN1QzTy4i?=
+ =?us-ascii?Q?GOGwethkIF2jzaJgyMfLQx2Aohmlg6EjwbFgUakuPAOjpEaRuUDLBlbMNqYe?=
+ =?us-ascii?Q?J2tR+9ytaAEtSszUQaOwENIVezBJ9yFVivLr/OlcaSrkKHTHyY7OB/wZDH3D?=
+ =?us-ascii?Q?wA=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR11MB4657.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: be7af36b-ec0d-428c-30c8-08db9a631bff
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Aug 2023 12:04:26.4656
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: G9QyhwIr/smx0VukbZTubp5nM4OehPTqJQkL41XU0N6MwWp6GmWaD2vkX8enf+wFG8ZWHhSQiQ0DyYLTcVo8bKqEM6Z2SBaCUieuy4x9i0I=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB4643
+X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 8/10/2023 8:59 PM, Konrad Dybcio wrote:
-> On 10.08.2023 13:54, Luo Jie wrote:
->> Add clock & reset controller driver for qca8386/qca8084.
+>From: Jakub Kicinski <kuba@kernel.org>
+>Sent: Friday, August 11, 2023 4:21 AM
+>
+>On Wed,  9 Aug 2023 22:40:24 +0100 Vadim Fedorenko wrote:
+>> From: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
 >>
->> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
->> ---
-> 
->> +struct qcom_cc {
->> +	struct qcom_reset_controller reset;
->> +	struct clk_regmap **rclks;
->> +	size_t num_rclks;
->> +};
-> This all, including the probe func, is required because of the MDIO dance,
-> I assume?
-> 
-> Commonizing that would make more sense should more clocks like this appear
-> in the future.
-> 
-Hi Konrad,
-Thanks for the review.
-the structure qcom_cc is not because of MDIO dance, this is the common 
-structure used by other qcom clock drivers such as gcc-ipq9574 in the 
-probe function.
+>> Add firmware admin command to access clock generation unit
+>> configuration, it is required to enable Extended PTP and SyncE features
+>> in the driver.
+>> Add definitions of possible hardware variations of input and output pins
+>> related to clock generation unit and functions to access the data.
+>
+>Doesn't build, but hold off a little with reposting, please hopefully
+>I'll have more time tomorrow to review.
 
-seems that we can't make any more commonization on this, please let me 
-know if there is any idea on this.
+Yes, we already find out, it doesn't build when applied to latest net-next/=
+main.
+I have prepared a fixes and sent to Vadim, but still waiting for answer if =
+he
+could send v4 with those, or if I shall submit them separately.
 
-> [...]
-> 
->> +static struct clk_branch nss_cc_switch_core_clk = {
->> +	.halt_reg = 0x8,
->> +	.clkr = {
->> +		.enable_reg = 0x8,
->> +		.enable_mask = BIT(0),
->> +		.hw.init = &(const struct clk_init_data) {
->> +			.name = "nss_cc_switch_core_clk",
->> +			.parent_hws = (const struct clk_hw *[]) {
->> +				&nss_cc_switch_core_clk_src.clkr.hw,
->> +			},
->> +			.num_parents = 1,
->> +			/* Can be disabled in PHY mode for power saving */
-> Well it clearly cannot be disabled if it has the CLK_IS_CRITICAL flag :D
-> 
-> What's the "PHY mode" you're talking about?
-Yes, the clock with flag CLK_IS_CRITICAL needs to be enabled, the 
-hardware register needs to be configured to enable it, it is disabled by 
-default.
-
-this clock branch is necessary for the switch mode that has switch 
-features such routing and fdb forwarding, i will remove the 
-CLK_IS_CRITICAL from the clock that is not needed for the PHY mode, we 
-can enable it later when configuring it as switch mode.
-
-As for PHY mode, the device works as only PHY device, that includes 4 
-PHY ports, no switch functions.
-
-> 
->> +			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
->> +			.ops = &clk_branch2_mdio_ops,
->> +		},
->> +	},
->> +};
-> I see a whole bunch of CRITICAL clocks.. please make sure these clocks
-> are actually necessary for Linux to know about (i.e. if we don't need
-> to call any operations on them, we might just skip registering them
-> with the driver).
-> 
-> Konrad
-> 
-yes, Konrad, the clocks with  CLK_IS_CRITICAL need to be enabled 
-manually, all clocks are disabled after reset(by default).
+Thank you!
+Arkadiusz
