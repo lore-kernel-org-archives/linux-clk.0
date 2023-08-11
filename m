@@ -2,94 +2,154 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E078C001B0
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Aug 2023 11:45:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EAD9C001B0
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Aug 2023 11:50:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236108AbjHKLpY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 11 Aug 2023 07:45:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36862 "EHLO
+        id S234529AbjHKLuN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 11 Aug 2023 07:50:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236201AbjHKLpU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Aug 2023 07:45:20 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 675DA26B6;
-        Fri, 11 Aug 2023 04:45:18 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id F14626705C;
-        Fri, 11 Aug 2023 11:45:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 642CAC433C7;
-        Fri, 11 Aug 2023 11:45:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691754317;
-        bh=UW0hV6I6tsk7xP4sIHoTq3TIb8NWElED9yus/Ag5psY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J9e/oH0fSZSuJXnUf67G9HS9B7snpdr8eoUrOxr1p9HpM0zMQCUJk2Ij/XUpPW9cN
-         e0uISWE10kz+q193lQdMSJVaghhpsDok7Wm6yL5EcGqsjkLwOVfJDA3ajhVdUnYmt5
-         412ByaU0btlPI/0M+Yq8pSYF0pgdEcXeuN7bzPDZQLy2Lxq4VysTHL7vCG1CjlC8E6
-         QbwHX5kU7O83CEenJdsZqnpoxqEnOihXwWWqPDOGljjVVgoFNTIVWwFVTUZEesidGJ
-         FK5MSk9xl7e39FX5r0D5Jpmq546J87MgAW2qAI3MTJyOGPJqvNYB8cX5FNX6Of0M7j
-         hO/oxHsshlw4w==
-From:   Will Deacon <will@kernel.org>
-To:     Andy Gross <agross@kernel.org>, Joerg Roedel <joro@8bytes.org>,
-        Rajendra Nayak <quic_rjendra@quicinc.com>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Joonwoo Park <joonwoop@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Imran Khan <kimran@codeaurora.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Jeffrey Hugo <quic_jhugo@quicinc.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>
-Cc:     catalin.marinas@arm.com, kernel-team@android.com,
-        Will Deacon <will@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        linux-arm-msm@vger.kernel.org, iommu@lists.linux.dev,
-        Jami Kettunen <jami.kettunen@somainline.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v3 0/6] MMCC MSM8998 fixes
-Date:   Fri, 11 Aug 2023 12:44:55 +0100
-Message-Id: <169175360735.3925957.9255014355088010270.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20230531-topic-8998_mmssclk-v3-0-ba1b1fd9ee75@linaro.org>
-References: <20230531-topic-8998_mmssclk-v3-0-ba1b1fd9ee75@linaro.org>
+        with ESMTP id S230010AbjHKLuM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Aug 2023 07:50:12 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D079BDC;
+        Fri, 11 Aug 2023 04:50:10 -0700 (PDT)
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37B5hH0u029807;
+        Fri, 11 Aug 2023 11:50:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=M6ocA0XsJ5bdriibaSgFS3W+em8rBoAQKGmiD2PZuMI=;
+ b=p5c3hEUzetz26gzEi9j0viRg4TeeQFLf4wGmAv3yKLFVnrIcRjv8Jggb6hl8mQFQw9ai
+ eHUu4UU+SGRg3EL9IoYBe8x79SqNqUHRb+qn13+n9fWPUyw6XxuLI/NKFRoBKnKLXLBH
+ A+OAZVCHOQBxoWs85ZqxTVJyXV64ROhWb4H9RhhNVfkDECb0pV4pythfqWKHGK+78MRb
+ GwM4nMMW/ELj5WuFZ6YTPgkBKWxTe/eJKBQDF4u1RxKJhUi8rdqbBSeDZixdF53xtgyo
+ peSESZcsSJapyHYN77OpKGeiOPkadgjhqFhVQ/HqvoDG4+d8P18lpA7R6yDJipn0yGRb vw== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3sd9061f2m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 11 Aug 2023 11:50:00 +0000
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 37BBnxKX025728
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 11 Aug 2023 11:49:59 GMT
+Received: from [10.253.77.66] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Fri, 11 Aug
+ 2023 04:49:56 -0700
+Message-ID: <9a55016f-0049-f185-f2be-d138fe33384b@quicinc.com>
+Date:   Fri, 11 Aug 2023 19:49:53 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Subject: Re: [PATCH v3 3/3] clk: qcom: add clock controller driver for
+ qca8386/qca8084
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>, <andersson@kernel.org>,
+        <agross@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <conor+dt@kernel.org>, <catalin.marinas@arm.com>,
+        <will@kernel.org>, <p.zabel@pengutronix.de>
+CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_srichara@quicinc.com>
+References: <20230810115419.25539-1-quic_luoj@quicinc.com>
+ <20230810115419.25539-4-quic_luoj@quicinc.com>
+ <9dec09fa-a5a3-416c-9b4d-4b4c4e10320b@linaro.org>
+Content-Language: en-US
+From:   Jie Luo <quic_luoj@quicinc.com>
+In-Reply-To: <9dec09fa-a5a3-416c-9b4d-4b4c4e10320b@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: bteA0h2er0MyN4fLjz8TxWgHkUuaijO3
+X-Proofpoint-ORIG-GUID: bteA0h2er0MyN4fLjz8TxWgHkUuaijO3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-08-11_03,2023-08-10_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ impostorscore=0 lowpriorityscore=0 priorityscore=1501 adultscore=0
+ suspectscore=0 malwarescore=0 mlxscore=0 clxscore=1015 spamscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2306200000 definitions=main-2308110108
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 09 Aug 2023 21:20:23 +0200, Konrad Dybcio wrote:
-> 8998 has a couple of issues related to its clock controllers. This series
-> attemps to fix some of them.
+
+
+On 8/10/2023 8:59 PM, Konrad Dybcio wrote:
+> On 10.08.2023 13:54, Luo Jie wrote:
+>> Add clock & reset controller driver for qca8386/qca8084.
+>>
+>> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+>> ---
 > 
-> The DT patch should go in first for bisectability, otherwise
-> clk/pd_ignore_unused will need to be used, as the SMMU GDSC is no longer
-> considered always-on.
+>> +struct qcom_cc {
+>> +	struct qcom_reset_controller reset;
+>> +	struct clk_regmap **rclks;
+>> +	size_t num_rclks;
+>> +};
+> This all, including the probe func, is required because of the MDIO dance,
+> I assume?
 > 
+> Commonizing that would make more sense should more clocks like this appear
+> in the future.
+> 
+Hi Konrad,
+Thanks for the review.
+the structure qcom_cc is not because of MDIO dance, this is the common 
+structure used by other qcom clock drivers such as gcc-ipq9574 in the 
+probe function.
+
+seems that we can't make any more commonization on this, please let me 
+know if there is any idea on this.
+
 > [...]
+> 
+>> +static struct clk_branch nss_cc_switch_core_clk = {
+>> +	.halt_reg = 0x8,
+>> +	.clkr = {
+>> +		.enable_reg = 0x8,
+>> +		.enable_mask = BIT(0),
+>> +		.hw.init = &(const struct clk_init_data) {
+>> +			.name = "nss_cc_switch_core_clk",
+>> +			.parent_hws = (const struct clk_hw *[]) {
+>> +				&nss_cc_switch_core_clk_src.clkr.hw,
+>> +			},
+>> +			.num_parents = 1,
+>> +			/* Can be disabled in PHY mode for power saving */
+> Well it clearly cannot be disabled if it has the CLK_IS_CRITICAL flag :D
+> 
+> What's the "PHY mode" you're talking about?
+Yes, the clock with flag CLK_IS_CRITICAL needs to be enabled, the 
+hardware register needs to be configured to enable it, it is disabled by 
+default.
 
-Applied bindings patch to will (for-joerg/arm-smmu/bindings), thanks!
+this clock branch is necessary for the switch mode that has switch 
+features such routing and fdb forwarding, i will remove the 
+CLK_IS_CRITICAL from the clock that is not needed for the PHY mode, we 
+can enable it later when configuring it as switch mode.
 
-[6/6] dt-bindings: arm-smmu: Fix MSM8998 clocks description
-      https://git.kernel.org/will/c/b606e2e8eded
+As for PHY mode, the device works as only PHY device, that includes 4 
+PHY ports, no switch functions.
 
-Cheers,
--- 
-Will
-
-https://fixes.arm64.dev
-https://next.arm64.dev
-https://will.arm64.dev
+> 
+>> +			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+>> +			.ops = &clk_branch2_mdio_ops,
+>> +		},
+>> +	},
+>> +};
+> I see a whole bunch of CRITICAL clocks.. please make sure these clocks
+> are actually necessary for Linux to know about (i.e. if we don't need
+> to call any operations on them, we might just skip registering them
+> with the driver).
+> 
+> Konrad
+> 
+yes, Konrad, the clocks with  CLK_IS_CRITICAL need to be enabled 
+manually, all clocks are disabled after reset(by default).
