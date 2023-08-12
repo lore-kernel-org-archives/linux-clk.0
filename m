@@ -2,102 +2,98 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C80E2C04A94
-	for <linux-clk@archiver.kernel.org>; Sat, 12 Aug 2023 10:04:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5621DC001B0
+	for <linux-clk@archiver.kernel.org>; Sat, 12 Aug 2023 10:26:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234418AbjHLKEF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 12 Aug 2023 06:04:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53554 "EHLO
+        id S233486AbjHLK0G (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 12 Aug 2023 06:26:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236752AbjHLKEB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 12 Aug 2023 06:04:01 -0400
-Received: from mx.skole.hr (mx2.hosting.skole.hr [161.53.165.186])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4162E26A0;
-        Sat, 12 Aug 2023 03:04:01 -0700 (PDT)
-Received: from mx2.hosting.skole.hr (localhost.localdomain [127.0.0.1])
-        by mx.skole.hr (mx.skole.hr) with ESMTP id C60F48406F;
-        Sat, 12 Aug 2023 12:03:58 +0200 (CEST)
+        with ESMTP id S229727AbjHLK0F (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 12 Aug 2023 06:26:05 -0400
+Received: from mx.skole.hr (mx1.hosting.skole.hr [161.53.165.185])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3CED170D;
+        Sat, 12 Aug 2023 03:26:08 -0700 (PDT)
+Received: from mx1.hosting.skole.hr (localhost.localdomain [127.0.0.1])
+        by mx.skole.hr (mx.skole.hr) with ESMTP id 293A182A9B;
+        Sat, 12 Aug 2023 12:26:07 +0200 (CEST)
 From:   =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Subject: [PATCH v2 0/4] clk: marvell: Move number of clocks to driver
- source
-Date:   Sat, 12 Aug 2023 12:02:55 +0200
-Message-Id: <20230812-mmp-nr-clks-v2-0-f9271bd7eaa5@skole.hr>
+Date:   Sat, 12 Aug 2023 12:25:05 +0200
+Subject: [PATCH v5 1/8] gpio: pxa: disable pinctrl calls for MMP_GPIO
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAM9Y12QC/23MQQ7CIBCF4as0s3YMUK3UlfcwXQgdhLSFBgzRN
- Nxd7Nrl/5L3bZAoOkpwbTaIlF1ywdcQhwa0ffgnoRtrg2CiZZL1uCwr+oh6nhJetGR04h11ykB
- 9rJGMe+/afahtXXqF+NnxzH/rfydzZHg2rR6VUrJX8pamMNPRRhhKKV/5NMhkpQAAAA==
-To:     Michael Turquette <mturquette@baylibre.com>,
+Message-Id: <20230812-pxa1908-lkml-v5-1-a5d51937ee34@skole.hr>
+References: <20230812-pxa1908-lkml-v5-0-a5d51937ee34@skole.hr>
+In-Reply-To: <20230812-pxa1908-lkml-v5-0-a5d51937ee34@skole.hr>
+To:     Robert Jarzmik <robert.jarzmik@free.fr>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Andy Shevchenko <andy@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org,
+        Conor Dooley <conor+dt@kernel.org>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Tony Luck <tony.luck@intel.com>,
+        "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
         =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-hardening@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        afaerber@suse.de
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1692;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=717;
  i=duje.mihanovic@skole.hr; h=from:subject:message-id;
- bh=cJRDswR60Gmq60WcoCzCVYt6uob84DCT479ZE1hE9II=;
- b=owEBbQKS/ZANAwAIAZoRnrBCLZbhAcsmYgBk11jVKQCc8SXUGxEtD639y/2mgmr2NmNH7gm/7
- DXjCTZA3a+JAjMEAAEIAB0WIQRT351NnD/hEPs2LXiaEZ6wQi2W4QUCZNdY1QAKCRCaEZ6wQi2W
- 4SseD/4hfBVKlj4oGiG+fcE8YDmZFgCsUxEoyrQGraYmb7D5hEUbxeRctcpOtfaKjjLM3nG2UxF
- RwVsuTueEmuo+4tEeIq/axikUxUhkQvBntxGmgZ5FbZ3jklhA+19qt1ufOPSDeNdOfykczMJ2zt
- ++xtk7M+vuUjmW20pHfilFIyx0owQhU8lopvzHSGPcJRYpvITxJUHgbbKlTBwKLUdjM5nNjtQic
- iSPuKDOIKOZnDQcqYFjP7VDDcwIcS8mdqD0MS/sVNZcieIvgV2Jj9XsQxz7zxbKDcTlETscqlpo
- 0nNE6YbDaw1J/ztF9qRCL/fLNIknO0tHZqEZZlzS2SPqpJHBtg8Hr7LvBiKvtB/pzL6o8bb6Bhl
- gjBx5dayhq0pPX4T8K4wJP0IzmGS81SBKN26Y41MSfsDyjJ27A9lc9aEs/sx8KZWLycR5MUc0Rl
- sgCxDprhI1pOuGq3bfa2JQdEtY8u1dSaqGcxLAXLKUuWgZuV6encAENQtQHdkyaJupHGeRznEzY
- cVv3m8ao0mt9ieHu5rmUBbAgeDSWQG4DnfhOdJQ/QX8igk2ISXx2Oo25IImQWe8OGhG4Rej/OzD
- Ip2Ryd0vdU3owS0VIRQBI6nucQGghl6uK+ihZyo3VTI1uYu04etvlg+D6+3CUErJ91vGqZjhdti
- 0yYKrL0LALPf8Qg==
+ bh=KpHlcLrUY59P26MylBMaHpzA91WHfXQj5w9V31CEE9k=;
+ b=owEBbQKS/ZANAwAIAZoRnrBCLZbhAcsmYgBk114Ejn0o+sJ9R66MpkeqR5THvpE/2hx19CFsu
+ I+erCRU2huJAjMEAAEIAB0WIQRT351NnD/hEPs2LXiaEZ6wQi2W4QUCZNdeBAAKCRCaEZ6wQi2W
+ 4U+wD/4rCSSTNj8ky6MrA4t2w8MZUprN7nQFoRNWTzeT1k/JBeLJD232B4AWHVBaN8s645nc8zZ
+ t/uLIrN77JlBAzm9+qTc97mF3MPZ3bmrxlRLgnqnLWxg+l+B+PmA4GzmoIw7QN1qW6F3De+LPkl
+ yfIMQX653+tM16G8/P4FTzM/jcc4QvVmjuWEjLfv/Ocz0+5BuQxuqODvOVaMFZIsqimCp2ocYdB
+ Uf6Br+DO06FPqtJ1+SEH2fUR8W/D6sR0K0D0dA3syjHqbN1tiUNlc74zJB6zFeZqciFt2f28OoP
+ 27sT3lXuTCuj2CrUvF+Zs7YpfUge+P/fEyubSiAX0yvqfPfb/R5O+xFhGZhqzUwFsQ0r+nFw5UX
+ qg9N5idsmwbelsRjz5UVoBgXymjaq8ehv0k8JkC/iRKAJF6Xe4JLuPSor5s+P4CskhKHBxGz7fR
+ lwE/VpOFmjErezbJtr77NHhla7OGyTqcvkbb08q5AnWX4+Uy8nsBqs3CHEUXKNg60o8xY4PNl4k
+ zCjYDqU7WX2C3rUC/n9iJTKYlCgiproqDqGQ/kq7JgptLm+qYKuD5GctY7ilirzgUm5a32VVenv
+ BOWkAtwezBuJpuJnb0rHbaM5aXDVAuWn5lyetOgXqetp4br3+/PDSRd1BDDieLQsxybkM4N/XRu
+ TXEKM5RqVOxT1oQ==
 X-Developer-Key: i=duje.mihanovic@skole.hr; a=openpgp;
  fpr=53DF9D4D9C3FE110FB362D789A119EB0422D96E1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Similarly to PXA3xx and MMP2, pinctrl-single isn't capable of setting
+pin direction on MMP either.
 
-In v4 of my PXA1908 series, Conor suggested that the NR_CLKS variables
-in dt bindings should be moved to the respective driver source files
-because these are not used by the device trees and so are needlessly
-added to the ABI. This series does that for the rest of the Marvell
-PXA/MMP SoCs.
-
-Link: https://lore.kernel.org/r/20230808-produce-thievish-3ce1b86a114b@spud/
+Fixes: a770d946371e ("gpio: pxa: add pin control gpio direction and request")
 Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
+Reviewed-by: Andy Shevchenko <andy@kernel.org>
 ---
-Changes in v2:
-- Fix clk-audio.c compile error
-- Reword mmp2 commit to match other commits
-- Link to v1: https://lore.kernel.org/r/20230809-mmp-nr-clks-v1-0-5f3cdbbb89b8@skole.hr
+ drivers/gpio/gpio-pxa.c | 1 +
+ 1 file changed, 1 insertion(+)
 
----
-Duje Mihanović (4):
-      clk: mmp2: Move number of clocks to driver source
-      clk: pxa168: Move number of clocks to driver source
-      clk: pxa1928: Move number of clocks to driver source
-      clk: pxa910: Move number of clocks to driver source
+diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
+index a1630ed4b741..d92650aecb06 100644
+--- a/drivers/gpio/gpio-pxa.c
++++ b/drivers/gpio/gpio-pxa.c
+@@ -238,6 +238,7 @@ static bool pxa_gpio_has_pinctrl(void)
+ 	switch (gpio_type) {
+ 	case PXA3XX_GPIO:
+ 	case MMP2_GPIO:
++	case MMP_GPIO:
+ 		return false;
+ 
+ 	default:
 
- drivers/clk/mmp/clk-audio.c                    | 6 ++++--
- drivers/clk/mmp/clk-of-mmp2.c                  | 4 +++-
- drivers/clk/mmp/clk-of-pxa168.c                | 4 +++-
- drivers/clk/mmp/clk-of-pxa1928.c               | 7 +++++--
- drivers/clk/mmp/clk-of-pxa910.c                | 4 +++-
- include/dt-bindings/clock/marvell,mmp2-audio.h | 1 -
- include/dt-bindings/clock/marvell,mmp2.h       | 1 -
- include/dt-bindings/clock/marvell,pxa168.h     | 1 -
- include/dt-bindings/clock/marvell,pxa1928.h    | 3 ---
- include/dt-bindings/clock/marvell,pxa910.h     | 1 -
- 10 files changed, 18 insertions(+), 14 deletions(-)
----
-base-commit: 52a93d39b17dc7eb98b6aa3edb93943248e03b2f
-change-id: 20230809-mmp-nr-clks-7c80e416e6bf
-
-Best regards,
 -- 
-Duje Mihanović <duje.mihanovic@skole.hr>
+2.41.0
 
 
