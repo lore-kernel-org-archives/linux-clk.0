@@ -2,59 +2,63 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E77E4C04E69
-	for <linux-clk@archiver.kernel.org>; Sat, 12 Aug 2023 11:27:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58F32C001B0
+	for <linux-clk@archiver.kernel.org>; Sat, 12 Aug 2023 11:48:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237214AbjHLL12 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 12 Aug 2023 07:27:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34622 "EHLO
+        id S236057AbjHLLst (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 12 Aug 2023 07:48:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237238AbjHLL1S (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 12 Aug 2023 07:27:18 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A931E7E;
-        Sat, 12 Aug 2023 04:27:19 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id 2adb3069b0e04-4fe7e67cc77so4536033e87.2;
-        Sat, 12 Aug 2023 04:27:19 -0700 (PDT)
+        with ESMTP id S237084AbjHLLse (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 12 Aug 2023 07:48:34 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14B1D170C
+        for <linux-clk@vger.kernel.org>; Sat, 12 Aug 2023 04:48:37 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id 2adb3069b0e04-4fe4762173bso4554612e87.3
+        for <linux-clk@vger.kernel.org>; Sat, 12 Aug 2023 04:48:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1691839638; x=1692444438;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YF7IV/t2RnprYmLwfCnYmyCQpWT6QNpR/xfog5JcW0k=;
-        b=mrSilgtXyIjVgz3RGl4U1tDbBtEZ15EsoDGG//y24OaFWUFe+uOnVqBlF9G06W/h2j
-         CL7boTuFOG/3vLcN+OiGWEVjwodaeWNOUQ+evLNqXQn+wBHU403KhbCxhp9YDfNWhinz
-         p8hdLQoE6pDLPS3ZGe+2dorr3T2zVpTgCOYs8z7XoErSvsToN/KAy+w7TM0cgrBcRChd
-         de9U9Ti4A+5kO4KAR+jZtiRF4ML2PZhPLvOLZcv1kp9QIPwQWjrPINZ6gkYzlM8F67yj
-         QeldAXeBHTaEQT9y0hBe8nOFCtF8YsiehYD8Fr74UXaft5qoyqox0nrXtkRejii63bm/
-         rIOg==
+        d=linaro.org; s=google; t=1691840915; x=1692445715;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LfI0Ot2bUrwRsw6GQEsr9wIkJZLiGCkI2QpujSVBMAg=;
+        b=R/HD4zWtfV1t+b+V0In6rTXIT05L0LOG61TsAP2U3KsE4sETkI8CbVuEifJQKLGDZG
+         tOQyQ35RZ6esZsnw8X53E1eFKSYHoqOvzwv4SUoWoRpLzIy3UPxkkn5qy3CouQdkEbtm
+         a6rvTmNMPrPRK0KsyX7TwFOqcNYb8izvoJijEzIWoNbp0dIef/PUbCDriZ/Z1rxKg4xe
+         QXuuk+XtmPO3+iPxDsrMugOoujGw7xS0Ewadd9m4jkOcD26C7UVTGlfioP6l2IoIg4nZ
+         7nFFRZNvX4tPLW2VyUzuc2uefDCxj29A/qo74oZD+OfGKtSjemjcydFOjnpEcCHG/RHC
+         NuXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691839638; x=1692444438;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YF7IV/t2RnprYmLwfCnYmyCQpWT6QNpR/xfog5JcW0k=;
-        b=f+jfDcq7lCfhbzs/kkbiXAPrC4YXqoSCBHS5M8DF8A1MgKVlTGckyq2r7dMc7e/P8n
-         yIFvhjJYfaXAGMt+HEqv47M5aMVLjkbRckTrhPeA/EAgnFE8fP6Ec2QD7ryEYR/dMsVM
-         CmsqTf9u5qU/w2VGdCnGkGM8XC6dp/k8ti8QtsK5O6pre8rkyCoFYO0hFdG/yxdMDGz0
-         IW5C6UGwCP/xUte5eU/F5Q8P7ram+0gCGacccLrD7JN3RV8nagACplkQKPMHY/ZTivxD
-         pIuVQjHOlvGySw2elR0W1j7UgpDCnBeyaJJRvSRllRPmIZK2p2Rp35srLaUy5o2wTyvC
-         OcXw==
-X-Gm-Message-State: AOJu0YylwQG7DM6ZWFqIg6R1k8sOBjSiDbg88FSfOW2A1o0Agv2uQYMz
-        lE2yhJaoMDypuWCyrccJd5o/v/643pTsVw==
-X-Google-Smtp-Source: AGHT+IEyIrZJpbCI0kGvUIiGJg9EDT8jtoIJfftz9EptJb9uUSUdEItjjsJFcnd5+yGtZ0Zlp5scZQ==
-X-Received: by 2002:a05:6512:2814:b0:4fe:d0f:b4f7 with SMTP id cf20-20020a056512281400b004fe0d0fb4f7mr3915409lfb.65.1691839637721;
-        Sat, 12 Aug 2023 04:27:17 -0700 (PDT)
-Received: from localhost.localdomain (bzd150.neoplus.adsl.tpnet.pl. [83.30.49.150])
-        by smtp.gmail.com with ESMTPSA id w3-20020ac24423000000b004fe2f085d5csm1087289lfl.299.2023.08.12.04.27.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Aug 2023 04:27:17 -0700 (PDT)
-From:   Adam Skladowski <a39.skl@gmail.com>
+        d=1e100.net; s=20221208; t=1691840915; x=1692445715;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LfI0Ot2bUrwRsw6GQEsr9wIkJZLiGCkI2QpujSVBMAg=;
+        b=ThYor7EyW51KuB9oqDxsUOT0B20IcGmlabUD6cdx7lN9E71c8kQ5UDA9sK2WLx3yLc
+         4adVjmnmO6bf6SIzrbA404DpbUbTg91JlxiCxFKrENZgEzu+VdpyQ/ibIxH18lsjM5YZ
+         aGiuWm2qvOMnfLNzwf3xxVuezsR5bsAP8tA8JzIgJGW4pt+zpAmPI29U1j2ClCikOqF0
+         /73J/I7ygXCCXerYLETXI2mT+RbnvTR+YphaGUNaM0XqT95BPhsveRNCKGBeqWB9dRte
+         mXAEnlwGXS0CsQbVWXSdHcZkL3aanu8w6d6JJlF7seBdxaMZ21MbYB/FeCaX8FkeIkBv
+         VwZg==
+X-Gm-Message-State: AOJu0YzE1il8qoAafD0GwRYOyTD0xfR9jLg9wR2WiVs6waphU49xxeBO
+        beDr+wp2sRebhvW/0u7pJRmYyA==
+X-Google-Smtp-Source: AGHT+IGo2fBKr2DiWlhiGXKDgUrYclUgc1Whq3WazgngnzJ/Pa8W78OCICi5dMP3Avi04ASJEji2mA==
+X-Received: by 2002:a05:6512:15a7:b0:4f9:6842:afc with SMTP id bp39-20020a05651215a700b004f968420afcmr4007296lfb.64.1691840915241;
+        Sat, 12 Aug 2023 04:48:35 -0700 (PDT)
+Received: from [192.168.1.101] (abyj188.neoplus.adsl.tpnet.pl. [83.9.29.188])
+        by smtp.gmail.com with ESMTPSA id j3-20020ac24543000000b004fe10276bbfsm1090168lfm.296.2023.08.12.04.48.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 12 Aug 2023 04:48:34 -0700 (PDT)
+Message-ID: <d584a9bc-4f71-4e57-b0e5-f86173e6a20f@linaro.org>
+Date:   Sat, 12 Aug 2023 13:48:33 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/7] clk: qcom: hfpll: Allow matching pdata
+Content-Language: en-US
+To:     Adam Skladowski <a39.skl@gmail.com>
 Cc:     phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
-        Adam Skladowski <a39.skl@gmail.com>,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -64,61 +68,58 @@ Cc:     phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
         Marijn Suijten <marijn.suijten@somainline.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 7/7] arm64: dts: qcom: msm8976: Fix ipc bit shifts
-Date:   Sat, 12 Aug 2023 13:24:50 +0200
-Message-Id: <20230812112534.8610-8-a39.skl@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230812112534.8610-1-a39.skl@gmail.com>
 References: <20230812112534.8610-1-a39.skl@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+ <20230812112534.8610-4-a39.skl@gmail.com>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20230812112534.8610-4-a39.skl@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Update bits to match downstream irq-bitmask values.
+On 12.08.2023 13:24, Adam Skladowski wrote:
+> HFPLL driver can be used to drive PLLs also on different SoCs like MSM8976
+> On MSM8976 each PLL gets it own different configuration,
+> add matching pdata to driver to support multiple configurations.
+> 
+> Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
+> ---
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-Fixes: 0484d3ce0902 ("arm64: dts: qcom: Add DTS for MSM8976 and MSM8956 SoCs")
-Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
----
- arch/arm64/boot/dts/qcom/msm8976.dtsi | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/qcom/msm8976.dtsi b/arch/arm64/boot/dts/qcom/msm8976.dtsi
-index 7385d5edec04..ab6d3834e436 100644
---- a/arch/arm64/boot/dts/qcom/msm8976.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8976.dtsi
-@@ -384,7 +384,7 @@ adsp_smp2p_in: slave-kernel {
- 	smp2p-modem {
- 		compatible = "qcom,smp2p";
- 		interrupts = <GIC_SPI 27 IRQ_TYPE_EDGE_RISING>;
--		qcom,ipc = <&apcs 8 13>;
-+		qcom,ipc = <&apcs 8 14>;
- 
- 		qcom,local-pid = <0>;
- 		qcom,remote-pid = <1>;
-@@ -407,7 +407,7 @@ modem_smp2p_in: slave-kernel {
- 	smp2p-wcnss {
- 		compatible = "qcom,smp2p";
- 		interrupts = <GIC_SPI 143 IRQ_TYPE_EDGE_RISING>;
--		qcom,ipc = <&apcs 8 17>;
-+		qcom,ipc = <&apcs 8 18>;
- 
- 		qcom,local-pid = <0>;
- 		qcom,remote-pid = <4>;
-@@ -433,9 +433,9 @@ smsm {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
--		qcom,ipc-1 = <&apcs 8 12>;
-+		qcom,ipc-1 = <&apcs 8 13>;
- 		qcom,ipc-2 = <&apcs 8 9>;
--		qcom,ipc-3 = <&apcs 8 18>;
-+		qcom,ipc-3 = <&apcs 8 19>;
- 
- 		apps_smsm: apps@0 {
- 			reg = <0>;
--- 
-2.41.0
-
+Konrad
