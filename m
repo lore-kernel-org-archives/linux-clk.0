@@ -2,119 +2,113 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7F75C0015E
-	for <linux-clk@archiver.kernel.org>; Sat, 12 Aug 2023 11:20:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46414C04A94
+	for <linux-clk@archiver.kernel.org>; Sat, 12 Aug 2023 11:27:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231434AbjHLLUe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 12 Aug 2023 07:20:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51448 "EHLO
+        id S232255AbjHLL1E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 12 Aug 2023 07:27:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231307AbjHLLUe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 12 Aug 2023 07:20:34 -0400
-Received: from out-64.mta0.migadu.com (out-64.mta0.migadu.com [91.218.175.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1ECB19F
-        for <linux-clk@vger.kernel.org>; Sat, 12 Aug 2023 04:20:36 -0700 (PDT)
-Message-ID: <436629d9-dd05-7593-1439-f22c9957485d@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1691839234;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=kYo66lOIT+5jOUo4wy3zizk9GdGi3NV1HZ2V22eu1ns=;
-        b=jFz/38T66Y6siTMwiAscYuxfkEZaBMIbcW6Q2SYha5VHt/0mhzefJ1jz/KT5yfzz0mCyzN
-        dactyUAErLwrNu4EtspM8oujFFvcFRZyCSxKTMcWzmF3wYVS9feK4b5FGU+vM9VaWSDBgm
-        htWF0rUREYLroIOqRHZwxsl9zfgyWec=
-Date:   Sat, 12 Aug 2023 12:20:32 +0100
+        with ESMTP id S231307AbjHLL1D (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 12 Aug 2023 07:27:03 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 536FC110;
+        Sat, 12 Aug 2023 04:27:06 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id 2adb3069b0e04-4fe426521adso4244232e87.0;
+        Sat, 12 Aug 2023 04:27:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1691839624; x=1692444424;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LrLDm8EhYfUEnK4RhbnUNMHzrTklLh0zDri9OxXh0HM=;
+        b=gva37Gk9U90pwSQWeKYkK8Au/OjnS+YOMBEoG8r6iYskk1vk2HPkK3U/EIA2xz0P8w
+         ac2iYm3IsIlRcfEKdhK0B5dCvXmnkZFJ3eqam8/gyPYnKDRzkdxHqkd0UZfOQV6ypGRk
+         k6pLk4LrxZ3NbfGg/6q1/j7ymWL5XnmBw2iWOOBF42uPsjnsdD9pq0rmB+zdncsncbiu
+         A6hQxLxY4SgvhXZevCIuo8RAxkmNYIG1J2Z9UDUv24uFuA5yqzVd0x7YyvIeYmTe5Bk0
+         laScfvHXZreX1zudT6cPAprizc7eLkdIm2pAbGp0u80rmSUeSovQw8mFqQuYoe90vkRU
+         XbPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691839624; x=1692444424;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LrLDm8EhYfUEnK4RhbnUNMHzrTklLh0zDri9OxXh0HM=;
+        b=iyx0zY5TEON1rq4qj4XfiBZLhIowbG44IKFIVCg2SEOIx8QZEwJ2u2JjsYl6NHj1ph
+         PXdVrF9gpwpD3JJUVVthvgnuG62b2FVc/HXvy2pFai9Wbm2noj2N2DGTwi0BwnV3NZ05
+         3oXCMnfWO0ZGX5ma8pyuo7o1/Hm/yzTKJ58xanqXEtDGys2WYhko06+3YE7eyEMtQhDz
+         IjXRY26qwMT6758us2PVNCpft3fmeUQhT7VE2W6PjfclVSO/QaM0A8MxAwaFoYc5tffT
+         flpSbyX3TDeRZmI3lIy+fuGYS5vPXfDBxNjeKEgLQuUzxvK7gfPkoJDRRTAyOnEAAxRi
+         4Xyw==
+X-Gm-Message-State: AOJu0Yyab+dmVxcmDH6Pyqm6XB3ptHM40KdLVTQIL6l3yhu5BT25coix
+        acsO3YYhcG1kdAAL9h3escUAEHHLqGvujw==
+X-Google-Smtp-Source: AGHT+IF2/cJ7UE3CDLAFj8zZQGzwYdRrLLqmF2U7MPf9xjIQ/WYWZO72FV/pdnvPt37s7gmnZbtDeA==
+X-Received: by 2002:a19:7511:0:b0:4f3:b708:f554 with SMTP id y17-20020a197511000000b004f3b708f554mr2786118lfe.47.1691839624225;
+        Sat, 12 Aug 2023 04:27:04 -0700 (PDT)
+Received: from localhost.localdomain (bzd150.neoplus.adsl.tpnet.pl. [83.30.49.150])
+        by smtp.gmail.com with ESMTPSA id w3-20020ac24423000000b004fe2f085d5csm1087289lfl.299.2023.08.12.04.27.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 12 Aug 2023 04:27:03 -0700 (PDT)
+From:   Adam Skladowski <a39.skl@gmail.com>
+Cc:     phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+        Adam Skladowski <a39.skl@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        AngeloGioacchino Del Regno <kholk11@gmail.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/7] MSM8976 PLL,RPMPD and DTS changes
+Date:   Sat, 12 Aug 2023 13:24:43 +0200
+Message-Id: <20230812112534.8610-1-a39.skl@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v4 0/9] Create common DPLL configuration API
-Content-Language: en-US
-To:     Jiri Pirko <jiri@resnulli.us>, Jakub Kicinski <kuba@kernel.org>
-Cc:     Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Milena Olech <milena.olech@intel.com>,
-        Michal Michalik <michal.michalik@intel.com>,
-        linux-arm-kernel@lists.infradead.org, poros@redhat.com,
-        mschmidt@redhat.com, netdev@vger.kernel.org,
-        linux-clk@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
-        intel-wired-lan@lists.osuosl.org
-References: <20230811200340.577359-1-vadim.fedorenko@linux.dev>
- <ZNclEAXpyAFrhCh5@nanopsycho>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <ZNclEAXpyAFrhCh5@nanopsycho>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12.08.2023 07:22, Jiri Pirko wrote:
-> Fri, Aug 11, 2023 at 10:03:31PM CEST, vadim.fedorenko@linux.dev wrote:
->> Implement common API for DPLL configuration and status reporting.
->> The API utilises netlink interface as transport for commands and event
->> notifications. This API aims to extend current pin configuration
->> provided by PTP subsystem and make it flexible and easy to cover
->> complex configurations.
->>
->> Netlink interface is based on ynl spec, it allows use of in-kernel
->> tools/net/ynl/cli.py application to control the interface with properly
->> formated command and json attribute strings. Here are few command
->> examples of how it works with `ice` driver on supported NIC:
->>
->> - dump dpll devices
->> $ sudo ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml \
->> --dump device-get
->> [{'clock-id': 282574471561216,
->>   'id': 0,
->>   'lock-status': 'unlocked',
->>   'mode': 'automatic',
->>   'module-name': 'ice',
->>   'type': 'eec'},
->> {'clock-id': 282574471561216,
->>   'id': 1,
->>   'lock-status': 'unlocked',
->>   'mode': 'automatic',
->>   'module-name': 'ice',
->>   'type': 'pps'}]
->>
->> - get single pin info:
->> $ sudo ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml \
->> --do pin-get --json '{"pin-id":2}'
->> {'clock-id': 282574471561216,
->> 'module-name': 'ice',
->> 'pin-board-label': 'C827_0-RCLKA',
->> 'pin-dpll-caps': 6,
->> 'pin-frequency': 1953125,
->> 'pin-id': 2,
->> 'pin-parent-device': [{'id': 0,
->>                          'pin-direction': 'input',
->>                          'pin-prio': 11,
->>                          'pin-state': 'selectable'},
->>                         {'id': 1,
->>                          'pin-direction': 'input',
->>                          'pin-prio': 9,
->>                          'pin-state': 'selectable'}],
->> 'pin-type': 'mux'}
->>
->> - set pin's state on dpll:
->> $ sudo ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml \
->> --do pin-set --json '{"pin-id":2, "pin-parent-device":{"id":1, "pin-state":2}}'
->>
->> - set pin's prio on dpll:
->> $ sudo ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml \
->> --do pin-set --json '{"pin-id":2, "pin-parent-device":{"id":1, "pin-prio":4}}'
->>
->> - set pin's state on parent pin:
->> $ sudo ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml \
->> --do pin-set --json '{"pin-id":13, \
->>                       "pin-parent-pin":{"pin-id":2, "pin-state":1}}'
->>
-> 
-> For the record, I'm fine with this patchset version now.
-> Please merge and make this jurney to be over. Thanks!
-> 
-Thanks Jiri! We are waiting for Jakub to review the code again and hopefully
-merge the code1
+This patch series fixes introduce support for msm8976 pll,
+also brings some adjustments and fixes domains setup and few dts nitpicks.
+
+Changes since v1
+================
+1. Fixed few styling issues
+2. Changed compatibles for plls
+3. Added fixes: tag to first patch
+
+Changes since v2
+================
+1. Fixed lacking .data in pll match_data
+2. Increased freq supported by A72PLL to include bin2
+3. Fixed remaining IPC bits
+4. Added R-b tags
+5. Changed commit msg for lpass dts patch
+6. Rebased patches on next-20230728
+
+Adam Skladowski (7):
+  drivers: genpd: qcom: rpmpd: Fix MSM8976 power domains setup
+  clk: qcom: clk-hfpll: Configure l_val in init when required
+  clk: qcom: hfpll: Allow matching pdata
+  dt-bindings: clock: qcom,hfpll: Document MSM8976 compatibles
+  clk: qcom: hfpll: Add MSM8976 PLL data
+  arm64: dts: qcom: msm8976: Split lpass region
+  arm64: dts: qcom: msm8976: Fix ipc bit shifts
+
+ .../devicetree/bindings/clock/qcom,hfpll.txt  |  3 +
+ arch/arm64/boot/dts/qcom/msm8976.dtsi         | 15 +++--
+ drivers/clk/qcom/clk-hfpll.c                  |  4 ++
+ drivers/clk/qcom/clk-hfpll.h                  |  1 +
+ drivers/clk/qcom/hfpll.c                      | 59 ++++++++++++++++++-
+ drivers/genpd/qcom/rpmpd.c                    | 27 ++++-----
+ 6 files changed, 85 insertions(+), 24 deletions(-)
+
+-- 
+2.41.0
+
