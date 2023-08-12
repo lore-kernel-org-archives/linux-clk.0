@@ -2,28 +2,28 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5373C04E69
-	for <linux-clk@archiver.kernel.org>; Sat, 12 Aug 2023 10:04:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0798BC04FDF
+	for <linux-clk@archiver.kernel.org>; Sat, 12 Aug 2023 10:04:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236880AbjHLKEC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 12 Aug 2023 06:04:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53550 "EHLO
+        id S236881AbjHLKED (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 12 Aug 2023 06:04:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53548 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236696AbjHLKEA (ORCPT
+        with ESMTP id S236477AbjHLKEA (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Sat, 12 Aug 2023 06:04:00 -0400
 Received: from mx.skole.hr (mx2.hosting.skole.hr [161.53.165.186])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 890BA270F;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3782E2133;
         Sat, 12 Aug 2023 03:04:01 -0700 (PDT)
 Received: from mx2.hosting.skole.hr (localhost.localdomain [127.0.0.1])
-        by mx.skole.hr (mx.skole.hr) with ESMTP id E5D09840B7;
+        by mx.skole.hr (mx.skole.hr) with ESMTP id 2872883E84;
         Sat, 12 Aug 2023 12:03:59 +0200 (CEST)
 From:   =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Date:   Sat, 12 Aug 2023 12:02:59 +0200
-Subject: [PATCH v2 4/4] clk: pxa910: Move number of clocks to driver source
+Date:   Sat, 12 Aug 2023 12:02:57 +0200
+Subject: [PATCH v2 2/4] clk: pxa168: Move number of clocks to driver source
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20230812-mmp-nr-clks-v2-4-f9271bd7eaa5@skole.hr>
+Message-Id: <20230812-mmp-nr-clks-v2-2-f9271bd7eaa5@skole.hr>
 References: <20230812-mmp-nr-clks-v2-0-f9271bd7eaa5@skole.hr>
 In-Reply-To: <20230812-mmp-nr-clks-v2-0-f9271bd7eaa5@skole.hr>
 To:     Michael Turquette <mturquette@baylibre.com>,
@@ -35,21 +35,21 @@ Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org,
         =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1446;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1430;
  i=duje.mihanovic@skole.hr; h=from:subject:message-id;
- bh=bly1aASdWUJrlcyrZt3WskO9eN5tVF6cUHmmrzJg8UU=;
- b=owEBbQKS/ZANAwAIAZoRnrBCLZbhAcsmYgBk11jWEzZpwoDieY1YVAjCCH1x1xQXehidFWpgq
- 9H8atPlLVyJAjMEAAEIAB0WIQRT351NnD/hEPs2LXiaEZ6wQi2W4QUCZNdY1gAKCRCaEZ6wQi2W
- 4aU3EACpydUl/5i56ATj+xlOLPRCc36f2rPxfP21b+/QyAbvWaxA/rXvGLfxK228tosn19KyJJ+
- JGWWdoqUaNJiqGuS3kWtpRSPPgf4xyIPEanXIC88bzPMqWzhhlIlFM4srEnWS6VzF9jW0Oqgtdo
- 2mpzowTqJhfMqQ5wRLhLjSPZOE758itKWnqrQablk9Tu6P/aMsm1woeQIcLAQuEnJJ2G/SyS9ZQ
- OVrfONAOgYclLrJmt3j3QoyijRB7nTYVebVhuojA5lwe6JPKMhnE9XmUmm3a8WqNiQs2POuCwKA
- j/XXkgROsNeUr9nxusVyYysq9hujHyZkxDNxh03hqRhz/98oaJ6d+pie4AaOzuG+9hnWX8WSRg6
- m3dftv/PkQBYMbRQpK0fRsuF5EJKJafCrrj9LkgxLfP1urwvy8Oq8PLdUH75OLB8yVUq0LOlW4Q
- i63OBSLMbUHTNSeH9jEJHtUaws4nSpzoJFSyxlCZXd5stfib4MGrzapCeVej5meczyTl/4M3h+a
- YCLWdl3a06UQdALASKps8obG1JJB2wGYLpTZ7zFK9Ua2Z2Yp7HaLXjU8ZxJuizulrliFypptz5H
- 8YSPrUcq997X0VIJsWBk4Q8Pm2D6lTHzv+KUSpXe7ishnDAf/slnHyfMIiV/iNWtXB3nH7GNFR8
- Y7/C71m4wMYMCkQ==
+ bh=An6utDAacc3cFI4LMImvW0yjAueMtmC2mjBjATMsvVg=;
+ b=owEBbQKS/ZANAwAIAZoRnrBCLZbhAcsmYgBk11jVacXgBMCH8q35Ann7jSg4TfdyzeLHaY9hW
+ aq5Nk9+YY+JAjMEAAEIAB0WIQRT351NnD/hEPs2LXiaEZ6wQi2W4QUCZNdY1QAKCRCaEZ6wQi2W
+ 4W7CD/9tICbRAnT159blHcf0W3+F7HJR4nZQ2+CD2Zas6PoasMq4zkdWmJjScbBSDbDWA3wLehN
+ Gf3LCIgtdad8CnUmziNhGXgets10EmMXL3piOofJa8PLr9BPZP41Fr7Q91/xUPO/PgK8foSpGRF
+ DdSKvELZz31Y5x+frC0cwpBlmtXpbqLk6onC5ncPu00SpZmU3LZ/hV5bglUOPR6r+h8aw1vcqBX
+ B2DEvTmjtJaAh6/Sr6Wu6qCLF3fDvf/kkOINLCCoB0RraC6ekFTjV5v87O51GATFpjPCyYs6GCp
+ pfLUAO2NZKZom8PEYBNfOSbzEes/6E5x25ETMCFqB1JtwTIDfRE77AzEjKVtHMD02MXC6Cx1+2S
+ 6LabpuBmrn/f2KBdzGem4tdIKvdxT2xvfFYpKkfSb6oCqk3BDGVKgQSBKnj8F/Kf3ak1EPZrAKo
+ 3hQ4WzHxQ9sEaXJ7yutPVTV0r9fDVu1hTJnsgBC3n6h4H70KkXdMql96wWgXqJmAL2JH7izAYIr
+ uM68CTOCoHaIk5GMXEwCZ1vkRQeHU5ATj6XesWF3Qa5o5MdhwGvvX4ge84yRxJ/5r6tWGsW+roa
+ NZa7ZgdU6HNSsQGIE/rENTIE8x+bhTuCDZgVNsfI2e/gx3HvYZz4fmC1lb3S/4/Grk2E9Ap2hSA
+ W0dToQ+tuGKi2Kw==
 X-Developer-Key: i=duje.mihanovic@skole.hr; a=openpgp;
  fpr=53DF9D4D9C3FE110FB362D789A119EB0422D96E1
 Precedence: bulk
@@ -63,41 +63,41 @@ Move this number of clocks into the driver source.
 
 Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
 ---
- drivers/clk/mmp/clk-of-pxa910.c            | 4 +++-
- include/dt-bindings/clock/marvell,pxa910.h | 1 -
+ drivers/clk/mmp/clk-of-pxa168.c            | 4 +++-
+ include/dt-bindings/clock/marvell,pxa168.h | 1 -
  2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/mmp/clk-of-pxa910.c b/drivers/clk/mmp/clk-of-pxa910.c
-index 4d15bac987eb..7a38c424782e 100644
---- a/drivers/clk/mmp/clk-of-pxa910.c
-+++ b/drivers/clk/mmp/clk-of-pxa910.c
-@@ -44,6 +44,8 @@
- #define APMU_DFC	0x60
+diff --git a/drivers/clk/mmp/clk-of-pxa168.c b/drivers/clk/mmp/clk-of-pxa168.c
+index 130d1a723879..fb0df64cf053 100644
+--- a/drivers/clk/mmp/clk-of-pxa168.c
++++ b/drivers/clk/mmp/clk-of-pxa168.c
+@@ -62,6 +62,8 @@
+ #define APMU_EPD	0x104
  #define MPMU_UART_PLL	0x14
  
 +#define NR_CLKS		200
 +
- struct pxa910_clk_unit {
+ struct pxa168_clk_unit {
  	struct mmp_clk_unit unit;
  	void __iomem *mpmu_base;
-@@ -296,7 +298,7 @@ static void __init pxa910_clk_init(struct device_node *np)
- 		goto unmap_apbc_region;
+@@ -321,7 +323,7 @@ static void __init pxa168_clk_init(struct device_node *np)
+ 		return;
  	}
  
--	mmp_clk_init(np, &pxa_unit->unit, PXA910_NR_CLKS);
+-	mmp_clk_init(np, &pxa_unit->unit, PXA168_NR_CLKS);
 +	mmp_clk_init(np, &pxa_unit->unit, NR_CLKS);
  
- 	pxa910_pll_init(pxa_unit);
+ 	pxa168_pll_init(pxa_unit);
  
-diff --git a/include/dt-bindings/clock/marvell,pxa910.h b/include/dt-bindings/clock/marvell,pxa910.h
-index c9018ab354d0..6caa231de0c1 100644
---- a/include/dt-bindings/clock/marvell,pxa910.h
-+++ b/include/dt-bindings/clock/marvell,pxa910.h
-@@ -55,5 +55,4 @@
- #define PXA910_CLK_CCIC0_PHY		108
- #define PXA910_CLK_CCIC0_SPHY		109
+diff --git a/include/dt-bindings/clock/marvell,pxa168.h b/include/dt-bindings/clock/marvell,pxa168.h
+index c92d969ae941..d1bb59187e1d 100644
+--- a/include/dt-bindings/clock/marvell,pxa168.h
++++ b/include/dt-bindings/clock/marvell,pxa168.h
+@@ -63,5 +63,4 @@
+ #define PXA168_CLK_SDH01_AXI		111
+ #define PXA168_CLK_SDH23_AXI		112
  
--#define PXA910_NR_CLKS			200
+-#define PXA168_NR_CLKS			200
  #endif
 
 -- 
