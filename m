@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55AA6C001B0
-	for <linux-clk@archiver.kernel.org>; Sat, 12 Aug 2023 11:27:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ECB8C04E69
+	for <linux-clk@archiver.kernel.org>; Sat, 12 Aug 2023 11:27:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237200AbjHLL1O (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 12 Aug 2023 07:27:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51590 "EHLO
+        id S237223AbjHLL1R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 12 Aug 2023 07:27:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237205AbjHLL1K (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 12 Aug 2023 07:27:10 -0400
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBD5F10C0;
-        Sat, 12 Aug 2023 04:27:13 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id 2adb3069b0e04-4fe44955decso3224244e87.1;
-        Sat, 12 Aug 2023 04:27:13 -0700 (PDT)
+        with ESMTP id S237225AbjHLL1O (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 12 Aug 2023 07:27:14 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 933F210EA;
+        Sat, 12 Aug 2023 04:27:17 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-4fe934c4decso3361774e87.1;
+        Sat, 12 Aug 2023 04:27:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1691839632; x=1692444432;
+        d=gmail.com; s=20221208; t=1691839636; x=1692444436;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WU55BRi9jqkommNEXyQaNiy0A+qH53L90d7/C677RoI=;
-        b=kbidcN+F6qMPvbd7FUAzY6AV74Q3DgkuPDtjtoLgxSJCrxTF5uqDwpowunBv9u1V9b
-         teEN8m+GyYqUhIb6NGg34T5IK72TFptKIJhOoFlVNlAOwxbHmZMAeoj6ZS5eDjzRYi6f
-         vYuKsoUeNUY56ew14RHH1zPRQeaYKgdm/HQVkHNCvw2ywMjCTkb7/+LX46znXkSm9kiM
-         SD6uCoEeF/UcEpKel6cW4UcoNYoco3oTka9wnC8+QGM37uQnA0//Kcl6vF3H/+kRiAAF
-         nXZGMvEpRPleZWji1k4ulpBmwJP3ZpEZQIUFFdDjA4s3JQ4nnBcpen6Y6A1VABoIPOqx
-         1mXQ==
+        bh=ex9NYx+HBgu6/pZgoWgfrfu/p4scpVkTohOjt1lHg7M=;
+        b=pN0llEAESY+It2U15Y27g05h//zrre0UROagBs08PTHBmQVn7iz7hKQTA8iYqK911V
+         JWh1SpM0B7jC5dlbI94oBH4mOUINNh3TB1e0866l2gFlEfO3KCx1MQnmt6jlrZ57QjTC
+         59ISQUqJJKaVQIh6HPaE5I3Yw7lDvIs6DeMe0+bNXYVjed7gA9RZOfZqZku+Yc7sWP9c
+         jdYLie8Hlcd0iG785ACdO5L5lNjxzfnsDqwgua+y9xbj6ha0TVoM/KYb3+Qwaoxlg789
+         NpVMPT9XG4Q6ha3ldAjqSno07vNXtdnvtSao5VbO6jQ0nADtu6nct4n+xiAjzVvoZ6SR
+         ANcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691839632; x=1692444432;
+        d=1e100.net; s=20221208; t=1691839636; x=1692444436;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WU55BRi9jqkommNEXyQaNiy0A+qH53L90d7/C677RoI=;
-        b=Ifkt0gq1b/2oK6Dc/+kPCGxR53s98L5HaWSbby9yCxDyaaPtfbmUw+rt7IO13X3KeT
-         ozt2PvwzWyjAq04zWYobmAvQcbtQFC6pd+ko1OeDcassa2nSGR7iDj82z29B7qCzWL84
-         dCXEyrqub7w1tcVmWMFkd8wjTKXQSQHriNR8jVC3kn/dFteUnJM6tyUosxgEEZsNOm3M
-         J5afAfHHAGd8UfKhQNAtRwU23tsQSO7UDZ5G17/eb/n/DA+cFzlBDgispPpTnWCzwnUP
-         JyHAOUS3Ej3Sf6743AaM2u1B/e0M1TPzWg0pOd6SlwsjlOaxN9kvJM3PqgBKW/FofDp2
-         Z0yQ==
-X-Gm-Message-State: AOJu0Yz/x2Mg6nIXLowMvNyqTiycJ4GvZWogYQGE5qRvsq8tee+QgEpG
-        3DjUdw1HyR8VCNFSTiDg71uwH2f1WvQZ8Q==
-X-Google-Smtp-Source: AGHT+IHkUlAyw1EbQzTXAy0OSQppQrYg0ktAyVbdXb7k0R23U77+wAa9Q1IqiIIcHhdSvoHKJxg7OA==
-X-Received: by 2002:a05:6512:398d:b0:4f7:6404:4638 with SMTP id j13-20020a056512398d00b004f764044638mr1633448lfu.17.1691839631999;
-        Sat, 12 Aug 2023 04:27:11 -0700 (PDT)
+        bh=ex9NYx+HBgu6/pZgoWgfrfu/p4scpVkTohOjt1lHg7M=;
+        b=J4ucl14DHx+ENBc0ybfKqINGhQkBGudpQOKUAboHmapgNxMKfVQt0i/GgLrieuT3pd
+         INfZlPOQKNBFsXKZo/moy051q+HjT7T+idQgx6+HlJ5CBMMO0BhJONS4ykaJBSbuTUgH
+         Tl4CQ09FRZCw7qhKp+Wm1lJ5FM7EWctNGPPVoSTjqUHv+Onaoq/4jfWlpzi8J/uOF7cQ
+         pCNi+MqNz6BUinXIUZPGLJS6lcpj5wjf+LGQiJ4GXyKucm2zGIcEtMp5+Cz4Irs1aZGY
+         eMoJwihvtEMnxK/2+3cRbG2MKFMKz8QPvfOmJYZlUh/zb7fs8aMH9GZ2XwA32OejvFVU
+         0uVg==
+X-Gm-Message-State: AOJu0Yy3gPBnNxcTBwalmx3XAmpPWKBwWu1qEC5XH6wm+xiEhRNcj5yf
+        lgDWweJegbKCYGub98Nef7MRJaJ2Q1SIIQ==
+X-Google-Smtp-Source: AGHT+IFbDsASJNCFwp84ZNhTaP1sLD8LG7+215PJRDtwi7gQrCokadl/uEB4gHwruL3aHoM2nyEQgA==
+X-Received: by 2002:a05:6512:2213:b0:4fc:6e21:ff50 with SMTP id h19-20020a056512221300b004fc6e21ff50mr3809526lfu.55.1691839635833;
+        Sat, 12 Aug 2023 04:27:15 -0700 (PDT)
 Received: from localhost.localdomain (bzd150.neoplus.adsl.tpnet.pl. [83.30.49.150])
-        by smtp.gmail.com with ESMTPSA id w3-20020ac24423000000b004fe2f085d5csm1087289lfl.299.2023.08.12.04.27.10
+        by smtp.gmail.com with ESMTPSA id w3-20020ac24423000000b004fe2f085d5csm1087289lfl.299.2023.08.12.04.27.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Aug 2023 04:27:11 -0700 (PDT)
+        Sat, 12 Aug 2023 04:27:15 -0700 (PDT)
 From:   Adam Skladowski <a39.skl@gmail.com>
 Cc:     phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
         Adam Skladowski <a39.skl@gmail.com>,
@@ -63,11 +63,10 @@ Cc:     phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
         AngeloGioacchino Del Regno <kholk11@gmail.com>,
         Marijn Suijten <marijn.suijten@somainline.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v3 4/7] dt-bindings: clock: qcom,hfpll: Document MSM8976 compatibles
-Date:   Sat, 12 Aug 2023 13:24:47 +0200
-Message-Id: <20230812112534.8610-5-a39.skl@gmail.com>
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 6/7] arm64: dts: qcom: msm8976: Split lpass region
+Date:   Sat, 12 Aug 2023 13:24:49 +0200
+Message-Id: <20230812112534.8610-7-a39.skl@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230812112534.8610-1-a39.skl@gmail.com>
 References: <20230812112534.8610-1-a39.skl@gmail.com>
@@ -78,28 +77,38 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Document MSM8976 HFPLL compatibles.
+MSM8976 downstream dts define reloc region which is used by pil-tz
+to load both wcnss and lpass, on mainline however we might not be
+able to do it and we need separate regions(also validating dts might get
+problematic if we had to put memory-region(rproc node) per device).
+Luckily it seems size and entry points in firmware headers appears
+to be static across multiple devices including Sony Loire platform
+and Xiaomi Redmi Note 3 Pro this should let us fit in first ~17MB
+Split lpass region(reloc on downstream) into two separate regions.
 
 Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- Documentation/devicetree/bindings/clock/qcom,hfpll.txt | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm64/boot/dts/qcom/msm8976.dtsi | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,hfpll.txt b/Documentation/devicetree/bindings/clock/qcom,hfpll.txt
-index ec02a024424c..5769cbbe76be 100644
---- a/Documentation/devicetree/bindings/clock/qcom,hfpll.txt
-+++ b/Documentation/devicetree/bindings/clock/qcom,hfpll.txt
-@@ -12,6 +12,9 @@ PROPERTIES
-                         "qcom,hfpll-apq8064", "qcom,hfpll"
-                         "qcom,hfpll-msm8974", "qcom,hfpll"
-                         "qcom,hfpll-msm8960", "qcom,hfpll"
-+                        "qcom,msm8976-hfpll-a53", "qcom,hfpll"
-+                        "qcom,msm8976-hfpll-a72", "qcom,hfpll"
-+                        "qcom,msm8976-hfpll-cci", "qcom,hfpll"
+diff --git a/arch/arm64/boot/dts/qcom/msm8976.dtsi b/arch/arm64/boot/dts/qcom/msm8976.dtsi
+index ab76806317a7..7385d5edec04 100644
+--- a/arch/arm64/boot/dts/qcom/msm8976.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8976.dtsi
+@@ -338,7 +338,12 @@ mpss_mem: mpss@86c00000 {
+ 		};
  
- - reg:
- 	Usage: required
+ 		lpass_mem: lpass@8c200000 {
+-			reg = <0x0 0x8c200000 0x0 0x1800000>;
++			reg = <0x0 0x8c200000 0x0 0x1000000>;
++			no-map;
++		};
++
++		wcnss_fw_mem: wcnss@8d200000 {
++			reg = <0x0 0x8d200000 0x0 0x800000>;
+ 			no-map;
+ 		};
+ 
 -- 
 2.41.0
 
