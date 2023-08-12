@@ -2,29 +2,29 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C64A8C04FE0
-	for <linux-clk@archiver.kernel.org>; Sat, 12 Aug 2023 10:26:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 440DCC001DB
+	for <linux-clk@archiver.kernel.org>; Sat, 12 Aug 2023 10:26:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236992AbjHLK0Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 12 Aug 2023 06:26:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36214 "EHLO
+        id S237075AbjHLK0W (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 12 Aug 2023 06:26:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236335AbjHLK0I (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 12 Aug 2023 06:26:08 -0400
-Received: from mx.skole.hr (mx2.hosting.skole.hr [161.53.165.186])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B005170D;
-        Sat, 12 Aug 2023 03:26:10 -0700 (PDT)
-Received: from mx2.hosting.skole.hr (localhost.localdomain [127.0.0.1])
-        by mx.skole.hr (mx.skole.hr) with ESMTP id CDC218407E;
-        Sat, 12 Aug 2023 12:26:08 +0200 (CEST)
+        with ESMTP id S236974AbjHLK0O (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 12 Aug 2023 06:26:14 -0400
+Received: from mx.skole.hr (mx1.hosting.skole.hr [161.53.165.185])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E575170D;
+        Sat, 12 Aug 2023 03:26:15 -0700 (PDT)
+Received: from mx1.hosting.skole.hr (localhost.localdomain [127.0.0.1])
+        by mx.skole.hr (mx.skole.hr) with ESMTP id D736882AE6;
+        Sat, 12 Aug 2023 12:26:13 +0200 (CEST)
 From:   =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Date:   Sat, 12 Aug 2023 12:25:06 +0200
-Subject: [PATCH v5 2/8] clk: mmp: Switch to use struct u32_fract instead of
- custom one
+Date:   Sat, 12 Aug 2023 12:25:11 +0200
+Subject: [PATCH v5 7/8] arm64: dts: Add DTS for Marvell PXA1908 and
+ samsung,coreprimevelte
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20230812-pxa1908-lkml-v5-2-a5d51937ee34@skole.hr>
+Message-Id: <20230812-pxa1908-lkml-v5-7-a5d51937ee34@skole.hr>
 References: <20230812-pxa1908-lkml-v5-0-a5d51937ee34@skole.hr>
 In-Reply-To: <20230812-pxa1908-lkml-v5-0-a5d51937ee34@skole.hr>
 To:     Robert Jarzmik <robert.jarzmik@free.fr>,
@@ -48,369 +48,690 @@ Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-hardening@vger.kernel.org,
         ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        afaerber@suse.de,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+        afaerber@suse.de
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=12358;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=16631;
  i=duje.mihanovic@skole.hr; h=from:subject:message-id;
- bh=ixuacWD4Wzo9v++NPDFaZfVWUv2CHv+uQOCbb7DKqhU=;
- b=owEBbQKS/ZANAwAIAZoRnrBCLZbhAcsmYgBk114Ek454LDTJ134PSCEeMuU5JPNMBrGdalIFz
- lFa8QU/+reJAjMEAAEIAB0WIQRT351NnD/hEPs2LXiaEZ6wQi2W4QUCZNdeBAAKCRCaEZ6wQi2W
- 4QiKD/4mrskwCG/7oMJJ6UqbJ88B3CnzcN3mb27HfV+TmMBQgUbAJZI/eI9xYdURIexFXgNq7ba
- zRedKvCmciHVg1SMLdHY3APEU2HltU49/AidMswhHXFMtJnwKymfAXssaUcNuX3rd73tR4nufK4
- qJ0GEKuI7GNN589eeqUxYLHei9NZYUo+5EzRhGz1XrZYlyXPXYEhQ0S0rmbqQLsN+CDU+WmYkq5
- ToCdZ/TFZtAvYifWn6CZGv2oZOPGAws0Egh8mPh+q7ThMzNSiRGDYy4cH8KHqJ93aM/lgZkioWv
- ok2HjuuSxghWzwxa2j0Uf9GZM/ADfJb21Dc8H4GUcqS+IkDZ46oaACAbGi9E+Ql74h6V60YyV5W
- FgySGEx1agwAmKEy+hthFB9G1/N8jl5EIKYGf4SqQa8QZRIbd174qpzju5NdD9bcnnZsJYHGcOY
- HYy5RoRom6gU0WYAfmsmh6uvfjUQcb2vuLZwbVxypbZmt3JGdrq3Y3XaF+Tu4XH/s3hctysdI29
- azR1R0lXTfw2HEVuGr3/Ielekn3dTH+eo9pkVcx3N8Yn+8zTGVUXLUYWQremhQdUiEV360n17QO
- tl5WwXIz3H+aGIc2Ies8z3hcW9KGnB7sJap0GrU1WerP27+h+XkZS9Qs4RYNZJtAGlMFflGQUhx
- WPfJam6pHpux4Rw==
+ bh=quTomvn3gr/hybIjdZsPfEB1DGFR5jS0tMGXtewBkGo=;
+ b=owEBbQKS/ZANAwAIAZoRnrBCLZbhAcsmYgBk114E68/GaCN6v06LoNi1ZmrBRsXcBR/o3mH9m
+ 2lFYVGK/F2JAjMEAAEIAB0WIQRT351NnD/hEPs2LXiaEZ6wQi2W4QUCZNdeBAAKCRCaEZ6wQi2W
+ 4awxD/9Xu5Qck7NOoUpId2pIiNPk4F8990pnEm4twLwaxfBvPpoQ2MA498e3Q89CBv+ZFC0lV1d
+ pHdqSNIz4vvnUwJEJGlgBDLTsEzgOPeKdM/9YOm/eqlz+JXy75MFCQNgPaPZv7CFyRlje23bZF4
+ gAEkPSdJLZ7r4dq427BIM3Oq88zoNHk4xu9JGKSM6sHImmAFlZ00OfYz//j5t4iCPevANtriEEd
+ cQOz9TEjg83CwmwW/cm812sFJUFgG2wYDc9mnhPdtSw42J/nDRDUuDycIjJCAZTPRDrB5yR55Mo
+ kUZWSxvnJmvMeS3P1VGtVh8SXrQVdfowKDAcX0bSsDoXVIsppDWj+l5CRRhQi8yIonHHCy4V8Hy
+ W9M+lBLl2D0IgS+PIg8tlIdgpsll4eoUYkc8LupVoNPseITHBULkzY9/eJc29+uMzEPJ4Z80WZ5
+ 8E//8/NEljSMtYJxs/DRM7ahiSZdPoyPBj4d10afO4Vdwn6U3N8H6mvpauxqnEbpl+vlfDYUCh2
+ 5FM2on0pHFnViZQkaNfZMz7psOeyaBvGlRmIEHJayHrZk72afmaecvWfREqcT/3D4L7UiMB6nZU
+ ooFbvXW/zk59EVv8S+sagjou1C6y0l+GZXwYvSIMftwWCm4yJw/xH+kVgmt88pznrckH6X9HAvM
+ 3b/rPz+Jd9AbNCw==
 X-Developer-Key: i=duje.mihanovic@skole.hr; a=openpgp;
  fpr=53DF9D4D9C3FE110FB362D789A119EB0422D96E1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Add DTS for Marvell PXA1908 SoC and Samsung Galaxy Core Prime Value
+Edition LTE, a smartphone based on said SoC.
 
-The struct mmp_clk_factor_tbl repeats the generic struct u32_fract.
-Kill the custom one and use the generic one instead.
-
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Tested-by: Duje Mihanović <duje.mihanovic@skole.hr>
 Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
 ---
- drivers/clk/mmp/clk-frac.c       | 57 ++++++++++++++++++++--------------------
- drivers/clk/mmp/clk-mmp2.c       |  6 ++---
- drivers/clk/mmp/clk-of-mmp2.c    | 26 +++++++++---------
- drivers/clk/mmp/clk-of-pxa168.c  |  4 +--
- drivers/clk/mmp/clk-of-pxa1928.c |  6 ++---
- drivers/clk/mmp/clk-of-pxa910.c  |  4 +--
- drivers/clk/mmp/clk-pxa168.c     |  4 +--
- drivers/clk/mmp/clk-pxa910.c     |  4 +--
- drivers/clk/mmp/clk.h            | 10 +++----
- 9 files changed, 58 insertions(+), 63 deletions(-)
+ arch/arm64/boot/dts/marvell/Makefile               |   3 +
+ .../dts/marvell/pxa1908-samsung-coreprimevelte.dts | 333 +++++++++++++++++++++
+ arch/arm64/boot/dts/marvell/pxa1908.dtsi           | 295 ++++++++++++++++++
+ 3 files changed, 631 insertions(+)
 
-diff --git a/drivers/clk/mmp/clk-frac.c b/drivers/clk/mmp/clk-frac.c
-index 1b90867b60c4..6556f6ada2e8 100644
---- a/drivers/clk/mmp/clk-frac.c
-+++ b/drivers/clk/mmp/clk-frac.c
-@@ -26,14 +26,15 @@ static long clk_factor_round_rate(struct clk_hw *hw, unsigned long drate,
- {
- 	struct mmp_clk_factor *factor = to_clk_factor(hw);
- 	u64 rate = 0, prev_rate;
-+	struct u32_fract *d;
- 	int i;
- 
- 	for (i = 0; i < factor->ftbl_cnt; i++) {
--		prev_rate = rate;
--		rate = *prate;
--		rate *= factor->ftbl[i].den;
--		do_div(rate, factor->ftbl[i].num * factor->masks->factor);
-+		d = &factor->ftbl[i];
- 
-+		prev_rate = rate;
-+		rate = (u64)(*prate) * d->denominator;
-+		do_div(rate, d->numerator * factor->masks->factor);
- 		if (rate > drate)
- 			break;
- 	}
-@@ -52,23 +53,22 @@ static unsigned long clk_factor_recalc_rate(struct clk_hw *hw,
- {
- 	struct mmp_clk_factor *factor = to_clk_factor(hw);
- 	struct mmp_clk_factor_masks *masks = factor->masks;
--	unsigned int val, num, den;
-+	struct u32_fract d;
-+	unsigned int val;
- 	u64 rate;
- 
- 	val = readl_relaxed(factor->base);
- 
- 	/* calculate numerator */
--	num = (val >> masks->num_shift) & masks->num_mask;
-+	d.numerator = (val >> masks->num_shift) & masks->num_mask;
- 
- 	/* calculate denominator */
--	den = (val >> masks->den_shift) & masks->den_mask;
--
--	if (!den)
-+	d.denominator = (val >> masks->den_shift) & masks->den_mask;
-+	if (!d.denominator)
- 		return 0;
- 
--	rate = parent_rate;
--	rate *= den;
--	do_div(rate, num * factor->masks->factor);
-+	rate = (u64)parent_rate * d.denominator;
-+	do_div(rate, d.numerator * factor->masks->factor);
- 
- 	return rate;
- }
-@@ -82,18 +82,18 @@ static int clk_factor_set_rate(struct clk_hw *hw, unsigned long drate,
- 	int i;
- 	unsigned long val;
- 	unsigned long flags = 0;
-+	struct u32_fract *d;
- 	u64 rate = 0;
- 
- 	for (i = 0; i < factor->ftbl_cnt; i++) {
--		rate = prate;
--		rate *= factor->ftbl[i].den;
--		do_div(rate, factor->ftbl[i].num * factor->masks->factor);
-+		d = &factor->ftbl[i];
- 
-+		rate = (u64)prate * d->denominator;
-+		do_div(rate, d->numerator * factor->masks->factor);
- 		if (rate > drate)
- 			break;
- 	}
--	if (i > 0)
--		i--;
-+	d = i ? &factor->ftbl[i - 1] : &factor->ftbl[0];
- 
- 	if (factor->lock)
- 		spin_lock_irqsave(factor->lock, flags);
-@@ -101,10 +101,10 @@ static int clk_factor_set_rate(struct clk_hw *hw, unsigned long drate,
- 	val = readl_relaxed(factor->base);
- 
- 	val &= ~(masks->num_mask << masks->num_shift);
--	val |= (factor->ftbl[i].num & masks->num_mask) << masks->num_shift;
-+	val |= (d->numerator & masks->num_mask) << masks->num_shift;
- 
- 	val &= ~(masks->den_mask << masks->den_shift);
--	val |= (factor->ftbl[i].den & masks->den_mask) << masks->den_shift;
-+	val |= (d->denominator & masks->den_mask) << masks->den_shift;
- 
- 	writel_relaxed(val, factor->base);
- 
-@@ -118,7 +118,8 @@ static int clk_factor_init(struct clk_hw *hw)
- {
- 	struct mmp_clk_factor *factor = to_clk_factor(hw);
- 	struct mmp_clk_factor_masks *masks = factor->masks;
--	u32 val, num, den;
-+	struct u32_fract d;
-+	u32 val;
- 	int i;
- 	unsigned long flags = 0;
- 
-@@ -128,23 +129,22 @@ static int clk_factor_init(struct clk_hw *hw)
- 	val = readl(factor->base);
- 
- 	/* calculate numerator */
--	num = (val >> masks->num_shift) & masks->num_mask;
-+	d.numerator = (val >> masks->num_shift) & masks->num_mask;
- 
- 	/* calculate denominator */
--	den = (val >> masks->den_shift) & masks->den_mask;
-+	d.denominator = (val >> masks->den_shift) & masks->den_mask;
- 
- 	for (i = 0; i < factor->ftbl_cnt; i++)
--		if (den == factor->ftbl[i].den && num == factor->ftbl[i].num)
-+		if (d.denominator == factor->ftbl[i].denominator &&
-+		    d.numerator == factor->ftbl[i].numerator)
- 			break;
- 
- 	if (i >= factor->ftbl_cnt) {
- 		val &= ~(masks->num_mask << masks->num_shift);
--		val |= (factor->ftbl[0].num & masks->num_mask) <<
--			masks->num_shift;
-+		val |= (factor->ftbl[0].numerator & masks->num_mask) << masks->num_shift;
- 
- 		val &= ~(masks->den_mask << masks->den_shift);
--		val |= (factor->ftbl[0].den & masks->den_mask) <<
--			masks->den_shift;
-+		val |= (factor->ftbl[0].denominator & masks->den_mask) << masks->den_shift;
- 	}
- 
- 	if (!(val & masks->enable_mask) || i >= factor->ftbl_cnt) {
-@@ -168,8 +168,7 @@ static const struct clk_ops clk_factor_ops = {
- struct clk *mmp_clk_register_factor(const char *name, const char *parent_name,
- 		unsigned long flags, void __iomem *base,
- 		struct mmp_clk_factor_masks *masks,
--		struct mmp_clk_factor_tbl *ftbl,
--		unsigned int ftbl_cnt, spinlock_t *lock)
-+		struct u32_fract *ftbl, unsigned int ftbl_cnt, spinlock_t *lock)
- {
- 	struct mmp_clk_factor *factor;
- 	struct clk_init_data init;
-diff --git a/drivers/clk/mmp/clk-mmp2.c b/drivers/clk/mmp/clk-mmp2.c
-index aabacfa10158..ab7dde7e7a44 100644
---- a/drivers/clk/mmp/clk-mmp2.c
-+++ b/drivers/clk/mmp/clk-mmp2.c
-@@ -59,9 +59,9 @@ static struct mmp_clk_factor_masks uart_factor_masks = {
- 	.den_shift = 0,
- };
- 
--static struct mmp_clk_factor_tbl uart_factor_tbl[] = {
--	{.num = 8125, .den = 1536},	/*14.745MHZ */
--	{.num = 3521, .den = 689},	/*19.23MHZ */
-+static struct u32_fract uart_factor_tbl[] = {
-+	{ .numerator = 8125, .denominator = 1536 },	/* 14.745MHZ */
-+	{ .numerator = 3521, .denominator =  689 },	/* 19.23MHZ */
- };
- 
- static const char *uart_parent[] = {"uart_pll", "vctcxo"};
-diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.c
-index bcf60f43aa13..d771b3e5fb2d 100644
---- a/drivers/clk/mmp/clk-of-mmp2.c
-+++ b/drivers/clk/mmp/clk-of-mmp2.c
-@@ -141,9 +141,9 @@ static struct mmp_clk_factor_masks uart_factor_masks = {
- 	.den_shift = 0,
- };
- 
--static struct mmp_clk_factor_tbl uart_factor_tbl[] = {
--	{.num = 8125, .den = 1536},	/*14.745MHZ */
--	{.num = 3521, .den = 689},	/*19.23MHZ */
-+static struct u32_fract uart_factor_tbl[] = {
-+	{ .numerator = 8125, .denominator = 1536 },	/* 14.745MHZ */
-+	{ .numerator = 3521, .denominator =  689 },	/* 19.23MHZ */
- };
- 
- static struct mmp_clk_factor_masks i2s_factor_masks = {
-@@ -155,16 +155,16 @@ static struct mmp_clk_factor_masks i2s_factor_masks = {
- 	.enable_mask = 0xd0000000,
- };
- 
--static struct mmp_clk_factor_tbl i2s_factor_tbl[] = {
--	{.num = 24868, .den =  511},	/*  2.0480 MHz */
--	{.num = 28003, .den =  793},	/*  2.8224 MHz */
--	{.num = 24941, .den = 1025},	/*  4.0960 MHz */
--	{.num = 28003, .den = 1586},	/*  5.6448 MHz */
--	{.num = 31158, .den = 2561},	/*  8.1920 MHz */
--	{.num = 16288, .den = 1845},	/* 11.2896 MHz */
--	{.num = 20772, .den = 2561},	/* 12.2880 MHz */
--	{.num =  8144, .den = 1845},	/* 22.5792 MHz */
--	{.num = 10386, .den = 2561},	/* 24.5760 MHz */
-+static struct u32_fract i2s_factor_tbl[] = {
-+	{ .numerator = 24868, .denominator =  511 },	/*  2.0480 MHz */
-+	{ .numerator = 28003, .denominator =  793 },	/*  2.8224 MHz */
-+	{ .numerator = 24941, .denominator = 1025 },	/*  4.0960 MHz */
-+	{ .numerator = 28003, .denominator = 1586 },	/*  5.6448 MHz */
-+	{ .numerator = 31158, .denominator = 2561 },	/*  8.1920 MHz */
-+	{ .numerator = 16288, .denominator = 1845 },	/* 11.2896 MHz */
-+	{ .numerator = 20772, .denominator = 2561 },	/* 12.2880 MHz */
-+	{ .numerator =  8144, .denominator = 1845 },	/* 22.5792 MHz */
-+	{ .numerator = 10386, .denominator = 2561 },	/* 24.5760 MHz */
- };
- 
- static DEFINE_SPINLOCK(acgr_lock);
-diff --git a/drivers/clk/mmp/clk-of-pxa168.c b/drivers/clk/mmp/clk-of-pxa168.c
-index 130d1a723879..17cb5c622c31 100644
---- a/drivers/clk/mmp/clk-of-pxa168.c
-+++ b/drivers/clk/mmp/clk-of-pxa168.c
-@@ -104,8 +104,8 @@ static struct mmp_clk_factor_masks uart_factor_masks = {
- 	.den_shift = 0,
- };
- 
--static struct mmp_clk_factor_tbl uart_factor_tbl[] = {
--	{.num = 8125, .den = 1536},	/*14.745MHZ */
-+static struct u32_fract uart_factor_tbl[] = {
-+	{ .numerator = 8125, .denominator = 1536 },	/* 14.745MHZ */
- };
- 
- static void pxa168_pll_init(struct pxa168_clk_unit *pxa_unit)
-diff --git a/drivers/clk/mmp/clk-of-pxa1928.c b/drivers/clk/mmp/clk-of-pxa1928.c
-index 2508a0d795f8..675d695c5f7d 100644
---- a/drivers/clk/mmp/clk-of-pxa1928.c
-+++ b/drivers/clk/mmp/clk-of-pxa1928.c
-@@ -58,9 +58,9 @@ static struct mmp_clk_factor_masks uart_factor_masks = {
- 	.den_shift = 0,
- };
- 
--static struct mmp_clk_factor_tbl uart_factor_tbl[] = {
--	{.num = 832, .den = 234},	/*58.5MHZ */
--	{.num = 1, .den = 1},		/*26MHZ */
-+static struct u32_fract uart_factor_tbl[] = {
-+	{ .numerator = 832, .denominator = 234 },	/* 58.5MHZ */
-+	{ .numerator =   1, .denominator =   1 },	/* 26MHZ */
- };
- 
- static void pxa1928_pll_init(struct pxa1928_clk_unit *pxa_unit)
-diff --git a/drivers/clk/mmp/clk-of-pxa910.c b/drivers/clk/mmp/clk-of-pxa910.c
-index 4d15bac987eb..f5b0b7b278c0 100644
---- a/drivers/clk/mmp/clk-of-pxa910.c
-+++ b/drivers/clk/mmp/clk-of-pxa910.c
-@@ -84,8 +84,8 @@ static struct mmp_clk_factor_masks uart_factor_masks = {
- 	.den_shift = 0,
- };
- 
--static struct mmp_clk_factor_tbl uart_factor_tbl[] = {
--	{.num = 8125, .den = 1536},	/*14.745MHZ */
-+static struct u32_fract uart_factor_tbl[] = {
-+	{ .numerator = 8125, .denominator = 1536 },	/* 14.745MHZ */
- };
- 
- static void pxa910_pll_init(struct pxa910_clk_unit *pxa_unit)
-diff --git a/drivers/clk/mmp/clk-pxa168.c b/drivers/clk/mmp/clk-pxa168.c
-index 8a9b8fb3a465..2ea88945bffd 100644
---- a/drivers/clk/mmp/clk-pxa168.c
-+++ b/drivers/clk/mmp/clk-pxa168.c
-@@ -52,8 +52,8 @@ static struct mmp_clk_factor_masks uart_factor_masks = {
- 	.den_shift = 0,
- };
- 
--static struct mmp_clk_factor_tbl uart_factor_tbl[] = {
--	{.num = 8125, .den = 1536},	/*14.745MHZ */
-+static struct u32_fract uart_factor_tbl[] = {
-+	{ .numerator = 8125, .denominator = 1536 },	/* 14.745MHZ */
- };
- 
- static const char *uart_parent[] = {"pll1_3_16", "uart_pll"};
-diff --git a/drivers/clk/mmp/clk-pxa910.c b/drivers/clk/mmp/clk-pxa910.c
-index 9fcd76316d7e..e29b0fd6f423 100644
---- a/drivers/clk/mmp/clk-pxa910.c
-+++ b/drivers/clk/mmp/clk-pxa910.c
-@@ -50,8 +50,8 @@ static struct mmp_clk_factor_masks uart_factor_masks = {
- 	.den_shift = 0,
- };
- 
--static struct mmp_clk_factor_tbl uart_factor_tbl[] = {
--	{.num = 8125, .den = 1536},	/*14.745MHZ */
-+static struct u32_fract uart_factor_tbl[] = {
-+	{ .numerator = 8125, .denominator = 1536 },	/* 14.745MHZ */
- };
- 
- static const char *uart_parent[] = {"pll1_3_16", "uart_pll"};
-diff --git a/drivers/clk/mmp/clk.h b/drivers/clk/mmp/clk.h
-index 55ac05379781..c83cec169ddc 100644
---- a/drivers/clk/mmp/clk.h
-+++ b/drivers/clk/mmp/clk.h
-@@ -3,6 +3,7 @@
- #define __MACH_MMP_CLK_H
- 
- #include <linux/clk-provider.h>
-+#include <linux/math.h>
- #include <linux/pm_domain.h>
- #include <linux/clkdev.h>
- 
-@@ -20,16 +21,11 @@ struct mmp_clk_factor_masks {
- 	unsigned int enable_mask;
- };
- 
--struct mmp_clk_factor_tbl {
--	unsigned int num;
--	unsigned int den;
--};
--
- struct mmp_clk_factor {
- 	struct clk_hw hw;
- 	void __iomem *base;
- 	struct mmp_clk_factor_masks *masks;
--	struct mmp_clk_factor_tbl *ftbl;
-+	struct u32_fract *ftbl;
- 	unsigned int ftbl_cnt;
- 	spinlock_t *lock;
- };
-@@ -37,7 +33,7 @@ struct mmp_clk_factor {
- extern struct clk *mmp_clk_register_factor(const char *name,
- 		const char *parent_name, unsigned long flags,
- 		void __iomem *base, struct mmp_clk_factor_masks *masks,
--		struct mmp_clk_factor_tbl *ftbl, unsigned int ftbl_cnt,
-+		struct u32_fract *ftbl, unsigned int ftbl_cnt,
- 		spinlock_t *lock);
- 
- /* Clock type "mix" */
+diff --git a/arch/arm64/boot/dts/marvell/Makefile b/arch/arm64/boot/dts/marvell/Makefile
+index 79ac09b58a89..263be6ec7567 100644
+--- a/arch/arm64/boot/dts/marvell/Makefile
++++ b/arch/arm64/boot/dts/marvell/Makefile
+@@ -27,3 +27,6 @@ dtb-$(CONFIG_ARCH_MVEBU) += cn9132-db-B.dtb
+ dtb-$(CONFIG_ARCH_MVEBU) += cn9130-crb-A.dtb
+ dtb-$(CONFIG_ARCH_MVEBU) += cn9130-crb-B.dtb
+ dtb-$(CONFIG_ARCH_MVEBU) += ac5-98dx35xx-rd.dtb
++
++# MMP SoC Family
++dtb-$(CONFIG_ARCH_MMP) += pxa1908-samsung-coreprimevelte.dtb
+diff --git a/arch/arm64/boot/dts/marvell/pxa1908-samsung-coreprimevelte.dts b/arch/arm64/boot/dts/marvell/pxa1908-samsung-coreprimevelte.dts
+new file mode 100644
+index 000000000000..e3c863d517a8
+--- /dev/null
++++ b/arch/arm64/boot/dts/marvell/pxa1908-samsung-coreprimevelte.dts
+@@ -0,0 +1,333 @@
++// SPDX-License-Identifier: GPL-2.0-only
++#include "pxa1908.dtsi"
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/linux-event-codes.h>
++
++/ {
++	model = "Samsung Galaxy Core Prime VE LTE";
++	compatible = "samsung,coreprimevelte", "marvell,pxa1908";
++
++	aliases {
++		mmc0 = &sdh2; /* eMMC */
++		mmc1 = &sdh0; /* SD card */
++		serial0 = &uart0;
++	};
++
++	chosen {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		stdout-path = "serial0:115200n8";
++
++		fb0: framebuffer@17177000 {
++			compatible = "simple-framebuffer";
++			reg = <0 0x17177000 0 (480 * 800 * 4)>;
++			width = <480>;
++			height = <800>;
++			stride = <(480 * 4)>;
++			format = "a8r8g8b8";
++		};
++	};
++
++	/* Bootloader fills this in */
++	memory {
++		device_type = "memory";
++		reg = <0 0 0 0>;
++	};
++
++	reserved-memory {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		framebuffer@17000000 {
++			reg = <0 0x17000000 0 0x1800000>;
++			no-map;
++		};
++
++		gpu@9000000 {
++			reg = <0 0x9000000 0 0x1000000>;
++		};
++
++		/* Communications processor, aka modem */
++		cp@3000000 {
++			reg = <0 0x3000000 0 0x5000000>;
++		};
++
++		cm3@a000000 {
++			reg = <0 0xa000000 0 0x80000>;
++		};
++
++		seclog@8000000 {
++			reg = <0 0x8000000 0 0x100000>;
++		};
++
++		ramoops@8100000 {
++			compatible = "ramoops";
++			reg = <0 0x8100000 0 0x40000>;
++			record-size = <0x8000>;
++			console-size = <0x20000>;
++			max-reason = <5>;
++		};
++	};
++
++
++	i2c-muic {
++		compatible = "i2c-gpio";
++		sda-gpios = <&gpio 30 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DRAIN)>;
++		scl-gpios = <&gpio 29 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DRAIN)>;
++		i2c-gpio,delay-us = <3>;
++		i2c-gpio,timeout-ms = <100>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&i2c_muic_pins>;
++
++		muic: extcon@14 {
++			compatible = "siliconmitus,sm5504-muic";
++			reg = <0x14>;
++			interrupt-parent = <&gpio>;
++			interrupts = <0 IRQ_TYPE_EDGE_FALLING>;
++		};
++	};
++
++	gpio-keys {
++		compatible = "gpio-keys";
++		pinctrl-names = "default";
++		pinctrl-0 = <&gpio_keys_pins>;
++		autorepeat;
++
++		key-home {
++			label = "Home";
++			linux,code = <KEY_HOME>;
++			gpios = <&gpio 50 GPIO_ACTIVE_LOW>;
++		};
++
++		key-volup {
++			label = "Volume Up";
++			linux,code = <KEY_VOLUMEUP>;
++			gpios = <&gpio 16 GPIO_ACTIVE_LOW>;
++		};
++
++		key-voldown {
++			label = "Volume Down";
++			linux,code = <KEY_VOLUMEDOWN>;
++			gpios = <&gpio 17 GPIO_ACTIVE_LOW>;
++		};
++	};
++};
++
++&smmu {
++	status = "okay";
++};
++
++&pmx {
++	pinctrl-single,gpio-range = <&range 55 55 0>,
++				    <&range 110 32 0>,
++				    <&range 52 1 0>;
++
++	pinctrl-names = "default";
++	pinctrl-0 = <&board_pins_1 &board_pins_2 &board_pins_3>;
++
++	board_pins_1: pinmux-board-1 {
++		pinctrl-single,pins = <
++			0x160 0
++			0x164 0
++			0x168 0
++			0x16c 0
++		>;
++		pinctrl-single,drive-strength = <0x1000 0x1800>;
++		pinctrl-single,bias-pullup = <0x8000 0x8000 0 0xc000>;
++		pinctrl-single,bias-pulldown = <0x8000 0x8000 0 0xa000>;
++		pinctrl-single,input-schmitt = <0 0x30>;
++		pinctrl-single,input-schmitt-enable = <0x40 0 0x40 0x40>;
++		pinctrl-single,low-power-mode = <0x288 0x388>;
++	};
++
++	board_pins_2: pinmux-board-2 {
++		pinctrl-single,pins = <
++			0x44 1
++			0x48 1
++			0x20 1
++			0x18 1
++			0x14 1
++			0x10 1
++			0xc 1
++			0x8 1
++			0x68 1
++			0x58 0
++			0x54 0
++			0x7c 0
++			0x6c 0
++			0x70 0
++			0x4c 1
++			0x50 1
++			0xac 0
++			0x90 0
++			0x8c 0
++			0x88 0
++			0x84 0
++			0xc8 0
++			0x128 0
++			0x190 0
++			0x194 0
++			0x1a0 0
++			0x114 0
++			0x118 0
++			0x1d8 0
++			0x1e4 0
++			0xe8 0
++			0x100 0
++			0x204 0
++			0x210 0
++			0x218 0
++		>;
++		pinctrl-single,bias-pullup = <0xc000 0xc000 0 0xc000>;
++		pinctrl-single,bias-pulldown = <0x8000 0xa000 0x8000 0xc000>;
++		pinctrl-single,low-power-mode = <0x288 0x388>;
++	};
++
++	board_pins_3: pinmux-board-3 {
++		pinctrl-single,pins = <
++			0x260 0
++			0x264 0
++			0x268 0
++			0x26c 0
++			0x270 0
++			0x274 0
++			0x78 0
++			0x74 0
++			0xb0 1
++		>;
++		pinctrl-single,drive-strength = <0x1000 0x1800>;
++		pinctrl-single,bias-pullup = <0 0xc000 0 0xc000>;
++		pinctrl-single,bias-pulldown = <0 0xa000 0 0xa000>;
++		pinctrl-single,input-schmitt = <0 0x30>;
++		pinctrl-single,input-schmitt-enable = <0x40 0 0x40 0x40>;
++		pinctrl-single,low-power-mode = <0 0x388>;
++	};
++
++	uart0_pins: pinmux-uart0 {
++		pinctrl-single,pins = <
++			0x198 6
++			0x19c 6
++		>;
++		pinctrl-single,drive-strength = <0x1000 0x1800>;
++		pinctrl-single,bias-pullup = <0 0xc000 0 0xc000>;
++		pinctrl-single,bias-pulldown = <0 0xa000 0 0xa000>;
++		pinctrl-single,input-schmitt = <0 0x30>;
++		pinctrl-single,input-schmitt-enable = <0x40 0 0x40 0x40>;
++		pinctrl-single,low-power-mode = <0 0x388>;
++	};
++
++	gpio_keys_pins: pinmux-gpio-keys {
++		pinctrl-single,pins = <
++			0x11c 0
++			0x120 0
++			0x1a4 0
++		>;
++		pinctrl-single,drive-strength = <0x1000 0x1800>;
++		pinctrl-single,bias-pullup = <0xc000 0xc000 0 0xc000>;
++		pinctrl-single,bias-pulldown = <0x8000 0xa0000 0x8000 0xa000>;
++		pinctrl-single,input-schmitt = <0 0x30>;
++		pinctrl-single,input-schmitt-enable = <0x40 0 0x40 0x40>;
++		pinctrl-single,low-power-mode = <0 0x388>;
++	};
++
++	i2c_muic_pins: pinmux-i2c-muic {
++		pinctrl-single,pins = <
++			0x154 0
++			0x150 0
++		>;
++		pinctrl-single,drive-strength = <0x1000 0x1800>;
++		pinctrl-single,bias-pullup = <0 0xc000 0 0xc000>;
++		pinctrl-single,bias-pulldown = <0 0xa000 0 0xa000>;
++		pinctrl-single,input-schmitt = <0 0x30>;
++		pinctrl-single,input-schmitt-enable = <0x40 0 0x40 0x40>;
++		pinctrl-single,low-power-mode = <0x288 0x388>;
++	};
++
++	sdh0_pins_1: pinmux-sdh0-1 {
++		pinctrl-single,pins = <
++			0x108 0
++		>;
++		pinctrl-single,drive-strength = <0x1000 0x1800>;
++		pinctrl-single,bias-pullup = <0xc000 0xc000 0 0xc000>;
++		pinctrl-single,bias-pulldown = <0x8000 0xa000 0x8000 0xa000>;
++		pinctrl-single,input-schmitt = <0 0x30>;
++		pinctrl-single,input-schmitt-enable = <0x40 0 0x40 0x40>;
++		pinctrl-single,low-power-mode = <0 0x388>;
++	};
++
++	sdh0_pins_2: pinmux-sdh0-2 {
++		pinctrl-single,pins = <
++			0x94 0
++			0x98 0
++			0x9c 0
++			0xa0 0
++			0xa4 0
++		>;
++		pinctrl-single,drive-strength = <0x800 0x1800>;
++		pinctrl-single,bias-pullup = <0xc000 0xc000 0 0xc000>;
++		pinctrl-single,bias-pulldown = <0x8000 0xa000 0x8000 0xa000>;
++		pinctrl-single,input-schmitt = <0 0x30>;
++		pinctrl-single,input-schmitt-enable = <0x40 0 0x40 0x40>;
++		pinctrl-single,low-power-mode = <0 0x388>;
++	};
++
++	sdh0_pins_3: pinmux-sdh0-3 {
++		pinctrl-single,pins = <
++			0xa8 0
++		>;
++		pinctrl-single,drive-strength = <0x1000 0x1800>;
++		pinctrl-single,bias-pullup = <0 0xc000 0 0xc000>;
++		pinctrl-single,bias-pulldown = <0 0xa000 0 0xa000>;
++		pinctrl-single,input-schmitt = <0 0x30>;
++		pinctrl-single,input-schmitt-enable = <0x40 0 0x40 0x40>;
++		pinctrl-single,low-power-mode = <0x208 0x388>;
++	};
++};
++
++&uart0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart0_pins>;
++};
++
++&twsi0 {
++	status = "okay";
++};
++
++&twsi1 {
++	status = "okay";
++};
++
++&twsi2 {
++	status = "okay";
++};
++
++&twsi3 {
++	status = "okay";
++};
++
++&usb {
++	extcon = <&muic>, <&muic>;
++};
++
++&sdh2 {
++	/* Disabled for now because initialization fails with -ETIMEDOUT. */
++	status = "disabled";
++	bus-width = <8>;
++	non-removable;
++	broken-cd;
++	mmc-ddr-1_8v;
++};
++
++&sdh0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&sdh0_pins_1 &sdh0_pins_2 &sdh0_pins_3>;
++	cd-gpios = <&gpio 11 0>;
++	cd-inverted;
++	bus-width = <4>;
++	wp-inverted;
++};
+diff --git a/arch/arm64/boot/dts/marvell/pxa1908.dtsi b/arch/arm64/boot/dts/marvell/pxa1908.dtsi
+new file mode 100644
+index 000000000000..cc322b9a0e9e
+--- /dev/null
++++ b/arch/arm64/boot/dts/marvell/pxa1908.dtsi
+@@ -0,0 +1,295 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/dts-v1/;
++
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/marvell,pxa1908.h>
++
++/ {
++	model = "Marvell Armada PXA1908";
++	compatible = "marvell,pxa1908";
++	#address-cells = <2>;
++	#size-cells = <2>;
++	interrupt-parent = <&gic>;
++
++	cpus {
++		#address-cells = <2>;
++		#size-cells = <0>;
++
++		cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			reg = <0 0>;
++			enable-method = "psci";
++		};
++
++		cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			reg = <0 1>;
++			enable-method = "psci";
++		};
++
++		cpu@2 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			reg = <0 2>;
++			enable-method = "psci";
++		};
++
++		cpu@3 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			reg = <0 3>;
++			enable-method = "psci";
++		};
++	};
++
++	psci {
++		compatible = "arm,psci-0.2";
++		method = "smc";
++	};
++
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++			<GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++			<GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++			<GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
++	};
++
++	soc {
++		compatible = "simple-bus";
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		smmu: iommu@c0010000 {
++			compatible = "arm,mmu-400";
++			reg = <0 0xc0010000 0 0x10000>;
++			#global-interrupts = <1>;
++			#iommu-cells = <1>;
++			interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
++		};
++
++		gic: interrupt-controller@d1df9000 {
++			compatible = "arm,gic-400";
++			reg = <0 0xd1df9000 0 0x1000>,
++				<0 0xd1dfa000 0 0x2000>,
++				/* The subsequent registers are guesses. */
++				<0 0xd1dfc000 0 0x2000>,
++				<0 0xd1dfe000 0 0x2000>;
++			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
++			interrupt-controller;
++			#interrupt-cells = <3>;
++		};
++
++		apb@d4000000 {
++			compatible = "simple-bus";
++			reg = <0 0xd4000000 0 0x200000>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges = <0 0 0xd4000000 0x200000>;
++
++			pdma: dma-controller@0 {
++				compatible = "marvell,pdma-1.0";
++				reg = <0 0x10000>;
++				interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
++				dma-channels = <30>;
++				#dma-cells = <2>;
++			};
++
++			twsi1: i2c@10800 {
++				compatible = "mrvl,mmp-twsi";
++				#address-cells = <1>;
++				#size-cells = <0>;
++				reg = <0x10800 0x64>;
++				interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&apbc PXA1908_CLK_TWSI1>;
++				mrvl,i2c-fast-mode;
++				status = "disabled";
++			};
++
++			twsi0: i2c@11000 {
++				compatible = "mrvl,mmp-twsi";
++				#address-cells = <1>;
++				#size-cells = <0>;
++				reg = <0x11000 0x64>;
++				interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&apbc PXA1908_CLK_TWSI0>;
++				mrvl,i2c-fast-mode;
++				status = "disabled";
++			};
++
++			twsi3: i2c@13800 {
++				compatible = "mrvl,mmp-twsi";
++				#address-cells = <1>;
++				#size-cells = <0>;
++				reg = <0x13800 0x64>;
++				interrupts = <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&apbc PXA1908_CLK_TWSI3>;
++				mrvl,i2c-fast-mode;
++				status = "disabled";
++			};
++
++			apbc: clock-controller@15000 {
++				compatible = "marvell,pxa1908-apbc";
++				reg = <0x15000 0x1000>;
++				#clock-cells = <1>;
++			};
++
++			uart0: serial@17000 {
++				compatible = "mrvl,mmp-uart", "intel,xscale-uart";
++				reg = <0x17000 0x1000>;
++				interrupts = <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&apbc PXA1908_CLK_UART0>;
++				reg-shift = <2>;
++			};
++
++			uart1: serial@18000 {
++				compatible = "mrvl,mmp-uart", "intel,xscale-uart";
++				reg = <0x18000 0x1000>;
++				interrupts = <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&apbc PXA1908_CLK_UART1>;
++				reg-shift = <2>;
++			};
++
++			gpio: gpio@19000 {
++				compatible = "marvell,mmp-gpio";
++				reg = <0x19000 0x800>;
++				#address-cells = <1>;
++				#size-cells = <1>;
++				gpio-controller;
++				#gpio-cells = <2>;
++				clocks = <&apbc PXA1908_CLK_GPIO>;
++				interrupts = <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>;
++				interrupt-names = "gpio_mux";
++				interrupt-controller;
++				#interrupt-cells = <2>;
++				ranges = <0 0x19000 0x800>;
++
++				gpio@0 {
++					reg = <0x0 0x4>;
++				};
++
++				gpio@4 {
++					reg = <0x4 0x4>;
++				};
++
++				gpio@8 {
++					reg = <0x8 0x4>;
++				};
++
++				gpio@100 {
++					reg = <0x100 0x4>;
++				};
++			};
++
++			pmx: pinmux@1e000 {
++				compatible = "pinconf-single";
++				reg = <0x1e000 0x330>;
++				#address-cells = <1>;
++				#size-cells = <1>;
++				#gpio-range-cells = <3>;
++				ranges;
++
++				#pinctrl-cells = <1>;
++				pinctrl-single,register-width = <32>;
++				pinctrl-single,function-mask = <7>;
++
++				range: gpio-range {
++					#pinctrl-single,gpio-range-cells = <3>;
++				};
++			};
++
++			uart2: serial@36000 {
++				compatible = "mrvl,mmp-uart", "intel,xscale-uart";
++				reg = <0x36000 0x1000>;
++				interrupts = <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&apbcp PXA1908_CLK_UART2>;
++				reg-shift = <2>;
++			};
++
++			twsi2: i2c@37000 {
++				compatible = "mrvl,mmp-twsi";
++				#address-cells = <1>;
++				#size-cells = <0>;
++				reg = <0x37000 0x64>;
++				interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&apbcp PXA1908_CLK_TWSI2>;
++				mrvl,i2c-fast-mode;
++				status = "disabled";
++			};
++
++			apbcp: clock-controller@3b000 {
++				compatible = "marvell,pxa1908-apbcp";
++				reg = <0x3b000 0x1000>;
++				#clock-cells = <1>;
++			};
++
++			mpmu: clock-controller@50000 {
++				compatible = "marvell,pxa1908-mpmu";
++				reg = <0x50000 0x1000>;
++				#clock-cells = <1>;
++			};
++		};
++
++		axi@d4200000 {
++			compatible = "simple-bus";
++			reg = <0 0xd4200000 0 0x200000>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges = <0 0 0xd4200000 0x200000>;
++
++			usbphy: phy@7000 {
++				compatible = "marvell,pxa1928-usb-phy";
++				reg = <0x7000 0x200>;
++				clocks = <&apmu PXA1908_CLK_USB>;
++				#phy-cells = <0>;
++			};
++
++			usb: usb@8000 {
++				compatible = "chipidea,usb2";
++				reg = <0x8000 0x200>;
++				interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&apmu PXA1908_CLK_USB>;
++				phys = <&usbphy>;
++				phy-names = "usb-phy";
++			};
++
++			sdh0: mmc@80000 {
++				compatible = "mrvl,pxav3-mmc";
++				reg = <0x80000 0x120>;
++				interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&apmu PXA1908_CLK_SDH0>;
++				clock-names = "io";
++				mrvl,clk-delay-cycles = <31>;
++			};
++
++			sdh1: mmc@80800 {
++				compatible = "mrvl,pxav3-mmc";
++				reg = <0x80800 0x120>;
++				interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&apmu PXA1908_CLK_SDH1>;
++				clock-names = "io";
++				mrvl,clk-delay-cycles = <31>;
++			};
++
++			sdh2: mmc@81000 {
++				compatible = "mrvl,pxav3-mmc";
++				reg = <0x81000 0x120>;
++				interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&apmu PXA1908_CLK_SDH2>;
++				clock-names = "io";
++				mrvl,clk-delay-cycles = <31>;
++			};
++
++			apmu: clock-controller@82800 {
++				compatible = "marvell,pxa1908-apmu";
++				reg = <0x82800 0x400>;
++				#clock-cells = <1>;
++			};
++		};
++	};
++};
 
 -- 
 2.41.0
