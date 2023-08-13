@@ -2,128 +2,126 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 317C3C04A94
-	for <linux-clk@archiver.kernel.org>; Sat, 12 Aug 2023 15:48:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CED5EC001B0
+	for <linux-clk@archiver.kernel.org>; Sun, 13 Aug 2023 09:45:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229699AbjHLPsG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 12 Aug 2023 11:48:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50534 "EHLO
+        id S230475AbjHMJph (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 13 Aug 2023 05:45:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229651AbjHLPsE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 12 Aug 2023 11:48:04 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49D1A1984
-        for <linux-clk@vger.kernel.org>; Sat, 12 Aug 2023 08:48:07 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-4fe21e7f3d1so4659960e87.3
-        for <linux-clk@vger.kernel.org>; Sat, 12 Aug 2023 08:48:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691855285; x=1692460085;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+7EmhC7IvfDMyhQW+vcMkOmpd2esE3mk9TXXEdkzT+8=;
-        b=A7GLIvcjYO96fYqCj6TXYiCoi+IFnBozs0dHCAMwuIz1SVTqmQ13MSQKg5x6B+Q1wI
-         2DkJ+RIxYyp9toISocgyAfo7Jhn3dQ/81rS6BEU4y4q8k/7beXVZ1e5FG0SLrxejg17N
-         1mJ7gWGKiYjgVonsWK8eyOWkMAnm9AsMBSlv7Bon+NDVz7C90oWfrQwK5OH4Q2PvJ9G7
-         WxIaWUlsAzFflKy2hjdtmhXhKEH47ts0iEHEWN4xIQ9QNbHG+PUqfu209LvsseRrO+ZL
-         93bN3XBWozPYK33/amI2eDS8i0Ek4WZWU+xmoc4RmOduDwmgXb76cDxMhPQMdkJ6J0T8
-         wkUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691855285; x=1692460085;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+7EmhC7IvfDMyhQW+vcMkOmpd2esE3mk9TXXEdkzT+8=;
-        b=SVTGPi/EK/fZr7PSql9q6TB+/LdfWyr0NzMsjq0OsTvYAMzCTi1GoWWtiSQUCUao44
-         m3F+iEok5L+ZVYPcd92Xo4GrI4cHinrc/ID2YIFrB9wB9f8LcqrSumhVsAgwp/nd97/Y
-         ifmHTisssc4NgQ8obwogj1Xk+fVneEWY2pDDcF7qAL9DogpTu/0faEVlLmPlntk7G7ah
-         Hx65gCTbUyRqoNTY94RDo3THdG2B25YZzBoQJC21Ipzj4P1hvNrSwsXdHX0ZH95j1T5m
-         /TNBczNHkZ7gC0Q8T8XmXR07RBtWsr3paMbdJkk3b1r6nXp8o6YlmPIntgchGqbOX7xN
-         XNwQ==
-X-Gm-Message-State: AOJu0YwZXytSjh2IebVwE0fMaEKsm47XUX49y8oRbsHRYVk3QxHc1SLn
-        0pG2W/2irXICthUz0CKcYfHDvQ==
-X-Google-Smtp-Source: AGHT+IH+/xOszBXGiiStoi3yRcILGLTaELHC86haK/0LqUTXljUMl1J1PwCbM3VVp5BWwhMudgfdKw==
-X-Received: by 2002:a19:5e49:0:b0:4fd:d7ac:2654 with SMTP id z9-20020a195e49000000b004fdd7ac2654mr2709878lfi.13.1691855285513;
-        Sat, 12 Aug 2023 08:48:05 -0700 (PDT)
-Received: from [192.168.1.101] (abyj188.neoplus.adsl.tpnet.pl. [83.9.29.188])
-        by smtp.gmail.com with ESMTPSA id d25-20020ac25459000000b004fde91ea57bsm1177780lfn.11.2023.08.12.08.48.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 12 Aug 2023 08:48:05 -0700 (PDT)
-Message-ID: <6e1271b0-61b2-4e7c-ae38-c436134e288f@linaro.org>
-Date:   Sat, 12 Aug 2023 17:48:03 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/7] clk: qcom: hfpll: Add MSM8976 PLL data
-Content-Language: en-US
-To:     Adam Skladowski <a39.skl@gmail.com>
-Cc:     phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S229441AbjHMJpg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 13 Aug 2023 05:45:36 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 726EDE7B;
+        Sun, 13 Aug 2023 02:45:36 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D709C61952;
+        Sun, 13 Aug 2023 09:45:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 466B9C433C7;
+        Sun, 13 Aug 2023 09:45:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1691919935;
+        bh=IvMvUg438awBsWmrvnlmQyrc2p9kbydwMSmLPr71LH8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nJuLxl1MCjxFSShXgYIj1sHOTmT1RIl6wxl9mwadKHXGJnX+Ym7sfsifvxm5+ogQX
+         UFTsc8FtEpSOelHMxljzkPsZaGrula8JHIv1JR95a5UmR4hBjYvqHubHsWE9jhAhIV
+         yROUaDgFL9eR9Na0JEZT2fmrJx6qVeQnEnWVg7pox2HnClwY5KkMm+NEfToEC1Ym+K
+         M/jagQW+Sm4iF9QNVQ7WiAIuwKEvtTgW/bKg0pXflkFxKZqYxB/0A7vc20RlMHvKMb
+         XbILVbVDKZUP5aTVzxHDonum1TxZlhq6nUKzeNe6Bit6XZK3oxFYQ7MBGFpT8Hz7uy
+         n4qpr3ZffXZYQ==
+Date:   Sun, 13 Aug 2023 10:45:30 +0100
+From:   Conor Dooley <conor@kernel.org>
+To:     Duje =?utf-8?Q?Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        AngeloGioacchino Del Regno <kholk11@gmail.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230812112534.8610-1-a39.skl@gmail.com>
- <20230812112534.8610-6-a39.skl@gmail.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20230812112534.8610-6-a39.skl@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] clk: marvell: Move number of clocks to driver
+ source
+Message-ID: <20230813-accuracy-constrict-fe6fe41c8b4e@spud>
+References: <20230812-mmp-nr-clks-v2-0-f9271bd7eaa5@skole.hr>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="n0gFG7/B+FgEa/54"
+Content-Disposition: inline
+In-Reply-To: <20230812-mmp-nr-clks-v2-0-f9271bd7eaa5@skole.hr>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12.08.2023 13:24, Adam Skladowski wrote:
-> Add PLL configuration for MSM8976 SoC, this SoC offers 3 HFPLL.
-> Small cluster offers two presets for 652-902Mhz range and 902Mhz-1.47Ghz.
-> For simplicity only add second range as smaller frequencies can be obtained
-> via apcs divider or safe parent this also saves us
-> a hassle of reconfiguring VCO bit and config_val.
-> A72 and CCI cluster only use single frequency range with their
-> outputs/post_dividers/vco_bits being static.
-> 
-> Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
-> ---
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-Konrad
+--n0gFG7/B+FgEa/54
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Sat, Aug 12, 2023 at 12:02:55PM +0200, Duje Mihanovi=C4=87 wrote:
+> Hi,
+>=20
+> In v4 of my PXA1908 series, Conor suggested that the NR_CLKS variables
+> in dt bindings should be moved to the respective driver source files
+> because these are not used by the device trees and so are needlessly
+> added to the ABI. This series does that for the rest of the Marvell
+> PXA/MMP SoCs.
+>=20
+> Link: https://lore.kernel.org/r/20230808-produce-thievish-3ce1b86a114b@sp=
+ud/
+> Signed-off-by: Duje Mihanovi=C4=87 <duje.mihanovic@skole.hr>
+
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+Thanks,
+conor.
+
+> ---
+> Changes in v2:
+> - Fix clk-audio.c compile error
+> - Reword mmp2 commit to match other commits
+> - Link to v1: https://lore.kernel.org/r/20230809-mmp-nr-clks-v1-0-5f3cdbb=
+b89b8@skole.hr
+>=20
+> ---
+> Duje Mihanovi=C4=87 (4):
+>       clk: mmp2: Move number of clocks to driver source
+>       clk: pxa168: Move number of clocks to driver source
+>       clk: pxa1928: Move number of clocks to driver source
+>       clk: pxa910: Move number of clocks to driver source
+>=20
+>  drivers/clk/mmp/clk-audio.c                    | 6 ++++--
+>  drivers/clk/mmp/clk-of-mmp2.c                  | 4 +++-
+>  drivers/clk/mmp/clk-of-pxa168.c                | 4 +++-
+>  drivers/clk/mmp/clk-of-pxa1928.c               | 7 +++++--
+>  drivers/clk/mmp/clk-of-pxa910.c                | 4 +++-
+>  include/dt-bindings/clock/marvell,mmp2-audio.h | 1 -
+>  include/dt-bindings/clock/marvell,mmp2.h       | 1 -
+>  include/dt-bindings/clock/marvell,pxa168.h     | 1 -
+>  include/dt-bindings/clock/marvell,pxa1928.h    | 3 ---
+>  include/dt-bindings/clock/marvell,pxa910.h     | 1 -
+>  10 files changed, 18 insertions(+), 14 deletions(-)
+> ---
+> base-commit: 52a93d39b17dc7eb98b6aa3edb93943248e03b2f
+> change-id: 20230809-mmp-nr-clks-7c80e416e6bf
+>=20
+> Best regards,
+> --=20
+> Duje Mihanovi=C4=87 <duje.mihanovic@skole.hr>
+>=20
+>=20
+
+--n0gFG7/B+FgEa/54
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZNimIQAKCRB4tDGHoIJi
+0gkjAQCHftyXsSmqXlJWH4Eg+IdAGbOVoF7KD+NAtBWvwRPqJgD+IiddYy1yVtgY
+YJf/wgJ7Ul0/tGdAyl8nh4q5C/3xiwY=
+=EmmT
+-----END PGP SIGNATURE-----
+
+--n0gFG7/B+FgEa/54--
