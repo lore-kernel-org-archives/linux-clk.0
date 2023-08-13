@@ -2,114 +2,141 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0E63C001DB
-	for <linux-clk@archiver.kernel.org>; Sun, 13 Aug 2023 18:59:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 602CAEB64DD
+	for <linux-clk@archiver.kernel.org>; Sun, 13 Aug 2023 22:08:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231479AbjHMS7o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 13 Aug 2023 14:59:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41860 "EHLO
+        id S231420AbjHMWIe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 13 Aug 2023 18:08:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229774AbjHMS7n (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 13 Aug 2023 14:59:43 -0400
-Received: from mail-ua1-x929.google.com (mail-ua1-x929.google.com [IPv6:2607:f8b0:4864:20::929])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E01131707
-        for <linux-clk@vger.kernel.org>; Sun, 13 Aug 2023 11:59:45 -0700 (PDT)
-Received: by mail-ua1-x929.google.com with SMTP id a1e0cc1a2514c-79a2216a22fso834549241.0
-        for <linux-clk@vger.kernel.org>; Sun, 13 Aug 2023 11:59:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1691953185; x=1692557985;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mvSEBb+mluam1nmVpoK29fUncMJsHTGSApagTYFZ+Nw=;
-        b=pFVAQ/sNHiDXrGMz9gVFrGk2RoyqRTEw1A8tOgJUVd9tH/SoMcC4+2/HnhEgNGyqry
-         y5eF3PH4E5Ljq8EAuiT4NILGWvm9UpdMnZN+PPX7q4BfSDcUQdZi08uoijQXZTyvTc1N
-         sQExNrek1/cDxrigvgPUQTrFENNXxGF0C29mUtIV5UayKQEolEHPhIwNqoKkFarvejJE
-         1/qkbE7EyLKltNSugm7eoJtMJUz8wmSUlxm3n8qP/n/OH1ipG9b3P4KBBqt5v+L45imk
-         u17e8fPs0O8H0YPNEKv35qJS4NW6FrC7lgI7FPLc9427hSnejGg2qIvsAOXUJHzI0eOj
-         YR2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691953185; x=1692557985;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mvSEBb+mluam1nmVpoK29fUncMJsHTGSApagTYFZ+Nw=;
-        b=bPbb922s9nflyHNWgdY6cIrEgX12Iv0PfoIE9O3PesU6v2N2cO9/x3oQ1wiTtr7Gy/
-         Bpk2IU9+SmE3MXg6mJzUGSN2mo0c0Avt4W0OT2fdf7Na0vSFq955LcDtbT13z0AMws5A
-         UDkNBs+m6n+d80+dubFCV5Ptf1TjAiNjO+05gOJKloFKzpaiAWsEGDjtpl9RQv+LB+WU
-         u4tZFUmCkdW80ytWMmnitOqlpBz9Qx+K9+DF5NIMn6fJRlchfGay0dJFPpqAFvCsL+PD
-         kMDH41bFEv0Fvt4DZonNloh0+AewsDea+9bvXNEplq+taduZtq2f10RIO7iLl6/tpZfo
-         YBrg==
-X-Gm-Message-State: AOJu0Yw3JxqKrTwo+kkClR5KGauX7aMJ4LCYumHuC5bhfaYQwKJfc4RR
-        d/cjtPjSSXIzY2a5RL229+YgNoKa/l7fsMn8/Ejxzw==
-X-Google-Smtp-Source: AGHT+IGluhxjUnvE0HEw7R1pBnoP9kfF80Uw2gAE8xhlQCTYodKi9s2rNhKVE9dOn2oFx7nOecRGqHm+O1G5Ai9/VuY=
-X-Received: by 2002:a67:f28b:0:b0:447:6965:7284 with SMTP id
- m11-20020a67f28b000000b0044769657284mr7883113vsk.8.1691953185055; Sun, 13 Aug
- 2023 11:59:45 -0700 (PDT)
+        with ESMTP id S231439AbjHMWIQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 13 Aug 2023 18:08:16 -0400
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AEC81BEE;
+        Sun, 13 Aug 2023 14:59:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+ s=s31663417; t=1691963935; x=1692568735; i=j.neuschaefer@gmx.net;
+ bh=MyejiVwol60hEEL/Sj0XYSSEOB2BnWEX72RuhsubBVY=;
+ h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
+ b=OmhGlZT9kO3NG/691pb8CwWsqQTA44ICNq4nXhekqaZF1KZG0ToWGeO5Y1VNSJ+Yz1yzN0n
+ JFRX5Nz6j0zFg3W/0VR23KsmQ8puZJhxewZsfMjj1anSpXTyzzNfvmjwiAbKq6OcrBwBQ1KFK
+ iZUadvzEZ2jD2Q1xFieaKD4jqHx45eEh+La7+705XTNqGuu7yLEy5EEZIqlDalY6XG3uYCezk
+ FPnjCcrdv5j6es60G1dZK1nSLEXKBZE+DOU817l919J/3CZFoUOElImSDAw5y3FckHE0Gat6a
+ IExS25gGPgzqBhF9jaXtt2GfjvBbUahckyR3gs3SHC2hL7NXvRFg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from probook ([151.216.152.144]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1N6sn7-1piBSy2B7n-018MQM; Sun, 13
+ Aug 2023 23:58:55 +0200
+Date:   Sun, 13 Aug 2023 23:58:55 +0200
+From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     Tao Lan <taolan@huawei.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, j.neuschaefer@gmx.net,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: fix memory leak in hisi_clk_init.
+Message-ID: <ZNlSH+eWV8Sk3FYn@probook>
+References: <20221222091221.28308-1-taolan@huawei.com>
 MIME-Version: 1.0
-References: <20230812-pxa1908-lkml-v5-0-a5d51937ee34@skole.hr> <20230812-pxa1908-lkml-v5-1-a5d51937ee34@skole.hr>
-In-Reply-To: <20230812-pxa1908-lkml-v5-1-a5d51937ee34@skole.hr>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Sun, 13 Aug 2023 20:59:34 +0200
-Message-ID: <CAMRc=MfS7Ybr0sxCmgh98+7+3pnRmWFVutTgz4+sa1nsTdh3Hg@mail.gmail.com>
-Subject: Re: [PATCH v5 1/8] gpio: pxa: disable pinctrl calls for MMP_GPIO
-To:     =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Cc:     Robert Jarzmik <robert.jarzmik@free.fr>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andy@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Tony Luck <tony.luck@intel.com>,
-        "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-hardening@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        afaerber@suse.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="a6iDqMC9Rx98SozQ"
+Content-Disposition: inline
+In-Reply-To: <20221222091221.28308-1-taolan@huawei.com>
+X-Provags-ID: V03:K1:zL8f0oHy0YLXJqtaYZ0ppZSPXqYJcTdo8zSUSRRTo22kCS1sL6y
+ tF6gBs81yiE1A9agmP550Lx+s57p1fox6sEmVF0A9MAP8v4p3J+WnX+xBe6Rv/s4Y+civIj
+ gxu5UFH4FnEhh29cqvS2xTqFJFNBqg6wjarZ/UwJ9ZtcBEYvKyUqXzTG5tjo4z49C3sz1Cn
+ 2LSN8njeeOh63Gpocp0vw==
+UI-OutboundReport: notjunk:1;M01:P0:m72hZOWJZfo=;75TnQhajGaIKcxvkM/83FTS2SKE
+ DJupgVeAaRnsEY7sxEvtPVl98PzLtejdMJkY1EweVd6ITB0ViGwhXbpjD3YFTxr7DBjJdlMom
+ 9jdj4sUFl3loIUbZObNclniDb0ReOdGGxl8wr6U74Vjo6O8ybvLG8acJrt/vuJc+/m2qWIJF5
+ y4+cE7oHDkasxZf75YO6ottNKuXQodzEUokbX4PQfRBXsOBsRH6AR9CGNyU5TeHa8Ixf1+xVp
+ u3NWwVUVE4OlnoQ3Si/ULgm0Vrourb1oAYLHwtnbO+6q/Js+mEg5na32K28/LzPW48sIdRmBP
+ gync/57WsYl5pBEdILZ/XWDudhXntcL5Pg5H3CmaBeduGITPwiRpPf6d1mX2V+lDsjSzdRks/
+ WUIJtrCYQ6YFbGCZAqtC3RIbsPm0rSJJnGbF/juTD8drZG5bYXEVGFS2nkWb8xZW6AueBHOB2
+ B+tWadBaEEwKpHRf+XdGGr9deqwJa2lZrGAxr3MU673Df2aCB6qWXTXytsXuvvvggwMMv5h4Q
+ 5iaGw35cp7ojBJJKZ884YxvaMJtriTmYPGa477apHLtynoPaHaq3lAHLDElXuxkmS19GUr30Q
+ BVXLF4M3RIr3/zkmcRX3ntZvkPutvc/2uWg9CGxVL9RwwvvPT/9u7Axziim4FanGakSuyi+eS
+ dWFeyNxJRr/YWuGkPw89NmNTom8vGkGlR0q93l8Tbu1Wa38LKwobUf7BD612+t5zVLOGl9njO
+ fjXOKLnhXBg90wYLBLk8TBV/v+TZ6V4nz4UzAFU6rNVO8GvTgum+aQCfsY6IjJPhtFYmycfaj
+ gXm1z42SQpBV/pc2PyBJh6EBT5jE60qnYLeG9sQQ8qdEJwc4Fc5hcjG0O7MgGl/KuAvrYFhcP
+ F1Os3DbJSxiUUq+3MtY8/kJ5qIO80OV/DtmF/xiOVNPsQFzMHo4Wewprvn73+KeEwoThU7UDy
+ x+I5CO0gMNgeG5ff1yZEaELEekM=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Aug 12, 2023 at 12:26=E2=80=AFPM Duje Mihanovi=C4=87 <duje.mihanovi=
-c@skole.hr> wrote:
->
-> Similarly to PXA3xx and MMP2, pinctrl-single isn't capable of setting
-> pin direction on MMP either.
->
-> Fixes: a770d946371e ("gpio: pxa: add pin control gpio direction and reque=
-st")
-> Signed-off-by: Duje Mihanovi=C4=87 <duje.mihanovic@skole.hr>
-> Reviewed-by: Andy Shevchenko <andy@kernel.org>
-> ---
->  drivers/gpio/gpio-pxa.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
-> index a1630ed4b741..d92650aecb06 100644
-> --- a/drivers/gpio/gpio-pxa.c
-> +++ b/drivers/gpio/gpio-pxa.c
-> @@ -238,6 +238,7 @@ static bool pxa_gpio_has_pinctrl(void)
->         switch (gpio_type) {
->         case PXA3XX_GPIO:
->         case MMP2_GPIO:
-> +       case MMP_GPIO:
->                 return false;
->
->         default:
->
-> --
-> 2.41.0
->
->
 
-Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+--a6iDqMC9Rx98SozQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hello,
+
+sorry for the delay, but I found this unmerged patch while cleaning up
+my mailbox.
+
+On Thu, Dec 22, 2022 at 09:12:21AM +0000, Tao Lan wrote:
+> From: taolan <taolan@huawei.com>
+>=20
+> when clk_data create fail, we also need to release base.
+>=20
+> Signed-off-by: taolan <taolan@huawei.com>
+> ---
+>  drivers/clk/hisilicon/clk.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>=20
+> diff --git a/drivers/clk/hisilicon/clk.c b/drivers/clk/hisilicon/clk.c
+> index 54d9fdc93599..9ca4fc05fa57 100644
+> --- a/drivers/clk/hisilicon/clk.c
+> +++ b/drivers/clk/hisilicon/clk.c
+> @@ -82,6 +82,10 @@ struct hisi_clock_data *hisi_clk_init(struct device_no=
+de *np,
+>  	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data->clk_data);
+>  	return clk_data;
+>  err_data:
+> +	if (base) {
+> +		iounmap(base);
+> +		base =3D NULL;
+> +	}
+
+This is inaccurate. Consider the case when kzalloc fails:
+
+	clk_data =3D kzalloc(sizeof(*clk_data), GFP_KERNEL);
+	if (!clk_data)
+		goto err;
+
+base has already been mapped, but the code jumps to 'err', which doesn't
+have the iounmap.
+
+To address this properly, you'd have to add another label between
+err_data and err.
+
+
+>  	kfree(clk_data);
+>  err:
+>  	return NULL;
+
+
+Best regards,
+jn
+
+--a6iDqMC9Rx98SozQ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAmTZUfwACgkQCDBEmo7z
+X9v5KBAArTSZfCeWFE+wvW+7H3bcqhQzz1HuFXIcWRP/7l4QxZfSrTseScsxx1tt
+65fD9mDm9etWw8lnuwHXpwx4KVkZf09eWh+H6LEGcm1x4BfcozFmeBiVySUJ81cO
+/UddTJBlXKYLI8wbIiVfIwDzLCGurJkSHNDJBrkgk/U/eV78AethhfP20qkGNChH
+Z1TF/4Xc64gcBC1SKHrCALNlB+ICTtQCwehR2DFbmjBtY3FREda3g5Z+xfjENVnN
+0dweiJ8ksBEfmAWFevogpDdcJkA+5XqUu9klH7svnm4k45LFJj6KVNQIotxGQJs5
+OhfFJ708uzuzNaRlb/GL8dUBQkH/zhS+9+lNn+jKcKgY6yKl9YrtZeOUG2u9ZMjJ
+8hPN/2FgpAkaY5pqCyOgDvcxOHyYmM2Vdyg0n79C7HRWqpRCPKezcemsQRMyqq+4
+Nlt12FqDMe4z8VDXGqE8gK8UhTZsGBrx+6niH/TYcWZrWZ4CG3Frz6SSOP/NF62r
+8h6quL5SbROq+fHpB2sXKj5k9HilQOhJSHvY+X9NB2F62PImXvMX7GGZKnRcAZXw
+1CB7aAMPUeqvNozcfO4iLABGpbIuumKTO/pgZ6B00QYExDcxTkDgao0bVZnjUber
+KgnGBrmdUv5gb3gYkchGVOST2dHygO1b3DxywiD+bYulbgJMP+4=
+=h3d+
+-----END PGP SIGNATURE-----
+
+--a6iDqMC9Rx98SozQ--
