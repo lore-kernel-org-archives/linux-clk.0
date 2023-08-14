@@ -2,88 +2,97 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0083C0729B
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Aug 2023 10:12:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC435C41513
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Aug 2023 10:42:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236339AbjHNKMD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Aug 2023 06:12:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51230 "EHLO
+        id S233054AbjHNKlo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Aug 2023 06:41:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236125AbjHNKLi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Aug 2023 06:11:38 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AC8F10F2
-        for <linux-clk@vger.kernel.org>; Mon, 14 Aug 2023 03:10:53 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-3fe1a17f983so37245045e9.3
-        for <linux-clk@vger.kernel.org>; Mon, 14 Aug 2023 03:10:53 -0700 (PDT)
+        with ESMTP id S235185AbjHNKlh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Aug 2023 06:41:37 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5207310DB
+        for <linux-clk@vger.kernel.org>; Mon, 14 Aug 2023 03:41:27 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-99bdcade7fbso541541966b.1
+        for <linux-clk@vger.kernel.org>; Mon, 14 Aug 2023 03:41:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1692007850; x=1692612650;
+        d=sartura.hr; s=sartura; t=1692009685; x=1692614485;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ESVhtHoMLjpXOh7/9of5EXSKLVqOfUmeEpUAt6YEbDk=;
-        b=ugbzJGCHzCqnyNCVJ9AEJgSO4wFcS2K/tJY0TUtVVrrYd1YFLE3qXOv0MlLIgXTZVB
-         QSyJ7RSa+r8S4kW3SkekG9EWAPUz/FTqQkJXJ32FVR5hTHmA5m4iXN/4HeZf3B67JJGU
-         j5RKW/uLqbsVY0JTxKCQIUsbSZXqvjHymXYU0ApOjlN09CTtTM7o1EsAq9df40ayR/gL
-         NyoWEuibfG0/nbthmkvaWcZLSQrvGVWfMbTn+1E0TTfEyXgjflRUpIUx/CipCOskR7rm
-         UZGWZJLHuzQf1sfwS5uxY93zjQt5km0HBE0WuxgosCyk6cdaXvIGV9cFxI0Ko83Xpkbr
-         M9Kg==
+        bh=Djj4l4V/6mjTCVIY5j1u2m14Bqurma+fObOXnVezLR0=;
+        b=fBXI+rRnh1me98p2B6w9MJ+himWLu2zzOVjf19ltNVYFfR/dNpJxyBqCz8zTs1bJhx
+         9ETPAkFP8toVGszYn8vNWF3zgyNJ8dTJ9EmV/PRn8ORbDyGt51YRA8tUs1AlGBYPc/uf
+         c1fZgwFTy5MW7wNzz0TeWZ+AVGDOxn1ORnT6Y3bMVEA1O6o86YSQvaIUysQgP58JRag5
+         N96eyCE5fUlCS1zHrsFwr4JEbOWtlKfr8WuPGfjnxcW3dS4jg+n7i3mahMjWVqicC5YO
+         +I4PbOWPQMjmRjlFmekO9xOnSInNBXEPmWFHHhWf5DFsvyNZTp8R5HQaQrITnK2LjyuE
+         L5gQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692007850; x=1692612650;
+        d=1e100.net; s=20221208; t=1692009685; x=1692614485;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ESVhtHoMLjpXOh7/9of5EXSKLVqOfUmeEpUAt6YEbDk=;
-        b=VQaQTh/6n34i+WFirGUp2C1qQ9m8qYMlEXHLAQ9wXt3t3NcAFVaiMRjOMsKjqdEmcD
-         9jjSFYjfNURCdaZzbMKoeLNdtYOVgdM/Q4FCALAzfBk7b0kCu0AsFgrezBBo34ZDcqcM
-         vDkD2VQ1PMDxpjOVUTblFOUtlzyUK3BHf/z2P3Z8NntWKci8alXGO2JHArWwZ0AzA/79
-         ZLapZd+AegP3EIWDS/PZAJElWNH9W2dKJhtDzBcRVsrnbViZSNVa4xv8zl0IHjoAMslO
-         G3YmNuRezMsjGnKqQxEItBjVA2cUF80VtL6RMaBdH0Wgg9t9lbFfLpKRLhRUjmCB2LFc
-         W0bw==
-X-Gm-Message-State: AOJu0YzXSmO5eUK0EUN0uE+11NM+zXMs8knyzkK9krN/+tqQRmcsxCwd
-        yAf2zOnPG0r/YZn6/Etu61cCJA==
-X-Google-Smtp-Source: AGHT+IHr7ubyVfhrrz0Cla5qo9gl0Y6s4v7dNlJWWF2mrQmHybIpVpMUq2sIq64MgDp9YflZck6Fzw==
-X-Received: by 2002:a1c:7717:0:b0:3fb:dbd0:a7ea with SMTP id t23-20020a1c7717000000b003fbdbd0a7eamr7212142wmi.37.1692007849752;
-        Mon, 14 Aug 2023 03:10:49 -0700 (PDT)
-Received: from hackbox.lan ([84.232.191.92])
-        by smtp.gmail.com with ESMTPSA id n5-20020a05600c294500b003fbaade0735sm16750396wmd.19.2023.08.14.03.10.48
+        bh=Djj4l4V/6mjTCVIY5j1u2m14Bqurma+fObOXnVezLR0=;
+        b=QArBr/eJVX5D2ZwbL6556Rx5aP5y9j62GTqRRlo6qWy247R6X7R/d0wWI49iYYx4RP
+         TCw8oJV7vYr0np7c42/qm9qRScAnYX0/X1hlefRBIIbqQTT/DGjJmAncwxPt5/+vrM9J
+         +otCuxXmtDopTOCpDI09Q1lV6axBSEqQGtNENTehi8jLquE/RB4PV9I8IhITrfAQtGey
+         k2zU/RZB0wsS2RPTk3un1N/fYISIxVVa4VZhOvyTrAkUmCsnU+gRrrBhlr2nrIJDGTB+
+         LeBAnIR7elrcVpPUl71d0lItLpVNijpkphcY6A7eUenR0gCzTNFRuTjGwD9Zym6tRcAj
+         k04g==
+X-Gm-Message-State: AOJu0YywhjtaLVNYyVoGnc08YdKX5P9VMWtdA4mPqA23vX6kJkWUxdKN
+        RZ3vOJPMzOOlr0hAZiPqQMu+fA==
+X-Google-Smtp-Source: AGHT+IG2Bg4je6dJx6bRZIw22iqCWG+Wx8NgEDEAyVFrqeUSGUgTzmkjIzRJRcIMWoTUmhbGYHlFAw==
+X-Received: by 2002:a17:906:7489:b0:974:183a:54b6 with SMTP id e9-20020a170906748900b00974183a54b6mr7128442ejl.33.1692009685347;
+        Mon, 14 Aug 2023 03:41:25 -0700 (PDT)
+Received: from fedora.. (cpezg-94-253-129-24-cbl.xnet.hr. [94.253.129.24])
+        by smtp.googlemail.com with ESMTPSA id qw4-20020a170906fca400b009934707378fsm5486586ejb.87.2023.08.14.03.41.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Aug 2023 03:10:49 -0700 (PDT)
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Yangtao Li <frank.li@vivo.com>
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/13] clk: sunxi: sun9i-mmc: Use devm_platform_get_and_ioremap_resource()
-Date:   Mon, 14 Aug 2023 13:09:58 +0300
-Message-Id: <169200755842.527063.8434968913073327760.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230705065313.67043-1-frank.li@vivo.com>
-References: <20230705065313.67043-1-frank.li@vivo.com>
+        Mon, 14 Aug 2023 03:41:24 -0700 (PDT)
+From:   Robert Marko <robert.marko@sartura.hr>
+To:     andersson@kernel.org, agross@kernel.org, konrad.dybcio@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     Robert Marko <robert.marko@sartura.hr>
+Subject: [PATCH 2/2] clk: qcom: gcc-ipq4019: add missing networking resets
+Date:   Mon, 14 Aug 2023 12:40:24 +0200
+Message-ID: <20230814104119.96858-2-robert.marko@sartura.hr>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230814104119.96858-1-robert.marko@sartura.hr>
+References: <20230814104119.96858-1-robert.marko@sartura.hr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+IPQ4019 has more networking related resets that will be required for future
+wired networking support, so lets add them.
 
-On Wed, 05 Jul 2023 14:53:01 +0800, Yangtao Li wrote:
-> Convert platform_get_resource(), devm_ioremap_resource() to a single
-> call to devm_platform_get_and_ioremap_resource(), as this is exactly
-> what this function does.
-> 
-> 
+Signed-off-by: Robert Marko <robert.marko@sartura.hr>
+---
+ drivers/clk/qcom/gcc-ipq4019.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Applied, thanks!
-
-[08/13] clk: imx: clk-imx8qxp-lpcg: Convert to devm_platform_ioremap_resource()
-        commit: 94945b23133db0b698ffe764d8a82593906d1e74
-
-Best regards,
+diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
+index c134c468bb33..4a0bd668892e 100644
+--- a/drivers/clk/qcom/gcc-ipq4019.c
++++ b/drivers/clk/qcom/gcc-ipq4019.c
+@@ -1713,6 +1713,12 @@ static const struct qcom_reset_map gcc_ipq4019_resets[] = {
+ 	[GCC_TCSR_BCR] = {0x22000, 0},
+ 	[GCC_MPM_BCR] = {0x24000, 0},
+ 	[GCC_SPDM_BCR] = {0x25000, 0},
++	[ESS_MAC1_ARES] = {0x1200C, 0},
++	[ESS_MAC2_ARES] = {0x1200C, 1},
++	[ESS_MAC3_ARES] = {0x1200C, 2},
++	[ESS_MAC4_ARES] = {0x1200C, 3},
++	[ESS_MAC5_ARES] = {0x1200C, 4},
++	[ESS_PSGMII_ARES] = {0x1200C, 5},
+ };
+ 
+ static const struct regmap_config gcc_ipq4019_regmap_config = {
 -- 
-Abel Vesa <abel.vesa@linaro.org>
+2.41.0
+
