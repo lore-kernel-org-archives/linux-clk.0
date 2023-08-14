@@ -2,66 +2,68 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A11DFC04FE0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC0F6C04FE1
 	for <linux-clk@archiver.kernel.org>; Mon, 14 Aug 2023 10:12:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235904AbjHNKMB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Aug 2023 06:12:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50188 "EHLO
+        id S236157AbjHNKMD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Aug 2023 06:12:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236304AbjHNKLn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Aug 2023 06:11:43 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91FD919A4
-        for <linux-clk@vger.kernel.org>; Mon, 14 Aug 2023 03:11:00 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-3fe4ad22e36so38221525e9.2
-        for <linux-clk@vger.kernel.org>; Mon, 14 Aug 2023 03:11:00 -0700 (PDT)
+        with ESMTP id S236453AbjHNKLq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Aug 2023 06:11:46 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD52419A5
+        for <linux-clk@vger.kernel.org>; Mon, 14 Aug 2023 03:11:06 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-3fe4cdb724cso38292135e9.1
+        for <linux-clk@vger.kernel.org>; Mon, 14 Aug 2023 03:11:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1692007859; x=1692612659;
+        d=linaro.org; s=google; t=1692007865; x=1692612665;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Nb7ZlCUQfDJARbtOUt/biUfmJL7GIxKwjMBKR0qftWo=;
-        b=DyIvt7Nx2tZKhMH0O3e+GOQBNk1EuYEB13JI5sUaJPqOj5E06Amto/Dw51fdGjeSKU
-         GZaJTA5JEn+4l1xBpb2rEtkKGn6q34hdJy/JzNLNCqdeHe5c6H61qWF+IO71AtLnrTPu
-         u3w0zMor+/ZnPt+I4uDb/xcAiUSUL119pNYSHG/HaOgDDoLJWDT6xQkPs+GvTqJx32pD
-         luW2L5bq69bfVRNQZWCSophfu1XenyqQRq2EZ9mGj0DUGMtxwBp5feGVf94peRQKvP+e
-         pdbH0G/Qq/vwq0hirShL8sIKqFY06fH/OptdQKX9DwCr39YHrIe1g9cqvY1U5Kytm8aZ
-         if8w==
+        bh=/TcrCIKHTmaelivXm5tJOqwQfnbwJsTfWCqqVzifvaY=;
+        b=qvM6n5R3PsB9N5APOdoqqSc6/Hr6IfuOzXBjrGfMblnQ44KbDdh7i09qhHGRq5Axqt
+         ef7Ij/tziKY/QQ55x69iuS/wccMVrcay+Gp3HJioxj2nRRJXeS/gF2FnWZipbO42nfy6
+         KzxV0UY3i4C3Y17jQpsmpmfRLVggp903zy//kE1UT3xHuC/c8NndFAlkh97H+mlDKxyS
+         u9MBMZSt+4AOZpPCl4GRfCDEkLVF/Ptg7WtC1qEDMDS/bQ7oGKSHlqW+oyQB7Yne1eiq
+         /hXk4Q6vEWvVe0OB2O5D8O2SerYqHsaqctjIlzRqyKB4V0P+UVAKpUXp5JxHWH3dlkfS
+         klVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692007859; x=1692612659;
+        d=1e100.net; s=20221208; t=1692007865; x=1692612665;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Nb7ZlCUQfDJARbtOUt/biUfmJL7GIxKwjMBKR0qftWo=;
-        b=JjqPs3aRThx5FxDB/Gql2r4B5JK2OD0XpO4RexndNX9zsVJTaJQj6bo+kbmf93x4uk
-         pR8VSTrMNIIum0yZfDqrKyyiSSx/l32Nx11qwDUCKKH9PWSAkj6415N/a6h2ALVr93TL
-         grnWuCY6gJvhWlh8UkKbRXt7qXMMZXhS35ooULyM404bghsSEgb++eGweFOWKDqTILSW
-         6k9j1Fk+wE5sRBMUNP4uZmxPIbH7qNE6abeZ1wn4xbx//weRW3iy4Quq4CuPq3ZT337L
-         M2b/jeBhMbUT0o+sB+Vh36jrHg0c9m4iCp/K+6YYiBuTcVXtGaF+AX2r4JSYMe8SeGCo
-         6OZw==
-X-Gm-Message-State: AOJu0YzrYhXfu2D00+7Yvd9sky1DW5w1srmP0/T3fI8ew3ZOc5UC6W0C
-        ExUFz40O+V2K2uUvXYG4kUfPKg==
-X-Google-Smtp-Source: AGHT+IFy89Mv0DhFk9eX+/djm2ymoeplyfteQc9mWueaCQHifiQjTckSV6qNHnCJHLd0SgAfYA3LTg==
-X-Received: by 2002:a7b:cd19:0:b0:3fe:9a6:f44 with SMTP id f25-20020a7bcd19000000b003fe09a60f44mr7475061wmj.32.1692007858922;
-        Mon, 14 Aug 2023 03:10:58 -0700 (PDT)
+        bh=/TcrCIKHTmaelivXm5tJOqwQfnbwJsTfWCqqVzifvaY=;
+        b=JdowMVpspyRzPd6FoMQl28C8rY4WUoKq2hyS65DdakPbZiCA/X+C7nZoEPIbAWV1TW
+         6/Jc/wxvAfaxA4QCvHgqMoa6SiO+dmdeiv1XUN8M8DJxYJ61eLhhotSH1NNpAD1sUrd1
+         ADWe0zZCYvwi0Oc0nf2rrJZWCcirxpZUERtBYAfpe8Q15sdeD6X+wc6GqqB4rl30Z+Kx
+         0hM1joACP1DKGSa9ad+Hh8ZvF8lQ8OZmDYn72H4B5JHsuTTnOGooxbcf5BvTsb2Ftb6a
+         X3D11j0EMPYoeHtyJOyh3CZWLl4xSq8HkAu4yRNL0vJBp0MshZgnPUR04nOFdF2hhsVk
+         Rwig==
+X-Gm-Message-State: AOJu0YyF/Mmlk1p2IzaNF9F2kEHS8cKIpXXAyW9TrarvsHVYiNvHiHkv
+        AKl5xAL/tSskp+29W1RsVvmMrw==
+X-Google-Smtp-Source: AGHT+IHaKzKqwuHoAPI714LcqSkOGAT5pHN1eCF2DxjAZ0E9BhudZJYx+MSdCGmRUMJmBw9VrK3Qjg==
+X-Received: by 2002:a7b:ce08:0:b0:3fe:19cf:93ca with SMTP id m8-20020a7bce08000000b003fe19cf93camr7297351wmc.8.1692007865250;
+        Mon, 14 Aug 2023 03:11:05 -0700 (PDT)
 Received: from hackbox.lan ([84.232.191.92])
-        by smtp.gmail.com with ESMTPSA id n5-20020a05600c294500b003fbaade0735sm16750396wmd.19.2023.08.14.03.10.57
+        by smtp.gmail.com with ESMTPSA id n5-20020a05600c294500b003fbaade0735sm16750396wmd.19.2023.08.14.03.11.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Aug 2023 03:10:58 -0700 (PDT)
+        Mon, 14 Aug 2023 03:11:04 -0700 (PDT)
 From:   Abel Vesa <abel.vesa@linaro.org>
 To:     abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
-        shawnguo@kernel.org, s.hauer@pengutronix.de,
-        rasmus.villemoes@prevas.dk, adrian.alonso@nxp.com,
-        aford173@gmail.com, a.fatoum@pengutronix.de,
-        Marco Felsch <m.felsch@pengutronix.de>
-Cc:     linux-clk@vger.kernel.org, linux-imx@nxp.com, kernel@pengutronix.de
-Subject: Re: [PATCH v2 1/2] clk: imx: pll14xx: align pdiv with reference manual
-Date:   Mon, 14 Aug 2023 13:10:01 +0300
-Message-Id: <169200755849.527063.13119807931380198015.b4-ty@linaro.org>
+        sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com, shengjiu.wang@gmail.com,
+        Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 0/2] clk: imx: add audio clock mux driver
+Date:   Mon, 14 Aug 2023 13:10:03 +0300
+Message-Id: <169200755845.527063.15808665958303223878.b4-ty@linaro.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230807084744.1184791-1-m.felsch@pengutronix.de>
-References: <20230807084744.1184791-1-m.felsch@pengutronix.de>
+In-Reply-To: <1690260984-25744-1-git-send-email-shengjiu.wang@nxp.com>
+References: <1690260984-25744-1-git-send-email-shengjiu.wang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -70,23 +72,23 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On Mon, 07 Aug 2023 10:47:43 +0200, Marco Felsch wrote:
-> The PLL14xx hardware can be found on i.MX8M{M,N,P} SoCs and always come
-> with a 6-bit pre-divider. Neither the reference manuals nor the
-> datasheets of these SoCs do mention any restrictions. Furthermore the
-> current code doesn't respect the restrictions from the comment too.
+On Tue, 25 Jul 2023 12:56:22 +0800, Shengjiu Wang wrote:
+> The Audio Clock Mux (ACM) is a collection of control registers
+> and multiplexers that are used to route the audio source clocks
+> to the audio peripherals on i.MX8QXP, i.MX8QM, i.MX8DXL
 > 
-> Therefore drop the restriction and align the max pre-divider (pdiv)
-> value to 63 to get more accurate frequencies.
+> Shengjiu Wang (2):
+>   dt-bindings: clock: fsl,imx8-acm: Add audio clock mux support
+>   clk: imx: imx8: add audio clock mux driver
 > 
 > [...]
 
 Applied, thanks!
 
-[1/2] clk: imx: pll14xx: align pdiv with reference manual
-      commit: 37cfd5e457cbdcd030f378127ff2d62776f641e7
-[2/2] clk: imx: pll14xx: dynamically configure PLL for 393216000/361267200Hz
-      commit: 72d00e560d10665e6139c9431956a87ded6e9880
+[1/2] dt-bindings: clock: fsl,imx8-acm: Add audio clock mux support
+      commit: a70cd8cdf7492006b547f46cc365eed79d331323
+[2/2] clk: imx: imx8: add audio clock mux driver
+      commit: d3a0946d7ac9ad844a196f0f2af696fde6b0728d
 
 Best regards,
 -- 
