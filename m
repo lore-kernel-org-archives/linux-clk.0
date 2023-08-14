@@ -2,59 +2,126 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4453CC04A94
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Aug 2023 07:35:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D34AC41513
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Aug 2023 08:18:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232694AbjHNHfI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Aug 2023 03:35:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56664 "EHLO
+        id S234319AbjHNIRl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Aug 2023 04:17:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234302AbjHNHe4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Aug 2023 03:34:56 -0400
-Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E9F510FE;
-        Mon, 14 Aug 2023 00:34:47 -0700 (PDT)
-Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id C5DC38212;
-        Mon, 14 Aug 2023 15:34:40 +0800 (CST)
-Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX166.cuchost.com
- (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 14 Aug
- 2023 15:34:40 +0800
-Received: from [192.168.125.84] (183.27.98.20) by EXMBX172.cuchost.com
- (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 14 Aug
- 2023 15:34:39 +0800
-Message-ID: <d548b6d1-d6e9-40b4-f51e-a0501a8eb9ce@starfivetech.com>
-Date:   Mon, 14 Aug 2023 15:34:35 +0800
+        with ESMTP id S234458AbjHNIRQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Aug 2023 04:17:16 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9540B10EA
+        for <linux-clk@vger.kernel.org>; Mon, 14 Aug 2023 01:17:15 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-3fe8242fc4dso32577475e9.1
+        for <linux-clk@vger.kernel.org>; Mon, 14 Aug 2023 01:17:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1692001034; x=1692605834;
+        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
+         :content-language:subject:reply-to:from:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=e3CFhGYYBnmc/7BGz71n+APKSrpv4uhL75vkasqQJ4o=;
+        b=iQkwPbQN3DsEDOtJk3CJaT+avcrhQmZRMrmuydv4HhzxFDJqxw9vGX/2VyMkUMA1wL
+         jk+ff37u88MZw/dBof5+1vAQrQoUsZRVs3rlTi0p0x633eGOAj0RobNrihc/vuOa7pHG
+         6eAH/89w+vFWZOFZKuerCFUtKJltGh7FmZ8pO7PYlqTZ0a/VC8XtnkggkA2JAFhJv0Bq
+         XuPNI1tM13nTx7WnwNrHP7EJRu30NfUNL14KiE7pfsaKcQNbGHrbWnb6HNFNCHTwS0HG
+         GcFhASxwqz+vqOX7V/nyAXR1aQ+K6hWKSIyZVhA20KJfGBBz8iVnsEyNGQ2cl706sOdd
+         157Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692001034; x=1692605834;
+        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
+         :content-language:subject:reply-to:from:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=e3CFhGYYBnmc/7BGz71n+APKSrpv4uhL75vkasqQJ4o=;
+        b=ZruywEYyz3sBNUlY8dHKQmRHBXYTbEuRkAJRNonAKQbYuubKaDKwnLJf3GESK1jfAo
+         rdk2uJWMsv+tt53XowmVaxS1hUOaiZ6RdNYTczZaIC6olY4xgwQDbE9eRfERI9uIZ/l5
+         voqp/tY9nL4VtiSEIO3ewPt2OW2MqNliqSoaWl+ZfufBFTDZPFn+YJxoGE68aaVhrboy
+         /xzP0KwgcTDEgglMsccOA27n1tkGlA/w1MB2KYGneNE8zFS/YZHQrmUVmt5ZbKnqb+DO
+         kMoDzwUUMHf9RL366E6zdrXDLfEEg6m0mjiJRogttxW9Xts5mvERymmqkf+M8YITlpGk
+         goHg==
+X-Gm-Message-State: AOJu0YwJzp/kBZCqDjUzKhgiaeDE2yC8mpEQ7d/0MGOuB1icGspCxZj1
+        PdeQEQvigNABHA1o05XnUpVwxQ==
+X-Google-Smtp-Source: AGHT+IEXbvgn6LW0yU+nkhHkcfkiCGwjUBAMcP+fKEDjyEF9E2V8kNEM6NVC/BjPKkIdX0hZ6fKCKg==
+X-Received: by 2002:adf:f24e:0:b0:319:7b50:cf5e with SMTP id b14-20020adff24e000000b003197b50cf5emr880096wrp.19.1692001034196;
+        Mon, 14 Aug 2023 01:17:14 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:a3d8:b217:d82c:9bc0? ([2a01:e0a:982:cbb0:a3d8:b217:d82c:9bc0])
+        by smtp.gmail.com with ESMTPSA id x13-20020a5d444d000000b00317f29ad113sm13580045wrr.32.2023.08.14.01.17.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Aug 2023 01:17:13 -0700 (PDT)
+Message-ID: <ff999018-8490-0f58-0a50-e82f1effce5c@linaro.org>
+Date:   Mon, 14 Aug 2023 10:17:12 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.2
-Subject: Re: [PATCH v1] clk: starfive: jh7110-sys: Set PLL0 rate to 1.5GHz
-To:     Xingyu Wu <xingyu.wu@starfivetech.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Emil Renner Berthing" <emil.renner.berthing@canonical.com>
-CC:     Conor Dooley <conor@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-References: <20230811033631.160912-1-xingyu.wu@starfivetech.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+From:   neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v2 09/15] pinctrl: pinctrl-oxnas: remove obsolete pinctrl
+ driver
 Content-Language: en-US
-From:   Hal Feng <hal.feng@starfivetech.com>
-In-Reply-To: <20230811033631.160912-1-xingyu.wu@starfivetech.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [183.27.98.20]
-X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX172.cuchost.com
- (172.16.6.92)
-X-YovoleRuleAgent: yovoleflag
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Andy Shevchenko <andy@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-oxnas@groups.io,
+        Arnd Bergmann <arnd@arndb.de>,
+        Daniel Golle <daniel@makrotopia.org>
+References: <20230630-topic-oxnas-upstream-remove-v2-0-fb6ab3dea87c@linaro.org>
+ <20230630-topic-oxnas-upstream-remove-v2-9-fb6ab3dea87c@linaro.org>
+ <a9074f2d-ffa2-477f-e3b5-2c7d213ec72c@linaro.org>
+ <CACRpkdbMy=JWAgybtimQXJRQ7jsVZ1g-DfqjryjP31JT9f=Prg@mail.gmail.com>
+Organization: Linaro Developer Services
+In-Reply-To: <CACRpkdbMy=JWAgybtimQXJRQ7jsVZ1g-DfqjryjP31JT9f=Prg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 11 Aug 2023 11:36:31 +0800, Xingyu Wu wrote:
-> Set PLL0 rate to 1.5GHz. Change the parent of cpu_root clock
-> and the divider of cpu_core before setting.
+On 07/08/2023 15:44, Linus Walleij wrote:
+> On Mon, Jul 31, 2023 at 4:44 PM Neil Armstrong
+> <neil.armstrong@linaro.org> wrote:
+>> On 30/06/2023 18:58, Neil Armstrong wrote:
+>>> Due to lack of maintenance and stall of development for a few years now,
+>>> and since no new features will ever be added upstream, remove support
+>>> for OX810 and OX820 pinctrl & gpio.
+>>
+>> Do you plan to take patches 9, 10 & 11 or should I funnel them via a final SoC PR ?
 > 
-> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
+> I tried to apply them to the pinctrl tree but that fails ...
+> Could you rebase patches 9,10,11 onto my "devel" branch
+> and send separately? Then I will apply them right away.
 
-Reviewed-by: Hal Feng <hal.feng@starfivetech.com>
+Sure, sent them right now!
+
+Thx,
+Neil
+
+> 
+> Yours,
+> Linus Walleij
+
