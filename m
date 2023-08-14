@@ -2,68 +2,67 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC0F6C04FE1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD51EC04FE2
 	for <linux-clk@archiver.kernel.org>; Mon, 14 Aug 2023 10:12:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236157AbjHNKMD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Aug 2023 06:12:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50266 "EHLO
+        id S236246AbjHNKMC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Aug 2023 06:12:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236453AbjHNKLq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Aug 2023 06:11:46 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD52419A5
-        for <linux-clk@vger.kernel.org>; Mon, 14 Aug 2023 03:11:06 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-3fe4cdb724cso38292135e9.1
-        for <linux-clk@vger.kernel.org>; Mon, 14 Aug 2023 03:11:06 -0700 (PDT)
+        with ESMTP id S236374AbjHNKLp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Aug 2023 06:11:45 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41D88171A
+        for <linux-clk@vger.kernel.org>; Mon, 14 Aug 2023 03:11:04 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-3fe4a89e8c4so37792565e9.3
+        for <linux-clk@vger.kernel.org>; Mon, 14 Aug 2023 03:11:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1692007865; x=1692612665;
+        d=linaro.org; s=google; t=1692007862; x=1692612662;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/TcrCIKHTmaelivXm5tJOqwQfnbwJsTfWCqqVzifvaY=;
-        b=qvM6n5R3PsB9N5APOdoqqSc6/Hr6IfuOzXBjrGfMblnQ44KbDdh7i09qhHGRq5Axqt
-         ef7Ij/tziKY/QQ55x69iuS/wccMVrcay+Gp3HJioxj2nRRJXeS/gF2FnWZipbO42nfy6
-         KzxV0UY3i4C3Y17jQpsmpmfRLVggp903zy//kE1UT3xHuC/c8NndFAlkh97H+mlDKxyS
-         u9MBMZSt+4AOZpPCl4GRfCDEkLVF/Ptg7WtC1qEDMDS/bQ7oGKSHlqW+oyQB7Yne1eiq
-         /hXk4Q6vEWvVe0OB2O5D8O2SerYqHsaqctjIlzRqyKB4V0P+UVAKpUXp5JxHWH3dlkfS
-         klVQ==
+        bh=MaXuPYqFCt1cmjyTonXoDUuLsOvVzVy8hsMCkW5COjI=;
+        b=bSZ+/4DNFkKeUladW5jBTnvjRx/qaS/6iW4dZtbTJm38E+5ad7uWL9AMgasZ3llT0I
+         PDRy76FrGf8RlBnMtm3W1VFdT3kP6bXg9Q8QJkoHPYGr5r6wVLnwzSjzfGhmOZo2ayR3
+         DHYgavRaCGHyr9k/1EocIc+NCGu3Ph321AxJhwY94CxyBXWNq1sM2NzVXAdhzhRuA0sT
+         dxX7mXAAWctFDbbtY5gmPC1eL9SLDoTXYGE1fy6Q+S0bsIV/4LgnNTe792x02K0eFh5F
+         PkuMNyiuXgYM12DveOXhOfeU9UCLiAoFVFbjq1YLgmqQsdb/3VWysQ6pd+MnAYXfDn1v
+         zc/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692007865; x=1692612665;
+        d=1e100.net; s=20221208; t=1692007862; x=1692612662;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/TcrCIKHTmaelivXm5tJOqwQfnbwJsTfWCqqVzifvaY=;
-        b=JdowMVpspyRzPd6FoMQl28C8rY4WUoKq2hyS65DdakPbZiCA/X+C7nZoEPIbAWV1TW
-         6/Jc/wxvAfaxA4QCvHgqMoa6SiO+dmdeiv1XUN8M8DJxYJ61eLhhotSH1NNpAD1sUrd1
-         ADWe0zZCYvwi0Oc0nf2rrJZWCcirxpZUERtBYAfpe8Q15sdeD6X+wc6GqqB4rl30Z+Kx
-         0hM1joACP1DKGSa9ad+Hh8ZvF8lQ8OZmDYn72H4B5JHsuTTnOGooxbcf5BvTsb2Ftb6a
-         X3D11j0EMPYoeHtyJOyh3CZWLl4xSq8HkAu4yRNL0vJBp0MshZgnPUR04nOFdF2hhsVk
-         Rwig==
-X-Gm-Message-State: AOJu0YyF/Mmlk1p2IzaNF9F2kEHS8cKIpXXAyW9TrarvsHVYiNvHiHkv
-        AKl5xAL/tSskp+29W1RsVvmMrw==
-X-Google-Smtp-Source: AGHT+IHaKzKqwuHoAPI714LcqSkOGAT5pHN1eCF2DxjAZ0E9BhudZJYx+MSdCGmRUMJmBw9VrK3Qjg==
-X-Received: by 2002:a7b:ce08:0:b0:3fe:19cf:93ca with SMTP id m8-20020a7bce08000000b003fe19cf93camr7297351wmc.8.1692007865250;
-        Mon, 14 Aug 2023 03:11:05 -0700 (PDT)
+        bh=MaXuPYqFCt1cmjyTonXoDUuLsOvVzVy8hsMCkW5COjI=;
+        b=Yv6ITwxuz31YwVcwwZnTdFb4Lg5LB1Zw9N3xPS/KM0NgudDBBCXp7HBPw7qC/S7YDI
+         XngEoBVWwz2UU0Zl1bGql0rVYfH0ga7wDs46wpSkfMPra4qbnMwX8/hltCfMLo2e6L4H
+         5Szg2ROgeZ9SBqHINhILpWCXztEXMTKdk093cdCUn4BXDcOoYrPq54Op9YYFhXFThat7
+         Z1Kywj99AKNIC3B4SZUr9BmaGBNYWaic0ghbNcHexZXKBbilrXMOBb3Ro0LwRQjXTg5y
+         u4sJXKBNFzSkrQ8LEglM05dp1OjKa99HfGxvRmKSHjhkYqODfp44z0uRO0ccpyy8Un+i
+         b7AA==
+X-Gm-Message-State: AOJu0Yy6sDMJrOMQSAl3UIFNCyCVwMOYXWy8Phd/2iYx3YaHp/UTLfuX
+        LluMoYnFOD6M7xtaTRRKVA3Kzg==
+X-Google-Smtp-Source: AGHT+IGZPHA+4ZqAgm+/n/NGaG1qCgAGrKpvZpUTdFrXfR8fObUEhvPkLDdn3AhuUSwCV+8k2c4eZw==
+X-Received: by 2002:a05:600c:214d:b0:3fc:62c:8275 with SMTP id v13-20020a05600c214d00b003fc062c8275mr7326938wml.35.1692007862509;
+        Mon, 14 Aug 2023 03:11:02 -0700 (PDT)
 Received: from hackbox.lan ([84.232.191.92])
-        by smtp.gmail.com with ESMTPSA id n5-20020a05600c294500b003fbaade0735sm16750396wmd.19.2023.08.14.03.11.03
+        by smtp.gmail.com with ESMTPSA id n5-20020a05600c294500b003fbaade0735sm16750396wmd.19.2023.08.14.03.11.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Aug 2023 03:11:04 -0700 (PDT)
+        Mon, 14 Aug 2023 03:11:01 -0700 (PDT)
 From:   Abel Vesa <abel.vesa@linaro.org>
-To:     abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
-        sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+To:     abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
         shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com, shengjiu.wang@gmail.com,
-        Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 0/2] clk: imx: add audio clock mux driver
-Date:   Mon, 14 Aug 2023 13:10:03 +0300
-Message-Id: <169200755845.527063.15808665958303223878.b4-ty@linaro.org>
+        festevam@gmail.com, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc:     linux-imx@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Ye Li <ye.li@nxp.com>, Peng Fan <peng.fan@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>
+Subject: Re: [PATCH 1/2] clk: imx: pllv4: Fix SPLL2 MULT range
+Date:   Mon, 14 Aug 2023 13:10:02 +0300
+Message-Id: <169200755846.527063.15298642342561865531.b4-ty@linaro.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <1690260984-25744-1-git-send-email-shengjiu.wang@nxp.com>
-References: <1690260984-25744-1-git-send-email-shengjiu.wang@nxp.com>
+In-Reply-To: <20230625123340.4067536-1-peng.fan@oss.nxp.com>
+References: <20230625123340.4067536-1-peng.fan@oss.nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -72,23 +71,23 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On Tue, 25 Jul 2023 12:56:22 +0800, Shengjiu Wang wrote:
-> The Audio Clock Mux (ACM) is a collection of control registers
-> and multiplexers that are used to route the audio source clocks
-> to the audio peripherals on i.MX8QXP, i.MX8QM, i.MX8DXL
+On Sun, 25 Jun 2023 20:33:39 +0800, Peng Fan (OSS) wrote:
+> The SPLL2 on iMX8ULP is different with other frac PLLs, it can
+> support VCO from 650Mhz to 1Ghz. According to RM, the MULT is
+> using a range from 27 to 54, not some fixed values. If using
+> current PLL implementation, some clock rate can't be supported.
 > 
-> Shengjiu Wang (2):
->   dt-bindings: clock: fsl,imx8-acm: Add audio clock mux support
->   clk: imx: imx8: add audio clock mux driver
+> Fix the issue by adding new type for the SPLL2 and use MULT range
+> to replace MULT table
 > 
 > [...]
 
 Applied, thanks!
 
-[1/2] dt-bindings: clock: fsl,imx8-acm: Add audio clock mux support
-      commit: a70cd8cdf7492006b547f46cc365eed79d331323
-[2/2] clk: imx: imx8: add audio clock mux driver
-      commit: d3a0946d7ac9ad844a196f0f2af696fde6b0728d
+[1/2] clk: imx: pllv4: Fix SPLL2 MULT range
+      commit: 3f0cdb945471f1abd1cf4d172190e9c489c5052a
+[2/2] clk: imx: imx8ulp: update SPLL2 type
+      commit: 7653a59be8af043adc4c09473975a860e6055ff9
 
 Best regards,
 -- 
