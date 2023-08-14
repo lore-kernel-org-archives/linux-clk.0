@@ -2,141 +2,169 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 602CAEB64DD
-	for <linux-clk@archiver.kernel.org>; Sun, 13 Aug 2023 22:08:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0061C04A6A
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Aug 2023 02:49:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231420AbjHMWIe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 13 Aug 2023 18:08:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58402 "EHLO
+        id S231899AbjHNCsg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 13 Aug 2023 22:48:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231439AbjHMWIQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 13 Aug 2023 18:08:16 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AEC81BEE;
-        Sun, 13 Aug 2023 14:59:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
- s=s31663417; t=1691963935; x=1692568735; i=j.neuschaefer@gmx.net;
- bh=MyejiVwol60hEEL/Sj0XYSSEOB2BnWEX72RuhsubBVY=;
- h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
- b=OmhGlZT9kO3NG/691pb8CwWsqQTA44ICNq4nXhekqaZF1KZG0ToWGeO5Y1VNSJ+Yz1yzN0n
- JFRX5Nz6j0zFg3W/0VR23KsmQ8puZJhxewZsfMjj1anSpXTyzzNfvmjwiAbKq6OcrBwBQ1KFK
- iZUadvzEZ2jD2Q1xFieaKD4jqHx45eEh+La7+705XTNqGuu7yLEy5EEZIqlDalY6XG3uYCezk
- FPnjCcrdv5j6es60G1dZK1nSLEXKBZE+DOU817l919J/3CZFoUOElImSDAw5y3FckHE0Gat6a
- IExS25gGPgzqBhF9jaXtt2GfjvBbUahckyR3gs3SHC2hL7NXvRFg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from probook ([151.216.152.144]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1N6sn7-1piBSy2B7n-018MQM; Sun, 13
- Aug 2023 23:58:55 +0200
-Date:   Sun, 13 Aug 2023 23:58:55 +0200
-From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     Tao Lan <taolan@huawei.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, j.neuschaefer@gmx.net,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: fix memory leak in hisi_clk_init.
-Message-ID: <ZNlSH+eWV8Sk3FYn@probook>
-References: <20221222091221.28308-1-taolan@huawei.com>
+        with ESMTP id S231731AbjHNCsP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 13 Aug 2023 22:48:15 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1652AE5D;
+        Sun, 13 Aug 2023 19:48:14 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9D9EF60C17;
+        Mon, 14 Aug 2023 02:48:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 795EFC433C8;
+        Mon, 14 Aug 2023 02:48:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1691981293;
+        bh=ciiPZ0XV44zYsaM7zV31cWAMKtbrCPScK0+W4m3gTYU=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=dWqnZZebzX9cTi9ZTbLsaLH2yQV86sX/gkq3M5t8OOrGXFuaWUScPHMiYFsHYnbxa
+         kbPCiUd8+TWE2QQ4ZzILlvSikuBQMx1PyyE+6my3xXTmRyOtDsRQVrKqNSBPA+8kYM
+         /aEdcgiDOIe+RZcFjFVRyKXW2NE++2W1+g+XDTOB/e5hu1BcIJupjPobxfGcEOejZR
+         ORb5YzIQSKq/aAv49L6G4pk4f3QdLwl8mN40Wm4FWtI05fxBkghpGJ7s1AGeMVdv5H
+         Im//9swhE/J8zqv57S4eKrGY2dCmpescaN9LSxqIjwgqQWHHAfTN6pLvmn2DSVYObR
+         3O8vscTgWpD9g==
+Message-ID: <bc6858ef-833f-2eb8-7f19-02ba9063ac0f@kernel.org>
+Date:   Sun, 13 Aug 2023 21:48:09 -0500
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="a6iDqMC9Rx98SozQ"
-Content-Disposition: inline
-In-Reply-To: <20221222091221.28308-1-taolan@huawei.com>
-X-Provags-ID: V03:K1:zL8f0oHy0YLXJqtaYZ0ppZSPXqYJcTdo8zSUSRRTo22kCS1sL6y
- tF6gBs81yiE1A9agmP550Lx+s57p1fox6sEmVF0A9MAP8v4p3J+WnX+xBe6Rv/s4Y+civIj
- gxu5UFH4FnEhh29cqvS2xTqFJFNBqg6wjarZ/UwJ9ZtcBEYvKyUqXzTG5tjo4z49C3sz1Cn
- 2LSN8njeeOh63Gpocp0vw==
-UI-OutboundReport: notjunk:1;M01:P0:m72hZOWJZfo=;75TnQhajGaIKcxvkM/83FTS2SKE
- DJupgVeAaRnsEY7sxEvtPVl98PzLtejdMJkY1EweVd6ITB0ViGwhXbpjD3YFTxr7DBjJdlMom
- 9jdj4sUFl3loIUbZObNclniDb0ReOdGGxl8wr6U74Vjo6O8ybvLG8acJrt/vuJc+/m2qWIJF5
- y4+cE7oHDkasxZf75YO6ottNKuXQodzEUokbX4PQfRBXsOBsRH6AR9CGNyU5TeHa8Ixf1+xVp
- u3NWwVUVE4OlnoQ3Si/ULgm0Vrourb1oAYLHwtnbO+6q/Js+mEg5na32K28/LzPW48sIdRmBP
- gync/57WsYl5pBEdILZ/XWDudhXntcL5Pg5H3CmaBeduGITPwiRpPf6d1mX2V+lDsjSzdRks/
- WUIJtrCYQ6YFbGCZAqtC3RIbsPm0rSJJnGbF/juTD8drZG5bYXEVGFS2nkWb8xZW6AueBHOB2
- B+tWadBaEEwKpHRf+XdGGr9deqwJa2lZrGAxr3MU673Df2aCB6qWXTXytsXuvvvggwMMv5h4Q
- 5iaGw35cp7ojBJJKZ884YxvaMJtriTmYPGa477apHLtynoPaHaq3lAHLDElXuxkmS19GUr30Q
- BVXLF4M3RIr3/zkmcRX3ntZvkPutvc/2uWg9CGxVL9RwwvvPT/9u7Axziim4FanGakSuyi+eS
- dWFeyNxJRr/YWuGkPw89NmNTom8vGkGlR0q93l8Tbu1Wa38LKwobUf7BD612+t5zVLOGl9njO
- fjXOKLnhXBg90wYLBLk8TBV/v+TZ6V4nz4UzAFU6rNVO8GvTgum+aQCfsY6IjJPhtFYmycfaj
- gXm1z42SQpBV/pc2PyBJh6EBT5jE60qnYLeG9sQQ8qdEJwc4Fc5hcjG0O7MgGl/KuAvrYFhcP
- F1Os3DbJSxiUUq+3MtY8/kJ5qIO80OV/DtmF/xiOVNPsQFzMHo4Wewprvn73+KeEwoThU7UDy
- x+I5CO0gMNgeG5ff1yZEaELEekM=
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v2 4/5] clk: socfpga: agilex: add clock driver for the
+ Agilex5
+Content-Language: en-US
+To:     "Rabara, Niravkumar L" <niravkumar.l.rabara@intel.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     "Ng, Adrian Ho Yin" <adrian.ho.yin.ng@intel.com>,
+        "andrew@lunn.ch" <andrew@lunn.ch>,
+        "conor+dt@kernel.org" <conor+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "krzysztof.kozlowski+dt@linaro.org" 
+        <krzysztof.kozlowski+dt@linaro.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Turquette, Mike" <mturquette@baylibre.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        "richardcochran@gmail.com" <richardcochran@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "wen.ping.teh@intel.com" <wen.ping.teh@intel.com>
+References: <20230618132235.728641-1-niravkumar.l.rabara@intel.com>
+ <20230801010234.792557-1-niravkumar.l.rabara@intel.com>
+ <20230801010234.792557-5-niravkumar.l.rabara@intel.com>
+ <d58e289b54f66c239ae09e94728716b7.sboyd@kernel.org>
+ <DM6PR11MB32915E1D8C2981100A83B4ABA216A@DM6PR11MB3291.namprd11.prod.outlook.com>
+From:   Dinh Nguyen <dinguyen@kernel.org>
+In-Reply-To: <DM6PR11MB32915E1D8C2981100A83B4ABA216A@DM6PR11MB3291.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---a6iDqMC9Rx98SozQ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On 8/13/23 07:53, Rabara, Niravkumar L wrote:
+> 
+> 
+>> -----Original Message-----
+>> From: Stephen Boyd <sboyd@kernel.org>
+>> Sent: Thursday, 10 August, 2023 5:27 AM
+>> To: Rabara, Niravkumar L <niravkumar.l.rabara@intel.com>
+>> Cc: Ng, Adrian Ho Yin <adrian.ho.yin.ng@intel.com>; andrew@lunn.ch;
+>> conor+dt@kernel.org; devicetree@vger.kernel.org; dinguyen@kernel.org;
+>> krzysztof.kozlowski+dt@linaro.org; linux-clk@vger.kernel.org; linux-
+>> kernel@vger.kernel.org; Turquette, Mike <mturquette@baylibre.com>;
+>> netdev@vger.kernel.org; p.zabel@pengutronix.de; richardcochran@gmail.com;
+>> robh+dt@kernel.org; wen.ping.teh@intel.com
+>> Subject: Re: [PATCH v2 4/5] clk: socfpga: agilex: add clock driver for the Agilex5
+>>
+>> Quoting niravkumar.l.rabara@intel.com (2023-07-31 18:02:33)
+>>> diff --git a/drivers/clk/socfpga/clk-agilex.c
+>>> b/drivers/clk/socfpga/clk-agilex.c
+>>> index 74d21bd82710..3dcd0f233c17 100644
+>>> --- a/drivers/clk/socfpga/clk-agilex.c
+>>> +++ b/drivers/clk/socfpga/clk-agilex.c
+>>> @@ -1,6 +1,6 @@
+>>>   // SPDX-License-Identifier: GPL-2.0
+>>>   /*
+>>> - * Copyright (C) 2019, Intel Corporation
+>>> + * Copyright (C) 2019-2023, Intel Corporation
+>>>    */
+>>>   #include <linux/slab.h>
+>>>   #include <linux/clk-provider.h>
+>>> @@ -9,6 +9,7 @@
+>>>   #include <linux/platform_device.h>
+>>>
+>>>   #include <dt-bindings/clock/agilex-clock.h>
+>>> +#include <dt-bindings/clock/intel,agilex5-clkmgr.h>
+>>>
+>>>   #include "stratix10-clk.h"
+>>>
+>>> @@ -41,6 +42,67 @@ static const struct clk_parent_data mpu_free_mux[] = {
+>>>            .name = "f2s-free-clk", },
+>>>   };
+>>>
+>>> +static const struct clk_parent_data core0_free_mux[] = {
+>>> +       { .fw_name = "main_pll_c1",
+>>> +         .name = "main_pll_c1", },
+>>
+>> We're adding support for something new? Only set .fw_name in that case, as
+>> .name will never be used. To do even better, set only .index so that we don't do
+>> any string comparisons.
+>>
+> Yes we are adding Agilex5 SoCFPGA platform specific clocks.
+> I will remove .name and only keep .fw_name in next version of this patch.
+>   
+>>> +       { .fw_name = "peri_pll_c0",
+>>> +         .name = "peri_pll_c0", },
+>>> +       { .fw_name = "osc1",
+>>> +         .name = "osc1", },
+>>> +       { .fw_name = "cb-intosc-hs-div2-clk",
+>>> +         .name = "cb-intosc-hs-div2-clk", },
+>>> +       { .fw_name = "f2s-free-clk",
+>>> +         .name = "f2s-free-clk", },
+>>> +};
+>>> +
+>> [...]
+>>> +
+>>>   static int n5x_clk_register_c_perip(const struct n5x_perip_c_clock *clks,
+>>>                                         int nums, struct
+>>> stratix10_clock_data *data)  { @@ -535,6 +917,51 @@ static int
+>>> n5x_clkmgr_init(struct platform_device *pdev)
+>>>          return 0;
+>>>   }
+>>>
+>>> +static int agilex5_clkmgr_init(struct platform_device *pdev) {
+>>> +       struct device_node *np = pdev->dev.of_node;
+>>> +       struct device *dev = &pdev->dev;
+>>> +       struct stratix10_clock_data *clk_data;
+>>
+>> Maybe call this stratix_data so that clk_data.clk_data is stratix_data.clk_data.
+> 
+> Will fix this in next version.
+> 
+>>
+>>> +       struct resource *res;
+>>> +       void __iomem *base;
+>>> +       int i, num_clks;
+>>> +
+>>> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>>> +       base = devm_ioremap_resource(dev, res);
+>>
+>> This is a single function call, devm_platform_ioremap_resource().i
+> 
+> Noted. Will fix in next version.
+> 
 
-sorry for the delay, but I found this unmerged patch while cleaning up
-my mailbox.
+When you resend a V3, just send this patch. I've already applied the 
+other 4 patches.
 
-On Thu, Dec 22, 2022 at 09:12:21AM +0000, Tao Lan wrote:
-> From: taolan <taolan@huawei.com>
->=20
-> when clk_data create fail, we also need to release base.
->=20
-> Signed-off-by: taolan <taolan@huawei.com>
-> ---
->  drivers/clk/hisilicon/clk.c | 4 ++++
->  1 file changed, 4 insertions(+)
->=20
-> diff --git a/drivers/clk/hisilicon/clk.c b/drivers/clk/hisilicon/clk.c
-> index 54d9fdc93599..9ca4fc05fa57 100644
-> --- a/drivers/clk/hisilicon/clk.c
-> +++ b/drivers/clk/hisilicon/clk.c
-> @@ -82,6 +82,10 @@ struct hisi_clock_data *hisi_clk_init(struct device_no=
-de *np,
->  	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data->clk_data);
->  	return clk_data;
->  err_data:
-> +	if (base) {
-> +		iounmap(base);
-> +		base =3D NULL;
-> +	}
-
-This is inaccurate. Consider the case when kzalloc fails:
-
-	clk_data =3D kzalloc(sizeof(*clk_data), GFP_KERNEL);
-	if (!clk_data)
-		goto err;
-
-base has already been mapped, but the code jumps to 'err', which doesn't
-have the iounmap.
-
-To address this properly, you'd have to add another label between
-err_data and err.
-
-
->  	kfree(clk_data);
->  err:
->  	return NULL;
-
-
-Best regards,
-jn
-
---a6iDqMC9Rx98SozQ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAmTZUfwACgkQCDBEmo7z
-X9v5KBAArTSZfCeWFE+wvW+7H3bcqhQzz1HuFXIcWRP/7l4QxZfSrTseScsxx1tt
-65fD9mDm9etWw8lnuwHXpwx4KVkZf09eWh+H6LEGcm1x4BfcozFmeBiVySUJ81cO
-/UddTJBlXKYLI8wbIiVfIwDzLCGurJkSHNDJBrkgk/U/eV78AethhfP20qkGNChH
-Z1TF/4Xc64gcBC1SKHrCALNlB+ICTtQCwehR2DFbmjBtY3FREda3g5Z+xfjENVnN
-0dweiJ8ksBEfmAWFevogpDdcJkA+5XqUu9klH7svnm4k45LFJj6KVNQIotxGQJs5
-OhfFJ708uzuzNaRlb/GL8dUBQkH/zhS+9+lNn+jKcKgY6yKl9YrtZeOUG2u9ZMjJ
-8hPN/2FgpAkaY5pqCyOgDvcxOHyYmM2Vdyg0n79C7HRWqpRCPKezcemsQRMyqq+4
-Nlt12FqDMe4z8VDXGqE8gK8UhTZsGBrx+6niH/TYcWZrWZ4CG3Frz6SSOP/NF62r
-8h6quL5SbROq+fHpB2sXKj5k9HilQOhJSHvY+X9NB2F62PImXvMX7GGZKnRcAZXw
-1CB7aAMPUeqvNozcfO4iLABGpbIuumKTO/pgZ6B00QYExDcxTkDgao0bVZnjUber
-KgnGBrmdUv5gb3gYkchGVOST2dHygO1b3DxywiD+bYulbgJMP+4=
-=h3d+
------END PGP SIGNATURE-----
-
---a6iDqMC9Rx98SozQ--
+Dinh
