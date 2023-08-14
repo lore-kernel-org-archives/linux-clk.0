@@ -2,126 +2,125 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D34AC41513
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Aug 2023 08:18:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1260EB64DD
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Aug 2023 09:06:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234319AbjHNIRl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Aug 2023 04:17:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35460 "EHLO
+        id S233910AbjHNJFa convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Aug 2023 05:05:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234458AbjHNIRQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Aug 2023 04:17:16 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9540B10EA
-        for <linux-clk@vger.kernel.org>; Mon, 14 Aug 2023 01:17:15 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-3fe8242fc4dso32577475e9.1
-        for <linux-clk@vger.kernel.org>; Mon, 14 Aug 2023 01:17:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1692001034; x=1692605834;
-        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
-         :content-language:subject:reply-to:from:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=e3CFhGYYBnmc/7BGz71n+APKSrpv4uhL75vkasqQJ4o=;
-        b=iQkwPbQN3DsEDOtJk3CJaT+avcrhQmZRMrmuydv4HhzxFDJqxw9vGX/2VyMkUMA1wL
-         jk+ff37u88MZw/dBof5+1vAQrQoUsZRVs3rlTi0p0x633eGOAj0RobNrihc/vuOa7pHG
-         6eAH/89w+vFWZOFZKuerCFUtKJltGh7FmZ8pO7PYlqTZ0a/VC8XtnkggkA2JAFhJv0Bq
-         XuPNI1tM13nTx7WnwNrHP7EJRu30NfUNL14KiE7pfsaKcQNbGHrbWnb6HNFNCHTwS0HG
-         GcFhASxwqz+vqOX7V/nyAXR1aQ+K6hWKSIyZVhA20KJfGBBz8iVnsEyNGQ2cl706sOdd
-         157Q==
+        with ESMTP id S235029AbjHNJFJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Aug 2023 05:05:09 -0400
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BE02127;
+        Mon, 14 Aug 2023 02:05:05 -0700 (PDT)
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-586bacac98aso36725407b3.2;
+        Mon, 14 Aug 2023 02:05:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692001034; x=1692605834;
-        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
-         :content-language:subject:reply-to:from:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=e3CFhGYYBnmc/7BGz71n+APKSrpv4uhL75vkasqQJ4o=;
-        b=ZruywEYyz3sBNUlY8dHKQmRHBXYTbEuRkAJRNonAKQbYuubKaDKwnLJf3GESK1jfAo
-         rdk2uJWMsv+tt53XowmVaxS1hUOaiZ6RdNYTczZaIC6olY4xgwQDbE9eRfERI9uIZ/l5
-         voqp/tY9nL4VtiSEIO3ewPt2OW2MqNliqSoaWl+ZfufBFTDZPFn+YJxoGE68aaVhrboy
-         /xzP0KwgcTDEgglMsccOA27n1tkGlA/w1MB2KYGneNE8zFS/YZHQrmUVmt5ZbKnqb+DO
-         kMoDzwUUMHf9RL366E6zdrXDLfEEg6m0mjiJRogttxW9Xts5mvERymmqkf+M8YITlpGk
-         goHg==
-X-Gm-Message-State: AOJu0YwJzp/kBZCqDjUzKhgiaeDE2yC8mpEQ7d/0MGOuB1icGspCxZj1
-        PdeQEQvigNABHA1o05XnUpVwxQ==
-X-Google-Smtp-Source: AGHT+IEXbvgn6LW0yU+nkhHkcfkiCGwjUBAMcP+fKEDjyEF9E2V8kNEM6NVC/BjPKkIdX0hZ6fKCKg==
-X-Received: by 2002:adf:f24e:0:b0:319:7b50:cf5e with SMTP id b14-20020adff24e000000b003197b50cf5emr880096wrp.19.1692001034196;
-        Mon, 14 Aug 2023 01:17:14 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:a3d8:b217:d82c:9bc0? ([2a01:e0a:982:cbb0:a3d8:b217:d82c:9bc0])
-        by smtp.gmail.com with ESMTPSA id x13-20020a5d444d000000b00317f29ad113sm13580045wrr.32.2023.08.14.01.17.12
+        d=1e100.net; s=20221208; t=1692003904; x=1692608704;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=v3ycoIeppxdN8sWq7VOLxcXgAcJ1tGCUh5KzOAHQXXk=;
+        b=Sk0SA8swx/aCuGFqb0IzKhT9bOxQK1AOpljXy63hkdLB1k1Ua1xsRSno4LwntvSuUv
+         4A2fqXLvGRgxaHrhOxfCCzm0E2U425UI27XOFCQY2c7/YK7SM0Mjr9SwPqW7nauFbiqW
+         lYEQaZAvipoeXDudCnqsCjnLWxsG3YRVm2h8XuTd6N9LYzPYcYArJI6d1jA1QsSUuRpT
+         nJZYUk/ohTGwtJu47uqKVJriLUuT4YAU24UfB+QIrs5qzdGMMmJgrU1VevirlCL5FB7j
+         NTwNaQYLwc0Y84Z4iv7YoUMoSmACO6uOX9WUdVsfwKwGRPNrx210vQkN1HUNWOxXLjR5
+         S9pg==
+X-Gm-Message-State: AOJu0YxwUy9NFuhd7jv/7JeW2Sx71yiSFGR/qVjX3LAF78tL6tbEqnGH
+        MRBNff1xACzoHLhckdPAwev1m5aTLOeiTQ==
+X-Google-Smtp-Source: AGHT+IGge39ImiDb+7423s3QNFIxfPMQNSIY3UxBvi3pEJZJXQq7z9AHiqru5cHEjTcVYtyYUJj6hQ==
+X-Received: by 2002:a0d:cbcb:0:b0:589:f47b:beac with SMTP id n194-20020a0dcbcb000000b00589f47bbeacmr1885768ywd.39.1692003904373;
+        Mon, 14 Aug 2023 02:05:04 -0700 (PDT)
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com. [209.85.219.180])
+        by smtp.gmail.com with ESMTPSA id e187-20020a8169c4000000b00559fb950d9fsm2659794ywc.45.2023.08.14.02.05.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Aug 2023 01:17:13 -0700 (PDT)
-Message-ID: <ff999018-8490-0f58-0a50-e82f1effce5c@linaro.org>
-Date:   Mon, 14 Aug 2023 10:17:12 +0200
+        Mon, 14 Aug 2023 02:05:03 -0700 (PDT)
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-d690c9fbda3so631450276.0;
+        Mon, 14 Aug 2023 02:05:03 -0700 (PDT)
+X-Received: by 2002:a25:e090:0:b0:d4f:f231:78be with SMTP id
+ x138-20020a25e090000000b00d4ff23178bemr8026219ybg.6.1692003903683; Mon, 14
+ Aug 2023 02:05:03 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-From:   neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v2 09/15] pinctrl: pinctrl-oxnas: remove obsolete pinctrl
- driver
-Content-Language: en-US
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
+References: <CACna6rxpzDWE5-gnmpgMgfzPmmHvEGTZk4GJvJ8jLSMazh2bVA@mail.gmail.com>
+ <bd5feeb3-bc44-d4d2-7708-eea9243b49a4@gmail.com> <0f9d0cd6-d344-7915-7bc1-7a090b8305d2@gmail.com>
+In-Reply-To: <0f9d0cd6-d344-7915-7bc1-7a090b8305d2@gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 14 Aug 2023 11:04:51 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXPB+nSHUTPufiaRP0cxvk2_raEHavwTouaiWibdQtCTg@mail.gmail.com>
+Message-ID: <CAMuHMdXPB+nSHUTPufiaRP0cxvk2_raEHavwTouaiWibdQtCTg@mail.gmail.com>
+Subject: Re: ARM board lockups/hangs triggered by locks and mutexes
+To:     =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+        Waiman Long <longman@redhat.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andy Shevchenko <andy@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-oxnas@groups.io,
-        Arnd Bergmann <arnd@arndb.de>,
-        Daniel Golle <daniel@makrotopia.org>
-References: <20230630-topic-oxnas-upstream-remove-v2-0-fb6ab3dea87c@linaro.org>
- <20230630-topic-oxnas-upstream-remove-v2-9-fb6ab3dea87c@linaro.org>
- <a9074f2d-ffa2-477f-e3b5-2c7d213ec72c@linaro.org>
- <CACRpkdbMy=JWAgybtimQXJRQ7jsVZ1g-DfqjryjP31JT9f=Prg@mail.gmail.com>
-Organization: Linaro Developer Services
-In-Reply-To: <CACRpkdbMy=JWAgybtimQXJRQ7jsVZ1g-DfqjryjP31JT9f=Prg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Florian Fainelli <f.fainelli@gmail.com>,
+        linux-clk@vger.kernel.org,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Network Development <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        OpenWrt Development List <openwrt-devel@lists.openwrt.org>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 07/08/2023 15:44, Linus Walleij wrote:
-> On Mon, Jul 31, 2023 at 4:44 PM Neil Armstrong
-> <neil.armstrong@linaro.org> wrote:
->> On 30/06/2023 18:58, Neil Armstrong wrote:
->>> Due to lack of maintenance and stall of development for a few years now,
->>> and since no new features will ever be added upstream, remove support
->>> for OX810 and OX820 pinctrl & gpio.
->>
->> Do you plan to take patches 9, 10 & 11 or should I funnel them via a final SoC PR ?
-> 
-> I tried to apply them to the pinctrl tree but that fails ...
-> Could you rebase patches 9,10,11 onto my "devel" branch
-> and send separately? Then I will apply them right away.
+Hi Rafal,
 
-Sure, sent them right now!
+On Mon, Aug 7, 2023 at 1:11 PM Rafał Miłecki <zajec5@gmail.com> wrote:
+> On 4.08.2023 13:07, Rafał Miłecki wrote:
+> > I triple checked that. Dropping a single unused function breaks kernel /
+> > device stability on BCM53573!
+> >
+> > AFAIK the only thing below diff actually affects is location of symbols
+> > (I actually verified that by comparing System.map before and after -
+> > over 22'000 of relocated symbols).
+> >
+> > Can some unfortunate location of symbols cause those hangs/lockups?
+>
+> I performed another experiment. First I dropped mtd_check_of_node() to
+> bring kernel back to the stable state.
+>
+> Then I started adding useless code to the mtdchar_unlocked_ioctl(). I
+> ended up adding just enough to make sure all post-mtd symbols in
+> System.map got the same offset as in case of backporting
+> mtd_check_of_node().
+>
+> I started experiencing lockups/hangs again.
+>
+> I repeated the same test with adding dumb code to the brcm_nvram_probe()
+> and verifying symbols offsets following brcm_nvram_probe one.
+>
+> I believe this confirms that this problem is about offset or alignment
+> of some specific symbol(s). The remaining question is what symbols and
+> how to fix or workaround that.
 
-Thx,
-Neil
+I had similar experiences on other ARM platforms many years ago:
+bisection lead to something completely bogus, and it turned out
+adding a single line of innocent code made the system lock-up or crash
+unexpectedly.  It was definitely related to alignment, as adding the
+right extra amount of innocent code would fix the problem. Until some
+later change changing alignment again...
+I never found the real cause, but the problems went away over time.
+I am not sure I did enable all required errata config options, so I
+may have missed some...
 
-> 
-> Yours,
-> Linus Walleij
+Gr{oetje,eeting}s,
 
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
