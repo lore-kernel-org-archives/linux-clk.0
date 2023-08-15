@@ -2,37 +2,37 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFDE4C001DB
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Aug 2023 02:44:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1852C001E0
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Aug 2023 02:46:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234340AbjHOCoE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Aug 2023 22:44:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35738 "EHLO
+        id S234070AbjHOCpl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Aug 2023 22:45:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234362AbjHOCnj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Aug 2023 22:43:39 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26F671715
-        for <linux-clk@vger.kernel.org>; Mon, 14 Aug 2023 19:43:39 -0700 (PDT)
+        with ESMTP id S234412AbjHOCpc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Aug 2023 22:45:32 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52A39171B
+        for <linux-clk@vger.kernel.org>; Mon, 14 Aug 2023 19:45:31 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id ABB5C64BD4
-        for <linux-clk@vger.kernel.org>; Tue, 15 Aug 2023 02:43:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64589C433C8;
-        Tue, 15 Aug 2023 02:43:37 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E460E6228E
+        for <linux-clk@vger.kernel.org>; Tue, 15 Aug 2023 02:45:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93522C433C8;
+        Tue, 15 Aug 2023 02:45:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692067418;
-        bh=7blTAewUXh9WclBQZ+mReosFc6JNCK0kdPIFgrfLNQw=;
+        s=k20201202; t=1692067530;
+        bh=0jae72dUtO4J4G32Ts+li+r0BcK6uWhskBdEb04ieUo=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=bL23djTCRcM7r+1Gp9qSDhPMBmz3x/C4x5iSW4nmvHKAbKinIWMu1gpgCHV4bQVvO
-         iocZQpk1ugrWIBmTlyjBYz5Fvl9hd/E+NoXEsPmh+rGNp31RAAKtoxKTO8IEl0Gwoi
-         uUldRosk0KIrHE/IQPDAjJ8cgdfeDS1VMB+IcNrZrxPJL9JgBvr/jscPaqc7XPbxg1
-         2aF7Hq0AWIZ7l7eqt7jdapEwypftzA2y2QjPKmz22u2HCEuwNz3EblWVp3FbN0p5RS
-         cYrQr31icAt0/4PEiCaf6+BlAmGP9viia3Y2nGMjQ9XfUPNzOM+9WK2H4UgWY2UNXz
-         CM5OJBRgrf65Q==
-Date:   Mon, 14 Aug 2023 19:43:36 -0700
+        b=pw4JSgGeLqMB/Dk+f88EXTTHTWHIq2iCZ07YbYCATn5Coirn7DVm2pbYm04lYa3B4
+         UdHBsgTTicgnOdvIm/C9xajI+2wotQKY6SDZM5S0xtG6dJMD/69UqnASNXNBGOcW0i
+         xzYAQnjRQGpd+JN0Jvf6exZTIfbRNQkmnQOnHc/kn85RkU0Ar9e3HRaXWxL1q7F1K1
+         KA7N9biVz+WU3VW1i4JhRae1UNAkV4r2/oAwLM5aHe23q1lTicB5o1eb5mWdp570U3
+         rZpfaieGW2NakV9KhzI3fENLizbxEmBeoDHDoQY7iV80WAtTS1aiOkoTLBNADI82SP
+         4VhE7jMLa621g==
+Date:   Mon, 14 Aug 2023 19:45:28 -0700
 From:   Jakub Kicinski <kuba@kernel.org>
 To:     Vadim Fedorenko <vadim.fedorenko@linux.dev>
 Cc:     Jiri Pirko <jiri@resnulli.us>,
@@ -44,12 +44,11 @@ Cc:     Jiri Pirko <jiri@resnulli.us>,
         linux-arm-kernel@lists.infradead.org, poros@redhat.com,
         mschmidt@redhat.com, netdev@vger.kernel.org,
         linux-clk@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
-        intel-wired-lan@lists.osuosl.org, Jiri Pirko <jiri@nvidia.com>
-Subject: Re: [PATCH net-next v4 2/9] dpll: spec: Add Netlink spec in YAML
-Message-ID: <20230814194336.55642f34@kernel.org>
-In-Reply-To: <20230811200340.577359-3-vadim.fedorenko@linux.dev>
+        intel-wired-lan@lists.osuosl.org
+Subject: Re: [PATCH net-next v4 0/9] Create common DPLL configuration API
+Message-ID: <20230814194528.00baec23@kernel.org>
+In-Reply-To: <20230811200340.577359-1-vadim.fedorenko@linux.dev>
 References: <20230811200340.577359-1-vadim.fedorenko@linux.dev>
-        <20230811200340.577359-3-vadim.fedorenko@linux.dev>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -57,73 +56,23 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 11 Aug 2023 21:03:33 +0100 Vadim Fedorenko wrote:
-> +attribute-sets:
-> +  -
-> +    name: dpll
-> +    enum-name: dpll_a
-> +    attributes:
-> +      -
-> +        name: id
-> +        type: u32
-> +        value: 1
+On Fri, 11 Aug 2023 21:03:31 +0100 Vadim Fedorenko wrote:
+>  create mode 100644 Documentation/driver-api/dpll.rst
+>  create mode 100644 Documentation/netlink/specs/dpll.yaml
+>  create mode 100644 drivers/dpll/Kconfig
+>  create mode 100644 drivers/dpll/Makefile
+>  create mode 100644 drivers/dpll/dpll_core.c
+>  create mode 100644 drivers/dpll/dpll_core.h
+>  create mode 100644 drivers/dpll/dpll_netlink.c
+>  create mode 100644 drivers/dpll/dpll_netlink.h
+>  create mode 100644 drivers/dpll/dpll_nl.c
+>  create mode 100644 drivers/dpll/dpll_nl.h
+>  create mode 100644 drivers/net/ethernet/intel/ice/ice_dpll.c
+>  create mode 100644 drivers/net/ethernet/intel/ice/ice_dpll.h
+>  create mode 100644 drivers/net/ethernet/mellanox/mlx5/core/dpll.c
+>  create mode 100644 include/linux/dpll.h
+>  create mode 100644 include/uapi/linux/dpll.h
 
-value: 1 is the default
-
-> +      -
-> +        name: module-name
-> +        type: string
-> +      -
-> +        name: clock-id
-> +        type: u64
-
-I don't see a pad, you have a u64 without a pad?
-
-> +      -
-> +        name: mode
-> +        type: u8
-
-It's an enum, should always be u32 or bigger at protocol level.
-Netlink pads to 4B, you're not saving any space.
-
-> +        enum: mode
-> +      -
-> +        name: mode-supported
-> +        type: u8
-
-Same.
-
-> +        enum: mode
-> +        multi-attr: true
-> +      -
-> +        name: lock-status
-> +        type: u8
-
-And here.
-
-> +        enum: lock-status
-> +      -
-> +        name: temp
-> +        type: s32
-> +      -
-> +        name: type
-> +        type: u8
-
-And here, etc.
-
-Why are all attributes in a single attr space? :(
-More than half of them are prefixed with a pin- does it really 
-not scream to you that they belong to a different space?
-
-> +operations:
-> +  enum-name: dpll_cmd
-> +  list:
-> +    -
-> +      name: device-id-get
-> +      doc: |
-> +        Get id of dpll device that matches given attributes
-> +      value: 1
-
-is the default
--- 
-pw-bot: cr
+Feels like we're lacking tests here. Is there a common subset of
+stuff we can expect reasonable devices to support?
+Anything you used in development that can be turned into tests?
