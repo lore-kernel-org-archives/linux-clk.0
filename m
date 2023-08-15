@@ -2,81 +2,95 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38AC0C0015E
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Aug 2023 07:45:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CF3BC04E69
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Aug 2023 08:33:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235416AbjHOHoi convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Aug 2023 03:44:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48378 "EHLO
+        id S235651AbjHOIdB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Aug 2023 04:33:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235518AbjHOHoF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Aug 2023 03:44:05 -0400
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39CE01984;
-        Tue, 15 Aug 2023 00:44:04 -0700 (PDT)
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6471744acb6so10374286d6.1;
-        Tue, 15 Aug 2023 00:44:04 -0700 (PDT)
+        with ESMTP id S235658AbjHOIco (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Aug 2023 04:32:44 -0400
+Received: from mail-yb1-xb2f.google.com (mail-yb1-xb2f.google.com [IPv6:2607:f8b0:4864:20::b2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27A7810D2
+        for <linux-clk@vger.kernel.org>; Tue, 15 Aug 2023 01:32:42 -0700 (PDT)
+Received: by mail-yb1-xb2f.google.com with SMTP id 3f1490d57ef6-d645b95c7b8so4433629276.0
+        for <linux-clk@vger.kernel.org>; Tue, 15 Aug 2023 01:32:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1692088361; x=1692693161;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VZAjQaDsCnRIDl9aQDrjmakMDdJ/kCnfJXWB5dbc3P0=;
+        b=jYzRlm8JrziIQLzbP27Eefb+wVJdzOl3JqzSe3PNIOYqLaKHZUWEy8e/X2fPr+dphU
+         p6H9WmsjA2NybRl5eoDqM0GBn1gzJhFFsmwJhHcKIJS9zl27YI/l0zmJb4O86z4xLXxZ
+         tgE+X4lz+6fZGHoHHcXKawTyxtRQhKYJ/NjzWbCcoGN9jlE4qc34bbdiSZcTZzgULxMq
+         iengflFRIFh8HSYfL01OC+8mFf4NDiebrNruLerEws8bjSpp5vFiE6dcr8X1fAxt9Zz6
+         9lkk0OdZF0mKHuYHRL3q1vJqTfz8B9hVvBqSDPYYnp7dOJGMV8An7JXlIRqAHxkmyh4U
+         jffQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692085443; x=1692690243;
+        d=1e100.net; s=20221208; t=1692088361; x=1692693161;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8rWQkz+u72Bytc1iKzonHEr2Ej41kcOIbbop2Hr+3Qg=;
-        b=ghMvJUjRPFszUqJB1FVvt4bA4fa2mqX5lYBr4P65zUCB/5asERRK7iXy/9Q3fkaudk
-         VPI0hPDKDoO9sWFa6sr3459DermSHdzpxcVZC2qlTcz9Bhmw9AG5pP/f9xMtoZKddup7
-         +HPEIlwE7cnqgbjfqlap19Mkm/mmVYnQg1PNrEJD/fT6sp/7uRq1YSzXahtRr+dU1LWd
-         sj3arvCgTzVkrqZma8yTBaMztmQpbbOylqFhkZ+/U6xSow6XVarCG9iXEv4JC7MkQ/J9
-         orTbRSLjMmWQg20jfI3/Z0+c+ClJGJPItxq/5t9EyIqMhVp3MZmRoo2qDoCn1SRb5Xkt
-         OKZQ==
-X-Gm-Message-State: AOJu0YwIzjSp6du9hrUlEcydjCTgWt7k8x6T98Q+vHHqzKF+w03sSDsq
-        MWprPL7yf02e++ljzhsuSrbABqwbcZD1jw==
-X-Google-Smtp-Source: AGHT+IF/7JxgluR118Ltlcgd2a7ZNABIhGFQ4EGYFYNbpHRNwYkcPP1/0oXfRXLr+/AIlKlehYGNIg==
-X-Received: by 2002:a05:6214:5805:b0:647:1fc5:1cbf with SMTP id mk5-20020a056214580500b006471fc51cbfmr5196953qvb.54.1692085443171;
-        Tue, 15 Aug 2023 00:44:03 -0700 (PDT)
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com. [209.85.222.181])
-        by smtp.gmail.com with ESMTPSA id s14-20020a0cdc0e000000b006431027ac44sm1554314qvk.83.2023.08.15.00.44.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Aug 2023 00:44:02 -0700 (PDT)
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-76731802203so351952885a.3;
-        Tue, 15 Aug 2023 00:44:02 -0700 (PDT)
-X-Received: by 2002:a05:620a:d8a:b0:76c:8e37:49b5 with SMTP id
- q10-20020a05620a0d8a00b0076c8e3749b5mr14170625qkl.47.1692085442461; Tue, 15
- Aug 2023 00:44:02 -0700 (PDT)
+        bh=VZAjQaDsCnRIDl9aQDrjmakMDdJ/kCnfJXWB5dbc3P0=;
+        b=Wz8rvDFuZ3Nyk2b7owWtiJ7dbzU51K7nlbxtj+OA9BnA3F/NbJzZdEMG7fQK3RIdOZ
+         vaF0A4U0Nic+S72gLk3gh7m6bmBlAwubUKQOqeSZhvwtBN+y7nyBqZgkrTJbWwIO/NcQ
+         tSWbuk/olbYDGPyuphpEGNW90u8lMOh76AOo6QjZRj6JbqknsnKpYkrC7wlIbMQLzdmi
+         B2SkhqhweCjbKZB2KX1bBv0L1PLUn9MwD5tNjVU7WQbdq+F+PdN7/BeExzPUgYHhtPgH
+         p3CLvFdzqqO2OQZV4fawd4lQ8Ztt9jqdFcIbRNVZdfFpYYkq74UMtMMFPuyLuMAK5Ykk
+         EXTQ==
+X-Gm-Message-State: AOJu0Yz2X9bk2WcAGZ8qOKnGOvqU7nY0j/EA8EMZ8Oz1lrIfagaELOyO
+        gNP3YDgkEiZfAOHVJsE6LI0By2I4x9hFbFHerpwFOw==
+X-Google-Smtp-Source: AGHT+IG0H51wCa6PmYWPCyxguFPsNbhjv2lmrIY2yYx1KK/MZ8UDuaCPbLbx4vhaQopqGxG8q0rHVd4001OjOPyHkZA=
+X-Received: by 2002:a25:b85:0:b0:d12:25d:fd5f with SMTP id 127-20020a250b85000000b00d12025dfd5fmr12359370ybl.5.1692088361388;
+ Tue, 15 Aug 2023 01:32:41 -0700 (PDT)
 MIME-Version: 1.0
-References: <87r0onprph.wl-kuninori.morimoto.gx@renesas.com> <87edknprnt.wl-kuninori.morimoto.gx@renesas.com>
-In-Reply-To: <87edknprnt.wl-kuninori.morimoto.gx@renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 15 Aug 2023 09:43:50 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUiNO6UUY24Jsg1QSAx5whb4aaHC946tou867DY-S730Q@mail.gmail.com>
-Message-ID: <CAMuHMdUiNO6UUY24Jsg1QSAx5whb4aaHC946tou867DY-S730Q@mail.gmail.com>
-Subject: Re: [PATCH 9/9] clk: renesas: r8a77995: add 922 ADG
-To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk@vger.kernel.org
+References: <20230812-pxa1908-lkml-v5-0-a5d51937ee34@skole.hr> <20230812-pxa1908-lkml-v5-1-a5d51937ee34@skole.hr>
+In-Reply-To: <20230812-pxa1908-lkml-v5-1-a5d51937ee34@skole.hr>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 15 Aug 2023 10:32:30 +0200
+Message-ID: <CACRpkdbFz-huUHkECKvJec3CpnOjKsu+MJA2ajoAbh1opjtr9A@mail.gmail.com>
+Subject: Re: [PATCH v5 1/8] gpio: pxa: disable pinctrl calls for MMP_GPIO
+To:     =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
+Cc:     Robert Jarzmik <robert.jarzmik@free.fr>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Andy Shevchenko <andy@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Tony Luck <tony.luck@intel.com>,
+        "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-hardening@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        afaerber@suse.de
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Aug 1, 2023 at 1:50 AM Kuninori Morimoto
-<kuninori.morimoto.gx@renesas.com> wrote:
-> R-Car Sound needs to enable "ADG" on RMSTPCR9/SMSTPCR9 22bit to use
-> clk_i which came from internal ZA2. This patch adds it.
+On Sat, Aug 12, 2023 at 12:26=E2=80=AFPM Duje Mihanovi=C4=87 <duje.mihanovi=
+c@skole.hr> wrote:
+
+> Similarly to PXA3xx and MMP2, pinctrl-single isn't capable of setting
+> pin direction on MMP either.
 >
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Fixes: a770d946371e ("gpio: pxa: add pin control gpio direction and reque=
+st")
+> Signed-off-by: Duje Mihanovi=C4=87 <duje.mihanovic@skole.hr>
+> Reviewed-by: Andy Shevchenko <andy@kernel.org>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk-for-v6.6.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
