@@ -2,77 +2,69 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBAB1C001E0
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Aug 2023 18:39:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 405B4C3DA40
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Aug 2023 18:49:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230070AbjHOSjH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Aug 2023 14:39:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36454 "EHLO
+        id S239415AbjHOStR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Aug 2023 14:49:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239239AbjHOSi4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Aug 2023 14:38:56 -0400
-Received: from out-25.mta1.migadu.com (out-25.mta1.migadu.com [IPv6:2001:41d0:203:375::19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A10B1733
-        for <linux-clk@vger.kernel.org>; Tue, 15 Aug 2023 11:38:51 -0700 (PDT)
-Message-ID: <39e701b4-0992-2c96-67b3-38c341c77af5@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1692124729;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=l71H0XchJUj51QCQRpzWl8MiAbxVsza3vleYUTSEqtE=;
-        b=CMD5FNJiviDfxbHNuk8RG4XO8ZCqfxARGsXr9AgrSsoS1mpjwsidIpYQI3xR5mTzGEs0vU
-        r1oAuACK5hLHQ76YInPYdy5/aekG7KQ5oICC1lV13jAW8FomaE/Cf7fmbogyFtNBLy7Qp3
-        D+G2ERY4tAgLAvqfauVyah4hdUvW7WM=
-Date:   Tue, 15 Aug 2023 19:38:41 +0100
+        with ESMTP id S239486AbjHOStN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Aug 2023 14:49:13 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 054712126;
+        Tue, 15 Aug 2023 11:48:40 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 02F6565F66;
+        Tue, 15 Aug 2023 18:46:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89533C433CD;
+        Tue, 15 Aug 2023 18:46:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692125191;
+        bh=na3DvkCy/DBRDdjxP4nOxRLkSN6S+gxI8DHXr/qxnlk=;
+        h=From:To:Subject:Date:In-Reply-To:References:From;
+        b=Ux0oRjjvmkgRP8eUypXP2QFTtsXJVfCnWm1Wm6qfWnpZuJmxCUv7lNY49/aT282SN
+         QeiZv7yIRac9DVvWY9fZcg+gWWAH3xVj2sVBXlVzCE3znq3vA6iVd4J7ZWbjGFXSS2
+         Xdo/Es+/9/iB2NnZNOXzWkGIduzoBVYvui9sRYnCtF4veut7EOSO5QDXWWo7b+CtKD
+         OlYWvzgIKb8BRR3THd9ZxkHeXxBXwdfH9YMbFjrrvYHdzHFe5/liNmZ1zuU8mFPfqb
+         JaIUO2eF9Fpl2RPMMLGuu+YVOEbRBfjcNSOYPRnNrWsoHpNU/mJTEb3Q2cWQ+aajTj
+         DmGhVqlJv7ToQ==
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     agross@kernel.org, konrad.dybcio@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Robert Marko <robert.marko@sartura.hr>
+Subject: Re: (subset) [PATCH 1/2] dt-bindings: clock: qcom: ipq4019: add missing networking resets
+Date:   Tue, 15 Aug 2023 11:49:13 -0700
+Message-ID: <169212535063.2466993.11716205800707340678.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230814104119.96858-1-robert.marko@sartura.hr>
+References: <20230814104119.96858-1-robert.marko@sartura.hr>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v4 3/9] dpll: core: Add DPLL framework base
- functions
-Content-Language: en-US
-To:     Jakub Kicinski <kuba@kernel.org>
-Cc:     Jiri Pirko <jiri@resnulli.us>,
-        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Milena Olech <milena.olech@intel.com>,
-        Michal Michalik <michal.michalik@intel.com>,
-        linux-arm-kernel@lists.infradead.org, poros@redhat.com,
-        mschmidt@redhat.com, netdev@vger.kernel.org,
-        linux-clk@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
-        intel-wired-lan@lists.osuosl.org, Jiri Pirko <jiri@nvidia.com>
-References: <20230811200340.577359-1-vadim.fedorenko@linux.dev>
- <20230811200340.577359-4-vadim.fedorenko@linux.dev>
- <20230814201709.655a24e2@kernel.org>
- <ef2eca98-4fcc-b448-fecb-38695238f87b@linux.dev>
- <20230815112856.1f1bd3ac@kernel.org>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20230815112856.1f1bd3ac@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 15/08/2023 19:28, Jakub Kicinski wrote:
-> On Tue, 15 Aug 2023 19:20:31 +0100 Vadim Fedorenko wrote:
->>>> +	ret = xa_alloc(&dpll_device_xa, &dpll->id, dpll, xa_limit_16b,
->>>> +		       GFP_KERNEL);
->>>
->>> Why only 16b and why not _cyclic?
->>
->> I cannot image systems with more than 65k of DPLL devices. We don't
->> store any id's of last used DPLL device, so there is no easy way to
->> restart the search from the last point. And it's not a hot path to
->> optimize it.
-> 
-> I think this gets used under the xa_lock() so you can just add a static
-> variable inside the function to remember previous allocation.
-> 
-> I don't expect >64k devices either, obviously, but what are we saving
-> by not allowing the full u32 range?
 
-I don't see any benefits for either _cyclic or u32 range, but if you 
-insist I can change it.
+On Mon, 14 Aug 2023 12:40:23 +0200, Robert Marko wrote:
+> Add bindings for the missing networking resets found in IPQ4019 GCC.
+> 
+> 
+
+Applied, thanks!
+
+[1/2] dt-bindings: clock: qcom: ipq4019: add missing networking resets
+      commit: 268edfe96ab8de82f1ba64a2098610e256bd6db7
+[2/2] clk: qcom: gcc-ipq4019: add missing networking resets
+      commit: 9bc66f973988dc4adc29d36824423448f8da8feb
+
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
