@@ -2,256 +2,87 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7369AEB64DD
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Aug 2023 03:36:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8969CC41513
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Aug 2023 05:15:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234414AbjHODgB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Aug 2023 23:36:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53432 "EHLO
+        id S234625AbjHOFPH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Aug 2023 01:15:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234542AbjHODd3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Aug 2023 23:33:29 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26B1D35A7
-        for <linux-clk@vger.kernel.org>; Mon, 14 Aug 2023 20:17:37 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9B22D635E1
-        for <linux-clk@vger.kernel.org>; Tue, 15 Aug 2023 03:17:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EFD7C433C7;
-        Tue, 15 Aug 2023 03:17:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692069431;
-        bh=22kBBBnNdB/LlZZ6DoBpY7Dn8SwEgCysRQ5z6dwITWs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=WLtA43ezjU4SB7ClVMO5p37HipKcIU4LFlDrvBoxm1cUVs35jEK7zYOQBWac9AUTY
-         FEuGKsyVyKrnIS6Rlv2n+nZYwQGU8V68TWujfXNaRNWcPpToTeN/7L7BUIEbZCB8c2
-         o2W2iNCMn311ApQCWT8Li6c5RGSiZVcXFvEJqAbw6qvivFGDR+T+eBGAYitLs0uXJN
-         kUo9EjHiQsde80sESI71HGhiW/FRcrTsMFfwiGlVJeJUfJ2oau392lBl0jA1gikIGj
-         Y9I2dGDsN7L6hJ7R58MSsmRRvC2nIkRazYrtkIj4majYv1KWp2Dw6Oor8mrQKRJ55A
-         iiUK4ilPSXKWA==
-Date:   Mon, 14 Aug 2023 20:17:09 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc:     Jiri Pirko <jiri@resnulli.us>,
-        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Milena Olech <milena.olech@intel.com>,
-        Michal Michalik <michal.michalik@intel.com>,
-        linux-arm-kernel@lists.infradead.org, poros@redhat.com,
-        mschmidt@redhat.com, netdev@vger.kernel.org,
-        linux-clk@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
-        intel-wired-lan@lists.osuosl.org, Jiri Pirko <jiri@nvidia.com>
-Subject: Re: [PATCH net-next v4 3/9] dpll: core: Add DPLL framework base
- functions
-Message-ID: <20230814201709.655a24e2@kernel.org>
-In-Reply-To: <20230811200340.577359-4-vadim.fedorenko@linux.dev>
-References: <20230811200340.577359-1-vadim.fedorenko@linux.dev>
-        <20230811200340.577359-4-vadim.fedorenko@linux.dev>
+        with ESMTP id S234631AbjHOFNN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Aug 2023 01:13:13 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3ECF910F4
+        for <linux-clk@vger.kernel.org>; Mon, 14 Aug 2023 22:13:03 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-99bf1f632b8so711926966b.1
+        for <linux-clk@vger.kernel.org>; Mon, 14 Aug 2023 22:13:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1692076382; x=1692681182;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DNI6rtrYF1Ybq811JJ87vOIIKiYVPsQ25Sx4UjotkVw=;
+        b=gbW4SSBK1ojxMblUsK5g499ERe7twiF6LRWgbQHzU/vA1ghtMMCyVjUo2EaWwIoba0
+         7zn5k05dEWr1IlsT3WxNxWIYIl4bSPmgbAL81eXgxBLtwA5MfEWRXl9tlBxymFWfSKjY
+         WzIep0GDpzuIwGsA9UvKuh/ir+8z3BQycdJmOHjkc2G2GWBm1XeQ46tENcVRQqY4tTX9
+         EBSz+f/dRQUKJD/yAtmDFYFZ9XjJEbnft0lhBy8WKkF94Ug5M/bpFvn1aHxUKpn2+ImF
+         rkfkoxFJT2NyLQ5ukz3ZzpXvjcjVO1r6GFAPXp042EFaTZIQwEwNHCuE68N1TKHED64P
+         2dDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692076382; x=1692681182;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DNI6rtrYF1Ybq811JJ87vOIIKiYVPsQ25Sx4UjotkVw=;
+        b=SlapDIVmnf3T2NSyFD0ovjfrFM/yEqYwz7o70BN7btPu19ZyaRZC2Wz4uqPLdYPREm
+         mlhx/qC4YwhaIYCgSeJQfQC0M8uArEGFHUjQFDb1BTeyOXYHwvKwyorww+JCtrgnr7Tm
+         PTteiA0sf73+HCok+c/IbummuvONJalaOC+rKHi6s8MsfY4QZDk2HUQACcA4JYy18mvp
+         m76bKYu1pvDtXLiE08C9TBn7smCPNfNKUVgKwjVjAQikyCOCWOlPPJm3jyyS9exPK8eY
+         emHbPRVjLhBgNS6fSOrF2XnUO3FWZkypN2D2KSW7qGrva0zm7WzDj8akkRBczBYbXF/p
+         h/Fg==
+X-Gm-Message-State: AOJu0Yyekjor/kgd+M+k1xsm1vQiIj2lknya/MewkudW1XVXWspWeyAp
+        MjtcCSHuaWq/70pF3H1KgqNTMg==
+X-Google-Smtp-Source: AGHT+IHxSgB//CCtVHdyYiVOgZlxJ2NXYIq1D1nSb6b31RyTYQO+cWLsea219E/beqdlubPkigPEGg==
+X-Received: by 2002:a17:906:8a6c:b0:99c:a93a:432f with SMTP id hy12-20020a1709068a6c00b0099ca93a432fmr9281673ejc.1.1692076381769;
+        Mon, 14 Aug 2023 22:13:01 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.214.188])
+        by smtp.gmail.com with ESMTPSA id h8-20020a1709062dc800b0099b7276235esm6553566eji.93.2023.08.14.22.13.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Aug 2023 22:13:01 -0700 (PDT)
+Message-ID: <808735b6-d7ee-5223-ef6b-8ec5118e95ac@linaro.org>
+Date:   Tue, 15 Aug 2023 07:12:59 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Subject: Re: [PATCH 1/2] dt-bindings: clock: qcom: ipq4019: add missing
+ networking resets
+Content-Language: en-US
+To:     Robert Marko <robert.marko@sartura.hr>, andersson@kernel.org,
+        agross@kernel.org, konrad.dybcio@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20230814104119.96858-1-robert.marko@sartura.hr>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230814104119.96858-1-robert.marko@sartura.hr>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 11 Aug 2023 21:03:34 +0100 Vadim Fedorenko wrote:
-> DPLL framework is used to represent and configure DPLL devices
-> in systems. Each device that has DPLL and can configure inputs
-> and outputs can use this framework.
+On 14/08/2023 12:40, Robert Marko wrote:
+> Add bindings for the missing networking resets found in IPQ4019 GCC.
 > 
-> Implement core framework functions for further interactions
-> with device drivers implementing dpll subsystem, as well as for
-> interactions of DPLL netlink framework part with the subsystem
-> itself.
+> Signed-off-by: Robert Marko <robert.marko@sartura.hr>
+> ---
+>  include/dt-bindings/clock/qcom,gcc-ipq4019.h | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
 
-> +static struct dpll_device *
-> +dpll_device_alloc(const u64 clock_id, u32 device_idx, struct module *module)
-> +{
-> +	struct dpll_device *dpll;
-> +	int ret;
-> +
-> +	dpll = kzalloc(sizeof(*dpll), GFP_KERNEL);
-> +	if (!dpll)
-> +		return ERR_PTR(-ENOMEM);
-> +	refcount_set(&dpll->refcount, 1);
-> +	INIT_LIST_HEAD(&dpll->registration_list);
-> +	dpll->device_idx = device_idx;
-> +	dpll->clock_id = clock_id;
-> +	dpll->module = module;
-> +	ret = xa_alloc(&dpll_device_xa, &dpll->id, dpll, xa_limit_16b,
-> +		       GFP_KERNEL);
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Why only 16b and why not _cyclic?
+Best regards,
+Krzysztof
 
-> +/**
-> + * dpll_device_register - register the dpll device in the subsystem
-> + * @dpll: pointer to a dpll
-> + * @type: type of a dpll
-> + * @ops: ops for a dpll device
-> + * @priv: pointer to private information of owner
-> + *
-> + * Make dpll device available for user space.
-> + *
-> + * Context: Acquires a lock (dpll_lock)
-> + * Return:
-> + * * 0 on success
-> + * * negative - error value
-> + */
-> +int dpll_device_register(struct dpll_device *dpll, enum dpll_type type,
-> +			 const struct dpll_device_ops *ops, void *priv)
-> +{
-> +	struct dpll_device_registration *reg;
-> +	bool first_registration = false;
-> +
-> +	if (WARN_ON(!ops))
-> +		return -EINVAL;
-> +	if (WARN_ON(!ops->mode_get))
-> +		return -EINVAL;
-> +	if (WARN_ON(!ops->lock_status_get))
-> +		return -EINVAL;
-> +	if (WARN_ON(type < DPLL_TYPE_PPS || type > DPLL_TYPE_MAX))
-> +		return -EINVAL;
-> +
-> +	mutex_lock(&dpll_lock);
-> +	reg = dpll_device_registration_find(dpll, ops, priv);
-> +	if (reg) {
-> +		mutex_unlock(&dpll_lock);
-> +		return -EEXIST;
-> +	}
-> +
-> +	reg = kzalloc(sizeof(*reg), GFP_KERNEL);
-> +	if (!reg) {
-> +		mutex_unlock(&dpll_lock);
-> +		return -ENOMEM;
-> +	}
-> +	reg->ops = ops;
-> +	reg->priv = priv;
-> +	dpll->type = type;
-> +	first_registration = list_empty(&dpll->registration_list);
-> +	list_add_tail(&reg->list, &dpll->registration_list);
-> +	if (!first_registration) {
-> +		mutex_unlock(&dpll_lock);
-> +		return 0;
-> +	}
-> +
-> +	xa_set_mark(&dpll_device_xa, dpll->id, DPLL_REGISTERED);
-> +	mutex_unlock(&dpll_lock);
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(dpll_device_register);
-
-Is the registration flow documented? It's a bit atypical so we should
-write some pseudocode somewhere.
-
-> +/**
-> + * dpll_device_unregister - unregister dpll device
-> + * @dpll: registered dpll pointer
-> + * @ops: ops for a dpll device
-> + * @priv: pointer to private information of owner
-> + *
-> + * Unregister device, make it unavailable for userspace.
-> + * Note: It does not free the memory
-> + * Context: Acquires a lock (dpll_lock)
-> + */
-> +void dpll_device_unregister(struct dpll_device *dpll,
-> +			    const struct dpll_device_ops *ops, void *priv)
-> +{
-> +	struct dpll_device_registration *reg;
-> +
-> +	mutex_lock(&dpll_lock);
-> +	ASSERT_DPLL_REGISTERED(dpll);
-> +	reg = dpll_device_registration_find(dpll, ops, priv);
-> +	if (WARN_ON(!reg)) {
-> +		mutex_unlock(&dpll_lock);
-> +		return;
-> +	}
-> +	list_del(&reg->list);
-> +	kfree(reg);
-> +
-> +	if (!list_empty(&dpll->registration_list)) {
-> +		mutex_unlock(&dpll_lock);
-> +		return;
-> +	}
-> +	xa_clear_mark(&dpll_device_xa, dpll->id, DPLL_REGISTERED);
-> +	mutex_unlock(&dpll_lock);
-> +}
-> +EXPORT_SYMBOL_GPL(dpll_device_unregister);
-
-> +/**
-> + * struct dpll_pin - structure for a dpll pin
-> + * @id:			unique id number for pin given by dpll subsystem
-> + * @pin_idx:		index of a pin given by dev driver
-> + * @clock_id:		clock_id of creator
-> + * @module:		module of creator
-> + * @dpll_refs:		hold referencees to dplls pin was registered with
-> + * @parent_refs:	hold references to parent pins pin was registered with
-> + * @prop:		pointer to pin properties given by registerer
-> + * @rclk_dev_name:	holds name of device when pin can recover clock from it
-> + * @refcount:		refcount
-> + **/
-> +struct dpll_pin {
-> +	u32 id;
-> +	u32 pin_idx;
-> +	u64 clock_id;
-> +	struct module *module;
-> +	struct xarray dpll_refs;
-> +	struct xarray parent_refs;
-> +	const struct dpll_pin_properties *prop;
-> +	char *rclk_dev_name;
-
-Where is rclk_dev_name filled in?
-
-> +struct dpll_pin_ops {
-> +	int (*frequency_set)(const struct dpll_pin *pin, void *pin_priv,
-> +			     const struct dpll_device *dpll, void *dpll_priv,
-> +			     const u64 frequency,
-> +			     struct netlink_ext_ack *extack);
-> +	int (*frequency_get)(const struct dpll_pin *pin, void *pin_priv,
-> +			     const struct dpll_device *dpll, void *dpll_priv,
-> +			     u64 *frequency, struct netlink_ext_ack *extack);
-> +	int (*direction_set)(const struct dpll_pin *pin, void *pin_priv,
-> +			     const struct dpll_device *dpll, void *dpll_priv,
-> +			     const enum dpll_pin_direction direction,
-> +			     struct netlink_ext_ack *extack);
-> +	int (*direction_get)(const struct dpll_pin *pin, void *pin_priv,
-> +			     const struct dpll_device *dpll, void *dpll_priv,
-> +			     enum dpll_pin_direction *direction,
-> +			     struct netlink_ext_ack *extack);
-> +	int (*state_on_pin_get)(const struct dpll_pin *pin, void *pin_priv,
-> +				const struct dpll_pin *parent_pin,
-> +				void *parent_pin_priv,
-> +				enum dpll_pin_state *state,
-> +				struct netlink_ext_ack *extack);
-> +	int (*state_on_dpll_get)(const struct dpll_pin *pin, void *pin_priv,
-> +				 const struct dpll_device *dpll,
-> +				 void *dpll_priv, enum dpll_pin_state *state,
-> +				 struct netlink_ext_ack *extack);
-> +	int (*state_on_pin_set)(const struct dpll_pin *pin, void *pin_priv,
-> +				const struct dpll_pin *parent_pin,
-> +				void *parent_pin_priv,
-> +				const enum dpll_pin_state state,
-> +				struct netlink_ext_ack *extack);
-> +	int (*state_on_dpll_set)(const struct dpll_pin *pin, void *pin_priv,
-> +				 const struct dpll_device *dpll,
-> +				 void *dpll_priv,
-> +				 const enum dpll_pin_state state,
-> +				 struct netlink_ext_ack *extack);
-> +	int (*prio_get)(const struct dpll_pin *pin,  void *pin_priv,
-> +			const struct dpll_device *dpll,  void *dpll_priv,
-> +			u32 *prio, struct netlink_ext_ack *extack);
-> +	int (*prio_set)(const struct dpll_pin *pin, void *pin_priv,
-> +			const struct dpll_device *dpll, void *dpll_priv,
-> +			const u32 prio, struct netlink_ext_ack *extack);
-> +};
-
-The ops need a kdoc
-
-> +struct dpll_device
-> +*dpll_device_get(u64 clock_id, u32 dev_driver_id, struct module *module);
-
-nit: * is part of the type, it goes on the previous line
