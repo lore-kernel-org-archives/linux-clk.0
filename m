@@ -2,40 +2,40 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84C6FC001DE
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Aug 2023 16:56:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47BA9C0015E
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Aug 2023 17:02:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233346AbjHOQzw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Aug 2023 12:55:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59426 "EHLO
+        id S238595AbjHORCT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Aug 2023 13:02:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238441AbjHOQzY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Aug 2023 12:55:24 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 016C319BF
-        for <linux-clk@vger.kernel.org>; Tue, 15 Aug 2023 09:55:21 -0700 (PDT)
+        with ESMTP id S238599AbjHORCH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Aug 2023 13:02:07 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79981B3
+        for <linux-clk@vger.kernel.org>; Tue, 15 Aug 2023 10:02:05 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 701DA65DB2
-        for <linux-clk@vger.kernel.org>; Tue, 15 Aug 2023 16:55:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51967C433CD;
-        Tue, 15 Aug 2023 16:55:20 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0F05B62755
+        for <linux-clk@vger.kernel.org>; Tue, 15 Aug 2023 17:02:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDA68C433C7;
+        Tue, 15 Aug 2023 17:02:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692118520;
-        bh=0NoRpcHZaUX5im0cn9/N12oK9jNQtW6pqx60BrLK0cs=;
+        s=k20201202; t=1692118924;
+        bh=r9KZfoAmpLHh60UciV5nylVVLkX7ks9J5Cw/wgBs6bw=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=h/qtXebOTThtIYgLdqHqoNRqfFRfa9y/NntkWbmyTvfgyh9BOctmFKj8k3XAsH1JF
-         aoJAGqTrHqidY5JCD+vm0ExK6+BLcxDLSq3p717eHvClBAxkaQSQRbfU1psUYJ74Bd
-         kRbPS0rjZmAdOGYHTHVXNwPnKjpnhSFi0B1wAuRKNJLkChNkLAJtDl052iMqhiYfZN
-         gLXuKq0MKFOl6PONyTJmxtK4SAvnRX8Q7p9ID1pGkSED5bp6y1rmkY83gbeufmn7as
-         b20tSiNqCkYQIn2ljZnydCYVtFoTrK3QNRMZqB4owFbaLyN+qC3eEAVhaUSNzJt1Kk
-         YrHv4JWLD1v1g==
-Date:   Tue, 15 Aug 2023 09:55:19 -0700
+        b=ow3YXSqMksDmaueAVNUM5WBG5xKeQfFxfA2pH0oD3F3PvzxmMy6ICbHq6ZzgWRWGK
+         aWiZcvJDavt+UHR9txOSRokZGJD9qnwxvM+4LGry273QbcF13RARMuqN/EpldDPYDz
+         i0ZsYWxjZmeSzflU80014K/dHCmsJDX9fy9KMyTwcG/Vjl3cE75GCUZbpKO87T62yC
+         3Bi7Za/j8N56fcVheaxGJPTdawjHf/fmoUf7FcSiHoSNE7yeJUf+tSLIC53h/zBXV4
+         9qetQIWqiAAyj3tjag/Z1MIK3/yq837XwlBfjKN5VylEFFKiQduQPdj5489SdaCf8g
+         k6H7+xF9YjAsQ==
+Date:   Tue, 15 Aug 2023 10:02:03 -0700
 From:   Jakub Kicinski <kuba@kernel.org>
-To:     Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc:     Jiri Pirko <jiri@resnulli.us>,
+To:     Jiri Pirko <jiri@resnulli.us>
+Cc:     Vadim Fedorenko <vadim.fedorenko@linux.dev>,
         Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
         Jonathan Lemon <jonathan.lemon@gmail.com>,
         Paolo Abeni <pabeni@redhat.com>,
@@ -44,15 +44,14 @@ Cc:     Jiri Pirko <jiri@resnulli.us>,
         linux-arm-kernel@lists.infradead.org, poros@redhat.com,
         mschmidt@redhat.com, netdev@vger.kernel.org,
         linux-clk@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
-        intel-wired-lan@lists.osuosl.org, Jiri Pirko <jiri@nvidia.com>
-Subject: Re: [PATCH net-next v4 4/9] dpll: netlink: Add DPLL framework base
- functions
-Message-ID: <20230815095519.76d06274@kernel.org>
-In-Reply-To: <d5c30de7-df89-18dd-3ad8-a5d99c1e7108@linux.dev>
+        intel-wired-lan@lists.osuosl.org
+Subject: Re: [PATCH net-next v4 0/9] Create common DPLL configuration API
+Message-ID: <20230815100203.4e45fc7e@kernel.org>
+In-Reply-To: <ZNtm6v+UuDIex1+s@nanopsycho>
 References: <20230811200340.577359-1-vadim.fedorenko@linux.dev>
-        <20230811200340.577359-5-vadim.fedorenko@linux.dev>
-        <20230814202441.349586b4@kernel.org>
-        <d5c30de7-df89-18dd-3ad8-a5d99c1e7108@linux.dev>
+        <20230814194528.00baec23@kernel.org>
+        <43395307-9d11-7905-0eec-0a4c1b1fc62a@linux.dev>
+        <ZNtm6v+UuDIex1+s@nanopsycho>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -60,29 +59,28 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 15 Aug 2023 16:18:16 +0100 Vadim Fedorenko wrote:
-> On 15/08/2023 04:24, Jakub Kicinski wrote:
-> > On Fri, 11 Aug 2023 21:03:35 +0100 Vadim Fedorenko wrote:  
-> >> +	xa_for_each(&pin->dpll_refs, i, ref) {
-> >> +		const struct dpll_pin_ops *ops = dpll_pin_ops(ref);
-> >> +		struct dpll_device *dpll = ref->dpll;
-> >> +
-> >> +		if (!ops->frequency_set)
-> >> +			return -EOPNOTSUPP;
-> >> +		ret = ops->frequency_set(pin, dpll_pin_on_dpll_priv(dpll, pin),
-> >> +					 dpll, dpll_priv(dpll), freq, extack);
-> >> +		if (ret)
-> >> +			return ret;
-> >> +		__dpll_pin_change_ntf(pin);
-> >> +	}  
-> > 
-> > only one freq is reported in get, AFAICT, so why send a notification
-> > after each ref is updated?  
+On Tue, 15 Aug 2023 13:52:10 +0200 Jiri Pirko wrote:
+> >> Feels like we're lacking tests here. Is there a common subset of
+> >> stuff we can expect reasonable devices to support?
+> >> Anything you used in development that can be turned into tests?  
+> >
+> >Well, we were playing with the tool ynl/cli.py and it's stated in
+> >the cover letter. But needs proper hardware to run. I'm not sure
+> >we can easily create emulation device to run tests.  
 > 
-> The pin can be technically connected to several DPLLs and app may watch
-> for the specific DPLL messages only. We would like to inform all users 
-> on any DPLL which has this pin connected to.
+> Well, something like "dpllsim", similar to netdevsim would be certainly
+> possible, then you can use it to write selftests for the uapi testing.
+> But why don't we do that as a follow-up patchset?
 
-How does this end up looking in the notifications?
-__dpll_pin_change_ntf() only takes the pin object, from a quick read 
-it seems like it will generate the same notification multiple times.
+I was thinking about a test that can be run against real HW.
+Something that a new vendor implementing DPLL can run and
+validate that their implementation behaves as expected.
+And something that distributors and stable kernels could
+potentially use to validate the code still works.
+
+We don't have any well established user space to make use of this 
+new functionality, there's high risk that drivers will invent their
+own ways of interpreting the API.
+
+Perhaps something that Red Hat could help with? I'm guessing you'd 
+be writing test to validate this for RHEL, anyway?
