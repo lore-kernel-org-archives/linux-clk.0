@@ -2,80 +2,128 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61A36C41513
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Aug 2023 00:38:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFDE4C001DB
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Aug 2023 02:44:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233294AbjHOAiD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Aug 2023 20:38:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35638 "EHLO
+        id S234340AbjHOCoE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Aug 2023 22:44:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233158AbjHOAhv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Aug 2023 20:37:51 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5868493
-        for <linux-clk@vger.kernel.org>; Mon, 14 Aug 2023 17:37:51 -0700 (PDT)
+        with ESMTP id S234362AbjHOCnj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Aug 2023 22:43:39 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26F671715
+        for <linux-clk@vger.kernel.org>; Mon, 14 Aug 2023 19:43:39 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EB5D1643DA
-        for <linux-clk@vger.kernel.org>; Tue, 15 Aug 2023 00:37:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D465C433C8;
-        Tue, 15 Aug 2023 00:37:50 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id ABB5C64BD4
+        for <linux-clk@vger.kernel.org>; Tue, 15 Aug 2023 02:43:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64589C433C8;
+        Tue, 15 Aug 2023 02:43:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692059870;
-        bh=ubU1qJZKk3bzBUfLAI3KRwP4DlPCyvxsYECxwGBOIZ0=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=VWCd4Jj+OtVbHhGPBlB4TnL6MIIsQYALM63RjU23lnzstIU3uPnBWIidNpfgsy+Qy
-         4aK/XcOLLk6KddsW5blqjQsm0XFbenXoll2BmXLp5DgJnEdydnjjn0yxQidM6hUR7q
-         uZ1mtRGC22KNkaIZOx8ge4vwbFT4M/kyTXcHWlt7r1mJWZMk+vdPqpUeM+gSWH2cc3
-         duSGDd4ABI8ksrIqnRsJe0dQXI4spwJx73V3BYU4ZfKMjl4QopCSOyD6EowXJz8iM0
-         uA33sWVQg92qvN0hJzP2x2qg/b8N9pxFi6IxLcvzPQsErjdBRFBhYWxqg0L6Ey620V
-         sjXabOVhvHixg==
-Message-ID: <f0f5ecf30d429755880dc530d71df405.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        s=k20201202; t=1692067418;
+        bh=7blTAewUXh9WclBQZ+mReosFc6JNCK0kdPIFgrfLNQw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=bL23djTCRcM7r+1Gp9qSDhPMBmz3x/C4x5iSW4nmvHKAbKinIWMu1gpgCHV4bQVvO
+         iocZQpk1ugrWIBmTlyjBYz5Fvl9hd/E+NoXEsPmh+rGNp31RAAKtoxKTO8IEl0Gwoi
+         uUldRosk0KIrHE/IQPDAjJ8cgdfeDS1VMB+IcNrZrxPJL9JgBvr/jscPaqc7XPbxg1
+         2aF7Hq0AWIZ7l7eqt7jdapEwypftzA2y2QjPKmz22u2HCEuwNz3EblWVp3FbN0p5RS
+         cYrQr31icAt0/4PEiCaf6+BlAmGP9viia3Y2nGMjQ9XfUPNzOM+9WK2H4UgWY2UNXz
+         CM5OJBRgrf65Q==
+Date:   Mon, 14 Aug 2023 19:43:36 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc:     Jiri Pirko <jiri@resnulli.us>,
+        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Milena Olech <milena.olech@intel.com>,
+        Michal Michalik <michal.michalik@intel.com>,
+        linux-arm-kernel@lists.infradead.org, poros@redhat.com,
+        mschmidt@redhat.com, netdev@vger.kernel.org,
+        linux-clk@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
+        intel-wired-lan@lists.osuosl.org, Jiri Pirko <jiri@nvidia.com>
+Subject: Re: [PATCH net-next v4 2/9] dpll: spec: Add Netlink spec in YAML
+Message-ID: <20230814194336.55642f34@kernel.org>
+In-Reply-To: <20230811200340.577359-3-vadim.fedorenko@linux.dev>
+References: <20230811200340.577359-1-vadim.fedorenko@linux.dev>
+        <20230811200340.577359-3-vadim.fedorenko@linux.dev>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <ZNja0W8oQ0PLAc7l@wens.tw>
-References: <ZNja0W8oQ0PLAc7l@wens.tw>
-Subject: Re: [GIT PULL] Allwinner clock changes for 6.6 part 2
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej@kernel.org>,
-        Samuel Holland <samuel@sholland.org>,
-        linux-sunxi@lists.linux.dev, linux-clk@vger.kernel.org
-To:     Chen-Yu Tsai <wens@kernel.org>
-Date:   Mon, 14 Aug 2023 17:37:48 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Chen-Yu Tsai (2023-08-13 06:29:53)
-> Hi,
->=20
-> Please pull another round of Allwinner clk patches for the 6.6 cycle.
->=20
->=20
-> Thanks
-> ChenYu
->=20
->=20
-> The following changes since commit 075d9ca5b4e17f84fd1c744a405e69ec743be7=
-f0:
->=20
->   clk: sunxi-ng: Modify mismatched function name (2023-07-31 00:52:36 +02=
-00)
->=20
-> are available in the Git repository at:
->=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/su=
-nxi-clk-for-6.6-2
->=20
-> for you to fetch changes up to a69f9463397e56666b113eebb2e99956aacf6929:
->=20
->   clk: sunxi-ng: nkm: Prefer current parent rate (2023-08-09 23:41:44 +08=
-00)
->=20
-> ----------------------------------------------------------------
+On Fri, 11 Aug 2023 21:03:33 +0100 Vadim Fedorenko wrote:
+> +attribute-sets:
+> +  -
+> +    name: dpll
+> +    enum-name: dpll_a
+> +    attributes:
+> +      -
+> +        name: id
+> +        type: u32
+> +        value: 1
 
-Thanks. Pulled into clk-next
+value: 1 is the default
+
+> +      -
+> +        name: module-name
+> +        type: string
+> +      -
+> +        name: clock-id
+> +        type: u64
+
+I don't see a pad, you have a u64 without a pad?
+
+> +      -
+> +        name: mode
+> +        type: u8
+
+It's an enum, should always be u32 or bigger at protocol level.
+Netlink pads to 4B, you're not saving any space.
+
+> +        enum: mode
+> +      -
+> +        name: mode-supported
+> +        type: u8
+
+Same.
+
+> +        enum: mode
+> +        multi-attr: true
+> +      -
+> +        name: lock-status
+> +        type: u8
+
+And here.
+
+> +        enum: lock-status
+> +      -
+> +        name: temp
+> +        type: s32
+> +      -
+> +        name: type
+> +        type: u8
+
+And here, etc.
+
+Why are all attributes in a single attr space? :(
+More than half of them are prefixed with a pin- does it really 
+not scream to you that they belong to a different space?
+
+> +operations:
+> +  enum-name: dpll_cmd
+> +  list:
+> +    -
+> +      name: device-id-get
+> +      doc: |
+> +        Get id of dpll device that matches given attributes
+> +      value: 1
+
+is the default
+-- 
+pw-bot: cr
