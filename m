@@ -2,128 +2,196 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8876C41513
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Aug 2023 05:55:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44CF5C001DE
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Aug 2023 06:02:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234664AbjHOFy3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Aug 2023 01:54:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32780 "EHLO
+        id S234666AbjHOGBh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Aug 2023 02:01:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234775AbjHOFwi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Aug 2023 01:52:38 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 102EB172A
-        for <linux-clk@vger.kernel.org>; Mon, 14 Aug 2023 22:52:17 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id ffacd0b85a97d-31963263938so2863968f8f.2
-        for <linux-clk@vger.kernel.org>; Mon, 14 Aug 2023 22:52:16 -0700 (PDT)
+        with ESMTP id S234760AbjHOGA6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Aug 2023 02:00:58 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3667FB
+        for <linux-clk@vger.kernel.org>; Mon, 14 Aug 2023 23:00:55 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-3fe4b45a336so45844175e9.1
+        for <linux-clk@vger.kernel.org>; Mon, 14 Aug 2023 23:00:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1692078735; x=1692683535;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=U5zZszRJ1TGZmt1SftJeogGq7JuNQUPsnorZGUjcM80=;
-        b=MsolIu3IE0lP2hEs6fQ0tC7Ck8AEypROUkZlWM3Ebv8EHB6YRbrVlHiQUbtn7VWgPT
-         UiV3H+ECTKz6aw4bzdgsvwGoWPH4In6jIWjjel3dD+dH64px9vo6vL5EuAiTaBHwfWKf
-         5vBoz2/iVMH9XVUHc4I++Pwit3udVu+xZlsYLZ66g5pCwx28MhUJFSjf17ZFYeJYUB9R
-         28T5bUgUhFdjcEUTxkmeIbjqF0IGjXOwG4okGd8uyEH9q01vgJ2QEql4SVUrN4XprKBr
-         LNUanWMQLyGYcjGjfc61EmefJZZkWEF2b/eNBfkjcetih+G/x4ix6Um4xk2jPpGZp7bz
-         6gYA==
+        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1692079254; x=1692684054;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ATuGiDRRt6vLATPUxSeo+7i81xqN5HyTALEXdeKA4F8=;
+        b=SsENlgM7QwFBr4fyrbLmlKEqIOdsbrkBW2fnqHH5I2nXrhsqj2FyMeX3t7E9PdQGv6
+         4w3Q5NO2ODfd50GcDA/PcpYdIdFq6nutLetkQeTZxjhv6FLVuDYHZZlGMqLX3SeAkg/n
+         92909bebuwsmYgZ5i+5UQG5pUc6VCB1jV4+iEG7syt29d/2lbK49DGBeH45mJZgezNMI
+         tug6zMwxljUWocIraQL5YPO2RD7mehMNmwGTdZdL4qDyCPcmGAMNogk1jMor8GFY6rNO
+         /x7ESOnP5Re+gF9gxek0LS3Uq1kGzI2gzTBiE21SomQ/h2qnxDxC8lj49n6LWWFJOCC9
+         ak8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692078735; x=1692683535;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=U5zZszRJ1TGZmt1SftJeogGq7JuNQUPsnorZGUjcM80=;
-        b=lkoQSLIP8RkCdzLTUFfvq/3vibMi5YcYudDfZXlE3tg0EZKee+lHrGgxi8sDOH+ETZ
-         /vBnKiuEc5ij88d1MxsjSKVDtnes9npD5KtVaEkrOYET1/L5ROL7g/73twf1l9D0EaKT
-         Pui97O0znUBq7hZhz6g72aufwpkTwYHeS6zc486AEknoOG9GpciJHsQzfgAzzkv9GCGC
-         MJDZ/0Yln81Wjr0jPu4gaNuOWOtk/v72smybqrSZg5wQ010cGo2Ju8sVD2l77UusyEVT
-         +5mNzqi2rQAWaKsNrWARVy2lnEe5ZLA47D4B99t5Rj7YABfw64lC3QZ7ZOt8p44Moj0K
-         BRaw==
-X-Gm-Message-State: AOJu0YyQnj6q/wwRtAXG9IUwR+y81mZfhPoA3ETurOeKbSe/xFJcMy4H
-        sdFbwnI5cjjUYOtLdws6P1Z09Q==
-X-Google-Smtp-Source: AGHT+IE/LzquRwTZSsulsvNuTfzEJnWCWfvoE6jF1rEF9CrWQKOMne+14OV1eWD5PpxyW0xtsskriw==
-X-Received: by 2002:a05:6000:12c4:b0:317:e766:d5e9 with SMTP id l4-20020a05600012c400b00317e766d5e9mr8903334wrx.3.1692078735462;
-        Mon, 14 Aug 2023 22:52:15 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.214.188])
-        by smtp.gmail.com with ESMTPSA id o13-20020a05600c378d00b003fe2de3f94fsm16455755wmr.12.2023.08.14.22.52.13
+        d=1e100.net; s=20221208; t=1692079254; x=1692684054;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ATuGiDRRt6vLATPUxSeo+7i81xqN5HyTALEXdeKA4F8=;
+        b=QaMyBBgAwOzo4WH5LeLkPkBzDEk1gTDrz/tw+Hoe3ze59CWy97lExEBswQ5WG6HJJk
+         htwDaSSK0SHDz7NOFrdzstGM0gYz5lk/XXdJk04mmV3eXTJYsHNJ1bKZJZliK9qXK25r
+         nnc+51gZoZ2T2eEy0zVC9VfGFHdFpWrXNmrLc269DMvb466aYFDp6UIECj+4OD+kqBod
+         ytdX6QX+Sa9dFJqdB5MeZqmHmWu8HWlxegeZyDLjZjhXnFe/TOIFgqRfoWN52otKRsn9
+         /nVkDG/q6obYCGvCF1GODdh9CfQDRgNkPNyoYTt8xPtkbCKD/8VJb0fGwxw+A1oBaA2m
+         IeiQ==
+X-Gm-Message-State: AOJu0YxWua6g9RappXHsNqFj00QOv4GIPIhXAayygtEvu7/aVLNXKG6T
+        npMWJMCNmBkNUdOzzX4HoyMybA==
+X-Google-Smtp-Source: AGHT+IH8cmixjntyPDKCP530AEOMW0rBts8FuLSUpsAjovyOl5LT8jngycJtfLakdIg/yNABjQ9QLg==
+X-Received: by 2002:a7b:ce90:0:b0:3fb:ef86:e30 with SMTP id q16-20020a7bce90000000b003fbef860e30mr8635975wmj.10.1692079254020;
+        Mon, 14 Aug 2023 23:00:54 -0700 (PDT)
+Received: from localhost ([212.23.236.67])
+        by smtp.gmail.com with ESMTPSA id l10-20020a7bc44a000000b003fc06169ab3sm19280308wmi.20.2023.08.14.23.00.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Aug 2023 22:52:15 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH 00/11] clk: samsung: remove number of clocks from bindings
-Date:   Tue, 15 Aug 2023 07:52:12 +0200
-Message-Id: <169207869892.18669.12968579673742031375.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230808082738.122804-1-krzysztof.kozlowski@linaro.org>
-References: <20230808082738.122804-1-krzysztof.kozlowski@linaro.org>
+        Mon, 14 Aug 2023 23:00:53 -0700 (PDT)
+Date:   Tue, 15 Aug 2023 08:00:52 +0200
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Jakub Kicinski <kuba@kernel.org>
+Cc:     Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Milena Olech <milena.olech@intel.com>,
+        Michal Michalik <michal.michalik@intel.com>,
+        linux-arm-kernel@lists.infradead.org, poros@redhat.com,
+        mschmidt@redhat.com, netdev@vger.kernel.org,
+        linux-clk@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
+        intel-wired-lan@lists.osuosl.org, Jiri Pirko <jiri@nvidia.com>
+Subject: Re: [PATCH net-next v4 3/9] dpll: core: Add DPLL framework base
+ functions 
+Message-ID: <ZNsUlAk/XIcPsMY0@nanopsycho>
+References: <20230811200340.577359-1-vadim.fedorenko@linux.dev>
+ <20230811200340.577359-4-vadim.fedorenko@linux.dev>
+ <20230814201709.655a24e2@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230814201709.655a24e2@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Tue, Aug 15, 2023 at 05:17:09AM CEST, kuba@kernel.org wrote:
+>On Fri, 11 Aug 2023 21:03:34 +0100 Vadim Fedorenko wrote:
 
-On Tue, 08 Aug 2023 10:27:27 +0200, Krzysztof Kozlowski wrote:
-> No dependencies, patches can be taken in one set via my clk tree.
-> 
-> Best regards,
-> Krzysztof
-> 
-> Krzysztof Kozlowski (11):
->   clk: samsung: exynos3250: do not define number of clocks in bindings
->   clk: samsung: exynos4: do not define number of clocks in bindings
->   clk: samsung: exynos5250: do not define number of clocks in bindings
->   clk: samsung: exynos5260: do not define number of clocks in bindings
->   clk: samsung: exynos5410: do not define number of clocks in bindings
->   clk: samsung: exynos5420: do not define number of clocks in bindings
->   clk: samsung: exynos5433: do not define number of clocks in bindings
->   clk: samsung: exynos7885: do not define number of clocks in bindings
->   clk: samsung: exynos850: do not define number of clocks in bindings
->   clk: samsung: exynoautov9: do not define number of clocks in bindings
->   dt-bindings: clock: samsung: remove define with number of clocks
-> 
-> [...]
+[...]
 
-Applied, thanks!
 
-Fixed commit msg language as suggested by Conor.
+>> +int dpll_device_register(struct dpll_device *dpll, enum dpll_type type,
+>> +			 const struct dpll_device_ops *ops, void *priv)
+>> +{
+>> +	struct dpll_device_registration *reg;
+>> +	bool first_registration = false;
+>> +
+>> +	if (WARN_ON(!ops))
+>> +		return -EINVAL;
+>> +	if (WARN_ON(!ops->mode_get))
+>> +		return -EINVAL;
+>> +	if (WARN_ON(!ops->lock_status_get))
+>> +		return -EINVAL;
+>> +	if (WARN_ON(type < DPLL_TYPE_PPS || type > DPLL_TYPE_MAX))
+>> +		return -EINVAL;
+>> +
+>> +	mutex_lock(&dpll_lock);
+>> +	reg = dpll_device_registration_find(dpll, ops, priv);
+>> +	if (reg) {
+>> +		mutex_unlock(&dpll_lock);
+>> +		return -EEXIST;
+>> +	}
+>> +
+>> +	reg = kzalloc(sizeof(*reg), GFP_KERNEL);
+>> +	if (!reg) {
+>> +		mutex_unlock(&dpll_lock);
+>> +		return -ENOMEM;
+>> +	}
+>> +	reg->ops = ops;
+>> +	reg->priv = priv;
+>> +	dpll->type = type;
+>> +	first_registration = list_empty(&dpll->registration_list);
+>> +	list_add_tail(&reg->list, &dpll->registration_list);
+>> +	if (!first_registration) {
+>> +		mutex_unlock(&dpll_lock);
+>> +		return 0;
+>> +	}
+>> +
+>> +	xa_set_mark(&dpll_device_xa, dpll->id, DPLL_REGISTERED);
+>> +	mutex_unlock(&dpll_lock);
+>> +
+>> +	return 0;
+>> +}
+>> +EXPORT_SYMBOL_GPL(dpll_device_register);
+>
+>Is the registration flow documented? It's a bit atypical so we should
+>write some pseudocode somewhere.
 
-[01/11] clk: samsung: exynos3250: do not define number of clocks in bindings
-        https://git.kernel.org/krzk/linux/c/ec01691c9c631ae465ff0438172738d68bca828b
-[02/11] clk: samsung: exynos4: do not define number of clocks in bindings
-        https://git.kernel.org/krzk/linux/c/826951d90658199a1a1098e823b6205aaea09b0f
-[03/11] clk: samsung: exynos5250: do not define number of clocks in bindings
-        https://git.kernel.org/krzk/linux/c/835dc5ac296073b9ca3a2fda86568bb1b9377dee
-[04/11] clk: samsung: exynos5260: do not define number of clocks in bindings
-        https://git.kernel.org/krzk/linux/c/727d0f0640755eb6e41725d63a506d510078fa8f
-[05/11] clk: samsung: exynos5410: do not define number of clocks in bindings
-        https://git.kernel.org/krzk/linux/c/678417694b8ec22d31d7605352196ffce9bfe128
-[06/11] clk: samsung: exynos5420: do not define number of clocks in bindings
-        https://git.kernel.org/krzk/linux/c/62eef444cf300ea8a5498a98bfcfd6eb0e53dd3e
-[07/11] clk: samsung: exynos5433: do not define number of clocks in bindings
-        https://git.kernel.org/krzk/linux/c/6a44298ddbdde13bc7d84168bd4d256521aef439
-[08/11] clk: samsung: exynos7885: do not define number of clocks in bindings
-        https://git.kernel.org/krzk/linux/c/ef4923c8e0523d83b7cd4918760e03b03b2b08ad
-[09/11] clk: samsung: exynos850: do not define number of clocks in bindings
-        https://git.kernel.org/krzk/linux/c/56d62cd46dee861080e2484e1bdcc9f892add060
-[10/11] clk: samsung: exynoautov9: do not define number of clocks in bindings
-        https://git.kernel.org/krzk/linux/c/901a0c690f547dbe24fd599e7fc58d7cbf69599b
-[11/11] dt-bindings: clock: samsung: remove define with number of clocks
-        https://git.kernel.org/krzk/linux/c/b3f9581affb03ed28ff1905b649e66904f29b9e4
+We have examples in 3 drivers with actual code. But sure, could use some
+documentation.
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+>
+>> +/**
+>> + * dpll_device_unregister - unregister dpll device
+>> + * @dpll: registered dpll pointer
+>> + * @ops: ops for a dpll device
+>> + * @priv: pointer to private information of owner
+>> + *
+>> + * Unregister device, make it unavailable for userspace.
+>> + * Note: It does not free the memory
+>> + * Context: Acquires a lock (dpll_lock)
+>> + */
+>> +void dpll_device_unregister(struct dpll_device *dpll,
+>> +			    const struct dpll_device_ops *ops, void *priv)
+>> +{
+>> +	struct dpll_device_registration *reg;
+>> +
+>> +	mutex_lock(&dpll_lock);
+>> +	ASSERT_DPLL_REGISTERED(dpll);
+>> +	reg = dpll_device_registration_find(dpll, ops, priv);
+>> +	if (WARN_ON(!reg)) {
+>> +		mutex_unlock(&dpll_lock);
+>> +		return;
+>> +	}
+>> +	list_del(&reg->list);
+>> +	kfree(reg);
+>> +
+>> +	if (!list_empty(&dpll->registration_list)) {
+>> +		mutex_unlock(&dpll_lock);
+>> +		return;
+>> +	}
+>> +	xa_clear_mark(&dpll_device_xa, dpll->id, DPLL_REGISTERED);
+>> +	mutex_unlock(&dpll_lock);
+>> +}
+>> +EXPORT_SYMBOL_GPL(dpll_device_unregister);
+>
+>> +/**
+>> + * struct dpll_pin - structure for a dpll pin
+>> + * @id:			unique id number for pin given by dpll subsystem
+>> + * @pin_idx:		index of a pin given by dev driver
+>> + * @clock_id:		clock_id of creator
+>> + * @module:		module of creator
+>> + * @dpll_refs:		hold referencees to dplls pin was registered with
+>> + * @parent_refs:	hold references to parent pins pin was registered with
+>> + * @prop:		pointer to pin properties given by registerer
+>> + * @rclk_dev_name:	holds name of device when pin can recover clock from it
+>> + * @refcount:		refcount
+>> + **/
+>> +struct dpll_pin {
+>> +	u32 id;
+>> +	u32 pin_idx;
+>> +	u64 clock_id;
+>> +	struct module *module;
+>> +	struct xarray dpll_refs;
+>> +	struct xarray parent_refs;
+>> +	const struct dpll_pin_properties *prop;
+>> +	char *rclk_dev_name;
+>
+>Where is rclk_dev_name filled in?
+
+Leftover, should be removed.
+
+[..]
+
