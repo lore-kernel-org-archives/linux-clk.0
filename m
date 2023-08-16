@@ -2,113 +2,152 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD62CC04A94
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Aug 2023 09:13:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 571B5C001E0
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Aug 2023 10:12:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243208AbjHPJNW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Aug 2023 05:13:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46840 "EHLO
+        id S243747AbjHPKMM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Aug 2023 06:12:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237338AbjHPJNK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Aug 2023 05:13:10 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1C44173F;
-        Wed, 16 Aug 2023 02:13:07 -0700 (PDT)
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37G7xCxx008027;
-        Wed, 16 Aug 2023 09:12:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=h8/aEe7kEtX6gF0ysHwTfSvOItaRpNuIkrapdMZFKQk=;
- b=KhIDwfVOVH/Y6ga704Nljnx0Dudy38UswT4QSS1e8G70UvMHv5Tnzpg3oLbXDoK7sjIR
- bbhqxBt1TVJA2Ku9e3TRZfmlKb6902thXBsbKNVYsxhynBht53y6sIzA+LHp23Qjzo7j
- P/KHMaIuoz4uyse7YAAQRnTprxun8Ws7gmSy6xbtWim7ZMIeN4dBaRKt62DxIdZkSzuN
- nkglRcnxCX8YGOksNx0pNqHNnez2QwcHht96w+2+ItKmcUchCE9xTDlcZLcf31sqzwrK
- C3L+7McSf65g/UsL8QBEbElvnYVqFjFJMoPRhyAl1ul2jb+3/8stANiYRULoQ3RnXbTy qQ== 
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3sgmkkrrww-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 16 Aug 2023 09:12:52 +0000
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 37G9CpKW003766
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 16 Aug 2023 09:12:51 GMT
-Received: from [10.253.34.149] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Wed, 16 Aug
- 2023 02:12:47 -0700
-Message-ID: <7b3d8099-9a1f-4314-2f7d-f51ca2aeed5e@quicinc.com>
-Date:   Wed, 16 Aug 2023 17:12:45 +0800
+        with ESMTP id S243746AbjHPKLm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Aug 2023 06:11:42 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65725C1
+        for <linux-clk@vger.kernel.org>; Wed, 16 Aug 2023 03:11:38 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-3fea0640d7aso23256075e9.0
+        for <linux-clk@vger.kernel.org>; Wed, 16 Aug 2023 03:11:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1692180697; x=1692785497;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gGbwkZ5V6/YyLPE8Zp3GkVLQyAqLALpzu6OjLBSVDy0=;
+        b=rAT9NQD7eCXUU472fon6nEd0kOc41WdS0+8kUIvA47MmJSq4kl9RzdyBgMCTV2bnIY
+         pnakgROCIzfW+LV86BvUuvAnjSNUt/aDpfvXpwkyxt0L6x71pgiXnnNxGZKLP7eY0uUp
+         l77CDjTI3XOAFCb4jexOIxdWRCe2yEocGJez/d7gGM4SVg8Xlx3QL8Pjshvai6wpQ2QS
+         UxIwkBx0sR8uTwvPCzPk4rLpXgj86HrnR4lN0INbJWMwQrNVgqc4ebJBZ7hbhaAtyH9S
+         RfS8bEoPRmxV+eSeWF6BdnLLnCMsmFqB/6ueH+PHmAGNboqRZfjuejoHg2TjFRvvIqBb
+         4/FQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692180697; x=1692785497;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gGbwkZ5V6/YyLPE8Zp3GkVLQyAqLALpzu6OjLBSVDy0=;
+        b=gUwr7207myCkp+hfjMXSSVkxsZtcucqSiuFVpTnBMUQbKXXjJneH7vaHz1X8nvfBj+
+         jCT4Z3gTzbeTe0yh1A03vukre6osuMBQB/WznfS18ipuZTDMnGfq0Axv/LEz0HcW2JkT
+         tcEdrcMbFNs6LdgZIn3AuvZMVA5VPv1ah/5U2Pst5SpHXPOLqZYuz0syzzvYznxxoKYV
+         ll6nxtxgDghSy71aF3QFOwpso6TCqtmYo/wplhtJozpjYP3JsAR13/loiIRVlJi714/D
+         C84HOGSGtBCWz0/DI8+LX/HloapLBDUGIcpsg4uObhKCJWWwT7A60GFzoRljdkWU3zY4
+         Rr+g==
+X-Gm-Message-State: AOJu0YywUdUk9MK0f57DXNyN+k20NskyppWa1HxEz+ptaL8l7ILRFli+
+        Gq6LSS0rkOfucklrx/uFcnH/sQ==
+X-Google-Smtp-Source: AGHT+IG/ajfND14aH8TEYYlnoQqe8yFUni7toeHyU2hTsv5/z3osWzlG5FBQuGaXT+MXU4IexkK42Q==
+X-Received: by 2002:a7b:ca53:0:b0:3fc:9e:eead with SMTP id m19-20020a7bca53000000b003fc009eeeadmr1093482wml.20.1692180696913;
+        Wed, 16 Aug 2023 03:11:36 -0700 (PDT)
+Received: from hackbox.lan ([84.232.191.92])
+        by smtp.gmail.com with ESMTPSA id g13-20020a5d698d000000b003180027d67asm20848822wru.19.2023.08.16.03.11.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Aug 2023 03:11:36 -0700 (PDT)
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] clk: imx: Updates for v6.6
+Date:   Wed, 16 Aug 2023 13:11:20 +0300
+Message-Id: <20230816101120.885812-1-abel.vesa@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [PATCH v4 2/4] dt-bindings: clock: add qca8386/qca8084 clock and
- reset definitions
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <andersson@kernel.org>, <agross@kernel.org>,
-        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <p.zabel@pengutronix.de>
-CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_srichara@quicinc.com>
-References: <20230815085205.9868-1-quic_luoj@quicinc.com>
- <20230815085205.9868-3-quic_luoj@quicinc.com>
- <3c702ccd-6a82-1121-0b4e-9529d82ccc13@linaro.org>
-Content-Language: en-US
-From:   Jie Luo <quic_luoj@quicinc.com>
-In-Reply-To: <3c702ccd-6a82-1121-0b4e-9529d82ccc13@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: cNJxEHmu20F18Px8cdb3tIoKJUxkIX3T
-X-Proofpoint-GUID: cNJxEHmu20F18Px8cdb3tIoKJUxkIX3T
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-08-16_07,2023-08-15_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- adultscore=0 clxscore=1015 mlxscore=0 malwarescore=0 lowpriorityscore=0
- mlxlogscore=904 spamscore=0 phishscore=0 impostorscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2306200000 definitions=main-2308160081
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+The following changes since commit 06c2afb862f9da8dc5efa4b6076a0e48c3fbaaa5:
 
+  Linux 6.5-rc1 (2023-07-09 13:53:13 -0700)
 
-On 8/15/2023 5:15 PM, Krzysztof Kozlowski wrote:
-> On 15/08/2023 10:52, Luo Jie wrote:
->> QCA8386/QCA8084 includes the clock & reset controller that is
->> accessed by MDIO bus. Two work modes are supported, qca8386 works
->> as switch mode, qca8084 works as PHY mode.
->>
->> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
-> 
-> This is a friendly reminder during the review process.
-> 
-> It looks like you received a tag and forgot to add it.
-> 
-> If you do not know the process, here is a short explanation:
-> Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-> versions, under or above your Signed-off-by tag. Tag is "received", when
-> provided in a message replied to you on the mailing list. Tools like b4
-> can help here. However, there's no need to repost patches *only* to add
-> the tags. The upstream maintainer will do that for tags received on the
-> version they apply.
-> 
-> https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
-> 
-> If a tag was not added on purpose, please state why and what changed.
-> 
-> Best regards,
-> Krzysztof
-> 
-Okay, got it, thanks Krzysztof for the reminder.
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/clk-imx-6.6
+
+for you to fetch changes up to 72d00e560d10665e6139c9431956a87ded6e9880:
+
+  clk: imx: pll14xx: dynamically configure PLL for 393216000/361267200Hz (2023-08-14 12:52:32 +0300)
+
+----------------------------------------------------------------
+i.MX clocks changes for 6.6
+
+- Add the PDM IPC clock for i.MX93
+- Add 519.75MHz frequency support for i.MX9 PLL
+- Simplify the .determine_rate() for GPR mux
+- Make the i.MX8QXP LPCG clock use devm_platform_ioremap_resource
+- Add the audio mux clock to i.MX8
+- Fix the SPLL2 MULT range for PLLv4
+- Update the SPLL2 type in i.MX8ULP
+- Fix the SAI4 clock on i.MX8MP
+- Add silicon revision print for i.MX25 on clocks init
+- Drop the return value from __mx25_clocks_init
+- Fix the clock pauses on no-op set_rate for i.MX8M composite clock
+- Drop restrictions for PLL14xx and fix its max prediv value
+- Drop the 393216000 and 361267200 from PLL14xx rate table to allow
+  glitch free switching
+
+----------------------------------------------------------------
+Ahmad Fatoum (2):
+      clk: imx: composite-8m: fix clock pauses when set_rate would be a no-op
+      clk: imx: pll14xx: dynamically configure PLL for 393216000/361267200Hz
+
+Chancel Liu (2):
+      dt-bindings: clock: imx93: Add PDM IPG clk
+      clk: imx93: Add PDM IPG clk
+
+Christophe JAILLET (1):
+      clk: imx: clk-gpr-mux: Simplify .determine_rate()
+
+Jacky Bai (1):
+      clk: imx: Add 519.75MHz frequency support for imx9 pll
+
+Marco Felsch (3):
+      clk: imx8mp: fix sai4 clock
+      dt-bindings: clocks: imx8mp: make sai4 a dummy clock
+      clk: imx: pll14xx: align pdiv with reference manual
+
+Martin Kaiser (2):
+      clk: imx25: print silicon revision during init
+      clk: imx25: make __mx25_clocks_init return void
+
+Peng Fan (1):
+      clk: imx: imx8ulp: update SPLL2 type
+
+Shengjiu Wang (2):
+      dt-bindings: clock: fsl,imx8-acm: Add audio clock mux support
+      clk: imx: imx8: add audio clock mux driver
+
+Yangtao Li (1):
+      clk: imx: clk-imx8qxp-lpcg: Convert to devm_platform_ioremap_resource()
+
+Ye Li (1):
+      clk: imx: pllv4: Fix SPLL2 MULT range
+
+ .../devicetree/bindings/clock/fsl,imx8-acm.yaml    | 282 ++++++++++++
+ drivers/clk/imx/Makefile                           |   3 +-
+ drivers/clk/imx/clk-composite-8m.c                 |  12 +-
+ drivers/clk/imx/clk-fracn-gppll.c                  |   1 +
+ drivers/clk/imx/clk-gpr-mux.c                      |   8 +-
+ drivers/clk/imx/clk-imx25.c                        |   5 +-
+ drivers/clk/imx/clk-imx8-acm.c                     | 476 +++++++++++++++++++++
+ drivers/clk/imx/clk-imx8mp.c                       |   5 -
+ drivers/clk/imx/clk-imx8qxp-lpcg.c                 |   4 +-
+ drivers/clk/imx/clk-imx8ulp.c                      |   2 +-
+ drivers/clk/imx/clk-imx93.c                        |   4 +-
+ drivers/clk/imx/clk-pll14xx.c                      |  13 +-
+ drivers/clk/imx/clk-pllv4.c                        |  46 +-
+ drivers/clk/imx/clk.h                              |   1 +
+ include/dt-bindings/clock/imx8-clock.h             |  28 ++
+ include/dt-bindings/clock/imx8mp-clock.h           |   2 +-
+ include/dt-bindings/clock/imx93-clock.h            |   3 +-
+ include/soc/imx/revision.h                         |   1 +
+ 18 files changed, 851 insertions(+), 45 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/fsl,imx8-acm.yaml
+ create mode 100644 drivers/clk/imx/clk-imx8-acm.c
