@@ -2,152 +2,115 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 571B5C001E0
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Aug 2023 10:12:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82626C04E69
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Aug 2023 11:43:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243747AbjHPKMM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Aug 2023 06:12:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45532 "EHLO
+        id S237885AbjHPLmb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Aug 2023 07:42:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243746AbjHPKLm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Aug 2023 06:11:42 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65725C1
-        for <linux-clk@vger.kernel.org>; Wed, 16 Aug 2023 03:11:38 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-3fea0640d7aso23256075e9.0
-        for <linux-clk@vger.kernel.org>; Wed, 16 Aug 2023 03:11:38 -0700 (PDT)
+        with ESMTP id S244747AbjHPLmR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Aug 2023 07:42:17 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 681EB212E
+        for <linux-clk@vger.kernel.org>; Wed, 16 Aug 2023 04:42:14 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id 2adb3069b0e04-4fe45da0a89so8689496e87.1
+        for <linux-clk@vger.kernel.org>; Wed, 16 Aug 2023 04:42:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1692180697; x=1692785497;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gGbwkZ5V6/YyLPE8Zp3GkVLQyAqLALpzu6OjLBSVDy0=;
-        b=rAT9NQD7eCXUU472fon6nEd0kOc41WdS0+8kUIvA47MmJSq4kl9RzdyBgMCTV2bnIY
-         pnakgROCIzfW+LV86BvUuvAnjSNUt/aDpfvXpwkyxt0L6x71pgiXnnNxGZKLP7eY0uUp
-         l77CDjTI3XOAFCb4jexOIxdWRCe2yEocGJez/d7gGM4SVg8Xlx3QL8Pjshvai6wpQ2QS
-         UxIwkBx0sR8uTwvPCzPk4rLpXgj86HrnR4lN0INbJWMwQrNVgqc4ebJBZ7hbhaAtyH9S
-         RfS8bEoPRmxV+eSeWF6BdnLLnCMsmFqB/6ueH+PHmAGNboqRZfjuejoHg2TjFRvvIqBb
-         4/FQ==
+        d=linaro.org; s=google; t=1692186132; x=1692790932;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bas6hCyrq5yvaQYyoovo0oL01lCqDvQI1WuSY5gP3xw=;
+        b=UEreo609MTylHajk5OCXFhsr+SlFlOxZQfgb9uDGSQ8T5WYmtsHnpDrm1Fiq5x1yEE
+         s2db1iEtk5v9vlXyVY6WM+wtgRmw0lPsm36lveWlEI7Rk/hRWBo1lWKDsl+ZehGHTzPK
+         yBfWGwKmPrLiX/9aONmSr6bU5NbSGloHkuFYQAdcPmy00ias1RsZTnYcj5A29ZFcycZz
+         HQP9ota0f91VBawjgo356fdL23rt5XkyF+7lFzxRILEnuWQMICMJIOkKmxGvGRS9aftX
+         nOOaygfFTaa4YkaI9AlXXN+HN3NrcpPPewgLPuGAIVdGmp/qsOneg+TbhO/hdqE6q0li
+         fxyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692180697; x=1692785497;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gGbwkZ5V6/YyLPE8Zp3GkVLQyAqLALpzu6OjLBSVDy0=;
-        b=gUwr7207myCkp+hfjMXSSVkxsZtcucqSiuFVpTnBMUQbKXXjJneH7vaHz1X8nvfBj+
-         jCT4Z3gTzbeTe0yh1A03vukre6osuMBQB/WznfS18ipuZTDMnGfq0Axv/LEz0HcW2JkT
-         tcEdrcMbFNs6LdgZIn3AuvZMVA5VPv1ah/5U2Pst5SpHXPOLqZYuz0syzzvYznxxoKYV
-         ll6nxtxgDghSy71aF3QFOwpso6TCqtmYo/wplhtJozpjYP3JsAR13/loiIRVlJi714/D
-         C84HOGSGtBCWz0/DI8+LX/HloapLBDUGIcpsg4uObhKCJWWwT7A60GFzoRljdkWU3zY4
-         Rr+g==
-X-Gm-Message-State: AOJu0YywUdUk9MK0f57DXNyN+k20NskyppWa1HxEz+ptaL8l7ILRFli+
-        Gq6LSS0rkOfucklrx/uFcnH/sQ==
-X-Google-Smtp-Source: AGHT+IG/ajfND14aH8TEYYlnoQqe8yFUni7toeHyU2hTsv5/z3osWzlG5FBQuGaXT+MXU4IexkK42Q==
-X-Received: by 2002:a7b:ca53:0:b0:3fc:9e:eead with SMTP id m19-20020a7bca53000000b003fc009eeeadmr1093482wml.20.1692180696913;
-        Wed, 16 Aug 2023 03:11:36 -0700 (PDT)
-Received: from hackbox.lan ([84.232.191.92])
-        by smtp.gmail.com with ESMTPSA id g13-20020a5d698d000000b003180027d67asm20848822wru.19.2023.08.16.03.11.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Aug 2023 03:11:36 -0700 (PDT)
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] clk: imx: Updates for v6.6
-Date:   Wed, 16 Aug 2023 13:11:20 +0300
-Message-Id: <20230816101120.885812-1-abel.vesa@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20221208; t=1692186132; x=1692790932;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bas6hCyrq5yvaQYyoovo0oL01lCqDvQI1WuSY5gP3xw=;
+        b=eEmZ1VFT5OVc5aFq9mNn1chz2zVCfnWU0mtF1PBcY20+yovfeuyGXxf55s4kXvlp5C
+         R6BFmeoIpW/TOA+XjXiKy7IxIv/ZEJR3/KfOst2VVIxdyC1RJFpqBvLRaORCILPXN9Wk
+         aY35Hi+OuJf2yBhkYVGhc5vx6E3JBO21+V/YFTIh1LEZDmwKAATaDzaJdN4o1IkXj7PS
+         dMeLT6xZ2rEJqq6jvFvz2OEliME+T04vPeZwat2AHM8Y/lbkm+Xis10JRHKuUfAHvBaS
+         VH+fWwlg8DLQpq3ukSqUO29Tw10+NYUPxP5QQOKL6Bc7cX7v/8W+fAM63ZuULCsdd/yg
+         TIDQ==
+X-Gm-Message-State: AOJu0Yyr8YqYAWpm5tkeandbduGKRI6N4cpwf87EtPnQ/2JdCx/rN0jz
+        hft0TKefqw95DxsXe5LEf2fNrw==
+X-Google-Smtp-Source: AGHT+IHZ2FQfSAme1NOF6QKe+qwZ/ZlF4pSYaZWpDqD/b2HkublAyMwtqbIFXX/wzEoc6Xlx+c434w==
+X-Received: by 2002:a19:9158:0:b0:4fd:b7d4:70ec with SMTP id y24-20020a199158000000b004fdb7d470ecmr589126lfj.10.1692186132676;
+        Wed, 16 Aug 2023 04:42:12 -0700 (PDT)
+Received: from [192.168.1.101] (abxi8.neoplus.adsl.tpnet.pl. [83.9.2.8])
+        by smtp.gmail.com with ESMTPSA id f14-20020a056512092e00b004fe4833ca5csm2874964lft.237.2023.08.16.04.42.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Aug 2023 04:42:12 -0700 (PDT)
+Message-ID: <ddc110f7-adec-4ea7-b09c-e3fff0c77d85@linaro.org>
+Date:   Wed, 16 Aug 2023 13:42:11 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next] clk: qcom: gcc-ipq5018: change some variable static
+Content-Language: en-US
+To:     Yang Yingliang <yangyingliang@huawei.com>,
+        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Cc:     andersson@kernel.org, agross@kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, quic_gokulsri@quicinc.com,
+        quic_srichara@quicinc.com, quic_varada@quicinc.com
+References: <20230816080113.1222352-1-yangyingliang@huawei.com>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20230816080113.1222352-1-yangyingliang@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The following changes since commit 06c2afb862f9da8dc5efa4b6076a0e48c3fbaaa5:
+On 16.08.2023 10:01, Yang Yingliang wrote:
+> lpass_axim_clk_src and lpass_sway_clk_src are only
+> used in gcc-ipq5018.c now, change them to static.
+> 
+> Fixes: e3fdbef1bab8 ("clk: qcom: Add Global Clock controller (GCC) driver for IPQ5018")
+> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+> ---
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-  Linux 6.5-rc1 (2023-07-09 13:53:13 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/clk-imx-6.6
-
-for you to fetch changes up to 72d00e560d10665e6139c9431956a87ded6e9880:
-
-  clk: imx: pll14xx: dynamically configure PLL for 393216000/361267200Hz (2023-08-14 12:52:32 +0300)
-
-----------------------------------------------------------------
-i.MX clocks changes for 6.6
-
-- Add the PDM IPC clock for i.MX93
-- Add 519.75MHz frequency support for i.MX9 PLL
-- Simplify the .determine_rate() for GPR mux
-- Make the i.MX8QXP LPCG clock use devm_platform_ioremap_resource
-- Add the audio mux clock to i.MX8
-- Fix the SPLL2 MULT range for PLLv4
-- Update the SPLL2 type in i.MX8ULP
-- Fix the SAI4 clock on i.MX8MP
-- Add silicon revision print for i.MX25 on clocks init
-- Drop the return value from __mx25_clocks_init
-- Fix the clock pauses on no-op set_rate for i.MX8M composite clock
-- Drop restrictions for PLL14xx and fix its max prediv value
-- Drop the 393216000 and 361267200 from PLL14xx rate table to allow
-  glitch free switching
-
-----------------------------------------------------------------
-Ahmad Fatoum (2):
-      clk: imx: composite-8m: fix clock pauses when set_rate would be a no-op
-      clk: imx: pll14xx: dynamically configure PLL for 393216000/361267200Hz
-
-Chancel Liu (2):
-      dt-bindings: clock: imx93: Add PDM IPG clk
-      clk: imx93: Add PDM IPG clk
-
-Christophe JAILLET (1):
-      clk: imx: clk-gpr-mux: Simplify .determine_rate()
-
-Jacky Bai (1):
-      clk: imx: Add 519.75MHz frequency support for imx9 pll
-
-Marco Felsch (3):
-      clk: imx8mp: fix sai4 clock
-      dt-bindings: clocks: imx8mp: make sai4 a dummy clock
-      clk: imx: pll14xx: align pdiv with reference manual
-
-Martin Kaiser (2):
-      clk: imx25: print silicon revision during init
-      clk: imx25: make __mx25_clocks_init return void
-
-Peng Fan (1):
-      clk: imx: imx8ulp: update SPLL2 type
-
-Shengjiu Wang (2):
-      dt-bindings: clock: fsl,imx8-acm: Add audio clock mux support
-      clk: imx: imx8: add audio clock mux driver
-
-Yangtao Li (1):
-      clk: imx: clk-imx8qxp-lpcg: Convert to devm_platform_ioremap_resource()
-
-Ye Li (1):
-      clk: imx: pllv4: Fix SPLL2 MULT range
-
- .../devicetree/bindings/clock/fsl,imx8-acm.yaml    | 282 ++++++++++++
- drivers/clk/imx/Makefile                           |   3 +-
- drivers/clk/imx/clk-composite-8m.c                 |  12 +-
- drivers/clk/imx/clk-fracn-gppll.c                  |   1 +
- drivers/clk/imx/clk-gpr-mux.c                      |   8 +-
- drivers/clk/imx/clk-imx25.c                        |   5 +-
- drivers/clk/imx/clk-imx8-acm.c                     | 476 +++++++++++++++++++++
- drivers/clk/imx/clk-imx8mp.c                       |   5 -
- drivers/clk/imx/clk-imx8qxp-lpcg.c                 |   4 +-
- drivers/clk/imx/clk-imx8ulp.c                      |   2 +-
- drivers/clk/imx/clk-imx93.c                        |   4 +-
- drivers/clk/imx/clk-pll14xx.c                      |  13 +-
- drivers/clk/imx/clk-pllv4.c                        |  46 +-
- drivers/clk/imx/clk.h                              |   1 +
- include/dt-bindings/clock/imx8-clock.h             |  28 ++
- include/dt-bindings/clock/imx8mp-clock.h           |   2 +-
- include/dt-bindings/clock/imx93-clock.h            |   3 +-
- include/soc/imx/revision.h                         |   1 +
- 18 files changed, 851 insertions(+), 45 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/fsl,imx8-acm.yaml
- create mode 100644 drivers/clk/imx/clk-imx8-acm.c
+Konrad
