@@ -2,69 +2,87 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 405B4C3DA40
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Aug 2023 18:49:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 105A5C001B0
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Aug 2023 03:51:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239415AbjHOStR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Aug 2023 14:49:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35186 "EHLO
+        id S236360AbjHPDvT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Aug 2023 23:51:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239486AbjHOStN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Aug 2023 14:49:13 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 054712126;
-        Tue, 15 Aug 2023 11:48:40 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 02F6565F66;
-        Tue, 15 Aug 2023 18:46:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89533C433CD;
-        Tue, 15 Aug 2023 18:46:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692125191;
-        bh=na3DvkCy/DBRDdjxP4nOxRLkSN6S+gxI8DHXr/qxnlk=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=Ux0oRjjvmkgRP8eUypXP2QFTtsXJVfCnWm1Wm6qfWnpZuJmxCUv7lNY49/aT282SN
-         QeiZv7yIRac9DVvWY9fZcg+gWWAH3xVj2sVBXlVzCE3znq3vA6iVd4J7ZWbjGFXSS2
-         Xdo/Es+/9/iB2NnZNOXzWkGIduzoBVYvui9sRYnCtF4veut7EOSO5QDXWWo7b+CtKD
-         OlYWvzgIKb8BRR3THd9ZxkHeXxBXwdfH9YMbFjrrvYHdzHFe5/liNmZ1zuU8mFPfqb
-         JaIUO2eF9Fpl2RPMMLGuu+YVOEbRBfjcNSOYPRnNrWsoHpNU/mJTEb3Q2cWQ+aajTj
-         DmGhVqlJv7ToQ==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     agross@kernel.org, konrad.dybcio@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Robert Marko <robert.marko@sartura.hr>
-Subject: Re: (subset) [PATCH 1/2] dt-bindings: clock: qcom: ipq4019: add missing networking resets
-Date:   Tue, 15 Aug 2023 11:49:13 -0700
-Message-ID: <169212535063.2466993.11716205800707340678.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230814104119.96858-1-robert.marko@sartura.hr>
-References: <20230814104119.96858-1-robert.marko@sartura.hr>
+        with ESMTP id S241713AbjHPDvL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Aug 2023 23:51:11 -0400
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B42A1980
+        for <linux-clk@vger.kernel.org>; Tue, 15 Aug 2023 20:51:09 -0700 (PDT)
+Received: from dggpemm500003.china.huawei.com (unknown [172.30.72.53])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4RQYz266XBzVjd9;
+        Wed, 16 Aug 2023 11:49:02 +0800 (CST)
+Received: from dggpemm500007.china.huawei.com (7.185.36.183) by
+ dggpemm500003.china.huawei.com (7.185.36.56) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.31; Wed, 16 Aug 2023 11:51:07 +0800
+Received: from huawei.com (10.175.103.91) by dggpemm500007.china.huawei.com
+ (7.185.36.183) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.31; Wed, 16 Aug
+ 2023 11:51:07 +0800
+From:   Yang Yingliang <yangyingliang@huawei.com>
+To:     <linux-clk@vger.kernel.org>
+CC:     <abelvesa@kernel.org>, <peng.fan@nxp.com>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <shawnguo@kernel.org>, <s.hauer@pengutronix.de>,
+        <kernel@pengutronix.de>, <festevam@gmail.com>, <linux-imx@nxp.com>,
+        <shengjiu.wang@nxp.com>, <yangyingliang@huawei.com>
+Subject: [PATCH -next] clk: imx: imx8: fix some error handles
+Date:   Wed, 16 Aug 2023 11:48:00 +0800
+Message-ID: <20230816034800.4081842-1-yangyingliang@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.103.91]
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpemm500007.china.huawei.com (7.185.36.183)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+device_link_add() returns NULL pointer not PTR_ERR() when it fails,
+so replace the IS_ERR() check with NULL pointer check and set the
+error code to -EINVAL.
 
-On Mon, 14 Aug 2023 12:40:23 +0200, Robert Marko wrote:
-> Add bindings for the missing networking resets found in IPQ4019 GCC.
-> 
-> 
+Set error code in the error path in imx8_acm_clk_probe().
 
-Applied, thanks!
+Fixes: d3a0946d7ac9 ("clk: imx: imx8: add audio clock mux driver")
+Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+---
+ drivers/clk/imx/clk-imx8-acm.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-[1/2] dt-bindings: clock: qcom: ipq4019: add missing networking resets
-      commit: 268edfe96ab8de82f1ba64a2098610e256bd6db7
-[2/2] clk: qcom: gcc-ipq4019: add missing networking resets
-      commit: 9bc66f973988dc4adc29d36824423448f8da8feb
-
-Best regards,
+diff --git a/drivers/clk/imx/clk-imx8-acm.c b/drivers/clk/imx/clk-imx8-acm.c
+index 1e82f72b75c6..550ceac45ff2 100644
+--- a/drivers/clk/imx/clk-imx8-acm.c
++++ b/drivers/clk/imx/clk-imx8-acm.c
+@@ -287,9 +287,9 @@ static int clk_imx_acm_attach_pm_domains(struct device *dev,
+ 							 DL_FLAG_STATELESS |
+ 							 DL_FLAG_PM_RUNTIME |
+ 							 DL_FLAG_RPM_ACTIVE);
+-		if (IS_ERR(dev_pm->pd_dev_link[i])) {
++		if (!dev_pm->pd_dev_link[i]) {
+ 			dev_pm_domain_detach(dev_pm->pd_dev[i], false);
+-			ret = PTR_ERR(dev_pm->pd_dev_link[i]);
++			ret = -EINVAL;
+ 			goto detach_pm;
+ 		}
+ 	}
+@@ -372,6 +372,7 @@ static int imx8_acm_clk_probe(struct platform_device *pdev)
+ 										0, NULL, NULL);
+ 		if (IS_ERR(hws[sels[i].clkid])) {
+ 			pm_runtime_disable(&pdev->dev);
++			ret = PTR_ERR(hws[sels[i].clkid]);
+ 			goto err_clk_register;
+ 		}
+ 	}
 -- 
-Bjorn Andersson <andersson@kernel.org>
+2.25.1
+
