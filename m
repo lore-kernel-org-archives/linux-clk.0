@@ -2,81 +2,113 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC810C04FE0
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Aug 2023 08:05:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD62CC04A94
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Aug 2023 09:13:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234915AbjHPIEg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Aug 2023 04:04:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34380 "EHLO
+        id S243208AbjHPJNW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Aug 2023 05:13:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242631AbjHPIEd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Aug 2023 04:04:33 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65C72109;
-        Wed, 16 Aug 2023 01:04:32 -0700 (PDT)
-Received: from dggpemm500017.china.huawei.com (unknown [172.30.72.53])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4RQgbH1PRfzVjsK;
-        Wed, 16 Aug 2023 16:02:19 +0800 (CST)
-Received: from dggpemm500007.china.huawei.com (7.185.36.183) by
- dggpemm500017.china.huawei.com (7.185.36.178) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.31; Wed, 16 Aug 2023 16:04:24 +0800
-Received: from huawei.com (10.175.103.91) by dggpemm500007.china.huawei.com
- (7.185.36.183) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.31; Wed, 16 Aug
- 2023 16:04:23 +0800
-From:   Yang Yingliang <yangyingliang@huawei.com>
-To:     <linux-clk@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
-CC:     <konrad.dybcio@linaro.org>, <andersson@kernel.org>,
-        <agross@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <quic_gokulsri@quicinc.com>, <quic_srichara@quicinc.com>,
-        <quic_varada@quicinc.com>, <yangyingliang@huawei.com>
-Subject: [PATCH -next] clk: qcom: gcc-ipq5018: change some variable static
-Date:   Wed, 16 Aug 2023 16:01:13 +0800
-Message-ID: <20230816080113.1222352-1-yangyingliang@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S237338AbjHPJNK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Aug 2023 05:13:10 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1C44173F;
+        Wed, 16 Aug 2023 02:13:07 -0700 (PDT)
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37G7xCxx008027;
+        Wed, 16 Aug 2023 09:12:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=h8/aEe7kEtX6gF0ysHwTfSvOItaRpNuIkrapdMZFKQk=;
+ b=KhIDwfVOVH/Y6ga704Nljnx0Dudy38UswT4QSS1e8G70UvMHv5Tnzpg3oLbXDoK7sjIR
+ bbhqxBt1TVJA2Ku9e3TRZfmlKb6902thXBsbKNVYsxhynBht53y6sIzA+LHp23Qjzo7j
+ P/KHMaIuoz4uyse7YAAQRnTprxun8Ws7gmSy6xbtWim7ZMIeN4dBaRKt62DxIdZkSzuN
+ nkglRcnxCX8YGOksNx0pNqHNnez2QwcHht96w+2+ItKmcUchCE9xTDlcZLcf31sqzwrK
+ C3L+7McSf65g/UsL8QBEbElvnYVqFjFJMoPRhyAl1ul2jb+3/8stANiYRULoQ3RnXbTy qQ== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3sgmkkrrww-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 16 Aug 2023 09:12:52 +0000
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 37G9CpKW003766
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 16 Aug 2023 09:12:51 GMT
+Received: from [10.253.34.149] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Wed, 16 Aug
+ 2023 02:12:47 -0700
+Message-ID: <7b3d8099-9a1f-4314-2f7d-f51ca2aeed5e@quicinc.com>
+Date:   Wed, 16 Aug 2023 17:12:45 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.103.91]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpemm500007.china.huawei.com (7.185.36.183)
-X-CFilter-Loop: Reflected
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Subject: Re: [PATCH v4 2/4] dt-bindings: clock: add qca8386/qca8084 clock and
+ reset definitions
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <andersson@kernel.org>, <agross@kernel.org>,
+        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <p.zabel@pengutronix.de>
+CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_srichara@quicinc.com>
+References: <20230815085205.9868-1-quic_luoj@quicinc.com>
+ <20230815085205.9868-3-quic_luoj@quicinc.com>
+ <3c702ccd-6a82-1121-0b4e-9529d82ccc13@linaro.org>
+Content-Language: en-US
+From:   Jie Luo <quic_luoj@quicinc.com>
+In-Reply-To: <3c702ccd-6a82-1121-0b4e-9529d82ccc13@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: cNJxEHmu20F18Px8cdb3tIoKJUxkIX3T
+X-Proofpoint-GUID: cNJxEHmu20F18Px8cdb3tIoKJUxkIX3T
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-08-16_07,2023-08-15_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ adultscore=0 clxscore=1015 mlxscore=0 malwarescore=0 lowpriorityscore=0
+ mlxlogscore=904 spamscore=0 phishscore=0 impostorscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2306200000 definitions=main-2308160081
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-lpass_axim_clk_src and lpass_sway_clk_src are only
-used in gcc-ipq5018.c now, change them to static.
 
-Fixes: e3fdbef1bab8 ("clk: qcom: Add Global Clock controller (GCC) driver for IPQ5018")
-Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
----
- drivers/clk/qcom/gcc-ipq5018.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/qcom/gcc-ipq5018.c b/drivers/clk/qcom/gcc-ipq5018.c
-index 313ff2281ca7..19dc2b71cacf 100644
---- a/drivers/clk/qcom/gcc-ipq5018.c
-+++ b/drivers/clk/qcom/gcc-ipq5018.c
-@@ -826,7 +826,7 @@ static const struct freq_tbl ftbl_lpass_axim_clk_src[] = {
- 	{ }
- };
- 
--struct clk_rcg2 lpass_axim_clk_src = {
-+static struct clk_rcg2 lpass_axim_clk_src = {
- 	.cmd_rcgr = 0x2e028,
- 	.freq_tbl = ftbl_lpass_axim_clk_src,
- 	.hid_width = 5,
-@@ -844,7 +844,7 @@ static const struct freq_tbl ftbl_lpass_sway_clk_src[] = {
- 	{ }
- };
- 
--struct clk_rcg2 lpass_sway_clk_src = {
-+static struct clk_rcg2 lpass_sway_clk_src = {
- 	.cmd_rcgr = 0x2e040,
- 	.freq_tbl = ftbl_lpass_sway_clk_src,
- 	.hid_width = 5,
--- 
-2.25.1
-
+On 8/15/2023 5:15 PM, Krzysztof Kozlowski wrote:
+> On 15/08/2023 10:52, Luo Jie wrote:
+>> QCA8386/QCA8084 includes the clock & reset controller that is
+>> accessed by MDIO bus. Two work modes are supported, qca8386 works
+>> as switch mode, qca8084 works as PHY mode.
+>>
+>> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+> 
+> This is a friendly reminder during the review process.
+> 
+> It looks like you received a tag and forgot to add it.
+> 
+> If you do not know the process, here is a short explanation:
+> Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+> versions, under or above your Signed-off-by tag. Tag is "received", when
+> provided in a message replied to you on the mailing list. Tools like b4
+> can help here. However, there's no need to repost patches *only* to add
+> the tags. The upstream maintainer will do that for tags received on the
+> version they apply.
+> 
+> https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+> 
+> If a tag was not added on purpose, please state why and what changed.
+> 
+> Best regards,
+> Krzysztof
+> 
+Okay, got it, thanks Krzysztof for the reminder.
