@@ -2,139 +2,185 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BA02C64EC0
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Aug 2023 20:59:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3FDAC678DD
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Aug 2023 23:37:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355080AbjHQU67 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Aug 2023 16:58:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48046 "EHLO
+        id S1356105AbjHQXgw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Aug 2023 19:36:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355097AbjHQU6c (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Aug 2023 16:58:32 -0400
-X-Greylist: delayed 90 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 17 Aug 2023 13:58:31 PDT
-Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66A0826BB
-        for <linux-clk@vger.kernel.org>; Thu, 17 Aug 2023 13:58:31 -0700 (PDT)
-Received: from eig-obgw-5007a.ext.cloudfilter.net ([10.0.29.141])
-        by cmsmtp with ESMTP
-        id WQQnqwsz3QFHRWk3Bqn0Cw; Thu, 17 Aug 2023 20:57:01 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with ESMTPS
-        id Wk3AqjQYpor5tWk3Aqw4EG; Thu, 17 Aug 2023 20:57:00 +0000
-X-Authority-Analysis: v=2.4 cv=Vqcwvs6n c=1 sm=1 tr=0 ts=64de899c
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=WzbPXH4gqzPVN0x6HrNMNA==:17
- a=OWjo9vPv0XrRhIrVQ50Ab3nP57M=:19 a=dLZJa+xiwSxG16/P+YVxDGlgEgI=:19
- a=IkcTkHD0fZMA:10 a=UttIx32zK-AA:10 a=wYkD_t78qR0A:10 a=NEAV23lmAAAA:8
- a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=IpJZQVW2AAAA:8 a=cm27Pg_UAAAA:8
- a=vO73nbbZ3KiERqEehhIA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
- a=cvBusfyB2V15izCimMoJ:22 a=IawgGOuG5U0WyFbmm1f5:22 a=xmb-EsYY8bH0VWELuYED:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=al2JraySz4Y/nPRNsqZbRF4Ul/8ysGw80iLcTMhMqyg=; b=RJc1tSlduq4F3dGL6LlDVnuap6
-        +bqyVurTa2rldyvuEFVel4+FHkb1+mkCzz0yARsiDbBm2lHDqYOOtOuWWiw7sfSE85uqivQazNw07
-        O0mwM1Nuc7gRH/9b8YFTyTA/sTZ5tvEg+1tXf2LvJfadtJn3vPqlKmdWezATiNrbK3T1b3P/kctWo
-        /8e8Ro5q/YWeNdkpKwIk2EDUBceBxMWviQTPavZ+N72YtLLTHhrAJxfJWm5utUr5FtEtkzytt3OsF
-        DQbQREDHTqCl5ca3eQnuLiagvUEtZ+mRcFlzP7sTW1QdsMNKWiLMU9o92CN1NpqijXSbNxfhxBh9D
-        BRzKKKIg==;
-Received: from 187-162-21-192.static.axtel.net ([187.162.21.192]:33092 helo=[192.168.15.8])
-        by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.96)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1qWk39-001NVy-0V;
-        Thu, 17 Aug 2023 15:56:59 -0500
-Message-ID: <7da75c68-9a5c-c8cb-2b52-543968568124@embeddedor.com>
-Date:   Thu, 17 Aug 2023 14:58:01 -0600
+        with ESMTP id S1356185AbjHQXgo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Aug 2023 19:36:44 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6DEF30D6
+        for <linux-clk@vger.kernel.org>; Thu, 17 Aug 2023 16:36:43 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3B7B161EDC
+        for <linux-clk@vger.kernel.org>; Thu, 17 Aug 2023 23:36:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27221C433C9;
+        Thu, 17 Aug 2023 23:36:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692315402;
+        bh=RhegQx5uRaKcu1E0Rcckw5IZtC6q56UwuK3vF+HLjhU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=oFbxa95Hfo/FdXazIXS1L4w163X1hkyZix7WC7BswVsZltRRJV70Ia5RhDke9RQmW
+         v5hMxYFTDPzxcMcC/GvJ3Y6U135ShOZAwlJqQ/LudBbm5whE1X7PpULwONQt8x2GYD
+         Az+eOYwcn5MjbP3m/psJ++7Fvg/c/ryL/n91X1rY5W4YzM4jMBtKNSJRV0qKYPc7Wy
+         ujm/9LHTqEDTlOq6wzgAehvprfFveA++VHaLyRvgActcHbER5qLtY2rU+RAJeFjmph
+         q9Vg1g8N/HCHlJIdko6OagOrS2NcV5TemgTsF+CEdKLCl4DtaFR6661uo6FA/+8WN/
+         WpXlldD11n9DQ==
+Date:   Thu, 17 Aug 2023 16:36:40 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+Cc:     Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "Michalik, Michal" <michal.michalik@intel.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
+        mschmidt <mschmidt@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+        Jiri Pirko <jiri@nvidia.com>
+Subject: Re: [PATCH net-next v4 2/9] dpll: spec: Add Netlink spec in YAML
+Message-ID: <20230817163640.2ad33a4b@kernel.org>
+In-Reply-To: <DM6PR11MB4657AD95547A14234941F9399B1AA@DM6PR11MB4657.namprd11.prod.outlook.com>
+References: <20230811200340.577359-1-vadim.fedorenko@linux.dev>
+        <20230811200340.577359-3-vadim.fedorenko@linux.dev>
+        <20230814194336.55642f34@kernel.org>
+        <DM6PR11MB4657AD95547A14234941F9399B1AA@DM6PR11MB4657.namprd11.prod.outlook.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH] clk: qcom: clk-spmi-pmic-div: Annotate struct
- spmi_pmic_div_clk_cc with __counted_by
-Content-Language: en-US
-To:     Kees Cook <keescook@chromium.org>,
-        Bjorn Andersson <andersson@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Tom Rix <trix@redhat.com>, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev, linux-hardening@vger.kernel.org
-References: <20230817202941.never.657-kees@kernel.org>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <20230817202941.never.657-kees@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.162.21.192
-X-Source-L: No
-X-Exim-ID: 1qWk39-001NVy-0V
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 187-162-21-192.static.axtel.net ([192.168.15.8]) [187.162.21.192]:33092
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 81
-X-Org:  HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfHCMX9U6v22v+wgVbQwOqxBIoD7ObfF6/hY8jtVQZsNB97Dbe6m1TRZE9DBcHXexIKU7dNCZECppP4zE7OKERZB/aULZ5VrHKv8cnp2YyMfwDrBw+SLx
- cZIXjYMaMtjQDfKPEQoV+v29+GJMbH1WmFzPqMAqidvsWU0LPGRPCH9Xf6y/uVkFNABz6kt6bvJcQlE5Ww+hSmzlGUzVEsk7zyo=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 8/17/23 14:29, Kees Cook wrote:
-> Prepare for the coming implementation by GCC and Clang of the __counted_by
-> attribute. Flexible array members annotated with __counted_by can have
-> their accesses bounds-checked at run-time checking via CONFIG_UBSAN_BOUNDS
-> (for array indexing) and CONFIG_FORTIFY_SOURCE (for strcpy/memcpy-family
-> functions).
+On Thu, 17 Aug 2023 18:40:00 +0000 Kubalewski, Arkadiusz wrote:
+> >Why are all attributes in a single attr space? :(
+> >More than half of them are prefixed with a pin- does it really
+> >not scream to you that they belong to a different space?
 > 
-> As found with Coccinelle[1], add __counted_by for struct spmi_pmic_div_clk_cc.
+> I agree, but there is an issue with this, currently:
 > 
-> [1] https://github.com/kees/kernel-tools/blob/trunk/coccinelle/examples/counted_by.cocci
+> name: pin-parent-device
+> subset-of: dpll
+> attributes:
+>   -
+>     name: id
+>     type: u32
+>   -
+>     name: pin-direction
+>     type: u32
+>   -
+>     name: pin-prio
+>     type: u32
+>   -
+>     name: pin-state
+>     type: u32
 > 
-> Cc: Bjorn Andersson <andersson@kernel.org>
-> Cc: Andy Gross <agross@kernel.org>
-> Cc: Konrad Dybcio <konrad.dybcio@linaro.org>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: linux-arm-msm@vger.kernel.org
-> Cc: linux-clk@vger.kernel.org
-> Signed-off-by: Kees Cook <keescook@chromium.org>
+> Where "id" is a part of device space, rest attrs would be a pin space..
+> Shall we have another argument for device id in a pin space?
 
-Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+Why would pin and device not have separate spaces?
 
-Thanks
---
-Gustavo
+When referring to a pin from a "device mostly" command you can
+usually wrap the pin attributes in a nest, and vice versa.
+But it may not be needed at all here? Let's look at the commands:
 
-> ---
->   drivers/clk/qcom/clk-spmi-pmic-div.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/qcom/clk-spmi-pmic-div.c b/drivers/clk/qcom/clk-spmi-pmic-div.c
-> index f846be285f51..f394031eb0e5 100644
-> --- a/drivers/clk/qcom/clk-spmi-pmic-div.c
-> +++ b/drivers/clk/qcom/clk-spmi-pmic-div.c
-> @@ -177,7 +177,7 @@ static const struct clk_ops clk_spmi_pmic_div_ops = {
->   
->   struct spmi_pmic_div_clk_cc {
->   	int		nclks;
-> -	struct clkdiv	clks[];
-> +	struct clkdiv	clks[] __counted_by(nclks);
->   };
->   
->   static struct clk_hw *
++    -
++      name: device-id-get
++        request:
++          attributes:
++            - module-name
++            - clock-id
++            - type
++        reply:
++          attributes:
++            - id
+
+All attributes are in "device" space, no mixing.
+
++      name: device-get
++        request:
++          attributes:
++            - id
++        reply: &dev-attrs
++          attributes:
++            - id
++            - module-name
++            - mode
++            - mode-supported
++            - lock-status
++            - temp
++            - clock-id
++            - type
+
+Again, no pin attributes, so pin can be separate?
+
++    -
++      name: device-set
++        request:
++          attributes:
++            - id
+
+Herm, this one looks like it's missing attrs :S
+
++    -
++      name: pin-id-get
++        request:
++          attributes:
++            - module-name
++            - clock-id
++            - pin-board-label
++            - pin-panel-label
++            - pin-package-label
++            - pin-type
++        reply:
++          attributes:
++            - pin-id
+
+Mostly pin stuff. I guess the module-name and clock-id attrs can be
+copy/pasted between device and pin, or put them in a separate set
+and add that set as an attr here. Copy paste is likely much simpler.
+
++    -
++      name: pin-get
++        request:
++          attributes:
++            - pin-id
++        reply: &pin-attrs
++          attributes:
++            - pin-id
++            - pin-board-label
++            - pin-panel-label
++            - pin-package-label
++            - pin-type
++            - pin-frequency
++            - pin-frequency-supported
++            - pin-dpll-caps
++            - pin-parent-device
++            - pin-parent-pin
+
+All pin.
+
++    -
++      name: pin-set
++        request:
++          attributes:
++            - pin-id
++            - pin-frequency
++            - pin-direction
++            - pin-prio
++            - pin-state
++            - pin-parent-device
++            - pin-parent-pin
+
+And all pin.
