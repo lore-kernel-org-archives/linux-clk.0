@@ -2,99 +2,71 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AD18C64E96
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Aug 2023 20:42:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BA02C64EC0
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Aug 2023 20:59:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354915AbjHQUmG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Aug 2023 16:42:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39802 "EHLO
+        id S1355080AbjHQU67 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Aug 2023 16:58:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354882AbjHQUmG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Aug 2023 16:42:06 -0400
-Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A4212698
-        for <linux-clk@vger.kernel.org>; Thu, 17 Aug 2023 13:42:04 -0700 (PDT)
-Received: from eig-obgw-6003a.ext.cloudfilter.net ([10.0.30.151])
+        with ESMTP id S1355097AbjHQU6c (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Aug 2023 16:58:32 -0400
+X-Greylist: delayed 90 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 17 Aug 2023 13:58:31 PDT
+Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66A0826BB
+        for <linux-clk@vger.kernel.org>; Thu, 17 Aug 2023 13:58:31 -0700 (PDT)
+Received: from eig-obgw-5007a.ext.cloudfilter.net ([10.0.29.141])
         by cmsmtp with ESMTP
-        id WcM7qWzE6WU1cWjohqLNHx; Thu, 17 Aug 2023 20:42:03 +0000
+        id WQQnqwsz3QFHRWk3Bqn0Cw; Thu, 17 Aug 2023 20:57:01 +0000
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with ESMTPS
-        id WjogqzsPEoeMqWjogqlP2i; Thu, 17 Aug 2023 20:42:02 +0000
-X-Authority-Analysis: v=2.4 cv=F9xEy4tN c=1 sm=1 tr=0 ts=64de861a
+        id Wk3AqjQYpor5tWk3Aqw4EG; Thu, 17 Aug 2023 20:57:00 +0000
+X-Authority-Analysis: v=2.4 cv=Vqcwvs6n c=1 sm=1 tr=0 ts=64de899c
  a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=WzbPXH4gqzPVN0x6HrNMNA==:17
  a=OWjo9vPv0XrRhIrVQ50Ab3nP57M=:19 a=dLZJa+xiwSxG16/P+YVxDGlgEgI=:19
  a=IkcTkHD0fZMA:10 a=UttIx32zK-AA:10 a=wYkD_t78qR0A:10 a=NEAV23lmAAAA:8
- a=IpJZQVW2AAAA:8 a=VwQbUJbxAAAA:8 a=c-n4J4-pAAAA:8 a=XPfOMz_LAAAA:8
- a=P-IC7800AAAA:8 a=pGLkceISAAAA:8 a=KKAkSRfTAAAA:8 a=QX4gbG5DAAAA:8
- a=zu6OG0ZhAAAA:8 a=FlkJ-zHRAAAA:8 a=JfrnYn6hAAAA:8 a=voM4FWlXAAAA:8
- a=e5mUnYsNAAAA:8 a=cm27Pg_UAAAA:8 a=mYo5tDoLIR1weVEbl60A:9 a=QEXdDO2ut3YA:10
- a=IawgGOuG5U0WyFbmm1f5:22 a=AjGcO6oz07-iQ99wixmX:22 a=L0NDqeB7ZLmQzAogN4cw:22
- a=mTuXyI7nMZpd5pdLa428:22 a=d3PnA9EDa4IxuAV0gXij:22 a=cvBusfyB2V15izCimMoJ:22
- a=AbAUZ8qAyYyZVLSsDulk:22 a=pAN39diAhXWuPx0-Vjn3:22 a=rcJ5IfC3ewqtVv14NVGK:22
- a=1CNFftbPRP8L7MoqJWF3:22 a=IC2XNlieTeVoXbcui8wp:22 a=Vxmtnl_E_bksehYqCbjh:22
- a=xmb-EsYY8bH0VWELuYED:22
+ a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=IpJZQVW2AAAA:8 a=cm27Pg_UAAAA:8
+ a=vO73nbbZ3KiERqEehhIA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
+ a=cvBusfyB2V15izCimMoJ:22 a=IawgGOuG5U0WyFbmm1f5:22 a=xmb-EsYY8bH0VWELuYED:22
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
         In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
         :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=9rxpK7oeGH/u4pk+tUlKyS3S2P3FaP+s+fkAyW7pq9A=; b=XOVQVo3BxnVxjOb5JTZPc40fxM
-        kKgmgj9iW/7Y4Slx9vP5PaviKcedkWxT+9RtGsQ4j/GbICmsy+bapQ8DK56v68nIRPMiXKIo1UY8a
-        XUUQS4FPcPkXiP6fkZmGdTOXdDPGD2QKagMI8kmxe6RdaUDJ4q3KxaGW6SoqC6e9APUDICSktVMMr
-        lK/EQ+ga8+iHTkymF1e7yyo+Ma0Qtrql4wrdztg9JavHJpv9+HpmYSs2MdGg52pcAY18Qf7qHI6wd
-        9sN26nXpV8jZCrIT0TNhD3B7B2KpadAofLE1SoMkAiAUZ4U0vigqXuDTyp4BrzNRms7eRvjvdA/Ew
-        yIX9zgpw==;
-Received: from 187-162-21-192.static.axtel.net ([187.162.21.192]:38244 helo=[192.168.15.8])
+        bh=al2JraySz4Y/nPRNsqZbRF4Ul/8ysGw80iLcTMhMqyg=; b=RJc1tSlduq4F3dGL6LlDVnuap6
+        +bqyVurTa2rldyvuEFVel4+FHkb1+mkCzz0yARsiDbBm2lHDqYOOtOuWWiw7sfSE85uqivQazNw07
+        O0mwM1Nuc7gRH/9b8YFTyTA/sTZ5tvEg+1tXf2LvJfadtJn3vPqlKmdWezATiNrbK3T1b3P/kctWo
+        /8e8Ro5q/YWeNdkpKwIk2EDUBceBxMWviQTPavZ+N72YtLLTHhrAJxfJWm5utUr5FtEtkzytt3OsF
+        DQbQREDHTqCl5ca3eQnuLiagvUEtZ+mRcFlzP7sTW1QdsMNKWiLMU9o92CN1NpqijXSbNxfhxBh9D
+        BRzKKKIg==;
+Received: from 187-162-21-192.static.axtel.net ([187.162.21.192]:33092 helo=[192.168.15.8])
         by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
         (Exim 4.96)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1qWjoa-001B6O-2R;
-        Thu, 17 Aug 2023 15:41:57 -0500
-Message-ID: <00ce86aa-a5fa-6f89-6e3d-5dd2830d0665@embeddedor.com>
-Date:   Thu, 17 Aug 2023 14:42:41 -0600
+        id 1qWk39-001NVy-0V;
+        Thu, 17 Aug 2023 15:56:59 -0500
+Message-ID: <7da75c68-9a5c-c8cb-2b52-543968568124@embeddedor.com>
+Date:   Thu, 17 Aug 2023 14:58:01 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.13.0
-Subject: Re: [PATCH] clk: Annotate struct clk_hw_onecell_data with
- __counted_by
+Subject: Re: [PATCH] clk: qcom: clk-spmi-pmic-div: Annotate struct
+ spmi_pmic_div_clk_cc with __counted_by
 Content-Language: en-US
 To:     Kees Cook <keescook@chromium.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Taichi Sugaya <sugaya.taichi@socionext.com>,
-        Takao Orito <orito.takao@socionext.com>,
-        Qin Jian <qinjian@cqplus1.com>, Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Samuel Holland <samuel@sholland.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-arm-msm@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@lists.linux.dev,
-        linux-phy@lists.infradead.org,
-        Nathan Chancellor <nathan@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>,
         Nick Desaulniers <ndesaulniers@google.com>,
         Tom Rix <trix@redhat.com>, linux-kernel@vger.kernel.org,
         llvm@lists.linux.dev, linux-hardening@vger.kernel.org
-References: <20230817203019.never.795-kees@kernel.org>
+References: <20230817202941.never.657-kees@kernel.org>
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <20230817203019.never.795-kees@kernel.org>
+In-Reply-To: <20230817202941.never.657-kees@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
@@ -105,69 +77,42 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 187.162.21.192
 X-Source-L: No
-X-Exim-ID: 1qWjoa-001B6O-2R
+X-Exim-ID: 1qWk39-001NVy-0V
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: 187-162-21-192.static.axtel.net ([192.168.15.8]) [187.162.21.192]:38244
+X-Source-Sender: 187-162-21-192.static.axtel.net ([192.168.15.8]) [187.162.21.192]:33092
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 14
+X-Email-Count: 81
 X-Org:  HG=hgshared;ORG=hostgator;
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfF2cWakLArjbHZCme2UtnCQ2cRnKSJPGcHaxFLXhGAgsnuKoG6wRyREJrbG8l6Iu9A/9IYT8jpvSTQ7+g44M9ClGRBDoDb49hDqfheupcH5wZoJ3nmf4
- 48UuYiSo5wBhLxhosCgBnxOoo9ZxuvczrHmkLtIZcuZdCU3h9M9H1IgFi24Kv3kANKWfg5Ef/XgPAimEfdTgGAzpnxnc14uF9+0=
+X-CMAE-Envelope: MS4xfHCMX9U6v22v+wgVbQwOqxBIoD7ObfF6/hY8jtVQZsNB97Dbe6m1TRZE9DBcHXexIKU7dNCZECppP4zE7OKERZB/aULZ5VrHKv8cnp2YyMfwDrBw+SLx
+ cZIXjYMaMtjQDfKPEQoV+v29+GJMbH1WmFzPqMAqidvsWU0LPGRPCH9Xf6y/uVkFNABz6kt6bvJcQlE5Ww+hSmzlGUzVEsk7zyo=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
 
-On 8/17/23 14:30, Kees Cook wrote:
+On 8/17/23 14:29, Kees Cook wrote:
 > Prepare for the coming implementation by GCC and Clang of the __counted_by
 > attribute. Flexible array members annotated with __counted_by can have
 > their accesses bounds-checked at run-time checking via CONFIG_UBSAN_BOUNDS
 > (for array indexing) and CONFIG_FORTIFY_SOURCE (for strcpy/memcpy-family
 > functions).
 > 
-> As found with Coccinelle[1], add __counted_by for struct clk_hw_onecell_data.
-> Additionally, since the element count member must be set before accessing
-> the annotated flexible array member, move its initialization earlier.
+> As found with Coccinelle[1], add __counted_by for struct spmi_pmic_div_clk_cc.
 > 
 > [1] https://github.com/kees/kernel-tools/blob/trunk/coccinelle/examples/counted_by.cocci
 > 
+> Cc: Bjorn Andersson <andersson@kernel.org>
+> Cc: Andy Gross <agross@kernel.org>
+> Cc: Konrad Dybcio <konrad.dybcio@linaro.org>
 > Cc: Michael Turquette <mturquette@baylibre.com>
 > Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Joel Stanley <joel@jms.id.au>
-> Cc: Andrew Jeffery <andrew@aj.id.au>
-> Cc: Taichi Sugaya <sugaya.taichi@socionext.com>
-> Cc: Takao Orito <orito.takao@socionext.com>
-> Cc: Qin Jian <qinjian@cqplus1.com>
-> Cc: Andrew Lunn <andrew@lunn.ch>
-> Cc: Gregory Clement <gregory.clement@bootlin.com>
-> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-> Cc: Andy Gross <agross@kernel.org>
-> Cc: Bjorn Andersson <andersson@kernel.org>
-> Cc: Konrad Dybcio <konrad.dybcio@linaro.org>
-> Cc: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-> Cc: Matthias Brugger <matthias.bgg@gmail.com>
-> Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> Cc: Maxime Ripard <mripard@kernel.org>
-> Cc: Chen-Yu Tsai <wens@csie.org>
-> Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
-> Cc: David Airlie <airlied@gmail.com>
-> Cc: Daniel Vetter <daniel@ffwll.ch>
-> Cc: Samuel Holland <samuel@sholland.org>
-> Cc: Vinod Koul <vkoul@kernel.org>
-> Cc: Kishon Vijay Abraham I <kishon@kernel.org>
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-aspeed@lists.ozlabs.org
 > Cc: linux-arm-msm@vger.kernel.org
-> Cc: linux-mediatek@lists.infradead.org
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linux-sunxi@lists.linux.dev
-> Cc: linux-phy@lists.infradead.org
+> Cc: linux-clk@vger.kernel.org
 > Signed-off-by: Kees Cook <keescook@chromium.org>
 
 Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
@@ -177,229 +122,19 @@ Thanks
 Gustavo
 
 > ---
->   drivers/clk/clk-aspeed.c                    | 3 +--
->   drivers/clk/clk-ast2600.c                   | 2 +-
->   drivers/clk/clk-gemini.c                    | 2 +-
->   drivers/clk/clk-milbeaut.c                  | 3 +--
->   drivers/clk/clk-sp7021.c                    | 3 +--
->   drivers/clk/mvebu/cp110-system-controller.c | 2 +-
->   drivers/clk/qcom/clk-cpu-8996.c             | 2 +-
->   drivers/clk/ralink/clk-mt7621.c             | 3 +--
->   drivers/gpu/drm/sun4i/sun8i_tcon_top.c      | 3 +--
->   drivers/phy/qualcomm/phy-qcom-edp.c         | 2 +-
->   include/linux/clk-provider.h                | 2 +-
->   11 files changed, 11 insertions(+), 16 deletions(-)
+>   drivers/clk/qcom/clk-spmi-pmic-div.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-> index 284710adaef5..ff84191d0fe8 100644
-> --- a/drivers/clk/clk-aspeed.c
-> +++ b/drivers/clk/clk-aspeed.c
-> @@ -701,6 +701,7 @@ static void __init aspeed_cc_init(struct device_node *np)
->   				  GFP_KERNEL);
->   	if (!aspeed_clk_data)
->   		return;
-> +	aspeed_clk_data->num = ASPEED_NUM_CLKS;
+> diff --git a/drivers/clk/qcom/clk-spmi-pmic-div.c b/drivers/clk/qcom/clk-spmi-pmic-div.c
+> index f846be285f51..f394031eb0e5 100644
+> --- a/drivers/clk/qcom/clk-spmi-pmic-div.c
+> +++ b/drivers/clk/qcom/clk-spmi-pmic-div.c
+> @@ -177,7 +177,7 @@ static const struct clk_ops clk_spmi_pmic_div_ops = {
 >   
->   	/*
->   	 * This way all clocks fetched before the platform device probes,
-> @@ -732,8 +733,6 @@ static void __init aspeed_cc_init(struct device_node *np)
->   		aspeed_ast2500_cc(map);
->   	else
->   		pr_err("unknown platform, failed to add clocks\n");
-> -
-> -	aspeed_clk_data->num = ASPEED_NUM_CLKS;
->   	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, aspeed_clk_data);
->   	if (ret)
->   		pr_err("failed to add DT provider: %d\n", ret);
-> diff --git a/drivers/clk/clk-ast2600.c b/drivers/clk/clk-ast2600.c
-> index f9e27f95a967..909c3137c428 100644
-> --- a/drivers/clk/clk-ast2600.c
-> +++ b/drivers/clk/clk-ast2600.c
-> @@ -839,6 +839,7 @@ static void __init aspeed_g6_cc_init(struct device_node *np)
->   				      ASPEED_G6_NUM_CLKS), GFP_KERNEL);
->   	if (!aspeed_g6_clk_data)
->   		return;
-> +	aspeed_g6_clk_data->num = ASPEED_G6_NUM_CLKS;
->   
->   	/*
->   	 * This way all clocks fetched before the platform device probes,
-> @@ -860,7 +861,6 @@ static void __init aspeed_g6_cc_init(struct device_node *np)
->   	}
->   
->   	aspeed_g6_cc(map);
-> -	aspeed_g6_clk_data->num = ASPEED_G6_NUM_CLKS;
->   	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, aspeed_g6_clk_data);
->   	if (ret)
->   		pr_err("failed to add DT provider: %d\n", ret);
-> diff --git a/drivers/clk/clk-gemini.c b/drivers/clk/clk-gemini.c
-> index a23fa6d47ef1..2572d15aadd0 100644
-> --- a/drivers/clk/clk-gemini.c
-> +++ b/drivers/clk/clk-gemini.c
-> @@ -404,6 +404,7 @@ static void __init gemini_cc_init(struct device_node *np)
->   				  GFP_KERNEL);
->   	if (!gemini_clk_data)
->   		return;
-> +	gemini_clk_data->num = GEMINI_NUM_CLKS;
->   
->   	/*
->   	 * This way all clock fetched before the platform device probes,
-> @@ -457,7 +458,6 @@ static void __init gemini_cc_init(struct device_node *np)
->   	gemini_clk_data->hws[GEMINI_CLK_APB] = hw;
->   
->   	/* Register the clocks to be accessed by the device tree */
-> -	gemini_clk_data->num = GEMINI_NUM_CLKS;
->   	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, gemini_clk_data);
->   }
->   CLK_OF_DECLARE_DRIVER(gemini_cc, "cortina,gemini-syscon", gemini_cc_init);
-> diff --git a/drivers/clk/clk-milbeaut.c b/drivers/clk/clk-milbeaut.c
-> index 050fd4fb588f..18c20aff45f7 100644
-> --- a/drivers/clk/clk-milbeaut.c
-> +++ b/drivers/clk/clk-milbeaut.c
-> @@ -618,6 +618,7 @@ static void __init m10v_cc_init(struct device_node *np)
->   
->   	if (!m10v_clk_data)
->   		return;
-> +	m10v_clk_data->num = M10V_NUM_CLKS;
->   
->   	base = of_iomap(np, 0);
->   	if (!base) {
-> @@ -654,8 +655,6 @@ static void __init m10v_cc_init(struct device_node *np)
->   					base + CLKSEL(1), 0, 3, 0, rclk_table,
->   					&m10v_crglock, NULL);
->   	m10v_clk_data->hws[M10V_RCLK_ID] = hw;
-> -
-> -	m10v_clk_data->num = M10V_NUM_CLKS;
->   	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, m10v_clk_data);
->   }
->   CLK_OF_DECLARE_DRIVER(m10v_cc, "socionext,milbeaut-m10v-ccu", m10v_cc_init);
-> diff --git a/drivers/clk/clk-sp7021.c b/drivers/clk/clk-sp7021.c
-> index 11d22043ddd7..01d3c4c7b0b2 100644
-> --- a/drivers/clk/clk-sp7021.c
-> +++ b/drivers/clk/clk-sp7021.c
-> @@ -621,6 +621,7 @@ static int sp7021_clk_probe(struct platform_device *pdev)
->   				GFP_KERNEL);
->   	if (!clk_data)
->   		return -ENOMEM;
-> +	clk_data->num = CLK_MAX;
->   
->   	hws = clk_data->hws;
->   	pd_ext.index = 0;
-> @@ -688,8 +689,6 @@ static int sp7021_clk_probe(struct platform_device *pdev)
->   			return PTR_ERR(hws[i]);
->   	}
->   
-> -	clk_data->num = CLK_MAX;
-> -
->   	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, clk_data);
->   }
->   
-> diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
-> index 84c8900542e4..03c59bf22106 100644
-> --- a/drivers/clk/mvebu/cp110-system-controller.c
-> +++ b/drivers/clk/mvebu/cp110-system-controller.c
-> @@ -240,9 +240,9 @@ static int cp110_syscon_common_probe(struct platform_device *pdev,
->   				      GFP_KERNEL);
->   	if (!cp110_clk_data)
->   		return -ENOMEM;
-> +	cp110_clk_data->num = CP110_CLK_NUM;
->   
->   	cp110_clks = cp110_clk_data->hws;
-> -	cp110_clk_data->num = CP110_CLK_NUM;
->   
->   	/* Register the PLL0 which is the root of the hw tree */
->   	pll0_name = ap_cp_unique_name(dev, syscon_node, "pll0");
-> diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
-> index 592c7c3cdeb7..72689448a653 100644
-> --- a/drivers/clk/qcom/clk-cpu-8996.c
-> +++ b/drivers/clk/qcom/clk-cpu-8996.c
-> @@ -590,6 +590,7 @@ static int qcom_cpu_clk_msm8996_driver_probe(struct platform_device *pdev)
->   	data = devm_kzalloc(dev, struct_size(data, hws, 2), GFP_KERNEL);
->   	if (!data)
->   		return -ENOMEM;
-> +	data->num = 2;
->   
->   	base = devm_platform_ioremap_resource(pdev, 0);
->   	if (IS_ERR(base))
-> @@ -605,7 +606,6 @@ static int qcom_cpu_clk_msm8996_driver_probe(struct platform_device *pdev)
->   
->   	data->hws[0] = &pwrcl_pmux.clkr.hw;
->   	data->hws[1] = &perfcl_pmux.clkr.hw;
-> -	data->num = 2;
->   
->   	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, data);
->   }
-> diff --git a/drivers/clk/ralink/clk-mt7621.c b/drivers/clk/ralink/clk-mt7621.c
-> index d95a33293b0a..92d14350c4b3 100644
-> --- a/drivers/clk/ralink/clk-mt7621.c
-> +++ b/drivers/clk/ralink/clk-mt7621.c
-> @@ -521,6 +521,7 @@ static int mt7621_clk_probe(struct platform_device *pdev)
->   				GFP_KERNEL);
->   	if (!clk_data)
->   		return -ENOMEM;
-> +	clk_data->num = count;
->   
->   	for (i = 0; i < ARRAY_SIZE(mt7621_clks_base); i++)
->   		clk_data->hws[i] = mt7621_clk_early[i];
-> @@ -537,8 +538,6 @@ static int mt7621_clk_probe(struct platform_device *pdev)
->   		goto unreg_clk_fixed;
->   	}
->   
-> -	clk_data->num = count;
-> -
->   	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, clk_data);
->   	if (ret) {
->   		dev_err(dev, "Couldn't add clk hw provider\n");
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
-> index 6f076cf4b403..a1ca3916f42b 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
-> +++ b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
-> @@ -141,6 +141,7 @@ static int sun8i_tcon_top_bind(struct device *dev, struct device *master,
->   				GFP_KERNEL);
->   	if (!clk_data)
->   		return -ENOMEM;
-> +	clk_data->num = CLK_NUM;
->   	tcon_top->clk_data = clk_data;
->   
->   	spin_lock_init(&tcon_top->reg_lock);
-> @@ -213,8 +214,6 @@ static int sun8i_tcon_top_bind(struct device *dev, struct device *master,
->   			goto err_unregister_gates;
->   		}
->   
-> -	clk_data->num = CLK_NUM;
-> -
->   	ret = of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
->   				     clk_data);
->   	if (ret)
-> diff --git a/drivers/phy/qualcomm/phy-qcom-edp.c b/drivers/phy/qualcomm/phy-qcom-edp.c
-> index e0e722b9be31..8e5078304646 100644
-> --- a/drivers/phy/qualcomm/phy-qcom-edp.c
-> +++ b/drivers/phy/qualcomm/phy-qcom-edp.c
-> @@ -744,6 +744,7 @@ static int qcom_edp_clks_register(struct qcom_edp *edp, struct device_node *np)
->   	data = devm_kzalloc(edp->dev, struct_size(data, hws, 2), GFP_KERNEL);
->   	if (!data)
->   		return -ENOMEM;
-> +	data->num = 2;
->   
->   	snprintf(name, sizeof(name), "%s::link_clk", dev_name(edp->dev));
->   	init.ops = &qcom_edp_dp_link_clk_ops;
-> @@ -763,7 +764,6 @@ static int qcom_edp_clks_register(struct qcom_edp *edp, struct device_node *np)
->   
->   	data->hws[0] = &edp->dp_link_hw;
->   	data->hws[1] = &edp->dp_pixel_hw;
-> -	data->num = 2;
->   
->   	return devm_of_clk_add_hw_provider(edp->dev, of_clk_hw_onecell_get, data);
->   }
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index 0f0cd01906b4..ec32ec58c59f 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -1379,7 +1379,7 @@ struct clk_onecell_data {
->   
->   struct clk_hw_onecell_data {
->   	unsigned int num;
-> -	struct clk_hw *hws[];
-> +	struct clk_hw *hws[] __counted_by(num);
+>   struct spmi_pmic_div_clk_cc {
+>   	int		nclks;
+> -	struct clkdiv	clks[];
+> +	struct clkdiv	clks[] __counted_by(nclks);
 >   };
 >   
->   #define CLK_OF_DECLARE(name, compat, fn) \
+>   static struct clk_hw *
