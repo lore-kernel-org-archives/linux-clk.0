@@ -2,842 +2,256 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBD7EC3064E
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Aug 2023 15:25:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71453C3DA65
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Aug 2023 18:41:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347218AbjHQPY5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Aug 2023 11:24:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38538 "EHLO
+        id S1349139AbjHQSkr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Aug 2023 14:40:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245738AbjHQPY0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Aug 2023 11:24:26 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BE2DE56;
-        Thu, 17 Aug 2023 08:24:23 -0700 (PDT)
+        with ESMTP id S1353225AbjHQSkP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Aug 2023 14:40:15 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A22130DA;
+        Thu, 17 Aug 2023 11:40:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1692285863; x=1723821863;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references;
-  bh=6aX94Q99bZs4q9hs4IK0tTmzrNr2pLUa/TdLhwl6NPA=;
-  b=GeChW6W8GUy4mDOi8NLAaFoKnoWk2wyhFHFtm5n29ujBEAEVg33b/FuC
-   VKeY7gTVY5l5hKDaDQtjOokbLxPhleI99XvWW8tUeocINy0/8kE3s435I
-   KYdZDM+kQZVa+sfSPIsP0w0t1QcgrRlsbeSAwl7lpmuSK8oYsZXaoJC50
-   pgknDS5oObySx6oL4Oha0AZEH6KKtLX7crO3+33BUsCwWNGhzXmfZePFJ
-   wzqg9wZOAnno8KXkQ1VF0XsuDaSXfHWge47c6kfdg2cHtV782FU20Yeaz
-   6zSynT3wv2uIyqGY+spw7Wx2LAW/9L8H17CaFtcV6dWBBtLq/k0IiMxgy
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10805"; a="436758822"
+  t=1692297606; x=1723833606;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=0e+hE/YOu77zg0GGxIY2TLWEP33CjX/bQsSZ7oNwaM8=;
+  b=R08nI2uSVJcO4slVVDN/j929txNXVGanbTtYI/Dy7VEU/A8Kr1fVqWwC
+   lY8sFR1ft45GuXmDquapl682H8P6j24H4EDTTpzW1OidLCAsPV4SXFv4A
+   6ISKsMD4ALDA/exKEI+zVWhfHSHTGNvkX2ohSjmamsPgl4oh0kEwxNedI
+   Hvt9O6gblj5aWxM/z5jFoxV3cXmiNwejCmSRvQjVrTPNnLXZlWUxKRLC0
+   uypqJbLOVT3Upy/aaUJOxyOzEORNC338GgLwjjI6WAp7annyEUIXIje7C
+   +Jn0UJttw8pmnblgk5KWujDgGM0u1YiNkxpx1riE0yLYRIzbXtPaurr14
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10805"; a="371801309"
 X-IronPort-AV: E=Sophos;i="6.01,180,1684825200"; 
-   d="scan'208";a="436758822"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2023 08:24:23 -0700
+   d="scan'208";a="371801309"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2023 11:40:04 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10805"; a="734694207"
+X-IronPort-AV: E=McAfee;i="6600,9927,10805"; a="800153545"
 X-IronPort-AV: E=Sophos;i="6.01,180,1684825200"; 
-   d="scan'208";a="734694207"
-Received: from mmichali-devpc.igk.intel.com ([10.211.235.239])
-  by orsmga002.jf.intel.com with ESMTP; 17 Aug 2023 08:24:19 -0700
-From:   Michal Michalik <michal.michalik@intel.com>
-To:     netdev@vger.kernel.org
-Cc:     vadim.fedorenko@linux.dev, kuba@kernel.org, jiri@resnulli.us,
-        arkadiusz.kubalewski@intel.com, jonathan.lemon@gmail.com,
-        pabeni@redhat.com, poros@redhat.com, milena.olech@intel.com,
-        mschmidt@redhat.com, linux-clk@vger.kernel.org, bvanassche@acm.org,
-        Michal Michalik <michal.michalik@intel.com>
-Subject: [PATCH RFC net-next v1 2/2] selftests/dpll: add DPLL system integration selftests
-Date:   Thu, 17 Aug 2023 17:22:09 +0200
-Message-Id: <20230817152209.23868-3-michal.michalik@intel.com>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20230817152209.23868-1-michal.michalik@intel.com>
-References: <20230817152209.23868-1-michal.michalik@intel.com>
+   d="scan'208";a="800153545"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmsmga008.fm.intel.com with ESMTP; 17 Aug 2023 11:40:04 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.27; Thu, 17 Aug 2023 11:40:03 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.27 via Frontend Transport; Thu, 17 Aug 2023 11:40:03 -0700
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (104.47.56.48) by
+ edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.27; Thu, 17 Aug 2023 11:40:03 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=K+leG9CuO78WLavX2+9lbYgEsl164Vvorj91skxhJtLrKFnnAYNU8DA73nKOXr6lOk0JTP0wSBfplS5c7+M2d7yzJnBiFhiY3g/WYNujSXtboeW3T6bad+UiZrHk12gFkR3Va28EydaEMd48U4TMhwoBNRrnu6Tugkhug69otzbs46tv7LY76U4nBYB80TTsV6CmhGHX535MkBZn1MN08l6EF9VYG+sBZeHRReyPL+2VMydXHhOxSTzoquK+ech3lQKVuQpUfp0MLliStaOdhoWEwoLM04A0ujg7aWCdi9hlpjRBjHxiCPD4R7N+BfqEpGChfeK1q5d6X61uRiIsUA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=c7WYn2Szd1yotq0/CW/21WjT8+mrrsudTYEH8jcqNjg=;
+ b=TlNdEH+u4shdyW7AfSumjusgTawt0ov+GdrU0IhZjU9rj/lpLP2oau5urNWDYTtB5t2NMMrUcNmklYNlFvTrU//6kleaffGTWvKsrcu5d+Jbm/cAfys65LePcm2gmMiLOD/0aI0dq03ym74JwFAA/+bgsAwRc/a5+G4/iH/aLB0fOFZLiNiGjW5d/jNugfe239ua2+7gOMpCbEjsbQP3Nhvmgv/wqlD7fD5rz5QGIjmnzZnCCXpaWmHuVM5m+m5Wnh5qGOArMFhlTar0oaorft+xDI9oQhOLjHzKNEPwdxT4WpoRcEnvnBWdKBvET71oKSieoSBy83BwknUD8uraVA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from DM6PR11MB4657.namprd11.prod.outlook.com (2603:10b6:5:2a6::7) by
+ IA1PR11MB7755.namprd11.prod.outlook.com (2603:10b6:208:420::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6678.26; Thu, 17 Aug
+ 2023 18:40:01 +0000
+Received: from DM6PR11MB4657.namprd11.prod.outlook.com
+ ([fe80::c3cd:b8d0:5231:33a8]) by DM6PR11MB4657.namprd11.prod.outlook.com
+ ([fe80::c3cd:b8d0:5231:33a8%5]) with mapi id 15.20.6678.031; Thu, 17 Aug 2023
+ 18:40:01 +0000
+From:   "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+To:     Jakub Kicinski <kuba@kernel.org>,
+        Vadim Fedorenko <vadim.fedorenko@linux.dev>
+CC:     Jiri Pirko <jiri@resnulli.us>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "Michalik, Michal" <michal.michalik@intel.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
+        mschmidt <mschmidt@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+        Jiri Pirko <jiri@nvidia.com>
+Subject: RE: [PATCH net-next v4 2/9] dpll: spec: Add Netlink spec in YAML
+Thread-Topic: [PATCH net-next v4 2/9] dpll: spec: Add Netlink spec in YAML
+Thread-Index: AQHZzI8RrqRf3aKbFEyIwXcwF38l0q/qq3UAgAQtf2A=
+Date:   Thu, 17 Aug 2023 18:40:00 +0000
+Message-ID: <DM6PR11MB4657AD95547A14234941F9399B1AA@DM6PR11MB4657.namprd11.prod.outlook.com>
+References: <20230811200340.577359-1-vadim.fedorenko@linux.dev>
+        <20230811200340.577359-3-vadim.fedorenko@linux.dev>
+ <20230814194336.55642f34@kernel.org>
+In-Reply-To: <20230814194336.55642f34@kernel.org>
+Accept-Language: pl-PL, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM6PR11MB4657:EE_|IA1PR11MB7755:EE_
+x-ms-office365-filtering-correlation-id: 0daeac0c-97fc-44d7-051f-08db9f515d4b
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 7CJ6wIyJty9Z5tjJqOjWjZp7KzRbbuUxnsKaCJhPIvtN1WcAB/gXziTJTaQ+M+L1gSBEOit3zukQA/NPwb6bndNz+UbYkAjPLnVPv1B4lt3BpGT+eIOqgFTS5hqP4IokaoPRmGBJBb2Si6MxnVSXmgucJYkwKQcTb2YAoka9ca4xh+VNlmPtfl28W9p0DciFPtp5ER8jHzhSAYY8DLPpcQKyF1BmnRRYv6Jm/8qgsPSY+QrBY06Nfmb0E77fYXbX21Zd/ASd3cX6PiMCGKXuNPs0EjtwirdAq1Y3m6EAtjfIhhVdFufPuHfOsTxKRxaVGTy4MT+po/p/b6fvxbbO1lP4OFoySZ3Qkq43w552ZBssO0Spvh8uPA62tZJj2AQFhO4N663DsXAZGb1r2kcbeBgmLXzacil4pOEk0J0TsMxd9uQqeb5nuZNypB3/6P1MyfA83yz93rNgp8DRf6RKVau4weJI7m6+vb0kDubCjYuGJeKK9UauNpQz7oYz9KtMRs+XLlEXkGRPnhYXzyY+MwcJssvyUDIPTo1ohNadd1E5qG/fCPIMg3rFZQ0awU7mw4HIow19/8sLDqbz+bR5jWrnSVT1Ko4OfJLPNm0Jer0VKfkFyp4xhscR+7owOOmT
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR11MB4657.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366004)(136003)(396003)(39860400002)(346002)(376002)(186009)(451199024)(1800799009)(2906002)(83380400001)(26005)(86362001)(7416002)(478600001)(6506007)(7696005)(71200400001)(33656002)(9686003)(55016003)(5660300002)(52536014)(41300700001)(66446008)(122000001)(316002)(54906003)(64756008)(76116006)(66476007)(66946007)(66556008)(110136005)(4326008)(8676002)(8936002)(82960400001)(38070700005)(38100700002);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?EK/xle91pj4xwfnPwF1y9AF2UQS4t4Zf3UnoaaW4Qj2sUBvmXXDpJQT2Kvwk?=
+ =?us-ascii?Q?GaED+cL8GD/R47EbgNh/xOC/CYxcj3R9cbbyNKcM7Q97rDxpMkcLncOsGO0x?=
+ =?us-ascii?Q?WuoN1/KOPCBosAO+F4mLzbq15Adskai9AymACe0NIBWFCK4yxmraFSOeAQ6Q?=
+ =?us-ascii?Q?61IQ3CJDevC9mfLdjBv5Kt9euSdhuuyWltD964Qcbe49BvcA/lUrgWWydBiH?=
+ =?us-ascii?Q?22YD4nVVOldCJzI8SwM9a4it1DvR9KtkyW/Mlju8BcEM4hJPJW8uulOqxOzG?=
+ =?us-ascii?Q?NqSFpB0IiYmTM27yrlY36WwIqZgwooe442hnnnvDcAep+sjuQ1W/2owtfgyA?=
+ =?us-ascii?Q?6DTgp9rJ31R7LjJIQAvRxmQ/rdFZ3MSGgNET0nbha+G9HNTDgF8giIYUlIFk?=
+ =?us-ascii?Q?KQJlshoLsmlARDjTyFqshLNCtdWEMHp9wlwX94R8UIlAb/mRypqsIuMHLsI0?=
+ =?us-ascii?Q?J2JlBF5rrEtPDn4OeL8wKQkVDL22pLB45ib2kUVRtO1YZx3jwvCI+KbV0EZr?=
+ =?us-ascii?Q?p7sEIbLb3XgZb5cdL/K4VlFuxqsnWufKMbdyBz6WoM0gkudg41oAEI2g0opW?=
+ =?us-ascii?Q?F2Lda+iUYqtA7nZjnnR/gM51ztB+HYGPYw129MGbV8+N3+reQmLHp+b/jfdV?=
+ =?us-ascii?Q?ehRmyT3Bpe7U7UBUmwSdIkfCIfokZLDRTGYI3xRvUBd8d8WCsQ4Pd/o9XrAX?=
+ =?us-ascii?Q?BbjY7uXv2DXnCVR61T/44booTfOFj0vpJ9IUDnvSR67stenLjUhcxT9yV8Je?=
+ =?us-ascii?Q?0nbB00XAYBCmqqx51Lcn8H3u87q8Jh3YHXYARwtrpvhb/3PCp6GqdR5ZKy9q?=
+ =?us-ascii?Q?5r+z6f0v3Xb6uT/O1bg1rQpC22WJM1/W08uSy2t31w1UKfSUjA90HpdsVoYP?=
+ =?us-ascii?Q?CqgSSvA/8LJSPMgnRt78J66Z6XRAYkArkEmYHfnwADtru+mHzq8Dy5xG7jut?=
+ =?us-ascii?Q?eErYfFSvfV42yFLogz43DUItEHgSN7LsCikLC22g4gZYkioEkRmEnphqFPkS?=
+ =?us-ascii?Q?lgTk6IUjnbS2RFYfhKiVfuDtT/ckeNJgfE+8cwA5Wp7gewWhX1DpznMAtjGd?=
+ =?us-ascii?Q?CzN7DPBudHAr+DVp5s50/B5x4/fY2jlNUOMWHW5sWQU3lNZPan4wsDxy2DqC?=
+ =?us-ascii?Q?f+xHmxjgdalZkXYSvu5vBGKLIxjn/+J+lsqGdrU0qKZLEPFtAODuvnQ0PHYu?=
+ =?us-ascii?Q?cbYMsm2YkSgAexRT/crNrfJu4V44vLxKVRHHsI8jLpJyT9IxgV6+XXtnrDis?=
+ =?us-ascii?Q?VmwigYksUiU1xkN0ZdJRWeNQYQNu1EPLTBl6dvipcYsH4yJTJK9+Q2uRKfyZ?=
+ =?us-ascii?Q?GzwQLR8F5pBg4E+aBvReJEIW4B6MLb5b2uS0/10ubBX8+z0xYcSfASM8en+v?=
+ =?us-ascii?Q?ofHZjDjIQ2HDo/z7o9ESlbAj+FEtnVIM11r8tWa9EzmJmpK44xTCebjc321i?=
+ =?us-ascii?Q?EMXNxJfaf4E0qU17UNpgMJoxImSU40r94ay7FDkMNazvBTi9kqBiEmE0GWo6?=
+ =?us-ascii?Q?3o6uj6XkSybomWSolgyjyr2jQ72cY2I+58gzVFu/pXSc9xNErDburEHe4BTB?=
+ =?us-ascii?Q?jK0Y3AKVQKW2TKrGPC2aiVta24AYrDgfh5LR5/11BJUBN3TYhW7uOs/ECbZg?=
+ =?us-ascii?Q?nw=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR11MB4657.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0daeac0c-97fc-44d7-051f-08db9f515d4b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Aug 2023 18:40:00.9009
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: u0QIVt2sXYw2G+6JKUyoHEVKHr0Oe9IhJUsjk8geHcU1OCarL3/4enlbmUAUT2r8vknRVwmkdT82t4YQYGIbwB7YnH6G7BUk/Js5Nd6F8kI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB7755
+X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The tests are written in Python3 (3.7+) and pytest testing framework.
-Framework is basing on the ynl library available in the kernel tree
-at: tools/net/ynl
+>From: Jakub Kicinski <kuba@kernel.org>
+>Sent: Tuesday, August 15, 2023 4:44 AM
+>
+>On Fri, 11 Aug 2023 21:03:33 +0100 Vadim Fedorenko wrote:
+>> +attribute-sets:
+>> +  -
+>> +    name: dpll
+>> +    enum-name: dpll_a
+>> +    attributes:
+>> +      -
+>> +        name: id
+>> +        type: u32
+>> +        value: 1
+>
+>value: 1 is the default
+>
+>> +      -
+>> +        name: module-name
+>> +        type: string
+>> +      -
+>> +        name: clock-id
+>> +        type: u64
+>
+>I don't see a pad, you have a u64 without a pad?
+>
+>> +      -
+>> +        name: mode
+>> +        type: u8
+>
+>It's an enum, should always be u32 or bigger at protocol level.
+>Netlink pads to 4B, you're not saving any space.
+>
+>> +        enum: mode
+>> +      -
+>> +        name: mode-supported
+>> +        type: u8
+>
+>Same.
+>
+>> +        enum: mode
+>> +        multi-attr: true
+>> +      -
+>> +        name: lock-status
+>> +        type: u8
+>
+>And here.
+>
+>> +        enum: lock-status
+>> +      -
+>> +        name: temp
+>> +        type: s32
+>> +      -
+>> +        name: type
+>> +        type: u8
+>
+>And here, etc.
+>
+>Why are all attributes in a single attr space? :(
+>More than half of them are prefixed with a pin- does it really
+>not scream to you that they belong to a different space?
+>
 
-High level flow of DPLL subsystem integration selftests:
-(after running run_dpll_tests.sh or 'make -C tools/testing/selftests')
-1) check if Python in correct version is installed,
-2) create temporary Python virtual environment,
-3) install all the required libraries,
-4) run the tests,
-5) do cleanup.
+I agree, but there is an issue with this, currently:
 
-The DPLL system integration tests are meant to be part of selftests, so
-they can be build and run using command:
-  make -C tools/testing/selftests
-  make -C tools/testing/selftests run_tests
+name: pin-parent-device
+subset-of: dpll
+attributes:
+  -
+    name: id
+    type: u32
+  -
+    name: pin-direction
+    type: u32
+  -
+    name: pin-prio
+    type: u32
+  -
+    name: pin-state
+    type: u32
 
-Alternatively, they can be run using single command [1]:
-  make kselftest
+Where "id" is a part of device space, rest attrs would be a pin space..
+Shall we have another argument for device id in a pin space?
 
-If we want to run only DPLL tests, we should set the TARGETS variable:
-  make -C tools/testing/selftests TARGETS=dpll
-  make -C tools/testing/selftests TARGETS=dpll run_tests
+Thank you!
+Arkadiusz
 
-They can also be run standalone using starter script:
-  ./run_dpll_tests.sh
 
-There is a possibliy to set optional PYTEST_PARAMS environment variable
-to set the pytest options, like tests filtering ("-k <filter>") or
-verbose output ("-v").
-
-[1] https://www.kernel.org/doc/html/v5.0/dev-tools/kselftest.html
-
-Signed-off-by: Michal Michalik <michal.michalik@intel.com>
----
- tools/testing/selftests/Makefile                 |   1 +
- tools/testing/selftests/dpll/Makefile            |  11 +
- tools/testing/selftests/dpll/__init__.py         |   0
- tools/testing/selftests/dpll/config              |   1 +
- tools/testing/selftests/dpll/consts.py           |  34 ++
- tools/testing/selftests/dpll/dpll_utils.py       | 104 ++++++
- tools/testing/selftests/dpll/requirements.txt    |   3 +
- tools/testing/selftests/dpll/run_dpll_tests.sh   |  75 +++++
- tools/testing/selftests/dpll/test_dpll.py        | 385 +++++++++++++++++++++++
- tools/testing/selftests/dpll/ynlfamilyhandler.py |  49 +++
- 10 files changed, 663 insertions(+)
- create mode 100644 tools/testing/selftests/dpll/Makefile
- create mode 100644 tools/testing/selftests/dpll/__init__.py
- create mode 100644 tools/testing/selftests/dpll/config
- create mode 100644 tools/testing/selftests/dpll/consts.py
- create mode 100644 tools/testing/selftests/dpll/dpll_utils.py
- create mode 100644 tools/testing/selftests/dpll/requirements.txt
- create mode 100755 tools/testing/selftests/dpll/run_dpll_tests.sh
- create mode 100644 tools/testing/selftests/dpll/test_dpll.py
- create mode 100644 tools/testing/selftests/dpll/ynlfamilyhandler.py
-
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index 5c60a7c..0f75009 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -13,6 +13,7 @@ TARGETS += core
- TARGETS += cpufreq
- TARGETS += cpu-hotplug
- TARGETS += damon
-+TARGETS += dpll
- TARGETS += drivers/dma-buf
- TARGETS += drivers/s390x/uvdevice
- TARGETS += drivers/net/bonding
-diff --git a/tools/testing/selftests/dpll/Makefile b/tools/testing/selftests/dpll/Makefile
-new file mode 100644
-index 0000000..8a7b544
---- /dev/null
-+++ b/tools/testing/selftests/dpll/Makefile
-@@ -0,0 +1,11 @@
-+ifndef KSRC
-+	KSRC:=${shell git rev-parse --show-toplevel}
-+endif
-+
-+build:
-+	./modules_handler.sh build
-+
-+run_tests:
-+	./run_dpll_tests.sh
-+
-+.PHONY: build run_tests
-\ No newline at end of file
-diff --git a/tools/testing/selftests/dpll/__init__.py b/tools/testing/selftests/dpll/__init__.py
-new file mode 100644
-index 0000000..e69de29
-diff --git a/tools/testing/selftests/dpll/config b/tools/testing/selftests/dpll/config
-new file mode 100644
-index 0000000..44df39b4
---- /dev/null
-+++ b/tools/testing/selftests/dpll/config
-@@ -0,0 +1 @@
-+CONFIG_DPLL=y
-\ No newline at end of file
-diff --git a/tools/testing/selftests/dpll/consts.py b/tools/testing/selftests/dpll/consts.py
-new file mode 100644
-index 0000000..838ce58
---- /dev/null
-+++ b/tools/testing/selftests/dpll/consts.py
-@@ -0,0 +1,34 @@
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Constants useful in DPLL system integration testing.
-+#
-+# Copyright (c) 2023, Intel Corporation.
-+# Author: Michal Michalik <michal.michalik@intel.com>
-+
-+import os
-+from enum import Enum
-+
-+
-+KSRC = os.environ.get('KSRC', '')
-+YNLPATH = 'tools/net/ynl/'
-+YNLSPEC = 'Documentation/netlink/specs/dpll.yaml'
-+
-+
-+class DPLL_TYPE(Enum):
-+    PPS = 1
-+    EEC = 2
-+
-+
-+class DPLL_LOCK_STATUS(Enum):
-+    UNLOCKED = 1
-+    LOCKED = 2
-+    LOCKED_HO_ACK = 3
-+    HOLDOVER = 4
-+
-+
-+class DPLL_PIN_TYPE(Enum):
-+    MUX = 1,
-+    EXT = 2
-+    SYNCE_ETH_PORT = 3
-+    INT_OSCILLATOR = 4
-+    GNSS = 5
-diff --git a/tools/testing/selftests/dpll/dpll_utils.py b/tools/testing/selftests/dpll/dpll_utils.py
-new file mode 100644
-index 0000000..4f56fa83
---- /dev/null
-+++ b/tools/testing/selftests/dpll/dpll_utils.py
-@@ -0,0 +1,104 @@
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Utilities useful in DPLL system integration testing.
-+#
-+# Copyright (c) 2023, Intel Corporation.
-+# Author: Michal Michalik <michal.michalik@intel.com>
-+
-+import re
-+import pytest
-+import subprocess
-+
-+from .ynlfamilyhandler import YnlFamilyHandler
-+
-+
-+def parse_header(filepath):
-+    FILTER = ('(u32)', '(u64)', '(', ')')
-+
-+    with open(filepath) as f:
-+        header = f.read()
-+
-+    items = {}
-+    matches = re.findall(r'''\#define
-+                             \s+?
-+                             ([\w\d]*)  # key
-+                             \s+?
-+                             ([\w\d)()"]+)  # value
-+                          ''', header, re.MULTILINE | re.VERBOSE)
-+    for key, value in matches:
-+        for f in FILTER:
-+            value = value.replace(f, '')
-+        if value.isnumeric():
-+            items[key] = int(value)
-+        elif not value:
-+            items[key] = True  # let's just treat it as a flag
-+        else:
-+            items[key] = value
-+
-+    return items
-+
-+
-+def load_driver(script, driver):
-+    try:
-+        subprocess.run([script, 'load', driver], check=True)
-+    except subprocess.CalledProcessError as e:
-+        pytest.exit(f'Failed to load the test module: "{e}"')
-+
-+
-+def unload_driver(script, driver):
-+    try:
-+        subprocess.run([script, 'unload', driver], check=True)
-+    except subprocess.CalledProcessError as e:
-+        pytest.exit(f'Failed to unload the test module: "{e}"')
-+
-+
-+def get_dpll_id(clock_id, test_module, type):
-+    yfh = YnlFamilyHandler()
-+    yfh.do = 'device-id-get'
-+    yfh.attrs = {
-+        'module-name': test_module,
-+        'clock-id': clock_id,
-+        'type': type
-+        }
-+    return yfh.execute()['id']
-+
-+
-+def get_dpll(clock_id, test_module, type):
-+    _id = get_dpll_id(clock_id, test_module, type)
-+    yfh = YnlFamilyHandler()
-+    yfh.do = 'device-get'
-+    yfh.attrs = {'id': _id}
-+    return yfh.execute()
-+
-+
-+def get_all_pins():
-+    yfh = YnlFamilyHandler()
-+    yfh.dump = 'pin-get'
-+    return yfh.execute()
-+
-+
-+def get_pin_id(test_module, clock_id, board_l, panel_l, package, type):
-+    yfh = YnlFamilyHandler()
-+    yfh.do = 'pin-id-get'
-+    yfh.attrs = {'module-name': test_module,
-+                 'clock-id': clock_id,
-+                 'pin-board-label': board_l,
-+                 'pin-panel-label': panel_l,
-+                 'pin-package-label': package,
-+                 'pin-type': type}
-+    return yfh.execute()['pin-id']
-+
-+
-+def get_pin(_id):
-+    yfh = YnlFamilyHandler()
-+    yfh.do = 'pin-get'
-+    yfh.attrs = {'pin-id': _id}
-+    return yfh.execute()
-+
-+
-+def set_pin(_id, params):
-+    yfh = YnlFamilyHandler()
-+    yfh.do = 'pin-set'
-+    yfh.attrs = params
-+    yfh.attrs['pin-id'] = _id
-+    return yfh.execute()
-diff --git a/tools/testing/selftests/dpll/requirements.txt b/tools/testing/selftests/dpll/requirements.txt
-new file mode 100644
-index 0000000..73180b8
---- /dev/null
-+++ b/tools/testing/selftests/dpll/requirements.txt
-@@ -0,0 +1,3 @@
-+jsonschema==4.*
-+PyYAML==6.*
-+pytest==7.*
-diff --git a/tools/testing/selftests/dpll/run_dpll_tests.sh b/tools/testing/selftests/dpll/run_dpll_tests.sh
-new file mode 100755
-index 0000000..c701d40
---- /dev/null
-+++ b/tools/testing/selftests/dpll/run_dpll_tests.sh
-@@ -0,0 +1,75 @@
-+#!/usr/bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Wraper script for running the DPLL system integration tests.
-+#
-+# The script check if all the requirements are fulfilled before running pytest.
-+#
-+# Copyright (c) 2023, Intel Corporation.
-+# Author: Michal Michalik <michal.michalik@intel.com>
-+
-+ENOPKG=65  # Package not installed
-+TEMP_VENV=$(mktemp -u)
-+KSRC=${KSRC:-$(git rev-parse --show-toplevel)}
-+PYTHON=${PYTHON:-python3}
-+
-+cleanup() {
-+    [ -n "$VIRTUAL_ENV" ] && deactivate
-+
-+    if [[ -d "$TEMP_VENV" ]]; then
-+        echo "Removing temporary virtual environment ($TEMP_VENV)"
-+        rm -r "$TEMP_VENV"
-+    else
-+        echo "Temporary virtual environment does not exist"
-+    fi
-+}
-+
-+skip () {
-+    cleanup
-+    echo "SKIP: $1"
-+    exit $2
-+}
-+
-+# 1) To run tests, we need Python 3 installed
-+which $PYTHON 2>&1 1> /dev/null
-+if [[ $? -ne 0 ]]; then
-+    skip "Python 3 is not installed" $ENOPKG
-+fi
-+
-+# 2) ...at least Python 3.7 (2018)
-+$PYTHON -c "import sys;vi=sys.version_info;
-+sys.exit(0) if vi[0] == 3 and vi[1] >= 7 else sys.exit(1)"
-+if [[ $? -ne 0 ]]; then
-+    skip "At least Python 3.7 is required (set PYTHON for custom path)" $ENOPKG
-+fi
-+
-+# 3) Let's make sure we have controlled environment (virtual environment)
-+#   a) Create venv
-+$PYTHON -m venv $TEMP_VENV
-+if [[ $? -ne 0 ]]; then
-+    skip "Could not create virtual environment" $ENOPKG
-+fi
-+
-+#   b) Activate venv
-+source $TEMP_VENV/bin/activate
-+if [[ $? -ne 0 ]]; then
-+    skip "Could not activate the virtual environment" $ENOPKG
-+fi
-+
-+#   c) Install the exact packages versions we need
-+pip install -r requirements.txt
-+if [[ $? -ne 0 ]]; then
-+    skip "Could not install the required packages" $ENOPKG
-+fi
-+
-+# 4) Finally, run the tests!
-+KSRC=$KSRC pytest $PYTEST_PARAMS
-+result=$?
-+if [[ $result -ne 0 ]]; then
-+    echo "ERROR: Some of the DPLL tests failed"
-+fi
-+
-+# 5) Clean up after execution
-+cleanup
-+
-+exit $result
-diff --git a/tools/testing/selftests/dpll/test_dpll.py b/tools/testing/selftests/dpll/test_dpll.py
-new file mode 100644
-index 0000000..4f70c07
---- /dev/null
-+++ b/tools/testing/selftests/dpll/test_dpll.py
-@@ -0,0 +1,385 @@
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# System integration tests for DPLL interface.
-+#
-+# Can be used directly, but strongly suggest using wrapper: run_dpll_tests.sh
-+# The wrapper takes care about fulfilling all the requirements needed to
-+# run all the tests.
-+#
-+# Copyright (c) 2023, Intel Corporation.
-+# Author: Michal Michalik <michal.michalik@intel.com>
-+
-+import pytest
-+import subprocess
-+from pathlib import Path
-+
-+from .consts import DPLL_TYPE, DPLL_LOCK_STATUS, DPLL_PIN_TYPE
-+from .dpll_utils import parse_header, load_driver, unload_driver, \
-+    get_dpll, get_dpll_id, get_pin_id, get_all_pins, get_pin, set_pin
-+from .ynlfamilyhandler import YnlFamilyHandler
-+from lib.ynl import NlError
-+
-+
-+SCRIPT_PATH = './modules_handler.sh'
-+TEST_MODULE_DIR = 'dpll_modules'
-+TEST_MODULE = 'dpll_test'
-+
-+
-+class TestDPLL:
-+    @classmethod
-+    def setup_class(cls):
-+        cls.module_consts = parse_header(Path(TEST_MODULE_DIR) / f'{TEST_MODULE}.h')
-+        load_driver(SCRIPT_PATH, TEST_MODULE)
-+
-+    @classmethod
-+    def teardown_class(cls):
-+        unload_driver(SCRIPT_PATH, TEST_MODULE)
-+
-+    def test_if_module_is_loaded(self):
-+        '''
-+        Checks if the module is successfully loaded at all. It should be already
-+        covered in the class setup (raise exception) - but just to make sure.
-+        '''
-+        s = subprocess.run(['lsmod'], check=True, capture_output=True)
-+        assert TEST_MODULE in str(s.stdout)
-+
-+    def test_get_two_dplls(self):
-+        '''
-+        Checks if the netlink is returning the expected DPLLs. We need to make
-+        sure that even if "other" DPLLs exist in the system we check only ours.
-+        '''
-+        yfh = YnlFamilyHandler()
-+        yfh.dump = 'device-get'
-+        reply = yfh.execute()
-+
-+        dplls = filter(lambda i: TEST_MODULE == i['module-name'], reply)
-+        assert len(list(dplls)) == 2
-+
-+    def test_get_two_distinct_dplls(self):
-+        '''
-+        Checks if the netlink is returning the expected, distinct DPLLs created
-+        by the tested module. We expect EEC and PPS ones.
-+        '''
-+        yfh = YnlFamilyHandler()
-+        yfh.dump = 'device-get'
-+        reply = yfh.execute()
-+
-+        dplls = filter(lambda i: TEST_MODULE in i['module-name'], reply)
-+        types = set(i['type'] for i in dplls)
-+
-+        assert types == {'eec', 'pps'}
-+
-+    @pytest.mark.parametrize("dtype", [DPLL_TYPE.EEC, DPLL_TYPE.PPS])
-+    def test_finding_dpll_id(self, dtype):
-+        '''
-+        Checks if we are able to find the DPLL id using 'device-id-get' do cmd.
-+        '''
-+        _id = get_dpll_id(self.module_consts['DPLLS_CLOCK_ID'], TEST_MODULE,
-+                          dtype.value)
-+        assert isinstance(_id, int)
-+
-+    @pytest.mark.parametrize("clk,dtype,exc", [(123, DPLL_TYPE.EEC.value, KeyError),
-+                                               (234, 4, NlError),
-+                                               (123, 4, NlError)])
-+    def test_finding_fails_correctly(self, clk, dtype, exc):
-+        '''
-+        Make sure the DPLL interface does not return any garbage on incorrect
-+        input like wrong DPLL type or clock id.
-+        '''
-+        with pytest.raises(exc):
-+            get_dpll_id(clk, TEST_MODULE, dtype)
-+
-+    @pytest.mark.parametrize("dtype", [DPLL_TYPE.EEC, DPLL_TYPE.PPS])
-+    def test_get_only_one_dpll(self, dtype):
-+        '''
-+        Checks if the netlink is returning the expected DPLLs created
-+        by the tested module, filtered on input. We expect EEC and PPS here.
-+        '''
-+        _id = get_dpll_id(self.module_consts['DPLLS_CLOCK_ID'], TEST_MODULE,
-+                          dtype.value)
-+
-+        yfh = YnlFamilyHandler()
-+        yfh.do = 'device-get'
-+        yfh.attrs = {'id': _id}
-+        reply = yfh.execute()
-+
-+        assert reply['type'] == dtype.name.lower()
-+
-+    @pytest.mark.parametrize("dtype", [DPLL_TYPE.EEC, DPLL_TYPE.PPS])
-+    def test_get_temperature(self, dtype):
-+        '''
-+        Checks if we are able to get correct DPLL temperature for both DPLLs.
-+        '''
-+        if dtype == DPLL_TYPE.EEC:
-+            desired_temp = self.module_consts['EEC_DPLL_TEMPERATURE']
-+        else:
-+            desired_temp = self.module_consts['PPS_DPLL_TEMPERATURE']
-+
-+        dpll = get_dpll(self.module_consts['DPLLS_CLOCK_ID'], TEST_MODULE,
-+                        dtype.value)
-+
-+        assert dpll['temp'] == desired_temp
-+
-+    @pytest.mark.parametrize("dtype, lock", [(DPLL_TYPE.EEC, DPLL_LOCK_STATUS.UNLOCKED),
-+                                             (DPLL_TYPE.PPS, DPLL_LOCK_STATUS.LOCKED)])
-+    def test_get_lock(self, dtype, lock):
-+        '''
-+        Checks if we are able to get correct DPLL lock status for both DPLLs.
-+        '''
-+        dpll = get_dpll(self.module_consts['DPLLS_CLOCK_ID'], TEST_MODULE,
-+                        dtype.value)
-+        assert dpll['lock-status'] == lock.name.lower()
-+
-+    @pytest.mark.parametrize("dtype", [DPLL_TYPE.EEC, DPLL_TYPE.PPS])
-+    def test_dump_pins_in_each_dpll(self, dtype):
-+        '''
-+        Checks if we are able to dump all pins for each DPLL separetely,
-+        filtered on output.
-+        '''
-+        if dtype == DPLL_TYPE.EEC:
-+            desired_pins = self.module_consts['EEC_PINS_NUMBER']
-+        else:
-+            desired_pins = self.module_consts['PPS_PINS_NUMBER']
-+
-+        dpll = get_dpll(self.module_consts['DPLLS_CLOCK_ID'], TEST_MODULE,
-+                        dtype.value)
-+
-+        yfh = YnlFamilyHandler()
-+        yfh.dump = 'pin-get'
-+        reply = yfh.execute()
-+
-+        pins = filter(lambda p: any(i['id'] == dpll['id']
-+                      for i in p.get('pin-parent-device', [])), reply)
-+
-+        assert len(list(pins)) == desired_pins
-+
-+    def test_dump_all_pins_in_both_dplls(self):
-+        '''
-+        Checks if we are able to dump all pins for both DPLLs, filtered by
-+        clock id on output.
-+        '''
-+        desired_pins = self.module_consts['EEC_PINS_NUMBER']  # all are in EEC
-+        clock_id = self.module_consts['DPLLS_CLOCK_ID']
-+
-+        reply = get_all_pins()
-+
-+        pins = filter(lambda p: p['clock-id'] == clock_id, reply)
-+
-+        assert len(list(pins)) == desired_pins
-+
-+    @pytest.mark.parametrize("pin, pin_name", [(DPLL_PIN_TYPE.EXT, 'PPS'),
-+                                               (DPLL_PIN_TYPE.GNSS, 'GNSS'),
-+                                               (DPLL_PIN_TYPE.SYNCE_ETH_PORT, 'RCLK')])
-+    def test_get_a_single_pin_from_dump(self, pin, pin_name):
-+        '''
-+        Checks if we are able to get all distinct pins for both DPLLs, filtered
-+        by clock id and type on output. Additionally, verify if the priority is
-+        assigned correctly and not mixed up.
-+        '''
-+        clock_id = self.module_consts['DPLLS_CLOCK_ID']
-+        priority = self.module_consts[f'PIN_{pin_name}_PRIORITY']
-+        caps = self.module_consts[f'PIN_{pin_name}_CAPABILITIES']
-+
-+        reply = get_all_pins()
-+
-+        pin_name = pin.name.lower().replace('_', '-')
-+        pins = filter(lambda p:
-+                      p['clock-id'] == clock_id and p['pin-type'] == pin_name, reply)
-+        pins = list(pins)
-+
-+        assert len(pins) == 1
-+        assert pins[0]['pin-dpll-caps'] == caps
-+        for p in pins[0]['pin-parent-device']:
-+            assert p['pin-prio'] == priority
-+
-+    @pytest.mark.parametrize("pin, pin_name",
-+                             [(DPLL_PIN_TYPE.EXT, 'PPS'),
-+                              (DPLL_PIN_TYPE.GNSS, 'GNSS'),
-+                              (DPLL_PIN_TYPE.SYNCE_ETH_PORT, 'RCLK')])
-+    def test_get_a_single_pin_id(self, pin, pin_name):
-+        '''
-+        Checks if we are able to get single pins using 'get-pin-id' do command.
-+        '''
-+        clock_id = self.module_consts['DPLLS_CLOCK_ID']
-+        board_l = f'{pin_name}_brd'
-+        panel_l = f'{pin_name}_pnl'
-+        package = f'{pin_name}_pcg'
-+
-+        _id = get_pin_id(TEST_MODULE, clock_id, board_l, panel_l, package, pin.value)
-+        assert isinstance(_id, int)
-+
-+    @pytest.mark.parametrize("pin, pin_name, param, value",
-+                             [(DPLL_PIN_TYPE.EXT, 'PPS', 'pin-prio', 1),
-+                              (DPLL_PIN_TYPE.GNSS, 'GNSS', 'pin-prio', 2),
-+                              (DPLL_PIN_TYPE.SYNCE_ETH_PORT, 'RCLK', 'pin-prio', 3)])
-+    def test_set_a_single_pin_prio(self, pin, pin_name, param, value):
-+        '''
-+        Checks if we are able to set pins priority using 'set-pin' do command.
-+        '''
-+        clock_id = self.module_consts['DPLLS_CLOCK_ID']
-+        board_l = f'{pin_name}_brd'
-+        panel_l = f'{pin_name}_pnl'
-+        package = f'{pin_name}_pcg'
-+
-+        _id = get_pin_id(TEST_MODULE, clock_id, board_l, panel_l, package, pin.value)
-+
-+        pins_before = get_all_pins()
-+        pin_before = get_pin(_id)
-+
-+        # both DPLL's are handled the same in the test module
-+        first_dpll_id = pin_before['pin-parent-device'][0]['id']
-+        set_pin(_id, {"pin-parent-device": {"id": first_dpll_id, param: value}})
-+
-+        pins_after = get_all_pins()
-+
-+        # assume same order, if that might change - test need to be updated
-+        for i in range(len(pins_before)):
-+            if pins_after[i]['pin-id'] != _id:
-+                assert pins_after[i] == pins_before[i]
-+            else:
-+                assert pins_after[i]["pin-parent-device"][0][param] == value
-+
-+        # set the original value back to leave the same state after test
-+        original_value = pin_before["pin-parent-device"][0][param]
-+        set_pin(_id, {"pin-parent-device": {"id": first_dpll_id, param: original_value}})
-+
-+    @pytest.mark.parametrize("pin, pin_name, param, value",
-+                             [(DPLL_PIN_TYPE.SYNCE_ETH_PORT, 'RCLK', 'pin-frequency', int(1e6)),
-+                              (DPLL_PIN_TYPE.SYNCE_ETH_PORT, 'RCLK', 'pin-frequency', int(12e6))])
-+    def test_set_a_single_pin_freq(self, pin, pin_name, param, value):
-+        '''
-+        Checks if we are able to set pins frequency using 'set-pin' do command.
-+        '''
-+        clock_id = self.module_consts['DPLLS_CLOCK_ID']
-+        board_l = f'{pin_name}_brd'
-+        panel_l = f'{pin_name}_pnl'
-+        package = f'{pin_name}_pcg'
-+
-+        _id = get_pin_id(TEST_MODULE, clock_id, board_l, panel_l, package, pin.value)
-+
-+        pins_before = get_all_pins()
-+        pin_before = get_pin(_id)
-+
-+        set_pin(_id, {param: value})
-+
-+        pins_after = get_all_pins()
-+
-+        # assume same order, if that might change - test need to be updated
-+        for i in range(len(pins_before)):
-+            if pins_after[i]['pin-id'] != _id:
-+                assert pins_after[i] == pins_before[i]
-+            else:
-+                assert pins_after[i][param] == value
-+
-+        # set the original value back to leave the same state after test
-+        set_pin(_id, {param: pin_before[param]})
-+
-+    @pytest.mark.parametrize("pin, pin_name, param, value",
-+                             [(DPLL_PIN_TYPE.SYNCE_ETH_PORT, 'RCLK', 'pin-frequency', int(1e5)),
-+                              (DPLL_PIN_TYPE.SYNCE_ETH_PORT, 'RCLK', 'pin-frequency', int(130e6))])
-+    def test_set_a_single_pin_fail(self, pin, pin_name, param, value):
-+        '''
-+        Checks if we fail correctly trying to set incorrect pin frequency.
-+        '''
-+        clock_id = self.module_consts['DPLLS_CLOCK_ID']
-+        board_l = f'{pin_name}_brd'
-+        panel_l = f'{pin_name}_pnl'
-+        package = f'{pin_name}_pcg'
-+
-+        _id = get_pin_id(TEST_MODULE, clock_id, board_l, panel_l, package, pin.value)
-+
-+        with pytest.raises(NlError):
-+            set_pin(_id, {param: value})
-+
-+
-+class TestTwoDPLLsOtherFirst(TestDPLL):
-+    '''
-+    Add a second module to the environment, which registers other DPLLs to make
-+    sure the references are not mixed together. Other driver first.
-+    '''
-+    OTHER_MODULE = 'dpll_test_other'
-+
-+    @classmethod
-+    def setup_class(cls):
-+        # Load another module first
-+        load_driver(SCRIPT_PATH, cls.OTHER_MODULE)
-+        super().setup_class()
-+
-+    @classmethod
-+    def teardown_class(cls):
-+        unload_driver(SCRIPT_PATH, cls.OTHER_MODULE)
-+        super().teardown_class()
-+
-+
-+class TestTwoDPLLsTestedFirst(TestDPLL):
-+    '''
-+    Add a second module to the environment, which registers other DPLLs to make
-+    sure the references are not mixed together. Tested driver first.
-+    '''
-+    OTHER_MODULE = 'dpll_test_other'
-+
-+    @classmethod
-+    def setup_class(cls):
-+        # Load the tested module first
-+        super().setup_class()
-+        load_driver(SCRIPT_PATH, cls.OTHER_MODULE)
-+
-+    @classmethod
-+    def teardown_class(cls):
-+        super().teardown_class()
-+        unload_driver(SCRIPT_PATH, cls.OTHER_MODULE)
-+
-+
-+class TestDPLLsNTF:
-+    MULTICAST_GROUP = 'monitor'
-+
-+    @classmethod
-+    def setup_class(cls):
-+        '''
-+        This test suite prepares the environment by arming the event tracking,
-+        loading the driver, changing pin, unloading the driver and gathering
-+        logs for further processing.
-+        '''
-+        cls.module_consts = parse_header(Path(TEST_MODULE_DIR) / f'{TEST_MODULE}.h')
-+
-+        yfh = YnlFamilyHandler(ntf=cls.MULTICAST_GROUP)
-+
-+        load_driver(SCRIPT_PATH, TEST_MODULE)
-+
-+        pin = DPLL_PIN_TYPE.GNSS
-+        clock_id = cls.module_consts['DPLLS_CLOCK_ID']
-+        board_l = f'{pin.name}_brd'
-+        panel_l = f'{pin.name}_pnl'
-+        package = f'{pin.name}_pcg'
-+
-+        _id = get_pin_id(TEST_MODULE, clock_id, board_l, panel_l, package, pin.value)
-+
-+        g_pin = get_pin(_id)
-+
-+        # both DPLL's are handled the same in the test module
-+        first_dpll_id = g_pin['pin-parent-device'][0]['id']
-+        set_pin(_id, {"pin-parent-device": {"id": first_dpll_id, 'pin-prio': 2}})
-+
-+        unload_driver(SCRIPT_PATH, TEST_MODULE)
-+        yfh.ynl.check_ntf()
-+        cls.events = yfh.ynl.async_msg_queue
-+
-+    @classmethod
-+    def teardown_class(cls):
-+        # Cleanup, in case something in the setup_class failed
-+        lsmod = subprocess.run(['lsmod'], capture_output=True)
-+        if TEST_MODULE in str(lsmod.stdout):
-+            unload_driver(SCRIPT_PATH, TEST_MODULE)
-+
-+    @pytest.mark.parametrize(('event', 'count'), [('device-create-ntf', 2),
-+                                                  ('device-delete-ntf', 2),
-+                                                  ('pin-change-ntf', 1),
-+                                                  ('pin-create-ntf', 5),
-+                                                  ('pin-delete-ntf', 5)])
-+    def test_number_of_events(self, event, count):
-+        '''
-+        Checks if we are getting exact number of events that we expect to be
-+        gathered while monitoring the DPLL subsystem.
-+        '''
-+        f_events = filter(lambda i: i['name'] == event, self.events)
-+        assert len(list(f_events)) == count
-diff --git a/tools/testing/selftests/dpll/ynlfamilyhandler.py b/tools/testing/selftests/dpll/ynlfamilyhandler.py
-new file mode 100644
-index 0000000..f7d6dca
---- /dev/null
-+++ b/tools/testing/selftests/dpll/ynlfamilyhandler.py
-@@ -0,0 +1,49 @@
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Wraper for the YNL library used to interact with the netlink interface.
-+#
-+# Copyright (c) 2023, Intel Corporation.
-+# Author: Michal Michalik <michal.michalik@intel.com>
-+
-+import sys
-+from pathlib import Path
-+from dataclasses import dataclass
-+
-+from .consts import KSRC, YNLSPEC, YNLPATH
-+
-+
-+try:
-+    ynl_full_path = Path(KSRC) / YNLPATH
-+    sys.path.append(ynl_full_path.as_posix())
-+    from lib import YnlFamily
-+except ModuleNotFoundError:
-+    print("Failed importing `ynl` library from kernel sources, please set KSRC")
-+    sys.exit(1)
-+
-+
-+@dataclass
-+class YnlFamilyHandler:
-+    spec: str = Path(KSRC) / YNLSPEC
-+    schema: str = ''
-+    dump: str = ''
-+    ntf: str = ''
-+    do: str = ''
-+    attrs = {}
-+
-+    def __post_init__(self):
-+        self.ynl = YnlFamily(self.spec, self.schema)
-+
-+        if self.ntf:
-+            self.ynl.ntf_subscribe(self.ntf)
-+
-+    def execute(self):
-+        if self.do and self.dump:
-+            raise ValueError('Both "do" or "dump" set simultaneously - clear either of them')
-+        elif self.do:
-+            reply = self.ynl.do(self.do, self.attrs)
-+        elif self.dump:
-+            reply = self.ynl.dump(self.dump, self.attrs)
-+        else:
-+            raise ValueError('Wrong command - Set either "do" or "dump" before executing')
-+
-+        return reply
--- 
-2.9.5
-
+>> +operations:
+>> +  enum-name: dpll_cmd
+>> +  list:
+>> +    -
+>> +      name: device-id-get
+>> +      doc: |
+>> +        Get id of dpll device that matches given attributes
+>> +      value: 1
+>
+>is the default
+>--
+>pw-bot: cr
