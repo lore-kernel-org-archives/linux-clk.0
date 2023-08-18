@@ -2,136 +2,83 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26BA4EE4997
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Aug 2023 20:25:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBDC7EE4997
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Aug 2023 21:03:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379975AbjHRUZV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 18 Aug 2023 16:25:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49782 "EHLO
+        id S236138AbjHRVDQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 18 Aug 2023 17:03:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379998AbjHRUZA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Aug 2023 16:25:00 -0400
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEB1F3C3F;
-        Fri, 18 Aug 2023 13:24:57 -0700 (PDT)
-Received: by mail-lj1-x229.google.com with SMTP id 38308e7fff4ca-2b9fa64db41so22208051fa.1;
-        Fri, 18 Aug 2023 13:24:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1692390296; x=1692995096;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TREPx2/TJaMZxACQ9fP6bDpOjANSKk0gWfm+5DLKSS4=;
-        b=c2UDdOwmkbPEOnHmCaBkkBnk7Y9RmpMNtgyHSTqQEDnNDghYAtEs1VaV48K/FOPEsN
-         Gx+7RIu7S5/rYdIZL0uR9pq5qoL6LlbdYNTX1BIiGHf7K+grm7shyDarn0cpHuApeY0P
-         aj3b5jwNtmO6LzJv0cb9ix8Jgx1UAJn1j6XIaOoNdMugmsWH+2DgVj+x2etdh8SZnpv3
-         ovQeRvYO5Jyh7MAi31hWUAwZx6zGzfKm5tLOOum8zThniilTcZqZFtSN7VyQL+DePZel
-         aDovwbw74ykF0crw6X2eVXYuS5MZCqeNGs5JETCyAO72PK4R9hU8ZmDMphsKbQ6pzk8w
-         tmbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692390296; x=1692995096;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TREPx2/TJaMZxACQ9fP6bDpOjANSKk0gWfm+5DLKSS4=;
-        b=eYKluyqhHdptuNIyuV0lshDJF77tRvhbwwMZmFrdOcqUAkOeOLFD3VhBzWjMvEWiA+
-         2Dh4DqPbQPdkhzZseS3wGxjmFEa2LKZ6rByJi+7pPfxghw3riehOner2Ppi0XfXiTr+u
-         rDOLA+UE2rQ0EJMOnU76MkWWK/rzmHmQ2MFn2jBZLUGkKQYmfkTcFiB1M/pOn8tBPzqI
-         AZtfaApNpZlPofjpup3B9CIuug/V7h50xGF2HaG2mRz07ymDuiH1gUsjDiUyRWdEQnH8
-         duu6SM9A+6wlcNJQuprE1MDZq9ENB3vQvu+UpXIBlTQpvGi8V0TadCJn3uPzT6MYsk8n
-         AMyw==
-X-Gm-Message-State: AOJu0YzW6wlMB87NRT5a5FT5f+T5gX0tuv5kBpy/7Eof+vPRI0MgTJeG
-        YyNMiJuKlrzkJciJdEZwKDY=
-X-Google-Smtp-Source: AGHT+IEX9bTLO9f9YkAXDWWZa4KwDsZNy6X5IdDV2FmHrF5JwaYOCPlE4yDsy1WqAdB010UahTyhcA==
-X-Received: by 2002:a2e:8007:0:b0:2b9:d28c:9c1c with SMTP id j7-20020a2e8007000000b002b9d28c9c1cmr210818ljg.26.1692390295899;
-        Fri, 18 Aug 2023 13:24:55 -0700 (PDT)
-Received: from [192.168.26.149] (031011218106.poznan.vectranet.pl. [31.11.218.106])
-        by smtp.googlemail.com with ESMTPSA id m11-20020a2e97cb000000b002b9f642fbe6sm624894ljj.111.2023.08.18.13.24.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Aug 2023 13:24:55 -0700 (PDT)
-Message-ID: <2a6f6a2e-532b-4c25-ba5b-86bb0022e58b@gmail.com>
-Date:   Fri, 18 Aug 2023 22:24:54 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: ARM board lockups/hangs triggered by locks and mutexes
-Content-Language: en-US
-From:   =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-        Waiman Long <longman@redhat.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        linux-clk@vger.kernel.org,
+        with ESMTP id S239374AbjHRVDJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Aug 2023 17:03:09 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BEC34215
+        for <linux-clk@vger.kernel.org>; Fri, 18 Aug 2023 14:03:07 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 764CA64678
+        for <linux-clk@vger.kernel.org>; Fri, 18 Aug 2023 21:03:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71C68C433C8;
+        Fri, 18 Aug 2023 21:03:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692392585;
+        bh=HHxNOIqgqP6yYIqo8lV6m5wy51W8npjOcTEiKx/jJO0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=UQ1G45rnUtbvnxhcsWbx94oyx/wuL9JR9EKknlg1Rfs7gLKRAS21Q1lpWqWQvVRC2
+         iOmH4tn0t06UkvIGfIt+2qfahKr1Kz03lQErN6upF0ZVjlOvvnUINWvnIpjnCzbm3B
+         RaAlSN+ps5J0EQHtpdCz20fhEHxYKPQesS9UOYpobQyA84U55WUl3u/Lm0bdY22FlQ
+         oZYz1T7zmnqkYOAEPY2jRBxMOPmdMuLw74TamIhMLB+kdrQiUtI1bxD8a/znjgNI8E
+         qJYqUziTnO9PQbKD3EoJqkvBNygwT85YbrzZzFfLp6OuVrrp6SK/x00Qcw0CUzCqnU
+         LPis6trKOy8ew==
+Date:   Fri, 18 Aug 2023 14:03:04 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+Cc:     Jiri Pirko <jiri@resnulli.us>,
+        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "Michalik, Michal" <michal.michalik@intel.com>,
         "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Network Development <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        OpenWrt Development List <openwrt-devel@lists.openwrt.org>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>
-References: <CACna6rxpzDWE5-gnmpgMgfzPmmHvEGTZk4GJvJ8jLSMazh2bVA@mail.gmail.com>
- <bd5feeb3-bc44-d4d2-7708-eea9243b49a4@gmail.com>
- <0f9d0cd6-d344-7915-7bc1-7a090b8305d2@gmail.com>
- <CAMuHMdXPB+nSHUTPufiaRP0cxvk2_raEHavwTouaiWibdQtCTg@mail.gmail.com>
- <14effeaf-f22c-461b-b1d3-4396f50ad4e6@gmail.com>
-In-Reply-To: <14effeaf-f22c-461b-b1d3-4396f50ad4e6@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
+        mschmidt <mschmidt@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>
+Subject: Re: [PATCH net-next v4 0/9] Create common DPLL configuration API
+Message-ID: <20230818140304.11f316c9@kernel.org>
+In-Reply-To: <DM6PR11MB4657374BF0A9361647444D239B1BA@DM6PR11MB4657.namprd11.prod.outlook.com>
+References: <20230811200340.577359-1-vadim.fedorenko@linux.dev>
+        <20230814194528.00baec23@kernel.org>
+        <43395307-9d11-7905-0eec-0a4c1b1fc62a@linux.dev>
+        <ZNtm6v+UuDIex1+s@nanopsycho>
+        <20230815100203.4e45fc7e@kernel.org>
+        <DM6PR11MB4657374BF0A9361647444D239B1BA@DM6PR11MB4657.namprd11.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 18.08.2023 22:23, Rafał Miłecki wrote:
-> On 14.08.2023 11:04, Geert Uytterhoeven wrote:
->> Hi Rafal,
->>
->> On Mon, Aug 7, 2023 at 1:11 PM Rafał Miłecki <zajec5@gmail.com> wrote:
->>> On 4.08.2023 13:07, Rafał Miłecki wrote:
->>>> I triple checked that. Dropping a single unused function breaks kernel /
->>>> device stability on BCM53573!
->>>>
->>>> AFAIK the only thing below diff actually affects is location of symbols
->>>> (I actually verified that by comparing System.map before and after -
->>>> over 22'000 of relocated symbols).
->>>>
->>>> Can some unfortunate location of symbols cause those hangs/lockups?
->>>
->>> I performed another experiment. First I dropped mtd_check_of_node() to
->>> bring kernel back to the stable state.
->>>
->>> Then I started adding useless code to the mtdchar_unlocked_ioctl(). I
->>> ended up adding just enough to make sure all post-mtd symbols in
->>> System.map got the same offset as in case of backporting
->>> mtd_check_of_node().
->>>
->>> I started experiencing lockups/hangs again.
->>>
->>> I repeated the same test with adding dumb code to the brcm_nvram_probe()
->>> and verifying symbols offsets following brcm_nvram_probe one.
->>>
->>> I believe this confirms that this problem is about offset or alignment
->>> of some specific symbol(s). The remaining question is what symbols and
->>> how to fix or workaround that.
->>
->> I had similar experiences on other ARM platforms many years ago:
->> bisection lead to something completely bogus, and it turned out
->> adding a single line of innocent code made the system lock-up or crash
->> unexpectedly.  It was definitely related to alignment, as adding the
->> right extra amount of innocent code would fix the problem. Until some
->> later change changing alignment again...
->> I never found the real cause, but the problems went away over time.
->> I am not sure I did enable all required errata config options, so I
->> may have missed some...
+On Fri, 18 Aug 2023 10:15:34 +0000 Kubalewski, Arkadiusz wrote:
+> HW agnostic tests were submitted by Michal as RFC for test framework
+> with fake modules implemented here:
+> https://lore.kernel.org/netdev/20230817152209.23868-1-michal.michalik@intel.com/#t
+> We had an agreement on latest dpll-meeting that we will follow up with
+> patches that would test dpll over fake modules, and we have started it.
+> As there was no requests to add HW-aware tests yet, we are not ready for
+> such submission yet. We could probably extended Michal's framework to
+> make it possible test real HW, but Michal's patches were just submitted,
+> we do expect some review/changes there, thus we could think of adding
+> something simpler for now..
 > 
-> I already experiented some weird performance variations on Broadcom's
-> Northstar platform that was related to symbols layout & cache hit/miss
-> ratio. For that reason I use -falign-functions=32 for that whole
-> OpenWrt's "bcm53xx" target (it covers Northstar and BCM53573). So
-> this aspect should be ruled out already in my case.
+> Is simple bash script wrapping around cli.py and talking to ice dpll
+> while verifying the outputs, an acceptable solution?
 
-Relevant OpenWrt commit with some description and links: b54ef39e0b91 ("bcm53xx: use -falign-functions=32 for kernel compilation"):
+Okay, it is what it is, let's leave tests as follow up.
 
-https://git.openwrt.org/?p=openwrt/openwrt.git;a=commitdiff;h=b54ef39e0b910a4b8eaca0497fe9b63e8392262a
+I'll reply to Michal on the RFC thread/
