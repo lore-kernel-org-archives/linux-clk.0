@@ -2,206 +2,406 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5B30C05052
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Aug 2023 10:16:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91F3AC71155
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Aug 2023 14:08:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349900AbjHRKP7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 18 Aug 2023 06:15:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57312 "EHLO
+        id S1377676AbjHROII (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 18 Aug 2023 10:08:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376318AbjHRKPx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Aug 2023 06:15:53 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0A1730FE;
-        Fri, 18 Aug 2023 03:15:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1692353749; x=1723889749;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=9qYxS/Hshg1byasx3Nq6t293IFvkuQZruwweU8iKwH4=;
-  b=EqfPbAXLikkarPNeGfQMoL7FFP4P2ucz8ivbjT0l7usHJukmqtqzy711
-   EptghB3MpfgFffbDUj4eFBgNr3S2NUPGV9yAfCWPgkszxQTu2QFWgoScR
-   ifOhESsikLkxe8BODGFsWmMemVkVslsTr+ZJM4AQ6Y87o30CiscvI0TWF
-   uFSko9jXuiTtbqNj8Bd7YuTucxn8wXSHuzV5XVtAS8z26YqgzEklrraTo
-   H8676lB3oKcm2AHcJOFXU4Z5hp23vwlNXYmv2iKyydOKF1eWkTwvMFVPG
-   myT11o0ah2XsxbtLQWZN8WpxUP0mOLwxI56UX2N3sk45Ui20DrLhAMetB
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10805"; a="363227175"
-X-IronPort-AV: E=Sophos;i="6.01,182,1684825200"; 
-   d="scan'208";a="363227175"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2023 03:15:49 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10805"; a="711944517"
-X-IronPort-AV: E=Sophos;i="6.01,182,1684825200"; 
-   d="scan'208";a="711944517"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by orsmga006.jf.intel.com with ESMTP; 18 Aug 2023 03:15:48 -0700
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.27; Fri, 18 Aug 2023 03:15:48 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.27 via Frontend Transport; Fri, 18 Aug 2023 03:15:48 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.47) by
- edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.27; Fri, 18 Aug 2023 03:15:36 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=f8VXqU6ZBZ5kYXkNJHUfH4HImqApT5BAPSqxAspPQaRfUqYiMrjuBATXxuZ9kHtAG2sMtrTzWg/le8cdfHY6bBKg+i0O35PsgstBVB2VnOxsICD8vllvlwYTwQ0k5KU7hctsWzUwc3KhVbHGtE5wjMfZsajFTCNBltaH/Gsf30xGVfu5upqL+MK8zJNurgNGLmBS3pPu6tIXuZegMxqzvS/ZzK49z7GGGIAQwlnsQr33VJQe4I9z5U0Ma6ymwcoe3onAdY9HOqUEGXvdERqU8H8mLSWGxEcBG42DE2oMRu5/8dmuJ45qBXd947v7jL0NX8XzsxPuVtER16adYag1SQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9qYxS/Hshg1byasx3Nq6t293IFvkuQZruwweU8iKwH4=;
- b=EOpNujO7BNTW1g1UcX+7K8LoIYLST+9a5O0pvCU8CHhYQfHjmthlEbIZhtYKsuGSMpgIv7rpm7S7OUJd8tW22Jhvs4CPvG0FC/bpavYxiHXi2qkNQo4/x84Epo8D25QKb4rf4oKqRgEr49y17wk59NWIRee80aAZ+Y5BO+WJkSU9ys7xY75jQqMAitaXf5jGlQcB7sbbGE8FYCA8NrnnANW0+FQA1MaUYmeoWbF/e0fali6iBFBv0U6Fd3AbsENbKP/xPR7e/IkeNrvJVrYk4G9CDFUqVn/FQDlKkdym8aU+oc2xLmceFvuMrP8wcgehe+qgc79Qg/lkbXUpFZlF9A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from DM6PR11MB4657.namprd11.prod.outlook.com (2603:10b6:5:2a6::7) by
- PH7PR11MB7100.namprd11.prod.outlook.com (2603:10b6:510:20f::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6678.32; Fri, 18 Aug 2023 10:15:34 +0000
-Received: from DM6PR11MB4657.namprd11.prod.outlook.com
- ([fe80::c3cd:b8d0:5231:33a8]) by DM6PR11MB4657.namprd11.prod.outlook.com
- ([fe80::c3cd:b8d0:5231:33a8%5]) with mapi id 15.20.6699.020; Fri, 18 Aug 2023
- 10:15:34 +0000
-From:   "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-To:     Jakub Kicinski <kuba@kernel.org>, Jiri Pirko <jiri@resnulli.us>
-CC:     Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "Olech, Milena" <milena.olech@intel.com>,
-        "Michalik, Michal" <michal.michalik@intel.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
-        mschmidt <mschmidt@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Bart Van Assche <bvanassche@acm.org>,
-        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>
-Subject: RE: [PATCH net-next v4 0/9] Create common DPLL configuration API
-Thread-Topic: [PATCH net-next v4 0/9] Create common DPLL configuration API
-Thread-Index: AQHZzI8M3L/+HbfEUkKmdDAnVNAwxa/qq/sAgACUSICAAAR3AIAAVpSAgAQzeAA=
-Date:   Fri, 18 Aug 2023 10:15:34 +0000
-Message-ID: <DM6PR11MB4657374BF0A9361647444D239B1BA@DM6PR11MB4657.namprd11.prod.outlook.com>
-References: <20230811200340.577359-1-vadim.fedorenko@linux.dev>
-        <20230814194528.00baec23@kernel.org>
-        <43395307-9d11-7905-0eec-0a4c1b1fc62a@linux.dev>
-        <ZNtm6v+UuDIex1+s@nanopsycho> <20230815100203.4e45fc7e@kernel.org>
-In-Reply-To: <20230815100203.4e45fc7e@kernel.org>
-Accept-Language: pl-PL, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM6PR11MB4657:EE_|PH7PR11MB7100:EE_
-x-ms-office365-filtering-correlation-id: 9013cf2f-b069-40f7-829d-08db9fd40f65
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: pDShzggiwn7NTJKLn13BJP7SOsgTsd6fA2JjtIHvUQYbFYKsM1wxWJaHqkNRYFfZg0qeti6G3DU7bXufwUO8IsfeAKVtvWWUYgVL29/sb9tEYSMyJa33ZLraud2xkPlgAnGubKc5hUzS2rUgWBp0Ky6FyJDcYrTkmgjUSusUH3vFhOmUuxKZZhaAAo+st7bVIhlg+0v/s9WPuTThl8t6W6LvTqRHwxPHM1XCEUixjHNi4RNqpI/qTPca9RKfopQXvIQRLhdJzQNn8RS73281d9QflryLrKojBUVxMNQEsE7SRFARRIrMoxVo21+ZIlExuV5vsN2G0es9jEAoH48T3ogftxF4m7Gcf9WjZM719y3xjrrwDzIM1NIU6sFMU4fjo+En/VTPO3kokNNZ4cXlUCERr8kS7+uVUfSPZNCcnW4diDizLLi17kqRVPj7x2DrWSZQEGKpR0MNFY4LCURzhhISOCy9Fy66nXjhnjD8b62jhwZJlrehZ1ez9h71WMX3OsB3jpgzs3t9+7HlzLqqMhm8cLYwMsJh6W1QgZtTx22r2N4LAz0WPu47N8YsKUX+YgTb3y2S6bvp04cYw1TusCwlnVT4ya2RcDVNXufGz8c=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR11MB4657.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366004)(376002)(346002)(136003)(396003)(39860400002)(186009)(451199024)(1800799009)(33656002)(86362001)(83380400001)(55016003)(4326008)(52536014)(8676002)(5660300002)(8936002)(2906002)(41300700001)(26005)(6506007)(71200400001)(7696005)(9686003)(76116006)(966005)(478600001)(7416002)(316002)(122000001)(54906003)(66946007)(82960400001)(110136005)(66446008)(66476007)(66556008)(38100700002)(38070700005)(64756008);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?E255i9lb1k1bWahwYR+YoG9zbLcvhOVZsbkvT3yIIe/dFoiEubVIBUB3teu1?=
- =?us-ascii?Q?hlAKxsQ2P2YHj3MfhnAQTaOim2OAgCqPWV4UiShWqgLQq6qJSkPwCOh1uN8Y?=
- =?us-ascii?Q?muGVYDJs2900Un0wmf8P2VjeB8gVyoo0euQJqXlS5HmPhBxxKzCEAPaWKk3l?=
- =?us-ascii?Q?aFXhvrqypzEsK7NhQ9Aui62kSEAhYWfL8zG3Ev7teLH/uDWvhHAlkcSsxU/e?=
- =?us-ascii?Q?Xb+SqOh6AsEQoWVfsGXaFuOr36L7uxPH/s+w8BPYcwo5hJUiJj3SZw5eBJ/9?=
- =?us-ascii?Q?93nTAqnLqhW+05OgXAVr9Ryz4/cm+p+5McSvMUl8nxm8fwwkrvWkttene5xR?=
- =?us-ascii?Q?BUNocBSJYMrRJpjxSVoUKjVdj9wGOOxvtn4OyphzML1lJjcCvK72qR3Jqjwe?=
- =?us-ascii?Q?+EbK6ripbU2XAUMnwfWpbfNiY917M4CdY0fHpQkg6NrsxjwcpEm2O7Mtw9yr?=
- =?us-ascii?Q?QiY2yZo0MKnwvlI7M3HUl1egJTVdC1zkUZZfdes99nNF+SDbR7xsfTsITScw?=
- =?us-ascii?Q?63uctv/0eH5ZxYwduS+SYmVWyoaomsPUD7bsg6N5oa7WztF2imKW39xoG1mz?=
- =?us-ascii?Q?n0mnqDTnftU8lJ4RpSOgQZgUaCBV/c4rUH3hl3W1PwgdpgP8ufDBpI3UXUjP?=
- =?us-ascii?Q?/iX/qX+JdOHBG780vetloWDf06Vfit0QB7XxnICFsIykxRkLoqyU+G8YGcgo?=
- =?us-ascii?Q?Q5tnqmzI+0yfMa9IaHFl2DWbFTVIKWSRDzZwFuqxHMd5oc5RjAoILv8/tfuZ?=
- =?us-ascii?Q?4SGhP+jdjehzofFCTt8G2JU+EG61tmj+7kIKWRv+nPb6EqKAL4n6+PZ0QrBv?=
- =?us-ascii?Q?bMjYlAve/AjdARb7GqQNobZEJZFmQ6F56XjQ0cW5IAGgafQq5ZEHuyZuMgoO?=
- =?us-ascii?Q?jDdZTgkTChDum/YZ2UlZpXJ9S99KCM/yVasK9+uYYk+XVQuG9vnctOcu24jT?=
- =?us-ascii?Q?B9mK3LnWiaPqgIGGgDVuZISNWD/imp3EOuD3FTxo5n17B9hPtPUKKqcjQ+7+?=
- =?us-ascii?Q?VJms2dDRsvXC+GWZHkyLEq8ge+T1FzRJWzUiXmNj20WACA2K4CZkvKF8mXjT?=
- =?us-ascii?Q?Rpt4UOs3d84a9n3Q+ynLs1unUcbYbOr+IMDRBkPJ0niEV28C1T8nG7c4vi7p?=
- =?us-ascii?Q?xzues0kcSMps2KjXx3SQL/rDmI6WmhX4ji/axAMN2dDD/NLRtx3zh38lqDgM?=
- =?us-ascii?Q?1a9ytAzC8wiTs2PzKB4iUTDDelYH3IxsiOnCTdjvqhLCsQyCKJGXx7+UASRf?=
- =?us-ascii?Q?aN0IfFAddRloRxPmMH4tbdDT3QI5MXRKEbUPlA0UHniaodpFrnSDdaw+Lx1c?=
- =?us-ascii?Q?doFxCmBp3WxefWNORkTPWuJMpfA30VXdJ9Ltjh6On6/y51h0a0ulmxAxIvra?=
- =?us-ascii?Q?vlftqykT77XsOh+ZUlzfkHZ4ckSd4gu/3Qxw69PcCo53tossjEcp03jbQV/c?=
- =?us-ascii?Q?TXA/A9Z6QWHYt+NRJeScjSN9esnzKyJf1vANUWcwTus83crWhDmoshtCJV0K?=
- =?us-ascii?Q?iIcLtzNAYlSMRb5zFNRjCCDwsueQ08aGi1Dyd6mlWj/RNjk6A1mdZJUEy/km?=
- =?us-ascii?Q?ViZxrNVfZ6cLYwyK1WuyNtOFNu/FrWktBRD0B2FWO/ZzRTpfO/FxYaqdfHgj?=
- =?us-ascii?Q?Yg=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        with ESMTP id S1377696AbjHROHd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Aug 2023 10:07:33 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E0CE4487;
+        Fri, 18 Aug 2023 07:07:20 -0700 (PDT)
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37IDOtsg016744;
+        Fri, 18 Aug 2023 14:07:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=djR5RlFv7R1h1hwEf8N9N+qufd/Avkm+BvhWAbtRuYE=;
+ b=l1tGI0Qs6Usb/G3InH4GnULSBkUHJPKlkEzjq/agiR7PwmXuFW+vRkkV6ZIQywoZF28/
+ /APw9vUwsbTVIRbWoUm91gCUXpwvfQAIiwrk09UBBmti0tW+uzFquvNpnnW17k7G4wTU
+ +lVhJZxmKgzHbaBd3YIcL622010GhzUcCQOt8OaMHYKsLSdFLGhP9EGNAv7pHtvnBN+A
+ YhOpSEjtIPqHqkYMRcbspEsx15dwAwVMnbmfdNiT7soEI+QKnyKYgvv7z+v8qheeMs8N
+ AqeISBhcWf5etbuqofaeiVeJW8LgrqD3jAtJTivqhklN4xzSmc4OuGWrxXlE/ldUOKBR ew== 
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3sj6320f2y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 18 Aug 2023 14:07:02 +0000
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 37IE72HH011476
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 18 Aug 2023 14:07:02 GMT
+Received: from [10.253.34.149] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Fri, 18 Aug
+ 2023 07:06:57 -0700
+Message-ID: <bcabc26b-d4b8-69b8-3453-2ae67aeb2568@quicinc.com>
+Date:   Fri, 18 Aug 2023 22:06:54 +0800
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR11MB4657.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9013cf2f-b069-40f7-829d-08db9fd40f65
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Aug 2023 10:15:34.3076
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: s4WAgpD97At5Ny8IgXw+uPLZ+D9XF3bMJRmA74F1v01idS1AGN9JW42hLvEztDr2SLMt4lU2c18L2S/pC/9Qx5+f59Ztg+tiezTPpgLNhsY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB7100
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Subject: Re: [PATCH v4 4/4] clk: qcom: add clock controller driver for
+ qca8386/qca8084
+Content-Language: en-US
+To:     Bjorn Andersson <andersson@kernel.org>
+CC:     <agross@kernel.org>, <konrad.dybcio@linaro.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <conor+dt@kernel.org>, <catalin.marinas@arm.com>,
+        <will@kernel.org>, <p.zabel@pengutronix.de>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_srichara@quicinc.com>
+References: <20230815085205.9868-1-quic_luoj@quicinc.com>
+ <20230815085205.9868-5-quic_luoj@quicinc.com>
+ <nk7o2fb6to26zt5fnbvfqhx2xg4rzmoeko2wfj5azh2ns4hisr@s76c3m33s774>
+From:   Jie Luo <quic_luoj@quicinc.com>
+In-Reply-To: <nk7o2fb6to26zt5fnbvfqhx2xg4rzmoeko2wfj5azh2ns4hisr@s76c3m33s774>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: idjsRt-y4ZB3aT2KBwimMjnQOLNFZ1NB
+X-Proofpoint-ORIG-GUID: idjsRt-y4ZB3aT2KBwimMjnQOLNFZ1NB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-08-18_17,2023-08-18_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ phishscore=0 adultscore=0 spamscore=0 impostorscore=0 suspectscore=0
+ bulkscore=0 malwarescore=0 clxscore=1015 mlxscore=0 priorityscore=1501
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2306200000 definitions=main-2308180129
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
->From: Jakub Kicinski <kuba@kernel.org>
->Sent: Tuesday, August 15, 2023 7:02 PM
->
->On Tue, 15 Aug 2023 13:52:10 +0200 Jiri Pirko wrote:
->> >> Feels like we're lacking tests here. Is there a common subset of
->> >> stuff we can expect reasonable devices to support?
->> >> Anything you used in development that can be turned into tests?
->> >
->> >Well, we were playing with the tool ynl/cli.py and it's stated in
->> >the cover letter. But needs proper hardware to run. I'm not sure
->> >we can easily create emulation device to run tests.
+
+
+On 8/18/2023 11:55 AM, Bjorn Andersson wrote:
+> On Tue, Aug 15, 2023 at 04:52:05PM +0800, Luo Jie wrote:
+>> Add clock & reset controller driver for qca8386/qca8084.
+> 
+> Not everyone is familiar with the QCA components, or the mdiobus dance.
+> Please do take the opportunity to educate us here.
+
+Thanks Bjorn for the comments, i will add the detail message here in the 
+next patch set.
+
+This clock controller driver is for the device where register is 
+accessed by MDIO bus, the framework of clock is same as the existed 
+clock controller of QCA driver such gcc-ipq9574.
+
+The MDIO bus is for accessing the PHY device by ieee802.3-c45 or 
+ieee802.3-c22, the clock register of qca8386/qca8084 is also accessed by 
+the MDIO bus, which has the special sequence to access the register with 
+multiple MDIO read/write operations.
+
+> 
 >>
->> Well, something like "dpllsim", similar to netdevsim would be certainly
->> possible, then you can use it to write selftests for the uapi testing.
->> But why don't we do that as a follow-up patchset?
->
->I was thinking about a test that can be run against real HW.
->Something that a new vendor implementing DPLL can run and
->validate that their implementation behaves as expected.
->And something that distributors and stable kernels could
->potentially use to validate the code still works.
->
->We don't have any well established user space to make use of this
->new functionality, there's high risk that drivers will invent their
->own ways of interpreting the API.
->
->Perhaps something that Red Hat could help with? I'm guessing you'd
->be writing test to validate this for RHEL, anyway?
+>> Change-Id: Ic4b768626b47f28073332885ae62972640821709
+> 
+> No Change-Id upstream, please.
+okay, will remove this.
 
-RH is doing some manual tests on their own, but also works with Intel's
-Validation. Usually our Validation team works with end-user point of view,
-but here we had to engage them to work with cli.py and confirm that
-control over dpll works as expected.
+> 
+>> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+>> ---
+>>   drivers/clk/qcom/Kconfig       |    8 +
+>>   drivers/clk/qcom/Makefile      |    1 +
+>>   drivers/clk/qcom/nsscc-qca8k.c | 2118 ++++++++++++++++++++++++++++++++
+>>   3 files changed, 2127 insertions(+)
+>>   create mode 100644 drivers/clk/qcom/nsscc-qca8k.c
+>>
+>> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+>> index 263e55d75e3f..d84705ff920d 100644
+>> --- a/drivers/clk/qcom/Kconfig
+>> +++ b/drivers/clk/qcom/Kconfig
+>> @@ -195,6 +195,14 @@ config IPQ_GCC_9574
+>>   	  i2c, USB, SD/eMMC, etc. Select this for the root clock
+>>   	  of ipq9574.
+>>   
+>> +config IPQ_NSSCC_QCA8K
+>> +	tristate "QCA8K(QCA8386 or QCA8084) NSS Clock Controller"
+>> +	help
+>> +	  Support for NSS(Network SubSystem) clock controller on
+>> +	  qca8386/qca8084 chip.
+>> +	  Say Y if you want to use network features of switch or PHY
+>> +	  device. Select this for the root clock of qca8k.
+> 
+> Please make sure that this works as 'm' as well, and if it already does,
+> please loosen the language.
+> 
+thanks for the comments, i will update this in the next patch set.
 
-HW agnostic tests were submitted by Michal as RFC for test framework
-with fake modules implemented here:
-https://lore.kernel.org/netdev/20230817152209.23868-1-michal.michalik@intel=
-.com/#t
-We had an agreement on latest dpll-meeting that we will follow up with
-patches that would test dpll over fake modules, and we have started it.
-As there was no requests to add HW-aware tests yet, we are not ready for
-such submission yet. We could probably extended Michal's framework to
-make it possible test real HW, but Michal's patches were just submitted,
-we do expect some review/changes there, thus we could think of adding
-something simpler for now..
+>> +
+>>   config MSM_GCC_8660
+>>   	tristate "MSM8660 Global Clock Controller"
+>>   	depends on ARM || COMPILE_TEST
+>> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+>> index e6e294274c35..17238177c39d 100644
+>> --- a/drivers/clk/qcom/Makefile
+>> +++ b/drivers/clk/qcom/Makefile
+>> @@ -29,6 +29,7 @@ obj-$(CONFIG_IPQ_GCC_6018) += gcc-ipq6018.o
+>>   obj-$(CONFIG_IPQ_GCC_806X) += gcc-ipq806x.o
+>>   obj-$(CONFIG_IPQ_GCC_8074) += gcc-ipq8074.o
+>>   obj-$(CONFIG_IPQ_GCC_9574) += gcc-ipq9574.o
+>> +obj-$(CONFIG_IPQ_NSSCC_QCA8K) += nsscc-qca8k.o
+> 
+> 'N' > 'L'
 
-Is simple bash script wrapping around cli.py and talking to ice dpll
-while verifying the outputs, an acceptable solution?
+will update this, thanks.
+> 
+>>   obj-$(CONFIG_IPQ_LCC_806X) += lcc-ipq806x.o
+>>   obj-$(CONFIG_MDM_GCC_9607) += gcc-mdm9607.o
+>>   obj-$(CONFIG_MDM_GCC_9615) += gcc-mdm9615.o
+>> diff --git a/drivers/clk/qcom/nsscc-qca8k.c b/drivers/clk/qcom/nsscc-qca8k.c
+> [..]
+>> +static inline void split_addr(u32 regaddr, u16 *r1, u16 *r2, u16 *page)
+>> +{
+>> +	*r1 = regaddr & 0x1c;
+>> +
+>> +	regaddr >>= 5;
+>> +	*r2 = regaddr & 0x7;
+>> +
+>> +	regaddr >>= 3;
+>> +	*page = regaddr & 0xffff;
+> 
+> Perhaps it's just me not knowing the details of the mdiobus, but it
+> would be really nice to have a comment with a detailed description of
+> the addressing scheme here.
+> 
+Thanks for the review comments, i will explain the detail information 
+for the sequence of accessing the switch register here in the next patch 
+set.
 
-Thank you!
-Arkadiusz
+>> +}
+>> +
+>> +int qca8k_mii_read(struct mii_bus *bus, u16 switch_phy_id, u32 reg, u32 *val)
+>> +{
+>> +	int ret;
+>> +
+>> +	ret = bus->read(bus, switch_phy_id, reg);
+>> +	if (ret >= 0) {
+>> +		*val = ret;
+>> +		ret = bus->read(bus, switch_phy_id, (reg | BIT(1)));
+>> +		*val |= ret << 16;
+>> +	}
+>> +
+>> +	if (ret < 0) {
+>> +		dev_err_ratelimited(&bus->dev, "fail to read qca8k mii register\n");
+>> +
+>> +		*val = 0;
+> 
+> It's good practice not to touch the return-by-reference parameter unless
+> you're returning success.
+> 
+okay, will remove this in the next patch set.
+
+>> +		return ret;
+>> +	}
+>> +
+>> +	return 0;
+> 
+> Afaict ret is 0 here, so a single return ret; should be fine?
+
+Yes, i will update to use the singel return ret here, thanks for the 
+comments.
+
+> 
+>> +}
+>> +
+>> +void qca8k_mii_write(struct mii_bus *bus, u16 switch_phy_id, u32 reg, u32 val)
+>> +{
+>> +	int ret;
+>> +	u16 lo, hi;
+>> +
+>> +	lo = val & 0xffff;
+> 
+> lower_16_bits(val);
+> 
+will update to use this in the next patch set.
+
+>> +	hi = (u16)(val >> 16);
+> 
+> upper_16_bits(val);
+
+will update to use this in the next patch set.
+> 
+>> +
+>> +	ret = bus->write(bus, switch_phy_id, reg, lo);
+>> +	if (ret >= 0)
+>> +		ret = bus->write(bus, switch_phy_id, (reg | BIT(1)), hi);
+>> +
+>> +	if (ret < 0)
+>> +		dev_err_ratelimited(&bus->dev, "fail to write qca8k mii register\n");
+>> +}
+>> +
+>> +int qca8k_mii_page_set(struct mii_bus *bus, u16 switch_phy_id, u32 reg, u16 page)
+>> +{
+>> +	int ret;
+>> +
+>> +	ret = bus->write(bus, switch_phy_id, reg, page);
+>> +	if (ret < 0)
+>> +		dev_err_ratelimited(&bus->dev, "fail to set page\n");
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +int qca8k_regmap_read(void *context, unsigned int reg, unsigned int *val)
+>> +{
+>> +	struct mii_bus *bus = context;
+>> +	u16 r1, r2, page;
+>> +	int ret;
+>> +
+>> +	reg += QCA8K_CLK_REG_BASE;
+>> +	split_addr(reg, &r1, &r2, &page);
+>> +
+>> +	mutex_lock_nested(&bus->mdio_lock, MDIO_MUTEX_NESTED);
+>> +	ret = qca8k_mii_page_set(bus, QCA8K_HIGH_ADDR_PREFIX, QCA8K_CFG_PAGE_REG, page);
+>> +	if (ret < 0)
+>> +		goto qca8k_read_exit;
+>> +
+>> +	ret = qca8k_mii_read(bus, QCA8K_LOW_ADDR_PREFIX | r2, r1, val);
+>> +
+>> +qca8k_read_exit:
+>> +	mutex_unlock(&bus->mdio_lock);
+>> +	return ret;
+>> +};
+>> +
+>> +int qca8k_regmap_write(void *context, unsigned int reg, unsigned int val)
+>> +{
+>> +	struct mii_bus *bus = context;
+>> +	u16 r1, r2, page;
+>> +	int ret;
+>> +
+>> +	reg += QCA8K_CLK_REG_BASE;
+>> +	split_addr(reg, &r1, &r2, &page);
+>> +
+>> +	mutex_lock_nested(&bus->mdio_lock, MDIO_MUTEX_NESTED);
+>> +	ret = qca8k_mii_page_set(bus, QCA8K_HIGH_ADDR_PREFIX, QCA8K_CFG_PAGE_REG, page);
+>> +	if (ret < 0)
+>> +		goto qca8k_write_exit;
+>> +
+>> +	qca8k_mii_write(bus, QCA8K_LOW_ADDR_PREFIX | r2, r1, val);
+>> +
+>> +qca8k_write_exit:
+>> +	mutex_unlock(&bus->mdio_lock);
+>> +	return ret;
+>> +};
+>> +
+>> +int qca8k_regmap_update_bits(void *context, unsigned int reg, unsigned int mask, unsigned int value)
+>> +{
+>> +	struct mii_bus *bus = context;
+>> +	u16 r1, r2, page;
+>> +	int ret;
+>> +	u32 val;
+>> +
+>> +	reg += QCA8K_CLK_REG_BASE;
+>> +	split_addr(reg, &r1, &r2, &page);
+>> +
+>> +	mutex_lock_nested(&bus->mdio_lock, MDIO_MUTEX_NESTED);
+> 
+> Why is this lock nested?
+> 
+Thanks for the comments, i will update to use the normal lock 
+mutex_lock() here.
+
+>> +	ret = qca8k_mii_page_set(bus, QCA8K_HIGH_ADDR_PREFIX, QCA8K_CFG_PAGE_REG, page);
+>> +	if (ret < 0)
+>> +		goto qca8k_update_exit;
+>> +
+>> +	ret = qca8k_mii_read(bus, QCA8K_LOW_ADDR_PREFIX | r2, r1, &val);
+>> +	if (ret < 0)
+>> +		goto qca8k_update_exit;
+>> +
+>> +	val &= ~mask;
+>> +	val |= value;
+>> +	qca8k_mii_write(bus, QCA8K_LOW_ADDR_PREFIX | r2, r1, val);
+>> +
+>> +qca8k_update_exit:
+>> +	mutex_unlock(&bus->mdio_lock);
+>> +	return ret;
+>> +}
+>> +
+>> +static const struct regmap_config nss_cc_qca8k_regmap_config = {
+>> +	.reg_bits = 12,
+>> +	.reg_stride = 4,
+>> +	.val_bits = 32,
+>> +	.max_register = 0x30C,
+>> +	.reg_read = qca8k_regmap_read,
+>> +	.reg_write = qca8k_regmap_write,
+>> +	.reg_update_bits = qca8k_regmap_update_bits,
+>> +	.disable_locking = true,
+> 
+> Why do you disable_locking and then provide your own locking? Why not
+> specify fast_io = false, use mdiobus_read() and mdiobus_write() and let
+> the regmap framework implement update_bits for you?
+> 
+> Regards,
+> Bjorn
+
+Hi Bjorn,
+when we read/write the clock hardware register by MDIO bus, there are 
+multiple MDIO operations where configuring page is needed before 
+reading/writing the converted register, as the sequence mentioned in 
+qca8k_regmap_read, and this sequence should be completed during the 
+mutex_lock, that is why we can't use regmap mutex lock, which only 
+protects single register access, but the clock register access needs 
+multiple register access.
+
+In addition, we also need to use the MDIO bus lock mii_bus->mdio_lock,
+since this MDIO bus is also used by the PHY register accessed.
+
+thanks,
+Jie.
+
+> 
+>> +	.cache_type = REGCACHE_NONE,
+>> +};
+>> +
+>> +static const struct qcom_cc_desc nss_cc_qca8k_desc = {
+>> +	.config = &nss_cc_qca8k_regmap_config,
+>> +	.clks = nss_cc_qca8k_clocks,
+>> +	.num_clks = ARRAY_SIZE(nss_cc_qca8k_clocks),
+>> +	.resets = nss_cc_qca8k_resets,
+>> +	.num_resets = ARRAY_SIZE(nss_cc_qca8k_resets),
+>> +};
+>> +
+>> +static int nss_cc_qca8k_probe(struct mdio_device *mdiodev)
+>> +{
+>> +	struct regmap *regmap;
+>> +
+>> +	regmap = devm_regmap_init(&mdiodev->dev, NULL, mdiodev->bus, nss_cc_qca8k_desc.config);
+>> +	if (IS_ERR(regmap))
+>> +		return dev_err_probe(&mdiodev->dev, PTR_ERR(regmap), "Failed to init regmap\n");
+>> +
+>> +	return _qcom_cc_really_probe(&mdiodev->dev, &nss_cc_qca8k_desc, regmap);
+>> +}
+>> +
+>> +static const struct of_device_id nss_cc_qca8k_match_table[] = {
+>> +	{ .compatible = "qcom,qca8084-nsscc" },
+>> +	{ }
+>> +};
+>> +MODULE_DEVICE_TABLE(of, nss_cc_qca8k_match_table);
+>> +
+>> +static struct mdio_driver nss_cc_qca8k_driver = {
+>> +	.mdiodrv.driver = {
+>> +		.name = "qcom,qca8k-nsscc",
+>> +		.of_match_table	= nss_cc_qca8k_match_table,
+>> +	},
+>> +	.probe = nss_cc_qca8k_probe,
+>> +};
+>> +
+>> +mdio_module_driver(nss_cc_qca8k_driver);
+>> +
+>> +MODULE_DESCRIPTION("QCOM NSS_CC QCA8K Driver");
+>> +MODULE_LICENSE("GPL");
+>> -- 
+>> 2.17.1
+>>
