@@ -2,218 +2,159 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3357BC05052
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Aug 2023 07:24:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 345DCC678DC
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Aug 2023 08:21:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232427AbjHRHYB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 18 Aug 2023 03:24:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59082 "EHLO
+        id S1358534AbjHRIVF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 18 Aug 2023 04:21:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358155AbjHRHXh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Aug 2023 03:23:37 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08EEB30DF
-        for <linux-clk@vger.kernel.org>; Fri, 18 Aug 2023 00:23:34 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-4ffa248263cso825016e87.2
-        for <linux-clk@vger.kernel.org>; Fri, 18 Aug 2023 00:23:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1692343412; x=1692948212;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+nrlvGLSZrLTAidXKYdnf+IMABQtnX9eIwf7feDIRl4=;
-        b=gUkgEFdIUbCRiIovcKuPSXsz2jIBb04GMmR/D3yc0PsZNNvQX94puOhOfFRBicMod9
-         FV75KNTBfswt/NUNYIl1BqJy7KRs3S3YAIGngmEcU5TovnqTTcy9aXhsxqPZdIWRXmEM
-         KtbCL3yxYGA+YCAMtZmuqJ1ngjumWyHgt292mGY+f43e/fzIwMte2JtKjLmYORwpgGTC
-         wE0h78ODD3iiAW0fW7CN/SEAWHZdFAWD/BJ3VsOsurCbmh0IhX82V89Gvry5s6dfXWsY
-         UkRy3/h5kT2IwVboIXZHHLuCH3lq20jEzrdr86vQfSmiM5PqstmAICwpAS/ow0JHRMf4
-         0k8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692343412; x=1692948212;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+nrlvGLSZrLTAidXKYdnf+IMABQtnX9eIwf7feDIRl4=;
-        b=RMN9G+ICePl7SuUd7Cd4ZvDwvbbjThpHkHS9ZYKYJWDeKiGZh5Usq58ZVCdSuop6ev
-         OjY5Sb8SYvRSZeDO6bHhhAtzE50w7aBl6/tQnrVB4pSow0foVUzlXvqbUwz5x3c9haM4
-         6I05IT2Om75E5GgsOVbYV4KtV23SrbSjykf+N26WWQ76uu7rPIfJ9e9//fp8y8/xy/fB
-         br1iIeNFJNhxwgdfS29Vx2AacxsAO7W63hBLUmr4wczg1pAhrinc3/vQYXNLCnzvlx3E
-         JVwmRErf5cfvrUTAQ0ENhwntcuYFh701uR/vJJug+AS6fYRe8FsORdPZQ4oNom3GiQuj
-         MU/A==
-X-Gm-Message-State: AOJu0YzwR94s6YYVoKOJuOLzaGxOdAI0SAFzjfODjjA2io/4fxJ2qprR
-        nyuVFejo9S4iv+EPSrYONMhCwA==
-X-Google-Smtp-Source: AGHT+IEOeJMn8/EoRozhoQagPj2QryyIspkPS5PyFAvnzRmg9yRI8DoPXKyuJg63xi4Xks3gO4wgAQ==
-X-Received: by 2002:a05:6512:2356:b0:4ff:6fa3:63ce with SMTP id p22-20020a056512235600b004ff6fa363cemr1126718lfu.10.1692343412057;
-        Fri, 18 Aug 2023 00:23:32 -0700 (PDT)
-Received: from localhost ([212.23.236.67])
-        by smtp.gmail.com with ESMTPSA id 16-20020a05600c231000b003fc00212c1esm1882608wmo.28.2023.08.18.00.23.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Aug 2023 00:23:31 -0700 (PDT)
-Date:   Fri, 18 Aug 2023 09:23:30 +0200
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Jakub Kicinski <kuba@kernel.org>
-Cc:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
-        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "Olech, Milena" <milena.olech@intel.com>,
-        "Michalik, Michal" <michal.michalik@intel.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
-        mschmidt <mschmidt@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Bart Van Assche <bvanassche@acm.org>,
-        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-        Jiri Pirko <jiri@nvidia.com>
-Subject: Re: [PATCH net-next v4 2/9] dpll: spec: Add Netlink spec in YAML
-Message-ID: <ZN8ccoE8X5J6yysk@nanopsycho>
-References: <20230811200340.577359-1-vadim.fedorenko@linux.dev>
- <20230811200340.577359-3-vadim.fedorenko@linux.dev>
- <20230814194336.55642f34@kernel.org>
- <DM6PR11MB4657AD95547A14234941F9399B1AA@DM6PR11MB4657.namprd11.prod.outlook.com>
- <20230817163640.2ad33a4b@kernel.org>
+        with ESMTP id S1358526AbjHRIU4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Aug 2023 04:20:56 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93919E55;
+        Fri, 18 Aug 2023 01:20:55 -0700 (PDT)
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37I56bhE023261;
+        Fri, 18 Aug 2023 08:20:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=0OJB9bimMmDXvfLY8yQNGFq9Rj+mqR3wqinojg+U3To=;
+ b=YWxUZBvVJoBTBGVChDYzOfKQwW6vz0xIcdHjUxk6IrrNUuKY/5SSxFQZrCLvYkvw5k8h
+ +ydCUhAX5ltisqBosQ78mzh8mYIvIF7YPXq/Cy+MTUA+Mc0Zs6LFn08ZaT7kDnDCysYR
+ brHYCB0MPxilE4Fc+Sk3polacfjc9Mg/duyXJzvds7rl8/BnxM2A0OidI4yWQ5zYzl5z
+ JOIFHifGTtws9t7fpfFSJhCSF+YDp2AjCVv+ejegJHiKXH6kDBmSG5ZIDqwiJlO+THvk
+ MQfgiDiHTvrmzqWAhUoJQnLjpU3BxrxDHyQOnwYJg+0T3vxB0CrNXJ5MSMcBscaxlQTx Ng== 
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3sht44936h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 18 Aug 2023 08:20:40 +0000
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 37I8KdTa002650
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 18 Aug 2023 08:20:39 GMT
+Received: from [10.253.34.149] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Fri, 18 Aug
+ 2023 01:20:36 -0700
+Message-ID: <23b1ff70-21c0-f4e2-c377-55317f69357c@quicinc.com>
+Date:   Fri, 18 Aug 2023 16:20:33 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230817163640.2ad33a4b@kernel.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Subject: Re: [PATCH v4 1/4] clk: qcom: branch: Add clk_branch2_mdio_ops
+Content-Language: en-US
+To:     Bjorn Andersson <andersson@kernel.org>
+CC:     <agross@kernel.org>, <konrad.dybcio@linaro.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <conor+dt@kernel.org>, <catalin.marinas@arm.com>,
+        <will@kernel.org>, <p.zabel@pengutronix.de>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_srichara@quicinc.com>
+References: <20230815085205.9868-1-quic_luoj@quicinc.com>
+ <20230815085205.9868-2-quic_luoj@quicinc.com>
+ <p7m4fi53nc75rjnmxdrukaitaddvq4vgvpydiyjmem4g2leyih@uohiocu35w2u>
+From:   Jie Luo <quic_luoj@quicinc.com>
+In-Reply-To: <p7m4fi53nc75rjnmxdrukaitaddvq4vgvpydiyjmem4g2leyih@uohiocu35w2u>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: wjBlevrSvqOdmcqk8PJVEuNga-l1WrAT
+X-Proofpoint-ORIG-GUID: wjBlevrSvqOdmcqk8PJVEuNga-l1WrAT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-08-18_09,2023-08-17_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
+ impostorscore=0 suspectscore=0 mlxscore=0 malwarescore=0
+ priorityscore=1501 phishscore=0 mlxlogscore=999 adultscore=0 spamscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2306200000 definitions=main-2308180077
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Fri, Aug 18, 2023 at 01:36:40AM CEST, kuba@kernel.org wrote:
->On Thu, 17 Aug 2023 18:40:00 +0000 Kubalewski, Arkadiusz wrote:
->> >Why are all attributes in a single attr space? :(
->> >More than half of them are prefixed with a pin- does it really
->> >not scream to you that they belong to a different space?
->> 
->> I agree, but there is an issue with this, currently:
->> 
->> name: pin-parent-device
->> subset-of: dpll
->> attributes:
->>   -
->>     name: id
->>     type: u32
->>   -
->>     name: pin-direction
->>     type: u32
->>   -
->>     name: pin-prio
->>     type: u32
->>   -
->>     name: pin-state
->>     type: u32
->> 
->> Where "id" is a part of device space, rest attrs would be a pin space..
->> Shall we have another argument for device id in a pin space?
->
->Why would pin and device not have separate spaces?
->
->When referring to a pin from a "device mostly" command you can
->usually wrap the pin attributes in a nest, and vice versa.
->But it may not be needed at all here? Let's look at the commands:
->
->+    -
->+      name: device-id-get
->+        request:
->+          attributes:
->+            - module-name
->+            - clock-id
->+            - type
->+        reply:
->+          attributes:
->+            - id
->
->All attributes are in "device" space, no mixing.
->
->+      name: device-get
->+        request:
->+          attributes:
->+            - id
->+        reply: &dev-attrs
->+          attributes:
->+            - id
->+            - module-name
->+            - mode
->+            - mode-supported
->+            - lock-status
->+            - temp
->+            - clock-id
->+            - type
->
->Again, no pin attributes, so pin can be separate?
->
->+    -
->+      name: device-set
->+        request:
->+          attributes:
->+            - id
->
->Herm, this one looks like it's missing attrs :S
->
->+    -
->+      name: pin-id-get
->+        request:
->+          attributes:
->+            - module-name
->+            - clock-id
->+            - pin-board-label
->+            - pin-panel-label
->+            - pin-package-label
->+            - pin-type
->+        reply:
->+          attributes:
->+            - pin-id
->
->Mostly pin stuff. I guess the module-name and clock-id attrs can be
->copy/pasted between device and pin, or put them in a separate set
->and add that set as an attr here. Copy paste is likely much simpler.
-
-Agreed for the copy.
-
-Honestly, I wound thing that shared ATTR space is fine for DPLL,
-the split is an overkill here. But up to you Jakub :)
 
 
->
->+    -
->+      name: pin-get
->+        request:
->+          attributes:
->+            - pin-id
->+        reply: &pin-attrs
->+          attributes:
->+            - pin-id
->+            - pin-board-label
->+            - pin-panel-label
->+            - pin-package-label
->+            - pin-type
->+            - pin-frequency
->+            - pin-frequency-supported
->+            - pin-dpll-caps
->+            - pin-parent-device
+On 8/18/2023 11:29 AM, Bjorn Andersson wrote:
+> On Tue, Aug 15, 2023 at 04:52:02PM +0800, Luo Jie wrote:
+>> Add the clk_branch2_mdio_ops for supporting clock controller
+>> where the hardware register is accessed by MDIO bus, and the
+>> spin clock can't be used because of sleep during the MDIO
+> 
+> spin clock?
+> 
+> I believe you're trying to say that the underlying access to the MDIO
+> bus can not be done in non-sleepable context and we can therefor not use
+> enable/disable to operate it?
 
-The ID of device is inside this nest.
+Hi Bjorn,
+Thanks for the review comments.
+yes, the MDIO operation can't be done in non-sleepable context, and 
+enable/disable clock is using spin lock, so i enable the clock in 
+.prepare ops.
 
+will fix this typo"spin clock" to "spin lock"
 
->+            - pin-parent-pin
->
->All pin.
->
->+    -
->+      name: pin-set
->+        request:
->+          attributes:
->+            - pin-id
->+            - pin-frequency
->+            - pin-direction
->+            - pin-prio
->+            - pin-state
->+            - pin-parent-device
+> 
+>> operation.
+>>
+>> The clock is enabled by the .prepare instead of .enable when
+>> the clk_branch2_mdio_ops is used.
+>>
+>> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+>> ---
+>>   drivers/clk/qcom/clk-branch.c | 7 +++++++
+>>   drivers/clk/qcom/clk-branch.h | 1 +
+>>   2 files changed, 8 insertions(+)
+>>
+>> diff --git a/drivers/clk/qcom/clk-branch.c b/drivers/clk/qcom/clk-branch.c
+>> index fc4735f74f0f..5e08c026ca4a 100644
+>> --- a/drivers/clk/qcom/clk-branch.c
+>> +++ b/drivers/clk/qcom/clk-branch.c
+>> @@ -153,3 +153,10 @@ const struct clk_ops clk_branch_simple_ops = {
+>>   	.is_enabled = clk_is_enabled_regmap,
+>>   };
+>>   EXPORT_SYMBOL_GPL(clk_branch_simple_ops);
+>> +
+>> +const struct clk_ops clk_branch2_mdio_ops = {
+>> +	.prepare = clk_branch2_enable,
+>> +	.unprepare = clk_branch2_disable,
+> 
+> I see none of the clocks specify halt_check, which would imply that
+> these two calls just turns into clk_enable_regmap() and
+> clk_disable_regmap().
+> 
+> So, isn't this then equivalent to clk_branch_simple_ops?
+> 
+> Regards,
+> Bjorn
+> 
 
-Same here.
+Thanks Bjorn for pointing this, i will add the the halt_check in the 
+next patch set, halt_check is applicable.
 
-
->+            - pin-parent-pin
->
->And all pin.
+>> +	.is_prepared = clk_is_enabled_regmap,
+>> +};
+>> +EXPORT_SYMBOL_GPL(clk_branch2_mdio_ops);
+>> diff --git a/drivers/clk/qcom/clk-branch.h b/drivers/clk/qcom/clk-branch.h
+>> index 0cf800b9d08d..4b006e8eec5e 100644
+>> --- a/drivers/clk/qcom/clk-branch.h
+>> +++ b/drivers/clk/qcom/clk-branch.h
+>> @@ -85,6 +85,7 @@ extern const struct clk_ops clk_branch_ops;
+>>   extern const struct clk_ops clk_branch2_ops;
+>>   extern const struct clk_ops clk_branch_simple_ops;
+>>   extern const struct clk_ops clk_branch2_aon_ops;
+>> +extern const struct clk_ops clk_branch2_mdio_ops;
+>>   
+>>   #define to_clk_branch(_hw) \
+>>   	container_of(to_clk_regmap(_hw), struct clk_branch, clkr)
+>> -- 
+>> 2.17.1
+>>
