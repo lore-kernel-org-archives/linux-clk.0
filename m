@@ -2,109 +2,152 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B33EC3DA66
-	for <linux-clk@archiver.kernel.org>; Sat, 19 Aug 2023 06:22:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84BD3EE49A8
+	for <linux-clk@archiver.kernel.org>; Sat, 19 Aug 2023 08:31:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245690AbjHSGWS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 19 Aug 2023 02:22:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54744 "EHLO
+        id S229655AbjHSIbG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 19 Aug 2023 04:31:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245698AbjHSGWC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 19 Aug 2023 02:22:02 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63CC93AB6;
-        Fri, 18 Aug 2023 23:22:01 -0700 (PDT)
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37J6Ljq1008858;
-        Sat, 19 Aug 2023 06:21:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=5pltigGTmCAd54+DBKzSWvMYWGt8jHWwbv3v95uSi3Y=;
- b=BzZXw8TDJNO5FyFPWKSZ6fKNTU9v/VWY5gQigmYkCtcSLUyWlfxu/fKh5R4x9PGW9rhm
- 5jxL+XUvZIt1AJ6Ct/mFyhNvtzeFL619VPEyw3TH6guv+ETrFxqSChyoMmvAnoLWVTy2
- SbNF1QAdLV0i7x9aNlZUaD9H9Uxg9Es3CT+nph1oN9HBJHKNoCd4CH6Aq0vpmu8iIWgl
- 75atVSF2oDaXdKPom/vtH6ngmNpmPBeQ5SfCOhNCVQfdTL46xFrjDFsGQa1c0KvT9uvx
- 8/hx2C8TqZC6Wv7wXcUMnluOhQcTom1boSxzqLJ11d0hsaJ/v1vb5ZDoYA4oyV/2rTCA sw== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3sjq1f02hw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 19 Aug 2023 06:21:45 +0000
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 37J6Ljiv025217
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 19 Aug 2023 06:21:45 GMT
-Received: from [10.253.35.175] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Fri, 18 Aug
- 2023 23:21:40 -0700
-Message-ID: <38627095-a92d-ea8b-56b6-7a4440fb6635@quicinc.com>
-Date:   Sat, 19 Aug 2023 14:21:37 +0800
+        with ESMTP id S229456AbjHSIbF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 19 Aug 2023 04:31:05 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D63B488A5;
+        Sat, 19 Aug 2023 01:31:04 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 36F6461489;
+        Sat, 19 Aug 2023 08:31:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AA58C433C8;
+        Sat, 19 Aug 2023 08:31:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692433863;
+        bh=QSBOluYybtxO4tKot9jNeLxorSiFqLCUATwDVsgqjAI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HnxIrCLXRM55inC1Mjw94VsUxujysWxXrEP+vbWMUyooq0WcAfQ2wmCjcXVmIqXRW
+         hJbQio9FD0+vxiB3Sam8on8eSShzRZH+u4Qr5Pk7CMh/FNB40pPf+XvJ/cW6DW+A1R
+         IC98ofk+4HwlQ7FC+cO05Gxv2jwz7+PviZHkAGczOM0TkqTgGOX5V17zXW1UtM2CIM
+         6jSDfglyJX3mHZStRviAzEGT2V/3NQw3K9FdgbFi39ic8erO+p49MGQVsQC2M/tAVd
+         anBl2ZftQRKN8DT35noAwkOxEHofBgS7Qfa2FrgSJafdFDek4uR2ieVkkzif8Si/sU
+         /2jUu8nuXYFgg==
+Date:   Sat, 19 Aug 2023 09:30:58 +0100
+From:   Conor Dooley <conor@kernel.org>
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: clock: versaclock3: Document
+ clock-output-names
+Message-ID: <20230819-starlit-vixen-ed35a46f065f@spud>
+References: <20230817090810.203900-1-biju.das.jz@bp.renesas.com>
+ <20230817090810.203900-2-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [PATCH v4 3/4] clk: qcom: common: add _qcom_cc_really_probe
-To:     Bjorn Andersson <andersson@kernel.org>
-CC:     <agross@kernel.org>, <konrad.dybcio@linaro.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <conor+dt@kernel.org>, <catalin.marinas@arm.com>,
-        <will@kernel.org>, <p.zabel@pengutronix.de>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_srichara@quicinc.com>
-References: <20230815085205.9868-1-quic_luoj@quicinc.com>
- <20230815085205.9868-4-quic_luoj@quicinc.com>
- <2dcu7jjwd2bhjbzxrxbfif566nupznb5n4oadnqha4h45w2n2g@4uy2pxkj5bvj>
- <6ee2129b-04c6-4978-03d6-835e3a10e665@quicinc.com>
- <4n3vqstyhknanmzx4swwjg4ueaqq2tbrxadnyrx3bchffyf7qr@yh4bik4rfsgm>
-Content-Language: en-US
-From:   Jie Luo <quic_luoj@quicinc.com>
-In-Reply-To: <4n3vqstyhknanmzx4swwjg4ueaqq2tbrxadnyrx3bchffyf7qr@yh4bik4rfsgm>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: IeW0Q28AeRBq6m9ZbrrPWqdojJg5Jpnn
-X-Proofpoint-ORIG-GUID: IeW0Q28AeRBq6m9ZbrrPWqdojJg5Jpnn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-08-19_04,2023-08-18_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
- adultscore=0 impostorscore=0 mlxlogscore=871 lowpriorityscore=0
- suspectscore=0 mlxscore=0 phishscore=0 spamscore=0 priorityscore=1501
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2306200000 definitions=main-2308190058
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="uTd1bS2sUh/E+Q2z"
+Content-Disposition: inline
+In-Reply-To: <20230817090810.203900-2-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
+--uTd1bS2sUh/E+Q2z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 8/19/2023 10:54 AM, Bjorn Andersson wrote:
-> On Fri, Aug 18, 2023 at 04:35:52PM +0800, Jie Luo wrote:
->> On 8/18/2023 11:14 AM, Bjorn Andersson wrote:
->>> On Tue, Aug 15, 2023 at 04:52:04PM +0800, Luo Jie wrote:
-> [..]
->>>> +int qcom_cc_really_probe(struct platform_device *pdev,
->>>> +			 const struct qcom_cc_desc *desc, struct regmap *regmap)
->>>
->>> Why do we want to keep this wrapper around?
->>>
->> There are many existed clock controller drivers using this wrapper
->> qcom_cc_really_probe, so i still keep this wrapper.
->>
->> do we need to remove this wrapper and update the existed drivers to use
->> _qcom_cc_really_probe?
-> 
-> Yes please. The additional API does not add value, but can be confusing,
-> so let's invest the extra time in fixing up all the drivers to keep the
-> interface clean.
-> 
-> Regards,
-> Bjorn
+On Thu, Aug 17, 2023 at 10:08:08AM +0100, Biju Das wrote:
+> Document clock-output-names property and fix the "assigned-clock-rates"
+> for each clock output in the example based on Table 3. ("Output Source")
+> in the 5P35023 datasheet(ie: {REF,SE1,SE2,SE3,DIFF1,DIFF2}).
+>=20
+> While at it, replace clocks phandle in the example from x1_x2->x1 as
+> X2 is a different 32768 kHz crystal.
+>=20
+> Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Closes: https://lore.kernel.org/all/CAMuHMdUHD+bEco=3DWYTYWsTAyRt3dTQQt4X=
+paejss0Y2ZpLCMNg@mail.gmail.com/
+> Fixes: a03d23f860eb ("dt-bindings: clock: Add Renesas versa3 clock genera=
+tor bindings")
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-Thanks Bjorn for the suggestion, will update this patch in the next version.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+Thanks,
+Conor.
+
+> ---
+> v1->v2:
+>  * Updated commit description to make it clear it fixes
+>    "assigned-clock-rates" in the example based on 5P35023 datasheet.
+> ---
+>  .../devicetree/bindings/clock/renesas,5p35023.yaml | 14 ++++++++++----
+>  1 file changed, 10 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml=
+ b/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml
+> index 839648e753d4..db8d01b291dd 100644
+> --- a/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml
+> +++ b/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml
+> @@ -49,6 +49,9 @@ properties:
+>      $ref: /schemas/types.yaml#/definitions/uint8-array
+>      maxItems: 37
+> =20
+> +  clock-output-names:
+> +    maxItems: 6
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -68,7 +71,7 @@ examples:
+>              reg =3D <0x68>;
+>              #clock-cells =3D <1>;
+> =20
+> -            clocks =3D <&x1_x2>;
+> +            clocks =3D <&x1>;
+> =20
+>              renesas,settings =3D [
+>                  80 00 11 19 4c 02 23 7f 83 19 08 a9 5f 25 24 bf
+> @@ -76,11 +79,14 @@ examples:
+>                  80 b0 45 c4 95
+>              ];
+> =20
+> +            clock-output-names =3D "ref", "se1", "se2", "se3",
+> +                                 "diff1", "diff2";
+> +
+>              assigned-clocks =3D <&versa3 0>, <&versa3 1>,
+>                                <&versa3 2>, <&versa3 3>,
+>                                <&versa3 4>, <&versa3 5>;
+> -            assigned-clock-rates =3D <12288000>, <25000000>,
+> -                                   <12000000>, <11289600>,
+> -                                   <11289600>, <24000000>;
+> +            assigned-clock-rates =3D <24000000>, <11289600>,
+> +                                   <11289600>, <12000000>,
+> +                                   <25000000>, <12288000>;
+>          };
+>      };
+> --=20
+> 2.25.1
+>=20
+
+--uTd1bS2sUh/E+Q2z
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZOB9wgAKCRB4tDGHoIJi
+0mrFAP9PzDRMb0YuFu9ZBqs7dSHjJkiLk6VDZV0JY/oR0PyDigD6Aw1D+UgSwdRJ
+nzj5i0IMk3CHIz8hDmRvBeaSBUoUpgA=
+=EnSt
+-----END PGP SIGNATURE-----
+
+--uTd1bS2sUh/E+Q2z--
