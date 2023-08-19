@@ -2,36 +2,36 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C1BEEE49A5
-	for <linux-clk@archiver.kernel.org>; Sat, 19 Aug 2023 14:26:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE566EE49A3
+	for <linux-clk@archiver.kernel.org>; Sat, 19 Aug 2023 14:26:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233455AbjHSO0h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 19 Aug 2023 10:26:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42868 "EHLO
+        id S233446AbjHSO0m (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 19 Aug 2023 10:26:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233451AbjHSO0g (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 19 Aug 2023 10:26:36 -0400
+        with ESMTP id S233468AbjHSO0m (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 19 Aug 2023 10:26:42 -0400
 Received: from mail.andi.de1.cc (mail.andi.de1.cc [IPv6:2a02:c205:3004:2154::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 086DA12764
-        for <linux-clk@vger.kernel.org>; Sat, 19 Aug 2023 07:26:31 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E41D1A2AC
+        for <linux-clk@vger.kernel.org>; Sat, 19 Aug 2023 07:26:38 -0700 (PDT)
 Received: from p200300ccff2bce001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:cc:ff2b:ce00:1a3d:a2ff:febf:d33a] helo=aktux)
         by mail.andi.de1.cc with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <andreas@kemnade.info>)
-        id 1qXMDF-002nxf-VO; Sat, 19 Aug 2023 15:41:57 +0200
+        id 1qXMDG-002nxv-Jd; Sat, 19 Aug 2023 15:41:58 +0200
 Received: from andi by aktux with local (Exim 4.96)
         (envelope-from <andreas@kemnade.info>)
-        id 1qXMDF-001ueD-2B;
-        Sat, 19 Aug 2023 15:41:57 +0200
+        id 1qXMDG-001ueM-0y;
+        Sat, 19 Aug 2023 15:41:58 +0200
 From:   Andreas Kemnade <andreas@kemnade.info>
 To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
         bcousson@baylibre.com, tony@atomide.com, andreas@kemnade.info,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
-Subject: [PATCH 1/3] dt-bindings: clock: add TWL6032 32K clocks
-Date:   Sat, 19 Aug 2023 15:41:45 +0200
-Message-Id: <20230819134147.456060-2-andreas@kemnade.info>
+Subject: [PATCH 3/3] ARM: dts: omap4-embt2ws: enable 32K clock on WLAN
+Date:   Sat, 19 Aug 2023 15:41:47 +0200
+Message-Id: <20230819134147.456060-4-andreas@kemnade.info>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230819134147.456060-1-andreas@kemnade.info>
 References: <20230819134147.456060-1-andreas@kemnade.info>
@@ -41,60 +41,51 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-To be able to be referenced from a future yaml-version of
-mfd/twl-family.txt depending on toplevel compatible have a separate file
-for the 6032
+WLAN did only work if clock was left enabled by the original system,
+so make it fully enable the needed resources itself.
 
 Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
 ---
- .../bindings/clock/ti,twl6032-clk.yaml        | 38 +++++++++++++++++++
- 1 file changed, 38 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/ti,twl6032-clk.yaml
+ arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/ti,twl6032-clk.yaml b/Documentation/devicetree/bindings/clock/ti,twl6032-clk.yaml
-new file mode 100644
-index 0000000000000..aebd9f8d761a2
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/ti,twl6032-clk.yaml
-@@ -0,0 +1,38 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/ti,twl6032-clk.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts b/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts
+index ee86981b2e448..9ca540ef86265 100644
+--- a/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts
++++ b/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts
+@@ -69,6 +69,12 @@ unknown_supply: unknown-supply {
+ 		regulator-name = "unknown";
+ 	};
+ 
++	wl12xx_pwrseq: wl12xx-pwrseq {
++		compatible = "mmc-pwrseq-simple";
++		clocks = <&clk32kaudio>;
++		clock-names = "ext_clock";
++	};
 +
-+title: Clocks of the TWL6032 PMIC
+        /* regulator for wl12xx on sdio2 */
+ 	wl12xx_vmmc: wl12xx-vmmc {
+ 		pinctrl-names = "default";
+@@ -97,6 +103,11 @@ twl: pmic@48 {
+ 		interrupt-controller;
+ 		#interrupt-cells = <1>;
+ 
++		clk32kaudio: clk-32kaudio {
++			compatible = "ti,twl6032-clk32kaudio";
++			#clock-cells = <0>;
++		};
 +
-+maintainers:
-+  - Andreas Kemnade <andreas@kemnade.info>
-+
-+description:
-+  The TWL6032 has some 32Khz clock outputs which can be controlled.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ti,twl6032-clk32kaudio
-+      - ti,twl6032-clk32kg
-+
-+  '#clock-cells':
-+    const: 0
-+
-+required:
-+  - compatible
-+  - '#clock-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    twl {
-+        clk32kaudio {
-+            compatible = "ti,twl6032-clk32kaudio";
-+            #clock-cells = <0>;
-+        };
-+    };
-+...
+ 		rtc {
+ 			compatible = "ti,twl4030-rtc";
+ 			interrupts = <11>;
+@@ -316,6 +327,7 @@ &mmc3 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&wl12xx_pins>;
+ 	vmmc-supply = <&wl12xx_vmmc>;
++	mmc-pwrseq = <&wl12xx_pwrseq>;
+ 	interrupts-extended = <&wakeupgen GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH
+ 			       &omap4_pmx_core 0x12e>;
+ 	non-removable;
 -- 
 2.39.2
 
