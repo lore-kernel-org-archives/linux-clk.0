@@ -2,90 +2,135 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE566EE49A3
-	for <linux-clk@archiver.kernel.org>; Sat, 19 Aug 2023 14:26:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C70DEE4993
+	for <linux-clk@archiver.kernel.org>; Sun, 20 Aug 2023 07:35:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233446AbjHSO0m (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 19 Aug 2023 10:26:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52970 "EHLO
+        id S229783AbjHTHfV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 20 Aug 2023 03:35:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233468AbjHSO0m (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 19 Aug 2023 10:26:42 -0400
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [IPv6:2a02:c205:3004:2154::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E41D1A2AC
-        for <linux-clk@vger.kernel.org>; Sat, 19 Aug 2023 07:26:38 -0700 (PDT)
-Received: from p200300ccff2bce001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:cc:ff2b:ce00:1a3d:a2ff:febf:d33a] helo=aktux)
-        by mail.andi.de1.cc with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <andreas@kemnade.info>)
-        id 1qXMDG-002nxv-Jd; Sat, 19 Aug 2023 15:41:58 +0200
-Received: from andi by aktux with local (Exim 4.96)
-        (envelope-from <andreas@kemnade.info>)
-        id 1qXMDG-001ueM-0y;
-        Sat, 19 Aug 2023 15:41:58 +0200
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        bcousson@baylibre.com, tony@atomide.com, andreas@kemnade.info,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
-Subject: [PATCH 3/3] ARM: dts: omap4-embt2ws: enable 32K clock on WLAN
-Date:   Sat, 19 Aug 2023 15:41:47 +0200
-Message-Id: <20230819134147.456060-4-andreas@kemnade.info>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230819134147.456060-1-andreas@kemnade.info>
-References: <20230819134147.456060-1-andreas@kemnade.info>
+        with ESMTP id S229668AbjHTHfV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 20 Aug 2023 03:35:21 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 549F8E2
+        for <linux-clk@vger.kernel.org>; Sun, 20 Aug 2023 00:34:34 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id 2adb3069b0e04-4fe27849e6aso3383337e87.1
+        for <linux-clk@vger.kernel.org>; Sun, 20 Aug 2023 00:34:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1692516872; x=1693121672;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=I6tLuLD++BQvtPqr+6W85PTyjvuOfHBFRdTsdV0IpdU=;
+        b=e7nzwYaFWQx61iKPJENX92vHtkW2gMXKzGibwJSliKlUyjxeCqSOHfxPtlcCTmdSYX
+         aAL/wOyV0kM64RplgZelyFqCkZq4zQNBv9WrYTQp0poEfBuEBPafl7z/9d4C8JX+9z45
+         xmw3A0hKmcNe1DHFr+ydynsfPYAOoOmEEHAodnthnOW7yWfJ+qEA0T44PP5jZzCsxdIm
+         h2V2QDlcFSCI2BOCvTv+aaictNI9KJQltG7HXNNk/ZBSyffs0C7J9zIuOFvcFQlEY4t2
+         6+IsqK8SBkcr3cgbsdrjoTIQWdKzQR/1S5k8GOuULgNuiwOZPpEFls7IOP+o+dcQOTFl
+         +r4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692516872; x=1693121672;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=I6tLuLD++BQvtPqr+6W85PTyjvuOfHBFRdTsdV0IpdU=;
+        b=CklT4KV/AlFJImwc3GjPzf6jGwBBylfXAjxwOXCCHDjRpuZkBbqq8irEYRukSzrkkZ
+         k8T7mB1P+yCMuZj+siENchFgInhC5eELcOlcVUtG3zsR0i8TPW5+CVq2zyrUEZvjIAm9
+         A/VnXKD/FnKdbEaQ33228fiav/pCk7odQVVuz3kUgOyFGwrqxqmRJNkfqMvufKsmzU7V
+         aOpXFgBzH8GZRxWeVAfyWzSp4wzpchPnzFrAlZf96Ng5KEG9imvck9TS3OJNLeNffVDk
+         Ur5wKozq+oJY1h3iRa/rVz9WwXP1m37rjRK/RfPjXCgdoqmy77Op0lrh2xIvUbkz98AV
+         qq9g==
+X-Gm-Message-State: AOJu0Yzt75qJ1yXdSCCVY45Uffk6VuoMXork3fHO2UnXCIqF9gCLYnNw
+        nQ1RmBA09YcnrzYGokmwbsfiHg==
+X-Google-Smtp-Source: AGHT+IGTlwDtllwhmcd3CgyHAJvbhZrkf+x4N/xPpPA8SZhot/IZi3eQMY8owGPvMR9WrGsk4rylVw==
+X-Received: by 2002:a05:6512:2305:b0:4fe:c98:789a with SMTP id o5-20020a056512230500b004fe0c98789amr3440222lfu.37.1692516872535;
+        Sun, 20 Aug 2023 00:34:32 -0700 (PDT)
+Received: from krzk-bin.. ([77.252.47.198])
+        by smtp.gmail.com with ESMTPSA id k9-20020a056402048900b0052540e85390sm3792062edv.43.2023.08.20.00.34.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Aug 2023 00:34:31 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        linux-clk@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL] clk: samsung: drivers for v6.6
+Date:   Sun, 20 Aug 2023 09:34:29 +0200
+Message-Id: <20230820073429.9069-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-WLAN did only work if clock was left enabled by the original system,
-so make it fully enable the needed resources itself.
+Hi,
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
----
- arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Few commits for Samsung clock drivers.
 
-diff --git a/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts b/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts
-index ee86981b2e448..9ca540ef86265 100644
---- a/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts
-+++ b/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts
-@@ -69,6 +69,12 @@ unknown_supply: unknown-supply {
- 		regulator-name = "unknown";
- 	};
- 
-+	wl12xx_pwrseq: wl12xx-pwrseq {
-+		compatible = "mmc-pwrseq-simple";
-+		clocks = <&clk32kaudio>;
-+		clock-names = "ext_clock";
-+	};
-+
-        /* regulator for wl12xx on sdio2 */
- 	wl12xx_vmmc: wl12xx-vmmc {
- 		pinctrl-names = "default";
-@@ -97,6 +103,11 @@ twl: pmic@48 {
- 		interrupt-controller;
- 		#interrupt-cells = <1>;
- 
-+		clk32kaudio: clk-32kaudio {
-+			compatible = "ti,twl6032-clk32kaudio";
-+			#clock-cells = <0>;
-+		};
-+
- 		rtc {
- 			compatible = "ti,twl4030-rtc";
- 			interrupts = <11>;
-@@ -316,6 +327,7 @@ &mmc3 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&wl12xx_pins>;
- 	vmmc-supply = <&wl12xx_vmmc>;
-+	mmc-pwrseq = <&wl12xx_pwrseq>;
- 	interrupts-extended = <&wakeupgen GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH
- 			       &omap4_pmx_core 0x12e>;
- 	non-removable;
--- 
-2.39.2
+Best regards,
+Krzysztof
 
+
+The following changes since commit 06c2afb862f9da8dc5efa4b6076a0e48c3fbaaa5:
+
+  Linux 6.5-rc1 (2023-07-09 13:53:13 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-6.6
+
+for you to fetch changes up to b3f9581affb03ed28ff1905b649e66904f29b9e4:
+
+  dt-bindings: clock: samsung: remove define with number of clocks (2023-08-15 07:50:15 +0200)
+
+----------------------------------------------------------------
+Samsung SoC clock drivers changes for 6.6
+
+Remove from the bindings the #defines with number of clocks supported by
+each clock controller driver.  This number can vary, e.g. when we
+implement more clocks in the driver.  Having the number in the bindings
+prevents changing it.  Instead, this should be just a #define inside the
+driver.
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (11):
+      clk: samsung: exynos3250: do not define number of clocks in bindings
+      clk: samsung: exynos4: do not define number of clocks in bindings
+      clk: samsung: exynos5250: do not define number of clocks in bindings
+      clk: samsung: exynos5260: do not define number of clocks in bindings
+      clk: samsung: exynos5410: do not define number of clocks in bindings
+      clk: samsung: exynos5420: do not define number of clocks in bindings
+      clk: samsung: exynos5433: do not define number of clocks in bindings
+      clk: samsung: exynos7885: do not define number of clocks in bindings
+      clk: samsung: exynos850: do not define number of clocks in bindings
+      clk: samsung: exynoautov9: do not define number of clocks in bindings
+      dt-bindings: clock: samsung: remove define with number of clocks
+
+ drivers/clk/samsung/clk-exynos3250.c             | 11 ++--
+ drivers/clk/samsung/clk-exynos4.c                |  5 +-
+ drivers/clk/samsung/clk-exynos4412-isp.c         |  5 +-
+ drivers/clk/samsung/clk-exynos5250.c             |  5 +-
+ drivers/clk/samsung/clk-exynos5260.c             | 41 ++++++++++-----
+ drivers/clk/samsung/clk-exynos5410.c             |  5 +-
+ drivers/clk/samsung/clk-exynos5420.c             |  5 +-
+ drivers/clk/samsung/clk-exynos5433.c             | 65 ++++++++++++++++--------
+ drivers/clk/samsung/clk-exynos7885.c             | 14 +++--
+ drivers/clk/samsung/clk-exynos850.c              | 35 +++++++++----
+ drivers/clk/samsung/clk-exynosautov9.c           | 29 +++++++----
+ include/dt-bindings/clock/exynos3250.h           | 18 -------
+ include/dt-bindings/clock/exynos4.h              |  5 --
+ include/dt-bindings/clock/exynos5250.h           |  3 --
+ include/dt-bindings/clock/exynos5260-clk.h       | 25 ---------
+ include/dt-bindings/clock/exynos5410.h           |  2 -
+ include/dt-bindings/clock/exynos5420.h           |  3 --
+ include/dt-bindings/clock/exynos5433.h           | 42 ---------------
+ include/dt-bindings/clock/exynos7885.h           |  4 --
+ include/dt-bindings/clock/exynos850.h            | 10 ----
+ include/dt-bindings/clock/samsung,exynosautov9.h | 18 -------
+ 21 files changed, 154 insertions(+), 196 deletions(-)
