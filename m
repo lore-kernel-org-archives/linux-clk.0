@@ -2,229 +2,351 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84011EE4996
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Aug 2023 09:33:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC337EE4993
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Aug 2023 10:15:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229776AbjHUJdK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Aug 2023 05:33:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33744 "EHLO
+        id S232420AbjHUKPx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Aug 2023 06:15:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233328AbjHUJdK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Aug 2023 05:33:10 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAE93A1;
-        Mon, 21 Aug 2023 02:33:07 -0700 (PDT)
+        with ESMTP id S231183AbjHUKPw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Aug 2023 06:15:52 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00181CE;
+        Mon, 21 Aug 2023 03:15:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1692610387; x=1724146387;
+  t=1692612951; x=1724148951;
   h=from:to:cc:subject:date:message-id:references:
    in-reply-to:content-transfer-encoding:mime-version;
-  bh=f70E1BzAei4Vd7QCd9/A1DILafprLD6f3wAC3RvRd5g=;
-  b=Unfcbvr3xIYqIVhDApml62iF8Q3fac8SX+M7oxZMZ+E7Jd2L1xuO6Kmi
-   vdWhJRgWwh/HQg8IOqrlFGNwWf7jiZ/2edmwDvOFRrsVTrdjY5sRNkz0d
-   b0gpmZD2SKS3iOdFNrIQNlS7eG1ZewdfysCrsYuG1lood6oX0Ck77C1Tt
-   83QPwfS4dGI1M9hZd+NrgiIDbm8z+Aj75B6oLtij2xlm0XTb04E/ZSMUA
-   FncL5J55xV14cLhJPf0s1WSsPmycgreZS2NuGF/+8vOYV2TvkwQiyVqFy
-   oRHD1N4NgNcTvYvnvLsUh5OzgWSdveAVO2Z1zqAtQFea0MvREZ8GAQs78
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10808"; a="373513354"
+  bh=fs4jWb4lLnIRQEtt8LOeSFEAjm/xmsJgxN4l/A9k9nM=;
+  b=jrSu1BDwjo+MgyPcGjO4BLRNtz2BVKCXJqfxOdf6xK7YKjbrygdfdrLy
+   xdhag+GxBrqJ6Cw/AaxLPVknH6RjGLP4FJTZY73NvnKoJe+xb4utEme2n
+   mf9lsYx4ma8rqjc0Ci5SvwClya8qqiPN36CHinPu4ifIraR6tqKDOCqih
+   fxgjt0fX9JuiFKpHBWDPlQEFH/X0B/kcS2p5+islVl4hIxVgkD4nY86LJ
+   nQIrdxDth0xEbDd8O7Eitt24b942qUNuP6gOYcVrfSW3hMlofxzUyMcd+
+   l9pd67O3N5pmR3DqcvKk8ueTTalkGd27FxBnVljjl5VX/NWEiqgzJtpnu
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10808"; a="363711619"
 X-IronPort-AV: E=Sophos;i="6.01,189,1684825200"; 
-   d="scan'208";a="373513354"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2023 02:33:07 -0700
+   d="scan'208";a="363711619"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2023 03:15:50 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10808"; a="738834863"
+X-IronPort-AV: E=McAfee;i="6600,9927,10808"; a="801217306"
 X-IronPort-AV: E=Sophos;i="6.01,189,1684825200"; 
-   d="scan'208";a="738834863"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by fmsmga007.fm.intel.com with ESMTP; 21 Aug 2023 02:33:07 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+   d="scan'208";a="801217306"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by fmsmga008.fm.intel.com with ESMTP; 21 Aug 2023 03:15:47 -0700
+Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.27; Mon, 21 Aug 2023 02:33:07 -0700
+ 15.1.2507.27; Mon, 21 Aug 2023 03:15:46 -0700
 Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.27; Mon, 21 Aug 2023 03:15:46 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
  fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.27; Mon, 21 Aug 2023 02:33:06 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.27 via Frontend Transport; Mon, 21 Aug 2023 02:33:06 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.168)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ 15.1.2507.27 via Frontend Transport; Mon, 21 Aug 2023 03:15:46 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.177)
+ by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.27; Mon, 21 Aug 2023 02:33:06 -0700
+ 15.1.2507.27; Mon, 21 Aug 2023 03:15:45 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Mb/oNZ1NcZOJr0TaC2n9IWfsJc3HN+g99Au09D1fnP1eZPOpiKKfvlTsweR5mSRtxAJtPPHAT13cCR5ofSTPNVUWo1sCbsVLrhlP+GnnVtI4sHRqXTzmzQpwpDZLv2t9gS3wfTp5Kx/2kZi26psB+lbntWZn2VLILrRV18b3M12a5Q6YA8lPSUlXngZLnGxvakOb0WjODGTZDJQhx4+TGMc2V/+wn/c/j/F6mAEF2BKCUVg3ZyS9cRDWMmY9I0FHsqHEMEv/n8ifGi1XgBjUo3AHiv9eKw/T1K8mwiAqmaYftkYaZ82LH9Qz57QGGLBgkybqJLCw2PGnxtkY782Vvw==
+ b=fbVGBqaKDC1F6pfHfYVhaGWl9OSQvvMkrrMN0yEzi+FQqEo6MWAXhJetVLnq8kuS9z4V8wldv7+a+xeiIuQ41OmFlKwOHJJi95arI/x4C01zlGQPrRSyGTqzciwdI/WZ0YgaJLQCw/QezeDL3RVMpmOO7nuRiHg9MfLjfReKymi4yj68a/Pr7QiLhT4p3eLaSy7n7Ekzl9VtZ5ifGKrX9H2jRc5xwG4zGJWVaR4538vzbWhHzf3yRtUqmOAkEE+6ep8VnK1/xooWkiI9HFPVVGJUFlG9yU2Q5gQdPkKwOwoC+iwAQQZ5JEM2kgw4HI/ArLSuHOsetd2M9eqsd2D01A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+xZ2EmLWT3waBb7y9YdHU3MZ1RspqcJ7B8hH4racO1w=;
- b=D6TgoW3TP+we/7BjHq1iLF1sNtcV4/IRp7/5pCgWcGLngfFuHEb951CJHqwRKH94Q7dnF3uueNNtU89M5eOMtrTr6nfTPS5tYqiR8h4smwQu3vzRVMUGVdl+SrF5fHwFDtLOeKb56+4FkN791tIxMeQ7IJzydyfhINgiGUv0jIPcSqM0iXEJLRmupQpn3fCN8k/6Z4DP+7+NrbO4uFLAtoceB0dWXfhVc5UZIs0xIS3ti47JT5bu4XZytsK+6KvI9NcN4zDO0yR0NSkFdETElQUWOtDvVZaEsGRd723kFgcKH7V1y5T1tdbGtq5Ir2LyaW1ox+LpjEgrP4kDwssvCg==
+ bh=SiKnIPSI0fQLXIVlpzVMa67Ad1sVQwH+FYWOa4EXAoI=;
+ b=ORO5h91EOT6z+lgzWsik/U1eUk6S+58VXDzD2SXoHHBr82g+u9vGFq+a67mYIZlNTqAzNvc5f0uBhHa/0ancACwIwdP2fE7tErdiOZo9OId9zIDsGHnXAL67d5z1FBBNmOC8/MRk/4RjDKNOnoVKrsH/3uulZ7cO5RzlxWwe4WYPywRaquoN1rZAVvFF442/B/4iFCQ+iZ68BWi2M89WTFUrb5Y1kaKE3rQ/EP1VRloIXCwH7aXPpvMkyRPe+2wZF9vnC2IYvgIGT+mMA5l0l3dnYUm3M6+PwOpOVjDsJRT5KdvJXoZG+zsY9C2PDskryrtjzYeQ5wsl0mmI5ImrwA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
-Received: from CH3PR11MB8414.namprd11.prod.outlook.com (2603:10b6:610:17e::19)
- by SJ2PR11MB7454.namprd11.prod.outlook.com (2603:10b6:a03:4cc::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.20; Mon, 21 Aug
- 2023 09:32:57 +0000
-Received: from CH3PR11MB8414.namprd11.prod.outlook.com
- ([fe80::ed67:3510:8326:d4d5]) by CH3PR11MB8414.namprd11.prod.outlook.com
- ([fe80::ed67:3510:8326:d4d5%2]) with mapi id 15.20.6699.022; Mon, 21 Aug 2023
- 09:32:57 +0000
-From:   "Michalik, Michal" <michal.michalik@intel.com>
-To:     Jakub Kicinski <kuba@kernel.org>
-CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>,
-        "jiri@resnulli.us" <jiri@resnulli.us>,
-        "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
-        "jonathan.lemon@gmail.com" <jonathan.lemon@gmail.com>,
-        "pabeni@redhat.com" <pabeni@redhat.com>, poros <poros@redhat.com>,
+Received: from DM6PR11MB4657.namprd11.prod.outlook.com (2603:10b6:5:2a6::7) by
+ DM8PR11MB5687.namprd11.prod.outlook.com (2603:10b6:8:22::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6699.24; Mon, 21 Aug 2023 10:15:42 +0000
+Received: from DM6PR11MB4657.namprd11.prod.outlook.com
+ ([fe80::c3cd:b8d0:5231:33a8]) by DM6PR11MB4657.namprd11.prod.outlook.com
+ ([fe80::c3cd:b8d0:5231:33a8%5]) with mapi id 15.20.6699.022; Mon, 21 Aug 2023
+ 10:15:42 +0000
+From:   "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+To:     Jiri Pirko <jiri@resnulli.us>, Jakub Kicinski <kuba@kernel.org>
+CC:     Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
         "Olech, Milena" <milena.olech@intel.com>,
+        "Michalik, Michal" <michal.michalik@intel.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
         mschmidt <mschmidt@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
         "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "bvanassche@acm.org" <bvanassche@acm.org>
-Subject: RE: [PATCH RFC net-next v1 2/2] selftests/dpll: add DPLL system
- integration selftests
-Thread-Topic: [PATCH RFC net-next v1 2/2] selftests/dpll: add DPLL system
- integration selftests
-Thread-Index: AQHZ0R7y+sClUTv/akmAx/gH3L3jSa/wjecAgAP0HyA=
-Date:   Mon, 21 Aug 2023 09:32:56 +0000
-Message-ID: <CH3PR11MB84141E0EDA588B84F7E10F71E31EA@CH3PR11MB8414.namprd11.prod.outlook.com>
-References: <20230817152209.23868-1-michal.michalik@intel.com>
-        <20230817152209.23868-3-michal.michalik@intel.com>
- <20230818140802.063aae1f@kernel.org>
-In-Reply-To: <20230818140802.063aae1f@kernel.org>
-Accept-Language: en-US
+        Bart Van Assche <bvanassche@acm.org>,
+        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+        Jiri Pirko <jiri@nvidia.com>
+Subject: RE: [PATCH net-next v4 2/9] dpll: spec: Add Netlink spec in YAML
+Thread-Topic: [PATCH net-next v4 2/9] dpll: spec: Add Netlink spec in YAML
+Thread-Index: AQHZzI8RrqRf3aKbFEyIwXcwF38l0q/qq3UAgAQtf2CAAFVFAIAAgm8AgATi18A=
+Date:   Mon, 21 Aug 2023 10:15:41 +0000
+Message-ID: <DM6PR11MB4657E60D5A092E9FC05BC9EF9B1EA@DM6PR11MB4657.namprd11.prod.outlook.com>
+References: <20230811200340.577359-1-vadim.fedorenko@linux.dev>
+ <20230811200340.577359-3-vadim.fedorenko@linux.dev>
+ <20230814194336.55642f34@kernel.org>
+ <DM6PR11MB4657AD95547A14234941F9399B1AA@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <20230817163640.2ad33a4b@kernel.org> <ZN8ccoE8X5J6yysk@nanopsycho>
+In-Reply-To: <ZN8ccoE8X5J6yysk@nanopsycho>
+Accept-Language: pl-PL, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CH3PR11MB8414:EE_|SJ2PR11MB7454:EE_
-x-ms-office365-filtering-correlation-id: 0802ddc0-9d82-41df-d75c-08dba2299a5e
+x-ms-traffictypediagnostic: DM6PR11MB4657:EE_|DM8PR11MB5687:EE_
+x-ms-office365-filtering-correlation-id: bdee2ec8-621a-4ff3-07af-08dba22f933e
 x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: v3lK7K/M7i8BkphkxD1T3Bv+GOxL+P7Y2PVCF1VQu7GaoBligRMX4yD2yY6OCa+AmerEyEN+tr3edLsmG+fs79fehiFr/mglvTcDrBW6aFoqHzRFT5d/Kk/NYiqHE2QmmdvXRKXQApg1J6Vz7D/JbI8Pd1UipTcgfeaaX+jH9qhIaMWK+FR9rVsk/vb94ADirVbrXimwMBqjmUrdniETvZT3HgWmYpjpVKboP5Ydwpmd9jigqt3mi9gq8frN24tGzZ0cMDVqHJeueNRQBeaLDr2Dfgjz77ZhjFbMtDzghvqBth3V3W+VTmsd39bCUUJCCnNV/QbkpRq4VkGFNGxwsGPBDyi1BDu8pNDbDiBsfNqxw5YaAxqSzpMjoDEGPoE6zWArKHsMvqJDgTqwUrKXLg+xm1RErGyfnzZ606C1ZEwAZQkebEMoY82BoYL2+T80f3R3FhnKyolsF6Z31/4imzvI0E0gdtOA1dCsrRy58U8Ohrdl1vjnjLAT0zs4FXEH4TQ/6V9YD30VMLp48y5PCs4pOnQ/fGdC1zAv3iGwS8cjESs+uKDGjfL5pqhs/UXDo/C35+KmRRMyEz3bAfr0THjlzYqr33lGaqLAh/StdtQ=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8414.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366004)(346002)(376002)(396003)(136003)(39860400002)(84040400005)(451199024)(186009)(1800799009)(2906002)(7416002)(83380400001)(53546011)(7696005)(38100700002)(38070700005)(6506007)(5660300002)(52536014)(33656002)(26005)(86362001)(8676002)(8936002)(4326008)(316002)(9686003)(66946007)(64756008)(6916009)(54906003)(66446008)(66556008)(76116006)(66476007)(82960400001)(966005)(478600001)(122000001)(55016003)(71200400001)(41300700001);DIR:OUT;SFP:1102;
+x-microsoft-antispam-message-info: NsujpIr+CKwpAvf4CLTmt65KpJmRq/RT08G13k0bFEQ2SBLdOacUF81TfMTsHzcTygnIzYvrbnUnF2aHIJmpkLYNm6yyisyX0xGDHPS8a9bG+HyduPqTWHFWoSDL/QUbRnM4va5SyFmNdOFK0936452Fp3B4CdDeHAMRFl49nEi7N0oFa9McLLrCf8kr6SOlqvWw5lemylY4c0MCySq289Ms7iXExZ36zwZvM8aWvCc7hp9pF99WuSvYImV6cVtlsJX+x2GgCFWjz/seuU91NKjatyyXnx1ITel28GKJaAumvdP8NVpuj9SxblVJEX4KYpg+ElODl4dUS6FVgagAEryHbX381WLWvkIWKt0xLZXBKCYp9p50NO5WdlHIvVVISeqVIGVDSwczA8Thc8FFX/DynAzUCK5ErHR2AwzY9kLjv68K5qeQyZrACAHwHqruU7FMBijCyVFQKY4Cgg/fBLnD+yRE/ETayK03sLtdpQ8OEGlkOW2PrKaXlKFZCCaP9W6LuFeEY06NRrUK2gzF1+YmwUSvKqVEnWkzjSzQOdcbrMQph83CJgauCB1+Z5+g1cD1PuLtaOeyZ94IGsM+VrjYxeHB5G+CQHsDB78HXhndIlq2Klal6QO4iFZy3Rw0
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR11MB4657.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(346002)(366004)(39860400002)(136003)(396003)(376002)(451199024)(186009)(1800799009)(83380400001)(2906002)(7416002)(7696005)(38100700002)(6506007)(5660300002)(52536014)(33656002)(26005)(86362001)(38070700005)(8676002)(8936002)(4326008)(316002)(9686003)(66946007)(64756008)(66556008)(54906003)(66446008)(66476007)(76116006)(110136005)(82960400001)(478600001)(122000001)(55016003)(71200400001)(41300700001);DIR:OUT;SFP:1102;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?eHpDQdsfSWB0KSCnkeO9R0LgW9ukRl6qHEEy6kGyg/NfKDNat9Vj+LOSYrt1?=
- =?us-ascii?Q?Vq9hnUMByHnP86m1mwEWkui6GLFhTIrGMDSVIO0KprMpW/j4h2V0Kb0I6BFi?=
- =?us-ascii?Q?cj3yeMOMgTqSL+o3DRR1SlQHWWaCAzNlk/lgR3y2q5yZXQpRLh3OnOwszip4?=
- =?us-ascii?Q?OnlOYgvdj2XL7XoHb06+jEPKtfU7wS0Jq94x5eosElYRwH2K3f/MYvPZTrQZ?=
- =?us-ascii?Q?MYQou28oTKIoO3Neg1dDcKDKj/KZHmFd0e7S96dIvELOdXZ46ZBxHUA2eR2d?=
- =?us-ascii?Q?U5x8wGDbFQHRKvaSTL9CcdRNcwrbdBsfQzOk6mM7sldRxhq0rSJ58aT3vzxE?=
- =?us-ascii?Q?7m2jPJ0y/SdEThOJ4Q4JUEf/N1XUGw2788ow+6n5Obv9svWB1mUu+qhWnU7Q?=
- =?us-ascii?Q?0y81LSL4wByOkxWt83lKnbknWYjf4PnW50DLRe/qGHP6P0t/oU5HBIkFBr85?=
- =?us-ascii?Q?srBMWYBLOery+TVSA2nef6INRQe73kuTOH9/cejc6KL4Mb77zMFTcc7jDhWM?=
- =?us-ascii?Q?Opk0DWJKIX84VOVZL+YNSde3srFZSB1OfEAVp8QuoyFOXdFvS3AvRzh1NpUr?=
- =?us-ascii?Q?y62eJEwi5QrLOnBoFz40JobMvFDGQ2BxP+V0Kj9DMS++k6h+4hk74kkgPG92?=
- =?us-ascii?Q?52BrEWzOMAja++bnPY17Zm4Wjqp4z/rUEd924OUM0uY62XQaLNKNSZfjp4S2?=
- =?us-ascii?Q?kMbfBCt3W+Uk7XZmJazSEwAuGsvh6Q0hKxBBjnaTUpyKx1uLKcLn6oarLpUG?=
- =?us-ascii?Q?GRbTzZSV6T17ac1H5rMCET58bGy5nRNDz+BYXUO1nzAWlUNxGClQzUWKFjgz?=
- =?us-ascii?Q?ouWV6zlXyOm7I7lDL35EVrtRDtDJpcWToYLZ06hkpsN01ttdarrxze56fqql?=
- =?us-ascii?Q?do8xKs2ja9Pet4l+RKk4220sIVPy43F1dKxu20Rh2gxaRKUCSWpVkLusT9Bl?=
- =?us-ascii?Q?WHOxuzr9eekMdhaladiDMPwp1TqudU482FdH1MRD6X6eAoJAELjqphMuNQkV?=
- =?us-ascii?Q?6iVFTVAbM14544j0TnAAhGrCWCvzOHZibJN78orZyqwKpgbYf+1OPAx6E3hu?=
- =?us-ascii?Q?4u9vOC6QGwevbnLcW0p57eEqoOKryd5u7Lk82SlW/YU019+wKN/GhyJP48XS?=
- =?us-ascii?Q?ya2Va1MuyTMAVxEr5IYjPKixMo5dT2twXHeIlNOsv4CaRb8s+kjshrgsSlQH?=
- =?us-ascii?Q?zB13tG/Mlte3dAA7KRRgDO0gkzjeZlLXgRMKHMnkAQpf38IpVR/biKFRQ6Wu?=
- =?us-ascii?Q?Vfkr4wyxWyX8h6K9L+mnuAAAZdtyG4Lh1eq71CSZUGsZUwCdNikcyRj/GjKV?=
- =?us-ascii?Q?8NTUsRNWtwjk2EzKjpEG7vBDf/n0hX1e2BgfDEzjKrMFlIzgC/Y/HG4AqRT6?=
- =?us-ascii?Q?9YTM/EP5spJ7XcudP1htAHpUVEXQ0gSbHo3JX6dmBEyTiclqt6R8rIGSKq4/?=
- =?us-ascii?Q?uBor36ptchBALLx9PBwjEGhj2u09ryt/MHubFnJ/nd04eBywumV8tfXQ2Zrb?=
- =?us-ascii?Q?MRCN8sWimIMk+bSNd21GtsqIyeGRxNXNiKYSoXaYniqrZHia/q4aERMEtPvw?=
- =?us-ascii?Q?8envFFZQTEafK0s5l2rMrxGzvkKz6pe+ovy0KSyD?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?A8gIOMQJ64fGiPSM47dTlsm393U5LFa0v8YmLnGoHujS73lT4d3Jlpia1pNk?=
+ =?us-ascii?Q?mmk5SaC36wfvELZCCSQFZ8ZH9U/H+kVqLHXpb5/pPpyBz0OmGGl9E2o95/Zz?=
+ =?us-ascii?Q?G15C+2QiyGUqipwNy1dIPGbJSo2o9zaY6m95u3E+xy7fK+7sLvD2ZiyQeXyy?=
+ =?us-ascii?Q?Q2l936SN8oz+Yo2l1q0V+9CMVwzlDnfItqNTk5SoRjZk3Wc7jq9JDGh5dGi5?=
+ =?us-ascii?Q?hPkkZC+wiAMBRKNlWUnM+Wrcd39ClhNP9e/Lc7Q7IJRQeI6PR3TDm+fnBbwg?=
+ =?us-ascii?Q?w67mD0/fOERwOKfDWgOpchwDIRsdgprWLfRb0dMrpZ74uA7f29l3LdWrzu4a?=
+ =?us-ascii?Q?EjTAOJgsQoSUmCKZMY9lsbeVnJdyrHnbMcr0cs0A4f4nAhLEyt0bRXGiHw2J?=
+ =?us-ascii?Q?2tCe7l8zSVw/shI6UvMI6y4kFMhYDb8JxHIxp2+9Q7Bs9Gq0Z3Gv6QnWMjBt?=
+ =?us-ascii?Q?1l9cgOiER7rQ0J3Ca+D3umNZV6MaTgcY85vW0dFfvZhK5WVh3/nb0H0u7+2Z?=
+ =?us-ascii?Q?4dZsN/yUW4BYvKOIi3IZ4mUV9gOjDh6d/bqsRunBlXKsNnWHiFzK3FzjpBw1?=
+ =?us-ascii?Q?7xshXoOomejzCJdO6yBKw0L1dkzRdgego7PREDLIfHUmWv5f9zTDxONPnkpN?=
+ =?us-ascii?Q?etoCDdQZPCwk7Ialtjmn/DLnPnYsftDg7lIUFIyj6CjJyjoBKJCAS/yA7A/d?=
+ =?us-ascii?Q?aXydYnRtgGBY6i3NqonAVwt9WF/Iiglp4+4/zh1RFuNaWLDFKxN/I1B3ermL?=
+ =?us-ascii?Q?eg/v70J4yKvUaW+TfK/m7klWpZ1nRTJcSemrdYFLleUVGtE4LiH3jRm1fLHk?=
+ =?us-ascii?Q?DHVAGKw2Agk1/2WCJFD9HO3cQ54FRWqUGiUNJB0f491rAEj9JMxuEXAvmAsv?=
+ =?us-ascii?Q?O45a0ShMNciQ2yrr0DS5rugF8gcO7DFXbsHl9t80JvVwiEP9nv/v++G51AUU?=
+ =?us-ascii?Q?Cm8MLvGmrZva0mWITV4180nESB3qm4I9UPzuS3O76itrmHFm2AaQ5uvkYza6?=
+ =?us-ascii?Q?Cdy+rUYQhCyUYINrygo3gaIVPfY9C7XEpprb+DoPAacWVSsipqq9sPS0Xq1N?=
+ =?us-ascii?Q?ATto7BbNjQpBMlNbekYDGVW/6wnr/LP5XCNI7neSBGaiPnFzGl9ijAOhu6PP?=
+ =?us-ascii?Q?EbU409326JkHYuPFlU12QR3sjs92uJ9gPdqAvQuKPrN42HDWXafM7i9bYnk8?=
+ =?us-ascii?Q?ZuOMmPzvi5NV0Ux4JCZTD/yfbli/QVXNU6quT0y9g6303B2rJnIaG3jUjK+L?=
+ =?us-ascii?Q?BhRDbQp3hLMG8Tg7I+LTMi0RTaglJ/iuFOWOooFtmQHzxdo7Hpr2a1VmpDoO?=
+ =?us-ascii?Q?1Dg7J53hpOaT5ZrHnRYmsjpyxOBA1xM3yvuQsm6XiEC47Tb95OFBQZiexiE8?=
+ =?us-ascii?Q?S4/GX4vkHXXOY/lLF9JUsiTLeHjijSoAbD9KRboS1juiG44A3vyE4+UEyJAg?=
+ =?us-ascii?Q?BWw0/1sLBRFfsk3TyXuh5aliG6MkfdxtuT59DIZVFnf2xxw3VpsxgL18vr66?=
+ =?us-ascii?Q?V7KjLGrOE1j3ZQgxyRyBEgTBCncgU+0BSokzcP28QJY4h7WZvOswtrv/B8Ku?=
+ =?us-ascii?Q?mGG5chfNacBuyQG30OQKygkuhiov6B7yh09yNgFUBYH53LwE3IlcaS72Vf3L?=
+ =?us-ascii?Q?uw=3D=3D?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8414.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0802ddc0-9d82-41df-d75c-08dba2299a5e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Aug 2023 09:32:56.9757
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR11MB4657.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bdee2ec8-621a-4ff3-07af-08dba22f933e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Aug 2023 10:15:42.0273
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: SpF/jFNvRmqqOp/sE5u3K1EOhXAMme3aswztQuPN1w+xc07H3BhJeobeOTqw0+41E1zrIikLD+k/KWSPhQ1BQHw2voZ6w16dC2Eah+FFIds=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB7454
+X-MS-Exchange-CrossTenant-userprincipalname: mGq4nQiGhwkxKOa1kBRap6tcwGueePZf/LexwAiN8ywZSo03HmRJ0umseVUPum56xGOE4wfGzYgskUNX5X7prGUAm0fTiUYakJoglJZgL/E=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM8PR11MB5687
 X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 18 August 2023 11:08 PM CEST, Jakub Kicinski wrote:
->=20
-> On Thu, 17 Aug 2023 17:22:09 +0200 Michal Michalik wrote:
->> High level flow of DPLL subsystem integration selftests:
->> (after running run_dpll_tests.sh or 'make -C tools/testing/selftests')
->> 1) check if Python in correct version is installed,
->> 2) create temporary Python virtual environment,
->> 3) install all the required libraries,
->> 4) run the tests,
->> 5) do cleanup.
->=20
-> How fragile do you reckon this setup will be?
-> I mean will it work reliably across distros and various VM setups?
-> I have tried writing tests based on ynl.py and the C codegen, and
-> I can't decide whether the python stuff is easy enough to deploy.
-> Much easier to scp over to the test host a binary based on the=20
-> C code. But typing tests in python is generally quicker...
-> What are your thoughts?
->=20
-> Thanks for posting the tests!
+>From: Jiri Pirko <jiri@resnulli.us>
+>Sent: Friday, August 18, 2023 9:24 AM
+>
+>Fri, Aug 18, 2023 at 01:36:40AM CEST, kuba@kernel.org wrote:
+>>On Thu, 17 Aug 2023 18:40:00 +0000 Kubalewski, Arkadiusz wrote:
+>>> >Why are all attributes in a single attr space? :(
+>>> >More than half of them are prefixed with a pin- does it really
+>>> >not scream to you that they belong to a different space?
+>>>
+>>> I agree, but there is an issue with this, currently:
+>>>
+>>> name: pin-parent-device
+>>> subset-of: dpll
+>>> attributes:
+>>>   -
+>>>     name: id
+>>>     type: u32
+>>>   -
+>>>     name: pin-direction
+>>>     type: u32
+>>>   -
+>>>     name: pin-prio
+>>>     type: u32
+>>>   -
+>>>     name: pin-state
+>>>     type: u32
+>>>
+>>> Where "id" is a part of device space, rest attrs would be a pin space..
+>>> Shall we have another argument for device id in a pin space?
+>>
+>>Why would pin and device not have separate spaces?
+>>
+>>When referring to a pin from a "device mostly" command you can
+>>usually wrap the pin attributes in a nest, and vice versa.
+>>But it may not be needed at all here? Let's look at the commands:
+>>
+>>+    -
+>>+      name: device-id-get
+>>+        request:
+>>+          attributes:
+>>+            - module-name
+>>+            - clock-id
+>>+            - type
+>>+        reply:
+>>+          attributes:
+>>+            - id
+>>
+>>All attributes are in "device" space, no mixing.
+>>
+>>+      name: device-get
+>>+        request:
+>>+          attributes:
+>>+            - id
+>>+        reply: &dev-attrs
+>>+          attributes:
+>>+            - id
+>>+            - module-name
+>>+            - mode
+>>+            - mode-supported
+>>+            - lock-status
+>>+            - temp
+>>+            - clock-id
+>>+            - type
+>>
+>>Again, no pin attributes, so pin can be separate?
+>>
+>>+    -
+>>+      name: device-set
+>>+        request:
+>>+          attributes:
+>>+            - id
+>>
+>>Herm, this one looks like it's missing attrs :S
+>>
+>>+    -
+>>+      name: pin-id-get
+>>+        request:
+>>+          attributes:
+>>+            - module-name
+>>+            - clock-id
+>>+            - pin-board-label
+>>+            - pin-panel-label
+>>+            - pin-package-label
+>>+            - pin-type
+>>+        reply:
+>>+          attributes:
+>>+            - pin-id
+>>
+>>Mostly pin stuff. I guess the module-name and clock-id attrs can be
+>>copy/pasted between device and pin, or put them in a separate set
+>>and add that set as an attr here. Copy paste is likely much simpler.
+>
+>Agreed for the copy.
+>
+>Honestly, I wound thing that shared ATTR space is fine for DPLL,
+>the split is an overkill here. But up to you Jakub :)
+>
 
-Hi Jakub,
+I prepared some POC's and it seems most convenient way to do the
+split was to add new argument as proposed on the previous mail.
+After all the spec generated diff for uAPI header like this:
 
-First of all - everything I'll write is just my opinion. While having
-quite a bit Python experience, I can't speak confidently about the
-target systems and hardware (architectures) it would be ran against and
-what might be possible problems around that. I need your help here.
+--- a/include/uapi/linux/dpll.h
++++ b/include/uapi/linux/dpll.h
+@@ -148,7 +148,17 @@ enum dpll_a {
+        DPLL_A_LOCK_STATUS,
+        DPLL_A_TEMP,
+        DPLL_A_TYPE,
+-       DPLL_A_PIN_ID,
++
++       __DPLL_A_MAX,
++       DPLL_A_MAX =3D (__DPLL_A_MAX - 1)
++};
++
++enum dpll_a_pin {
++       DPLL_A_PIN_ID =3D 1,
++       DPLL_A_PIN_PARENT_ID,
++       DPLL_A_PIN_MODULE_NAME,
++       DPLL_A_PIN_PAD,
++       DPLL_A_PIN_CLOCK_ID,
+        DPLL_A_PIN_BOARD_LABEL,
+        DPLL_A_PIN_PANEL_LABEL,
+        DPLL_A_PIN_PACKAGE_LABEL,
+@@ -164,8 +174,8 @@ enum dpll_a {
+        DPLL_A_PIN_PARENT_DEVICE,
+        DPLL_A_PIN_PARENT_PIN,
 
-From my point of view, all we need is a Python 3.7 and access to PyPI
-repositories. This version of Python is 5 years old, but if we need
-support of even older versions I can rewrite the code not to use
-dataclasses[1] so we could go with even older version. Do you think it
-is required to support platforms with no Python at all?
+-       __DPLL_A_MAX,
+-       DPLL_A_MAX =3D (__DPLL_A_MAX - 1)
++       __DPLL_A_PIN_MAX,
++       DPLL_A_PIN_MAX =3D (__DPLL_A_PIN_MAX - 1)
+ };
 
-Another requirement is the toolchain for building the module, but I
-assume if Python is not there in some embedded system - the build tools
-are also not there...
+So we have additional attribute for targeting either a pin or device
+DPLL_A_PIN_PARENT_ID (u32) - which would be enclosed in the nests as
+previously:
+- DPLL_A_PIN_PARENT_DEVICE (if parent is a device)
+- DPLL_A_PIN_PARENT_PIN (if parent is a pin)
 
-I've seen other Python pytest code in the kernel repo - that is why I
-thought it might be a good idea to propose something like that. Your
-idea is also cool - binary is always superior. I am a strong advocate of
-taking into consideration not only deployment ease, but also maintenance
-and ease of read which might encourage community to help. I also see a
-benefit of showing the sample implementation (my tested "dummy module").
 
-My deployment is automatic and does not leave any garbage in the system
-after tests (packages are installed into temporary virtual environment).
-In case any of the requirements are not met - tests are skipped. I've
-tested it both on real HW with some E810T cards installed and on fresh
-VM - seems to work fine. But that of course require further verification.
-Till now only Arek Kubalewski sucessfully gave those tests a shot.
+I will adapt the docs and send this to Vadim's repo for review today,
+if that is ok for us.
 
-The biggest concern for me is the requirement of selftests[2]:
-  "Don't take too long;"
-This approach is reloading the modules few times to check few scenarios.
-Also, the DPLL subsystem is being tested against multiple requests - so
-it takes some time to finish (not too long but is definitely not instant).
+Thank you!
+Arkadiusz
 
-If you asked me, I would consider those tests to be part of the kernel.
-I am not sure if they should be a part of selftests, though. Maybe a
-reasonable approach would be to have have my tests being a "thorough
-integration tests" and at the same time some limited tests shipped as a
-selftests binary? I can also parametrically limit the scope of my tests
-to run faster in selftests (e.g. only one scenario) and having possibility
-to run extensive tests on demand?
+>
+>>
+>>+    -
+>>+      name: pin-get
+>>+        request:
+>>+          attributes:
+>>+            - pin-id
+>>+        reply: &pin-attrs
+>>+          attributes:
+>>+            - pin-id
+>>+            - pin-board-label
+>>+            - pin-panel-label
+>>+            - pin-package-label
+>>+            - pin-type
+>>+            - pin-frequency
+>>+            - pin-frequency-supported
+>>+            - pin-dpll-caps
+>>+            - pin-parent-device
+>
+>The ID of device is inside this nest.
+>
+>
+>>+            - pin-parent-pin
+>>
+>>All pin.
+>>
+>>+    -
+>>+      name: pin-set
+>>+        request:
+>>+          attributes:
+>>+            - pin-id
+>>+            - pin-frequency
+>>+            - pin-direction
+>>+            - pin-prio
+>>+            - pin-state
+>>+            - pin-parent-device
+>
+>Same here.
+>
+>
+>>+            - pin-parent-pin
+>>
+>>And all pin.
 
-Thanks,
-M^2
-
-[1] https://docs.python.org/3/library/dataclasses.html
-[2] https://www.kernel.org/doc/html/v5.0/dev-tools/kselftest.html
