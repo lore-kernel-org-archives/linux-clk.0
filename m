@@ -2,95 +2,91 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43B28EE49A5
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Aug 2023 20:28:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2A27EE49A5
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Aug 2023 20:48:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230520AbjHVU2v (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Aug 2023 16:28:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51086 "EHLO
+        id S230141AbjHVUsd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Aug 2023 16:48:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230032AbjHVU2v (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Aug 2023 16:28:51 -0400
+        with ESMTP id S230057AbjHVUsc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Aug 2023 16:48:32 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE221CF3;
-        Tue, 22 Aug 2023 13:28:48 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D53ECED;
+        Tue, 22 Aug 2023 13:48:31 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6CC906432D;
-        Tue, 22 Aug 2023 20:28:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2972C433C8;
-        Tue, 22 Aug 2023 20:28:47 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A758161E98;
+        Tue, 22 Aug 2023 20:48:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F15EDC433C8;
+        Tue, 22 Aug 2023 20:48:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692736127;
-        bh=6f5FyCfLDzuHLiSHijWE7qPSLlX2swSIgoIGlFa2UeM=;
+        s=k20201202; t=1692737310;
+        bh=aILIsWQMwP6Mj5nyxK3OtqseZMs0COchyqoscurzKhQ=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=JJrA4tFMwvnexhNlmF30iCe2bZXrD4P4ZkvdDesUn/pRJ7HQKc8GCIXzvTNXAPqlW
-         Xflwb7z/bMAMgbbw4tprbGbmW5vK7sve/vBvbpI7W+wTSWGdQShS11goWswrdhb4Om
-         4cb4io3WVngCKb1P8NVOGkC/3PXrMSJ19neLDx7ex8fZMjgDmIp0Ma0n9A8Dje7mNm
-         s+xrirw6vCSBl6XV5D2xgdcmJAyAz5402umkjDtSvCMThF5oN8y1JMXHnnIAS8wy4m
-         twWTLxZyN1ItRYx/n13NU3E3xh9duRhvsL1KLdyOdM7vE0y3Ep5+kPH1aJZ5+FH36s
-         VNYFc++tFp0mw==
-Message-ID: <309338dc2c3b62e3c62268760947b9c1.sboyd@kernel.org>
+        b=dsS3OKL7mrRgbNc88hSFt6uzeGpHLpTKARKF0Ygmqy7yD6bu+Ug7nml6VPDuTpfCM
+         br4CprQs6Ifs3RrJjHCWsEOhyIRB0nSVmzz4gBRtf0NXiqbnizB4a41QiSuBEdShM7
+         OJd1cpV9RAChClt6ck2eipk4GLRX9kCCHw4+h3q8Q6HNbs0HQhWHLrW9aVd76IxUq0
+         inbkWghGCwJj3nPnVUhlV7xIpbzvHNhChiQWlUULBZBiOH9olRETtQB1iNLg+IOa8y
+         hkXGEU5sss9v4V9KK1QDVYK66sXGTMmfEfqSdqgftcW4L/+g0HK0tdLf8XBnWoHjml
+         TZtVdSqlMF8xQ==
+Message-ID: <ee3587e81b8c982ca6b186c4786b4cd9.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230817142211.311366-3-biju.das.jz@bp.renesas.com>
-References: <20230817142211.311366-1-biju.das.jz@bp.renesas.com> <20230817142211.311366-3-biju.das.jz@bp.renesas.com>
-Subject: Re: [PATCH v3 2/4] clk: vc3: Fix 64 by 64 division
+In-Reply-To: <20230822200837.2734347-1-andersson@kernel.org>
+References: <20230822200837.2734347-1-andersson@kernel.org>
+Subject: Re: [GIT PULL] Qualcomm clock updates for v6.6
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Julia Lawall <julia.lawall@inria.fr>
-To:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Tue, 22 Aug 2023 13:28:45 -0700
+Cc:     linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        Kathiravan T <quic_kathirav@quicinc.com>,
+        Otto =?utf-8?q?Pfl=C3=BCger?= <otto.pflueger@abscue.de>,
+        Robert Marko <robert.marko@sartura.hr>,
+        Sricharan Ramabadhran <quic_srichara@quicinc.com>,
+        Varadarajan Narayanan <quic_varada@quicinc.com>,
+        Yang Yingliang <yangyingliang@huawei.com>,
+        Yassine Oudjana <y.oudjana@protonmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Danila Tikhonov <danila@jiaxyga.com>,
+        David Wronek <davidwronek@gmail.com>,
+        Luca Weiss <luca.weiss@fairphone.com>,
+        Luca Weiss <luca@z3ntu.xyz>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Patrick Whewell <patrick.whewell@sightlineapplications.com>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        Taniya Das <quic_tdas@quicinc.com>
+To:     Bjorn Andersson <andersson@kernel.org>, linux-clk@vger.kernel.org
+Date:   Tue, 22 Aug 2023 13:48:27 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Biju Das (2023-08-17 07:22:09)
-> Fix the below cocci warnings by replacing do_div()->div64_ul() and
-> bound the result with a max value of U16_MAX.
+Quoting Bjorn Andersson (2023-08-22 13:08:34)
 >=20
-> cocci warnings:
->         drivers/clk/clk-versaclock3.c:404:2-8: WARNING: do_div() does a
->         64-by-32 division, please consider using div64_ul instead.
+> The following changes since commit 06c2afb862f9da8dc5efa4b6076a0e48c3fbaa=
+a5:
 >=20
-> Reported-by: Julia Lawall <julia.lawall@inria.fr>
-> Closes: https://lore.kernel.org/r/202307270841.yr5HxYIl-lkp@intel.com/
-> Fixes: 6e9aff555db7 ("clk: Add support for versa3 clock driver")
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
-> v2->v3:
->  * Added to this patch series.
-> v1->v2:
->  * Added fixes tag.
-> ---
->  drivers/clk/clk-versaclock3.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+>   Linux 6.5-rc1 (2023-07-09 13:53:13 -0700)
 >=20
-> diff --git a/drivers/clk/clk-versaclock3.c b/drivers/clk/clk-versaclock3.c
-> index 7ab2447bd203..3ded616a0d15 100644
-> --- a/drivers/clk/clk-versaclock3.c
-> +++ b/drivers/clk/clk-versaclock3.c
-> @@ -401,9 +401,8 @@ static long vc3_pll_round_rate(struct clk_hw *hw, uns=
-igned long rate,
->                 /* Determine best fractional part, which is 16 bit wide */
->                 div_frc =3D rate % *parent_rate;
->                 div_frc *=3D BIT(16) - 1;
-> -               do_div(div_frc, *parent_rate);
-> =20
-> -               vc3->div_frc =3D (u32)div_frc;
-> +               vc3->div_frc =3D min_t(u64, div64_ul(div_frc, *parent_rat=
-e), U16_MAX);
->                 rate =3D (*parent_rate *
->                         (vc3->div_int * VC3_2_POW_16 + div_frc) / VC3_2_P=
-OW_16);
+> are available in the Git repository at:
+>=20
+>   https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qco=
+m-clk-for-6.6
+>=20
+> for you to fetch changes up to e1cd74b6dccb98ca09e4612ff29c7658db7a487b:
+>=20
+>   clk: qcom: smd-rpm: Set XO rate and CLK_IS_CRITICAL on PCNoC (2023-08-1=
+7 20:09:11 -0700)
+>=20
+> ----------------------------------------------------------------
 
-                                                            ^
-Should this be vc3->div_frc now to get the clamped value? --|
+Thanks. Pulled into clk-next
