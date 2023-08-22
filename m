@@ -2,84 +2,99 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E74AEE4993
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Aug 2023 18:14:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60C0BEE49AE
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Aug 2023 18:53:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229603AbjHVSOt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Aug 2023 14:14:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49300 "EHLO
+        id S229942AbjHVSxS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Aug 2023 14:53:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229503AbjHVSOt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Aug 2023 14:14:49 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC10811F;
-        Tue, 22 Aug 2023 11:14:47 -0700 (PDT)
+        with ESMTP id S229941AbjHVSxO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Aug 2023 14:53:14 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55CD5E61;
+        Tue, 22 Aug 2023 11:53:04 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 89C5765B0C;
-        Tue, 22 Aug 2023 18:14:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8737C433C8;
-        Tue, 22 Aug 2023 18:14:46 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D9B0C65D7B;
+        Tue, 22 Aug 2023 18:53:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B0D6C433C7;
+        Tue, 22 Aug 2023 18:53:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692728086;
-        bh=bT544UBRGcCu3KciRnWuvQZJPAko+oTrWuhgYPYj+wM=;
+        s=k20201202; t=1692730383;
+        bh=bKiDZmN49huWf7NWKy0Ori9rr/bVNoT6UpjkQ5TVMmo=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=lT109YoDvDGnN1g1hZVQsIGE2ONBzVw1+Oqj6DV28+VcqpoyBETL3aot22bxUb2KF
-         UhSwoSVSsIiLiksKlkRnAsZ6rFEFH6yMwBtA/LfEK6R/0otkDGdHzYn7N+PSxIOfWY
-         moYSbVdgrVo0j6LS2oYFIeAy3SG6LFouDHREkqukF3+paZQxfrn6xEGC2YToAmKF3T
-         Qv+Ovp0gPtsxwvlJIGdvdfa0t2xEDxrIA8//4IzqC9as0CR8d+frgHAN+sNCC7392N
-         jzSdnz6emR4kVVXlOufCM0DHRIvynzRIArYptsLCFYuVTtXjEftUFEHdbXO38D7zbz
-         KiqEJS2GWKZLg==
-Message-ID: <20d97115695c13341e8f66db1c90f9af.sboyd@kernel.org>
+        b=OITsBL8GveepBAjZCgo5KbglXtc1/m82nLHDkWsfB54qKA6hFX1PynX1TEVeb5msA
+         2aG4TIbKW0mg9cZBRYmcO5eturhlFyCpCCsm6LqmpKu9Aunm2hyaMZHPPXXRk5jboE
+         SmW3lXJcAjuLUOIwm/ur+B22J5i9nyRHRJTmuRZ2Xl7KxrbQDBMpI4EGOotoGYmC7i
+         +T6u9I+V4ShC1r4JiBIXzcZskcD5Z1W2DnPNRUTQk5q8MRhsXryEQ+lPqoJseYaPZx
+         dRC8c0YWeD60ilE64eQHnK7NmoSKVJ2WLS0VWmVbPYFl//j+J5CT7k0WdVffiT6OGx
+         x0JR87wuG7Miw==
+Message-ID: <cb32b5abb9fbe13fb82d906b37908276.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230820073429.9069-1-krzysztof.kozlowski@linaro.org>
-References: <20230820073429.9069-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [GIT PULL] clk: samsung: drivers for v6.6
+In-Reply-To: <20230808051407.647395-3-quic_imrashai@quicinc.com>
+References: <20230808051407.647395-1-quic_imrashai@quicinc.com> <20230808051407.647395-3-quic_imrashai@quicinc.com>
+Subject: Re: [PATCH 2/4] clk: qcom: branch: Add mem ops support for branch2 clocks
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        linux-clk@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Tue, 22 Aug 2023 11:14:44 -0700
+Cc:     Taniya Das <quic_tdas@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 22 Aug 2023 11:52:59 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Krzysztof Kozlowski (2023-08-20 00:34:29)
-> Hi,
->=20
-> Few commits for Samsung clock drivers.
->=20
-> Best regards,
-> Krzysztof
->=20
->=20
-> The following changes since commit 06c2afb862f9da8dc5efa4b6076a0e48c3fbaa=
-a5:
->=20
->   Linux 6.5-rc1 (2023-07-09 13:53:13 -0700)
->=20
-> are available in the Git repository at:
->=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/sam=
-sung-clk-6.6
->=20
-> for you to fetch changes up to b3f9581affb03ed28ff1905b649e66904f29b9e4:
->=20
->   dt-bindings: clock: samsung: remove define with number of clocks (2023-=
-08-15 07:50:15 +0200)
->=20
-> ----------------------------------------------------------------
+Quoting Imran Shaik (2023-08-07 22:14:05)
+> diff --git a/drivers/clk/qcom/clk-branch.h b/drivers/clk/qcom/clk-branch.h
+> index 0cf800b9d08d..0ffda6bef00e 100644
+> --- a/drivers/clk/qcom/clk-branch.h
+> +++ b/drivers/clk/qcom/clk-branch.h
+> @@ -24,8 +24,11 @@
+>  struct clk_branch {
+>         u32     hwcg_reg;
+>         u32     halt_reg;
+> +       u32     mem_enable_reg;
+> +       u32     mem_ack_reg;
+>         u8      hwcg_bit;
+>         u8      halt_bit;
+> +       u8      mem_enable_ack_bit;
+>         u8      halt_check;
+>  #define BRANCH_VOTED                   BIT(7) /* Delay on disable */
+>  #define BRANCH_HALT                    0 /* pol: 1 =3D halt */
 
-Thanks. Pulled into clk-next
+I suspect making a wrapper around struct clk_branch would be a better
+approach so that we don't bloat all the other clk_branch structures that
+exist in the qcom clk drivers.
+
+ $ git grep 'struct clk_branch' -- drivers/clk/qcom | wc -l
+   6357
+
+How many of these are going to be using these new registers? It may also
+make sense to do that for hardware clock gating as well, but I'm not
+really sure. Anyway, the idea is
+
+	struct clk_mem_branch {
+		u32 enable_reg;
+		u32 ack_reg;
+		u8  ack_bit;
+		struct clk_branch branch;
+	};
+
+and then a container_of define. Plus, you can put some comment above the
+structure to describe when these clks are used.
