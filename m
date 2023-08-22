@@ -2,50 +2,50 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89624EE4996
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Aug 2023 11:32:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D581FEE4996
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Aug 2023 11:32:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234873AbjHVLcn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Aug 2023 07:32:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47308 "EHLO
+        id S234909AbjHVLcy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Aug 2023 07:32:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234893AbjHVLcn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Aug 2023 07:32:43 -0400
+        with ESMTP id S234928AbjHVLcw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Aug 2023 07:32:52 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A213E63;
-        Tue, 22 Aug 2023 04:32:18 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 775DFCE7;
+        Tue, 22 Aug 2023 04:32:22 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9FDC365257;
-        Tue, 22 Aug 2023 11:32:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD772C433C8;
-        Tue, 22 Aug 2023 11:32:08 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5323E652C0;
+        Tue, 22 Aug 2023 11:32:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EDC5C433D9;
+        Tue, 22 Aug 2023 11:32:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692703929;
-        bh=1py0y39GPE7PL6VgFa1+mZiwMR1bB5ccoSWup0ZTgnA=;
+        s=k20201202; t=1692703941;
+        bh=KsOKHiygKpqL3JfDSmiPSy4RSTpplxLAURixhu/LNgA=;
         h=From:To:Cc:Subject:Date:From;
-        b=eBVan6nT8786LVTGb/dmJXZ8KFuzBapA6yX9pahPw/+5ZasuGibUAtQBBXJJIf1km
-         limS/1vsAvWjj1d4kuXgKA9NiIR0NXXPOw4Nn5K/4E+2FKdp1+1HVZJjIXplKfdn/r
-         7Rhpv5hkNLxSwgGX7ycy2BnbeEsL/W7Bd1TwBoAf/BmUHFEZU60XWdWqumTUIFp/fH
-         UTls0ZDj+6PB4pA8kE7jQ9Icj+c2dtAamUGhWexZRWslMb0ZemA0Ls5PchQKytUaUN
-         fOLr5mcdo42bOr+92Lg7VTEpRitUF05evlijE2HLFxdY0brSEDKTC9yWVH3PG5GsrF
-         H2Ppo0bPpJgZA==
+        b=etU2YWjxcaBBfoDte9X+PChSHeEqKS/M6IUPn172r2RfeivgA6ZXQmoVlS22PIrOQ
+         aKShA+XK/fMlLfYCnH1xwNamXkkdLZjA9/m8UdKdpT1i9IMKi8dSEo2wuJ7Gs6F6Fr
+         0+rq+Wwyx5mBkrJBLA9gffYC5cBWoZcA/7vE0QKGU0CiODpgtNe3L2ZaplaG5eyaSd
+         UNZpDc6jguv9bu1sdTVFtAoSguUJ8dxGKdwx3/Afsa/m5/HQkR19dzBjbv4cY1O8hq
+         wSwlVViajwt++N9u0ujj9ulThveoG0SZAuUBuPPzE85KHwK6MWzENAM5yQhhSMLoPh
+         7PTJvgURejTCQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Baoquan He <bhe@redhat.com>, kernel test robot <lkp@intel.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.10 1/4] clk: fixed-mmio: make COMMON_CLK_FIXED_MMIO depend on HAS_IOMEM
-Date:   Tue, 22 Aug 2023 07:32:03 -0400
-Message-Id: <20230822113207.3550238-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 1/3] clk: fixed-mmio: make COMMON_CLK_FIXED_MMIO depend on HAS_IOMEM
+Date:   Tue, 22 Aug 2023 07:32:16 -0400
+Message-Id: <20230822113218.3550311-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.10.191
+X-stable-base: Linux 5.4.254
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -84,10 +84,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+)
 
 diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 4ae49eae45869..df739665f2063 100644
+index cc871ae3a1792..5b34dbc830ee4 100644
 --- a/drivers/clk/Kconfig
 +++ b/drivers/clk/Kconfig
-@@ -356,6 +356,7 @@ config COMMON_CLK_BD718XX
+@@ -302,6 +302,7 @@ config COMMON_CLK_BD718XX
  config COMMON_CLK_FIXED_MMIO
  	bool "Clock driver for Memory Mapped Fixed values"
  	depends on COMMON_CLK && OF
