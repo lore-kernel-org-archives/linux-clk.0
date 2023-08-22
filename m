@@ -2,43 +2,43 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C77A4EE49AB
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Aug 2023 21:14:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F0DDEE49AE
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Aug 2023 21:15:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230518AbjHVVOn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Aug 2023 17:14:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56624 "EHLO
+        id S231175AbjHVVPD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Aug 2023 17:15:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229516AbjHVVOm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Aug 2023 17:14:42 -0400
+        with ESMTP id S229516AbjHVVPD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Aug 2023 17:15:03 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B65DCD5;
-        Tue, 22 Aug 2023 14:14:40 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A49ACCE2;
+        Tue, 22 Aug 2023 14:14:58 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 197FF634E2;
-        Tue, 22 Aug 2023 21:14:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69561C433C7;
-        Tue, 22 Aug 2023 21:14:39 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4332063D2E;
+        Tue, 22 Aug 2023 21:14:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96BA1C433C8;
+        Tue, 22 Aug 2023 21:14:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692738879;
-        bh=SPp1M0vHZgQWOwHmNtx6gdbtHubBTU74HyDjyjXehKo=;
+        s=k20201202; t=1692738897;
+        bh=K6pJHppdKklQ3rQ4cf2Xv9YHa2wO4so9Jg5yzN39o/A=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=jCPpW6GTFUHktg0LNOrTOeONo2ycd7Jevp2S0xMVkM62FGTp14eNu0B/wtOvuQRfX
-         UVDdRPrtzBHBdmbpjJ9Il1SP44sNdGq5+PKhmMUfchW9g7ULrbTJIbOLzs84x3wEVD
-         WQyc0zJnCNfEcLnpAXl3Pwwyn9Tlx7q77eNTCNh9pxvaFzgntoCUoiHD0P8ih604j+
-         Nu3+Zgaub36WxBsXtu8pLafPp5uYy2l0KKyc4ojc5AerBPwZ6DpndJmVR2afrHt+8Z
-         xMlaUuZ64H+1Rk922yH9QYo0jSjv7wToo8/FaeR8UzyP5x/YX6qWo1QWJUCPK0JE4k
-         2zSNV/wxIprxg==
-Message-ID: <c7e413675d10671d763780ad0a441acb.sboyd@kernel.org>
+        b=kNwWqnBmgRsbe1avEgYlVDtYVjzNJgc4USQJYfX2CGWtsSqFZY3KKWmp+jgClAkjn
+         gw6D3X7eDuzhduGH3vm+VsqwLC7K62elO/wft4lrTPVPyYRnenrgczLvW0vpkKkEZ4
+         TLdnd1yRkgRKw4SmZ4/7bymIw+VVGgH/eLW2KIfdtjidlo55R3KXWu8DgCEpEzi4f4
+         AmwaC2c9gTtGwMUjYEQNSXgq7nOsJmiDYtyEhlBhhE7vAWLRtELa4KoOpqj2wUXiio
+         DH3GmFAMvNDkZjwvPqFMfh0GPoxp+1ILUbmJlGzug1lrDIneVV52OzfJCB7KkVLJvi
+         ZcLKZh+PwqH9g==
+Message-ID: <481eef17d430c09dfc85f3663be2c7ac.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230812-mmp-nr-clks-v2-1-f9271bd7eaa5@skole.hr>
-References: <20230812-mmp-nr-clks-v2-0-f9271bd7eaa5@skole.hr> <20230812-mmp-nr-clks-v2-1-f9271bd7eaa5@skole.hr>
-Subject: Re: [PATCH v2 1/4] clk: mmp2: Move number of clocks to driver source
+In-Reply-To: <20230812-mmp-nr-clks-v2-2-f9271bd7eaa5@skole.hr>
+References: <20230812-mmp-nr-clks-v2-0-f9271bd7eaa5@skole.hr> <20230812-mmp-nr-clks-v2-2-f9271bd7eaa5@skole.hr>
+Subject: Re: [PATCH v2 2/4] clk: pxa168: Move number of clocks to driver source
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org,
@@ -48,13 +48,13 @@ To:     Conor Dooley <conor+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 22 Aug 2023 14:14:37 -0700
+Date:   Tue, 22 Aug 2023 14:14:55 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Duje Mihanovi=C4=87 (2023-08-12 03:02:56)
+Quoting Duje Mihanovi=C4=87 (2023-08-12 03:02:57)
 > The number of clocks should not be in the dt binding as it is not used
 > by the respective device tree and thus needlessly bloats the ABI.
 >=20
