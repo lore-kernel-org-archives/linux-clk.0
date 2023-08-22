@@ -2,71 +2,76 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E4D4EE49AE
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Aug 2023 17:40:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FAF5EE4993
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Aug 2023 17:58:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229445AbjHVRks (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Aug 2023 13:40:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42348 "EHLO
+        id S229470AbjHVR6Y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Aug 2023 13:58:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229436AbjHVRks (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Aug 2023 13:40:48 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB77044AF;
-        Tue, 22 Aug 2023 10:40:40 -0700 (PDT)
+        with ESMTP id S229479AbjHVR6Y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Aug 2023 13:58:24 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A677CE9
+        for <linux-clk@vger.kernel.org>; Tue, 22 Aug 2023 10:58:21 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id DD4A26561B;
-        Tue, 22 Aug 2023 17:40:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34D53C433C7;
-        Tue, 22 Aug 2023 17:40:36 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B4728614EE
+        for <linux-clk@vger.kernel.org>; Tue, 22 Aug 2023 17:58:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3A2BC433C8;
+        Tue, 22 Aug 2023 17:58:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692726036;
-        bh=vUXnzI9j9sDb0rMzXZN/6KnI5PcGGTVTb3BdxDzzeys=;
+        s=k20201202; t=1692727100;
+        bh=RfvfmqFjsfgrytUD5NsxzQg5ctyL8XwSos9DQJXcNiA=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Qr/ppBl6GgVkdhPQK4f2qWkzGDP4viAkH9/RB5T8Wo0sVPjHB/l1+shNmn55PZuD9
-         98Q2QRFFeCfTHc/+Mwx9j01Yss32EdhvEW9U/NmKEyQ5u3Ee2jcf5e+tfn4CAPgrtZ
-         zY4iww4p7isvYgmb7yGzqiURPKZLjOyDeE6HoWVgpl8DUSMctVsbXg20Ekm+vaYbz2
-         2PGtdNazK1SxVm5F+LS1a2LmRahzMuYSyZ975CsCXkvpNgK4f1IVTtyYH0B4kgQVJi
-         ESbCl5SReVoO8YvYSb9ca07juhHMy/Pj5h6aAy9KjQtbVZrVDOPS/xVXDKMs5bYYiH
-         fpXccfdwUpsDw==
-Message-ID: <8d35fa35494d8e8958aab3bdfb73525e.sboyd@kernel.org>
+        b=aa47fMliESM0A8yWtb++pnJMQ/APgyF3FDCI80Wug+SbhJZzeKcrl5ADUTgjoOCU2
+         da7G+5E3EQ/cvDGAUsD041+sZgdCu5cd3i7kbFMHs9pDT1t5XJFQTBLdzEQBGS0zin
+         B3UpZC4hXdoTqeLU/edZZkDaF814Wn19vjyX7T9MKeRTLG1Qu24n9VM9c/huS03Sk1
+         tm7LAwfJ7hqIFtRbq9fPXdIIE8vGqFArkLApf7ImsKhk52T84cR/T84cFFIM9kECe4
+         5us4OyNoBIhlKZBxgvfe8RKPXg0aydSWzFGeKOM3sSARzyQgEw3Ulah4T9aRt39l59
+         WBpvWn5GuK+zg==
+Message-ID: <e87da743beec8466d4fe6416ded5b19d.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <cover.1692262242.git.geert+renesas@glider.be>
-References: <cover.1692262242.git.geert+renesas@glider.be>
-Subject: Re: [GIT PULL] clk: renesas: Updates for v6.6 (take two)
+In-Reply-To: <8651570.alqRGMn8q6@phil>
+References: <8651570.alqRGMn8q6@phil>
+Subject: Re: [GIT PULL] Rockchip clock changes for 6.6 #1
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Tue, 22 Aug 2023 10:40:33 -0700
+Cc:     linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+To:     Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com
+Date:   Tue, 22 Aug 2023 10:58:17 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Geert Uytterhoeven (2023-08-17 01:54:29)
->         Hi Mike, Stephen,
+Quoting Heiko Stuebner (2023-08-16 15:05:52)
+> Hi Mike, Stephen,
 >=20
-> The following changes since commit dec57795efc4585d5bbca913af6683c5cce2a6=
-47:
+> please find below a pull-request with some small Rockchip stuff.
 >=20
->   clk: renesas: r8a77965: Add 3DGE and ZG support (2023-07-27 14:32:46 +0=
-200)
+> Please pull.
+>=20
+> Thanks
+> Heiko
+>=20
+>=20
+> The following changes since commit 06c2afb862f9da8dc5efa4b6076a0e48c3fbaa=
+a5:
+>=20
+>   Linux 6.5-rc1 (2023-07-09 13:53:13 -0700)
 >=20
 > are available in the Git repository at:
 >=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
- tags/renesas-clk-for-v6.6-tag2
+>   git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git =
+tags/v6.6-rockchip-clk1
 >=20
-> for you to fetch changes up to 708cb698ffa219567dd5837aefae7a99fbb28b77:
+> for you to fetch changes up to 5c7a71fd82350c2f5828a66a1f2f38306d61cbc7:
 >=20
->   clk: renesas: rcar-gen3: Add ADG clocks (2023-08-15 11:34:43 +0200)
+>   clk: rockchip: rv1126: Add PD_VO clock tree (2023-08-10 23:14:06 +0200)
 >=20
 > ----------------------------------------------------------------
 
