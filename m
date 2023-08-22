@@ -2,93 +2,114 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92F0FEE49AC
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Aug 2023 16:33:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64CA3EE4996
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Aug 2023 16:55:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237845AbjHVQde (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Aug 2023 12:33:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58238 "EHLO
+        id S235991AbjHVQzA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Aug 2023 12:55:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237859AbjHVQdd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Aug 2023 12:33:33 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE396E53
-        for <linux-clk@vger.kernel.org>; Tue, 22 Aug 2023 09:33:22 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-4ff88239785so7166341e87.0
-        for <linux-clk@vger.kernel.org>; Tue, 22 Aug 2023 09:33:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1692722001; x=1693326801;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2xSrhz5Us97Qf9+7A783D7YhpLpwN4x1lqakquu3VGg=;
-        b=tiEBp3JL4YsbBo0QBtgI3BmQCPsYGmzCdpu19U5Nd41sv+ssgGLIFtY5a1xz0xtsP/
-         BKPV24/E5/rZr1hm9Q31b6qODcKiXkchKBWAx4wxEzP+sIwra+poInZczv74sJUEnrvW
-         suDXeUnVmclfMTBeErpwG3IQKd89egEpnhRv8CuJBKLaiW+YaczEgROWpPB8YPuczdGt
-         Cd1gB5TRwa48+WR33V341n6aJiGfIUhWkWOCEHwSlblbZkDmMzV4ork+r5tBySfvhwbY
-         kKuuBtulfExcTuvOKdTUoQgBewgcUPZUDiJ9ofZhY0gNyPk+XIYeRlet7T3VAfOD3z35
-         X/eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692722001; x=1693326801;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2xSrhz5Us97Qf9+7A783D7YhpLpwN4x1lqakquu3VGg=;
-        b=TYsEcfTU75CGYFTjTQ9cKEXIZagARBnYOBWCpOSzqBHQCj5nM+KmPIL2dDS4Tkr0R3
-         oEE1nPEWBQiehgxXRoBVt8db0BgD1AF7haqmU6XaRiKiqpU94jv0mvXYe/toEtve918A
-         1QDo9vpwvzJnkbkDlgCJHfsK15P/RXsEmbp+b0RDz6WfNeesO34/Jk/zXCB/LXtR9WXJ
-         cB1t7DjrVNtW8xk8TJwLrLIP0v70TKFuoLx21D5IxhiMDdU4x9zOO1L5xYC9IHTB1k7f
-         bDip3akG26eOe9ScjBgFokh9Duay64h/oIxfC+de8zpQy5z1fVFxaNNccDfkDr7bwuWF
-         bu6A==
-X-Gm-Message-State: AOJu0YwsTuiosZ1Lfey6UF/4OvKaKqueFGWH6bSMqaeV8tnDICSd0tjd
-        PjXNxc7iFowiWrfDbN3MrmeZLA==
-X-Google-Smtp-Source: AGHT+IFS5+pN89cVqDrLU2XMxBLLm1IgGNr/2RbOgFBpign6kDrEGDdwUp0uhR5vmCE6wdyEgQI7Kw==
-X-Received: by 2002:a05:6512:1584:b0:4f8:711b:18b0 with SMTP id bp4-20020a056512158400b004f8711b18b0mr8883753lfb.3.1692722000583;
-        Tue, 22 Aug 2023 09:33:20 -0700 (PDT)
-Received: from [192.168.0.22] ([77.252.47.198])
-        by smtp.gmail.com with ESMTPSA id w17-20020aa7d291000000b0050488d1d376sm7750157edq.0.2023.08.22.09.33.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Aug 2023 09:33:20 -0700 (PDT)
-Message-ID: <1c812715-731e-18fe-e431-311f18af1bb5@linaro.org>
-Date:   Tue, 22 Aug 2023 18:33:18 +0200
+        with ESMTP id S234012AbjHVQzA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Aug 2023 12:55:00 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF934128
+        for <linux-clk@vger.kernel.org>; Tue, 22 Aug 2023 09:54:58 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5EACC658A6
+        for <linux-clk@vger.kernel.org>; Tue, 22 Aug 2023 16:54:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4254CC433C8;
+        Tue, 22 Aug 2023 16:54:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692723297;
+        bh=UoOkKIMbPfEd0c+D0Uln/kWgFO+YI518rHnvKJm0rLE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=FSW1H/InJ2afLXXYL2DTIbtdyEMvsvlV33F1+8nwiy+mPTMnZSkf5rQYOZPUIYgOJ
+         KbKOR9QK5OXYgCCadIlZbHfa/ilQRbg/ewWQfBVzWcB2MlDaMnL5adQu1yRdy4ihx8
+         rlyJhCqIqCnTRnUEZeSz7bllPFA5aIhZ3PFtO2sptLM9MoISuNOt6+ezpkEUAB2Wg5
+         kWoGVIS0paAl0jwTiQreTve7v0Ywb5dKFSmCEJ4ZLHHSuSxqrbDDE7lHiJtOSNcnCB
+         U/eNEsQZ5JYTPI5+/bhjZfm+eg+niNopnoEmKhnTdwoA9qDiXEBt6b4l4lP84Nkx+h
+         W3lYaCXNI72Bw==
+Date:   Tue, 22 Aug 2023 09:54:56 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+Cc:     Jiri Pirko <jiri@resnulli.us>,
+        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "Michalik, Michal" <michal.michalik@intel.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
+        mschmidt <mschmidt@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+        Jiri Pirko <jiri@nvidia.com>
+Subject: Re: [PATCH net-next v4 2/9] dpll: spec: Add Netlink spec in YAML
+Message-ID: <20230822095456.0a08b008@kernel.org>
+In-Reply-To: <DM6PR11MB4657E60D5A092E9FC05BC9EF9B1EA@DM6PR11MB4657.namprd11.prod.outlook.com>
+References: <20230811200340.577359-1-vadim.fedorenko@linux.dev>
+        <20230811200340.577359-3-vadim.fedorenko@linux.dev>
+        <20230814194336.55642f34@kernel.org>
+        <DM6PR11MB4657AD95547A14234941F9399B1AA@DM6PR11MB4657.namprd11.prod.outlook.com>
+        <20230817163640.2ad33a4b@kernel.org>
+        <ZN8ccoE8X5J6yysk@nanopsycho>
+        <DM6PR11MB4657E60D5A092E9FC05BC9EF9B1EA@DM6PR11MB4657.namprd11.prod.outlook.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [PATCH V10 2/4] dt-bindings: clock: document Amlogic S4 SoC
- peripherals clock controller
-Content-Language: en-US
-To:     Yu Tu <yu.tu@amlogic.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     kelvin.zhang@amlogic.com, qi.duan@amlogic.com
-References: <20230822082750.27633-1-yu.tu@amlogic.com>
- <20230822082750.27633-3-yu.tu@amlogic.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230822082750.27633-3-yu.tu@amlogic.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22/08/2023 10:27, Yu Tu wrote:
-> Add the S4 peripherals clock controller dt-bindings in the S4 SoC
-> family.
+On Mon, 21 Aug 2023 10:15:41 +0000 Kubalewski, Arkadiusz wrote:
+> I prepared some POC's and it seems most convenient way to do the
+> split was to add new argument as proposed on the previous mail.
+> After all the spec generated diff for uAPI header like this:
 > 
-> Signed-off-by: Yu Tu <yu.tu@amlogic.com>
-> ---
+> --- a/include/uapi/linux/dpll.h
+> +++ b/include/uapi/linux/dpll.h
+> @@ -148,7 +148,17 @@ enum dpll_a {
+>         DPLL_A_LOCK_STATUS,
+>         DPLL_A_TEMP,
+>         DPLL_A_TYPE,
+> -       DPLL_A_PIN_ID,
+> +
+> +       __DPLL_A_MAX,
+> +       DPLL_A_MAX = (__DPLL_A_MAX - 1)
+> +};
+> +
+> +enum dpll_a_pin {
+> +       DPLL_A_PIN_ID = 1,
+> +       DPLL_A_PIN_PARENT_ID,
+> +       DPLL_A_PIN_MODULE_NAME,
+> +       DPLL_A_PIN_PAD,
+> +       DPLL_A_PIN_CLOCK_ID,
+>         DPLL_A_PIN_BOARD_LABEL,
+>         DPLL_A_PIN_PANEL_LABEL,
+>         DPLL_A_PIN_PACKAGE_LABEL,
+> @@ -164,8 +174,8 @@ enum dpll_a {
+>         DPLL_A_PIN_PARENT_DEVICE,
+>         DPLL_A_PIN_PARENT_PIN,
+> 
+> -       __DPLL_A_MAX,
+> -       DPLL_A_MAX = (__DPLL_A_MAX - 1)
+> +       __DPLL_A_PIN_MAX,
+> +       DPLL_A_PIN_MAX = (__DPLL_A_PIN_MAX - 1)
+>  };
+> 
+> So we have additional attribute for targeting either a pin or device
+> DPLL_A_PIN_PARENT_ID (u32) - which would be enclosed in the nests as
+> previously:
+> - DPLL_A_PIN_PARENT_DEVICE (if parent is a device)
+> - DPLL_A_PIN_PARENT_PIN (if parent is a pin)
+> 
+> 
+> I will adapt the docs and send this to Vadim's repo for review today,
+> if that is ok for us.
 
-As well ignored email from v8 and v7 and earlier versions.
-
-Best regards,
-Krzysztof
-
+LGTM!
