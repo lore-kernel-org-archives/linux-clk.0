@@ -2,165 +2,205 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1C27EE49AC
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Aug 2023 08:29:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50B0EEE49A3
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Aug 2023 08:57:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233849AbjHVI3B (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Aug 2023 04:29:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37942 "EHLO
+        id S234068AbjHVI5F (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Aug 2023 04:57:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233846AbjHVI2z (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Aug 2023 04:28:55 -0400
-Received: from mail-sh.amlogic.com (mail-sh.amlogic.com [58.32.228.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A32B219C;
-        Tue, 22 Aug 2023 01:28:06 -0700 (PDT)
-Received: from droid06.amlogic.com (10.18.11.248) by mail-sh.amlogic.com
- (10.18.11.5) with Microsoft SMTP Server id 15.1.2507.13; Tue, 22 Aug 2023
- 16:28:00 +0800
-From:   Yu Tu <yu.tu@amlogic.com>
-To:     <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Neil Armstrong" <neil.armstrong@linaro.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-CC:     <kelvin.zhang@amlogic.com>, <qi.duan@amlogic.com>,
-        Yu Tu <yu.tu@amlogic.com>
-Subject: [PATCH V10 1/4] dt-bindings: clock: document Amlogic S4 SoC PLL clock controller
-Date:   Tue, 22 Aug 2023 16:27:47 +0800
-Message-ID: <20230822082750.27633-2-yu.tu@amlogic.com>
-X-Mailer: git-send-email 2.33.1
-In-Reply-To: <20230822082750.27633-1-yu.tu@amlogic.com>
-References: <20230822082750.27633-1-yu.tu@amlogic.com>
+        with ESMTP id S234077AbjHVI5E (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Aug 2023 04:57:04 -0400
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43BB2CE6
+        for <linux-clk@vger.kernel.org>; Tue, 22 Aug 2023 01:56:34 -0700 (PDT)
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 878B03FA71
+        for <linux-clk@vger.kernel.org>; Tue, 22 Aug 2023 08:56:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1692694589;
+        bh=KsZAGBK8aBuJlkQpPFqYx4eAjZW/EbO7+eNh4lzjUK8=;
+        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+         To:Cc:Content-Type;
+        b=LV4GQONUCJ8gUyyrkN2uF/mUVPdpAVRlQm7zqwb7WwdqkEPHJ6UkP8gX5XYwdAmGL
+         RQIJadYuhYIw+cNkYtCXRVrfV5VeKp8jqbAIhq6N6/xfli6gaMMTOOCTff/YegMEbC
+         GU4vA5ZjbolgUwmaHpnpmftImAK3KlqJugZvXOzCPYLNw9ESjJAm8sOmzTRR1Au3dv
+         Wm0k26dGOFkLM6+VVV8MDcEX5pVRvjf9SrcV3dZadnF0LNPeV3X7QvTShxMzIiTWYl
+         +5XbBp3TsELh6VbpXqk9kxehNrlyz0fF0cW/b2N1e0J/eBmGo9boc4CdvMZxsdf9nR
+         t84in+VeqeFcw==
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-41087c90290so41889131cf.1
+        for <linux-clk@vger.kernel.org>; Tue, 22 Aug 2023 01:56:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692694588; x=1693299388;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KsZAGBK8aBuJlkQpPFqYx4eAjZW/EbO7+eNh4lzjUK8=;
+        b=Q3mmHuNwcAeF/ewo2Bz866HP0n6LLYAjtTdXf8CvlcWzTOYUEogAuYGloYJaKmiXKl
+         JLyznA56jmU/2nvwC+SYC4lY/CtsurMMmWrn5+XMvgeyAQ3CgnQXWaZs+smJdbOjAy+D
+         EtgaxmFyW57rHm43XdV2jb953x25RGH63eZhSmeVvDjvIjyj3eMV51YvlGkMMpJgpeqV
+         et2a8xX0K2PCIVw209TCZQm0kxgc1Uv0Ge2VWiXnn00OQbV4Tw70U7oXo3C9nTSP5ZQe
+         un+Nrm9GXagQ/662QSNWBdgW1iOLxDQHMbQcS+jU1xxxBsQitnjv8NvbuLW+ziYn8H5Y
+         nvLA==
+X-Gm-Message-State: AOJu0Yy0x/i0KWHyfoL3JofZkUDksKkMpOBrYWXx7Axf2A1RXKfIZH85
+        aaZYgcGvWSxUYMBMGfWxVrR7NCoue6qSWbIAmWoBOK2SSc0KDFvMf4/ip0ArTNcXpV0PlE6QH9r
+        0CQLWW72vCA92en7zhfRpbTmMqRb/x166+hCaj9Ah3rs1yIAbC3N6uKnhvi3bnw==
+X-Received: by 2002:ac8:5787:0:b0:410:8c5f:52d6 with SMTP id v7-20020ac85787000000b004108c5f52d6mr12939351qta.14.1692694588420;
+        Tue, 22 Aug 2023 01:56:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHz+XeobfYaXTqusfmnM3w4yzTZ61pr2mb1iYxs26jyO6SMQfQwD2LuF4RCO/YSbJLBRAYjMwZ79K959JxrgqU=
+X-Received: by 2002:ac8:5787:0:b0:410:8c5f:52d6 with SMTP id
+ v7-20020ac85787000000b004108c5f52d6mr12939341qta.14.1692694588195; Tue, 22
+ Aug 2023 01:56:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.18.11.248]
+References: <20230821152915.208366-1-xingyu.wu@starfivetech.com>
+ <CAJM55Z_XxHeC-X2d4qcsRK6THLyqWV4SsSW3S+cC8yszpPD9Og@mail.gmail.com> <07ddac3c-eb6e-d187-b942-102f117f8d13@starfivetech.com>
+In-Reply-To: <07ddac3c-eb6e-d187-b942-102f117f8d13@starfivetech.com>
+From:   Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Date:   Tue, 22 Aug 2023 10:56:12 +0200
+Message-ID: <CAJM55Z-gYpn_FjG2Zb__Nt=rbrNQN8QDNB=KEFdeVkz9Ptv72Q@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: starfive: jh7110-sys: Fix lower rate of CPUfreq
+ by setting PLL0 rate to 1.5GHz
+To:     Xingyu Wu <xingyu.wu@starfivetech.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Conor Dooley <conor@kernel.org>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the S4 PLL clock controller dt-bindings in the S4 SoC family.
+On Tue, 22 Aug 2023 at 05:33, Xingyu Wu <xingyu.wu@starfivetech.com> wrote:
+> On 2023/8/21 23:38, Emil Renner Berthing wrote:
+> > On Mon, 21 Aug 2023 at 17:29, Xingyu Wu <xingyu.wu@starfivetech.com> wrote:
+> >>
+> >> CPUfreq supports 4 cpu frequency loads on 375/500/750/1500MHz.
+> >> But now PLL0 rate is 1GHz and the cpu frequency loads become
+> >> 333/500/500/1000MHz in fact.
+> >>
+> >> So PLL0 rate should be set to 1.5GHz. Change the parent of cpu_root clock
+> >> and the divider of cpu_core before the setting.
+> >>
+> >> Reviewed-by: Hal Feng <hal.feng@starfivetech.com>
+> >> Fixes: e2c510d6d630 ("riscv: dts: starfive: Add cpu scaling for JH7110 SoC")
+> >> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
+> >> ---
+> >>
+> >> Hi Stephen and Emil,
+> >>
+> >> This patch fixes the issue about lower rate of CPUfreq[1]
+> >> and sets PLL0 rate to 1.5GHz. In order not to affect the cpu
+> >> operation, the cpu_root's parent clock should be changed first.
+> >> And the divider of the cpu_core clock should be set to 2 so they
+> >> won't crash when setting 1.5GHz without voltage regulation.
+> >
+> > Hi Xingyu,
+> >
+> > It sounds like this is something the driver should handle
+> > automatically whenever clk_set_rate() is called on the PLL0 clock.
+> > Then we should be able to use regular assigned-clocks /
+> > assigned-clock-rates stanzas in the device tree instead of having this
+> > 1.5GHz rate hard-coded in the driver.
+> >
+> > /Emil
+>
+> Hi Emil,
+>
+> The frequency of PLL0 is set according to this process to avoid crash:
+> 1. The divider of the cpu_core clock should be set to 2 if PLL0 is set to 1.5GHz.
+> 2. The parent of cpu_root is changed from pll0 to osc.
+> 3. The PLL0 is set to 1.5GHz.
+> 4. The parent of cpu_root is changed from osc to pll0 back.
+> I don't think assigned-clock-rates/assigned-clock-parents can do such a complicated job.
 
-Signed-off-by: Yu Tu <yu.tu@amlogic.com>
----
- .../bindings/clock/amlogic,s4-pll-clkc.yaml   | 49 +++++++++++++++++++
- .../dt-bindings/clock/amlogic,s4-pll-clkc.h   | 43 ++++++++++++++++
- 2 files changed, 92 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/amlogic,s4-pll-clkc.yaml
- create mode 100644 include/dt-bindings/clock/amlogic,s4-pll-clkc.h
+Right, but what I'm saying is that if calling clk_set_rate() on the
+PLL0 clock causes a crash, that sounds like a bug in the driver. If
+you fix that bug, and make clk_set_rate() on the PLL0 clock do the
+procedure above when changing the rate, then the PLL0 clock can work
+just like any other clock and assigned-clock-rates would work.
 
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,s4-pll-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,s4-pll-clkc.yaml
-new file mode 100644
-index 000000000000..d8932ec26ca8
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/amlogic,s4-pll-clkc.yaml
-@@ -0,0 +1,49 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+# Copyright (C) 2022-2023 Amlogic, Inc. All rights reserved
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/amlogic,s4-pll-clkc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Amlogic S4 PLL Clock Controller
-+
-+maintainers:
-+  - Yu Tu <yu.tu@amlogic.com>
-+
-+properties:
-+  compatible:
-+    const: amlogic,s4-pll-clkc
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    items:
-+      - const: xtal
-+
-+  "#clock-cells":
-+    const: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - "#clock-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    clkc_pll: clock-controller@fe008000 {
-+      compatible = "amlogic,s4-pll-clkc";
-+      reg = <0xfe008000 0x1e8>;
-+      clocks = <&xtal>;
-+      clock-names = "xtal";
-+      #clock-cells = <1>;
-+    };
-+
-+...
-diff --git a/include/dt-bindings/clock/amlogic,s4-pll-clkc.h b/include/dt-bindings/clock/amlogic,s4-pll-clkc.h
-new file mode 100644
-index 000000000000..af9f110f8b62
---- /dev/null
-+++ b/include/dt-bindings/clock/amlogic,s4-pll-clkc.h
-@@ -0,0 +1,43 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
-+/*
-+ * Copyright (c) 2022-2023 Amlogic, Inc. All rights reserved.
-+ * Author: Yu Tu <yu.tu@amlogic.com>
-+ */
-+
-+#ifndef _DT_BINDINGS_CLOCK_AMLOGIC_S4_PLL_CLKC_H
-+#define _DT_BINDINGS_CLOCK_AMLOGIC_S4_PLL_CLKC_H
-+
-+#define CLKID_FIXED_PLL_DCO		0
-+#define CLKID_FIXED_PLL			1
-+#define CLKID_FCLK_DIV2_DIV		2
-+#define CLKID_FCLK_DIV2			3
-+#define CLKID_FCLK_DIV3_DIV		4
-+#define CLKID_FCLK_DIV3			5
-+#define CLKID_FCLK_DIV4_DIV		6
-+#define CLKID_FCLK_DIV4			7
-+#define CLKID_FCLK_DIV5_DIV		8
-+#define CLKID_FCLK_DIV5			9
-+#define CLKID_FCLK_DIV7_DIV		10
-+#define CLKID_FCLK_DIV7			11
-+#define CLKID_FCLK_DIV2P5_DIV		12
-+#define CLKID_FCLK_DIV2P5		13
-+#define CLKID_GP0_PLL_DCO		14
-+#define CLKID_GP0_PLL			15
-+#define CLKID_HIFI_PLL_DCO		16
-+#define CLKID_HIFI_PLL			17
-+#define CLKID_HDMI_PLL_DCO		18
-+#define CLKID_HDMI_PLL_OD		19
-+#define CLKID_HDMI_PLL			20
-+#define CLKID_MPLL_50M_DIV		21
-+#define CLKID_MPLL_50M			22
-+#define CLKID_MPLL_PREDIV		23
-+#define CLKID_MPLL0_DIV			24
-+#define CLKID_MPLL0			25
-+#define CLKID_MPLL1_DIV			26
-+#define CLKID_MPLL1			27
-+#define CLKID_MPLL2_DIV			28
-+#define CLKID_MPLL2			29
-+#define CLKID_MPLL3_DIV			30
-+#define CLKID_MPLL3			31
-+
-+#endif /* _DT_BINDINGS_CLOCK_AMLOGIC_S4_PLL_CLKC_H */
--- 
-2.33.1
+/Emil
 
+>
+> Best regards,
+> Xingyu Wu
+>
+> >
+> >> [1]: https://github.com/starfive-tech/VisionFive2/issues/55
+> >>
+> >> This patch is based on linux-next(20230818) which has merge PLL driver
+> >> on the StarFive JH7110 SoC.
+> >>
+> >> Thanks,
+> >> Xingyu Wu
+> >>
+> >> ---
+> >>  .../clk/starfive/clk-starfive-jh7110-sys.c    | 47 ++++++++++++++++++-
+> >>  1 file changed, 46 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/clk/starfive/clk-starfive-jh7110-sys.c b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
+> >> index 3884eff9fe93..b6b9e967dfc7 100644
+> >> --- a/drivers/clk/starfive/clk-starfive-jh7110-sys.c
+> >> +++ b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
+> >> @@ -501,7 +501,52 @@ static int __init jh7110_syscrg_probe(struct platform_device *pdev)
+> >>         if (ret)
+> >>                 return ret;
+> >>
+> >> -       return jh7110_reset_controller_register(priv, "rst-sys", 0);
+> >> +       ret = jh7110_reset_controller_register(priv, "rst-sys", 0);
+> >> +       if (ret)
+> >> +               return ret;
+> >> +
+> >> +       /*
+> >> +        * Set PLL0 rate to 1.5GHz
+> >> +        * In order to not affect the cpu when the PLL0 rate is changing,
+> >> +        * we need to switch the parent of cpu_root clock to osc clock first,
+> >> +        * and then switch back after setting the PLL0 rate.
+> >> +        */
+> >> +       pllclk = clk_get(priv->dev, "pll0_out");
+> >> +       if (!IS_ERR(pllclk)) {
+> >> +               struct clk *osc = clk_get(&pdev->dev, "osc");
+> >> +               struct clk *cpu_root = priv->reg[JH7110_SYSCLK_CPU_ROOT].hw.clk;
+> >> +               struct clk *cpu_core = priv->reg[JH7110_SYSCLK_CPU_CORE].hw.clk;
+> >> +
+> >> +               if (IS_ERR(osc)) {
+> >> +                       clk_put(pllclk);
+> >> +                       return PTR_ERR(osc);
+> >> +               }
+> >> +
+> >> +               /*
+> >> +                * CPU need voltage regulation by CPUfreq if set 1.5GHz.
+> >> +                * So in this driver, cpu_core need to be set the divider to be 2 first
+> >> +                * and will be 750M after setting parent.
+> >> +                */
+> >> +               ret = clk_set_rate(cpu_core, clk_get_rate(cpu_core) / 2);
+> >> +               if (ret)
+> >> +                       goto failed_set;
+> >> +
+> >> +               ret = clk_set_parent(cpu_root, osc);
+> >> +               if (ret)
+> >> +                       goto failed_set;
+> >> +
+> >> +               ret = clk_set_rate(pllclk, 1500000000);
+> >> +               if (ret)
+> >> +                       goto failed_set;
+> >> +
+> >> +               ret = clk_set_parent(cpu_root, pllclk);
+> >> +
+> >> +failed_set:
+> >> +               clk_put(pllclk);
+> >> +               clk_put(osc);
+> >> +       }
+> >> +
+> >> +       return ret;
+> >>  }
+> >>
+> >>  static const struct of_device_id jh7110_syscrg_match[] = {
+> >> --
+> >> 2.25.1
+> >>
+>
