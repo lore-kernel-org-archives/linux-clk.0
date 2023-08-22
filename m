@@ -2,114 +2,72 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64CA3EE4996
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Aug 2023 16:55:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E4D4EE49AE
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Aug 2023 17:40:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235991AbjHVQzA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Aug 2023 12:55:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48714 "EHLO
+        id S229445AbjHVRks (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Aug 2023 13:40:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234012AbjHVQzA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Aug 2023 12:55:00 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF934128
-        for <linux-clk@vger.kernel.org>; Tue, 22 Aug 2023 09:54:58 -0700 (PDT)
+        with ESMTP id S229436AbjHVRks (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Aug 2023 13:40:48 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB77044AF;
+        Tue, 22 Aug 2023 10:40:40 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5EACC658A6
-        for <linux-clk@vger.kernel.org>; Tue, 22 Aug 2023 16:54:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4254CC433C8;
-        Tue, 22 Aug 2023 16:54:57 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DD4A26561B;
+        Tue, 22 Aug 2023 17:40:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34D53C433C7;
+        Tue, 22 Aug 2023 17:40:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692723297;
-        bh=UoOkKIMbPfEd0c+D0Uln/kWgFO+YI518rHnvKJm0rLE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=FSW1H/InJ2afLXXYL2DTIbtdyEMvsvlV33F1+8nwiy+mPTMnZSkf5rQYOZPUIYgOJ
-         KbKOR9QK5OXYgCCadIlZbHfa/ilQRbg/ewWQfBVzWcB2MlDaMnL5adQu1yRdy4ihx8
-         rlyJhCqIqCnTRnUEZeSz7bllPFA5aIhZ3PFtO2sptLM9MoISuNOt6+ezpkEUAB2Wg5
-         kWoGVIS0paAl0jwTiQreTve7v0Ywb5dKFSmCEJ4ZLHHSuSxqrbDDE7lHiJtOSNcnCB
-         U/eNEsQZ5JYTPI5+/bhjZfm+eg+niNopnoEmKhnTdwoA9qDiXEBt6b4l4lP84Nkx+h
-         W3lYaCXNI72Bw==
-Date:   Tue, 22 Aug 2023 09:54:56 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-Cc:     Jiri Pirko <jiri@resnulli.us>,
-        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "Olech, Milena" <milena.olech@intel.com>,
-        "Michalik, Michal" <michal.michalik@intel.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
-        mschmidt <mschmidt@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Bart Van Assche <bvanassche@acm.org>,
-        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-        Jiri Pirko <jiri@nvidia.com>
-Subject: Re: [PATCH net-next v4 2/9] dpll: spec: Add Netlink spec in YAML
-Message-ID: <20230822095456.0a08b008@kernel.org>
-In-Reply-To: <DM6PR11MB4657E60D5A092E9FC05BC9EF9B1EA@DM6PR11MB4657.namprd11.prod.outlook.com>
-References: <20230811200340.577359-1-vadim.fedorenko@linux.dev>
-        <20230811200340.577359-3-vadim.fedorenko@linux.dev>
-        <20230814194336.55642f34@kernel.org>
-        <DM6PR11MB4657AD95547A14234941F9399B1AA@DM6PR11MB4657.namprd11.prod.outlook.com>
-        <20230817163640.2ad33a4b@kernel.org>
-        <ZN8ccoE8X5J6yysk@nanopsycho>
-        <DM6PR11MB4657E60D5A092E9FC05BC9EF9B1EA@DM6PR11MB4657.namprd11.prod.outlook.com>
+        s=k20201202; t=1692726036;
+        bh=vUXnzI9j9sDb0rMzXZN/6KnI5PcGGTVTb3BdxDzzeys=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=Qr/ppBl6GgVkdhPQK4f2qWkzGDP4viAkH9/RB5T8Wo0sVPjHB/l1+shNmn55PZuD9
+         98Q2QRFFeCfTHc/+Mwx9j01Yss32EdhvEW9U/NmKEyQ5u3Ee2jcf5e+tfn4CAPgrtZ
+         zY4iww4p7isvYgmb7yGzqiURPKZLjOyDeE6HoWVgpl8DUSMctVsbXg20Ekm+vaYbz2
+         2PGtdNazK1SxVm5F+LS1a2LmRahzMuYSyZ975CsCXkvpNgK4f1IVTtyYH0B4kgQVJi
+         ESbCl5SReVoO8YvYSb9ca07juhHMy/Pj5h6aAy9KjQtbVZrVDOPS/xVXDKMs5bYYiH
+         fpXccfdwUpsDw==
+Message-ID: <8d35fa35494d8e8958aab3bdfb73525e.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <cover.1692262242.git.geert+renesas@glider.be>
+References: <cover.1692262242.git.geert+renesas@glider.be>
+Subject: Re: [GIT PULL] clk: renesas: Updates for v6.6 (take two)
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Tue, 22 Aug 2023 10:40:33 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 21 Aug 2023 10:15:41 +0000 Kubalewski, Arkadiusz wrote:
-> I prepared some POC's and it seems most convenient way to do the
-> split was to add new argument as proposed on the previous mail.
-> After all the spec generated diff for uAPI header like this:
-> 
-> --- a/include/uapi/linux/dpll.h
-> +++ b/include/uapi/linux/dpll.h
-> @@ -148,7 +148,17 @@ enum dpll_a {
->         DPLL_A_LOCK_STATUS,
->         DPLL_A_TEMP,
->         DPLL_A_TYPE,
-> -       DPLL_A_PIN_ID,
-> +
-> +       __DPLL_A_MAX,
-> +       DPLL_A_MAX = (__DPLL_A_MAX - 1)
-> +};
-> +
-> +enum dpll_a_pin {
-> +       DPLL_A_PIN_ID = 1,
-> +       DPLL_A_PIN_PARENT_ID,
-> +       DPLL_A_PIN_MODULE_NAME,
-> +       DPLL_A_PIN_PAD,
-> +       DPLL_A_PIN_CLOCK_ID,
->         DPLL_A_PIN_BOARD_LABEL,
->         DPLL_A_PIN_PANEL_LABEL,
->         DPLL_A_PIN_PACKAGE_LABEL,
-> @@ -164,8 +174,8 @@ enum dpll_a {
->         DPLL_A_PIN_PARENT_DEVICE,
->         DPLL_A_PIN_PARENT_PIN,
-> 
-> -       __DPLL_A_MAX,
-> -       DPLL_A_MAX = (__DPLL_A_MAX - 1)
-> +       __DPLL_A_PIN_MAX,
-> +       DPLL_A_PIN_MAX = (__DPLL_A_PIN_MAX - 1)
->  };
-> 
-> So we have additional attribute for targeting either a pin or device
-> DPLL_A_PIN_PARENT_ID (u32) - which would be enclosed in the nests as
-> previously:
-> - DPLL_A_PIN_PARENT_DEVICE (if parent is a device)
-> - DPLL_A_PIN_PARENT_PIN (if parent is a pin)
-> 
-> 
-> I will adapt the docs and send this to Vadim's repo for review today,
-> if that is ok for us.
+Quoting Geert Uytterhoeven (2023-08-17 01:54:29)
+>         Hi Mike, Stephen,
+>=20
+> The following changes since commit dec57795efc4585d5bbca913af6683c5cce2a6=
+47:
+>=20
+>   clk: renesas: r8a77965: Add 3DGE and ZG support (2023-07-27 14:32:46 +0=
+200)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/renesas-clk-for-v6.6-tag2
+>=20
+> for you to fetch changes up to 708cb698ffa219567dd5837aefae7a99fbb28b77:
+>=20
+>   clk: renesas: rcar-gen3: Add ADG clocks (2023-08-15 11:34:43 +0200)
+>=20
+> ----------------------------------------------------------------
 
-LGTM!
+Thanks. Pulled into clk-next
