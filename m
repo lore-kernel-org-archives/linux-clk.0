@@ -2,120 +2,197 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F46FEE49A4
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Aug 2023 13:49:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4D91EE4993
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Aug 2023 14:55:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232958AbjHVNtu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Aug 2023 09:49:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46334 "EHLO
+        id S236984AbjHVOz1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Aug 2023 10:55:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235581AbjHVNtu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Aug 2023 09:49:50 -0400
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D26619A;
-        Tue, 22 Aug 2023 06:49:48 -0700 (PDT)
-Received: by mail-lj1-x22c.google.com with SMTP id 38308e7fff4ca-2b9338e4695so70329301fa.2;
-        Tue, 22 Aug 2023 06:49:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1692712186; x=1693316986;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TLn/3efpd2FHK1XF98uw9PrjC+AofRAhsZ6yDmk96uo=;
-        b=Hq+666VAOjMKQc8i4v58ma2fvIlzw8wBHTHtgxiuRGUtxJBUjXWjE6NPj7GckmJbLg
-         B+/LSa/l0aOf7zBDPaRWDltoOHpMhbLUMBO7Pflgrv6nsIEmzFp5ScWiKrOIRf3trrma
-         cQMnTxXz4ygPvvWIXPzviTkJMHD+0Y1MGVbZ2AZvjrlXhCVmMfEokQoIogJIvWfp3f3o
-         sVxMt4rvexPgfQQlbeoLxyvE0mwEBcGOLxWbeniLKLYtLJDNzv6RIR99E5vcVmEKUAiG
-         XqSWloto3QdQwSazy0wuhIC4286NEFi7/hzNEXKuTD3hPgSZCxW/WEMyuXI9dEFGS4RF
-         5rBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692712186; x=1693316986;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TLn/3efpd2FHK1XF98uw9PrjC+AofRAhsZ6yDmk96uo=;
-        b=KKlOposIKOWMwXCRM6Yqdz+SQWifqQngRRD3PsW2DGfleUptC07wqpQDG6maXFvZ7W
-         TpSiz3ZdB2SwLQy0wjmHsjz712g+G3jhnv84ApVA9WFfTU5sTxowesswRZ5HqQ+yKEzE
-         VfiDv92UYU+xrzAJWIYvxZnfpXZaImLHRpvrZKN17YSgi9FsXQ/qcS4xnvO71NONSxyw
-         8BLIBRGM73V/BpIxsvhwXKdPpR9UKDx20TGIyyrLsFFwSt3Ebybi/ciDOJFGYSCkdQfj
-         rmyjAqhwDLVR+K/LKEqh0lVbYZ191xteWiZN6aMRLb9NbHURwdMVnIISyQQiZoIsXmUe
-         2Ijg==
-X-Gm-Message-State: AOJu0Yyyoa8Wv98SEW5upj/ZtbeXtF84PjrWUeaFGdxWIs4MUOoCDmpm
-        50wVZkSAysKprRjABrYWHHA=
-X-Google-Smtp-Source: AGHT+IHjITXPvnbT+VWFJqJbcw0NgpsWG1mFhuUyAyxMRR9lUZv6B8mGeGhDbNv4II1EuFxqD626oA==
-X-Received: by 2002:a19:385e:0:b0:4fe:7dcb:8ea5 with SMTP id d30-20020a19385e000000b004fe7dcb8ea5mr6087643lfj.25.1692712186038;
-        Tue, 22 Aug 2023 06:49:46 -0700 (PDT)
-Received: from lab.hqhome163.com ([194.183.10.152])
-        by smtp.googlemail.com with ESMTPSA id l19-20020a1c7913000000b003fe26bf65e7sm15740528wme.13.2023.08.22.06.49.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Aug 2023 06:49:44 -0700 (PDT)
-From:   Alessandro Carminati <alessandro.carminati@gmail.com>
-Cc:     Alessandro Carminati <alessandro.carminati@gmail.com>,
-        Philip Daly <pdaly@redhat.com>,
+        with ESMTP id S233629AbjHVOz0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Aug 2023 10:55:26 -0400
+Received: from EUR04-VI1-obe.outbound.protection.outlook.com (mail-vi1eur04on2052.outbound.protection.outlook.com [40.107.8.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1616198;
+        Tue, 22 Aug 2023 07:55:21 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=nVuo8A24PCw6Rl38JfcYoVJJCAVBmgTBDkr08WfryThY2wu8r8JEyLynZf6+eS/RqPoRzXy3Xgnq3nIld7trJFG4ll/vUpxMieyYxktbvUEh+dc2voIQoWjrbHI84iYv1uZ6uKpZydVm2Sq9m9WNUxJOk6UDf4vAkYq8fu5/7GQhjj9NZtH1iSmO2D1nbLuLiDYtkFkx9VPRGd5EjnchOltDoswkmx0sBZTQIGpafImZ/6TPZd+Nrrex0qD1YKBk22s95mJdH5gG1rxJu8FN7NHKOvaO8oaYjxSjF69+QlvAwdacBNwUd4a7EHH6ACMpD0ai/RHikeYpllCVziWZAw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aVqB6QIr0Oy194tvuxVk0WB6vOoANW0evRTgIrd85a4=;
+ b=mhbgSoGKr9LK5Js4stcpv6o0sB3NyE9SAWOCNjrQ+MaTfgWZhJ49UvoJPQSBiWYpCXCcSk/hSq0N7NaaoM0LHP4hyH0d2sWR+XVe0GyRccXqF1AtG+rz6ko5s5rz4K1FHCakuHkATx0+lYXO9xwQ1i1GYlDA0INDQM0gaPoEGEeR8PoyNdARCACx0YrPcB4dCy2z2Q5VStDIHGyTUZMmfWichYj6p+CXFEA4AkEaQmKQ8uGt8Sr3Uq6l3NJgkNt0UUndRulFLddwBEvs0AqFZfdPFXcyZoEo8QNZt/hSX9X7b6zw+/EBZs97IfBOa5+EPLNSZPEvwGKJ6USAdfZI9Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aVqB6QIr0Oy194tvuxVk0WB6vOoANW0evRTgIrd85a4=;
+ b=PY0VteW8P8i6pRQbtFxcHy+DsToKlbwsl1JlDUWqUzemwNunANhS1uGVdAvzWFo0l2TKYVWGyUVnDhZ4OeEmr9wui62FDfJCtrbjL5Zi2KbqYQ73DjKyYwALVBSbRM08DCtmM6cvh7DLgWB+wjwZONj5Msp3IbquIqVO3CvHXlk=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from GV1PR04MB9070.eurprd04.prod.outlook.com (2603:10a6:150:21::14)
+ by AS8PR04MB8547.eurprd04.prod.outlook.com (2603:10a6:20b:422::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.24; Tue, 22 Aug
+ 2023 14:55:18 +0000
+Received: from GV1PR04MB9070.eurprd04.prod.outlook.com
+ ([fe80::fd28:f7a2:1bc1:53a0]) by GV1PR04MB9070.eurprd04.prod.outlook.com
+ ([fe80::fd28:f7a2:1bc1:53a0%6]) with mapi id 15.20.6699.022; Tue, 22 Aug 2023
+ 14:55:17 +0000
+Date:   Tue, 22 Aug 2023 17:55:12 +0300
+From:   Ioana Ciornei <ioana.ciornei@nxp.com>
+To:     Sean Anderson <sean.anderson@seco.com>
+Cc:     Vladimir Oltean <vladimir.oltean@nxp.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        linux-phy@lists.infradead.org,
+        Madalin Bucur <madalin.bucur@nxp.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Camelia Alexandra Groza <camelia.groza@nxp.com>,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        Bagas Sanjaya <bagasdotme@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        =?utf-8?B?RmVybuKUnMOtbmRleg==?= Rojas <noltari@gmail.com>,
+        Jonas Gorski <jonas.gorski@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>, Li Yang <leoyang.li@nxp.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
+        Shawn Guo <shawnguo@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] Sanitize possible_parent_show to Handle Return Value of of_clk_get_parent_name
-Date:   Tue, 22 Aug 2023 13:48:49 +0000
-Message-Id: <20230822134849.3352329-1-alessandro.carminati@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        linux-doc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v14 00/15] phy: Add support for Lynx 10G SerDes
+Message-ID: <20230822145512.pc6qd4ovvnw4y3en@LXL00007.wbi.nxp.com>
+References: <20230612163353.dwouatvqbuo6h4ea@skbuf>
+ <1dd01fe2-08a8-ec2f-1184-a58b2f55ba85@seco.com>
+ <20230613142754.wr5njtjo4tbloqwu@skbuf>
+ <20230811150826.urp2hzl3tahesrjx@skbuf>
+ <26623d0c-8a5a-614b-7df7-69214aaec524@seco.com>
+ <20230811163637.bs7a46juasjgnmf4@skbuf>
+ <20230821124952.mraqqp7pxlo56gkh@skbuf>
+ <a2e3fcad-9857-f1b3-8ada-efb2013a4bf5@seco.com>
+ <20230821181349.hls6pukp5d6rc5av@LXL00007.wbi.nxp.com>
+ <73d59dd2-88f0-3c1a-0de2-de2e050cba5a@seco.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <73d59dd2-88f0-3c1a-0de2-de2e050cba5a@seco.com>
+X-ClientProxiedBy: VI1P194CA0051.EURP194.PROD.OUTLOOK.COM
+ (2603:10a6:803:3c::40) To GV1PR04MB9070.eurprd04.prod.outlook.com
+ (2603:10a6:150:21::14)
 MIME-Version: 1.0
-Content-type: text/plain
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: GV1PR04MB9070:EE_|AS8PR04MB8547:EE_
+X-MS-Office365-Filtering-Correlation-Id: 54584efa-0dff-41a4-178c-08dba31fcca5
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: QUz2pvSPJ8nkLvCZguMDVEOIoeZzTzgoBR5iaEi4y3K7Lkx7K95UJCVSXj2kDGkoYDTJ2f9zG+hbQeCaGj5NOAHu7qu2RKjtQfQ9GGwhwc1dtepTA31yvVc7rhakulyIIHytzVpOhb6PdCrNYimjHGiOzfPOtUut77kT0LOGOrLlEs8CiNF0fA4hSll1lbCVI4JsqYBW0cklqn4/KHZtAgeA8kl6FwmbbnQwZCW7R7u8/pLv87RCqbtB5wpLBeWEFsdhA6Okof/SHNenUFVQ7xtJr9jme3gEniC2PTGXEy1BbS8CWFe8OeestrVoMCH84CPyT1iHZeTDz4ygkPw9jtWn2MjwYBLXdFlZM3q3CoaTTc1Bggo4ZnBRBYm2zo2kWVbRvbI0xHq2bVXw01nC/3rW4zdwVVgAhEwlqfnrtQRoTeYkdyT7HmRrrhVgJRE66jM6m1Lu7kes4WqLtBLWSoi1ZEy7F+Bitn2KxND6EdMehmr9EFE48WNNvyKrPXp0JjIoR1fpsxWOzudZcNJzWthz2WSdQ2iylA156pTQvX4=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1PR04MB9070.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(136003)(376002)(39860400002)(346002)(366004)(1800799009)(186009)(451199024)(54906003)(6916009)(66476007)(66556008)(6512007)(316002)(66946007)(8676002)(8936002)(4326008)(966005)(41300700001)(1076003)(478600001)(6666004)(38100700002)(6486002)(53546011)(6506007)(83380400001)(2906002)(7416002)(86362001)(44832011)(5660300002)(26005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?vlzlZgil1aNwyhrB2b9V7gLe81GcMP+g9pCLRPZ45Xnfocn3RsogTp8fxyTD?=
+ =?us-ascii?Q?YxMTsbsxJ3pqzRhBQZHj7SEJAhvwZtJMbFq2y8NLBhrMLuyxyQ9mdvYqcsxv?=
+ =?us-ascii?Q?qVyVCwDAFz27Dd2Db7fAm579tm0beU9OFU52DZsScMHk2782rf5jOxIaragT?=
+ =?us-ascii?Q?VPLRLbC+/Iy8rNc2CrkUU/mZLRz7lnBKVHDrJdzX6FKRcJ1NCrByvJAv5fwG?=
+ =?us-ascii?Q?JCed244xDNWFgGD4AFwYATpcoNlHn7tLOEkZsCcrzlIdzFQj9rgsSJemHXNt?=
+ =?us-ascii?Q?eDQH4OTD6U7/jeo3ICIDk8UT1mDEUp8XUueKvftc/PP0ZOrgLH35KRSrKCZ/?=
+ =?us-ascii?Q?ZLidJxUUgmEnkRPSuCsvSzhTTf1g/rYNVvW2oW9RNhWomF5BlOYI4ISQuCwh?=
+ =?us-ascii?Q?XwasCL4d9nBM3hshyvMzrRpYjagzkkpd13hw1HfvU356JWamcXg/+PAmb5B4?=
+ =?us-ascii?Q?xDddnl9FztLX2rUDVzOu6df7bY7dQJ1wXf/Vjb7keu/Dpr8uddyx1hwZ0Hcj?=
+ =?us-ascii?Q?Kk6luiW3z2QDQpH3LWP7kVCM3hmn2pCh+z0O4cHoEihSHLwL2uCfhYai7LzD?=
+ =?us-ascii?Q?J9pQJAJtOCUhzf52LhOHdpBr0ndq580QgATZ5FD+L5J5KaUf9+Dm1ludgiZ2?=
+ =?us-ascii?Q?Anib4qwtT6AKeBErRseM/u9LInMbfMY7U2RUMtKkmh4RTN9p2pKOr3Zek8KT?=
+ =?us-ascii?Q?vsV/kqpqsfEQJWPcjNLlDfTiSS2GM9z4CJK5kNoYAeHy0tYsA/lprFxn4Ey3?=
+ =?us-ascii?Q?1SY/5u7TcRazNb3FRcvv91KZwdFlPsAEZsiGduet4wnOSmJvqPk8n8QBbLbD?=
+ =?us-ascii?Q?BKPgJj0bbp0w23N0p6mzEdMfNR/gRLfxshSEttcXn3pjSmMIipc/zjND0ULu?=
+ =?us-ascii?Q?DvkMOyRJV8dDNJRPRqG0ozgx1gA2S9OzObZvmRsMEjHH+TTTva21AjQe6Bux?=
+ =?us-ascii?Q?QgRsl7nIOeIbxj846ftgfapYWM3FqdbSwanC2VwpPm3mRQbXILf4i8NZ+xI8?=
+ =?us-ascii?Q?yVpn8vp0XTxHfMIbPCBGrLmh0eKnFRV4TczGMdWg31dmxUIol2Z88XP2rzhj?=
+ =?us-ascii?Q?glGfPRNBwqMnELnbAhmapJe/BnyaWglz9uumS9Yc+Aqlc9aLXFhestEeR3HP?=
+ =?us-ascii?Q?QvISoPyxOIMh+r4T/aA9Oprd9T/4QvWH1WB2I+pEd3VYEvG9AVkOes0zzmAg?=
+ =?us-ascii?Q?kB7Kdj7ZMvzzhq89LWdgFne9GbyyRZDfyYgqlDY0oup4ql4ZWLhNrx/APaRx?=
+ =?us-ascii?Q?ZUYhxFwFv8Kk8k3OgYglu3w6jWMnEy3S0A0SP5Ikkx5JhiN2kQ/rQaizoDDf?=
+ =?us-ascii?Q?afFTYpCc35xraFLwKg5gJPJVhlHiHwb7MmMflI2mqKXZwsxATS3d12DzQmue?=
+ =?us-ascii?Q?JYlDk6PWPv0jndkPaSyscrz20g8k0SJoii1SK6XR1BJN3Buocp63v4IBTzK1?=
+ =?us-ascii?Q?G4ABpaJuCHKO+J20isE2w7ofmSYwnplA8XWz5R6oNnM0Anl60P7jN9v9MQdd?=
+ =?us-ascii?Q?sNMsCV9Q30+UqUsYG8S71vcnSBBkhcRPBz0LlgNh5oJ0n5v6pzfvLvubGTVl?=
+ =?us-ascii?Q?wyG5Nv5iBK5/5rcAVZFFbqeLLkz0eGLTXiQnbjRR?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 54584efa-0dff-41a4-178c-08dba31fcca5
+X-MS-Exchange-CrossTenant-AuthSource: GV1PR04MB9070.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2023 14:55:17.8808
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: mPR8Y+BRCl4En17NB8tef9OvHdiTZUoVrcnhtbZSfX/b5+0fJnQ9IUKwFKlcijgoxe/yC83jwCh7EOvXkE3NjA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8547
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In the possible_parent_show function, ensure proper handling of the return
-value from of_clk_get_parent_name to prevent potential issues arising from
-a NULL return.
-The current implementation invokes seq_puts directly on the result of
-of_clk_get_parent_name without verifying the return value, which can lead
-to kernel panic if the function returns NULL.
+On Mon, Aug 21, 2023 at 02:46:53PM -0400, Sean Anderson wrote:
+> On 8/21/23 14:13, Ioana Ciornei wrote:
+> > On Mon, Aug 21, 2023 at 01:45:44PM -0400, Sean Anderson wrote:
+> >> Well, we have two pieces of information we need
+> >> 
+> >> - What values do we need to program in the PCCRs to select a particular
+> >>   mode? This includes whether to e.g. set the KX bits.
+> >> - Implied by the above, what protocols are supported on which lanes?
+> >>   This is not strictly necessary, but will certainly solve a lot of
+> >>   headscratching.
+> >> 
+> >> This information varies between different socs, and different serdes on
+> >> the same socs. We can't really look at the RCW or the clocks and figure
+> >> out what we need to program. So what are our options?
+> >> 
+> >> - We can have a separate compatible for each serdes on each SoC (e.g.
+> >>   "fsl,lynx-10g-a"). This was rejected by the devicetree maintainers.
 
-This patch addresses the concern by introducing a check on the return
-value of of_clk_get_parent_name. If the return value is not NULL, the
-function proceeds to call seq_puts, providing the returned value as
-argument.
-However, if of_clk_get_parent_name returns NULL, the function provides a
-static string as argument, avoiding the panic.
+I previously took this statement at face value and didn't further
+investigate. After a bit of digging through the first versions of this
+patch set it's evident that you left out a big piece of information.
 
-Reported-by: Philip Daly <pdaly@redhat.com>
-Signed-off-by: Alessandro Carminati (Red Hat) <alessandro.carminati@gmail.com>
----
- drivers/clk/clk.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+The devicetree maintainers have indeed rejected compatible strings of
+the "fsl,<soc-name>-serdes-<instance>" form but they also suggested to
+move the numbering to a property instead:
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index c249f9791ae8..ab999644e185 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3416,6 +3416,7 @@ static void possible_parent_show(struct seq_file *s, struct clk_core *core,
- 				 unsigned int i, char terminator)
- {
- 	struct clk_core *parent;
-+	const char *tmp;
- 
- 	/*
- 	 * Go through the following options to fetch a parent's name.
-@@ -3436,12 +3437,12 @@ static void possible_parent_show(struct seq_file *s, struct clk_core *core,
- 		seq_puts(s, core->parents[i].name);
- 	else if (core->parents[i].fw_name)
- 		seq_printf(s, "<%s>(fw)", core->parents[i].fw_name);
--	else if (core->parents[i].index >= 0)
--		seq_puts(s,
--			 of_clk_get_parent_name(core->of_node,
--						core->parents[i].index));
--	else
-+	else if (core->parents[i].index >= 0) {
-+		tmp = of_clk_get_parent_name(core->of_node, core->parents[i].index);
-+		seq_puts(s, tmp ? tmp : "(none)");
-+	} else {
- 		seq_puts(s, "(missing)");
-+	}
- 
- 	seq_putc(s, terminator);
- }
--- 
-2.34.1
+https://lore.kernel.org/all/db9d9455-37af-1616-8f7f-3d752e7930f1@linaro.org/
 
+But instead of doing that, you chose to move all the different details
+that vary between SerDes blocks/SoCs from the driver to the DTS. I don't
+see that this was done in response to explicit feedback.
+
+> >> - We can have one compatible for each SoC, and determine the serdes
+> >>   based on the address. I would like to avoid this...
+> > 
+> > To me this really seems like a straightforward approach.
+> 
+> Indeed it would be straightforward, but what's the point of having a
+> devicetree in the first place then? We could just go back to being a
+> (non-dt) platform device.
+> 
+
+I am confused why you are now so adamant to have these details into the
+DTS. Your first approach was to put them into the driver, not the DTS:
+
+https://lore.kernel.org/netdev/20220628221404.1444200-5-sean.anderson@seco.com/
+
+And this approach could still work now and get accepted by the device
+tree maintainers. The only change that would be needed is to add a
+property like "fsl,serdes-block-id = <1>".
+
+> >> - We can stick all the details which vary between serdes/socs into the
+> >>   device tree. This is very flexible, since supporting new SoCs is
+> >>   mostly a matter of adding a new compatible and writing a new
+> >>   devicetree. On the other hand, if you have a bug in your devicetree,
+> >>   it's not easy to fix it in the kernel.
+> >> - Just don't support protocol switching. The 28G driver does this, which
+> >>   is why it only has one compatible. However, supporting protocol
+> >>   switching is a core goal of this driver, so dropping support is not an
+> >>   option.
+> >> 
+
+Ioana
