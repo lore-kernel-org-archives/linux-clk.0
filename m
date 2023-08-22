@@ -2,107 +2,120 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EDBBEE49A3
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Aug 2023 12:24:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F46FEE49A4
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Aug 2023 13:49:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235575AbjHVMYI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Aug 2023 08:24:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45446 "EHLO
+        id S232958AbjHVNtu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Aug 2023 09:49:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232256AbjHVMYI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Aug 2023 08:24:08 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1C421B2;
-        Tue, 22 Aug 2023 05:24:06 -0700 (PDT)
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37M9Uu5P019649;
-        Tue, 22 Aug 2023 11:46:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=q3CEcAMK1BPwNANS5ZGNItwwcCsuN+Y63PbtS+iHC9s=;
- b=dIwOctzEiMo3HPyNiyMLpdl/lcRvQ5FfuRhCUWKsdkv61ytOL08u/bHNg3md9GIt7lYx
- 79bAD9e1sSA+FgekgkaOlMMKmb2ZxA4cFxJ/2Bs52VXJ6oDaQqFNKgTutQ7rj3viUOo8
- NqiX5xRN6hPRP0zPLLuK2bp8Ao97SigPCm2a6FSbfjw73cIs2KxcfS/yrtM5hYAyKzU5
- LKlqLCIBGadkSLNX91eGkspwyUpfUaluSk061kVKzq5gDwRWtuRaOIIVqpHFuZzWG/Ue
- U1OoUt7JaGXSo9FGl0c3fy4NvSeZ7YQbq97xcDUlQO/XzbiR8BgJ2NR/niZkcJIS7+5i rg== 
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3smf3q9fvk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 22 Aug 2023 11:46:50 +0000
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-        by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 37MBkmZY013267
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 22 Aug 2023 11:46:48 GMT
-Received: from [10.216.34.168] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.36; Tue, 22 Aug
- 2023 04:46:44 -0700
-Message-ID: <1136bf59-3ecb-db33-6dd6-eeca7fb8accc@quicinc.com>
-Date:   Tue, 22 Aug 2023 17:16:40 +0530
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [PATCH 3/4] clk: qcom: Add ECPRICC driver support for QDU1000 and
- QRU1000
-Content-Language: en-US
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Andy Gross <agross@kernel.org>,
+        with ESMTP id S235581AbjHVNtu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Aug 2023 09:49:50 -0400
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D26619A;
+        Tue, 22 Aug 2023 06:49:48 -0700 (PDT)
+Received: by mail-lj1-x22c.google.com with SMTP id 38308e7fff4ca-2b9338e4695so70329301fa.2;
+        Tue, 22 Aug 2023 06:49:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1692712186; x=1693316986;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TLn/3efpd2FHK1XF98uw9PrjC+AofRAhsZ6yDmk96uo=;
+        b=Hq+666VAOjMKQc8i4v58ma2fvIlzw8wBHTHtgxiuRGUtxJBUjXWjE6NPj7GckmJbLg
+         B+/LSa/l0aOf7zBDPaRWDltoOHpMhbLUMBO7Pflgrv6nsIEmzFp5ScWiKrOIRf3trrma
+         cQMnTxXz4ygPvvWIXPzviTkJMHD+0Y1MGVbZ2AZvjrlXhCVmMfEokQoIogJIvWfp3f3o
+         sVxMt4rvexPgfQQlbeoLxyvE0mwEBcGOLxWbeniLKLYtLJDNzv6RIR99E5vcVmEKUAiG
+         XqSWloto3QdQwSazy0wuhIC4286NEFi7/hzNEXKuTD3hPgSZCxW/WEMyuXI9dEFGS4RF
+         5rBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692712186; x=1693316986;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TLn/3efpd2FHK1XF98uw9PrjC+AofRAhsZ6yDmk96uo=;
+        b=KKlOposIKOWMwXCRM6Yqdz+SQWifqQngRRD3PsW2DGfleUptC07wqpQDG6maXFvZ7W
+         TpSiz3ZdB2SwLQy0wjmHsjz712g+G3jhnv84ApVA9WFfTU5sTxowesswRZ5HqQ+yKEzE
+         VfiDv92UYU+xrzAJWIYvxZnfpXZaImLHRpvrZKN17YSgi9FsXQ/qcS4xnvO71NONSxyw
+         8BLIBRGM73V/BpIxsvhwXKdPpR9UKDx20TGIyyrLsFFwSt3Ebybi/ciDOJFGYSCkdQfj
+         rmyjAqhwDLVR+K/LKEqh0lVbYZ191xteWiZN6aMRLb9NbHURwdMVnIISyQQiZoIsXmUe
+         2Ijg==
+X-Gm-Message-State: AOJu0Yyyoa8Wv98SEW5upj/ZtbeXtF84PjrWUeaFGdxWIs4MUOoCDmpm
+        50wVZkSAysKprRjABrYWHHA=
+X-Google-Smtp-Source: AGHT+IHjITXPvnbT+VWFJqJbcw0NgpsWG1mFhuUyAyxMRR9lUZv6B8mGeGhDbNv4II1EuFxqD626oA==
+X-Received: by 2002:a19:385e:0:b0:4fe:7dcb:8ea5 with SMTP id d30-20020a19385e000000b004fe7dcb8ea5mr6087643lfj.25.1692712186038;
+        Tue, 22 Aug 2023 06:49:46 -0700 (PDT)
+Received: from lab.hqhome163.com ([194.183.10.152])
+        by smtp.googlemail.com with ESMTPSA id l19-20020a1c7913000000b003fe26bf65e7sm15740528wme.13.2023.08.22.06.49.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Aug 2023 06:49:44 -0700 (PDT)
+From:   Alessandro Carminati <alessandro.carminati@gmail.com>
+Cc:     Alessandro Carminati <alessandro.carminati@gmail.com>,
+        Philip Daly <pdaly@redhat.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>
-CC:     Taniya Das <quic_tdas@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Ajit Pandey <quic_ajipan@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>
-References: <20230808051407.647395-1-quic_imrashai@quicinc.com>
- <20230808051407.647395-4-quic_imrashai@quicinc.com>
- <7d9ac1c6-be2d-4fd6-ba56-3976ec847274@linaro.org>
-From:   Imran Shaik <quic_imrashai@quicinc.com>
-In-Reply-To: <7d9ac1c6-be2d-4fd6-ba56-3976ec847274@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: eECfzVK_BxfDF8UlXUBdgLpgs1xsL3Un
-X-Proofpoint-ORIG-GUID: eECfzVK_BxfDF8UlXUBdgLpgs1xsL3Un
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-08-22_10,2023-08-22_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- lowpriorityscore=0 priorityscore=1501 adultscore=0 mlxlogscore=525
- bulkscore=0 suspectscore=0 spamscore=0 mlxscore=0 phishscore=0
- impostorscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2306200000 definitions=main-2308220089
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] Sanitize possible_parent_show to Handle Return Value of of_clk_get_parent_name
+Date:   Tue, 22 Aug 2023 13:48:49 +0000
+Message-Id: <20230822134849.3352329-1-alessandro.carminati@gmail.com>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-type: text/plain
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+In the possible_parent_show function, ensure proper handling of the return
+value from of_clk_get_parent_name to prevent potential issues arising from
+a NULL return.
+The current implementation invokes seq_puts directly on the result of
+of_clk_get_parent_name without verifying the return value, which can lead
+to kernel panic if the function returns NULL.
 
+This patch addresses the concern by introducing a check on the return
+value of of_clk_get_parent_name. If the return value is not NULL, the
+function proceeds to call seq_puts, providing the returned value as
+argument.
+However, if of_clk_get_parent_name returns NULL, the function provides a
+static string as argument, avoiding the panic.
 
-On 8/10/2023 1:31 AM, Konrad Dybcio wrote:
-> On 8.08.2023 07:14, Imran Shaik wrote:
->> Add ECPRI Clock Controller (ECPRICC) support for QDU1000 and QRU1000 SoCs.
->>
->> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
->> ---
-> Please ensure inline hex is lowercase
-> 
+Reported-by: Philip Daly <pdaly@redhat.com>
+Signed-off-by: Alessandro Carminati (Red Hat) <alessandro.carminati@gmail.com>
+---
+ drivers/clk/clk.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-Sure, will update all the hex values in lowercase and push another series.
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index c249f9791ae8..ab999644e185 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3416,6 +3416,7 @@ static void possible_parent_show(struct seq_file *s, struct clk_core *core,
+ 				 unsigned int i, char terminator)
+ {
+ 	struct clk_core *parent;
++	const char *tmp;
+ 
+ 	/*
+ 	 * Go through the following options to fetch a parent's name.
+@@ -3436,12 +3437,12 @@ static void possible_parent_show(struct seq_file *s, struct clk_core *core,
+ 		seq_puts(s, core->parents[i].name);
+ 	else if (core->parents[i].fw_name)
+ 		seq_printf(s, "<%s>(fw)", core->parents[i].fw_name);
+-	else if (core->parents[i].index >= 0)
+-		seq_puts(s,
+-			 of_clk_get_parent_name(core->of_node,
+-						core->parents[i].index));
+-	else
++	else if (core->parents[i].index >= 0) {
++		tmp = of_clk_get_parent_name(core->of_node, core->parents[i].index);
++		seq_puts(s, tmp ? tmp : "(none)");
++	} else {
+ 		seq_puts(s, "(missing)");
++	}
+ 
+ 	seq_putc(s, terminator);
+ }
+-- 
+2.34.1
 
-> No GDSCs in this clock controller?
-> 
-> Konrad
-
-There are no GDSCs in this clock controller.
-
-Thanks,
-Imran
