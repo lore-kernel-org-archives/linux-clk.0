@@ -2,99 +2,71 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60C0BEE49AE
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Aug 2023 18:53:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34613EE4993
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Aug 2023 19:10:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229942AbjHVSxS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Aug 2023 14:53:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49896 "EHLO
+        id S229586AbjHVTKc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Aug 2023 15:10:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229941AbjHVSxO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Aug 2023 14:53:14 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55CD5E61;
-        Tue, 22 Aug 2023 11:53:04 -0700 (PDT)
+        with ESMTP id S229638AbjHVTKc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Aug 2023 15:10:32 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D65ECD1;
+        Tue, 22 Aug 2023 12:10:30 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D9B0C65D7B;
-        Tue, 22 Aug 2023 18:53:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B0D6C433C7;
-        Tue, 22 Aug 2023 18:53:03 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 060AD63F0C;
+        Tue, 22 Aug 2023 19:10:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 423E6C433C7;
+        Tue, 22 Aug 2023 19:10:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692730383;
-        bh=bKiDZmN49huWf7NWKy0Ori9rr/bVNoT6UpjkQ5TVMmo=;
+        s=k20201202; t=1692731429;
+        bh=eu9VEfAYz4xOHMvSGfeTJy1FSyA8KLmA3Mo65tCtRWg=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=OITsBL8GveepBAjZCgo5KbglXtc1/m82nLHDkWsfB54qKA6hFX1PynX1TEVeb5msA
-         2aG4TIbKW0mg9cZBRYmcO5eturhlFyCpCCsm6LqmpKu9Aunm2hyaMZHPPXXRk5jboE
-         SmW3lXJcAjuLUOIwm/ur+B22J5i9nyRHRJTmuRZ2Xl7KxrbQDBMpI4EGOotoGYmC7i
-         +T6u9I+V4ShC1r4JiBIXzcZskcD5Z1W2DnPNRUTQk5q8MRhsXryEQ+lPqoJseYaPZx
-         dRC8c0YWeD60ilE64eQHnK7NmoSKVJ2WLS0VWmVbPYFl//j+J5CT7k0WdVffiT6OGx
-         x0JR87wuG7Miw==
-Message-ID: <cb32b5abb9fbe13fb82d906b37908276.sboyd@kernel.org>
+        b=F8DzFuQCUHOw1eYq0kub61a6e48jKYbrToANBn5UzrgTPQfr5gi/rF6JOwHMxloUc
+         YaTD8qdgzndT7FD+RbaNZwVtQ59rU6CiaEAwyTFwo+v6yWXX8dncSeqG1o72UezOwt
+         EqRk3r3Pn7QCXrWuzTfJtzk1SlhocDZ3Hms60HDBZRl0kW/42Go+emToHL4fUA38yu
+         uMzVllBc+7LoyRlB8tvFcJuJxwC//A+LJr4QxV/SvzUDl3vhaSg3WtIWbfjy9Lg5QV
+         U0WSTb57JW3OiuA5yDnIhzZWOIEPDBojG7kR+JJ4bmrjYByYwCUA0I9Jl/524QQNmf
+         jY0i/uwhJQSng==
+Message-ID: <6e781c2d21e346cdd7f84c3b7a57dafc.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230808051407.647395-3-quic_imrashai@quicinc.com>
-References: <20230808051407.647395-1-quic_imrashai@quicinc.com> <20230808051407.647395-3-quic_imrashai@quicinc.com>
-Subject: Re: [PATCH 2/4] clk: qcom: branch: Add mem ops support for branch2 clocks
+In-Reply-To: <6ebdcbdc-409c-0c08-1e5d-f9aa0b92c3b2@quicinc.com>
+References: <20230810115419.25539-1-quic_luoj@quicinc.com> <20230810115419.25539-4-quic_luoj@quicinc.com> <9dec09fa-a5a3-416c-9b4d-4b4c4e10320b@linaro.org> <9a55016f-0049-f185-f2be-d138fe33384b@quicinc.com> <631d5a82-7d24-49cd-9868-74c7b3c08bcd@linaro.org> <6ebdcbdc-409c-0c08-1e5d-f9aa0b92c3b2@quicinc.com>
+Subject: Re: [PATCH v3 3/3] clk: qcom: add clock controller driver for qca8386/qca8084
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Taniya Das <quic_tdas@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ajit Pandey <quic_ajipan@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 22 Aug 2023 11:52:59 -0700
+        quic_srichara@quicinc.com
+To:     Jie Luo <quic_luoj@quicinc.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>, agross@kernel.org,
+        andersson@kernel.org, catalin.marinas@arm.com, conor+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        p.zabel@pengutronix.de, robh+dt@kernel.org, will@kernel.org
+Date:   Tue, 22 Aug 2023 12:10:25 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Imran Shaik (2023-08-07 22:14:05)
-> diff --git a/drivers/clk/qcom/clk-branch.h b/drivers/clk/qcom/clk-branch.h
-> index 0cf800b9d08d..0ffda6bef00e 100644
-> --- a/drivers/clk/qcom/clk-branch.h
-> +++ b/drivers/clk/qcom/clk-branch.h
-> @@ -24,8 +24,11 @@
->  struct clk_branch {
->         u32     hwcg_reg;
->         u32     halt_reg;
-> +       u32     mem_enable_reg;
-> +       u32     mem_ack_reg;
->         u8      hwcg_bit;
->         u8      halt_bit;
-> +       u8      mem_enable_ack_bit;
->         u8      halt_check;
->  #define BRANCH_VOTED                   BIT(7) /* Delay on disable */
->  #define BRANCH_HALT                    0 /* pol: 1 =3D halt */
+Quoting Jie Luo (2023-08-14 03:58:26)
+>=20
+>=20
+> On 8/12/2023 6:56 PM, Konrad Dybcio wrote:
+> > My main point is, why can't you use qcom_cc_really_probe?
+> >=20
+>=20
+> Hi Konrad,
+> qcom_cc_really_probe is taking the platform_device as the input=20
+> parameter, but the nss_cc_qca8k_probe takes the mdio_device as the probe =
 
-I suspect making a wrapper around struct clk_branch would be a better
-approach so that we don't bloat all the other clk_branch structures that
-exist in the qcom clk drivers.
+> parameter.
 
- $ git grep 'struct clk_branch' -- drivers/clk/qcom | wc -l
-   6357
-
-How many of these are going to be using these new registers? It may also
-make sense to do that for hardware clock gating as well, but I'm not
-really sure. Anyway, the idea is
-
-	struct clk_mem_branch {
-		u32 enable_reg;
-		u32 ack_reg;
-		u8  ack_bit;
-		struct clk_branch branch;
-	};
-
-and then a container_of define. Plus, you can put some comment above the
-structure to describe when these clks are used.
+There's no real reason why it takes a platform device instead of a plain
+struct device. You can have an earlier patch change that function to
+take a struct device instead.
