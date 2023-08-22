@@ -2,79 +2,75 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F07AEE49AF
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Aug 2023 23:01:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F3C3EE49AE
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Aug 2023 23:53:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231600AbjHVXBu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Aug 2023 19:01:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42982 "EHLO
+        id S231461AbjHVXxP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Aug 2023 19:53:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231599AbjHVXBt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Aug 2023 19:01:49 -0400
+        with ESMTP id S229635AbjHVXxP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Aug 2023 19:53:15 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C409E45;
-        Tue, 22 Aug 2023 16:01:47 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7D95E45;
+        Tue, 22 Aug 2023 16:53:13 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EF30E638D1;
-        Tue, 22 Aug 2023 23:01:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6F8AC433D9;
-        Tue, 22 Aug 2023 23:01:45 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 46C17611F8;
+        Tue, 22 Aug 2023 23:53:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F2C5C433C8;
+        Tue, 22 Aug 2023 23:53:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692745306;
-        bh=5nZO/EA7xNC0zbfhm7E3kKtBi2sQs7kn8lqJX9i1moQ=;
+        s=k20201202; t=1692748392;
+        bh=VXjLfDLXW29nf4QA7vjtO9n14lKR802Jjb1/pOw8LS8=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=kFfl8kbg4KZrdf2pK6oqno0lo1RVgBYPaJ1Ry7rEJ9uMjKXAx9MB/UJjCxwjzJALQ
-         +TJR+zwHTTmUxWnGdWIT4ef8SdHbpRLYrck6r7+hRLfGlbLe0A7HxHMk+ZCbTw4QZm
-         J6cauK3lLaooPguYa79+YfdehebtYPe1lBj9ViSkx55KLHcUsrJt+JUZhXr+fDtB2Y
-         fCrldC8dH8GeFYAS0JVNlgYsevE/DxAV8A5OhwJ9kC7wt5SQO0KLPGWbYOBr/XUXwO
-         MNi9GHujl40bkvfxlwevKlKa/zu70Frt82S8JiZBE4BXi8RHL4wXiAf+Xv6bBi/7E1
-         F60zLZ3oI2A6Q==
-Message-ID: <ff6a9b1567e0a36fd0a7ae628d2d92d4.sboyd@kernel.org>
+        b=ZMUdKUlIB01ybTpfQ43R5KrVs+KwmwlOulDOiY5DMyAt9tCMQy3k4j8pbfBaX1MTI
+         EmV87hiZ9avfH886O3NPSMfWd/NNNPfNmo9PlrOuEuXpM/Kk1cz9/7b8r1trHcs+xc
+         lHw8auCGCJm9UMyYcm6ywYy1X+otbm9lBostcA3kh8s0nme7a+lACjHeAUHrC5keek
+         c/ccfWMNYq21I2mdqTO+UN6xG108ZmjOxWV1kZDuhdfHLsW9nfDz/tCkHPUX4Gv90O
+         rSlwZXZtV5NRTnR7yjnGkOTSwNgNwFniJ6Oplz18lKUAz+95mMfBATsPDP14x+3b2O
+         eXdSMyFJiR61A==
+Message-ID: <19fde7851bb06b7103e6221ca9b97f86.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <8cfd376d48d63670882b8079c411d605@208suo.com>
-References: <20230721011303.4303-1-xujianghui@cdjrlc.com> <8cfd376d48d63670882b8079c411d605@208suo.com>
-Subject: Re: [PATCH] clk: keystone: sci-clk: fix application of sizeof to pointer
+In-Reply-To: <20230817142211.311366-2-biju.das.jz@bp.renesas.com>
+References: <20230817142211.311366-1-biju.das.jz@bp.renesas.com> <20230817142211.311366-2-biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH v3 1/4] dt-bindings: clock: versaclock3: Document clock-output-names
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-To:     kristo@kernel.org, mturquette@baylibre.com, nm@ti.com,
-        ssantosh@kernel.org, sunran001@208suo.com
-Date:   Tue, 22 Aug 2023 16:01:43 -0700
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 22 Aug 2023 16:53:10 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting sunran001@208suo.com (2023-07-20 18:14:19)
-> ./drivers/clk/keystone/sci-clk.c:390:8-14: ERROR: application of sizeof
-> to pointer
+Quoting Biju Das (2023-08-17 07:22:08)
+> Document clock-output-names property and fix the "assigned-clock-rates"
+> for each clock output in the example based on Table 3. ("Output Source")
+> in the 5P35023 datasheet(ie: {REF,SE1,SE2,SE3,DIFF1,DIFF2}).
 >=20
-> Signed-off-by: Ran Sun <sunran001@208suo.com>
+> While at it, replace clocks phandle in the example from x1_x2->x1 as
+> X2 is a different 32768 kHz crystal.
+>=20
+> Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Closes: https://lore.kernel.org/all/CAMuHMdUHD+bEco=3DWYTYWsTAyRt3dTQQt4X=
+paejss0Y2ZpLCMNg@mail.gmail.com/
+> Fixes: a03d23f860eb ("dt-bindings: clock: Add Renesas versa3 clock genera=
+tor bindings")
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 > ---
->   drivers/clk/keystone/sci-clk.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/keystone/sci-clk.c=20
-> b/drivers/clk/keystone/sci-clk.c
-> index 6c1df4f11536..2c68c1e09d1f 100644
-> --- a/drivers/clk/keystone/sci-clk.c
-> +++ b/drivers/clk/keystone/sci-clk.c
-> @@ -389,7 +389,7 @@ static struct clk_hw *sci_clk_get(struct=20
-> of_phandle_args *clkspec, void *data)
->         key.clk_id =3D clkspec->args[1];
->=20
->         clk =3D bsearch(&key, provider->clocks, provider->num_clocks,
 
-Huh? I see 'provider->clocks' is struct sci_clk_provider::clocks which
-is of type 'struct sci_clk **'. It looks like each element in the array
-is a 'struct sci_clk *', so if we want to silence the coccinelle warning
-perhaps this should change to sizeof(*clk). Certainly we don't want to
-change it to be the sizeof(struct sci_clk) though. Does changing the
-sizeof() to deref the pointer work to silence the error?
-
-> -                     sizeof(clk), _cmp_sci_clk);
-> +                     sizeof(**clk), _cmp_sci_clk);
+Applied to clk-next
