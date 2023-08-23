@@ -2,115 +2,106 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 102FCEE49B2
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Aug 2023 10:37:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ACF5EE49A3
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Aug 2023 13:39:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233855AbjHWKhd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Aug 2023 06:37:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35736 "EHLO
+        id S235767AbjHWNjs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Aug 2023 09:39:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233723AbjHWKhc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Aug 2023 06:37:32 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3C88DB;
-        Wed, 23 Aug 2023 03:37:30 -0700 (PDT)
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37N7EHov021159;
-        Wed, 23 Aug 2023 10:37:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=mvWYy01RsxAg0AJNiuOS2h/QmuSlFlwkOY2ZNs76GeA=;
- b=GtK7KzkZoxzE2jWh8lCwxczfQLgJrVbHVvI8XhCvhw2VUcv3RDWLe4FNrsPSxZ8pg3bx
- fF/W9KzMFwiaP675s3TEPNhfB8/KGlK0xXsO21U6FnN7KpaXNDJshth/eETwS4dRi9tH
- tAvDqk9bxaXMrZ3QeRZOtbRHvQ2JRRe/v3H/8NhLFCobJmfoc+/yXSAwE3DvhzVGqb6h
- E+ZLWXhjsys+S8oOjEnwamwy06rCyo8HmlEeITVPBkwp1o+VLYSIT+WL1EMolfPWntWB
- 9rtZXjW/9DqdHLidZDSf0INHdguErB1uxoKwRShZkkCIEptcjjqUsc4lE3UwARSA02L0 Ew== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3sn2cm1nah-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 23 Aug 2023 10:37:21 +0000
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 37NAbKMH012186
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 23 Aug 2023 10:37:20 GMT
-Received: from [10.253.13.101] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Wed, 23 Aug
- 2023 03:37:16 -0700
-Message-ID: <f4e1f615-658c-541b-f322-d21ba97724a0@quicinc.com>
-Date:   Wed, 23 Aug 2023 18:37:14 +0800
+        with ESMTP id S234769AbjHWNjs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Aug 2023 09:39:48 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6343198;
+        Wed, 23 Aug 2023 06:39:46 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id 98e67ed59e1d1-26f3e26e59cso2537856a91.0;
+        Wed, 23 Aug 2023 06:39:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1692797986; x=1693402786;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NOK5CRwsaqs85wt6f2CGJEL5j+Al2yb9ep0E5pLTroM=;
+        b=bJLHAqQ5GZGeUGLTMgxzu6PG/h4EcSTPT67BPy7RnqnAlv7C9B3fssI97ZvfThO5iy
+         kdiZEh/pdRMCqJZNnQ3WOY65dKULMxBQsdqQsV9DJ49+VOTJdtzUpoXEzVmET9XyUJt5
+         RenohtVCeDqthFdOuWi1JPsByhsmxvDomR3zGhEe8S2Q/Na1ZZrHW04bE1YOzicaAcjP
+         IQ3HEAnws3KHRwHXPOoObT9H3SXJNN5POcQV6ROoI9E+L6ojac6Q+MEbv8YGlnNRYiMb
+         jr2ObCRM/gX/rzw8H22XzZRVbyzUkzabDO1RNc63uZd31kk1ghEKLccMlqsvF1gCvs7B
+         4VPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692797986; x=1693402786;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NOK5CRwsaqs85wt6f2CGJEL5j+Al2yb9ep0E5pLTroM=;
+        b=lJFz+ZFaJUQUln9Z1UFo3E6ItnALN953F8gblh4VHGvPIRdFacDTSLt4xbw17phFm4
+         +awhWuklhCkD/2PqGcECI7/EHnGmN0qS83HyrSFcPaWnaOdfuCnsPyRGywU0tizAiOPu
+         UnS2lQItzrvn1M87yO1JnK61kSBz0it6xmFHpE4Vo12lBJkToXmQVgX/rk5kGgJUESdj
+         0CFiK9DV1fS9/G5G1axlu7rDULvJ0gTUwp6IzpDYabc3jISmKNKu0tZTCL791vOc3KLF
+         z4fHY4ZcyHzu+UZU6IjMtayBERg6H+HZ97jaSWLQrLccr+bBaS5AH+UjJsUZAwNcfWUf
+         qnAA==
+X-Gm-Message-State: AOJu0YypqqtE/oomj3rf7ENHsK/jPqKvndmZnZhQbQAzFVKQUPhU/ag9
+        L2ZgNrlQ0Ulxgro9NDTltPU=
+X-Google-Smtp-Source: AGHT+IGjcViQKH3GHOWrPKrXnL7/axkeVL2dFUz1FSPB4G3KOxDlRDcMkp1/S2uPhYGLgxC46dQ0Wg==
+X-Received: by 2002:a17:90a:1508:b0:26d:23c3:9f30 with SMTP id l8-20020a17090a150800b0026d23c39f30mr18203197pja.14.1692797986143;
+        Wed, 23 Aug 2023 06:39:46 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id v23-20020a17090ae99700b00263e4dc33aasm11337417pjy.11.2023.08.23.06.39.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Aug 2023 06:39:45 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date:   Wed, 23 Aug 2023 06:39:44 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: use capital "OR" for multiple licenses in
+ SPDX
+Message-ID: <f1197557-7d27-453b-b9df-c6dbb3e0f377@roeck-us.net>
+References: <20230823084540.112602-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [PATCH v5 2/4] dt-bindings: clock: add qca8386/qca8084 clock and
- reset definitions
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <andersson@kernel.org>, <agross@kernel.org>,
-        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <p.zabel@pengutronix.de>
-CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_srichara@quicinc.com>
-References: <20230823085031.27252-1-quic_luoj@quicinc.com>
- <20230823085031.27252-3-quic_luoj@quicinc.com>
- <692b7775-eeda-3c5b-cc24-c5dbdbb38c71@linaro.org>
- <7eaca76f-e7ad-cb1c-5a1d-5a2b68357e9c@quicinc.com>
- <715b3a1e-a7bb-6ca7-e402-05b0e09dbe42@linaro.org>
-From:   Jie Luo <quic_luoj@quicinc.com>
-In-Reply-To: <715b3a1e-a7bb-6ca7-e402-05b0e09dbe42@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: mptchh7G9OnMyHTsMMeZPHdJJGgrkvFx
-X-Proofpoint-GUID: mptchh7G9OnMyHTsMMeZPHdJJGgrkvFx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-08-23_06,2023-08-22_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 suspectscore=0 phishscore=0 spamscore=0 malwarescore=0
- clxscore=1015 mlxlogscore=696 adultscore=0 priorityscore=1501 mlxscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2308100000 definitions=main-2308230096
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230823084540.112602-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 8/23/2023 6:28 PM, Krzysztof Kozlowski wrote:
-> On 23/08/2023 12:24, Jie Luo wrote:
->>>> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
->>>
->>> You ignored tag, so I wrote you friendly reminder. You responded:
->>>
->>> "Okay, got it, thanks Krzysztof for the reminder."
->>>
->>> so again you ignored the tag?
->>>
->>> No, come on. Doing mistakes is fine. Doing the same mistakes over and
->>> over is not fine.
->>>
->>> Best regards,
->>> Krzysztof
->>>
->> oh, sorry for missed stating the reason for the tag removed, this patch
->> is updated, i forget to state the reason that the register address is
->> changed from 24 to 0x10, i will keep this in mind and add this info in
->> the next patch set.
+On Wed, Aug 23, 2023 at 10:45:40AM +0200, Krzysztof Kozlowski wrote:
+> Documentation/process/license-rules.rst and checkpatch expect the SPDX
+> identifier syntax for multiple licenses to use capital "OR".  Correct it
+> to keep consistent format and avoid copy-paste issues.
 > 
-> That's not really a reason for dropping the tag.
+> Correct also the format // -> .* in few Allwinner binding headers as
+> pointed out by checkpatch:
 > 
-> Best regards,
-> Krzysztof
+>   WARNING: Improper SPDX comment style for 'include/dt-bindings/reset/sun50i-h6-ccu.h', please use '/*' instead
 > 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> ---
+> 
+> Rebased on next-20230822, so might not apply cleanly.  What does not
+> apply, can be skipped and I will fix it after next RC.
+> ---
+[ ... ]
+>  Documentation/devicetree/bindings/hwmon/jedec,jc42.yaml         | 2 +-
+>  Documentation/devicetree/bindings/hwmon/lltc,ltc4151.yaml       | 2 +-
+>  Documentation/devicetree/bindings/hwmon/lm75.yaml               | 2 +-
+>  Documentation/devicetree/bindings/hwmon/microchip,mcp3021.yaml  | 2 +-
+>  Documentation/devicetree/bindings/hwmon/national,lm90.yaml      | 2 +-
+>  Documentation/devicetree/bindings/hwmon/nxp,mc34vr500.yaml      | 2 +-
+>  Documentation/devicetree/bindings/hwmon/sensirion,sht15.yaml    | 2 +-
+>  Documentation/devicetree/bindings/hwmon/ti,tmp102.yaml          | 2 +-
+>  Documentation/devicetree/bindings/hwmon/ti,tmp108.yaml          | 2 +-
 
-okay, Krzysztof, understand it, i will follow up this.
+For the above:
+
+Acked-by: Guenter Roeck <linux@roeck-us.net>
+
+Guenter
