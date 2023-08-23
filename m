@@ -2,41 +2,41 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A988C83003
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A49BBEE49AB
 	for <linux-clk@archiver.kernel.org>; Wed, 23 Aug 2023 21:37:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238154AbjHWVgy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Aug 2023 17:36:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51724 "EHLO
+        id S238183AbjHWVgz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Aug 2023 17:36:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238330AbjHWVgq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Aug 2023 17:36:46 -0400
+        with ESMTP id S238291AbjHWVgp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Aug 2023 17:36:45 -0400
 Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FECC10DF;
-        Wed, 23 Aug 2023 14:36:44 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A4D410DA;
+        Wed, 23 Aug 2023 14:36:42 -0700 (PDT)
 Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
-        by mx1.sberdevices.ru (Postfix) with ESMTP id 3384612000F;
-        Thu, 24 Aug 2023 00:36:42 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 3384612000F
+        by mx1.sberdevices.ru (Postfix) with ESMTP id 8634D12000E;
+        Thu, 24 Aug 2023 00:36:40 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 8634D12000E
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1692826602;
-        bh=Vva4K8raNyfigWqjwYs30j/2FeM+p1/UqnnkmM2a/B8=;
+        s=mail; t=1692826600;
+        bh=UMjyWx5X8qkH6QVOfwr1uFHotgM+aCzn487XOI4oa9w=;
         h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-        b=ZQOkWjMx5GFuxD1WcVHm3NoidxxX7iWOofQPelRm7L27S2omVQLM2mkfXfSmepNHc
-         dMdqRRvsmfUEJ7QyiBI/7tkQiecCzYy4jh8F2wlYtC88jcjZ4qus7ZVZ2lXY3G1tiL
-         Cmw46C6INtgxHS515yccDzb9dtHm3BgMbAHQaEdcfmluyA9JF1ugrbWisJTqYx+0WM
-         tSma+TOtnoXLb3lkdQ3cLbFxR98vqcWMYJ55qeTr5uhovq9OFT6sOE6pI6HesjjlTS
-         y2zbzifOc/SZM9/jYYOcYeynJqYQ04B9PgA6hSLXuqhGUB59w32//ZMCssbxyiaSus
-         X4Ntzk2z5aaKQ==
+        b=gz5UOBf0vU19CWsnRfL9x1Z9Zrlb//QFxKjPEBRiQoAUC6ZMZ2smRvPlhn63fSI46
+         F+4M8FhC9MkHUhkyxgp8ign+A6xpDqoD21rf/Es4jBosUn8O2M5a4k42Zk76czDyy8
+         5vtRILZ3XxglfXJhLbahpZivP1SAa7Qz02bsJylvywTRhrnuvAOqjy7MbXIrg1/8hd
+         h2TUZ+cM/Hd3QDI68BtI2svWW6NJCRcSomuPMwGZEG2GkCX/YfnQF2+OTimZBB6QAq
+         ikrNb+q1+6+8P1mbU0pB77949SdOatDsgEUb5INb5cO7tM/BuSBk2rpk97NMwBccef
+         KV5NYFA0d1vtA==
 Received: from p-i-exch-sc-m01.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         by mx1.sberdevices.ru (Postfix) with ESMTPS;
-        Thu, 24 Aug 2023 00:36:42 +0300 (MSK)
+        Thu, 24 Aug 2023 00:36:40 +0300 (MSK)
 Received: from localhost.localdomain (100.64.160.123) by
  p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.30; Thu, 24 Aug 2023 00:36:38 +0300
+ 15.2.1118.30; Thu, 24 Aug 2023 00:36:36 +0300
 From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
 To:     <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
         <mturquette@baylibre.com>, <sboyd@kernel.org>,
@@ -49,9 +49,9 @@ CC:     <kernel@sberdevices.ru>, <sdfw_system_team@sberdevices.ru>,
         <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         Dmitry Rokosov <ddrokosov@sberdevices.ru>
-Subject: [PATCH v2 05/15] arm64: dts: meson: a1: introduce PLL and Peripherals clk controllers
-Date:   Thu, 24 Aug 2023 00:36:20 +0300
-Message-ID: <20230823213630.12936-6-ddrokosov@sberdevices.ru>
+Subject: [PATCH v2 03/15] arm64: dts: meson: a1: remove the unnecessary 'okay' status pwrc value
+Date:   Thu, 24 Aug 2023 00:36:18 +0300
+Message-ID: <20230823213630.12936-4-ddrokosov@sberdevices.ru>
 X-Mailer: git-send-email 2.36.0
 In-Reply-To: <20230823213630.12936-1-ddrokosov@sberdevices.ru>
 References: <20230823213630.12936-1-ddrokosov@sberdevices.ru>
@@ -81,67 +81,27 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch adds clkc and clkc_pll dts nodes to A1 SoC main dtsi. The
-first one is responsible for all SoC peripherals clocks excluding audio
-clocks. The second one is used by A1 SoC PLLs. Actually, there are two
-different APB heads, so we have two different drivers.
+In the file 'meson-a1.dtsi,' which is a basic device tree include, it is
+not necessary to mark the node with 'status = "okay"' because it is
+enabled by default.
 
 Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
 ---
- arch/arm64/boot/dts/amlogic/meson-a1.dtsi | 26 +++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ arch/arm64/boot/dts/amlogic/meson-a1.dtsi | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-index f95f4daef02c..a8a39eeb2581 100644
+index 42083d1bc8ca..f740153f3c1e 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-@@ -3,6 +3,8 @@
-  * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
-  */
- 
-+#include <dt-bindings/clock/amlogic,a1-pll-clkc.h>
-+#include <dt-bindings/clock/amlogic,a1-peripherals-clkc.h>
- #include <dt-bindings/gpio/meson-a1-gpio.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-@@ -115,6 +117,21 @@ gpio_intc: interrupt-controller@440 {
- 					<49 50 51 52 53 54 55 56>;
- 			};
- 
-+			clkc_periphs: clock-controller@800 {
-+				compatible = "amlogic,a1-peripherals-clkc";
-+				reg = <0 0x800 0 0x104>;
-+				#clock-cells = <1>;
-+				clocks = <&clkc_pll CLKID_FCLK_DIV2>,
-+					 <&clkc_pll CLKID_FCLK_DIV3>,
-+					 <&clkc_pll CLKID_FCLK_DIV5>,
-+					 <&clkc_pll CLKID_FCLK_DIV7>,
-+					 <&clkc_pll CLKID_HIFI_PLL>,
-+					 <&xtal>;
-+				clock-names = "fclk_div2", "fclk_div3",
-+					      "fclk_div5", "fclk_div7",
-+					      "hifi_pll", "xtal";
-+			};
-+
- 			uart_AO: serial@1c00 {
- 				compatible = "amlogic,meson-gx-uart",
- 					     "amlogic,meson-ao-uart";
-@@ -134,6 +151,15 @@ uart_AO_B: serial@2000 {
- 				clock-names = "xtal", "pclk", "baud";
- 				status = "disabled";
- 			};
-+
-+			clkc_pll: pll-clock-controller@7c80 {
-+				compatible = "amlogic,a1-pll-clkc";
-+				reg = <0 0x7c80 0 0x18c>;
-+				#clock-cells = <1>;
-+				clocks = <&clkc_periphs CLKID_FIXPLL_IN>,
-+					 <&clkc_periphs CLKID_HIFIPLL_IN>;
-+				clock-names = "fixpll_in", "hifipll_in";
-+			};
+@@ -66,7 +66,6 @@ sm: secure-monitor {
+ 		pwrc: power-controller {
+ 			compatible = "amlogic,meson-a1-pwrc";
+ 			#power-domain-cells = <1>;
+-			status = "okay";
  		};
+ 	};
  
- 		gic: interrupt-controller@ff901000 {
 -- 
 2.36.0
 
