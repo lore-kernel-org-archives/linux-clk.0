@@ -2,208 +2,167 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEE85C7113B
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Aug 2023 19:49:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D725C3DA6F
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Aug 2023 19:51:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238390AbjHWTtQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Aug 2023 15:49:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45120 "EHLO
+        id S238416AbjHWTvZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Aug 2023 15:51:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238452AbjHWTtK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Aug 2023 15:49:10 -0400
+        with ESMTP id S238400AbjHWTuw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Aug 2023 15:50:52 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F34B810CB;
-        Wed, 23 Aug 2023 12:49:05 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DD1A10CB;
+        Wed, 23 Aug 2023 12:50:50 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6E80266355;
-        Wed, 23 Aug 2023 19:49:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CBD2C433C7;
-        Wed, 23 Aug 2023 19:49:03 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B017F63CE5;
+        Wed, 23 Aug 2023 19:50:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C596EC43391;
+        Wed, 23 Aug 2023 19:50:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692820144;
-        bh=FobxdKGjk+XaZrxNDpLxP3Jm4scXYpkNdSMSYXKfLC8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VrIrnOXxJ1NiXM4eC6i5wDYcWnO2n2+H8JJ7WurOqnZVdoRfknp6PpjWUYjCL+aQg
-         wMlA0wo6so3p7NmsQ0lVQyCbPov43nWUsY7rhLIe6PonfQsB6CTB0/Rhp0M0C4A6MU
-         q2SUB837PnnyUGujlCNOu9nSpUD+SvH/iLA/gwec8Sbtxu2NpO7DkOahYZlGBkwSfS
-         UD9k3jsf7sxmyqoQz3f1cJrTPiJQ1BNKrUv6RZGp1Dj3WH13LlA5iLGQU2NbRw4CIs
-         Cq23xTOhm4MwfN+b05AcD8ruyhspDNVCNmPPFQN89U1kEI2tHpB3UT06BIKW68D0ef
-         SFhz9NSBmf9kA==
-Received: (nullmailer pid 2782531 invoked by uid 1000);
-        Wed, 23 Aug 2023 19:49:02 -0000
-Date:   Wed, 23 Aug 2023 14:49:02 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: use capital "OR" for multiple licenses in
- SPDX
-Message-ID: <20230823194902.GA2782125-robh@kernel.org>
-References: <20230823084540.112602-1-krzysztof.kozlowski@linaro.org>
+        s=k20201202; t=1692820248;
+        bh=Nz7ebjs2vivWWwqHJWA21skiIKMtX1ru/2/PSbwqwhc=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=eXUNcMDR43CEuc8qbMnzrKtDdzZcJ968q6mo3cEWPRDw9AsEXEuDWqlCKkmsv02n3
+         bUwDPqRmspeRWTgczvmyrtiKCaCwzV/+ngmj933qSzf0TPEmrsUsDlV7nSoadiWJLx
+         ykCTYeY1U6dy06xS2El134IK86fDheCRriZfkMv4Yq4vrZkEbdY3xv/phnbFoo1d7V
+         pX+9QkKLDkd8WHF42Rs77m7N2AQ/DX/hMQZs8Ug7mengRucUu1CCP/mLWDC/G6HWps
+         ZltVnrxi2Tw0YtEV7iqeAuqCzjI/XAvhAHvqZN7UT8/9k0FDkfqXmE+ullQYZrCktw
+         Zqv0ulrWGcD4g==
+Message-ID: <981e3c291fefcb8234219550e012bbad.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230823084540.112602-1-krzysztof.kozlowski@linaro.org>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <krg4m5nckoaunsqounzehm4oyubblticfifgvpxrnbf5xf65xq@ignx6g2eqtev>
+References: <20230721-clk-fix-kunit-lockdep-v1-0-32cdba4c8fc1@kernel.org> <088cc246369820d5a426bc8823c85c8e.sboyd@kernel.org> <6534e4c349253da8ee467ffeda8221ed.sboyd@kernel.org> <krg4m5nckoaunsqounzehm4oyubblticfifgvpxrnbf5xf65xq@ignx6g2eqtev>
+Subject: Re: [PATCH 0/2] clk: kunit: Fix the lockdep warnings
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Guenter Roeck <linux@roeck-us.net>,
+        kernel test robot <yujie.liu@intel.com>,
+        kunit-dev@googlegroups.com
+To:     Maxime Ripard <mripard@kernel.org>
+Date:   Wed, 23 Aug 2023 12:50:46 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Aug 23, 2023 at 10:45:40AM +0200, Krzysztof Kozlowski wrote:
-> Documentation/process/license-rules.rst and checkpatch expect the SPDX
-> identifier syntax for multiple licenses to use capital "OR".  Correct it
-> to keep consistent format and avoid copy-paste issues.
-> 
-> Correct also the format // -> .* in few Allwinner binding headers as
-> pointed out by checkpatch:
-> 
->   WARNING: Improper SPDX comment style for 'include/dt-bindings/reset/sun50i-h6-ccu.h', please use '/*' instead
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> ---
-> 
-> Rebased on next-20230822, so might not apply cleanly.  What does not
-> apply, can be skipped and I will fix it after next RC.
-> ---
->  Documentation/devicetree/bindings/arm/arm,coresight-cti.yaml    | 2 +-
->  .../devicetree/bindings/arm/arm,coresight-dummy-sink.yaml       | 2 +-
->  .../devicetree/bindings/arm/arm,coresight-dummy-source.yaml     | 2 +-
->  .../devicetree/bindings/arm/arm,embedded-trace-extension.yaml   | 2 +-
->  .../devicetree/bindings/arm/arm,trace-buffer-extension.yaml     | 2 +-
->  Documentation/devicetree/bindings/arm/arm,versatile-sysreg.yaml | 2 +-
->  Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml        | 2 +-
->  .../devicetree/bindings/arm/keystone/ti,k3-sci-common.yaml      | 2 +-
->  Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml      | 2 +-
->  Documentation/devicetree/bindings/arm/qcom,coresight-tpda.yaml  | 2 +-
->  Documentation/devicetree/bindings/arm/qcom,coresight-tpdm.yaml  | 2 +-
->  Documentation/devicetree/bindings/clock/ti,cdce925.yaml         | 2 +-
->  Documentation/devicetree/bindings/clock/ti,sci-clk.yaml         | 2 +-
->  Documentation/devicetree/bindings/crypto/ti,sa2ul.yaml          | 2 +-
->  .../devicetree/bindings/display/msm/dsi-controller-main.yaml    | 2 +-
->  Documentation/devicetree/bindings/display/msm/dsi-phy-10nm.yaml | 2 +-
->  Documentation/devicetree/bindings/display/msm/dsi-phy-14nm.yaml | 2 +-
->  Documentation/devicetree/bindings/display/msm/dsi-phy-20nm.yaml | 2 +-
->  Documentation/devicetree/bindings/display/msm/dsi-phy-28nm.yaml | 2 +-
->  Documentation/devicetree/bindings/display/msm/dsi-phy-7nm.yaml  | 2 +-
->  .../devicetree/bindings/display/msm/dsi-phy-common.yaml         | 2 +-
->  Documentation/devicetree/bindings/display/msm/mdss-common.yaml  | 2 +-
->  Documentation/devicetree/bindings/display/msm/qcom,mdp5.yaml    | 2 +-
->  Documentation/devicetree/bindings/display/msm/qcom,mdss.yaml    | 2 +-
->  .../devicetree/bindings/display/msm/qcom,msm8998-dpu.yaml       | 2 +-
->  .../devicetree/bindings/display/msm/qcom,msm8998-mdss.yaml      | 2 +-
->  .../devicetree/bindings/display/msm/qcom,qcm2290-dpu.yaml       | 2 +-
->  .../devicetree/bindings/display/msm/qcom,qcm2290-mdss.yaml      | 2 +-
->  .../devicetree/bindings/display/msm/qcom,sc7180-dpu.yaml        | 2 +-
->  .../devicetree/bindings/display/msm/qcom,sc7180-mdss.yaml       | 2 +-
->  .../devicetree/bindings/display/msm/qcom,sc7280-dpu.yaml        | 2 +-
->  .../devicetree/bindings/display/msm/qcom,sc7280-mdss.yaml       | 2 +-
->  .../devicetree/bindings/display/msm/qcom,sc8280xp-dpu.yaml      | 2 +-
->  .../devicetree/bindings/display/msm/qcom,sc8280xp-mdss.yaml     | 2 +-
->  .../devicetree/bindings/display/msm/qcom,sdm845-dpu.yaml        | 2 +-
->  .../devicetree/bindings/display/msm/qcom,sdm845-mdss.yaml       | 2 +-
->  .../devicetree/bindings/display/msm/qcom,sm6115-dpu.yaml        | 2 +-
->  .../devicetree/bindings/display/msm/qcom,sm6115-mdss.yaml       | 2 +-
->  .../devicetree/bindings/display/msm/qcom,sm6350-mdss.yaml       | 2 +-
->  .../devicetree/bindings/display/msm/qcom,sm6375-mdss.yaml       | 2 +-
->  .../devicetree/bindings/display/msm/qcom,sm8150-dpu.yaml        | 2 +-
->  .../devicetree/bindings/display/msm/qcom,sm8150-mdss.yaml       | 2 +-
->  .../devicetree/bindings/display/msm/qcom,sm8250-dpu.yaml        | 2 +-
->  .../devicetree/bindings/display/msm/qcom,sm8250-mdss.yaml       | 2 +-
->  .../devicetree/bindings/display/msm/qcom,sm8350-dpu.yaml        | 2 +-
->  .../devicetree/bindings/display/msm/qcom,sm8350-mdss.yaml       | 2 +-
->  .../devicetree/bindings/display/msm/qcom,sm8450-dpu.yaml        | 2 +-
->  .../devicetree/bindings/display/msm/qcom,sm8450-mdss.yaml       | 2 +-
->  .../devicetree/bindings/display/msm/qcom,sm8550-dpu.yaml        | 2 +-
->  .../devicetree/bindings/display/msm/qcom,sm8550-mdss.yaml       | 2 +-
->  .../devicetree/bindings/display/panel/himax,hx8394.yaml         | 2 +-
->  .../devicetree/bindings/display/panel/mantix,mlaf057we51-x.yaml | 2 +-
->  .../devicetree/bindings/display/panel/orisetech,otm8009a.yaml   | 2 +-
->  .../devicetree/bindings/display/panel/panel-dsi-cm.yaml         | 2 +-
->  .../devicetree/bindings/display/panel/panel-mipi-dbi-spi.yaml   | 2 +-
->  .../devicetree/bindings/display/panel/panel-simple-dsi.yaml     | 2 +-
->  .../devicetree/bindings/display/panel/raydium,rm68200.yaml      | 2 +-
->  .../devicetree/bindings/display/panel/rocktech,jh057n00900.yaml | 2 +-
->  .../devicetree/bindings/display/panel/visionox,r66451.yaml      | 2 +-
->  .../devicetree/bindings/display/panel/visionox,rm69299.yaml     | 2 +-
->  .../devicetree/bindings/display/panel/visionox,vtdr6130.yaml    | 2 +-
->  .../devicetree/bindings/display/rockchip/rockchip-vop2.yaml     | 2 +-
->  .../bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml         | 2 +-
->  .../devicetree/bindings/hwlock/ti,omap-hwspinlock.yaml          | 2 +-
->  Documentation/devicetree/bindings/hwmon/jedec,jc42.yaml         | 2 +-
->  Documentation/devicetree/bindings/hwmon/lltc,ltc4151.yaml       | 2 +-
->  Documentation/devicetree/bindings/hwmon/lm75.yaml               | 2 +-
->  Documentation/devicetree/bindings/hwmon/microchip,mcp3021.yaml  | 2 +-
->  Documentation/devicetree/bindings/hwmon/national,lm90.yaml      | 2 +-
->  Documentation/devicetree/bindings/hwmon/nxp,mc34vr500.yaml      | 2 +-
->  Documentation/devicetree/bindings/hwmon/sensirion,sht15.yaml    | 2 +-
->  Documentation/devicetree/bindings/hwmon/ti,tmp102.yaml          | 2 +-
->  Documentation/devicetree/bindings/hwmon/ti,tmp108.yaml          | 2 +-
->  Documentation/devicetree/bindings/input/elan,ekth3000.yaml      | 2 +-
->  .../devicetree/bindings/interrupt-controller/ti,pruss-intc.yaml | 2 +-
->  Documentation/devicetree/bindings/iommu/xen,grant-dma.yaml      | 2 +-
->  Documentation/devicetree/bindings/mailbox/ti,omap-mailbox.yaml  | 2 +-
->  .../devicetree/bindings/phy/mediatek,mt7621-pci-phy.yaml        | 2 +-
->  .../devicetree/bindings/phy/nvidia,tegra210-xusb-padctl.yaml    | 2 +-
->  .../devicetree/bindings/power/reset/gpio-poweroff.yaml          | 2 +-
->  Documentation/devicetree/bindings/power/reset/gpio-restart.yaml | 2 +-
->  .../devicetree/bindings/power/reset/restart-handler.yaml        | 2 +-
->  Documentation/devicetree/bindings/power/supply/bq256xx.yaml     | 2 +-
->  .../devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml         | 2 +-
->  .../devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml         | 2 +-
->  .../devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml      | 2 +-
->  .../devicetree/bindings/remoteproc/ti,pru-consumer.yaml         | 2 +-
->  Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml  | 2 +-
->  .../devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml       | 2 +-
->  Documentation/devicetree/bindings/reset/ti,sci-reset.yaml       | 2 +-
->  Documentation/devicetree/bindings/reset/ti,tps380x-reset.yaml   | 2 +-
->  Documentation/devicetree/bindings/soc/ti/sci-pm-domain.yaml     | 2 +-
->  Documentation/devicetree/bindings/usb/cypress,hx3.yaml          | 2 +-
->  Documentation/devicetree/bindings/usb/genesys,gl850g.yaml       | 2 +-
->  Documentation/devicetree/bindings/usb/realtek,rts5411.yaml      | 2 +-
->  Documentation/devicetree/bindings/usb/ti,usb8041.yaml           | 2 +-
->  Documentation/devicetree/bindings/usb/vialab,vl817.yaml         | 2 +-
->  include/dt-bindings/ata/ahci.h                                  | 2 +-
->  include/dt-bindings/clock/hi3559av100-clock.h                   | 2 +-
->  include/dt-bindings/clock/r8a779f0-cpg-mssr.h                   | 2 +-
->  include/dt-bindings/clock/rockchip,rk3588-cru.h                 | 2 +-
->  include/dt-bindings/clock/stm32mp1-clks.h                       | 2 +-
->  include/dt-bindings/clock/sun20i-d1-ccu.h                       | 2 +-
->  include/dt-bindings/clock/sun20i-d1-r-ccu.h                     | 2 +-
->  include/dt-bindings/clock/sun50i-a100-ccu.h                     | 2 +-
->  include/dt-bindings/clock/sun50i-h6-ccu.h                       | 2 +-
->  include/dt-bindings/clock/sun50i-h616-ccu.h                     | 2 +-
->  include/dt-bindings/clock/sun6i-rtc.h                           | 2 +-
->  include/dt-bindings/display/sdtv-standards.h                    | 2 +-
->  include/dt-bindings/gpio/meson-g12a-gpio.h                      | 2 +-
->  include/dt-bindings/power/amlogic,c3-pwrc.h                     | 2 +-
->  include/dt-bindings/power/meson-a1-power.h                      | 2 +-
->  include/dt-bindings/power/meson-axg-power.h                     | 2 +-
->  include/dt-bindings/power/meson-g12a-power.h                    | 2 +-
->  include/dt-bindings/power/meson-gxbb-power.h                    | 2 +-
->  include/dt-bindings/power/meson-s4-power.h                      | 2 +-
->  include/dt-bindings/power/meson-sm1-power.h                     | 2 +-
->  include/dt-bindings/power/meson8-power.h                        | 2 +-
->  include/dt-bindings/power/r8a779f0-sysc.h                       | 2 +-
->  include/dt-bindings/power/rk3588-power.h                        | 2 +-
->  include/dt-bindings/power/summit,smb347-charger.h               | 2 +-
->  include/dt-bindings/reset/rockchip,rk3588-cru.h                 | 2 +-
->  include/dt-bindings/reset/stm32mp1-resets.h                     | 2 +-
->  include/dt-bindings/reset/sun20i-d1-ccu.h                       | 2 +-
->  include/dt-bindings/reset/sun20i-d1-r-ccu.h                     | 2 +-
->  include/dt-bindings/reset/sun50i-a100-ccu.h                     | 2 +-
->  include/dt-bindings/reset/sun50i-a100-r-ccu.h                   | 2 +-
->  include/dt-bindings/reset/sun50i-h6-ccu.h                       | 2 +-
->  include/dt-bindings/reset/sun50i-h6-r-ccu.h                     | 2 +-
->  include/dt-bindings/reset/sun50i-h616-ccu.h                     | 2 +-
->  130 files changed, 130 insertions(+), 130 deletions(-)
+Quoting Maxime Ripard (2023-08-21 04:16:12)
+> Hi Stephen,
+>=20
+> On Wed, Aug 09, 2023 at 06:37:30PM -0700, Stephen Boyd wrote:
+> > Quoting Stephen Boyd (2023-08-09 16:21:50)
+> > > +kunit-dev
+> > >=20
+> > > Quoting Maxime Ripard (2023-07-21 00:09:31)
+> > > > Hi,
+> > > >=20
+> > > > Here's a small series to address the lockdep warning we have when
+> > > > running the clk kunit tests with lockdep enabled.
+> > > >=20
+> > > > For the record, it can be tested with:
+> > > >=20
+> > > > $ ./tools/testing/kunit/kunit.py run \
+> > > >     --kunitconfig=3Ddrivers/clk \
+> > > >     --cross_compile aarch64-linux-gnu- --arch arm64 \
+> > > >     --kconfig_add CONFIG_DEBUG_KERNEL=3Dy \
+> > > >     --kconfig_add CONFIG_PROVE_LOCKING=3Dy
+> > > >=20
+> > > > Let me know what you think,
+> > >=20
+> > > Thanks for doing this. I want to roll these helpers into the clk_kuni=
+t.c
+> > > file that I had created for some other clk tests[1]. That's mostly
+> > > because clk.c is already super long and adding kunit code there makes
+> > > that problem worse. I'll try to take that patch out of the rest of the
+> > > series and then add this series on top and resend.
+> > >=20
+> > > I don't know what to do about the case where CONFIG_KUNIT=3Dm though.=
+ We
+> > > have to export clk_prepare_lock/unlock()? I really don't want to do t=
+hat
+> > > even if kunit is enabled (see EXPORT_SYMBOL_IF_KUNIT). Maybe if there
+> > > was a GPL version of that, so proprietary modules can't get at kernel
+> > > internals on kunit enabled kernels.
+> > >=20
+> > > But I also like the approach taken here of adding a small stub around
+> > > the call to make sure a test is running. Maybe I'll make a kunit
+> > > namespaced exported gpl symbol that bails if a test isn't running and
+> > > calls the clk_prepare_lock/unlock functions inside clk.c and then move
+> > > the rest of the code to clk_kunit.c to get something more strict.
+> > >=20
+> >=20
+> > What if we don't try to do any wrapper or export symbols and test
+> > __clk_determine_rate() how it is called from the clk framework? The
+> > downside is the code is not as simple because we have to check things
+> > from within the clk_ops::determine_rate(), but the upside is that we can
+> > avoid exporting internal clk APIs or wrap them so certain preconditions
+> > are met like requiring them to be called from within a clk_op.
+>=20
+> The main reason for that test was linked to commit 262ca38f4b6e ("clk:
+> Stop forwarding clk_rate_requests to the parent"). Prior to it, if a
+> clock had CLK_SET_RATE_PARENT, we could end up with its parent's parent
+> hw struct and rate in best_parent_*.
+>=20
+> So that test was mostly about making sure that __clk_determine_rate will
+> properly set the best_parent fields to match the clock's parent.
+>=20
+> If we do a proper clock that uses __clk_determine_rate, we lose the
+> ability to check the content of the clk_rate_request returned by
+> __clk_determine_rate. It's up to you to tell whether it's a bad thing or
+> not :)
 
-Applied, thanks!
+I'm a little confused here. Was the test trying to check the changed
+lines in clk_core_round_rate_nolock() that were made in commit
+262ca38f4b6e under the CLK_SET_RATE_PARENT condition? From what I can
+tell that doesn't get tested here.
 
-Rob
+Instead, the test calls __clk_determine_rate() that calls
+clk_core_round_rate_nolock() which falls into the clk_core_can_round()
+condition because the hw has clk_dummy_single_parent_ops which has
+.determine_rate op set to __clk_mux_determine_rate_closest(). Once we
+find that the clk can round, we call __clk_mux_determine_rate_closest().
+This patch still calls __clk_mux_determine_rate_closest() like
+__clk_determine_rate() was doing in the test, and checks that the
+request structure has the expected parent in the req->best_parent_hw.
+
+If we wanted to test the changed lines in clk_core_round_rate_nolock()
+we should have called __clk_determine_rate() on a clk_hw that didn't
+have a .determine_rate or .round_rate clk_op. Then it would have fallen
+into the if (core->flags & CLK_SET_RATE_PARENT) condition in
+clk_core_round_rate_nolock() and made sure that the request structure
+returned was properly forwarded to the parent.
+
+We can still do that by making a child of the leaf, set clk_ops on that
+to be this new determine_rate clk op that calls to the parent (the leaf
+today), and make that leaf clk not have any determine_rate clk_op. Then
+we will fall into the CLK_SET_RATE_PARENT condition and can make sure
+the request structure returned points at the parent instead of the mux.
+
+>=20
+> > I also find it very odd to call clk_mux_determine_rate_closest() from a
+> > clk that has one parent.
+>=20
+> Yeah, the behaviour difference between determine_rate and
+> determine_rate_closest is weird to me too. We discussed it recently here:
+> https://lore.kernel.org/linux-clk/mlgxmfim3poke2j45vwh2htkn66hrrjd6ozjebt=
+qhbf4wwljwo@hzi4dyplhdqg/
+
+Sure, but I'm saying that the clk has one parent, not more than one, so
+by definition it isn't a mux. It can only choose one parent. It's odd
+that "mux" is in the name.
+
+>=20
+> > Maybe the clk op should call clk_hw_forward_rate_request() followed by
+> > __clk_determine_rate() on the parent so we can test what the test
+> > comment says it wants to test.
+>=20
+> I guess that would work too :)
+>=20
+
+Ok, but I think it doesn't test what was intended to be tested?
