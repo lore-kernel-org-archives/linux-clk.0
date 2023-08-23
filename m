@@ -2,128 +2,111 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC741EE49B6
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Aug 2023 10:17:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96534EE4993
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Aug 2023 10:25:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233341AbjHWKRa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Aug 2023 06:17:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42806 "EHLO
+        id S232328AbjHWKZQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Aug 2023 06:25:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232971AbjHWKR3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Aug 2023 06:17:29 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CDB9170F
-        for <linux-clk@vger.kernel.org>; Wed, 23 Aug 2023 03:16:59 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id 4fb4d7f45d1cf-523d2ef19e4so7009286a12.2
-        for <linux-clk@vger.kernel.org>; Wed, 23 Aug 2023 03:16:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1692785793; x=1693390593;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PkhmhhTWHkeRQp2PPUUxTCXWp1T0OTe7aVdp4fg5upo=;
-        b=LO6EWlz79jJJ9v/UQCg4OZKmPJO9+j6QHM1tngs1xZjP73VY2yTNyozqbCEjmHkgOJ
-         /I25kU9siRPAlFrz9dpUhrfTb7C4hK1nJcapsvmczx4ZFMRu+Id4skeNROqiKQ5j7fC1
-         ZyyN0rEkpFnovXZ/Y9YFpI+20NzFPUlKW8oib55lhQS8AfgOyDR1cSStWeGIk4mOE/f8
-         e8jk+ITZo8/vSFO72g6rBQt9NS7/HQQrfF/hlcYS6bEX+Ay7j17UK9K0sHHCYLh/aFQD
-         moxfheS5gy+jsjw+9CZRAFxsIYJOD76OVSKpIkrcpc8QGv+VCkZ89LVZ+6AtV/ge1cjC
-         e99w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692785793; x=1693390593;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PkhmhhTWHkeRQp2PPUUxTCXWp1T0OTe7aVdp4fg5upo=;
-        b=UULXHhhVeQqClozwUmQN5TNkXcuzvPgEAEBUTPPDp5sMcjcEkxft4RB3Kac3qIcpng
-         3mR1rKfCVwpYPYCkPPrEL6T86l0d4mzLClx5xQ1znrbM9agDz2r8Yl2+oa2+3c6uXePe
-         /Kh7qavkUg31tmhLz006AcmJYnfLqNrpAV3OrME413F+meSxh852kurOULo0415BTdt5
-         Vhyf8kpyUeppI0kUwd5l7IN/FO92R4IqagnpQSfhTtkoidnK1RIi4yB4ih3J9JjiH1jn
-         tQ94Bepcv56jyFMmn2tXPFjiH3pE7sJsS5yqLiEofkWrDmfUi5oWdFaUm7qIwv0Lu/3Q
-         cWjg==
-X-Gm-Message-State: AOJu0YyDzZqmRvCyz0uQ2hHHx1GNG+UptXsVEAdiJ+ka/673GY5gRsQG
-        /Hncojbt6TRmM4B8gk+DNiB72Q==
-X-Google-Smtp-Source: AGHT+IG4cl/3Fz/QSS2cl3WXZt2VKfaSb/kNTKY6FTxfUyaMgKaOK/vEjbIWyu1Ae6CwwBgVchcQyg==
-X-Received: by 2002:a05:6402:1614:b0:522:1e2f:fa36 with SMTP id f20-20020a056402161400b005221e2ffa36mr8763754edv.28.1692785793520;
-        Wed, 23 Aug 2023 03:16:33 -0700 (PDT)
-Received: from [192.168.0.22] ([77.252.47.198])
-        by smtp.gmail.com with ESMTPSA id i15-20020a50fc0f000000b0051e1660a34esm9063699edr.51.2023.08.23.03.16.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Aug 2023 03:16:32 -0700 (PDT)
-Message-ID: <61b9e036-7864-65c6-d43b-463fff896ddc@linaro.org>
-Date:   Wed, 23 Aug 2023 12:16:28 +0200
+        with ESMTP id S230141AbjHWKZP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Aug 2023 06:25:15 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BAC211F;
+        Wed, 23 Aug 2023 03:25:12 -0700 (PDT)
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37N9ULXg016321;
+        Wed, 23 Aug 2023 10:25:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=K5KxTV25eSkKqVuPGc6yQJ66jbQLXcAGnNjeCidT3UQ=;
+ b=o5UngKoeSvDyA91pfj7O9oBE6EvrhS223fgCv2nm2JVedgtuEgXdylP85+vkI3/xXkxV
+ IwIYNAUjDnfIPAzpIGlf1MiYCtVvxPwi2MuL9oEUJ1uDbZZylGRQ8ilumYz9K4Ds/M23
+ maBtbKlQpfYiR2aHRLsVB1TrAfO0zGdQ2CKCZKNhj42XSh8SlMVwi3+y5TbmPNZ+j0Kv
+ gqXa2qTW19/et3xBhw+tonGrZsJevYvohQWS9E33sg/lRhojwY9rvzLSl4b4YYuFN7SK
+ 8JRSnenR7OYOtCNCWq/+B5EeE/hJ243fjHjo5eHXxMs55rIfq+PxgPTZOQKWEWMUnnu+ mA== 
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3sn2mvhjne-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 23 Aug 2023 10:25:03 +0000
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 37NAP1Lx016960
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 23 Aug 2023 10:25:02 GMT
+Received: from [10.253.13.101] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Wed, 23 Aug
+ 2023 03:24:58 -0700
+Message-ID: <7eaca76f-e7ad-cb1c-5a1d-5a2b68357e9c@quicinc.com>
+Date:   Wed, 23 Aug 2023 18:24:55 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.14.0
-Subject: Re: [PATCH v3 29/42] dt-bindings: rtc: Add ST M48T86
+Subject: Re: [PATCH v5 2/4] dt-bindings: clock: add qca8386/qca8084 clock and
+ reset definitions
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <andersson@kernel.org>, <agross@kernel.org>,
+        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <p.zabel@pengutronix.de>
+CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_srichara@quicinc.com>
+References: <20230823085031.27252-1-quic_luoj@quicinc.com>
+ <20230823085031.27252-3-quic_luoj@quicinc.com>
+ <692b7775-eeda-3c5b-cc24-c5dbdbb38c71@linaro.org>
 Content-Language: en-US
-To:     nikita.shubin@maquefel.me,
-        Hartley Sweeten <hsweeten@visionengravers.com>,
-        Lennert Buytenhek <kernel@wantstofly.org>,
-        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Lukasz Majewski <lukma@denx.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sebastian Reichel <sre@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Mark Brown <broonie@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Vinod Koul <vkoul@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Damien Le Moal <dlemoal@kernel.org>,
-        Sergey Shtylyov <s.shtylyov@omp.ru>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        soc@kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Andy Shevchenko <andy@kernel.org>,
-        Michael Peters <mpeters@embeddedTS.com>,
-        Kris Bahnsen <kris@embeddedTS.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-spi@vger.kernel.org,
-        netdev@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-ide@vger.kernel.org,
-        linux-input@vger.kernel.org, alsa-devel@alsa-project.org
-References: <20230605-ep93xx-v3-0-3d63a5f1103e@maquefel.me>
- <20230605-ep93xx-v3-29-3d63a5f1103e@maquefel.me>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230605-ep93xx-v3-29-3d63a5f1103e@maquefel.me>
-Content-Type: text/plain; charset=UTF-8
+From:   Jie Luo <quic_luoj@quicinc.com>
+In-Reply-To: <692b7775-eeda-3c5b-cc24-c5dbdbb38c71@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 4eGDYzjcRDnS-wAmADU4X7l1O_k-SKiC
+X-Proofpoint-GUID: 4eGDYzjcRDnS-wAmADU4X7l1O_k-SKiC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-08-23_06,2023-08-22_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ impostorscore=0 mlxscore=0 priorityscore=1501 lowpriorityscore=0
+ suspectscore=0 spamscore=0 mlxlogscore=742 bulkscore=0 clxscore=1015
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2308100000 definitions=main-2308230094
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 20/07/2023 13:29, Nikita Shubin via B4 Relay wrote:
-> From: Nikita Shubin <nikita.shubin@maquefel.me>
+
+
+On 8/23/2023 6:11 PM, Krzysztof Kozlowski wrote:
+> On 23/08/2023 10:50, Luo Jie wrote:
+>> QCA8386/QCA8084 includes the clock & reset controller that is
+>> accessed by MDIO bus. Two work modes are supported, qca8386 works
+>> as switch mode, qca8084 works as PHY mode.
+>>
+>> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
 > 
-> Add YAML bindings for ST M48T86 / Dallas DS12887 RTC.
+> You ignored tag, so I wrote you friendly reminder. You responded:
 > 
-> Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
+> "Okay, got it, thanks Krzysztof for the reminder."
+> 
+> so again you ignored the tag?
+> 
+> No, come on. Doing mistakes is fine. Doing the same mistakes over and
+> over is not fine.
+> 
+> Best regards,
+> Krzysztof
+> 
+oh, sorry for missed stating the reason for the tag removed, this patch 
+is updated, i forget to state the reason that the register address is 
+changed from 24 to 0x10, i will keep this in mind and add this info in 
+the next patch set.
 
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
-
+Thanks Krzysztof for this reminder.
