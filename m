@@ -2,106 +2,83 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ACF5EE49A3
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Aug 2023 13:39:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B44F9EE49A0
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Aug 2023 14:52:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235767AbjHWNjs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Aug 2023 09:39:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40506 "EHLO
+        id S236683AbjHWOwP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Aug 2023 10:52:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234769AbjHWNjs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Aug 2023 09:39:48 -0400
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6343198;
-        Wed, 23 Aug 2023 06:39:46 -0700 (PDT)
-Received: by mail-pj1-x102d.google.com with SMTP id 98e67ed59e1d1-26f3e26e59cso2537856a91.0;
-        Wed, 23 Aug 2023 06:39:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1692797986; x=1693402786;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NOK5CRwsaqs85wt6f2CGJEL5j+Al2yb9ep0E5pLTroM=;
-        b=bJLHAqQ5GZGeUGLTMgxzu6PG/h4EcSTPT67BPy7RnqnAlv7C9B3fssI97ZvfThO5iy
-         kdiZEh/pdRMCqJZNnQ3WOY65dKULMxBQsdqQsV9DJ49+VOTJdtzUpoXEzVmET9XyUJt5
-         RenohtVCeDqthFdOuWi1JPsByhsmxvDomR3zGhEe8S2Q/Na1ZZrHW04bE1YOzicaAcjP
-         IQ3HEAnws3KHRwHXPOoObT9H3SXJNN5POcQV6ROoI9E+L6ojac6Q+MEbv8YGlnNRYiMb
-         jr2ObCRM/gX/rzw8H22XzZRVbyzUkzabDO1RNc63uZd31kk1ghEKLccMlqsvF1gCvs7B
-         4VPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692797986; x=1693402786;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NOK5CRwsaqs85wt6f2CGJEL5j+Al2yb9ep0E5pLTroM=;
-        b=lJFz+ZFaJUQUln9Z1UFo3E6ItnALN953F8gblh4VHGvPIRdFacDTSLt4xbw17phFm4
-         +awhWuklhCkD/2PqGcECI7/EHnGmN0qS83HyrSFcPaWnaOdfuCnsPyRGywU0tizAiOPu
-         UnS2lQItzrvn1M87yO1JnK61kSBz0it6xmFHpE4Vo12lBJkToXmQVgX/rk5kGgJUESdj
-         0CFiK9DV1fS9/G5G1axlu7rDULvJ0gTUwp6IzpDYabc3jISmKNKu0tZTCL791vOc3KLF
-         z4fHY4ZcyHzu+UZU6IjMtayBERg6H+HZ97jaSWLQrLccr+bBaS5AH+UjJsUZAwNcfWUf
-         qnAA==
-X-Gm-Message-State: AOJu0YypqqtE/oomj3rf7ENHsK/jPqKvndmZnZhQbQAzFVKQUPhU/ag9
-        L2ZgNrlQ0Ulxgro9NDTltPU=
-X-Google-Smtp-Source: AGHT+IGjcViQKH3GHOWrPKrXnL7/axkeVL2dFUz1FSPB4G3KOxDlRDcMkp1/S2uPhYGLgxC46dQ0Wg==
-X-Received: by 2002:a17:90a:1508:b0:26d:23c3:9f30 with SMTP id l8-20020a17090a150800b0026d23c39f30mr18203197pja.14.1692797986143;
-        Wed, 23 Aug 2023 06:39:46 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id v23-20020a17090ae99700b00263e4dc33aasm11337417pjy.11.2023.08.23.06.39.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Aug 2023 06:39:45 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Wed, 23 Aug 2023 06:39:44 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: use capital "OR" for multiple licenses in
- SPDX
-Message-ID: <f1197557-7d27-453b-b9df-c6dbb3e0f377@roeck-us.net>
-References: <20230823084540.112602-1-krzysztof.kozlowski@linaro.org>
+        with ESMTP id S235178AbjHWOwO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Aug 2023 10:52:14 -0400
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [IPv6:2a02:c205:3004:2154::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0D2CE6A;
+        Wed, 23 Aug 2023 07:52:09 -0700 (PDT)
+Received: from p5dcc3441.dip0.t-ipconnect.de ([93.204.52.65] helo=aktux)
+        by mail.andi.de1.cc with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <andreas@kemnade.info>)
+        id 1qYpDF-002xEG-Kp; Wed, 23 Aug 2023 16:52:01 +0200
+Date:   Wed, 23 Aug 2023 16:51:59 +0200
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     bcousson@baylibre.com, conor+dt@kernel.org,
+        devicetree@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, mturquette@baylibre.com,
+        robh+dt@kernel.org, tony@atomide.com
+Subject: Re: [PATCH 2/3] clk: twl: add clock driver for TWL6032
+Message-ID: <20230823165159.108875d0@aktux>
+In-Reply-To: <a65a7d976be4212ef71fe32c4ed2dacb.sboyd@kernel.org>
+References: <20230819134147.456060-1-andreas@kemnade.info>
+        <20230819134147.456060-3-andreas@kemnade.info>
+        <a65a7d976be4212ef71fe32c4ed2dacb.sboyd@kernel.org>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.37; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230823084540.112602-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Aug 23, 2023 at 10:45:40AM +0200, Krzysztof Kozlowski wrote:
-> Documentation/process/license-rules.rst and checkpatch expect the SPDX
-> identifier syntax for multiple licenses to use capital "OR".  Correct it
-> to keep consistent format and avoid copy-paste issues.
-> 
-> Correct also the format // -> .* in few Allwinner binding headers as
-> pointed out by checkpatch:
-> 
->   WARNING: Improper SPDX comment style for 'include/dt-bindings/reset/sun50i-h6-ccu.h', please use '/*' instead
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> ---
-> 
-> Rebased on next-20230822, so might not apply cleanly.  What does not
-> apply, can be skipped and I will fix it after next RC.
-> ---
-[ ... ]
->  Documentation/devicetree/bindings/hwmon/jedec,jc42.yaml         | 2 +-
->  Documentation/devicetree/bindings/hwmon/lltc,ltc4151.yaml       | 2 +-
->  Documentation/devicetree/bindings/hwmon/lm75.yaml               | 2 +-
->  Documentation/devicetree/bindings/hwmon/microchip,mcp3021.yaml  | 2 +-
->  Documentation/devicetree/bindings/hwmon/national,lm90.yaml      | 2 +-
->  Documentation/devicetree/bindings/hwmon/nxp,mc34vr500.yaml      | 2 +-
->  Documentation/devicetree/bindings/hwmon/sensirion,sht15.yaml    | 2 +-
->  Documentation/devicetree/bindings/hwmon/ti,tmp102.yaml          | 2 +-
->  Documentation/devicetree/bindings/hwmon/ti,tmp108.yaml          | 2 +-
+On Tue, 22 Aug 2023 15:34:59 -0700
+Stephen Boyd <sboyd@kernel.org> wrote:
 
-For the above:
+> Quoting Andreas Kemnade (2023-08-19 06:41:46)
+> > diff --git a/drivers/clk/clk-twl.c b/drivers/clk/clk-twl.c
+> > new file mode 100644
+> > index 0000000000000..deb5742393bac
+> > --- /dev/null
+> > +++ b/drivers/clk/clk-twl.c
+[...]
+> > +
+> > +static struct platform_driver twl_clks_driver = {
+> > +       .driver = {
+> > +               .name = "twl-clk",
+> > +               .of_match_table = twl_clks_of_match,
+> > +       },
+> > +       .probe = twl_clks_probe,
+> > +       .remove_new = twl_clks_remove,
+> > +};
+> > +
+> > +module_platform_driver(twl_clks_driver);
+> > +
+> > +MODULE_DESCRIPTION("Clock driver for TWL Series Devices");
+> > +MODULE_ALIAS("platform:twl-clk");  
+> 
+> This alias is unnecessary?
+> 
+The question is whether this driver should have a separate dt
+node (and if a separate node, then one per clock as the clk-palmas
+driver) or not. See Rob's review of the binding document.
+So we have basically #clock-cells = <1>; in the twl parent
+and a call to mfd_add_device() there in the former case and I guess
+that alias is needed then.
 
-Acked-by: Guenter Roeck <linux@roeck-us.net>
+But if the overall structure stays as in this version,
+then I doubt that we need that alias.
 
-Guenter
+Regards,
+Andreas
+
+
