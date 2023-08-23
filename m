@@ -2,1519 +2,1402 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE1BCEE4993
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Aug 2023 08:48:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAD93EE49AE
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Aug 2023 08:56:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232007AbjHWIso (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Aug 2023 04:48:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45870 "EHLO
+        id S235130AbjHWIz4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Aug 2023 04:55:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235008AbjHWIrr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Aug 2023 04:47:47 -0400
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3558510E7
-        for <linux-clk@vger.kernel.org>; Wed, 23 Aug 2023 01:46:15 -0700 (PDT)
-Received: by mail-lj1-x22c.google.com with SMTP id 38308e7fff4ca-2b9cdba1228so84259911fa.2
-        for <linux-clk@vger.kernel.org>; Wed, 23 Aug 2023 01:46:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1692780373; x=1693385173;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wNochH5AzkkbM02iKAt64Ac4DR2vD4vaGcqyxMvLZVY=;
-        b=FhCexy8y7ro104msZGjkcgIBCQaHn2CRqvB2kep4Km9TOq/UMGFXLndYDYmnI5Mp6s
-         K4Nmnf7rhCKtTxqYeoN/ftfysDdubtlQXvoSym2EFt4ICaqVkQu5fW7cj1kDBkP0Hyqh
-         In0BKnVqt2+tYrO+9hJ2KpvIkIvWIBhiyvll4Y5G3itusRUgfgcK/sFjvWT9Z3iUbMlR
-         ep5rPN8RJuanqW62Pwqa+3iUiMl6XxdN1m8f8vQsWVIlqNbaVqK5n7C4wfoZJjZm9a6Z
-         LbK/qqgfLDnPuQZ03j3WqGpE/dnyfGc7DFIeo6e/h9fFCaho4h6hSZFbaOUMEY+5flnG
-         L3LA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692780373; x=1693385173;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wNochH5AzkkbM02iKAt64Ac4DR2vD4vaGcqyxMvLZVY=;
-        b=h8kDlr+QqzVQQ161EIYV6KKbE0HTe/PZr8ObEL/f40+Km7NslV2c83GH7M7IatPwFU
-         gqEBBBk4DOEzMzdjuJp8eVKB15fSNfONxLBmSS9+lOgBDdtp0lGeDCaeSOa3FapFzzqU
-         +z42eM86iEVCVoi6kEE+N64+mXzDFlt4M14GVOpORUFSJ6E0ACN9QHWmccJ6J60NNsSE
-         MeR2upeHhCrGk3taG8D8DepULNqYE9TSACMMHBkzO2aylvV7usHfTCXXlfxIurYzmAGB
-         A1zt5kCMfOaj1TC39ZKN76ipbaUoAUE+quz1spglpZp2gMcSdqq3EJZmSok2pSy0jozR
-         SCcA==
-X-Gm-Message-State: AOJu0YznNPLKC2PviwvmeuKxoOECrkxCOslCqgktsfJl6yzeY6Qdbbgm
-        cjjoOQI5/HAAHA+NMkdnJjC30w==
-X-Google-Smtp-Source: AGHT+IHkGj/NYJq/FRYjSbgE8fN+I3rSglzTGyg8tmrvX8t4CCjOU29Ss7Prv9aY3uR4AaZALKPw5g==
-X-Received: by 2002:a2e:7e10:0:b0:2b9:eaa7:c23f with SMTP id z16-20020a2e7e10000000b002b9eaa7c23fmr8238886ljc.49.1692780372918;
-        Wed, 23 Aug 2023 01:46:12 -0700 (PDT)
-Received: from krzk-bin.. ([77.252.47.198])
-        by smtp.gmail.com with ESMTPSA id l7-20020a17090615c700b00999bb1e01dfsm9462805ejd.52.2023.08.23.01.46.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Aug 2023 01:46:12 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] dt-bindings: use capital "OR" for multiple licenses in SPDX
-Date:   Wed, 23 Aug 2023 10:45:40 +0200
-Message-Id: <20230823084540.112602-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        with ESMTP id S235075AbjHWIxm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Aug 2023 04:53:42 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F13531BF7;
+        Wed, 23 Aug 2023 01:51:18 -0700 (PDT)
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37N7A4O6027369;
+        Wed, 23 Aug 2023 08:51:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=qcppdkim1;
+ bh=UWMjJfFb0MwxCtcQ+6jje7+746jxi/1Ab6noIzkVK/M=;
+ b=lgLCAb/qU2YZxt/hYp5qJ3A9ZGqhzGTytfo6Lnfpeb6Z2McmMfqPr8RagZTwKkhv2eai
+ EeaDsRZpuIfi3tm7F/oIUrX3mM6Q28ezTQlz7OVyxDmGoV6MF+Rur2MoI8SK+B9pG1x3
+ FWx7csJHXn44PUvuaK4R3EpigInrQl0yQGhpOfQwDXaPm0qluy7Rwb+CesaZlCH7z7D2
+ KgZrnzEjNjWN47irM3Z/1oyMZeBNtGcQHlzhT7bOT1QxNe2Pws0RUpuaB/oukktCMICH
+ +T22fstNZRpe/F26c8ZV6TNjdOpZu+NWj0a6ipMFaXKOaaEIS0BTDYvvjKFQjqiOQIC8 pw== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3sn3tqh8e2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 23 Aug 2023 08:51:06 +0000
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 37N8p4M7013866
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 23 Aug 2023 08:51:04 GMT
+Received: from akronite-sh-dev02.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.30; Wed, 23 Aug 2023 01:51:00 -0700
+From:   Luo Jie <quic_luoj@quicinc.com>
+To:     <andersson@kernel.org>, <agross@kernel.org>,
+        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <p.zabel@pengutronix.de>
+CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_srichara@quicinc.com>
+Subject: [PATCH v5 3/4] clk: qcom: common: commonize qcom_cc_really_probe
+Date:   Wed, 23 Aug 2023 16:50:30 +0800
+Message-ID: <20230823085031.27252-4-quic_luoj@quicinc.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20230823085031.27252-1-quic_luoj@quicinc.com>
+References: <20230823085031.27252-1-quic_luoj@quicinc.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: mQzImlm8rhJnHz236bjUj3ySh86-LGjG
+X-Proofpoint-ORIG-GUID: mQzImlm8rhJnHz236bjUj3ySh86-LGjG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-08-23_06,2023-08-22_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
+ bulkscore=0 spamscore=0 phishscore=0 mlxscore=0 lowpriorityscore=0
+ malwarescore=0 priorityscore=1501 mlxlogscore=999 adultscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2308100000 definitions=main-2308230079
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Documentation/process/license-rules.rst and checkpatch expect the SPDX
-identifier syntax for multiple licenses to use capital "OR".  Correct it
-to keep consistent format and avoid copy-paste issues.
+The previous wrapper qcom_cc_really_probe takes the platform
+device as parameter, which is limited to platform driver.
 
-Correct also the format // -> .* in few Allwinner binding headers as
-pointed out by checkpatch:
+As for qca8k clock controller driver, which is registered as
+the MDIO device, which also follows the qcom clock framework.
 
-  WARNING: Improper SPDX comment style for 'include/dt-bindings/reset/sun50i-h6-ccu.h', please use '/*' instead
+To commonize qcom_cc_really_probe, updating it to take the
+struct device as parameter, so that the qcom_cc_really_probe
+can be utilized by the previous platform device and the new
+added MDIO device.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Also update the current clock controller drivers to take
+&pdev->dev as parameter when calling qcom_cc_really_probe.
 
+Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
 ---
+ drivers/clk/qcom/apss-ipq6018.c        | 2 +-
+ drivers/clk/qcom/camcc-sc7180.c        | 2 +-
+ drivers/clk/qcom/camcc-sc7280.c        | 2 +-
+ drivers/clk/qcom/camcc-sdm845.c        | 2 +-
+ drivers/clk/qcom/camcc-sm6350.c        | 2 +-
+ drivers/clk/qcom/camcc-sm8250.c        | 2 +-
+ drivers/clk/qcom/camcc-sm8450.c        | 2 +-
+ drivers/clk/qcom/common.c              | 7 +++----
+ drivers/clk/qcom/common.h              | 2 +-
+ drivers/clk/qcom/dispcc-qcm2290.c      | 2 +-
+ drivers/clk/qcom/dispcc-sc7180.c       | 2 +-
+ drivers/clk/qcom/dispcc-sc7280.c       | 2 +-
+ drivers/clk/qcom/dispcc-sc8280xp.c     | 2 +-
+ drivers/clk/qcom/dispcc-sdm845.c       | 2 +-
+ drivers/clk/qcom/dispcc-sm6115.c       | 2 +-
+ drivers/clk/qcom/dispcc-sm6125.c       | 2 +-
+ drivers/clk/qcom/dispcc-sm6350.c       | 2 +-
+ drivers/clk/qcom/dispcc-sm6375.c       | 2 +-
+ drivers/clk/qcom/dispcc-sm8250.c       | 2 +-
+ drivers/clk/qcom/dispcc-sm8450.c       | 2 +-
+ drivers/clk/qcom/dispcc-sm8550.c       | 2 +-
+ drivers/clk/qcom/gcc-ipq6018.c         | 2 +-
+ drivers/clk/qcom/gcc-ipq8074.c         | 2 +-
+ drivers/clk/qcom/gcc-mdm9607.c         | 2 +-
+ drivers/clk/qcom/gcc-mdm9615.c         | 2 +-
+ drivers/clk/qcom/gcc-msm8917.c         | 2 +-
+ drivers/clk/qcom/gcc-msm8939.c         | 2 +-
+ drivers/clk/qcom/gcc-msm8953.c         | 2 +-
+ drivers/clk/qcom/gcc-msm8976.c         | 2 +-
+ drivers/clk/qcom/gcc-msm8996.c         | 2 +-
+ drivers/clk/qcom/gcc-msm8998.c         | 2 +-
+ drivers/clk/qcom/gcc-qcm2290.c         | 2 +-
+ drivers/clk/qcom/gcc-qcs404.c          | 2 +-
+ drivers/clk/qcom/gcc-qdu1000.c         | 2 +-
+ drivers/clk/qcom/gcc-sa8775p.c         | 2 +-
+ drivers/clk/qcom/gcc-sc7180.c          | 2 +-
+ drivers/clk/qcom/gcc-sc7280.c          | 2 +-
+ drivers/clk/qcom/gcc-sc8180x.c         | 2 +-
+ drivers/clk/qcom/gcc-sc8280xp.c        | 2 +-
+ drivers/clk/qcom/gcc-sdm660.c          | 2 +-
+ drivers/clk/qcom/gcc-sdm845.c          | 2 +-
+ drivers/clk/qcom/gcc-sdx55.c           | 2 +-
+ drivers/clk/qcom/gcc-sdx65.c           | 2 +-
+ drivers/clk/qcom/gcc-sdx75.c           | 2 +-
+ drivers/clk/qcom/gcc-sm6115.c          | 2 +-
+ drivers/clk/qcom/gcc-sm6125.c          | 2 +-
+ drivers/clk/qcom/gcc-sm6350.c          | 2 +-
+ drivers/clk/qcom/gcc-sm6375.c          | 2 +-
+ drivers/clk/qcom/gcc-sm7150.c          | 2 +-
+ drivers/clk/qcom/gcc-sm8150.c          | 2 +-
+ drivers/clk/qcom/gcc-sm8250.c          | 2 +-
+ drivers/clk/qcom/gcc-sm8350.c          | 2 +-
+ drivers/clk/qcom/gcc-sm8450.c          | 2 +-
+ drivers/clk/qcom/gcc-sm8550.c          | 2 +-
+ drivers/clk/qcom/gpucc-msm8998.c       | 2 +-
+ drivers/clk/qcom/gpucc-sa8775p.c       | 2 +-
+ drivers/clk/qcom/gpucc-sc7180.c        | 2 +-
+ drivers/clk/qcom/gpucc-sc7280.c        | 2 +-
+ drivers/clk/qcom/gpucc-sc8280xp.c      | 2 +-
+ drivers/clk/qcom/gpucc-sdm660.c        | 2 +-
+ drivers/clk/qcom/gpucc-sdm845.c        | 2 +-
+ drivers/clk/qcom/gpucc-sm6115.c        | 2 +-
+ drivers/clk/qcom/gpucc-sm6125.c        | 2 +-
+ drivers/clk/qcom/gpucc-sm6350.c        | 2 +-
+ drivers/clk/qcom/gpucc-sm6375.c        | 2 +-
+ drivers/clk/qcom/gpucc-sm8150.c        | 2 +-
+ drivers/clk/qcom/gpucc-sm8250.c        | 2 +-
+ drivers/clk/qcom/gpucc-sm8350.c        | 2 +-
+ drivers/clk/qcom/gpucc-sm8450.c        | 2 +-
+ drivers/clk/qcom/gpucc-sm8550.c        | 2 +-
+ drivers/clk/qcom/lcc-ipq806x.c         | 2 +-
+ drivers/clk/qcom/lcc-mdm9615.c         | 2 +-
+ drivers/clk/qcom/lcc-msm8960.c         | 2 +-
+ drivers/clk/qcom/lpassaudiocc-sc7280.c | 4 ++--
+ drivers/clk/qcom/lpasscorecc-sc7180.c  | 2 +-
+ drivers/clk/qcom/lpasscorecc-sc7280.c  | 2 +-
+ drivers/clk/qcom/mmcc-msm8960.c        | 2 +-
+ drivers/clk/qcom/mmcc-msm8974.c        | 2 +-
+ drivers/clk/qcom/mmcc-msm8994.c        | 2 +-
+ drivers/clk/qcom/mmcc-msm8996.c        | 2 +-
+ drivers/clk/qcom/mmcc-msm8998.c        | 2 +-
+ drivers/clk/qcom/mmcc-sdm660.c         | 2 +-
+ drivers/clk/qcom/tcsrcc-sm8550.c       | 2 +-
+ drivers/clk/qcom/videocc-sc7180.c      | 2 +-
+ drivers/clk/qcom/videocc-sc7280.c      | 2 +-
+ drivers/clk/qcom/videocc-sdm845.c      | 2 +-
+ drivers/clk/qcom/videocc-sm8150.c      | 2 +-
+ drivers/clk/qcom/videocc-sm8250.c      | 2 +-
+ drivers/clk/qcom/videocc-sm8350.c      | 2 +-
+ drivers/clk/qcom/videocc-sm8450.c      | 2 +-
+ drivers/clk/qcom/videocc-sm8550.c      | 2 +-
+ 91 files changed, 94 insertions(+), 95 deletions(-)
 
-Rebased on next-20230822, so might not apply cleanly.  What does not
-apply, can be skipped and I will fix it after next RC.
----
- Documentation/devicetree/bindings/arm/arm,coresight-cti.yaml    | 2 +-
- .../devicetree/bindings/arm/arm,coresight-dummy-sink.yaml       | 2 +-
- .../devicetree/bindings/arm/arm,coresight-dummy-source.yaml     | 2 +-
- .../devicetree/bindings/arm/arm,embedded-trace-extension.yaml   | 2 +-
- .../devicetree/bindings/arm/arm,trace-buffer-extension.yaml     | 2 +-
- Documentation/devicetree/bindings/arm/arm,versatile-sysreg.yaml | 2 +-
- Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml        | 2 +-
- .../devicetree/bindings/arm/keystone/ti,k3-sci-common.yaml      | 2 +-
- Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml      | 2 +-
- Documentation/devicetree/bindings/arm/qcom,coresight-tpda.yaml  | 2 +-
- Documentation/devicetree/bindings/arm/qcom,coresight-tpdm.yaml  | 2 +-
- Documentation/devicetree/bindings/clock/ti,cdce925.yaml         | 2 +-
- Documentation/devicetree/bindings/clock/ti,sci-clk.yaml         | 2 +-
- Documentation/devicetree/bindings/crypto/ti,sa2ul.yaml          | 2 +-
- .../devicetree/bindings/display/msm/dsi-controller-main.yaml    | 2 +-
- Documentation/devicetree/bindings/display/msm/dsi-phy-10nm.yaml | 2 +-
- Documentation/devicetree/bindings/display/msm/dsi-phy-14nm.yaml | 2 +-
- Documentation/devicetree/bindings/display/msm/dsi-phy-20nm.yaml | 2 +-
- Documentation/devicetree/bindings/display/msm/dsi-phy-28nm.yaml | 2 +-
- Documentation/devicetree/bindings/display/msm/dsi-phy-7nm.yaml  | 2 +-
- .../devicetree/bindings/display/msm/dsi-phy-common.yaml         | 2 +-
- Documentation/devicetree/bindings/display/msm/mdss-common.yaml  | 2 +-
- Documentation/devicetree/bindings/display/msm/qcom,mdp5.yaml    | 2 +-
- Documentation/devicetree/bindings/display/msm/qcom,mdss.yaml    | 2 +-
- .../devicetree/bindings/display/msm/qcom,msm8998-dpu.yaml       | 2 +-
- .../devicetree/bindings/display/msm/qcom,msm8998-mdss.yaml      | 2 +-
- .../devicetree/bindings/display/msm/qcom,qcm2290-dpu.yaml       | 2 +-
- .../devicetree/bindings/display/msm/qcom,qcm2290-mdss.yaml      | 2 +-
- .../devicetree/bindings/display/msm/qcom,sc7180-dpu.yaml        | 2 +-
- .../devicetree/bindings/display/msm/qcom,sc7180-mdss.yaml       | 2 +-
- .../devicetree/bindings/display/msm/qcom,sc7280-dpu.yaml        | 2 +-
- .../devicetree/bindings/display/msm/qcom,sc7280-mdss.yaml       | 2 +-
- .../devicetree/bindings/display/msm/qcom,sc8280xp-dpu.yaml      | 2 +-
- .../devicetree/bindings/display/msm/qcom,sc8280xp-mdss.yaml     | 2 +-
- .../devicetree/bindings/display/msm/qcom,sdm845-dpu.yaml        | 2 +-
- .../devicetree/bindings/display/msm/qcom,sdm845-mdss.yaml       | 2 +-
- .../devicetree/bindings/display/msm/qcom,sm6115-dpu.yaml        | 2 +-
- .../devicetree/bindings/display/msm/qcom,sm6115-mdss.yaml       | 2 +-
- .../devicetree/bindings/display/msm/qcom,sm6350-mdss.yaml       | 2 +-
- .../devicetree/bindings/display/msm/qcom,sm6375-mdss.yaml       | 2 +-
- .../devicetree/bindings/display/msm/qcom,sm8150-dpu.yaml        | 2 +-
- .../devicetree/bindings/display/msm/qcom,sm8150-mdss.yaml       | 2 +-
- .../devicetree/bindings/display/msm/qcom,sm8250-dpu.yaml        | 2 +-
- .../devicetree/bindings/display/msm/qcom,sm8250-mdss.yaml       | 2 +-
- .../devicetree/bindings/display/msm/qcom,sm8350-dpu.yaml        | 2 +-
- .../devicetree/bindings/display/msm/qcom,sm8350-mdss.yaml       | 2 +-
- .../devicetree/bindings/display/msm/qcom,sm8450-dpu.yaml        | 2 +-
- .../devicetree/bindings/display/msm/qcom,sm8450-mdss.yaml       | 2 +-
- .../devicetree/bindings/display/msm/qcom,sm8550-dpu.yaml        | 2 +-
- .../devicetree/bindings/display/msm/qcom,sm8550-mdss.yaml       | 2 +-
- .../devicetree/bindings/display/panel/himax,hx8394.yaml         | 2 +-
- .../devicetree/bindings/display/panel/mantix,mlaf057we51-x.yaml | 2 +-
- .../devicetree/bindings/display/panel/orisetech,otm8009a.yaml   | 2 +-
- .../devicetree/bindings/display/panel/panel-dsi-cm.yaml         | 2 +-
- .../devicetree/bindings/display/panel/panel-mipi-dbi-spi.yaml   | 2 +-
- .../devicetree/bindings/display/panel/panel-simple-dsi.yaml     | 2 +-
- .../devicetree/bindings/display/panel/raydium,rm68200.yaml      | 2 +-
- .../devicetree/bindings/display/panel/rocktech,jh057n00900.yaml | 2 +-
- .../devicetree/bindings/display/panel/visionox,r66451.yaml      | 2 +-
- .../devicetree/bindings/display/panel/visionox,rm69299.yaml     | 2 +-
- .../devicetree/bindings/display/panel/visionox,vtdr6130.yaml    | 2 +-
- .../devicetree/bindings/display/rockchip/rockchip-vop2.yaml     | 2 +-
- .../bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml         | 2 +-
- .../devicetree/bindings/hwlock/ti,omap-hwspinlock.yaml          | 2 +-
- Documentation/devicetree/bindings/hwmon/jedec,jc42.yaml         | 2 +-
- Documentation/devicetree/bindings/hwmon/lltc,ltc4151.yaml       | 2 +-
- Documentation/devicetree/bindings/hwmon/lm75.yaml               | 2 +-
- Documentation/devicetree/bindings/hwmon/microchip,mcp3021.yaml  | 2 +-
- Documentation/devicetree/bindings/hwmon/national,lm90.yaml      | 2 +-
- Documentation/devicetree/bindings/hwmon/nxp,mc34vr500.yaml      | 2 +-
- Documentation/devicetree/bindings/hwmon/sensirion,sht15.yaml    | 2 +-
- Documentation/devicetree/bindings/hwmon/ti,tmp102.yaml          | 2 +-
- Documentation/devicetree/bindings/hwmon/ti,tmp108.yaml          | 2 +-
- Documentation/devicetree/bindings/input/elan,ekth3000.yaml      | 2 +-
- .../devicetree/bindings/interrupt-controller/ti,pruss-intc.yaml | 2 +-
- Documentation/devicetree/bindings/iommu/xen,grant-dma.yaml      | 2 +-
- Documentation/devicetree/bindings/mailbox/ti,omap-mailbox.yaml  | 2 +-
- .../devicetree/bindings/phy/mediatek,mt7621-pci-phy.yaml        | 2 +-
- .../devicetree/bindings/phy/nvidia,tegra210-xusb-padctl.yaml    | 2 +-
- .../devicetree/bindings/power/reset/gpio-poweroff.yaml          | 2 +-
- Documentation/devicetree/bindings/power/reset/gpio-restart.yaml | 2 +-
- .../devicetree/bindings/power/reset/restart-handler.yaml        | 2 +-
- Documentation/devicetree/bindings/power/supply/bq256xx.yaml     | 2 +-
- .../devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml         | 2 +-
- .../devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml         | 2 +-
- .../devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml      | 2 +-
- .../devicetree/bindings/remoteproc/ti,pru-consumer.yaml         | 2 +-
- Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml  | 2 +-
- .../devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml       | 2 +-
- Documentation/devicetree/bindings/reset/ti,sci-reset.yaml       | 2 +-
- Documentation/devicetree/bindings/reset/ti,tps380x-reset.yaml   | 2 +-
- Documentation/devicetree/bindings/soc/ti/sci-pm-domain.yaml     | 2 +-
- Documentation/devicetree/bindings/usb/cypress,hx3.yaml          | 2 +-
- Documentation/devicetree/bindings/usb/genesys,gl850g.yaml       | 2 +-
- Documentation/devicetree/bindings/usb/realtek,rts5411.yaml      | 2 +-
- Documentation/devicetree/bindings/usb/ti,usb8041.yaml           | 2 +-
- Documentation/devicetree/bindings/usb/vialab,vl817.yaml         | 2 +-
- include/dt-bindings/ata/ahci.h                                  | 2 +-
- include/dt-bindings/clock/hi3559av100-clock.h                   | 2 +-
- include/dt-bindings/clock/r8a779f0-cpg-mssr.h                   | 2 +-
- include/dt-bindings/clock/rockchip,rk3588-cru.h                 | 2 +-
- include/dt-bindings/clock/stm32mp1-clks.h                       | 2 +-
- include/dt-bindings/clock/sun20i-d1-ccu.h                       | 2 +-
- include/dt-bindings/clock/sun20i-d1-r-ccu.h                     | 2 +-
- include/dt-bindings/clock/sun50i-a100-ccu.h                     | 2 +-
- include/dt-bindings/clock/sun50i-h6-ccu.h                       | 2 +-
- include/dt-bindings/clock/sun50i-h616-ccu.h                     | 2 +-
- include/dt-bindings/clock/sun6i-rtc.h                           | 2 +-
- include/dt-bindings/display/sdtv-standards.h                    | 2 +-
- include/dt-bindings/gpio/meson-g12a-gpio.h                      | 2 +-
- include/dt-bindings/power/amlogic,c3-pwrc.h                     | 2 +-
- include/dt-bindings/power/meson-a1-power.h                      | 2 +-
- include/dt-bindings/power/meson-axg-power.h                     | 2 +-
- include/dt-bindings/power/meson-g12a-power.h                    | 2 +-
- include/dt-bindings/power/meson-gxbb-power.h                    | 2 +-
- include/dt-bindings/power/meson-s4-power.h                      | 2 +-
- include/dt-bindings/power/meson-sm1-power.h                     | 2 +-
- include/dt-bindings/power/meson8-power.h                        | 2 +-
- include/dt-bindings/power/r8a779f0-sysc.h                       | 2 +-
- include/dt-bindings/power/rk3588-power.h                        | 2 +-
- include/dt-bindings/power/summit,smb347-charger.h               | 2 +-
- include/dt-bindings/reset/rockchip,rk3588-cru.h                 | 2 +-
- include/dt-bindings/reset/stm32mp1-resets.h                     | 2 +-
- include/dt-bindings/reset/sun20i-d1-ccu.h                       | 2 +-
- include/dt-bindings/reset/sun20i-d1-r-ccu.h                     | 2 +-
- include/dt-bindings/reset/sun50i-a100-ccu.h                     | 2 +-
- include/dt-bindings/reset/sun50i-a100-r-ccu.h                   | 2 +-
- include/dt-bindings/reset/sun50i-h6-ccu.h                       | 2 +-
- include/dt-bindings/reset/sun50i-h6-r-ccu.h                     | 2 +-
- include/dt-bindings/reset/sun50i-h616-ccu.h                     | 2 +-
- 130 files changed, 130 insertions(+), 130 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/arm/arm,coresight-cti.yaml b/Documentation/devicetree/bindings/arm/arm,coresight-cti.yaml
-index d6c84b6e7fe6..6216cfb0a188 100644
---- a/Documentation/devicetree/bindings/arm/arm,coresight-cti.yaml
-+++ b/Documentation/devicetree/bindings/arm/arm,coresight-cti.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- # Copyright 2019 Linaro Ltd.
- %YAML 1.2
- ---
-diff --git a/Documentation/devicetree/bindings/arm/arm,coresight-dummy-sink.yaml b/Documentation/devicetree/bindings/arm/arm,coresight-dummy-sink.yaml
-index cb78cfa56702..c960c8e0a9a5 100644
---- a/Documentation/devicetree/bindings/arm/arm,coresight-dummy-sink.yaml
-+++ b/Documentation/devicetree/bindings/arm/arm,coresight-dummy-sink.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/arm/arm,coresight-dummy-sink.yaml#
-diff --git a/Documentation/devicetree/bindings/arm/arm,coresight-dummy-source.yaml b/Documentation/devicetree/bindings/arm/arm,coresight-dummy-source.yaml
-index 5fedaed49a1f..6745b4cc8f1c 100644
---- a/Documentation/devicetree/bindings/arm/arm,coresight-dummy-source.yaml
-+++ b/Documentation/devicetree/bindings/arm/arm,coresight-dummy-source.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/arm/arm,coresight-dummy-source.yaml#
-diff --git a/Documentation/devicetree/bindings/arm/arm,embedded-trace-extension.yaml b/Documentation/devicetree/bindings/arm/arm,embedded-trace-extension.yaml
-index 108460627d9a..a88f96b0ca16 100644
---- a/Documentation/devicetree/bindings/arm/arm,embedded-trace-extension.yaml
-+++ b/Documentation/devicetree/bindings/arm/arm,embedded-trace-extension.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- # Copyright 2021, Arm Ltd
- %YAML 1.2
- ---
-diff --git a/Documentation/devicetree/bindings/arm/arm,trace-buffer-extension.yaml b/Documentation/devicetree/bindings/arm/arm,trace-buffer-extension.yaml
-index b1322658063a..bc0c6d8b7fdb 100644
---- a/Documentation/devicetree/bindings/arm/arm,trace-buffer-extension.yaml
-+++ b/Documentation/devicetree/bindings/arm/arm,trace-buffer-extension.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- # Copyright 2021, Arm Ltd
- %YAML 1.2
- ---
-diff --git a/Documentation/devicetree/bindings/arm/arm,versatile-sysreg.yaml b/Documentation/devicetree/bindings/arm/arm,versatile-sysreg.yaml
-index 491eef1e1b10..3b060c36b90c 100644
---- a/Documentation/devicetree/bindings/arm/arm,versatile-sysreg.yaml
-+++ b/Documentation/devicetree/bindings/arm/arm,versatile-sysreg.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/arm/arm,versatile-sysreg.yaml#
-diff --git a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-index e17b3d66d6e5..68f717670f78 100644
---- a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-+++ b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/arm/aspeed/aspeed.yaml#
-diff --git a/Documentation/devicetree/bindings/arm/keystone/ti,k3-sci-common.yaml b/Documentation/devicetree/bindings/arm/keystone/ti,k3-sci-common.yaml
-index ff378d5cbd32..4a323e8c785d 100644
---- a/Documentation/devicetree/bindings/arm/keystone/ti,k3-sci-common.yaml
-+++ b/Documentation/devicetree/bindings/arm/keystone/ti,k3-sci-common.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/arm/keystone/ti,k3-sci-common.yaml#
-diff --git a/Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml b/Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml
-index 86b59de7707e..c24ad0968f3e 100644
---- a/Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml
-+++ b/Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/arm/keystone/ti,sci.yaml#
-diff --git a/Documentation/devicetree/bindings/arm/qcom,coresight-tpda.yaml b/Documentation/devicetree/bindings/arm/qcom,coresight-tpda.yaml
-index 2ec9b5b24d73..ea3c5db6b52d 100644
---- a/Documentation/devicetree/bindings/arm/qcom,coresight-tpda.yaml
-+++ b/Documentation/devicetree/bindings/arm/qcom,coresight-tpda.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- # Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
- %YAML 1.2
- ---
-diff --git a/Documentation/devicetree/bindings/arm/qcom,coresight-tpdm.yaml b/Documentation/devicetree/bindings/arm/qcom,coresight-tpdm.yaml
-index 5c08342664ea..3bad47b7b02b 100644
---- a/Documentation/devicetree/bindings/arm/qcom,coresight-tpdm.yaml
-+++ b/Documentation/devicetree/bindings/arm/qcom,coresight-tpdm.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- # Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
- %YAML 1.2
- ---
-diff --git a/Documentation/devicetree/bindings/clock/ti,cdce925.yaml b/Documentation/devicetree/bindings/clock/ti,cdce925.yaml
-index a4ec8dd5ddf1..95c1c6f8b755 100644
---- a/Documentation/devicetree/bindings/clock/ti,cdce925.yaml
-+++ b/Documentation/devicetree/bindings/clock/ti,cdce925.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/clock/ti,cdce925.yaml#
-diff --git a/Documentation/devicetree/bindings/clock/ti,sci-clk.yaml b/Documentation/devicetree/bindings/clock/ti,sci-clk.yaml
-index 63d976341696..0a9d6a4c4b66 100644
---- a/Documentation/devicetree/bindings/clock/ti,sci-clk.yaml
-+++ b/Documentation/devicetree/bindings/clock/ti,sci-clk.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/clock/ti,sci-clk.yaml#
-diff --git a/Documentation/devicetree/bindings/crypto/ti,sa2ul.yaml b/Documentation/devicetree/bindings/crypto/ti,sa2ul.yaml
-index f0ef7685550a..ff10a0838ad6 100644
---- a/Documentation/devicetree/bindings/crypto/ti,sa2ul.yaml
-+++ b/Documentation/devicetree/bindings/crypto/ti,sa2ul.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/crypto/ti,sa2ul.yaml#
-diff --git a/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml b/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
-index b8d1f2b7d541..c6dbab65d5f7 100644
---- a/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/msm/dsi-controller-main.yaml#
-diff --git a/Documentation/devicetree/bindings/display/msm/dsi-phy-10nm.yaml b/Documentation/devicetree/bindings/display/msm/dsi-phy-10nm.yaml
-index e6b00d7387ce..69d13867b7cf 100644
---- a/Documentation/devicetree/bindings/display/msm/dsi-phy-10nm.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/dsi-phy-10nm.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/msm/dsi-phy-10nm.yaml#
-diff --git a/Documentation/devicetree/bindings/display/msm/dsi-phy-14nm.yaml b/Documentation/devicetree/bindings/display/msm/dsi-phy-14nm.yaml
-index 2361da5f6736..52bbe132e6da 100644
---- a/Documentation/devicetree/bindings/display/msm/dsi-phy-14nm.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/dsi-phy-14nm.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/msm/dsi-phy-14nm.yaml#
-diff --git a/Documentation/devicetree/bindings/display/msm/dsi-phy-20nm.yaml b/Documentation/devicetree/bindings/display/msm/dsi-phy-20nm.yaml
-index 9c1f9140c731..7e6687cb002b 100644
---- a/Documentation/devicetree/bindings/display/msm/dsi-phy-20nm.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/dsi-phy-20nm.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/msm/dsi-phy-20nm.yaml#
-diff --git a/Documentation/devicetree/bindings/display/msm/dsi-phy-28nm.yaml b/Documentation/devicetree/bindings/display/msm/dsi-phy-28nm.yaml
-index 62fb3e484eb2..288d8babb76a 100644
---- a/Documentation/devicetree/bindings/display/msm/dsi-phy-28nm.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/dsi-phy-28nm.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/msm/dsi-phy-28nm.yaml#
-diff --git a/Documentation/devicetree/bindings/display/msm/dsi-phy-7nm.yaml b/Documentation/devicetree/bindings/display/msm/dsi-phy-7nm.yaml
-index 8e9031bbde73..dd6619555a12 100644
---- a/Documentation/devicetree/bindings/display/msm/dsi-phy-7nm.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/dsi-phy-7nm.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/msm/dsi-phy-7nm.yaml#
-diff --git a/Documentation/devicetree/bindings/display/msm/dsi-phy-common.yaml b/Documentation/devicetree/bindings/display/msm/dsi-phy-common.yaml
-index 0f6f08890e7e..6b57ce41c95f 100644
---- a/Documentation/devicetree/bindings/display/msm/dsi-phy-common.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/dsi-phy-common.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/msm/dsi-phy-common.yaml#
-diff --git a/Documentation/devicetree/bindings/display/msm/mdss-common.yaml b/Documentation/devicetree/bindings/display/msm/mdss-common.yaml
-index a8086ca09d9f..f69196e4cc76 100644
---- a/Documentation/devicetree/bindings/display/msm/mdss-common.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/mdss-common.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/msm/mdss-common.yaml#
-diff --git a/Documentation/devicetree/bindings/display/msm/qcom,mdp5.yaml b/Documentation/devicetree/bindings/display/msm/qcom,mdp5.yaml
-index 2fe032d0e8f8..91c774f106ce 100644
---- a/Documentation/devicetree/bindings/display/msm/qcom,mdp5.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/qcom,mdp5.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/msm/qcom,mdp5.yaml#
-diff --git a/Documentation/devicetree/bindings/display/msm/qcom,mdss.yaml b/Documentation/devicetree/bindings/display/msm/qcom,mdss.yaml
-index 5854a3a1224b..0999ea07f47b 100644
---- a/Documentation/devicetree/bindings/display/msm/qcom,mdss.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/qcom,mdss.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/msm/qcom,mdss.yaml#
-diff --git a/Documentation/devicetree/bindings/display/msm/qcom,msm8998-dpu.yaml b/Documentation/devicetree/bindings/display/msm/qcom,msm8998-dpu.yaml
-index 8d3cd46260fb..d5a64c8a921f 100644
---- a/Documentation/devicetree/bindings/display/msm/qcom,msm8998-dpu.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/qcom,msm8998-dpu.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/msm/qcom,msm8998-dpu.yaml#
-diff --git a/Documentation/devicetree/bindings/display/msm/qcom,msm8998-mdss.yaml b/Documentation/devicetree/bindings/display/msm/qcom,msm8998-mdss.yaml
-index 3c2b6ed98a56..e320ab1de6de 100644
---- a/Documentation/devicetree/bindings/display/msm/qcom,msm8998-mdss.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/qcom,msm8998-mdss.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/msm/qcom,msm8998-mdss.yaml#
-diff --git a/Documentation/devicetree/bindings/display/msm/qcom,qcm2290-dpu.yaml b/Documentation/devicetree/bindings/display/msm/qcom,qcm2290-dpu.yaml
-index 414f4e7ebdf1..be6cd8adb3b6 100644
---- a/Documentation/devicetree/bindings/display/msm/qcom,qcm2290-dpu.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/qcom,qcm2290-dpu.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/msm/qcom,qcm2290-dpu.yaml#
-diff --git a/Documentation/devicetree/bindings/display/msm/qcom,qcm2290-mdss.yaml b/Documentation/devicetree/bindings/display/msm/qcom,qcm2290-mdss.yaml
-index 2995b84b2cd4..4184b84d4c21 100644
---- a/Documentation/devicetree/bindings/display/msm/qcom,qcm2290-mdss.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/qcom,qcm2290-mdss.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/msm/qcom,qcm2290-mdss.yaml#
-diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sc7180-dpu.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sc7180-dpu.yaml
-index ea75f0f95d5c..8137618237ce 100644
---- a/Documentation/devicetree/bindings/display/msm/qcom,sc7180-dpu.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/qcom,sc7180-dpu.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/msm/qcom,sc7180-dpu.yaml#
-diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sc7180-mdss.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sc7180-mdss.yaml
-index 42ef06edddc4..3b9c103e504a 100644
---- a/Documentation/devicetree/bindings/display/msm/qcom,sc7180-mdss.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/qcom,sc7180-mdss.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/msm/qcom,sc7180-mdss.yaml#
-diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sc7280-dpu.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sc7280-dpu.yaml
-index 26dc073bd19a..b0fbe86219d1 100644
---- a/Documentation/devicetree/bindings/display/msm/qcom,sc7280-dpu.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/qcom,sc7280-dpu.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/msm/qcom,sc7280-dpu.yaml#
-diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sc7280-mdss.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sc7280-mdss.yaml
-index 078e1d1a7d2f..43500dad66e7 100644
---- a/Documentation/devicetree/bindings/display/msm/qcom,sc7280-mdss.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/qcom,sc7280-mdss.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/msm/qcom,sc7280-mdss.yaml#
-diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sc8280xp-dpu.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sc8280xp-dpu.yaml
-index f2c8e16cf067..d19e3bec4600 100644
---- a/Documentation/devicetree/bindings/display/msm/qcom,sc8280xp-dpu.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/qcom,sc8280xp-dpu.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/msm/qcom,sc8280xp-dpu.yaml#
-diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sc8280xp-mdss.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sc8280xp-mdss.yaml
-index c239544bc37f..db680fb12b6a 100644
---- a/Documentation/devicetree/bindings/display/msm/qcom,sc8280xp-mdss.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/qcom,sc8280xp-mdss.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/msm/qcom,sc8280xp-mdss.yaml#
-diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sdm845-dpu.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sdm845-dpu.yaml
-index 0f7765d832e7..b917064bdf33 100644
---- a/Documentation/devicetree/bindings/display/msm/qcom,sdm845-dpu.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/qcom,sdm845-dpu.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/msm/qcom,sdm845-dpu.yaml#
-diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sdm845-mdss.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sdm845-mdss.yaml
-index 6ecb00920d7f..d6d7ac1b2ef8 100644
---- a/Documentation/devicetree/bindings/display/msm/qcom,sdm845-mdss.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/qcom,sdm845-mdss.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/msm/qcom,sdm845-mdss.yaml#
-diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sm6115-dpu.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sm6115-dpu.yaml
-index bf62c2f5325a..510eb6c19364 100644
---- a/Documentation/devicetree/bindings/display/msm/qcom,sm6115-dpu.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/qcom,sm6115-dpu.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/msm/qcom,sm6115-dpu.yaml#
-diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sm6115-mdss.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sm6115-mdss.yaml
-index b9f83088f370..17221b62a642 100644
---- a/Documentation/devicetree/bindings/display/msm/qcom,sm6115-mdss.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/qcom,sm6115-mdss.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/msm/qcom,sm6115-mdss.yaml#
-diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sm6350-mdss.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sm6350-mdss.yaml
-index 63962a8f2faf..db255b1f4c20 100644
---- a/Documentation/devicetree/bindings/display/msm/qcom,sm6350-mdss.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/qcom,sm6350-mdss.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/msm/qcom,sm6350-mdss.yaml#
-diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sm6375-mdss.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sm6375-mdss.yaml
-index 595a9d56949c..30d36fffaedb 100644
---- a/Documentation/devicetree/bindings/display/msm/qcom,sm6375-mdss.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/qcom,sm6375-mdss.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/msm/qcom,sm6375-mdss.yaml#
-diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sm8150-dpu.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sm8150-dpu.yaml
-index 2b3f3fe9bdf7..13146b3f053c 100644
---- a/Documentation/devicetree/bindings/display/msm/qcom,sm8150-dpu.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/qcom,sm8150-dpu.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/msm/qcom,sm8150-dpu.yaml#
-diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sm8150-mdss.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sm8150-mdss.yaml
-index 5182e958e069..54cdaa827cd3 100644
---- a/Documentation/devicetree/bindings/display/msm/qcom,sm8150-mdss.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/qcom,sm8150-mdss.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/msm/qcom,sm8150-mdss.yaml#
-diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sm8250-dpu.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sm8250-dpu.yaml
-index acd2ed391b2f..ffa5047e901f 100644
---- a/Documentation/devicetree/bindings/display/msm/qcom,sm8250-dpu.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/qcom,sm8250-dpu.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/msm/qcom,sm8250-dpu.yaml#
-diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sm8250-mdss.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sm8250-mdss.yaml
-index 5cfb9b917e90..e887f031b8be 100644
---- a/Documentation/devicetree/bindings/display/msm/qcom,sm8250-mdss.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/qcom,sm8250-mdss.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/msm/qcom,sm8250-mdss.yaml#
-diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sm8350-dpu.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sm8350-dpu.yaml
-index 1a4e03531a1b..96ef2d9c3512 100644
---- a/Documentation/devicetree/bindings/display/msm/qcom,sm8350-dpu.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/qcom,sm8350-dpu.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/msm/qcom,sm8350-dpu.yaml#
-diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sm8350-mdss.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sm8350-mdss.yaml
-index 8c89fb7fc8a3..60d4aae1131b 100644
---- a/Documentation/devicetree/bindings/display/msm/qcom,sm8350-mdss.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/qcom,sm8350-mdss.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/msm/qcom,sm8350-mdss.yaml#
-diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sm8450-dpu.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sm8450-dpu.yaml
-index da3fd66c564f..2a5d3daed0e1 100644
---- a/Documentation/devicetree/bindings/display/msm/qcom,sm8450-dpu.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/qcom,sm8450-dpu.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/msm/qcom,sm8450-dpu.yaml#
-diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sm8450-mdss.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sm8450-mdss.yaml
-index cfad5049a966..bb22940b9385 100644
---- a/Documentation/devicetree/bindings/display/msm/qcom,sm8450-mdss.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/qcom,sm8450-mdss.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/msm/qcom,sm8450-mdss.yaml#
-diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sm8550-dpu.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sm8550-dpu.yaml
-index 99908fbe74f0..16a541fca66f 100644
---- a/Documentation/devicetree/bindings/display/msm/qcom,sm8550-dpu.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/qcom,sm8550-dpu.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/msm/qcom,sm8550-dpu.yaml#
-diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sm8550-mdss.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sm8550-mdss.yaml
-index 5390a8e79ad3..48aea8005c86 100644
---- a/Documentation/devicetree/bindings/display/msm/qcom,sm8550-mdss.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/qcom,sm8550-mdss.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/msm/qcom,sm8550-mdss.yaml#
-diff --git a/Documentation/devicetree/bindings/display/panel/himax,hx8394.yaml b/Documentation/devicetree/bindings/display/panel/himax,hx8394.yaml
-index 1b2a1baa26f9..ffb35288ffbb 100644
---- a/Documentation/devicetree/bindings/display/panel/himax,hx8394.yaml
-+++ b/Documentation/devicetree/bindings/display/panel/himax,hx8394.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/panel/himax,hx8394.yaml#
-diff --git a/Documentation/devicetree/bindings/display/panel/mantix,mlaf057we51-x.yaml b/Documentation/devicetree/bindings/display/panel/mantix,mlaf057we51-x.yaml
-index a4b8569ab81c..74ff772973d6 100644
---- a/Documentation/devicetree/bindings/display/panel/mantix,mlaf057we51-x.yaml
-+++ b/Documentation/devicetree/bindings/display/panel/mantix,mlaf057we51-x.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/panel/mantix,mlaf057we51-x.yaml#
-diff --git a/Documentation/devicetree/bindings/display/panel/orisetech,otm8009a.yaml b/Documentation/devicetree/bindings/display/panel/orisetech,otm8009a.yaml
-index ad7d3575190e..1e4f140f48b8 100644
---- a/Documentation/devicetree/bindings/display/panel/orisetech,otm8009a.yaml
-+++ b/Documentation/devicetree/bindings/display/panel/orisetech,otm8009a.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/panel/orisetech,otm8009a.yaml#
-diff --git a/Documentation/devicetree/bindings/display/panel/panel-dsi-cm.yaml b/Documentation/devicetree/bindings/display/panel/panel-dsi-cm.yaml
-index 4a36aa64c716..f8dc9929e833 100644
---- a/Documentation/devicetree/bindings/display/panel/panel-dsi-cm.yaml
-+++ b/Documentation/devicetree/bindings/display/panel/panel-dsi-cm.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/panel/panel-dsi-cm.yaml#
-diff --git a/Documentation/devicetree/bindings/display/panel/panel-mipi-dbi-spi.yaml b/Documentation/devicetree/bindings/display/panel/panel-mipi-dbi-spi.yaml
-index 2f0238b770eb..2786c0b9b65d 100644
---- a/Documentation/devicetree/bindings/display/panel/panel-mipi-dbi-spi.yaml
-+++ b/Documentation/devicetree/bindings/display/panel/panel-mipi-dbi-spi.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/panel/panel-mipi-dbi-spi.yaml#
-diff --git a/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.yaml b/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.yaml
-index 90c04cff8281..73674baea75d 100644
---- a/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.yaml
-+++ b/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/panel/panel-simple-dsi.yaml#
-diff --git a/Documentation/devicetree/bindings/display/panel/raydium,rm68200.yaml b/Documentation/devicetree/bindings/display/panel/raydium,rm68200.yaml
-index e8ce2315631a..46fe1014ebc4 100644
---- a/Documentation/devicetree/bindings/display/panel/raydium,rm68200.yaml
-+++ b/Documentation/devicetree/bindings/display/panel/raydium,rm68200.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/panel/raydium,rm68200.yaml#
-diff --git a/Documentation/devicetree/bindings/display/panel/rocktech,jh057n00900.yaml b/Documentation/devicetree/bindings/display/panel/rocktech,jh057n00900.yaml
-index 150e81090af2..5ea74426b1d5 100644
---- a/Documentation/devicetree/bindings/display/panel/rocktech,jh057n00900.yaml
-+++ b/Documentation/devicetree/bindings/display/panel/rocktech,jh057n00900.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/panel/rocktech,jh057n00900.yaml#
-diff --git a/Documentation/devicetree/bindings/display/panel/visionox,r66451.yaml b/Documentation/devicetree/bindings/display/panel/visionox,r66451.yaml
-index 6ba323683921..187840bb76c7 100644
---- a/Documentation/devicetree/bindings/display/panel/visionox,r66451.yaml
-+++ b/Documentation/devicetree/bindings/display/panel/visionox,r66451.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/panel/visionox,r66451.yaml#
-diff --git a/Documentation/devicetree/bindings/display/panel/visionox,rm69299.yaml b/Documentation/devicetree/bindings/display/panel/visionox,rm69299.yaml
-index 444ac2a4772d..fa745a6f4456 100644
---- a/Documentation/devicetree/bindings/display/panel/visionox,rm69299.yaml
-+++ b/Documentation/devicetree/bindings/display/panel/visionox,rm69299.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/panel/visionox,rm69299.yaml#
-diff --git a/Documentation/devicetree/bindings/display/panel/visionox,vtdr6130.yaml b/Documentation/devicetree/bindings/display/panel/visionox,vtdr6130.yaml
-index 84562a5b710a..d5a8295106c1 100644
---- a/Documentation/devicetree/bindings/display/panel/visionox,vtdr6130.yaml
-+++ b/Documentation/devicetree/bindings/display/panel/visionox,vtdr6130.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/panel/visionox,vtdr6130.yaml#
-diff --git a/Documentation/devicetree/bindings/display/rockchip/rockchip-vop2.yaml b/Documentation/devicetree/bindings/display/rockchip/rockchip-vop2.yaml
-index fba45091d909..b60b90472d42 100644
---- a/Documentation/devicetree/bindings/display/rockchip/rockchip-vop2.yaml
-+++ b/Documentation/devicetree/bindings/display/rockchip/rockchip-vop2.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/display/rockchip/rockchip-vop2.yaml#
-diff --git a/Documentation/devicetree/bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml b/Documentation/devicetree/bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml
-index 38478dad8b25..584cce3211c0 100644
---- a/Documentation/devicetree/bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml
-+++ b/Documentation/devicetree/bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/hwlock/allwinner,sun6i-a31-hwspinlock.yaml#
-diff --git a/Documentation/devicetree/bindings/hwlock/ti,omap-hwspinlock.yaml b/Documentation/devicetree/bindings/hwlock/ti,omap-hwspinlock.yaml
-index 0a955c7b9706..5ba60d532fcd 100644
---- a/Documentation/devicetree/bindings/hwlock/ti,omap-hwspinlock.yaml
-+++ b/Documentation/devicetree/bindings/hwlock/ti,omap-hwspinlock.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/hwlock/ti,omap-hwspinlock.yaml#
-diff --git a/Documentation/devicetree/bindings/hwmon/jedec,jc42.yaml b/Documentation/devicetree/bindings/hwmon/jedec,jc42.yaml
-index 0e49b3901161..bf3332153ad8 100644
---- a/Documentation/devicetree/bindings/hwmon/jedec,jc42.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/jedec,jc42.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/hwmon/jedec,jc42.yaml#
-diff --git a/Documentation/devicetree/bindings/hwmon/lltc,ltc4151.yaml b/Documentation/devicetree/bindings/hwmon/lltc,ltc4151.yaml
-index b1a4c235376e..e62aff670478 100644
---- a/Documentation/devicetree/bindings/hwmon/lltc,ltc4151.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/lltc,ltc4151.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/hwmon/lltc,ltc4151.yaml#
-diff --git a/Documentation/devicetree/bindings/hwmon/lm75.yaml b/Documentation/devicetree/bindings/hwmon/lm75.yaml
-index 8226e3b5d028..0b69897f0c63 100644
---- a/Documentation/devicetree/bindings/hwmon/lm75.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/lm75.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/hwmon/lm75.yaml#
-diff --git a/Documentation/devicetree/bindings/hwmon/microchip,mcp3021.yaml b/Documentation/devicetree/bindings/hwmon/microchip,mcp3021.yaml
-index 028d6e570131..f5e104c1b0d0 100644
---- a/Documentation/devicetree/bindings/hwmon/microchip,mcp3021.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/microchip,mcp3021.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/hwmon/microchip,mcp3021.yaml#
-diff --git a/Documentation/devicetree/bindings/hwmon/national,lm90.yaml b/Documentation/devicetree/bindings/hwmon/national,lm90.yaml
-index 7b9d48d6d6da..6e59c8fdef30 100644
---- a/Documentation/devicetree/bindings/hwmon/national,lm90.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/national,lm90.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/hwmon/national,lm90.yaml#
-diff --git a/Documentation/devicetree/bindings/hwmon/nxp,mc34vr500.yaml b/Documentation/devicetree/bindings/hwmon/nxp,mc34vr500.yaml
-index 306f67315835..48d654e52114 100644
---- a/Documentation/devicetree/bindings/hwmon/nxp,mc34vr500.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/nxp,mc34vr500.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/hwmon/nxp,mc34vr500.yaml#
-diff --git a/Documentation/devicetree/bindings/hwmon/sensirion,sht15.yaml b/Documentation/devicetree/bindings/hwmon/sensirion,sht15.yaml
-index 80df7182ea28..14ac783c9a5f 100644
---- a/Documentation/devicetree/bindings/hwmon/sensirion,sht15.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/sensirion,sht15.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/hwmon/sensirion,sht15.yaml#
-diff --git a/Documentation/devicetree/bindings/hwmon/ti,tmp102.yaml b/Documentation/devicetree/bindings/hwmon/ti,tmp102.yaml
-index c5a889e3e27b..7e5b62a0215d 100644
---- a/Documentation/devicetree/bindings/hwmon/ti,tmp102.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/ti,tmp102.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/hwmon/ti,tmp102.yaml#
-diff --git a/Documentation/devicetree/bindings/hwmon/ti,tmp108.yaml b/Documentation/devicetree/bindings/hwmon/ti,tmp108.yaml
-index dcbc6fbc3b48..8b5307c875ff 100644
---- a/Documentation/devicetree/bindings/hwmon/ti,tmp108.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/ti,tmp108.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/hwmon/ti,tmp108.yaml#
-diff --git a/Documentation/devicetree/bindings/input/elan,ekth3000.yaml b/Documentation/devicetree/bindings/input/elan,ekth3000.yaml
-index 2a9bb6ace021..24dc2d69613f 100644
---- a/Documentation/devicetree/bindings/input/elan,ekth3000.yaml
-+++ b/Documentation/devicetree/bindings/input/elan,ekth3000.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/input/elan,ekth3000.yaml#
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc.yaml b/Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc.yaml
-index 65523d9459d8..3cd5a1822e14 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc.yaml
-+++ b/Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/interrupt-controller/ti,pruss-intc.yaml#
-diff --git a/Documentation/devicetree/bindings/iommu/xen,grant-dma.yaml b/Documentation/devicetree/bindings/iommu/xen,grant-dma.yaml
-index be1539d234f9..3528b81daa25 100644
---- a/Documentation/devicetree/bindings/iommu/xen,grant-dma.yaml
-+++ b/Documentation/devicetree/bindings/iommu/xen,grant-dma.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/iommu/xen,grant-dma.yaml#
-diff --git a/Documentation/devicetree/bindings/mailbox/ti,omap-mailbox.yaml b/Documentation/devicetree/bindings/mailbox/ti,omap-mailbox.yaml
-index 4943c75e8a60..1a2001e58880 100644
---- a/Documentation/devicetree/bindings/mailbox/ti,omap-mailbox.yaml
-+++ b/Documentation/devicetree/bindings/mailbox/ti,omap-mailbox.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/mailbox/ti,omap-mailbox.yaml#
-diff --git a/Documentation/devicetree/bindings/phy/mediatek,mt7621-pci-phy.yaml b/Documentation/devicetree/bindings/phy/mediatek,mt7621-pci-phy.yaml
-index b35c4d256e40..99eac888ae03 100644
---- a/Documentation/devicetree/bindings/phy/mediatek,mt7621-pci-phy.yaml
-+++ b/Documentation/devicetree/bindings/phy/mediatek,mt7621-pci-phy.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/phy/mediatek,mt7621-pci-phy.yaml#
-diff --git a/Documentation/devicetree/bindings/phy/nvidia,tegra210-xusb-padctl.yaml b/Documentation/devicetree/bindings/phy/nvidia,tegra210-xusb-padctl.yaml
-index d16bd6e47f90..e9237c58ce45 100644
---- a/Documentation/devicetree/bindings/phy/nvidia,tegra210-xusb-padctl.yaml
-+++ b/Documentation/devicetree/bindings/phy/nvidia,tegra210-xusb-padctl.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/phy/nvidia,tegra210-xusb-padctl.yaml#
-diff --git a/Documentation/devicetree/bindings/power/reset/gpio-poweroff.yaml b/Documentation/devicetree/bindings/power/reset/gpio-poweroff.yaml
-index 45d66c775115..b54ec003a1e0 100644
---- a/Documentation/devicetree/bindings/power/reset/gpio-poweroff.yaml
-+++ b/Documentation/devicetree/bindings/power/reset/gpio-poweroff.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/power/reset/gpio-poweroff.yaml#
-diff --git a/Documentation/devicetree/bindings/power/reset/gpio-restart.yaml b/Documentation/devicetree/bindings/power/reset/gpio-restart.yaml
-index d3d18e0f5db3..53535de0d41c 100644
---- a/Documentation/devicetree/bindings/power/reset/gpio-restart.yaml
-+++ b/Documentation/devicetree/bindings/power/reset/gpio-restart.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/power/reset/gpio-restart.yaml#
-diff --git a/Documentation/devicetree/bindings/power/reset/restart-handler.yaml b/Documentation/devicetree/bindings/power/reset/restart-handler.yaml
-index f2ffdd29d52a..965a834a3dbe 100644
---- a/Documentation/devicetree/bindings/power/reset/restart-handler.yaml
-+++ b/Documentation/devicetree/bindings/power/reset/restart-handler.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/power/reset/restart-handler.yaml#
-diff --git a/Documentation/devicetree/bindings/power/supply/bq256xx.yaml b/Documentation/devicetree/bindings/power/supply/bq256xx.yaml
-index 4fe9c3705265..a76afe3ca299 100644
---- a/Documentation/devicetree/bindings/power/supply/bq256xx.yaml
-+++ b/Documentation/devicetree/bindings/power/supply/bq256xx.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- # Copyright (C) 2020 Texas Instruments Incorporated
- %YAML 1.2
- ---
-diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
-index f16e90380df1..9768db8663eb 100644
---- a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/remoteproc/ti,k3-dsp-rproc.yaml#
-diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
-index 54eecc567e0b..a492f74a8608 100644
---- a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/remoteproc/ti,k3-r5f-rproc.yaml#
-diff --git a/Documentation/devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml
-index 1fdc2741c36e..94eb2033e79c 100644
---- a/Documentation/devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/remoteproc/ti,omap-remoteproc.yaml#
-diff --git a/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml b/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
-index 35f0bb38f7b2..2811334515d1 100644
---- a/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/remoteproc/ti,pru-consumer.yaml#
-diff --git a/Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml
-index cd55d80137f7..baccd98754a9 100644
---- a/Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/remoteproc/ti,pru-rproc.yaml#
-diff --git a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
-index 9f677367dd9f..78aac69f1060 100644
---- a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/remoteproc/xlnx,zynqmp-r5fss.yaml#
-diff --git a/Documentation/devicetree/bindings/reset/ti,sci-reset.yaml b/Documentation/devicetree/bindings/reset/ti,sci-reset.yaml
-index dcf9206e12be..e10eb98eddad 100644
---- a/Documentation/devicetree/bindings/reset/ti,sci-reset.yaml
-+++ b/Documentation/devicetree/bindings/reset/ti,sci-reset.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/reset/ti,sci-reset.yaml#
-diff --git a/Documentation/devicetree/bindings/reset/ti,tps380x-reset.yaml b/Documentation/devicetree/bindings/reset/ti,tps380x-reset.yaml
-index f436f2cf1df7..6063784f0352 100644
---- a/Documentation/devicetree/bindings/reset/ti,tps380x-reset.yaml
-+++ b/Documentation/devicetree/bindings/reset/ti,tps380x-reset.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/reset/ti,tps380x-reset.yaml#
-diff --git a/Documentation/devicetree/bindings/soc/ti/sci-pm-domain.yaml b/Documentation/devicetree/bindings/soc/ti/sci-pm-domain.yaml
-index 5df7688a1e1c..a750035d6234 100644
---- a/Documentation/devicetree/bindings/soc/ti/sci-pm-domain.yaml
-+++ b/Documentation/devicetree/bindings/soc/ti/sci-pm-domain.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/soc/ti/sci-pm-domain.yaml#
-diff --git a/Documentation/devicetree/bindings/usb/cypress,hx3.yaml b/Documentation/devicetree/bindings/usb/cypress,hx3.yaml
-index 47add0d85fb8..28096619a882 100644
---- a/Documentation/devicetree/bindings/usb/cypress,hx3.yaml
-+++ b/Documentation/devicetree/bindings/usb/cypress,hx3.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/usb/cypress,hx3.yaml#
-diff --git a/Documentation/devicetree/bindings/usb/genesys,gl850g.yaml b/Documentation/devicetree/bindings/usb/genesys,gl850g.yaml
-index 383625c2ef00..d0927f6768a4 100644
---- a/Documentation/devicetree/bindings/usb/genesys,gl850g.yaml
-+++ b/Documentation/devicetree/bindings/usb/genesys,gl850g.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/usb/genesys,gl850g.yaml#
-diff --git a/Documentation/devicetree/bindings/usb/realtek,rts5411.yaml b/Documentation/devicetree/bindings/usb/realtek,rts5411.yaml
-index 9309f003cd07..f0784d2e86da 100644
---- a/Documentation/devicetree/bindings/usb/realtek,rts5411.yaml
-+++ b/Documentation/devicetree/bindings/usb/realtek,rts5411.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/usb/realtek,rts5411.yaml#
-diff --git a/Documentation/devicetree/bindings/usb/ti,usb8041.yaml b/Documentation/devicetree/bindings/usb/ti,usb8041.yaml
-index 88ea6c952c66..c2e29bd61e11 100644
---- a/Documentation/devicetree/bindings/usb/ti,usb8041.yaml
-+++ b/Documentation/devicetree/bindings/usb/ti,usb8041.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/usb/ti,usb8041.yaml#
-diff --git a/Documentation/devicetree/bindings/usb/vialab,vl817.yaml b/Documentation/devicetree/bindings/usb/vialab,vl817.yaml
-index 23a13e1d5c7a..76db9071b352 100644
---- a/Documentation/devicetree/bindings/usb/vialab,vl817.yaml
-+++ b/Documentation/devicetree/bindings/usb/vialab,vl817.yaml
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/usb/vialab,vl817.yaml#
-diff --git a/include/dt-bindings/ata/ahci.h b/include/dt-bindings/ata/ahci.h
-index 77997b35612c..b3f3b7cf9af8 100644
---- a/include/dt-bindings/ata/ahci.h
-+++ b/include/dt-bindings/ata/ahci.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: GPL-2.0-only or BSD-2-Clause */
-+/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
- /*
-  * This header provides constants for most AHCI bindings.
-  */
-diff --git a/include/dt-bindings/clock/hi3559av100-clock.h b/include/dt-bindings/clock/hi3559av100-clock.h
-index 5fe7689010a0..a4f0e997546c 100644
---- a/include/dt-bindings/clock/hi3559av100-clock.h
-+++ b/include/dt-bindings/clock/hi3559av100-clock.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: GPL-2.0-or-later or BSD-2-Clause */
-+/* SPDX-License-Identifier: GPL-2.0-or-later OR BSD-2-Clause */
- /*
-  * Copyright (c) 2019-2020, Huawei Tech. Co., Ltd.
-  *
-diff --git a/include/dt-bindings/clock/r8a779f0-cpg-mssr.h b/include/dt-bindings/clock/r8a779f0-cpg-mssr.h
-index f2ae1c6a82dd..c34be5624954 100644
---- a/include/dt-bindings/clock/r8a779f0-cpg-mssr.h
-+++ b/include/dt-bindings/clock/r8a779f0-cpg-mssr.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: (GPL-2.0 or MIT) */
-+/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
- /*
-  * Copyright (C) 2021 Renesas Electronics Corp.
-  */
-diff --git a/include/dt-bindings/clock/rockchip,rk3588-cru.h b/include/dt-bindings/clock/rockchip,rk3588-cru.h
-index b5616bca7b44..5790b1391201 100644
---- a/include/dt-bindings/clock/rockchip,rk3588-cru.h
-+++ b/include/dt-bindings/clock/rockchip,rk3588-cru.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: (GPL-2.0 or MIT) */
-+/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
- /*
-  * Copyright (c) 2021 Rockchip Electronics Co. Ltd.
-  * Copyright (c) 2022 Collabora Ltd.
-diff --git a/include/dt-bindings/clock/stm32mp1-clks.h b/include/dt-bindings/clock/stm32mp1-clks.h
-index 25e8cfd43459..0a5324bcdbda 100644
---- a/include/dt-bindings/clock/stm32mp1-clks.h
-+++ b/include/dt-bindings/clock/stm32mp1-clks.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: GPL-2.0 or BSD-3-Clause */
-+/* SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause */
- /*
-  * Copyright (C) STMicroelectronics 2018 - All Rights Reserved
-  * Author: Gabriel Fernandez <gabriel.fernandez@st.com> for STMicroelectronics.
-diff --git a/include/dt-bindings/clock/sun20i-d1-ccu.h b/include/dt-bindings/clock/sun20i-d1-ccu.h
-index e143b9929763..fdbfb404f92a 100644
---- a/include/dt-bindings/clock/sun20i-d1-ccu.h
-+++ b/include/dt-bindings/clock/sun20i-d1-ccu.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: (GPL-2.0+ or MIT) */
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
- /*
-  * Copyright (C) 2020 huangzhenwei@allwinnertech.com
-  * Copyright (C) 2021 Samuel Holland <samuel@sholland.org>
-diff --git a/include/dt-bindings/clock/sun20i-d1-r-ccu.h b/include/dt-bindings/clock/sun20i-d1-r-ccu.h
-index 4c2697fd32b0..f95c170711e5 100644
---- a/include/dt-bindings/clock/sun20i-d1-r-ccu.h
-+++ b/include/dt-bindings/clock/sun20i-d1-r-ccu.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: (GPL-2.0+ or MIT) */
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
- /*
-  * Copyright (C) 2021 Samuel Holland <samuel@sholland.org>
-  */
-diff --git a/include/dt-bindings/clock/sun50i-a100-ccu.h b/include/dt-bindings/clock/sun50i-a100-ccu.h
-index 28dc36e1a232..06a2031d466b 100644
---- a/include/dt-bindings/clock/sun50i-a100-ccu.h
-+++ b/include/dt-bindings/clock/sun50i-a100-ccu.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: (GPL-2.0+ or MIT) */
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
- /*
-  * Copyright (c) 2020 Yangtao Li <frank@allwinnertech.com>
-  */
-diff --git a/include/dt-bindings/clock/sun50i-h6-ccu.h b/include/dt-bindings/clock/sun50i-h6-ccu.h
-index a1545cd60e75..ef9123d81937 100644
---- a/include/dt-bindings/clock/sun50i-h6-ccu.h
-+++ b/include/dt-bindings/clock/sun50i-h6-ccu.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: (GPL-2.0+ or MIT)
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
- /*
-  * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.io>
-  */
-diff --git a/include/dt-bindings/clock/sun50i-h616-ccu.h b/include/dt-bindings/clock/sun50i-h616-ccu.h
-index 1191aca53ac6..6f8f01e67628 100644
---- a/include/dt-bindings/clock/sun50i-h616-ccu.h
-+++ b/include/dt-bindings/clock/sun50i-h616-ccu.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: (GPL-2.0+ or MIT) */
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
- /*
-  * Copyright (C) 2020 Arm Ltd.
-  */
-diff --git a/include/dt-bindings/clock/sun6i-rtc.h b/include/dt-bindings/clock/sun6i-rtc.h
-index c845493e4d37..3bd3aa3d57ce 100644
---- a/include/dt-bindings/clock/sun6i-rtc.h
-+++ b/include/dt-bindings/clock/sun6i-rtc.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: (GPL-2.0+ or MIT) */
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
+diff --git a/drivers/clk/qcom/apss-ipq6018.c b/drivers/clk/qcom/apss-ipq6018.c
+index f2f502e2d5a4..facb26d88322 100644
+--- a/drivers/clk/qcom/apss-ipq6018.c
++++ b/drivers/clk/qcom/apss-ipq6018.c
+@@ -89,7 +89,7 @@ static int apss_ipq6018_probe(struct platform_device *pdev)
+ 	if (!regmap)
+ 		return -ENODEV;
  
- #ifndef _DT_BINDINGS_CLK_SUN6I_RTC_H_
- #define _DT_BINDINGS_CLK_SUN6I_RTC_H_
-diff --git a/include/dt-bindings/display/sdtv-standards.h b/include/dt-bindings/display/sdtv-standards.h
-index fbc1a3db2ea7..8249a2b47b79 100644
---- a/include/dt-bindings/display/sdtv-standards.h
-+++ b/include/dt-bindings/display/sdtv-standards.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: GPL-2.0-only or X11 */
-+/* SPDX-License-Identifier: GPL-2.0-only OR X11 */
- /*
-  * Copyright 2019 Pengutronix, Marco Felsch <kernel@pengutronix.de>
-  */
-diff --git a/include/dt-bindings/gpio/meson-g12a-gpio.h b/include/dt-bindings/gpio/meson-g12a-gpio.h
-index f7bd69350d18..fa7bb0bbf010 100644
---- a/include/dt-bindings/gpio/meson-g12a-gpio.h
-+++ b/include/dt-bindings/gpio/meson-g12a-gpio.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: (GPL-2.0+ or MIT) */
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
- /*
-  * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
-  * Author: Xingyu Chen <xingyu.chen@amlogic.com>
-diff --git a/include/dt-bindings/power/amlogic,c3-pwrc.h b/include/dt-bindings/power/amlogic,c3-pwrc.h
-index 1d98a25b08a4..61759df4b2e7 100644
---- a/include/dt-bindings/power/amlogic,c3-pwrc.h
-+++ b/include/dt-bindings/power/amlogic,c3-pwrc.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: (GPL-2.0+ or MIT) */
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
- /*
-  * Copyright (c) 2023 Amlogic, Inc.
-  * Author: hongyu chen1 <hongyu.chen1@amlogic.com>
-diff --git a/include/dt-bindings/power/meson-a1-power.h b/include/dt-bindings/power/meson-a1-power.h
-index 6cf50bfb8ccf..724c370d6853 100644
---- a/include/dt-bindings/power/meson-a1-power.h
-+++ b/include/dt-bindings/power/meson-a1-power.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: (GPL-2.0+ or MIT) */
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
- /*
-  * Copyright (c) 2019 Amlogic, Inc.
-  * Author: Jianxin Pan <jianxin.pan@amlogic.com>
-diff --git a/include/dt-bindings/power/meson-axg-power.h b/include/dt-bindings/power/meson-axg-power.h
-index e5243884b249..ace0e468ce21 100644
---- a/include/dt-bindings/power/meson-axg-power.h
-+++ b/include/dt-bindings/power/meson-axg-power.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: (GPL-2.0+ or MIT) */
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
- /*
-  * Copyright (c) 2020 BayLibre, SAS
-  * Author: Neil Armstrong <narmstrong@baylibre.com>
-diff --git a/include/dt-bindings/power/meson-g12a-power.h b/include/dt-bindings/power/meson-g12a-power.h
-index 93b03bdd60b7..44ec0c50e340 100644
---- a/include/dt-bindings/power/meson-g12a-power.h
-+++ b/include/dt-bindings/power/meson-g12a-power.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: (GPL-2.0+ or MIT) */
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
- /*
-  * Copyright (c) 2019 BayLibre, SAS
-  * Author: Neil Armstrong <narmstrong@baylibre.com>
-diff --git a/include/dt-bindings/power/meson-gxbb-power.h b/include/dt-bindings/power/meson-gxbb-power.h
-index 1262dac696c0..8d0b32b6c02c 100644
---- a/include/dt-bindings/power/meson-gxbb-power.h
-+++ b/include/dt-bindings/power/meson-gxbb-power.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: (GPL-2.0+ or MIT) */
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
- /*
-  * Copyright (c) 2019 BayLibre, SAS
-  * Author: Neil Armstrong <narmstrong@baylibre.com>
-diff --git a/include/dt-bindings/power/meson-s4-power.h b/include/dt-bindings/power/meson-s4-power.h
-index 462dd2cb938b..f210a524a592 100644
---- a/include/dt-bindings/power/meson-s4-power.h
-+++ b/include/dt-bindings/power/meson-s4-power.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: (GPL-2.0+ or MIT) */
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
- /*
-  * Copyright (c) 2021 Amlogic, Inc.
-  * Author: Shunzhou Jiang <shunzhou.jiang@amlogic.com>
-diff --git a/include/dt-bindings/power/meson-sm1-power.h b/include/dt-bindings/power/meson-sm1-power.h
-index a020ab00c134..d78e710dbfff 100644
---- a/include/dt-bindings/power/meson-sm1-power.h
-+++ b/include/dt-bindings/power/meson-sm1-power.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: (GPL-2.0+ or MIT) */
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
- /*
-  * Copyright (c) 2019 BayLibre, SAS
-  * Author: Neil Armstrong <narmstrong@baylibre.com>
-diff --git a/include/dt-bindings/power/meson8-power.h b/include/dt-bindings/power/meson8-power.h
-index dd8b2ddb82a7..7a55ba2cd22e 100644
---- a/include/dt-bindings/power/meson8-power.h
-+++ b/include/dt-bindings/power/meson8-power.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: (GPL-2.0+ or MIT) */
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
- /*
-  * Copyright (c) 2019 Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-  */
-diff --git a/include/dt-bindings/power/r8a779f0-sysc.h b/include/dt-bindings/power/r8a779f0-sysc.h
-index 0ec8ad727ed9..cde1536e9ed0 100644
---- a/include/dt-bindings/power/r8a779f0-sysc.h
-+++ b/include/dt-bindings/power/r8a779f0-sysc.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: (GPL-2.0 or MIT) */
-+/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
- /*
-  * Copyright (C) 2021 Renesas Electronics Corp.
-  */
-diff --git a/include/dt-bindings/power/rk3588-power.h b/include/dt-bindings/power/rk3588-power.h
-index 1b92fec013cb..6b91a50cc6d6 100644
---- a/include/dt-bindings/power/rk3588-power.h
-+++ b/include/dt-bindings/power/rk3588-power.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: (GPL-2.0 or MIT) */
-+/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
- #ifndef __DT_BINDINGS_POWER_RK3588_POWER_H__
- #define __DT_BINDINGS_POWER_RK3588_POWER_H__
+-	return qcom_cc_really_probe(pdev, &apss_ipq6018_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &apss_ipq6018_desc, regmap);
+ }
  
-diff --git a/include/dt-bindings/power/summit,smb347-charger.h b/include/dt-bindings/power/summit,smb347-charger.h
-index 3205699b5e41..14f2f9cf2020 100644
---- a/include/dt-bindings/power/summit,smb347-charger.h
-+++ b/include/dt-bindings/power/summit,smb347-charger.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: (GPL-2.0-or-later or MIT) */
-+/* SPDX-License-Identifier: (GPL-2.0-or-later OR MIT) */
- /*
-  * Author: David Heidelberg <david@ixit.cz>
-  */
-diff --git a/include/dt-bindings/reset/rockchip,rk3588-cru.h b/include/dt-bindings/reset/rockchip,rk3588-cru.h
-index 738e56aead93..d4264db2a07f 100644
---- a/include/dt-bindings/reset/rockchip,rk3588-cru.h
-+++ b/include/dt-bindings/reset/rockchip,rk3588-cru.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: (GPL-2.0 or MIT) */
-+/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
- /*
-  * Copyright (c) 2021 Rockchip Electronics Co. Ltd.
-  * Copyright (c) 2022 Collabora Ltd.
-diff --git a/include/dt-bindings/reset/stm32mp1-resets.h b/include/dt-bindings/reset/stm32mp1-resets.h
-index 4ffa7c3612e6..9071f139649f 100644
---- a/include/dt-bindings/reset/stm32mp1-resets.h
-+++ b/include/dt-bindings/reset/stm32mp1-resets.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: GPL-2.0 or BSD-3-Clause */
-+/* SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause */
- /*
-  * Copyright (C) STMicroelectronics 2018 - All Rights Reserved
-  * Author: Gabriel Fernandez <gabriel.fernandez@st.com> for STMicroelectronics.
-diff --git a/include/dt-bindings/reset/sun20i-d1-ccu.h b/include/dt-bindings/reset/sun20i-d1-ccu.h
-index f8001cf50bf1..79e52aca5912 100644
---- a/include/dt-bindings/reset/sun20i-d1-ccu.h
-+++ b/include/dt-bindings/reset/sun20i-d1-ccu.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: (GPL-2.0+ or MIT) */
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
- /*
-  * Copyright (c) 2020 huangzhenwei@allwinnertech.com
-  * Copyright (C) 2021 Samuel Holland <samuel@sholland.org>
-diff --git a/include/dt-bindings/reset/sun20i-d1-r-ccu.h b/include/dt-bindings/reset/sun20i-d1-r-ccu.h
-index d93d6423d283..e20babc990af 100644
---- a/include/dt-bindings/reset/sun20i-d1-r-ccu.h
-+++ b/include/dt-bindings/reset/sun20i-d1-r-ccu.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: (GPL-2.0+ or MIT) */
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
- /*
-  * Copyright (C) 2021 Samuel Holland <samuel@sholland.org>
-  */
-diff --git a/include/dt-bindings/reset/sun50i-a100-ccu.h b/include/dt-bindings/reset/sun50i-a100-ccu.h
-index 55c0ada99885..d13764bc1860 100644
---- a/include/dt-bindings/reset/sun50i-a100-ccu.h
-+++ b/include/dt-bindings/reset/sun50i-a100-ccu.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: (GPL-2.0+ or MIT) */
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
- /*
-  * Copyright (c) 2020 Yangtao Li <frank@allwinnertech.com>
-  */
-diff --git a/include/dt-bindings/reset/sun50i-a100-r-ccu.h b/include/dt-bindings/reset/sun50i-a100-r-ccu.h
-index 737bf6f66626..1e7c4431f03c 100644
---- a/include/dt-bindings/reset/sun50i-a100-r-ccu.h
-+++ b/include/dt-bindings/reset/sun50i-a100-r-ccu.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: (GPL-2.0+ or MIT) */
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
- /*
-  * Copyright (c) 2020 Yangtao Li <frank@allwinnertech.com>
-  */
-diff --git a/include/dt-bindings/reset/sun50i-h6-ccu.h b/include/dt-bindings/reset/sun50i-h6-ccu.h
-index 81106f455097..d038ddfa4818 100644
---- a/include/dt-bindings/reset/sun50i-h6-ccu.h
-+++ b/include/dt-bindings/reset/sun50i-h6-ccu.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: (GPL-2.0+ or MIT)
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
- /*
-  * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.io>
-  */
-diff --git a/include/dt-bindings/reset/sun50i-h6-r-ccu.h b/include/dt-bindings/reset/sun50i-h6-r-ccu.h
-index 7950e799c76d..d541ade884fc 100644
---- a/include/dt-bindings/reset/sun50i-h6-r-ccu.h
-+++ b/include/dt-bindings/reset/sun50i-h6-r-ccu.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: (GPL-2.0+ or MIT) */
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
- /*
-  * Copyright (C) 2016 Icenowy Zheng <icenowy@aosc.xyz>
-  */
-diff --git a/include/dt-bindings/reset/sun50i-h616-ccu.h b/include/dt-bindings/reset/sun50i-h616-ccu.h
-index cb6285a8d128..1bd8bb0a11be 100644
---- a/include/dt-bindings/reset/sun50i-h616-ccu.h
-+++ b/include/dt-bindings/reset/sun50i-h616-ccu.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: (GPL-2.0+ or MIT) */
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
- /*
-  * Copyright (C) 2020 Arm Ltd.
-  */
+ static struct platform_driver apss_ipq6018_driver = {
+diff --git a/drivers/clk/qcom/camcc-sc7180.c b/drivers/clk/qcom/camcc-sc7180.c
+index 8a4ba7a19ed1..8e3634036369 100644
+--- a/drivers/clk/qcom/camcc-sc7180.c
++++ b/drivers/clk/qcom/camcc-sc7180.c
+@@ -1680,7 +1680,7 @@ static int cam_cc_sc7180_probe(struct platform_device *pdev)
+ 	clk_agera_pll_configure(&cam_cc_pll2, regmap, &cam_cc_pll2_config);
+ 	clk_fabia_pll_configure(&cam_cc_pll3, regmap, &cam_cc_pll3_config);
+ 
+-	ret = qcom_cc_really_probe(pdev, &cam_cc_sc7180_desc, regmap);
++	ret = qcom_cc_really_probe(&pdev->dev, &cam_cc_sc7180_desc, regmap);
+ 	pm_runtime_put(&pdev->dev);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "Failed to register CAM CC clocks\n");
+diff --git a/drivers/clk/qcom/camcc-sc7280.c b/drivers/clk/qcom/camcc-sc7280.c
+index 4396fddba7a6..7641c3b7751e 100644
+--- a/drivers/clk/qcom/camcc-sc7280.c
++++ b/drivers/clk/qcom/camcc-sc7280.c
+@@ -2457,7 +2457,7 @@ static int cam_cc_sc7280_probe(struct platform_device *pdev)
+ 	clk_lucid_pll_configure(&cam_cc_pll5, regmap, &cam_cc_pll5_config);
+ 	clk_lucid_pll_configure(&cam_cc_pll6, regmap, &cam_cc_pll6_config);
+ 
+-	return qcom_cc_really_probe(pdev, &cam_cc_sc7280_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &cam_cc_sc7280_desc, regmap);
+ }
+ 
+ static struct platform_driver cam_cc_sc7280_driver = {
+diff --git a/drivers/clk/qcom/camcc-sdm845.c b/drivers/clk/qcom/camcc-sdm845.c
+index 27d44188a7ab..8ba095587ce8 100644
+--- a/drivers/clk/qcom/camcc-sdm845.c
++++ b/drivers/clk/qcom/camcc-sdm845.c
+@@ -1735,7 +1735,7 @@ static int cam_cc_sdm845_probe(struct platform_device *pdev)
+ 	cam_cc_pll_config.l = 0x14;
+ 	clk_fabia_pll_configure(&cam_cc_pll3, regmap, &cam_cc_pll_config);
+ 
+-	return qcom_cc_really_probe(pdev, &cam_cc_sdm845_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &cam_cc_sdm845_desc, regmap);
+ }
+ 
+ static struct platform_driver cam_cc_sdm845_driver = {
+diff --git a/drivers/clk/qcom/camcc-sm6350.c b/drivers/clk/qcom/camcc-sm6350.c
+index acba9f99d960..d52073a6e204 100644
+--- a/drivers/clk/qcom/camcc-sm6350.c
++++ b/drivers/clk/qcom/camcc-sm6350.c
+@@ -1879,7 +1879,7 @@ static int camcc_sm6350_probe(struct platform_device *pdev)
+ 	clk_agera_pll_configure(&camcc_pll2, regmap, &camcc_pll2_config);
+ 	clk_fabia_pll_configure(&camcc_pll3, regmap, &camcc_pll3_config);
+ 
+-	return qcom_cc_really_probe(pdev, &camcc_sm6350_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &camcc_sm6350_desc, regmap);
+ }
+ 
+ static struct platform_driver camcc_sm6350_driver = {
+diff --git a/drivers/clk/qcom/camcc-sm8250.c b/drivers/clk/qcom/camcc-sm8250.c
+index 9b32c56a5bc5..6ac85b96a1ea 100644
+--- a/drivers/clk/qcom/camcc-sm8250.c
++++ b/drivers/clk/qcom/camcc-sm8250.c
+@@ -2433,7 +2433,7 @@ static int cam_cc_sm8250_probe(struct platform_device *pdev)
+ 	clk_lucid_pll_configure(&cam_cc_pll3, regmap, &cam_cc_pll3_config);
+ 	clk_lucid_pll_configure(&cam_cc_pll4, regmap, &cam_cc_pll4_config);
+ 
+-	return qcom_cc_really_probe(pdev, &cam_cc_sm8250_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &cam_cc_sm8250_desc, regmap);
+ }
+ 
+ static struct platform_driver cam_cc_sm8250_driver = {
+diff --git a/drivers/clk/qcom/camcc-sm8450.c b/drivers/clk/qcom/camcc-sm8450.c
+index 51338a2884d2..26b78eed15ef 100644
+--- a/drivers/clk/qcom/camcc-sm8450.c
++++ b/drivers/clk/qcom/camcc-sm8450.c
+@@ -2839,7 +2839,7 @@ static int cam_cc_sm8450_probe(struct platform_device *pdev)
+ 	clk_lucid_evo_pll_configure(&cam_cc_pll7, regmap, &cam_cc_pll7_config);
+ 	clk_lucid_evo_pll_configure(&cam_cc_pll8, regmap, &cam_cc_pll8_config);
+ 
+-	return qcom_cc_really_probe(pdev, &cam_cc_sm8450_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &cam_cc_sm8450_desc, regmap);
+ }
+ 
+ static struct platform_driver cam_cc_sm8450_driver = {
+diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+index 75f09e6e057e..e21fd7992237 100644
+--- a/drivers/clk/qcom/common.c
++++ b/drivers/clk/qcom/common.c
+@@ -234,11 +234,10 @@ static struct clk_hw *qcom_cc_clk_hw_get(struct of_phandle_args *clkspec,
+ 	return cc->rclks[idx] ? &cc->rclks[idx]->hw : NULL;
+ }
+ 
+-int qcom_cc_really_probe(struct platform_device *pdev,
++int qcom_cc_really_probe(struct device *dev,
+ 			 const struct qcom_cc_desc *desc, struct regmap *regmap)
+ {
+ 	int i, ret;
+-	struct device *dev = &pdev->dev;
+ 	struct qcom_reset_controller *reset;
+ 	struct qcom_cc *cc;
+ 	struct gdsc_desc *scd;
+@@ -315,7 +314,7 @@ int qcom_cc_probe(struct platform_device *pdev, const struct qcom_cc_desc *desc)
+ 	if (IS_ERR(regmap))
+ 		return PTR_ERR(regmap);
+ 
+-	return qcom_cc_really_probe(pdev, desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, desc, regmap);
+ }
+ EXPORT_SYMBOL_GPL(qcom_cc_probe);
+ 
+@@ -333,7 +332,7 @@ int qcom_cc_probe_by_index(struct platform_device *pdev, int index,
+ 	if (IS_ERR(regmap))
+ 		return PTR_ERR(regmap);
+ 
+-	return qcom_cc_really_probe(pdev, desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, desc, regmap);
+ }
+ EXPORT_SYMBOL_GPL(qcom_cc_probe_by_index);
+ 
+diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
+index 9c8f7b798d9f..e168a81a40e3 100644
+--- a/drivers/clk/qcom/common.h
++++ b/drivers/clk/qcom/common.h
+@@ -58,7 +58,7 @@ extern int qcom_cc_register_sleep_clk(struct device *dev);
+ 
+ extern struct regmap *qcom_cc_map(struct platform_device *pdev,
+ 				  const struct qcom_cc_desc *desc);
+-extern int qcom_cc_really_probe(struct platform_device *pdev,
++extern int qcom_cc_really_probe(struct device *dev,
+ 				const struct qcom_cc_desc *desc,
+ 				struct regmap *regmap);
+ extern int qcom_cc_probe(struct platform_device *pdev,
+diff --git a/drivers/clk/qcom/dispcc-qcm2290.c b/drivers/clk/qcom/dispcc-qcm2290.c
+index 44dd5cfcc150..5d1903e83fcc 100644
+--- a/drivers/clk/qcom/dispcc-qcm2290.c
++++ b/drivers/clk/qcom/dispcc-qcm2290.c
+@@ -522,7 +522,7 @@ static int disp_cc_qcm2290_probe(struct platform_device *pdev)
+ 	/* Keep DISP_CC_XO_CLK always-ON */
+ 	regmap_update_bits(regmap, 0x604c, BIT(0), BIT(0));
+ 
+-	ret = qcom_cc_really_probe(pdev, &disp_cc_qcm2290_desc, regmap);
++	ret = qcom_cc_really_probe(&pdev->dev, &disp_cc_qcm2290_desc, regmap);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to register DISP CC clocks\n");
+ 		return ret;
+diff --git a/drivers/clk/qcom/dispcc-sc7180.c b/drivers/clk/qcom/dispcc-sc7180.c
+index 9536bfc72a43..644dd6241c9b 100644
+--- a/drivers/clk/qcom/dispcc-sc7180.c
++++ b/drivers/clk/qcom/dispcc-sc7180.c
+@@ -713,7 +713,7 @@ static int disp_cc_sc7180_probe(struct platform_device *pdev)
+ 
+ 	clk_fabia_pll_configure(&disp_cc_pll0, regmap, &disp_cc_pll_config);
+ 
+-	return qcom_cc_really_probe(pdev, &disp_cc_sc7180_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &disp_cc_sc7180_desc, regmap);
+ }
+ 
+ static struct platform_driver disp_cc_sc7180_driver = {
+diff --git a/drivers/clk/qcom/dispcc-sc7280.c b/drivers/clk/qcom/dispcc-sc7280.c
+index ad596d567f6a..decb231cd135 100644
+--- a/drivers/clk/qcom/dispcc-sc7280.c
++++ b/drivers/clk/qcom/dispcc-sc7280.c
+@@ -884,7 +884,7 @@ static int disp_cc_sc7280_probe(struct platform_device *pdev)
+ 	 */
+ 	regmap_update_bits(regmap, 0x5008, BIT(0), BIT(0));
+ 
+-	return qcom_cc_really_probe(pdev, &disp_cc_sc7280_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &disp_cc_sc7280_desc, regmap);
+ }
+ 
+ static struct platform_driver disp_cc_sc7280_driver = {
+diff --git a/drivers/clk/qcom/dispcc-sc8280xp.c b/drivers/clk/qcom/dispcc-sc8280xp.c
+index 167470beb369..afb3b7a0d679 100644
+--- a/drivers/clk/qcom/dispcc-sc8280xp.c
++++ b/drivers/clk/qcom/dispcc-sc8280xp.c
+@@ -3172,7 +3172,7 @@ static int disp_cc_sc8280xp_probe(struct platform_device *pdev)
+ 	clk_lucid_pll_configure(clkr_to_alpha_clk_pll(desc->clks[DISP_CC_PLL1]), regmap, &disp_cc_pll1_config);
+ 	clk_lucid_pll_configure(clkr_to_alpha_clk_pll(desc->clks[DISP_CC_PLL2]), regmap, &disp_cc_pll2_config);
+ 
+-	ret = qcom_cc_really_probe(pdev, desc, regmap);
++	ret = qcom_cc_really_probe(&pdev->dev, desc, regmap);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to register display clock controller\n");
+ 		goto out_pm_runtime_put;
+diff --git a/drivers/clk/qcom/dispcc-sdm845.c b/drivers/clk/qcom/dispcc-sdm845.c
+index 735adfefc379..633119a5c51d 100644
+--- a/drivers/clk/qcom/dispcc-sdm845.c
++++ b/drivers/clk/qcom/dispcc-sdm845.c
+@@ -861,7 +861,7 @@ static int disp_cc_sdm845_probe(struct platform_device *pdev)
+ 	/* Enable hardware clock gating for DSI and MDP clocks */
+ 	regmap_update_bits(regmap, 0x8000, 0x7f0, 0x7f0);
+ 
+-	return qcom_cc_really_probe(pdev, &disp_cc_sdm845_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &disp_cc_sdm845_desc, regmap);
+ }
+ 
+ static struct platform_driver disp_cc_sdm845_driver = {
+diff --git a/drivers/clk/qcom/dispcc-sm6115.c b/drivers/clk/qcom/dispcc-sm6115.c
+index 1937edf23f21..9ebdd82942ba 100644
+--- a/drivers/clk/qcom/dispcc-sm6115.c
++++ b/drivers/clk/qcom/dispcc-sm6115.c
+@@ -586,7 +586,7 @@ static int disp_cc_sm6115_probe(struct platform_device *pdev)
+ 	/* Keep DISP_CC_XO_CLK always-ON */
+ 	regmap_update_bits(regmap, 0x604c, BIT(0), BIT(0));
+ 
+-	ret = qcom_cc_really_probe(pdev, &disp_cc_sm6115_desc, regmap);
++	ret = qcom_cc_really_probe(&pdev->dev, &disp_cc_sm6115_desc, regmap);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to register DISP CC clocks\n");
+ 		return ret;
+diff --git a/drivers/clk/qcom/dispcc-sm6125.c b/drivers/clk/qcom/dispcc-sm6125.c
+index 87b27053ddb6..f9ef300146a7 100644
+--- a/drivers/clk/qcom/dispcc-sm6125.c
++++ b/drivers/clk/qcom/dispcc-sm6125.c
+@@ -682,7 +682,7 @@ static int disp_cc_sm6125_probe(struct platform_device *pdev)
+ 
+ 	clk_alpha_pll_configure(&disp_cc_pll0, regmap, &disp_cc_pll0_config);
+ 
+-	return qcom_cc_really_probe(pdev, &disp_cc_sm6125_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &disp_cc_sm6125_desc, regmap);
+ }
+ 
+ static struct platform_driver disp_cc_sm6125_driver = {
+diff --git a/drivers/clk/qcom/dispcc-sm6350.c b/drivers/clk/qcom/dispcc-sm6350.c
+index ea6f54ed846e..ff6e320a9c26 100644
+--- a/drivers/clk/qcom/dispcc-sm6350.c
++++ b/drivers/clk/qcom/dispcc-sm6350.c
+@@ -770,7 +770,7 @@ static int disp_cc_sm6350_probe(struct platform_device *pdev)
+ 
+ 	clk_fabia_pll_configure(&disp_cc_pll0, regmap, &disp_cc_pll0_config);
+ 
+-	return qcom_cc_really_probe(pdev, &disp_cc_sm6350_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &disp_cc_sm6350_desc, regmap);
+ }
+ 
+ static struct platform_driver disp_cc_sm6350_driver = {
+diff --git a/drivers/clk/qcom/dispcc-sm6375.c b/drivers/clk/qcom/dispcc-sm6375.c
+index caa1b90a5ff2..1ab189fe9d42 100644
+--- a/drivers/clk/qcom/dispcc-sm6375.c
++++ b/drivers/clk/qcom/dispcc-sm6375.c
+@@ -583,7 +583,7 @@ static int disp_cc_sm6375_probe(struct platform_device *pdev)
+ 
+ 	clk_lucid_pll_configure(&disp_cc_pll0, regmap, &disp_cc_pll0_config);
+ 
+-	return qcom_cc_really_probe(pdev, &disp_cc_sm6375_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &disp_cc_sm6375_desc, regmap);
+ }
+ 
+ static struct platform_driver disp_cc_sm6375_driver = {
+diff --git a/drivers/clk/qcom/dispcc-sm8250.c b/drivers/clk/qcom/dispcc-sm8250.c
+index e17bb8b543b5..fc46cb3ffa62 100644
+--- a/drivers/clk/qcom/dispcc-sm8250.c
++++ b/drivers/clk/qcom/dispcc-sm8250.c
+@@ -1368,7 +1368,7 @@ static int disp_cc_sm8250_probe(struct platform_device *pdev)
+ 	/* DISP_CC_XO_CLK always-on */
+ 	regmap_update_bits(regmap, 0x605c, BIT(0), BIT(0));
+ 
+-	ret = qcom_cc_really_probe(pdev, &disp_cc_sm8250_desc, regmap);
++	ret = qcom_cc_really_probe(&pdev->dev, &disp_cc_sm8250_desc, regmap);
+ 
+ 	pm_runtime_put(&pdev->dev);
+ 
+diff --git a/drivers/clk/qcom/dispcc-sm8450.c b/drivers/clk/qcom/dispcc-sm8450.c
+index adbfd30bfc96..9e3eec3f41d3 100644
+--- a/drivers/clk/qcom/dispcc-sm8450.c
++++ b/drivers/clk/qcom/dispcc-sm8450.c
+@@ -1791,7 +1791,7 @@ static int disp_cc_sm8450_probe(struct platform_device *pdev)
+ 	 */
+ 	regmap_update_bits(regmap, 0xe05c, BIT(0), BIT(0));
+ 
+-	ret = qcom_cc_really_probe(pdev, &disp_cc_sm8450_desc, regmap);
++	ret = qcom_cc_really_probe(&pdev->dev, &disp_cc_sm8450_desc, regmap);
+ 
+ 	pm_runtime_put(&pdev->dev);
+ 
+diff --git a/drivers/clk/qcom/dispcc-sm8550.c b/drivers/clk/qcom/dispcc-sm8550.c
+index 1e5a11081860..8a460f2f119e 100644
+--- a/drivers/clk/qcom/dispcc-sm8550.c
++++ b/drivers/clk/qcom/dispcc-sm8550.c
+@@ -1776,7 +1776,7 @@ static int disp_cc_sm8550_probe(struct platform_device *pdev)
+ 	 */
+ 	regmap_update_bits(regmap, 0xe054, BIT(0), BIT(0));
+ 
+-	ret = qcom_cc_really_probe(pdev, &disp_cc_sm8550_desc, regmap);
++	ret = qcom_cc_really_probe(&pdev->dev, &disp_cc_sm8550_desc, regmap);
+ 
+ 	pm_runtime_put(&pdev->dev);
+ 
+diff --git a/drivers/clk/qcom/gcc-ipq6018.c b/drivers/clk/qcom/gcc-ipq6018.c
+index 86b43175b042..6ecd09999892 100644
+--- a/drivers/clk/qcom/gcc-ipq6018.c
++++ b/drivers/clk/qcom/gcc-ipq6018.c
+@@ -4609,7 +4609,7 @@ static int gcc_ipq6018_probe(struct platform_device *pdev)
+ 	clk_alpha_pll_configure(&nss_crypto_pll_main, regmap,
+ 				&nss_crypto_pll_config);
+ 
+-	return qcom_cc_really_probe(pdev, &gcc_ipq6018_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gcc_ipq6018_desc, regmap);
+ }
+ 
+ static struct platform_driver gcc_ipq6018_driver = {
+diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
+index 6541d98c0348..b54d6ca2d00e 100644
+--- a/drivers/clk/qcom/gcc-ipq8074.c
++++ b/drivers/clk/qcom/gcc-ipq8074.c
+@@ -4733,7 +4733,7 @@ static int gcc_ipq8074_probe(struct platform_device *pdev)
+ 	clk_alpha_pll_configure(&nss_crypto_pll_main, regmap,
+ 				&nss_crypto_pll_config);
+ 
+-	return qcom_cc_really_probe(pdev, &gcc_ipq8074_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gcc_ipq8074_desc, regmap);
+ }
+ 
+ static struct platform_driver gcc_ipq8074_driver = {
+diff --git a/drivers/clk/qcom/gcc-mdm9607.c b/drivers/clk/qcom/gcc-mdm9607.c
+index 4c9078e99bb3..fbef88518efd 100644
+--- a/drivers/clk/qcom/gcc-mdm9607.c
++++ b/drivers/clk/qcom/gcc-mdm9607.c
+@@ -1605,7 +1605,7 @@ static int gcc_mdm9607_probe(struct platform_device *pdev)
+ 	/* Vote for GPLL0 to turn on. Needed by acpuclock. */
+ 	regmap_update_bits(regmap, 0x45000, BIT(0), BIT(0));
+ 
+-	return qcom_cc_really_probe(pdev, &gcc_mdm9607_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gcc_mdm9607_desc, regmap);
+ }
+ 
+ static struct platform_driver gcc_mdm9607_driver = {
+diff --git a/drivers/clk/qcom/gcc-mdm9615.c b/drivers/clk/qcom/gcc-mdm9615.c
+index 8bed02a748ab..f63af7b6ae03 100644
+--- a/drivers/clk/qcom/gcc-mdm9615.c
++++ b/drivers/clk/qcom/gcc-mdm9615.c
+@@ -1712,7 +1712,7 @@ static int gcc_mdm9615_probe(struct platform_device *pdev)
+ 	if (IS_ERR(regmap))
+ 		return PTR_ERR(regmap);
+ 
+-	return qcom_cc_really_probe(pdev, &gcc_mdm9615_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gcc_mdm9615_desc, regmap);
+ }
+ 
+ static struct platform_driver gcc_mdm9615_driver = {
+diff --git a/drivers/clk/qcom/gcc-msm8917.c b/drivers/clk/qcom/gcc-msm8917.c
+index a4c33a2ce61c..6c292d387552 100644
+--- a/drivers/clk/qcom/gcc-msm8917.c
++++ b/drivers/clk/qcom/gcc-msm8917.c
+@@ -3270,7 +3270,7 @@ static int gcc_msm8917_probe(struct platform_device *pdev)
+ 
+ 	clk_alpha_pll_configure(&gpll3_early, regmap, &gpll3_early_config);
+ 
+-	return qcom_cc_really_probe(pdev, gcc_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, gcc_desc, regmap);
+ }
+ 
+ static const struct of_device_id gcc_msm8917_match_table[] = {
+diff --git a/drivers/clk/qcom/gcc-msm8939.c b/drivers/clk/qcom/gcc-msm8939.c
+index 7f8969a77974..ec1227d4e714 100644
+--- a/drivers/clk/qcom/gcc-msm8939.c
++++ b/drivers/clk/qcom/gcc-msm8939.c
+@@ -4005,7 +4005,7 @@ static int gcc_msm8939_probe(struct platform_device *pdev)
+ 	clk_pll_configure_sr_hpm_lp(&gpll3, regmap, &gpll3_config, true);
+ 	clk_pll_configure_sr_hpm_lp(&gpll4, regmap, &gpll4_config, true);
+ 
+-	return qcom_cc_really_probe(pdev, &gcc_msm8939_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gcc_msm8939_desc, regmap);
+ }
+ 
+ static struct platform_driver gcc_msm8939_driver = {
+diff --git a/drivers/clk/qcom/gcc-msm8953.c b/drivers/clk/qcom/gcc-msm8953.c
+index 8aafa6591e84..158dee785e5b 100644
+--- a/drivers/clk/qcom/gcc-msm8953.c
++++ b/drivers/clk/qcom/gcc-msm8953.c
+@@ -4217,7 +4217,7 @@ static int gcc_msm8953_probe(struct platform_device *pdev)
+ 
+ 	clk_alpha_pll_configure(&gpll3_early, regmap, &gpll3_early_config);
+ 
+-	return qcom_cc_really_probe(pdev, &gcc_msm8953_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gcc_msm8953_desc, regmap);
+ }
+ 
+ static const struct of_device_id gcc_msm8953_match_table[] = {
+diff --git a/drivers/clk/qcom/gcc-msm8976.c b/drivers/clk/qcom/gcc-msm8976.c
+index 8beb923c0e19..dd8b68bf0300 100644
+--- a/drivers/clk/qcom/gcc-msm8976.c
++++ b/drivers/clk/qcom/gcc-msm8976.c
+@@ -4129,7 +4129,7 @@ static int gcc_msm8976_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	return qcom_cc_really_probe(pdev, &gcc_msm8976_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gcc_msm8976_desc, regmap);
+ }
+ 
+ static struct platform_driver gcc_msm8976_driver = {
+diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
+index 5e44d1bcca9e..673d3d9f376a 100644
+--- a/drivers/clk/qcom/gcc-msm8996.c
++++ b/drivers/clk/qcom/gcc-msm8996.c
+@@ -3848,7 +3848,7 @@ static int gcc_msm8996_probe(struct platform_device *pdev)
+ 	 */
+ 	regmap_update_bits(regmap, 0x52008, BIT(21), BIT(21));
+ 
+-	return qcom_cc_really_probe(pdev, &gcc_msm8996_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gcc_msm8996_desc, regmap);
+ }
+ 
+ static struct platform_driver gcc_msm8996_driver = {
+diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
+index be024f8093c5..cd3a2e6338b6 100644
+--- a/drivers/clk/qcom/gcc-msm8998.c
++++ b/drivers/clk/qcom/gcc-msm8998.c
+@@ -3235,7 +3235,7 @@ static int gcc_msm8998_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	return qcom_cc_really_probe(pdev, &gcc_msm8998_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gcc_msm8998_desc, regmap);
+ }
+ 
+ static const struct of_device_id gcc_msm8998_match_table[] = {
+diff --git a/drivers/clk/qcom/gcc-qcm2290.c b/drivers/clk/qcom/gcc-qcm2290.c
+index 48995e50c6bd..9a6703365e61 100644
+--- a/drivers/clk/qcom/gcc-qcm2290.c
++++ b/drivers/clk/qcom/gcc-qcm2290.c
+@@ -2994,7 +2994,7 @@ static int gcc_qcm2290_probe(struct platform_device *pdev)
+ 	clk_alpha_pll_configure(&gpll8, regmap, &gpll8_config);
+ 	clk_alpha_pll_configure(&gpll9, regmap, &gpll9_config);
+ 
+-	return qcom_cc_really_probe(pdev, &gcc_qcm2290_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gcc_qcm2290_desc, regmap);
+ }
+ 
+ static struct platform_driver gcc_qcm2290_driver = {
+diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
+index a39c4990b29d..c3cfd572e7c1 100644
+--- a/drivers/clk/qcom/gcc-qcs404.c
++++ b/drivers/clk/qcom/gcc-qcs404.c
+@@ -2824,7 +2824,7 @@ static int gcc_qcs404_probe(struct platform_device *pdev)
+ 
+ 	clk_alpha_pll_configure(&gpll3_out_main, regmap, &gpll3_config);
+ 
+-	return qcom_cc_really_probe(pdev, &gcc_qcs404_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gcc_qcs404_desc, regmap);
+ }
+ 
+ static struct platform_driver gcc_qcs404_driver = {
+diff --git a/drivers/clk/qcom/gcc-qdu1000.c b/drivers/clk/qcom/gcc-qdu1000.c
+index 5051769ad90c..6e6a2f02712e 100644
+--- a/drivers/clk/qcom/gcc-qdu1000.c
++++ b/drivers/clk/qcom/gcc-qdu1000.c
+@@ -2622,7 +2622,7 @@ static int gcc_qdu1000_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = qcom_cc_really_probe(pdev, &gcc_qdu1000_desc, regmap);
++	ret = qcom_cc_really_probe(&pdev->dev, &gcc_qdu1000_desc, regmap);
+ 	if (ret)
+ 		return dev_err_probe(&pdev->dev, ret, "Failed to register GCC clocks\n");
+ 
+diff --git a/drivers/clk/qcom/gcc-sa8775p.c b/drivers/clk/qcom/gcc-sa8775p.c
+index bb94ff367abd..b4dc497c1255 100644
+--- a/drivers/clk/qcom/gcc-sa8775p.c
++++ b/drivers/clk/qcom/gcc-sa8775p.c
+@@ -4758,7 +4758,7 @@ static int gcc_sa8775p_probe(struct platform_device *pdev)
+ 	regmap_update_bits(regmap, 0x34004, BIT(0), BIT(0));
+ 	regmap_update_bits(regmap, 0x34024, BIT(0), BIT(0));
+ 
+-	return qcom_cc_really_probe(pdev, &gcc_sa8775p_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gcc_sa8775p_desc, regmap);
+ }
+ 
+ static struct platform_driver gcc_sa8775p_driver = {
+diff --git a/drivers/clk/qcom/gcc-sc7180.c b/drivers/clk/qcom/gcc-sc7180.c
+index cef3c77564cf..78379651588a 100644
+--- a/drivers/clk/qcom/gcc-sc7180.c
++++ b/drivers/clk/qcom/gcc-sc7180.c
+@@ -2461,7 +2461,7 @@ static int gcc_sc7180_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	return qcom_cc_really_probe(pdev, &gcc_sc7180_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gcc_sc7180_desc, regmap);
+ }
+ 
+ static struct platform_driver gcc_sc7180_driver = {
+diff --git a/drivers/clk/qcom/gcc-sc7280.c b/drivers/clk/qcom/gcc-sc7280.c
+index 1dc804154031..cd5431c8b1e4 100644
+--- a/drivers/clk/qcom/gcc-sc7280.c
++++ b/drivers/clk/qcom/gcc-sc7280.c
+@@ -3472,7 +3472,7 @@ static int gcc_sc7280_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	return qcom_cc_really_probe(pdev, &gcc_sc7280_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gcc_sc7280_desc, regmap);
+ }
+ 
+ static struct platform_driver gcc_sc7280_driver = {
+diff --git a/drivers/clk/qcom/gcc-sc8180x.c b/drivers/clk/qcom/gcc-sc8180x.c
+index c41b9f010585..76258103e5be 100644
+--- a/drivers/clk/qcom/gcc-sc8180x.c
++++ b/drivers/clk/qcom/gcc-sc8180x.c
+@@ -4602,7 +4602,7 @@ static int gcc_sc8180x_probe(struct platform_device *pdev)
+ 	regmap_update_bits(regmap, 0x4d110, 0x3, 0x3);
+ 	regmap_update_bits(regmap, 0x71028, 0x3, 0x3);
+ 
+-	return qcom_cc_really_probe(pdev, &gcc_sc8180x_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gcc_sc8180x_desc, regmap);
+ }
+ 
+ static struct platform_driver gcc_sc8180x_driver = {
+diff --git a/drivers/clk/qcom/gcc-sc8280xp.c b/drivers/clk/qcom/gcc-sc8280xp.c
+index b90c71637814..e728b7a55a2a 100644
+--- a/drivers/clk/qcom/gcc-sc8280xp.c
++++ b/drivers/clk/qcom/gcc-sc8280xp.c
+@@ -7456,7 +7456,7 @@ static int gcc_sc8280xp_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = qcom_cc_really_probe(pdev, &gcc_sc8280xp_desc, regmap);
++	ret = qcom_cc_really_probe(&pdev->dev, &gcc_sc8280xp_desc, regmap);
+ 	pm_runtime_put(&pdev->dev);
+ 
+ 	return ret;
+diff --git a/drivers/clk/qcom/gcc-sdm660.c b/drivers/clk/qcom/gcc-sdm660.c
+index 6afce8e42ede..7ee0a58fe0b7 100644
+--- a/drivers/clk/qcom/gcc-sdm660.c
++++ b/drivers/clk/qcom/gcc-sdm660.c
+@@ -2475,7 +2475,7 @@ static int gcc_sdm660_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	return qcom_cc_really_probe(pdev, &gcc_sdm660_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gcc_sdm660_desc, regmap);
+ }
+ 
+ static struct platform_driver gcc_sdm660_driver = {
+diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+index 6af08e0ca847..bbfd2bbb73b9 100644
+--- a/drivers/clk/qcom/gcc-sdm845.c
++++ b/drivers/clk/qcom/gcc-sdm845.c
+@@ -4012,7 +4012,7 @@ static int gcc_sdm845_probe(struct platform_device *pdev)
+ 		return ret;
+ 
+ 	gcc_desc = of_device_get_match_data(&pdev->dev);
+-	return qcom_cc_really_probe(pdev, gcc_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, gcc_desc, regmap);
+ }
+ 
+ static struct platform_driver gcc_sdm845_driver = {
+diff --git a/drivers/clk/qcom/gcc-sdx55.c b/drivers/clk/qcom/gcc-sdx55.c
+index d5e17122698c..2b7a24b07119 100644
+--- a/drivers/clk/qcom/gcc-sdx55.c
++++ b/drivers/clk/qcom/gcc-sdx55.c
+@@ -1620,7 +1620,7 @@ static int gcc_sdx55_probe(struct platform_device *pdev)
+ 	regmap_update_bits(regmap, 0x6d008, BIT(21), BIT(21));
+ 	regmap_update_bits(regmap, 0x6d008, BIT(22), BIT(22));
+ 
+-	return qcom_cc_really_probe(pdev, &gcc_sdx55_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gcc_sdx55_desc, regmap);
+ }
+ 
+ static struct platform_driver gcc_sdx55_driver = {
+diff --git a/drivers/clk/qcom/gcc-sdx65.c b/drivers/clk/qcom/gcc-sdx65.c
+index b0c17043551d..c27dc4bca6d3 100644
+--- a/drivers/clk/qcom/gcc-sdx65.c
++++ b/drivers/clk/qcom/gcc-sdx65.c
+@@ -1583,7 +1583,7 @@ static int gcc_sdx65_probe(struct platform_device *pdev)
+ 	regmap_update_bits(regmap, 0x6d008, BIT(21), BIT(21));
+ 	regmap_update_bits(regmap, 0x6d008, BIT(22), BIT(22));
+ 
+-	return qcom_cc_really_probe(pdev, &gcc_sdx65_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gcc_sdx65_desc, regmap);
+ }
+ 
+ static struct platform_driver gcc_sdx65_driver = {
+diff --git a/drivers/clk/qcom/gcc-sdx75.c b/drivers/clk/qcom/gcc-sdx75.c
+index b6772abdcec5..65a1d77a01f5 100644
+--- a/drivers/clk/qcom/gcc-sdx75.c
++++ b/drivers/clk/qcom/gcc-sdx75.c
+@@ -2943,7 +2943,7 @@ static int gcc_sdx75_probe(struct platform_device *pdev)
+ 	regmap_update_bits(regmap, 0x3e004, BIT(0), BIT(0));
+ 	regmap_update_bits(regmap, 0x3e008, BIT(0), BIT(0));
+ 
+-	return qcom_cc_really_probe(pdev, &gcc_sdx75_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gcc_sdx75_desc, regmap);
+ }
+ 
+ static struct platform_driver gcc_sdx75_driver = {
+diff --git a/drivers/clk/qcom/gcc-sm6115.c b/drivers/clk/qcom/gcc-sm6115.c
+index 033e308ff865..211b3693d6dc 100644
+--- a/drivers/clk/qcom/gcc-sm6115.c
++++ b/drivers/clk/qcom/gcc-sm6115.c
+@@ -3512,7 +3512,7 @@ static int gcc_sm6115_probe(struct platform_device *pdev)
+ 	clk_alpha_pll_configure(&gpll10, regmap, &gpll10_config);
+ 	clk_alpha_pll_configure(&gpll11, regmap, &gpll11_config);
+ 
+-	return qcom_cc_really_probe(pdev, &gcc_sm6115_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gcc_sm6115_desc, regmap);
+ }
+ 
+ static struct platform_driver gcc_sm6115_driver = {
+diff --git a/drivers/clk/qcom/gcc-sm6125.c b/drivers/clk/qcom/gcc-sm6125.c
+index 40ad062d1bf7..a5e26c909ecc 100644
+--- a/drivers/clk/qcom/gcc-sm6125.c
++++ b/drivers/clk/qcom/gcc-sm6125.c
+@@ -4162,7 +4162,7 @@ static int gcc_sm6125_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	return qcom_cc_really_probe(pdev, &gcc_sm6125_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gcc_sm6125_desc, regmap);
+ }
+ 
+ static struct platform_driver gcc_sm6125_driver = {
+diff --git a/drivers/clk/qcom/gcc-sm6350.c b/drivers/clk/qcom/gcc-sm6350.c
+index 9b4e4bb05963..44f2eb827f17 100644
+--- a/drivers/clk/qcom/gcc-sm6350.c
++++ b/drivers/clk/qcom/gcc-sm6350.c
+@@ -2558,7 +2558,7 @@ static int gcc_sm6350_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	return qcom_cc_really_probe(pdev, &gcc_sm6350_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gcc_sm6350_desc, regmap);
+ }
+ 
+ static struct platform_driver gcc_sm6350_driver = {
+diff --git a/drivers/clk/qcom/gcc-sm6375.c b/drivers/clk/qcom/gcc-sm6375.c
+index 417a0fd242ec..2e8eb1305e65 100644
+--- a/drivers/clk/qcom/gcc-sm6375.c
++++ b/drivers/clk/qcom/gcc-sm6375.c
+@@ -3894,7 +3894,7 @@ static int gcc_sm6375_probe(struct platform_device *pdev)
+ 	clk_lucid_pll_configure(&gpll8, regmap, &gpll8_config);
+ 	clk_zonda_pll_configure(&gpll9, regmap, &gpll9_config);
+ 
+-	return qcom_cc_really_probe(pdev, &gcc_sm6375_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gcc_sm6375_desc, regmap);
+ }
+ 
+ static struct platform_driver gcc_sm6375_driver = {
+diff --git a/drivers/clk/qcom/gcc-sm7150.c b/drivers/clk/qcom/gcc-sm7150.c
+index 6b628178f62c..a531c0b5598f 100644
+--- a/drivers/clk/qcom/gcc-sm7150.c
++++ b/drivers/clk/qcom/gcc-sm7150.c
+@@ -3021,7 +3021,7 @@ static int gcc_sm7150_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	return qcom_cc_really_probe(pdev, &gcc_sm7150_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gcc_sm7150_desc, regmap);
+ }
+ 
+ static struct platform_driver gcc_sm7150_driver = {
+diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8150.c
+index 70b067f3618c..16e9e58bffdb 100644
+--- a/drivers/clk/qcom/gcc-sm8150.c
++++ b/drivers/clk/qcom/gcc-sm8150.c
+@@ -3787,7 +3787,7 @@ static int gcc_sm8150_probe(struct platform_device *pdev)
+ 	regmap_update_bits(regmap, 0x4d110, 0x3, 0x3);
+ 	regmap_update_bits(regmap, 0x71028, 0x3, 0x3);
+ 
+-	return qcom_cc_really_probe(pdev, &gcc_sm8150_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gcc_sm8150_desc, regmap);
+ }
+ 
+ static struct platform_driver gcc_sm8150_driver = {
+diff --git a/drivers/clk/qcom/gcc-sm8250.c b/drivers/clk/qcom/gcc-sm8250.c
+index b6cf4bc88d4d..f3b58b6ff56c 100644
+--- a/drivers/clk/qcom/gcc-sm8250.c
++++ b/drivers/clk/qcom/gcc-sm8250.c
+@@ -3660,7 +3660,7 @@ static int gcc_sm8250_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	return qcom_cc_really_probe(pdev, &gcc_sm8250_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gcc_sm8250_desc, regmap);
+ }
+ 
+ static struct platform_driver gcc_sm8250_driver = {
+diff --git a/drivers/clk/qcom/gcc-sm8350.c b/drivers/clk/qcom/gcc-sm8350.c
+index 1385a98eb3bb..84de2db61cc3 100644
+--- a/drivers/clk/qcom/gcc-sm8350.c
++++ b/drivers/clk/qcom/gcc-sm8350.c
+@@ -3826,7 +3826,7 @@ static int gcc_sm8350_probe(struct platform_device *pdev)
+ 	/* FORCE_MEM_CORE_ON for ufs phy ice core clocks */
+ 	regmap_update_bits(regmap, gcc_ufs_phy_ice_core_clk.halt_reg, BIT(14), BIT(14));
+ 
+-	return qcom_cc_really_probe(pdev, &gcc_sm8350_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gcc_sm8350_desc, regmap);
+ }
+ 
+ static struct platform_driver gcc_sm8350_driver = {
+diff --git a/drivers/clk/qcom/gcc-sm8450.c b/drivers/clk/qcom/gcc-sm8450.c
+index 75635d40a12d..97001faf3dc1 100644
+--- a/drivers/clk/qcom/gcc-sm8450.c
++++ b/drivers/clk/qcom/gcc-sm8450.c
+@@ -3293,7 +3293,7 @@ static int gcc_sm8450_probe(struct platform_device *pdev)
+ 	regmap_update_bits(regmap, 0x42004, BIT(0), BIT(0));
+ 	regmap_update_bits(regmap, 0x42028, BIT(0), BIT(0));
+ 
+-	return qcom_cc_really_probe(pdev, &gcc_sm8450_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gcc_sm8450_desc, regmap);
+ }
+ 
+ static struct platform_driver gcc_sm8450_driver = {
+diff --git a/drivers/clk/qcom/gcc-sm8550.c b/drivers/clk/qcom/gcc-sm8550.c
+index 277cd4f020ff..6e7bfee5ae9c 100644
+--- a/drivers/clk/qcom/gcc-sm8550.c
++++ b/drivers/clk/qcom/gcc-sm8550.c
+@@ -3360,7 +3360,7 @@ static int gcc_sm8550_probe(struct platform_device *pdev)
+ 	/* Clear GDSC_SLEEP_ENA_VOTE to stop votes being auto-removed in sleep. */
+ 	regmap_write(regmap, 0x52024, 0x0);
+ 
+-	return qcom_cc_really_probe(pdev, &gcc_sm8550_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gcc_sm8550_desc, regmap);
+ }
+ 
+ static struct platform_driver gcc_sm8550_driver = {
+diff --git a/drivers/clk/qcom/gpucc-msm8998.c b/drivers/clk/qcom/gpucc-msm8998.c
+index f929e0f2333f..2a35e38f80a2 100644
+--- a/drivers/clk/qcom/gpucc-msm8998.c
++++ b/drivers/clk/qcom/gpucc-msm8998.c
+@@ -335,7 +335,7 @@ static int gpucc_msm8998_probe(struct platform_device *pdev)
+ 	/* tweak droop detector (GPUCC_GPU_DD_WRAP_CTRL) to reduce leakage */
+ 	regmap_write_bits(regmap, gfx3d_clk.clkr.enable_reg, BIT(0), BIT(0));
+ 
+-	return qcom_cc_really_probe(pdev, &gpucc_msm8998_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gpucc_msm8998_desc, regmap);
+ }
+ 
+ static struct platform_driver gpucc_msm8998_driver = {
+diff --git a/drivers/clk/qcom/gpucc-sa8775p.c b/drivers/clk/qcom/gpucc-sa8775p.c
+index 18d23be8d435..b76223c79a2a 100644
+--- a/drivers/clk/qcom/gpucc-sa8775p.c
++++ b/drivers/clk/qcom/gpucc-sa8775p.c
+@@ -598,7 +598,7 @@ static int gpu_cc_sa8775p_probe(struct platform_device *pdev)
+ 	clk_lucid_evo_pll_configure(&gpu_cc_pll0, regmap, &gpu_cc_pll0_config);
+ 	clk_lucid_evo_pll_configure(&gpu_cc_pll1, regmap, &gpu_cc_pll1_config);
+ 
+-	return qcom_cc_really_probe(pdev, &gpu_cc_sa8775p_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gpu_cc_sa8775p_desc, regmap);
+ }
+ 
+ static struct platform_driver gpu_cc_sa8775p_driver = {
+diff --git a/drivers/clk/qcom/gpucc-sc7180.c b/drivers/clk/qcom/gpucc-sc7180.c
+index 3f92f0b43be6..03b48767cf4d 100644
+--- a/drivers/clk/qcom/gpucc-sc7180.c
++++ b/drivers/clk/qcom/gpucc-sc7180.c
+@@ -241,7 +241,7 @@ static int gpu_cc_sc7180_probe(struct platform_device *pdev)
+ 	value = 0xF << CX_GMU_CBCR_WAKE_SHIFT | 0xF << CX_GMU_CBCR_SLEEP_SHIFT;
+ 	regmap_update_bits(regmap, 0x1098, mask, value);
+ 
+-	return qcom_cc_really_probe(pdev, &gpu_cc_sc7180_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gpu_cc_sc7180_desc, regmap);
+ }
+ 
+ static struct platform_driver gpu_cc_sc7180_driver = {
+diff --git a/drivers/clk/qcom/gpucc-sc7280.c b/drivers/clk/qcom/gpucc-sc7280.c
+index 1490cd45a654..71ea731223c8 100644
+--- a/drivers/clk/qcom/gpucc-sc7280.c
++++ b/drivers/clk/qcom/gpucc-sc7280.c
+@@ -465,7 +465,7 @@ static int gpu_cc_sc7280_probe(struct platform_device *pdev)
+ 	regmap_update_bits(regmap, 0x1098, BIT(0), BIT(0));
+ 	regmap_update_bits(regmap, 0x1098, BIT(13), BIT(13));
+ 
+-	return qcom_cc_really_probe(pdev, &gpu_cc_sc7280_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gpu_cc_sc7280_desc, regmap);
+ }
+ 
+ static struct platform_driver gpu_cc_sc7280_driver = {
+diff --git a/drivers/clk/qcom/gpucc-sc8280xp.c b/drivers/clk/qcom/gpucc-sc8280xp.c
+index 8e147ee294ee..3ec2437e8586 100644
+--- a/drivers/clk/qcom/gpucc-sc8280xp.c
++++ b/drivers/clk/qcom/gpucc-sc8280xp.c
+@@ -451,7 +451,7 @@ static int gpu_cc_sc8280xp_probe(struct platform_device *pdev)
+ 	regmap_update_bits(regmap, 0x1170, BIT(0), BIT(0));
+ 	regmap_update_bits(regmap, 0x109c, BIT(0), BIT(0));
+ 
+-	ret = qcom_cc_really_probe(pdev, &gpu_cc_sc8280xp_desc, regmap);
++	ret = qcom_cc_really_probe(&pdev->dev, &gpu_cc_sc8280xp_desc, regmap);
+ 	pm_runtime_put(&pdev->dev);
+ 
+ 	return ret;
+diff --git a/drivers/clk/qcom/gpucc-sdm660.c b/drivers/clk/qcom/gpucc-sdm660.c
+index d6b38a0b063d..653cd218d012 100644
+--- a/drivers/clk/qcom/gpucc-sdm660.c
++++ b/drivers/clk/qcom/gpucc-sdm660.c
+@@ -331,7 +331,7 @@ static int gpucc_sdm660_probe(struct platform_device *pdev)
+ 	gpu_pll_config.alpha_hi = 0x8a;
+ 	clk_alpha_pll_configure(&gpu_pll1_pll_out_main, regmap, &gpu_pll_config);
+ 
+-	return qcom_cc_really_probe(pdev, &gpucc_sdm660_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gpucc_sdm660_desc, regmap);
+ }
+ 
+ static struct platform_driver gpucc_sdm660_driver = {
+diff --git a/drivers/clk/qcom/gpucc-sdm845.c b/drivers/clk/qcom/gpucc-sdm845.c
+index 970d7414bdf0..8658f692fcea 100644
+--- a/drivers/clk/qcom/gpucc-sdm845.c
++++ b/drivers/clk/qcom/gpucc-sdm845.c
+@@ -192,7 +192,7 @@ static int gpu_cc_sdm845_probe(struct platform_device *pdev)
+ 	value = 0xf << CX_GMU_CBCR_WAKE_SHIFT | 0xf << CX_GMU_CBCR_SLEEP_SHIFT;
+ 	regmap_update_bits(regmap, 0x1098, mask, value);
+ 
+-	return qcom_cc_really_probe(pdev, &gpu_cc_sdm845_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gpu_cc_sdm845_desc, regmap);
+ }
+ 
+ static struct platform_driver gpu_cc_sdm845_driver = {
+diff --git a/drivers/clk/qcom/gpucc-sm6115.c b/drivers/clk/qcom/gpucc-sm6115.c
+index c84727e8352d..d9b0c72d1de1 100644
+--- a/drivers/clk/qcom/gpucc-sm6115.c
++++ b/drivers/clk/qcom/gpucc-sm6115.c
+@@ -487,7 +487,7 @@ static int gpu_cc_sm6115_probe(struct platform_device *pdev)
+ 	qcom_branch_set_force_mem_core(regmap, gpu_cc_gx_gfx3d_clk, true);
+ 	qcom_branch_set_force_periph_on(regmap, gpu_cc_gx_gfx3d_clk, true);
+ 
+-	return qcom_cc_really_probe(pdev, &gpu_cc_sm6115_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gpu_cc_sm6115_desc, regmap);
+ }
+ 
+ static struct platform_driver gpu_cc_sm6115_driver = {
+diff --git a/drivers/clk/qcom/gpucc-sm6125.c b/drivers/clk/qcom/gpucc-sm6125.c
+index d4f1296a48ef..88da5df38a41 100644
+--- a/drivers/clk/qcom/gpucc-sm6125.c
++++ b/drivers/clk/qcom/gpucc-sm6125.c
+@@ -408,7 +408,7 @@ static int gpu_cc_sm6125_probe(struct platform_device *pdev)
+ 	qcom_branch_set_force_mem_core(regmap, gpu_cc_gx_gfx3d_clk, true);
+ 	qcom_branch_set_force_periph_on(regmap, gpu_cc_gx_gfx3d_clk, true);
+ 
+-	return qcom_cc_really_probe(pdev, &gpu_cc_sm6125_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gpu_cc_sm6125_desc, regmap);
+ }
+ 
+ static struct platform_driver gpu_cc_sm6125_driver = {
+diff --git a/drivers/clk/qcom/gpucc-sm6350.c b/drivers/clk/qcom/gpucc-sm6350.c
+index ef15185a99c3..21f9ef9227e5 100644
+--- a/drivers/clk/qcom/gpucc-sm6350.c
++++ b/drivers/clk/qcom/gpucc-sm6350.c
+@@ -494,7 +494,7 @@ static int gpu_cc_sm6350_probe(struct platform_device *pdev)
+ 	value = 0xF << CX_GMU_CBCR_WAKE_SHIFT | 0xF << CX_GMU_CBCR_SLEEP_SHIFT;
+ 	regmap_update_bits(regmap, 0x1098, mask, value);
+ 
+-	return qcom_cc_really_probe(pdev, &gpu_cc_sm6350_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gpu_cc_sm6350_desc, regmap);
+ }
+ 
+ static struct platform_driver gpu_cc_sm6350_driver = {
+diff --git a/drivers/clk/qcom/gpucc-sm6375.c b/drivers/clk/qcom/gpucc-sm6375.c
+index 2d863dc3d83b..5bfeb4c857a9 100644
+--- a/drivers/clk/qcom/gpucc-sm6375.c
++++ b/drivers/clk/qcom/gpucc-sm6375.c
+@@ -454,7 +454,7 @@ static int gpucc_sm6375_probe(struct platform_device *pdev)
+ 	clk_lucid_pll_configure(&gpucc_pll0, regmap, &gpucc_pll0_config);
+ 	clk_lucid_pll_configure(&gpucc_pll1, regmap, &gpucc_pll1_config);
+ 
+-	ret = qcom_cc_really_probe(pdev, &gpucc_sm6375_desc, regmap);
++	ret = qcom_cc_really_probe(&pdev->dev, &gpucc_sm6375_desc, regmap);
+ 	pm_runtime_put(&pdev->dev);
+ 
+ 	return ret;
+diff --git a/drivers/clk/qcom/gpucc-sm8150.c b/drivers/clk/qcom/gpucc-sm8150.c
+index 8422fd047493..1aefe5c224b8 100644
+--- a/drivers/clk/qcom/gpucc-sm8150.c
++++ b/drivers/clk/qcom/gpucc-sm8150.c
+@@ -304,7 +304,7 @@ static int gpu_cc_sm8150_probe(struct platform_device *pdev)
+ 
+ 	clk_trion_pll_configure(&gpu_cc_pll1, regmap, &gpu_cc_pll1_config);
+ 
+-	return qcom_cc_really_probe(pdev, &gpu_cc_sm8150_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gpu_cc_sm8150_desc, regmap);
+ }
+ 
+ static struct platform_driver gpu_cc_sm8150_driver = {
+diff --git a/drivers/clk/qcom/gpucc-sm8250.c b/drivers/clk/qcom/gpucc-sm8250.c
+index 9c1f8ce32da4..1bdd1a8ac53f 100644
+--- a/drivers/clk/qcom/gpucc-sm8250.c
++++ b/drivers/clk/qcom/gpucc-sm8250.c
+@@ -320,7 +320,7 @@ static int gpu_cc_sm8250_probe(struct platform_device *pdev)
+ 	value = 0xf << CX_GMU_CBCR_WAKE_SHIFT | 0xf << CX_GMU_CBCR_SLEEP_SHIFT;
+ 	regmap_update_bits(regmap, 0x1098, mask, value);
+ 
+-	return qcom_cc_really_probe(pdev, &gpu_cc_sm8250_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gpu_cc_sm8250_desc, regmap);
+ }
+ 
+ static struct platform_driver gpu_cc_sm8250_driver = {
+diff --git a/drivers/clk/qcom/gpucc-sm8350.c b/drivers/clk/qcom/gpucc-sm8350.c
+index 5367ce654ac9..53b69a12942f 100644
+--- a/drivers/clk/qcom/gpucc-sm8350.c
++++ b/drivers/clk/qcom/gpucc-sm8350.c
+@@ -604,7 +604,7 @@ static int gpu_cc_sm8350_probe(struct platform_device *pdev)
+ 	clk_lucid_pll_configure(&gpu_cc_pll0, regmap, &gpu_cc_pll0_config);
+ 	clk_lucid_pll_configure(&gpu_cc_pll1, regmap, &gpu_cc_pll1_config);
+ 
+-	return qcom_cc_really_probe(pdev, &gpu_cc_sm8350_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gpu_cc_sm8350_desc, regmap);
+ }
+ 
+ static const struct of_device_id gpu_cc_sm8350_match_table[] = {
+diff --git a/drivers/clk/qcom/gpucc-sm8450.c b/drivers/clk/qcom/gpucc-sm8450.c
+index 16c0381b3087..bf48ea630dd5 100644
+--- a/drivers/clk/qcom/gpucc-sm8450.c
++++ b/drivers/clk/qcom/gpucc-sm8450.c
+@@ -750,7 +750,7 @@ static int gpu_cc_sm8450_probe(struct platform_device *pdev)
+ 	clk_lucid_evo_pll_configure(&gpu_cc_pll0, regmap, &gpu_cc_pll0_config);
+ 	clk_lucid_evo_pll_configure(&gpu_cc_pll1, regmap, &gpu_cc_pll1_config);
+ 
+-	return qcom_cc_really_probe(pdev, &gpu_cc_sm8450_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gpu_cc_sm8450_desc, regmap);
+ }
+ 
+ static struct platform_driver gpu_cc_sm8450_driver = {
+diff --git a/drivers/clk/qcom/gpucc-sm8550.c b/drivers/clk/qcom/gpucc-sm8550.c
+index 8a2e3522af51..13474af4d6e4 100644
+--- a/drivers/clk/qcom/gpucc-sm8550.c
++++ b/drivers/clk/qcom/gpucc-sm8550.c
+@@ -584,7 +584,7 @@ static int gpu_cc_sm8550_probe(struct platform_device *pdev)
+ 	regmap_update_bits(regmap, 0x9004, BIT(0), BIT(0));
+ 	regmap_update_bits(regmap, 0x900c, BIT(0), BIT(0));
+ 
+-	return qcom_cc_really_probe(pdev, &gpu_cc_sm8550_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &gpu_cc_sm8550_desc, regmap);
+ }
+ 
+ static struct platform_driver gpu_cc_sm8550_driver = {
+diff --git a/drivers/clk/qcom/lcc-ipq806x.c b/drivers/clk/qcom/lcc-ipq806x.c
+index 81a44a9a9abc..beb4d3881e60 100644
+--- a/drivers/clk/qcom/lcc-ipq806x.c
++++ b/drivers/clk/qcom/lcc-ipq806x.c
+@@ -455,7 +455,7 @@ static int lcc_ipq806x_probe(struct platform_device *pdev)
+ 	/* Enable PLL4 source on the LPASS Primary PLL Mux */
+ 	regmap_write(regmap, 0xc4, 0x1);
+ 
+-	return qcom_cc_really_probe(pdev, &lcc_ipq806x_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &lcc_ipq806x_desc, regmap);
+ }
+ 
+ static struct platform_driver lcc_ipq806x_driver = {
+diff --git a/drivers/clk/qcom/lcc-mdm9615.c b/drivers/clk/qcom/lcc-mdm9615.c
+index 8d243e880d95..e0035b67f16a 100644
+--- a/drivers/clk/qcom/lcc-mdm9615.c
++++ b/drivers/clk/qcom/lcc-mdm9615.c
+@@ -555,7 +555,7 @@ static int lcc_mdm9615_probe(struct platform_device *pdev)
+ 	/* Enable PLL4 source on the LPASS Primary PLL Mux */
+ 	regmap_write(regmap, 0xc4, 0x1);
+ 
+-	return qcom_cc_really_probe(pdev, &lcc_mdm9615_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &lcc_mdm9615_desc, regmap);
+ }
+ 
+ static struct platform_driver lcc_mdm9615_driver = {
+diff --git a/drivers/clk/qcom/lcc-msm8960.c b/drivers/clk/qcom/lcc-msm8960.c
+index 3926184cc91b..b8d8346f5bab 100644
+--- a/drivers/clk/qcom/lcc-msm8960.c
++++ b/drivers/clk/qcom/lcc-msm8960.c
+@@ -471,7 +471,7 @@ static int lcc_msm8960_probe(struct platform_device *pdev)
+ 	/* Enable PLL4 source on the LPASS Primary PLL Mux */
+ 	regmap_write(regmap, 0xc4, 0x1);
+ 
+-	return qcom_cc_really_probe(pdev, &lcc_msm8960_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &lcc_msm8960_desc, regmap);
+ }
+ 
+ static struct platform_driver lcc_msm8960_driver = {
+diff --git a/drivers/clk/qcom/lpassaudiocc-sc7280.c b/drivers/clk/qcom/lpassaudiocc-sc7280.c
+index 134eb1529ede..4934409b90b5 100644
+--- a/drivers/clk/qcom/lpassaudiocc-sc7280.c
++++ b/drivers/clk/qcom/lpassaudiocc-sc7280.c
+@@ -771,7 +771,7 @@ static int lpass_audio_cc_sc7280_probe(struct platform_device *pdev)
+ 	regmap_write(regmap, 0x4, 0x3b);
+ 	regmap_write(regmap, 0x8, 0xff05);
+ 
+-	ret = qcom_cc_really_probe(pdev, &lpass_audio_cc_sc7280_desc, regmap);
++	ret = qcom_cc_really_probe(&pdev->dev, &lpass_audio_cc_sc7280_desc, regmap);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to register LPASS AUDIO CC clocks\n");
+ 		goto exit;
+@@ -846,7 +846,7 @@ static int lpass_aon_cc_sc7280_probe(struct platform_device *pdev)
+ 
+ 	clk_lucid_pll_configure(&lpass_aon_cc_pll, regmap, &lpass_aon_cc_pll_config);
+ 
+-	ret = qcom_cc_really_probe(pdev, &lpass_aon_cc_sc7280_desc, regmap);
++	ret = qcom_cc_really_probe(&pdev->dev, &lpass_aon_cc_sc7280_desc, regmap);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to register LPASS AON CC clocks\n");
+ 		goto exit;
+diff --git a/drivers/clk/qcom/lpasscorecc-sc7180.c b/drivers/clk/qcom/lpasscorecc-sc7180.c
+index 010867dcc2ef..c5b51e471020 100644
+--- a/drivers/clk/qcom/lpasscorecc-sc7180.c
++++ b/drivers/clk/qcom/lpasscorecc-sc7180.c
+@@ -414,7 +414,7 @@ static int lpass_core_cc_sc7180_probe(struct platform_device *pdev)
+ 	clk_fabia_pll_configure(&lpass_lpaaudio_dig_pll, regmap,
+ 				&lpass_lpaaudio_dig_pll_config);
+ 
+-	ret = qcom_cc_really_probe(pdev, &lpass_core_cc_sc7180_desc, regmap);
++	ret = qcom_cc_really_probe(&pdev->dev, &lpass_core_cc_sc7180_desc, regmap);
+ 
+ 	pm_runtime_mark_last_busy(&pdev->dev);
+ exit:
+diff --git a/drivers/clk/qcom/lpasscorecc-sc7280.c b/drivers/clk/qcom/lpasscorecc-sc7280.c
+index 6ad19b06b1ce..8a9a9d7dab0d 100644
+--- a/drivers/clk/qcom/lpasscorecc-sc7280.c
++++ b/drivers/clk/qcom/lpasscorecc-sc7280.c
+@@ -405,7 +405,7 @@ static int lpass_core_cc_sc7280_probe(struct platform_device *pdev)
+ 
+ 	clk_lucid_pll_configure(&lpass_core_cc_dig_pll, regmap, &lpass_core_cc_dig_pll_config);
+ 
+-	return qcom_cc_really_probe(pdev, &lpass_core_cc_sc7280_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &lpass_core_cc_sc7280_desc, regmap);
+ }
+ 
+ static struct platform_driver lpass_core_cc_sc7280_driver = {
+diff --git a/drivers/clk/qcom/mmcc-msm8960.c b/drivers/clk/qcom/mmcc-msm8960.c
+index 6bf908a51f53..bd532f371cdf 100644
+--- a/drivers/clk/qcom/mmcc-msm8960.c
++++ b/drivers/clk/qcom/mmcc-msm8960.c
+@@ -3128,7 +3128,7 @@ static int mmcc_msm8960_probe(struct platform_device *pdev)
+ 
+ 	clk_pll_configure_sr(&pll15, regmap, &pll15_config, false);
+ 
+-	return qcom_cc_really_probe(pdev, match->data, regmap);
++	return qcom_cc_really_probe(&pdev->dev, match->data, regmap);
+ }
+ 
+ static struct platform_driver mmcc_msm8960_driver = {
+diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-msm8974.c
+index 82f6bad144a9..524d94d89aa3 100644
+--- a/drivers/clk/qcom/mmcc-msm8974.c
++++ b/drivers/clk/qcom/mmcc-msm8974.c
+@@ -2774,7 +2774,7 @@ static int mmcc_msm8974_probe(struct platform_device *pdev)
+ 		msm8226_clock_override();
+ 	}
+ 
+-	return qcom_cc_really_probe(pdev, desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, desc, regmap);
+ }
+ 
+ static struct platform_driver mmcc_msm8974_driver = {
+diff --git a/drivers/clk/qcom/mmcc-msm8994.c b/drivers/clk/qcom/mmcc-msm8994.c
+index 89c5f5fa7d9a..b46e133a3da1 100644
+--- a/drivers/clk/qcom/mmcc-msm8994.c
++++ b/drivers/clk/qcom/mmcc-msm8994.c
+@@ -2603,7 +2603,7 @@ static int mmcc_msm8994_probe(struct platform_device *pdev)
+ 	clk_alpha_pll_configure(&mmpll3_early, regmap, &mmpll_p_config);
+ 	clk_alpha_pll_configure(&mmpll5_early, regmap, &mmpll_p_config);
+ 
+-	return qcom_cc_really_probe(pdev, &mmcc_msm8994_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &mmcc_msm8994_desc, regmap);
+ }
+ 
+ static struct platform_driver mmcc_msm8994_driver = {
+diff --git a/drivers/clk/qcom/mmcc-msm8996.c b/drivers/clk/qcom/mmcc-msm8996.c
+index 80330dab4d81..8b898e6e53c3 100644
+--- a/drivers/clk/qcom/mmcc-msm8996.c
++++ b/drivers/clk/qcom/mmcc-msm8996.c
+@@ -3627,7 +3627,7 @@ static int mmcc_msm8996_probe(struct platform_device *pdev)
+ 	/* Disable the NoC FSM for mmss_mmagic_cfg_ahb_clk */
+ 	regmap_update_bits(regmap, 0x5054, BIT(15), 0);
+ 
+-	return qcom_cc_really_probe(pdev, &mmcc_msm8996_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &mmcc_msm8996_desc, regmap);
+ }
+ 
+ static struct platform_driver mmcc_msm8996_driver = {
+diff --git a/drivers/clk/qcom/mmcc-msm8998.c b/drivers/clk/qcom/mmcc-msm8998.c
+index 4490594bde69..2f74c539f394 100644
+--- a/drivers/clk/qcom/mmcc-msm8998.c
++++ b/drivers/clk/qcom/mmcc-msm8998.c
+@@ -2873,7 +2873,7 @@ static int mmcc_msm8998_probe(struct platform_device *pdev)
+ 	if (IS_ERR(regmap))
+ 		return PTR_ERR(regmap);
+ 
+-	return qcom_cc_really_probe(pdev, &mmcc_msm8998_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &mmcc_msm8998_desc, regmap);
+ }
+ 
+ static struct platform_driver mmcc_msm8998_driver = {
+diff --git a/drivers/clk/qcom/mmcc-sdm660.c b/drivers/clk/qcom/mmcc-sdm660.c
+index bc19a23e13f8..db9c916a07b6 100644
+--- a/drivers/clk/qcom/mmcc-sdm660.c
++++ b/drivers/clk/qcom/mmcc-sdm660.c
+@@ -2851,7 +2851,7 @@ static int mmcc_660_probe(struct platform_device *pdev)
+ 	clk_alpha_pll_configure(&mmpll8, regmap, &mmpll8_config);
+ 	clk_alpha_pll_configure(&mmpll10, regmap, &mmpll10_config);
+ 
+-	return qcom_cc_really_probe(pdev, &mmcc_660_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &mmcc_660_desc, regmap);
+ }
+ 
+ static struct platform_driver mmcc_660_driver = {
+diff --git a/drivers/clk/qcom/tcsrcc-sm8550.c b/drivers/clk/qcom/tcsrcc-sm8550.c
+index 2c67ee71c196..617dc1123267 100644
+--- a/drivers/clk/qcom/tcsrcc-sm8550.c
++++ b/drivers/clk/qcom/tcsrcc-sm8550.c
+@@ -165,7 +165,7 @@ static int tcsr_cc_sm8550_probe(struct platform_device *pdev)
+ 	if (IS_ERR(regmap))
+ 		return PTR_ERR(regmap);
+ 
+-	return qcom_cc_really_probe(pdev, &tcsr_cc_sm8550_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &tcsr_cc_sm8550_desc, regmap);
+ }
+ 
+ static struct platform_driver tcsr_cc_sm8550_driver = {
+diff --git a/drivers/clk/qcom/videocc-sc7180.c b/drivers/clk/qcom/videocc-sc7180.c
+index 5b9b54f616b8..526165b2acb8 100644
+--- a/drivers/clk/qcom/videocc-sc7180.c
++++ b/drivers/clk/qcom/videocc-sc7180.c
+@@ -226,7 +226,7 @@ static int video_cc_sc7180_probe(struct platform_device *pdev)
+ 	/* Keep VIDEO_CC_XO_CLK ALWAYS-ON */
+ 	regmap_update_bits(regmap, 0x984, 0x1, 0x1);
+ 
+-	return qcom_cc_really_probe(pdev, &video_cc_sc7180_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &video_cc_sc7180_desc, regmap);
+ }
+ 
+ static struct platform_driver video_cc_sc7180_driver = {
+diff --git a/drivers/clk/qcom/videocc-sc7280.c b/drivers/clk/qcom/videocc-sc7280.c
+index 615695d82319..fd6186d708b9 100644
+--- a/drivers/clk/qcom/videocc-sc7280.c
++++ b/drivers/clk/qcom/videocc-sc7280.c
+@@ -298,7 +298,7 @@ static int video_cc_sc7280_probe(struct platform_device *pdev)
+ 
+ 	clk_lucid_pll_configure(&video_pll0, regmap, &video_pll0_config);
+ 
+-	return qcom_cc_really_probe(pdev, &video_cc_sc7280_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &video_cc_sc7280_desc, regmap);
+ }
+ 
+ static struct platform_driver video_cc_sc7280_driver = {
+diff --git a/drivers/clk/qcom/videocc-sdm845.c b/drivers/clk/qcom/videocc-sdm845.c
+index c77a4dd5d39c..557264abdbaa 100644
+--- a/drivers/clk/qcom/videocc-sdm845.c
++++ b/drivers/clk/qcom/videocc-sdm845.c
+@@ -329,7 +329,7 @@ static int video_cc_sdm845_probe(struct platform_device *pdev)
+ 
+ 	clk_fabia_pll_configure(&video_pll0, regmap, &video_pll0_config);
+ 
+-	return qcom_cc_really_probe(pdev, &video_cc_sdm845_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &video_cc_sdm845_desc, regmap);
+ }
+ 
+ static struct platform_driver video_cc_sdm845_driver = {
+diff --git a/drivers/clk/qcom/videocc-sm8150.c b/drivers/clk/qcom/videocc-sm8150.c
+index 1afdbe4a249d..a5e7ba988372 100644
+--- a/drivers/clk/qcom/videocc-sm8150.c
++++ b/drivers/clk/qcom/videocc-sm8150.c
+@@ -245,7 +245,7 @@ static int video_cc_sm8150_probe(struct platform_device *pdev)
+ 	/* Keep VIDEO_CC_XO_CLK ALWAYS-ON */
+ 	regmap_update_bits(regmap, 0x984, 0x1, 0x1);
+ 
+-	return qcom_cc_really_probe(pdev, &video_cc_sm8150_desc, regmap);
++	return qcom_cc_really_probe(&pdev->dev, &video_cc_sm8150_desc, regmap);
+ }
+ 
+ static struct platform_driver video_cc_sm8150_driver = {
+diff --git a/drivers/clk/qcom/videocc-sm8250.c b/drivers/clk/qcom/videocc-sm8250.c
+index ad46c4014a40..6d119dcb7b1e 100644
+--- a/drivers/clk/qcom/videocc-sm8250.c
++++ b/drivers/clk/qcom/videocc-sm8250.c
+@@ -387,7 +387,7 @@ static int video_cc_sm8250_probe(struct platform_device *pdev)
+ 	regmap_update_bits(regmap, 0xe58, BIT(0), BIT(0));
+ 	regmap_update_bits(regmap, 0xeec, BIT(0), BIT(0));
+ 
+-	ret = qcom_cc_really_probe(pdev, &video_cc_sm8250_desc, regmap);
++	ret = qcom_cc_really_probe(&pdev->dev, &video_cc_sm8250_desc, regmap);
+ 
+ 	pm_runtime_put(&pdev->dev);
+ 
+diff --git a/drivers/clk/qcom/videocc-sm8350.c b/drivers/clk/qcom/videocc-sm8350.c
+index b148877fc73d..6a13b7da30e0 100644
+--- a/drivers/clk/qcom/videocc-sm8350.c
++++ b/drivers/clk/qcom/videocc-sm8350.c
+@@ -527,7 +527,7 @@ static int video_cc_sm8350_probe(struct platform_device *pdev)
+ 	regmap_update_bits(regmap, 0xe58, BIT(0), BIT(0));
+ 	regmap_update_bits(regmap, 0xeec, BIT(0), BIT(0));
+ 
+-	ret = qcom_cc_really_probe(pdev, &video_cc_sm8350_desc, regmap);
++	ret = qcom_cc_really_probe(&pdev->dev, &video_cc_sm8350_desc, regmap);
+ 	pm_runtime_put(&pdev->dev);
+ 
+ 	return ret;
+diff --git a/drivers/clk/qcom/videocc-sm8450.c b/drivers/clk/qcom/videocc-sm8450.c
+index 7d0029b8b799..1ae3beab1d37 100644
+--- a/drivers/clk/qcom/videocc-sm8450.c
++++ b/drivers/clk/qcom/videocc-sm8450.c
+@@ -432,7 +432,7 @@ static int video_cc_sm8450_probe(struct platform_device *pdev)
+ 	regmap_update_bits(regmap, 0x8130, BIT(0), BIT(0));
+ 	regmap_update_bits(regmap, 0x8114, BIT(0), BIT(0));
+ 
+-	ret = qcom_cc_really_probe(pdev, &video_cc_sm8450_desc, regmap);
++	ret = qcom_cc_really_probe(&pdev->dev, &video_cc_sm8450_desc, regmap);
+ 
+ 	pm_runtime_put(&pdev->dev);
+ 
+diff --git a/drivers/clk/qcom/videocc-sm8550.c b/drivers/clk/qcom/videocc-sm8550.c
+index e2400fe23e60..dcca9bc04756 100644
+--- a/drivers/clk/qcom/videocc-sm8550.c
++++ b/drivers/clk/qcom/videocc-sm8550.c
+@@ -439,7 +439,7 @@ static int video_cc_sm8550_probe(struct platform_device *pdev)
+ 	regmap_update_bits(regmap, 0x8140, BIT(0), BIT(0));
+ 	regmap_update_bits(regmap, 0x8124, BIT(0), BIT(0));
+ 
+-	ret = qcom_cc_really_probe(pdev, &video_cc_sm8550_desc, regmap);
++	ret = qcom_cc_really_probe(&pdev->dev, &video_cc_sm8550_desc, regmap);
+ 
+ 	pm_runtime_put(&pdev->dev);
+ 
 -- 
-2.34.1
+2.17.1
 
