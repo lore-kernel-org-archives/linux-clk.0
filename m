@@ -2,72 +2,110 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28379C27C40
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Aug 2023 18:06:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F349C3DA66
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Aug 2023 19:14:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233736AbjHWSGS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Aug 2023 14:06:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45146 "EHLO
+        id S235905AbjHWTOE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Aug 2023 15:14:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238009AbjHWSGN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Aug 2023 14:06:13 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D288A1AD;
-        Wed, 23 Aug 2023 11:06:11 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6532763A12;
-        Wed, 23 Aug 2023 18:06:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FEE4C433C8;
-        Wed, 23 Aug 2023 18:06:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692813970;
-        bh=fjXSLSy3WEZTv3uqwqTkRVnSzz6Rn81OEXWWbM6LqtI=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=mfHvotbp3o0f8VJBONDvCHYEm8vU/iwT12Fkgt6d69nj9IumERsQ1TZ4vxTcy5UcQ
-         pF1WcDfv0ZHz/el5vPdmiUitFyzNlzRp8VElq7ftUVlYwqSA74RhKry+lldch9HSgh
-         kIq9ZN2+I9DznTkwmPf1DnnVykoVICVFtbAiHyTQN1QO+svDTaqN8BWiUYq8B45HGi
-         V1CYm4FicnSvRAedMnnn93O5Az63/zmRZ+a3Ra1XnXTaibEO6LaybF3ETpaaWn5ZjY
-         9A7ElWRcQ5iyEUf8bUOivvgc9IGX9q6ckUPwlsACqLYEBPe8nC2vX2UoPOJY0XcVKC
-         ZYp+jbqqUaFTw==
-Message-ID: <8c918dc8f68feb92519e5b327b5c5c3c.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S237937AbjHWTOE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Aug 2023 15:14:04 -0400
+Received: from mail-oa1-x34.google.com (mail-oa1-x34.google.com [IPv6:2001:4860:4864:20::34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D8A810C3;
+        Wed, 23 Aug 2023 12:14:02 -0700 (PDT)
+Received: by mail-oa1-x34.google.com with SMTP id 586e51a60fabf-1bbb4bde76dso3732591fac.2;
+        Wed, 23 Aug 2023 12:14:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1692818041; x=1693422841;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bkRiXtT9qgRHA1MKcE0+A+p3QG0zRao4eJgb/tjcvlQ=;
+        b=Q7FSR6dB4wlwBDBXWX1KuXmDaeBGHhW7k1v1+ImA0gFuBtUwOFzm4sVD7FddobVmOr
+         3flBiIIHqODI7t/NtETd5yagNh/2+9nwVLOimnCEL/3pAZ8RjhiV22UkBemb+lIXscwj
+         DnFQ4PiEtqRe9E2f0zkPWsOj9Hy7mWxzVtKoJ9mepCvmUQHMlEuHbjs441uTrkJiDCGP
+         zOOUcPo6LL0fpfPCaoa+h4tYIUmAtTrNwKlxMERhHWFxOqZpB2UfXC5I0/E6y22ulicG
+         jBUuDlVtTebd0QNP7nUEgop+ZYUsMc+eB0t5G18veKrNJqhCljBxCriqGeos55fR4QVa
+         q37Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692818041; x=1693422841;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bkRiXtT9qgRHA1MKcE0+A+p3QG0zRao4eJgb/tjcvlQ=;
+        b=cB0TuaWtMIirz1llb2mitV39qqR6VdNZiMzfr8fYD/xW7WGMt92nPKMZV0fXleuMf2
+         E3cr7yj4kdhLLvFBFF7GwDwmbmBygg1ZOGecNcW7WDeXABr3jIvY0nYDvM253sz4ShfN
+         fez4A1F2DxkynOQkRwiXMzEHSqEiYXP6fNT21r077kZstBWy4rzLbwdjHhlZ+yo4tVsK
+         OiQa9m+zxdZ5VtVXhWptuAGAyOLhunu7faRfTS92bzVIkKS3EirQgnU/P9zUSBx42kV0
+         +laP6y4siN5KFNCnmMVMSbfizccL93Hg7K5GnQpodm8tRPjLri/jEBOZ267qypUaDYeA
+         I/+w==
+X-Gm-Message-State: AOJu0YwsflArI8dIRcpPWGkrMTcKsmyDnyJOWN/Hbux0gmtdik/Eu44d
+        MMZWEJMbwpGznoFW9knABVo7Leg+vHZBeUVf
+X-Google-Smtp-Source: AGHT+IHnSuSCucRZeqayL6ja0sJEQ/drYGXt+yBc/3mzIKZdrzN5yLF7PvV5D8Ze5IKPro5ArXJ8Hg==
+X-Received: by 2002:a05:6870:2051:b0:1c8:39a6:779d with SMTP id l17-20020a056870205100b001c839a6779dmr15738900oad.20.1692818041186;
+        Wed, 23 Aug 2023 12:14:01 -0700 (PDT)
+Received: from shaak (modemcable063.135-226-192.mc.videotron.ca. [192.226.135.63])
+        by smtp.gmail.com with ESMTPSA id d1-20020a0cf0c1000000b0064f46c719fasm2197994qvl.31.2023.08.23.12.13.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Aug 2023 12:14:00 -0700 (PDT)
+Date:   Wed, 23 Aug 2023 15:13:58 -0400
+From:   Liam Beguin <liambeguin@gmail.com>
+To:     Mike Looijmans <mike.looijmans@topic.nl>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sboyd@kernel.org, mturquette@baylibre.com
+Subject: Re: [PATCH 1/3] clk: lmk04832: Set missing parent_names for output
+ clocks
+Message-ID: <20230823191358.GA2572839@shaak>
+References: <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.05b2cfbe-0414-4869-b825-034b9be5bf9a@emailsignatures365.codetwo.com>
+ <20230802064100.15793-1-mike.looijmans@topic.nl>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230823084540.112602-1-krzysztof.kozlowski@linaro.org>
-References: <20230823084540.112602-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH] dt-bindings: use capital "OR" for multiple licenses in SPDX
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Date:   Wed, 23 Aug 2023 11:06:08 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230802064100.15793-1-mike.looijmans@topic.nl>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Krzysztof Kozlowski (2023-08-23 01:45:40)
-> Documentation/process/license-rules.rst and checkpatch expect the SPDX
-> identifier syntax for multiple licenses to use capital "OR".  Correct it
-> to keep consistent format and avoid copy-paste issues.
->=20
-> Correct also the format // -> .* in few Allwinner binding headers as
-> pointed out by checkpatch:
->=20
->   WARNING: Improper SPDX comment style for 'include/dt-bindings/reset/sun=
-50i-h6-ccu.h', please use '/*' instead
->=20
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->=20
-> ---
+On Wed, Aug 02, 2023 at 08:40:58AM +0200, Mike Looijmans wrote:
+> lmk04832_register_clkout forgot to fill in the parent_names, resulting
+> in the error message "Must specify parents if num_parents > 0".
+> 
+> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Reviewed-by: Liam Beguin <liambeguin@gmail.com>
+
+> ---
+>  drivers/clk/clk-lmk04832.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/clk-lmk04832.c b/drivers/clk/clk-lmk04832.c
+> index e22ac93e0c2f..188085e7a30b 100644
+> --- a/drivers/clk/clk-lmk04832.c
+> +++ b/drivers/clk/clk-lmk04832.c
+> @@ -1297,6 +1297,7 @@ static int lmk04832_register_clkout(struct lmk04832 *lmk, const int num)
+>  		sprintf(dclk_name, "lmk-dclk%02d_%02d", num, num + 1);
+>  		init.name = dclk_name;
+>  		parent_names[0] = clk_hw_get_name(&lmk->vco);
+> +		init.parent_names = parent_names;
+>  		init.ops = &lmk04832_dclk_ops;
+>  		init.flags = CLK_SET_RATE_PARENT;
+>  		init.num_parents = 1;
+> -- 
+> 2.17.1
+> 
+> 
+> Met vriendelijke groet / kind regards,
+> 
+> Mike Looijmans
+> System Expert
+> 
+> 
+> TOPIC Embedded Products B.V.
+> Materiaalweg 4, 5681 RJ Best
+> The Netherlands
+> 
+> T: +31 (0) 499 33 69 69
+> E: mike.looijmans@topicproducts.com
+> W: www.topic.nl
+> 
+> Please consider the environment before printing this e-mail
