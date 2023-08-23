@@ -2,41 +2,41 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83EF5C727A3
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B43E2C727A4
 	for <linux-clk@archiver.kernel.org>; Wed, 23 Aug 2023 21:37:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238533AbjHWVh0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Aug 2023 17:37:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58542 "EHLO
+        id S232900AbjHWVh1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Aug 2023 17:37:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238411AbjHWVgy (ORCPT
+        with ESMTP id S238427AbjHWVgy (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Aug 2023 17:36:54 -0400
 Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56F78CEE;
-        Wed, 23 Aug 2023 14:36:50 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A61AB10DA;
+        Wed, 23 Aug 2023 14:36:51 -0700 (PDT)
 Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
-        by mx1.sberdevices.ru (Postfix) with ESMTP id 926F6120013;
-        Thu, 24 Aug 2023 00:36:48 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 926F6120013
+        by mx1.sberdevices.ru (Postfix) with ESMTP id 2CFEE120006;
+        Thu, 24 Aug 2023 00:36:50 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 2CFEE120006
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1692826608;
-        bh=ToVnF7gvSLZltv/UmFNilTBeOSS1k0whmcocztGl8Xk=;
+        s=mail; t=1692826610;
+        bh=/l6bE+/XrXtEOVGkX/GB5PXGccTEAcvYMkTvkzjC9Do=;
         h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-        b=dfltiHHZtCVBBO2Zbj8XWJzt1+eM/Pj6Frtd2MdwgusZkHJyE6v/bHWmlSfg/t1yn
-         VgGFZ5/wdUYeZpDXAU8HX5SAZuR7qA1xQURvu80nqAdJIjVMy2/rHiBZFEK/k5lXFA
-         9x0789/CaMA72CbF3bOZF17GfT52z9e/xV87heV0TGp89DZYUas1T+KAgAKNy3rLzp
-         g/TaX7v6mC9OIkjlUSER4NCILdBA2sLxU3UluvWdKBKbaaHoRDv7XSMbLAwKmfB4L+
-         3TQITHpvMmVbtgu634T15vb4xJTlCnsi0g6Pe9AvZIekrcP4rac6bT7XPakkNUbTJO
-         KM0DBDuNkozQQ==
+        b=AC9ceuHrbiRHodN9H2wVt5S7KKSyYMsGqnyXXlschSFH0ECfiRqUBCcCtHXpQBgs2
+         960Ld6r7ryhKsrwd0nW7PE9xS2fXpH44VI9lFFcmd7sc8MC8fYaBz++5Jy0t04b2WH
+         AEBfpKK9AkAW357ndj+qsiFmx5+sf9fjg/pVzMAiBU+L3SGJdP7oEoi+Fl3a5w8oSt
+         ewFF7rdXJF+5hmVRijT9iLxHOEGZGft/+FBqARv01VieI1TBklXDXESG55JYnYVx8M
+         0AQFUwzAPAtudFbI5/PoD/FE8EvIFqSMFzpMDUBSeta1+ir4IMxNKKgOceIdpA4qmh
+         ZIzcp8hobXs+g==
 Received: from p-i-exch-sc-m01.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         by mx1.sberdevices.ru (Postfix) with ESMTPS;
-        Thu, 24 Aug 2023 00:36:48 +0300 (MSK)
+        Thu, 24 Aug 2023 00:36:50 +0300 (MSK)
 Received: from localhost.localdomain (100.64.160.123) by
  p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.30; Thu, 24 Aug 2023 00:36:44 +0300
+ 15.2.1118.30; Thu, 24 Aug 2023 00:36:46 +0300
 From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
 To:     <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
         <mturquette@baylibre.com>, <sboyd@kernel.org>,
@@ -48,11 +48,10 @@ CC:     <kernel@sberdevices.ru>, <sdfw_system_team@sberdevices.ru>,
         <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        Alexey Romanov <avromanov@sberdevices.ru>,
         Dmitry Rokosov <ddrokosov@sberdevices.ru>
-Subject: [PATCH v2 13/15] arm64: dts: meson: a1: add ao secure node
-Date:   Thu, 24 Aug 2023 00:36:28 +0300
-Message-ID: <20230823213630.12936-14-ddrokosov@sberdevices.ru>
+Subject: [PATCH v2 15/15] dt-bindings: arm: amlogic: add Amlogic AD402 bindings
+Date:   Thu, 24 Aug 2023 00:36:30 +0300
+Message-ID: <20230823213630.12936-16-ddrokosov@sberdevices.ru>
 X-Mailer: git-send-email 2.36.0
 In-Reply-To: <20230823213630.12936-1-ddrokosov@sberdevices.ru>
 References: <20230823213630.12936-1-ddrokosov@sberdevices.ru>
@@ -82,38 +81,25 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Alexey Romanov <avromanov@sberdevices.ru>
+Add the compatible for the Amlogic A1 Based AD402 board.
 
-Add node for board info registers, which allows getting SoC family and
-board revision.
-
-For example, with MESON_GX_SOCINFO config enabled we can get the
-following information for board with Meson A1 SoC:
-    soc soc0: Amlogic Meson A1 (A113L) Revision 2c:a (1:a) Detected
-
-Signed-off-by: Alexey Romanov <avromanov@sberdevices.ru>
 Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
 ---
- arch/arm64/boot/dts/amlogic/meson-a1.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+ Documentation/devicetree/bindings/arm/amlogic.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-index edadddacfee0..81abf1762719 100644
---- a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-@@ -248,6 +248,12 @@ hwrng: rng@5118 {
- 				power-domains = <&pwrc PWRC_OTP_ID>;
- 			};
+diff --git a/Documentation/devicetree/bindings/arm/amlogic.yaml b/Documentation/devicetree/bindings/arm/amlogic.yaml
+index 08d59842655c..15880abb7261 100644
+--- a/Documentation/devicetree/bindings/arm/amlogic.yaml
++++ b/Documentation/devicetree/bindings/arm/amlogic.yaml
+@@ -203,6 +203,7 @@ properties:
+         items:
+           - enum:
+               - amlogic,ad401
++              - amlogic,ad402
+           - const: amlogic,a1
  
-+			sec_AO: ao-secure@5a20 {
-+				compatible = "amlogic,meson-gx-ao-secure", "syscon";
-+				reg = <0x0 0x5a20 0x0 0x140>;
-+				amlogic,has-chip-id;
-+			};
-+
- 			clkc_pll: pll-clock-controller@7c80 {
- 				compatible = "amlogic,a1-pll-clkc";
- 				reg = <0 0x7c80 0 0x18c>;
+       - description: Boards with the Amlogic C3 C302X/C308L SoC
 -- 
 2.36.0
 
