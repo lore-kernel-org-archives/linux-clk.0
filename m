@@ -2,158 +2,208 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D013C3DA66
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Aug 2023 19:16:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEE85C7113B
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Aug 2023 19:49:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234498AbjHWTPk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Aug 2023 15:15:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39052 "EHLO
+        id S238390AbjHWTtQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Aug 2023 15:49:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238298AbjHWTPO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Aug 2023 15:15:14 -0400
-Received: from mail-qv1-xf34.google.com (mail-qv1-xf34.google.com [IPv6:2607:f8b0:4864:20::f34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B55C10D0;
-        Wed, 23 Aug 2023 12:15:09 -0700 (PDT)
-Received: by mail-qv1-xf34.google.com with SMTP id 6a1803df08f44-64a0176b1easo35085776d6.3;
-        Wed, 23 Aug 2023 12:15:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1692818108; x=1693422908;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ISfTpPb1V2P+jzT7DRqJg3+P9Rpp6ZuddKf1v0Q69Bg=;
-        b=KFjN1bVnsq2ecwzbZvnrSAX8HUoJYlMSih4uyjLyOzesfPHaRY3HhKzghx/38BGT5q
-         gfL8oDqED1zr9ZwPUrSKRobECWUW8KPaKQF/1g0FvSqSkDodK7PEcMy+HCOaIHpak6/j
-         IjmbwCvDaH5I27pm2XrBJSTI5xuIu01qAxfjYQGQc+LGoghJAFb5b3AOm84eeTjqN2DN
-         jmguWVBajtT4eDngMEL1cPSRIGdg7onV5kJqhDOg+J3Hun5yC310Oh3cg5bE63vYIO3R
-         zflAQALyH2AtnfT1gLOY7bnBVX58JE2gNrfaL0gtGJL1t5EuCuVHGn+i6Q2IO2YMgXTE
-         xwmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692818108; x=1693422908;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ISfTpPb1V2P+jzT7DRqJg3+P9Rpp6ZuddKf1v0Q69Bg=;
-        b=XXshiijCUpTECT1/Aaqnewmzmq4gtfnTAJPa5WUH8AwCa9/TuAqBkv4GF7kAlbLdu0
-         uc52Kz0fA460F/Qfv0VlrxkV+dUB/jeFmiLJL35/BMO3/Gigaa6X8XrVrI31egoNB3yT
-         RwmaqVc0QYSKxwCNCbAWHveWIhrQ+S1QsyQipXgEXbQ7BSrM/6fDouzIUXRIk5zcqdvB
-         J3GXHjTZgYw3cjnK/1z+lc1PckKnjl7HfgLDJvhOLmwqZ/X30wADafEdCLbf4Oxx82Es
-         Ed9XnJsXm65nTkKHhiQWcHDMsDvQt/w8lYYMkuO39aL57ee/JjvGb5xpF5UABLKUxRrx
-         8dhg==
-X-Gm-Message-State: AOJu0YyyPtbyi64sXRz1g8NdYKhrt9llCRnKmBALe4zNcjnLDEuUvMdr
-        IfqYj0WFj4XDDmJlB3Za2nU=
-X-Google-Smtp-Source: AGHT+IFfaRfpPJ21GEsT5Ao87FJteBSmW6mCf5mGefHgD9XZmcrxWpqJ7YiikryeJ7mgcf+pWmmN4Q==
-X-Received: by 2002:a05:6214:5489:b0:63d:4813:6a6a with SMTP id lg9-20020a056214548900b0063d48136a6amr14360059qvb.44.1692818108031;
-        Wed, 23 Aug 2023 12:15:08 -0700 (PDT)
-Received: from shaak (modemcable063.135-226-192.mc.videotron.ca. [192.226.135.63])
-        by smtp.gmail.com with ESMTPSA id c16-20020a0cca10000000b0064b502fdeecsm4245322qvk.68.2023.08.23.12.15.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Aug 2023 12:15:07 -0700 (PDT)
-Date:   Wed, 23 Aug 2023 15:15:06 -0400
-From:   Liam Beguin <liambeguin@gmail.com>
-To:     Mike Looijmans <mike.looijmans@topic.nl>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sboyd@kernel.org, mturquette@baylibre.com
-Subject: Re: [PATCH 3/3] clk: lmk04832: Support using PLL1_LD as SPI readback
- pin
-Message-ID: <20230823191506.GC2572839@shaak>
-References: <20230802064100.15793-1-mike.looijmans@topic.nl>
- <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.5ec2b609-3eb5-4de3-93d2-a352a16683c8@emailsignatures365.codetwo.com>
- <20230802064100.15793-3-mike.looijmans@topic.nl>
+        with ESMTP id S238452AbjHWTtK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Aug 2023 15:49:10 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F34B810CB;
+        Wed, 23 Aug 2023 12:49:05 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6E80266355;
+        Wed, 23 Aug 2023 19:49:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CBD2C433C7;
+        Wed, 23 Aug 2023 19:49:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692820144;
+        bh=FobxdKGjk+XaZrxNDpLxP3Jm4scXYpkNdSMSYXKfLC8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VrIrnOXxJ1NiXM4eC6i5wDYcWnO2n2+H8JJ7WurOqnZVdoRfknp6PpjWUYjCL+aQg
+         wMlA0wo6so3p7NmsQ0lVQyCbPov43nWUsY7rhLIe6PonfQsB6CTB0/Rhp0M0C4A6MU
+         q2SUB837PnnyUGujlCNOu9nSpUD+SvH/iLA/gwec8Sbtxu2NpO7DkOahYZlGBkwSfS
+         UD9k3jsf7sxmyqoQz3f1cJrTPiJQ1BNKrUv6RZGp1Dj3WH13LlA5iLGQU2NbRw4CIs
+         Cq23xTOhm4MwfN+b05AcD8ruyhspDNVCNmPPFQN89U1kEI2tHpB3UT06BIKW68D0ef
+         SFhz9NSBmf9kA==
+Received: (nullmailer pid 2782531 invoked by uid 1000);
+        Wed, 23 Aug 2023 19:49:02 -0000
+Date:   Wed, 23 Aug 2023 14:49:02 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: use capital "OR" for multiple licenses in
+ SPDX
+Message-ID: <20230823194902.GA2782125-robh@kernel.org>
+References: <20230823084540.112602-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230802064100.15793-3-mike.looijmans@topic.nl>
+In-Reply-To: <20230823084540.112602-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Aug 02, 2023 at 08:41:00AM +0200, Mike Looijmans wrote:
-> The PLL1_PD pin (a.k.a. STATUS_LD1) can be used as SPI readback pin. Make
-> this possible.
+On Wed, Aug 23, 2023 at 10:45:40AM +0200, Krzysztof Kozlowski wrote:
+> Documentation/process/license-rules.rst and checkpatch expect the SPDX
+> identifier syntax for multiple licenses to use capital "OR".  Correct it
+> to keep consistent format and avoid copy-paste issues.
 > 
-> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
-
-Reviewed-by: Liam Beguin <liambeguin@gmail.com>
-
+> Correct also the format // -> .* in few Allwinner binding headers as
+> pointed out by checkpatch:
+> 
+>   WARNING: Improper SPDX comment style for 'include/dt-bindings/reset/sun50i-h6-ccu.h', please use '/*' instead
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
 > ---
->  drivers/clk/clk-lmk04832.c | 23 ++++++++++++++++++-----
->  1 file changed, 18 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/clk/clk-lmk04832.c b/drivers/clk/clk-lmk04832.c
-> index dd1f0c59ee71..99b271c1278a 100644
-> --- a/drivers/clk/clk-lmk04832.c
-> +++ b/drivers/clk/clk-lmk04832.c
-> @@ -134,6 +134,11 @@
->  /* 0x14b - 0x152 Holdover */
->  
->  /* 0x153 - 0x15f PLL1 Configuration */
-> +#define LMK04832_REG_PLL1_LD		0x15f
-> +#define LMK04832_BIT_PLL1_LD_MUX		GENMASK(7, 3)
-> +#define LMK04832_VAL_PLL1_LD_MUX_SPI_RDBK		0x07
-> +#define LMK04832_BIT_PLL1_LD_TYPE		GENMASK(2, 0)
-> +#define LMK04832_VAL_PLL1_LD_TYPE_OUT_PP		0x03
->  
->  /* 0x160 - 0x16e PLL2 Configuration */
->  #define LMK04832_REG_PLL2_R_MSB		0x160
-> @@ -206,6 +211,7 @@ enum lmk04832_rdbk_type {
->  	RDBK_CLKIN_SEL0,
->  	RDBK_CLKIN_SEL1,
->  	RDBK_RESET,
-> +	RDBK_PLL1_LD,
->  };
->  
->  struct lmk_dclk {
-> @@ -1346,6 +1352,10 @@ static int lmk04832_set_spi_rdbk(const struct lmk04832 *lmk, const int rdbk_pin)
->  {
->  	int reg;
->  	int ret;
-> +	int val = FIELD_PREP(LMK04832_BIT_CLKIN_SEL_MUX,
-> +			     LMK04832_VAL_CLKIN_SEL_MUX_SPI_RDBK) |
-> +		  FIELD_PREP(LMK04832_BIT_CLKIN_SEL_TYPE,
-> +			     LMK04832_VAL_CLKIN_SEL_TYPE_OUT);
->  
->  	dev_info(lmk->dev, "setting up 4-wire mode\n");
->  	ret = regmap_write(lmk->regmap, LMK04832_REG_RST3W,
-> @@ -1363,15 +1373,18 @@ static int lmk04832_set_spi_rdbk(const struct lmk04832 *lmk, const int rdbk_pin)
->  	case RDBK_RESET:
->  		reg = LMK04832_REG_CLKIN_RST;
->  		break;
-> +	case RDBK_PLL1_LD:
-> +		reg = LMK04832_REG_PLL1_LD;
-> +		val = FIELD_PREP(LMK04832_BIT_PLL1_LD_MUX,
-> +				 LMK04832_VAL_PLL1_LD_MUX_SPI_RDBK) |
-> +		      FIELD_PREP(LMK04832_BIT_PLL1_LD_TYPE,
-> +				 LMK04832_VAL_PLL1_LD_TYPE_OUT_PP);
-> +		break;
->  	default:
->  		return -EINVAL;
->  	}
->  
-> -	return regmap_write(lmk->regmap, reg,
-> -			    FIELD_PREP(LMK04832_BIT_CLKIN_SEL_MUX,
-> -				       LMK04832_VAL_CLKIN_SEL_MUX_SPI_RDBK) |
-> -			    FIELD_PREP(LMK04832_BIT_CLKIN_SEL_TYPE,
-> -				       LMK04832_VAL_CLKIN_SEL_TYPE_OUT));
-> +	return regmap_write(lmk->regmap, reg, val);
->  }
->  
->  static int lmk04832_probe(struct spi_device *spi)
-> -- 
-> 2.17.1
-> 
-> 
-> Met vriendelijke groet / kind regards,
-> 
-> Mike Looijmans
-> System Expert
-> 
-> 
-> TOPIC Embedded Products B.V.
-> Materiaalweg 4, 5681 RJ Best
-> The Netherlands
-> 
-> T: +31 (0) 499 33 69 69
-> E: mike.looijmans@topicproducts.com
-> W: www.topic.nl
-> 
-> Please consider the environment before printing this e-mail
+> Rebased on next-20230822, so might not apply cleanly.  What does not
+> apply, can be skipped and I will fix it after next RC.
+> ---
+>  Documentation/devicetree/bindings/arm/arm,coresight-cti.yaml    | 2 +-
+>  .../devicetree/bindings/arm/arm,coresight-dummy-sink.yaml       | 2 +-
+>  .../devicetree/bindings/arm/arm,coresight-dummy-source.yaml     | 2 +-
+>  .../devicetree/bindings/arm/arm,embedded-trace-extension.yaml   | 2 +-
+>  .../devicetree/bindings/arm/arm,trace-buffer-extension.yaml     | 2 +-
+>  Documentation/devicetree/bindings/arm/arm,versatile-sysreg.yaml | 2 +-
+>  Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml        | 2 +-
+>  .../devicetree/bindings/arm/keystone/ti,k3-sci-common.yaml      | 2 +-
+>  Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml      | 2 +-
+>  Documentation/devicetree/bindings/arm/qcom,coresight-tpda.yaml  | 2 +-
+>  Documentation/devicetree/bindings/arm/qcom,coresight-tpdm.yaml  | 2 +-
+>  Documentation/devicetree/bindings/clock/ti,cdce925.yaml         | 2 +-
+>  Documentation/devicetree/bindings/clock/ti,sci-clk.yaml         | 2 +-
+>  Documentation/devicetree/bindings/crypto/ti,sa2ul.yaml          | 2 +-
+>  .../devicetree/bindings/display/msm/dsi-controller-main.yaml    | 2 +-
+>  Documentation/devicetree/bindings/display/msm/dsi-phy-10nm.yaml | 2 +-
+>  Documentation/devicetree/bindings/display/msm/dsi-phy-14nm.yaml | 2 +-
+>  Documentation/devicetree/bindings/display/msm/dsi-phy-20nm.yaml | 2 +-
+>  Documentation/devicetree/bindings/display/msm/dsi-phy-28nm.yaml | 2 +-
+>  Documentation/devicetree/bindings/display/msm/dsi-phy-7nm.yaml  | 2 +-
+>  .../devicetree/bindings/display/msm/dsi-phy-common.yaml         | 2 +-
+>  Documentation/devicetree/bindings/display/msm/mdss-common.yaml  | 2 +-
+>  Documentation/devicetree/bindings/display/msm/qcom,mdp5.yaml    | 2 +-
+>  Documentation/devicetree/bindings/display/msm/qcom,mdss.yaml    | 2 +-
+>  .../devicetree/bindings/display/msm/qcom,msm8998-dpu.yaml       | 2 +-
+>  .../devicetree/bindings/display/msm/qcom,msm8998-mdss.yaml      | 2 +-
+>  .../devicetree/bindings/display/msm/qcom,qcm2290-dpu.yaml       | 2 +-
+>  .../devicetree/bindings/display/msm/qcom,qcm2290-mdss.yaml      | 2 +-
+>  .../devicetree/bindings/display/msm/qcom,sc7180-dpu.yaml        | 2 +-
+>  .../devicetree/bindings/display/msm/qcom,sc7180-mdss.yaml       | 2 +-
+>  .../devicetree/bindings/display/msm/qcom,sc7280-dpu.yaml        | 2 +-
+>  .../devicetree/bindings/display/msm/qcom,sc7280-mdss.yaml       | 2 +-
+>  .../devicetree/bindings/display/msm/qcom,sc8280xp-dpu.yaml      | 2 +-
+>  .../devicetree/bindings/display/msm/qcom,sc8280xp-mdss.yaml     | 2 +-
+>  .../devicetree/bindings/display/msm/qcom,sdm845-dpu.yaml        | 2 +-
+>  .../devicetree/bindings/display/msm/qcom,sdm845-mdss.yaml       | 2 +-
+>  .../devicetree/bindings/display/msm/qcom,sm6115-dpu.yaml        | 2 +-
+>  .../devicetree/bindings/display/msm/qcom,sm6115-mdss.yaml       | 2 +-
+>  .../devicetree/bindings/display/msm/qcom,sm6350-mdss.yaml       | 2 +-
+>  .../devicetree/bindings/display/msm/qcom,sm6375-mdss.yaml       | 2 +-
+>  .../devicetree/bindings/display/msm/qcom,sm8150-dpu.yaml        | 2 +-
+>  .../devicetree/bindings/display/msm/qcom,sm8150-mdss.yaml       | 2 +-
+>  .../devicetree/bindings/display/msm/qcom,sm8250-dpu.yaml        | 2 +-
+>  .../devicetree/bindings/display/msm/qcom,sm8250-mdss.yaml       | 2 +-
+>  .../devicetree/bindings/display/msm/qcom,sm8350-dpu.yaml        | 2 +-
+>  .../devicetree/bindings/display/msm/qcom,sm8350-mdss.yaml       | 2 +-
+>  .../devicetree/bindings/display/msm/qcom,sm8450-dpu.yaml        | 2 +-
+>  .../devicetree/bindings/display/msm/qcom,sm8450-mdss.yaml       | 2 +-
+>  .../devicetree/bindings/display/msm/qcom,sm8550-dpu.yaml        | 2 +-
+>  .../devicetree/bindings/display/msm/qcom,sm8550-mdss.yaml       | 2 +-
+>  .../devicetree/bindings/display/panel/himax,hx8394.yaml         | 2 +-
+>  .../devicetree/bindings/display/panel/mantix,mlaf057we51-x.yaml | 2 +-
+>  .../devicetree/bindings/display/panel/orisetech,otm8009a.yaml   | 2 +-
+>  .../devicetree/bindings/display/panel/panel-dsi-cm.yaml         | 2 +-
+>  .../devicetree/bindings/display/panel/panel-mipi-dbi-spi.yaml   | 2 +-
+>  .../devicetree/bindings/display/panel/panel-simple-dsi.yaml     | 2 +-
+>  .../devicetree/bindings/display/panel/raydium,rm68200.yaml      | 2 +-
+>  .../devicetree/bindings/display/panel/rocktech,jh057n00900.yaml | 2 +-
+>  .../devicetree/bindings/display/panel/visionox,r66451.yaml      | 2 +-
+>  .../devicetree/bindings/display/panel/visionox,rm69299.yaml     | 2 +-
+>  .../devicetree/bindings/display/panel/visionox,vtdr6130.yaml    | 2 +-
+>  .../devicetree/bindings/display/rockchip/rockchip-vop2.yaml     | 2 +-
+>  .../bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml         | 2 +-
+>  .../devicetree/bindings/hwlock/ti,omap-hwspinlock.yaml          | 2 +-
+>  Documentation/devicetree/bindings/hwmon/jedec,jc42.yaml         | 2 +-
+>  Documentation/devicetree/bindings/hwmon/lltc,ltc4151.yaml       | 2 +-
+>  Documentation/devicetree/bindings/hwmon/lm75.yaml               | 2 +-
+>  Documentation/devicetree/bindings/hwmon/microchip,mcp3021.yaml  | 2 +-
+>  Documentation/devicetree/bindings/hwmon/national,lm90.yaml      | 2 +-
+>  Documentation/devicetree/bindings/hwmon/nxp,mc34vr500.yaml      | 2 +-
+>  Documentation/devicetree/bindings/hwmon/sensirion,sht15.yaml    | 2 +-
+>  Documentation/devicetree/bindings/hwmon/ti,tmp102.yaml          | 2 +-
+>  Documentation/devicetree/bindings/hwmon/ti,tmp108.yaml          | 2 +-
+>  Documentation/devicetree/bindings/input/elan,ekth3000.yaml      | 2 +-
+>  .../devicetree/bindings/interrupt-controller/ti,pruss-intc.yaml | 2 +-
+>  Documentation/devicetree/bindings/iommu/xen,grant-dma.yaml      | 2 +-
+>  Documentation/devicetree/bindings/mailbox/ti,omap-mailbox.yaml  | 2 +-
+>  .../devicetree/bindings/phy/mediatek,mt7621-pci-phy.yaml        | 2 +-
+>  .../devicetree/bindings/phy/nvidia,tegra210-xusb-padctl.yaml    | 2 +-
+>  .../devicetree/bindings/power/reset/gpio-poweroff.yaml          | 2 +-
+>  Documentation/devicetree/bindings/power/reset/gpio-restart.yaml | 2 +-
+>  .../devicetree/bindings/power/reset/restart-handler.yaml        | 2 +-
+>  Documentation/devicetree/bindings/power/supply/bq256xx.yaml     | 2 +-
+>  .../devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml         | 2 +-
+>  .../devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml         | 2 +-
+>  .../devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml      | 2 +-
+>  .../devicetree/bindings/remoteproc/ti,pru-consumer.yaml         | 2 +-
+>  Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml  | 2 +-
+>  .../devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml       | 2 +-
+>  Documentation/devicetree/bindings/reset/ti,sci-reset.yaml       | 2 +-
+>  Documentation/devicetree/bindings/reset/ti,tps380x-reset.yaml   | 2 +-
+>  Documentation/devicetree/bindings/soc/ti/sci-pm-domain.yaml     | 2 +-
+>  Documentation/devicetree/bindings/usb/cypress,hx3.yaml          | 2 +-
+>  Documentation/devicetree/bindings/usb/genesys,gl850g.yaml       | 2 +-
+>  Documentation/devicetree/bindings/usb/realtek,rts5411.yaml      | 2 +-
+>  Documentation/devicetree/bindings/usb/ti,usb8041.yaml           | 2 +-
+>  Documentation/devicetree/bindings/usb/vialab,vl817.yaml         | 2 +-
+>  include/dt-bindings/ata/ahci.h                                  | 2 +-
+>  include/dt-bindings/clock/hi3559av100-clock.h                   | 2 +-
+>  include/dt-bindings/clock/r8a779f0-cpg-mssr.h                   | 2 +-
+>  include/dt-bindings/clock/rockchip,rk3588-cru.h                 | 2 +-
+>  include/dt-bindings/clock/stm32mp1-clks.h                       | 2 +-
+>  include/dt-bindings/clock/sun20i-d1-ccu.h                       | 2 +-
+>  include/dt-bindings/clock/sun20i-d1-r-ccu.h                     | 2 +-
+>  include/dt-bindings/clock/sun50i-a100-ccu.h                     | 2 +-
+>  include/dt-bindings/clock/sun50i-h6-ccu.h                       | 2 +-
+>  include/dt-bindings/clock/sun50i-h616-ccu.h                     | 2 +-
+>  include/dt-bindings/clock/sun6i-rtc.h                           | 2 +-
+>  include/dt-bindings/display/sdtv-standards.h                    | 2 +-
+>  include/dt-bindings/gpio/meson-g12a-gpio.h                      | 2 +-
+>  include/dt-bindings/power/amlogic,c3-pwrc.h                     | 2 +-
+>  include/dt-bindings/power/meson-a1-power.h                      | 2 +-
+>  include/dt-bindings/power/meson-axg-power.h                     | 2 +-
+>  include/dt-bindings/power/meson-g12a-power.h                    | 2 +-
+>  include/dt-bindings/power/meson-gxbb-power.h                    | 2 +-
+>  include/dt-bindings/power/meson-s4-power.h                      | 2 +-
+>  include/dt-bindings/power/meson-sm1-power.h                     | 2 +-
+>  include/dt-bindings/power/meson8-power.h                        | 2 +-
+>  include/dt-bindings/power/r8a779f0-sysc.h                       | 2 +-
+>  include/dt-bindings/power/rk3588-power.h                        | 2 +-
+>  include/dt-bindings/power/summit,smb347-charger.h               | 2 +-
+>  include/dt-bindings/reset/rockchip,rk3588-cru.h                 | 2 +-
+>  include/dt-bindings/reset/stm32mp1-resets.h                     | 2 +-
+>  include/dt-bindings/reset/sun20i-d1-ccu.h                       | 2 +-
+>  include/dt-bindings/reset/sun20i-d1-r-ccu.h                     | 2 +-
+>  include/dt-bindings/reset/sun50i-a100-ccu.h                     | 2 +-
+>  include/dt-bindings/reset/sun50i-a100-r-ccu.h                   | 2 +-
+>  include/dt-bindings/reset/sun50i-h6-ccu.h                       | 2 +-
+>  include/dt-bindings/reset/sun50i-h6-r-ccu.h                     | 2 +-
+>  include/dt-bindings/reset/sun50i-h616-ccu.h                     | 2 +-
+>  130 files changed, 130 insertions(+), 130 deletions(-)
+
+Applied, thanks!
+
+Rob
