@@ -2,137 +2,144 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBE2AEE4993
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Aug 2023 15:38:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83FC0C71134
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Aug 2023 18:01:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237278AbjHWPiT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Aug 2023 11:38:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38542 "EHLO
+        id S237972AbjHWSBa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Aug 2023 14:01:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237291AbjHWPiS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Aug 2023 11:38:18 -0400
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [IPv6:2a02:c205:3004:2154::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A023710CC;
-        Wed, 23 Aug 2023 08:38:15 -0700 (PDT)
-Received: from p5dcc3441.dip0.t-ipconnect.de ([93.204.52.65] helo=aktux)
-        by mail.andi.de1.cc with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <andreas@kemnade.info>)
-        id 1qYpvt-002xI2-3t; Wed, 23 Aug 2023 17:38:09 +0200
-Date:   Wed, 23 Aug 2023 17:38:07 +0200
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     Rob Herring <robh@kernel.org>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        bcousson@baylibre.com, tony@atomide.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: clock: add TWL6032 32K clocks
-Message-ID: <20230823173807.0b80a70a@aktux>
-In-Reply-To: <20230821205745.GA2270173-robh@kernel.org>
-References: <20230819134147.456060-1-andreas@kemnade.info>
-        <20230819134147.456060-2-andreas@kemnade.info>
-        <20230821205745.GA2270173-robh@kernel.org>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.37; x86_64-pc-linux-gnu)
+        with ESMTP id S236766AbjHWSBX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Aug 2023 14:01:23 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7040F10CC;
+        Wed, 23 Aug 2023 11:01:21 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0359D61493;
+        Wed, 23 Aug 2023 18:01:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 171C7C433CB;
+        Wed, 23 Aug 2023 18:01:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692813680;
+        bh=e6v4G4jDId6hSaMFJ0Kx8OgZafHgAdprexUAH84vTj4=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=dFsqugUGl0tq8Gl4euWZzkD93IAHJBfTd6WBCPx6rBdtKFjNK6oU+7ieeF09hHwh6
+         NiJtkPHDdoObFrFepffIOZOsHVHGuNgFXnnCFspcKmtCwklnMlJsxtR5/TXdQUnLMk
+         cJcbHeXlucaD9eXCQb+aBC38vu5xQcrjDDQ2jpEkwgUGrDIRQSrJkP0Gy5gL6uFZZB
+         tYuPa2l/kZzaH9PrL12pHbMbTq70I4qfYguOyB6GGNSAXFAeggM5UgzmOrqiHOqEnS
+         YlHQhCn+VHHFOqE6/Sb/S1wYzxefYWtN4ni2vu9cx7KfYxqzyhQzsgecmrkMTWPoiB
+         oG4Af56/cKiow==
+Message-ID: <a14cdd584283d32a3642658aaed6c98c.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <ZOXLNliOogkNyJYQ@e120937-lin>
+References: <20230811161446.636253-1-cristian.marussi@arm.com> <20230811161446.636253-2-cristian.marussi@arm.com> <17bd83d833b59fd4f64eec433589fa55.sboyd@kernel.org> <ZOXLNliOogkNyJYQ@e120937-lin>
+Subject: Re: [PATCH 1/6] firmware: arm_scmi: Simplify enable/disable Clock operations
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        sudeep.holla@arm.com, james.quinlan@broadcom.com,
+        f.fainelli@gmail.com, vincent.guittot@linaro.org,
+        etienne.carriere@linaro.org, peng.fan@oss.nxp.com,
+        chuck.cannon@nxp.com, souvik.chakravarty@arm.com,
+        nicola.mazzucato@arm.com,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org
+To:     Cristian Marussi <cristian.marussi@arm.com>
+Date:   Wed, 23 Aug 2023 11:01:17 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 21 Aug 2023 15:57:45 -0500
-Rob Herring <robh@kernel.org> wrote:
+Quoting Cristian Marussi (2023-08-23 02:02:46)
+> On Tue, Aug 22, 2023 at 01:17:15PM -0700, Stephen Boyd wrote:
+> > Quoting Cristian Marussi (2023-08-11 09:14:41)
+> > > Add a param to Clock enable/disable operation to ask for atomic opera=
+tion
+> > > and remove _atomic version of such operations.
+> >=20
+>=20
+> Hi,
 
-> On Sat, Aug 19, 2023 at 03:41:45PM +0200, Andreas Kemnade wrote:
-> > To be able to be referenced from a future yaml-version of
-> > mfd/twl-family.txt depending on toplevel compatible have a separate
-> > file for the 6032  
-> 
-> Really, the parent needs to be done first...
-> 
-well, for some other subdevices, a yaml is already in the tree
-and Krzysztof recently added a R-By to another one.
+Yo
 
-But if the clocks should not have a node, then it is obvious.
-What would be the route to conversion here: Is a conversion
-of mfd/twl-family.txt without specifying subnodes ok for the first step,
-maybe with additionalProperties: yes?
+>=20
+> > Why?
+> >=20
+>=20
+> :D, given that the 2 flavours of SCMI enable/disable ops (and the upcoming
+> state_get) just differ in their operating mode (atomic or not) and the
+> Clock framework in turn wrap such calls into 4 related and explicitly
+> named clk_ops (scmi_clock_enable/scmi_clock_atomic_enable etc) that hint
+> at what is being done, seemed to me reasonable to reduce the churn and
+> remove a bit of code wrappers in favour of a param.
 
+Please add these extra details to the commit text about why we're making
+the change.
 
-> > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> > ---
-> >  .../bindings/clock/ti,twl6032-clk.yaml        | 38
-> > +++++++++++++++++++ 1 file changed, 38 insertions(+)
-> >  create mode 100644
-> > Documentation/devicetree/bindings/clock/ti,twl6032-clk.yaml
-> > 
-> > diff --git
-> > a/Documentation/devicetree/bindings/clock/ti,twl6032-clk.yaml
-> > b/Documentation/devicetree/bindings/clock/ti,twl6032-clk.yaml new
-> > file mode 100644 index 0000000000000..aebd9f8d761a2 --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/ti,twl6032-clk.yaml
-> > @@ -0,0 +1,38 @@
-> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/clock/ti,twl6032-clk.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Clocks of the TWL6032 PMIC
-> > +
-> > +maintainers:
-> > +  - Andreas Kemnade <andreas@kemnade.info>
-> > +
-> > +description:
-> > +  The TWL6032 has some 32Khz clock outputs which can be
-> > controlled.  
-> 
-> outputs? Seems like only 1 with no clock cells to specify which one.
-> 
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - ti,twl6032-clk32kaudio
-> > +      - ti,twl6032-clk32kg  
-> 
-> Or is it 1 output per compatible? I hope not.
-> 
-yes, it is. It was inspired by the clk-palmas driver:
-$ grep palmas.*32 arch/arm/boot/dts/ti/omap/omap5-*
-arch/arm/boot/dts/ti/omap/omap5-board-common.dtsi:
-clk32kgaudio: palmas_clk32k@1 {
-arch/arm/boot/dts/ti/omap/omap5-board-common.dtsi:
-	compatible = "ti,palmas-clk32kgaudio";
+>=20
+> > >=20
+> > > No functional change.
+> > >=20
+> > > CC: Michael Turquette <mturquette@baylibre.com>
+> > > CC: Stephen Boyd <sboyd@kernel.org>
+> > > CC: linux-clk@vger.kernel.org
+> > > Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+> > > ---
+> > >  drivers/clk/clk-scmi.c            |  8 ++++----
+> > >  drivers/firmware/arm_scmi/clock.c | 24 ++++++------------------
+> > >  include/linux/scmi_protocol.h     |  9 ++++-----
+> > >  3 files changed, 14 insertions(+), 27 deletions(-)
+> > >=20
+> > > diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
+> > > index 2c7a830ce308..ff003083e592 100644
+> > > --- a/drivers/clk/clk-scmi.c
+> > > +++ b/drivers/clk/clk-scmi.c
+> > > @@ -78,28 +78,28 @@ static int scmi_clk_enable(struct clk_hw *hw)
+> > >  {
+> > >         struct scmi_clk *clk =3D to_scmi_clk(hw);
+> > > =20
+> > > -       return scmi_proto_clk_ops->enable(clk->ph, clk->id);
+> > > +       return scmi_proto_clk_ops->enable(clk->ph, clk->id, false);
+> > >  }
+> > > =20
+> > >  static void scmi_clk_disable(struct clk_hw *hw)
+> > >  {
+> > >         struct scmi_clk *clk =3D to_scmi_clk(hw);
+> > > =20
+> > > -       scmi_proto_clk_ops->disable(clk->ph, clk->id);
+> > > +       scmi_proto_clk_ops->disable(clk->ph, clk->id, false);
+> >=20
+> > I enjoyed how it was before because I don't know what 'false' means
+> > without looking at the ops now.
+> >=20
+>=20
+> Yes indeed, I can drop this and rework if you prefer to maintain the old
+> API calls, but this would mean that whenever we'll add new atomic
+> flavour to some new SCMI clk operations we'll have to add 2 ops instead
+> of a parametrized one...this is what would happen also in this series
+> with state_get (and what really triggered this refactor)
+>=20
+> (and please consider that on the SCMI side, for testing purposes, I would
+> prefer to expose always both atomic and non-atomic flavours even if NOT
+> both actively used by the Clock framework...like state_get() that can only
+> be atomic for Clock frmwk...)
+>=20
 
-Well, we have the CLK_IGNORE_UNUSED, so if we use #clock-cells = 1,
-an unused clock will not be touched by the kernel, right?
+Perhaps we need a local variable to make it more readable.
 
-> > +
-> > +  '#clock-cells':
-> > +    const: 0
-> > +
-> > +required:
-> > +  - compatible
-> > +  - '#clock-cells'
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    twl {
-> > +        clk32kaudio {
-> > +            compatible = "ti,twl6032-clk32kaudio";
-> > +            #clock-cells = <0>;
-> > +        };  
-> 
-> You don't need a child node to be a clock provider. Just add 
-> #clock-cells to the parent node.
-> 
-hmm, we have child nodes there for every subdevice in that family,
-even if I doubt it is totally technically required.
-So why should the clk device be an exception? 
+	static int scmi_clk_enable(struct clk_hw *hw)
+	{
+	       bool can_sleep =3D false;
+	       struct scmi_clk *clk =3D to_scmi_clk(hw);
 
-Regards,
-Andreas
+	       return scmi_proto_clk_ops->enable(clk->ph, clk->id, can_sleep);
+	}
+
+This let's the reader quickly understand what the parameter means. I'm
+OK with adding the function parameter, but a plain 'true' or 'false'
+doesn't help with clarity.
