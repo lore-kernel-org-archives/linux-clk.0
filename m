@@ -2,130 +2,142 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DC2DC7113B
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Aug 2023 19:15:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D013C3DA66
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Aug 2023 19:16:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238102AbjHWTOh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Aug 2023 15:14:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51692 "EHLO
+        id S234498AbjHWTPk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Aug 2023 15:15:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238078AbjHWTOc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Aug 2023 15:14:32 -0400
-Received: from mail-qv1-xf32.google.com (mail-qv1-xf32.google.com [IPv6:2607:f8b0:4864:20::f32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0797A10C3;
-        Wed, 23 Aug 2023 12:14:31 -0700 (PDT)
-Received: by mail-qv1-xf32.google.com with SMTP id 6a1803df08f44-63f7c242030so29963826d6.3;
-        Wed, 23 Aug 2023 12:14:30 -0700 (PDT)
+        with ESMTP id S238298AbjHWTPO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Aug 2023 15:15:14 -0400
+Received: from mail-qv1-xf34.google.com (mail-qv1-xf34.google.com [IPv6:2607:f8b0:4864:20::f34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B55C10D0;
+        Wed, 23 Aug 2023 12:15:09 -0700 (PDT)
+Received: by mail-qv1-xf34.google.com with SMTP id 6a1803df08f44-64a0176b1easo35085776d6.3;
+        Wed, 23 Aug 2023 12:15:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1692818070; x=1693422870;
+        d=gmail.com; s=20221208; t=1692818108; x=1693422908;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4T+N5RAAw1c+yhIr8G224Fh/GWReWEnbHuSJmvVHpR8=;
-        b=Py+Ka0YgJJI55CI/55kjB0+4PQkBPF3GQgAuJUAqO4ig52oDxp1+Q2HtF7Bs7MVpPa
-         JGJWKVPWP98KkG/DuYmsEZH7w4OYxYmeUV0kIeoXuXH88zMkWvdPGM4Y/75cou2Zq5ha
-         IVK92eLt6RN9is7zkKdMXp+nuFoPPXBHT0NvkXLfSwvZRLskD+q6D/0cA/FgFZeIkN/h
-         MZoJRhayq9qgNDFZjRXHNBaai/WJDbY6Z5KEW5sXFZ/S80+iTiu6rVVx9eQDKL5uVVUU
-         rW+8MJEVWOoeml9aVU34eTFofr5cD2A5LWmDADxBZVQfAnn8OGiWkvhYqmlzVABEtkQ1
-         EdHw==
+        bh=ISfTpPb1V2P+jzT7DRqJg3+P9Rpp6ZuddKf1v0Q69Bg=;
+        b=KFjN1bVnsq2ecwzbZvnrSAX8HUoJYlMSih4uyjLyOzesfPHaRY3HhKzghx/38BGT5q
+         gfL8oDqED1zr9ZwPUrSKRobECWUW8KPaKQF/1g0FvSqSkDodK7PEcMy+HCOaIHpak6/j
+         IjmbwCvDaH5I27pm2XrBJSTI5xuIu01qAxfjYQGQc+LGoghJAFb5b3AOm84eeTjqN2DN
+         jmguWVBajtT4eDngMEL1cPSRIGdg7onV5kJqhDOg+J3Hun5yC310Oh3cg5bE63vYIO3R
+         zflAQALyH2AtnfT1gLOY7bnBVX58JE2gNrfaL0gtGJL1t5EuCuVHGn+i6Q2IO2YMgXTE
+         xwmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692818070; x=1693422870;
+        d=1e100.net; s=20221208; t=1692818108; x=1693422908;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4T+N5RAAw1c+yhIr8G224Fh/GWReWEnbHuSJmvVHpR8=;
-        b=cDrUkh8mqAt4pT+goLdNngNWAvzQhnCcTqPj4AMDwLTmnVNu5mqnLYmSk1AtWXw9tA
-         hsGwUkOW0gChkAQQ6Bhr3t3hrBvxhew05BUtKt0r+RdR2LkteRx8VAaNJLXX/e/gJ4nC
-         xYNAlcdcRtUKGjz+MB9r5xIbqqqwerC7do4FOSHBCFhviMHWz3CKsiPVpAjorX1PlsfP
-         dr9oNpCfAKX26o5/Ap/8vmA+o/VkgN6Lu4XaY/Op2FhwZB8BA2W+Jv/osAz/6tOh//Il
-         dlmuW+RHAcaAPDY0O783G7y6l4m2sRKKeFLwhyvJo7ogaNosgx7zstHy/Do50RfbtK/1
-         PRpA==
-X-Gm-Message-State: AOJu0YzRaKeJ4D5O8VyMXb8hAUBQ9BHcnZLm6LCkzkVxPaWnN/io7tZ3
-        DaEC3OV1Ex0d6Sw3sMxBNUo=
-X-Google-Smtp-Source: AGHT+IHjkNNR2fn0UGX+mTk/BvbjJYYuXYQhN4C4weV6FoUiL+6dbLGDrjNJAn3RzeH/HKIytzSaxg==
-X-Received: by 2002:a0c:f154:0:b0:64f:50e9:a08a with SMTP id y20-20020a0cf154000000b0064f50e9a08amr4971913qvl.52.1692818070001;
-        Wed, 23 Aug 2023 12:14:30 -0700 (PDT)
+        bh=ISfTpPb1V2P+jzT7DRqJg3+P9Rpp6ZuddKf1v0Q69Bg=;
+        b=XXshiijCUpTECT1/Aaqnewmzmq4gtfnTAJPa5WUH8AwCa9/TuAqBkv4GF7kAlbLdu0
+         uc52Kz0fA460F/Qfv0VlrxkV+dUB/jeFmiLJL35/BMO3/Gigaa6X8XrVrI31egoNB3yT
+         RwmaqVc0QYSKxwCNCbAWHveWIhrQ+S1QsyQipXgEXbQ7BSrM/6fDouzIUXRIk5zcqdvB
+         J3GXHjTZgYw3cjnK/1z+lc1PckKnjl7HfgLDJvhOLmwqZ/X30wADafEdCLbf4Oxx82Es
+         Ed9XnJsXm65nTkKHhiQWcHDMsDvQt/w8lYYMkuO39aL57ee/JjvGb5xpF5UABLKUxRrx
+         8dhg==
+X-Gm-Message-State: AOJu0YyyPtbyi64sXRz1g8NdYKhrt9llCRnKmBALe4zNcjnLDEuUvMdr
+        IfqYj0WFj4XDDmJlB3Za2nU=
+X-Google-Smtp-Source: AGHT+IFfaRfpPJ21GEsT5Ao87FJteBSmW6mCf5mGefHgD9XZmcrxWpqJ7YiikryeJ7mgcf+pWmmN4Q==
+X-Received: by 2002:a05:6214:5489:b0:63d:4813:6a6a with SMTP id lg9-20020a056214548900b0063d48136a6amr14360059qvb.44.1692818108031;
+        Wed, 23 Aug 2023 12:15:08 -0700 (PDT)
 Received: from shaak (modemcable063.135-226-192.mc.videotron.ca. [192.226.135.63])
-        by smtp.gmail.com with ESMTPSA id p5-20020a0ce185000000b0064730b8bc65sm4730455qvl.75.2023.08.23.12.14.29
+        by smtp.gmail.com with ESMTPSA id c16-20020a0cca10000000b0064b502fdeecsm4245322qvk.68.2023.08.23.12.15.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Aug 2023 12:14:29 -0700 (PDT)
-Date:   Wed, 23 Aug 2023 15:14:27 -0400
+        Wed, 23 Aug 2023 12:15:07 -0700 (PDT)
+Date:   Wed, 23 Aug 2023 15:15:06 -0400
 From:   Liam Beguin <liambeguin@gmail.com>
 To:     Mike Looijmans <mike.looijmans@topic.nl>
 Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         sboyd@kernel.org, mturquette@baylibre.com
-Subject: Re: [PATCH 2/3] clk: lmk04832: Don't disable vco clock on probe fail
-Message-ID: <20230823191427.GB2572839@shaak>
+Subject: Re: [PATCH 3/3] clk: lmk04832: Support using PLL1_LD as SPI readback
+ pin
+Message-ID: <20230823191506.GC2572839@shaak>
 References: <20230802064100.15793-1-mike.looijmans@topic.nl>
- <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.37b21939-e4ca-460d-8656-25f90de74f6b@emailsignatures365.codetwo.com>
- <20230802064100.15793-2-mike.looijmans@topic.nl>
+ <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.5ec2b609-3eb5-4de3-93d2-a352a16683c8@emailsignatures365.codetwo.com>
+ <20230802064100.15793-3-mike.looijmans@topic.nl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230802064100.15793-2-mike.looijmans@topic.nl>
+In-Reply-To: <20230802064100.15793-3-mike.looijmans@topic.nl>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Aug 02, 2023 at 08:40:59AM +0200, Mike Looijmans wrote:
-> The probe() method never calls clk_prepare_enable(), so it should not
-> call clk_disable_unprepare() for the vco.clk in the error path. Fixes
-> a "lmk-vco already disabled" BUG when probe fails.
+On Wed, Aug 02, 2023 at 08:41:00AM +0200, Mike Looijmans wrote:
+> The PLL1_PD pin (a.k.a. STATUS_LD1) can be used as SPI readback pin. Make
+> this possible.
 > 
 > Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
 
 Reviewed-by: Liam Beguin <liambeguin@gmail.com>
 
 > ---
->  drivers/clk/clk-lmk04832.c | 11 ++++-------
->  1 file changed, 4 insertions(+), 7 deletions(-)
+>  drivers/clk/clk-lmk04832.c | 23 ++++++++++++++++++-----
+>  1 file changed, 18 insertions(+), 5 deletions(-)
 > 
 > diff --git a/drivers/clk/clk-lmk04832.c b/drivers/clk/clk-lmk04832.c
-> index 188085e7a30b..dd1f0c59ee71 100644
+> index dd1f0c59ee71..99b271c1278a 100644
 > --- a/drivers/clk/clk-lmk04832.c
 > +++ b/drivers/clk/clk-lmk04832.c
-> @@ -1505,21 +1505,21 @@ static int lmk04832_probe(struct spi_device *spi)
->  		ret = clk_set_rate(lmk->vco.clk, lmk->vco_rate);
->  		if (ret) {
->  			dev_err(lmk->dev, "failed to set VCO rate\n");
-> -			goto err_disable_vco;
-> +			goto err_disable_oscin;
->  		}
+> @@ -134,6 +134,11 @@
+>  /* 0x14b - 0x152 Holdover */
+>  
+>  /* 0x153 - 0x15f PLL1 Configuration */
+> +#define LMK04832_REG_PLL1_LD		0x15f
+> +#define LMK04832_BIT_PLL1_LD_MUX		GENMASK(7, 3)
+> +#define LMK04832_VAL_PLL1_LD_MUX_SPI_RDBK		0x07
+> +#define LMK04832_BIT_PLL1_LD_TYPE		GENMASK(2, 0)
+> +#define LMK04832_VAL_PLL1_LD_TYPE_OUT_PP		0x03
+>  
+>  /* 0x160 - 0x16e PLL2 Configuration */
+>  #define LMK04832_REG_PLL2_R_MSB		0x160
+> @@ -206,6 +211,7 @@ enum lmk04832_rdbk_type {
+>  	RDBK_CLKIN_SEL0,
+>  	RDBK_CLKIN_SEL1,
+>  	RDBK_RESET,
+> +	RDBK_PLL1_LD,
+>  };
+>  
+>  struct lmk_dclk {
+> @@ -1346,6 +1352,10 @@ static int lmk04832_set_spi_rdbk(const struct lmk04832 *lmk, const int rdbk_pin)
+>  {
+>  	int reg;
+>  	int ret;
+> +	int val = FIELD_PREP(LMK04832_BIT_CLKIN_SEL_MUX,
+> +			     LMK04832_VAL_CLKIN_SEL_MUX_SPI_RDBK) |
+> +		  FIELD_PREP(LMK04832_BIT_CLKIN_SEL_TYPE,
+> +			     LMK04832_VAL_CLKIN_SEL_TYPE_OUT);
+>  
+>  	dev_info(lmk->dev, "setting up 4-wire mode\n");
+>  	ret = regmap_write(lmk->regmap, LMK04832_REG_RST3W,
+> @@ -1363,15 +1373,18 @@ static int lmk04832_set_spi_rdbk(const struct lmk04832 *lmk, const int rdbk_pin)
+>  	case RDBK_RESET:
+>  		reg = LMK04832_REG_CLKIN_RST;
+>  		break;
+> +	case RDBK_PLL1_LD:
+> +		reg = LMK04832_REG_PLL1_LD;
+> +		val = FIELD_PREP(LMK04832_BIT_PLL1_LD_MUX,
+> +				 LMK04832_VAL_PLL1_LD_MUX_SPI_RDBK) |
+> +		      FIELD_PREP(LMK04832_BIT_PLL1_LD_TYPE,
+> +				 LMK04832_VAL_PLL1_LD_TYPE_OUT_PP);
+> +		break;
+>  	default:
+>  		return -EINVAL;
 >  	}
 >  
->  	ret = lmk04832_register_sclk(lmk);
->  	if (ret) {
->  		dev_err(lmk->dev, "failed to init SYNC/SYSREF clock path\n");
-> -		goto err_disable_vco;
-> +		goto err_disable_oscin;
->  	}
+> -	return regmap_write(lmk->regmap, reg,
+> -			    FIELD_PREP(LMK04832_BIT_CLKIN_SEL_MUX,
+> -				       LMK04832_VAL_CLKIN_SEL_MUX_SPI_RDBK) |
+> -			    FIELD_PREP(LMK04832_BIT_CLKIN_SEL_TYPE,
+> -				       LMK04832_VAL_CLKIN_SEL_TYPE_OUT));
+> +	return regmap_write(lmk->regmap, reg, val);
+>  }
 >  
->  	for (i = 0; i < info->num_channels; i++) {
->  		ret = lmk04832_register_clkout(lmk, i);
->  		if (ret) {
->  			dev_err(lmk->dev, "failed to register clk %d\n", i);
-> -			goto err_disable_vco;
-> +			goto err_disable_oscin;
->  		}
->  	}
->  
-> @@ -1528,16 +1528,13 @@ static int lmk04832_probe(struct spi_device *spi)
->  					  lmk->clk_data);
->  	if (ret) {
->  		dev_err(lmk->dev, "failed to add provider (%d)\n", ret);
-> -		goto err_disable_vco;
-> +		goto err_disable_oscin;
->  	}
->  
->  	spi_set_drvdata(spi, lmk);
->  
->  	return 0;
->  
-> -err_disable_vco:
-> -	clk_disable_unprepare(lmk->vco.clk);
-> -
->  err_disable_oscin:
->  	clk_disable_unprepare(lmk->oscin);
->  
+>  static int lmk04832_probe(struct spi_device *spi)
 > -- 
 > 2.17.1
 > 
