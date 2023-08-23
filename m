@@ -2,120 +2,113 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2850CEE4993
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Aug 2023 09:02:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE9D0EE49A0
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Aug 2023 09:14:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231278AbjHWJBw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Aug 2023 05:01:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52902 "EHLO
+        id S235665AbjHWJOb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Aug 2023 05:14:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235069AbjHWIxl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Aug 2023 04:53:41 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B01471BF3;
-        Wed, 23 Aug 2023 01:51:09 -0700 (PDT)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37N79CcG028861;
-        Wed, 23 Aug 2023 08:50:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=qcppdkim1;
- bh=iW5JrOC1YQW/pJrddy1rYFptRArjo3CS53FyfQ1uQHM=;
- b=RjfITr4+GiPymyaUihIiBGXjAS5+KCWykQfyZxAaehCVj4A70+JPFviMciSA7D892tmG
- i9cbnpdSeeSAIMJxCPzaXvpfqrRH/UXXUIZjQdHnftYnOT1gZ6L/sDaVZNbGDhl7GZSs
- F1SfgVXUvpuI6Zc+XBsegtH6uJ0z4aSFNqPzXpQ29j1qaI+QQ0YzqwCl16a2XnAPCaeZ
- 7D6BeCtc93BMH898wzAADLzHFPwJNUvpu0dAyvImqoW3xZJC5xPfZ1zEB0a9XJvXefq3
- 1GE+fEfO8b+vzBZnI6KddBJu4OVYypkhaYlQ8DSO2xSKh6nguqeXaTDF9Kelde+hoeZK uA== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3sn2exscce-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 23 Aug 2023 08:50:58 +0000
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 37N8ouEa003305
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 23 Aug 2023 08:50:56 GMT
-Received: from akronite-sh-dev02.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.30; Wed, 23 Aug 2023 01:50:53 -0700
-From:   Luo Jie <quic_luoj@quicinc.com>
-To:     <andersson@kernel.org>, <agross@kernel.org>,
-        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <p.zabel@pengutronix.de>
-CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_srichara@quicinc.com>
-Subject: [PATCH v5 1/4] clk: qcom: branch: Add clk_branch2_mdio_ops
-Date:   Wed, 23 Aug 2023 16:50:28 +0800
-Message-ID: <20230823085031.27252-2-quic_luoj@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230823085031.27252-1-quic_luoj@quicinc.com>
-References: <20230823085031.27252-1-quic_luoj@quicinc.com>
+        with ESMTP id S235166AbjHWJLb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Aug 2023 05:11:31 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 86A5946AD;
+        Wed, 23 Aug 2023 02:03:07 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 168A41042;
+        Wed, 23 Aug 2023 02:03:31 -0700 (PDT)
+Received: from e120937-lin (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 76B3E3F740;
+        Wed, 23 Aug 2023 02:02:48 -0700 (PDT)
+Date:   Wed, 23 Aug 2023 10:02:46 +0100
+From:   Cristian Marussi <cristian.marussi@arm.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        sudeep.holla@arm.com, james.quinlan@broadcom.com,
+        f.fainelli@gmail.com, vincent.guittot@linaro.org,
+        etienne.carriere@linaro.org, peng.fan@oss.nxp.com,
+        chuck.cannon@nxp.com, souvik.chakravarty@arm.com,
+        nicola.mazzucato@arm.com,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/6] firmware: arm_scmi: Simplify enable/disable Clock
+ operations
+Message-ID: <ZOXLNliOogkNyJYQ@e120937-lin>
+References: <20230811161446.636253-1-cristian.marussi@arm.com>
+ <20230811161446.636253-2-cristian.marussi@arm.com>
+ <17bd83d833b59fd4f64eec433589fa55.sboyd@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: qYFs-SrUI_osTXn6RoFsju5_3EhuzfFm
-X-Proofpoint-ORIG-GUID: qYFs-SrUI_osTXn6RoFsju5_3EhuzfFm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-08-23_06,2023-08-22_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=924
- mlxscore=0 lowpriorityscore=0 priorityscore=1501 impostorscore=0
- malwarescore=0 suspectscore=0 adultscore=0 phishscore=0 bulkscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2308100000 definitions=main-2308230079
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <17bd83d833b59fd4f64eec433589fa55.sboyd@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the clk_branch2_mdio_ops for supporting clock controller
-where the hardware register is accessed by MDIO bus, and the
-spin lock can't be used because of sleep during the MDIO
-operation.
+On Tue, Aug 22, 2023 at 01:17:15PM -0700, Stephen Boyd wrote:
+> Quoting Cristian Marussi (2023-08-11 09:14:41)
+> > Add a param to Clock enable/disable operation to ask for atomic operation
+> > and remove _atomic version of such operations.
+> 
 
-The clock is enabled by the .prepare instead of .enable when
-the clk_branch2_mdio_ops is used.
+Hi,
 
-Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
----
- drivers/clk/qcom/clk-branch.c | 7 +++++++
- drivers/clk/qcom/clk-branch.h | 1 +
- 2 files changed, 8 insertions(+)
+> Why?
+> 
 
-diff --git a/drivers/clk/qcom/clk-branch.c b/drivers/clk/qcom/clk-branch.c
-index fc4735f74f0f..5e08c026ca4a 100644
---- a/drivers/clk/qcom/clk-branch.c
-+++ b/drivers/clk/qcom/clk-branch.c
-@@ -153,3 +153,10 @@ const struct clk_ops clk_branch_simple_ops = {
- 	.is_enabled = clk_is_enabled_regmap,
- };
- EXPORT_SYMBOL_GPL(clk_branch_simple_ops);
-+
-+const struct clk_ops clk_branch2_mdio_ops = {
-+	.prepare = clk_branch2_enable,
-+	.unprepare = clk_branch2_disable,
-+	.is_prepared = clk_is_enabled_regmap,
-+};
-+EXPORT_SYMBOL_GPL(clk_branch2_mdio_ops);
-diff --git a/drivers/clk/qcom/clk-branch.h b/drivers/clk/qcom/clk-branch.h
-index 0cf800b9d08d..4b006e8eec5e 100644
---- a/drivers/clk/qcom/clk-branch.h
-+++ b/drivers/clk/qcom/clk-branch.h
-@@ -85,6 +85,7 @@ extern const struct clk_ops clk_branch_ops;
- extern const struct clk_ops clk_branch2_ops;
- extern const struct clk_ops clk_branch_simple_ops;
- extern const struct clk_ops clk_branch2_aon_ops;
-+extern const struct clk_ops clk_branch2_mdio_ops;
- 
- #define to_clk_branch(_hw) \
- 	container_of(to_clk_regmap(_hw), struct clk_branch, clkr)
--- 
-2.17.1
+:D, given that the 2 flavours of SCMI enable/disable ops (and the upcoming
+state_get) just differ in their operating mode (atomic or not) and the
+Clock framework in turn wrap such calls into 4 related and explicitly
+named clk_ops (scmi_clock_enable/scmi_clock_atomic_enable etc) that hint
+at what is being done, seemed to me reasonable to reduce the churn and
+remove a bit of code wrappers in favour of a param.
 
+> > 
+> > No functional change.
+> > 
+> > CC: Michael Turquette <mturquette@baylibre.com>
+> > CC: Stephen Boyd <sboyd@kernel.org>
+> > CC: linux-clk@vger.kernel.org
+> > Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+> > ---
+> >  drivers/clk/clk-scmi.c            |  8 ++++----
+> >  drivers/firmware/arm_scmi/clock.c | 24 ++++++------------------
+> >  include/linux/scmi_protocol.h     |  9 ++++-----
+> >  3 files changed, 14 insertions(+), 27 deletions(-)
+> > 
+> > diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
+> > index 2c7a830ce308..ff003083e592 100644
+> > --- a/drivers/clk/clk-scmi.c
+> > +++ b/drivers/clk/clk-scmi.c
+> > @@ -78,28 +78,28 @@ static int scmi_clk_enable(struct clk_hw *hw)
+> >  {
+> >         struct scmi_clk *clk = to_scmi_clk(hw);
+> >  
+> > -       return scmi_proto_clk_ops->enable(clk->ph, clk->id);
+> > +       return scmi_proto_clk_ops->enable(clk->ph, clk->id, false);
+> >  }
+> >  
+> >  static void scmi_clk_disable(struct clk_hw *hw)
+> >  {
+> >         struct scmi_clk *clk = to_scmi_clk(hw);
+> >  
+> > -       scmi_proto_clk_ops->disable(clk->ph, clk->id);
+> > +       scmi_proto_clk_ops->disable(clk->ph, clk->id, false);
+> 
+> I enjoyed how it was before because I don't know what 'false' means
+> without looking at the ops now.
+> 
+
+Yes indeed, I can drop this and rework if you prefer to maintain the old
+API calls, but this would mean that whenever we'll add new atomic
+flavour to some new SCMI clk operations we'll have to add 2 ops instead
+of a parametrized one...this is what would happen also in this series
+with state_get (and what really triggered this refactor)
+
+(and please consider that on the SCMI side, for testing purposes, I would
+prefer to expose always both atomic and non-atomic flavours even if NOT
+both actively used by the Clock framework...like state_get() that can only
+be atomic for Clock frmwk...)
+
+Thanks,
+Cristian
