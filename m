@@ -2,41 +2,41 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E088C7113B
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Aug 2023 21:37:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C454C27C40
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Aug 2023 21:37:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234697AbjHWVgy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Aug 2023 17:36:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51698 "EHLO
+        id S238168AbjHWVgz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Aug 2023 17:36:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238315AbjHWVgp (ORCPT
+        with ESMTP id S238300AbjHWVgp (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Aug 2023 17:36:45 -0400
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6818010DE;
-        Wed, 23 Aug 2023 14:36:43 -0700 (PDT)
-Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
-        by mx1.sberdevices.ru (Postfix) with ESMTP id 5F34310000C;
-        Thu, 24 Aug 2023 00:36:41 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 5F34310000C
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A58610DC;
+        Wed, 23 Aug 2023 14:36:42 -0700 (PDT)
+Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
+        by mx1.sberdevices.ru (Postfix) with ESMTP id 1F17912000D;
+        Thu, 24 Aug 2023 00:36:39 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 1F17912000D
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1692826601;
-        bh=ofem6esa7IqI8462uKhai0hK+fnryfGoYKUd31YzbPk=;
+        s=mail; t=1692826599;
+        bh=Rl3Kx3xyjDP17+NjGbmC5zqjBx2KBCc3DXusX7F9y6E=;
         h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-        b=p4AX42JqJ4OIuwPgodfzr8qMJzwJwKIXJTG7E8mNv88EyzBYVGBh7EESEpz3/DWXO
-         OXhl4cMNzUNlykV2M56fHPX17yt5eVtssrtY788TN9xYSqeJcw2bMVuF/VqAIvxoLP
-         v1HwtiqarXRwfHFUE1gf16MGxXGmWg45n4QKWGxrX3UXjOic+6cKWdFJNY3z77inU0
-         zfJVE+tcdELOi/5+yuhwTH44/7yO//ClluXNeQoKdwAbL7Kq/FenB8Q/D3padfyMl/
-         jX12DFWWm3Iy/nSWqjdDU38En3MsdLAdrfaLnxwpyIYAOR9MKVQPC5B0zCOK2nqW3P
-         9JMGrCt9On/dA==
+        b=q6Oi7XnOAlRPkMTP5DT9Z6oGWqGviUtCzYA496QxvEYC69Q7Tj3LvDSeSQaOFqdLc
+         dGLg6yzsF7QYlO4bxkATXHbx5HYscxzlhi/I4coJKeMftWJtd+dBkXjBc/q/3GjtX5
+         N2Bp5xFdjMAaQbkYZwvYvmItHuAoGIrY4p/4U2yuVpeJFyFELlc1vjBSITwYJn1YEp
+         Qkx77wxQzpeyhRGBwkX3T71Pr0sS9HjgtQW6x6rqtZfYPlA3cVfCKLZeREQ3Crsh8k
+         XD68VfOQiNFbT8DMX/+9kVXSkVe6KuvsmWq1FED/vof61kNAWORCbVVZDsAtxgYqNv
+         3QZgBvdHGIqRA==
 Received: from p-i-exch-sc-m01.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         by mx1.sberdevices.ru (Postfix) with ESMTPS;
-        Thu, 24 Aug 2023 00:36:41 +0300 (MSK)
+        Thu, 24 Aug 2023 00:36:38 +0300 (MSK)
 Received: from localhost.localdomain (100.64.160.123) by
  p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.30; Thu, 24 Aug 2023 00:36:37 +0300
+ 15.2.1118.30; Thu, 24 Aug 2023 00:36:34 +0300
 From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
 To:     <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
         <mturquette@baylibre.com>, <sboyd@kernel.org>,
@@ -49,9 +49,9 @@ CC:     <kernel@sberdevices.ru>, <sdfw_system_team@sberdevices.ru>,
         <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         Dmitry Rokosov <ddrokosov@sberdevices.ru>
-Subject: [PATCH v2 04/15] arm64: dts: meson: a1: reorder gpio_intc node definition
-Date:   Thu, 24 Aug 2023 00:36:19 +0300
-Message-ID: <20230823213630.12936-5-ddrokosov@sberdevices.ru>
+Subject: [PATCH v2 01/15] arm64: dts: meson: a1: reorder includes to keep them sorted
+Date:   Thu, 24 Aug 2023 00:36:16 +0300
+Message-ID: <20230823213630.12936-2-ddrokosov@sberdevices.ru>
 X-Mailer: git-send-email 2.36.0
 In-Reply-To: <20230823213630.12936-1-ddrokosov@sberdevices.ru>
 References: <20230823213630.12936-1-ddrokosov@sberdevices.ru>
@@ -70,7 +70,7 @@ X-KSMG-AntiSpam-Rate: 0
 X-KSMG-AntiSpam-Status: not_detected
 X-KSMG-AntiSpam-Method: none
 X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 527 527 5bb611be2ca2baa31d984ccbf4ef4415504fc308, {Tracking_smtp_not_equal_from}, {Tracking_from_domain_doesnt_match_to}, salutedevices.com:7.1.1;sberdevices.ru:7.1.1,5.0.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;p-i-exch-sc-m01.sberdevices.ru:7.1.1,5.0.1;100.64.160.123:7.1.2, FromAlignment: n, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, ApMailHostAddress: 100.64.160.123
+X-KSMG-AntiSpam-Info: LuaCore: 527 527 5bb611be2ca2baa31d984ccbf4ef4415504fc308, {Tracking_smtp_not_equal_from}, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;p-i-exch-sc-m01.sberdevices.ru:7.1.1,5.0.1;sberdevices.ru:7.1.1,5.0.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;100.64.160.123:7.1.2;salutedevices.com:7.1.1, FromAlignment: n, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, ApMailHostAddress: 100.64.160.123
 X-MS-Exchange-Organization-SCL: -1
 X-KSMG-AntiSpam-Interceptor-Info: scan successful
 X-KSMG-AntiPhishing: Clean
@@ -81,53 +81,30 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-It is recommended to maintain a sorted order of device tree entries, so
-move the gpio_intc node ahead of the uart_AO node.
+It is recommended to alphabetically sort all headers included in the
+dtsi.
 
-Fixes: ea254644a228 ("arm64: dts: meson-a1: add gpio_intc node")
 Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
 ---
- arch/arm64/boot/dts/amlogic/meson-a1.dtsi | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ arch/arm64/boot/dts/amlogic/meson-a1.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-index f740153f3c1e..f95f4daef02c 100644
+index c8f344596285..5d0c8e3966ce 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-@@ -105,6 +105,16 @@ gpio: bank@400 {
+@@ -3,9 +3,9 @@
+  * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
+  */
  
- 			};
+-#include <dt-bindings/interrupt-controller/irq.h>
+-#include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/gpio/meson-a1-gpio.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/interrupt-controller/irq.h>
  
-+			gpio_intc: interrupt-controller@440 {
-+				compatible = "amlogic,meson-a1-gpio-intc",
-+					     "amlogic,meson-gpio-intc";
-+				reg = <0x0 0x0440 0x0 0x14>;
-+				interrupt-controller;
-+				#interrupt-cells = <2>;
-+				amlogic,channel-interrupts =
-+					<49 50 51 52 53 54 55 56>;
-+			};
-+
- 			uart_AO: serial@1c00 {
- 				compatible = "amlogic,meson-gx-uart",
- 					     "amlogic,meson-ao-uart";
-@@ -124,16 +134,6 @@ uart_AO_B: serial@2000 {
- 				clock-names = "xtal", "pclk", "baud";
- 				status = "disabled";
- 			};
--
--			gpio_intc: interrupt-controller@0440 {
--				compatible = "amlogic,meson-a1-gpio-intc",
--					     "amlogic,meson-gpio-intc";
--				reg = <0x0 0x0440 0x0 0x14>;
--				interrupt-controller;
--				#interrupt-cells = <2>;
--				amlogic,channel-interrupts =
--					<49 50 51 52 53 54 55 56>;
--			};
- 		};
- 
- 		gic: interrupt-controller@ff901000 {
+ / {
+ 	compatible = "amlogic,a1";
 -- 
 2.36.0
 
