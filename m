@@ -2,126 +2,196 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73410C3DA6F
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Aug 2023 09:53:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84494C6FA8F
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Aug 2023 09:57:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240774AbjHXJwn convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Aug 2023 05:52:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41910 "EHLO
+        id S237366AbjHXJ5F (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Aug 2023 05:57:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240730AbjHXJwM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Aug 2023 05:52:12 -0400
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C91B810FE;
-        Thu, 24 Aug 2023 02:52:10 -0700 (PDT)
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-5925e580f12so16029307b3.3;
-        Thu, 24 Aug 2023 02:52:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692870730; x=1693475530;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vDuexcPZUqv8UAEKhi2IQMob9YTR6PYlVc2uGP+fxmc=;
-        b=Tzn6J5NAjjb30WyvCQLaH9v2CeIQTBFNmlJUnfsUzp+dF+hE9hmHA4stMIWrtFTZgq
-         tX8RLiATW8jNwkOmfYsqTm7krbNKoX9bYWpuA1vl0KQCCwWJv8sZBGzGGLtiwrgGexIV
-         16jphXJOEayNIrSv5O1MKY2fe9irz0denhLrVH9eEhq1NTlNogAw594BTOBeWPZU4THO
-         YHg10qsHk5vMjr33Hvq4g5bNGObtwMegImQtnVll/EApxiC0z4F/D0i/pF5xPQE1mcWX
-         Z8c9ERSeBFbIxOTSJwlg5oTr35DcR9aTRvrEZ3SVf90/Gre2v5UFD7mRrwlcykRJzPIO
-         EOMw==
-X-Gm-Message-State: AOJu0YwYWV/ONy4Mvsgv9Bw21iPZazinxUz8uyu2KLnmfbJu3eKJyyqD
-        PHkbFYGbetTe0gkEEgRX4Y5kcRtD32wdBA==
-X-Google-Smtp-Source: AGHT+IEqjaSN6Lf3+dPIsbwlJTBpzpTb5GqAMnaVnVhv+EIG5+nq39Axtd2mts2CeKnD+RtA3u9bVA==
-X-Received: by 2002:a81:7709:0:b0:580:bd0d:809f with SMTP id s9-20020a817709000000b00580bd0d809fmr15500404ywc.18.1692870729911;
-        Thu, 24 Aug 2023 02:52:09 -0700 (PDT)
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com. [209.85.219.176])
-        by smtp.gmail.com with ESMTPSA id l123-20020a815781000000b005928fe005e3sm15705ywb.25.2023.08.24.02.52.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Aug 2023 02:52:09 -0700 (PDT)
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-d77a4e30e97so2055539276.2;
-        Thu, 24 Aug 2023 02:52:09 -0700 (PDT)
-X-Received: by 2002:a5b:749:0:b0:d1a:c21:3bcf with SMTP id s9-20020a5b0749000000b00d1a0c213bcfmr15966178ybq.55.1692870729354;
- Thu, 24 Aug 2023 02:52:09 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230824082501.87429-1-biju.das.jz@bp.renesas.com>
- <20230824082501.87429-4-biju.das.jz@bp.renesas.com> <CAMuHMdUyb0rt7T82h_wS1jCt=U-1o6tS+B0AgMTHgyBbkEi5eQ@mail.gmail.com>
- <OS0PR01MB5922249F5000425F44B6A075861DA@OS0PR01MB5922.jpnprd01.prod.outlook.com>
- <CAMuHMdXCnP7ErKYVtyfsxsABjUTgZDFRuWnSPtRoL=9m4-ciSA@mail.gmail.com> <OS0PR01MB5922F2A5E303B9E194B829F0861DA@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-In-Reply-To: <OS0PR01MB5922F2A5E303B9E194B829F0861DA@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 24 Aug 2023 11:51:56 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU52bhZf3AcpYZ-yRRaKCftpUaE8BeZYPXJO30+nLfc7Q@mail.gmail.com>
-Message-ID: <CAMuHMdU52bhZf3AcpYZ-yRRaKCftpUaE8BeZYPXJO30+nLfc7Q@mail.gmail.com>
-Subject: Re: [PATCH v4 3/4] clk: vc3: Fix output clock mapping
-To:     Biju Das <biju.das.jz@bp.renesas.com>
+        with ESMTP id S239510AbjHXJ4n (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Aug 2023 05:56:43 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4C081980;
+        Thu, 24 Aug 2023 02:56:41 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 62EA66145F;
+        Thu, 24 Aug 2023 09:56:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75D22C433C8;
+        Thu, 24 Aug 2023 09:56:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692871000;
+        bh=zsEzdj4jNIpbU5B5GHL0RXLo+9JE86jUG5stKApaQU8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=T9XESszoLo2bkOi87DCGsc0IBEanLft2t92W3tDiJG0yY9cAtRyU0X3Ae6Q6R6Ngx
+         olxppAulMvPoIPc3xtq8tXLvJfLBpX/+rwr4b2QchwTLQ8vfXwOU8ICABm1C/OoeT+
+         u0bFk0Uumgc7w+DVlKOZDZmbIstgasezycb7/oG0HIb+Q+frPVx4rx7eRklipVsNF1
+         e+ZhBY44dQuHk9FlhksrIj/cPxp+jFYTilL0xVY8FXlKbak24fg+yIvtDc+Kqh9NW6
+         2DBxWNmkLn7fsgl3z3shlBmTLUjz24Tg5gj2ECenN01LV0kPYE+piObicDAtUMcOPT
+         kulyT/YLIJSFg==
+Date:   Thu, 24 Aug 2023 11:56:38 +0200
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Guenter Roeck <linux@roeck-us.net>,
+        kernel test robot <yujie.liu@intel.com>,
+        kunit-dev@googlegroups.com
+Subject: Re: [PATCH 0/2] clk: kunit: Fix the lockdep warnings
+Message-ID: <62acjjvghvezxhg5u25f6kg53c6qhbcaee4ra5muyg5rmrokis@yntvznfi5hix>
+References: <20230721-clk-fix-kunit-lockdep-v1-0-32cdba4c8fc1@kernel.org>
+ <088cc246369820d5a426bc8823c85c8e.sboyd@kernel.org>
+ <6534e4c349253da8ee467ffeda8221ed.sboyd@kernel.org>
+ <krg4m5nckoaunsqounzehm4oyubblticfifgvpxrnbf5xf65xq@ignx6g2eqtev>
+ <981e3c291fefcb8234219550e012bbad.sboyd@kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="bndqdpalpffkyi5m"
+Content-Disposition: inline
+In-Reply-To: <981e3c291fefcb8234219550e012bbad.sboyd@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Biju,
 
-On Thu, Aug 24, 2023 at 11:48 AM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> > Subject: Re: [PATCH v4 3/4] clk: vc3: Fix output clock mapping
-> > On Thu, Aug 24, 2023 at 11:20 AM Biju Das <biju.das.jz@bp.renesas.com>
-> > wrote:
-> > > > Subject: Re: [PATCH v4 3/4] clk: vc3: Fix output clock mapping On
-> > > > Thu, Aug 24, 2023 at 10:25 AM Biju Das <biju.das.jz@bp.renesas.com>
-> > > > wrote:
-> > > > > According to Table 3. ("Output Source") in the 5P35023 datasheet,
-> > > > > the output clock mapping should be 0=REF, 1=SE1, 2=SE2, 3=SE3,
-> > > > > 4=DIFF1, 5=DIFF2. But the code uses inverse. Fix this mapping issue.
-> > > > >
-> > > > > Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > > > > Fixes: 6e9aff555db7 ("clk: Add support for versa3 clock driver")
-> > > > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> > > > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > > >
-> > > > This order should be documented in the DT bindings, too.
-> > >
-> > > Ok, will update the mapping in bindings like below.
-> > >
-> > > +  assigned-clocks:
-> > > +    items:
-> > > +      - description: Link clock generator.
-> > > +      - description: Output clock index. The index is mapped to the
-> > clock
-> > > +          output in the hardware manual as follows
-> > > +          0 - REF, 1 - SE1, 2 - SE2, 3 - SE3, 4 - DIFF1, 5 - DIFF2.
-> > > +
-> >
-> > There is no need to document assigned-clocks.
-> > The clock indices documentation belongs to the #clock-cells property.
+--bndqdpalpffkyi5m
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Stephen,
+
+On Wed, Aug 23, 2023 at 12:50:46PM -0700, Stephen Boyd wrote:
+> Quoting Maxime Ripard (2023-08-21 04:16:12)
+> > Hi Stephen,
+> >=20
+> > On Wed, Aug 09, 2023 at 06:37:30PM -0700, Stephen Boyd wrote:
+> > > Quoting Stephen Boyd (2023-08-09 16:21:50)
+> > > > +kunit-dev
+> > > >=20
+> > > > Quoting Maxime Ripard (2023-07-21 00:09:31)
+> > > > > Hi,
+> > > > >=20
+> > > > > Here's a small series to address the lockdep warning we have when
+> > > > > running the clk kunit tests with lockdep enabled.
+> > > > >=20
+> > > > > For the record, it can be tested with:
+> > > > >=20
+> > > > > $ ./tools/testing/kunit/kunit.py run \
+> > > > >     --kunitconfig=3Ddrivers/clk \
+> > > > >     --cross_compile aarch64-linux-gnu- --arch arm64 \
+> > > > >     --kconfig_add CONFIG_DEBUG_KERNEL=3Dy \
+> > > > >     --kconfig_add CONFIG_PROVE_LOCKING=3Dy
+> > > > >=20
+> > > > > Let me know what you think,
+> > > >=20
+> > > > Thanks for doing this. I want to roll these helpers into the clk_ku=
+nit.c
+> > > > file that I had created for some other clk tests[1]. That's mostly
+> > > > because clk.c is already super long and adding kunit code there mak=
+es
+> > > > that problem worse. I'll try to take that patch out of the rest of =
+the
+> > > > series and then add this series on top and resend.
+> > > >=20
+> > > > I don't know what to do about the case where CONFIG_KUNIT=3Dm thoug=
+h. We
+> > > > have to export clk_prepare_lock/unlock()? I really don't want to do=
+ that
+> > > > even if kunit is enabled (see EXPORT_SYMBOL_IF_KUNIT). Maybe if the=
+re
+> > > > was a GPL version of that, so proprietary modules can't get at kern=
+el
+> > > > internals on kunit enabled kernels.
+> > > >=20
+> > > > But I also like the approach taken here of adding a small stub arou=
+nd
+> > > > the call to make sure a test is running. Maybe I'll make a kunit
+> > > > namespaced exported gpl symbol that bails if a test isn't running a=
+nd
+> > > > calls the clk_prepare_lock/unlock functions inside clk.c and then m=
+ove
+> > > > the rest of the code to clk_kunit.c to get something more strict.
+> > > >=20
+> > >=20
+> > > What if we don't try to do any wrapper or export symbols and test
+> > > __clk_determine_rate() how it is called from the clk framework? The
+> > > downside is the code is not as simple because we have to check things
+> > > from within the clk_ops::determine_rate(), but the upside is that we =
+can
+> > > avoid exporting internal clk APIs or wrap them so certain preconditio=
+ns
+> > > are met like requiring them to be called from within a clk_op.
+> >=20
+> > The main reason for that test was linked to commit 262ca38f4b6e ("clk:
+> > Stop forwarding clk_rate_requests to the parent"). Prior to it, if a
+> > clock had CLK_SET_RATE_PARENT, we could end up with its parent's parent
+> > hw struct and rate in best_parent_*.
+> >=20
+> > So that test was mostly about making sure that __clk_determine_rate will
+> > properly set the best_parent fields to match the clock's parent.
+> >=20
+> > If we do a proper clock that uses __clk_determine_rate, we lose the
+> > ability to check the content of the clk_rate_request returned by
+> > __clk_determine_rate. It's up to you to tell whether it's a bad thing or
+> > not :)
+>=20
+> I'm a little confused here. Was the test trying to check the changed
+> lines in clk_core_round_rate_nolock() that were made in commit
+> 262ca38f4b6e under the CLK_SET_RATE_PARENT condition?
+
+That's what I was trying to test, yeah. Not necessarily this function in
+particular (there's several affected), but at least we would get
+something sane in a common case.
+
+> From what I can tell that doesn't get tested here.
+>=20
+> Instead, the test calls __clk_determine_rate() that calls
+> clk_core_round_rate_nolock() which falls into the clk_core_can_round()
+> condition because the hw has clk_dummy_single_parent_ops which has
+> .determine_rate op set to __clk_mux_determine_rate_closest(). Once we
+> find that the clk can round, we call __clk_mux_determine_rate_closest().
+
+clk_mux_determine_rate_flags was also affected by the same issue.
+
+> This patch still calls __clk_mux_determine_rate_closest() like
+> __clk_determine_rate() was doing in the test, and checks that the
+> request structure has the expected parent in the req->best_parent_hw.
+>=20
+> If we wanted to test the changed lines in clk_core_round_rate_nolock()
+> we should have called __clk_determine_rate() on a clk_hw that didn't
+> have a .determine_rate or .round_rate clk_op. Then it would have fallen
+> into the if (core->flags & CLK_SET_RATE_PARENT) condition in
+> clk_core_round_rate_nolock() and made sure that the request structure
+> returned was properly forwarded to the parent.
 >
-> OK, I will update the main description as below
->
-> --- a/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml
-> +++ b/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml
-> @@ -25,6 +25,9 @@ description: |
->    boots. Any configuration not supported by the common clock framework
->    must be done via the full register map, including optimized settings.
->
-> +  The index in the assigned-clocks is mapped to the output clock as below
-> +  0 - REF, 1 - SE1, 2 - SE2, 3 - SE3, 4 - DIFF1, 5 - DIFF2.
-> +
->    Link to datasheet:
+> We can still do that by making a child of the leaf, set clk_ops on that
+> to be this new determine_rate clk op that calls to the parent (the leaf
+> today), and make that leaf clk not have any determine_rate clk_op. Then
+> we will fall into the CLK_SET_RATE_PARENT condition and can make sure
+> the request structure returned points at the parent instead of the mux.
 
-Please add this to the #clocks-cells property instead.
+But you're right clk_core_round_rate_nolock() wasn't properly tested. I
+guess, if we find it worth it, we should add a test for that one too?
 
-Gr{oetje,eeting}s,
+clk_mux_determine_rate_flags with multiple parents and
+CLK_SET_RATE_PARENT was also affected and fixed in the commit mentioned
+above.
 
-                        Geert
+Maxime
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+--bndqdpalpffkyi5m
+Content-Type: application/pgp-signature; name="signature.asc"
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZOcpVgAKCRDj7w1vZxhR
+xe2tAP4sO1fRwk9HD3riMEIBUXzb5NL14nsmVupsFkt0r7i85AD9HYpRp15vQkk9
+HA78nl7n2yMabQeBU7ncU6ZhmuU0nA8=
+=fxA0
+-----END PGP SIGNATURE-----
+
+--bndqdpalpffkyi5m--
