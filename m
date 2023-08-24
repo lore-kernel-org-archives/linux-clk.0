@@ -2,88 +2,87 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB00BC83003
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Aug 2023 10:48:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EF93C6FA8F
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Aug 2023 10:49:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229885AbjHXKs0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Aug 2023 06:48:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41090 "EHLO
+        id S235917AbjHXKtA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Aug 2023 06:49:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237177AbjHXKsV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Aug 2023 06:48:21 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9DCE010DA;
-        Thu, 24 Aug 2023 03:48:18 -0700 (PDT)
+        with ESMTP id S234499AbjHXKs2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Aug 2023 06:48:28 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 40FCB10DA;
+        Thu, 24 Aug 2023 03:48:26 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="6.01,195,1684767600"; 
-   d="scan'208";a="173833526"
+   d="scan'208";a="177538150"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 24 Aug 2023 19:48:17 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 24 Aug 2023 19:48:25 +0900
 Received: from localhost.localdomain (unknown [10.226.93.115])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 3768F400721C;
-        Thu, 24 Aug 2023 19:48:13 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 2E0BF400721C;
+        Thu, 24 Aug 2023 19:48:22 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>, linux-clk@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v5 0/4] Fix Versa3 clock mapping
-Date:   Thu, 24 Aug 2023 11:48:08 +0100
-Message-Id: <20230824104812.147775-1-biju.das.jz@bp.renesas.com>
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Julia Lawall <julia.lawall@inria.fr>
+Subject: [PATCH v5 2/4] clk: vc3: Fix 64 by 64 division
+Date:   Thu, 24 Aug 2023 11:48:10 +0100
+Message-Id: <20230824104812.147775-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230824104812.147775-1-biju.das.jz@bp.renesas.com>
+References: <20230824104812.147775-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-According to Table 3. ("Output Source") in the 5P35023 datasheet,
-the output clock mapping should be 0=REF, 1=SE1, 2=SE2, 3=SE3,
-4=DIFF1, 5=DIFF2. But the code uses inverse.
+Fix the below cocci warnings by replacing do_div()->div64_ul() and
+bound the result with a max value of U16_MAX.
 
-This patch series aims to document clock-output-names in bindings and
-fix the mapping in driver.
+cocci warnings:
+	drivers/clk/clk-versaclock3.c:404:2-8: WARNING: do_div() does a
+	64-by-32 division, please consider using div64_ul instead.
 
-Also added a fix for 64 by 64 division.
-
+Reported-by: Julia Lawall <julia.lawall@inria.fr>
+Closes: https://lore.kernel.org/r/202307270841.yr5HxYIl-lkp@intel.com/
+Fixes: 6e9aff555db7 ("clk: Add support for versa3 clock driver")
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
 v4->v5:
- * Added description for #clock-cells property for clock mapping.
- * Updated commit header and description to reflect this change.
- * Dropped fixes tag.
- * Retained Ack tag from Conor and Krzysztof as it is trivial change.
+ * No change.
 v3->v4:
- * Dropped clock-output-names as there is no validation for it and people
-   can get it wrong.
- * Updated commit header, description and example to reflect this change
- * Retained Ack tag from Conor and Krzysztof as it is trivial change.
  * Used clamped value for rate calculation in vc3_pll_round_rate().
 v2->v3:
- * Dropped dts patch and added fix for 64 byte division to this patch
-   series.
- * Added Rb tag from Geert for patch#3
- * Added a patch to make vc3_clk_mux enum values depend on vc3_clk enum
-   values.
+ * Added to this patch series.
 v1->v2:
- * Updated binding commit description to make it clear it fixes
-   "assigned-clock-rates" in the example based on 5P35023 datasheet.
+ * Added fixes tag.
+---
+ drivers/clk/clk-versaclock3.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Biju Das (4):
-  dt-bindings: clock: versaclock3: Add description for #clock-cells
-    property
-  clk: vc3: Fix 64 by 64 division
-  clk: vc3: Fix output clock mapping
-  clk: vc3: Make vc3_clk_mux enum values based on vc3_clk enum values
-
- .../bindings/clock/renesas,5p35023.yaml       | 11 ++-
- drivers/clk/clk-versaclock3.c                 | 81 +++++++++----------
- 2 files changed, 47 insertions(+), 45 deletions(-)
-
+diff --git a/drivers/clk/clk-versaclock3.c b/drivers/clk/clk-versaclock3.c
+index 7ab2447bd203..b1a94db1f3c9 100644
+--- a/drivers/clk/clk-versaclock3.c
++++ b/drivers/clk/clk-versaclock3.c
+@@ -401,11 +401,10 @@ static long vc3_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+ 		/* Determine best fractional part, which is 16 bit wide */
+ 		div_frc = rate % *parent_rate;
+ 		div_frc *= BIT(16) - 1;
+-		do_div(div_frc, *parent_rate);
+ 
+-		vc3->div_frc = (u32)div_frc;
++		vc3->div_frc = min_t(u64, div64_ul(div_frc, *parent_rate), U16_MAX);
+ 		rate = (*parent_rate *
+-			(vc3->div_int * VC3_2_POW_16 + div_frc) / VC3_2_POW_16);
++			(vc3->div_int * VC3_2_POW_16 + vc3->div_frc) / VC3_2_POW_16);
+ 	} else {
+ 		rate = *parent_rate * vc3->div_int;
+ 	}
 -- 
 2.25.1
 
