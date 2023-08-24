@@ -2,97 +2,145 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B677C6FA8F
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Aug 2023 11:33:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DA9DC27C40
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Aug 2023 14:26:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240997AbjHXLdV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Aug 2023 07:33:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52046 "EHLO
+        id S241591AbjHXO0C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Aug 2023 10:26:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240993AbjHXLc6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Aug 2023 07:32:58 -0400
-Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 794471700
-        for <linux-clk@vger.kernel.org>; Thu, 24 Aug 2023 04:32:56 -0700 (PDT)
-Received: by mail-yb1-xb2b.google.com with SMTP id 3f1490d57ef6-d35a9d7a5bdso6109845276.0
-        for <linux-clk@vger.kernel.org>; Thu, 24 Aug 2023 04:32:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1692876775; x=1693481575;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=rh32VvfI5MkyHqwl9PZI/qELeAQhhvR1x3Jaeolc9mM=;
-        b=wkj3UmKSMWiZfcUaifqnSMUa/8ve0lUQdivdDRinWio6U6CuuUln+AIFsT0bJDb7XS
-         qFmv0JfZDCTnKag1Rc53F+v6A8A5tfAIP2V0eM1xPgJd0gClcCRYagUzLXvg/qeGLoCb
-         WcpJ2DlV73oJBbFwfOXIzyquXIMA/p6cURPVOLH2ZvE991gNTDEIFVjRJLQdjM4/4O8K
-         Ofs+UiRj1t298z6nSmT+LVTESpcpn2NMCkbly7IF2MOsR6LTMojh8WD4WSgK/c8jCCtI
-         LV7Zqado0VOWDtHuOHi8S+Bnl9gIzM0lPdVS9Gj2wA1APm9uKWBK6iNiJjjxLc5deHmR
-         qAqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692876775; x=1693481575;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rh32VvfI5MkyHqwl9PZI/qELeAQhhvR1x3Jaeolc9mM=;
-        b=bLbJROj3+q9LQh2qc9uPUTZnt54g/0Ij/a+NBBgxVl8+1d6IgPmqS3/LBJ+GO6hEmK
-         JwWZct66RJSGGUXdIu4+hHWEpBFMhDGVzOxE9+w6lqFdXKnsh6/DSSHHAUeyAITt3Aez
-         1kpo9pj68zys8YFVWR8nVbPSQ1bMv/r8jqrX87T7wkyGLTjIJ8GDwdPIAr6Ra071d39k
-         TUyJxk6ALXUDplqc9butEKTI1N9YpI/C/6K/31wdbOFwLQnUrBs272ezcdgBFwM1gcnq
-         MUPu5WvtocluNAAIGITYWNbPglTf0VF8kHyJTwPwCi/aLDmcmStwBCJ9fip7ca9BOXlE
-         v7jQ==
-X-Gm-Message-State: AOJu0Yyf+9NBORUtb3vrDQWnUqUyE/A9C71ue5eJaRfKBsEt9quqI8bd
-        iUhpnmqfwuUyOrvvuhJmgfjUn4B4iR7jgn6VnZF5wQ==
-X-Google-Smtp-Source: AGHT+IFrZ3KxdMcBDzpZmdn8uhtDr6jdMdipqQ5Lp34DLjAgvFiZAgLJzef2cvHpmKgcaBCIWzFUpKySloB7CLGBGCQ=
-X-Received: by 2002:a25:fc15:0:b0:d62:ba45:539f with SMTP id
- v21-20020a25fc15000000b00d62ba45539fmr16370282ybd.43.1692876775688; Thu, 24
- Aug 2023 04:32:55 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230612-topic-rcg2_ro-v1-0-e7d824aeb628@linaro.org>
- <20230612-topic-rcg2_ro-v1-2-e7d824aeb628@linaro.org> <20230613175626.aesimqz2alcqjtok@ripper>
- <e3f69e9d-7c23-d5cd-e203-f1e435ba063a@linaro.org> <0ca1922a-5d21-2c00-7514-6f90a9d2cb03@linaro.org>
- <e86e9efe-b377-4cbc-8603-f308ea65d2b9@linaro.org>
-In-Reply-To: <e86e9efe-b377-4cbc-8603-f308ea65d2b9@linaro.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Thu, 24 Aug 2023 14:32:44 +0300
-Message-ID: <CAA8EJpr1GBykvwSA5x9HTY5MuvFOdLFjJMkWWdV1qK8W0no0rg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: qcom: gcc-msm8996: Use read-only RCG ops for RPM
- bus clocks
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
+        with ESMTP id S241639AbjHXOZr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Aug 2023 10:25:47 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2F9C21FCE;
+        Thu, 24 Aug 2023 07:25:23 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 09C2DD75;
+        Thu, 24 Aug 2023 07:26:03 -0700 (PDT)
+Received: from pluto (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 07C9B3F762;
+        Thu, 24 Aug 2023 07:25:20 -0700 (PDT)
+Date:   Thu, 24 Aug 2023 15:25:21 +0100
+From:   Cristian Marussi <cristian.marussi@arm.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        sudeep.holla@arm.com, james.quinlan@broadcom.com,
+        f.fainelli@gmail.com, vincent.guittot@linaro.org,
+        etienne.carriere@linaro.org, peng.fan@oss.nxp.com,
+        chuck.cannon@nxp.com, souvik.chakravarty@arm.com,
+        nicola.mazzucato@arm.com,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Stephan Gerhold <stephan@gerhold.net>
-Content-Type: text/plain; charset="UTF-8"
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/6] firmware: arm_scmi: Simplify enable/disable Clock
+ operations
+Message-ID: <ZOdoP00tlAIRr9fN@pluto>
+References: <20230811161446.636253-1-cristian.marussi@arm.com>
+ <20230811161446.636253-2-cristian.marussi@arm.com>
+ <17bd83d833b59fd4f64eec433589fa55.sboyd@kernel.org>
+ <ZOXLNliOogkNyJYQ@e120937-lin>
+ <a14cdd584283d32a3642658aaed6c98c.sboyd@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a14cdd584283d32a3642658aaed6c98c.sboyd@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 24 Aug 2023 at 13:28, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
->
-> On 31.07.2023 13:01, Konrad Dybcio wrote:
-> > On 13.06.2023 19:54, Konrad Dybcio wrote:
-> >>
-> >>
-> >> On 13.06.2023 19:56, Bjorn Andersson wrote:
-> >>> On Mon, Jun 12, 2023 at 11:22:48AM +0200, Konrad Dybcio wrote:
-> >>>> The config/periph/system NoC clocks are wholly controlled by the
-> >>>> RPM firmware and Linux should never ever alter their configuration.
-> >>>>
-> >>>
-> >>> Does Linux need to know about them?
-> >> Not really, but it allows us to get rates of their children.
-> >>
-> >> We can get rid of them if one can argue debugcc is enough. Unless
-> >> we need clk_get_rate for some reason.
-> >>
-> > Any opinions?
-> So, do we drop them?
+On Wed, Aug 23, 2023 at 11:01:17AM -0700, Stephen Boyd wrote:
+> Quoting Cristian Marussi (2023-08-23 02:02:46)
+> > On Tue, Aug 22, 2023 at 01:17:15PM -0700, Stephen Boyd wrote:
+> > > Quoting Cristian Marussi (2023-08-11 09:14:41)
+> > > > Add a param to Clock enable/disable operation to ask for atomic operation
+> > > > and remove _atomic version of such operations.
+> > > 
+> > 
+> > Hi,
+> 
+> Yo
+> 
+> > 
+> > > Why?
+> > > 
+> > 
+> > :D, given that the 2 flavours of SCMI enable/disable ops (and the upcoming
+> > state_get) just differ in their operating mode (atomic or not) and the
+> > Clock framework in turn wrap such calls into 4 related and explicitly
+> > named clk_ops (scmi_clock_enable/scmi_clock_atomic_enable etc) that hint
+> > at what is being done, seemed to me reasonable to reduce the churn and
+> > remove a bit of code wrappers in favour of a param.
+> 
+> Please add these extra details to the commit text about why we're making
+> the change.
+> 
+Sure I'll do.
 
-My opinion would be to drop the NoC clocks unless there is any extra
-value (like child clocks).
+> > 
+> > > > 
+> > > > No functional change.
+> > > > 
+> > > > CC: Michael Turquette <mturquette@baylibre.com>
+> > > > CC: Stephen Boyd <sboyd@kernel.org>
+> > > > CC: linux-clk@vger.kernel.org
+> > > > Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+> > > > ---
+> > > >  drivers/clk/clk-scmi.c            |  8 ++++----
+> > > >  drivers/firmware/arm_scmi/clock.c | 24 ++++++------------------
+> > > >  include/linux/scmi_protocol.h     |  9 ++++-----
+> > > >  3 files changed, 14 insertions(+), 27 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
+> > > > index 2c7a830ce308..ff003083e592 100644
+> > > > --- a/drivers/clk/clk-scmi.c
+> > > > +++ b/drivers/clk/clk-scmi.c
+> > > > @@ -78,28 +78,28 @@ static int scmi_clk_enable(struct clk_hw *hw)
+> > > >  {
+> > > >         struct scmi_clk *clk = to_scmi_clk(hw);
+> > > >  
+> > > > -       return scmi_proto_clk_ops->enable(clk->ph, clk->id);
+> > > > +       return scmi_proto_clk_ops->enable(clk->ph, clk->id, false);
+> > > >  }
+> > > >  
+> > > >  static void scmi_clk_disable(struct clk_hw *hw)
+> > > >  {
+> > > >         struct scmi_clk *clk = to_scmi_clk(hw);
+> > > >  
+> > > > -       scmi_proto_clk_ops->disable(clk->ph, clk->id);
+> > > > +       scmi_proto_clk_ops->disable(clk->ph, clk->id, false);
+> > > 
+> > > I enjoyed how it was before because I don't know what 'false' means
+> > > without looking at the ops now.
+> > > 
+> > 
+> > Yes indeed, I can drop this and rework if you prefer to maintain the old
+> > API calls, but this would mean that whenever we'll add new atomic
+> > flavour to some new SCMI clk operations we'll have to add 2 ops instead
+> > of a parametrized one...this is what would happen also in this series
+> > with state_get (and what really triggered this refactor)
+> > 
+> > (and please consider that on the SCMI side, for testing purposes, I would
+> > prefer to expose always both atomic and non-atomic flavours even if NOT
+> > both actively used by the Clock framework...like state_get() that can only
+> > be atomic for Clock frmwk...)
+> > 
+> 
+> Perhaps we need a local variable to make it more readable.
+> 
+> 	static int scmi_clk_enable(struct clk_hw *hw)
+> 	{
+> 	       bool can_sleep = false;
+> 	       struct scmi_clk *clk = to_scmi_clk(hw);
+> 
+> 	       return scmi_proto_clk_ops->enable(clk->ph, clk->id, can_sleep);
+> 	}
+> 
+> This let's the reader quickly understand what the parameter means. I'm
+> OK with adding the function parameter, but a plain 'true' or 'false'
+> doesn't help with clarity.
 
--- 
-With best wishes
-Dmitry
+Thanks for the suggestion, it would help definitely making it more
+readable, maybe a local define or enum could make it without even
+putting anything on the stack.
+
+Thanks,
+Cristian
