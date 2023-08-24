@@ -2,49 +2,49 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C90C1C3DA6F
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Aug 2023 05:25:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C335C71153
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Aug 2023 05:27:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239792AbjHXFZX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Aug 2023 01:25:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35782 "EHLO
+        id S239820AbjHXF1D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Aug 2023 01:27:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239787AbjHXFZL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Aug 2023 01:25:11 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 356AA198;
-        Wed, 23 Aug 2023 22:25:09 -0700 (PDT)
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37O52iuX009529;
-        Thu, 24 Aug 2023 05:24:52 GMT
+        with ESMTP id S239794AbjHXF0o (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Aug 2023 01:26:44 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A25DA198;
+        Wed, 23 Aug 2023 22:26:42 -0700 (PDT)
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37O5DI8N026426;
+        Thu, 24 Aug 2023 05:26:06 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
  mime-version : subject : to : cc : references : from : in-reply-to :
  content-type : content-transfer-encoding; s=qcppdkim1;
- bh=kmKwr01EpasB+ADLvTx3XipsclwcdrknzBWShzrD9Zk=;
- b=jdE0/k++x3t83vuoFzNfhCms8tzDxHxR77PSRhsc0hm7ih83U4Xuq0f7p24ag3gVB6x1
- W1sYvH/K/Ms2cZluI+8qjYBSBhAfciXdSE+6O6WrUnqld+z0eeFs/1aATtK98NJ2PGPq
- gOhvfVpkuRjTk+xchb4DA3AeQDc3IGbrgp7FCTetsy5HqpWQvi3IsOMMYoHmgtQOwstG
- 7BjoU9zdDvV8yjvuAONZ+7P2xQGbhV1X16eaxFJfxz0MlKPtc9T7R4nawTePLT3RyaR3
- wqyjdkRb+8Ez568EnIBDpsWd4BQsuieIfKaneDGuSGeZxORObK0STZfYl5oj72b7NH/B rQ== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3snkumsj0d-1
+ bh=bOgs1mB1zlTdBpD4rupOhWFVyHKEo2JmyL+UiN2aZes=;
+ b=TQUoOIZ5MfHqPdB+DNAWASs+1cQmMhkpXO0mvZgV9cl67KnVxqz2mitCEt6IHQ05M5ID
+ yAOUVo/yMxtqEVC2EBUPN9oFoQohgWJK001tGSX6bewIsSPyikcSyLs4Q0UWziP8fdEb
+ fpzJCB94Lxfpz2YhRYQCjJBzoWxePqZzwEPOjCtB5NTj+tjVaSqGc9gO8CJodU/oGcSn
+ 3l2mmlEzuD7H+xpi49Fms70mxRL20+z/PmqgpNsO+IsSfN/kkJwxE4fDSgD4914PxVKy
+ Spgr1/6VPumBXpsgyICyIEJORcT5figo1LtnjFJmq6WCjgVyTchK80jqkPC87KyaDGqV jQ== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3snxtar7fk-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 24 Aug 2023 05:24:52 +0000
+        Thu, 24 Aug 2023 05:26:06 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 37O5OnVw025425
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 37O5Q5fw012926
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 24 Aug 2023 05:24:49 GMT
+        Thu, 24 Aug 2023 05:26:05 GMT
 Received: from [10.216.48.216] (10.80.80.8) by nalasex01a.na.qualcomm.com
  (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.36; Wed, 23 Aug
- 2023 22:24:28 -0700
-Message-ID: <b6d0664c-02b8-5641-c9af-218cd7bd0898@quicinc.com>
-Date:   Thu, 24 Aug 2023 10:54:25 +0530
+ 2023 22:25:54 -0700
+Message-ID: <e07948d3-8766-b932-2eb4-7dc90b894f91@quicinc.com>
+Date:   Thu, 24 Aug 2023 10:55:51 +0530
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.13.0
-Subject: Re: [PATCH 2/6] clk: qcom: gcc-ipq9574: Mark nssnoc clocks as
- critical
+Subject: Re: [PATCH 6/6] arm64: defconfig: Build NSS Clock Controller driver
+ for IPQ9574
 Content-Language: en-US
 To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         <agross@kernel.org>, <andersson@kernel.org>,
@@ -61,85 +61,61 @@ To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>
 CC:     <quic_saahtoma@quicinc.com>
 References: <20230711093529.18355-1-quic_devipriy@quicinc.com>
- <20230711093529.18355-3-quic_devipriy@quicinc.com>
- <8433cbfa-52c5-90c5-1e4c-0b13236d2153@linaro.org>
+ <20230711093529.18355-7-quic_devipriy@quicinc.com>
+ <f234891f-c508-20de-6d6b-c7b37f6adb2b@linaro.org>
 From:   Devi Priya <quic_devipriy@quicinc.com>
-In-Reply-To: <8433cbfa-52c5-90c5-1e4c-0b13236d2153@linaro.org>
+In-Reply-To: <f234891f-c508-20de-6d6b-c7b37f6adb2b@linaro.org>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: jiROBs6DdN3kCx_eanj1-sVr18Hdaf0n
-X-Proofpoint-ORIG-GUID: jiROBs6DdN3kCx_eanj1-sVr18Hdaf0n
+X-Proofpoint-ORIG-GUID: z3CMQHD-4r6G21l9nMmw1F8IcRfDtqOs
+X-Proofpoint-GUID: z3CMQHD-4r6G21l9nMmw1F8IcRfDtqOs
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
  definitions=2023-08-24_02,2023-08-22_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=972
- spamscore=0 suspectscore=0 adultscore=0 clxscore=1015 priorityscore=1501
- impostorscore=0 lowpriorityscore=0 phishscore=0 mlxscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2308100000
- definitions=main-2308240042
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ priorityscore=1501 lowpriorityscore=0 suspectscore=0 bulkscore=0
+ impostorscore=0 clxscore=1015 malwarescore=0 mlxscore=0 spamscore=0
+ mlxlogscore=983 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2308100000 definitions=main-2308240043
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
 
-On 7/11/2023 3:55 PM, Dmitry Baryshkov wrote:
+On 7/11/2023 4:18 PM, Dmitry Baryshkov wrote:
 > On 11/07/2023 12:35, Devi Priya wrote:
->> Mark nssnoc clocks as critical as they are to be turned on to access
->> nss port tx/rx clocks.
-> 
-> Can you please clarify, if these are turned off, one can not access 
-> nsscc clocks? Then the nsscc should be the consumer of these clocks 
-> (instead of declaring them as critical). May be using pm_clk for nsscc 
-> will work. If not, you'll have to do that manually from 
-> runtime_suspend/runtime_resume callbacks.
-
-Sure, will use pm_clk for nsscc in V2
-
-Thanks,
-Devi Priya
-> 
+>> Build Qualcomm IPQ9574 NSSCC driver.
 >>
 >> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
 >> ---
->>   drivers/clk/qcom/gcc-ipq9574.c | 6 +++---
->>   1 file changed, 3 insertions(+), 3 deletions(-)
+>>   arch/arm64/configs/defconfig | 1 +
+>>   1 file changed, 1 insertion(+)
 >>
->> diff --git a/drivers/clk/qcom/gcc-ipq9574.c 
->> b/drivers/clk/qcom/gcc-ipq9574.c
->> index 6914f962c893..b68addc6f687 100644
->> --- a/drivers/clk/qcom/gcc-ipq9574.c
->> +++ b/drivers/clk/qcom/gcc-ipq9574.c
->> @@ -2166,7 +2166,7 @@ static struct clk_branch gcc_nssnoc_nsscc_clk = {
->>                   &pcnoc_bfdcd_clk_src.clkr.hw
->>               },
->>               .num_parents = 1,
->> -            .flags = CLK_SET_RATE_PARENT,
->> +            .flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
->>               .ops = &clk_branch2_ops,
->>           },
->>       },
->> @@ -2565,7 +2565,7 @@ static struct clk_branch gcc_nssnoc_snoc_clk = {
->>                   &system_noc_bfdcd_clk_src.clkr.hw
->>               },
->>               .num_parents = 1,
->> -            .flags = CLK_SET_RATE_PARENT,
->> +            .flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
->>               .ops = &clk_branch2_ops,
->>           },
->>       },
->> @@ -2582,7 +2582,7 @@ static struct clk_branch gcc_nssnoc_snoc_1_clk = {
->>                   &system_noc_bfdcd_clk_src.clkr.hw
->>               },
->>               .num_parents = 1,
->> -            .flags = CLK_SET_RATE_PARENT,
->> +            .flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
->>               .ops = &clk_branch2_ops,
->>           },
->>       },
+>> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+>> index 9ce0f1554f4d..d10083da2401 100644
+>> --- a/arch/arm64/configs/defconfig
+>> +++ b/arch/arm64/configs/defconfig
+>> @@ -1180,6 +1180,7 @@ CONFIG_IPQ_GCC_5332=y
+>>   CONFIG_IPQ_GCC_6018=y
+>>   CONFIG_IPQ_GCC_8074=y
+>>   CONFIG_IPQ_GCC_9574=y
+>> +CONFIG_IPQ_NSSCC_9574=y
+> 
+> Can it work if it is built as a module? This defconfig is used on all 
+> variety of platforms, including even non-Qualcomm ones. We are trying to 
+> limit the built-in drivers list to the crucial-only ones.
+> 
+Sure, got it
+
+Thanks,
+Devi priya
+>>   CONFIG_MSM_GCC_8916=y
+>>   CONFIG_MSM_GCC_8994=y
+>>   CONFIG_MSM_MMCC_8994=m
 > 
