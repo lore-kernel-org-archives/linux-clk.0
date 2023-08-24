@@ -2,144 +2,119 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C934C83003
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Aug 2023 07:00:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3979C27C40
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Aug 2023 07:05:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235535AbjHXHAN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Aug 2023 03:00:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35950 "EHLO
+        id S240271AbjHXHFE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Aug 2023 03:05:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237025AbjHXG7t (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Aug 2023 02:59:49 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBB63E45
-        for <linux-clk@vger.kernel.org>; Wed, 23 Aug 2023 23:59:45 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id ffacd0b85a97d-31c79850df5so156526f8f.1
-        for <linux-clk@vger.kernel.org>; Wed, 23 Aug 2023 23:59:45 -0700 (PDT)
+        with ESMTP id S232346AbjHXHEe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Aug 2023 03:04:34 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4439110F
+        for <linux-clk@vger.kernel.org>; Thu, 24 Aug 2023 00:04:31 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-99d937b83efso830530366b.3
+        for <linux-clk@vger.kernel.org>; Thu, 24 Aug 2023 00:04:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1692860384; x=1693465184;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+xVvlCGex8MTTZYxV9+n6jIh21hrXPC9JzY4cLwH6KA=;
-        b=JA/SlRiSGXLmyf4uxdL8Ezug//3djjbWkWBwFLDDwMEZb8sfx3E/tGZNzckZiddzdY
-         vzZdao/SmZppv1Jwr8TYyz+1EEMuiXtaqhPJ7UsLHabhBVyNQllseyx+wcxHnck5PYfx
-         3hjWgKX243esYSmP+UJ9iPL8O54M2Y1okgV06RTexXMWQJin22ja0auiPFgIJxZxJuaI
-         0qIi2d3hAdKgKRPFYf5Kr6t0K2llnb2ccWk78c7jf4OX2MR20VO/5sXnz2HOzK16yds/
-         PV7MZCBC2Ro5kwyuyRG7lb7ghiiAWapS+FketmqQpxWVxUlSyzuqj3dxhlKM2K9It+vQ
-         2oRQ==
+        d=linaro.org; s=google; t=1692860670; x=1693465470;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=epDel6TpPlgTi6sKB5gJ0l72hGnrt57/HnyL5WYVXDQ=;
+        b=KunHaC32uuSn1ziqE8KkBJSfNk48n7Be1u2t8yEB5C4r7BpE9/tCow/xRQFLAg23Qj
+         3b7kuORbbrgXKbEp3/NxQgls1lhJoLTMJJGw2d+A6jWaSDmtXAZjeAoC2IrAUDwIdaP7
+         bT9MuOHBlHcWKQAW9sxKJMK7Hj1xw0+adGhJQH19cG/ubssUL2yPV0Kz1MLUOMvH0qvP
+         jjQA0UmK8TnGH4whqUywmLDPI5SvJC2J0nvZmS++A0GcxmP9DM5/WYH7/pDAuLkEUs3X
+         Ys9/1jvAiN1e5NN+EtU+tiDraomqHeBI0nUnAjJ5Q78PPDDgiJo7thwmKxiZuwXmfkeS
+         zO/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692860384; x=1693465184;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+xVvlCGex8MTTZYxV9+n6jIh21hrXPC9JzY4cLwH6KA=;
-        b=BGnUay9FVEcZVcJT34HQsE9pHFjeRbCwwkVf6Fy7nidZKorDfJUNg2HgyeLivWPoCG
-         043ww3Hse1Olbbt838qVujEuQ8p/8obulhuhXMyZq1K2Jjqxhh2GYZEDaszrijHuKYf0
-         NMhyMieZmPbT/J0OSa/iH8RvIP7/+vYk1T00t2+0vq1jqwHabPX614dZu94h0wjw7Ydk
-         BNGw7IX4LCcJAyUqCgC+MAu55Iuh1rXcGxDmvaBmcNOVaY06Jy897U+nhttABW8CTVxD
-         rpKsl9ObfkzUEZ7tZfCJhjlf2ihpSceABBSVL2oBk651mffsqDSx9hRhK5W+r2WmhOFQ
-         Vzyg==
-X-Gm-Message-State: AOJu0Yyjt6zts5Ti2vIvwFWmt3H6JJpcPYFr8ds3/G09YFaI9WJZE6lP
-        yvZx/mKQqgBrv8D66EXTMGknhQ==
-X-Google-Smtp-Source: AGHT+IHV5h/gWiGqWISIXTEBzuyi+BE2xkRY/zgFh1SxLekzv+sqKnQhfmfoEMGVAG+tjnX0+xWpsg==
-X-Received: by 2002:adf:edca:0:b0:31a:d7fc:28f with SMTP id v10-20020adfedca000000b0031ad7fc028fmr12034332wro.19.1692860384103;
-        Wed, 23 Aug 2023 23:59:44 -0700 (PDT)
-Received: from localhost ([212.23.236.67])
-        by smtp.gmail.com with ESMTPSA id y17-20020adfe6d1000000b003176eab8868sm21246718wrm.82.2023.08.23.23.59.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Aug 2023 23:59:43 -0700 (PDT)
-Date:   Thu, 24 Aug 2023 08:59:42 +0200
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc:     Jakub Kicinski <kuba@kernel.org>,
-        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Milena Olech <milena.olech@intel.com>,
-        Michal Michalik <michal.michalik@intel.com>,
-        linux-arm-kernel@lists.infradead.org, poros@redhat.com,
-        mschmidt@redhat.com, netdev@vger.kernel.org,
-        linux-clk@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
-        intel-wired-lan@lists.osuosl.org
-Subject: Re: [PATCH net-next v6 0/9] Create common DPLL configuration API
-Message-ID: <ZOb/3qbGKS4+6Slu@nanopsycho>
-References: <20230823225242.817957-1-vadim.fedorenko@linux.dev>
+        d=1e100.net; s=20221208; t=1692860670; x=1693465470;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=epDel6TpPlgTi6sKB5gJ0l72hGnrt57/HnyL5WYVXDQ=;
+        b=gIOUMYAtdH/i+5D6SwaIoCEWZb7cRIoUVZn3+knwP+22goYSWA81UhSnFeXY2tA/8f
+         XRFG2VHkjq6dsRKSaWK3EgdsEyQXCKI/T70M1ojFC0lp4z55yb1o1qsh50WYSYPHywd2
+         TJ9NDKhbguNl6fOsnHJZZX0W3/FkumeZaNCgwCleGu/fvzaChqHdbz7rqeRTGt2wF46q
+         veS564BK3BDvStp8dMtPwl8fH06K16CXSsyjgyydPKmnQooy9qSocU54WvTaAf57WUS6
+         kSKQJdTI2JkHL6/9vRxJJxyv/g03LFNZGj3dYJ4v1LS/2BYzyoVWN9QvW76e4GC0vvgK
+         OKpw==
+X-Gm-Message-State: AOJu0YxU8ukPJ66Q485eGpee73NnIPmkwpFa5xQEYHH1lwNIhYcKqB2Z
+        OH4BKSI/ExKfQ9bs4aYJjVWy2Q==
+X-Google-Smtp-Source: AGHT+IE6R8i7XgIiAOlH2YmrMpDPdKnhhvHKTIFGgOMKQWjbC1Id3mCTDOtL8JrM7L+8mawHUqjSCg==
+X-Received: by 2002:a17:906:310d:b0:99b:ed53:5c12 with SMTP id 13-20020a170906310d00b0099bed535c12mr10628973ejx.17.1692860669780;
+        Thu, 24 Aug 2023 00:04:29 -0700 (PDT)
+Received: from [192.168.0.22] ([77.252.47.198])
+        by smtp.gmail.com with ESMTPSA id lz16-20020a170906fb1000b0099297782aa9sm10416058ejb.49.2023.08.24.00.04.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Aug 2023 00:04:29 -0700 (PDT)
+Message-ID: <9edcfc47-ed89-8074-6bde-d747ae73de25@linaro.org>
+Date:   Thu, 24 Aug 2023 09:04:28 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230823225242.817957-1-vadim.fedorenko@linux.dev>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Subject: Re: [PATCH 2/3] clk: twl: add clock driver for TWL6032
+Content-Language: en-US
+To:     Andreas Kemnade <andreas@kemnade.info>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     bcousson@baylibre.com, conor+dt@kernel.org,
+        devicetree@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, mturquette@baylibre.com,
+        robh+dt@kernel.org, tony@atomide.com
+References: <20230819134147.456060-1-andreas@kemnade.info>
+ <20230819134147.456060-3-andreas@kemnade.info>
+ <a65a7d976be4212ef71fe32c4ed2dacb.sboyd@kernel.org>
+ <20230823165159.108875d0@aktux>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230823165159.108875d0@aktux>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Thu, Aug 24, 2023 at 12:52:33AM CEST, vadim.fedorenko@linux.dev wrote:
->Implement common API for DPLL configuration and status reporting.
->The API utilises netlink interface as transport for commands and event
->notifications. This API aims to extend current pin configuration 
->provided by PTP subsystem and make it flexible and easy to cover
->complex configurations.
->
->Netlink interface is based on ynl spec, it allows use of in-kernel
->tools/net/ynl/cli.py application to control the interface with properly
->formated command and json attribute strings. Here are few command
->examples of how it works with `ice` driver on supported NIC:
->
->- dump dpll devices:
->$ sudo ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml \
->--dump device-get
->[{'clock-id': 4658613174691613800,
->  'id': 0,
->  'lock-status': 'locked-ho-acq',
->  'mode': 'automatic',
->  'mode-supported': ['automatic'],
->  'module-name': 'ice',
->  'type': 'eec'},
-> {'clock-id': 4658613174691613800,
->  'id': 1,
->  'lock-status': 'locked-ho-acq',
->  'mode': 'automatic',
->  'mode-supported': ['automatic'],
->  'module-name': 'ice',
->  'type': 'pps'}]
->
->- get single pin info:
->$ sudo ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml \
->--do pin-get --json '{"id":2}'
->{'board-label': 'C827_0-RCLKA',
-> 'clock-id': 4658613174691613800,
-> 'capabilities': 6,
-> 'frequency': 1953125,
-> 'id': 2,
-> 'module-name': 'ice',
-> 'parent-device': [{'direction': 'input',
->                    'parent-id': 0,
->                    'prio': 9,
->                    'state': 'disconnected'},
->                   {'direction': 'input',
->                    'parent-id': 1,
->                    'prio': 9,
->                    'state': 'disconnected'}],
-> 'type': 'mux'}
->
->- set pin's state on dpll:
->$ sudo ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml \
->--do pin-set --json '{"id":2, "parent-device":{"parent-id":1, "state":2}}'
->
->- set pin's prio on dpll:
->$ sudo ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml \
->--do pin-set --json '{"id":2, "parent-device":{"parent-id":1, "prio":4}}'
->
->- set pin's state on parent pin:
->$ sudo ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml \
->--do pin-set --json '{"id":13, "parent-pin":{"parent-id":2, "state":1}}'
->
->
->Changelog:
->
->v5 -> v6:
->- change dpll-caps to pin capabilities and adjust enum accordingly
->- remove dpll.h from netdevice.h
+On 23/08/2023 16:51, Andreas Kemnade wrote:
+> On Tue, 22 Aug 2023 15:34:59 -0700
+> Stephen Boyd <sboyd@kernel.org> wrote:
+> 
+>> Quoting Andreas Kemnade (2023-08-19 06:41:46)
+>>> diff --git a/drivers/clk/clk-twl.c b/drivers/clk/clk-twl.c
+>>> new file mode 100644
+>>> index 0000000000000..deb5742393bac
+>>> --- /dev/null
+>>> +++ b/drivers/clk/clk-twl.c
+> [...]
+>>> +
+>>> +static struct platform_driver twl_clks_driver = {
+>>> +       .driver = {
+>>> +               .name = "twl-clk",
+>>> +               .of_match_table = twl_clks_of_match,
+>>> +       },
+>>> +       .probe = twl_clks_probe,
+>>> +       .remove_new = twl_clks_remove,
+>>> +};
+>>> +
+>>> +module_platform_driver(twl_clks_driver);
+>>> +
+>>> +MODULE_DESCRIPTION("Clock driver for TWL Series Devices");
+>>> +MODULE_ALIAS("platform:twl-clk");  
+>>
+>> This alias is unnecessary?
+>>
+> The question is whether this driver should have a separate dt
+> node (and if a separate node, then one per clock as the clk-palmas
+> driver) or not. See Rob's review of the binding document.
+> So we have basically #clock-cells = <1>; in the twl parent
+> and a call to mfd_add_device() there in the former case and I guess
+> that alias is needed then.
+> 
 
-For the record, I'm fine with this version and my signed-offs stand.
+You should not need the alias in any of these cases. platform alias for
+platform driver means you have incomplete tables and use alias instead
+of tables. Preference is to use tables.
 
-Thanks!
+Best regards,
+Krzysztof
+
