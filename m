@@ -2,78 +2,82 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 899BCC7113B
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Aug 2023 07:31:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B69CCC88CB9
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Aug 2023 08:25:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229709AbjHXHbN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Aug 2023 03:31:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47484 "EHLO
+        id S233825AbjHXIZR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Aug 2023 04:25:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240395AbjHXHa4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Aug 2023 03:30:56 -0400
-Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C8131710
-        for <linux-clk@vger.kernel.org>; Thu, 24 Aug 2023 00:30:41 -0700 (PDT)
-Received: from dlp.unisoc.com ([10.29.3.86])
-        by SHSQR01.spreadtrum.com with ESMTP id 37O7UOaI040918;
-        Thu, 24 Aug 2023 15:30:24 +0800 (+08)
-        (envelope-from zhifeng.tang@unisoc.com)
-Received: from SHDLP.spreadtrum.com (shmbx04.spreadtrum.com [10.0.1.214])
-        by dlp.unisoc.com (SkyGuard) with ESMTPS id 4RWZRz3YcVz2Q1xTT;
-        Thu, 24 Aug 2023 15:27:59 +0800 (CST)
-Received: from xm9614pcu.spreadtrum.com (10.13.2.29) by shmbx04.spreadtrum.com
- (10.0.1.214) with Microsoft SMTP Server (TLS) id 15.0.1497.23; Thu, 24 Aug
- 2023 15:30:23 +0800
-From:   Zhifeng Tang <zhifeng.tang@unisoc.com>
+        with ESMTP id S232438AbjHXIZL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Aug 2023 04:25:11 -0400
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BA7E21711;
+        Thu, 24 Aug 2023 01:25:08 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="6.01,195,1684767600"; 
+   d="scan'208";a="173816674"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 24 Aug 2023 17:25:08 +0900
+Received: from localhost.localdomain (unknown [10.226.93.115])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 7E07F4010E05;
+        Thu, 24 Aug 2023 17:25:04 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Zhifeng Tang <zhifeng.tang@unisoc.com>,
-        Cixi Geng <cixi.geng1@unisoc.com>
-CC:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Zhifeng Tang <zhifeng.tang23@gmail.com>,
-        Wenming Wu <wenming.wu@unisoc.com>
-Subject: [PATCH V2] clk: sprd: Fix thm_parents incorrect configuration
-Date:   Thu, 24 Aug 2023 15:29:18 +0800
-Message-ID: <20230824072918.7805-1-zhifeng.tang@unisoc.com>
-X-Mailer: git-send-email 2.17.1
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v4 0/4] Fix Versa3 clock mapping
+Date:   Thu, 24 Aug 2023 09:24:57 +0100
+Message-Id: <20230824082501.87429-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.13.2.29]
-X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
- shmbx04.spreadtrum.com (10.0.1.214)
-X-MAIL: SHSQR01.spreadtrum.com 37O7UOaI040918
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The thm*_clk have two clock sources 32k and 250k,excluding 32m.
+According to Table 3. ("Output Source") in the 5P35023 datasheet,
+the output clock mapping should be 0=REF, 1=SE1, 2=SE2, 3=SE3,
+4=DIFF1, 5=DIFF2. But the code uses inverse.
 
-Fixes: af3bd36573e3 ("clk: sprd: Add clocks support for UMS512")
+This patch series aims to document clock-output-names in bindings and
+fix the mapping in driver.
 
----
-V2: add Fixes tag.
----
-Signed-off-by: Zhifeng Tang <zhifeng.tang@unisoc.com>
----
- drivers/clk/sprd/ums512-clk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Also added a fix for 64 by 64 division.
 
-diff --git a/drivers/clk/sprd/ums512-clk.c b/drivers/clk/sprd/ums512-clk.c
-index fc25bdd85e4e..f43bb10bd5ae 100644
---- a/drivers/clk/sprd/ums512-clk.c
-+++ b/drivers/clk/sprd/ums512-clk.c
-@@ -800,7 +800,7 @@ static SPRD_MUX_CLK_DATA(uart1_clk, "uart1-clk", uart_parents,
- 			 0x250, 0, 3, UMS512_MUX_FLAG);
- 
- static const struct clk_parent_data thm_parents[] = {
--	{ .fw_name = "ext-32m" },
-+	{ .fw_name = "ext-32k" },
- 	{ .hw = &clk_250k.hw  },
- };
- static SPRD_MUX_CLK_DATA(thm0_clk, "thm0-clk", thm_parents,
+v3->v4:
+ * Dropped clock-output-names as there is no validation for it and people
+   can get it wrong.
+ * Updated commit header, description and example to reflect this change
+ * Retained Ack tag from Conor and Krzysztof as it is trivial change.
+ * Used clamped value for rate calculation in vc3_pll_round_rate().
+v2->v3:
+ * Dropped dts patch and added fix for 64 byte division to this patch
+   series.
+ * Added Rb tag from Geert for patch#3
+ * Added a patch to make vc3_clk_mux enum values depend on vc3_clk enum
+   values.
+v1->v2:
+ * Updated binding commit description to make it clear it fixes
+   "assigned-clock-rates" in the example based on 5P35023 datasheet.
+
+Biju Das (4):
+  dt-bindings: clock: versaclock3: Fix the assigned-clock-rates
+  clk: vc3: Fix 64 by 64 division
+  clk: vc3: Fix output clock mapping
+  clk: vc3: Make vc3_clk_mux enum values based on vc3_clk enum values
+
+ .../bindings/clock/renesas,5p35023.yaml       |  8 +-
+ drivers/clk/clk-versaclock3.c                 | 81 +++++++++----------
+ 2 files changed, 44 insertions(+), 45 deletions(-)
+
 -- 
-2.17.1
+2.25.1
 
