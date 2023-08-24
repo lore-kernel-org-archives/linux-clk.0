@@ -2,163 +2,144 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6380C7EE2C
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Aug 2023 05:27:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C934C83003
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Aug 2023 07:00:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239797AbjHXF1C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Aug 2023 01:27:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42610 "EHLO
+        id S235535AbjHXHAN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Aug 2023 03:00:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236085AbjHXF0d (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Aug 2023 01:26:33 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D584CD0;
-        Wed, 23 Aug 2023 22:26:31 -0700 (PDT)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37O2dY7A027342;
-        Thu, 24 Aug 2023 05:26:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=cR9r0HbqbixacVcNUJfujbEbOF2OUeDJHRF2a00IxU0=;
- b=I/292nJWrI7vtpLcA7HibzN5WXozIMOWCBhZzioZAXMHu7M4olI/DIi9XKtfsqlBZaf/
- IiobuYb85xVbYXc1wYxSag1uaurD0qCbNMN70zBVUHRo/1q1rIjmp5o3KVo+oxcwImfK
- b/uT/zxpPddUGF5HyRRGDrOmi+hyIpgtexd8ap3QNc+9QcziCdszGv2H7XU1Vuv4Rc/p
- SA7nYEDD80jK0A0rj8ZUy2t9l3cY7Hwpu98kSWb7JRTTz5/Cjn6csyDhRHkZF/fetcZ0
- 4ihxtkPfBD8TxtZyUqzpL3tqAz0Yh31JGjipdeBNiZIKD4QASan+J61J4f9Hy6erLTVj rQ== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3sn2exukxw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 24 Aug 2023 05:26:07 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 37O5PWY4032278
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 24 Aug 2023 05:25:32 GMT
-Received: from [10.216.48.216] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.36; Wed, 23 Aug
- 2023 22:25:24 -0700
-Message-ID: <17a4b36b-4c46-86f6-5b93-b30171c324f2@quicinc.com>
-Date:   Thu, 24 Aug 2023 10:55:21 +0530
+        with ESMTP id S237025AbjHXG7t (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Aug 2023 02:59:49 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBB63E45
+        for <linux-clk@vger.kernel.org>; Wed, 23 Aug 2023 23:59:45 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id ffacd0b85a97d-31c79850df5so156526f8f.1
+        for <linux-clk@vger.kernel.org>; Wed, 23 Aug 2023 23:59:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1692860384; x=1693465184;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+xVvlCGex8MTTZYxV9+n6jIh21hrXPC9JzY4cLwH6KA=;
+        b=JA/SlRiSGXLmyf4uxdL8Ezug//3djjbWkWBwFLDDwMEZb8sfx3E/tGZNzckZiddzdY
+         vzZdao/SmZppv1Jwr8TYyz+1EEMuiXtaqhPJ7UsLHabhBVyNQllseyx+wcxHnck5PYfx
+         3hjWgKX243esYSmP+UJ9iPL8O54M2Y1okgV06RTexXMWQJin22ja0auiPFgIJxZxJuaI
+         0qIi2d3hAdKgKRPFYf5Kr6t0K2llnb2ccWk78c7jf4OX2MR20VO/5sXnz2HOzK16yds/
+         PV7MZCBC2Ro5kwyuyRG7lb7ghiiAWapS+FketmqQpxWVxUlSyzuqj3dxhlKM2K9It+vQ
+         2oRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692860384; x=1693465184;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+xVvlCGex8MTTZYxV9+n6jIh21hrXPC9JzY4cLwH6KA=;
+        b=BGnUay9FVEcZVcJT34HQsE9pHFjeRbCwwkVf6Fy7nidZKorDfJUNg2HgyeLivWPoCG
+         043ww3Hse1Olbbt838qVujEuQ8p/8obulhuhXMyZq1K2Jjqxhh2GYZEDaszrijHuKYf0
+         NMhyMieZmPbT/J0OSa/iH8RvIP7/+vYk1T00t2+0vq1jqwHabPX614dZu94h0wjw7Ydk
+         BNGw7IX4LCcJAyUqCgC+MAu55Iuh1rXcGxDmvaBmcNOVaY06Jy897U+nhttABW8CTVxD
+         rpKsl9ObfkzUEZ7tZfCJhjlf2ihpSceABBSVL2oBk651mffsqDSx9hRhK5W+r2WmhOFQ
+         Vzyg==
+X-Gm-Message-State: AOJu0Yyjt6zts5Ti2vIvwFWmt3H6JJpcPYFr8ds3/G09YFaI9WJZE6lP
+        yvZx/mKQqgBrv8D66EXTMGknhQ==
+X-Google-Smtp-Source: AGHT+IHV5h/gWiGqWISIXTEBzuyi+BE2xkRY/zgFh1SxLekzv+sqKnQhfmfoEMGVAG+tjnX0+xWpsg==
+X-Received: by 2002:adf:edca:0:b0:31a:d7fc:28f with SMTP id v10-20020adfedca000000b0031ad7fc028fmr12034332wro.19.1692860384103;
+        Wed, 23 Aug 2023 23:59:44 -0700 (PDT)
+Received: from localhost ([212.23.236.67])
+        by smtp.gmail.com with ESMTPSA id y17-20020adfe6d1000000b003176eab8868sm21246718wrm.82.2023.08.23.23.59.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Aug 2023 23:59:43 -0700 (PDT)
+Date:   Thu, 24 Aug 2023 08:59:42 +0200
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc:     Jakub Kicinski <kuba@kernel.org>,
+        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Milena Olech <milena.olech@intel.com>,
+        Michal Michalik <michal.michalik@intel.com>,
+        linux-arm-kernel@lists.infradead.org, poros@redhat.com,
+        mschmidt@redhat.com, netdev@vger.kernel.org,
+        linux-clk@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
+        intel-wired-lan@lists.osuosl.org
+Subject: Re: [PATCH net-next v6 0/9] Create common DPLL configuration API
+Message-ID: <ZOb/3qbGKS4+6Slu@nanopsycho>
+References: <20230823225242.817957-1-vadim.fedorenko@linux.dev>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH 5/6] arm64: dts: qcom: ipq9574: Add support for nsscc node
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <p.zabel@pengutronix.de>, <richardcochran@gmail.com>,
-        <arnd@arndb.de>, <geert+renesas@glider.be>,
-        <neil.armstrong@linaro.org>, <nfraprado@collabora.com>,
-        <rafal@milecki.pl>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>
-CC:     <quic_saahtoma@quicinc.com>
-References: <20230711093529.18355-1-quic_devipriy@quicinc.com>
- <20230711093529.18355-6-quic_devipriy@quicinc.com>
- <05554015-6b08-c194-9d27-af5539e3ce46@linaro.org>
-From:   Devi Priya <quic_devipriy@quicinc.com>
-In-Reply-To: <05554015-6b08-c194-9d27-af5539e3ce46@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: k80k8rolSFTOWiLC5rDJLv-HBqSOxo8_
-X-Proofpoint-ORIG-GUID: k80k8rolSFTOWiLC5rDJLv-HBqSOxo8_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-08-24_02,2023-08-22_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=999
- mlxscore=0 lowpriorityscore=0 priorityscore=1501 impostorscore=0
- malwarescore=0 suspectscore=0 adultscore=0 phishscore=0 bulkscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2308100000 definitions=main-2308240043
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230823225242.817957-1-vadim.fedorenko@linux.dev>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Thu, Aug 24, 2023 at 12:52:33AM CEST, vadim.fedorenko@linux.dev wrote:
+>Implement common API for DPLL configuration and status reporting.
+>The API utilises netlink interface as transport for commands and event
+>notifications. This API aims to extend current pin configuration 
+>provided by PTP subsystem and make it flexible and easy to cover
+>complex configurations.
+>
+>Netlink interface is based on ynl spec, it allows use of in-kernel
+>tools/net/ynl/cli.py application to control the interface with properly
+>formated command and json attribute strings. Here are few command
+>examples of how it works with `ice` driver on supported NIC:
+>
+>- dump dpll devices:
+>$ sudo ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml \
+>--dump device-get
+>[{'clock-id': 4658613174691613800,
+>  'id': 0,
+>  'lock-status': 'locked-ho-acq',
+>  'mode': 'automatic',
+>  'mode-supported': ['automatic'],
+>  'module-name': 'ice',
+>  'type': 'eec'},
+> {'clock-id': 4658613174691613800,
+>  'id': 1,
+>  'lock-status': 'locked-ho-acq',
+>  'mode': 'automatic',
+>  'mode-supported': ['automatic'],
+>  'module-name': 'ice',
+>  'type': 'pps'}]
+>
+>- get single pin info:
+>$ sudo ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml \
+>--do pin-get --json '{"id":2}'
+>{'board-label': 'C827_0-RCLKA',
+> 'clock-id': 4658613174691613800,
+> 'capabilities': 6,
+> 'frequency': 1953125,
+> 'id': 2,
+> 'module-name': 'ice',
+> 'parent-device': [{'direction': 'input',
+>                    'parent-id': 0,
+>                    'prio': 9,
+>                    'state': 'disconnected'},
+>                   {'direction': 'input',
+>                    'parent-id': 1,
+>                    'prio': 9,
+>                    'state': 'disconnected'}],
+> 'type': 'mux'}
+>
+>- set pin's state on dpll:
+>$ sudo ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml \
+>--do pin-set --json '{"id":2, "parent-device":{"parent-id":1, "state":2}}'
+>
+>- set pin's prio on dpll:
+>$ sudo ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml \
+>--do pin-set --json '{"id":2, "parent-device":{"parent-id":1, "prio":4}}'
+>
+>- set pin's state on parent pin:
+>$ sudo ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml \
+>--do pin-set --json '{"id":13, "parent-pin":{"parent-id":2, "state":1}}'
+>
+>
+>Changelog:
+>
+>v5 -> v6:
+>- change dpll-caps to pin capabilities and adjust enum accordingly
+>- remove dpll.h from netdevice.h
 
+For the record, I'm fine with this version and my signed-offs stand.
 
-On 7/11/2023 3:27 PM, Krzysztof Kozlowski wrote:
-> On 11/07/2023 11:35, Devi Priya wrote:
->> Add a node for the nss clock controller found on ipq9574 based devices.
->>
->> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
->> ---
->>   arch/arm64/boot/dts/qcom/ipq9574.dtsi | 44 +++++++++++++++++++++++++++
->>   1 file changed, 44 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
->> index f120c7c52351..257ce4a5bfd5 100644
->> --- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
->> @@ -10,6 +10,8 @@
->>   #include <dt-bindings/clock/qcom,ipq9574-gcc.h>
->>   #include <dt-bindings/interrupt-controller/arm-gic.h>
->>   #include <dt-bindings/reset/qcom,ipq9574-gcc.h>
->> +#include <dt-bindings/clock/qcom,ipq9574-nsscc.h>
->> +#include <dt-bindings/reset/qcom,ipq9574-nsscc.h>
->>   
->>   / {
->>   	interrupt-parent = <&intc>;
->> @@ -17,6 +19,30 @@
->>   	#size-cells = <2>;
->>   
->>   	clocks {
->> +		bias_pll_cc_clk: bias-pll-cc-clk {
->> +			compatible = "fixed-clock";
->> +			clock-frequency = <1200000000>;
->> +			#clock-cells = <0>;
->> +		};
->> +
->> +		bias_pll_nss_noc_clk: bias-pll-nss-noc-clk {
->> +			compatible = "fixed-clock";
->> +			clock-frequency = <461500000>;
->> +			#clock-cells = <0>;
->> +		};
->> +
->> +		bias_pll_ubi_nc_clk: bias-pll-ubi-nc-clk {
->> +			compatible = "fixed-clock";
->> +			clock-frequency = <353000000>;
->> +			#clock-cells = <0>;
->> +		};
->> +
->> +		gcc_gpll0_out_aux: gcc-gpll0-out-aux {
->> +			compatible = "fixed-clock";
->> +			clock-frequency = <800000000>;
->> +			#clock-cells = <0>;
->> +		};
-> 
-> Isn't this GCC clock?
-Yes, will register this in the gcc driver.
-
-Thanks,
-Devi Priya
-> 
->> +
->>   		sleep_clk: sleep-clk {
->>   			compatible = "fixed-clock";
->>   			#clock-cells = <0>;
->> @@ -620,6 +646,24 @@
->>   				status = "disabled";
->>   			};
->>   		};
->> +
->> +		nsscc: nsscc@39b00000 {
-> 
-> Node names should be generic. See also an explanation and list of
-> examples (not exhaustive) in DT specification:
-> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-> 
-> 
-> Best regards,
-> Krzysztof
-> 
+Thanks!
