@@ -2,133 +2,119 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9F78C7113B
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Aug 2023 10:28:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C81EC7113B
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Aug 2023 10:48:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236775AbjHXK1z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Aug 2023 06:27:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38830 "EHLO
+        id S231991AbjHXKs1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Aug 2023 06:48:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41106 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240318AbjHXK1b (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Aug 2023 06:27:31 -0400
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59F6519B3
-        for <linux-clk@vger.kernel.org>; Thu, 24 Aug 2023 03:27:28 -0700 (PDT)
-Received: by mail-lj1-x22c.google.com with SMTP id 38308e7fff4ca-2bcde83ce9fso21655221fa.1
-        for <linux-clk@vger.kernel.org>; Thu, 24 Aug 2023 03:27:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1692872846; x=1693477646;
-        h=content-transfer-encoding:in-reply-to:autocrypt:references:cc:to
-         :from:content-language:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=+Ob/Mpz+t6vu5eWAFyajBgLSNxG2TBv1MxUudZj1Pd8=;
-        b=gspdKjHItrfP42lktMfQTgPFF8AAwRm2N5qPVxiEO363WXxT1nM9PTyo7rWcPxWl3+
-         QWPpCJ6Bap7aKFBR/lG05kUQXKU3/af7sEWtFlJn0unU0Y+GdVo0MEI2zed4NHwMAm/o
-         ASFU8kMrMZnXlQ87Za0fy5T4hZ9aNPy9W98uZwNq3wbqt2a1teY9TRKW5V2g+0R8m2pw
-         t9+XNeBjUrtoV2BS2VRuow2ZIto7x/PofKZzAKQndT3qnaG7nbta8RMlgBkDuZDsPInl
-         jVq7G2qn3fxOZ9uoB9xVURi7oXhRmAmI+9XurvQR8A1z0e0W82Rj3tL4NTzTcW6LcZt0
-         Vgeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692872846; x=1693477646;
-        h=content-transfer-encoding:in-reply-to:autocrypt:references:cc:to
-         :from:content-language:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+Ob/Mpz+t6vu5eWAFyajBgLSNxG2TBv1MxUudZj1Pd8=;
-        b=WEh16bqxr/8A6MIbATnwdQa8iPYDZh0eKBAe+tmIT46I9g21T7H3AJF6KqOQX3kumB
-         EtsAMIXw6S2QeB2Vd3Lz2PRiKGPvkpd5/iZHbdiKxAjCD0Suadhjb7Q0eUcsEbt+h6cv
-         lXHSqVHGxUhJ9P7S4HKj+7qKQX34HWsJ9CLaO+hIVxoQ3EpIClm2nSxQkWxlq7XPm7mA
-         370SHk+asuPfImmjnEUbVpU2HtSdMnSNpCfUXeQ2J8iFzcTgQgz2NyWUdMqLrduohd65
-         UqT5pJ1MgYskysKzkQ/e0aEIrV8FzwNJwCe4iPR6PMzVAuA1b9LB7HS7LpIbF9QOluai
-         fyiA==
-X-Gm-Message-State: AOJu0YyL8Us8DYcyXw8NLWuyx7F5a16LX3EqpaciCiMFxtH8JHpUKGUc
-        fSZ+/wCoY/FbpG8tcpzzTQpBlA==
-X-Google-Smtp-Source: AGHT+IHaGANEzfvksntjsu132drw24mtmAag3H/CAM2o6dcFFliKCC2WGjxueezZdm4f47ZX32FGEA==
-X-Received: by 2002:a2e:9bcc:0:b0:2bc:bc70:263f with SMTP id w12-20020a2e9bcc000000b002bcbc70263fmr8339441ljj.0.1692872846643;
-        Thu, 24 Aug 2023 03:27:26 -0700 (PDT)
-Received: from ?IPV6:2a00:f41:4882:ba34:4490:938b:eab4:c5ef? ([2a00:f41:4882:ba34:4490:938b:eab4:c5ef])
-        by smtp.gmail.com with ESMTPSA id y7-20020a2e95c7000000b002b9358f5088sm3711533ljh.53.2023.08.24.03.27.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Aug 2023 03:27:26 -0700 (PDT)
-Message-ID: <e86e9efe-b377-4cbc-8603-f308ea65d2b9@linaro.org>
-Date:   Thu, 24 Aug 2023 12:27:24 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] clk: qcom: gcc-msm8996: Use read-only RCG ops for RPM
- bus clocks
-Content-Language: en-US
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-To:     Bjorn Andersson <andersson@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S238116AbjHXKsZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Aug 2023 06:48:25 -0400
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D78C010DA;
+        Thu, 24 Aug 2023 03:48:22 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="6.01,195,1684767600"; 
+   d="scan'208";a="173833534"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 24 Aug 2023 19:48:22 +0900
+Received: from localhost.localdomain (unknown [10.226.93.115])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 6A0A2400721C;
+        Thu, 24 Aug 2023 19:48:18 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Stephan Gerhold <stephan@gerhold.net>
-References: <20230612-topic-rcg2_ro-v1-0-e7d824aeb628@linaro.org>
- <20230612-topic-rcg2_ro-v1-2-e7d824aeb628@linaro.org>
- <20230613175626.aesimqz2alcqjtok@ripper>
- <e3f69e9d-7c23-d5cd-e203-f1e435ba063a@linaro.org>
- <0ca1922a-5d21-2c00-7514-6f90a9d2cb03@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <0ca1922a-5d21-2c00-7514-6f90a9d2cb03@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Conor Dooley <conor.dooley@microchip.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v5 1/4] dt-bindings: clock: versaclock3: Add description for #clock-cells property
+Date:   Thu, 24 Aug 2023 11:48:09 +0100
+Message-Id: <20230824104812.147775-2-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230824104812.147775-1-biju.das.jz@bp.renesas.com>
+References: <20230824104812.147775-1-biju.das.jz@bp.renesas.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 31.07.2023 13:01, Konrad Dybcio wrote:
-> On 13.06.2023 19:54, Konrad Dybcio wrote:
->>
->>
->> On 13.06.2023 19:56, Bjorn Andersson wrote:
->>> On Mon, Jun 12, 2023 at 11:22:48AM +0200, Konrad Dybcio wrote:
->>>> The config/periph/system NoC clocks are wholly controlled by the
->>>> RPM firmware and Linux should never ever alter their configuration.
->>>>
->>>
->>> Does Linux need to know about them?
->> Not really, but it allows us to get rates of their children.
->>
->> We can get rid of them if one can argue debugcc is enough. Unless
->> we need clk_get_rate for some reason.
->>
-> Any opinions?
-So, do we drop them?
+Add description for "#clock-cells" property to map indexes to the clock
+output in the Table 3. ("Output Source") in the 5P35023 datasheet
+(ie: {REF,SE1,SE2,SE3,DIFF1,DIFF2}. Also update the "assigned-clock-rates"
+in the example.
 
-Konrad
+While at it, replace clocks phandle in the example from x1_x2->x1 as
+X2 is a different 32768 kHz crystal.
+
+Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+v4->v5:
+ * Added description for "#clock-cells" property to map indexes to the
+   clock output.
+ * Updated commit header and description to reflect this change.
+ * Dropped fixes tag.
+ * Retained Ack tag from Conor and Krzysztof as it is trivial change.
+v3->v4:
+ * Dropped clock-output-names as there is no validation for it and people
+   can get it wrong.
+ * Updated commit header, description and example to reflect this change
+ * Retained Ack tag from Conor and Krzysztof as it is trivial change.
+v2->v3:
+ * No change.
+v1->v2:
+ * Updated commit description to make it clear it fixes
+   "assigned-clock-rates" in the example based on 5P35023 datasheet.
+---
+ .../devicetree/bindings/clock/renesas,5p35023.yaml    | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml b/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml
+index 839648e753d4..42b6f80613f3 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml
++++ b/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml
+@@ -37,6 +37,9 @@ properties:
+     maxItems: 1
+ 
+   '#clock-cells':
++    description:
++      The index in the assigned-clocks is mapped to the output clock as below
++      0 - REF, 1 - SE1, 2 - SE2, 3 - SE3, 4 - DIFF1, 5 - DIFF2.
+     const: 1
+ 
+   clocks:
+@@ -68,7 +71,7 @@ examples:
+             reg = <0x68>;
+             #clock-cells = <1>;
+ 
+-            clocks = <&x1_x2>;
++            clocks = <&x1>;
+ 
+             renesas,settings = [
+                 80 00 11 19 4c 02 23 7f 83 19 08 a9 5f 25 24 bf
+@@ -79,8 +82,8 @@ examples:
+             assigned-clocks = <&versa3 0>, <&versa3 1>,
+                               <&versa3 2>, <&versa3 3>,
+                               <&versa3 4>, <&versa3 5>;
+-            assigned-clock-rates = <12288000>, <25000000>,
+-                                   <12000000>, <11289600>,
+-                                   <11289600>, <24000000>;
++            assigned-clock-rates = <24000000>, <11289600>,
++                                   <11289600>, <12000000>,
++                                   <25000000>, <12288000>;
+         };
+     };
+-- 
+2.25.1
+
