@@ -2,154 +2,178 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E2B9C27C40
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Aug 2023 08:40:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA79DC27C40
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Aug 2023 08:48:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229495AbjHXIkV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Aug 2023 04:40:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54456 "EHLO
+        id S229619AbjHXIsW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Aug 2023 04:48:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229479AbjHXIkD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Aug 2023 04:40:03 -0400
-Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01on2092.outbound.protection.outlook.com [40.107.114.92])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18F3D1709;
-        Thu, 24 Aug 2023 01:40:00 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IDEd6uLNC2gMZB24WYzNAGefd2fiPpnU857lFl0jh3ZvjYw6DxSOzASY/SdH57GCLSINUloqzWmO3hfkVvhmcI5gZTPewVppfk1EAsQzKpEUFowRisGwufajm/erb90MLXqmm1bxqdNXzMnHuZiy9KdgyA7aRmLOWp6DZVJ1DmRTWrEM5w54TEwD8pds6m/CIpaI/Yfau3vU6TdNVXf5sqnKOIsLm44EK1fe3lvR67xquq5byUv/hNSxHWK2u9Zc4gdAk1ScABk6fhHmq9RiHnHkVhrAPHNi5WUHvDm1kj7b4sOkSdGzYA2Ur3f09C1lzFf7W1gl3IPQDARxn3FLyg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FZnav27oAWf/W2QY2qUQpyFXgYqg55dOgDs6MYlCkqI=;
- b=eYViqCK/b3b6A7Ggag9bVpVJf2dqgg+p5NDOZCrQejVDAjLX6PDQAycN9kS43tnEtWoOPYGB+LtPKQx273nDsLKbwvXcvAKI4ZGVvEqYRamx/45Z/4uzTl++aq4GAZwgzbAtVwQ9oyCdnfYjHr5PhoV0nLofLzgZXSEaGXW0/xkvQNsenwEoJstlqW4Y1DTSLBKCZgnDdnTnrFzLcPY0R37ngPDd5BnP+C8uXjhmfOphph7ilX33vVppRTng8E/QjZ+EwkIeBO+/rBj6jKvNuC+9AotuqbcCOgWespHSyrOQ16hyPjcZ5XtaK5qtP//qckqMBqrDphhbxNkk1QAeyw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FZnav27oAWf/W2QY2qUQpyFXgYqg55dOgDs6MYlCkqI=;
- b=Xs1/qJAreoC8TG8NXSKPBiZf3aExLUsyLN3zVw/53LhpN/WLchpKP3IZflizGwNytibEQvwvljolEjt7Tayu4hNbjXCTwWe0FVw6XHWcidybpcvdYsrViPDtAco2hm9yEOaGEauDkTNUHr1zO3i1U+SJ/cdwHhgxSnkjvC4JH7I=
-Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com (2603:1096:604:bb::5)
- by TYWPR01MB9806.jpnprd01.prod.outlook.com (2603:1096:400:234::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.27; Thu, 24 Aug
- 2023 08:39:57 +0000
-Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com
- ([fe80::9d23:32f5:9325:3706]) by OS0PR01MB5922.jpnprd01.prod.outlook.com
- ([fe80::9d23:32f5:9325:3706%4]) with mapi id 15.20.6699.027; Thu, 24 Aug 2023
- 08:39:57 +0000
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-CC:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: RE: [PATCH v4 1/4] dt-bindings: clock: versaclock3: Fix the
- assigned-clock-rates
-Thread-Topic: [PATCH v4 1/4] dt-bindings: clock: versaclock3: Fix the
- assigned-clock-rates
-Thread-Index: AQHZ1mSCChbHcDjmoEa+V1KOBtSFzK/5HrmAgAAA7rA=
-Date:   Thu, 24 Aug 2023 08:39:57 +0000
-Message-ID: <OS0PR01MB59228C57C7E75DFA2E7C72DA861DA@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-References: <20230824082501.87429-1-biju.das.jz@bp.renesas.com>
- <20230824082501.87429-2-biju.das.jz@bp.renesas.com>
- <CAMuHMdVSoR_4vH=_6Jf15oPATpy3WuxKAHStn8bH2QCYt5FGHg@mail.gmail.com>
-In-Reply-To: <CAMuHMdVSoR_4vH=_6Jf15oPATpy3WuxKAHStn8bH2QCYt5FGHg@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OS0PR01MB5922:EE_|TYWPR01MB9806:EE_
-x-ms-office365-filtering-correlation-id: 42369f13-e645-4543-b59a-08dba47db240
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: Re3JL/GT0UpLVpADjg5XXSWkeLkwnxm3iF0Sxztbr4nyFaPiQ1avS7COSOHe5o+2FW9wK1QuI6IaOKNH3ZtP1cX8A+/jGvx+HzYS2wgevzki7yb74mHV7GrEjuKP2SO7/JWU1zYXDwwL4wCrYXN7u3RqNF8qNTzH/5cdcNrZ4Aw09iGMtluc5LP3vlMQuqEZBC5jqHgfcsyE9PJroS6EjiVcLV0mQkrEGgBwUMv4mf7hp6rCy4ZywmgLwVyzdzCwTx8ONZcpF4OpNa/I43rzqc5vjRqNjL1V5E6bGKJhQu4s7FCTLqNwVy8b6z5kSJdANAF9kQnx3tXX8tWVwa41PVXoIwTLeIhLO2lM/rAq5Ivq73bcWTcwW60lxC0HMK+Qq/SynKb02hZboOTGgXtJv+FCQDlFCcfr7vYwUTZbj1G3x2+d/FpB4m6S2XfmkstNJ+klSKdtC6oEX3b9KO1OIfWXIHG7OcxiD18YCOBaWQ/zbusSNQ80UikxohFmdKSIhAZwRfYj/4c5KzWio+1ftZD9eOcEAcEnPr4JC3akAFbsbwBLWP01xF/ncu0G7zbyXrjJbbgc9G7SYLuXq08OIfS2cJVTloypcdAi2pRhE65V124yiL2/HnpZ7n4k6WPM
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB5922.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(366004)(376002)(346002)(136003)(396003)(186009)(1800799009)(451199024)(52536014)(5660300002)(4326008)(8676002)(8936002)(4744005)(83380400001)(7416002)(33656002)(55016003)(26005)(71200400001)(38070700005)(38100700002)(122000001)(66946007)(76116006)(66556008)(66476007)(66446008)(54906003)(64756008)(316002)(6916009)(478600001)(41300700001)(53546011)(6506007)(2906002)(86362001)(7696005)(9686003);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?MHMwVVNSeWdUNlBCeVBMeTJpb25UQ2JJcjJQdUZoNHFERXN2TVpQYjlXRUJa?=
- =?utf-8?B?TDRTWDJMNXNVN05OUy8zb0FMeUhnbGx5QitoUkVQSWhNWlNOeVN1dXRpZDkx?=
- =?utf-8?B?dVA1NExzbWxDR3M4QmdtbnJKd2ZySDRXU3RoVElyVlFYeHRJb3o5dHVXZjhk?=
- =?utf-8?B?MG5Qbm5lVHFvVXE2RW5jaFZUOWtzeFdBbFl0TkJuQWEraGVtZ0k3bG5YdUR1?=
- =?utf-8?B?eEtCcG9JQUNENGlxTjNGREIzRVBhZlNKS21kcVZMS2UvOXdmTU52SmtQSTlV?=
- =?utf-8?B?Z3g0UVh3U2ZvWXVWMUsyZTdqNytZT0c5K1hJZzd6NE9qT3Mvb1VTUWRveEFI?=
- =?utf-8?B?b1FTRU1EeWp6eTRYY25LQ1JTUlA5VEhyY0FqQUdjTEZVNk50QkRGRFJkbllj?=
- =?utf-8?B?SG5mZnZ5S0pCR014RkljZFlVRytjNnV6d21DVXlWUmZIZzR0dWZnQTVEUExC?=
- =?utf-8?B?REY4MFZlZ2RHQktWMHNyTHAxWDIvMERlcmQ1V043dDYzd0pxMnQ4YzJkc2NX?=
- =?utf-8?B?LzVKMXpVd1YyVUZaU05mb0F5S211TUpRRHhZOFZweGliY0wxQkdiekl4eEFO?=
- =?utf-8?B?TUxNMjlvY1dyY0E2WVV4ZjVaS1g1QlJySXRhc3FLOWhsUmhPTEZNOWVLNEVW?=
- =?utf-8?B?QmFhdjdNZHdSd210eCs5OWdNeGJXY01JdENoV2JQNmZ1bGhDQ09wbVN4RmNT?=
- =?utf-8?B?N3l1MEpjT05hdGlkT0JwdTV3UGx1Yk1nT3NaMnc1WHZpT3pGM2VGSk5EaFJI?=
- =?utf-8?B?MDZ5RjJCc0FNLzJPRGQ4L3Y2YXFjZ1cvdDhBTzN3RTVOMGxvaUhTMkRxRDlB?=
- =?utf-8?B?SHVLOUY4THk4a0o2MkE5RHdKNjBmaDRpL2RrZ2lPNHpHVWVMZ3E3ZktsU1ps?=
- =?utf-8?B?ZElTc3R6dWRvM2E5UXRYZlU1aFNrSmR1enYvQXRsWXZWWVh0QWNlejBxaFNJ?=
- =?utf-8?B?aEEreUt4MzAzM1RSVC9FVVJSams4eitYN3dlWnB6M2s5alZEM2pYaG1paDlq?=
- =?utf-8?B?ZG9XVDNsTTh1bzlCMTB1RmVZc2YwV01hVFBKYzdSZDB2Z0IzaHpTaW9JT0xM?=
- =?utf-8?B?eW82UlZyNFJWdXl1NDJOTVhjMkx6d2g4clJsQ0t5TDUzdSt0SzlRVGhIRUxP?=
- =?utf-8?B?RmlFNUxUdSs0SHlIYitaaHcyQkFmc1czQVd4RHVYYkdDNERYRDN0RzlIbUkv?=
- =?utf-8?B?a3E0S2xzem80RjdXdVdnNFhFZWxselF3bHRONW5lbEpQa1pzWVk2NnNxVS9x?=
- =?utf-8?B?NzlYSjg1Q1kvdjVYaWRpdjltVGg3Z3FFc0NZODh0czYzVDN6QlhPUVNKL1du?=
- =?utf-8?B?OUU0NlMvWnpicW1oRVN6SzFGWGk0eGJmSVhVWDFvVEFhTzJ3VHEzc0xYVTQ4?=
- =?utf-8?B?MjlqNkFtajJ4eHJyblEydmNJNXhGd09FMkx1VWswclBZdjZHU09NdFJLWDRK?=
- =?utf-8?B?SDhmS21SaEJxRFQxYTBNQ1h1MmxuQWkyWE1udnZ3MHptaWU5a3pBRnBhanNi?=
- =?utf-8?B?S0ZIMjZpdDdGOW9NbjFGTUtCMkY3bkYyUE5LS01DbmpYckc3WklPaUh3TWZD?=
- =?utf-8?B?Wm16VXNHRHcrdXA4RUswaWxvK0hlTmxHK2NjWFZ3czhsK1ZScEhaYyt6TmF3?=
- =?utf-8?B?WHM4VzRhd2ZxRFJ0VmlnVHVqK2pJOVJ5RXdEMFpQRTMyc0RIN09JZzlZTnVz?=
- =?utf-8?B?SHQ2dVFFekdhRnBIN3U1Y1ppcTh4N1RaNFBidTIwTzlrWmpmeFEvWTdndnlJ?=
- =?utf-8?B?bDBGMUZiL3Z1MUkzYXlwZmsxL0cxVXpZYThEL0lIWmVuL1pxa1RWdTVKb0xL?=
- =?utf-8?B?Wm9tUTdLNTJ2cVlrN0VQb0ZNOFVyVGtIYXBzVEJJRCtxVjJiYzlPTDFNUEhB?=
- =?utf-8?B?a2FPaGNkNFlib1VPMldyLzhHTmRudVdyTHQzNTdOV3pRY2dNS29ZRXdDdHNL?=
- =?utf-8?B?dWdTUjdIODBUN1lrRCtsL1NhdUk1L0dEaW95VFZmTHBQWWhsOW4zNVlTZlpY?=
- =?utf-8?B?TmUxZU9CNW1XNjk4aDBsdENHUXFiS1NHNVBGRWYrZnltMDF3YW5CQTM1TXZa?=
- =?utf-8?B?dkNYRGdaNGZ1K2xJU3lqc1dnS1YzUWhRQ2I4bFN6MG1hR1BVaFZYNmwzdmRt?=
- =?utf-8?B?Um1MMW90VjJ2Uzg4VHR2UzJsSXVqaGpRQ1hKRHF2VjdmM2FiMUZoa25NTWhr?=
- =?utf-8?B?a2c9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        with ESMTP id S240575AbjHXIsF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Aug 2023 04:48:05 -0400
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C0951BC6
+        for <linux-clk@vger.kernel.org>; Thu, 24 Aug 2023 01:47:38 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id 2adb3069b0e04-4ffa01fc987so761823e87.1
+        for <linux-clk@vger.kernel.org>; Thu, 24 Aug 2023 01:47:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1692866842; x=1693471642;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Luu2mgu5dBhR6s0bCtSFfR5zNZajHF5BW8EWntyR8Zc=;
+        b=QUg6K6RRwKwmJKro0tziz7F+gHcpcXqtWXrEdODclSfX6hERwyWAQ7gi38RTf+Si7y
+         UqEtpQTRWG5L8nzjPmgnc2AsuiCsShq4ze/ZHNTCZ0e1z2p2U9CPTVIylMhvnaHoMLHP
+         VfNXkbDvVcim1WDv8+rEEHZsYHdlJVTln1wcV8xHatpawV6EpozV7h97MdEGXmuLmEJq
+         m2ms1I/TIlDIYqWe6951t9M4mBsCaO325sQMKgC4poip7vheGdnc3n8YqkNSwlbISnLf
+         LqnsDMdzpZKUz2fk5ZErjYJ/xRhNFtSqy04fw4ykl/19rl9npekV3Ce5SF033yxwC9bp
+         aKTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692866842; x=1693471642;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Luu2mgu5dBhR6s0bCtSFfR5zNZajHF5BW8EWntyR8Zc=;
+        b=daUWckEgvYxdl+p5CDLN/XLLJHgYwDtzssIonh5C6gKRGC0Z/O3eNANd6e3s+RaNMU
+         03PxW1b2wEbWEQYO6emH91uz59Z6RiqVvmHXVleseb8LRENgK2S0TLH+Hymo1W0vXvRY
+         CULXedVi9LLbahcl7Ytj5ik9fpy5iviGjw3SsBANXDTZDBZFvPlFZXhoGPaTSGEMGIPK
+         7WRuCNMZ/M+AmDW+3MOIwJXJV30sLc8qjrQOdmCC+8oRYlj0iA2r4CFcWQJhw6cmdHqF
+         wgduzhgCyCbdlRgjJjFH6xfQ3VUWV6oHA93n0Tfw/Qef2YD4MSC4RzriBBWOQ0q7enZW
+         tvsg==
+X-Gm-Message-State: AOJu0Yx77SRDhJ1kx5IVT0NiM645VwWWu8MwNqDYyeRZvPQ9Czk7xiOM
+        T7r4RdU/5MCTQEquqHJSHMWvNQ==
+X-Google-Smtp-Source: AGHT+IFxr2lky/zZxRDrtPoerryLLsp8lOpSvqyqiX9re9sZXlPeGUSvwTTorceGzllqJ3qri5xsvQ==
+X-Received: by 2002:ac2:4f15:0:b0:4ff:8f76:678c with SMTP id k21-20020ac24f15000000b004ff8f76678cmr6695568lfr.1.1692866842361;
+        Thu, 24 Aug 2023 01:47:22 -0700 (PDT)
+Received: from ?IPV6:2a00:f41:4882:ba34:4490:938b:eab4:c5ef? ([2a00:f41:4882:ba34:4490:938b:eab4:c5ef])
+        by smtp.gmail.com with ESMTPSA id w12-20020a05651203cc00b004ff8ee47f2fsm3063805lfp.1.2023.08.24.01.47.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Aug 2023 01:47:22 -0700 (PDT)
+Message-ID: <868da572-cff1-42b6-9931-06b6a8c73809@linaro.org>
+Date:   Thu, 24 Aug 2023 10:47:19 +0200
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB5922.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 42369f13-e645-4543-b59a-08dba47db240
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Aug 2023 08:39:57.0956
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: u/YDA9JC8q1RjYLbA8e5y46Lk992H+aFcdvLCsrIGraABk0VDk/DOhuDibT6F91zgrizOndGxoNMZPgmCdPZoaXwb8T0Duam8SdCyQh1UGI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB9806
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/6] dt-bindings: clock: Add ipq9574 NSSCC clock and reset
+ definitions
+Content-Language: en-US
+To:     Kathiravan T <quic_kathirav@quicinc.com>,
+        Devi Priya <quic_devipriy@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, catalin.marinas@arm.com, will@kernel.org,
+        p.zabel@pengutronix.de, richardcochran@gmail.com, arnd@arndb.de,
+        geert+renesas@glider.be, neil.armstrong@linaro.org,
+        nfraprado@collabora.com, rafal@milecki.pl,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org
+Cc:     quic_saahtoma@quicinc.com
+References: <20230711093529.18355-1-quic_devipriy@quicinc.com>
+ <20230711093529.18355-4-quic_devipriy@quicinc.com>
+ <ea229d40-0bce-87e8-edef-72a7f251c051@quicinc.com>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <ea229d40-0bce-87e8-edef-72a7f251c051@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SGkgR2VlcnQgVXl0dGVyaG9ldmVuLA0KDQpUaGFua3MgZm9yIHRoZSBmZWVkYmFjay4NCg0KPiBT
-dWJqZWN0OiBSZTogW1BBVENIIHY0IDEvNF0gZHQtYmluZGluZ3M6IGNsb2NrOiB2ZXJzYWNsb2Nr
-MzogRml4IHRoZQ0KPiBhc3NpZ25lZC1jbG9jay1yYXRlcw0KPiANCj4gSGkgQmlqdSwNCj4gDQo+
-IE9uIFRodSwgQXVnIDI0LCAyMDIzIGF0IDEwOjI14oCvQU0gQmlqdSBEYXMgPGJpanUuZGFzLmp6
-QGJwLnJlbmVzYXMuY29tPg0KPiB3cm90ZToNCj4gPiBGaXggdGhlICJhc3NpZ25lZC1jbG9jay1y
-YXRlcyIgZm9yIGVhY2ggY2xvY2sgb3V0cHV0IGluIHRoZSBleGFtcGxlDQo+ID4gYmFzZWQgb24g
-VGFibGUgMy4gKCJPdXRwdXQgU291cmNlIikgaW4gdGhlIDVQMzUwMjMNCj4gPiBkYXRhc2hlZXQo
-aWU6IHtSRUYsU0UxLFNFMixTRTMsRElGRjEsRElGRjJ9KS4NCj4gPg0KPiA+IFdoaWxlIGF0IGl0
-LCByZXBsYWNlIGNsb2NrcyBwaGFuZGxlIGluIHRoZSBleGFtcGxlIGZyb20geDFfeDItPngxIGFz
-DQo+ID4gWDIgaXMgYSBkaWZmZXJlbnQgMzI3Njgga0h6IGNyeXN0YWwuDQo+IA0KPiBUaGFua3Mg
-Zm9yIHlvdXIgcGF0Y2ghDQo+IA0KPiA+IFN1Z2dlc3RlZC1ieTogR2VlcnQgVXl0dGVyaG9ldmVu
-IDxnZWVydCtyZW5lc2FzQGdsaWRlci5iZT4NCj4gDQo+IFRoaXMgaXMgbm90IHdoYXQgSSBzdWdn
-ZXN0ZWQuDQo+IFRoZSBiaW5kaW5ncyBzaG91bGQgZG9jdW1lbnQgdGhlIG1lYW5pbmcgb2YgdGhl
-IGNsb2NrIGluZGljZXMuDQoNCk9LLCB3aWxsIGFkZCB0aGlzIG1lYW5pbmcgaW4gZGVzY3JpcHRp
-b24uDQoNCj4gDQo+ID4gRml4ZXM6IGEwM2QyM2Y4NjBlYiAoImR0LWJpbmRpbmdzOiBjbG9jazog
-QWRkIFJlbmVzYXMgdmVyc2EzIGNsb2NrDQo+ID4gZ2VuZXJhdG9yIGJpbmRpbmdzIikNCj4gDQo+
-IFRoaXMgcGF0Y2ggaXMgbm90IGEgY3JpdGljYWwgZml4Lg0KDQpXaWxsIHJlbW92ZSBpdCBpbiBu
-ZXh0IHZlcnNpb24uDQoNCkNoZWVycywNCkJpanUNCg==
+On 24.08.2023 07:18, Kathiravan T wrote:
+> 
+> On 7/11/2023 3:05 PM, Devi Priya wrote:
+>> Add NSSCC clock and reset definitions for ipq9574.
+>>
+>> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+>> ---
+>>   .../bindings/clock/qcom,ipq9574-nsscc.yaml    |  76 +++++++++
+>>   .../dt-bindings/clock/qcom,ipq9574-nsscc.h    | 152 ++++++++++++++++++
+>>   .../dt-bindings/reset/qcom,ipq9574-nsscc.h    | 134 +++++++++++++++
+>>   3 files changed, 362 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
+>>   create mode 100644 include/dt-bindings/clock/qcom,ipq9574-nsscc.h
+>>   create mode 100644 include/dt-bindings/reset/qcom,ipq9574-nsscc.h
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
+>> new file mode 100644
+>> index 000000000000..1e8754760785
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
+>> @@ -0,0 +1,76 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/clock/qcom,ipq9574-nsscc.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Qualcomm Networking Sub System Clock & Reset Controller on IPQ9574
+>> +
+>> +maintainers:
+>> +  - Bjorn Andersson <andersson@kernel.org>
+>> +  - Anusha Rao <quic_anusha@quicinc.com>
+>> +
+>> +description: |
+>> +  Qualcomm networking sub system clock control module provides the clocks,
+>> +  resets and power domains on IPQ9574
+>> +
+>> +  See also::
+>> +    include/dt-bindings/clock/qcom,ipq9574-nsscc.h
+>> +    include/dt-bindings/reset/qcom,ipq9574-nsscc.h
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: qcom,ipq9574-nsscc
+>> +
+>> +  clocks:
+>> +    items:
+>> +      - description: Bias PLL cc clock source
+>> +      - description: Bias PLL nss noc clock source
+>> +      - description: Bias PLL ubi nc clock source
+>> +      - description: GCC GPLL0 out aux clock source
+>> +      - description: Uniphy0 GCC Rx clock source
+>> +      - description: Uniphy0 GCC Tx clock source
+>> +      - description: Uniphy1 GCC Rx clock source
+>> +      - description: Uniphy1 GCC Tx clock source
+>> +      - description: Uniphy2 GCC Rx clock source
+>> +      - description: Uniphy2 GCC Tx clock source
+> 
+> 
+> These are UniphyX *NSS* TX/RX clock source?
+Wouldn't that be "source from GCC"?
+
+Konrad
