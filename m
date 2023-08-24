@@ -2,86 +2,1074 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69D50C27C40
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Aug 2023 15:50:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C7E9C71153
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Aug 2023 16:48:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233569AbjHXPtu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Aug 2023 11:49:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35462 "EHLO
+        id S241505AbjHXQrm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Aug 2023 12:47:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242318AbjHXPti (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Aug 2023 11:49:38 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB299198D
-        for <linux-clk@vger.kernel.org>; Thu, 24 Aug 2023 08:49:36 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 49424640E7
-        for <linux-clk@vger.kernel.org>; Thu, 24 Aug 2023 15:49:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53607C433C8;
-        Thu, 24 Aug 2023 15:49:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692892175;
-        bh=eC9VAF+7u+1jW7kBZ1cokph7iWMcoRHh6F6nR9a6IPs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=OeFVez6ajm6VnzYsfFMDK7+Dd0g3b77EHss18ukapCrNQFaadu5BpgZrEx4B9rZBs
-         OjYUjLI4pFi6D4Nvx4J1XAiJs+QHJFktjiKHEvsJVHBw8/COuZhU0StXiRii+4KIVm
-         LyzO6nvd9lDTusMwlUplq3V18ae3ypHX2MWIMFFjjUP8Dpwctf91m7DGdjSvCVp1/F
-         KWJKGzA1xxlKKmdjxj7sdfRIZ6C9LUfzqf7K6mt6euTJMdSk9ZFLfE8MnyUiF/ptKs
-         LYKx6AjZmZdSacR34k7mwBASNnDQA9IM5m15OCwru4j7GNmMHhhToQVxvH9UD/smiC
-         CR04bxr2GJliA==
-Date:   Thu, 24 Aug 2023 08:49:34 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     "Michalik, Michal" <michal.michalik@intel.com>
-Cc:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>,
-        "jiri@resnulli.us" <jiri@resnulli.us>,
-        "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
-        "jonathan.lemon@gmail.com" <jonathan.lemon@gmail.com>,
-        "pabeni@redhat.com" <pabeni@redhat.com>, poros <poros@redhat.com>,
-        "Olech, Milena" <milena.olech@intel.com>,
-        mschmidt <mschmidt@redhat.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "bvanassche@acm.org" <bvanassche@acm.org>
-Subject: Re: [PATCH RFC net-next v1 2/2] selftests/dpll: add DPLL system
- integration selftests
-Message-ID: <20230824084934.3b9b96ee@kernel.org>
-In-Reply-To: <CH3PR11MB84149ADA77B4A6FBD4F0C230E31DA@CH3PR11MB8414.namprd11.prod.outlook.com>
-References: <20230817152209.23868-1-michal.michalik@intel.com>
-        <20230817152209.23868-3-michal.michalik@intel.com>
-        <20230818140802.063aae1f@kernel.org>
-        <CH3PR11MB84141E0EDA588B84F7E10F71E31EA@CH3PR11MB8414.namprd11.prod.outlook.com>
-        <20230821141327.1ae35b2e@kernel.org>
-        <CH3PR11MB84149ADA77B4A6FBD4F0C230E31DA@CH3PR11MB8414.namprd11.prod.outlook.com>
+        with ESMTP id S242719AbjHXQrT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Aug 2023 12:47:19 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DC05E5E
+        for <linux-clk@vger.kernel.org>; Thu, 24 Aug 2023 09:47:14 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-3fbd33a57b6so107455e9.2
+        for <linux-clk@vger.kernel.org>; Thu, 24 Aug 2023 09:47:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1692895633; x=1693500433;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2EvVczCSuUG1dXsNAF6+71rd6RXjkN2oapDkjlIssOs=;
+        b=RyXAG50F6hn+1yLt8VNrrY+dgwQQX9yTg5FXP8LuLL3NdZJUUT9ogqDIIz+Jqty6KV
+         scjK8thkm3bf+KrWEnz2Ts5KmY8sUIeo5zvkjyvmnA/0LB+ERqIk410cDbFok8J8Ca1d
+         p7Kybb2TTfUcZvzzzlUhuyslqmDQrR0Cq7/Af3g1g9aH5/qjCLY4Cf6/HuzFh2lLBJkr
+         89mpB/FTvn9//umfd+FdV/Ub5F6Ok75Etr5ZsytGVqdpkvNtHBTFBKa86ddhh4hZSp9X
+         OKYbkUFkhxJnZzuxl0IabStV8vePLrncLDikazN/dxmI1peDicmDB2cArhKdwjkD58P1
+         XIEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692895633; x=1693500433;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2EvVczCSuUG1dXsNAF6+71rd6RXjkN2oapDkjlIssOs=;
+        b=kGVoxaqNmKr/MZ1rLwxgbvaoFKPwJAcXl353UiR1h4iW7DiCji/Gr2E7rYHWHNDeGv
+         p5vz8DahIsZFb7A4bJs8PPiDjMbimZ0RSnfgSCuoSmG5Bi1Vv5dV3F9jq8UODUpI3MD3
+         fD8yQtbCjLa9L48RNBjOgJN5n/GA7FemoEkaKbHEZbNDdWNPPu7lgbbyy0+9JorjUmpQ
+         cF4LFUckBOin/8bxBdE700VBeUMZBaApGDL2xHCgQGBTFyi6BDy629oQovw34RwmC+xh
+         C5+2hj2ntKyvukHcgwKZv/VYcw6BEYpHW/rcu60b2X0+FnGpvpy2xkXWPUJn2QlUlp/U
+         JoGg==
+X-Gm-Message-State: AOJu0YyPobh1voUQPwagAilFwFZxKNouJE7kFU1+h4s6sM6Tr6JFaVm4
+        7wnZ/7VGLNZNJWzRRg4vS4F2og==
+X-Google-Smtp-Source: AGHT+IExRJs/qGH+i/kd6Ktcz1lqMKQ7lAX5u5Fyz8UxNkGrr12wTZVMNRXW+bPgiwCIxopKVSshPA==
+X-Received: by 2002:a7b:cb41:0:b0:3fe:1b4e:c484 with SMTP id v1-20020a7bcb41000000b003fe1b4ec484mr12566755wmj.5.1692895632749;
+        Thu, 24 Aug 2023 09:47:12 -0700 (PDT)
+Received: from toaster.lan ([2a01:e0a:3c5:5fb1:d046:70c0:38b7:4ca3])
+        by smtp.googlemail.com with ESMTPSA id n17-20020a1c7211000000b003feef5b0baesm3111967wmc.26.2023.08.24.09.47.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Aug 2023 09:47:12 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Neil Armstrong <neil.armstrong@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     Alexander Stein <alexander.stein@mailbox.org>,
+        Kevin Hilman <khilman@baylibre.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        Jerome Brunet <jbrunet@baylibre.com>
+Subject: [PATCH v2] dt-bindings: clock: meson: Convert axg-audio-clkc to YAML format
+Date:   Thu, 24 Aug 2023 18:46:49 +0200
+Message-Id: <20230824164649.2914789-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 24 Aug 2023 08:59:53 +0000 Michalik, Michal wrote:
-> >> The biggest concern for me is the requirement of selftests[2]:
-> >>   "Don't take too long;"
-> >> This approach is reloading the modules few times to check few scenarios.
-> >> Also, the DPLL subsystem is being tested against multiple requests - so
-> >> it takes some time to finish (not too long but is definitely not instant).  
-> > 
-> > I think the time constraints are more of a question of practicality.
-> > A developer should be able to run the tests as part of their workflow.
-> 
-> That makes sense - agree. So Jakub, if I understand correctly we have a few
-> different problems to solve here:
-> 1) how to deploy the module:
->  - now it's separated, we should consider e.g. netdevsim
-> 2) if we should have those tests a part of selftests
->  - I would remove it from selftests and move it to ./tools/testing
-> 3) if we should use Python at all:
->  - fast to develop and easy to maintain
->  - might be problematic to deploy (no Python, VMs, embedded, no network etc.)
->  
-> Do I understand our current outcome of the discussion correctly?
+From: Alexander Stein <alexander.stein@mailbox.org>
 
-Yes, and on (3) unless someone objects let's stick to Python.
+Convert Amlogic AXG Audio Clock Controller binding to yaml.
+
+Signed-off-by: Alexander Stein <alexander.stein@mailbox.org>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ .../bindings/clock/amlogic,axg-audio-clkc.txt |  59 --
+ .../clock/amlogic,axg-audio-clkc.yaml         | 917 ++++++++++++++++++
+ 2 files changed, 917 insertions(+), 59 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
+
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt
+deleted file mode 100644
+index 3a8948c04bc9..000000000000
+--- a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt
++++ /dev/null
+@@ -1,59 +0,0 @@
+-* Amlogic AXG Audio Clock Controllers
+-
+-The Amlogic AXG audio clock controller generates and supplies clock to the
+-other elements of the audio subsystem, such as fifos, i2s, spdif and pdm
+-devices.
+-
+-Required Properties:
+-
+-- compatible	: should be "amlogic,axg-audio-clkc" for the A113X and A113D,
+-		  "amlogic,g12a-audio-clkc" for G12A,
+-		  "amlogic,sm1-audio-clkc" for S905X3.
+-- reg		: physical base address of the clock controller and length of
+-		  memory mapped region.
+-- clocks	: a list of phandle + clock-specifier pairs for the clocks listed
+-		  in clock-names.
+-- clock-names	: must contain the following:
+-		  * "pclk" - Main peripheral bus clock
+-		  may contain the following:
+-		  * "mst_in[0-7]" - 8 input plls to generate clock signals
+-		  * "slv_sclk[0-9]" - 10 slave bit clocks provided by external
+-				      components.
+-		  * "slv_lrclk[0-9]" - 10 slave sample clocks provided by external
+-				       components.
+-- resets	: phandle of the internal reset line
+-- #clock-cells	: should be 1.
+-- #reset-cells  : should be 1 on the g12a (and following) soc family
+-
+-Each clock is assigned an identifier and client nodes can use this identifier
+-to specify the clock which they consume. All available clocks are defined as
+-preprocessor macros in the dt-bindings/clock/axg-audio-clkc.h header and can be
+-used in device tree sources.
+-
+-Example:
+-
+-clkc_audio: clock-controller@0 {
+-	compatible = "amlogic,axg-audio-clkc";
+-	reg = <0x0 0x0 0x0 0xb4>;
+-	#clock-cells = <1>;
+-
+-	clocks = <&clkc CLKID_AUDIO>,
+-		 <&clkc CLKID_MPLL0>,
+-		 <&clkc CLKID_MPLL1>,
+-		 <&clkc CLKID_MPLL2>,
+-		 <&clkc CLKID_MPLL3>,
+-		 <&clkc CLKID_HIFI_PLL>,
+-		 <&clkc CLKID_FCLK_DIV3>,
+-		 <&clkc CLKID_FCLK_DIV4>,
+-		 <&clkc CLKID_GP0_PLL>;
+-	clock-names = "pclk",
+-		      "mst_in0",
+-		      "mst_in1",
+-		      "mst_in2",
+-		      "mst_in3",
+-		      "mst_in4",
+-		      "mst_in5",
+-		      "mst_in6",
+-		      "mst_in7";
+-	resets = <&reset RESET_AUDIO>;
+-};
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
+new file mode 100644
+index 000000000000..5ae2ff4efe11
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
+@@ -0,0 +1,917 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Amlogic AXG Audio Clock Controller
++
++maintainers:
++  - Neil Armstrong <neil.armstrong@linaro.org>
++  - Jerome Brunet <jbrunet@baylibre.com>
++
++description:
++  The Amlogic AXG audio clock controller generates and supplies clock to the
++  other elements of the audio subsystem, such as fifos, i2s, spdif and pdm
++  devices.
++
++properties:
++  compatible:
++    enum:
++      - amlogic,axg-audio-clkc
++      - amlogic,g12a-audio-clkc
++      - amlogic,sm1-audio-clkc
++
++  '#clock-cells':
++    const: 1
++
++  '#reset-cells':
++    const: 1
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    minItems: 1
++    maxItems: 29
++
++  # All clocks except pclk are optional inputs of the controller
++  # which may or may not be wired in depending on SoC variants, boards config, etc ...
++  # The order in which those clocks appear is unpredictable and does not matter.
++  # Lacking a better way to describe this, the optional clocks are repeated 28 times.
++  clock-names:
++    minItems: 1
++    items:
++      - const: pclk
++      - enum:
++          - mst_in0
++          - mst_in1
++          - mst_in2
++          - mst_in3
++          - mst_in4
++          - mst_in5
++          - mst_in6
++          - mst_in7
++          - slv_sclk0
++          - slv_sclk1
++          - slv_sclk2
++          - slv_sclk3
++          - slv_sclk4
++          - slv_sclk5
++          - slv_sclk6
++          - slv_sclk7
++          - slv_sclk8
++          - slv_sclk9
++          - slv_lrclk0
++          - slv_lrclk1
++          - slv_lrclk2
++          - slv_lrclk3
++          - slv_lrclk4
++          - slv_lrclk5
++          - slv_lrclk6
++          - slv_lrclk7
++          - slv_lrclk8
++          - slv_lrclk9
++      - enum:
++          - mst_in0
++          - mst_in1
++          - mst_in2
++          - mst_in3
++          - mst_in4
++          - mst_in5
++          - mst_in6
++          - mst_in7
++          - slv_sclk0
++          - slv_sclk1
++          - slv_sclk2
++          - slv_sclk3
++          - slv_sclk4
++          - slv_sclk5
++          - slv_sclk6
++          - slv_sclk7
++          - slv_sclk8
++          - slv_sclk9
++          - slv_lrclk0
++          - slv_lrclk1
++          - slv_lrclk2
++          - slv_lrclk3
++          - slv_lrclk4
++          - slv_lrclk5
++          - slv_lrclk6
++          - slv_lrclk7
++          - slv_lrclk8
++          - slv_lrclk9
++      - enum:
++          - mst_in0
++          - mst_in1
++          - mst_in2
++          - mst_in3
++          - mst_in4
++          - mst_in5
++          - mst_in6
++          - mst_in7
++          - slv_sclk0
++          - slv_sclk1
++          - slv_sclk2
++          - slv_sclk3
++          - slv_sclk4
++          - slv_sclk5
++          - slv_sclk6
++          - slv_sclk7
++          - slv_sclk8
++          - slv_sclk9
++          - slv_lrclk0
++          - slv_lrclk1
++          - slv_lrclk2
++          - slv_lrclk3
++          - slv_lrclk4
++          - slv_lrclk5
++          - slv_lrclk6
++          - slv_lrclk7
++          - slv_lrclk8
++          - slv_lrclk9
++      - enum:
++          - mst_in0
++          - mst_in1
++          - mst_in2
++          - mst_in3
++          - mst_in4
++          - mst_in5
++          - mst_in6
++          - mst_in7
++          - slv_sclk0
++          - slv_sclk1
++          - slv_sclk2
++          - slv_sclk3
++          - slv_sclk4
++          - slv_sclk5
++          - slv_sclk6
++          - slv_sclk7
++          - slv_sclk8
++          - slv_sclk9
++          - slv_lrclk0
++          - slv_lrclk1
++          - slv_lrclk2
++          - slv_lrclk3
++          - slv_lrclk4
++          - slv_lrclk5
++          - slv_lrclk6
++          - slv_lrclk7
++          - slv_lrclk8
++          - slv_lrclk9
++      - enum:
++          - mst_in0
++          - mst_in1
++          - mst_in2
++          - mst_in3
++          - mst_in4
++          - mst_in5
++          - mst_in6
++          - mst_in7
++          - slv_sclk0
++          - slv_sclk1
++          - slv_sclk2
++          - slv_sclk3
++          - slv_sclk4
++          - slv_sclk5
++          - slv_sclk6
++          - slv_sclk7
++          - slv_sclk8
++          - slv_sclk9
++          - slv_lrclk0
++          - slv_lrclk1
++          - slv_lrclk2
++          - slv_lrclk3
++          - slv_lrclk4
++          - slv_lrclk5
++          - slv_lrclk6
++          - slv_lrclk7
++          - slv_lrclk8
++          - slv_lrclk9
++      - enum:
++          - mst_in0
++          - mst_in1
++          - mst_in2
++          - mst_in3
++          - mst_in4
++          - mst_in5
++          - mst_in6
++          - mst_in7
++          - slv_sclk0
++          - slv_sclk1
++          - slv_sclk2
++          - slv_sclk3
++          - slv_sclk4
++          - slv_sclk5
++          - slv_sclk6
++          - slv_sclk7
++          - slv_sclk8
++          - slv_sclk9
++          - slv_lrclk0
++          - slv_lrclk1
++          - slv_lrclk2
++          - slv_lrclk3
++          - slv_lrclk4
++          - slv_lrclk5
++          - slv_lrclk6
++          - slv_lrclk7
++          - slv_lrclk8
++          - slv_lrclk9
++      - enum:
++          - mst_in0
++          - mst_in1
++          - mst_in2
++          - mst_in3
++          - mst_in4
++          - mst_in5
++          - mst_in6
++          - mst_in7
++          - slv_sclk0
++          - slv_sclk1
++          - slv_sclk2
++          - slv_sclk3
++          - slv_sclk4
++          - slv_sclk5
++          - slv_sclk6
++          - slv_sclk7
++          - slv_sclk8
++          - slv_sclk9
++          - slv_lrclk0
++          - slv_lrclk1
++          - slv_lrclk2
++          - slv_lrclk3
++          - slv_lrclk4
++          - slv_lrclk5
++          - slv_lrclk6
++          - slv_lrclk7
++          - slv_lrclk8
++          - slv_lrclk9
++      - enum:
++          - mst_in0
++          - mst_in1
++          - mst_in2
++          - mst_in3
++          - mst_in4
++          - mst_in5
++          - mst_in6
++          - mst_in7
++          - slv_sclk0
++          - slv_sclk1
++          - slv_sclk2
++          - slv_sclk3
++          - slv_sclk4
++          - slv_sclk5
++          - slv_sclk6
++          - slv_sclk7
++          - slv_sclk8
++          - slv_sclk9
++          - slv_lrclk0
++          - slv_lrclk1
++          - slv_lrclk2
++          - slv_lrclk3
++          - slv_lrclk4
++          - slv_lrclk5
++          - slv_lrclk6
++          - slv_lrclk7
++          - slv_lrclk8
++          - slv_lrclk9
++      - enum:
++          - mst_in0
++          - mst_in1
++          - mst_in2
++          - mst_in3
++          - mst_in4
++          - mst_in5
++          - mst_in6
++          - mst_in7
++          - slv_sclk0
++          - slv_sclk1
++          - slv_sclk2
++          - slv_sclk3
++          - slv_sclk4
++          - slv_sclk5
++          - slv_sclk6
++          - slv_sclk7
++          - slv_sclk8
++          - slv_sclk9
++          - slv_lrclk0
++          - slv_lrclk1
++          - slv_lrclk2
++          - slv_lrclk3
++          - slv_lrclk4
++          - slv_lrclk5
++          - slv_lrclk6
++          - slv_lrclk7
++          - slv_lrclk8
++          - slv_lrclk9
++      - enum:
++          - mst_in0
++          - mst_in1
++          - mst_in2
++          - mst_in3
++          - mst_in4
++          - mst_in5
++          - mst_in6
++          - mst_in7
++          - slv_sclk0
++          - slv_sclk1
++          - slv_sclk2
++          - slv_sclk3
++          - slv_sclk4
++          - slv_sclk5
++          - slv_sclk6
++          - slv_sclk7
++          - slv_sclk8
++          - slv_sclk9
++          - slv_lrclk0
++          - slv_lrclk1
++          - slv_lrclk2
++          - slv_lrclk3
++          - slv_lrclk4
++          - slv_lrclk5
++          - slv_lrclk6
++          - slv_lrclk7
++          - slv_lrclk8
++          - slv_lrclk9
++      - enum:
++          - mst_in0
++          - mst_in1
++          - mst_in2
++          - mst_in3
++          - mst_in4
++          - mst_in5
++          - mst_in6
++          - mst_in7
++          - slv_sclk0
++          - slv_sclk1
++          - slv_sclk2
++          - slv_sclk3
++          - slv_sclk4
++          - slv_sclk5
++          - slv_sclk6
++          - slv_sclk7
++          - slv_sclk8
++          - slv_sclk9
++          - slv_lrclk0
++          - slv_lrclk1
++          - slv_lrclk2
++          - slv_lrclk3
++          - slv_lrclk4
++          - slv_lrclk5
++          - slv_lrclk6
++          - slv_lrclk7
++          - slv_lrclk8
++          - slv_lrclk9
++      - enum:
++          - mst_in0
++          - mst_in1
++          - mst_in2
++          - mst_in3
++          - mst_in4
++          - mst_in5
++          - mst_in6
++          - mst_in7
++          - slv_sclk0
++          - slv_sclk1
++          - slv_sclk2
++          - slv_sclk3
++          - slv_sclk4
++          - slv_sclk5
++          - slv_sclk6
++          - slv_sclk7
++          - slv_sclk8
++          - slv_sclk9
++          - slv_lrclk0
++          - slv_lrclk1
++          - slv_lrclk2
++          - slv_lrclk3
++          - slv_lrclk4
++          - slv_lrclk5
++          - slv_lrclk6
++          - slv_lrclk7
++          - slv_lrclk8
++          - slv_lrclk9
++      - enum:
++          - mst_in0
++          - mst_in1
++          - mst_in2
++          - mst_in3
++          - mst_in4
++          - mst_in5
++          - mst_in6
++          - mst_in7
++          - slv_sclk0
++          - slv_sclk1
++          - slv_sclk2
++          - slv_sclk3
++          - slv_sclk4
++          - slv_sclk5
++          - slv_sclk6
++          - slv_sclk7
++          - slv_sclk8
++          - slv_sclk9
++          - slv_lrclk0
++          - slv_lrclk1
++          - slv_lrclk2
++          - slv_lrclk3
++          - slv_lrclk4
++          - slv_lrclk5
++          - slv_lrclk6
++          - slv_lrclk7
++          - slv_lrclk8
++          - slv_lrclk9
++      - enum:
++          - mst_in0
++          - mst_in1
++          - mst_in2
++          - mst_in3
++          - mst_in4
++          - mst_in5
++          - mst_in6
++          - mst_in7
++          - slv_sclk0
++          - slv_sclk1
++          - slv_sclk2
++          - slv_sclk3
++          - slv_sclk4
++          - slv_sclk5
++          - slv_sclk6
++          - slv_sclk7
++          - slv_sclk8
++          - slv_sclk9
++          - slv_lrclk0
++          - slv_lrclk1
++          - slv_lrclk2
++          - slv_lrclk3
++          - slv_lrclk4
++          - slv_lrclk5
++          - slv_lrclk6
++          - slv_lrclk7
++          - slv_lrclk8
++          - slv_lrclk9
++      - enum:
++          - mst_in0
++          - mst_in1
++          - mst_in2
++          - mst_in3
++          - mst_in4
++          - mst_in5
++          - mst_in6
++          - mst_in7
++          - slv_sclk0
++          - slv_sclk1
++          - slv_sclk2
++          - slv_sclk3
++          - slv_sclk4
++          - slv_sclk5
++          - slv_sclk6
++          - slv_sclk7
++          - slv_sclk8
++          - slv_sclk9
++          - slv_lrclk0
++          - slv_lrclk1
++          - slv_lrclk2
++          - slv_lrclk3
++          - slv_lrclk4
++          - slv_lrclk5
++          - slv_lrclk6
++          - slv_lrclk7
++          - slv_lrclk8
++          - slv_lrclk9
++      - enum:
++          - mst_in0
++          - mst_in1
++          - mst_in2
++          - mst_in3
++          - mst_in4
++          - mst_in5
++          - mst_in6
++          - mst_in7
++          - slv_sclk0
++          - slv_sclk1
++          - slv_sclk2
++          - slv_sclk3
++          - slv_sclk4
++          - slv_sclk5
++          - slv_sclk6
++          - slv_sclk7
++          - slv_sclk8
++          - slv_sclk9
++          - slv_lrclk0
++          - slv_lrclk1
++          - slv_lrclk2
++          - slv_lrclk3
++          - slv_lrclk4
++          - slv_lrclk5
++          - slv_lrclk6
++          - slv_lrclk7
++          - slv_lrclk8
++          - slv_lrclk9
++      - enum:
++          - mst_in0
++          - mst_in1
++          - mst_in2
++          - mst_in3
++          - mst_in4
++          - mst_in5
++          - mst_in6
++          - mst_in7
++          - slv_sclk0
++          - slv_sclk1
++          - slv_sclk2
++          - slv_sclk3
++          - slv_sclk4
++          - slv_sclk5
++          - slv_sclk6
++          - slv_sclk7
++          - slv_sclk8
++          - slv_sclk9
++          - slv_lrclk0
++          - slv_lrclk1
++          - slv_lrclk2
++          - slv_lrclk3
++          - slv_lrclk4
++          - slv_lrclk5
++          - slv_lrclk6
++          - slv_lrclk7
++          - slv_lrclk8
++          - slv_lrclk9
++      - enum:
++          - mst_in0
++          - mst_in1
++          - mst_in2
++          - mst_in3
++          - mst_in4
++          - mst_in5
++          - mst_in6
++          - mst_in7
++          - slv_sclk0
++          - slv_sclk1
++          - slv_sclk2
++          - slv_sclk3
++          - slv_sclk4
++          - slv_sclk5
++          - slv_sclk6
++          - slv_sclk7
++          - slv_sclk8
++          - slv_sclk9
++          - slv_lrclk0
++          - slv_lrclk1
++          - slv_lrclk2
++          - slv_lrclk3
++          - slv_lrclk4
++          - slv_lrclk5
++          - slv_lrclk6
++          - slv_lrclk7
++          - slv_lrclk8
++          - slv_lrclk9
++      - enum:
++          - mst_in0
++          - mst_in1
++          - mst_in2
++          - mst_in3
++          - mst_in4
++          - mst_in5
++          - mst_in6
++          - mst_in7
++          - slv_sclk0
++          - slv_sclk1
++          - slv_sclk2
++          - slv_sclk3
++          - slv_sclk4
++          - slv_sclk5
++          - slv_sclk6
++          - slv_sclk7
++          - slv_sclk8
++          - slv_sclk9
++          - slv_lrclk0
++          - slv_lrclk1
++          - slv_lrclk2
++          - slv_lrclk3
++          - slv_lrclk4
++          - slv_lrclk5
++          - slv_lrclk6
++          - slv_lrclk7
++          - slv_lrclk8
++          - slv_lrclk9
++      - enum:
++          - mst_in0
++          - mst_in1
++          - mst_in2
++          - mst_in3
++          - mst_in4
++          - mst_in5
++          - mst_in6
++          - mst_in7
++          - slv_sclk0
++          - slv_sclk1
++          - slv_sclk2
++          - slv_sclk3
++          - slv_sclk4
++          - slv_sclk5
++          - slv_sclk6
++          - slv_sclk7
++          - slv_sclk8
++          - slv_sclk9
++          - slv_lrclk0
++          - slv_lrclk1
++          - slv_lrclk2
++          - slv_lrclk3
++          - slv_lrclk4
++          - slv_lrclk5
++          - slv_lrclk6
++          - slv_lrclk7
++          - slv_lrclk8
++          - slv_lrclk9
++      - enum:
++          - mst_in0
++          - mst_in1
++          - mst_in2
++          - mst_in3
++          - mst_in4
++          - mst_in5
++          - mst_in6
++          - mst_in7
++          - slv_sclk0
++          - slv_sclk1
++          - slv_sclk2
++          - slv_sclk3
++          - slv_sclk4
++          - slv_sclk5
++          - slv_sclk6
++          - slv_sclk7
++          - slv_sclk8
++          - slv_sclk9
++          - slv_lrclk0
++          - slv_lrclk1
++          - slv_lrclk2
++          - slv_lrclk3
++          - slv_lrclk4
++          - slv_lrclk5
++          - slv_lrclk6
++          - slv_lrclk7
++          - slv_lrclk8
++          - slv_lrclk9
++      - enum:
++          - mst_in0
++          - mst_in1
++          - mst_in2
++          - mst_in3
++          - mst_in4
++          - mst_in5
++          - mst_in6
++          - mst_in7
++          - slv_sclk0
++          - slv_sclk1
++          - slv_sclk2
++          - slv_sclk3
++          - slv_sclk4
++          - slv_sclk5
++          - slv_sclk6
++          - slv_sclk7
++          - slv_sclk8
++          - slv_sclk9
++          - slv_lrclk0
++          - slv_lrclk1
++          - slv_lrclk2
++          - slv_lrclk3
++          - slv_lrclk4
++          - slv_lrclk5
++          - slv_lrclk6
++          - slv_lrclk7
++          - slv_lrclk8
++          - slv_lrclk9
++      - enum:
++          - mst_in0
++          - mst_in1
++          - mst_in2
++          - mst_in3
++          - mst_in4
++          - mst_in5
++          - mst_in6
++          - mst_in7
++          - slv_sclk0
++          - slv_sclk1
++          - slv_sclk2
++          - slv_sclk3
++          - slv_sclk4
++          - slv_sclk5
++          - slv_sclk6
++          - slv_sclk7
++          - slv_sclk8
++          - slv_sclk9
++          - slv_lrclk0
++          - slv_lrclk1
++          - slv_lrclk2
++          - slv_lrclk3
++          - slv_lrclk4
++          - slv_lrclk5
++          - slv_lrclk6
++          - slv_lrclk7
++          - slv_lrclk8
++          - slv_lrclk9
++      - enum:
++          - mst_in0
++          - mst_in1
++          - mst_in2
++          - mst_in3
++          - mst_in4
++          - mst_in5
++          - mst_in6
++          - mst_in7
++          - slv_sclk0
++          - slv_sclk1
++          - slv_sclk2
++          - slv_sclk3
++          - slv_sclk4
++          - slv_sclk5
++          - slv_sclk6
++          - slv_sclk7
++          - slv_sclk8
++          - slv_sclk9
++          - slv_lrclk0
++          - slv_lrclk1
++          - slv_lrclk2
++          - slv_lrclk3
++          - slv_lrclk4
++          - slv_lrclk5
++          - slv_lrclk6
++          - slv_lrclk7
++          - slv_lrclk8
++          - slv_lrclk9
++      - enum:
++          - mst_in0
++          - mst_in1
++          - mst_in2
++          - mst_in3
++          - mst_in4
++          - mst_in5
++          - mst_in6
++          - mst_in7
++          - slv_sclk0
++          - slv_sclk1
++          - slv_sclk2
++          - slv_sclk3
++          - slv_sclk4
++          - slv_sclk5
++          - slv_sclk6
++          - slv_sclk7
++          - slv_sclk8
++          - slv_sclk9
++          - slv_lrclk0
++          - slv_lrclk1
++          - slv_lrclk2
++          - slv_lrclk3
++          - slv_lrclk4
++          - slv_lrclk5
++          - slv_lrclk6
++          - slv_lrclk7
++          - slv_lrclk8
++          - slv_lrclk9
++      - enum:
++          - mst_in0
++          - mst_in1
++          - mst_in2
++          - mst_in3
++          - mst_in4
++          - mst_in5
++          - mst_in6
++          - mst_in7
++          - slv_sclk0
++          - slv_sclk1
++          - slv_sclk2
++          - slv_sclk3
++          - slv_sclk4
++          - slv_sclk5
++          - slv_sclk6
++          - slv_sclk7
++          - slv_sclk8
++          - slv_sclk9
++          - slv_lrclk0
++          - slv_lrclk1
++          - slv_lrclk2
++          - slv_lrclk3
++          - slv_lrclk4
++          - slv_lrclk5
++          - slv_lrclk6
++          - slv_lrclk7
++          - slv_lrclk8
++          - slv_lrclk9
++      - enum:
++          - mst_in0
++          - mst_in1
++          - mst_in2
++          - mst_in3
++          - mst_in4
++          - mst_in5
++          - mst_in6
++          - mst_in7
++          - slv_sclk0
++          - slv_sclk1
++          - slv_sclk2
++          - slv_sclk3
++          - slv_sclk4
++          - slv_sclk5
++          - slv_sclk6
++          - slv_sclk7
++          - slv_sclk8
++          - slv_sclk9
++          - slv_lrclk0
++          - slv_lrclk1
++          - slv_lrclk2
++          - slv_lrclk3
++          - slv_lrclk4
++          - slv_lrclk5
++          - slv_lrclk6
++          - slv_lrclk7
++          - slv_lrclk8
++          - slv_lrclk9
++      - enum:
++          - mst_in0
++          - mst_in1
++          - mst_in2
++          - mst_in3
++          - mst_in4
++          - mst_in5
++          - mst_in6
++          - mst_in7
++          - slv_sclk0
++          - slv_sclk1
++          - slv_sclk2
++          - slv_sclk3
++          - slv_sclk4
++          - slv_sclk5
++          - slv_sclk6
++          - slv_sclk7
++          - slv_sclk8
++          - slv_sclk9
++          - slv_lrclk0
++          - slv_lrclk1
++          - slv_lrclk2
++          - slv_lrclk3
++          - slv_lrclk4
++          - slv_lrclk5
++          - slv_lrclk6
++          - slv_lrclk7
++          - slv_lrclk8
++          - slv_lrclk9
++
++  resets:
++    description: internal reset line
++
++required:
++  - compatible
++  - '#clock-cells'
++  - reg
++  - clocks
++  - clock-names
++  - resets
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - amlogic,g12a-audio-clkc
++              - amlogic,sm1-audio-clkc
++    then:
++      required:
++        - '#reset-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/axg-clkc.h>
++    #include <dt-bindings/reset/amlogic,meson-axg-reset.h>
++    apb {
++        #address-cells = <2>;
++        #size-cells = <2>;
++
++        clkc_audio: clock-controller@0 {
++        compatible = "amlogic,axg-audio-clkc";
++        reg = <0x0 0x0 0x0 0xb4>;
++        #clock-cells = <1>;
++
++        clocks = <&clkc CLKID_AUDIO>,
++            <&clkc CLKID_MPLL0>,
++            <&clkc CLKID_MPLL1>,
++            <&clkc CLKID_MPLL2>,
++            <&clkc CLKID_HIFI_PLL>,
++            <&clkc CLKID_FCLK_DIV3>,
++            <&clkc CLKID_FCLK_DIV4>,
++            <&clkc CLKID_GP0_PLL>,
++            <&codec_frame_clk>;
++        clock-names = "pclk",
++            "mst_in0",
++            "mst_in1",
++            "mst_in2",
++            "mst_in4",
++            "mst_in5",
++            "mst_in6",
++            "mst_in7",
++            "slv_lrclk1";
++        resets = <&reset RESET_AUDIO>;
++      };
++    };
+-- 
+2.40.1
+
