@@ -2,61 +2,61 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0652EE49BC
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF11CEE49BD
 	for <linux-clk@archiver.kernel.org>; Fri, 25 Aug 2023 15:39:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343798AbjHYPjA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Aug 2023 11:39:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54666 "EHLO
+        id S1343890AbjHYPjC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Aug 2023 11:39:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343571AbjHYPih (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Aug 2023 11:38:37 -0400
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEB302688
-        for <linux-clk@vger.kernel.org>; Fri, 25 Aug 2023 08:38:32 -0700 (PDT)
-Received: by mail-lj1-x233.google.com with SMTP id 38308e7fff4ca-2bcde83ce9fso15842341fa.1
-        for <linux-clk@vger.kernel.org>; Fri, 25 Aug 2023 08:38:32 -0700 (PDT)
+        with ESMTP id S1343905AbjHYPin (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Aug 2023 11:38:43 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 740DB2704
+        for <linux-clk@vger.kernel.org>; Fri, 25 Aug 2023 08:38:36 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id 2adb3069b0e04-4fe8c16c1b4so1575662e87.2
+        for <linux-clk@vger.kernel.org>; Fri, 25 Aug 2023 08:38:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1692977911; x=1693582711;
+        d=linaro.org; s=google; t=1692977914; x=1693582714;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=dcjcwisDXlg84xv+ldq2FQJTTOumDjlAQbIhasmseG4=;
-        b=wv+7VD7h2I9Bwxo458SiQOktW0QIFDltt4/vn/kw/WblRcP546HD1eUSnOPwYZvG32
-         XOFrvCIt4w/j2VcN06RNHJc2lSHRw+U+OoVQHzTR959o9GywnADT+Nq/bc2SHeBGRPvA
-         +mXTIbVYQ++57pQ3bPAcQKuGMXZU2PH8MN+R1xdBAS2kldiQcz73OYsEdblj35OUZB5K
-         MJzsN9Jr/gAOKxGXcrJOfrDQCjHaB0mDdlcV5sK/p6zCXlLdODfFWv1Qvgw6xsQl9GTF
-         si7s0CV1doVUnrnRwgGworZenrskPpG+fVnVfSm/53HCL6bu1TbUUg1vk5nu5DnBz2Ko
-         /iSA==
+        bh=azTsgBM86+GM9sSp42BUI1s8412oPMCgpH7RHDGWmLw=;
+        b=i9hivS1oUlHEda/POH/lLTO9SB2ZhHbDNnbg9QGKhCuzidjynDn7kYqQQRBMaxOFFp
+         44uWmeDTl6fjdqvRQ9gsaWdTm8XNWalwNkS9r4rg05ZYYC/jv9bU6H9K2HzYQjQQtJgS
+         afRJ+OnwYDKKMAB6L4Z92+/O4+GjJGdSQ40ch6PnofT0m06GKweUPvO1VO8IReYIbzsw
+         0tioSrBGuNjiiWIso/1D1wbkEtDRjD3l0rMBgt7mTGNZzUSMYi1mnpOIFsxMEyLTNYCG
+         MIx526z7krjhugm6JNLDxJUWTrWLUFtuFnbAHEZR1imRge2DklUzNNPcfOKte0c1GuL0
+         1aiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692977911; x=1693582711;
+        d=1e100.net; s=20221208; t=1692977914; x=1693582714;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dcjcwisDXlg84xv+ldq2FQJTTOumDjlAQbIhasmseG4=;
-        b=hRfWrGude6SWQpC5KXaFcrJQkpN9MuxFRyv5TNY8delGIepHXEhjS3LZ1K0/dSvjj+
-         aNfCXDXbBZyPJn04Wy+eIzjyKsL9Xw+vddJ9qgGBQoNpy6lMeG+RJYvkmNXynGo3hPZt
-         N7EZA+HliPE3q1po6QvoH+LqhvArZiYqxLF+Z+PfBtd2SflTDdB/OLfKT6pWgrdPZjvd
-         o5RYMJSxBvzSCopRgaUSGRG37vNgt3gT3qQ+H1vyP7bEJExA3ilu3lne3x43o+4tdLC9
-         LnQWyCvk/2TOgYCnc9N6W12pNY/BhumZLw6czaDwYfErpPC1wBhRkKiptUB3ZRaC5SU1
-         4aKg==
-X-Gm-Message-State: AOJu0YzXa2SlpjpAieb70RCzo8WB4ti+aLpumbp/00+ZRKDFe+js6GYr
-        Hxlgln5PxDukk98KH5sDqaLJQg==
-X-Google-Smtp-Source: AGHT+IE31/e3cnbPUm2oftzb5dIS9wX6shBNinidBB80qR9C1Lcug/NYghtA/1bMLAB+jx3HHMS9lA==
-X-Received: by 2002:ac2:4985:0:b0:4f9:51ac:41eb with SMTP id f5-20020ac24985000000b004f951ac41ebmr11172410lfl.16.1692977911150;
-        Fri, 25 Aug 2023 08:38:31 -0700 (PDT)
+        bh=azTsgBM86+GM9sSp42BUI1s8412oPMCgpH7RHDGWmLw=;
+        b=LGV0gdwXKqw/9ahQX8RaHNTVKms7bj08X6h/OyXrh/dwltolZKJHYFEUDjEx56WcTj
+         4YpkYJY1hTgiOguIv51xo4YslL7nf4BVglTUENd8X+AK/Ex2Hasnz+4r6tfJyGHOhgVD
+         s+B4CJBQEintfHmzdPVRKzc5lc/wwwel3RuGs8QM7mODqYBSEtZYp4vFg1uAXdEmd0t2
+         9WwI/qsRFaHXPRklesro6oZdU++zLqQfI1QBop7drYqJj9CVgd3nQHBmWxWvDtakNCG1
+         cPTG1vKyghDSFl0JSPjEtJJrd4++KAvc4H2GkNuB8h9XUB7/7SwC21b9JZzYGCqGqXkP
+         w4Yw==
+X-Gm-Message-State: AOJu0Yx0KjoVY8W7YFAMrtxjmIB0KUN33bJ/9M0bOu6xp9XAZfe/P7rD
+        YMK+b4O2EOYTPpy6y+GnpFBaiQ==
+X-Google-Smtp-Source: AGHT+IFpC7f2GKEeP17lWZafcyaLyk7hJMxrz3ESx1Rz4tEHInZrUawfmikVewSTSsESxFiozjT9kw==
+X-Received: by 2002:a19:6d1c:0:b0:4fd:c83b:a093 with SMTP id i28-20020a196d1c000000b004fdc83ba093mr11919849lfc.1.1692977914620;
+        Fri, 25 Aug 2023 08:38:34 -0700 (PDT)
 Received: from [192.168.1.101] (abxh59.neoplus.adsl.tpnet.pl. [83.9.1.59])
-        by smtp.gmail.com with ESMTPSA id y17-20020a197511000000b004fe432108absm326002lfe.182.2023.08.25.08.38.30
+        by smtp.gmail.com with ESMTPSA id y17-20020a197511000000b004fe432108absm326002lfe.182.2023.08.25.08.38.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Aug 2023 08:38:30 -0700 (PDT)
+        Fri, 25 Aug 2023 08:38:34 -0700 (PDT)
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Fri, 25 Aug 2023 17:38:26 +0200
-Subject: [PATCH v4 04/10] interconnect: qcom: icc-rpm: Check for
- node-specific rate coefficients
+Date:   Fri, 25 Aug 2023 17:38:29 +0200
+Subject: [PATCH v4 07/10] interconnect: qcom: qcm2290: Update EBI channel
+ configuration
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230726-topic-icc_coeff-v4-4-c04b60caa467@linaro.org>
+Message-Id: <20230726-topic-icc_coeff-v4-7-c04b60caa467@linaro.org>
 References: <20230726-topic-icc_coeff-v4-0-c04b60caa467@linaro.org>
 In-Reply-To: <20230726-topic-icc_coeff-v4-0-c04b60caa467@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
@@ -69,87 +69,48 @@ Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         Konrad Dybcio <konrad.dybcio@linaro.org>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1692977905; l=2693;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1692977905; l=1320;
  i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=mAeJwUiLt8a3mVMD19ZVYHlnPNRhvBX56pfF4nnsqeU=;
- b=fQY47HFD8x4as0tMazw1XA/kjiE7LYBWkxxqbTw7bad6rox/70IKKEhXY4I8h7i9KKBqlEIZm
- WQBNFTKpD3WA/tcJFgcfRNiBF4xrw+r0MvevMIO/WIhYXbDowBGEGAp
+ bh=Y3uMer9xOocejP5QFGPjFGimfPx5QRm0vyhaJFgmIts=;
+ b=J8kGgkMIcFdUnllOtWiO18kvfFZhO5gtE0bKmGCVA2lUur90VBvqeYmMaLqgPp1SMjC6rXJ11
+ XPwIZ5sMI2kDjabqVKuJ0Zql/RyizxHLEPqngv7zBQ1Mdg4FxI8tYEK
 X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
  pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Some nodes may have different coefficients than the general values for
-bus they're attached to. Check for that and use them if present. See
-[1], [2] for reference.
+QCM2290 can support two memory configurations: single-channel, 32-bit
+wide LPDDR3 @ up to 933MHz (bus clock) or dual-channel, 16-bit wide
+LPDDR4X @ up to 1804 MHz. The interconnect driver in its current form
+seems to gravitate towards the first one, however there are no LPDDR3-
+equipped boards upstream and we still don't have a great way to discern
+the DDR generations on the kernel side.
 
-[1] https://github.com/sonyxperiadev/kernel/commit/7456d9779af9ad6bb9c7ee6f33d5c5a8d3648e24
-[2] https://github.com/artem/android_kernel_sony_msm8996/commit/bf7a8985dcaf0eab5bc2562d2d6775e7e29c0f30
+To make DDR scaling possible on the only currently-supported 2290
+board, stick with the LPDDR4X config by default. The side effect on any
+potential LPDDR3 board would be that the requested bus clock rate is
+too high (but still capped to the firmware-configured FMAX).
+
 Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- drivers/interconnect/qcom/icc-rpm.c | 14 ++++++++++----
- drivers/interconnect/qcom/icc-rpm.h |  4 ++++
- 2 files changed, 14 insertions(+), 4 deletions(-)
+ drivers/interconnect/qcom/qcm2290.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/interconnect/qcom/icc-rpm.c b/drivers/interconnect/qcom/icc-rpm.c
-index 1d3af4e9ead8..9c40314e03b5 100644
---- a/drivers/interconnect/qcom/icc-rpm.c
-+++ b/drivers/interconnect/qcom/icc-rpm.c
-@@ -300,14 +300,14 @@ static u64 qcom_icc_calc_rate(struct qcom_icc_provider *qp, struct qcom_icc_node
- 	else
- 		agg_avg_rate = qn->sum_avg[ctx];
- 
--	if (qp->ab_coeff) {
--		agg_avg_rate = agg_avg_rate * qp->ab_coeff;
-+	if (qn->ab_coeff) {
-+		agg_avg_rate = agg_avg_rate * qn->ab_coeff;
- 		agg_avg_rate = div_u64(agg_avg_rate, 100);
- 	}
- 
--	if (qp->ib_coeff) {
-+	if (qn->ib_coeff) {
- 		agg_peak_rate = qn->max_peak[ctx] * 100;
--		agg_peak_rate = div_u64(qn->max_peak[ctx], qp->ib_coeff);
-+		agg_peak_rate = div_u64(qn->max_peak[ctx], qn->ib_coeff);
- 	} else {
- 		agg_peak_rate = qn->max_peak[ctx];
- 	}
-@@ -563,6 +563,12 @@ int qnoc_probe(struct platform_device *pdev)
- 	for (i = 0; i < num_nodes; i++) {
- 		size_t j;
- 
-+		if (!qnodes[i]->ab_coeff)
-+			qnodes[i]->ab_coeff = qp->ab_coeff;
-+
-+		if (!qnodes[i]->ib_coeff)
-+			qnodes[i]->ib_coeff = qp->ib_coeff;
-+
- 		node = icc_node_create(qnodes[i]->id);
- 		if (IS_ERR(node)) {
- 			ret = PTR_ERR(node);
-diff --git a/drivers/interconnect/qcom/icc-rpm.h b/drivers/interconnect/qcom/icc-rpm.h
-index 725e0d4840e4..4abf99ce2690 100644
---- a/drivers/interconnect/qcom/icc-rpm.h
-+++ b/drivers/interconnect/qcom/icc-rpm.h
-@@ -103,6 +103,8 @@ struct qcom_icc_qos {
-  * @mas_rpm_id:	RPM id for devices that are bus masters
-  * @slv_rpm_id:	RPM id for devices that are bus slaves
-  * @qos: NoC QoS setting parameters
-+ * @ab_coeff: a percentage-based coefficient for compensating the AB calculations
-+ * @ib_coeff: an inverse-percentage-based coefficient for compensating the IB calculations
-  * @bus_clk_rate: a pointer to an array containing bus clock rates in Hz
-  */
- struct qcom_icc_node {
-@@ -118,6 +120,8 @@ struct qcom_icc_node {
- 	int mas_rpm_id;
- 	int slv_rpm_id;
- 	struct qcom_icc_qos qos;
-+	u16 ab_coeff;
-+	u16 ib_coeff;
- 	u32 bus_clk_rate[QCOM_SMD_RPM_STATE_NUM];
+diff --git a/drivers/interconnect/qcom/qcm2290.c b/drivers/interconnect/qcom/qcm2290.c
+index 7abc0c449220..b88cf9a022e0 100644
+--- a/drivers/interconnect/qcom/qcm2290.c
++++ b/drivers/interconnect/qcom/qcm2290.c
+@@ -678,7 +678,8 @@ static struct qcom_icc_node mas_gfx3d = {
+ static struct qcom_icc_node slv_ebi1 = {
+ 	.name = "slv_ebi1",
+ 	.id = QCM2290_SLAVE_EBI1,
+-	.buswidth = 8,
++	.buswidth = 4,
++	.channels = 2,
+ 	.mas_rpm_id = -1,
+ 	.slv_rpm_id = 0,
  };
- 
 
 -- 
 2.42.0
