@@ -2,158 +2,131 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD7F5C3DA6F
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Aug 2023 08:57:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FC11C3DA66
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Aug 2023 09:14:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244020AbjHYI5Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Aug 2023 04:57:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34328 "EHLO
+        id S241608AbjHYJOD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Aug 2023 05:14:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244006AbjHYI5G (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Aug 2023 04:57:06 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F5D01BF6;
-        Fri, 25 Aug 2023 01:57:01 -0700 (PDT)
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37P8L8rS016120;
-        Fri, 25 Aug 2023 08:56:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=onBKAcug19tEB8vhIRdPk/6OlxISuNmM42XPXEW9QAc=;
- b=L6sGXD3j1xKckmgyy6crfOH22H3q1FH0wDeOdmZ5+LD/OPX9hntvHLuRnqwd9lg3+eic
- 4ma3njb9LycwHx97qSRViKXddool054vv0l2MgQYkWsOEdITZeneKZr/hPpmEHMAmWlG
- ofaSl++LPQb3DFrXFvERU1ySWLE3UMo6BJy/VUPca6VA2JR4Ei5XvYGhLM+6ov6++Cno
- HG2bbj5H+VXTILcbNVMiliujhT/BXl+4gCjBoNC7Rw2F/KtEb5UI5+nakZIcAv6bHzmL
- El2mbvR7g3Kz/Uv0FCmQEpYMwWdSaMecLAusAKWWW094+VzqyS8DgJBSIr4ihcUePs01 wQ== 
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3spmm68j1t-1
+        with ESMTP id S238617AbjHYJNd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Aug 2023 05:13:33 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62A4A1FD4;
+        Fri, 25 Aug 2023 02:13:31 -0700 (PDT)
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37P8paUM003379;
+        Fri, 25 Aug 2023 09:13:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=qcppdkim1;
+ bh=++ZxkWnEWTqk2wHUFN76TInldLleN88u6lc/34mYbmk=;
+ b=oPT65v/riv/Hsu5MlJ6QpwdOrQKyLkJJ3KHD/2eYW91lNTb6Y3qihf/kZMAbaN6jkqmB
+ pFN3wIIO2c8X6Ma8nENvV47cawpKi/IxAGmrYqBv02i2FyKmkjziMwu055io4aTidWO2
+ auOzEqscEw22tgGeHjX1XO+furYV4uQANDqAguua9wrAOYlaVoxJF7o37ZdosYmU/Ru/
+ T5NMkGSnEfdSDZJuX4mq7JJcdo+lRsG2PjZuwCVPZQWW+wftMxnlECM9dwo8ni2kypR4
+ BjA1dhmobKkU4KY5tsgWLJAz6TtfQbYTdhXrUVR+TKuuwvVn7uP6nX/2oG9Y4OTiu2th cA== 
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3spmpv0hq2-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 25 Aug 2023 08:56:19 +0000
+        Fri, 25 Aug 2023 09:13:06 +0000
 Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-        by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 37P8uIbh000424
+        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 37P9D59g015252
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 25 Aug 2023 08:56:19 GMT
-Received: from [10.216.23.75] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.36; Fri, 25 Aug
- 2023 01:56:11 -0700
-Message-ID: <a3a5a5a6-fb09-4904-81a0-c1de4653e378@quicinc.com>
-Date:   Fri, 25 Aug 2023 14:26:04 +0530
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH 3/6] dt-bindings: clock: Add ipq9574 NSSCC clock and reset
- definitions
-Content-Language: en-US
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Kathiravan T <quic_kathirav@quicinc.com>, <agross@kernel.org>,
-        <andersson@kernel.org>, <mturquette@baylibre.com>,
+        Fri, 25 Aug 2023 09:13:05 GMT
+Received: from devipriy-linux.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.36; Fri, 25 Aug 2023 02:12:58 -0700
+From:   Devi Priya <quic_devipriy@quicinc.com>
+To:     <andersson@kernel.org>, <agross@kernel.org>,
+        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
         <sboyd@kernel.org>, <robh+dt@kernel.org>,
         <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
         <catalin.marinas@arm.com>, <will@kernel.org>,
         <p.zabel@pengutronix.de>, <richardcochran@gmail.com>,
         <arnd@arndb.de>, <geert+renesas@glider.be>,
-        <neil.armstrong@linaro.org>, <nfraprado@collabora.com>,
-        <rafal@milecki.pl>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
+        <nfraprado@collabora.com>, <rafal@milecki.pl>, <peng.fan@nxp.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>
-CC:     <quic_saahtoma@quicinc.com>
-References: <20230711093529.18355-1-quic_devipriy@quicinc.com>
- <20230711093529.18355-4-quic_devipriy@quicinc.com>
- <ea229d40-0bce-87e8-edef-72a7f251c051@quicinc.com>
- <868da572-cff1-42b6-9931-06b6a8c73809@linaro.org>
-From:   Devi Priya <quic_devipriy@quicinc.com>
-In-Reply-To: <868da572-cff1-42b6-9931-06b6a8c73809@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
+CC:     <quic_devipriy@quicinc.com>, <quic_saahtoma@quicinc.com>
+Subject: [PATCH V2 1/7] clk: qcom: clk-alpha-pll: Add NSS HUAYRA ALPHA PLL support for ipq9574
+Date:   Fri, 25 Aug 2023 14:42:28 +0530
+Message-ID: <20230825091234.32713-2-quic_devipriy@quicinc.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20230825091234.32713-1-quic_devipriy@quicinc.com>
+References: <20230825091234.32713-1-quic_devipriy@quicinc.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nasanex01a.na.qualcomm.com (10.52.223.231)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Rp6KQ-52rhszQMjaKaWh-UHsgFMqZ8Fy
-X-Proofpoint-GUID: Rp6KQ-52rhszQMjaKaWh-UHsgFMqZ8Fy
+X-Proofpoint-GUID: 52CGh9GZQigfFOTrIOeDnAXlnpjeK8zJ
+X-Proofpoint-ORIG-GUID: 52CGh9GZQigfFOTrIOeDnAXlnpjeK8zJ
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
  definitions=2023-08-25_07,2023-08-24_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
- impostorscore=0 priorityscore=1501 malwarescore=0 phishscore=0
- clxscore=1015 mlxscore=0 adultscore=0 bulkscore=0 lowpriorityscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2308100000 definitions=main-2308250077
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
+ priorityscore=1501 impostorscore=0 malwarescore=0 spamscore=0 bulkscore=0
+ phishscore=0 suspectscore=0 mlxscore=0 mlxlogscore=876 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2308100000
+ definitions=main-2308250079
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Add support for NSS Huayra alpha pll found on ipq9574 SoCs.
+Programming sequence is the same as that of Huayra type Alpha PLL,
+so we can re-use the same.
 
+Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+ Changes in V2:
+	- Picked up the R-b tag
 
-On 8/24/2023 2:17 PM, Konrad Dybcio wrote:
-> On 24.08.2023 07:18, Kathiravan T wrote:
->>
->> On 7/11/2023 3:05 PM, Devi Priya wrote:
->>> Add NSSCC clock and reset definitions for ipq9574.
->>>
->>> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
->>> ---
->>>    .../bindings/clock/qcom,ipq9574-nsscc.yaml    |  76 +++++++++
->>>    .../dt-bindings/clock/qcom,ipq9574-nsscc.h    | 152 ++++++++++++++++++
->>>    .../dt-bindings/reset/qcom,ipq9574-nsscc.h    | 134 +++++++++++++++
->>>    3 files changed, 362 insertions(+)
->>>    create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
->>>    create mode 100644 include/dt-bindings/clock/qcom,ipq9574-nsscc.h
->>>    create mode 100644 include/dt-bindings/reset/qcom,ipq9574-nsscc.h
->>>
->>> diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
->>> new file mode 100644
->>> index 000000000000..1e8754760785
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
->>> @@ -0,0 +1,76 @@
->>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/clock/qcom,ipq9574-nsscc.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: Qualcomm Networking Sub System Clock & Reset Controller on IPQ9574
->>> +
->>> +maintainers:
->>> +  - Bjorn Andersson <andersson@kernel.org>
->>> +  - Anusha Rao <quic_anusha@quicinc.com>
->>> +
->>> +description: |
->>> +  Qualcomm networking sub system clock control module provides the clocks,
->>> +  resets and power domains on IPQ9574
->>> +
->>> +  See also::
->>> +    include/dt-bindings/clock/qcom,ipq9574-nsscc.h
->>> +    include/dt-bindings/reset/qcom,ipq9574-nsscc.h
->>> +
->>> +properties:
->>> +  compatible:
->>> +    const: qcom,ipq9574-nsscc
->>> +
->>> +  clocks:
->>> +    items:
->>> +      - description: Bias PLL cc clock source
->>> +      - description: Bias PLL nss noc clock source
->>> +      - description: Bias PLL ubi nc clock source
->>> +      - description: GCC GPLL0 out aux clock source
->>> +      - description: Uniphy0 GCC Rx clock source
->>> +      - description: Uniphy0 GCC Tx clock source
->>> +      - description: Uniphy1 GCC Rx clock source
->>> +      - description: Uniphy1 GCC Tx clock source
->>> +      - description: Uniphy2 GCC Rx clock source
->>> +      - description: Uniphy2 GCC Tx clock source
->>
->>
->> These are UniphyX *NSS* TX/RX clock source?
-> Wouldn't that be "source from GCC"?
-These clocks are not sourced from GCC
+ drivers/clk/qcom/clk-alpha-pll.c | 12 ++++++++++++
+ drivers/clk/qcom/clk-alpha-pll.h |  1 +
+ 2 files changed, 13 insertions(+)
 
-Thanks,
-Devi Priya
-> 
-> Konrad
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index e4ef645f65d1..1c2a72840cd2 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -228,6 +228,18 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
+ 		[PLL_OFF_ALPHA_VAL] = 0x24,
+ 		[PLL_OFF_ALPHA_VAL_U] = 0x28,
+ 	},
++
++	[CLK_ALPHA_PLL_TYPE_NSS_HUAYRA] =  {
++		[PLL_OFF_L_VAL] = 0x04,
++		[PLL_OFF_ALPHA_VAL] = 0x08,
++		[PLL_OFF_TEST_CTL] = 0x0c,
++		[PLL_OFF_TEST_CTL_U] = 0x10,
++		[PLL_OFF_USER_CTL] = 0x14,
++		[PLL_OFF_CONFIG_CTL] = 0x18,
++		[PLL_OFF_CONFIG_CTL_U] = 0x1c,
++		[PLL_OFF_STATUS] = 0x20,
++	},
++
+ };
+ EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
+ 
+diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+index e4bd863027ab..cb079a6ed96a 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.h
++++ b/drivers/clk/qcom/clk-alpha-pll.h
+@@ -28,6 +28,7 @@ enum {
+ 	CLK_ALPHA_PLL_TYPE_BRAMMO_EVO,
+ 	CLK_ALPHA_PLL_TYPE_STROMER,
+ 	CLK_ALPHA_PLL_TYPE_STROMER_PLUS,
++	CLK_ALPHA_PLL_TYPE_NSS_HUAYRA,
+ 	CLK_ALPHA_PLL_TYPE_MAX,
+ };
+ 
+-- 
+2.34.1
+
