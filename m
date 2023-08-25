@@ -2,260 +2,146 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 920EFC3DA66
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Aug 2023 06:27:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01689C3DA66
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Aug 2023 08:15:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240208AbjHYG0u (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Aug 2023 02:26:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57322 "EHLO
+        id S241988AbjHYIPM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Aug 2023 04:15:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241749AbjHYG0Y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Aug 2023 02:26:24 -0400
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6A7B1FD5;
-        Thu, 24 Aug 2023 23:26:21 -0700 (PDT)
-Received: by mail-lj1-x22c.google.com with SMTP id 38308e7fff4ca-2b95d5ee18dso7715941fa.1;
-        Thu, 24 Aug 2023 23:26:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1692944780; x=1693549580;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=I1ipShb9SqOkO9YC3H7e/0Pr97qinxpxrUiWfa6MdKI=;
-        b=JdGpEX7Dstg6BWpug7MvXigpjjMEfMugatyynVwkbQ4PJ5UpZmMM2OaOQuzEngnxus
-         +yKkmAkX1hIU7zP5+VOALdAIUKCRtsJ5NolcAiP/DUmYEc2Ucat9OBow75rgT7zjqE9H
-         YmTHwJdZR549F4qdn1abLUqDfTIjCS57FtOXcDuLTC9XiwmeIMFvwC+Lfa9jsb3g7SBn
-         XUtaa9UfqBaEDDhslNsANFfXVjCsrIQmw3IAP4Ug+6tjiacDpnfAPfGiQ16Gn8qU+7Bf
-         gtQvsunnnOFvGvMPeeOE1rtBF6EFlh07IzZmb9cFRPIMa2xYQ3A8no2hNkH56WYthTtP
-         AURw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692944780; x=1693549580;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=I1ipShb9SqOkO9YC3H7e/0Pr97qinxpxrUiWfa6MdKI=;
-        b=hEeyp9COLNf5oPPNF6KnGeXzmn+Us0/cs342+JYXqCqQd7wVrk+LRGDchzrVwYMKxf
-         /JqwqMODjOGplHKFZPtwdvh6ebRH0p0c00+1Glmzj1Gd52jINuBG7mcUN6AT41SK1zzz
-         bTmYW8b2wzZ6Rum+/CH8PSpiGsevvzJxkZ0CZ4CTT0AeyW4gX3OP+dh1BN6N0Yq+TfD9
-         Wkj8pjTQcdJugEkbXVrcBtW2ZpEYhXHVnm7mjEuosGQ6sglRSwDNEwgQrl54yzp3vIGV
-         nh2+IlRiUTlXt8DyKyfh7t6zOzKqxtTUgWVdREv0pA87DuxO0hDkJbtKGA4zyMmbK34d
-         HGCA==
-X-Gm-Message-State: AOJu0YwDHxkUbWO+s36zmxCMzI1sNCkqOnnvFjXMuuk2qHigy3+7RFDw
-        0aMkoUvwQmhskdB7FZyRPRxMNJl0OqrBzLCx5dM=
-X-Google-Smtp-Source: AGHT+IGkaeK48THQJm2FwND3YMABwJYN+gKPAIMo9dNPHXvcvYZEMnmxeoc+h24u8LUXLnWM2Dmc6rbgJkyPamFSkhI=
-X-Received: by 2002:ac2:5b03:0:b0:500:a6c1:d8e3 with SMTP id
- v3-20020ac25b03000000b00500a6c1d8e3mr842166lfn.46.1692944779618; Thu, 24 Aug
- 2023 23:26:19 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230805070643.30705-1-zhifeng.tang@unisoc.com>
-In-Reply-To: <20230805070643.30705-1-zhifeng.tang@unisoc.com>
-From:   Chunyan Zhang <zhang.lyra@gmail.com>
-Date:   Fri, 25 Aug 2023 14:25:42 +0800
-Message-ID: <CAAfSe-vc1Kmvj0eFqTBAMv+ZAOH13b8WSDfVJ+OZx7s1gUuLMA@mail.gmail.com>
-Subject: Re: [PATCH] clk: sprd: Composite driver support offset config
-To:     Zhifeng Tang <zhifeng.tang@unisoc.com>
+        with ESMTP id S243521AbjHYIOw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Aug 2023 04:14:52 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B36822129;
+        Fri, 25 Aug 2023 01:14:01 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7839266F89;
+        Fri, 25 Aug 2023 08:13:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60304C433C8;
+        Fri, 25 Aug 2023 08:13:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692951236;
+        bh=YVk25x/sSU7KEodueNZY7jdyqVwGHD8I8MTwcv0HBcY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jf5c9teWfTlMZp6cHwEiPogx9JME0pEgI1Vbwmam7Q1cOGt/82i3FwrEXwALY8pxA
+         dAqlWhAZlzITVWqTD5hyFzs0j1Ipv4PEgRkcI38v8vAyE8im6SomovcAkG3BTnjOm1
+         KoVjdE+zKmXXxoODTr4nSiQi5KTSGKXUsE0+Wly8Kbep68N13q7RVBPwmu9p5Azkoc
+         9//5olSOeJEff5SzXXugigY2z2saBGCytS51glbKeggPr5lKvzc25w3j/LaU/7n8+5
+         RI7Q9dr4GzUzT1fhP6KNTnOxZgvrZx3B5SMgg7wAJM+65RHpg/aHsaUN8cqu9BawgP
+         HpGM73RZRKCyg==
+Date:   Fri, 25 Aug 2023 10:13:53 +0200
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Frank Oltmanns <frank@oltmanns.dev>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Cixi Geng <cixi.geng1@unisoc.com>,
-        Maxime Ripard <mripard@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Zhifeng Tang <zhifeng.tang23@gmail.com>,
-        Wenming Wu <wenming.wu@unisoc.com>
-Content-Type: text/plain; charset="UTF-8"
+        Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Ondrej Jirman <x@xnux.eu>,
+        Icenowy Zheng <uwu@icenowy.me>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, dri-devel@lists.freedesktop.org,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: Re: [PATCH 0/3] Make Allwinner A64's pll-mipi keep its rate when
+ parent rate changes
+Message-ID: <zrjpbtf7qwaj2tjvfz2no534tmz5j4yudp45tung2w5x2zcl6y@bal3bclzze4e>
+References: <20230825-pll-mipi_keep_rate-v1-0-35bc43570730@oltmanns.dev>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="eowkeu32rskmvnge"
+Content-Disposition: inline
+In-Reply-To: <20230825-pll-mipi_keep_rate-v1-0-35bc43570730@oltmanns.dev>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 5 Aug 2023 at 15:07, Zhifeng Tang <zhifeng.tang@unisoc.com> wrote:
->
-> The composite interface support the offset configuration,
-> which is userd to support mux and div in different registers.
 
-Please fix the typo "userd".
+--eowkeu32rskmvnge
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Also, you should describe in more detail the reason why we need this
-change. Is it because the divider has different addresses from mux for
-one composite clk?
+Hi,
 
->
-> Signed-off-by: Zhifeng Tang <zhifeng.tang@unisoc.com>
-> ---
->  drivers/clk/sprd/composite.h | 38 +++++++++++++++++++++++++-----------
->  drivers/clk/sprd/div.c       |  6 +++---
->  drivers/clk/sprd/div.h       | 17 +++++++++++-----
->  3 files changed, 42 insertions(+), 19 deletions(-)
->
-> diff --git a/drivers/clk/sprd/composite.h b/drivers/clk/sprd/composite.h
-> index adbabbe596b7..74765584021d 100644
-> --- a/drivers/clk/sprd/composite.h
-> +++ b/drivers/clk/sprd/composite.h
-> @@ -19,24 +19,24 @@ struct sprd_comp {
->  };
->
->  #define SPRD_COMP_CLK_HW_INIT_FN(_struct, _name, _parent, _reg, _table,        \
-> -                                _mshift, _mwidth, _dshift, _dwidth,    \
-> -                                _flags, _fn)                           \
-> +                                _mshift, _mwidth, _doffset, _dshift,   \
-> +                                _dwidth, _flags, _fn)                  \
->         struct sprd_comp _struct = {                                    \
->                 .mux    = _SPRD_MUX_CLK(_mshift, _mwidth, _table),      \
-> -               .div    = _SPRD_DIV_CLK(_dshift, _dwidth),              \
-> +               .div    = _SPRD_DIV_CLK(_doffset, _dshift, _dwidth),    \
->                 .common = {                                             \
->                         .regmap         = NULL,                         \
->                         .reg            = _reg,                         \
->                         .hw.init = _fn(_name, _parent,                  \
->                                        &sprd_comp_ops, _flags),         \
-> -                        }                                              \
-> +               }                                                       \
->         }
->
->  #define SPRD_COMP_CLK_TABLE(_struct, _name, _parent, _reg, _table,     \
->                             _mshift, _mwidth, _dshift, _dwidth, _flags) \
->         SPRD_COMP_CLK_HW_INIT_FN(_struct, _name, _parent, _reg, _table, \
-> -                                _mshift, _mwidth, _dshift, _dwidth,    \
-> -                                _flags, CLK_HW_INIT_PARENTS)
-> +                                _mshift, _mwidth, 0x0, _dshift,        \
-> +                                _dwidth, _flags, CLK_HW_INIT_PARENTS)
->
->  #define SPRD_COMP_CLK(_struct, _name, _parent, _reg, _mshift,          \
->                       _mwidth, _dshift, _dwidth, _flags)                \
-> @@ -47,14 +47,30 @@ struct sprd_comp {
->                                  _mshift, _mwidth, _dshift,             \
->                                  _dwidth, _flags)                       \
->         SPRD_COMP_CLK_HW_INIT_FN(_struct, _name, _parent, _reg, _table, \
-> -                                _mshift, _mwidth, _dshift, _dwidth,    \
-> -                                _flags, CLK_HW_INIT_PARENTS_DATA)
-> +                                _mshift, _mwidth, 0x0, _dshift,        \
-> +                                _dwidth, _flags,                       \
-> +                                CLK_HW_INIT_PARENTS_DATA)
->
->  #define SPRD_COMP_CLK_DATA(_struct, _name, _parent, _reg, _mshift,     \
->                            _mwidth, _dshift, _dwidth, _flags)           \
-> -       SPRD_COMP_CLK_DATA_TABLE(_struct, _name, _parent, _reg, NULL,   \
-> -                                _mshift, _mwidth, _dshift, _dwidth,    \
-> -                                _flags)
-> +       SPRD_COMP_CLK_DATA_TABLE(_struct, _name, _parent, _reg, NULL,   \
-> +                                _mshift, _mwidth, _dshift,             \
-> +                                _dwidth,  _flags)
+On Fri, Aug 25, 2023 at 07:36:36AM +0200, Frank Oltmanns wrote:
+> I would like to make the Allwinner A64's pll-mipi to keep its rate when
+> its parent's (pll-video0) rate changes. Keeping pll-mipi's rate is
+> required, to let the A64 drive both an LCD and HDMI display at the same
+> time, because both have pll-video0 as an ancestor.
+>=20
+> PATCH 1 adds this functionality as a feature into the clk framework (new
+> flag: CLK_KEEP_RATE).
+>=20
+> Cores that use this flag, store a rate as req_rate when it or one of its
+> descendants requests a new rate.
+>=20
+> That rate is then restored in the clk_change_rate recursion, which walks
+> through the tree. It will reach the flagged core (e.g. pll-mipi) after
+> the parent's rate (e.g. pll-video0) has already been set to the new
+> rate. It will then call determine_rate (which requests the parent's
+> current, i.e. new, rate) to determine a rate that is close to the
+> flagged core's previous rate. Afterward it will re-calculate the rates
+> for the flagged core's subtree.
 
-It seems that nothing changes here? Please don't make unrelated changes.
+I don't think it's the right way forward. It makes the core logic more
+complicated, for something that is redundant with the notifiers
+mechanism that has been the go-to for that kind of things so far.
 
-> +
-> +#define SPRD_COMP_CLK_DATA_TABLE_OFFSET(_struct, _name, _parent, _reg, \
-> +                                       _table, _mshift, _mwidth,       \
-> +                                       _dshift, _dwidth, _flags)       \
-> +       SPRD_COMP_CLK_HW_INIT_FN(_struct, _name, _parent, _reg, _table, \
-> +                                _mshift, _mwidth, 0x4, _dshift,        \
+It's not really obvious to me why the notifiers don't work there.
 
-I suggest not using hard code here.
+> This work is inspired by an out-of-tree patchset [1] [2] [3].
+> Unfortunately, the patchset uses clk_set_rate() in a notifier callback,
+> which the following comment on clk_notifier_register() forbids: "The
+> callbacks associated with the notifier must not re-enter into the clk
+> framework by calling any top-level clk APIs." [4] Furthermore, that
+> out-of-tree patchset no longer works with the current linux-next,
+> because setting pll-mipi is now also resetting pll-video0 [5].
 
-Also I think all _OFFSET() should have an offset parameter, that will
-be more flexible and logical.
+Is it because of the "The callbacks associated with the notifier must
+not re-enter into the clk framework by calling any top-level clk APIs."
+comment?
 
-> +                                _dwidth, _flags,                       \
-> +                                CLK_HW_INIT_PARENTS_DATA)
-> +
-> +#define SPRD_COMP_CLK_DATA_OFFSET(_struct, _name, _parent, _reg,       \
-> +                                 _mshift, _mwidth, _dshift,            \
-> +                                 _dwidth, _flags)                      \
-> +       SPRD_COMP_CLK_DATA_TABLE_OFFSET(_struct, _name, _parent, _reg,  \
-> +                                       NULL, _mshift, _mwidth,         \
-> +                                       _dshift, _dwidth,  _flags)
->
->  static inline struct sprd_comp *hw_to_sprd_comp(const struct clk_hw *hw)
->  {
-> diff --git a/drivers/clk/sprd/div.c b/drivers/clk/sprd/div.c
-> index c7261630cab4..0fb41d653f1e 100644
-> --- a/drivers/clk/sprd/div.c
-> +++ b/drivers/clk/sprd/div.c
-> @@ -25,7 +25,7 @@ unsigned long sprd_div_helper_recalc_rate(struct sprd_clk_common *common,
->         unsigned long val;
->         unsigned int reg;
->
-> -       regmap_read(common->regmap, common->reg, &reg);
-> +       regmap_read(common->regmap, common->reg - div->offset, &reg);
+If so, I think the thing we should emphasize is that it's about *any
+top-level clk API*, as in clk_set_rate() or clk_set_parent().
 
-Generally offset should be an increase based on reg, but it is converse here.
+The issue is that any consumer-facing API is taking the clk_prepare lock
+and thus we would have reentrancy. But we're a provider there, and none
+of the clk_hw_* functions are taking that lock. Neither do our own function.
 
->         val = reg >> div->shift;
->         val &= (1 << div->width) - 1;
->
-> @@ -53,10 +53,10 @@ int sprd_div_helper_set_rate(const struct sprd_clk_common *common,
->         val = divider_get_val(rate, parent_rate, NULL,
->                               div->width, 0);
->
-> -       regmap_read(common->regmap, common->reg, &reg);
-> +       regmap_read(common->regmap, common->reg - div->offset, &reg);
->         reg &= ~GENMASK(div->width + div->shift - 1, div->shift);
->
-> -       regmap_write(common->regmap, common->reg,
-> +       regmap_write(common->regmap, common->reg - div->offset,
->                           reg | (val << div->shift));
->
->         return 0;
-> diff --git a/drivers/clk/sprd/div.h b/drivers/clk/sprd/div.h
-> index f5d614b3dcf1..db6b62ee6a8d 100644
-> --- a/drivers/clk/sprd/div.h
-> +++ b/drivers/clk/sprd/div.h
-> @@ -20,12 +20,14 @@
->   * classes.
->   */
->  struct sprd_div_internal {
-> +       u32     offset;
+So we could call in that notifier our set_rate callback directly, or we
+could create a clk_hw_set_rate() function.
 
-I suggest changing the type to 'signed' int, which would cover the
-cases no matter whether the divider register offset is up or down
-based on the mux register address. That would be more flexible.
+The first one will create cache issue between the actual rate that the
+common clock framework is running and the one we actually enforced, but
+we could create a function to flush the CCF cache.
 
-Thanks,
-Chunyan
+The second one is probably simpler.
 
->         u8      shift;
->         u8      width;
->  };
->
-> -#define _SPRD_DIV_CLK(_shift, _width)  \
-> +#define _SPRD_DIV_CLK(_offset, _shift, _width) \
->         {                               \
-> +               .offset = _offset,      \
->                 .shift  = _shift,       \
->                 .width  = _width,       \
->         }
-> @@ -35,10 +37,10 @@ struct sprd_div {
->         struct sprd_clk_common  common;
->  };
->
-> -#define SPRD_DIV_CLK_HW_INIT_FN(_struct, _name, _parent, _reg,         \
-> +#define SPRD_DIV_CLK_HW_INIT_FN(_struct, _name, _parent, _reg, _offset,        \
->                                 _shift, _width, _flags, _fn)            \
->         struct sprd_div _struct = {                                     \
-> -               .div    = _SPRD_DIV_CLK(_shift, _width),                \
-> +               .div    = _SPRD_DIV_CLK(_offset, _shift, _width),       \
->                 .common = {                                             \
->                         .regmap         = NULL,                         \
->                         .reg            = _reg,                         \
-> @@ -49,12 +51,17 @@ struct sprd_div {
->
->  #define SPRD_DIV_CLK(_struct, _name, _parent, _reg,                    \
->                      _shift, _width, _flags)                            \
-> -       SPRD_DIV_CLK_HW_INIT_FN(_struct, _name, _parent, _reg,          \
-> +       SPRD_DIV_CLK_HW_INIT_FN(_struct, _name, _parent, _reg, 0x0,     \
->                                 _shift, _width, _flags, CLK_HW_INIT)
->
-> +#define SPRD_DIV_CLK_FW_NAME(_struct, _name, _parent, _reg,            \
-> +                       _shift, _width, _flags)                         \
-> +       SPRD_DIV_CLK_HW_INIT_FN(_struct, _name, _parent, _reg, 0x0,     \
-> +                               _shift, _width, _flags, CLK_HW_INIT_FW_NAME)
-> +
->  #define SPRD_DIV_CLK_HW(_struct, _name, _parent, _reg,                 \
->                         _shift, _width, _flags)                         \
-> -       SPRD_DIV_CLK_HW_INIT_FN(_struct, _name, _parent, _reg,          \
-> +       SPRD_DIV_CLK_HW_INIT_FN(_struct, _name, _parent, _reg, 0x0,     \
->                                 _shift, _width, _flags, CLK_HW_INIT_HW)
->
->  static inline struct sprd_div *hw_to_sprd_div(const struct clk_hw *hw)
-> --
-> 2.17.1
->
+
+Another option could be that we turn clk_set_rate_exclusive into
+something more subtle that allows to change a parent rate as long as the
+clock rate doesn't. It would ease the requirement that
+clk_set_rate_exclusive() has on a clock subtree (which I think prevents
+its usage to some extent), but I have no issue on how that would work in
+practice.
+
+So yeah, I think adding a clk_hw_set_rate() that would be callable from
+a notifier is the right way forward there.
+
+Maxime
+
+--eowkeu32rskmvnge
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZOhivQAKCRDj7w1vZxhR
+xawrAQDXTz7ob5/J2vw49XyCzcbpbZrstccYpgBThY1SZyXjYwEA45sertGOozw2
+pmFuwh+868GL2/YEUfeODgXdaZ4xTgs=
+=exoj
+-----END PGP SIGNATURE-----
+
+--eowkeu32rskmvnge--
