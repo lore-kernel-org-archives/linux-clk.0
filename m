@@ -2,100 +2,260 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08328EE49A0
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Aug 2023 05:38:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 920EFC3DA66
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Aug 2023 06:27:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236354AbjHYFha (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Aug 2023 01:37:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49508 "EHLO
+        id S240208AbjHYG0u (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Aug 2023 02:26:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236232AbjHYFhW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Aug 2023 01:37:22 -0400
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [IPv6:2001:67c:2050:0:465::202])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68D2F198E;
-        Thu, 24 Aug 2023 22:37:19 -0700 (PDT)
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4RX7xl3YrDz9sbM;
-        Fri, 25 Aug 2023 07:37:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
-        s=MBO0001; t=1692941835;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=CtWNv86caywaEjwkohWs7vAaLBc1+BjOtBhmNdab+kQ=;
-        b=LG9UBsKqOdgerrl9ZSTlYYJMPV7TR0xfA8XVmV5w0WgciQAtaR81Q7SkccExCNQ5PLrBjJ
-        V93VXat6yB8Ox97X2rvzi2mGxyvAezSdAljZ0BqSK4fskRQwxOvp54t6NwrltIwWL9EAgy
-        d4h4VJhgj2utNexNEHsa4XQrG3nwlFWHQDNsUl9C3jOovOlm88UDCJw0Ly3dnEV81aFTci
-        a9ZqisdWAPR2iCBa/i8WJJZFPyOFufL8DOLzeQlaP802IkiF7++cpNopubYtRvE8uq2GwT
-        yrN2/CRw3Xp/P8/D4/sh/AeXiCQus4HzQD948HRj81ddyYdhU1anXaWNo1xWAg==
-From:   Frank Oltmanns <frank@oltmanns.dev>
-Date:   Fri, 25 Aug 2023 07:36:38 +0200
-Subject: [PATCH 2/3] clk: sunxi-ng: a64: keep rate of pll-mipi stable
- across parent rate changes
+        with ESMTP id S241749AbjHYG0Y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Aug 2023 02:26:24 -0400
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6A7B1FD5;
+        Thu, 24 Aug 2023 23:26:21 -0700 (PDT)
+Received: by mail-lj1-x22c.google.com with SMTP id 38308e7fff4ca-2b95d5ee18dso7715941fa.1;
+        Thu, 24 Aug 2023 23:26:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1692944780; x=1693549580;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=I1ipShb9SqOkO9YC3H7e/0Pr97qinxpxrUiWfa6MdKI=;
+        b=JdGpEX7Dstg6BWpug7MvXigpjjMEfMugatyynVwkbQ4PJ5UpZmMM2OaOQuzEngnxus
+         +yKkmAkX1hIU7zP5+VOALdAIUKCRtsJ5NolcAiP/DUmYEc2Ucat9OBow75rgT7zjqE9H
+         YmTHwJdZR549F4qdn1abLUqDfTIjCS57FtOXcDuLTC9XiwmeIMFvwC+Lfa9jsb3g7SBn
+         XUtaa9UfqBaEDDhslNsANFfXVjCsrIQmw3IAP4Ug+6tjiacDpnfAPfGiQ16Gn8qU+7Bf
+         gtQvsunnnOFvGvMPeeOE1rtBF6EFlh07IzZmb9cFRPIMa2xYQ3A8no2hNkH56WYthTtP
+         AURw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692944780; x=1693549580;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=I1ipShb9SqOkO9YC3H7e/0Pr97qinxpxrUiWfa6MdKI=;
+        b=hEeyp9COLNf5oPPNF6KnGeXzmn+Us0/cs342+JYXqCqQd7wVrk+LRGDchzrVwYMKxf
+         /JqwqMODjOGplHKFZPtwdvh6ebRH0p0c00+1Glmzj1Gd52jINuBG7mcUN6AT41SK1zzz
+         bTmYW8b2wzZ6Rum+/CH8PSpiGsevvzJxkZ0CZ4CTT0AeyW4gX3OP+dh1BN6N0Yq+TfD9
+         Wkj8pjTQcdJugEkbXVrcBtW2ZpEYhXHVnm7mjEuosGQ6sglRSwDNEwgQrl54yzp3vIGV
+         nh2+IlRiUTlXt8DyKyfh7t6zOzKqxtTUgWVdREv0pA87DuxO0hDkJbtKGA4zyMmbK34d
+         HGCA==
+X-Gm-Message-State: AOJu0YwDHxkUbWO+s36zmxCMzI1sNCkqOnnvFjXMuuk2qHigy3+7RFDw
+        0aMkoUvwQmhskdB7FZyRPRxMNJl0OqrBzLCx5dM=
+X-Google-Smtp-Source: AGHT+IGkaeK48THQJm2FwND3YMABwJYN+gKPAIMo9dNPHXvcvYZEMnmxeoc+h24u8LUXLnWM2Dmc6rbgJkyPamFSkhI=
+X-Received: by 2002:ac2:5b03:0:b0:500:a6c1:d8e3 with SMTP id
+ v3-20020ac25b03000000b00500a6c1d8e3mr842166lfn.46.1692944779618; Thu, 24 Aug
+ 2023 23:26:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230825-pll-mipi_keep_rate-v1-2-35bc43570730@oltmanns.dev>
-References: <20230825-pll-mipi_keep_rate-v1-0-35bc43570730@oltmanns.dev>
-In-Reply-To: <20230825-pll-mipi_keep_rate-v1-0-35bc43570730@oltmanns.dev>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Ondrej Jirman <x@xnux.eu>,
-        Icenowy Zheng <uwu@icenowy.me>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        dri-devel@lists.freedesktop.org,
-        Frank Oltmanns <frank@oltmanns.dev>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=956; i=frank@oltmanns.dev;
- h=from:subject:message-id; bh=zvqbUzAjOYwvk01SnxhIMjoc57Uv6Z82bewdgKFVkGA=;
- b=owEB7QES/pANAwAIAZppogiUStPHAcsmYgBk6D3/p5Vr8PmaxXx3YvNoCgTBhkxHsGUS++j05
- QkLFWRynMSJAbMEAAEIAB0WIQQC/SV7f5DmuaVET5aaaaIIlErTxwUCZOg9/wAKCRCaaaIIlErT
- x6A8C/9laYi7uMdpPfGT4cEdfSPWzp/olospIp/RZ7V6kkvJgaNGwYq70JKvfZLou03/1Mq9Fkb
- f3v0knivK0Vb8eYtPwl0g94hJp5UcQqZAFL9nGqX8bKz54brnriMyI1tp2LhBT6mMwisSkfWVLJ
- zhy0ublVtldseV9rqWdyrNRnAnj72ycrFmZpcWabADZDrYY4XwziwFMfD8EMoxq0lsn06pSVpKv
- gcEif70O6HXzmle+IRwUI2twW1ann6RJgm7GqkU7BbmmOixFaQ/eDRjqRFTT2dnZblNcP1ceDKf
- rzY+udlH7xcBL5ZE63JubDUt4D2yg3Kx6GlHWBQ5rr5pM70D9oOEDyxTBZGX3/kNpPuy8oCzR+Z
- sAY+IrPCnrNvGiRgiE8FNMc9zEV5F32eWwpOqf7S63NQiSfDP6T72cmtup00nJ/2QaUL7ZCnsUt
- zWc5Cj3KvY1NgjWukfkTcRC+v60m0Z0cQIJ26Q2CMgevyriWW1r+toyPYhQDUMeJyIN1M=
-X-Developer-Key: i=frank@oltmanns.dev; a=openpgp;
- fpr=02FD257B7F90E6B9A5444F969A69A208944AD3C7
-X-Rspamd-Queue-Id: 4RX7xl3YrDz9sbM
+References: <20230805070643.30705-1-zhifeng.tang@unisoc.com>
+In-Reply-To: <20230805070643.30705-1-zhifeng.tang@unisoc.com>
+From:   Chunyan Zhang <zhang.lyra@gmail.com>
+Date:   Fri, 25 Aug 2023 14:25:42 +0800
+Message-ID: <CAAfSe-vc1Kmvj0eFqTBAMv+ZAOH13b8WSDfVJ+OZx7s1gUuLMA@mail.gmail.com>
+Subject: Re: [PATCH] clk: sprd: Composite driver support offset config
+To:     Zhifeng Tang <zhifeng.tang@unisoc.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Cixi Geng <cixi.geng1@unisoc.com>,
+        Maxime Ripard <mripard@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Zhifeng Tang <zhifeng.tang23@gmail.com>,
+        Wenming Wu <wenming.wu@unisoc.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Keep the clock rate of Allwinner A64's pll-mipi even when the parent
-(pll-video0) changes its rate. This is required, to drive both an LCD
-and HDMI display, because both have pll-video0 as an ancestor.
+On Sat, 5 Aug 2023 at 15:07, Zhifeng Tang <zhifeng.tang@unisoc.com> wrote:
+>
+> The composite interface support the offset configuration,
+> which is userd to support mux and div in different registers.
 
-Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
----
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Please fix the typo "userd".
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-index 8951ffc14ff5..d22094ce1d66 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-@@ -180,7 +180,8 @@ static struct ccu_nkm pll_mipi_clk = {
- 		.reg		= 0x040,
- 		.hw.init	= CLK_HW_INIT("pll-mipi", "pll-video0",
- 					      &ccu_nkm_ops,
--					      CLK_SET_RATE_UNGATE | CLK_SET_RATE_PARENT),
-+					      CLK_SET_RATE_UNGATE | CLK_SET_RATE_PARENT |
-+					      CLK_KEEP_RATE),
- 		.features	= CCU_FEATURE_CLOSEST_RATE,
- 	},
- };
+Also, you should describe in more detail the reason why we need this
+change. Is it because the divider has different addresses from mux for
+one composite clk?
 
--- 
-2.41.0
+>
+> Signed-off-by: Zhifeng Tang <zhifeng.tang@unisoc.com>
+> ---
+>  drivers/clk/sprd/composite.h | 38 +++++++++++++++++++++++++-----------
+>  drivers/clk/sprd/div.c       |  6 +++---
+>  drivers/clk/sprd/div.h       | 17 +++++++++++-----
+>  3 files changed, 42 insertions(+), 19 deletions(-)
+>
+> diff --git a/drivers/clk/sprd/composite.h b/drivers/clk/sprd/composite.h
+> index adbabbe596b7..74765584021d 100644
+> --- a/drivers/clk/sprd/composite.h
+> +++ b/drivers/clk/sprd/composite.h
+> @@ -19,24 +19,24 @@ struct sprd_comp {
+>  };
+>
+>  #define SPRD_COMP_CLK_HW_INIT_FN(_struct, _name, _parent, _reg, _table,        \
+> -                                _mshift, _mwidth, _dshift, _dwidth,    \
+> -                                _flags, _fn)                           \
+> +                                _mshift, _mwidth, _doffset, _dshift,   \
+> +                                _dwidth, _flags, _fn)                  \
+>         struct sprd_comp _struct = {                                    \
+>                 .mux    = _SPRD_MUX_CLK(_mshift, _mwidth, _table),      \
+> -               .div    = _SPRD_DIV_CLK(_dshift, _dwidth),              \
+> +               .div    = _SPRD_DIV_CLK(_doffset, _dshift, _dwidth),    \
+>                 .common = {                                             \
+>                         .regmap         = NULL,                         \
+>                         .reg            = _reg,                         \
+>                         .hw.init = _fn(_name, _parent,                  \
+>                                        &sprd_comp_ops, _flags),         \
+> -                        }                                              \
+> +               }                                                       \
+>         }
+>
+>  #define SPRD_COMP_CLK_TABLE(_struct, _name, _parent, _reg, _table,     \
+>                             _mshift, _mwidth, _dshift, _dwidth, _flags) \
+>         SPRD_COMP_CLK_HW_INIT_FN(_struct, _name, _parent, _reg, _table, \
+> -                                _mshift, _mwidth, _dshift, _dwidth,    \
+> -                                _flags, CLK_HW_INIT_PARENTS)
+> +                                _mshift, _mwidth, 0x0, _dshift,        \
+> +                                _dwidth, _flags, CLK_HW_INIT_PARENTS)
+>
+>  #define SPRD_COMP_CLK(_struct, _name, _parent, _reg, _mshift,          \
+>                       _mwidth, _dshift, _dwidth, _flags)                \
+> @@ -47,14 +47,30 @@ struct sprd_comp {
+>                                  _mshift, _mwidth, _dshift,             \
+>                                  _dwidth, _flags)                       \
+>         SPRD_COMP_CLK_HW_INIT_FN(_struct, _name, _parent, _reg, _table, \
+> -                                _mshift, _mwidth, _dshift, _dwidth,    \
+> -                                _flags, CLK_HW_INIT_PARENTS_DATA)
+> +                                _mshift, _mwidth, 0x0, _dshift,        \
+> +                                _dwidth, _flags,                       \
+> +                                CLK_HW_INIT_PARENTS_DATA)
+>
+>  #define SPRD_COMP_CLK_DATA(_struct, _name, _parent, _reg, _mshift,     \
+>                            _mwidth, _dshift, _dwidth, _flags)           \
+> -       SPRD_COMP_CLK_DATA_TABLE(_struct, _name, _parent, _reg, NULL,   \
+> -                                _mshift, _mwidth, _dshift, _dwidth,    \
+> -                                _flags)
+> +       SPRD_COMP_CLK_DATA_TABLE(_struct, _name, _parent, _reg, NULL,   \
+> +                                _mshift, _mwidth, _dshift,             \
+> +                                _dwidth,  _flags)
 
+It seems that nothing changes here? Please don't make unrelated changes.
+
+> +
+> +#define SPRD_COMP_CLK_DATA_TABLE_OFFSET(_struct, _name, _parent, _reg, \
+> +                                       _table, _mshift, _mwidth,       \
+> +                                       _dshift, _dwidth, _flags)       \
+> +       SPRD_COMP_CLK_HW_INIT_FN(_struct, _name, _parent, _reg, _table, \
+> +                                _mshift, _mwidth, 0x4, _dshift,        \
+
+I suggest not using hard code here.
+
+Also I think all _OFFSET() should have an offset parameter, that will
+be more flexible and logical.
+
+> +                                _dwidth, _flags,                       \
+> +                                CLK_HW_INIT_PARENTS_DATA)
+> +
+> +#define SPRD_COMP_CLK_DATA_OFFSET(_struct, _name, _parent, _reg,       \
+> +                                 _mshift, _mwidth, _dshift,            \
+> +                                 _dwidth, _flags)                      \
+> +       SPRD_COMP_CLK_DATA_TABLE_OFFSET(_struct, _name, _parent, _reg,  \
+> +                                       NULL, _mshift, _mwidth,         \
+> +                                       _dshift, _dwidth,  _flags)
+>
+>  static inline struct sprd_comp *hw_to_sprd_comp(const struct clk_hw *hw)
+>  {
+> diff --git a/drivers/clk/sprd/div.c b/drivers/clk/sprd/div.c
+> index c7261630cab4..0fb41d653f1e 100644
+> --- a/drivers/clk/sprd/div.c
+> +++ b/drivers/clk/sprd/div.c
+> @@ -25,7 +25,7 @@ unsigned long sprd_div_helper_recalc_rate(struct sprd_clk_common *common,
+>         unsigned long val;
+>         unsigned int reg;
+>
+> -       regmap_read(common->regmap, common->reg, &reg);
+> +       regmap_read(common->regmap, common->reg - div->offset, &reg);
+
+Generally offset should be an increase based on reg, but it is converse here.
+
+>         val = reg >> div->shift;
+>         val &= (1 << div->width) - 1;
+>
+> @@ -53,10 +53,10 @@ int sprd_div_helper_set_rate(const struct sprd_clk_common *common,
+>         val = divider_get_val(rate, parent_rate, NULL,
+>                               div->width, 0);
+>
+> -       regmap_read(common->regmap, common->reg, &reg);
+> +       regmap_read(common->regmap, common->reg - div->offset, &reg);
+>         reg &= ~GENMASK(div->width + div->shift - 1, div->shift);
+>
+> -       regmap_write(common->regmap, common->reg,
+> +       regmap_write(common->regmap, common->reg - div->offset,
+>                           reg | (val << div->shift));
+>
+>         return 0;
+> diff --git a/drivers/clk/sprd/div.h b/drivers/clk/sprd/div.h
+> index f5d614b3dcf1..db6b62ee6a8d 100644
+> --- a/drivers/clk/sprd/div.h
+> +++ b/drivers/clk/sprd/div.h
+> @@ -20,12 +20,14 @@
+>   * classes.
+>   */
+>  struct sprd_div_internal {
+> +       u32     offset;
+
+I suggest changing the type to 'signed' int, which would cover the
+cases no matter whether the divider register offset is up or down
+based on the mux register address. That would be more flexible.
+
+Thanks,
+Chunyan
+
+>         u8      shift;
+>         u8      width;
+>  };
+>
+> -#define _SPRD_DIV_CLK(_shift, _width)  \
+> +#define _SPRD_DIV_CLK(_offset, _shift, _width) \
+>         {                               \
+> +               .offset = _offset,      \
+>                 .shift  = _shift,       \
+>                 .width  = _width,       \
+>         }
+> @@ -35,10 +37,10 @@ struct sprd_div {
+>         struct sprd_clk_common  common;
+>  };
+>
+> -#define SPRD_DIV_CLK_HW_INIT_FN(_struct, _name, _parent, _reg,         \
+> +#define SPRD_DIV_CLK_HW_INIT_FN(_struct, _name, _parent, _reg, _offset,        \
+>                                 _shift, _width, _flags, _fn)            \
+>         struct sprd_div _struct = {                                     \
+> -               .div    = _SPRD_DIV_CLK(_shift, _width),                \
+> +               .div    = _SPRD_DIV_CLK(_offset, _shift, _width),       \
+>                 .common = {                                             \
+>                         .regmap         = NULL,                         \
+>                         .reg            = _reg,                         \
+> @@ -49,12 +51,17 @@ struct sprd_div {
+>
+>  #define SPRD_DIV_CLK(_struct, _name, _parent, _reg,                    \
+>                      _shift, _width, _flags)                            \
+> -       SPRD_DIV_CLK_HW_INIT_FN(_struct, _name, _parent, _reg,          \
+> +       SPRD_DIV_CLK_HW_INIT_FN(_struct, _name, _parent, _reg, 0x0,     \
+>                                 _shift, _width, _flags, CLK_HW_INIT)
+>
+> +#define SPRD_DIV_CLK_FW_NAME(_struct, _name, _parent, _reg,            \
+> +                       _shift, _width, _flags)                         \
+> +       SPRD_DIV_CLK_HW_INIT_FN(_struct, _name, _parent, _reg, 0x0,     \
+> +                               _shift, _width, _flags, CLK_HW_INIT_FW_NAME)
+> +
+>  #define SPRD_DIV_CLK_HW(_struct, _name, _parent, _reg,                 \
+>                         _shift, _width, _flags)                         \
+> -       SPRD_DIV_CLK_HW_INIT_FN(_struct, _name, _parent, _reg,          \
+> +       SPRD_DIV_CLK_HW_INIT_FN(_struct, _name, _parent, _reg, 0x0,     \
+>                                 _shift, _width, _flags, CLK_HW_INIT_HW)
+>
+>  static inline struct sprd_div *hw_to_sprd_div(const struct clk_hw *hw)
+> --
+> 2.17.1
+>
