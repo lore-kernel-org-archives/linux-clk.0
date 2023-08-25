@@ -2,221 +2,194 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46850EE49A6
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Aug 2023 18:15:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 191BCC3DA66
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Aug 2023 19:08:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232048AbjHYSOi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Aug 2023 14:14:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34850 "EHLO
+        id S229534AbjHYTHz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Aug 2023 15:07:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232860AbjHYSOK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Aug 2023 14:14:10 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBBB8272D
-        for <linux-clk@vger.kernel.org>; Fri, 25 Aug 2023 11:13:40 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-4fe15bfb1adso1841936e87.0
-        for <linux-clk@vger.kernel.org>; Fri, 25 Aug 2023 11:13:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1692987201; x=1693592001;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ELm30cfPyzIG/TZbjvqwagZo2Is2xhLq9tEiyh3zeHw=;
-        b=CIohHlyoA//+r+yPRb5x6+dip/wynsQH340QPVM2jrHwm6aPkuFaXPLBrgbgFnuw6z
-         6LxFl/ciI+dWmgyPVVI6YA8/tsZF3cTD7b9IqgxQDUDWOAWNqX0vDOiAnJ54uYmn3mFK
-         T0HcNJA7qfrLKyes9bIbwlL7x+NeWLDu3S7oV630LpSxJ/I83sOhBmkIWFYyFjsCZwgv
-         gS5oHLkLwXqpnJ3+Cn0W47wYIIOfu8KqXSh5mIuhCsk65ZzrWsTHGR7+ueiDRAYVHwed
-         JrC1hY+Dlpe+4jiHE37rLxy30IYhr3r20opR4hVTvDVKY6n/L+dStv1YgqF7UaxePgtP
-         roRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692987201; x=1693592001;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ELm30cfPyzIG/TZbjvqwagZo2Is2xhLq9tEiyh3zeHw=;
-        b=AW/o2T057LigWi0WA0sN+VSqc5l2y0VHQ/Ha7byj5tPIuLkxSSMyo5RgEna8yie0jw
-         ZwYzLEmEmsRHeYR4nxYn4ZBHTQNb5mJr9Kv9Zwt8jtWlTbxCAXYPU8QEixYfannUYHhL
-         DFjTOz/gJ42s7M0jS70ovJRCPntAohGCDMr45ItZBGa6xkE20dDg5VrPPCOJ7DERwExh
-         P31lOciguFQfAJZz+aBROcIkADFz4MJD37pconSifLiqgXRwuNxe2cJO/fGakExGNkUw
-         wOWTSoSWwic8HyNJUKDBC4rkRb1DggSMqwX/XZ9QHBiNRGkPjx1wqE3MWq7Su5lM3zvp
-         q6sg==
-X-Gm-Message-State: AOJu0YyGeaQnkRSW5w28NDQZ45ReJM++0fcp+7CXE1I5rcxxm8KeDKPK
-        Eu0Lb+KBflf3qctjqXw6LZgWkg==
-X-Google-Smtp-Source: AGHT+IGswc4aau/HBnxyrq5ztPWud8GOeyX3tZiERT+wyt9vpoi6Hl+FhshReKOqEMlUe75lwI3RIQ==
-X-Received: by 2002:ac2:4f08:0:b0:4ff:78c2:6d8b with SMTP id k8-20020ac24f08000000b004ff78c26d8bmr16036211lfr.67.1692987201000;
-        Fri, 25 Aug 2023 11:13:21 -0700 (PDT)
-Received: from [192.168.1.101] (abxh59.neoplus.adsl.tpnet.pl. [83.9.1.59])
-        by smtp.gmail.com with ESMTPSA id b2-20020ac247e2000000b005009920b6afsm374522lfp.9.2023.08.25.11.13.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Aug 2023 11:13:20 -0700 (PDT)
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Fri, 25 Aug 2023 20:13:17 +0200
-Subject: [PATCH 3/3] clk: qcom: Add SM6115 LPASSCC
+        with ESMTP id S231132AbjHYTH1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Aug 2023 15:07:27 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95BD9272B;
+        Fri, 25 Aug 2023 12:07:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1692990420; x=1724526420;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=6UUfSj/UJmCbC5zGcO3AKCRignGGEY+ieIG/q9Qe/Fo=;
+  b=aqbBDd7pvrEh7TPjxK/hLNEOjEHHWGs6Nd9/FBaJbYAxwPiASUwZuDKX
+   VB8Q84VfMjxjOLgh1/oNQmxr8dEyP1muNMHGavENUhwrRARzbezJkeFXJ
+   rLWJFXHvbAfVUWUClmQ9K2VccWsmjkDEMDjhAD2zznHWNBnOHRLyhMbY5
+   LJOWafE1X6LewJ/VkhDqYROwwTwv0climdTqwtTlypLbM8UPRBjqnxXFt
+   rWkc13JHqR1mwr8zI8zgJWO0BHcp97xQnA9AP3hsA3ujm4Ojt9GMG0BRt
+   MIrQUkvF3+Ga29G1n757J21UWXxnU6xq55ExiI+ohLlCZsk6AiIKxSICY
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10813"; a="359779847"
+X-IronPort-AV: E=Sophos;i="6.02,201,1688454000"; 
+   d="scan'208";a="359779847"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2023 12:07:00 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.01,202,1684825200"; 
+   d="scan'208";a="881242147"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by fmsmga001.fm.intel.com with ESMTP; 25 Aug 2023 12:07:04 -0700
+Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.27; Fri, 25 Aug 2023 12:06:58 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.27 via Frontend Transport; Fri, 25 Aug 2023 12:06:58 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.109)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.27; Fri, 25 Aug 2023 12:06:58 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=UjhgGEV/uCY1tICfgv1uSUHlzr2L+CHYwgJYDryeS3i9UNjHb9zd53zbRypKUgYP1eaG9As3t0uf2RtBKkbKmsmwXBND/0zZ8NuvGsTRz742TKDO2jlPcsqdvX0ma0vY4WtdtxdY885XuPCfnUHipemuDwiKIXB1SplfWQomB4QdqXkFT9+PFLjAy2Dn9Umnp17g0pEJacCmTKe+NK/B7Mbu69Nw/JzE1evEXDYmMcN7z6SqH4GKamjoiI1wJWNqhSYX1UQq53CJS2CO4OayAB0BypweXoI6Pd8UhXzszjOJ9anMCz7K5TGpCQv8rUc0/kj5S/NyAmnIqeFw6ejedA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2wSZen0Tih98xDY5GlLblBiqDbeF8C4XBTM1Psystjk=;
+ b=VhgRCjP4MsX/guSHsfYSqlTUcuDyxUIY5q32P75HlmxFPIhDEdayEjDVV0oMONK0hjZ6yiss+A40PfWU62JKTLb2WNIfExskHdMYDJCexSqr/X2X/KQc7w/E+DGB+fmIpg/8CjFzulbwYzFPgs7wYbk6bJnzLrJ9tz0Byqc6v5Ckly1E2/qTfeJwDJdjRowVIA9oOVP12azbB5oriKqrpUsjOISNfv+gmFEEnWElFW+GrzWqKfelQbtNePGc5UHnipGpHN8pOjVavIdNPq81w/K1lY8D89ykITGbneBP7WLC2jF8eY8775RyLWRvkAcDjX/1FEFVpk3kpbHmItr8YA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from CH3PR11MB8414.namprd11.prod.outlook.com (2603:10b6:610:17e::19)
+ by SJ0PR11MB4864.namprd11.prod.outlook.com (2603:10b6:a03:2d4::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.27; Fri, 25 Aug
+ 2023 19:06:55 +0000
+Received: from CH3PR11MB8414.namprd11.prod.outlook.com
+ ([fe80::ed67:3510:8326:d4d5]) by CH3PR11MB8414.namprd11.prod.outlook.com
+ ([fe80::ed67:3510:8326:d4d5%2]) with mapi id 15.20.6699.028; Fri, 25 Aug 2023
+ 19:06:55 +0000
+From:   "Michalik, Michal" <michal.michalik@intel.com>
+To:     Jakub Kicinski <kuba@kernel.org>
+CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>,
+        "jiri@resnulli.us" <jiri@resnulli.us>,
+        "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
+        "jonathan.lemon@gmail.com" <jonathan.lemon@gmail.com>,
+        "pabeni@redhat.com" <pabeni@redhat.com>, poros <poros@redhat.com>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        mschmidt <mschmidt@redhat.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "bvanassche@acm.org" <bvanassche@acm.org>
+Subject: RE: [PATCH RFC net-next v1 2/2] selftests/dpll: add DPLL system
+ integration selftests
+Thread-Topic: [PATCH RFC net-next v1 2/2] selftests/dpll: add DPLL system
+ integration selftests
+Thread-Index: AQHZ0R7y+sClUTv/akmAx/gH3L3jSa/wjecAgAP0HyCAAMRjgIAD48hAgAB4uQCAAchgAA==
+Date:   Fri, 25 Aug 2023 19:06:55 +0000
+Message-ID: <CH3PR11MB8414200922FA16348A4F36C9E3E3A@CH3PR11MB8414.namprd11.prod.outlook.com>
+References: <20230817152209.23868-1-michal.michalik@intel.com>
+        <20230817152209.23868-3-michal.michalik@intel.com>
+        <20230818140802.063aae1f@kernel.org>
+        <CH3PR11MB84141E0EDA588B84F7E10F71E31EA@CH3PR11MB8414.namprd11.prod.outlook.com>
+        <20230821141327.1ae35b2e@kernel.org>
+        <CH3PR11MB84149ADA77B4A6FBD4F0C230E31DA@CH3PR11MB8414.namprd11.prod.outlook.com>
+ <20230824084934.3b9b96ee@kernel.org>
+In-Reply-To: <20230824084934.3b9b96ee@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CH3PR11MB8414:EE_|SJ0PR11MB4864:EE_
+x-ms-office365-filtering-correlation-id: 74132cf8-b020-4a18-1965-08dba59e72c6
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: UJcBf0/tF2cYqNG3jZRNteC+6KO7m4bQTNhLtF9MxddyEEiMdnxtDWAE2xtkKDu77KXedFzABhpA4tb/J2WATD6UWNTr4/H7JCic3O5R/XmD83827Z8o+7Y9q3JuGPCU1rNU7/DdQYFngQZBmPRgGM/PIzi7NuNUXPc31Ks3V1XnVg0KO7CgvedtskEwUiy86XY1oiJcUjXVAOmzFC0UNWaJ6AHpjY0W79Wf/6ISlYtvHNwI1b9SJp0Jwrn45vMB2+STRVB2JoiSfPgD799OOQFDEQ6Q9vhylLxPGKD+880gWtNH8BGFiRMPd1eQJd7cdJtgYi9KikUHa0Cw9ZG+YCrCLM3HJgAiUrgrB/TQH9sNSQN4qtUdy9r0/TsU8tvEnAnutSDIbG5BNkpXlBgSvfHsjhcWfMezb2MkRdWbk769STFd6EwRUatkwZaYq7gT5P3W9Cfxydf3t1U4pORthabkKRQQI0Kw9LnJodTI5zi4TGG7Ioo0STICckuMBB3Wrfp2Rw4MoLwdFJ8hQqyJH1vecxm8z/4yf5W04DK9WO/8MP5H2jW595I6BH9v9YPTSTWejKJFwV5NbjMDGhGX4Z/tG30vKuA5GYvf9IHHJBPkFAWtQQurWRnFCjxg11Id
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8414.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(376002)(136003)(396003)(366004)(346002)(451199024)(1800799009)(186009)(82960400001)(38100700002)(38070700005)(122000001)(8676002)(4326008)(8936002)(6506007)(64756008)(54906003)(41300700001)(66476007)(33656002)(53546011)(316002)(66446008)(66946007)(76116006)(6916009)(7696005)(86362001)(66556008)(71200400001)(9686003)(478600001)(26005)(55016003)(83380400001)(7416002)(2906002)(52536014)(5660300002);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?2gqin3VwZkfvgs2hLQDFQlMMF4Y8mGbLYSzT6kORI42wzCMw6WHI2fyAQgx/?=
+ =?us-ascii?Q?K0tfUi9CTXjWJK3OUOtzoJfd/qt/8RVYDXbuvqlFSLqod+2OeLw9iugZ2wr1?=
+ =?us-ascii?Q?0h2nH+Eo21NFYfkJHpRiiCSxYYmWA9v3sWiATWBD8mqenYiRIvGM6Ox+C+9z?=
+ =?us-ascii?Q?CLq+AEnjo3QdcOmolIieu8TZMlfmRfRJ3LTe208SmEsCQ9Oh3nvBdlMBV3/r?=
+ =?us-ascii?Q?MixmzUv54wD2wWm2Htvjw2V+vRQk8IUxJ72qOt3HbinRLBdLbWYlkuUYCVvm?=
+ =?us-ascii?Q?Dl3rRyx4olzx8JXqJzQR9lEEJhVqSUDUr3hcIjBoGQd7vSW4HEtZ4rK3Byrv?=
+ =?us-ascii?Q?woCI8yluBBpratMcuSb3Io+r8WqWlvktn7+0XEJWMMahQHRjm3MMnKpYVN3y?=
+ =?us-ascii?Q?iY1w1N7Yeytsn8kuEnEwDqWEm4hZp8U0bmgQMr2r14WL+uIUsBtEV5zA0bfU?=
+ =?us-ascii?Q?vjuC7X4wcFD7VDBzkkzq1FTsdeOkA7lTQtGwy2fxNpModyCJF1+xKCchi9Kv?=
+ =?us-ascii?Q?I9roZ2nYBxq1uZSxwYCe4+WrXAlB8FrrDZESHrYuQj2QKHSdNOmatWkKT/xU?=
+ =?us-ascii?Q?76vWy4DCvImk01+ff5X40J7s4yNfvUriF94U2ZPUVEdd2aQRxyTDMqccekty?=
+ =?us-ascii?Q?puSXZWpHrWcWogAsPHoq0+pDFW5A4fRmJl5+VHgTxAii1u1jhkXlNlZnyeXt?=
+ =?us-ascii?Q?Zf2bnasf1mOcNtmMfQwQIB9IB2aiTov5wpPLK2fhBOmctb2eZ0ko58wUViDH?=
+ =?us-ascii?Q?6ku/+e7bIc/PPMRbJ8G3bcTJuDDuEuj5QdgXI3J8/rE1Yyc+9dPXfOmA01l7?=
+ =?us-ascii?Q?cl9iRQMi8IKBle+tJFzhO+VPLB/NCE35RX8xavfMujdt3C9C8LsSbvQlt8dF?=
+ =?us-ascii?Q?je2PkszQsbYYrjGBiv37kiuCrf6d14kgqYKT+9gbXM9ZoLwvxk8uVn43ZT8U?=
+ =?us-ascii?Q?AK67WlGBxJtl6Ce7cBetW5jFMVFQRu0b3iCaZfKDBvsEmSq8MUv7jQLTPBxS?=
+ =?us-ascii?Q?uYTGcB+ucweifM4GVWki/z+9T66r17U4MymfdFuvuvhkITBa8yKS0e/D19u2?=
+ =?us-ascii?Q?HSrs0TvbsoVYB9Y6z5EF1el4N5EhIj3gYRrbEGn0jnza+ya6fzyARNp/5eB4?=
+ =?us-ascii?Q?xjFPcb51llULA6l7EQZhaEuEcv3Y/0Rf6tdafND2oFmA1w+rVjUWslz3hEMQ?=
+ =?us-ascii?Q?J+V6vL1NDCzKVMgec2ywbKfD+zDClBPaLKzLLjbszdJPffPIoCpN3QxlpP10?=
+ =?us-ascii?Q?mnHGIrvCtfVFWBQZSYtACNNwAEOxLq3a67W/S9PDFYHW92gAn7JFaucrh0wI?=
+ =?us-ascii?Q?SUnda0u3fPB2t7YRdE4ncfE0rD3uD7343xlkvzIfsIL/i7nmcEDr+XPV2Vm7?=
+ =?us-ascii?Q?dnGR2JIGinpQnflvdjrGgWmB+A6f5gYlh/TzMD2eva96tCpr6RSRhFp8Q44O?=
+ =?us-ascii?Q?H0HAd4XjeeNpfe9d4yGs/dM9ZlGBwQ2Uf/h020+fHW3VouxzS0r0/04pFNFb?=
+ =?us-ascii?Q?gceah6iJd6ngjV+N6eQVVCp+yYbb4MgBeekABEZQEmzV45wJViS+EzEJxx4Z?=
+ =?us-ascii?Q?7WSFwvRejHeze3fagqQlUTaHY31tagSy5X78Ri3E?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230825-topic-6115_lpasscc-v1-3-d4857be298e3@linaro.org>
-References: <20230825-topic-6115_lpasscc-v1-0-d4857be298e3@linaro.org>
-In-Reply-To: <20230825-topic-6115_lpasscc-v1-0-d4857be298e3@linaro.org>
-To:     Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1692987195; l=4383;
- i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=apOX3hdOGey1znwpGB5xLtFMz1hlV86nLVwgjBM0kcY=;
- b=wY/yNZgIiIkFzV93iclndiGDM7zP595ileVmaloPXed+8rHh/U3D5zG8z+Hp79io1oOn6GKbX
- AZ1HmMV808ZCP24m+B6NKVKCAPjiUnYJEyOxgAG1Z34ODxJDNOyZhVE
-X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8414.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 74132cf8-b020-4a18-1965-08dba59e72c6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Aug 2023 19:06:55.1659
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 4Ob/JTScGkCmi12Z2KZs+skxxTsRgeQrotKAgIJ8DcTKdBCmRJr9s9qUvt9ZJIyAPKTp8Ooo5BEH2P34XzsWKVBnSY0hYiu3f0Hkf8Euqys=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB4864
+X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SM6115 (and its derivatives or similar SoCs) have a LPASS clock
-controller block which provides audio-related resets.
+On 24 August 2023 5:50 PM CEST, Jakub Kicinski wrote:
+>=20
+> On Thu, 24 Aug 2023 08:59:53 +0000 Michalik, Michal wrote:
+>> >> The biggest concern for me is the requirement of selftests[2]:
+>> >>   "Don't take too long;"
+>> >> This approach is reloading the modules few times to check few scenari=
+os.
+>> >> Also, the DPLL subsystem is being tested against multiple requests - =
+so
+>> >> it takes some time to finish (not too long but is definitely not inst=
+ant). =20
+>> >=20
+>> > I think the time constraints are more of a question of practicality.
+>> > A developer should be able to run the tests as part of their workflow.
+>>=20
+>> That makes sense - agree. So Jakub, if I understand correctly we have a =
+few
+>> different problems to solve here:
+>> 1) how to deploy the module:
+>>  - now it's separated, we should consider e.g. netdevsim
+>> 2) if we should have those tests a part of selftests
+>>  - I would remove it from selftests and move it to ./tools/testing
+>> 3) if we should use Python at all:
+>>  - fast to develop and easy to maintain
+>>  - might be problematic to deploy (no Python, VMs, embedded, no network =
+etc.)
+>> =20
+>> Do I understand our current outcome of the discussion correctly?
+>=20
+> Yes, and on (3) unless someone objects let's stick to Python.
 
-Add the required code to support them.
+Please be kindly informed that I just start my 2 week vacations returning o=
+n 11th Sep.
+Excuse me for the upcoming delay in preparing the v2 of the RFC.
 
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
----
- drivers/clk/qcom/Kconfig          |  9 +++++
- drivers/clk/qcom/Makefile         |  1 +
- drivers/clk/qcom/lpasscc-sm6115.c | 84 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 94 insertions(+)
-
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index bd9bfb11b328..df9cf112e4b6 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -1001,6 +1001,15 @@ config SM_GPUCC_8550
- 	  Say Y if you want to support graphics controller devices and
- 	  functionality such as 3D graphics.
- 
-+config SM_LPASSCC_6115
-+	tristate "SM6115 Low Power Audio Subsystem (LPASS) Clock Controller"
-+	depends on ARM64 || COMPILE_TEST
-+	select SM_GCC_6115
-+	help
-+	  Support for the LPASS clock controller on SM6115 devices.
-+	  Say Y if you want to toggle LPASS-adjacent resets within
-+	  this clock controller to reset the LPASS subsystem.
-+
- config SM_TCSRCC_8550
- 	tristate "SM8550 TCSR Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 4790c8cca426..61e3c72fe954 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -128,6 +128,7 @@ obj-$(CONFIG_SM_GPUCC_8250) += gpucc-sm8250.o
- obj-$(CONFIG_SM_GPUCC_8350) += gpucc-sm8350.o
- obj-$(CONFIG_SM_GPUCC_8450) += gpucc-sm8450.o
- obj-$(CONFIG_SM_GPUCC_8550) += gpucc-sm8550.o
-+obj-$(CONFIG_SM_LPASSCC_6115) += lpasscc-sm6115.o
- obj-$(CONFIG_SM_TCSRCC_8550) += tcsrcc-sm8550.o
- obj-$(CONFIG_SM_VIDEOCC_8150) += videocc-sm8150.o
- obj-$(CONFIG_SM_VIDEOCC_8250) += videocc-sm8250.o
-diff --git a/drivers/clk/qcom/lpasscc-sm6115.c b/drivers/clk/qcom/lpasscc-sm6115.c
-new file mode 100644
-index 000000000000..6aa19e16c53b
---- /dev/null
-+++ b/drivers/clk/qcom/lpasscc-sm6115.c
-@@ -0,0 +1,84 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2022, 2023 Linaro Limited
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include <linux/regmap.h>
-+
-+#include <dt-bindings/clock/qcom,sm6115-lpasscc.h>
-+
-+#include "common.h"
-+#include "reset.h"
-+
-+static const struct qcom_reset_map lpass_audiocc_sm6115_resets[] = {
-+	[LPASS_AUDIO_SWR_RX_CGCR] =  { .reg = 0x98, .bit = 1, .udelay = 500 },
-+};
-+
-+static struct regmap_config lpass_audiocc_sm6115_regmap_config = {
-+	.reg_bits = 32,
-+	.reg_stride = 4,
-+	.val_bits = 32,
-+	.name = "lpass-audio-csr",
-+	.max_register = 0x1000,
-+};
-+
-+static const struct qcom_cc_desc lpass_audiocc_sm6115_reset_desc = {
-+	.config = &lpass_audiocc_sm6115_regmap_config,
-+	.resets = lpass_audiocc_sm6115_resets,
-+	.num_resets = ARRAY_SIZE(lpass_audiocc_sm6115_resets),
-+};
-+
-+static const struct qcom_reset_map lpasscc_sm6115_resets[] = {
-+	[LPASS_SWR_TX_CONFIG_CGCR] = { .reg = 0x100, .bit = 1, .udelay = 500 },
-+};
-+
-+static struct regmap_config lpasscc_sm6115_regmap_config = {
-+	.reg_bits = 32,
-+	.reg_stride = 4,
-+	.val_bits = 32,
-+	.name = "lpass-tcsr",
-+	.max_register = 0x1000,
-+};
-+
-+static const struct qcom_cc_desc lpasscc_sm6115_reset_desc = {
-+	.config = &lpasscc_sm6115_regmap_config,
-+	.resets = lpasscc_sm6115_resets,
-+	.num_resets = ARRAY_SIZE(lpasscc_sm6115_resets),
-+};
-+
-+static const struct of_device_id lpasscc_sm6115_match_table[] = {
-+	{
-+		.compatible = "qcom,sm6115-lpassaudiocc",
-+		.data = &lpass_audiocc_sm6115_reset_desc,
-+	}, {
-+		.compatible = "qcom,sm6115-lpasscc",
-+		.data = &lpasscc_sm6115_reset_desc,
-+	},
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, lpasscc_sm6115_match_table);
-+
-+static int lpasscc_sm6115_probe(struct platform_device *pdev)
-+{
-+	const struct qcom_cc_desc *desc = of_device_get_match_data(&pdev->dev);
-+
-+	return qcom_cc_probe_by_index(pdev, 0, desc);
-+}
-+
-+static struct platform_driver lpasscc_sm6115_driver = {
-+	.probe = lpasscc_sm6115_probe,
-+	.driver = {
-+		.name = "lpasscc-sm6115",
-+		.of_match_table = lpasscc_sm6115_match_table,
-+	},
-+};
-+
-+module_platform_driver(lpasscc_sm6115_driver);
-+
-+MODULE_DESCRIPTION("QTI LPASSCC SM6115 Driver");
-+MODULE_LICENSE("GPL");
-
--- 
-2.42.0
-
+All the best,
+M^2
