@@ -2,184 +2,213 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54562EE49A3
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Aug 2023 14:43:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2E6BC3DA6F
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Aug 2023 15:09:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241862AbjHYOnT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Aug 2023 10:43:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59318 "EHLO
+        id S229690AbjHYPIo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Aug 2023 11:08:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343813AbjHYOnT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Aug 2023 10:43:19 -0400
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2074.outbound.protection.outlook.com [40.107.20.74])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 038262109;
-        Fri, 25 Aug 2023 07:43:16 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=l+WRyyXIpMryZTTBIuzbu2iYOLbTJL4pLwUCGVI9lf2A+zdCw8QiJMu2YObaokvFFeNl7PYJxJIZ/8ps1sxcZlYDbxWIHHZqiCZfHHq0jQXj1TMTCBz3usPqHdozbWd/5ZkdG+bdhnjxzsnI1/bOC+cozzr4niQCNw9Xzss7NwluIK5ixcBlaR/iU1/vSVpFrxN/vva7mqviN7wTqdHAwHloxF/VgpGWcN24NzNGUatjg6nsHNNMcOesk3hX5ODc4rQMcf2EJMmYi94Yqz2E1ci8rHzSw5yLFpDGf5s8BFC6JVPtJtXaZw7Y/akDNZ+PIKSOKu6Wme9YGIc0MLeaVg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AKu0XsIH7fZsMQJp7epgBQ0pYnq+MOci2Ok3BGweFp0=;
- b=nUV3LEWooI1bB9GDuUrip18vDGk6ZCGobHGayt1RK1IMxXEXgunLLnTpEOmevrGB/8pjRbBoQFNv4F3BQcMyQkM0e1AigxV05Uw64F0oyodtXzw8LFTzFepfP0OjbfxuHsWID4ann/RVTa3mWLwIfOukUgbBz9mwCaTNVOrEtWasEQggpNVRYOBJh5aiNe/eMhJrGhx/RT0IPgZS3iRtNCyQ8p3b9o6OJZeY6LgMbWjjNc7dPxyte0Ch/3BPr+opFVn7e8+a8TSl2Ch5+fs0l/4Ap3BsHfOKx0is60ySnUGAhYh8n4G26FZFQEgatYRBdH1KFxZD2+fSqJW07Xla5g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AKu0XsIH7fZsMQJp7epgBQ0pYnq+MOci2Ok3BGweFp0=;
- b=RG03z5duxHXS9WvPOggjpB+KNYVvSbQ/f+XLrNWC5uyoN9xG9v2QLGpw7X3aKo7RTrwL8mTbzkYAWjDw03BQ48o7ZVAV1uOVXSb6cxqVVg6nLzSo3lJjmTkGl9M8g3PKjoyQ9xoTu5ovYrZCp6bPhkQx/y/wI4ecA+vtFQbEQ9Y=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM0PR04MB6452.eurprd04.prod.outlook.com (2603:10a6:208:16d::21)
- by VE1PR04MB7389.eurprd04.prod.outlook.com (2603:10a6:800:1b1::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.27; Fri, 25 Aug
- 2023 14:43:12 +0000
-Received: from AM0PR04MB6452.eurprd04.prod.outlook.com
- ([fe80::d4ed:20a0:8c0a:d9cf]) by AM0PR04MB6452.eurprd04.prod.outlook.com
- ([fe80::d4ed:20a0:8c0a:d9cf%7]) with mapi id 15.20.6699.028; Fri, 25 Aug 2023
- 14:43:12 +0000
-Date:   Fri, 25 Aug 2023 17:43:07 +0300
-From:   Vladimir Oltean <vladimir.oltean@nxp.com>
-To:     Sean Anderson <sean.anderson@seco.com>
-Cc:     Ioana Ciornei <ioana.ciornei@nxp.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        linux-phy@lists.infradead.org,
-        Madalin Bucur <madalin.bucur@nxp.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Camelia Alexandra Groza <camelia.groza@nxp.com>,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        Bagas Sanjaya <bagasdotme@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        =?utf-8?B?RmVybuKUnMOtbmRleg==?= Rojas <noltari@gmail.com>,
-        Jonas Gorski <jonas.gorski@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>, Li Yang <leoyang.li@nxp.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v14 00/15] phy: Add support for Lynx 10G SerDes
-Message-ID: <20230825144307.jkogntveiafucpqy@skbuf>
-References: <20230821124952.mraqqp7pxlo56gkh@skbuf>
- <a2e3fcad-9857-f1b3-8ada-efb2013a4bf5@seco.com>
- <20230821181349.hls6pukp5d6rc5av@LXL00007.wbi.nxp.com>
- <73d59dd2-88f0-3c1a-0de2-de2e050cba5a@seco.com>
- <20230821195823.ns55h3livxgol7fp@skbuf>
- <a66c9abf-5351-62b6-5573-cae38e6768e2@seco.com>
- <20230821224834.ppk4hmjyajupy7va@skbuf>
- <a4828cf7-9cac-286f-0aba-fcd1688c8422@seco.com>
- <20230821235917.mzawnkoi7oj4zgm6@skbuf>
- <54621dd6-275b-fd9d-a158-6871f1a04fd1@seco.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <54621dd6-275b-fd9d-a158-6871f1a04fd1@seco.com>
-X-ClientProxiedBy: FR3P281CA0083.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:1f::21) To AM0PR04MB6452.eurprd04.prod.outlook.com
- (2603:10a6:208:16d::21)
+        with ESMTP id S229448AbjHYPIQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Aug 2023 11:08:16 -0400
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [IPv6:2001:67c:2050:0:465::101])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 441912127;
+        Fri, 25 Aug 2023 08:08:13 -0700 (PDT)
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4RXNcS5hXvz9sy4;
+        Fri, 25 Aug 2023 17:08:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
+        s=MBO0001; t=1692976088;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=AAEOctatpX3/10zBsdBfZLy0AhwYTDuyHJC0ob0juM4=;
+        b=IjIDPIFmVJawwxPDgRAAlZPbcizlZu2X0oO98CrY7GZLx1XpLW7KW6fiyGbFlWKGn7z8px
+        LF8Yv+5laH7ak4UBi6248gTuwquMwszkDWa9XJG1NkJ/LtaAKl9Mef8iOsLi42PFCY54hP
+        faju8xYIEdwPmuMm1IFQfz1a3knx/QWXtOScS4DmfAUPRhyrypK/LXCflX+Ed/vnSuT0p5
+        X6XBeKAXaruVsPIMxm0XyjGUgjuAJF9j+0rwkBdTo48ZmcyH1FgFET4bkJ3LLQYP8K903P
+        V2fUr/uVExTnT01W5FiGDxwPHaR81Xyo5OyQSHKqolrMV8L6F355X+Isvsk0sA==
+References: <20230825-pll-mipi_keep_rate-v1-0-35bc43570730@oltmanns.dev>
+ <zrjpbtf7qwaj2tjvfz2no534tmz5j4yudp45tung2w5x2zcl6y@bal3bclzze4e>
+From:   Frank Oltmanns <frank@oltmanns.dev>
+To:     Maxime Ripard <mripard@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Ondrej Jirman <x@xnux.eu>,
+        Icenowy Zheng <uwu@icenowy.me>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, dri-devel@lists.freedesktop.org,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: Re: [PATCH 0/3] Make Allwinner A64's pll-mipi keep its rate when
+ parent rate changes
+In-reply-to: <zrjpbtf7qwaj2tjvfz2no534tmz5j4yudp45tung2w5x2zcl6y@bal3bclzze4e>
+Date:   Fri, 25 Aug 2023 17:07:58 +0200
+Message-ID: <87ledzqhwx.fsf@oltmanns.dev>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM0PR04MB6452:EE_|VE1PR04MB7389:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8bb88f74-d651-4aba-5b08-08dba5799b75
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: X/cbV8PiUiegA+KSzcWdvcS5V9FRey8tBlPLwNKeEhCvQuwTv5IvvRTLWYYmh4s7Ji9onl4MDRercxMDFicsEj8hFlqya7wnPJdctJCOyj/a8lhPMttxq2TEJ3XltLOEZOSySNNHAmtNwJjKhrzDr9TevKWhGdNU4fPaqLK5T50pRWUv6ixWJJmmDYRc6AmBug5k1sDOd5dIak7cjC58Cewo+Mq2qQoKKPSQf71qNoW8xNJDQy4GmJtebcE7rTPT7qtvp7+DfOTYSdePNfvahWzPZjMxvwttN9ULpDwwY8ciesp44sIqmZRp8i69/eZLvClMVeMbeHDEO6+UBELPUSqIPUvhfNARZ2ePCeXYjTip6L/Aa6e6isQ6cFDtcechXeGWbxju4ALUq1bXJRBGSrHJvUf6HBwe3WHxbkTtVsf9XKc2MASltqxaoWJ6aIa86mTZCJ5nxlMzdBKl/OjXdKynoVVc/bCjJjjHBnyrNlWN0SRU36J0EoXXiKLDFMVhyFaMSrV8xkpP1Didi1FPE1S5+zv8hVzd+RiDk6AfrjN1vuylOkv2so0TApRymB8H
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB6452.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7916004)(136003)(396003)(376002)(39860400002)(366004)(346002)(451199024)(1800799009)(186009)(86362001)(33716001)(38100700002)(6506007)(6666004)(6486002)(8936002)(54906003)(478600001)(26005)(5660300002)(4326008)(316002)(6916009)(44832011)(8676002)(3716004)(6512007)(53546011)(9686003)(83380400001)(66946007)(7416002)(41300700001)(2906002)(66476007)(66556008)(1076003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?CJ02Qg/461uz4cbMJTex/NjMCy7ck6mSpCnvvJGAVrNBe00XGV0D5R3//kG3?=
- =?us-ascii?Q?u06pbgSyg3W9rYSjgGXRlPAZ5/8gnjfIjgSNRAkF4rhEfw4qMDtZ/+unyyaE?=
- =?us-ascii?Q?wkdMAZa/ceU54De0Q+I6kBRaTyf0TQnsG8L81104jvphdmPP0rrp4VsheVe8?=
- =?us-ascii?Q?pQkg0GUzM0Z530L4UhUpCyUpotRmgVPU/xwxNO/pFRz4KHKSY4qXv6IxAvs9?=
- =?us-ascii?Q?RlD4AKNgZV5aZJzLpJThr3CtLCpWU8COmi2qyF+sQwC/5kafeRyMiR+ute5T?=
- =?us-ascii?Q?ep1ehVef5E3O1qxaaFObciTQvRnxt+1uzBGlTw1R0b+tcKb568ufEzG5XrGQ?=
- =?us-ascii?Q?BPSNkShXSm52Zo7KpyOGZcNyiD+oLrsf1rJYF0mKvA0zQz2+b5ML7J8BkRGI?=
- =?us-ascii?Q?buYmc4osmaLuMVMMskUSw4PBi7HoV1Q7YdATucVObwyY7WeB1jJy2GSbp4Q5?=
- =?us-ascii?Q?7nMaYypmeZReWha2nt5J8sym5fLOnf/tYMRP9m78WmDEzZZjdVichoDf3c0u?=
- =?us-ascii?Q?8XSbspVtFPuhnnTf/NkBreWneAM2LYImYlazUDHsHE0pjz9krije7i5o9sWx?=
- =?us-ascii?Q?Eziz7IrYRVG4goC9RoAdxYjl3MCEr+hoMaLbrBfBAQxLA9GDebTRrbx35hx7?=
- =?us-ascii?Q?zzRUP9ObmJWICftiBBUrCBp6t7jQfRLyqQLhkotZ78byHAeKOGWQjZ5vHn7D?=
- =?us-ascii?Q?hHxJ1XyjI25j4ACZIbgZi18i4J20flsZacC7+BbCDhrnYPIsjc1DRJksyOCB?=
- =?us-ascii?Q?pIUJO0DMy+zxIFG5PIBzBw6x4BbV04ibBQtFZjfbPE9cJkCrkpe793zP1xZF?=
- =?us-ascii?Q?QrzRIy8ncH+JoafwqylwGBdAaDw9FW7E3TH6ho6IDvQaDJZYEb/Kag7lk7na?=
- =?us-ascii?Q?n2Z8/wZFiN3lJtmrLCA6D2RjgpPkiccI5HRsZDBNxuymIHAvBuEsNEUnbGsG?=
- =?us-ascii?Q?giCD6d+h0/ypqmsOarVqLHe47Uiy+KFDsDM4ay9Y1PLDZuUxSbHWl7RFotfC?=
- =?us-ascii?Q?2p1OMVTfjiugP763r/ay6WOuD/1aT1PilUMC0yd0dFj/q+QYNnSAMrO2F7df?=
- =?us-ascii?Q?jXg7xNCRNkpY9gs9X6MnCsFoQ5U6Ud6iUXylcL+QVlc8eB4TsfHU4xAJKjf6?=
- =?us-ascii?Q?6lzcUpYlF5EsvUySEA0e4r1DUYX1BbwCfhZc9fV/ScFW9awotwqCy0c8uR6k?=
- =?us-ascii?Q?trTqZkBu64PgsWtxPadkVbs53N7b+yoxKEYptbIDiH1L9CMHj8pHpn1AZ71T?=
- =?us-ascii?Q?2QiBMzb15Pppil+AegAi6kysXVxwENIuvqS+kMoa6CTR9FEzZZVdsSyANwct?=
- =?us-ascii?Q?o12O5sWSsAa/W5ee27zWPNaB8Pu/uLzgZ9XcBrmXMi8hvftsPaiUZkkNaFsb?=
- =?us-ascii?Q?BofBFMPTVY/nNiThGpvT+9/gNqXCoRQ/wEDoC2DKVXrKJPv5/RQchENA3sLg?=
- =?us-ascii?Q?ZEG6xvkTVL7NhJdTyhwpc16CVIXVBWWU9+4o2K9B8zWrnavgQSBgwVSAb2Lc?=
- =?us-ascii?Q?uzqzqoxvhE85uQN7Z2hxqonK/e1ZIPetYdJUzZdTy0dDE1rNmnsiSEjexXXe?=
- =?us-ascii?Q?IFA+kSPH8lBeN9Oi/sgfNAcnpDZI8xI4yMrR+RooLiqXiqx6ZUDg8XOsF+N1?=
- =?us-ascii?Q?sg=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8bb88f74-d651-4aba-5b08-08dba5799b75
-X-MS-Exchange-CrossTenant-AuthSource: AM0PR04MB6452.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2023 14:43:12.3777
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rCe/mjJHrdklRp4K5fe0Krg3/Ve+cCeA4R/GmDP7W5WbdZkkKk3cBsfcdNrYmJeCWPMi5W2l2DlV4MUKIkFKrw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB7389
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Rspamd-Queue-Id: 4RXNcS5hXvz9sy4
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Aug 24, 2023 at 06:09:52PM -0400, Sean Anderson wrote:
-> On 8/21/23 19:59, Vladimir Oltean wrote:
-> > On Mon, Aug 21, 2023 at 07:39:15PM -0400, Sean Anderson wrote:
-> >> Well, I think we should take the opportunity to think about the hardware
-> >> which exists and how we plan to model it. IMO grouping lanes into a
-> >> single phy simplifies both the phy driver and the mac driver.
-> > 
-> > Ok, but ungrouped for backplane and grouped for !backplane? For the KR
-> > link modes, parallel link training, with separate consumers per lanes in
-> > a group, will be needed per lane.
-> 
-> Hm, this is the sort of thing I hadn't considered since separate link
-> training isn't necessary for lynx 10g. But couldn't this be done by
-> adding a "lane" parameter to phy_configure_opts_xgkr?
-> 
-> Although, I am not sure how the driver is supposed to figure out what
-> coefficients to use. c73 implies that the training frame should be sent
-> on each lane. So I expected that there would be four copies of the
-> link coefficient registers. However, when reading the LX2160ARM, I only
-> saw one set of registers (e.g. 26.6.3.3). So is link training done
-> serially? I didn't see anything like a "lane select" field.
-> 
-> --Sean
+Thank you for your feedback, Maxime!
 
-There is one AN/LT block replicated for each lane, even for multi-lane
-backplane protocols. The primary (first) AN/LT block handles C73 autoneg
-+ C73 link training on that lane, and the secondary AN/LT blocks handle
-just link training on their respective lanes.
+On 2023-08-25 at 10:13:53 +0200, Maxime Ripard <mripard@kernel.org> wrote:
+> [[PGP Signed Part:Undecided]]
+> Hi,
+>
+> On Fri, Aug 25, 2023 at 07:36:36AM +0200, Frank Oltmanns wrote:
+>> I would like to make the Allwinner A64's pll-mipi to keep its rate when
+>> its parent's (pll-video0) rate changes. Keeping pll-mipi's rate is
+>> required, to let the A64 drive both an LCD and HDMI display at the same
+>> time, because both have pll-video0 as an ancestor.
+>>
+>> PATCH 1 adds this functionality as a feature into the clk framework (new
+>> flag: CLK_KEEP_RATE).
+>>
+>> Cores that use this flag, store a rate as req_rate when it or one of its
+>> descendants requests a new rate.
+>>
+>> That rate is then restored in the clk_change_rate recursion, which walks
+>> through the tree. It will reach the flagged core (e.g. pll-mipi) after
+>> the parent's rate (e.g. pll-video0) has already been set to the new
+>> rate. It will then call determine_rate (which requests the parent's
+>> current, i.e. new, rate) to determine a rate that is close to the
+>> flagged core's previous rate. Afterward it will re-calculate the rates
+>> for the flagged core's subtree.
+>
+> I don't think it's the right way forward. It makes the core logic more
+> complicated, for something that is redundant with the notifiers
+> mechanism that has been the go-to for that kind of things so far.
 
-In other words, each AN/LT block needs to interact with just its lane
-(SerDes PHY). A "lane" parameter could be added to phy_configure_opts_xgkr
-to work around the "grouped lanes" design, but it would complicate the
-consumer implementation, since the AN/LT block does not otherwise need
-to know what is the index of the SerDes lane it is attached to (so it
-would need something like an extra device tree property).
+Yeah, that was my initial idea as well. But I couldn't get it to work.
+See details below.
 
-C72 link training is independent on each lane, has independent AN/LT
-block MDIO registers, independent SerDes lane registers, and independent
-training frame exchanges. There is no "lane select" field.
+Do you have an example of a clock that restores its previous rate after
+the parent rate has changed? I've looked left and right, but to me it
+seems that notifiers are mainly used for setting clocks into some kind
+of "safe mode" prior to the rate change. Examples:
 
-You can see the "LX2160A lanes A, B, C, D with SerDes 1 protocol 19:
-dpmac2 uses 40GBase-KR4" example in my backplane dt-bindings patch,
-which shows how on dpmac2's internal MDIO bus, there are AN/LT devices
-at MDIO addresses 7, 6, 5 and 4, one for each lane.
+sunxi-ng:
+https://elixir.bootlin.com/linux/v6.4.11/source/drivers/clk/sunxi-ng/ccu_mu=
+x.c#L273
+https://elixir.bootlin.com/linux/v6.4.11/source/drivers/clk/sunxi-ng/ccu_co=
+mmon.c#L60
 
-I know that Lynx 10G doesn't do multi-lane backplane, but I wouldn't
-want Lynx 10G and Lynx 28G to have different designs when it comes to
-their handling of multi-lane. A single design that works for both would
-be great.
+but also others:
+https://elixir.bootlin.com/linux/v6.4.11/source/drivers/clk/at91/clk-master=
+.c#L248
+https://elixir.bootlin.com/linux/v6.4.11/source/drivers/clk/meson/meson8b.c=
+#L3755
+https://elixir.bootlin.com/linux/v6.4.11/source/drivers/clk/qcom/clk-cpu-89=
+96.c#L546
+
+> It's not really obvious to me why the notifiers don't work there.
+>
+>> This work is inspired by an out-of-tree patchset [1] [2] [3].
+>> Unfortunately, the patchset uses clk_set_rate() in a notifier callback,
+>> which the following comment on clk_notifier_register() forbids: "The
+>> callbacks associated with the notifier must not re-enter into the clk
+>> framework by calling any top-level clk APIs." [4] Furthermore, that
+>> out-of-tree patchset no longer works with the current linux-next,
+>> because setting pll-mipi is now also resetting pll-video0 [5].
+>
+> Is it because of the "The callbacks associated with the notifier must
+> not re-enter into the clk framework by calling any top-level clk APIs."
+> comment?
+
+I don't think that's the reason. I'm fairly certain that the problem is,
+that pll-mipi tries to set the parent rate. Maybe it should check if the
+parent is locked, before determining a rate that requires the parent
+rate to change. =F0=9F=A4=94 Currently, it only calls clk_hw_can_set_rate_p=
+arent()
+which only checks the flag, but does not check if it is really possible
+to change the parent's rate.
+
+Regardless, please don't prematurely dismiss my proposal. It has the
+advantage that it is not specific for sunxi-ng, but could be used for
+other drivers as well. Maybe there other instances of exclusive locks
+today where the CLK_KEEP_RATE flag might work equally well. =F0=9F=A4=B7
+
+> If so, I think the thing we should emphasize is that it's about *any
+> top-level clk API*, as in clk_set_rate() or clk_set_parent().
+>
+> The issue is that any consumer-facing API is taking the clk_prepare lock
+> and thus we would have reentrancy. But we're a provider there, and none
+> of the clk_hw_* functions are taking that lock. Neither do our own functi=
+on.
+>
+> So we could call in that notifier our set_rate callback directly, or we
+> could create a clk_hw_set_rate() function.
+>
+> The first one will create cache issue between the actual rate that the
+> common clock framework is running and the one we actually enforced, but
+> we could create a function to flush the CCF cache.
+>
+> The second one is probably simpler.
+
+I'm probably missing something, because I don't think this would work.
+For reference, this is our tree:
+
+    pll-video0
+       hdmi-phy-clk
+       hdmi
+       tcon1
+       pll-mipi
+          tcon0
+             tcon-data-clock
+
+When pll-video0's rate is changed (e.g. because a HDMI monitor is
+plugged in), the rates of the complete subtree for pll-video0 are
+recalculated, including tcon0 and tcon-data-clock. The rate of tcon0 is
+based on the rate that was recalculated for pll-mipi, which - in turn -
+was of course recalculated based on the pll-video0's new rate. These
+values are stored by the clk framework in a private struct. They are
+calculated before actually performing any rate changes.
+
+So, if a notifier sets pll-mipi's rate to something else than was
+previously recalculated, the clk framework would still try to set tcon0
+to the value that it previously calculated.
+
+So, we would have to recalculate pll-mipi's subtree after changing its
+rate (that's what PATCH 1 is doing).
+
+> Another option could be that we turn clk_set_rate_exclusive into
+> something more subtle that allows to change a parent rate as long as the
+> clock rate doesn't.
+
+I don't think this would work either. Only in rare circumstances
+pll-mipi can be set to the exact previous rate, normally it will be set
+to a rate that is close to it's previous rate.
+
+Note there is another option, we could analyze: pll-video0's
+RRE_RATE_CHANGE notifier could be used to set pll-mipi into a mode that
+lets it recalculate a rate that is close to the previous rate. A
+POST_RATE_CHANGE notifier could be used to switch it back to "normal"
+recalc mode. I don't know if pll-video0's notifier works or if we also
+need to be notified after pll-mipi has finished setting it's rate.
+However, this seems a little hacky and I haven't tried if it works at
+all. I prefer the current proposal (i.e. the CLK_KEEP_RATE flag).
+
+Best regards,
+  Frank
+
+> It would ease the requirement that
+> clk_set_rate_exclusive() has on a clock subtree (which I think prevents
+> its usage to some extent), but I have no issue on how that would work in
+> practice.
+>
+> So yeah, I think adding a clk_hw_set_rate() that would be callable from
+> a notifier is the right way forward there.
+>
+> Maxime
+>
+> [[End of PGP Signed Part]]
