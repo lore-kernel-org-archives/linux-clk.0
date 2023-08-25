@@ -2,175 +2,184 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D94F2EE49BB
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Aug 2023 14:02:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54562EE49A3
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Aug 2023 14:43:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245528AbjHYOB4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Aug 2023 10:01:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55298 "EHLO
+        id S241862AbjHYOnT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Aug 2023 10:43:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245537AbjHYOBf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Aug 2023 10:01:35 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B37D026A8
-        for <linux-clk@vger.kernel.org>; Fri, 25 Aug 2023 07:01:04 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-307d58b3efbso739243f8f.0
-        for <linux-clk@vger.kernel.org>; Fri, 25 Aug 2023 07:01:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1692972063; x=1693576863;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :references:cc:to:content-language:subject:reply-to:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Cz3wvihV4Khraq2quFRW1dbYxEl7BtIN5eOiHQDnTTs=;
-        b=xqn7boffTsoZ8n5yt2Eo1KHP14UWJYM9I/i9voNa5bLezX07HVpDau5+ZiB5aSmXYL
-         chspf245MiswOtYlVXA1o4e4OepqE/xiPUEU1H4wh9gzOYIycGbB5/CRz1UtZt177UnS
-         JSSObj+MANe14J/OT4eKGMavoBpcpxPPct93IW8kSnikV6JU9YCSRSF7No5e6WrZ51H4
-         Ur4ub9QrtS9Nt4YK61UN+o71lsoaDAqucKys1VFRDjsvsr8RViDYdwjlxWr8oSXhz3kT
-         Sr1X2gpYYhyp0JbdNdLhgJ0j/kYfEspMjM7ZNt5by36av1Uevdl3ZzhUcHPBL3OQIXQe
-         rwdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692972063; x=1693576863;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :references:cc:to:content-language:subject:reply-to:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Cz3wvihV4Khraq2quFRW1dbYxEl7BtIN5eOiHQDnTTs=;
-        b=LVsqgDlDAahion1kKDWnf9TdbmZpCCioLeNqH0PdbunNqwBRymxa2MAxrPH0RvzZ0E
-         8ObN/fmpm9P5W/3DLjfSwLXwHNc3rfqZdOPu2fJ0Zrm9/hlmgk27d88p/Cz95eeqcx4E
-         KmExPqIbQ1whyH5oikbh9hUWeXRgxAnRwV+vf4L9GJOmp+hfFDb4kkbGROcTBzCBsgPt
-         jDx1UDLnYjBGDoKlgjFxzB+b0RO2rPRPIMKu0GQ2168s2xp8Lzu5emmywp7e05n/iBou
-         SPQqubOIocamQn9QTGqq2O40tMwQ4vDgfAAfJj6qUEDv2vxX+j5VCo1uX9bQZxMCzjVC
-         9Zvg==
-X-Gm-Message-State: AOJu0Yx4EfK109If0aA3FjIO3Pr9gWAEy4Ab+8weqIeh6tMM6fSTi04P
-        bW0UtjvtuIFl6cvXHTGexFR2QQ==
-X-Google-Smtp-Source: AGHT+IHo2T3zBE151rMfkaJbiyRPBn5jZOjs9VP+lw99pnBUBa+mBAh2rrRjlocfb2/8uaB+zkWHjg==
-X-Received: by 2002:a5d:61d0:0:b0:317:f537:748d with SMTP id q16-20020a5d61d0000000b00317f537748dmr13225547wrv.64.1692972062756;
-        Fri, 25 Aug 2023 07:01:02 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:4e1:71e1:b02b:811e? ([2a01:e0a:982:cbb0:4e1:71e1:b02b:811e])
-        by smtp.gmail.com with ESMTPSA id x16-20020a5d6510000000b003143c9beeaesm2322239wru.44.2023.08.25.07.01.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Aug 2023 07:01:02 -0700 (PDT)
-Message-ID: <71d1d748-133a-470b-986c-ece79f743aa4@linaro.org>
-Date:   Fri, 25 Aug 2023 16:01:00 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 2/4] clk: qcom: rpmh: Add RPMH clocks support for SM4450
-Content-Language: en-US, fr
-To:     Ajit Pandey <quic_ajipan@quicinc.com>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        with ESMTP id S1343813AbjHYOnT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Aug 2023 10:43:19 -0400
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2074.outbound.protection.outlook.com [40.107.20.74])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 038262109;
+        Fri, 25 Aug 2023 07:43:16 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=l+WRyyXIpMryZTTBIuzbu2iYOLbTJL4pLwUCGVI9lf2A+zdCw8QiJMu2YObaokvFFeNl7PYJxJIZ/8ps1sxcZlYDbxWIHHZqiCZfHHq0jQXj1TMTCBz3usPqHdozbWd/5ZkdG+bdhnjxzsnI1/bOC+cozzr4niQCNw9Xzss7NwluIK5ixcBlaR/iU1/vSVpFrxN/vva7mqviN7wTqdHAwHloxF/VgpGWcN24NzNGUatjg6nsHNNMcOesk3hX5ODc4rQMcf2EJMmYi94Yqz2E1ci8rHzSw5yLFpDGf5s8BFC6JVPtJtXaZw7Y/akDNZ+PIKSOKu6Wme9YGIc0MLeaVg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AKu0XsIH7fZsMQJp7epgBQ0pYnq+MOci2Ok3BGweFp0=;
+ b=nUV3LEWooI1bB9GDuUrip18vDGk6ZCGobHGayt1RK1IMxXEXgunLLnTpEOmevrGB/8pjRbBoQFNv4F3BQcMyQkM0e1AigxV05Uw64F0oyodtXzw8LFTzFepfP0OjbfxuHsWID4ann/RVTa3mWLwIfOukUgbBz9mwCaTNVOrEtWasEQggpNVRYOBJh5aiNe/eMhJrGhx/RT0IPgZS3iRtNCyQ8p3b9o6OJZeY6LgMbWjjNc7dPxyte0Ch/3BPr+opFVn7e8+a8TSl2Ch5+fs0l/4Ap3BsHfOKx0is60ySnUGAhYh8n4G26FZFQEgatYRBdH1KFxZD2+fSqJW07Xla5g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AKu0XsIH7fZsMQJp7epgBQ0pYnq+MOci2Ok3BGweFp0=;
+ b=RG03z5duxHXS9WvPOggjpB+KNYVvSbQ/f+XLrNWC5uyoN9xG9v2QLGpw7X3aKo7RTrwL8mTbzkYAWjDw03BQ48o7ZVAV1uOVXSb6cxqVVg6nLzSo3lJjmTkGl9M8g3PKjoyQ9xoTu5ovYrZCp6bPhkQx/y/wI4ecA+vtFQbEQ9Y=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM0PR04MB6452.eurprd04.prod.outlook.com (2603:10a6:208:16d::21)
+ by VE1PR04MB7389.eurprd04.prod.outlook.com (2603:10a6:800:1b1::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.27; Fri, 25 Aug
+ 2023 14:43:12 +0000
+Received: from AM0PR04MB6452.eurprd04.prod.outlook.com
+ ([fe80::d4ed:20a0:8c0a:d9cf]) by AM0PR04MB6452.eurprd04.prod.outlook.com
+ ([fe80::d4ed:20a0:8c0a:d9cf%7]) with mapi id 15.20.6699.028; Fri, 25 Aug 2023
+ 14:43:12 +0000
+Date:   Fri, 25 Aug 2023 17:43:07 +0300
+From:   Vladimir Oltean <vladimir.oltean@nxp.com>
+To:     Sean Anderson <sean.anderson@seco.com>
+Cc:     Ioana Ciornei <ioana.ciornei@nxp.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        linux-phy@lists.infradead.org,
+        Madalin Bucur <madalin.bucur@nxp.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Camelia Alexandra Groza <camelia.groza@nxp.com>,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        Bagas Sanjaya <bagasdotme@gmail.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230824173410.550126-1-quic_ajipan@quicinc.com>
- <20230824173410.550126-3-quic_ajipan@quicinc.com>
-From:   Neil Armstrong <neil.armstrong@linaro.org>
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro Developer Services
-In-Reply-To: <20230824173410.550126-3-quic_ajipan@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        =?utf-8?B?RmVybuKUnMOtbmRleg==?= Rojas <noltari@gmail.com>,
+        Jonas Gorski <jonas.gorski@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>, Li Yang <leoyang.li@nxp.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v14 00/15] phy: Add support for Lynx 10G SerDes
+Message-ID: <20230825144307.jkogntveiafucpqy@skbuf>
+References: <20230821124952.mraqqp7pxlo56gkh@skbuf>
+ <a2e3fcad-9857-f1b3-8ada-efb2013a4bf5@seco.com>
+ <20230821181349.hls6pukp5d6rc5av@LXL00007.wbi.nxp.com>
+ <73d59dd2-88f0-3c1a-0de2-de2e050cba5a@seco.com>
+ <20230821195823.ns55h3livxgol7fp@skbuf>
+ <a66c9abf-5351-62b6-5573-cae38e6768e2@seco.com>
+ <20230821224834.ppk4hmjyajupy7va@skbuf>
+ <a4828cf7-9cac-286f-0aba-fcd1688c8422@seco.com>
+ <20230821235917.mzawnkoi7oj4zgm6@skbuf>
+ <54621dd6-275b-fd9d-a158-6871f1a04fd1@seco.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <54621dd6-275b-fd9d-a158-6871f1a04fd1@seco.com>
+X-ClientProxiedBy: FR3P281CA0083.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:1f::21) To AM0PR04MB6452.eurprd04.prod.outlook.com
+ (2603:10a6:208:16d::21)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM0PR04MB6452:EE_|VE1PR04MB7389:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8bb88f74-d651-4aba-5b08-08dba5799b75
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: X/cbV8PiUiegA+KSzcWdvcS5V9FRey8tBlPLwNKeEhCvQuwTv5IvvRTLWYYmh4s7Ji9onl4MDRercxMDFicsEj8hFlqya7wnPJdctJCOyj/a8lhPMttxq2TEJ3XltLOEZOSySNNHAmtNwJjKhrzDr9TevKWhGdNU4fPaqLK5T50pRWUv6ixWJJmmDYRc6AmBug5k1sDOd5dIak7cjC58Cewo+Mq2qQoKKPSQf71qNoW8xNJDQy4GmJtebcE7rTPT7qtvp7+DfOTYSdePNfvahWzPZjMxvwttN9ULpDwwY8ciesp44sIqmZRp8i69/eZLvClMVeMbeHDEO6+UBELPUSqIPUvhfNARZ2ePCeXYjTip6L/Aa6e6isQ6cFDtcechXeGWbxju4ALUq1bXJRBGSrHJvUf6HBwe3WHxbkTtVsf9XKc2MASltqxaoWJ6aIa86mTZCJ5nxlMzdBKl/OjXdKynoVVc/bCjJjjHBnyrNlWN0SRU36J0EoXXiKLDFMVhyFaMSrV8xkpP1Didi1FPE1S5+zv8hVzd+RiDk6AfrjN1vuylOkv2so0TApRymB8H
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB6452.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7916004)(136003)(396003)(376002)(39860400002)(366004)(346002)(451199024)(1800799009)(186009)(86362001)(33716001)(38100700002)(6506007)(6666004)(6486002)(8936002)(54906003)(478600001)(26005)(5660300002)(4326008)(316002)(6916009)(44832011)(8676002)(3716004)(6512007)(53546011)(9686003)(83380400001)(66946007)(7416002)(41300700001)(2906002)(66476007)(66556008)(1076003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?CJ02Qg/461uz4cbMJTex/NjMCy7ck6mSpCnvvJGAVrNBe00XGV0D5R3//kG3?=
+ =?us-ascii?Q?u06pbgSyg3W9rYSjgGXRlPAZ5/8gnjfIjgSNRAkF4rhEfw4qMDtZ/+unyyaE?=
+ =?us-ascii?Q?wkdMAZa/ceU54De0Q+I6kBRaTyf0TQnsG8L81104jvphdmPP0rrp4VsheVe8?=
+ =?us-ascii?Q?pQkg0GUzM0Z530L4UhUpCyUpotRmgVPU/xwxNO/pFRz4KHKSY4qXv6IxAvs9?=
+ =?us-ascii?Q?RlD4AKNgZV5aZJzLpJThr3CtLCpWU8COmi2qyF+sQwC/5kafeRyMiR+ute5T?=
+ =?us-ascii?Q?ep1ehVef5E3O1qxaaFObciTQvRnxt+1uzBGlTw1R0b+tcKb568ufEzG5XrGQ?=
+ =?us-ascii?Q?BPSNkShXSm52Zo7KpyOGZcNyiD+oLrsf1rJYF0mKvA0zQz2+b5ML7J8BkRGI?=
+ =?us-ascii?Q?buYmc4osmaLuMVMMskUSw4PBi7HoV1Q7YdATucVObwyY7WeB1jJy2GSbp4Q5?=
+ =?us-ascii?Q?7nMaYypmeZReWha2nt5J8sym5fLOnf/tYMRP9m78WmDEzZZjdVichoDf3c0u?=
+ =?us-ascii?Q?8XSbspVtFPuhnnTf/NkBreWneAM2LYImYlazUDHsHE0pjz9krije7i5o9sWx?=
+ =?us-ascii?Q?Eziz7IrYRVG4goC9RoAdxYjl3MCEr+hoMaLbrBfBAQxLA9GDebTRrbx35hx7?=
+ =?us-ascii?Q?zzRUP9ObmJWICftiBBUrCBp6t7jQfRLyqQLhkotZ78byHAeKOGWQjZ5vHn7D?=
+ =?us-ascii?Q?hHxJ1XyjI25j4ACZIbgZi18i4J20flsZacC7+BbCDhrnYPIsjc1DRJksyOCB?=
+ =?us-ascii?Q?pIUJO0DMy+zxIFG5PIBzBw6x4BbV04ibBQtFZjfbPE9cJkCrkpe793zP1xZF?=
+ =?us-ascii?Q?QrzRIy8ncH+JoafwqylwGBdAaDw9FW7E3TH6ho6IDvQaDJZYEb/Kag7lk7na?=
+ =?us-ascii?Q?n2Z8/wZFiN3lJtmrLCA6D2RjgpPkiccI5HRsZDBNxuymIHAvBuEsNEUnbGsG?=
+ =?us-ascii?Q?giCD6d+h0/ypqmsOarVqLHe47Uiy+KFDsDM4ay9Y1PLDZuUxSbHWl7RFotfC?=
+ =?us-ascii?Q?2p1OMVTfjiugP763r/ay6WOuD/1aT1PilUMC0yd0dFj/q+QYNnSAMrO2F7df?=
+ =?us-ascii?Q?jXg7xNCRNkpY9gs9X6MnCsFoQ5U6Ud6iUXylcL+QVlc8eB4TsfHU4xAJKjf6?=
+ =?us-ascii?Q?6lzcUpYlF5EsvUySEA0e4r1DUYX1BbwCfhZc9fV/ScFW9awotwqCy0c8uR6k?=
+ =?us-ascii?Q?trTqZkBu64PgsWtxPadkVbs53N7b+yoxKEYptbIDiH1L9CMHj8pHpn1AZ71T?=
+ =?us-ascii?Q?2QiBMzb15Pppil+AegAi6kysXVxwENIuvqS+kMoa6CTR9FEzZZVdsSyANwct?=
+ =?us-ascii?Q?o12O5sWSsAa/W5ee27zWPNaB8Pu/uLzgZ9XcBrmXMi8hvftsPaiUZkkNaFsb?=
+ =?us-ascii?Q?BofBFMPTVY/nNiThGpvT+9/gNqXCoRQ/wEDoC2DKVXrKJPv5/RQchENA3sLg?=
+ =?us-ascii?Q?ZEG6xvkTVL7NhJdTyhwpc16CVIXVBWWU9+4o2K9B8zWrnavgQSBgwVSAb2Lc?=
+ =?us-ascii?Q?uzqzqoxvhE85uQN7Z2hxqonK/e1ZIPetYdJUzZdTy0dDE1rNmnsiSEjexXXe?=
+ =?us-ascii?Q?IFA+kSPH8lBeN9Oi/sgfNAcnpDZI8xI4yMrR+RooLiqXiqx6ZUDg8XOsF+N1?=
+ =?us-ascii?Q?sg=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8bb88f74-d651-4aba-5b08-08dba5799b75
+X-MS-Exchange-CrossTenant-AuthSource: AM0PR04MB6452.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2023 14:43:12.3777
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: rCe/mjJHrdklRp4K5fe0Krg3/Ve+cCeA4R/GmDP7W5WbdZkkKk3cBsfcdNrYmJeCWPMi5W2l2DlV4MUKIkFKrw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB7389
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
-
-On 24/08/2023 19:34, Ajit Pandey wrote:
-> Add support for RPMH clocks for SM4450 platform.
+On Thu, Aug 24, 2023 at 06:09:52PM -0400, Sean Anderson wrote:
+> On 8/21/23 19:59, Vladimir Oltean wrote:
+> > On Mon, Aug 21, 2023 at 07:39:15PM -0400, Sean Anderson wrote:
+> >> Well, I think we should take the opportunity to think about the hardware
+> >> which exists and how we plan to model it. IMO grouping lanes into a
+> >> single phy simplifies both the phy driver and the mac driver.
+> > 
+> > Ok, but ungrouped for backplane and grouped for !backplane? For the KR
+> > link modes, parallel link training, with separate consumers per lanes in
+> > a group, will be needed per lane.
 > 
-> Signed-off-by: Ajit Pandey <quic_ajipan@quicinc.com>
-> ---
->   drivers/clk/qcom/clk-rpmh.c | 21 +++++++++++++++++++++
->   1 file changed, 21 insertions(+)
+> Hm, this is the sort of thing I hadn't considered since separate link
+> training isn't necessary for lynx 10g. But couldn't this be done by
+> adding a "lane" parameter to phy_configure_opts_xgkr?
 > 
-> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-> index 4c5b552b47b6..5d853fd43294 100644
-> --- a/drivers/clk/qcom/clk-rpmh.c
-> +++ b/drivers/clk/qcom/clk-rpmh.c
-> @@ -350,6 +350,7 @@ DEFINE_CLK_RPMH_VRM(ln_bb_clk3, _a2, "lnbclka3", 2);
->   
->   DEFINE_CLK_RPMH_VRM(ln_bb_clk1, _a4, "lnbclka1", 4);
->   DEFINE_CLK_RPMH_VRM(ln_bb_clk2, _a4, "lnbclka2", 4);
-> +DEFINE_CLK_RPMH_VRM(ln_bb_clk3, _a4, "lnbclka3", 4);
->   
->   DEFINE_CLK_RPMH_VRM(ln_bb_clk2, _g4, "lnbclkg2", 4);
->   DEFINE_CLK_RPMH_VRM(ln_bb_clk3, _g4, "lnbclkg3", 4);
-> @@ -717,6 +718,25 @@ static const struct clk_rpmh_desc clk_rpmh_sdx75 = {
->   	.num_clks = ARRAY_SIZE(sdx75_rpmh_clocks),
->   };
->   
-> +static struct clk_hw *sm4450_rpmh_clocks[] = {
-> +	[RPMH_CXO_CLK]		= &clk_rpmh_bi_tcxo_div4.hw,
-> +	[RPMH_CXO_CLK_A]	= &clk_rpmh_bi_tcxo_div4_ao.hw,
+> Although, I am not sure how the driver is supposed to figure out what
+> coefficients to use. c73 implies that the training frame should be sent
+> on each lane. So I expected that there would be four copies of the
+> link coefficient registers. However, when reading the LX2160ARM, I only
+> saw one set of registers (e.g. 26.6.3.3). So is link training done
+> serially? I didn't see anything like a "lane select" field.
+> 
+> --Sean
 
-Are you sure about div4 here ?
+There is one AN/LT block replicated for each lane, even for multi-lane
+backplane protocols. The primary (first) AN/LT block handles C73 autoneg
++ C73 link training on that lane, and the secondary AN/LT blocks handle
+just link training on their respective lanes.
 
-Kailua uses div2 because the CXO input gets used divided by 2
-by PHYs and divided by 4 for GCC/DISPCC/...
+In other words, each AN/LT block needs to interact with just its lane
+(SerDes PHY). A "lane" parameter could be added to phy_configure_opts_xgkr
+to work around the "grouped lanes" design, but it would complicate the
+consumer implementation, since the AN/LT block does not otherwise need
+to know what is the index of the SerDes lane it is attached to (so it
+would need something like an extra device tree property).
 
-This is why we introduced a div2 clock in DT used to feed GCC/DISPCC/...
+C72 link training is independent on each lane, has independent AN/LT
+block MDIO registers, independent SerDes lane registers, and independent
+training frame exchanges. There is no "lane select" field.
 
-Neil
+You can see the "LX2160A lanes A, B, C, D with SerDes 1 protocol 19:
+dpmac2 uses 40GBase-KR4" example in my backplane dt-bindings patch,
+which shows how on dpmac2's internal MDIO bus, there are AN/LT devices
+at MDIO addresses 7, 6, 5 and 4, one for each lane.
 
-> +	[RPMH_LN_BB_CLK2]	= &clk_rpmh_ln_bb_clk2_a4.hw,
-> +	[RPMH_LN_BB_CLK2_A]	= &clk_rpmh_ln_bb_clk2_a4_ao.hw,
-> +	[RPMH_LN_BB_CLK3]       = &clk_rpmh_ln_bb_clk3_a4.hw,
-> +	[RPMH_LN_BB_CLK3_A]     = &clk_rpmh_ln_bb_clk3_a4_ao.hw,
-> +	[RPMH_RF_CLK1]		= &clk_rpmh_rf_clk1_a.hw,
-> +	[RPMH_RF_CLK1_A]	= &clk_rpmh_rf_clk1_a_ao.hw,
-> +	[RPMH_RF_CLK5]		= &clk_rpmh_rf_clk5_a.hw,
-> +	[RPMH_RF_CLK5_A]	= &clk_rpmh_rf_clk5_a_ao.hw,
-> +	[RPMH_IPA_CLK]		= &clk_rpmh_ipa.hw,
-> +};
-> +
-> +static const struct clk_rpmh_desc clk_rpmh_sm4450 = {
-> +	.clks = sm4450_rpmh_clocks,
-> +	.num_clks = ARRAY_SIZE(sm4450_rpmh_clocks),
-> +};
-> +
->   static struct clk_hw *of_clk_rpmh_hw_get(struct of_phandle_args *clkspec,
->   					 void *data)
->   {
-> @@ -810,6 +830,7 @@ static const struct of_device_id clk_rpmh_match_table[] = {
->   	{ .compatible = "qcom,sdx55-rpmh-clk",  .data = &clk_rpmh_sdx55},
->   	{ .compatible = "qcom,sdx65-rpmh-clk",  .data = &clk_rpmh_sdx65},
->   	{ .compatible = "qcom,sdx75-rpmh-clk",  .data = &clk_rpmh_sdx75},
-> +	{ .compatible = "qcom,sm4450-rpmh-clk", .data = &clk_rpmh_sm4450},
->   	{ .compatible = "qcom,sm6350-rpmh-clk", .data = &clk_rpmh_sm6350},
->   	{ .compatible = "qcom,sm8150-rpmh-clk", .data = &clk_rpmh_sm8150},
->   	{ .compatible = "qcom,sm8250-rpmh-clk", .data = &clk_rpmh_sm8250},
-
+I know that Lynx 10G doesn't do multi-lane backplane, but I wouldn't
+want Lynx 10G and Lynx 28G to have different designs when it comes to
+their handling of multi-lane. A single design that works for both would
+be great.
