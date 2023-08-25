@@ -2,146 +2,158 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01689C3DA66
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Aug 2023 08:15:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD7F5C3DA6F
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Aug 2023 08:57:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241988AbjHYIPM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Aug 2023 04:15:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50734 "EHLO
+        id S244020AbjHYI5Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Aug 2023 04:57:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243521AbjHYIOw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Aug 2023 04:14:52 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B36822129;
-        Fri, 25 Aug 2023 01:14:01 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7839266F89;
-        Fri, 25 Aug 2023 08:13:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60304C433C8;
-        Fri, 25 Aug 2023 08:13:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692951236;
-        bh=YVk25x/sSU7KEodueNZY7jdyqVwGHD8I8MTwcv0HBcY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jf5c9teWfTlMZp6cHwEiPogx9JME0pEgI1Vbwmam7Q1cOGt/82i3FwrEXwALY8pxA
-         dAqlWhAZlzITVWqTD5hyFzs0j1Ipv4PEgRkcI38v8vAyE8im6SomovcAkG3BTnjOm1
-         KoVjdE+zKmXXxoODTr4nSiQi5KTSGKXUsE0+Wly8Kbep68N13q7RVBPwmu9p5Azkoc
-         9//5olSOeJEff5SzXXugigY2z2saBGCytS51glbKeggPr5lKvzc25w3j/LaU/7n8+5
-         RI7Q9dr4GzUzT1fhP6KNTnOxZgvrZx3B5SMgg7wAJM+65RHpg/aHsaUN8cqu9BawgP
-         HpGM73RZRKCyg==
-Date:   Fri, 25 Aug 2023 10:13:53 +0200
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Frank Oltmanns <frank@oltmanns.dev>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Ondrej Jirman <x@xnux.eu>,
-        Icenowy Zheng <uwu@icenowy.me>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, dri-devel@lists.freedesktop.org,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: Re: [PATCH 0/3] Make Allwinner A64's pll-mipi keep its rate when
- parent rate changes
-Message-ID: <zrjpbtf7qwaj2tjvfz2no534tmz5j4yudp45tung2w5x2zcl6y@bal3bclzze4e>
-References: <20230825-pll-mipi_keep_rate-v1-0-35bc43570730@oltmanns.dev>
+        with ESMTP id S244006AbjHYI5G (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Aug 2023 04:57:06 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F5D01BF6;
+        Fri, 25 Aug 2023 01:57:01 -0700 (PDT)
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37P8L8rS016120;
+        Fri, 25 Aug 2023 08:56:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=onBKAcug19tEB8vhIRdPk/6OlxISuNmM42XPXEW9QAc=;
+ b=L6sGXD3j1xKckmgyy6crfOH22H3q1FH0wDeOdmZ5+LD/OPX9hntvHLuRnqwd9lg3+eic
+ 4ma3njb9LycwHx97qSRViKXddool054vv0l2MgQYkWsOEdITZeneKZr/hPpmEHMAmWlG
+ ofaSl++LPQb3DFrXFvERU1ySWLE3UMo6BJy/VUPca6VA2JR4Ei5XvYGhLM+6ov6++Cno
+ HG2bbj5H+VXTILcbNVMiliujhT/BXl+4gCjBoNC7Rw2F/KtEb5UI5+nakZIcAv6bHzmL
+ El2mbvR7g3Kz/Uv0FCmQEpYMwWdSaMecLAusAKWWW094+VzqyS8DgJBSIr4ihcUePs01 wQ== 
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3spmm68j1t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 25 Aug 2023 08:56:19 +0000
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+        by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 37P8uIbh000424
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 25 Aug 2023 08:56:19 GMT
+Received: from [10.216.23.75] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.36; Fri, 25 Aug
+ 2023 01:56:11 -0700
+Message-ID: <a3a5a5a6-fb09-4904-81a0-c1de4653e378@quicinc.com>
+Date:   Fri, 25 Aug 2023 14:26:04 +0530
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="eowkeu32rskmvnge"
-Content-Disposition: inline
-In-Reply-To: <20230825-pll-mipi_keep_rate-v1-0-35bc43570730@oltmanns.dev>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH 3/6] dt-bindings: clock: Add ipq9574 NSSCC clock and reset
+ definitions
+Content-Language: en-US
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Kathiravan T <quic_kathirav@quicinc.com>, <agross@kernel.org>,
+        <andersson@kernel.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <p.zabel@pengutronix.de>, <richardcochran@gmail.com>,
+        <arnd@arndb.de>, <geert+renesas@glider.be>,
+        <neil.armstrong@linaro.org>, <nfraprado@collabora.com>,
+        <rafal@milecki.pl>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>
+CC:     <quic_saahtoma@quicinc.com>
+References: <20230711093529.18355-1-quic_devipriy@quicinc.com>
+ <20230711093529.18355-4-quic_devipriy@quicinc.com>
+ <ea229d40-0bce-87e8-edef-72a7f251c051@quicinc.com>
+ <868da572-cff1-42b6-9931-06b6a8c73809@linaro.org>
+From:   Devi Priya <quic_devipriy@quicinc.com>
+In-Reply-To: <868da572-cff1-42b6-9931-06b6a8c73809@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Rp6KQ-52rhszQMjaKaWh-UHsgFMqZ8Fy
+X-Proofpoint-GUID: Rp6KQ-52rhszQMjaKaWh-UHsgFMqZ8Fy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-08-25_07,2023-08-24_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
+ impostorscore=0 priorityscore=1501 malwarescore=0 phishscore=0
+ clxscore=1015 mlxscore=0 adultscore=0 bulkscore=0 lowpriorityscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2308100000 definitions=main-2308250077
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---eowkeu32rskmvnge
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On 8/24/2023 2:17 PM, Konrad Dybcio wrote:
+> On 24.08.2023 07:18, Kathiravan T wrote:
+>>
+>> On 7/11/2023 3:05 PM, Devi Priya wrote:
+>>> Add NSSCC clock and reset definitions for ipq9574.
+>>>
+>>> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+>>> ---
+>>>    .../bindings/clock/qcom,ipq9574-nsscc.yaml    |  76 +++++++++
+>>>    .../dt-bindings/clock/qcom,ipq9574-nsscc.h    | 152 ++++++++++++++++++
+>>>    .../dt-bindings/reset/qcom,ipq9574-nsscc.h    | 134 +++++++++++++++
+>>>    3 files changed, 362 insertions(+)
+>>>    create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
+>>>    create mode 100644 include/dt-bindings/clock/qcom,ipq9574-nsscc.h
+>>>    create mode 100644 include/dt-bindings/reset/qcom,ipq9574-nsscc.h
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
+>>> new file mode 100644
+>>> index 000000000000..1e8754760785
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
+>>> @@ -0,0 +1,76 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/clock/qcom,ipq9574-nsscc.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Qualcomm Networking Sub System Clock & Reset Controller on IPQ9574
+>>> +
+>>> +maintainers:
+>>> +  - Bjorn Andersson <andersson@kernel.org>
+>>> +  - Anusha Rao <quic_anusha@quicinc.com>
+>>> +
+>>> +description: |
+>>> +  Qualcomm networking sub system clock control module provides the clocks,
+>>> +  resets and power domains on IPQ9574
+>>> +
+>>> +  See also::
+>>> +    include/dt-bindings/clock/qcom,ipq9574-nsscc.h
+>>> +    include/dt-bindings/reset/qcom,ipq9574-nsscc.h
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    const: qcom,ipq9574-nsscc
+>>> +
+>>> +  clocks:
+>>> +    items:
+>>> +      - description: Bias PLL cc clock source
+>>> +      - description: Bias PLL nss noc clock source
+>>> +      - description: Bias PLL ubi nc clock source
+>>> +      - description: GCC GPLL0 out aux clock source
+>>> +      - description: Uniphy0 GCC Rx clock source
+>>> +      - description: Uniphy0 GCC Tx clock source
+>>> +      - description: Uniphy1 GCC Rx clock source
+>>> +      - description: Uniphy1 GCC Tx clock source
+>>> +      - description: Uniphy2 GCC Rx clock source
+>>> +      - description: Uniphy2 GCC Tx clock source
+>>
+>>
+>> These are UniphyX *NSS* TX/RX clock source?
+> Wouldn't that be "source from GCC"?
+These clocks are not sourced from GCC
 
-On Fri, Aug 25, 2023 at 07:36:36AM +0200, Frank Oltmanns wrote:
-> I would like to make the Allwinner A64's pll-mipi to keep its rate when
-> its parent's (pll-video0) rate changes. Keeping pll-mipi's rate is
-> required, to let the A64 drive both an LCD and HDMI display at the same
-> time, because both have pll-video0 as an ancestor.
->=20
-> PATCH 1 adds this functionality as a feature into the clk framework (new
-> flag: CLK_KEEP_RATE).
->=20
-> Cores that use this flag, store a rate as req_rate when it or one of its
-> descendants requests a new rate.
->=20
-> That rate is then restored in the clk_change_rate recursion, which walks
-> through the tree. It will reach the flagged core (e.g. pll-mipi) after
-> the parent's rate (e.g. pll-video0) has already been set to the new
-> rate. It will then call determine_rate (which requests the parent's
-> current, i.e. new, rate) to determine a rate that is close to the
-> flagged core's previous rate. Afterward it will re-calculate the rates
-> for the flagged core's subtree.
-
-I don't think it's the right way forward. It makes the core logic more
-complicated, for something that is redundant with the notifiers
-mechanism that has been the go-to for that kind of things so far.
-
-It's not really obvious to me why the notifiers don't work there.
-
-> This work is inspired by an out-of-tree patchset [1] [2] [3].
-> Unfortunately, the patchset uses clk_set_rate() in a notifier callback,
-> which the following comment on clk_notifier_register() forbids: "The
-> callbacks associated with the notifier must not re-enter into the clk
-> framework by calling any top-level clk APIs." [4] Furthermore, that
-> out-of-tree patchset no longer works with the current linux-next,
-> because setting pll-mipi is now also resetting pll-video0 [5].
-
-Is it because of the "The callbacks associated with the notifier must
-not re-enter into the clk framework by calling any top-level clk APIs."
-comment?
-
-If so, I think the thing we should emphasize is that it's about *any
-top-level clk API*, as in clk_set_rate() or clk_set_parent().
-
-The issue is that any consumer-facing API is taking the clk_prepare lock
-and thus we would have reentrancy. But we're a provider there, and none
-of the clk_hw_* functions are taking that lock. Neither do our own function.
-
-So we could call in that notifier our set_rate callback directly, or we
-could create a clk_hw_set_rate() function.
-
-The first one will create cache issue between the actual rate that the
-common clock framework is running and the one we actually enforced, but
-we could create a function to flush the CCF cache.
-
-The second one is probably simpler.
-
-
-Another option could be that we turn clk_set_rate_exclusive into
-something more subtle that allows to change a parent rate as long as the
-clock rate doesn't. It would ease the requirement that
-clk_set_rate_exclusive() has on a clock subtree (which I think prevents
-its usage to some extent), but I have no issue on how that would work in
-practice.
-
-So yeah, I think adding a clk_hw_set_rate() that would be callable from
-a notifier is the right way forward there.
-
-Maxime
-
---eowkeu32rskmvnge
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZOhivQAKCRDj7w1vZxhR
-xawrAQDXTz7ob5/J2vw49XyCzcbpbZrstccYpgBThY1SZyXjYwEA45sertGOozw2
-pmFuwh+868GL2/YEUfeODgXdaZ4xTgs=
-=exoj
------END PGP SIGNATURE-----
-
---eowkeu32rskmvnge--
+Thanks,
+Devi Priya
+> 
+> Konrad
