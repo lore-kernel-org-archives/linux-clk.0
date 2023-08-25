@@ -2,84 +2,87 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9740DEE49B2
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Aug 2023 20:59:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67138EE49A0
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Aug 2023 21:09:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231274AbjHYU6z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Aug 2023 16:58:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49406 "EHLO
+        id S229487AbjHYVJI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Aug 2023 17:09:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231287AbjHYU6x (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Aug 2023 16:58:53 -0400
+        with ESMTP id S231349AbjHYVIv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Aug 2023 17:08:51 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6A742136;
-        Fri, 25 Aug 2023 13:58:51 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31E6F2136;
+        Fri, 25 Aug 2023 14:08:50 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6F584631B1;
-        Fri, 25 Aug 2023 20:58:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B458DC433C8;
-        Fri, 25 Aug 2023 20:58:50 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id ABCEB62CEA;
+        Fri, 25 Aug 2023 21:08:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1E1FC433C7;
+        Fri, 25 Aug 2023 21:08:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692997130;
-        bh=g08hzV5OBUeJ7RWaVONAbcH3zygdvgpJ5wKolWeZ0zI=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=RIUQ/Ih2Tcz3f07wyn6v2xDJy5LgoJmrbrBsmyqX5s+3LmNUYXDADnKuZoCsnb3RQ
-         PmkzpIa55YuL/n8anpNjfBkp1vDjLPotofNfZpnBlPo68AWos1lkv4Os6S+B94wb+D
-         naDyKbgXmayZrBvWRuUOf08fo7t2KEuWoaxygXw8DU4HB7jTjFG6j0OL9ddJlwRFMA
-         hVSJOxYILvEOq8eq/hiqJTnPnIH3EmQuu/BKNuZMVgnQiLCOsNeaVj7E37jbF9UOx9
-         NgCeCo8MuLUwcJQrx6T49tIK+IJsrN2u83McU1s9HOaOgvTSTLzNTv8li9bDdFOG5/
-         9Rt7kF8GxjYMw==
-Message-ID: <4a00db79414dbc47a2b7792d849f7056.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230825091234.32713-2-quic_devipriy@quicinc.com>
-References: <20230825091234.32713-1-quic_devipriy@quicinc.com> <20230825091234.32713-2-quic_devipriy@quicinc.com>
-Subject: Re: [PATCH V2 1/7] clk: qcom: clk-alpha-pll: Add NSS HUAYRA ALPHA PLL support for ipq9574
+        s=k20201202; t=1692997729;
+        bh=ARe4eaJDMUfyUJaaKSUTVZX4MA/XIiNgJzSti8DsjBU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=hOA+NTLTETSlkdS2nikHS0TRZNk6ELgOTGjqnRh0mi6qrOhr+bjr71QLHK68jxkN7
+         1QfrU+8rUE3t58QNJy2M6yIIJ+4xprYgxbIJsAz2bYgGrJ6SwtkITpnb8G8Pcr9Wbb
+         rQVVV5OLqJZvIP3/xsVZqySAQJwh0ABWulBjIHoJxO0mqsxeGcyfOQzB0BgOTeC0kY
+         x1tzpszqIvsnA35jHRMCGuULlXkWVcHkFvNbuOxydoYhFg+bbGUHNswnLFJ4xekiPX
+         vz9cVpY0Ye608gDW9sTpbBNix+85tiv8yYlHlB/PgbPKk6qkn7XLt62YKcxuWqaHmw
+         311XTmI4/nKUA==
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     quic_devipriy@quicinc.com, quic_saahtoma@quicinc.com
-To:     Devi Priya <quic_devipriy@quicinc.com>, agross@kernel.org,
-        andersson@kernel.org, arnd@arndb.de, catalin.marinas@arm.com,
-        conor+dt@kernel.org, devicetree@vger.kernel.org,
-        geert+renesas@glider.be, konrad.dybcio@linaro.org,
-        krzysztof.kozlowski+dt@linaro.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        netdev@vger.kernel.org, nfraprado@collabora.com,
-        p.zabel@pengutronix.de, peng.fan@nxp.com, rafal@milecki.pl,
-        richardcochran@gmail.com, robh+dt@kernel.org, will@kernel.org
-Date:   Fri, 25 Aug 2023 13:58:48 -0700
-User-Agent: alot/0.10
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk fixes for v6.5-rc7
+Date:   Fri, 25 Aug 2023 14:08:46 -0700
+Message-ID: <20230825210848.1209346-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.42.0.rc1.204.g551eb34607-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Devi Priya (2023-08-25 02:12:28)
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alph=
-a-pll.c
-> index e4ef645f65d1..1c2a72840cd2 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.c
-> +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> @@ -228,6 +228,18 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] =3D {
->                 [PLL_OFF_ALPHA_VAL] =3D 0x24,
->                 [PLL_OFF_ALPHA_VAL_U] =3D 0x28,
->         },
-> +
+The following changes since commit ae9b14582ad03abb3db66ba3f8dc5ca443ff54a1:
 
-Why the extra newline? All other types aren't this way.
+  Merge tag 'clk-meson-fixes-v6.5-1' of https://github.com/BayLibre/clk-meson into clk-fixes (2023-07-26 11:47:57 -0700)
 
-> +       [CLK_ALPHA_PLL_TYPE_NSS_HUAYRA] =3D  {
-> +               [PLL_OFF_L_VAL] =3D 0x04,
-> +               [PLL_OFF_ALPHA_VAL] =3D 0x08,
-> +               [PLL_OFF_TEST_CTL] =3D 0x0c,
-> +               [PLL_OFF_TEST_CTL_U] =3D 0x10,
-> +               [PLL_OFF_USER_CTL] =3D 0x14,
-> +               [PLL_OFF_CONFIG_CTL] =3D 0x18,
-> +               [PLL_OFF_CONFIG_CTL_U] =3D 0x1c,
-> +               [PLL_OFF_STATUS] =3D 0x20,
-> +       },
-> +
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+
+for you to fetch changes up to 66fbfb35da47f391bdadf9fa7ceb88af4faa9022:
+
+  clk: Fix slab-out-of-bounds error in devm_clk_release() (2023-08-22 15:25:18 -0700)
+
+----------------------------------------------------------------
+One clk driver fix and two clk framework fixes
+
+ - Fix an OOB access when devm_get_clk_from_child() is used and
+   devm_clk_release() casts the void pointer to the wrong type
+ - Move clk_rate_exclusive_{get,put}() within the correct ifdefs in
+   clk.h so that the stubs are used when CONFIG_COMMON_CLK=n
+ - Register the proper clk provider function depending on the value of
+   #clock-cells in the TI keystone driver
+
+----------------------------------------------------------------
+Andrey Skvortsov (1):
+      clk: Fix slab-out-of-bounds error in devm_clk_release()
+
+Biju Das (1):
+      clk: Fix undefined reference to `clk_rate_exclusive_{get,put}'
+
+Francesco Dolcini (1):
+      clk: keystone: syscon-clk: Fix audio refclk
+
+ drivers/clk/clk-devres.c          | 13 ++++---
+ drivers/clk/keystone/syscon-clk.c |  6 ++-
+ include/linux/clk.h               | 80 +++++++++++++++++++--------------------
+ 3 files changed, 51 insertions(+), 48 deletions(-)
+
+-- 
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
