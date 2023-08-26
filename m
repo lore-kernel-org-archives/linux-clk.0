@@ -2,86 +2,120 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBB84C83F11
-	for <linux-clk@archiver.kernel.org>; Sat, 26 Aug 2023 12:52:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87DA2C83F15
+	for <linux-clk@archiver.kernel.org>; Sat, 26 Aug 2023 12:54:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231574AbjHZMvd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 26 Aug 2023 08:51:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51790 "EHLO
+        id S232211AbjHZMyN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 26 Aug 2023 08:54:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232209AbjHZMvN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 26 Aug 2023 08:51:13 -0400
+        with ESMTP id S232253AbjHZMxz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 26 Aug 2023 08:53:55 -0400
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E70611BC6;
-        Sat, 26 Aug 2023 05:51:10 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 83C0919AE;
+        Sat, 26 Aug 2023 05:53:53 -0700 (PDT)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 945471FB;
-        Sat, 26 Aug 2023 05:51:50 -0700 (PDT)
-Received: from pluto (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5692A3F64C;
-        Sat, 26 Aug 2023 05:51:08 -0700 (PDT)
-Date:   Sat, 26 Aug 2023 13:50:58 +0100
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 99A5F1FB;
+        Sat, 26 Aug 2023 05:54:33 -0700 (PDT)
+Received: from pluto.fritz.box (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 431503F64C;
+        Sat, 26 Aug 2023 05:53:51 -0700 (PDT)
 From:   Cristian Marussi <cristian.marussi@arm.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        sudeep.holla@arm.com, james.quinlan@broadcom.com,
+To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     sudeep.holla@arm.com, james.quinlan@broadcom.com,
         f.fainelli@gmail.com, vincent.guittot@linaro.org,
-        etienne.carriere@linaro.org, peng.fan@oss.nxp.com,
+        etienne.carriere@foss.st.com, peng.fan@oss.nxp.com,
         chuck.cannon@nxp.com, souvik.chakravarty@arm.com,
         nicola.mazzucato@arm.com,
+        Cristian Marussi <cristian.marussi@arm.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/6] firmware: arm_scmi: Simplify enable/disable Clock
- operations
-Message-ID: <ZOn1MhhlIj584bzY@pluto>
-References: <20230811161446.636253-1-cristian.marussi@arm.com>
- <20230811161446.636253-2-cristian.marussi@arm.com>
- <17bd83d833b59fd4f64eec433589fa55.sboyd@kernel.org>
- <ZOXLNliOogkNyJYQ@e120937-lin>
- <a14cdd584283d32a3642658aaed6c98c.sboyd@kernel.org>
- <ZOdoP00tlAIRr9fN@pluto>
- <4870d94375cfdf6c0ba4d4b5cb3b6dc3.sboyd@kernel.org>
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH v2 5/6] clk: scmi: Add support for .is_enabled clk_ops
+Date:   Sat, 26 Aug 2023 13:53:07 +0100
+Message-ID: <20230826125308.462328-6-cristian.marussi@arm.com>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <20230826125308.462328-1-cristian.marussi@arm.com>
+References: <20230826125308.462328-1-cristian.marussi@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4870d94375cfdf6c0ba4d4b5cb3b6dc3.sboyd@kernel.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Aug 24, 2023 at 11:43:35AM -0700, Stephen Boyd wrote:
-> Quoting Cristian Marussi (2023-08-24 07:25:21)
-> > On Wed, Aug 23, 2023 at 11:01:17AM -0700, Stephen Boyd wrote:
-> > > 
-> > > Perhaps we need a local variable to make it more readable.
-> > > 
-> > >       static int scmi_clk_enable(struct clk_hw *hw)
-> > >       {
-> > >              bool can_sleep = false;
-> > >              struct scmi_clk *clk = to_scmi_clk(hw);
-> > > 
-> > >              return scmi_proto_clk_ops->enable(clk->ph, clk->id, can_sleep);
-> > >       }
-> > > 
-> > > This let's the reader quickly understand what the parameter means. I'm
-> > > OK with adding the function parameter, but a plain 'true' or 'false'
-> > > doesn't help with clarity.
-> > 
-> > Thanks for the suggestion, it would help definitely making it more
-> > readable, maybe a local define or enum could make it without even
-> > putting anything on the stack.
-> > 
-> 
-> Surely the compiler can optimize that so there isn't stack local
-> storage for a local variable used as an argument to a function call?
+Add support for .is_enabled atomic clk_ops using the related SCMI Clock
+operation in atomic mode, if available.
 
-Yes indeed the compiler will certainly drop anything at the end, but still
-I'd have to fill with local vars definitions all the related functions just
-to be able to make them more readable while I can improve the readability
-also by just adding a pair descriptive defines to use all over.
+Note that the .is_enabled callback will be supported by this SCMI Clock
+driver only if the configured underlying SCMI transport does support atomic
+operations.
 
-I'll send a V2 and then you tell if it is fine for you.
+CC: Michael Turquette <mturquette@baylibre.com>
+CC: Stephen Boyd <sboyd@kernel.org>
+CC: linux-clk@vger.kernel.org
+Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+---
+v1 --> v2
+- use more descriptive defines
+---
+ drivers/clk/clk-scmi.c | 23 ++++++++++++++++++++---
+ 1 file changed, 20 insertions(+), 3 deletions(-)
 
-Thanks
-Cristian
+diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
+index b7a180b3443e..2e1337b511eb 100644
+--- a/drivers/clk/clk-scmi.c
++++ b/drivers/clk/clk-scmi.c
+@@ -20,6 +20,7 @@ static const struct scmi_clk_proto_ops *scmi_proto_clk_ops;
+ 
+ struct scmi_clk {
+ 	u32 id;
++	struct device *dev;
+ 	struct clk_hw hw;
+ 	const struct scmi_clock_info *info;
+ 	const struct scmi_protocol_handle *ph;
+@@ -105,10 +106,24 @@ static void scmi_clk_atomic_disable(struct clk_hw *hw)
+ 	scmi_proto_clk_ops->disable(clk->ph, clk->id, ATOMIC);
+ }
+ 
++static int scmi_clk_atomic_is_enabled(struct clk_hw *hw)
++{
++	int ret;
++	bool enabled = false;
++	struct scmi_clk *clk = to_scmi_clk(hw);
++
++	ret = scmi_proto_clk_ops->state_get(clk->ph, clk->id, &enabled, ATOMIC);
++	if (ret)
++		dev_warn(clk->dev,
++			 "Failed to get state for clock ID %d\n", clk->id);
++
++	return !!enabled;
++}
++
+ /*
+- * We can provide enable/disable atomic callbacks only if the underlying SCMI
+- * transport for an SCMI instance is configured to handle SCMI commands in an
+- * atomic manner.
++ * We can provide enable/disable/is_enabled atomic callbacks only if the
++ * underlying SCMI transport for an SCMI instance is configured to handle
++ * SCMI commands in an atomic manner.
+  *
+  * When no SCMI atomic transport support is available we instead provide only
+  * the prepare/unprepare API, as allowed by the clock framework when atomic
+@@ -132,6 +147,7 @@ static const struct clk_ops scmi_atomic_clk_ops = {
+ 	.set_rate = scmi_clk_set_rate,
+ 	.enable = scmi_clk_atomic_enable,
+ 	.disable = scmi_clk_atomic_disable,
++	.is_enabled = scmi_clk_atomic_is_enabled,
+ };
+ 
+ static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk,
+@@ -221,6 +237,7 @@ static int scmi_clocks_probe(struct scmi_device *sdev)
+ 
+ 		sclk->id = idx;
+ 		sclk->ph = ph;
++		sclk->dev = dev;
+ 
+ 		/*
+ 		 * Note that when transport is atomic but SCMI protocol did not
+-- 
+2.42.0
 
