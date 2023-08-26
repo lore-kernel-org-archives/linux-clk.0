@@ -2,73 +2,86 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A28BC83F01
-	for <linux-clk@archiver.kernel.org>; Sat, 26 Aug 2023 11:26:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBB84C83F11
+	for <linux-clk@archiver.kernel.org>; Sat, 26 Aug 2023 12:52:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232603AbjHZLZ4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 26 Aug 2023 07:25:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35968 "EHLO
+        id S231574AbjHZMvd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 26 Aug 2023 08:51:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232674AbjHZLZi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 26 Aug 2023 07:25:38 -0400
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BC572123;
-        Sat, 26 Aug 2023 04:25:34 -0700 (PDT)
-Received: by mail-lj1-x22b.google.com with SMTP id 38308e7fff4ca-2b9c907bc68so25487691fa.2;
-        Sat, 26 Aug 2023 04:25:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1693049132; x=1693653932;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z7q9dBWc81QA1pa/uzOif31Eyr0SsHNs9yCw/zf7Ygo=;
-        b=naL2RizsHkPl81Tn7M8FOmAl9U7H/P2uC5hoXX9gkpE1RzukK9ZQX7oW3Gca7QtL0r
-         bqDXOFgFHW6FKtGc+I7gOYLD6H1JxC+bV0Jl3pmn5JIxVc8v12qTKPTH791hgNJURaLW
-         Ri3/wI2XbvrJS2D8HaF50tofAySosTVqaPJmG4Fn6+yQkBGJO6JH34loz2xeK/IM1YbZ
-         lhdfDdr81cpMXwWgE+uZ+RpUZ8zx+Es/BGso2yqfiFPZDqxC/Ua8tcydMqVXpngYLzQg
-         KwknZlQTcfYjUZDRRR9bD7OQKk3ht+HHXOn1Ekg7gPPiN6FVEvhm0ptuVpzxZ9pn6qly
-         SEjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693049132; x=1693653932;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Z7q9dBWc81QA1pa/uzOif31Eyr0SsHNs9yCw/zf7Ygo=;
-        b=jSto9URzdBj2BztMc10buYCqATe1DOj7WJgxtTEItMM5KOh2scNirZmvO61EgLqQsL
-         MGQ8qJILaPmQC6rG0kGTCc4umCVvHVIgbF+iN8es+wCUt2ejR0CB7/6f9rPGdxw5dPfU
-         1EGPPX24DZv8DCeMRVPHgPXKLu5XebJMpr+fveMU+ykaQ/D1dXir0/YBzP3wOWntgkBm
-         9zGtkBLwCoOG+TmviYY9G5NW14s8tD4ZTXmKLJhPGN8gyO2fjCZWcsdYnC5rRoMEceNc
-         rvUGZQGra/eX0Wk3MtnLJkgHFZqu2nZB8HTi9n0ZmdG0Ggzvv3fiKOB9vSKS4wPqohOz
-         /vIA==
-X-Gm-Message-State: AOJu0Yx6txYvIu3Bw5eD/2mfSgSDKSdKDlj8Bh0PPEMjRuuCf+kiPDl2
-        2Euz/8YU/2YPiZ2YGd2oB2wVGKDebavymQ==
-X-Google-Smtp-Source: AGHT+IHa1RBHeNuoBKWE4UageeHtiPeJkDemALQvIrHv67GOVFom87yOULnI/u0HmGGkixDme02t+g==
-X-Received: by 2002:a2e:7810:0:b0:2bc:e46d:f4d0 with SMTP id t16-20020a2e7810000000b002bce46df4d0mr5668480ljc.2.1693049132260;
-        Sat, 26 Aug 2023 04:25:32 -0700 (PDT)
-Received: from user-PC.. ([178.134.198.138])
-        by smtp.gmail.com with ESMTPSA id u9-20020a2e9b09000000b002b9b27cf729sm758451lji.52.2023.08.26.04.25.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Aug 2023 04:25:31 -0700 (PDT)
-From:   Maksim Kiselev <bigunclemax@gmail.com>
-To:     linux-clk@vger.kernel.org
-Cc:     badolevishal1116@gmail.com, chinmoyghosh2001@gmail.com,
-        linux-kernel@vger.kernel.org, mintupatel89@gmail.com,
-        mturquette@baylibre.com, sboyd@kernel.org, vimal.kumar32@gmail.com
-Subject: Re: [PATCH v5] Common clock: To list active consumers of clocks
-Date:   Sat, 26 Aug 2023 14:25:24 +0300
-Message-Id: <20230826112524.4134627-1-bigunclemax@gmail.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <1669569799-8526-1-git-send-email-badolevishal1116@gmail.com>
-References: <1669569799-8526-1-git-send-email-badolevishal1116@gmail.com>
+        with ESMTP id S232209AbjHZMvN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 26 Aug 2023 08:51:13 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E70611BC6;
+        Sat, 26 Aug 2023 05:51:10 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 945471FB;
+        Sat, 26 Aug 2023 05:51:50 -0700 (PDT)
+Received: from pluto (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5692A3F64C;
+        Sat, 26 Aug 2023 05:51:08 -0700 (PDT)
+Date:   Sat, 26 Aug 2023 13:50:58 +0100
+From:   Cristian Marussi <cristian.marussi@arm.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        sudeep.holla@arm.com, james.quinlan@broadcom.com,
+        f.fainelli@gmail.com, vincent.guittot@linaro.org,
+        etienne.carriere@linaro.org, peng.fan@oss.nxp.com,
+        chuck.cannon@nxp.com, souvik.chakravarty@arm.com,
+        nicola.mazzucato@arm.com,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/6] firmware: arm_scmi: Simplify enable/disable Clock
+ operations
+Message-ID: <ZOn1MhhlIj584bzY@pluto>
+References: <20230811161446.636253-1-cristian.marussi@arm.com>
+ <20230811161446.636253-2-cristian.marussi@arm.com>
+ <17bd83d833b59fd4f64eec433589fa55.sboyd@kernel.org>
+ <ZOXLNliOogkNyJYQ@e120937-lin>
+ <a14cdd584283d32a3642658aaed6c98c.sboyd@kernel.org>
+ <ZOdoP00tlAIRr9fN@pluto>
+ <4870d94375cfdf6c0ba4d4b5cb3b6dc3.sboyd@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4870d94375cfdf6c0ba4d4b5cb3b6dc3.sboyd@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Sorry for disturbing. Just a gentle ping :) 
-This patch looks abandoned.
-Is there any chance that it will be reviewed?
+On Thu, Aug 24, 2023 at 11:43:35AM -0700, Stephen Boyd wrote:
+> Quoting Cristian Marussi (2023-08-24 07:25:21)
+> > On Wed, Aug 23, 2023 at 11:01:17AM -0700, Stephen Boyd wrote:
+> > > 
+> > > Perhaps we need a local variable to make it more readable.
+> > > 
+> > >       static int scmi_clk_enable(struct clk_hw *hw)
+> > >       {
+> > >              bool can_sleep = false;
+> > >              struct scmi_clk *clk = to_scmi_clk(hw);
+> > > 
+> > >              return scmi_proto_clk_ops->enable(clk->ph, clk->id, can_sleep);
+> > >       }
+> > > 
+> > > This let's the reader quickly understand what the parameter means. I'm
+> > > OK with adding the function parameter, but a plain 'true' or 'false'
+> > > doesn't help with clarity.
+> > 
+> > Thanks for the suggestion, it would help definitely making it more
+> > readable, maybe a local define or enum could make it without even
+> > putting anything on the stack.
+> > 
+> 
+> Surely the compiler can optimize that so there isn't stack local
+> storage for a local variable used as an argument to a function call?
 
-Cheers,
-Maksim
+Yes indeed the compiler will certainly drop anything at the end, but still
+I'd have to fill with local vars definitions all the related functions just
+to be able to make them more readable while I can improve the readability
+also by just adding a pair descriptive defines to use all over.
+
+I'll send a V2 and then you tell if it is fine for you.
+
+Thanks
+Cristian
+
