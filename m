@@ -2,59 +2,60 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3799CC83F17
-	for <linux-clk@archiver.kernel.org>; Sat, 26 Aug 2023 09:23:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C7F4C83F11
+	for <linux-clk@archiver.kernel.org>; Sat, 26 Aug 2023 09:29:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232209AbjHZJWo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 26 Aug 2023 05:22:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47110 "EHLO
+        id S232215AbjHZJ3W (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 26 Aug 2023 05:29:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232195AbjHZJWY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 26 Aug 2023 05:22:24 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03BF3199E
-        for <linux-clk@vger.kernel.org>; Sat, 26 Aug 2023 02:22:20 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-52a5c0d949eso343787a12.0
-        for <linux-clk@vger.kernel.org>; Sat, 26 Aug 2023 02:22:20 -0700 (PDT)
+        with ESMTP id S232213AbjHZJ25 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 26 Aug 2023 05:28:57 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2E181BD9
+        for <linux-clk@vger.kernel.org>; Sat, 26 Aug 2023 02:28:53 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-99df431d4bfso213083666b.1
+        for <linux-clk@vger.kernel.org>; Sat, 26 Aug 2023 02:28:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693041739; x=1693646539;
+        d=linaro.org; s=google; t=1693042132; x=1693646932;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ujQSKV2q1WTc1rtA/ac/WYkEvifC5+suFNij4ldFKKQ=;
-        b=eQNFBrypsepUIV9QHa2uj5K66l1sj6M5lxJhecDY3b1kJz7luFf3FVjMq8k4/KRfKQ
-         2SRhJHfYNHvlCkLVzFpDgOL6G4XxwOorTuNu96GZYTVWE4sstM89kP/0mEDNyp4PYCIR
-         uB5qpFO67aWUyf+1A1K/zIk2Q48To9HJPxbegXUJWJazC3erskq1Q6aohH6i23rzbghu
-         1nAZLYJ3S/lQEBSDtXKMNuvBfv/TmYvZLHeTfhyohVQaqjVIqHOolZFhy5THTan9ME+c
-         xs+LAsJBozJIQprkay6GqXlrElW9/UzsZjtG6Dm3jnp9MwR41WwHaazAZSSA9j7rAtfv
-         n6kQ==
+        bh=SgOfZl7JHb6cCD/AKyPsLjM9BY1ctg0ixsZpth8YBeI=;
+        b=c2E/gdAQe91sf2BmUkEExRGXyvJPerR6C4gVCzeO1Wpy+F6ERLyrIGBWQfNFl1hDsE
+         +jtXUfeaHHLPDHDFFQp2oBHMl5Q6u3LdRqsjiUi/OvpKVV/Ut4A3tlf+VqCX7Wjzan73
+         I9TIFuTg6Tmo2AQxpibSP+K/DLr7Qb+chMQZuoc3nF1tAIx4FVSHbgdCktmo2zLNyyOo
+         W3iHuah96IfaFi5f4KC3bvlR3pOab0vJsBEvlS6EU7XaBWryLRBl7JBJaTu8f7LrHdPh
+         O7ukCp2W0qSjqebwt2cKmvVoRxSs3VKDAjXRI66LnNUNz135/MOyq9rmFIMjYOPZOhj2
+         3Psw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693041739; x=1693646539;
+        d=1e100.net; s=20221208; t=1693042132; x=1693646932;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ujQSKV2q1WTc1rtA/ac/WYkEvifC5+suFNij4ldFKKQ=;
-        b=OUj9vOFC93R7R5suJFqpMxe4LBwYI2MFsIoooDFhrE6H5hrWpqMuUOPkNeze1jBRO6
-         3g5d1MMNA/SWTzRTart5JMY+HIvN4CiQTWmAM/keepy18EG1FNWKoSuKM2rW7WmgDuCv
-         sAae5bZ8vcZ20V4B4nUWb3oZRkkIBN1/Mr0m7dIcVi8FzNVhRpYVX6tGZAnW3LVO5Mjj
-         IqFi3JbTnz1/NO8750RdWQNMuVWXn4Yt0Vkf68IdQp+7kua2t9lcWmeAZtXoE8WJk5VB
-         Ao0K1bYjJi/xF574py1d8iga7ZIgBYPzsh+wPL0kWoKAq0rKecnCq6dMxQYTm38yUZBE
-         jZjA==
-X-Gm-Message-State: AOJu0YzDhgoYuSA+efxrwMoOGFxpLc0aBFo8XQMhAEKDlQhToYSKg+17
-        d7LQVxqr+jgcjXecNEb0QsF/zw==
-X-Google-Smtp-Source: AGHT+IEaSCxBOdkRZUukHKRgvjUCj61hoQM5BErksYdtKO/OWio+dLUoa3lHiOPhM6/l6+4Hz8fjvw==
-X-Received: by 2002:aa7:ccc9:0:b0:525:7cd4:34da with SMTP id y9-20020aa7ccc9000000b005257cd434damr14932807edt.40.1693041739354;
-        Sat, 26 Aug 2023 02:22:19 -0700 (PDT)
+        bh=SgOfZl7JHb6cCD/AKyPsLjM9BY1ctg0ixsZpth8YBeI=;
+        b=MxvMH90AbK3fuAWlLt+UVRqkAeDtUYePZjbkNHaNEIfhB+y9PrKW8ftmEa+gj+sF2q
+         r4MY6xPM+/hyqiM/D804BDSTfXHTHsKG0AXsipJ7Bm3E3+uXRqOhTsA+7T2J/4/YdhSB
+         LmIPEqmuauJMVPl2twQftYAkNkncnW3n7rX/B2Rb0SV7xWH0YrV8cHRqIr5p+kFu+X8n
+         pthb4+lECu2TaPTc6dBIlH+7InbVSQb+6294REJenEtGoaFbwI6U2Uci28tZXhPzefXg
+         IwFvTgEEoVPweYPpOPHRSgmqzuoSDPEyn8+bojQB9Tl+xkFnIJ7Achzc15BNcHVLfc0G
+         Aycg==
+X-Gm-Message-State: AOJu0YzQx0AW9+UxJ3IXCpR4SNbA3VA6BTM26tqxHVOksN71W3ENTaRj
+        792mdTcyutHbmG8H+3pm3TBobQ==
+X-Google-Smtp-Source: AGHT+IHampEn40bTeySzDL6q556qVYdc+Oz1VH1bNwaZdJ5z5SxNdkz3aM00eL75fotqqo2CJA0Q0g==
+X-Received: by 2002:a17:906:5187:b0:9a1:b5fc:8c56 with SMTP id y7-20020a170906518700b009a1b5fc8c56mr10159086ejk.55.1693042132066;
+        Sat, 26 Aug 2023 02:28:52 -0700 (PDT)
 Received: from [192.168.0.22] ([77.252.47.198])
-        by smtp.gmail.com with ESMTPSA id d2-20020a056402078200b005232ea6a330sm1921486edy.2.2023.08.26.02.22.18
+        by smtp.gmail.com with ESMTPSA id q4-20020a170906144400b00992eabc0ad8sm1944551ejc.42.2023.08.26.02.28.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 26 Aug 2023 02:22:18 -0700 (PDT)
-Message-ID: <a9d52cd9-845e-ff88-3c26-858cb6604e43@linaro.org>
-Date:   Sat, 26 Aug 2023 11:22:17 +0200
+        Sat, 26 Aug 2023 02:28:51 -0700 (PDT)
+Message-ID: <40fd108a-86e3-e68e-04bc-caab45a3381e@linaro.org>
+Date:   Sat, 26 Aug 2023 11:28:50 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.14.0
-Subject: Re: [PATCH 3/3] clk: qcom: Add SM6115 LPASSCC
+Subject: Re: [PATCH 1/3] dt-bindings: clock: Add Qualcomm SM6115 LPASS clock
+ controller
 Content-Language: en-US
 To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -69,9 +70,9 @@ Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20230825-topic-6115_lpasscc-v1-0-d4857be298e3@linaro.org>
- <20230825-topic-6115_lpasscc-v1-3-d4857be298e3@linaro.org>
+ <20230825-topic-6115_lpasscc-v1-1-d4857be298e3@linaro.org>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230825-topic-6115_lpasscc-v1-3-d4857be298e3@linaro.org>
+In-Reply-To: <20230825-topic-6115_lpasscc-v1-1-d4857be298e3@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -82,120 +83,80 @@ On 25/08/2023 20:13, Konrad Dybcio wrote:
 > SM6115 (and its derivatives or similar SoCs) have a LPASS clock
 > controller block which provides audio-related resets.
 > 
-> Add the required code to support them.
+> Add bindings for it.
 > 
 > Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 > ---
->  drivers/clk/qcom/Kconfig          |  9 +++++
->  drivers/clk/qcom/Makefile         |  1 +
->  drivers/clk/qcom/lpasscc-sm6115.c | 84 +++++++++++++++++++++++++++++++++++++++
->  3 files changed, 94 insertions(+)
+>  .../bindings/clock/qcom,sm6115-lpasscc.yaml        | 53 ++++++++++++++++++++++
+>  include/dt-bindings/clock/qcom,sm6115-lpasscc.h    | 15 ++++++
+>  2 files changed, 68 insertions(+)
 > 
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index bd9bfb11b328..df9cf112e4b6 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -1001,6 +1001,15 @@ config SM_GPUCC_8550
->  	  Say Y if you want to support graphics controller devices and
->  	  functionality such as 3D graphics.
->  
-> +config SM_LPASSCC_6115
-> +	tristate "SM6115 Low Power Audio Subsystem (LPASS) Clock Controller"
-> +	depends on ARM64 || COMPILE_TEST
-> +	select SM_GCC_6115
-> +	help
-> +	  Support for the LPASS clock controller on SM6115 devices.
-> +	  Say Y if you want to toggle LPASS-adjacent resets within
-> +	  this clock controller to reset the LPASS subsystem.
-> +
->  config SM_TCSRCC_8550
->  	tristate "SM8550 TCSR Clock Controller"
->  	depends on ARM64 || COMPILE_TEST
-> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-> index 4790c8cca426..61e3c72fe954 100644
-> --- a/drivers/clk/qcom/Makefile
-> +++ b/drivers/clk/qcom/Makefile
-> @@ -128,6 +128,7 @@ obj-$(CONFIG_SM_GPUCC_8250) += gpucc-sm8250.o
->  obj-$(CONFIG_SM_GPUCC_8350) += gpucc-sm8350.o
->  obj-$(CONFIG_SM_GPUCC_8450) += gpucc-sm8450.o
->  obj-$(CONFIG_SM_GPUCC_8550) += gpucc-sm8550.o
-> +obj-$(CONFIG_SM_LPASSCC_6115) += lpasscc-sm6115.o
->  obj-$(CONFIG_SM_TCSRCC_8550) += tcsrcc-sm8550.o
->  obj-$(CONFIG_SM_VIDEOCC_8150) += videocc-sm8150.o
->  obj-$(CONFIG_SM_VIDEOCC_8250) += videocc-sm8250.o
-> diff --git a/drivers/clk/qcom/lpasscc-sm6115.c b/drivers/clk/qcom/lpasscc-sm6115.c
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm6115-lpasscc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm6115-lpasscc.yaml
 > new file mode 100644
-> index 000000000000..6aa19e16c53b
+> index 000000000000..58ee84aed073
 > --- /dev/null
-> +++ b/drivers/clk/qcom/lpasscc-sm6115.c
-> @@ -0,0 +1,84 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) 2022, 2023 Linaro Limited
-> + */
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sm6115-lpasscc.yaml
+> @@ -0,0 +1,53 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,sm6115-lpasscc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +#include <linux/clk-provider.h>
-> +#include <linux/err.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/of_device.h>
-> +#include <linux/regmap.h>
-> +
-> +#include <dt-bindings/clock/qcom,sm6115-lpasscc.h>
-> +
-> +#include "common.h"
-> +#include "reset.h"
-> +
-> +static const struct qcom_reset_map lpass_audiocc_sm6115_resets[] = {
-> +	[LPASS_AUDIO_SWR_RX_CGCR] =  { .reg = 0x98, .bit = 1, .udelay = 500 },
-> +};
-> +
-> +static struct regmap_config lpass_audiocc_sm6115_regmap_config = {
-> +	.reg_bits = 32,
-> +	.reg_stride = 4,
-> +	.val_bits = 32,
-> +	.name = "lpass-audio-csr",
-> +	.max_register = 0x1000,
-> +};
-> +
-> +static const struct qcom_cc_desc lpass_audiocc_sm6115_reset_desc = {
-> +	.config = &lpass_audiocc_sm6115_regmap_config,
-> +	.resets = lpass_audiocc_sm6115_resets,
-> +	.num_resets = ARRAY_SIZE(lpass_audiocc_sm6115_resets),
-> +};
-> +
-> +static const struct qcom_reset_map lpasscc_sm6115_resets[] = {
-> +	[LPASS_SWR_TX_CONFIG_CGCR] = { .reg = 0x100, .bit = 1, .udelay = 500 },
-> +};
-> +
-> +static struct regmap_config lpasscc_sm6115_regmap_config = {
-> +	.reg_bits = 32,
-> +	.reg_stride = 4,
-> +	.val_bits = 32,
-> +	.name = "lpass-tcsr",
-> +	.max_register = 0x1000,
-> +};
-> +
-> +static const struct qcom_cc_desc lpasscc_sm6115_reset_desc = {
-> +	.config = &lpasscc_sm6115_regmap_config,
-> +	.resets = lpasscc_sm6115_resets,
-> +	.num_resets = ARRAY_SIZE(lpasscc_sm6115_resets),
-> +};
-> +
-> +static const struct of_device_id lpasscc_sm6115_match_table[] = {
-> +	{
-> +		.compatible = "qcom,sm6115-lpassaudiocc",
-> +		.data = &lpass_audiocc_sm6115_reset_desc,
-> +	}, {
-> +		.compatible = "qcom,sm6115-lpasscc",
-> +		.data = &lpasscc_sm6115_reset_desc,
-> +	},
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(of, lpasscc_sm6115_match_table);
+> +title: Qualcomm LPASS Core & Audio Clock Controller on SM6115
 
-Everything here is almost the same as sc8280xp one, so this should be
-added to sc8280xp. You cut some boilerplate and additional driver.
+Everything here looks the same as sc8280xp, so this could be just added
+there as enum. The overall LPASS block version is different, but the
+resets/clock controller look similar, doesn't it?
+
+> +
+> +maintainers:
+> +  - Konrad Dybcio <konrad.dybcio@linaro.org>
+> +  - Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> +
+> +description: |
+> +  Qualcomm LPASS core and audio clock controllers provide audio-related resets
+> +  on SM6115 and its derivatives.
+> +
+> +  See also::
+> +    include/dt-bindings/clock/qcom,sm6115-lpasscc.h
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - qcom,sm6115-lpassaudiocc
+> +      - qcom,sm6115-lpasscc
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#reset-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - '#reset-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    lpass_audiocc: clock-controller@a6a9000 {
+> +        compatible = "qcom,sm6115-lpassaudiocc";
+> +        reg = <0x0a6a9000 0x1000>;
+> +        #reset-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    lpasscc: clock-controller@a7ec000 {
+> +        compatible = "qcom,sm6115-lpasscc";
+> +        reg = <0x0a7ec000 0x1000>;
+> +        #reset-cells = <1>;
+
+Also second example is not really needed. The difference is only in the
+compatible.
+
 
 Best regards,
 Krzysztof
