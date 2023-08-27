@@ -2,142 +2,137 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDF2FC6FA8F
-	for <linux-clk@archiver.kernel.org>; Sun, 27 Aug 2023 02:40:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BF9FC83F10
+	for <linux-clk@archiver.kernel.org>; Sun, 27 Aug 2023 03:29:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229802AbjH0Cjo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 26 Aug 2023 22:39:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54670 "EHLO
+        id S229927AbjH0D2j (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 26 Aug 2023 23:28:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229823AbjH0Cjj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 26 Aug 2023 22:39:39 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC491198;
-        Sat, 26 Aug 2023 19:39:36 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id ffacd0b85a97d-31aeef88a55so1704146f8f.2;
-        Sat, 26 Aug 2023 19:39:36 -0700 (PDT)
+        with ESMTP id S229969AbjH0D2K (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 26 Aug 2023 23:28:10 -0400
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 592A81BE
+        for <linux-clk@vger.kernel.org>; Sat, 26 Aug 2023 20:28:07 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id 2adb3069b0e04-5007abb15e9so3297576e87.0
+        for <linux-clk@vger.kernel.org>; Sat, 26 Aug 2023 20:28:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1693103975; x=1693708775;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+yH/o2ZWBRtoe26D6XGpWVYuP9btOQOzyXUSdyvEgf4=;
-        b=KxMixF7fAz+2HM1zt8DJekvJFtI5xTlkM1RtpGWqXnWiUbPWICwFsQoSx6pSFZkV1m
-         II3uy3tNcN27PqYiga94p5QfIxqxfB6NKOx7Tysq4CKZIcX6ULSTOJrKT0jsBWvjYJ6t
-         5smeF9BVTK8yjGfSdsw+q/Xlr50yUXgj2x4O/NGPUNG/NGd1QSNcSJGt955NpDgH20x3
-         cfov9IkCG1yHk/ipIF+z49xEKmRHhRsPYalmKY16gdHc98hjIqcOLv+gmBhqT8OEfMzn
-         k7SY5M+Q6ARmgF8pabFw3Xo3pia4gKu6ya/ObNl7xeRFra/8+AqhgqJWXt2k8JlIsi0h
-         jd6Q==
+        d=linaro.org; s=google; t=1693106885; x=1693711685;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t3g6MqdL49Zw746Urhy4bMomELw3at37JA0MQmf1GuE=;
+        b=gZk56rsSYpXAtZqre3gL4WDl+llYm5Y/XTTsBsqgcBqBQjzzQaPHSBKjjhoktElCIU
+         YSCz19InOb9kqtX51/vxWYqCwzzwaZX67t4eZNTeLIIhsDhO6XbsSCSE5zSqPwsxB48G
+         qrJG0ZeX6n27VTUZMfVzl3vAtnOzzLnvXBM0YrgmAoQJ/KCr28rxNHnnfzEoKDmzYoq5
+         c7Cel9JOe10uJYXJZfcbmGezlHZapIszYnj5TvIErU0gWnUmgvVVtIS4Oh7kfxtLtE1a
+         fkd63af0itIVNH7bpiM3KTV1KIpYvLjWABP+W+Fn0lh38L7YZxx8Tg05ZI50yhY/d8Z3
+         3tEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693103975; x=1693708775;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+yH/o2ZWBRtoe26D6XGpWVYuP9btOQOzyXUSdyvEgf4=;
-        b=XW1uDplIVZv2TNbI+o+m1C+Xsj4qmWs2EfoOqPer/dfu3Esr+sf+dvHet3ERpltwvs
-         S2sk48SVAO5UKt7AhEOPsRSDE9067stPDTZEvMznWeDXwoWP21lSY6K2SlWHzL29aWkL
-         je13OhtmdARKQYnVxhCTB8AD5BwFxR/e6s5SoDURd7N9Tt8C53jpbjzunsDHSj2SD3+x
-         ejf7Ei8QaC9wYCT8Eo42Su9SwkzGxcZrEM09xj0OKyGCWhqOfgfH8waopmhKgELGlqEt
-         iPosnFn8PQnpSbP7oJQdBDUqXmzaGZfS5rDfRVrFsL/3fR+cBFdPsaPXHGC3yjtcW5g4
-         n/Xg==
-X-Gm-Message-State: AOJu0Yx+wQ6NwYcnvOAfTrIOppq6Q8tCx9pBN0MRdOrOKmPWPuR7IJgJ
-        CTmA9250a7O1Gm+j1xhg9BLwDGXY97A=
-X-Google-Smtp-Source: AGHT+IGMIXkgpm8D4jua/sUFVs6Tw8lJJjU2zm69WqKFh27o1N3r6lrBnu6lxDtbvqSAwGlP7n+Drg==
-X-Received: by 2002:a05:6000:889:b0:319:8333:a2cb with SMTP id cs9-20020a056000088900b003198333a2cbmr17028019wrb.13.1693103974785;
-        Sat, 26 Aug 2023 19:39:34 -0700 (PDT)
-Received: from localhost.localdomain (211.red-88-11-180.dynamicip.rima-tde.net. [88.11.180.211])
-        by smtp.gmail.com with ESMTPSA id a9-20020a5d5709000000b00317b5c8a4f1sm6313482wrv.60.2023.08.26.19.39.33
+        d=1e100.net; s=20221208; t=1693106885; x=1693711685;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=t3g6MqdL49Zw746Urhy4bMomELw3at37JA0MQmf1GuE=;
+        b=iU+phvv4P0CQ8jMM+CVllAnE1H6KWN/NSj4wiHJw1kvRnGB18iP94T7LQyM1/ECd/3
+         hs4lML4P//nwYOWImVrHdy4SwALse6TwOvR5ChJ9QoUdJXnia5o63pHJlI98KshqLp3f
+         AEAhqizO8wXzVqHr5FJkyPcsERPUdCNQz5/ompH5RO51iXFVTzlSWy0iLF2KkCWnH86f
+         EEnNRERNA9r0tg1wZ7KM/j94InY0y9zC17WiSeQFrgphSyHoM1uL5muIqESLMaB2/vSn
+         g/uRtoJYeUvjdp5FrUtf+qzfWtD5zh7Lt/IJTQDT8rpz90dfViyeSzsa0TY8oqkNoW7M
+         NdwA==
+X-Gm-Message-State: AOJu0YxNqUZnOdsEsaywGPYp7DyNYZSsXW2z2nX4NiLNVaNR+uj6v29w
+        1YkTSErhYpPSssBof+//qB8Zpw==
+X-Google-Smtp-Source: AGHT+IFlwxRzeXJbJzLv94IcpMX3D6twL2DPEVf13PUuJa+IErq+Vxh/s+6EYL1dtdv/ufVKhAWDwA==
+X-Received: by 2002:a19:6705:0:b0:4f8:7513:8cb0 with SMTP id b5-20020a196705000000b004f875138cb0mr13589811lfc.2.1693106885517;
+        Sat, 26 Aug 2023 20:28:05 -0700 (PDT)
+Received: from umbar.unikie.fi ([192.130.178.91])
+        by smtp.gmail.com with ESMTPSA id w7-20020ac254a7000000b004fb99da37e3sm955709lfk.220.2023.08.26.20.28.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Aug 2023 19:39:34 -0700 (PDT)
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-To:     linux-clk@vger.kernel.org
-Cc:     tsbogend@alpha.franken.de, sboyd@kernel.org,
-        mturquette@baylibre.com, linux-kernel@vger.kernel.org,
-        ndesaulniers@google.com, arnd@kernel.org, yangshiji66@outlook.com,
-        kernel test robot <lkp@intel.com>
-Subject: [PATCH v2] clk: ralink: mtmips: quiet unused variable warning
-Date:   Sun, 27 Aug 2023 04:39:32 +0200
-Message-Id: <20230827023932.501102-1-sergio.paracuellos@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        Sat, 26 Aug 2023 20:28:05 -0700 (PDT)
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Ilia Lin <ilia.lin@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Christian Marangi <ansuelsmth@gmail.com>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v4 1/6] dt-bindings: opp: opp-v2-kryo-cpu: support Qualcomm Krait SoCs
+Date:   Sun, 27 Aug 2023 06:27:58 +0300
+Message-Id: <20230827032803.934819-2-dmitry.baryshkov@linaro.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230827032803.934819-1-dmitry.baryshkov@linaro.org>
+References: <20230827032803.934819-1-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-When CONFIG_OF is disabled then the matching table is not referenced and
-the following warning appears:
+Exted the opp-v2-kryo-cpu.yaml to support defining OPP tables for the
+previous generation of Qualcomm CPUs, 32-bit Krait-based platforms.
 
-drivers/clk/ralink/clk-mtmips.c:821:34: warning: unused variable 'mtmips_of_match' [-Wunused-const-variable]
-821 |   static const struct of_device_id mtmips_of_match[] = {
-    |                          ^
+It makes no sense to use 'operating-points-v2-kryo-cpu' compatibility
+node for the Krait cores. Add support for the Krait-specific
+'operating-points-v2-krait-cpu' compatibility string and the relevant
+opp-microvolt subclasses properties.
 
-There are two match tables in the driver: one for the clock driver and the
-other for the reset driver. The only difference between them is that the
-clock driver uses 'data' and does not have 'ralink,rt2880-reset' compatible.
-Both just can be merged into a single one just by adding the compatible
-'ralink,rt2880-reset' entry to 'mtmips_of_match[]', which will allow it to
-be used for 'mtmips_clk_driver' (which doesn't use the data) as well as for
-'mtmips_clk_init()' (which doesn't need get called for 'ralink,rt2880-reset').
+The listed opp-supported-hw values are applicable only to msm8996 /
+msm8996pro platforms. Remove the enum as other platforms will use other
+bit values. It makes little sense to list all possible values for all
+the platforms here.
 
-Doing in this way ensures that 'CONFIG_OF' is not disabled anymore so the
-above warning disapears.
-
-Fixes: 6f3b15586eef ("clk: ralink: add clock and reset driver for MTMIPS SoCs")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202307242310.CdOnd2py-lkp@intel.com/
-Suggested-by: Arnd Bergmann <arnd@kernel.org>
-Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
-Changes in v2:
-- Merge two match tables into one to properly avoid this warning.
+ .../devicetree/bindings/opp/opp-v2-kryo-cpu.yaml     | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-PATCH in v1: https://lore.kernel.org/lkml/20230802092647.3000666-1-sergio.paracuellos@gmail.com/T/
-
- drivers/clk/ralink/clk-mtmips.c | 20 +++++---------------
- 1 file changed, 5 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/clk/ralink/clk-mtmips.c b/drivers/clk/ralink/clk-mtmips.c
-index 1e7991439527..50a443bf79ec 100644
---- a/drivers/clk/ralink/clk-mtmips.c
-+++ b/drivers/clk/ralink/clk-mtmips.c
-@@ -821,6 +821,10 @@ static const struct mtmips_clk_data mt76x8_clk_data = {
- };
+diff --git a/Documentation/devicetree/bindings/opp/opp-v2-kryo-cpu.yaml b/Documentation/devicetree/bindings/opp/opp-v2-kryo-cpu.yaml
+index bbbad31ae4ca..4e84d06d5ff9 100644
+--- a/Documentation/devicetree/bindings/opp/opp-v2-kryo-cpu.yaml
++++ b/Documentation/devicetree/bindings/opp/opp-v2-kryo-cpu.yaml
+@@ -26,7 +26,9 @@ description: |
  
- static const struct of_device_id mtmips_of_match[] = {
-+	{
-+		.compatible = "ralink,rt2880-reset",
-+		.data = NULL,
-+	},
- 	{
- 		.compatible = "ralink,rt2880-sysc",
- 		.data = &rt2880_clk_data,
-@@ -1088,25 +1092,11 @@ static int mtmips_clk_probe(struct platform_device *pdev)
- 	return 0;
- }
+ properties:
+   compatible:
+-    const: operating-points-v2-kryo-cpu
++    enum:
++      - operating-points-v2-krait-cpu
++      - operating-points-v2-kryo-cpu
  
--static const struct of_device_id mtmips_clk_of_match[] = {
--	{ .compatible = "ralink,rt2880-reset" },
--	{ .compatible = "ralink,rt2880-sysc" },
--	{ .compatible = "ralink,rt3050-sysc" },
--	{ .compatible = "ralink,rt3052-sysc" },
--	{ .compatible = "ralink,rt3352-sysc" },
--	{ .compatible = "ralink,rt3883-sysc" },
--	{ .compatible = "ralink,rt5350-sysc" },
--	{ .compatible = "ralink,mt7620-sysc" },
--	{ .compatible = "ralink,mt7628-sysc" },
--	{ .compatible = "ralink,mt7688-sysc" },
--	{}
--};
--
- static struct platform_driver mtmips_clk_driver = {
- 	.probe = mtmips_clk_probe,
- 	.driver = {
- 		.name = "mtmips-clk",
--		.of_match_table = mtmips_clk_of_match,
-+		.of_match_table = mtmips_of_match,
- 	},
- };
+   nvmem-cells:
+     description: |
+@@ -63,14 +65,16 @@ patternProperties:
+           5:  MSM8996SG, speedbin 1
+           6:  MSM8996SG, speedbin 2
+           7-31:  unused
+-        enum: [0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7,
+-               0x9, 0xd, 0xe, 0xf,
+-               0x10, 0x20, 0x30, 0x70]
++
++          Other platforms use bits directly corresponding to speedbin index.
+ 
+       clock-latency-ns: true
+ 
+       required-opps: true
+ 
++    patternProperties:
++      '^opp-microvolt-speed[0-9]+-pvs[0-9]+$': true
++
+     required:
+       - opp-hz
  
 -- 
-2.25.1
+2.39.2
 
