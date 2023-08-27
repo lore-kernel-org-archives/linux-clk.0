@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0134BC83F2C
-	for <linux-clk@archiver.kernel.org>; Sun, 27 Aug 2023 03:29:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20C69C83F2E
+	for <linux-clk@archiver.kernel.org>; Sun, 27 Aug 2023 03:29:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230020AbjH0D2l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 26 Aug 2023 23:28:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58522 "EHLO
+        id S230055AbjH0D2m (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 26 Aug 2023 23:28:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230055AbjH0D2N (ORCPT
+        with ESMTP id S230090AbjH0D2N (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Sat, 26 Aug 2023 23:28:13 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60CA3CC4
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D59BECD1
         for <linux-clk@vger.kernel.org>; Sat, 26 Aug 2023 20:28:10 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-50079d148aeso3261207e87.3
+Received: by mail-lj1-x233.google.com with SMTP id 38308e7fff4ca-2b9338e4695so32462201fa.2
         for <linux-clk@vger.kernel.org>; Sat, 26 Aug 2023 20:28:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693106888; x=1693711688;
+        d=linaro.org; s=google; t=1693106889; x=1693711689;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=t4PW5GOr14sKnMrp5iOyHNMKLLl0ISY4Z/HKicgZzoc=;
-        b=f16Ooh6S4gZROEoA9uKf3LLXMe57HTJ3KNIYW828cLk6zG2Kc9y34Lpbmz+3QRMXwd
-         AT61rlkWJyWc+fZjMnjcLXzJnBi97LeQaheoBLALaseEtZt8CqlwLZX4xViIQS/3HrG7
-         arjbpQ73FXtekyWLoJwvZfDdXhsSD4C0kZCCvZ1kOgp14Wwhwd4/AYAZ0Lo+IYM3wvGO
-         MtiOxptgo4qJAJLByiDiReK74wqzfoPHm8C5daVvNrPHSayPosvhoQ1l0mh4j00+oWHt
-         ZcvTT1rNBuDQEeft+HG9yyWn7wzc101DWy9hr9Ce46FQuPhGFVFTlVRAy5+SMURcvyi5
-         H6jQ==
+        bh=BwfUF3EYgRVowKMk7VzgTE9mIXza2VTBkWULkxA1a3Y=;
+        b=o2U3iefzt2SEM7nfET/xOsW/Z5X3GB6s+NoSCE1D1YRV2TGuaFa1NsgZbOpbjgT4kZ
+         3XW3OphD58dA4uUAOvjD5AFMAXoThWM3T5Nl5o+7u6kSKyH32d/Mc8FYxCJa+7vI8kGU
+         h0fVgvPdI2E0oiMJw2AJd2e4KlWOWn36vnM/gIA2moopQtjmJha1ATGbyTqlQxM2vQDr
+         apq5nnamOmv4sdLVdy4rwCT6qsoI3JHtPG8AkOtordO/2tLjUSmIzyys9UBZom5/RRRZ
+         fuxc15k/1HWX0nugUQTjGyqWswuFPM2CaLOtprDgt8KKZiasoGyFChKywHyi4QyN8nm3
+         7nfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693106888; x=1693711688;
+        d=1e100.net; s=20221208; t=1693106889; x=1693711689;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=t4PW5GOr14sKnMrp5iOyHNMKLLl0ISY4Z/HKicgZzoc=;
-        b=c597uLRF9iBWIIs+2Eek4oYTcdWUXexfBS+SCGkmHzpdw59aoVxOgUHss+PM7Px3wT
-         SdUVtdqTp3lRkKDdognAx5JoEvViVdToHcdkBidjwE/ZqxjZdZBihEEriiR1+TnviAPX
-         uAV7dkKpaopAi39yat0fE1SfiZO0fQIQkJZfC6dg+GCs02itcQw/vHAF2kvJiMLOcb2W
-         Zt35JcvJ1fCHb89XBAa6w6cH3K9u+j6XiyjjR4Qq7EXJJhqVD9A5kIN2zQqt70CSkPVt
-         k15PN9g/5uotsMoKc9oxT568DZVn6Ep1w5zkw9j7WvkqNNDhvz/2wQtJt5Zjsh2rbRyA
-         JLSA==
-X-Gm-Message-State: AOJu0YwAIoQNnaMhkn0xB2b4JY7VrYkLLQDah8CPmsKIk0R2CBtQSoQD
-        NAMtFasiYbPOuESrLhFYI0HDpw==
-X-Google-Smtp-Source: AGHT+IErw0mBCEud+xQcTHHPFAg9BsMuGdvzqgou1vUPSVogP124ojPYPCskD4g6M77Uw5ShhtPnzA==
-X-Received: by 2002:a05:6512:348a:b0:500:953b:d112 with SMTP id v10-20020a056512348a00b00500953bd112mr7013499lfr.27.1693106888434;
-        Sat, 26 Aug 2023 20:28:08 -0700 (PDT)
+        bh=BwfUF3EYgRVowKMk7VzgTE9mIXza2VTBkWULkxA1a3Y=;
+        b=jHT6lwmDqTnvCkiSJArPj8y72HP9hLkNVv9pOITnJL9agz4GVeubyxYqpK4uaDuONe
+         2McnKM+Hblf9LZ2sIoxfSE8uHHBQoQoZLCpm3k41omQ3D9pvlPXAakTOROOIM9diOlbd
+         No7RcqNgHnkOU8ye1e3a22Cql66loVbfPBvGbTqYvtCLN+O94Gas16mz7O7gMzFGJM42
+         xTBIdye06im2EKk5f938FVNbVqainqHht+zPGalmrun7wNZ6x7ek5UhxXrpURRhSk1DQ
+         affpNEoJzqLksFxAwWpVfHCUZdFRgYMlZlugUWOVLfrhTDyOt2+sIDP1rxAOi8CGWTHg
+         rW4w==
+X-Gm-Message-State: AOJu0YxEzWVJkeIsFm9LYhLJsTppnupwiINhEp1wsA8Ad8vEbZ77K51M
+        pu8bIkMEZCabXQzGfH+AhoiSmA==
+X-Google-Smtp-Source: AGHT+IGg8zVbzuFFSiqDkEi6k4ZwbCaoAlD5/PcWXNyrojkFLqRlpymVSukD0uP3p7jUxDOeOAkfkw==
+X-Received: by 2002:a05:6512:4026:b0:4f9:570c:7b28 with SMTP id br38-20020a056512402600b004f9570c7b28mr19830480lfb.32.1693106889117;
+        Sat, 26 Aug 2023 20:28:09 -0700 (PDT)
 Received: from umbar.unikie.fi ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id w7-20020ac254a7000000b004fb99da37e3sm955709lfk.220.2023.08.26.20.28.07
+        by smtp.gmail.com with ESMTPSA id w7-20020ac254a7000000b004fb99da37e3sm955709lfk.220.2023.08.26.20.28.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Sat, 26 Aug 2023 20:28:08 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
@@ -66,9 +66,9 @@ Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
         Christian Marangi <ansuelsmth@gmail.com>,
         Stephan Gerhold <stephan@gerhold.net>
-Subject: [PATCH v4 5/6] cpufreq: qcom-nvmem: provide separate configuration data for apq8064
-Date:   Sun, 27 Aug 2023 06:28:02 +0300
-Message-Id: <20230827032803.934819-6-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v4 6/6] cpufreq: qcom-nvmem: enable core voltage scaling for MSM8960
+Date:   Sun, 27 Aug 2023 06:28:03 +0300
+Message-Id: <20230827032803.934819-7-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230827032803.934819-1-dmitry.baryshkov@linaro.org>
 References: <20230827032803.934819-1-dmitry.baryshkov@linaro.org>
@@ -78,110 +78,26 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-APQ8064 can scale core voltage according to the frequency needs. Rather
-than reusing the A/B format multiplexer, use a simple fuse parsing
-function and configure required regulator.
+Reuse APQ8064 config for MSM8960 to enable core voltage scaling.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/cpufreq/qcom-cpufreq-nvmem.c | 49 ++++++++++++++++++++++++++--
- 1 file changed, 47 insertions(+), 2 deletions(-)
+ drivers/cpufreq/qcom-cpufreq-nvmem.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/cpufreq/qcom-cpufreq-nvmem.c b/drivers/cpufreq/qcom-cpufreq-nvmem.c
-index 81c080b854fe..35e2610c9526 100644
+index 35e2610c9526..2590c673cd3b 100644
 --- a/drivers/cpufreq/qcom-cpufreq-nvmem.c
 +++ b/drivers/cpufreq/qcom-cpufreq-nvmem.c
-@@ -26,6 +26,7 @@
- #include <linux/platform_device.h>
- #include <linux/pm_domain.h>
- #include <linux/pm_opp.h>
-+#include <linux/regulator/consumer.h>
- #include <linux/slab.h>
- #include <linux/soc/qcom/smem.h>
- 
-@@ -39,6 +40,7 @@ struct qcom_cpufreq_match_data {
- 			   char **pvs_name,
- 			   struct qcom_cpufreq_drv *drv);
- 	const char **genpd_names;
-+	const char * const *regulator_names;
- };
- 
- struct qcom_cpufreq_drv {
-@@ -203,6 +205,34 @@ static int qcom_cpufreq_krait_name_version(struct device *cpu_dev,
- 	return ret;
- }
- 
-+static int qcom_cpufreq_apq8064_name_version(struct device *cpu_dev,
-+					     struct nvmem_cell *speedbin_nvmem,
-+					     char **pvs_name,
-+					     struct qcom_cpufreq_drv *drv)
-+{
-+	int speed = 0, pvs = 0;
-+	u8 *speedbin;
-+	size_t len;
-+	int ret = 0;
-+
-+	speedbin = nvmem_cell_read(speedbin_nvmem, &len);
-+	if (IS_ERR(speedbin))
-+		return PTR_ERR(speedbin);
-+
-+	if (len != 4)
-+		return -EINVAL;
-+
-+	get_krait_bin_format_a(cpu_dev, &speed, &pvs, speedbin);
-+
-+	snprintf(*pvs_name, sizeof("speedXX-pvsXX"), "speed%d-pvs%d",
-+		 speed, pvs);
-+
-+	drv->versions = (1 << speed);
-+
-+	kfree(speedbin);
-+	return ret;
-+}
-+
- static const struct qcom_cpufreq_match_data match_data_kryo = {
- 	.get_version = qcom_cpufreq_kryo_name_version,
- };
-@@ -217,6 +247,16 @@ static const struct qcom_cpufreq_match_data match_data_qcs404 = {
- 	.genpd_names = qcs404_genpd_names,
- };
- 
-+static const char * apq8064_regulator_names[] = {
-+	"vdd-core",
-+	NULL
-+};
-+
-+static const struct qcom_cpufreq_match_data match_data_apq8064 = {
-+	.get_version = qcom_cpufreq_apq8064_name_version,
-+	.regulator_names = apq8064_regulator_names,
-+};
-+
- static int qcom_cpufreq_probe(struct platform_device *pdev)
- {
- 	struct qcom_cpufreq_drv *drv;
-@@ -304,7 +344,12 @@ static int qcom_cpufreq_probe(struct platform_device *pdev)
- 			config.virt_devs = NULL;
- 		}
- 
--		if (config.supported_hw || config.genpd_names) {
-+		if (drv->data->regulator_names)
-+			config.regulator_names = drv->data->regulator_names;
-+
-+		if (config.supported_hw ||
-+		    config.genpd_names ||
-+		    config.regulator_names) {
- 			drv->opp_tokens[cpu] = dev_pm_opp_set_config(cpu_dev, &config);
- 			if (drv->opp_tokens[cpu] < 0) {
- 				ret = drv->opp_tokens[cpu];
-@@ -361,7 +406,7 @@ static const struct of_device_id qcom_cpufreq_match_list[] __initconst = {
- 	{ .compatible = "qcom,msm8996", .data = &match_data_kryo },
- 	{ .compatible = "qcom,qcs404", .data = &match_data_qcs404 },
+@@ -408,7 +408,7 @@ static const struct of_device_id qcom_cpufreq_match_list[] __initconst = {
  	{ .compatible = "qcom,ipq8064", .data = &match_data_krait },
--	{ .compatible = "qcom,apq8064", .data = &match_data_krait },
-+	{ .compatible = "qcom,apq8064", .data = &match_data_apq8064 },
+ 	{ .compatible = "qcom,apq8064", .data = &match_data_apq8064 },
  	{ .compatible = "qcom,msm8974", .data = &match_data_krait },
- 	{ .compatible = "qcom,msm8960", .data = &match_data_krait },
+-	{ .compatible = "qcom,msm8960", .data = &match_data_krait },
++	{ .compatible = "qcom,msm8960", .data = &match_data_apq8064 },
  	{},
+ };
+ MODULE_DEVICE_TABLE(of, qcom_cpufreq_match_list);
 -- 
 2.39.2
 
