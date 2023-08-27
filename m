@@ -2,102 +2,78 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20C69C83F2E
-	for <linux-clk@archiver.kernel.org>; Sun, 27 Aug 2023 03:29:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09E60C83F11
+	for <linux-clk@archiver.kernel.org>; Sun, 27 Aug 2023 09:46:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230055AbjH0D2m (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 26 Aug 2023 23:28:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58554 "EHLO
+        id S230332AbjH0JqJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 27 Aug 2023 05:46:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230090AbjH0D2N (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 26 Aug 2023 23:28:13 -0400
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D59BECD1
-        for <linux-clk@vger.kernel.org>; Sat, 26 Aug 2023 20:28:10 -0700 (PDT)
-Received: by mail-lj1-x233.google.com with SMTP id 38308e7fff4ca-2b9338e4695so32462201fa.2
-        for <linux-clk@vger.kernel.org>; Sat, 26 Aug 2023 20:28:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693106889; x=1693711689;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BwfUF3EYgRVowKMk7VzgTE9mIXza2VTBkWULkxA1a3Y=;
-        b=o2U3iefzt2SEM7nfET/xOsW/Z5X3GB6s+NoSCE1D1YRV2TGuaFa1NsgZbOpbjgT4kZ
-         3XW3OphD58dA4uUAOvjD5AFMAXoThWM3T5Nl5o+7u6kSKyH32d/Mc8FYxCJa+7vI8kGU
-         h0fVgvPdI2E0oiMJw2AJd2e4KlWOWn36vnM/gIA2moopQtjmJha1ATGbyTqlQxM2vQDr
-         apq5nnamOmv4sdLVdy4rwCT6qsoI3JHtPG8AkOtordO/2tLjUSmIzyys9UBZom5/RRRZ
-         fuxc15k/1HWX0nugUQTjGyqWswuFPM2CaLOtprDgt8KKZiasoGyFChKywHyi4QyN8nm3
-         7nfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693106889; x=1693711689;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BwfUF3EYgRVowKMk7VzgTE9mIXza2VTBkWULkxA1a3Y=;
-        b=jHT6lwmDqTnvCkiSJArPj8y72HP9hLkNVv9pOITnJL9agz4GVeubyxYqpK4uaDuONe
-         2McnKM+Hblf9LZ2sIoxfSE8uHHBQoQoZLCpm3k41omQ3D9pvlPXAakTOROOIM9diOlbd
-         No7RcqNgHnkOU8ye1e3a22Cql66loVbfPBvGbTqYvtCLN+O94Gas16mz7O7gMzFGJM42
-         xTBIdye06im2EKk5f938FVNbVqainqHht+zPGalmrun7wNZ6x7ek5UhxXrpURRhSk1DQ
-         affpNEoJzqLksFxAwWpVfHCUZdFRgYMlZlugUWOVLfrhTDyOt2+sIDP1rxAOi8CGWTHg
-         rW4w==
-X-Gm-Message-State: AOJu0YxEzWVJkeIsFm9LYhLJsTppnupwiINhEp1wsA8Ad8vEbZ77K51M
-        pu8bIkMEZCabXQzGfH+AhoiSmA==
-X-Google-Smtp-Source: AGHT+IGg8zVbzuFFSiqDkEi6k4ZwbCaoAlD5/PcWXNyrojkFLqRlpymVSukD0uP3p7jUxDOeOAkfkw==
-X-Received: by 2002:a05:6512:4026:b0:4f9:570c:7b28 with SMTP id br38-20020a056512402600b004f9570c7b28mr19830480lfb.32.1693106889117;
-        Sat, 26 Aug 2023 20:28:09 -0700 (PDT)
-Received: from umbar.unikie.fi ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id w7-20020ac254a7000000b004fb99da37e3sm955709lfk.220.2023.08.26.20.28.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Aug 2023 20:28:08 -0700 (PDT)
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Ilia Lin <ilia.lin@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Christian Marangi <ansuelsmth@gmail.com>,
-        Stephan Gerhold <stephan@gerhold.net>
-Subject: [PATCH v4 6/6] cpufreq: qcom-nvmem: enable core voltage scaling for MSM8960
-Date:   Sun, 27 Aug 2023 06:28:03 +0300
-Message-Id: <20230827032803.934819-7-dmitry.baryshkov@linaro.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230827032803.934819-1-dmitry.baryshkov@linaro.org>
-References: <20230827032803.934819-1-dmitry.baryshkov@linaro.org>
+        with ESMTP id S230330AbjH0Jph (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 27 Aug 2023 05:45:37 -0400
+X-Greylist: delayed 450 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 27 Aug 2023 02:45:34 PDT
+Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8972C109
+        for <linux-clk@vger.kernel.org>; Sun, 27 Aug 2023 02:45:34 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id aCDYqs7H09KIfaCDYq3nVP; Sun, 27 Aug 2023 11:38:02 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1693129082;
+        bh=eq0x3iigUAjoi4D0w91pgHaAwqeD7R2OBa1kT6pnQ2g=;
+        h=From:To:Cc:Subject:Date;
+        b=fPSJLpblS3Yu70HOrJviqaDMJByLb2CaOFA7ikx3WuTq//wD9+qnKhz82HFJn0p3q
+         cRH42ggURSGiJFgCPN3cHzub8twAQf0PSwJJV0IdtCArAztC+PcxucbuqHGVxx8XeV
+         cgS6ucw9aBDokf0CAqj444HQfdPYsUUYV77qg8OnjZ55cOOX2bCltPzLpfvtFFTC8m
+         toq+Dgm/p/ZLl+uESmRH0LHFFkfPzDDgexDJoz3t8tDtfr8hVNuF7xXlSudcOSJz8F
+         Qi8/OnpRKJfbjzoV3NSLloOqQUbvOiMrOn4Hoyynn4gtCNkn2x+9sFE6RnpM02mvGL
+         0zByFg+24Tumg==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 27 Aug 2023 11:38:02 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
+        sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        shengjiu.wang@nxp.com
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 0/5] clk: imx: imx8: Fix some error handling paths
+Date:   Sun, 27 Aug 2023 11:37:51 +0200
+Message-Id: <cover.1693126687.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Reuse APQ8064 config for MSM8960 to enable core voltage scaling.
+This serie fix some error handling paths. It is split in different patches to
+ease review because the issues are unrelated and the proposed fixes are maybe
+wrong (I don't have the hardware to test anything)
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/cpufreq/qcom-cpufreq-nvmem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch 2 and 3 are more speculative than the 3 oher ones. Review with care.
 
-diff --git a/drivers/cpufreq/qcom-cpufreq-nvmem.c b/drivers/cpufreq/qcom-cpufreq-nvmem.c
-index 35e2610c9526..2590c673cd3b 100644
---- a/drivers/cpufreq/qcom-cpufreq-nvmem.c
-+++ b/drivers/cpufreq/qcom-cpufreq-nvmem.c
-@@ -408,7 +408,7 @@ static const struct of_device_id qcom_cpufreq_match_list[] __initconst = {
- 	{ .compatible = "qcom,ipq8064", .data = &match_data_krait },
- 	{ .compatible = "qcom,apq8064", .data = &match_data_apq8064 },
- 	{ .compatible = "qcom,msm8974", .data = &match_data_krait },
--	{ .compatible = "qcom,msm8960", .data = &match_data_krait },
-+	{ .compatible = "qcom,msm8960", .data = &match_data_apq8064 },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, qcom_cpufreq_match_list);
+
+Finally, I got some problem when generating the serie, and some patches have
+been hand-modified afterwards.
+They look good to me, but I hope have not screwed up things...
+
+Christophe JAILLET (5):
+  clk: imx: imx8: Fix an error handling path in
+    clk_imx_acm_attach_pm_domains()
+  clk: imx: imx8: Fix an error handling path if
+    devm_clk_hw_register_mux_parent_data_table() fails
+  clk: imx: imx8: Fix an error handling path in imx8_acm_clk_probe()
+  clk: imx: imx8: Add a message in case of
+    devm_clk_hw_register_mux_parent_data_table() error
+  clk: imx: imx8: Simplify clk_imx_acm_detach_pm_domains()
+
+ drivers/clk/imx/clk-imx8-acm.c | 27 +++++++++++++++------------
+ 1 file changed, 15 insertions(+), 12 deletions(-)
+
 -- 
-2.39.2
+2.34.1
 
