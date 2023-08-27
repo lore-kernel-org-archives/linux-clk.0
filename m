@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 033CFC83F2A
-	for <linux-clk@archiver.kernel.org>; Sun, 27 Aug 2023 11:51:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A65EEC83F26
+	for <linux-clk@archiver.kernel.org>; Sun, 27 Aug 2023 11:51:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229893AbjH0LvO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 27 Aug 2023 07:51:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51972 "EHLO
+        id S229869AbjH0LvM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 27 Aug 2023 07:51:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229996AbjH0Luv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 27 Aug 2023 07:50:51 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 063A5198
-        for <linux-clk@vger.kernel.org>; Sun, 27 Aug 2023 04:50:42 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id 2adb3069b0e04-50091b91a83so3506108e87.3
-        for <linux-clk@vger.kernel.org>; Sun, 27 Aug 2023 04:50:42 -0700 (PDT)
+        with ESMTP id S229932AbjH0Luq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 27 Aug 2023 07:50:46 -0400
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3F141A4
+        for <linux-clk@vger.kernel.org>; Sun, 27 Aug 2023 04:50:39 -0700 (PDT)
+Received: by mail-lj1-x233.google.com with SMTP id 38308e7fff4ca-2bcda0aaf47so38416051fa.1
+        for <linux-clk@vger.kernel.org>; Sun, 27 Aug 2023 04:50:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693137041; x=1693741841;
+        d=linaro.org; s=google; t=1693137038; x=1693741838;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yLKGJjqVnU2Wm3Zgin7pA30JtWvao8SZmntEz34aPKQ=;
-        b=hKk3x+Zv5Stkb3C8Elm6a90EI7XMk8yQcRuxikhvRvwchROVpMkm7xFolD8qtVBmDk
-         6adcp2Yx5D1Y6Yh4Z7ZOZBPIHAg0oOor+qQO9ni01bpQYVrIfpqAglssPtn6/i08vWm8
-         ork+yMC8gdL9Kus8RSiMNGBU+rVlTfaLI/I8tFm+UGlR29owTQyIcQlP8VM8mk6OC2IC
-         9pYdggLXqJF/0HTtQV0BeSaEtAxsGQlqOq0NcTsz9ktSL2HiKieIRWQdKxASDAvsmIzk
-         r2g4UtiajpQsb7q2bVCHfUsUK8ot4Rvyfqw0MFyPpOovKa7EhCFC5B5wfkwmxXfymV3o
-         7SZw==
+        bh=1h5yZ1ON0tbidIVRhLbpjEGcgJUDJL2iKVUumFLXMN4=;
+        b=a7muBL9IUjqVns3i7KW6R+6B7wM+KGnCPlxLztBTGwmKd+7z0pZeGLdaSXFwCjJhfX
+         9Ub944wky508FCfEE8IQHBzo3TJlucAi5N1NkR7K+gAVoqa5iZkw9CddGPC2PS80cqVT
+         HZD51xtrHwKHyC/GFCx+xAL2moQUGk0xmcXgrjtG2grNG4NaKBOH97WPa83SEOCP/CMW
+         jGzVMk176p7kQNitmRfBRVlDQsllaRWQFkBtGkBobzd6rwr5MumkHM49mMYqOrdkXMVV
+         PigGQa4KeXaau44rGImOqs1sReH4OGRItWGNBkknm82QaVKarQcnuYOQkSCNkWGXS4WF
+         iYJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693137041; x=1693741841;
+        d=1e100.net; s=20221208; t=1693137038; x=1693741838;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yLKGJjqVnU2Wm3Zgin7pA30JtWvao8SZmntEz34aPKQ=;
-        b=hmHBuWFJA3/4QMfgPaVWNSwR5akvugLTNHweuDok+AW4d24TJPxNlmL4DbdBZU4qoo
-         tgrYwci/Z+hjZooSaE7EBtjyLEMYUCNyyZXbkXXDO4pNN5MLVuo7DN1bm5jEScJNRqaF
-         onltPZeyX9SMJjgyvVMmQ1BmgKZOsKrAsZVhWwBARbyn17byE9yXtIG35trCTIveMrEY
-         oZkHFOhV0W4YkctBjJLPZJ+yaVQU8nh45ljqi7nLBhOA9IBF/X6TqL6hY/BQWy868Xij
-         PphL4E9DozYlTfqGUh4oc3Esaqt2z3PZZr3EiGGzgNwglwH05xSCs18V9RlebdNUivbo
-         wT4Q==
-X-Gm-Message-State: AOJu0YyYAMlvZPgeHrFsdIwQeiRJHai0YXAKp0vnh4cJklRPNRIfmOGJ
-        Yl2Ztxnl+MHiW9b6fHDvaE1m7Q==
-X-Google-Smtp-Source: AGHT+IE82B0W59RE5kDcLVQBQzjElyJ+kGQifs7Z6nM3Eb6+cLGR9AHkSdzhRVD0qO0TI75bkp+Yxw==
-X-Received: by 2002:a05:6512:282c:b0:4ff:8f45:ab86 with SMTP id cf44-20020a056512282c00b004ff8f45ab86mr19674525lfb.25.1693137041071;
-        Sun, 27 Aug 2023 04:50:41 -0700 (PDT)
+        bh=1h5yZ1ON0tbidIVRhLbpjEGcgJUDJL2iKVUumFLXMN4=;
+        b=QFNa8FwAYkcArhpltT2tq8M5ZCVRyHG8vtih3lUWmnrnfLlsDiBarfYvyxlAzFQUGg
+         GGNrjeX8CNUBphxP+tSUFntaWc2gKZYWfEufj/WnI7aJ1k78TMr2CEzxOK2Yz+ftYjoU
+         7VbiwhlXWA8mc0B2byaZk2RRVCoMfFgA9q9lhB/AUXVNWMccpdUh8kPEyA/NF4JmKSeH
+         l8+LaxGPfJ2jz7mS0IOA/pC4pfIBrM97Xqmh6p9dg8A+LeUicQAQV2snKbx2qLtjbsu/
+         sSb7xVoibiLhaX84wPj6HMmHdCiEoWIfl3ItUt3Ii372UWEQLL0jxBPD2OidxUYVunbx
+         +qyQ==
+X-Gm-Message-State: AOJu0YxdxMImE4CvjVvrHOfKsbPnMriIu+b/96XMCRywWy2xPuTXRy6G
+        TfrkmKsKHc3aArsO6w+ohUdiTw==
+X-Google-Smtp-Source: AGHT+IGW0g5PxPyHdiA94zEf8AFi046HCvktmj51b88ouBJ1A4lNV4gblc4U8fgDj2Haet1KdvtBvA==
+X-Received: by 2002:a05:6512:3096:b0:500:a008:a2e8 with SMTP id z22-20020a056512309600b00500a008a2e8mr3090179lfd.12.1693137038048;
+        Sun, 27 Aug 2023 04:50:38 -0700 (PDT)
 Received: from umbar.unikie.fi ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id a8-20020a19f808000000b004ff9f88b86esm1114770lff.308.2023.08.27.04.50.40
+        by smtp.gmail.com with ESMTPSA id a8-20020a19f808000000b004ff9f88b86esm1114770lff.308.2023.08.27.04.50.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Aug 2023 04:50:40 -0700 (PDT)
+        Sun, 27 Aug 2023 04:50:37 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -66,9 +66,9 @@ Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
         Christian Marangi <ansuelsmth@gmail.com>,
         Stephan Gerhold <stephan@gerhold.net>
-Subject: [PATCH v4 07/23] soc: qcom: spm: add support for voltage regulator
-Date:   Sun, 27 Aug 2023 14:50:17 +0300
-Message-Id: <20230827115033.935089-8-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v4 04/23] dt-bindings: cache: describe L2 cache on Qualcomm Krait platforms
+Date:   Sun, 27 Aug 2023 14:50:14 +0300
+Message-Id: <20230827115033.935089-5-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230827115033.935089-1-dmitry.baryshkov@linaro.org>
 References: <20230827115033.935089-1-dmitry.baryshkov@linaro.org>
@@ -78,337 +78,128 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The SPM / SAW2 device also provides a voltage regulator functionality
-with optional AVS (Adaptive Voltage Scaling) support. The exact register
-sequence and voltage ranges differs from device to device.
+The L2 cache device on Qualcomm Krait platforms controls the supplying
+voltages and the cache frequency. Add corresponding bindings for this
+device.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/soc/qcom/spm.c | 221 ++++++++++++++++++++++++++++++++++++++++-
- include/soc/qcom/spm.h |   9 ++
- 2 files changed, 225 insertions(+), 5 deletions(-)
+ .../bindings/cache/qcom,krait-l2-cache.yaml   | 86 +++++++++++++++++++
+ include/dt-bindings/soc/qcom,krait-l2-cache.h | 12 +++
+ 2 files changed, 98 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/cache/qcom,krait-l2-cache.yaml
+ create mode 100644 include/dt-bindings/soc/qcom,krait-l2-cache.h
 
-diff --git a/drivers/soc/qcom/spm.c b/drivers/soc/qcom/spm.c
-index 2f0b1bfe7658..595e2afb2141 100644
---- a/drivers/soc/qcom/spm.c
-+++ b/drivers/soc/qcom/spm.c
-@@ -6,20 +6,40 @@
-  * SAW power controller driver
-  */
- 
--#include <linux/kernel.h>
-+#include <linux/bitfield.h>
-+#include <linux/err.h>
- #include <linux/init.h>
- #include <linux/io.h>
-+#include <linux/iopoll.h>
-+#include <linux/kernel.h>
-+#include <linux/linear_range.h>
- #include <linux/module.h>
--#include <linux/slab.h>
- #include <linux/of.h>
--#include <linux/err.h>
- #include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <linux/smp.h>
+diff --git a/Documentation/devicetree/bindings/cache/qcom,krait-l2-cache.yaml b/Documentation/devicetree/bindings/cache/qcom,krait-l2-cache.yaml
+new file mode 100644
+index 000000000000..59ce11dd0a24
+--- /dev/null
++++ b/Documentation/devicetree/bindings/cache/qcom,krait-l2-cache.yaml
+@@ -0,0 +1,86 @@
++# SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/cache/qcom,krait-l2-cache.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+#include <linux/regulator/driver.h>
++title: Qualcomm Krait L2 Cache
 +
- #include <soc/qcom/spm.h>
- 
-+#define FIELD_SET(current, mask, val)	\
-+	(((current) & ~(mask)) | FIELD_PREP((mask), (val)))
++maintainers:
++  - Bjorn Andersson <andersson@kernel.org>
 +
- #define SPM_CTL_INDEX		0x7f
- #define SPM_CTL_INDEX_SHIFT	4
- #define SPM_CTL_EN		BIT(0)
- 
-+/* These registers might be specific to SPM 1.1 */
-+#define SPM_VCTL_VLVL			GENMASK(7, 0)
-+#define SPM_PMIC_DATA_0_VLVL		GENMASK(7, 0)
-+#define SPM_PMIC_DATA_1_MIN_VSEL	GENMASK(5, 0)
-+#define SPM_PMIC_DATA_1_MAX_VSEL	GENMASK(21, 16)
++description:
++  L2 cache on Qualcomm Krait platforms is shared between all CPU cores. L2
++  cache frequency and voltages should be scaled according to the needs of the
++  cores.
 +
-+#define SPM_1_1_AVS_CTL_AVS_ENABLED	BIT(27)
-+#define SPM_AVS_CTL_MAX_VLVL		GENMASK(22, 17)
-+#define SPM_AVS_CTL_MIN_VLVL		GENMASK(15, 10)
++allOf:
++  - $ref: /schemas/cache-controller.yaml#
 +
- enum spm_reg {
- 	SPM_REG_CFG,
- 	SPM_REG_SPM_CTL,
-@@ -29,10 +49,12 @@ enum spm_reg {
- 	SPM_REG_PMIC_DATA_1,
- 	SPM_REG_VCTL,
- 	SPM_REG_SEQ_ENTRY,
--	SPM_REG_SPM_STS,
-+	SPM_REG_STS0,
-+	SPM_REG_STS1,
- 	SPM_REG_PMIC_STS,
- 	SPM_REG_AVS_CTL,
- 	SPM_REG_AVS_LIMIT,
-+	SPM_REG_RST,
- 	SPM_REG_NR,
- };
- 
-@@ -169,6 +191,10 @@ static const struct spm_reg_data spm_reg_8226_cpu  = {
- 
- static const u16 spm_reg_offset_v1_1[SPM_REG_NR] = {
- 	[SPM_REG_CFG]		= 0x08,
-+	[SPM_REG_STS0]		= 0x0c,
-+	[SPM_REG_STS1]		= 0x10,
-+	[SPM_REG_VCTL]		= 0x14,
-+	[SPM_REG_AVS_CTL]	= 0x18,
- 	[SPM_REG_SPM_CTL]	= 0x20,
- 	[SPM_REG_PMIC_DLY]	= 0x24,
- 	[SPM_REG_PMIC_DATA_0]	= 0x28,
-@@ -176,7 +202,12 @@ static const u16 spm_reg_offset_v1_1[SPM_REG_NR] = {
- 	[SPM_REG_SEQ_ENTRY]	= 0x80,
- };
- 
-+static void smp_set_vdd_v1_1(void *data);
++select:
++  properties:
++    compatible:
++      contains:
++        enum:
++          - qcom,krait-l2-cache
 +
- /* SPM register data for 8064 */
-+static struct linear_range spm_v1_1_regulator_range =
-+	REGULATOR_LINEAR_RANGE(700000, 0, 56, 12500);
++  required:
++    - compatible
 +
- static const struct spm_reg_data spm_reg_8064_cpu = {
- 	.reg_offset = spm_reg_offset_v1_1,
- 	.spm_cfg = 0x1F,
-@@ -187,6 +218,10 @@ static const struct spm_reg_data spm_reg_8064_cpu = {
- 		0x10, 0x54, 0x30, 0x0C, 0x24, 0x30, 0x0F },
- 	.start_index[PM_SLEEP_MODE_STBY] = 0,
- 	.start_index[PM_SLEEP_MODE_SPC] = 2,
-+	.set_vdd = smp_set_vdd_v1_1,
-+	.range = &spm_v1_1_regulator_range,
-+	.init_uV = 1300000,
-+	.ramp_delay = 1250,
- };
- 
- static inline void spm_register_write(struct spm_driver_data *drv,
-@@ -238,6 +273,181 @@ void spm_set_low_power_mode(struct spm_driver_data *drv,
- 	spm_register_write_sync(drv, SPM_REG_SPM_CTL, ctl_val);
- }
- 
-+static int spm_set_voltage_sel(struct regulator_dev *rdev, unsigned int selector)
-+{
-+	struct spm_driver_data *drv = rdev_get_drvdata(rdev);
++properties:
++  compatible:
++    items:
++      - const: qcom,krait-l2-cache
++      - const: cache
 +
-+	drv->volt_sel = selector;
++  clocks:
++    maxItems: 1
 +
-+	/* Always do the SAW register writes on the corresponding CPU */
-+	return smp_call_function_single(drv->reg_cpu, drv->reg_data->set_vdd, drv, true);
-+}
++  '#interconnect-cells':
++    const: 1
 +
-+static int spm_get_voltage_sel(struct regulator_dev *rdev)
-+{
-+	struct spm_driver_data *drv = rdev_get_drvdata(rdev);
++  vdd-mem-supply:
++    description: suppling regulator for the memory cells of the cache
 +
-+	return drv->volt_sel;
-+}
++  vdd-dig-supply:
++    description: suppling regulator for the digital logic of the cache
 +
-+static const struct regulator_ops spm_reg_ops = {
-+	.set_voltage_sel	= spm_set_voltage_sel,
-+	.get_voltage_sel	= spm_get_voltage_sel,
-+	.list_voltage		= regulator_list_voltage_linear_range,
-+	.set_voltage_time_sel	= regulator_set_voltage_time_sel,
-+};
++  operating-points-v2: true
++  opp-table:
++    type: object
 +
-+static void smp_set_vdd_v1_1(void *data)
-+{
-+	struct spm_driver_data *drv = data;
-+	unsigned int vctl, data0, data1, avs_ctl, sts;
-+	unsigned int vlevel, volt_sel;
-+	bool avs_enabled;
++required:
++  - compatible
++  - cache-level
++  - cache-unified
++  - clocks
++  - '#interconnect-cells'
 +
-+	volt_sel = drv->volt_sel;
-+	vlevel = volt_sel | 0x80; /* band */
++unevaluatedProperties: false
 +
-+	avs_ctl = spm_register_read(drv, SPM_REG_AVS_CTL);
-+	vctl = spm_register_read(drv, SPM_REG_VCTL);
-+	data0 = spm_register_read(drv, SPM_REG_PMIC_DATA_0);
-+	data1 = spm_register_read(drv, SPM_REG_PMIC_DATA_1);
++examples:
++  - |
++    #include <dt-bindings/soc/qcom,krait-l2-cache.h>
 +
-+	avs_enabled = avs_ctl & SPM_1_1_AVS_CTL_AVS_ENABLED;
++    l2-cache {
++        compatible = "qcom,krait-l2-cache", "cache";
++        cache-level = <2>;
++        cache-unified;
++        vdd-mem-supply = <&pm8921_l24>;
++        vdd-dig-supply = <&pm8921_s3>;
++        clocks = <&kraitcc 4>;
++        #interconnect-cells = <1>;
++        operating-points-v2 = <&l2_opp_table>;
 +
-+	/* If AVS is enabled, switch it off during the voltage change */
-+	if (avs_enabled) {
-+		avs_ctl &= ~SPM_1_1_AVS_CTL_AVS_ENABLED;
-+		spm_register_write(drv, SPM_REG_AVS_CTL, avs_ctl);
-+	}
++        l2_opp_table: opp-table {
++            compatible = "operating-points-v2";
 +
-+	/* Kick the state machine back to idle */
-+	spm_register_write(drv, SPM_REG_RST, 1);
++            opp-384000000 {
++                opp-hz = /bits/ 64 <384000000>;
++                opp-microvolt = <1050000 1050000 1150000>,
++                                <950000 950000 1150000>;
++            };
++        };
++    };
++...
 +
-+	vctl = FIELD_SET(vctl, SPM_VCTL_VLVL, vlevel);
-+	data0 = FIELD_SET(data0, SPM_PMIC_DATA_0_VLVL, vlevel);
-+	data1 = FIELD_SET(data1, SPM_PMIC_DATA_1_MIN_VSEL, volt_sel);
-+	data1 = FIELD_SET(data1, SPM_PMIC_DATA_1_MAX_VSEL, volt_sel);
+diff --git a/include/dt-bindings/soc/qcom,krait-l2-cache.h b/include/dt-bindings/soc/qcom,krait-l2-cache.h
+new file mode 100644
+index 000000000000..c9a38d368111
+--- /dev/null
++++ b/include/dt-bindings/soc/qcom,krait-l2-cache.h
+@@ -0,0 +1,12 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (C) 2023 Linaro Ltd. All rights reserved.
++ */
 +
-+	spm_register_write(drv, SPM_REG_VCTL, vctl);
-+	spm_register_write(drv, SPM_REG_PMIC_DATA_0, data0);
-+	spm_register_write(drv, SPM_REG_PMIC_DATA_1, data1);
++#ifndef __DT_BINDINGS_SOC_QCOM_KRAIT_L2_CACHE_H
++#define __DT_BINDINGS_SOC_QCOM_KRAIT_L2_CACHE_H
 +
-+	if (read_poll_timeout_atomic(spm_register_read,
-+				     sts, sts == vlevel,
-+				     1, 200, false,
-+				     drv, SPM_REG_STS1)) {
-+		dev_err_ratelimited(drv->dev, "timeout setting the voltage (%x %x)!\n", sts, vlevel);
-+		goto enable_avs;
-+	}
++#define MASTER_KRAIT_L2		0
++#define SLAVE_KRAIT_L2		1
 +
-+	if (avs_enabled) {
-+		unsigned int max_avs = volt_sel;
-+		unsigned int min_avs = max(max_avs, 4U) - 4;
-+
-+		avs_ctl = FIELD_SET(avs_ctl, SPM_AVS_CTL_MIN_VLVL, min_avs);
-+		avs_ctl = FIELD_SET(avs_ctl, SPM_AVS_CTL_MAX_VLVL, max_avs);
-+		spm_register_write(drv, SPM_REG_AVS_CTL, avs_ctl);
-+	}
-+
-+enable_avs:
-+	if (avs_enabled) {
-+		avs_ctl |= SPM_1_1_AVS_CTL_AVS_ENABLED;
-+		spm_register_write(drv, SPM_REG_AVS_CTL, avs_ctl);
-+	}
-+}
-+
-+static int spm_get_cpu(struct device *dev)
-+{
-+	int cpu;
-+	bool found;
-+
-+	for_each_possible_cpu(cpu) {
-+		struct device_node *cpu_node, *saw_node;
-+
-+		cpu_node = of_cpu_device_node_get(cpu);
-+		if (!cpu_node)
-+			continue;
-+
-+		saw_node = of_parse_phandle(cpu_node, "qcom,saw", 0);
-+		found = (saw_node == dev->of_node);
-+		of_node_put(saw_node);
-+		of_node_put(cpu_node);
-+
-+		if (found)
-+			return cpu;
-+	}
-+
-+	/* L2 SPM is not bound to any CPU, tie it to CPU0 */
-+
-+	return 0;
-+}
-+
-+#ifdef CONFIG_REGULATOR
-+static int spm_register_regulator(struct device *dev, struct spm_driver_data *drv)
-+{
-+	struct regulator_config config = {
-+		.dev = dev,
-+		.driver_data = drv,
-+	};
-+	struct regulator_desc *rdesc;
-+	struct regulator_dev *rdev;
-+	int ret;
-+	bool found;
-+
-+	if (!drv->reg_data->set_vdd)
-+		return 0;
-+
-+	rdesc = devm_kzalloc(dev, sizeof(*rdesc), GFP_KERNEL);
-+	if (!rdesc)
-+		return -ENOMEM;
-+
-+	rdesc->name = "spm";
-+	rdesc->of_match = of_match_ptr("regulator");
-+	rdesc->type = REGULATOR_VOLTAGE;
-+	rdesc->owner = THIS_MODULE;
-+	rdesc->ops = &spm_reg_ops;
-+
-+	rdesc->linear_ranges = drv->reg_data->range;
-+	rdesc->n_linear_ranges = 1;
-+	rdesc->n_voltages = rdesc->linear_ranges[rdesc->n_linear_ranges - 1].max_sel + 1;
-+	rdesc->ramp_delay = drv->reg_data->ramp_delay;
-+
-+	drv->reg_cpu = spm_get_cpu(dev);
-+	dev_dbg(dev, "SAW2 bound to CPU %d\n", drv->reg_cpu);
-+
-+	/*
-+	 * Program initial voltage, otherwise registration will also try
-+	 * setting the voltage, which might result in undervolting the CPU.
-+	 */
-+	drv->volt_sel = DIV_ROUND_UP(drv->reg_data->init_uV - rdesc->min_uV,
-+				     rdesc->uV_step);
-+	ret = linear_range_get_selector_high(drv->reg_data->range,
-+					     drv->reg_data->init_uV,
-+					     &drv->volt_sel,
-+					     &found);
-+	if (ret) {
-+		dev_err(dev, "Initial uV value out of bounds\n");
-+		return ret;
-+	}
-+
-+	/* Always do the SAW register writes on the corresponding CPU */
-+	smp_call_function_single(drv->reg_cpu, drv->reg_data->set_vdd, drv, true);
-+
-+	rdev = devm_regulator_register(dev, rdesc, &config);
-+	if (IS_ERR(rdev)) {
-+		dev_err(dev, "failed to register regulator\n");
-+		return PTR_ERR(rdev);
-+	}
-+
-+	return 0;
-+}
-+#else
-+static int spm_register_regulator(struct device *dev, struct spm_driver_data *drv)
-+{
-+	return 0;
-+}
 +#endif
-+
- static const struct of_device_id spm_match_table[] = {
- 	{ .compatible = "qcom,sdm660-gold-saw2-v4.1-l2",
- 	  .data = &spm_reg_660_gold_l2 },
-@@ -288,6 +498,7 @@ static int spm_dev_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 
- 	drv->reg_data = match_id->data;
-+	drv->dev = &pdev->dev;
- 	platform_set_drvdata(pdev, drv);
- 
- 	/* Write the SPM sequences first.. */
-@@ -315,7 +526,7 @@ static int spm_dev_probe(struct platform_device *pdev)
- 	if (drv->reg_data->reg_offset[SPM_REG_SPM_CTL])
- 		spm_set_low_power_mode(drv, PM_SLEEP_MODE_STBY);
- 
--	return 0;
-+	return spm_register_regulator(&pdev->dev, drv);
- }
- 
- static struct platform_driver spm_driver = {
-diff --git a/include/soc/qcom/spm.h b/include/soc/qcom/spm.h
-index 4951f9d8b0bd..9859ebe42003 100644
---- a/include/soc/qcom/spm.h
-+++ b/include/soc/qcom/spm.h
-@@ -30,11 +30,20 @@ struct spm_reg_data {
- 	u32 avs_limit;
- 	u8 seq[MAX_SEQ_DATA];
- 	u8 start_index[PM_SLEEP_MODE_NR];
-+
-+	smp_call_func_t set_vdd;
-+	/* for now we support only a single range */
-+	struct linear_range *range;
-+	unsigned int ramp_delay;
-+	unsigned int init_uV;
- };
- 
- struct spm_driver_data {
- 	void __iomem *reg_base;
- 	const struct spm_reg_data *reg_data;
-+	struct device *dev;
-+	unsigned int volt_sel;
-+	int reg_cpu;
- };
- 
- void spm_set_low_power_mode(struct spm_driver_data *drv,
 -- 
 2.39.2
 
