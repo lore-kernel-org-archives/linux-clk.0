@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2890C83F1D
-	for <linux-clk@archiver.kernel.org>; Sun, 27 Aug 2023 03:29:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EA0FC83F1F
+	for <linux-clk@archiver.kernel.org>; Sun, 27 Aug 2023 03:29:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230008AbjH0D2l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 26 Aug 2023 23:28:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58468 "EHLO
+        id S229996AbjH0D2k (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 26 Aug 2023 23:28:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230016AbjH0D2M (ORCPT
+        with ESMTP id S230041AbjH0D2M (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Sat, 26 Aug 2023 23:28:12 -0400
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE6D1CDC
-        for <linux-clk@vger.kernel.org>; Sat, 26 Aug 2023 20:28:08 -0700 (PDT)
-Received: by mail-lj1-x22b.google.com with SMTP id 38308e7fff4ca-2bce552508fso32586031fa.1
-        for <linux-clk@vger.kernel.org>; Sat, 26 Aug 2023 20:28:08 -0700 (PDT)
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 784351BC
+        for <linux-clk@vger.kernel.org>; Sat, 26 Aug 2023 20:28:09 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-5008faf4456so3321305e87.3
+        for <linux-clk@vger.kernel.org>; Sat, 26 Aug 2023 20:28:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google; t=1693106887; x=1693711687;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9jEwHJKZuaMJ1K+mHgMlvEIYS1NT0o5IAPoON35Oxpc=;
-        b=G8C02m3kw8TgefxEn0rp9pofAWcoofE2gqf6N5A6CTM6HRTUgun1ahmqeMfMZRGtWn
-         oMg6Qs6QeCHezMMo8Pz9uyR26iHmsQ8hIfZd51nvGwDO0RMukfF75NBsv1CETMtxeYcW
-         4WXJR4qGP3EYBwiXnIyPSbcycKqyvnzoClL1jya5uR7iBdORndvz36sMPhbB6Mb2e+Gs
-         5hlkM1EjPfAPbMg0RfOUXy0p2EIJ0X5BBvGuRRm5ulFa83g0XWUh14luoChD9XCkxGWa
-         rl2nK5odSXp5nGj5EDDL55NlkJqs+F/WHUfe5W/G+YPEJSBvArmzYoW0Vnssb8WzpAZ2
-         mpKQ==
+        bh=BGQGpgfeYNye1dt0r4z4EthF4Df+KGXsl1wiSoevU0U=;
+        b=vlT9NoLRHvUa1GVtRYVRfHgKsp3Ww+lrBKkvGEfx4kTJIoyB8u5WtMv3eCSt6gNaWZ
+         NMFaNGgqvGoTICRKywbNaXZjJ2ZMDjfp9h/SY/eNwV8+nLiftfSayVx0zb3fLZ9Ol8tx
+         /9hKqYGbIzeia1WPJfpQewzp59JRsLvBEOBQaifFtzqQz4DLzOmnXJtTXoTwUByPk78X
+         YuZZN1NZ0oK737vuZgklmA7Huau8Vylhr9nM87P4R73K5RwcdEKwlF1NAMmjSx5L68DM
+         xk0w7kDHEZG976vyoy6Bbzq4eu2lwzkFzyFRUEMHj9PBzzTPQgCB5Xl/BsbqjjIv+CKz
+         9hUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20221208; t=1693106887; x=1693711687;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9jEwHJKZuaMJ1K+mHgMlvEIYS1NT0o5IAPoON35Oxpc=;
-        b=W6Jueh/OfAqq6jSLKJwOzreDpFyQmZGrfRfxNUxyEAN3eHiKWqQweQr1mcB0GVy3uP
-         nh6ZDjhj0DHvUi2lU8iT9QOtgGHwpyodMtNwvDoyC8EHYqULMBgIMvWeBRXPB9HGYdFi
-         2Uqhf1KexSFK8jG9v//hF/7ADDoyX2O7Ul5q4+yoMXS5mlOTVT/aoJZ6B7x4F9U4N940
-         EfxNaAj2Qn2F4m1j4uLM7wIy4J+nHuFpzOu0/bAL/2lSCJHAl+5ep6BXqJ3pw5Xa/syw
-         DlUujpAxg0G96xbKt/LgmLUnRQr4qTXMQac1xwUFD0ff978SVplfR5IWDQUkHLOkadck
-         zFJQ==
-X-Gm-Message-State: AOJu0YyNfjgFWuvAgvrBRJ48TtoXZgwBFU8LNDPrOx6pO2BGbZcSkVBZ
-        6yjfpFZedAUbEV+umtOzskZWAUdBftQ39lrVq/Q=
-X-Google-Smtp-Source: AGHT+IFW3Tnvq+titUDJOIoT8z7qbYZWW3LCEn3XipfERJO5Ybc4sUWphJslLk5OFk1zLoOka3N2vA==
-X-Received: by 2002:a05:6512:3c96:b0:500:a092:d085 with SMTP id h22-20020a0565123c9600b00500a092d085mr7773135lfv.68.1693106887008;
+        bh=BGQGpgfeYNye1dt0r4z4EthF4Df+KGXsl1wiSoevU0U=;
+        b=XwB2iq7FlhIWThw2mwTz8uN351VgLzDneMN5fO0QCvU3B0wVGYhDdAmCJcEnI6iCP5
+         5TZOwg0nHiYqLJBnS4HdLASybYD0aIPV5r2gXacx5OWx2CkHO2FN7dmtkXMkDfOj419I
+         eYLKtS7+vpYb51YhMSK/cYIUYU3+vwPWNzWzjpmAqKDdUD7ESPj7IPC9qulGRSghsOnW
+         4C+FQabmAZJxdABZQr7M/xCbfGGZ1eWk1+RiIf9LbJTug840Rebt6137fShUJX9+2ehS
+         y/VHI20rjvelr1dMSW7LPDCIPfqO+dYZuGTgzrDD8mrIry+qVn5YF5aUV1gwLKDO7e4r
+         F8WQ==
+X-Gm-Message-State: AOJu0YwHwF3xQQ7Lel0rPoTJ+mLXStJrp1UNKbL8mS83sG7+HuLzv5wi
+        GCwd9omwPWsQW1/LRa8VIMnCDA==
+X-Google-Smtp-Source: AGHT+IFk+n/6PVtDoQJf+8ueLyFuYvOcTUbUYRtGdl2csVNXctHp302ZQqhPDY8Vq5EilsYbGtTdgg==
+X-Received: by 2002:a05:6512:33c1:b0:4ff:a23b:de27 with SMTP id d1-20020a05651233c100b004ffa23bde27mr2883484lfg.50.1693106887697;
         Sat, 26 Aug 2023 20:28:07 -0700 (PDT)
 Received: from umbar.unikie.fi ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id w7-20020ac254a7000000b004fb99da37e3sm955709lfk.220.2023.08.26.20.28.06
+        by smtp.gmail.com with ESMTPSA id w7-20020ac254a7000000b004fb99da37e3sm955709lfk.220.2023.08.26.20.28.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Aug 2023 20:28:06 -0700 (PDT)
+        Sat, 26 Aug 2023 20:28:07 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -66,9 +66,9 @@ Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
         Christian Marangi <ansuelsmth@gmail.com>,
         Stephan Gerhold <stephan@gerhold.net>
-Subject: [PATCH v4 3/6] cpufreq: qcom-nvmem: also accept operating-points-v2-krait-cpu
-Date:   Sun, 27 Aug 2023 06:28:00 +0300
-Message-Id: <20230827032803.934819-4-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v4 4/6] cpufreq: qcom-nvmem: drop pvs_ver for format a fuses
+Date:   Sun, 27 Aug 2023 06:28:01 +0300
+Message-Id: <20230827032803.934819-5-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230827032803.934819-1-dmitry.baryshkov@linaro.org>
 References: <20230827032803.934819-1-dmitry.baryshkov@linaro.org>
@@ -78,32 +78,38 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-the qcom-cpufreq-nvmem driver attempts to support both Qualcomm Kryo
-(newer 64-bit ARMv8 cores) and Krait (older 32-bit ARMv7 cores). It
-makes no sense to use 'operating-points-v2-kryo-cpu' compatibility node
-for the Krait cores. Add support for 'operating-points-v2-krait-cpu'
-compatibility string.
+The fuses used on msm8960 / apq8064 / ipq806x families of devices do not
+have the pvs version. Drop this argument from parsing function.
 
 Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/cpufreq/qcom-cpufreq-nvmem.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/cpufreq/qcom-cpufreq-nvmem.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/cpufreq/qcom-cpufreq-nvmem.c b/drivers/cpufreq/qcom-cpufreq-nvmem.c
-index f4c196ba4432..04329ef61150 100644
+index 04329ef61150..81c080b854fe 100644
 --- a/drivers/cpufreq/qcom-cpufreq-nvmem.c
 +++ b/drivers/cpufreq/qcom-cpufreq-nvmem.c
-@@ -238,7 +238,8 @@ static int qcom_cpufreq_probe(struct platform_device *pdev)
- 	if (!np)
- 		return -ENOENT;
+@@ -50,7 +50,7 @@ struct qcom_cpufreq_drv {
+ static struct platform_device *cpufreq_dt_pdev, *cpufreq_pdev;
  
--	ret = of_device_is_compatible(np, "operating-points-v2-kryo-cpu");
-+	ret = of_device_is_compatible(np, "operating-points-v2-kryo-cpu") ||
-+	      of_device_is_compatible(np, "operating-points-v2-krait-cpu");
- 	if (!ret) {
- 		of_node_put(np);
- 		return -ENOENT;
+ static void get_krait_bin_format_a(struct device *cpu_dev,
+-					  int *speed, int *pvs, int *pvs_ver,
++					  int *speed, int *pvs,
+ 					  u8 *buf)
+ {
+ 	u32 pte_efuse;
+@@ -181,8 +181,7 @@ static int qcom_cpufreq_krait_name_version(struct device *cpu_dev,
+ 
+ 	switch (len) {
+ 	case 4:
+-		get_krait_bin_format_a(cpu_dev, &speed, &pvs, &pvs_ver,
+-				       speedbin);
++		get_krait_bin_format_a(cpu_dev, &speed, &pvs, speedbin);
+ 		break;
+ 	case 8:
+ 		get_krait_bin_format_b(cpu_dev, &speed, &pvs, &pvs_ver,
 -- 
 2.39.2
 
