@@ -2,115 +2,130 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16465CA1013
-	for <linux-clk@archiver.kernel.org>; Sun, 27 Aug 2023 11:51:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24320C83F10
+	for <linux-clk@archiver.kernel.org>; Sun, 27 Aug 2023 17:05:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230009AbjH0LvU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 27 Aug 2023 07:51:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45844 "EHLO
+        id S229888AbjH0REz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 27 Aug 2023 13:04:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230127AbjH0LvC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 27 Aug 2023 07:51:02 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 248A819A
-        for <linux-clk@vger.kernel.org>; Sun, 27 Aug 2023 04:50:55 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id 2adb3069b0e04-5009d4a4897so3531972e87.0
-        for <linux-clk@vger.kernel.org>; Sun, 27 Aug 2023 04:50:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693137053; x=1693741853;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Rzx9Bm824S2wRWYFO7S2MdJvHvf/jzSVekqRFumNr7k=;
-        b=VKlq61LG7eiUVDlCu1oOs0TkRJTbsYvQqWvjCRgyDh4261NSRyrk6YloVEyca0sTaF
-         29YwGLcuj6pb1PlsAaw4qGzLFP67VXskypHQxXeV5Qoj1SFR7jCgT0H+msqeKhdMd9+M
-         cDLwdt2Tdlf2U2bSFAIuRR1nqc/1EjZAQakEXu/Oh1IE526FkyhpBnL4ABWEgIlE3tEy
-         juQNJrBC6Z3ON65rfiELxGYXrzkTeM4cmNs4EPGZF2ySaLVaHDq1d4DjwseGf6g5LVt7
-         vDfduzDIUESXJZ0rz6Ly9LZtPTVI26zgg16V9AGPwTOn3T+ufczczVmkdEFTqBNf0OlG
-         AkNA==
+        with ESMTP id S229853AbjH0RE1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 27 Aug 2023 13:04:27 -0400
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0590712D;
+        Sun, 27 Aug 2023 10:04:25 -0700 (PDT)
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2bcb0b973a5so37282541fa.3;
+        Sun, 27 Aug 2023 10:04:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693137053; x=1693741853;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Rzx9Bm824S2wRWYFO7S2MdJvHvf/jzSVekqRFumNr7k=;
-        b=dNj95e1Bd3O73oQC5/Z1Px2rr37hlCtDdxBxAdKDWh+TfQMQUotE/kL5gngzzt022P
-         XiliQYerdF9LTFN/ZkDizb2jXZ6Ls6W2uFt57zVFXwbMWAl1ve703Cird07Aw9ttP8i+
-         FbX/4rgwyxDIGQPQYYHxLO4ldGmsIkAT5K/yDoax8VRF4PHgM0Pt9e3KoifkfypUVqvJ
-         ZoiQdHFl+ekjxa1sxoWPTn/7+XaSs4PycWKXtsJJosMLG7e5f+ou0m3HliUe9nL2WJEf
-         M4VKHJUpBxOPiN91ALGognRVOwBoZQeu4XkVVqaHsTse5rMyN2UwJ8ytqWjkwd5pvZOy
-         ufug==
-X-Gm-Message-State: AOJu0YzNeu72m1AyzAuUGoq0erj39fG1UzVzRrHUiy12QcwjT+LAPEgW
-        zbdccoSvgrZqtufB2QhuT+t4bRp6hQ9+1oKmCt0=
-X-Google-Smtp-Source: AGHT+IGqlgoo4wUMXLVlAqHZbEMker1couiI+m+u0qpCzAbR2CI/aAjORLP/ZrpQrfkF8v7v6brvrA==
-X-Received: by 2002:a05:6512:4026:b0:4f9:570c:7b28 with SMTP id br38-20020a056512402600b004f9570c7b28mr20427762lfb.32.1693137053533;
-        Sun, 27 Aug 2023 04:50:53 -0700 (PDT)
-Received: from umbar.unikie.fi ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id a8-20020a19f808000000b004ff9f88b86esm1114770lff.308.2023.08.27.04.50.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Aug 2023 04:50:53 -0700 (PDT)
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     Rob Herring <robh+dt@kernel.org>,
+        d=1e100.net; s=20221208; t=1693155863; x=1693760663;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9ERbGcMk6gfakm9DN1/j10oG7dRsa1/HJVwOkOQiUYg=;
+        b=QB82P1/Zoei8Wskv8ZM5fkHfMCha7VG0U/0BQuxdE2f4ZU2B9iX5BaWjqV2hRhjaM1
+         VclHZdpG/2ZEkFaM2dgBudZ0Q+U82Aw6FOzq5HJnOxQXtukJ/gxGiGUzAcDX6ip40XrQ
+         XckT14k0RWChipnAa0JW55RHk50fzqco30TuRFsN8+FEazdk/0kN/qDcBHnUMl3O+ke8
+         GVIYwwWSmeaefQRYixLYsd4hzTY4BV6OACA3xwRyJJPTdsAktiJYnDWMOiWCq798WXG2
+         RJ33CKslbhnggSYVNsYXxsj3BpaCtmZRyNcXfddXeiVAHJXQ7NPJgRW7BxHOa7+YgvKz
+         Xu6Q==
+X-Gm-Message-State: AOJu0Yy5bPw5dm2YIHq5P44geJtehAkLAX5c9lBm3O/vKyfD20hoaaQw
+        Vq69AP/F35DC7D6Qt/9s56N6wMENeV5TlRfu
+X-Google-Smtp-Source: AGHT+IEF7d/5kTVF5MtR4cRbcAp149+5664NC2TYLcGNDPGf3jUEZ1dBbrgI5e/SqbeFgnAyHK3sug==
+X-Received: by 2002:a2e:9bd8:0:b0:2b1:c1ae:73e3 with SMTP id w24-20020a2e9bd8000000b002b1c1ae73e3mr17253046ljj.15.1693155862987;
+        Sun, 27 Aug 2023 10:04:22 -0700 (PDT)
+Received: from [192.168.86.246] (cpc87451-finc19-2-0-cust61.4-2.cable.virginm.net. [82.11.51.62])
+        by smtp.gmail.com with ESMTPSA id a1-20020a17090640c100b0099bcf9c2ec6sm3589439ejk.75.2023.08.27.10.04.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 27 Aug 2023 10:04:22 -0700 (PDT)
+Message-ID: <70b3ba82-0920-4613-9480-919a3df6833c@linux.com>
+Date:   Sun, 27 Aug 2023 18:04:21 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V10 0/4] Add S4 SoC PLLs and Peripheral clock
+To:     Yu Tu <yu.tu@amlogic.com>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Ilia Lin <ilia.lin@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Christian Marangi <ansuelsmth@gmail.com>,
-        Stephan Gerhold <stephan@gerhold.net>
-Subject: [PATCH v4 23/23] ARM: dts: qcom: ipq8064: drop 'regulator' property from SAW2 devices
-Date:   Sun, 27 Aug 2023 14:50:33 +0300
-Message-Id: <20230827115033.935089-24-dmitry.baryshkov@linaro.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230827115033.935089-1-dmitry.baryshkov@linaro.org>
-References: <20230827115033.935089-1-dmitry.baryshkov@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     kelvin.zhang@amlogic.com, qi.duan@amlogic.com
+References: <20230822082750.27633-1-yu.tu@amlogic.com>
+Content-Language: en-US
+From:   Lucas Tanure <tanure@linux.com>
+In-Reply-To: <20230822082750.27633-1-yu.tu@amlogic.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The SAW2 device should describe the regulator constraints rather than
-just declaring that it has the regulator.
+On 22-08-2023 09:27, Yu Tu wrote:
+> 1. Add S4 SoC PLLs and Peripheral clock controller dt-bindings.
+> 2. Add PLLs and Peripheral clock controller driver for S4 SOC.
+> 
+> 
+> Yu Tu (4):
+>    dt-bindings: clock: document Amlogic S4 SoC PLL clock controller
+>    dt-bindings: clock: document Amlogic S4 SoC peripherals clock
+>      controller
+>    clk: meson: S4: add support for Amlogic S4 SoC PLL clock driver
+>    clk: meson: S4: add support for Amlogic S4 SoC peripheral clock
+>      controller
+> 
+> V9 -> V10:
+> 1. Change the relevant S4 CLK patch based on Neil's recently modified
+> patch.
+> 2. Change patch 0003/0004 clocks comment, format and clock flags suggested
+> by Jerome.
+> 
+> V8 -> V9: Add patch 0001/0002 dt-bindings tag. Suggested by Krzysztof.
+> V7 -> V8:
+> 1. Change patch 0001/0002 dt-bindings title description, remove "meson".
+> Suggested by Dmitry, Neil.
+> 2. Change patch 0003/0004 clocks comment, format and clock flags suggested by
+> Dmitry, Neil, Jerome.
+> 
+> V6 -> V7: Change send patch series as well change format and clock flags
+> suggested by Jerome. Change dt-bindings suggested by Krzysztof.
+> V5 -> V6: Change send patch series, as well change format and clock flags.
+> V4 -> V5: change format and clock flags and adjust the patch series
+> as suggested by Jerome.
+> V3 -> V4: change format and clock flags.
+> V2 -> V3: Use two clock controller.
+> V1 -> V2: Change format as discussed in the email.
+> 
+> Link:https://lore.kernel.org/linux-amlogic/20230517070215.28463-1-yu.tu@amlogic.com/
+> 
+>   .../clock/amlogic,s4-peripherals-clkc.yaml    |   96 +
+>   .../bindings/clock/amlogic,s4-pll-clkc.yaml   |   49 +
+>   drivers/clk/meson/Kconfig                     |   23 +
+>   drivers/clk/meson/Makefile                    |    2 +
+>   drivers/clk/meson/s4-peripherals.c            | 3787 +++++++++++++++++
+>   drivers/clk/meson/s4-peripherals.h            |   57 +
+>   drivers/clk/meson/s4-pll.c                    |  867 ++++
+>   drivers/clk/meson/s4-pll.h                    |   38 +
+>   .../clock/amlogic,s4-peripherals-clkc.h       |  236 +
+>   .../dt-bindings/clock/amlogic,s4-pll-clkc.h   |   43 +
+>   10 files changed, 5198 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/clock/amlogic,s4-peripherals-clkc.yaml
+>   create mode 100644 Documentation/devicetree/bindings/clock/amlogic,s4-pll-clkc.yaml
+>   create mode 100644 drivers/clk/meson/s4-peripherals.c
+>   create mode 100644 drivers/clk/meson/s4-peripherals.h
+>   create mode 100644 drivers/clk/meson/s4-pll.c
+>   create mode 100644 drivers/clk/meson/s4-pll.h
+>   create mode 100644 include/dt-bindings/clock/amlogic,s4-peripherals-clkc.h
+>   create mode 100644 include/dt-bindings/clock/amlogic,s4-pll-clkc.h
+> 
+> 
+> base-commit: bd0f6c57c2b324b6f92ccfe13a8005ff829287b8
+How similar is T7 and S4 regarding the clocks?
+Can S4 clock driver be used by T7 without modifications?
 
-Drop the 'regulator' property. If/when CPU voltage scaling is
-implemented for this platform, proper regulator nodes show be added
-instead.
-
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- arch/arm/boot/dts/qcom/qcom-ipq8064.dtsi | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/arch/arm/boot/dts/qcom/qcom-ipq8064.dtsi b/arch/arm/boot/dts/qcom/qcom-ipq8064.dtsi
-index c3677440b786..191d1cb27cb7 100644
---- a/arch/arm/boot/dts/qcom/qcom-ipq8064.dtsi
-+++ b/arch/arm/boot/dts/qcom/qcom-ipq8064.dtsi
-@@ -589,7 +589,6 @@ acc0: clock-controller@2088000 {
- 		saw0: regulator@2089000 {
- 			compatible = "qcom,saw2";
- 			reg = <0x02089000 0x1000>, <0x02009000 0x1000>;
--			regulator;
- 		};
- 
- 		acc1: clock-controller@2098000 {
-@@ -604,7 +603,6 @@ acc1: clock-controller@2098000 {
- 		saw1: regulator@2099000 {
- 			compatible = "qcom,saw2";
- 			reg = <0x02099000 0x1000>, <0x02009000 0x1000>;
--			regulator;
- 		};
- 
- 		nss_common: syscon@3000000 {
--- 
-2.39.2
-
+Thanks
+Lucas
