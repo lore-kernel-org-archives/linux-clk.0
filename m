@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DB1AC83F2E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BD74C83F30
 	for <linux-clk@archiver.kernel.org>; Sun, 27 Aug 2023 11:51:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229887AbjH0LvO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 27 Aug 2023 07:51:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52472 "EHLO
+        id S229925AbjH0LvQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 27 Aug 2023 07:51:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229970AbjH0Lut (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 27 Aug 2023 07:50:49 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AFD61A6
-        for <linux-clk@vger.kernel.org>; Sun, 27 Aug 2023 04:50:41 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id 2adb3069b0e04-500aed06ffcso1983356e87.0
-        for <linux-clk@vger.kernel.org>; Sun, 27 Aug 2023 04:50:41 -0700 (PDT)
+        with ESMTP id S230016AbjH0Luy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 27 Aug 2023 07:50:54 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 171C61B8
+        for <linux-clk@vger.kernel.org>; Sun, 27 Aug 2023 04:50:45 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id 2adb3069b0e04-4ffa248263cso3702963e87.2
+        for <linux-clk@vger.kernel.org>; Sun, 27 Aug 2023 04:50:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693137040; x=1693741840;
+        d=linaro.org; s=google; t=1693137043; x=1693741843;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YCEB400wiwuGaLoRWnnc0v8VJxlf3ONSbs27qRslkuQ=;
-        b=VuzkZPKNr+JSPG7TFEhP8V87XbkOFshNSeXfn0KGHL1Mwk0zsOILta6i/zNfJpG/R0
-         4jer7KYMIBrx2LkLGbYww++lPrtN6+vB7OS85dzOBfgz+inVE5uWMMGwkX95cmjf9ueo
-         M9JEBIhn0f4j1bQyfpYDp6Wci+MsyxWEeiaLZ/QBZjhdMFwqMqIR93rbXNaq3YAyvi05
-         V++hA9ryeFl3b7kRLIZ5eODnG/iFn+3WASML8lTDc6JX5jkmWaZjaLvL34xgVbM82QmU
-         bRDnHF+/JoCXNvT73xYcqkL7Cd6N72hD5uI+bzGmrdt67zAvwflSGGPadsZMlzUEUuui
-         ft1g==
+        bh=8KDBrUFxvk4wsTAEzsTm5KMoDepnn6zKvijV8dmMWVs=;
+        b=eJa3SO1MWfrCt2LNj05Qv9mIV6/g1KqTjVMc9StVLX+7K2UsfVYbvYYPdhjSEC9SEP
+         alDsRDcjK5GAyOf82KiDDT3+eihTCIEQ12wuRf9hxmYtt8ZWrmUyow2BOfyabtieURyS
+         +RBcJF+e+dSWGy6Nyk5/p/rAxvADSvJy1d5G33FFU2PMdNEEq5lccF64BdKWnrd/xEdf
+         Fqz4Wp3g/e2syVC8KfOOLe4tis/g9kYohGasBlah+0RS6aoSSgmIOgbRzpJUc1PcR0ZR
+         8wyawiHd17tJDZZsB5iH30HuhiE/F177dmCfRv3wsa6uln3wTqRcfH0+zYx0CwjOvWT4
+         hCpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693137040; x=1693741840;
+        d=1e100.net; s=20221208; t=1693137043; x=1693741843;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YCEB400wiwuGaLoRWnnc0v8VJxlf3ONSbs27qRslkuQ=;
-        b=atBLn+txPtbV8oLqVYw7eG/9zDir43tHotvkQ1qc8jOXXefobSoeL+R7A4FrCJL/HM
-         LTe7R1UL1Cz81+UPTIVNSDMGDq9iHdX1+JXrkszh6CVErBB/qxa/NsT30q1wue/GDIl4
-         DvPBE/KogZLQ9KqvrODqoxMRQNXHjpZmdGr30+Lrd2s8tzOFOzv9Dw4zq8i0SChDnLbm
-         FRxJY5XfZ1DRiZSLcC+wNMqTibHBkKdgwDEeSSB0aQgCbpHV+1U32XhDWQWkoe2EwKFi
-         EngqVK/GDIZLo04txRWfA38lpJcrTTM3LmsJg7mqh10p4DUL0wc9pulj3jFm5FuMHORK
-         0vLg==
-X-Gm-Message-State: AOJu0YxUckcRPHC8ksFW2hr1CDwgXHkfivUU2Co3iJ74h/bfyMCSLfso
-        2zvOaeK2DRJBsjJLmLctJPqQzA==
-X-Google-Smtp-Source: AGHT+IE/cqxIjVe7ZiLWlUP/By2i9l0VUFtG/BHgUa9AyuDoKEYYw+S8OWc+EQ/W9+EZGrMu/KF5KQ==
-X-Received: by 2002:a05:6512:3b0b:b0:500:a08e:2fd3 with SMTP id f11-20020a0565123b0b00b00500a08e2fd3mr7785043lfv.21.1693137040249;
-        Sun, 27 Aug 2023 04:50:40 -0700 (PDT)
+        bh=8KDBrUFxvk4wsTAEzsTm5KMoDepnn6zKvijV8dmMWVs=;
+        b=WkbqrBQ4GaJe7qsbp6hcAfRBgElTBKxDYd5MW+J5dJyqPDSLcHdxHuwoEnKLvQqTVq
+         +1yYuxdhtKNZkT2bVjLw7G0GOjqogutsmsIU8/s+2kRoRDuPoIbBWMP2jP1DoG1T4JYg
+         G0QPycwNLv6lLaBkuEhtBvJffRE/XEu+ijvWU3kb9ukiHWTGsnQMlRydm/BIlzTChlQV
+         9k/Xoau6mmqRWC1g/TulRSVwWPvMf0Ge/IEXUEyXPe0h1jHU1vglBl752U5kqpK+c/kI
+         C69zlKE28dEKK4BHxvvsP+xlqM37aHLsi8a6Tsma5AzywIiG1ZfVoQiGGLOUyWnNFVqr
+         cprw==
+X-Gm-Message-State: AOJu0YynxIDQXxg6+oLJxrL4KihNCw555Z19p4T376ajA3BtsNbFPpg0
+        rDzGwndJDl+FJamnsOWHk9Hobw==
+X-Google-Smtp-Source: AGHT+IGxUZBkVrWP6BMePbUZBlujSEAikUvWhsWK+Cf0yxICxoD31Wz1dbr7xzSwVZ0JIHiwR31lcw==
+X-Received: by 2002:a05:6512:3150:b0:500:9734:545a with SMTP id s16-20020a056512315000b005009734545amr7821055lfi.5.1693137043478;
+        Sun, 27 Aug 2023 04:50:43 -0700 (PDT)
 Received: from umbar.unikie.fi ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id a8-20020a19f808000000b004ff9f88b86esm1114770lff.308.2023.08.27.04.50.39
+        by smtp.gmail.com with ESMTPSA id a8-20020a19f808000000b004ff9f88b86esm1114770lff.308.2023.08.27.04.50.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Aug 2023 04:50:39 -0700 (PDT)
+        Sun, 27 Aug 2023 04:50:43 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -66,9 +66,9 @@ Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
         Christian Marangi <ansuelsmth@gmail.com>,
         Stephan Gerhold <stephan@gerhold.net>
-Subject: [PATCH v4 06/23] clk: qcom: krait-cc: rewrite driver to use clk_hw instead of clk
-Date:   Sun, 27 Aug 2023 14:50:16 +0300
-Message-Id: <20230827115033.935089-7-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v4 10/23] ARM: dts: qcom: apq8064-cm-qs600: constraint cpufreq regulators
+Date:   Sun, 27 Aug 2023 14:50:20 +0300
+Message-Id: <20230827115033.935089-11-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230827115033.935089-1-dmitry.baryshkov@linaro.org>
 References: <20230827115033.935089-1-dmitry.baryshkov@linaro.org>
@@ -78,221 +78,54 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The krait-cc driver still uses struct clk internally. Rewrite it to
-allocate and register struct clk_hw instead.
+Add additional constraints to the CPUfreq-related regulators, it is
+better be safe than sorry there.
 
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/clk/qcom/krait-cc.c | 141 ++++++++++++++++--------------------
- 1 file changed, 63 insertions(+), 78 deletions(-)
+ .../boot/dts/qcom/qcom-apq8064-cm-qs600.dts    | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/qcom/krait-cc.c b/drivers/clk/qcom/krait-cc.c
-index 410ae8390f1c..a37abbd31f50 100644
---- a/drivers/clk/qcom/krait-cc.c
-+++ b/drivers/clk/qcom/krait-cc.c
-@@ -13,17 +13,9 @@
- #include <linux/clk-provider.h>
- #include <linux/slab.h>
+diff --git a/arch/arm/boot/dts/qcom/qcom-apq8064-cm-qs600.dts b/arch/arm/boot/dts/qcom/qcom-apq8064-cm-qs600.dts
+index 671d58cc2741..ee071aed9b8d 100644
+--- a/arch/arm/boot/dts/qcom/qcom-apq8064-cm-qs600.dts
++++ b/arch/arm/boot/dts/qcom/qcom-apq8064-cm-qs600.dts
+@@ -116,8 +116,8 @@ pm8921_s1: s1 {
+ 		};
  
--#include "clk-krait.h"
--
--enum {
--	cpu0_mux = 0,
--	cpu1_mux,
--	cpu2_mux,
--	cpu3_mux,
--	l2_mux,
-+#include <dt-bindings/clock/qcom,krait-cc.h>
+ 		pm8921_s3: s3 {
+-			regulator-min-microvolt = <1000000>;
+-			regulator-max-microvolt = <1400000>;
++			regulator-min-microvolt = <950000>;
++			regulator-max-microvolt = <1150000>;
+ 			qcom,switch-mode-frequency = <4800000>;
+ 		};
  
--	clks_max,
--};
-+#include "clk-krait.h"
+@@ -157,9 +157,23 @@ pm8921_l23: l23 {
+ 			bias-pull-down;
+ 		};
  
- static unsigned int sec_mux_map[] = {
- 	2,
-@@ -235,7 +227,7 @@ krait_add_pri_mux(struct device *dev, struct clk_hw *hfpll_div, struct clk_hw *s
- 		.parent_data = p_data,
- 		.num_parents = ARRAY_SIZE(p_data),
- 		.ops = &krait_mux_clk_ops,
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
++		pm8921_l24: l24 {
++			regulator-min-microvolt = <1050000>;
++			regulator-max-microvolt = <1150000>;
++			bias-pull-down;
++		};
++
+ 		pm8921_lvs6: lvs6 {
+ 			bias-pull-down;
+ 		};
++
++		/* HFPLL regulator */
++		pm8921_lvs7: lvs7 {
++			regulator-min-microvolt = <1800000>;
++			regulator-max-microvolt = <1800000>;
++			regulator-boot-on;
++			regulator-always-on;
++		};
  	};
- 	struct clk_hw *clk;
- 	char *hfpll_name;
-@@ -324,19 +316,6 @@ static struct clk_hw *krait_add_clks(struct device *dev, int id, bool unique_aux
- 	return pri_mux;
- }
- 
--static struct clk *krait_of_get(struct of_phandle_args *clkspec, void *data)
--{
--	unsigned int idx = clkspec->args[0];
--	struct clk **clks = data;
--
--	if (idx >= clks_max) {
--		pr_err("%s: invalid clock index %d\n", __func__, idx);
--		return ERR_PTR(-EINVAL);
--	}
--
--	return clks[idx] ? : ERR_PTR(-ENODEV);
--}
--
- static const struct of_device_id krait_cc_match_table[] = {
- 	{ .compatible = "qcom,krait-cc-v1", (void *)1UL },
- 	{ .compatible = "qcom,krait-cc-v2" },
-@@ -344,60 +323,84 @@ static const struct of_device_id krait_cc_match_table[] = {
  };
- MODULE_DEVICE_TABLE(of, krait_cc_match_table);
  
-+static int krait_clk_reinit(struct clk_hw *hw, int cpu)
-+{
-+	struct clk *clk;
-+	unsigned long cur_rate, aux_rate;
-+	char name[5]; /* CPUn */
-+
-+	if (cpu == -1)
-+		strcpy(name, "L2");
-+	else
-+		snprintf(name, sizeof(name), "CPU%d", cpu);
-+
-+	clk = clk_hw_get_clk(hw, clk_hw_get_name(hw));
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	aux_rate = 384000000;
-+
-+	cur_rate = clk_get_rate(clk);
-+	if (cur_rate < aux_rate) {
-+		pr_info("%s @ Undefined rate %lu. Forcing new rate.\n",
-+			name, cur_rate / 1000);
-+		cur_rate = aux_rate;
-+	}
-+
-+	clk_set_rate(clk, aux_rate);
-+	clk_set_rate(clk, 2);
-+	clk_set_rate(clk, cur_rate);
-+	pr_info("%s @ %lu KHz\n", name, clk_get_rate(clk) / 1000);
-+
-+	clk_put(clk);
-+
-+	return 0;
-+}
-+
-+/* Krait configurations have at most 4 CPUs and one L2 */
-+#define KRAIT_NUM_CLOCKS 5
-+
- static int krait_cc_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	const struct of_device_id *id;
--	unsigned long cur_rate, aux_rate;
--	int cpu;
--	struct clk_hw *mux, *l2_pri_mux;
--	struct clk *clk, **clks;
-+	int cpu, ret;
-+	struct clk_hw *clk;
-+	struct clk_hw_onecell_data *clks;
- 
- 	id = of_match_device(krait_cc_match_table, dev);
- 	if (!id)
- 		return -ENODEV;
- 
- 	/* Rate is 1 because 0 causes problems for __clk_mux_determine_rate */
--	clk = clk_register_fixed_rate(dev, "qsb", NULL, 0, 1);
-+	clk = clk_hw_register_fixed_rate(dev, "qsb", NULL, 0, 1);
- 	if (IS_ERR(clk))
- 		return PTR_ERR(clk);
- 
- 	if (!id->data) {
--		clk = clk_register_fixed_factor(dev, "acpu_aux",
--						"gpll0_vote", 0, 1, 2);
-+		clk = clk_hw_register_fixed_factor(dev, "acpu_aux", "gpll0_vote", 0, 1, 2);
- 		if (IS_ERR(clk))
- 			return PTR_ERR(clk);
- 	}
- 
--	/* Krait configurations have at most 4 CPUs and one L2 */
--	clks = devm_kcalloc(dev, clks_max, sizeof(*clks), GFP_KERNEL);
-+	clks = devm_kzalloc(dev, struct_size(clks, hws, KRAIT_NUM_CLOCKS), GFP_KERNEL);
- 	if (!clks)
- 		return -ENOMEM;
- 
-+	clks->num = KRAIT_NUM_CLOCKS;
-+	BUILD_BUG_ON(KRAIT_L2 >= KRAIT_NUM_CLOCKS);
-+
- 	for_each_possible_cpu(cpu) {
--		mux = krait_add_clks(dev, cpu, id->data);
--		if (IS_ERR(mux))
--			return PTR_ERR(mux);
--		clks[cpu] = mux->clk;
-+		clk = krait_add_clks(dev, cpu, id->data);
-+		if (IS_ERR(clk))
-+			return PTR_ERR(clk);
-+		clks->hws[cpu] = clk;
- 	}
- 
--	l2_pri_mux = krait_add_clks(dev, -1, id->data);
--	if (IS_ERR(l2_pri_mux))
--		return PTR_ERR(l2_pri_mux);
--	clks[l2_mux] = l2_pri_mux->clk;
--
--	/*
--	 * We don't want the CPU or L2 clocks to be turned off at late init
--	 * if CPUFREQ or HOTPLUG configs are disabled. So, bump up the
--	 * refcount of these clocks. Any cpufreq/hotplug manager can assume
--	 * that the clocks have already been prepared and enabled by the time
--	 * they take over.
--	 */
--	for_each_online_cpu(cpu) {
--		clk_prepare_enable(clks[l2_mux]);
--		WARN(clk_prepare_enable(clks[cpu]),
--		     "Unable to turn on CPU%d clock", cpu);
--	}
-+	clk = krait_add_clks(dev, -1, id->data);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+	clks->hws[KRAIT_L2] = clk;
- 
- 	/*
- 	 * Force reinit of HFPLLs and muxes to overwrite any potential
-@@ -410,31 +413,13 @@ static int krait_cc_probe(struct platform_device *pdev)
- 	 * two different rates to force a HFPLL reinit under all
- 	 * circumstances.
- 	 */
--	cur_rate = clk_get_rate(clks[l2_mux]);
--	aux_rate = 384000000;
--	if (cur_rate < aux_rate) {
--		pr_info("L2 @ Undefined rate. Forcing new rate.\n");
--		cur_rate = aux_rate;
--	}
--	clk_set_rate(clks[l2_mux], aux_rate);
--	clk_set_rate(clks[l2_mux], 2);
--	clk_set_rate(clks[l2_mux], cur_rate);
--	pr_info("L2 @ %lu KHz\n", clk_get_rate(clks[l2_mux]) / 1000);
--	for_each_possible_cpu(cpu) {
--		clk = clks[cpu];
--		cur_rate = clk_get_rate(clk);
--		if (cur_rate < aux_rate) {
--			pr_info("CPU%d @ Undefined rate. Forcing new rate.\n", cpu);
--			cur_rate = aux_rate;
--		}
-+	krait_clk_reinit(clks->hws[KRAIT_L2], -1);
-+	for_each_possible_cpu(cpu)
-+		krait_clk_reinit(clks->hws[cpu], cpu);
- 
--		clk_set_rate(clk, aux_rate);
--		clk_set_rate(clk, 2);
--		clk_set_rate(clk, cur_rate);
--		pr_info("CPU%d @ %lu KHz\n", cpu, clk_get_rate(clk) / 1000);
--	}
--
--	of_clk_add_provider(dev->of_node, krait_of_get, clks);
-+	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, clks);
-+	if (ret)
-+		return ret;
- 
- 	return 0;
- }
 -- 
 2.39.2
 
