@@ -2,59 +2,59 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45833C83F1B
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Aug 2023 10:58:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56121C83F17
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Aug 2023 11:05:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232289AbjH1K5J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Aug 2023 06:57:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58148 "EHLO
+        id S232404AbjH1LE4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Aug 2023 07:04:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232438AbjH1K4w (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Aug 2023 06:56:52 -0400
-Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37608199
-        for <linux-clk@vger.kernel.org>; Mon, 28 Aug 2023 03:56:45 -0700 (PDT)
-Received: by mail-lj1-x230.google.com with SMTP id 38308e7fff4ca-2bcb54226e7so36082451fa.1
-        for <linux-clk@vger.kernel.org>; Mon, 28 Aug 2023 03:56:45 -0700 (PDT)
+        with ESMTP id S232410AbjH1LEg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Aug 2023 07:04:36 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB795C3
+        for <linux-clk@vger.kernel.org>; Mon, 28 Aug 2023 04:04:32 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-500b6456c7eso1696541e87.2
+        for <linux-clk@vger.kernel.org>; Mon, 28 Aug 2023 04:04:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693220203; x=1693825003;
+        d=linaro.org; s=google; t=1693220671; x=1693825471;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=srKA/ALXPSnQ62rsT+MiaUT6YrnaLtt+5wgGzzrgvds=;
-        b=g0A7NBMC9NL0QQM0wY+Dsz4aYlU8NeO8roX0MzalgcIVUkmBZygRh/kE0lgvSr/W62
-         OeNgHLiFg7ExsaxgXwMZsKeQrnutK2QkksymgT70hS6ZGqwPxx8uf/NEBYWTnWOUak+H
-         13rh3m7URj+eiC3/NPOtj348NgbckkxpGSEMlisGH/NOKWmlKynGAtoY4V1Pojh3FvAT
-         pGk0iRqYH03INQmPriOY5K9ycdy/RLFPtsUPm4tp/hswpFoxUNFiaOeo+G3TXTgmp2DJ
-         10xwPJH6qQ1T1iFf3eFRX6+9DHciBw41BZcRaBr40OZmWdA+CAWZ00zqJdoDnqblEaPJ
-         5uUg==
+        bh=lmMR63i69wE8/b9RkFpou+l6zEGQJ7lmmfXhEmNqTjY=;
+        b=i9CNeWehusZdR30wSYSORX/eK/HNKfb/HYIPLSK37pTt2uWHh87K6PKD/R0FfJoQkV
+         5Un6NGPJKEOKRc2UCLvKYRPGfNe+74QzlaV9lEmeaUKU5EMhRsIkZ4ok0bXqbrPrK9zn
+         lbEmrULA4Gjq3Ri3a1V8N2Nmls1VBsV9T0zES0WUrmV6hACv/SuAZmvfQQd2r5MbkR7j
+         6r4+8361TNhDpETZKcsEYk5ndIGXaCHLrq33V+vYUoayGRzLRM+bd/F+89LLoODHl4DF
+         VY1iQl5+omyk0VQ9ALKOxg6B2v73qOzTvsSKk9PWuOb2bvUzZjYlc1UXOh0B1PBOzWOm
+         OpSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693220203; x=1693825003;
+        d=1e100.net; s=20221208; t=1693220671; x=1693825471;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=srKA/ALXPSnQ62rsT+MiaUT6YrnaLtt+5wgGzzrgvds=;
-        b=Q7AeBrEKPumOrN2jv35wPQzf1eNkTejh0/DYKKbP+LbxxGRxSlM/YCYcYHuYatkv62
-         8Ozr3s/G6oaTkDbG8F1tSuvRTkh+qcFmCVucZxC8mqlKsQTem8ydnWoIdDcXrXCxizqK
-         ikUdb+up8VD7qOwMKn/02tqKyotyWFq320OSo2b5iWE9+Ki775wgml2qZ3Rd06CIC08z
-         wZo1FhdPOgdfQNWY7r1pAJFizK53a/edhT2xqsQNkBs3fscb5C4iFhjjp4ozmaup6q5Z
-         0aBaGhE/ZGAQ2gwxHJOoR1YKt/YigRiOFGuQA9W+JOVdTnLx4dmtq7TfG5ErVnESNdce
-         D1AQ==
-X-Gm-Message-State: AOJu0YwNL9S86XiDn2ylKiZGCu/q08F2qLytcHtRyQcNhaSNqqwvLXBl
-        oRF0mpBVeT+MR6MyMgjfau9MAQ==
-X-Google-Smtp-Source: AGHT+IHTtnlPqthCzOC6wPyXJohzr03QjLSt+lEdrakLa7RNz/guZwXTE6EYvN9OfxQlKYOMJiMcCQ==
-X-Received: by 2002:a2e:b74b:0:b0:2bc:c2d8:e050 with SMTP id k11-20020a2eb74b000000b002bcc2d8e050mr8231520ljo.24.1693220203517;
-        Mon, 28 Aug 2023 03:56:43 -0700 (PDT)
+        bh=lmMR63i69wE8/b9RkFpou+l6zEGQJ7lmmfXhEmNqTjY=;
+        b=eAI4b3YasmDZls9Lgq+wiKxF45eFWjtJa5/ypQCswmqHBN3tZjnc6lvv/Wir24lGD8
+         FwO4fBc8eTyWMfYxEUYxV6LmIVcDijGFfXn1Terc/cNCJd5ArYJRj8UFP6ISfDPC3aT7
+         FL/dMr7uK272GPOQetdk+mBb8XDNWTJ+kYYrABV2xgSMNdz74VTg2n6CEZKk0e+nb1T3
+         BVaeVJQbbzp7bTSCNh4bKi2tDLgH88GPmLWcCjylbUtx+t28qxsBWaIF91qfeUZ+pXn+
+         hlsSPI3AgBdyo2gAGiyYigFoeov2gQMkHP8LMq9l8mZqqoNCnSgKMM77dRGYpEsQhLVy
+         c1jg==
+X-Gm-Message-State: AOJu0YyyBbcGvQMqwIscJFVI2p4oBbIAIizUf2RbmMCRYSjpsVYjrCcH
+        pMhoGYLSzhfmyKxgafMus2CMLQ==
+X-Google-Smtp-Source: AGHT+IEW8at6c7DdFsHCNACWwN5LiMnAyoT6lrVD62kzT/hOk/P6D9CD0W37S2TbtsNAF+33pUiE+Q==
+X-Received: by 2002:a05:6512:313b:b0:500:81fa:46f1 with SMTP id p27-20020a056512313b00b0050081fa46f1mr13487265lfd.67.1693220670922;
+        Mon, 28 Aug 2023 04:04:30 -0700 (PDT)
 Received: from [192.168.1.101] (abyl195.neoplus.adsl.tpnet.pl. [83.9.31.195])
-        by smtp.gmail.com with ESMTPSA id w16-20020a2e9990000000b002b6d7682050sm1698240lji.89.2023.08.28.03.56.42
+        by smtp.gmail.com with ESMTPSA id d17-20020ac244d1000000b0050096cc3ba1sm1531586lfm.255.2023.08.28.04.04.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Aug 2023 03:56:43 -0700 (PDT)
-Message-ID: <1c38d466-a878-44f3-bc9f-25d26c07ebb3@linaro.org>
-Date:   Mon, 28 Aug 2023 12:56:42 +0200
+        Mon, 28 Aug 2023 04:04:30 -0700 (PDT)
+Message-ID: <8a7af8ce-3ff4-4520-b4e2-dd39570ca796@linaro.org>
+Date:   Mon, 28 Aug 2023 13:04:28 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 17/23] ARM: dts: qcom: apq8064: add simple CPUFreq
- support
+Subject: Re: [PATCH v4 5/6] cpufreq: qcom-nvmem: provide separate
+ configuration data for apq8064
 Content-Language: en-US
 To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -72,8 +72,8 @@ Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
         Christian Marangi <ansuelsmth@gmail.com>,
         Stephan Gerhold <stephan@gerhold.net>
-References: <20230827115033.935089-1-dmitry.baryshkov@linaro.org>
- <20230827115033.935089-18-dmitry.baryshkov@linaro.org>
+References: <20230827032803.934819-1-dmitry.baryshkov@linaro.org>
+ <20230827032803.934819-6-dmitry.baryshkov@linaro.org>
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
@@ -110,20 +110,71 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <20230827115033.935089-18-dmitry.baryshkov@linaro.org>
+In-Reply-To: <20230827032803.934819-6-dmitry.baryshkov@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 27.08.2023 13:50, Dmitry Baryshkov wrote:
-> Declare CPU frequency-scaling properties. Each CPU has its own clock,
-> how all CPUs have the same OPP table. Voltage scaling is not (yet)
-> enabled with this patch. It will be enabled later.
+On 27.08.2023 05:28, Dmitry Baryshkov wrote:
+> APQ8064 can scale core voltage according to the frequency needs. Rather
+> than reusing the A/B format multiplexer, use a simple fuse parsing
+> function and configure required regulator.
 > 
 > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
-Acked-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>  drivers/cpufreq/qcom-cpufreq-nvmem.c | 49 ++++++++++++++++++++++++++--
+>  1 file changed, 47 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/qcom-cpufreq-nvmem.c b/drivers/cpufreq/qcom-cpufreq-nvmem.c
+> index 81c080b854fe..35e2610c9526 100644
+> --- a/drivers/cpufreq/qcom-cpufreq-nvmem.c
+> +++ b/drivers/cpufreq/qcom-cpufreq-nvmem.c
+> @@ -26,6 +26,7 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_domain.h>
+>  #include <linux/pm_opp.h>
+> +#include <linux/regulator/consumer.h>
+>  #include <linux/slab.h>
+>  #include <linux/soc/qcom/smem.h>
+>  
+> @@ -39,6 +40,7 @@ struct qcom_cpufreq_match_data {
+>  			   char **pvs_name,
+>  			   struct qcom_cpufreq_drv *drv);
+>  	const char **genpd_names;
+> +	const char * const *regulator_names;
+>  };
+>  
+>  struct qcom_cpufreq_drv {
+> @@ -203,6 +205,34 @@ static int qcom_cpufreq_krait_name_version(struct device *cpu_dev,
+>  	return ret;
+>  }
+>  
+> +static int qcom_cpufreq_apq8064_name_version(struct device *cpu_dev,
+> +					     struct nvmem_cell *speedbin_nvmem,
+> +					     char **pvs_name,
+> +					     struct qcom_cpufreq_drv *drv)
+> +{
+> +	int speed = 0, pvs = 0;
+> +	u8 *speedbin;
+> +	size_t len;
+> +	int ret = 0;
+Unused, just return 0
+
+> +
+> +	speedbin = nvmem_cell_read(speedbin_nvmem, &len);
+> +	if (IS_ERR(speedbin))
+> +		return PTR_ERR(speedbin);
+> +
+> +	if (len != 4)
+> +		return -EINVAL;
+> +
+> +	get_krait_bin_format_a(cpu_dev, &speed, &pvs, speedbin);
+> +
+> +	snprintf(*pvs_name, sizeof("speedXX-pvsXX"), "speed%d-pvs%d",
+> +		 speed, pvs);
+speed and pvs are both one hex digit long at best (see masking in
+get_krait_bin_format_a)
 
 Konrad
