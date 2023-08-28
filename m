@@ -2,114 +2,64 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 531F2C83F11
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Aug 2023 17:05:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 838BCC83F12
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Aug 2023 19:42:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229742AbjH1REv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Aug 2023 13:04:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58312 "EHLO
+        id S229906AbjH1TmW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Aug 2023 15:42:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232768AbjH1REd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Aug 2023 13:04:33 -0400
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80B39CC9
-        for <linux-clk@vger.kernel.org>; Mon, 28 Aug 2023 10:04:06 -0700 (PDT)
-Received: by mail-lj1-x232.google.com with SMTP id 38308e7fff4ca-2bbbda48904so52038911fa.2
-        for <linux-clk@vger.kernel.org>; Mon, 28 Aug 2023 10:04:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693242242; x=1693847042;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QSrl3cpJZO7aZE1Yxm4SqizpgYezcJgEGdHLm/P1iHs=;
-        b=lqjR0mwnxlPfB3pZZdRkYcRA08lVepuq2/IwI7osHmBf9u3A9XsUC7/xwycOdqGTar
-         khkXWOuhJwFJjxWWW4QkAZ5RN5wN03kONq56+tDV7MpAD0waPigqUG5MyCfYY14a8Oyy
-         Tel7vsTpWp0Gt/EAE33ldeTOCML3K5zo9QZHAxWw5uA30dT1LP7nCs0VEVsk09SISUnO
-         1cXGCJBTQTk2efnaGsO6jbCVnbLzzPssKcagk/fkEtB0XCe9Nc2SLJaNeo9EarZvBGsA
-         8zuGvdfFF0qPIKXgbC3OwUxnVWTwBHj32+NUE9mO/YgKhxDJpBcKpQ4/QuwKKYn0CiZc
-         Zg+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693242242; x=1693847042;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QSrl3cpJZO7aZE1Yxm4SqizpgYezcJgEGdHLm/P1iHs=;
-        b=YWTjGVkAci+tO8whr2Fes53KakWyAuvnBaYcqaTjFJx9Jgs8cdmd415hDOBI4PhdDv
-         LM7+4eaj5EdOl2bDqIcyJfYK5yuT/370wAMNks1R9YQYKfpBy7/cgDw3aSLtrEq+MCrh
-         i+FWWQhxG4mDcxsBPualsJjt409BX3AcESxBEYJ0bSAgflmrmB96LuKJlJxvu/Z9X3k4
-         Ss8c2bsfLSoPuWcIxWcJ1sr93PE4kwHEsSqXJzusjYPGM/Ulnod3tcf/s9+t/R9B8i4N
-         kz0J6N0HLyTGngqadXMvace+ZjREl2txgZ/ZjAWj64JfLjCMC7f0mICjxzbNLQafoFn/
-         1uig==
-X-Gm-Message-State: AOJu0YxwKaKxddNRG8XIQD/P25B/bnaJ85doo2oP43VSnTn8aLa1rjCa
-        GDB2b8MoT4Rm5/Psw43zJlapYw==
-X-Google-Smtp-Source: AGHT+IHIT+tfWoWiJtAo3hCcci7b4CvANX2Cx8WSzh19VQKIWj08H73waLFC5u9mbATceAcPTpS8WQ==
-X-Received: by 2002:a2e:9c51:0:b0:2bc:d8cb:59fe with SMTP id t17-20020a2e9c51000000b002bcd8cb59femr11545709ljj.8.1693242242437;
-        Mon, 28 Aug 2023 10:04:02 -0700 (PDT)
-Received: from [192.168.0.22] ([77.252.47.225])
-        by smtp.gmail.com with ESMTPSA id d12-20020a170906344c00b00982a92a849asm4860999ejb.91.2023.08.28.10.04.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Aug 2023 10:04:01 -0700 (PDT)
-Message-ID: <119f56c8-5f38-eb48-7157-6033932f0430@linaro.org>
-Date:   Mon, 28 Aug 2023 19:04:00 +0200
+        with ESMTP id S233521AbjH1Tl4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Aug 2023 15:41:56 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43488129
+        for <linux-clk@vger.kernel.org>; Mon, 28 Aug 2023 12:41:54 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D677F644A1
+        for <linux-clk@vger.kernel.org>; Mon, 28 Aug 2023 19:41:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97074C433C7;
+        Mon, 28 Aug 2023 19:41:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1693251713;
+        bh=FRkyoN28bA0TvlJ3RY9iFOdJIYYMOxmsjaIcU+xn6HA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Z6ykNQHj5v1smymmy8iT87a87m3qn0RUsD5d6MSzm0nvQocIRjlQjx5T/gkjcCnq4
+         ebQrqlBLCwhtPUeyi835/CATC7qcAPDZJV4CIeVAQoP6bA8aG23275zbf0c4qB4/kg
+         GFm01kwEWoZRq7iP+n1THZK/kDlw1PmVogBxepsSxKtSpio50As0QTGelcex8AbnaA
+         /xjeHsLgLk0thp8nOVnIAlZ6sWfORKVj57Bofp7+D45XiRPWzUcNHoLddqgfbOIoMQ
+         uB/TO/FSzvVh+FgYSOGioLZjOsc3BfqALSUxdLcUR9leFRBHsB+ejUFC6go3IDgHCU
+         mkrkQsKrHXWPg==
+Date:   Mon, 28 Aug 2023 12:41:51 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc:     Jiri Pirko <jiri@resnulli.us>,
+        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Milena Olech <milena.olech@intel.com>,
+        Michal Michalik <michal.michalik@intel.com>,
+        linux-arm-kernel@lists.infradead.org, poros@redhat.com,
+        mschmidt@redhat.com, netdev@vger.kernel.org,
+        linux-clk@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
+        intel-wired-lan@lists.osuosl.org
+Subject: Re: [PATCH net-next v7 0/9] Create common DPLL configuration API
+Message-ID: <20230828124151.37130b34@kernel.org>
+In-Reply-To: <20230824213132.827338-1-vadim.fedorenko@linux.dev>
+References: <20230824213132.827338-1-vadim.fedorenko@linux.dev>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [PATCH 2/3] clk: twl: add clock driver for TWL6032
-Content-Language: en-US
-To:     Andreas Kemnade <andreas@kemnade.info>
-Cc:     Stephen Boyd <sboyd@kernel.org>, bcousson@baylibre.com,
-        conor+dt@kernel.org, devicetree@vger.kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        mturquette@baylibre.com, robh+dt@kernel.org, tony@atomide.com
-References: <20230819134147.456060-1-andreas@kemnade.info>
- <20230819134147.456060-3-andreas@kemnade.info>
- <a65a7d976be4212ef71fe32c4ed2dacb.sboyd@kernel.org>
- <20230823165159.108875d0@aktux>
- <9edcfc47-ed89-8074-6bde-d747ae73de25@linaro.org>
- <20230828182412.16d4aea6@aktux>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230828182412.16d4aea6@aktux>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 28/08/2023 18:24, Andreas Kemnade wrote:
-> Hi,
-> 
-> On Thu, 24 Aug 2023 09:04:28 +0200
-> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
-> 
->>>>> +
->>>>> +MODULE_DESCRIPTION("Clock driver for TWL Series Devices");
->>>>> +MODULE_ALIAS("platform:twl-clk");    
->>>>
->>>> This alias is unnecessary?
->>>>  
->>> The question is whether this driver should have a separate dt
->>> node (and if a separate node, then one per clock as the clk-palmas
->>> driver) or not. See Rob's review of the binding document.
->>> So we have basically #clock-cells = <1>; in the twl parent
->>> and a call to mfd_add_device() there in the former case and I guess
->>> that alias is needed then.
->>>   
->>
->> You should not need the alias in any of these cases. platform alias for
->> platform driver means you have incomplete tables and use alias instead
->> of tables. Preference is to use tables.
-> 
-> Is there a general consensus that MODULE_ALIAS("platform:.*") should be
-> exorcised? Of course for this new driver I will avoid it now anyways.
+On Thu, 24 Aug 2023 22:31:23 +0100 Vadim Fedorenko wrote:
+>  41 files changed, 8050 insertions(+), 96 deletions(-)
 
-Whether "general" I don't know, but I was removing it quite a lot in the
-past. I think I removed all at some point, now I guess we have them back :/.
-
-MODULE_ALIAS is not the correct way to solve module matching problem. ID
-table with the correct way. Alias is just a workaround which now works,
-but later might stop (e.g. ID table will come with additional features).
-
-Best regards,
-Krzysztof
-
+After some deliberation we decided to play it safe and defer 
+DPLL to v6.7, sorry.
+-- 
+pw-bot: defer
