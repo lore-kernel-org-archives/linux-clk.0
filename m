@@ -2,47 +2,59 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24320C83F10
-	for <linux-clk@archiver.kernel.org>; Sun, 27 Aug 2023 17:05:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84C02C83F14
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Aug 2023 02:43:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229888AbjH0REz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 27 Aug 2023 13:04:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53494 "EHLO
+        id S229629AbjH1CZ1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 27 Aug 2023 22:25:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229853AbjH0RE1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 27 Aug 2023 13:04:27 -0400
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0590712D;
-        Sun, 27 Aug 2023 10:04:25 -0700 (PDT)
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2bcb0b973a5so37282541fa.3;
-        Sun, 27 Aug 2023 10:04:24 -0700 (PDT)
+        with ESMTP id S229480AbjH1CZZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 27 Aug 2023 22:25:25 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EB45D8;
+        Sun, 27 Aug 2023 19:25:23 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-5298e43bb67so5695835a12.1;
+        Sun, 27 Aug 2023 19:25:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1693189521; x=1693794321;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3uCqSe5BtqveCUXWZraiTGYO03+jzgwg7ae/wj5X+p4=;
+        b=Rs3o3lwnQlpCEgSLIhsuXQgDmYUY4nedQrR0H5FZ8oTW0MZRjTIwXBAPZ+XJu3G+TE
+         5KjGSKsVuufTscOJKZYMJ0KS9kzz7Xyep4wKl3+TVKixZzHm9nNNmppNSYgB6pYYp8wo
+         2RELcBP24h5WR7o6jlsDO44dmgK9Rx1V/rHeb5kqpg0aMZd+1c1fYnPO/kg2TIDgRiRO
+         F6FsxT3p+yiDRZpYEihMKhJw4/CBMdGfU1djfnZwE5niVYTe2vjJramAzelc7971T3gV
+         Ybsa3YcfCZr8kK6KmUBRZmdwfO/lSvmWuPcvibJK6pARqe0eHe8I8aasMcaQku+BGBpB
+         lOuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693155863; x=1693760663;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9ERbGcMk6gfakm9DN1/j10oG7dRsa1/HJVwOkOQiUYg=;
-        b=QB82P1/Zoei8Wskv8ZM5fkHfMCha7VG0U/0BQuxdE2f4ZU2B9iX5BaWjqV2hRhjaM1
-         VclHZdpG/2ZEkFaM2dgBudZ0Q+U82Aw6FOzq5HJnOxQXtukJ/gxGiGUzAcDX6ip40XrQ
-         XckT14k0RWChipnAa0JW55RHk50fzqco30TuRFsN8+FEazdk/0kN/qDcBHnUMl3O+ke8
-         GVIYwwWSmeaefQRYixLYsd4hzTY4BV6OACA3xwRyJJPTdsAktiJYnDWMOiWCq798WXG2
-         RJ33CKslbhnggSYVNsYXxsj3BpaCtmZRyNcXfddXeiVAHJXQ7NPJgRW7BxHOa7+YgvKz
-         Xu6Q==
-X-Gm-Message-State: AOJu0Yy5bPw5dm2YIHq5P44geJtehAkLAX5c9lBm3O/vKyfD20hoaaQw
-        Vq69AP/F35DC7D6Qt/9s56N6wMENeV5TlRfu
-X-Google-Smtp-Source: AGHT+IEF7d/5kTVF5MtR4cRbcAp149+5664NC2TYLcGNDPGf3jUEZ1dBbrgI5e/SqbeFgnAyHK3sug==
-X-Received: by 2002:a2e:9bd8:0:b0:2b1:c1ae:73e3 with SMTP id w24-20020a2e9bd8000000b002b1c1ae73e3mr17253046ljj.15.1693155862987;
-        Sun, 27 Aug 2023 10:04:22 -0700 (PDT)
-Received: from [192.168.86.246] (cpc87451-finc19-2-0-cust61.4-2.cable.virginm.net. [82.11.51.62])
-        by smtp.gmail.com with ESMTPSA id a1-20020a17090640c100b0099bcf9c2ec6sm3589439ejk.75.2023.08.27.10.04.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 27 Aug 2023 10:04:22 -0700 (PDT)
-Message-ID: <70b3ba82-0920-4613-9480-919a3df6833c@linux.com>
-Date:   Sun, 27 Aug 2023 18:04:21 +0100
+        d=1e100.net; s=20221208; t=1693189521; x=1693794321;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3uCqSe5BtqveCUXWZraiTGYO03+jzgwg7ae/wj5X+p4=;
+        b=loty176zXbuvP1FUdD2B1stkbLL0mY3Dp6/W4Dax59XfsQIx9KI1fvl9Hd7v+U2zf3
+         P5Fk3eLauCjbOUumb7/uU20oDfsC/Rn0Rf9JljhIGe2W/OiM/omjVV56GHMV6xMmEWKL
+         SV2fNBvmNVUID61rZ+5ruB2P9x5KsYHtRrTSadHXVt6vbAQe8IWkknhgtVgLMtsr38EC
+         5dhc9UBJhfUxJT1qYMEKMcu33YSXJkaqjdPAA57DTpDY96eQe6Y/MYchMKv3pN+LqJHz
+         hdYEJ/dfymUli/75E/ZVZL+JPXNj+ijGCWClZh8Bk5+uVK6+Ukmjr8F6ws2ABrte6NCY
+         p99Q==
+X-Gm-Message-State: AOJu0Yz1xr+hAK7NfWqvF5uvLyHKF8bW4Kp6Mj5Qm694KGyr9FizFjTB
+        gg4tjUhVhK5s+Wt07EC2zMKTt8a74NLbJ1xce98=
+X-Google-Smtp-Source: AGHT+IFjV4c6iPT2oORQcm92nmX2L7ZxJD/Ip41JWUNWiITPNAyX6af0+kocn3phLX4sb40+kQJXCmdDRW8aRdq8dR4=
+X-Received: by 2002:a05:6402:d56:b0:525:4d74:be8c with SMTP id
+ ec22-20020a0564020d5600b005254d74be8cmr21355835edb.14.1693189521348; Sun, 27
+ Aug 2023 19:25:21 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+References: <20230822082750.27633-1-yu.tu@amlogic.com> <70b3ba82-0920-4613-9480-919a3df6833c@linux.com>
+In-Reply-To: <70b3ba82-0920-4613-9480-919a3df6833c@linux.com>
+From:   Keguang Zhang <keguang.zhang@gmail.com>
+Date:   Mon, 28 Aug 2023 10:24:45 +0800
+Message-ID: <CAJhJPsWASjw-QiTocaJZCF5HYHUnF7xVf-o7Ohj0Mgjq0OpsLA@mail.gmail.com>
 Subject: Re: [PATCH V10 0/4] Add S4 SoC PLLs and Peripheral clock
-To:     Yu Tu <yu.tu@amlogic.com>, linux-clk@vger.kernel.org,
+To:     Lucas Tanure <tanure@linux.com>
+Cc:     Yu Tu <yu.tu@amlogic.com>, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
@@ -53,79 +65,98 @@ To:     Yu Tu <yu.tu@amlogic.com>, linux-clk@vger.kernel.org,
         Stephen Boyd <sboyd@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     kelvin.zhang@amlogic.com, qi.duan@amlogic.com
-References: <20230822082750.27633-1-yu.tu@amlogic.com>
-Content-Language: en-US
-From:   Lucas Tanure <tanure@linux.com>
-In-Reply-To: <20230822082750.27633-1-yu.tu@amlogic.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        kelvin.zhang@amlogic.com, qi.duan@amlogic.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22-08-2023 09:27, Yu Tu wrote:
-> 1. Add S4 SoC PLLs and Peripheral clock controller dt-bindings.
-> 2. Add PLLs and Peripheral clock controller driver for S4 SOC.
-> 
-> 
-> Yu Tu (4):
->    dt-bindings: clock: document Amlogic S4 SoC PLL clock controller
->    dt-bindings: clock: document Amlogic S4 SoC peripherals clock
->      controller
->    clk: meson: S4: add support for Amlogic S4 SoC PLL clock driver
->    clk: meson: S4: add support for Amlogic S4 SoC peripheral clock
->      controller
-> 
-> V9 -> V10:
-> 1. Change the relevant S4 CLK patch based on Neil's recently modified
-> patch.
-> 2. Change patch 0003/0004 clocks comment, format and clock flags suggested
-> by Jerome.
-> 
-> V8 -> V9: Add patch 0001/0002 dt-bindings tag. Suggested by Krzysztof.
-> V7 -> V8:
-> 1. Change patch 0001/0002 dt-bindings title description, remove "meson".
-> Suggested by Dmitry, Neil.
-> 2. Change patch 0003/0004 clocks comment, format and clock flags suggested by
-> Dmitry, Neil, Jerome.
-> 
-> V6 -> V7: Change send patch series as well change format and clock flags
-> suggested by Jerome. Change dt-bindings suggested by Krzysztof.
-> V5 -> V6: Change send patch series, as well change format and clock flags.
-> V4 -> V5: change format and clock flags and adjust the patch series
-> as suggested by Jerome.
-> V3 -> V4: change format and clock flags.
-> V2 -> V3: Use two clock controller.
-> V1 -> V2: Change format as discussed in the email.
-> 
-> Link:https://lore.kernel.org/linux-amlogic/20230517070215.28463-1-yu.tu@amlogic.com/
-> 
->   .../clock/amlogic,s4-peripherals-clkc.yaml    |   96 +
->   .../bindings/clock/amlogic,s4-pll-clkc.yaml   |   49 +
->   drivers/clk/meson/Kconfig                     |   23 +
->   drivers/clk/meson/Makefile                    |    2 +
->   drivers/clk/meson/s4-peripherals.c            | 3787 +++++++++++++++++
->   drivers/clk/meson/s4-peripherals.h            |   57 +
->   drivers/clk/meson/s4-pll.c                    |  867 ++++
->   drivers/clk/meson/s4-pll.h                    |   38 +
->   .../clock/amlogic,s4-peripherals-clkc.h       |  236 +
->   .../dt-bindings/clock/amlogic,s4-pll-clkc.h   |   43 +
->   10 files changed, 5198 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/clock/amlogic,s4-peripherals-clkc.yaml
->   create mode 100644 Documentation/devicetree/bindings/clock/amlogic,s4-pll-clkc.yaml
->   create mode 100644 drivers/clk/meson/s4-peripherals.c
->   create mode 100644 drivers/clk/meson/s4-peripherals.h
->   create mode 100644 drivers/clk/meson/s4-pll.c
->   create mode 100644 drivers/clk/meson/s4-pll.h
->   create mode 100644 include/dt-bindings/clock/amlogic,s4-peripherals-clkc.h
->   create mode 100644 include/dt-bindings/clock/amlogic,s4-pll-clkc.h
-> 
-> 
-> base-commit: bd0f6c57c2b324b6f92ccfe13a8005ff829287b8
-How similar is T7 and S4 regarding the clocks?
-Can S4 clock driver be used by T7 without modifications?
+On Mon, Aug 28, 2023 at 1:34=E2=80=AFAM Lucas Tanure <tanure@linux.com> wro=
+te:
+>
+> On 22-08-2023 09:27, Yu Tu wrote:
+> > 1. Add S4 SoC PLLs and Peripheral clock controller dt-bindings.
+> > 2. Add PLLs and Peripheral clock controller driver for S4 SOC.
+> >
+> >
+> > Yu Tu (4):
+> >    dt-bindings: clock: document Amlogic S4 SoC PLL clock controller
+> >    dt-bindings: clock: document Amlogic S4 SoC peripherals clock
+> >      controller
+> >    clk: meson: S4: add support for Amlogic S4 SoC PLL clock driver
+> >    clk: meson: S4: add support for Amlogic S4 SoC peripheral clock
+> >      controller
+> >
+> > V9 -> V10:
+> > 1. Change the relevant S4 CLK patch based on Neil's recently modified
+> > patch.
+> > 2. Change patch 0003/0004 clocks comment, format and clock flags sugges=
+ted
+> > by Jerome.
+> >
+> > V8 -> V9: Add patch 0001/0002 dt-bindings tag. Suggested by Krzysztof.
+> > V7 -> V8:
+> > 1. Change patch 0001/0002 dt-bindings title description, remove "meson"=
+.
+> > Suggested by Dmitry, Neil.
+> > 2. Change patch 0003/0004 clocks comment, format and clock flags sugges=
+ted by
+> > Dmitry, Neil, Jerome.
+> >
+> > V6 -> V7: Change send patch series as well change format and clock flag=
+s
+> > suggested by Jerome. Change dt-bindings suggested by Krzysztof.
+> > V5 -> V6: Change send patch series, as well change format and clock fla=
+gs.
+> > V4 -> V5: change format and clock flags and adjust the patch series
+> > as suggested by Jerome.
+> > V3 -> V4: change format and clock flags.
+> > V2 -> V3: Use two clock controller.
+> > V1 -> V2: Change format as discussed in the email.
+> >
+> > Link:https://lore.kernel.org/linux-amlogic/20230517070215.28463-1-yu.tu=
+@amlogic.com/
+> >
+> >   .../clock/amlogic,s4-peripherals-clkc.yaml    |   96 +
+> >   .../bindings/clock/amlogic,s4-pll-clkc.yaml   |   49 +
+> >   drivers/clk/meson/Kconfig                     |   23 +
+> >   drivers/clk/meson/Makefile                    |    2 +
+> >   drivers/clk/meson/s4-peripherals.c            | 3787 ++++++++++++++++=
++
+> >   drivers/clk/meson/s4-peripherals.h            |   57 +
+> >   drivers/clk/meson/s4-pll.c                    |  867 ++++
+> >   drivers/clk/meson/s4-pll.h                    |   38 +
+> >   .../clock/amlogic,s4-peripherals-clkc.h       |  236 +
+> >   .../dt-bindings/clock/amlogic,s4-pll-clkc.h   |   43 +
+> >   10 files changed, 5198 insertions(+)
+> >   create mode 100644 Documentation/devicetree/bindings/clock/amlogic,s4=
+-peripherals-clkc.yaml
+> >   create mode 100644 Documentation/devicetree/bindings/clock/amlogic,s4=
+-pll-clkc.yaml
+> >   create mode 100644 drivers/clk/meson/s4-peripherals.c
+> >   create mode 100644 drivers/clk/meson/s4-peripherals.h
+> >   create mode 100644 drivers/clk/meson/s4-pll.c
+> >   create mode 100644 drivers/clk/meson/s4-pll.h
+> >   create mode 100644 include/dt-bindings/clock/amlogic,s4-peripherals-c=
+lkc.h
+> >   create mode 100644 include/dt-bindings/clock/amlogic,s4-pll-clkc.h
+> >
+> >
+> > base-commit: bd0f6c57c2b324b6f92ccfe13a8005ff829287b8
+> How similar is T7 and S4 regarding the clocks?
+> Can S4 clock driver be used by T7 without modifications?
+>
+Unfortunately not.
+But don't worry! The T7 clock driver is coming soon.
 
-Thanks
-Lucas
+> Thanks
+> Lucas
+
+
+
+--=20
+Best regards,
+
+Keguang Zhang
