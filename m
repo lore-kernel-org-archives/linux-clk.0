@@ -2,77 +2,73 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 064C1C83F16
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Aug 2023 11:47:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37D49C83F11
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Aug 2023 12:36:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229918AbjH1Lqt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Aug 2023 07:46:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42896 "EHLO
+        id S230255AbjH1MgP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Aug 2023 08:36:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232607AbjH1Lqo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Aug 2023 07:46:44 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A76D199
-        for <linux-clk@vger.kernel.org>; Mon, 28 Aug 2023 04:46:11 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id 2adb3069b0e04-5007f3d3235so4836139e87.2
-        for <linux-clk@vger.kernel.org>; Mon, 28 Aug 2023 04:46:11 -0700 (PDT)
+        with ESMTP id S231366AbjH1Mf4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Aug 2023 08:35:56 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F7FA124
+        for <linux-clk@vger.kernel.org>; Mon, 28 Aug 2023 05:35:53 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id 38308e7fff4ca-2ba1e9b1fa9so47550951fa.3
+        for <linux-clk@vger.kernel.org>; Mon, 28 Aug 2023 05:35:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693223141; x=1693827941;
+        d=linaro.org; s=google; t=1693226152; x=1693830952;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=6dr8kOwOsDboXjhvNdOS41TNLyrTWEdq0XWTC5Df7tY=;
-        b=QQD8Ameg4gMcUdDMYhMto/Hi/7tnyS4tDVntfE/tGymUvmk92wDRd2UtqPldnveVK5
-         EdwotR0vKrCJ0w24OADGtEXQJYG5lUBBmn4el/fQJqJ65wff5vFRrkN+F9Q+NktKAaBB
-         kvxbUp/WO2x8bSDWL9dYpkMLM4DUXn9qrMKumZhOTbNkYW1L0H92jjDfbM9MgYz802lk
-         NYzMb/kMBrB1mLfBO/kxPAlDV+zLbloJI8xKBS+qupeSz4hPllNNDe1eXSj14LnOW6SL
-         /O7X9KDxE68YsNlldXBEsRsq0b/4qtWVzKhPsiQ8O7q8w0xPeKbhvoNjyHQBjEZUq9vw
-         PAFg==
+        bh=U8FHoF0EEmuxAOTXhuGWB0DeQBV57gCB/+pF5x9rYb8=;
+        b=gRDXI736iuTJFUUiRF4E62C+qEsccSMJ1SkQ9nG0QQNdFSO+Kt6BbzdhAUnFTjziGI
+         EeuMZa+UaUDJ+o07JNOtP1S1idXGzCuOzbgyMwziHzkdBfnn7y1EhhTxDUeQxXrsWjbk
+         jQhawFqvcQsACxULxRSjo6oi8DkDNA2MxjEem5JKXrUu3ff/C12sMtdMGIq8cH+oCmX1
+         +FnzUvPvXz7nQYTgWc22cfIF0/73cGcyIOVGJF8nplrtVTn9hFwO4SHZjnSu2flTBWP9
+         dk9B91+11lPK/whCssNn+wc2IYAhvRTCw8Q8NAKTUv/xVQTD7Q9hVym0NbiKxROuv2GC
+         WgiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693223141; x=1693827941;
+        d=1e100.net; s=20221208; t=1693226152; x=1693830952;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6dr8kOwOsDboXjhvNdOS41TNLyrTWEdq0XWTC5Df7tY=;
-        b=gZou1E/1FgLZC/WADxeFZooTKcsCZONpcQz8dOwfBVSEwdMn45dNbNX4KXjgoXTqGk
-         U0CBIIcWEvLJl32UKS6NFqUsoTlQF+echkkMaxk0SemjXXvc/OSB/cJWw/E3dPEk4zV5
-         FEyZPvy1ozKqN0KT+athLdQ4C6IXIQ2Hs8pWuLHlNM09+4rRIRFCMqb2GBOnyDUlI4C1
-         /JoB97aSjUwqbjLBwoQlyB40j02pnQquQQvWtM954ZLqAkKz80nmhteEFjr88b5XF+s6
-         SRC5s5lXqSSrdeV3oNAPBEm2LPKNK54LhPwtc/9dWvG0KBUqWUSSVVn4IEM0W9B5h3o9
-         j6dg==
-X-Gm-Message-State: AOJu0YzFEMabB9icEGJyDw4HG9itIClE5gsb/XJKyx9y+3apSWYIAzXv
-        Gmjo2qK45w1czJKXvPxhnxfbIQ==
-X-Google-Smtp-Source: AGHT+IF6DFfsQgsH8hrHCCkBH8ra8UAma78Y1ZsfOHa33tSwNnuRfE8kzVVbfJkhMv/fqHwwXX6Nuw==
-X-Received: by 2002:a19:ca44:0:b0:500:90d1:90a6 with SMTP id h4-20020a19ca44000000b0050090d190a6mr10738379lfj.63.1693223140723;
-        Mon, 28 Aug 2023 04:45:40 -0700 (PDT)
+        bh=U8FHoF0EEmuxAOTXhuGWB0DeQBV57gCB/+pF5x9rYb8=;
+        b=K6UrlqqokQTAbC65wDKege69nLhq7+OzGMK41uO4XITk+eC760YI2kHp/qn0u5+rx4
+         Usd139I6BkwK3jsu01oCwzO8+5+E9gttUu+MoZ2n7BMsRwG37BNu8tN8kQvW1tt1zBQD
+         hFASi/7y+O9FU+0ozbRK8aynzcJMaZc9nzfwVsqxyyvXi03OyCXVFiaUBvtoPLQqdkDI
+         owuMh53WN23A54bUvYdF6KAxSLzp9qSXKernoTd4CGUvuQ4uXZgSf2NIFoMLRLCFYnqY
+         rJmUFUKcgB06zMvk2T2HAJBchXZ68HvLrQt20G/KK3yIFuJHttSVeEusNiHd75JzIXG5
+         z9LQ==
+X-Gm-Message-State: AOJu0Yycz0Nf+tUoFjPqhudoGFK3YsLHPXA0wC3Xe2lC3Vbw7u7PsVR4
+        KXe5L2oRaqfhmQJn61DFTmpBfg==
+X-Google-Smtp-Source: AGHT+IHaVAV7m/SxxXQTce6SzKSz9Jg84rLyUgxT39ppgMlbeCRLlAK4JgHzs+HlNgnDqopNISb+nA==
+X-Received: by 2002:a2e:8918:0:b0:2bc:eaec:e23f with SMTP id d24-20020a2e8918000000b002bceaece23fmr9199572lji.43.1693226151808;
+        Mon, 28 Aug 2023 05:35:51 -0700 (PDT)
 Received: from [192.168.1.101] (abyl195.neoplus.adsl.tpnet.pl. [83.9.31.195])
-        by smtp.gmail.com with ESMTPSA id t16-20020ac25490000000b004ff91a94156sm1548628lfk.121.2023.08.28.04.45.39
+        by smtp.gmail.com with ESMTPSA id l26-20020a2e99da000000b002bcb239a7efsm1742551ljj.56.2023.08.28.05.35.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Aug 2023 04:45:40 -0700 (PDT)
-Message-ID: <b6b655ca-e20d-462b-b1a5-a96b9196e641@linaro.org>
-Date:   Mon, 28 Aug 2023 13:45:38 +0200
+        Mon, 28 Aug 2023 05:35:51 -0700 (PDT)
+Message-ID: <790ead1e-7b15-4f88-bdf9-738b24531ef0@linaro.org>
+Date:   Mon, 28 Aug 2023 14:35:49 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] clk: qcom: Add SM6115 LPASSCC
+Subject: Re: [PATCH V2 5/7] clk: qcom: Add NSS clock Controller driver for
+ IPQ9574
 Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230825-topic-6115_lpasscc-v1-0-d4857be298e3@linaro.org>
- <20230825-topic-6115_lpasscc-v1-3-d4857be298e3@linaro.org>
- <a9d52cd9-845e-ff88-3c26-858cb6604e43@linaro.org>
- <CAA8EJprEnMjbKw2fbU1X7GV=ANARNhofSQh49Bdo1kvuOskbbQ@mail.gmail.com>
- <5847be93-68c3-95fb-1d3e-9678804b9a70@linaro.org>
+To:     Devi Priya <quic_devipriy@quicinc.com>, andersson@kernel.org,
+        agross@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, catalin.marinas@arm.com, will@kernel.org,
+        p.zabel@pengutronix.de, richardcochran@gmail.com, arnd@arndb.de,
+        geert+renesas@glider.be, nfraprado@collabora.com, rafal@milecki.pl,
+        peng.fan@nxp.com, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        netdev@vger.kernel.org
+Cc:     quic_saahtoma@quicinc.com
+References: <20230825091234.32713-1-quic_devipriy@quicinc.com>
+ <20230825091234.32713-6-quic_devipriy@quicinc.com>
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
@@ -109,38 +105,43 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <5847be93-68c3-95fb-1d3e-9678804b9a70@linaro.org>
+In-Reply-To: <20230825091234.32713-6-quic_devipriy@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 26.08.2023 16:29, Krzysztof Kozlowski wrote:
-> On 26/08/2023 16:09, Dmitry Baryshkov wrote:
+On 25.08.2023 11:12, Devi Priya wrote:
+> Add Networking Sub System Clock Controller(NSSCC) driver for ipq9574 based
+> devices.
 > 
->>>> +MODULE_DEVICE_TABLE(of, lpasscc_sm6115_match_table);
->>>
->>> Everything here is almost the same as sc8280xp one, so this should be
->>> added to sc8280xp. You cut some boilerplate and additional driver.
->>
->> We have been there. It quickly becomes a nightmare to maintain.
->> Consider dispcc-sm8250.c
-> 
-> Because too much was added. I do not propose to keep all resets here.
-> 
->>
->> But I agree with you, this code looks too similar. If we expect more
->> similar lpasscc drivers, which provide no clocks, just several resets,
->> maybe we can create a common generic wrapper and make resets lists
->> corresponding driver data?
-> 
-> This would also work.
-Sounds like a good idea until somebody at qualcomm decides to add
-support for bypassing adsp that only works on chromebooks that may get
-cancelled or super secret internal devboards and the driver will gain
-support for clocks..
+> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+> ---
+[...]
 
-But I guess that person will have to worry about squaring this out.
+> +	[UBI3_CLKRST_CLAMP_ENABLE] = { 0x28A04, 9 },
+Please make all hex lowercase.
+
+[...]
+
+> +	[PPE_FULL_RESET] = { 0x28A08, 0, 1, 0x1E0000 },
+{ .reg = 0x28a08, .bitmask = GENMASK(foo,bar) },
+
+[...]
+
+> +	ret = devm_pm_runtime_enable(&pdev->dev);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = devm_pm_clk_create(&pdev->dev);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = of_pm_clk_add_clk(&pdev->dev, "nssnoc_nsscc");
+> +	if (ret < 0) {
+> +		dev_err(&pdev->dev, "Failed to acquire nssnoc_nsscc clock\n");
+> +		return ret;
+dev_err_probe, everywhere?
 
 Konrad
