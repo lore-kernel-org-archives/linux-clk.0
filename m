@@ -2,146 +2,319 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37D49C83F11
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Aug 2023 12:36:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2F4FC83F1C
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Aug 2023 14:15:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230255AbjH1MgP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Aug 2023 08:36:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56714 "EHLO
+        id S230103AbjH1OO3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Aug 2023 10:14:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231366AbjH1Mf4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Aug 2023 08:35:56 -0400
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F7FA124
-        for <linux-clk@vger.kernel.org>; Mon, 28 Aug 2023 05:35:53 -0700 (PDT)
-Received: by mail-lj1-x234.google.com with SMTP id 38308e7fff4ca-2ba1e9b1fa9so47550951fa.3
-        for <linux-clk@vger.kernel.org>; Mon, 28 Aug 2023 05:35:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693226152; x=1693830952;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=U8FHoF0EEmuxAOTXhuGWB0DeQBV57gCB/+pF5x9rYb8=;
-        b=gRDXI736iuTJFUUiRF4E62C+qEsccSMJ1SkQ9nG0QQNdFSO+Kt6BbzdhAUnFTjziGI
-         EeuMZa+UaUDJ+o07JNOtP1S1idXGzCuOzbgyMwziHzkdBfnn7y1EhhTxDUeQxXrsWjbk
-         jQhawFqvcQsACxULxRSjo6oi8DkDNA2MxjEem5JKXrUu3ff/C12sMtdMGIq8cH+oCmX1
-         +FnzUvPvXz7nQYTgWc22cfIF0/73cGcyIOVGJF8nplrtVTn9hFwO4SHZjnSu2flTBWP9
-         dk9B91+11lPK/whCssNn+wc2IYAhvRTCw8Q8NAKTUv/xVQTD7Q9hVym0NbiKxROuv2GC
-         WgiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693226152; x=1693830952;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U8FHoF0EEmuxAOTXhuGWB0DeQBV57gCB/+pF5x9rYb8=;
-        b=K6UrlqqokQTAbC65wDKege69nLhq7+OzGMK41uO4XITk+eC760YI2kHp/qn0u5+rx4
-         Usd139I6BkwK3jsu01oCwzO8+5+E9gttUu+MoZ2n7BMsRwG37BNu8tN8kQvW1tt1zBQD
-         hFASi/7y+O9FU+0ozbRK8aynzcJMaZc9nzfwVsqxyyvXi03OyCXVFiaUBvtoPLQqdkDI
-         owuMh53WN23A54bUvYdF6KAxSLzp9qSXKernoTd4CGUvuQ4uXZgSf2NIFoMLRLCFYnqY
-         rJmUFUKcgB06zMvk2T2HAJBchXZ68HvLrQt20G/KK3yIFuJHttSVeEusNiHd75JzIXG5
-         z9LQ==
-X-Gm-Message-State: AOJu0Yycz0Nf+tUoFjPqhudoGFK3YsLHPXA0wC3Xe2lC3Vbw7u7PsVR4
-        KXe5L2oRaqfhmQJn61DFTmpBfg==
-X-Google-Smtp-Source: AGHT+IHaVAV7m/SxxXQTce6SzKSz9Jg84rLyUgxT39ppgMlbeCRLlAK4JgHzs+HlNgnDqopNISb+nA==
-X-Received: by 2002:a2e:8918:0:b0:2bc:eaec:e23f with SMTP id d24-20020a2e8918000000b002bceaece23fmr9199572lji.43.1693226151808;
-        Mon, 28 Aug 2023 05:35:51 -0700 (PDT)
-Received: from [192.168.1.101] (abyl195.neoplus.adsl.tpnet.pl. [83.9.31.195])
-        by smtp.gmail.com with ESMTPSA id l26-20020a2e99da000000b002bcb239a7efsm1742551ljj.56.2023.08.28.05.35.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Aug 2023 05:35:51 -0700 (PDT)
-Message-ID: <790ead1e-7b15-4f88-bdf9-738b24531ef0@linaro.org>
-Date:   Mon, 28 Aug 2023 14:35:49 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 5/7] clk: qcom: Add NSS clock Controller driver for
- IPQ9574
-Content-Language: en-US
-To:     Devi Priya <quic_devipriy@quicinc.com>, andersson@kernel.org,
-        agross@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, catalin.marinas@arm.com, will@kernel.org,
-        p.zabel@pengutronix.de, richardcochran@gmail.com, arnd@arndb.de,
-        geert+renesas@glider.be, nfraprado@collabora.com, rafal@milecki.pl,
-        peng.fan@nxp.com, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        with ESMTP id S231743AbjH1OOV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Aug 2023 10:14:21 -0400
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [IPv6:2001:67c:2050:0:465::102])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F68AF7;
+        Mon, 28 Aug 2023 07:14:17 -0700 (PDT)
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4RZCGv27R1z9sr6;
+        Mon, 28 Aug 2023 16:14:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
+        s=MBO0001; t=1693232055;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=+DO/l19fra2OrFIuBGZ5yUwxn75lwFHs9VDz/dQrv/o=;
+        b=imCfI3Fl0CU6sxkurcZarAexLBD/sw/LLM0LSo6Esc/GeST0+FK1cfygO5a2HcEnwfkNEi
+        hFwUwk0hHFU8cRjeVEUbZod44/7kwx3HpCnFxomHJr4m85AjXX/n6epx5B0tpt5BJ0xgn+
+        Nl8g6jnmVlh/+fv+SDKCHzlokI+qZ9h9C7dex3HUj2m6lNc44py+pyb83qvsXyxQXXimvd
+        f+Nl52q9f0wtYeJodZ1dlzpuxG6QVt7T+8KmtC/tg2NORSKJVJb6okvtDbhwqDuxF6X8ak
+        uztQy/lOw4qVyus8nZN/wV+MOcXO7Dk2Ls/Kf1IPjUUmj+9qoMM6vX99TPj1Uw==
+References: <20230825-pll-mipi_keep_rate-v1-0-35bc43570730@oltmanns.dev>
+ <zrjpbtf7qwaj2tjvfz2no534tmz5j4yudp45tung2w5x2zcl6y@bal3bclzze4e>
+ <87ledzqhwx.fsf@oltmanns.dev> <878r9yb21b.fsf@oltmanns.dev>
+ <yblg37fisgmuveiuxsxcvls4uoxjv5wkvsztm6zpelxv7quuz5@zbsqfcn2z34v>
+From:   Frank Oltmanns <frank@oltmanns.dev>
+To:     Maxime Ripard <mripard@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Ondrej Jirman <x@xnux.eu>,
+        Icenowy Zheng <uwu@icenowy.me>, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        netdev@vger.kernel.org
-Cc:     quic_saahtoma@quicinc.com
-References: <20230825091234.32713-1-quic_devipriy@quicinc.com>
- <20230825091234.32713-6-quic_devipriy@quicinc.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20230825091234.32713-6-quic_devipriy@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        linux-sunxi@lists.linux.dev, dri-devel@lists.freedesktop.org,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: Re: [PATCH 0/3] Make Allwinner A64's pll-mipi keep its rate when
+ parent rate changes
+In-reply-to: <yblg37fisgmuveiuxsxcvls4uoxjv5wkvsztm6zpelxv7quuz5@zbsqfcn2z34v>
+Date:   Mon, 28 Aug 2023 16:14:06 +0200
+Message-ID: <87msybuudt.fsf@oltmanns.dev>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Rspamd-Queue-Id: 4RZCGv27R1z9sr6
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 25.08.2023 11:12, Devi Priya wrote:
-> Add Networking Sub System Clock Controller(NSSCC) driver for ipq9574 based
-> devices.
-> 
-> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
-> ---
-[...]
 
-> +	[UBI3_CLKRST_CLAMP_ENABLE] = { 0x28A04, 9 },
-Please make all hex lowercase.
+On 2023-08-28 at 10:25:01 +0200, Maxime Ripard <mripard@kernel.org> wrote:
+> On Sat, Aug 26, 2023 at 11:12:16AM +0200, Frank Oltmanns wrote:
+>>
+>> On 2023-08-25 at 17:07:58 +0200, Frank Oltmanns <frank@oltmanns.dev> wro=
+te:
+>> > Thank you for your feedback, Maxime!
+>> >
+>> > On 2023-08-25 at 10:13:53 +0200, Maxime Ripard <mripard@kernel.org> wr=
+ote:
+>> >> [[PGP Signed Part:Undecided]]
+>> >> Hi,
+>> >>
+>> >> On Fri, Aug 25, 2023 at 07:36:36AM +0200, Frank Oltmanns wrote:
+>> >>> I would like to make the Allwinner A64's pll-mipi to keep its rate w=
+hen
+>> >>> its parent's (pll-video0) rate changes. Keeping pll-mipi's rate is
+>> >>> required, to let the A64 drive both an LCD and HDMI display at the s=
+ame
+>> >>> time, because both have pll-video0 as an ancestor.
+>> >>>
+>> >>> PATCH 1 adds this functionality as a feature into the clk framework =
+(new
+>> >>> flag: CLK_KEEP_RATE).
+>> >>>
+>> >>> Cores that use this flag, store a rate as req_rate when it or one of=
+ its
+>> >>> descendants requests a new rate.
+>> >>>
+>> >>> That rate is then restored in the clk_change_rate recursion, which w=
+alks
+>> >>> through the tree. It will reach the flagged core (e.g. pll-mipi) aft=
+er
+>> >>> the parent's rate (e.g. pll-video0) has already been set to the new
+>> >>> rate. It will then call determine_rate (which requests the parent's
+>> >>> current, i.e. new, rate) to determine a rate that is close to the
+>> >>> flagged core's previous rate. Afterward it will re-calculate the rat=
+es
+>> >>> for the flagged core's subtree.
+>> >>
+>> >> I don't think it's the right way forward. It makes the core logic more
+>> >> complicated, for something that is redundant with the notifiers
+>> >> mechanism that has been the go-to for that kind of things so far.
+>> >
+>> > Yeah, that was my initial idea as well. But I couldn't get it to work.
+>> > See details below.
+>> >
+>> > Do you have an example of a clock that restores its previous rate after
+>> > the parent rate has changed? I've looked left and right, but to me it
+>> > seems that notifiers are mainly used for setting clocks into some kind
+>> > of "safe mode" prior to the rate change. Examples:
+>> >
+>> > sunxi-ng:
+>> > https://elixir.bootlin.com/linux/v6.4.11/source/drivers/clk/sunxi-ng/c=
+cu_mux.c#L273
+>> > https://elixir.bootlin.com/linux/v6.4.11/source/drivers/clk/sunxi-ng/c=
+cu_common.c#L60
+>> >
+>> > but also others:
+>> > https://elixir.bootlin.com/linux/v6.4.11/source/drivers/clk/at91/clk-m=
+aster.c#L248
+>> > https://elixir.bootlin.com/linux/v6.4.11/source/drivers/clk/meson/meso=
+n8b.c#L3755
+>> > https://elixir.bootlin.com/linux/v6.4.11/source/drivers/clk/qcom/clk-c=
+pu-8996.c#L546
+>> >
+>> >> It's not really obvious to me why the notifiers don't work there.
+>> >>
+>> >>> This work is inspired by an out-of-tree patchset [1] [2] [3].
+>> >>> Unfortunately, the patchset uses clk_set_rate() in a notifier callba=
+ck,
+>> >>> which the following comment on clk_notifier_register() forbids: "The
+>> >>> callbacks associated with the notifier must not re-enter into the clk
+>> >>> framework by calling any top-level clk APIs." [4] Furthermore, that
+>> >>> out-of-tree patchset no longer works with the current linux-next,
+>> >>> because setting pll-mipi is now also resetting pll-video0 [5].
+>> >>
+>> >> Is it because of the "The callbacks associated with the notifier must
+>> >> not re-enter into the clk framework by calling any top-level clk APIs=
+."
+>> >> comment?
+>> >
+>> > I don't think that's the reason. I'm fairly certain that the problem i=
+s,
+>> > that pll-mipi tries to set the parent rate. Maybe it should check if t=
+he
+>> > parent is locked, before determining a rate that requires the parent
+>> > rate to change. =F0=9F=A4=94 Currently, it only calls clk_hw_can_set_r=
+ate_parent()
+>> > which only checks the flag, but does not check if it is really possible
+>> > to change the parent's rate.
+>> >
+>> > Regardless, please don't prematurely dismiss my proposal. It has the
+>> > advantage that it is not specific for sunxi-ng, but could be used for
+>> > other drivers as well. Maybe there other instances of exclusive locks
+>> > today where the CLK_KEEP_RATE flag might work equally well. =F0=9F=A4=
+=B7
+>> >
+>> >> If so, I think the thing we should emphasize is that it's about *any
+>> >> top-level clk API*, as in clk_set_rate() or clk_set_parent().
+>> >>
+>> >> The issue is that any consumer-facing API is taking the clk_prepare l=
+ock
+>> >> and thus we would have reentrancy. But we're a provider there, and no=
+ne
+>> >> of the clk_hw_* functions are taking that lock. Neither do our own fu=
+nction.
+>> >>
+>> >> So we could call in that notifier our set_rate callback directly, or =
+we
+>> >> could create a clk_hw_set_rate() function.
+>> >>
+>> >> The first one will create cache issue between the actual rate that the
+>> >> common clock framework is running and the one we actually enforced, b=
+ut
+>> >> we could create a function to flush the CCF cache.
+>> >>
+>> >> The second one is probably simpler.
+>> >
+>> > I'm probably missing something, because I don't think this would work.
+>> > For reference, this is our tree:
+>> >
+>> >     pll-video0
+>> >        hdmi-phy-clk
+>> >        hdmi
+>> >        tcon1
+>> >        pll-mipi
+>> >           tcon0
+>> >              tcon-data-clock
+>> >
+>> > When pll-video0's rate is changed (e.g. because a HDMI monitor is
+>> > plugged in), the rates of the complete subtree for pll-video0 are
+>> > recalculated, including tcon0 and tcon-data-clock. The rate of tcon0 is
+>> > based on the rate that was recalculated for pll-mipi, which - in turn -
+>> > was of course recalculated based on the pll-video0's new rate. These
+>> > values are stored by the clk framework in a private struct. They are
+>> > calculated before actually performing any rate changes.
+>> >
+>> > So, if a notifier sets pll-mipi's rate to something else than was
+>> > previously recalculated, the clk framework would still try to set tcon0
+>> > to the value that it previously calculated.
+>> >
+>> > So, we would have to recalculate pll-mipi's subtree after changing its
+>> > rate (that's what PATCH 1 is doing).
+>>
+>> Sorry, I forgot that this actually was possible by flagging pll-mipi
+>> with CLK_RECALC_NEW_RATES. But the real problem I was fighting with when
+>> trying to use the notifiers is something else.
+>>
+>> Initially, pll-video0 is set by the bootloader. In my case uboot sets it
+>> to 294 MHz. pll-mipi is set to 588 MHz.
+>>
+>> Afterward, there are actually two types of calls for setting pll-mipi in
+>> my scenario:
+>>  1. during boot when tcon-data-clock is set to drive the LCD panel
+>>  2. when the HDMI cable is plugged in
+>
+> Not really. Both of those clocks can change (or not) at any point in
+> time. What triggers the rate set is a modeset which might never happen
+> (if the display driver or output is disabled, if the fbdev emulation is
+> disabled or if there's never a compositor starting) or possibly happen
+> each frame on both output for all you know.
 
-[...]
+Ok, thank you for the explanation and I apologize for not having the
+terminology straight. This would mean that in my description above there
+are two modesets that trigger the rate set
+ 1. for the tcon-data-clock on boot when the internal display is
+    activated and
+ 2. for hdmi when the external monitor is activated.
 
-> +	[PPE_FULL_RESET] = { 0x28A08, 0, 1, 0x1E0000 },
-{ .reg = 0x28a08, .bitmask = GENMASK(foo,bar) },
+For reference: In my scenario I'm using a pinephone which has an
+internal LCD display and an HDMI connector (not supported in mainline).
 
-[...]
+I understand that there could be more. Let's put a pin in that, because
+my understandig is, that this is not the relevant part here.
 
-> +	ret = devm_pm_runtime_enable(&pdev->dev);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = devm_pm_clk_create(&pdev->dev);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = of_pm_clk_add_clk(&pdev->dev, "nssnoc_nsscc");
-> +	if (ret < 0) {
-> +		dev_err(&pdev->dev, "Failed to acquire nssnoc_nsscc clock\n");
-> +		return ret;
-dev_err_probe, everywhere?
+>> In the first case, the rate for pll-mipi is based on the rate that
+>> tcon-data-clock requests. In that case, we do not want to restore the
+>> previous rate.
+>>
+>> In the second case, pll-mipi should try to remain running at the
+>> previous rate (the one that was requested by tcon-data-clock). That's
+>> the reason for setting core->req_rate in PATCH 1.
+>>
+>> Unfortunately, the notifier does not provide us with enough context to
+>> distinguish the two cases.
+>
+> I don't think any piece of code will be able to, really.
 
-Konrad
+In the first case, setting the pll-mipi clock starts from the bottom
+(tcon-data-clock) and uses clk_calc_new_rates() to get to the top-most
+clock that needs and can be changed. On it's way up to pll-video0 it
+passes pll-mipi. My proposal (PATCH 1) is to use that moment to store
+the rate in req_rate.
+
+In contrast, in the second case, setting the pll-mipi clock starts from
+the top. pll-video0's rate is changed and therefore a new rate is
+propagate for the whole subtree where, on its way down, it passes
+pll-mipi. My proposal (PATCH 1) is to use that moment to restore the
+rate from req_rate that was previously (see pragraph above) set.
+
+Since I did not see a way to achieve this using notifiers (and you seem
+to agree), I chose to propose a different path.
+
+> Your definition of CLK_KEEP_RATE is that it will "try to keep rate, if
+> parent rate changes"
+>
+> What happens if it fails, possibly because of rounding like you
+> mentioned already?
+
+Maybe "keep" is too strong of a word. I'm sorry for the confusion my
+poor choice of wording has caused.
+
+What I would like if for a clock to go back as closely as possible to
+the previous rate. And this is what PATCH 1 does by using the clocks
+determine_rate (or round_rate) operation.
+
+> Fundamentally, the problem is that you need different rates on two
+> subtrees, and we set both to have CLK_SET_RATE_PARENT and allow both to
+> change the parent rate if needed.
+
+This reads to me as if you are emphasizing the word "both" here. I'm
+aware that you know, but I state it here for the benefit of others: Up
+until kernel 6.5 only hdmi resets pll-video0. pll-mipi does not set
+pll-video0. This has changed in clk-next. Now also pll-mipi sets the
+parent rate.
+
+Icenowy's patches are aimed at (and work for) up to kernel 6.5. They
+restore pll-mipi's rate after pll-video0 has been changed by hdmi.
+
+> What would happen if we force pll-video0 to a known, fixed, value and
+> remove CLK_SET_RATE_PARENT from both the pll-mipi and hdmi clocks?
+
+Approximately three months ago, I wrote "one could argue that pll-video0
+should be set to 297MHz at boot", to which Jernej responded: "Ideally,
+clock rate setting code should be immune on "initial" values, set by
+bootloader or default values. If it's not, then it should be improved in
+the way that it is.":
+https://lore.kernel.org/linux-clk/4831731.31r3eYUQgx@jernej-laptop/#t
+
+That's what got me startet on the whole process of allowing pll-mipi to
+set it's parent instead of simply setting it to a known rate of 297 MHz.
+
+Should I resume the other (297MHz) investigation?
+
+I had another idea, but don't know how/if that's possible: Maybe we
+could use a notifier to notify pll-mipi (or even better:
+tcon-data-clock) and use some mechanism to defer calling clk_set_rate()
+to a point in time when the whole process of setting the clocks is
+complete.
+
+Best regards,
+  Frank
+
+
+>
+> Maxime
