@@ -2,58 +2,59 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2989C83F18
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Aug 2023 10:57:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45833C83F1B
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Aug 2023 10:58:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232348AbjH1K5F (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Aug 2023 06:57:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57880 "EHLO
+        id S232289AbjH1K5J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Aug 2023 06:57:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232541AbjH1K43 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Aug 2023 06:56:29 -0400
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2643926B8
-        for <linux-clk@vger.kernel.org>; Mon, 28 Aug 2023 03:55:57 -0700 (PDT)
-Received: by mail-lj1-x233.google.com with SMTP id 38308e7fff4ca-2bbbda48904so45662131fa.2
-        for <linux-clk@vger.kernel.org>; Mon, 28 Aug 2023 03:55:57 -0700 (PDT)
+        with ESMTP id S232438AbjH1K4w (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Aug 2023 06:56:52 -0400
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37608199
+        for <linux-clk@vger.kernel.org>; Mon, 28 Aug 2023 03:56:45 -0700 (PDT)
+Received: by mail-lj1-x230.google.com with SMTP id 38308e7fff4ca-2bcb54226e7so36082451fa.1
+        for <linux-clk@vger.kernel.org>; Mon, 28 Aug 2023 03:56:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693220135; x=1693824935;
+        d=linaro.org; s=google; t=1693220203; x=1693825003;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=X8Kw9Gk3+Q3NbpaubJDvq27IOe+OQQYt7bdMuLQlMe8=;
-        b=Uhir4f1KTK3Tfx3FJrC4gazSMf8I+qvnAd1pT0CYtgMZjGgCT5u53/uVJtdINK70TP
-         BfoTEp+ZXg+ulMdp9CHN4kM2AWfJ3KNFH/0b+2zPjvegqL7GYEsnhAmPuupgEXoVKnuk
-         WyXpGKvM63ZAzn1x0730QZPXx+lb2soPd9W7aditJWjY/pQNU+7bwRjnr2MOwIJN7OTM
-         8uhOc7axKp4oBHY3Pxzacc/Q7DA/ySlbgQG8zPagzx7EXtUxZd56zhAvxUjwXrBSst7X
-         qzuYJuwN5yKyDE6+RYe/BOCRR/1mub7toAOrYCBjP5L67quXljzdyVOAfZqPin28EnhT
-         2Qhw==
+        bh=srKA/ALXPSnQ62rsT+MiaUT6YrnaLtt+5wgGzzrgvds=;
+        b=g0A7NBMC9NL0QQM0wY+Dsz4aYlU8NeO8roX0MzalgcIVUkmBZygRh/kE0lgvSr/W62
+         OeNgHLiFg7ExsaxgXwMZsKeQrnutK2QkksymgT70hS6ZGqwPxx8uf/NEBYWTnWOUak+H
+         13rh3m7URj+eiC3/NPOtj348NgbckkxpGSEMlisGH/NOKWmlKynGAtoY4V1Pojh3FvAT
+         pGk0iRqYH03INQmPriOY5K9ycdy/RLFPtsUPm4tp/hswpFoxUNFiaOeo+G3TXTgmp2DJ
+         10xwPJH6qQ1T1iFf3eFRX6+9DHciBw41BZcRaBr40OZmWdA+CAWZ00zqJdoDnqblEaPJ
+         5uUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693220135; x=1693824935;
+        d=1e100.net; s=20221208; t=1693220203; x=1693825003;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X8Kw9Gk3+Q3NbpaubJDvq27IOe+OQQYt7bdMuLQlMe8=;
-        b=dLVZ+VUR2wEpZWljmtBRyeRX0oeD01IgnaQIhKo/sWxBqPABGiohAA9O0WtNpCjHB/
-         DCCs3Lrx2LtR3PP3h6+kFFM3G3ns1i8jxApoOS34TlzzCQr3zbzZFS4x1OCCJ1FUXWs+
-         crQ3vvALuigKAMfI8j3S14E7x1U87L/g6m43YhwHyfVoCbJx5X/qZGdonWXZLRd3SBAV
-         9WcLMKt7I8x2ZenplgkFGiQ5fIewPu7kvWm0XnXvJc5e5FxxTEHkmwz3XAemNBdqdxUR
-         f9z8eIKJ7HvEoaMyWGW2pCdeNByje8rqd9Rb15F5NSuE4ptne6kaGHTEZf1/l3o20kf5
-         ZpsQ==
-X-Gm-Message-State: AOJu0YynHEmfil916BYmkCtngJ0jVoINHFPRU6GqlHNfwAN2p4lY9prl
-        FglUHFEWuPYXXY3/n7vjA+uetA==
-X-Google-Smtp-Source: AGHT+IHoOA10Yb85WM5JQrFoTFK2LBF0w7IuZdHV/H6yvcuikPFOGbWNlMbUo7HIGAptpU7oRjpDhQ==
-X-Received: by 2002:a2e:9e97:0:b0:2b9:ba02:436c with SMTP id f23-20020a2e9e97000000b002b9ba02436cmr16901731ljk.28.1693220135519;
-        Mon, 28 Aug 2023 03:55:35 -0700 (PDT)
+        bh=srKA/ALXPSnQ62rsT+MiaUT6YrnaLtt+5wgGzzrgvds=;
+        b=Q7AeBrEKPumOrN2jv35wPQzf1eNkTejh0/DYKKbP+LbxxGRxSlM/YCYcYHuYatkv62
+         8Ozr3s/G6oaTkDbG8F1tSuvRTkh+qcFmCVucZxC8mqlKsQTem8ydnWoIdDcXrXCxizqK
+         ikUdb+up8VD7qOwMKn/02tqKyotyWFq320OSo2b5iWE9+Ki775wgml2qZ3Rd06CIC08z
+         wZo1FhdPOgdfQNWY7r1pAJFizK53a/edhT2xqsQNkBs3fscb5C4iFhjjp4ozmaup6q5Z
+         0aBaGhE/ZGAQ2gwxHJOoR1YKt/YigRiOFGuQA9W+JOVdTnLx4dmtq7TfG5ErVnESNdce
+         D1AQ==
+X-Gm-Message-State: AOJu0YwNL9S86XiDn2ylKiZGCu/q08F2qLytcHtRyQcNhaSNqqwvLXBl
+        oRF0mpBVeT+MR6MyMgjfau9MAQ==
+X-Google-Smtp-Source: AGHT+IHTtnlPqthCzOC6wPyXJohzr03QjLSt+lEdrakLa7RNz/guZwXTE6EYvN9OfxQlKYOMJiMcCQ==
+X-Received: by 2002:a2e:b74b:0:b0:2bc:c2d8:e050 with SMTP id k11-20020a2eb74b000000b002bcc2d8e050mr8231520ljo.24.1693220203517;
+        Mon, 28 Aug 2023 03:56:43 -0700 (PDT)
 Received: from [192.168.1.101] (abyl195.neoplus.adsl.tpnet.pl. [83.9.31.195])
-        by smtp.gmail.com with ESMTPSA id w16-20020a2e9990000000b002b6d7682050sm1698240lji.89.2023.08.28.03.55.34
+        by smtp.gmail.com with ESMTPSA id w16-20020a2e9990000000b002b6d7682050sm1698240lji.89.2023.08.28.03.56.42
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Aug 2023 03:55:35 -0700 (PDT)
-Message-ID: <b42a00ab-1fc1-49f5-aee8-f435648cc816@linaro.org>
-Date:   Mon, 28 Aug 2023 12:55:34 +0200
+        Mon, 28 Aug 2023 03:56:43 -0700 (PDT)
+Message-ID: <1c38d466-a878-44f3-bc9f-25d26c07ebb3@linaro.org>
+Date:   Mon, 28 Aug 2023 12:56:42 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 16/23] ARM: dts: qcom: apq8064: add L2 cache scaling
+Subject: Re: [PATCH v4 17/23] ARM: dts: qcom: apq8064: add simple CPUFreq
+ support
 Content-Language: en-US
 To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -72,7 +73,7 @@ Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         Christian Marangi <ansuelsmth@gmail.com>,
         Stephan Gerhold <stephan@gerhold.net>
 References: <20230827115033.935089-1-dmitry.baryshkov@linaro.org>
- <20230827115033.935089-17-dmitry.baryshkov@linaro.org>
+ <20230827115033.935089-18-dmitry.baryshkov@linaro.org>
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
@@ -109,7 +110,7 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <20230827115033.935089-17-dmitry.baryshkov@linaro.org>
+In-Reply-To: <20230827115033.935089-18-dmitry.baryshkov@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -117,8 +118,9 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 27.08.2023 13:50, Dmitry Baryshkov wrote:
-> Populate L2 cache node with clock, supplies and OPP information to
-> facilitate scaling L2 frequency.
+> Declare CPU frequency-scaling properties. Each CPU has its own clock,
+> how all CPUs have the same OPP table. Voltage scaling is not (yet)
+> enabled with this patch. It will be enabled later.
 > 
 > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
