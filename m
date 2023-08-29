@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84F9DC83F2C
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Aug 2023 17:19:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2269DC83F1C
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Aug 2023 17:19:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237922AbjH2RSu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Aug 2023 13:18:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48262 "EHLO
+        id S237946AbjH2RSw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Aug 2023 13:18:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237837AbjH2RSS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Aug 2023 13:18:18 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 362D5E5B;
-        Tue, 29 Aug 2023 10:17:58 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-51e28cac164so45422a12.1;
-        Tue, 29 Aug 2023 10:17:58 -0700 (PDT)
+        with ESMTP id S237858AbjH2RSY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Aug 2023 13:18:24 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D34DE6A;
+        Tue, 29 Aug 2023 10:18:04 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-98377c5d53eso602414466b.0;
+        Tue, 29 Aug 2023 10:18:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1693329465; x=1693934265;
+        d=gmail.com; s=20221208; t=1693329468; x=1693934268;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zVn9A5G3nnJE19BtxVBvWzOtozFqCP+CXHqAAw8DJNQ=;
-        b=b27K62CJiQ+fNyDd0kgfJWF+Ca5wj/0wqhnGz119b5cE+nOb+FyBPPaNzRONJSDjrR
-         rXcaWzd5feRR339wfkwB3/8yPB39a9T6o/LPn55vwhhLvUcAuZbo2CfwN3zqDEykQ1N0
-         DGeOSoCb9It3jKexuc4G4It/gfPj+uz0wiuC+hWp1KcKKgFD9uTysasqB3QgPYfeSZh7
-         D+2ayYgDjIVbn2TKN82W4PVwlwzWdFhJgdnkptvrMMDg+GdJyR3smqzdXi/xbuB/ndB+
-         kHsbiAR8Qr7fLZxvz2V1RxKNW+CPI7XJAE7qUHApqXmbMyT6mmLKPKSgQrgngQ0MxuLO
-         RD+w==
+        bh=rxQ4tL3N96YVekC9Q3F0L/yW2/LZMHRKh1BzDPVBfDY=;
+        b=W/Ba6mCAi3EsvONs3oStI9qe3lO+rjKO8eqd6OeC8WOC74KB45sAbS9gwOsR0+B1ZB
+         PwL13BHOhzqel1D0V2oej1RVUSQf5DoDYJYciJbLHJvwSoNC+cFkvwhDSfHRmcPMZII1
+         neyUEn6Ja2qOg4YUvTVZ7Qm5OnlDoGd4gaQoZ9OeHUAkmF3iXPTA0HVdbNjvlrlGBGtR
+         5eNVr3wvN+laOQRMTLthwwYCoQMvNZkMJW65SUwC9uk1SqiX2ZbtwK00+7SLfSJmr8hY
+         cUiUL63YWqF2ZNiaqWzuoT8C5DWWgLL5LEenq3unErWmHO6zR0MxN11SwAIWSEILorFr
+         OfeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693329465; x=1693934265;
+        d=1e100.net; s=20221208; t=1693329468; x=1693934268;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zVn9A5G3nnJE19BtxVBvWzOtozFqCP+CXHqAAw8DJNQ=;
-        b=ILRaNUg9ldmuPE/tjFtCmp7S9FzbPwJKVF/thH96hlJdpU5iJhYvKuW+O+2VzN6bkP
-         6A92QGUplpvGzE4IYBYzJ2U70NSv47vT4qd95OdmBf5XMTHMX2NJzd6zsi5j/uA/qqf9
-         0Cr7HpBoMzOG9NCJClGUrPJdYeFZQdREmUFsCT2Irhbu7C0OzC2kBypXEulpJOCLUHjQ
-         zU0azzFY1xSjPXbKwHMBK5wNPpBekkil9WUxmvu8Dp2F6oyZS5GvPMVP56ImXn3dd7bm
-         ilnf/p7AQa4lrSsVD2W8TsCwGyeSMfJksbrG9iEE3cgfmSMB7Nx0imoL1Z6xWvCblaBM
-         M2dQ==
-X-Gm-Message-State: AOJu0YwthKph8umyRZg8Xu1DDuZwYp6urkqVqWBcDwrQUz0sW+E4RPwp
-        Syba/k/OcrYN78ZSIesGRQ==
-X-Google-Smtp-Source: AGHT+IGVS1awmweidX6xAv3OC62PyPcHpBoI4b0nE82P4GEfIg0etIKXitlAvzG1CNyrO+3Zg0BtZA==
-X-Received: by 2002:a17:907:b609:b0:9a1:b144:30f4 with SMTP id vl9-20020a170907b60900b009a1b14430f4mr3760583ejc.14.1693329465170;
-        Tue, 29 Aug 2023 10:17:45 -0700 (PDT)
+        bh=rxQ4tL3N96YVekC9Q3F0L/yW2/LZMHRKh1BzDPVBfDY=;
+        b=SfRyNDXVCOJIQDWfO6fjbWY0nIYU8Fe0l3ovm2P97cO3HsGQUfTfT94r2wb7zI8ftQ
+         WbWT8pQJqlqBEv2O2V44TpbCPlzakbFZs+1MTjGfssqxslYsHVD1CF6fBezeQyrAPuE7
+         vQHTO4uVidMiRRypIRdi512bVRq2vc2AHBnkvSAFUV5RUMxuASkiUTtGeON4v9Yo3RkJ
+         5FOYFo3yXGOH8SN3V95CeYT0ErV9Wvjs8e4w1R24YsDnp8L10mqMD0Bmgss059OAnZjD
+         T2vMXiyiMfAIKv8hII7Yfa/trLP+t0EnjJwlba6oP4HjOwX6mXtaX/XpJWHjv/dx0vvV
+         07iQ==
+X-Gm-Message-State: AOJu0YxTJIOsCWH2Or9ngTB+mgTTOgquehVdOg25tc8k8oGrAIINRiSG
+        pe2say/GZWHfBKM2CUQFDA==
+X-Google-Smtp-Source: AGHT+IEP+Kiln5uLUvH0vUDxEPIVhi+RtKwR8SCN3T7Y1jAiZqj1OOnREaOOEVkkHwHkpcNqHLAI6A==
+X-Received: by 2002:a17:906:18c:b0:9a2:1e03:1571 with SMTP id 12-20020a170906018c00b009a21e031571mr12264491ejb.15.1693329468081;
+        Tue, 29 Aug 2023 10:17:48 -0700 (PDT)
 Received: from U4.lan ([2001:9e8:b958:3410:8e0c:ed68:cd6c:7cb8])
-        by smtp.gmail.com with ESMTPSA id a21-20020a1709062b1500b00993cc1242d4sm6115834ejg.151.2023.08.29.10.17.44
+        by smtp.gmail.com with ESMTPSA id a21-20020a1709062b1500b00993cc1242d4sm6115834ejg.151.2023.08.29.10.17.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Aug 2023 10:17:44 -0700 (PDT)
+        Tue, 29 Aug 2023 10:17:47 -0700 (PDT)
 From:   Alex Bee <knaerzche@gmail.com>
 To:     Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -67,9 +67,9 @@ Cc:     Elaine Zhang <zhangqing@rock-chips.com>,
         dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
         linux-clk@vger.kernel.org, linux-phy@lists.infradead.org,
         Alex Bee <knaerzche@gmail.com>
-Subject: [PATCH 21/31] ARM: dts: rockchip: add power controller for RK312x
-Date:   Tue, 29 Aug 2023 19:16:37 +0200
-Message-ID: <20230829171647.187787-22-knaerzche@gmail.com>
+Subject: [PATCH 24/31] ARM: dts: rockchip: Add 8-channel I2S for RK3128
+Date:   Tue, 29 Aug 2023 19:16:40 +0200
+Message-ID: <20230829171647.187787-25-knaerzche@gmail.com>
 X-Mailer: git-send-email 2.42.0
 In-Reply-To: <20230829171647.187787-1-knaerzche@gmail.com>
 References: <20230829171647.187787-1-knaerzche@gmail.com>
@@ -79,114 +79,39 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the power controller node and the correspondending qos nodes for
-RK312x.
+RK3128 has a second I2S block with 8 playback channels.
+It's internally hard-wired to the HDMI-TX, thus only usable with it.
 
 Signed-off-by: Alex Bee <knaerzche@gmail.com>
 ---
- arch/arm/boot/dts/rockchip/rk312x.dtsi | 82 ++++++++++++++++++++++++++
- 1 file changed, 82 insertions(+)
+ arch/arm/boot/dts/rockchip/rk3128.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/arch/arm/boot/dts/rockchip/rk312x.dtsi b/arch/arm/boot/dts/rockchip/rk312x.dtsi
-index 93560c4cd16a..617306a9edf7 100644
---- a/arch/arm/boot/dts/rockchip/rk312x.dtsi
-+++ b/arch/arm/boot/dts/rockchip/rk312x.dtsi
-@@ -8,6 +8,7 @@
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/pinctrl/rockchip.h>
-+#include <dt-bindings/power/rk3128-power.h>
- 
+diff --git a/arch/arm/boot/dts/rockchip/rk3128.dtsi b/arch/arm/boot/dts/rockchip/rk3128.dtsi
+index 4c5c9728179e..2339232ae2d7 100644
+--- a/arch/arm/boot/dts/rockchip/rk3128.dtsi
++++ b/arch/arm/boot/dts/rockchip/rk3128.dtsi
+@@ -7,6 +7,20 @@
  / {
  	compatible = "rockchip,rk3128";
-@@ -133,6 +134,87 @@ smp-sram@0 {
- 	pmu: syscon@100a0000 {
- 		compatible = "rockchip,rk3128-pmu", "syscon", "simple-mfd";
- 		reg = <0x100a0000 0x1000>;
-+
-+		power: power-controller {
-+			compatible = "rockchip,rk3128-power-controller";
-+			#power-domain-cells = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			power-domain@RK3128_PD_VIO {
-+				reg = <RK3128_PD_VIO>;
-+				clocks = <&cru ACLK_RGA>,
-+					 <&cru ACLK_LCDC0>,
-+					 <&cru ACLK_IEP>,
-+					 <&cru ACLK_CIF>,
-+					 <&cru ACLK_VIO0>,
-+					 <&cru ACLK_VIO1>,
-+					 <&cru DCLK_VOP>,
-+					 <&cru DCLK_EBC>,
-+					 <&cru HCLK_RGA>,
-+					 <&cru HCLK_VIO>,
-+					 <&cru HCLK_EBC>,
-+					 <&cru HCLK_LCDC0>,
-+					 <&cru HCLK_IEP>,
-+					 <&cru HCLK_CIF>,
-+					 <&cru HCLK_VIO_H2P>,
-+					 <&cru PCLK_MIPI>,
-+					 <&cru SCLK_VOP>;
-+				pm_qos = <&qos_rga>,
-+					 <&qos_iep>,
-+					 <&qos_lcdc>,
-+					 <&qos_vip>;
-+				#power-domain-cells = <0>;
-+			};
-+
-+			power-domain@RK3128_PD_VIDEO {
-+				reg = <RK3128_PD_VIDEO>;
-+				clocks = <&cru ACLK_VEPU>,
-+					 <&cru ACLK_VDPU>,
-+					 <&cru HCLK_VEPU>,
-+					 <&cru HCLK_VDPU>,
-+					 <&cru SCLK_HEVC_CORE>;
-+				pm_qos = <&qos_vpu>;
-+				#power-domain-cells = <0>;
-+			};
-+
-+			power-domain@RK3128_PD_GPU {
-+				reg = <RK3128_PD_GPU>;
-+				clocks = <&cru ACLK_GPU>;
-+				pm_qos = <&qos_gpu>;
-+				#power-domain-cells = <0>;
-+			};
-+		};
-+	};
-+
-+	qos_gpu: qos@1012d000 {
-+		compatible = "rockchip,rk3128-qos", "syscon";
-+		reg = <0x1012d000 0x20>;
-+	};
-+
-+	qos_vpu: qos@1012e000 {
-+		compatible = "rockchip,rk3128-qos", "syscon";
-+		reg = <0x1012e000 0x20>;
-+	};
-+
-+	qos_rga: qos@1012f000 {
-+		compatible = "rockchip,rk3128-qos", "syscon";
-+		reg = <0x1012f000 0x20>;
-+	};
-+
-+	qos_iep: qos@1012f100 {
-+		compatible = "rockchip,rk3128-qos", "syscon";
-+		reg = <0x1012f100 0x20>;
-+	};
-+
-+	qos_lcdc: qos@1012f180 {
-+		compatible = "rockchip,rk3128-qos", "syscon";
-+		reg = <0x1012f180 0x20>;
-+	};
-+
-+	qos_vip: qos@1012f200 {
-+		compatible = "rockchip,rk3128-qos", "syscon";
-+		reg = <0x1012f200 0x20>;
- 	};
  
- 	gic: interrupt-controller@10139000 {
++	i2s_8ch: i2s@10200000 {
++		compatible = "rockchip,rk3128-i2s", "rockchip,rk3066-i2s";
++		reg = <0x10200000 0x1000>;
++		interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cru SCLK_I2S0>, <&cru HCLK_I2S_8CH>;
++		clock-names = "i2s_clk", "i2s_hclk";
++		dmas = <&pdma 14>, <&pdma 15>;
++		dma-names = "tx", "rx";
++		rockchip,playback-channels = <8>;
++		rockchip,capture-channels = <2>;
++		#sound-dai-cells = <0>;
++		status = "disabled";
++	};
++
+ 	i2c3: i2c@2005e000 {
+ 		compatible = "rockchip,rk3128-i2c", "rockchip,rk3288-i2c";
+ 		reg = <0x2005e000 0x1000>;
 -- 
 2.42.0
 
