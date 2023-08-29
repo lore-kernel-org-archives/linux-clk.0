@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8024C83F3A
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Aug 2023 17:19:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 268CDC83F3E
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Aug 2023 17:19:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237795AbjH2RSx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Aug 2023 13:18:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36322 "EHLO
+        id S237952AbjH2RSw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Aug 2023 13:18:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237881AbjH2RS2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Aug 2023 13:18:28 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A95A2CD8;
-        Tue, 29 Aug 2023 10:18:10 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-99df431d4bfso614833566b.1;
-        Tue, 29 Aug 2023 10:18:10 -0700 (PDT)
+        with ESMTP id S237875AbjH2RS1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Aug 2023 13:18:27 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B27F519F;
+        Tue, 29 Aug 2023 10:18:09 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id a640c23a62f3a-99bcfe28909so599854066b.3;
+        Tue, 29 Aug 2023 10:18:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1693329474; x=1693934274;
+        d=gmail.com; s=20221208; t=1693329472; x=1693934272;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FWLxgtqau2yJo36SsneTQsDsVw22iqHp96edYBnf0k4=;
-        b=DYqQwQyTYCKikxyb60b1L/cidyYBoJlyYx7DxCxp/DB+czy+oU22765aVqWMq9gChN
-         hzGEHV6Ukz3+gA74rYbufEwC2om/X8PtXxXA3N4xznw7V3cK6OUceS64tiUtUh4lQPuZ
-         qvxPqnf3hK4BA3whTsYfsEi6LxYF3o5Zmt46/Dv4v/PQEoWAF/mUpr/tVxZ7VVCfDarZ
-         mLrYEkTYyOAS4e9Z4fXdLaY72iT9bCF1mJiIdDpUW5Iw6c1lmIe3+MiIWrm9ATp5bMj7
-         ZuPqabLS7qMEYqkgArtWxlTFln3aqUH+fMUcDuldrO9akccaSGMeHmH6Nx3uouf7wLBI
-         xCWw==
+        bh=xkvURmq2cbKlpQEevUHV3n2DL6VzUfl6w6/QUHqY58A=;
+        b=mh8CjGx2AHkgqd0uSoIKqeT9Tx6k2Ul0GOWg1kjbkiddzhSqVBM1nD4aYXZydED6H+
+         kWK+uS1baw/rCdfglAdVxz+J7v7YlDKV0ueFoYNvYQZ/07I8e34HSGQRfE5Pn4X9nzZp
+         IG/sINaLFwKvTfuxWfyfmNaQNcQ/tiVUFJdycaBVaRRyoOlUB0nbZpFAkDUwkmUAprwH
+         kdBDs78wbMXS2p6rqK+rwKDETklEowDB0LPP6XtEtCx5sTvze9IlfS2B9HFExdu2ZDQz
+         aE2Wba9Fb0V5phmR9SwmII3cBtdclPmYCGSX+M0CWij4M4ICfmFqNvoGeH+pWTWKGM5P
+         kyUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693329474; x=1693934274;
+        d=1e100.net; s=20221208; t=1693329472; x=1693934272;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FWLxgtqau2yJo36SsneTQsDsVw22iqHp96edYBnf0k4=;
-        b=ghg7oPYK+cKs8T6ZeFYF27ZLOr+4O0YOoOczlo99LreXsM5Rjzq1Q2ikpy1k+3MuXz
-         vSYCDCUwHukaHD0ehp9jXFCnC4F43bdQoDMX2FGp2mgXkHYE4v9BFyhamF2rRygu82Zz
-         9UGeFiZ/LObvPiRsTz7+IY6cj25J0nnCgS9w7xhC2Csv8TAga1yZK1HAqjRzsuLfwcQ4
-         3b4b3UM05QicwdmALDn4D1AEgu3tw+I6HS2My6L/uu5x/EoGCbnxm2C8w9/SjUbFaYzj
-         KW7sVJAJILOVqfrnyr5z7fdjVrsY/9eXVV0biSrGwe2gJ5eXgQCpmn9ZXBZdPq7nEyie
-         g0rA==
-X-Gm-Message-State: AOJu0Yzoq5IYmxiyss58tAGKNUIF81OshpFD5tcQSso9KrUiEPXaVuK0
-        nTpjTsCEzSj15dmmmBAjOQ==
-X-Google-Smtp-Source: AGHT+IHXNp8WBS05GZKX2uNVCiNbXcRpufiupVelX14WxEIUnMHV/eQymrQIzu4L1T4F5np5oSoR4g==
-X-Received: by 2002:a17:906:13:b0:9a2:19ea:88fc with SMTP id 19-20020a170906001300b009a219ea88fcmr13209839eja.71.1693329474462;
-        Tue, 29 Aug 2023 10:17:54 -0700 (PDT)
+        bh=xkvURmq2cbKlpQEevUHV3n2DL6VzUfl6w6/QUHqY58A=;
+        b=gzsJACRUCWUowgjn1s4bez3/+sCe0HvLa0bsj7youd0amO/xi50m4CWVty/ciPEtRH
+         s4PexgMEKhNrU6dja5kjBCY6ledQ2mZ5xL8PbmD9PW00EoFR4wCdurCP4YDH4/dGfPQN
+         UCQseQ4vIrv+DPegtfChiASCyFUIttMaJ6GcGnmlTOSNMlHKPLVFhWZfZyb9mtg3mSPq
+         YZKiP9Xwp2MfXaRrOPEJE4qF1lMYrQpL8YqcuMO/bK15aBTU7SOjqJ/mRZBiUkUE3zfh
+         ZUKvS2icZKOiXCyXi+6PgOHJo4Tly1ViTDRUbY8mzWB50v8nuFBQLdPxGX/meSw3VJED
+         B/Gw==
+X-Gm-Message-State: AOJu0YwogVJRuEKRk2QeMsbtQv+9w0Wx6Cpf4Qq4AQv9ptFgWUbR/z2y
+        TGg20JkzYGbTk/61W+KhCQ==
+X-Google-Smtp-Source: AGHT+IF8xlfihuxSv7bVK1cLtxo53LQXa5+OykLNbJpUofa4RUl/ax3u6GyAuJkTQpRKAMBEGM1X+Q==
+X-Received: by 2002:a17:906:220f:b0:9a5:aece:13b0 with SMTP id s15-20020a170906220f00b009a5aece13b0mr5390216ejs.36.1693329472292;
+        Tue, 29 Aug 2023 10:17:52 -0700 (PDT)
 Received: from U4.lan ([2001:9e8:b958:3410:8e0c:ed68:cd6c:7cb8])
-        by smtp.gmail.com with ESMTPSA id a21-20020a1709062b1500b00993cc1242d4sm6115834ejg.151.2023.08.29.10.17.53
+        by smtp.gmail.com with ESMTPSA id a21-20020a1709062b1500b00993cc1242d4sm6115834ejg.151.2023.08.29.10.17.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Aug 2023 10:17:53 -0700 (PDT)
+        Tue, 29 Aug 2023 10:17:51 -0700 (PDT)
 From:   Alex Bee <knaerzche@gmail.com>
 To:     Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -67,9 +67,9 @@ Cc:     Elaine Zhang <zhangqing@rock-chips.com>,
         dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
         linux-clk@vger.kernel.org, linux-phy@lists.infradead.org,
         Alex Bee <knaerzche@gmail.com>
-Subject: [PATCH 30/31] ARM: dts: rockchip: Add sdmmc_det pinctrl for RK312x
-Date:   Tue, 29 Aug 2023 19:16:46 +0200
-Message-ID: <20230829171647.187787-31-knaerzche@gmail.com>
+Subject: [PATCH 28/31] ARM: dts: rockchip: Add USB host clocks for RK312x
+Date:   Tue, 29 Aug 2023 19:16:44 +0200
+Message-ID: <20230829171647.187787-29-knaerzche@gmail.com>
 X-Mailer: git-send-email 2.42.0
 In-Reply-To: <20230829171647.187787-1-knaerzche@gmail.com>
 References: <20230829171647.187787-1-knaerzche@gmail.com>
@@ -79,29 +79,33 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The pincontrol for sd card detection is currently missing.
-Add it.
+Add the AHB clocks for both the ehci and ohci controller.
 
 Signed-off-by: Alex Bee <knaerzche@gmail.com>
 ---
- arch/arm/boot/dts/rockchip/rk312x.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm/boot/dts/rockchip/rk312x.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/arch/arm/boot/dts/rockchip/rk312x.dtsi b/arch/arm/boot/dts/rockchip/rk312x.dtsi
-index 19bd6448d122..5388264b54f6 100644
+index 019aa92c0cfa..b13957d55500 100644
 --- a/arch/arm/boot/dts/rockchip/rk312x.dtsi
 +++ b/arch/arm/boot/dts/rockchip/rk312x.dtsi
-@@ -969,6 +969,10 @@ sdmmc_cmd: sdmmc-cmd {
- 				rockchip,pins = <1 RK_PB7 1 &pcfg_pull_default>;
- 			};
- 
-+			sdmmc_det: sdmmc-det {
-+				rockchip,pins = <1 RK_PC1 1 &pcfg_pull_default>;
-+			};
-+
- 			sdmmc_wp: sdmmc-wp {
- 				rockchip,pins = <1 RK_PA7 1 &pcfg_pull_default>;
- 			};
+@@ -292,6 +292,7 @@ usb_host_ehci: usb@101c0000 {
+ 		compatible = "generic-ehci";
+ 		reg = <0x101c0000 0x20000>;
+ 		interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cru HCLK_HOST2>;
+ 		phys = <&usb2phy_host>;
+ 		phy-names = "usb";
+ 		status = "disabled";
+@@ -301,6 +302,7 @@ usb_host_ohci: usb@101e0000 {
+ 		compatible = "generic-ohci";
+ 		reg = <0x101e0000 0x20000>;
+ 		interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cru HCLK_HOST2>;
+ 		phys = <&usb2phy_host>;
+ 		phy-names = "usb";
+ 		status = "disabled";
 -- 
 2.42.0
 
