@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2269DC83F1C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BD79C83F35
 	for <linux-clk@archiver.kernel.org>; Tue, 29 Aug 2023 17:19:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237946AbjH2RSw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Aug 2023 13:18:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36230 "EHLO
+        id S234739AbjH2RSv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Aug 2023 13:18:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237858AbjH2RSY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Aug 2023 13:18:24 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D34DE6A;
-        Tue, 29 Aug 2023 10:18:04 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-98377c5d53eso602414466b.0;
-        Tue, 29 Aug 2023 10:18:03 -0700 (PDT)
+        with ESMTP id S237868AbjH2RSZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Aug 2023 13:18:25 -0400
+Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1E091B7;
+        Tue, 29 Aug 2023 10:18:06 -0700 (PDT)
+Received: by mail-lj1-x22e.google.com with SMTP id 38308e7fff4ca-2bcc187e0b5so71471001fa.1;
+        Tue, 29 Aug 2023 10:18:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1693329468; x=1693934268;
+        d=gmail.com; s=20221208; t=1693329471; x=1693934271;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rxQ4tL3N96YVekC9Q3F0L/yW2/LZMHRKh1BzDPVBfDY=;
-        b=W/Ba6mCAi3EsvONs3oStI9qe3lO+rjKO8eqd6OeC8WOC74KB45sAbS9gwOsR0+B1ZB
-         PwL13BHOhzqel1D0V2oej1RVUSQf5DoDYJYciJbLHJvwSoNC+cFkvwhDSfHRmcPMZII1
-         neyUEn6Ja2qOg4YUvTVZ7Qm5OnlDoGd4gaQoZ9OeHUAkmF3iXPTA0HVdbNjvlrlGBGtR
-         5eNVr3wvN+laOQRMTLthwwYCoQMvNZkMJW65SUwC9uk1SqiX2ZbtwK00+7SLfSJmr8hY
-         cUiUL63YWqF2ZNiaqWzuoT8C5DWWgLL5LEenq3unErWmHO6zR0MxN11SwAIWSEILorFr
-         OfeA==
+        bh=G4PHXGicMxBk+MJKalmg1iNAvJdEv1pEopykpBO9nUE=;
+        b=EShIb7E+Z3Us6tkTRIUmptYNcn1c25vEpCspbQxGLoL+VKjAo/XzXV/t/I+jrto2Lx
+         gVt5UeRIM1WKSIll76L1JN3B79kBVT0lfFGsZnECJ+uNIBuxz1f7TJblkBfZMrSiQIGT
+         /0z+a+iJBak/4doNX0w1w3AVduVoXz63YzJV0i4k16xgEWkLoxvOSrJX0wFxYJv9WUY1
+         Rjb/7WG9lvaXaAj6RvmuX6qBaDS2uP3leouUnNxofbkxuT0zXGRF2JJDC72nriYF029x
+         j27ZDobOtTmUm6vnZjKJWnpQrz5BBImekLEhx/6psHKvowGH9bJ2vhLR1YW4bkq4R6lN
+         XaHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693329468; x=1693934268;
+        d=1e100.net; s=20221208; t=1693329471; x=1693934271;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rxQ4tL3N96YVekC9Q3F0L/yW2/LZMHRKh1BzDPVBfDY=;
-        b=SfRyNDXVCOJIQDWfO6fjbWY0nIYU8Fe0l3ovm2P97cO3HsGQUfTfT94r2wb7zI8ftQ
-         WbWT8pQJqlqBEv2O2V44TpbCPlzakbFZs+1MTjGfssqxslYsHVD1CF6fBezeQyrAPuE7
-         vQHTO4uVidMiRRypIRdi512bVRq2vc2AHBnkvSAFUV5RUMxuASkiUTtGeON4v9Yo3RkJ
-         5FOYFo3yXGOH8SN3V95CeYT0ErV9Wvjs8e4w1R24YsDnp8L10mqMD0Bmgss059OAnZjD
-         T2vMXiyiMfAIKv8hII7Yfa/trLP+t0EnjJwlba6oP4HjOwX6mXtaX/XpJWHjv/dx0vvV
-         07iQ==
-X-Gm-Message-State: AOJu0YxTJIOsCWH2Or9ngTB+mgTTOgquehVdOg25tc8k8oGrAIINRiSG
-        pe2say/GZWHfBKM2CUQFDA==
-X-Google-Smtp-Source: AGHT+IEP+Kiln5uLUvH0vUDxEPIVhi+RtKwR8SCN3T7Y1jAiZqj1OOnREaOOEVkkHwHkpcNqHLAI6A==
-X-Received: by 2002:a17:906:18c:b0:9a2:1e03:1571 with SMTP id 12-20020a170906018c00b009a21e031571mr12264491ejb.15.1693329468081;
-        Tue, 29 Aug 2023 10:17:48 -0700 (PDT)
+        bh=G4PHXGicMxBk+MJKalmg1iNAvJdEv1pEopykpBO9nUE=;
+        b=hM6QDBlKUZatpz0UEUsDuMZbSZWn1AQky/y9OBmt7aHiwR9WeE9gQICIws42+f0rUo
+         TOa34pGMRiSlLCXC3pRb6sBQrQ/s3o+d1XHuMGboFII7k08bTcu+X3OkxGvpwBuYNV6L
+         7RBvpsvpgSgu96lNoGwLiVjJDi2vXSoSziWlxGSKntRncwrBLcN55TxsOR6JmU7N59dV
+         Q/ynbu3PFSikCifkxKfgGlqg2YWe9JfLFBoON8spLwjCRb7p1dgH4GiXTGlwdyABqSfM
+         Bi7Iw/Zqk0fkd9A3+kzObEVl0WB95RYTl4jiEYnwVXBm1egwnHuduKFVAFEPzk32fK3g
+         zE7w==
+X-Gm-Message-State: AOJu0YzkUmtgpDgBD0LivQ/oVhkWvSlSedBvr7UbXwbBB5iTP6a0fpMX
+        cy3a/A3dZI+fGDH2rJh37Q==
+X-Google-Smtp-Source: AGHT+IEQB3R89Y565RxZaGfUe+xAj9rNo4DRqqtlbGvy1GBw6QhT8IIxT0/e3EW2cHJ2YckOECQ8ww==
+X-Received: by 2002:a2e:9084:0:b0:2b9:f007:9910 with SMTP id l4-20020a2e9084000000b002b9f0079910mr20989559ljg.53.1693329471278;
+        Tue, 29 Aug 2023 10:17:51 -0700 (PDT)
 Received: from U4.lan ([2001:9e8:b958:3410:8e0c:ed68:cd6c:7cb8])
-        by smtp.gmail.com with ESMTPSA id a21-20020a1709062b1500b00993cc1242d4sm6115834ejg.151.2023.08.29.10.17.47
+        by smtp.gmail.com with ESMTPSA id a21-20020a1709062b1500b00993cc1242d4sm6115834ejg.151.2023.08.29.10.17.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Aug 2023 10:17:47 -0700 (PDT)
+        Tue, 29 Aug 2023 10:17:50 -0700 (PDT)
 From:   Alex Bee <knaerzche@gmail.com>
 To:     Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -67,9 +67,9 @@ Cc:     Elaine Zhang <zhangqing@rock-chips.com>,
         dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
         linux-clk@vger.kernel.org, linux-phy@lists.infradead.org,
         Alex Bee <knaerzche@gmail.com>
-Subject: [PATCH 24/31] ARM: dts: rockchip: Add 8-channel I2S for RK3128
-Date:   Tue, 29 Aug 2023 19:16:40 +0200
-Message-ID: <20230829171647.187787-25-knaerzche@gmail.com>
+Subject: [PATCH 27/31] ARM: dts: rockchip: Add dwc2 otg fifo siztes for RK312x
+Date:   Tue, 29 Aug 2023 19:16:43 +0200
+Message-ID: <20230829171647.187787-28-knaerzche@gmail.com>
 X-Mailer: git-send-email 2.42.0
 In-Reply-To: <20230829171647.187787-1-knaerzche@gmail.com>
 References: <20230829171647.187787-1-knaerzche@gmail.com>
@@ -79,39 +79,29 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-RK3128 has a second I2S block with 8 playback channels.
-It's internally hard-wired to the HDMI-TX, thus only usable with it.
+The driver currently won't probe correctly if those values are missing.
+They have been taken from dowstream kernel and match those of other
+Rockchip SoCs.
 
 Signed-off-by: Alex Bee <knaerzche@gmail.com>
 ---
- arch/arm/boot/dts/rockchip/rk3128.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ arch/arm/boot/dts/rockchip/rk312x.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm/boot/dts/rockchip/rk3128.dtsi b/arch/arm/boot/dts/rockchip/rk3128.dtsi
-index 4c5c9728179e..2339232ae2d7 100644
---- a/arch/arm/boot/dts/rockchip/rk3128.dtsi
-+++ b/arch/arm/boot/dts/rockchip/rk3128.dtsi
-@@ -7,6 +7,20 @@
- / {
- 	compatible = "rockchip,rk3128";
- 
-+	i2s_8ch: i2s@10200000 {
-+		compatible = "rockchip,rk3128-i2s", "rockchip,rk3066-i2s";
-+		reg = <0x10200000 0x1000>;
-+		interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&cru SCLK_I2S0>, <&cru HCLK_I2S_8CH>;
-+		clock-names = "i2s_clk", "i2s_hclk";
-+		dmas = <&pdma 14>, <&pdma 15>;
-+		dma-names = "tx", "rx";
-+		rockchip,playback-channels = <8>;
-+		rockchip,capture-channels = <2>;
-+		#sound-dai-cells = <0>;
-+		status = "disabled";
-+	};
-+
- 	i2c3: i2c@2005e000 {
- 		compatible = "rockchip,rk3128-i2c", "rockchip,rk3288-i2c";
- 		reg = <0x2005e000 0x1000>;
+diff --git a/arch/arm/boot/dts/rockchip/rk312x.dtsi b/arch/arm/boot/dts/rockchip/rk312x.dtsi
+index ce3f03c3532e..019aa92c0cfa 100644
+--- a/arch/arm/boot/dts/rockchip/rk312x.dtsi
++++ b/arch/arm/boot/dts/rockchip/rk312x.dtsi
+@@ -280,6 +280,9 @@ usb_otg: usb@10180000 {
+ 		clocks = <&cru HCLK_OTG>;
+ 		clock-names = "otg";
+ 		dr_mode = "otg";
++		g-np-tx-fifo-size = <16>;
++		g-rx-fifo-size = <280>;
++		g-tx-fifo-size = <256 128 128 64 32 16>;
+ 		phys = <&usb2phy_otg>;
+ 		phy-names = "usb2-phy";
+ 		status = "disabled";
 -- 
 2.42.0
 
