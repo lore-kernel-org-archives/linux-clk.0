@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15D64C83F1B
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Aug 2023 17:19:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9384AC83F26
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Aug 2023 17:19:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237871AbjH2RSq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Aug 2023 13:18:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47900 "EHLO
+        id S237884AbjH2RSr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Aug 2023 13:18:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237784AbjH2RSL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Aug 2023 13:18:11 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5270ECD1;
-        Tue, 29 Aug 2023 10:17:45 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-997c4107d62so601373366b.0;
-        Tue, 29 Aug 2023 10:17:45 -0700 (PDT)
+        with ESMTP id S237801AbjH2RSO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Aug 2023 13:18:14 -0400
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DEF6CF2;
+        Tue, 29 Aug 2023 10:17:49 -0700 (PDT)
+Received: by mail-lj1-x229.google.com with SMTP id 38308e7fff4ca-2b95d5ee18dso70769221fa.1;
+        Tue, 29 Aug 2023 10:17:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1693329453; x=1693934253;
+        d=gmail.com; s=20221208; t=1693329462; x=1693934262;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MBe21p78bEGeinGOeEZ5dbYwb28pfpjkSo3Y7gdPnoA=;
-        b=SUdL/xb3kpsY3Akj/aJ26o1kv2KJys+W9cQBeBkftJhsQqWtZcpM7ECdOar9ADv/Jk
-         jnanflospjevW6BNesT12gqFBXaaHkeB5/Dad0SOUROZyWMFcC4+ME8Rt+tWiNBTyLGL
-         VMwY7HTAQx+H8I3BXswnEOgBBn12IteAi1X/spxrBhperVxXoUCrAPC5WTzBhG3W/QiD
-         pCWF4JTBniQzdk5RPjFTAk9dpoOCO8j3OClV0dicykotS4qTBR5aP//QtpVMSOsX+tdg
-         X0bBbzobuYclmPOSn8aN3PQxMR/UlFydtNoqxKA/LXK49n1/jGxqCSXxPz24N7GhDtJB
-         llzA==
+        bh=feXb8mBBSxHC2Wg38x6bXprPMxa/iS7sxw36h6E5GW8=;
+        b=h4PyqX0xtB7S2T6VFiGduqml3wx0qswAzQccLxwPFbM0Qk7fnZ8sK0BmODYagHvSJg
+         dN0Gkz34UcQ5dALUAS7qkreaFpaJH1/HqwEkvHL6nhuwbhwsUlvgNhtu0JWR/t+byarI
+         jO/zOGwOmY8ILY7Yn5zt8RSPxT4JW03j5Tykw5RFZbIchdbUVag5NZphZtJVw8SKgyXA
+         StVAmKygz3dt8cdzSI8lWcVBevQXPpttS6lu7dJtB3bq4a2IVYMqqSDw4EMZGzaYGz8o
+         MWk29pok/xzUj/XYqYYzaN6bwBumz3ddYzcgcpDsm6KdIhLN5lyBSD70ZFbaayj7BLKq
+         o/hA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693329453; x=1693934253;
+        d=1e100.net; s=20221208; t=1693329462; x=1693934262;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MBe21p78bEGeinGOeEZ5dbYwb28pfpjkSo3Y7gdPnoA=;
-        b=KbjJmytHaZLdHza+gSzgkPIfCJ7AdLiMIqmuZks65m6ncR+ap9BK00CZm8DqaEGV5B
-         MeFNjdpwzk+5mK5lWgF1NmMg1K3DYNs/b3EB6kgaoEtxoXQR+eJKut08YVQxYJAIt8FD
-         y8SxurMAWhOT3qUMvfk3zE8hjQVBI3Qz60mnWQthEsxGYQiH4SE4klHz8ABMBqB8mJFm
-         rUQ29xDirksFrzlcbMtCxdcJ//EfKgT8S1xlQ9kPea3WRkkq8D9HlMbvoOikHUpKmkH7
-         5zuGmAOA6fScZBYYgTfn5pHw3lrRuBAonane4TkFwUg1ZwvQc/BtnYO9J6zAuj71xcFr
-         +12A==
-X-Gm-Message-State: AOJu0YwZROpqRKs8RQOaeek9jSRjH9WaOisiJ8ORLkcBy1WqIkg6V57c
-        wjp3yKirpQRAAhOLeFCPrg==
-X-Google-Smtp-Source: AGHT+IG3HeRnwjBp4DP1d8br+7ZiHAWUkr/gchOvBZ36yJgCrvVfN0JO4YkAJKyfaU26dvULxvz2mA==
-X-Received: by 2002:a17:906:5346:b0:9a2:1ce5:1243 with SMTP id j6-20020a170906534600b009a21ce51243mr12594716ejo.60.1693329453236;
-        Tue, 29 Aug 2023 10:17:33 -0700 (PDT)
+        bh=feXb8mBBSxHC2Wg38x6bXprPMxa/iS7sxw36h6E5GW8=;
+        b=hQeaSNbk+lRMH4oenE8jHp+vWQJFowBlQwOrh8OJpl5VRhZi5CwvweJS/++IEh3dov
+         A06TVAXIMHoHZ/Fg2m0f675P55kGRgHMKQCFlyeKdZc62ZagFriuSc5NpgNz0DgEavNS
+         Tyngzpf4rJbVVt5hOz8zstMbiebURLZq3id705Y/C3eXGL9l4ZXHD7wBnm3jGvbY4W/e
+         LGVPQgVW7g86b0tuAWdMP8Bmfm9wZoYnHpiS/gRHwaqm/iOEcu0AjkDOQ6u8bKSGhQQf
+         rkZzrKTcvMopGWU6Sb1P85j2Ry7lMlXEXoJl0LVf5XEnMzUyVu+gi/yjom+gHEeJt2ri
+         1TWQ==
+X-Gm-Message-State: AOJu0YwjLrTwHRkowFK8rt3VkTUo8A4IBc9Jhc1Jdi0FRshgc3J8Tho/
+        1Og/BIwNOfwzOo318VRisw==
+X-Google-Smtp-Source: AGHT+IGy6ebumFaH6aO1ynQk+aNb6IThAySOcLcWyoeDCRfh26m8xsK1Szz112EbWkaHyFlntA3M6Q==
+X-Received: by 2002:a2e:9cd8:0:b0:2bb:bdf0:caf2 with SMTP id g24-20020a2e9cd8000000b002bbbdf0caf2mr20698676ljj.25.1693329462298;
+        Tue, 29 Aug 2023 10:17:42 -0700 (PDT)
 Received: from U4.lan ([2001:9e8:b958:3410:8e0c:ed68:cd6c:7cb8])
-        by smtp.gmail.com with ESMTPSA id a21-20020a1709062b1500b00993cc1242d4sm6115834ejg.151.2023.08.29.10.17.32
+        by smtp.gmail.com with ESMTPSA id a21-20020a1709062b1500b00993cc1242d4sm6115834ejg.151.2023.08.29.10.17.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Aug 2023 10:17:32 -0700 (PDT)
+        Tue, 29 Aug 2023 10:17:41 -0700 (PDT)
 From:   Alex Bee <knaerzche@gmail.com>
 To:     Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -67,9 +67,9 @@ Cc:     Elaine Zhang <zhangqing@rock-chips.com>,
         dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
         linux-clk@vger.kernel.org, linux-phy@lists.infradead.org,
         Alex Bee <knaerzche@gmail.com>
-Subject: [PATCH 09/31] phy: phy-rockchip-inno-usb2: Add RK3128 support
-Date:   Tue, 29 Aug 2023 19:16:25 +0200
-Message-ID: <20230829171647.187787-10-knaerzche@gmail.com>
+Subject: [PATCH 18/31] ARM: dts: rockchip: Enable SMP bringup for RK312x
+Date:   Tue, 29 Aug 2023 19:16:34 +0200
+Message-ID: <20230829171647.187787-19-knaerzche@gmail.com>
 X-Mailer: git-send-email 2.42.0
 In-Reply-To: <20230829171647.187787-1-knaerzche@gmail.com>
 References: <20230829171647.187787-1-knaerzche@gmail.com>
@@ -79,79 +79,41 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add registers to support the 2-port usb2 phy found in RK312x SoC familiy.
+For bringup of the non-boot cpu cores the enable-method for RK3036 can be
+re-used.
+
+This adds a (small) chunk  of SRAM for execution of the SMP trampoline code
+and the respective enable-method property to the cpus.
 
 Signed-off-by: Alex Bee <knaerzche@gmail.com>
 ---
- drivers/phy/rockchip/phy-rockchip-inno-usb2.c | 48 +++++++++++++++++++
- 1 file changed, 48 insertions(+)
+ arch/arm/boot/dts/rockchip/rk312x.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
-index a4a1716e67bd..9ea08be533cc 100644
---- a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
-+++ b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
-@@ -1374,6 +1374,53 @@ static int rockchip_usb2phy_probe(struct platform_device *pdev)
- 	return ret;
- }
+diff --git a/arch/arm/boot/dts/rockchip/rk312x.dtsi b/arch/arm/boot/dts/rockchip/rk312x.dtsi
+index b195ac525c37..08b953b005ff 100644
+--- a/arch/arm/boot/dts/rockchip/rk312x.dtsi
++++ b/arch/arm/boot/dts/rockchip/rk312x.dtsi
+@@ -27,6 +27,7 @@ arm-pmu {
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
++		enable-method = "rockchip,rk3036-smp";
  
-+static const struct rockchip_usb2phy_cfg rk3128_phy_cfgs[] = {
-+	{
-+		.reg = 0x17c,
-+		.num_ports	= 2,
-+		.clkout_ctl	= { 0x0190, 15, 15, 1, 0 },
-+		.port_cfgs	= {
-+			[USB2PHY_PORT_OTG] = {
-+				.phy_sus	= { 0x017c, 8, 0, 0, 0x1d1 },
-+				.bvalid_det_en	= { 0x017c, 14, 14, 0, 1 },
-+				.bvalid_det_st	= { 0x017c, 15, 15, 0, 1 },
-+				.bvalid_det_clr	= { 0x017c, 15, 15, 0, 1 },
-+				.idfall_det_en  = { 0x01a0, 2, 2, 0, 1 },
-+				.idfall_det_st  = { 0x01a0, 3, 3, 0, 1 },
-+				.idfall_det_clr = { 0x01a0, 3, 3, 0, 1 },
-+				.idrise_det_en  = { 0x01a0, 0, 0, 0, 1 },
-+				.idrise_det_st  = { 0x01a0, 1, 1, 0, 1 },
-+				.idrise_det_clr = { 0x01a0, 1, 1, 0, 1 },
-+				.ls_det_en	= { 0x017c, 12, 12, 0, 1 },
-+				.ls_det_st	= { 0x017c, 13, 13, 0, 1 },
-+				.ls_det_clr	= { 0x017c, 13, 13, 0, 1 },
-+				.utmi_bvalid	= { 0x014c, 5, 5, 0, 1 },
-+				.utmi_id	= { 0x014c, 8, 8, 0, 1 },
-+				.utmi_ls	= { 0x014c, 7, 6, 0, 1 },
-+			},
-+			[USB2PHY_PORT_HOST] = {
-+				.phy_sus	= { 0x0194, 8, 0, 0, 0x1d1 },
-+				.ls_det_en	= { 0x0194, 14, 14, 0, 1 },
-+				.ls_det_st	= { 0x0194, 15, 15, 0, 1 },
-+				.ls_det_clr	= { 0x0194, 15, 15, 0, 1 }
-+			}
-+		},
-+		.chg_det = {
-+			.opmode		= { 0x017c, 3, 0, 5, 1 },
-+			.cp_det		= { 0x02c0, 6, 6, 0, 1 },
-+			.dcp_det	= { 0x02c0, 5, 5, 0, 1 },
-+			.dp_det		= { 0x02c0, 7, 7, 0, 1 },
-+			.idm_sink_en	= { 0x0184, 8, 8, 0, 1 },
-+			.idp_sink_en	= { 0x0184, 7, 7, 0, 1 },
-+			.idp_src_en	= { 0x0184, 9, 9, 0, 1 },
-+			.rdm_pdwn_en	= { 0x0184, 10, 10, 0, 1 },
-+			.vdm_src_en	= { 0x0184, 12, 12, 0, 1 },
-+			.vdp_src_en	= { 0x0184, 11, 11, 0, 1 },
-+		},
-+	},
-+	{ /* sentinel */ }
-+};
+ 		cpu0: cpu@f00 {
+ 			device_type = "cpu";
+@@ -87,6 +88,11 @@ imem: sram@10080000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		ranges = <0 0x10080000 0x2000>;
 +
- static const struct rockchip_usb2phy_cfg rk3228_phy_cfgs[] = {
- 	{
- 		.reg = 0x760,
-@@ -1749,6 +1796,7 @@ static const struct rockchip_usb2phy_cfg rv1108_phy_cfgs[] = {
++		smp-sram@0 {
++			compatible = "rockchip,rk3066-smp-sram";
++			reg = <0x00 0x10>;
++		};
+ 	};
  
- static const struct of_device_id rockchip_usb2phy_dt_match[] = {
- 	{ .compatible = "rockchip,px30-usb2phy", .data = &rk3328_phy_cfgs },
-+	{ .compatible = "rockchip,rk3128-usb2phy", .data = &rk3128_phy_cfgs },
- 	{ .compatible = "rockchip,rk3228-usb2phy", .data = &rk3228_phy_cfgs },
- 	{ .compatible = "rockchip,rk3308-usb2phy", .data = &rk3308_phy_cfgs },
- 	{ .compatible = "rockchip,rk3328-usb2phy", .data = &rk3328_phy_cfgs },
+ 	pmu: syscon@100a0000 {
 -- 
 2.42.0
 
