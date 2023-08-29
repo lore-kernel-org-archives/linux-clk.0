@@ -2,106 +2,116 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D795C83F17
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Aug 2023 21:19:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 761A3C83F1A
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Aug 2023 03:30:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231814AbjH1VTF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Aug 2023 17:19:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46316 "EHLO
+        id S235308AbjH2D3p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Aug 2023 23:29:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232840AbjH1VSf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Aug 2023 17:18:35 -0400
-Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CA71C3
-        for <linux-clk@vger.kernel.org>; Mon, 28 Aug 2023 14:18:33 -0700 (PDT)
-Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-58d31f142eeso44141907b3.0
-        for <linux-clk@vger.kernel.org>; Mon, 28 Aug 2023 14:18:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693257512; x=1693862312;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=FliVY615SEVhU7q/mzsk+r1Q2msZnK6cJIUPdMDRRUs=;
-        b=cWLcHR4sSxaF1+1qqYC7UpzV+E6ieIqJHvwuenssIkM9Cr5x/uMmdwIfA8+hieDITg
-         vNNwvwOmUiXrG3+RScTdFFGfqHsTg8WNN95/fVmfljca/dI4cx2sjdZ+Q4J1nHu4NrE1
-         IGaW7B1NP+cloCZ/rmvXq+BXrJuQXa38/NWp/fqRgu5BfH+uruV7I1hK2Ne3MXEYVv3A
-         z1pl5VZDhzFOhn4m6Q2A189RCqhln0mRnqTZr8YhExbWfF2PoHSOxNZ4FkBVZzRuriYY
-         nTPOjnVHooNRKkrIxZmX0eYc5Gr9i41/0BI9DIilI7+k9vDZibgphNkWF1R/iv+n5Nxx
-         AYVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693257512; x=1693862312;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FliVY615SEVhU7q/mzsk+r1Q2msZnK6cJIUPdMDRRUs=;
-        b=C6kdC4+lrXbl5IDbC6mjd2dctq8sRNQTfX9Ofsx95TVbwDI8qHQowIoznUGhRyaZEz
-         BqZoYPApaGlvQXm3gj+Fc/CBoHKFwRq6Yeu1NzaBcKJMFtc/PVsYNe8PLby7yt0PpvV3
-         wEv3kQfQI7i2/TdIBT/4NO/hJIN1ajlah41dkgDRsVa+PzrrsJUPMmxRJBGpgCwvO39Y
-         Hj0t/vspdmQ4+HcH/dnyLThyF/eMXZ73Boqbw0GP8H6aPFg7mS8Vx5bSVzclTCuxHLaG
-         akGj3FXavPCQ0LgxcANqVe7MoaxzbnINDqv8p7qTqU1HcFDdEg/hw4mcx9DovBezaz+l
-         McxA==
-X-Gm-Message-State: AOJu0YxRSl1z7Gzuvpw6evKlOXdLdpcxTm4M02WlRkjN6P8zAyGHHgIr
-        1SS9PRAnnQozbzJSzaVRhEtzABEmzSh312TTWaPYsQ==
-X-Google-Smtp-Source: AGHT+IGVY3Grt8v+TneGy63uFk333inJDlkXAPH94m3V0xoeYPtYcffqLrh79udacodPiOlKofhL6KWSVF8Dj92OMHg=
-X-Received: by 2002:a25:da0c:0:b0:d74:6163:db8c with SMTP id
- n12-20020a25da0c000000b00d746163db8cmr28524846ybf.41.1693257512343; Mon, 28
- Aug 2023 14:18:32 -0700 (PDT)
+        with ESMTP id S235629AbjH2D3k (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Aug 2023 23:29:40 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BFCF110;
+        Mon, 28 Aug 2023 20:29:37 -0700 (PDT)
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37T2VbxH031740;
+        Tue, 29 Aug 2023 03:28:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=EhZf3ayO/wDgQ6rYztFJO+yN7mD/q2RQlkhBvaG9Ui0=;
+ b=ouLV7d8WwDMdkAzdgRpJEIK3wTlBNoK43jpEpbAYIC7dlHCUEM3U05Ed7KcHk5KUOtZg
+ +27dPSAbTnOxFw+m1EJtu9BDVthfesqW5PAWopD8keUVCQ4btSaFZoWiDdq6CT2pPZCp
+ vp7i+Gvix/gHgzkIkR2rev9n804KBXAw1Vkd60EdsaQ9llUVBu1BK6aQM92KnSiBuVgD
+ zFIR9OxG+4/85FyuVxN+I3+i667jrcC3Le6K6SNu6xLIBFNmyoyWterK4NeX/Q7xmdd4
+ 0Qe/GItjjCmtrokuCcfZ5WDvPTfSX10dbsK/CTt32rwp2zJPPDLB5NYLuAeKuD3xstE4 fw== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3srvr81ghx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 29 Aug 2023 03:28:54 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 37T3SrGw001787
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 29 Aug 2023 03:28:53 GMT
+Received: from [10.216.21.12] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.36; Mon, 28 Aug
+ 2023 20:28:45 -0700
+Message-ID: <63826bbc-7193-f6fd-358d-87ad6b3ae5b1@quicinc.com>
+Date:   Tue, 29 Aug 2023 08:58:37 +0530
 MIME-Version: 1.0
-References: <20230827115033.935089-1-dmitry.baryshkov@linaro.org>
- <20230827115033.935089-6-dmitry.baryshkov@linaro.org> <493aff10d698c9ca5bdbeae45250f5fe.sboyd@kernel.org>
-In-Reply-To: <493aff10d698c9ca5bdbeae45250f5fe.sboyd@kernel.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Tue, 29 Aug 2023 00:18:21 +0300
-Message-ID: <CAA8EJppBT2hOUfGkzj273pcniE2-Q4dn8aA9Of11X1JmkAbOiA@mail.gmail.com>
-Subject: Re: [PATCH v4 05/23] interconnect: icc-clk: add support for scaling
- using OPP
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>,
-        Ilia Lin <ilia.lin@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Nishanth Menon <nm@ti.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Christian Marangi <ansuelsmth@gmail.com>,
-        Stephan Gerhold <stephan@gerhold.net>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH V2 1/7] clk: qcom: clk-alpha-pll: Add NSS HUAYRA ALPHA PLL
+ support for ipq9574
+To:     Stephen Boyd <sboyd@kernel.org>, <agross@kernel.org>,
+        <andersson@kernel.org>, <arnd@arndb.de>, <catalin.marinas@arm.com>,
+        <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
+        <geert+renesas@glider.be>, <konrad.dybcio@linaro.org>,
+        <krzysztof.kozlowski+dt@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <mturquette@baylibre.com>,
+        <netdev@vger.kernel.org>, <nfraprado@collabora.com>,
+        <p.zabel@pengutronix.de>, <peng.fan@nxp.com>, <rafal@milecki.pl>,
+        <richardcochran@gmail.com>, <robh+dt@kernel.org>, <will@kernel.org>
+CC:     <quic_saahtoma@quicinc.com>
+References: <20230825091234.32713-1-quic_devipriy@quicinc.com>
+ <20230825091234.32713-2-quic_devipriy@quicinc.com>
+ <4a00db79414dbc47a2b7792d849f7056.sboyd@kernel.org>
+Content-Language: en-US
+From:   Devi Priya <quic_devipriy@quicinc.com>
+In-Reply-To: <4a00db79414dbc47a2b7792d849f7056.sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Q7kegw_-tSm7uznGqCAL3sL8_6h0oaLb
+X-Proofpoint-ORIG-GUID: Q7kegw_-tSm7uznGqCAL3sL8_6h0oaLb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-08-28_20,2023-08-28_04,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ priorityscore=1501 mlxlogscore=999 spamscore=0 clxscore=1015
+ impostorscore=0 malwarescore=0 lowpriorityscore=0 suspectscore=0
+ mlxscore=0 phishscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2308100000 definitions=main-2308290030
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 28 Aug 2023 at 21:10, Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Dmitry Baryshkov (2023-08-27 04:50:15)
-> > diff --git a/drivers/interconnect/icc-clk.c b/drivers/interconnect/icc-clk.c
-> > index d787f2ea36d9..45ffb068979d 100644
-> > --- a/drivers/interconnect/icc-clk.c
-> > +++ b/drivers/interconnect/icc-clk.c
-> > @@ -25,12 +28,16 @@ struct icc_clk_provider {
-> >  static int icc_clk_set(struct icc_node *src, struct icc_node *dst)
-> >  {
-> >         struct icc_clk_node *qn = src->data;
-> > +       unsigned long rate = icc_units_to_bps(src->peak_bw);
-> >         int ret;
-> >
-> >         if (!qn || !qn->clk)
-> >                 return 0;
-> >
-> > -       if (!src->peak_bw) {
-> > +       if (qn->opp)
-> > +               return dev_pm_opp_set_rate(qn->dev, rate);
->
-> Just curious how does lockdep do with this? Doesn't OPP call into
-> interconnect code, so lockdep will complain about ABBA?
 
-Interesting question. I should check it.
 
--- 
-With best wishes
-Dmitry
+On 8/26/2023 2:28 AM, Stephen Boyd wrote:
+> Quoting Devi Priya (2023-08-25 02:12:28)
+>> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+>> index e4ef645f65d1..1c2a72840cd2 100644
+>> --- a/drivers/clk/qcom/clk-alpha-pll.c
+>> +++ b/drivers/clk/qcom/clk-alpha-pll.c
+>> @@ -228,6 +228,18 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
+>>                  [PLL_OFF_ALPHA_VAL] = 0x24,
+>>                  [PLL_OFF_ALPHA_VAL_U] = 0x28,
+>>          },
+>> +
+> 
+> Why the extra newline? All other types aren't this way.
+Sure, will drop it in V3
+
+Thanks,
+Devi Priya
+> 
+>> +       [CLK_ALPHA_PLL_TYPE_NSS_HUAYRA] =  {
+>> +               [PLL_OFF_L_VAL] = 0x04,
+>> +               [PLL_OFF_ALPHA_VAL] = 0x08,
+>> +               [PLL_OFF_TEST_CTL] = 0x0c,
+>> +               [PLL_OFF_TEST_CTL_U] = 0x10,
+>> +               [PLL_OFF_USER_CTL] = 0x14,
+>> +               [PLL_OFF_CONFIG_CTL] = 0x18,
+>> +               [PLL_OFF_CONFIG_CTL_U] = 0x1c,
+>> +               [PLL_OFF_STATUS] = 0x20,
+>> +       },
+>> +
