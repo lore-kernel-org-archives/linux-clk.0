@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37ADCC83F18
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Aug 2023 17:19:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31388C83F12
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Aug 2023 17:19:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234424AbjH2RSe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Aug 2023 13:18:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59780 "EHLO
+        id S237727AbjH2RSf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Aug 2023 13:18:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237866AbjH2RSB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Aug 2023 13:18:01 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32EEC10C6;
-        Tue, 29 Aug 2023 10:17:34 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id a640c23a62f3a-99c353a395cso601423566b.2;
-        Tue, 29 Aug 2023 10:17:34 -0700 (PDT)
+        with ESMTP id S237861AbjH2RSA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Aug 2023 13:18:00 -0400
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0A9810C1;
+        Tue, 29 Aug 2023 10:17:33 -0700 (PDT)
+Received: by mail-lj1-x22c.google.com with SMTP id 38308e7fff4ca-2bcc187e0b5so71463511fa.1;
+        Tue, 29 Aug 2023 10:17:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1693329448; x=1693934248;
+        d=gmail.com; s=20221208; t=1693329446; x=1693934246;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Rlz17GtutNw1PX6avQfyxd2FJLVbt0FbIToHal1G+vU=;
-        b=UIFYLrNe0gh2pAwnM5MUnuNxEI2N+C+hDeO1RoxlyGw+Dv05W/dM9XAythdMCRIY6K
-         Z9nxj4tt6ACJ68ny5AJEt3T2+Td3iRnGFXuDpEEGOKu1ZCi0/xj3r9ftMwbIkD3G91Uu
-         U+ldak5sol1qkR+3XD7+yUG1TLmaye0xeGMRwwNqpywQVNXSCXTHRVBbLJQJvccZ/LA9
-         LfsLtbCwvE6VCGJqblgyPJH3fqOZ+8kAGnBFIBXvtLQwOoeNKDHvfHDNfwl+3UeJYtEU
-         h2pnzMnciPjnl0iSQaYBcpSKtOHjUkwuAJ9DiY+9OzRXC+sMbSIofwBZCO86tFcfg3tY
-         qkyA==
+        bh=FenEPRzkF+fCLIr+dUsskF7AjB/E9ox5j4UlAbRUoQo=;
+        b=Yo/oKwwdBrMUMDkG5wvtSq8crhNn4CVhpsSAkfHlafXQiHFiaNCwXonEMR1ZDxCS5m
+         8YMbkPO77M/H+V8eGgHCiLqFyL8qhL3LoN424+kSeFvcy4Iw6OTRIVTpSCSdd9tCwDyf
+         wK/8ORLWL2an1MTEX9kBbYFORB1c6srfOFu6kASEukKSZlOVd+rDH0qqXHzVYYUbjidp
+         vAaJcoC5HbbSkmGx74F2zL0RGWprs9ssIYNMNeCUn3cIqf34INO4z4cFqNir0FJsujPG
+         QLxlsOanjUlDMPVQsbzFmL8MlsHmUnyQ97SW1Iqn7dN1mY4qZODbo9MMtiCx+VK0783S
+         3AIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693329448; x=1693934248;
+        d=1e100.net; s=20221208; t=1693329446; x=1693934246;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Rlz17GtutNw1PX6avQfyxd2FJLVbt0FbIToHal1G+vU=;
-        b=UonFUDCNVTk7n4Zxxruq3Td7Pv3W0kodNBBPVkzpJobuVf0Fr9WzZrSq9WxG3Q0GoW
-         h1gX7b/Ui9WjGxLfOBZj/H4/JutUAvARhVH/zGvmp0+lgxC6d+Ltty1l0GG4IstZohXg
-         EAKzHsDVJUGb+VW/a032nmDKxHzzrYHCG+uaMLpALApB504X7mOqy40uXX6d6cRbGNek
-         WKKch/phs2+yFFhOP6cJf6aeLAXb4RTj39Y5OxKWthXLl5a9tJEANngyC463EkXA045/
-         Eag9FE/shWZBj/pXAU/ABT9jYMOcccqeVNy6AroixV/yevDpT1ZnmazXgObAY4HwAFec
-         E3nw==
-X-Gm-Message-State: AOJu0YwA6wSpJZ+W0i2eoaGpcz7K/wdeJsc/TRNCDJancm7FNnKtwLMA
-        JbNOaHylLAkoDs+E2E/csg==
-X-Google-Smtp-Source: AGHT+IFFkEkxU6fLi6B7Qfna18QFEfdVNppGwFK63NpwdhfSCbGPZ5uGzoW6mAq0vfuONXZvjcBGNA==
-X-Received: by 2002:a17:906:8462:b0:9a5:81cf:57b5 with SMTP id hx2-20020a170906846200b009a581cf57b5mr8395816ejc.2.1693329448163;
-        Tue, 29 Aug 2023 10:17:28 -0700 (PDT)
+        bh=FenEPRzkF+fCLIr+dUsskF7AjB/E9ox5j4UlAbRUoQo=;
+        b=HWi6FW/xfOrucfw6+Cfqi0r5pBS1jh5YwOoPsyl0Gw5f+LFzsTRi2kQXCZm8lKSP+K
+         64Hw/ErwXeAdv/qi7inGDkxMEkYBfO3m20UyngAHC1NcoEXtDm83UwLuqplGAdZjBtV1
+         3n3hRgTZ4Wkh3AID5Gl39O3IgZ5I1mbNKbfFU4nlfk2d5qmMXo8UqpTP8EnBJwLhnYhp
+         v78t9HYa+LcMsGSMcTa0Nlt0+GNk1QF9m9RfdYib/rcQY3aVbY/qPbcwIIevZawnCHpy
+         22Smf5MjiFDgH5O36LJm/GHQiHVTwUPc+gA3m5ONusYKgqID6TsUbH2k7PDXa1CgmhpD
+         2b/w==
+X-Gm-Message-State: AOJu0YzZ6aids1t8wvWI9d+WqQOM9OjDRg5RFmScrZ1YfwcjpEL4XN/q
+        nyoVeogFFn7Xfg2U9LruqA==
+X-Google-Smtp-Source: AGHT+IHBPt21/CoYA6gAD1CvzSK0qv2qopqh1SeqIwu0FZaxDbZLhuYzC+CMcy5Il7uIpCQK4RaODA==
+X-Received: by 2002:a05:651c:1315:b0:2bd:1394:583f with SMTP id u21-20020a05651c131500b002bd1394583fmr3610948lja.3.1693329446179;
+        Tue, 29 Aug 2023 10:17:26 -0700 (PDT)
 Received: from U4.lan ([2001:9e8:b958:3410:8e0c:ed68:cd6c:7cb8])
-        by smtp.gmail.com with ESMTPSA id a21-20020a1709062b1500b00993cc1242d4sm6115834ejg.151.2023.08.29.10.17.27
+        by smtp.gmail.com with ESMTPSA id a21-20020a1709062b1500b00993cc1242d4sm6115834ejg.151.2023.08.29.10.17.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Aug 2023 10:17:27 -0700 (PDT)
+        Tue, 29 Aug 2023 10:17:25 -0700 (PDT)
 From:   Alex Bee <knaerzche@gmail.com>
 To:     Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -67,9 +67,9 @@ Cc:     Elaine Zhang <zhangqing@rock-chips.com>,
         dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
         linux-clk@vger.kernel.org, linux-phy@lists.infradead.org,
         Alex Bee <knaerzche@gmail.com>
-Subject: [PATCH 04/31] dt-bindings: arm: rockchip: Add Geniatech XPI-3128
-Date:   Tue, 29 Aug 2023 19:16:20 +0200
-Message-ID: <20230829171647.187787-5-knaerzche@gmail.com>
+Subject: [PATCH 02/31] dt-bindings: gpu: mali-utgard: Add Rockchip RK3128 compatible
+Date:   Tue, 29 Aug 2023 19:16:18 +0200
+Message-ID: <20230829171647.187787-3-knaerzche@gmail.com>
 X-Mailer: git-send-email 2.42.0
 In-Reply-To: <20230829171647.187787-1-knaerzche@gmail.com>
 References: <20230829171647.187787-1-knaerzche@gmail.com>
@@ -79,29 +79,26 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add Geniatech XPI-3128, a RK3128 based single board computer.
+Rockchip RK312x SoC family has a Mali400 MP2.
+Add a compatible for it.
 
 Signed-off-by: Alex Bee <knaerzche@gmail.com>
 ---
- Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
- 1 file changed, 5 insertions(+)
+ Documentation/devicetree/bindings/gpu/arm,mali-utgard.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
-index ecdb72a519cb..e4c1af691b7a 100644
---- a/Documentation/devicetree/bindings/arm/rockchip.yaml
-+++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
-@@ -227,6 +227,11 @@ properties:
-           - const: geekbuying,geekbox
-           - const: rockchip,rk3368
- 
-+      - description: Geniatech XPI-3128
-+        items:
-+          - const: geniatech,xpi-3128
-+          - const: rockchip,rk3128
-+
-       - description: Google Bob (Asus Chromebook Flip C101PA)
-         items:
-           - const: google,bob-rev13
+diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-utgard.yaml b/Documentation/devicetree/bindings/gpu/arm,mali-utgard.yaml
+index 0fae1ef013be..abd4aa335fbc 100644
+--- a/Documentation/devicetree/bindings/gpu/arm,mali-utgard.yaml
++++ b/Documentation/devicetree/bindings/gpu/arm,mali-utgard.yaml
+@@ -29,6 +29,7 @@ properties:
+               - allwinner,sun50i-a64-mali
+               - rockchip,rk3036-mali
+               - rockchip,rk3066-mali
++              - rockchip,rk3128-mali
+               - rockchip,rk3188-mali
+               - rockchip,rk3228-mali
+               - samsung,exynos4210-mali
 -- 
 2.42.0
 
