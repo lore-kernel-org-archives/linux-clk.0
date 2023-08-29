@@ -2,106 +2,102 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF359C83F14
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Aug 2023 14:09:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62843C83F1B
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Aug 2023 17:18:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230261AbjH2OJ2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Aug 2023 10:09:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56656 "EHLO
+        id S236546AbjH2RSC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Aug 2023 13:18:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236926AbjH2OJV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Aug 2023 10:09:21 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBC19114;
-        Tue, 29 Aug 2023 07:09:16 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 00DA665A6C;
-        Tue, 29 Aug 2023 14:09:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBA54C433C7;
-        Tue, 29 Aug 2023 14:09:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1693318155;
-        bh=h8cfi2Mh1OhVzbl+CNjIEmhwkyrXf53KkQGLSBB6wsA=;
-        h=From:Date:Subject:To:Cc:From;
-        b=N3/GQ3X7y44HVD+8aWwz23+1T+Lkd8kDl3LPguUf+jOXkkHwNIj/VSz+0mRcFqkhi
-         yw562Y+zSi5C3/1mbzoezYfT1Z7wkCn9G48InL/YMbiAzOCkj7lOC7ZphD8fVjTWZ0
-         98XXzw4FtUG6kiQ7lbInZWoEXc6lwyWjwnGfVYUxWVB0MWIEGRDIw1b9j+4cRsctPV
-         qiPFPPmfRL4nv94RNcxXyvXI94s5oEBQ9QQ7lfyib7F7xZAxnWzDPkiadneUtJDKfq
-         cMTCEuC1pVsjignGWXKzFQp0sewPMYqJhIZaav3h18MwbCotHU4ECS6koXZGDZgUhS
-         cGMaUpAuWP0VA==
-From:   Nathan Chancellor <nathan@kernel.org>
-Date:   Tue, 29 Aug 2023 07:08:47 -0700
-Subject: [PATCH] clk: qcom: Fix SM_GPUCC_8450 dependencies
+        with ESMTP id S237857AbjH2RSA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Aug 2023 13:18:00 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E77710C0;
+        Tue, 29 Aug 2023 10:17:33 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-991c786369cso601746966b.1;
+        Tue, 29 Aug 2023 10:17:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1693329445; x=1693934245;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=21iVkiyaMhIOgRnviPspvm+tAmKdNHJ4HpDL49p+DgE=;
+        b=NKjq2NpTIzwWtsb4WQ8JGYvGWyLJPvx0NmmkaWHXoHsK2bUZZOLSZlh09hYMZQjyNe
+         YRJebTQvSlvRhwarjHsEhi0stN7D8UajKYGCZ3BbcZfLWAg1RK5gHyP0IqpmY0cDuAU4
+         aRbXPvPTgdpOt7wC7BTaeD6lmV+1idIhZ3g3RGmvQYqFI+CrnXPcrkLweYOID+NGHEK0
+         DRBRLt+Bdc5LLin7QH6zusukVIw5lnnj3z/4E/VDQxPCdazNNIdrT7quG/nRuF3Z/XWt
+         gj9SKxmkGlyI3H22Mf9FhJKBQhVJqGWFmcuHK0PaZwCl5qNDJY2RuX5Mr/GDdzGX5RL4
+         9TpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693329445; x=1693934245;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=21iVkiyaMhIOgRnviPspvm+tAmKdNHJ4HpDL49p+DgE=;
+        b=S5dOstpDRZNdmMSfvnUXVJRAas6rVe0I2vEuzfL2a2Ch6C1+SXtGydMY08X6XB+3Bp
+         Pc9RCbDuV/+Bc+aaPqtlaLX9G3TIJEZXTkDEIJGbKts6u/FCeUCKNmUxjPvcbF1NDXgW
+         annkeBJrN8q5GbAFTMOIdTrAkCuY/MYNX9Z3cms6BHOKKQJMz2UrgJ9ufRrLhOSu+xwF
+         9N3+jSABB6oGUyf5P8QfnCw439VSfUnlz+i9PjV3JKndfwHand6a4hFVohTCGpY4b+sz
+         V+yFQPaBfUPKY+Q0x2Z/9U4nDV1R7YRYVEPeJqEgEOgN70dJ+Ysz2QyuIj3P/S0klrMl
+         c++Q==
+X-Gm-Message-State: AOJu0Yw7CXCmXZejrWXv+xS+KdTUUZWdVrcNwSpRLz1LnO7yzCZEmPV2
+        ubgst5s0hSgO79Yc1Yg31g==
+X-Google-Smtp-Source: AGHT+IE47kgzk515LSlCQdCMRZcljVGwTMt+S3yLZvAE50B+UB6aWy1SLTFd1oolF0G2c8xX/aHgtw==
+X-Received: by 2002:a17:907:7788:b0:993:d617:bdc5 with SMTP id ky8-20020a170907778800b00993d617bdc5mr22834649ejc.37.1693329444970;
+        Tue, 29 Aug 2023 10:17:24 -0700 (PDT)
+Received: from U4.lan ([2001:9e8:b958:3410:8e0c:ed68:cd6c:7cb8])
+        by smtp.gmail.com with ESMTPSA id a21-20020a1709062b1500b00993cc1242d4sm6115834ejg.151.2023.08.29.10.17.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Aug 2023 10:17:24 -0700 (PDT)
+From:   Alex Bee <knaerzche@gmail.com>
+To:     Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Lee Jones <lee@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>
+Cc:     Elaine Zhang <zhangqing@rock-chips.com>,
+        Johan Jonker <jbx6244@gmail.com>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
+        linux-clk@vger.kernel.org, linux-phy@lists.infradead.org,
+        Alex Bee <knaerzche@gmail.com>
+Subject: [PATCH 01/31] dt-bindings: mfd: syscon: Add rockchip,rk3128-qos compatible
+Date:   Tue, 29 Aug 2023 19:16:17 +0200
+Message-ID: <20230829171647.187787-2-knaerzche@gmail.com>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <20230829171647.187787-1-knaerzche@gmail.com>
+References: <20230829171647.187787-1-knaerzche@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230829-fix-sm_gpucc_8550-deps-v1-1-d751f6cd35b2@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAO777WQC/x2M0QpAQBAAf0X7bOvsIfyKpOss9gHXbaTk310ep
- 2bmAeUorNBlD0S+ROXYExR5Bn51+8IoU2IgQ9Y01OIsN+o2LuH0fmyqyuDEQbGtrXOmtGRnghS
- HyMn8x/3wvh+MRlagaAAAAA==
-To:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        patches@lists.linux.dev, Nathan Chancellor <nathan@kernel.org>
-X-Mailer: b4 0.13-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1636; i=nathan@kernel.org;
- h=from:subject:message-id; bh=h8cfi2Mh1OhVzbl+CNjIEmhwkyrXf53KkQGLSBB6wsA=;
- b=owGbwMvMwCEmm602sfCA1DTG02pJDClv/3CVnpnkJPL4XqLm8VObE+NUFma778wp/Gb9TOfBD
- RPvi1MudZSyMIhxMMiKKbJUP1Y9bmg45yzjjVOTYOawMoEMYeDiFICJ7Gln+J9wJ+KM92fuXs+i
- /vL0PVf/3HzLt0/z/Wn+wkt2YtqFp58z/Hf9kO7vcTL9y7Pf32Nl74XJi/YYmditWTQlrsdrcfn
- 1BfwA
-X-Developer-Key: i=nathan@kernel.org; a=openpgp;
- fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-CONFIG_SM_GCC_8450 depends on ARM64 but it is selected by
-CONFIG_SM_GPUCC_8450, which can be selected on ARM, resulting in a
-Kconfig warning.
+Document Rockchip RK3128 SoC compatible for qos registers.
 
-WARNING: unmet direct dependencies detected for SM_GCC_8450
-  Depends on [n]: COMMON_CLK [=y] && COMMON_CLK_QCOM [=y] && (ARM64 || COMPILE_TEST [=n])
-  Selected by [y]:
-  - SM_GPUCC_8450 [=y] && COMMON_CLK [=y] && COMMON_CLK_QCOM [=y]
-
-Add the same dependencies to CONFIG_SM_GPUCC_8450 to resolve the
-warning.
-
-Fixes: 728692d49edc ("clk: qcom: Add support for SM8450 GPUCC")
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+Signed-off-by: Alex Bee <knaerzche@gmail.com>
 ---
-I think this is more of a silent conflict between commit ab7f00379fe9
-("clk: qcom: restrict drivers per ARM/ARM64") and commit 728692d49edc
-("clk: qcom: Add support for SM8450 GPUCC"), rather than just a fault of
-728692d49edc but ab7f00379fe9 was merged first so I just chose
-728692d49edc as the problematic commit for the message, feel free to
-adjust it as necessary.
----
- drivers/clk/qcom/Kconfig | 1 +
+ Documentation/devicetree/bindings/mfd/syscon.yaml | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index bd9bfb11b328..865db5202e4c 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -986,6 +986,7 @@ config SM_GPUCC_8350
- 
- config SM_GPUCC_8450
- 	tristate "SM8450 Graphics Clock Controller"
-+	depends on ARM64 || COMPILE_TEST
- 	select SM_GCC_8450
- 	help
- 	  Support for the graphics clock controller on SM8450 devices.
-
----
-base-commit: e1cd74b6dccb98ca09e4612ff29c7658db7a487b
-change-id: 20230829-fix-sm_gpucc_8550-deps-963aa04323f2
-
-Best regards,
+diff --git a/Documentation/devicetree/bindings/mfd/syscon.yaml b/Documentation/devicetree/bindings/mfd/syscon.yaml
+index 8103154bbb52..089ad6bf58c5 100644
+--- a/Documentation/devicetree/bindings/mfd/syscon.yaml
++++ b/Documentation/devicetree/bindings/mfd/syscon.yaml
+@@ -61,6 +61,7 @@ properties:
+               - rockchip,px30-qos
+               - rockchip,rk3036-qos
+               - rockchip,rk3066-qos
++              - rockchip,rk3128-qos
+               - rockchip,rk3228-qos
+               - rockchip,rk3288-qos
+               - rockchip,rk3368-qos
 -- 
-Nathan Chancellor <nathan@kernel.org>
+2.42.0
 
