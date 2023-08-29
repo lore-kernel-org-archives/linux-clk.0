@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5C9FC83F1A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FAA7C83F1D
 	for <linux-clk@archiver.kernel.org>; Tue, 29 Aug 2023 17:19:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237877AbjH2RSq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Aug 2023 13:18:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47912 "EHLO
+        id S237863AbjH2RSp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Aug 2023 13:18:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237785AbjH2RSM (ORCPT
+        with ESMTP id S237787AbjH2RSM (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Aug 2023 13:18:12 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B1B6CDC;
-        Tue, 29 Aug 2023 10:17:46 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-99357737980so603838266b.2;
-        Tue, 29 Aug 2023 10:17:45 -0700 (PDT)
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49962CEA;
+        Tue, 29 Aug 2023 10:17:47 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-99bc9e3cbf1so2562166b.0;
+        Tue, 29 Aug 2023 10:17:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1693329454; x=1693934254;
+        d=gmail.com; s=20221208; t=1693329458; x=1693934258; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=R9DunujICwW+FdyG9ifMFQMXRh/n/3eNMexEB6m+XBc=;
-        b=px2WocHwCMwjM675wD1bA1eXGHHv/R0rc7/GX6NGiX/OBlTqMyRnCDGc1uHsgku1sr
-         G9rYQKPxprXZVpBGprwZm/C1f5qoDFg7KX5I/JxK4fvDG/kHaDBkBRxeheaI3QKeuZWE
-         b50Gkg1HsF/3mn9w/IkH+vaEzdeSdwvdItZaDUy7tTxaZ866AleSX46/6MxQjT3LQ2cV
-         UjX9eF48i0xUFo7p0kA7WbqSxQWbgvpfuTM5l8VNPmlDvMkdduEnZHvz3nbv9HkQuSG+
-         oVeE+UuxPm3zGhNAUqbsJx77wJbbtm5NJgbuIgPWEmDiRNhO2V29qqX6GcIpTJKMkWbk
-         0XkA==
+        bh=NPphieGb8xL4eR5mTMzLTUQW79Ts5+jV8h+GajjCpv8=;
+        b=dicmkfBsk+tFeRQT4u4wgbcqy092CU3pw2DfTN0XnlBc+B1QpF3wGX3MTAP5G8+6aQ
+         kNKigeS7HOumT4S5/HKEuOJtNhWxKA2gIl2CXuN7gbr/RTJHFUuH0RmU254IjeLb9LJz
+         olF99rEHc4ufJtFApdSpuNagqis1gVCDNh7SjBUIkl1ArUs/LwHRwrp9coMYbBSnsZWc
+         aFN4UjxCgfs97MU9hyOrNaDFeuJgkBBa0bGFU3OSU1U2zv1thSaTuzOxLgCxcBgoTi01
+         E2FtkoMkZiGQeEybiyVJPM4hG+GoeObC6gY86cFEXA7gYLXuK0/Eb85wwcBx4uVj53yy
+         qr+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693329454; x=1693934254;
+        d=1e100.net; s=20221208; t=1693329458; x=1693934258;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=R9DunujICwW+FdyG9ifMFQMXRh/n/3eNMexEB6m+XBc=;
-        b=gtJMrs5OKLdFb5vy4SJ7hx3fKMMwbJ0usgnelhuTT4W2FtoFVmSSaPWKATcBveqvOj
-         1/9QHQ3mmu4KIm3G+TjAkV5uFuHQ7xzVYA4CTdLj5yg7HUl+CkEPlCxisojwBy7aLR1H
-         /LPb77l3CPmLQCtQSXlhZHbDZaOFaThlivTQfpATXEyRqPJpkmalbVfA23vXjaQ37PkC
-         D27mZ+s0e0zFtHs/bi3YV26XfrXZjdatcRStyfkxsTPmIBDFYxZJj6+XrLA8wn+/wvu3
-         009GMN5b9ur9bxiAAgUKSziRKbk65oZtjG/mJmExogKsHgGKAUGuS6B6a46qmjyaQLB0
-         DNTw==
-X-Gm-Message-State: AOJu0YwoZm/4IB0tZuYwQ8z8mt5s33NOmSIer9UOCr4mIU/u1C6/vBwG
-        9hEFDQzjO4QnG1mA2zOtdw==
-X-Google-Smtp-Source: AGHT+IHrpTiL0i8g4E5q2Q0OjRcmwKFC2fgt4+QDBkipBm6SYXUm13m4URpgLyUReqBKRY8pMjjrIg==
-X-Received: by 2002:a17:907:2bee:b0:9a1:b950:abab with SMTP id gv46-20020a1709072bee00b009a1b950ababmr16022437ejc.32.1693329454190;
-        Tue, 29 Aug 2023 10:17:34 -0700 (PDT)
+        bh=NPphieGb8xL4eR5mTMzLTUQW79Ts5+jV8h+GajjCpv8=;
+        b=C4ItigqKv0xaiH+MwEFjS6kRXDZ3DNcDuqBg3lEyBHZ1zq9jTulIYwVlJ0FbMHuR33
+         1YcEwP94dOqkBlo9cWRZ0yHOJqpLXycXlbh0ZbmmX0rpNPM/XpY9+wj9nfeyKKLPlIpy
+         RJXcj0jMqXJaw9t6G5SWpHiRPUrFhBtgiY3s+BEVmMTO4UuUPwx7N6qd0gSFUwVXhtfK
+         v2eYgG4ibfGnP5sOK8UMY27GyAONT4pF4+lHK0c1h1sUayVXwEvv7zN3JkgfkJTWr085
+         ZXU2gktqR4+xCxOptqzwbCfcgUd+uWjKBuiIEsLR6uLaRHByRZqps/pMKsszdkO4nB3K
+         zVGA==
+X-Gm-Message-State: AOJu0Yzl3WI0Vs8KFshztnYIVHiJYWxZqRoptVqY57O0zeugfySo2GGF
+        mY22vHYzFdQz064mjmD3cQ==
+X-Google-Smtp-Source: AGHT+IGSTrK9d7vStZC0bzy2T16uTrrd34R83QYESq2KKcyDTtiuTq+EZyCdPP7zwxTKL8JMYzopcA==
+X-Received: by 2002:a17:907:d1e:b0:9a5:b247:3ab with SMTP id gn30-20020a1709070d1e00b009a5b24703abmr3596972ejc.19.1693329458114;
+        Tue, 29 Aug 2023 10:17:38 -0700 (PDT)
 Received: from U4.lan ([2001:9e8:b958:3410:8e0c:ed68:cd6c:7cb8])
-        by smtp.gmail.com with ESMTPSA id a21-20020a1709062b1500b00993cc1242d4sm6115834ejg.151.2023.08.29.10.17.33
+        by smtp.gmail.com with ESMTPSA id a21-20020a1709062b1500b00993cc1242d4sm6115834ejg.151.2023.08.29.10.17.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Aug 2023 10:17:33 -0700 (PDT)
+        Tue, 29 Aug 2023 10:17:37 -0700 (PDT)
 From:   Alex Bee <knaerzche@gmail.com>
 To:     Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -67,9 +67,9 @@ Cc:     Elaine Zhang <zhangqing@rock-chips.com>,
         dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
         linux-clk@vger.kernel.org, linux-phy@lists.infradead.org,
         Alex Bee <knaerzche@gmail.com>
-Subject: [PATCH 10/31] ARM: dts: rockchip: Fix i2c0 register address for RK3128
-Date:   Tue, 29 Aug 2023 19:16:26 +0200
-Message-ID: <20230829171647.187787-11-knaerzche@gmail.com>
+Subject: [PATCH 14/31] ARM: dts: rockchip: Disable non-required timers for RK3128
+Date:   Tue, 29 Aug 2023 19:16:30 +0200
+Message-ID: <20230829171647.187787-15-knaerzche@gmail.com>
 X-Mailer: git-send-email 2.42.0
 In-Reply-To: <20230829171647.187787-1-knaerzche@gmail.com>
 References: <20230829171647.187787-1-knaerzche@gmail.com>
@@ -79,27 +79,54 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The register address for i2c0 is missing a 0x to mark it as hex.
+The Rockchip timer linux driver can handle a maximum of 2 timers and will
+get confused if more of them exist.
+RK3128 only needs timer0, timer1 and timer5. The latter is the source
+for the arm-timer and its clock is prevented from being disabled in the
+clock driver so it can get disabled in the device tree, too.
 
 Fixes: a0201bff6259 ("ARM: dts: rockchip: add rk3128 soc dtsi")
 Signed-off-by: Alex Bee <knaerzche@gmail.com>
 ---
- arch/arm/boot/dts/rockchip/rk3128.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/rockchip/rk3128.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/arch/arm/boot/dts/rockchip/rk3128.dtsi b/arch/arm/boot/dts/rockchip/rk3128.dtsi
-index b63bd4ad3143..2e345097b9bd 100644
+index 88a4b0d6d928..f3f0788195d2 100644
 --- a/arch/arm/boot/dts/rockchip/rk3128.dtsi
 +++ b/arch/arm/boot/dts/rockchip/rk3128.dtsi
-@@ -426,7 +426,7 @@ saradc: saradc@2006c000 {
+@@ -252,6 +252,7 @@ timer2: timer@20044040 {
+ 		interrupts = <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cru PCLK_TIMER>, <&cru SCLK_TIMER2>;
+ 		clock-names = "pclk", "timer";
++		status = "disabled";
+ 	};
  
- 	i2c0: i2c@20072000 {
- 		compatible = "rockchip,rk3128-i2c", "rockchip,rk3288-i2c";
--		reg = <20072000 0x1000>;
-+		reg = <0x20072000 0x1000>;
- 		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
- 		clock-names = "i2c";
- 		clocks = <&cru PCLK_I2C0>;
+ 	timer3: timer@20044060 {
+@@ -260,6 +261,7 @@ timer3: timer@20044060 {
+ 		interrupts = <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cru PCLK_TIMER>, <&cru SCLK_TIMER3>;
+ 		clock-names = "pclk", "timer";
++		status = "disabled";
+ 	};
+ 
+ 	timer4: timer@20044080 {
+@@ -268,6 +270,7 @@ timer4: timer@20044080 {
+ 		interrupts = <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cru PCLK_TIMER>, <&cru SCLK_TIMER4>;
+ 		clock-names = "pclk", "timer";
++		status = "disabled";
+ 	};
+ 
+ 	timer5: timer@200440a0 {
+@@ -276,6 +279,7 @@ timer5: timer@200440a0 {
+ 		interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cru PCLK_TIMER>, <&cru SCLK_TIMER5>;
+ 		clock-names = "pclk", "timer";
++		status = "disabled";
+ 	};
+ 
+ 	watchdog: watchdog@2004c000 {
 -- 
 2.42.0
 
