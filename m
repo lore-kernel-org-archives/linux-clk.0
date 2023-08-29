@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9384AC83F26
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Aug 2023 17:19:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A84AEC83F22
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Aug 2023 17:19:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237884AbjH2RSr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Aug 2023 13:18:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48040 "EHLO
+        id S237859AbjH2RSp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Aug 2023 13:18:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237801AbjH2RSO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Aug 2023 13:18:14 -0400
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DEF6CF2;
-        Tue, 29 Aug 2023 10:17:49 -0700 (PDT)
-Received: by mail-lj1-x229.google.com with SMTP id 38308e7fff4ca-2b95d5ee18dso70769221fa.1;
-        Tue, 29 Aug 2023 10:17:48 -0700 (PDT)
+        with ESMTP id S237791AbjH2RSN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Aug 2023 13:18:13 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24FEBCE0;
+        Tue, 29 Aug 2023 10:17:46 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-99357737980so603840866b.2;
+        Tue, 29 Aug 2023 10:17:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1693329462; x=1693934262;
+        d=gmail.com; s=20221208; t=1693329455; x=1693934255;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=feXb8mBBSxHC2Wg38x6bXprPMxa/iS7sxw36h6E5GW8=;
-        b=h4PyqX0xtB7S2T6VFiGduqml3wx0qswAzQccLxwPFbM0Qk7fnZ8sK0BmODYagHvSJg
-         dN0Gkz34UcQ5dALUAS7qkreaFpaJH1/HqwEkvHL6nhuwbhwsUlvgNhtu0JWR/t+byarI
-         jO/zOGwOmY8ILY7Yn5zt8RSPxT4JW03j5Tykw5RFZbIchdbUVag5NZphZtJVw8SKgyXA
-         StVAmKygz3dt8cdzSI8lWcVBevQXPpttS6lu7dJtB3bq4a2IVYMqqSDw4EMZGzaYGz8o
-         MWk29pok/xzUj/XYqYYzaN6bwBumz3ddYzcgcpDsm6KdIhLN5lyBSD70ZFbaayj7BLKq
-         o/hA==
+        bh=QBQAx86WvaOm9XdYlFOZiKDZLABoSR2aNslGbzHlpgw=;
+        b=YjhSA4kQm+ny80r016Dc472pNmS42pS1nmBOqM6oVPhNBKNJlGfLb1VzG6ozVtCF6x
+         Mlyk33197iTKYGWOJtecIgwjpqlPxkQGfI/pRAOpXj485zDfiV/PQZgJDdgUDsifpH6W
+         LVPXNmebt4tPML8gXvgpBgcI6wjLHgTdw+3WflobmCdqdL1TbtTLMeahRuWF8LxtlATr
+         IKqdPLOqNzQALqccixO4n4ZLiVXScDyHxok1Foj+nS8E2ValnPtuN4jUWiEOK7qKTwIW
+         2H4UL/qePX62A4CF+Z9Lw3aAxUzhqpesyFt7Q4G+715YvpCqNSDPku8LQs0jlfjZU5Cx
+         fEwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693329462; x=1693934262;
+        d=1e100.net; s=20221208; t=1693329455; x=1693934255;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=feXb8mBBSxHC2Wg38x6bXprPMxa/iS7sxw36h6E5GW8=;
-        b=hQeaSNbk+lRMH4oenE8jHp+vWQJFowBlQwOrh8OJpl5VRhZi5CwvweJS/++IEh3dov
-         A06TVAXIMHoHZ/Fg2m0f675P55kGRgHMKQCFlyeKdZc62ZagFriuSc5NpgNz0DgEavNS
-         Tyngzpf4rJbVVt5hOz8zstMbiebURLZq3id705Y/C3eXGL9l4ZXHD7wBnm3jGvbY4W/e
-         LGVPQgVW7g86b0tuAWdMP8Bmfm9wZoYnHpiS/gRHwaqm/iOEcu0AjkDOQ6u8bKSGhQQf
-         rkZzrKTcvMopGWU6Sb1P85j2Ry7lMlXEXoJl0LVf5XEnMzUyVu+gi/yjom+gHEeJt2ri
-         1TWQ==
-X-Gm-Message-State: AOJu0YwjLrTwHRkowFK8rt3VkTUo8A4IBc9Jhc1Jdi0FRshgc3J8Tho/
-        1Og/BIwNOfwzOo318VRisw==
-X-Google-Smtp-Source: AGHT+IGy6ebumFaH6aO1ynQk+aNb6IThAySOcLcWyoeDCRfh26m8xsK1Szz112EbWkaHyFlntA3M6Q==
-X-Received: by 2002:a2e:9cd8:0:b0:2bb:bdf0:caf2 with SMTP id g24-20020a2e9cd8000000b002bbbdf0caf2mr20698676ljj.25.1693329462298;
-        Tue, 29 Aug 2023 10:17:42 -0700 (PDT)
+        bh=QBQAx86WvaOm9XdYlFOZiKDZLABoSR2aNslGbzHlpgw=;
+        b=ZFlmS2GygdBHdItRy8bLHa2Vo61gs3+De189HTwBb6LPtWHdtLPK9k24/lIGVKfNGV
+         tjVeZ7wz+t6EUY1/BRVf1z347s5ZgWz+V0GFcAw80JKCLkkQgsm+rW60tggvTzN7GVLM
+         0NbmBvWzH1r1LNs/f3inA3rXtwwCWGNDEa9ETZSZwUA/9z/Jj/eMmRiuhSL1wpc7wHhU
+         Am4q4eW0WoKwj3jVNhwA+ZcP0/glDRmLOnno/IMwA/jocGM5k4EVZ39J0kPo0GBVMmKM
+         mcjPOtisko06gXxKiweajD8bP9Mo5pDl4tJ7Rnz2fGbDgOfvhrIQLDcC/+DQhwbAO/0J
+         S+2Q==
+X-Gm-Message-State: AOJu0Yycqb9VtpHh59SVlcq8E6ZpwRtNDDYpGHCm1QZyGIkUQGUfhYrL
+        5PEHSQzVzkSTxLO+lyy/BA==
+X-Google-Smtp-Source: AGHT+IGriq1g6SBECfoMzn6NHKe8g9e4THTgJ8Zp6YWeIKJEJrAB+LeVhbZzVDvMc9306PK2d3bxNw==
+X-Received: by 2002:a17:906:150:b0:9a1:d7cd:602d with SMTP id 16-20020a170906015000b009a1d7cd602dmr14195595ejh.45.1693329455250;
+        Tue, 29 Aug 2023 10:17:35 -0700 (PDT)
 Received: from U4.lan ([2001:9e8:b958:3410:8e0c:ed68:cd6c:7cb8])
-        by smtp.gmail.com with ESMTPSA id a21-20020a1709062b1500b00993cc1242d4sm6115834ejg.151.2023.08.29.10.17.41
+        by smtp.gmail.com with ESMTPSA id a21-20020a1709062b1500b00993cc1242d4sm6115834ejg.151.2023.08.29.10.17.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Aug 2023 10:17:41 -0700 (PDT)
+        Tue, 29 Aug 2023 10:17:34 -0700 (PDT)
 From:   Alex Bee <knaerzche@gmail.com>
 To:     Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -67,9 +67,9 @@ Cc:     Elaine Zhang <zhangqing@rock-chips.com>,
         dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
         linux-clk@vger.kernel.org, linux-phy@lists.infradead.org,
         Alex Bee <knaerzche@gmail.com>
-Subject: [PATCH 18/31] ARM: dts: rockchip: Enable SMP bringup for RK312x
-Date:   Tue, 29 Aug 2023 19:16:34 +0200
-Message-ID: <20230829171647.187787-19-knaerzche@gmail.com>
+Subject: [PATCH 11/31] ARM: dts: rockchip: Add missing arm timer interrupt for RK3128
+Date:   Tue, 29 Aug 2023 19:16:27 +0200
+Message-ID: <20230829171647.187787-12-knaerzche@gmail.com>
 X-Mailer: git-send-email 2.42.0
 In-Reply-To: <20230829171647.187787-1-knaerzche@gmail.com>
 References: <20230829171647.187787-1-knaerzche@gmail.com>
@@ -79,41 +79,29 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-For bringup of the non-boot cpu cores the enable-method for RK3036 can be
-re-used.
+The Cortex-A7 timer has 4 interrupts.
+Add the mssing one.
 
-This adds a (small) chunk  of SRAM for execution of the SMP trampoline code
-and the respective enable-method property to the cpus.
-
+Fixes: a0201bff6259 ("ARM: dts: rockchip: add rk3128 soc dtsi")
 Signed-off-by: Alex Bee <knaerzche@gmail.com>
 ---
- arch/arm/boot/dts/rockchip/rk312x.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm/boot/dts/rockchip/rk3128.dtsi | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/rockchip/rk312x.dtsi b/arch/arm/boot/dts/rockchip/rk312x.dtsi
-index b195ac525c37..08b953b005ff 100644
---- a/arch/arm/boot/dts/rockchip/rk312x.dtsi
-+++ b/arch/arm/boot/dts/rockchip/rk312x.dtsi
-@@ -27,6 +27,7 @@ arm-pmu {
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		enable-method = "rockchip,rk3036-smp";
- 
- 		cpu0: cpu@f00 {
- 			device_type = "cpu";
-@@ -87,6 +88,11 @@ imem: sram@10080000 {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		ranges = <0 0x10080000 0x2000>;
-+
-+		smp-sram@0 {
-+			compatible = "rockchip,rk3066-smp-sram";
-+			reg = <0x00 0x10>;
-+		};
+diff --git a/arch/arm/boot/dts/rockchip/rk3128.dtsi b/arch/arm/boot/dts/rockchip/rk3128.dtsi
+index 2e345097b9bd..bf55d4575311 100644
+--- a/arch/arm/boot/dts/rockchip/rk3128.dtsi
++++ b/arch/arm/boot/dts/rockchip/rk3128.dtsi
+@@ -64,7 +64,8 @@ timer {
+ 		compatible = "arm,armv7-timer";
+ 		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
+ 			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
+-			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
++			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
++			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
+ 		arm,cpu-registers-not-fw-configured;
+ 		clock-frequency = <24000000>;
  	};
- 
- 	pmu: syscon@100a0000 {
 -- 
 2.42.0
 
