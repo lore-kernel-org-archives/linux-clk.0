@@ -2,106 +2,107 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 288CCC83F14
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Aug 2023 20:19:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B3D0C6FA8F
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Aug 2023 20:23:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239215AbjH3UTG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Aug 2023 16:19:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47602 "EHLO
+        id S238561AbjH3UXA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 30 Aug 2023 16:23:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239274AbjH3UTE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Aug 2023 16:19:04 -0400
-Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27C4D30F5
-        for <linux-clk@vger.kernel.org>; Wed, 30 Aug 2023 13:18:40 -0700 (PDT)
-Received: by mail-yb1-xb30.google.com with SMTP id 3f1490d57ef6-d7ab8e1f27cso4690607276.3
-        for <linux-clk@vger.kernel.org>; Wed, 30 Aug 2023 13:18:40 -0700 (PDT)
+        with ESMTP id S238739AbjH3UWs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Aug 2023 16:22:48 -0400
+Received: from mail-il1-x132.google.com (mail-il1-x132.google.com [IPv6:2607:f8b0:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0954C3A9C
+        for <linux-clk@vger.kernel.org>; Wed, 30 Aug 2023 13:15:07 -0700 (PDT)
+Received: by mail-il1-x132.google.com with SMTP id e9e14a558f8ab-34df008b0cbso551195ab.1
+        for <linux-clk@vger.kernel.org>; Wed, 30 Aug 2023 13:15:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693426611; x=1694031411; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1693426418; x=1694031218; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=XQLDwU/5nlJVkLKtn9y3pCNSu2CdyaBTamOi0p9fafo=;
-        b=mgFm/UcEfXm5XlIf884UeLhKsItj/NvGLJcZ8m+VCu5I5SzrbUmwsKSUBKh8SfWUxz
-         +KrC8dJpSItGaYUru9g8Rj22QotP0P1HNnouJLbGr/PI55nX0HKAYCjCuGk0i/jx/DqR
-         jjgbkj91ja4jo+Xf2hD1OQGuuE8F0s2M7eGdWiIVD77VYA8kp6B2EZEY0DVTuk1ulVQ/
-         p94r6pT/eENWFn0i6kh5xPHz3zJzkeZk1l70ENPc0l80c9+zbfvEDyYcnyzjoFulwXAq
-         gevkLyXEJzyH7CUT6UzyxTgOZ6b5keCTFc80G+RJiyDHrSKMIBGhF++//oWYbd6K+Xkg
-         apcQ==
+        bh=1KOegy06ogcAjmdzAViYXl4NQcN+91FD3LEAsWAkUdY=;
+        b=NUTrYqrRJ58oIVjhrZrapgx71QoZY7Kql5HM+oxRxcFxqBsnPMgU3WOmgv+Nuc9Qxv
+         VyJhluUzgpngBSYzYEKRG0Sq5tENHsFDZMi0OaFSvwQl/G6t0bBOYqsg5OWeDu8/SrCl
+         qQus3CMAOP64iPOBr9+ncLbII4kduaAxTmlK0vnRuQ3YE2pSw6vQbi3G+hrWMWoAsnt0
+         kTBWl+UexXyxHguq9fMUYf928PrqxhL+esjowDUWkJwCW6cN2RL+pOk+egSUe/b+yQF3
+         ctS4NP0P2EroywrMEKYyybSPFGNWvlT8Xbp1HRnqq9W956QfcC0fUYpkzYzjSKVy+WyF
+         /bSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693426611; x=1694031411;
+        d=1e100.net; s=20221208; t=1693426418; x=1694031218;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=XQLDwU/5nlJVkLKtn9y3pCNSu2CdyaBTamOi0p9fafo=;
-        b=IMtCHT3+H7R2/ITCtqp/C6wTGXcBh3aQeKz331U1lOhRLhjmHAlJpNQxBgfc57QdyU
-         8f8Fm8T62edTNajIs/a+NLz/ykUwOEVZYfzRmeaaLw84rhI79QdOFIMWITfGw6Q1/9vf
-         H+yU6uC1/boBRo75s1aaIxKgr1qedtIJlIl2WQ1q1pq/WLXt8CRKgDfNvP/8+5k7wKZD
-         mX3YTECY2o5ZW7tYGXuyDHKzH/LSGi09pdlibTQmayavjIHWpkdlpKh6t467AhkfXQD/
-         J51+kKXFjmkjtxyddcKzXL58t2qxZ/8GW1XiQeZMZX6sjx7Mkm9G4rIcc73s78pxafzj
-         GePA==
-X-Gm-Message-State: AOJu0YzP717aw0PcdVBraGZ9h2Kte+6OiVK+IwpZpxg2u4S2vNEqdab6
-        nxYqrFV541/8Dbt5XSfHR1ZvaAoNKUSmbfJaxhCUBRqWruawJnHd
-X-Google-Smtp-Source: AGHT+IFv7Iqz9PDMTBwkRWX43WVdyu1g8mi2iBNzTPeSuQLXbC3nxFiStH1X7rnhu4oe4LvGcutHKuy/2++Z3ItRKFI=
-X-Received: by 2002:a25:d3ca:0:b0:d77:f99e:7b1e with SMTP id
- e193-20020a25d3ca000000b00d77f99e7b1emr3338959ybf.48.1693426610755; Wed, 30
- Aug 2023 13:16:50 -0700 (PDT)
+        bh=1KOegy06ogcAjmdzAViYXl4NQcN+91FD3LEAsWAkUdY=;
+        b=OKCp9+rBroKYK5sjmVrPqIdQ+JqWjHku0IOR+xbkfbhgPTzvHhzKcGxfu6xm6ERhd0
+         /tmMHzFvp8zmyh+ITqHVN8yfBL9nmn+m1b5NQh/yN39gRxD+0vfIga6E1cwejgSam2ME
+         1wSRNJwW8rK/8rqyjBxinUa+0tK3mIduOW9A9eBhBnGiDKsNEQTKLpE2BoORZ6BH2op/
+         agA4/f/PrGu/INuaKHdSYb/0kMTWB51at8jDQJiLI+1AYHzNTKxO3T1dLQaFRQWxWkfa
+         gJ/2LXQm0h/7wFZtEQ+cpigWGCfARRmYFWgtf4gtGRCByYukp3iAlY3i4LVDgFZ1xiLa
+         BZqQ==
+X-Gm-Message-State: AOJu0Ywqg1+9IJgbd9p3bIsvsORfrD4TK2F6W4IKURLbbDK8IHigazWI
+        SPp4wDfEb57kkJ+lfEFlC0isQ3ZVsnPBfEPacNrwAJ0WaB1aVxgn
+X-Google-Smtp-Source: AGHT+IG7TvoHuWNPaDhyhT+X0ymvRmY9e9DoTJccBmV6ELNz8an6E/b58h/EKFxkyXSfq0zQ3gZSQX9I0Ytk/qlKz3w=
+X-Received: by 2002:a5b:41:0:b0:d7a:8e37:6d4d with SMTP id e1-20020a5b0041000000b00d7a8e376d4dmr3133168ybp.43.1693424561021;
+ Wed, 30 Aug 2023 12:42:41 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230816080113.1222352-1-yangyingliang@huawei.com>
-In-Reply-To: <20230816080113.1222352-1-yangyingliang@huawei.com>
+References: <20230829095423.760641-1-quic_gokulsri@quicinc.com>
+ <20230829095423.760641-4-quic_gokulsri@quicinc.com> <f457ee94-81d0-bd28-1432-ba2828dabb79@linaro.org>
+ <efe09cb6-7b67-9307-28e7-99e238a3672b@gmail.com> <0941e2f4-6b58-a4e7-3dda-c1723f5503ac@linaro.org>
+ <CAOX2RU4j57H51ceYdKk9K-2ZNO7N4MDA6BOKrP2N3DNbphQAow@mail.gmail.com> <f7a350a9-5580-c3b9-a917-69a9b16dbf41@quicinc.com>
+In-Reply-To: <f7a350a9-5580-c3b9-a917-69a9b16dbf41@quicinc.com>
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Wed, 30 Aug 2023 23:16:39 +0300
-Message-ID: <CAA8EJpob4WsM6OyAYY5VKJ-TGixPmrHs38F+CT0xLNxq-ci07Q@mail.gmail.com>
-Subject: Re: [PATCH -next] clk: qcom: gcc-ipq5018: change some variable static
-To:     Yang Yingliang <yangyingliang@huawei.com>
-Cc:     linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        konrad.dybcio@linaro.org, andersson@kernel.org, agross@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        quic_gokulsri@quicinc.com, quic_srichara@quicinc.com,
-        quic_varada@quicinc.com
+Date:   Wed, 30 Aug 2023 22:42:29 +0300
+Message-ID: <CAA8EJpoE=oF86piKCnt-7-Nw8xa9nYg-TqSOaP1V-vb=Oxwwng@mail.gmail.com>
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: ipq5018: enable the CPUFreq support
+To:     Gokul Sriram P <quic_gokulsri@quicinc.com>
+Cc:     Robert Marko <robimarko@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, jassisinghbrar@gmail.com,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        quic_varada@quicinc.com, quic_srichara@quicinc.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 16 Aug 2023 at 11:05, Yang Yingliang <yangyingliang@huawei.com> wrote:
+On Wed, 30 Aug 2023 at 21:32, Gokul Sriram P <quic_gokulsri@quicinc.com> wrote:
 >
-> lpass_axim_clk_src and lpass_sway_clk_src are only
-> used in gcc-ipq5018.c now, change them to static.
 >
-> Fixes: e3fdbef1bab8 ("clk: qcom: Add Global Clock controller (GCC) driver for IPQ5018")
-> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+> >>>>>    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> >>>>>    #include <dt-bindings/clock/qcom,gcc-ipq5018.h>
+> >>>>>    #include <dt-bindings/reset/qcom,gcc-ipq5018.h>
+> >>>>> +#include <dt-bindings/clock/qcom,apss-ipq.h>
+> >>>> c is before r.
+>   Sure, will update.
+>
+> [...]
+> >>>>
+> >>>>> +   cpu_opp_table: opp-table-cpu {
+> >>>>> +           compatible = "operating-points-v2";
+> >>>>> +           opp-shared;
+> >>>>> +
+> >>>>> +           opp-1008000000 {
+> >>>>> +                   opp-hz = /bits/ 64 <1008000000>;
+> >>>>> +                   opp-microvolt = <1100000>;
+> >>>>> +                   clock-latency-ns = <200000>;
+> >>>> And the rest of OPPs?
+> >>> Hi Krzysztof,
+> >>> IPQ5018 only supports running at 1.1GHz, but its running at 800MHz
+> >>> by default from the bootloader so there is only one OPP.
+> >> Isn't this contradictory? If it is running at 800 initially, then it
+> >> supports running at 800...
+> > I can only guess that it's not validated at 800MHz.
+> As per the h/w design team, there is negligible power or thermal benefit
+> by lowering to 800MHz clock.
+> Hence, 800MHz opp wasn't included here.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
-> ---
->  drivers/clk/qcom/gcc-ipq5018.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/qcom/gcc-ipq5018.c b/drivers/clk/qcom/gcc-ipq5018.c
-> index 313ff2281ca7..19dc2b71cacf 100644
-> --- a/drivers/clk/qcom/gcc-ipq5018.c
-> +++ b/drivers/clk/qcom/gcc-ipq5018.c
-> @@ -826,7 +826,7 @@ static const struct freq_tbl ftbl_lpass_axim_clk_src[] = {
->         { }
->  };
->
-> -struct clk_rcg2 lpass_axim_clk_src = {
-> +static struct clk_rcg2 lpass_axim_clk_src = {
->         .cmd_rcgr = 0x2e028,
->         .freq_tbl = ftbl_lpass_axim_clk_src,
->         .hid_width = 5,
-> @@ -844,7 +844,7 @@ static const struct freq_tbl ftbl_lpass_sway_clk_src[] = {
->         { }
->  };
->
-> -struct clk_rcg2 lpass_sway_clk_src = {
-> +static struct clk_rcg2 lpass_sway_clk_src = {
->         .cmd_rcgr = 0x2e040,
->         .freq_tbl = ftbl_lpass_sway_clk_src,
->         .hid_width = 5,
-> --
-> 2.25.1
->
+Just my 2c. If 800 MHz is supported, it should be included. Even if
+just to prevent the kernel from throwing a warning about the CPU
+running at the unsupported frequency. Then one can use scheduler
+tunings to prevent the CPU from going to 800 MHz state.
 
 
 -- 
