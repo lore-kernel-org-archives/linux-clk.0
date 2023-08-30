@@ -2,97 +2,69 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95560C6FA8F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDE24C83F1C
 	for <linux-clk@archiver.kernel.org>; Wed, 30 Aug 2023 18:30:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231419AbjH3Sah (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S231611AbjH3Sah (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Wed, 30 Aug 2023 14:30:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44742 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241301AbjH3GvK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Aug 2023 02:51:10 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A97219A;
-        Tue, 29 Aug 2023 23:51:08 -0700 (PDT)
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37U3oDlD006509;
-        Wed, 30 Aug 2023 06:50:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=tSZudSx08f9+CBtOs+1Ugw6FeBgTDW2acM0JToePn/o=;
- b=YAzo8VBYM1xPNbkLYld/QkPP2tiTCLyAEOJGCyM8V3HHlJq7QKb37fEaZRPN3pS7lgjr
- Gq7Z6yBzxflH7tV9SE+8s3aBJRyMQw8YQLBf8cCLWe+1IKNtDOHNMMGI6LNo86iQ4xQr
- wDKTmVW/bhJUc1KFtsIQI2W1Yg4vMOGGGWD9m2NXgkIgcKT15gvFpud1wROqrf6Bb+3Z
- Z/pNc9djkOTiyjSoUQeZzpifqFNgoqnlJd1jKehh5zlmQ4rIzmQdN9WlHbzsTuzVOf9F
- UPNzgQcv1N2PkGfSuPuh33v+fEgi101YHP7HdnQWmD6Q9DuMzk+4PGFtySupsj5CFZFi gw== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ssv0y0hhs-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 30 Aug 2023 06:50:54 +0000
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 37U6orI5023675
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 30 Aug 2023 06:50:53 GMT
-Received: from [10.201.2.48] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.36; Tue, 29 Aug
- 2023 23:50:49 -0700
-Message-ID: <ded5b9fd-1437-f179-d9d7-86be6847b8e6@quicinc.com>
-Date:   Wed, 30 Aug 2023 12:20:46 +0530
+        with ESMTP id S1344196AbjH3SUz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Aug 2023 14:20:55 -0400
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [IPv6:2a02:c205:3004:2154::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3A591A2;
+        Wed, 30 Aug 2023 11:20:51 -0700 (PDT)
+Received: from p200300ccff199c001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:cc:ff19:9c00:1a3d:a2ff:febf:d33a] helo=aktux)
+        by mail.andi.de1.cc with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <andreas@kemnade.info>)
+        id 1qbPo3-003BYx-Tu; Wed, 30 Aug 2023 20:20:43 +0200
+Received: from andi by aktux with local (Exim 4.96)
+        (envelope-from <andreas@kemnade.info>)
+        id 1qbPo3-003gU6-1v;
+        Wed, 30 Aug 2023 20:20:43 +0200
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     lee@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        bcousson@baylibre.com, tony@atomide.com, mturquette@baylibre.com,
+        sboyd@kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc:     Andreas Kemnade <andreas@kemnade.info>
+Subject: [PATCH v2 2/5] dt-bindings: mfd: ti,twl: Add clock provider properties
+Date:   Wed, 30 Aug 2023 20:20:35 +0200
+Message-Id: <20230830182038.878265-3-andreas@kemnade.info>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230830182038.878265-1-andreas@kemnade.info>
+References: <20230830182038.878265-1-andreas@kemnade.info>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH 3/3] arm64: dts: qcom: ipq5018: enable the CPUFreq support
-Content-Language: en-US
-To:     Robert Marko <robimarko@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <jassisinghbrar@gmail.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <quic_varada@quicinc.com>, <quic_srichara@quicinc.com>
-References: <20230829095423.760641-1-quic_gokulsri@quicinc.com>
- <20230829095423.760641-4-quic_gokulsri@quicinc.com>
- <f457ee94-81d0-bd28-1432-ba2828dabb79@linaro.org>
- <efe09cb6-7b67-9307-28e7-99e238a3672b@gmail.com>
-From:   Gokul Sriram P <quic_gokulsri@quicinc.com>
-In-Reply-To: <efe09cb6-7b67-9307-28e7-99e238a3672b@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: APNCzlVQoJT8u__rDBEUsru3NHL5jpR-
-X-Proofpoint-ORIG-GUID: APNCzlVQoJT8u__rDBEUsru3NHL5jpR-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-08-29_16,2023-08-29_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
- phishscore=0 mlxlogscore=560 suspectscore=0 priorityscore=1501
- malwarescore=0 lowpriorityscore=0 mlxscore=0 spamscore=0 bulkscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2308100000 definitions=main-2308300062
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-[...]
->>>   +        a53pll: clock@b116000 {
->>> +            compatible = "qcom,ipq5018-a53pll";
->>> +            reg = <0x0b116000 0x40>;
->>> +            #clock-cells = <0>;
->>> +            clocks = <&xo_board_clk>;
->>> +            clock-names = "xo";
->>> +        };
->>> +
->>> +        apcs_glb: mailbox@b111000 {
->> 0xb111000 looks lower than 0x116000.
-Sure, will update.
+Since these devices provide clock outputs, add the corresponding
+property.
 
-Regards,
-Gokul
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+---
+ Documentation/devicetree/bindings/mfd/ti,twl.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/mfd/ti,twl.yaml b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+index 3d7b3e0addafa..6bb781b95ecdb 100644
+--- a/Documentation/devicetree/bindings/mfd/ti,twl.yaml
++++ b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+@@ -37,6 +37,9 @@ properties:
+   "#interrupt-cells":
+     const: 1
+ 
++  "#clock-cells":
++    const: 1
++
+ additionalProperties: true
+ 
+ required:
+-- 
+2.39.2
+
