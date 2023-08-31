@@ -2,90 +2,96 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E377C83F12
-	for <linux-clk@archiver.kernel.org>; Thu, 31 Aug 2023 11:32:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A5A1C83F01
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Aug 2023 12:15:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239114AbjHaLcc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 31 Aug 2023 07:32:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49918 "EHLO
+        id S242511AbjHaMPI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 31 Aug 2023 08:15:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232716AbjHaLcc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Aug 2023 07:32:32 -0400
-Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F451CF9
-        for <linux-clk@vger.kernel.org>; Thu, 31 Aug 2023 04:32:29 -0700 (PDT)
-Received: by mail-yb1-xb32.google.com with SMTP id 3f1490d57ef6-d7b66b5641eso464271276.3
-        for <linux-clk@vger.kernel.org>; Thu, 31 Aug 2023 04:32:29 -0700 (PDT)
+        with ESMTP id S241719AbjHaMPI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Aug 2023 08:15:08 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6405E71
+        for <linux-clk@vger.kernel.org>; Thu, 31 Aug 2023 05:14:43 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id ffacd0b85a97d-31c479ede21so572703f8f.2
+        for <linux-clk@vger.kernel.org>; Thu, 31 Aug 2023 05:14:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693481548; x=1694086348; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=6Y4Cq/IHdVsRZWccJ+nEpibfReLfGO5CUKhv7KNNEEs=;
-        b=r22IQQCEFtQcbJRHBCq5qEcauLLGwMO++3wX21yyE8QrruYLJ2o5hdnH6eYCbDaH6J
-         Lm7/PFLFfckGz+upSVnz3h6l9DwrWIEMMO2rLLzZU1vjBNJ2HF9nII3t0JvFTHsY3bEI
-         yXXS07bojLRSxMlPSKr7E/zxvwJ8cRKB2ODJ5wEf+ntLb90dnz3zvs3YqZdQ1Aq6xcNc
-         72LTT3v1RXqZQZIZf0jUUXqrrQkqggN7TBssKGpzvGYDc2iipFnEYxCxohNs39ONx/Mf
-         ORL9L58hFjfyPS6dEYKjdyxQBBWnxhAL+tlBP1LAaerW4GOxyNniBLv44khEOKROGj5Z
-         9Gsg==
+        d=linaro.org; s=google; t=1693484082; x=1694088882; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7H15GGgOOLbON3/iWgJJVm7fJYdeKXuSJEp4p1EF47M=;
+        b=IV2elOH1gpSqdJ7ffTxrjO4nO8FMnXInBgjyeGZV5V7RzGwnUh0s5aCLjzh/i9sLGB
+         UfuAIKHuAY/ZKs/W9CfWTqUEbn56YB7YolW8WJvHVte+dRfdzZBXqRZ+lYyUtUlBwRyW
+         NZHDW+LFn7KzzWuMyxJfN1l6yLLzvhDKKfRLqgKpqInQaqi2FVK0Vp8K28v9ZUuxlwi/
+         ptpPS0xJzXZOr81YR4qMkN53rYuCn8tcN1ygNkrctTOtCVRnrwgckxUSMKScTdCq9M5p
+         FBlvU1xk+/0jub+YLBSAPTtw4/CeopFgzKOcW8nMZHzU39hbhLqoqGvdZisOYDs1R8oS
+         6Mkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693481548; x=1694086348;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6Y4Cq/IHdVsRZWccJ+nEpibfReLfGO5CUKhv7KNNEEs=;
-        b=Nr1oGHYX96MEf4KICtfpEzRukndQZ9Otm/3FFEYV+7zY+am5jpgxjcUi/rSXcHWsSy
-         kUlIsd98rkKZPXua1p2zIYKCbCOrrRfb34yg1JWiWuY/QJO6MiDaeIvanw+KVlGvMZwa
-         SR4wrk1DaTVRYicCKmdJbLbhNdaRyfAHdhFURFtGNZdCSMBTZgMgp0mwCeTOBS2X93nx
-         a7EBcUKPPMFkMImkzEBsw1TRZcZhygoDkR1iA/WJ8oHrYgDpAA1YxA7fZbHib6r0sCov
-         dJksnUuEPjzDVEWBUQI3quFYEDswWPtABPRgKJ7bDPGaAiN5TKkSNNDi/zuLZsteqMhJ
-         k9hg==
-X-Gm-Message-State: AOJu0YwVQ71yRZeKhCBe0+XUsxfici4S4xdlSB69YNRsZImeB8kuJA0c
-        Bf+lCnDsiZJruPkfNHm3DUrtpF/mW++Cx7Xq6YC3Mg==
-X-Google-Smtp-Source: AGHT+IGmZkwOv9/T3myqmvLQt+2FQYaNTQx2vhwnosm5z0c5JuszozfA/F3Oh1I0GuscrvpOIc2G/zJJoa5FiM3GqoA=
-X-Received: by 2002:a25:b8b:0:b0:c73:e6b5:c452 with SMTP id
- 133-20020a250b8b000000b00c73e6b5c452mr4431574ybl.2.1693481548627; Thu, 31 Aug
- 2023 04:32:28 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1693484082; x=1694088882;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7H15GGgOOLbON3/iWgJJVm7fJYdeKXuSJEp4p1EF47M=;
+        b=Qa0vdPsI7bbsBXXfAf/t9SkmS4s3UBZI/VkGvieoRLNV/0qS+S7V52H5vi+U7gXK0G
+         LGIEJ2uDmBnHhMovOdbbWqxzPOlJcjabu7AR55oMbJFiHzDDav5uQxu8wuDrDx13IuHg
+         A9uz6SrXn4g6j0sqEveSFIxnrz2oSIdnVaos63H6Wzawt9KL7QmS361ziykPsWOtg9QQ
+         oBHrBUuq8qelcTZ4IHDRo0QyPk/Ljqm5652Aky3Tr6OuBGUgHc6/VpDhyd5/P7XSTjL1
+         HEB1u2tzv9kJT1s72bx2ifL1CwfxLgH8MxILVcI6iZ3OGJqABgmc9jm01muLZrHVU0ZU
+         cr/w==
+X-Gm-Message-State: AOJu0YyNis8JlD/Z6Q2xk7PEGaHEQUPn19Nq1NJ46YOV1w0Csnndt7P6
+        w1VB1oHTvfovHcMAk9UvuKE55A==
+X-Google-Smtp-Source: AGHT+IGzuc9t5U+jBBYlKTYO5mWRjFkAcO0WyHY3IcrVl5E26ucKZIcSsLqwziSynCwOmpKqJMQN+Q==
+X-Received: by 2002:a5d:5450:0:b0:319:650f:60e2 with SMTP id w16-20020a5d5450000000b00319650f60e2mr3816436wrv.11.1693484082235;
+        Thu, 31 Aug 2023 05:14:42 -0700 (PDT)
+Received: from linaro.org ([84.232.191.193])
+        by smtp.gmail.com with ESMTPSA id l4-20020a5d4804000000b0031c56218984sm2023427wrq.104.2023.08.31.05.14.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Aug 2023 05:14:41 -0700 (PDT)
+Date:   Thu, 31 Aug 2023 15:14:40 +0300
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     Baruch Siach <baruch@tkos.co.il>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: gate: fix comment typo
+Message-ID: <ZPCEMPqGw8+xsrst@linaro.org>
+References: <7dfbd302399d8f0c1430151633bc734e64ee348b.1693478478.git.baruch@tkos.co.il>
 MIME-Version: 1.0
-References: <20230830-topic-rpmbusclocks8996gcc-v1-1-9e99bedcdc3b@linaro.org>
-In-Reply-To: <20230830-topic-rpmbusclocks8996gcc-v1-1-9e99bedcdc3b@linaro.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Thu, 31 Aug 2023 14:32:17 +0300
-Message-ID: <CAA8EJprupMJY7xKq4qO_+vBsrtBDvEPr+HEZqc2S+o0B1tQsWg@mail.gmail.com>
-Subject: Re: [PATCH] clk: qcom: gcc-msm8996: Remove RPM bus clocks
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7dfbd302399d8f0c1430151633bc734e64ee348b.1693478478.git.baruch@tkos.co.il>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 31 Aug 2023 at 12:39, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
->
-> The GCC driver contains clocks that are owned (meaning configured and
-> scaled) by the RPM core.
->
-> Remove them from Linux to stop interjecting the RPM's logic.
->
-> Fixes: b1e010c0730a ("clk: qcom: Add MSM8996 Global Clock Control (GCC) driver")
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+On 23-08-31 13:41:18, Baruch Siach wrote:
+> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
 > ---
-> Evolution of:
-> https://lore.kernel.org/linux-arm-msm/20230612-topic-rcg2_ro-v1-0-e7d824aeb628@linaro.org/
-> ---
->  drivers/clk/qcom/gcc-msm8996.c | 237 +----------------------------------------
->  1 file changed, 5 insertions(+), 232 deletions(-)
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Tested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Thanks for your patch.
+
+But your commit needs a message, even if it is a trivial typo.
+
+Maybe have a read thhrouh Documentation/process/submitting-patches.rst
+first.
 
 
--- 
-With best wishes
-Dmitry
+>  drivers/clk/clk-gate.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/clk-gate.c b/drivers/clk/clk-gate.c
+> index 64283807600b..f4f5b489a1f2 100644
+> --- a/drivers/clk/clk-gate.c
+> +++ b/drivers/clk/clk-gate.c
+> @@ -15,7 +15,7 @@
+>  #include <linux/string.h>
+>  
+>  /**
+> - * DOC: basic gatable clock which can gate and ungate it's ouput
+> + * DOC: basic gatable clock which can gate and ungate it's output
+>   *
+>   * Traits of this clock:
+>   * prepare - clk_(un)prepare only ensures parent is (un)prepared
+> -- 
+> 2.40.1
+> 
