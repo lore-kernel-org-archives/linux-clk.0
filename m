@@ -2,154 +2,66 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E882C83F10
-	for <linux-clk@archiver.kernel.org>; Thu, 31 Aug 2023 10:00:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A124BC83F10
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Aug 2023 10:58:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242479AbjHaKAj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 31 Aug 2023 06:00:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53000 "EHLO
+        id S239193AbjHaK60 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 31 Aug 2023 06:58:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233881AbjHaKAj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Aug 2023 06:00:39 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EA82CED;
-        Thu, 31 Aug 2023 03:00:35 -0700 (PDT)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37V9GP4v032484;
-        Thu, 31 Aug 2023 10:00:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=uh2tVtIUs3ZV9uZDdyhxj6TuRdsD5ZaJVkC1lFuqyjc=;
- b=GBXOQyRKIEj7tgYISTcJORwXHUbiqSBsmmevysG/Yw38pYLSQC8eTCOvfimdDwug0IHq
- Z2GTMK8WwsXUgabhC7b8AK3Hcv8o68ZCCx2M/GJZoHeMJ8QjZHtsrSQBjF6QxmGzUJyq
- 6BOLKBYqT6aY8p4u5vF00i6M4kquKd3MwG9ZxmB9ZlgNItpL7FI0Bd9SAPKTZBRH817x
- r06Cf53lV5UHtFSx/pdJKyfxj7YbUXx7URrDXkaKyKhxOYTpG3IHjKuJ/F8r5DYJws5L
- ydTHrJAmSLO+Km90EVqstzxb3Zq6u73364iZPDcDYt6Q8zEL6MgT4SePNDRIoKpG6obK 3w== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3sswbv2vty-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 31 Aug 2023 10:00:30 +0000
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 37VA0TTr020290
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 31 Aug 2023 10:00:29 GMT
-Received: from [10.218.10.146] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.36; Thu, 31 Aug
- 2023 03:00:23 -0700
-Message-ID: <7d4a2cd5-291c-e058-9834-1d7eaf911821@quicinc.com>
-Date:   Thu, 31 Aug 2023 15:30:19 +0530
+        with ESMTP id S236690AbjHaK60 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Aug 2023 06:58:26 -0400
+X-Greylist: delayed 998 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 31 Aug 2023 03:58:22 PDT
+Received: from mail.tkos.co.il (mail.tkos.co.il [84.110.109.230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EC75CF4
+        for <linux-clk@vger.kernel.org>; Thu, 31 Aug 2023 03:58:22 -0700 (PDT)
+Received: from tarshish.tkos.co.il (unknown [10.0.8.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.tkos.co.il (Postfix) with ESMTPS id B453A440E97;
+        Thu, 31 Aug 2023 13:40:54 +0300 (IDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tkos.co.il;
+        s=default; t=1693478454;
+        bh=gmLsht0AfTMiYjFBJexACC/YbakFqRYgTpdOTxdg1PQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=TsCuqpvLS68qpDZHSkeW5uN8qMayeF08hTuYk2Smk7RPsYxJh+a9LHMqt+Rn+b1iC
+         vc+WSw3cSVmzOJkqzC2e9dc1HKetbd+1AVYlz8yrv87pXrcMrjvohTQQXKZ4FjFYt6
+         bn2emXiLWC9uWp9QSomkwvw8I10NxLTYlsW7+8CZzXqDz7JtRaBSMY/iUoaKC89nfA
+         pPKUXzX66K5GSymDgXr8wo4pvzsmv+0O6ublcNsu8/BTtPcoKIxCCm8qade7Ur9ED8
+         SAN2unu8RfqdazdAD7t9dytjcrL2Pxu9z6fWvXyN1Rj8beYBDqwq2V4MPtny7CiOd/
+         FMB/8F2nNs9ug==
+From:   Baruch Siach <baruch@tkos.co.il>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, Baruch Siach <baruch@tkos.co.il>
+Subject: [PATCH] clk: gate: fix comment typo
+Date:   Thu, 31 Aug 2023 13:41:18 +0300
+Message-Id: <7dfbd302399d8f0c1430151633bc734e64ee348b.1693478478.git.baruch@tkos.co.il>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [PATCH 3/4] dt-bindings: clock: qcom: Add GCC clocks for SM4450
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>
-CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20230824173410.550126-1-quic_ajipan@quicinc.com>
- <20230824173410.550126-4-quic_ajipan@quicinc.com>
- <161de126-87b0-3440-8517-330b529c3fb6@linaro.org>
-From:   Ajit Pandey <quic_ajipan@quicinc.com>
-In-Reply-To: <161de126-87b0-3440-8517-330b529c3fb6@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: gl8gxOXJflGu-4r4GQnPBpF3UPZ9ZV9Z
-X-Proofpoint-GUID: gl8gxOXJflGu-4r4GQnPBpF3UPZ9ZV9Z
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-08-31_07,2023-08-29_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- lowpriorityscore=0 phishscore=0 impostorscore=0 bulkscore=0 spamscore=0
- mlxlogscore=999 adultscore=0 malwarescore=0 priorityscore=1501
- clxscore=1011 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2308100000 definitions=main-2308310088
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+---
+ drivers/clk/clk-gate.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-On 8/24/2023 11:40 PM, Krzysztof Kozlowski wrote:
-> On 24/08/2023 19:34, Ajit Pandey wrote:
->> Add support for qcom global clock controller bindings for SM4450 platform.
->>
->> Signed-off-by: Ajit Pandey <quic_ajipan@quicinc.com>
->> ---
->>   .../bindings/clock/qcom,sm4450-gcc.yaml       |  54 +++++
->>   include/dt-bindings/clock/qcom,sm4450-gcc.h   | 197 ++++++++++++++++++
->>   2 files changed, 251 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm4450-gcc.yaml
->>   create mode 100644 include/dt-bindings/clock/qcom,sm4450-gcc.h
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm4450-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm4450-gcc.yaml
->> new file mode 100644
->> index 000000000000..8c767bdf7f9d
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/qcom,sm4450-gcc.yaml
->> @@ -0,0 +1,54 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/clock/qcom,sm4450-gcc.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Qualcomm Global Clock & Reset Controller on SM4450
->> +
->> +maintainers:
->> +  - Ajit Pandey <quic_ajipan@quicinc.com>
->> +  - Taniya Das <quic_tdas@quicinc.com>
->> +
->> +description: |
->> +  Qualcomm global clock control module provides the clocks, resets and power
->> +  domains on SM4450
->> +
->> +  See also:: include/dt-bindings/clock/qcom,sm4450-gcc.h
->> +
->> +properties:
->> +  compatible:
->> +    const: qcom,sm4450-gcc
->> +
->> +  clocks:
->> +    items:
->> +      - description: Board XO source
->> +      - description: Sleep clock source
->> +      - description: UFS Phy Rx symbol 0 clock source (Optional clock)
->> +      - description: UFS Phy Rx symbol 1 clock source (Optional clock)
->> +      - description: UFS Phy Tx symbol 0 clock source (Optional clock)
->> +      - description: USB3 Phy wrapper pipe clock source (Optional clock)
-> 
-> I doubt that these are really optional clocks. They are set as parents
-> of your clocks in the controller, so if these clocks are physically
-> missing, how does the clock controller work?
-> 
-> 
-> Best regards,
-> Krzysztof
-> 
-
-Yeah, if these optional clocks are missing, few dependent child clocks 
-functionality (UFS/USB) will not work and clock controller will work 
-with limited functionality, but I agree that the tag "Optional Clock" is 
-bit confusing here and will remove this in next patch series.
-
+diff --git a/drivers/clk/clk-gate.c b/drivers/clk/clk-gate.c
+index 64283807600b..f4f5b489a1f2 100644
+--- a/drivers/clk/clk-gate.c
++++ b/drivers/clk/clk-gate.c
+@@ -15,7 +15,7 @@
+ #include <linux/string.h>
+ 
+ /**
+- * DOC: basic gatable clock which can gate and ungate it's ouput
++ * DOC: basic gatable clock which can gate and ungate it's output
+  *
+  * Traits of this clock:
+  * prepare - clk_(un)prepare only ensures parent is (un)prepared
 -- 
-Thanks, and Regards
-Ajit
+2.40.1
+
