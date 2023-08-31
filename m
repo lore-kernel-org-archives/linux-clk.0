@@ -2,82 +2,103 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E330C83F2F
-	for <linux-clk@archiver.kernel.org>; Thu, 31 Aug 2023 18:25:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02036EE49B0
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Aug 2023 21:52:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234683AbjHaSZl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 31 Aug 2023 14:25:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34722 "EHLO
+        id S229751AbjHaVwa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 31 Aug 2023 17:52:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230427AbjHaSZl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Aug 2023 14:25:41 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91F72E5F;
-        Thu, 31 Aug 2023 11:25:38 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        with ESMTP id S238001AbjHaVwa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Aug 2023 17:52:30 -0400
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5978B8;
+        Thu, 31 Aug 2023 14:52:25 -0700 (PDT)
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id BC19ACE2168;
-        Thu, 31 Aug 2023 18:25:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F6EDC433C8;
-        Thu, 31 Aug 2023 18:25:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1693506335;
-        bh=HX+LsS71C3YAX9zxZxNXGCOSH6tcuNhHV+Qq0DsTkRo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sIcWQLiiJEmqNg1U8AU/O/skuvuq3R3SqjMyRMDeuPLE05ii9AuKe2zi4eXPK8AAZ
-         Lb0X7wnGImFPjMSNy6GhWcMFUz5DPWGsdVzSSkhYEbMltSaeRL30sRnQi6wcB4v/B2
-         ZgSxIpbCGIScfcKgoyfRrYH5rZLkDYLQj8F6ApeGCURUmtFbdDp8LRTmJUzPOFCMCN
-         G1hB7gF+KmgsCrQPtWk7NKA2wK3U0/UYFSIM6dOabodpZEj70ggjIGjLwMx7aUQkZa
-         OzjrWNkQWa7+APPkbW3z/ESF1k9bsapb+9Mq+cEzDodsiyue0WnHVUrvVRPmjTTNHJ
-         zrUelRhJkl2QA==
-Received: (nullmailer pid 2548329 invoked by uid 1000);
-        Thu, 31 Aug 2023 18:25:32 -0000
-Date:   Thu, 31 Aug 2023 13:25:32 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Adam Ford <aford173@gmail.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
-        Abel Vesa <abelvesa@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        aford@beaconembedded.com, marex@denx.de,
-        Shawn Guo <shawnguo@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>
-Subject: Re: [PATCH V3 3/3] clk: imx8mp: Remove non-existent
- IMX8MP_CLK_AUDIOMIX_PDM_ROOT
-Message-ID: <169350633203.2548268.6713389438245540707.robh@kernel.org>
-References: <20230831044431.250338-1-aford173@gmail.com>
- <20230831044431.250338-3-aford173@gmail.com>
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id 91B938659F;
+        Thu, 31 Aug 2023 23:52:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1693518744;
+        bh=VX4ueldWGhNie2C6yLSDql4e0oCmV/PfqbMuG7MW9jg=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=I9pttGndcWPz52/igHC1f7L/vKr9I7RmxuKmktKFpv6NwzFEWQM7bkZ8P4AHJ5R8H
+         9vEysRwWn1GAqm1L5rfhnOtK2/AOlkJkghF+gsq6uNjOzK2/gVfFwsICakOM/mBE/v
+         XpiFdW53VfWgSGbxoYaCuwVAehxyfgHiFM6hc0Clylb0klDy9VyQiSUYgN7xAr3ud6
+         eF4RBan9gCBz2DS7rpjRKDFSiZre3Nt3izBD9KpCtrhKomj9D/PeAp76ohT69ntB4r
+         NwJtG2a4FxBw339d/hJQQlujUo7ysz4C9XuQpmMbok/XD56p0J81Y4ykEguP3FyWGA
+         U/G8PeFjKrTng==
+Message-ID: <99204fbf-3246-6124-2e35-bdc353d7e7b6@denx.de>
+Date:   Thu, 31 Aug 2023 23:52:23 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230831044431.250338-3-aford173@gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Subject: Re: [PATCH V3 1/3] arm64: dts: imx8mp: Add easrc node
+Content-Language: en-US
+To:     Adam Ford <aford173@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     aford@beaconembedded.com, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20230831044431.250338-1-aford173@gmail.com>
+From:   Marek Vasut <marex@denx.de>
+In-Reply-To: <20230831044431.250338-1-aford173@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-On Wed, 30 Aug 2023 23:44:31 -0500, Adam Ford wrote:
-> The TRM shows there is only one AUDIOMIX PDM Root Clock Select
-> register, and it's called IMX8MP_CLK_AUDIOMIX_PDM_SEL.  That
-> selector doesn't appear to have any more children and the
-> MICFIL driver can reference IMX8MP_CLK_AUDIOMIX_PDM_SEL
-> directly without the need for any other.  Remove this
-> errant clock, since it doesn't really exist.
+On 8/31/23 06:44, Adam Ford wrote:
+> The i.MX8MP has an asynchronous sample rate converter which seems
+> to be the same as what is available on the i.MX8M Nano.
 > 
 > Signed-off-by: Adam Ford <aford173@gmail.com>
 > ---
+> V3:  No Change.  The dt-binding update was already accepted into the sound tree, so that patch
+>       was dropped from the series
 > 
-> V3:  New to series
+> V2:  No Change.
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> index 83d907294fbc..3167706d81e1 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> @@ -1459,6 +1459,26 @@ sai7: sai@30c80000 {
+>   					interrupts = <GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH>;
+>   					status = "disabled";
+>   				};
+> +
+> +				easrc: easrc@30c90000 {
+> +					compatible = "fsl,imx8mp-easrc", "fsl,imx8mn-easrc";
+> +					reg = <0x30c90000 0x10000>;
+> +					interrupts = <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>;
+> +					clocks = <&audio_blk_ctrl IMX8MP_CLK_AUDIOMIX_ASRC_IPG>;
+> +					clock-names = "mem";
+> +					dmas = <&sdma2 16 23 0> , <&sdma2 17 23 0>,
+> +					       <&sdma2 18 23 0> , <&sdma2 19 23 0>,
+> +					       <&sdma2 20 23 0> , <&sdma2 21 23 0>,
+> +					       <&sdma2 22 23 0> , <&sdma2 23 23 0>;
+> +					dma-names = "ctx0_rx", "ctx0_tx",
+> +						    "ctx1_rx", "ctx1_tx",
+> +						    "ctx2_rx", "ctx2_tx",
+> +						    "ctx3_rx", "ctx3_tx";
+> +					firmware-name = "imx/easrc/easrc-imx8mn.bin";
 
-Acked-by: Rob Herring <robh@kernel.org>
+Should the firmware name really be imx8mn or should it be imx8mp ?
 
+I think the later is better, you can always add a symlink for the 
+firmware name, and you can discern mx8mn/mp firmwares on the same rootfs 
+in case that was ever needed in the future.
