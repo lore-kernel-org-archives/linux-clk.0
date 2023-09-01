@@ -2,104 +2,110 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4213C88CB2
-	for <linux-clk@archiver.kernel.org>; Thu, 31 Aug 2023 21:53:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D224CCA0FE1
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Sep 2023 02:55:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238001AbjHaVxI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 31 Aug 2023 17:53:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33088 "EHLO
+        id S230052AbjIACzE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 31 Aug 2023 22:55:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230425AbjHaVxI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Aug 2023 17:53:08 -0400
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22DA31B0;
-        Thu, 31 Aug 2023 14:53:05 -0700 (PDT)
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id 06A6286146;
-        Thu, 31 Aug 2023 23:53:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1693518783;
-        bh=7zNiAYmjqejwICsTZJq3BxAP06RQWgh69LgCsjNl+Lc=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=uRx7kevIBzaKZHWDa6nk1U95Zv0YF9lq3NYfR21MkcUKxm9SGs2+9OEKa4mlsnSxx
-         Uv1ZgDJ06E4T6qL/KtM8Xf8O7qTviC/0w52I85/NwvasIUO7zJianktiaqRr2ggJHU
-         m4fRDcuG0dzJ9hE9uvAhNDjJvfEYFl8JZT8v0V1do1oQUAnQka3oa+YJAol5Vzafrw
-         BHrEk7zGzyXUH/RKr6tJ2ygnMwvgu7jCbbWRZJaMNXR8AoXgN7sktahRo6moKCxV1B
-         IMllStmHtrXxEmk5A07wpVHCv4ABWenJgVyfcEEwGzcwNw20eLXb+E56lMpqlFE4ln
-         3OfBfQQu3enEQ==
-Message-ID: <4d700304-3e10-a19b-d3f0-d0a1aec11580@denx.de>
-Date:   Thu, 31 Aug 2023 23:53:02 +0200
+        with ESMTP id S1344936AbjIACzD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Aug 2023 22:55:03 -0400
+X-Greylist: delayed 438 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 31 Aug 2023 19:55:00 PDT
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C969CE4C
+        for <linux-clk@vger.kernel.org>; Thu, 31 Aug 2023 19:55:00 -0700 (PDT)
+Received: from 4d92782a4194.home.arpa (unknown [124.16.138.129])
+        by APP-05 (Coremail) with SMTP id zQCowAAHD1eoUPFkj_PaCA--.40644S2;
+        Fri, 01 Sep 2023 10:47:04 +0800 (CST)
+From:   Jiasheng Jiang <jiasheng@iscas.ac.cn>
+To:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
+        angelogioacchino.delregno@collabora.com, wenst@chromium.org,
+        msp@baylibre.com, frank.li@vivo.com, robh@kernel.org,
+        jamesjj.liao@mediatek.com, shunli.wang@mediatek.com,
+        erin.lo@mediatek.com
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Jiasheng Jiang <jiasheng@iscas.ac.cn>
+Subject: [PATCH] clk: mediatek: clk-mt2701: Add check for mtk_alloc_clk_data
+Date:   Fri,  1 Sep 2023 10:46:58 +0800
+Message-Id: <20230901024658.23405-1-jiasheng@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [PATCH V3 2/3] arm64: dts: imx8mp: Add micfil node
-Content-Language: en-US
-To:     Adam Ford <aford173@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     aford@beaconembedded.com, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20230831044431.250338-1-aford173@gmail.com>
- <20230831044431.250338-2-aford173@gmail.com>
-From:   Marek Vasut <marex@denx.de>
-In-Reply-To: <20230831044431.250338-2-aford173@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: zQCowAAHD1eoUPFkj_PaCA--.40644S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7uF1xXFW3Aw4kuw4kWr4rKrg_yoW8AF1kpr
+        WkKF1YyFyUGw17Grs5Jr4DC3W5Aw10ga4UtFy3Zw1rZr13KrWUAF1F9a4vk3Z2yrWv9FyU
+        X3WY9w409FWDuFDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUvC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+        1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+        6r4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+        CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+        2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+        W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+        Y2ka0xkIwI1lc2xSY4AK67AK6r4UMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
+        1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
+        b7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
+        vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
+        cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
+        nxnUUI43ZEXa7VUbpwZ7UUUUU==
+X-Originating-IP: [124.16.138.129]
+X-CM-SenderInfo: pmld2xxhqjqxpvfd2hldfou0/
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 8/31/23 06:44, Adam Ford wrote:
-> The i.MX8MP has a micfil controller which is used for interfacing
-> with a pulse density microphone. Add the node and mark it as
-> disabled by default.
-> 
-> Signed-off-by: Adam Ford <aford173@gmail.com>
-> ---
-> V3:  The AUDIOMIX_PDM_ROOT doesn't exist and the real clock is
->       called IMX8MP_CLK_AUDIOMIX_PDM_SEL, so swap it out.
-> 
-> V2:  No change
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> index 3167706d81e1..341fd0369ce9 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> @@ -1479,6 +1479,27 @@ easrc: easrc@30c90000 {
->   					fsl,asrc-format = <2>;
->   					status = "disabled";
->   				};
-> +
-> +				micfil: audio-controller@30ca0000 {
-> +					compatible = "fsl,imx8mp-micfil";
-> +					reg = <0x30ca0000 0x10000>;
-> +					#sound-dai-cells = <0>;
-> +					interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>,
-> +						     <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>,
-> +						     <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>,
-> +						     <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
-> +					clocks = <&audio_blk_ctrl IMX8MP_CLK_AUDIOMIX_PDM_IPG>,
-> +						 <&audio_blk_ctrl IMX8MP_CLK_AUDIOMIX_PDM_SEL>,
-> +						 <&clk IMX8MP_AUDIO_PLL1_OUT>,
-> +						 <&clk IMX8MP_AUDIO_PLL2_OUT>,
-> +						 <&clk IMX8MP_CLK_EXT3>;
-> +					clock-names = "ipg_clk", "ipg_clk_app",
-> +						      "pll8k", "pll11k", "clkext3";
-> +					dmas = <&sdma2 24 25 0x80000000>;
-> +					dma-names = "rx";
+Add the check for the return value of mtk_alloc_clk_data() in order to
+avoid NULL pointer dereference.
 
-Is dma-names really required if there is only a single DMA channel in DT ?
+Fixes: e9862118272a ("clk: mediatek: Add MT2701 clock support")
+Signed-off-by: Jiasheng Jiang <jiasheng@iscas.ac.cn>
+---
+ drivers/clk/mediatek/clk-mt2701.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
+index c81f3e33ce56..12d9560eb4ba 100644
+--- a/drivers/clk/mediatek/clk-mt2701.c
++++ b/drivers/clk/mediatek/clk-mt2701.c
+@@ -667,6 +667,8 @@ static int mtk_topckgen_init(struct platform_device *pdev)
+ 		return PTR_ERR(base);
+ 
+ 	clk_data = mtk_alloc_clk_data(CLK_TOP_NR);
++	if (!clk_data)
++		return -ENOMEM;
+ 
+ 	mtk_clk_register_fixed_clks(top_fixed_clks, ARRAY_SIZE(top_fixed_clks),
+ 								clk_data);
+@@ -747,6 +749,8 @@ static void __init mtk_infrasys_init_early(struct device_node *node)
+ 
+ 	if (!infra_clk_data) {
+ 		infra_clk_data = mtk_alloc_clk_data(CLK_INFRA_NR);
++		if (!infra_clk_data)
++			return;
+ 
+ 		for (i = 0; i < CLK_INFRA_NR; i++)
+ 			infra_clk_data->hws[i] = ERR_PTR(-EPROBE_DEFER);
+@@ -774,6 +778,8 @@ static int mtk_infrasys_init(struct platform_device *pdev)
+ 
+ 	if (!infra_clk_data) {
+ 		infra_clk_data = mtk_alloc_clk_data(CLK_INFRA_NR);
++		if (!infra_clk_data)
++			return -ENOMEM;
+ 	} else {
+ 		for (i = 0; i < CLK_INFRA_NR; i++) {
+ 			if (infra_clk_data->hws[i] == ERR_PTR(-EPROBE_DEFER))
+@@ -890,6 +896,8 @@ static int mtk_pericfg_init(struct platform_device *pdev)
+ 		return PTR_ERR(base);
+ 
+ 	clk_data = mtk_alloc_clk_data(CLK_PERI_NR);
++	if (!clk_data)
++		return -ENOMEM;
+ 
+ 	mtk_clk_register_gates(&pdev->dev, node, peri_clks,
+ 			       ARRAY_SIZE(peri_clks), clk_data);
+-- 
+2.25.1
+
