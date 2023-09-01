@@ -2,137 +2,77 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADB66CA0FE6
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Sep 2023 11:07:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BC08CA0FE1
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Sep 2023 13:04:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229763AbjIALHO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Sep 2023 07:07:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38832 "EHLO
+        id S1349641AbjIANEl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Sep 2023 09:04:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242330AbjIALHN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Sep 2023 07:07:13 -0400
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B59410D2;
-        Fri,  1 Sep 2023 04:07:11 -0700 (PDT)
-Received: by mail-pj1-x102f.google.com with SMTP id 98e67ed59e1d1-26d1a17ce06so1306968a91.0;
-        Fri, 01 Sep 2023 04:07:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1693566430; x=1694171230; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bPUOMfLU4we4CjltUjwN44sx+Ez5EK03Lr9xq9NQohw=;
-        b=f8IA9xzGM7p+Fpyaa7UW7rwFtzfe7CvPyo+NlWXf2ChGZ2osL4bLeN/FHpbp0vqfns
-         d7jHgDg5SjCmWOkNGl8E6Dtaf3jW9tm6t66SXPq6UgG99hVv4PAzDZhklMCWUcYYnnrB
-         xvMQzKHTCt2Myy+s/SCEScrl3ggUU0OoHDp2xhPhUzX85fPYp1E4BbaHmf1N/OznhR58
-         ObN7rCTtMOEwCHdLlC8lM3ZjmCSwasMFWFS27WgLIf/NGkIqaIEdHDzTERovCMKViiwu
-         mVA05ydNMcNhuAv4AWzWsar0Bi51NfVR07aa5H2xeJ3zF5aYK2aBu/qXxlQrfaPugzdQ
-         DGKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693566430; x=1694171230;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bPUOMfLU4we4CjltUjwN44sx+Ez5EK03Lr9xq9NQohw=;
-        b=Dp4qzuhDxTLhWDz95vnoZPsoHGVSVMUr7ERGhrZeGq10KjXVRJwHT2j+a9Uqv+1Zll
-         /7534I+/TyWxFtWZkKYQv5rMV2yNPi35hKjI+N+NvmmXaYr3S2qsLpI5yAqlhC1YUWML
-         njiJYpq7610cVmEIoHql0I9RhZjesZqhlYONOQA8eVlwmIEbaf+FGgzPd8nl57GlosVm
-         Ac+hPGeCFgu2sdnhH98Oyq8qsdtTWF0febUmpneUR5TDCNOobQTJKopmhsNS/SSOZVHQ
-         qHbZjHpiVX7l4OXIyyNV+MCOnHzenO9rbybtJQhzgKnkVW7XO2eQ6CUvozWYI4tFxCSP
-         Ic0w==
-X-Gm-Message-State: AOJu0Yw0MrKirbnx8Jene1DzmiGo9S7zSFO6jV4gKzg/xmvr476P2c6B
-        zOcXO1Ujilh+t7/+o1kqdCDXSdqV96OOj3QfZsQ=
-X-Google-Smtp-Source: AGHT+IE2MCHN/JLIV3aZGEUAAMU6YT0YmbzRuP8i8CYwfT9g4LLvQK1VGtWvr2duPwboM58vGfo3BnTX2uUxdgkgWd0=
-X-Received: by 2002:a17:90a:5aa3:b0:26d:355a:47e3 with SMTP id
- n32-20020a17090a5aa300b0026d355a47e3mr1944668pji.38.1693566429840; Fri, 01
- Sep 2023 04:07:09 -0700 (PDT)
+        with ESMTP id S237214AbjIANEk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Sep 2023 09:04:40 -0400
+Received: from mail.astralinux.ru (mail.astralinux.ru [217.74.38.119])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B539210F6;
+        Fri,  1 Sep 2023 06:04:26 -0700 (PDT)
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by mail.astralinux.ru (Postfix) with ESMTP id EF7731866782;
+        Fri,  1 Sep 2023 16:04:22 +0300 (MSK)
+Received: from mail.astralinux.ru ([127.0.0.1])
+        by localhost (rbta-msk-vsrv-mail01.astralinux.ru [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id dad7jqbU_Blo; Fri,  1 Sep 2023 16:04:22 +0300 (MSK)
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by mail.astralinux.ru (Postfix) with ESMTP id 9E92A1865E84;
+        Fri,  1 Sep 2023 16:04:22 +0300 (MSK)
+X-Virus-Scanned: amavisd-new at astralinux.ru
+Received: from mail.astralinux.ru ([127.0.0.1])
+        by localhost (rbta-msk-vsrv-mail01.astralinux.ru [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id dpsgIrz02uZS; Fri,  1 Sep 2023 16:04:22 +0300 (MSK)
+Received: from rbta-msk-lt-106062.astralinux.ru (unknown [10.177.20.23])
+        by mail.astralinux.ru (Postfix) with ESMTPSA id ADACD1866136;
+        Fri,  1 Sep 2023 16:04:21 +0300 (MSK)
+From:   Anastasia Belova <abelova@astralinux.ru>
+To:     Michael Turquette <mturquette@baylibre.com>
+Cc:     Anastasia Belova <abelova@astralinux.ru>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mike Looijmans <mike.looijmans@topic.nl>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        lvc-project@linuxtesting.org
+Subject: [PATCH] clk: cdce925: change condition in cdce925_clk_round_rate
+Date:   Fri,  1 Sep 2023 16:03:59 +0300
+Message-Id: <20230901130359.20561-1-abelova@astralinux.ru>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-References: <20230831044431.250338-1-aford173@gmail.com> <20230831044431.250338-2-aford173@gmail.com>
- <4d700304-3e10-a19b-d3f0-d0a1aec11580@denx.de>
-In-Reply-To: <4d700304-3e10-a19b-d3f0-d0a1aec11580@denx.de>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Fri, 1 Sep 2023 06:06:56 -0500
-Message-ID: <CAHCN7xJpug+ap4koX_3w_YTvHF9NC8-2S0f69SsDNY_6T+rcPQ@mail.gmail.com>
-Subject: Re: [PATCH V3 2/3] arm64: dts: imx8mp: Add micfil node
-To:     Marek Vasut <marex@denx.de>
-Cc:     linux-arm-kernel@lists.infradead.org, aford@beaconembedded.com,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Aug 31, 2023 at 4:53=E2=80=AFPM Marek Vasut <marex@denx.de> wrote:
->
-> On 8/31/23 06:44, Adam Ford wrote:
-> > The i.MX8MP has a micfil controller which is used for interfacing
-> > with a pulse density microphone. Add the node and mark it as
-> > disabled by default.
-> >
-> > Signed-off-by: Adam Ford <aford173@gmail.com>
-> > ---
-> > V3:  The AUDIOMIX_PDM_ROOT doesn't exist and the real clock is
-> >       called IMX8MP_CLK_AUDIOMIX_PDM_SEL, so swap it out.
-> >
-> > V2:  No change
-> >
-> > diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boo=
-t/dts/freescale/imx8mp.dtsi
-> > index 3167706d81e1..341fd0369ce9 100644
-> > --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> > +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> > @@ -1479,6 +1479,27 @@ easrc: easrc@30c90000 {
-> >                                       fsl,asrc-format =3D <2>;
-> >                                       status =3D "disabled";
-> >                               };
-> > +
-> > +                             micfil: audio-controller@30ca0000 {
-> > +                                     compatible =3D "fsl,imx8mp-micfil=
-";
-> > +                                     reg =3D <0x30ca0000 0x10000>;
-> > +                                     #sound-dai-cells =3D <0>;
-> > +                                     interrupts =3D <GIC_SPI 109 IRQ_T=
-YPE_LEVEL_HIGH>,
-> > +                                                  <GIC_SPI 110 IRQ_TYP=
-E_LEVEL_HIGH>,
-> > +                                                  <GIC_SPI 44 IRQ_TYPE=
-_LEVEL_HIGH>,
-> > +                                                  <GIC_SPI 45 IRQ_TYPE=
-_LEVEL_HIGH>;
-> > +                                     clocks =3D <&audio_blk_ctrl IMX8M=
-P_CLK_AUDIOMIX_PDM_IPG>,
-> > +                                              <&audio_blk_ctrl IMX8MP_=
-CLK_AUDIOMIX_PDM_SEL>,
-> > +                                              <&clk IMX8MP_AUDIO_PLL1_=
-OUT>,
-> > +                                              <&clk IMX8MP_AUDIO_PLL2_=
-OUT>,
-> > +                                              <&clk IMX8MP_CLK_EXT3>;
-> > +                                     clock-names =3D "ipg_clk", "ipg_c=
-lk_app",
-> > +                                                   "pll8k", "pll11k", =
-"clkext3";
-> > +                                     dmas =3D <&sdma2 24 25 0x80000000=
->;
-> > +                                     dma-names =3D "rx";
->
-> Is dma-names really required if there is only a single DMA channel in DT =
-?
+To avoid division by zero add check if
+divider is zero.
 
-I would normally agree with you, the DT binding file shows it's
-required, and the driver looks like it's searching for a channel name
-called 'rx'
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-adam
+Fixes: 19fbbbbcd3a3 ("Add TI CDCE925 I2C controlled clock synthesizer dri=
+ver")
+Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
+---
+ drivers/clk/clk-cdce925.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk-cdce925.c b/drivers/clk/clk-cdce925.c
+index 96ac90364847..d903cdc3ad7d 100644
+--- a/drivers/clk/clk-cdce925.c
++++ b/drivers/clk/clk-cdce925.c
+@@ -441,7 +441,7 @@ static long cdce925_clk_round_rate(struct clk_hw *hw,=
+ unsigned long rate,
+ 	unsigned long l_parent_rate =3D *parent_rate;
+ 	u16 divider =3D cdce925_calc_divider(rate, l_parent_rate);
+=20
+-	if (l_parent_rate / divider !=3D rate) {
++	if (divider && l_parent_rate / divider !=3D rate) {
+ 		l_parent_rate =3D cdce925_clk_best_parent_rate(hw, rate);
+ 		divider =3D cdce925_calc_divider(rate, l_parent_rate);
+ 		*parent_rate =3D l_parent_rate;
+--=20
+2.30.2
+
