@@ -2,202 +2,115 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD334CA0FEF
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Sep 2023 17:55:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0185FCA0FF9
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Sep 2023 22:55:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244123AbjIARzk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Sep 2023 13:55:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57322 "EHLO
+        id S233283AbjIAWzG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Sep 2023 18:55:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234661AbjIARzj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Sep 2023 13:55:39 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64FD3E72
-        for <linux-clk@vger.kernel.org>; Fri,  1 Sep 2023 10:55:35 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id 2adb3069b0e04-5008faf4456so4049067e87.3
-        for <linux-clk@vger.kernel.org>; Fri, 01 Sep 2023 10:55:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693590933; x=1694195733; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:references:cc:to
-         :from:content-language:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=iXwfrkGM7Hz+jCAI0wm9OEdUpgziFLOO3YnjHkqpV2w=;
-        b=xdoz+/a23dmydI3ey5EbohLlk1xVa0PRFwgfEbKyT5yqzWSZpmqKvxzagemM34mJHr
-         BiuPFGWu/VgtvMSiCict3JQAwZZAAmqMX+deq9FXGMmnFTuR1nniieoryYnObZwysVUH
-         E8TY7LxHC/Tm6kXNPq8ennScCZt7NJdGlAJtBeQWjcYjJNbf4Kp4aaO/eCM2nQiS7rhb
-         xs9IHcK/wKzgxe8EY0V8jBIVWhC1vHxvQqdI0XGyuqmy2mQ1lmngVsQsWdb2JtYXPnAE
-         NlP9OorykmSZegjxcCrtl1ToNMnI+k3Ee8pfVxczjiI2AyZ62bLN8pvCguVT/9mchIGo
-         M2rA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693590933; x=1694195733;
-        h=content-transfer-encoding:in-reply-to:autocrypt:references:cc:to
-         :from:content-language:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iXwfrkGM7Hz+jCAI0wm9OEdUpgziFLOO3YnjHkqpV2w=;
-        b=aZRyqPXDdQWT+aHvm9Z/HS9vZ9NR11FmDBC8vMDiQufH0MVc5CAKPbiY1mMgyp9zmC
-         1yYKiwL5ezhVyvzt/cHfaj1pwcmRh3rgt7uRhJqKhQO5P1B/f+mXUh2kZpWCd05gVwJQ
-         GIA1UkT7ztuBnVE457bWnvQgfi/MA1qQoEMU4UWlyyMQ8Cqn5NHGo4G1FrYk0nH8mKMC
-         AIZOjoHXF4tuCmD5PSfds9NnqMv00Z0OocubHnzF6xQ+iMySIeMyAO9OJ89ZXbTsqgBn
-         um07Mw+tochwE3DTziFY/2fn5TrjQbzEzXRXtZrzkHRL0RVJrkNGQe0RhjuvUWvGh8so
-         zZhQ==
-X-Gm-Message-State: AOJu0YyAENBiqhGn5qyhdVHbe2It3TFRkSUy2efpquiEtNGF0UTKg8VB
-        iuFdwX5owXSfsRs6ympcA+sMlQ==
-X-Google-Smtp-Source: AGHT+IEVz6fJWAjbQSaZH9j8buVj8fBa5mtJlorGodbyAE6AeJjp2x4UEgh5FPmAsFJCi5/vrH6s7Q==
-X-Received: by 2002:a05:6512:2016:b0:500:91c1:9642 with SMTP id a22-20020a056512201600b0050091c19642mr1780047lfb.21.1693590933257;
-        Fri, 01 Sep 2023 10:55:33 -0700 (PDT)
-Received: from [192.168.1.101] (abxh154.neoplus.adsl.tpnet.pl. [83.9.1.154])
-        by smtp.gmail.com with ESMTPSA id r1-20020a19ac41000000b004ff748f6f1fsm717827lfc.69.2023.09.01.10.55.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Sep 2023 10:55:32 -0700 (PDT)
-Message-ID: <519259d7-ac6d-409b-a864-071e41f66f70@linaro.org>
-Date:   Fri, 1 Sep 2023 19:55:30 +0200
+        with ESMTP id S1351109AbjIAWzF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Sep 2023 18:55:05 -0400
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6188A172D;
+        Fri,  1 Sep 2023 14:06:02 -0700 (PDT)
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id 3E57F86784;
+        Fri,  1 Sep 2023 23:06:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1693602361;
+        bh=9ni6WpCLFXsfPtmtSSKyYdoZ+OPfotsSV4r5eavgMAA=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=w3jvVWugIgtBjjHtQNuDByeDxff9KmrcUaUiHLNzOS1O+KedXs3NNSfttnZET8v98
+         4lXYzXBfSeAHbHOD2/R92jn8KUwEdH0pG3cEuc9zy+LhtA7y6f5Y+7s+dHZfFAnxb+
+         sEUAJjRc+MDmIsE6tlZCKxmz71GLzJXaK+EhlUWUT/3EBQBzIDhJlQRt6fXk6hwHaM
+         02q5iDEkNx23fjj3J0/n9N//wXU7ZdJNKAWASDXkWeYFfxHC+vp+hzrG/z2X28Iq+j
+         hSTgqizwNXvvVEYfowTAmYenlgSl472HppFnOpX5jbYTLKXKQ1ScZ5RWrofkdhhTZD
+         Bj8Byno9PAe+g==
+Message-ID: <c14a6e7b-3bfc-2dd9-378e-fb587e3e03e8@denx.de>
+Date:   Fri, 1 Sep 2023 17:49:44 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/15] clk: qcom: gcc-sm6375: Unregister critical clocks
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Subject: Re: [PATCH V3 2/3] arm64: dts: imx8mp: Add micfil node
 Content-Language: en-US
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-To:     Johan Hovold <johan@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+To:     Adam Ford <aford173@gmail.com>
+Cc:     linux-arm-kernel@lists.infradead.org, aford@beaconembedded.com,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20230717-topic-branch_aon_cleanup-v1-0-27784d27a4f4@linaro.org>
- <20230717-topic-branch_aon_cleanup-v1-3-27784d27a4f4@linaro.org>
- <ZLaRtrH85v4kpSvb@hovoldconsulting.com>
- <33a26241-026a-9466-5dd6-e3202b29f57c@linaro.org>
- <ybugl2m7o5cnzj4lv5ksit2rip6yvths5ieo3xlw6cycto2zax@2jimga475z2t>
- <ZLeiM6l6tu6XDzrr@hovoldconsulting.com>
- <cc9e6464-5e47-4044-9785-c57167f0e1c5@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <cc9e6464-5e47-4044-9785-c57167f0e1c5@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20230831044431.250338-1-aford173@gmail.com>
+ <20230831044431.250338-2-aford173@gmail.com>
+ <4d700304-3e10-a19b-d3f0-d0a1aec11580@denx.de>
+ <CAHCN7xJpug+ap4koX_3w_YTvHF9NC8-2S0f69SsDNY_6T+rcPQ@mail.gmail.com>
+From:   Marek Vasut <marex@denx.de>
+In-Reply-To: <CAHCN7xJpug+ap4koX_3w_YTvHF9NC8-2S0f69SsDNY_6T+rcPQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 9.08.2023 18:52, Konrad Dybcio wrote:
-> On 19.07.2023 10:43, Johan Hovold wrote:
->> On Tue, Jul 18, 2023 at 09:23:52AM -0700, Bjorn Andersson wrote:
->>> On Tue, Jul 18, 2023 at 03:26:51PM +0200, Konrad Dybcio wrote:
->>>> On 18.07.2023 15:20, Johan Hovold wrote:
->>>>> On Mon, Jul 17, 2023 at 05:19:10PM +0200, Konrad Dybcio wrote:
->>>>>> Some clocks need to be always-on, but we don't really do anything
->>>>>> with them, other than calling enable() once and telling Linux they're
->>>>>> enabled.
->>>>>>
->>>>>> Unregister them to save a couple of bytes and, perhaps more
->>>>>> importantly, allow for runtime suspend of the clock controller device,
->>>>>> as CLK_IS_CRITICAL prevents the latter.
->>>>>
->>>>> But this doesn't sound right. How can you disable a controller which
->>>>> still has clocks enabled?
->>>>>
->>>>> Shouldn't instead these clocks be modelled properly so that they are
->>>>> only enabled when actually needed?
->>>> Hm.. We do have clk_branch2_aon_ops, but something still needs to
->>>> toggle these clocks.
->>>>
+On 9/1/23 13:06, Adam Ford wrote:
+> On Thu, Aug 31, 2023 at 4:53 PM Marek Vasut <marex@denx.de> wrote:
+>>
+>> On 8/31/23 06:44, Adam Ford wrote:
+>>> The i.MX8MP has a micfil controller which is used for interfacing
+>>> with a pulse density microphone. Add the node and mark it as
+>>> disabled by default.
 >>>
->>> Before we started replacing these clocks with static votes, I handled
->>> exactly this problem in the turingcc-qcs404 driver by registering the
->>> ahb clock with a pm_clk_add(). The clock framework will then
->>> automagically keep the clock enabled around operations, but it will also
->>> keep the runtime state active as long as the clock is prepared.
+>>> Signed-off-by: Adam Ford <aford173@gmail.com>
+>>> ---
+>>> V3:  The AUDIOMIX_PDM_ROOT doesn't exist and the real clock is
+>>>        called IMX8MP_CLK_AUDIOMIX_PDM_SEL, so swap it out.
 >>>
->>> As mentioned in an earlier reply today, there's no similarity to this in
->>> the reset or gdsc code, so we'd need to add that in order to rely on
->>> such mechanism.
->>
->> This reminds me of:
->>
->> 	4cc47e8add63 ("clk: qcom: gdsc: Remove direct runtime PM calls")
->>
->> which recently removed a broken attempt to implement this for gdscs.
->>
->> Just stumbled over GENPD_FLAG_PM_CLK which may provide a way forward at
->> least for genpd (but see below).
->>
->>>> I *think* we could leave a permanent vote in probe() without breaking
->>>> runtime pm! I'll give it a spin bit later..
->>>>
+>>> V2:  No change
 >>>
->>> Modelling the AHB clock in DT and putting a devm_clk_get_enabled() would
->>> properly connect the two, and thereby handle probe order between the two
->>> clock controllers.
+>>> diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+>>> index 3167706d81e1..341fd0369ce9 100644
+>>> --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+>>> +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+>>> @@ -1479,6 +1479,27 @@ easrc: easrc@30c90000 {
+>>>                                        fsl,asrc-format = <2>;
+>>>                                        status = "disabled";
+>>>                                };
+>>> +
+>>> +                             micfil: audio-controller@30ca0000 {
+>>> +                                     compatible = "fsl,imx8mp-micfil";
+>>> +                                     reg = <0x30ca0000 0x10000>;
+>>> +                                     #sound-dai-cells = <0>;
+>>> +                                     interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>,
+>>> +                                                  <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>,
+>>> +                                                  <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>,
+>>> +                                                  <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
+>>> +                                     clocks = <&audio_blk_ctrl IMX8MP_CLK_AUDIOMIX_PDM_IPG>,
+>>> +                                              <&audio_blk_ctrl IMX8MP_CLK_AUDIOMIX_PDM_SEL>,
+>>> +                                              <&clk IMX8MP_AUDIO_PLL1_OUT>,
+>>> +                                              <&clk IMX8MP_AUDIO_PLL2_OUT>,
+>>> +                                              <&clk IMX8MP_CLK_EXT3>;
+>>> +                                     clock-names = "ipg_clk", "ipg_clk_app",
+>>> +                                                   "pll8k", "pll11k", "clkext3";
+>>> +                                     dmas = <&sdma2 24 25 0x80000000>;
+>>> +                                     dma-names = "rx";
 >>
->> Yeah, this dependency really should be described eventually.
->>
->>> But it would prevent the power-domain of the parent provider to ever
->>> suspending. Using pm_clk_add() this would at least depend on client
->>> votes.
->>
->> IIUC using pm_clk_add() would also prevent the parent from suspending
->> due to that resume call in clk_prepare().
->>
->> And this mechanism is also used for GENPD_FLAG_PM_CLK...
-> So.. how do we go about solving the issue that this patch tried to
-> address?
-I see things this way:
+>> Is dma-names really required if there is only a single DMA channel in DT ?
+> 
+> I would normally agree with you, the DT binding file shows it's
+> required, and the driver looks like it's searching for a channel name
+> called 'rx'
 
-- clock controllers (non-gcc) that use magic writes today,
-  they should stay as they are to avoid dramatic spaghetti wrt
-  dt backwards compatibility
-
-- clock controllers (non-gcc) that use CLK_IS_CRITICAL are
-  transitioned to magic writes to skip the PM code fluff which
-  prevents shutting down the PDs if any clock is critical and
-  for uniformity with point 1 (as the device trees still don't
-  contain any references to the necessary clocks)
-
-- new clock controllers are modeled with use of pm_clk and with
-  proper device tree references
-
-FWIW Qualcomm nowadays just keep these clocks always on (answering
-Johan's question - they're either off-from-Linux-POV-not-really-in-
-hardware or these clocks retain the enable bit, I don't know) in
-their shipping downstream kernels, the power leak is probably
-minimal, but if we can avoid it, every nanowatt is to our advantage
-
-Konrad
+Maybe something that can be improved both in the driver and bindings ?
