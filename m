@@ -2,139 +2,202 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A434CA0FE6
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Sep 2023 16:16:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD334CA0FEF
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Sep 2023 17:55:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344743AbjIAQQZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Sep 2023 12:16:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53984 "EHLO
+        id S244123AbjIARzk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Sep 2023 13:55:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234902AbjIAQQZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Sep 2023 12:16:25 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 977D3E5F;
-        Fri,  1 Sep 2023 09:16:22 -0700 (PDT)
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 381G0JhN016347;
-        Fri, 1 Sep 2023 16:15:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=fQXdVgC8H3ZHI+cVXJ85DJqMLWM9x6fFJNVhYDTwO2U=;
- b=QF/Y+jXY86srvasL/bV23xR2zL/QNhGaYnI1ugZvudru7ikrNWFe5Eq6B4Xag4BGMPtJ
- 1CsZTlA7EWA+ojky7eTUDJKDWMNyZraBZXf4MeMi6C+Lyle+QjmUErL2YBCdv5Qk4Ol5
- TdbXEaN6W11/A+LRt5I6Vd6iPlqmW4jspmAnYGkDqA/YwDyx9iDYAYs/mcXZVq8uSJGg
- RWLBBcCHZYzZkoaGKVscjiivoLNJ2T9SZbFbaxJ+xmBUvQg0JzrPxrDZ9U7znmgHnt5Q
- AWSESID9Iru5XhjRt9h7jwerWT8mPc7o3B3YWnURiVGe7kmnrVJS6cj7nVSG7/O+LPH8 kw== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3sug2h8n5f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 01 Sep 2023 16:15:17 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 381GFGln026870
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 1 Sep 2023 16:15:16 GMT
-Received: from [10.216.36.87] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.36; Fri, 1 Sep
- 2023 09:15:05 -0700
-Message-ID: <c1da6c89-5716-1232-11c0-ec598d7b189e@quicinc.com>
-Date:   Fri, 1 Sep 2023 21:45:00 +0530
+        with ESMTP id S234661AbjIARzj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Sep 2023 13:55:39 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64FD3E72
+        for <linux-clk@vger.kernel.org>; Fri,  1 Sep 2023 10:55:35 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id 2adb3069b0e04-5008faf4456so4049067e87.3
+        for <linux-clk@vger.kernel.org>; Fri, 01 Sep 2023 10:55:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1693590933; x=1694195733; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:references:cc:to
+         :from:content-language:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=iXwfrkGM7Hz+jCAI0wm9OEdUpgziFLOO3YnjHkqpV2w=;
+        b=xdoz+/a23dmydI3ey5EbohLlk1xVa0PRFwgfEbKyT5yqzWSZpmqKvxzagemM34mJHr
+         BiuPFGWu/VgtvMSiCict3JQAwZZAAmqMX+deq9FXGMmnFTuR1nniieoryYnObZwysVUH
+         E8TY7LxHC/Tm6kXNPq8ennScCZt7NJdGlAJtBeQWjcYjJNbf4Kp4aaO/eCM2nQiS7rhb
+         xs9IHcK/wKzgxe8EY0V8jBIVWhC1vHxvQqdI0XGyuqmy2mQ1lmngVsQsWdb2JtYXPnAE
+         NlP9OorykmSZegjxcCrtl1ToNMnI+k3Ee8pfVxczjiI2AyZ62bLN8pvCguVT/9mchIGo
+         M2rA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693590933; x=1694195733;
+        h=content-transfer-encoding:in-reply-to:autocrypt:references:cc:to
+         :from:content-language:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iXwfrkGM7Hz+jCAI0wm9OEdUpgziFLOO3YnjHkqpV2w=;
+        b=aZRyqPXDdQWT+aHvm9Z/HS9vZ9NR11FmDBC8vMDiQufH0MVc5CAKPbiY1mMgyp9zmC
+         1yYKiwL5ezhVyvzt/cHfaj1pwcmRh3rgt7uRhJqKhQO5P1B/f+mXUh2kZpWCd05gVwJQ
+         GIA1UkT7ztuBnVE457bWnvQgfi/MA1qQoEMU4UWlyyMQ8Cqn5NHGo4G1FrYk0nH8mKMC
+         AIZOjoHXF4tuCmD5PSfds9NnqMv00Z0OocubHnzF6xQ+iMySIeMyAO9OJ89ZXbTsqgBn
+         um07Mw+tochwE3DTziFY/2fn5TrjQbzEzXRXtZrzkHRL0RVJrkNGQe0RhjuvUWvGh8so
+         zZhQ==
+X-Gm-Message-State: AOJu0YyAENBiqhGn5qyhdVHbe2It3TFRkSUy2efpquiEtNGF0UTKg8VB
+        iuFdwX5owXSfsRs6ympcA+sMlQ==
+X-Google-Smtp-Source: AGHT+IEVz6fJWAjbQSaZH9j8buVj8fBa5mtJlorGodbyAE6AeJjp2x4UEgh5FPmAsFJCi5/vrH6s7Q==
+X-Received: by 2002:a05:6512:2016:b0:500:91c1:9642 with SMTP id a22-20020a056512201600b0050091c19642mr1780047lfb.21.1693590933257;
+        Fri, 01 Sep 2023 10:55:33 -0700 (PDT)
+Received: from [192.168.1.101] (abxh154.neoplus.adsl.tpnet.pl. [83.9.1.154])
+        by smtp.gmail.com with ESMTPSA id r1-20020a19ac41000000b004ff748f6f1fsm717827lfc.69.2023.09.01.10.55.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Sep 2023 10:55:32 -0700 (PDT)
+Message-ID: <519259d7-ac6d-409b-a864-071e41f66f70@linaro.org>
+Date:   Fri, 1 Sep 2023 19:55:30 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.0
-Subject: Re: [PATCH V2 3/7] clk: qcom: gcc-ipq9574: Add gpll0_out_aux clock
-To:     Devi Priya <quic_devipriy@quicinc.com>, <andersson@kernel.org>,
-        <agross@kernel.org>, <konrad.dybcio@linaro.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <conor+dt@kernel.org>, <catalin.marinas@arm.com>,
-        <will@kernel.org>, <p.zabel@pengutronix.de>,
-        <richardcochran@gmail.com>, <arnd@arndb.de>,
-        <geert+renesas@glider.be>, <nfraprado@collabora.com>,
-        <rafal@milecki.pl>, <peng.fan@nxp.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>
-CC:     <quic_saahtoma@quicinc.com>
-References: <20230825091234.32713-1-quic_devipriy@quicinc.com>
- <20230825091234.32713-4-quic_devipriy@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/15] clk: qcom: gcc-sm6375: Unregister critical clocks
 Content-Language: en-US
-From:   Kathiravan T <quic_kathirav@quicinc.com>
-In-Reply-To: <20230825091234.32713-4-quic_devipriy@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+To:     Johan Hovold <johan@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20230717-topic-branch_aon_cleanup-v1-0-27784d27a4f4@linaro.org>
+ <20230717-topic-branch_aon_cleanup-v1-3-27784d27a4f4@linaro.org>
+ <ZLaRtrH85v4kpSvb@hovoldconsulting.com>
+ <33a26241-026a-9466-5dd6-e3202b29f57c@linaro.org>
+ <ybugl2m7o5cnzj4lv5ksit2rip6yvths5ieo3xlw6cycto2zax@2jimga475z2t>
+ <ZLeiM6l6tu6XDzrr@hovoldconsulting.com>
+ <cc9e6464-5e47-4044-9785-c57167f0e1c5@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
+ BB/OmIWU6X+LZW6P88ZmHe+KeyABLMP5s1tJNK1j4ntT7mECcWZDzafPWF4F6m4WJOG27kTJ
+ HGWdmtO+RvadOVi6CoUDqALsmfS3MUG5Pj2Ne9+0jRg4hEnB92AyF9rW2G3qisFcwPgvatt7
+ TXD5E38mLyOPOUyXNj9XpDbt1hNwKQfiidmPh5e7VNAWRnW1iCMMoKqzM1Anzq7e5Afyeifz
+ zRcQPLaqrPjnKqZGL2BKQSZDh6NkI5ZLRhhHQf61fkWcUpTp1oDC6jWVfT7hwRVIQLrrNj9G
+ MpPzrlN4YuAqKeIer1FMt8cq64ifgTzxHzXsMcUdclzq2LTk2RXaPl6Jg/IXWqUClJHbamSk
+ t1bfif3SnmhA6TiNvEpDKPiT3IDs42THU6ygslrBxyROQPWLI9IL1y8S6RtEh8H+NZQWZNzm
+ UQ3imZirlPjxZtvz1BtnnBWS06e7x/UEAguj7VHCuymVgpl2Za17d1jj81YN5Rp5L9GXxkV1
+ aUEwONM3eCI3qcYm5JNc5X+JthZOWsbIPSC1Rhxz3JmWIwP1udr5E3oNRe9u2LIEq+wH/toH
+ kpPDhTeMkvt4KfE5m5ercid9+ZXAqoaYLUL4HCEw+HW0DXcKDwARAQABzShLb25yYWQgRHli
+ Y2lvIDxrb25yYWQuZHliY2lvQGxpbmFyby5vcmc+wsGOBBMBCAA4FiEEU24if9oCL2zdAAQV
+ R4cBcg5dfFgFAmQ5bqwCGwMFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AACgkQR4cBcg5dfFjO
+ BQ//YQV6fkbqQCceYebGg6TiisWCy8LG77zV7DB0VMIWJv7Km7Sz0QQrHQVzhEr3trNenZrf
+ yy+o2tQOF2biICzbLM8oyQPY8B///KJTWI2khoB8IJSJq3kNG68NjPg2vkP6CMltC/X3ohAo
+ xL2UgwN5vj74QnlNneOjc0vGbtA7zURNhTz5P/YuTudCqcAbxJkbqZM4WymjQhe0XgwHLkiH
+ 5LHSZ31MRKp/+4Kqs4DTXMctc7vFhtUdmatAExDKw8oEz5NbskKbW+qHjW1XUcUIrxRr667V
+ GWH6MkVceT9ZBrtLoSzMLYaQXvi3sSAup0qiJiBYszc/VOu3RbIpNLRcXN3KYuxdQAptacTE
+ mA+5+4Y4DfC3rUSun+hWLDeac9z9jjHm5rE998OqZnOU9aztbd6zQG5VL6EKgsVXAZD4D3RP
+ x1NaAjdA3MD06eyvbOWiA5NSzIcC8UIQvgx09xm7dThCuQYJR4Yxjd+9JPJHI6apzNZpDGvQ
+ BBZzvwxV6L1CojUEpnilmMG1ZOTstktWpNzw3G2Gis0XihDUef0MWVsQYJAl0wfiv/0By+XK
+ mm2zRR+l/dnzxnlbgJ5pO0imC2w0TVxLkAp0eo0LHw619finad2u6UPQAkZ4oj++iIGrJkt5
+ Lkn2XgB+IW8ESflz6nDY3b5KQRF8Z6XLP0+IEdLOOARkOW7yEgorBgEEAZdVAQUBAQdAwmUx
+ xrbSCx2ksDxz7rFFGX1KmTkdRtcgC6F3NfuNYkYDAQgHwsF2BBgBCAAgFiEEU24if9oCL2zd
+ AAQVR4cBcg5dfFgFAmQ5bvICGwwACgkQR4cBcg5dfFju1Q//Xta1ShwL0MLSC1KL1lXGXeRM
+ 8arzfyiB5wJ9tb9U/nZvhhdfilEDLe0jKJY0RJErbdRHsalwQCrtq/1ewQpMpsRxXzAjgfRN
+ jc4tgxRWmI+aVTzSRpywNahzZBT695hMz81cVZJoZzaV0KaMTlSnBkrviPz1nIGHYCHJxF9r
+ cIu0GSIyUjZ/7xslxdvjpLth16H27JCWDzDqIQMtg61063gNyEyWgt1qRSaK14JIH/DoYRfn
+ jfFQSC8bffFjat7BQGFz4ZpRavkMUFuDirn5Tf28oc5ebe2cIHp4/kajTx/7JOxWZ80U70mA
+ cBgEeYSrYYnX+UJsSxpzLc/0sT1eRJDEhI4XIQM4ClIzpsCIN5HnVF76UQXh3a9zpwh3dk8i
+ bhN/URmCOTH+LHNJYN/MxY8wuukq877DWB7k86pBs5IDLAXmW8v3gIDWyIcgYqb2v8QO2Mqx
+ YMqL7UZxVLul4/JbllsQB8F/fNI8AfttmAQL9cwo6C8yDTXKdho920W4WUR9k8NT/OBqWSyk
+ bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
+ nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
+ izWDgYvmBE8=
+In-Reply-To: <cc9e6464-5e47-4044-9785-c57167f0e1c5@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: VP7ph8WG9-9QtdtoE8jgz2InqWjNjAPh
-X-Proofpoint-ORIG-GUID: VP7ph8WG9-9QtdtoE8jgz2InqWjNjAPh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-09-01_13,2023-08-31_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
- suspectscore=0 mlxlogscore=999 priorityscore=1501 mlxscore=0 phishscore=0
- adultscore=0 clxscore=1011 malwarescore=0 lowpriorityscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2308100000 definitions=main-2309010152
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 9.08.2023 18:52, Konrad Dybcio wrote:
+> On 19.07.2023 10:43, Johan Hovold wrote:
+>> On Tue, Jul 18, 2023 at 09:23:52AM -0700, Bjorn Andersson wrote:
+>>> On Tue, Jul 18, 2023 at 03:26:51PM +0200, Konrad Dybcio wrote:
+>>>> On 18.07.2023 15:20, Johan Hovold wrote:
+>>>>> On Mon, Jul 17, 2023 at 05:19:10PM +0200, Konrad Dybcio wrote:
+>>>>>> Some clocks need to be always-on, but we don't really do anything
+>>>>>> with them, other than calling enable() once and telling Linux they're
+>>>>>> enabled.
+>>>>>>
+>>>>>> Unregister them to save a couple of bytes and, perhaps more
+>>>>>> importantly, allow for runtime suspend of the clock controller device,
+>>>>>> as CLK_IS_CRITICAL prevents the latter.
+>>>>>
+>>>>> But this doesn't sound right. How can you disable a controller which
+>>>>> still has clocks enabled?
+>>>>>
+>>>>> Shouldn't instead these clocks be modelled properly so that they are
+>>>>> only enabled when actually needed?
+>>>> Hm.. We do have clk_branch2_aon_ops, but something still needs to
+>>>> toggle these clocks.
+>>>>
+>>>
+>>> Before we started replacing these clocks with static votes, I handled
+>>> exactly this problem in the turingcc-qcs404 driver by registering the
+>>> ahb clock with a pm_clk_add(). The clock framework will then
+>>> automagically keep the clock enabled around operations, but it will also
+>>> keep the runtime state active as long as the clock is prepared.
+>>>
+>>> As mentioned in an earlier reply today, there's no similarity to this in
+>>> the reset or gdsc code, so we'd need to add that in order to rely on
+>>> such mechanism.
+>>
+>> This reminds me of:
+>>
+>> 	4cc47e8add63 ("clk: qcom: gdsc: Remove direct runtime PM calls")
+>>
+>> which recently removed a broken attempt to implement this for gdscs.
+>>
+>> Just stumbled over GENPD_FLAG_PM_CLK which may provide a way forward at
+>> least for genpd (but see below).
+>>
+>>>> I *think* we could leave a permanent vote in probe() without breaking
+>>>> runtime pm! I'll give it a spin bit later..
+>>>>
+>>>
+>>> Modelling the AHB clock in DT and putting a devm_clk_get_enabled() would
+>>> properly connect the two, and thereby handle probe order between the two
+>>> clock controllers.
+>>
+>> Yeah, this dependency really should be described eventually.
+>>
+>>> But it would prevent the power-domain of the parent provider to ever
+>>> suspending. Using pm_clk_add() this would at least depend on client
+>>> votes.
+>>
+>> IIUC using pm_clk_add() would also prevent the parent from suspending
+>> due to that resume call in clk_prepare().
+>>
+>> And this mechanism is also used for GENPD_FLAG_PM_CLK...
+> So.. how do we go about solving the issue that this patch tried to
+> address?
+I see things this way:
 
-On 8/25/2023 2:42 PM, Devi Priya wrote:
-> Add support for gpll0_out_aux clock which acts as the parent for
-> certain networking subsystem (nss) clocks.
->
-> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
-> ---
->   drivers/clk/qcom/gcc-ipq9574.c | 16 ++++++++++++++++
->   1 file changed, 16 insertions(+)
->
-> diff --git a/drivers/clk/qcom/gcc-ipq9574.c b/drivers/clk/qcom/gcc-ipq9574.c
-> index 8f430367299e..495a66f7d29a 100644
-> --- a/drivers/clk/qcom/gcc-ipq9574.c
-> +++ b/drivers/clk/qcom/gcc-ipq9574.c
-> @@ -107,6 +107,21 @@ static struct clk_alpha_pll_postdiv gpll0 = {
->   	},
->   };
->   
-> +static struct clk_alpha_pll_postdiv gpll0_out_aux = {
-> +	.offset = 0x20000,
-> +	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
-> +	.width = 4,
-> +	.clkr.hw.init = &(const struct clk_init_data) {
-> +		.name = "gpll0_out_aux",
-> +		.parent_hws = (const struct clk_hw *[]) {
-> +			&gpll0_main.clkr.hw
-> +		},
-> +		.num_parents = 1,
-> +		.flags = CLK_SET_RATE_PARENT,
+- clock controllers (non-gcc) that use magic writes today,
+  they should stay as they are to avoid dramatic spaghetti wrt
+  dt backwards compatibility
 
+- clock controllers (non-gcc) that use CLK_IS_CRITICAL are
+  transitioned to magic writes to skip the PM code fluff which
+  prevents shutting down the PDs if any clock is critical and
+  for uniformity with point 1 (as the device trees still don't
+  contain any references to the necessary clocks)
 
-You might need to drop the member 'flags '. Please refer 
-https://lore.kernel.org/linux-arm-msm/1693474133-10467-1-git-send-email-quic_varada@quicinc.com/
+- new clock controllers are modeled with use of pm_clk and with
+  proper device tree references
 
-I will send the patch to drop the flags in the existing driver sometime 
-next week.
+FWIW Qualcomm nowadays just keep these clocks always on (answering
+Johan's question - they're either off-from-Linux-POV-not-really-in-
+hardware or these clocks retain the enable bit, I don't know) in
+their shipping downstream kernels, the power leak is probably
+minimal, but if we can avoid it, every nanowatt is to our advantage
 
-Thanks,
-
-
-> +		.ops = &clk_alpha_pll_postdiv_ro_ops,
-> +	},
-> +};
-> +
->   static struct clk_alpha_pll gpll4_main = {
->   	.offset = 0x22000,
->   	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
-> @@ -4144,6 +4159,7 @@ static struct clk_regmap *gcc_ipq9574_clks[] = {
->   	[GCC_SNOC_PCIE1_1LANE_S_CLK] = &gcc_snoc_pcie1_1lane_s_clk.clkr,
->   	[GCC_SNOC_PCIE2_2LANE_S_CLK] = &gcc_snoc_pcie2_2lane_s_clk.clkr,
->   	[GCC_SNOC_PCIE3_2LANE_S_CLK] = &gcc_snoc_pcie3_2lane_s_clk.clkr,
-> +	[GPLL0_OUT_AUX] = &gpll0_out_aux.clkr,
->   };
->   
->   static const struct qcom_reset_map gcc_ipq9574_resets[] = {
+Konrad
