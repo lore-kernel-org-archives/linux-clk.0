@@ -2,138 +2,140 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A51E8C83F3E
-	for <linux-clk@archiver.kernel.org>; Sat,  2 Sep 2023 20:28:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 817E8C83F2D
+	for <linux-clk@archiver.kernel.org>; Sun,  3 Sep 2023 22:37:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234294AbjIBU2S (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 2 Sep 2023 16:28:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56978 "EHLO
+        id S1348734AbjICWhj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 3 Sep 2023 18:37:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234241AbjIBU2R (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 2 Sep 2023 16:28:17 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72C65CC5
-        for <linux-clk@vger.kernel.org>; Sat,  2 Sep 2023 13:28:14 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-50079d148aeso409484e87.3
-        for <linux-clk@vger.kernel.org>; Sat, 02 Sep 2023 13:28:14 -0700 (PDT)
+        with ESMTP id S1348599AbjICWhj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 3 Sep 2023 18:37:39 -0400
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71C4DFD
+        for <linux-clk@vger.kernel.org>; Sun,  3 Sep 2023 15:37:33 -0700 (PDT)
+Received: by mail-pl1-x636.google.com with SMTP id d9443c01a7336-1c0c6d4d650so6840695ad.0
+        for <linux-clk@vger.kernel.org>; Sun, 03 Sep 2023 15:37:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693686493; x=1694291293; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=AqfoenQWKjB8osDxkwnJtLt7lDhWz7e/+s7umbsPwHw=;
-        b=swKso9zaMeE8R5oZjRS8ty0OwExYJa4ha1t8KJkRfTc791O0G2shPvtBU4uifG8jBs
-         AZD3uT1E9Q2MkDU1l9svrGjU+VVCzsXgqjwJjgIPzBhOP7/9fK4PF3R2Z6mciOT7hQB+
-         B0PkhdQFSxqzBm3oiJ8wSspp2ey/zWuEBSif5eVMj9ahqbf/W+9rKBERtRVtnVHDskdG
-         Ed9IWcMPaZEyGRrk0sAmA13nktmI206WuBkks27jZlUkGqycITAa4qsVPGnm9JA2CfVw
-         H2kov2FFhEK6M9Q5tb/0z2ifUjk5PXASAxK5nuKa7UJ7mgv+xzZ6jZLxFIW029UhicTV
-         8ccg==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1693780653; x=1694385453; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=75zjcGnVwfUfJUqEwa2RDdihaMKUFMKRhK0oHtPsQNI=;
+        b=n1ur5N3G9t7vJyxmDMMoTCHYKx9FAszjoE+NXscBcZMaSkqyLHj9yW97arnmKFdmPZ
+         Ol/qDyeD6yCjpKQ3v0FoSylSvZQ5ck0KuVRcwYieTBhmEUG4K9UT6Co1iHLr2aqqFl6q
+         PlxIsFOGrYFvqlUcplUYiCzwrprwTenlmfqk5g2vMOcD1KjyzB4GFvczlrRebFw0rYLq
+         CTDQ0QmWt7Lkh3CzL8VGuN3f6G3kKGu3l5JU462iRoygQi3q3x0X4lA8R69gsydc7rC2
+         fLydcVOYkYt9Qe8FEsZ8SRkoRz7legC30pREXyzvPMFUJEye0ddRTZSK3fDbx+gf4g6+
+         i/PA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693686493; x=1694291293;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20221208; t=1693780653; x=1694385453;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AqfoenQWKjB8osDxkwnJtLt7lDhWz7e/+s7umbsPwHw=;
-        b=lI8SPqInJ7fS0FNaeBA+m5U1ymRurTci6gpcAriGVm4UugKsvVtSzydZ/8cQG//3iL
-         ukgw6+FEOGNt5IlCj3eaB1ubsKcw/JV6yEdQ0+UL0Eoaoaj6PRGiowSpNUq65Cc0jrQO
-         tUFeovmijgxsMpg2YzWa24shGOmhnARK/4lZQnBgLnh78NxK/iXbEFYvvYvZfE+/1jAS
-         27ByCYCcFreAM8Ej05mmwrhigUZXQSfnfJYTDwdxgxG+11plfcwydQpE7Me7b/3w1KaE
-         9Qippe4xo5EBlhlYWV0rkjPViLirMcgidrddl+erRyn9wLyNLqxQWB/UmBZVk84hn3Gl
-         xZSw==
-X-Gm-Message-State: AOJu0YzGmijEC4r800INg81B0EY9ez90YGefrWOcpsJE9AxPLlt4mozm
-        XF10TRUYYPmjdnGZtibSZ/M0WA==
-X-Google-Smtp-Source: AGHT+IFKG4hNiSYylXmxPiCLbNRI/9QDxNUYdr8ha450JvMnEp+W79CNqzswJe03zTPMb/vPObWnrQ==
-X-Received: by 2002:a05:6512:742:b0:500:7f51:d129 with SMTP id c2-20020a056512074200b005007f51d129mr3115285lfs.34.1693686492622;
-        Sat, 02 Sep 2023 13:28:12 -0700 (PDT)
-Received: from [192.168.1.101] (abxi170.neoplus.adsl.tpnet.pl. [83.9.2.170])
-        by smtp.gmail.com with ESMTPSA id g22-20020ac25396000000b00500829f7b2bsm1073827lfh.250.2023.09.02.13.28.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 02 Sep 2023 13:28:12 -0700 (PDT)
-Message-ID: <091e4156-cdaa-4233-b7e5-69e3f8ee9a49@linaro.org>
-Date:   Sat, 2 Sep 2023 22:28:09 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: mmcc-msm8974: remove ocmemcx_ahb_clk
-To:     Luca Weiss <luca@z3ntu.xyz>, ~postmarketos/upstreaming@lists.sr.ht,
-        phone-devel@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        bh=75zjcGnVwfUfJUqEwa2RDdihaMKUFMKRhK0oHtPsQNI=;
+        b=EGG+lWF4tSnXsfy/KDCu/skvLoupAwVTfinInlMKGheiF3DF5XQKwImMJRV6zPRsTP
+         ibtvsPkTZiomHqe4LiyswZaa3Tzx8kQq86RY3EeexXl0W2xjJPcqcl1mkXWuhfaEcQti
+         3ffw1GIpsT6o4fxSPKTtekxJ1uqt5NqfMe9ayXkwUrnrlnO3zMJ9AaM+j6dNgXyFOqEG
+         3EuwmELRMSvnU4dwz9wFP7Emg6W4i+ruBJmzFNYQQ/jrRTMRu8YdGfjSNPWXjyueojfc
+         XXP6yCqw44fZhbrYpRFKqo1VEnlAoCF6SG6b1C/jn1PlhAw/BiSq85JNbhZJ1fq/h0RX
+         v8NA==
+X-Gm-Message-State: AOJu0YwKDe+3eAbb/NlT4O+IZQVvt4p9W/6mpEAMENWQyafDsBQHfLHj
+        QKB0B7lNR/QUltwQ8dSyBBL7kQ==
+X-Google-Smtp-Source: AGHT+IFDK+b96i9bQUuJGZtagPUV/w9JXYNNgJkrbO34Zg85edf5iKUpK9zgciN7b4RZ32LgaCKJZg==
+X-Received: by 2002:a17:902:ab1b:b0:1bb:9c45:130f with SMTP id ik27-20020a170902ab1b00b001bb9c45130fmr7786838plb.69.1693780652704;
+        Sun, 03 Sep 2023 15:37:32 -0700 (PDT)
+Received: from x1 ([2601:1c2:1800:f680:e0eb:2a3d:8122:b588])
+        by smtp.gmail.com with ESMTPSA id t11-20020a170902a5cb00b001b9cea4e8a2sm6282788plq.293.2023.09.03.15.37.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 Sep 2023 15:37:32 -0700 (PDT)
+Date:   Sun, 3 Sep 2023 15:37:30 -0700
+From:   Drew Fustini <dfustini@baylibre.com>
+To:     Jisheng Zhang <jszhang@kernel.org>
+Cc:     Yangtao Li <frank.li@vivo.com>, devicetree@vger.kernel.org,
+        Conor Dooley <conor+dt@kernel.org>, sboyd@kernel.org,
+        mturquette@baylibre.com, linux-kernel@vger.kernel.org,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Mike Turquette <mturquette@linaro.org>
-Cc:     Stephen Boyd <sboyd@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20230902-msm8226-ocmemcx_ahb_clk-remove-v1-1-8124dbde83b9@z3ntu.xyz>
-Content-Language: en-US
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20230902-msm8226-ocmemcx_ahb_clk-remove-v1-1-8124dbde83b9@z3ntu.xyz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+        Wei Fu <wefu@redhat.com>
+Subject: Re: [PATCH 2/3] clk: thead: add support for the T-HEAD TH1520 CCU
+Message-ID: <ZPUKqsEglxC5+Ocb@x1>
+References: <20230515054402.27633-1-frank.li@vivo.com>
+ <20230515054402.27633-3-frank.li@vivo.com>
+ <ZOsnYagqFz6atfw2@xhacker>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZOsnYagqFz6atfw2@xhacker>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2.09.2023 19:34, Luca Weiss wrote:
-> According to a commit in the 3.4 vendor kernel sources[0] the
-> ocmemcx_ahb_clk clock "is controlled by RPM and should not be touched by
-> APPS.".
+On Sun, Aug 27, 2023 at 06:37:21PM +0800, Jisheng Zhang wrote:
+> On Mon, May 15, 2023 at 01:44:00PM +0800, Yangtao Li wrote:
+> > Add support for th1520 in the clock framework.
 > 
-> [0] https://git.codelinaro.org/clo/la/kernel/msm/-/commit/37df5f2d91b4d5768b37fcaacaeea958dd683ebc
+> Hi Yangtao,
 > 
-> And indeed, when using MDSS+GPU+OCMEM on MSM8226 and not using
-> clk_ignore_unused, when Linux tries to disable the clock the device
-> crashes and reboots.
+> I didn't see any new version of this series in this development window,
+> and we have already talked about it several times on wechat, so do
+> you still plan to renew this series? If not, I will update it and may
+> rewrite the code once next development window is open.
 > 
-> And since there's also no evidence of this clock in msm8974 vendor
-> kernel sources, remove the clock for msm8226 and msm8974.
-Going over the downstream clock driver for 26 and 74 and comparing
-the registered clocks with mainline may be useful.
+> Thanks in advance
 
-Older clock drivers were likely written by hand and people doing
-that likely didn't have a great reference of which clocks should
-be skipped due to having been moved to firmware somewhere in the
-bringup process.
+I tried this clock driver on the BeagleV Ahead board and I got the
+following during boot [1]:
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+  __clk_core_init: ahb2 must implement .set_parent & .determine_rate
+  th1520-clk: probe of ffef010000.clock-controller failed with error -22
 
-Konrad
+I am guessing this has to do with how ahb2_clk is defined?
 
+ 432 static struct ccu_div ahb2_clk = {
+ 433         .div            = TH_CCU_DIV_FLAGS(0, 3, CLK_DIVIDER_ONE_BASED),
+ 434         .mux            = TH_CCU_ARG(5, 1),
+ 435         .common         = {
+ 436                 .reg            = 0x120,                      
+ 437                 .hw.init        = CLK_HW_INIT_PARENTS("ahb2",
+ 438                                                       ahb2_parents,
+ 439                                                       &ccu_div_ops,
+ 440                                                       0),
+ 441         },
+ 442 };
+
+It passes ccu_div_ops in CLK_HW_INIT_PARENTS(). ccu_div_ops does
+implement .set_parent but it doesn't implement .determine_rate. Maybe
+that is the problem?
+
+Yangtao or Jisheng: would you be able to share the device tree you're
+using?
+
+I added this based on the example in the device tree binding:
+=============================================================
+diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
+index 18761a06c866..8153bf73e8c0 100644
+--- a/arch/riscv/boot/dts/thead/th1520.dtsi
++++ b/arch/riscv/boot/dts/thead/th1520.dtsi
+@@ -313,6 +313,14 @@ dmac0: dma-controller@ffefc00000 {
+                        status = "disabled";
+                };
+ 
++               clk: clock-controller@ffef010000 {
++                       compatible = "thead,th1520-ccu";
++                       reg = <0xff 0xef010000 0x0 0x1000>;
++                       clocks = <&osc_32k>, <&osc>;
++                       clock-names = "losc", "hosc";
++                       #clock-cells = <1>;
++               };
++
+                mmc0: mmc@ffe7080000 {
+                        compatible = "thead,th1520-dwcmshc";
+                        reg = <0xff 0xe7080000 0x0 0x10000
+
+=============================================================
+
+Thank you,
+Drew
+
+[1] https://gist.github.com/pdp7/b585a6dad5134fc8773e53ad48600fef
