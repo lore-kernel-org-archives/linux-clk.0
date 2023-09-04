@@ -2,140 +2,165 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 817E8C83F2D
-	for <linux-clk@archiver.kernel.org>; Sun,  3 Sep 2023 22:37:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71070C71153
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Sep 2023 07:56:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348734AbjICWhj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 3 Sep 2023 18:37:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59950 "EHLO
+        id S237891AbjIDH4R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 4 Sep 2023 03:56:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348599AbjICWhj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 3 Sep 2023 18:37:39 -0400
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71C4DFD
-        for <linux-clk@vger.kernel.org>; Sun,  3 Sep 2023 15:37:33 -0700 (PDT)
-Received: by mail-pl1-x636.google.com with SMTP id d9443c01a7336-1c0c6d4d650so6840695ad.0
-        for <linux-clk@vger.kernel.org>; Sun, 03 Sep 2023 15:37:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1693780653; x=1694385453; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=75zjcGnVwfUfJUqEwa2RDdihaMKUFMKRhK0oHtPsQNI=;
-        b=n1ur5N3G9t7vJyxmDMMoTCHYKx9FAszjoE+NXscBcZMaSkqyLHj9yW97arnmKFdmPZ
-         Ol/qDyeD6yCjpKQ3v0FoSylSvZQ5ck0KuVRcwYieTBhmEUG4K9UT6Co1iHLr2aqqFl6q
-         PlxIsFOGrYFvqlUcplUYiCzwrprwTenlmfqk5g2vMOcD1KjyzB4GFvczlrRebFw0rYLq
-         CTDQ0QmWt7Lkh3CzL8VGuN3f6G3kKGu3l5JU462iRoygQi3q3x0X4lA8R69gsydc7rC2
-         fLydcVOYkYt9Qe8FEsZ8SRkoRz7legC30pREXyzvPMFUJEye0ddRTZSK3fDbx+gf4g6+
-         i/PA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693780653; x=1694385453;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=75zjcGnVwfUfJUqEwa2RDdihaMKUFMKRhK0oHtPsQNI=;
-        b=EGG+lWF4tSnXsfy/KDCu/skvLoupAwVTfinInlMKGheiF3DF5XQKwImMJRV6zPRsTP
-         ibtvsPkTZiomHqe4LiyswZaa3Tzx8kQq86RY3EeexXl0W2xjJPcqcl1mkXWuhfaEcQti
-         3ffw1GIpsT6o4fxSPKTtekxJ1uqt5NqfMe9ayXkwUrnrlnO3zMJ9AaM+j6dNgXyFOqEG
-         3EuwmELRMSvnU4dwz9wFP7Emg6W4i+ruBJmzFNYQQ/jrRTMRu8YdGfjSNPWXjyueojfc
-         XXP6yCqw44fZhbrYpRFKqo1VEnlAoCF6SG6b1C/jn1PlhAw/BiSq85JNbhZJ1fq/h0RX
-         v8NA==
-X-Gm-Message-State: AOJu0YwKDe+3eAbb/NlT4O+IZQVvt4p9W/6mpEAMENWQyafDsBQHfLHj
-        QKB0B7lNR/QUltwQ8dSyBBL7kQ==
-X-Google-Smtp-Source: AGHT+IFDK+b96i9bQUuJGZtagPUV/w9JXYNNgJkrbO34Zg85edf5iKUpK9zgciN7b4RZ32LgaCKJZg==
-X-Received: by 2002:a17:902:ab1b:b0:1bb:9c45:130f with SMTP id ik27-20020a170902ab1b00b001bb9c45130fmr7786838plb.69.1693780652704;
-        Sun, 03 Sep 2023 15:37:32 -0700 (PDT)
-Received: from x1 ([2601:1c2:1800:f680:e0eb:2a3d:8122:b588])
-        by smtp.gmail.com with ESMTPSA id t11-20020a170902a5cb00b001b9cea4e8a2sm6282788plq.293.2023.09.03.15.37.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Sep 2023 15:37:32 -0700 (PDT)
-Date:   Sun, 3 Sep 2023 15:37:30 -0700
-From:   Drew Fustini <dfustini@baylibre.com>
-To:     Jisheng Zhang <jszhang@kernel.org>
-Cc:     Yangtao Li <frank.li@vivo.com>, devicetree@vger.kernel.org,
-        Conor Dooley <conor+dt@kernel.org>, sboyd@kernel.org,
-        mturquette@baylibre.com, linux-kernel@vger.kernel.org,
+        with ESMTP id S230373AbjIDH4R (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Sep 2023 03:56:17 -0400
+Received: from mail-sh.amlogic.com (mail-sh.amlogic.com [58.32.228.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C81F103;
+        Mon,  4 Sep 2023 00:56:13 -0700 (PDT)
+Received: from droid06.amlogic.com (10.18.11.248) by mail-sh.amlogic.com
+ (10.18.11.5) with Microsoft SMTP Server id 15.1.2507.13; Mon, 4 Sep 2023
+ 15:56:11 +0800
+From:   Yu Tu <yu.tu@amlogic.com>
+To:     Neil Armstrong <neil.armstrong@linaro.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen Boyd" <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
-        Wei Fu <wefu@redhat.com>
-Subject: Re: [PATCH 2/3] clk: thead: add support for the T-HEAD TH1520 CCU
-Message-ID: <ZPUKqsEglxC5+Ocb@x1>
-References: <20230515054402.27633-1-frank.li@vivo.com>
- <20230515054402.27633-3-frank.li@vivo.com>
- <ZOsnYagqFz6atfw2@xhacker>
+        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>,
+        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+CC:     <kelvin.zhang@amlogic.com>, <qi.duan@amlogic.com>,
+        Yu Tu <yu.tu@amlogic.com>, Rob Herring <robh@kernel.org>
+Subject: [PATCH V11 1/4] dt-bindings: clock: document Amlogic S4 SoC PLL clock controller
+Date:   Mon, 4 Sep 2023 15:55:01 +0800
+Message-ID: <20230904075504.23263-2-yu.tu@amlogic.com>
+X-Mailer: git-send-email 2.33.1
+In-Reply-To: <20230904075504.23263-1-yu.tu@amlogic.com>
+References: <20230904075504.23263-1-yu.tu@amlogic.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZOsnYagqFz6atfw2@xhacker>
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.18.11.248]
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Aug 27, 2023 at 06:37:21PM +0800, Jisheng Zhang wrote:
-> On Mon, May 15, 2023 at 01:44:00PM +0800, Yangtao Li wrote:
-> > Add support for th1520 in the clock framework.
-> 
-> Hi Yangtao,
-> 
-> I didn't see any new version of this series in this development window,
-> and we have already talked about it several times on wechat, so do
-> you still plan to renew this series? If not, I will update it and may
-> rewrite the code once next development window is open.
-> 
-> Thanks in advance
+Add the S4 PLL clock controller dt-bindings in the S4 SoC family.
 
-I tried this clock driver on the BeagleV Ahead board and I got the
-following during boot [1]:
+Signed-off-by: Yu Tu <yu.tu@amlogic.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../bindings/clock/amlogic,s4-pll-clkc.yaml   | 49 +++++++++++++++++++
+ .../dt-bindings/clock/amlogic,s4-pll-clkc.h   | 43 ++++++++++++++++
+ 2 files changed, 92 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,s4-pll-clkc.yaml
+ create mode 100644 include/dt-bindings/clock/amlogic,s4-pll-clkc.h
 
-  __clk_core_init: ahb2 must implement .set_parent & .determine_rate
-  th1520-clk: probe of ffef010000.clock-controller failed with error -22
-
-I am guessing this has to do with how ahb2_clk is defined?
-
- 432 static struct ccu_div ahb2_clk = {
- 433         .div            = TH_CCU_DIV_FLAGS(0, 3, CLK_DIVIDER_ONE_BASED),
- 434         .mux            = TH_CCU_ARG(5, 1),
- 435         .common         = {
- 436                 .reg            = 0x120,                      
- 437                 .hw.init        = CLK_HW_INIT_PARENTS("ahb2",
- 438                                                       ahb2_parents,
- 439                                                       &ccu_div_ops,
- 440                                                       0),
- 441         },
- 442 };
-
-It passes ccu_div_ops in CLK_HW_INIT_PARENTS(). ccu_div_ops does
-implement .set_parent but it doesn't implement .determine_rate. Maybe
-that is the problem?
-
-Yangtao or Jisheng: would you be able to share the device tree you're
-using?
-
-I added this based on the example in the device tree binding:
-=============================================================
-diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
-index 18761a06c866..8153bf73e8c0 100644
---- a/arch/riscv/boot/dts/thead/th1520.dtsi
-+++ b/arch/riscv/boot/dts/thead/th1520.dtsi
-@@ -313,6 +313,14 @@ dmac0: dma-controller@ffefc00000 {
-                        status = "disabled";
-                };
- 
-+               clk: clock-controller@ffef010000 {
-+                       compatible = "thead,th1520-ccu";
-+                       reg = <0xff 0xef010000 0x0 0x1000>;
-+                       clocks = <&osc_32k>, <&osc>;
-+                       clock-names = "losc", "hosc";
-+                       #clock-cells = <1>;
-+               };
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,s4-pll-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,s4-pll-clkc.yaml
+new file mode 100644
+index 000000000000..d8932ec26ca8
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/amlogic,s4-pll-clkc.yaml
+@@ -0,0 +1,49 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++# Copyright (C) 2022-2023 Amlogic, Inc. All rights reserved
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/amlogic,s4-pll-clkc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-                mmc0: mmc@ffe7080000 {
-                        compatible = "thead,th1520-dwcmshc";
-                        reg = <0xff 0xe7080000 0x0 0x10000
++title: Amlogic S4 PLL Clock Controller
++
++maintainers:
++  - Yu Tu <yu.tu@amlogic.com>
++
++properties:
++  compatible:
++    const: amlogic,s4-pll-clkc
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    items:
++      - const: xtal
++
++  "#clock-cells":
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - "#clock-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    clkc_pll: clock-controller@fe008000 {
++      compatible = "amlogic,s4-pll-clkc";
++      reg = <0xfe008000 0x1e8>;
++      clocks = <&xtal>;
++      clock-names = "xtal";
++      #clock-cells = <1>;
++    };
++
++...
+diff --git a/include/dt-bindings/clock/amlogic,s4-pll-clkc.h b/include/dt-bindings/clock/amlogic,s4-pll-clkc.h
+new file mode 100644
+index 000000000000..af9f110f8b62
+--- /dev/null
++++ b/include/dt-bindings/clock/amlogic,s4-pll-clkc.h
+@@ -0,0 +1,43 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
++/*
++ * Copyright (c) 2022-2023 Amlogic, Inc. All rights reserved.
++ * Author: Yu Tu <yu.tu@amlogic.com>
++ */
++
++#ifndef _DT_BINDINGS_CLOCK_AMLOGIC_S4_PLL_CLKC_H
++#define _DT_BINDINGS_CLOCK_AMLOGIC_S4_PLL_CLKC_H
++
++#define CLKID_FIXED_PLL_DCO		0
++#define CLKID_FIXED_PLL			1
++#define CLKID_FCLK_DIV2_DIV		2
++#define CLKID_FCLK_DIV2			3
++#define CLKID_FCLK_DIV3_DIV		4
++#define CLKID_FCLK_DIV3			5
++#define CLKID_FCLK_DIV4_DIV		6
++#define CLKID_FCLK_DIV4			7
++#define CLKID_FCLK_DIV5_DIV		8
++#define CLKID_FCLK_DIV5			9
++#define CLKID_FCLK_DIV7_DIV		10
++#define CLKID_FCLK_DIV7			11
++#define CLKID_FCLK_DIV2P5_DIV		12
++#define CLKID_FCLK_DIV2P5		13
++#define CLKID_GP0_PLL_DCO		14
++#define CLKID_GP0_PLL			15
++#define CLKID_HIFI_PLL_DCO		16
++#define CLKID_HIFI_PLL			17
++#define CLKID_HDMI_PLL_DCO		18
++#define CLKID_HDMI_PLL_OD		19
++#define CLKID_HDMI_PLL			20
++#define CLKID_MPLL_50M_DIV		21
++#define CLKID_MPLL_50M			22
++#define CLKID_MPLL_PREDIV		23
++#define CLKID_MPLL0_DIV			24
++#define CLKID_MPLL0			25
++#define CLKID_MPLL1_DIV			26
++#define CLKID_MPLL1			27
++#define CLKID_MPLL2_DIV			28
++#define CLKID_MPLL2			29
++#define CLKID_MPLL3_DIV			30
++#define CLKID_MPLL3			31
++
++#endif /* _DT_BINDINGS_CLOCK_AMLOGIC_S4_PLL_CLKC_H */
+-- 
+2.33.1
 
-=============================================================
-
-Thank you,
-Drew
-
-[1] https://gist.github.com/pdp7/b585a6dad5134fc8773e53ad48600fef
