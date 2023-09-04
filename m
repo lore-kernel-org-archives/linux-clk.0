@@ -2,111 +2,99 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E9E4C71153
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Sep 2023 20:17:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6591C83F33
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Sep 2023 20:42:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231724AbjIDURL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 4 Sep 2023 16:17:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40954 "EHLO
+        id S229685AbjIDUmX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 4 Sep 2023 16:42:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229833AbjIDURK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Sep 2023 16:17:10 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89CBA133
-        for <linux-clk@vger.kernel.org>; Mon,  4 Sep 2023 13:16:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1693858580;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=kGoBgsQFryqGjj7NkhmyfIdQDuJkRXBECyY4eqxV61U=;
-        b=DNEvZwgEEKBxoAKj2A5ToPc9LcmbZM+YQ0MD7wMW7VahtPQT9anQ5/nHDmrs7Tv9mo7Kby
-        imaMsRMqKN4ey2XFz5zh5Dm11kpeG3Taw156A9cp7xdHctoFjrb6hX8nrDMRhhfhBYL6XJ
-        KMxOjpCmTZMSC1vmcRDRihBPX32twH4=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-99-nqZ8nfniN1qcoiVAW_bmIQ-1; Mon, 04 Sep 2023 16:16:17 -0400
-X-MC-Unique: nqZ8nfniN1qcoiVAW_bmIQ-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        with ESMTP id S238976AbjIDUmW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Sep 2023 16:42:22 -0400
+X-Greylist: delayed 342 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 04 Sep 2023 13:42:19 PDT
+Received: from relay08.th.seeweb.it (relay08.th.seeweb.it [5.144.164.169])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84D15187
+        for <linux-clk@vger.kernel.org>; Mon,  4 Sep 2023 13:42:19 -0700 (PDT)
+Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id EFF9D8008A4;
-        Mon,  4 Sep 2023 20:16:16 +0000 (UTC)
-Received: from [10.22.8.119] (unknown [10.22.8.119])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2AAE8140E966;
-        Mon,  4 Sep 2023 20:16:15 +0000 (UTC)
-Message-ID: <ad726bb4-fbd1-389c-4978-03eec77b4322@redhat.com>
-Date:   Mon, 4 Sep 2023 16:16:15 -0400
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id E54A33ECA8;
+        Mon,  4 Sep 2023 22:36:35 +0200 (CEST)
+Date:   Mon, 4 Sep 2023 22:36:33 +0200
+From:   Marijn Suijten <marijn.suijten@somainline.org>
+To:     Devi Priya <quic_devipriy@quicinc.com>
+Cc:     andersson@kernel.org, agross@kernel.org, konrad.dybcio@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, mturquette@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_saahtoma@quicinc.com
+Subject: Re: [PATCH V2] clk: qcom: clk-rcg2: Fix clock rate overflow for high
+ parent frequencies
+Message-ID: <odbwkksa5xl33c6ic6nyqv732drx6e3or3tlxattd5jhg3q5jt@oepczt2vyowt>
+References: <20230901073640.4973-1-quic_devipriy@quicinc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: ARM BCM53573 SoC hangs/lockups caused by locks/clock/random
- changes
-Content-Language: en-US
-To:     "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc:     =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        openwrt-devel@lists.openwrt.org,
-        bcm-kernel-feedback-list@broadcom.com
-References: <a03a6e1d-e99c-40a3-bdac-0075b5339beb@gmail.com>
- <c98e6c5b-d334-075f-71b8-1c2a3b73b205@redhat.com>
- <ZPX6W6q4+ECPbBmq@shell.armlinux.org.uk>
-From:   Waiman Long <longman@redhat.com>
-In-Reply-To: <ZPX6W6q4+ECPbBmq@shell.armlinux.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230901073640.4973-1-quic_devipriy@quicinc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 9/4/23 11:40, Russell King (Oracle) wrote:
-> On Mon, Sep 04, 2023 at 11:25:57AM -0400, Waiman Long wrote:
->> On 9/4/23 04:33, Rafał Miłecki wrote:
->>> As those hangs/lockups are related to so many different changes it's
->>> really hard to debug them.
->>>
->>> This bug seems to be specific to the slow arch clock that affects
->>> stability only when kernel locking code and symbols layout trigger some
->>> very specific timing.
->>>
->>> Enabling CONFIG_PROVE_LOCKING seems to make issue go away but it affects
->>> so much code it's hard to tell why it actually matters.
->>>
->>> Same for disabling CONFIG_SMP. I noticed Broadcom's SDK keeps it
->>> disabled. I tried it and it improves stability (I had 3 devices with 6
->>> days of uptime and counting) indeed. Again it affects a lot of kernel
->>> parts so it's hard to tell why it helps.
->>>
->>> Unless someone comes up with some magic solution I'll probably try
->>> building BCM53573 images without CONFIG_SMP for my personal needs.
->> All the locking operations rely on the fact that the instruction to acquire
->> or release a lock is atomic. Is it possible that it may not be the case
->> under certain circumstances for this ARM BCM53573 SoC? Or maybe some Kconfig
->> options are not set correctly like missing some errata that are needed.
->>
->> I don't know enough about the 32-bit arm architecture to say whether this is
->> the case or not, but that is my best guess.
-> So, BCM53573 is Cortex-A7, which is ARMv7, which has the exclusive
-> load/store instructions. Whether the SoC has the necessary exclusive
-> monitors to support these instructions is another matter, and I
-> suspect someone with documentation would need to check that.
+On 2023-09-01 13:06:40, Devi Priya wrote:
+> If the parent clock rate is greater than unsigned long max/2 then
+> integer overflow happens when calculating the clock rate on 32-bit systems.
+> As RCG2 uses half integer dividers, the clock rate is first being
+> multiplied by 2 which will overflow the unsigned long max value.
+> Hence, replace the common pattern of doing 64-bit multiplication
 
-To clarify, it is not necessary to use atomic instruction as in x86, but 
-the LL/SC style of synchronization instructions with proper hardware 
-support should also be enough. Again the hardware needs to have the 
-proper support for the correct operation of those synchronization 
-instructions.
+Wasn't it doing 32-bit multiplication on 32-bit systems?  Glad to see the u64
+mul and div cleaned up in the if (mode) block either way though.
 
-Cheers,
-Longman
+> and then a do_div() call with simpler mult_frac call.
 
+mul_frac()
+
+> 
+> Fixes: bcd61c0f535a ("clk: qcom: Add support for root clock generators (RCGs)")
+> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+> ---
+>  Changes in V2:
+> 	- Replaced 64-bit multiplication & a do_div call with mult_frac
+> 	  call as suggested by Marijn Suijten.
+
+Don't forget to add reviewers to CC on followup revisions :)
+
+Reviewed-by: Marijn Suijten <marijn.suijten@somainline.org>
+
+> 	- Updated the subject title
+> 	- Added Fixes tag
+> 	- Did not pick up the R-b tag due to the above changes.
+> 
+>  drivers/clk/qcom/clk-rcg2.c | 8 ++------
+>  1 file changed, 2 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+> index a42f661550ca..f64d69164547 100644
+> --- a/drivers/clk/qcom/clk-rcg2.c
+> +++ b/drivers/clk/qcom/clk-rcg2.c
+> @@ -159,15 +159,11 @@ static unsigned long
+>  calc_rate(unsigned long rate, u32 m, u32 n, u32 mode, u32 hid_div)
+>  {
+>  	if (hid_div) {
+> -		rate *= 2;
+> -		rate /= hid_div + 1;
+> +		rate = mult_frac(rate, 2, hid_div + 1);
+>  	}
+>  
+>  	if (mode) {
+> -		u64 tmp = rate;
+> -		tmp *= m;
+> -		do_div(tmp, n);
+> -		rate = tmp;
+> +		rate = mult_frac(rate, m, n);
+>  	}
+>  
+>  	return rate;
+> -- 
+> 2.34.1
+> 
