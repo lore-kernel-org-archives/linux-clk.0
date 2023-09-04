@@ -2,50 +2,63 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4EA0CA0FF8
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Sep 2023 16:26:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0393BCA0FF3
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Sep 2023 16:26:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351207AbjIEQZp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Sep 2023 12:25:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36802 "EHLO
+        id S1350921AbjIEQZx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Sep 2023 12:25:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353556AbjIEGma (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Sep 2023 02:42:30 -0400
-Received: from muru.com (muru.com [72.249.23.125])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 393A91B4;
-        Mon,  4 Sep 2023 23:42:26 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id A712D809E;
-        Tue,  5 Sep 2023 06:42:25 +0000 (UTC)
-Date:   Tue, 5 Sep 2023 09:42:24 +0300
-From:   Tony Lindgren <tony@atomide.com>
-To:     Andreas Kemnade <andreas@kemnade.info>
-Cc:     lee@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        bcousson@baylibre.com, mturquette@baylibre.com, sboyd@kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] dt-bindings: mfd: convert twl-family.tx to
- json-schema
-Message-ID: <20230905064224.GA11676@atomide.com>
-References: <20230830182038.878265-1-andreas@kemnade.info>
- <20230830182038.878265-2-andreas@kemnade.info>
+        with ESMTP id S1353876AbjIEI1a (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Sep 2023 04:27:30 -0400
+X-Greylist: delayed 89187 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 05 Sep 2023 01:27:27 PDT
+Received: from mail.equinoxrise.pl (mail.equinoxrise.pl [217.61.112.157])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 260B7CC7
+        for <linux-clk@vger.kernel.org>; Tue,  5 Sep 2023 01:27:27 -0700 (PDT)
+Received: by mail.equinoxrise.pl (Postfix, from userid 1002)
+        id AA218833C9; Mon,  4 Sep 2023 09:40:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=equinoxrise.pl;
+        s=mail; t=1693813259;
+        bh=v6OgBfK5dN7P5dQ0wCu59rOfZaiqziJeLNblJ8dOcGI=;
+        h=Date:From:To:Subject:From;
+        b=El0a4+vlHyj2sVdTjypGIByHgiA6Z9YePNJjUUH9xVV17XTLvn6T3fThM2DC15P2K
+         creWk8XxqAHV3tvbGBmPUzvcat9TkG5wkEc3IK4OvxlC84NyFfinqdZSMheAtCXN/K
+         LpDgZ/1+T/yAuRVBJFGZD267Rmbhi1d6s+PSuknhdgEc8kUh7KJsiK9JswW2lkylqZ
+         ZzjOsr59QkI1jvFm0nhXul2hmRi+7j52aHCsOXT1vlgyH4GsV8Pw/uK3ankmMTJoVx
+         bjGe2MLHEvPIk+KWtt6F5M1pEvRG9aeIVi2CUcvu2TqzaCFNpNiW29kSUb4GPnNlj5
+         e4Z+jx+GlZumw==
+Received: by mail.equinoxrise.pl for <linux-clk@vger.kernel.org>; Mon,  4 Sep 2023 07:40:34 GMT
+Message-ID: <20230904084500-0.1.7.q83.0.u0g2k9s2ep@equinoxrise.pl>
+Date:   Mon,  4 Sep 2023 07:40:34 GMT
+From:   "Mateusz Talaga" <mateusz.talaga@equinoxrise.pl>
+To:     <linux-clk@vger.kernel.org>
+Subject: Prezentacja
+X-Mailer: mail.equinoxrise.pl
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230830182038.878265-2-andreas@kemnade.info>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-* Andreas Kemnade <andreas@kemnade.info> [230830 18:20]:
-> +title: Texas Instruments TWL family
-> +
-> +maintainers:
-> +  - Tony Lindgren <tony@atomide.com>
+Dzie=C5=84 dobry!
 
-s/me/you/ above please :)
+Czy m=C3=B3g=C5=82bym przedstawi=C4=87 rozwi=C4=85zanie, kt=C3=B3re umo=C5=
+=BCliwia monitoring ka=C5=BCdego auta w czasie rzeczywistym w tym jego po=
+zycj=C4=99, zu=C5=BCycie paliwa i przebieg?
 
-Regards,
+Dodatkowo nasze narz=C4=99dzie minimalizuje koszty utrzymania samochod=C3=
+=B3w, skraca czas przejazd=C3=B3w, a tak=C5=BCe tworzenie planu tras czy =
+dostaw.
 
-Tony
+Z naszej wiedzy i do=C5=9Bwiadczenia korzysta ju=C5=BC ponad 49 tys. Klie=
+nt=C3=B3w. Monitorujemy 809 000 pojazd=C3=B3w na ca=C5=82ym =C5=9Bwiecie,=
+ co jest nasz=C4=85 najlepsz=C4=85 wizyt=C3=B3wk=C4=85.
+
+Bardzo prosz=C4=99 o e-maila zwrotnego, je=C5=9Bli mogliby=C5=9Bmy wsp=C3=
+=B3lnie om=C3=B3wi=C4=87 potencja=C5=82 wykorzystania takiego rozwi=C4=85=
+zania w Pa=C5=84stwa firmie.
+
+
+Pozdrawiam
+Mateusz Talaga
