@@ -2,99 +2,50 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6591C83F33
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Sep 2023 20:42:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4EA0CA0FF8
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Sep 2023 16:26:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229685AbjIDUmX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 4 Sep 2023 16:42:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42864 "EHLO
+        id S1351207AbjIEQZp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Sep 2023 12:25:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238976AbjIDUmW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Sep 2023 16:42:22 -0400
-X-Greylist: delayed 342 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 04 Sep 2023 13:42:19 PDT
-Received: from relay08.th.seeweb.it (relay08.th.seeweb.it [5.144.164.169])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84D15187
-        for <linux-clk@vger.kernel.org>; Mon,  4 Sep 2023 13:42:19 -0700 (PDT)
-Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id E54A33ECA8;
-        Mon,  4 Sep 2023 22:36:35 +0200 (CEST)
-Date:   Mon, 4 Sep 2023 22:36:33 +0200
-From:   Marijn Suijten <marijn.suijten@somainline.org>
-To:     Devi Priya <quic_devipriy@quicinc.com>
-Cc:     andersson@kernel.org, agross@kernel.org, konrad.dybcio@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, mturquette@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, quic_saahtoma@quicinc.com
-Subject: Re: [PATCH V2] clk: qcom: clk-rcg2: Fix clock rate overflow for high
- parent frequencies
-Message-ID: <odbwkksa5xl33c6ic6nyqv732drx6e3or3tlxattd5jhg3q5jt@oepczt2vyowt>
-References: <20230901073640.4973-1-quic_devipriy@quicinc.com>
+        with ESMTP id S1353556AbjIEGma (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Sep 2023 02:42:30 -0400
+Received: from muru.com (muru.com [72.249.23.125])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 393A91B4;
+        Mon,  4 Sep 2023 23:42:26 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id A712D809E;
+        Tue,  5 Sep 2023 06:42:25 +0000 (UTC)
+Date:   Tue, 5 Sep 2023 09:42:24 +0300
+From:   Tony Lindgren <tony@atomide.com>
+To:     Andreas Kemnade <andreas@kemnade.info>
+Cc:     lee@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        bcousson@baylibre.com, mturquette@baylibre.com, sboyd@kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] dt-bindings: mfd: convert twl-family.tx to
+ json-schema
+Message-ID: <20230905064224.GA11676@atomide.com>
+References: <20230830182038.878265-1-andreas@kemnade.info>
+ <20230830182038.878265-2-andreas@kemnade.info>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230901073640.4973-1-quic_devipriy@quicinc.com>
+In-Reply-To: <20230830182038.878265-2-andreas@kemnade.info>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2023-09-01 13:06:40, Devi Priya wrote:
-> If the parent clock rate is greater than unsigned long max/2 then
-> integer overflow happens when calculating the clock rate on 32-bit systems.
-> As RCG2 uses half integer dividers, the clock rate is first being
-> multiplied by 2 which will overflow the unsigned long max value.
-> Hence, replace the common pattern of doing 64-bit multiplication
+* Andreas Kemnade <andreas@kemnade.info> [230830 18:20]:
+> +title: Texas Instruments TWL family
+> +
+> +maintainers:
+> +  - Tony Lindgren <tony@atomide.com>
 
-Wasn't it doing 32-bit multiplication on 32-bit systems?  Glad to see the u64
-mul and div cleaned up in the if (mode) block either way though.
+s/me/you/ above please :)
 
-> and then a do_div() call with simpler mult_frac call.
+Regards,
 
-mul_frac()
-
-> 
-> Fixes: bcd61c0f535a ("clk: qcom: Add support for root clock generators (RCGs)")
-> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
-> ---
->  Changes in V2:
-> 	- Replaced 64-bit multiplication & a do_div call with mult_frac
-> 	  call as suggested by Marijn Suijten.
-
-Don't forget to add reviewers to CC on followup revisions :)
-
-Reviewed-by: Marijn Suijten <marijn.suijten@somainline.org>
-
-> 	- Updated the subject title
-> 	- Added Fixes tag
-> 	- Did not pick up the R-b tag due to the above changes.
-> 
->  drivers/clk/qcom/clk-rcg2.c | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-> index a42f661550ca..f64d69164547 100644
-> --- a/drivers/clk/qcom/clk-rcg2.c
-> +++ b/drivers/clk/qcom/clk-rcg2.c
-> @@ -159,15 +159,11 @@ static unsigned long
->  calc_rate(unsigned long rate, u32 m, u32 n, u32 mode, u32 hid_div)
->  {
->  	if (hid_div) {
-> -		rate *= 2;
-> -		rate /= hid_div + 1;
-> +		rate = mult_frac(rate, 2, hid_div + 1);
->  	}
->  
->  	if (mode) {
-> -		u64 tmp = rate;
-> -		tmp *= m;
-> -		do_div(tmp, n);
-> -		rate = tmp;
-> +		rate = mult_frac(rate, m, n);
->  	}
->  
->  	return rate;
-> -- 
-> 2.34.1
-> 
+Tony
