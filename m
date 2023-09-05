@@ -2,127 +2,110 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5048CA1009
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Sep 2023 20:07:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB942CA100F
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Sep 2023 20:47:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242515AbjIEUHv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Sep 2023 16:07:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54682 "EHLO
+        id S235485AbjIEUr2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Sep 2023 16:47:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233069AbjIEUHu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Sep 2023 16:07:50 -0400
-Received: from mail-qt1-x82e.google.com (mail-qt1-x82e.google.com [IPv6:2607:f8b0:4864:20::82e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43546AB;
-        Tue,  5 Sep 2023 13:07:47 -0700 (PDT)
-Received: by mail-qt1-x82e.google.com with SMTP id d75a77b69052e-4142ca41b89so19844901cf.0;
-        Tue, 05 Sep 2023 13:07:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1693944466; x=1694549266; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=wWLhmbexMwFItDsfUj1BiKajqO0nL+fAa0yKi72A9kg=;
-        b=ec35FZiQR6vs8ePnc92VgmiEMlr0k9jkEmCoUanW63vlV4icPo3bNmAtXwjalrZltM
-         zepKNTAfOFdpq0B+j8XW8ram3fbIu7xm8yOtbwwnez0ya1XShvT1exx20SWIzkuOOc1B
-         VIdBZcl07IsD8hJD2tmfGE9Lljg39Yz1sP5zM7ksZCvoc1BHgHHyEIqW9ibuCne6SVUP
-         OGeCrXe9cdnq+9tXl4niafFIHJ5wJjU4ypbxXk2FHmO1upI4oUN+Q4zZYiuZOzXI+ttS
-         Hhrq0g8sECWH11qQOTGKQ2nSw0MSIv3Feofg1XvhCx5Ez/82BXCfnIdp7J+5mvSHvf0z
-         l4mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693944466; x=1694549266;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wWLhmbexMwFItDsfUj1BiKajqO0nL+fAa0yKi72A9kg=;
-        b=Nr98bbChkN+FRHutYN0I7iLpZBMwFsbvoSyAEZhu66Yykm/3bnQ6WxuFAKhyA7WaKg
-         0Il3w0x9dqocpY92WL7NIQFn5CRGFaFl22kADVESRQjv+y2xzn+o5fqgu+Gao/VPFdy1
-         zHUiaRgMZpVBM9NFB8c0+l23nhs2wVSXKm41hLxzq7XIz4/GdlQs9nByuBlhsJrWjgu3
-         JHyNhOYStNhZKDj0krm/gYc+LqX8bABAfw0tL4KMeRgz6xviej+p1mKxm8zWweSdJmlB
-         GeZssAOLkbhdSNT9BEHPdZkRSxdC5vPlmyeWO61yhw/EIXuMH2EwdqJMijNlm5WEkUMo
-         GasQ==
-X-Gm-Message-State: AOJu0Yz/+4vFKbBcOznKlsisazoaI1rpjPjG+0x0Q4f4TxgHFkq9PD6l
-        JKHoh0lXRRhAQijDtNE5Xa+pvb0oRonICg==
-X-Google-Smtp-Source: AGHT+IHYXuEyrFsZo1mZAuwnxMK9+X1hIcxfibCAJKF/FhNk+CgDpk4pUHUE9pHQTzgCca8Z/CJKNw==
-X-Received: by 2002:a05:622a:288:b0:412:217:3d3d with SMTP id z8-20020a05622a028800b0041202173d3dmr14942089qtw.68.1693944466189;
-        Tue, 05 Sep 2023 13:07:46 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id b3-20020ac844c3000000b00410929fe3b9sm4630573qto.58.2023.09.05.13.07.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Sep 2023 13:07:45 -0700 (PDT)
-Message-ID: <3e573810-d50c-9b54-7ea3-f1d82a7ca5b5@gmail.com>
-Date:   Tue, 5 Sep 2023 13:07:41 -0700
+        with ESMTP id S231834AbjIEUr1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Sep 2023 16:47:27 -0400
+X-Greylist: delayed 426 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 05 Sep 2023 13:47:24 PDT
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73F02113;
+        Tue,  5 Sep 2023 13:47:24 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4527CC433C7;
+        Tue,  5 Sep 2023 20:40:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1693946418;
+        bh=6OpsPJP4XjfqnisD11vFNxFbp8JALAsZzg5eN/wcwUg=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=c/4JUAHjqfywDpLHsZ6vXB0Y2whTeGW+/I21fqhL7dGUG72ukus6qcVyuXheR3rz6
+         n/DOXc4aOPdBRdkZfscvkcBTs1+GC2SbsWImyz3y5FmPKGcaAiXakzp3VkBd7Lsu/U
+         THt56ogfx8nWgz6IOFuMrED5rZbEHESv2E8y+K/XDZOFyJAOkiJVFREuo3rE9t/IQN
+         ng9sAnY/AkdWyzmGZmJMOUImX1RKxPy8a6ruO6NxrAhF9QrsZ2drou2P/qrhskVSXZ
+         Tou/LKRpEjSXSB6yRZMf8VpwSuakeoS5cPVPvBbKgYuwCn+5V+Jomp7jGnXSjV/x1r
+         /vbS8B7bDliNg==
+Message-ID: <3fe1655e30d62493a24e1f97ab7bf710.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: ARM BCM53573 SoC hangs/lockups caused by locks/clock/random
- changes
-To:     "Russell King (Oracle)" <linux@armlinux.org.uk>,
-        Waiman Long <longman@redhat.com>
-Cc:     =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        openwrt-devel@lists.openwrt.org,
-        bcm-kernel-feedback-list@broadcom.com
-References: <a03a6e1d-e99c-40a3-bdac-0075b5339beb@gmail.com>
- <c98e6c5b-d334-075f-71b8-1c2a3b73b205@redhat.com>
- <ZPX6W6q4+ECPbBmq@shell.armlinux.org.uk>
-Content-Language: en-US
-In-Reply-To: <ZPX6W6q4+ECPbBmq@shell.armlinux.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20230901070041.13463-1-quic_devipriy@quicinc.com>
+References: <20230901070041.13463-1-quic_devipriy@quicinc.com>
+Subject: Re: [PATCH V2] clk: qcom: clk-alpha-pll: Use determine_rate instead of round_rate
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     quic_devipriy@quicinc.com, quic_saahtoma@quicinc.com
+To:     Devi Priya <quic_devipriy@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, konrad.dybcio@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mturquette@baylibre.com
+Date:   Tue, 05 Sep 2023 13:40:15 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Quoting Devi Priya (2023-09-01 00:00:41)
+> The round_rate() API returns a long value as the errors are reported using
+> negative error codes. This leads to long overflow when the clock rate
+> exceeds 2GHz.As the clock controller treats the clock rate above signed
+> long max as an error, use determine_rate in place of round_rate as the
+> determine_rate API does not possess such limitations.
 
+Does this fix something, or is it preparing for PLLs that run faster
+than 2GHz?
 
-On 9/4/2023 8:40 AM, Russell King (Oracle) wrote:
-> On Mon, Sep 04, 2023 at 11:25:57AM -0400, Waiman Long wrote:
->>
->> On 9/4/23 04:33, Rafał Miłecki wrote:
->>> As those hangs/lockups are related to so many different changes it's
->>> really hard to debug them.
->>>
->>> This bug seems to be specific to the slow arch clock that affects
->>> stability only when kernel locking code and symbols layout trigger some
->>> very specific timing.
->>>
->>> Enabling CONFIG_PROVE_LOCKING seems to make issue go away but it affects
->>> so much code it's hard to tell why it actually matters.
->>>
->>> Same for disabling CONFIG_SMP. I noticed Broadcom's SDK keeps it
->>> disabled. I tried it and it improves stability (I had 3 devices with 6
->>> days of uptime and counting) indeed. Again it affects a lot of kernel
->>> parts so it's hard to tell why it helps.
->>>
->>> Unless someone comes up with some magic solution I'll probably try
->>> building BCM53573 images without CONFIG_SMP for my personal needs.
->>
->> All the locking operations rely on the fact that the instruction to acquire
->> or release a lock is atomic. Is it possible that it may not be the case
->> under certain circumstances for this ARM BCM53573 SoC? Or maybe some Kconfig
->> options are not set correctly like missing some errata that are needed.
->>
->> I don't know enough about the 32-bit arm architecture to say whether this is
->> the case or not, but that is my best guess.
-> 
-> So, BCM53573 is Cortex-A7, which is ARMv7, which has the exclusive
-> load/store instructions. Whether the SoC has the necessary exclusive
-> monitors to support these instructions is another matter, and I
-> suspect someone with documentation would need to check that.
+>=20
+> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+> ---
+>  Changes in V2:
+>         - Updated divider_round_rate to divider_determine_rate as=20
+>           suggested by Stephen Boyd.
+>=20
+>  drivers/clk/qcom/clk-alpha-pll.c | 125 +++++++++++++++++--------------
+>  1 file changed, 68 insertions(+), 57 deletions(-)
+>=20
+> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alph=
+a-pll.c
+> index 1c2a72840cd2..de2b7e2784ec 100644
+> --- a/drivers/clk/qcom/clk-alpha-pll.c
+> +++ b/drivers/clk/qcom/clk-alpha-pll.c
+> @@ -2353,22 +2362,24 @@ static unsigned long clk_rivian_evo_pll_recalc_ra=
+te(struct clk_hw *hw,
+>         return parent_rate * l;
+>  }
+> =20
+> -static long clk_rivian_evo_pll_round_rate(struct clk_hw *hw, unsigned lo=
+ng rate,
+> -                                         unsigned long *prate)
+> +static int clk_rivian_evo_pll_determine_rate(struct clk_hw *hw,
+> +                                            struct clk_rate_request *req)
+>  {
+>         struct clk_alpha_pll *pll =3D to_clk_alpha_pll(hw);
+>         unsigned long min_freq, max_freq;
+>         u32 l;
+>         u64 a;
+> =20
+> -       rate =3D alpha_pll_round_rate(rate, *prate, &l, &a, 0);
+> -       if (!pll->vco_table || alpha_pll_find_vco(pll, rate))
+> -               return rate;
+> +       req->rate =3D alpha_pll_round_rate(req->rate, req->best_parent_ra=
+te,
+> +                                        &l, &a, 0);
+> +       if (!pll->vco_table || alpha_pll_find_vco(pll, req->rate))
+> +               return 0;
+> =20
+>         min_freq =3D pll->vco_table[0].min_freq;
+>         max_freq =3D pll->vco_table[pll->num_vco - 1].max_freq;
+> =20
+> -       return clamp(rate, min_freq, max_freq);
+> +       req->rate =3D clamp(req->rate, min_freq, max_freq);
+> +       return 0;
+>  }
 
-Finding documentation about this SoC has been very difficult 
-unfortunately...
-
-Would any of the lock or mutex debugging self test catch hardware 
-designed without proper support for exclusive monitors in the DRAM 
-controller? Keep in mind this is an uni-processor system however, does 
-that mean we may have issues in our SMP_ON_UP alternative patching?
--- 
-Florian
+Is this any different from clk_alpha_pll_determine_rate()? I think the
+only difference is alpha_pll_width, which could probably be some
+argument passed to an alpha_pll_determine_rate() function that does the
+internal clamping. It could also take a struct clk_rate_request then so
+that we don't pass individual members of that struct.
