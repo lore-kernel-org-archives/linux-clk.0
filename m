@@ -2,104 +2,134 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74035EB8FA5
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Sep 2023 08:37:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41DF4EB8FAF
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Sep 2023 09:34:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234954AbjIFIho (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Sep 2023 04:37:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58890 "EHLO
+        id S237202AbjIFJeR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Sep 2023 05:34:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231225AbjIFIhl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Sep 2023 04:37:41 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86E62E46
-        for <linux-clk@vger.kernel.org>; Wed,  6 Sep 2023 01:37:35 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-401da71b83cso32563095e9.2
-        for <linux-clk@vger.kernel.org>; Wed, 06 Sep 2023 01:37:35 -0700 (PDT)
+        with ESMTP id S237188AbjIFJeH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Sep 2023 05:34:07 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 295891732
+        for <linux-clk@vger.kernel.org>; Wed,  6 Sep 2023 02:34:02 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-52a23227567so4920316a12.0
+        for <linux-clk@vger.kernel.org>; Wed, 06 Sep 2023 02:34:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1693989454; x=1694594254; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pLvxqkVcGrj0lGKXFta0h+15ddHO134yyI3SPEEzAKg=;
-        b=R5VMhODl9rRQwWpXjU/CKq3PcnrZcYb85/PTd9zRH+WiMVSWE1VSxB7sG/KXqxH5IA
-         JchoUIXgoGxEKov7u1fK8i46eh1/+nVtVytXoHBMqnWBgXlSLBg0jvlu7aMhiNXUxu7o
-         BTnNlwbw3cIX/lH8lNnpfRulMPoh1+KxTjaE5+E/hcnAyZZvKEp9DzoKxoFk5kMNWM3o
-         0qn2JbblY8PXWVm6ICPqCmwe8jH2bTS2hpIweq5X13BTaiDaUEmNfAOgoIiPszzmaQnt
-         NHTmtJmlbFTkP4ozmXByj7DpAbMFQa4COJVvb7ID9pqaapOllUdzJ0MvHikLXsF/d1FY
-         SSUA==
+        d=linaro.org; s=google; t=1693992840; x=1694597640; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ziVk/veg1qjtBNTjNVyae/HZA2k0Y/JtBFbzDoCbnN8=;
+        b=rs/J/SQoxSpzpx/5MrnlH3r9TSlYsblto5vgIVqYtBNsagFlmW6cRqWR8AJBv1pD5D
+         X3dUEoclAGRIwyXdUFUGSV6ngv3C6jHwp5Oedf1Jp1RerzU7bydR3hKOSM2zr2gWNsiY
+         qvrpEJCmVRrXysX1winqcXZG10eSxUOdVQvnVTBRcJht1ZaBC/n4sbqe4nrzUAb+ZSIa
+         TBj5W/BOt1V28nV1ym83IwG/CS8JfyiNs2yYbrc04hQGiPXtIhiGBp2Qq1MM1LZOMDkf
+         1LFtKuNej5B4odu8Ly8Iy/PsqGA0Phq7uZXkoegFXmNGE/DkyLlotzk2Mqi+YHTBewXT
+         CpHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693989454; x=1694594254;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pLvxqkVcGrj0lGKXFta0h+15ddHO134yyI3SPEEzAKg=;
-        b=dtyq5v8U3nMg3HOPCG9Z2CnfFCy0VUc/PQI5G0Ifpl5tq6L+CdKM9eM7CzMx0GGgFe
-         DZPmmwuz1+55fJlhEPj2BbY8K8lKXZZ8SlI5SRha9PJCK3z/JgPGtABWGxK1Bn/9uzFm
-         qTDtsemDJoBS1/suBnfLk3q0Dmx4N5S8eZE4edRgMM+zO/6HSCx47Cp5rZzOs2JdbPTW
-         Trq876YW6ZLS7EL/sT3pHuk3az/AE9GB4s5wS67zVvEIOFZsLgzMb+fwMyKKwBBS3ZtJ
-         FCWIO8BnSDT7ViSmTt1RcaoyPX24hh0OIRSGsS8XxknaVDaRHlisCFzWxyKruuz14mOk
-         UR9A==
-X-Gm-Message-State: AOJu0YwHNgkyNyCHYZx2WXQdzhGMkzAB4134DI32IWb0ViiGTBOZ2Vot
-        Vph8W3mAz73zYAzQPXW++7vY3A==
-X-Google-Smtp-Source: AGHT+IGgBixjKxuTBBYWuFq762q1URHhmlYUZ9/8lQFX9qon/QhhHDr/qErp5oYLmkehX7+4VS+HJA==
-X-Received: by 2002:adf:ed88:0:b0:31a:e3ad:f30e with SMTP id c8-20020adfed88000000b0031ae3adf30emr1759759wro.68.1693989453796;
-        Wed, 06 Sep 2023 01:37:33 -0700 (PDT)
-Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
-        by smtp.gmail.com with ESMTPSA id s16-20020adfecd0000000b0030ada01ca78sm19753926wro.10.2023.09.06.01.37.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Sep 2023 01:37:33 -0700 (PDT)
-Date:   Wed, 6 Sep 2023 10:37:31 +0200
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
-Cc:     kuba@kernel.org, jonathan.lemon@gmail.com, pabeni@redhat.com,
-        vadim.fedorenko@linux.dev, linux-arm-kernel@lists.infradead.org,
-        poros@redhat.com, mschmidt@redhat.com, netdev@vger.kernel.org,
-        linux-clk@vger.kernel.org, bvanassche@acm.org,
-        intel-wired-lan@lists.osuosl.org
-Subject: Re: [PATCH net-next 0/4] dpll: add phase offset and phase adjust
-Message-ID: <ZPg6Sz6pgLnmQcpe@nanopsycho>
-References: <20230905232610.1403647-1-arkadiusz.kubalewski@intel.com>
+        d=1e100.net; s=20221208; t=1693992840; x=1694597640;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ziVk/veg1qjtBNTjNVyae/HZA2k0Y/JtBFbzDoCbnN8=;
+        b=WVFJnp+be2YTaudZ4KGphop9MDYkym/00u5zTkgLRKa6xZb8bqsWiJbnFT3mWu228W
+         XmF+1efTbSChV1wtmLWZBFG12i3AU3F4saoIARTSBgfMCROzYyst4oPkc1uAxwcLfHyM
+         9N4k0Lr2V7pTEXER8AStxgd4Aqqw9wjy8BTS1HvAfKG+mp7T5GBTLc5GWjuH3r/2+A3c
+         ebxYgAJwS3iQw2MIuJxiNs1SHAKc+MFQpMzWaarAvgo5ETF22Qb45yT5FGJ6N2mkE3tR
+         PHynAlBwx+eRFDBRkS8IBCMb7aTEobRUdfTQBsj0BcaMOybSPlprWWsWnlDaUX0+14rF
+         SusA==
+X-Gm-Message-State: AOJu0Yx1ONImF8/AfsyQloiw/YijItGcV7wmKwASCa7FQHAU8Uz2tu/X
+        tXCd1VT817QpWJSjSFEXxYBZHg==
+X-Google-Smtp-Source: AGHT+IHkLoR/htCGI0OYQso1z2eOfyHTLyaPZLptfd2ZajzqOzD/lY6+wGXwaDqT4z0S4ZyYfxFbEw==
+X-Received: by 2002:aa7:da93:0:b0:523:4933:b024 with SMTP id q19-20020aa7da93000000b005234933b024mr1931401eds.14.1693992840594;
+        Wed, 06 Sep 2023 02:34:00 -0700 (PDT)
+Received: from [192.168.37.154] (178235177204.dynamic-4-waw-k-1-1-0.vectranet.pl. [178.235.177.204])
+        by smtp.gmail.com with ESMTPSA id w13-20020aa7dccd000000b005256e0797acsm8187613edu.37.2023.09.06.02.33.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Sep 2023 02:34:00 -0700 (PDT)
+Message-ID: <cbb530b9-224b-4b6f-8551-dd8340a59408@linaro.org>
+Date:   Wed, 6 Sep 2023 11:33:58 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230905232610.1403647-1-arkadiusz.kubalewski@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND 7/7] arm64: dts: qcom: include the GPLL0 as clock
+ provider for IPQ mailbox
+Content-Language: en-US
+To:     Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sricharan Ramabadhran <quic_srichara@quicinc.com>,
+        Anusha Rao <quic_anusha@quicinc.com>,
+        Devi Priya <quic_devipriy@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20230904-gpll_cleanup-v1-0-de2c448f1188@quicinc.com>
+ <20230904-gpll_cleanup-v1-7-de2c448f1188@quicinc.com>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20230904-gpll_cleanup-v1-7-de2c448f1188@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Wed, Sep 06, 2023 at 01:26:06AM CEST, arkadiusz.kubalewski@intel.com wrote:
->This RFC is to start discussion over extending dpll interface
->with possibility to:
->- read a phase offset between signals on pin and dpll,
->- adjust a phase of pin's signal.
+On 6.09.2023 06:56, Kathiravan Thirumoorthy wrote:
+> While the kernel is booting up, APSS PLL will be running at 800MHz with
+> GPLL0 as source. Once the cpufreq driver is available, APSS PLL will be
+> configured to the rate based on the opp table and the source also will be
+> changed to APSS_PLL_EARLY.
+> 
+> Also, dynamic scaling of CPUFreq is not supported on IPQ5332, so to switch
+> between the frequencies we need to park the APSS PLL in safe source,
+> here it is GPLL0 and then shutdown and bring up the APSS PLL in the
+> desired rate. So this patch is preparatory one to enable the CPUFreq on
+> IPQ5332.
+> 
+> Signed-off-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+> ---
+Please split this. Somebody reverting this in the future will have
+a hard time resolving conflicts.
 
-1) RFC patches should be marked as such
-2) I suggest to postpone this after the first dpll patchset is merged
-
->
->The RFC is based on latest version of dpll interface submitted for
->net-next [1].
->
->[1] https://lore.kernel.org/netdev/20230824213132.827338-1-vadim.fedorenko@linux.dev/
->
->Arkadiusz Kubalewski (4):
->  dpll: docs: add support for pin signal phase offset/adjust
->  dpll: spec: add support for pin-dpll signal phase offset/adjust
->  dpll: netlink/core: add support for pin-dpll signal phase
->    offset/adjust
->  ice: dpll: implement phase related callbacks
->
-> Documentation/driver-api/dpll.rst         |  53 ++++-
-> Documentation/netlink/specs/dpll.yaml     |  33 +++-
-> drivers/dpll/dpll_netlink.c               |  99 +++++++++-
-> drivers/dpll/dpll_nl.c                    |   8 +-
-> drivers/dpll/dpll_nl.h                    |   2 +-
-> drivers/net/ethernet/intel/ice/ice_dpll.c | 224 +++++++++++++++++++++-
-> drivers/net/ethernet/intel/ice/ice_dpll.h |  10 +-
-> include/linux/dpll.h                      |  18 ++
-> include/uapi/linux/dpll.h                 |   8 +-
-> 9 files changed, 443 insertions(+), 12 deletions(-)
->
->-- 
->2.38.1
->
+Konrad
