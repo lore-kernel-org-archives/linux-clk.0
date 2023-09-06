@@ -2,133 +2,129 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DC7EEB8FA5
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Sep 2023 06:07:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DF8EEB8FAF
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Sep 2023 07:33:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232974AbjIFGHo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Sep 2023 02:07:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46500 "EHLO
+        id S233291AbjIFHdp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Sep 2023 03:33:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241386AbjIFGHn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Sep 2023 02:07:43 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FF3610DC;
-        Tue,  5 Sep 2023 23:07:23 -0700 (PDT)
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3865knGv028100;
-        Wed, 6 Sep 2023 06:07:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=XwnqHZrjEXk32wMzzvgxT0wFIpyLkqsdotf/qrmxZ3s=;
- b=CWy6Lh+WsANgEtBKUsepb0F+Sr6TAO2DX1jOYvPpTSlHccWH54Hi1e5ezPKotXQ5eIow
- os95PXOMDyISR0MqK98gnE2zcDsYesdjw+SLrnbtORI9StpI9sOhb93+yP6na/dgOFhV
- ZvQtLZZXmErVYcy/fPmn9bjzMQZPUpAt6n7Cnkh4YzhWdZQwEZvr/V+C0sLbWRueGWzx
- VlLZQ7F1/mOhD12bVGuy5Vp1/sooH9OifhgE9pD7rBDYo01s7T485Jlyi/6Q+5Vsy90m
- WyAZHmMWqGTC+uxp7gRKtzE6qFd7WSZgHZ6spGtrn0kyej1mg+l5xqZchX6adMpjE5Lf XQ== 
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3sww32tvy5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 06 Sep 2023 06:07:20 +0000
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-        by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38667J2c021035
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 6 Sep 2023 06:07:19 GMT
-Received: from [10.216.33.5] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.36; Tue, 5 Sep
- 2023 23:07:14 -0700
-Message-ID: <22165524-706a-324a-5d3c-83b4aaa0162a@quicinc.com>
-Date:   Wed, 6 Sep 2023 11:37:10 +0530
+        with ESMTP id S230457AbjIFHdp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Sep 2023 03:33:45 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A4A494
+        for <linux-clk@vger.kernel.org>; Wed,  6 Sep 2023 00:33:41 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-991c786369cso519095966b.1
+        for <linux-clk@vger.kernel.org>; Wed, 06 Sep 2023 00:33:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1693985620; x=1694590420; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fpD6AkXtMkCTmpfHMn2qCtUK2W4rA8+BGckdMcP312o=;
+        b=wfXAKm2WeJwLJ33bF4T+LqW8OWqbrzya4Tm+SnPLtsH9QZmRgMehUXVZEtLOjl5x3r
+         yT3b3EBdzPnFSqNTXsJ8rpTwiM76U+frOxJ2Twzg+yZpwZzSuQhssaT1rNHZh8xKlLBf
+         HFb4mrpn0dCQW4IugZeMkGS5BGOK/dyFW7DIkOlhxO1wUksp7LXlWBoTNC1/GNLulIyT
+         CeCzyhfN8gJYGUjN7ucIwUwkHSGQsvfeiydHOybe/7p4sdJuZRIkn5qG1B2kx1jO5UK8
+         6dmdI3zMtGMyaiIVm4gEfQXp12zuMd5n4P22hKygbwARTOXwvbH8ScC6ZLarIMfRUTsn
+         o3Pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693985620; x=1694590420;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fpD6AkXtMkCTmpfHMn2qCtUK2W4rA8+BGckdMcP312o=;
+        b=Z9YsluFwOdOhVCbcaX2e/WBOy4FPMJedczCLMDeAu1YjjpqIvDfTbD89UPe+oiugaa
+         Pl/838cDnlUfTyiol16J0ST7+LapX6MBMGgZi7apLGnnQsDVNm3ICv2hNTJkSxenjDnc
+         g48m1dP22em+PLV94XV+WNnwByZyKLeTBj1X2NVOa6pqXfdiJxt7hmUMkgNIfLQEoyPe
+         Z/yb4nVWMZKj+nctEzolw8MT9+0XDkVCzhpEpNT23XymwXhGy5KM61HVGn6G/IstA4Wi
+         oSCi57H2MOy39+5QT6jFzYmiPzEwfOtg0TFpWbB1lL0y8wDUOcjNvRT9J8A2pHnGx88v
+         X5gw==
+X-Gm-Message-State: AOJu0Yym//Q5yEq5t5KVjp9S0V1XhM83JIWDiShUVqzjsStD4QysSzW9
+        rI/Knro4f/LEyK7xvKTWPoiQaw==
+X-Google-Smtp-Source: AGHT+IEhKqKFrVoZjkPExKcVXyQIew/nhqO2sPlIMwbwO3xz7DKGU3zysxKFS3T2Yb2MkM8NAYSu5w==
+X-Received: by 2002:a17:906:224a:b0:9a1:e758:fc73 with SMTP id 10-20020a170906224a00b009a1e758fc73mr1540363ejr.67.1693985619802;
+        Wed, 06 Sep 2023 00:33:39 -0700 (PDT)
+Received: from [192.168.37.236] (178235177204.dynamic-4-waw-k-1-1-0.vectranet.pl. [178.235.177.204])
+        by smtp.gmail.com with ESMTPSA id f3-20020a170906824300b009786c8249d6sm8690489ejx.175.2023.09.06.00.33.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Sep 2023 00:33:39 -0700 (PDT)
+Message-ID: <f139041f-452a-46d9-b5af-a5ddef29c705@linaro.org>
+Date:   Wed, 6 Sep 2023 09:33:38 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [PATCH 2/4] clk: qcom: branch: Add mem ops support for branch2
- clocks
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>
-CC:     Taniya Das <quic_tdas@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Ajit Pandey <quic_ajipan@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>
-References: <20230808051407.647395-1-quic_imrashai@quicinc.com>
- <20230808051407.647395-3-quic_imrashai@quicinc.com>
- <98d0632c-7129-4e3a-aba7-e805e3281f91@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2] clk: qcom: clk-alpha-pll: Use determine_rate instead
+ of round_rate
 Content-Language: en-US
-From:   Imran Shaik <quic_imrashai@quicinc.com>
-In-Reply-To: <98d0632c-7129-4e3a-aba7-e805e3281f91@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Devi Priya <quic_devipriy@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mturquette@baylibre.com
+Cc:     quic_saahtoma@quicinc.com
+References: <20230901070041.13463-1-quic_devipriy@quicinc.com>
+ <3fe1655e30d62493a24e1f97ab7bf710.sboyd@kernel.org>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <3fe1655e30d62493a24e1f97ab7bf710.sboyd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: rU3R9v8C3mx1KS1xG2GYZpwSvD6creZQ
-X-Proofpoint-GUID: rU3R9v8C3mx1KS1xG2GYZpwSvD6creZQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-09-05_13,2023-09-05_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 phishscore=0
- clxscore=1015 suspectscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0
- mlxlogscore=877 mlxscore=0 priorityscore=1501 spamscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2308100000
- definitions=main-2309060052
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 8/10/2023 1:27 AM, Konrad Dybcio wrote:
-> On 8.08.2023 07:14, Imran Shaik wrote:
->> From: Taniya Das <quic_tdas@quicinc.com>
->>
->> Clock CBCRs with memories need an update for memory before enable/disable
->> of the clock. Add support for the mem ops to handle this sequence.
->>
->> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
->> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
->> ---
-> Could you expand the commit message a bit? What does this clock
-> memory do?
+On 5.09.2023 22:40, Stephen Boyd wrote:
+> Quoting Devi Priya (2023-09-01 00:00:41)
+>> The round_rate() API returns a long value as the errors are reported using
+>> negative error codes. This leads to long overflow when the clock rate
+>> exceeds 2GHz.As the clock controller treats the clock rate above signed
+>> long max as an error, use determine_rate in place of round_rate as the
+>> determine_rate API does not possess such limitations.
 > 
+> Does this fix something, or is it preparing for PLLs that run faster
+> than 2GHz?
+I did some grepping and we already have multiple of these.
 
-Sure, will expand the commit message with more details and push the next 
-series.
+E.g. SM8250 CAMCC PLL2 (zonda) goes (or well, should go) up to 3.6 GHz.
 
-> [..]
-> 
->> +static int clk_branch2_mem_enable(struct clk_hw *hw)
->> +{
->> +	struct clk_branch *br = to_clk_branch(hw);
->> +	u32 val;
->> +	int count = 200;
->> +
->> +	regmap_update_bits(br->clkr.regmap, br->mem_enable_reg,
->> +			br->mem_enable_ack_bit, br->mem_enable_ack_bit);
->> +
->> +	regmap_read(br->clkr.regmap, br->mem_ack_reg, &val);
->> +
->> +	while (count-- > 0) {
->> +		if (val & br->mem_enable_ack_bit)
->> +			return clk_branch2_enable(hw);
->> +		udelay(1);
->> +		regmap_read(br->clkr.regmap, br->mem_ack_reg, &val);
->> +	}
-> readl_poll_timeout?
-> 
+Today, only stromer PLL uses determine rate, but perhaps all of them
+should.
 
-Sure, will check and use this.
+I would not at all be surprised if many otherwise inexplicable bugs
+went away with that change.
 
-Thanks,
-Imran
-
-> Konrad
+Konrad
