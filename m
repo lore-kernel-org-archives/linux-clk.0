@@ -2,174 +2,408 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38A0FEB8FB8
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Sep 2023 10:06:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2959EB8FA5
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Sep 2023 10:26:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232136AbjIFKGe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Sep 2023 06:06:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50604 "EHLO
+        id S238847AbjIFK0c (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Sep 2023 06:26:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238568AbjIFKGc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Sep 2023 06:06:32 -0400
-Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01on2103.outbound.protection.outlook.com [40.107.114.103])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E50F11986;
-        Wed,  6 Sep 2023 03:05:54 -0700 (PDT)
+        with ESMTP id S238923AbjIFK0b (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Sep 2023 06:26:31 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4016A10F9;
+        Wed,  6 Sep 2023 03:26:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1693995984; x=1725531984;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=WMhnAR1sbMmFu0U79lTBLHtF+yfuj4+7qrkTt5Ldtpg=;
+  b=YZa+YDLDhdUA7bZip8fMVO4maHI1W3J+wFkykV6tQqJ2o2tjXMKJTQun
+   N7/02s2mm8MFxHcFuaWt7mqlLOWZCbdvLQDbO5LHsqpxLpX/HvnzVKt1V
+   YXxc0yA8ESBZmi2PqYtJs3RY4/Wiry+dHlspx2vzCMRyS5TxQ3zryPbMz
+   j/18hjhRhXVG6MimXQCfAEk/xadVK4jrjgpV7AGqOC3QHY6WP32bX/orA
+   1DF1CeE8rYxo0sIYBZY0EC3XGuN5xlXcFjnK1SaB9d6a3Og4kO0Ytywji
+   RSPrEwabMBdtYfTiw3j2oq2leIEZGwBHTPNZI1umCVRGbN9+o2/GMUb9t
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10824"; a="380828955"
+X-IronPort-AV: E=Sophos;i="6.02,231,1688454000"; 
+   d="scan'208";a="380828955"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2023 03:26:22 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10824"; a="884639834"
+X-IronPort-AV: E=Sophos;i="6.02,231,1688454000"; 
+   d="scan'208";a="884639834"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by fmsmga001.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 06 Sep 2023 03:26:11 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.32; Wed, 6 Sep 2023 03:26:20 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.27 via Frontend Transport; Wed, 6 Sep 2023 03:26:20 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.43) by
+ edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.27; Wed, 6 Sep 2023 03:26:19 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=W/ijDuVt47wJ7QaBjXo6fNuuvqXFW33Tps/rqDQCVDoHeQrs5HjqVscne0Fd8QrQTPzFLYjKoxKZk86c98upMpsSsz1yN3ShuV0SXtRWetvGVrB3UwLxm01AlHVEEk4HXNhQGRcXlTH7cspxRDMSaBVkSRACSrO/mf7HElQ7kset9/PcSFm5xMjs8Owupokaf4gH9J/qkjaU01I9+CZ3teyCqPNmdrtWTaiHllufPNberKm1VGSQB6vHJulb/PnC1r81nn3noG7imQqt+wb43wR+7Byi7wiWyrOFALQ+I9PGHdpWHRk6OzAKlZbJy/6U7X01BM8j6CjxAjWHgyKLPQ==
+ b=NHvtfsCcOlZGFcznxZDD6YhwyAUkQ4OJQ1MKCrP7iU7tl1OEA2zVUm9E54EnuQ8Eu0BQ2Ah+f+hdtCMK/uLqkGj6FJUBCSeNPzvS/puya0pXduyuRbCsy0rHQJoPuiSg7snJvbgR96SUEStYd4QkFoGq3n6oTnki4AKNIBCFEHt6d6tUoeMWS3zUNHWIEXci9vPsEI2mCOPbsb2d6wLfP4KcR7GYrHhTGpnbBXrUdziZVnYIBNwB/kjRdqOjXdOAM/QAhT/+0RPUla8bv5eskiErhSRz8t1vNnqyeJgx1kWyJPxmcq0TDe0X1DSQgcuALgr62KOAlpALIKBkv4VSgA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CVQ+5HD9quvDjAVNzhd/zcL5Ag/dzpX9fTAT7ybe6iA=;
- b=H+eybk5ezKRocKjDvNLzH17hdL5pt+b/m7Nfl1nBjF86hDzaeDlJ1qLnFuH+5wz2UZClQ+YA9Hwyyj/ngXrOMsJ0K1GUlS0TYXHH+s0yVzW713VKckKYA/iyHPoerlxjUsu+YhRU6RVDQxzeN0RuRxmI2e+im34YTONPTrReC/ey78N1I37l+ituS3KUvdz2JbWzEnq49D611acHaQ7hh+RssCQXEkC7tZKrNEt4yjLLNBg8XST2vjq3Dnrb3BK4875C7vyMdtPhrDGUZbf79/mn/oXcaj0BnL9VaRnpqwpAXCDL/fgkfw5gIFppnTnPWVnHGJTwmrZ5bNyFnPOKXQ==
+ bh=fuxLw9neIWnPIG4fSJBWdfdL5hAZUmVcwVHzyvRjSfw=;
+ b=QUhy8f2UkNvkE8Vo4643dVfBgdjAaxVRU6zqFbhPk1unz7XiF/Pl0bfebw+9DYMI5UaxK9kmoltS4ae94BOEZOCHS9IZDyCx3rOL9iSQtei9QVbc3Soh+OJplJEdXVaoETofXslxITNRKtpOH17QMU7kiRUvGP6ZjM4TS2hcdpL1UDS+/HjcB7qUZ/N5F568iWJrCGvOyPbAkzI1tJcEGeXFftwa+6cAByvPPSMwUwN5wBVkv8KJm4KIetljk9ke+MYj/Cgaa+hMpY31NJMdnlhSsHQLJzN6Pn3V7DEo8FYf7feIPeM8miuSbod8/Bm+vxzwfuYg6rx9+6GJKatAtA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CVQ+5HD9quvDjAVNzhd/zcL5Ag/dzpX9fTAT7ybe6iA=;
- b=M69ctuSJujhQflhyMc1w+xXrnDVzuEWTUnu3cqbvPCpvQV8oKR9r39hpjEH3IJjzfn4X2yiHQHzdxBwQYqHpMiDJcYpaNWehBFB5XAm+nJeBrbnvxChqIB8ygerAIgjyvTXWDXYsvVr3U86QbBgu9Q4+NzxnbOb7vHaI+mlP20A=
-Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com (2603:1096:604:bb::5)
- by TYAPR01MB5513.jpnprd01.prod.outlook.com (2603:1096:404:803f::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6745.34; Wed, 6 Sep
- 2023 10:05:18 +0000
-Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com
- ([fe80::9d23:32f5:9325:3706]) by OS0PR01MB5922.jpnprd01.prod.outlook.com
- ([fe80::9d23:32f5:9325:3706%5]) with mapi id 15.20.6745.034; Wed, 6 Sep 2023
- 10:05:18 +0000
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from DM6PR11MB4657.namprd11.prod.outlook.com (2603:10b6:5:2a6::7) by
+ DS7PR11MB6246.namprd11.prod.outlook.com (2603:10b6:8:99::15) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6745.34; Wed, 6 Sep 2023 10:26:16 +0000
+Received: from DM6PR11MB4657.namprd11.prod.outlook.com
+ ([fe80::c3cd:b8d0:5231:33a8]) by DM6PR11MB4657.namprd11.prod.outlook.com
+ ([fe80::c3cd:b8d0:5231:33a8%5]) with mapi id 15.20.6745.034; Wed, 6 Sep 2023
+ 10:26:15 +0000
+From:   "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+To:     "Drewek, Wojciech" <wojciech.drewek@intel.com>,
+        "kuba@kernel.org" <kuba@kernel.org>,
+        "jiri@resnulli.us" <jiri@resnulli.us>,
+        "jonathan.lemon@gmail.com" <jonathan.lemon@gmail.com>,
+        "pabeni@redhat.com" <pabeni@redhat.com>,
+        "vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>
+CC:     "bvanassche@acm.org" <bvanassche@acm.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
         "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: RE: [PATCH v5 0/4] Fix Versa3 clock mapping
-Thread-Topic: [PATCH v5 0/4] Fix Versa3 clock mapping
-Thread-Index: AQHZ1nh+NHF2xlaW+kizb3Zp4n0aULANpgwg
-Date:   Wed, 6 Sep 2023 10:05:18 +0000
-Message-ID: <OS0PR01MB59222FB9C553696FA8C2321086EFA@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-References: <20230824104812.147775-1-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20230824104812.147775-1-biju.das.jz@bp.renesas.com>
-Accept-Language: en-GB, en-US
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [Intel-wired-lan] [PATCH net-next 3/4] dpll: netlink/core: add
+ support for pin-dpll signal phase offset/adjust
+Thread-Topic: [Intel-wired-lan] [PATCH net-next 3/4] dpll: netlink/core: add
+ support for pin-dpll signal phase offset/adjust
+Thread-Index: AQHZ4FDCw1mHMtCJKkeJmPewpnRyjLANcEiAgAAhq0A=
+Date:   Wed, 6 Sep 2023 10:26:15 +0000
+Message-ID: <DM6PR11MB4657497B4D1446F62E3BC5C89BEFA@DM6PR11MB4657.namprd11.prod.outlook.com>
+References: <20230905232610.1403647-1-arkadiusz.kubalewski@intel.com>
+ <20230905232610.1403647-4-arkadiusz.kubalewski@intel.com>
+ <MW4PR11MB577647EAF2272B22A73131D4FDEFA@MW4PR11MB5776.namprd11.prod.outlook.com>
+In-Reply-To: <MW4PR11MB577647EAF2272B22A73131D4FDEFA@MW4PR11MB5776.namprd11.prod.outlook.com>
+Accept-Language: pl-PL, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+ header.d=none;dmarc=none action=none header.from=intel.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OS0PR01MB5922:EE_|TYAPR01MB5513:EE_
-x-ms-office365-filtering-correlation-id: e2e1843f-31da-4261-570c-08dbaec0c611
+x-ms-traffictypediagnostic: DM6PR11MB4657:EE_|DS7PR11MB6246:EE_
+x-ms-office365-filtering-correlation-id: bc99a86c-1ca4-4d97-4979-08dbaec3b369
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 9SGsrC4G+lUln8ewwsMvHX0yhYfHIJ785iNDEdhQKzpIrDSz34ucMwvxuu0jV7QefnRFxipfmAT+qPWDOzc7ovnZ3gtNiCxlpDX1tmW6KM6Z6JHm8br1j97HlxB1MKOUhba7EXr97IW7LUI10TEBmPSheb9Fao9C7ke/A8Ds0Ct7cMTy6hvWRi+186mI9lalCq/Et7vZ/L/gyMJo4BrQ1qp4DWn7FpyYJ8oauQ9wO/ZNLnyF4KzI+CQUhs7JmyXcU/1Qw35DuUISgscRzQ8JrqjVSW1U6m8GvKnlYYgqi5cEL69MajafmzMPVCsba/tdI25TqONM9aLIcoRqEGlObXc2TIN2aCGWQsElKxidOAj+L3yrC305JvuFSjEn+CCp2kxMfG5bNPSU/S1p0SG7cHiz1Fza5pOsUEQUeYOQM3an/aelF5qbt3aNAms4ZyFGKKCtb4gE2phKOLULhe0GMARXj7dcgzL9L3oeSqAw9KGdoUgRSuU8q7XP6souMn5irN6stMyoyBYQPGo+aSG/b/ajCWN3g0JnQ1nJgVlZ/VU3wahxvWmXWmwN0iglIqxBaFjnvxZAVqtA1QP8uJoSlURTeqZ+U3YsP/rZul90WIdc1LQF4VFTVXlr3qUC+c2b
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB5922.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(346002)(396003)(366004)(136003)(376002)(39860400002)(451199024)(186009)(1800799009)(122000001)(6506007)(9686003)(71200400001)(7696005)(33656002)(55016003)(86362001)(38070700005)(38100700002)(107886003)(2906002)(26005)(76116006)(83380400001)(478600001)(110136005)(52536014)(66946007)(8936002)(5660300002)(4326008)(8676002)(316002)(7416002)(54906003)(66446008)(64756008)(66476007)(66556008)(41300700001);DIR:OUT;SFP:1102;
+x-microsoft-antispam-message-info: ZNCJ4XJRa4aV29QO8OH4/rr2dnPdg7u3y6jNx+evwB1RFlaE+KOIStS/DaCY6sSOz8HytTU2WMCYhWfwhik8kOqid37g0KM709UeiSUguscyLMn8iirh/6tu5y4HP/cajG2ckeo1yrY3bhARYQ8fFvgTPXlpxzttUfie/haDT1NKuIFvBnTz4yeVhhIbiOKXEqJ9eyX1IY0BfRZjDc/HKnOgCj0KbJsXwPziOyFiaey27E5bZrIt+Gu9C+pTe2LVULQMgf0fUEaAJzQcK2XQqMU8IeZ+ZzYyWqg9gGeT1aFvMMM3ChZaKZz6ygCAWhxPnGvyO+6+sSGn0AAvD4x1s7u2jckRI5NXezP/sQ6wUhvbZVQOOMbfdmyRnLZF+yOpG5e01OGNrBiWiuyzBIHpuv5rwkL0ZQTDoPLgk4DYzk0CrYDITkoJO8J+aO7m+uOPCAGO2Hi2/Wn1QDkuNslnlllRbhdtoQUcFD20yQxlwHj68V7IwM2tj3p29EuVqL+u/RkBZOPnYT0utGd1NEms5ntcjBfPZB+74hx9vIkK9Zv0QT7a+j7ymCpgItnf/kRILSfdfo9MhmE0rS2hj98UWABzH9c3bjk9ABtXdneGKFI=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR11MB4657.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(136003)(346002)(396003)(39860400002)(376002)(366004)(451199024)(186009)(1800799009)(122000001)(9686003)(53546011)(7696005)(6506007)(71200400001)(52536014)(33656002)(82960400001)(55016003)(38100700002)(38070700005)(86362001)(2906002)(966005)(83380400001)(478600001)(110136005)(66946007)(316002)(76116006)(8676002)(8936002)(4326008)(5660300002)(7416002)(41300700001)(54906003)(66476007)(66446008)(64756008)(66556008);DIR:OUT;SFP:1102;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?KQrcxlvnSEzKT4u96Yyfo3vfb24/WgoP+Y4OS0YWqpDlBntwmJwEQtVEraaA?=
- =?us-ascii?Q?9xuYgRi9lkONvU46oMZLH5lHkueTPO/Yly8Mi91Fl/vpXlnVP8iEZseaTvh9?=
- =?us-ascii?Q?EV2QuNWLifPs6E+kANNA9Vc+mDn+khdgdZy9JwvnmTKN7AuNDQ9u3Q5lfigi?=
- =?us-ascii?Q?fl3LKwAI0ZXXCDheUXo1/QlVtIDWpVwvDGaVscpK18W8bS3qSdoBi1w63UbN?=
- =?us-ascii?Q?W+4uul79V+RcFu1cY12ZLwdOh4u4hZ1p/KL9YpB2EUHOw/4I5VHrd5V3mZfu?=
- =?us-ascii?Q?s64GLQrbIabHvhd9a1/TSK2W76bx0HbQiKyZWhjX1hiyrFLpAbXvgLlbZ368?=
- =?us-ascii?Q?tCcnj5amt7olRh7O3NsNjar0EZ1KsoIf0SXTWxJn3oB+q+tE9jI7F2Q76g+w?=
- =?us-ascii?Q?5GfxGfkE23bM1WvfHe4X7CgG3bwEQ4cCGqcYd3GYRAovsy1+Ny5CNvve8bwg?=
- =?us-ascii?Q?vS16WXrQKig3pOAxNvKhz9H7HrTyFPK16HUlozc66nvu82SD+KZJ5Dn/EMno?=
- =?us-ascii?Q?+/N5aCXgqjiKTh/ykkPSED1xEWaYDYtsaKbwelBE+UhYm8N0dlZmf1Vz/67V?=
- =?us-ascii?Q?EWG/ctgNVzy8R+mzEwirOVK+mKLvp2RaDwFYURSMcKTyvbVUiEgI3tgjI3i3?=
- =?us-ascii?Q?MS1VUTuPLT7l6CGWVyXEONkHkEQht1OmEkni02ceoysN/fYQRZEfYOV2oquH?=
- =?us-ascii?Q?689g9KOMp/taXnV2lgTZAp9wcFbgRcltk4CrYUw1TwnWi0WrA3foR4IEU10M?=
- =?us-ascii?Q?aA9UQQRLFUa2YZBJEesWynFiU7ObtAY5slGMCBDBiGlec0HUxbvoG7L2KcL2?=
- =?us-ascii?Q?9CJ9WJ075cipSIc6QM4TGXu/WnKa4ogVaV1MPWcASpbJ0TZtFUKJXsFV/8Px?=
- =?us-ascii?Q?ZbwtU6E67Tn/9CO1ro/0EcnUta22kHcVGvyPQNhDNnIunbDAb1cRD6vbEBQe?=
- =?us-ascii?Q?r+JmvAJ3J8b+c3DCYhhyHB/IIYqUqJKFeweN2K6SBy0wfogb0OiV8lgKVEkC?=
- =?us-ascii?Q?s51RX9kkxPUQtH/6B2A9pxeIg1WNF+O0gnaQ2baAQwqBUc5nJ3Rhv5JffGWE?=
- =?us-ascii?Q?FnVnMIRaTm2MvXVMNDBs7QEKIFDj2p2Kk5CgtxI/5NAqHyA4CQk0VE+BLMGs?=
- =?us-ascii?Q?80AegT8p1yqgBDU2gtPseXF+KCaUQvISdh4bokQCuhqskmWKpVDdqmVcfYS6?=
- =?us-ascii?Q?eo+l/0ZSnCC2c4Gnn3JNPadxtcp4HPSFTl0A0+lSIc8jGy8Si/Jt3G7HSozf?=
- =?us-ascii?Q?Hf24VQZOpgzmqVmRKgxQE1rqnJFb7FRAPdIm++v+oI2Rgq5ezAheAMPKMLRD?=
- =?us-ascii?Q?Rq9Vla9pCHbutSRnu4xA8cHhHcypmnYsF+/mCq3bqHPUyDCeoI7f80owGFs+?=
- =?us-ascii?Q?nv9WbdwkeVRFsKlXDtsbRWgrmwtL0PyImw4fHEOCEndxzM+ZXlaDEN9ZCFoO?=
- =?us-ascii?Q?ZOmESM6xuHNY8G9NdxZ8e732wK9PXoh9Ps3aFgjLGev5OwuC8mER0mMekgdD?=
- =?us-ascii?Q?lDV3MgERGnlMjyoQ4VkyTYEuOg1/hzVaWX0hnLZfGp8X4AkUTvVJVg1mBCaC?=
- =?us-ascii?Q?8rybv5ZEB5UZ/s6AaCr9SoUl2G3CkK3jDlprzYQ2uuuNUd3jEjKgVBf6vXgz?=
- =?us-ascii?Q?ug=3D=3D?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?osmYYq5bZzNUfYPKMK689rhHHdwc+fkJ64BGEW4qcOS2N68st42J6qmNg8C1?=
+ =?us-ascii?Q?Z+sPL+9FayNwda/+n+HMt6FeSPzwbtWHNSOPAJMZZnSDV8OLnZfNQQ/ob8xy?=
+ =?us-ascii?Q?Uqc1EpIzT88bUuSfjspzeq3L81BjRg6ngiLeTG6HfmHHHZXazfCacAt8d/3h?=
+ =?us-ascii?Q?s+cFIZ4cHIVVDKfuQR9pMWwMG49coYbaLr6XWUIFob7t9BBsI5PdtTmOJUrL?=
+ =?us-ascii?Q?HKqWLAccc7LGtW7YH0yLvlRiyhWtTONcEnoHen+nbMMWRLjO/B56hjMSkBWW?=
+ =?us-ascii?Q?XPY9pJTa0/hOCUEoGq01brdNptQ7KrMMmfMpmoEIqW+KZwXeumuPvRO/rV4i?=
+ =?us-ascii?Q?djILAt6+gy6dS3DlNEZc5kGD45Xh4CGlV2Z4/8CczLTvfUtB+POwiXLSQbU0?=
+ =?us-ascii?Q?S/eXDfdXGButRhzed2zkCI7g18TyyhnVOnBrpsg4JT9/OTlMYp4nbtBk07es?=
+ =?us-ascii?Q?Q85MlcAGOVh+UfC6aUxsX4csobtUsT/SfBUa9NBPFO5AN6jQ5gJe3kjxI775?=
+ =?us-ascii?Q?4jU8zFGcqdNfQUPNpu3xuJlJQIE6AZ+nkxtq6nvpZLwH710/a9g/q5EUtKP6?=
+ =?us-ascii?Q?KWkVI9aO3cDIcI1ouXA2NdLDGeBY/ZUFMzOG7PVQuzVOghKL2qGcLakyIw44?=
+ =?us-ascii?Q?5No6EZ7Gk2G75O5fubHGGVaVLt7POWodJ+3tY+GpnSXxj7I/FTSlk8Xdln3V?=
+ =?us-ascii?Q?FX2EJx9xw/ph1LE8RVR07pPzOBMTxHK7YMxRpt7JZMtR4ruKVNusBQwcxDOf?=
+ =?us-ascii?Q?Rdwv8rxLaYcwDOuOCCEaKjVGPsYkwEVRuzgloZSQ5kQzs8k6b+oGfz60f4C7?=
+ =?us-ascii?Q?x0pkqrT00Uc3s2kbEMonxfQJ/MMVWNOm6oi9r9EDMn3gI+JFBvlub4T7X4Nm?=
+ =?us-ascii?Q?ll034kcBRxCg3IRajlluOatuOTh5PKN+FKMU9xAWGG3i2/QSkLQfpdEYGFhL?=
+ =?us-ascii?Q?7T41AMm7ATFWl3Ht3zdUI7r2et2hVcavzOXlMNtPlFeffWWxG/ImtYEt38WK?=
+ =?us-ascii?Q?FpDI/uaDwJy2/UINgsdpxEEsisXkCsLXNoBP0k71pj5ZmrEQe1SGcRuSur6K?=
+ =?us-ascii?Q?Etpl/SfOc30XKRauTXkjh6qfNuyO+uBZh6odPOjI8ZhFhqnkecyM0LXsSdG/?=
+ =?us-ascii?Q?3wbt/XlS0kQIyVGDkHvqJMnxpRnxvYviGqjJrcnHCiZCM4a/mEXEE5Zoev2S?=
+ =?us-ascii?Q?i24icFhbhu+ia4n60CUu+gJKlkSYis0J+Sibz6VgkkyQTos+oZvtKMIypz5C?=
+ =?us-ascii?Q?wE9q6b4EhY8YTo2KNDoVCByLtvmo/auOXKhHryFhUiaOQmT/87v0VcgYxaAR?=
+ =?us-ascii?Q?AUvVJKbJtayv792rdt7Qr0T1gwSSGotcdu8hbKakF7elIt1n7iOYUJYT29H6?=
+ =?us-ascii?Q?bJz3W7bLnaup6gfiYq9dQmEZmtA0FRhWEiuRBt2zVWIRb/foaLgor81WoUiI?=
+ =?us-ascii?Q?3yRKBKS48hnekyG0zycJuv5ARthLlueSAtpKE8oVE1rqDy7xxT1fS2hnFdlL?=
+ =?us-ascii?Q?a8AIyfTDmywMLTCpGiPbW79ImiFhr10z5TiZQiF7fpQ2bAdTL4herSWqZ2wO?=
+ =?us-ascii?Q?wJzWls/L4kyW7EMfw9FEi7hSflpI0lQMIHf7gVfygf2QDXjGGSTOFfVENUi1?=
+ =?us-ascii?Q?+RC05syHjvtXuSQghJS7J5FP8yO97p8IdK/1JjQpHcdDK2kTHW257vMXTXUN?=
+ =?us-ascii?Q?NZsJ3A=3D=3D?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB5922.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e2e1843f-31da-4261-570c-08dbaec0c611
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Sep 2023 10:05:18.3006
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR11MB4657.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bc99a86c-1ca4-4d97-4979-08dbaec3b369
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Sep 2023 10:26:15.4907
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: HasXJ1MVXMmRy3yc5hHfnpkFtTZWEmxhQ5r+JrhKO42KnLaxBhdHhFWJJnsv8Zp7qUMMGg2x1fMUfCg56T1d5lj1XMH+vM38jlIF+Q+ZScY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB5513
+X-MS-Exchange-CrossTenant-userprincipalname: YbAYrgd2iFGn7e7HGx3XjSsiJbKH9/yvVhVjji+v7rMcO1Z75/P91OMdd5BvVSSjzWeadHceKWPseLrwpxyf4fF9tfvqf/xo17f/32VSgEI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB6246
+X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi All,
+>From: Drewek, Wojciech <wojciech.drewek@intel.com>
+>Sent: Wednesday, September 6, 2023 10:02 AM
+>
+>> -----Original Message-----
+>> From: Intel-wired-lan <intel-wired-lan-bounces@osuosl.org> On Behalf Of
+>> Arkadiusz Kubalewski
+>> Sent: Wednesday, September 6, 2023 1:26 AM
+>> To: kuba@kernel.org; jiri@resnulli.us; jonathan.lemon@gmail.com;
+>> pabeni@redhat.com; vadim.fedorenko@linux.dev
+>> Cc: bvanassche@acm.org; netdev@vger.kernel.org; intel-wired-
+>> lan@lists.osuosl.org; linux-clk@vger.kernel.org; linux-arm-
+>> kernel@lists.infradead.org
+>> Subject: [Intel-wired-lan] [PATCH net-next 3/4] dpll: netlink/core: add
+>> support
+>> for pin-dpll signal phase offset/adjust
+>>
+>> Add callback ops for pin-dpll phase measurment.
+>> Add callback for pin signal phase adjustment.
+>> Add min and max phase adjustment values to pin proprties.
+>> Invoke callbacks in dpll_netlink.c when filling the pin details to
+>> provide user with phase related attribute values.
+>>
+>> Signed-off-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+>> ---
+>>  drivers/dpll/dpll_netlink.c | 99
+>> ++++++++++++++++++++++++++++++++++++-
+>>  include/linux/dpll.h        | 18 +++++++
+>>  2 files changed, 116 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/dpll/dpll_netlink.c b/drivers/dpll/dpll_netlink.c
+>> index 764437a0661b..548517d9ca4c 100644
+>> --- a/drivers/dpll/dpll_netlink.c
+>> +++ b/drivers/dpll/dpll_netlink.c
+>> @@ -212,6 +212,53 @@ dpll_msg_add_pin_direction(struct sk_buff *msg,
+>> struct dpll_pin *pin,
+>>  	return 0;
+>>  }
+>>
+>> +static int
+>> +dpll_msg_add_pin_phase_adjust(struct sk_buff *msg, struct dpll_pin *pin=
+,
+>> +			      struct dpll_pin_ref *ref,
+>> +			      struct netlink_ext_ack *extack)
+>> +{
+>> +	const struct dpll_pin_ops *ops =3D dpll_pin_ops(ref);
+>> +	struct dpll_device *dpll =3D ref->dpll;
+>> +	s32 phase_adjust;
+>> +	int ret;
+>> +
+>> +	if (!ops->phase_adjust_get)
+>> +		return 0;
+>
+>Why 0 is returned here? If it's intended, I would put a comment stating
+>why.
+>Same thing in dpll_msg_add_phase_offset.
 
-Gentle ping.
+The callback is optional, any driver implementing dpll interface doesn't
+have to implement this callback and it must not be seen as an error.
+Callback that are required are pointed out in documentation:
+Documentation/driver-api/dpll.rst
 
-Cheers,
-Biju
+All the optional callbacks are returning this way, I don't see a point
+in adding extra comment here.
 
-> Subject: [PATCH v5 0/4] Fix Versa3 clock mapping
->=20
-> According to Table 3. ("Output Source") in the 5P35023 datasheet, the
-> output clock mapping should be 0=3DREF, 1=3DSE1, 2=3DSE2, 3=3DSE3, 4=3DDI=
-FF1,
-> 5=3DDIFF2. But the code uses inverse.
->=20
-> This patch series aims to document clock-output-names in bindings and fix
-> the mapping in driver.
->=20
-> Also added a fix for 64 by 64 division.
->=20
-> v4->v5:
->  * Added description for #clock-cells property for clock mapping.
->  * Updated commit header and description to reflect this change.
->  * Dropped fixes tag.
->  * Retained Ack tag from Conor and Krzysztof as it is trivial change.
-> v3->v4:
->  * Dropped clock-output-names as there is no validation for it and people
->    can get it wrong.
->  * Updated commit header, description and example to reflect this change
->  * Retained Ack tag from Conor and Krzysztof as it is trivial change.
->  * Used clamped value for rate calculation in vc3_pll_round_rate().
-> v2->v3:
->  * Dropped dts patch and added fix for 64 byte division to this patch
->    series.
->  * Added Rb tag from Geert for patch#3
->  * Added a patch to make vc3_clk_mux enum values depend on vc3_clk enum
->    values.
-> v1->v2:
->  * Updated binding commit description to make it clear it fixes
->    "assigned-clock-rates" in the example based on 5P35023 datasheet.
->=20
-> Biju Das (4):
->   dt-bindings: clock: versaclock3: Add description for #clock-cells
->     property
->   clk: vc3: Fix 64 by 64 division
->   clk: vc3: Fix output clock mapping
->   clk: vc3: Make vc3_clk_mux enum values based on vc3_clk enum values
->=20
->  .../bindings/clock/renesas,5p35023.yaml       | 11 ++-
->  drivers/clk/clk-versaclock3.c                 | 81 +++++++++----------
->  2 files changed, 47 insertions(+), 45 deletions(-)
->=20
-> --
-> 2.25.1
+Thank you!
+Arkadiusz
 
+>
+>> +	ret =3D ops->phase_adjust_get(pin, dpll_pin_on_dpll_priv(dpll, pin),
+>> +				    dpll, dpll_priv(dpll),
+>> +				    &phase_adjust, extack);
+>> +	if (ret)
+>> +		return ret;
+>> +	if (nla_put_s32(msg, DPLL_A_PIN_PHASE_ADJUST, phase_adjust))
+>> +		return -EMSGSIZE;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int
+>> +dpll_msg_add_phase_offset(struct sk_buff *msg, struct dpll_pin *pin,
+>> +			  struct dpll_pin_ref *ref,
+>> +			  struct netlink_ext_ack *extack)
+>> +{
+>> +	const struct dpll_pin_ops *ops =3D dpll_pin_ops(ref);
+>> +	struct dpll_device *dpll =3D ref->dpll;
+>> +	s64 phase_offset;
+>> +	int ret;
+>> +
+>> +	if (!ops->phase_offset_get)
+>> +		return 0;
+>> +	ret =3D ops->phase_offset_get(pin, dpll_pin_on_dpll_priv(dpll, pin),
+>> +				    dpll, dpll_priv(dpll), &phase_offset,
+>> +				    extack);
+>> +	if (ret)
+>> +		return ret;
+>> +	if (nla_put_64bit(msg, DPLL_A_PIN_PHASE_OFFSET,
+>> sizeof(phase_offset),
+>> +			  &phase_offset, DPLL_A_PIN_PAD))
+>> +		return -EMSGSIZE;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>  static int
+>>  dpll_msg_add_pin_freq(struct sk_buff *msg, struct dpll_pin *pin,
+>>  		      struct dpll_pin_ref *ref, struct netlink_ext_ack *extack)
+>> @@ -330,6 +377,9 @@ dpll_msg_add_pin_dplls(struct sk_buff *msg, struct
+>> dpll_pin *pin,
+>>  		if (ret)
+>>  			goto nest_cancel;
+>>  		ret =3D dpll_msg_add_pin_direction(msg, pin, ref, extack);
+>> +		if (ret)
+>> +			goto nest_cancel;
+>> +		ret =3D dpll_msg_add_phase_offset(msg, pin, ref, extack);
+>>  		if (ret)
+>>  			goto nest_cancel;
+>>  		nla_nest_end(msg, attr);
+>> @@ -377,6 +427,15 @@ dpll_cmd_pin_get_one(struct sk_buff *msg, struct
+>> dpll_pin *pin,
+>>  	if (nla_put_u32(msg, DPLL_A_PIN_CAPABILITIES, prop->capabilities))
+>>  		return -EMSGSIZE;
+>>  	ret =3D dpll_msg_add_pin_freq(msg, pin, ref, extack);
+>> +	if (ret)
+>> +		return ret;
+>> +	if (nla_put_s32(msg, DPLL_A_PIN_PHASE_ADJUST_MIN,
+>> +			prop->phase_range.min))
+>> +		return -EMSGSIZE;
+>> +	if (nla_put_s32(msg, DPLL_A_PIN_PHASE_ADJUST_MAX,
+>> +			prop->phase_range.max))
+>> +		return -EMSGSIZE;
+>> +	ret =3D dpll_msg_add_pin_phase_adjust(msg, pin, ref, extack);
+>>  	if (ret)
+>>  		return ret;
+>>  	if (xa_empty(&pin->parent_refs))
+>> @@ -416,7 +475,7 @@ dpll_device_get_one(struct dpll_device *dpll, struct
+>> sk_buff *msg,
+>>  	if (nla_put_u32(msg, DPLL_A_TYPE, dpll->type))
+>>  		return -EMSGSIZE;
+>>
+>> -	return ret;
+>> +	return 0;
+>>  }
+>>
+>>  static int
+>> @@ -705,6 +764,39 @@ dpll_pin_direction_set(struct dpll_pin *pin, struct
+>> dpll_device *dpll,
+>>  	return 0;
+>>  }
+>>
+>> +static int
+>> +dpll_pin_phase_adj_set(struct dpll_pin *pin, struct nlattr
+>> *phase_adj_attr,
+>> +		       struct netlink_ext_ack *extack)
+>> +{
+>> +	struct dpll_pin_ref *ref;
+>> +	unsigned long i;
+>> +	s32 phase_adj;
+>> +	int ret;
+>> +
+>> +	phase_adj =3D nla_get_s32(phase_adj_attr);
+>> +	if (phase_adj > pin->prop->phase_range.max ||
+>> +	    phase_adj < pin->prop->phase_range.min) {
+>> +		NL_SET_ERR_MSG(extack, "phase adjust value not
+>> supported");
+>> +		return -EINVAL;
+>> +	}
+>> +	xa_for_each(&pin->dpll_refs, i, ref) {
+>> +		const struct dpll_pin_ops *ops =3D dpll_pin_ops(ref);
+>> +		struct dpll_device *dpll =3D ref->dpll;
+>> +
+>> +		if (!ops->phase_adjust_set)
+>> +			return -EOPNOTSUPP;
+>> +		ret =3D ops->phase_adjust_set(pin,
+>> +					    dpll_pin_on_dpll_priv(dpll, pin),
+>> +					    dpll, dpll_priv(dpll), phase_adj,
+>> +					    extack);
+>> +		if (ret)
+>> +			return ret;
+>> +	}
+>> +	__dpll_pin_change_ntf(pin);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>  static int
+>>  dpll_pin_parent_device_set(struct dpll_pin *pin, struct nlattr
+>> *parent_nest,
+>>  			   struct netlink_ext_ack *extack)
+>> @@ -793,6 +885,11 @@ dpll_pin_set_from_nlattr(struct dpll_pin *pin,
+>> struct
+>> genl_info *info)
+>>  			if (ret)
+>>  				return ret;
+>>  			break;
+>> +		case DPLL_A_PIN_PHASE_ADJUST:
+>> +			ret =3D dpll_pin_phase_adj_set(pin, a, info->extack);
+>> +			if (ret)
+>> +				return ret;
+>> +			break;
+>>  		case DPLL_A_PIN_PARENT_DEVICE:
+>>  			ret =3D dpll_pin_parent_device_set(pin, a, info->extack);
+>>  			if (ret)
+>> diff --git a/include/linux/dpll.h b/include/linux/dpll.h
+>> index bbc480cd2932..578fc5fa3750 100644
+>> --- a/include/linux/dpll.h
+>> +++ b/include/linux/dpll.h
+>> @@ -68,6 +68,18 @@ struct dpll_pin_ops {
+>>  	int (*prio_set)(const struct dpll_pin *pin, void *pin_priv,
+>>  			const struct dpll_device *dpll, void *dpll_priv,
+>>  			const u32 prio, struct netlink_ext_ack *extack);
+>> +	int (*phase_offset_get)(const struct dpll_pin *pin, void *pin_priv,
+>> +				const struct dpll_device *dpll, void *dpll_priv,
+>> +				s64 *phase_offset,
+>> +				struct netlink_ext_ack *extack);
+>> +	int (*phase_adjust_get)(const struct dpll_pin *pin, void *pin_priv,
+>> +				const struct dpll_device *dpll, void *dpll_priv,
+>> +				s32 *phase_adjust,
+>> +				struct netlink_ext_ack *extack);
+>> +	int (*phase_adjust_set)(const struct dpll_pin *pin, void *pin_priv,
+>> +				const struct dpll_device *dpll, void *dpll_priv,
+>> +				const s32 phase_adjust,
+>> +				struct netlink_ext_ack *extack);
+>>  };
+>>
+>>  struct dpll_pin_frequency {
+>> @@ -91,6 +103,11 @@ struct dpll_pin_frequency {
+>>  #define DPLL_PIN_FREQUENCY_DCF77 \
+>>  	DPLL_PIN_FREQUENCY(DPLL_PIN_FREQUENCY_77_5_KHZ)
+>>
+>> +struct dpll_pin_phase_adjust_range {
+>> +	s32 min;
+>> +	s32 max;
+>> +};
+>> +
+>>  struct dpll_pin_properties {
+>>  	const char *board_label;
+>>  	const char *panel_label;
+>> @@ -99,6 +116,7 @@ struct dpll_pin_properties {
+>>  	unsigned long capabilities;
+>>  	u32 freq_supported_num;
+>>  	struct dpll_pin_frequency *freq_supported;
+>> +	struct dpll_pin_phase_adjust_range phase_range;
+>>  };
+>>
+>>  #if IS_ENABLED(CONFIG_DPLL)
+>> --
+>> 2.38.1
+>>
+>> _______________________________________________
+>> Intel-wired-lan mailing list
+>> Intel-wired-lan@osuosl.org
+>> https://lists.osuosl.org/mailman/listinfo/intel-wired-lan
