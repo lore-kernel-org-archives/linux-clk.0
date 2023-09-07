@@ -2,154 +2,122 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEF3AEC873F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFD04EC8740
 	for <linux-clk@archiver.kernel.org>; Thu,  7 Sep 2023 15:46:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233361AbjIGPqc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Sep 2023 11:46:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36234 "EHLO
+        id S233539AbjIGPqe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Sep 2023 11:46:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344467AbjIGPdI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Sep 2023 11:33:08 -0400
-Received: from mail-oo1-xc36.google.com (mail-oo1-xc36.google.com [IPv6:2607:f8b0:4864:20::c36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F1D91FDE
-        for <linux-clk@vger.kernel.org>; Thu,  7 Sep 2023 08:32:48 -0700 (PDT)
-Received: by mail-oo1-xc36.google.com with SMTP id 006d021491bc7-5739965a482so558639eaf.0
-        for <linux-clk@vger.kernel.org>; Thu, 07 Sep 2023 08:32:48 -0700 (PDT)
+        with ESMTP id S1345267AbjIGPfU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Sep 2023 11:35:20 -0400
+Received: from mail-qt1-x830.google.com (mail-qt1-x830.google.com [IPv6:2607:f8b0:4864:20::830])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34CA019A9
+        for <linux-clk@vger.kernel.org>; Thu,  7 Sep 2023 08:34:48 -0700 (PDT)
+Received: by mail-qt1-x830.google.com with SMTP id d75a77b69052e-41243a67b62so7589031cf.2
+        for <linux-clk@vger.kernel.org>; Thu, 07 Sep 2023 08:34:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694100721; x=1694705521; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EWjc9Tq24L0z9SehMarme94KIq1a0OWmKWnWsMLtL6w=;
-        b=HQLiZXC1eHtCEZwKpEqaVpP9w08cv9t+P/0ZqNlc7W9r3BQCL/XUHY/9viY9YxojB1
-         mVX6V3aRbCf8wJWuzxJ/rmZ/pKPQgOsfpcF5S68sQYLlxf0Hhr95d1B1NZs7TmJJOT84
-         4iLq75vl99RghWyxM8dKIf75sO3OLVxYieOpvm3sNiEMeARfQbtrFsdNh08ix7vhCruw
-         5IgVJ0jDRmfCK/CpI7F9QFM5wPe0O0RvHw2jI0vMa4T0Li5A+smRpAMY8w9RH3fQuTIA
-         9xog3ifdyGM8zDiVxqNk6PDq4E+3BEWWmFWt0xsgbb1mq4hemox98w5eESkDYmV1cYLy
-         QhMw==
+        d=gmail.com; s=20221208; t=1694100861; x=1694705661; darn=vger.kernel.org;
+        h=cc:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=J4f41YsSBkx4jVRvXl4Nds903quY9STr5t2ZITBPCIU=;
+        b=nsMIyEiOaMsnXomT7dWhGFrzfRtEtzoYXfHty3h91rCWI7rflvE+onrs5i3xYe1EoI
+         3oKz0Q0zaIB57Eevc60gSShNQcGVopom2RtjCPF8gqg/CZtTlXn378Kj4lBJblOSidyP
+         6gZoOtBs7T+enTc4YiD3GHPupmU/R9Puq7GMMOSyo/kE7Fj1N10jw0rMqFeiTSvVLOuG
+         obruvCZ2fZS0dkiZN1IboSYLd+U5jvXqs7CvxRyY+YpticTdGURLC7ZeqospMByViHXB
+         2fur6G7QVprDss3RXXXOzWlVIdhbyU7bVLTdubMJl1Kg3yz6iOd/QI1qFJoK5e4k1V5U
+         nt0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1694100721; x=1694705521;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EWjc9Tq24L0z9SehMarme94KIq1a0OWmKWnWsMLtL6w=;
-        b=mH2ht3u7rBuYy5d/B8B8lGsP6QYdvlRTG3m9xRxxz09iTRQyh6pKjcwZH7kENpkt2h
-         vnfTMMNFN2g82DlWIu/wnOil8z1ZcLhuGkXg6H89qB3RrWMBn/NXvJHVnkVpu8FRAKcz
-         oCeiqIB62Cox3el+tdDfcmtS66QpDHvJedFVCIfPINoTiUc4TxJOkd7Fdp2DbZiNWh55
-         t9MsoEjmWsbjwj26Mb/RIDV3jK3BPt46sBZMaXsqTJqV7o8C4W+eiyp8iyzxFrwBtjlt
-         Q/im5PRtuiSNCRgjk3OwKfcdVDVp5/u5JrDxAGfmwpy7inRZdxbwl4HvR6ydDLB9ur0T
-         DTXA==
-X-Gm-Message-State: AOJu0Yy9kFj7kplmsqqiLOocnWlThSWr6LAKLAllrLlYhyxUX3J+HEYY
-        9R8y8G+Q1ZUQr06a5BFt6ihlE4Rq6hcv7uUuec5NEXQQOA58ThH2qy0=
-X-Google-Smtp-Source: AGHT+IEfYqhUFJ1cVabsx1fK7bxKAay+z3MPpC0vnndLwwN0XFbr3Qb0Xl2nmJ3y7ZRnqy/9qAjqB1Ntotany1k2aKs=
-X-Received: by 2002:a25:32cd:0:b0:d78:3b67:ef3 with SMTP id
- y196-20020a2532cd000000b00d783b670ef3mr3182735yby.12.1694095033559; Thu, 07
- Sep 2023 06:57:13 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1694100861; x=1694705661;
+        h=cc:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=J4f41YsSBkx4jVRvXl4Nds903quY9STr5t2ZITBPCIU=;
+        b=BE9BSNaja3T4mrjRRRPELyJPLsOQ098q3kLsb2hVY+Tb8JeUCwNPvNyMjiPqeLYLJr
+         gP08UagGmaZNrXqagO2//fV5zmUhrGsAKnnSHmsbn80EuP4WI/GQ9vgBTbM1iPHJaiFa
+         WAjxR/sxTbCqOAHGfPw+W2k/a53mFy+cv4xFjyBuWEjeu/7fU0SyTNoEbfoG25o87d2C
+         fptPoqM6oBI/rFPUG3vtz5q8+CR79LIvv/DKw4h4jesfRLORcZNa19zxGJX8byUZr2Ey
+         ngJQh46K4J1ueSbiUsDyKqhztr76v5YxMY6A3RAZVmUvl+FnnkHdrLEGKEI7BsLHn/Ih
+         /nVg==
+X-Gm-Message-State: AOJu0YzrwTclNJw8nyKFfoBW+0CEAziixqmjrSV4xuFp68YAIz8PH8Zz
+        Rd8adIazmMz6ZIqwh6H99Okw59rXvafc86OGoM8WVJ0ETvQsbA==
+X-Received: by 2002:ac8:4f0d:0:b0:411:ffe7:ece8 with SMTP id
+ b13-20020ac84f0d000000b00411ffe7ece8mt18686628qte.14.1694096172656; Thu, 07
+ Sep 2023 07:16:12 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1693996662.git.quic_varada@quicinc.com> <558c6b70090ea7220bfb0b6e7d81828025018376.1693996662.git.quic_varada@quicinc.com>
-In-Reply-To: <558c6b70090ea7220bfb0b6e7d81828025018376.1693996662.git.quic_varada@quicinc.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Thu, 7 Sep 2023 16:57:02 +0300
-Message-ID: <CAA8EJprUgcmqFeNeuFgnRkk=XUr8NjNMMzd0y7sVhOnGUnn2qA@mail.gmail.com>
-Subject: Re: [PATCH v1 06/10] cpufreq: qti: Enable cpufreq for ipq53xx
-To:     Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc:     ilia.lin@kernel.org, agross@kernel.org, andersson@kernel.org,
-        konrad.dybcio@linaro.org, rafael@kernel.org,
-        viresh.kumar@linaro.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        quic_kathirav@quicinc.com, linux-pm@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20230822134849.3352329-1-alessandro.carminati@gmail.com>
+In-Reply-To: <20230822134849.3352329-1-alessandro.carminati@gmail.com>
+From:   Alessandro Carminati <alessandro.carminati@gmail.com>
+Date:   Thu, 7 Sep 2023 16:15:36 +0200
+Message-ID: <CAPp5cGTshQJ3aLeLqv=CbaVeg9GnK_k9nsoaWrBKs1dcXzNZow@mail.gmail.com>
+Subject: Re: [PATCH] Sanitize possible_parent_show to Handle Return Value of of_clk_get_parent_name
+Cc:     Philip Daly <pdaly@redhat.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 7 Sept 2023 at 08:23, Varadarajan Narayanan
-<quic_varada@quicinc.com> wrote:
+this is a gentle ping
+
+thank you
+Alessandro Carminati
+
+Il giorno mar 22 ago 2023 alle ore 15:49 Alessandro Carminati
+<alessandro.carminati@gmail.com> ha scritto:
 >
-> IPQ53xx have different OPPs available for the CPU based on
-> SoC variant. This can be determined through use of an eFuse
-> register present in the silicon.
+> In the possible_parent_show function, ensure proper handling of the return
+> value from of_clk_get_parent_name to prevent potential issues arising from
+> a NULL return.
+> The current implementation invokes seq_puts directly on the result of
+> of_clk_get_parent_name without verifying the return value, which can lead
+> to kernel panic if the function returns NULL.
 >
-> Added support for ipq53xx on nvmem driver which helps to
-> determine OPPs at runtime based on the eFuse register which
-> has the CPU frequency limits. opp-supported-hw dt binding
-> can be used to indicate the available OPPs for each limit.
+> This patch addresses the concern by introducing a check on the return
+> value of of_clk_get_parent_name. If the return value is not NULL, the
+> function proceeds to call seq_puts, providing the returned value as
+> argument.
+> However, if of_clk_get_parent_name returns NULL, the function provides a
+> static string as argument, avoiding the panic.
 >
-> nvmem driver also creates the "cpufreq-dt" platform_device after
-> passing the version matching data to the OPP framework so that the
-> cpufreq-dt handles the actual cpufreq implementation.
->
-> Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> Reported-by: Philip Daly <pdaly@redhat.com>
+> Signed-off-by: Alessandro Carminati (Red Hat) <alessandro.carminati@gmail.com>
 > ---
->  drivers/cpufreq/cpufreq-dt-platdev.c |  1 +
->  drivers/cpufreq/qcom-cpufreq-nvmem.c | 15 +++++++++++++++
->  2 files changed, 16 insertions(+)
+>  drivers/clk/clk.c | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
 >
-> diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufr=
-eq-dt-platdev.c
-> index 02ec58a..f0c45d4 100644
-> --- a/drivers/cpufreq/cpufreq-dt-platdev.c
-> +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-> @@ -178,6 +178,7 @@ static const struct of_device_id blocklist[] __initco=
-nst =3D {
->         { .compatible =3D "ti,am625", },
->         { .compatible =3D "ti,am62a7", },
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index c249f9791ae8..ab999644e185 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -3416,6 +3416,7 @@ static void possible_parent_show(struct seq_file *s, struct clk_core *core,
+>                                  unsigned int i, char terminator)
+>  {
+>         struct clk_core *parent;
+> +       const char *tmp;
 >
-> +       { .compatible =3D "qcom,ipq5332", },
->         { .compatible =3D "qcom,ipq8064", },
->         { .compatible =3D "qcom,apq8064", },
->         { .compatible =3D "qcom,msm8974", },
-> diff --git a/drivers/cpufreq/qcom-cpufreq-nvmem.c b/drivers/cpufreq/qcom-=
-cpufreq-nvmem.c
-> index 84d7033..49d21b0 100644
-> --- a/drivers/cpufreq/qcom-cpufreq-nvmem.c
-> +++ b/drivers/cpufreq/qcom-cpufreq-nvmem.c
-> @@ -146,6 +146,20 @@ static int qcom_cpufreq_kryo_name_version(struct dev=
-ice *cpu_dev,
->                 return PTR_ERR(speedbin);
+>         /*
+>          * Go through the following options to fetch a parent's name.
+> @@ -3436,12 +3437,12 @@ static void possible_parent_show(struct seq_file *s, struct clk_core *core,
+>                 seq_puts(s, core->parents[i].name);
+>         else if (core->parents[i].fw_name)
+>                 seq_printf(s, "<%s>(fw)", core->parents[i].fw_name);
+> -       else if (core->parents[i].index >= 0)
+> -               seq_puts(s,
+> -                        of_clk_get_parent_name(core->of_node,
+> -                                               core->parents[i].index));
+> -       else
+> +       else if (core->parents[i].index >= 0) {
+> +               tmp = of_clk_get_parent_name(core->of_node, core->parents[i].index);
+> +               seq_puts(s, tmp ? tmp : "(none)");
+> +       } else {
+>                 seq_puts(s, "(missing)");
+> +       }
 >
->         switch (msm_id) {
-> +       case QCOM_ID_IPQ5332:
-> +       case QCOM_ID_IPQ5322:
-> +       case QCOM_ID_IPQ5312:
-> +       case QCOM_ID_IPQ5302:
-> +       case QCOM_ID_IPQ5300:
-
-msm8996 was bad enough. Can we use compat strings instead? Or make
-this a default for qcom_cpufreq_kryo_name_version()?
-
-> +               /* Fuse Value    Freq    BIT to set
-> +                * ---------------------------------
-> +                *   2=E2=80=99b00     No Limit     BIT(0)
-> +                *   2=E2=80=99b01     1.5 GHz      BIT(1)
-> +                *   2=E2=80=99b10     1.2 Ghz      BIT(2)
-> +                *   2=E2=80=99b11     1.0 GHz      BIT(3)
-> +                */
-> +               drv->versions =3D 1 << (unsigned int)(*speedbin);
-> +               break;
->         case QCOM_ID_MSM8996:
->         case QCOM_ID_APQ8096:
->                 drv->versions =3D 1 << (unsigned int)(*speedbin);
-> @@ -359,6 +373,7 @@ static const struct of_device_id qcom_cpufreq_match_l=
-ist[] __initconst =3D {
->         { .compatible =3D "qcom,apq8096", .data =3D &match_data_kryo },
->         { .compatible =3D "qcom,msm8996", .data =3D &match_data_kryo },
->         { .compatible =3D "qcom,qcs404", .data =3D &match_data_qcs404 },
-> +       { .compatible =3D "qcom,ipq5332", .data =3D &match_data_kryo },
->         { .compatible =3D "qcom,ipq8064", .data =3D &match_data_krait },
->         { .compatible =3D "qcom,apq8064", .data =3D &match_data_krait },
->         { .compatible =3D "qcom,msm8974", .data =3D &match_data_krait },
+>         seq_putc(s, terminator);
+>  }
 > --
-> 2.7.4
+> 2.34.1
 >
-
-
---=20
-With best wishes
-Dmitry
