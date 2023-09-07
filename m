@@ -2,155 +2,188 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F6A0EC873F
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Sep 2023 15:46:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 927EBEC8742
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Sep 2023 15:46:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230061AbjIGPqZ convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Sep 2023 11:46:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35042 "EHLO
+        id S232256AbjIGPq3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Sep 2023 11:46:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343654AbjIGPao (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Sep 2023 11:30:44 -0400
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7C1F1FDA;
-        Thu,  7 Sep 2023 08:30:17 -0700 (PDT)
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-579de633419so11006347b3.3;
-        Thu, 07 Sep 2023 08:30:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1694100535; x=1694705335;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IGdCm3ngn4AXhff3BrHDNP55N2x9eM/v8Yjzq97ZIQw=;
-        b=HsomnAYn+M1bNtm/pmGN7agVOcmvQSz0sWdLVWXaptUlkeo4RHXI0Y/A+Z/px1qLjN
-         B0PN/jvxCpewAtLWuRsh+rm9I2BdclBFfYh/BHwAsgjRfW4mdE8P53PEHXjsNYaMJPAW
-         a/aDbCcpviTx6lk1Sdn0qp6HPdlKggdggzkuE5JN1CwC+IjUsaX5+Jej2KMpzOt8eThE
-         j9P4OwEeT6jTHOmvGtefZuCNcRir/xVFD0OgRZyEg882Mzssi+0sljV82lbWQ/qgSapN
-         gsSqq2Xc/9MKPQHMLJ8+tAPZHRYyn9n784H+1+R1i1JclBd7Y02eKDSeX0Bv5abgEk2c
-         Qg9A==
-X-Gm-Message-State: AOJu0Yxcyi51LO0z+5uc2zsIRvjRH/rb07kT3luiXCi3VXcki7ljSMVj
-        ndKuWqt4rSlfkYgavkf2cPXTOqSASDpAhA==
-X-Google-Smtp-Source: AGHT+IH1Kt2dgZnQZNqAjoXPvUTJYHzDfERDgvSAz1KAbJeKLaG0Do5KNmQM/G7Rb3Kfp2OGJUcsMA==
-X-Received: by 2002:a25:778b:0:b0:d78:1360:a484 with SMTP id s133-20020a25778b000000b00d781360a484mr18585654ybc.57.1694081288608;
-        Thu, 07 Sep 2023 03:08:08 -0700 (PDT)
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com. [209.85.219.182])
-        by smtp.gmail.com with ESMTPSA id e10-20020a25690a000000b00d7ba4c5e31fsm3733615ybc.39.2023.09.07.03.08.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Sep 2023 03:08:08 -0700 (PDT)
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-d7e87b4a0f2so739522276.0;
-        Thu, 07 Sep 2023 03:08:08 -0700 (PDT)
-X-Received: by 2002:a25:9387:0:b0:d7a:def7:b96a with SMTP id
- a7-20020a259387000000b00d7adef7b96amr16752501ybm.53.1694081288073; Thu, 07
- Sep 2023 03:08:08 -0700 (PDT)
+        with ESMTP id S245334AbjIGP2i (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Sep 2023 11:28:38 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1B381BF0;
+        Thu,  7 Sep 2023 08:28:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1694100491; x=1725636491;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=9RBRiFY3vB7fzj4b5KuQkX2LlrLmbM4nRtsKuZEBuqA=;
+  b=Pbp6pS9KiO5G187GzHhSRR93LfGSTGeKRIMqVZmOAXhaEKXg3qKCrvfV
+   TWQ4JEcEQuy+Zmamcpu0dP7j5/7HnCYaj+TvtFacnqhjNvqmLdz3A4yXr
+   xPhCyUzGGllpjzTI0cn+w9XTFEmaRP9v1QxierxYANojVpXF2lWUCKMRs
+   sbevC8o8RbRfPmK3YUJdhaHhlbgfFjSfRSq7JVRHcAUmKJo+zHtkwLxv7
+   BXwJ50SS2NsLY0lLB/4KjKQFpTma8A4xBWCvMrwqmpY/aLuW8WPPHitBr
+   jhDTlYNdNv3vGz3UAbjFuVotzTAG4TkeE74EbQNe17mp1O1EQjAOOfk/q
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10825"; a="381084933"
+X-IronPort-AV: E=Sophos;i="6.02,234,1688454000"; 
+   d="scan'208";a="381084933"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2023 01:52:01 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10825"; a="807440610"
+X-IronPort-AV: E=Sophos;i="6.02,234,1688454000"; 
+   d="scan'208";a="807440610"
+Received: from lkp-server01.sh.intel.com (HELO 59b3c6e06877) ([10.239.97.150])
+  by fmsmga008.fm.intel.com with ESMTP; 07 Sep 2023 01:51:56 -0700
+Received: from kbuild by 59b3c6e06877 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1qeAjy-00013h-2e;
+        Thu, 07 Sep 2023 08:51:54 +0000
+Date:   Thu, 7 Sep 2023 16:51:39 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Varadarajan Narayanan <quic_varada@quicinc.com>,
+        ilia.lin@kernel.org, agross@kernel.org, andersson@kernel.org,
+        konrad.dybcio@linaro.org, rafael@kernel.org,
+        viresh.kumar@linaro.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        quic_kathirav@quicinc.com, linux-pm@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+        Varadarajan Narayanan <quic_varada@quicinc.com>
+Subject: Re: [PATCH v1 04/10] clk: qcom: apss-ipq6018: ipq5332: add safe
+ source switch for a53pll
+Message-ID: <202309071656.f4IVOEO6-lkp@intel.com>
+References: <5e3c29df2b42cceb8072b00546a78e1b99b2d374.1693996662.git.quic_varada@quicinc.com>
 MIME-Version: 1.0
-References: <20230905140008.136263-1-aymeric.aillet@iot.bzh>
-In-Reply-To: <20230905140008.136263-1-aymeric.aillet@iot.bzh>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 7 Sep 2023 12:07:56 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdX4-Bd8EvFE2U6YOL01LxAFg+uCjoD-sodXNgWuD9U5rg@mail.gmail.com>
-Message-ID: <CAMuHMdX4-Bd8EvFE2U6YOL01LxAFg+uCjoD-sodXNgWuD9U5rg@mail.gmail.com>
-Subject: Re: [PATCH 1/1] clk: renesas: Mark concerned clocks as "ignore_unused"
-To:     Aymeric Aillet <aymeric.aillet@iot.bzh>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5e3c29df2b42cceb8072b00546a78e1b99b2d374.1693996662.git.quic_varada@quicinc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Aymeric,
+Hi Varadarajan,
 
-On Tue, Sep 5, 2023 at 4:00 PM Aymeric Aillet <aymeric.aillet@iot.bzh> wrote:
-> In order to avoid Linux from gating clocks that are used by
-> another OS running at the same time (eg. RTOS), we are adding
-> the "CLK_IGNORE_UNUSED" flag to the concerned clocks.
->
-> As for now, list of clocks to be flagged have been completed
-> depending of features that are supported by Renesas SoCs/boards
-> port in Zephyr RTOS.
->
-> Signed-off-by: Aymeric Aillet <aymeric.aillet@iot.bzh>
+kernel test robot noticed the following build errors:
 
-Thanks for your patch!
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.5 next-20230907]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> --- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-> @@ -288,6 +288,18 @@ static struct mssr_mod_clk r8a7795_mod_clks[] __initdata = {
->         DEF_MOD("scu-src0",             1031,   MOD_CLK_ID(1017)),
->  };
->
-> +static const unsigned int r8a7795_ignore_unused_mod_clks[] __initconst = {
-> +       MOD_CLK_ID(206),        /* SCIF1 */
-> +       MOD_CLK_ID(303),        /* CMT0 */
-> +       MOD_CLK_ID(310),        /* SCIF2 */
-> +       MOD_CLK_ID(523),        /* PWM */
-> +       MOD_CLK_ID(906),        /* GPIO6 */
-> +       MOD_CLK_ID(907),        /* GPIO5 */
-> +       MOD_CLK_ID(916),        /* CAN0 */
-> +       MOD_CLK_ID(929),        /* I2C2 */
-> +       MOD_CLK_ID(927),        /* I2C4 */
+url:    https://github.com/intel-lab-lkp/linux/commits/Varadarajan-Narayanan/clk-qcom-clk-alpha-pll-introduce-stromer-plus-ops/20230907-132537
+base:   linus/master
+patch link:    https://lore.kernel.org/r/5e3c29df2b42cceb8072b00546a78e1b99b2d374.1693996662.git.quic_varada%40quicinc.com
+patch subject: [PATCH v1 04/10] clk: qcom: apss-ipq6018: ipq5332: add safe source switch for a53pll
+config: s390-randconfig-r031-20230907 (https://download.01.org/0day-ci/archive/20230907/202309071656.f4IVOEO6-lkp@intel.com/config)
+compiler: clang version 16.0.4 (https://github.com/llvm/llvm-project.git ae42196bc493ffe877a7e3dff8be32035dea4d07)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20230907/202309071656.f4IVOEO6-lkp@intel.com/reproduce)
 
-All of this is board-specific, so it cannot be handled in the SoC
-clock driver.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202309071656.f4IVOEO6-lkp@intel.com/
 
-E.g. scif2 is the main serial console for Linux on the Salvator-X(S)
-and ULCB development
-boards.
-Pwm, gpio6, gpio5, i2c2, and i2c4 are used on Salvator-X(S).
-I2c2 and i2c4 are also used on ULCB.
-Scif1 and can0 are used on the KingFisher extension board for ULCB.
+All errors (new ones prefixed by >>):
 
-> --- a/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-> @@ -168,6 +168,12 @@ static const struct mssr_mod_clk r8a779f0_mod_clks[] __initconst = {
->         DEF_MOD("ufs",          1514,   R8A779F0_CLK_S0D4_HSC),
->  };
->
-> +static const unsigned int r8a779f0_ignore_unused_mod_clks[] __initconst = {
-> +       MOD_CLK_ID(702),        /* SCIF0 */
-> +       MOD_CLK_ID(704),        /* SCIF3 */
-> +       MOD_CLK_ID(915),        /* PFC0 */
+   In file included from drivers/clk/qcom/apss-ipq6018.c:10:
+   In file included from include/linux/regmap.h:20:
+   In file included from include/linux/iopoll.h:14:
+   In file included from include/linux/io.h:13:
+   In file included from arch/s390/include/asm/io.h:78:
+   include/asm-generic/io.h:547:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           val = __raw_readb(PCI_IOBASE + addr);
+                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:560:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+                                                           ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/big_endian.h:37:59: note: expanded from macro '__le16_to_cpu'
+   #define __le16_to_cpu(x) __swab16((__force __u16)(__le16)(x))
+                                                             ^
+   include/uapi/linux/swab.h:102:54: note: expanded from macro '__swab16'
+   #define __swab16(x) (__u16)__builtin_bswap16((__u16)(x))
+                                                        ^
+   In file included from drivers/clk/qcom/apss-ipq6018.c:10:
+   In file included from include/linux/regmap.h:20:
+   In file included from include/linux/iopoll.h:14:
+   In file included from include/linux/io.h:13:
+   In file included from arch/s390/include/asm/io.h:78:
+   include/asm-generic/io.h:573:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+                                                           ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
+   #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
+                                                             ^
+   include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
+   #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
+                                                        ^
+   In file included from drivers/clk/qcom/apss-ipq6018.c:10:
+   In file included from include/linux/regmap.h:20:
+   In file included from include/linux/iopoll.h:14:
+   In file included from include/linux/io.h:13:
+   In file included from arch/s390/include/asm/io.h:78:
+   include/asm-generic/io.h:584:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           __raw_writeb(value, PCI_IOBASE + addr);
+                               ~~~~~~~~~~ ^
+   include/asm-generic/io.h:594:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+                                                         ~~~~~~~~~~ ^
+   include/asm-generic/io.h:604:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+                                                         ~~~~~~~~~~ ^
+   include/asm-generic/io.h:692:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           readsb(PCI_IOBASE + addr, buffer, count);
+                  ~~~~~~~~~~ ^
+   include/asm-generic/io.h:700:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           readsw(PCI_IOBASE + addr, buffer, count);
+                  ~~~~~~~~~~ ^
+   include/asm-generic/io.h:708:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           readsl(PCI_IOBASE + addr, buffer, count);
+                  ~~~~~~~~~~ ^
+   include/asm-generic/io.h:717:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           writesb(PCI_IOBASE + addr, buffer, count);
+                   ~~~~~~~~~~ ^
+   include/asm-generic/io.h:726:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           writesw(PCI_IOBASE + addr, buffer, count);
+                   ~~~~~~~~~~ ^
+   include/asm-generic/io.h:735:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           writesl(PCI_IOBASE + addr, buffer, count);
+                   ~~~~~~~~~~ ^
+>> drivers/clk/qcom/apss-ipq6018.c:94:11: error: use of undeclared identifier 'P_GPLL0'
+                   index = P_GPLL0;
+                           ^
+   12 warnings and 1 error generated.
 
-E.g. scif0 is available for use by Linux on the Spider development board.
 
-> --- a/drivers/clk/renesas/renesas-cpg-mssr.h
-> +++ b/drivers/clk/renesas/renesas-cpg-mssr.h
-> @@ -140,6 +140,10 @@ struct cpg_mssr_info {
->         unsigned int num_mod_clks;
->         unsigned int num_hw_mod_clks;
->
-> +       /* Module Clocks that should not be gated */
-> +       const unsigned int *ignore_unused_mod_clks;
-> +       unsigned int num_ignore_unused_mod_clks;
-> +
->         /* Critical Module Clocks that should not be disabled */
->         const unsigned int *crit_mod_clks;
->         unsigned int num_crit_mod_clks;
+vim +/P_GPLL0 +94 drivers/clk/qcom/apss-ipq6018.c
 
-Even if this was considered a good solution, why couldn't these be
-added to the existing crit_mod_clks[] array?
-
-Fortunately, the Renesas SoC developers thought about this use case:
-R-Car H3 has both System (SMSTPCRn) and Realtime  (RMSTPCRn) Module
-Stop Control Registers, and a module clock is not gated unless it is
-stopped in both sets.  Linux uses the System set, while an RTOS like
-Zephyr running on the Cortex-R CPU core should use the Realtime set.
-Note that that mechanism does not protect against both OSes changing
-e.g. a divider for a parent clock.
-
-R-Car S4-8 only has a single set of Module Stop Control Register
-(MSTPCRn), but it does support multiple domains instead, and has Domain
-x Write Access Control Register (DxWACR_yyy) to control access.
-
-Gr{oetje,eeting}s,
-
-                        Geert
+    86	
+    87	static int cpu_clk_notifier_fn(struct notifier_block *nb, unsigned long action,
+    88					void *data)
+    89	{
+    90		u8 index;
+    91		int err;
+    92	
+    93		if (action == PRE_RATE_CHANGE)
+  > 94			index = P_GPLL0;
+    95		else if (action == POST_RATE_CHANGE)
+    96			index = P_APSS_PLL_EARLY;
+    97		else
+    98			return 0;
+    99	
+   100		err = clk_rcg2_mux_closest_ops.set_parent(&apcs_alias0_clk_src.clkr.hw,
+   101							  index);
+   102	
+   103		return notifier_from_errno(err);
+   104	}
+   105	
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
