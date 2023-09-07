@@ -2,50 +2,59 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 927EBEC8742
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Sep 2023 15:46:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEF3AEC873F
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Sep 2023 15:46:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232256AbjIGPq3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Sep 2023 11:46:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39384 "EHLO
+        id S233361AbjIGPqc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Sep 2023 11:46:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245334AbjIGP2i (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Sep 2023 11:28:38 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1B381BF0;
-        Thu,  7 Sep 2023 08:28:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1694100491; x=1725636491;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=9RBRiFY3vB7fzj4b5KuQkX2LlrLmbM4nRtsKuZEBuqA=;
-  b=Pbp6pS9KiO5G187GzHhSRR93LfGSTGeKRIMqVZmOAXhaEKXg3qKCrvfV
-   TWQ4JEcEQuy+Zmamcpu0dP7j5/7HnCYaj+TvtFacnqhjNvqmLdz3A4yXr
-   xPhCyUzGGllpjzTI0cn+w9XTFEmaRP9v1QxierxYANojVpXF2lWUCKMRs
-   sbevC8o8RbRfPmK3YUJdhaHhlbgfFjSfRSq7JVRHcAUmKJo+zHtkwLxv7
-   BXwJ50SS2NsLY0lLB/4KjKQFpTma8A4xBWCvMrwqmpY/aLuW8WPPHitBr
-   jhDTlYNdNv3vGz3UAbjFuVotzTAG4TkeE74EbQNe17mp1O1EQjAOOfk/q
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10825"; a="381084933"
-X-IronPort-AV: E=Sophos;i="6.02,234,1688454000"; 
-   d="scan'208";a="381084933"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2023 01:52:01 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10825"; a="807440610"
-X-IronPort-AV: E=Sophos;i="6.02,234,1688454000"; 
-   d="scan'208";a="807440610"
-Received: from lkp-server01.sh.intel.com (HELO 59b3c6e06877) ([10.239.97.150])
-  by fmsmga008.fm.intel.com with ESMTP; 07 Sep 2023 01:51:56 -0700
-Received: from kbuild by 59b3c6e06877 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qeAjy-00013h-2e;
-        Thu, 07 Sep 2023 08:51:54 +0000
-Date:   Thu, 7 Sep 2023 16:51:39 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Varadarajan Narayanan <quic_varada@quicinc.com>,
-        ilia.lin@kernel.org, agross@kernel.org, andersson@kernel.org,
+        with ESMTP id S1344467AbjIGPdI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Sep 2023 11:33:08 -0400
+Received: from mail-oo1-xc36.google.com (mail-oo1-xc36.google.com [IPv6:2607:f8b0:4864:20::c36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F1D91FDE
+        for <linux-clk@vger.kernel.org>; Thu,  7 Sep 2023 08:32:48 -0700 (PDT)
+Received: by mail-oo1-xc36.google.com with SMTP id 006d021491bc7-5739965a482so558639eaf.0
+        for <linux-clk@vger.kernel.org>; Thu, 07 Sep 2023 08:32:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1694100721; x=1694705521; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EWjc9Tq24L0z9SehMarme94KIq1a0OWmKWnWsMLtL6w=;
+        b=HQLiZXC1eHtCEZwKpEqaVpP9w08cv9t+P/0ZqNlc7W9r3BQCL/XUHY/9viY9YxojB1
+         mVX6V3aRbCf8wJWuzxJ/rmZ/pKPQgOsfpcF5S68sQYLlxf0Hhr95d1B1NZs7TmJJOT84
+         4iLq75vl99RghWyxM8dKIf75sO3OLVxYieOpvm3sNiEMeARfQbtrFsdNh08ix7vhCruw
+         5IgVJ0jDRmfCK/CpI7F9QFM5wPe0O0RvHw2jI0vMa4T0Li5A+smRpAMY8w9RH3fQuTIA
+         9xog3ifdyGM8zDiVxqNk6PDq4E+3BEWWmFWt0xsgbb1mq4hemox98w5eESkDYmV1cYLy
+         QhMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1694100721; x=1694705521;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EWjc9Tq24L0z9SehMarme94KIq1a0OWmKWnWsMLtL6w=;
+        b=mH2ht3u7rBuYy5d/B8B8lGsP6QYdvlRTG3m9xRxxz09iTRQyh6pKjcwZH7kENpkt2h
+         vnfTMMNFN2g82DlWIu/wnOil8z1ZcLhuGkXg6H89qB3RrWMBn/NXvJHVnkVpu8FRAKcz
+         oCeiqIB62Cox3el+tdDfcmtS66QpDHvJedFVCIfPINoTiUc4TxJOkd7Fdp2DbZiNWh55
+         t9MsoEjmWsbjwj26Mb/RIDV3jK3BPt46sBZMaXsqTJqV7o8C4W+eiyp8iyzxFrwBtjlt
+         Q/im5PRtuiSNCRgjk3OwKfcdVDVp5/u5JrDxAGfmwpy7inRZdxbwl4HvR6ydDLB9ur0T
+         DTXA==
+X-Gm-Message-State: AOJu0Yy9kFj7kplmsqqiLOocnWlThSWr6LAKLAllrLlYhyxUX3J+HEYY
+        9R8y8G+Q1ZUQr06a5BFt6ihlE4Rq6hcv7uUuec5NEXQQOA58ThH2qy0=
+X-Google-Smtp-Source: AGHT+IEfYqhUFJ1cVabsx1fK7bxKAay+z3MPpC0vnndLwwN0XFbr3Qb0Xl2nmJ3y7ZRnqy/9qAjqB1Ntotany1k2aKs=
+X-Received: by 2002:a25:32cd:0:b0:d78:3b67:ef3 with SMTP id
+ y196-20020a2532cd000000b00d783b670ef3mr3182735yby.12.1694095033559; Thu, 07
+ Sep 2023 06:57:13 -0700 (PDT)
+MIME-Version: 1.0
+References: <cover.1693996662.git.quic_varada@quicinc.com> <558c6b70090ea7220bfb0b6e7d81828025018376.1693996662.git.quic_varada@quicinc.com>
+In-Reply-To: <558c6b70090ea7220bfb0b6e7d81828025018376.1693996662.git.quic_varada@quicinc.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Thu, 7 Sep 2023 16:57:02 +0300
+Message-ID: <CAA8EJprUgcmqFeNeuFgnRkk=XUr8NjNMMzd0y7sVhOnGUnn2qA@mail.gmail.com>
+Subject: Re: [PATCH v1 06/10] cpufreq: qti: Enable cpufreq for ipq53xx
+To:     Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc:     ilia.lin@kernel.org, agross@kernel.org, andersson@kernel.org,
         konrad.dybcio@linaro.org, rafael@kernel.org,
         viresh.kumar@linaro.org, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
@@ -53,137 +62,94 @@ To:     Varadarajan Narayanan <quic_varada@quicinc.com>,
         quic_kathirav@quicinc.com, linux-pm@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        Varadarajan Narayanan <quic_varada@quicinc.com>
-Subject: Re: [PATCH v1 04/10] clk: qcom: apss-ipq6018: ipq5332: add safe
- source switch for a53pll
-Message-ID: <202309071656.f4IVOEO6-lkp@intel.com>
-References: <5e3c29df2b42cceb8072b00546a78e1b99b2d374.1693996662.git.quic_varada@quicinc.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5e3c29df2b42cceb8072b00546a78e1b99b2d374.1693996662.git.quic_varada@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Varadarajan,
+On Thu, 7 Sept 2023 at 08:23, Varadarajan Narayanan
+<quic_varada@quicinc.com> wrote:
+>
+> IPQ53xx have different OPPs available for the CPU based on
+> SoC variant. This can be determined through use of an eFuse
+> register present in the silicon.
+>
+> Added support for ipq53xx on nvmem driver which helps to
+> determine OPPs at runtime based on the eFuse register which
+> has the CPU frequency limits. opp-supported-hw dt binding
+> can be used to indicate the available OPPs for each limit.
+>
+> nvmem driver also creates the "cpufreq-dt" platform_device after
+> passing the version matching data to the OPP framework so that the
+> cpufreq-dt handles the actual cpufreq implementation.
+>
+> Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> ---
+>  drivers/cpufreq/cpufreq-dt-platdev.c |  1 +
+>  drivers/cpufreq/qcom-cpufreq-nvmem.c | 15 +++++++++++++++
+>  2 files changed, 16 insertions(+)
+>
+> diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufr=
+eq-dt-platdev.c
+> index 02ec58a..f0c45d4 100644
+> --- a/drivers/cpufreq/cpufreq-dt-platdev.c
+> +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+> @@ -178,6 +178,7 @@ static const struct of_device_id blocklist[] __initco=
+nst =3D {
+>         { .compatible =3D "ti,am625", },
+>         { .compatible =3D "ti,am62a7", },
+>
+> +       { .compatible =3D "qcom,ipq5332", },
+>         { .compatible =3D "qcom,ipq8064", },
+>         { .compatible =3D "qcom,apq8064", },
+>         { .compatible =3D "qcom,msm8974", },
+> diff --git a/drivers/cpufreq/qcom-cpufreq-nvmem.c b/drivers/cpufreq/qcom-=
+cpufreq-nvmem.c
+> index 84d7033..49d21b0 100644
+> --- a/drivers/cpufreq/qcom-cpufreq-nvmem.c
+> +++ b/drivers/cpufreq/qcom-cpufreq-nvmem.c
+> @@ -146,6 +146,20 @@ static int qcom_cpufreq_kryo_name_version(struct dev=
+ice *cpu_dev,
+>                 return PTR_ERR(speedbin);
+>
+>         switch (msm_id) {
+> +       case QCOM_ID_IPQ5332:
+> +       case QCOM_ID_IPQ5322:
+> +       case QCOM_ID_IPQ5312:
+> +       case QCOM_ID_IPQ5302:
+> +       case QCOM_ID_IPQ5300:
 
-kernel test robot noticed the following build errors:
+msm8996 was bad enough. Can we use compat strings instead? Or make
+this a default for qcom_cpufreq_kryo_name_version()?
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v6.5 next-20230907]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Varadarajan-Narayanan/clk-qcom-clk-alpha-pll-introduce-stromer-plus-ops/20230907-132537
-base:   linus/master
-patch link:    https://lore.kernel.org/r/5e3c29df2b42cceb8072b00546a78e1b99b2d374.1693996662.git.quic_varada%40quicinc.com
-patch subject: [PATCH v1 04/10] clk: qcom: apss-ipq6018: ipq5332: add safe source switch for a53pll
-config: s390-randconfig-r031-20230907 (https://download.01.org/0day-ci/archive/20230907/202309071656.f4IVOEO6-lkp@intel.com/config)
-compiler: clang version 16.0.4 (https://github.com/llvm/llvm-project.git ae42196bc493ffe877a7e3dff8be32035dea4d07)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20230907/202309071656.f4IVOEO6-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202309071656.f4IVOEO6-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/clk/qcom/apss-ipq6018.c:10:
-   In file included from include/linux/regmap.h:20:
-   In file included from include/linux/iopoll.h:14:
-   In file included from include/linux/io.h:13:
-   In file included from arch/s390/include/asm/io.h:78:
-   include/asm-generic/io.h:547:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           val = __raw_readb(PCI_IOBASE + addr);
-                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:560:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-                                                           ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:37:59: note: expanded from macro '__le16_to_cpu'
-   #define __le16_to_cpu(x) __swab16((__force __u16)(__le16)(x))
-                                                             ^
-   include/uapi/linux/swab.h:102:54: note: expanded from macro '__swab16'
-   #define __swab16(x) (__u16)__builtin_bswap16((__u16)(x))
-                                                        ^
-   In file included from drivers/clk/qcom/apss-ipq6018.c:10:
-   In file included from include/linux/regmap.h:20:
-   In file included from include/linux/iopoll.h:14:
-   In file included from include/linux/io.h:13:
-   In file included from arch/s390/include/asm/io.h:78:
-   include/asm-generic/io.h:573:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-                                                           ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
-   #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
-                                                             ^
-   include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
-   #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
-                                                        ^
-   In file included from drivers/clk/qcom/apss-ipq6018.c:10:
-   In file included from include/linux/regmap.h:20:
-   In file included from include/linux/iopoll.h:14:
-   In file included from include/linux/io.h:13:
-   In file included from arch/s390/include/asm/io.h:78:
-   include/asm-generic/io.h:584:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           __raw_writeb(value, PCI_IOBASE + addr);
-                               ~~~~~~~~~~ ^
-   include/asm-generic/io.h:594:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-                                                         ~~~~~~~~~~ ^
-   include/asm-generic/io.h:604:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-                                                         ~~~~~~~~~~ ^
-   include/asm-generic/io.h:692:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           readsb(PCI_IOBASE + addr, buffer, count);
-                  ~~~~~~~~~~ ^
-   include/asm-generic/io.h:700:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           readsw(PCI_IOBASE + addr, buffer, count);
-                  ~~~~~~~~~~ ^
-   include/asm-generic/io.h:708:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           readsl(PCI_IOBASE + addr, buffer, count);
-                  ~~~~~~~~~~ ^
-   include/asm-generic/io.h:717:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           writesb(PCI_IOBASE + addr, buffer, count);
-                   ~~~~~~~~~~ ^
-   include/asm-generic/io.h:726:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           writesw(PCI_IOBASE + addr, buffer, count);
-                   ~~~~~~~~~~ ^
-   include/asm-generic/io.h:735:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           writesl(PCI_IOBASE + addr, buffer, count);
-                   ~~~~~~~~~~ ^
->> drivers/clk/qcom/apss-ipq6018.c:94:11: error: use of undeclared identifier 'P_GPLL0'
-                   index = P_GPLL0;
-                           ^
-   12 warnings and 1 error generated.
+> +               /* Fuse Value    Freq    BIT to set
+> +                * ---------------------------------
+> +                *   2=E2=80=99b00     No Limit     BIT(0)
+> +                *   2=E2=80=99b01     1.5 GHz      BIT(1)
+> +                *   2=E2=80=99b10     1.2 Ghz      BIT(2)
+> +                *   2=E2=80=99b11     1.0 GHz      BIT(3)
+> +                */
+> +               drv->versions =3D 1 << (unsigned int)(*speedbin);
+> +               break;
+>         case QCOM_ID_MSM8996:
+>         case QCOM_ID_APQ8096:
+>                 drv->versions =3D 1 << (unsigned int)(*speedbin);
+> @@ -359,6 +373,7 @@ static const struct of_device_id qcom_cpufreq_match_l=
+ist[] __initconst =3D {
+>         { .compatible =3D "qcom,apq8096", .data =3D &match_data_kryo },
+>         { .compatible =3D "qcom,msm8996", .data =3D &match_data_kryo },
+>         { .compatible =3D "qcom,qcs404", .data =3D &match_data_qcs404 },
+> +       { .compatible =3D "qcom,ipq5332", .data =3D &match_data_kryo },
+>         { .compatible =3D "qcom,ipq8064", .data =3D &match_data_krait },
+>         { .compatible =3D "qcom,apq8064", .data =3D &match_data_krait },
+>         { .compatible =3D "qcom,msm8974", .data =3D &match_data_krait },
+> --
+> 2.7.4
+>
 
 
-vim +/P_GPLL0 +94 drivers/clk/qcom/apss-ipq6018.c
-
-    86	
-    87	static int cpu_clk_notifier_fn(struct notifier_block *nb, unsigned long action,
-    88					void *data)
-    89	{
-    90		u8 index;
-    91		int err;
-    92	
-    93		if (action == PRE_RATE_CHANGE)
-  > 94			index = P_GPLL0;
-    95		else if (action == POST_RATE_CHANGE)
-    96			index = P_APSS_PLL_EARLY;
-    97		else
-    98			return 0;
-    99	
-   100		err = clk_rcg2_mux_closest_ops.set_parent(&apcs_alias0_clk_src.clkr.hw,
-   101							  index);
-   102	
-   103		return notifier_from_errno(err);
-   104	}
-   105	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--=20
+With best wishes
+Dmitry
