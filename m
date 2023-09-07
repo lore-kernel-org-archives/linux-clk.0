@@ -2,83 +2,101 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E4ACEC8738
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Sep 2023 16:21:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54BA3EC873D
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Sep 2023 16:36:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232749AbjIGQVC convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Sep 2023 12:21:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33430 "EHLO
+        id S240717AbjIGQgt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Sep 2023 12:36:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239343AbjIGQUk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Sep 2023 12:20:40 -0400
-Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1203B4ED2;
-        Thu,  7 Sep 2023 09:16:56 -0700 (PDT)
-Received: by mail-pf1-x432.google.com with SMTP id d2e1a72fcca58-68a3e943762so1050759b3a.1;
-        Thu, 07 Sep 2023 09:16:56 -0700 (PDT)
+        with ESMTP id S241254AbjIGQgh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Sep 2023 12:36:37 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 379FC14022
+        for <linux-clk@vger.kernel.org>; Thu,  7 Sep 2023 09:27:25 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id 4fb4d7f45d1cf-52c9f1bd05dso1558805a12.3
+        for <linux-clk@vger.kernel.org>; Thu, 07 Sep 2023 09:27:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1694103972; x=1694708772; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=a51rbBUhl2yVMBaRWJfNm+10uIGnQdsMPdqet6PAES4=;
+        b=q5Va59M9HCW2XU7Gu1mcu3kiMhxfaoBLITFalWanEpjxvSgnZr1il4DXFyQv+BETFF
+         ZrYAkj4UE5dT0+GNo5ZDAPudTSO7QJFcQpTJSHkkvFWZeyocqzAFi7iQsR8zIEX/bneq
+         bKmz1hfbFPnF80YCpuLKJ0UAcF+avKip/cAKTIDAkNpKPClL0mxQJZarYsvlL6CaKmoU
+         YJ6hr4f8p54EmLv2xU3kfAgGpjY0z4qXp+vLPbOUb6xlgcPYTiO6MdPrCsEggECZj/xF
+         FT0oA7vhVfFZ6WmXhxrYf0M5JVxP3RJJPQxuYQZ1T9V6DWVSAGYGPl/IDsIBSxDY+CUA
+         2ABQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1694103303; x=1694708103;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Bm3Pmr9P0h91Fq080SIB3HpfHrouG3fGksLn8OJ16Uw=;
-        b=UpbkQVJ4A9arFNmMrdDwFXouwdicz9sP58cUtb2ZbiBl1QdngJUkoh3BIOkPwsnzcM
-         sIcMlSqxKVWjGKVarqSpIVZM8kNu6up7ABEcEMevWziQYDpyKQ/qFseVpl0eKBBcsoPZ
-         8hI0MCvwsUbU1cZK9IsqL2eNYyHnxTb891/Ux3VF2LMb3C9woSDskfKQ/s0p+qcYF3DW
-         zTgXo2rB1i6Etzmcowas90+WgBgW0bFLFT1bUeOQMzXMrwVMTlxFyxr2v9zSDosA1pS7
-         me5Cd3Q+2j/e93suKtnTcQFYNYtQjbNSTltkI8jmld4V2c6GF5qWNwJY3X9Iy9TLS+qd
-         ThAw==
-X-Gm-Message-State: AOJu0Yyaf0DdzdkpgwdWQgA6BJsHDdogdOQcX+/666paBpDrBvmJ6tmr
-        tGIx9KosJuU/xSlxQPNG6z58OzUn/AaCxg==
-X-Google-Smtp-Source: AGHT+IFqYZGX4bKZMxlmtbfnIbHqnTv5PBpeh/lnaBf/E7f8W9zM59Ayn2GUvxGdGpBqEIWeX5m1Zg==
-X-Received: by 2002:a05:6358:2822:b0:133:ac7:c84b with SMTP id k34-20020a056358282200b001330ac7c84bmr4901523rwb.12.1694070944428;
-        Thu, 07 Sep 2023 00:15:44 -0700 (PDT)
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com. [209.85.219.169])
-        by smtp.gmail.com with ESMTPSA id o140-20020a0dcc92000000b0058390181d16sm4221929ywd.30.2023.09.07.00.15.43
+        d=1e100.net; s=20221208; t=1694103972; x=1694708772;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=a51rbBUhl2yVMBaRWJfNm+10uIGnQdsMPdqet6PAES4=;
+        b=WqiCrPQ1L/7JatI0EXCS0ra4oCUxLa9DdNFDVPCDIGynqRWfJ6aofAdwhdwwLmHbKa
+         O6w7v8AFt6s8a6r93K6oRmphy4tMinjCRXTXlPq9K6Ca3aa4d6Md6GsEPTFGtJCizmJc
+         hUlFiiI8rgCC6F7llhAxEClB9si9cC2OpeQbNTo8bhoePO3HDhW+o2bGGYjbL08vNXbM
+         J7ux9APKayQg1AC19oY86Bqla/OQ0ILxOaqwiaHaFy8/ByjnAFR6igRvD0OlUKPnc02G
+         ntBm+6Q1cJAuPorH7/xyO7jDF7fAPcIFGbfeVozlbXYmDmR6BNeG/Kl9vP74A6HYFyaN
+         XtxA==
+X-Gm-Message-State: AOJu0Yye+6LJXiwWLv8m+rQUUB3XDTVSWvm1E25wVWu2W8Q44WPeHw54
+        qpgiuVvarzlNPDKSn+necHGsKemTxzwuzgxSMKZ0yg==
+X-Google-Smtp-Source: AGHT+IFlXAmlomGcmhe6S0hUGMXYE4sEpDzId5svN/29k+3GVd9pMgSG9ox0ZZbhaW0oXLRASeVmdQ==
+X-Received: by 2002:a17:906:24b:b0:9a5:ebfd:79a3 with SMTP id 11-20020a170906024b00b009a5ebfd79a3mr3449605ejl.29.1694066582736;
+        Wed, 06 Sep 2023 23:03:02 -0700 (PDT)
+Received: from [192.168.0.22] (77-252-46-238.static.ip.netia.com.pl. [77.252.46.238])
+        by smtp.gmail.com with ESMTPSA id a1-20020a170906684100b009920e9a3a73sm9946636ejs.115.2023.09.06.23.03.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Sep 2023 00:15:43 -0700 (PDT)
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-d7225259f52so616567276.0;
-        Thu, 07 Sep 2023 00:15:43 -0700 (PDT)
-X-Received: by 2002:a05:6902:120e:b0:d78:134:9477 with SMTP id
- s14-20020a056902120e00b00d7801349477mr21940790ybu.58.1694070943694; Thu, 07
- Sep 2023 00:15:43 -0700 (PDT)
+        Wed, 06 Sep 2023 23:03:02 -0700 (PDT)
+Message-ID: <d822da46-b6c0-6932-6ed6-8806fbeee51d@linaro.org>
+Date:   Thu, 7 Sep 2023 08:03:00 +0200
 MIME-Version: 1.0
-References: <20230824104812.147775-1-biju.das.jz@bp.renesas.com> <20230824104812.147775-5-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20230824104812.147775-5-biju.das.jz@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 7 Sep 2023 09:15:32 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVs0oUv4mL34P_i18jtzUPHrj_7+mc58=rOYTX2xBEeMw@mail.gmail.com>
-Message-ID: <CAMuHMdVs0oUv4mL34P_i18jtzUPHrj_7+mc58=rOYTX2xBEeMw@mail.gmail.com>
-Subject: Re: [PATCH v5 4/4] clk: vc3: Make vc3_clk_mux enum values based on
- vc3_clk enum values
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.0
+Subject: Re: [PATCH v1 07/10] arm64: dts: qcom: ipq5332: populate the opp
+ table based on the eFuse
+Content-Language: en-US
+To:     Varadarajan Narayanan <quic_varada@quicinc.com>,
+        ilia.lin@kernel.org, agross@kernel.org, andersson@kernel.org,
+        konrad.dybcio@linaro.org, rafael@kernel.org,
+        viresh.kumar@linaro.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        quic_kathirav@quicinc.com, linux-pm@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <cover.1693996662.git.quic_varada@quicinc.com>
+ <a6d12e3b253d6a55d85f66979ba8b7d9c9ff6072.1693996662.git.quic_varada@quicinc.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <a6d12e3b253d6a55d85f66979ba8b7d9c9ff6072.1693996662.git.quic_varada@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Aug 24, 2023 at 12:48 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> Make vc3_clk_mux enum values depend upon vc3_clk enum valuesÂ to avoid
-> any accidental breakage in the future.
->
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+On 07/09/2023 07:21, Varadarajan Narayanan wrote:
+> IPQ53xx have different OPPs available for the CPU based on
+> SoC variant. This can be determined through use of an eFuse
+> register present in the silicon.
+> 
+> Add support to read the eFuse and populate the OPPs based on it.
+> 
+> Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Gr{oetje,eeting}s,
+>  	};
+> @@ -150,6 +173,11 @@
+>  			reg = <0x000a4000 0x721>;
+>  			#address-cells = <1>;
+>  			#size-cells = <1>;
+> +
+> +			cpu_speed_bin: cpu_speed_bin@1d {
 
-                        Geert
+No underscores in node names. I am pretty sure I repeated it multiple
+times already...
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Best regards,
+Krzysztof
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
