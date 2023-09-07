@@ -2,101 +2,186 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54BA3EC873D
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Sep 2023 16:36:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1580EC8748
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Sep 2023 16:46:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240717AbjIGQgt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Sep 2023 12:36:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60394 "EHLO
+        id S242628AbjIGQqr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Sep 2023 12:46:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241254AbjIGQgh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Sep 2023 12:36:37 -0400
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 379FC14022
-        for <linux-clk@vger.kernel.org>; Thu,  7 Sep 2023 09:27:25 -0700 (PDT)
-Received: by mail-ed1-x532.google.com with SMTP id 4fb4d7f45d1cf-52c9f1bd05dso1558805a12.3
-        for <linux-clk@vger.kernel.org>; Thu, 07 Sep 2023 09:27:25 -0700 (PDT)
+        with ESMTP id S242585AbjIGQq0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Sep 2023 12:46:26 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CEAB2119
+        for <linux-clk@vger.kernel.org>; Thu,  7 Sep 2023 09:45:48 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id 4fb4d7f45d1cf-5298e43bb67so2404698a12.1
+        for <linux-clk@vger.kernel.org>; Thu, 07 Sep 2023 09:45:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694103972; x=1694708772; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:to
+        d=linaro.org; s=google; t=1694105052; x=1694709852; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=a51rbBUhl2yVMBaRWJfNm+10uIGnQdsMPdqet6PAES4=;
-        b=q5Va59M9HCW2XU7Gu1mcu3kiMhxfaoBLITFalWanEpjxvSgnZr1il4DXFyQv+BETFF
-         ZrYAkj4UE5dT0+GNo5ZDAPudTSO7QJFcQpTJSHkkvFWZeyocqzAFi7iQsR8zIEX/bneq
-         bKmz1hfbFPnF80YCpuLKJ0UAcF+avKip/cAKTIDAkNpKPClL0mxQJZarYsvlL6CaKmoU
-         YJ6hr4f8p54EmLv2xU3kfAgGpjY0z4qXp+vLPbOUb6xlgcPYTiO6MdPrCsEggECZj/xF
-         FT0oA7vhVfFZ6WmXhxrYf0M5JVxP3RJJPQxuYQZ1T9V6DWVSAGYGPl/IDsIBSxDY+CUA
-         2ABQ==
+        bh=mDoUjvYQ5hLp90NpvOpciamYswy5+ILruLlYsWMAII8=;
+        b=xI66/kuaWRy4SvqMks5H1NwJMxqta+htFNTG1dFxsYLSVNdopkCV76eqoYgj4oG75g
+         EWhXqmWpo2atyp0i8kLI5DSN9WfxmBvcYhBSWcJ1W+K4x0jC2bfzti0hzjfPtrUBC+Qk
+         tnvoTNC7wm+0GWbXSw//xglnUesH1nOo7VD0OocmndT3v5orQC7Cb8Pej7GgdZvdxPw3
+         kmGZxT6Pv4zeU/JGlo5ho6A473eGy6Gy6sqaVPHYP8WtB4pTQTTwvJXHfsmlqezAq1Kc
+         +0O2EBzelmsFA6Q1wIjlt3/jWfCTtfwus+w8mMHcP20Pr1AXFtVwVus9XskNrbiGeA+D
+         gxQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1694103972; x=1694708772;
-        h=content-transfer-encoding:in-reply-to:from:references:to
+        d=1e100.net; s=20221208; t=1694105052; x=1694709852;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=a51rbBUhl2yVMBaRWJfNm+10uIGnQdsMPdqet6PAES4=;
-        b=WqiCrPQ1L/7JatI0EXCS0ra4oCUxLa9DdNFDVPCDIGynqRWfJ6aofAdwhdwwLmHbKa
-         O6w7v8AFt6s8a6r93K6oRmphy4tMinjCRXTXlPq9K6Ca3aa4d6Md6GsEPTFGtJCizmJc
-         hUlFiiI8rgCC6F7llhAxEClB9si9cC2OpeQbNTo8bhoePO3HDhW+o2bGGYjbL08vNXbM
-         J7ux9APKayQg1AC19oY86Bqla/OQ0ILxOaqwiaHaFy8/ByjnAFR6igRvD0OlUKPnc02G
-         ntBm+6Q1cJAuPorH7/xyO7jDF7fAPcIFGbfeVozlbXYmDmR6BNeG/Kl9vP74A6HYFyaN
-         XtxA==
-X-Gm-Message-State: AOJu0Yye+6LJXiwWLv8m+rQUUB3XDTVSWvm1E25wVWu2W8Q44WPeHw54
-        qpgiuVvarzlNPDKSn+necHGsKemTxzwuzgxSMKZ0yg==
-X-Google-Smtp-Source: AGHT+IFlXAmlomGcmhe6S0hUGMXYE4sEpDzId5svN/29k+3GVd9pMgSG9ox0ZZbhaW0oXLRASeVmdQ==
-X-Received: by 2002:a17:906:24b:b0:9a5:ebfd:79a3 with SMTP id 11-20020a170906024b00b009a5ebfd79a3mr3449605ejl.29.1694066582736;
-        Wed, 06 Sep 2023 23:03:02 -0700 (PDT)
-Received: from [192.168.0.22] (77-252-46-238.static.ip.netia.com.pl. [77.252.46.238])
-        by smtp.gmail.com with ESMTPSA id a1-20020a170906684100b009920e9a3a73sm9946636ejs.115.2023.09.06.23.03.01
+        bh=mDoUjvYQ5hLp90NpvOpciamYswy5+ILruLlYsWMAII8=;
+        b=J4RM/icT+7f2ZNG+qCAfg7S02qzLwf2wNczn9yaKisJVgqLHDYBdMJONenfX3Ka1Hg
+         HGTloGxBEvFrLSc1FMNkGXvEtTQcnEbBtPlBtFc7+dSWv/1UHQhBBjkSRSk5tcNolA9v
+         Cqyo80hHXoKzhDVjscAM6hx8+DTv2wwHs06EurXu9nonCup2damsy6whE9OhcfwPzdEa
+         Wm2XMHoB3TjTvq+p2hOp4EnnFWCfVi3EeECZrekf+sqzXdQ5Vp8PlNBiVPoxyJVDN4t3
+         IotrTik1+0c2AMJtvk4qbsrsRvj1XXWzwwKZ88HJDKmjNzFt6SGPwmtZp1OekHj0Vo5X
+         q9rQ==
+X-Gm-Message-State: AOJu0YzuLgkrj02zs0qf1VFEkIQw/FnLLhbBrmB8teDOw+yxA66AzPw3
+        xPg/3igIEhBkhfrILLLwvH85NdvnShWlyjW2aSw8+g==
+X-Google-Smtp-Source: AGHT+IFvxabhPY7oNJR7yHmojbvgWgbazhQtpCoLLsasYPzm8UdBiLSJ/NE+FoR8Wyv0Yf2YrLLe5g==
+X-Received: by 2002:a17:907:6e87:b0:9a1:c69c:9388 with SMTP id sh7-20020a1709076e8700b009a1c69c9388mr2016148ejc.37.1694075690953;
+        Thu, 07 Sep 2023 01:34:50 -0700 (PDT)
+Received: from [192.168.37.232] (178235177204.dynamic-4-waw-k-1-1-0.vectranet.pl. [178.235.177.204])
+        by smtp.gmail.com with ESMTPSA id f25-20020a170906495900b0099d9dee8108sm10215498ejt.149.2023.09.07.01.34.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Sep 2023 23:03:02 -0700 (PDT)
-Message-ID: <d822da46-b6c0-6932-6ed6-8806fbeee51d@linaro.org>
-Date:   Thu, 7 Sep 2023 08:03:00 +0200
+        Thu, 07 Sep 2023 01:34:50 -0700 (PDT)
+Message-ID: <f7c2f7dd-dcc7-4f3a-9c04-e370ba608de5@linaro.org>
+Date:   Thu, 7 Sep 2023 10:34:48 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [PATCH v1 07/10] arm64: dts: qcom: ipq5332: populate the opp
- table based on the eFuse
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 06/10] cpufreq: qti: Enable cpufreq for ipq53xx
 Content-Language: en-US
 To:     Varadarajan Narayanan <quic_varada@quicinc.com>,
         ilia.lin@kernel.org, agross@kernel.org, andersson@kernel.org,
-        konrad.dybcio@linaro.org, rafael@kernel.org,
-        viresh.kumar@linaro.org, robh+dt@kernel.org,
+        rafael@kernel.org, viresh.kumar@linaro.org, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
         mturquette@baylibre.com, sboyd@kernel.org,
         quic_kathirav@quicinc.com, linux-pm@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 References: <cover.1693996662.git.quic_varada@quicinc.com>
- <a6d12e3b253d6a55d85f66979ba8b7d9c9ff6072.1693996662.git.quic_varada@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <a6d12e3b253d6a55d85f66979ba8b7d9c9ff6072.1693996662.git.quic_varada@quicinc.com>
+ <558c6b70090ea7220bfb0b6e7d81828025018376.1693996662.git.quic_varada@quicinc.com>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <558c6b70090ea7220bfb0b6e7d81828025018376.1693996662.git.quic_varada@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 07/09/2023 07:21, Varadarajan Narayanan wrote:
+On 7.09.2023 07:21, Varadarajan Narayanan wrote:
 > IPQ53xx have different OPPs available for the CPU based on
 > SoC variant. This can be determined through use of an eFuse
 > register present in the silicon.
 > 
-> Add support to read the eFuse and populate the OPPs based on it.
+> Added support for ipq53xx on nvmem driver which helps to
+> determine OPPs at runtime based on the eFuse register which
+> has the CPU frequency limits. opp-supported-hw dt binding
+> can be used to indicate the available OPPs for each limit.
+> 
+> nvmem driver also creates the "cpufreq-dt" platform_device after
+> passing the version matching data to the OPP framework so that the
+> cpufreq-dt handles the actual cpufreq implementation.
 > 
 > Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> ---
+>  drivers/cpufreq/cpufreq-dt-platdev.c |  1 +
+>  drivers/cpufreq/qcom-cpufreq-nvmem.c | 15 +++++++++++++++
+>  2 files changed, 16 insertions(+)
+> 
+> diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+> index 02ec58a..f0c45d4 100644
+> --- a/drivers/cpufreq/cpufreq-dt-platdev.c
+> +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+Viresh probably picks up patches for both files, so it should
+be fine, but I'd say it's 'eeeh' to edit 2 separate drivers at
+once.
 
+> @@ -178,6 +178,7 @@ static const struct of_device_id blocklist[] __initconst = {
+>  	{ .compatible = "ti,am625", },
+>  	{ .compatible = "ti,am62a7", },
+>  
+> +	{ .compatible = "qcom,ipq5332", },
+>  	{ .compatible = "qcom,ipq8064", },
+>  	{ .compatible = "qcom,apq8064", },
+>  	{ .compatible = "qcom,msm8974", },
+> diff --git a/drivers/cpufreq/qcom-cpufreq-nvmem.c b/drivers/cpufreq/qcom-cpufreq-nvmem.c
+> index 84d7033..49d21b0 100644
+> --- a/drivers/cpufreq/qcom-cpufreq-nvmem.c
+> +++ b/drivers/cpufreq/qcom-cpufreq-nvmem.c
+> @@ -146,6 +146,20 @@ static int qcom_cpufreq_kryo_name_version(struct device *cpu_dev,
+>  		return PTR_ERR(speedbin);
+>  
+>  	switch (msm_id) {
+> +	case QCOM_ID_IPQ5332:
+> +	case QCOM_ID_IPQ5322:
+> +	case QCOM_ID_IPQ5312:
+> +	case QCOM_ID_IPQ5302:
+> +	case QCOM_ID_IPQ5300:
+> +		/* Fuse Value    Freq    BIT to set
+> +		 * ---------------------------------
+> +		 *   2’b00     No Limit     BIT(0)
+> +		 *   2’b01     1.5 GHz      BIT(1)
+> +		 *   2’b10     1.2 Ghz      BIT(2)
+> +		 *   2’b11     1.0 GHz      BIT(3)
+I think the last column is a bit excessive, it says exactly
+the same as the line below.
 
->  	};
-> @@ -150,6 +173,11 @@
->  			reg = <0x000a4000 0x721>;
->  			#address-cells = <1>;
->  			#size-cells = <1>;
-> +
-> +			cpu_speed_bin: cpu_speed_bin@1d {
+Actually, with this data being present in the devicetree, perhaps
+this comment could be entirely skipped.
 
-No underscores in node names. I am pretty sure I repeated it multiple
-times already...
-
-Best regards,
-Krzysztof
-
+Konrad
+> +		 */
+> +		drv->versions = 1 << (unsigned int)(*speedbin);
+> +		break;
+>  	case QCOM_ID_MSM8996:
+>  	case QCOM_ID_APQ8096:
+>  		drv->versions = 1 << (unsigned int)(*speedbin);
+> @@ -359,6 +373,7 @@ static const struct of_device_id qcom_cpufreq_match_list[] __initconst = {
+>  	{ .compatible = "qcom,apq8096", .data = &match_data_kryo },
+>  	{ .compatible = "qcom,msm8996", .data = &match_data_kryo },
+>  	{ .compatible = "qcom,qcs404", .data = &match_data_qcs404 },
+> +	{ .compatible = "qcom,ipq5332", .data = &match_data_kryo },
+>  	{ .compatible = "qcom,ipq8064", .data = &match_data_krait },
+>  	{ .compatible = "qcom,apq8064", .data = &match_data_krait },
+>  	{ .compatible = "qcom,msm8974", .data = &match_data_krait },
