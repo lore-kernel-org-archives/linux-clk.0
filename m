@@ -2,118 +2,309 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 072A3EC8759
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Sep 2023 22:33:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A174CEC875F
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Sep 2023 22:45:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232576AbjIGWdc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Sep 2023 18:33:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57978 "EHLO
+        id S232469AbjIGWpa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Sep 2023 18:45:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230195AbjIGWdb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Sep 2023 18:33:31 -0400
+        with ESMTP id S229541AbjIGWpa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Sep 2023 18:45:30 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 643141BC7;
-        Thu,  7 Sep 2023 15:33:28 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0154FC433C7;
-        Thu,  7 Sep 2023 22:33:27 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 105BD1BC8;
+        Thu,  7 Sep 2023 15:45:26 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84770C433C9;
+        Thu,  7 Sep 2023 22:45:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694126008;
-        bh=11OxPGs4D8TG3RACZZ9X30xzAuDPKXdLvJllCq6fnTo=;
+        s=k20201202; t=1694126725;
+        bh=7qyhLYr4pO5sm3ZD/DMx8wk96vJyeNH7OhlrfuB93Kw=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=A9CB1+8hr6VRvzDP+b4+8UmSv+gg1cQtjVgTQLSreTgDVuN3TsxSV8iw3Neljvbus
-         Kr+EiccofWyyWM/0+UPpajzV8JRcNi2VBidD9cKl74APIVZBj7+9H5kBc9v1VmfJ9D
-         +N0l48ppypPbnTuJ4CRKkhJZgOsPvxe3uUL/A8pdt39iYL2fWlp2q9VkOo5+7SIdaH
-         2E9yAbvowEqBtvye++5wCPbtIeiSLsRtRUeqc4lz9YpQsU+eBTZcbFrwr5L07wcxEL
-         K+H9WVjahsSaoFLQNpO6uhDa4WZoumTTd06OMNvryDVDlty/hOJiyeMAUZrWkKuBp1
-         dEmlOLpRceqbA==
-Message-ID: <fc8023b435f78e02c96fecbe8e7599ee.sboyd@kernel.org>
+        b=TT3OHA8mbFVm6Xr+gpkeeWcGsyx+3GQQcF9ozKW8SRKSDNWgJG9Yembgzyar14fzk
+         1KTBGFNL1miz4j0XyQ4RDyVkeBElYIQPi2b4K7owh4oxnxQj7Jkeqoa1pSHtNeitIL
+         JEt/iFFzQQDai3JP9eSLYxPP3g7kH1quDcH0XOugpPqry7joRSBXa0PhXPxDtrgk1q
+         TVwJJLhPfoYvjJ4CernbRSMsRRObfD6tofoECaXpkCa9b15aWchz0Ko8+JHJOEX0gG
+         2+ZWkW/YNaV8MdgfSGQ/oY4WQFyvd2/0kb+iUl4PnWE8KhQo5zzT+HH/7A+1/+czwt
+         5BUju2Mkb++FA==
+Message-ID: <17681a9f756cc70a190c674c51b90140.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAPp5cGTshQJ3aLeLqv=CbaVeg9GnK_k9nsoaWrBKs1dcXzNZow@mail.gmail.com>
-References: <20230822134849.3352329-1-alessandro.carminati@gmail.com> <CAPp5cGTshQJ3aLeLqv=CbaVeg9GnK_k9nsoaWrBKs1dcXzNZow@mail.gmail.com>
-Subject: Re: [PATCH] Sanitize possible_parent_show to Handle Return Value of of_clk_get_parent_name
+In-Reply-To: <16d09acf-7bdd-04ee-6faf-936c0366df03@quicinc.com>
+References: <20230901091823.30242-1-quic_luoj@quicinc.com> <20230901091823.30242-5-quic_luoj@quicinc.com> <27ae3297ad161fd67706db70b402db04.sboyd@kernel.org> <16d09acf-7bdd-04ee-6faf-936c0366df03@quicinc.com>
+Subject: Re: [PATCH v6 4/4] clk: qcom: add clock controller driver for qca8386/qca8084
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Philip Daly <pdaly@redhat.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Alessandro Carminati <alessandro.carminati@gmail.com>
-Date:   Thu, 07 Sep 2023 15:33:25 -0700
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        quic_srichara@quicinc.com
+To:     Jie Luo <quic_luoj@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, catalin.marinas@arm.com, conor+dt@kernel.org,
+        konrad.dybcio@linaro.org, krzysztof.kozlowski+dt@linaro.org,
+        mturquette@baylibre.com, p.zabel@pengutronix.de,
+        robh+dt@kernel.org, will@kernel.org
+Date:   Thu, 07 Sep 2023 15:45:23 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Alessandro Carminati (2023-09-07 07:15:36)
-> this is a gentle ping
+Quoting Jie Luo (2023-09-07 01:36:50)
 >=20
+> On 9/6/2023 5:36 AM, Stephen Boyd wrote:
+> > Quoting Luo Jie (2023-09-01 02:18:23)
+> >> diff --git a/drivers/clk/qcom/nsscc-qca8k.c b/drivers/clk/qcom/nsscc-q=
+ca8k.c
+> >> new file mode 100644
+> >> index 000000000000..f9312735daf3
+> >> --- /dev/null
+> >> +++ b/drivers/clk/qcom/nsscc-qca8k.c
+> >> @@ -0,0 +1,2179 @@
+> >> +// SPDX-License-Identifier: GPL-2.0-only
+> >> +/*
+> >> + * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights re=
+served.
+> >> + */
+> >> +
+> >> +#include <linux/clk-provider.h>
+> >> +#include <linux/kernel.h>
+> >> +#include <linux/module.h>
+> >> +#include <linux/of.h>
+> >> +#include <linux/platform_device.h>
+> >=20
+> > Is platform_device include used?
+> >=20
+> will remove this.
+>=20
+> >> +#include <linux/regmap.h>
+> >> +#include <linux/phy.h>
+> >=20
+> > Is the phy include used? Where is the mdio.h include?
+>=20
+> there is no PHY include, just the mdio_device is included, however the=20
+> mii_bus->mdio_lock is needed by this clock controller.
+>=20
+> so "struct mii_bus" is needed and included by the header file phy.h,
+> the mdio.h is included by phy.h.
 
-I couldn't read your email because it was sent to nobody
-(unlisted-recipients). Can you resend with a proper To: line?=20
+Don't rely on implicit includes. It leads to compile errors if headers
+are ever split/moved around. Just include mdio.h as you use it.
 
 >=20
-> Il giorno mar 22 ago 2023 alle ore 15:49 Alessandro Carminati
-> <alessandro.carminati@gmail.com> ha scritto:
-> >
-> > In the possible_parent_show function, ensure proper handling of the ret=
-urn
-> > value from of_clk_get_parent_name to prevent potential issues arising f=
-rom
-> > a NULL return.
-> > The current implementation invokes seq_puts directly on the result of
-> > of_clk_get_parent_name without verifying the return value, which can le=
-ad
-> > to kernel panic if the function returns NULL.
-> >
-> > This patch addresses the concern by introducing a check on the return
-> > value of of_clk_get_parent_name. If the return value is not NULL, the
+> >=20
+> >> +
+> >> +#include <dt-bindings/clock/qcom,qca8k-nsscc.h>
+> >> +#include <dt-bindings/reset/qcom,qca8k-nsscc.h>
+> >> +
+> >> +#include "clk-branch.h"
+> >> +#include "clk-rcg.h"
+> >> +#include "clk-regmap.h"
+> >> +#include "clk-regmap-divider.h"
+> >> +#include "clk-regmap-mux.h"
+> > [...]
+> >> +
+> >> +static const struct freq_tbl ftbl_nss_cc_mac5_rx_clk_src[] =3D {
+> >> +       F(50000000, P_XO, 1, 0, 0),
+> >> +       F(125000000, P_UNIPHY0_RX, 1, 0, 0),
+> >> +       F(125000000, P_UNIPHY0_TX, 1, 0, 0),
+> >> +       F(312500000, P_UNIPHY0_RX, 1, 0, 0),
+> >> +       F(312500000, P_UNIPHY0_TX, 1, 0, 0),
+> >=20
+> > This frequency table looks like the parent should change rate...
+>=20
+> Yes, the parent need to change the rate for the different interface=20
+> mode, PHY_INTERFACE_MODE_2500BASEX use 312.5M, PHY_INTERFACE_MODE_SGMII=20
+> use 125M.
+>=20
+> >=20
+> >> +       { }
+> >> +};
+> >> +
+> >> +static struct clk_rcg2 nss_cc_mac5_rx_clk_src =3D {
+> >> +       .cmd_rcgr =3D 0x154,
+> >> +       .freq_tbl =3D ftbl_nss_cc_mac5_rx_clk_src,
+> >> +       .hid_width =3D 5,
+> >> +       .parent_map =3D nss_cc_uniphy0_rx_tx_map,
+> >> +       .clkr.hw.init =3D &(const struct clk_init_data) {
+> >> +               .name =3D "nss_cc_mac5_rx_clk_src",
+> >> +               .parent_data =3D nss_cc_uniphy0_rx_tx_data,
+> >> +               .num_parents =3D ARRAY_SIZE(nss_cc_uniphy0_rx_tx_data),
+> >> +               .ops =3D &clk_rcg2_ops,
+> >=20
+> > ... but this doesn't have any CLK_SET_RATE_PARENT flag set. How does it
+> > work?
+>=20
+> since it has the different parent clock rate 312.5M and 125M for the=20
+> deffernet interface mode used. If the flag CLK_SET_RATE_PARENT is set,=20
+> when we require to configure 25M clock rate for example, it may lead to=20
+> the parent rate changed(312.5M/12.5 or 125M/5), which is not expected,=20
+> the parent rate(312.5M or 125M) can't be changed, since the parent rate=20
+> is decided by interface mode(PHY_INTERFACE_MODE_2500BASEX or=20
+> PHY_INTERFACE_MODE_SGMII).
+>=20
+> the work flow:
+> the parent of nss_cc_mac5_rx_clk_src is selected as 312.5M or 125M=20
+> firstly, then configure the required clock rate of clk_branch.
+>=20
+> uniphy(312.5M or 125M) ---> RCG(nss_cc_mac5_rx_clk_src) ---> clk_branch.
 
-Use of_clk_get_parent_name() to signify that it is a function.
+Ok. So you're saying that the uniphy rate changes outside of the clk
+framework? That is potentially troublesome because the clk framework
+aggressively caches things to the point that if the parent of the RCG
+changes rates the branch rate won't reflect the new rate. It looks like
+none of that really matters in practice because the divider is always 1
+here, but this will be confusing if a driver calls clk_get_rate() when
+the uniphy rate has changed.
 
-> > function proceeds to call seq_puts, providing the returned value as
-> > argument.
-> > However, if of_clk_get_parent_name returns NULL, the function provides a
-> > static string as argument, avoiding the panic.
-> >
-> > Reported-by: Philip Daly <pdaly@redhat.com>
-> > Signed-off-by: Alessandro Carminati (Red Hat) <alessandro.carminati@gma=
-il.com>
-> > ---
+Why can't that be driven from the clk framework? Or why can't the uniphy
+implement a clk provider that supports changing rates? If that was done,
+then a driver could change the uniphy rate and the clk framework would
+propagate the frequency down to all the children, recalculating the
+rates along the way. It may even mean that there's nothing to do when
+changing these clks, besides perhaps changing the parent?
 
-It needs a Fixes tag.
+>=20
+> >=20
+> >> +       },
+> >> +};
+> >> +
+> >> +static struct clk_regmap_div nss_cc_mac5_rx_div_clk_src =3D {
+> >> +       .reg =3D 0x15c,
+> >> +       .shift =3D 0,
+> >> +       .width =3D 4,
+> >> +       .clkr =3D {
+> >> +               .hw.init =3D &(const struct clk_init_data) {
+> >> +                       .name =3D "nss_cc_mac5_rx_div_clk_src",
+> > [...]
+> >> +
+> >> +static struct clk_branch nss_cc_mdio_master_ahb_clk =3D {
+> >> +       .halt_reg =3D 0x19c,
+> >> +       .halt_check =3D BRANCH_HALT,
+> >> +       .clkr =3D {
+> >> +               .enable_reg =3D 0x19c,
+> >> +               .enable_mask =3D BIT(0),
+> >> +               .hw.init =3D &(const struct clk_init_data) {
+> >> +                       .name =3D "nss_cc_mdio_master_ahb_clk",
+> >> +                       .parent_hws =3D (const struct clk_hw *[]) {
+> >> +                               &nss_cc_ahb_clk_src.clkr.hw,
+> >> +                       },
+> >> +                       .num_parents =3D 1,
+> >> +                       .flags =3D CLK_SET_RATE_PARENT | CLK_IS_CRITIC=
+AL,
+> >=20
+> > Why can't we simply enable clks in probe that are critical? The regmap
+> > operations are complicated?
+>=20
+> since these clocks with the flag CLK_IS_CRITICAL are the common clocks=20
+> needed to be enabled for all devices no matter what work mode(qca8084 or =
 
-> >  drivers/clk/clk.c | 11 ++++++-----
-> >  1 file changed, 6 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index c249f9791ae8..ab999644e185 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -3416,6 +3416,7 @@ static void possible_parent_show(struct seq_file =
-*s, struct clk_core *core,
-> >                                  unsigned int i, char terminator)
-> >  {
-> >         struct clk_core *parent;
-> > +       const char *tmp;
-> >
-> >         /*
-> >          * Go through the following options to fetch a parent's name.
-> > @@ -3436,12 +3437,12 @@ static void possible_parent_show(struct seq_fil=
-e *s, struct clk_core *core,
-> >                 seq_puts(s, core->parents[i].name);
-> >         else if (core->parents[i].fw_name)
-> >                 seq_printf(s, "<%s>(fw)", core->parents[i].fw_name);
-> > -       else if (core->parents[i].index >=3D 0)
-> > -               seq_puts(s,
-> > -                        of_clk_get_parent_name(core->of_node,
-> > -                                               core->parents[i].index)=
+> qca8386) used, which is base clock to enable to use the clock driver, to =
+
+> enable these clocks by using flag CLK_IS_CRITICAL is simplier way and=20
+> can simply the device probe driver and device tree definations.
+
+Sure, but it also means you use the despised CLK_IS_CRITICAL flag when
+it could simply be some code in probe that sets some bits for "boot
+configuration". The benefit is that we don't register clks that do
+practically nothing besides use resources in the kernel for a one time
+operation at probe.
+
+>=20
+> >=20
+> >> +};
+> >> +
+> >> +/* For each read/write operation of clock register, there are three M=
+DIO frames
+> >> + * sent to the device.
+> >> + *
+> >> + * 1. The high address part[31:8] of register is packaged into the fi=
+rst MDIO frame.
+> >> + * 2. The low address part[7:0] of register is packaged into the seco=
+nd MDIO frame
+> >> + *    with the low 16bit data to read/write.
+> >> + * 3. The low address part[7:0] of register is packaged into the last=
+ MDIO frame
+> >> + *    with the high 16bit data to read/write.
+> >> + *
+> >> + * The clause22 MDIO frame format used by device is as below.
+> >> + * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+> >> + * | ST| OP|   ADDR  |   REG   | TA|             DATA              |
+> >> + * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+> >> + */
+> >> +static inline void split_addr(u32 regaddr, u16 *r1, u16 *r2, u16 *pag=
+e)
+> >=20
+> > split_addr() is too generic of a name. Please namespace this function to
+> > something else.
+>=20
+> okay, maybe convert_reg_to_mii_addr?
+
+Sure!
+
+> >=20
+> >> +               *val |=3D ret << 16;
+> >> +       }
+> >> +
+> >> +       if (ret < 0)
+> >> +               dev_err_ratelimited(&bus->dev, "fail to read qca8k mii=
+ register\n");
+> >> +
+> >> +       return ret < 0 ? ret : 0;
+> >> +}
+> >> +
+> >> +void qca8k_mii_write(struct mii_bus *bus, u16 switch_phy_id, u32 reg,=
+ u32 val)
+> >> +{
+> >> +       int ret;
+> >> +
+> >> +       ret =3D bus->write(bus, switch_phy_id, reg, lower_16_bits(val)=
 );
-> > -       else
-> > +       else if (core->parents[i].index >=3D 0) {
-> > +               tmp =3D of_clk_get_parent_name(core->of_node, core->par=
-ents[i].index);
-> > +               seq_puts(s, tmp ? tmp : "(none)");
+> >> +       if (ret >=3D 0)
+> >> +               ret =3D bus->write(bus, switch_phy_id, (reg | BIT(1)),=
+ upper_16_bits(val));
+> >> +
+> >> +       if (ret < 0)
+> >> +               dev_err_ratelimited(&bus->dev, "fail to write qca8k mi=
+i register\n");
+> >> +}
+> >> +
+> >> +int qca8k_mii_page_set(struct mii_bus *bus, u16 switch_phy_id, u32 re=
+g, u16 page)
+> >=20
+> > Regmap core has support for picking pages. Can that be used here?
+>=20
+> Hi Stephen,
+> No, we can't depend on regmap to pick the page, since the MDIO bus is=20
+> shared by qca8k device and PHY device, if there is a PHY device access,=20
+> even if the page is not changed, we still need to configure the page=20
+> again, so the page is alwasy configured for each register access, the=20
+> sequence can't be interrupted.
 
-How about using seq_printf("%s", ...) instead? That should print out
-"(null)" in the case that it is NULL, instead of "(none)" and it is a
-one line change.
+Ok.
+
+> >=20
+> >> +};
+> >> +
+> >> +static const struct qcom_cc_desc nss_cc_qca8k_desc =3D {
+> >> +       .config =3D &nss_cc_qca8k_regmap_config,
+> >> +       .clks =3D nss_cc_qca8k_clocks,
+> >> +       .num_clks =3D ARRAY_SIZE(nss_cc_qca8k_clocks),
+> >> +       .resets =3D nss_cc_qca8k_resets,
+> >> +       .num_resets =3D ARRAY_SIZE(nss_cc_qca8k_resets),
+> >> +};
+> >> +
+> >> +static int nss_cc_qca8k_probe(struct mdio_device *mdiodev)
+> >> +{
+> >> +       struct regmap *regmap;
+> >> +
+> >> +       regmap =3D devm_regmap_init(&mdiodev->dev, NULL, mdiodev->bus,=
+ nss_cc_qca8k_desc.config);
+> >=20
+> > Why can't we use devm_regmap_init_mdio() here? Is it because the device
+> > needs special data marshaling per split_addr()?
+>=20
+> Hi Stephen,
+> No, we can't use devm_regmap_init_mdio, which is for the standard PHY=20
+> device access(clause22 and clause 45), but the clock device needs the=20
+> special MDIO sequences for the register access.
+
+Ok.
