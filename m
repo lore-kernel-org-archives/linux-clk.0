@@ -2,170 +2,157 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2C6FEC874B
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Sep 2023 17:05:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81475EC874B
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Sep 2023 17:12:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239277AbjIGRFE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Sep 2023 13:05:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40682 "EHLO
+        id S241763AbjIGRMN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Sep 2023 13:12:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238554AbjIGRFD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Sep 2023 13:05:03 -0400
-Received: from frontal.iot.bzh (058728349.box.freepro.com [95.178.89.150])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81BB01BF2;
-        Thu,  7 Sep 2023 10:04:37 -0700 (PDT)
-Received: from frontal.iot.bzh (localhost [127.0.0.1])
-        by frontal.iot.bzh (Proxmox) with ESMTP id 011AC2ABE9;
-        Thu,  7 Sep 2023 15:24:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iot.bzh; h=cc:cc
-        :content-transfer-encoding:content-type:content-type:date:from
-        :from:in-reply-to:message-id:mime-version:references:reply-to
-        :subject:subject:to:to; s=iot.bzh; bh=KoOI913TFgaIOlWsEk/WIX2Ino
-        WLJuiODkB1xGFjMrk=; b=io47Vv5FpSX4K5+bG5JyYpJAT9Py2uv2gZ0C0UVcPB
-        vOS9ENQwpILEMZUY4QuyYFDXkn9u7FC0if/G43LUGIN0/iF2vMEDX9x2T81Kgaa9
-        6ZK/0hrfSoyNnq1y9SWtlz1imm8qhec+wluanhgypUIlwgg4ExXtNdx1vwH7FaI/
-        2/c/QS+rpyn0wNIQuDln2KoVXPnz6H1sZkQwuZPwSfYjQpXyi+Ap6IlvwEPWHfuO
-        MfV5/QCudw1SIGqCcpwa+GPvXihi+mHiPKno86dbf1gOX62QC+GAXtuudO/2DF2Q
-        zYkSOyExgJFG4NJquiP6LeIkWMaZJWdp0wp7ZsJBqxnw==
-Message-ID: <f73c91b4-7de5-1139-1fb3-d5a2cd7f6007@iot.bzh>
-Date:   Thu, 7 Sep 2023 15:24:14 +0200
+        with ESMTP id S233003AbjIGRMN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Sep 2023 13:12:13 -0400
+Received: from mail-oi1-x22e.google.com (mail-oi1-x22e.google.com [IPv6:2607:f8b0:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC8531FF9
+        for <linux-clk@vger.kernel.org>; Thu,  7 Sep 2023 10:11:44 -0700 (PDT)
+Received: by mail-oi1-x22e.google.com with SMTP id 5614622812f47-3a5a7e7cd61so609353b6e.0
+        for <linux-clk@vger.kernel.org>; Thu, 07 Sep 2023 10:11:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1694106651; x=1694711451; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9kunx9UxE5AO8Mpt3OIBGhm0UdSfJDTNTDmm1Ca6qzg=;
+        b=mqr6B3gnuWo9hdtRcXy28lJZ6ryediMoOZOZisVWjs9qQtwRKEsixAp+tifgf7ZI59
+         aeP5elib2rQbpRTynWGyk/Hio5k3qLImTs+TzYfBrSEN+6HSsS5AbVjeckyyaTZlICKH
+         A0j03wJ5o6s3p+Q2p6lG2rPinkNTOovWJgz4fo7YQkEaQQ5nTchnvZMVmPof8692ybRI
+         LNH6l/0bs3RbMSwtLJl7670zz2ANeNDlNnKmU+N8DZodY8Tszzv1XNgbzdZ7pfqwFt02
+         lGnjfw+I0ZumjFZLUkMvo/ZrAXyv61axzVjpVsBOxp05AcRqIyNrrXjQIc80o5AAkjP+
+         5Yrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1694106651; x=1694711451;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9kunx9UxE5AO8Mpt3OIBGhm0UdSfJDTNTDmm1Ca6qzg=;
+        b=iCwIEPxjv9DDXib0FlJSVdYATsCQeLIkRGi2MJbikmAx1S9Q+TlEh565uxYKHcI0da
+         CSPAvrvzmNS1Si54QH1YiRUPh926cWxPAO39Pjm7b/tl3pFs8rvqgcaIOS6jyddO8Ohu
+         HC8hvuUyvVAWOM4Id7ZXPO0WetxSUzGrLo4N/b3iRHXMcvIU0ocmvzOv0zEA5PJAtPYp
+         4detmE3+Q6EzjFxvGi6TmKCgaP7qOTMcKMUR9kK1VzFh8AvdvcptYG1wx6kBy8u3y554
+         7+qfrkJ82SBCvZCEYOnYCSvzBovSlFSDpGqAIkIW+XQLD47OIiAZ63Spev5y9w6ds14R
+         lGUw==
+X-Gm-Message-State: AOJu0YyEyrFsoP6ggVZzl38lDpA4kF9mqLwHzRirk6ND6CvMlIXnmctN
+        CzVU2Ee1doOPYIm9f5Xvdkauf/OKCTm4Zobh3BHLY8Bx9k8WQFjc
+X-Google-Smtp-Source: AGHT+IGWwMUs+woCpFuAAwk4rYJhGtyUArweMKLG0DdWWNZXHEqnr826vQ2pJOiYkeGxQTvNpSH7Tmuy50h8QS8fgX8=
+X-Received: by 2002:a5b:f11:0:b0:d80:12f5:cd4d with SMTP id
+ x17-20020a5b0f11000000b00d8012f5cd4dmr156584ybr.18.1694095179083; Thu, 07 Sep
+ 2023 06:59:39 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [PATCH 1/1] clk: renesas: Mark concerned clocks as
- "ignore_unused"
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org
-References: <20230905140008.136263-1-aymeric.aillet@iot.bzh>
- <CAMuHMdX4-Bd8EvFE2U6YOL01LxAFg+uCjoD-sodXNgWuD9U5rg@mail.gmail.com>
-Content-Language: en-US
-From:   Aymeric Aillet <aymeric.aillet@iot.bzh>
-In-Reply-To: <CAMuHMdX4-Bd8EvFE2U6YOL01LxAFg+uCjoD-sodXNgWuD9U5rg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <cover.1693996662.git.quic_varada@quicinc.com> <a6d12e3b253d6a55d85f66979ba8b7d9c9ff6072.1693996662.git.quic_varada@quicinc.com>
+In-Reply-To: <a6d12e3b253d6a55d85f66979ba8b7d9c9ff6072.1693996662.git.quic_varada@quicinc.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Thu, 7 Sep 2023 16:59:28 +0300
+Message-ID: <CAA8EJppNsgUNgwadq9oM0_KyORNR5PBZGVZukN6MzAm2KPzC9g@mail.gmail.com>
+Subject: Re: [PATCH v1 07/10] arm64: dts: qcom: ipq5332: populate the opp
+ table based on the eFuse
+To:     Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc:     ilia.lin@kernel.org, agross@kernel.org, andersson@kernel.org,
+        konrad.dybcio@linaro.org, rafael@kernel.org,
+        viresh.kumar@linaro.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        quic_kathirav@quicinc.com, linux-pm@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Geert,
-Thanks for your quick answer !
-> Hi Aymeric,
+On Thu, 7 Sept 2023 at 08:23, Varadarajan Narayanan
+<quic_varada@quicinc.com> wrote:
 >
-> On Tue, Sep 5, 2023 at 4:00 PM Aymeric Aillet <aymeric.aillet@iot.bzh> wrote:
->> In order to avoid Linux from gating clocks that are used by
->> another OS running at the same time (eg. RTOS), we are adding
->> the "CLK_IGNORE_UNUSED" flag to the concerned clocks.
->>
->> As for now, list of clocks to be flagged have been completed
->> depending of features that are supported by Renesas SoCs/boards
->> port in Zephyr RTOS.
->>
->> Signed-off-by: Aymeric Aillet <aymeric.aillet@iot.bzh>
-> Thanks for your patch!
+> IPQ53xx have different OPPs available for the CPU based on
+> SoC variant. This can be determined through use of an eFuse
+> register present in the silicon.
 >
->> --- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
->> +++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
->> @@ -288,6 +288,18 @@ static struct mssr_mod_clk r8a7795_mod_clks[] __initdata = {
->>          DEF_MOD("scu-src0",             1031,   MOD_CLK_ID(1017)),
->>   };
->>
->> +static const unsigned int r8a7795_ignore_unused_mod_clks[] __initconst = {
->> +       MOD_CLK_ID(206),        /* SCIF1 */
->> +       MOD_CLK_ID(303),        /* CMT0 */
->> +       MOD_CLK_ID(310),        /* SCIF2 */
->> +       MOD_CLK_ID(523),        /* PWM */
->> +       MOD_CLK_ID(906),        /* GPIO6 */
->> +       MOD_CLK_ID(907),        /* GPIO5 */
->> +       MOD_CLK_ID(916),        /* CAN0 */
->> +       MOD_CLK_ID(929),        /* I2C2 */
->> +       MOD_CLK_ID(927),        /* I2C4 */
-> All of this is board-specific, so it cannot be handled in the SoC
-> clock driver.
+> Add support to read the eFuse and populate the OPPs based on it.
 >
-> E.g. scif2 is the main serial console for Linux on the Salvator-X(S)
-> and ULCB development
-> boards.
-> Pwm, gpio6, gpio5, i2c2, and i2c4 are used on Salvator-X(S).
-> I2c2 and i2c4 are also used on ULCB.
-> Scif1 and can0 are used on the KingFisher extension board for ULCB.
-
-True, my cases were specific boards we are (or will) support in Zephyr OS.
-
-I didn't though about what would happen on other boards with the same 
-SoC while testing, my bad.
-
+> Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/ipq5332.dtsi | 34 +++++++++++++++++++++++++++++++---
+>  1 file changed, 31 insertions(+), 3 deletions(-)
 >
->> --- a/drivers/clk/renesas/r8a779f0-cpg-mssr.c
->> +++ b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
->> @@ -168,6 +168,12 @@ static const struct mssr_mod_clk r8a779f0_mod_clks[] __initconst = {
->>          DEF_MOD("ufs",          1514,   R8A779F0_CLK_S0D4_HSC),
->>   };
->>
->> +static const unsigned int r8a779f0_ignore_unused_mod_clks[] __initconst = {
->> +       MOD_CLK_ID(702),        /* SCIF0 */
->> +       MOD_CLK_ID(704),        /* SCIF3 */
->> +       MOD_CLK_ID(915),        /* PFC0 */
-> E.g. scif0 is available for use by Linux on the Spider development board.
+> diff --git a/arch/arm64/boot/dts/qcom/ipq5332.dtsi b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
+> index 82761ae..3ca3f34 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq5332.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
+> @@ -91,11 +91,34 @@
+>         };
 >
->> --- a/drivers/clk/renesas/renesas-cpg-mssr.h
->> +++ b/drivers/clk/renesas/renesas-cpg-mssr.h
->> @@ -140,6 +140,10 @@ struct cpg_mssr_info {
->>          unsigned int num_mod_clks;
->>          unsigned int num_hw_mod_clks;
->>
->> +       /* Module Clocks that should not be gated */
->> +       const unsigned int *ignore_unused_mod_clks;
->> +       unsigned int num_ignore_unused_mod_clks;
->> +
->>          /* Critical Module Clocks that should not be disabled */
->>          const unsigned int *crit_mod_clks;
->>          unsigned int num_crit_mod_clks;
-> Even if this was considered a good solution, why couldn't these be
-> added to the existing crit_mod_clks[] array?
-When working on this I understood that critical clocks were not only 
-preserved but were also managed differently at boot.
-My point was only to preserve these form gating so I though that marking 
-them as critical was a bit overkill.
-My understanding of the difference between critical and unused clocks is 
-maybe not the good one !
+>         cpu_opp_table: opp-table-cpu {
+> -               compatible = "operating-points-v2";
+> +               compatible = "operating-points-v2-kryo-cpu";
+>                 opp-shared;
+> +               nvmem-cells = <&cpu_speed_bin>;
+> +               nvmem-cell-names = "speed_bin";
+> +
+> +               /*
+> +                * Listed all supported CPU frequencies and opp-supported-hw
+> +                * values to select CPU frequencies based on the limits fused.
+> +                * ------------------------------------------------------------
+> +                * Frequency     BIT3   BIT2   BIT1    BIT0    opp-supported-hw
+> +                *              1.0GHz 1.2GHz 1.5GHz No Limit
+> +                * ------------------------------------------------------------
+> +                * 1100000000     1      1      1       1            0xF
+> +                * 1500000000     0      0      1       1            0x3
+> +                * -----------------------------------------------------------
+> +                */
+
+This can probably go to the commit message instead.
+
+> +
+> +               opp-1100000000 {
+> +                       opp-hz = /bits/ 64 <1100000000>;
+
+But your table shows 1.0 GHz and 1.2 GHz instead of 1.1 GHz
+
+> +                       opp-microvolt = <850000>;
+> +                       opp-supported-hw = <0xF>;
+> +                       clock-latency-ns = <200000>;
+> +               };
 >
-> Fortunately, the Renesas SoC developers thought about this use case:
-> R-Car H3 has both System (SMSTPCRn) and Realtime  (RMSTPCRn) Module
-> Stop Control Registers, and a module clock is not gated unless it is
-> stopped in both sets.  Linux uses the System set, while an RTOS like
-> Zephyr running on the Cortex-R CPU core should use the Realtime set.
-> Note that that mechanism does not protect against both OSes changing
-> e.g. a divider for a parent clock.
+> -               opp-1488000000 {
+> -                       opp-hz = /bits/ 64 <1488000000>;
+> +               opp-1500000000 {
+> +                       opp-hz = /bits/ 64 <1500000000>;
+
+So, 1.488 GHz or 1.5 GHz?
+
+> +                       opp-microvolt = <950000>;
+
+Which regulator is controlled by this microvolt?
+
+> +                       opp-supported-hw = <0x3>;
+>                         clock-latency-ns = <200000>;
+>                 };
+>         };
+> @@ -150,6 +173,11 @@
+>                         reg = <0x000a4000 0x721>;
+>                         #address-cells = <1>;
+>                         #size-cells = <1>;
+> +
+> +                       cpu_speed_bin: cpu_speed_bin@1d {
+> +                               reg = <0x1d 0x2>;
+> +                               bits = <7 2>;
+> +                       };
+>                 };
 >
-> R-Car S4-8 only has a single set of Module Stop Control Register
-> (MSTPCRn), but it does support multiple domains instead, and has Domain
-> x Write Access Control Register (DxWACR_yyy) to control access.
-I started working on this for an S4 based board as we are not yet 
-supporting multiple domain control on our Zephyr support.
-
-Concerning Gen3 SoCs, you are right, we are already using RMSTPCRn 
-module on our H3 SoC implementation so this part of my patch is useless 
-anyway !
-
-I'll keep this patch on my side while working on multiple domains 
-support on our Gen4 Zephyr support.
-
+>                 rng: rng@e3000 {
+> --
+> 2.7.4
 >
-> Gr{oetje,eeting}s,
->
->                          Geert
 
-Thanks again for your answer.
 
-Regards,
-
-Aymeric
-
->
 -- 
-Regards,
-Aymeric Aillet - Embedded system engineer - IoT.bzh
-aymeric.aillet@iot.bzh - www.iot.bzh
-
-
+With best wishes
+Dmitry
