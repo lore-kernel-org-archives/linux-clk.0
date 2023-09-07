@@ -2,88 +2,105 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E3DDEC874B
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Sep 2023 17:23:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEFEEEC874D
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Sep 2023 17:28:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234777AbjIGRXE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Sep 2023 13:23:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35380 "EHLO
+        id S243912AbjIGR2l convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Sep 2023 13:28:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243905AbjIGRXB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Sep 2023 13:23:01 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 381AA1FE2
-        for <linux-clk@vger.kernel.org>; Thu,  7 Sep 2023 10:22:31 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-401da71b7c5so13553265e9.2
-        for <linux-clk@vger.kernel.org>; Thu, 07 Sep 2023 10:22:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694107288; x=1694712088; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=y7Y6zFmhlb8oBiHulr6SNzDGIOTaQJEEOwxmUItsSBI=;
-        b=FU0e0le3QDzntwka15fMhUAXDeLBVLSwPGf/Y51t/1s6n2DjsGIe4IPqg9X1D1HP21
-         Rlyy0wEXpKf7WcGQ4oQKM2gwOk0KXIJouLVNNzDjEJkP0j+OyuLCj0BpRMCHl1hxZCS2
-         E2fq2z6avKSWvxfOSta61d2dQD8fVMhbWJ5di7XCMucNRmF9jtg/wCR2kpi1v02CilIZ
-         F9K/Sz4IJZ+WWvuSbOjgKNvcRqqcgqcWj+ys8X2QCgYZ3f7W1br9R7HcSsa153p0N9Tx
-         5cLtdDcgDqsPrvT+9oUBb64JA+jUA1fF/v29Eqr9PF28wXLfI1Vgbi8V9QfFiLfmop6z
-         UaSQ==
+        with ESMTP id S243845AbjIGR2k (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Sep 2023 13:28:40 -0400
+Received: from mail-oa1-x30.google.com (mail-oa1-x30.google.com [IPv6:2001:4860:4864:20::30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C72A31700;
+        Thu,  7 Sep 2023 10:28:12 -0700 (PDT)
+Received: by mail-oa1-x30.google.com with SMTP id 586e51a60fabf-1a28de15c8aso958751fac.2;
+        Thu, 07 Sep 2023 10:28:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1694107288; x=1694712088;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y7Y6zFmhlb8oBiHulr6SNzDGIOTaQJEEOwxmUItsSBI=;
-        b=K4+4HjxF83MbfEk2YTUcgzaqG+AtYbnPOn7o+Oua031sAAOO0Y10GaAtT/8ECWEKM7
-         n/blTGHz7ebLkMeJpGG6DIx5PX94GG7RqHid1Sm5sudCfp2VSFozsBN9QIJ60kgPvICZ
-         NX9lMAy2fZuXeEEdQIwNvl3K1aYuB/bnR6BkiDBu7glv7WKI7q44olkQYTQNCC8PykNi
-         ZtXPYZyySJlnv2JE8EFVWbs82g4OmTHjJazEpLCKw3tKba8QjDTBxdc26oy3tmW9S59h
-         JozFxpSIuvL2Xy+FWEFQGtfUc6FehBPo6FLZHhdiDQX2cchWl3h1z8sFWeI3vGnhV2cy
-         9uHA==
-X-Gm-Message-State: AOJu0Yw+DJ7smXG11/H0J7Ida3ooe9ExPwheMS67wwKaSFs0lEjcfnGa
-        BkTWnb/W3Heh/14eN49JUe2EwcZFEGHthhdWz6O19A==
-X-Google-Smtp-Source: AGHT+IEKmnSNSlUtiCWpMx5epfLO+Rm4w2bJrzAa6Be3omHD0KXp967h3WlCKIuq9OnSAsdvXE+3AA==
-X-Received: by 2002:a05:6402:3c2:b0:522:2dcc:afb6 with SMTP id t2-20020a05640203c200b005222dccafb6mr3798766edw.7.1694066597001;
-        Wed, 06 Sep 2023 23:03:17 -0700 (PDT)
-Received: from [192.168.0.22] (77-252-46-238.static.ip.netia.com.pl. [77.252.46.238])
-        by smtp.gmail.com with ESMTPSA id t3-20020aa7d4c3000000b0051bed21a635sm9237337edr.74.2023.09.06.23.03.15
+        d=1e100.net; s=20230601; t=1694107338; x=1694712138;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0eAo0T4Q7ty5BOJJ1ZPPpf8WGcau2gMsvRbOa9Sut6k=;
+        b=dJfuF8YxZ8nPjyXtmkkpAWgSzx7PNZ7aQl6y1zMUQ0bfeB4zsrh5SD2LhSfvj0zciI
+         eL0qYNLdCdZA8tc9nYX7jcWaxXK0jtVJZGvRYIHiZQfXSMYVWPZR0udWDO1isl41+gik
+         7ar8J60wPEAR9FNhJe5/texcrvT2hMN9a11FlL/ez9rmDpWVDS88Y0vtbagimIja05pB
+         YHWd5WWfzhZCTdZ73zviCDZLXggRFOTqHZs6AoNE7PxHF68gCqmjjy52nqv7Jlrop3x1
+         m/oo1TgEKbCdh6okdFS0EuWOU9pUA/VlPuAxKf0HTy/J/4gy5vgONPIBNfzNT4cuBoX1
+         KLCA==
+X-Gm-Message-State: AOJu0Yx8Rt74CAwww0CO6s2xF4sfpf//GawvEi+dwUk/77ZEQPEFDPSZ
+        CmVBIiKv9zdsGI5TAFDWwB/F0fE55GaCFg==
+X-Google-Smtp-Source: AGHT+IEc4Ap6beIZHT2MzekHqr8DHQwFnYECOD6BVi1xOIrzUCzH/nLhY3+HtKUHusDnSvBJCGSnnA==
+X-Received: by 2002:a05:6870:b016:b0:1c0:a784:cf7e with SMTP id y22-20020a056870b01600b001c0a784cf7emr22067504oae.51.1694070854803;
+        Thu, 07 Sep 2023 00:14:14 -0700 (PDT)
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com. [209.85.210.49])
+        by smtp.gmail.com with ESMTPSA id c7-20020a9d6c87000000b006bee5535b44sm7095067otr.75.2023.09.07.00.14.14
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Sep 2023 23:03:16 -0700 (PDT)
-Message-ID: <3f68d3bf-3273-2339-ea41-3362ced3c91b@linaro.org>
-Date:   Thu, 7 Sep 2023 08:03:14 +0200
+        Thu, 07 Sep 2023 00:14:14 -0700 (PDT)
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-6c0a42a469dso434740a34.2;
+        Thu, 07 Sep 2023 00:14:14 -0700 (PDT)
+X-Received: by 2002:a05:6358:2789:b0:12b:c378:b090 with SMTP id
+ l9-20020a056358278900b0012bc378b090mr4579788rwb.26.1694070853892; Thu, 07 Sep
+ 2023 00:14:13 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [PATCH v1 05/10] dt-bindings: cpufreq: qcom-cpufreq-nvmem:
- document IPQ5332
-Content-Language: en-US
-To:     Varadarajan Narayanan <quic_varada@quicinc.com>,
-        ilia.lin@kernel.org, agross@kernel.org, andersson@kernel.org,
-        konrad.dybcio@linaro.org, rafael@kernel.org,
-        viresh.kumar@linaro.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        quic_kathirav@quicinc.com, linux-pm@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <cover.1693996662.git.quic_varada@quicinc.com>
- <8fe23b5401362e214078648926a00f7ceefaa542.1693996662.git.quic_varada@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <8fe23b5401362e214078648926a00f7ceefaa542.1693996662.git.quic_varada@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20230824104812.147775-1-biju.das.jz@bp.renesas.com> <20230824104812.147775-2-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20230824104812.147775-2-biju.das.jz@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 7 Sep 2023 09:14:02 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXFhORcYPKYPNYMhzUgpgfWohaPMH8bYSKdOgMN_0z5iA@mail.gmail.com>
+Message-ID: <CAMuHMdXFhORcYPKYPNYMhzUgpgfWohaPMH8bYSKdOgMN_0z5iA@mail.gmail.com>
+Subject: Re: [PATCH v5 1/4] dt-bindings: clock: versaclock3: Add description
+ for #clock-cells property
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Conor Dooley <conor.dooley@microchip.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 07/09/2023 07:21, Varadarajan Narayanan wrote:
-> Document IPQ5332 compatible for Qcom NVMEM CPUFreq driver.
-> 
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+On Thu, Aug 24, 2023 at 12:48 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> Add description for "#clock-cells" property to map indexes to the clock
+> output in the Table 3. ("Output Source") in the 5P35023 datasheet
+> (ie: {REF,SE1,SE2,SE3,DIFF1,DIFF2}. Also update the "assigned-clock-rates"
+> in the example.
+>
+> While at it, replace clocks phandle in the example from x1_x2->x1 as
+> X2 is a different 32768 kHz crystal.
+>
+> Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
+> v4->v5:
+>  * Added description for "#clock-cells" property to map indexes to the
+>    clock output.
+>  * Updated commit header and description to reflect this change.
+>  * Dropped fixes tag.
+>  * Retained Ack tag from Conor and Krzysztof as it is trivial change.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Best regards,
-Krzysztof
+Gr{oetje,eeting}s,
 
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
