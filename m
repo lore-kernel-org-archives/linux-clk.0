@@ -2,105 +2,68 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEFEEEC874D
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Sep 2023 17:28:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63262EC8742
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Sep 2023 17:31:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243912AbjIGR2l convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Sep 2023 13:28:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57748 "EHLO
+        id S232033AbjIGRbU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Sep 2023 13:31:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243845AbjIGR2k (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Sep 2023 13:28:40 -0400
-Received: from mail-oa1-x30.google.com (mail-oa1-x30.google.com [IPv6:2001:4860:4864:20::30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C72A31700;
-        Thu,  7 Sep 2023 10:28:12 -0700 (PDT)
-Received: by mail-oa1-x30.google.com with SMTP id 586e51a60fabf-1a28de15c8aso958751fac.2;
-        Thu, 07 Sep 2023 10:28:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694107338; x=1694712138;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0eAo0T4Q7ty5BOJJ1ZPPpf8WGcau2gMsvRbOa9Sut6k=;
-        b=dJfuF8YxZ8nPjyXtmkkpAWgSzx7PNZ7aQl6y1zMUQ0bfeB4zsrh5SD2LhSfvj0zciI
-         eL0qYNLdCdZA8tc9nYX7jcWaxXK0jtVJZGvRYIHiZQfXSMYVWPZR0udWDO1isl41+gik
-         7ar8J60wPEAR9FNhJe5/texcrvT2hMN9a11FlL/ez9rmDpWVDS88Y0vtbagimIja05pB
-         YHWd5WWfzhZCTdZ73zviCDZLXggRFOTqHZs6AoNE7PxHF68gCqmjjy52nqv7Jlrop3x1
-         m/oo1TgEKbCdh6okdFS0EuWOU9pUA/VlPuAxKf0HTy/J/4gy5vgONPIBNfzNT4cuBoX1
-         KLCA==
-X-Gm-Message-State: AOJu0Yx8Rt74CAwww0CO6s2xF4sfpf//GawvEi+dwUk/77ZEQPEFDPSZ
-        CmVBIiKv9zdsGI5TAFDWwB/F0fE55GaCFg==
-X-Google-Smtp-Source: AGHT+IEc4Ap6beIZHT2MzekHqr8DHQwFnYECOD6BVi1xOIrzUCzH/nLhY3+HtKUHusDnSvBJCGSnnA==
-X-Received: by 2002:a05:6870:b016:b0:1c0:a784:cf7e with SMTP id y22-20020a056870b01600b001c0a784cf7emr22067504oae.51.1694070854803;
-        Thu, 07 Sep 2023 00:14:14 -0700 (PDT)
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com. [209.85.210.49])
-        by smtp.gmail.com with ESMTPSA id c7-20020a9d6c87000000b006bee5535b44sm7095067otr.75.2023.09.07.00.14.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Sep 2023 00:14:14 -0700 (PDT)
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-6c0a42a469dso434740a34.2;
-        Thu, 07 Sep 2023 00:14:14 -0700 (PDT)
-X-Received: by 2002:a05:6358:2789:b0:12b:c378:b090 with SMTP id
- l9-20020a056358278900b0012bc378b090mr4579788rwb.26.1694070853892; Thu, 07 Sep
- 2023 00:14:13 -0700 (PDT)
+        with ESMTP id S240346AbjIGRbU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Sep 2023 13:31:20 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF97E1724;
+        Thu,  7 Sep 2023 10:30:54 -0700 (PDT)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 8769466072ED;
+        Thu,  7 Sep 2023 10:06:13 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1694077574;
+        bh=faV2RqAEvL8VWjpK/yOwEuSo/mN8TrmiSzgmPKx+9yM=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=fZSdzOn7RsosI0whfciCa1jkLbzobNQgzpFfqN64/WFaH0JVVvDSITRRVIEfU0cJL
+         9G92DE9ZL2ENrm3vbx1QvZd4i1CDQL2FuXWddcPUL3Tqh0pjzLSwMkHx2wp7B4QUdQ
+         q9PGdQgGkyyyX1Pl4543wCue7OOTDAwD5g72b0Ly6kMs0p+bnuU6+07ib7DHxNU5cx
+         u4ZwxmJ0hWyaDQ8C8BclNi0tFr2oq07xr85X+lIXCQX1ZEOKfYScVlTmGYcg2MRiu6
+         Wj0OIJV+sPLPeQ/pVqWigMMccyTCNRS+0EL92QjILR/PUc4OKJzNOD0NEDYdoLByDx
+         2NecuKDEnsvzw==
+Message-ID: <73fd31ea-f869-db13-5069-f0f5267ba3d3@collabora.com>
+Date:   Thu, 7 Sep 2023 11:06:11 +0200
 MIME-Version: 1.0
-References: <20230824104812.147775-1-biju.das.jz@bp.renesas.com> <20230824104812.147775-2-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20230824104812.147775-2-biju.das.jz@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 7 Sep 2023 09:14:02 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXFhORcYPKYPNYMhzUgpgfWohaPMH8bYSKdOgMN_0z5iA@mail.gmail.com>
-Message-ID: <CAMuHMdXFhORcYPKYPNYMhzUgpgfWohaPMH8bYSKdOgMN_0z5iA@mail.gmail.com>
-Subject: Re: [PATCH v5 1/4] dt-bindings: clock: versaclock3: Add description
- for #clock-cells property
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.0
+Subject: Re: [PATCH] clk: mediatek: clk-mt2701: Add check for
+ mtk_alloc_clk_data
+Content-Language: en-US
+To:     Jiasheng Jiang <jiasheng@iscas.ac.cn>, mturquette@baylibre.com,
+        sboyd@kernel.org, matthias.bgg@gmail.com, wenst@chromium.org,
+        msp@baylibre.com, frank.li@vivo.com, robh@kernel.org,
+        jamesjj.liao@mediatek.com, shunli.wang@mediatek.com,
+        erin.lo@mediatek.com
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+References: <20230901024658.23405-1-jiasheng@iscas.ac.cn>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20230901024658.23405-1-jiasheng@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Aug 24, 2023 at 12:48 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> Add description for "#clock-cells" property to map indexes to the clock
-> output in the Table 3. ("Output Source") in the 5P35023 datasheet
-> (ie: {REF,SE1,SE2,SE3,DIFF1,DIFF2}. Also update the "assigned-clock-rates"
-> in the example.
->
-> While at it, replace clocks phandle in the example from x1_x2->x1 as
-> X2 is a different 32768 kHz crystal.
->
-> Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
-> v4->v5:
->  * Added description for "#clock-cells" property to map indexes to the
->    clock output.
->  * Updated commit header and description to reflect this change.
->  * Dropped fixes tag.
->  * Retained Ack tag from Conor and Krzysztof as it is trivial change.
+Il 01/09/23 04:46, Jiasheng Jiang ha scritto:
+> Add the check for the return value of mtk_alloc_clk_data() in order to
+> avoid NULL pointer dereference.
+> 
+> Fixes: e9862118272a ("clk: mediatek: Add MT2701 clock support")
+> Signed-off-by: Jiasheng Jiang <jiasheng@iscas.ac.cn>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Gr{oetje,eeting}s,
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
