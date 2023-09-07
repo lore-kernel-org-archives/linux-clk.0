@@ -2,148 +2,105 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29416EE14D4
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Sep 2023 05:24:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 953C2EC8739
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Sep 2023 15:22:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230345AbjIGFYd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Sep 2023 01:24:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47576 "EHLO
+        id S229566AbjIGPWP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Sep 2023 11:22:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242346AbjIGFYc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Sep 2023 01:24:32 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42EB51FC6;
-        Wed,  6 Sep 2023 22:24:00 -0700 (PDT)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3874sYbO024320;
-        Thu, 7 Sep 2023 05:22:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : mime-version : in-reply-to : references :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=kEMZE311kuSIysXCzCHzrtPRAC/01PofCb3pYyOhmmk=;
- b=VadpahkdT+MXAIhauMJYFr2pt0KaVnqVYc8BnAavu/PSnAHEpWqxF9JSN+fcwDA7mTNx
- 6MQFoCtj8dDZSor65XRnEkssIld77zkGOmAAT3/YCBUiclZoSA2OhjrFN4xFX4ZEzzSy
- +mXDQN20KohI8bLR8VzizdttYUys+QVBdNBzCt1xnL8rfDL9bGyrooGfxg81zHd7h9f1
- b8L8N7JohCgi0Y1Fgn8UwFwRLSxy1fh81frImioq5VjBPml+87mzoDxNmjFEkyF7vT38
- B9PmI1YwFtRwz+tLhJpYD23YRkktj0bHrHQ0RAgnhiTuU81NLnrqR+gDn5LyuTWthYaj hw== 
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3sy50d8apd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 07 Sep 2023 05:22:49 +0000
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-        by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3875MmkB018953
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 7 Sep 2023 05:22:48 GMT
-Received: from varda-linux.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.36; Wed, 6 Sep 2023 22:22:42 -0700
-From:   Varadarajan Narayanan <quic_varada@quicinc.com>
-To:     <ilia.lin@kernel.org>, <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <rafael@kernel.org>,
-        <viresh.kumar@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <quic_kathirav@quicinc.com>, <linux-pm@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-CC:     Varadarajan Narayanan <quic_varada@quicinc.com>,
-        Praveenkumar I <ipkumar@codeaurora.org>
-Subject: [PATCH v1 09/10] cpufreq: qti: Introduce cpufreq for ipq95xx
-Date:   Thu, 7 Sep 2023 10:51:44 +0530
-Message-ID: <f7d49397507e10423b87910e88c52d5a1681f128.1693996662.git.quic_varada@quicinc.com>
-X-Mailer: git-send-email 2.7.4
+        with ESMTP id S229661AbjIGPVT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Sep 2023 11:21:19 -0400
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3077F183
+        for <linux-clk@vger.kernel.org>; Thu,  7 Sep 2023 08:21:07 -0700 (PDT)
+Received: by mail-pl1-x636.google.com with SMTP id d9443c01a7336-1c1f7f7151fso8185355ad.1
+        for <linux-clk@vger.kernel.org>; Thu, 07 Sep 2023 08:21:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1694100031; x=1694704831; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=yMRlMwN20QLTSRPs/jI5d8COnV1IkaL0AH6Bo1uSv5s=;
+        b=NjWZm6Um6DHzbhWwWeUaizzLAGcxA/hTVSG1Jrsnfa7mPU/v4+9bRccHR2BaAvUroJ
+         XoGb1swPl5lLxNvKTxyBNXMlpO4DTRyeOvdDqR7XxgpFgzQyJoa/dDPRMNm7aJk9hwBU
+         0M3q1sfdXJQ3N6HQyesa4vSy8yiYOTMyKJJxgwSbPY3XGe7AXJX9eG2hf9FWiQhx0sII
+         mFZOy/7mkgceEH2hZk5xS/X/1lxKa3J7WdYyDqzHrozFhRvkOc+UrK9++Lje/Po5XkYt
+         fRtq3JUksrcCu5ro77Je4Up0VhV46eh+E0Owic0UKtTTpDHkuH6k3+Z2xtaQaA8EPBUf
+         qqNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1694100031; x=1694704831;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yMRlMwN20QLTSRPs/jI5d8COnV1IkaL0AH6Bo1uSv5s=;
+        b=V+85AjWjBNCilhHWHXgADzeEEItDzTsD2Vv7flkrOaZHpRbbGMJlJMa1glTPf0p+/d
+         L4BlcZDtZKrVUalgF40ebHXx/PGO6nVlPnv12NTlMZnx6+8bTgPzcyi5TzGZt/QdqO7I
+         Dnb/umrRd8DWjMNPBDArUxo/0vqeIVlbOIR2pcKNPehvUp0bUndxCZ1+ILjfBofXyvIo
+         KdGvliXuPzMxpLpAvfYJ/NZFGGOfUEN24V5SIf3JT5Aqs8vsIX/s0jX73PhYGMnkQlau
+         YpTA8cgV5EyV6kfyERE7v/LwYZxPzqEoPFVE5JRn+uBy7N286DJmSkaw1WrU0GANDu33
+         9qug==
+X-Gm-Message-State: AOJu0Yx1JducFDgJOQJXOgQiC9Tz6tU2FH4qkSEms+KHam/qXPIETh5R
+        jsMddYFg5jUffrkUrooO1wpgSHJ0DA6dsIcE0dnoEcT3+7dhRKGz
+X-Google-Smtp-Source: AGHT+IFUuNXZQLnUGxYZ4nwOIc/1ZCmT/RBxdiDK6aXiF/foDyogFPcREcWU6P3R5YT2nx0jFgg2XzMsNGlNNM2BlgA=
+X-Received: by 2002:a25:a1e9:0:b0:d78:35cd:7f5c with SMTP id
+ a96-20020a25a1e9000000b00d7835cd7f5cmr19661493ybi.46.1694093927719; Thu, 07
+ Sep 2023 06:38:47 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <cover.1693996662.git.quic_varada@quicinc.com>
-References: <cover.1693996662.git.quic_varada@quicinc.com>
+References: <cover.1693996662.git.quic_varada@quicinc.com> <00a5ca23101df1f8f20bdec03be20af9d39c64d1.1693996662.git.quic_varada@quicinc.com>
+In-Reply-To: <00a5ca23101df1f8f20bdec03be20af9d39c64d1.1693996662.git.quic_varada@quicinc.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Thu, 7 Sep 2023 16:38:36 +0300
+Message-ID: <CAA8EJpqtXw1ukDZ1hXAc3G7LNDwjcduUdNaPHadfSqCuV3fxbg@mail.gmail.com>
+Subject: Re: [PATCH v1 02/10] clk: qcom: apss-ipq-pll: Use stromer plus ops
+ for stromer plus pll
+To:     Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc:     ilia.lin@kernel.org, agross@kernel.org, andersson@kernel.org,
+        konrad.dybcio@linaro.org, rafael@kernel.org,
+        viresh.kumar@linaro.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        quic_kathirav@quicinc.com, linux-pm@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: E2pKXKB1uNtzr1HeOIK6hpFhumM-sje0
-X-Proofpoint-GUID: E2pKXKB1uNtzr1HeOIK6hpFhumM-sje0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-09-06_12,2023-09-05_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
- spamscore=0 malwarescore=0 priorityscore=1501 mlxlogscore=999 adultscore=0
- suspectscore=0 bulkscore=0 lowpriorityscore=0 impostorscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2308100000 definitions=main-2309070045
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-IPQ95xx SoCs have different OPPs available for the CPU based on
-the SoC variant. This can be determined from an eFuse register
-present in the silicon.
+On Thu, 7 Sept 2023 at 08:22, Varadarajan Narayanan
+<quic_varada@quicinc.com> wrote:
+>
+> The set rate and determine rate operations are different between
+> Stromer and Stromer Plus PLLs. Hence, use stromer plus ops for
+> ipq_pll_stromer_plus.
+>
+> Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
 
-Added support for ipq95xx on nvmem driver which helps to
-determine OPPs at runtime based on the eFuse register which
-has the CPU frequency limits. opp-supported-hw dt binding
-can be used to indicate the available OPPs for each limit.
+Fixes tag?
 
-Signed-off-by: Praveenkumar I <ipkumar@codeaurora.org>
-Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
-Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
----
- drivers/cpufreq/cpufreq-dt-platdev.c |  1 +
- drivers/cpufreq/qcom-cpufreq-nvmem.c | 20 ++++++++++++++++++++
- 2 files changed, 21 insertions(+)
+> ---
+>  drivers/clk/qcom/apss-ipq-pll.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/qcom/apss-ipq-pll.c b/drivers/clk/qcom/apss-ipq-pll.c
+> index e170331..18c4ffe 100644
+> --- a/drivers/clk/qcom/apss-ipq-pll.c
+> +++ b/drivers/clk/qcom/apss-ipq-pll.c
+> @@ -68,7 +68,7 @@ static struct clk_alpha_pll ipq_pll_stromer_plus = {
+>                                 .fw_name = "xo",
+>                         },
+>                         .num_parents = 1,
+> -                       .ops = &clk_alpha_pll_stromer_ops,
+> +                       .ops = &clk_alpha_pll_stromer_plus_ops,
+>                 },
+>         },
+>  };
+> --
+> 2.7.4
+>
 
-diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-index f0c45d4..4ab29c0 100644
---- a/drivers/cpufreq/cpufreq-dt-platdev.c
-+++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-@@ -180,6 +180,7 @@ static const struct of_device_id blocklist[] __initconst = {
- 
- 	{ .compatible = "qcom,ipq5332", },
- 	{ .compatible = "qcom,ipq8064", },
-+	{ .compatible = "qcom,ipq9574", },
- 	{ .compatible = "qcom,apq8064", },
- 	{ .compatible = "qcom,msm8974", },
- 	{ .compatible = "qcom,msm8960", },
-diff --git a/drivers/cpufreq/qcom-cpufreq-nvmem.c b/drivers/cpufreq/qcom-cpufreq-nvmem.c
-index 49d21b0..de70225 100644
---- a/drivers/cpufreq/qcom-cpufreq-nvmem.c
-+++ b/drivers/cpufreq/qcom-cpufreq-nvmem.c
-@@ -168,6 +168,25 @@ static int qcom_cpufreq_kryo_name_version(struct device *cpu_dev,
- 	case QCOM_ID_APQ8096SG:
- 		drv->versions = 1 << ((unsigned int)(*speedbin) + 4);
- 		break;
-+	case QCOM_ID_IPQ9514:
-+	case QCOM_ID_IPQ9550:
-+	case QCOM_ID_IPQ9554:
-+	case QCOM_ID_IPQ9570:
-+	case QCOM_ID_IPQ9574:
-+		/* Fuse Value    Freq    BIT to set
-+		 * ---------------------------------
-+		 *   2’b00     No Limit     BIT(0)
-+		 *   2’b10     1.8 GHz      BIT(1)
-+		 *   2’b01     1.5 Ghz      BIT(2)
-+		 *   2’b11     1.2 GHz      BIT(3)
-+		 */
-+		if ((unsigned int)(*speedbin) == 2)
-+			drv->versions = BIT(1);
-+		else if ((unsigned int)(*speedbin) == 1)
-+			drv->versions = BIT(2);
-+		else
-+			drv->versions = 1 << (unsigned int)(*speedbin);
-+		break;
- 	default:
- 		BUG();
- 		break;
-@@ -375,6 +394,7 @@ static const struct of_device_id qcom_cpufreq_match_list[] __initconst = {
- 	{ .compatible = "qcom,qcs404", .data = &match_data_qcs404 },
- 	{ .compatible = "qcom,ipq5332", .data = &match_data_kryo },
- 	{ .compatible = "qcom,ipq8064", .data = &match_data_krait },
-+	{ .compatible = "qcom,ipq9574", .data = &match_data_kryo },
- 	{ .compatible = "qcom,apq8064", .data = &match_data_krait },
- 	{ .compatible = "qcom,msm8974", .data = &match_data_krait },
- 	{ .compatible = "qcom,msm8960", .data = &match_data_krait },
+
 -- 
-2.7.4
-
+With best wishes
+Dmitry
