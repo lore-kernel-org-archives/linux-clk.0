@@ -2,220 +2,118 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6507EEC8750
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Sep 2023 18:53:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 072A3EC8759
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Sep 2023 22:33:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230059AbjIGSxm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Sep 2023 14:53:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41092 "EHLO
+        id S232576AbjIGWdc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Sep 2023 18:33:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230271AbjIGSxl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Sep 2023 14:53:41 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CC2719B0
-        for <linux-clk@vger.kernel.org>; Thu,  7 Sep 2023 11:52:57 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-99bcf2de59cso160461066b.0
-        for <linux-clk@vger.kernel.org>; Thu, 07 Sep 2023 11:52:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694112742; x=1694717542; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=n+7VyO9HJQgcCdV1oziXjEck+bwNvVutHKF259s+mUE=;
-        b=vgCvntVGud2ySWvYdR0gt2K56FBFpnsjCqhvZy05KlDD9+rDphYOzxWronWueVhVy8
-         lVgrW2FluIj9BAgZcDq5FY7oWPHve6nGP57iDtXBtvaxTW5ty0enTQTLNGU7cgg3kv0R
-         XceAEPZGLGWB/xg4ak2GpduQAU0CdJVDokJAuEumamWcN34nAzdtq91AJHJinNBxB+Vo
-         LHlG4VTecEGNbKXrNABdywChLbc6x8PWN83wwE5X2QSYaJ4Pic5pzd6zJm0VmOoyEZ+z
-         X+zMWf5kPhMa5spJm4OA/UX777b6hgFVlnHZgJofP0nJHGrYAZg2mqfdVVpm6mFLx1ZH
-         1VRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694112742; x=1694717542;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=n+7VyO9HJQgcCdV1oziXjEck+bwNvVutHKF259s+mUE=;
-        b=ZYzJB6/DSyAyO5VuJpFPeBoG8cFbe4WhN+M+K+HNCByLNLDHuLLQhJhpSl2K/P5YGn
-         s7YafKwiJDRoEf7c5WzhMabmJ9YzbD/fDeWcafTdwN/C4u4o5PKR1ee0XjwfDnumx2QX
-         Xm0JUzdh74vpg2pg50lQKM24qh4dE+tEl0ruUUo9AoU0VJNlOrPCATRdOC4R7GfALpEp
-         9q+Y1gVzp6e4+Jx+6enkiDEtboCMGBRk7wrkIB2QgpDaRmWD1pNFd304mrtNl0o0Nxmm
-         gJPFbwxDn7CeOyI8psxUfzGCzFce1aOnzgIXSCvge5m60jBbxQIx4MgOZYdlGwGPOAHY
-         nyyw==
-X-Gm-Message-State: AOJu0YzuXy3yPX9ETiQjxiTDAo5CrxiI0DX6ed97fUgAqZiXsjsC2djY
-        4QqzwnBWztuVZkPuSo1OT9/p+apM/8iTuTLd21VPlg==
-X-Google-Smtp-Source: AGHT+IH+CwVwCl1iJM6DtJhr1qBDbMzFIn3otLkKPSG2M+l5DaLO/pmOhn61jKGup+8AtmrqTLUZag==
-X-Received: by 2002:a19:7710:0:b0:500:bd75:77d1 with SMTP id s16-20020a197710000000b00500bd7577d1mr3079574lfc.63.1694075519864;
-        Thu, 07 Sep 2023 01:31:59 -0700 (PDT)
-Received: from [192.168.37.232] (178235177204.dynamic-4-waw-k-1-1-0.vectranet.pl. [178.235.177.204])
-        by smtp.gmail.com with ESMTPSA id a9-20020aa7d749000000b005257da6be23sm9555588eds.75.2023.09.07.01.31.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Sep 2023 01:31:59 -0700 (PDT)
-Message-ID: <b0508a69-130d-4b05-9dfc-399e482dc2ae@linaro.org>
-Date:   Thu, 7 Sep 2023 10:31:55 +0200
+        with ESMTP id S230195AbjIGWdb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Sep 2023 18:33:31 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 643141BC7;
+        Thu,  7 Sep 2023 15:33:28 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0154FC433C7;
+        Thu,  7 Sep 2023 22:33:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1694126008;
+        bh=11OxPGs4D8TG3RACZZ9X30xzAuDPKXdLvJllCq6fnTo=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=A9CB1+8hr6VRvzDP+b4+8UmSv+gg1cQtjVgTQLSreTgDVuN3TsxSV8iw3Neljvbus
+         Kr+EiccofWyyWM/0+UPpajzV8JRcNi2VBidD9cKl74APIVZBj7+9H5kBc9v1VmfJ9D
+         +N0l48ppypPbnTuJ4CRKkhJZgOsPvxe3uUL/A8pdt39iYL2fWlp2q9VkOo5+7SIdaH
+         2E9yAbvowEqBtvye++5wCPbtIeiSLsRtRUeqc4lz9YpQsU+eBTZcbFrwr5L07wcxEL
+         K+H9WVjahsSaoFLQNpO6uhDa4WZoumTTd06OMNvryDVDlty/hOJiyeMAUZrWkKuBp1
+         dEmlOLpRceqbA==
+Message-ID: <fc8023b435f78e02c96fecbe8e7599ee.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 04/10] clk: qcom: apss-ipq6018: ipq5332: add safe
- source switch for a53pll
-Content-Language: en-US
-To:     Varadarajan Narayanan <quic_varada@quicinc.com>,
-        ilia.lin@kernel.org, agross@kernel.org, andersson@kernel.org,
-        rafael@kernel.org, viresh.kumar@linaro.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        quic_kathirav@quicinc.com, linux-pm@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <cover.1693996662.git.quic_varada@quicinc.com>
- <5e3c29df2b42cceb8072b00546a78e1b99b2d374.1693996662.git.quic_varada@quicinc.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <5e3c29df2b42cceb8072b00546a78e1b99b2d374.1693996662.git.quic_varada@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAPp5cGTshQJ3aLeLqv=CbaVeg9GnK_k9nsoaWrBKs1dcXzNZow@mail.gmail.com>
+References: <20230822134849.3352329-1-alessandro.carminati@gmail.com> <CAPp5cGTshQJ3aLeLqv=CbaVeg9GnK_k9nsoaWrBKs1dcXzNZow@mail.gmail.com>
+Subject: Re: [PATCH] Sanitize possible_parent_show to Handle Return Value of of_clk_get_parent_name
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Philip Daly <pdaly@redhat.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Alessandro Carminati <alessandro.carminati@gmail.com>
+Date:   Thu, 07 Sep 2023 15:33:25 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 7.09.2023 07:21, Varadarajan Narayanan wrote:
-> Stromer Plus PLL found on IPQ53xx doesn't support dynamic
-> frequency scaling. To achieve the same, we need to park the APPS
-> PLL source to GPLL0, re configure the PLL and then switch the
-> source to APSS_PLL_EARLY.
-> 
-> To support this, register a clock notifier to get the PRE_RATE
-> and POST_RATE notification. Change the APSS PLL source to GPLL0
-> when PRE_RATE notification is received, then configure the PLL
-> and then change back the source to APSS_PLL_EARLY.
-> 
-> Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> ---
->  drivers/clk/qcom/apss-ipq6018.c | 54 ++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 53 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/qcom/apss-ipq6018.c b/drivers/clk/qcom/apss-ipq6018.c
-> index 4e13a08..ffb6ab5 100644
-> --- a/drivers/clk/qcom/apss-ipq6018.c
-> +++ b/drivers/clk/qcom/apss-ipq6018.c
-> @@ -9,8 +9,11 @@
->  #include <linux/clk-provider.h>
->  #include <linux/regmap.h>
->  #include <linux/module.h>
-> +#include <linux/clk.h>
-> +#include <linux/soc/qcom/smem.h>
->  
->  #include <dt-bindings/clock/qcom,apss-ipq.h>
-> +#include <dt-bindings/arm/qcom,ids.h>
->  
->  #include "common.h"
->  #include "clk-regmap.h"
-> @@ -84,15 +87,64 @@ static const struct qcom_cc_desc apss_ipq6018_desc = {
->  	.num_clks = ARRAY_SIZE(apss_ipq6018_clks),
->  };
->  
-> +static int cpu_clk_notifier_fn(struct notifier_block *nb, unsigned long action,
-> +				void *data)
-> +{
-> +	u8 index;
-> +	int err;
-> +
-> +	if (action == PRE_RATE_CHANGE)
-> +		index = P_GPLL0;
-> +	else if (action == POST_RATE_CHANGE)
-> +		index = P_APSS_PLL_EARLY;
-> +	else
-> +		return 0;
-> +
-> +	err = clk_rcg2_mux_closest_ops.set_parent(&apcs_alias0_clk_src.clkr.hw,
-> +						  index);
-Adding a variable for clk_hw within the apcs_alias0 clock would
-make this easier to digest, I think.
+Quoting Alessandro Carminati (2023-09-07 07:15:36)
+> this is a gentle ping
+>=20
 
-And if we wanna be even less error-prone, you can reference the
-ops of this clock in an indirect way.
+I couldn't read your email because it was sent to nobody
+(unlisted-recipients). Can you resend with a proper To: line?=20
 
-> +
-> +	return notifier_from_errno(err);
-> +}
-> +
-> +static struct notifier_block cpu_clk_notifier = {
-> +	.notifier_call = cpu_clk_notifier_fn,
-> +};
-> +
->  static int apss_ipq6018_probe(struct platform_device *pdev)
->  {
->  	struct regmap *regmap;
-> +	u32 soc_id;
-> +	int ret;
-> +
-> +	ret = qcom_smem_get_soc_id(&soc_id);
-> +	if (ret)
-> +		return ret;
->  
->  	regmap = dev_get_regmap(pdev->dev.parent, NULL);
->  	if (!regmap)
->  		return -ENODEV;
->  
-> -	return qcom_cc_really_probe(pdev, &apss_ipq6018_desc, regmap);
-> +	ret = qcom_cc_really_probe(pdev, &apss_ipq6018_desc, regmap);
-> +	if (ret)
-> +		return ret;
-> +
-> +	switch (soc_id) {
-> +	/*
-> +	 * Only below variants of IPQ53xx support scaling
-> +	 */
-1. /* Keep this in a 1-line comment */
+>=20
+> Il giorno mar 22 ago 2023 alle ore 15:49 Alessandro Carminati
+> <alessandro.carminati@gmail.com> ha scritto:
+> >
+> > In the possible_parent_show function, ensure proper handling of the ret=
+urn
+> > value from of_clk_get_parent_name to prevent potential issues arising f=
+rom
+> > a NULL return.
+> > The current implementation invokes seq_puts directly on the result of
+> > of_clk_get_parent_name without verifying the return value, which can le=
+ad
+> > to kernel panic if the function returns NULL.
+> >
+> > This patch addresses the concern by introducing a check on the return
+> > value of of_clk_get_parent_name. If the return value is not NULL, the
 
-2. why? explain the reasoning in the commit message
+Use of_clk_get_parent_name() to signify that it is a function.
 
-Konrad
-> +	case QCOM_ID_IPQ5332:
-> +	case QCOM_ID_IPQ5322:
-> +	case QCOM_ID_IPQ5300:
-> +		ret = clk_notifier_register(apcs_alias0_clk_src.clkr.hw.clk,
-> +						&cpu_clk_notifier);
-> +		if (ret)
-> +			return ret;
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +
-> +	return 0;
->  }
->  
->  static struct platform_driver apss_ipq6018_driver = {
+> > function proceeds to call seq_puts, providing the returned value as
+> > argument.
+> > However, if of_clk_get_parent_name returns NULL, the function provides a
+> > static string as argument, avoiding the panic.
+> >
+> > Reported-by: Philip Daly <pdaly@redhat.com>
+> > Signed-off-by: Alessandro Carminati (Red Hat) <alessandro.carminati@gma=
+il.com>
+> > ---
+
+It needs a Fixes tag.
+
+> >  drivers/clk/clk.c | 11 ++++++-----
+> >  1 file changed, 6 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > index c249f9791ae8..ab999644e185 100644
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -3416,6 +3416,7 @@ static void possible_parent_show(struct seq_file =
+*s, struct clk_core *core,
+> >                                  unsigned int i, char terminator)
+> >  {
+> >         struct clk_core *parent;
+> > +       const char *tmp;
+> >
+> >         /*
+> >          * Go through the following options to fetch a parent's name.
+> > @@ -3436,12 +3437,12 @@ static void possible_parent_show(struct seq_fil=
+e *s, struct clk_core *core,
+> >                 seq_puts(s, core->parents[i].name);
+> >         else if (core->parents[i].fw_name)
+> >                 seq_printf(s, "<%s>(fw)", core->parents[i].fw_name);
+> > -       else if (core->parents[i].index >=3D 0)
+> > -               seq_puts(s,
+> > -                        of_clk_get_parent_name(core->of_node,
+> > -                                               core->parents[i].index)=
+);
+> > -       else
+> > +       else if (core->parents[i].index >=3D 0) {
+> > +               tmp =3D of_clk_get_parent_name(core->of_node, core->par=
+ents[i].index);
+> > +               seq_puts(s, tmp ? tmp : "(none)");
+
+How about using seq_printf("%s", ...) instead? That should print out
+"(null)" in the case that it is NULL, instead of "(none)" and it is a
+one line change.
