@@ -2,309 +2,120 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A174CEC875F
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Sep 2023 22:45:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA7FEE57E0
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Sep 2023 08:10:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232469AbjIGWpa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Sep 2023 18:45:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49828 "EHLO
+        id S238973AbjIHIKz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Sep 2023 04:10:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229541AbjIGWpa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Sep 2023 18:45:30 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 105BD1BC8;
-        Thu,  7 Sep 2023 15:45:26 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84770C433C9;
-        Thu,  7 Sep 2023 22:45:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694126725;
-        bh=7qyhLYr4pO5sm3ZD/DMx8wk96vJyeNH7OhlrfuB93Kw=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=TT3OHA8mbFVm6Xr+gpkeeWcGsyx+3GQQcF9ozKW8SRKSDNWgJG9Yembgzyar14fzk
-         1KTBGFNL1miz4j0XyQ4RDyVkeBElYIQPi2b4K7owh4oxnxQj7Jkeqoa1pSHtNeitIL
-         JEt/iFFzQQDai3JP9eSLYxPP3g7kH1quDcH0XOugpPqry7joRSBXa0PhXPxDtrgk1q
-         TVwJJLhPfoYvjJ4CernbRSMsRRObfD6tofoECaXpkCa9b15aWchz0Ko8+JHJOEX0gG
-         2+ZWkW/YNaV8MdgfSGQ/oY4WQFyvd2/0kb+iUl4PnWE8KhQo5zzT+HH/7A+1/+czwt
-         5BUju2Mkb++FA==
-Message-ID: <17681a9f756cc70a190c674c51b90140.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S234726AbjIHIKy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Sep 2023 04:10:54 -0400
+Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 936D61BD8
+        for <linux-clk@vger.kernel.org>; Fri,  8 Sep 2023 01:10:50 -0700 (PDT)
+Received: by mail-yb1-xb31.google.com with SMTP id 3f1490d57ef6-d7e904674aeso1628462276.3
+        for <linux-clk@vger.kernel.org>; Fri, 08 Sep 2023 01:10:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1694160650; x=1694765450; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LX8a9RtwGTkNLy+xzOfITbjsoPIkf7czyOLexbXeC30=;
+        b=Ta0p6zxQby92DMNhDSTt1AvTBovOoRn8asPZr1gk8V+gWfRAw2lZ8kV6N2h5VheLA9
+         JTwBoy+SlBso8p8yiQeZw9m8VIslhXrjcvZ5E2UZym2iFFPZRUZ19C2h6TFQcteH11vf
+         tCWseemtS2uDnmZUvC5Xigx02zT3ivXvtqF0lUjngafAifpN9hdj6jNDqYqLTE2gaMBu
+         iytiWf5lqdP3in57u48TCk3CgK/d/Em9rG3zXv15NAbtJ7j+4oUTFyWueOaeLjTW0u68
+         rBdsg0qwP0Cvh4Mrxlp0yxGPAiscP+VSfYH4+kJmZCpGHS0cI2peLG93YXdqz4+8AHmr
+         5rqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694160650; x=1694765450;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LX8a9RtwGTkNLy+xzOfITbjsoPIkf7czyOLexbXeC30=;
+        b=f/IRDl6Nn74z3m56elUAHhKTJPlTtDxaOcuG6iMcPxsXnyPwXWI0FcToP1XQfq9JpC
+         HDHdGBfUQ9rR+/HXdUyCIjkVgOu2X4fTa/uP+GovorgK9JNYuz1aDChUgbV5TnfMtIqn
+         ulKZLRMiBdEnDmVpzCQg9nmTGdRFAffXia/utrZJB2eH0F46lkv45cyHIE/KxruNzaY3
+         Hzk6lgErJphMTp5lHyajlA16+lZdOeU5vpdRhxiE6rJpfH4f4C8PZ82QP7ygvbP8uPp2
+         pSKrDJSdpDyNGGtJt7Rris/V1bZCf1pXruSWBmadnwkLwVAe1BZ5frfhDQs4T4zmxmAh
+         tmFQ==
+X-Gm-Message-State: AOJu0YzmO2OmCl82JsZNOSuKQGJ9Agn0Aekr6i3dC/Fwi9kYgdMQQy9x
+        36/66NAUYlG2s9j3wlOQG8all088Ji9ycNlLcso6sg==
+X-Google-Smtp-Source: AGHT+IEIhWm+dbLokHs4WzlKU9nNAycGL1sYfhy4ej/rUnehmE6v6eMqoNyWh18rq8tDXFFLvVdbX78B2EnbokZq5wM=
+X-Received: by 2002:a5b:c4d:0:b0:d80:14ed:d294 with SMTP id
+ d13-20020a5b0c4d000000b00d8014edd294mr1579706ybr.36.1694160649746; Fri, 08
+ Sep 2023 01:10:49 -0700 (PDT)
 MIME-Version: 1.0
+References: <a03a6e1d-e99c-40a3-bdac-0075b5339beb@gmail.com>
+In-Reply-To: <a03a6e1d-e99c-40a3-bdac-0075b5339beb@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 8 Sep 2023 10:10:37 +0200
+Message-ID: <CACRpkdahWm9aP+UasDx=s3th+vyjAfuWrKB5HS9BKEbz90ZmKw@mail.gmail.com>
+Subject: Re: ARM BCM53573 SoC hangs/lockups caused by locks/clock/random changes
+To:     =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+        Waiman Long <longman@redhat.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        openwrt-devel@lists.openwrt.org,
+        bcm-kernel-feedback-list@broadcom.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <16d09acf-7bdd-04ee-6faf-936c0366df03@quicinc.com>
-References: <20230901091823.30242-1-quic_luoj@quicinc.com> <20230901091823.30242-5-quic_luoj@quicinc.com> <27ae3297ad161fd67706db70b402db04.sboyd@kernel.org> <16d09acf-7bdd-04ee-6faf-936c0366df03@quicinc.com>
-Subject: Re: [PATCH v6 4/4] clk: qcom: add clock controller driver for qca8386/qca8084
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        quic_srichara@quicinc.com
-To:     Jie Luo <quic_luoj@quicinc.com>, agross@kernel.org,
-        andersson@kernel.org, catalin.marinas@arm.com, conor+dt@kernel.org,
-        konrad.dybcio@linaro.org, krzysztof.kozlowski+dt@linaro.org,
-        mturquette@baylibre.com, p.zabel@pengutronix.de,
-        robh+dt@kernel.org, will@kernel.org
-Date:   Thu, 07 Sep 2023 15:45:23 -0700
-User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jie Luo (2023-09-07 01:36:50)
->=20
-> On 9/6/2023 5:36 AM, Stephen Boyd wrote:
-> > Quoting Luo Jie (2023-09-01 02:18:23)
-> >> diff --git a/drivers/clk/qcom/nsscc-qca8k.c b/drivers/clk/qcom/nsscc-q=
-ca8k.c
-> >> new file mode 100644
-> >> index 000000000000..f9312735daf3
-> >> --- /dev/null
-> >> +++ b/drivers/clk/qcom/nsscc-qca8k.c
-> >> @@ -0,0 +1,2179 @@
-> >> +// SPDX-License-Identifier: GPL-2.0-only
-> >> +/*
-> >> + * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights re=
-served.
-> >> + */
-> >> +
-> >> +#include <linux/clk-provider.h>
-> >> +#include <linux/kernel.h>
-> >> +#include <linux/module.h>
-> >> +#include <linux/of.h>
-> >> +#include <linux/platform_device.h>
-> >=20
-> > Is platform_device include used?
-> >=20
-> will remove this.
->=20
-> >> +#include <linux/regmap.h>
-> >> +#include <linux/phy.h>
-> >=20
-> > Is the phy include used? Where is the mdio.h include?
->=20
-> there is no PHY include, just the mdio_device is included, however the=20
-> mii_bus->mdio_lock is needed by this clock controller.
->=20
-> so "struct mii_bus" is needed and included by the header file phy.h,
-> the mdio.h is included by phy.h.
+Hi Rafal,
 
-Don't rely on implicit includes. It leads to compile errors if headers
-are ever split/moved around. Just include mdio.h as you use it.
+On Mon, Sep 4, 2023 at 10:34=E2=80=AFAM Rafa=C5=82 Mi=C5=82ecki <zajec5@gma=
+il.com> wrote:
 
->=20
-> >=20
-> >> +
-> >> +#include <dt-bindings/clock/qcom,qca8k-nsscc.h>
-> >> +#include <dt-bindings/reset/qcom,qca8k-nsscc.h>
-> >> +
-> >> +#include "clk-branch.h"
-> >> +#include "clk-rcg.h"
-> >> +#include "clk-regmap.h"
-> >> +#include "clk-regmap-divider.h"
-> >> +#include "clk-regmap-mux.h"
-> > [...]
-> >> +
-> >> +static const struct freq_tbl ftbl_nss_cc_mac5_rx_clk_src[] =3D {
-> >> +       F(50000000, P_XO, 1, 0, 0),
-> >> +       F(125000000, P_UNIPHY0_RX, 1, 0, 0),
-> >> +       F(125000000, P_UNIPHY0_TX, 1, 0, 0),
-> >> +       F(312500000, P_UNIPHY0_RX, 1, 0, 0),
-> >> +       F(312500000, P_UNIPHY0_TX, 1, 0, 0),
-> >=20
-> > This frequency table looks like the parent should change rate...
->=20
-> Yes, the parent need to change the rate for the different interface=20
-> mode, PHY_INTERFACE_MODE_2500BASEX use 312.5M, PHY_INTERFACE_MODE_SGMII=20
-> use 125M.
->=20
-> >=20
-> >> +       { }
-> >> +};
-> >> +
-> >> +static struct clk_rcg2 nss_cc_mac5_rx_clk_src =3D {
-> >> +       .cmd_rcgr =3D 0x154,
-> >> +       .freq_tbl =3D ftbl_nss_cc_mac5_rx_clk_src,
-> >> +       .hid_width =3D 5,
-> >> +       .parent_map =3D nss_cc_uniphy0_rx_tx_map,
-> >> +       .clkr.hw.init =3D &(const struct clk_init_data) {
-> >> +               .name =3D "nss_cc_mac5_rx_clk_src",
-> >> +               .parent_data =3D nss_cc_uniphy0_rx_tx_data,
-> >> +               .num_parents =3D ARRAY_SIZE(nss_cc_uniphy0_rx_tx_data),
-> >> +               .ops =3D &clk_rcg2_ops,
-> >=20
-> > ... but this doesn't have any CLK_SET_RATE_PARENT flag set. How does it
-> > work?
->=20
-> since it has the different parent clock rate 312.5M and 125M for the=20
-> deffernet interface mode used. If the flag CLK_SET_RATE_PARENT is set,=20
-> when we require to configure 25M clock rate for example, it may lead to=20
-> the parent rate changed(312.5M/12.5 or 125M/5), which is not expected,=20
-> the parent rate(312.5M or 125M) can't be changed, since the parent rate=20
-> is decided by interface mode(PHY_INTERFACE_MODE_2500BASEX or=20
-> PHY_INTERFACE_MODE_SGMII).
->=20
-> the work flow:
-> the parent of nss_cc_mac5_rx_clk_src is selected as 312.5M or 125M=20
-> firstly, then configure the required clock rate of clk_branch.
->=20
-> uniphy(312.5M or 125M) ---> RCG(nss_cc_mac5_rx_clk_src) ---> clk_branch.
+> I'm clueless at this point.
+> Maybe someone can come up with an idea of actual issue & ideally a
+> solution.
 
-Ok. So you're saying that the uniphy rate changes outside of the clk
-framework? That is potentially troublesome because the clk framework
-aggressively caches things to the point that if the parent of the RCG
-changes rates the branch rate won't reflect the new rate. It looks like
-none of that really matters in practice because the divider is always 1
-here, but this will be confusing if a driver calls clk_get_rate() when
-the uniphy rate has changed.
+Damn this is frustrating.
 
-Why can't that be driven from the clk framework? Or why can't the uniphy
-implement a clk provider that supports changing rates? If that was done,
-then a driver could change the uniphy rate and the clk framework would
-propagate the frequency down to all the children, recalculating the
-rates along the way. It may even mean that there's nothing to do when
-changing these clks, besides perhaps changing the parent?
+> 2. Clock (arm,armv7-timer)
+>
+> While comparing main clock in Broadcom's SDK with upstream one I noticed
+> a tiny difference: mask value. I don't know it it makes any sense but
+> switching from CLOCKSOURCE_MASK(56) to CLOCKSOURCE_MASK(64) in
+> arm_arch_timer.c (to match SDK) increases average uptime (time before a
+> hang/lockup happens) from 4 minutes to 36 minutes.
 
->=20
-> >=20
-> >> +       },
-> >> +};
-> >> +
-> >> +static struct clk_regmap_div nss_cc_mac5_rx_div_clk_src =3D {
-> >> +       .reg =3D 0x15c,
-> >> +       .shift =3D 0,
-> >> +       .width =3D 4,
-> >> +       .clkr =3D {
-> >> +               .hw.init =3D &(const struct clk_init_data) {
-> >> +                       .name =3D "nss_cc_mac5_rx_div_clk_src",
-> > [...]
-> >> +
-> >> +static struct clk_branch nss_cc_mdio_master_ahb_clk =3D {
-> >> +       .halt_reg =3D 0x19c,
-> >> +       .halt_check =3D BRANCH_HALT,
-> >> +       .clkr =3D {
-> >> +               .enable_reg =3D 0x19c,
-> >> +               .enable_mask =3D BIT(0),
-> >> +               .hw.init =3D &(const struct clk_init_data) {
-> >> +                       .name =3D "nss_cc_mdio_master_ahb_clk",
-> >> +                       .parent_hws =3D (const struct clk_hw *[]) {
-> >> +                               &nss_cc_ahb_clk_src.clkr.hw,
-> >> +                       },
-> >> +                       .num_parents =3D 1,
-> >> +                       .flags =3D CLK_SET_RATE_PARENT | CLK_IS_CRITIC=
-AL,
-> >=20
-> > Why can't we simply enable clks in probe that are critical? The regmap
-> > operations are complicated?
->=20
-> since these clocks with the flag CLK_IS_CRITICAL are the common clocks=20
-> needed to be enabled for all devices no matter what work mode(qca8084 or =
+This could be related to how often the system goes to idle.
 
-> qca8386) used, which is base clock to enable to use the clock driver, to =
+> +       if (cpu_idle_force_poll =3D=3D 1234)
+> +               arch_cpu_idle();
+> +       if (cpu_idle_force_poll =3D=3D 5678)
+> +               arch_cpu_idle();
+> +       if (cpu_idle_force_poll =3D=3D 1234)
+> +               arch_cpu_idle();
+> +       if (cpu_idle_force_poll =3D=3D 5678)
+> +               arch_cpu_idle();
+> +       if (cpu_idle_force_poll =3D=3D 1234)
+> +               arch_cpu_idle();
+> +       if (cpu_idle_force_poll =3D=3D 5678)
+> +               arch_cpu_idle();
+> +       if (cpu_idle_force_poll =3D=3D 1234)
+> +               arch_cpu_idle();
 
-> enable these clocks by using flag CLK_IS_CRITICAL is simplier way and=20
-> can simply the device probe driver and device tree definations.
+Idle again.
 
-Sure, but it also means you use the despised CLK_IS_CRITICAL flag when
-it could simply be some code in probe that sets some bits for "boot
-configuration". The benefit is that we don't register clks that do
-practically nothing besides use resources in the kernel for a one time
-operation at probe.
+I would have tried to see what arch_cpu_idle() is doing.
 
->=20
-> >=20
-> >> +};
-> >> +
-> >> +/* For each read/write operation of clock register, there are three M=
-DIO frames
-> >> + * sent to the device.
-> >> + *
-> >> + * 1. The high address part[31:8] of register is packaged into the fi=
-rst MDIO frame.
-> >> + * 2. The low address part[7:0] of register is packaged into the seco=
-nd MDIO frame
-> >> + *    with the low 16bit data to read/write.
-> >> + * 3. The low address part[7:0] of register is packaged into the last=
- MDIO frame
-> >> + *    with the high 16bit data to read/write.
-> >> + *
-> >> + * The clause22 MDIO frame format used by device is as below.
-> >> + * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-> >> + * | ST| OP|   ADDR  |   REG   | TA|             DATA              |
-> >> + * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-> >> + */
-> >> +static inline void split_addr(u32 regaddr, u16 *r1, u16 *r2, u16 *pag=
-e)
-> >=20
-> > split_addr() is too generic of a name. Please namespace this function to
-> > something else.
->=20
-> okay, maybe convert_reg_to_mii_addr?
+arm_pm_idle() or cpu_do_idle()?
 
-Sure!
+What happens if you just put return in arch_cpu_idle()
+so it does nothing?
 
-> >=20
-> >> +               *val |=3D ret << 16;
-> >> +       }
-> >> +
-> >> +       if (ret < 0)
-> >> +               dev_err_ratelimited(&bus->dev, "fail to read qca8k mii=
- register\n");
-> >> +
-> >> +       return ret < 0 ? ret : 0;
-> >> +}
-> >> +
-> >> +void qca8k_mii_write(struct mii_bus *bus, u16 switch_phy_id, u32 reg,=
- u32 val)
-> >> +{
-> >> +       int ret;
-> >> +
-> >> +       ret =3D bus->write(bus, switch_phy_id, reg, lower_16_bits(val)=
-);
-> >> +       if (ret >=3D 0)
-> >> +               ret =3D bus->write(bus, switch_phy_id, (reg | BIT(1)),=
- upper_16_bits(val));
-> >> +
-> >> +       if (ret < 0)
-> >> +               dev_err_ratelimited(&bus->dev, "fail to write qca8k mi=
-i register\n");
-> >> +}
-> >> +
-> >> +int qca8k_mii_page_set(struct mii_bus *bus, u16 switch_phy_id, u32 re=
-g, u16 page)
-> >=20
-> > Regmap core has support for picking pages. Can that be used here?
->=20
-> Hi Stephen,
-> No, we can't depend on regmap to pick the page, since the MDIO bus is=20
-> shared by qca8k device and PHY device, if there is a PHY device access,=20
-> even if the page is not changed, we still need to configure the page=20
-> again, so the page is alwasy configured for each register access, the=20
-> sequence can't be interrupted.
-
-Ok.
-
-> >=20
-> >> +};
-> >> +
-> >> +static const struct qcom_cc_desc nss_cc_qca8k_desc =3D {
-> >> +       .config =3D &nss_cc_qca8k_regmap_config,
-> >> +       .clks =3D nss_cc_qca8k_clocks,
-> >> +       .num_clks =3D ARRAY_SIZE(nss_cc_qca8k_clocks),
-> >> +       .resets =3D nss_cc_qca8k_resets,
-> >> +       .num_resets =3D ARRAY_SIZE(nss_cc_qca8k_resets),
-> >> +};
-> >> +
-> >> +static int nss_cc_qca8k_probe(struct mdio_device *mdiodev)
-> >> +{
-> >> +       struct regmap *regmap;
-> >> +
-> >> +       regmap =3D devm_regmap_init(&mdiodev->dev, NULL, mdiodev->bus,=
- nss_cc_qca8k_desc.config);
-> >=20
-> > Why can't we use devm_regmap_init_mdio() here? Is it because the device
-> > needs special data marshaling per split_addr()?
->=20
-> Hi Stephen,
-> No, we can't use devm_regmap_init_mdio, which is for the standard PHY=20
-> device access(clause22 and clause 45), but the clock device needs the=20
-> special MDIO sequences for the register access.
-
-Ok.
+Yours,
+Linus Walleij
