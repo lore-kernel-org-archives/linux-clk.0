@@ -2,204 +2,143 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA498EE3EC0
-	for <linux-clk@archiver.kernel.org>; Sat,  9 Sep 2023 16:47:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17858EE14AA
+	for <linux-clk@archiver.kernel.org>; Sat,  9 Sep 2023 21:47:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233375AbjIIQrw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 9 Sep 2023 12:47:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34600 "EHLO
+        id S233013AbjIIVrv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 9 Sep 2023 17:47:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231965AbjIIQrw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 9 Sep 2023 12:47:52 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 74322129;
-        Sat,  9 Sep 2023 09:47:44 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="6.02,239,1688396400"; 
-   d="scan'208";a="175535710"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 10 Sep 2023 01:47:43 +0900
-Received: from localhost.localdomain (unknown [10.226.92.15])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 80FD7400197C;
-        Sun, 10 Sep 2023 01:47:41 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Biju Das <biju.das.au@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH] clk: si570: Simplify probe()
-Date:   Sat,  9 Sep 2023 17:47:38 +0100
-Message-Id: <20230909164738.47708-1-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S229550AbjIIVrv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 9 Sep 2023 17:47:51 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7C2CBB;
+        Sat,  9 Sep 2023 14:47:46 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id 2adb3069b0e04-501cef42bc9so5218443e87.0;
+        Sat, 09 Sep 2023 14:47:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1694296064; x=1694900864; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VjkPTg6d1txBcnxQFxlQUXqq1PN1XBWEFnNTjUZQp8U=;
+        b=OmUzY7Bd5ZELo2+srrfZgfLnkOin3dAUk1V9ap5wZEso9xKXT1wWXEQpLwgjwUgSRY
+         5/lzVA3SF5xbqpCxfMsUVV1tZD4VUorXRAlM6sCYYd7LjuzTflEcQ8cPLC5F010s/U7Q
+         Cexw5lHgdcPQVSZxt7SOGSM5l2JLq4Co8CxU6uNSvrKgK/8QygDYPzqfDeivDxpUNCsm
+         /a+mH0eqHbqupTKxNWARRN6W8FskBzs/bS6y7KiZY/f2k5epfkzBH58VNjh0vNF/vg4C
+         SbXHO6M4734IJaZTWg6YUtaS14Qnu1KOXsT2WWsihU15DAvA/cCZ5eLAXRYT2EZ2sTDB
+         5ihQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694296064; x=1694900864;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VjkPTg6d1txBcnxQFxlQUXqq1PN1XBWEFnNTjUZQp8U=;
+        b=Xt9l3Tb/es5ajn7Ad89Zg+NjB44XhomaGOM/a8c7lM8zYU1SYtLWMXJHTWoVi91LfS
+         kOOPXbHNhA1/yhTmKc1V8/h2T+G2Gi/4QGPCVN4MfBZPCtvTk1mej9yQqPrc02nn1VPi
+         Kjlv15orVq8pwcgsj7oHyflRH64pea+FmKPEOJKawpNc6VQf95WU7jylHUZgakRmaArc
+         vDPBJ/X9hKvH2KHA4gAM1vDRycdQ0NJuRtCm5eZGK3XkdNKbenKH7ZKEMzhqGVbLcf+2
+         m3eYoGgZ9iWGb0r/8O8yJNCLIWIHxatoKShYS6oGmpM2cKpksAI2tZTj7u6Lotttz8G2
+         VLNQ==
+X-Gm-Message-State: AOJu0Yx09L4FYnFDb6GnlTX3FNtj2U2Ng/V1McU1hYvRQV7BY+nSdWbQ
+        prYrBdU7FBPP5Gm/065zIHJIiEiiOvTUdQ==
+X-Google-Smtp-Source: AGHT+IGnahBBVT0pZWu7NpQPJloZxgwkpgFO4fKvItiJoiirz8vhclaabDlaXjsBK6Ty8SBgzl11Ww==
+X-Received: by 2002:a05:6512:3194:b0:500:9a29:bcb8 with SMTP id i20-20020a056512319400b005009a29bcb8mr5609577lfe.4.1694296064323;
+        Sat, 09 Sep 2023 14:47:44 -0700 (PDT)
+Received: from user-PC.. ([92.51.95.194])
+        by smtp.gmail.com with ESMTPSA id f24-20020a19ae18000000b004fe27a050fdsm745345lfc.259.2023.09.09.14.47.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 09 Sep 2023 14:47:43 -0700 (PDT)
+From:   Maksim Kiselev <bigunclemax@gmail.com>
+To:     linux-clk@vger.kernel.org
+Cc:     Maksim Kiselev <bigunclemax@gmail.com>,
+        Chinmoy Ghosh <chinmoyghosh2001@gmail.com>,
+        Mintu Patel <mintupatel89@gmail.com>,
+        Vimal Kumar <vimal.kumar32@gmail.com>,
+        Vishal Badole <badolevishal1116@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH v1] clk: Add clock consumer and connection id to clk summary
+Date:   Sun, 10 Sep 2023 00:47:32 +0300
+Message-Id: <20230909214732.4170560-1-bigunclemax@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The driver has an OF match table, still, it uses an ID lookup table for
-retrieving match data. Currently, the driver is working on the
-assumption that an I2C device registered via OF will always match a
-legacy I2C device ID. The correct approach is to have an OF device ID
-table using i2c_get_match_data() if the devices are registered via OF/ID.
+Add "consumer device" and "connection id" columns to the clk summary
+in order to show which user acquired and enabled a particular clock.
 
-Unify the OF/ID table by adding struct clk_si570_info as match data
-instead of clk_si570_variant and replace the ID lookup table for
-the match data by i2c_get_match_data(). This allows to simplify
-probe().
-
-Drop enum clk_si570_variant as there is no user.
-
-While at it, remove the trailing comma in the terminator entry for the OF
-table making code robust against (theoretical) misrebases or other similar
-things where the new entry goes _after_ the termination without the
-compiler noticing.
-
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Co-developed-by: Chinmoy Ghosh <chinmoyghosh2001@gmail.com>
+Signed-off-by: Chinmoy Ghosh <chinmoyghosh2001@gmail.com>
+Co-developed-by: Mintu Patel <mintupatel89@gmail.com>
+Signed-off-by: Mintu Patel <mintupatel89@gmail.com>
+Co-developed-by: Vimal Kumar <vimal.kumar32@gmail.com>
+Signed-off-by: Vimal Kumar <vimal.kumar32@gmail.com>
+Co-developed-by: Vishal Badole <badolevishal1116@gmail.com>
+Signed-off-by: Vishal Badole <badolevishal1116@gmail.com>
+Signed-off-by: Maksim Kiselev <bigunclemax@gmail.com>
 ---
- drivers/clk/clk-si570.c | 67 +++++++++++++++++++++++------------------
- 1 file changed, 38 insertions(+), 29 deletions(-)
+ drivers/clk/clk.c | 29 ++++++++++++++++++++++-------
+ 1 file changed, 22 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/clk-si570.c b/drivers/clk/clk-si570.c
-index de0212fb5f87..ad053a922a42 100644
---- a/drivers/clk/clk-si570.c
-+++ b/drivers/clk/clk-si570.c
-@@ -49,12 +49,22 @@
- 
- #define SI570_FREEZE_DCO	(1 << 4)
- 
-+/**
-+ * struct clk_si570_info:
-+ * @max_freq:	Maximum frequency for this device
-+ * @has_temperature_stability: Device support temperature stability
-+ */
-+struct clk_si570_info {
-+	u64 max_freq;
-+	bool has_temperature_stability;
-+};
-+
- /**
-  * struct clk_si570:
-  * @hw:	Clock hw struct
-  * @regmap:	Device's regmap
-  * @div_offset:	Rgister offset for dividers
-- * @max_freq:	Maximum frequency for this device
-+ * @info:	Device info
-  * @fxtal:	Factory xtal frequency
-  * @n1:		Clock divider N1
-  * @hs_div:	Clock divider HSDIV
-@@ -66,7 +76,7 @@ struct clk_si570 {
- 	struct clk_hw hw;
- 	struct regmap *regmap;
- 	unsigned int div_offset;
--	u64 max_freq;
-+	const struct clk_si570_info *info;
- 	u64 fxtal;
- 	unsigned int n1;
- 	unsigned int hs_div;
-@@ -76,11 +86,6 @@ struct clk_si570 {
- };
- #define to_clk_si570(_hw)	container_of(_hw, struct clk_si570, hw)
- 
--enum clk_si570_variant {
--	si57x,
--	si59x
--};
--
- /**
-  * si570_get_divs() - Read clock dividers from HW
-  * @data:	Pointer to struct clk_si570
-@@ -341,7 +346,7 @@ static int si570_set_rate(struct clk_hw *hw, unsigned long rate,
- 	struct i2c_client *client = data->i2c_client;
- 	int err;
- 
--	if (rate < SI570_MIN_FREQ || rate > data->max_freq) {
-+	if (rate < SI570_MIN_FREQ || rate > data->info->max_freq) {
- 		dev_err(&client->dev,
- 			"requested frequency %lu Hz is out of range\n", rate);
- 		return -EINVAL;
-@@ -398,24 +403,13 @@ static const struct regmap_config si570_regmap_config = {
- 	.volatile_reg = si570_regmap_is_volatile,
- };
- 
--static const struct i2c_device_id si570_id[] = {
--	{ "si570", si57x },
--	{ "si571", si57x },
--	{ "si598", si59x },
--	{ "si599", si59x },
--	{ }
--};
--MODULE_DEVICE_TABLE(i2c, si570_id);
--
- static int si570_probe(struct i2c_client *client)
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index c249f9791ae8..64ee44f55a6f 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3187,7 +3187,8 @@ static struct hlist_head *orphan_list[] = {
+ static void clk_summary_show_one(struct seq_file *s, struct clk_core *c,
+ 				 int level)
  {
- 	struct clk_si570 *data;
- 	struct clk_init_data init;
--	const struct i2c_device_id *id = i2c_match_id(si570_id, client);
- 	u32 initial_fout, factory_fout, stability;
- 	bool skip_recall;
- 	int err;
--	enum clk_si570_variant variant = id->driver_data;
+-	int phase;
++	int phase, next_line = 0;
++	struct clk *clk_user;
  
- 	data = devm_kzalloc(&client->dev, sizeof(*data), GFP_KERNEL);
- 	if (!data)
-@@ -427,7 +421,8 @@ static int si570_probe(struct i2c_client *client)
- 	data->hw.init = &init;
- 	data->i2c_client = client;
+ 	seq_printf(s, "%*s%-*s %7d %8d %8d %11lu %10lu ",
+ 		   level * 3 + 1, "",
+@@ -3205,11 +3206,25 @@ static void clk_summary_show_one(struct seq_file *s, struct clk_core *c,
+ 	seq_printf(s, " %6d", clk_core_get_scaled_duty_cycle(c, 100000));
  
--	if (variant == si57x) {
-+	data->info = i2c_get_match_data(client);
-+	if (data->info->has_temperature_stability) {
- 		err = of_property_read_u32(client->dev.of_node,
- 				"temperature-stability", &stability);
- 		if (err) {
-@@ -438,10 +433,6 @@ static int si570_probe(struct i2c_client *client)
- 		/* adjust register offsets for 7ppm devices */
- 		if (stability == 7)
- 			data->div_offset = SI570_DIV_OFFSET_7PPM;
--
--		data->max_freq = SI570_MAX_FREQ;
--	} else {
--		data->max_freq = SI598_MAX_FREQ;
- 	}
- 
- 	if (of_property_read_string(client->dev.of_node, "clock-output-names",
-@@ -496,12 +487,30 @@ static int si570_probe(struct i2c_client *client)
- 	return 0;
+ 	if (c->ops->is_enabled)
+-		seq_printf(s, " %9c\n", clk_core_is_enabled(c) ? 'Y' : 'N');
++		seq_printf(s, " %9c", clk_core_is_enabled(c) ? 'Y' : 'N');
+ 	else if (!c->ops->enable)
+-		seq_printf(s, " %9c\n", 'Y');
++		seq_printf(s, " %9c", 'Y');
+ 	else
+-		seq_printf(s, " %9c\n", '?');
++		seq_printf(s, " %9c", '?');
++
++	hlist_for_each_entry(clk_user, &c->clks, clks_node) {
++		if (!clk_user->dev_id && !clk_user->con_id)
++			continue;
++
++		seq_printf(s, "%*s%-25s  %10s\n",
++			   2 + 103 * next_line, "",
++			   clk_user->dev_id, clk_user->con_id);
++
++		next_line = 1;
++	}
++
++	if (!next_line)
++		seq_puts(s, "\n");
  }
  
-+static const struct clk_si570_info clk_si570_info = {
-+	.max_freq = SI570_MAX_FREQ,
-+	.has_temperature_stability = true,
-+};
-+
-+static const struct clk_si570_info clk_si590_info = {
-+	.max_freq = SI598_MAX_FREQ,
-+};
-+
-+static const struct i2c_device_id si570_id[] = {
-+	{ "si570", (kernel_ulong_t)&clk_si570_info },
-+	{ "si571", (kernel_ulong_t)&clk_si570_info },
-+	{ "si598", (kernel_ulong_t)&clk_si590_info },
-+	{ "si599", (kernel_ulong_t)&clk_si590_info },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i2c, si570_id);
-+
- static const struct of_device_id clk_si570_of_match[] = {
--	{ .compatible = "silabs,si570" },
--	{ .compatible = "silabs,si571" },
--	{ .compatible = "silabs,si598" },
--	{ .compatible = "silabs,si599" },
--	{ },
-+	{ .compatible = "silabs,si570", .data = &clk_si570_info },
-+	{ .compatible = "silabs,si571", .data = &clk_si570_info },
-+	{ .compatible = "silabs,si598", .data = &clk_si590_info },
-+	{ .compatible = "silabs,si599", .data = &clk_si590_info },
-+	{ }
- };
- MODULE_DEVICE_TABLE(of, clk_si570_of_match);
+ static void clk_summary_show_subtree(struct seq_file *s, struct clk_core *c,
+@@ -3230,9 +3245,9 @@ static int clk_summary_show(struct seq_file *s, void *data)
+ 	struct clk_core *c;
+ 	struct hlist_head **lists = s->private;
+ 
+-	seq_puts(s, "                                 enable  prepare  protect                                duty  hardware\n");
+-	seq_puts(s, "   clock                          count    count    count        rate   accuracy phase  cycle    enable\n");
+-	seq_puts(s, "-------------------------------------------------------------------------------------------------------\n");
++	seq_puts(s, "                                 enable  prepare  protect                                duty  hardware  consumer                   connection\n");
++	seq_puts(s, "   clock                          count    count    count        rate   accuracy phase  cycle    enable    device                           id\n");
++	seq_puts(s, "----------------------------------------------------------------------------------------------------------------------------------------------\n");
+ 
+ 	clk_prepare_lock();
  
 -- 
-2.25.1
+2.39.2
 
