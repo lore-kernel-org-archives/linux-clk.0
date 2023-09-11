@@ -2,143 +2,61 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17858EE14AA
-	for <linux-clk@archiver.kernel.org>; Sat,  9 Sep 2023 21:47:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3ABCCA0EDA
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Sep 2023 22:00:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233013AbjIIVrv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 9 Sep 2023 17:47:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44620 "EHLO
+        id S236711AbjIKV7e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Sep 2023 17:59:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229550AbjIIVrv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 9 Sep 2023 17:47:51 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7C2CBB;
-        Sat,  9 Sep 2023 14:47:46 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id 2adb3069b0e04-501cef42bc9so5218443e87.0;
-        Sat, 09 Sep 2023 14:47:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1694296064; x=1694900864; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VjkPTg6d1txBcnxQFxlQUXqq1PN1XBWEFnNTjUZQp8U=;
-        b=OmUzY7Bd5ZELo2+srrfZgfLnkOin3dAUk1V9ap5wZEso9xKXT1wWXEQpLwgjwUgSRY
-         5/lzVA3SF5xbqpCxfMsUVV1tZD4VUorXRAlM6sCYYd7LjuzTflEcQ8cPLC5F010s/U7Q
-         Cexw5lHgdcPQVSZxt7SOGSM5l2JLq4Co8CxU6uNSvrKgK/8QygDYPzqfDeivDxpUNCsm
-         /a+mH0eqHbqupTKxNWARRN6W8FskBzs/bS6y7KiZY/f2k5epfkzBH58VNjh0vNF/vg4C
-         SbXHO6M4734IJaZTWg6YUtaS14Qnu1KOXsT2WWsihU15DAvA/cCZ5eLAXRYT2EZ2sTDB
-         5ihQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694296064; x=1694900864;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VjkPTg6d1txBcnxQFxlQUXqq1PN1XBWEFnNTjUZQp8U=;
-        b=Xt9l3Tb/es5ajn7Ad89Zg+NjB44XhomaGOM/a8c7lM8zYU1SYtLWMXJHTWoVi91LfS
-         kOOPXbHNhA1/yhTmKc1V8/h2T+G2Gi/4QGPCVN4MfBZPCtvTk1mej9yQqPrc02nn1VPi
-         Kjlv15orVq8pwcgsj7oHyflRH64pea+FmKPEOJKawpNc6VQf95WU7jylHUZgakRmaArc
-         vDPBJ/X9hKvH2KHA4gAM1vDRycdQ0NJuRtCm5eZGK3XkdNKbenKH7ZKEMzhqGVbLcf+2
-         m3eYoGgZ9iWGb0r/8O8yJNCLIWIHxatoKShYS6oGmpM2cKpksAI2tZTj7u6Lotttz8G2
-         VLNQ==
-X-Gm-Message-State: AOJu0Yx09L4FYnFDb6GnlTX3FNtj2U2Ng/V1McU1hYvRQV7BY+nSdWbQ
-        prYrBdU7FBPP5Gm/065zIHJIiEiiOvTUdQ==
-X-Google-Smtp-Source: AGHT+IGnahBBVT0pZWu7NpQPJloZxgwkpgFO4fKvItiJoiirz8vhclaabDlaXjsBK6Ty8SBgzl11Ww==
-X-Received: by 2002:a05:6512:3194:b0:500:9a29:bcb8 with SMTP id i20-20020a056512319400b005009a29bcb8mr5609577lfe.4.1694296064323;
-        Sat, 09 Sep 2023 14:47:44 -0700 (PDT)
-Received: from user-PC.. ([92.51.95.194])
-        by smtp.gmail.com with ESMTPSA id f24-20020a19ae18000000b004fe27a050fdsm745345lfc.259.2023.09.09.14.47.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Sep 2023 14:47:43 -0700 (PDT)
-From:   Maksim Kiselev <bigunclemax@gmail.com>
-To:     linux-clk@vger.kernel.org
-Cc:     Maksim Kiselev <bigunclemax@gmail.com>,
-        Chinmoy Ghosh <chinmoyghosh2001@gmail.com>,
-        Mintu Patel <mintupatel89@gmail.com>,
-        Vimal Kumar <vimal.kumar32@gmail.com>,
-        Vishal Badole <badolevishal1116@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH v1] clk: Add clock consumer and connection id to clk summary
-Date:   Sun, 10 Sep 2023 00:47:32 +0300
-Message-Id: <20230909214732.4170560-1-bigunclemax@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        with ESMTP id S244438AbjIKUc0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Sep 2023 16:32:26 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE233FB;
+        Mon, 11 Sep 2023 13:32:20 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57DB3C433C8;
+        Mon, 11 Sep 2023 20:32:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1694464340;
+        bh=gkJtNfISerIA7gwmSqPXIKAOxbGkK5wwyEPfgZ0HhLs=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=sgs/ROxaHaBrq99VhTdvJCJm+mgJNqnQcuMBloJ6IsXQTemSdVAPRlSkaqq6ukcOm
+         +JUwz7VRBF+5X6PXQxTR96MzJql2jpVIuHg22ntYZ0RNoqgmTNcMV5ERnZqrV3DHuk
+         bl8FxDbWFJmvuWXZI1mvRGcAyh62Vap/tBgX7AKxZb2RfbNreF3sDrtXWO3Llq/UPi
+         ZZ3VQvjaepFUxyOnbDxGJW/pwlykiWPvz1JoL8d9YRfJwh1uXFzBH8vXVJu+2ZWYOw
+         hlaqAVqzyNJHaoselppsyjyEgEjgMDMJ9Ni1PiOcceIiuomYzHwWZJQkN3uGHCn7/6
+         KESdaUonghoTQ==
+Message-ID: <dc833f3a32c583ae474e040db1b2eca0.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20230824104812.147775-4-biju.das.jz@bp.renesas.com>
+References: <20230824104812.147775-1-biju.das.jz@bp.renesas.com> <20230824104812.147775-4-biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH v5 3/4] clk: vc3: Fix output clock mapping
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+To:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Mon, 11 Sep 2023 13:32:18 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add "consumer device" and "connection id" columns to the clk summary
-in order to show which user acquired and enabled a particular clock.
+Quoting Biju Das (2023-08-24 03:48:11)
+> According to Table 3. ("Output Source") in the 5P35023 datasheet,
+> the output clock mapping should be 0=3DREF, 1=3DSE1, 2=3DSE2, 3=3DSE3,
+> 4=3DDIFF1, 5=3DDIFF2. But the code uses inverse. Fix this mapping issue.
+>=20
+> Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Closes: https://lore.kernel.org/all/CAMuHMdUHD+bEco=3DWYTYWsTAyRt3dTQQt4X=
+paejss0Y2ZpLCMNg@mail.gmail.com/
+> Fixes: 6e9aff555db7 ("clk: Add support for versa3 clock driver")
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
 
-Co-developed-by: Chinmoy Ghosh <chinmoyghosh2001@gmail.com>
-Signed-off-by: Chinmoy Ghosh <chinmoyghosh2001@gmail.com>
-Co-developed-by: Mintu Patel <mintupatel89@gmail.com>
-Signed-off-by: Mintu Patel <mintupatel89@gmail.com>
-Co-developed-by: Vimal Kumar <vimal.kumar32@gmail.com>
-Signed-off-by: Vimal Kumar <vimal.kumar32@gmail.com>
-Co-developed-by: Vishal Badole <badolevishal1116@gmail.com>
-Signed-off-by: Vishal Badole <badolevishal1116@gmail.com>
-Signed-off-by: Maksim Kiselev <bigunclemax@gmail.com>
----
- drivers/clk/clk.c | 29 ++++++++++++++++++++++-------
- 1 file changed, 22 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index c249f9791ae8..64ee44f55a6f 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3187,7 +3187,8 @@ static struct hlist_head *orphan_list[] = {
- static void clk_summary_show_one(struct seq_file *s, struct clk_core *c,
- 				 int level)
- {
--	int phase;
-+	int phase, next_line = 0;
-+	struct clk *clk_user;
- 
- 	seq_printf(s, "%*s%-*s %7d %8d %8d %11lu %10lu ",
- 		   level * 3 + 1, "",
-@@ -3205,11 +3206,25 @@ static void clk_summary_show_one(struct seq_file *s, struct clk_core *c,
- 	seq_printf(s, " %6d", clk_core_get_scaled_duty_cycle(c, 100000));
- 
- 	if (c->ops->is_enabled)
--		seq_printf(s, " %9c\n", clk_core_is_enabled(c) ? 'Y' : 'N');
-+		seq_printf(s, " %9c", clk_core_is_enabled(c) ? 'Y' : 'N');
- 	else if (!c->ops->enable)
--		seq_printf(s, " %9c\n", 'Y');
-+		seq_printf(s, " %9c", 'Y');
- 	else
--		seq_printf(s, " %9c\n", '?');
-+		seq_printf(s, " %9c", '?');
-+
-+	hlist_for_each_entry(clk_user, &c->clks, clks_node) {
-+		if (!clk_user->dev_id && !clk_user->con_id)
-+			continue;
-+
-+		seq_printf(s, "%*s%-25s  %10s\n",
-+			   2 + 103 * next_line, "",
-+			   clk_user->dev_id, clk_user->con_id);
-+
-+		next_line = 1;
-+	}
-+
-+	if (!next_line)
-+		seq_puts(s, "\n");
- }
- 
- static void clk_summary_show_subtree(struct seq_file *s, struct clk_core *c,
-@@ -3230,9 +3245,9 @@ static int clk_summary_show(struct seq_file *s, void *data)
- 	struct clk_core *c;
- 	struct hlist_head **lists = s->private;
- 
--	seq_puts(s, "                                 enable  prepare  protect                                duty  hardware\n");
--	seq_puts(s, "   clock                          count    count    count        rate   accuracy phase  cycle    enable\n");
--	seq_puts(s, "-------------------------------------------------------------------------------------------------------\n");
-+	seq_puts(s, "                                 enable  prepare  protect                                duty  hardware  consumer                   connection\n");
-+	seq_puts(s, "   clock                          count    count    count        rate   accuracy phase  cycle    enable    device                           id\n");
-+	seq_puts(s, "----------------------------------------------------------------------------------------------------------------------------------------------\n");
- 
- 	clk_prepare_lock();
- 
--- 
-2.39.2
-
+Applied to clk-fixes
