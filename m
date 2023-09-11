@@ -2,124 +2,69 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CE66CA0EC9
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Sep 2023 22:01:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4414CA0EC9
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Sep 2023 22:01:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355527AbjIKWAb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Sep 2023 18:00:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43224 "EHLO
+        id S241853AbjIKWAd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Sep 2023 18:00:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241853AbjIKPQN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Sep 2023 11:16:13 -0400
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FF34120
-        for <linux-clk@vger.kernel.org>; Mon, 11 Sep 2023 08:16:08 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qfidk-00069m-CE; Mon, 11 Sep 2023 17:15:52 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qfidj-005a7S-FW; Mon, 11 Sep 2023 17:15:51 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qfidh-000igm-W3; Mon, 11 Sep 2023 17:15:50 +0200
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, kernel@pengutronix.de
-Subject: [PATCH] clk: qcom: cbf-msm8996: Convert to platform remove callback returning void
-Date:   Mon, 11 Sep 2023 17:15:48 +0200
-Message-Id: <20230911151548.672485-1-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.40.1
+        with ESMTP id S244394AbjIKUUd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Sep 2023 16:20:33 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7798185;
+        Mon, 11 Sep 2023 13:20:28 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5231EC433C7;
+        Mon, 11 Sep 2023 20:20:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1694463628;
+        bh=t+7z6sKacC4bNsdeAQDIrInU1BgKBgiThKa36hekUHM=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=vIA7WWczePJi65XG6iZtGohn8yGNCzh3/cU2eYLsksjybLNOvWmnArQt3wxDYNQS1
+         SF5roN/gdpcp9fOyl2dovpcqOthXqzPsJE/+iIqLHcmN4XyeHHr8GvWeIwsIKEnrae
+         zDVZtvLR8zSsL1k51qQl34iQpvhUDrtz30Gxb2sMCseAz6scW40t7Eib2PLwdndVhL
+         SOVxXWFzz6KclxMRfHZLDnIPvt3FU26jgjckhXOESfWfNVPF8XBVBD+mLX1JiZTyzD
+         oF8Jqac4h5svNOooBowUX7LEhi0/AAWpnbKZ7YZ4Uqk2/uWNQif/AEmxemdwOZRSlq
+         6XSJyrR/2ArwA==
+Message-ID: <a1b8a5bcbddc57cb3c62d3d81fdc4c4a.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2722; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=bX1MW8+1wZBVxTfQwby6K9/t5il+Vswf92hv70gjQVs=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBk/y8jygiIoFpJ0EtdFbFcr0qZwZUSpJLq25Dus aDm2cqAfMeJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZP8vIwAKCRCPgPtYfRL+ TliuB/9a/6uVl/T7KCMAF5D1v0A6Vv0h/saI88s9Pm9AMmyUUkKhCIANj+hOR94EWXR3IoWsK3B qyaqr8h/NHaWqNyGJFw9jXXwg2STqwtaw6h9XYYeuIZnIhSDA4FdmxWTt2TNxxocw8/DsNcA4nG Br4FRGOA+ENf3+5zq6N307M/rwoV2ypY77qqrvqZ/HH7AofUw/sbpjzjBaTGJROgjZ+SgbVPpNN JQGD9FI7umKXpz5c8FdUrPPmYDQDVaByQmrglOxl24dgT+uQtIIdv46u5K/RsJNrrK6WgQi9+HR ssaMnY2VfxN48sFLykVvmhOeF5sZSiGtTFUyR0qiuZ8IuZZL
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20230909000703.3478902-1-sboyd@kernel.org>
+References: <20230909000703.3478902-1-sboyd@kernel.org>
+Subject: Re: [PATCH] clk: asm9620: Remove 'hw' local variable that isn't checked
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        patches@lists.linux.dev,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        kernel test robot <lkp@intel.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Date:   Mon, 11 Sep 2023 13:20:26 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The .remove() callback for a platform driver returns an int which makes
-many driver authors wrongly assume it's possible to do error handling by
-returning an error code. However the value returned is ignored (apart
-from emitting a warning) and this typically results in resource leaks.
-To improve here there is a quest to make the remove callback return
-void. In the first step of this quest all drivers are converted to
-.remove_new() which already returns void. Eventually after all drivers
-are converted, .remove_new() is renamed to .remove().
+Quoting Stephen Boyd (2023-09-08 17:07:02)
+> The 'hw' pointer local variable in this function became unused after
+> commit f5290d8e4f0c ("clk: asm9260: use parent index to link the
+> reference clock"). Remove it to silence an unused but set variable
+> warning.
+>=20
+>  drivers/clk/clk-asm9260.c:258:17: warning: variable 'hw' set but not use=
+d [-Wunused-but-set-variable]
+>            struct clk_hw *hw, *pll_hw;
+>                           ^
+>    1 warning generated.
+>=20
+> Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Fixes: f5290d8e4f0c ("clk: asm9260: use parent index to link the referenc=
+e clock")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202309042014.IWERPl09-lkp@i=
+ntel.com/
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> ---
 
-qcom_msm8996_cbf_icc_remove() returned zero unconditionally. After
-changing this function to return void instead, the driver can be
-converted trivially to use .remove_new().
-
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
- drivers/clk/qcom/clk-cbf-8996.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/clk/qcom/clk-cbf-8996.c b/drivers/clk/qcom/clk-cbf-8996.c
-index 53f205a3f183..fe24b4abeab4 100644
---- a/drivers/clk/qcom/clk-cbf-8996.c
-+++ b/drivers/clk/qcom/clk-cbf-8996.c
-@@ -250,13 +250,11 @@ static int qcom_msm8996_cbf_icc_register(struct platform_device *pdev, struct cl
- 	return 0;
- }
- 
--static int qcom_msm8996_cbf_icc_remove(struct platform_device *pdev)
-+static void qcom_msm8996_cbf_icc_remove(struct platform_device *pdev)
- {
- 	struct icc_provider *provider = platform_get_drvdata(pdev);
- 
- 	icc_clk_unregister(provider);
--
--	return 0;
- }
- #define qcom_msm8996_cbf_icc_sync_state icc_sync_state
- #else
-@@ -266,7 +264,7 @@ static int qcom_msm8996_cbf_icc_register(struct platform_device *pdev,  struct c
- 
- 	return 0;
- }
--#define qcom_msm8996_cbf_icc_remove(pdev) (0)
-+#define qcom_msm8996_cbf_icc_remove(pdev) { }
- #define qcom_msm8996_cbf_icc_sync_state NULL
- #endif
- 
-@@ -340,9 +338,9 @@ static int qcom_msm8996_cbf_probe(struct platform_device *pdev)
- 	return qcom_msm8996_cbf_icc_register(pdev, &cbf_mux.clkr.hw);
- }
- 
--static int qcom_msm8996_cbf_remove(struct platform_device *pdev)
-+static void qcom_msm8996_cbf_remove(struct platform_device *pdev)
- {
--	return qcom_msm8996_cbf_icc_remove(pdev);
-+	qcom_msm8996_cbf_icc_remove(pdev);
- }
- 
- static const struct of_device_id qcom_msm8996_cbf_match_table[] = {
-@@ -354,7 +352,7 @@ MODULE_DEVICE_TABLE(of, qcom_msm8996_cbf_match_table);
- 
- static struct platform_driver qcom_msm8996_cbf_driver = {
- 	.probe = qcom_msm8996_cbf_probe,
--	.remove = qcom_msm8996_cbf_remove,
-+	.remove_new = qcom_msm8996_cbf_remove,
- 	.driver = {
- 		.name = "qcom-msm8996-cbf",
- 		.of_match_table = qcom_msm8996_cbf_match_table,
-
-base-commit: 0bb80ecc33a8fb5a682236443c1e740d5c917d1d
--- 
-2.40.1
-
+Applied to clk-next
