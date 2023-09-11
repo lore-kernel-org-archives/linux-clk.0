@@ -2,60 +2,100 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28832CA0EC7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12C8CCA0EDE
 	for <linux-clk@archiver.kernel.org>; Mon, 11 Sep 2023 22:00:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236073AbjIKV7r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Sep 2023 17:59:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45772 "EHLO
+        id S1355446AbjIKV7l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Sep 2023 17:59:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244435AbjIKUbe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Sep 2023 16:31:34 -0400
+        with ESMTP id S239782AbjIKO2f (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Sep 2023 10:28:35 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC17BFB;
-        Mon, 11 Sep 2023 13:31:29 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78406C433C9;
-        Mon, 11 Sep 2023 20:31:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694464289;
-        bh=377+1V6Tv6JYTAiugUCOFQVdbsCc62iMLppW1xTy8D4=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=kdLmXHAo+Wg9ksR2yKwxupnfv6klUME4sKSV64I15MtgZ0QilfsPqa87YIAmAypB9
-         T7eNtVWqIgwv1f6oLbhn2cSKf9GDCK6LZ18bfnoV6ASNlkDij9iTtsmz/TXI1hkky4
-         EJEHL2Tasmzl43KnEnPrA1wjb+QmgZTR1W67I49B8ZkcSPhg+eXcN31png0+wett0v
-         w6Y+2RsimXVSOL71iHzDxWyNlMZudKGrvo5R4LSppjatPaaRsMIk4TyXX7lasHtdbb
-         a5aBrJFadJ4Rt/sYoh2cOjPkL+FpRLOCpgb7iBYP0k+/B2G2fUg8lNGF28IUdWmxuw
-         8jHTZYN1i+L2Q==
-Message-ID: <6c6c6564b92a838ecb4325ecd9f768c4.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230824092624.20020-1-zhifeng.tang@unisoc.com>
-References: <20230824092624.20020-1-zhifeng.tang@unisoc.com>
-Subject: Re: [PATCH V2] clk: sprd: Fix thm_parents incorrect configuration
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Zhifeng Tang <zhifeng.tang23@gmail.com>,
-        Wenming Wu <wenming.wu@unisoc.com>
-To:     Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Cixi Geng <cixi.geng1@unisoc.com>,
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FD6DF0;
+        Mon, 11 Sep 2023 07:28:31 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DAA7C433C7;
+        Mon, 11 Sep 2023 14:28:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1694442510;
+        bh=pyR5PsWEn2NNie5H8Ireh8g+wBNLdMRO0Y1mmp0dnus=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=SWJ0IwTjStPsgMN/KQbvAh0+KB+LoHnaVaHxl8eWgEsZKSz2jHJ2MbHqqfJ81Pm//
+         RDivkY68YSRI/5YJdReLAe/vH78FTxaWxzr4Na8geeVluafFQhDc14G/ezKOmbgt5n
+         rQDo3Nso6gt/owljsafGhY2VKnZ1ffHVdjLlu9Io=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     stable@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        patches@lists.linux.dev, kernel test robot <lkp@intel.com>,
+        Baoquan He <bhe@redhat.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Zhifeng Tang <zhifeng.tang@unisoc.com>
-Date:   Mon, 11 Sep 2023 13:31:27 -0700
-User-Agent: alot/0.10
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 6.4 049/737] clk: fixed-mmio: make COMMON_CLK_FIXED_MMIO depend on HAS_IOMEM
+Date:   Mon, 11 Sep 2023 15:38:28 +0200
+Message-ID: <20230911134651.829658114@linuxfoundation.org>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <20230911134650.286315610@linuxfoundation.org>
+References: <20230911134650.286315610@linuxfoundation.org>
+User-Agent: quilt/0.67
+X-stable: review
+X-Patchwork-Hint: ignore
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Zhifeng Tang (2023-08-24 02:26:24)
-> The thm*_clk have two clock sources 32k and 250k,excluding 32m.
->=20
-> Fixes: af3bd36573e3 ("clk: sprd: Add clocks support for UMS512")
-> Signed-off-by: Zhifeng Tang <zhifeng.tang@unisoc.com>
-> Acked-by: Chunyan Zhang <zhang.lyra@gmail.com>
-> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> ---
+6.4-stable review patch.  If anyone has any objections, please let me know.
 
-Applied to clk-fixes
+------------------
+
+From: Baoquan He <bhe@redhat.com>
+
+[ Upstream commit e7dd44f4f3166db45248414f5df8f615392de47a ]
+
+On s390 systems (aka mainframes), it has classic channel devices for
+networking and permanent storage that are currently even more common
+than PCI devices. Hence it could have a fully functional s390 kernel
+with CONFIG_PCI=n, then the relevant iomem mapping functions
+[including ioremap(), devm_ioremap(), etc.] are not available.
+
+Here let COMMON_CLK_FIXED_MMIO depend on HAS_IOMEM so that it won't
+be built to cause below compiling error if PCI is unset:
+
+------
+ld: drivers/clk/clk-fixed-mmio.o: in function `fixed_mmio_clk_setup':
+clk-fixed-mmio.c:(.text+0x5e): undefined reference to `of_iomap'
+ld: clk-fixed-mmio.c:(.text+0xba): undefined reference to `iounmap'
+------
+
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202306211329.ticOJCSv-lkp@intel.com/
+Signed-off-by: Baoquan He <bhe@redhat.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org
+Link: https://lore.kernel.org/r/20230707135852.24292-8-bhe@redhat.com
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/clk/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 016814e15536a..52dfbae4f361c 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -444,6 +444,7 @@ config COMMON_CLK_BD718XX
+ config COMMON_CLK_FIXED_MMIO
+ 	bool "Clock driver for Memory Mapped Fixed values"
+ 	depends on COMMON_CLK && OF
++	depends on HAS_IOMEM
+ 	help
+ 	  Support for Memory Mapped IO Fixed clocks
+ 
+-- 
+2.40.1
+
+
+
