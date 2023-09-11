@@ -2,69 +2,71 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4414CA0EC9
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Sep 2023 22:01:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09E49CA0EC3
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Sep 2023 23:19:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241853AbjIKWAd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Sep 2023 18:00:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35954 "EHLO
+        id S232908AbjIKXTq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Sep 2023 19:19:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244394AbjIKUUd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Sep 2023 16:20:33 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7798185;
-        Mon, 11 Sep 2023 13:20:28 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5231EC433C7;
-        Mon, 11 Sep 2023 20:20:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694463628;
-        bh=t+7z6sKacC4bNsdeAQDIrInU1BgKBgiThKa36hekUHM=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=vIA7WWczePJi65XG6iZtGohn8yGNCzh3/cU2eYLsksjybLNOvWmnArQt3wxDYNQS1
-         SF5roN/gdpcp9fOyl2dovpcqOthXqzPsJE/+iIqLHcmN4XyeHHr8GvWeIwsIKEnrae
-         zDVZtvLR8zSsL1k51qQl34iQpvhUDrtz30Gxb2sMCseAz6scW40t7Eib2PLwdndVhL
-         SOVxXWFzz6KclxMRfHZLDnIPvt3FU26jgjckhXOESfWfNVPF8XBVBD+mLX1JiZTyzD
-         oF8Jqac4h5svNOooBowUX7LEhi0/AAWpnbKZ7YZ4Uqk2/uWNQif/AEmxemdwOZRSlq
-         6XSJyrR/2ArwA==
-Message-ID: <a1b8a5bcbddc57cb3c62d3d81fdc4c4a.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S237471AbjIKWxW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Sep 2023 18:53:22 -0400
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [IPv6:2a02:c205:3004:2154::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 731325BA9;
+        Mon, 11 Sep 2023 15:15:07 -0700 (PDT)
+Received: from p200300ccff36fa001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:cc:ff36:fa00:1a3d:a2ff:febf:d33a] helo=aktux)
+        by mail.andi.de1.cc with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <andreas@kemnade.info>)
+        id 1qfpAD-003crJ-R8; Tue, 12 Sep 2023 00:13:49 +0200
+Received: from andi by aktux with local (Exim 4.96)
+        (envelope-from <andreas@kemnade.info>)
+        id 1qfpAD-006ECk-1T;
+        Tue, 12 Sep 2023 00:13:49 +0200
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     dmitry.torokhov@gmail.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        lee@kernel.org, bcousson@baylibre.com, tony@atomide.com,
+        mturquette@baylibre.com, sboyd@kernel.org, andreas@kemnade.info,
+        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc:     Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v3 2/5] dt-bindings: mfd: ti,twl: Add clock provider properties
+Date:   Tue, 12 Sep 2023 00:13:43 +0200
+Message-Id: <20230911221346.1484543-3-andreas@kemnade.info>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230911221346.1484543-1-andreas@kemnade.info>
+References: <20230911221346.1484543-1-andreas@kemnade.info>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230909000703.3478902-1-sboyd@kernel.org>
-References: <20230909000703.3478902-1-sboyd@kernel.org>
-Subject: Re: [PATCH] clk: asm9620: Remove 'hw' local variable that isn't checked
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        patches@lists.linux.dev,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        kernel test robot <lkp@intel.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Date:   Mon, 11 Sep 2023 13:20:26 -0700
-User-Agent: alot/0.10
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Stephen Boyd (2023-09-08 17:07:02)
-> The 'hw' pointer local variable in this function became unused after
-> commit f5290d8e4f0c ("clk: asm9260: use parent index to link the
-> reference clock"). Remove it to silence an unused but set variable
-> warning.
->=20
->  drivers/clk/clk-asm9260.c:258:17: warning: variable 'hw' set but not use=
-d [-Wunused-but-set-variable]
->            struct clk_hw *hw, *pll_hw;
->                           ^
->    1 warning generated.
->=20
-> Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Fixes: f5290d8e4f0c ("clk: asm9260: use parent index to link the referenc=
-e clock")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202309042014.IWERPl09-lkp@i=
-ntel.com/
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-> ---
+Since these devices provide clock outputs, add the corresponding
+property.
 
-Applied to clk-next
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ Documentation/devicetree/bindings/mfd/ti,twl.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/mfd/ti,twl.yaml b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+index f125b254a4b93..c04d57ba22b49 100644
+--- a/Documentation/devicetree/bindings/mfd/ti,twl.yaml
++++ b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+@@ -37,6 +37,9 @@ properties:
+   "#interrupt-cells":
+     const: 1
+ 
++  "#clock-cells":
++    const: 1
++
+ additionalProperties: false
+ 
+ required:
+-- 
+2.39.2
+
