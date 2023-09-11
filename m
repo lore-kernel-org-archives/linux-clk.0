@@ -2,88 +2,65 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79B63CA0ECD
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Sep 2023 03:16:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99186CA0ED2
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Sep 2023 03:16:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242487AbjILDQM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Sep 2023 23:16:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43856 "EHLO
+        id S232212AbjILDQ3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Sep 2023 23:16:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242458AbjILDQA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Sep 2023 23:16:00 -0400
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [IPv6:2a02:c205:3004:2154::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B56F017A9DF;
-        Mon, 11 Sep 2023 18:56:24 -0700 (PDT)
-Received: from p200300ccff36fa001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:cc:ff36:fa00:1a3d:a2ff:febf:d33a] helo=aktux)
-        by mail.andi.de1.cc with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <andreas@kemnade.info>)
-        id 1qfpAE-003cro-KU; Tue, 12 Sep 2023 00:13:50 +0200
-Received: from andi by aktux with local (Exim 4.96)
-        (envelope-from <andreas@kemnade.info>)
-        id 1qfpAE-006ECz-0p;
-        Tue, 12 Sep 2023 00:13:50 +0200
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     dmitry.torokhov@gmail.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        lee@kernel.org, bcousson@baylibre.com, tony@atomide.com,
-        mturquette@baylibre.com, sboyd@kernel.org, andreas@kemnade.info,
-        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v3 5/5] ARM: dts: omap4-embt2ws: enable 32K clock on WLAN
-Date:   Tue, 12 Sep 2023 00:13:46 +0200
-Message-Id: <20230911221346.1484543-6-andreas@kemnade.info>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230911221346.1484543-1-andreas@kemnade.info>
-References: <20230911221346.1484543-1-andreas@kemnade.info>
+        with ESMTP id S241726AbjILDQF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Sep 2023 23:16:05 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B281410459F
+        for <linux-clk@vger.kernel.org>; Mon, 11 Sep 2023 19:07:25 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 559BEC433C7;
+        Mon, 11 Sep 2023 20:50:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1694465406;
+        bh=2b8SGAE21odM9DkLgO7tG0F/Bh3n74Ew4ALGkLao9HY=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=tJTE8spMApaF2UOyoodztKt3ja+TUu1x2pUCSAdXF+otCk4g2xtCKq+kPIlJZa569
+         ltc8Ao7tGX3Uf59oYQO7eFHOxpT2m133eWbCW9dK/GIzx3IJAC+zC8WugLauIYiMvo
+         489fnB9ONdPE9JDTxrC4TcjwH+1b4MIeSaE6YEb4kX28/WwnJKLiddZLsLbSqEeOJ1
+         eUZ4OLIhoExHzlzigD7LgTWIbL8fB3AjHvfDeoGkkewzM8CCNgoL2LG5uiV8GzkLK+
+         Z6mZ/qS+Qpbm6xj+72VOTdsQoUoa5XhY9jTdjTpX7a3pUQqHjjjG6AMfhUR2o5kh8D
+         pmekDETZgM6Xw==
+Message-ID: <9434b9e6b7f60c308df5b1f28edbbe5c.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20230831181656.154750-2-marex@denx.de>
+References: <20230831181656.154750-1-marex@denx.de> <20230831181656.154750-2-marex@denx.de>
+Subject: Re: [PATCH 2/2] clk: si521xx: Fix regmap write accessor
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Marek Vasut <marex@denx.de>,
+        Michael Turquette <mturquette@baylibre.com>
+To:     Marek Vasut <marex@denx.de>, linux-clk@vger.kernel.org
+Date:   Mon, 11 Sep 2023 13:50:04 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-WLAN did only work if clock was left enabled by the original system,
-so make it fully enable the needed resources itself.
+Quoting Marek Vasut (2023-08-31 11:16:56)
+> Rework the write operation such that the Byte Count register is written w=
+ith
+> a single raw i2c write outside of regmap using transfer which does specify
+> the number of bytes to be transfered, one in this case, and which makes t=
+he
+> expected subsequent write transfer look like address+register+data, and t=
+hen
+> make use of this method. Without this change, the Byte Count register wri=
+te
+> in probe() would succeed as it would provide the byte count as part of its
+> write payload, but any subsequent writes would fail due to this Byte Count
+> register programming. Such failing writes happens e.g. during resume, when
+> restoring the regmap content.
+>=20
+> Fixes: edc12763a3a2 ("clk: si521xx: Clock driver for Skyworks Si521xx I2C=
+ PCIe clock generators")
+> Signed-off-by: Marek Vasut <marex@denx.de>
+> ---
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
----
- arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts b/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts
-index ee86981b2e448..9d2f2d8639496 100644
---- a/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts
-+++ b/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts
-@@ -69,6 +69,12 @@ unknown_supply: unknown-supply {
- 		regulator-name = "unknown";
- 	};
- 
-+	wl12xx_pwrseq: wl12xx-pwrseq {
-+		compatible = "mmc-pwrseq-simple";
-+		clocks = <&twl 1>;
-+		clock-names = "ext_clock";
-+	};
-+
-        /* regulator for wl12xx on sdio2 */
- 	wl12xx_vmmc: wl12xx-vmmc {
- 		pinctrl-names = "default";
-@@ -92,6 +98,7 @@ &i2c1 {
- 	twl: pmic@48 {
- 		compatible = "ti,twl6032";
- 		reg = <0x48>;
-+		#clock-cells = <1>;
- 		/* IRQ# = 7 */
- 		interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>; /* IRQ_SYS_1N cascaded to gic */
- 		interrupt-controller;
-@@ -316,6 +323,7 @@ &mmc3 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&wl12xx_pins>;
- 	vmmc-supply = <&wl12xx_vmmc>;
-+	mmc-pwrseq = <&wl12xx_pwrseq>;
- 	interrupts-extended = <&wakeupgen GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH
- 			       &omap4_pmx_core 0x12e>;
- 	non-removable;
--- 
-2.39.2
-
+Applied to clk-fixes
