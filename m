@@ -2,70 +2,105 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E6D5CA0ED2
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Sep 2023 22:00:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 264B9CA0ED5
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Sep 2023 22:00:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355478AbjIKWAB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Sep 2023 18:00:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42318 "EHLO
+        id S244436AbjIKWAD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Sep 2023 18:00:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244436AbjIKUcB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Sep 2023 16:32:01 -0400
+        with ESMTP id S244313AbjIKUDA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Sep 2023 16:03:00 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E03A5FB;
-        Mon, 11 Sep 2023 13:31:56 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EA7DC433C7;
-        Mon, 11 Sep 2023 20:31:56 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4382ECA;
+        Mon, 11 Sep 2023 13:02:56 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9BF6C433C8;
+        Mon, 11 Sep 2023 20:02:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694464316;
-        bh=Y+aT8djXB9CKXwdEp5pmxFPUegbaDESTt4aIlc9PZG4=;
+        s=k20201202; t=1694462575;
+        bh=jH16CmyhpxzVrUqxcSYdhIT8N0H3czRJNlZ/KK78ShE=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=oAFvnvewGgyc+jUnwhQyLdci5Up5KJPqZBqAV5PdPShdVMrVeGQ//3WHuoHQ9jZxY
-         yLiYPnWd47MFYFVoy95wTburWA6StzdZ2/YtudPBYq/yMwUtttM16Mt3gYt+XzRvH1
-         HD8BWI3FaCevr0x8TTPGwR6A6MmmG2HzP9ermf3L04EQasKe9nyHoKf4ZYD0mmAZi4
-         X9jkSem9YLSd8l6N/TPCjrhBLH3cs7/A/+rGRmkD6A0C7vli5oXXplFy94S7eaxwSA
-         QvJDDkxUyj+Egrm7ZfMQ3A/lWp3kAkuN8iooWGWx6s5zgVxaKd90RWRK6cAl6mBNJS
-         H/g8/la8b1Cdg==
-Message-ID: <92a0a9b6800ce1570a21b0bda42ccf2a.sboyd@kernel.org>
+        b=sXuUmqDGwXvk1y5MfLugBJ534n0qLPH7QM512PqtNUncruB8rY7n7J36aqcS4Eq/4
+         v9BzmRcQPr8JdEGn+Rrv6gV6l0YFTlX5LdECpc4nJHDAUxLqCGLgdXpYDfmT0L2TQP
+         mVyjA+v478FVdKDdV9KxCXVUqbaIV72vTcbnbxKRkmqCMMhkvQ2JuITgG+a5PWtufs
+         Yv05oLNGyCSqMMFcHIF0pI/ugc4B8KEQTnNfV7mDtXqn8xdkK3YmQG6nZGQUA+Gb4X
+         8Btb/NqLhrbR7lLcuyyDpKLYYpuM0CgLnxXj2oROm7v+OleMBSu8dx6K9AaaF8CCDv
+         +Py4o4ELgtv6g==
+Message-ID: <8ec473b5b80d5fad8d76df6d88d2c1d0.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230824104812.147775-2-biju.das.jz@bp.renesas.com>
-References: <20230824104812.147775-1-biju.das.jz@bp.renesas.com> <20230824104812.147775-2-biju.das.jz@bp.renesas.com>
-Subject: Re: [PATCH v5 1/4] dt-bindings: clock: versaclock3: Add description for #clock-cells property
+In-Reply-To: <20230911151548.672485-1-u.kleine-koenig@pengutronix.de>
+References: <20230911151548.672485-1-u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH] clk: qcom: cbf-msm8996: Convert to platform remove callback returning void
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>
-Date:   Mon, 11 Sep 2023 13:31:54 -0700
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        kernel@pengutronix.de
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Uwe =?utf-8?q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Date:   Mon, 11 Sep 2023 13:02:53 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Biju Das (2023-08-24 03:48:09)
-> Add description for "#clock-cells" property to map indexes to the clock
-> output in the Table 3. ("Output Source") in the 5P35023 datasheet
-> (ie: {REF,SE1,SE2,SE3,DIFF1,DIFF2}. Also update the "assigned-clock-rates"
-> in the example.
+Quoting Uwe Kleine-K=C3=B6nig (2023-09-11 08:15:48)
+> The .remove() callback for a platform driver returns an int which makes
+> many driver authors wrongly assume it's possible to do error handling by
+> returning an error code. However the value returned is ignored (apart
+> from emitting a warning) and this typically results in resource leaks.
+> To improve here there is a quest to make the remove callback return
+> void. In the first step of this quest all drivers are converted to
+> .remove_new() which already returns void. Eventually after all drivers
+> are converted, .remove_new() is renamed to .remove().
 >=20
-> While at it, replace clocks phandle in the example from x1_x2->x1 as
-> X2 is a different 32768 kHz crystal.
+> qcom_msm8996_cbf_icc_remove() returned zero unconditionally. After
+> changing this function to return void instead, the driver can be
+> converted trivially to use .remove_new().
 >=20
-> Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
 > ---
 
-Applied to clk-fixes
+Do you want to take this? Otherwise, I can apply it to fixes.
+
+>  drivers/clk/qcom/clk-cbf-8996.c | 12 +++++-------
+>  1 file changed, 5 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/drivers/clk/qcom/clk-cbf-8996.c b/drivers/clk/qcom/clk-cbf-8=
+996.c
+> index 53f205a3f183..fe24b4abeab4 100644
+> --- a/drivers/clk/qcom/clk-cbf-8996.c
+> +++ b/drivers/clk/qcom/clk-cbf-8996.c
+> @@ -250,13 +250,11 @@ static int qcom_msm8996_cbf_icc_register(struct pla=
+tform_device *pdev, struct cl
+>         return 0;
+>  }
+> =20
+> -static int qcom_msm8996_cbf_icc_remove(struct platform_device *pdev)
+> +static void qcom_msm8996_cbf_icc_remove(struct platform_device *pdev)
+>  {
+>         struct icc_provider *provider =3D platform_get_drvdata(pdev);
+> =20
+>         icc_clk_unregister(provider);
+> -
+> -       return 0;
+>  }
+>  #define qcom_msm8996_cbf_icc_sync_state icc_sync_state
+>  #else
+> @@ -266,7 +264,7 @@ static int qcom_msm8996_cbf_icc_register(struct platf=
+orm_device *pdev,  struct c
+> =20
+>         return 0;
+>  }
+> -#define qcom_msm8996_cbf_icc_remove(pdev) (0)
+> +#define qcom_msm8996_cbf_icc_remove(pdev) { }
+
+It would be better if this was a static inline function.
+
+>  #define qcom_msm8996_cbf_icc_sync_state NULL
+>  #endif
+>
