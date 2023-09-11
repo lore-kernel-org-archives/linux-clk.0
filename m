@@ -2,65 +2,196 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99186CA0ED2
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Sep 2023 03:16:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65E63CA0ED3
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Sep 2023 04:22:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232212AbjILDQ3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Sep 2023 23:16:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54472 "EHLO
+        id S232452AbjILEW0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Sep 2023 00:22:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241726AbjILDQF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Sep 2023 23:16:05 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B281410459F
-        for <linux-clk@vger.kernel.org>; Mon, 11 Sep 2023 19:07:25 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 559BEC433C7;
-        Mon, 11 Sep 2023 20:50:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694465406;
-        bh=2b8SGAE21odM9DkLgO7tG0F/Bh3n74Ew4ALGkLao9HY=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=tJTE8spMApaF2UOyoodztKt3ja+TUu1x2pUCSAdXF+otCk4g2xtCKq+kPIlJZa569
-         ltc8Ao7tGX3Uf59oYQO7eFHOxpT2m133eWbCW9dK/GIzx3IJAC+zC8WugLauIYiMvo
-         489fnB9ONdPE9JDTxrC4TcjwH+1b4MIeSaE6YEb4kX28/WwnJKLiddZLsLbSqEeOJ1
-         eUZ4OLIhoExHzlzigD7LgTWIbL8fB3AjHvfDeoGkkewzM8CCNgoL2LG5uiV8GzkLK+
-         Z6mZ/qS+Qpbm6xj+72VOTdsQoUoa5XhY9jTdjTpX7a3pUQqHjjjG6AMfhUR2o5kh8D
-         pmekDETZgM6Xw==
-Message-ID: <9434b9e6b7f60c308df5b1f28edbbe5c.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S230461AbjILEWJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Sep 2023 00:22:09 -0400
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [IPv6:2a02:c205:3004:2154::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B80312BB27;
+        Mon, 11 Sep 2023 18:56:27 -0700 (PDT)
+Received: from p200300ccff36fa001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:cc:ff36:fa00:1a3d:a2ff:febf:d33a] helo=aktux)
+        by mail.andi.de1.cc with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <andreas@kemnade.info>)
+        id 1qfpAD-003crH-IB; Tue, 12 Sep 2023 00:13:49 +0200
+Received: from andi by aktux with local (Exim 4.96)
+        (envelope-from <andreas@kemnade.info>)
+        id 1qfpAD-006ECg-0a;
+        Tue, 12 Sep 2023 00:13:49 +0200
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     dmitry.torokhov@gmail.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        lee@kernel.org, bcousson@baylibre.com, tony@atomide.com,
+        mturquette@baylibre.com, sboyd@kernel.org, andreas@kemnade.info,
+        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH v3 1/5] dt-bindings: mfd: convert twl-family.txt to json-schema
+Date:   Tue, 12 Sep 2023 00:13:42 +0200
+Message-Id: <20230911221346.1484543-2-andreas@kemnade.info>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230911221346.1484543-1-andreas@kemnade.info>
+References: <20230911221346.1484543-1-andreas@kemnade.info>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230831181656.154750-2-marex@denx.de>
-References: <20230831181656.154750-1-marex@denx.de> <20230831181656.154750-2-marex@denx.de>
-Subject: Re: [PATCH 2/2] clk: si521xx: Fix regmap write accessor
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Marek Vasut <marex@denx.de>,
-        Michael Turquette <mturquette@baylibre.com>
-To:     Marek Vasut <marex@denx.de>, linux-clk@vger.kernel.org
-Date:   Mon, 11 Sep 2023 13:50:04 -0700
-User-Agent: alot/0.10
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Marek Vasut (2023-08-31 11:16:56)
-> Rework the write operation such that the Byte Count register is written w=
-ith
-> a single raw i2c write outside of regmap using transfer which does specify
-> the number of bytes to be transfered, one in this case, and which makes t=
-he
-> expected subsequent write transfer look like address+register+data, and t=
-hen
-> make use of this method. Without this change, the Byte Count register wri=
-te
-> in probe() would succeed as it would provide the byte count as part of its
-> write payload, but any subsequent writes would fail due to this Byte Count
-> register programming. Such failing writes happens e.g. during resume, when
-> restoring the regmap content.
->=20
-> Fixes: edc12763a3a2 ("clk: si521xx: Clock driver for Skyworks Si521xx I2C=
- PCIe clock generators")
-> Signed-off-by: Marek Vasut <marex@denx.de>
-> ---
+Convert the TWL[46]030 binding to DT schema format. To do it as a step by
+step work, do not include / handle nodes for subdevices yet, just convert
+things with minimal corrections. There are already some bindings for its
+subdevices in the tree.
 
-Applied to clk-fixes
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+---
+ .../bindings/input/twl4030-pwrbutton.txt      |  2 +-
+ .../devicetree/bindings/mfd/ti,twl.yaml       | 64 +++++++++++++++++++
+ .../devicetree/bindings/mfd/twl-family.txt    | 46 -------------
+ 3 files changed, 65 insertions(+), 47 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/ti,twl.yaml
+ delete mode 100644 Documentation/devicetree/bindings/mfd/twl-family.txt
+
+diff --git a/Documentation/devicetree/bindings/input/twl4030-pwrbutton.txt b/Documentation/devicetree/bindings/input/twl4030-pwrbutton.txt
+index f5021214edecb..6c201a2ba8acf 100644
+--- a/Documentation/devicetree/bindings/input/twl4030-pwrbutton.txt
++++ b/Documentation/devicetree/bindings/input/twl4030-pwrbutton.txt
+@@ -1,7 +1,7 @@
+ Texas Instruments TWL family (twl4030) pwrbutton module
+ 
+ This module is part of the TWL4030. For more details about the whole
+-chip see Documentation/devicetree/bindings/mfd/twl-family.txt.
++chip see Documentation/devicetree/bindings/mfd/ti,twl.yaml.
+ 
+ This module provides a simple power button event via an Interrupt.
+ 
+diff --git a/Documentation/devicetree/bindings/mfd/ti,twl.yaml b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+new file mode 100644
+index 0000000000000..f125b254a4b93
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+@@ -0,0 +1,64 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/mfd/ti,twl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Texas Instruments TWL family
++
++maintainers:
++  - Andreas Kemnade <andreas@kemnade.info>
++
++description: |
++  The TWLs are Integrated Power Management Chips.
++  Some version might contain much more analog function like
++  USB transceiver or Audio amplifier.
++  These chips are connected to an i2c bus.
++
++properties:
++  compatible:
++    description:
++      TWL4030 for integrated power-management/audio CODEC device used in OMAP3
++      based boards
++      TWL6030/32 for integrated power-management used in OMAP4 based boards
++    enum:
++      - ti,twl4030
++      - ti,twl6030
++      - ti,twl6032
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  interrupt-controller: true
++
++  "#interrupt-cells":
++    const: 1
++
++additionalProperties: false
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - interrupt-controller
++  - "#interrupt-cells"
++
++examples:
++  - |
++    i2c {
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      pmic@48 {
++        compatible = "ti,twl6030";
++        reg = <0x48>;
++        interrupts = <39>; /* IRQ_SYS_1N cascaded to gic */
++        interrupt-controller;
++        #interrupt-cells = <1>;
++        interrupt-parent = <&gic>;
++      };
++    };
++
+diff --git a/Documentation/devicetree/bindings/mfd/twl-family.txt b/Documentation/devicetree/bindings/mfd/twl-family.txt
+deleted file mode 100644
+index c2f9302965dea..0000000000000
+--- a/Documentation/devicetree/bindings/mfd/twl-family.txt
++++ /dev/null
+@@ -1,46 +0,0 @@
+-Texas Instruments TWL family
+-
+-The TWLs are Integrated Power Management Chips.
+-Some version might contain much more analog function like
+-USB transceiver or Audio amplifier.
+-These chips are connected to an i2c bus.
+-
+-
+-Required properties:
+-- compatible : Must be "ti,twl4030";
+-  For Integrated power-management/audio CODEC device used in OMAP3
+-  based boards
+-- compatible : Must be "ti,twl6030";
+-  For Integrated power-management used in OMAP4 based boards
+-- interrupts : This i2c device has an IRQ line connected to the main SoC
+-- interrupt-controller : Since the twl support several interrupts internally,
+-  it is considered as an interrupt controller cascaded to the SoC one.
+-- #interrupt-cells = <1>;
+-
+-Optional node:
+-- Child nodes contain in the twl. The twl family is made of several variants
+-  that support a different number of features.
+-  The children nodes will thus depend of the capability of the variant.
+-
+-
+-Example:
+-/*
+- * Integrated Power Management Chip
+- * https://www.ti.com/lit/ds/symlink/twl6030.pdf
+- */
+-twl@48 {
+-    compatible = "ti,twl6030";
+-    reg = <0x48>;
+-    interrupts = <39>; /* IRQ_SYS_1N cascaded to gic */
+-    interrupt-controller;
+-    #interrupt-cells = <1>;
+-    interrupt-parent = <&gic>;
+-    #address-cells = <1>;
+-    #size-cells = <0>;
+-
+-    twl_rtc {
+-        compatible = "ti,twl_rtc";
+-        interrupts = <11>;
+-        reg = <0>;
+-    };
+-};
+-- 
+2.39.2
+
