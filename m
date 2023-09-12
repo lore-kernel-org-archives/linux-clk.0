@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88C6ECA0ECF
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Sep 2023 04:54:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCAD3CA0ED6
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Sep 2023 04:54:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229567AbjILEyo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Sep 2023 00:54:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40598 "EHLO
+        id S229445AbjILEys (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Sep 2023 00:54:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229495AbjILExn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Sep 2023 00:53:43 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E354E1997
-        for <linux-clk@vger.kernel.org>; Mon, 11 Sep 2023 21:52:46 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-52a1ce529fdso6792070a12.1
-        for <linux-clk@vger.kernel.org>; Mon, 11 Sep 2023 21:52:46 -0700 (PDT)
+        with ESMTP id S229897AbjILEyE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Sep 2023 00:54:04 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDA7A19AA
+        for <linux-clk@vger.kernel.org>; Mon, 11 Sep 2023 21:52:48 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-522dd6b6438so6226125a12.0
+        for <linux-clk@vger.kernel.org>; Mon, 11 Sep 2023 21:52:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1694494365; x=1695099165; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1694494367; x=1695099167; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jo/Dhp0OB8bboTWYwPIzrc1K3kv8uwjtpXTegipdPHc=;
-        b=qF7HnNVAZL97mkDnRyMiMWN+iIYqL+deXUmIJpY98pSzxYCAX/4FHlf228aZnyqAN4
-         i3R8Oq7lJC0mamK7Rlwg8+tzRjHZZjBYE72Jir8DamdrB0mP5XxV/Nyv05lt6A08Qju9
-         52Kpr+A1qoG2wIlAHP+hllWkzGv+VuNKhFm/LfQeT+Ufjw1d8EORVHh0L7g6OfrZdjDG
-         nZIzQqMMcrsp4EZx68nLaPhhztG9WH7QkH/TsioHCfmFmBXlOAgixjKw7HsTtp495q/d
-         VcPoUN8V+Oap9kYpfKF+/hDQk06y4AZXwu0AwFtybPSrH/B+mJODz9WGp70dzDOUEXgf
-         dVBA==
+        bh=NAKzNTbLzgfAHRXdnsKRKe+RoiapOo2jvnyugHXTYOc=;
+        b=A5zJQYN52UqoLxmSRjZAee6WWzlfF1olKju9k+NXO4cDdTUbJ0COqMbBxaZVv9gOCr
+         ARUPt/bB/czYWIe+BVgRNocGNq7iTWfpOWg64aMhhSZYUGlrZ9LqmdpU4spXkVNvf1bz
+         5k+pB+HcbmFJgahiPtKiqEMROGCDctaE8YZ7s0E9DDk15Zu7W7y0fxKNPcAg6gWF0EFz
+         YOOS9XvQce9X52zJw25o1yyz+57HsAsm+hAZwDKO5fwjwxH1bB3xeMNgdYNBw1Nri041
+         YG1q4NKPxeqm/2nmaR2j5FoMxTXXoJsZUFTYi3HK3AaZLgh+vtS49ZSY1SA2dTEUd7lx
+         espg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694494365; x=1695099165;
+        d=1e100.net; s=20230601; t=1694494367; x=1695099167;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jo/Dhp0OB8bboTWYwPIzrc1K3kv8uwjtpXTegipdPHc=;
-        b=OoxNQY8Zn4KS3848bA6vnm0LpPtt4/7oo7+Ywot/Ukpd3K2MKErBL783TOyqEHz67O
-         7An05LrINRlpFsAqt0r0Lo4zmkG66he79HZc+gfJtqJKlj6Rtl+hikFgcjVEgslMxLtj
-         +NyNw7f4Ftq0MhJnWPPEqWMXT0899fUP1wuTIqQ1ZFNywiCIad/ydRGqzfR8fHFQzvL4
-         Vbtts5Bc7sts50vdr57Dr7xOgEzP/61EKOnCsGAXnc3kLxZ0K4Y6xXDrq/ZTsSLUp7Pk
-         wIRXMVhAcPlZNObOTkl9M0o5nOCugvmcCtw58pf2Yo7MS72KkW/fRcZp2JL7lnauOX7s
-         L9Lw==
-X-Gm-Message-State: AOJu0YwhNRDtSADnWBNExis3sWNKdRyuxl6a7oiX90TFLV0JLeTZezAi
-        tkIriCmZpdXMYF5SW/Ue8VAcJA==
-X-Google-Smtp-Source: AGHT+IHQ/lVkuQFDtf8qYMcsBRGgpvmpbqpXE6jLiYty7Ri7fdqkUCoAD7dGqyQevjHt4iQoJ0Z6EA==
-X-Received: by 2002:a05:6402:333:b0:522:3d36:ff27 with SMTP id q19-20020a056402033300b005223d36ff27mr9729078edw.31.1694494365456;
-        Mon, 11 Sep 2023 21:52:45 -0700 (PDT)
+        bh=NAKzNTbLzgfAHRXdnsKRKe+RoiapOo2jvnyugHXTYOc=;
+        b=KqozMP1I34ibVpULCxt5PaI9WWRrtFS1qw96bAFUt9RsyRKkyTOTAEv+xQ1n/TUbhn
+         rXZBxpatswuO0l79bnrRqqtolJEsWBhgv5h0WP8m/t1toELyU/oLGPCp4bQ4Nf+oJTra
+         s/Ix7+ZOb0Tcg7XplJVuxCuT2M7Tf2CqhdGxASAraZ4XCQoheIxxF+cri7v/7FAfdXEE
+         9G/2+CfCW/zWMvMhN3GbCfJcFnBfAY1mZafKflmnyfVLN/Zd6+xBDrMOzQjC+BZIQs2D
+         +wWX9wcgjgrzIFezjbiPo9WKnfxEejRHx02zCBiLqCLZhE6W1+xGlCmoag9kuesqUF4s
+         eX0g==
+X-Gm-Message-State: AOJu0Yzsq7zSyblWAWs6kvvqSph6QoriTTtrq6w8m6+BRKMUVwfs/PB/
+        ynWxf3BhjRUUJFTYuC79J/EPnQ==
+X-Google-Smtp-Source: AGHT+IHbBiCW5+2oyUrY79stp2q5q5fLR4ZrMDANH3Hb0eBVLnJv5YMHustdDuw874VCDX2s8efWsA==
+X-Received: by 2002:a50:fa8e:0:b0:52e:585a:e94 with SMTP id w14-20020a50fa8e000000b0052e585a0e94mr8790647edr.2.1694494367488;
+        Mon, 11 Sep 2023 21:52:47 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.145])
-        by smtp.gmail.com with ESMTPSA id f21-20020a05640214d500b0051e22660835sm5422415edx.46.2023.09.11.21.52.43
+        by smtp.gmail.com with ESMTPSA id f21-20020a05640214d500b0051e22660835sm5422415edx.46.2023.09.11.21.52.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Sep 2023 21:52:45 -0700 (PDT)
+        Mon, 11 Sep 2023 21:52:47 -0700 (PDT)
 From:   Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To:     geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
@@ -67,9 +67,9 @@ Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 14/37] clk: renesas: rzg2l: use u32 for flag and mux_flags
-Date:   Tue, 12 Sep 2023 07:51:34 +0300
-Message-Id: <20230912045157.177966-15-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 15/37] clk: renesas: rzg2l: add support for RZ/G3S PLL
+Date:   Tue, 12 Sep 2023 07:51:35 +0300
+Message-Id: <20230912045157.177966-16-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com>
@@ -81,28 +81,110 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-flag and mux_flags are intended to keep bit masks. Use u32 type for it.
+Add support for reading the frequency of PLL1/4/6 available on RZ/G3S.
+The computation formula for PLL frequency is as follows:
+Fout = (nir + nfr / 4096) * Fin / (mr * pr)
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/clk/renesas/rzg2l-cpg.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/renesas/rzg2l-cpg.c | 44 ++++++++++++++++++++++++++++++---
+ drivers/clk/renesas/rzg2l-cpg.h |  3 +++
+ 2 files changed, 43 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
-index 6cee9e56acc7..0b28870a6f9d 100644
---- a/drivers/clk/renesas/rzg2l-cpg.h
-+++ b/drivers/clk/renesas/rzg2l-cpg.h
-@@ -92,8 +92,8 @@ struct cpg_core_clk {
- 	unsigned int conf;
- 	const struct clk_div_table *dtable;
- 	const char * const *parent_names;
--	int flag;
--	int mux_flags;
-+	u32 flag;
-+	u32 mux_flags;
- 	int num_parents;
+diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
+index 50f69bbe1a6e..638501e493e2 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.c
++++ b/drivers/clk/renesas/rzg2l-cpg.c
+@@ -718,11 +718,43 @@ static const struct clk_ops rzg2l_cpg_pll_ops = {
+ 	.recalc_rate = rzg2l_cpg_pll_clk_recalc_rate,
  };
  
++static unsigned long rzg3s_cpg_pll_clk_recalc_rate(struct clk_hw *hw,
++						   unsigned long parent_rate)
++{
++	struct pll_clk *pll_clk = to_pll(hw);
++	struct rzg2l_cpg_priv *priv = pll_clk->priv;
++	u32 nir, nfr, mr, pr, val;
++	u64 rate;
++
++	if (pll_clk->type != CLK_TYPE_G3S_SAM_PLL)
++		return parent_rate;
++
++	val = readl(priv->base + GET_REG_SAMPLL_CLK1(pll_clk->conf));
++
++	pr = 1 << FIELD_GET(GENMASK(28, 26), val);
++	/* Hardware interprets values higher than 8 as p = 16. */
++	if (pr > 8)
++		pr = 16;
++
++	mr  = FIELD_GET(GENMASK(25, 22), val) + 1;
++	nir = FIELD_GET(GENMASK(21, 13), val) + 1;
++	nfr = FIELD_GET(GENMASK(12, 1), val);
++
++	rate = DIV_ROUND_CLOSEST_ULL((u64)parent_rate * nfr, 4096);
++	rate += (u64)parent_rate * nir;
++	return DIV_ROUND_CLOSEST_ULL(rate, (mr + pr));
++}
++
++static const struct clk_ops rzg3s_cpg_pll_ops = {
++	.recalc_rate = rzg3s_cpg_pll_clk_recalc_rate,
++};
++
+ static struct clk * __init
+ rzg2l_cpg_pll_clk_register(const struct cpg_core_clk *core,
+ 			   struct clk **clks,
+ 			   void __iomem *base,
+-			   struct rzg2l_cpg_priv *priv)
++			   struct rzg2l_cpg_priv *priv,
++			   const struct clk_ops *ops)
+ {
+ 	struct device *dev = priv->dev;
+ 	const struct clk *parent;
+@@ -740,7 +772,7 @@ rzg2l_cpg_pll_clk_register(const struct cpg_core_clk *core,
+ 
+ 	parent_name = __clk_get_name(parent);
+ 	init.name = core->name;
+-	init.ops = &rzg2l_cpg_pll_ops;
++	init.ops = ops;
+ 	init.flags = 0;
+ 	init.parent_names = &parent_name;
+ 	init.num_parents = 1;
+@@ -835,8 +867,12 @@ rzg2l_cpg_register_core_clk(const struct cpg_core_clk *core,
+ 						core->mult, div);
+ 		break;
+ 	case CLK_TYPE_SAM_PLL:
+-		clk = rzg2l_cpg_pll_clk_register(core, priv->clks,
+-						 priv->base, priv);
++		clk = rzg2l_cpg_pll_clk_register(core, priv->clks, priv->base, priv,
++						 &rzg2l_cpg_pll_ops);
++		break;
++	case CLK_TYPE_G3S_SAM_PLL:
++		clk = rzg2l_cpg_pll_clk_register(core, priv->clks, priv->base, priv,
++						 &rzg3s_cpg_pll_ops);
+ 		break;
+ 	case CLK_TYPE_SIPLL5:
+ 		clk = rzg2l_cpg_sipll5_register(core, priv->clks, priv);
+diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
+index 0b28870a6f9d..16f7a1872814 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.h
++++ b/drivers/clk/renesas/rzg2l-cpg.h
+@@ -102,6 +102,7 @@ enum clk_types {
+ 	CLK_TYPE_IN,		/* External Clock Input */
+ 	CLK_TYPE_FF,		/* Fixed Factor Clock */
+ 	CLK_TYPE_SAM_PLL,
++	CLK_TYPE_G3S_SAM_PLL,
+ 
+ 	/* Clock with divider */
+ 	CLK_TYPE_DIV,
+@@ -129,6 +130,8 @@ enum clk_types {
+ 	DEF_TYPE(_name, _id, _type, .parent = _parent)
+ #define DEF_SAMPLL(_name, _id, _parent, _conf) \
+ 	DEF_TYPE(_name, _id, CLK_TYPE_SAM_PLL, .parent = _parent, .conf = _conf)
++#define DEF_G3S_SAMPLL(_name, _id, _parent, _conf) \
++	DEF_TYPE(_name, _id, CLK_TYPE_G3S_SAM_PLL, .parent = _parent, .conf = _conf)
+ #define DEF_INPUT(_name, _id) \
+ 	DEF_TYPE(_name, _id, CLK_TYPE_IN)
+ #define DEF_FIXED(_name, _id, _parent, _mult, _div) \
 -- 
 2.39.2
 
