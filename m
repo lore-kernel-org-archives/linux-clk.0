@@ -2,21 +2,21 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D98CBCA0ECF
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Sep 2023 09:34:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6DC9CA0EC3
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Sep 2023 09:34:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232169AbjILJee (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Sep 2023 05:34:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57900 "EHLO
+        id S232422AbjILJeg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Sep 2023 05:34:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230234AbjILJee (ORCPT
+        with ESMTP id S232143AbjILJee (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Sep 2023 05:34:34 -0400
 Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 840FF116;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD21ACD;
         Tue, 12 Sep 2023 02:34:29 -0700 (PDT)
 Received: from 4d92782a4194.home.arpa (unknown [124.16.138.129])
-        by APP-05 (Coremail) with SMTP id zQCowAB3kQiQMABlcnFXDA--.38735S3;
-        Tue, 12 Sep 2023 17:34:09 +0800 (CST)
+        by APP-05 (Coremail) with SMTP id zQCowAB3kQiQMABlcnFXDA--.38735S6;
+        Tue, 12 Sep 2023 17:34:11 +0800 (CST)
 From:   Jiasheng Jiang <jiasheng@iscas.ac.cn>
 To:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
         angelogioacchino.delregno@collabora.com, wenst@chromium.org,
@@ -30,32 +30,32 @@ Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org,
         Jiasheng Jiang <jiasheng@iscas.ac.cn>
-Subject: [PATCH 2/5] clk: mediatek: clk-mt6779: Add check for mtk_alloc_clk_data
-Date:   Tue, 12 Sep 2023 17:34:04 +0800
-Message-Id: <20230912093407.21505-2-jiasheng@iscas.ac.cn>
+Subject: [PATCH 5/5] clk: mediatek: clk-mt7629: Add check for mtk_alloc_clk_data
+Date:   Tue, 12 Sep 2023 17:34:07 +0800
+Message-Id: <20230912093407.21505-5-jiasheng@iscas.ac.cn>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230912093407.21505-1-jiasheng@iscas.ac.cn>
 References: <20230912093407.21505-1-jiasheng@iscas.ac.cn>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: zQCowAB3kQiQMABlcnFXDA--.38735S3
-X-Coremail-Antispam: 1UD129KBjvdXoWrKFW5Jw18ZryDCw15GFykZrb_yoWkZFc_Xw
-        1kZrZrur1DtFn5Jr4UGw1xZrZ8Krs0vrykZ3s8tFW3J34fWF17A3yvvwsa9rsrWwn7Zr1D
-        trn3GF4fuF15ZjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUbyxFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-        6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUGwA2048vs2IY02
-        0Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xv
-        wVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1l84
-        ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AI
-        xVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20x
-        vE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xv
-        r2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04
-        v7MxkIecxEwVAFwVW8uwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC2
-        0s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI
-        0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv2
-        0xvEc7CjxVAFwI0_Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87
-        Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIF
-        yTuYvjfUYiiSDUUUU
+X-CM-TRANSID: zQCowAB3kQiQMABlcnFXDA--.38735S6
+X-Coremail-Antispam: 1UD129KBjvJXoW7uF1xXFW5Zw4xtryxuF1DAwb_yoW8Xr4kpr
+        ykKr1YyFyUKw47Gws5Jw4qk3W5Zw10ga4UtFy3Zw10qr1agrW7CFyFkas29an2yrWv9Fyj
+        qw1Y9w4xuFW7uFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUmF14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
+        kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
+        z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
+        4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE
+        3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2I
+        x0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8
+        JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2
+        ka0xkIwI1lc2xSY4AK67AK6r4fMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j
+        6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7
+        AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I6r4UMIIF0xvE
+        2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42
+        IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2
+        KfnxnUUI43ZEXa7VUbaLvtUUUUU==
 X-Originating-IP: [124.16.138.129]
 X-CM-SenderInfo: pmld2xxhqjqxpvfd2hldfou0/
 Precedence: bulk
@@ -65,26 +65,17 @@ X-Mailing-List: linux-clk@vger.kernel.org
 Add the check for the return value of mtk_alloc_clk_data() in order to
 avoid NULL pointer dereference.
 
-Fixes: 710774e04861 ("clk: mediatek: Add MT6779 clock support")
+Fixes: 3b5e748615e7 ("clk: mediatek: add clock support for MT7629 SoC")
 Signed-off-by: Jiasheng Jiang <jiasheng@iscas.ac.cn>
 ---
- drivers/clk/mediatek/clk-mt6779.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/clk/mediatek/clk-mt7629.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/clk/mediatek/clk-mt6779.c b/drivers/clk/mediatek/clk-mt6779.c
-index 3ee2f5a2319a..ffedb1fe3c67 100644
---- a/drivers/clk/mediatek/clk-mt6779.c
-+++ b/drivers/clk/mediatek/clk-mt6779.c
-@@ -1217,6 +1217,8 @@ static int clk_mt6779_apmixed_probe(struct platform_device *pdev)
- 	struct device_node *node = pdev->dev.of_node;
- 
- 	clk_data = mtk_alloc_clk_data(CLK_APMIXED_NR_CLK);
-+	if (!clk_data)
-+		return -ENOMEM;
- 
- 	mtk_clk_register_plls(node, plls, ARRAY_SIZE(plls), clk_data);
- 
-@@ -1237,6 +1239,8 @@ static int clk_mt6779_top_probe(struct platform_device *pdev)
+diff --git a/drivers/clk/mediatek/clk-mt7629.c b/drivers/clk/mediatek/clk-mt7629.c
+index 2882107d0f24..b8a1f01bc974 100644
+--- a/drivers/clk/mediatek/clk-mt7629.c
++++ b/drivers/clk/mediatek/clk-mt7629.c
+@@ -555,6 +555,8 @@ static int mtk_topckgen_init(struct platform_device *pdev)
  		return PTR_ERR(base);
  
  	clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
@@ -93,6 +84,24 @@ index 3ee2f5a2319a..ffedb1fe3c67 100644
  
  	mtk_clk_register_fixed_clks(top_fixed_clks, ARRAY_SIZE(top_fixed_clks),
  				    clk_data);
+@@ -579,6 +581,8 @@ static int mtk_infrasys_init(struct platform_device *pdev)
+ 	struct clk_hw_onecell_data *clk_data;
+ 
+ 	clk_data = mtk_alloc_clk_data(CLK_INFRA_NR_CLK);
++	if (!clk_data)
++		return -ENOMEM;
+ 
+ 	mtk_clk_register_gates(&pdev->dev, node, infra_clks,
+ 			       ARRAY_SIZE(infra_clks), clk_data);
+@@ -602,6 +606,8 @@ static int mtk_pericfg_init(struct platform_device *pdev)
+ 		return PTR_ERR(base);
+ 
+ 	clk_data = mtk_alloc_clk_data(CLK_PERI_NR_CLK);
++	if (!clk_data)
++		return -ENOMEM;
+ 
+ 	mtk_clk_register_gates(&pdev->dev, node, peri_clks,
+ 			       ARRAY_SIZE(peri_clks), clk_data);
 -- 
 2.25.1
 
