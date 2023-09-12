@@ -2,72 +2,86 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6448CA0ED2
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Sep 2023 10:03:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2C6CCA0ECA
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Sep 2023 11:30:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233440AbjILKDG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Sep 2023 06:03:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54988 "EHLO
+        id S234295AbjILLan (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Sep 2023 07:30:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233641AbjILKDD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Sep 2023 06:03:03 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33DA210D8;
-        Tue, 12 Sep 2023 03:02:59 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id ED0836607323;
-        Tue, 12 Sep 2023 11:02:56 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1694512978;
-        bh=4xz6Szx2cylj0/jy1E9nlRbuyxqN2NyY/h3Y3/JNrd4=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=YN3r5AGSobwaP8QJ50wV4fViTzFF4D0sOKkXRMFHO4zOSHNEJqZzkziZ8qYJZvZJm
-         5k8boUM7fjL6JCe3pYTBMTZ7/TAkjE9QnD4KINDv/AmlUTNI8n1R2ZboYsUCJCkUmq
-         n4C8TkeTs07cc6Nqu1h83t1LoR7lbZTFMSM6rS7jVVjFN79Ekw3wFBwbzL7ztc6cM5
-         q65aPqwaN1xbgNfQB1/w9EvmqBV0+zG57PsvFbJXU1DhJshiBSn5S6IBCOFn6ZBZa3
-         jewSxUI+hvVTx8C+5uIiBu67SdCLg9NMLb+Z30Z8MI/vHDp7COfT+pAje2B9owSdPL
-         r1xg0+3QULqkw==
-Message-ID: <cfbe3332-ca36-613a-7ba1-f0c17da5cbe9@collabora.com>
-Date:   Tue, 12 Sep 2023 12:02:54 +0200
+        with ESMTP id S234493AbjILLaI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Sep 2023 07:30:08 -0400
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D31C01706;
+        Tue, 12 Sep 2023 04:30:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+        s=20161220; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+        Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=Qu39PQ0U2Ph5m1ZjnlmlC8FtqW2Q1p6q+fQQPfB0rxg=; b=Kw6L05BgsU0e+oBduAi3AmSIMC
+        kQr0uIEKSM5/Z/cnvJVkyGPvaUluJ+hN7NvFeyxX0Mwi6OhPULr4DzFGIIf/9Pagg4V48lay9QOYo
+        DT1h41WrVW5qJtK9sjBuPhQVlLSQgindSvucBe2vs7Q0u+8B4g8mJUYSimrdWIMYRbLKb89F/19x2
+        jGtWiO2iESI53J+886MB7VttrSn0nRaftNxKaHUG0TB07NIefxOkRu2fJ/tnvIl6q8+xlO2FbpR2O
+        sWY/woMhBGZtHyDIq3kkr1Hr9dHEfU6lUNeVoMNs60zPDwTdrS4ztMwyteKULuxyatKSNSk69DBPe
+        B8wecZ+A==;
+Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
+        by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.96)
+        (envelope-from <cyndis@kapsi.fi>)
+        id 1qg1ag-00Fv4Q-0P;
+        Tue, 12 Sep 2023 14:29:58 +0300
+From:   Mikko Perttunen <cyndis@kapsi.fi>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     Timo Alho <talho@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: tegra: fix error return case for recalc_rate
+Date:   Tue, 12 Sep 2023 14:29:50 +0300
+Message-ID: <20230912112951.2330497-1-cyndis@kapsi.fi>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [PATCH 2/5] clk: mediatek: clk-mt6779: Add check for
- mtk_alloc_clk_data
-Content-Language: en-US
-To:     Jiasheng Jiang <jiasheng@iscas.ac.cn>, mturquette@baylibre.com,
-        sboyd@kernel.org, matthias.bgg@gmail.com, wenst@chromium.org,
-        msp@baylibre.com, amergnat@baylibre.com, frank.li@vivo.com,
-        robh@kernel.org, owen.chen@mediatek.com, mars.cheng@mediatek.com,
-        macpaul.lin@mediatek.com, cw00.choi@samsung.com,
-        u.kleine-koenig@pengutronix.de, wendell.lin@mediatek.com,
-        luca.ceresoli@bootlin.com, kevin-cw.chen@mediatek.com,
-        ryder.lee@mediatek.com, wenzhen.yu@mediatek.com
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-References: <20230912093407.21505-1-jiasheng@iscas.ac.cn>
- <20230912093407.21505-2-jiasheng@iscas.ac.cn>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20230912093407.21505-2-jiasheng@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 91.158.25.70
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 12/09/23 11:34, Jiasheng Jiang ha scritto:
-> Add the check for the return value of mtk_alloc_clk_data() in order to
-> avoid NULL pointer dereference.
-> 
-> Fixes: 710774e04861 ("clk: mediatek: Add MT6779 clock support")
-> Signed-off-by: Jiasheng Jiang <jiasheng@iscas.ac.cn>
+From: Timo Alho <talho@nvidia.com>
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+tegra-bpmp clocks driver makes implicit conversion of signed error
+code to unsigned value in recalc_rate operation. The behavior for
+recalc_rate, according to it's specification, should be that "If the
+driver cannot figure out a rate for this clock, it must return 0."
 
+Fixes: ca6f2796eef7 ("clk: tegra: Add BPMP clock driver")
+Signed-off-by: Timo Alho <talho@nvidia.com>
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+---
+ drivers/clk/tegra/clk-bpmp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/tegra/clk-bpmp.c b/drivers/clk/tegra/clk-bpmp.c
+index a9f3fb448de6..7bfba0afd778 100644
+--- a/drivers/clk/tegra/clk-bpmp.c
++++ b/drivers/clk/tegra/clk-bpmp.c
+@@ -159,7 +159,7 @@ static unsigned long tegra_bpmp_clk_recalc_rate(struct clk_hw *hw,
+ 
+ 	err = tegra_bpmp_clk_transfer(clk->bpmp, &msg);
+ 	if (err < 0)
+-		return err;
++		return 0;
+ 
+ 	return response.rate;
+ }
+-- 
+2.41.0
 
