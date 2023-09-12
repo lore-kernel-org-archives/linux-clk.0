@@ -2,132 +2,92 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E34F3CA0EF1
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Sep 2023 17:16:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FD45CA0EF8
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Sep 2023 17:18:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233220AbjILRQF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Sep 2023 13:16:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32784 "EHLO
+        id S233220AbjILRSS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Sep 2023 13:18:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234256AbjILRQE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Sep 2023 13:16:04 -0400
-Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 974B310EB
-        for <linux-clk@vger.kernel.org>; Tue, 12 Sep 2023 10:16:00 -0700 (PDT)
-Received: from [192.168.1.18] ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id g6zSq6dtZ3ISpg6zSqZ0YH; Tue, 12 Sep 2023 19:15:57 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1694538957;
-        bh=AfOWrkTi8ZBiDYWOws0Egwd9wQjQnAJJDX+E9T7oIq4=;
-        h=Date:Subject:To:References:From:In-Reply-To;
-        b=BUobmzeJhgsZWHZVQ4Z3p3tC0qCNHSrFh1byXYPwtDY9hGF43NLiS5gOfCx44ub20
-         mqBDVNKq4hCt6NRWvKHdX8Kvkj/fzcZEdHjmzhg6zdCg/DBNXWbdi3dGk/l3RjbyG9
-         +iR7LFgN5luK1Jga8mYk/4Ib41yu0KXpK4XRcO7l+eJzWzEddmPMkX6HwP13hWKdgD
-         thjUcZpSWVr2P7LoeHHYhG/93HlRqeYa87DpNzy4phTiCNZ+pHPOzScPQmOpjVcNXW
-         PS8Lq8956SOOKgNqZrgpvspV6E7lPeKItUY/lpLvIwkKc2VAARtiaAsJkTb0b6KEme
-         Fh8TZdwaDzT3w==
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 12 Sep 2023 19:15:57 +0200
-X-ME-IP: 86.243.2.178
-Message-ID: <a9b646c7-2c02-8a69-a4c8-7e981a630eef@wanadoo.fr>
-Date:   Tue, 12 Sep 2023 19:15:54 +0200
+        with ESMTP id S237006AbjILRSR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Sep 2023 13:18:17 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07C8310F4;
+        Tue, 12 Sep 2023 10:18:14 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8967CC433C8;
+        Tue, 12 Sep 2023 17:18:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1694539093;
+        bh=+2q46O7efDXVGtNITaVnlXpqniY/rjlpX0v8ey8+6L0=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=fgFTkWWLOfuQzE/RIqe1KySaJA0A6/r1GgKbxoH2HvpA9PiX4Fmq2wZ0+RIifXEFo
+         ArgRoNDAQxa2IZjNtwQIwfwP25wDrnGaeOKu1p+6eRCIjTbuWjJVckt0t87hWvZwwn
+         TJSM+HTmP8j6wQdDGbwVRGQuaI4wIdi/cQJNW0dKbK9+72cXNqOLqhmuRMq5kZ7P8M
+         hU/pOqpFd121kKYuOotZJDhKqvZc85Dhcye8la7Fbim9Qfn+IB+nxo2/yVkSO0LMd+
+         QKHBiiuths6GeyeGXHnEuncCEkVv7Y+XckSEvHTSvjZynHvLtr+P/9Nh7vzrcZNJ08
+         aUdpNTF7QBH0g==
+Message-ID: <82adb75659e0d278e25b65b0e81df99a.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [PATCH v3 4/5] clk: twl: add clock driver for TWL6032
-To:     Andreas Kemnade <andreas@kemnade.info>, dmitry.torokhov@gmail.com,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, lee@kernel.org, bcousson@baylibre.com,
-        tony@atomide.com, mturquette@baylibre.com, sboyd@kernel.org,
-        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20230911221346.1484543-1-andreas@kemnade.info>
- <20230911221346.1484543-5-andreas@kemnade.info>
-Content-Language: fr
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20230911221346.1484543-5-andreas@kemnade.info>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <f67b354c-8a4b-49f5-6275-66b7d614301a@quicinc.com>
+References: <20230901091823.30242-1-quic_luoj@quicinc.com> <20230901091823.30242-5-quic_luoj@quicinc.com> <27ae3297ad161fd67706db70b402db04.sboyd@kernel.org> <16d09acf-7bdd-04ee-6faf-936c0366df03@quicinc.com> <17681a9f756cc70a190c674c51b90140.sboyd@kernel.org> <5a4805f7-f802-b1ba-9804-59c0fe6c7f26@quicinc.com> <92058c25fb11b75ee0a2298a684825e9.sboyd@kernel.org> <f67b354c-8a4b-49f5-6275-66b7d614301a@quicinc.com>
+Subject: Re: [PATCH v6 4/4] clk: qcom: add clock controller driver for qca8386/qca8084
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        quic_srichara@quicinc.com
+To:     Jie Luo <quic_luoj@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, catalin.marinas@arm.com, conor+dt@kernel.org,
+        konrad.dybcio@linaro.org, krzysztof.kozlowski+dt@linaro.org,
+        mturquette@baylibre.com, p.zabel@pengutronix.de,
+        robh+dt@kernel.org, will@kernel.org
+Date:   Tue, 12 Sep 2023 10:18:11 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Le 12/09/2023 à 00:13, Andreas Kemnade a écrit :
-> The TWL6032 has some clock outputs which are controlled like
-> fixed-voltage regulators, in some drivers for these chips
-> found in the wild, just the regulator api is abused for controlling
-> them, so simply use something similar to the regulator functions.
-> Due to a lack of hardware available for testing, leave out the
-> TWL6030-specific part of those functions.
-> 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> ---
->   drivers/clk/Kconfig   |   9 ++
->   drivers/clk/Makefile  |   1 +
->   drivers/clk/clk-twl.c | 197 ++++++++++++++++++++++++++++++++++++++++++
->   3 files changed, 207 insertions(+)
->   create mode 100644 drivers/clk/clk-twl.c
-> 
+Quoting Jie Luo (2023-09-12 05:07:02)
+>=20
+>=20
+> On 9/12/2023 4:11 AM, Stephen Boyd wrote:
+> > Quoting Jie Luo (2023-09-08 04:10:35)
+> >>
+> >> For example, when the uniphy works on PHY_INTERFACE_MODE_2500BASEX, th=
+en
+> >> the parent uniphy clock rate is 312.5M, which is decided by hardware a=
+nd
+> >> can't be changed. when a branch clock requires a 25M clock, the parent
+> >> uniphy clock maybe updated to 125M by clock framework if the flag
+> >> CLK_SET_RATE_PARENT is set here, but the actual hardware clock rate of
+> >> uniphy is still 315.5M since the uniphy still works in the interface
+> >> mode PHY_INTERFACE_MODE_2500BASEX.
+> >>
+> >=20
+> > If the parent rate can't change because CLK_SET_RATE_PARENT is missing
+> > and the hardware doesn't allow it, then perhaps instead of having a
+> > frequency table we should have rcg clk ops for determine_rate that
+> > simply looks at the parent rates and finds the rate closest to what is
+> > desired. And for the set_rate clk_op we can have it be simple and just
+> > program a fixed divider. The benefit is less frequency tables that don't
+> > do anything and less hard-coding of the frequency. I thought we already
+> > had those rcg clk_ops but I couldn't find them with a quick glance.
+>=20
+> Thanks Stephen for the suggestion.
+> looks you are saying the clk ops clk_dp_ops for the fix parent rate?=20
+> which seems not meet the clock requirement of this clock.
 
-...
+Yeah that is close, but the determine_rate clk_op needs to look at all
+possible parents. With the dp clk_ops we assume that only one parent is
+possible.
 
-> +static int twl_clks_probe(struct platform_device *pdev)
-> +{
-> +	struct clk_hw_onecell_data *clk_data;
-> +	const struct twl_clks_data *hw_data;
-> +
-> +	struct twl_clock_info *cinfo;
-> +	int ret;
-> +	int i;
-> +	int count;
-> +
-> +	hw_data = twl6032_clks;
-> +	for (count = 0; hw_data[count].init.name; count++)
-> +		;
+>=20
+> For the device qca8k, it is also possible to switch the interface modes=20
+> between PHY_INTERFACE_MODE_2500BASEX(312.5M) and=20
+> PHY_INTERFACE_MODE_SGMII(125M) during the running time, and there are=20
+> multiple parent clock source(P_UNIPHY0_RX or P_UNIPHY0_TX) for the RCG=20
+> clocks to select according to the current work mode. so the parent_map=20
+> and freq_tbl are necessary to this clock.
 
-Nit: does removing the /* sentinel */ and using 
-ARRAY_SIZE(twl_clks_data) would make sense and be simpler?
-
-CJ
-
-> +
-> +	clk_data = devm_kzalloc(&pdev->dev,
-> +				struct_size(clk_data, hws, count),
-> +				GFP_KERNEL);
-> +	if (!clk_data)
-> +		return -ENOMEM;
-> +
-> +	clk_data->num = count;
-> +	cinfo = devm_kcalloc(&pdev->dev, count, sizeof(*cinfo), GFP_KERNEL);
-> +	if (!cinfo)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < count; i++) {
-> +		cinfo[i].base = hw_data[i].base;
-> +		cinfo[i].dev = &pdev->dev;
-> +		cinfo[i].hw.init = &hw_data[i].init;
-> +		ret = devm_clk_hw_register(&pdev->dev, &cinfo[i].hw);
-> +		if (ret) {
-> +			dev_err(&pdev->dev, "Fail to register clock %s, %d\n",
-> +				hw_data[i].init.name, ret);
-> +			return ret;
-> +		}
-> +		clk_data->hws[i] = &cinfo[i].hw;
-> +	}
-> +
-> +	ret = devm_of_clk_add_hw_provider(&pdev->dev,
-> +					  of_clk_hw_onecell_get, clk_data);
-> +	if (ret < 0)
-> +		dev_err(&pdev->dev, "Fail to add clock driver, %d\n", ret);
-> +
-> +	return ret;
-
-Nit: should there be a V4, some prefer return 0 to be more explicit.
-
-> +}
-
-...
-
+I still don't see why the freq_tbl is necessary.
