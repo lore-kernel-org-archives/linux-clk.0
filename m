@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00C8BCA0EEA
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Sep 2023 04:53:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 532D7CA0EDA
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Sep 2023 04:54:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229629AbjILExf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Sep 2023 00:53:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33932 "EHLO
+        id S229486AbjILEyK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Sep 2023 00:54:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230033AbjILEwt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Sep 2023 00:52:49 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA9D810F1
-        for <linux-clk@vger.kernel.org>; Mon, 11 Sep 2023 21:52:36 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-52889bc61b6so6808122a12.0
-        for <linux-clk@vger.kernel.org>; Mon, 11 Sep 2023 21:52:36 -0700 (PDT)
+        with ESMTP id S229663AbjILEw7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Sep 2023 00:52:59 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3A42170E
+        for <linux-clk@vger.kernel.org>; Mon, 11 Sep 2023 21:52:38 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id 4fb4d7f45d1cf-52e297c7c39so6478330a12.2
+        for <linux-clk@vger.kernel.org>; Mon, 11 Sep 2023 21:52:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1694494355; x=1695099155; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1694494357; x=1695099157; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hoCpw81yKfLo4VgDXItzmRw2QIwsF6c48cElOMC6EIw=;
-        b=efNOZzaz2mrdrYrVz2KZBe32hb1eSXlS2tFMQ4NMoahGA3XAxUHEviSgw/HMyGy0/B
-         CEZNceT+KnwaHQFSGL3o5Ng8YedDWmHdMIo5DZiWau3V8csdEwc6aqSwS3uXRGY3No9q
-         DOaKOTQezTL3Wmx+HByicQ+A+hGxccvel3g4l2KSQKDqPRG+5qgRHZPuxarKLWOFPJTp
-         M9Zxw4YoxrConb/40UaNZpceX7tpnj/hiRC09kSjDxvTM9ftODKFuIVre6j0h5BNAH7f
-         0Dwe0+S6xrcrAosN+C6CfKzpZ/WEkBTQlh9IRRamQ0wCrzENLWoCwW9PtWEbychZXVEq
-         YBwA==
+        bh=xebdOcqzNiLkrduYHBYJ420PrwL90pWS/PE9oQklpQQ=;
+        b=Q6951NLvBLtdQJdHbWazUlIgC6dItBfINLnECfWGnWpUHF8ddwr15nlV+1DTrRAlSX
+         6AG3yd5crTN+vL/rKVQLb9fatbnx7dRuII2Olzh3hLCYIOhnI1ltxS8P/m3VfM/KL/VN
+         L9ESBj373OZIBhENeB7V2ePeTEJ8Mu48+q1ZJpG/wt+CagFnXDXy1eKLy4Qkr2w+IsLy
+         gW10318azQ8oXmStfeF3QgulhaVtSFOjs0itKLtJGJBdbVBK0gH7uYaR2Powu16hXKGk
+         gY2fgYbGPWLOsXNWwq9Jdpv4VIP1wrcVmMAmRUAlFO4GExQXN57y8lmfWmSLwG0hae02
+         1w2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694494355; x=1695099155;
+        d=1e100.net; s=20230601; t=1694494357; x=1695099157;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hoCpw81yKfLo4VgDXItzmRw2QIwsF6c48cElOMC6EIw=;
-        b=I0iV3JefDICCR7RpYrj3wYSFwLrSuRStZiqykwn6vgjBwo64QWwIj0SuS19jnj17XV
-         NSyCUG5xQr8xszPhGlEY8FAbDNNKPGTflHuogCs7LOs1k+RAItdrf799LJpy/g3tDOJr
-         cCQeriuIM0gC58iKPUvseNooHxPDFeGvZvaBvyMJRR18ye47bbqjuUp3Wa/yy0gGbqna
-         Ugd+Zb9Cbl1gDCahy+nE0HM8me7g23gUe39bWE0BTbd1QpWWJdkXqQ9gRln/hivdHO3C
-         714WJKdXmjFFIK2b/T1TGuQ6OTCZ/HM4GtcFmHR/DBZ9TXUmGJ2djGSEbLzhwmM/CwKc
-         abjg==
-X-Gm-Message-State: AOJu0YyZcI8XfvFl7vxnbnH2yIXa+1/wBu28KnwFg8V1DplWDWKqJge5
-        rbXEY6DPGY19bSuJh0wwIKzfEg==
-X-Google-Smtp-Source: AGHT+IF4gJ4l/dCvSevhNyicQ8r0uP2R1CJmeGlXUXe1057QGw/WFznmHIXupPF24lUa2/XA0gyFOA==
-X-Received: by 2002:aa7:c48b:0:b0:522:1bdd:d41a with SMTP id m11-20020aa7c48b000000b005221bddd41amr9906905edq.4.1694494355421;
-        Mon, 11 Sep 2023 21:52:35 -0700 (PDT)
+        bh=xebdOcqzNiLkrduYHBYJ420PrwL90pWS/PE9oQklpQQ=;
+        b=EcqcRQzk87acaL2GwKtPo7NAlchcQbU/lYQi5OmimBSRtvds9LbYWgaNYGdo98UhOA
+         fkOEzkHgw11hQACkHwjCmim9kWEhrWwHkBY3+XSLoFN6vyK9WdyiNZPZK3bpag7PWWo7
+         GXAlMyALya7mu1wXRqSobCe+B1dj/HZHjcHki6cz+hEJ+9nIthrMeQHUn7/Wg+CBvNql
+         LPRGOCSalvWOKjRc2XyNHwhd8B37tCCQxmsW8DqSgCv+mjw48a8/gwQvnbeDfT7v3E+/
+         ajJ/qOJpZ/jpKlCOg8uqpqhbA065/C5JZPjKNQDoahQKiixWEEeg2qVwofgEJthXG6TP
+         vybw==
+X-Gm-Message-State: AOJu0YyeOvNBkJGDwtmIt2d4dzVmuvvlpAZrV8+Z4qFO+dq8pscja2R9
+        H4qNKjXcZF14Eaj7YRrhkNwXSA==
+X-Google-Smtp-Source: AGHT+IGjT1c2D7rGbZkIDjQDBZ2SswU72mlETKwu7Rg6sZA50uDeTp2UawtC4cLxsacoGPlnRuQpVw==
+X-Received: by 2002:aa7:c989:0:b0:525:58aa:6c83 with SMTP id c9-20020aa7c989000000b0052558aa6c83mr10337940edt.11.1694494357418;
+        Mon, 11 Sep 2023 21:52:37 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.145])
-        by smtp.gmail.com with ESMTPSA id f21-20020a05640214d500b0051e22660835sm5422415edx.46.2023.09.11.21.52.33
+        by smtp.gmail.com with ESMTPSA id f21-20020a05640214d500b0051e22660835sm5422415edx.46.2023.09.11.21.52.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Sep 2023 21:52:35 -0700 (PDT)
+        Mon, 11 Sep 2023 21:52:37 -0700 (PDT)
 From:   Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To:     geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
@@ -67,9 +67,9 @@ Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 09/37] clk: renesas: rzg2l: fix computation formula
-Date:   Tue, 12 Sep 2023 07:51:29 +0300
-Message-Id: <20230912045157.177966-10-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 10/37] clk: renesas: rzg2l: use core->name for clock name
+Date:   Tue, 12 Sep 2023 07:51:30 +0300
+Message-Id: <20230912045157.177966-11-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com>
@@ -81,53 +81,27 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-According to hardware manual of RZ/G2L (r01uh0914ej0130-rzg2l-rzg2lc.pdf)
-the computation formula for PLL rate is as follows:
+core->name already contains the clock name thus, there is no
+need to check the GET_SHIFT(core->conf) to decide on it.
 
-Fout = ((m + k/65536) * Fin) / (p * 2^s)
-
-and k has values in range [-32768, 32767]. Dividing k by 65536 with
-integer variables leads all the time to zero. Thus we may have slight
-differences b/w what has been set vs. what is displayed. Thus,
-get rid of this and decompose the formula before dividing k by 65536.
-
-Fixes: ef3c613ccd68a ("clk: renesas: Add CPG core wrapper for RZ/G2L SoC")
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/clk/renesas/rzg2l-cpg.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/clk/renesas/rzg2l-cpg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index d0d086d6dc51..b391c9548421 100644
+index b391c9548421..44226682db2c 100644
 --- a/drivers/clk/renesas/rzg2l-cpg.c
 +++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -696,18 +696,22 @@ static unsigned long rzg2l_cpg_pll_clk_recalc_rate(struct clk_hw *hw,
- 	struct pll_clk *pll_clk = to_pll(hw);
- 	struct rzg2l_cpg_priv *priv = pll_clk->priv;
- 	unsigned int val1, val2;
--	unsigned int mult = 1;
--	unsigned int div = 1;
-+	unsigned int div;
-+	u64 rate;
-+	s16 kdiv;
+@@ -266,7 +266,7 @@ rzg2l_cpg_sd_mux_clk_register(const struct cpg_core_clk *core,
+ 	clk_hw_data->priv = priv;
+ 	clk_hw_data->conf = core->conf;
  
- 	if (pll_clk->type != CLK_TYPE_SAM_PLL)
- 		return parent_rate;
- 
- 	val1 = readl(priv->base + GET_REG_SAMPLL_CLK1(pll_clk->conf));
- 	val2 = readl(priv->base + GET_REG_SAMPLL_CLK2(pll_clk->conf));
--	mult = MDIV(val1) + KDIV(val1) / 65536;
-+	kdiv = KDIV(val1);
- 	div = PDIV(val1) << SDIV(val2);
- 
--	return DIV_ROUND_CLOSEST_ULL((u64)parent_rate * mult, div);
-+	rate = (u64)MDIV(val1) * parent_rate;
-+	rate += ((long long)parent_rate * kdiv) / 65536;
-+
-+	return DIV_ROUND_CLOSEST_ULL(rate, div);
- }
- 
- static const struct clk_ops rzg2l_cpg_pll_ops = {
+-	init.name = GET_SHIFT(core->conf) ? "sd1" : "sd0";
++	init.name = core->name;
+ 	init.ops = &rzg2l_cpg_sd_clk_mux_ops;
+ 	init.flags = 0;
+ 	init.num_parents = core->num_parents;
 -- 
 2.39.2
 
