@@ -2,92 +2,67 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FD45CA0EF8
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Sep 2023 17:18:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80294EE3F00
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Sep 2023 17:55:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233220AbjILRSS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Sep 2023 13:18:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34244 "EHLO
+        id S235776AbjILRzj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Sep 2023 13:55:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237006AbjILRSR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Sep 2023 13:18:17 -0400
+        with ESMTP id S231665AbjILRzj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Sep 2023 13:55:39 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07C8310F4;
-        Tue, 12 Sep 2023 10:18:14 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8967CC433C8;
-        Tue, 12 Sep 2023 17:18:13 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEA3110D3;
+        Tue, 12 Sep 2023 10:55:35 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22A31C433C8;
+        Tue, 12 Sep 2023 17:55:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694539093;
-        bh=+2q46O7efDXVGtNITaVnlXpqniY/rjlpX0v8ey8+6L0=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=fgFTkWWLOfuQzE/RIqe1KySaJA0A6/r1GgKbxoH2HvpA9PiX4Fmq2wZ0+RIifXEFo
-         ArgRoNDAQxa2IZjNtwQIwfwP25wDrnGaeOKu1p+6eRCIjTbuWjJVckt0t87hWvZwwn
-         TJSM+HTmP8j6wQdDGbwVRGQuaI4wIdi/cQJNW0dKbK9+72cXNqOLqhmuRMq5kZ7P8M
-         hU/pOqpFd121kKYuOotZJDhKqvZc85Dhcye8la7Fbim9Qfn+IB+nxo2/yVkSO0LMd+
-         QKHBiiuths6GeyeGXHnEuncCEkVv7Y+XckSEvHTSvjZynHvLtr+P/9Nh7vzrcZNJ08
-         aUdpNTF7QBH0g==
-Message-ID: <82adb75659e0d278e25b65b0e81df99a.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <f67b354c-8a4b-49f5-6275-66b7d614301a@quicinc.com>
-References: <20230901091823.30242-1-quic_luoj@quicinc.com> <20230901091823.30242-5-quic_luoj@quicinc.com> <27ae3297ad161fd67706db70b402db04.sboyd@kernel.org> <16d09acf-7bdd-04ee-6faf-936c0366df03@quicinc.com> <17681a9f756cc70a190c674c51b90140.sboyd@kernel.org> <5a4805f7-f802-b1ba-9804-59c0fe6c7f26@quicinc.com> <92058c25fb11b75ee0a2298a684825e9.sboyd@kernel.org> <f67b354c-8a4b-49f5-6275-66b7d614301a@quicinc.com>
-Subject: Re: [PATCH v6 4/4] clk: qcom: add clock controller driver for qca8386/qca8084
+        s=k20201202; t=1694541335;
+        bh=rrwYR3/rqDwXPIcEZV4/pnPLM7oE/aWqYDmNh+JXXaA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=mboLiXQHP0KBMCCt14sMYW/+pIam/h/U7/xcobZ6lEqrEw993BhQD+cDrERdJRs4R
+         Cz+Opgs5wXVQEPUMxCKIRZYuZ+EzImcwDVA9bhEsz9u9atUquoxR2HEhAmit5Do77P
+         24YFu98YvPZJBvw1q+1LhYX/Le/pLGO/TOmqEBVQe904avvh1nKq17kOi9F2TAYOv6
+         0AM10A9qEStnIGYJldEHDyhR1zqeesqNsYeMRisrJ5gSJX6bYjdkvz/8uaD0si/SF+
+         QKOvPCgr+SbkEq41pqpgohXL1FsDCuQeH54aitsYYStDkOVVxbz0RlpSediS2EB5c2
+         EatiPcArOHtLA==
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        quic_srichara@quicinc.com
-To:     Jie Luo <quic_luoj@quicinc.com>, agross@kernel.org,
-        andersson@kernel.org, catalin.marinas@arm.com, conor+dt@kernel.org,
-        konrad.dybcio@linaro.org, krzysztof.kozlowski+dt@linaro.org,
-        mturquette@baylibre.com, p.zabel@pengutronix.de,
-        robh+dt@kernel.org, will@kernel.org
-Date:   Tue, 12 Sep 2023 10:18:11 -0700
-User-Agent: alot/0.10
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        patches@lists.linux.dev, Guenter Roeck <linux@roeck-us.net>,
+        Maxime Ripard <mripard@kernel.org>
+Subject: [PATCH 0/2] clk: Fix lockdep warnings in clk_test
+Date:   Tue, 12 Sep 2023 10:55:29 -0700
+Message-ID: <20230912175534.2427862-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.42.0.283.g2d96d420d3-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jie Luo (2023-09-12 05:07:02)
->=20
->=20
-> On 9/12/2023 4:11 AM, Stephen Boyd wrote:
-> > Quoting Jie Luo (2023-09-08 04:10:35)
-> >>
-> >> For example, when the uniphy works on PHY_INTERFACE_MODE_2500BASEX, th=
-en
-> >> the parent uniphy clock rate is 312.5M, which is decided by hardware a=
-nd
-> >> can't be changed. when a branch clock requires a 25M clock, the parent
-> >> uniphy clock maybe updated to 125M by clock framework if the flag
-> >> CLK_SET_RATE_PARENT is set here, but the actual hardware clock rate of
-> >> uniphy is still 315.5M since the uniphy still works in the interface
-> >> mode PHY_INTERFACE_MODE_2500BASEX.
-> >>
-> >=20
-> > If the parent rate can't change because CLK_SET_RATE_PARENT is missing
-> > and the hardware doesn't allow it, then perhaps instead of having a
-> > frequency table we should have rcg clk ops for determine_rate that
-> > simply looks at the parent rates and finds the rate closest to what is
-> > desired. And for the set_rate clk_op we can have it be simple and just
-> > program a fixed divider. The benefit is less frequency tables that don't
-> > do anything and less hard-coding of the frequency. I thought we already
-> > had those rcg clk_ops but I couldn't find them with a quick glance.
->=20
-> Thanks Stephen for the suggestion.
-> looks you are saying the clk ops clk_dp_ops for the fix parent rate?=20
-> which seems not meet the clock requirement of this clock.
+This is a replacement for the series from Maxime[1]. I didn't want to
+introduce more wrappers, so this series takes the approach of driving
+the test from a clk_op instead. The second patch extends the test to
+look at more determine_rate variants. We can probably extend the test
+further to set or not set the CLK_SET_RATE_PARENT flag as well but I
+didn't do that.
 
-Yeah that is close, but the determine_rate clk_op needs to look at all
-possible parents. With the dp clk_ops we assume that only one parent is
-possible.
+Stephen Boyd (2):
+  clk: Drive clk_leaf_mux_set_rate_parent test from clk_ops
+  clk: Parameterize clk_leaf_mux_set_rate_parent
 
->=20
-> For the device qca8k, it is also possible to switch the interface modes=20
-> between PHY_INTERFACE_MODE_2500BASEX(312.5M) and=20
-> PHY_INTERFACE_MODE_SGMII(125M) during the running time, and there are=20
-> multiple parent clock source(P_UNIPHY0_RX or P_UNIPHY0_TX) for the RCG=20
-> clocks to select according to the current work mode. so the parent_map=20
-> and freq_tbl are necessary to this clock.
+ drivers/clk/clk_test.c | 130 +++++++++++++++++++++++++++++++++++------
+ 1 file changed, 113 insertions(+), 17 deletions(-)
 
-I still don't see why the freq_tbl is necessary.
+Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: Maxime Ripard <mripard@kernel.org>
+
+[1] https://lore.kernel.org/r/20230721-clk-fix-kunit-lockdep-v1-0-32cdba4c8fc1@kernel.org
+
+base-commit: 0bb80ecc33a8fb5a682236443c1e740d5c917d1d
+-- 
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
+
