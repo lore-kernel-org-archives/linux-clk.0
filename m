@@ -2,71 +2,137 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E277EE3F00
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Sep 2023 17:59:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1E7FEE3F00
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Sep 2023 18:04:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232616AbjILR76 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Sep 2023 13:59:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40790 "EHLO
+        id S234358AbjILSEJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Sep 2023 14:04:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231665AbjILR76 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Sep 2023 13:59:58 -0400
+        with ESMTP id S233127AbjILSEJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Sep 2023 14:04:09 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73D12C1;
-        Tue, 12 Sep 2023 10:59:54 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CEF8C433C7;
-        Tue, 12 Sep 2023 17:59:54 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 386A4E59;
+        Tue, 12 Sep 2023 11:04:05 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBB86C433C8;
+        Tue, 12 Sep 2023 18:04:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694541594;
-        bh=gTj8iF9KcqBW/RU03eG4Ux7aTjD77gzubI/yf7LAsOs=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Oe3pEuLfrQJFi8kxdOsYhLw3OeQBwQaBfxW8wVmAm04NL0uIG6QLagTHPUFeQ6QR6
-         lWiOD84U1mAABlv+2zibX1gPqtR4NsZQAKl18jW6WmaWK/ras703QgQwGyVqeCj22p
-         KT82QtMdP41bDZbTndElPcRGb4jSmhtIdyNCStyILXRnQZongWpKc6XjVBnxJgwB89
-         3M8mzQle8bS2al/m1yX6o2amKOliQuts3R/Q7b+y0VlAZ/lHGhBEPvr4ZACcv82VNK
-         E2PoepWD0c8RLfWJGSu3Jnui0JVAMa5L6zzYNWGi7NsLtalwzLPnqbU4PK8KrCKn++
-         xBEE1TGetT+3Q==
-Message-ID: <f72f0a599fa5ca03321454fd14dd8856.sboyd@kernel.org>
+        s=k20201202; t=1694541844;
+        bh=C413WTTl+XcEFmSRmh21k8Ec3xNKfPk06vrSk2SqD9k=;
+        h=In-Reply-To:References:Subject:From:To:Date:From;
+        b=MzlPWkKkjcVGHwy1XBAtpP7d58dXjyJJW1mVltmpZmndjsuiKQ0533gUJwbpBesiS
+         Z5BkDrEk/2i4RrWuaAFtZQ9YGxRlkK0rPIoBaLjo6M/ZXbSE7cZWAHokkkJe29iiL0
+         a+3xSTpIe0i/Pfq/lSVK3dN3KbGdgE09bO9phIrQ28F+CO3nHg3JdVxqgYPAfXNP5Q
+         3vzWh0z6zaqOpgcT86Jy8myvBQXIUzc/JzMz4MfvvMylkDpuE/vDUfV63cPer1248D
+         l58hxDlB08f8zhLaWLQ3xdtcW+jKTO6kUO0N4VIWd+VdWq5XvU6QFJDEPIb56e/tZq
+         UoA8j/ft69Zyw==
+Message-ID: <9a8476b92ab656387fa7dcf54a0713a3.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAPp5cGSbdhLb2c5hQrP-O-+j63haXs0c6=JCoFxnAzF1mhspuA@mail.gmail.com>
-References: <20230822134849.3352329-1-alessandro.carminati@gmail.com> <CAPp5cGTshQJ3aLeLqv=CbaVeg9GnK_k9nsoaWrBKs1dcXzNZow@mail.gmail.com> <fc8023b435f78e02c96fecbe8e7599ee.sboyd@kernel.org> <CAPp5cGQ0Wp4my93tEm9-Huc6R+22zCj91mNJsPpGTFoo49=mcQ@mail.gmail.com> <fde1b20074cf5c0e0bc1944959486150.sboyd@kernel.org> <CAPp5cGSbdhLb2c5hQrP-O-+j63haXs0c6=JCoFxnAzF1mhspuA@mail.gmail.com>
-Subject: Re: [PATCH] Sanitize possible_parent_show to Handle Return Value of of_clk_get_parent_name
+In-Reply-To: <20230911221346.1484543-5-andreas@kemnade.info>
+References: <20230911221346.1484543-1-andreas@kemnade.info> <20230911221346.1484543-5-andreas@kemnade.info>
+Subject: Re: [PATCH v3 4/5] clk: twl: add clock driver for TWL6032
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Philip Daly <pdaly@redhat.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Alessandro Carminati <alessandro.carminati@gmail.com>
-Date:   Tue, 12 Sep 2023 10:59:51 -0700
+To:     andreas@kemnade.info, bcousson@baylibre.com, conor+dt@kernel.org,
+        devicetree@vger.kernel.org, dmitry.torokhov@gmail.com,
+        krzysztof.kozlowski+dt@linaro.org, lee@kernel.org,
+        linux-clk@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        mturquette@baylibre.com, robh+dt@kernel.org, tony@atomide.com
+Date:   Tue, 12 Sep 2023 11:04:02 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Alessandro Carminati (2023-09-12 10:05:19)
-> Il giorno ven 8 set 2023 alle ore 23:25 Stephen Boyd
-> <sboyd@kernel.org> ha scritto:
-> >
-> > Is nothing actually wrong? And this is a speculative patch?
->=20
-> In the current state, Linux can crash, so I would say that there's someth=
-ing
-> wrong.
-> I submitted this patch in response to a specific bug report that caused a
-> kernel crash during testing.
+Quoting Andreas Kemnade (2023-09-11 15:13:45)
+> diff --git a/drivers/clk/clk-twl.c b/drivers/clk/clk-twl.c
+> new file mode 100644
+> index 0000000000000..09006e53a32ec
+> --- /dev/null
+> +++ b/drivers/clk/clk-twl.c
+> @@ -0,0 +1,197 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Clock driver for twl device.
+> + *
+> + * inspired by the driver for the Palmas device
+> + */
+> +
+> +#include <linux/clk.h>
 
-Where is the bug report? On some public tracker? Can you link to it?
+Please drop this include unless it is used.
 
->=20
-> >
-> > All other arms of this conditional statement check the validity of the
-> > pointer before printing the string. And when the parent isn't known we
-> > print "(missing)", so it looks like we should do that instead. How about
-> > this patch?
->=20
-> Indeed, your patch appears to provide a more verbose coding and accurate
-> message, which is valuable for troubleshooting.
-> So yeah, for what it is worth, I think it is good as well.
+> +#include <linux/clk-provider.h>
+> +#include <linux/mfd/twl.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/slab.h>
+> +
+> +#define VREG_STATE              2
+> +#define TWL6030_CFG_STATE_OFF   0x00
+> +#define TWL6030_CFG_STATE_ON    0x01
+> +#define TWL6030_CFG_STATE_MASK  0x03
+> +
+> +struct twl_clock_info {
+> +       struct device *dev;
+> +       u8 base;
+> +       struct clk_hw hw;
+> +};
+[...]
+> +
+> +static int twl_clks_probe(struct platform_device *pdev)
+> +{
+> +       struct clk_hw_onecell_data *clk_data;
+> +       const struct twl_clks_data *hw_data;
+> +
+> +       struct twl_clock_info *cinfo;
+> +       int ret;
+> +       int i;
+> +       int count;
+> +
+> +       hw_data =3D twl6032_clks;
+> +       for (count =3D 0; hw_data[count].init.name; count++)
+> +               ;
+> +
+> +       clk_data =3D devm_kzalloc(&pdev->dev,
+> +                               struct_size(clk_data, hws, count),
+> +                               GFP_KERNEL);
+> +       if (!clk_data)
+> +               return -ENOMEM;
+> +
+> +       clk_data->num =3D count;
+> +       cinfo =3D devm_kcalloc(&pdev->dev, count, sizeof(*cinfo), GFP_KER=
+NEL);
+> +       if (!cinfo)
+> +               return -ENOMEM;
+> +
+> +       for (i =3D 0; i < count; i++) {
+> +               cinfo[i].base =3D hw_data[i].base;
+> +               cinfo[i].dev =3D &pdev->dev;
+> +               cinfo[i].hw.init =3D &hw_data[i].init;
+> +               ret =3D devm_clk_hw_register(&pdev->dev, &cinfo[i].hw);
+> +               if (ret) {
+> +                       dev_err(&pdev->dev, "Fail to register clock %s, %=
+d\n",
 
-Cool, can you send it after testing it out?
+Use dev_err_probe()
+
+> +                               hw_data[i].init.name, ret);
+> +                       return ret;
+> +               }
+> +               clk_data->hws[i] =3D &cinfo[i].hw;
+> +       }
+> +
+> +       ret =3D devm_of_clk_add_hw_provider(&pdev->dev,
+> +                                         of_clk_hw_onecell_get, clk_data=
+);
+> +       if (ret < 0)
+> +               dev_err(&pdev->dev, "Fail to add clock driver, %d\n", ret=
+);
+
+Use dev_err_probe()
+
+> +
+> +       return ret;
