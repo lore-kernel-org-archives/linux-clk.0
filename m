@@ -2,230 +2,132 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C2C0CA0EF1
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Sep 2023 17:05:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E34F3CA0EF1
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Sep 2023 17:16:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236655AbjILRGB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Sep 2023 13:06:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39682 "EHLO
+        id S233220AbjILRQF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Sep 2023 13:16:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236656AbjILRGA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Sep 2023 13:06:00 -0400
-Received: from mail-oa1-x34.google.com (mail-oa1-x34.google.com [IPv6:2001:4860:4864:20::34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92C091702;
-        Tue, 12 Sep 2023 10:05:56 -0700 (PDT)
-Received: by mail-oa1-x34.google.com with SMTP id 586e51a60fabf-1d544a4a315so4418675fac.3;
-        Tue, 12 Sep 2023 10:05:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1694538356; x=1695143156; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=8uJBTEQdRONw+vXUu5BwG/gWVTti+h7mfVrycIXCgFw=;
-        b=rhWAtluaYsXJSobzLa0gPn55m4+/xPsVoupw1b6M5dZRcN6PZUFix1sQibRjo6rJs8
-         ZTNxsgZeh5xXRmHYVs70PQeIPyCds7/8gsh5G5bQsZ7VJaproXDDSxz5aqssXcLe6k1m
-         wXrnAok1FUlKMmtrayaR5NBOcVwxKVcKeXVqStHUFCQPnlmXmd4q5R/IvPQwcoP0yrTy
-         M7ivsMM+iRKZZIQhP5cq/o/nsRYh49ZAJlzzPZo1LozvAoi/KGEOxMuhozJonULR9Cnl
-         1iC/Nx3OrvqKthSYQRyqO+vZAXMKp3gYdQsroX5qMTkx0e8ve+mB8L5XKEttNi3SPZho
-         vHLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694538356; x=1695143156;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8uJBTEQdRONw+vXUu5BwG/gWVTti+h7mfVrycIXCgFw=;
-        b=gfErp+6kS1lAyjEBWgNE6smc7lC0o4UBC7iOmjD9xhAXqMuc6Fkn9EgRbauEpRO9nL
-         W9v61f/W2FqsNpWO9ey8plTxETfeWDUE+kvJItYChLMFfMU0JjccMU0axTWe7F8CsO1K
-         /iz6vdreKfPaOH8SjAc3nmtgnhOYumxRkHs9Aehn+JPQcU+enKoFBJRXCmYXXYn8KDhR
-         kLtlvORm3URnQTnXJIJaVfI+fK28ITx9P44mNX1FB3m9uw84SYsGIfZ+fXw5NhgH8dCE
-         +CI7y0DTobF1txrXbb5htmnsLViixjSl9D173iXWKJlLjwyK1J7v1zxKLnNlaQ0uPbPx
-         ggnA==
-X-Gm-Message-State: AOJu0Yy4Ahd5VOxRZXVj02BQy0EexCB7jjWHDszRP0Jfy4R1sh2YHcgQ
-        TJfwDALImN2HjfzgB2qBl310mgJF/3K4yoRPlw0=
-X-Google-Smtp-Source: AGHT+IFe0HmuIMu5VK1+fjKg0/SlUkDg8D9D6s6bYMKGEfjNBjKCWbQ3kcHMS/ugJyrDHxTPI+WzBcGMxi8KOSfJh34=
-X-Received: by 2002:a05:6870:8290:b0:1ba:2a58:b15e with SMTP id
- q16-20020a056870829000b001ba2a58b15emr124229oae.2.1694538355761; Tue, 12 Sep
- 2023 10:05:55 -0700 (PDT)
+        with ESMTP id S234256AbjILRQE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Sep 2023 13:16:04 -0400
+Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 974B310EB
+        for <linux-clk@vger.kernel.org>; Tue, 12 Sep 2023 10:16:00 -0700 (PDT)
+Received: from [192.168.1.18] ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id g6zSq6dtZ3ISpg6zSqZ0YH; Tue, 12 Sep 2023 19:15:57 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1694538957;
+        bh=AfOWrkTi8ZBiDYWOws0Egwd9wQjQnAJJDX+E9T7oIq4=;
+        h=Date:Subject:To:References:From:In-Reply-To;
+        b=BUobmzeJhgsZWHZVQ4Z3p3tC0qCNHSrFh1byXYPwtDY9hGF43NLiS5gOfCx44ub20
+         mqBDVNKq4hCt6NRWvKHdX8Kvkj/fzcZEdHjmzhg6zdCg/DBNXWbdi3dGk/l3RjbyG9
+         +iR7LFgN5luK1Jga8mYk/4Ib41yu0KXpK4XRcO7l+eJzWzEddmPMkX6HwP13hWKdgD
+         thjUcZpSWVr2P7LoeHHYhG/93HlRqeYa87DpNzy4phTiCNZ+pHPOzScPQmOpjVcNXW
+         PS8Lq8956SOOKgNqZrgpvspV6E7lPeKItUY/lpLvIwkKc2VAARtiaAsJkTb0b6KEme
+         Fh8TZdwaDzT3w==
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 12 Sep 2023 19:15:57 +0200
+X-ME-IP: 86.243.2.178
+Message-ID: <a9b646c7-2c02-8a69-a4c8-7e981a630eef@wanadoo.fr>
+Date:   Tue, 12 Sep 2023 19:15:54 +0200
 MIME-Version: 1.0
-References: <20230822134849.3352329-1-alessandro.carminati@gmail.com>
- <CAPp5cGTshQJ3aLeLqv=CbaVeg9GnK_k9nsoaWrBKs1dcXzNZow@mail.gmail.com>
- <fc8023b435f78e02c96fecbe8e7599ee.sboyd@kernel.org> <CAPp5cGQ0Wp4my93tEm9-Huc6R+22zCj91mNJsPpGTFoo49=mcQ@mail.gmail.com>
- <fde1b20074cf5c0e0bc1944959486150.sboyd@kernel.org>
-In-Reply-To: <fde1b20074cf5c0e0bc1944959486150.sboyd@kernel.org>
-From:   Alessandro Carminati <alessandro.carminati@gmail.com>
-Date:   Tue, 12 Sep 2023 19:05:19 +0200
-Message-ID: <CAPp5cGSbdhLb2c5hQrP-O-+j63haXs0c6=JCoFxnAzF1mhspuA@mail.gmail.com>
-Subject: Re: [PATCH] Sanitize possible_parent_show to Handle Return Value of of_clk_get_parent_name
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Philip Daly <pdaly@redhat.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.0
+Subject: Re: [PATCH v3 4/5] clk: twl: add clock driver for TWL6032
+To:     Andreas Kemnade <andreas@kemnade.info>, dmitry.torokhov@gmail.com,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, lee@kernel.org, bcousson@baylibre.com,
+        tony@atomide.com, mturquette@baylibre.com, sboyd@kernel.org,
+        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-clk@vger.kernel.org
+References: <20230911221346.1484543-1-andreas@kemnade.info>
+ <20230911221346.1484543-5-andreas@kemnade.info>
+Content-Language: fr
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20230911221346.1484543-5-andreas@kemnade.info>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Stephen,
+Le 12/09/2023 à 00:13, Andreas Kemnade a écrit :
+> The TWL6032 has some clock outputs which are controlled like
+> fixed-voltage regulators, in some drivers for these chips
+> found in the wild, just the regulator api is abused for controlling
+> them, so simply use something similar to the regulator functions.
+> Due to a lack of hardware available for testing, leave out the
+> TWL6030-specific part of those functions.
+> 
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> ---
+>   drivers/clk/Kconfig   |   9 ++
+>   drivers/clk/Makefile  |   1 +
+>   drivers/clk/clk-twl.c | 197 ++++++++++++++++++++++++++++++++++++++++++
+>   3 files changed, 207 insertions(+)
+>   create mode 100644 drivers/clk/clk-twl.c
+> 
 
-Thank you for your time and your work.
+...
 
-Il giorno ven 8 set 2023 alle ore 23:25 Stephen Boyd
-<sboyd@kernel.org> ha scritto:
->
-> Quoting Alessandro Carminati (2023-09-08 01:36:14)
-> > Hello Stephen,
-> > Thank you for your review and the time you dedicated to it.
-> >
-> > Il giorno ven 8 set 2023 alle ore 00:33 Stephen Boyd
-> > <sboyd@kernel.org> ha scritto:
-> > >
-> > > Quoting Alessandro Carminati (2023-09-07 07:15:36)
-> > > > this is a gentle ping
-> > > >
-> > >
-> > > I couldn't read your email because it was sent to nobody
-> > > (unlisted-recipients). Can you resend with a proper To: line?
-> > >
-> > > >
-> > > > Il giorno mar 22 ago 2023 alle ore 15:49 Alessandro Carminati
-> > > > <alessandro.carminati@gmail.com> ha scritto:
-> > > > >
-> > > > > In the possible_parent_show function, ensure proper handling of the return
-> > > > > value from of_clk_get_parent_name to prevent potential issues arising from
-> > > > > a NULL return.
-> > > > > The current implementation invokes seq_puts directly on the result of
-> > > > > of_clk_get_parent_name without verifying the return value, which can lead
-> > > > > to kernel panic if the function returns NULL.
-> > > > >
-> > > > > This patch addresses the concern by introducing a check on the return
-> > > > > value of of_clk_get_parent_name. If the return value is not NULL, the
-> > >
-> > > Use of_clk_get_parent_name() to signify that it is a function.
-> > >
-> > > > > function proceeds to call seq_puts, providing the returned value as
-> > > > > argument.
-> > > > > However, if of_clk_get_parent_name returns NULL, the function provides a
-> > > > > static string as argument, avoiding the panic.
-> > > > >
-> > > > > Reported-by: Philip Daly <pdaly@redhat.com>
-> > > > > Signed-off-by: Alessandro Carminati (Red Hat) <alessandro.carminati@gmail.com>
-> > > > > ---
-> > >
-> > > It needs a Fixes tag.
-> > Sure!
-> > I need to be more careful on this.
-> >
-> > >
-> > > > >  drivers/clk/clk.c | 11 ++++++-----
-> > > > >  1 file changed, 6 insertions(+), 5 deletions(-)
-> > > > >
-> > > > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > > > > index c249f9791ae8..ab999644e185 100644
-> > > > > --- a/drivers/clk/clk.c
-> > > > > +++ b/drivers/clk/clk.c
-> > > > > @@ -3416,6 +3416,7 @@ static void possible_parent_show(struct seq_file *s, struct clk_core *core,
-> > > > >                                  unsigned int i, char terminator)
-> > > > >  {
-> > > > >         struct clk_core *parent;
-> > > > > +       const char *tmp;
-> > > > >
-> > > > >         /*
-> > > > >          * Go through the following options to fetch a parent's name.
-> > > > > @@ -3436,12 +3437,12 @@ static void possible_parent_show(struct seq_file *s, struct clk_core *core,
-> > > > >                 seq_puts(s, core->parents[i].name);
-> > > > >         else if (core->parents[i].fw_name)
-> > > > >                 seq_printf(s, "<%s>(fw)", core->parents[i].fw_name);
-> > > > > -       else if (core->parents[i].index >= 0)
-> > > > > -               seq_puts(s,
-> > > > > -                        of_clk_get_parent_name(core->of_node,
-> > > > > -                                               core->parents[i].index));
-> > > > > -       else
-> > > > > +       else if (core->parents[i].index >= 0) {
-> > > > > +               tmp = of_clk_get_parent_name(core->of_node, core->parents[i].index);
-> > > > > +               seq_puts(s, tmp ? tmp : "(none)");
-> > >
-> > > How about using seq_printf("%s", ...) instead? That should print out
-> > > "(null)" in the case that it is NULL, instead of "(none)" and it is a
-> > > one line change.
-> >
-> > I did consider using seq_printf("%s", ...) as an alternative approach to
-> > address the issue initially.
-> > However, after a review of the file's history, I arrived at a different
-> > conclusion.
-> >
-> > The commit [1] that introduced this bug was primarily focused on replacing
-> > seq_printf() with seq_putc().
-> > I considered that to maintain code consistency and align with the intentions
-> > of that commit, it may be more appropriate to continue using seq_putc() in
-> > this particular instance.
-> > I agree however with the idea of rolling back that particular change, but
-> > in this case, we perhaps may want to consider also [2], a similar change made
-> > in the same period.
-> > I haven't proceeded with a patch submission for it[2], mainly due to the lack
-> > of evidence of a kernel splash related to it and my uncertainty around the
-> > fact that can exist use cases where the name field in the struct cgroup_subsys
-> > can hit that code set to NULL.
->
-> Is nothing actually wrong? And this is a speculative patch?
-
-In the current state, Linux can crash, so I would say that there's something
-wrong.
-I submitted this patch in response to a specific bug report that caused a
-kernel crash during testing.
-
->
-> All other arms of this conditional statement check the validity of the
-> pointer before printing the string. And when the parent isn't known we
-> print "(missing)", so it looks like we should do that instead. How about
-> this patch?
-
-Indeed, your patch appears to provide a more verbose coding and accurate
-message, which is valuable for troubleshooting.
-So yeah, for what it is worth, I think it is good as well.
-
->
-> ----8<---
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index c249f9791ae8..473563bc7496 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -3416,6 +3416,7 @@ static void possible_parent_show(struct seq_file *s, struct clk_core *core,
->                                  unsigned int i, char terminator)
->  {
->         struct clk_core *parent;
-> +       const char *name = NULL;
->
->         /*
->          * Go through the following options to fetch a parent's name.
-> @@ -3430,18 +3431,20 @@ static void possible_parent_show(struct seq_file *s, struct clk_core *core,
->          * registered (yet).
->          */
->         parent = clk_core_get_parent_by_index(core, i);
-> -       if (parent)
-> +       if (parent) {
->                 seq_puts(s, parent->name);
-> -       else if (core->parents[i].name)
-> +       } else if (core->parents[i].name) {
->                 seq_puts(s, core->parents[i].name);
-> -       else if (core->parents[i].fw_name)
-> +       } else if (core->parents[i].fw_name) {
->                 seq_printf(s, "<%s>(fw)", core->parents[i].fw_name);
-> -       else if (core->parents[i].index >= 0)
-> -               seq_puts(s,
-> -                        of_clk_get_parent_name(core->of_node,
-> -                                               core->parents[i].index));
-> -       else
-> -               seq_puts(s, "(missing)");
-> +       } else {
-> +               if (core->parents[i].index >= 0)
-> +                       name = of_clk_get_parent_name(core->of_node, core->parents[i].index);
-> +               if (!name)
-> +                       name = "(missing)";
+> +static int twl_clks_probe(struct platform_device *pdev)
+> +{
+> +	struct clk_hw_onecell_data *clk_data;
+> +	const struct twl_clks_data *hw_data;
 > +
-> +               seq_puts(s, name);
-> +       }
->
->         seq_putc(s, terminator);
->  }
+> +	struct twl_clock_info *cinfo;
+> +	int ret;
+> +	int i;
+> +	int count;
+> +
+> +	hw_data = twl6032_clks;
+> +	for (count = 0; hw_data[count].init.name; count++)
+> +		;
 
-Regards.
-Alessandro
+Nit: does removing the /* sentinel */ and using 
+ARRAY_SIZE(twl_clks_data) would make sense and be simpler?
+
+CJ
+
+> +
+> +	clk_data = devm_kzalloc(&pdev->dev,
+> +				struct_size(clk_data, hws, count),
+> +				GFP_KERNEL);
+> +	if (!clk_data)
+> +		return -ENOMEM;
+> +
+> +	clk_data->num = count;
+> +	cinfo = devm_kcalloc(&pdev->dev, count, sizeof(*cinfo), GFP_KERNEL);
+> +	if (!cinfo)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < count; i++) {
+> +		cinfo[i].base = hw_data[i].base;
+> +		cinfo[i].dev = &pdev->dev;
+> +		cinfo[i].hw.init = &hw_data[i].init;
+> +		ret = devm_clk_hw_register(&pdev->dev, &cinfo[i].hw);
+> +		if (ret) {
+> +			dev_err(&pdev->dev, "Fail to register clock %s, %d\n",
+> +				hw_data[i].init.name, ret);
+> +			return ret;
+> +		}
+> +		clk_data->hws[i] = &cinfo[i].hw;
+> +	}
+> +
+> +	ret = devm_of_clk_add_hw_provider(&pdev->dev,
+> +					  of_clk_hw_onecell_get, clk_data);
+> +	if (ret < 0)
+> +		dev_err(&pdev->dev, "Fail to add clock driver, %d\n", ret);
+> +
+> +	return ret;
+
+Nit: should there be a V4, some prefer return 0 to be more explicit.
+
+> +}
+
+...
+
