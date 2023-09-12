@@ -2,93 +2,83 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD241EE3F33
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Sep 2023 21:11:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 211C2EE3F39
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Sep 2023 22:28:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230052AbjILVLj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Sep 2023 17:11:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59072 "EHLO
+        id S235041AbjILW2f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Sep 2023 18:28:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230453AbjILVLi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Sep 2023 17:11:38 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4584E10CE;
-        Tue, 12 Sep 2023 14:11:34 -0700 (PDT)
-X-IronPort-AV: E=McAfee;i="6600,9927,10831"; a="382301443"
-X-IronPort-AV: E=Sophos;i="6.02,141,1688454000"; 
-   d="scan'208";a="382301443"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2023 14:11:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10831"; a="743858277"
-X-IronPort-AV: E=Sophos;i="6.02,141,1688454000"; 
-   d="scan'208";a="743858277"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga002.jf.intel.com with ESMTP; 12 Sep 2023 14:11:02 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 037C81E5; Wed, 13 Sep 2023 00:11:00 +0300 (EEST)
-Date:   Wed, 13 Sep 2023 00:11:00 +0300
-From:   Andy Shevchenko <andy@black.fi.intel.com>
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Julia Lawall <julia.lawall@inria.fr>
-Subject: Re: [PATCH v5 2/4] clk: vc3: Fix 64 by 64 division
-Message-ID: <ZQDT5Indg/md+KXt@black.fi.intel.com>
-References: <20230824104812.147775-1-biju.das.jz@bp.renesas.com>
- <20230824104812.147775-3-biju.das.jz@bp.renesas.com>
+        with ESMTP id S234813AbjILW2e (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Sep 2023 18:28:34 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27EEB10C8;
+        Tue, 12 Sep 2023 15:28:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+        Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+        bh=8HUDCyTDk+/khqCF060Q0sN0T5AM39PQmswQmYF5Wg8=; b=t+qdWssTTp4SMLdYgRmkf82hZc
+        hx/6H4XhsW4XtOuIMimfn4J3fC+YTVlVbBuGa9P7qDqzALpsYuk094kUYgMCsh1qgp1o2rHpFADo6
+        egz7U2HGuf2kKrr8BQPaivPsgUhZyjnyZHcS4p5HZPJnXc7nHTG7Oug8T+3fAb23GSEJlcd0VrWsl
+        w39uCmCUWde1oDsCY6GBLahNckBW5MNXwhUJcDJ0GRp64TFObK9LR24KDW9hCspKQNgvLg1qRlnW/
+        I79XjeFW2vvq43KZ5rLgYHTQBpmkKK7XpZ9XdYdcBNZa5f+etpO2RvD21uWwuIr22c2jH0jr5z3UG
+        3fUQBDyw==;
+Received: from [2601:1c2:980:9ec0::9fed]
+        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1qgBry-004CLH-0m;
+        Tue, 12 Sep 2023 22:28:30 +0000
+Message-ID: <8b77219e-b59e-40f1-96f1-980a0b2debcf@infradead.org>
+Date:   Tue, 12 Sep 2023 15:28:29 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230824104812.147775-3-biju.das.jz@bp.renesas.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: Tree for Sep 12 (drivers/clk/imx/clk-imx8-acm.o)
+Content-Language: en-US
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org, dl-linux-imx <linux-imx@nxp.com>,
+        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>
+References: <20230912152645.0868a96a@canb.auug.org.au>
+From:   Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20230912152645.0868a96a@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Aug 24, 2023 at 11:48:10AM +0100, Biju Das wrote:
-> Fix the below cocci warnings by replacing do_div()->div64_ul() and
-> bound the result with a max value of U16_MAX.
+
+
+On 9/11/23 22:26, Stephen Rothwell wrote:
+> Hi all,
 > 
-> cocci warnings:
-> 	drivers/clk/clk-versaclock3.c:404:2-8: WARNING: do_div() does a
-> 	64-by-32 division, please consider using div64_ul instead.
+> Changes since 20230911:
+> 
+> New tree: bcachefs
+> 
+> The bcachefs tree gained a semantic conflict against Linus' tree for
+> which I applied a patch.
+> 
+> The wireless-next tree gaind a conflict against the wireless tree.
+> 
+> Non-merge commits (relative to Linus' tree): 4095
+>  1552 files changed, 346893 insertions(+), 22945 deletions(-)
+> 
+> ----------------------------------------------------------------------------
 
-It's nice, but there is a room for a couple of improvements. See below.
+on arm64:
 
-...
+aarch64-linux-ld: drivers/clk/imx/clk-imx8-acm.o: in function `imx8_acm_clk_probe':
+clk-imx8-acm.c:(.text+0x3d0): undefined reference to `imx_check_clk_hws'
 
->  		/* Determine best fractional part, which is 16 bit wide */
->  		div_frc = rate % *parent_rate;
->  		div_frc *= BIT(16) - 1;
-> -		do_div(div_frc, *parent_rate);
->  
-> -		vc3->div_frc = (u32)div_frc;
-> +		vc3->div_frc = min_t(u64, div64_ul(div_frc, *parent_rate), U16_MAX);
+when
+CONFIG_CLK_IMX8QXP=y
+CONFIG_MXC_CLK=m
 
-First of all, as Linus Torvalds pointed out [1] min_t() is often used as
-a shortcut for clamp(). Second one, the BIT(16) - 1 is specifically used
-as the value related to the bits in the hardware and u16 is a software
-type that coincidentially has the same maximum as the above mentioned
-bitfield.
+Should CLK_IMX8QXP select MXC_CLK?
+I'll leave that patch up to the maintainers.
 
-That said, here this should be clamped to the [0 .. BIT(16) - 1] range.
-
-Since the patch is applied perhaps you can cook a followup.
-
-To everyone the message is simple: try to not use typed version of min()
-and clamp() at all.
-
->  		rate = (*parent_rate *
-> -			(vc3->div_int * VC3_2_POW_16 + div_frc) / VC3_2_POW_16);
-> +			(vc3->div_int * VC3_2_POW_16 + vc3->div_frc) / VC3_2_POW_16);
-
-[1]: https://lore.kernel.org/lkml/CAHk-=whwEAc22wm8h9FESPB5X+P4bLDgv0erBQMa1buTNQW7tA@mail.gmail.com/
-
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+~Randy
