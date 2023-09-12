@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9606CA0ED4
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Sep 2023 04:53:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3983FCA0ECE
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Sep 2023 04:53:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229604AbjILEwa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Sep 2023 00:52:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51328 "EHLO
+        id S229672AbjILExK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Sep 2023 00:53:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229562AbjILEwY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Sep 2023 00:52:24 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96F09E5F
-        for <linux-clk@vger.kernel.org>; Mon, 11 Sep 2023 21:52:20 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-31f737b8b69so4700981f8f.3
-        for <linux-clk@vger.kernel.org>; Mon, 11 Sep 2023 21:52:20 -0700 (PDT)
+        with ESMTP id S229871AbjILEwi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Sep 2023 00:52:38 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF7F6E5F
+        for <linux-clk@vger.kernel.org>; Mon, 11 Sep 2023 21:52:30 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-52bcd4db4c0so11174709a12.0
+        for <linux-clk@vger.kernel.org>; Mon, 11 Sep 2023 21:52:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1694494339; x=1695099139; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1694494349; x=1695099149; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=70blZEKYbPkUhjmz5mQWqO3PukYEZHU7HfQH/TSApUo=;
-        b=kqfJUrg1n+l53/ypRls1jEYBEQS1yM5qC72Ce83Pw3OSGQAkUGD1/8DxeiKx6pKL/O
-         75RwVZ/Cjwgs4HQ29MeiI6n4d/Uf4TNyT9rjxyNDXvIUNLxIqi+hBQF/bKYlEm2/fI1B
-         +NhCoUqXP4M1WfChUkI0cXzUF5x/R+IK4VYTJTi7s+N/5aBee5ULv/ySPuOaoRd5u3DB
-         RgL15fkwQRAfR2VdN2rR4nWFzjT8bILkCynNm4MVv3C4/JiWV/nqdjm3sx1IJHWaCQg/
-         8eINlhMZo/fDx1fPojLruX7ffY9YNj87/N1wKYRNmfTvTXc9N5s3pDXGcjQF1IbjTGTa
-         od4Q==
+        bh=guWRsEbW/fD7+Pcy25Stc1OLTXf0j4lTRRX1eGYVn5A=;
+        b=YdXqa9jQW9o4bt7bYo+y+DJYHMT6kNXZpkeZFUbaniD3Q6qAoT9rbc2tJDoPeIJx59
+         OvKlOQAomk45/7Gjh5ICFvIKiJGQlk5KPeXdiBA2p+ysfD7bY7AnQlvb2gCwqTg4QThE
+         a7UHa5gNUYGY3OgUiLDN1G+Lp2QMdgj9ffY0B00s241uSMgZB8DaTfJf1m3IEqcJTx2F
+         R9yTpASamYpEO14ZQApl9cTeolteK+1wT/s23hSW3WMDSsYdA3uyDLR0TqlT/jZcaeGO
+         EuhH79pk6CIX2RN6xrZ0kIQpNSBjEN69f9XC9pPYoEfyTFFFYhhbW8wTPh9nevAYIiie
+         9R7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694494339; x=1695099139;
+        d=1e100.net; s=20230601; t=1694494349; x=1695099149;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=70blZEKYbPkUhjmz5mQWqO3PukYEZHU7HfQH/TSApUo=;
-        b=xA/OBd5439eOKAahi6y/AtSYThkfdFIom4mTMokpGUYZocD/NrvAPHaD17NE3Li256
-         XlU3k/LMp9wcAUeZ5EV5GWx825FsbTtKhRjDBRJXCAGRDVlTy2nD/gNGZs/qX3Du4Cxc
-         nfHY6HqiDdtGB/5InEWE8148A8ZMghfZwZHqrtoSbWOMFpKK0aeyVzBxK4gaSW0GVWPT
-         ccMAkQEXu6chNdgW+kWD9xkab5NsPsUFMvjG56xD5iViv30izX/1AS23fT+1966rgiDi
-         gM6+wBola1aLPe9m7o0k/MfGOSvXsgxvq+KxkezgS+zvT8qUK95CGm7wMx8CMP8tZcHU
-         SuXg==
-X-Gm-Message-State: AOJu0Yw6d42OiehWcb0zBXbQkvei42jw8Nhn3plJOTs6bEyvMwbJFs6w
-        Ysmjufe8TK7P6QTefpWNg9twAQ==
-X-Google-Smtp-Source: AGHT+IHq4NsElZT5XJXLX6atbe5JezA+r31z/sk8n97Du/yTxrrOfNS/FcxRiNTwh32QYFqy3lq2Eg==
-X-Received: by 2002:a05:6000:ca:b0:319:8a21:6f9a with SMTP id q10-20020a05600000ca00b003198a216f9amr8919668wrx.63.1694494338959;
-        Mon, 11 Sep 2023 21:52:18 -0700 (PDT)
+        bh=guWRsEbW/fD7+Pcy25Stc1OLTXf0j4lTRRX1eGYVn5A=;
+        b=MTTEHRXqdNCT+IIoReV1mBTgaPcqR3Ja2OMoIr6FG6yoW72TbUydChFm6wDO4TYWVd
+         P1/uDOqbl7whf4U+6ekE/vadwleBUGEZpph2VzpMJU2IFOiFPvLtZB3kktKRXBCXG0To
+         oW58Lg2Kb/yhXmNwnvr+m1Ozxt1cNS0xnA7ancPnLyeuO3FfbJHgC8z2xoNeB03e6X+y
+         rjKLCoT8lsOPrBHA5qEbGQhmvNFxNUTcpmhyOhNJQsKd+jVnvPh8AxNx7OIip9EWO5RP
+         ivGKmMOzeNDbnPsnRTzApGum/wxk9Tjvn0HTXcscKWfAyMF3E+ACVL8nO/DbRevRt4Xi
+         3xNQ==
+X-Gm-Message-State: AOJu0YwMvlkWBbMkh+gMycGLze3PCFnrD4iS3XcE/COw/2ohIQoxMeKb
+        IThi/+N4G6erKLHCTzxrx/23PQ==
+X-Google-Smtp-Source: AGHT+IEw1IT73GHrwLm7IAaZHmPBXodeE0rXNMEu3NzoBzDPUmsX/AZnpuvTZE72xXRpwD0wUUGzyA==
+X-Received: by 2002:a05:6402:35c1:b0:52b:db44:79e3 with SMTP id z1-20020a05640235c100b0052bdb4479e3mr2362828edc.4.1694494349309;
+        Mon, 11 Sep 2023 21:52:29 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.145])
-        by smtp.gmail.com with ESMTPSA id f21-20020a05640214d500b0051e22660835sm5422415edx.46.2023.09.11.21.52.16
+        by smtp.gmail.com with ESMTPSA id f21-20020a05640214d500b0051e22660835sm5422415edx.46.2023.09.11.21.52.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Sep 2023 21:52:18 -0700 (PDT)
+        Mon, 11 Sep 2023 21:52:29 -0700 (PDT)
 From:   Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To:     geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
@@ -67,9 +67,9 @@ Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 01/37] dt-bindings: serial: renesas,scif: document r9a08g045 support
-Date:   Tue, 12 Sep 2023 07:51:21 +0300
-Message-Id: <20230912045157.177966-2-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 06/37] clk: renesas: rzg2l: wait for status bit of SD mux before continuing
+Date:   Tue, 12 Sep 2023 07:51:26 +0300
+Message-Id: <20230912045157.177966-7-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com>
@@ -81,27 +81,56 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Document support for the Serial Communication Interface with FIFO (SCIF)
-available in the Renesas RZ/G3S (R9A08G045) SoC. SCIF interface in
-Renesas RZ/G3S is similar to the one available in RZ/G2L.
+Hardware user manual of RZ/G2L (r01uh0914ej0130-rzg2l-rzg2lc.pdf,
+chapter 7.4.7 Procedure for Switching Clocks by the Dynamic Switching
+Frequency Selectors) specifies that we need to check CPG_PL2SDHI_DSEL for
+SD clock switching status.
 
+Fixes: eaff33646f4cb ("clk: renesas: rzg2l: Add SDHI clk mux support")
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/serial/renesas,scif.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/renesas/rzg2l-cpg.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/serial/renesas,scif.yaml b/Documentation/devicetree/bindings/serial/renesas,scif.yaml
-index 99030fc18c45..4610a5bd580c 100644
---- a/Documentation/devicetree/bindings/serial/renesas,scif.yaml
-+++ b/Documentation/devicetree/bindings/serial/renesas,scif.yaml
-@@ -79,6 +79,7 @@ properties:
-           - enum:
-               - renesas,scif-r9a07g043      # RZ/G2UL and RZ/Five
-               - renesas,scif-r9a07g054      # RZ/V2L
-+              - renesas,scif-r9a08g045      # RZ/G3S
-           - const: renesas,scif-r9a07g044   # RZ/G2{L,LC} fallback
+diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
+index 47f488387f33..70d1c28ba088 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.c
++++ b/drivers/clk/renesas/rzg2l-cpg.c
+@@ -188,7 +188,8 @@ static int rzg2l_cpg_sd_clk_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	u32 off = GET_REG_OFFSET(hwdata->conf);
+ 	u32 shift = GET_SHIFT(hwdata->conf);
+ 	const u32 clk_src_266 = 2;
+-	u32 bitmask;
++	u32 msk, val, bitmask;
++	int ret;
  
-   reg:
+ 	/*
+ 	 * As per the HW manual, we should not directly switch from 533 MHz to
+@@ -203,9 +204,6 @@ static int rzg2l_cpg_sd_clk_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	 */
+ 	bitmask = (GENMASK(GET_WIDTH(hwdata->conf) - 1, 0) << shift) << 16;
+ 	if (index != clk_src_266) {
+-		u32 msk, val;
+-		int ret;
+-
+ 		writel(bitmask | ((clk_src_266 + 1) << shift), priv->base + off);
+ 
+ 		msk = off ? CPG_CLKSTATUS_SELSDHI1_STS : CPG_CLKSTATUS_SELSDHI0_STS;
+@@ -221,7 +219,13 @@ static int rzg2l_cpg_sd_clk_mux_set_parent(struct clk_hw *hw, u8 index)
+ 
+ 	writel(bitmask | ((index + 1) << shift), priv->base + off);
+ 
+-	return 0;
++	ret = readl_poll_timeout(priv->base + CPG_CLKSTATUS, val,
++				 !(val & msk), 100,
++				 CPG_SDHI_CLK_SWITCH_STATUS_TIMEOUT_US);
++	if (ret)
++		dev_err(priv->dev, "failed to switch clk source\n");
++
++	return ret;
+ }
+ 
+ static u8 rzg2l_cpg_sd_clk_mux_get_parent(struct clk_hw *hw)
 -- 
 2.39.2
 
