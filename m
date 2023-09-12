@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 794E8CA0EE3
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Sep 2023 04:53:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 622DDCA0EE4
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Sep 2023 04:53:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229812AbjILExN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Sep 2023 00:53:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51494 "EHLO
+        id S229598AbjILExe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Sep 2023 00:53:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229600AbjILEwa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Sep 2023 00:52:30 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCFC0E6F
-        for <linux-clk@vger.kernel.org>; Mon, 11 Sep 2023 21:52:26 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id 4fb4d7f45d1cf-52f3ba561d9so5123343a12.1
-        for <linux-clk@vger.kernel.org>; Mon, 11 Sep 2023 21:52:26 -0700 (PDT)
+        with ESMTP id S229969AbjILEwn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Sep 2023 00:52:43 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEC20E6F
+        for <linux-clk@vger.kernel.org>; Mon, 11 Sep 2023 21:52:34 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id 4fb4d7f45d1cf-52683b68c2fso6763828a12.0
+        for <linux-clk@vger.kernel.org>; Mon, 11 Sep 2023 21:52:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1694494345; x=1695099145; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1694494353; x=1695099153; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CWV9f2XGMGZ1osmL6Dmo7EcLISauRJpn6Qrd8fgNooo=;
-        b=IDY/MvQXmCwdQaxZowq326AODqP5jDcnKI50MylXYv2f6wVY5NyQTSNmuwblNtfmbV
-         62qM1t9v27sUyQp630EYuOcRkbMqCo+/4EIKZzig43rAecnBkDjwxkZba7KlmCrZLdQW
-         u1aHFpQN+KXxyASj1iZHsSMMtc4yhIDpEc05uwxMsqEC32R8gTBepFoxdxG880tooVjH
-         J64jwhkmXyk8zFUd9E5PwV0g62KPFiF/WdAhz1RZlBfqzbnVybxE/TGMAfylq1IqP/sY
-         h6sX4GIKW2jaCwuMQx9/eBeoenEx13FLAAucb5kyV4l8USOhPNTwdQnTnhjz+eW/LrQI
-         ySMg==
+        bh=snUK6IGdcPPH31oyrmWJb6PGm1SWgHHvAW8FtA1dRGY=;
+        b=fsW1QIISAkwqEOyPM4pIHtQSBHEsdVvarIyjLfevy+I2Y9vxrk28aWiUw+xLRreBs7
+         044622wXMwW7F0dIWDcx/z9x0r3QJEDCCFcHITMoLpHSQd1K4BqWLuLb7YNXRote2/4I
+         YWH7YbZ0naRlCUZh9cBl241mMtqtSJ7JBTgLav9jMmDan0LVBd8c6/pw4e7EJTh/rTuZ
+         3+1pam1xeoePQNGiQtNU454gmeF+f+Y2YE284N22dYQuw5ofaxaR8nBrHpvvBTMCOhcJ
+         8dbNueD60OMaiylDGMPWZsYUVaQ8SrS6NzQzJoLCAes/h0YXwG+zjayEd8muL/0R/KEb
+         5hRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694494345; x=1695099145;
+        d=1e100.net; s=20230601; t=1694494353; x=1695099153;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=CWV9f2XGMGZ1osmL6Dmo7EcLISauRJpn6Qrd8fgNooo=;
-        b=dFeVhckcAHrk8IKPoSLaPB5WekJPgHgru6JrM18CC0dcr+uvocz0MSCH3gagvp/tK6
-         JEoCm/ZFVdztGJZNWgELW5lHo40eJEnTTyoyq4ci9nU8buIk3j7CC/CX9/MF4ipjPKmt
-         +RErFmVAA6+j8CivT7/QXsVVAR12mhZc0R2qs8Xsvm3CSrnvWifHHwNTPP2izyZdxMT3
-         cyp4rhJtrVwlDW8bij9VzDGUlduDola6PCdd9rp2egxDofT9PCuX2+YbY5k4wCalqwb7
-         ADsdNnDKCbZX5tmYf3RHyvpeTaCbZsQLXaSPZC5jgfMICLAj/Yo/jEK+1IPEqTMZBOLG
-         wy/w==
-X-Gm-Message-State: AOJu0YyRNlrwtM1FwSRghTMtMjtyQeBDBw+TvuxDFQYd5j6zENaT4wHc
-        IuYncvQnEJuCTosnutIOdtwXXA==
-X-Google-Smtp-Source: AGHT+IEXMvJ54B9tDieb/iBxe6vR9tpU1fSuBhk/VIriKpr9bHjIDviE+4AXLRRYhM0H6Kg7n9NlkA==
-X-Received: by 2002:aa7:d28a:0:b0:522:d801:7d07 with SMTP id w10-20020aa7d28a000000b00522d8017d07mr1984738edq.10.1694494345199;
-        Mon, 11 Sep 2023 21:52:25 -0700 (PDT)
+        bh=snUK6IGdcPPH31oyrmWJb6PGm1SWgHHvAW8FtA1dRGY=;
+        b=bIToiTZkgx+vseuprNDScmCQxM91TznyGkabR0cqHy5FMIg97E4Rf88kDteTGfN+nd
+         KmtUXIcaDZeDtm0MullVD9h+QZLTbBuYDilGP/5oG2sKTPYNTLJYmA4Ns1ZUPeJoHv+J
+         bh7gRlhOpbHF/Qhnrl5mSyqCiFYuBVyqbwWRTwE0x2yJFMC/Mgm4Cbii9cu6/Hd2E34Q
+         8tBtC5fie+/Lyqiy08XrXgdPWai6FUsBnkboWQ29/iuZx8TvY619hZtIUW/7ytV5bTaL
+         ezzwdJymtc6iw7OhCU/dwuGlW33MuOvwwHRUPAqUtrx2JvwUE/whjyU5ePoYiyqMQhO+
+         8hTg==
+X-Gm-Message-State: AOJu0Yxmc2fk5fq1TYFcJnXWeZ0veXl3FqS7uzIQq3q8cU85veYsl5SF
+        OXHU7727eMrTMyiKLz4z75XAOQ==
+X-Google-Smtp-Source: AGHT+IFPU8acqypJwJGWtWMHEWY4tPoDnTqyGjoIpvI9ATueUsR1/PPIgOlRCJv9LKZVFhbCP8k9Pg==
+X-Received: by 2002:aa7:df08:0:b0:52e:585a:e9c with SMTP id c8-20020aa7df08000000b0052e585a0e9cmr8579509edy.2.1694494353384;
+        Mon, 11 Sep 2023 21:52:33 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.145])
-        by smtp.gmail.com with ESMTPSA id f21-20020a05640214d500b0051e22660835sm5422415edx.46.2023.09.11.21.52.23
+        by smtp.gmail.com with ESMTPSA id f21-20020a05640214d500b0051e22660835sm5422415edx.46.2023.09.11.21.52.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Sep 2023 21:52:24 -0700 (PDT)
+        Mon, 11 Sep 2023 21:52:33 -0700 (PDT)
 From:   Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To:     geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
@@ -67,9 +67,9 @@ Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 04/37] soc: renesas: identify RZ/G3S SoC
-Date:   Tue, 12 Sep 2023 07:51:24 +0300
-Message-Id: <20230912045157.177966-5-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 08/37] clk: renesas: rzg2l: trust value returned by hardware
+Date:   Tue, 12 Sep 2023 07:51:28 +0300
+Message-Id: <20230912045157.177966-9-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com>
@@ -81,76 +81,38 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Add support to identify the RZ/G3S (R9A08G045) SoC.
+Initial value of CPG_PL2SDHI_DSEL bits 0..1 or 4..6 is 01b. Hardware user's
+manual (r01uh0914ej0130-rzg2l-rzg2lc.pdf) specifies that setting 0 is
+prohibited. The rzg2l_cpg_sd_clk_mux_get_parent() should just read
+CPG_PL2SDHI_DSEL, trust the value and return the proper clock parent index
+based on the read value. Do this.
 
+Fixes: eaff33646f4cb ("clk: renesas: rzg2l: Add SDHI clk mux support")
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/soc/renesas/Kconfig       |  6 ++++++
- drivers/soc/renesas/renesas-soc.c | 13 +++++++++++++
- 2 files changed, 19 insertions(+)
+ drivers/clk/renesas/rzg2l-cpg.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
-index 5a75ab64d1ed..631b17c627a8 100644
---- a/drivers/soc/renesas/Kconfig
-+++ b/drivers/soc/renesas/Kconfig
-@@ -319,6 +319,12 @@ config ARCH_R9A07G054
- 	help
- 	  This enables support for the Renesas RZ/V2L SoC variants.
+diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
+index 1195d4b1f545..d0d086d6dc51 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.c
++++ b/drivers/clk/renesas/rzg2l-cpg.c
+@@ -239,14 +239,8 @@ static u8 rzg2l_cpg_sd_clk_mux_get_parent(struct clk_hw *hw)
  
-+config ARCH_R9A08G045
-+	bool "ARM64 Platform support for RZ/G3S"
-+	select ARCH_RZG2L
-+	help
-+	  This enables support for the Renesas RZ/G3S SoC variants.
-+
- config ARCH_R9A09G011
- 	bool "ARM64 Platform support for RZ/V2M"
- 	select PM
-diff --git a/drivers/soc/renesas/renesas-soc.c b/drivers/soc/renesas/renesas-soc.c
-index 42af7c09f743..1598b66ffb51 100644
---- a/drivers/soc/renesas/renesas-soc.c
-+++ b/drivers/soc/renesas/renesas-soc.c
-@@ -72,6 +72,10 @@ static const struct renesas_family fam_rzg2ul __initconst __maybe_unused = {
- 	.name	= "RZ/G2UL",
- };
+ 	val >>= GET_SHIFT(hwdata->conf);
+ 	val &= GENMASK(GET_WIDTH(hwdata->conf) - 1, 0);
+-	if (val) {
+-		val--;
+-	} else {
+-		/* Prohibited clk source, change it to 533 MHz(reset value) */
+-		rzg2l_cpg_sd_clk_mux_set_parent(hw, 0);
+-	}
  
-+static const struct renesas_family fam_rzg3s __initconst __maybe_unused = {
-+	.name	= "RZ/G3S",
-+};
-+
- static const struct renesas_family fam_rzv2l __initconst __maybe_unused = {
- 	.name	= "RZ/V2L",
- };
-@@ -170,6 +174,11 @@ static const struct renesas_soc soc_rz_g2ul __initconst __maybe_unused = {
- 	.id     = 0x8450447,
- };
+-	return val;
++	return val ? --val : val;
+ }
  
-+static const struct renesas_soc soc_rz_g3s __initconst __maybe_unused = {
-+	.family = &fam_rzg3s,
-+	.id	= 0x85e0447,
-+};
-+
- static const struct renesas_soc soc_rz_v2l __initconst __maybe_unused = {
- 	.family = &fam_rzv2l,
- 	.id     = 0x8447447,
-@@ -386,6 +395,9 @@ static const struct of_device_id renesas_socs[] __initconst __maybe_unused = {
- #ifdef CONFIG_ARCH_R9A07G054
- 	{ .compatible = "renesas,r9a07g054",	.data = &soc_rz_v2l },
- #endif
-+#ifdef CONFIG_ARCH_R9A08G045
-+	{ .compatible = "renesas,r9a08g045",	.data = &soc_rz_g3s },
-+#endif
- #ifdef CONFIG_ARCH_R9A09G011
- 	{ .compatible = "renesas,r9a09g011",	.data = &soc_rz_v2m },
- #endif
-@@ -429,6 +441,7 @@ static const struct of_device_id renesas_ids[] __initconst = {
- 	{ .compatible = "renesas,r9a07g043-sysc",	.data = &id_rzg2l },
- 	{ .compatible = "renesas,r9a07g044-sysc",	.data = &id_rzg2l },
- 	{ .compatible = "renesas,r9a07g054-sysc",	.data = &id_rzg2l },
-+	{ .compatible = "renesas,r9a08g045-sysc",	.data = &id_rzg2l },
- 	{ .compatible = "renesas,r9a09g011-sys",	.data = &id_rzv2m },
- 	{ .compatible = "renesas,prr",			.data = &id_prr },
- 	{ /* sentinel */ }
+ static const struct clk_ops rzg2l_cpg_sd_clk_mux_ops = {
 -- 
 2.39.2
 
