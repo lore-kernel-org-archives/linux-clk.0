@@ -2,24 +2,45 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1B70CA0ED6
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Sep 2023 09:34:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4357BCA0EC3
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Sep 2023 10:02:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232406AbjILJeg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Sep 2023 05:34:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57922 "EHLO
+        id S229843AbjILKCt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Sep 2023 06:02:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232084AbjILJee (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Sep 2023 05:34:34 -0400
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8462C12A;
-        Tue, 12 Sep 2023 02:34:29 -0700 (PDT)
-Received: from 4d92782a4194.home.arpa (unknown [124.16.138.129])
-        by APP-05 (Coremail) with SMTP id zQCowAB3kQiQMABlcnFXDA--.38735S4;
-        Tue, 12 Sep 2023 17:34:09 +0800 (CST)
-From:   Jiasheng Jiang <jiasheng@iscas.ac.cn>
-To:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
-        angelogioacchino.delregno@collabora.com, wenst@chromium.org,
+        with ESMTP id S231313AbjILKCr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Sep 2023 06:02:47 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42B3AE64;
+        Tue, 12 Sep 2023 03:02:43 -0700 (PDT)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id CD253660731E;
+        Tue, 12 Sep 2023 11:02:40 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1694512961;
+        bh=KFTpQC/A7VUsLib15J+EGZdvXTKuNhYXeMQivKrdSI4=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=MWjR5HVJefu2d4j7QZ0QOiJcsTAnJWDAsEhh96ZUoKmFmE85LCwH4TZiwnt328dGv
+         q3MAI7VoMfghswBvo4j8oz+XvpY1nRW1m5LQI3DKbo3iUSDyR2JR961AFoSWJE5sNs
+         +bQoFCHrGVvtNmcrwlfpPwZ40mT32rRu+yvNJWf+AoDK/0aOHrU2DklbjZIf19O42U
+         Tais/Ygi8W1NYC/qUPa/L/XGSzPSOUOfKIeOxSEy6mPA8uBq/6LptDEH9SY6tRhafY
+         It7g9YntFnTIAULfP29C9jywUuz0+LIvmayOhqjzxf96XWiKgixbI1xMJcOKFxCKWM
+         aDeo2JBarstdw==
+Message-ID: <250a4a3a-cc70-7541-aa49-ec15b8d3e122@collabora.com>
+Date:   Tue, 12 Sep 2023 12:02:38 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.0
+Subject: Re: [PATCH 5/5] clk: mediatek: clk-mt7629: Add check for
+ mtk_alloc_clk_data
+Content-Language: en-US
+To:     Jiasheng Jiang <jiasheng@iscas.ac.cn>, mturquette@baylibre.com,
+        sboyd@kernel.org, matthias.bgg@gmail.com, wenst@chromium.org,
         msp@baylibre.com, amergnat@baylibre.com, frank.li@vivo.com,
         robh@kernel.org, owen.chen@mediatek.com, mars.cheng@mediatek.com,
         macpaul.lin@mediatek.com, cw00.choi@samsung.com,
@@ -28,80 +49,25 @@ To:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
         ryder.lee@mediatek.com, wenzhen.yu@mediatek.com
 Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Jiasheng Jiang <jiasheng@iscas.ac.cn>
-Subject: [PATCH 3/5] clk: mediatek: clk-mt6797: Add check for mtk_alloc_clk_data
-Date:   Tue, 12 Sep 2023 17:34:05 +0800
-Message-Id: <20230912093407.21505-3-jiasheng@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230912093407.21505-1-jiasheng@iscas.ac.cn>
+        linux-mediatek@lists.infradead.org
 References: <20230912093407.21505-1-jiasheng@iscas.ac.cn>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: zQCowAB3kQiQMABlcnFXDA--.38735S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7uF1xXFW3WF18trWrCFW7Arb_yoW8Gw4kpr
-        47GryYyFyUJw17GFs5Gw4jk3W5C3W0qay5Kay3ZwnYvr13GrW7CF1Yka4v9a1IyrWv9Fy8
-        Xw1q9w409r4DCFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUPC14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jryl82xGYIkIc2
-        x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
-        Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UM2
-        8EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS
-        0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2
-        IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0
-        Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kIc2
-        xKxwCY02Avz4vE14v_GFWl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l
-        x2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14
-        v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IY
-        x2IY6xkF7I0E14v26F4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z2
-        80aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI
-        43ZEXa7VUbfb1UUUUUU==
-X-Originating-IP: [124.16.138.129]
-X-CM-SenderInfo: pmld2xxhqjqxpvfd2hldfou0/
+ <20230912093407.21505-5-jiasheng@iscas.ac.cn>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20230912093407.21505-5-jiasheng@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the check for the return value of mtk_alloc_clk_data() in order to
-avoid NULL pointer dereference.
+Il 12/09/23 11:34, Jiasheng Jiang ha scritto:
+> Add the check for the return value of mtk_alloc_clk_data() in order to
+> avoid NULL pointer dereference.
+> 
+> Fixes: 3b5e748615e7 ("clk: mediatek: add clock support for MT7629 SoC")
+> Signed-off-by: Jiasheng Jiang <jiasheng@iscas.ac.cn>
 
-Fixes: 96596aa06628 ("clk: mediatek: add clk support for MT6797")
-Signed-off-by: Jiasheng Jiang <jiasheng@iscas.ac.cn>
----
- drivers/clk/mediatek/clk-mt6797.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-diff --git a/drivers/clk/mediatek/clk-mt6797.c b/drivers/clk/mediatek/clk-mt6797.c
-index 2ebd25f0ce71..f12d4e9ff0bb 100644
---- a/drivers/clk/mediatek/clk-mt6797.c
-+++ b/drivers/clk/mediatek/clk-mt6797.c
-@@ -390,6 +390,8 @@ static int mtk_topckgen_init(struct platform_device *pdev)
- 		return PTR_ERR(base);
- 
- 	clk_data = mtk_alloc_clk_data(CLK_TOP_NR);
-+	if (!clk_data)
-+		return -ENOMEM;
- 
- 	mtk_clk_register_factors(top_fixed_divs, ARRAY_SIZE(top_fixed_divs),
- 				 clk_data);
-@@ -545,6 +547,8 @@ static void mtk_infrasys_init_early(struct device_node *node)
- 
- 	if (!infra_clk_data) {
- 		infra_clk_data = mtk_alloc_clk_data(CLK_INFRA_NR);
-+		if (!infra_clk_data)
-+			return;
- 
- 		for (i = 0; i < CLK_INFRA_NR; i++)
- 			infra_clk_data->hws[i] = ERR_PTR(-EPROBE_DEFER);
-@@ -570,6 +574,8 @@ static int mtk_infrasys_init(struct platform_device *pdev)
- 
- 	if (!infra_clk_data) {
- 		infra_clk_data = mtk_alloc_clk_data(CLK_INFRA_NR);
-+		if (!infra_clk_data)
-+			return -ENOMEM;
- 	} else {
- 		for (i = 0; i < CLK_INFRA_NR; i++) {
- 			if (infra_clk_data->hws[i] == ERR_PTR(-EPROBE_DEFER))
--- 
-2.25.1
 
