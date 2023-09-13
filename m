@@ -2,118 +2,101 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41E2FCA550A
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Sep 2023 08:55:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D866CA552C
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Sep 2023 09:40:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239134AbjIMIzk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Sep 2023 04:55:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44444 "EHLO
+        id S229712AbjIMJkP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Sep 2023 05:40:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239132AbjIMIzk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Sep 2023 04:55:40 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C972F199E
-        for <linux-clk@vger.kernel.org>; Wed, 13 Sep 2023 01:55:35 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-307d20548adso6644530f8f.0
-        for <linux-clk@vger.kernel.org>; Wed, 13 Sep 2023 01:55:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694595334; x=1695200134; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3s4XTmZuXvVvkm0V75pftgs9YXVxmixMmIhKraOPVhI=;
-        b=UzS8VAEcinFpI6HSw2/LRpJNhK13qDFwkRBdbLq0CYo54n4xofFgWo+oF0gtkGzKR7
-         QHv6Ogre5NkbuTHjCuE6BlIaqpWi3s3pdh0ArOabtC+EARy80CfPde99aszfTztAFLXN
-         nMfd4pQ+nvJaL88vSRan6Z27A5zvz/XsDh/k3zm10aDRQfiKdHPB6GT59L/0tm+o1qT+
-         jYB04l8Oe2xNIOlu+wwxR/4zP2DNboDwaIj8BgFYXyjC/OJ0vO9dI7d5iRAiffIxY/gf
-         aAbl6OKonhhvKRwo++J2WKoRZuXztXLBd9PdrDoQFBNI+G1+J8YNtBcSazoLQBjUC5Ob
-         lm5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694595334; x=1695200134;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3s4XTmZuXvVvkm0V75pftgs9YXVxmixMmIhKraOPVhI=;
-        b=UFLWYaYWFJREbShT2QTINCUBjDZVyT1UfYFVVoMvAcSTBS15LuA6LmN1RbwuI8a/gO
-         K9zteaWjDg5BGN3IOba/RJDNpnE6nIMO8nygReJQEvlAC5a+I8bTCzW4SuN0lAG5kdRz
-         Qv3YnEWd6alMqHoqK9M/xxCrUo4XS7aKAIowGBBwjvEa9/KsHCZFB2rTkQ9TdUuHYtHN
-         uYsEiuao/Y2mn3Ar98SQ+AF/V9OUDNcMl7JMdwad0OlFK56XcPY85TT1G226aJwSjSN0
-         eHAEUiU4L6vf9PYtFATbS2UHgTR1fXO5PJ46ndPebNcAZWxb6JJ73WjoTtRYSvEapQvX
-         qA/g==
-X-Gm-Message-State: AOJu0Ywsq/V7mBgCQdAZ9cV+Q/AA09J18dFM5QTZRTtBHMU1FgDTZykQ
-        I7pJKtRrnPQApInWYAWrJyiVyg==
-X-Google-Smtp-Source: AGHT+IGN8q/6+xxALx9gUe9stgKotwY8iX0ZO8k2F0PDEZ1P0Uoeo9yl6chJOtzG1X7GSQJV67hvyg==
-X-Received: by 2002:adf:f3cc:0:b0:31a:ea9f:1aa6 with SMTP id g12-20020adff3cc000000b0031aea9f1aa6mr1464200wrp.47.1694595334276;
-        Wed, 13 Sep 2023 01:55:34 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.214.188])
-        by smtp.gmail.com with ESMTPSA id n15-20020a5d598f000000b0031fba0a746bsm3925446wri.9.2023.09.13.01.55.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Sep 2023 01:55:33 -0700 (PDT)
-Message-ID: <3a65082c-200c-ce59-a662-ecd623dc68b4@linaro.org>
-Date:   Wed, 13 Sep 2023 10:55:30 +0200
+        with ESMTP id S238978AbjIMJkO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Sep 2023 05:40:14 -0400
+X-Greylist: delayed 964 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 13 Sep 2023 02:40:10 PDT
+Received: from hsmtpd-def.xspmail.jp (hsmtpd-def.xspmail.jp [202.238.198.244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6CAC1998
+        for <linux-clk@vger.kernel.org>; Wed, 13 Sep 2023 02:40:10 -0700 (PDT)
+X-Country-Code: JP
+Received: from sakura.ysato.name (ik1-413-38519.vs.sakura.ne.jp [153.127.30.23])
+        by hsmtpd-out-2.asahinet.cluster.xspmail.jp (Halon) with ESMTPA
+        id ec9dee9f-943d-49be-b71d-7e6d7a11e7dc;
+        Wed, 13 Sep 2023 18:24:04 +0900 (JST)
+Received: from SIOS1075.ysato.name (al128006.dynamic.ppp.asahi-net.or.jp [111.234.128.6])
+        by sakura.ysato.name (Postfix) with ESMTPSA id 4DDCB1C00A0;
+        Wed, 13 Sep 2023 18:24:04 +0900 (JST)
+From:   Yoshinori Sato <ysato@users.sourceforge.jp>
+To:     linux-sh@vger.kernel.org
+Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>,
+        glaubitz@physik.fu-berlin.de, linux-clk@vger.kernel.org
+Subject: [RFC PATCH v2 12/30] drivers/clk: Add SH7750 CPG drivers entry.
+Date:   Wed, 13 Sep 2023 18:23:37 +0900
+Message-Id: <4179b63bb3f151a49616c4ae2702de16702ad739.1694596125.git.ysato@users.sourceforge.jp>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <cover.1694596125.git.ysato@users.sourceforge.jp>
+References: <cover.1694596125.git.ysato@users.sourceforge.jp>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [PATCH V2 6/7] arm64: dts: qcom: ipq9574: Add support for nsscc
- node
-Content-Language: en-US
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Devi Priya <quic_devipriy@quicinc.com>, andersson@kernel.org,
-        agross@kernel.org, konrad.dybcio@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de,
-        richardcochran@gmail.com, arnd@arndb.de, geert+renesas@glider.be,
-        nfraprado@collabora.com, rafal@milecki.pl, peng.fan@nxp.com,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
-        quic_saahtoma@quicinc.com
-References: <20230825091234.32713-1-quic_devipriy@quicinc.com>
- <20230825091234.32713-7-quic_devipriy@quicinc.com>
- <CAA8EJpo75zWLXuF-HC-Xz+6mvu_S1ET-9gzW=mOq+FjKspDwhw@mail.gmail.com>
- <CAMuHMdXx_b-uubonRH5=Tcxo+ddxg2wXvRNQNjhMrfvSFh0Xcw@mail.gmail.com>
- <daed3270-847e-f4c6-17ad-4d1962ae7d49@linaro.org>
- <CAMuHMdVxykGwyrKKSHBv9AHy4gAeH7DT7caZarbs-F40zz5Jpw@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <CAMuHMdVxykGwyrKKSHBv9AHy4gAeH7DT7caZarbs-F40zz5Jpw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 13/09/2023 10:38, Geert Uytterhoeven wrote:
-> Hi Krzysztof,
-> 
-> On Wed, Sep 13, 2023 at 10:26 AM Krzysztof Kozlowski
-> <krzysztof.kozlowski@linaro.org> wrote:
->> On 13/09/2023 10:23, Geert Uytterhoeven wrote:
->>>>
->>>>> +                       clock-names = "nssnoc_nsscc", "nssnoc_snoc", "nssnoc_snoc_1",
->>>>> +                                     "bias_pll_cc_clk", "bias_pll_nss_noc_clk",
->>>>> +                                     "bias_pll_ubi_nc_clk", "gpll0_out_aux", "uniphy0_nss_rx_clk",
->>>>> +                                     "uniphy0_nss_tx_clk", "uniphy1_nss_rx_clk",
->>>>> +                                     "uniphy1_nss_tx_clk", "uniphy2_nss_rx_clk",
->>>>> +                                     "uniphy2_nss_tx_clk", "xo_board_clk";
->>>>
->>>> You are using clock indices. Please drop clock-names.
->>>
->>> What do you mean by "using clock indices"?
->>> Note that the "clock-names" property is required according to the DT bindings.
->>
->> Indeed, thanks for pointing this out. Probably bindings should be changed.
-> 
-> But what's so great about not having "clock-names"?
-> There are _14_ input clocks.
+Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
+---
+ drivers/clk/renesas/Kconfig  | 15 ++++++++++++++-
+ drivers/clk/renesas/Makefile |  1 +
+ 2 files changed, 15 insertions(+), 1 deletion(-)
 
-There is nothing particularly wrong. They are just not used by Linux
-implementation and they confuse people into thinking items are not
-strictly ordered. Thus agreement long time ago for Qualcomm clock
-controllers was to drop the clock-names to avoid that confusion and make
-it explicit.
-
-Best regards,
-Krzysztof
+diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
+index 37632a0659d8..c4e2f7d0349d 100644
+--- a/drivers/clk/renesas/Kconfig
++++ b/drivers/clk/renesas/Kconfig
+@@ -2,7 +2,7 @@
+ 
+ config CLK_RENESAS
+ 	bool "Renesas SoC clock support" if COMPILE_TEST && !ARCH_RENESAS
+-	default y if ARCH_RENESAS
++	default y if ARCH_RENESAS || SUPERH
+ 	select CLK_EMEV2 if ARCH_EMEV2
+ 	select CLK_RZA1 if ARCH_R7S72100
+ 	select CLK_R7S9210 if ARCH_R7S9210
+@@ -39,6 +39,11 @@ config CLK_RENESAS
+ 	select CLK_R9A07G054 if ARCH_R9A07G054
+ 	select CLK_R9A09G011 if ARCH_R9A09G011
+ 	select CLK_SH73A0 if ARCH_SH73A0
++	select CLK_SH7750 if CPU_SUBTYPE_SH7750
++	select CLK_SH7750 if CPU_SUBTYPE_SH7750S
++	select CLK_SH7750 if CPU_SUBTYPE_SH7750R
++	select CLK_SH7750 if CPU_SUBTYPE_SH7751
++	select CLK_SH7750 if CPU_SUBTYPE_SH7751R
+ 
+ if CLK_RENESAS
+ 
+@@ -218,6 +223,14 @@ config CLK_RZG2L
+ 	bool "Renesas RZ/{G2L,G2UL,V2L} family clock support" if COMPILE_TEST
+ 	select RESET_CONTROLLER
+ 
++config CLK_SH7750
++	bool "Renesas SH7750/7751 family clock support"
++	depends on CPU_SUBTYPE_SH7750 || CPU_SUBTYPE_SH7750S || \
++	           CPU_SUBTYPE_SH7750R || \
++	           CPU_SUBTYPE_SH7751 || CPU_SUBTYPE_SH7751R || COMPILE_TEST
++	help
++	  This is a driver for SH7750 / SH7751 CPG.
++
+ # Generic
+ config CLK_RENESAS_CPG_MSSR
+ 	bool "CPG/MSSR clock support" if COMPILE_TEST
+diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
+index de907623fe3f..3f896cf31dc4 100644
+--- a/drivers/clk/renesas/Makefile
++++ b/drivers/clk/renesas/Makefile
+@@ -36,6 +36,7 @@ obj-$(CONFIG_CLK_R9A07G044)		+= r9a07g044-cpg.o
+ obj-$(CONFIG_CLK_R9A07G054)		+= r9a07g044-cpg.o
+ obj-$(CONFIG_CLK_R9A09G011)		+= r9a09g011-cpg.o
+ obj-$(CONFIG_CLK_SH73A0)		+= clk-sh73a0.o
++obj-$(CONFIG_CLK_SH7750)		+= clk-sh7750.o clk-shdiv.o
+ 
+ # Family
+ obj-$(CONFIG_CLK_RCAR_CPG_LIB)		+= rcar-cpg-lib.o
+-- 
+2.39.2
 
