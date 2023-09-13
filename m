@@ -2,115 +2,81 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23965CA550D
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Sep 2023 08:43:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41E2FCA550A
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Sep 2023 08:55:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237278AbjIMInn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Sep 2023 04:43:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38912 "EHLO
+        id S239134AbjIMIzk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Sep 2023 04:55:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231698AbjIMInm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Sep 2023 04:43:42 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FA91E73
-        for <linux-clk@vger.kernel.org>; Wed, 13 Sep 2023 01:43:38 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-99c1c66876aso834736466b.2
-        for <linux-clk@vger.kernel.org>; Wed, 13 Sep 2023 01:43:38 -0700 (PDT)
+        with ESMTP id S239132AbjIMIzk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Sep 2023 04:55:40 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C972F199E
+        for <linux-clk@vger.kernel.org>; Wed, 13 Sep 2023 01:55:35 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-307d20548adso6644530f8f.0
+        for <linux-clk@vger.kernel.org>; Wed, 13 Sep 2023 01:55:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694594617; x=1695199417; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1694595334; x=1695200134; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=7VWbnSO3QqQi1sbJoehxyEUytvvrSclKo+E9q29SgaY=;
-        b=j9mPSQFXsaLuexh6o8nfFNRBqWUNtRskjH6vag+wavV+H5hGEno1ZLYzhFTQEyJ5o8
-         0v8ZT9XNtikxrsuvMX8sdvoBSldUyYvQuo7hmakYOooMUlp0bFlFSEFKDTwYuw7HQ+/k
-         YA5dgeU/iq4ohiF7RgCIagvyIwisanDTQQY4DCmJoMIrgCtPHp/VyruoT42USbPim9uu
-         JBkTNnaZHGxssxHhKPWS3U7Bs/I2Sy36sKxNswDUr10Nj7+qpI2oSZtn1gyab8W5uclz
-         do2GwlR2G7fq3FvVQACub4EnUdFoCNgbo1M8vhJLE8sFyLB4AzxKQBfaKnvgeVonF5Sg
-         j5hA==
+        bh=3s4XTmZuXvVvkm0V75pftgs9YXVxmixMmIhKraOPVhI=;
+        b=UzS8VAEcinFpI6HSw2/LRpJNhK13qDFwkRBdbLq0CYo54n4xofFgWo+oF0gtkGzKR7
+         QHv6Ogre5NkbuTHjCuE6BlIaqpWi3s3pdh0ArOabtC+EARy80CfPde99aszfTztAFLXN
+         nMfd4pQ+nvJaL88vSRan6Z27A5zvz/XsDh/k3zm10aDRQfiKdHPB6GT59L/0tm+o1qT+
+         jYB04l8Oe2xNIOlu+wwxR/4zP2DNboDwaIj8BgFYXyjC/OJ0vO9dI7d5iRAiffIxY/gf
+         aAbl6OKonhhvKRwo++J2WKoRZuXztXLBd9PdrDoQFBNI+G1+J8YNtBcSazoLQBjUC5Ob
+         lm5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694594617; x=1695199417;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1694595334; x=1695200134;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7VWbnSO3QqQi1sbJoehxyEUytvvrSclKo+E9q29SgaY=;
-        b=bG3kN9t6otZUjZx0e7pyIpGJaaXiEMzMTcTHEl+wlC1BOQ8yJfW0v2BOpHn/ugIyDB
-         rw+fr41qj5lmBPuyYDvJJuzADahtDNzeealZXfMqHcvFEfGdProHGsO6upWWLx5QaD1S
-         S4ol6TaRkZCT1rEbJXwXzQdZz8crvs6gbFtkcd2lmj0B5jTGK0GgkvUabKC+LoJJYWiT
-         PPwHrdC4d74X13GSWXB1EHykkOp0XzgsUHG/7meIB985eHI3/fuOkIvLB7n63mjeBnHz
-         dtcsgVE9szC5tNFLUHHD6BjYVcCba067iJomOopU67XtOlbbo5n6IDS4rZcr1kRGD1wT
-         7SVQ==
-X-Gm-Message-State: AOJu0Yynfr3HDwBRRX/bJC0+tTnh5kEiWkwJnw8ZyYVxvT/1neLCiA37
-        cnpuNKX4/igCIxt9Kcux4+d/TQ==
-X-Google-Smtp-Source: AGHT+IHQhQ4tantOAn3/0fVJr3ybsNR+u4GIF0fRCDA9G6qqdjslm83NMWHFBY3AZ69t5v9qg6zGsQ==
-X-Received: by 2002:a17:906:109a:b0:9a1:c44d:7056 with SMTP id u26-20020a170906109a00b009a1c44d7056mr1640901eju.26.1694594616915;
-        Wed, 13 Sep 2023 01:43:36 -0700 (PDT)
-Received: from [192.168.37.232] (178235177106.dynamic-4-waw-k-1-1-0.vectranet.pl. [178.235.177.106])
-        by smtp.gmail.com with ESMTPSA id pv26-20020a170907209a00b00992d122af63sm8018251ejb.89.2023.09.13.01.43.34
+        bh=3s4XTmZuXvVvkm0V75pftgs9YXVxmixMmIhKraOPVhI=;
+        b=UFLWYaYWFJREbShT2QTINCUBjDZVyT1UfYFVVoMvAcSTBS15LuA6LmN1RbwuI8a/gO
+         K9zteaWjDg5BGN3IOba/RJDNpnE6nIMO8nygReJQEvlAC5a+I8bTCzW4SuN0lAG5kdRz
+         Qv3YnEWd6alMqHoqK9M/xxCrUo4XS7aKAIowGBBwjvEa9/KsHCZFB2rTkQ9TdUuHYtHN
+         uYsEiuao/Y2mn3Ar98SQ+AF/V9OUDNcMl7JMdwad0OlFK56XcPY85TT1G226aJwSjSN0
+         eHAEUiU4L6vf9PYtFATbS2UHgTR1fXO5PJ46ndPebNcAZWxb6JJ73WjoTtRYSvEapQvX
+         qA/g==
+X-Gm-Message-State: AOJu0Ywsq/V7mBgCQdAZ9cV+Q/AA09J18dFM5QTZRTtBHMU1FgDTZykQ
+        I7pJKtRrnPQApInWYAWrJyiVyg==
+X-Google-Smtp-Source: AGHT+IGN8q/6+xxALx9gUe9stgKotwY8iX0ZO8k2F0PDEZ1P0Uoeo9yl6chJOtzG1X7GSQJV67hvyg==
+X-Received: by 2002:adf:f3cc:0:b0:31a:ea9f:1aa6 with SMTP id g12-20020adff3cc000000b0031aea9f1aa6mr1464200wrp.47.1694595334276;
+        Wed, 13 Sep 2023 01:55:34 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.214.188])
+        by smtp.gmail.com with ESMTPSA id n15-20020a5d598f000000b0031fba0a746bsm3925446wri.9.2023.09.13.01.55.31
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Sep 2023 01:43:36 -0700 (PDT)
-Message-ID: <3260f0ca-9e27-4920-8415-7f364dff773d@linaro.org>
-Date:   Wed, 13 Sep 2023 10:43:34 +0200
+        Wed, 13 Sep 2023 01:55:33 -0700 (PDT)
+Message-ID: <3a65082c-200c-ce59-a662-ecd623dc68b4@linaro.org>
+Date:   Wed, 13 Sep 2023 10:55:30 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.0
 Subject: Re: [PATCH V2 6/7] arm64: dts: qcom: ipq9574: Add support for nsscc
  node
 Content-Language: en-US
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
 Cc:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Devi Priya <quic_devipriy@quicinc.com>, andersson@kernel.org,
-        agross@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, catalin.marinas@arm.com, will@kernel.org,
-        p.zabel@pengutronix.de, richardcochran@gmail.com, arnd@arndb.de,
-        geert+renesas@glider.be, nfraprado@collabora.com, rafal@milecki.pl,
-        peng.fan@nxp.com, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        netdev@vger.kernel.org, quic_saahtoma@quicinc.com
+        agross@kernel.org, konrad.dybcio@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de,
+        richardcochran@gmail.com, arnd@arndb.de, geert+renesas@glider.be,
+        nfraprado@collabora.com, rafal@milecki.pl, peng.fan@nxp.com,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+        quic_saahtoma@quicinc.com
 References: <20230825091234.32713-1-quic_devipriy@quicinc.com>
  <20230825091234.32713-7-quic_devipriy@quicinc.com>
  <CAA8EJpo75zWLXuF-HC-Xz+6mvu_S1ET-9gzW=mOq+FjKspDwhw@mail.gmail.com>
  <CAMuHMdXx_b-uubonRH5=Tcxo+ddxg2wXvRNQNjhMrfvSFh0Xcw@mail.gmail.com>
  <daed3270-847e-f4c6-17ad-4d1962ae7d49@linaro.org>
  <CAMuHMdVxykGwyrKKSHBv9AHy4gAeH7DT7caZarbs-F40zz5Jpw@mail.gmail.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 In-Reply-To: <CAMuHMdVxykGwyrKKSHBv9AHy4gAeH7DT7caZarbs-F40zz5Jpw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -118,7 +84,7 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 13.09.2023 10:38, Geert Uytterhoeven wrote:
+On 13/09/2023 10:38, Geert Uytterhoeven wrote:
 > Hi Krzysztof,
 > 
 > On Wed, Sep 13, 2023 at 10:26 AM Krzysztof Kozlowski
@@ -141,9 +107,13 @@ On 13.09.2023 10:38, Geert Uytterhoeven wrote:
 > 
 > But what's so great about not having "clock-names"?
 > There are _14_ input clocks.
-clk_parent_data has an "index" member, which lets us bind
-clocks[n] to parent[n]. With the DT properties being ABI,
-including the order of entries within, that lets us get rid
-of clock-names and the matching is marginally faster.
 
-Konrad
+There is nothing particularly wrong. They are just not used by Linux
+implementation and they confuse people into thinking items are not
+strictly ordered. Thus agreement long time ago for Qualcomm clock
+controllers was to drop the clock-names to avoid that confusion and make
+it explicit.
+
+Best regards,
+Krzysztof
+
