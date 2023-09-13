@@ -2,33 +2,33 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F59CA552D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63304CA552E
 	for <linux-clk@archiver.kernel.org>; Wed, 13 Sep 2023 09:40:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238981AbjIMJkP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S238978AbjIMJkP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Wed, 13 Sep 2023 05:40:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59912 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239017AbjIMJkO (ORCPT
+        with ESMTP id S238981AbjIMJkO (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Sep 2023 05:40:14 -0400
-Received: from hsmtpd-def.xspmail.jp (hsmtpd-def.xspmail.jp [202.238.198.243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6F80199F
+Received: from hsmtpd-def.xspmail.jp (hsmtpd-def.xspmail.jp [202.238.198.240])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D711119AB
         for <linux-clk@vger.kernel.org>; Wed, 13 Sep 2023 02:40:10 -0700 (PDT)
 X-Country-Code: JP
 Received: from sakura.ysato.name (ik1-413-38519.vs.sakura.ne.jp [153.127.30.23])
-        by hsmtpd-out-1.asahinet.cluster.xspmail.jp (Halon) with ESMTPA
-        id cd8459a2-a307-4c58-8e39-13d8eefa5ff9;
+        by hsmtpd-out-0.asahinet.cluster.xspmail.jp (Halon) with ESMTPA
+        id da1abe5c-e986-40d7-846a-8155217b1ea4;
         Wed, 13 Sep 2023 18:24:04 +0900 (JST)
 Received: from SIOS1075.ysato.name (al128006.dynamic.ppp.asahi-net.or.jp [111.234.128.6])
-        by sakura.ysato.name (Postfix) with ESMTPSA id C8DFF1C0198;
-        Wed, 13 Sep 2023 18:24:03 +0900 (JST)
+        by sakura.ysato.name (Postfix) with ESMTPSA id 1A6621C005D;
+        Wed, 13 Sep 2023 18:24:04 +0900 (JST)
 From:   Yoshinori Sato <ysato@users.sourceforge.jp>
 To:     linux-sh@vger.kernel.org
 Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>,
         glaubitz@physik.fu-berlin.de, linux-clk@vger.kernel.org
-Subject: [RFC PATCH v2 10/30] drivers/clk: SH7750 / SH7751 CPG Driver
-Date:   Wed, 13 Sep 2023 18:23:35 +0900
-Message-Id: <a9a3e6f0dfdd1c5d6970d2decffef3c07d93476e.1694596125.git.ysato@users.sourceforge.jp>
+Subject: [RFC PATCH v2 11/30] drivers/clk: SuperH generai clock divider helper
+Date:   Wed, 13 Sep 2023 18:23:36 +0900
+Message-Id: <d886ddd66e60319483619d90176ba34537c471e8.1694596125.git.ysato@users.sourceforge.jp>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <cover.1694596125.git.ysato@users.sourceforge.jp>
 References: <cover.1694596125.git.ysato@users.sourceforge.jp>
@@ -40,252 +40,388 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
 ---
- drivers/clk/renesas/clk-sh7750.c | 236 +++++++++++++++++++++++++++++++
- 1 file changed, 236 insertions(+)
- create mode 100644 drivers/clk/renesas/clk-sh7750.c
+ drivers/clk/renesas/clk-shdiv.c | 346 ++++++++++++++++++++++++++++++++
+ drivers/clk/renesas/clk-shdiv.h |  18 ++
+ 2 files changed, 364 insertions(+)
+ create mode 100644 drivers/clk/renesas/clk-shdiv.c
+ create mode 100644 drivers/clk/renesas/clk-shdiv.h
 
-diff --git a/drivers/clk/renesas/clk-sh7750.c b/drivers/clk/renesas/clk-sh7750.c
+diff --git a/drivers/clk/renesas/clk-shdiv.c b/drivers/clk/renesas/clk-shdiv.c
 new file mode 100644
-index 000000000000..51f1aecd23dc
+index 000000000000..90055bc384c7
 --- /dev/null
-+++ b/drivers/clk/renesas/clk-sh7750.c
-@@ -0,0 +1,236 @@
++++ b/drivers/clk/renesas/clk-shdiv.c
+@@ -0,0 +1,346 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Renesas SH7750/51 CPG driver
-+ *
-+ * Copyright 2023 Yoshinori Sato <ysato@users.sourceforge.jp>
++ * SuperH divider clock driver
 + */
 +
 +#include <linux/clkdev.h>
 +#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
++#include <linux/module.h>
++#include <linux/slab.h>
 +#include <linux/io.h>
++#include <linux/err.h>
++#include <linux/string.h>
 +#include "clk-shdiv.h"
-+#include <dt-bindings/clock/sh7750.h>
 +
-+static DEFINE_SPINLOCK(clklock);
++#define div_mask(width)	((1 << (width)) - 1)
 +
-+/* PCLK divide rate selector */
-+static const struct clk_div_table pdiv_table[] = {
-+	{ .val = 0, .div = 2, },
-+	{ .val = 1, .div = 3, },
-+	{ .val = 2, .div = 4, },
-+	{ .val = 3, .div = 6, },
-+	{ .val = 4, .div = 8, },
-+	{ }
-+};
-+
-+/* ICLK and BCLK divide rate selector */
-+static const struct clk_div_table div_table[] = {
-+	{ .val = 0, .div = 1, },
-+	{ .val = 1, .div = 2, },
-+	{ .val = 2, .div = 3, },
-+	{ .val = 3, .div = 4, },
-+	{ .val = 4, .div = 6, },
-+	{ .val = 5, .div = 8, },
-+	{ }
-+};
-+
-+struct cpg_priv {
-+	struct clk_hw hw;
-+	void __iomem *frqcr;
-+	void __iomem *wdt;
-+	u32 mode;
-+	bool have_div1;
-+};
-+
-+#define to_priv(_hw) container_of(_hw, struct cpg_priv, hw)
-+
-+#define FRQCR_PLL1EN BIT(10)
-+static const int pll1mult[] = { 12, 12, 6, 12, 6, 12, 1};
-+
-+static unsigned long pll_recalc_rate(struct clk_hw *hw,
-+				      unsigned long parent_rate)
++static unsigned int _get_table_maxdiv(const struct clk_div_table *table,
++				      u8 width)
 +{
-+	struct cpg_priv *cpg = to_priv(hw);
-+	unsigned long rate = parent_rate;
-+	uint16_t frqcr;
++	unsigned int maxdiv = 0, mask = div_mask(width);
++	const struct clk_div_table *clkt;
 +
-+	frqcr = ioread16(cpg->frqcr);
-+	if (frqcr & FRQCR_PLL1EN) {
-+		rate *= pll1mult[cpg->mode];
-+		if (cpg->mode < 6 && cpg->have_div1)
-+			rate /= 2;
-+	}
-+	return rate;
++	for (clkt = table; clkt->div; clkt++)
++		if (clkt->div > maxdiv && clkt->val <= mask)
++			maxdiv = clkt->div;
++	return maxdiv;
 +}
 +
-+static void get_round_rate(struct cpg_priv *cpg,
-+			   unsigned long *out, bool *pllen,
-+			   unsigned long rate, unsigned long prate)
++static unsigned int _get_maxdiv(const struct clk_div_table *table, u8 width)
 +{
-+	long pllout, res;
-+	bool pll;
-+
-+	if (cpg->mode < 6 && cpg->have_div1)
-+		prate /= 2;
-+
-+	pllout = prate * pll1mult[cpg->mode];
-+	if (abs(pllout - rate) > abs(prate - rate)) {
-+		res = prate;
-+		pll = false;
-+	} else {
-+		res = pllout;
-+		pll = true;
-+	}
-+	if (out)
-+		*out = res;
-+	if (pllen)
-+		*pllen = pll;
++	if (table)
++		return _get_table_maxdiv(table, width);
++	return div_mask(width) + 1;
 +}
 +
-+static int pll_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
++static unsigned int _get_table_div(const struct clk_div_table *table,
++				   unsigned int val)
 +{
-+	struct cpg_priv *cpg = to_priv(hw);
++	const struct clk_div_table *clkt;
 +
-+	get_round_rate(cpg, &req->rate, NULL, req->rate, req->best_parent_rate);
++	for (clkt = table; clkt->div; clkt++)
++		if (clkt->val == val)
++			return clkt->div;
 +	return 0;
 +}
 +
-+static int pll_set_rate(struct clk_hw *hw,
-+			unsigned long rate, unsigned long prate)
++static unsigned int _get_div(const struct clk_div_table *table,
++			     unsigned int val,  u8 width)
 +{
-+	struct cpg_priv *cpg = to_priv(hw);
-+	bool oldpll, newpll;
-+	uint16_t frqcr;
++	if (table)
++		return _get_table_div(table, val);
++	return val + 1;
++}
 +
-+	frqcr = ioread16(cpg->frqcr);
-+	get_round_rate(cpg, NULL, &newpll, rate, prate);
-+	oldpll = frqcr & FRQCR_PLL1EN;
-+	frqcr &= ~FRQCR_PLL1EN;
++static unsigned int _get_table_val(const struct clk_div_table *table,
++				   unsigned int div)
++{
++	const struct clk_div_table *clkt;
 +
-+	if (newpll) {
-+		frqcr |= FRQCR_PLL1EN;
-+		if (!oldpll) {
-+			/* set PLL wakeup delay time */
-+			iowrite16(0xa500, cpg->wdt + 4);
-+			iowrite16(0xa507, cpg->wdt + 4);
-+			iowrite16(0xa507, cpg->wdt + 4);
-+			iowrite16(0x5a00, cpg->wdt);
++	for (clkt = table; clkt->div; clkt++)
++		if (clkt->div == div)
++			return clkt->val;
++	return 0;
++}
++
++static unsigned int _get_val(const struct clk_div_table *table,
++			     unsigned int div, u8 width)
++{
++	if (table)
++		return  _get_table_val(table, div);
++	return div - 1;
++}
++
++static unsigned long sh_divider_recalc_rate(struct clk_hw *hw,
++					 unsigned long parent_rate,
++					 unsigned int val,
++					 const struct clk_div_table *table)
++{
++	struct clk_divider *divider = to_clk_divider(hw);
++	unsigned int div;
++
++	div = _get_div(table, val, divider->width);
++
++	return DIV_ROUND_UP_ULL((u64)parent_rate, div);
++}
++
++static unsigned long sh_clk_divider_recalc_rate(struct clk_hw *hw,
++		unsigned long parent_rate)
++{
++	struct clk_divider *divider = to_clk_divider(hw);
++	unsigned int val;
++
++	val = __raw_readw(divider->reg) >> divider->shift;
++	val &= div_mask(divider->width);
++
++	return sh_divider_recalc_rate(hw, parent_rate, val, divider->table);
++}
++
++static bool _is_valid_table_div(const struct clk_div_table *table,
++				unsigned int div)
++{
++	const struct clk_div_table *clkt;
++
++	for (clkt = table; clkt->div; clkt++)
++		if (clkt->div == div)
++			return true;
++	return false;
++}
++
++static bool _is_valid_div(const struct clk_div_table *table, unsigned int div)
++{
++	if (table)
++		return _is_valid_table_div(table, div);
++	return true;
++}
++
++static int _round_up_table(const struct clk_div_table *table, int div)
++{
++	const struct clk_div_table *clkt;
++	int up = INT_MAX;
++
++	for (clkt = table; clkt->div; clkt++) {
++		if (clkt->div == div)
++			return clkt->div;
++		else if (clkt->div < div)
++			continue;
++
++		if ((clkt->div - div) < (up - div))
++			up = clkt->div;
++	}
++
++	return up;
++}
++
++static int _div_round_up(const struct clk_div_table *table,
++			 unsigned long parent_rate, unsigned long rate)
++{
++	int div = DIV_ROUND_UP_ULL((u64)parent_rate, rate);
++
++	if (table)
++		div = _round_up_table(table, div);
++
++	return div;
++}
++
++static int _div_round(const struct clk_div_table *table,
++		      unsigned long parent_rate, unsigned long rate)
++{
++	return _div_round_up(table, parent_rate, rate);
++}
++
++static bool _is_best_div(unsigned long rate, unsigned long now,
++			 unsigned long best)
++{
++	return now <= rate && now > best;
++}
++
++static int _next_div(const struct clk_div_table *table, int div)
++{
++	div++;
++
++	if (table)
++		return _round_up_table(table, div);
++
++	return div;
++}
++
++static int clk_divider_bestdiv(struct clk_hw *hw, unsigned long rate,
++			       unsigned long *best_parent_rate,
++			       const struct clk_div_table *table, u8 width)
++{
++	int i, bestdiv = 0;
++	unsigned long parent_rate, best = 0, now, maxdiv;
++	unsigned long parent_rate_saved = *best_parent_rate;
++
++	if (!rate)
++		rate = 1;
++
++	maxdiv = _get_maxdiv(table, width);
++
++	if (!(clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT)) {
++		parent_rate = *best_parent_rate;
++		bestdiv = _div_round(table, parent_rate, rate);
++		bestdiv = bestdiv == 0 ? 1 : bestdiv;
++		bestdiv = bestdiv > maxdiv ? maxdiv : bestdiv;
++		return bestdiv;
++	}
++
++	/*
++	 * The maximum divider we can use without overflowing
++	 * unsigned long in rate * i below
++	 */
++	maxdiv = min(ULONG_MAX / rate, maxdiv);
++
++	for (i = _next_div(table, 0); i <= maxdiv;
++	     i = _next_div(table, i)) {
++		if (rate * i == parent_rate_saved) {
++			/*
++			 * It's the most ideal case if the requested rate can be
++			 * divided from parent clock without needing to change
++			 * parent rate, so return the divider immediately.
++			 */
++			*best_parent_rate = parent_rate_saved;
++			return i;
++		}
++		parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw),
++					       rate * i);
++		now = DIV_ROUND_UP_ULL((u64)parent_rate, i);
++		if (_is_best_div(rate, now, best)) {
++			bestdiv = i;
++			best = now;
++			*best_parent_rate = parent_rate;
 +		}
 +	}
-+	iowrite16(frqcr, cpg->frqcr);
 +
-+	/* Test for new PLL state */
-+	frqcr = ioread16(cpg->frqcr);
-+	oldpll = frqcr & FRQCR_PLL1EN;
-+	return !(oldpll == newpll);
++	if (!bestdiv) {
++		bestdiv = _get_maxdiv(table, width);
++		*best_parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw), 1);
++	}
++
++	return bestdiv;
 +}
 +
-+static const struct clk_ops pll_ops = {
-+	.recalc_rate = pll_recalc_rate,
-+	.determine_rate = pll_determine_rate,
-+	.set_rate = pll_set_rate,
++static long sh_divider_round_rate(struct clk_hw *hw, unsigned long rate,
++			unsigned long *prate, const struct clk_div_table *table,
++			u8 width)
++{
++	int div;
++
++	div = clk_divider_bestdiv(hw, rate, prate, table, width);
++
++	return DIV_ROUND_UP_ULL((u64)*prate, div);
++}
++
++static int sh_clk_divider_determine_rate(struct clk_hw *hw,
++					  struct clk_rate_request *req)
++{
++	struct clk_divider *divider = to_clk_divider(hw);
++	long rate, prate;
++
++	prate = req->best_parent_rate;
++	rate = sh_divider_round_rate(hw, req->rate, &prate, divider->table,
++				     divider->width);
++	if (rate < 0)
++		return rate;
++	req->rate = rate;
++	req->best_parent_rate = prate;
++	return 0;
++}
++
++static int sh_divider_get_val(unsigned long rate, unsigned long parent_rate,
++			   const struct clk_div_table *table, u8 width)
++{
++	unsigned int div, value;
++
++	div = DIV_ROUND_UP_ULL((u64)parent_rate, rate);
++
++	if (!_is_valid_div(table, div))
++		return -EINVAL;
++
++	value = _get_val(table, div, width);
++
++	return min_t(unsigned int, value, div_mask(width));
++}
++
++static int sh_clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
++				unsigned long parent_rate)
++{
++	struct clk_divider *divider = to_clk_divider(hw);
++	unsigned int value;
++	unsigned long flags = 0;
++	u16 val;
++
++	value = sh_divider_get_val(rate, parent_rate, divider->table,
++				   divider->width);
++
++	if (divider->lock)
++		spin_lock_irqsave(divider->lock, flags);
++	else
++		__acquire(divider->lock);
++
++	val = __raw_readw(divider->reg);
++	val &= ~(div_mask(divider->width) << divider->shift);
++	val |= value << divider->shift;
++	__raw_writew(val, divider->reg);
++
++	if (divider->lock)
++		spin_unlock_irqrestore(divider->lock, flags);
++	else
++		__release(divider->lock);
++
++	return 0;
++}
++
++static const struct clk_ops sh_clk_divider_ops = {
++	.recalc_rate = sh_clk_divider_recalc_rate,
++	.determine_rate = sh_clk_divider_determine_rate,
++	.set_rate = sh_clk_divider_set_rate,
 +};
 +
-+#define PLLOUT "pllout"
-+
-+static int __init register_pll(struct device_node *node, struct cpg_priv *cpg)
++static int _register_divider(struct device_node *node, const char *name,
++			     const char *parent_name,
++			     void __iomem *reg, u8 shift, u8 width,
++			     const struct clk_div_table *table,
++			     spinlock_t *lock)
 +{
-+	struct clk *clk;
-+	const char *clk_name = node->name;
-+	const char *parent_name;
++	struct clk_divider *div;
 +	struct clk_init_data init;
 +
-+	parent_name = of_clk_get_parent_name(node, 0);
-+	init.name = PLLOUT;
-+	init.ops = &pll_ops;
++	/* allocate the divider */
++	div = kzalloc(sizeof(*div), GFP_KERNEL);
++	if (!div)
++		return -ENOMEM;
++
++	init.name = name;
++	init.ops = &sh_clk_divider_ops;
 +	init.flags = 0;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+	cpg->hw.init = &init;
++	init.parent_names = (parent_name ? &parent_name : NULL);
++	init.num_parents = (parent_name ? 1 : 0);
 +
-+	if (of_clk_hw_register(node, &cpg->hw) < 0) {
-+		pr_err("%s: failed to register %s pll clock (%ld)\n",
-+		       __func__, clk_name, PTR_ERR(clk));
-+		return 0;
-+	}
-+	of_clk_add_hw_provider(node, of_clk_hw_simple_get, &cpg->hw);
++	/* struct clk_divider assignments */
++	div->reg = reg;
++	div->shift = shift;
++	div->width = width;
++	div->lock = lock;
++	div->hw.init = &init;
++	div->table = table;
 +
-+	return 1;
++	/* register the clock */
++	if (of_clk_hw_register(node, &div->hw) < 0)
++		kfree(div);
++	of_clk_add_hw_provider(node, of_clk_hw_simple_get, &div->hw);
++
++	return 0;
 +}
 +
-+static void __init register_div(struct device_node *node, struct cpg_priv *cpg)
++int sh_div_clk_register(struct device_node *node, const char *name,
++			const char *parent_name,
++			void __iomem *reg, u8 shift, u8 width,
++			const struct clk_div_table *table,
++			spinlock_t *lock)
 +{
-+	static const char * const divout[] = {
-+		[SH7750_CPG_FCK] = "fck",
-+		[SH7750_CPG_BCK] = "bck",
-+		[SH7750_CPG_ICK] = "ick",
-+	};
-+	struct clk *clk;
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(divout); i++) {
-+		if (sh_div_clk_register(node, divout[i], PLLOUT,
-+					cpg->frqcr, i * 3, 3,
-+					(i == 0) ? pdiv_table : div_table,
-+					&clklock) < 0)
-+			pr_err("%s: failed to register %s div clock (%ld)\n",
-+			       __func__, divout[i], PTR_ERR(clk));
-+	}
++	return _register_divider(node, name, parent_name, reg, shift,
++				 width, table, lock);
 +}
++EXPORT_SYMBOL_GPL(sh_div_clk_register);
+diff --git a/drivers/clk/renesas/clk-shdiv.h b/drivers/clk/renesas/clk-shdiv.h
+new file mode 100644
+index 000000000000..fd49c06da9ff
+--- /dev/null
++++ b/drivers/clk/renesas/clk-shdiv.h
+@@ -0,0 +1,18 @@
++/* SPDX-License-Identifier: GPL-2.0 */
 +
++#ifndef __CLK_SHDIV_H__
++#define __CLK_SHDIV_H__
++/*
++ * SuperH divider clock driver
++ */
 +
-+static void __init sh7750_cpg_setup(struct device_node *node)
-+{
-+	unsigned int num_parents;
-+	struct cpg_priv *cpg;
++#include <linux/of.h>
++#include <linux/clk-provider.h>
 +
-+	num_parents = of_clk_get_parent_count(node);
-+	if (num_parents < 1) {
-+		pr_err("%s: no parent found", node->name);
-+		return;
-+	}
++int sh_div_clk_register(struct device_node *node, const char *name,
++			const char *parent_name,
++			void __iomem *reg, u8 shift, u8 width,
++			const struct clk_div_table *table,
++			spinlock_t *lock);
 +
-+	cpg = kzalloc(sizeof(struct cpg_priv), GFP_KERNEL);
-+	if (!cpg) {
-+		pr_err("%s: failed to alloc memory", node->name);
-+		return;
-+	}
-+
-+	of_property_read_u32_index(node, "renesas,mode", 0, &cpg->mode);
-+	if (cpg->mode >= 7) {
-+		pr_err("%s: Invalid clock mode setting (%u)\n",
-+		       node->name, cpg->mode);
-+		goto cpg_free;
-+	}
-+	cpg->have_div1 = (of_device_is_compatible(node, "renesas,sh7750r-pll-clk") == 0);
-+
-+	cpg->frqcr = of_iomap(node, 0);
-+	if (cpg->frqcr == NULL) {
-+		pr_err("%s: failed to map divide register", node->name);
-+		goto cpg_free;
-+	}
-+
-+	cpg->wdt = of_iomap(node, 1);
-+	if (cpg->wdt == NULL) {
-+		pr_err("%s: failed to map watchdog register", node->name);
-+		goto unmap_frqcr;
-+	}
-+
-+	if (!register_pll(node, cpg))
-+		goto unmap_wdt;
-+
-+	register_div(node, cpg);
-+
-+unmap_wdt:
-+	iounmap(cpg->wdt);
-+unmap_frqcr:
-+	iounmap(cpg->frqcr);
-+cpg_free:
-+	kfree(cpg);
-+}
-+
-+CLK_OF_DECLARE(sh7750_cpg, "renesas,sh7750-cpg",
-+	       sh7750_cpg_setup);
++#endif
 -- 
 2.39.2
 
