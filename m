@@ -2,57 +2,63 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1949DCA5505
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Sep 2023 08:24:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84268CA5505
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Sep 2023 08:26:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238517AbjIMIYJ convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Sep 2023 04:24:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57288 "EHLO
+        id S238936AbjIMI0Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Sep 2023 04:26:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231301AbjIMIYI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Sep 2023 04:24:08 -0400
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB581E73;
-        Wed, 13 Sep 2023 01:24:04 -0700 (PDT)
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-58c92a2c52dso62440907b3.2;
-        Wed, 13 Sep 2023 01:24:04 -0700 (PDT)
+        with ESMTP id S238910AbjIMI0T (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Sep 2023 04:26:19 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B352E1998
+        for <linux-clk@vger.kernel.org>; Wed, 13 Sep 2023 01:26:14 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id ffacd0b85a97d-31f737b8b69so6082178f8f.3
+        for <linux-clk@vger.kernel.org>; Wed, 13 Sep 2023 01:26:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1694593573; x=1695198373; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MoiLF9qWHetvzCqeRRmjqsm+XzU44/Y+Q1HjHiijaVk=;
+        b=EdhhLngt5a0eQi59anhz1MT+BwGrYGcNs0gH+KUr58WJVAcf5FIwOtAn1lvEbgJGgO
+         dl9/8PIxRHSvpwNBZNYLNCxC8K9NrqDEujmFbJefX2t8mrbu8SdObvMTPn+lfMH7WUCi
+         JgKDWKK03xqGLCwN5bI0GOMKH2C/MqDSTUXHyU22Ogd3Cz7gAaY4BrLSscz2tLmDFp1L
+         pg5h+R9vpw6FVStKsv8XqLfcNrxYlTYaxv+Qy52oCrev2xhWDnVV06kiBDrL4UhAwvZO
+         Lf/RapebciMKoEJ8s00OEtVsUcTJ3VMN9f6D1HgCUXfCD6AByqPR27PoVc5/MoqNED3t
+         d93g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694593444; x=1695198244;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3YpGKJuDtrl+7ORYHXXZK89Axri0zAtMDBhXftL8Qjk=;
-        b=j54TWAR9li5C7xEsZHsgXo6RsgGYG5XzSWx9lNk82ObL8fqqP0NGL/2+iT7FcPZvof
-         a012o0kUvxTF2SDj/qWNW5yXa3HUpdM+JdtEiC6c1lIGZTW33o0Fa4jH2O+4mpZruJcK
-         BoKMp+XgHbIJgSOWndCutmrtNwZkgbhlhPZ0AZ9lVhwKt8v0xX5IxP0+h8Iiq0aLlWHi
-         eVuomBVQgw09aK3gk4ZbWF0FMJ0ERrU5EuffuShU4MCAlUpZ5R8P0DWS3gGroP91jNe6
-         POgEbq+04nqRZ4rHpVUczxujEPypQARlunErJslo0bJoemvqrTyfg0Rl8giVm0t5JN/n
-         hzlA==
-X-Gm-Message-State: AOJu0YwT6srZY6+ATzceF+J+Do3VoNk2kOQ0z2b72yVKHqzD8fU1z8WU
-        MdEwE0i6sU2Y8O+8BCq1VS2AiBH41ASsbg==
-X-Google-Smtp-Source: AGHT+IGVwk+ycTXGeEGKkEi3H5eUGCLRXcodxKTCwu8p7OaPp8DF+PtdafJgwCLuJjD1jBYPpz/qkg==
-X-Received: by 2002:a0d:ea0b:0:b0:59b:4116:cf12 with SMTP id t11-20020a0dea0b000000b0059b4116cf12mr1931803ywe.8.1694593443927;
-        Wed, 13 Sep 2023 01:24:03 -0700 (PDT)
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com. [209.85.128.173])
-        by smtp.gmail.com with ESMTPSA id m4-20020a819c04000000b0059b20231f1dsm2964940ywa.121.2023.09.13.01.24.02
+        d=1e100.net; s=20230601; t=1694593573; x=1695198373;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MoiLF9qWHetvzCqeRRmjqsm+XzU44/Y+Q1HjHiijaVk=;
+        b=fmDce3iUrY3vFsLLrj893VdJb9V53BdFbPFMb8WXlks1G69XNL1hqBIABNYjCaQlC1
+         bv5lj4xIgP0+Tq/zW+bv0ZxuXnCCtOd6/4m/5TXst+R3z/XmJOqFqgOFu4PBkKwLi6qw
+         lpXc9bIhiAZ33s4khvYnTDTmZeDTdL+Mg8TlLOsmzNvIi4RtXiuSXxZyUlDWG8c5Q6AU
+         tXIcKON/zsJww5UfjRGciHlOBhkuEE3BvCF2IILj8SxdxbNDc66OWxV4xOIjo8v1ZLTF
+         69BYGdXTDIX2ViMyCHAd1OqRNfnGdplyVxUFzG7CLNnKw6637AoNFzXxp3RdzhwrmOMb
+         epJQ==
+X-Gm-Message-State: AOJu0YzsjkQOZkOiDBIZJ6qtqRXe5fgBiN6h3BP7TiKX1kjQcz0BzDjr
+        dnQfSdsR5zEubgLGsKZw1uzW1w==
+X-Google-Smtp-Source: AGHT+IFanqHvpz/OBQqvTsB3/lwBZqctCXSf2n5vpeLr5J1YVLJWmkIRLIDCy8G5mDDR4cSEzLpOzw==
+X-Received: by 2002:adf:ea43:0:b0:317:5c36:913b with SMTP id j3-20020adfea43000000b003175c36913bmr1316763wrn.48.1694593573133;
+        Wed, 13 Sep 2023 01:26:13 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.214.188])
+        by smtp.gmail.com with ESMTPSA id y18-20020adfd092000000b003179d5aee67sm14921713wrh.94.2023.09.13.01.26.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Sep 2023 01:24:02 -0700 (PDT)
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-58c92a2c52dso62440617b3.2;
-        Wed, 13 Sep 2023 01:24:02 -0700 (PDT)
-X-Received: by 2002:a25:d045:0:b0:d74:6c9f:e734 with SMTP id
- h66-20020a25d045000000b00d746c9fe734mr1738982ybg.47.1694593442162; Wed, 13
- Sep 2023 01:24:02 -0700 (PDT)
+        Wed, 13 Sep 2023 01:26:12 -0700 (PDT)
+Message-ID: <daed3270-847e-f4c6-17ad-4d1962ae7d49@linaro.org>
+Date:   Wed, 13 Sep 2023 10:26:09 +0200
 MIME-Version: 1.0
-References: <20230825091234.32713-1-quic_devipriy@quicinc.com>
- <20230825091234.32713-7-quic_devipriy@quicinc.com> <CAA8EJpo75zWLXuF-HC-Xz+6mvu_S1ET-9gzW=mOq+FjKspDwhw@mail.gmail.com>
-In-Reply-To: <CAA8EJpo75zWLXuF-HC-Xz+6mvu_S1ET-9gzW=mOq+FjKspDwhw@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 13 Sep 2023 10:23:50 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXx_b-uubonRH5=Tcxo+ddxg2wXvRNQNjhMrfvSFh0Xcw@mail.gmail.com>
-Message-ID: <CAMuHMdXx_b-uubonRH5=Tcxo+ddxg2wXvRNQNjhMrfvSFh0Xcw@mail.gmail.com>
-Subject: Re: [PATCH V2 6/7] arm64: dts: qcom: ipq9574: Add support for nsscc node
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.0
+Subject: Re: [PATCH V2 6/7] arm64: dts: qcom: ipq9574: Add support for nsscc
+ node
+Content-Language: en-US
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Cc:     Devi Priya <quic_devipriy@quicinc.com>, andersson@kernel.org,
         agross@kernel.org, konrad.dybcio@linaro.org,
         mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
@@ -64,80 +70,34 @@ Cc:     Devi Priya <quic_devipriy@quicinc.com>, andersson@kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
         quic_saahtoma@quicinc.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+References: <20230825091234.32713-1-quic_devipriy@quicinc.com>
+ <20230825091234.32713-7-quic_devipriy@quicinc.com>
+ <CAA8EJpo75zWLXuF-HC-Xz+6mvu_S1ET-9gzW=mOq+FjKspDwhw@mail.gmail.com>
+ <CAMuHMdXx_b-uubonRH5=Tcxo+ddxg2wXvRNQNjhMrfvSFh0Xcw@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <CAMuHMdXx_b-uubonRH5=Tcxo+ddxg2wXvRNQNjhMrfvSFh0Xcw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Dmitry,
+On 13/09/2023 10:23, Geert Uytterhoeven wrote:
+>>
+>>> +                       clock-names = "nssnoc_nsscc", "nssnoc_snoc", "nssnoc_snoc_1",
+>>> +                                     "bias_pll_cc_clk", "bias_pll_nss_noc_clk",
+>>> +                                     "bias_pll_ubi_nc_clk", "gpll0_out_aux", "uniphy0_nss_rx_clk",
+>>> +                                     "uniphy0_nss_tx_clk", "uniphy1_nss_rx_clk",
+>>> +                                     "uniphy1_nss_tx_clk", "uniphy2_nss_rx_clk",
+>>> +                                     "uniphy2_nss_tx_clk", "xo_board_clk";
+>>
+>> You are using clock indices. Please drop clock-names.
+> 
+> What do you mean by "using clock indices"?
+> Note that the "clock-names" property is required according to the DT bindings.
 
-On Fri, Aug 25, 2023 at 1:28 PM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
-> On Fri, 25 Aug 2023 at 12:15, Devi Priya <quic_devipriy@quicinc.com> wrote:
-> > Add a node for the nss clock controller found on ipq9574 based devices.
-> >
-> > Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
-> > ---
-> >  Changes in V2:
-> >         - Dropped the fixed clock node gcc_gpll0_out_aux and added
-> >           support for the same in gcc driver
-> >         - Updated the node name to clock-controller@39b00000
-> >         - Added clock-names to retrieve the nssnoc clocks and add them
-> >           to the list of pm clocks in nss driver
-> >
-> >  arch/arm64/boot/dts/qcom/ipq9574.dtsi | 48 +++++++++++++++++++++++++++
-> >  1 file changed, 48 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-> > index 51aba071c1eb..903311547e96 100644
-> > --- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-> > @@ -722,6 +742,34 @@ frame@b128000 {
-> >                                 status = "disabled";
-> >                         };
-> >                 };
-> > +
-> > +               nsscc: clock-controller@39b00000 {
-> > +                       compatible = "qcom,ipq9574-nsscc";
-> > +                       reg = <0x39b00000 0x80000>;
-> > +                       clocks = <&gcc GCC_NSSNOC_NSSCC_CLK>,
-> > +                                <&gcc GCC_NSSNOC_SNOC_CLK>,
-> > +                                <&gcc GCC_NSSNOC_SNOC_1_CLK>,
-> > +                                <&bias_pll_cc_clk>,
-> > +                                <&bias_pll_nss_noc_clk>,
-> > +                                <&bias_pll_ubi_nc_clk>,
-> > +                                <&gcc GPLL0_OUT_AUX>,
-> > +                                <0>,
-> > +                                <0>,
-> > +                                <0>,
-> > +                                <0>,
-> > +                                <0>,
-> > +                                <0>,
-> > +                                <&xo_board_clk>;
->
-> If you move xo_board closer to the start of the list, it will be
-> slightly easier to review.
->
-> > +                       clock-names = "nssnoc_nsscc", "nssnoc_snoc", "nssnoc_snoc_1",
-> > +                                     "bias_pll_cc_clk", "bias_pll_nss_noc_clk",
-> > +                                     "bias_pll_ubi_nc_clk", "gpll0_out_aux", "uniphy0_nss_rx_clk",
-> > +                                     "uniphy0_nss_tx_clk", "uniphy1_nss_rx_clk",
-> > +                                     "uniphy1_nss_tx_clk", "uniphy2_nss_rx_clk",
-> > +                                     "uniphy2_nss_tx_clk", "xo_board_clk";
->
-> You are using clock indices. Please drop clock-names.
+Indeed, thanks for pointing this out. Probably bindings should be changed.
 
-What do you mean by "using clock indices"?
-Note that the "clock-names" property is required according to the DT bindings.
+Best regards,
+Krzysztof
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
