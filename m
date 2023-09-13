@@ -2,29 +2,29 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 861D6EE0214
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Sep 2023 20:50:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 151D9EE0217
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Sep 2023 20:50:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232557AbjIMUui (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Sep 2023 16:50:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47826 "EHLO
+        id S232659AbjIMUuq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Sep 2023 16:50:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232655AbjIMUui (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Sep 2023 16:50:38 -0400
-Received: from out-213.mta0.migadu.com (out-213.mta0.migadu.com [IPv6:2001:41d0:1004:224b::d5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D83801BCB
-        for <linux-clk@vger.kernel.org>; Wed, 13 Sep 2023 13:50:33 -0700 (PDT)
+        with ESMTP id S232633AbjIMUun (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Sep 2023 16:50:43 -0400
+Received: from out-221.mta0.migadu.com (out-221.mta0.migadu.com [91.218.175.221])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9DA51BCC
+        for <linux-clk@vger.kernel.org>; Wed, 13 Sep 2023 13:50:38 -0700 (PDT)
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1694638232;
+        t=1694638237;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=G90Q6qLc0f1xMf2M7//tk2QueiicL78TEVydjKJMhek=;
-        b=DcERaXJglJ7D/njzcbua0aJomQTkose8tzwTR7zKml2m4FyYu4Gb5Co87MM/sfubJDNOU9
-        SV6IJHb6Jp/RHeRN9i5R502iO9HIffqcjUSClKd3VEnyBGncykYC96/QAX/3zaqQyi4Vb3
-        a5x+5F4et+Jsy1fHNwGyvi4xGRzJGCc=
+        bh=vZass3Dyedj4ggitp08zjYqaNhpM0XXdE/iC0Le1m5g=;
+        b=RJYILRiPernX0SgPJS3DjhC+yzHFojqyk7DUGdhyfjB4JDM/tT9wgeisH+cgci50yb45Xs
+        8pXrn2N8fZg3/s8uR3Ih6FDeMNGgDvQVL7odaZDjeIe1V270Gj13C2CLLiShd0v8PpSsRb
+        KBXxYz/K7FrqB5foBGb6bygP5mrxcqk=
 From:   Vadim Fedorenko <vadim.fedorenko@linux.dev>
 To:     Jakub Kicinski <kuba@kernel.org>, Jiri Pirko <jiri@resnulli.us>,
         Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
@@ -37,9 +37,9 @@ Cc:     Vadim Fedorenko <vadim.fedorenko@linux.dev>,
         mschmidt@redhat.com, netdev@vger.kernel.org,
         linux-clk@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
         intel-wired-lan@lists.osuosl.org, Jiri Pirko <jiri@nvidia.com>
-Subject: [PATCH net-next v8 4/9] dpll: netlink: Add DPLL framework base functions
-Date:   Wed, 13 Sep 2023 21:49:38 +0100
-Message-Id: <20230913204943.1051233-5-vadim.fedorenko@linux.dev>
+Subject: [PATCH net-next v8 8/9] ptp_ocp: implement DPLL ops
+Date:   Wed, 13 Sep 2023 21:49:42 +0100
+Message-Id: <20230913204943.1051233-9-vadim.fedorenko@linux.dev>
 In-Reply-To: <20230913204943.1051233-1-vadim.fedorenko@linux.dev>
 References: <20230913204943.1051233-1-vadim.fedorenko@linux.dev>
 MIME-Version: 1.0
@@ -49,1406 +49,652 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-DPLL framework is used to represent and configure DPLL devices
-in systems. Each device that has DPLL and can configure inputs
-and outputs can use this framework.
+Implement basic DPLL operations in ptp_ocp driver as the
+simplest example of using new subsystem.
 
-Implement dpll netlink framework functions for enablement of dpll
-subsystem netlink family.
-
-Co-developed-by: Milena Olech <milena.olech@intel.com>
-Signed-off-by: Milena Olech <milena.olech@intel.com>
-Co-developed-by: Michal Michalik <michal.michalik@intel.com>
-Signed-off-by: Michal Michalik <michal.michalik@intel.com>
 Signed-off-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Co-developed-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
 Signed-off-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
 Signed-off-by: Jiri Pirko <jiri@nvidia.com>
 ---
-v6->v7:
-- when multiple dplls are present in the OS and users construct invalid
-  pin set netlink request with the target dpll not belonging to the pin,
-  but with the same id as device_id that was provided by the kernel
-  module the system would crash, prevent by use dpll->id as index for
-  storing and loading the dpll from pin's dpll_refs xarray
 v5->v6:
-- rename attribute name DPLL_A_PIN_DPLL_CAPS -> DPLL_A_PIN_CAPABILITIES
-- rename enum prefix DPLL_PIN_CAPS_* -> DPLL_PIN_CAPABILITIES_*
-v4->v5:
-- split pin into separated attribute space
-- use u32 instead of u8 for all attributes as in dpll spec
-- use DPLL_A_PAD for 64bit attrs of device
-- use DPLL_A_PIN_PAD for 64bit pin related attrs
-- fix don't use WARN_ON when target device exist but not connected to
-  the pin being configured, extack and return error instead
-v3->v4:
-- rebase on top of net-next
-v2->v3:
-- extack error messages are clarified
-v1->v2:
-- add proper policy while parsing nested attributes
-- remove DETACHED mode
-- move init/exit functions to core part
+- rename DPLL_PIN_CAPS_* -> DPLL_PIN_CAPABILITIES_*
+RFC:
+v9->v10:
+- implement monitoring thread and netlink notification
 
- drivers/dpll/dpll_core.c    |   11 +-
- drivers/dpll/dpll_netlink.c | 1241 +++++++++++++++++++++++++++++++++++
- drivers/dpll/dpll_netlink.h |   13 +
- include/linux/dpll.h        |    4 +
- 4 files changed, 1268 insertions(+), 1 deletion(-)
- create mode 100644 drivers/dpll/dpll_netlink.c
- create mode 100644 drivers/dpll/dpll_netlink.h
+ drivers/ptp/Kconfig   |   1 +
+ drivers/ptp/ptp_ocp.c | 369 +++++++++++++++++++++++++++++++++++-------
+ 2 files changed, 310 insertions(+), 60 deletions(-)
 
-diff --git a/drivers/dpll/dpll_core.c b/drivers/dpll/dpll_core.c
-index 6449ba6a383b..3568149b9562 100644
---- a/drivers/dpll/dpll_core.c
-+++ b/drivers/dpll/dpll_core.c
-@@ -14,6 +14,7 @@
- #include <linux/string.h>
+diff --git a/drivers/ptp/Kconfig b/drivers/ptp/Kconfig
+index ed9d97a032f1..5dd5f188e14f 100644
+--- a/drivers/ptp/Kconfig
++++ b/drivers/ptp/Kconfig
+@@ -188,6 +188,7 @@ config PTP_1588_CLOCK_OCP
+ 	depends on COMMON_CLK
+ 	select NET_DEVLINK
+ 	select CRC16
++	select DPLL
+ 	help
+ 	  This driver adds support for an OpenCompute time card.
  
- #include "dpll_core.h"
-+#include "dpll_netlink.h"
+diff --git a/drivers/ptp/ptp_ocp.c b/drivers/ptp/ptp_ocp.c
+index 20a974ced8d6..88d60a9b5731 100644
+--- a/drivers/ptp/ptp_ocp.c
++++ b/drivers/ptp/ptp_ocp.c
+@@ -23,6 +23,7 @@
+ #include <linux/mtd/mtd.h>
+ #include <linux/nvmem-consumer.h>
+ #include <linux/crc16.h>
++#include <linux/dpll.h>
  
- /* Mutex lock to protect DPLL subsystem devices and pins */
- DEFINE_MUTEX(dpll_lock);
-@@ -381,6 +382,7 @@ int dpll_device_register(struct dpll_device *dpll, enum dpll_type type,
- 	}
+ #define PCI_VENDOR_ID_FACEBOOK			0x1d9b
+ #define PCI_DEVICE_ID_FACEBOOK_TIMECARD		0x0400
+@@ -260,12 +261,21 @@ enum ptp_ocp_sma_mode {
+ 	SMA_MODE_OUT,
+ };
  
- 	xa_set_mark(&dpll_device_xa, dpll->id, DPLL_REGISTERED);
-+	dpll_device_create_ntf(dpll);
- 	mutex_unlock(&dpll_lock);
- 
- 	return 0;
-@@ -404,6 +406,7 @@ void dpll_device_unregister(struct dpll_device *dpll,
- 
- 	mutex_lock(&dpll_lock);
- 	ASSERT_DPLL_REGISTERED(dpll);
-+	dpll_device_delete_ntf(dpll);
- 	reg = dpll_device_registration_find(dpll, ops, priv);
- 	if (WARN_ON(!reg)) {
- 		mutex_unlock(&dpll_lock);
-@@ -528,6 +531,7 @@ __dpll_pin_register(struct dpll_device *dpll, struct dpll_pin *pin,
- 	if (ret)
- 		goto ref_pin_del;
- 	xa_set_mark(&dpll_pin_xa, pin->id, DPLL_REGISTERED);
-+	dpll_pin_create_ntf(pin);
- 
- 	return ret;
- 
-@@ -602,6 +606,7 @@ void dpll_pin_unregister(struct dpll_device *dpll, struct dpll_pin *pin,
- 		return;
- 
- 	mutex_lock(&dpll_lock);
-+	dpll_pin_delete_ntf(pin);
- 	__dpll_pin_unregister(dpll, pin, ops, priv);
- 	mutex_unlock(&dpll_lock);
- }
-@@ -650,6 +655,7 @@ int dpll_pin_on_pin_register(struct dpll_pin *parent, struct dpll_pin *pin,
- 			stop = i;
- 			goto dpll_unregister;
- 		}
-+		dpll_pin_create_ntf(pin);
- 	}
- 	mutex_unlock(&dpll_lock);
- 
-@@ -657,8 +663,10 @@ int dpll_pin_on_pin_register(struct dpll_pin *parent, struct dpll_pin *pin,
- 
- dpll_unregister:
- 	xa_for_each(&parent->dpll_refs, i, ref)
--		if (i < stop)
-+		if (i < stop) {
- 			__dpll_pin_unregister(ref->dpll, pin, ops, priv);
-+			dpll_pin_delete_ntf(pin);
-+		}
- 	refcount_dec(&pin->refcount);
- 	dpll_xa_ref_pin_del(&pin->parent_refs, parent, ops, priv);
- unlock:
-@@ -684,6 +692,7 @@ void dpll_pin_on_pin_unregister(struct dpll_pin *parent, struct dpll_pin *pin,
- 	unsigned long i;
- 
- 	mutex_lock(&dpll_lock);
-+	dpll_pin_delete_ntf(pin);
- 	dpll_xa_ref_pin_del(&pin->parent_refs, parent, ops, priv);
- 	refcount_dec(&pin->refcount);
- 	xa_for_each(&pin->dpll_refs, i, ref)
-diff --git a/drivers/dpll/dpll_netlink.c b/drivers/dpll/dpll_netlink.c
-new file mode 100644
-index 000000000000..9464a6865977
---- /dev/null
-+++ b/drivers/dpll/dpll_netlink.c
-@@ -0,0 +1,1241 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Generic netlink for DPLL management framework
-+ *
-+ *  Copyright (c) 2023 Meta Platforms, Inc. and affiliates
-+ *  Copyright (c) 2023 Intel and affiliates
-+ *
-+ */
-+#include <linux/module.h>
-+#include <linux/kernel.h>
-+#include <net/genetlink.h>
-+#include "dpll_core.h"
-+#include "dpll_netlink.h"
-+#include "dpll_nl.h"
-+#include <uapi/linux/dpll.h>
-+
-+#define ASSERT_NOT_NULL(ptr)	(WARN_ON(!ptr))
-+
-+#define xa_for_each_marked_start(xa, index, entry, filter, start) \
-+	for (index = start, entry = xa_find(xa, &index, ULONG_MAX, filter); \
-+	     entry; entry = xa_find_after(xa, &index, ULONG_MAX, filter))
-+
-+struct dpll_dump_ctx {
-+	unsigned long idx;
++static struct dpll_pin_frequency ptp_ocp_sma_freq[] = {
++	DPLL_PIN_FREQUENCY_1PPS,
++	DPLL_PIN_FREQUENCY_10MHZ,
++	DPLL_PIN_FREQUENCY_IRIG_B,
++	DPLL_PIN_FREQUENCY_DCF77,
 +};
 +
-+static struct dpll_dump_ctx *dpll_dump_context(struct netlink_callback *cb)
-+{
-+	return (struct dpll_dump_ctx *)cb->ctx;
-+}
-+
-+static int
-+dpll_msg_add_dev_handle(struct sk_buff *msg, struct dpll_device *dpll)
-+{
-+	if (nla_put_u32(msg, DPLL_A_ID, dpll->id))
-+		return -EMSGSIZE;
-+
-+	return 0;
-+}
-+
-+static int
-+dpll_msg_add_dev_parent_handle(struct sk_buff *msg, u32 id)
-+{
-+	if (nla_put_u32(msg, DPLL_A_PIN_PARENT_ID, id))
-+		return -EMSGSIZE;
-+
-+	return 0;
-+}
-+
-+/**
-+ * dpll_msg_add_pin_handle - attach pin handle attribute to a given message
-+ * @msg: pointer to sk_buff message to attach a pin handle
-+ * @pin: pin pointer
-+ *
-+ * Return:
-+ * * 0 - success
-+ * * -EMSGSIZE - no space in message to attach pin handle
-+ */
-+static int
-+dpll_msg_add_pin_handle(struct sk_buff *msg, struct dpll_pin *pin)
-+{
-+	if (!pin)
-+		return 0;
-+	if (nla_put_u32(msg, DPLL_A_PIN_ID, pin->id))
-+		return -EMSGSIZE;
-+	return 0;
-+}
-+
-+static int
-+dpll_msg_add_mode(struct sk_buff *msg, struct dpll_device *dpll,
-+		  struct netlink_ext_ack *extack)
-+{
-+	const struct dpll_device_ops *ops = dpll_device_ops(dpll);
-+	enum dpll_mode mode;
-+	int ret;
-+
-+	ret = ops->mode_get(dpll, dpll_priv(dpll), &mode, extack);
-+	if (ret)
-+		return ret;
-+	if (nla_put_u32(msg, DPLL_A_MODE, mode))
-+		return -EMSGSIZE;
-+
-+	return 0;
-+}
-+
-+static int
-+dpll_msg_add_mode_supported(struct sk_buff *msg, struct dpll_device *dpll,
-+			    struct netlink_ext_ack *extack)
-+{
-+	const struct dpll_device_ops *ops = dpll_device_ops(dpll);
-+	enum dpll_mode mode;
-+
-+	if (!ops->mode_supported)
-+		return 0;
-+	for (mode = DPLL_MODE_MANUAL; mode <= DPLL_MODE_MAX; mode++)
-+		if (ops->mode_supported(dpll, dpll_priv(dpll), mode, extack))
-+			if (nla_put_u32(msg, DPLL_A_MODE_SUPPORTED, mode))
-+				return -EMSGSIZE;
-+
-+	return 0;
-+}
-+
-+static int
-+dpll_msg_add_lock_status(struct sk_buff *msg, struct dpll_device *dpll,
-+			 struct netlink_ext_ack *extack)
-+{
-+	const struct dpll_device_ops *ops = dpll_device_ops(dpll);
-+	enum dpll_lock_status status;
-+	int ret;
-+
-+	ret = ops->lock_status_get(dpll, dpll_priv(dpll), &status, extack);
-+	if (ret)
-+		return ret;
-+	if (nla_put_u32(msg, DPLL_A_LOCK_STATUS, status))
-+		return -EMSGSIZE;
-+
-+	return 0;
-+}
-+
-+static int
-+dpll_msg_add_temp(struct sk_buff *msg, struct dpll_device *dpll,
-+		  struct netlink_ext_ack *extack)
-+{
-+	const struct dpll_device_ops *ops = dpll_device_ops(dpll);
-+	s32 temp;
-+	int ret;
-+
-+	if (!ops->temp_get)
-+		return 0;
-+	ret = ops->temp_get(dpll, dpll_priv(dpll), &temp, extack);
-+	if (ret)
-+		return ret;
-+	if (nla_put_s32(msg, DPLL_A_TEMP, temp))
-+		return -EMSGSIZE;
-+
-+	return 0;
-+}
-+
-+static int
-+dpll_msg_add_pin_prio(struct sk_buff *msg, struct dpll_pin *pin,
-+		      struct dpll_pin_ref *ref,
-+		      struct netlink_ext_ack *extack)
-+{
-+	const struct dpll_pin_ops *ops = dpll_pin_ops(ref);
-+	struct dpll_device *dpll = ref->dpll;
-+	u32 prio;
-+	int ret;
-+
-+	if (!ops->prio_get)
-+		return 0;
-+	ret = ops->prio_get(pin, dpll_pin_on_dpll_priv(dpll, pin), dpll,
-+			    dpll_priv(dpll), &prio, extack);
-+	if (ret)
-+		return ret;
-+	if (nla_put_u32(msg, DPLL_A_PIN_PRIO, prio))
-+		return -EMSGSIZE;
-+
-+	return 0;
-+}
-+
-+static int
-+dpll_msg_add_pin_on_dpll_state(struct sk_buff *msg, struct dpll_pin *pin,
-+			       struct dpll_pin_ref *ref,
-+			       struct netlink_ext_ack *extack)
-+{
-+	const struct dpll_pin_ops *ops = dpll_pin_ops(ref);
-+	struct dpll_device *dpll = ref->dpll;
-+	enum dpll_pin_state state;
-+	int ret;
-+
-+	if (!ops->state_on_dpll_get)
-+		return 0;
-+	ret = ops->state_on_dpll_get(pin, dpll_pin_on_dpll_priv(dpll, pin),
-+				     dpll, dpll_priv(dpll), &state, extack);
-+	if (ret)
-+		return ret;
-+	if (nla_put_u32(msg, DPLL_A_PIN_STATE, state))
-+		return -EMSGSIZE;
-+
-+	return 0;
-+}
-+
-+static int
-+dpll_msg_add_pin_direction(struct sk_buff *msg, struct dpll_pin *pin,
-+			   struct dpll_pin_ref *ref,
-+			   struct netlink_ext_ack *extack)
-+{
-+	const struct dpll_pin_ops *ops = dpll_pin_ops(ref);
-+	struct dpll_device *dpll = ref->dpll;
-+	enum dpll_pin_direction direction;
-+	int ret;
-+
-+	ret = ops->direction_get(pin, dpll_pin_on_dpll_priv(dpll, pin), dpll,
-+				 dpll_priv(dpll), &direction, extack);
-+	if (ret)
-+		return ret;
-+	if (nla_put_u32(msg, DPLL_A_PIN_DIRECTION, direction))
-+		return -EMSGSIZE;
-+
-+	return 0;
-+}
-+
-+static int
-+dpll_msg_add_pin_freq(struct sk_buff *msg, struct dpll_pin *pin,
-+		      struct dpll_pin_ref *ref, struct netlink_ext_ack *extack)
-+{
-+	const struct dpll_pin_ops *ops = dpll_pin_ops(ref);
-+	struct dpll_device *dpll = ref->dpll;
-+	struct nlattr *nest;
-+	int fs, ret;
-+	u64 freq;
-+
-+	if (!ops->frequency_get)
-+		return 0;
-+	ret = ops->frequency_get(pin, dpll_pin_on_dpll_priv(dpll, pin), dpll,
-+				 dpll_priv(dpll), &freq, extack);
-+	if (ret)
-+		return ret;
-+	if (nla_put_64bit(msg, DPLL_A_PIN_FREQUENCY, sizeof(freq), &freq,
-+			  DPLL_A_PIN_PAD))
-+		return -EMSGSIZE;
-+	for (fs = 0; fs < pin->prop->freq_supported_num; fs++) {
-+		nest = nla_nest_start(msg, DPLL_A_PIN_FREQUENCY_SUPPORTED);
-+		if (!nest)
-+			return -EMSGSIZE;
-+		freq = pin->prop->freq_supported[fs].min;
-+		if (nla_put_64bit(msg, DPLL_A_PIN_FREQUENCY_MIN, sizeof(freq),
-+				  &freq, DPLL_A_PIN_PAD)) {
-+			nla_nest_cancel(msg, nest);
-+			return -EMSGSIZE;
-+		}
-+		freq = pin->prop->freq_supported[fs].max;
-+		if (nla_put_64bit(msg, DPLL_A_PIN_FREQUENCY_MAX, sizeof(freq),
-+				  &freq, DPLL_A_PIN_PAD)) {
-+			nla_nest_cancel(msg, nest);
-+			return -EMSGSIZE;
-+		}
-+		nla_nest_end(msg, nest);
-+	}
-+
-+	return 0;
-+}
-+
-+static bool dpll_pin_is_freq_supported(struct dpll_pin *pin, u32 freq)
-+{
-+	int fs;
-+
-+	for (fs = 0; fs < pin->prop->freq_supported_num; fs++)
-+		if (freq >= pin->prop->freq_supported[fs].min &&
-+		    freq <= pin->prop->freq_supported[fs].max)
-+			return true;
-+	return false;
-+}
-+
-+static int
-+dpll_msg_add_pin_parents(struct sk_buff *msg, struct dpll_pin *pin,
-+			 struct dpll_pin_ref *dpll_ref,
-+			 struct netlink_ext_ack *extack)
-+{
-+	enum dpll_pin_state state;
-+	struct dpll_pin_ref *ref;
-+	struct dpll_pin *ppin;
-+	struct nlattr *nest;
-+	unsigned long index;
-+	int ret;
-+
-+	xa_for_each(&pin->parent_refs, index, ref) {
-+		const struct dpll_pin_ops *ops = dpll_pin_ops(ref);
-+		void *parent_priv;
-+
-+		ppin = ref->pin;
-+		parent_priv = dpll_pin_on_dpll_priv(dpll_ref->dpll, ppin);
-+		ret = ops->state_on_pin_get(pin,
-+					    dpll_pin_on_pin_priv(ppin, pin),
-+					    ppin, parent_priv, &state, extack);
-+		if (ret)
-+			return ret;
-+		nest = nla_nest_start(msg, DPLL_A_PIN_PARENT_PIN);
-+		if (!nest)
-+			return -EMSGSIZE;
-+		ret = dpll_msg_add_dev_parent_handle(msg, ppin->id);
-+		if (ret)
-+			goto nest_cancel;
-+		if (nla_put_u32(msg, DPLL_A_PIN_STATE, state)) {
-+			ret = -EMSGSIZE;
-+			goto nest_cancel;
-+		}
-+		nla_nest_end(msg, nest);
-+	}
-+
-+	return 0;
-+
-+nest_cancel:
-+	nla_nest_cancel(msg, nest);
-+	return ret;
-+}
-+
-+static int
-+dpll_msg_add_pin_dplls(struct sk_buff *msg, struct dpll_pin *pin,
-+		       struct netlink_ext_ack *extack)
-+{
-+	struct dpll_pin_ref *ref;
-+	struct nlattr *attr;
-+	unsigned long index;
-+	int ret;
-+
-+	xa_for_each(&pin->dpll_refs, index, ref) {
-+		attr = nla_nest_start(msg, DPLL_A_PIN_PARENT_DEVICE);
-+		if (!attr)
-+			return -EMSGSIZE;
-+		ret = dpll_msg_add_dev_parent_handle(msg, ref->dpll->id);
-+		if (ret)
-+			goto nest_cancel;
-+		ret = dpll_msg_add_pin_on_dpll_state(msg, pin, ref, extack);
-+		if (ret)
-+			goto nest_cancel;
-+		ret = dpll_msg_add_pin_prio(msg, pin, ref, extack);
-+		if (ret)
-+			goto nest_cancel;
-+		ret = dpll_msg_add_pin_direction(msg, pin, ref, extack);
-+		if (ret)
-+			goto nest_cancel;
-+		nla_nest_end(msg, attr);
-+	}
-+
-+	return 0;
-+
-+nest_cancel:
-+	nla_nest_end(msg, attr);
-+	return ret;
-+}
-+
-+static int
-+dpll_cmd_pin_get_one(struct sk_buff *msg, struct dpll_pin *pin,
-+		     struct netlink_ext_ack *extack)
-+{
-+	const struct dpll_pin_properties *prop = pin->prop;
-+	struct dpll_pin_ref *ref;
-+	int ret;
-+
-+	ref = dpll_xa_ref_dpll_first(&pin->dpll_refs);
-+	ASSERT_NOT_NULL(ref);
-+
-+	ret = dpll_msg_add_pin_handle(msg, pin);
-+	if (ret)
-+		return ret;
-+	if (nla_put_string(msg, DPLL_A_PIN_MODULE_NAME,
-+			   module_name(pin->module)))
-+		return -EMSGSIZE;
-+	if (nla_put_64bit(msg, DPLL_A_PIN_CLOCK_ID, sizeof(pin->clock_id),
-+			  &pin->clock_id, DPLL_A_PIN_PAD))
-+		return -EMSGSIZE;
-+	if (prop->board_label &&
-+	    nla_put_string(msg, DPLL_A_PIN_BOARD_LABEL, prop->board_label))
-+		return -EMSGSIZE;
-+	if (prop->panel_label &&
-+	    nla_put_string(msg, DPLL_A_PIN_PANEL_LABEL, prop->panel_label))
-+		return -EMSGSIZE;
-+	if (prop->package_label &&
-+	    nla_put_string(msg, DPLL_A_PIN_PACKAGE_LABEL,
-+			   prop->package_label))
-+		return -EMSGSIZE;
-+	if (nla_put_u32(msg, DPLL_A_PIN_TYPE, prop->type))
-+		return -EMSGSIZE;
-+	if (nla_put_u32(msg, DPLL_A_PIN_CAPABILITIES, prop->capabilities))
-+		return -EMSGSIZE;
-+	ret = dpll_msg_add_pin_freq(msg, pin, ref, extack);
-+	if (ret)
-+		return ret;
-+	if (xa_empty(&pin->parent_refs))
-+		ret = dpll_msg_add_pin_dplls(msg, pin, extack);
-+	else
-+		ret = dpll_msg_add_pin_parents(msg, pin, ref, extack);
-+
-+	return ret;
-+}
-+
-+static int
-+dpll_device_get_one(struct dpll_device *dpll, struct sk_buff *msg,
-+		    struct netlink_ext_ack *extack)
-+{
-+	int ret;
-+
-+	ret = dpll_msg_add_dev_handle(msg, dpll);
-+	if (ret)
-+		return ret;
-+	if (nla_put_string(msg, DPLL_A_MODULE_NAME, module_name(dpll->module)))
-+		return -EMSGSIZE;
-+	if (nla_put_64bit(msg, DPLL_A_CLOCK_ID, sizeof(dpll->clock_id),
-+			  &dpll->clock_id, DPLL_A_PAD))
-+		return -EMSGSIZE;
-+	ret = dpll_msg_add_temp(msg, dpll, extack);
-+	if (ret)
-+		return ret;
-+	ret = dpll_msg_add_lock_status(msg, dpll, extack);
-+	if (ret)
-+		return ret;
-+	ret = dpll_msg_add_mode(msg, dpll, extack);
-+	if (ret)
-+		return ret;
-+	ret = dpll_msg_add_mode_supported(msg, dpll, extack);
-+	if (ret)
-+		return ret;
-+	if (nla_put_u32(msg, DPLL_A_TYPE, dpll->type))
-+		return -EMSGSIZE;
-+
-+	return ret;
-+}
-+
-+static int
-+dpll_device_event_send(enum dpll_cmd event, struct dpll_device *dpll)
-+{
-+	struct sk_buff *msg;
-+	int ret = -ENOMEM;
-+	void *hdr;
-+
-+	if (WARN_ON(!xa_get_mark(&dpll_device_xa, dpll->id, DPLL_REGISTERED)))
-+		return -ENODEV;
-+	msg = genlmsg_new(NLMSG_GOODSIZE, GFP_KERNEL);
-+	if (!msg)
-+		return -ENOMEM;
-+	hdr = genlmsg_put(msg, 0, 0, &dpll_nl_family, 0, event);
-+	if (!hdr)
-+		goto err_free_msg;
-+	ret = dpll_device_get_one(dpll, msg, NULL);
-+	if (ret)
-+		goto err_cancel_msg;
-+	genlmsg_end(msg, hdr);
-+	genlmsg_multicast(&dpll_nl_family, msg, 0, 0, GFP_KERNEL);
-+
-+	return 0;
-+
-+err_cancel_msg:
-+	genlmsg_cancel(msg, hdr);
-+err_free_msg:
-+	nlmsg_free(msg);
-+
-+	return ret;
-+}
-+
-+int dpll_device_create_ntf(struct dpll_device *dpll)
-+{
-+	return dpll_device_event_send(DPLL_CMD_DEVICE_CREATE_NTF, dpll);
-+}
-+
-+int dpll_device_delete_ntf(struct dpll_device *dpll)
-+{
-+	return dpll_device_event_send(DPLL_CMD_DEVICE_DELETE_NTF, dpll);
-+}
-+
-+static int
-+__dpll_device_change_ntf(struct dpll_device *dpll)
-+{
-+	return dpll_device_event_send(DPLL_CMD_DEVICE_CHANGE_NTF, dpll);
-+}
-+
-+/**
-+ * dpll_device_change_ntf - notify that the dpll device has been changed
-+ * @dpll: registered dpll pointer
-+ *
-+ * Context: acquires and holds a dpll_lock.
-+ * Return: 0 if succeeds, error code otherwise.
-+ */
-+int dpll_device_change_ntf(struct dpll_device *dpll)
-+{
-+	int ret;
-+
-+	mutex_lock(&dpll_lock);
-+	ret = __dpll_device_change_ntf(dpll);
-+	mutex_unlock(&dpll_lock);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(dpll_device_change_ntf);
-+
-+static int
-+dpll_pin_event_send(enum dpll_cmd event, struct dpll_pin *pin)
-+{
-+	struct sk_buff *msg;
-+	int ret = -ENOMEM;
-+	void *hdr;
-+
-+	if (WARN_ON(!xa_get_mark(&dpll_pin_xa, pin->id, DPLL_REGISTERED)))
-+		return -ENODEV;
-+
-+	msg = genlmsg_new(NLMSG_GOODSIZE, GFP_KERNEL);
-+	if (!msg)
-+		return -ENOMEM;
-+
-+	hdr = genlmsg_put(msg, 0, 0, &dpll_nl_family, 0, event);
-+	if (!hdr)
-+		goto err_free_msg;
-+	ret = dpll_cmd_pin_get_one(msg, pin, NULL);
-+	if (ret)
-+		goto err_cancel_msg;
-+	genlmsg_end(msg, hdr);
-+	genlmsg_multicast(&dpll_nl_family, msg, 0, 0, GFP_KERNEL);
-+
-+	return 0;
-+
-+err_cancel_msg:
-+	genlmsg_cancel(msg, hdr);
-+err_free_msg:
-+	nlmsg_free(msg);
-+
-+	return ret;
-+}
-+
-+int dpll_pin_create_ntf(struct dpll_pin *pin)
-+{
-+	return dpll_pin_event_send(DPLL_CMD_PIN_CREATE_NTF, pin);
-+}
-+
-+int dpll_pin_delete_ntf(struct dpll_pin *pin)
-+{
-+	return dpll_pin_event_send(DPLL_CMD_PIN_DELETE_NTF, pin);
-+}
-+
-+static int __dpll_pin_change_ntf(struct dpll_pin *pin)
-+{
-+	return dpll_pin_event_send(DPLL_CMD_PIN_CHANGE_NTF, pin);
-+}
-+
-+/**
-+ * dpll_pin_change_ntf - notify that the pin has been changed
-+ * @pin: registered pin pointer
-+ *
-+ * Context: acquires and holds a dpll_lock.
-+ * Return: 0 if succeeds, error code otherwise.
-+ */
-+int dpll_pin_change_ntf(struct dpll_pin *pin)
-+{
-+	int ret;
-+
-+	mutex_lock(&dpll_lock);
-+	ret = __dpll_pin_change_ntf(pin);
-+	mutex_unlock(&dpll_lock);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(dpll_pin_change_ntf);
-+
-+static int
-+dpll_pin_freq_set(struct dpll_pin *pin, struct nlattr *a,
-+		  struct netlink_ext_ack *extack)
-+{
-+	u64 freq = nla_get_u64(a);
-+	struct dpll_pin_ref *ref;
-+	unsigned long i;
-+	int ret;
-+
-+	if (!dpll_pin_is_freq_supported(pin, freq)) {
-+		NL_SET_ERR_MSG_ATTR(extack, a, "frequency is not supported by the device");
-+		return -EINVAL;
-+	}
-+
-+	xa_for_each(&pin->dpll_refs, i, ref) {
-+		const struct dpll_pin_ops *ops = dpll_pin_ops(ref);
-+		struct dpll_device *dpll = ref->dpll;
-+
-+		if (!ops->frequency_set)
-+			return -EOPNOTSUPP;
-+		ret = ops->frequency_set(pin, dpll_pin_on_dpll_priv(dpll, pin),
-+					 dpll, dpll_priv(dpll), freq, extack);
-+		if (ret)
-+			return ret;
-+	}
-+	__dpll_pin_change_ntf(pin);
-+
-+	return 0;
-+}
-+
-+static int
-+dpll_pin_on_pin_state_set(struct dpll_pin *pin, u32 parent_idx,
-+			  enum dpll_pin_state state,
-+			  struct netlink_ext_ack *extack)
-+{
-+	struct dpll_pin_ref *parent_ref;
-+	const struct dpll_pin_ops *ops;
-+	struct dpll_pin_ref *dpll_ref;
-+	void *pin_priv, *parent_priv;
-+	struct dpll_pin *parent;
-+	unsigned long i;
-+	int ret;
-+
-+	if (!(DPLL_PIN_CAPABILITIES_STATE_CAN_CHANGE &
-+	      pin->prop->capabilities)) {
-+		NL_SET_ERR_MSG(extack, "state changing is not allowed");
-+		return -EOPNOTSUPP;
-+	}
-+	parent = xa_load(&dpll_pin_xa, parent_idx);
-+	if (!parent)
-+		return -EINVAL;
-+	parent_ref = xa_load(&pin->parent_refs, parent->pin_idx);
-+	if (!parent_ref)
-+		return -EINVAL;
-+	xa_for_each(&parent->dpll_refs, i, dpll_ref) {
-+		ops = dpll_pin_ops(parent_ref);
-+		if (!ops->state_on_pin_set)
-+			return -EOPNOTSUPP;
-+		pin_priv = dpll_pin_on_pin_priv(parent, pin);
-+		parent_priv = dpll_pin_on_dpll_priv(dpll_ref->dpll, parent);
-+		ret = ops->state_on_pin_set(pin, pin_priv, parent, parent_priv,
-+					    state, extack);
-+		if (ret)
-+			return ret;
-+	}
-+	__dpll_pin_change_ntf(pin);
-+
-+	return 0;
-+}
-+
-+static int
-+dpll_pin_state_set(struct dpll_device *dpll, struct dpll_pin *pin,
-+		   enum dpll_pin_state state,
-+		   struct netlink_ext_ack *extack)
-+{
-+	const struct dpll_pin_ops *ops;
-+	struct dpll_pin_ref *ref;
-+	int ret;
-+
-+	if (!(DPLL_PIN_CAPABILITIES_STATE_CAN_CHANGE &
-+	      pin->prop->capabilities)) {
-+		NL_SET_ERR_MSG(extack, "state changing is not allowed");
-+		return -EOPNOTSUPP;
-+	}
-+	ref = xa_load(&pin->dpll_refs, dpll->id);
-+	ASSERT_NOT_NULL(ref);
-+	ops = dpll_pin_ops(ref);
-+	if (!ops->state_on_dpll_set)
-+		return -EOPNOTSUPP;
-+	ret = ops->state_on_dpll_set(pin, dpll_pin_on_dpll_priv(dpll, pin),
-+				     dpll, dpll_priv(dpll), state, extack);
-+	if (ret)
-+		return ret;
-+	__dpll_pin_change_ntf(pin);
-+
-+	return 0;
-+}
-+
-+static int
-+dpll_pin_prio_set(struct dpll_device *dpll, struct dpll_pin *pin,
-+		  u32 prio, struct netlink_ext_ack *extack)
-+{
-+	const struct dpll_pin_ops *ops;
-+	struct dpll_pin_ref *ref;
-+	int ret;
-+
-+	if (!(DPLL_PIN_CAPABILITIES_PRIORITY_CAN_CHANGE &
-+	      pin->prop->capabilities)) {
-+		NL_SET_ERR_MSG(extack, "prio changing is not allowed");
-+		return -EOPNOTSUPP;
-+	}
-+	ref = xa_load(&pin->dpll_refs, dpll->id);
-+	ASSERT_NOT_NULL(ref);
-+	ops = dpll_pin_ops(ref);
-+	if (!ops->prio_set)
-+		return -EOPNOTSUPP;
-+	ret = ops->prio_set(pin, dpll_pin_on_dpll_priv(dpll, pin), dpll,
-+			    dpll_priv(dpll), prio, extack);
-+	if (ret)
-+		return ret;
-+	__dpll_pin_change_ntf(pin);
-+
-+	return 0;
-+}
-+
-+static int
-+dpll_pin_direction_set(struct dpll_pin *pin, struct dpll_device *dpll,
-+		       enum dpll_pin_direction direction,
-+		       struct netlink_ext_ack *extack)
-+{
-+	const struct dpll_pin_ops *ops;
-+	struct dpll_pin_ref *ref;
-+	int ret;
-+
-+	if (!(DPLL_PIN_CAPABILITIES_DIRECTION_CAN_CHANGE &
-+	      pin->prop->capabilities)) {
-+		NL_SET_ERR_MSG(extack, "direction changing is not allowed");
-+		return -EOPNOTSUPP;
-+	}
-+	ref = xa_load(&pin->dpll_refs, dpll->id);
-+	ASSERT_NOT_NULL(ref);
-+	ops = dpll_pin_ops(ref);
-+	if (!ops->direction_set)
-+		return -EOPNOTSUPP;
-+	ret = ops->direction_set(pin, dpll_pin_on_dpll_priv(dpll, pin),
-+				 dpll, dpll_priv(dpll), direction, extack);
-+	if (ret)
-+		return ret;
-+	__dpll_pin_change_ntf(pin);
-+
-+	return 0;
-+}
-+
-+static int
-+dpll_pin_parent_device_set(struct dpll_pin *pin, struct nlattr *parent_nest,
-+			   struct netlink_ext_ack *extack)
-+{
-+	struct nlattr *tb[DPLL_A_PIN_MAX + 1];
-+	enum dpll_pin_direction direction;
-+	enum dpll_pin_state state;
-+	struct dpll_pin_ref *ref;
-+	struct dpll_device *dpll;
-+	u32 pdpll_idx, prio;
-+	int ret;
-+
-+	nla_parse_nested(tb, DPLL_A_PIN_MAX, parent_nest,
-+			 dpll_pin_parent_device_nl_policy, extack);
-+	if (!tb[DPLL_A_PIN_PARENT_ID]) {
-+		NL_SET_ERR_MSG(extack, "device parent id expected");
-+		return -EINVAL;
-+	}
-+	pdpll_idx = nla_get_u32(tb[DPLL_A_PIN_PARENT_ID]);
-+	dpll = xa_load(&dpll_device_xa, pdpll_idx);
-+	if (!dpll) {
-+		NL_SET_ERR_MSG(extack, "parent device not found");
-+		return -EINVAL;
-+	}
-+	ref = xa_load(&pin->dpll_refs, dpll->id);
-+	if (!ref) {
-+		NL_SET_ERR_MSG(extack, "pin not connected to given parent device");
-+		return -EINVAL;
-+	}
-+	if (tb[DPLL_A_PIN_STATE]) {
-+		state = nla_get_u32(tb[DPLL_A_PIN_STATE]);
-+		ret = dpll_pin_state_set(dpll, pin, state, extack);
-+		if (ret)
-+			return ret;
-+	}
-+	if (tb[DPLL_A_PIN_PRIO]) {
-+		prio = nla_get_u32(tb[DPLL_A_PIN_PRIO]);
-+		ret = dpll_pin_prio_set(dpll, pin, prio, extack);
-+		if (ret)
-+			return ret;
-+	}
-+	if (tb[DPLL_A_PIN_DIRECTION]) {
-+		direction = nla_get_u32(tb[DPLL_A_PIN_DIRECTION]);
-+		ret = dpll_pin_direction_set(pin, dpll, direction, extack);
-+		if (ret)
-+			return ret;
-+	}
-+	return 0;
-+}
-+
-+static int
-+dpll_pin_parent_pin_set(struct dpll_pin *pin, struct nlattr *parent_nest,
-+			struct netlink_ext_ack *extack)
-+{
-+	struct nlattr *tb[DPLL_A_PIN_MAX + 1];
-+	enum dpll_pin_state state;
-+	u32 ppin_idx;
-+	int ret;
-+
-+	nla_parse_nested(tb, DPLL_A_PIN_MAX, parent_nest,
-+			 dpll_pin_parent_pin_nl_policy, extack);
-+	if (!tb[DPLL_A_PIN_PARENT_ID]) {
-+		NL_SET_ERR_MSG(extack, "device parent id expected");
-+		return -EINVAL;
-+	}
-+	ppin_idx = nla_get_u32(tb[DPLL_A_PIN_PARENT_ID]);
-+	state = nla_get_u32(tb[DPLL_A_PIN_STATE]);
-+	ret = dpll_pin_on_pin_state_set(pin, ppin_idx, state, extack);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static int
-+dpll_pin_set_from_nlattr(struct dpll_pin *pin, struct genl_info *info)
-+{
-+	struct nlattr *a;
-+	int rem, ret;
-+
-+	nla_for_each_attr(a, genlmsg_data(info->genlhdr),
-+			  genlmsg_len(info->genlhdr), rem) {
-+		switch (nla_type(a)) {
-+		case DPLL_A_PIN_FREQUENCY:
-+			ret = dpll_pin_freq_set(pin, a, info->extack);
-+			if (ret)
-+				return ret;
-+			break;
-+		case DPLL_A_PIN_PARENT_DEVICE:
-+			ret = dpll_pin_parent_device_set(pin, a, info->extack);
-+			if (ret)
-+				return ret;
-+			break;
-+		case DPLL_A_PIN_PARENT_PIN:
-+			ret = dpll_pin_parent_pin_set(pin, a, info->extack);
-+			if (ret)
-+				return ret;
-+			break;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static struct dpll_pin *
-+dpll_pin_find(u64 clock_id, struct nlattr *mod_name_attr,
-+	      enum dpll_pin_type type, struct nlattr *board_label,
-+	      struct nlattr *panel_label, struct nlattr *package_label,
-+	      struct netlink_ext_ack *extack)
-+{
-+	bool board_match, panel_match, package_match;
-+	struct dpll_pin *pin_match = NULL, *pin;
-+	const struct dpll_pin_properties *prop;
-+	bool cid_match, mod_match, type_match;
-+	unsigned long i;
-+
-+	xa_for_each_marked(&dpll_pin_xa, i, pin, DPLL_REGISTERED) {
-+		prop = pin->prop;
-+		cid_match = clock_id ? pin->clock_id == clock_id : true;
-+		mod_match = mod_name_attr && module_name(pin->module) ?
-+			!nla_strcmp(mod_name_attr,
-+				    module_name(pin->module)) : true;
-+		type_match = type ? prop->type == type : true;
-+		board_match = board_label ? (prop->board_label ?
-+			!nla_strcmp(board_label, prop->board_label) : false) :
-+			true;
-+		panel_match = panel_label ? (prop->panel_label ?
-+			!nla_strcmp(panel_label, prop->panel_label) : false) :
-+			true;
-+		package_match = package_label ? (prop->package_label ?
-+			!nla_strcmp(package_label, prop->package_label) :
-+			false) : true;
-+		if (cid_match && mod_match && type_match && board_match &&
-+		    panel_match && package_match) {
-+			if (pin_match) {
-+				NL_SET_ERR_MSG(extack, "multiple matches");
-+				return ERR_PTR(-EINVAL);
-+			}
-+			pin_match = pin;
-+		};
-+	}
-+	if (!pin_match) {
-+		NL_SET_ERR_MSG(extack, "not found");
-+		return ERR_PTR(-ENODEV);
-+	}
-+	return pin_match;
-+}
-+
-+static struct dpll_pin *dpll_pin_find_from_nlattr(struct genl_info *info)
-+{
-+	struct nlattr *attr, *mod_name_attr = NULL, *board_label_attr = NULL,
-+		*panel_label_attr = NULL, *package_label_attr = NULL;
-+	enum dpll_pin_type type = 0;
-+	u64 clock_id = 0;
-+	int rem = 0;
-+
-+	nla_for_each_attr(attr, genlmsg_data(info->genlhdr),
-+			  genlmsg_len(info->genlhdr), rem) {
-+		switch (nla_type(attr)) {
-+		case DPLL_A_PIN_CLOCK_ID:
-+			if (clock_id)
-+				goto duplicated_attr;
-+			clock_id = nla_get_u64(attr);
-+			break;
-+		case DPLL_A_PIN_MODULE_NAME:
-+			if (mod_name_attr)
-+				goto duplicated_attr;
-+			mod_name_attr = attr;
-+			break;
-+		case DPLL_A_PIN_TYPE:
-+			if (type)
-+				goto duplicated_attr;
-+			type = nla_get_u32(attr);
-+		break;
-+		case DPLL_A_PIN_BOARD_LABEL:
-+			if (board_label_attr)
-+				goto duplicated_attr;
-+			board_label_attr = attr;
-+		break;
-+		case DPLL_A_PIN_PANEL_LABEL:
-+			if (panel_label_attr)
-+				goto duplicated_attr;
-+			panel_label_attr = attr;
-+		break;
-+		case DPLL_A_PIN_PACKAGE_LABEL:
-+			if (package_label_attr)
-+				goto duplicated_attr;
-+			package_label_attr = attr;
-+		break;
-+		default:
-+			break;
-+		}
-+	}
-+	if (!(clock_id  || mod_name_attr || board_label_attr ||
-+	      panel_label_attr || package_label_attr)) {
-+		NL_SET_ERR_MSG(info->extack, "missing attributes");
-+		return ERR_PTR(-EINVAL);
-+	}
-+	return dpll_pin_find(clock_id, mod_name_attr, type, board_label_attr,
-+			     panel_label_attr, package_label_attr,
-+			     info->extack);
-+duplicated_attr:
-+	NL_SET_ERR_MSG(info->extack, "duplicated attribute");
-+	return ERR_PTR(-EINVAL);
-+}
-+
-+int dpll_nl_pin_id_get_doit(struct sk_buff *skb, struct genl_info *info)
-+{
-+	struct dpll_pin *pin;
-+	struct sk_buff *msg;
-+	struct nlattr *hdr;
-+	int ret;
-+
-+	msg = genlmsg_new(NLMSG_GOODSIZE, GFP_KERNEL);
-+	if (!msg)
-+		return -ENOMEM;
-+	hdr = genlmsg_put_reply(msg, info, &dpll_nl_family, 0,
-+				DPLL_CMD_PIN_ID_GET);
-+	if (!hdr)
-+		return -EMSGSIZE;
-+
-+	pin = dpll_pin_find_from_nlattr(info);
-+	if (!IS_ERR(pin)) {
-+		ret = dpll_msg_add_pin_handle(msg, pin);
-+		if (ret) {
-+			nlmsg_free(msg);
-+			return ret;
-+		}
-+	}
-+	genlmsg_end(msg, hdr);
-+
-+	return genlmsg_reply(msg, info);
-+}
-+
-+int dpll_nl_pin_get_doit(struct sk_buff *skb, struct genl_info *info)
-+{
-+	struct dpll_pin *pin = info->user_ptr[0];
-+	struct sk_buff *msg;
-+	struct nlattr *hdr;
-+	int ret;
-+
-+	if (!pin)
-+		return -ENODEV;
-+	msg = genlmsg_new(NLMSG_GOODSIZE, GFP_KERNEL);
-+	if (!msg)
-+		return -ENOMEM;
-+	hdr = genlmsg_put_reply(msg, info, &dpll_nl_family, 0,
-+				DPLL_CMD_PIN_GET);
-+	if (!hdr)
-+		return -EMSGSIZE;
-+	ret = dpll_cmd_pin_get_one(msg, pin, info->extack);
-+	if (ret) {
-+		nlmsg_free(msg);
-+		return ret;
-+	}
-+	genlmsg_end(msg, hdr);
-+
-+	return genlmsg_reply(msg, info);
-+}
-+
-+int dpll_nl_pin_get_dumpit(struct sk_buff *skb, struct netlink_callback *cb)
-+{
-+	struct dpll_dump_ctx *ctx = dpll_dump_context(cb);
-+	struct dpll_pin *pin;
-+	struct nlattr *hdr;
-+	unsigned long i;
-+	int ret = 0;
-+
-+	xa_for_each_marked_start(&dpll_pin_xa, i, pin, DPLL_REGISTERED,
-+				 ctx->idx) {
-+		hdr = genlmsg_put(skb, NETLINK_CB(cb->skb).portid,
-+				  cb->nlh->nlmsg_seq,
-+				  &dpll_nl_family, NLM_F_MULTI,
-+				  DPLL_CMD_PIN_GET);
-+		if (!hdr) {
-+			ret = -EMSGSIZE;
-+			break;
-+		}
-+		ret = dpll_cmd_pin_get_one(skb, pin, cb->extack);
-+		if (ret) {
-+			genlmsg_cancel(skb, hdr);
-+			break;
-+		}
-+		genlmsg_end(skb, hdr);
-+	}
-+	if (ret == -EMSGSIZE) {
-+		ctx->idx = i;
-+		return skb->len;
-+	}
-+	return ret;
-+}
-+
-+int dpll_nl_pin_set_doit(struct sk_buff *skb, struct genl_info *info)
-+{
-+	struct dpll_pin *pin = info->user_ptr[0];
-+
-+	return dpll_pin_set_from_nlattr(pin, info);
-+}
-+
-+static struct dpll_device *
-+dpll_device_find(u64 clock_id, struct nlattr *mod_name_attr,
-+		 enum dpll_type type, struct netlink_ext_ack *extack)
-+{
-+	struct dpll_device *dpll_match = NULL, *dpll;
-+	bool cid_match, mod_match, type_match;
-+	unsigned long i;
-+
-+	xa_for_each_marked(&dpll_device_xa, i, dpll, DPLL_REGISTERED) {
-+		cid_match = clock_id ? dpll->clock_id == clock_id : true;
-+		mod_match = mod_name_attr ? (module_name(dpll->module) ?
-+			!nla_strcmp(mod_name_attr,
-+				    module_name(dpll->module)) : false) : true;
-+		type_match = type ? dpll->type == type : true;
-+		if (cid_match && mod_match && type_match) {
-+			if (dpll_match) {
-+				NL_SET_ERR_MSG(extack, "multiple matches");
-+				return ERR_PTR(-EINVAL);
-+			}
-+			dpll_match = dpll;
-+		}
-+	}
-+	if (!dpll_match) {
-+		NL_SET_ERR_MSG(extack, "not found");
-+		return ERR_PTR(-ENODEV);
-+	}
-+
-+	return dpll_match;
-+}
-+
-+static struct dpll_device *
-+dpll_device_find_from_nlattr(struct genl_info *info)
-+{
-+	struct nlattr *attr, *mod_name_attr = NULL;
-+	enum dpll_type type = 0;
-+	u64 clock_id = 0;
-+	int rem = 0;
-+
-+	nla_for_each_attr(attr, genlmsg_data(info->genlhdr),
-+			  genlmsg_len(info->genlhdr), rem) {
-+		switch (nla_type(attr)) {
-+		case DPLL_A_CLOCK_ID:
-+			if (clock_id)
-+				goto duplicated_attr;
-+			clock_id = nla_get_u64(attr);
-+			break;
-+		case DPLL_A_MODULE_NAME:
-+			if (mod_name_attr)
-+				goto duplicated_attr;
-+			mod_name_attr = attr;
-+			break;
-+		case DPLL_A_TYPE:
-+			if (type)
-+				goto duplicated_attr;
-+			type = nla_get_u32(attr);
-+			break;
-+		default:
-+			break;
-+		}
-+	}
-+	if (!clock_id && !mod_name_attr && !type) {
-+		NL_SET_ERR_MSG(info->extack, "missing attributes");
-+		return ERR_PTR(-EINVAL);
-+	}
-+	return dpll_device_find(clock_id, mod_name_attr, type, info->extack);
-+duplicated_attr:
-+	NL_SET_ERR_MSG(info->extack, "duplicated attribute");
-+	return ERR_PTR(-EINVAL);
-+}
-+
-+int dpll_nl_device_id_get_doit(struct sk_buff *skb, struct genl_info *info)
-+{
-+	struct dpll_device *dpll;
-+	struct sk_buff *msg;
-+	struct nlattr *hdr;
-+	int ret;
-+
-+	msg = genlmsg_new(NLMSG_GOODSIZE, GFP_KERNEL);
-+	if (!msg)
-+		return -ENOMEM;
-+	hdr = genlmsg_put_reply(msg, info, &dpll_nl_family, 0,
-+				DPLL_CMD_DEVICE_ID_GET);
-+	if (!hdr)
-+		return -EMSGSIZE;
-+
-+	dpll = dpll_device_find_from_nlattr(info);
-+	if (!IS_ERR(dpll)) {
-+		ret = dpll_msg_add_dev_handle(msg, dpll);
-+		if (ret) {
-+			nlmsg_free(msg);
-+			return ret;
-+		}
-+	}
-+	genlmsg_end(msg, hdr);
-+
-+	return genlmsg_reply(msg, info);
-+}
-+
-+int dpll_nl_device_get_doit(struct sk_buff *skb, struct genl_info *info)
-+{
-+	struct dpll_device *dpll = info->user_ptr[0];
-+	struct sk_buff *msg;
-+	struct nlattr *hdr;
-+	int ret;
-+
-+	msg = genlmsg_new(NLMSG_GOODSIZE, GFP_KERNEL);
-+	if (!msg)
-+		return -ENOMEM;
-+	hdr = genlmsg_put_reply(msg, info, &dpll_nl_family, 0,
-+				DPLL_CMD_DEVICE_GET);
-+	if (!hdr)
-+		return -EMSGSIZE;
-+
-+	ret = dpll_device_get_one(dpll, msg, info->extack);
-+	if (ret) {
-+		nlmsg_free(msg);
-+		return ret;
-+	}
-+	genlmsg_end(msg, hdr);
-+
-+	return genlmsg_reply(msg, info);
-+}
-+
-+int dpll_nl_device_set_doit(struct sk_buff *skb, struct genl_info *info)
-+{
-+	/* placeholder for set command */
-+	return 0;
-+}
-+
-+int dpll_nl_device_get_dumpit(struct sk_buff *skb, struct netlink_callback *cb)
-+{
-+	struct dpll_dump_ctx *ctx = dpll_dump_context(cb);
-+	struct dpll_device *dpll;
-+	struct nlattr *hdr;
-+	unsigned long i;
-+	int ret = 0;
-+
-+	xa_for_each_marked_start(&dpll_device_xa, i, dpll, DPLL_REGISTERED,
-+				 ctx->idx) {
-+		hdr = genlmsg_put(skb, NETLINK_CB(cb->skb).portid,
-+				  cb->nlh->nlmsg_seq, &dpll_nl_family,
-+				  NLM_F_MULTI, DPLL_CMD_DEVICE_GET);
-+		if (!hdr) {
-+			ret = -EMSGSIZE;
-+			break;
-+		}
-+		ret = dpll_device_get_one(dpll, skb, cb->extack);
-+		if (ret) {
-+			genlmsg_cancel(skb, hdr);
-+			break;
-+		}
-+		genlmsg_end(skb, hdr);
-+	}
-+	if (ret == -EMSGSIZE) {
-+		ctx->idx = i;
-+		return skb->len;
-+	}
-+	return ret;
-+}
-+
-+int dpll_pre_doit(const struct genl_split_ops *ops, struct sk_buff *skb,
-+		  struct genl_info *info)
-+{
-+	u32 id;
-+
-+	if (GENL_REQ_ATTR_CHECK(info, DPLL_A_ID))
-+		return -EINVAL;
-+
-+	mutex_lock(&dpll_lock);
-+	id = nla_get_u32(info->attrs[DPLL_A_ID]);
-+	info->user_ptr[0] = dpll_device_get_by_id(id);
-+	if (!info->user_ptr[0]) {
-+		NL_SET_ERR_MSG(info->extack, "device not found");
-+		goto unlock;
-+	}
-+	return 0;
-+unlock:
-+	mutex_unlock(&dpll_lock);
-+	return -ENODEV;
-+}
-+
-+void dpll_post_doit(const struct genl_split_ops *ops, struct sk_buff *skb,
-+		    struct genl_info *info)
-+{
-+	mutex_unlock(&dpll_lock);
-+}
-+
-+int
-+dpll_lock_doit(const struct genl_split_ops *ops, struct sk_buff *skb,
-+	       struct genl_info *info)
-+{
-+	mutex_lock(&dpll_lock);
-+
-+	return 0;
-+}
-+
-+void
-+dpll_unlock_doit(const struct genl_split_ops *ops, struct sk_buff *skb,
-+		 struct genl_info *info)
-+{
-+	mutex_unlock(&dpll_lock);
-+}
-+
-+int dpll_lock_dumpit(struct netlink_callback *cb)
-+{
-+	mutex_lock(&dpll_lock);
-+
-+	return 0;
-+}
-+
-+int dpll_unlock_dumpit(struct netlink_callback *cb)
-+{
-+	mutex_unlock(&dpll_lock);
-+
-+	return 0;
-+}
-+
-+int dpll_pin_pre_doit(const struct genl_split_ops *ops, struct sk_buff *skb,
-+		      struct genl_info *info)
-+{
-+	int ret;
-+
-+	mutex_lock(&dpll_lock);
-+	if (GENL_REQ_ATTR_CHECK(info, DPLL_A_PIN_ID)) {
-+		ret = -EINVAL;
-+		goto unlock_dev;
-+	}
-+	info->user_ptr[0] = xa_load(&dpll_pin_xa,
-+				    nla_get_u32(info->attrs[DPLL_A_PIN_ID]));
-+	if (!info->user_ptr[0]) {
-+		NL_SET_ERR_MSG(info->extack, "pin not found");
-+		ret = -ENODEV;
-+		goto unlock_dev;
-+	}
-+
-+	return 0;
-+
-+unlock_dev:
-+	mutex_unlock(&dpll_lock);
-+	return ret;
-+}
-+
-+void dpll_pin_post_doit(const struct genl_split_ops *ops, struct sk_buff *skb,
-+			struct genl_info *info)
-+{
-+	mutex_unlock(&dpll_lock);
-+}
-diff --git a/drivers/dpll/dpll_netlink.h b/drivers/dpll/dpll_netlink.h
-new file mode 100644
-index 000000000000..a9cfd55f57fc
---- /dev/null
-+++ b/drivers/dpll/dpll_netlink.h
-@@ -0,0 +1,13 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ *  Copyright (c) 2023 Meta Platforms, Inc. and affiliates
-+ *  Copyright (c) 2023 Intel and affiliates
-+ */
-+
-+int dpll_device_create_ntf(struct dpll_device *dpll);
-+
-+int dpll_device_delete_ntf(struct dpll_device *dpll);
-+
-+int dpll_pin_create_ntf(struct dpll_pin *pin);
-+
-+int dpll_pin_delete_ntf(struct dpll_pin *pin);
-diff --git a/include/linux/dpll.h b/include/linux/dpll.h
-index b47c3560b937..2202310c10cd 100644
---- a/include/linux/dpll.h
-+++ b/include/linux/dpll.h
-@@ -130,4 +130,8 @@ int dpll_pin_on_pin_register(struct dpll_pin *parent, struct dpll_pin *pin,
- void dpll_pin_on_pin_unregister(struct dpll_pin *parent, struct dpll_pin *pin,
- 				const struct dpll_pin_ops *ops, void *priv);
+ struct ptp_ocp_sma_connector {
+ 	enum	ptp_ocp_sma_mode mode;
+ 	bool	fixed_fcn;
+ 	bool	fixed_dir;
+ 	bool	disabled;
+ 	u8	default_fcn;
++	struct dpll_pin		   *dpll_pin;
++	struct dpll_pin_properties dpll_prop;
+ };
  
-+int dpll_device_change_ntf(struct dpll_device *dpll);
+ struct ocp_attr_group {
+@@ -294,6 +304,7 @@ struct ptp_ocp_serial_port {
+ 
+ #define OCP_BOARD_ID_LEN		13
+ #define OCP_SERIAL_LEN			6
++#define OCP_SMA_NUM			4
+ 
+ struct ptp_ocp {
+ 	struct pci_dev		*pdev;
+@@ -331,7 +342,9 @@ struct ptp_ocp {
+ 	const struct attribute_group **attr_group;
+ 	const struct ptp_ocp_eeprom_map *eeprom_map;
+ 	struct dentry		*debug_root;
++	bool			sync;
+ 	time64_t		gnss_lost;
++	struct delayed_work	sync_work;
+ 	int			id;
+ 	int			n_irqs;
+ 	struct ptp_ocp_serial_port	gnss_port;
+@@ -350,8 +363,9 @@ struct ptp_ocp {
+ 	u32			ts_window_adjust;
+ 	u64			fw_cap;
+ 	struct ptp_ocp_signal	signal[4];
+-	struct ptp_ocp_sma_connector sma[4];
++	struct ptp_ocp_sma_connector sma[OCP_SMA_NUM];
+ 	const struct ocp_sma_op *sma_op;
++	struct dpll_device *dpll;
+ };
+ 
+ #define OCP_REQ_TIMESTAMP	BIT(0)
+@@ -835,6 +849,7 @@ static DEFINE_IDR(ptp_ocp_idr);
+ struct ocp_selector {
+ 	const char *name;
+ 	int value;
++	u64 frequency;
+ };
+ 
+ static const struct ocp_selector ptp_ocp_clock[] = {
+@@ -855,31 +870,31 @@ static const struct ocp_selector ptp_ocp_clock[] = {
+ #define SMA_SELECT_MASK		GENMASK(14, 0)
+ 
+ static const struct ocp_selector ptp_ocp_sma_in[] = {
+-	{ .name = "10Mhz",	.value = 0x0000 },
+-	{ .name = "PPS1",	.value = 0x0001 },
+-	{ .name = "PPS2",	.value = 0x0002 },
+-	{ .name = "TS1",	.value = 0x0004 },
+-	{ .name = "TS2",	.value = 0x0008 },
+-	{ .name = "IRIG",	.value = 0x0010 },
+-	{ .name = "DCF",	.value = 0x0020 },
+-	{ .name = "TS3",	.value = 0x0040 },
+-	{ .name = "TS4",	.value = 0x0080 },
+-	{ .name = "FREQ1",	.value = 0x0100 },
+-	{ .name = "FREQ2",	.value = 0x0200 },
+-	{ .name = "FREQ3",	.value = 0x0400 },
+-	{ .name = "FREQ4",	.value = 0x0800 },
+-	{ .name = "None",	.value = SMA_DISABLE },
++	{ .name = "10Mhz",  .value = 0x0000,      .frequency = 10000000 },
++	{ .name = "PPS1",   .value = 0x0001,      .frequency = 1 },
++	{ .name = "PPS2",   .value = 0x0002,      .frequency = 1 },
++	{ .name = "TS1",    .value = 0x0004,      .frequency = 0 },
++	{ .name = "TS2",    .value = 0x0008,      .frequency = 0 },
++	{ .name = "IRIG",   .value = 0x0010,      .frequency = 10000 },
++	{ .name = "DCF",    .value = 0x0020,      .frequency = 77500 },
++	{ .name = "TS3",    .value = 0x0040,      .frequency = 0 },
++	{ .name = "TS4",    .value = 0x0080,      .frequency = 0 },
++	{ .name = "FREQ1",  .value = 0x0100,      .frequency = 0 },
++	{ .name = "FREQ2",  .value = 0x0200,      .frequency = 0 },
++	{ .name = "FREQ3",  .value = 0x0400,      .frequency = 0 },
++	{ .name = "FREQ4",  .value = 0x0800,      .frequency = 0 },
++	{ .name = "None",   .value = SMA_DISABLE, .frequency = 0 },
+ 	{ }
+ };
+ 
+ static const struct ocp_selector ptp_ocp_sma_out[] = {
+-	{ .name = "10Mhz",	.value = 0x0000 },
+-	{ .name = "PHC",	.value = 0x0001 },
+-	{ .name = "MAC",	.value = 0x0002 },
+-	{ .name = "GNSS1",	.value = 0x0004 },
+-	{ .name = "GNSS2",	.value = 0x0008 },
+-	{ .name = "IRIG",	.value = 0x0010 },
+-	{ .name = "DCF",	.value = 0x0020 },
++	{ .name = "10Mhz",	.value = 0x0000,  .frequency = 10000000 },
++	{ .name = "PHC",	.value = 0x0001,  .frequency = 1 },
++	{ .name = "MAC",	.value = 0x0002,  .frequency = 1 },
++	{ .name = "GNSS1",	.value = 0x0004,  .frequency = 1 },
++	{ .name = "GNSS2",	.value = 0x0008,  .frequency = 1 },
++	{ .name = "IRIG",	.value = 0x0010,  .frequency = 10000 },
++	{ .name = "DCF",	.value = 0x0020,  .frequency = 77000 },
+ 	{ .name = "GEN1",	.value = 0x0040 },
+ 	{ .name = "GEN2",	.value = 0x0080 },
+ 	{ .name = "GEN3",	.value = 0x0100 },
+@@ -890,15 +905,15 @@ static const struct ocp_selector ptp_ocp_sma_out[] = {
+ };
+ 
+ static const struct ocp_selector ptp_ocp_art_sma_in[] = {
+-	{ .name = "PPS1",	.value = 0x0001 },
+-	{ .name = "10Mhz",	.value = 0x0008 },
++	{ .name = "PPS1",	.value = 0x0001,  .frequency = 1 },
++	{ .name = "10Mhz",	.value = 0x0008,  .frequency = 1000000 },
+ 	{ }
+ };
+ 
+ static const struct ocp_selector ptp_ocp_art_sma_out[] = {
+-	{ .name = "PHC",	.value = 0x0002 },
+-	{ .name = "GNSS",	.value = 0x0004 },
+-	{ .name = "10Mhz",	.value = 0x0010 },
++	{ .name = "PHC",	.value = 0x0002,  .frequency = 1 },
++	{ .name = "GNSS",	.value = 0x0004,  .frequency = 1 },
++	{ .name = "10Mhz",	.value = 0x0010,  .frequency = 10000000 },
+ 	{ }
+ };
+ 
+@@ -1351,7 +1366,6 @@ static int
+ ptp_ocp_init_clock(struct ptp_ocp *bp)
+ {
+ 	struct timespec64 ts;
+-	bool sync;
+ 	u32 ctrl;
+ 
+ 	ctrl = OCP_CTRL_ENABLE;
+@@ -1375,8 +1389,8 @@ ptp_ocp_init_clock(struct ptp_ocp *bp)
+ 
+ 	ptp_ocp_estimate_pci_timing(bp);
+ 
+-	sync = ioread32(&bp->reg->status) & OCP_STATUS_IN_SYNC;
+-	if (!sync) {
++	bp->sync = ioread32(&bp->reg->status) & OCP_STATUS_IN_SYNC;
++	if (!bp->sync) {
+ 		ktime_get_clocktai_ts64(&ts);
+ 		ptp_ocp_settime(&bp->ptp_info, &ts);
+ 	}
+@@ -2289,22 +2303,35 @@ ptp_ocp_sma_fb_set_inputs(struct ptp_ocp *bp, int sma_nr, u32 val)
+ static void
+ ptp_ocp_sma_fb_init(struct ptp_ocp *bp)
+ {
++	struct dpll_pin_properties prop = {
++		.board_label = NULL,
++		.type = DPLL_PIN_TYPE_EXT,
++		.capabilities = DPLL_PIN_CAPABILITIES_DIRECTION_CAN_CHANGE,
++		.freq_supported_num = ARRAY_SIZE(ptp_ocp_sma_freq),
++		.freq_supported = ptp_ocp_sma_freq,
 +
-+int dpll_pin_change_ntf(struct dpll_pin *pin);
++	};
+ 	u32 reg;
+ 	int i;
+ 
+ 	/* defaults */
++	for (i = 0; i < OCP_SMA_NUM; i++) {
++		bp->sma[i].default_fcn = i & 1;
++		bp->sma[i].dpll_prop = prop;
++		bp->sma[i].dpll_prop.board_label =
++			bp->ptp_info.pin_config[i].name;
++	}
+ 	bp->sma[0].mode = SMA_MODE_IN;
+ 	bp->sma[1].mode = SMA_MODE_IN;
+ 	bp->sma[2].mode = SMA_MODE_OUT;
+ 	bp->sma[3].mode = SMA_MODE_OUT;
+-	for (i = 0; i < 4; i++)
+-		bp->sma[i].default_fcn = i & 1;
+-
+ 	/* If no SMA1 map, the pin functions and directions are fixed. */
+ 	if (!bp->sma_map1) {
+-		for (i = 0; i < 4; i++) {
++		for (i = 0; i < OCP_SMA_NUM; i++) {
+ 			bp->sma[i].fixed_fcn = true;
+ 			bp->sma[i].fixed_dir = true;
++			bp->sma[1].dpll_prop.capabilities &=
++				~DPLL_PIN_CAPABILITIES_DIRECTION_CAN_CHANGE;
+ 		}
+ 		return;
+ 	}
+@@ -2314,7 +2341,7 @@ ptp_ocp_sma_fb_init(struct ptp_ocp *bp)
+ 	 */
+ 	reg = ioread32(&bp->sma_map2->gpio2);
+ 	if (reg == 0xffffffff) {
+-		for (i = 0; i < 4; i++)
++		for (i = 0; i < OCP_SMA_NUM; i++)
+ 			bp->sma[i].fixed_dir = true;
+ 	} else {
+ 		reg = ioread32(&bp->sma_map1->gpio1);
+@@ -2336,7 +2363,7 @@ static const struct ocp_sma_op ocp_fb_sma_op = {
+ };
+ 
+ static int
+-ptp_ocp_fb_set_pins(struct ptp_ocp *bp)
++ptp_ocp_set_pins(struct ptp_ocp *bp)
+ {
+ 	struct ptp_pin_desc *config;
+ 	int i;
+@@ -2403,16 +2430,16 @@ ptp_ocp_fb_board_init(struct ptp_ocp *bp, struct ocp_resource *r)
+ 
+ 	ptp_ocp_tod_init(bp);
+ 	ptp_ocp_nmea_out_init(bp);
+-	ptp_ocp_sma_init(bp);
+ 	ptp_ocp_signal_init(bp);
+ 
+ 	err = ptp_ocp_attr_group_add(bp, fb_timecard_groups);
+ 	if (err)
+ 		return err;
+ 
+-	err = ptp_ocp_fb_set_pins(bp);
++	err = ptp_ocp_set_pins(bp);
+ 	if (err)
+ 		return err;
++	ptp_ocp_sma_init(bp);
+ 
+ 	return ptp_ocp_init_clock(bp);
+ }
+@@ -2452,6 +2479,14 @@ ptp_ocp_register_resources(struct ptp_ocp *bp, kernel_ulong_t driver_data)
+ static void
+ ptp_ocp_art_sma_init(struct ptp_ocp *bp)
+ {
++	struct dpll_pin_properties prop = {
++		.board_label = NULL,
++		.type = DPLL_PIN_TYPE_EXT,
++		.capabilities = 0,
++		.freq_supported_num = ARRAY_SIZE(ptp_ocp_sma_freq),
++		.freq_supported = ptp_ocp_sma_freq,
 +
- #endif
++	};
+ 	u32 reg;
+ 	int i;
+ 
+@@ -2466,16 +2501,16 @@ ptp_ocp_art_sma_init(struct ptp_ocp *bp)
+ 	bp->sma[2].default_fcn = 0x10;	/* OUT: 10Mhz */
+ 	bp->sma[3].default_fcn = 0x02;	/* OUT: PHC */
+ 
+-	/* If no SMA map, the pin functions and directions are fixed. */
+-	if (!bp->art_sma) {
+-		for (i = 0; i < 4; i++) {
++	for (i = 0; i < OCP_SMA_NUM; i++) {
++		/* If no SMA map, the pin functions and directions are fixed. */
++		bp->sma[i].dpll_prop = prop;
++		bp->sma[i].dpll_prop.board_label =
++			bp->ptp_info.pin_config[i].name;
++		if (!bp->art_sma) {
+ 			bp->sma[i].fixed_fcn = true;
+ 			bp->sma[i].fixed_dir = true;
++			continue;
+ 		}
+-		return;
+-	}
+-
+-	for (i = 0; i < 4; i++) {
+ 		reg = ioread32(&bp->art_sma->map[i].gpio);
+ 
+ 		switch (reg & 0xff) {
+@@ -2486,9 +2521,13 @@ ptp_ocp_art_sma_init(struct ptp_ocp *bp)
+ 		case 1:
+ 		case 8:
+ 			bp->sma[i].mode = SMA_MODE_IN;
++			bp->sma[i].dpll_prop.capabilities =
++				DPLL_PIN_CAPABILITIES_DIRECTION_CAN_CHANGE;
+ 			break;
+ 		default:
+ 			bp->sma[i].mode = SMA_MODE_OUT;
++			bp->sma[i].dpll_prop.capabilities =
++				DPLL_PIN_CAPABILITIES_DIRECTION_CAN_CHANGE;
+ 			break;
+ 		}
+ 	}
+@@ -2555,6 +2594,9 @@ ptp_ocp_art_board_init(struct ptp_ocp *bp, struct ocp_resource *r)
+ 	/* Enable MAC serial port during initialisation */
+ 	iowrite32(1, &bp->board_config->mro50_serial_activate);
+ 
++	err = ptp_ocp_set_pins(bp);
++	if (err)
++		return err;
+ 	ptp_ocp_sma_init(bp);
+ 
+ 	err = ptp_ocp_attr_group_add(bp, art_timecard_groups);
+@@ -2696,16 +2738,9 @@ sma4_show(struct device *dev, struct device_attribute *attr, char *buf)
+ }
+ 
+ static int
+-ptp_ocp_sma_store(struct ptp_ocp *bp, const char *buf, int sma_nr)
++ptp_ocp_sma_store_val(struct ptp_ocp *bp, int val, enum ptp_ocp_sma_mode mode, int sma_nr)
+ {
+ 	struct ptp_ocp_sma_connector *sma = &bp->sma[sma_nr - 1];
+-	enum ptp_ocp_sma_mode mode;
+-	int val;
+-
+-	mode = sma->mode;
+-	val = sma_parse_inputs(bp->sma_op->tbl, buf, &mode);
+-	if (val < 0)
+-		return val;
+ 
+ 	if (sma->fixed_dir && (mode != sma->mode || val & SMA_DISABLE))
+ 		return -EOPNOTSUPP;
+@@ -2740,6 +2775,20 @@ ptp_ocp_sma_store(struct ptp_ocp *bp, const char *buf, int sma_nr)
+ 	return val;
+ }
+ 
++static int
++ptp_ocp_sma_store(struct ptp_ocp *bp, const char *buf, int sma_nr)
++{
++	struct ptp_ocp_sma_connector *sma = &bp->sma[sma_nr - 1];
++	enum ptp_ocp_sma_mode mode;
++	int val;
++
++	mode = sma->mode;
++	val = sma_parse_inputs(bp->sma_op->tbl, buf, &mode);
++	if (val < 0)
++		return val;
++	return ptp_ocp_sma_store_val(bp, val, mode, sma_nr);
++}
++
+ static ssize_t
+ sma1_store(struct device *dev, struct device_attribute *attr,
+ 	   const char *buf, size_t count)
+@@ -3834,9 +3883,8 @@ ptp_ocp_summary_show(struct seq_file *s, void *data)
+ 		strcpy(buf, "unknown");
+ 		break;
+ 	}
+-	val = ioread32(&bp->reg->status);
+ 	seq_printf(s, "%7s: %s, state: %s\n", "PHC src", buf,
+-		   val & OCP_STATUS_IN_SYNC ? "sync" : "unsynced");
++		   bp->sync ? "sync" : "unsynced");
+ 
+ 	if (!ptp_ocp_gettimex(&bp->ptp_info, &ts, &sts)) {
+ 		struct timespec64 sys_ts;
+@@ -4068,7 +4116,6 @@ ptp_ocp_phc_info(struct ptp_ocp *bp)
+ {
+ 	struct timespec64 ts;
+ 	u32 version, select;
+-	bool sync;
+ 
+ 	version = ioread32(&bp->reg->version);
+ 	select = ioread32(&bp->reg->select);
+@@ -4077,11 +4124,10 @@ ptp_ocp_phc_info(struct ptp_ocp *bp)
+ 		 ptp_ocp_select_name_from_val(ptp_ocp_clock, select >> 16),
+ 		 ptp_clock_index(bp->ptp));
+ 
+-	sync = ioread32(&bp->reg->status) & OCP_STATUS_IN_SYNC;
+ 	if (!ptp_ocp_gettimex(&bp->ptp_info, &ts, NULL))
+ 		dev_info(&bp->pdev->dev, "Time: %lld.%ld, %s\n",
+ 			 ts.tv_sec, ts.tv_nsec,
+-			 sync ? "in-sync" : "UNSYNCED");
++			 bp->sync ? "in-sync" : "UNSYNCED");
+ }
+ 
+ static void
+@@ -4178,12 +4224,168 @@ ptp_ocp_detach(struct ptp_ocp *bp)
+ 	device_unregister(&bp->dev);
+ }
+ 
++static int ptp_ocp_dpll_lock_status_get(const struct dpll_device *dpll,
++					void *priv,
++					enum dpll_lock_status *status,
++					struct netlink_ext_ack *extack)
++{
++	struct ptp_ocp *bp = priv;
++
++	*status = bp->sync ? DPLL_LOCK_STATUS_LOCKED : DPLL_LOCK_STATUS_UNLOCKED;
++
++	return 0;
++}
++
++static int ptp_ocp_dpll_state_get(const struct dpll_pin *pin, void *pin_priv,
++				  const struct dpll_device *dpll, void *priv,
++				  enum dpll_pin_state *state,
++				  struct netlink_ext_ack *extack)
++{
++	struct ptp_ocp *bp = priv;
++	int idx;
++
++	if (bp->pps_select) {
++		idx = ioread32(&bp->pps_select->gpio1);
++		*state = (&bp->sma[idx] == pin_priv) ? DPLL_PIN_STATE_CONNECTED :
++						      DPLL_PIN_STATE_SELECTABLE;
++		return 0;
++	}
++	NL_SET_ERR_MSG(extack, "pin selection is not supported on current HW");
++	return -EINVAL;
++}
++
++static int ptp_ocp_dpll_mode_get(const struct dpll_device *dpll, void *priv,
++				 u32 *mode, struct netlink_ext_ack *extack)
++{
++	*mode = DPLL_MODE_AUTOMATIC;
++	return 0;
++}
++
++static bool ptp_ocp_dpll_mode_supported(const struct dpll_device *dpll,
++					void *priv, const enum dpll_mode mode,
++					struct netlink_ext_ack *extack)
++{
++	return mode == DPLL_MODE_AUTOMATIC;
++}
++
++static int ptp_ocp_dpll_direction_get(const struct dpll_pin *pin,
++				      void *pin_priv,
++				      const struct dpll_device *dpll,
++				      void *priv,
++				      enum dpll_pin_direction *direction,
++				      struct netlink_ext_ack *extack)
++{
++	struct ptp_ocp_sma_connector *sma = pin_priv;
++
++	*direction = sma->mode == SMA_MODE_IN ?
++				  DPLL_PIN_DIRECTION_INPUT :
++				  DPLL_PIN_DIRECTION_OUTPUT;
++	return 0;
++}
++
++static int ptp_ocp_dpll_direction_set(const struct dpll_pin *pin,
++				      void *pin_priv,
++				      const struct dpll_device *dpll,
++				      void *dpll_priv,
++				      enum dpll_pin_direction direction,
++				      struct netlink_ext_ack *extack)
++{
++	struct ptp_ocp_sma_connector *sma = pin_priv;
++	struct ptp_ocp *bp = dpll_priv;
++	enum ptp_ocp_sma_mode mode;
++	int sma_nr = (sma - bp->sma);
++
++	if (sma->fixed_dir)
++		return -EOPNOTSUPP;
++	mode = direction == DPLL_PIN_DIRECTION_INPUT ?
++			    SMA_MODE_IN : SMA_MODE_OUT;
++	return ptp_ocp_sma_store_val(bp, 0, mode, sma_nr);
++}
++
++static int ptp_ocp_dpll_frequency_set(const struct dpll_pin *pin,
++				      void *pin_priv,
++				      const struct dpll_device *dpll,
++				      void *dpll_priv, u64 frequency,
++				      struct netlink_ext_ack *extack)
++{
++	struct ptp_ocp_sma_connector *sma = pin_priv;
++	struct ptp_ocp *bp = dpll_priv;
++	const struct ocp_selector *tbl;
++	int sma_nr = (sma - bp->sma);
++	int i;
++
++	if (sma->fixed_fcn)
++		return -EOPNOTSUPP;
++
++	tbl = bp->sma_op->tbl[sma->mode];
++	for (i = 0; tbl[i].name; i++)
++		if (tbl[i].frequency == frequency)
++			return ptp_ocp_sma_store_val(bp, i, sma->mode, sma_nr);
++	return -EINVAL;
++}
++
++static int ptp_ocp_dpll_frequency_get(const struct dpll_pin *pin,
++				      void *pin_priv,
++				      const struct dpll_device *dpll,
++				      void *dpll_priv, u64 *frequency,
++				      struct netlink_ext_ack *extack)
++{
++	struct ptp_ocp_sma_connector *sma = pin_priv;
++	struct ptp_ocp *bp = dpll_priv;
++	const struct ocp_selector *tbl;
++	int sma_nr = (sma - bp->sma);
++	u32 val;
++	int i;
++
++	val = bp->sma_op->get(bp, sma_nr);
++	tbl = bp->sma_op->tbl[sma->mode];
++	for (i = 0; tbl[i].name; i++)
++		if (val == tbl[i].value) {
++			*frequency = tbl[i].frequency;
++			return 0;
++		}
++
++	return -EINVAL;
++}
++
++static const struct dpll_device_ops dpll_ops = {
++	.lock_status_get = ptp_ocp_dpll_lock_status_get,
++	.mode_get = ptp_ocp_dpll_mode_get,
++	.mode_supported = ptp_ocp_dpll_mode_supported,
++};
++
++static const struct dpll_pin_ops dpll_pins_ops = {
++	.frequency_get = ptp_ocp_dpll_frequency_get,
++	.frequency_set = ptp_ocp_dpll_frequency_set,
++	.direction_get = ptp_ocp_dpll_direction_get,
++	.direction_set = ptp_ocp_dpll_direction_set,
++	.state_on_dpll_get = ptp_ocp_dpll_state_get,
++};
++
++static void
++ptp_ocp_sync_work(struct work_struct *work)
++{
++	struct ptp_ocp *bp;
++	bool sync;
++
++	bp = container_of(work, struct ptp_ocp, sync_work.work);
++	sync = !!(ioread32(&bp->reg->status) & OCP_STATUS_IN_SYNC);
++
++	if (bp->sync != sync)
++		dpll_device_change_ntf(bp->dpll);
++
++	bp->sync = sync;
++
++	queue_delayed_work(system_power_efficient_wq, &bp->sync_work, HZ);
++}
++
+ static int
+ ptp_ocp_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ {
+ 	struct devlink *devlink;
+ 	struct ptp_ocp *bp;
+-	int err;
++	int err, i;
++	u64 clkid;
+ 
+ 	devlink = devlink_alloc(&ptp_ocp_devlink_ops, sizeof(*bp), &pdev->dev);
+ 	if (!devlink) {
+@@ -4202,6 +4404,8 @@ ptp_ocp_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	if (err)
+ 		goto out_disable;
+ 
++	INIT_DELAYED_WORK(&bp->sync_work, ptp_ocp_sync_work);
++
+ 	/* compat mode.
+ 	 * Older FPGA firmware only returns 2 irq's.
+ 	 * allow this - if not all of the IRQ's are returned, skip the
+@@ -4233,8 +4437,43 @@ ptp_ocp_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 
+ 	ptp_ocp_info(bp);
+ 	devlink_register(devlink);
+-	return 0;
+ 
++	clkid = pci_get_dsn(pdev);
++	bp->dpll = dpll_device_get(clkid, 0, THIS_MODULE);
++	if (IS_ERR(bp->dpll)) {
++		err = PTR_ERR(bp->dpll);
++		dev_err(&pdev->dev, "dpll_device_alloc failed\n");
++		goto out;
++	}
++
++	err = dpll_device_register(bp->dpll, DPLL_TYPE_PPS, &dpll_ops, bp);
++	if (err)
++		goto out;
++
++	for (i = 0; i < OCP_SMA_NUM; i++) {
++		bp->sma[i].dpll_pin = dpll_pin_get(clkid, i, THIS_MODULE, &bp->sma[i].dpll_prop);
++		if (IS_ERR(bp->sma[i].dpll_pin)) {
++			err = PTR_ERR(bp->dpll);
++			goto out_dpll;
++		}
++
++		err = dpll_pin_register(bp->dpll, bp->sma[i].dpll_pin, &dpll_pins_ops,
++					&bp->sma[i]);
++		if (err) {
++			dpll_pin_put(bp->sma[i].dpll_pin);
++			goto out_dpll;
++		}
++	}
++	queue_delayed_work(system_power_efficient_wq, &bp->sync_work, HZ);
++
++	return 0;
++out_dpll:
++	while (i) {
++		--i;
++		dpll_pin_unregister(bp->dpll, bp->sma[i].dpll_pin, &dpll_pins_ops, &bp->sma[i]);
++		dpll_pin_put(bp->sma[i].dpll_pin);
++	}
++	dpll_device_put(bp->dpll);
+ out:
+ 	ptp_ocp_detach(bp);
+ out_disable:
+@@ -4249,7 +4488,17 @@ ptp_ocp_remove(struct pci_dev *pdev)
+ {
+ 	struct ptp_ocp *bp = pci_get_drvdata(pdev);
+ 	struct devlink *devlink = priv_to_devlink(bp);
++	int i;
+ 
++	cancel_delayed_work_sync(&bp->sync_work);
++	for (i = 0; i < OCP_SMA_NUM; i++) {
++		if (bp->sma[i].dpll_pin) {
++			dpll_pin_unregister(bp->dpll, bp->sma[i].dpll_pin, &dpll_pins_ops, bp);
++			dpll_pin_put(bp->sma[i].dpll_pin);
++		}
++	}
++	dpll_device_unregister(bp->dpll, &dpll_ops, bp);
++	dpll_device_put(bp->dpll);
+ 	devlink_unregister(devlink);
+ 	ptp_ocp_detach(bp);
+ 	pci_disable_device(pdev);
 -- 
 2.27.0
 
