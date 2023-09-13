@@ -2,199 +2,129 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99EBECA0ED1
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Sep 2023 03:33:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 457F9EEB595
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Sep 2023 05:32:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234151AbjIMDdS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Sep 2023 23:33:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42912 "EHLO
+        id S236623AbjIMFcl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Sep 2023 01:32:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231144AbjIMDdS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Sep 2023 23:33:18 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09F42170F;
-        Tue, 12 Sep 2023 20:33:14 -0700 (PDT)
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38D1VVes023409;
-        Wed, 13 Sep 2023 03:32:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=uFJyocmED4hz9zxf654Kw/VEVbsiQNhYNzZor0D7cI4=;
- b=kdcfk6CBHJEirtPrhb+oIGZax1z1OU+em6Eq6ZrV5oFWju/n1e2TF6lP1ZJOXx4wm0Qu
- /F5GPLm7uwz0CWC24AMg4MFRDjHGU7Wr/gFnREG3clJw9ScDnzZKZLu+fSCnCXpvrAuN
- STBJ2ilabS70foGDDalHOojEfyZG1wJDBAehIXYJ2tnHjPejnIraLQypXpRhDWB5EtH/
- WP1/G2/jnCFZRofGWOmK7nIg2sUR6v6fa+AtyvWftyaQ+6O7+xheg365PEIhZ8Mi6amn
- I+h8kkcey+kLzM4h44yj7ztus8uboGNSTRXquxfNO9GDJLoRFBct1LSUJ0XxPGQmQplF eg== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t2y7q8mer-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 13 Sep 2023 03:32:30 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38D3WT0f004638
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 13 Sep 2023 03:32:29 GMT
-Received: from [10.216.41.52] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.36; Tue, 12 Sep
- 2023 20:32:21 -0700
-Message-ID: <ef61cef0-fd3a-d89c-b73e-b10e63fa7789@quicinc.com>
-Date:   Wed, 13 Sep 2023 09:02:13 +0530
+        with ESMTP id S229485AbjIMFck (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Sep 2023 01:32:40 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7EFF172A
+        for <linux-clk@vger.kernel.org>; Tue, 12 Sep 2023 22:32:36 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id ffacd0b85a97d-31c5c06e8bbso6477688f8f.1
+        for <linux-clk@vger.kernel.org>; Tue, 12 Sep 2023 22:32:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1694583155; x=1695187955; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=N4nYj22yWcBXT0fLmDHEet6LUruNho+epuPQlZMk6rA=;
+        b=QfIuB7m5npkIjdxEqLwP/UTYKoi0Aid+CBgxNJNeQIm29w78Vckcx7Xl158RrQriHm
+         xyiGqFkjn3hIa0/7pWc861IvFuMza8/zGM2B+I2u7h7bHvuUksUjHaadTjYzA/pM/xLy
+         Qk9UgnBw6wB84kjy/C4l9s08ndOqkKSGutvIcPlFEPDbcSmZszD8iVI9i5vE8zq0QZIc
+         6qyd4oiKPk0pKo6mWzFO86Ar48M3F41sxmRFdMGG5jdKPGgW3rZ3aJV6kyjdDFatqk8n
+         t+Q6Svjl9DWSxn8u4+g4Rbb8JnmqhgpQSOGaoA1F0HlkATlg22ZTh+6OzNBeMAehpw2J
+         13Rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694583155; x=1695187955;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=N4nYj22yWcBXT0fLmDHEet6LUruNho+epuPQlZMk6rA=;
+        b=p9vHwxg0Xeug0cwb9wHqmDzNPxDoyLfwzvi8rBYNbUOpabQ0hBKYY7XvAD8M6DZd6l
+         VL50w9AB5Gz2UI3Bjw87M0PANOI6uomWl+ziOFl1xwf6XdlSebsQ+tg5skO2T1MAvUHT
+         aYstynjaRLQlP66syokvqsSt7mjUHJ6O4J52/ni1EzCG+6HqLB9vIckRjAdATJAyc9ke
+         p04ELn89Of84fDjHkrFa5WjfQYhvqaz4as1l7PFo6UfzT/pPnOJi2OZxWgREtdlW2LFI
+         c8hekoefqSWSu3CyQ/yUHGatkQ16j8jzdAj/ZMikVLhDKzdeUAxEi+adnhhaK1UNEXDt
+         s0IQ==
+X-Gm-Message-State: AOJu0Yy+nLlquXicvZHiFaz0AGxXuUZuM2RT8BHlxtqKfx+xrM6J7kQ4
+        oj8LH5BGBU/zUUCSx/Xpdw08yA==
+X-Google-Smtp-Source: AGHT+IER9H3VVgLr+hfSKE6vI6LgtgJgyvA5sBGY5z57WD3YPKGjBTuZJ6vz2gIvOl0O6kav/COyJg==
+X-Received: by 2002:adf:e350:0:b0:319:7787:54a9 with SMTP id n16-20020adfe350000000b00319778754a9mr1037074wrj.24.1694583155059;
+        Tue, 12 Sep 2023 22:32:35 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.145])
+        by smtp.gmail.com with ESMTPSA id n15-20020a5d598f000000b0031fba0a746bsm3448003wri.9.2023.09.12.22.32.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Sep 2023 22:32:34 -0700 (PDT)
+Message-ID: <56cf08f2-5d8e-6098-6218-081d8f620abe@tuxon.dev>
+Date:   Wed, 13 Sep 2023 08:32:31 +0300
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.15.0
-Subject: Re: [PATCH V2 6/7] arm64: dts: qcom: ipq9574: Add support for nsscc
- node
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC:     <andersson@kernel.org>, <agross@kernel.org>,
-        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <p.zabel@pengutronix.de>, <richardcochran@gmail.com>,
-        <arnd@arndb.de>, <geert+renesas@glider.be>,
-        <nfraprado@collabora.com>, <rafal@milecki.pl>, <peng.fan@nxp.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
-        <quic_saahtoma@quicinc.com>
-References: <20230825091234.32713-1-quic_devipriy@quicinc.com>
- <20230825091234.32713-7-quic_devipriy@quicinc.com>
- <CAA8EJpo75zWLXuF-HC-Xz+6mvu_S1ET-9gzW=mOq+FjKspDwhw@mail.gmail.com>
+Subject: Re: [PATCH 35/37] dt-bindings: arm: renesas: document SMARC
+ Carrier-II EVK
 Content-Language: en-US
-From:   Devi Priya <quic_devipriy@quicinc.com>
-In-Reply-To: <CAA8EJpo75zWLXuF-HC-Xz+6mvu_S1ET-9gzW=mOq+FjKspDwhw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+To:     Rob Herring <robh@kernel.org>
+Cc:     geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        ulf.hansson@linaro.org, linus.walleij@linaro.org,
+        gregkh@linuxfoundation.org, jirislaby@kernel.org,
+        magnus.damm@gmail.com, catalin.marinas@arm.com, will@kernel.org,
+        prabhakar.mahadev-lad.rj@bp.renesas.com,
+        biju.das.jz@bp.renesas.com, quic_bjorande@quicinc.com,
+        arnd@arndb.de, konrad.dybcio@linaro.org, neil.armstrong@linaro.org,
+        nfraprado@collabora.com, rafal@milecki.pl,
+        wsa+renesas@sang-engineering.com,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com>
+ <20230912045157.177966-36-claudiu.beznea.uj@bp.renesas.com>
+ <20230912161635.GA877089-robh@kernel.org>
+From:   claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20230912161635.GA877089-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: gApxFy5Cy_uY5wxT9JTOvWBqjExHH7f3
-X-Proofpoint-ORIG-GUID: gApxFy5Cy_uY5wxT9JTOvWBqjExHH7f3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-09-12_24,2023-09-05_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
- malwarescore=0 clxscore=1015 spamscore=0 priorityscore=1501
- mlxlogscore=999 phishscore=0 bulkscore=0 suspectscore=0 adultscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2308100000 definitions=main-2309130027
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
 
-On 8/25/2023 4:58 PM, Dmitry Baryshkov wrote:
-> On Fri, 25 Aug 2023 at 12:15, Devi Priya <quic_devipriy@quicinc.com> wrote:
+On 12.09.2023 19:16, Rob Herring wrote:
+> On Tue, Sep 12, 2023 at 07:51:55AM +0300, Claudiu wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >>
->> Add a node for the nss clock controller found on ipq9574 based devices.
+>> Document Renesas SMARC Carrier-II EVK board which is based on RZ/G3S
+>> (R9A08G045) SoC. The SMARC Carrier-II EVK consists of RZ/G3S SoM module and
+>> SMARC Carrier-II carrier board, the SoM module sits on top of carrier
+>> board.
 >>
->> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >> ---
->>   Changes in V2:
->>          - Dropped the fixed clock node gcc_gpll0_out_aux and added
->>            support for the same in gcc driver
->>          - Updated the node name to clock-controller@39b00000
->>          - Added clock-names to retrieve the nssnoc clocks and add them
->>            to the list of pm clocks in nss driver
+>>  Documentation/devicetree/bindings/soc/renesas/renesas.yaml | 2 ++
+>>  1 file changed, 2 insertions(+)
 >>
->>   arch/arm64/boot/dts/qcom/ipq9574.dtsi | 48 +++++++++++++++++++++++++++
->>   1 file changed, 48 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
->> index 51aba071c1eb..903311547e96 100644
->> --- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
->> @@ -10,6 +10,8 @@
->>   #include <dt-bindings/clock/qcom,ipq9574-gcc.h>
->>   #include <dt-bindings/interrupt-controller/arm-gic.h>
->>   #include <dt-bindings/reset/qcom,ipq9574-gcc.h>
->> +#include <dt-bindings/clock/qcom,ipq9574-nsscc.h>
->> +#include <dt-bindings/reset/qcom,ipq9574-nsscc.h>
->>   #include <dt-bindings/thermal/thermal.h>
->>
->>   / {
->> @@ -18,6 +20,24 @@ / {
->>          #size-cells = <2>;
->>
->>          clocks {
->> +               bias_pll_cc_clk: bias-pll-cc-clk {
->> +                       compatible = "fixed-clock";
->> +                       clock-frequency = <1200000000>;
->> +                       #clock-cells = <0>;
->> +               };
->> +
->> +               bias_pll_nss_noc_clk: bias-pll-nss-noc-clk {
->> +                       compatible = "fixed-clock";
->> +                       clock-frequency = <461500000>;
->> +                       #clock-cells = <0>;
->> +               };
->> +
->> +               bias_pll_ubi_nc_clk: bias-pll-ubi-nc-clk {
->> +                       compatible = "fixed-clock";
->> +                       clock-frequency = <353000000>;
->> +                       #clock-cells = <0>;
->> +               };
+>> diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+>> index 822faf081e84..f4964445e5ab 100644
+>> --- a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+>> +++ b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+>> @@ -476,6 +476,8 @@ properties:
+>>  
+>>        - description: RZ/G3S (R9A08G045)
+>>          items:
+>> +          - enum:
+>> +              - renesas,smarc2-evk # SMARC Carrier-II EVK
 > 
-> Which part provides these clocks?
-The Bias PLL generates these clocks based on the reference clock.
+> You just changed the existing binding...
 > 
->> +
->>                  sleep_clk: sleep-clk {
->>                          compatible = "fixed-clock";
->>                          #clock-cells = <0>;
->> @@ -722,6 +742,34 @@ frame@b128000 {
->>                                  status = "disabled";
->>                          };
->>                  };
->> +
->> +               nsscc: clock-controller@39b00000 {
->> +                       compatible = "qcom,ipq9574-nsscc";
->> +                       reg = <0x39b00000 0x80000>;
->> +                       clocks = <&gcc GCC_NSSNOC_NSSCC_CLK>,
->> +                                <&gcc GCC_NSSNOC_SNOC_CLK>,
->> +                                <&gcc GCC_NSSNOC_SNOC_1_CLK>,
->> +                                <&bias_pll_cc_clk>,
->> +                                <&bias_pll_nss_noc_clk>,
->> +                                <&bias_pll_ubi_nc_clk>,
->> +                                <&gcc GPLL0_OUT_AUX>,
->> +                                <0>,
->> +                                <0>,
->> +                                <0>,
->> +                                <0>,
->> +                                <0>,
->> +                                <0>,
->> +                                <&xo_board_clk>;
+>>            - enum:
+>>                - renesas,r9a08g045s33 # PCIe support
 > 
-> If you move xo_board closer to the start of the list, it will be
-> slightly easier to review.
-Sure okay
-> 
->> +                       clock-names = "nssnoc_nsscc", "nssnoc_snoc", "nssnoc_snoc_1",
->> +                                     "bias_pll_cc_clk", "bias_pll_nss_noc_clk",
->> +                                     "bias_pll_ubi_nc_clk", "gpll0_out_aux", "uniphy0_nss_rx_clk",
->> +                                     "uniphy0_nss_tx_clk", "uniphy1_nss_rx_clk",
->> +                                     "uniphy1_nss_tx_clk", "uniphy2_nss_rx_clk",
->> +                                     "uniphy2_nss_tx_clk", "xo_board_clk";
-> 
-> You are using clock indices. Please drop clock-names.
-Sure okay
+> This is the SoM module? 
 
-Thanks,
-Devi Priya
+No, this is a SoC variant which supports PCIe.
+
+> You either need to squash this change or add 
+> another case with 3 entries and maintain the 2 entry case. (there's no 
+> way to express any entry at the beginning or middle can be optional)
 > 
->> +                       #clock-cells = <1>;
->> +                       #reset-cells = <1>;
->> +                       #power-domain-cells = <1>;
->> +               };
->>          };
+>>            - const: renesas,r9a08g045
+>> -- 
+>> 2.39.2
 >>
->>          thermal-zones {
->> --
->> 2.34.1
->>
-> 
-> 
