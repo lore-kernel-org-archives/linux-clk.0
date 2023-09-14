@@ -2,60 +2,59 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFE62EEAA4F
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Sep 2023 14:48:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 130B6EEAA4E
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Sep 2023 15:17:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240737AbjINOsp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Sep 2023 10:48:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49310 "EHLO
+        id S240130AbjINPRt convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Sep 2023 11:17:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240566AbjINOs2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Sep 2023 10:48:28 -0400
-Received: from mail-yb1-xb35.google.com (mail-yb1-xb35.google.com [IPv6:2607:f8b0:4864:20::b35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FE0D2118
-        for <linux-clk@vger.kernel.org>; Thu, 14 Sep 2023 07:48:24 -0700 (PDT)
-Received: by mail-yb1-xb35.google.com with SMTP id 3f1490d57ef6-d7b91422da8so1071271276.2
-        for <linux-clk@vger.kernel.org>; Thu, 14 Sep 2023 07:48:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694702904; x=1695307704; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=HuHnnCCpKec3KupkEaXCUwSfceD3r5v9lcKHYT+1ctU=;
-        b=uwOzEaRMlvkrX6eBWpjTmYYq/BIp35aWULXxX2pVTtglET3jtjxkAVOfYdwt22wd7J
-         pSGO7CeMaYRPidkO4KLxPl2tkhCI+pAFOs3tq+i4l4eSCJUnXbwD/zJNwoAxdBcVNsT1
-         yLPx5eGtt5WLnq4uOXEZiF5JAyCWPgrH3ns8qg4llIB6S4qSBK4HfSVVSn0k0614reaS
-         7XFG6H7hlO/rwk1Itq+cm7NhauRK5bfd1r0Ed03QLTNs9b9CYic0vQ4ZxHutkLnFF7YR
-         JX55qt8AGcP1IZLlKKbAK22Nq2SI9U8J1Cz7yOyD61xKh3qDgJyhueuNzA9SC44kuQcf
-         T4eQ==
+        with ESMTP id S232858AbjINPRs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Sep 2023 11:17:48 -0400
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FE3E1FC9;
+        Thu, 14 Sep 2023 08:17:44 -0700 (PDT)
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-d7e741729a2so1151317276.2;
+        Thu, 14 Sep 2023 08:17:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694702904; x=1695307704;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HuHnnCCpKec3KupkEaXCUwSfceD3r5v9lcKHYT+1ctU=;
-        b=Sbg95ByBbB+YzsHgxCf5zj9Hi78AJQWxgxWnxGgCyuhFWXQoBwv+gjkZlmQlCbhm8Y
-         Lqb2RDM3WBlgu5JXb3zPn8XL5n4WpWdSay3tjaszbgG9h4Q0ljlqaF8IjUZlwkwVcITW
-         eYLWav6+lym8OP91XdBstOpQzLY14DX3AN4QjzdP0x3HTy2+PgxCWc57XNoLRF54oSL2
-         u6PCFqcz/ARtf9cmCIkbRsOzwbkk7mlaSgVSVQuQy50cRWShqRJMVsh7esYHOavsAwGh
-         NpTJ3qYyjpAdkZTvvVAOZVFjSA3VzgproT2SJL+EjBxv9K0oHPPqgHuj3/SRB7Vnyn5d
-         TUEQ==
-X-Gm-Message-State: AOJu0YyRvx17bAJ+rS3iydDoDZ7z8bGaEHIy57YOhFYBaAaPPAq2cRQm
-        7eUXdnwVRtI9nWvfFgIrJGKBC/KT7ulaqTbn5z1nUw==
-X-Google-Smtp-Source: AGHT+IGBWbsPXdVUyVGh6IoeKWogXMpeV+NV1QYCzoeda8qrpQjFBedRitaOXAtVUrf1hzUWZSmx3vAdawl5AXo2Qt4=
-X-Received: by 2002:a25:858b:0:b0:d4c:cbd2:f6f3 with SMTP id
- x11-20020a25858b000000b00d4ccbd2f6f3mr5416147ybk.53.1694702903830; Thu, 14
- Sep 2023 07:48:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1694704661; x=1695309461;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bEkJKx0NjBVdd3xMHiONy8V+yf50ybZmUTpOXQj8RoE=;
+        b=dH7SuCRer46KaOVn+hpGtIwakV9ev8dWyNIHp7LX43rgOautvVzKq+dP3ICYL/MVjW
+         iEE1W6fiLiNRQasifDd8g7HWk+BcS7dj3azd+li8rXj2tnYV68qn43nT9ygW9eGAF1HR
+         IYxbHm+ylNvv8EBrJePQsmmdYGkSul8HnSQ1e1ZBNUxlMrkkbePSuwE+aiJkhsRZFy+s
+         2yX0rNQvLDfPYN3Uj+6+8KoyqUk8F9dFlgSqngnVyjrIsWUXdEy5gHlDmIirICAqSz3C
+         7JHnMYun6pXs4BuASYRqSdnKUb64E986SiX+caTSEV9S3jifxHI8nTlEHfreijp1VUGt
+         jlbg==
+X-Gm-Message-State: AOJu0YzGwSFKRybfvDsSS7E/buzPkLMYYY3roFy6e/opQB+0lKhtVZti
+        D8rMMoLCEpjl7LUMGJgqq1NjP+o1MRQP+Q==
+X-Google-Smtp-Source: AGHT+IElEWg2j/G1TPDgJ6GDDWWMMTKuTjJ6ifTRLmy7lxHCixE5BxLuAvmp0gp+Gm6DBVq4jio4lA==
+X-Received: by 2002:a25:2d03:0:b0:d78:3f9c:138e with SMTP id t3-20020a252d03000000b00d783f9c138emr5969314ybt.37.1694704660879;
+        Thu, 14 Sep 2023 08:17:40 -0700 (PDT)
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com. [209.85.219.175])
+        by smtp.gmail.com with ESMTPSA id b5-20020a5b0b45000000b00d816fa23bd4sm355682ybr.26.2023.09.14.08.17.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Sep 2023 08:17:40 -0700 (PDT)
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-d7e741729a2so1151297276.2;
+        Thu, 14 Sep 2023 08:17:40 -0700 (PDT)
+X-Received: by 2002:a25:760c:0:b0:d7b:9d44:76dc with SMTP id
+ r12-20020a25760c000000b00d7b9d4476dcmr6035360ybc.38.1694704660368; Thu, 14
+ Sep 2023 08:17:40 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com> <20230912045157.177966-32-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20230912045157.177966-32-claudiu.beznea.uj@bp.renesas.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 14 Sep 2023 16:47:48 +0200
-Message-ID: <CAPDyKFq1n=QOt9WSnzH4juPZ-B7xWdwGnDcAYUo7_D=2PRj-WQ@mail.gmail.com>
-Subject: Re: [PATCH 31/37] dt-bindings: mmc: renesas,sdhi: Document RZ/G3S support
+References: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com> <20230912045157.177966-17-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20230912045157.177966-17-claudiu.beznea.uj@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 14 Sep 2023 17:17:27 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXJUsbSbKhvxwvi4oG_K2v4w+5YU3VJL9J1X2mrdCA0ag@mail.gmail.com>
+Message-ID: <CAMuHMdXJUsbSbKhvxwvi4oG_K2v4w+5YU3VJL9J1X2mrdCA0ag@mail.gmail.com>
+Subject: Re: [PATCH 16/37] clk: renesas: rzg2l: add struct clk_hw_data
 To:     Claudiu <claudiu.beznea@tuxon.dev>
-Cc:     geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, linus.walleij@linaro.org,
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        ulf.hansson@linaro.org, linus.walleij@linaro.org,
         gregkh@linuxfoundation.org, jirislaby@kernel.org,
         magnus.damm@gmail.com, catalin.marinas@arm.com, will@kernel.org,
         prabhakar.mahadev-lad.rj@bp.renesas.com,
@@ -69,49 +68,30 @@ Cc:     geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
         linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 12 Sept 2023 at 06:53, Claudiu <claudiu.beznea@tuxon.dev> wrote:
->
+On Tue, Sep 12, 2023 at 6:52 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
 > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >
-> Document support for the SD Card/MMC interface on the Renesas
-> RZ/G3S (R9A08G045) SoC.
+> Add clk_hw_data struct that keeps the core part of a clock data. The
+> sd_hw_data embeds a member of type struct clk_hw_data along with other
+> members (in the next commits). This commit prepares the field for
+> refactoring the SD MUX clock driver.
 >
 > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Applied for next, thanks!
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Kind regards
-Uffe
+Gr{oetje,eeting}s,
 
+                        Geert
 
-> ---
->  Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
-> index 7756a8687eaf..94e228787630 100644
-> --- a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
-> +++ b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
-> @@ -59,6 +59,7 @@ properties:
->                - renesas,sdhi-r9a07g043 # RZ/G2UL
->                - renesas,sdhi-r9a07g044 # RZ/G2{L,LC}
->                - renesas,sdhi-r9a07g054 # RZ/V2L
-> +              - renesas,sdhi-r9a08g045 # RZ/G3S
->                - renesas,sdhi-r9a09g011 # RZ/V2M
->            - const: renesas,rcar-gen3-sdhi # R-Car Gen3 or RZ/G2
->        - items:
-> @@ -122,6 +123,7 @@ allOf:
->                - renesas,sdhi-r9a07g043
->                - renesas,sdhi-r9a07g044
->                - renesas,sdhi-r9a07g054
-> +              - renesas,sdhi-r9a08g045
->                - renesas,sdhi-r9a09g011
->      then:
->        properties:
-> --
-> 2.39.2
->
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
