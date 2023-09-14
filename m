@@ -2,158 +2,151 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEAB3EDE99F
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Sep 2023 10:23:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BA68EDE9AC
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Sep 2023 11:42:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234376AbjINKXG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Sep 2023 06:23:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46696 "EHLO
+        id S236275AbjINLmY convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Sep 2023 07:42:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230141AbjINKXF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Sep 2023 06:23:05 -0400
-Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-he1eur04on2045.outbound.protection.outlook.com [40.107.7.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D24B81BE9;
-        Thu, 14 Sep 2023 03:23:00 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=bJoaMAScdB43tQPLfic3aclFrBVPtEWp+JOpDk64K8GarF/kdfBXGsb/uFuX7e/YE9cqGtzhnaUsjIqwQHSbz/AL6pYpGG/mzoofc5W18zp2RpREVPmm4KvLbhgnKbF+mQPF51gpVdb1P/kXWSWL0z2EGZK5as07u1lvN3BRJChGehD3eF2h39yjeb6ZlGU3h74dGiG18ljqh75hpeoxILBLGw3NZ0yiw/5Feo1YSo57uQMf5XTkX5KZvtbap/yEhGB0jWlIq4IEApaQ+XB0t/EKhTNVCmIhuHv4PJHr0DwkkCaG/CZEwI4sCNP2zcPL1RQAb8S9MKYzdPgBJdgUxA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=86e6zB0JNzVLJMib9ZdlscZgSj1VvstHvc51jzK1Zz8=;
- b=B++NgnY87Q9jCId/LrIm5k2pNK4oZpAnQ2bmrz2CfpFYy4Ze+2ncUgqdzTMIWQDOqNtNbkI3yyRBsuv2RPTfvaJ0eiafc43BskUzDnGASAniGoRvyc2t9ibbqchbDy0NOaQHWO2OJ981beoTXfxoio1ulFo3Qi2fuL7FWy/4ZK82eI+vhwFCs0kS5VZs3c530+TPpk94MEmyz6mNJzD2zsfJ7GN2fVxl4JXfruyakyvKQ1ok7S6N73pOsKsv2lcuG9amlCe7OQXYi2NvLjFfh9NxFb24AsOVlGCuY7ObE9RbbVuMiv8Vqi66YAHYlTN0yuDZTBxcsgKLNvocvdqhXg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=86e6zB0JNzVLJMib9ZdlscZgSj1VvstHvc51jzK1Zz8=;
- b=jOyPf1iRuGNfbW27uUw6sHZPBc6Gr49yCiDdYj6XiAiU/fu/XbrrDe77a36dQP2C4HAQFmboE5wrnv/nhvmoj6p3hWFy5szH1b9Xyw2xR+6eeYKl8x3T8uk8KFqd4zsl9cCGZOM5BgfNROL0E7cVJT05HzGUYEpyEoOos4WRYM8=
-Received: from AS1PR04MB9264.eurprd04.prod.outlook.com (2603:10a6:20b:4c4::14)
- by GVXPR04MB9803.eurprd04.prod.outlook.com (2603:10a6:150:111::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6792.19; Thu, 14 Sep
- 2023 10:22:57 +0000
-Received: from AS1PR04MB9264.eurprd04.prod.outlook.com
- ([fe80::22ec:b7f4:780a:ac16]) by AS1PR04MB9264.eurprd04.prod.outlook.com
- ([fe80::22ec:b7f4:780a:ac16%7]) with mapi id 15.20.6768.029; Thu, 14 Sep 2023
- 10:22:57 +0000
-From:   "S.J. Wang" <shengjiu.wang@nxp.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        "abelvesa@kernel.org" <abelvesa@kernel.org>,
-        Peng Fan <peng.fan@nxp.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>
-CC:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: RE: [PATCH 0/5] clk: imx: imx8: Fix some error handling paths
-Thread-Topic: [PATCH 0/5] clk: imx: imx8: Fix some error handling paths
-Thread-Index: AQHZ5vVuJ1bkWufps0KPYlMW4So/JQ==
-Date:   Thu, 14 Sep 2023 10:22:57 +0000
-Message-ID: <AS1PR04MB92641B7B3944C2CF9F3DA3B3E3F7A@AS1PR04MB9264.eurprd04.prod.outlook.com>
-References: <cover.1693126687.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1693126687.git.christophe.jaillet@wanadoo.fr>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AS1PR04MB9264:EE_|GVXPR04MB9803:EE_
-x-ms-office365-filtering-correlation-id: 4d004c07-64ce-497c-bc94-08dbb50c90d7
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 6gVAkmZXr9dFDwjEHNfGNm2jJ1Ew+sLKLTwBhP7iyrBC4BkHi4oVqujovK/PgnPpz6fidJqAjMXKGa6g0eDWuB6/FZ+nOi7NfOVvUdCpvHJfe9CdGq03lmTd3/QjF6l2ZkI2Gsl55cVYRLzuSV84YaEsV5itxapD3Tw7AlMVUjT+PYWnPouq2hZBYNhXLFeWR1LWQOm3uKZCbE++/wyNsrfMvukeTxKcGweTgdXkSYUCkC+vqUdpGFSAOhf7w2aTqt0lh25TZIhvKISQRwwqF53WFxoQhuVHmLoFHdcnwMq5XcRAwYhBz5RNJbrrfIPEG04IO53Jhpudkj0Nc2/Ox8cq42s/mw5prFLjliqVLTSZGPZxOuVIZUDdOOwJvI7WzkatVD1QdpZdQY3cLtQTTRxR9G6l1HOg3dg3q48SmPQ6CXSWpfrNM+A27QMSmoOGopB5hQrno4DBHoT2kYaFv1tSIYdtx8Z5Bd9yVu8mFcaJ7rGschBO4S52DYa5xBrLGkJd8mDYgwEApKMXJmC7aQWwYwkEIyfeNzH6MD/AnXYbVQYkNR7q9dhLm0kPXxBO8iEUTIc2gP61ya/N8fZsHlDlTg6KrxDgHm+Y0737GvctF2pdp0xF7KBg8jl0JP4q9iFGH4PoOxj/dnSuKsxWvQ==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS1PR04MB9264.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(376002)(366004)(39860400002)(346002)(136003)(1800799009)(451199024)(186009)(83380400001)(71200400001)(55016003)(26005)(66556008)(33656002)(110136005)(66946007)(76116006)(64756008)(5660300002)(4326008)(52536014)(8676002)(8936002)(2906002)(7416002)(41300700001)(54906003)(6636002)(66446008)(66476007)(316002)(6506007)(7696005)(9686003)(478600001)(122000001)(86362001)(921005)(38100700002)(38070700005);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?5Gf6n21D12/hTdrfi2VS7XmildQMzXyLBfwzCi4RsA/jYQx95fRy0bH3MhW5?=
- =?us-ascii?Q?Spyb/k/aXHLoimFUdYPmCRH7vMu/vpXzFofADAPtaPzbVPTf4Da6STYUYJjH?=
- =?us-ascii?Q?KFH10NX20CbgVhU/HPFpUP53TpBwxvFE8WZr+PRdlVQG+aehbjTwNw15uBYC?=
- =?us-ascii?Q?w1GzxI48DJ0KSXeti7a6vbi53BZrOUZsXDsuc48Yn0Yowpw7Qo6gU1UiimK9?=
- =?us-ascii?Q?gpuyYiT6AY2aJAdqSFeydvdsMpgT5inTZvIwk/+b2IEM6+dFsKrQoeuUt/Nx?=
- =?us-ascii?Q?PCg0HX0CH5yGDW8JNvZhi3tWvGY7egFaMmda+y0JfVvYqyNrXtsIBXWkxktt?=
- =?us-ascii?Q?rtkrnZyNil2MU4TsR7hW03gA8+u7N5XW8UeYk60WLNx+IL0P6eCZq3fwDio+?=
- =?us-ascii?Q?yc8nBoac8YlOftVTws0vDkAUiNVOSKtV34i9DsVByAUASeJuP+I+i4Svgw5Z?=
- =?us-ascii?Q?dZnWaIkefvC4n9zZ8a0YvUUU1Ka7PVznBHDFGsfXFdcTxTAhNFpZSKjyYtRj?=
- =?us-ascii?Q?/jOlxy2ZHW8w+bIDfrIcyFBD4Wfv4IVE6kfqbCrZ51wfs7dii+C+rOPlXqwR?=
- =?us-ascii?Q?nbqI4KZunhW9anRMTDG2PmKH0E41l/7b63Klyv7iaJMw4cCMuP5w2tcQQIu+?=
- =?us-ascii?Q?lyk+J6rl9OOwSEroW3kxGJhd/r9cOnRud3/l0CCzjqrOlq/ILCg89OYo4b/r?=
- =?us-ascii?Q?/CCfiHy+MY+cxcLYBveC/LrQ/lug3lcw+BZTkU9uBHuiMZnUQQ7vkTZWEwUU?=
- =?us-ascii?Q?Jq7uZ0JUW4lafhrXUZ1j5ido6xfI+2Fn9HQ3BA0q5ax1RxFjhHaxlve5gxWm?=
- =?us-ascii?Q?1wyG4PFrcca4ASKu78SQ0fDEAtO6hXMbIqc6TLOJjgwJ50Al2SWtdy1JKf3c?=
- =?us-ascii?Q?mRry7TCU0N0BnEMZ1bsy5VNiMJlNdbtnad8idQdHaedYxfJpT4vriXGmhVWQ?=
- =?us-ascii?Q?A5YFeo2QUbcjjGMU8lD4vKi7oroqEk8m9sCHqSpbgCfGsgwhD5A9ZQU5jK8l?=
- =?us-ascii?Q?PpBaoXukbtvKn7F4DnWVAflpKyEMT+g5b1voH0scD7QRmGWD6CvfrL1LNPbn?=
- =?us-ascii?Q?phkamSsGUc0/Bc74J3fwLgNU5VUMekE3t+f5t0Wknh95ORPU7UfHJS1UQbgp?=
- =?us-ascii?Q?OHp2FZ3fL2BRFrqskY93rOCt1a/dgFkI8atPWcMksycw/J+tEVSwInPwASmm?=
- =?us-ascii?Q?b/2/PGqXS2pRt1pFXbllX9g0pR0Xl/miL/isuQHTzpTOAOINp74KlUSondY7?=
- =?us-ascii?Q?Q2rE1uFGdcMrZNAJnTFdoK84CHCyju2tRKlKfVC+wJD/Wv6dP9a3GSS8PU0L?=
- =?us-ascii?Q?XqrAtXoCaCvLayCMrpyC498sYh3pohAPFwN0FAGVua9cozvUm+c+jWyNgJgE?=
- =?us-ascii?Q?kMjSm1XVv5H8cgS7STY/rZPJ1oj6pcHduqNqoaUTD5fQBi8PNvOoEv+ASC6b?=
- =?us-ascii?Q?3fnXHisEhIVU8g20I6TWN21ovwF7ZWYqH3HoEuLheKsT5gRKmmTF7R/zymQI?=
- =?us-ascii?Q?V6p5sWYAclWWXMr4Q4qOpYepMuI3yDYjTH76ob1aN4SfFO+HYmCBIXNh21Wp?=
- =?us-ascii?Q?XcvTOOvhgKh/1WHcQGr/cvHYVztXnNqxKUg+bdQb?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        with ESMTP id S235161AbjINLmX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Sep 2023 07:42:23 -0400
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40446CC3;
+        Thu, 14 Sep 2023 04:42:19 -0700 (PDT)
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-59b9d255037so9680767b3.2;
+        Thu, 14 Sep 2023 04:42:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694691738; x=1695296538;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TQF6azidQAjPWw/iF7OTkfye/Uwv7/91WnosuLGo4H0=;
+        b=KRnazo4b3oK3Ks80sZ9YwBqZ6xe5m9l7EplvvSZ7n533Jj0sGVsmxvb7E1Ubha9X49
+         3pvqgFAc0LQVRM5+uXjVO5J6hrkVd9Sltk4bM/lvxXfRURlGvW0/xhpsvu7f02kyzogs
+         If6oNpnHXlTaIQH99wRBrWT3j2hM8kA8SHG5+vyzLz03uxQlqxBlNRoi1xtAQlECi45K
+         10mUks1PSym7GeZ5M1iHso4qGqezTGe78jsCRkdp7SQkUiij6Rghsaf3Zq07BDQoUCns
+         PCdL1+gyRApk2rOaTVBg2CzIg8jGnIWDHLxVX+U3hSS7fh7dOG27D9O5WQe2YD9czxrx
+         UoaA==
+X-Gm-Message-State: AOJu0YxbPVJxeSkMv5ONQ3fTr4ZrWIKhzJrOkG3s+RryLnMCmHQag6cg
+        RkjZtdBGRhsaznrTFKa57v0SPj8cCFYQ1g==
+X-Google-Smtp-Source: AGHT+IF0Sgpy0A5vUjYzeH274xmHzh4WNbwSDJ0nsHb0aJrnlaQDcsZtmGN7NOioeDgdpMgpB5N8vQ==
+X-Received: by 2002:a81:49ca:0:b0:59b:e622:f820 with SMTP id w193-20020a8149ca000000b0059be622f820mr2817520ywa.13.1694691738247;
+        Thu, 14 Sep 2023 04:42:18 -0700 (PDT)
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
+        by smtp.gmail.com with ESMTPSA id z5-20020a81a245000000b005832fe29034sm269217ywg.89.2023.09.14.04.42.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Sep 2023 04:42:17 -0700 (PDT)
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-d776e1f181bso855446276.3;
+        Thu, 14 Sep 2023 04:42:17 -0700 (PDT)
+X-Received: by 2002:a25:8683:0:b0:d7b:8d9a:4ec5 with SMTP id
+ z3-20020a258683000000b00d7b8d9a4ec5mr4800309ybk.41.1694691737069; Thu, 14 Sep
+ 2023 04:42:17 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AS1PR04MB9264.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4d004c07-64ce-497c-bc94-08dbb50c90d7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Sep 2023 10:22:57.7163
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: uE5PnIvHCXUh3hp0MRrkQ5fcPmt2Hixlqo1ILQFyK9Ct8H78BJysg3jkBzRAplsONqCRdDf38BJZduHYIhjcew==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB9803
+References: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com> <20230912045157.177966-7-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20230912045157.177966-7-claudiu.beznea.uj@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 14 Sep 2023 13:42:04 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXoq96ptmm+oU_yHdkSfN4+WCfABn98tXV5xfyvM66Eig@mail.gmail.com>
+Message-ID: <CAMuHMdXoq96ptmm+oU_yHdkSfN4+WCfABn98tXV5xfyvM66Eig@mail.gmail.com>
+Subject: Re: [PATCH 06/37] clk: renesas: rzg2l: wait for status bit of SD mux
+ before continuing
+To:     Claudiu <claudiu.beznea@tuxon.dev>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        ulf.hansson@linaro.org, linus.walleij@linaro.org,
+        gregkh@linuxfoundation.org, jirislaby@kernel.org,
+        magnus.damm@gmail.com, catalin.marinas@arm.com, will@kernel.org,
+        prabhakar.mahadev-lad.rj@bp.renesas.com,
+        biju.das.jz@bp.renesas.com, quic_bjorande@quicinc.com,
+        arnd@arndb.de, konrad.dybcio@linaro.org, neil.armstrong@linaro.org,
+        nfraprado@collabora.com, rafal@milecki.pl,
+        wsa+renesas@sang-engineering.com,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
->=20
-> This serie fix some error handling paths. It is split in different patche=
-s to ease
-> review because the issues are unrelated and the proposed fixes are maybe
-> wrong (I don't have the hardware to test anything)
->=20
-> Patch 2 and 3 are more speculative than the 3 oher ones. Review with care=
-.
->=20
->=20
-> Finally, I got some problem when generating the serie, and some patches
-> have been hand-modified afterwards.
-> They look good to me, but I hope have not screwed up things...
+Hi Claudiu,
 
+On Tue, Sep 12, 2023 at 6:52 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Hardware user manual of RZ/G2L (r01uh0914ej0130-rzg2l-rzg2lc.pdf,
+> chapter 7.4.7 Procedure for Switching Clocks by the Dynamic Switching
+> Frequency Selectors) specifies that we need to check CPG_PL2SDHI_DSEL for
+> SD clock switching status.
+>
+> Fixes: eaff33646f4cb ("clk: renesas: rzg2l: Add SDHI clk mux support")
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-From the 3rd patch,  it can't be applied, maybe there is generating issue.
+Thanks for your patch!
 
-Best regards
-Wang Shengjiu
+> --- a/drivers/clk/renesas/rzg2l-cpg.c
+> +++ b/drivers/clk/renesas/rzg2l-cpg.c
+> @@ -188,7 +188,8 @@ static int rzg2l_cpg_sd_clk_mux_set_parent(struct clk_hw *hw, u8 index)
+>         u32 off = GET_REG_OFFSET(hwdata->conf);
+>         u32 shift = GET_SHIFT(hwdata->conf);
+>         const u32 clk_src_266 = 2;
+> -       u32 bitmask;
+> +       u32 msk, val, bitmask;
+> +       int ret;
+>
+>         /*
+>          * As per the HW manual, we should not directly switch from 533 MHz to
+> @@ -203,9 +204,6 @@ static int rzg2l_cpg_sd_clk_mux_set_parent(struct clk_hw *hw, u8 index)
+>          */
+>         bitmask = (GENMASK(GET_WIDTH(hwdata->conf) - 1, 0) << shift) << 16;
+>         if (index != clk_src_266) {
+> -               u32 msk, val;
+> -               int ret;
+> -
+>                 writel(bitmask | ((clk_src_266 + 1) << shift), priv->base + off);
+>
+>                 msk = off ? CPG_CLKSTATUS_SELSDHI1_STS : CPG_CLKSTATUS_SELSDHI0_STS;
+> @@ -221,7 +219,13 @@ static int rzg2l_cpg_sd_clk_mux_set_parent(struct clk_hw *hw, u8 index)
+>
+>         writel(bitmask | ((index + 1) << shift), priv->base + off);
+>
+> -       return 0;
+> +       ret = readl_poll_timeout(priv->base + CPG_CLKSTATUS, val,
+> +                                !(val & msk), 100,
 
->=20
-> Christophe JAILLET (5):
->   clk: imx: imx8: Fix an error handling path in
->     clk_imx_acm_attach_pm_domains()
->   clk: imx: imx8: Fix an error handling path if
->     devm_clk_hw_register_mux_parent_data_table() fails
->   clk: imx: imx8: Fix an error handling path in imx8_acm_clk_probe()
->   clk: imx: imx8: Add a message in case of
->     devm_clk_hw_register_mux_parent_data_table() error
->   clk: imx: imx8: Simplify clk_imx_acm_detach_pm_domains()
->=20
->  drivers/clk/imx/clk-imx8-acm.c | 27 +++++++++++++++------------
->  1 file changed, 15 insertions(+), 12 deletions(-)
->=20
-> --
-> 2.34.1
+"msk" may be uninitialized.
 
+> +                                CPG_SDHI_CLK_SWITCH_STATUS_TIMEOUT_US);
+> +       if (ret)
+> +               dev_err(priv->dev, "failed to switch clk source\n");
+> +
+> +       return ret;
+
+This is now (supposed to be) doing the same thing twice, once using
+clk_src_266, and then again with the wanted index, so why not introduce
+a small helper? That would have avoided the uninitialized variable, too.
+
+I know you're rewriting this code in "[PATCH 18/37] clk: renesas:
+rzg2l: refactor sd mux driver", but even after that, you always do
+a register write before calling rzg2l_cpg_wait_clk_update_done(),
+so it may still be a net win.
+
+>  }
+>
+>  static u8 rzg2l_cpg_sd_clk_mux_get_parent(struct clk_hw *hw)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
