@@ -2,69 +2,107 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47847EEAA57
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Sep 2023 16:30:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0900EEAA63
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Sep 2023 18:31:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232000AbjINQaX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Sep 2023 12:30:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44480 "EHLO
+        id S240803AbjINScD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Sep 2023 14:32:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232206AbjINQaW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Sep 2023 12:30:22 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 678591FCE;
-        Thu, 14 Sep 2023 09:30:18 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0C7FC433C7;
-        Thu, 14 Sep 2023 16:30:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694709018;
-        bh=nhzaDPtDjFNbPiCIGqGrvXSRv8u+mkX5rY5cXHPXIyg=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Dm8BJHKO+oN1VPX59fBzNz5hbhtgnQTaYqEzNlqiHyg3/Q+TebdGXj2DcI3a2WO0g
-         fU84tjCBbCgehDqn8bZsOzcN6mjV67vc6lQGVnjKjIEjyWUkvC/WYSeG92GE57jAfx
-         dLdWUBX6itACTWdaC6jc15D9ZzLhfEDJCB6mhMx7W5siky4FI4y4Lp+d+c768DN8pn
-         ZIBGMA8/MRfKmtLIKrWK6dZBnrH5jZBhEQjFtbkOj0LZ8egKX7zfgAr3R3Gn2rENu0
-         FnbUZit7JL1A230nO7ifdOsD0kPVrWYqXd5lAtBQI3nhob61IGES8GJpGBXsX4V7ku
-         3geRAMW/3X15Q==
-Message-ID: <580f3934ab1171e27d785db7362c342d.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S239341AbjINScC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Sep 2023 14:32:02 -0400
+Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 693F81FE5
+        for <linux-clk@vger.kernel.org>; Thu, 14 Sep 2023 11:31:58 -0700 (PDT)
+Received: from [192.168.1.18] ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id gr87qJd7OVPLSgr87qVaza; Thu, 14 Sep 2023 20:31:56 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1694716316;
+        bh=v/TDaIRxJKGlPY3fpIXLuEW+O/pJ/KGfg3MooNqWmPg=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=DDU0oPPSHjTHHZulF/fW8fttRhxzZMW45GPSWMZEF8ewpK5IIDxMHhJmvdzC76/JX
+         +EskoztytTE1jMet+dGErWhFeMv5qguonENn2WH14VXr80uVgD6wmo5BcUn/Bo8Q4K
+         IF+gJD+Ich4nTiC0W9cuD49BAf0kZwQAJENdSWp4s8Pu+9OBCB7XJIUBN4Hbwxe4VL
+         FV/2VN0zY3yKtI5MawaU/KOoACGUmZO0OVuJ49UJTC8b859b6ZpD3ss8S5kgeVNHtS
+         M+5ucGSyopZqnJINrUUvkLtwinG3nwsmtbm8OobXPbVWHhWbiH7//C7bTSSRxKvL4Y
+         PlYEIj1yTCBSg==
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 14 Sep 2023 20:31:56 +0200
+X-ME-IP: 86.243.2.178
+Message-ID: <b3b54c2a-e567-a4fe-d022-eae04aa07354@wanadoo.fr>
+Date:   Thu, 14 Sep 2023 20:31:55 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <9952fa20-a27f-3240-cc49-5c5109febfc1@quicinc.com>
-References: <20230901091823.30242-1-quic_luoj@quicinc.com> <20230901091823.30242-5-quic_luoj@quicinc.com> <27ae3297ad161fd67706db70b402db04.sboyd@kernel.org> <16d09acf-7bdd-04ee-6faf-936c0366df03@quicinc.com> <17681a9f756cc70a190c674c51b90140.sboyd@kernel.org> <5a4805f7-f802-b1ba-9804-59c0fe6c7f26@quicinc.com> <92058c25fb11b75ee0a2298a684825e9.sboyd@kernel.org> <f67b354c-8a4b-49f5-6275-66b7d614301a@quicinc.com> <82adb75659e0d278e25b65b0e81df99a.sboyd@kernel.org> <9952fa20-a27f-3240-cc49-5c5109febfc1@quicinc.com>
-Subject: Re: [PATCH v6 4/4] clk: qcom: add clock controller driver for qca8386/qca8084
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        quic_srichara@quicinc.com
-To:     Jie Luo <quic_luoj@quicinc.com>, agross@kernel.org,
-        andersson@kernel.org, catalin.marinas@arm.com, conor+dt@kernel.org,
-        konrad.dybcio@linaro.org, krzysztof.kozlowski+dt@linaro.org,
-        mturquette@baylibre.com, p.zabel@pengutronix.de,
-        robh+dt@kernel.org, will@kernel.org
-Date:   Thu, 14 Sep 2023 09:30:15 -0700
-User-Agent: alot/0.10
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.0
+Subject: Re: RE: [PATCH 0/5] clk: imx: imx8: Fix some error handling paths
+To:     "S.J. Wang" <shengjiu.wang@nxp.com>,
+        "abelvesa@kernel.org" <abelvesa@kernel.org>,
+        Peng Fan <peng.fan@nxp.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>
+Cc:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+References: <cover.1693126687.git.christophe.jaillet@wanadoo.fr>
+ <AS1PR04MB92641B7B3944C2CF9F3DA3B3E3F7A@AS1PR04MB9264.eurprd04.prod.outlook.com>
+Content-Language: fr
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <AS1PR04MB92641B7B3944C2CF9F3DA3B3E3F7A@AS1PR04MB9264.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jie Luo (2023-09-12 20:27:25)
->=20
->=20
-> On 9/13/2023 1:18 AM, Stephen Boyd wrote:
-> > Quoting Jie Luo (2023-09-12 05:07:02)
-> >>
-> >> and freq_tbl are necessary to this clock.
-> >=20
-> > I still don't see why the freq_tbl is necessary.
->=20
-> Hi Stephen,
-> For clk_rcg2_ops, freq_tbl is used to find the closest rate to decided=20
-> the parent clock, the configuration of clock source and clock divider=20
-> are saved in the freq_tbl to configure the RCG hardware register, the=20
-> mapping of parent clock and hardware register value is decided by the=20
-> freq_tbl for the RCG clock.
+Le 14/09/2023 à 12:22, S.J. Wang a écrit :
+>>
+>> This serie fix some error handling paths. It is split in different patches to ease
+>> review because the issues are unrelated and the proposed fixes are maybe
+>> wrong (I don't have the hardware to test anything)
+>>
+>> Patch 2 and 3 are more speculative than the 3 oher ones. Review with care.
+>>
+>>
+>> Finally, I got some problem when generating the serie, and some patches
+>> have been hand-modified afterwards.
+>> They look good to me, but I hope have not screwed up things...
+> 
+> 
+>  From the 3rd patch,  it can't be applied, maybe there is generating issue.
 
-The divider is always 1. The frequency is the frequency of the parent.
-The two pieces of information are already known without the frequency
-table. Why is it needed?
+I will resend.
+
+CJ
+
+> 
+> Best regards
+> Wang Shengjiu
+> 
+>>
+>> Christophe JAILLET (5):
+>>    clk: imx: imx8: Fix an error handling path in
+>>      clk_imx_acm_attach_pm_domains()
+>>    clk: imx: imx8: Fix an error handling path if
+>>      devm_clk_hw_register_mux_parent_data_table() fails
+>>    clk: imx: imx8: Fix an error handling path in imx8_acm_clk_probe()
+>>    clk: imx: imx8: Add a message in case of
+>>      devm_clk_hw_register_mux_parent_data_table() error
+>>    clk: imx: imx8: Simplify clk_imx_acm_detach_pm_domains()
+>>
+>>   drivers/clk/imx/clk-imx8-acm.c | 27 +++++++++++++++------------
+>>   1 file changed, 15 insertions(+), 12 deletions(-)
+>>
+>> --
+>> 2.34.1
+> 
+> 
+
