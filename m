@@ -2,34 +2,34 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1425EEAA71
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Sep 2023 20:31:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D51EEEAA79
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Sep 2023 20:31:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229939AbjINUbZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Sep 2023 16:31:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44372 "EHLO
+        id S229909AbjINUb1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Sep 2023 16:31:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229905AbjINUbY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Sep 2023 16:31:24 -0400
+        with ESMTP id S229954AbjINUb0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Sep 2023 16:31:26 -0400
 Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 168D12701
-        for <linux-clk@vger.kernel.org>; Thu, 14 Sep 2023 13:31:20 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2AF42697
+        for <linux-clk@vger.kernel.org>; Thu, 14 Sep 2023 13:31:21 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id gszUqMvFz7mcCgszeqSuie; Thu, 14 Sep 2023 22:31:18 +0200
+        id gszUqMvFz7mcCgszgqSujL; Thu, 14 Sep 2023 22:31:20 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1694723478;
-        bh=vDMwGPoL7IUwKLZSj66ABJwQcRH7iJ6OhehhdBpzoGI=;
+        s=t20230301; t=1694723480;
+        bh=uJUbD44KFFzWixdbKCNvbFqaLxCfMEIUABC+xCGz+h8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=H53P1VIqYoTjl1GsFVQAtp1OUqAcTgfxyzCQIi7cOILeyUZmPhDyWJhgyBfbLcBp1
-         Ytg/siSE+/4EFWOce4lK2PyDFezrBpi2Y403yLVvLp1XBhT+9W2cr+jitk4DWtiqml
-         Ww737IvD6ByWQupws/gWtCOkh4TqrHIWKsP+0Yp0qBJHd624z/ESKvMjFwkE29XY6i
-         IIEO6CUPSk2FdJXq0YBaIWrD6i2/Z9VlX7nqZo8qrrR6ojDVItnZ7K2DAR//iSheYo
-         MY7ePLJMSK5fxMknV83WAokoDP6yHtaUeQAp58i3pkBi3talLLPHzitWCMYxN3G23u
-         esTHVNSH3ybLw==
+        b=YsX/EaRdLBP85K/6bBP2Aha5OcT3dD8fBN9dwo5VUfI+WskzbbHIhG5SdMV5qrLxq
+         4mynLaS+CwsO9EC4d2UpwkhaWR+aSXd8iH82HeTiD7GMUb5dIPEtzH4TG4qH4/WgTS
+         LcxbGiDsJiMBiskch95I5TdB1H4uEt4+4NBzSy5kGnLDVu/PEgMtiucXDDUubaQa8k
+         fEQJuagJOCtIHSY48dsi2OF8nqMQhlwAgteuiscn8tqM9CS//lYwicdnkc7pwd0J2z
+         74tonesYF6Z4mKsSv5+8Zl/MqUDRqDMEFp7MhZdgggnYj2lrClchrqNo0wMtvIYuOz
+         P88jgwDJCB4/A==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 14 Sep 2023 22:31:18 +0200
+X-ME-Date: Thu, 14 Sep 2023 22:31:20 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To:     abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
@@ -39,9 +39,9 @@ To:     abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
 Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH v2 1/5] clk: imx: imx8: Fix an error handling path in clk_imx_acm_attach_pm_domains()
-Date:   Thu, 14 Sep 2023 22:31:02 +0200
-Message-Id: <ced98eb9416ded902f3896ba58fee72991864e26.1694722339.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH v2 3/5] clk: imx: imx8: Fix an error handling path in imx8_acm_clk_probe()
+Date:   Thu, 14 Sep 2023 22:31:04 +0200
+Message-Id: <64da5952f807f37f29f0c4420ac1bde416551a13.1694722339.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1694722339.git.christophe.jaillet@wanadoo.fr>
 References: <cover.1694722339.git.christophe.jaillet@wanadoo.fr>
@@ -51,33 +51,50 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-If a dev_pm_domain_attach_by_id() call fails, previously allocated
-resources need to be released.
+If an error occurs after a successful clk_imx_acm_attach_pm_domains() call,
+it must be undone.
+
+Add an explicit error handling path, re-order the code and add the missing
+clk_imx_acm_detach_pm_domains() call.
 
 Fixes: d3a0946d7ac9 ("clk: imx: imx8: add audio clock mux driver")
 Reviewed-by: Peng Fan <peng.fan@nxp.com>
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/clk/imx/clk-imx8-acm.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/clk/imx/clk-imx8-acm.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/clk/imx/clk-imx8-acm.c b/drivers/clk/imx/clk-imx8-acm.c
-index 1e82f72b75c6..87025a6772d0 100644
+index 73b3b5354951..1c95ae905eec 100644
 --- a/drivers/clk/imx/clk-imx8-acm.c
 +++ b/drivers/clk/imx/clk-imx8-acm.c
-@@ -279,8 +279,10 @@ static int clk_imx_acm_attach_pm_domains(struct device *dev,
+@@ -374,7 +374,6 @@ static int imx8_acm_clk_probe(struct platform_device *pdev)
+ 										0, NULL, NULL);
+ 		if (IS_ERR(hws[sels[i].clkid])) {
+ 			ret = PTR_ERR(hws[sels[i].clkid]);
+-			pm_runtime_disable(&pdev->dev);
+ 			goto err_clk_register;
+ 		}
+ 	}
+@@ -384,12 +383,16 @@ static int imx8_acm_clk_probe(struct platform_device *pdev)
+ 	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, clk_hw_data);
+ 	if (ret < 0) {
+ 		dev_err(dev, "failed to register hws for ACM\n");
+-		pm_runtime_disable(&pdev->dev);
++		goto err_clk_register;
+ 	}
  
- 	for (i = 0; i < dev_pm->num_domains; i++) {
- 		dev_pm->pd_dev[i] = dev_pm_domain_attach_by_id(dev, i);
--		if (IS_ERR(dev_pm->pd_dev[i]))
--			return PTR_ERR(dev_pm->pd_dev[i]);
-+		if (IS_ERR(dev_pm->pd_dev[i])) {
-+			ret = PTR_ERR(dev_pm->pd_dev[i]);
-+			goto detach_pm;
-+		}
+-err_clk_register:
++	pm_runtime_put_sync(&pdev->dev);
++	return 0;
  
- 		dev_pm->pd_dev_link[i] = device_link_add(dev,
- 							 dev_pm->pd_dev[i],
++err_clk_register:
+ 	pm_runtime_put_sync(&pdev->dev);
++	pm_runtime_disable(&pdev->dev);
++	clk_imx_acm_detach_pm_domains(&pdev->dev, &priv->dev_pm);
+ 
+ 	return ret;
+ }
 -- 
 2.34.1
 
