@@ -2,107 +2,83 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0900EEAA63
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Sep 2023 18:31:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28230EEAA71
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Sep 2023 20:31:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240803AbjINScD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Sep 2023 14:32:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50436 "EHLO
+        id S229799AbjINUbS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Sep 2023 16:31:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239341AbjINScC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Sep 2023 14:32:02 -0400
-Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 693F81FE5
-        for <linux-clk@vger.kernel.org>; Thu, 14 Sep 2023 11:31:58 -0700 (PDT)
-Received: from [192.168.1.18] ([86.243.2.178])
+        with ESMTP id S229655AbjINUbP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Sep 2023 16:31:15 -0400
+Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FF8A2696
+        for <linux-clk@vger.kernel.org>; Thu, 14 Sep 2023 13:31:11 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id gr87qJd7OVPLSgr87qVaza; Thu, 14 Sep 2023 20:31:56 +0200
+        id gszUqMvFz7mcCgszUqSuhP; Thu, 14 Sep 2023 22:31:09 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1694716316;
-        bh=v/TDaIRxJKGlPY3fpIXLuEW+O/pJ/KGfg3MooNqWmPg=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=DDU0oPPSHjTHHZulF/fW8fttRhxzZMW45GPSWMZEF8ewpK5IIDxMHhJmvdzC76/JX
-         +EskoztytTE1jMet+dGErWhFeMv5qguonENn2WH14VXr80uVgD6wmo5BcUn/Bo8Q4K
-         IF+gJD+Ich4nTiC0W9cuD49BAf0kZwQAJENdSWp4s8Pu+9OBCB7XJIUBN4Hbwxe4VL
-         FV/2VN0zY3yKtI5MawaU/KOoACGUmZO0OVuJ49UJTC8b859b6ZpD3ss8S5kgeVNHtS
-         M+5ucGSyopZqnJINrUUvkLtwinG3nwsmtbm8OobXPbVWHhWbiH7//C7bTSSRxKvL4Y
-         PlYEIj1yTCBSg==
-X-ME-Helo: [192.168.1.18]
+        s=t20230301; t=1694723469;
+        bh=Sb61MGbLqsf+CsIMkkDke3Cvm/shDI295oG39gW+CtY=;
+        h=From:To:Cc:Subject:Date;
+        b=UwON7NmSvg7mtEanY+4I6YQv7qqLAI1G+Uy0/Q/THiamTR7s3nbj+HcQ0M5V17DqS
+         nZ+75/D30Rq03k2eDlNrK90bw2b8OGG7I9a/35Ot4rVad6FwXxNe1dVlquOZmdF/vP
+         FaSPjlLYiceEv/qdn/Etd8FnJHWXpSarWzW8X8ov+QDxcu0Ach0bkowQ4juoDGzRi1
+         SLZHcYvX+PbIw3QZNIWD2CMaLeMbZWrU3g4cDzDCsVzalCU8Vh1o4LfmjRxcW+qQzI
+         aHz+so4vGspS4P7bO9ENAqtd5zMYLgm8MdoZR18KZQSrtmWX6rtc2y6crgaPkDRTKk
+         t79GaoGvxY6JQ==
+X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 14 Sep 2023 20:31:56 +0200
+X-ME-Date: Thu, 14 Sep 2023 22:31:09 +0200
 X-ME-IP: 86.243.2.178
-Message-ID: <b3b54c2a-e567-a4fe-d022-eae04aa07354@wanadoo.fr>
-Date:   Thu, 14 Sep 2023 20:31:55 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: RE: [PATCH 0/5] clk: imx: imx8: Fix some error handling paths
-To:     "S.J. Wang" <shengjiu.wang@nxp.com>,
-        "abelvesa@kernel.org" <abelvesa@kernel.org>,
-        Peng Fan <peng.fan@nxp.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>
-Cc:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-References: <cover.1693126687.git.christophe.jaillet@wanadoo.fr>
- <AS1PR04MB92641B7B3944C2CF9F3DA3B3E3F7A@AS1PR04MB9264.eurprd04.prod.outlook.com>
-Content-Language: fr
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <AS1PR04MB92641B7B3944C2CF9F3DA3B3E3F7A@AS1PR04MB9264.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
+        sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        shengjiu.wang@nxp.com
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH v2 0/5] clk: imx: imx8: Fix some error handling paths
+Date:   Thu, 14 Sep 2023 22:31:01 +0200
+Message-Id: <cover.1694722339.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Le 14/09/2023 à 12:22, S.J. Wang a écrit :
->>
->> This serie fix some error handling paths. It is split in different patches to ease
->> review because the issues are unrelated and the proposed fixes are maybe
->> wrong (I don't have the hardware to test anything)
->>
->> Patch 2 and 3 are more speculative than the 3 oher ones. Review with care.
->>
->>
->> Finally, I got some problem when generating the serie, and some patches
->> have been hand-modified afterwards.
->> They look good to me, but I hope have not screwed up things...
-> 
-> 
->  From the 3rd patch,  it can't be applied, maybe there is generating issue.
+This serie fix some error handling paths. It is split in different patches to
+ease review because the issues are unrelated and the proposed fixes are maybe
+wrong (I don't have the hardware to test anything)
 
-I will resend.
+Some of v1 patches had been incorrectly hand modified. There was a extra ')' in
+patch 3 and 4 that prevented the merge.
 
-CJ
+This v2 is a cleanly regenarated serie, compile tested at each step. This
+time, git format-patch did all the work and the patches have NOT been hand
+modified afterwards.
 
-> 
-> Best regards
-> Wang Shengjiu
-> 
->>
->> Christophe JAILLET (5):
->>    clk: imx: imx8: Fix an error handling path in
->>      clk_imx_acm_attach_pm_domains()
->>    clk: imx: imx8: Fix an error handling path if
->>      devm_clk_hw_register_mux_parent_data_table() fails
->>    clk: imx: imx8: Fix an error handling path in imx8_acm_clk_probe()
->>    clk: imx: imx8: Add a message in case of
->>      devm_clk_hw_register_mux_parent_data_table() error
->>    clk: imx: imx8: Simplify clk_imx_acm_detach_pm_domains()
->>
->>   drivers/clk/imx/clk-imx8-acm.c | 27 +++++++++++++++------------
->>   1 file changed, 15 insertions(+), 12 deletions(-)
->>
->> --
->> 2.34.1
-> 
-> 
+
+Some log messages have also been slightly tweaked.
+R-b tags have been added.
+
+v1: https://lore.kernel.org/all/cover.1693126687.git.christophe.jaillet@wanadoo.fr/
+
+Christophe JAILLET (5):
+  clk: imx: imx8: Fix an error handling path in
+    clk_imx_acm_attach_pm_domains()
+  clk: imx: imx8: Fix an error handling path if
+    devm_clk_hw_register_mux_parent_data_table() fails
+  clk: imx: imx8: Fix an error handling path in imx8_acm_clk_probe()
+  clk: imx: imx8: Add a message in case of
+    devm_clk_hw_register_mux_parent_data_table() error
+  clk: imx: imx8: Simplify clk_imx_acm_detach_pm_domains()
+
+ drivers/clk/imx/clk-imx8-acm.c | 27 +++++++++++++++------------
+ 1 file changed, 15 insertions(+), 12 deletions(-)
+
+-- 
+2.34.1
 
