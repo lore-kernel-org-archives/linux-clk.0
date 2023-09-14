@@ -2,165 +2,234 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CE31EE0211
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Sep 2023 22:02:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB7E6EDE981
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Sep 2023 05:47:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232924AbjIMWCT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Sep 2023 18:02:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48038 "EHLO
+        id S234884AbjINFrP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Sep 2023 01:47:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232884AbjIMWCT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Sep 2023 18:02:19 -0400
-Received: from EUR01-DB5-obe.outbound.protection.outlook.com (mail-db5eur01on2048.outbound.protection.outlook.com [40.107.15.48])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BBC5173A;
-        Wed, 13 Sep 2023 15:02:15 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RGgwN3bZT2nvdwHiHVQq4qSS3+SZ7wCU3pQIFRhh/gI863gcV7Pmmo5lA6bsCBjd1xBwCy3bGGG4YeONkYqKzR2yGAwPZxhtsuLDQ06maXDpWZVMR/Ja/SXtnX0IMKRyIore121k+JYWnczr94WOLTpe6457Mrgsbp9clE8nVnGMCnupDykpvSth9qP6x9x7wP9Gz3OAMpUJQ9YfkiLATaEDajMJghV8061XkCxb/gqhfy/jIxQaXaOLh5zqSXIGe73lQl/nggIm4lXR4zD6GBf3/JvZL0/IsvnKWzQDnpivtZ4a1N0KK1qrb41R+uRuo7Ued0Xm/zIWR6OpkXp7yw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dbMzda2NQ1JzH3Btrwq0WIO/fngxccAjDf6vA+aD57Y=;
- b=M9ShVZeVp99gxeHh1AMh9ehAOgqF0dX6cUReHZe4yz97CCJIi9fw3lJGZDYqxdvN4EAQQbovojm7VSV2Br0il9rrnFSa8+3Bc4merGYcjFGIT21tkjCUVW5dj4jUmSB84UPs969d5venAh+/HHKdAe4FyBwdUPjZwoP5M5WeHWCNr95GZgYLIPtWUTH9dDyeD2IjFWkEEbldWhICRhZ8QzC6WnvlcCqUNGpdOyXR1ezfhPwEXkHjADY9jIrxoHnXJxAl9FrQr2A+G96aZ43x6bA7tniT5YgztoCnVlpbvtHSbVKXPkbM+YDlDHQU8UhMNwIKfa4vHIHIDd0kQQlHqg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dbMzda2NQ1JzH3Btrwq0WIO/fngxccAjDf6vA+aD57Y=;
- b=TC8iZr1VhrGHm95bqAG4CcF2O1XwG5BB/rUrxc07oCm6IJaFfFSQIx7wq2acfZP556K5xL30S7qPREf95nWrJ1nINwlqc5tYQHAlEvWVYalCTP5Rf0Tp6unV7voseVYslGYICUSZma+AxmM5L6pG+qO2WF1t9xV/HPq0IaiHLGU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM0PR04MB6452.eurprd04.prod.outlook.com (2603:10a6:208:16d::21)
- by PA4PR04MB9366.eurprd04.prod.outlook.com (2603:10a6:102:2a9::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6768.34; Wed, 13 Sep
- 2023 22:02:11 +0000
-Received: from AM0PR04MB6452.eurprd04.prod.outlook.com
- ([fe80::568a:57ee:35b5:e454]) by AM0PR04MB6452.eurprd04.prod.outlook.com
- ([fe80::568a:57ee:35b5:e454%3]) with mapi id 15.20.6792.019; Wed, 13 Sep 2023
- 22:02:11 +0000
-Date:   Thu, 14 Sep 2023 01:02:06 +0300
-From:   Vladimir Oltean <vladimir.oltean@nxp.com>
-To:     Sean Anderson <sean.anderson@seco.com>
-Cc:     Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        linux-phy@lists.infradead.org,
-        Madalin Bucur <madalin.bucur@nxp.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Camelia Alexandra Groza <camelia.groza@nxp.com>,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        Bagas Sanjaya <bagasdotme@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Ioana Ciornei <ioana.ciornei@nxp.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        =?utf-8?B?RmVybuKUnMOtbmRleg==?= Rojas <noltari@gmail.com>,
-        Jonas Gorski <jonas.gorski@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>, Li Yang <leoyang.li@nxp.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v14 00/15] phy: Add support for Lynx 10G SerDes
-Message-ID: <20230913220206.ht66go3bmaqvp2r5@skbuf>
-References: <c2f928d2-25f6-0e31-9ab3-9d585968df1b@seco.com>
- <20230522150010.q5zndfwcuvrb6pg2@skbuf>
- <22a28a6f-2c84-a6b1-bb57-a269af34c993@seco.com>
- <20230610222123.mzmfjx7zfw4nh2lo@skbuf>
- <c702e2b6-cb0f-4ac9-86fe-a220284d45aa@seco.com>
- <20230612163353.dwouatvqbuo6h4ea@skbuf>
- <1dd01fe2-08a8-ec2f-1184-a58b2f55ba85@seco.com>
- <20230613142754.wr5njtjo4tbloqwu@skbuf>
- <20230810102631.bvozjer3t67r67iy@skbuf>
- <b1df425f-1ea4-0465-674c-25f3ed9b73d4@seco.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b1df425f-1ea4-0465-674c-25f3ed9b73d4@seco.com>
-X-ClientProxiedBy: AS4P190CA0068.EURP190.PROD.OUTLOOK.COM
- (2603:10a6:20b:656::28) To AM0PR04MB6452.eurprd04.prod.outlook.com
- (2603:10a6:208:16d::21)
+        with ESMTP id S235005AbjINFrO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Sep 2023 01:47:14 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C76FC1;
+        Wed, 13 Sep 2023 22:47:10 -0700 (PDT)
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38E4fNcb024818;
+        Thu, 14 Sep 2023 05:46:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=qcppdkim1;
+ bh=KidyxnJcQ6y2+KJMqUAzy9sxm7eEM8yxxduzD6cB4sE=;
+ b=ov0Hsx9zG0XkbFxh2dga6AI+5KVq2IvihZfL5On/bBTH8mBiScDNiogTrT3G9zXTXMlj
+ W88PWroDkjZjg/ESswWEPHbWBuBG1yVQUDd/jEEREFBfZeTxHP41e5sYswr8GosCmeio
+ KuDqE1oUINuFro7d5PcB6G5vie8yhKKXQ4DkYthF17MUfYeiNTNZXku7eMHZosCkjpmE
+ qaoqK6fwNCbC9NZzU50C3ye5vCv+diONWM8LuktpPDz9r1LIyMEkj5f7za0HRHdPatO1
+ 6guKF2IOddWPe+ypguplo5H6IOpN7DqFMU/I8gw8aU8R8/HQOcdrZZiuomY2mqMDoA3P Jw== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t3dj8a26x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 14 Sep 2023 05:46:59 +0000
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38E5kwMi017105
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 14 Sep 2023 05:46:58 GMT
+Received: from akronite-sh-dev02.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.30; Wed, 13 Sep 2023 22:46:54 -0700
+From:   Luo Jie <quic_luoj@quicinc.com>
+To:     <andersson@kernel.org>, <agross@kernel.org>,
+        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <p.zabel@pengutronix.de>
+CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_srichara@quicinc.com>
+Subject: [PATCH v7 0/4] add clock controller of qca8386/qca8084
+Date:   Thu, 14 Sep 2023 13:46:35 +0800
+Message-ID: <20230914054639.13075-1-quic_luoj@quicinc.com>
+X-Mailer: git-send-email 2.42.0
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM0PR04MB6452:EE_|PA4PR04MB9366:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7bc96ce8-4a98-40ee-817c-08dbb4a514a8
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: HEY3lbNzjEbtgniOXLgwH2j4j5pY/dzrGVgV5qljbT5Zl9153Ld3eUO+Js5tW2Wzfx0iSY859G0clxJ4Wt/YN0XR0qzeLtc+l9cFc1fZpc1OW7ChCxponvZtKCxzaChMu9izaB3AlkxzGQXChCeGQv1+KMqSBIFf+4cRTZM2vxb4rRJfCWEf+//o3nG2IJyQdrXSrzOSA7RAPFWh0ZpEEMrIjsFKPFqryBgz4hyf9ME+240FSIKfkjozXkOiX3IRDZVeZqjc8oToh7+SlznmUHj9kitLMlDckUe/Ezw23ONFNvnXxBaQecADDQVKMUJIMtYzQDfibu1Bi0daxQFxuAHaDe1RJKmej0R9gHjxmglRkkpRXyfn5dXMZdInuJo0OvWqa2n3yADt0Rltt2gGiTLXsKwq9RJAkYrhz60I3YRwCR+uv+8yY2S76lyEjG4d59PpD+bvhB0pu/awS9oLJM4j5iYkqPqalE+56T3f9asdrFdidrRndhL4YcC65NXhLtLxJxuFQ5lCNjmkOk1ukMgP/DtaXWzfHuR/pNN6QRI=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB6452.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7916004)(136003)(376002)(39860400002)(366004)(346002)(396003)(1800799009)(186009)(451199024)(6486002)(6506007)(6512007)(9686003)(6666004)(83380400001)(86362001)(33716001)(38100700002)(1076003)(26005)(44832011)(54906003)(7416002)(66556008)(66476007)(6916009)(41300700001)(316002)(66946007)(2906002)(8936002)(4326008)(8676002)(966005)(478600001)(5660300002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?LabR4Dopp/SGYX9L4Zg4esSLwVUSlGrznrlcezHGiqwvc1bcpWdbfCELqFGX?=
- =?us-ascii?Q?svWmYyQxVTNauVgxOjfGXNJhEJ4WeOozoShs1AakQaRDH4H55GMkHYDtp/r2?=
- =?us-ascii?Q?LtgKCujxykT15Oh+rNM7LaRyCvClNJQnChLNV6LQqkALk60LSLgVbpmCreJZ?=
- =?us-ascii?Q?cBPCYelwWonbuKYZ9EcCNeUOpVjqEPlCxbQjdIV6QClFVbawmwWN2BnqhxYH?=
- =?us-ascii?Q?g4/uDD6WYxOAl+19FJz+HfBoRVyQdbP6uO46lVaLrR+Pc8+XY/AnwymRENlp?=
- =?us-ascii?Q?8XFBt7fFb/mq+/dgMW6pv/RqJHoixTGj6CLffV7RxIfuyewc5q1wycMqaFWr?=
- =?us-ascii?Q?R8yrrV+OfZvU54/h9tU0EBionlIag7UL1umrYKwcFpozC6QyxpVinyYLba+v?=
- =?us-ascii?Q?XyJy92R4uieaju4cDE2O/DHzW09H78wFNHzC9f6i2pAG5wnQaJl+d7Ew7GG6?=
- =?us-ascii?Q?T1Afmk45ThcztXvSnan3HoPc2qnkmNbSEZ0pB2lZX/ul1KO/n0otL1hYqHow?=
- =?us-ascii?Q?1KlxAVjbzP0Un3MvBnS++onyY5IDllTWyyYFeHDM5+gRza2CctB5JyvdcOQI?=
- =?us-ascii?Q?tzL9wYD8Piuj1RALppQ7YscTzqwsSWGLqmn1lyL8R/AI3XxqqqSfvSXNdMsV?=
- =?us-ascii?Q?DVHmLC+o52cTv5x4njxqd0s+54jRyVL8Q4YlRSfbEyQYqAj2YUb4zJGQu17I?=
- =?us-ascii?Q?nv+N7R5K5XB0mQn8N68HnBR8wcaOwAjhSuC8wiZA4urdyHQPFTpP+Npp2EZ/?=
- =?us-ascii?Q?rOI+ZMAj6peetRvoi0u6Nkgvspspnj5UGA/ucNaLaUWa7aw/PA/fxRC3XGGP?=
- =?us-ascii?Q?+FLD8J2Wb/X2gTZ1RMwnLeFC3GXblli0stooOLiJM/HK1lM1Wr0cFh88FZoN?=
- =?us-ascii?Q?46b1nQ+upa0xmf8Mg3g5zeYNvOhfgoPX870KB6m6TQ0s1T17zd+UR29XadEM?=
- =?us-ascii?Q?gRUMhuhqeutBXYB0uI8+rvjqxE+htSsTBU9lNtwReMfMyzJaaqbLetkG8jLy?=
- =?us-ascii?Q?yXIG6byIBkq4/rcOXllemSvM6E8YTaOFQa3eQ7+gzj79S7N1ll/Asv/slKSE?=
- =?us-ascii?Q?Tp4wiEkNc/z/d2xtzgJz0ch3JVpzQj7dT6Mhqo98swx+0A+5G6xf7WiGgsVG?=
- =?us-ascii?Q?AyyLp8kDFSG+lXxrub0T546Bfv7ofcf9PqhKbljnP0wyXg1udB4C6Q5hqDfa?=
- =?us-ascii?Q?sdJ3jBDiqRJBigMSZ/etgD/Hi9ALNQ7tXG7Htk9sgj2hI0kbK/vmAStV1d9f?=
- =?us-ascii?Q?rgHJhVeQwUNgkupJqjrHMBYqaSzKIahNNmQdJavp00r5ZZadHfHTtThvDXPt?=
- =?us-ascii?Q?lz0fy9OcoDZMoxWejiKIch7WHuqYtCgzV5bWsGxwfmpyM54OgiZBLCa7eARV?=
- =?us-ascii?Q?WNu79PCJns4sfcWTReZg+NyBs9atg5q8Ey1EIKC8ngLGBIFIJe1uQhM81rbd?=
- =?us-ascii?Q?fcqJTDp4SS8iww6p0PkswGj5D5f3vB8z+1DH6raHupAwwpJ5aWYcJKCCsrih?=
- =?us-ascii?Q?MFmfi73mbQMvS2LKjVwia/Cv4LmeeIoWcNmg51xhSdkWqWLkd0bXmZjQcpyo?=
- =?us-ascii?Q?Yirs2biIjDDS4ytASmiNIcA2RfT6Z6mekh2qIsM2hqSI8NoXSah8dF2DX2rm?=
- =?us-ascii?Q?IA=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7bc96ce8-4a98-40ee-817c-08dbb4a514a8
-X-MS-Exchange-CrossTenant-AuthSource: AM0PR04MB6452.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2023 22:02:11.4900
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6ofDbZiMr5gOXKhLXWv7w6zOT+zfsWSfmdStNCesBAyo3FsdNy067Tb3OFsAyrDXEQidrS+t5kacqcwn/XIlUA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB9366
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: rJoraFnwCd0m8TFqk-sT6vlqu5RNrbcD
+X-Proofpoint-ORIG-GUID: rJoraFnwCd0m8TFqk-sT6vlqu5RNrbcD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-09-14_03,2023-09-13_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 mlxscore=0 lowpriorityscore=0 adultscore=0 spamscore=0
+ impostorscore=0 malwarescore=0 bulkscore=0 phishscore=0 suspectscore=0
+ mlxlogscore=982 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2308100000 definitions=main-2309140050
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Sean,
+qca8xxx is 4 * 2.5GBaseT ports chip, working as switch mode
+named by qca8386, or working as PHY mode named by qca8084,
+clock hardware reigster is accessed by MDIO bus.
 
-On Thu, Aug 10, 2023 at 03:58:36PM -0400, Sean Anderson wrote:
-> I can look into doing this. It will be in my free time, so it will
-> likely be a bit before I can update this series.
+This patch series add the clock controller of qca8363/qca8084,
+and add the clock ops clk_branch2_prepare_ops to avoid spin lock
+used during the clock operation of qca8k clock controller where
+the sleep happens when accessing clock control register by MDIO
+bus.
 
-I was expecting you'd ask some clarification questions about the RCW
-override procedure that I've informally described over email, so I guess
-you haven't spent any more time on this.
+Changes in v2:
+	* remove clock flag CLK_ENABLE_MUTEX_LOCK.
+	* add clock ops clk_branch2_qca8k_ops.
+	* improve yaml file for fixing dtschema warnings.
+	* enable clock controller driver in defconfig.
 
-I'm letting you know that very soon, I will have to start my work on
-porting the backplane driver posted here:
-https://patchwork.kernel.org/project/netdevbpf/cover/20230817150644.3605105-1-vladimir.oltean@nxp.com/
-to the Lynx 10G SoCs. And for that, I need a SerDes driver as a base :)
+Changes in v3:
+	* rename clk_branch2_qca8k_ops to clk_branch2_mdio_ops.
+	* fix review comments on yaml file.
+	* use dev_err_probe on driver probe error.
+	* only use the compatible "qcom,qca8084-nsscc".
+	* remove enable clock controller driver patch.
 
-I was wondering how inclined are you to respond positively to the
-feedback that the lynx-10g driver should have a look and feel as close
-as possible to lynx-28g, given that they're very similar.
+Changes in v4:
+	* add _qcom_cc_really_probe function.
+	* commonizing the probe function.
+	* remove flag CLK_IS_CRITICAL from clocks only needed
+	to be enabled in switch device.
+	* update device tree property reg to 0x10. 
 
-Because internally within NXP, we do have a version of the lynx-10g
-driver which is contemporary with lynx-28g from mainline, but we didn't
-publish it because protocol changes didn't work (for the same reason
-that they don't work with your driver). With that driver, you can think
-of the feedback about the similar look and feel as being "implicitly applied"
-(being written by the same author), so I'm starting to consider more and
-more seriously the option of basing my work on that instead of your v14
-(on which I'd need to spend extra time to modify the dt-bindings with PCCRs,
-concept of lane groups, concept of PLL CCF driver, etc).
+Changes in v5:
+	* commonize qcom_cc_really_probe.
+	* add halt_check for the branch clocks.
+	* fix the review comments on nsscc-qca8k.c. 
 
-What are your thoughts?
+Changes in v6:
+	* rename clk_branch2_mdio_ops to clk_branch2_prepare_ops.
+
+Changes in v7:
+	* remove the clock flag CLK_IS_CRITICAL.
+	* optimize the file nsscc-qca8k.c.
+	* identify & fix the comments from Stephen.
+
+Luo Jie (4):
+  clk: qcom: branch: Add clk_branch2_prepare_ops
+  dt-bindings: clock: add qca8386/qca8084 clock and reset definitions
+  clk: qcom: common: commonize qcom_cc_really_probe
+  clk: qcom: add clock controller driver for qca8386/qca8084
+
+ .../bindings/clock/qcom,qca8k-nsscc.yaml      |   79 +
+ drivers/clk/qcom/Kconfig                      |    9 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/apss-ipq6018.c               |    2 +-
+ drivers/clk/qcom/camcc-sc7180.c               |    2 +-
+ drivers/clk/qcom/camcc-sc7280.c               |    2 +-
+ drivers/clk/qcom/camcc-sdm845.c               |    2 +-
+ drivers/clk/qcom/camcc-sm6350.c               |    2 +-
+ drivers/clk/qcom/camcc-sm8250.c               |    2 +-
+ drivers/clk/qcom/camcc-sm8450.c               |    2 +-
+ drivers/clk/qcom/clk-branch.c                 |    7 +
+ drivers/clk/qcom/clk-branch.h                 |    1 +
+ drivers/clk/qcom/common.c                     |    7 +-
+ drivers/clk/qcom/common.h                     |    2 +-
+ drivers/clk/qcom/dispcc-qcm2290.c             |    2 +-
+ drivers/clk/qcom/dispcc-sc7180.c              |    2 +-
+ drivers/clk/qcom/dispcc-sc7280.c              |    2 +-
+ drivers/clk/qcom/dispcc-sc8280xp.c            |    2 +-
+ drivers/clk/qcom/dispcc-sdm845.c              |    2 +-
+ drivers/clk/qcom/dispcc-sm6115.c              |    2 +-
+ drivers/clk/qcom/dispcc-sm6125.c              |    2 +-
+ drivers/clk/qcom/dispcc-sm6350.c              |    2 +-
+ drivers/clk/qcom/dispcc-sm6375.c              |    2 +-
+ drivers/clk/qcom/dispcc-sm8250.c              |    2 +-
+ drivers/clk/qcom/dispcc-sm8450.c              |    2 +-
+ drivers/clk/qcom/dispcc-sm8550.c              |    2 +-
+ drivers/clk/qcom/gcc-ipq5018.c                |    2 +-
+ drivers/clk/qcom/gcc-ipq6018.c                |    2 +-
+ drivers/clk/qcom/gcc-ipq8074.c                |    2 +-
+ drivers/clk/qcom/gcc-mdm9607.c                |    2 +-
+ drivers/clk/qcom/gcc-mdm9615.c                |    2 +-
+ drivers/clk/qcom/gcc-msm8917.c                |    2 +-
+ drivers/clk/qcom/gcc-msm8939.c                |    2 +-
+ drivers/clk/qcom/gcc-msm8953.c                |    2 +-
+ drivers/clk/qcom/gcc-msm8976.c                |    2 +-
+ drivers/clk/qcom/gcc-msm8996.c                |    2 +-
+ drivers/clk/qcom/gcc-msm8998.c                |    2 +-
+ drivers/clk/qcom/gcc-qcm2290.c                |    2 +-
+ drivers/clk/qcom/gcc-qcs404.c                 |    2 +-
+ drivers/clk/qcom/gcc-qdu1000.c                |    2 +-
+ drivers/clk/qcom/gcc-sa8775p.c                |    2 +-
+ drivers/clk/qcom/gcc-sc7180.c                 |    2 +-
+ drivers/clk/qcom/gcc-sc7280.c                 |    2 +-
+ drivers/clk/qcom/gcc-sc8180x.c                |    2 +-
+ drivers/clk/qcom/gcc-sc8280xp.c               |    2 +-
+ drivers/clk/qcom/gcc-sdm660.c                 |    2 +-
+ drivers/clk/qcom/gcc-sdm845.c                 |    2 +-
+ drivers/clk/qcom/gcc-sdx55.c                  |    2 +-
+ drivers/clk/qcom/gcc-sdx65.c                  |    2 +-
+ drivers/clk/qcom/gcc-sdx75.c                  |    2 +-
+ drivers/clk/qcom/gcc-sm6115.c                 |    2 +-
+ drivers/clk/qcom/gcc-sm6125.c                 |    2 +-
+ drivers/clk/qcom/gcc-sm6350.c                 |    2 +-
+ drivers/clk/qcom/gcc-sm6375.c                 |    2 +-
+ drivers/clk/qcom/gcc-sm7150.c                 |    2 +-
+ drivers/clk/qcom/gcc-sm8150.c                 |    2 +-
+ drivers/clk/qcom/gcc-sm8250.c                 |    2 +-
+ drivers/clk/qcom/gcc-sm8350.c                 |    2 +-
+ drivers/clk/qcom/gcc-sm8450.c                 |    2 +-
+ drivers/clk/qcom/gcc-sm8550.c                 |    2 +-
+ drivers/clk/qcom/gpucc-msm8998.c              |    2 +-
+ drivers/clk/qcom/gpucc-sa8775p.c              |    2 +-
+ drivers/clk/qcom/gpucc-sc7180.c               |    2 +-
+ drivers/clk/qcom/gpucc-sc7280.c               |    2 +-
+ drivers/clk/qcom/gpucc-sc8280xp.c             |    2 +-
+ drivers/clk/qcom/gpucc-sdm660.c               |    2 +-
+ drivers/clk/qcom/gpucc-sdm845.c               |    2 +-
+ drivers/clk/qcom/gpucc-sm6115.c               |    2 +-
+ drivers/clk/qcom/gpucc-sm6125.c               |    2 +-
+ drivers/clk/qcom/gpucc-sm6350.c               |    2 +-
+ drivers/clk/qcom/gpucc-sm6375.c               |    2 +-
+ drivers/clk/qcom/gpucc-sm8150.c               |    2 +-
+ drivers/clk/qcom/gpucc-sm8250.c               |    2 +-
+ drivers/clk/qcom/gpucc-sm8350.c               |    2 +-
+ drivers/clk/qcom/gpucc-sm8450.c               |    2 +-
+ drivers/clk/qcom/gpucc-sm8550.c               |    2 +-
+ drivers/clk/qcom/lcc-ipq806x.c                |    2 +-
+ drivers/clk/qcom/lcc-msm8960.c                |    2 +-
+ drivers/clk/qcom/lpassaudiocc-sc7280.c        |    4 +-
+ drivers/clk/qcom/lpasscorecc-sc7180.c         |    2 +-
+ drivers/clk/qcom/lpasscorecc-sc7280.c         |    2 +-
+ drivers/clk/qcom/mmcc-msm8960.c               |    2 +-
+ drivers/clk/qcom/mmcc-msm8974.c               |    2 +-
+ drivers/clk/qcom/mmcc-msm8994.c               |    2 +-
+ drivers/clk/qcom/mmcc-msm8996.c               |    2 +-
+ drivers/clk/qcom/mmcc-msm8998.c               |    2 +-
+ drivers/clk/qcom/mmcc-sdm660.c                |    2 +-
+ drivers/clk/qcom/nsscc-qca8k.c                | 2178 +++++++++++++++++
+ drivers/clk/qcom/tcsrcc-sm8550.c              |    2 +-
+ drivers/clk/qcom/videocc-sc7180.c             |    2 +-
+ drivers/clk/qcom/videocc-sc7280.c             |    2 +-
+ drivers/clk/qcom/videocc-sdm845.c             |    2 +-
+ drivers/clk/qcom/videocc-sm8150.c             |    2 +-
+ drivers/clk/qcom/videocc-sm8250.c             |    2 +-
+ drivers/clk/qcom/videocc-sm8350.c             |    2 +-
+ drivers/clk/qcom/videocc-sm8450.c             |    2 +-
+ drivers/clk/qcom/videocc-sm8550.c             |    2 +-
+ include/dt-bindings/clock/qcom,qca8k-nsscc.h  |  101 +
+ include/dt-bindings/reset/qcom,qca8k-nsscc.h  |   75 +
+ 99 files changed, 2545 insertions(+), 95 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,qca8k-nsscc.yaml
+ create mode 100644 drivers/clk/qcom/nsscc-qca8k.c
+ create mode 100644 include/dt-bindings/clock/qcom,qca8k-nsscc.h
+ create mode 100644 include/dt-bindings/reset/qcom,qca8k-nsscc.h
+
+
+base-commit: ca5ab9638e925613f73b575041801a7b2fd26bd4
+-- 
+2.42.0
+
