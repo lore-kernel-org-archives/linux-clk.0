@@ -2,129 +2,90 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02402EDE98F
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Sep 2023 07:58:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC09FEDE996
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Sep 2023 08:42:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235951AbjINH6l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Sep 2023 03:58:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52296 "EHLO
+        id S230234AbjINImQ convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Sep 2023 04:42:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231274AbjINH6k (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Sep 2023 03:58:40 -0400
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AC5A1BFC
-        for <linux-clk@vger.kernel.org>; Thu, 14 Sep 2023 00:58:36 -0700 (PDT)
-Received: by mail-lj1-x229.google.com with SMTP id 38308e7fff4ca-2bfc8c02e82so5855761fa.0
-        for <linux-clk@vger.kernel.org>; Thu, 14 Sep 2023 00:58:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694678314; x=1695283114; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BbQLH7nE4IDFv4D1KGNNw5oakRW09gU02ZbpYUht0n4=;
-        b=D9iRgGGkOtcLSUrFu+zIveEZFpbvq1yhlmM1GELd4ZRxeF2b47tD8XBDoOaJGCjO/V
-         71c9EnkJC6jzHEvqpX05VeMqnT4tHT/GsXCnEvYKUbjsRoN8MX0RWzmDrcDt7NcEmgeA
-         A+HvfTXYN8PfdjXUucgvbe6tWzd1PVlS1dUgGxTtzyiwD739h9YFZsbxVBuLxAL0HUMU
-         0H51JF3Rcd8IRFkGotuIopFp52InAIQjS2rL4j3fh6w+EdXs6Q7nIo8vnBCADZcRocfQ
-         je/E+QEQ95P7cTw/vIAExXT5/BCA+e2v4Gmw9vpm91rSJxK6PKyayrF4K7eYxizJ0tlu
-         Kr4g==
+        with ESMTP id S229891AbjINImQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Sep 2023 04:42:16 -0400
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6291091;
+        Thu, 14 Sep 2023 01:42:12 -0700 (PDT)
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-59bbdb435bfso7884857b3.3;
+        Thu, 14 Sep 2023 01:42:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694678314; x=1695283114;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BbQLH7nE4IDFv4D1KGNNw5oakRW09gU02ZbpYUht0n4=;
-        b=ejIupwgtDfYLy4dUbfckjOTbRZrCIdYp8gi0gCJrY4e14qK52iiSvEKPyTVGcn7zvo
-         awqs29v9NgUBo+3XXS/HEx69FiecuhXEBUFfOu0D2n1JM14drb80rmwDYgBZA0tTw5iy
-         HsVty+U018fzAcBeuL3ck203nD8O4ZxqkAcY9EXG+KrbwczOAQjqtXwnynCkwdQVeLgb
-         XWvzeDYFDeQKKZLvUU4nNVbvZ+bKOrW9JI3D/Snr+2mYZ8Ze9DNVTBFP0UaZEWQMzixO
-         jWYCUf5D2p79JNuZKKA2Jubca1GuDBkB78q8e5S42/Na9ahjbd7me0X5j9q/Wk+fADBG
-         oXLg==
-X-Gm-Message-State: AOJu0YwMyestn34DNlb1xTU1g6C8hTveG6z3nYrJLWASbNQq0YLZ2A5w
-        +0i0KJu5FF8DDe1VHqg+5QbvsA==
-X-Google-Smtp-Source: AGHT+IGl9iUSiuwx+cME20CcLxNpbz+K+s5Tn4VVY7yBGAiQ6nWnIAJqUufkPxFR0gCnOzqcctoehw==
-X-Received: by 2002:a2e:321a:0:b0:2b6:cff1:cd1c with SMTP id y26-20020a2e321a000000b002b6cff1cd1cmr4014654ljy.34.1694678314344;
-        Thu, 14 Sep 2023 00:58:34 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.214.188])
-        by smtp.gmail.com with ESMTPSA id k8-20020a5d4288000000b00317a29af4b2sm1007983wrq.68.2023.09.14.00.58.32
+        d=1e100.net; s=20230601; t=1694680931; x=1695285731;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Gt1d7x2jEDiyKRRaW6VzepfhDR5PRb6XJnF6WiN9Kfg=;
+        b=Y2EKMkwYRkbJVBSnL7eMtOebjKyx1nVensbYz4yzG08bUUvC9haDKGo9/9hSzH/TzX
+         FbPVyZzUGBqIZwfiWY8bZFOC8jLlYKXAhDu88bgdICTE8VgAhn+qaT4FrJCLGGyMC/lM
+         sSPorCvk1kSPzIU2/r4kU+7aprodAT350VxgfitjaLQYFrbna5n4lU6CyXxCDzpwaxuK
+         S8FGavfVXSRUmbOPKCXqrJklt2UdDn64m2SjcUPvpMVqB3KP4uAAMMyKpWroe6G3Ieyc
+         urm2S2lssVyEGNAOepw7b/AF7fO9GzdrFCUGRHEbATbSVqoOJXxWw/vUkJbMVoi8ahet
+         uKNg==
+X-Gm-Message-State: AOJu0YzEse9ynEBSgnn9+6E/KQ0teXe+/KyWG2+kp9bbthbFDE7gXsUC
+        etuuZsxPBssqauedHUAz+O0FcaqGr5GF+Q==
+X-Google-Smtp-Source: AGHT+IHy8EAG/YRAmgKeD3zoebtRhIrODs0H7KWcN//8lYUqY9YSl7tWPEO1edaRItsSeDda1vQzsA==
+X-Received: by 2002:a25:9885:0:b0:d80:a9d:aeae with SMTP id l5-20020a259885000000b00d800a9daeaemr4781019ybo.44.1694680931412;
+        Thu, 14 Sep 2023 01:42:11 -0700 (PDT)
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com. [209.85.219.172])
+        by smtp.gmail.com with ESMTPSA id m196-20020a25d4cd000000b00d814d8dfd69sm245845ybf.27.2023.09.14.01.42.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Sep 2023 00:58:33 -0700 (PDT)
-Message-ID: <c7c28667-0266-5fc4-2dc3-132c51a93a92@linaro.org>
-Date:   Thu, 14 Sep 2023 09:58:31 +0200
+        Thu, 14 Sep 2023 01:42:10 -0700 (PDT)
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-d81adf0d57fso18132276.1;
+        Thu, 14 Sep 2023 01:42:10 -0700 (PDT)
+X-Received: by 2002:a25:9707:0:b0:d80:4c9b:bf72 with SMTP id
+ d7-20020a259707000000b00d804c9bbf72mr4457953ybo.21.1694680930741; Thu, 14 Sep
+ 2023 01:42:10 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [PATCH v7 4/4] clk: qcom: add clock controller driver for
- qca8386/qca8084
-Content-Language: en-US
-To:     Jie Luo <quic_luoj@quicinc.com>, andersson@kernel.org,
-        agross@kernel.org, konrad.dybcio@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        quic_srichara@quicinc.com
-References: <20230914054639.13075-1-quic_luoj@quicinc.com>
- <20230914054639.13075-5-quic_luoj@quicinc.com>
- <357805c5-bedb-8972-bcf1-fabaaaf90ad9@linaro.org>
- <1a1922ec-a8ae-4a42-d8a9-921450592213@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <1a1922ec-a8ae-4a42-d8a9-921450592213@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20230913203805.465780-1-ralph.siemsen@linaro.org>
+In-Reply-To: <20230913203805.465780-1-ralph.siemsen@linaro.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 14 Sep 2023 10:41:58 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX1ccpveV+vxJrkmVCH-SJXhAHCiyp75CfXUQjz6bwcwQ@mail.gmail.com>
+Message-ID: <CAMuHMdX1ccpveV+vxJrkmVCH-SJXhAHCiyp75CfXUQjz6bwcwQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] clk: renesas: r9a06g032: fix kerneldoc warning
+To:     Ralph Siemsen <ralph.siemsen@linaro.org>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 14/09/2023 09:52, Jie Luo wrote:
-> 
-> 
-> On 9/14/2023 2:15 PM, Krzysztof Kozlowski wrote:
->> On 14/09/2023 07:46, Luo Jie wrote:
->>> The clock controller driver of qca8386/qca8084 is registered
->>> as the MDIO device, the hardware register is accessed by MDIO bus
->>> that is normally used to access general PHY device, which is
->>> different from the current existed qcom clock controller drivers
->>> using ioremap to access hardware clock registers.
->>>
->>> MDIO bus is common utilized by both qca8386/qca8084 and other
->>> PHY devices, so the mutex lock mdio_bus->mdio_lock should be
->>> used instead of using the mutex lock of remap.
->>>
->>> To access the hardware clock registers of qca8386/qca8084, there
->>> is special MDIO frame sequence(three MDIO read/write operations)
->>> need to be sent to device.
->>>
->>> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
->>> ---
->>>   drivers/clk/qcom/Kconfig       |    9 +
->>>   drivers/clk/qcom/Makefile      |    1 +
->>>   drivers/clk/qcom/nsscc-qca8k.c | 2178 ++++++++++++++++++++++++++++++++
->>>   3 files changed, 2188 insertions(+)
->>>   create mode 100644 drivers/clk/qcom/nsscc-qca8k.c
->>>
->>> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
->>> index 865db5202e4c..c95ada6a1385 100644
->>> --- a/drivers/clk/qcom/Kconfig
->>> +++ b/drivers/clk/qcom/Kconfig
->>> @@ -203,6 +203,15 @@ config IPQ_GCC_9574
->>>   	  i2c, USB, SD/eMMC, etc. Select this for the root clock
->>>   	  of ipq9574.
->>>   
->>> +config IPQ_NSSCC_QCA8K
->>> +	tristate "QCA8K(QCA8386 or QCA8084) NSS Clock Controller"
->>> +	depends on MDIO_BUS || COMPILE_TEST
->>
->> This is SoC is for both ARM and ARM64 worlds?
->>
-> Thanks Krzysztof for the comments.
-> This chip is independent of the ARCH, which just depends on the MDIO 
-> bus, both mips and arm are supported.
+On Wed, Sep 13, 2023 at 10:38 PM Ralph Siemsen <ralph.siemsen@linaro.org> wrote:
+> Mention the 'dual' structure in the kdoc. This fixes the following
+> W=1 warning during build:
+>
+> > drivers/clk/renesas/r9a06g032-clocks.c:119: warning: Function parameter or member 'dual' not described in 'r9a06g032_clkdesc'
+>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202309101314.kTRoxND5-lkp@intel.com/
+> Signed-off-by: Ralph Siemsen <ralph.siemsen@linaro.org>
+> ---
+> Changes in v2:
+> - split the warning fix into separate commit
 
-There is no ARCH_QCOM on MIPS, so it's limited to ARM. Then add
-restriction to ARM || COMPILE_TEST.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk-for-v6.7.
 
-Best regards,
-Krzysztof
+Gr{oetje,eeting}s,
 
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
