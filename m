@@ -2,134 +2,301 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40BC6EE645A
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Sep 2023 12:20:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45F03EE645D
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Sep 2023 12:53:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234769AbjIOMUg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 15 Sep 2023 08:20:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36070 "EHLO
+        id S235074AbjIOMxV convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 15 Sep 2023 08:53:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234741AbjIOMUd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Sep 2023 08:20:33 -0400
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B89AA2711
-        for <linux-clk@vger.kernel.org>; Fri, 15 Sep 2023 05:20:06 -0700 (PDT)
-Received: by mail-lj1-x22e.google.com with SMTP id 38308e7fff4ca-2bfcc35ef7bso26447391fa.2
-        for <linux-clk@vger.kernel.org>; Fri, 15 Sep 2023 05:20:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694780405; x=1695385205; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=52tjejpvxnE8EVFiMbyAusvH4BJALwybD9Pcm4LTKkU=;
-        b=oPX4L/hHHkRvPGad9Q1rYbcez0sv5sc/Q8IXU5t9YF2q/OMWHDS96L9AXIYxiVXl1j
-         d4IISqFLxHvdtvBHQEDRxYfblAmqnaiBNvll7hBHV6BoX6SY7LszjiH0gEq3U8Hqgt88
-         Wh0TrcP8ez7MivCMYSFKrXRWrJBpOLcxKBCnlbw38VKzZYhPF9VA2bRXiH6nHiRfEEDy
-         BBLCdQ8bU2wdpM/PjvsrKbIiH/kDhD4lR9rQHyOyTjq3+62xM9Vglk/MRSuoYhdPPe8B
-         u17WKgO4BZ9RVKFnRjBySYhVNd4hLlb3KWoU5OvaAnv4w4hhRCfZAPlg/yOmdGeGshq/
-         DypA==
+        with ESMTP id S234651AbjIOMxU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Sep 2023 08:53:20 -0400
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB319173A;
+        Fri, 15 Sep 2023 05:53:15 -0700 (PDT)
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-59c26aa19b7so1523647b3.2;
+        Fri, 15 Sep 2023 05:53:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694780405; x=1695385205;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=52tjejpvxnE8EVFiMbyAusvH4BJALwybD9Pcm4LTKkU=;
-        b=P90eQRfK0Sz0VIngLslE/7Hh7UBDAR15z7of79HWVOruuudTG891oYg50QMNPThps8
-         Xi9s98jt0oJXbkdb4P6B1Q93CWHwoOHI42wkKx8q2Fz+A0MySHCo/HIOdRpoll0PJ6iQ
-         s1N8RIH+KHjPXms1Xvuiqjbl3cGmwd2OutN2XEcQwG2OU2V0SDod+ijL2jhZdKiWAdh3
-         oBiOuHofGMQJ5lNQZEnXtc+BCGROw3p+IEUnsmUjcRRZsiPL2g1eckqgwSg+jMnf8Ac6
-         fkS7vzwhz37hdVFfP6INsbzSBFIwSjrvpGJ+K4wROfNfu/vSMlZV2bvM2ftLDw0xgyq5
-         tCxg==
-X-Gm-Message-State: AOJu0YxJdvJmT2EGfsF9GoRZ7IDlQ7AUHLGrihRXwSiPbPW87WyHnpwB
-        Pl6LD37sGlqpuXf0Z4qYK+SJlA==
-X-Google-Smtp-Source: AGHT+IEuaLoRu6BfkkK0RfPqU4MzcognEb/aFkTu1WQhdb96RMqVBnMjoxxbgnJqGTaec9hd0t0CDA==
-X-Received: by 2002:a2e:9f0a:0:b0:2bc:be3c:9080 with SMTP id u10-20020a2e9f0a000000b002bcbe3c9080mr1318797ljk.27.1694780404833;
-        Fri, 15 Sep 2023 05:20:04 -0700 (PDT)
-Received: from ?IPV6:2a00:f41:cbe:bc7d:62a6:5d09:5ba7:be5b? ([2a00:f41:cbe:bc7d:62a6:5d09:5ba7:be5b])
-        by smtp.gmail.com with ESMTPSA id y15-20020a2e978f000000b002bce38190a3sm696858lji.34.2023.09.15.05.19.58
+        d=1e100.net; s=20230601; t=1694782395; x=1695387195;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=q9UOXsTHLtyILmXxjRADy8o2iP5tGoLsuD7drO9aP90=;
+        b=ImHuMK3vTld0WGRs09iR99nYrPlxaJDZiygs6osOeCU7AulSkqVpekt36AeYrswe4b
+         VF1Q1JvSWY32WnHJfOP5/KkYGcqmvDCkYgLmE+F8BXe69usWok0/VXriDrEATcNDx1wb
+         Vp7fAnrC6o7AUB9T2IPMb26s3kj/+ZN+6M6e1aNzcniN+2w2oj9cfA8JuQGUHKhAuXAJ
+         8FaK+QK/IZZXuNDtsdZhbfVpNv/HnHlNkloQMfab+kjXUqpFZvqHQCrDIZAXT7zjymsH
+         KhuFV6Jp/UerQ5GAM1ese5LC9nY7mGELbY1UGkEUBm9ocNxXhsTCwVVfhJcjeJkS4Bbo
+         xZPA==
+X-Gm-Message-State: AOJu0YwyUepJ8K16yxP5qgLvk8sdNqcNcFoIRVoQx3LgJFrU8vVvxRyP
+        Igk9aXLHhqW/jlxmM+zqdtKniwlbpG682A==
+X-Google-Smtp-Source: AGHT+IEiG+J/MtyiASFsbJojo/dOvWuNx/+PiFaaXKi5X4GHvaWkd+lh+nc5KJsxGZWrf6hpsbLd6g==
+X-Received: by 2002:a81:83d2:0:b0:586:9f6c:4215 with SMTP id t201-20020a8183d2000000b005869f6c4215mr1618500ywf.33.1694782394654;
+        Fri, 15 Sep 2023 05:53:14 -0700 (PDT)
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
+        by smtp.gmail.com with ESMTPSA id m5-20020a817105000000b0058038e6609csm840043ywc.74.2023.09.15.05.53.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Sep 2023 05:20:04 -0700 (PDT)
-Message-ID: <76f3bc23-8677-42bd-a3a5-43b17cbe552e@linaro.org>
-Date:   Fri, 15 Sep 2023 14:19:56 +0200
+        Fri, 15 Sep 2023 05:53:14 -0700 (PDT)
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-d81afd5273eso1360503276.3;
+        Fri, 15 Sep 2023 05:53:13 -0700 (PDT)
+X-Received: by 2002:a25:cf06:0:b0:d74:6c9f:e734 with SMTP id
+ f6-20020a25cf06000000b00d746c9fe734mr1318086ybg.47.1694782393719; Fri, 15 Sep
+ 2023 05:53:13 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/11] clk: qcom: ipq8074: drop the CLK_SET_RATE_PARENT
- flag from PLL clocks
-Content-Language: en-US
-To:     Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sricharan Ramabadhran <quic_srichara@quicinc.com>,
-        Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>,
-        Varadarajan Narayanan <quic_varada@quicinc.com>,
-        Anusha Rao <quic_anusha@quicinc.com>,
-        Devi Priya <quic_devipriy@quicinc.com>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        stable@vger.kernel.org
-References: <20230913-gpll_cleanup-v2-0-c8ceb1a37680@quicinc.com>
- <20230913-gpll_cleanup-v2-1-c8ceb1a37680@quicinc.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20230913-gpll_cleanup-v2-1-c8ceb1a37680@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com> <20230912045157.177966-23-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20230912045157.177966-23-claudiu.beznea.uj@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 15 Sep 2023 14:52:59 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUCpbPA3cDjNAq1irvr6z4Jux-5-tVDBuyr6nx_qOQGpg@mail.gmail.com>
+Message-ID: <CAMuHMdUCpbPA3cDjNAq1irvr6z4Jux-5-tVDBuyr6nx_qOQGpg@mail.gmail.com>
+Subject: Re: [PATCH 22/37] clk: renesas: add minimal boot support for RZ/G3S SoC
+To:     Claudiu <claudiu.beznea@tuxon.dev>
+Cc:     geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, ulf.hansson@linaro.org,
+        linus.walleij@linaro.org, gregkh@linuxfoundation.org,
+        jirislaby@kernel.org, magnus.damm@gmail.com,
+        catalin.marinas@arm.com, will@kernel.org,
+        prabhakar.mahadev-lad.rj@bp.renesas.com,
+        biju.das.jz@bp.renesas.com, quic_bjorande@quicinc.com,
+        arnd@arndb.de, konrad.dybcio@linaro.org, neil.armstrong@linaro.org,
+        nfraprado@collabora.com, rafal@milecki.pl,
+        wsa+renesas@sang-engineering.com,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 14.09.2023 08:59, Kathiravan Thirumoorthy wrote:
-> GPLL, NSS crypto PLL clock rates are fixed and shouldn't be scaled based
-> on the request from dependent clocks. Doing so will result in the
-> unexpected behaviour. So drop the CLK_SET_RATE_PARENT flag from the PLL
-> clocks.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: b8e7e519625f ("clk: qcom: ipq8074: add remaining PLL’s")
-> Signed-off-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-> ---
-Stephen, do you think there should be some sort of error
-or at least warning thrown when SET_RATE_PARENT is used with
-RO ops?
+Hi Claudiu,
 
-Konrad
+On Tue, Sep 12, 2023 at 6:53 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Add minimal clock and reset support for RZ/G3S SoC to be able to boot
+> Linux from SD Card/eMMC. This includes necessary core clocks for booting
+> and GIC, SCIF, GPIO, SD0 mod clocks and resets.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+
+Thanks for your patch!
+
+> --- /dev/null
+> +++ b/drivers/clk/renesas/r9a08g045-cpg.c
+> @@ -0,0 +1,217 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * RZ/G3S CPG driver
+> + *
+> + * Copyright (C) 2023 Renesas Electronics Corp.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/device.h>
+> +#include <linux/init.h>
+> +#include <linux/kernel.h>
+> +
+> +#include <dt-bindings/clock/r9a08g045-cpg.h>
+> +
+> +#include "rzg2l-cpg.h"
+> +
+> +/* RZ/G3S Specific registers. */
+> +#define G3S_CPG_PL2_DDIV               (0x204)
+> +#define G3S_CPG_SDHI_DDIV              (0x218)
+> +#define G3S_CPG_PLL_DSEL               (0x240)
+> +#define G3S_CPG_SDHI_DSEL              (0x244)
+> +#define G3S_CLKSELSTATUS               (0x284)
+> +
+> +/* RZ/G3S Specific division configuration.  */
+> +#define G3S_DIVPL2B            DDIV_PACK(G3S_CPG_PL2_DDIV, 4, 3)
+> +#define G3S_DIV_SDHI0          DDIV_PACK(G3S_CPG_SDHI_DDIV, 0, 1)
+> +
+> +/* RZ/G3S Clock status configuration. */
+> +#define G3S_DIVPL1A_STS                DDIV_PACK(CPG_CLKSTATUS, 0, 1)
+> +#define G3S_DIVPL2B_STS                DDIV_PACK(CPG_CLKSTATUS, 5, 1)
+> +#define G3S_DIVPL3A_STS                DDIV_PACK(CPG_CLKSTATUS, 8, 1)
+> +#define G3S_DIVPL3B_STS                DDIV_PACK(CPG_CLKSTATUS, 9, 1)
+> +#define G3S_DIVPL3C_STS                DDIV_PACK(CPG_CLKSTATUS, 10, 1)
+> +#define G3S_DIV_SDHI0_STS      DDIV_PACK(CPG_CLKSTATUS, 24, 1)
+
+The register at offset 0x280 is called CPG_CLKDIVSTATUS, so
+you probably want to add and use a G3S-specific definition.
+
+> +#define G3S_SEL_PLL4_STS       SEL_PLL_PACK(G3S_CLKSELSTATUS, 6, 1)
+> +#define G3S_SEL_SDHI0_STS      SEL_PLL_PACK(G3S_CLKSELSTATUS, 16, 1)
+> +
+> +/* RZ/G3S Specific clocks select. */
+> +#define G3S_SEL_PLL4           SEL_PLL_PACK(G3S_CPG_PLL_DSEL, 6, 1)
+> +#define G3S_SEL_SDHI0          SEL_PLL_PACK(G3S_CPG_SDHI_DSEL, 0, 2)
+> +
+> +/* PLL 1/4/6 configuration registers macro. */
+> +#define G3S_PLL146_CONF(clk1, clk2)    ((clk1) << 22 | (clk2) << 12)
+> +
+> +#define DEF_G3S_MUX(_name, _id, _conf, _parent_names, _mux_flags, _clk_flags) \
+> +       DEF_TYPE(_name, _id, CLK_TYPE_MUX, .conf = (_conf), \
+> +                .parent_names = (_parent_names), \
+> +                .num_parents = ARRAY_SIZE((_parent_names)), \
+> +                .mux_flags = CLK_MUX_HIWORD_MASK | (_mux_flags), \
+> +                .flag = (_clk_flags))
+> +
+> +enum clk_ids {
+> +       /* Core Clock Outputs exported to DT */
+> +       LAST_DT_CORE_CLK = R9A08G045_SWD,
+> +
+> +       /* External Input Clocks */
+> +       CLK_EXTAL,
+> +
+> +       /* Internal Core Clocks */
+> +       CLK_OSC_DIV1000,
+> +       CLK_PLL1,
+> +       CLK_PLL2,
+> +       CLK_PLL2_DIV2,
+> +       CLK_PLL2_DIV2_8,
+> +       CLK_PLL2_DIV6,
+> +       CLK_PLL3,
+> +       CLK_PLL3_DIV2,
+> +       CLK_PLL3_DIV2_2,
+
+Do you need CLK_PLL3_DIV2_2?
+When adding support for R9A07G043_CLK_AT later, you can define it
+as CLK_PLL3_DIV2 / 2.
+
+> +       CLK_PLL3_DIV2_4,
+> +       CLK_PLL3_DIV2_8,
+> +       CLK_PLL3_DIV6,
+> +       CLK_PLL4,
+> +       CLK_PLL6,
+> +       CLK_PLL6_DIV2,
+> +       CLK_SEL_SDHI0,
+> +       CLK_SEL_PLL4,
+> +       CLK_P1_DIV2,
+> +       CLK_P3_DIV2,
+
+Do you need CLK_P1_DIV2 and CLK_P3_DIV2?
+I don't see them in Figure 7.3 ("Clock System Diagram (2)").
+
+> +       CLK_SD0_DIV,
+
+CLK_SD0_DIV is unused.
+
+> +       CLK_SD0_DIV4,
+> +       CLK_S0_DIV2,
+
+CLK_S0_DIV2 is unused.
+
+> +
+> +       /* Module Clocks */
+> +       MOD_CLK_BASE,
+> +};
+> +
+> +/* Divider tables */
+> +static const struct clk_div_table dtable_1_2[] = {
+> +       {0, 1},
+
+"{ 0, 1 }," etc...
+
+> +       {1, 2},
+> +       {0, 0},
+> +};
+> +
+> +static const struct clk_div_table dtable_1_8[] = {
+> +       {0, 1},
+> +       {1, 2},
+> +       {2, 4},
+> +       {3, 8},
+> +       {0, 0},
+> +};
+> +
+> +static const struct clk_div_table dtable_1_32[] = {
+> +       {0, 1},
+> +       {1, 2},
+> +       {2, 4},
+> +       {3, 8},
+> +       {4, 32},
+> +       {0, 0},
+> +};
+> +
+> +/* Mux clock names tables. */
+> +static const char * const sel_sdhi[] = { ".pll2_div2", ".pll6", ".pll2_div6" };
+> +static const char * const sel_pll4[] = { ".osc_div1000", ".pll4" };
+> +
+> +/* Mux clock indexes tables. */
+
+indices
+
+> +static const u32 mtable_sd[] = { 0, 2, 3 };
+> +static const u32 mtable_pll4[] = { 0, 1 };
+> +
+> +static const struct cpg_core_clk r9a08g045_core_clks[] __initconst = {
+> +       /* External Clock Inputs */
+> +       DEF_INPUT("extal", CLK_EXTAL),
+> +
+> +       /* Internal Core Clocks */
+> +       DEF_FIXED(".osc", R9A08G045_OSCCLK, CLK_EXTAL, 1, 1),
+
+"OSC", as this is not an internal core clock.
+
+> +       DEF_FIXED(".osc2", R9A08G045_OSCCLK2, CLK_EXTAL, 1, 3),
+
+"OSC2"
+
+> +       DEF_FIXED(".osc_div1000", CLK_OSC_DIV1000, CLK_EXTAL, 1, 1000),
+> +       DEF_G3S_SAMPLL(".pll1", CLK_PLL1, CLK_EXTAL, G3S_PLL146_CONF(0x4, 0x8)),
+> +       DEF_FIXED(".pll2", CLK_PLL2, CLK_EXTAL, 200, 3),
+> +       DEF_FIXED(".pll3", CLK_PLL3, CLK_EXTAL, 200, 3),
+> +       DEF_FIXED(".pll4", CLK_PLL4, CLK_EXTAL, 100, 3),
+> +       DEF_FIXED(".pll6", CLK_PLL6, CLK_EXTAL, 125, 6),
+> +       DEF_FIXED(".pll2_div2", CLK_PLL2_DIV2, CLK_PLL2, 1, 2),
+> +       DEF_FIXED(".pll2_div2_8", CLK_PLL2_DIV2_8, CLK_PLL2_DIV2, 1, 8),
+> +       DEF_FIXED(".pll2_div6", CLK_PLL2_DIV6, CLK_PLL2, 1, 6),
+> +       DEF_FIXED(".pll3_div2", CLK_PLL3_DIV2, CLK_PLL3, 1, 2),
+> +       DEF_FIXED(".pll3_div2_2", CLK_PLL3_DIV2_2, CLK_PLL3_DIV2, 1, 2),
+> +       DEF_FIXED(".pll3_div2_4", CLK_PLL3_DIV2_4, CLK_PLL3_DIV2, 1, 4),
+> +       DEF_FIXED(".pll3_div2_8", CLK_PLL3_DIV2_8, CLK_PLL3_DIV2, 1, 8),
+> +       DEF_FIXED(".pll3_div6", CLK_PLL3_DIV6, CLK_PLL3, 1, 6),
+> +       DEF_FIXED(".pll6_div2", CLK_PLL6_DIV2, CLK_PLL6, 1, 2),
+> +       DEF_SD_MUX(".sel_sd0", CLK_SEL_SDHI0, G3S_SEL_SDHI0, G3S_SEL_SDHI0_STS, sel_sdhi,
+> +                  mtable_sd, 0, NULL),
+> +       DEF_SD_MUX(".sel_pll4", CLK_SEL_PLL4, G3S_SEL_PLL4, G3S_SEL_PLL4_STS, sel_pll4,
+> +                  mtable_pll4, CLK_SET_PARENT_GATE, NULL),
+> +
+> +       /* Core output clk */
+> +       DEF_G3S_DIV("I", R9A08G045_CLK_I, CLK_PLL1, DIVPL1A, G3S_DIVPL1A_STS, dtable_1_8,
+> +                   0, 0, NULL),
+> +       DEF_G3S_DIV("P0", R9A08G045_CLK_P0, CLK_PLL2_DIV2_8, G3S_DIVPL2B, G3S_DIVPL2B_STS,
+> +                   dtable_1_32, 0, 0, NULL),
+> +       DEF_G3S_DIV("SD0", R9A08G045_CLK_SD0, CLK_SEL_SDHI0, G3S_DIV_SDHI0, G3S_DIV_SDHI0_STS,
+> +                   dtable_1_2, 800000000UL, CLK_SET_RATE_PARENT, DIV_NOTIF),
+> +       DEF_FIXED("SD0_DIV4", CLK_SD0_DIV4, R9A08G045_CLK_SD0, 1, 4),
+
+".sd0_div4", as this is not a public core clock.
+
+> +       DEF_FIXED("M0", R9A08G045_CLK_M0, CLK_PLL3_DIV2_4, 1, 1),
+> +       DEF_G3S_DIV("P1", R9A08G045_CLK_P1, CLK_PLL3_DIV2_4, DIVPL3A, G3S_DIVPL3A_STS,
+> +                   dtable_1_32, 0, 0, NULL),
+> +       DEF_FIXED("P1_DIV2", CLK_P1_DIV2, R9A08G045_CLK_P1, 1, 2),
+> +       DEF_G3S_DIV("P2", R9A08G045_CLK_P2, CLK_PLL3_DIV2_8, DIVPL3B, G3S_DIVPL3B_STS,
+> +                   dtable_1_32, 0, 0, NULL),
+> +       DEF_G3S_DIV("P3", R9A08G045_CLK_P3, CLK_PLL3_DIV2_4, DIVPL3C, G3S_DIVPL3C_STS,
+> +                   dtable_1_32, 0, 0, NULL),
+> +       DEF_FIXED("P3_DIV2", CLK_P3_DIV2, R9A08G045_CLK_P3, 1, 2),
+> +       DEF_FIXED("S0", R9A08G045_CLK_S0, CLK_SEL_PLL4, 1, 2),
+> +       DEF_FIXED("S0_DIV2", CLK_S0_DIV2, R9A08G045_CLK_S0, 1, 2),
+> +};
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
