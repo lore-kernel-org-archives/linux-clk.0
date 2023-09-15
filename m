@@ -2,68 +2,79 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EA83EE6457
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Sep 2023 12:06:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40BC6EE645A
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Sep 2023 12:20:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234495AbjIOMG2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 15 Sep 2023 08:06:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49394 "EHLO
+        id S234769AbjIOMUg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 15 Sep 2023 08:20:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234618AbjIOMG1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Sep 2023 08:06:27 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31DE62D7E
-        for <linux-clk@vger.kernel.org>; Fri, 15 Sep 2023 05:04:47 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id 2adb3069b0e04-500bbe3ef0eso2477468e87.1
-        for <linux-clk@vger.kernel.org>; Fri, 15 Sep 2023 05:04:47 -0700 (PDT)
+        with ESMTP id S234741AbjIOMUd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Sep 2023 08:20:33 -0400
+Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B89AA2711
+        for <linux-clk@vger.kernel.org>; Fri, 15 Sep 2023 05:20:06 -0700 (PDT)
+Received: by mail-lj1-x22e.google.com with SMTP id 38308e7fff4ca-2bfcc35ef7bso26447391fa.2
+        for <linux-clk@vger.kernel.org>; Fri, 15 Sep 2023 05:20:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694779485; x=1695384285; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=icfi94Iw++0R/AP2toim4sb84mQcBzKxVTS6OAVvVDA=;
-        b=bF20TnzVDLQAx9XBtjZg/o9oA67v0QYYMjqD0x3vaChuSHcT3G9D5dAMBGjVbvcWSr
-         r5fB2Vuk9V1zsnC/Ee2V0TSS5zJ92IQ3gRw6+IVVHQvL12PO4lWD1GRaJsLlpTX+P2iU
-         LXVgpVu4OaZlYWNL6cuoFTQxGO904oe9yYFuEhN7AhBHos7SQ1akJ4KKK4ICdumBuyxJ
-         vFdbYHyZQfqOEKyZmNvI8bLEmZnf2/C/eKSDY3OMNKFd9+I5CvDLXPKR0LHH820RrxeW
-         ocQ70QvPs1DCfcSVtOAnTw89CL3yN+5bmCi32Z6EdZwUY2v8hNj+0fonWsD5+HJVSsWa
-         cJfg==
+        d=linaro.org; s=google; t=1694780405; x=1695385205; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=52tjejpvxnE8EVFiMbyAusvH4BJALwybD9Pcm4LTKkU=;
+        b=oPX4L/hHHkRvPGad9Q1rYbcez0sv5sc/Q8IXU5t9YF2q/OMWHDS96L9AXIYxiVXl1j
+         d4IISqFLxHvdtvBHQEDRxYfblAmqnaiBNvll7hBHV6BoX6SY7LszjiH0gEq3U8Hqgt88
+         Wh0TrcP8ez7MivCMYSFKrXRWrJBpOLcxKBCnlbw38VKzZYhPF9VA2bRXiH6nHiRfEEDy
+         BBLCdQ8bU2wdpM/PjvsrKbIiH/kDhD4lR9rQHyOyTjq3+62xM9Vglk/MRSuoYhdPPe8B
+         u17WKgO4BZ9RVKFnRjBySYhVNd4hLlb3KWoU5OvaAnv4w4hhRCfZAPlg/yOmdGeGshq/
+         DypA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694779485; x=1695384285;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=icfi94Iw++0R/AP2toim4sb84mQcBzKxVTS6OAVvVDA=;
-        b=mMDpmpqTPRKzAtKwjXobE62P0wC5xXo9QTL0Svqs7prdtPvLcQIHQvbvR+FeBk0UNr
-         +nlv4fZoPXf6ho7wS8JmoWSL/flcvujzYRhvllFx2uTaaJxYtpQR0Ao4As5wCYXaAPqt
-         OiSM5Buf+baUs0m5/aIddWsJAt9Qg1Nrh9fIERopvp+u5vir99aRN/vsnF7nbdutFUXk
-         XLfkNChlr6nGFaJRkpLlXhL+167JTDfoktt8wPCsjbJMyQXtyqwamr7mQn0/t2wlO3u+
-         BYCNrLCjx2Efmz0icUAM73vFlzFgjg/hrkY55nZ3bx0j2lV4mhTuki5mCVi8gte3lLBC
-         +v+A==
-X-Gm-Message-State: AOJu0YwGDAmVennu6Xz9yiEdu93aVmAA94m18sKa8gk5cu89sbU+5maW
-        QL5x3pSB9sLvhifGWgdD+IRiBw==
-X-Google-Smtp-Source: AGHT+IGC51QtLtToliH13uoTDIZ9HjuO7MczTafyoIlsaog7UILk/Ln075g2op/cY9P/VuE/ZnOIOQ==
-X-Received: by 2002:a05:6512:3096:b0:4fe:4896:b6ab with SMTP id z22-20020a056512309600b004fe4896b6abmr601778lfd.15.1694779484198;
-        Fri, 15 Sep 2023 05:04:44 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1694780405; x=1695385205;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=52tjejpvxnE8EVFiMbyAusvH4BJALwybD9Pcm4LTKkU=;
+        b=P90eQRfK0Sz0VIngLslE/7Hh7UBDAR15z7of79HWVOruuudTG891oYg50QMNPThps8
+         Xi9s98jt0oJXbkdb4P6B1Q93CWHwoOHI42wkKx8q2Fz+A0MySHCo/HIOdRpoll0PJ6iQ
+         s1N8RIH+KHjPXms1Xvuiqjbl3cGmwd2OutN2XEcQwG2OU2V0SDod+ijL2jhZdKiWAdh3
+         oBiOuHofGMQJ5lNQZEnXtc+BCGROw3p+IEUnsmUjcRRZsiPL2g1eckqgwSg+jMnf8Ac6
+         fkS7vzwhz37hdVFfP6INsbzSBFIwSjrvpGJ+K4wROfNfu/vSMlZV2bvM2ftLDw0xgyq5
+         tCxg==
+X-Gm-Message-State: AOJu0YxJdvJmT2EGfsF9GoRZ7IDlQ7AUHLGrihRXwSiPbPW87WyHnpwB
+        Pl6LD37sGlqpuXf0Z4qYK+SJlA==
+X-Google-Smtp-Source: AGHT+IEuaLoRu6BfkkK0RfPqU4MzcognEb/aFkTu1WQhdb96RMqVBnMjoxxbgnJqGTaec9hd0t0CDA==
+X-Received: by 2002:a2e:9f0a:0:b0:2bc:be3c:9080 with SMTP id u10-20020a2e9f0a000000b002bcbe3c9080mr1318797ljk.27.1694780404833;
+        Fri, 15 Sep 2023 05:20:04 -0700 (PDT)
 Received: from ?IPV6:2a00:f41:cbe:bc7d:62a6:5d09:5ba7:be5b? ([2a00:f41:cbe:bc7d:62a6:5d09:5ba7:be5b])
-        by smtp.gmail.com with ESMTPSA id l18-20020ac24312000000b004fa52552c7csm614093lfh.151.2023.09.15.05.04.42
+        by smtp.gmail.com with ESMTPSA id y15-20020a2e978f000000b002bce38190a3sm696858lji.34.2023.09.15.05.19.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Sep 2023 05:04:43 -0700 (PDT)
-Message-ID: <b6ded7b6-1818-402f-8826-2ab1ecd05056@linaro.org>
-Date:   Fri, 15 Sep 2023 14:04:41 +0200
+        Fri, 15 Sep 2023 05:20:04 -0700 (PDT)
+Message-ID: <76f3bc23-8677-42bd-a3a5-43b17cbe552e@linaro.org>
+Date:   Fri, 15 Sep 2023 14:19:56 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: gcc-sm8150: Fix gcc_sdcc2_apps_clk_src
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Danila Tikhonov <danila@jiaxyga.com>, agross@kernel.org,
-        andersson@kernel.org, dkatraga@codeaurora.org,
-        mturquette@baylibre.com, quic_tdas@quicinc.com, vkoul@kernel.org
-Cc:     adomerlee@gmail.com, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230913175612.8685-1-danila@jiaxyga.com>
- <539752971c7a61ce7a5deddc1478686a.sboyd@kernel.org>
+Subject: Re: [PATCH v2 01/11] clk: qcom: ipq8074: drop the CLK_SET_RATE_PARENT
+ flag from PLL clocks
 Content-Language: en-US
+To:     Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sricharan Ramabadhran <quic_srichara@quicinc.com>,
+        Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>,
+        Varadarajan Narayanan <quic_varada@quicinc.com>,
+        Anusha Rao <quic_anusha@quicinc.com>,
+        Devi Priya <quic_devipriy@quicinc.com>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        stable@vger.kernel.org
+References: <20230913-gpll_cleanup-v2-0-c8ceb1a37680@quicinc.com>
+ <20230913-gpll_cleanup-v2-1-c8ceb1a37680@quicinc.com>
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
@@ -100,42 +111,25 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <539752971c7a61ce7a5deddc1478686a.sboyd@kernel.org>
+In-Reply-To: <20230913-gpll_cleanup-v2-1-c8ceb1a37680@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 14.09.2023 18:20, Stephen Boyd wrote:
-> Quoting Danila Tikhonov (2023-09-13 10:56:11)
->> Set .flags = CLK_OPS_PARENT_ENABLE to fix "gcc_sdcc2_apps_clk_src: rcg
->> didn't update its configuration" error.
->>
->> Fixes: 2a1d7eb854bb ("clk: qcom: gcc: Add global clock controller driver for SM8150")
->> Tested-by: Arseniy Velikanov <adomerlee@gmail.com>
->> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
->> ---
->>  drivers/clk/qcom/gcc-sm8150.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8150.c
->> index 41ab210875fb..05d115c52dfe 100644
->> --- a/drivers/clk/qcom/gcc-sm8150.c
->> +++ b/drivers/clk/qcom/gcc-sm8150.c
->> @@ -774,7 +774,7 @@ static struct clk_rcg2 gcc_sdcc2_apps_clk_src = {
->>                 .name = "gcc_sdcc2_apps_clk_src",
->>                 .parent_data = gcc_parents_6,
->>                 .num_parents = ARRAY_SIZE(gcc_parents_6),
->> -               .flags = CLK_SET_RATE_PARENT,
->> +               .flags = CLK_OPS_PARENT_ENABLE,
->>                 .ops = &clk_rcg2_floor_ops,
+On 14.09.2023 08:59, Kathiravan Thirumoorthy wrote:
+> GPLL, NSS crypto PLL clock rates are fixed and shouldn't be scaled based
+> on the request from dependent clocks. Doing so will result in the
+> unexpected behaviour. So drop the CLK_SET_RATE_PARENT flag from the PLL
+> clocks.
 > 
-> In what case are we getting the rcg stuck? I thought that you could
-> write the rcg registers while the parent was off and switch to that
-> parent if the parent isn't enabled and it wouldn't get stuck.
-I think the better question here would be "why isn't
-OPS_PARENT_ENABLE the default for all qc clocks on all
-platforms" :/
+> Cc: stable@vger.kernel.org
+> Fixes: b8e7e519625f ("clk: qcom: ipq8074: add remaining PLL’s")
+> Signed-off-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+> ---
+Stephen, do you think there should be some sort of error
+or at least warning thrown when SET_RATE_PARENT is used with
+RO ops?
 
 Konrad
