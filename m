@@ -2,88 +2,149 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7D34CD13D1
-	for <linux-clk@archiver.kernel.org>; Sat, 16 Sep 2023 10:06:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0903AC2BA15
+	for <linux-clk@archiver.kernel.org>; Sat, 16 Sep 2023 17:16:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239018AbjIPKF6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 16 Sep 2023 06:05:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56450 "EHLO
+        id S233168AbjIPRPa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 16 Sep 2023 13:15:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47106 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238847AbjIPKFe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 16 Sep 2023 06:05:34 -0400
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [IPv6:2a02:c205:3004:2154::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68A84CDE;
-        Sat, 16 Sep 2023 03:05:28 -0700 (PDT)
-Received: from p200300ccff1003001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:cc:ff10:300:1a3d:a2ff:febf:d33a] helo=aktux)
-        by mail.andi.de1.cc with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <andreas@kemnade.info>)
-        id 1qhSB1-003pjl-Tb; Sat, 16 Sep 2023 12:05:23 +0200
-Received: from andi by aktux with local (Exim 4.96)
-        (envelope-from <andreas@kemnade.info>)
-        id 1qhSB1-006vL4-0d;
-        Sat, 16 Sep 2023 12:05:23 +0200
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     dmitry.torokhov@gmail.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        lee@kernel.org, bcousson@baylibre.com, tony@atomide.com,
-        mturquette@baylibre.com, sboyd@kernel.org, andreas@kemnade.info,
-        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v4 5/5] ARM: dts: omap4-embt2ws: enable 32K clock on WLAN
-Date:   Sat, 16 Sep 2023 12:05:15 +0200
-Message-Id: <20230916100515.1650336-6-andreas@kemnade.info>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230916100515.1650336-1-andreas@kemnade.info>
-References: <20230916100515.1650336-1-andreas@kemnade.info>
+        with ESMTP id S231316AbjIPRPE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 16 Sep 2023 13:15:04 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A31CFCEC;
+        Sat, 16 Sep 2023 10:14:59 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-31c5a2e8501so2936145f8f.0;
+        Sat, 16 Sep 2023 10:14:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1694884498; x=1695489298; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oVZXsVyggnQQBeZou9kqJ/xLa3R34SntugSTM7Apkww=;
+        b=P5kdAw7ql1QkWx1/CtNEWvHq7epAEqKcwLAEsGqZCt+Qe7OJkf5G0h/oL9bsceOhCK
+         GWKkPNDxzCYxyLA+jvT8dAJMvfcMGJM8UI+GNlM0ApoxZ5JLxV77QC3y4GaBjyScbkUw
+         VwVzoJUxkXjupj6IO/MgxGjoKWcuQcpz8Qeiw/cqV1fasFoVE6yAq4ULNJ8YbQwemP2O
+         Hdh2y2Vz+N5sK8cM446v708eYuVje3fO5+10wAWqAZNMH9fhmORKjlktTbUHEb5tiRZj
+         VnrlEbFq5NZkptcoL9SSP+gDJXb0ilaDJHA5Ham5pCpqTRoKcc0MFbwc0debdTf8cYV3
+         Mmug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694884498; x=1695489298;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oVZXsVyggnQQBeZou9kqJ/xLa3R34SntugSTM7Apkww=;
+        b=PwtPQEq7SqfI9IWc+6T+IYuP+hYA82SgXiHDCbR1UipHbvdFsfAmMwh6aOqxFkqkGz
+         sSV/XqWVtqi6+ckw9uoFIEQImSVNwNjSEWuzUe+JRz1VKw+6YQXt4tJAm9c7e2zTztrQ
+         or+dhn39RxVessLRPMCkTjUdOcoKDBKsty4J8gr9tivHadC2lgAUn+KHxK9C9lppL9zf
+         ejJjqZ6eESq9JcKnJtwjpISmDemENdBIaeF7aSI5FPAumVf/STg0mDY5ORQC2TKUAG8M
+         nQKdXZoksQZAsVWLsXl9S1hq/g4scJhuyELMh0ZH0A1eyJmluggTcA2VlnurF2dXuaHG
+         jzrg==
+X-Gm-Message-State: AOJu0YwDcZtOmKY1QNWE4bj8FgBRSKMVtDJaxeBPXqEKAxerj0G6lfDT
+        5H8lUBI0/osEmhsf7Wc47aE=
+X-Google-Smtp-Source: AGHT+IGEOxr64dWy80O37qvohPSo6KmqFNR4Ouidxg0QkTTgOWK43xOc7mIgtd449FAcx/yukJxquQ==
+X-Received: by 2002:adf:fb90:0:b0:317:e5dc:5cd0 with SMTP id a16-20020adffb90000000b00317e5dc5cd0mr3984009wrr.21.1694884497939;
+        Sat, 16 Sep 2023 10:14:57 -0700 (PDT)
+Received: from localhost.localdomain (93-34-89-13.ip49.fastwebnet.it. [93.34.89.13])
+        by smtp.googlemail.com with ESMTPSA id w4-20020a5d6804000000b003196e992567sm7712395wru.115.2023.09.16.10.14.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 16 Sep 2023 10:14:57 -0700 (PDT)
+From:   Christian Marangi <ansuelsmth@gmail.com>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Christian Marangi <ansuelsmth@gmail.com>
+Subject: [PATCH v6 1/3] clk: qcom: clk-rcg: introduce support for multiple conf for same freq
+Date:   Sat, 16 Sep 2023 16:00:44 +0200
+Message-Id: <20230916140046.7878-2-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20230916140046.7878-1-ansuelsmth@gmail.com>
+References: <20230916140046.7878-1-ansuelsmth@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-WLAN did only work if clock was left enabled by the original system,
-so make it fully enable the needed resources itself.
+Some RCG frequency can be reached by multiple configuration.
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+We currently declare multiple configuration for the same frequency but
+that is not supported and always the first configuration will be taken.
+
+These multiple configuration are needed as based on the current parent
+configuration, it may be needed to use a different configuration to
+reach the same frequency.
+
+To handle this introduce 3 new macro, C, FM and FMS:
+
+- C is used to declare a freq_conf where src, pre_div, m and n are
+  provided.
+
+- FM is used to declare a freq_multi_tbl with the frequency and an
+  array of confs to insert all the config for the provided frequency.
+
+- FMS is used to declare a freq_multi_tbl with the frequency and an
+  array of a single conf with the provided src, pre_div, m and n.
+
+Struct clk_rcg2 is changed to add a union type to reference a simple
+freq_tbl or a complex freq_multi_tbl.
+
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 ---
- arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/clk/qcom/clk-rcg.h | 23 ++++++++++++++++++++++-
+ 1 file changed, 22 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts b/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts
-index ee86981b2e448..9d2f2d8639496 100644
---- a/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts
-+++ b/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts
-@@ -69,6 +69,12 @@ unknown_supply: unknown-supply {
- 		regulator-name = "unknown";
- 	};
+diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+index e6d84c8c7989..c81458db6ce4 100644
+--- a/drivers/clk/qcom/clk-rcg.h
++++ b/drivers/clk/qcom/clk-rcg.h
+@@ -17,6 +17,23 @@ struct freq_tbl {
+ 	u16 n;
+ };
  
-+	wl12xx_pwrseq: wl12xx-pwrseq {
-+		compatible = "mmc-pwrseq-simple";
-+		clocks = <&twl 1>;
-+		clock-names = "ext_clock";
-+	};
++#define C(s, h, m, n) { (s), (2 * (h) - 1), (m), (n) }
++#define FM(f, confs) { (f), ARRAY_SIZE(confs), (confs) }
++#define FMS(f, s, h, m, n) { (f), 1, (const struct freq_conf []){ C(s, h, m, n) } }
 +
-        /* regulator for wl12xx on sdio2 */
- 	wl12xx_vmmc: wl12xx-vmmc {
- 		pinctrl-names = "default";
-@@ -92,6 +98,7 @@ &i2c1 {
- 	twl: pmic@48 {
- 		compatible = "ti,twl6032";
- 		reg = <0x48>;
-+		#clock-cells = <1>;
- 		/* IRQ# = 7 */
- 		interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>; /* IRQ_SYS_1N cascaded to gic */
- 		interrupt-controller;
-@@ -316,6 +323,7 @@ &mmc3 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&wl12xx_pins>;
- 	vmmc-supply = <&wl12xx_vmmc>;
-+	mmc-pwrseq = <&wl12xx_pwrseq>;
- 	interrupts-extended = <&wakeupgen GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH
- 			       &omap4_pmx_core 0x12e>;
- 	non-removable;
++struct freq_conf {
++	u8 src;
++	u8 pre_div;
++	u16 m;
++	u16 n;
++};
++
++struct freq_multi_tbl {
++	unsigned long freq;
++	int num_confs;
++	const struct freq_conf *confs;
++};
++
+ /**
+  * struct mn - M/N:D counter
+  * @mnctr_en_bit: bit to enable mn counter
+@@ -138,6 +155,7 @@ extern const struct clk_ops clk_dyn_rcg_ops;
+  * @safe_src_index: safe src index value
+  * @parent_map: map from software's parent index to hardware's src_sel field
+  * @freq_tbl: frequency table
++ * @freq_multi_tbl: frequency table for clocks reachable with multiple RCGs conf
+  * @clkr: regmap clock handle
+  * @cfg_off: defines the cfg register offset from the CMD_RCGR + CFG_REG
+  * @parked_cfg: cached value of the CFG register for parked RCGs
+@@ -149,7 +167,10 @@ struct clk_rcg2 {
+ 	u8			hid_width;
+ 	u8			safe_src_index;
+ 	const struct parent_map	*parent_map;
+-	const struct freq_tbl	*freq_tbl;
++	union {
++		const struct freq_tbl		*freq_tbl;
++		const struct freq_multi_tbl	*freq_multi_tbl;
++	};
+ 	struct clk_regmap	clkr;
+ 	u8			cfg_off;
+ 	u32			parked_cfg;
 -- 
-2.39.2
+2.40.1
 
