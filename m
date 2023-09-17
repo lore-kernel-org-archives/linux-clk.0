@@ -2,96 +2,100 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79DCBCD37B4
-	for <linux-clk@archiver.kernel.org>; Sun, 17 Sep 2023 11:01:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDEDBCD37B4
+	for <linux-clk@archiver.kernel.org>; Sun, 17 Sep 2023 19:22:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230005AbjIQLBF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 17 Sep 2023 07:01:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39222 "EHLO
+        id S232790AbjIQTVe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 17 Sep 2023 15:21:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229776AbjIQLAd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 17 Sep 2023 07:00:33 -0400
+        with ESMTP id S239414AbjIQTVR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 17 Sep 2023 15:21:17 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09808136
-        for <linux-clk@vger.kernel.org>; Sun, 17 Sep 2023 04:00:28 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7B459C433C8;
-        Sun, 17 Sep 2023 11:00:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694948427;
-        bh=s08oDzPuNzSJeFX6h/ScM9J80V2nEYO6YkYo4nxEPCE=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=nritynd2YmYUlN1ie5Ol4kmiqCoZ5YuAdBaqB1rdW9DyUzY5ckHaIv3mlVt52W+Ze
-         CkVyNPkKEA0HggjJK7WTDYR+3afmh9aobqqy7H3YnB1Ezsx70YW4ca9y2eJAT8w1x3
-         PjDJGUp5NWF6rbMJlTMVaT1cL240EHZqLkchK6JhyZK4IfUhQjnwAS3dnSfOR0i/w5
-         PoJfvWfc/cf77esp/YA2sM5hOv88kUAFW5RKvL6CsIdl3nQiILPgkwiwqMSCgF6R54
-         fnaMzKOPkuVXNx+PGFTJiBCvQpYzNAqWIQZwOCTOs85sSdkHZiM+PgFtPE1x/lr8MR
-         c++vLi1xox62w==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 5A962E26888;
-        Sun, 17 Sep 2023 11:00:27 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FB6E132;
+        Sun, 17 Sep 2023 12:21:05 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FB54C433C9;
+        Sun, 17 Sep 2023 19:21:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1694978465;
+        bh=CkL1q/1PzLO1l70MethORY8Un7Sr3BNjlZXJcYek3sw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=DRXVA0Rp0UAhGRZiYZjPIfZd2AT1oBquD3jw1ht3mLezRs1uCu1tXTXL22bk0b/3/
+         3FmIFr4QBC8xh01e7hPLOnLXMRyRKrBeSWWlFvXi8ZUugof4xZJ2/4rT7u/TtD660R
+         bHAumiLWNy7hPdM6B6C0/1gwmq53tQm4Q/xSw5c8=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     stable@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        patches@lists.linux.dev, kernel test robot <lkp@intel.com>,
+        Baoquan He <bhe@redhat.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.10 049/406] clk: fixed-mmio: make COMMON_CLK_FIXED_MMIO depend on HAS_IOMEM
+Date:   Sun, 17 Sep 2023 21:08:23 +0200
+Message-ID: <20230917191102.438575278@linuxfoundation.org>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <20230917191101.035638219@linuxfoundation.org>
+References: <20230917191101.035638219@linuxfoundation.org>
+User-Agent: quilt/0.67
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v8 0/9] Create common DPLL configuration API
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <169494842736.21621.10730860855645661664.git-patchwork-notify@kernel.org>
-Date:   Sun, 17 Sep 2023 11:00:27 +0000
-References: <20230913204943.1051233-1-vadim.fedorenko@linux.dev>
-In-Reply-To: <20230913204943.1051233-1-vadim.fedorenko@linux.dev>
-To:     Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc:     kuba@kernel.org, jiri@resnulli.us, arkadiusz.kubalewski@intel.com,
-        jonathan.lemon@gmail.com, pabeni@redhat.com,
-        milena.olech@intel.com, michal.michalik@intel.com,
-        linux-arm-kernel@lists.infradead.org, poros@redhat.com,
-        mschmidt@redhat.com, netdev@vger.kernel.org,
-        linux-clk@vger.kernel.org, bvanassche@acm.org,
-        intel-wired-lan@lists.osuosl.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello:
+5.10-stable review patch.  If anyone has any objections, please let me know.
 
-This series was applied to netdev/net-next.git (main)
-by David S. Miller <davem@davemloft.net>:
+------------------
 
-On Wed, 13 Sep 2023 21:49:34 +0100 you wrote:
-> Implement common API for DPLL configuration and status reporting.
-> The API utilises netlink interface as transport for commands and event
-> notifications. This API aims to extend current pin configuration
-> provided by PTP subsystem and make it flexible and easy to cover
-> complex configurations.
-> 
-> Netlink interface is based on ynl spec, it allows use of in-kernel
-> tools/net/ynl/cli.py application to control the interface with properly
-> formated command and json attribute strings. Here are few command
-> examples of how it works with `ice` driver on supported NIC:
-> 
-> [...]
+From: Baoquan He <bhe@redhat.com>
 
-Here is the summary with links:
-  - [net-next,v8,1/9] dpll: documentation on DPLL subsystem interface
-    https://git.kernel.org/netdev/net-next/c/dbb291f19393
-  - [net-next,v8,2/9] dpll: spec: Add Netlink spec in YAML
-    https://git.kernel.org/netdev/net-next/c/3badff3a25d8
-  - [net-next,v8,3/9] dpll: core: Add DPLL framework base functions
-    https://git.kernel.org/netdev/net-next/c/9431063ad323
-  - [net-next,v8,4/9] dpll: netlink: Add DPLL framework base functions
-    https://git.kernel.org/netdev/net-next/c/9d71b54b65b1
-  - [net-next,v8,5/9] netdev: expose DPLL pin handle for netdevice
-    https://git.kernel.org/netdev/net-next/c/5f1842692880
-  - [net-next,v8,6/9] ice: add admin commands to access cgu configuration
-    https://git.kernel.org/netdev/net-next/c/8a3a565ff210
-  - [net-next,v8,7/9] ice: implement dpll interface to control cgu
-    https://git.kernel.org/netdev/net-next/c/d7999f5ea64b
-  - [net-next,v8,8/9] ptp_ocp: implement DPLL ops
-    https://git.kernel.org/netdev/net-next/c/09eeb3aecc6c
-  - [net-next,v8,9/9] mlx5: Implement SyncE support using DPLL infrastructure
-    https://git.kernel.org/netdev/net-next/c/496fd0a26bbf
+[ Upstream commit e7dd44f4f3166db45248414f5df8f615392de47a ]
 
-You are awesome, thank you!
+On s390 systems (aka mainframes), it has classic channel devices for
+networking and permanent storage that are currently even more common
+than PCI devices. Hence it could have a fully functional s390 kernel
+with CONFIG_PCI=n, then the relevant iomem mapping functions
+[including ioremap(), devm_ioremap(), etc.] are not available.
+
+Here let COMMON_CLK_FIXED_MMIO depend on HAS_IOMEM so that it won't
+be built to cause below compiling error if PCI is unset:
+
+------
+ld: drivers/clk/clk-fixed-mmio.o: in function `fixed_mmio_clk_setup':
+clk-fixed-mmio.c:(.text+0x5e): undefined reference to `of_iomap'
+ld: clk-fixed-mmio.c:(.text+0xba): undefined reference to `iounmap'
+------
+
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202306211329.ticOJCSv-lkp@intel.com/
+Signed-off-by: Baoquan He <bhe@redhat.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org
+Link: https://lore.kernel.org/r/20230707135852.24292-8-bhe@redhat.com
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/clk/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 4ae49eae45869..df739665f2063 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -356,6 +356,7 @@ config COMMON_CLK_BD718XX
+ config COMMON_CLK_FIXED_MMIO
+ 	bool "Clock driver for Memory Mapped Fixed values"
+ 	depends on COMMON_CLK && OF
++	depends on HAS_IOMEM
+ 	help
+ 	  Support for Memory Mapped IO Fixed clocks
+ 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+2.40.1
+
 
 
