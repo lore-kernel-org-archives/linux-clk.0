@@ -2,101 +2,96 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23EB2CD37B3
-	for <linux-clk@archiver.kernel.org>; Sun, 17 Sep 2023 09:59:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79DCBCD37B4
+	for <linux-clk@archiver.kernel.org>; Sun, 17 Sep 2023 11:01:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234550AbjIQJ7T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 17 Sep 2023 05:59:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54538 "EHLO
+        id S230005AbjIQLBF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 17 Sep 2023 07:01:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39222 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236104AbjIQJ6x (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 17 Sep 2023 05:58:53 -0400
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 316B418B;
-        Sun, 17 Sep 2023 02:58:48 -0700 (PDT)
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4RpNft2Fqqz9sTH;
-        Sun, 17 Sep 2023 11:58:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-        t=1694944726;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=rRchFMkYjDHunyns7t89UibgDRtGEiZxqa3pX6WkczU=;
-        b=aHWf6Q6/SNJQ3cJyyOf9Cgql8Svdn8YO4ZLOIjD3zg4VUOvvml1PzjehqE9O5txsvmkjz1
-        MoKuCp1C36cyILgTVfuMGup35yQsF37We5BKWh2FB9vaCMf47rfuyPDlHK7n+0CTIHD39N
-        btSkfPoz9EfKhCFgPu18H7xbx8HX+8UeSySCVA7KCkg0zgKydm11STZ/D6dnLoocdX31LD
-        do8eZL4tHyx/xaYAtMqWI6FAI5nvYwVQy+IDHGoHFnPLJo0HqaJR5DEEEqtEvzMFMrNyTK
-        pEhsAJylLmO1OJkHrFwKvKPrgymkADDcV0T4WJHZobSKI07d/4kJAIIOgA2vcw==
-From:   Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-        t=1694944724;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=rRchFMkYjDHunyns7t89UibgDRtGEiZxqa3pX6WkczU=;
-        b=Fnpl+WRUl9vxqztebmNzEp0iixEd60vp5ImSNtQE9Tahrg6mYF1gaOF9S5cZUZPRitufkP
-        I+5uSUC2cdA0VU4oG9I4PwEW0vq52KfUmmRC/KrIXKXCz49iATodkH0tyzu/vy2EYwmgPH
-        9UlfNQHb3LA2dQZNtNIzoSrq1JpKmb1bJBe29BB3z10XqZIHiuA5rc4tZQB3WzWybLEDPe
-        em8bi86uDWAV7lO8SLl6kD7ArcHyjhIYzU42ihUz9m1mG4hS+5De5biQHaW1GmQ3KBicyO
-        Zb+Tt/Gcv7SypTyhuk8fofzSXKkkAG7cGdebBxv8PhqkUuJ6M+E7Tg+t549a9g==
-To:     linux-clk@vger.kernel.org
-Cc:     Marek Vasut <marek.vasut+renesas@mailbox.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] clk: renesas: r8a7795: Constify r8a7795_*_clks
-Date:   Sun, 17 Sep 2023 11:58:32 +0200
-Message-Id: <20230917095832.39007-1-marek.vasut+renesas@mailbox.org>
+        with ESMTP id S229776AbjIQLAd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 17 Sep 2023 07:00:33 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09808136
+        for <linux-clk@vger.kernel.org>; Sun, 17 Sep 2023 04:00:28 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 7B459C433C8;
+        Sun, 17 Sep 2023 11:00:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1694948427;
+        bh=s08oDzPuNzSJeFX6h/ScM9J80V2nEYO6YkYo4nxEPCE=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=nritynd2YmYUlN1ie5Ol4kmiqCoZ5YuAdBaqB1rdW9DyUzY5ckHaIv3mlVt52W+Ze
+         CkVyNPkKEA0HggjJK7WTDYR+3afmh9aobqqy7H3YnB1Ezsx70YW4ca9y2eJAT8w1x3
+         PjDJGUp5NWF6rbMJlTMVaT1cL240EHZqLkchK6JhyZK4IfUhQjnwAS3dnSfOR0i/w5
+         PoJfvWfc/cf77esp/YA2sM5hOv88kUAFW5RKvL6CsIdl3nQiILPgkwiwqMSCgF6R54
+         fnaMzKOPkuVXNx+PGFTJiBCvQpYzNAqWIQZwOCTOs85sSdkHZiM+PgFtPE1x/lr8MR
+         c++vLi1xox62w==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 5A962E26888;
+        Sun, 17 Sep 2023 11:00:27 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: 5050228945451b1f8c4
-X-MBO-RS-META: qm5sjf7soujp3mdr3974gaj74bnauad9
-X-Rspamd-Queue-Id: 4RpNft2Fqqz9sTH
+Subject: Re: [PATCH net-next v8 0/9] Create common DPLL configuration API
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <169494842736.21621.10730860855645661664.git-patchwork-notify@kernel.org>
+Date:   Sun, 17 Sep 2023 11:00:27 +0000
+References: <20230913204943.1051233-1-vadim.fedorenko@linux.dev>
+In-Reply-To: <20230913204943.1051233-1-vadim.fedorenko@linux.dev>
+To:     Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc:     kuba@kernel.org, jiri@resnulli.us, arkadiusz.kubalewski@intel.com,
+        jonathan.lemon@gmail.com, pabeni@redhat.com,
+        milena.olech@intel.com, michal.michalik@intel.com,
+        linux-arm-kernel@lists.infradead.org, poros@redhat.com,
+        mschmidt@redhat.com, netdev@vger.kernel.org,
+        linux-clk@vger.kernel.org, bvanassche@acm.org,
+        intel-wired-lan@lists.osuosl.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Make r8a7795_core_clks and r8a7795_mod_clks arrays const and align them
-with the other clock tables in other *cpg-mssr.c . No functional change.
+Hello:
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
----
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
----
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+This series was applied to netdev/net-next.git (main)
+by David S. Miller <davem@davemloft.net>:
 
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index ad20b3301ef6..e47d9b1fcc0a 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -51,7 +51,7 @@ enum clk_ids {
- 	MOD_CLK_BASE
- };
- 
--static struct cpg_core_clk r8a7795_core_clks[] __initdata = {
-+static const struct cpg_core_clk r8a7795_core_clks[] __initconst = {
- 	/* External Clock Inputs */
- 	DEF_INPUT("extal",      CLK_EXTAL),
- 	DEF_INPUT("extalr",     CLK_EXTALR),
-@@ -128,7 +128,7 @@ static struct cpg_core_clk r8a7795_core_clks[] __initdata = {
- 	DEF_BASE("r",           R8A7795_CLK_R,     CLK_TYPE_GEN3_R, CLK_RINT),
- };
- 
--static struct mssr_mod_clk r8a7795_mod_clks[] __initdata = {
-+static const struct mssr_mod_clk r8a7795_mod_clks[] __initconst = {
- 	DEF_MOD("3dge",			 112,	R8A7795_CLK_ZG),
- 	DEF_MOD("fdp1-1",		 118,	R8A7795_CLK_S0D1),
- 	DEF_MOD("fdp1-0",		 119,	R8A7795_CLK_S0D1),
+On Wed, 13 Sep 2023 21:49:34 +0100 you wrote:
+> Implement common API for DPLL configuration and status reporting.
+> The API utilises netlink interface as transport for commands and event
+> notifications. This API aims to extend current pin configuration
+> provided by PTP subsystem and make it flexible and easy to cover
+> complex configurations.
+> 
+> Netlink interface is based on ynl spec, it allows use of in-kernel
+> tools/net/ynl/cli.py application to control the interface with properly
+> formated command and json attribute strings. Here are few command
+> examples of how it works with `ice` driver on supported NIC:
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next,v8,1/9] dpll: documentation on DPLL subsystem interface
+    https://git.kernel.org/netdev/net-next/c/dbb291f19393
+  - [net-next,v8,2/9] dpll: spec: Add Netlink spec in YAML
+    https://git.kernel.org/netdev/net-next/c/3badff3a25d8
+  - [net-next,v8,3/9] dpll: core: Add DPLL framework base functions
+    https://git.kernel.org/netdev/net-next/c/9431063ad323
+  - [net-next,v8,4/9] dpll: netlink: Add DPLL framework base functions
+    https://git.kernel.org/netdev/net-next/c/9d71b54b65b1
+  - [net-next,v8,5/9] netdev: expose DPLL pin handle for netdevice
+    https://git.kernel.org/netdev/net-next/c/5f1842692880
+  - [net-next,v8,6/9] ice: add admin commands to access cgu configuration
+    https://git.kernel.org/netdev/net-next/c/8a3a565ff210
+  - [net-next,v8,7/9] ice: implement dpll interface to control cgu
+    https://git.kernel.org/netdev/net-next/c/d7999f5ea64b
+  - [net-next,v8,8/9] ptp_ocp: implement DPLL ops
+    https://git.kernel.org/netdev/net-next/c/09eeb3aecc6c
+  - [net-next,v8,9/9] mlx5: Implement SyncE support using DPLL infrastructure
+    https://git.kernel.org/netdev/net-next/c/496fd0a26bbf
+
+You are awesome, thank you!
 -- 
-2.40.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
