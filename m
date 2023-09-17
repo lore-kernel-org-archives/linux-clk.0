@@ -2,100 +2,172 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDD83CD13D1
-	for <linux-clk@archiver.kernel.org>; Sun, 17 Sep 2023 20:09:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D85CD37B4
+	for <linux-clk@archiver.kernel.org>; Sun, 17 Sep 2023 22:41:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240439AbjIQUId (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 17 Sep 2023 16:08:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59870 "EHLO
+        id S232943AbjIQWk6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 17 Sep 2023 18:40:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240430AbjIQUID (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 17 Sep 2023 16:08:03 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23F81B5;
-        Sun, 17 Sep 2023 13:07:58 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C68EC433C7;
-        Sun, 17 Sep 2023 20:07:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1694981277;
-        bh=cdOSdwOI+AKP6Uj8nFMlulS2yMVBvWtR569kfA/S+5c=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Zt3lZR9ujFC7Wi4OJk+94qOZC3gMvalU4g3yEakGIa3owrkvf78P7E8JtzQxkhaXv
-         xOSSCg3oTzFwCkjiW+FCppFFr8AwHScHTLY9Vei7IFvscPg4+6NZi0GdaNUTlifcDt
-         vJJOFr+OT2RzGaQ2fxPJxxIHatmEO+ak6KcBH+lA=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     stable@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        patches@lists.linux.dev, kernel test robot <lkp@intel.com>,
-        Baoquan He <bhe@redhat.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.15 032/511] clk: fixed-mmio: make COMMON_CLK_FIXED_MMIO depend on HAS_IOMEM
-Date:   Sun, 17 Sep 2023 21:07:39 +0200
-Message-ID: <20230917191114.612100020@linuxfoundation.org>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20230917191113.831992765@linuxfoundation.org>
-References: <20230917191113.831992765@linuxfoundation.org>
-User-Agent: quilt/0.67
-X-stable: review
-X-Patchwork-Hint: ignore
+        with ESMTP id S234153AbjIQWki (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 17 Sep 2023 18:40:38 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2166912B;
+        Sun, 17 Sep 2023 15:40:33 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-40479f8325fso29972355e9.1;
+        Sun, 17 Sep 2023 15:40:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1694990431; x=1695595231; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pu55F0bb4aC5tU7CS7Hj+QvENmRKx9xwc5E2LcNAfp4=;
+        b=FYMljGgmPGRvBwI4FGBxfrlNEQBof+nqWESW5HoBjEwD59CKYxYqxRD50ZNE0P+eV+
+         kVtOncNplDTuDiQwwzJKYEz7R/XnmBbvyl8DMr87pTlNIGVDyIQKdHcr4Osb1gS+NDSV
+         Qbrv3BZhgzhoxJOMxIRAx6l4IkRF6Vi1CKPWOvqQoxPgvc7ooBf9K8smwTJ1VQhu00Tu
+         vu4BwcsFv5EdPPrIHObSdrHhHxmjuz7tgx4gG3Q8cbNxY6BsE8X2cfS5Q69Dub4hGzI/
+         v1murZQvLJd0JiRu6Tl5WN4SRMxzvLrOum0iROUyRHQjYXpaXEZJ9WIkQnRnvZDjmaJM
+         TizQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694990431; x=1695595231;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pu55F0bb4aC5tU7CS7Hj+QvENmRKx9xwc5E2LcNAfp4=;
+        b=gKJiOlvTQX3FqTxezz+7yfgASTKxs4grY7IMoMFh58+LUm4lve6FZ0wbvbzjULfH51
+         pnC5clfb61x8BW0BNW/l3E4dQx1+fB0A1U7J6efF8FedZJ+XOP1rAt62CnikKMv0RTwS
+         pBPQSniHrr8UJJ08dp0McYoXA6LRNq/6IxNBXLgATNoPy/TSNEeVwK4Bzh9tOtcxuz5W
+         X9dlIMNOaS7SpGi2dN44ItE0TLPpxRpzhxxd19+B3/74y2dQLqBUlC9oQLTyt93Mzb6i
+         OG9ca/+cucbdoKF8s16BHkUybIN0lC81OeL+apXfgKJ6aBaRPhIKRdpF4jjgP9NntKkq
+         Y+/Q==
+X-Gm-Message-State: AOJu0Yz11jF/vzJH3T2JoXqlbuQOamAsZ9By9fn8jcjnD0h2amIQUuh5
+        8dqyRR/BWEy9+cdCs14L85Q=
+X-Google-Smtp-Source: AGHT+IG1VR6cDCdZ46S19smX52QInRtz+mz6NvGtQgk0lwi5BOk5UmykR5KiLbJFQ+OC5vUw/6UaRw==
+X-Received: by 2002:a05:600c:28f:b0:402:e68f:888c with SMTP id 15-20020a05600c028f00b00402e68f888cmr6072309wmk.7.1694990430795;
+        Sun, 17 Sep 2023 15:40:30 -0700 (PDT)
+Received: from [127.0.1.1] ([91.230.2.244])
+        by smtp.gmail.com with ESMTPSA id x14-20020a1c7c0e000000b003fe2b081661sm13642931wmc.30.2023.09.17.15.40.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Sep 2023 15:40:30 -0700 (PDT)
+From:   Benjamin Bara <bbara93@gmail.com>
+Subject: [PATCH 00/13] imx8mp: first clock propagation attempt (for LVDS)
+Date:   Mon, 18 Sep 2023 00:39:56 +0200
+Message-Id: <20230918-imx8mp-dtsi-v1-0-1d008b3237c0@skidata.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADyAB2UC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI2MDS0Nj3czcCovcAt2UkuJMXfNks1QjU0sD81SDVCWgjoKi1LTMCrBp0bG
+ 1tQCBWXH5XQAAAA==
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>
+Cc:     Frank Oltmanns <frank@oltmanns.dev>,
+        Maxime Ripard <mripard@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Benjamin Bara <benjamin.bara@skidata.com>,
+        Adam Ford <aford173@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>
+X-Mailer: b4 0.12.3
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-5.15-stable review patch.  If anyone has any objections, please let me know.
+Hi!
 
-------------------
+Target of this series is to dynamically set the rate of video_pll1 to
+the required LVDS clock rate(s), which are configured by the panel, and
+the lvds-bridge respectively.
 
-From: Baoquan He <bhe@redhat.com>
+Some background:
+The LVDS panel requires two clocks: the crtc clock and the lvds clock.
+The lvds rate is always 7x the crtc rate. On the imx8mp, these are
+assigned to media_disp2_pix and media_ldb, which are both
+clk-composite-8m. The rates are set by drm_client_modeset_commit() (and
+later by fsl_ldb_atomic_enable()), and the fsl-ldb driver, first crtc,
+then lvds. The parent is typically assigned to video_pll1, which is a
+clk-pll14xx (pll1443x).
 
-[ Upstream commit e7dd44f4f3166db45248414f5df8f615392de47a ]
+The main problem:
+As the clk-composite-8m currently doesn't support CLK_SET_RATE_PARENT,
+the crtc rate is not propagated to video_pll1, and therefore must be
+assigned in the device-tree manually.
 
-On s390 systems (aka mainframes), it has classic channel devices for
-networking and permanent storage that are currently even more common
-than PCI devices. Hence it could have a fully functional s390 kernel
-with CONFIG_PCI=n, then the relevant iomem mapping functions
-[including ioremap(), devm_ioremap(), etc.] are not available.
+The idea:
+Enable CLK_SET_RATE_PARENT, at least for media_disp2_pix and media_ldb.
+When this is done, ensure that the pll1443x can be re-configured,
+meaning it ensures that an already configured rate (crtc rate) is still
+supported when a second child requires a different rate (lvds rate). As
+the children have divider, the current approach is straight forward by
+calculating the LCM of the required rates. During the rate change of the
+PLL, it must ensure that all children still have the configured rate at
+the end (and maybe also bypass the clock while doing so?). This is done
+by implementing a notifier function for the clk-composite-8m. The tricky
+part is now to find out if the rate change was intentional or not. This
+is done by adding the "change trigger" to the notify data. In our case,
+we now can infer if we aren't the change trigger, we need to keep the
+existing rate after the PLL's rate change. We keep the existing rate by
+modifying the new_rate of the clock's core, as we are quite late in an
+already ongoing clock change process.
 
-Here let COMMON_CLK_FIXED_MMIO depend on HAS_IOMEM so that it won't
-be built to cause below compiling error if PCI is unset:
+Future work:
+The re-configuration of the PLL can definitely be improved for other use
+cases where the children have more fancy inter-dependencies. That's one
+of the main reasons I currently only touched the mentioned clocks.
+Additionally, it might make sense to automatically re-parent if a
+different possible parent suits better.
+For the core part, I thought about extending my "unintentional change
+check" so that the core ensures that the children keep the configured
+rate, which might not be easy as the parent could be allowed to "round",
+but it's not clear (at least to me yet) how much rounding is allowed. I
+found a similar discussion posted here[1], therefore added Frank and
+Maxime.
 
-------
-ld: drivers/clk/clk-fixed-mmio.o: in function `fixed_mmio_clk_setup':
-clk-fixed-mmio.c:(.text+0x5e): undefined reference to `of_iomap'
-ld: clk-fixed-mmio.c:(.text+0xba): undefined reference to `iounmap'
-------
+Thanks & regards,
+Benjamin
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202306211329.ticOJCSv-lkp@intel.com/
-Signed-off-by: Baoquan He <bhe@redhat.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org
-Link: https://lore.kernel.org/r/20230707135852.24292-8-bhe@redhat.com
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+[1] https://lore.kernel.org/lkml/20230825-pll-mipi_keep_rate-v1-0-35bc43570730@oltmanns.dev/
+
 ---
- drivers/clk/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Benjamin Bara (13):
+      arm64: dts: imx8mp: lvds_bridge: use root instead of composite
+      arm64: dts: imx8mp: re-parent IMX8MP_CLK_MEDIA_MIPI_PHY1_REF
+      clk: implement clk_hw_set_rate()
+      clk: print debug message if parent change is ignored
+      clk: keep track of the trigger of an ongoing clk_set_rate
+      clk: keep track if a clock is explicitly configured
+      clk: detect unintended rate changes
+      clk: divider: stop early if an optimal divider is found
+      clk: imx: pll14xx: consider active rate for re-config
+      clk: imx: composite-8m: convert compute_dividers to void
+      clk: imx: composite-8m: implement CLK_SET_RATE_PARENT
+      clk: imx: imx8mp: allow LVDS clocks to set parent rate
+      arm64: dts: imx8mp: remove assigned-clock-rate of IMX8MP_VIDEO_PLL1
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 100e474ff3dc5..d12465c227514 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -380,6 +380,7 @@ config COMMON_CLK_BD718XX
- config COMMON_CLK_FIXED_MMIO
- 	bool "Clock driver for Memory Mapped Fixed values"
- 	depends on COMMON_CLK && OF
-+	depends on HAS_IOMEM
- 	help
- 	  Support for Memory Mapped IO Fixed clocks
- 
+ arch/arm64/boot/dts/freescale/imx8mp.dtsi |  14 +--
+ drivers/clk/clk-divider.c                 |   9 ++
+ drivers/clk/clk.c                         | 146 +++++++++++++++++++++++++++++-
+ drivers/clk/imx/clk-composite-8m.c        |  89 +++++++++++++++---
+ drivers/clk/imx/clk-imx8mp.c              |   4 +-
+ drivers/clk/imx/clk-pll14xx.c             |  20 ++++
+ drivers/clk/imx/clk.h                     |   4 +
+ include/linux/clk-provider.h              |   2 +
+ include/linux/clk.h                       |   2 +
+ 9 files changed, 261 insertions(+), 29 deletions(-)
+---
+base-commit: e143016b56ecb0fcda5bb6026b0a25fe55274f56
+change-id: 20230913-imx8mp-dtsi-7c6e25907e0e
+
+Best regards,
 -- 
-2.40.1
-
-
+Benjamin Bara <benjamin.bara@skidata.com>
 
