@@ -2,58 +2,57 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11368C46CA1
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Sep 2023 17:59:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03E7ACD37B0
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Sep 2023 18:06:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229379AbjIRR7h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Sep 2023 13:59:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54806 "EHLO
+        id S229559AbjIRSGK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Sep 2023 14:06:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229452AbjIRR7g (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Sep 2023 13:59:36 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59C51DB;
-        Mon, 18 Sep 2023 10:59:30 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-522bd411679so6173706a12.0;
-        Mon, 18 Sep 2023 10:59:30 -0700 (PDT)
+        with ESMTP id S229563AbjIRSGI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Sep 2023 14:06:08 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2046C115;
+        Mon, 18 Sep 2023 11:06:01 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-5031426b626so2293576e87.3;
+        Mon, 18 Sep 2023 11:06:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1695059968; x=1695664768; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2z+YfEIrjX3pGh98erEY2L625u+oUnPZE1jx6jpqjps=;
-        b=mm/LoWXaXRxm27XEHEwGWRp9Ej/ppCSH5ewljKttRPsRH+I0rq95QyU+g7EM8qH9r8
-         truc/e/gYlsrkakVr6hVCEP13oOoi5qyZJ3l7RlA8SwMFRrdkN2+HWZrkO9wQf7PNNOg
-         RBonJ+PC7L3A83MXyThWGhix5a8sayEJQS1zPpNc83i/MQB+WYtY5pa1kbLO6JGzCYxq
-         rW1UMJ5UHDtWB6Ho0psNG2zXcGY3+G18DFBQyVRrW3yJXjSAC4g1jpiGIzN+q3XC5Tgj
-         7cmpkTiRFn9VvmHkqI92KiPM68UT123RGcPJtoRCX9/81cz1R1llkCX3Z/PLK0IHsX5H
-         wPcA==
+        d=gmail.com; s=20230601; t=1695060359; x=1695665159; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=CKdtwrHX9h1DYPfJUeRRaXbqtpaVmfYt1U1WzQ3+7bs=;
+        b=ODf1e4gqLjiMq36pAFhsOGnzyxsbP3c4hiTiPN/u3lmEymr/KVjrYAxAEV9Rcg/YT1
+         Y7fZn6MVR2eSqMUJZCCaz7lRvPyJ8ytgvGInLLLsCLtYT06M/G+PYXmYwXQF3iG7Aiz7
+         SnyPKnvtqZDEYW+DmwlQqzJesZhHtsz4gZ4nCu5cyTtNt5aLRlF3nTQxaryP4b2l+nOo
+         eKdil0vc3JP8wluHMou9MovPZwBm+mHRcN8YjqOGZb8Q45tFbsyDxz11HCq+Ogo455DL
+         1yp1DbYSkKkx6xb3ndu8ZpssNpClbvPKZ4eL38sFLf7rIvYEeHDfq/0ji0lUqaCkNiaA
+         SQsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695059968; x=1695664768;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2z+YfEIrjX3pGh98erEY2L625u+oUnPZE1jx6jpqjps=;
-        b=VUTLWqB5WGrK0MLxlyDW4uCbyK6p1DvFG0zLdot/OHGHfMWhdq/ZDxCSa8LTnrrxkk
-         jevrh+ZyW6haTuR2LFmJkKfZWEwjdlhx2NIciqBSDJBtV/h/8CidjYveBz7GeaVRVJ1c
-         Rrx/dz9do0oRJhXXjBky82+Hemb5JU1EOl8sFjo+LrciQSiUD0MWgZTgPR907r9v5IIC
-         93yGQcjYCbNfoRMF6OGlzhAIh2wGfeh+799+e5WvA5ggZ9sRuZPcm7IWnwo8EYQcFtbO
-         BvknXEvsmJwngBinEBGILdu71uWm2DZke8anF7I7jXoZ7P9SANahO0OUQ7bUa6MInyqs
-         Sbnw==
-X-Gm-Message-State: AOJu0YzdiaF32aJIbSQKZIVDcqvyxATyDFwSmVymt1r8ZriQYZzgItru
-        c7TbrSQEnnwC/8Ry6e2SKqLcsGd7rM79foGnzak=
-X-Google-Smtp-Source: AGHT+IG/RyMpqq1hOq1M/e4gKRaB7kZ9lH1Ca1G70SneQICLUr0RT6KxkeqMMhs2bB3VSBrO3ofPIT1Y4DbuBjAUIjo=
-X-Received: by 2002:aa7:d3d6:0:b0:51e:2e39:9003 with SMTP id
- o22-20020aa7d3d6000000b0051e2e399003mr6614828edr.40.1695059968144; Mon, 18
- Sep 2023 10:59:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1695060359; x=1695665159;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CKdtwrHX9h1DYPfJUeRRaXbqtpaVmfYt1U1WzQ3+7bs=;
+        b=tBGoOJ/JtxNiwNbDXzuaZqZ2RMu4JpDmYCIBprYkQIenOBUrZgS2Xu7aus5558X7HL
+         AhCtO/LgYk/MaeOm3zHNr/XYddgGtZl1cskraO9L1WUoHrtNl3cIsz2VmstYMHoS8jAc
+         M6ksIKV9bHreD7cs84Z+50c7Ghc/KdXow8+mmFdKMxhkxqpm7vsH93asNcQykO3MRQV/
+         NAy+qYVDw/FwuaN7cWefghcclaMcvSC+Rl6LbJP8Ldp9bXsJaO3qJBNsmwuQdeM+Fa/f
+         07YmLhCBbR+DMmRIiEeq+pQEouq8/D/fA/g/kSpghYhZDUmbLhHW/Xi9ieqFnRbxTeah
+         X1hA==
+X-Gm-Message-State: AOJu0YzcivF98QXHLqcRThATwSNwnlUySt0DRf/xgfPKdn4VLHQKHckA
+        k8cYy04PR4Q/cBddrX/QSH7qk/m92/BPHTSDHr8=
+X-Google-Smtp-Source: AGHT+IFXN7l/mdsgdrO4ji+WnHGSExjTx9sIQQWWSfSABQ2Ll3GGhB5DZw3ei/EfymWbBw68Dw2z79cKlNYX9CN4iA8=
+X-Received: by 2002:a19:6756:0:b0:502:ff3b:7671 with SMTP id
+ e22-20020a196756000000b00502ff3b7671mr5803223lfj.9.1695060359169; Mon, 18 Sep
+ 2023 11:05:59 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230918-imx8mp-dtsi-v1-0-1d008b3237c0@skidata.com> <CAHCN7xJ8KrBd-532=gDE+82xo1ZNtoDT7pZsYwy9-9WiJvmkvw@mail.gmail.com>
-In-Reply-To: <CAHCN7xJ8KrBd-532=gDE+82xo1ZNtoDT7pZsYwy9-9WiJvmkvw@mail.gmail.com>
+References: <20230918-imx8mp-dtsi-v1-0-1d008b3237c0@skidata.com> <87fs3bbdjb.fsf@oltmanns.dev>
+In-Reply-To: <87fs3bbdjb.fsf@oltmanns.dev>
 From:   Benjamin Bara <bbara93@gmail.com>
-Date:   Mon, 18 Sep 2023 19:59:16 +0200
-Message-ID: <CAJpcXm6OWNODOz5gEWVhOJjKTazwzE7XV6ZR1H06zpECrivZig@mail.gmail.com>
+Date:   Mon, 18 Sep 2023 20:05:48 +0200
+Message-ID: <CAJpcXm7nrLzbDmNVCACy3ycBnhWY7HxWhCwroOCF-+GfMT_A9w@mail.gmail.com>
 Subject: Re: [PATCH 00/13] imx8mp: first clock propagation attempt (for LVDS)
-To:     Adam Ford <aford173@gmail.com>
+To:     Frank Oltmanns <frank@oltmanns.dev>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
@@ -66,70 +65,37 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
         Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Frank Oltmanns <frank@oltmanns.dev>,
         Maxime Ripard <mripard@kernel.org>, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org,
         Benjamin Bara <benjamin.bara@skidata.com>,
+        Adam Ford <aford173@gmail.com>,
         Lucas Stach <l.stach@pengutronix.de>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Adam!
+Hi Frank!
 
-On Mon, 18 Sept 2023 at 07:00, Adam Ford <aford173@gmail.com> wrote:
-> On Sun, Sep 17, 2023 at 3:40=E2=80=AFPM Benjamin Bara <bbara93@gmail.com>=
- wrote:
-> > The idea:
-> > Enable CLK_SET_RATE_PARENT, at least for media_disp2_pix and media_ldb.
-> > When this is done, ensure that the pll1443x can be re-configured,
-> > meaning it ensures that an already configured rate (crtc rate) is still
-> > supported when a second child requires a different rate (lvds rate). As
->
-> Have you tested with the DSI as well?  If memory servers, the DSI
-> clock and the LVDS clock are both clocked from the same video_pll.  At
-> one time, I had done some experimentation with trying the DSI
-> connected to an HDMI bridge chip connected to a monitor and the LVDS
-> was connected to a display panel with a static resolution and refresh
-> rate.  For my LVDS display, it needs 30MHz to display properly, but
-> various HDMI resolutions needed values that were not evenly divisible
-> by 30MHz which appeared to cause display sync issues when trying to
-> share a clock that was trying to dynamically adjust for two different
-> displays especially when trying to change the resoltuion of the HDMI
-> display to various values for different resolutions.
+On Mon, 18 Sept 2023 at 19:24, Frank Oltmanns <frank@oltmanns.dev> wrote:
+> On 2023-09-18 at 00:39:56 +0200, Benjamin Bara <bbara93@gmail.com> wrote:
+> Thank you very much for including me in the discussion. If I understood
+> Maxime correctly, your proposal is close to what he was suggesting in
+> the discussion you referenced. Unfortunately, it doesn't cover the
+> rounding aspect (which you also mentioned in your cover letter and the
+> description for clk_detect_unintended_rate_changes in patch 7. I've been
+> pondering the last three weeks how to find a good solution to this
+> problem, but so far haven't found any.
 
-Unfortunately I haven't. I think if you have the use case to support
-different "run-time-dynamic" (HDMI) rates in parallel with a static
-(LVDS) rate, it probably makes sense (for now) to just use a LVDS panel
-which can be feeded from one of the static PLLs directly and do a manual
-re-parenting in the dt. The manual re-parenting could be replaced by an
-automated re-parenting in the composite driver. When I think about it,
-it might make sense to extend clk-divider's clk_divider_bestdiv()[1]
-(which is currently used by the composite-8m) with a "find the best
-parent" implementation, something like:
-1. are we in range if we divide the active parent with all possible
-   dividers? (already existing)
-2. are we in range if we switch to a different parent and divide it with
-   all possible dividers?
-3. are we in range if we re-configure a possible parent (and switch to
-   it)?
+I think if we stick to the idea of always enforcing the exact "typical
+rate", we cannot avoid physically impossible cases. IMHO, it might make
+sense to add a set_rate() function with a "timing_entry" (e.g. used by
+display_timing.h[1]) to the clock API, which gives a suggestion but also
+defines the "real" boundaries. This would provide a shared parent PLL
+more freedom to provide a satisfying rate for all its children.
 
-Steps 2 & 3 are e.g. implemented by at91's clk-master[2]. There are
-maybe also "smarter" solutions to the problem beside trying every
-possibility. Anyways, we already have a CLK_SET_RATE_NO_REPARENT which
-would indicate if we are allowed to do so.
-
-For static use cases involving both, I would probably (for now) go with
-a hard-assigned, tested clock rate in the dt. IMHO, this should always
-work as fall-back.
-
-Regards,
+Regards
 Benjamin
 
-[1] https://elixir.bootlin.com/linux/v6.5.3/source/drivers/clk/clk-divider.=
-c#L304
-[2] https://elixir.bootlin.com/linux/v6.5.3/source/drivers/clk/at91/clk-mas=
-ter.c#L586
+[1] https://elixir.bootlin.com/linux/v6.5.3/source/include/video/display_timing.h#L64
