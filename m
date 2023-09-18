@@ -2,186 +2,248 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 749D2CD13D3
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Sep 2023 05:08:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ED70CD13D1
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Sep 2023 06:03:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236741AbjIRFB0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Sep 2023 01:01:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51452 "EHLO
+        id S239838AbjIRGCu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Sep 2023 02:02:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233195AbjIRFAz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Sep 2023 01:00:55 -0400
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F23BFAC;
-        Sun, 17 Sep 2023 22:00:49 -0700 (PDT)
-Received: by mail-pj1-x102d.google.com with SMTP id 98e67ed59e1d1-274c05edb69so473997a91.2;
-        Sun, 17 Sep 2023 22:00:49 -0700 (PDT)
+        with ESMTP id S239818AbjIRGCW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Sep 2023 02:02:22 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08817126
+        for <linux-clk@vger.kernel.org>; Sun, 17 Sep 2023 23:02:12 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id ffacd0b85a97d-31f71b25a99so4023565f8f.2
+        for <linux-clk@vger.kernel.org>; Sun, 17 Sep 2023 23:02:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1695013249; x=1695618049; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UVNF5sAoH2+S/vs1X3i/qSh9lM2MoEqXJhGdzFOpd3Y=;
-        b=EIplKW9LURVX+E4g1KdCgDxlQUbVjAoQvLJ14xk4IhauKfPzBhFkirWd/5U/TQ+XAi
-         4Z1LEvrKTFbPq+3D7oWm2aFrAhzdRxufE4DFcQbfdK5FoMs29TCWxfxH6c9aDzN1Z3mL
-         LMv9TtoqRX/8d6SRC98eW9aMxvtaA9Fvq2UsVLLMTNcfAABBt75uNElHz677b220dE3c
-         NVaEZX13drF7hnLkBRFmgvedvaFXk9k0N+UOm7Qy5pzzIsUZ7tPMei8DtWNK5hmaXX6c
-         kGT/ZY+rp8iuAftv2S6zcXM/5WvdrUVjxiS1jo+UOYxhLLtQ4IQ32WqNBUPC10vongHz
-         57bA==
+        d=tuxon.dev; s=google; t=1695016930; x=1695621730; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=utARk3pA80ZpdJiXILdi626DttxX2nbKMhwhhWazB0w=;
+        b=YMZtx6ZJI0DwEErCSi5w+S3KqPxHMuNG1qG1240fRe2pbUF0QXkKiQmWe2zTWmIQ9Z
+         9ASsS8kZ8134NcRR6unbuxYGTj3fl5JREar+a6wHNtdsWNPnXvoEjkm8T5M0uWKOu6gT
+         m21gZa+MzvdTa39dPBreE+h3E1GXhVtLSKm7cjPsjV5hn6YkrL1gsQuyg86oa7Av3/ml
+         /DNHF0RRdGkrYJniB3ljeCLVak1pGaF68AAmcl0ZEpIoYrzgOa4/Aw1XnpVGtiG4ZXXT
+         BcKuOby6JEJ6us2fDLgHXyEEPUuTO97Rok/xXvAeB379lP4nFItfYR/NJrLI6mZp6IiM
+         1MKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695013249; x=1695618049;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UVNF5sAoH2+S/vs1X3i/qSh9lM2MoEqXJhGdzFOpd3Y=;
-        b=O/PMFFsH+zIIdXmjffJMFbYL5m2xeMbmD2p1EX/oIwwUzw/VkKMFSGle6BV640K+K7
-         N/vOL+aM+fd6+N7T8MQavbOqw2BlqGcSU6q8qHdgsJVWsGyZu4+1z95Z6mOeQ9SNfjdb
-         dFjzFNWt1VItNHEtFOrj9qZjBpIAm/wb905l9Qk4FhUeoh5LUXO8ZrNHUrc7+EbEk2Tu
-         uDEQBsELFWVM76XXvo1lH89VcxN3NPWks0DetjxxSGHjW47jl3qpFG0pMXAD+H1/qk3C
-         d/6A475dqzsWT74Cb1qgG4YJmyaxrhML4+VlNYG6zcByMxQhIMw8AFTKz9xjQPBiJUWW
-         J+fw==
-X-Gm-Message-State: AOJu0Yx0sUN8R9XQKg+ORL3kSgYZfz/UX830lcDl2LOLgiONfP/7+owJ
-        F5FU6wdJ+nWgTvc09sP18sKOGxzq5T5JNY/zEJk=
-X-Google-Smtp-Source: AGHT+IFI+iihCDqE8YIc6IjinrCImEQ/bsS70zAv7j9bLn5alZdsPVXi1Rds61BqWssOaMz8RfFx/UcWxVyd/5Ob+VE=
-X-Received: by 2002:a17:90a:3ea5:b0:276:6b9d:7503 with SMTP id
- k34-20020a17090a3ea500b002766b9d7503mr995967pjc.28.1695013249158; Sun, 17 Sep
- 2023 22:00:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1695016930; x=1695621730;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=utARk3pA80ZpdJiXILdi626DttxX2nbKMhwhhWazB0w=;
+        b=pUHogr+xFWNP9NdP7B1ywDnOZ6eY2aqO02f8lr5xsUqIJcrEICN5JDXN6laM8eaqG5
+         1UN7aAFLZAHvbI+9kuymjiCRmAaLQ4QYbPuphe5dOX5CnCH4Av9Mt+XhjN9AZCEm6Isq
+         wIuuqncBJMmHoB3f7yqTH2d8bLFoe01ELmb/Y+J17I3JEoreJlvE71auDzeHUOnBrwV0
+         AbXCTMs4Bnrvqit1rrV1HRn5fliCi1c4yXfYHIRzIXE5pYOAStoTmahcEBZkF3kCfD0G
+         z3QJbHVEIkB8rlLQSuHkEc4OKb1DcDRvUOGyHtczd+Gqo3sUMHsjkLOv89IlmRP70jDl
+         16PQ==
+X-Gm-Message-State: AOJu0YwAfQe1Ox+EEbR1xzb0ahF8axXHJ7/UpllkISAevw6JYm3bFut/
+        xLPMh7j9bO/Dsv4nvVNV/KrIqA==
+X-Google-Smtp-Source: AGHT+IHp0qFS6xGsK25AktAjmIe39Vn37L/gbzfBpt+VNyZTYa3REIePYUyoEE2pqDRgvpG5ShpzkQ==
+X-Received: by 2002:a05:6000:1a44:b0:317:3d6c:5b27 with SMTP id t4-20020a0560001a4400b003173d6c5b27mr6781745wry.46.1695016930169;
+        Sun, 17 Sep 2023 23:02:10 -0700 (PDT)
+Received: from [192.168.32.2] ([82.78.167.145])
+        by smtp.gmail.com with ESMTPSA id j5-20020a5d6045000000b0032008f99216sm4743995wrt.96.2023.09.17.23.02.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 17 Sep 2023 23:02:09 -0700 (PDT)
+Message-ID: <458ac1fb-575b-6ebd-7da0-a8d3abd3d5f8@tuxon.dev>
+Date:   Mon, 18 Sep 2023 09:02:07 +0300
 MIME-Version: 1.0
-References: <20230918-imx8mp-dtsi-v1-0-1d008b3237c0@skidata.com>
-In-Reply-To: <20230918-imx8mp-dtsi-v1-0-1d008b3237c0@skidata.com>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Sun, 17 Sep 2023 22:00:37 -0700
-Message-ID: <CAHCN7xJ8KrBd-532=gDE+82xo1ZNtoDT7pZsYwy9-9WiJvmkvw@mail.gmail.com>
-Subject: Re: [PATCH 00/13] imx8mp: first clock propagation attempt (for LVDS)
-To:     Benjamin Bara <bbara93@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Frank Oltmanns <frank@oltmanns.dev>,
-        Maxime Ripard <mripard@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        Benjamin Bara <benjamin.bara@skidata.com>,
-        Lucas Stach <l.stach@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH 33/37] arm64: dts: renesas: rzg3l-smarc-som: add initial
+ support for RZ/G3S SMARC Carrier-II SoM
+Content-Language: en-US
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        ulf.hansson@linaro.org, linus.walleij@linaro.org,
+        gregkh@linuxfoundation.org, jirislaby@kernel.org,
+        magnus.damm@gmail.com, catalin.marinas@arm.com, will@kernel.org,
+        prabhakar.mahadev-lad.rj@bp.renesas.com,
+        biju.das.jz@bp.renesas.com, quic_bjorande@quicinc.com,
+        arnd@arndb.de, konrad.dybcio@linaro.org, neil.armstrong@linaro.org,
+        nfraprado@collabora.com, rafal@milecki.pl,
+        wsa+renesas@sang-engineering.com,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com>
+ <20230912045157.177966-34-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdUfwtpe5qLonZ0CZcaRw1j5x7xLLXJpMqpWLX5AzK3xmw@mail.gmail.com>
+From:   claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <CAMuHMdUfwtpe5qLonZ0CZcaRw1j5x7xLLXJpMqpWLX5AzK3xmw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Sep 17, 2023 at 3:40=E2=80=AFPM Benjamin Bara <bbara93@gmail.com> w=
-rote:
->
-> Hi!
->
-> Target of this series is to dynamically set the rate of video_pll1 to
-> the required LVDS clock rate(s), which are configured by the panel, and
-> the lvds-bridge respectively.
->
-> Some background:
-> The LVDS panel requires two clocks: the crtc clock and the lvds clock.
-> The lvds rate is always 7x the crtc rate. On the imx8mp, these are
-> assigned to media_disp2_pix and media_ldb, which are both
-> clk-composite-8m. The rates are set by drm_client_modeset_commit() (and
-> later by fsl_ldb_atomic_enable()), and the fsl-ldb driver, first crtc,
-> then lvds. The parent is typically assigned to video_pll1, which is a
-> clk-pll14xx (pll1443x).
->
-> The main problem:
-> As the clk-composite-8m currently doesn't support CLK_SET_RATE_PARENT,
-> the crtc rate is not propagated to video_pll1, and therefore must be
-> assigned in the device-tree manually.
->
-> The idea:
-> Enable CLK_SET_RATE_PARENT, at least for media_disp2_pix and media_ldb.
-> When this is done, ensure that the pll1443x can be re-configured,
-> meaning it ensures that an already configured rate (crtc rate) is still
-> supported when a second child requires a different rate (lvds rate). As
+Hi, Geert,
 
-Have you tested with the DSI as well?  If memory servers, the DSI
-clock and the LVDS clock are both clocked from the same video_pll.  At
-one time, I had done some experimentation with trying the DSI
-connected to an HDMI bridge chip connected to a monitor and the LVDS
-was connected to a display panel with a static resolution and refresh
-rate.  For my LVDS display, it needs 30MHz to display properly, but
-various HDMI resolutions needed values that were not evenly divisible
-by 30MHz which appeared to cause display sync issues when trying to
-share a clock that was trying to dynamically adjust for two different
-displays especially when trying to change the resoltuion of the HDMI
-display to various values for different resolutions.
+On 15.09.2023 17:28, Geert Uytterhoeven wrote:
+> Hi Claudiu,
+> 
+> Thanks for your patch!
+> 
+> On Tue, Sep 12, 2023 at 6:53 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> Add initial support for RZ/G3S SMARC Carrier-II SoM. SoM contains the following
+>> devices:
+>> - RZ/G3S microcontroller: Renesas R9A08G045S33GBG
+>> - 9-channel PMIC: Renesas RAA215300
+>> - Clock Generator: Renesas 5L35023B
+>> - 128M QSPI Flash: Renesas AT25QL128A
+>> - 8G LPDDR4 SDRAM: Micron MT53D512M16D1DS-046
+> 
+> That's an 8 Gib part, so 1 GiB?
+> 
+>> - 64GB eMMC Flash: Micron MTFC64GBCAQTC
+>> - 2x Gigabit Ethernet Transceiver: Microchip KSZ9131RNX
+>> - 5x Current Monitors: Renesas ISL28025FR12Z
+>>
+>> The following interfaces are available on SoM board:
+>> - 2 uSD interfaces
+>> - 12-pin, 1.0mm pitch connector to the RZ/G3S ADC IO
+>> - 4-pin, 1.0mm pitch connector to the RZ/G3S I3C IO
+>> - JTAG connector
+> 
+> Please drop the description of parts you are not adding to the DTS yet.
+> 
+>> At the moment the 24MHz output of 5L35023B, memory SD ch0 (with all its
+>> bits) were described in device tree.
+>>
+>> SD channel 0 of RZ/G3S is connected to an uSD card interface
+>> and an eMMC. The selection b/w them is done though a hardware switch.
+>> The DT will select b/w uSD and eMMC though SW_SD0_DEV_SEL build flag.
+>>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+>> @@ -0,0 +1,147 @@
+>> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +/*
+>> + * Device Tree Source for the R9A08G045S33 SMARC Carrier-II's SoM board.
+>> + *
+>> + * Copyright (C) 2023 Renesas Electronics Corp.
+>> + */
+>> +
+>> +#include <dt-bindings/gpio/gpio.h>
+>> +#include <dt-bindings/pinctrl/rzg2l-pinctrl.h>
+>> +
+>> +/*
+>> + * Signals of SW_CONFIG switches:
+>> + * @SW_SD0_DEV_SEL:
+>> + *     0 - SD0 is connected to eMMC
+>> + *     1 - SD0 is connected to uSD0 card
+>> + */
+>> +#define SW_SD0_DEV_SEL 1
+>> +
+>> +/ {
+>> +       aliases {
+>> +               mmc0 = &sdhi0;
+>> +       };
+>> +
+>> +       chosen {
+>> +               bootargs = "ignore_loglevel";
+>> +               stdout-path = "serial0:115200n8";
+>> +       };
+>> +
+>> +       memory@48000000 {
+>> +               device-type = "memory";
+>> +               /* First 128MB is reserved for secure area. */
+>> +               reg = <0x0 0x48000000 0x0 0x38000000>;
+>> +       };
+>> +
+>> +       reg_3p3v: regulator0 {
+>> +               compatible = "regulator-fixed";
+>> +               regulator-name = "fixed-3.3V";
+>> +               regulator-min-microvolt = <3300000>;
+>> +               regulator-max-microvolt = <3300000>;
+>> +               regulator-boot-on;
+>> +               regulator-always-on;
+>> +       };
+>> +
+>> +#if SW_SD0_DEV_SEL
+>> +       vccq_sdhi0: regulator1 {
+>> +               compatible = "regulator-gpio";
+>> +               regulator-name = "SDHI0 VccQ";
+>> +               regulator-min-microvolt = <1800000>;
+>> +               regulator-max-microvolt = <3300000>;
+>> +               gpios = <&pinctrl RZG2L_GPIO(2, 2) GPIO_ACTIVE_HIGH>;
+>> +               gpios-states = <1>;
+>> +               states = <3300000 1>, <1800000 0>;
+>> +       };
+>> +#else
+>> +       reg_1p8v: regulator1 {
+>> +               compatible = "regulator-fixed";
+>> +               regulator-name = "fixed-1.8V";
+>> +               regulator-min-microvolt = <1800000>;
+>> +               regulator-max-microvolt = <1800000>;
+>> +               regulator-boot-on;
+>> +               regulator-always-on;
+>> +       };
+>> +#endif
+>> +};
+>> +
+>> +&extal_clk {
+>> +       clock-frequency = <24000000>;
+>> +};
+>> +
+>> +#if SW_SD0_DEV_SEL
+>> +/* SD0 slot */
+>> +&sdhi0 {
+>> +       pinctrl-0 = <&sdhi0_pins>;
+>> +       pinctrl-1 = <&sdhi0_uhs_pins>;
+>> +       pinctrl-names = "default", "state_uhs";
+>> +       vmmc-supply = <&reg_3p3v>;
+>> +       vqmmc-supply = <&vccq_sdhi0>;
+>> +       bus-width = <4>;
+>> +       sd-uhs-sdr50;
+>> +       sd-uhs-sdr104;
+>> +       max-frequency = <125000000>;
+>> +       status = "okay";
+>> +};
+>> +#else
+>> +/* eMMC */
+>> +&sdhi0 {
+>> +       pinctrl-0 = <&sdhi0_emmc_pins>;
+>> +       pinctrl-1 = <&sdhi0_emmc_pins>;
+>> +       pinctrl-names = "default", "state_uhs";
+>> +       vmmc-supply = <&reg_3p3v>;
+>> +       vqmmc-supply = <&reg_1p8v>;
+>> +       bus-width = <8>;
+>> +       mmc-hs200-1_8v;
+>> +       non-removable;
+>> +       fixed-emmc-driver-type = <1>;
+>> +       max-frequency = <125000000>;
+>> +       status = "okay";
+>> +};
+>> +#endif
+>> +
+>> +&pinctrl {
+>> +       sd0-pwr-en-hog {
+>> +               gpio-hog;
+>> +               gpios = <RZG2L_GPIO(2, 1) GPIO_ACTIVE_HIGH>;
+> 
+> According to the schematics, P2_1 controls power to the uSD slot.
+> Hence shouldn't reg_3p3v above be modelled using regulator-gpio,
+> with enable-gpios pointing to P2_1?
 
-> the children have divider, the current approach is straight forward by
-> calculating the LCM of the required rates. During the rate change of the
-> PLL, it must ensure that all children still have the configured rate at
-> the end (and maybe also bypass the clock while doing so?). This is done
-> by implementing a notifier function for the clk-composite-8m. The tricky
-> part is now to find out if the rate change was intentional or not. This
-> is done by adding the "change trigger" to the notify data. In our case,
-> we now can infer if we aren't the change trigger, we need to keep the
-> existing rate after the PLL's rate change. We keep the existing rate by
-> modifying the new_rate of the clock's core, as we are quite late in an
-> already ongoing clock change process.
->
-> Future work:
-> The re-configuration of the PLL can definitely be improved for other use
-> cases where the children have more fancy inter-dependencies. That's one
-> of the main reasons I currently only touched the mentioned clocks.
-> Additionally, it might make sense to automatically re-parent if a
-> different possible parent suits better.
-> For the core part, I thought about extending my "unintentional change
-> check" so that the core ensures that the children keep the configured
-> rate, which might not be easy as the parent could be allowed to "round",
-> but it's not clear (at least to me yet) how much rounding is allowed. I
-> found a similar discussion posted here[1], therefore added Frank and
-> Maxime.
->
-> Thanks & regards,
-> Benjamin
->
-> [1] https://lore.kernel.org/lkml/20230825-pll-mipi_keep_rate-v1-0-35bc435=
-70730@oltmanns.dev/
->
-> ---
-> Benjamin Bara (13):
->       arm64: dts: imx8mp: lvds_bridge: use root instead of composite
->       arm64: dts: imx8mp: re-parent IMX8MP_CLK_MEDIA_MIPI_PHY1_REF
->       clk: implement clk_hw_set_rate()
->       clk: print debug message if parent change is ignored
->       clk: keep track of the trigger of an ongoing clk_set_rate
->       clk: keep track if a clock is explicitly configured
->       clk: detect unintended rate changes
->       clk: divider: stop early if an optimal divider is found
->       clk: imx: pll14xx: consider active rate for re-config
->       clk: imx: composite-8m: convert compute_dividers to void
->       clk: imx: composite-8m: implement CLK_SET_RATE_PARENT
->       clk: imx: imx8mp: allow LVDS clocks to set parent rate
->       arm64: dts: imx8mp: remove assigned-clock-rate of IMX8MP_VIDEO_PLL1
->
->  arch/arm64/boot/dts/freescale/imx8mp.dtsi |  14 +--
->  drivers/clk/clk-divider.c                 |   9 ++
->  drivers/clk/clk.c                         | 146 ++++++++++++++++++++++++=
-+++++-
->  drivers/clk/imx/clk-composite-8m.c        |  89 +++++++++++++++---
->  drivers/clk/imx/clk-imx8mp.c              |   4 +-
->  drivers/clk/imx/clk-pll14xx.c             |  20 ++++
->  drivers/clk/imx/clk.h                     |   4 +
->  include/linux/clk-provider.h              |   2 +
->  include/linux/clk.h                       |   2 +
->  9 files changed, 261 insertions(+), 29 deletions(-)
-> ---
-> base-commit: e143016b56ecb0fcda5bb6026b0a25fe55274f56
-> change-id: 20230913-imx8mp-dtsi-7c6e25907e0e
->
-> Best regards,
-> --
-> Benjamin Bara <benjamin.bara@skidata.com>
->
+That should work. I'll check it, thanks!
+
+> 
+>> +               output-high;
+>> +               line-name = "sd0_pwr_en";
+>> +       };
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
