@@ -2,26 +2,27 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73738CD13D2
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 893CDC46CA1
 	for <linux-clk@archiver.kernel.org>; Mon, 18 Sep 2023 07:43:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234354AbjIRHnU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Sep 2023 03:43:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47586 "EHLO
+        id S240270AbjIRHnW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Sep 2023 03:43:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240503AbjIRHnN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Sep 2023 03:43:13 -0400
-Received: from mail-m12791.qiye.163.com (mail-m12791.qiye.163.com [115.236.127.91])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD176CCE;
-        Mon, 18 Sep 2023 00:41:54 -0700 (PDT)
+        with ESMTP id S240496AbjIRHnM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Sep 2023 03:43:12 -0400
+X-Greylist: delayed 544 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 18 Sep 2023 00:41:58 PDT
+Received: from mail-m49251.qiye.163.com (mail-m49251.qiye.163.com [45.254.49.251])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16E741B5;
+        Mon, 18 Sep 2023 00:41:56 -0700 (PDT)
 DKIM-Signature: a=rsa-sha256;
-        b=UEh7tRhqxHvTaUFQ0u3MeGBGhtzOP/PIi/s7GFyLhXmIlQ2+/CD2jlRdoQSsXQJf6b48/28Apzu9C/YfbudI/QH1+LjuLnfG8HkNqlPdceoCAU831/uiQX+LDSCLt1w10u+zkYvn1fF7QrQHiPcnBj9aAZm/mLdKrhq0BHFBTkM=;
+        b=acOd2ke57QbjXIpr8WEZCRZSAYNGHf1HbxM9U1aGgLGr9PLnd+ACr878zLkd6X952/kTisl1H5l+X/5JEBTo0iYQ09aTdV94GKaJ0dM7q5b2nXv12U5Cmlk5QR8AZU80E4GXJ+0q11TBfZXMiS8UWgN2wqx5pqAI9PZYUXFBTOY=;
         s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-        bh=89R2kmI3V5ZPb6807YAI+FcT78Vp6S5FMXaVvIkbARo=;
+        bh=vyECsO4uy90lTUrx8mOBqqu8I+jSj4HmGYI/qGQDg4o=;
         h=date:mime-version:subject:message-id:from;
 Received: from localhost.localdomain (unknown [58.22.7.114])
-        by mail-m11879.qiye.163.com (Hmail) with ESMTPA id E9AA868021E;
-        Mon, 18 Sep 2023 15:31:51 +0800 (CST)
+        by mail-m11879.qiye.163.com (Hmail) with ESMTPA id 801BC680358;
+        Mon, 18 Sep 2023 15:31:57 +0800 (CST)
 From:   Elaine Zhang <zhangqing@rock-chips.com>
 To:     mturquette@baylibre.com, sboyd@kernel.org,
         kever.yang@rock-chips.com, zhangqing@rock-chips.com,
@@ -31,56 +32,74 @@ Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
         linux-kernel@vger.kernel.org, huangtao@rock-chips.com,
         xxx@rock-chips.com, xf@rock-chips.com
-Subject: [PATCH v1 0/8] clk: rockchip: Support module build
-Date:   Mon, 18 Sep 2023 15:31:43 +0800
-Message-Id: <20230918073151.7660-1-zhangqing@rock-chips.com>
+Subject: [PATCH v1 5/8] clk: rockchip: rk3399: Support module build
+Date:   Mon, 18 Sep 2023 15:31:48 +0800
+Message-Id: <20230918073151.7660-6-zhangqing@rock-chips.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20230918073151.7660-1-zhangqing@rock-chips.com>
+References: <20230918073151.7660-1-zhangqing@rock-chips.com>
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-        tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ0MdQlZOT0tOQ01MTU9CGBpVEwETFh
+        tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGRoaTlZCTE9CSh1IGUgdTk9VEwETFh
         oSFyQUDg9ZV1kYEgtZQVlOQ1VJSVVMVUpKT1lXWRYaDxIVHRRZQVlPS0hVSk1PSU5JVUpLS1VKQl
         kG
-X-HM-Tid: 0a8aa733eb9e2eb5kusne9aa868021e
+X-HM-Tid: 0a8aa73401362eb5kusn801bc680358
 X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Mz46OAw*Lz1RP0pWMg1LSUsD
-        SSswCTVVSlVKTUJOS0lJSEpJQkJKVTMWGhIXVQETGhUcChIVHDsJFBgQVhgTEgsIVRgUFkVZV1kS
-        C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUhLT083Bg++
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OlE6Tjo5Qz1KN0oJIgwvSBA6
+        MysKCUJVSlVKTUJOS0lJSEpDT0NIVTMWGhIXVQETGhUcChIVHDsJFBgQVhgTEgsIVRgUFkVZV1kS
+        C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUhJS0g3Bg++
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Elaine Zhang (8):
-  clk: clk-fractional-divider: Export
-    clk_fractional_divider_general_approximation API
-  clk: rockchip: drop use of rockchip_clk_protect_critical()
-  dt-bindings: clock: rk3188: Add binding id for ACLK_CPU_PRE
-  clk: rockchip: Avoid __clk_lookup() calls
-  clk: rockchip: rk3399: Support module build
-  clk: rockchip: rk3568: Support module build
-  clk: rockchip: rk3588: Support module build
-  clk: rockchip: fix the clk config to support module build
+support CLK_OF_DECLARE and module_platform_driver
+double clk init method.
 
- drivers/clk/clk-fractional-divider.c          |   1 +
- drivers/clk/rockchip/Kconfig                  |   8 +-
- drivers/clk/rockchip/clk-cpu.c                |  18 +-
- drivers/clk/rockchip/clk-px30.c               |  88 +++---
- drivers/clk/rockchip/clk-rk3036.c             |  42 ++-
- drivers/clk/rockchip/clk-rk3128.c             |  59 ++--
- drivers/clk/rockchip/clk-rk3188.c             |  59 ++--
- drivers/clk/rockchip/clk-rk3228.c             | 147 ++++-----
- drivers/clk/rockchip/clk-rk3288.c             |  74 ++---
- drivers/clk/rockchip/clk-rk3308.c             |  46 +--
- drivers/clk/rockchip/clk-rk3328.c             | 182 +++++------
- drivers/clk/rockchip/clk-rk3368.c             |  71 ++---
- drivers/clk/rockchip/clk-rk3399.c             | 283 ++++++++----------
- drivers/clk/rockchip/clk-rk3568.c             | 114 +++----
- drivers/clk/rockchip/clk-rk3588.c             |  19 +-
- drivers/clk/rockchip/clk-rv1108.c             |  65 ++--
- drivers/clk/rockchip/clk-rv1126.c             |  77 ++---
- drivers/clk/rockchip/clk.c                    |  20 +-
- drivers/clk/rockchip/clk.h                    |  18 +-
- include/dt-bindings/clock/rk3188-cru-common.h |   1 +
- 20 files changed, 579 insertions(+), 813 deletions(-)
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+---
+ drivers/clk/rockchip/clk-rk3399.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index ee3bda968574..dcc794dbb190 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -1571,6 +1571,7 @@ static void __init rk3399_pmu_clk_init(struct device_node *np)
+ }
+ CLK_OF_DECLARE(rk3399_cru_pmu, "rockchip,rk3399-pmucru", rk3399_pmu_clk_init);
+ 
++#ifdef MODULE
+ struct clk_rk3399_inits {
+ 	void (*inits)(struct device_node *np);
+ };
+@@ -1593,8 +1594,9 @@ static const struct of_device_id clk_rk3399_match_table[] = {
+ 	},
+ 	{ }
+ };
++MODULE_DEVICE_TABLE(of, clk_rk3399_match_table);
+ 
+-static int __init clk_rk3399_probe(struct platform_device *pdev)
++static int clk_rk3399_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+ 	const struct of_device_id *match;
+@@ -1612,10 +1614,16 @@ static int __init clk_rk3399_probe(struct platform_device *pdev)
+ }
+ 
+ static struct platform_driver clk_rk3399_driver = {
++	.probe		= clk_rk3399_probe,
+ 	.driver		= {
+ 		.name	= "clk-rk3399",
+ 		.of_match_table = clk_rk3399_match_table,
+ 		.suppress_bind_attrs = true,
+ 	},
+ };
+-builtin_platform_driver_probe(clk_rk3399_driver, clk_rk3399_probe);
++module_platform_driver(clk_rk3399_driver);
++
++MODULE_DESCRIPTION("Rockchip RK3399 Clock Driver");
++MODULE_LICENSE("GPL");
++MODULE_ALIAS("platform:clk-rk3399");
++#endif /* MODULE */
 -- 
 2.17.1
 
