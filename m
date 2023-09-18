@@ -2,148 +2,166 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE658C46CA1
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Sep 2023 17:08:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3817C46CA1
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Sep 2023 17:24:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231362AbjIRRIe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Sep 2023 13:08:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34292 "EHLO
+        id S229641AbjIRRYy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Sep 2023 13:24:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231438AbjIRRI0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Sep 2023 13:08:26 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B6DB10C8;
-        Mon, 18 Sep 2023 10:08:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1695056884; x=1726592884;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=R0IYlcHB+mDxKxCzHImBnbsDf3CITkOOK5I/jc4Vt4g=;
-  b=jHmVXcnHxtmp9g7cDHL/OkxMyvebYAO6oquBDrkJo/a+KVVdUPtx3o4J
-   MkVxl3S9cxl7Cw5d2qJb8JI3a65E+VPflJvNO+0VsWgvki9hFLNCiaSba
-   jC+xQpNXl1k8aT95Bhb5M2muNoIEtY3hIzw0rE6KrlLH6Zz+fRQ2ljPp0
-   Q+z8C4FtEwY5cEi6NWyMwHiriy3qHJo3YdqzMX4ZIvcIzxFyCNZfOpSsY
-   asldT74jT9fkq2KuYrs3kGhzAXk6jmhyWjmR6hVIsURsKZKKn0f38xiZH
-   diUwLCbpjKWkYzycxjq4BIbH9mR2SrwBRF/T3lXD9m4XXeNu2jRpJ2vhc
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10837"; a="377037214"
-X-IronPort-AV: E=Sophos;i="6.02,157,1688454000"; 
-   d="scan'208";a="377037214"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2023 10:08:02 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10837"; a="775202677"
-X-IronPort-AV: E=Sophos;i="6.02,157,1688454000"; 
-   d="scan'208";a="775202677"
-Received: from lkp-server02.sh.intel.com (HELO 9ef86b2655e5) ([10.239.97.151])
-  by orsmga008.jf.intel.com with ESMTP; 18 Sep 2023 10:07:58 -0700
-Received: from kbuild by 9ef86b2655e5 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qiHj2-0006J6-1j;
-        Mon, 18 Sep 2023 17:07:56 +0000
-Date:   Tue, 19 Sep 2023 01:07:42 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Elaine Zhang <zhangqing@rock-chips.com>, mturquette@baylibre.com,
-        sboyd@kernel.org, kever.yang@rock-chips.com, heiko@sntech.de,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org
-Cc:     oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        huangtao@rock-chips.com, xxx@rock-chips.com, xf@rock-chips.com
-Subject: Re: [PATCH v1 4/8] clk: rockchip: Avoid __clk_lookup() calls
-Message-ID: <202309190032.1NPAySNx-lkp@intel.com>
-References: <20230918073151.7660-5-zhangqing@rock-chips.com>
+        with ESMTP id S229561AbjIRRYx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Sep 2023 13:24:53 -0400
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [IPv6:2001:67c:2050:0:465::202])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2C47DB;
+        Mon, 18 Sep 2023 10:24:47 -0700 (PDT)
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4RqBVy2295z9sVw;
+        Mon, 18 Sep 2023 19:24:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
+        s=MBO0001; t=1695057882;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=+4yHZzrHJjqPq7LBrt01/QAbJUKdFCg/AHjFPUYawGM=;
+        b=FNUSQaK7LApdoP5g+mITwld4G9hToDRz95VaB47X6UkIF4AXHWaH097ukp/autFcL6DmU8
+        uyXDLwDHuCAOVXTnm28zLYj1tQWwlGkMrJyuOWXbJlPUWyB4UsmSSE431UJQduy/LeH6o/
+        +hhTnswkKDH6nnkzhPca9FglyNr9lFm88xC8we0pR+6/JWQtKd4KaGpt0nHCmdc/lz4tay
+        Jsa6Y2EqX96ESgoyGzzqPulK76XFtliJEhgJYNZtTxordHMW0KRWa6ESnLu+lwLBB71N1L
+        g58hb9jE3HEMFvs6Zn+onrZ8EKm/1QCDo6rC1C70ylqDxLH9rOGGkMWGEvzYXg==
+References: <20230918-imx8mp-dtsi-v1-0-1d008b3237c0@skidata.com>
+From:   Frank Oltmanns <frank@oltmanns.dev>
+To:     Benjamin Bara <bbara93@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Maxime Ripard <mripard@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Benjamin Bara <benjamin.bara@skidata.com>,
+        Adam Ford <aford173@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>
+Subject: Re: [PATCH 00/13] imx8mp: first clock propagation attempt (for LVDS)
+In-reply-to: <20230918-imx8mp-dtsi-v1-0-1d008b3237c0@skidata.com>
+Date:   Mon, 18 Sep 2023 19:24:08 +0200
+Message-ID: <87fs3bbdjb.fsf@oltmanns.dev>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230918073151.7660-5-zhangqing@rock-chips.com>
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Elaine,
+Hi Benjamin!
 
-kernel test robot noticed the following build warnings:
+On 2023-09-18 at 00:39:56 +0200, Benjamin Bara <bbara93@gmail.com> wrote:
+> Hi!
+>
+> Target of this series is to dynamically set the rate of video_pll1 to
+> the required LVDS clock rate(s), which are configured by the panel, and
+> the lvds-bridge respectively.
+>
+> Some background:
+> The LVDS panel requires two clocks: the crtc clock and the lvds clock.
+> The lvds rate is always 7x the crtc rate. On the imx8mp, these are
+> assigned to media_disp2_pix and media_ldb, which are both
+> clk-composite-8m. The rates are set by drm_client_modeset_commit() (and
+> later by fsl_ldb_atomic_enable()), and the fsl-ldb driver, first crtc,
+> then lvds. The parent is typically assigned to video_pll1, which is a
+> clk-pll14xx (pll1443x).
+>
+> The main problem:
+> As the clk-composite-8m currently doesn't support CLK_SET_RATE_PARENT,
+> the crtc rate is not propagated to video_pll1, and therefore must be
+> assigned in the device-tree manually.
+>
+> The idea:
+> Enable CLK_SET_RATE_PARENT, at least for media_disp2_pix and media_ldb.
+> When this is done, ensure that the pll1443x can be re-configured,
+> meaning it ensures that an already configured rate (crtc rate) is still
+> supported when a second child requires a different rate (lvds rate). As
+> the children have divider, the current approach is straight forward by
+> calculating the LCM of the required rates. During the rate change of the
+> PLL, it must ensure that all children still have the configured rate at
+> the end (and maybe also bypass the clock while doing so?). This is done
+> by implementing a notifier function for the clk-composite-8m. The tricky
+> part is now to find out if the rate change was intentional or not. This
+> is done by adding the "change trigger" to the notify data. In our case,
+> we now can infer if we aren't the change trigger, we need to keep the
+> existing rate after the PLL's rate change. We keep the existing rate by
+> modifying the new_rate of the clock's core, as we are quite late in an
+> already ongoing clock change process.
+>
+> Future work:
+> The re-configuration of the PLL can definitely be improved for other use
+> cases where the children have more fancy inter-dependencies. That's one
+> of the main reasons I currently only touched the mentioned clocks.
+> Additionally, it might make sense to automatically re-parent if a
+> different possible parent suits better.
+> For the core part, I thought about extending my "unintentional change
+> check" so that the core ensures that the children keep the configured
+> rate, which might not be easy as the parent could be allowed to "round",
+> but it's not clear (at least to me yet) how much rounding is allowed. I
+> found a similar discussion posted here[1], therefore added Frank and
+> Maxime.
 
-[auto build test WARNING on rockchip/for-next]
-[also build test WARNING on clk/clk-next linus/master v6.6-rc2 next-20230918]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Thank you very much for including me in the discussion. If I understood
+Maxime correctly, your proposal is close to what he was suggesting in
+the discussion you referenced. Unfortunately, it doesn't cover the
+rounding aspect (which you also mentioned in your cover letter and the
+description for clk_detect_unintended_rate_changes in patch 7. I've been
+pondering the last three weeks how to find a good solution to this
+problem, but so far haven't found any.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Elaine-Zhang/clk-clk-fractional-divider-Export-clk_fractional_divider_general_approximation-API/20230918-154652
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git for-next
-patch link:    https://lore.kernel.org/r/20230918073151.7660-5-zhangqing%40rock-chips.com
-patch subject: [PATCH v1 4/8] clk: rockchip: Avoid __clk_lookup() calls
-config: arm64-defconfig (https://download.01.org/0day-ci/archive/20230919/202309190032.1NPAySNx-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20230919/202309190032.1NPAySNx-lkp@intel.com/reproduce)
+Hopefully, your suggestion spurs some new thoughts.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202309190032.1NPAySNx-lkp@intel.com/
+Thanks,
+  Frank
 
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/clk/rockchip/clk-rk3328.c:13:
->> drivers/clk/rockchip/clk-rk3328.c:160:7: warning: 'mux_armclk_p' defined but not used [-Wunused-const-variable=]
-     160 | PNAME(mux_armclk_p)             = { "apll_core",
-         |       ^~~~~~~~~~~~
-   drivers/clk/rockchip/clk.h:512:43: note: in definition of macro 'PNAME'
-     512 | #define PNAME(x) static const char *const x[] __initconst
-         |                                           ^
---
-   In file included from drivers/clk/rockchip/clk-rk3588.c:13:
->> drivers/clk/rockchip/clk-rk3588.c:447:7: warning: 'mux_armclkb23_p' defined but not used [-Wunused-const-variable=]
-     447 | PNAME(mux_armclkb23_p)                  = { "xin24m", "gpll", "b1pll",};
-         |       ^~~~~~~~~~~~~~~
-   drivers/clk/rockchip/clk.h:512:43: note: in definition of macro 'PNAME'
-     512 | #define PNAME(x) static const char *const x[] __initconst
-         |                                           ^
->> drivers/clk/rockchip/clk-rk3588.c:446:7: warning: 'mux_armclkb01_p' defined but not used [-Wunused-const-variable=]
-     446 | PNAME(mux_armclkb01_p)                  = { "xin24m", "gpll", "b0pll",};
-         |       ^~~~~~~~~~~~~~~
-   drivers/clk/rockchip/clk.h:512:43: note: in definition of macro 'PNAME'
-     512 | #define PNAME(x) static const char *const x[] __initconst
-         |                                           ^
->> drivers/clk/rockchip/clk-rk3588.c:445:7: warning: 'mux_armclkl_p' defined but not used [-Wunused-const-variable=]
-     445 | PNAME(mux_armclkl_p)                    = { "xin24m", "gpll", "lpll" };
-         |       ^~~~~~~~~~~~~
-   drivers/clk/rockchip/clk.h:512:43: note: in definition of macro 'PNAME'
-     512 | #define PNAME(x) static const char *const x[] __initconst
-         |                                           ^
-
-
-vim +/mux_armclk_p +160 drivers/clk/rockchip/clk-rk3328.c
-
-fe3511ad8a1cf6 Elaine Zhang 2016-12-29  144  
-fe3511ad8a1cf6 Elaine Zhang 2016-12-29  145  PNAME(mux_2plls_p)		= { "cpll", "gpll" };
-fe3511ad8a1cf6 Elaine Zhang 2016-12-29  146  PNAME(mux_gpll_cpll_p)		= { "gpll", "cpll" };
-fe3511ad8a1cf6 Elaine Zhang 2016-12-29  147  PNAME(mux_cpll_gpll_apll_p)	= { "cpll", "gpll", "apll" };
-fe3511ad8a1cf6 Elaine Zhang 2016-12-29  148  PNAME(mux_2plls_xin24m_p)	= { "cpll", "gpll", "xin24m" };
-fe3511ad8a1cf6 Elaine Zhang 2016-12-29  149  PNAME(mux_2plls_hdmiphy_p)	= { "cpll", "gpll",
-fe3511ad8a1cf6 Elaine Zhang 2016-12-29  150  				    "dummy_hdmiphy" };
-fe3511ad8a1cf6 Elaine Zhang 2016-12-29  151  PNAME(mux_4plls_p)		= { "cpll", "gpll",
-fe3511ad8a1cf6 Elaine Zhang 2016-12-29  152  				    "dummy_hdmiphy",
-fe3511ad8a1cf6 Elaine Zhang 2016-12-29  153  				    "usb480m" };
-fe3511ad8a1cf6 Elaine Zhang 2016-12-29  154  PNAME(mux_2plls_u480m_p)	= { "cpll", "gpll",
-fe3511ad8a1cf6 Elaine Zhang 2016-12-29  155  				    "usb480m" };
-fe3511ad8a1cf6 Elaine Zhang 2016-12-29  156  PNAME(mux_2plls_24m_u480m_p)	= { "cpll", "gpll",
-fe3511ad8a1cf6 Elaine Zhang 2016-12-29  157  				     "xin24m", "usb480m" };
-fe3511ad8a1cf6 Elaine Zhang 2016-12-29  158  
-fe3511ad8a1cf6 Elaine Zhang 2016-12-29  159  PNAME(mux_ddrphy_p)		= { "dpll", "apll", "cpll" };
-fe3511ad8a1cf6 Elaine Zhang 2016-12-29 @160  PNAME(mux_armclk_p)		= { "apll_core",
-fe3511ad8a1cf6 Elaine Zhang 2016-12-29  161  				    "gpll_core",
-fe3511ad8a1cf6 Elaine Zhang 2016-12-29  162  				    "dpll_core",
-fe3511ad8a1cf6 Elaine Zhang 2016-12-29  163  				    "npll_core"};
-fe3511ad8a1cf6 Elaine Zhang 2016-12-29  164  PNAME(mux_hdmiphy_p)		= { "hdmi_phy", "xin24m" };
-fe3511ad8a1cf6 Elaine Zhang 2016-12-29  165  PNAME(mux_usb480m_p)		= { "usb480m_phy",
-fe3511ad8a1cf6 Elaine Zhang 2016-12-29  166  				    "xin24m" };
-fe3511ad8a1cf6 Elaine Zhang 2016-12-29  167  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>
+> Thanks & regards,
+> Benjamin
+>
+> [1] https://lore.kernel.org/lkml/20230825-pll-mipi_keep_rate-v1-0-35bc43570730@oltmanns.dev/
+>
+> ---
+> Benjamin Bara (13):
+>       arm64: dts: imx8mp: lvds_bridge: use root instead of composite
+>       arm64: dts: imx8mp: re-parent IMX8MP_CLK_MEDIA_MIPI_PHY1_REF
+>       clk: implement clk_hw_set_rate()
+>       clk: print debug message if parent change is ignored
+>       clk: keep track of the trigger of an ongoing clk_set_rate
+>       clk: keep track if a clock is explicitly configured
+>       clk: detect unintended rate changes
+>       clk: divider: stop early if an optimal divider is found
+>       clk: imx: pll14xx: consider active rate for re-config
+>       clk: imx: composite-8m: convert compute_dividers to void
+>       clk: imx: composite-8m: implement CLK_SET_RATE_PARENT
+>       clk: imx: imx8mp: allow LVDS clocks to set parent rate
+>       arm64: dts: imx8mp: remove assigned-clock-rate of IMX8MP_VIDEO_PLL1
+>
+>  arch/arm64/boot/dts/freescale/imx8mp.dtsi |  14 +--
+>  drivers/clk/clk-divider.c                 |   9 ++
+>  drivers/clk/clk.c                         | 146 +++++++++++++++++++++++++++++-
+>  drivers/clk/imx/clk-composite-8m.c        |  89 +++++++++++++++---
+>  drivers/clk/imx/clk-imx8mp.c              |   4 +-
+>  drivers/clk/imx/clk-pll14xx.c             |  20 ++++
+>  drivers/clk/imx/clk.h                     |   4 +
+>  include/linux/clk-provider.h              |   2 +
+>  include/linux/clk.h                       |   2 +
+>  9 files changed, 261 insertions(+), 29 deletions(-)
+> ---
+> base-commit: e143016b56ecb0fcda5bb6026b0a25fe55274f56
+> change-id: 20230913-imx8mp-dtsi-7c6e25907e0e
+>
+> Best regards,
