@@ -2,64 +2,59 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A65BCD3427
-	for <linux-clk@archiver.kernel.org>; Sun, 17 Sep 2023 22:41:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 749D2CD13D3
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Sep 2023 05:08:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234562AbjIQWlE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 17 Sep 2023 18:41:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35012 "EHLO
+        id S236741AbjIRFB0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Sep 2023 01:01:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237519AbjIQWks (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 17 Sep 2023 18:40:48 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78294130;
-        Sun, 17 Sep 2023 15:40:43 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-40472f9db24so38546595e9.2;
-        Sun, 17 Sep 2023 15:40:43 -0700 (PDT)
+        with ESMTP id S233195AbjIRFAz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Sep 2023 01:00:55 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F23BFAC;
+        Sun, 17 Sep 2023 22:00:49 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id 98e67ed59e1d1-274c05edb69so473997a91.2;
+        Sun, 17 Sep 2023 22:00:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1694990442; x=1695595242; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dQJrC2vG5It4Q7jqZ1TqS/6dJhYmmMKtvWU2Ye0A1e0=;
-        b=bKt6lnL5RYEGk0CZ5w0ebgl6p26PmUKjHG6i2TvfaCbONA4aV7vA25yUon31DZ6hxb
-         9ON0RKtvLy6bERnr2JKWA613UYyHmYiuLenpZlYGlpVBPsq7U7/K2l66rkLRMghl9f33
-         iF+MZLFQoGmAA2/tqahNRcRTmHTykldjvMEn638+0FnrEIkAliLfp/zbP+jJ7l/pF3au
-         427MYWTQINTXTUmu+ZkbZWzFxQn8w2a+/u73A/F0yRPpUHBvdsPoPbXMBuwv+Mzk0mif
-         3ASCcIesnzSxGZIiOqkSqBTuElg8PzvId3CDdieS47gYW3t9x01H6TLWeR1tCkl7R/Df
-         Y/YQ==
+        d=gmail.com; s=20230601; t=1695013249; x=1695618049; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UVNF5sAoH2+S/vs1X3i/qSh9lM2MoEqXJhGdzFOpd3Y=;
+        b=EIplKW9LURVX+E4g1KdCgDxlQUbVjAoQvLJ14xk4IhauKfPzBhFkirWd/5U/TQ+XAi
+         4Z1LEvrKTFbPq+3D7oWm2aFrAhzdRxufE4DFcQbfdK5FoMs29TCWxfxH6c9aDzN1Z3mL
+         LMv9TtoqRX/8d6SRC98eW9aMxvtaA9Fvq2UsVLLMTNcfAABBt75uNElHz677b220dE3c
+         NVaEZX13drF7hnLkBRFmgvedvaFXk9k0N+UOm7Qy5pzzIsUZ7tPMei8DtWNK5hmaXX6c
+         kGT/ZY+rp8iuAftv2S6zcXM/5WvdrUVjxiS1jo+UOYxhLLtQ4IQ32WqNBUPC10vongHz
+         57bA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694990442; x=1695595242;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1695013249; x=1695618049;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dQJrC2vG5It4Q7jqZ1TqS/6dJhYmmMKtvWU2Ye0A1e0=;
-        b=M2sFkCBPcNEleRye7f9GIcAaw5X2JX4uhnZERvCcR3JuAdL4ekL8ejmf5tf2Do2g1n
-         KJZeeKdbj1xhQcZuR/cnSColoW+Wru47QVra1pTAK456cJArcAMneZfCYsVOusMEvLec
-         xsq0VN7Z++keW98XOqer2o9wwKMAwmmmFkyXMeIswmrwnLj2veOWGPpvx/yyLvM7i2a5
-         e8C3UcDDN5E04TPa7jadOwerWJrzaBNSmqKFuoDMjJePJ5pLiII2YmtueTwPXg169Dg9
-         IKMmVDllSJG11uoemGP3q3uPHqiYs+A6ZvdVi9avXO+ilTEwa02/3mI6FLWUq/QLVwqU
-         F8mA==
-X-Gm-Message-State: AOJu0Yw9Vpd0PguUb9IX7JCnr9nnaoE2IKeFDhIVDtbEF1/6HA6WJDD3
-        v0AKRjg381BstA5nxaBRKxA=
-X-Google-Smtp-Source: AGHT+IEMN4Y0RtC3E0hFzpJCX/PfrE3WOd7fkLRSAZR+Pe5gBDiWN4mI0PGB+DeHlwh5xtWtJzNbAw==
-X-Received: by 2002:a1c:771a:0:b0:3fe:ba7:f200 with SMTP id t26-20020a1c771a000000b003fe0ba7f200mr6071299wmi.20.1694990441886;
-        Sun, 17 Sep 2023 15:40:41 -0700 (PDT)
-Received: from [127.0.1.1] ([91.230.2.244])
-        by smtp.gmail.com with ESMTPSA id x14-20020a1c7c0e000000b003fe2b081661sm13642931wmc.30.2023.09.17.15.40.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Sep 2023 15:40:41 -0700 (PDT)
-From:   Benjamin Bara <bbara93@gmail.com>
-Date:   Mon, 18 Sep 2023 00:40:08 +0200
-Subject: [PATCH 12/13] clk: imx: imx8mp: allow LVDS clocks to set parent
- rate
+        bh=UVNF5sAoH2+S/vs1X3i/qSh9lM2MoEqXJhGdzFOpd3Y=;
+        b=O/PMFFsH+zIIdXmjffJMFbYL5m2xeMbmD2p1EX/oIwwUzw/VkKMFSGle6BV640K+K7
+         N/vOL+aM+fd6+N7T8MQavbOqw2BlqGcSU6q8qHdgsJVWsGyZu4+1z95Z6mOeQ9SNfjdb
+         dFjzFNWt1VItNHEtFOrj9qZjBpIAm/wb905l9Qk4FhUeoh5LUXO8ZrNHUrc7+EbEk2Tu
+         uDEQBsELFWVM76XXvo1lH89VcxN3NPWks0DetjxxSGHjW47jl3qpFG0pMXAD+H1/qk3C
+         d/6A475dqzsWT74Cb1qgG4YJmyaxrhML4+VlNYG6zcByMxQhIMw8AFTKz9xjQPBiJUWW
+         J+fw==
+X-Gm-Message-State: AOJu0Yx0sUN8R9XQKg+ORL3kSgYZfz/UX830lcDl2LOLgiONfP/7+owJ
+        F5FU6wdJ+nWgTvc09sP18sKOGxzq5T5JNY/zEJk=
+X-Google-Smtp-Source: AGHT+IFI+iihCDqE8YIc6IjinrCImEQ/bsS70zAv7j9bLn5alZdsPVXi1Rds61BqWssOaMz8RfFx/UcWxVyd/5Ob+VE=
+X-Received: by 2002:a17:90a:3ea5:b0:276:6b9d:7503 with SMTP id
+ k34-20020a17090a3ea500b002766b9d7503mr995967pjc.28.1695013249158; Sun, 17 Sep
+ 2023 22:00:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230918-imx8mp-dtsi-v1-12-1d008b3237c0@skidata.com>
 References: <20230918-imx8mp-dtsi-v1-0-1d008b3237c0@skidata.com>
 In-Reply-To: <20230918-imx8mp-dtsi-v1-0-1d008b3237c0@skidata.com>
-To:     Rob Herring <robh+dt@kernel.org>,
+From:   Adam Ford <aford173@gmail.com>
+Date:   Sun, 17 Sep 2023 22:00:37 -0700
+Message-ID: <CAHCN7xJ8KrBd-532=gDE+82xo1ZNtoDT7pZsYwy9-9WiJvmkvw@mail.gmail.com>
+Subject: Re: [PATCH 00/13] imx8mp: first clock propagation attempt (for LVDS)
+To:     Benjamin Bara <bbara93@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
         Shawn Guo <shawnguo@kernel.org>,
@@ -70,68 +65,123 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
-        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>
-Cc:     Frank Oltmanns <frank@oltmanns.dev>,
+        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Frank Oltmanns <frank@oltmanns.dev>,
         Maxime Ripard <mripard@kernel.org>, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org,
-        Benjamin Bara <benjamin.bara@skidata.com>
-X-Mailer: b4 0.12.3
+        Benjamin Bara <benjamin.bara@skidata.com>,
+        Lucas Stach <l.stach@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Benjamin Bara <benjamin.bara@skidata.com>
+On Sun, Sep 17, 2023 at 3:40=E2=80=AFPM Benjamin Bara <bbara93@gmail.com> w=
+rote:
+>
+> Hi!
+>
+> Target of this series is to dynamically set the rate of video_pll1 to
+> the required LVDS clock rate(s), which are configured by the panel, and
+> the lvds-bridge respectively.
+>
+> Some background:
+> The LVDS panel requires two clocks: the crtc clock and the lvds clock.
+> The lvds rate is always 7x the crtc rate. On the imx8mp, these are
+> assigned to media_disp2_pix and media_ldb, which are both
+> clk-composite-8m. The rates are set by drm_client_modeset_commit() (and
+> later by fsl_ldb_atomic_enable()), and the fsl-ldb driver, first crtc,
+> then lvds. The parent is typically assigned to video_pll1, which is a
+> clk-pll14xx (pll1443x).
+>
+> The main problem:
+> As the clk-composite-8m currently doesn't support CLK_SET_RATE_PARENT,
+> the crtc rate is not propagated to video_pll1, and therefore must be
+> assigned in the device-tree manually.
+>
+> The idea:
+> Enable CLK_SET_RATE_PARENT, at least for media_disp2_pix and media_ldb.
+> When this is done, ensure that the pll1443x can be re-configured,
+> meaning it ensures that an already configured rate (crtc rate) is still
+> supported when a second child requires a different rate (lvds rate). As
 
-As composit-8m are now ready to dynamically propagate the
-required clock rate and pll14xx is able to keep its children in the
-configured state, allow media_ldb and media_disp2_pix to set the rate of
-their parent (which is usually video_pll for both).
+Have you tested with the DSI as well?  If memory servers, the DSI
+clock and the LVDS clock are both clocked from the same video_pll.  At
+one time, I had done some experimentation with trying the DSI
+connected to an HDMI bridge chip connected to a monitor and the LVDS
+was connected to a display panel with a static resolution and refresh
+rate.  For my LVDS display, it needs 30MHz to display properly, but
+various HDMI resolutions needed values that were not evenly divisible
+by 30MHz which appeared to cause display sync issues when trying to
+share a clock that was trying to dynamically adjust for two different
+displays especially when trying to change the resoltuion of the HDMI
+display to various values for different resolutions.
 
-Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
----
- drivers/clk/imx/clk-imx8mp.c | 4 ++--
- drivers/clk/imx/clk.h        | 4 ++++
- 2 files changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-index 670aa2bab301..fbc63012dab9 100644
---- a/drivers/clk/imx/clk-imx8mp.c
-+++ b/drivers/clk/imx/clk-imx8mp.c
-@@ -547,7 +547,7 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
- 	hws[IMX8MP_CLK_AHB] = imx8m_clk_hw_composite_bus_critical("ahb_root", imx8mp_ahb_sels, ccm_base + 0x9000);
- 	hws[IMX8MP_CLK_AUDIO_AHB] = imx8m_clk_hw_composite_bus("audio_ahb", imx8mp_audio_ahb_sels, ccm_base + 0x9100);
- 	hws[IMX8MP_CLK_MIPI_DSI_ESC_RX] = imx8m_clk_hw_composite_bus("mipi_dsi_esc_rx", imx8mp_mipi_dsi_esc_rx_sels, ccm_base + 0x9200);
--	hws[IMX8MP_CLK_MEDIA_DISP2_PIX] = imx8m_clk_hw_composite_bus("media_disp2_pix", imx8mp_media_disp_pix_sels, ccm_base + 0x9300);
-+	hws[IMX8MP_CLK_MEDIA_DISP2_PIX] = imx8m_clk_hw_composite_bus_flags("media_disp2_pix", imx8mp_media_disp_pix_sels, ccm_base + 0x9300, CLK_SET_RATE_PARENT);
- 
- 	hws[IMX8MP_CLK_IPG_ROOT] = imx_clk_hw_divider2("ipg_root", "ahb_root", ccm_base + 0x9080, 0, 1);
- 
-@@ -611,7 +611,7 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
- 	hws[IMX8MP_CLK_MEDIA_MIPI_PHY1_REF] = imx8m_clk_hw_composite("media_mipi_phy1_ref", imx8mp_media_mipi_phy1_ref_sels, ccm_base + 0xbd80);
- 	hws[IMX8MP_CLK_MEDIA_DISP1_PIX] = imx8m_clk_hw_composite("media_disp1_pix", imx8mp_media_disp_pix_sels, ccm_base + 0xbe00);
- 	hws[IMX8MP_CLK_MEDIA_CAM2_PIX] = imx8m_clk_hw_composite("media_cam2_pix", imx8mp_media_cam2_pix_sels, ccm_base + 0xbe80);
--	hws[IMX8MP_CLK_MEDIA_LDB] = imx8m_clk_hw_composite("media_ldb", imx8mp_media_ldb_sels, ccm_base + 0xbf00);
-+	hws[IMX8MP_CLK_MEDIA_LDB] =  imx8m_clk_hw_composite_flags("media_ldb", imx8mp_media_ldb_sels, ccm_base + 0xbf00, CLK_SET_RATE_PARENT);
- 	hws[IMX8MP_CLK_MEMREPAIR] = imx8m_clk_hw_composite_critical("mem_repair", imx8mp_memrepair_sels, ccm_base + 0xbf80);
- 	hws[IMX8MP_CLK_MEDIA_MIPI_TEST_BYTE] = imx8m_clk_hw_composite("media_mipi_test_byte", imx8mp_media_mipi_test_byte_sels, ccm_base + 0xc100);
- 	hws[IMX8MP_CLK_ECSPI3] = imx8m_clk_hw_composite("ecspi3", imx8mp_ecspi3_sels, ccm_base + 0xc180);
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index adb7ad649a0d..aa5202f284f3 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -442,6 +442,10 @@ struct clk_hw *__imx8m_clk_hw_composite(const char *name,
- 	_imx8m_clk_hw_composite(name, parent_names, reg, \
- 			IMX_COMPOSITE_BUS, IMX_COMPOSITE_CLK_FLAGS_DEFAULT)
- 
-+#define imx8m_clk_hw_composite_bus_flags(name, parent_names, reg, flags) \
-+	_imx8m_clk_hw_composite(name, parent_names, reg, \
-+			IMX_COMPOSITE_BUS, IMX_COMPOSITE_CLK_FLAGS_DEFAULT | flags)
-+
- #define imx8m_clk_hw_composite_bus_critical(name, parent_names, reg)	\
- 	_imx8m_clk_hw_composite(name, parent_names, reg, \
- 			IMX_COMPOSITE_BUS, IMX_COMPOSITE_CLK_FLAGS_CRITICAL)
-
--- 
-2.34.1
-
+> the children have divider, the current approach is straight forward by
+> calculating the LCM of the required rates. During the rate change of the
+> PLL, it must ensure that all children still have the configured rate at
+> the end (and maybe also bypass the clock while doing so?). This is done
+> by implementing a notifier function for the clk-composite-8m. The tricky
+> part is now to find out if the rate change was intentional or not. This
+> is done by adding the "change trigger" to the notify data. In our case,
+> we now can infer if we aren't the change trigger, we need to keep the
+> existing rate after the PLL's rate change. We keep the existing rate by
+> modifying the new_rate of the clock's core, as we are quite late in an
+> already ongoing clock change process.
+>
+> Future work:
+> The re-configuration of the PLL can definitely be improved for other use
+> cases where the children have more fancy inter-dependencies. That's one
+> of the main reasons I currently only touched the mentioned clocks.
+> Additionally, it might make sense to automatically re-parent if a
+> different possible parent suits better.
+> For the core part, I thought about extending my "unintentional change
+> check" so that the core ensures that the children keep the configured
+> rate, which might not be easy as the parent could be allowed to "round",
+> but it's not clear (at least to me yet) how much rounding is allowed. I
+> found a similar discussion posted here[1], therefore added Frank and
+> Maxime.
+>
+> Thanks & regards,
+> Benjamin
+>
+> [1] https://lore.kernel.org/lkml/20230825-pll-mipi_keep_rate-v1-0-35bc435=
+70730@oltmanns.dev/
+>
+> ---
+> Benjamin Bara (13):
+>       arm64: dts: imx8mp: lvds_bridge: use root instead of composite
+>       arm64: dts: imx8mp: re-parent IMX8MP_CLK_MEDIA_MIPI_PHY1_REF
+>       clk: implement clk_hw_set_rate()
+>       clk: print debug message if parent change is ignored
+>       clk: keep track of the trigger of an ongoing clk_set_rate
+>       clk: keep track if a clock is explicitly configured
+>       clk: detect unintended rate changes
+>       clk: divider: stop early if an optimal divider is found
+>       clk: imx: pll14xx: consider active rate for re-config
+>       clk: imx: composite-8m: convert compute_dividers to void
+>       clk: imx: composite-8m: implement CLK_SET_RATE_PARENT
+>       clk: imx: imx8mp: allow LVDS clocks to set parent rate
+>       arm64: dts: imx8mp: remove assigned-clock-rate of IMX8MP_VIDEO_PLL1
+>
+>  arch/arm64/boot/dts/freescale/imx8mp.dtsi |  14 +--
+>  drivers/clk/clk-divider.c                 |   9 ++
+>  drivers/clk/clk.c                         | 146 ++++++++++++++++++++++++=
++++++-
+>  drivers/clk/imx/clk-composite-8m.c        |  89 +++++++++++++++---
+>  drivers/clk/imx/clk-imx8mp.c              |   4 +-
+>  drivers/clk/imx/clk-pll14xx.c             |  20 ++++
+>  drivers/clk/imx/clk.h                     |   4 +
+>  include/linux/clk-provider.h              |   2 +
+>  include/linux/clk.h                       |   2 +
+>  9 files changed, 261 insertions(+), 29 deletions(-)
+> ---
+> base-commit: e143016b56ecb0fcda5bb6026b0a25fe55274f56
+> change-id: 20230913-imx8mp-dtsi-7c6e25907e0e
+>
+> Best regards,
+> --
+> Benjamin Bara <benjamin.bara@skidata.com>
+>
