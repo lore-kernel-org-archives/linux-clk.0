@@ -2,253 +2,148 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C76DDCD13D2
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Sep 2023 16:07:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE658C46CA1
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Sep 2023 17:08:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230090AbjIRQHf convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Sep 2023 12:07:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54896 "EHLO
+        id S231362AbjIRRIe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Sep 2023 13:08:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230078AbjIRQHZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Sep 2023 12:07:25 -0400
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 461F96E9D;
-        Mon, 18 Sep 2023 09:05:37 -0700 (PDT)
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-d8181087dc9so4212513276.3;
-        Mon, 18 Sep 2023 09:05:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695053137; x=1695657937;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=N1/vmY6rZvIej4ygh7IWLFkgOKHXgwWsTVOn8tVpI9o=;
-        b=DupzuQotgRbE/jsJGHM/+Sm2IWXH6BENP3qLw+urrJWwZP1Ur17qjVVFJh3FAe1nYr
-         rCNuMxcqUZWbgG4zaCG+r1bhDzOmxoaNgo9lako7o2oXo0RbnNvFWWrYj+pcP5v64IG+
-         zEFqhjJVx2x5d8dK06kpxgiSg34y6WXtKOBNYR1knygVgYcNrMOHHmiLLyQpqJSt8Qew
-         ll2/IKHjPZILs3faWlccT21bt3wequU9Gr+nol50Acs3FMVt9OzE6fWmYUgZf22yea0T
-         44m2havz8MwHkn0XWt0zq7KG42hPCVE6Y1jO5i+K0CK/5KCz1j+fWG31P9xkOM8PtXbX
-         X3BA==
-X-Gm-Message-State: AOJu0YzasUQBJYMVlcDc7OPfzo0trsXHIgG6QXQYL/OtUFD4A0S6rkj+
-        iRqv0gY8x+7zWjaVJ912HCMp0shzCgumJQ==
-X-Google-Smtp-Source: AGHT+IHbeukF1H1g/gc72+wXvXK7Uqao3n5ggyxh/FDAYy/YJuhQfsu1nUiVYjvhcUGLBG1bCKxV/w==
-X-Received: by 2002:a25:b85:0:b0:d7b:97f3:4646 with SMTP id 127-20020a250b85000000b00d7b97f34646mr8460236ybl.60.1695053136709;
-        Mon, 18 Sep 2023 09:05:36 -0700 (PDT)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
-        by smtp.gmail.com with ESMTPSA id 72-20020a25054b000000b00d7802512079sm2361618ybf.38.2023.09.18.09.05.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Sep 2023 09:05:36 -0700 (PDT)
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-5925e580f12so49412407b3.3;
-        Mon, 18 Sep 2023 09:05:36 -0700 (PDT)
-X-Received: by 2002:a0d:cb16:0:b0:59b:52d6:9a34 with SMTP id
- n22-20020a0dcb16000000b0059b52d69a34mr9887143ywd.11.1695053136322; Mon, 18
- Sep 2023 09:05:36 -0700 (PDT)
+        with ESMTP id S231438AbjIRRI0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Sep 2023 13:08:26 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B6DB10C8;
+        Mon, 18 Sep 2023 10:08:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1695056884; x=1726592884;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=R0IYlcHB+mDxKxCzHImBnbsDf3CITkOOK5I/jc4Vt4g=;
+  b=jHmVXcnHxtmp9g7cDHL/OkxMyvebYAO6oquBDrkJo/a+KVVdUPtx3o4J
+   MkVxl3S9cxl7Cw5d2qJb8JI3a65E+VPflJvNO+0VsWgvki9hFLNCiaSba
+   jC+xQpNXl1k8aT95Bhb5M2muNoIEtY3hIzw0rE6KrlLH6Zz+fRQ2ljPp0
+   Q+z8C4FtEwY5cEi6NWyMwHiriy3qHJo3YdqzMX4ZIvcIzxFyCNZfOpSsY
+   asldT74jT9fkq2KuYrs3kGhzAXk6jmhyWjmR6hVIsURsKZKKn0f38xiZH
+   diUwLCbpjKWkYzycxjq4BIbH9mR2SrwBRF/T3lXD9m4XXeNu2jRpJ2vhc
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10837"; a="377037214"
+X-IronPort-AV: E=Sophos;i="6.02,157,1688454000"; 
+   d="scan'208";a="377037214"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2023 10:08:02 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10837"; a="775202677"
+X-IronPort-AV: E=Sophos;i="6.02,157,1688454000"; 
+   d="scan'208";a="775202677"
+Received: from lkp-server02.sh.intel.com (HELO 9ef86b2655e5) ([10.239.97.151])
+  by orsmga008.jf.intel.com with ESMTP; 18 Sep 2023 10:07:58 -0700
+Received: from kbuild by 9ef86b2655e5 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1qiHj2-0006J6-1j;
+        Mon, 18 Sep 2023 17:07:56 +0000
+Date:   Tue, 19 Sep 2023 01:07:42 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Elaine Zhang <zhangqing@rock-chips.com>, mturquette@baylibre.com,
+        sboyd@kernel.org, kever.yang@rock-chips.com, heiko@sntech.de,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org
+Cc:     oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        huangtao@rock-chips.com, xxx@rock-chips.com, xf@rock-chips.com
+Subject: Re: [PATCH v1 4/8] clk: rockchip: Avoid __clk_lookup() calls
+Message-ID: <202309190032.1NPAySNx-lkp@intel.com>
+References: <20230918073151.7660-5-zhangqing@rock-chips.com>
 MIME-Version: 1.0
-References: <cover.1694596125.git.ysato@users.sourceforge.jp> <a9a3e6f0dfdd1c5d6970d2decffef3c07d93476e.1694596125.git.ysato@users.sourceforge.jp>
-In-Reply-To: <a9a3e6f0dfdd1c5d6970d2decffef3c07d93476e.1694596125.git.ysato@users.sourceforge.jp>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 18 Sep 2023 18:05:24 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWwGdEJrfuVvwOCL34OmmbkkO=DQeSoqWDkSjxub=00sQ@mail.gmail.com>
-Message-ID: <CAMuHMdWwGdEJrfuVvwOCL34OmmbkkO=DQeSoqWDkSjxub=00sQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 10/30] drivers/clk: SH7750 / SH7751 CPG Driver
-To:     Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc:     linux-sh@vger.kernel.org, glaubitz@physik.fu-berlin.de,
-        linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230918073151.7660-5-zhangqing@rock-chips.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Sato-san,
+Hi Elaine,
 
-On Wed, Sep 13, 2023 at 11:25 AM Yoshinori Sato
-<ysato@users.sourceforge.jp> wrote:
-> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
+kernel test robot noticed the following build warnings:
 
-Thanks for your patch!
+[auto build test WARNING on rockchip/for-next]
+[also build test WARNING on clk/clk-next linus/master v6.6-rc2 next-20230918]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
->  drivers/clk/renesas/clk-sh7750.c | 236 +++++++++++++++++++++++++++++++
+url:    https://github.com/intel-lab-lkp/linux/commits/Elaine-Zhang/clk-clk-fractional-divider-Export-clk_fractional_divider_general_approximation-API/20230918-154652
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git for-next
+patch link:    https://lore.kernel.org/r/20230918073151.7660-5-zhangqing%40rock-chips.com
+patch subject: [PATCH v1 4/8] clk: rockchip: Avoid __clk_lookup() calls
+config: arm64-defconfig (https://download.01.org/0day-ci/archive/20230919/202309190032.1NPAySNx-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20230919/202309190032.1NPAySNx-lkp@intel.com/reproduce)
 
-Patch prefix should be "clk: renesas: ".
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202309190032.1NPAySNx-lkp@intel.com/
 
-> --- /dev/null
-> +++ b/drivers/clk/renesas/clk-sh7750.c
-> @@ -0,0 +1,236 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Renesas SH7750/51 CPG driver
-> + *
-> + * Copyright 2023 Yoshinori Sato <ysato@users.sourceforge.jp>
-> + */
-> +
-> +#include <linux/clkdev.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/err.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/io.h>
+All warnings (new ones prefixed by >>):
 
-Please add a blank line.
-
-> +#include "clk-shdiv.h"
-
-This doesn't exist until "[RFC PATCH v2 11/30] drivers/clk: SuperH
-generai clock divider helper", so please move that patch up in the
-series.
-
-> +#include <dt-bindings/clock/sh7750.h>
-
-This doesn't exist until "[RFC PATCH v2 24/30] include/dt-bindings:
-Add SH7750 CPG header.", so please move that patch up in the series.
-
-> +
-> +static DEFINE_SPINLOCK(clklock);
-
-I think it would make sense to move this into struct cpg_priv.
-
-
-> +struct cpg_priv {
-> +       struct clk_hw hw;
-> +       void __iomem *frqcr;
-> +       void __iomem *wdt;
-> +       u32 mode;
-> +       bool have_div1;
-> +};
-> +
-> +#define to_priv(_hw) container_of(_hw, struct cpg_priv, hw)
-> +
-> +#define FRQCR_PLL1EN BIT(10)
-> +static const int pll1mult[] = { 12, 12, 6, 12, 6, 12, 1};
-
-unsigned int
-
-> +
-> +static unsigned long pll_recalc_rate(struct clk_hw *hw,
-> +                                     unsigned long parent_rate)
-> +{
-> +       struct cpg_priv *cpg = to_priv(hw);
-> +       unsigned long rate = parent_rate;
-> +       uint16_t frqcr;
-
-u16
-
-Please don't mix uint<n>_t and u<n> in the same driver.
-
-> +static int pll_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
-> +{
-> +       struct cpg_priv *cpg = to_priv(hw);
-> +
-> +       get_round_rate(cpg, &req->rate, NULL, req->rate, req->best_parent_rate);
-> +       return 0;
-> +}
-> +
-> +static int pll_set_rate(struct clk_hw *hw,
-> +                       unsigned long rate, unsigned long prate)
-> +{
-> +       struct cpg_priv *cpg = to_priv(hw);
-> +       bool oldpll, newpll;
-> +       uint16_t frqcr;
-
-u16
+   In file included from drivers/clk/rockchip/clk-rk3328.c:13:
+>> drivers/clk/rockchip/clk-rk3328.c:160:7: warning: 'mux_armclk_p' defined but not used [-Wunused-const-variable=]
+     160 | PNAME(mux_armclk_p)             = { "apll_core",
+         |       ^~~~~~~~~~~~
+   drivers/clk/rockchip/clk.h:512:43: note: in definition of macro 'PNAME'
+     512 | #define PNAME(x) static const char *const x[] __initconst
+         |                                           ^
+--
+   In file included from drivers/clk/rockchip/clk-rk3588.c:13:
+>> drivers/clk/rockchip/clk-rk3588.c:447:7: warning: 'mux_armclkb23_p' defined but not used [-Wunused-const-variable=]
+     447 | PNAME(mux_armclkb23_p)                  = { "xin24m", "gpll", "b1pll",};
+         |       ^~~~~~~~~~~~~~~
+   drivers/clk/rockchip/clk.h:512:43: note: in definition of macro 'PNAME'
+     512 | #define PNAME(x) static const char *const x[] __initconst
+         |                                           ^
+>> drivers/clk/rockchip/clk-rk3588.c:446:7: warning: 'mux_armclkb01_p' defined but not used [-Wunused-const-variable=]
+     446 | PNAME(mux_armclkb01_p)                  = { "xin24m", "gpll", "b0pll",};
+         |       ^~~~~~~~~~~~~~~
+   drivers/clk/rockchip/clk.h:512:43: note: in definition of macro 'PNAME'
+     512 | #define PNAME(x) static const char *const x[] __initconst
+         |                                           ^
+>> drivers/clk/rockchip/clk-rk3588.c:445:7: warning: 'mux_armclkl_p' defined but not used [-Wunused-const-variable=]
+     445 | PNAME(mux_armclkl_p)                    = { "xin24m", "gpll", "lpll" };
+         |       ^~~~~~~~~~~~~
+   drivers/clk/rockchip/clk.h:512:43: note: in definition of macro 'PNAME'
+     512 | #define PNAME(x) static const char *const x[] __initconst
+         |                                           ^
 
 
-> +static void __init register_div(struct device_node *node, struct cpg_priv *cpg)
-> +{
-> +       static const char * const divout[] = {
-> +               [SH7750_CPG_FCK] = "fck",
-> +               [SH7750_CPG_BCK] = "bck",
-> +               [SH7750_CPG_ICK] = "ick",
-> +       };
-> +       struct clk *clk;
-> +       int i;
+vim +/mux_armclk_p +160 drivers/clk/rockchip/clk-rk3328.c
 
-unsigned int
-
-> +
-> +       for (i = 0; i < ARRAY_SIZE(divout); i++) {
-> +               if (sh_div_clk_register(node, divout[i], PLLOUT,
-> +                                       cpg->frqcr, i * 3, 3,
-> +                                       (i == 0) ? pdiv_table : div_table,
-> +                                       &clklock) < 0)
-> +                       pr_err("%s: failed to register %s div clock (%ld)\n",
-> +                              __func__, divout[i], PTR_ERR(clk));
-> +       }
-> +}
-> +
-> +
-> +static void __init sh7750_cpg_setup(struct device_node *node)
-> +{
-> +       unsigned int num_parents;
-> +       struct cpg_priv *cpg;
-> +
-> +       num_parents = of_clk_get_parent_count(node);
-> +       if (num_parents < 1) {
-> +               pr_err("%s: no parent found", node->name);
-> +               return;
-> +       }
-> +
-> +       cpg = kzalloc(sizeof(struct cpg_priv), GFP_KERNEL);
-> +       if (!cpg) {
-> +               pr_err("%s: failed to alloc memory", node->name);
-> +               return;
-> +       }
-> +
-> +       of_property_read_u32_index(node, "renesas,mode", 0, &cpg->mode);
-> +       if (cpg->mode >= 7) {
-> +               pr_err("%s: Invalid clock mode setting (%u)\n",
-> +                      node->name, cpg->mode);
-> +               goto cpg_free;
-> +       }
-> +       cpg->have_div1 = (of_device_is_compatible(node, "renesas,sh7750r-pll-clk") == 0);
-
-What is this for? There are no users of "renesas,sh7750r-pll-clk".
-
-> +
-> +       cpg->frqcr = of_iomap(node, 0);
-> +       if (cpg->frqcr == NULL) {
-> +               pr_err("%s: failed to map divide register", node->name);
-> +               goto cpg_free;
-> +       }
-> +
-> +       cpg->wdt = of_iomap(node, 1);
-> +       if (cpg->wdt == NULL) {
-> +               pr_err("%s: failed to map watchdog register", node->name);
-> +               goto unmap_frqcr;
-> +       }
-> +
-> +       if (!register_pll(node, cpg))
-> +               goto unmap_wdt;
-> +
-> +       register_div(node, cpg);
-> +
-> +unmap_wdt:
-> +       iounmap(cpg->wdt);
-> +unmap_frqcr:
-> +       iounmap(cpg->frqcr);
-> +cpg_free:
-> +       kfree(cpg);
-> +}
-> +
-> +CLK_OF_DECLARE(sh7750_cpg, "renesas,sh7750-cpg",
-> +              sh7750_cpg_setup);
-
-Probably you want a second entry for "renesas,sh7751-cpg"?
-
-Is there a good reason to use CLK_OF_DECLARE()?
-Perhaps because you need it early for the timer?
-
-Most modern clock drivers use a platform_driver, registered from
-e.g. subsys_initcall().  When you need an early initialization phase,
-you can use CLK_OF_DECLARE_DRIVER() for the early part.
-
-Gr{oetje,eeting}s,
-
-                        Geert
+fe3511ad8a1cf6 Elaine Zhang 2016-12-29  144  
+fe3511ad8a1cf6 Elaine Zhang 2016-12-29  145  PNAME(mux_2plls_p)		= { "cpll", "gpll" };
+fe3511ad8a1cf6 Elaine Zhang 2016-12-29  146  PNAME(mux_gpll_cpll_p)		= { "gpll", "cpll" };
+fe3511ad8a1cf6 Elaine Zhang 2016-12-29  147  PNAME(mux_cpll_gpll_apll_p)	= { "cpll", "gpll", "apll" };
+fe3511ad8a1cf6 Elaine Zhang 2016-12-29  148  PNAME(mux_2plls_xin24m_p)	= { "cpll", "gpll", "xin24m" };
+fe3511ad8a1cf6 Elaine Zhang 2016-12-29  149  PNAME(mux_2plls_hdmiphy_p)	= { "cpll", "gpll",
+fe3511ad8a1cf6 Elaine Zhang 2016-12-29  150  				    "dummy_hdmiphy" };
+fe3511ad8a1cf6 Elaine Zhang 2016-12-29  151  PNAME(mux_4plls_p)		= { "cpll", "gpll",
+fe3511ad8a1cf6 Elaine Zhang 2016-12-29  152  				    "dummy_hdmiphy",
+fe3511ad8a1cf6 Elaine Zhang 2016-12-29  153  				    "usb480m" };
+fe3511ad8a1cf6 Elaine Zhang 2016-12-29  154  PNAME(mux_2plls_u480m_p)	= { "cpll", "gpll",
+fe3511ad8a1cf6 Elaine Zhang 2016-12-29  155  				    "usb480m" };
+fe3511ad8a1cf6 Elaine Zhang 2016-12-29  156  PNAME(mux_2plls_24m_u480m_p)	= { "cpll", "gpll",
+fe3511ad8a1cf6 Elaine Zhang 2016-12-29  157  				     "xin24m", "usb480m" };
+fe3511ad8a1cf6 Elaine Zhang 2016-12-29  158  
+fe3511ad8a1cf6 Elaine Zhang 2016-12-29  159  PNAME(mux_ddrphy_p)		= { "dpll", "apll", "cpll" };
+fe3511ad8a1cf6 Elaine Zhang 2016-12-29 @160  PNAME(mux_armclk_p)		= { "apll_core",
+fe3511ad8a1cf6 Elaine Zhang 2016-12-29  161  				    "gpll_core",
+fe3511ad8a1cf6 Elaine Zhang 2016-12-29  162  				    "dpll_core",
+fe3511ad8a1cf6 Elaine Zhang 2016-12-29  163  				    "npll_core"};
+fe3511ad8a1cf6 Elaine Zhang 2016-12-29  164  PNAME(mux_hdmiphy_p)		= { "hdmi_phy", "xin24m" };
+fe3511ad8a1cf6 Elaine Zhang 2016-12-29  165  PNAME(mux_usb480m_p)		= { "usb480m_phy",
+fe3511ad8a1cf6 Elaine Zhang 2016-12-29  166  				    "xin24m" };
+fe3511ad8a1cf6 Elaine Zhang 2016-12-29  167  
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
