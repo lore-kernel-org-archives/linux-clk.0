@@ -2,116 +2,85 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 116D5CD13D2
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Sep 2023 07:43:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73738CD13D2
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Sep 2023 07:43:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239315AbjIRHmr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Sep 2023 03:42:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41056 "EHLO
+        id S234354AbjIRHnU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Sep 2023 03:43:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240339AbjIRHmc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Sep 2023 03:42:32 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 035FB1AE;
-        Mon, 18 Sep 2023 00:39:39 -0700 (PDT)
-X-IronPort-AV: E=McAfee;i="6600,9927,10836"; a="382333083"
-X-IronPort-AV: E=Sophos;i="6.02,156,1688454000"; 
-   d="scan'208";a="382333083"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2023 00:39:38 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10836"; a="811259953"
-X-IronPort-AV: E=Sophos;i="6.02,156,1688454000"; 
-   d="scan'208";a="811259953"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2023 00:39:24 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97-RC0)
-        (envelope-from <andy@kernel.org>)
-        id 1qi8qk-0000000EvwK-3qGW;
-        Mon, 18 Sep 2023 10:39:18 +0300
-Date:   Mon, 18 Sep 2023 10:39:18 +0300
-From:   Andy Shevchenko <andy@kernel.org>
-To:     nikita.shubin@maquefel.me
-Cc:     Hartley Sweeten <hsweeten@visionengravers.com>,
-        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Lukasz Majewski <lukma@denx.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Mark Brown <broonie@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Vinod Koul <vkoul@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Damien Le Moal <dlemoal@kernel.org>,
-        Sergey Shtylyov <s.shtylyov@omp.ru>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-spi@vger.kernel.org,
-        netdev@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-ide@vger.kernel.org,
-        linux-input@vger.kernel.org, alsa-devel@alsa-project.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v4 00/42] ep93xx device tree conversion
-Message-ID: <ZQf+pps0Ffsak+BA@smile.fi.intel.com>
-References: <20230915-ep93xx-v4-0-a1d779dcec10@maquefel.me>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230915-ep93xx-v4-0-a1d779dcec10@maquefel.me>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+        with ESMTP id S240503AbjIRHnN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Sep 2023 03:43:13 -0400
+Received: from mail-m12791.qiye.163.com (mail-m12791.qiye.163.com [115.236.127.91])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD176CCE;
+        Mon, 18 Sep 2023 00:41:54 -0700 (PDT)
+DKIM-Signature: a=rsa-sha256;
+        b=UEh7tRhqxHvTaUFQ0u3MeGBGhtzOP/PIi/s7GFyLhXmIlQ2+/CD2jlRdoQSsXQJf6b48/28Apzu9C/YfbudI/QH1+LjuLnfG8HkNqlPdceoCAU831/uiQX+LDSCLt1w10u+zkYvn1fF7QrQHiPcnBj9aAZm/mLdKrhq0BHFBTkM=;
+        s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+        bh=89R2kmI3V5ZPb6807YAI+FcT78Vp6S5FMXaVvIkbARo=;
+        h=date:mime-version:subject:message-id:from;
+Received: from localhost.localdomain (unknown [58.22.7.114])
+        by mail-m11879.qiye.163.com (Hmail) with ESMTPA id E9AA868021E;
+        Mon, 18 Sep 2023 15:31:51 +0800 (CST)
+From:   Elaine Zhang <zhangqing@rock-chips.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org,
+        kever.yang@rock-chips.com, zhangqing@rock-chips.com,
+        heiko@sntech.de, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        linux-kernel@vger.kernel.org, huangtao@rock-chips.com,
+        xxx@rock-chips.com, xf@rock-chips.com
+Subject: [PATCH v1 0/8] clk: rockchip: Support module build
+Date:   Mon, 18 Sep 2023 15:31:43 +0800
+Message-Id: <20230918073151.7660-1-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 2.17.1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+        tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ0MdQlZOT0tOQ01MTU9CGBpVEwETFh
+        oSFyQUDg9ZV1kYEgtZQVlOQ1VJSVVMVUpKT1lXWRYaDxIVHRRZQVlPS0hVSk1PSU5JVUpLS1VKQl
+        kG
+X-HM-Tid: 0a8aa733eb9e2eb5kusne9aa868021e
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Mz46OAw*Lz1RP0pWMg1LSUsD
+        SSswCTVVSlVKTUJOS0lJSEpJQkJKVTMWGhIXVQETGhUcChIVHDsJFBgQVhgTEgsIVRgUFkVZV1kS
+        C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUhLT083Bg++
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Sep 15, 2023 at 11:10:42AM +0300, Nikita Shubin via B4 Relay wrote:
-> This series aims to convert ep93xx from platform to full device tree support.
-> 
-> The main goal is to receive ACK's to take it via Arnd's arm-soc branch.
-> 
-> Major changes:
-> - drop newline at the end from each YAML files
-> - rename dma and clk bindings headers to match first compatible
-> - shrink SoC exported functions number to only 2
-> - dropped some ep93xx_pata fixes from these series
-> - dropped m48t86 stuff from these series
-> 
-> Bit thanks to Andy Shevchenko for thorough review.
+Elaine Zhang (8):
+  clk: clk-fractional-divider: Export
+    clk_fractional_divider_general_approximation API
+  clk: rockchip: drop use of rockchip_clk_protect_critical()
+  dt-bindings: clock: rk3188: Add binding id for ACLK_CPU_PRE
+  clk: rockchip: Avoid __clk_lookup() calls
+  clk: rockchip: rk3399: Support module build
+  clk: rockchip: rk3568: Support module build
+  clk: rockchip: rk3588: Support module build
+  clk: rockchip: fix the clk config to support module build
 
-You are welcome!
-
-Dunno if you have used --patience when formatted the patches, but I think
-you should, if hadn't, for the next version. It will help a lot in reviewing
-and understanding the changes.
+ drivers/clk/clk-fractional-divider.c          |   1 +
+ drivers/clk/rockchip/Kconfig                  |   8 +-
+ drivers/clk/rockchip/clk-cpu.c                |  18 +-
+ drivers/clk/rockchip/clk-px30.c               |  88 +++---
+ drivers/clk/rockchip/clk-rk3036.c             |  42 ++-
+ drivers/clk/rockchip/clk-rk3128.c             |  59 ++--
+ drivers/clk/rockchip/clk-rk3188.c             |  59 ++--
+ drivers/clk/rockchip/clk-rk3228.c             | 147 ++++-----
+ drivers/clk/rockchip/clk-rk3288.c             |  74 ++---
+ drivers/clk/rockchip/clk-rk3308.c             |  46 +--
+ drivers/clk/rockchip/clk-rk3328.c             | 182 +++++------
+ drivers/clk/rockchip/clk-rk3368.c             |  71 ++---
+ drivers/clk/rockchip/clk-rk3399.c             | 283 ++++++++----------
+ drivers/clk/rockchip/clk-rk3568.c             | 114 +++----
+ drivers/clk/rockchip/clk-rk3588.c             |  19 +-
+ drivers/clk/rockchip/clk-rv1108.c             |  65 ++--
+ drivers/clk/rockchip/clk-rv1126.c             |  77 ++---
+ drivers/clk/rockchip/clk.c                    |  20 +-
+ drivers/clk/rockchip/clk.h                    |  18 +-
+ include/dt-bindings/clock/rk3188-cru-common.h |   1 +
+ 20 files changed, 579 insertions(+), 813 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.17.1
 
