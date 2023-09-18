@@ -2,127 +2,104 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34C41CD37B0
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Sep 2023 09:07:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC970CD37B0
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Sep 2023 11:44:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238676AbjIRJGm convert rfc822-to-8bit (ORCPT
+        id S241270AbjIRLoC convert rfc822-to-8bit (ORCPT
         <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Sep 2023 05:06:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44552 "EHLO
+        Mon, 18 Sep 2023 07:44:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239007AbjIRJGQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Sep 2023 05:06:16 -0400
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0064E4;
-        Mon, 18 Sep 2023 02:06:10 -0700 (PDT)
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-5925e580f12so44811767b3.3;
-        Mon, 18 Sep 2023 02:06:10 -0700 (PDT)
+        with ESMTP id S241879AbjIRLn6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Sep 2023 07:43:58 -0400
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65390101;
+        Mon, 18 Sep 2023 04:43:47 -0700 (PDT)
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-59c215f2f4aso25062167b3.1;
+        Mon, 18 Sep 2023 04:43:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695027970; x=1695632770;
+        d=1e100.net; s=20230601; t=1695037426; x=1695642226;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qs7t8EoP8pSAMvY7e5Wa3knWe5J4fpmFbkl13nOAw0w=;
-        b=ASangAAReqz49pGrqOLafaQ+idBC5ru4rG4pgZ4zrZUaLZxpw1HH9XWu9G+6GD8o2M
-         CGBjDlGh+HZE3+mjABpREpn3t5H9oUcsGOAXRtmm5bQpWU+ZofmPCXN+tVogt+1ssbR6
-         k5Y3pkmOFhi+P86Bt5D0KL2WNilUkG6DFxa7yx0sOIRgD9ekQ0fknjcmUSekXnKJ7e9h
-         UYZHEo3XgmQvRTzS82NBVa3gPkuqNrjgKiYBIfClGV4I53WxmofdC+EU3J6P+zN5aGPD
-         ouRvU2FfBfqfiOw9vENCa3zVfaW+zTZQcG50Gul5R/DqUfwrKdiigx5xDhkzOoeTMzwL
-         U+qg==
-X-Gm-Message-State: AOJu0YwIZWW+Ncov1ytfciomsbcN122aNQ8zOQKtMAQalJMZ6EHDNfVF
-        1rtXr/ffIFgfqESie4FO5zFzoR0ZE51jWg==
-X-Google-Smtp-Source: AGHT+IHxEsyCSZcp0FIYgpyJsnDdOPWWLqZL/uowIeYryzrawSO/p1JRaqP1PdmNwfX05tOnKgO/AA==
-X-Received: by 2002:a81:6256:0:b0:58c:6121:48e8 with SMTP id w83-20020a816256000000b0058c612148e8mr9483173ywb.33.1695027969928;
-        Mon, 18 Sep 2023 02:06:09 -0700 (PDT)
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com. [209.85.128.171])
-        by smtp.gmail.com with ESMTPSA id m131-20020a817189000000b00589dbcf16cbsm2430341ywc.35.2023.09.18.02.06.09
+        bh=GJJOzR+YVeocDIgokR8jWUc83rIvpyDkrWoxfJG2Icw=;
+        b=pLzMWkviKebk+IzeFiUiLzbkYvtABQ2mJ0mNBiNHp246jt3rOOiQI04oHMWS2Bh5Yi
+         6v+1kCovK5ujgvJ/kAUOMBSvDklv4EJ7QpWER655OsvcFwOMnwr38Gv6DFDzfY0GePPb
+         +BhW5fAdfs8Om82VdhKIobmncmDRzGWVM5yABD0lixhfMV0k/jK3bkx/ec2PzP5gpHzH
+         F9D5N64W+Yw/s7ES5cEdviPCGykwodJk39CMk7EHmz8Im+Yd4DR6ZpCQW5TbhIEbMG5p
+         Ax+JYdtYrJeuiE+aCc/VsMhimapoy6uBrxhmj7LvUN5INJUJ+8B6Wzmm5O53CHpKJyrt
+         HTRw==
+X-Gm-Message-State: AOJu0YzLc6sLlHgzyaHTLfZ7/E2gpqaVJZ0tZzglU1+J3CUXOOOqIcRa
+        ISoIeyEdZlNVCbhGVm4M/UeSICP+mtvgaw==
+X-Google-Smtp-Source: AGHT+IFsVqTEIGgtnkFZBA9OGZqubR/hrR0RbiIrziH7xKVj43CemDNvYBC+pBZngVErosQXDg8SXA==
+X-Received: by 2002:a81:7209:0:b0:59b:5696:c33 with SMTP id n9-20020a817209000000b0059b56960c33mr8105951ywc.46.1695037426318;
+        Mon, 18 Sep 2023 04:43:46 -0700 (PDT)
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
+        by smtp.gmail.com with ESMTPSA id p62-20020a819841000000b0059b50f126fbsm1621417ywg.114.2023.09.18.04.43.45
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Sep 2023 02:06:09 -0700 (PDT)
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-59bcd927b45so44819007b3.1;
-        Mon, 18 Sep 2023 02:06:09 -0700 (PDT)
-X-Received: by 2002:a81:5e84:0:b0:589:c065:b419 with SMTP id
- s126-20020a815e84000000b00589c065b419mr10493285ywb.34.1695027969581; Mon, 18
- Sep 2023 02:06:09 -0700 (PDT)
+        Mon, 18 Sep 2023 04:43:46 -0700 (PDT)
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-59c215f2f4aso25061917b3.1;
+        Mon, 18 Sep 2023 04:43:45 -0700 (PDT)
+X-Received: by 2002:a0d:df10:0:b0:59b:f744:f158 with SMTP id
+ i16-20020a0ddf10000000b0059bf744f158mr8461214ywe.15.1695037425699; Mon, 18
+ Sep 2023 04:43:45 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com>
- <20230912045157.177966-23-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdUCpbPA3cDjNAq1irvr6z4Jux-5-tVDBuyr6nx_qOQGpg@mail.gmail.com> <701ee3bd-5d16-6b5f-2d34-4a4919c4c532@tuxon.dev>
-In-Reply-To: <701ee3bd-5d16-6b5f-2d34-4a4919c4c532@tuxon.dev>
+References: <20230917095832.39007-1-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20230917095832.39007-1-marek.vasut+renesas@mailbox.org>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 18 Sep 2023 11:05:57 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdW1ikV_AZXM24_a1YT_mUV_Qyvi+rpzGJxVSAwBMPyE+w@mail.gmail.com>
-Message-ID: <CAMuHMdW1ikV_AZXM24_a1YT_mUV_Qyvi+rpzGJxVSAwBMPyE+w@mail.gmail.com>
-Subject: Re: [PATCH 22/37] clk: renesas: add minimal boot support for RZ/G3S SoC
-To:     claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        ulf.hansson@linaro.org, linus.walleij@linaro.org,
-        gregkh@linuxfoundation.org, jirislaby@kernel.org,
-        magnus.damm@gmail.com, catalin.marinas@arm.com, will@kernel.org,
-        prabhakar.mahadev-lad.rj@bp.renesas.com,
-        biju.das.jz@bp.renesas.com, quic_bjorande@quicinc.com,
-        arnd@arndb.de, konrad.dybcio@linaro.org, neil.armstrong@linaro.org,
-        nfraprado@collabora.com, rafal@milecki.pl,
-        wsa+renesas@sang-engineering.com,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Date:   Mon, 18 Sep 2023 13:43:33 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWuHN-+=Wjt3mwH9HScuk_EDwW_=bW=KNXhk21MYuOTvQ@mail.gmail.com>
+Message-ID: <CAMuHMdWuHN-+=Wjt3mwH9HScuk_EDwW_=bW=KNXhk21MYuOTvQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a7795: Constify r8a7795_*_clks
+To:     Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc:     linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Claudiu,
+Hi Marek,
 
-On Mon, Sep 18, 2023 at 9:50 AM claudiu beznea <claudiu.beznea@tuxon.dev> wrote:
-> On 15.09.2023 15:52, Geert Uytterhoeven wrote:
-> > On Tue, Sep 12, 2023 at 6:53 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
-> >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >>
-> >> Add minimal clock and reset support for RZ/G3S SoC to be able to boot
-> >> Linux from SD Card/eMMC. This includes necessary core clocks for booting
-> >> and GIC, SCIF, GPIO, SD0 mod clocks and resets.
-> >>
-> >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >
-> > Thanks for your patch!
-> >
->
-> [ ... ]
->
-> >> +       CLK_PLL3_DIV2_4,
-> >> +       CLK_PLL3_DIV2_8,
-> >> +       CLK_PLL3_DIV6,
-> >> +       CLK_PLL4,
-> >> +       CLK_PLL6,
-> >> +       CLK_PLL6_DIV2,
-> >> +       CLK_SEL_SDHI0,
-> >> +       CLK_SEL_PLL4,
-> >> +       CLK_P1_DIV2,
-> >> +       CLK_P3_DIV2,
-> >
-> > Do you need CLK_P1_DIV2 and CLK_P3_DIV2?
-> > I don't see them in Figure 7.3 ("Clock System Diagram (2)").
->
-> P1_DIV2 is clock source for MHU_PCLK or OTFDE_DDR_PCLK.
-> P3_DIV2 is clock source for DMAC_PCLK, OTFDE_SPI_PCLK.
-> These are expressed in clock list document
-> (RZG3S_clock_list_r1.00_20230602.xlsx).
->
-> It is true the functionality could be preserved even w/o these 2 clocks but
-> I kept them here as I saw them as core clocks even though they are not
-> present in the Clock System Diagram from HW manual.
+Thanks for your patch!
 
-I don't think you can, as the module clock abstraction does not support
-specifying a divider.  Hence you do need an internal core clock between
-P1 and the module clock, to take care of the divider.
+On Sun, Sep 17, 2023 at 11:58 AM Marek Vasut
+<marek.vasut+renesas@mailbox.org> wrote:
+> Make r8a7795_core_clks and r8a7795_mod_clks arrays const and align them
+> with the other clock tables in other *cpg-mssr.c . No functional change.
+>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 
-> With these, would you prefer to keep these clocks or just remove them?
+Indeed, these are no longer modified since commit b1dec4e78599a2ce
+("clk: renesas: rcar-gen3: Disable R-Car H3 ES1.*").
 
-Yes, as I expect that at least the DMAC_PCLK will be added, eventually.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk-for-v6.7.
+
+> --- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+> @@ -51,7 +51,7 @@ enum clk_ids {
+>         MOD_CLK_BASE
+>  };
+>
+> -static struct cpg_core_clk r8a7795_core_clks[] __initdata = {
+> +static const struct cpg_core_clk r8a7795_core_clks[] __initconst = {
+>         /* External Clock Inputs */
+>         DEF_INPUT("extal",      CLK_EXTAL),
+>         DEF_INPUT("extalr",     CLK_EXTALR),
+> @@ -128,7 +128,7 @@ static struct cpg_core_clk r8a7795_core_clks[] __initdata = {
+>         DEF_BASE("r",           R8A7795_CLK_R,     CLK_TYPE_GEN3_R, CLK_RINT),
+>  };
+>
+> -static struct mssr_mod_clk r8a7795_mod_clks[] __initdata = {
+> +static const struct mssr_mod_clk r8a7795_mod_clks[] __initconst = {
+>         DEF_MOD("3dge",                  112,   R8A7795_CLK_ZG),
+>         DEF_MOD("fdp1-1",                118,   R8A7795_CLK_S0D1),
+>         DEF_MOD("fdp1-0",                119,   R8A7795_CLK_S0D1),
 
 Gr{oetje,eeting}s,
 
