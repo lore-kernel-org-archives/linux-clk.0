@@ -2,57 +2,58 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3881CD13D8
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Sep 2023 08:11:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34C41CD37B0
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Sep 2023 09:07:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240512AbjIRIKu convert rfc822-to-8bit (ORCPT
+        id S238676AbjIRJGm convert rfc822-to-8bit (ORCPT
         <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Sep 2023 04:10:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52966 "EHLO
+        Mon, 18 Sep 2023 05:06:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240564AbjIRIKr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Sep 2023 04:10:47 -0400
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6573E91;
-        Mon, 18 Sep 2023 01:10:42 -0700 (PDT)
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-65642ade0easo12524116d6.1;
-        Mon, 18 Sep 2023 01:10:42 -0700 (PDT)
+        with ESMTP id S239007AbjIRJGQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Sep 2023 05:06:16 -0400
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0064E4;
+        Mon, 18 Sep 2023 02:06:10 -0700 (PDT)
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-5925e580f12so44811767b3.3;
+        Mon, 18 Sep 2023 02:06:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695024641; x=1695629441;
+        d=1e100.net; s=20230601; t=1695027970; x=1695632770;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LX+6XiZ9i9bduvS7LsPDJJ/qIaDd1B/wTxi5s+/d5gs=;
-        b=gLQe+fp4gNihvquT5rZUYAslzC0hDLrDAWD5jjhkHvnBeaO2uu3f3h+aU1LC8/xKvZ
-         RKYj7h9T1qR2iyfHaAxr5zkz2Me7v9d21PscfG1wci0KHJFOvheYKzNIfJKCJHbC97/+
-         W/1GtCm+x55PDjX178BPuPfsiB4j/q0ESHKUh3Ra/q5/1E+q7Zc31ldQY4NWLpWeKKo6
-         AdoKWcwMRQdQna5X1M4rCwmtFZaJfNsTSCco7wJ1nMc87A6zHR0nGk1gb2/iZ1HsAoeY
-         asdozON9i86aGTXqCdEcDPaGpAPOUaOjdTIZPfE6Vzo0wZMASTnq7THOLBYtU7zq3uCL
-         xHpg==
-X-Gm-Message-State: AOJu0Yw1O1KjXXtnbClHolvj8duyPGwzTZhbFhzuvW+IltAEWUQPaw3n
-        kNs8U1GnXjEB+rwxzhd7glMgrtBWO2aE/w==
-X-Google-Smtp-Source: AGHT+IEssz/h2MzmVPfY/xAB1BaTSjOhI/Bwq5sx6gVrWw2l9kRGzoEy1ex5EvPT1YRDd3dVZtTFBQ==
-X-Received: by 2002:a05:6214:4b12:b0:656:1c7b:5aa1 with SMTP id pj18-20020a0562144b1200b006561c7b5aa1mr9485316qvb.29.1695024641328;
-        Mon, 18 Sep 2023 01:10:41 -0700 (PDT)
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com. [209.85.219.47])
-        by smtp.gmail.com with ESMTPSA id mu7-20020a056214328700b0064f42b1ab05sm3179770qvb.39.2023.09.18.01.10.41
+        bh=qs7t8EoP8pSAMvY7e5Wa3knWe5J4fpmFbkl13nOAw0w=;
+        b=ASangAAReqz49pGrqOLafaQ+idBC5ru4rG4pgZ4zrZUaLZxpw1HH9XWu9G+6GD8o2M
+         CGBjDlGh+HZE3+mjABpREpn3t5H9oUcsGOAXRtmm5bQpWU+ZofmPCXN+tVogt+1ssbR6
+         k5Y3pkmOFhi+P86Bt5D0KL2WNilUkG6DFxa7yx0sOIRgD9ekQ0fknjcmUSekXnKJ7e9h
+         UYZHEo3XgmQvRTzS82NBVa3gPkuqNrjgKiYBIfClGV4I53WxmofdC+EU3J6P+zN5aGPD
+         ouRvU2FfBfqfiOw9vENCa3zVfaW+zTZQcG50Gul5R/DqUfwrKdiigx5xDhkzOoeTMzwL
+         U+qg==
+X-Gm-Message-State: AOJu0YwIZWW+Ncov1ytfciomsbcN122aNQ8zOQKtMAQalJMZ6EHDNfVF
+        1rtXr/ffIFgfqESie4FO5zFzoR0ZE51jWg==
+X-Google-Smtp-Source: AGHT+IHxEsyCSZcp0FIYgpyJsnDdOPWWLqZL/uowIeYryzrawSO/p1JRaqP1PdmNwfX05tOnKgO/AA==
+X-Received: by 2002:a81:6256:0:b0:58c:6121:48e8 with SMTP id w83-20020a816256000000b0058c612148e8mr9483173ywb.33.1695027969928;
+        Mon, 18 Sep 2023 02:06:09 -0700 (PDT)
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com. [209.85.128.171])
+        by smtp.gmail.com with ESMTPSA id m131-20020a817189000000b00589dbcf16cbsm2430341ywc.35.2023.09.18.02.06.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Sep 2023 01:10:41 -0700 (PDT)
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-65631aa8b93so18948376d6.3;
-        Mon, 18 Sep 2023 01:10:41 -0700 (PDT)
-X-Received: by 2002:a81:6d84:0:b0:58f:c452:74da with SMTP id
- i126-20020a816d84000000b0058fc45274damr9139447ywc.42.1695024249288; Mon, 18
- Sep 2023 01:04:09 -0700 (PDT)
+        Mon, 18 Sep 2023 02:06:09 -0700 (PDT)
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-59bcd927b45so44819007b3.1;
+        Mon, 18 Sep 2023 02:06:09 -0700 (PDT)
+X-Received: by 2002:a81:5e84:0:b0:589:c065:b419 with SMTP id
+ s126-20020a815e84000000b00589c065b419mr10493285ywb.34.1695027969581; Mon, 18
+ Sep 2023 02:06:09 -0700 (PDT)
 MIME-Version: 1.0
 References: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com>
- <20230912045157.177966-15-claudiu.beznea.uj@bp.renesas.com> <CAMuHMdWRxaBsPAn0OR15WFua_5HZVPTmWabFnnex5gDLKjE9Cw@mail.gmail.com>
-In-Reply-To: <CAMuHMdWRxaBsPAn0OR15WFua_5HZVPTmWabFnnex5gDLKjE9Cw@mail.gmail.com>
+ <20230912045157.177966-23-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdUCpbPA3cDjNAq1irvr6z4Jux-5-tVDBuyr6nx_qOQGpg@mail.gmail.com> <701ee3bd-5d16-6b5f-2d34-4a4919c4c532@tuxon.dev>
+In-Reply-To: <701ee3bd-5d16-6b5f-2d34-4a4919c4c532@tuxon.dev>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 18 Sep 2023 10:03:58 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV1_Hyqzkf73k2-Vou_qJX8eUzEG+hJ-yP+9TYErWjyGg@mail.gmail.com>
-Message-ID: <CAMuHMdV1_Hyqzkf73k2-Vou_qJX8eUzEG+hJ-yP+9TYErWjyGg@mail.gmail.com>
-Subject: Re: [PATCH 14/37] clk: renesas: rzg2l: use u32 for flag and mux_flags
-To:     Claudiu <claudiu.beznea@tuxon.dev>
+Date:   Mon, 18 Sep 2023 11:05:57 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdW1ikV_AZXM24_a1YT_mUV_Qyvi+rpzGJxVSAwBMPyE+w@mail.gmail.com>
+Message-ID: <CAMuHMdW1ikV_AZXM24_a1YT_mUV_Qyvi+rpzGJxVSAwBMPyE+w@mail.gmail.com>
+Subject: Re: [PATCH 22/37] clk: renesas: add minimal boot support for RZ/G3S SoC
+To:     claudiu beznea <claudiu.beznea@tuxon.dev>
 Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
         ulf.hansson@linaro.org, linus.walleij@linaro.org,
@@ -74,43 +75,54 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Sep 14, 2023 at 3:29 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> On Tue, Sep 12, 2023 at 6:52 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
-> > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >
-> > flag and mux_flags are intended to keep bit masks. Use u32 type for it.
-> >
-> > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Thanks for your patch!
->
-> > --- a/drivers/clk/renesas/rzg2l-cpg.h
-> > +++ b/drivers/clk/renesas/rzg2l-cpg.h
-> > @@ -92,8 +92,8 @@ struct cpg_core_clk {
-> >         unsigned int conf;
-> >         const struct clk_div_table *dtable;
-> >         const char * const *parent_names;
-> > -       int flag;
-> > -       int mux_flags;
-> > +       u32 flag;
->
-> "flag" is used for several purposes, which expected different types:
->     - clk_init_data.flags is unsigned long,
->     - The clk_divider_flags parameter of clk_hw_register_divider_table() is u8,
->     - The clk_divider_flags parameter of __clk_hw_register_divider() is u8,
->     - The flags parameter of __devm_clk_hw_register_mux() is unsigned long.
->
-> > +       u32 mux_flags;
->
-> Actually the clk_mux_flags parameter of __devm_clk_hw_register_mux() is u8.
->
-> >         int num_parents;
-> >  };
->
-> I guess u32 is fine for all.
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Claudiu,
 
-Thx, will queue in renesas-clk-for-v6.7.
+On Mon, Sep 18, 2023 at 9:50 AM claudiu beznea <claudiu.beznea@tuxon.dev> wrote:
+> On 15.09.2023 15:52, Geert Uytterhoeven wrote:
+> > On Tue, Sep 12, 2023 at 6:53 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+> >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> >>
+> >> Add minimal clock and reset support for RZ/G3S SoC to be able to boot
+> >> Linux from SD Card/eMMC. This includes necessary core clocks for booting
+> >> and GIC, SCIF, GPIO, SD0 mod clocks and resets.
+> >>
+> >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> >
+> > Thanks for your patch!
+> >
+>
+> [ ... ]
+>
+> >> +       CLK_PLL3_DIV2_4,
+> >> +       CLK_PLL3_DIV2_8,
+> >> +       CLK_PLL3_DIV6,
+> >> +       CLK_PLL4,
+> >> +       CLK_PLL6,
+> >> +       CLK_PLL6_DIV2,
+> >> +       CLK_SEL_SDHI0,
+> >> +       CLK_SEL_PLL4,
+> >> +       CLK_P1_DIV2,
+> >> +       CLK_P3_DIV2,
+> >
+> > Do you need CLK_P1_DIV2 and CLK_P3_DIV2?
+> > I don't see them in Figure 7.3 ("Clock System Diagram (2)").
+>
+> P1_DIV2 is clock source for MHU_PCLK or OTFDE_DDR_PCLK.
+> P3_DIV2 is clock source for DMAC_PCLK, OTFDE_SPI_PCLK.
+> These are expressed in clock list document
+> (RZG3S_clock_list_r1.00_20230602.xlsx).
+>
+> It is true the functionality could be preserved even w/o these 2 clocks but
+> I kept them here as I saw them as core clocks even though they are not
+> present in the Clock System Diagram from HW manual.
+
+I don't think you can, as the module clock abstraction does not support
+specifying a divider.  Hence you do need an internal core clock between
+P1 and the module clock, to take care of the divider.
+
+> With these, would you prefer to keep these clocks or just remove them?
+
+Yes, as I expect that at least the DMAC_PCLK will be added, eventually.
 
 Gr{oetje,eeting}s,
 
