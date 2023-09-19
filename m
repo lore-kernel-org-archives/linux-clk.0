@@ -2,31 +2,31 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7EE2CD3445
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Sep 2023 07:22:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A0ADEDE989
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Sep 2023 07:31:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231687AbjISHWR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Sep 2023 03:22:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59744 "EHLO
+        id S231742AbjISHbr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Sep 2023 03:31:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231701AbjISHWR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Sep 2023 03:22:17 -0400
+        with ESMTP id S231751AbjISHbq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Sep 2023 03:31:46 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33EC4114;
-        Tue, 19 Sep 2023 00:22:12 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D791C433C7;
-        Tue, 19 Sep 2023 07:22:11 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0FF211A;
+        Tue, 19 Sep 2023 00:31:39 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6539C433C8;
+        Tue, 19 Sep 2023 07:31:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695108131;
-        bh=qgeDAcm+eFxaDNpoHATRJfJ3GIVR3JDf6CwlvDJ9Hdg=;
+        s=k20201202; t=1695108699;
+        bh=c8Jda3J+RhTWA4ijuCRZYSHme2R9CMRcX025MvqhKWM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=V4HyzUmM6NZAHCqsSdBwChfVQ9vb+mbJnDvnR1AuafUhWBK8agKMQvyTxRy1AIaar
-         gWEnVH7b3opi/SyBv31tCeKJtVRXoxV7GNKllD9WtdJqrPUFa4AmeRfWm/jHoiUmcj
-         soxIOiH5yp8+OubvyaWdJ6jYlZU5/QoiN5dPoalPvuvjt41lPrON9UeGK5FOJ5OYcd
-         NfQhpcKP6bDENs58VVUHADVmfMP3x80uKq27SEXBERvfWOjixPeaUltAlMF3B33+k1
-         DLelCMWw0ML+BbJBMDX2QawLBZPtqeIIBBvoQ1C+lZbjarSQrs9ZTAjqqzjBNczJ+d
-         uqYXLYWaJ4d3A==
-Date:   Tue, 19 Sep 2023 09:22:09 +0200
+        b=UWKb7fqgAsdPyITs/ng3rd6kRyzAEvbEg0CsfVTkaem2KV+R8S+vnc5Pw1SmiaXxV
+         IckberZW3K1GtRiC+8vAsQ81c6T2vmVkVIbMcN0POV024F2AOQ+8I1XS+sbRdZoE7Y
+         1G5vwtR10gIpigpW0BvThdnGBCbrD4ywTgDmK5awI93ZQVZSh+Qm0vSB8Sy/Hue6JU
+         byoGujV8JGMBIPS2uy221+6Vrv2KjHrutiYo4rg/bye/5qjeS0mYTdxiFh0CH71e5R
+         QIsUJyCh3UzdF151UJSrKbwBapmj5pAI7LORymIxi3Wf5Vhhzotw2YHJdFJN4smXEu
+         KfXcMaHVz1b2w==
+Date:   Tue, 19 Sep 2023 09:31:36 +0200
 From:   Maxime Ripard <mripard@kernel.org>
 To:     Benjamin Bara <bbara93@gmail.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -44,86 +44,89 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Frank Oltmanns <frank@oltmanns.dev>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Benjamin Bara <benjamin.bara@skidata.com>
-Subject: Re: [PATCH 07/13] clk: detect unintended rate changes
-Message-ID: <izjejcqxv5jpnwpgdzuiibvhajw5vy26hpjlknefuepjboppkg@ywkvxiup4xqg>
+        Benjamin Bara <benjamin.bara@skidata.com>,
+        Adam Ford <aford173@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>
+Subject: Re: [PATCH 00/13] imx8mp: first clock propagation attempt (for LVDS)
+Message-ID: <7at35ykai5lyeaci3xvklrfk4xg4hn3jnw4fz3egqobjvnglbz@cv45l3mrhtct>
 References: <20230918-imx8mp-dtsi-v1-0-1d008b3237c0@skidata.com>
- <20230918-imx8mp-dtsi-v1-7-1d008b3237c0@skidata.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="3pz4fjkoxsas7y5a"
+        protocol="application/pgp-signature"; boundary="rra6xzzb3zzwrtqx"
 Content-Disposition: inline
-In-Reply-To: <20230918-imx8mp-dtsi-v1-7-1d008b3237c0@skidata.com>
+In-Reply-To: <20230918-imx8mp-dtsi-v1-0-1d008b3237c0@skidata.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---3pz4fjkoxsas7y5a
+--rra6xzzb3zzwrtqx
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-On Mon, Sep 18, 2023 at 12:40:03AM +0200, Benjamin Bara wrote:
-> From: Benjamin Bara <benjamin.bara@skidata.com>
+On Mon, Sep 18, 2023 at 12:39:56AM +0200, Benjamin Bara wrote:
+> Target of this series is to dynamically set the rate of video_pll1 to
+> the required LVDS clock rate(s), which are configured by the panel, and
+> the lvds-bridge respectively.
 >=20
-> As we now keep track of the clocks which are allowed to change - namely
-> the ones which are along the ancestor line between the rate trigger and
-> the top-most changed clock
+> Some background:
+> The LVDS panel requires two clocks: the crtc clock and the lvds clock.
+> The lvds rate is always 7x the crtc rate. On the imx8mp, these are
+> assigned to media_disp2_pix and media_ldb, which are both
+> clk-composite-8m. The rates are set by drm_client_modeset_commit() (and
+> later by fsl_ldb_atomic_enable()), and the fsl-ldb driver, first crtc,
+> then lvds. The parent is typically assigned to video_pll1, which is a
+> clk-pll14xx (pll1443x).
+>=20
+> The main problem:
+> As the clk-composite-8m currently doesn't support CLK_SET_RATE_PARENT,
+> the crtc rate is not propagated to video_pll1, and therefore must be
+> assigned in the device-tree manually.
+>=20
+> The idea:
+> Enable CLK_SET_RATE_PARENT, at least for media_disp2_pix and media_ldb.
+> When this is done, ensure that the pll1443x can be re-configured,
+> meaning it ensures that an already configured rate (crtc rate) is still
+> supported when a second child requires a different rate (lvds rate). As
+> the children have divider, the current approach is straight forward by
+> calculating the LCM of the required rates. During the rate change of the
+> PLL, it must ensure that all children still have the configured rate at
+> the end (and maybe also bypass the clock while doing so?). This is done
+> by implementing a notifier function for the clk-composite-8m. The tricky
+> part is now to find out if the rate change was intentional or not. This
+> is done by adding the "change trigger" to the notify data. In our case,
+> we now can infer if we aren't the change trigger, we need to keep the
+> existing rate after the PLL's rate change. We keep the existing rate by
+> modifying the new_rate of the clock's core, as we are quite late in an
+> already ongoing clock change process.
 
-I'm not sure that the fact that only a clock between the clock
-triggering the rate change and the top-most changed clock was allowed to
-change has ever been a thing.
+So just like the discussion we had on the Allwinner stuff, I don't think
+you can cover it completely within the framework. If we take a step
+backward, I guess what you want is that you have multiple clocks,
+feeding multiple displays at varying clock rates depending on the
+resolution, and the parent needs to accomodate all of them, right?
 
-This puts a fairly big pressure on the tree propagation code, and
-whether or not that can be done is completely context-dependent.
+Could you share the clock tree and the capability of each clocks (range
+of the multipliers / dividers mostly)?
 
-Devices like UART, I2C or audio devices are rate change sensitive, and
-yet usually have internal dividers to accomodate for their parent rate
-so don't usually care as long as they are notified.
-
-Similarly, all the non-rate-sensitive devices (like pretty much all
-bus/registers clocks) don't care at all about what the rate is, so that
-requirement is making a rate change going through less likely, without a
-particular reason only for a handful of devices (display in this case).
-
-Also, this rules out any child of a clock from being allowed to change?
-That looks wild to me :)
-
-> we can run through the subtree of changes and look for unexpected
-> ones.
-
-Again, I'm not sure we can say that those changes were unexpected. They
-very much were expected to change to the CCF so far.
-
-> Shared parents must set their rate in a way, that all
-> consumer-configured rates are respected.
-
-Again, that entirely depends on the context: the clock tree topology,
-the devices involved, what their drivers support, etc. I'm sure it's
-true in your case, but I'm not sure we can make that a generic
-statement.
-
-> As this is sometimes not possible and clocks sometime doesn't require
-> the *exact* rate, we might have to find a way to find out if it is
-> *exact enough*. Then we could fix it in the core.
-
-And "exact enough" entirely depends on the context again, so really, I'm
-not sure we can (and should!) fix that at the framework level.
+I'm wondering if we couldn't set the parent clock to a fairly high rate
+that would be high enough for each child to reach whatever rate it needs
+to have without the need for CLK_SET_RATE_PARENT.
 
 Maxime
 
---3pz4fjkoxsas7y5a
+--rra6xzzb3zzwrtqx
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZQlMIQAKCRDj7w1vZxhR
-xc6LAQCWG43IJjPcdV6NAx1M8x90MI1vXcM3D6N8NzmrVpQnJQD9EeUCxENPJjhD
-Hv0cIlQ3XenPhpGlG2OclHNzNRlYhw4=
-=HI+3
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZQlOWAAKCRDj7w1vZxhR
+xeBiAP4jttHKIfgVxUcdg4EmJxBQdy3Fu1rxc1KHBNTMdjPJaAEA9bFwNcsUbV6n
++2VSHcZbhMSCH+91fdbGdVwx08U2rAo=
+=VMgi
 -----END PGP SIGNATURE-----
 
---3pz4fjkoxsas7y5a--
+--rra6xzzb3zzwrtqx--
