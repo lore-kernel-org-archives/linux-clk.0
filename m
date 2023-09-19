@@ -2,64 +2,52 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14AF8CE79A8
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Sep 2023 23:04:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46675CE79AC
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Sep 2023 23:04:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233747AbjISXEZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Sep 2023 19:04:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48870 "EHLO
+        id S233800AbjISXEa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Sep 2023 19:04:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233672AbjISXEC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Sep 2023 19:04:02 -0400
+        with ESMTP id S233722AbjISXEO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Sep 2023 19:04:14 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03BCF138;
-        Tue, 19 Sep 2023 16:03:52 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53B73C433CB;
-        Tue, 19 Sep 2023 23:03:50 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B16511AB;
+        Tue, 19 Sep 2023 16:03:57 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B579C43215;
+        Tue, 19 Sep 2023 23:03:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695164632;
-        bh=9JPk/GnPXNyAivpcwuGojuU8M2bc6bbcZIAp5O0Gbao=;
+        s=k20201202; t=1695164636;
+        bh=TyjQ2a3fkLX16U9DrTeFwA6CpB4id9tE4rUUupeTxQM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YjsvT1wovZ3ZyCQBHj+1+2m/Rnv0NEX90ttFgKP0/X3WyrSjL7169o07sOV+qkSJO
-         neQomVybJTjDhRNwaQ4cRvi1+M0z0lT/LDVIQrBdtX165x7MuhHviWBYliotN25ITz
-         DQAJ2li6LuLYPR+JwZ8n8ant18yFzgfIiAbYJ637qbpyilUTrb4r1TGe8ZdGWFbm6h
-         CBYnyVJbUA4fMrCRBarg9YUGA5ddA4G6g7K8zTEJLo7EqW5Cj0/FHjPK7JPQMX4B17
-         T/vvdQyHQVd0K/ZNwrx3XhSQnjD7EWD24MqG3/s1QrrIFGnBe0GzlEBzKbZLW2kNBd
-         YpLPuzmUhpEWQ==
+        b=FDHQK0XZUKFKX7CtidDDbUDAllbjRjLgpaqYZcU8s16H5gX3vSlJVLTa06FyKkqFO
+         5FJzoeESlfKVYExy1xAyvNtA1So+4PEr4dEhvag4HWg8ESa2u+2Hxy450KYcxItcZx
+         P+GGNbBpqx/GpH0JYdewKVmDdSJA1UGk6yl23OixU6mKnNLOY31U/Tl1Y8QVcsvI98
+         OYPPknV5llvL4S9VNOlYYI898pV1JQXhtGRk5g4QdkwDSPS8lplV7oBAktSD81RB0M
+         aU5DNkHhTsLB8r585noxLUqUP3ANwEOR5CIVWOA+dCusrTO/FOxdarQi5YZ/IaJ+UT
+         jVFYKUp4BIVHA==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
+To:     Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Krishna Manikandan <quic_mkrishn@quicinc.com>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>
-Cc:     ~postmarketos/upstreaming@lists.sr.ht,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Martin Botka <martin.botka@somainline.org>,
-        Jami Kettunen <jami.kettunen@somainline.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, Lux Aliaga <they@mint.lgbt>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: (subset) [PATCH v4 00/17] drm/msm: Add SM6125 MDSS/DPU hardware and enable Sony Xperia 10 II panel
-Date:   Tue, 19 Sep 2023 16:07:40 -0700
-Message-ID: <169516485993.787935.1547209942193391755.b4-ty@kernel.org>
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>
+Cc:     Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>
+Subject: Re: (subset) [PATCH V6 0/5] Add camera clock controller support for SM8550
+Date:   Tue, 19 Sep 2023 16:07:44 -0700
+Message-ID: <169516485981.787935.8704144419477158360.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20230723-sm6125-dpu-v4-0-a3f287dd6c07@somainline.org>
-References: <20230723-sm6125-dpu-v4-0-a3f287dd6c07@somainline.org>
+In-Reply-To: <20230707035744.22245-1-quic_jkona@quicinc.com>
+References: <20230707035744.22245-1-quic_jkona@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -68,32 +56,20 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On Sun, 23 Jul 2023 18:08:38 +0200, Marijn Suijten wrote:
-> Bring up the SM6125 DPU now that all preliminary series (such as INTF
-> TE) have been merged (for me to test the hardware properly), and most
-> other conflicting work (barring ongoing catalog *improvements*) has made
-> its way in as well or is still being discussed.
+On Fri, 07 Jul 2023 09:27:39 +0530, Jagadeesh Kona wrote:
+> Add bindings, driver and devicetree node for camera clock controller on
+> SM8550.
 > 
-> The second part of the series complements that by immediately utilizing
-> this hardware in DT, and even enabling the MDSS/DSI nodes complete with
-> a 6.0" 1080x2520 panel for Sony's Seine PDX201 (Xperia 10 II).
+> Changes in v6:
+>  - Updated parent map and frequency table of cam_cc_xo_clk_src to use
+>    active only source P_BI_TCXO_AO instead of P_BI_TCXO
 > 
 > [...]
 
 Applied, thanks!
 
-[02/17] arm64: dts: qcom: sm6125: Pad APPS IOMMU address to 8 characters
-        commit: 310cdafc4a56827d1aeda7cc297939034adb8f99
-[03/17] arm64: dts: qcom: sm6125: Sort spmi_bus node numerically by reg
-        commit: 3d06cee2249f4764f01a9f602ec1cc1bf4562ca6
-[14/17] arm64: dts: qcom: sm6125: Switch fixed xo_board clock to RPM XO clock
-        commit: cbe82d7d0b149aa9c0c000f7ffd2b18bfd248d35
-[15/17] arm64: dts: qcom: sm6125: Add dispcc node
-        commit: 4988881ec067c3e6d382de1583b7f5b1095ddea2
-[16/17] arm64: dts: qcom: sm6125: Add display hardware nodes
-        commit: 0865d23a02260a76963bd18d9ae603e77cdd0eba
-[17/17] arm64: dts: qcom: sm6125-seine: Configure MDSS, DSI and panel
-        commit: 5078dfe3c5c7b8d2d6494c26de81a4f3d4a5a3d7
+[5/5] arm64: dts: qcom: sm8550: Add camera clock controller
+      commit: e271b59e39a6fbdc57784fdda7e68076f8e58ef7
 
 Best regards,
 -- 
