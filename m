@@ -2,120 +2,50 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57DE6CD5484
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Sep 2023 07:37:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37677CD548A
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Sep 2023 07:38:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231857AbjISHh6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Sep 2023 03:37:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49502 "EHLO
+        id S231879AbjISHiQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Sep 2023 03:38:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231871AbjISHhx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Sep 2023 03:37:53 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4100C116;
-        Tue, 19 Sep 2023 00:37:42 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4926FC433CA;
-        Tue, 19 Sep 2023 07:37:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695109061;
-        bh=NJEdOhSplERf4qx+MZnaddtdGxjwkTj9FA70yGwEl/I=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=toJGkyN//X1dq/GlVmSCP5BAImC4qNkx0+qvdGNKwgIg4nWdrMsNY3PSR0LhC8ey6
-         C6+w/YZpgqJtNnUImwuowlzhbwSJg/GDc2ONrxID0oKvtqayMHYIXYRPPiyamykENZ
-         e+TARbge08QSDBvNJQDO9cN672fNX0dzU/CHe43RvDVGoeQZ4OXCCDjW+SJ0byGQil
-         9fh2QIkA9HgWdNZTNqZEZ3VwNWKobCNo9MBFNopyWfkRdPQMtRpCRKq+aDqYbywaeD
-         Ps9K6b7AMDHjKLH1jXSd3fAGprFS2WLFcz+O4Ec//le6qhvGvAvknDoCYivh3lVr2x
-         otIj5mwBAL7eQ==
-Date:   Tue, 19 Sep 2023 09:37:38 +0200
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Benjamin Bara <bbara93@gmail.com>
-Cc:     Adam Ford <aford173@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Frank Oltmanns <frank@oltmanns.dev>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Benjamin Bara <benjamin.bara@skidata.com>,
-        Lucas Stach <l.stach@pengutronix.de>
-Subject: Re: [PATCH 00/13] imx8mp: first clock propagation attempt (for LVDS)
-Message-ID: <fzu4iwxh7tak65twym35p7oik2nt4ke6khmmamzz7q2uopu736@cimranz73wvt>
-References: <20230918-imx8mp-dtsi-v1-0-1d008b3237c0@skidata.com>
- <CAHCN7xJ8KrBd-532=gDE+82xo1ZNtoDT7pZsYwy9-9WiJvmkvw@mail.gmail.com>
- <CAJpcXm6OWNODOz5gEWVhOJjKTazwzE7XV6ZR1H06zpECrivZig@mail.gmail.com>
+        with ESMTP id S231888AbjISHiE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Sep 2023 03:38:04 -0400
+X-Greylist: delayed 440 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 19 Sep 2023 00:37:58 PDT
+Received: from mail.leeswilly.pl (mail.leeswilly.pl [89.116.26.225])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56D3A19D
+        for <linux-clk@vger.kernel.org>; Tue, 19 Sep 2023 00:37:58 -0700 (PDT)
+Received: by mail.leeswilly.pl (Postfix, from userid 1001)
+        id F41CE76134A; Tue, 19 Sep 2023 09:30:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=leeswilly.pl; s=mail;
+        t=1695108637; bh=qCQG4c3C0tvkuSSy6okg6Td4OKi9mrw7rI9pE9SwJ9g=;
+        h=Date:From:To:Subject:From;
+        b=rlLRj4GQuuARDlv7wX5/AJ1LAf0hj9bY1rbBKH5ivfghxsBXmszkrfdSHydPjoEyI
+         fYB2whcaE69XF8H3jXxFBDBHWNJ1tjnVL/2oEy5DPsrH0OF84BJU0aU+DohQWYECHL
+         UX151p6WBIrUpPk0ues82PTl080m9KsYd+XLesiaOszanpTzHc4EqKJP+3KtCFGo/G
+         hyeC9jPdty8JLFgl7uKq5kiNuDEEV4MutMXzIRZa4DerbfJNkxl0C9LW0B0vESovWP
+         qrjQvl1A+RCQfwgcHG0dkbc0AcIBIZ1020NyTlqeTALgwFMLVTinpJm09XMy4J+VTs
+         0N8G6bbM6yNMg==
+Received: by mail.leeswilly.pl for <linux-clk@vger.kernel.org>; Tue, 19 Sep 2023 07:30:18 GMT
+Message-ID: <20230919084500-0.1.3z.bbic.0.f9f490ntgq@leeswilly.pl>
+Date:   Tue, 19 Sep 2023 07:30:18 GMT
+From:   "Jakub Lemczak" <jakub.lemczak@leeswilly.pl>
+To:     <linux-clk@vger.kernel.org>
+Subject: =?UTF-8?Q?Pytanie_o_samoch=C3=B3d?=
+X-Mailer: mail.leeswilly.pl
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="zkw33pnzrz7sbey3"
-Content-Disposition: inline
-In-Reply-To: <CAJpcXm6OWNODOz5gEWVhOJjKTazwzE7XV6ZR1H06zpECrivZig@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Dzie=C5=84 dobry,
 
---zkw33pnzrz7sbey3
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Czy interesuje Pa=C5=84stwa rozwi=C4=85zanie umo=C5=BCliwiaj=C4=85ce moni=
+torowanie samochod=C3=B3w firmowych oraz optymalizacj=C4=99 koszt=C3=B3w =
+ich utrzymania?=20
 
-On Mon, Sep 18, 2023 at 07:59:16PM +0200, Benjamin Bara wrote:
-> Hi Adam!
->=20
-> On Mon, 18 Sept 2023 at 07:00, Adam Ford <aford173@gmail.com> wrote:
-> > On Sun, Sep 17, 2023 at 3:40=E2=80=AFPM Benjamin Bara <bbara93@gmail.co=
-m> wrote:
-> > > The idea:
-> > > Enable CLK_SET_RATE_PARENT, at least for media_disp2_pix and media_ld=
-b.
-> > > When this is done, ensure that the pll1443x can be re-configured,
-> > > meaning it ensures that an already configured rate (crtc rate) is sti=
-ll
-> > > supported when a second child requires a different rate (lvds rate). =
-As
-> >
-> > Have you tested with the DSI as well?  If memory servers, the DSI
-> > clock and the LVDS clock are both clocked from the same video_pll.  At
-> > one time, I had done some experimentation with trying the DSI
-> > connected to an HDMI bridge chip connected to a monitor and the LVDS
-> > was connected to a display panel with a static resolution and refresh
-> > rate.  For my LVDS display, it needs 30MHz to display properly, but
-> > various HDMI resolutions needed values that were not evenly divisible
-> > by 30MHz which appeared to cause display sync issues when trying to
-> > share a clock that was trying to dynamically adjust for two different
-> > displays especially when trying to change the resoltuion of the HDMI
-> > display to various values for different resolutions.
->=20
-> Unfortunately I haven't. I think if you have the use case to support
-> different "run-time-dynamic" (HDMI) rates in parallel with a static
-> (LVDS) rate
 
-If anything, LVDS is harder to deal with than HDMI. HDMI only has a
-handful of clock rates (74.250, 148.5, 297 and 594MHz mostly) while LVDS
-is more freeform.
-
-We are more likely to change the rate on an HDMI device though, but a
-rate change from 1080p to 720p would only require a divide by two (from
-148.5 to 74.250) so fairly easy to do.
-
-Maxime
-
---zkw33pnzrz7sbey3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZQlPwgAKCRDj7w1vZxhR
-xQXZAP0X9+g7TAJgG9bUbGB3HDyh4TifaZt/f4MAA2x26s9IQQD/YvP1E9Pg3wEZ
-aHBt6URFPtaaQv1p3sB+/iouDuI0mgU=
-=L9fk
------END PGP SIGNATURE-----
-
---zkw33pnzrz7sbey3--
+Pozdrawiam
+Jakub Lemczak
