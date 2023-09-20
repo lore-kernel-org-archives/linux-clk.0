@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69272CE79D2
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Sep 2023 14:04:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CA8FCE79D1
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Sep 2023 14:04:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234579AbjITOE3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 20 Sep 2023 10:04:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52568 "EHLO
+        id S235115AbjITOEh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 20 Sep 2023 10:04:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236279AbjITOE2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Sep 2023 10:04:28 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59DB4DE
-        for <linux-clk@vger.kernel.org>; Wed, 20 Sep 2023 07:04:18 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-99bdcade7fbso892194466b.1
-        for <linux-clk@vger.kernel.org>; Wed, 20 Sep 2023 07:04:18 -0700 (PDT)
+        with ESMTP id S236439AbjITOEc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Sep 2023 10:04:32 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AECA7D9
+        for <linux-clk@vger.kernel.org>; Wed, 20 Sep 2023 07:04:23 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-9ad8a33fd0dso890777566b.3
+        for <linux-clk@vger.kernel.org>; Wed, 20 Sep 2023 07:04:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=pqrs.dk; s=google; t=1695218657; x=1695823457; darn=vger.kernel.org;
+        d=pqrs.dk; s=google; t=1695218662; x=1695823462; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=w032pb+6esKyq8yphCBmJ8JNN5QmwR1Eb041EExaFZk=;
-        b=Opk02AndNUovlKRWpIYhIYxIOS5ARtlaLM+u9NKlbDgtVbpRrxuLPUm4Xiix4hRng/
-         qEWUdxG8Nmp5QqvQMCKsDODGlt8RQJmAJW2N6OJZ9gZy361FZc218fjSUZJApN3Wv4zl
-         aEaL9bktwo7P6sVXmBmKm9J8SWHgTFPLEKkNwWiDbcK2OHUsWAiwAEo/npoPTQW0bjb/
-         MwrL4ThOEbuo6MpNLGrsTamPo2sYestvuThDzfQLMF2ljDKtSMHWpGHEdM/tgvssGBK7
-         PPjkeNrRekDeO0swYgG2SbVdGJMGsd7BYg+k8ngOpe0d2L0Rsmhup3AQ0CpcXdBKmiv4
-         t4zg==
+        bh=DWkKzE4Z8RDrXV6wrMgsXOyr17/u+hWk6l6i8+o41y0=;
+        b=em1W+8KZ7dIQwzWp4QilMrTesB48Ctsb8uT+hL5orBSxzDl3RB5HJufz5LZakFrgy9
+         8T/Wh/LmWd6u5dvakkoRPSGxjb0purb5EpKQVpuRpFi5BLm8Vtw96MAWbTXTnHqr0Ryh
+         bwjyQpxGbPZXmCRD2lseQfoHWNwTUf3iCZ2JPbWdOXulESyftR4gyCXSyjZu2Sw56VuP
+         N0cQHUAbOW9l6kDCJkGQktxD9FPrSKwu+i905nEZrs1mmp6bprgAJCcH6lY3XZLSWqNE
+         tFYkORTzglmOoPlNUa78gV2b6DttAL2j5vMe6wMrF7U8gbKJUGkLT2wAVqQ4HT0POpNN
+         M26g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695218657; x=1695823457;
+        d=1e100.net; s=20230601; t=1695218662; x=1695823462;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=w032pb+6esKyq8yphCBmJ8JNN5QmwR1Eb041EExaFZk=;
-        b=NeN0zWjvgIHyI/W6mBoCQHIiGyx9qhr60zn4nlN0MngXZcpk1/Lgt8Ou70TDkRbX8k
-         VJ/ebCDDOaah3t0naenLV8oaQn0Jc/x7X4BL3q8G3NlkoWYdFi8vUCPiDqx4tHRBMZAt
-         gqZxkUoa0G0ghwK06rjB/3bsLQUbLr+XKEwxYU5Kf8MFBYgsP9V59l1H3wBo+7oI2YzZ
-         VGxlnENrg0sVYSwzl5D3QiffMVcTKprJ7/P4fvp4w8snXDcf0S7H1r1OFkGWXh5xSjqi
-         wzuQFyvmXkpA0qA8Zyaj6BUQBDB8RQfVXVYy7Z51qy824LnkcoYuZN3gM3X0honB5ZG6
-         K+jQ==
-X-Gm-Message-State: AOJu0YxjkmcPD9XW1pedwROXN3gmzzFyGkE7bTkS2Zmjl7/5+iXk5vbO
-        6CY936t//mk0QuZWpGOmOKGwBQ==
-X-Google-Smtp-Source: AGHT+IE/14qrFxxxSUOR3v71Wjk2ijgN7NN3iU9WAeOZia0vNq5OGN6XaLta0ZA56FNPAv4OF96Nsw==
-X-Received: by 2002:a17:907:7714:b0:9ad:e2c5:7f73 with SMTP id kw20-20020a170907771400b009ade2c57f73mr2341145ejc.27.1695218656360;
-        Wed, 20 Sep 2023 07:04:16 -0700 (PDT)
+        bh=DWkKzE4Z8RDrXV6wrMgsXOyr17/u+hWk6l6i8+o41y0=;
+        b=mthFEbCpq18WBr4LqPHrz9YoZ0TlD2VnZYmR3qedol+z3dhNqlz009Mwss3z3XJbrI
+         iHGng5Bz4+askEbJMnAQJ6FxqxuFYRsNJbTCCPIIAYxkUx2d4Gmwv+kGRRUm0Sc2gwh4
+         q6tXkWtVejekAfnNv3oJdT9XfC75sFatcar8S+yH5ZeyEEMwjtnuH1t30/K2Sh7YBV8H
+         7MkcFP//jr7CjZB3uZ2XNd7CqEJe/8w4nGRbcfJa2XTwqXZeDY5/SZfHKsA96TCz6GBG
+         1KRZrLP90ET1u/qICzUm+pJkAbiz+HU9h/fR/8GRAothfnVrmh9XDlw8B2C//QyKH6j/
+         SrdA==
+X-Gm-Message-State: AOJu0Yxp7w16D16nLpYBJgaL++Psn4rpYYcu5OuHkOqWVyrab2NpI24E
+        QCRGbeb16JciNIoyvtdaIENQhg==
+X-Google-Smtp-Source: AGHT+IGGYIonhOllcmSBOA3CcwrxlwNHhrbXgSUw/s/q//Q2xEV7PvwsVsb+kstHH91b0JAySyBCdw==
+X-Received: by 2002:a17:906:5386:b0:9a1:be50:ae61 with SMTP id g6-20020a170906538600b009a1be50ae61mr2179267ejo.69.1695218661856;
+        Wed, 20 Sep 2023 07:04:21 -0700 (PDT)
 Received: from capella.localdomain ([193.89.194.60])
-        by smtp.gmail.com with ESMTPSA id c26-20020a170906341a00b00993470682e5sm9397761ejb.32.2023.09.20.07.04.15
+        by smtp.gmail.com with ESMTPSA id c26-20020a170906341a00b00993470682e5sm9397761ejb.32.2023.09.20.07.04.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Sep 2023 07:04:16 -0700 (PDT)
+        Wed, 20 Sep 2023 07:04:21 -0700 (PDT)
 From:   =?UTF-8?q?Alvin=20=C5=A0ipraga?= <alvin@pqrs.dk>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -58,11 +58,12 @@ To:     Michael Turquette <mturquette@baylibre.com>,
         =?UTF-8?q?=A0ipraga?= <alsi@bang-olufsen.dk>
 Cc:     Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
         Rabeeh Khoury <rabeeh@solid-run.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] dt-bindings: clock: si5351: convert to yaml
-Date:   Wed, 20 Sep 2023 15:09:53 +0200
-Message-ID: <20230920140343.2329225-2-alvin@pqrs.dk>
+        Jacob Siverskog <jacob@teenage.engineering>,
+        Sergej Sawazki <sergej@taudac.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 3/3] clk: si5351: allow PLLs to be adjusted without reset
+Date:   Wed, 20 Sep 2023 15:09:55 +0200
+Message-ID: <20230920140343.2329225-4-alvin@pqrs.dk>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230920140343.2329225-1-alvin@pqrs.dk>
 References: <20230920140343.2329225-1-alvin@pqrs.dk>
@@ -75,423 +76,136 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Alvin Šipraga <alsi@bang-olufsen.dk>
 
-The following additional properties are described:
+Introduce a new PLL reset mode flag which controls whether or not to
+reset a PLL after adjusting its rate. The mode can be configured through
+platform data or device tree.
 
-  - clock-names
-  - clock-frequency of the clkout child nodes
+Since commit 6dc669a22c77 ("clk: si5351: Add PLL soft reset"), the
+driver unconditionally resets a PLL whenever its rate is adjusted.
+The rationale was that a PLL reset was required to get three outputs
+working at the same time. Before this change, the driver never reset the
+PLLs.
 
-In order to suppress warnings from the DT schema validator, the clkout
-child nodes are prescribed names clkout@[0-7] rather than clkout[0-7].
-The latter form is still admissible but the example has been changed to
-use the former.
+Commit b26ff127c52c ("clk: si5351: Apply PLL soft reset before enabling
+the outputs") subsequently introduced an option to reset the PLL when
+enabling a clock output that sourced it. Here, the rationale was that
+this is required to get a deterministic phase relationship between
+multiple output clocks.
 
-The example is refined as follows:
+This clearly shows that it is useful to reset the PLLs in applications
+where multiple clock outputs are used. However, the Si5351 also allows
+for glitch-free rate adjustment of its PLLs if one avoids resetting the
+PLL. In our audio application where a single Si5351 clock output is used
+to supply a runtime adjustable bit clock, this unconditional PLL reset
+behaviour introduces unwanted glitches in the clock output.
 
-  - correct the usage of property pll-master -> silabs,pll-master
-  - give an example of how the silabs,pll-reset property can be used
-
-I made myself maintainer of the file as I cannot presume that anybody
-else wants the responsibility.
+It would appear that the problem being solved in the former commit
+may be solved by using the optional device tree property introduced in
+the latter commit, obviating the need for an unconditional PLL reset
+after rate adjustment. But it's not OK to break the default behaviour of
+the driver, and it cannot be assumed that all device trees are using the
+property introduced in the latter commit. Hence, the new behaviour is
+made opt-in.
 
 Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 Cc: Rabeeh Khoury <rabeeh@solid-run.com>
+Cc: Jacob Siverskog <jacob@teenage.engineering>
+Cc: Sergej Sawazki <sergej@taudac.com>
 Signed-off-by: Alvin Šipraga <alsi@bang-olufsen.dk>
 ---
- .../bindings/clock/silabs,si5351.txt          | 126 ---------
- .../bindings/clock/silabs,si5351.yaml         | 251 ++++++++++++++++++
- 2 files changed, 251 insertions(+), 126 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/silabs,si5351.txt
- create mode 100644 Documentation/devicetree/bindings/clock/silabs,si5351.yaml
+ drivers/clk/clk-si5351.c             | 47 ++++++++++++++++++++++++++--
+ include/linux/platform_data/si5351.h |  2 ++
+ 2 files changed, 46 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/silabs,si5351.txt b/Documentation/devicetree/bindings/clock/silabs,si5351.txt
-deleted file mode 100644
-index bfda6af76bee..000000000000
---- a/Documentation/devicetree/bindings/clock/silabs,si5351.txt
-+++ /dev/null
-@@ -1,126 +0,0 @@
--Binding for Silicon Labs Si5351a/b/c programmable i2c clock generator.
--
--Reference
--[1] Si5351A/B/C Data Sheet
--    https://www.skyworksinc.com/-/media/Skyworks/SL/documents/public/data-sheets/Si5351-B.pdf
--
--The Si5351a/b/c are programmable i2c clock generators with up to 8 output
--clocks. Si5351a also has a reduced pin-count package (MSOP10) where only
--3 output clocks are accessible. The internal structure of the clock
--generators can be found in [1].
--
--==I2C device node==
--
--Required properties:
--- compatible: shall be one of the following:
--	"silabs,si5351a" - Si5351a, QFN20 package
--	"silabs,si5351a-msop" - Si5351a, MSOP10 package
--	"silabs,si5351b" - Si5351b, QFN20 package
--	"silabs,si5351c" - Si5351c, QFN20 package
--- reg: i2c device address, shall be 0x60 or 0x61.
--- #clock-cells: from common clock binding; shall be set to 1.
--- clocks: from common clock binding; list of parent clock
--  handles, shall be xtal reference clock or xtal and clkin for
--  si5351c only. Corresponding clock input names are "xtal" and
--  "clkin" respectively.
--- #address-cells: shall be set to 1.
--- #size-cells: shall be set to 0.
--
--Optional properties:
--- silabs,pll-source: pair of (number, source) for each pll. Allows
--  to overwrite clock source of pll A (number=0) or B (number=1).
--
--==Child nodes==
--
--Each of the clock outputs can be overwritten individually by
--using a child node to the I2C device node. If a child node for a clock
--output is not set, the eeprom configuration is not overwritten.
--
--Required child node properties:
--- reg: number of clock output.
--
--Optional child node properties:
--- silabs,clock-source: source clock of the output divider stage N, shall be
--  0 = multisynth N
--  1 = multisynth 0 for output clocks 0-3, else multisynth4
--  2 = xtal
--  3 = clkin (si5351c only)
--- silabs,drive-strength: output drive strength in mA, shall be one of {2,4,6,8}.
--- silabs,multisynth-source: source pll A(0) or B(1) of corresponding multisynth
--  divider.
--- silabs,pll-master: boolean, multisynth can change pll frequency.
--- silabs,pll-reset: boolean, clock output can reset its pll.
--- silabs,disable-state : clock output disable state, shall be
--  0 = clock output is driven LOW when disabled
--  1 = clock output is driven HIGH when disabled
--  2 = clock output is FLOATING (HIGH-Z) when disabled
--  3 = clock output is NEVER disabled
--
--==Example==
--
--/* 25MHz reference crystal */
--ref25: ref25M {
--	compatible = "fixed-clock";
--	#clock-cells = <0>;
--	clock-frequency = <25000000>;
--};
--
--i2c-master-node {
--
--	/* Si5351a msop10 i2c clock generator */
--	si5351a: clock-generator@60 {
--		compatible = "silabs,si5351a-msop";
--		reg = <0x60>;
--		#address-cells = <1>;
--		#size-cells = <0>;
--		#clock-cells = <1>;
--
--		/* connect xtal input to 25MHz reference */
--		clocks = <&ref25>;
--		clock-names = "xtal";
--
--		/* connect xtal input as source of pll0 and pll1 */
--		silabs,pll-source = <0 0>, <1 0>;
--
--		/*
--		 * overwrite clkout0 configuration with:
--		 * - 8mA output drive strength
--		 * - pll0 as clock source of multisynth0
--		 * - multisynth0 as clock source of output divider
--		 * - multisynth0 can change pll0
--		 * - set initial clock frequency of 74.25MHz
--		 */
--		clkout0 {
--			reg = <0>;
--			silabs,drive-strength = <8>;
--			silabs,multisynth-source = <0>;
--			silabs,clock-source = <0>;
--			silabs,pll-master;
--			clock-frequency = <74250000>;
--		};
--
--		/*
--		 * overwrite clkout1 configuration with:
--		 * - 4mA output drive strength
--		 * - pll1 as clock source of multisynth1
--		 * - multisynth1 as clock source of output divider
--		 * - multisynth1 can change pll1
--		 */
--		clkout1 {
--			reg = <1>;
--			silabs,drive-strength = <4>;
--			silabs,multisynth-source = <1>;
--			silabs,clock-source = <0>;
--			pll-master;
--		};
--
--		/*
--		 * overwrite clkout2 configuration with:
--		 * - xtal as clock source of output divider
--		 */
--		clkout2 {
--			reg = <2>;
--			silabs,clock-source = <2>;
--		};
--	};
--};
-diff --git a/Documentation/devicetree/bindings/clock/silabs,si5351.yaml b/Documentation/devicetree/bindings/clock/silabs,si5351.yaml
-new file mode 100644
-index 000000000000..3ca8d998c48c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/silabs,si5351.yaml
-@@ -0,0 +1,251 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/silabs,si5351.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
+index 00fb9b09e030..95d7afb8cfc6 100644
+--- a/drivers/clk/clk-si5351.c
++++ b/drivers/clk/clk-si5351.c
+@@ -506,6 +506,8 @@ static int si5351_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ {
+ 	struct si5351_hw_data *hwdata =
+ 		container_of(hw, struct si5351_hw_data, hw);
++	struct si5351_platform_data *pdata =
++		hwdata->drvdata->client->dev.platform_data;
+ 	u8 reg = (hwdata->num == 0) ? SI5351_PLLA_PARAMETERS :
+ 		SI5351_PLLB_PARAMETERS;
+ 
+@@ -518,9 +520,10 @@ static int si5351_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 		(hwdata->params.p2 == 0) ? SI5351_CLK_INTEGER_MODE : 0);
+ 
+ 	/* Do a pll soft reset on the affected pll */
+-	si5351_reg_write(hwdata->drvdata, SI5351_PLL_RESET,
+-			 hwdata->num == 0 ? SI5351_PLL_RESET_A :
+-					    SI5351_PLL_RESET_B);
++	if (pdata->pll_reset[hwdata->num])
++		si5351_reg_write(hwdata->drvdata, SI5351_PLL_RESET,
++				 hwdata->num == 0 ? SI5351_PLL_RESET_A :
++						    SI5351_PLL_RESET_B);
+ 
+ 	dev_dbg(&hwdata->drvdata->client->dev,
+ 		"%s - %s: p1 = %lu, p2 = %lu, p3 = %lu, parent_rate = %lu, rate = %lu\n",
+@@ -1222,6 +1225,44 @@ static int si5351_dt_parse(struct i2c_client *client,
+ 		}
+ 	}
+ 
++	/*
++	 * Parse PLL reset mode. For compatibility with older device trees, the
++	 * default is to always reset a PLL after setting its rate.
++	 */
++	pdata->pll_reset[0] = true;
++	pdata->pll_reset[1] = true;
 +
-+title: Silicon Labs Si5351A/B/C programmable I2C clock generators
++	of_property_for_each_u32(np, "silabs,pll-reset-mode", prop, p, num) {
++		if (num >= 2) {
++			dev_err(&client->dev,
++				"invalid pll %d on pll-reset-mode prop\n", num);
++			return -EINVAL;
++		}
 +
-+description: |
-+  The Silicon Labs Si5351A/B/C are programmable I2C clock generators with up to
-+  8 outputs. Si5351A also has a reduced pin-count package (10-MSOP) where only 3
-+  output clocks are accessible. The internal structure of the clock generators
-+  can be found in [1].
++		p = of_prop_next_u32(prop, p, &val);
++		if (!p) {
++			dev_err(&client->dev,
++				"missing pll-reset-mode for pll %d\n", num);
++			return -EINVAL;
++		}
 +
-+  [1] Si5351A/B/C Data Sheet
-+      https://www.skyworksinc.com/-/media/Skyworks/SL/documents/public/data-sheets/Si5351-B.pdf
++		switch (val) {
++		case 0:
++			/* Reset PLL whenever its rate is adjusted */
++			pdata->pll_reset[num] = true;
++			break;
++		case 1:
++			/* Don't reset PLL whenever its rate is adjusted */
++			pdata->pll_reset[num] = false;
++			break;
++		default:
++			dev_err(&client->dev,
++				"invalid pll-reset-mode %d for pll %d\n", val,
++				num);
++			return -EINVAL;
++		}
++	}
 +
-+maintainers:
-+  - Alvin Šipraga <alsi@bang-olufsen.dk>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - silabs,si5351a      # Si5351A, 20-QFN package
-+      - silabs,si5351a-msop # Si5351A, 10-MSOP package
-+      - silabs,si5351b      # Si5351B, 20-QFN package
-+      - silabs,si5351c      # Si5351C, 20-QFN package
-+
-+  reg:
-+    enum:
-+      - 0x60
-+      - 0x61
-+    description: |
-+      I2C address of the clock generator
-+
-+  "#address-cells":
-+    const: 1
-+
-+  "#size-cells":
-+    const: 0
-+
-+  "#clock-cells":
-+    const: 1
-+
-+  silabs,pll-source:
-+    $ref: /schemas/types.yaml#/definitions/uint32-matrix
-+    minItems: 1
-+    maxItems: 2
-+    description: |
-+      Pair of <number source> for each PLL. Allows to overwrite clock source of
-+      PLL A (number=0) or PLL B (number=1).
-+
-+patternProperties:
-+  "^clkout@?[0-8]$":
-+    type: object
-+
-+    properties:
-+      reg:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        description: Clock output number.
-+
-+      clock-frequency:
-+        $ref: /schemas/clock/clock.yaml#/properties/clock-frequency
-+
-+      silabs,clock-source:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        description: |
-+          Source clock of the this output's divider stage.
-+
-+          0 - use multisynth N for this output, where N is the output number
-+          1 - use either multisynth 0 (if output number is 0-3) or multisynth 4
-+              (otherwise) for this output
-+          2 - use XTAL for this output
-+          3 - use CLKIN for this output (Si5351C only)
-+
-+      silabs,drive-strength:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        enum: [2, 4, 6, 8]
-+        description: Output drive strength in mA.
-+
-+      silabs,multisynth-source:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        enum: [0, 1]
-+        description: |
-+          Source PLL A (0) or B (1) for the corresponding multisynth divider.
-+
-+      silabs,pll-master:
-+        type: boolean
-+        description: |
-+          The frequency of the source PLL is allowed to be changed by the
-+          multisynth when setting the rate of this clock output.
-+
-+      silabs,pll-reset:
-+        type: boolean
-+        description: Reset the source PLL when enabling this clock output.
-+
-+      silabs,disable-state:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        enum: [0, 1, 2, 3]
-+        description: |
-+          Clock output disable state. The state can be one of:
-+
-+          0 - clock output is driven LOW when disabled
-+          1 - clock output is driven HIGH when disabled
-+          2 - clock output is FLOATING (HIGH-Z) when disabled
-+          3 - clock output is never disabled
-+
-+    allOf:
-+      - if:
-+          properties:
-+            compatible:
-+              contains:
-+                const: silabs,si5351a-msop
-+        then:
-+          properties:
-+            reg:
-+              minimum: 0
-+              maximum: 2
-+        else:
-+          properties:
-+            reg:
-+              minimum: 0
-+              maximum: 7
-+
-+      - if:
-+          properties:
-+            compatible:
-+              contains:
-+                const: silabs,si5351c
-+        then:
-+          properties:
-+            silabs,clock-source:
-+              enum: [0, 1, 2, 3]
-+        else:
-+          properties:
-+            silabs,clock-source:
-+              enum: [0, 1, 2]
-+    required:
-+      - reg
-+
-+    additionalProperties: false
-+
-+allOf:
-+  - $ref: /schemas/clock/clock.yaml
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - silabs,si5351a
-+              - silabs,si5351a-msop
-+              - silabs,si5351b
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 1
-+          maxItems: 1
-+        clock-names:
-+          items:
-+            - const: xtal
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: silabs,si5351c
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 1
-+          maxItems: 2
-+        clock-names:
-+          minItems: 1
-+          items:
-+            - const: xtal
-+            - const: clkin
-+
-+required:
-+  - reg
-+  - "#address-cells"
-+  - "#size-cells"
-+  - "#clock-cells"
-+  - clocks
-+  - clock-names
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    i2c {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      si5351a: clock-generator@60 {
-+        compatible = "silabs,si5351a-msop";
-+        reg = <0x60>;
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+        #clock-cells = <1>;
-+
-+        /* Connect XTAL input to 25MHz reference */
-+        clocks = <&ref25>;
-+        clock-names = "xtal";
-+
-+        /* Use XTAL input as source of PLL0 and PLL1 */
-+        silabs,pll-source = <0 0>, <1 0>;
-+
-+        /*
-+         * Overwrite CLK0 configuration with:
-+         * - 8 mA output drive strength
-+         * - PLL0 as clock source of multisynth 0
-+         * - Multisynth 0 as clock source of output divider
-+         * - Multisynth 0 can change PLL0
-+         * - Set initial clock frequency of 74.25MHz
-+         */
-+        clkout@0 {
-+          reg = <0>;
-+          silabs,drive-strength = <8>;
-+          silabs,multisynth-source = <0>;
-+          silabs,clock-source = <0>;
-+          silabs,pll-master;
-+          clock-frequency = <74250000>;
-+        };
-+
-+        /*
-+         * Overwrite CLK1 configuration with:
-+         * - 4 mA output drive strength
-+         * - PLL1 as clock source of multisynth 1
-+         * - Multisynth 1 as clock source of output divider
-+         * - Multisynth 1 can change PLL1
-+         * - Reset PLL1 when enabling this clock output
-+         */
-+        clkout@1 {
-+          reg = <1>;
-+          silabs,drive-strength = <4>;
-+          silabs,multisynth-source = <1>;
-+          silabs,clock-source = <0>;
-+          silabs,pll-master;
-+          silabs,pll-reset;
-+        };
-+
-+        /*
-+         * Overwrite CLK2 configuration with:
-+         * - XTAL as clock source of output divider
-+         */
-+        clkout@2 {
-+          reg = <2>;
-+          silabs,clock-source = <2>;
-+        };
-+      };
-+    };
+ 	/* per clkout properties */
+ 	for_each_child_of_node(np, child) {
+ 		if (of_property_read_u32(child, "reg", &num)) {
+diff --git a/include/linux/platform_data/si5351.h b/include/linux/platform_data/si5351.h
+index c71a2dd66143..5f412a615532 100644
+--- a/include/linux/platform_data/si5351.h
++++ b/include/linux/platform_data/si5351.h
+@@ -105,10 +105,12 @@ struct si5351_clkout_config {
+  * @clk_xtal: xtal input clock
+  * @clk_clkin: clkin input clock
+  * @pll_src: array of pll source clock setting
++ * @pll_reset: array indicating if plls should be reset after setting the rate
+  * @clkout: array of clkout configuration
+  */
+ struct si5351_platform_data {
+ 	enum si5351_pll_src pll_src[2];
++	bool pll_reset[2];
+ 	struct si5351_clkout_config clkout[8];
+ };
+ 
 -- 
 2.41.0
 
