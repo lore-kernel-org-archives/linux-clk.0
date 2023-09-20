@@ -2,63 +2,83 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23528C04AB4
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Sep 2023 17:10:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 057FAC04ABA
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Sep 2023 17:25:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235603AbjITRKv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 20 Sep 2023 13:10:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39718 "EHLO
+        id S229458AbjITRZ5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 20 Sep 2023 13:25:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235610AbjITRKi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Sep 2023 13:10:38 -0400
+        with ESMTP id S229501AbjITRZ5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Sep 2023 13:25:57 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC9A51AE;
-        Wed, 20 Sep 2023 10:10:25 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4DDAC433C7;
-        Wed, 20 Sep 2023 17:10:24 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFB9DAF;
+        Wed, 20 Sep 2023 10:25:51 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCDE6C433C8;
+        Wed, 20 Sep 2023 17:25:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695229825;
-        bh=0I3AfStlyMfjYoEdi44xRtEG06lMHtCu6S/JOVwZJqo=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=nm2SY7FzwFqykW7m653O3ENCHQ2DRkYf00q5RpXh10QvIOV6orM4P0MDzNVluy6YK
-         ABaagiMPsJCNQyGXdOhICNPua6gCQtg0TFUrRCNNJKIaEkbYdeR+RN1nphZsX8r+0h
-         BNxqQvVXQnkVEIL2CS3Z3DJV6GG3mamVFKHYu0vQe7kLoEXRgJslNpXpc0RLP2cXaU
-         Nd8Kp3XaEbdsmJszFBVIeJTNnw4OsOdREFIPlTPyTeNmi6QnxJGCKnlc6UHaTK0EQS
-         6Z8cM25cQ+21b2CpaLVRUgkTLhMn/ZWmhzKVS/cjNqiaKykW1gRZuBMrAh73HozG4F
-         7WyU45OfayObQ==
+        s=k20201202; t=1695230751;
+        bh=VpRWSb03mWUXop7HUZgoUaUDO2VTaHNelfCTFII07Wo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MJyl9iDmi8aOXaG01pUifTMB5M6DtD7cLntc+MmVa5fB8Mp8Ic78LDK4/xNXv+Qa7
+         0GtxtV3XwFkic/snw1ISBO5dmr2BOZSw7w0Sn5JA03uylFTXRyDKQabbu8z2WRXFoS
+         dEJJjbTwIJrKTFgehBF7/hRXD/7KU+fGfN6iR28Fq8Old2tOYqt+2lVP3rGTJdd/Su
+         vAzx90w+cy4Tx0Yl34iQU53/8ojgh7pcsSY2DaYxOJEe7OFwZBb54gVjUDY81lcZln
+         MudS4NkUCeElwN9D3IW9MYA/1LWO8w4eUIxhtIa8GqHcSLMwcA1fFGAysQeXHQfK6u
+         yQoza2XXSMj8Q==
+Date:   Wed, 20 Sep 2023 10:29:58 -0700
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     agross@kernel.org, konrad.dybcio@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        quic_kathirav@quicinc.com, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Varadarajan Narayanan <quic_varada@quicinc.com>
-Subject: Re: [PATCH v2] clk: qcom: ipq5332: Drop set rate parent from gpll0 dependent clocks
-Date:   Wed, 20 Sep 2023 10:14:11 -0700
-Message-ID: <169523004950.2665018.1185201202790611677.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <1693474133-10467-1-git-send-email-quic_varada@quicinc.com>
-References: <1693474133-10467-1-git-send-email-quic_varada@quicinc.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        linux-arm-msm@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, kernel@pengutronix.de
+Subject: Re: [PATCH] clk: qcom: cbf-msm8996: Convert to platform remove
+ callback returning void
+Message-ID: <cghreaj25elndy3wfdqhetlpk3hswyu5hnvvzdhcoqbpj2kin7@lzfeshjoyxti>
+References: <20230911151548.672485-1-u.kleine-koenig@pengutronix.de>
+ <8ec473b5b80d5fad8d76df6d88d2c1d0.sboyd@kernel.org>
+ <20230912065343.neorcr5mksodbaod@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230912065343.neorcr5mksodbaod@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-On Thu, 31 Aug 2023 14:58:53 +0530, Varadarajan Narayanan wrote:
-> IPQ5332's GPLL0's nominal/turbo frequency is 800MHz.
-> This must not be scaled based on the requirement of
-> dependent clocks. Hence remove the CLK_SET_RATE_PARENT
-> flag.
+On Tue, Sep 12, 2023 at 08:53:43AM +0200, Uwe Kleine-König wrote:
+> Hello Stephen,
 > 
+> On Mon, Sep 11, 2023 at 01:02:53PM -0700, Stephen Boyd wrote:
+> > Quoting Uwe Kleine-König (2023-09-11 08:15:48)
+> > > The .remove() callback for a platform driver returns an int which makes
+> > > many driver authors wrongly assume it's possible to do error handling by
+> > > returning an error code. However the value returned is ignored (apart
+> > > from emitting a warning) and this typically results in resource leaks.
+> > > To improve here there is a quest to make the remove callback return
+> > > void. In the first step of this quest all drivers are converted to
+> > > .remove_new() which already returns void. Eventually after all drivers
+> > > are converted, .remove_new() is renamed to .remove().
+> > > 
+> > > qcom_msm8996_cbf_icc_remove() returned zero unconditionally. After
+> > > changing this function to return void instead, the driver can be
+> > > converted trivially to use .remove_new().
+> > > 
+> > > Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> > > ---
+> > 
+> > Do you want to take this? Otherwise, I can apply it to fixes.
+> 
+> if "you" == "Uwe Kleine-König": Please take it via your tree. There is
+> still much to do before the next synchronous step, so there is no urge.
+> If the patch goes in during the next merge window that's fine, too.
 > 
 
-Applied, thanks!
+@Stephen, should I just pick this in the Qcom tree for 6.7 then?
 
-[1/1] clk: qcom: ipq5332: Drop set rate parent from gpll0 dependent clocks
-      commit: ccd8ab030643040600a663edde56b434b6f4fb6c
-
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+Regards,
+Bjorn
