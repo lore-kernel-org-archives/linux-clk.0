@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E462CE79AD
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Sep 2023 07:27:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62169CE79AC
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Sep 2023 07:51:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233638AbjITH1l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 20 Sep 2023 03:27:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51332 "EHLO
+        id S233218AbjITHvG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 20 Sep 2023 03:51:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233534AbjITH1k (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Sep 2023 03:27:40 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17E3494;
-        Wed, 20 Sep 2023 00:27:34 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-405082a8c77so33177535e9.0;
-        Wed, 20 Sep 2023 00:27:34 -0700 (PDT)
+        with ESMTP id S231948AbjITHux (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Sep 2023 03:50:53 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4118A133;
+        Wed, 20 Sep 2023 00:50:46 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-3200257b9a3so3468875f8f.3;
+        Wed, 20 Sep 2023 00:50:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1695194852; x=1695799652; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1695196244; x=1695801044; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5+GDwghWtCGnjwtUkaeguB7fJuXzmOmAvKOJYz0ylF0=;
-        b=VVdpI3m2KUUs5z2r8pD0bVzluy5dTIfMsIlu5OIoFgNzR2gzdh8pL/wn2iSOLp7t2r
-         qrLI/kVGP3T9R2M6P/LYYFNzjehDAMTAYdAbB9F1WetvJ/c7RMk9N7vdutMHwykITt2e
-         J1qpZCNs8kHSk3zW4bnXKzDKOeEAdE0RNzTYnI0tkGWNentlVjihefYK5OTEjxNHXlpY
-         0tRZtvPglBGZ54n83Edsersq38a9adJ+/EBrDssuMSMShPzH/I9ukJKD3fsIPeGgMTrh
-         J7lIbOaYvUAi1dIxHQ+LNmGQXp45MpyC5Bbv/ik1LmZkNCv9IXHM4YbfUut5gt11kbHT
-         /+0A==
+        bh=HlzHTfHgS7DIEzzPJ69/Nl7roPtenVnlUobepr30yTw=;
+        b=Zs1iswTQLjB/GmsDbSOxzXEo87i7En0Js0LHm7sNaVT7xKV7Pu+e+uDuNM5ImHjmRz
+         baHQ8R5HaY3R74+i1nCtMMz1FrCQJfe5pI79om0GkmR+iF569HsQbV2bvXQOc/AtidQ9
+         XdiDHiRUDtWPV2SId57XTABdBfiBtyldp4NpkvSidNaI5FF3UVEjWk+L/jBLsF981WWH
+         T8lB0HKgI0tcRYX83oSHt0+qevUDAHKQJw28SIumuFXm/fV0aJbWfYtZigIjqAe+oW4L
+         rMSYuZMdZ998QUdWOV9IYx6H0HT1K2yZZ+/n2qwNuU5F8cbAnOMhp/HjVq6caV1b+uAe
+         i2pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695194852; x=1695799652;
+        d=1e100.net; s=20230601; t=1695196244; x=1695801044;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5+GDwghWtCGnjwtUkaeguB7fJuXzmOmAvKOJYz0ylF0=;
-        b=Y8X/pY8HEJNM0wkKu+NzJ6mnFJaTHxUIBC/4U5Lpiji+ufeYKSf4a0mGBBr3aa9mhp
-         Dko2OHQAX/HcPXXe+Wec/zHX8+d++ToaQKeB2sYJZ1UlRQaOBaPSH9CqCeKCw/kdhDhK
-         TpMIFPLlikEWmLNVUcDw362eDWGkmBe16U8HnCaKeB2QXz7OuzZVZvJ77bEbbJpZbWxs
-         UHdsCX0Rput0wVM1jP5jzbIq0PAQRKoGMTdQi++uf9+7ogjhlRcoClZ8bgKAnNr9MRFw
-         8oaBZ0R5wMwpy2WdkfzRJYLgVqBFws0mmVHML0auZRU9GyEZYXF3z9L9QWbFzJrdrO/P
-         F8Qg==
-X-Gm-Message-State: AOJu0YwsaeO7RI29P5YA+LjqKzO3wZh/1tYyO36NpvxmJxhZZqAgQUK+
-        60PjgpHOJnMRDTng7p4aWkk=
-X-Google-Smtp-Source: AGHT+IE36bbZ9tr6wEPLTb1Q/Lecmhd89mTYG9E4C6kcf04nY3dThV6ualRnEDrtvqfseFpx7wB9pw==
-X-Received: by 2002:a1c:740f:0:b0:402:cc9a:31a7 with SMTP id p15-20020a1c740f000000b00402cc9a31a7mr1978915wmc.19.1695194852167;
-        Wed, 20 Sep 2023 00:27:32 -0700 (PDT)
+        bh=HlzHTfHgS7DIEzzPJ69/Nl7roPtenVnlUobepr30yTw=;
+        b=NTXPxXUHUC26qYq1JqbZyQv6zICllCp/G9Ti060bkZoo6HpjdtI1tGezUiQS3VAgor
+         CbWvqJ3lSosn8aQ8QHaFbY6aZQ+/MYXKfofTn5N6dnwEKgKDOGWiQVz0AWfR14fmqqHE
+         NKQD73/hFHy6gGWg5kITnqC6hCKv25EQUNeOuojXoF7O8HZdZzUwFCaWVivZl2bwjXjg
+         ElPG4WKJC/9VABAyf4N7bOLop8Muy0X/i4B8+gInTh0UX77oz1SQfw7EP0eJBQ4J4+ew
+         yj65t59uMHsyyRIkUuf8Fk25t1FNDFPjR3uuSs2nP3Vmg6eWGnNqrgnhaSnb4U1ohPvr
+         2OKA==
+X-Gm-Message-State: AOJu0YytzUtyr8BQqVbRn75ljKlFzEtoyBujoaATY+xvaTlRKu70Wv79
+        D/YxRUMjSkEMKumwXJrgZ9s=
+X-Google-Smtp-Source: AGHT+IEEmHXQCsShaamGnvoU38VzYpHCM+Fifd+ZtlaDpeigN7nlVyFwbMp3MQeBupf+fI/pxclJFg==
+X-Received: by 2002:adf:ee88:0:b0:314:1b36:f440 with SMTP id b8-20020adfee88000000b003141b36f440mr1457739wro.70.1695196244358;
+        Wed, 20 Sep 2023 00:50:44 -0700 (PDT)
 Received: from PCBABN.skidata.net ([91.230.2.244])
-        by smtp.gmail.com with ESMTPSA id u1-20020a05600c00c100b003fe0a0e03fcsm1141898wmm.12.2023.09.20.00.27.31
+        by smtp.gmail.com with ESMTPSA id q11-20020adff50b000000b0031c71693449sm17768372wro.1.2023.09.20.00.50.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Sep 2023 00:27:31 -0700 (PDT)
+        Wed, 20 Sep 2023 00:50:44 -0700 (PDT)
 From:   Benjamin Bara <bbara93@gmail.com>
 To:     mripard@kernel.org
 Cc:     abelvesa@kernel.org, bbara93@gmail.com, benjamin.bara@skidata.com,
@@ -60,12 +60,12 @@ Cc:     abelvesa@kernel.org, bbara93@gmail.com, benjamin.bara@skidata.com,
         linux@armlinux.org.uk, mturquette@baylibre.com, peng.fan@nxp.com,
         robh+dt@kernel.org, s.hauer@pengutronix.de, sboyd@kernel.org,
         shawnguo@kernel.org
-Subject: Re: [PATCH 01/13] arm64: dts: imx8mp: lvds_bridge: use root instead of composite
-Date:   Wed, 20 Sep 2023 09:27:25 +0200
-Message-Id: <20230920072726.1737684-1-bbara93@gmail.com>
+Subject: Re: [PATCH 05/13] clk: keep track of the trigger of an ongoing clk_set_rate
+Date:   Wed, 20 Sep 2023 09:50:37 +0200
+Message-Id: <20230920075037.1737982-1-bbara93@gmail.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <sam7p4hwzgzzicacmbie3o7izedgun7eyxwdyn2zszmvwbtfvv@7lnpxiscu3kr>
-References: <sam7p4hwzgzzicacmbie3o7izedgun7eyxwdyn2zszmvwbtfvv@7lnpxiscu3kr>
+In-Reply-To: <gyx5a6sacm6xens4jmxqynehloumsxyft35u6nd445qsv5345l@553vkj27ywef>
+References: <gyx5a6sacm6xens4jmxqynehloumsxyft35u6nd445qsv5345l@553vkj27ywef>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -74,20 +74,77 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Hi!
 
-On Tue, 19 Sept 2023 at 08:47, Maxime Ripard <mripard@kernel.org> wrote:
-> On Mon, Sep 18, 2023 at 12:39:57AM +0200, Benjamin Bara wrote:
+On Tue, 19 Sept 2023 at 09:06, Maxime Ripard <mripard@kernel.org> wrote:
+> On Mon, Sep 18, 2023 at 12:40:01AM +0200, Benjamin Bara wrote:
 > > From: Benjamin Bara <benjamin.bara@skidata.com>
 > >
-> > Use the actual root node of the media_ldb clock for the lvds_bridge.
+> > When we keep track of the rate change trigger, we can easily check if an
+> > affected clock is affiliated with the trigger. Additionally, the trigger
+> > is added to the notify data, so that drivers can implement workarounds
+> > that might be necessary if a shared parent changes.
 > >
 > > Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
+> > ---
+> >  drivers/clk/clk.c   | 12 ++++++++++++
+> >  include/linux/clk.h |  2 ++
+> >  2 files changed, 14 insertions(+)
+> >
+> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > index 4954d31899ce..8f4f92547768 100644
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -33,6 +33,9 @@ static struct task_struct *enable_owner;
+> >  static int prepare_refcnt;
+> >  static int enable_refcnt;
+> >
+> > +/* responsible for ongoing rate change, protected by prepare_lock */
+> > +static struct clk *rate_trigger_clk;
+> > +
+> >  static HLIST_HEAD(clk_root_list);
+> >  static HLIST_HEAD(clk_orphan_list);
+> >  static LIST_HEAD(clk_notifier_list);
+> > @@ -1742,6 +1745,7 @@ static int __clk_notify(struct clk_core *core, unsigned long msg,
+> >
+> >       cnd.old_rate = old_rate;
+> >       cnd.new_rate = new_rate;
+> > +     cnd.trigger = rate_trigger_clk ? : core->parent->hw->clk;
+> >
+> >       list_for_each_entry(cn, &clk_notifier_list, node) {
+> >               if (cn->clk->core == core) {
+> > @@ -2513,6 +2517,8 @@ int clk_set_rate(struct clk *clk, unsigned long rate)
+> >       /* prevent racing with updates to the clock topology */
+> >       clk_prepare_lock();
+> >
+> > +     rate_trigger_clk = clk;
+> > +
 >
-> DT is supposed to be hardware description, so an explanation about what
-> has changed or was wrong in that description to make that patch needed
-> would be welcome here
+> So I don't think that interacts very well with the clk_hw_set_rate
+> function you introduced. It looks like you only consider the initial
+> clock here so you wouldn't update rate_trigger_clk on a clk_hw_set_rate
+> call, but that creates some inconsistencies:
+>
+>   - If we call clk_hw_set_rate outside of the set_rate path (but in
+>     .init for example), then we end up with a notifier without a trigger
+>     clock set.
+>
+>   - More generally, depending on the path we're currently in, a call to
+>     clk_hw_set_rate will notify a clock in different ways which is a bit
+>     weird to me. The trigger clock can also be any clock, parent or
+>     child, at any level, which definitely complicates things at the
+>     driver level.
+>
+> The rate propagation is top-down, so could be get away with just setting
+> the parent clock that triggered the notification?
 
-Sure, sorry for that. In the imx8mp context, the _ROOT is the "leaf", so
-the actual clock that is connected to the bridge. I will adapt and
-clarify for V2.
+As I mentioned in the other response, this implementation seems to be
+just a hack to get additional context in the notifier. I think that's
+also a problem Frank had in his approach. Inside the notifier, it's not
+clear what to do with the incoming change. Because it could be either
+"intended", meaning a sub-clock of the current clock has triggered the
+change, or "unintended" (e.g. a sibling has triggered the change, but
+the subtree beyond the current clock still requires the old rate, and
+therefore the clock needs to adapt). Therefore I think if we use
+req_rate here, we might be able to achieve the same thing in a better
+way.
 
-Thanks
+Thanks!
