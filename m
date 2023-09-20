@@ -2,60 +2,50 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DE56C04AB4
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Sep 2023 17:10:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38B03C04AB8
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Sep 2023 17:10:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235370AbjITRKY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 20 Sep 2023 13:10:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42124 "EHLO
+        id S235535AbjITRKc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 20 Sep 2023 13:10:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235218AbjITRKW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Sep 2023 13:10:22 -0400
+        with ESMTP id S235348AbjITRKY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Sep 2023 13:10:24 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72776DD;
-        Wed, 20 Sep 2023 10:10:14 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46DCAC433CC;
-        Wed, 20 Sep 2023 17:10:12 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8F55A9;
+        Wed, 20 Sep 2023 10:10:17 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D232C43142;
+        Wed, 20 Sep 2023 17:10:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695229814;
-        bh=K5WcaoeJv2tdAiYCqf61it4DKUXI7DqZS6x3h8zOk0w=;
+        s=k20201202; t=1695229817;
+        bh=QYX3fNOvU0hTAEO3rl7RQlLTMCi1Wz+F8nJ3IGYH4lY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G8/B2EjB+oEufWRJ87Xj42cxUp4SDiIDu/k5rp/B9eXd7kPtY1r2HkGbmEfA2mc0X
-         IFsCJEjyGrIeOp6YyEan05LwhrZVD1Uq7lyN/PELCCUu5ebtzfXaZo0VJiNDezMBj9
-         HvVn/6KyxQoFLMZFSYxZhJsjjfBckH6Gmn8BJAvwuRYkhjWGLZThSCjGOVa5F7dXAv
-         RH7qasRhWiOkENFhzU/EcIHYP2s/oQdCmKrQo0pkUamR3UhqvMYOEfCOYh9qH3AhKM
-         fqq7ankDh60H0C7dsF3ZV5NW8XZ2s2x4xCqQ4GOJPR3XkQnvaMBTDeQ0/6XyS1LrzB
-         4m93yth8AiI6A==
+        b=ETZVjDxQxJMp+WduqsIlvWWcFzWU96/Yk3yYZ17ZZULSJm8iF8aiuTEBAmRuNg7Nz
+         k7oUmq7Ae9vUfPM/jBsSsVE4vB1arVw1tKznw7N+BO8gNbc6A1MEQ4WtNlSiaSHkDH
+         YJD033EWSF2tS26D8GUrjxKRi0y/j9193Jr34S13PbdREVkIqMuaVzyXtHmSm2xM+N
+         v8K6A3IBfhxlwcGPMX8FwFu+luQu2MpaU/st2QUJwTMS+9DbhC5ucnE8wV7llGyCRt
+         WqM2n2ekJYGD1u/AsPy6kdI+aYn1Z/N+y9Cj/c9YPmLwzV3WLPOLdhUqCwAlWUXAmc
+         Dtc7z1vTL17zA==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>,
+To:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        Imran Khan <kimran@codeaurora.org>,
-        Rajendra Nayak <quic_rjendra@quicinc.com>,
-        Joonwoo Park <joonwoop@codeaurora.org>,
-        Jeffrey Hugo <quic_jhugo@quicinc.com>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Jami Kettunen <jami.kettunen@somainline.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: (subset) [PATCH v3 0/6] MMCC MSM8998 fixes
-Date:   Wed, 20 Sep 2023 10:14:01 -0700
-Message-ID: <169523004959.2665018.814335598226765516.b4-ty@kernel.org>
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Mike Turquette <mturquette@linaro.org>,
+        Luca Weiss <luca@z3ntu.xyz>
+Cc:     Stephen Boyd <sboyd@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: mmcc-msm8974: remove ocmemcx_ahb_clk
+Date:   Wed, 20 Sep 2023 10:14:04 -0700
+Message-ID: <169523004965.2665018.3540985295032371662.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20230531-topic-8998_mmssclk-v3-0-ba1b1fd9ee75@linaro.org>
-References: <20230531-topic-8998_mmssclk-v3-0-ba1b1fd9ee75@linaro.org>
+In-Reply-To: <20230902-msm8226-ocmemcx_ahb_clk-remove-v1-1-8124dbde83b9@z3ntu.xyz>
+References: <20230902-msm8226-ocmemcx_ahb_clk-remove-v1-1-8124dbde83b9@z3ntu.xyz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -64,24 +54,23 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On Wed, 09 Aug 2023 21:20:23 +0200, Konrad Dybcio wrote:
-> 8998 has a couple of issues related to its clock controllers. This series
-> attemps to fix some of them.
+On Sat, 02 Sep 2023 19:34:23 +0200, Luca Weiss wrote:
+> According to a commit in the 3.4 vendor kernel sources[0] the
+> ocmemcx_ahb_clk clock "is controlled by RPM and should not be touched by
+> APPS.".
 > 
-> The DT patch should go in first for bisectability, otherwise
-> clk/pd_ignore_unused will need to be used, as the SMMU GDSC is no longer
-> considered always-on.
+> [0] https://git.codelinaro.org/clo/la/kernel/msm/-/commit/37df5f2d91b4d5768b37fcaacaeea958dd683ebc
+> 
+> And indeed, when using MDSS+GPU+OCMEM on MSM8226 and not using
+> clk_ignore_unused, when Linux tries to disable the clock the device
+> crashes and reboots.
 > 
 > [...]
 
 Applied, thanks!
 
-[3/6] clk: qcom: gcc-msm8998: Don't check halt bit on some branch clks
-      (no commit info)
-[4/6] clk: qcom: mmcc-msm8998: Don't check halt bit on some branch clks
-      commit: 9906c4140897bbdbff7bb71c6ae67903cb9954ce
-[5/6] clk: qcom: mmcc-msm8998: Fix the SMMU GDSC
-      commit: 1fc62c8347397faf4e18249e88ecd4470c0a5357
+[1/1] clk: qcom: mmcc-msm8974: remove ocmemcx_ahb_clk
+      commit: 471e2875f8904539985e62220afd6c88e70779fa
 
 Best regards,
 -- 
