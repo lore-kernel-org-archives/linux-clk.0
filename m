@@ -2,50 +2,43 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0259C04AB4
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Sep 2023 17:10:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40274C04AB6
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Sep 2023 17:10:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235504AbjITRKr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S235352AbjITRKr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Wed, 20 Sep 2023 13:10:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52742 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235495AbjITRKb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Sep 2023 13:10:31 -0400
+        with ESMTP id S235516AbjITRKc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Sep 2023 13:10:32 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C7C113E;
-        Wed, 20 Sep 2023 10:10:21 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20216C433AB;
-        Wed, 20 Sep 2023 17:10:20 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4101DA3;
+        Wed, 20 Sep 2023 10:10:22 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59508C4339A;
+        Wed, 20 Sep 2023 17:10:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695229821;
-        bh=K0sbzUr5jtVHR89g51G0NkEZtQQygAev4/km+8TF2zI=;
+        s=k20201202; t=1695229822;
+        bh=yi/QaKUzu89G9FWmGFRchfsQQ/b6YUKl1lKijsBirj4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KaGRn/sUlxTUwOwVDJUOKl874bT6lpR6k2REBs0mAw1R/+FcIcLWrTv7jKe06ld8C
-         /h0mu+XWl7Eyo2ZctNYM/Zcb0nI/SI4O/W8ottKhpQ85AVTnLfM3xXsNz+hLDp1tsf
-         vfh5hAjFocLhf4pJeKmZFpgquifpSjFwHNfV7J92/4VbwA4qRfF67xEYvGME1KLCHI
-         /abV8iSlXkjsBY8L//f4LW/BtFPNeNGS4XeuKkUppwfagmgYiFUyuHvgNnn2WbLK5C
-         SRgYaFymt7xtNCKoPyZYLAIqsZm9jrBiazyTlDE201mc2RTNNyYWu8B/lzc6qm4DHA
-         InW0bN9ab5qMw==
+        b=pCQ2j0lIK/SfCLhJx5NnqapK9sHxDjO9QgCbQhyfVH2W2lEB8+jy4jUtiOY3DonSY
+         UPmLszfxgEvSVNV2OGjaiSWvuatayoV+NsncV/6bXcGnd+k9gs/vxmExPI7oudUnkJ
+         IUGiw7qssgqP0pLvI53w8/8vTMp3HRkeiWKrvXdTTSjmGEGk6iI1nErkTRgjFvRPJS
+         UJP1rrK4p2iGlw/ZhrF9O9/l/cnrmQLixzFrBF3FIl37yxDXoH+629mBd/10A5XzwC
+         yHBmZVfISC0eIMxDS+8EhrlGLCzxRD7qrnne44yysWiaaurR+nhA3VXw9hCdBU0+0L
+         CXKaDyLZI5JXQ==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Ajit Pandey <quic_ajipan@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] clk: qcom: Add support for GCC and RPMHCC on SM4450
-Date:   Wed, 20 Sep 2023 10:14:07 -0700
-Message-ID: <169523004970.2665018.17640231475620159294.b4-ty@kernel.org>
+To:     agross@kernel.org, konrad.dybcio@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, mturquette@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Devi Priya <quic_devipriy@quicinc.com>
+Cc:     quic_saahtoma@quicinc.com
+Subject: Re: [PATCH V2] clk: qcom: clk-rcg2: Fix clock rate overflow for high parent frequencies
+Date:   Wed, 20 Sep 2023 10:14:08 -0700
+Message-ID: <169523004952.2665018.4505782565131153297.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20230909123431.1725728-1-quic_ajipan@quicinc.com>
-References: <20230909123431.1725728-1-quic_ajipan@quicinc.com>
+In-Reply-To: <20230901073640.4973-1-quic_devipriy@quicinc.com>
+References: <20230901073640.4973-1-quic_devipriy@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -54,27 +47,20 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On Sat, 09 Sep 2023 18:04:27 +0530, Ajit Pandey wrote:
-> This series add dt-bindings and driver support for GCC and RPMHCC on
-> SM4450 platform.
-> 
-> Changes in v2:
->  - Remove min-items and optional tag from bindings documentation.
->  - Use qcom_branch_set_force_mem_core() wrapper API to update bits.
->  - Link to v1: https://patchwork.kernel.org/project/linux-clk/list/?series=779098
+On Fri, 01 Sep 2023 13:06:40 +0530, Devi Priya wrote:
+> If the parent clock rate is greater than unsigned long max/2 then
+> integer overflow happens when calculating the clock rate on 32-bit systems.
+> As RCG2 uses half integer dividers, the clock rate is first being
+> multiplied by 2 which will overflow the unsigned long max value.
+> Hence, replace the common pattern of doing 64-bit multiplication
+> and then a do_div() call with simpler mult_frac call.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/4] dt-bindings: clock: qcom: Add RPMHCC for SM4450
-      commit: 0b8aae7ed8eaf24d5f59d390325e9b2ebf1c78bd
-[2/4] clk: qcom: rpmh: Add RPMH clocks support for SM4450
-      commit: 5a6eabf3268f91ce3cb5350210d0a876fa65b481
-[3/4] dt-bindings: clock: qcom: Add GCC clocks for SM4450
-      commit: d2d04deb5566b82aeb795f24014f5b3bdb8315ed
-[4/4] clk: qcom: Add GCC driver support for SM4450
-      commit: c32c4ef98baca6dfedbddace1e0bbcae0ca65050
+[1/1] clk: qcom: clk-rcg2: Fix clock rate overflow for high parent frequencies
+      commit: f7b7d30158cff246667273bd2a62fc93ee0725d2
 
 Best regards,
 -- 
