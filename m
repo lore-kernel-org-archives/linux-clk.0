@@ -2,96 +2,134 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82808E7D0A7
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Sep 2023 18:16:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2947E7D0A2
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Sep 2023 18:35:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230388AbjIUSQm convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Sep 2023 14:16:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52672 "EHLO
+        id S229611AbjIUSfn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Sep 2023 14:35:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230301AbjIUSQ1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Sep 2023 14:16:27 -0400
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A17CE5AE2E;
-        Thu, 21 Sep 2023 10:21:40 -0700 (PDT)
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-52f9a45b4bdso1423259a12.3;
-        Thu, 21 Sep 2023 10:21:40 -0700 (PDT)
+        with ESMTP id S229648AbjIUSfZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Sep 2023 14:35:25 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4115065BA;
+        Thu, 21 Sep 2023 11:15:22 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-4053c6f0d3dso922945e9.1;
+        Thu, 21 Sep 2023 11:15:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1695320120; x=1695924920; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VewR6GvnAG1Xb3ny5cXxxfMwVZK0RXHm5eoMUnZrOq4=;
+        b=dNMWu+4wZaZq9t/liVVlkh0RkoNzuzAWg28uiKBteA91wSWenHkvXGatLVu7j1+ApF
+         eUPQZp46d5xh7OGrShzDvxC+G6Z+pszsJybMS5NdD2ICisaGIyU/7KX1yvIrk3HV0sog
+         7MRo/bOwJY2p4nskGEAjjjGDKUBbGGbUU/xZJEDLnADN+GK9vlJzFy/oHiRX944F45Sm
+         tFtMuHeeTvbCPBpwwsCrwJm6N/reheVrojhQGJj08LVI2TAtwwYbmzj165trvrRiyfrk
+         0Afvf0yxBt79AVrhkVLz7XIAtNb5f9poI+I4Tblkk+Re6i+vE7WjfgMYxXa8XkbNjJPb
+         d+Og==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695316899; x=1695921699;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=78TMJJFlsLVACVaST0yD4fr1cOAvW144T6j75QycuXg=;
-        b=BAV30hJkYC7gDJg8tJ5MgmwgAeTItbBEzWUcixCeM/pAGaCgaQ8iMiyn0XLG6VH9AG
-         ATLhbdtVyCC4KBdQdSsCTH0JJXuR7XVOSpV3URxP7TbirqHqYFRHRbBWD7+I3DjzCUZ0
-         iu65ni8UHH5hJfVmugdCvjEeqTP4zFi4RxIie6MPXhe9eTmsLORXD/5wosNIUBMifG9j
-         lSBCLxcxr0nbNY41dJQU3tqmp4sKBbaCaM27tuidbCQzJUwFo7JleTbtt8kmem84QoDV
-         zKqJa3Leqv9IUbhA64LQUI3GFTuCZ4samvzOPMyY2jFjLR5XbI/opUALhieLgtJd7xXY
-         YUKA==
-X-Gm-Message-State: AOJu0Yy11+ifoLtQMj0zsVqtcJIIdGl/qpKcTULNtlXmQqyT9qQ/0DL6
-        JbaLbcnQYqAHQbj57DOkw4bWirx05e9jlYr9
-X-Google-Smtp-Source: AGHT+IH+uBVw292r+sxaKfU8NLmvm5e2Jkc2m0Sb1GJILXn42+85/1qKFwBKoGAB4t0PUKVC9cnpbw==
-X-Received: by 2002:a2e:8098:0:b0:2c0:c6a:eb2f with SMTP id i24-20020a2e8098000000b002c00c6aeb2fmr5027753ljg.1.1695302182923;
-        Thu, 21 Sep 2023 06:16:22 -0700 (PDT)
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
-        by smtp.gmail.com with ESMTPSA id p2-20020a2e9a82000000b002c001e57e1asm337469lji.73.2023.09.21.06.16.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Sep 2023 06:16:22 -0700 (PDT)
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2c007d6159aso15303351fa.3;
-        Thu, 21 Sep 2023 06:16:22 -0700 (PDT)
-X-Received: by 2002:a05:6512:3987:b0:500:bb99:69a7 with SMTP id
- j7-20020a056512398700b00500bb9969a7mr6201266lfu.14.1695301737311; Thu, 21 Sep
- 2023 06:08:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1695320120; x=1695924920;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VewR6GvnAG1Xb3ny5cXxxfMwVZK0RXHm5eoMUnZrOq4=;
+        b=v3HyRDiuDSv4UOAOI6b2dJJiQiyLcmxcawoAsFopmfBJIm4CL+TxYZXymZLZgH/8bZ
+         mdEd9nCNQ2HmEtgera8S24ZzcIlLo59AIB/6t+IWhSLSRfKAWP8GiDaJP1Pn2FeaGnH0
+         FtN/H1iPK7WysWNw4baL5T9KjyqMvGkNQz+QzstQwyANyvsfF518wkNETEdPn4yu2qdj
+         4XQze42yzDc301hW8vfMseqXzR8hZx4SRwhAPNnFQwHBsTLdUiNhP+c//qlLda4B5XAZ
+         dqsTZABY+mRMbSW7gAkfSFJbGABejaZQ4d3NFkcHMLn0KqfPVzM1aXL8SJ/Dplxfyb9p
+         4Tug==
+X-Gm-Message-State: AOJu0YxynJVca+OWaTbMFhngqOpLDHk3DpUNVlqMtgGUfTKzqbDbAmnf
+        Xpa8ljMaU95TwpVstx1sgQfE6PG83n4z9Q==
+X-Google-Smtp-Source: AGHT+IFHhXhgBdE5T7SPSfFl/a9nBt06Mtr/0hBhDGBXRf4YMzvsWqLkX0osTD7Hjg49aO3EPR3Lkw==
+X-Received: by 2002:a05:6512:4002:b0:4fe:25bc:71f5 with SMTP id br2-20020a056512400200b004fe25bc71f5mr4995738lfb.11.1695281585731;
+        Thu, 21 Sep 2023 00:33:05 -0700 (PDT)
+Received: from lab.hqhome163.com ([194.183.10.152])
+        by smtp.googlemail.com with ESMTPSA id k22-20020a05600c0b5600b0040523bef620sm1161231wmr.0.2023.09.21.00.33.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Sep 2023 00:33:05 -0700 (PDT)
+From:   "Alessandro Carminati (Red Hat)" <alessandro.carminati@gmail.com>
+To:     linux-clk@vger.kernel.org
+Cc:     Alessandro Carminati <alessandro.carminati@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Philip Daly <pdaly@redhat.com>
+Subject: [PATCH v2] clk: Sanitize possible_parent_show to Handle Return Value of of_clk_get_parent_name
+Date:   Thu, 21 Sep 2023 07:32:17 +0000
+Message-Id: <20230921073217.572151-1-alessandro.carminati@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com> <20230912045157.177966-29-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20230912045157.177966-29-claudiu.beznea.uj@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 21 Sep 2023 15:08:39 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV5BuPPLkZUDfhjXzq_aQ+LFfEM=eXGT-XjmpxSjSqeJg@mail.gmail.com>
-Message-ID: <CAMuHMdV5BuPPLkZUDfhjXzq_aQ+LFfEM=eXGT-XjmpxSjSqeJg@mail.gmail.com>
-Subject: Re: [PATCH 28/37] pinctrl: renesas: rzg2l: make struct
- rzg2l_pinctrl_data::dedicated_pins constant
-To:     Claudiu <claudiu.beznea@tuxon.dev>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        ulf.hansson@linaro.org, linus.walleij@linaro.org,
-        gregkh@linuxfoundation.org, jirislaby@kernel.org,
-        magnus.damm@gmail.com, catalin.marinas@arm.com, will@kernel.org,
-        prabhakar.mahadev-lad.rj@bp.renesas.com,
-        biju.das.jz@bp.renesas.com, quic_bjorande@quicinc.com,
-        arnd@arndb.de, konrad.dybcio@linaro.org, neil.armstrong@linaro.org,
-        nfraprado@collabora.com, rafal@milecki.pl,
-        wsa+renesas@sang-engineering.com,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-type: text/plain
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Sep 12, 2023 at 6:53 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> struct rzg2l_pinctrl_data::dedicated_pins is constant thus mark it so.
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+From: Alessandro Carminati <alessandro.carminati@gmail.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-pinctrl-for-v6.7.
+In the possible_parent_show function, ensure proper handling of the return
+value from of_clk_get_parent_name to prevent potential issues arising from
+a NULL return.
+The current implementation invokes seq_puts directly on the result of
+of_clk_get_parent_name without verifying the return value, which can lead
+to kernel panic if the function returns NULL.
 
-Gr{oetje,eeting}s,
+This patch addresses the concern by introducing a check on the return
+value of of_clk_get_parent_name. If the return value is not NULL, the
+function proceeds to call seq_puts, providing the returned value as
+argument.
+However, if of_clk_get_parent_name returns NULL, the function provides a
+static string as argument, avoiding the panic.
 
-                        Geert
+Fixes: 1ccc0ddf046a ("clk: Use seq_puts() in possible_parent_show()")
+Reported-by: Philip Daly <pdaly@redhat.com>
+Signed-off-by: Alessandro Carminati (Red Hat) <alessandro.carminati@gmail.com>
+---
+ drivers/clk/clk.c | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index c249f9791ae8..473563bc7496 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3416,6 +3416,7 @@ static void possible_parent_show(struct seq_file *s, struct clk_core *core,
+ 				 unsigned int i, char terminator)
+ {
+ 	struct clk_core *parent;
++	const char *name = NULL;
+ 
+ 	/*
+ 	 * Go through the following options to fetch a parent's name.
+@@ -3430,18 +3431,20 @@ static void possible_parent_show(struct seq_file *s, struct clk_core *core,
+ 	 * registered (yet).
+ 	 */
+ 	parent = clk_core_get_parent_by_index(core, i);
+-	if (parent)
++	if (parent) {
+ 		seq_puts(s, parent->name);
+-	else if (core->parents[i].name)
++	} else if (core->parents[i].name) {
+ 		seq_puts(s, core->parents[i].name);
+-	else if (core->parents[i].fw_name)
++	} else if (core->parents[i].fw_name) {
+ 		seq_printf(s, "<%s>(fw)", core->parents[i].fw_name);
+-	else if (core->parents[i].index >= 0)
+-		seq_puts(s,
+-			 of_clk_get_parent_name(core->of_node,
+-						core->parents[i].index));
+-	else
+-		seq_puts(s, "(missing)");
++	} else {
++		if (core->parents[i].index >= 0)
++			name = of_clk_get_parent_name(core->of_node, core->parents[i].index);
++		if (!name)
++			name = "(missing)";
++
++		seq_puts(s, name);
++	}
+ 
+ 	seq_putc(s, terminator);
+ }
+-- 
+2.34.1
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
