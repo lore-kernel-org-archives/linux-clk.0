@@ -2,78 +2,160 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76D67E7D0AB
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Sep 2023 21:46:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02E9CE7D0AE
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Sep 2023 21:49:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232775AbjIUVq7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Sep 2023 17:46:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48150 "EHLO
+        id S231912AbjIUVth convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Sep 2023 17:49:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232538AbjIUVq2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Sep 2023 17:46:28 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B01826E8C;
-        Thu, 21 Sep 2023 10:22:31 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF20FC4E685;
-        Thu, 21 Sep 2023 13:43:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695303788;
-        bh=EWdJvIwF6uv0RWl2Gt/yW75HzMTZ/s3XRzzcEYnfV7c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QH0o15QG+AubVg6W1pk+o3mUkrKs+CPmKCMeHbIP1NMLSk+MCAMvzuby9ymnvm0l+
-         kcRFHkUzLgmT18elmBM8npwxFYWov8LWYK4xwcb36u78XXIktx9JgCpO/gFilF26P+
-         sJYdwerntMLkuNJoHidrfuR/Dtf9VoaY6DySkwWlTgCLFS62/iUVO/77lyxW0awSjh
-         e+Na9Fgm4E0lIFMtDuxLp4NuelMx7q3NKWawVBceg+HYdNsMGU0DhVLNJWq9raAmg2
-         uTfklCCHQXvDvD8Gv9HSfn8SKqdxhGrbExHxWVea06k7LponKAdd0t6s+MVBcxKP9q
-         k7+r35VqwpAZw==
-Date:   Thu, 21 Sep 2023 15:43:05 +0200
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Alex Bee <knaerzche@gmail.com>
-Cc:     Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Lee Jones <lee@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Elaine Zhang <zhangqing@rock-chips.com>,
-        Johan Jonker <jbx6244@gmail.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
-        linux-clk@vger.kernel.org, linux-phy@lists.infradead.org
-Subject: Re: [PATCH 08/31] phy: rockchip-inno-usb2: Split ID interrupt phy
- registers
-Message-ID: <ZQxIaU6ITbTGBkVC@matsya>
-References: <20230829171647.187787-1-knaerzche@gmail.com>
- <20230829171647.187787-9-knaerzche@gmail.com>
+        with ESMTP id S232319AbjIUVtY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Sep 2023 17:49:24 -0400
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2084C448F;
+        Thu, 21 Sep 2023 10:07:52 -0700 (PDT)
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-690bc3f82a7so1127520b3a.0;
+        Thu, 21 Sep 2023 10:07:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695316071; x=1695920871;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4YK1weMDx1FKxLRBUAONRFKh9Xh1dDH4kzuT00SLrmA=;
+        b=jYpk4nKWDgQgChDkkVmmFI9i+gI1+c+FU+F5DBZ0RB8h4AOvZL2o17xSmdHiCFMjr9
+         h5SE3gvFMyqb0LeKY41bjZrHvrNIyatJrO5Mh2GgRJJNY1hPRHVmur0pywP/WioORfbo
+         X8TCl9Pa33frjxfgljdzb9pvNWFzZWzDoEGelYV+8u/RdWbo8BABxURiTSH5zdToraMN
+         fhYsNxSLzlz0Ry2EzS7ZRAN0ltz3q6AzibG7oXknu71/j+VgqF7EnumXlSMRP76zDgBv
+         MTOOouZiLuOxfwJXqXcMYojM0pcvo/KGix+T9e7V/W7gQFG45Ai/XDCBe1wT9itGjtOK
+         b5fg==
+X-Gm-Message-State: AOJu0Yx/5n868t349X/eSqsFpmDhTt7L+SIKreDMWRLCtX4piiaMbBc3
+        52mBfwwmb2mdtQEoiCAwEBE1A3yi1yhOqi6w
+X-Google-Smtp-Source: AGHT+IH84N7XN9EgwsRyAozkezBVyE59xu48k9ZHh5955znTtM6G4h5YLzbUH7LWy2Qeh/RbV0bMTQ==
+X-Received: by 2002:a81:91c2:0:b0:59b:4f2d:231 with SMTP id i185-20020a8191c2000000b0059b4f2d0231mr5439104ywg.45.1695300904001;
+        Thu, 21 Sep 2023 05:55:04 -0700 (PDT)
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com. [209.85.128.179])
+        by smtp.gmail.com with ESMTPSA id s185-20020a8182c2000000b00597e912e67esm309130ywf.131.2023.09.21.05.55.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Sep 2023 05:55:02 -0700 (PDT)
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-59bd2e19c95so11952697b3.0;
+        Thu, 21 Sep 2023 05:55:02 -0700 (PDT)
+X-Received: by 2002:a25:a329:0:b0:d84:e73a:6ac9 with SMTP id
+ d38-20020a25a329000000b00d84e73a6ac9mr5019217ybi.24.1695300902378; Thu, 21
+ Sep 2023 05:55:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230829171647.187787-9-knaerzche@gmail.com>
+References: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com> <20230912045157.177966-27-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20230912045157.177966-27-claudiu.beznea.uj@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 21 Sep 2023 14:54:49 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU_P8QM1qrwTJQcDCaKhMDCDnO1G_u=Nx=kuzy9MGuT8Q@mail.gmail.com>
+Message-ID: <CAMuHMdU_P8QM1qrwTJQcDCaKhMDCDnO1G_u=Nx=kuzy9MGuT8Q@mail.gmail.com>
+Subject: Re: [PATCH 26/37] pinctrl: renesas: rzg2l: move ds and oi to SoC
+ specific configuration
+To:     Claudiu <claudiu.beznea@tuxon.dev>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        ulf.hansson@linaro.org, linus.walleij@linaro.org,
+        gregkh@linuxfoundation.org, jirislaby@kernel.org,
+        magnus.damm@gmail.com, catalin.marinas@arm.com, will@kernel.org,
+        prabhakar.mahadev-lad.rj@bp.renesas.com,
+        biju.das.jz@bp.renesas.com, quic_bjorande@quicinc.com,
+        arnd@arndb.de, konrad.dybcio@linaro.org, neil.armstrong@linaro.org,
+        nfraprado@collabora.com, rafal@milecki.pl,
+        wsa+renesas@sang-engineering.com,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 29-08-23, 19:16, Alex Bee wrote:
-> Commit 51a9b2c03dd3 ("phy: rockchip-inno-usb2: Handle ID IRQ") added ID
-> detection interrupt registers. However the current implementation assumes
-> that falling and rising edge interrupt are always enabled in registers
-> spaning over subsequent bits.
-> That is not the case for RK312x's version of the phy and this
-> implementation can't be used as-is, since there are bits with different
-> purpose in between.
-> 
-> This splits up the register definitions for id_det_en, id_det_en and
-> id_det_clr registers in rising and falling edge variants.
-> It's required as preparation to support RK312x's Innosilicon usb2 phy as
-> well in this driver and matches pretty much to what the vendor does, so I'm
-> not expecting issues for other SoCs with that change.
+Hi Claudiu,
 
-This fails to apply for phy/next
+On Tue, Sep 12, 2023 at 6:53 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Move drive strength and output impedance values to SoC specific
+> configuration data structure (struct rzg2l_hwcfg). This allows extending
+> the drive strength support for RZ/G3S. Along with this the DS values
+> were converted to uA for simple integration with RZ/G3S support.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
--- 
-~Vinod
+Thanks for your patch!
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> @@ -133,13 +133,27 @@ struct rzg2l_register_offsets {
+>         u16 sd_ch;
+>  };
+>
+> +/**
+> + * enum rzg2l_iolh_index - starting indexes in IOLH specific arrays
+
+indices
+
+> + * @RZG2L_IOLH_IDX_3V3: starting index for 3V3 power source
+> + * @RZG2L_IOLH_IDX_MAX: maximum index
+> + */
+> +enum rzg2l_iolh_index {
+> +       RZG2L_IOLH_IDX_3V3 = 0,
+> +       RZG2L_IOLH_IDX_MAX = 4,
+> +};
+> +
+>  /**
+>   * struct rzg2l_hwcfg - hardware configuration data structure
+>   * @regs: hardware specific register offsets
+> + * @iolh_groupa_ua: IOLH group A micro amps specific values
+
+uA (or µA ;-)
+
+> + * @iolh_groupb_oi: IOLH group B output impedance specific values
+>   * @func_base: base number for port function (see register PFC)
+>   */
+>  struct rzg2l_hwcfg {
+>         const struct rzg2l_register_offsets regs;
+> +       u16 iolh_groupa_ua[RZG2L_IOLH_IDX_MAX];
+> +       u16 iolh_groupb_oi[RZG2L_IOLH_IDX_MAX];
+>         u8 func_base;
+>  };
+>
+
+> @@ -708,11 +719,11 @@ static int rzg2l_pinctrl_pinconf_set(struct pinctrl_dev *pctldev,
+>                         if (!(cfg & PIN_CFG_IOLH_A))
+>                                 return -EINVAL;
+>
+> -                       for (index = 0; index < ARRAY_SIZE(iolh_groupa_mA); index++) {
+> -                               if (arg == iolh_groupa_mA[index])
+> +                       for (index = RZG2L_IOLH_IDX_3V3; index < RZG2L_IOLH_IDX_3V3 + 4; index++) {
+
+I'm not so fond of the hardcoded "+ 4", here and below.
+Please add and use a #define.
+
+> +                               if (arg == (hwcfg->iolh_groupa_ua[index] / 1000))
+>                                         break;
+>                         }
+> -                       if (index >= ARRAY_SIZE(iolh_groupa_mA))
+> +                       if (index == (RZG2L_IOLH_IDX_3V3 + 4))
+>                                 return -EINVAL;
+>
+>                         rzg2l_rmw_pin_config(pctrl, IOLH(off), bit, IOLH_MASK, index);
+
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
