@@ -2,119 +2,97 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D910BE7D0A7
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Sep 2023 20:14:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2EEFE7D0A7
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Sep 2023 20:19:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229545AbjIUUO3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Sep 2023 16:14:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48060 "EHLO
+        id S229972AbjIUUTg convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Sep 2023 16:19:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230479AbjIUUOM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Sep 2023 16:14:12 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DAC4CDBFD;
-        Thu, 21 Sep 2023 11:20:10 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A5E5C433C7;
-        Thu, 21 Sep 2023 18:20:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695320410;
-        bh=F7FOmZJGIZea3PDFeMXSNL3wD06ectqhotbY/CYvQks=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gcrZlu1OoqwfasuSssDAxLOCRvqJmyVmQChzusvlYR8QPU7Zzl9UKSTMk3D9DZ7it
-         MwoxrJ+pSxuduTRLsqGaciU8U/7IwTkj/okC+SktMnxUm6pBDNdXoBpRN9UbS2LYwx
-         GUaJF0XjITZrbG8fDh0+gxRYAqerHh9UYlA6BIVoL0iteOZXgotzm9WR2oWUNanZqT
-         JW2mryDuv01/LdooWc4APsPKALCXkNxADgfc7Hx/I2LnNXy18SJymxQCnsUeelAyx9
-         32s3745804OphWhgnApJhk3blLfh4/BwkShCyTU1poJzkvUDWpnFBmYWMMhzvBiyDs
-         FcoEr4BDF895A==
-Received: (nullmailer pid 762555 invoked by uid 1000);
-        Thu, 21 Sep 2023 18:20:07 -0000
-Date:   Thu, 21 Sep 2023 13:20:07 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Alvin =?utf-8?Q?=C5=A0ipraga?= <alvin@pqrs.dk>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        =?utf-8?B?77+9aXByYWdh?= <alsi@bang-olufsen.dk>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Rabeeh Khoury <rabeeh@solid-run.com>,
-        Jacob Siverskog <jacob@teenage.engineering>,
-        Sergej Sawazki <sergej@taudac.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] dt-bindings: clock: si5351: add PLL reset mode
- property
-Message-ID: <20230921182007.GA761604-robh@kernel.org>
-References: <20230920140343.2329225-1-alvin@pqrs.dk>
- <20230920140343.2329225-3-alvin@pqrs.dk>
+        with ESMTP id S231621AbjIUUTP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Sep 2023 16:19:15 -0400
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5A7B2AC41;
+        Thu, 21 Sep 2023 10:11:44 -0700 (PDT)
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-578a44dfa88so808716a12.0;
+        Thu, 21 Sep 2023 10:11:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695316304; x=1695921104;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+RPRgMtQ7qCU/brC+NvfIv29WXY/7wD47KIHBnDqHGA=;
+        b=XW7Y/gyKkn3zry2MWC7GN9TNgLSt5dHxfZcLXb+szocF0kbYiYcDr3k5xn8E8otmxe
+         i8fYRF1J0SVrzGsAoLft8EGRTOZzpAFin84604MiR93XGfUIz9KcCxBmZ+da4kspcQgC
+         x+NeHoOuctMgJoYhlE+gd8++nbCc9Puj0lF2waEwcWPb48yMtOMPkwlkURV3MdeiRLmv
+         +6asZqJKhKkjRK9pVhJ+y2TAfAOZeaxMP92rrZ5sMz0AwH6u3yoRmXlFN3f81h9wEPfU
+         30Q7PlfFsvDZVmFNm7bubFsL9H5sT2VZ+go+1QluKg2pKhdnLqReWzpHTi9GwqlCRLCQ
+         rPgg==
+X-Gm-Message-State: AOJu0Yza9dRcTuHhjh/BgTEnkIM9KmOIRXW+YpDuvyZLwr70E+R+E/Rf
+        tNhRSJRHLco34QiJg7x1P2f/hXsd6XzHQulg
+X-Google-Smtp-Source: AGHT+IERK5CYoZHbPlYt3rNggsKsuNjahQunWcbVai6KndOpdvCGz4YrSvq0luFY8urPBXDa2JHl9g==
+X-Received: by 2002:a0d:d8c2:0:b0:579:16e0:b1bf with SMTP id a185-20020a0dd8c2000000b0057916e0b1bfmr5944356ywe.12.1695298056358;
+        Thu, 21 Sep 2023 05:07:36 -0700 (PDT)
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
+        by smtp.gmail.com with ESMTPSA id e62-20020a0df541000000b005844ae2bfa3sm291931ywf.95.2023.09.21.05.07.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Sep 2023 05:07:36 -0700 (PDT)
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-59c26aa19b7so10370997b3.2;
+        Thu, 21 Sep 2023 05:07:36 -0700 (PDT)
+X-Received: by 2002:a0d:eb93:0:b0:57a:9b2c:51f1 with SMTP id
+ u141-20020a0deb93000000b0057a9b2c51f1mr4883712ywe.1.1695298055833; Thu, 21
+ Sep 2023 05:07:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230920140343.2329225-3-alvin@pqrs.dk>
+References: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com> <20230912045157.177966-25-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20230912045157.177966-25-claudiu.beznea.uj@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 21 Sep 2023 14:07:23 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUWUMMQ9dp5mf5wQ2X6CtpdAKH=FU-3xvNHcVknAsv+=w@mail.gmail.com>
+Message-ID: <CAMuHMdUWUMMQ9dp5mf5wQ2X6CtpdAKH=FU-3xvNHcVknAsv+=w@mail.gmail.com>
+Subject: Re: [PATCH 24/37] pinctrl: renesas: rzg2l: adapt for different SD,
+ PWPR register offsets
+To:     Claudiu <claudiu.beznea@tuxon.dev>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        ulf.hansson@linaro.org, linus.walleij@linaro.org,
+        gregkh@linuxfoundation.org, jirislaby@kernel.org,
+        magnus.damm@gmail.com, catalin.marinas@arm.com, will@kernel.org,
+        prabhakar.mahadev-lad.rj@bp.renesas.com,
+        biju.das.jz@bp.renesas.com, quic_bjorande@quicinc.com,
+        arnd@arndb.de, konrad.dybcio@linaro.org, neil.armstrong@linaro.org,
+        nfraprado@collabora.com, rafal@milecki.pl,
+        wsa+renesas@sang-engineering.com,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Sep 20, 2023 at 03:09:54PM +0200, Alvin Šipraga wrote:
-> From: Alvin Šipraga <alsi@bang-olufsen.dk>
-> 
-> For applications where the PLL must be adjusted without glitches in the
-> clock output(s), a new silabs,pll-reset-mode property is added. It
-> can be used to specify whether or not the PLL should be reset after
-> adjustment. Resetting is known to cause glitches.
-> 
-> For compatibility with older device trees, it must be assumed that the
-> default PLL reset mode is to unconditionally reset after adjustment.
-> 
-> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-> Cc: Rabeeh Khoury <rabeeh@solid-run.com>
-> Cc: Jacob Siverskog <jacob@teenage.engineering>
-> Cc: Sergej Sawazki <sergej@taudac.com>
-> Signed-off-by: Alvin Šipraga <alsi@bang-olufsen.dk>
-> ---
->  .../bindings/clock/silabs,si5351.yaml         | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/silabs,si5351.yaml b/Documentation/devicetree/bindings/clock/silabs,si5351.yaml
-> index 3ca8d998c48c..b6692b323a66 100644
-> --- a/Documentation/devicetree/bindings/clock/silabs,si5351.yaml
-> +++ b/Documentation/devicetree/bindings/clock/silabs,si5351.yaml
-> @@ -50,6 +50,22 @@ properties:
->        Pair of <number source> for each PLL. Allows to overwrite clock source of
->        PLL A (number=0) or PLL B (number=1).
->  
-> +  silabs,pll-reset-mode:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-matrix
-> +    minItems: 1
-> +    maxItems: 2
-> +    description: |
-> +      Pair of <number mode> for each PLL. Configures the reset mode for PLL A
-> +      (number=0) and/or PLL B (number=1). Mode can be one of:
-> +
-> +      0 - reset whenever PLL rate is adjusted (default mode)
-> +      1 - do not reset when PLL rate is adjusted
-> +
-> +      In mode 1, the PLL is only reset if the silabs,pll-reset is specified in
-> +      one of the clock output child nodes that also sources the PLL. This mode
-> +      may be preferable if output clocks are expected to be adjusted without
-> +      glitches.
+On Tue, Sep 12, 2023 at 6:53 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> SD, PWPR power registers have different offsets b/w RZ/G2L and RZ/G3S.
+> Commit adds a per SoC configuration data structure that is initialized with
+> proper register offset for individual SoCs. The struct rzg2l_hwcfg will be
+> further extended in next commits.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Same comments as the other matrix property.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> +
->  patternProperties:
->    "^clkout@?[0-8]$":
->      type: object
-> @@ -205,6 +221,9 @@ examples:
->          /* Use XTAL input as source of PLL0 and PLL1 */
->          silabs,pll-source = <0 0>, <1 0>;
->  
-> +        /* Don't reset PLL1 on rate adjustment */
-> +        silabs,pll-reset-mode = <1 1>;
-> +
->          /*
->           * Overwrite CLK0 configuration with:
->           * - 8 mA output drive strength
-> -- 
-> 2.41.0
-> 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
