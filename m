@@ -2,554 +2,686 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21BD9E7D0A1
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Sep 2023 22:56:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37752E7D0CE
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Sep 2023 06:08:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230232AbjIUW4H convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Sep 2023 18:56:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58482 "EHLO
+        id S229711AbjIVGIe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Sep 2023 02:08:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231406AbjIUWzs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Sep 2023 18:55:48 -0400
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A91FA4A32D;
-        Thu, 21 Sep 2023 10:14:24 -0700 (PDT)
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-68fcb4dc8a9so1111729b3a.2;
-        Thu, 21 Sep 2023 10:14:24 -0700 (PDT)
+        with ESMTP id S229539AbjIVGId (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Sep 2023 02:08:33 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C07F114;
+        Thu, 21 Sep 2023 23:08:25 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-9a9d82d73f9so212792166b.3;
+        Thu, 21 Sep 2023 23:08:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jms.id.au; s=google; t=1695362904; x=1695967704; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=3ehP2y9sSARQViq4dc4KH5Orc7A36Z7hzUihJTbc2K8=;
+        b=M6DBM9K/SKJEHlR6oozVNb7c1oVrmdVnfyeGuMU4W5sBrzs7LVtI+cNsZUc8oX6M8Q
+         vcLZfYdUoznDlbHrCBa8M+gui8rmerR5BuAN6kfeLQ/jC2IDzUHf1FMKUlNjizL7rY1G
+         wRxC2HUEZ24Xa3fkBAyOKOv3GILKlAZGqZ32A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695316381; x=1695921181;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UAHKG7R+6lgDEExNMzQpuzImNL/hQIVkiU8H9tQe9qs=;
-        b=qn1ShQ654vea/JyspgXm4BKzvAq1BI2+RQRKH9d3X0FIb2IiFf78005+9QVVMR6DlV
-         ZKKfkDmQCaVjdinLXXlQ3CPGr38xNL2WqGA+f7tWjjaoxnfuLWfx0o1y2S9zJzZiQ3al
-         h0BwA1r5Yv6BWpALyu5fRMtQHjBc03w6taidVd+sblAVBuUZe+KLhg/vj3DZIkSc9w8P
-         C9bgEbQVCSvoMRCI2pMHjYYaM+rVnfrFMzK7yNOPQP1vPU/MXer2l/5dDZ1dUPdyHGZF
-         r+LxrKQISxijzkRWLZjufc7I2GGlMPvTKxa86vGr/bE88Pwbcw7y0OQCW3lX7sQcneLL
-         IAuw==
-X-Gm-Message-State: AOJu0YxrDsTmr0Ae1sXNZ/bqQ6LRvLvcW87XWDrJEXGudQejZCDJbQDL
-        vCyzPvEjTtkzVasgHhAZxMbTS/9Q0S5R664I
-X-Google-Smtp-Source: AGHT+IE+DSffpVBY2fAYdjK9RqpHWFHeAABPgDSQcgdEstjFSu4XhYPWPAjjeOKcf3AXtNokRlDirA==
-X-Received: by 2002:a25:850e:0:b0:d0a:a1fa:b8e4 with SMTP id w14-20020a25850e000000b00d0aa1fab8e4mr5651126ybk.38.1695301687803;
-        Thu, 21 Sep 2023 06:08:07 -0700 (PDT)
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com. [209.85.128.173])
-        by smtp.gmail.com with ESMTPSA id z17-20020a258691000000b00d7e3e42d0c4sm308412ybk.53.2023.09.21.06.08.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Sep 2023 06:08:07 -0700 (PDT)
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-59ed7094255so11814607b3.3;
-        Thu, 21 Sep 2023 06:08:07 -0700 (PDT)
-X-Received: by 2002:a81:c213:0:b0:58f:bda3:8dd with SMTP id
- z19-20020a81c213000000b0058fbda308ddmr5534159ywc.32.1695301687169; Thu, 21
- Sep 2023 06:08:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1695362904; x=1695967704;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3ehP2y9sSARQViq4dc4KH5Orc7A36Z7hzUihJTbc2K8=;
+        b=WLUTbMT2fC2VhfyZmnytQqwwP9w57pPti65gyAILXrdjm9DjH34CEfz7zXQYDNBbb4
+         EwGVAEKIBJZooqNfws3WCepyVyFOlhGiJGH0jfd78rInjS21A3m8coFqahYtezkOmovC
+         H/0UgYNoApXzFXvDOH+HxqSMVga/iZzUiB2xoqh4Z+Bc0xoeakrejagU3oTna33N5Q1D
+         TCjh1gAogv0hEfdpKnTbTGjOycVUOnaRg4UNdEZOYkTygnBlN8iFd6MFhmWPxeAfrKCu
+         po/t9saFeduuHuz8E24Q4uNAqRLHgzWY1iAYKSD9ttA1g8e5Nqy+wPCP1P0kaSuCK/S4
+         KnUw==
+X-Gm-Message-State: AOJu0YzUyY5aZcasx7hl68j/BjTHhTFVWncN4NNEA6QVtI9S+eYazNyk
+        0jP88bwgOAiIaT4a6ACtlRzmJhw9L6535UosxWg=
+X-Google-Smtp-Source: AGHT+IHtlPb79rluFXfsZMIso1MlC8TfWO0i/46tYmIOaj6omgHJILRDrd56w9v4rPnjAlwrOuWxklh8H2rfD7yQl7M=
+X-Received: by 2002:a17:906:3091:b0:9a9:d448:a666 with SMTP id
+ 17-20020a170906309100b009a9d448a666mr6001734ejv.76.1695362903545; Thu, 21 Sep
+ 2023 23:08:23 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com> <20230912045157.177966-28-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20230912045157.177966-28-claudiu.beznea.uj@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 21 Sep 2023 15:07:53 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWfa_vre2Y0nOwST4FZ5D8NZj7cOmhrvk+MaMTjNYM+uA@mail.gmail.com>
-Message-ID: <CAMuHMdWfa_vre2Y0nOwST4FZ5D8NZj7cOmhrvk+MaMTjNYM+uA@mail.gmail.com>
-Subject: Re: [PATCH 27/37] pinctrl: renesas: rzg2l: add support for different
- ds values on different groups
-To:     Claudiu <claudiu.beznea@tuxon.dev>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        ulf.hansson@linaro.org, linus.walleij@linaro.org,
-        gregkh@linuxfoundation.org, jirislaby@kernel.org,
-        magnus.damm@gmail.com, catalin.marinas@arm.com, will@kernel.org,
-        prabhakar.mahadev-lad.rj@bp.renesas.com,
-        biju.das.jz@bp.renesas.com, quic_bjorande@quicinc.com,
-        arnd@arndb.de, konrad.dybcio@linaro.org, neil.armstrong@linaro.org,
-        nfraprado@collabora.com, rafal@milecki.pl,
-        wsa+renesas@sang-engineering.com,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20230919061041.124415-1-tmaimon77@gmail.com> <20230919061041.124415-2-tmaimon77@gmail.com>
+In-Reply-To: <20230919061041.124415-2-tmaimon77@gmail.com>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Fri, 22 Sep 2023 06:08:11 +0000
+Message-ID: <CACPK8XdRuD__67eAUK2DPN-unObCBs64S2rewdD1fyzLfT1Yxg@mail.gmail.com>
+Subject: Re: [PATCH v19 1/1] clk: npcm8xx: add clock controller
+To:     Tomer Maimon <tmaimon77@gmail.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, avifishman70@gmail.com,
+        tali.perry1@gmail.com, venture@google.com, yuenn@google.com,
+        benjaminfair@google.com, openbmc@lists.ozlabs.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Claudiu,
-
-Thanks for your patch!
-
-On Tue, Sep 12, 2023 at 6:53 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+On Tue, 19 Sept 2023 at 06:11, Tomer Maimon <tmaimon77@gmail.com> wrote:
 >
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> Nuvoton Arbel BMC NPCM8XX contains an integrated clock controller which
+> generates and supplies clocks to all modules within the BMC.
 >
-> RZ/G3S supports different drive strenght values for different power sources
+> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
 
-strength
+Acked-by: Joel Stanley <joel@jms.id.au>
 
-> and pin groups (A, B, C). On each group there could be up to 4 drive
-> strength values per power source. Available power sources are 1v8, 2v5,
-> 3v3. Drive strength values are fine tuned than what was previously
-> available on the driver thus the necessity of having micro-amp support.
-> As drive strength and power source values are linked togheter the
+I am not a clk reviewer, but this looks similar enough to other clk
+drivers that I think it could be merged, and further improvements made
+in the tree.
 
-together
 
-> hardware setup for these was moved at the end of
-> rzg2l_pinctrl_pinconf_set() to ensure proper validation of the new
-> values.
+> ---
+>  drivers/clk/Kconfig       |   8 +
+>  drivers/clk/Makefile      |   1 +
+>  drivers/clk/clk-npcm8xx.c | 565 ++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 574 insertions(+)
+>  create mode 100644 drivers/clk/clk-npcm8xx.c
 >
-> The drive strength values are expected to be initialized though SoC
-> specific hardware configuration data structure.
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index c30099866174..9bc5f2dfc7e2 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -325,6 +325,14 @@ config COMMON_CLK_LOCHNAGAR
+>           This driver supports the clocking features of the Cirrus Logic
+>           Lochnagar audio development board.
 >
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-
-> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-
-> @@ -133,27 +135,40 @@ struct rzg2l_register_offsets {
->         u16 sd_ch;
->  };
->
-> +/* Value to be passed on drive strength arrays as invalid value. */
-> +#define RZG2L_INVALID_IOLH_VAL (0xffff)
-
-I think you can do without this (see below).
-
+> +config COMMON_CLK_NPCM8XX
+> +       tristate "Clock driver for the NPCM8XX SoC Family"
+> +       depends on ARCH_NPCM || COMPILE_TEST
+> +       help
+> +         This driver supports the clocks on the Nuvoton BMC NPCM8XX SoC Family,
+> +         all the clocks are initialized by the bootloader, so this driver
+> +         allows only reading of current settings directly from the hardware.
 > +
->  /**
->   * enum rzg2l_iolh_index - starting indexes in IOLH specific arrays
-> + * @RZG2L_IOLH_IDX_1V8: starting index for 1V8 power source
-> + * @RZG2L_IOLH_IDX_2V5: starting index for 2V5 power source
->   * @RZG2L_IOLH_IDX_3V3: starting index for 3V3 power source
->   * @RZG2L_IOLH_IDX_MAX: maximum index
->   */
->  enum rzg2l_iolh_index {
-> -       RZG2L_IOLH_IDX_3V3 = 0,
-> -       RZG2L_IOLH_IDX_MAX = 4,
-> +       RZG2L_IOLH_IDX_1V8 = 0,
-> +       RZG2L_IOLH_IDX_2V5 = 4,
-> +       RZG2L_IOLH_IDX_3V3 = 8,
-> +       RZG2L_IOLH_IDX_MAX = 12,
->  };
->
->  /**
->   * struct rzg2l_hwcfg - hardware configuration data structure
->   * @regs: hardware specific register offsets
->   * @iolh_groupa_ua: IOLH group A micro amps specific values
-> + * @iolh_groupb_ua: IOLH group B micro amps specific values
-> + * @iolh_groupc_ua: IOLH group C micro amps specific values
-
-uA
-
->   * @iolh_groupb_oi: IOLH group B output impedance specific values
-> + * @drive_strength_ua: driver strenght in ua is supported (otherwise mA is supported)
-
-drive strength in uA
-
->   * @func_base: base number for port function (see register PFC)
->   */
->  struct rzg2l_hwcfg {
->         const struct rzg2l_register_offsets regs;
->         u16 iolh_groupa_ua[RZG2L_IOLH_IDX_MAX];
-> +       u16 iolh_groupb_ua[RZG2L_IOLH_IDX_MAX];
-> +       u16 iolh_groupc_ua[RZG2L_IOLH_IDX_MAX];
->         u16 iolh_groupb_oi[RZG2L_IOLH_IDX_MAX];
-> +       bool drive_strength_ua;
->         u8 func_base;
->  };
->
-
-> @@ -555,6 +584,164 @@ static void rzg2l_rmw_pin_config(struct rzg2l_pinctrl *pctrl, u32 offset,
->         spin_unlock_irqrestore(&pctrl->lock, flags);
->  }
->
-> +static int rzg2l_get_power_source(struct rzg2l_pinctrl *pctrl, u32 pin, u32 caps)
-> +{
-> +       const struct rzg2l_hwcfg *hwcfg = pctrl->data->hwcfg;
-> +       const struct rzg2l_register_offsets *regs = &hwcfg->regs;
+>  config COMMON_CLK_LOONGSON2
+>         bool "Clock driver for Loongson-2 SoC"
+>         depends on LOONGARCH || COMPILE_TEST
+> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> index 18969cbd4bb1..e2cbc6cceb8c 100644
+> --- a/drivers/clk/Makefile
+> +++ b/drivers/clk/Makefile
+> @@ -51,6 +51,7 @@ obj-$(CONFIG_ARCH_MILBEAUT_M10V)      += clk-milbeaut.o
+>  obj-$(CONFIG_ARCH_MOXART)              += clk-moxart.o
+>  obj-$(CONFIG_ARCH_NOMADIK)             += clk-nomadik.o
+>  obj-$(CONFIG_ARCH_NPCM7XX)             += clk-npcm7xx.o
+> +obj-$(CONFIG_COMMON_CLK_NPCM8XX)       += clk-npcm8xx.o
+>  obj-$(CONFIG_ARCH_NSPIRE)              += clk-nspire.o
+>  obj-$(CONFIG_COMMON_CLK_PALMAS)                += clk-palmas.o
+>  obj-$(CONFIG_CLK_LS1028A_PLLDIG)       += clk-plldig.o
+> diff --git a/drivers/clk/clk-npcm8xx.c b/drivers/clk/clk-npcm8xx.c
+> new file mode 100644
+> index 000000000000..16c50aa9cb65
+> --- /dev/null
+> +++ b/drivers/clk/clk-npcm8xx.c
+> @@ -0,0 +1,565 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Nuvoton NPCM8xx Clock Generator
+> + * All the clocks are initialized by the bootloader, so this driver allows only
+> + * reading of current settings directly from the hardware.
+> + *
+> + * Copyright (C) 2020 Nuvoton Technologies
+> + * Author: Tomer Maimon <tomer.maimon@nuvoton.com>
+> + */
+> +
+> +#include <linux/bitfield.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/slab.h>
+> +
+> +#include <dt-bindings/clock/nuvoton,npcm845-clk.h>
+> +
+> +/* npcm8xx clock registers*/
+> +#define NPCM8XX_CLKSEL         0x04
+> +#define NPCM8XX_CLKDIV1                0x08
+> +#define NPCM8XX_CLKDIV2                0x2C
+> +#define NPCM8XX_CLKDIV3                0x58
+> +#define NPCM8XX_CLKDIV4                0x7C
+> +#define NPCM8XX_PLLCON0                0x0C
+> +#define NPCM8XX_PLLCON1                0x10
+> +#define NPCM8XX_PLLCON2                0x54
+> +#define NPCM8XX_PLLCONG                0x60
+> +#define NPCM8XX_THRTL_CNT      0xC0
+> +
+> +#define PLLCON_LOKI    BIT(31)
+> +#define PLLCON_LOKS    BIT(30)
+> +#define PLLCON_FBDV    GENMASK(27, 16)
+> +#define PLLCON_OTDV2   GENMASK(15, 13)
+> +#define PLLCON_PWDEN   BIT(12)
+> +#define PLLCON_OTDV1   GENMASK(10, 8)
+> +#define PLLCON_INDV    GENMASK(5, 0)
+> +
+> +struct npcm8xx_clk_pll {
+> +       void __iomem    *pllcon;
+> +       unsigned int    id;
+> +       const char      *name;
+> +       unsigned long   flags;
+> +       struct clk_hw   hw;
+> +};
+> +
+> +#define to_npcm8xx_clk_pll(_hw) container_of(_hw, struct npcm8xx_clk_pll, hw)
+> +
+> +struct npcm8xx_pll_data {
+> +       const char *name;
+> +       struct clk_parent_data parent;
+> +       unsigned int reg;
 > +       unsigned long flags;
-> +       void __iomem *addr;
-> +       u32 pwr_reg;
-> +       u16 ps;
+> +       struct clk_hw hw;
+> +};
 > +
-> +       if (caps & PIN_CFG_IO_VMC_SD0)
-> +               pwr_reg = SD_CH(regs->sd_ch, 0);
-> +       else if (caps & PIN_CFG_IO_VMC_SD1)
-> +               pwr_reg = SD_CH(regs->sd_ch, 1);
-> +       else if (caps & PIN_CFG_IO_VMC_QSPI)
-> +               pwr_reg = QSPI;
-> +       else if (!(caps & PIN_CFG_SOFT_PS))
-> +               return -EINVAL;
-> +
-> +       spin_lock_irqsave(&pctrl->lock, flags);
-
-No need to take this spinlock
-(it was just moved, and wasn't needed before).
-
-> +       if (caps & PIN_CFG_SOFT_PS) {
-> +               ps = pctrl->settings[pin].power_source;
-> +       } else {
-> +               addr = pctrl->base + pwr_reg;
-> +               ps = (readl(addr) & PVDD_MASK) ? 1800 : 3300;
-> +       }
-> +       spin_unlock_irqrestore(&pctrl->lock, flags);
-
-I think the above can be simplified using a new caps_to_pwr_reg()
-helper:
-
-    if (caps & PIN_CFG_SOFT_PS)
-                return pctrl->settings[pin].power_source;
-
-    addr = pctrl->base + caps_to_pwr_reg(caps);
-    if (addr == (u32)-1)
-            return -EINVAL;
-
-    return (readl(addr) & PVDD_MASK) ? 1800 : 3300;
-
-BTW, if it wasn't for the initialization of settings[pin].power_source
-in rzg2l_pinctrl_register() using rzg2l_get_power_source() too, you
-could always return the cached value.
-
-> +
-> +       return ps;
-> +}
-> +
-> +static int rzg2l_set_power_source(struct rzg2l_pinctrl *pctrl, u32 pin, u32 caps, u32 ps)
-> +{
-> +       const struct rzg2l_hwcfg *hwcfg = pctrl->data->hwcfg;
-> +       const struct rzg2l_register_offsets *regs = &hwcfg->regs;
+> +struct npcm8xx_clk_div_data {
+> +       u32 reg;
+> +       u8 shift;
+> +       u8 width;
+> +       const char *name;
+> +       const struct clk_parent_data parent_data;
+> +       u8 clk_divider_flags;
 > +       unsigned long flags;
-> +       void __iomem *addr;
-> +       u32 pwr_reg;
+> +       int onecell_idx;
+> +};
 > +
-> +       if (caps & PIN_CFG_IO_VMC_SD0)
-> +               pwr_reg = SD_CH(regs->sd_ch, 0);
-> +       else if (caps & PIN_CFG_IO_VMC_SD1)
-> +               pwr_reg = SD_CH(regs->sd_ch, 1);
-> +       else if (caps & PIN_CFG_IO_VMC_QSPI)
-> +               pwr_reg = QSPI;
-> +       else if (!(caps & PIN_CFG_SOFT_PS))
-> +               return -EINVAL;
+> +struct npcm8xx_clk_mux_data {
+> +       u8 shift;
+> +       u32 mask;
+> +       const u32 *table;
+> +       const char *name;
+> +       const struct clk_parent_data *parent_data;
+> +       u8 num_parents;
+> +       unsigned long flags;
+> +       struct clk_hw hw;
+> +};
 > +
-> +       addr = pctrl->base + pwr_reg;
-> +       spin_lock_irqsave(&pctrl->lock, flags);
-> +       if (!(caps & PIN_CFG_SOFT_PS))
-> +               writel((ps == 1800) ? PVDD_1800 : PVDD_3300, addr);
-> +       pctrl->settings[pin].power_source = ps;
-> +       spin_unlock_irqrestore(&pctrl->lock, flags);
-
-No need to take this spinlock
-(it was just moved, and wasn't needed before).
-
+> +/* external clock definition */
+> +#define NPCM8XX_CLK_S_REFCLK   "refclk"
 > +
-> +       return 0;
-
-This function can be simplified in a similar way.
-
-> +}
-
-> +static u16 rzg2l_iolh_ua_to_val(const struct rzg2l_hwcfg *hwcfg, u32 caps,
-> +                               enum rzg2l_iolh_index ps_index, u16 ua)
+> +/* pll definition */
+> +#define NPCM8XX_CLK_S_PLL0     "pll0"
+> +#define NPCM8XX_CLK_S_PLL1     "pll1"
+> +#define NPCM8XX_CLK_S_PLL2     "pll2"
+> +#define NPCM8XX_CLK_S_PLL_GFX  "pll_gfx"
+> +
+> +/* early divider definition */
+> +#define NPCM8XX_CLK_S_PLL2_DIV2                "pll2_div2"
+> +#define NPCM8XX_CLK_S_PLL_GFX_DIV2     "pll_gfx_div2"
+> +#define NPCM8XX_CLK_S_PLL1_DIV2                "pll1_div2"
+> +
+> +/* mux definition */
+> +#define NPCM8XX_CLK_S_CPU_MUX     "cpu_mux"
+> +#define NPCM8XX_CLK_S_PIX_MUX     "gfx_pixel_mux"
+> +#define NPCM8XX_CLK_S_SD_MUX      "sd_mux"
+> +#define NPCM8XX_CLK_S_UART_MUX    "uart_mux"
+> +#define NPCM8XX_CLK_S_SU_MUX      "serial_usb_mux"
+> +#define NPCM8XX_CLK_S_MC_MUX      "mc_mux"
+> +#define NPCM8XX_CLK_S_ADC_MUX     "adc_mux"
+> +#define NPCM8XX_CLK_S_GFX_MUX     "gfx_mux"
+> +#define NPCM8XX_CLK_S_CLKOUT_MUX  "clkout_mux"
+> +#define NPCM8XX_CLK_S_GFXM_MUX    "gfxm_mux"
+> +#define NPCM8XX_CLK_S_DVC_MUX     "dvc_mux"
+> +#define NPCM8XX_CLK_S_RG_MUX     "rg_mux"
+> +#define NPCM8XX_CLK_S_RCP_MUX    "rcp_mux"
+> +
+> +/* div definition */
+> +#define NPCM8XX_CLK_S_MC          "mc"
+> +#define NPCM8XX_CLK_S_AXI         "axi"
+> +#define NPCM8XX_CLK_S_AHB         "ahb"
+> +#define NPCM8XX_CLK_S_SPI0        "spi0"
+> +#define NPCM8XX_CLK_S_SPI1        "spi1"
+> +#define NPCM8XX_CLK_S_SPI3        "spi3"
+> +#define NPCM8XX_CLK_S_SPIX        "spix"
+> +#define NPCM8XX_CLK_S_APB1        "apb1"
+> +#define NPCM8XX_CLK_S_APB2        "apb2"
+> +#define NPCM8XX_CLK_S_APB3        "apb3"
+> +#define NPCM8XX_CLK_S_APB4        "apb4"
+> +#define NPCM8XX_CLK_S_APB5        "apb5"
+> +#define NPCM8XX_CLK_S_APB19       "apb19"
+> +#define NPCM8XX_CLK_S_TOCK        "tock"
+> +#define NPCM8XX_CLK_S_CLKOUT      "clkout"
+> +#define NPCM8XX_CLK_S_PRE_ADC     "pre adc"
+> +#define NPCM8XX_CLK_S_UART        "uart"
+> +#define NPCM8XX_CLK_S_UART2       "uart2"
+> +#define NPCM8XX_CLK_S_TIMER       "timer"
+> +#define NPCM8XX_CLK_S_MMC         "mmc"
+> +#define NPCM8XX_CLK_S_SDHC        "sdhc"
+> +#define NPCM8XX_CLK_S_ADC         "adc"
+> +#define NPCM8XX_CLK_S_GFX         "gfx0_gfx1_mem"
+> +#define NPCM8XX_CLK_S_USBIF       "serial_usbif"
+> +#define NPCM8XX_CLK_S_USB_HOST    "usb_host"
+> +#define NPCM8XX_CLK_S_USB_BRIDGE  "usb_bridge"
+> +#define NPCM8XX_CLK_S_PCI         "pci"
+> +#define NPCM8XX_CLK_S_TH          "th"
+> +#define NPCM8XX_CLK_S_ATB         "atb"
+> +#define NPCM8XX_CLK_S_PRE_CLK     "pre_clk"
+> +#define NPCM8XX_CLK_S_RG         "rg"
+> +#define NPCM8XX_CLK_S_RCP        "rcp"
+> +
+> +static struct clk_hw hw_pll1_div2, hw_pll2_div2, hw_gfx_div2, hw_pre_clk;
+> +static struct npcm8xx_pll_data npcm8xx_pll_clks[] = {
+> +       { NPCM8XX_CLK_S_PLL0, { .name = NPCM8XX_CLK_S_REFCLK }, NPCM8XX_PLLCON0, 0 },
+> +       { NPCM8XX_CLK_S_PLL1, { .name = NPCM8XX_CLK_S_REFCLK }, NPCM8XX_PLLCON1, 0 },
+> +       { NPCM8XX_CLK_S_PLL2, { .name = NPCM8XX_CLK_S_REFCLK }, NPCM8XX_PLLCON2, 0 },
+> +       { NPCM8XX_CLK_S_PLL_GFX, { .name = NPCM8XX_CLK_S_REFCLK }, NPCM8XX_PLLCONG, 0 },
+> +};
+> +
+> +static const u32 cpuck_mux_table[] = { 0, 1, 2, 7 };
+> +static const struct clk_parent_data cpuck_mux_parents[] = {
+> +       { .hw = &npcm8xx_pll_clks[0].hw },
+> +       { .hw = &npcm8xx_pll_clks[1].hw },
+> +       { .index = 0 },
+> +       { .hw = &npcm8xx_pll_clks[2].hw }
+> +};
+> +
+> +static const u32 pixcksel_mux_table[] = { 0, 2 };
+> +static const struct clk_parent_data pixcksel_mux_parents[] = {
+> +       { .hw = &npcm8xx_pll_clks[3].hw },
+> +       { .index = 0 }
+> +};
+> +
+> +static const u32 default_mux_table[] = { 0, 1, 2, 3 };
+> +static const struct clk_parent_data default_mux_parents[] = {
+> +       { .hw = &npcm8xx_pll_clks[0].hw },
+> +       { .hw = &npcm8xx_pll_clks[1].hw },
+> +       { .index = 0 },
+> +       { .hw = &hw_pll2_div2 }
+> +};
+> +
+> +static const u32 sucksel_mux_table[] = { 2, 3 };
+> +static const struct clk_parent_data sucksel_mux_parents[] = {
+> +       { .index = 0 },
+> +       { .hw = &hw_pll2_div2 }
+> +};
+> +
+> +static const u32 mccksel_mux_table[] = { 0, 2 };
+> +static const struct clk_parent_data mccksel_mux_parents[] = {
+> +       { .hw = &hw_pll1_div2 },
+> +       { .index = 0 }
+> +};
+> +
+> +static const u32 clkoutsel_mux_table[] = { 0, 1, 2, 3, 4 };
+> +static const struct clk_parent_data clkoutsel_mux_parents[] = {
+> +       { .hw = &npcm8xx_pll_clks[0].hw },
+> +       { .hw = &npcm8xx_pll_clks[1].hw },
+> +       { .index = 0 },
+> +       { .hw = &hw_gfx_div2 },
+> +       { .hw = &hw_pll2_div2 }
+> +};
+> +
+> +static const u32 gfxmsel_mux_table[] = { 2, 3 };
+> +static const struct clk_parent_data gfxmsel_mux_parents[] = {
+> +       { .index = 0 },
+> +       { .hw = &npcm8xx_pll_clks[2].hw }
+> +};
+> +
+> +static const u32 dvcssel_mux_table[] = { 2, 3 };
+> +static const struct clk_parent_data dvcssel_mux_parents[] = {
+> +       { .index = 0 },
+> +       { .hw = &npcm8xx_pll_clks[2].hw }
+> +};
+> +
+> +static const u32 default3_mux_table[] = { 0, 1, 2 };
+> +static const struct clk_parent_data default3_mux_parents[] = {
+> +       { .hw = &npcm8xx_pll_clks[0].hw },
+> +       { .hw = &npcm8xx_pll_clks[1].hw },
+> +       { .index = 0 }
+> +};
+> +
+> +static struct npcm8xx_clk_mux_data npcm8xx_muxes[] = {
+> +       { 0, 3, cpuck_mux_table, NPCM8XX_CLK_S_CPU_MUX, cpuck_mux_parents,
+> +               ARRAY_SIZE(cpuck_mux_parents), CLK_IS_CRITICAL },
+> +       { 4, 2, pixcksel_mux_table, NPCM8XX_CLK_S_PIX_MUX, pixcksel_mux_parents,
+> +               ARRAY_SIZE(pixcksel_mux_parents), 0 },
+> +       { 6, 2, default_mux_table, NPCM8XX_CLK_S_SD_MUX, default_mux_parents,
+> +               ARRAY_SIZE(default_mux_parents), 0 },
+> +       { 8, 2, default_mux_table, NPCM8XX_CLK_S_UART_MUX, default_mux_parents,
+> +               ARRAY_SIZE(default_mux_parents), 0 },
+> +       { 10, 2, sucksel_mux_table, NPCM8XX_CLK_S_SU_MUX, sucksel_mux_parents,
+> +               ARRAY_SIZE(sucksel_mux_parents), 0 },
+> +       { 12, 2, mccksel_mux_table, NPCM8XX_CLK_S_MC_MUX, mccksel_mux_parents,
+> +               ARRAY_SIZE(mccksel_mux_parents), 0 },
+> +       { 14, 2, default_mux_table, NPCM8XX_CLK_S_ADC_MUX, default_mux_parents,
+> +               ARRAY_SIZE(default_mux_parents), 0 },
+> +       { 16, 2, default_mux_table, NPCM8XX_CLK_S_GFX_MUX, default_mux_parents,
+> +               ARRAY_SIZE(default_mux_parents), 0 },
+> +       { 18, 3, clkoutsel_mux_table, NPCM8XX_CLK_S_CLKOUT_MUX, clkoutsel_mux_parents,
+> +               ARRAY_SIZE(clkoutsel_mux_parents), 0 },
+> +       { 21, 2, gfxmsel_mux_table, NPCM8XX_CLK_S_GFXM_MUX, gfxmsel_mux_parents,
+> +               ARRAY_SIZE(gfxmsel_mux_parents), 0 },
+> +       { 23, 2, dvcssel_mux_table, NPCM8XX_CLK_S_DVC_MUX, dvcssel_mux_parents,
+> +               ARRAY_SIZE(dvcssel_mux_parents), 0 },
+> +       { 25, 2, default3_mux_table, NPCM8XX_CLK_S_RG_MUX, default3_mux_parents,
+> +               ARRAY_SIZE(default3_mux_parents), 0 },
+> +       { 27, 2, default3_mux_table, NPCM8XX_CLK_S_RCP_MUX, default3_mux_parents,
+> +               ARRAY_SIZE(default3_mux_parents), 0 },
+> +};
+> +
+> +/* configurable dividers: */
+> +static const struct npcm8xx_clk_div_data npcm8xx_divs[] = {
+> +       { NPCM8XX_CLKDIV1, 28, 3, NPCM8XX_CLK_S_ADC,
+> +       { .name = NPCM8XX_CLK_S_PRE_ADC, .index = -1 },
+> +       CLK_DIVIDER_READ_ONLY | CLK_DIVIDER_POWER_OF_TWO, 0, NPCM8XX_CLK_ADC },
+> +       { NPCM8XX_CLKDIV1, 26, 2, NPCM8XX_CLK_S_AHB, { .hw = &hw_pre_clk },
+> +       CLK_DIVIDER_READ_ONLY, CLK_IS_CRITICAL, NPCM8XX_CLK_AHB },
+> +       { NPCM8XX_CLKDIV1, 21, 5, NPCM8XX_CLK_S_PRE_ADC,
+> +       { .hw = &npcm8xx_muxes[6].hw }, CLK_DIVIDER_READ_ONLY, 0, -1 },
+> +       { NPCM8XX_CLKDIV1, 16, 5, NPCM8XX_CLK_S_UART,
+> +       { .hw = &npcm8xx_muxes[3].hw }, 0, 0, NPCM8XX_CLK_UART },
+> +       { NPCM8XX_CLKDIV1, 11, 5, NPCM8XX_CLK_S_MMC,
+> +       { .hw = &npcm8xx_muxes[2].hw }, CLK_DIVIDER_READ_ONLY, 0,
+> +       NPCM8XX_CLK_MMC },
+> +       { NPCM8XX_CLKDIV1, 6, 5, NPCM8XX_CLK_S_SPI3,
+> +       { .fw_name = NPCM8XX_CLK_S_AHB, .name = NPCM8XX_CLK_S_AHB }, 0, 0,
+> +       NPCM8XX_CLK_SPI3 },
+> +       { NPCM8XX_CLKDIV1, 2, 4, NPCM8XX_CLK_S_PCI,
+> +       { .hw = &npcm8xx_muxes[7].hw }, CLK_DIVIDER_READ_ONLY, 0,
+> +       NPCM8XX_CLK_PCI },
+> +
+> +       { NPCM8XX_CLKDIV2, 30, 2, NPCM8XX_CLK_S_APB4,
+> +       { .fw_name = NPCM8XX_CLK_S_AHB, .name = NPCM8XX_CLK_S_AHB },
+> +       CLK_DIVIDER_READ_ONLY | CLK_DIVIDER_POWER_OF_TWO, 0, NPCM8XX_CLK_APB4 },
+> +       { NPCM8XX_CLKDIV2, 28, 2, NPCM8XX_CLK_S_APB3,
+> +       { .fw_name = NPCM8XX_CLK_S_AHB, .name = NPCM8XX_CLK_S_AHB },
+> +       CLK_DIVIDER_READ_ONLY | CLK_DIVIDER_POWER_OF_TWO, 0, NPCM8XX_CLK_APB3 },
+> +       { NPCM8XX_CLKDIV2, 26, 2, NPCM8XX_CLK_S_APB2,
+> +       { .fw_name = NPCM8XX_CLK_S_AHB, .name = NPCM8XX_CLK_S_AHB },
+> +       CLK_DIVIDER_READ_ONLY | CLK_DIVIDER_POWER_OF_TWO, 0, NPCM8XX_CLK_APB2 },
+> +       { NPCM8XX_CLKDIV2, 24, 2, NPCM8XX_CLK_S_APB1,
+> +       { .fw_name = NPCM8XX_CLK_S_AHB, .name = NPCM8XX_CLK_S_AHB },
+> +       CLK_DIVIDER_READ_ONLY | CLK_DIVIDER_POWER_OF_TWO, 0, NPCM8XX_CLK_APB1 },
+> +       { NPCM8XX_CLKDIV2, 22, 2, NPCM8XX_CLK_S_APB5,
+> +       { .fw_name = NPCM8XX_CLK_S_AHB, .name = NPCM8XX_CLK_S_AHB },
+> +       CLK_DIVIDER_READ_ONLY | CLK_DIVIDER_POWER_OF_TWO, 0, NPCM8XX_CLK_APB5 },
+> +       { NPCM8XX_CLKDIV2, 16, 5, NPCM8XX_CLK_S_CLKOUT,
+> +       { .hw = &npcm8xx_muxes[8].hw }, CLK_DIVIDER_READ_ONLY, 0,
+> +       NPCM8XX_CLK_CLKOUT },
+> +       { NPCM8XX_CLKDIV2, 13, 3, NPCM8XX_CLK_S_GFX,
+> +       { .hw = &npcm8xx_muxes[7].hw }, CLK_DIVIDER_READ_ONLY, 0,
+> +       NPCM8XX_CLK_GFX },
+> +       { NPCM8XX_CLKDIV2, 8, 5, NPCM8XX_CLK_S_USB_BRIDGE,
+> +       { .hw = &npcm8xx_muxes[4].hw }, CLK_DIVIDER_READ_ONLY, 0,
+> +       NPCM8XX_CLK_SU },
+> +       { NPCM8XX_CLKDIV2, 4, 4, NPCM8XX_CLK_S_USB_HOST,
+> +       { .hw = &npcm8xx_muxes[4].hw }, CLK_DIVIDER_READ_ONLY, 0,
+> +       NPCM8XX_CLK_SU48 },
+> +       { NPCM8XX_CLKDIV2, 0, 4, NPCM8XX_CLK_S_SDHC,
+> +       { .hw = &npcm8xx_muxes[2].hw }, CLK_DIVIDER_READ_ONLY, 0,
+> +       NPCM8XX_CLK_SDHC },
+> +
+> +       { NPCM8XX_CLKDIV3, 16, 8, NPCM8XX_CLK_S_SPI1,
+> +       { .fw_name = NPCM8XX_CLK_S_AHB, .name = NPCM8XX_CLK_S_AHB },
+> +       CLK_DIVIDER_READ_ONLY, 0, NPCM8XX_CLK_SPI1 },
+> +       { NPCM8XX_CLKDIV3, 11, 5, NPCM8XX_CLK_S_UART2,
+> +       { .hw = &npcm8xx_muxes[3].hw }, CLK_DIVIDER_READ_ONLY, 0,
+> +       NPCM8XX_CLK_UART2 },
+> +       { NPCM8XX_CLKDIV3, 6, 5, NPCM8XX_CLK_S_SPI0,
+> +       { .fw_name = NPCM8XX_CLK_S_AHB, .name = NPCM8XX_CLK_S_AHB },
+> +       CLK_DIVIDER_READ_ONLY, 0, NPCM8XX_CLK_SPI0 },
+> +       { NPCM8XX_CLKDIV3, 1, 5, NPCM8XX_CLK_S_SPIX,
+> +       { .fw_name = NPCM8XX_CLK_S_AHB, .name = NPCM8XX_CLK_S_AHB },
+> +       CLK_DIVIDER_READ_ONLY, 0, NPCM8XX_CLK_SPIX },
+> +
+> +       { NPCM8XX_CLKDIV4, 28, 4, NPCM8XX_CLK_S_RG,
+> +       { .hw = &npcm8xx_muxes[11].hw }, CLK_DIVIDER_READ_ONLY, 0,
+> +       NPCM8XX_CLK_RG },
+> +       { NPCM8XX_CLKDIV4, 12, 4, NPCM8XX_CLK_S_RCP,
+> +       { .hw = &npcm8xx_muxes[12].hw }, CLK_DIVIDER_READ_ONLY, 0,
+> +       NPCM8XX_CLK_RCP },
+> +
+> +       { NPCM8XX_THRTL_CNT, 0, 2, NPCM8XX_CLK_S_TH,
+> +       { .hw = &npcm8xx_muxes[0].hw },
+> +       CLK_DIVIDER_READ_ONLY | CLK_DIVIDER_POWER_OF_TWO, 0, NPCM8XX_CLK_TH },
+> +};
+> +
+> +static unsigned long npcm8xx_clk_pll_recalc_rate(struct clk_hw *hw,
+> +                                                unsigned long parent_rate)
 > +{
-> +       const u16 *array = NULL;
-> +       u16 i;
+> +       struct npcm8xx_clk_pll *pll = to_npcm8xx_clk_pll(hw);
+> +       unsigned long fbdv, indv, otdv1, otdv2;
+> +       unsigned int val;
+> +       u64 ret;
 > +
-> +       if (caps & PIN_CFG_IOLH_A)
-> +               array = &hwcfg->iolh_groupa_ua[ps_index];
-> +
-> +       if (caps & PIN_CFG_IOLH_B)
-> +               array = &hwcfg->iolh_groupb_ua[ps_index];
-> +
-> +       if (caps & PIN_CFG_IOLH_C)
-> +               array = &hwcfg->iolh_groupc_ua[ps_index];
-> +
-> +       if (!array)
-> +               return RZG2L_INVALID_IOLH_VAL;
-
-Just make the function return int, and return -EINVAL.
-
-> +
-> +       for (i = 0; i < 4; i++) {
-> +               if (array[i] == ua)
-> +                       return i;
+> +       if (parent_rate == 0) {
+> +               pr_debug("%s: parent rate is zero\n", __func__);
+> +               return 0;
 > +       }
 > +
-> +       return RZG2L_INVALID_IOLH_VAL;
+> +       val = readl_relaxed(pll->pllcon);
+> +
+> +       indv = FIELD_GET(PLLCON_INDV, val);
+> +       fbdv = FIELD_GET(PLLCON_FBDV, val);
+> +       otdv1 = FIELD_GET(PLLCON_OTDV1, val);
+> +       otdv2 = FIELD_GET(PLLCON_OTDV2, val);
+> +
+> +       ret = (u64)parent_rate * fbdv;
+> +       do_div(ret, indv * otdv1 * otdv2);
+> +
+> +       return ret;
 > +}
 > +
-> +static bool rzg2l_ds_supported(struct rzg2l_pinctrl *pctrl, u32 caps,
-
-rzg2l_ds_is_supported(), for consistency with rzg2l_ps_is_supported()
-
-> +                              enum rzg2l_iolh_index iolh_idx,
-> +                              u16 ds)
+> +static const struct clk_ops npcm8xx_clk_pll_ops = {
+> +       .recalc_rate = npcm8xx_clk_pll_recalc_rate,
+> +};
+> +
+> +static struct clk_hw *
+> +npcm8xx_clk_register_pll(struct device *dev, void __iomem *pllcon,
+> +                        const char *name, const struct clk_parent_data *parent,
+> +                        unsigned long flags)
 > +{
-> +       const struct rzg2l_hwcfg *hwcfg = pctrl->data->hwcfg;
-> +       const u16 *array = NULL;
-> +       u16 i;
+> +       struct npcm8xx_clk_pll *pll;
+> +       struct clk_init_data init = {};
+> +       int ret;
 > +
-> +       if (caps & PIN_CFG_IOLH_A)
-> +               array = hwcfg->iolh_groupa_ua;
+> +       pll = devm_kzalloc(dev, sizeof(*pll), GFP_KERNEL);
+> +       if (!pll)
+> +               return ERR_PTR(-ENOMEM);
 > +
-> +       if (caps & PIN_CFG_IOLH_B)
-> +               array = hwcfg->iolh_groupb_ua;
+> +       init.name = name;
+> +       init.ops = &npcm8xx_clk_pll_ops;
+> +       init.parent_data = parent;
+> +       init.num_parents = 1;
+> +       init.flags = flags;
 > +
-> +       if (caps & PIN_CFG_IOLH_C)
-> +               array = hwcfg->iolh_groupc_ua;
+> +       pll->pllcon = pllcon;
+> +       pll->hw.init = &init;
 > +
-> +       /* Should not happen. */
-> +       if (!array)
-> +               return false;
-> +
-> +       if (array[iolh_idx] == RZG2L_INVALID_IOLH_VAL)
-
-If zero uA is considered an invalid value, this can be simplified to
-
-    if (!array[iolh_idx])
-
-> +               return false;
-> +
-> +       for (i = 0; i < 4; i++) {
-> +               if (array[iolh_idx + i] == ds)
-> +                       return true;
+> +       ret = devm_clk_hw_register(dev, &pll->hw);
+> +       if (ret) {
+> +               kfree(pll);
+> +               return ERR_PTR(ret);
 > +       }
 > +
-> +       return false;
+> +       return &pll->hw;
 > +}
 > +
->  static int rzg2l_pinctrl_pinconf_get(struct pinctrl_dev *pctldev,
->                                      unsigned int _pin,
->                                      unsigned long *config)
-
-> @@ -594,40 +779,50 @@ static int rzg2l_pinctrl_pinconf_get(struct pinctrl_dev *pctldev,
->                         return -EINVAL;
->                 break;
->
-> -       case PIN_CONFIG_POWER_SOURCE: {
-> -               u32 pwr_reg = 0x0;
-> -
-> -               if (cfg & PIN_CFG_IO_VMC_SD0)
-> -                       pwr_reg = SD_CH(regs->sd_ch, 0);
-> -               else if (cfg & PIN_CFG_IO_VMC_SD1)
-> -                       pwr_reg = SD_CH(regs->sd_ch, 1);
-> -               else if (cfg & PIN_CFG_IO_VMC_QSPI)
-> -                       pwr_reg = QSPI;
-> -               else
-> -                       return -EINVAL;
-> -
-> -               spin_lock_irqsave(&pctrl->lock, flags);
-> -               addr = pctrl->base + pwr_reg;
-> -               arg = (readl(addr) & PVDD_MASK) ? 1800 : 3300;
-> -               spin_unlock_irqrestore(&pctrl->lock, flags);
-> +       case PIN_CONFIG_POWER_SOURCE:
-> +               ret = rzg2l_get_power_source(pctrl, _pin, cfg);
-> +               if (ret < 0)
-> +                       return ret;
-> +               arg = ret;
->                 break;
-> -       }
->
->         case PIN_CONFIG_DRIVE_STRENGTH: {
->                 unsigned int index;
->
-> -               if (!(cfg & PIN_CFG_IOLH_A))
-> +               if (!(cfg & PIN_CFG_IOLH_A) || hwcfg->drive_strength_ua)
->                         return -EINVAL;
->
->                 index = rzg2l_read_pin_config(pctrl, IOLH(off), bit, IOLH_MASK);
-> +               /*
-> +                * Drive strenght mA is supported only by group A and only
-> +                * for 3V3 port source.
-> +                */
->                 arg = hwcfg->iolh_groupa_ua[index + RZG2L_IOLH_IDX_3V3] / 1000;
->                 break;
->         }
->
-> +       case PIN_CONFIG_DRIVE_STRENGTH_UA: {
-> +               enum rzg2l_iolh_index iolh_idx;
-> +               u8 val;
+> +static DEFINE_SPINLOCK(npcm8xx_clk_lock);
 > +
-> +               if (!(cfg & (PIN_CFG_IOLH_A | PIN_CFG_IOLH_B | PIN_CFG_IOLH_C)) ||
-> +                   !hwcfg->drive_strength_ua)
-> +                       return -EINVAL;
+> +static int npcm8xx_clk_probe(struct platform_device *pdev)
+> +{
+> +       struct clk_hw_onecell_data *npcm8xx_clk_data;
+> +       struct device *dev = &pdev->dev;
+> +       void __iomem *clk_base;
+> +       struct resource *res;
+> +       struct clk_hw *hw;
+> +       unsigned int i;
+> +       int err;
 > +
-> +               ret = rzg2l_get_power_source(pctrl, _pin, cfg);
-> +               if (ret < 0)
-> +                       return ret;
-> +               iolh_idx = rzg2l_ps_to_iolh_idx(ret);
-> +               val = rzg2l_read_pin_config(pctrl, IOLH(off), bit, IOLH_MASK);
-> +               arg = rzg2l_iolh_val_to_ua(hwcfg, cfg, iolh_idx + val);
-> +               break;
-> +       }
-> +
->         case PIN_CONFIG_OUTPUT_IMPEDANCE_OHMS: {
->                 unsigned int index;
->
-> -               if (!(cfg & PIN_CFG_IOLH_B))
-> +               if (!(cfg & PIN_CFG_IOLH_B) ||
-> +                   hwcfg->iolh_groupb_oi[0] == RZG2L_INVALID_IOLH_VAL)
-
-    !hwcfg->iolh_groupb_oi[0]
-
->                         return -EINVAL;
->
->                 index = rzg2l_read_pin_config(pctrl, IOLH(off), bit, IOLH_MASK);
-
-> @@ -730,11 +904,20 @@ static int rzg2l_pinctrl_pinconf_set(struct pinctrl_dev *pctldev,
->                         break;
->                 }
->
-> +               case PIN_CONFIG_DRIVE_STRENGTH_UA:
-> +                       if (!(cfg & (PIN_CFG_IOLH_A | PIN_CFG_IOLH_B | PIN_CFG_IOLH_C)) ||
-> +                           !hwcfg->drive_strength_ua)
-> +                               return -EINVAL;
-> +
-> +                       settings.drive_strength_ua = pinconf_to_config_argument(_configs[i]);
-> +                       break;
-> +
->                 case PIN_CONFIG_OUTPUT_IMPEDANCE_OHMS: {
->                         unsigned int arg = pinconf_to_config_argument(_configs[i]);
->                         unsigned int index;
->
-> -                       if (!(cfg & PIN_CFG_IOLH_B))
-> +                       if (!(cfg & PIN_CFG_IOLH_B) ||
-> +                           hwcfg->iolh_groupb_oi[0] == RZG2L_INVALID_IOLH_VAL)
-
-!iolh_groupb_oi[0]
-
->                                 return -EINVAL;
->
->                         for (index = 0; index < ARRAY_SIZE(hwcfg->iolh_groupb_oi); index++) {
-> @@ -753,6 +936,47 @@ static int rzg2l_pinctrl_pinconf_set(struct pinctrl_dev *pctldev,
->                 }
->         }
->
-> +       /* Apply drive strength and power source. */
-> +       if (memcmp(&settings, &pctrl->settings[_pin], sizeof(settings))) {
-
-I'd rather invert the logic and return early here, so you can decrease
-indentation below...
-
-> +               enum rzg2l_iolh_index iolh_idx;
-> +               unsigned long flags;
-> +               int ret;
-> +               u16 val;
-> +
-> +               if (settings.power_source == pctrl->settings[_pin].power_source)
-> +                       goto apply_drive_strength;
-
-... and invert the logic here to avoid the goto:
-
-    if (settings.power_source != pctrl->settings[_pin].power_source)) {
-            ...
-> +
-> +               ret = rzg2l_ps_is_supported(settings.power_source);
-> +               if (!ret)
-> +                       return -EINVAL;
-> +
-> +               /* Apply power source. */
-> +               ret = rzg2l_set_power_source(pctrl, _pin, cfg, settings.power_source);
-> +               if (ret)
-> +                       return ret;
-> +
-
-    }
-
-> +apply_drive_strength:
-> +               if (settings.drive_strength_ua == pctrl->settings[_pin].drive_strength_ua)
-> +                       return 0;
-
-Same here:
-
-    if (settings.drive_strength_ua != pctrl->settings[_pin].drive_strength_ua) {
-            ...
-
-> +
-> +               iolh_idx = rzg2l_ps_to_iolh_idx(settings.power_source);
-> +               ret = rzg2l_ds_supported(pctrl, cfg, iolh_idx,
-> +                                        settings.drive_strength_ua);
-> +               if (!ret)
-> +                       return -EINVAL;
-> +
-> +               /* Get register value for this PS/DS tuple. */
-> +               val = rzg2l_iolh_ua_to_val(hwcfg, cfg, iolh_idx, settings.drive_strength_ua);
-> +               if (val == RZG2L_INVALID_IOLH_VAL)
-> +                       return -EINVAL;
-
-Make val int, and return val if it is a negative error code.
-
-> +
-> +               /* Apply drive strength. */
-> +               rzg2l_rmw_pin_config(pctrl, IOLH(off), bit, IOLH_MASK, val);
-> +               spin_lock_irqsave(&pctrl->lock, flags);
-> +               pctrl->settings[_pin].drive_strength_ua = settings.drive_strength_ua;
-> +               spin_unlock_irqrestore(&pctrl->lock, flags);
-
-No need to take the spinlock.
-
-> +       }
-> +
-
-And after that, you'll realize the memcmp() can just be dropped ;-)
-
->         return 0;
->  }
->
-> @@ -1459,6 +1683,7 @@ static int rzg2l_gpio_register(struct rzg2l_pinctrl *pctrl)
->
->  static int rzg2l_pinctrl_register(struct rzg2l_pinctrl *pctrl)
->  {
-> +       const struct rzg2l_hwcfg *hwcfg = pctrl->data->hwcfg;
->         struct pinctrl_pin_desc *pins;
->         unsigned int i, j;
->         u32 *pin_data;
-> @@ -1501,6 +1726,22 @@ static int rzg2l_pinctrl_register(struct rzg2l_pinctrl *pctrl)
->                 pins[index].drv_data = &pin_data[index];
->         }
->
-> +       pctrl->settings = devm_kzalloc(pctrl->dev, sizeof(*pctrl->settings) * pctrl->desc.npins,
-> +                                      GFP_KERNEL);
-
-devm_kcalloc()
-
-> +       if (!pctrl->settings)
+> +       npcm8xx_clk_data = devm_kzalloc(dev, struct_size(npcm8xx_clk_data, hws,
+> +                                                        NPCM8XX_NUM_CLOCKS),
+> +                                       GFP_KERNEL);
+> +       if (!npcm8xx_clk_data)
 > +               return -ENOMEM;
 > +
-> +       for (i = 0; hwcfg->drive_strength_ua && i < pctrl->desc.npins; i++) {
-> +               if (pin_data[i] & PIN_CFG_SOFT_PS) {
-> +                       pctrl->settings[i].power_source = 3300;
-> +               } else {
-> +                       ret = rzg2l_get_power_source(pctrl, i, pin_data[i]);
-> +                       if (ret < 0)
-> +                               continue;
-> +                       pctrl->settings[i].power_source = ret;
-> +               }
+> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +       clk_base = devm_ioremap(dev, res->start, resource_size(res));
+> +       if (!clk_base) {
+> +               dev_err(&pdev->dev, "Failed to remap I/O memory\n");
+> +               return -ENOMEM;
 > +       }
 > +
->         ret = devm_pinctrl_register_and_init(pctrl->dev, &pctrl->desc, pctrl,
->                                              &pctrl->pctl);
->         if (ret) {
-> @@ -1574,6 +1815,8 @@ static const struct rzg2l_hwcfg rzg2l_hwcfg = {
->                 .sd_ch = 0x3000,
->         },
->         .iolh_groupa_ua = {
-> +               /* 1v8, 2v5 power source */
-> +               [RZG2L_IOLH_IDX_1V8 ... RZG2L_IOLH_IDX_3V3 - 1] = RZG2L_INVALID_IOLH_VAL,
-
-If zero uA is considered an invalid value, the initialization above can
-be dropped.
-
->                 /* 3v3 power source */
->                 [RZG2L_IOLH_IDX_3V3] = 2000, 4000, 8000, 12000,
->         },
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> +       npcm8xx_clk_data->num = NPCM8XX_NUM_CLOCKS;
+> +
+> +       for (i = 0; i < NPCM8XX_NUM_CLOCKS; i++)
+> +               npcm8xx_clk_data->hws[i] = ERR_PTR(-EPROBE_DEFER);
+> +
+> +       /* Register plls */
+> +       for (i = 0; i < ARRAY_SIZE(npcm8xx_pll_clks); i++) {
+> +               struct npcm8xx_pll_data *pll_clk = &npcm8xx_pll_clks[i];
+> +
+> +               hw = npcm8xx_clk_register_pll(dev, clk_base + pll_clk->reg,
+> +                                             pll_clk->name, &pll_clk->parent,
+> +                                             pll_clk->flags);
+> +               if (IS_ERR(hw)) {
+> +                       dev_err(dev, "npcm8xx_clk: Can't register pll\n");
+> +                       return PTR_ERR(hw);
+> +               }
+> +               pll_clk->hw = *hw;
+> +       }
+> +
+> +       /* Register fixed dividers */
+> +       hw = devm_clk_hw_register_fixed_factor(dev, NPCM8XX_CLK_S_PLL1_DIV2,
+> +                                              NPCM8XX_CLK_S_PLL1, 0, 1, 2);
+> +       if (IS_ERR(hw)) {
+> +               dev_err(dev, "npcm8xx_clk: Can't register fixed div\n");
+> +               return PTR_ERR(hw);
+> +       }
+> +       hw_pll1_div2 = *hw;
+> +
+> +       hw = devm_clk_hw_register_fixed_factor(dev, NPCM8XX_CLK_S_PLL2_DIV2,
+> +                                              NPCM8XX_CLK_S_PLL2, 0, 1, 2);
+> +       if (IS_ERR(hw)) {
+> +               dev_err(dev, "npcm8xx_clk: Can't register pll2 div2\n");
+> +               return PTR_ERR(hw);
+> +       }
+> +       hw_pll2_div2 = *hw;
+> +
+> +       hw = devm_clk_hw_register_fixed_factor(dev, NPCM8XX_CLK_S_PLL_GFX_DIV2,
+> +                                              NPCM8XX_CLK_S_PLL_GFX, 0, 1, 2);
+> +       if (IS_ERR(hw)) {
+> +               dev_err(dev, "npcm8xx_clk: Can't register gfx div2\n");
+> +               return PTR_ERR(hw);
+> +       }
+> +       hw_gfx_div2 = *hw;
+> +
+> +       /* Register muxes */
+> +       for (i = 0; i < ARRAY_SIZE(npcm8xx_muxes); i++) {
+> +               struct npcm8xx_clk_mux_data *mux_data = &npcm8xx_muxes[i];
+> +
+> +               hw = devm_clk_hw_register_mux_parent_data_table(dev,
+> +                                                               mux_data->name,
+> +                                                               mux_data->parent_data,
+> +                                                               mux_data->num_parents,
+> +                                                               mux_data->flags,
+> +                                                               clk_base + NPCM8XX_CLKSEL,
+> +                                                               mux_data->shift,
+> +                                                               mux_data->mask,
+> +                                                               0,
+> +                                                               mux_data->table,
+> +                                                               &npcm8xx_clk_lock);
+> +               if (IS_ERR(hw)) {
+> +                       dev_err(dev, "npcm8xx_clk: Can't register mux\n");
+> +                       return PTR_ERR(hw);
+> +               }
+> +               mux_data->hw = *hw;
+> +       }
+> +
+> +       hw = devm_clk_hw_register_fixed_factor(dev, NPCM8XX_CLK_S_PRE_CLK,
+> +                                              NPCM8XX_CLK_S_CPU_MUX, 0, 1, 2);
+> +       if (IS_ERR(hw)) {
+> +               dev_err(dev, "npcm8xx_clk: Can't register pre clk div2\n");
+> +               return PTR_ERR(hw);
+> +       }
+> +       hw_pre_clk = *hw;
+> +
+> +       hw = devm_clk_hw_register_fixed_factor(dev, NPCM8XX_CLK_S_AXI,
+> +                                              NPCM8XX_CLK_S_TH, 0, 1, 2);
+> +       if (IS_ERR(hw)) {
+> +               dev_err(dev, "npcm8xx_clk: Can't register axi div2\n");
+> +               return PTR_ERR(hw);
+> +       }
+> +       npcm8xx_clk_data->hws[NPCM8XX_CLK_AXI] = hw;
+> +
+> +       hw = devm_clk_hw_register_fixed_factor(dev, NPCM8XX_CLK_S_ATB,
+> +                                              NPCM8XX_CLK_S_AXI, 0, 1, 2);
+> +       if (IS_ERR(hw)) {
+> +               dev_err(dev, "npcm8xx_clk: Can't register atb div2\n");
+> +               return PTR_ERR(hw);
+> +       }
+> +       npcm8xx_clk_data->hws[NPCM8XX_CLK_ATB] = hw;
+> +
+> +       /* Register clock dividers specified in npcm8xx_divs */
+> +       for (i = 0; i < ARRAY_SIZE(npcm8xx_divs); i++) {
+> +               const struct npcm8xx_clk_div_data *div_data = &npcm8xx_divs[i];
+> +
+> +               hw = clk_hw_register_divider_parent_data(dev, div_data->name,
+> +                                                        &div_data->parent_data,
+> +                                                        div_data->flags,
+> +                                                        clk_base + div_data->reg,
+> +                                                        div_data->shift,
+> +                                                        div_data->width,
+> +                                                        div_data->clk_divider_flags,
+> +                                                        &npcm8xx_clk_lock);
+> +               if (IS_ERR(hw)) {
+> +                       dev_err(dev, "npcm8xx_clk: Can't register div table\n");
+> +                       goto err_div_clk;
+> +               }
+> +
+> +               if (div_data->onecell_idx >= 0)
+> +                       npcm8xx_clk_data->hws[div_data->onecell_idx] = hw;
+> +       }
+> +
+> +       err = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+> +                                         npcm8xx_clk_data);
+> +       if (err) {
+> +               dev_err(dev, "unable to add clk provider\n");
+> +               hw = ERR_PTR(err);
+> +               goto err_div_clk;
+> +       }
+> +
+> +       return err;
+> +
+> +err_div_clk:
+> +       while (i--)
+> +               if (npcm8xx_divs[i].onecell_idx >= 0)
+> +                       clk_hw_unregister_divider(npcm8xx_clk_data->hws[npcm8xx_divs[i].onecell_idx]);
+> +
+> +       return PTR_ERR(hw);
+> +}
+> +
+> +static const struct of_device_id npcm8xx_clk_dt_ids[] = {
+> +       { .compatible = "nuvoton,npcm845-clk", },
+> +       { }
+> +};
+> +MODULE_DEVICE_TABLE(of, npcm8xx_clk_dt_ids);
+> +
+> +static struct platform_driver npcm8xx_clk_driver = {
+> +       .probe  = npcm8xx_clk_probe,
+> +       .driver = {
+> +               .name = "npcm8xx_clk",
+> +               .of_match_table = npcm8xx_clk_dt_ids,
+> +       },
+> +};
+> +
+> +static int __init npcm8xx_clk_driver_init(void)
+> +{
+> +       return platform_driver_register(&npcm8xx_clk_driver);
+> +}
+> +arch_initcall(npcm8xx_clk_driver_init);
+> +
+> +static void __exit npcm8xx_clk_exit(void)
+> +{
+> +       platform_driver_unregister(&npcm8xx_clk_driver);
+> +}
+> +module_exit(npcm8xx_clk_exit);
+> +
+> +MODULE_DESCRIPTION("Clock driver for Nuvoton NPCM8XX BMC SoC");
+> +MODULE_AUTHOR("Tomer Maimon <tomer.maimon@nuvoton.com>");
+> +MODULE_LICENSE("GPL v2");
+> +
+> --
+> 2.33.0
+>
