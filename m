@@ -2,120 +2,100 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D41ACE7A88
-	for <linux-clk@archiver.kernel.org>; Sat, 23 Sep 2023 11:26:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24B3CCE7A88
+	for <linux-clk@archiver.kernel.org>; Sat, 23 Sep 2023 13:31:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230389AbjIWL0e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 23 Sep 2023 07:26:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49700 "EHLO
+        id S229616AbjIWNbq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 23 Sep 2023 09:31:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230491AbjIWL0d (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 23 Sep 2023 07:26:33 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7690F198;
-        Sat, 23 Sep 2023 04:26:24 -0700 (PDT)
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38NBNxnT004905;
-        Sat, 23 Sep 2023 11:26:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=bWTOsBbqIB9GxAQEeNjWm91N5pgYFPfSs0SRTZgW/JA=;
- b=NBa0vT0pBZPm0I2NNydwLXM84me17XGljcPaSRTsmXPqE3ApssH7H4F87ybx6Nw7pgcp
- qP2Gr38zJrDkcsfTCYU4Ntbro5MHBI1o3nZ1mJIYQ1nUMvxE5x3pHtUaM9FVUocF80yY
- F4jMc7Q+z4nxuq/5OIUGp6lFoB+vFO7UO5gJQcgdXYUpGsowDA9IOBNxn/9CgNOT2+SQ
- jr5EjF2lXht4YYwj0HL+z+Acqhm2dSoHJ9m1k5TqDIU5zAjvYz3gK8l1/ZrIN6MzoLtL
- 6OXND/Dm0YNsz9DuQfbHO5BXBkDEGPPICSyHknOmGbfNYiakKo12ORfYBiuwkAaePtrJ hg== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t9r88gq2u-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 23 Sep 2023 11:26:10 +0000
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38NBQ9jl015317
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 23 Sep 2023 11:26:09 GMT
-Received: from [10.253.9.19] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Sat, 23 Sep
- 2023 04:26:05 -0700
-Message-ID: <164945f5-dde9-bfe7-80f4-9ae6736a6259@quicinc.com>
-Date:   Sat, 23 Sep 2023 19:26:03 +0800
+        with ESMTP id S229476AbjIWNbq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 23 Sep 2023 09:31:46 -0400
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3741019C;
+        Sat, 23 Sep 2023 06:31:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net; s=s31663417;
+ t=1695475890; x=1696080690; i=j.neuschaefer@gmx.net;
+ bh=3aoYsFvHdLQ1zTsKyLP0oEuWvOgGBDuRqueX4hDnnJE=;
+ h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+ b=CIA+S3FR+thMZ7uH+pgX/pEw5WBsU34+4I+QtbASDckhCHPBr1qUqsQGZ6SdXmyyNFhOWYF794y
+ XvSA3rT0EiKl0niyMD+BytOQt9bJYDbByGF9wb/PwAFP4rD20NHq91dJ02hpLtNC5SLtNK2xJS+ok
+ WIjCGI9lCOg0G9iHdfTaio3NdhuTUlD4LVrDLKf04EFj+j30lpHUqSfNSDCo0HqU1qH8F+Q5sFmql
+ 24ueQdk2hW8wvmwFWzbExbBZ2ccMI0NvmyuxrAykSMexV5oENlP3AhMDpTmOoXb8mIzGjw4iCKXXe
+ rXoemMreUq7kRTOYk//ko1IaKYJvkeTNrt1w==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from probook ([89.0.47.152]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MuUj2-1ra5Lv40zS-00rVKM; Sat, 23
+ Sep 2023 15:31:30 +0200
+From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     linux-clk@vger.kernel.org
+Cc:     =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, openbmc@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: npcm7xx: Fix incorrect kfree
+Date:   Sat, 23 Sep 2023 15:31:27 +0200
+Message-Id: <20230923133127.1815621-1-j.neuschaefer@gmx.net>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v6 4/4] clk: qcom: add clock controller driver for
- qca8386/qca8084
-To:     Stephen Boyd <sboyd@kernel.org>, <agross@kernel.org>,
-        <andersson@kernel.org>, <catalin.marinas@arm.com>,
-        <conor+dt@kernel.org>, <konrad.dybcio@linaro.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
-        <p.zabel@pengutronix.de>, <robh+dt@kernel.org>, <will@kernel.org>
-CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_srichara@quicinc.com>
-References: <20230901091823.30242-1-quic_luoj@quicinc.com>
- <20230901091823.30242-5-quic_luoj@quicinc.com>
- <27ae3297ad161fd67706db70b402db04.sboyd@kernel.org>
- <16d09acf-7bdd-04ee-6faf-936c0366df03@quicinc.com>
- <17681a9f756cc70a190c674c51b90140.sboyd@kernel.org>
- <5a4805f7-f802-b1ba-9804-59c0fe6c7f26@quicinc.com>
- <92058c25fb11b75ee0a2298a684825e9.sboyd@kernel.org>
- <f67b354c-8a4b-49f5-6275-66b7d614301a@quicinc.com>
- <82adb75659e0d278e25b65b0e81df99a.sboyd@kernel.org>
- <9952fa20-a27f-3240-cc49-5c5109febfc1@quicinc.com>
- <580f3934ab1171e27d785db7362c342d.sboyd@kernel.org>
-Content-Language: en-US
-From:   Jie Luo <quic_luoj@quicinc.com>
-In-Reply-To: <580f3934ab1171e27d785db7362c342d.sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: dbrRdHWrDOisq1ggy48qblpjG8hk83mP
-X-Proofpoint-GUID: dbrRdHWrDOisq1ggy48qblpjG8hk83mP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-09-23_08,2023-09-21_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 bulkscore=0 clxscore=1015 mlxlogscore=969 adultscore=0
- impostorscore=0 spamscore=0 mlxscore=0 lowpriorityscore=0 suspectscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2309180000 definitions=main-2309230095
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:MzXEya1jWvyFn/iWbjLkP5u7vhVmzdkIDybc1OE3k9SmipH+0Sc
+ B+2k77sBUvNBti61dTU9cnvAhlknCVcwf/ax8fVb9gp2TD9o3V1t4r0Z81vxk2h6QOSIFhg
+ EDPuuxp+UvRfydLNtXIGveCAZTVRCoZWywDsdLjLteaHDsVjQdU/4qznli2Ti8ap/5FxfUo
+ 5Fd1tckxUgzZLNFjP17Jw==
+UI-OutboundReport: notjunk:1;M01:P0:zS98FUfADP8=;roxmjkJ5q3Zw6CKrMQ9ERd4TwhY
+ GAFK3mF0uukB7e1ZsfiwObPW+ZaZAsYxIkmOIRFewdrUQsZspz/8QFWfZhXnNYpazItnyQz9C
+ xajb+sm/R6JYLy9w6AlDmzupFayK+cDLnApAeOCxqpcNoXE5KOkm3Q/2AuEuJn/3FC3kgKvfS
+ H+eNKrFU03zomPo6YcALUIed6QWFmEQ/D5E6s+KERYYqK9CV4PZrPxTgcys+M5DClQxSSvb9m
+ AYNhWSxteNc4a/TMAcR4f48OHuP9YLaGhMIIxM8VPqgzpTP+5moF2V+TOmuLY06UT+d4Z/4Fd
+ xJw5q6wK1XdaeaMLLpFy+NQ4cwT6gcRZbD59LYF2sxWqxuw4i/gih19X1tU2r0DTeeE0Rnn6B
+ fGbUNfxeb3kEN74fThNfGr1svOyqqV7m0d9sF/XLTJoslztiaiCIa9CgyZoXEXd5GK90sGKFU
+ MkXPdUmTE7xyad5oUG65bPV5IKLIJzaGdmAkDXXzPMH7hkEIVDMXBkv4oE6Xd9HAzfOAkwKE7
+ atxbPEm+HD3+YyTpE5/LrVePP6oe2lBwhjRj0/RPb/PICwzcYaVD9Ds9je6IrCane8pdJd00d
+ hnBgxg4IgQl51Bkn17t0lJqJiRblATYWfBpQUQnGyEmad17UKd2u4jVZ3ql89FhQZoHkJia+3
+ ulP+UCGLGQLaSCShYWevtujTQf5mpa3JB6k2M5HRZfhPwyZ1YiqsLcSVAlGjbiZJdDb6Ijw1C
+ kjcthnZXNqieZbnZcbKPsq5fyGhmiQ73TVMpCIoekBFSWwy47n47HPIA0p9A8rPMm2gxQeFnH
+ eslkQGRkt0+bdsOU/RyRWgkg7NMP5tWmzInQbgqFdQ5HOU+pUhVvwnzM+28SKbZWkNJPCJRIF
+ mhYc2fVZkUa1KgMo9x7pIV0fstemB0z6rc7rVIrarg5zxbHc/rrTfwvMCE6v0lAty//xUuOIE
+ iyx/MNF0WSzZsZzd56ll8Yecj+4=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+The corresponding allocation is:
 
+> npcm7xx_clk_data =3D kzalloc(struct_size(npcm7xx_clk_data, hws,
+> 			     NPCM7XX_NUM_CLOCKS), GFP_KERNEL);
 
-On 9/15/2023 12:30 AM, Stephen Boyd wrote:
-> Quoting Jie Luo (2023-09-12 20:27:25)
->>
->>
->> On 9/13/2023 1:18 AM, Stephen Boyd wrote:
->>> Quoting Jie Luo (2023-09-12 05:07:02)
->>>>
->>>> and freq_tbl are necessary to this clock.
->>>
->>> I still don't see why the freq_tbl is necessary.
->>
->> Hi Stephen,
->> For clk_rcg2_ops, freq_tbl is used to find the closest rate to decided
->> the parent clock, the configuration of clock source and clock divider
->> are saved in the freq_tbl to configure the RCG hardware register, the
->> mapping of parent clock and hardware register value is decided by the
->> freq_tbl for the RCG clock.
-> 
-> The divider is always 1. The frequency is the frequency of the parent.
-> The two pieces of information are already known without the frequency
-> table. Why is it needed?
+... so, kfree should be applied to npcm7xx_clk_data, not
+npcm7xx_clk_data->hws.
 
-Hi Stephen,
-i uploaded the new patchset V9 to remove these redundant freq_tbl by 
-using the clk_ops clk_ops clk_rcg2_mux_closest_ops, thanks for this
-suggestion for the code improvement.
+Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+=2D--
+ drivers/clk/clk-npcm7xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best Regards,
-Jie
+diff --git a/drivers/clk/clk-npcm7xx.c b/drivers/clk/clk-npcm7xx.c
+index e319cfa51a8a3..030186def9c69 100644
+=2D-- a/drivers/clk/clk-npcm7xx.c
++++ b/drivers/clk/clk-npcm7xx.c
+@@ -510,7 +510,7 @@ static void __init npcm7xx_clk_init(struct device_node=
+ *clk_np)
+ 	return;
+
+ npcm7xx_init_fail:
+-	kfree(npcm7xx_clk_data->hws);
++	kfree(npcm7xx_clk_data);
+ npcm7xx_init_np_err:
+ 	iounmap(clk_base);
+ npcm7xx_init_error:
+=2D-
+2.40.1
+
