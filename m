@@ -2,118 +2,85 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BFC8CE7A88
-	for <linux-clk@archiver.kernel.org>; Sat, 23 Sep 2023 16:14:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8641CCE7A88
+	for <linux-clk@archiver.kernel.org>; Sat, 23 Sep 2023 19:13:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231915AbjIWQOl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 23 Sep 2023 12:14:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48782 "EHLO
+        id S229493AbjIWTOA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 23 Sep 2023 15:14:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231284AbjIWQOl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 23 Sep 2023 12:14:41 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB0F2A3
-        for <linux-clk@vger.kernel.org>; Sat, 23 Sep 2023 09:14:34 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-40528376459so38617975e9.3
-        for <linux-clk@vger.kernel.org>; Sat, 23 Sep 2023 09:14:34 -0700 (PDT)
+        with ESMTP id S229456AbjIWTN7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 23 Sep 2023 15:13:59 -0400
+Received: from mail-yw1-x1133.google.com (mail-yw1-x1133.google.com [IPv6:2607:f8b0:4864:20::1133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87B65FA
+        for <linux-clk@vger.kernel.org>; Sat, 23 Sep 2023 12:13:53 -0700 (PDT)
+Received: by mail-yw1-x1133.google.com with SMTP id 00721157ae682-59c07cf02ebso48214357b3.1
+        for <linux-clk@vger.kernel.org>; Sat, 23 Sep 2023 12:13:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1695485673; x=1696090473; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vflvz+AATv6d9uy0+n/CPOAt3NEI1Og8mJmqlW1xhco=;
-        b=Nf/8o4t4Hin9O42VZaJp6ZCHPNKVq8reOjmV9t4RkD6fbBYZGF6J+1L+9GJE4oDwNS
-         HNG32SydkaTWcwion39XSyGSo/PHho49LKglTiGdxHyG/qTL0T9PcKsPJWG5TIw7QW/D
-         bjywnEUdsPf/XtRefMsqP7q5OimTsKjwFdYFYU1xv3QXdeSn7GvnUXhVe2wir6vFezPE
-         tkX3CpPJgyrv40dtEOoaYhw2bf4DmkcZmN2t22JaW1tyl1l+y4XZSdyBwAoFHDl/WM7F
-         OOq/h/MAIdaKe/G8gR/DxlTVVN2i4FClxKDo2c1Nc6cTVbX/zXmmxtx9GB98Avd/+/HA
-         U8Hg==
+        d=linaro.org; s=google; t=1695496433; x=1696101233; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/ZmYNV3oT+zkVAf2ugnkULn4izub45DJoleWbLBZiLk=;
+        b=BYmUWmHm1d+2YeSfA6FrjZLsVZIWFYDvO+oimM5AK1Ut1MfL9t6+qD0oiN7kaG94e0
+         KKBLl867I3svVBLc4CWICmmboBjCFPY5D+IJtJSFiXUPcp/mw4jkteJuu7RdQfzBF1x/
+         OZtYgkJrUE8ncCeNi3NQPI6wa0WmgYRuTJQekEzFg3ShGcFrWD2r/NR6DjijuiQrhlpr
+         54vKvq52qjLHw5z/8fdmCfm8HFwR5hg2fU4PadZYdQhm6p2ZehRM0HQuz/xV0w/oP4TY
+         2WuyrsWKKcRVcLsN5y7CH9gjiPAQNsVj8pneQf50dX2wk5lc8dp8to1vOQvpyv7OEw76
+         bwwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695485673; x=1696090473;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vflvz+AATv6d9uy0+n/CPOAt3NEI1Og8mJmqlW1xhco=;
-        b=ri1qek1N19Jso12kB+pA/Y9C5wcD8l3qm3MHsN5Jtprz3CDtDRwohmsuPKvrURA3V5
-         2Vtgjm2d44Yfe3lp4MiBmroE0NPOjtez5Zcw5XTRlIi9pFI09zPnOtZZOlVqpeEBA0Qs
-         uaSB9lnnq8oRL1Wngxo58/U0vZ2YzKK7jDMZAeXth4xi3GAy7BQaFqrYe5X6TG95sLfP
-         2tR185MNwtzVaZ71OVqbin/YnfXQoVShfmomSUUgRzPHsYeH8pz97L8SFftzldK4ffdg
-         Nws5kN2Lt7ZeY28Ty99wY7znPnclpIwJSqWKZOh5UB5KVzDFaG0yOQwhdLWRc6m6HzaR
-         ULsA==
-X-Gm-Message-State: AOJu0Yw8G8KSutDpR+Qnqk3XBRFdT7bx/NRp1PTyO7LoJy0a5J2ICqNo
-        82NUeXgRD5rdYy33OhkfBpRPNg==
-X-Google-Smtp-Source: AGHT+IGa/JXt7k/sD3brA21YU73JU7T0XX5PP5dASJHJGNUDd9u/dTh6dZgbpssUlNcWDJ3phTImNA==
-X-Received: by 2002:a05:600c:2282:b0:401:aa8f:7566 with SMTP id 2-20020a05600c228200b00401aa8f7566mr1692261wmf.26.1695485673156;
-        Sat, 23 Sep 2023 09:14:33 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.100])
-        by smtp.gmail.com with ESMTPSA id f17-20020a1c6a11000000b00402f745c5ffsm7608479wmc.8.2023.09.23.09.14.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 23 Sep 2023 09:14:32 -0700 (PDT)
-Message-ID: <197aed7b-8698-98b8-5761-afd03fc6aae7@linaro.org>
-Date:   Sat, 23 Sep 2023 18:14:30 +0200
+        d=1e100.net; s=20230601; t=1695496433; x=1696101233;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/ZmYNV3oT+zkVAf2ugnkULn4izub45DJoleWbLBZiLk=;
+        b=BVLXXXeyM3BREb3PJpFQhSKKFhVWjI3c3qwyl8KZbeEQ2exv+LR+MP9WYppj1Cup+y
+         TyckRwPZvactMoyiiU9lgY3Vi47ixzjeTSVNv9OP6f5K1qQhzGC17wOtRY5izDrrXpkw
+         C3TwvkVvB2M93pcJLlr47LID1lbl0x8f6/3myFFUGOpx1alkeYzGQ7V5lHo6YXgO5fX3
+         aGtNhA/x6hxoGOUXB6Ca8lLGlUOJYeQeJaKLuXszbLzJanQqMESkU2VNQl4zWDoWI0WY
+         H2wkHe6nqm1Fh7w58rw13JmWIGglzaPdcnPvjgeP5ZF3q3bKjLyovN0iqT+4m6NSC5Rt
+         yQ5Q==
+X-Gm-Message-State: AOJu0Yya1RjbQGfpYsP6GJjwgqx6A/Urxj/VR+nMLAi9NPVM5ojn53pW
+        SLUip4ifn49ufy1x0S0aIgu8z4OVD4EuPhA3CL37nQ==
+X-Google-Smtp-Source: AGHT+IGXN+4C918nlV0X9cam2P53VSEtGaNCjhNVGXRfBhpYoducXAEJcOhhSM/a1gaDZ9hAbqMkiRbLfciiL/l5bZg=
+X-Received: by 2002:a05:690c:4483:b0:59f:5361:d18c with SMTP id
+ gr3-20020a05690c448300b0059f5361d18cmr2111515ywb.41.1695496432784; Sat, 23
+ Sep 2023 12:13:52 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 2/4] dt-bindings: clock: qcom,camcc.yaml: Add sc8280xp
- CAMCC compatible
-Content-Language: en-US
-To:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        andersson@kernel.org, agross@kernel.org, konrad.dybcio@linaro.org,
+References: <20230922084303.4164046-1-quic_gokulsri@quicinc.com> <20230922084303.4164046-3-quic_gokulsri@quicinc.com>
+In-Reply-To: <20230922084303.4164046-3-quic_gokulsri@quicinc.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Sat, 23 Sep 2023 22:13:41 +0300
+Message-ID: <CAA8EJpoyaM0_utG9oAwyqO3RPoNDNduuPc3u+tzrjYM6NXRnjg@mail.gmail.com>
+Subject: Re: [PATCH V2 2/3] clk: qcom: apss-ipq-pll: add support for IPQ5018
+To:     Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
         mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        jonathan@marek.ca, quic_tdas@quicinc.com,
-        vladimir.zapolskiy@linaro.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230923150045.1068556-1-bryan.odonoghue@linaro.org>
- <20230923150045.1068556-3-bryan.odonoghue@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230923150045.1068556-3-bryan.odonoghue@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        krzysztof.kozlowski+dt@linaro.org, jassisinghbrar@gmail.com,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        quic_varada@quicinc.com, quic_srichara@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23/09/2023 17:00, Bryan O'Donoghue wrote:
-> Document sc8280xp camcc as a new compat string with the same
-> requirements as sm8250 and sm8450.
-> 
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+On Fri, 22 Sept 2023 at 11:44, Gokul Sriram Palanisamy
+<quic_gokulsri@quicinc.com> wrote:
+>
+> IPQ5018 APSS PLL is of type Stromer. Reuse Stromer Plus PLL offsets,
+> add configuration values and the compatible.
+>
+> Co-developed-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+> Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
 > ---
->  .../devicetree/bindings/clock/qcom,camcc.yaml |   2 +
->  .../dt-bindings/clock/qcom,camcc-sc8280xp.h   | 179 ++++++++++++++++++
->  2 files changed, 181 insertions(+)
->  create mode 100644 include/dt-bindings/clock/qcom,camcc-sc8280xp.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,camcc.yaml
-> index 81807b8e0d24..456d304cbea8 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,camcc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,camcc.yaml
-> @@ -30,6 +30,7 @@ properties:
->      enum:
->        - qcom,sc7180-camcc
->        - qcom,sc7280-camcc
-> +      - qcom,sc8280xp-camcc
->        - qcom,sdm845-camcc
->        - qcom,sm6350-camcc
->        - qcom,sm8250-camcc
-> @@ -127,6 +128,7 @@ allOf:
->        properties:
->          compatible:
->            enum:
-> +            - qcom,sc8280xp-camcc
->              - qcom,sm8250-camcc
->              - qcom,sm8450-camcc
->      then:
-> diff --git a/include/dt-bindings/clock/qcom,camcc-sc8280xp.h b/include/dt-bindings/clock/qcom,camcc-sc8280xp.h
-> new file mode 100644
-> index 000000000000..867fbd146ee4
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/qcom,camcc-sc8280xp.h
+>  drivers/clk/qcom/apss-ipq-pll.c | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
 
-Filename must match compatible (thus follow common naming scheme - SoC-IP).
 
-Best regards,
-Krzysztof
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
+
+-- 
+With best wishes
+Dmitry
