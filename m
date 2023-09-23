@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FC69CE7A8C
-	for <linux-clk@archiver.kernel.org>; Sat, 23 Sep 2023 15:00:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C9B1CE7A90
+	for <linux-clk@archiver.kernel.org>; Sat, 23 Sep 2023 15:01:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231910AbjIWPBD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 23 Sep 2023 11:01:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49658 "EHLO
+        id S231890AbjIWPBF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 23 Sep 2023 11:01:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231883AbjIWPBC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 23 Sep 2023 11:01:02 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B64CA197
-        for <linux-clk@vger.kernel.org>; Sat, 23 Sep 2023 08:00:53 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-401187f8071so27185185e9.0
-        for <linux-clk@vger.kernel.org>; Sat, 23 Sep 2023 08:00:53 -0700 (PDT)
+        with ESMTP id S231895AbjIWPBE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 23 Sep 2023 11:01:04 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00DA81B6
+        for <linux-clk@vger.kernel.org>; Sat, 23 Sep 2023 08:00:57 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-405361bb94eso37013775e9.0
+        for <linux-clk@vger.kernel.org>; Sat, 23 Sep 2023 08:00:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1695481252; x=1696086052; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1695481256; x=1696086056; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=i0JcmES5eq6i+P6K3jjeZcZW1E/M9HeojX8j4CGEfZ4=;
-        b=dA7j5pkBoE0ODqObeelRJ90/7ByBlzfg2nPXoERCyZx6YywHvma3a9T2STWWNDBKTu
-         ejp9L6lZaNEbe0oyXKfwRxMEyvjdrhZ76YPkpar/H5k0b6DmsPbliXnmaBQnozOOfncY
-         MM+rf42ZDzPaSKcKImFowkXpoGAN1pQ86Wc0oYM745WhG9U8g49smcK5WyNTPN2YVPVw
-         Z+TWdfSkkw33aUCPqyJDwRWVMXjW6dSo6/Vyoc3aRJDVhsZbofY/zvOZpDdZVhKxN+Ru
-         7o56FmmVvEEP/sRXnN4gckLHcdchnaM7FAYTxHtEKeaoygNQfEyu+Drv2TpETO/yjRSg
-         fngA==
+        bh=vA79xyD+PI0yTnhfaRji6jl5WeCnlojw8Sdf795ardQ=;
+        b=pLAtZWi52lNZyMgkzyD21GM66S2r19aRkyd3N35MDulpauOp/VD0CooNRRub/dad5a
+         ePg9+dY43b4gro1G/Y8byDc6KAvgZ/c+CBwF3z4kEKuGtt1ZqAW2qjGO6rLqgKqYEI/M
+         f4NkLiG+BWgsVwEKr+dxe8pF7tCi/G5FN2JnqnJysNBzhhxr70Y+up2bb5mGlDOht14v
+         lbI1e6J7f4FkvP//mUQ8LdA5Oo4zS7y7NIcGB6IGYmOXxk1UKIfJfzpQIpbHVE9F5MPU
+         ru4M4+36osmGtZACLWP3M+vY7x0if0ikvUKdi0Ek+VOOsu8+Fnc5zxb6AahA2XWQQChP
+         mYVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695481252; x=1696086052;
+        d=1e100.net; s=20230601; t=1695481256; x=1696086056;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=i0JcmES5eq6i+P6K3jjeZcZW1E/M9HeojX8j4CGEfZ4=;
-        b=hkM5uJJ39DdlQr+V4sd+muvDAFtlMwmev3KGutf9SsK0vQPup6wOTVujOLBerKPi8V
-         ZxvgYwNY9dYGjWIYTC7qilepcyZvkHl6IhvD71HmCM77CUSdsuI2/PePXzcPQbDBf4nY
-         bFeE2LhqOQ1YgWo6lXVOmdQZEnYxGb4ayeWYUI9JCcXCb72CtVHve6uwUrT/oBtmlDuR
-         w4JQjjktqCthSkWymHhNXEgBNqxtAYTVUPt2OlRFNiCb2fOr7y2RRmrGbgrpGQ2Xtr6z
-         mjkYre2cAe+6D7SbHjccDyKJWKodsMi5Qf/8CDVefaxvyO6MZajGTzULTkJA6FYjnWTS
-         Kr5w==
-X-Gm-Message-State: AOJu0Yy870wMtmX1xPh+v49YKPPzhAKKBKLE0pjdzMjB0AuXWP8xuiJ1
-        sOldaPSRH2eZvs6T9moM+HXDtQ==
-X-Google-Smtp-Source: AGHT+IGyhh5rCri/EL77QPBtIrU3OoeY8jyaVydBZfR795IyQuYjkCBZA4MCM+eZ+3MdjrL95Ml0LQ==
-X-Received: by 2002:a05:600c:501e:b0:405:2d29:1648 with SMTP id n30-20020a05600c501e00b004052d291648mr4220649wmr.19.1695481251911;
-        Sat, 23 Sep 2023 08:00:51 -0700 (PDT)
+        bh=vA79xyD+PI0yTnhfaRji6jl5WeCnlojw8Sdf795ardQ=;
+        b=RtOGZPI9/6qX9cwSaC8HVKrPYEk8xS9rhiEfBOckmGydeoSfMR4GhJa3jbmAKttVdv
+         iruWw3pgTs3mVoE8tOWmK6Tviim23+h1Qmt/1TdkV8nMDWqi5/dlrhBG2zG7or3HOgKz
+         +K4WkLi50J/z2jBehlzizqeaHR81VORItmXZ8lQ+0V/aYmN9aGkSJAjCer3lPs76MvYA
+         p0n8u9jZWPgW6bnkDY4vE4kVuHoSkAY/GBm6Cm7fhJtDBDSa2rw6HVVsqmjkVEo/ciDn
+         ilOpO/Ko322Wmh594EvyHWdm6MguD9wHB0VWzFOLJFH7nbr8e5NEtbREJRBD0hCChRWR
+         SDmw==
+X-Gm-Message-State: AOJu0YwnTrU8Zcrk14sHFBR4Gs3jsd6fU40zXc+Zsq0yXF+UQ6u2LIuf
+        mMk/p6XJSWJrlR/5cTEIN4tmUg==
+X-Google-Smtp-Source: AGHT+IFer9fB1MpYho3IkwkJ6C0+JOEp2GkPhJjHoub4fFsQziH0jcjSVV8tvLVhn0zHn2yAw4294w==
+X-Received: by 2002:a05:600c:2183:b0:3f9:b244:c294 with SMTP id e3-20020a05600c218300b003f9b244c294mr1856618wme.35.1695481256422;
+        Sat, 23 Sep 2023 08:00:56 -0700 (PDT)
 Received: from x13s-linux.chello.ie (188-141-3-169.dynamic.upc.ie. [188.141.3.169])
-        by smtp.gmail.com with ESMTPSA id m28-20020a05600c3b1c00b004053a2138bfsm5787006wms.12.2023.09.23.08.00.50
+        by smtp.gmail.com with ESMTPSA id m28-20020a05600c3b1c00b004053a2138bfsm5787006wms.12.2023.09.23.08.00.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Sep 2023 08:00:51 -0700 (PDT)
+        Sat, 23 Sep 2023 08:00:56 -0700 (PDT)
 From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 To:     andersson@kernel.org, agross@kernel.org, konrad.dybcio@linaro.org,
         mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
@@ -58,9 +58,9 @@ To:     andersson@kernel.org, agross@kernel.org, konrad.dybcio@linaro.org,
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         bryan.odonoghue@linaro.org
-Subject: [PATCH 1/4] dt-bindings: clock: qcom,camcc.yaml: Convert qcom,camcc to a single yaml file
-Date:   Sat, 23 Sep 2023 16:00:42 +0100
-Message-Id: <20230923150045.1068556-2-bryan.odonoghue@linaro.org>
+Subject: [PATCH 4/4] arm64: boot: dts: qcom: sc8280xp: Add in CAMCC for sc8280xp
+Date:   Sat, 23 Sep 2023 16:00:45 +0100
+Message-Id: <20230923150045.1068556-5-bryan.odonoghue@linaro.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20230923150045.1068556-1-bryan.odonoghue@linaro.org>
 References: <20230923150045.1068556-1-bryan.odonoghue@linaro.org>
@@ -70,682 +70,40 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Move the various camcc yaml files into one. The Camera Clock Controller
-is pretty similar from SoC to SoC.
-
-Mostly we have some SoCs which require fewer clocks than others. In some
-cases we have SoCs which have required-opps and required-power-domains.
-
-It is likely we could and should extend the thin CAMCC descriptions such
-as sdm845 an sm6350 to the more robust descriptions such as sm8250 and
-sm8450.
-
-As a result of listing sm8250 and sm8450 together required-opps and
-power-domains become required for sm8250, which is a NOP for the dtsi
-since both declarations already exist for sm8250.
-
-sm8250 is also chosen as the example for the new combined camcc.yaml.
-
-A minor tweak to fix Bjorn's email address in the Maintainer list is
-included.
+Add in CAMCC for sc8280xp. The sc8280xp Camera Clock Controller looks
+similar to most of the sdmX, smX and now scX controllers.
 
 Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 ---
- .../bindings/clock/qcom,camcc-sm8250.yaml     |  84 ---------
- .../devicetree/bindings/clock/qcom,camcc.yaml | 171 ++++++++++++++++++
- .../bindings/clock/qcom,sc7180-camcc.yaml     |  72 --------
- .../bindings/clock/qcom,sc7280-camcc.yaml     |  71 --------
- .../bindings/clock/qcom,sdm845-camcc.yaml     |  65 -------
- .../bindings/clock/qcom,sm6350-camcc.yaml     |  49 -----
- .../bindings/clock/qcom,sm8450-camcc.yaml     |  85 ---------
- 7 files changed, 171 insertions(+), 426 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/qcom,camcc-sm8250.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,camcc.yaml
- delete mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7180-camcc.yaml
- delete mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7280-camcc.yaml
- delete mode 100644 Documentation/devicetree/bindings/clock/qcom,sdm845-camcc.yaml
- delete mode 100644 Documentation/devicetree/bindings/clock/qcom,sm6350-camcc.yaml
- delete mode 100644 Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+ arch/arm64/boot/dts/qcom/sc8280xp.dtsi | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,camcc-sm8250.yaml b/Documentation/devicetree/bindings/clock/qcom,camcc-sm8250.yaml
-deleted file mode 100644
-index 426335a2841c..000000000000
---- a/Documentation/devicetree/bindings/clock/qcom,camcc-sm8250.yaml
-+++ /dev/null
-@@ -1,84 +0,0 @@
--# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
--%YAML 1.2
-----
--$id: http://devicetree.org/schemas/clock/qcom,camcc-sm8250.yaml#
--$schema: http://devicetree.org/meta-schemas/core.yaml#
--
--title: Qualcomm Camera Clock & Reset Controller on SM8250
--
--maintainers:
--  - Jonathan Marek <jonathan@marek.ca>
--
--description: |
--  Qualcomm camera clock control module provides the clocks, resets and
--  power domains on SM8250.
--
--  See also:: include/dt-bindings/clock/qcom,camcc-sm8250.h
--
--properties:
--  compatible:
--    const: qcom,sm8250-camcc
--
--  clocks:
--    items:
--      - description: AHB
--      - description: Board XO source
--      - description: Board active XO source
--      - description: Sleep clock source
--
--  clock-names:
--    items:
--      - const: iface
--      - const: bi_tcxo
--      - const: bi_tcxo_ao
--      - const: sleep_clk
--
--  '#clock-cells':
--    const: 1
--
--  '#reset-cells':
--    const: 1
--
--  '#power-domain-cells':
--    const: 1
--
--  power-domains:
--    items:
--      - description: MMCX power domain
--
--  reg:
--    maxItems: 1
--
--  required-opps:
--    maxItems: 1
--    description:
--      OPP node describing required MMCX performance point.
--
--required:
--  - compatible
--  - reg
--  - clocks
--  - clock-names
--  - '#clock-cells'
--  - '#reset-cells'
--  - '#power-domain-cells'
--
--additionalProperties: false
--
--examples:
--  - |
--    #include <dt-bindings/clock/qcom,gcc-sm8250.h>
--    #include <dt-bindings/clock/qcom,rpmh.h>
--    clock-controller@ad00000 {
--      compatible = "qcom,sm8250-camcc";
--      reg = <0x0ad00000 0x10000>;
--      clocks = <&gcc GCC_CAMERA_AHB_CLK>,
--               <&rpmhcc RPMH_CXO_CLK>,
--               <&rpmhcc RPMH_CXO_CLK_A>,
--               <&sleep_clk>;
--      clock-names = "iface", "bi_tcxo", "bi_tcxo_ao", "sleep_clk";
--      #clock-cells = <1>;
--      #reset-cells = <1>;
--      #power-domain-cells = <1>;
--    };
--...
-diff --git a/Documentation/devicetree/bindings/clock/qcom,camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,camcc.yaml
-new file mode 100644
-index 000000000000..81807b8e0d24
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,camcc.yaml
-@@ -0,0 +1,171 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/qcom,camcc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
+index cad59af7ccef..dad4894f358c 100644
+--- a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
+@@ -3450,6 +3450,21 @@ usb_1_role_switch: endpoint {
+ 			};
+ 		};
+ 
++		camcc: clock-controller@ad00000 {
++			compatible = "qcom,sc8280xp-camcc";
++			reg = <0 0x0ad00000 0 0x20000>;
++			clocks = <&gcc GCC_CAMERA_AHB_CLK>,
++				 <&rpmhcc RPMH_CXO_CLK>,
++				 <&rpmhcc RPMH_CXO_CLK_A>,
++				 <&sleep_clk>;
++			clock-names = "iface", "bi_tcxo", "bi_tcxo_ao", "sleep_clk";
++			power-domains = <&rpmhpd SC8280XP_MMCX>;
++			required-opps = <&rpmhpd_opp_low_svs>;
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++			#power-domain-cells = <1>;
++		};
 +
-+title: Qualcomm Camera Clock & Reset Controller
-+
-+maintainers:
-+  - Bjorn Andersson <andersson@kernel.org>
-+  - Jonathan Marek <jonathan@marek.ca>
-+  - Konrad Dybcio <konrad.dybcio@linaro.org>
-+  - Taniya Das <quic_tdas@quicinc.com>
-+  - Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-+
-+description: |
-+  Qualcomm camera clock control module provides the clocks, resets and power
-+  domains on Qualcomm SoCs.
-+
-+  See also:: include/dt-bindings/clock/qcom,camcc-sc7180.h
-+  See also:: include/dt-bindings/clock/qcom,camcc-sc7280.h
-+  See also:: include/dt-bindings/clock/qcom,camcc-sdm845.h
-+  See also:: include/dt-bindings/clock/qcom,camcc-sm8250.h
-+  See also:: include/dt-bindings/clock/qcom,sm6350-camcc.h
-+  See also:: include/dt-bindings/clock/qcom,sm8450-camcc.h
-+  See also:: include/dt-bindings/clock/qcom,sm8550-camcc.h
-+
-+properties:
-+  compatible:
-+    enum:
-+      - qcom,sc7180-camcc
-+      - qcom,sc7280-camcc
-+      - qcom,sdm845-camcc
-+      - qcom,sm6350-camcc
-+      - qcom,sm8250-camcc
-+      - qcom,sm8450-camcc
-+      - qcom,sm8550-camcc
-+
-+  clocks:
-+    minItems: 1
-+    maxItems: 4
-+
-+  clock-names:
-+    minItems: 1
-+    maxItems: 4
-+
-+  '#clock-cells':
-+    const: 1
-+
-+  '#reset-cells':
-+    const: 1
-+
-+  '#power-domain-cells':
-+    const: 1
-+
-+  power-domains:
-+    maxItems: 1
-+    description:
-+      A phandle and PM domain specifier for the MMCX power domain.
-+
-+  reg:
-+    maxItems: 1
-+
-+  required-opps:
-+    maxItems: 1
-+    description:
-+      OPP node describing required MMCX performance point.
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - '#clock-cells'
-+  - '#reset-cells'
-+  - '#power-domain-cells'
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          enum:
-+            - qcom,sc7180-camcc
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: Board XO source
-+            - description: Camera_ahb clock from GCC
-+            - description: Camera XO clock from GCC
-+        clock-names:
-+          items:
-+            - const: bi_tcxo
-+            - const: iface
-+            - const: xo
-+  - if:
-+      properties:
-+        compatible:
-+          enum:
-+            - qcom,sdm845-camcc
-+            - qcom,sm6350-camcc
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: Board XO source
-+        clock-names:
-+          items:
-+            - const: bi_tcxo
-+  - if:
-+      properties:
-+        compatible:
-+          enum:
-+            - qcom,sc7280-camcc
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: Board XO source
-+            - description: Board XO active source
-+            - description: Sleep clock source
-+        clock-names:
-+          items:
-+            - const: bi_tcxo
-+            - const: bi_tcxo_ao
-+            - const: sleep_clk
-+  - if:
-+      properties:
-+        compatible:
-+          enum:
-+            - qcom,sm8250-camcc
-+            - qcom,sm8450-camcc
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: AHB
-+            - description: Board XO source
-+            - description: Board active XO source
-+            - description: Sleep clock source
-+        clock-names:
-+          items:
-+            - const: iface
-+            - const: bi_tcxo
-+            - const: bi_tcxo_ao
-+            - const: sleep_clk
-+      required:
-+        - power-domains
-+        - required-opps
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/qcom,gcc-sm8250.h>
-+    #include <dt-bindings/clock/qcom,rpmh.h>
-+    #include <dt-bindings/power/qcom,rpmhpd.h>
-+    clock-controller@ad00000 {
-+      compatible = "qcom,sm8250-camcc";
-+      reg = <0x0ad00000 0x10000>;
-+      clocks = <&gcc GCC_CAMERA_AHB_CLK>,
-+               <&rpmhcc RPMH_CXO_CLK>,
-+               <&rpmhcc RPMH_CXO_CLK_A>,
-+               <&sleep_clk>;
-+      clock-names = "iface", "bi_tcxo", "bi_tcxo_ao", "sleep_clk";
-+      #clock-cells = <1>;
-+      #reset-cells = <1>;
-+      #power-domain-cells = <1>;
-+      power-domains = <&rpmhpd RPMHPD_MMCX>;
-+      required-opps = <&rpmhpd_opp_low_svs>;
-+    };
-+...
-diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7180-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7180-camcc.yaml
-deleted file mode 100644
-index 2dfc2a4f1918..000000000000
---- a/Documentation/devicetree/bindings/clock/qcom,sc7180-camcc.yaml
-+++ /dev/null
-@@ -1,72 +0,0 @@
--# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
--%YAML 1.2
-----
--$id: http://devicetree.org/schemas/clock/qcom,sc7180-camcc.yaml#
--$schema: http://devicetree.org/meta-schemas/core.yaml#
--
--title: Qualcomm Camera Clock & Reset Controller on SC7180
--
--maintainers:
--  - Taniya Das <quic_tdas@quicinc.com>
--
--description: |
--  Qualcomm camera clock control module provides the clocks, resets and power
--  domains on SC7180.
--
--  See also:: include/dt-bindings/clock/qcom,camcc-sc7180.h
--
--properties:
--  compatible:
--    const: qcom,sc7180-camcc
--
--  clocks:
--    items:
--      - description: Board XO source
--      - description: Camera_ahb clock from GCC
--      - description: Camera XO clock from GCC
--
--  clock-names:
--    items:
--      - const: bi_tcxo
--      - const: iface
--      - const: xo
--
--  '#clock-cells':
--    const: 1
--
--  '#reset-cells':
--    const: 1
--
--  '#power-domain-cells':
--    const: 1
--
--  reg:
--    maxItems: 1
--
--required:
--  - compatible
--  - reg
--  - clocks
--  - clock-names
--  - '#clock-cells'
--  - '#reset-cells'
--  - '#power-domain-cells'
--
--additionalProperties: false
--
--examples:
--  - |
--    #include <dt-bindings/clock/qcom,gcc-sc7180.h>
--    #include <dt-bindings/clock/qcom,rpmh.h>
--    clock-controller@ad00000 {
--      compatible = "qcom,sc7180-camcc";
--      reg = <0x0ad00000 0x10000>;
--      clocks = <&rpmhcc RPMH_CXO_CLK>,
--               <&gcc GCC_CAMERA_AHB_CLK>,
--               <&gcc GCC_CAMERA_XO_CLK>;
--      clock-names = "bi_tcxo", "iface", "xo";
--      #clock-cells = <1>;
--      #reset-cells = <1>;
--      #power-domain-cells = <1>;
--    };
--...
-diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7280-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7280-camcc.yaml
-deleted file mode 100644
-index 01feef1cab0a..000000000000
---- a/Documentation/devicetree/bindings/clock/qcom,sc7280-camcc.yaml
-+++ /dev/null
-@@ -1,71 +0,0 @@
--# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
--%YAML 1.2
-----
--$id: http://devicetree.org/schemas/clock/qcom,sc7280-camcc.yaml#
--$schema: http://devicetree.org/meta-schemas/core.yaml#
--
--title: Qualcomm Camera Clock & Reset Controller on SC7280
--
--maintainers:
--  - Taniya Das <quic_tdas@quicinc.com>
--
--description: |
--  Qualcomm camera clock control module provides the clocks, resets and
--  power domains on SC7280.
--
--  See also:: include/dt-bindings/clock/qcom,camcc-sc7280.h
--
--properties:
--  compatible:
--    const: qcom,sc7280-camcc
--
--  clocks:
--    items:
--      - description: Board XO source
--      - description: Board XO active source
--      - description: Sleep clock source
--
--  clock-names:
--    items:
--      - const: bi_tcxo
--      - const: bi_tcxo_ao
--      - const: sleep_clk
--
--  '#clock-cells':
--    const: 1
--
--  '#reset-cells':
--    const: 1
--
--  '#power-domain-cells':
--    const: 1
--
--  reg:
--    maxItems: 1
--
--required:
--  - compatible
--  - reg
--  - clocks
--  - clock-names
--  - '#clock-cells'
--  - '#reset-cells'
--  - '#power-domain-cells'
--
--additionalProperties: false
--
--examples:
--  - |
--    #include <dt-bindings/clock/qcom,rpmh.h>
--    clock-controller@ad00000 {
--      compatible = "qcom,sc7280-camcc";
--      reg = <0x0ad00000 0x10000>;
--      clocks = <&rpmhcc RPMH_CXO_CLK>,
--               <&rpmhcc RPMH_CXO_CLK_A>,
--               <&sleep_clk>;
--      clock-names = "bi_tcxo", "bi_tcxo_ao", "sleep_clk";
--      #clock-cells = <1>;
--      #reset-cells = <1>;
--      #power-domain-cells = <1>;
--    };
--...
-diff --git a/Documentation/devicetree/bindings/clock/qcom,sdm845-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sdm845-camcc.yaml
-deleted file mode 100644
-index 91d1f7918037..000000000000
---- a/Documentation/devicetree/bindings/clock/qcom,sdm845-camcc.yaml
-+++ /dev/null
-@@ -1,65 +0,0 @@
--# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
--%YAML 1.2
-----
--$id: http://devicetree.org/schemas/clock/qcom,sdm845-camcc.yaml#
--$schema: http://devicetree.org/meta-schemas/core.yaml#
--
--title: Qualcomm Camera Clock & Reset Controller on SDM845
--
--maintainers:
--  - Bjorn Andersson <bjorn.andersson@linaro.org>
--
--description: |
--  Qualcomm camera clock control module provides the clocks, resets and power
--  domains on SDM845.
--
--  See also:: include/dt-bindings/clock/qcom,camcc-sm845.h
--
--properties:
--  compatible:
--    const: qcom,sdm845-camcc
--
--  clocks:
--    items:
--      - description: Board XO source
--
--  clock-names:
--    items:
--      - const: bi_tcxo
--
--  '#clock-cells':
--    const: 1
--
--  '#reset-cells':
--    const: 1
--
--  '#power-domain-cells':
--    const: 1
--
--  reg:
--    maxItems: 1
--
--required:
--  - compatible
--  - reg
--  - clocks
--  - clock-names
--  - '#clock-cells'
--  - '#reset-cells'
--  - '#power-domain-cells'
--
--additionalProperties: false
--
--examples:
--  - |
--    #include <dt-bindings/clock/qcom,rpmh.h>
--    clock-controller@ad00000 {
--      compatible = "qcom,sdm845-camcc";
--      reg = <0x0ad00000 0x10000>;
--      clocks = <&rpmhcc RPMH_CXO_CLK>;
--      clock-names = "bi_tcxo";
--      #clock-cells = <1>;
--      #reset-cells = <1>;
--      #power-domain-cells = <1>;
--    };
--...
-diff --git a/Documentation/devicetree/bindings/clock/qcom,sm6350-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm6350-camcc.yaml
-deleted file mode 100644
-index fd6658cb793d..000000000000
---- a/Documentation/devicetree/bindings/clock/qcom,sm6350-camcc.yaml
-+++ /dev/null
-@@ -1,49 +0,0 @@
--# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
--%YAML 1.2
-----
--$id: http://devicetree.org/schemas/clock/qcom,sm6350-camcc.yaml#
--$schema: http://devicetree.org/meta-schemas/core.yaml#
--
--title: Qualcomm Camera Clock & Reset Controller on SM6350
--
--maintainers:
--  - Konrad Dybcio <konrad.dybcio@linaro.org>
--
--description: |
--  Qualcomm camera clock control module provides the clocks, resets and  power
--  domains on SM6350.
--
--  See also:: include/dt-bindings/clock/qcom,sm6350-camcc.h
--
--properties:
--  compatible:
--    const: qcom,sm6350-camcc
--
--  clocks:
--    items:
--      - description: Board XO source
--
--  reg:
--    maxItems: 1
--
--required:
--  - compatible
--  - clocks
--
--allOf:
--  - $ref: qcom,gcc.yaml#
--
--unevaluatedProperties: false
--
--examples:
--  - |
--    #include <dt-bindings/clock/qcom,rpmh.h>
--    clock-controller@ad00000 {
--      compatible = "qcom,sm6350-camcc";
--      reg = <0x0ad00000 0x16000>;
--      clocks = <&rpmhcc RPMH_CXO_CLK>;
--      #clock-cells = <1>;
--      #reset-cells = <1>;
--      #power-domain-cells = <1>;
--    };
--...
-diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
-deleted file mode 100644
-index dc3c18e4ead7..000000000000
---- a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
-+++ /dev/null
-@@ -1,85 +0,0 @@
--# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
--%YAML 1.2
-----
--$id: http://devicetree.org/schemas/clock/qcom,sm8450-camcc.yaml#
--$schema: http://devicetree.org/meta-schemas/core.yaml#
--
--title: Qualcomm Camera Clock & Reset Controller on SM8450
--
--maintainers:
--  - Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
--
--description: |
--  Qualcomm camera clock control module provides the clocks, resets and power
--  domains on SM8450.
--
--  See also::
--    include/dt-bindings/clock/qcom,sm8450-camcc.h
--    include/dt-bindings/clock/qcom,sm8550-camcc.h
--
--properties:
--  compatible:
--    enum:
--      - qcom,sm8450-camcc
--      - qcom,sm8550-camcc
--
--  clocks:
--    items:
--      - description: Camera AHB clock from GCC
--      - description: Board XO source
--      - description: Board active XO source
--      - description: Sleep clock source
--
--  power-domains:
--    maxItems: 1
--    description:
--      A phandle and PM domain specifier for the MMCX power domain.
--
--  required-opps:
--    maxItems: 1
--    description:
--      A phandle to an OPP node describing required MMCX performance point.
--
--  '#clock-cells':
--    const: 1
--
--  '#reset-cells':
--    const: 1
--
--  '#power-domain-cells':
--    const: 1
--
--  reg:
--    maxItems: 1
--
--required:
--  - compatible
--  - reg
--  - clocks
--  - power-domains
--  - required-opps
--  - '#clock-cells'
--  - '#reset-cells'
--  - '#power-domain-cells'
--
--additionalProperties: false
--
--examples:
--  - |
--    #include <dt-bindings/clock/qcom,gcc-sm8450.h>
--    #include <dt-bindings/clock/qcom,rpmh.h>
--    #include <dt-bindings/power/qcom,rpmhpd.h>
--    clock-controller@ade0000 {
--      compatible = "qcom,sm8450-camcc";
--      reg = <0xade0000 0x20000>;
--      clocks = <&gcc GCC_CAMERA_AHB_CLK>,
--               <&rpmhcc RPMH_CXO_CLK>,
--               <&rpmhcc RPMH_CXO_CLK_A>,
--               <&sleep_clk>;
--      power-domains = <&rpmhpd RPMHPD_MMCX>;
--      required-opps = <&rpmhpd_opp_low_svs>;
--      #clock-cells = <1>;
--      #reset-cells = <1>;
--      #power-domain-cells = <1>;
--    };
--...
+ 		mdss0: display-subsystem@ae00000 {
+ 			compatible = "qcom,sc8280xp-mdss";
+ 			reg = <0 0x0ae00000 0 0x1000>;
 -- 
 2.40.1
 
