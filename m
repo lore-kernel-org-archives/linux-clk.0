@@ -2,406 +2,241 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E058CD4942
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Sep 2023 12:02:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41A8FCE7A8B
+	for <linux-clk@archiver.kernel.org>; Sat, 23 Sep 2023 11:21:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233977AbjIVMCE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Sep 2023 08:02:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48582 "EHLO
+        id S230491AbjIWLVo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 23 Sep 2023 07:21:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233961AbjIVMCD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Sep 2023 08:02:03 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 286E91A2;
-        Fri, 22 Sep 2023 05:01:56 -0700 (PDT)
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38MBpMlL001221;
-        Fri, 22 Sep 2023 12:01:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=+xyd9IwCpJTRpcGWBwVDyX7y0WiRng0i7g5laRI0u+Q=;
- b=a7nW5ZyUwgPTbmBBG/6DK8XTnPAIoliMMHkEF53T74gvZWDxqCIxt6G3hYtpbUhSlpFO
- 9jetWeCqyzW8s3Lynom77Q8O32/H1THidrxZ+2VlB2EbbbxRkhPOL2EjsznBH2JyTg0o
- zrjnQm8JyI15gviy88leZR5xtX9lUN94SnUqKaeWSFIDZtV6S1YURT0dBe9Cn5u7feF/
- CfKqKyjRnNCFhIIBIQhR/XGmteGdS6nbKug4UQDZgNmYu7YzoL8loDkb3KJxWursHt80
- FOsyvZyxnSJv2O857S4CWeURE+Qc5CjG4AJmNhEZjboWNZNtabuAyEYRoyoIl134UiNU XA== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t8u0hhsb7-1
+        with ESMTP id S229655AbjIWLVo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 23 Sep 2023 07:21:44 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8066198;
+        Sat, 23 Sep 2023 04:21:37 -0700 (PDT)
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38NBLMnb030942;
+        Sat, 23 Sep 2023 11:21:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=qcppdkim1;
+ bh=OSRmEvcdMTR40TpwjERBT8n1cbos3S2SY9LG+na7EDM=;
+ b=KXyIIOl8SgcODX3A/u3DWPiSAamL40M9ijfFRG/GX3DXHRypbhVpFiopUifxTEaMAom9
+ R3SlVNs3oWI4sRBIiBLt0oBh4sJpb/BO7JDK3zJaBKVORmwjouvivYOLUIw+cZfenc+6
+ ziC8JokPNHkgsXtUi3O5yYhokIDUPgr2Z7TTFFBz7vbmSBUzNjOqzTbX8nlSTfAROkJt
+ 2zRojfhOtx6sQ6ZI3TN9Omd2UNihJqujplXHCbsD1LWuq6rhwa09J2XSWfm6In0p8WAD
+ c9fKMTr257qqYK0XaoZfB3keNC8cPISqMcnCyTcHz9bNl36hy4NpPTNHd5Ik+lNWo/5j sQ== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t9nqnrw8p-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 22 Sep 2023 12:01:18 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38MC1G9V004544
+        Sat, 23 Sep 2023 11:21:21 +0000
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38NBLLn5001337
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 22 Sep 2023 12:01:16 GMT
-Received: from [10.216.15.173] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.36; Fri, 22 Sep
- 2023 05:01:08 -0700
-Message-ID: <45f96567-553c-9214-eb7e-c75c6e09d78b@quicinc.com>
-Date:   Fri, 22 Sep 2023 17:31:04 +0530
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [PATCH V2 5/7] clk: qcom: Add NSS clock Controller driver for
- IPQ9574
-Content-Language: en-US
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC:     <andersson@kernel.org>, <agross@kernel.org>,
+        Sat, 23 Sep 2023 11:21:21 GMT
+Received: from akronite-sh-dev02.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.30; Sat, 23 Sep 2023 04:21:17 -0700
+From:   Luo Jie <quic_luoj@quicinc.com>
+To:     <andersson@kernel.org>, <agross@kernel.org>,
         <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
         <sboyd@kernel.org>, <robh+dt@kernel.org>,
         <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
         <catalin.marinas@arm.com>, <will@kernel.org>,
-        <p.zabel@pengutronix.de>, <richardcochran@gmail.com>,
-        <arnd@arndb.de>, <geert+renesas@glider.be>,
-        <nfraprado@collabora.com>, <rafal@milecki.pl>, <peng.fan@nxp.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <p.zabel@pengutronix.de>
+CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
-        <quic_saahtoma@quicinc.com>
-References: <20230825091234.32713-1-quic_devipriy@quicinc.com>
- <20230825091234.32713-6-quic_devipriy@quicinc.com>
- <CAA8EJpr+Wwgot-PDRtj-LVi79aD13B9WVREmjTXiR-8XEEx-rQ@mail.gmail.com>
- <652b55cc-87dd-46d1-e480-e25f5f22b8d8@quicinc.com>
- <a4c9baae-f328-22b5-48d7-fc7df0b62a79@quicinc.com>
- <CAA8EJpq0uawrOBHA8XHygEpGYF--HyxJWxKG44iiFdAZZz7O2w@mail.gmail.com>
-From:   Devi Priya <quic_devipriy@quicinc.com>
-In-Reply-To: <CAA8EJpq0uawrOBHA8XHygEpGYF--HyxJWxKG44iiFdAZZz7O2w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+        <quic_srichara@quicinc.com>
+Subject: [PATCH v9 0/4] add clock controller of qca8386/qca8084
+Date:   Sat, 23 Sep 2023 19:21:01 +0800
+Message-ID: <20230923112105.18102-1-quic_luoj@quicinc.com>
+X-Mailer: git-send-email 2.42.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-Originating-IP: [10.80.80.8]
 X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
+ nalasex01c.na.qualcomm.com (10.47.97.35)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: xy5DeM2VzxIyKi60wg7aWl-9oz9aGM_2
-X-Proofpoint-GUID: xy5DeM2VzxIyKi60wg7aWl-9oz9aGM_2
+X-Proofpoint-GUID: pKFBsb36iPVvvupyske7bZw6b-MZP7bU
+X-Proofpoint-ORIG-GUID: pKFBsb36iPVvvupyske7bZw6b-MZP7bU
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-09-22_09,2023-09-21_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
- mlxlogscore=999 clxscore=1015 lowpriorityscore=0 phishscore=0
- priorityscore=1501 spamscore=0 adultscore=0 suspectscore=0 impostorscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2309180000 definitions=main-2309220102
+ definitions=2023-09-23_08,2023-09-21_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ lowpriorityscore=0 impostorscore=0 malwarescore=0 mlxlogscore=999
+ adultscore=0 phishscore=0 priorityscore=1501 mlxscore=0 suspectscore=0
+ spamscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2309180000 definitions=main-2309230095
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+qca8xxx is 4 * 2.5GBaseT ports chip, working as switch mode
+named by qca8386, or working as PHY mode named by qca8084,
+clock hardware reigster is accessed by MDIO bus.
+
+This patch series add the clock controller of qca8363/qca8084,
+and add the clock ops clk_branch2_prepare_ops to avoid spin lock
+used during the clock operation of qca8k clock controller where
+the sleep happens when accessing clock control register by MDIO
+bus.
+
+Changes in v2:
+	* remove clock flag CLK_ENABLE_MUTEX_LOCK.
+	* add clock ops clk_branch2_qca8k_ops.
+	* improve yaml file for fixing dtschema warnings.
+	* enable clock controller driver in defconfig.
+
+Changes in v3:
+	* rename clk_branch2_qca8k_ops to clk_branch2_mdio_ops.
+	* fix review comments on yaml file.
+	* use dev_err_probe on driver probe error.
+	* only use the compatible "qcom,qca8084-nsscc".
+	* remove enable clock controller driver patch.
+
+Changes in v4:
+	* add _qcom_cc_really_probe function.
+	* commonizing the probe function.
+	* remove flag CLK_IS_CRITICAL from clocks only needed
+	to be enabled in switch device.
+	* update device tree property reg to 0x10. 
+
+Changes in v5:
+	* commonize qcom_cc_really_probe.
+	* add halt_check for the branch clocks.
+	* fix the review comments on nsscc-qca8k.c. 
+
+Changes in v6:
+	* rename clk_branch2_mdio_ops to clk_branch2_prepare_ops.
+
+Changes in v7:
+	* remove the clock flag CLK_IS_CRITICAL.
+	* optimize the file nsscc-qca8k.c.
+	* identify & fix the comments from Stephen.
+
+Changes in v8:
+	* add dependency on ARM in Kconfig.
+
+Changes in v9:
+	* take the clk_ops clk_rcg2_mux_closest_ops to remove the
+	  redundant freq_tbls.
+
+Luo Jie (4):
+  clk: qcom: branch: Add clk_branch2_prepare_ops
+  dt-bindings: clock: add qca8386/qca8084 clock and reset definitions
+  clk: qcom: common: commonize qcom_cc_really_probe
+  clk: qcom: add clock controller driver for qca8386/qca8084
+
+ .../bindings/clock/qcom,qca8k-nsscc.yaml      |   79 +
+ drivers/clk/qcom/Kconfig                      |   10 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/apss-ipq6018.c               |    2 +-
+ drivers/clk/qcom/camcc-sc7180.c               |    2 +-
+ drivers/clk/qcom/camcc-sc7280.c               |    2 +-
+ drivers/clk/qcom/camcc-sdm845.c               |    2 +-
+ drivers/clk/qcom/camcc-sm6350.c               |    2 +-
+ drivers/clk/qcom/camcc-sm8250.c               |    2 +-
+ drivers/clk/qcom/camcc-sm8450.c               |    2 +-
+ drivers/clk/qcom/clk-branch.c                 |    7 +
+ drivers/clk/qcom/clk-branch.h                 |    1 +
+ drivers/clk/qcom/common.c                     |    7 +-
+ drivers/clk/qcom/common.h                     |    2 +-
+ drivers/clk/qcom/dispcc-qcm2290.c             |    2 +-
+ drivers/clk/qcom/dispcc-sc7180.c              |    2 +-
+ drivers/clk/qcom/dispcc-sc7280.c              |    2 +-
+ drivers/clk/qcom/dispcc-sc8280xp.c            |    2 +-
+ drivers/clk/qcom/dispcc-sdm845.c              |    2 +-
+ drivers/clk/qcom/dispcc-sm6115.c              |    2 +-
+ drivers/clk/qcom/dispcc-sm6125.c              |    2 +-
+ drivers/clk/qcom/dispcc-sm6350.c              |    2 +-
+ drivers/clk/qcom/dispcc-sm6375.c              |    2 +-
+ drivers/clk/qcom/dispcc-sm8250.c              |    2 +-
+ drivers/clk/qcom/dispcc-sm8450.c              |    2 +-
+ drivers/clk/qcom/dispcc-sm8550.c              |    2 +-
+ drivers/clk/qcom/gcc-ipq5018.c                |    2 +-
+ drivers/clk/qcom/gcc-ipq6018.c                |    2 +-
+ drivers/clk/qcom/gcc-ipq8074.c                |    2 +-
+ drivers/clk/qcom/gcc-mdm9607.c                |    2 +-
+ drivers/clk/qcom/gcc-mdm9615.c                |    2 +-
+ drivers/clk/qcom/gcc-msm8917.c                |    2 +-
+ drivers/clk/qcom/gcc-msm8939.c                |    2 +-
+ drivers/clk/qcom/gcc-msm8953.c                |    2 +-
+ drivers/clk/qcom/gcc-msm8976.c                |    2 +-
+ drivers/clk/qcom/gcc-msm8996.c                |    2 +-
+ drivers/clk/qcom/gcc-msm8998.c                |    2 +-
+ drivers/clk/qcom/gcc-qcm2290.c                |    2 +-
+ drivers/clk/qcom/gcc-qcs404.c                 |    2 +-
+ drivers/clk/qcom/gcc-qdu1000.c                |    2 +-
+ drivers/clk/qcom/gcc-sa8775p.c                |    2 +-
+ drivers/clk/qcom/gcc-sc7180.c                 |    2 +-
+ drivers/clk/qcom/gcc-sc7280.c                 |    2 +-
+ drivers/clk/qcom/gcc-sc8180x.c                |    2 +-
+ drivers/clk/qcom/gcc-sc8280xp.c               |    2 +-
+ drivers/clk/qcom/gcc-sdm660.c                 |    2 +-
+ drivers/clk/qcom/gcc-sdm845.c                 |    2 +-
+ drivers/clk/qcom/gcc-sdx55.c                  |    2 +-
+ drivers/clk/qcom/gcc-sdx65.c                  |    2 +-
+ drivers/clk/qcom/gcc-sdx75.c                  |    2 +-
+ drivers/clk/qcom/gcc-sm6115.c                 |    2 +-
+ drivers/clk/qcom/gcc-sm6125.c                 |    2 +-
+ drivers/clk/qcom/gcc-sm6350.c                 |    2 +-
+ drivers/clk/qcom/gcc-sm6375.c                 |    2 +-
+ drivers/clk/qcom/gcc-sm7150.c                 |    2 +-
+ drivers/clk/qcom/gcc-sm8150.c                 |    2 +-
+ drivers/clk/qcom/gcc-sm8250.c                 |    2 +-
+ drivers/clk/qcom/gcc-sm8350.c                 |    2 +-
+ drivers/clk/qcom/gcc-sm8450.c                 |    2 +-
+ drivers/clk/qcom/gcc-sm8550.c                 |    2 +-
+ drivers/clk/qcom/gpucc-msm8998.c              |    2 +-
+ drivers/clk/qcom/gpucc-sa8775p.c              |    2 +-
+ drivers/clk/qcom/gpucc-sc7180.c               |    2 +-
+ drivers/clk/qcom/gpucc-sc7280.c               |    2 +-
+ drivers/clk/qcom/gpucc-sc8280xp.c             |    2 +-
+ drivers/clk/qcom/gpucc-sdm660.c               |    2 +-
+ drivers/clk/qcom/gpucc-sdm845.c               |    2 +-
+ drivers/clk/qcom/gpucc-sm6115.c               |    2 +-
+ drivers/clk/qcom/gpucc-sm6125.c               |    2 +-
+ drivers/clk/qcom/gpucc-sm6350.c               |    2 +-
+ drivers/clk/qcom/gpucc-sm6375.c               |    2 +-
+ drivers/clk/qcom/gpucc-sm8150.c               |    2 +-
+ drivers/clk/qcom/gpucc-sm8250.c               |    2 +-
+ drivers/clk/qcom/gpucc-sm8350.c               |    2 +-
+ drivers/clk/qcom/gpucc-sm8450.c               |    2 +-
+ drivers/clk/qcom/gpucc-sm8550.c               |    2 +-
+ drivers/clk/qcom/lcc-ipq806x.c                |    2 +-
+ drivers/clk/qcom/lcc-msm8960.c                |    2 +-
+ drivers/clk/qcom/lpassaudiocc-sc7280.c        |    4 +-
+ drivers/clk/qcom/lpasscorecc-sc7180.c         |    2 +-
+ drivers/clk/qcom/lpasscorecc-sc7280.c         |    2 +-
+ drivers/clk/qcom/mmcc-msm8960.c               |    2 +-
+ drivers/clk/qcom/mmcc-msm8974.c               |    2 +-
+ drivers/clk/qcom/mmcc-msm8994.c               |    2 +-
+ drivers/clk/qcom/mmcc-msm8996.c               |    2 +-
+ drivers/clk/qcom/mmcc-msm8998.c               |    2 +-
+ drivers/clk/qcom/mmcc-sdm660.c                |    2 +-
+ drivers/clk/qcom/nsscc-qca8k.c                | 2139 +++++++++++++++++
+ drivers/clk/qcom/tcsrcc-sm8550.c              |    2 +-
+ drivers/clk/qcom/videocc-sc7180.c             |    2 +-
+ drivers/clk/qcom/videocc-sc7280.c             |    2 +-
+ drivers/clk/qcom/videocc-sdm845.c             |    2 +-
+ drivers/clk/qcom/videocc-sm8150.c             |    2 +-
+ drivers/clk/qcom/videocc-sm8250.c             |    2 +-
+ drivers/clk/qcom/videocc-sm8350.c             |    2 +-
+ drivers/clk/qcom/videocc-sm8450.c             |    2 +-
+ drivers/clk/qcom/videocc-sm8550.c             |    2 +-
+ include/dt-bindings/clock/qcom,qca8k-nsscc.h  |  101 +
+ include/dt-bindings/reset/qcom,qca8k-nsscc.h  |   75 +
+ 99 files changed, 2507 insertions(+), 95 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,qca8k-nsscc.yaml
+ create mode 100644 drivers/clk/qcom/nsscc-qca8k.c
+ create mode 100644 include/dt-bindings/clock/qcom,qca8k-nsscc.h
+ create mode 100644 include/dt-bindings/reset/qcom,qca8k-nsscc.h
 
 
-On 9/20/2023 1:50 PM, Dmitry Baryshkov wrote:
-> On Wed, 20 Sept 2023 at 09:39, Devi Priya <quic_devipriy@quicinc.com> wrote:
->>
->>
->>
->> On 9/12/2023 7:38 PM, Devi Priya wrote:
->>>
->>>
->>> On 8/25/2023 5:14 PM, Dmitry Baryshkov wrote:
->>>> On Fri, 25 Aug 2023 at 12:15, Devi Priya <quic_devipriy@quicinc.com>
->>>> wrote:
->>>>>
->>>>> Add Networking Sub System Clock Controller(NSSCC) driver for ipq9574
->>>>> based
->>>>> devices.
->>>>>
->>>>> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
->>>>> ---
->>>>>    Changes in V2:
->>>>>           - Added depends on ARM64 || COMPILE_TEST in Kconfig
->>>>>           - Added module_platform_driver
->>>>>           - Dropped patch [2/6] - clk: qcom: gcc-ipq9574: Mark nssnoc
->>>>> clocks as critical
->>>>>              & added pm_clk for nssnoc clocks
->>>>>           - Updated the uniphy clock names
->>>>>
->>>>>    drivers/clk/qcom/Kconfig         |    7 +
->>>>>    drivers/clk/qcom/Makefile        |    1 +
->>>>>    drivers/clk/qcom/nsscc-ipq9574.c | 3109 ++++++++++++++++++++++++++++++
->>>>>    3 files changed, 3117 insertions(+)
->>>>>    create mode 100644 drivers/clk/qcom/nsscc-ipq9574.c
->>>>>
->>>>> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
->>>>> index bd9bfb11b328..3ecc11e2c8e3 100644
->>>>> --- a/drivers/clk/qcom/Kconfig
->>>>> +++ b/drivers/clk/qcom/Kconfig
->>>>> @@ -203,6 +203,13 @@ config IPQ_GCC_9574
->>>>>             i2c, USB, SD/eMMC, etc. Select this for the root clock
->>>>>             of ipq9574.
->>>>>
->>>>> +config IPQ_NSSCC_9574
->>>>> +       tristate "IPQ9574 NSS Clock Controller"
->>>>> +       depends on ARM64 || COMPILE_TEST
->>>>> +       depends on IPQ_GCC_9574
->>>>> +       help
->>>>> +         Support for NSS clock controller on ipq9574 devices.
->>>>> +
->>>>>    config MSM_GCC_8660
->>>>>           tristate "MSM8660 Global Clock Controller"
->>>>>           depends on ARM || COMPILE_TEST
->>>>> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
->>>>> index 4790c8cca426..3f084928962e 100644
->>>>> --- a/drivers/clk/qcom/Makefile
->>>>> +++ b/drivers/clk/qcom/Makefile
->>>>> @@ -30,6 +30,7 @@ obj-$(CONFIG_IPQ_GCC_6018) += gcc-ipq6018.o
->>>>>    obj-$(CONFIG_IPQ_GCC_806X) += gcc-ipq806x.o
->>>>>    obj-$(CONFIG_IPQ_GCC_8074) += gcc-ipq8074.o
->>>>>    obj-$(CONFIG_IPQ_GCC_9574) += gcc-ipq9574.o
->>>>> +obj-$(CONFIG_IPQ_NSSCC_9574)   += nsscc-ipq9574.o
->>>>>    obj-$(CONFIG_IPQ_LCC_806X) += lcc-ipq806x.o
->>>>>    obj-$(CONFIG_MDM_GCC_9607) += gcc-mdm9607.o
->>>>>    obj-$(CONFIG_MDM_GCC_9615) += gcc-mdm9615.o
->>>>> diff --git a/drivers/clk/qcom/nsscc-ipq9574.c
->>>>> b/drivers/clk/qcom/nsscc-ipq9574.c
->>>>> new file mode 100644
->>>>> index 000000000000..65bdb449ae5f
->>>>> --- /dev/null
->>>>> +++ b/drivers/clk/qcom/nsscc-ipq9574.c
->>>>> @@ -0,0 +1,3109 @@
->>>>> +// SPDX-License-Identifier: GPL-2.0-only
->>>>> +/*
->>>>> + * Copyright (c) 2021, The Linux Foundation. All rights reserved.
->>>>> + * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights
->>>>> reserved.
->>>>> + */
->>>>> +
->>>>> +#include <linux/clk-provider.h>
->>>>> +#include <linux/err.h>
->>>>> +#include <linux/kernel.h>
->>>>> +#include <linux/module.h>
->>>>> +#include <linux/of.h>
->>>>> +#include <linux/of_device.h>
->>>>> +#include <linux/regmap.h>
->>>>> +#include <linux/pm_clock.h>
->>>>> +#include <linux/pm_runtime.h>
->>>>> +
->>>>> +#include <dt-bindings/clock/qcom,ipq9574-nsscc.h>
->>>>> +#include <dt-bindings/reset/qcom,ipq9574-nsscc.h>
->>>>> +
->>>>> +#include "clk-alpha-pll.h"
->>>>> +#include "clk-branch.h"
->>>>> +#include "clk-pll.h"
->>>>> +#include "clk-rcg.h"
->>>>> +#include "clk-regmap.h"
->>>>> +#include "clk-regmap-divider.h"
->>>>> +#include "clk-regmap-mux.h"
->>>>> +#include "common.h"
->>>>> +#include "reset.h"
->>>>> +
->>>>> +/* Need to match the order of clocks in DT binding */
->>>>> +enum {
->>>>> +       DT_NSSNOC_NSSCC_CLK,
->>>>> +       DT_NSSNOC_SNOC_CLK,
->>>>> +       DT_NSSNOC_SNOC_1_CLK,
->>>>
->>>> Not using the index makes it seem that these clocks are not used,
->>>> until one scrolls down to pm_clks.
->>> Okay, got it
->>>>
->>>> BTW: The NSSNOC_SNOC clocks make it look like there is an interconnect
->>>> here (not a simple NIU).
->>>
->>> Hi Dmitry, We are exploring on the ICC driver. In the meantime to
->>> unblock PCIe/NSS changes getting merged, shall we use regmap_update_bits
->>> and turn on the critical NSSNOC clocks, ANOC & SNOC pcie clocks in the
->>> probe function of the gcc driver itself as like sm8550 driver to get the
->>> changes merged?
->>>
->>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/qcom/gcc-sm8550.c#n3347
->>
->> Hi Dmitry,
->> Just curious to know if we could send out the next series with the
->> proposed approach if that holds good.
-> 
-> The answer really depends on the structure of your hardware. The issue
-> is that once you commit the device bindings,you have to support them
-> forever. So, if you commit the NSS clock support without interconnects
-> in place, you have to keep this ANOC/SNOC/etc code forever, even after
-> you land the interconnect. So I'd suggest landing the icc driver first
-> (or at least implementing and sending to the mailing list), so that we
-> can see how all these pieces fit together.
+base-commit: 5a1b322cb0b7d0d33a2d13462294dc0f46911172
+-- 
+2.42.0
 
-Hi Dmitry,
-Unlike MSM chipsets, IPQ chipsets does not have any use case wherein the
-NOC clocks have to be scaled. So if these clocks can be enabled in the
-probe, there is no need for an interconnect driver at all. The same
-applies to both ipq9574 and ipq5332 SoCs.
-
-Thanks,
-Devi Priya
-> 
->> Thanks,
->> Devi Priya
->>
->>>>
->>>>> +       DT_BIAS_PLL_CC_CLK,
->>>>> +       DT_BIAS_PLL_NSS_NOC_CLK,
->>>>> +       DT_BIAS_PLL_UBI_NC_CLK,
->>>>> +       DT_GCC_GPLL0_OUT_AUX,
->>>>> +       DT_UNIPHY0_NSS_RX_CLK,
->>>>> +       DT_UNIPHY0_NSS_TX_CLK,
->>>>> +       DT_UNIPHY1_NSS_RX_CLK,
->>>>> +       DT_UNIPHY1_NSS_TX_CLK,
->>>>> +       DT_UNIPHY2_NSS_RX_CLK,
->>>>> +       DT_UNIPHY2_NSS_TX_CLK,
->>>>> +       DT_XO,
->>>>
->>>> As I wrote, please move DT_XO closer to the beginning of the list.
->>>>
->>>>> +};
->>>>> +
->>>>> +enum {
->>>>> +       P_BIAS_PLL_CC_CLK,
->>>>> +       P_BIAS_PLL_NSS_NOC_CLK,
->>>>> +       P_BIAS_PLL_UBI_NC_CLK,
->>>>> +       P_GCC_GPLL0_OUT_AUX,
->>>>> +       P_UBI32_PLL_OUT_MAIN,
->>>>> +       P_UNIPHY0_NSS_RX_CLK,
->>>>> +       P_UNIPHY0_NSS_TX_CLK,
->>>>> +       P_UNIPHY1_NSS_RX_CLK,
->>>>> +       P_UNIPHY1_NSS_TX_CLK,
->>>>> +       P_UNIPHY2_NSS_RX_CLK,
->>>>> +       P_UNIPHY2_NSS_TX_CLK,
->>>>> +       P_XO,
->>>>> +};
->>>>> +
->>>>> +static const struct alpha_pll_config ubi32_pll_config = {
->>>>> +       .l = 0x3e,
->>>>> +       .alpha = 0x6666,
->>>>> +       .config_ctl_val = 0x200d4aa8,
->>>>> +       .config_ctl_hi_val = 0x3c,
->>>>> +       .main_output_mask = BIT(0),
->>>>> +       .aux_output_mask = BIT(1),
->>>>> +       .pre_div_val = 0x0,
->>>>> +       .pre_div_mask = BIT(12),
->>>>> +       .post_div_val = 0x0,
->>>>> +       .post_div_mask = GENMASK(9, 8),
->>>>> +       .alpha_en_mask = BIT(24),
->>>>> +       .test_ctl_val = 0x1c0000c0,
->>>>> +       .test_ctl_hi_val = 0x4000,
->>>>> +};
->>>>> +
->>>>> +static struct clk_alpha_pll ubi32_pll_main = {
->>>>> +       .offset = 0x28000,
->>>>> +       .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_NSS_HUAYRA],
->>>>> +       .flags = SUPPORTS_DYNAMIC_UPDATE,
->>>>> +       .clkr = {
->>>>> +               .hw.init = &(const struct clk_init_data) {
->>>>> +                       .name = "ubi32_pll_main",
->>>>> +                       .parent_data = &(const struct clk_parent_data) {
->>>>> +                               .index = DT_XO,
->>>>> +                       },
->>>>> +                       .num_parents = 1,
->>>>> +                       .ops = &clk_alpha_pll_huayra_ops,
->>>>> +               },
->>>>> +       },
->>>>> +};
->>>>> +
->>>>> +static struct clk_alpha_pll_postdiv ubi32_pll = {
->>>>> +       .offset = 0x28000,
->>>>> +       .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_NSS_HUAYRA],
->>>>> +       .width = 2,
->>>>> +       .clkr.hw.init = &(const struct clk_init_data) {
->>>>> +               .name = "ubi32_pll",
->>>>> +               .parent_hws = (const struct clk_hw *[]) {
->>>>> +                       &ubi32_pll_main.clkr.hw
->>>>> +               },
->>>>> +               .num_parents = 1,
->>>>> +               .ops = &clk_alpha_pll_postdiv_ro_ops,
->>>>> +               .flags = CLK_SET_RATE_PARENT,
->>>>> +       },
->>>>> +};
->>>>> +
->>>>
->>>> [skipped clock tables, LGTM]
->>>>
->>>>> +static const struct of_device_id nss_cc_ipq9574_match_table[] = {
->>>>> +       { .compatible = "qcom,ipq9574-nsscc" },
->>>>> +       { }
->>>>> +};
->>>>> +MODULE_DEVICE_TABLE(of, nss_cc_ipq9574_match_table);
->>>>> +
->>>>> +static int nss_cc_ipq9574_probe(struct platform_device *pdev)
->>>>> +{
->>>>> +       struct regmap *regmap;
->>>>> +       struct qcom_cc_desc nsscc_ipq9574_desc = nss_cc_ipq9574_desc;
->>>>> +
->>>>> +       int ret;
->>>>> +
->>>>> +       ret = devm_pm_runtime_enable(&pdev->dev);
->>>>> +       if (ret < 0)
->>>>> +               return ret;
->>>>> +
->>>>> +       ret = devm_pm_clk_create(&pdev->dev);
->>>>> +       if (ret < 0)
->>>>> +               return ret;
->>>>> +
->>>>> +       ret = of_pm_clk_add_clk(&pdev->dev, "nssnoc_nsscc");
->>>>
->>>> As we are switching to DT indices, better add new API that takes index
->>>> rather than mixing indices and names.
->>> sure okay
->>>
->>> Thanks,
->>> Devi Priya
->>>>
->>>>> +       if (ret < 0) {
->>>>> +               dev_err(&pdev->dev, "Failed to acquire nssnoc_nsscc
->>>>> clock\n");
->>>>> +               return ret;
->>>>> +       }
->>>>> +
->>>>> +       ret = of_pm_clk_add_clk(&pdev->dev, "nssnoc_snoc");
->>>>> +       if (ret < 0) {
->>>>> +               dev_err(&pdev->dev, "Failed to acquire nssnoc_snoc
->>>>> clock\n");
->>>>> +               return ret;
->>>>> +       }
->>>>> +
->>>>> +       ret = of_pm_clk_add_clk(&pdev->dev, "nssnoc_snoc_1");
->>>>> +       if (ret < 0) {
->>>>> +               dev_err(&pdev->dev, "Failed to acquire nssnoc_snoc_1
->>>>> clock\n");
->>>>> +               return ret;
->>>>> +       }
->>>>> +
->>>>> +       ret = pm_runtime_get(&pdev->dev);
->>>>> +       if (ret)
->>>>> +               return ret;
->>>>> +
->>>>> +       regmap = qcom_cc_map(pdev, &nsscc_ipq9574_desc);
->>>>> +       if (IS_ERR(regmap))
->>>>> +               return PTR_ERR(regmap);
->>>>> +
->>>>> +       clk_alpha_pll_configure(&ubi32_pll_main, regmap,
->>>>> &ubi32_pll_config);
->>>>> +
->>>>> +       return qcom_cc_really_probe(pdev, &nsscc_ipq9574_desc, regmap);
->>>>> +}
->>>>> +
->>>>> +static const struct dev_pm_ops nss_cc_pm_ops = {
->>>>> +       SET_RUNTIME_PM_OPS(pm_clk_suspend, pm_clk_resume, NULL)
->>>>> +};
->>>>> +
->>>>> +static struct platform_driver nss_cc_ipq9574_driver = {
->>>>> +       .probe = nss_cc_ipq9574_probe,
->>>>> +       .driver = {
->>>>> +               .name = "qcom,nsscc-ipq9574",
->>>>> +               .of_match_table = nss_cc_ipq9574_match_table,
->>>>> +               .pm = &nss_cc_pm_ops,
->>>>> +       },
->>>>> +};
->>>>> +
->>>>> +module_platform_driver(nss_cc_ipq9574_driver);
->>>>> +
->>>>> +MODULE_DESCRIPTION("QTI NSS_CC IPQ9574 Driver");
->>>>> +MODULE_LICENSE("GPL");
->>>>> --
->>>>> 2.34.1
->>>>>
->>>>
->>>>
-> 
-> 
-> 
