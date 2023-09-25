@@ -2,140 +2,214 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FE6ACE7A89
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Sep 2023 08:52:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CE02CE7A8C
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Sep 2023 09:06:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233095AbjIYIwV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Sep 2023 04:52:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44270 "EHLO
+        id S233183AbjIYJGt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Sep 2023 05:06:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233081AbjIYIwT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Sep 2023 04:52:19 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86AB1FC
-        for <linux-clk@vger.kernel.org>; Mon, 25 Sep 2023 01:52:12 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-52fe27898e9so6959297a12.0
-        for <linux-clk@vger.kernel.org>; Mon, 25 Sep 2023 01:52:12 -0700 (PDT)
+        with ESMTP id S233171AbjIYJGt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Sep 2023 05:06:49 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9CD6D3
+        for <linux-clk@vger.kernel.org>; Mon, 25 Sep 2023 02:06:41 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id ffacd0b85a97d-32157c8e4c7so5840583f8f.1
+        for <linux-clk@vger.kernel.org>; Mon, 25 Sep 2023 02:06:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1695631931; x=1696236731; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1695632800; x=1696237600; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=gLPIK/6A0OdvTUmgqW6fMGOpG0vd/sid0O/dWoZpXFk=;
-        b=O+ik+tdH2Au3yfXyzSQtplnu87GviBuuEzuxmRa4RVFbNGR/lrlU71y7A0XBBoqZor
-         zhAZI6ZSkJU57gXyC/9mELHaxTKj8boJn8QmFi+wKv1f1DDmf7OHUDh1v16W4SAk4Ln5
-         e30LwoyUKnbM8QZOic31PMUhT5LB4H540Nc0Icr6P1GJk+q55CRt686PiE8dQOi4f5Ip
-         XFI+5WxdxfifCSsCnjmZa0PU/lgCl3CSieWG9wJSW7892+i2LrwyT1nQCl3CzZIG143k
-         O5od/okmgqMiGvsGzmYFd2E7hrkc2rFu7dRsUwLqvc9SIkwvMXAfJ7/QRMwjZ8rACpOf
-         dC1A==
+        bh=81U+bAho6tv2ZGiC9bVpY2SK8WrqzTjp0FIVIQ6Q7Hs=;
+        b=htM4xc4ePTiowBKwIB+Tjlnj/rQ1XQvuEts2NeicE9zvVrIWOlic0RYhiqCZJfolPd
+         E5Z2CnkGwHdCHVBZtl4yhBhlmlSjSx1qjCPQGfHmcVNETwQ2ERgzYfiv3fHERSHY+xWk
+         e6BrtZnmvmlmh5Wj1nHBpMoFX32JkANdKFH1gBJboiJvFduKbfYcbMd6YBRT31N2aKDA
+         NGiBOelF/SBXtXYKs9MQ0UcNhO3DX0LcmeSCB68dI4q8FY6sEsEzwlYPPd9S9KG0QDMg
+         MprcropNzmTTBvZJL4NdWwswYD0xqrO7KOGzInRcN1OxVcQLRD3Xq+bDdVZmYxMfJWQE
+         1QpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695631931; x=1696236731;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1695632800; x=1696237600;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gLPIK/6A0OdvTUmgqW6fMGOpG0vd/sid0O/dWoZpXFk=;
-        b=qLZRjzhOa0puCDTIT+AgQ+QHYLbdK6+tE/H+lN5ZD50N1iTg9DOGDOe/SnSsQNL8UT
-         yia0seOPIbzbd51PUffpxhSJgwUOffOlfwdYh3il6gOq8r/ohQNR9rMZUFy43dGphG0t
-         tnSoyAG1V0ZZE5MGyXYYNovy5xjhO34hxUSvqmWZ4RwsYdbw62B1dFGEpgrIUgObo+LT
-         5kW1m2ZGO/YMuj79ie5DDquOqaTXulb/FsQBgegbt9EUxhVgNJEStzfjfD2eUPZuvLYw
-         mYciJjiQlrGRYPloq+vDnGsYrjHXn931xh6FjETv06sW1C+RJldoMa3q5F0bVvjKgtIr
-         h47g==
-X-Gm-Message-State: AOJu0YzI41BwRQTHa1gO38cqdp//+eagkN9pV7AJjPNRVCv8I2U8CH2y
-        TB2i1rSqwQa7xTyizcx244OS0w==
-X-Google-Smtp-Source: AGHT+IEknGXpUcjCFhyykhoIm20lhyrc7fXegdvuAII0uwwwGWRrkN5jwyVbotbwFuNd+lYoXvXe+g==
-X-Received: by 2002:aa7:c38d:0:b0:530:8d55:9c6f with SMTP id k13-20020aa7c38d000000b005308d559c6fmr5184794edq.2.1695631930980;
-        Mon, 25 Sep 2023 01:52:10 -0700 (PDT)
-Received: from [192.168.101.165] (178235177023.dynamic-4-waw-k-1-1-0.vectranet.pl. [178.235.177.23])
-        by smtp.gmail.com with ESMTPSA id v4-20020a056402174400b0053424352ab3sm663625edx.19.2023.09.25.01.52.09
+        bh=81U+bAho6tv2ZGiC9bVpY2SK8WrqzTjp0FIVIQ6Q7Hs=;
+        b=Wm8p+Z4Eba3Oy/dqBJYOT1kbYHXWgHkzw9p7d0kGKCGYwlL71mkglvA7Lch9AmMJGX
+         4HDH8jQTMSIRmb3vfKFIjMyQal1EcqDZcUakimmPk6AL+Z8/62qyo3YrQoNtJf79mObz
+         XL0mEjaD3MrJEiXgzmherJeZ2k0L7JxW2w8/kz9hptJ5f8Vl4amjkl/NglunWwo9I4iM
+         F/ZoYB46b9Y2M0BIWRccQm4uwWeLyp/2/hfoRLZCtYrOXGtHgK9Zf2LGzrrG8TXz5lQ2
+         iGpiyPTZwqm6e0nuM1pzO9lQzosP5aoebpFzvwtmT//abP5ZZirUvqFgWbgbQLdMr/07
+         rLWw==
+X-Gm-Message-State: AOJu0YwukUb+OsfwNJ6SspReDI8DoIv7af5EPP15KR3Sp3iqiHhp96Z+
+        XDj/w8gSPCOuu69OoDaMHMZM7wwuJJL5NnsEY2Q=
+X-Google-Smtp-Source: AGHT+IGUJgJsDCBH6bmCvUPLYKLjFd40iunFFF6Tx2JQZ53PhXz9k00Dk9bx7cNGJsP5xLR0sHi9yA==
+X-Received: by 2002:a5d:4802:0:b0:314:3fc0:ba82 with SMTP id l2-20020a5d4802000000b003143fc0ba82mr5434290wrq.37.1695632800191;
+        Mon, 25 Sep 2023 02:06:40 -0700 (PDT)
+Received: from [192.168.0.162] (188-141-3-169.dynamic.upc.ie. [188.141.3.169])
+        by smtp.gmail.com with ESMTPSA id u21-20020adfa195000000b00323293bd023sm2121244wru.6.2023.09.25.02.06.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Sep 2023 01:52:10 -0700 (PDT)
-Message-ID: <a983d891-74ef-48e0-9de1-d3d000cbf415@linaro.org>
-Date:   Mon, 25 Sep 2023 10:52:09 +0200
+        Mon, 25 Sep 2023 02:06:39 -0700 (PDT)
+Message-ID: <cce93def-17f3-4ea3-a4d9-1c1773f90928@linaro.org>
+Date:   Mon, 25 Sep 2023 10:06:38 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] arm64: boot: dts: qcom: sc8280xp: Add in CAMCC for
- sc8280xp
+Subject: Re: [PATCH 3/4] clk: qcom: camcc-sc8280xp: Add sc8280xp CAMCC
 Content-Language: en-US
-To:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        andersson@kernel.org, agross@kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        jonathan@marek.ca, quic_tdas@quicinc.com,
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>, andersson@kernel.org,
+        agross@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, jonathan@marek.ca, quic_tdas@quicinc.com,
         vladimir.zapolskiy@linaro.org
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20230923150045.1068556-1-bryan.odonoghue@linaro.org>
- <20230923150045.1068556-5-bryan.odonoghue@linaro.org>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20230923150045.1068556-5-bryan.odonoghue@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+ <20230923150045.1068556-4-bryan.odonoghue@linaro.org>
+ <2678d8a5-4101-4fc3-9f9d-cbe616eee131@linaro.org>
+From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <2678d8a5-4101-4fc3-9f9d-cbe616eee131@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23.09.2023 17:00, Bryan O'Donoghue wrote:
-> Add in CAMCC for sc8280xp. The sc8280xp Camera Clock Controller looks
-> similar to most of the sdmX, smX and now scX controllers.
+On 25/09/2023 09:51, Konrad Dybcio wrote:
+> On 23.09.2023 17:00, Bryan O'Donoghue wrote:
+>> Add the sc8280xp CAMCC driver which follows the sdm845 CAMCC lineage
+>> with additional CCI and IFE blocks and more granular clock parentage.
+>>
+>> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+>> ---
+>>   drivers/clk/qcom/Kconfig          |    9 +
+>>   drivers/clk/qcom/Makefile         |    1 +
+>>   drivers/clk/qcom/camcc-sc8280xp.c | 3051 +++++++++++++++++++++++++++++
+>>   3 files changed, 3061 insertions(+)
+>>   create mode 100644 drivers/clk/qcom/camcc-sc8280xp.c
+>>
+>> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+>> index 4b72e98eaa70..5ce6d888aba0 100644
+>> --- a/drivers/clk/qcom/Kconfig
+>> +++ b/drivers/clk/qcom/Kconfig
+>> @@ -426,6 +426,15 @@ config SC_CAMCC_7280
+>>   	  Say Y if you want to support camera devices and functionality such as
+>>   	  capturing pictures.
+>>   
+>> +config SC_CAMCC_8280XP
+>> +	tristate "SC8280XP Camera Clock Controller"
+>> +	select SC_GCC_8280XP
+>> +	help
+>> +	  Support for the camera clock controller on Qualcomm Technologies, Inc
+>> +	  SC8280XP devices.
+>> +	  Say Y if you want to support camera devices and functionality such as
+>> +	  capturing pictures.
+>> +
+>>   config SC_DISPCC_7180
+>>   	tristate "SC7180 Display Clock Controller"
+>>   	depends on ARM64 || COMPILE_TEST
+>> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+>> index a301b08dba05..8f66cefa9e57 100644
+>> --- a/drivers/clk/qcom/Makefile
+>> +++ b/drivers/clk/qcom/Makefile
+>> @@ -68,6 +68,7 @@ obj-$(CONFIG_QCS_TURING_404) += turingcc-qcs404.o
+>>   obj-$(CONFIG_QDU_GCC_1000) += gcc-qdu1000.o
+>>   obj-$(CONFIG_SC_CAMCC_7180) += camcc-sc7180.o
+>>   obj-$(CONFIG_SC_CAMCC_7280) += camcc-sc7280.o
+>> +obj-$(CONFIG_SC_CAMCC_8280XP) += camcc-sc8280xp.o
+>>   obj-$(CONFIG_SC_DISPCC_7180) += dispcc-sc7180.o
+>>   obj-$(CONFIG_SC_DISPCC_7280) += dispcc-sc7280.o
+>>   obj-$(CONFIG_SC_DISPCC_8280XP) += dispcc-sc8280xp.o
+>> diff --git a/drivers/clk/qcom/camcc-sc8280xp.c b/drivers/clk/qcom/camcc-sc8280xp.c
+>> new file mode 100644
+>> index 000000000000..fbb3fa39862c
+>> --- /dev/null
+>> +++ b/drivers/clk/qcom/camcc-sc8280xp.c
+>> @@ -0,0 +1,3051 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Copyright (c) 2021, The Linux Foundation. All rights reserved.
+>> + * Copyright (c) 2023, Linaro Ltd.
+>> + */
+>> +
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/err.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of_device.h>
+>> +#include <linux/of.h>
+>> +#include <linux/pm_clock.h>
+>> +#include <linux/pm_runtime.h>
+>> +#include <linux/regmap.h>
+>> +#include <linux/pm_runtime.h>
+>> +
+>> +#include <dt-bindings/clock/qcom,camcc-sc8280xp.h>
+>> +
+>> +#include "clk-alpha-pll.h"
+>> +#include "clk-branch.h"
+>> +#include "clk-rcg.h"
+>> +#include "clk-regmap.h"
+>> +#include "common.h"
+>> +#include "gdsc.h"
+>> +#include "reset.h"
+>> +
+>> +enum {
+>> +	DT_BI_TCXO,
+>> +	DT_BI_TCXO_AO,
+>> +	DT_SLEEP_CLK,
+>> +};
+> This enum here is so that
 > 
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/sc8280xp.dtsi | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
+> [...]
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
-> index cad59af7ccef..dad4894f358c 100644
-> --- a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
-> @@ -3450,6 +3450,21 @@ usb_1_role_switch: endpoint {
->  			};
->  		};
->  
-> +		camcc: clock-controller@ad00000 {
-> +			compatible = "qcom,sc8280xp-camcc";
-> +			reg = <0 0x0ad00000 0 0x20000>;
-> +			clocks = <&gcc GCC_CAMERA_AHB_CLK>,
-> +				 <&rpmhcc RPMH_CXO_CLK>,
-> +				 <&rpmhcc RPMH_CXO_CLK_A>,
-> +				 <&sleep_clk>;
-This does not match what you added in the clock driver
+>> +static struct clk_alpha_pll cam_cc_pll0 = {
+>> +	.offset = 0x0,
+>> +	.vco_table = lucid_vco,
+>> +	.num_vco = ARRAY_SIZE(lucid_vco),
+>> +	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID],
+>> +	.clkr = {
+>> +		.hw.init = &(struct clk_init_data){
+>> +			.name = "cam_cc_pll0",
+>> +			.parent_data = &(const struct clk_parent_data){
+>> +				.fw_name = "bi_tcxo", .name = "bi_tcxo",
+> you can use .index = <some enum member> here
+> 
 
-> +			clock-names = "iface", "bi_tcxo", "bi_tcxo_ao", "sleep_clk";
-And with using .index there, clock-names will become redundant
+Hmm. I actually think I _removed_ those indexes from the reference code.
 
-Konrad
+doh !
+
+> [...]
+> 
+>> +
+>> +static const struct clk_parent_data cam_cc_parent_data_0[] = {
+>> +	{ .fw_name = "bi_tcxo", .name = "bi_tcxo" },
+> also in these arrays
+> 
+> [...]
+> 
+>> +static struct gdsc bps_gdsc = {
+>> +	.gdscr = 0x7004,
+>> +	.pd = {
+>> +		.name = "bps_gdsc",
+>> +	},
+>> +	.flags = HW_CTRL | RETAIN_FF_ENABLE,
+> HW_CTRL means "hardware controlled mode is always on", not
+> "hardware controlled mode is available". Is that what you want?
+
+That's what the downstream flags
+
+drivers/clk/qcom/camcc-sc7180.c::bps_gdsc
+drivers/clk/qcom/camcc-sc7280.c::bps_gdsc
+drivers/clk/qcom/camcc-sdm845.c::bps_gdsc
+drivers/clk/qcom/camcc-sm8250.c::bps_gdsc
+drivers/clk/qcom/camcc-sm8450.c::bps_gdsc
+
+etc
+
+> Also, does this clock controller not take GCC_CAMERA_AHB_CLK as
+> input?
+
+it does yeah.
+
+---
+bod
+
