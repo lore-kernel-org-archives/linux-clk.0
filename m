@@ -2,62 +2,112 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D203CE7A91
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Sep 2023 01:13:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CFDBCE7A89
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Sep 2023 07:20:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231149AbjIYBNR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 24 Sep 2023 21:13:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44464 "EHLO
+        id S229912AbjIYHUW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Sep 2023 03:20:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230360AbjIYBNQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 24 Sep 2023 21:13:16 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4813CA;
-        Sun, 24 Sep 2023 18:13:10 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E9EDC433C9;
-        Mon, 25 Sep 2023 01:13:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695604390;
-        bh=Wmz48UIlp2PC5T1iQz6rVBuxFVOUZ6YblW0qZ4yZewQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=m74P3FZ9MNSUw+ugowyh7SlhphwEjH2qhoh4JsqgBOodaRKVV2TQ5PXk0DLtlR0bW
-         MkJ2rfz01I5kZsfJDj8SUHDXsdNUrBJ+XmKMVswChappzRYtEvQm2SAV+WBpsSFzTZ
-         70Fg6leER1yYOJGoLKeQNn8DPAeRVtgkgWs3pfthi1tSykXsdD00/SjpCGGHdY59xY
-         AHP5Q0NCjAjNZuLmTQ70trQj5DFFS/m7OOu9E0D2GnT8+68+8Bg5oIp6jqNWj3eoeW
-         x+dPDhWApsQBfS4+1XOpFcQpanmxqYbiIwdhSm8jZeW26N0EBD5kVLkseAJiLHvNDN
-         Q61cbL9zbvO9A==
-Date:   Mon, 25 Sep 2023 09:12:58 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Adam Ford <aford173@gmail.com>
-Cc:     linux-arm-kernel@lists.infradead.org, marex@denx.de,
-        aford@beaconembedded.com, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH V3 2/3] arm64: dts: imx8mp: Add micfil node
-Message-ID: <20230925011258.GD7231@dragon>
-References: <20230831044431.250338-1-aford173@gmail.com>
- <20230831044431.250338-2-aford173@gmail.com>
+        with ESMTP id S229810AbjIYHUU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Sep 2023 03:20:20 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD699DF;
+        Mon, 25 Sep 2023 00:20:12 -0700 (PDT)
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38P4nxce013442;
+        Mon, 25 Sep 2023 07:20:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=c6f2BxdBF3vgTPlNcikKDgRPEjUn6m3A1J3kOzNzU2s=;
+ b=X6IYW0Y09DKBAmALOibTF6u/L4fTNK1gx3InbYyPxa09erYXPDRc2F8Q+XV+T2QzxE/W
+ PtKhirohsFPySR7eKQvfXnQYfSIFMP1QAd608+uRj67QWpJin8XfQtQaGU8qfMqnZu4M
+ 2Im36qzXMpV54/lytAAfo+bj5p0oEeEtBYFEu6wlJcIJELfWn+ulPyD77OV8FzO8Ti+V
+ Qiq+ivf9q/PWcj/JKSivwDFJl+AUrf/WFvMgJ6DuiDhXxdvwlZhw/rjWy+HjloVmBsAQ
+ sn3ufd6g/TrS3VbLV9r6OA2blbgkscIOQh65gHEEbFK/WKrQAxd2KzvQrlIfD/E+VhrH Dw== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t9qbpu5w3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 25 Sep 2023 07:20:07 +0000
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38P7K6iC004414
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 25 Sep 2023 07:20:06 GMT
+Received: from [10.201.2.48] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.36; Mon, 25 Sep
+ 2023 00:20:01 -0700
+Message-ID: <ad1ecbab-f138-45fa-9faf-2b27c0f6d536@quicinc.com>
+Date:   Mon, 25 Sep 2023 12:49:53 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230831044431.250338-2-aford173@gmail.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH V2 3/3] arm64: dts: qcom: ipq5018: enable the CPUFreq
+ support
+Content-Language: en-US
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <jassisinghbrar@gmail.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_varada@quicinc.com>, <quic_srichara@quicinc.com>
+References: <20230922084303.4164046-1-quic_gokulsri@quicinc.com>
+ <20230922084303.4164046-4-quic_gokulsri@quicinc.com>
+ <CAA8EJpqpQkFLm13cf=4tOakCV2q1-FZv4vzBmfQURXNi5-do7A@mail.gmail.com>
+From:   Gokul Sriram P <quic_gokulsri@quicinc.com>
+In-Reply-To: <CAA8EJpqpQkFLm13cf=4tOakCV2q1-FZv4vzBmfQURXNi5-do7A@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: qXXd76zv6FHWdI6Ogd0D5PpPmH130Pl-
+X-Proofpoint-ORIG-GUID: qXXd76zv6FHWdI6Ogd0D5PpPmH130Pl-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-09-25_04,2023-09-21_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ priorityscore=1501 adultscore=0 mlxlogscore=889 spamscore=0 malwarescore=0
+ impostorscore=0 lowpriorityscore=0 phishscore=0 suspectscore=0
+ clxscore=1015 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2309180000 definitions=main-2309250050
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Aug 30, 2023 at 11:44:30PM -0500, Adam Ford wrote:
-> The i.MX8MP has a micfil controller which is used for interfacing
-> with a pulse density microphone. Add the node and mark it as
-> disabled by default.
-> 
-> Signed-off-by: Adam Ford <aford173@gmail.com>
 
-Applied, thanks!
+On 9/24/2023 12:45 AM, Dmitry Baryshkov wrote:
+> On Fri, 22 Sept 2023 at 11:44, Gokul Sriram Palanisamy
+> <quic_gokulsri@quicinc.com> wrote:
+>> @@ -181,6 +203,24 @@ v2m1: v2m@1000 {
+>>                          };
+>>                  };
+>>
+>> +               a53pll: clock@b116000 {
+>> +                       compatible = "qcom,ipq5018-a53pll";
+>> +                       reg = <0x0b116000 0x40>;
+>> +                       #clock-cells = <0>;
+>> +                       clocks = <&xo_board_clk>;
+>> +                       clock-names = "xo";
+>> +               };
+>> +
+>> +               apcs_glb: mailbox@b111000 {
+>> +                       compatible = "qcom,ipq5018-apcs-apps-global",
+>> +                                    "qcom,ipq6018-apcs-apps-global";
+>> +                       reg = <0x0b111000 0x1000>;
+>> +                       #clock-cells = <1>;
+>> +                       clocks = <&a53pll>, <&xo_board_clk>, <&gcc GPLL0>;
+>> +                       clock-names = "pll", "xo", "gpll0";
+>> +                       #mbox-cells = <1>;
+>> +               };
+> Hmm, no, I was too quick to R-B. 0xb111 < 0xb116, please change these two nodes.
+
+Sure, will update and resend. Thanks.
+Regards,
+Gokul
+
