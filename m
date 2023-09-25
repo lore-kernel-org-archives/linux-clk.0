@@ -2,42 +2,42 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18A67CE7A95
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Sep 2023 10:29:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56CE0CE7A94
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Sep 2023 10:29:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231437AbjIYK3K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Sep 2023 06:29:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56786 "EHLO
+        id S231706AbjIYK3q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Sep 2023 06:29:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231553AbjIYK3I (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Sep 2023 06:29:08 -0400
+        with ESMTP id S231258AbjIYK3j (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Sep 2023 06:29:39 -0400
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE993BE;
-        Mon, 25 Sep 2023 03:29:02 -0700 (PDT)
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38PA7usD009687;
-        Mon, 25 Sep 2023 10:28:50 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E11058E;
+        Mon, 25 Sep 2023 03:29:32 -0700 (PDT)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38P9Ublr021060;
+        Mon, 25 Sep 2023 10:29:19 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=qcppdkim1;
- bh=yj7fYIgnT40zKCEw9gVfgAft6mXpSgmJ3XSg2/mSCrc=;
- b=UQWq4DMkHhXaGDnl4r0ggPJaC0noyN6JaDvJYFnMkT6r0dMhCT20e+z7IfhdQN7TeRYL
- wTMEVuxQ4qKkh2Vrvk4A+sVxKrCOBIIlG4OjTM7NGYdKarY59RyhJC5RxT5Y8j+DmlEu
- tIxj0ADa3M2uh3RVza4Kgdt7m+q+G1CRe7apvcoCWY86uEP1NBh5VSdKlshIvyyqTp/t
- VxfpnxBZmENzTYzrDa9foLPuf9WIOmO3f6GZaR6tocCWpOqIOymB+/n68i/zQiWrTH4D
- Q/ZLiq5hGXDIR0szfAwwAJU5DXuT6PkA592HqcL8nlBirhzDRO+kgfXMS1S8W83+YS6s +g== 
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3tajapj24s-1
+ bh=bih0g4dycmaTUji9/KI8JMhRgvzpmPyPyMqn7Zh/OiY=;
+ b=beMeHMNqqNdpWz92aNbYdlZLObpmjHkMPUvCHZ37t91TFF8raOrREJjN549iDKhTZSjI
+ 2qipti3rfC3yM5rIdNgafhc1N7sICu3HRsgX/yAxrJtW4l43uDXtks+hfyO5D6Yls1gh
+ tfhYqftaqEdI/Gsxh2vT7fhwPiyQefY/Is73BHeRwjUzVQgLl67/HJ5duauwST1l0iXx
+ Fv8wpJFZwHEAd4wuKaYfJEkXav58eVbuue9nuUMMZbwTdkxb8jC4wwkgHqOH1kYbLYZq
+ OMFk4DSHhkJpt4HxpKdBeL1aNAJD5q6rfXwMG4cIye5bHx1jmwrGLUKxQJcVJLPsJ3rI 8Q== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3tb5n88cw3-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 25 Sep 2023 10:28:50 +0000
+        Mon, 25 Sep 2023 10:29:19 +0000
 Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38PASnn7019426
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38PASw7g031592
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 25 Sep 2023 10:28:49 GMT
+        Mon, 25 Sep 2023 10:28:58 GMT
 Received: from hu-gokulsri-blr.qualcomm.com (10.80.80.8) by
  nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.36; Mon, 25 Sep 2023 03:28:44 -0700
+ 15.2.1118.36; Mon, 25 Sep 2023 03:28:53 -0700
 From:   Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
 To:     <dmitry.baryshkov@linaro.org>, <agross@kernel.org>,
         <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
@@ -48,9 +48,9 @@ To:     <dmitry.baryshkov@linaro.org>, <agross@kernel.org>,
         <linux-kernel@vger.kernel.org>
 CC:     <quic_varada@quicinc.com>, <quic_srichara@quicinc.com>,
         <quic_gokulsri@quicinc.com>
-Subject: [PATCH V3 1/3] dt-bindings: clock: qcom,a53pll: add IPQ5018 compatible
-Date:   Mon, 25 Sep 2023 15:58:24 +0530
-Message-ID: <20230925102826.405446-2-quic_gokulsri@quicinc.com>
+Subject: [PATCH V3 3/3] arm64: dts: qcom: ipq5018: enable the CPUFreq support
+Date:   Mon, 25 Sep 2023 15:58:26 +0530
+Message-ID: <20230925102826.405446-4-quic_gokulsri@quicinc.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230925102826.405446-1-quic_gokulsri@quicinc.com>
 References: <20230925102826.405446-1-quic_gokulsri@quicinc.com>
@@ -62,40 +62,110 @@ X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nalasex01b.na.qualcomm.com (10.47.209.197)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: VxU0dj9EKZE3njEQ2_coJuNbnVrw77EM
-X-Proofpoint-GUID: VxU0dj9EKZE3njEQ2_coJuNbnVrw77EM
+X-Proofpoint-ORIG-GUID: 9XKjpmcXF0Eyltqx7WMTuzUffxYbBGXP
+X-Proofpoint-GUID: 9XKjpmcXF0Eyltqx7WMTuzUffxYbBGXP
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-09-25_07,2023-09-25_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 malwarescore=0
- phishscore=0 spamscore=0 suspectscore=0 lowpriorityscore=0 clxscore=1015
- mlxscore=0 bulkscore=0 impostorscore=0 priorityscore=1501 mlxlogscore=910
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2309180000
- definitions=main-2309250076
+ definitions=2023-09-25_07,2023-09-21_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
+ adultscore=0 priorityscore=1501 impostorscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 malwarescore=0 mlxlogscore=890 phishscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2309180000 definitions=main-2309250077
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add IPQ5018 compatible to A53 PLL bindings.
+Add the APCS, A53 PLL, cpu-opp-table nodes to set
+the CPU frequency at 800MHz (idle) or 1.008GHz.
 
+Co-developed-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
 Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- Documentation/devicetree/bindings/clock/qcom,a53pll.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/qcom/ipq5018.dtsi | 40 +++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,a53pll.yaml b/Documentation/devicetree/bindings/clock/qcom,a53pll.yaml
-index 9436266828af..5ca927a8b1d5 100644
---- a/Documentation/devicetree/bindings/clock/qcom,a53pll.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,a53pll.yaml
-@@ -16,6 +16,7 @@ description:
- properties:
-   compatible:
-     enum:
-+      - qcom,ipq5018-a53pll
-       - qcom,ipq5332-a53pll
-       - qcom,ipq6018-a53pll
-       - qcom,ipq8074-a53pll
+diff --git a/arch/arm64/boot/dts/qcom/ipq5018.dtsi b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
+index 9f13d2dcdfd5..56f3c5260bbd 100644
+--- a/arch/arm64/boot/dts/qcom/ipq5018.dtsi
++++ b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
+@@ -5,6 +5,7 @@
+  * Copyright (c) 2023 The Linux Foundation. All rights reserved.
+  */
+ 
++#include <dt-bindings/clock/qcom,apss-ipq.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/clock/qcom,gcc-ipq5018.h>
+ #include <dt-bindings/reset/qcom,gcc-ipq5018.h>
+@@ -36,6 +37,8 @@ CPU0: cpu@0 {
+ 			reg = <0x0>;
+ 			enable-method = "psci";
+ 			next-level-cache = <&L2_0>;
++			clocks = <&apcs_glb APCS_ALIAS0_CORE_CLK>;
++			operating-points-v2 = <&cpu_opp_table>;
+ 		};
+ 
+ 		CPU1: cpu@1 {
+@@ -44,6 +47,8 @@ CPU1: cpu@1 {
+ 			reg = <0x1>;
+ 			enable-method = "psci";
+ 			next-level-cache = <&L2_0>;
++			clocks = <&apcs_glb APCS_ALIAS0_CORE_CLK>;
++			operating-points-v2 = <&cpu_opp_table>;
+ 		};
+ 
+ 		L2_0: l2-cache {
+@@ -54,6 +59,23 @@ L2_0: l2-cache {
+ 		};
+ 	};
+ 
++	cpu_opp_table: opp-table-cpu {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp-800000000 {
++			opp-hz = /bits/ 64 <800000000>;
++			opp-microvolt = <1100000>;
++			clock-latency-ns = <200000>;
++		};
++
++		opp-1008000000 {
++			opp-hz = /bits/ 64 <1008000000>;
++			opp-microvolt = <1100000>;
++			clock-latency-ns = <200000>;
++		};
++	};
++
+ 	firmware {
+ 		scm {
+ 			compatible = "qcom,scm-ipq5018", "qcom,scm";
+@@ -181,6 +203,24 @@ v2m1: v2m@1000 {
+ 			};
+ 		};
+ 
++		apcs_glb: mailbox@b111000 {
++			compatible = "qcom,ipq5018-apcs-apps-global",
++				     "qcom,ipq6018-apcs-apps-global";
++			reg = <0x0b111000 0x1000>;
++			#clock-cells = <1>;
++			clocks = <&a53pll>, <&xo_board_clk>, <&gcc GPLL0>;
++			clock-names = "pll", "xo", "gpll0";
++			#mbox-cells = <1>;
++		};
++
++		a53pll: clock@b116000 {
++			compatible = "qcom,ipq5018-a53pll";
++			reg = <0x0b116000 0x40>;
++			#clock-cells = <0>;
++			clocks = <&xo_board_clk>;
++			clock-names = "xo";
++		};
++
+ 		timer@b120000 {
+ 			compatible = "arm,armv7-timer-mem";
+ 			reg = <0x0b120000 0x1000>;
 -- 
 2.34.1
 
