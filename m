@@ -2,137 +2,187 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61F6ECE7A81
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Sep 2023 10:57:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4F93CE7A95
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Sep 2023 15:07:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230476AbjIYK5f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Sep 2023 06:57:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34078 "EHLO
+        id S232520AbjIYPHQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Sep 2023 11:07:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230333AbjIYK5e (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Sep 2023 06:57:34 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1F69DF
-        for <linux-clk@vger.kernel.org>; Mon, 25 Sep 2023 03:57:27 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id 4fb4d7f45d1cf-522bd411679so7153565a12.0
-        for <linux-clk@vger.kernel.org>; Mon, 25 Sep 2023 03:57:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1695639446; x=1696244246; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BnAAhfoYruyD394fjKRaDPqkZa0mFeKHrn6AwAJI6Tc=;
-        b=Z1rl6IfjbBStqA++k+n5TKMVhv4ac1WgpKIcINMsyyXBQIzlpKdplMVWrU3+dO/qpE
-         o3GH7p6m3GwADvAOM9WS00MU9mSMOF85It74YHbpCJJIg+DU3yvGfj5KXQ6qe1x3V7R7
-         s8UaQV9zwO4hgQg4m1bp4alKlGlEbfZHjK2Et80CoQ0ElM8HofpKIgSQU5jN1lIDoPF1
-         0O5LVPX4T3A7qGomEbh7Dm2GqRpMVYL0RRTekiTvomLkEB4Lsdy1k514rjQ5dT+PsrZc
-         CuO6a5wK0+xOq8VEJMYMaAp6GuOOkLF2VSAOsrq0B0r7BGKnimSANLYd2E9LkdfInyFL
-         z7Jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695639446; x=1696244246;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BnAAhfoYruyD394fjKRaDPqkZa0mFeKHrn6AwAJI6Tc=;
-        b=USQBSfFee66A1oj67qVh/fmdcQnVEoV/0ZS22cYvW05kFvfObkm6jlAVDODiAnW/L8
-         fVds7fnFj3pyvid2cQuyRpBZGh+nTY8+Z91yIGuh3wjhyPa7xK0rAH8cHSi7J8dUSPPc
-         6+bamusKNwNWjpHnfZ/Kkxbo5FYdQYd7aCjrk7kgL4wCbXXqrdDN1jGwjhW4pRAzLNih
-         QxFIhUDFkd8hGVzfF/mzoOpsMKCVzlxWMjMK3Wkw6HitzuW1gJeXOKai6o7ZdBawV8xU
-         JgYDVYFvJ0h4rd82dUUQ9Rnym5s66/IiE7Z1gU/PjxJrVN2UjXCD1m4S9KJsHvhzCPkQ
-         Mh/A==
-X-Gm-Message-State: AOJu0YxWeuFMn3eKUkbV+/Bt6DEgTrN9K4L+Ln0HmDeS4OecS81rDR/e
-        pt3LLreGaDN1bEzXSGHsNjibXA==
-X-Google-Smtp-Source: AGHT+IG1F15xbFHscKHKRV3WbAIyTcqu8JRFrpo2XrTc5Q5Vvm/44wjKqk98GU5NEYjklPgGA7dvlg==
-X-Received: by 2002:a17:907:e92:b0:9ae:50e3:7e40 with SMTP id ho18-20020a1709070e9200b009ae50e37e40mr7306548ejc.52.1695639446232;
-        Mon, 25 Sep 2023 03:57:26 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.100])
-        by smtp.gmail.com with ESMTPSA id s14-20020a170906bc4e00b009937dbabbd5sm6146381ejv.220.2023.09.25.03.57.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Sep 2023 03:57:25 -0700 (PDT)
-Message-ID: <0489cc26-b728-4460-be6b-6cfd401e6bff@linaro.org>
-Date:   Mon, 25 Sep 2023 12:57:23 +0200
+        with ESMTP id S230076AbjIYPHQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Sep 2023 11:07:16 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5CF1103;
+        Mon, 25 Sep 2023 08:07:09 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 087A5C433C8;
+        Mon, 25 Sep 2023 15:07:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695654429;
+        bh=bivzZDncrKe0eAtcWd82K5+BpAK/gZqr/XIOn3YurAU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=M0K0o8kJ56GSNHPhAk6QFPkhTSVBV+cmOb2ikJeU7Mkv4vVR5axSxnyeDIE7ZSINb
+         /0I+0XyU3gTLA3LNDm+P3moOj9fpid57kqif0rnqOpgoW5R1me9H/E1accyHUTSQo0
+         M/E0WoKNi01FBpo3f4B+Si9oeAOcVqNAHh3b+C58hwtqht4MZeg4XszGPx6h6U8upM
+         Ka7zAvP+P1c5YuKz7d7ST9d/+pbw3P/zYHSUEM7Hyjrv82BV3w8eoIxvSnL9GmSeNl
+         3xt69wWujr7S07Ws0mfNPUfoUwyKX0VZBevM18O5os5CXz8G5lLPdpRvMH6T67pQ+l
+         NVTA/VrvYxhAg==
+Date:   Mon, 25 Sep 2023 17:07:06 +0200
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Benjamin Bara <bbara93@gmail.com>
+Cc:     abelvesa@kernel.org, benjamin.bara@skidata.com,
+        conor+dt@kernel.org, devicetree@vger.kernel.org,
+        festevam@gmail.com, frank@oltmanns.dev, kernel@pengutronix.de,
+        krzysztof.kozlowski+dt@linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-imx@nxp.com, linux-kernel@vger.kernel.org,
+        linux@armlinux.org.uk, mturquette@baylibre.com, peng.fan@nxp.com,
+        robh+dt@kernel.org, s.hauer@pengutronix.de, sboyd@kernel.org,
+        shawnguo@kernel.org
+Subject: Re: [PATCH 06/13] clk: keep track if a clock is explicitly configured
+Message-ID: <2z7ujpgyptfa2wtzmb2jvb6krngh5fpnbbqjhx22rwv2qvofas@uple3zsk42nx>
+References: <pgnlrokdqqqclqvp4h2zk7iyq2jfncnvvwavovydovdmj3d2gf@kszpslmeswbr>
+ <20230920072216.1737599-1-bbara93@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 3/3] arm64: dts: qcom: ipq5018: enable the CPUFreq
- support
-Content-Language: en-US
-To:     Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>,
-        dmitry.baryshkov@linaro.org, agross@kernel.org,
-        andersson@kernel.org, konrad.dybcio@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, jassisinghbrar@gmail.com,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     quic_varada@quicinc.com, quic_srichara@quicinc.com
-References: <20230925102826.405446-1-quic_gokulsri@quicinc.com>
- <20230925102826.405446-4-quic_gokulsri@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20230925102826.405446-4-quic_gokulsri@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="w3qki6j3vhdewku6"
+Content-Disposition: inline
+In-Reply-To: <20230920072216.1737599-1-bbara93@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 25/09/2023 12:28, Gokul Sriram Palanisamy wrote:
-> Add the APCS, A53 PLL, cpu-opp-table nodes to set
-> the CPU frequency at 800MHz (idle) or 1.008GHz.
-> 
-> Co-developed-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/ipq5018.dtsi | 40 +++++++++++++++++++++++++++
->  1 file changed, 40 insertions(+)
-> 
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+--w3qki6j3vhdewku6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best regards,
-Krzysztof
+Hi Benjamin,
 
+On Wed, Sep 20, 2023 at 09:22:16AM +0200, Benjamin Bara wrote:
+> On Tue, 19 Sept 2023 at 09:07, Maxime Ripard <mripard@kernel.org> wrote:
+> > On Mon, Sep 18, 2023 at 12:40:02AM +0200, Benjamin Bara wrote:
+> > > From: Benjamin Bara <benjamin.bara@skidata.com>
+> > >
+> > > When we keep track if a clock has a given rate explicitly set by a
+> > > consumer, we can identify unintentional clock rate changes in an easy
+> > > way. This also helps during debugging, as one can see if a rate is set
+> > > by accident or due to a consumer-related change.
+> > >
+> > > Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
+> > > ---
+> > >  drivers/clk/clk.c            | 25 +++++++++++++++++++++++++
+> > >  include/linux/clk-provider.h |  1 +
+> > >  2 files changed, 26 insertions(+)
+> > >
+> > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > > index 8f4f92547768..82c65ed432c5 100644
+> > > --- a/drivers/clk/clk.c
+> > > +++ b/drivers/clk/clk.c
+> > > @@ -70,6 +70,7 @@ struct clk_core {
+> > >       unsigned long           rate;
+> > >       unsigned long           req_rate;
+> > >       unsigned long           new_rate;
+> > > +     unsigned long           set_rate;
+> >
+> > This is pretty much what req_rate is supposed to be about. Why didn't it
+> > work in your case?
+>=20
+> I picked this one to respond first because I think some of the
+> implemented stuff just workarounds the current req_rate behaviour.
+>=20
+> Currently, I have two "problems" with it:
+> 1. It's set during initialization[1]. In this phase, the *required* rate
+>    isn't known yet, so it should be 0 imo.
+
+Agreed. Ideally, it should be another value (like -1) since 0 is also
+used for rates in some drivers, but that's a separate story :)
+
+> 2. It's set during re-parenting[2,3]. Also here, just because we
+>    re-parent, the active consumer (which set the req_rate to a valid
+>    value) still requires the clock to have the same rate.
+>
+> That is basically the reason why we have no info if the req_rate is
+> really "required" by a consumer or if it is just set because the parent
+> had it at some time. It's only usage is here[4], which IMO doesn't
+> really depends on the wrong behaviour I described above.
+
+Ah, right.
+
+> The respective sub-tree we talk about on the imx8mp looks like this (one
+> example for the the LVDS-only case):
+> video_pll1 (pll; 7x crtc rate - currently, rate is assigned via dt)
+>   video_pll1_bypass (mux; 7x crtc rate)
+>     video_pll1_out (gate; 7x crtc rate)
+>       media_ldb (divider; 7x crtc rate)
+>         media_ldb_root_clk (gate; 7x crtc rate)
+>       media_disp2_pix (divider; 1x crtc rate)
+>         media_disp2_pix_root_clk (gate; 1x crtc rate)
+>       media_disp1_pix (divider; unused for now)
+>         media_disp1_pix_root_clk (gate; unused for now)
+>=20
+> The problem is that the panel driver sets media_disp1_pix_root_clk,
+> ldb-bridge driver sets media_ldb_root_clk. All the others have a
+> req_rate of the rate video_pll1 had when they got initialized or
+> re-parented.
+
+So we have only dividers, but what is the range of those? ie, could we
+get away with running the video-pll1 at 297/594MHz (or a multiple of it)
+and cover most of the pixel rates for LVDS?
+
+> My idea was, that when media_disp2_pix_root_clk is set to the CRTC rate,
+> IMO all clocks along the line (especially media_disp1_pix, which is
+> "seen" as child of the PLL, and the actual divider for
+> media_disp2_pix_root_clk) need to set their new rate as "required",
+> because the subtree below them relies on it. This might be a wrong
+> approach. It might be sufficient to have a req_rate only on the nodes
+> that actually require it.
+
+That makes total sense. However, the clock framework hasn't been
+designed around modifying the rate of multiple clocks in one go, which
+is pretty much what you want to achieve at the moment.
+
+You're already reaching those limits in your patches since, for example,
+you kind of hardcode the tolerance the clocks consider to be ok within
+the framework, which something that really belongs to each clock driver.
+
+This is why I'm insisting in figuring out whether we can run the main
+PLL at a frequency that is good enough for each use-case. That way it
+doesn't have to change, you don't have to propagate anything, the
+problem becomes much simpler :)
+
+> However, IMHO we need to make sure that *all* required rates
+> (especially the ones of leaves!) are respected after a change.
+
+Part of the issue I was telling you about is that clk_set_rate never
+really expressed any time duration, it's very much a fire and forget
+call, so for all the CCF cares the rate could change on the very next
+instruction and it would be ok.
+
+Doing so would also introduce some subtle corner-cases, like what is
+happening if cpufreq set your CPU frequency to (for example) 1GHz, but
+the firmware lowered it to 600MHz for thermal throttling. What happens
+then? Which rate do you consider the required rate?
+
+This would effectively mean merging clk_set_rate with
+clk_set_rate_exclusive, but the latter never really caught up because
+most clocks don't care, and it's fairly inconvenient to use.
+
+If there is an effort to be made (and I still don't believe we need to),
+then I think we should put in into improving clk_set_rate_exclusive()
+rather than changing the semantics of clk_set_rate().
+
+Maxime
+
+--w3qki6j3vhdewku6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZRGiGgAKCRDj7w1vZxhR
+xYF8AQD3ptB1rqfyR5RILANllLGYphcfR0zwbSaykHIjMoX3lwD/eeKkYte4HbhG
+AZ1KPxfPovlj7jmuBLB0KW7uY228YQg=
+=Dr5U
+-----END PGP SIGNATURE-----
+
+--w3qki6j3vhdewku6--
