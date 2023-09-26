@@ -2,187 +2,98 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4F93CE7A95
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Sep 2023 15:07:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B46FFE7D24D
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Sep 2023 08:08:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232520AbjIYPHQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Sep 2023 11:07:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35620 "EHLO
+        id S233848AbjIZIIa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Sep 2023 04:08:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230076AbjIYPHQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Sep 2023 11:07:16 -0400
+        with ESMTP id S229556AbjIZII3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Sep 2023 04:08:29 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5CF1103;
-        Mon, 25 Sep 2023 08:07:09 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 087A5C433C8;
-        Mon, 25 Sep 2023 15:07:08 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62ABBBE;
+        Tue, 26 Sep 2023 01:08:22 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F12C4C433C8;
+        Tue, 26 Sep 2023 08:08:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695654429;
-        bh=bivzZDncrKe0eAtcWd82K5+BpAK/gZqr/XIOn3YurAU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=M0K0o8kJ56GSNHPhAk6QFPkhTSVBV+cmOb2ikJeU7Mkv4vVR5axSxnyeDIE7ZSINb
-         /0I+0XyU3gTLA3LNDm+P3moOj9fpid57kqif0rnqOpgoW5R1me9H/E1accyHUTSQo0
-         M/E0WoKNi01FBpo3f4B+Si9oeAOcVqNAHh3b+C58hwtqht4MZeg4XszGPx6h6U8upM
-         Ka7zAvP+P1c5YuKz7d7ST9d/+pbw3P/zYHSUEM7Hyjrv82BV3w8eoIxvSnL9GmSeNl
-         3xt69wWujr7S07Ws0mfNPUfoUwyKX0VZBevM18O5os5CXz8G5lLPdpRvMH6T67pQ+l
-         NVTA/VrvYxhAg==
-Date:   Mon, 25 Sep 2023 17:07:06 +0200
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Benjamin Bara <bbara93@gmail.com>
-Cc:     abelvesa@kernel.org, benjamin.bara@skidata.com,
-        conor+dt@kernel.org, devicetree@vger.kernel.org,
-        festevam@gmail.com, frank@oltmanns.dev, kernel@pengutronix.de,
-        krzysztof.kozlowski+dt@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-imx@nxp.com, linux-kernel@vger.kernel.org,
-        linux@armlinux.org.uk, mturquette@baylibre.com, peng.fan@nxp.com,
-        robh+dt@kernel.org, s.hauer@pengutronix.de, sboyd@kernel.org,
-        shawnguo@kernel.org
-Subject: Re: [PATCH 06/13] clk: keep track if a clock is explicitly configured
-Message-ID: <2z7ujpgyptfa2wtzmb2jvb6krngh5fpnbbqjhx22rwv2qvofas@uple3zsk42nx>
-References: <pgnlrokdqqqclqvp4h2zk7iyq2jfncnvvwavovydovdmj3d2gf@kszpslmeswbr>
- <20230920072216.1737599-1-bbara93@gmail.com>
+        s=k20201202; t=1695715702;
+        bh=UjHcxElqJT2Xn40h70QVPAzMGgQiQRJNiS+9s0Gk/2Y=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=Tbfzb396Id5RYpSZusFkKdTiL9aPVNcGgS0A0dsHmqnoeaLC1HtiE+jwMZNzXUs9H
+         uuRoqOoSaznBmPFFknL2+Obbdu3r2S8RdSLvjueky9tM0+prY6DIqOuHyWNXvEVpO1
+         CQZaVkCTpHqMv04Zgn6xY9NV7Ynab9biQhu5D0HL9Bh0bRX9bvuaQ5avK/6cc0Ovfx
+         AYLacydmC1YKFY3nr83v3IQDO1tvJPc/HkP656G6Tm+iwQDWPaMCm1NclDK6AaWwf4
+         Gkk2ejWhkF/NzRyL/ZxjpS8AO1pfdyLbtwFwDqIZiqP7CN7Yn2SjJyCCn1UVy5CYHS
+         c93sy0mgxUI7w==
+From:   Mark Brown <broonie@kernel.org>
+To:     Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Lee Jones <lee@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Alex Bee <knaerzche@gmail.com>
+Cc:     Elaine Zhang <zhangqing@rock-chips.com>,
+        Johan Jonker <jbx6244@gmail.com>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
+        linux-clk@vger.kernel.org, linux-phy@lists.infradead.org
+In-Reply-To: <20230829171647.187787-1-knaerzche@gmail.com>
+References: <20230829171647.187787-1-knaerzche@gmail.com>
+Subject: Re: (subset) [PATCH 00/31] Fix and improve Rockchip RK3128 support
+Message-Id: <169571569769.2520438.14041840367987493896.b4-ty@kernel.org>
+Date:   Tue, 26 Sep 2023 10:08:17 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="w3qki6j3vhdewku6"
-Content-Disposition: inline
-In-Reply-To: <20230920072216.1737599-1-bbara93@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-099c9
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Tue, 29 Aug 2023 19:16:16 +0200, Alex Bee wrote:
+> this series fixes some issues I found when testing my "new" RK3128 board
+> with the mainline kernel and adds some core functionality like SMP bringup,
+> usb and networking.
+> 
+> The propably most distinctive change is the split up of the DTs for the
+> different SoCs of this platform: RK3126 and RK3128. Even if I'm not adding
+> a RK3126 board in this series: I think this change should be done as early
+> as possible in order to avoid issues in future.
+> Actually it should have been done like that in the first place.
+> 
+> [...]
 
---w3qki6j3vhdewku6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied to
 
-Hi Benjamin,
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-On Wed, Sep 20, 2023 at 09:22:16AM +0200, Benjamin Bara wrote:
-> On Tue, 19 Sept 2023 at 09:07, Maxime Ripard <mripard@kernel.org> wrote:
-> > On Mon, Sep 18, 2023 at 12:40:02AM +0200, Benjamin Bara wrote:
-> > > From: Benjamin Bara <benjamin.bara@skidata.com>
-> > >
-> > > When we keep track if a clock has a given rate explicitly set by a
-> > > consumer, we can identify unintentional clock rate changes in an easy
-> > > way. This also helps during debugging, as one can see if a rate is set
-> > > by accident or due to a consumer-related change.
-> > >
-> > > Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
-> > > ---
-> > >  drivers/clk/clk.c            | 25 +++++++++++++++++++++++++
-> > >  include/linux/clk-provider.h |  1 +
-> > >  2 files changed, 26 insertions(+)
-> > >
-> > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > > index 8f4f92547768..82c65ed432c5 100644
-> > > --- a/drivers/clk/clk.c
-> > > +++ b/drivers/clk/clk.c
-> > > @@ -70,6 +70,7 @@ struct clk_core {
-> > >       unsigned long           rate;
-> > >       unsigned long           req_rate;
-> > >       unsigned long           new_rate;
-> > > +     unsigned long           set_rate;
-> >
-> > This is pretty much what req_rate is supposed to be about. Why didn't it
-> > work in your case?
->=20
-> I picked this one to respond first because I think some of the
-> implemented stuff just workarounds the current req_rate behaviour.
->=20
-> Currently, I have two "problems" with it:
-> 1. It's set during initialization[1]. In this phase, the *required* rate
->    isn't known yet, so it should be 0 imo.
+Thanks!
 
-Agreed. Ideally, it should be another value (like -1) since 0 is also
-used for rates in some drivers, but that's a separate story :)
+[03/31] dt-bindings: ASoC: rockchip: Add compatible for RK3128 spdif
+        commit: 5c8a033f5674ae62d5aa2ebbdb9980b89380c34f
 
-> 2. It's set during re-parenting[2,3]. Also here, just because we
->    re-parent, the active consumer (which set the req_rate to a valid
->    value) still requires the clock to have the same rate.
->
-> That is basically the reason why we have no info if the req_rate is
-> really "required" by a consumer or if it is just set because the parent
-> had it at some time. It's only usage is here[4], which IMO doesn't
-> really depends on the wrong behaviour I described above.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-Ah, right.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-> The respective sub-tree we talk about on the imx8mp looks like this (one
-> example for the the LVDS-only case):
-> video_pll1 (pll; 7x crtc rate - currently, rate is assigned via dt)
->   video_pll1_bypass (mux; 7x crtc rate)
->     video_pll1_out (gate; 7x crtc rate)
->       media_ldb (divider; 7x crtc rate)
->         media_ldb_root_clk (gate; 7x crtc rate)
->       media_disp2_pix (divider; 1x crtc rate)
->         media_disp2_pix_root_clk (gate; 1x crtc rate)
->       media_disp1_pix (divider; unused for now)
->         media_disp1_pix_root_clk (gate; unused for now)
->=20
-> The problem is that the panel driver sets media_disp1_pix_root_clk,
-> ldb-bridge driver sets media_ldb_root_clk. All the others have a
-> req_rate of the rate video_pll1 had when they got initialized or
-> re-parented.
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-So we have only dividers, but what is the range of those? ie, could we
-get away with running the video-pll1 at 297/594MHz (or a multiple of it)
-and cover most of the pixel rates for LVDS?
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-> My idea was, that when media_disp2_pix_root_clk is set to the CRTC rate,
-> IMO all clocks along the line (especially media_disp1_pix, which is
-> "seen" as child of the PLL, and the actual divider for
-> media_disp2_pix_root_clk) need to set their new rate as "required",
-> because the subtree below them relies on it. This might be a wrong
-> approach. It might be sufficient to have a req_rate only on the nodes
-> that actually require it.
+Thanks,
+Mark
 
-That makes total sense. However, the clock framework hasn't been
-designed around modifying the rate of multiple clocks in one go, which
-is pretty much what you want to achieve at the moment.
-
-You're already reaching those limits in your patches since, for example,
-you kind of hardcode the tolerance the clocks consider to be ok within
-the framework, which something that really belongs to each clock driver.
-
-This is why I'm insisting in figuring out whether we can run the main
-PLL at a frequency that is good enough for each use-case. That way it
-doesn't have to change, you don't have to propagate anything, the
-problem becomes much simpler :)
-
-> However, IMHO we need to make sure that *all* required rates
-> (especially the ones of leaves!) are respected after a change.
-
-Part of the issue I was telling you about is that clk_set_rate never
-really expressed any time duration, it's very much a fire and forget
-call, so for all the CCF cares the rate could change on the very next
-instruction and it would be ok.
-
-Doing so would also introduce some subtle corner-cases, like what is
-happening if cpufreq set your CPU frequency to (for example) 1GHz, but
-the firmware lowered it to 600MHz for thermal throttling. What happens
-then? Which rate do you consider the required rate?
-
-This would effectively mean merging clk_set_rate with
-clk_set_rate_exclusive, but the latter never really caught up because
-most clocks don't care, and it's fairly inconvenient to use.
-
-If there is an effort to be made (and I still don't believe we need to),
-then I think we should put in into improving clk_set_rate_exclusive()
-rather than changing the semantics of clk_set_rate().
-
-Maxime
-
---w3qki6j3vhdewku6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZRGiGgAKCRDj7w1vZxhR
-xYF8AQD3ptB1rqfyR5RILANllLGYphcfR0zwbSaykHIjMoX3lwD/eeKkYte4HbhG
-AZ1KPxfPovlj7jmuBLB0KW7uY228YQg=
-=Dr5U
------END PGP SIGNATURE-----
-
---w3qki6j3vhdewku6--
