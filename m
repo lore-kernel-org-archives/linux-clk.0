@@ -2,98 +2,177 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B46FFE7D24D
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Sep 2023 08:08:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D99E4E7D275
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Sep 2023 09:56:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233848AbjIZIIa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Sep 2023 04:08:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46330 "EHLO
+        id S233723AbjIZJ4S (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Sep 2023 05:56:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229556AbjIZII3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Sep 2023 04:08:29 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62ABBBE;
-        Tue, 26 Sep 2023 01:08:22 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F12C4C433C8;
-        Tue, 26 Sep 2023 08:08:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695715702;
-        bh=UjHcxElqJT2Xn40h70QVPAzMGgQiQRJNiS+9s0Gk/2Y=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=Tbfzb396Id5RYpSZusFkKdTiL9aPVNcGgS0A0dsHmqnoeaLC1HtiE+jwMZNzXUs9H
-         uuRoqOoSaznBmPFFknL2+Obbdu3r2S8RdSLvjueky9tM0+prY6DIqOuHyWNXvEVpO1
-         CQZaVkCTpHqMv04Zgn6xY9NV7Ynab9biQhu5D0HL9Bh0bRX9bvuaQ5avK/6cc0Ovfx
-         AYLacydmC1YKFY3nr83v3IQDO1tvJPc/HkP656G6Tm+iwQDWPaMCm1NclDK6AaWwf4
-         Gkk2ejWhkF/NzRyL/ZxjpS8AO1pfdyLbtwFwDqIZiqP7CN7Yn2SjJyCCn1UVy5CYHS
-         c93sy0mgxUI7w==
-From:   Mark Brown <broonie@kernel.org>
-To:     Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Lee Jones <lee@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Alex Bee <knaerzche@gmail.com>
-Cc:     Elaine Zhang <zhangqing@rock-chips.com>,
-        Johan Jonker <jbx6244@gmail.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
-        linux-clk@vger.kernel.org, linux-phy@lists.infradead.org
-In-Reply-To: <20230829171647.187787-1-knaerzche@gmail.com>
-References: <20230829171647.187787-1-knaerzche@gmail.com>
-Subject: Re: (subset) [PATCH 00/31] Fix and improve Rockchip RK3128 support
-Message-Id: <169571569769.2520438.14041840367987493896.b4-ty@kernel.org>
-Date:   Tue, 26 Sep 2023 10:08:17 +0200
+        with ESMTP id S232983AbjIZJ4K (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Sep 2023 05:56:10 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 745F5CCF
+        for <linux-clk@vger.kernel.org>; Tue, 26 Sep 2023 02:55:58 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id a640c23a62f3a-9a64619d8fbso1056305266b.0
+        for <linux-clk@vger.kernel.org>; Tue, 26 Sep 2023 02:55:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1695722156; x=1696326956; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oCGAB9bjd2rRkobql917EBDyBbo8Xf1tmOkuieid9Qw=;
+        b=HFmsZ4RrW76dmgghgjnLmy/if7RGsBsH4gCiOAm04mIl6nM43bU4nQtLpo9Mipeio4
+         JUhdNIn4w3HgA3gLB+81owUI+uiPg/4oyDitaKB+k6BzOwxh8C6RoMsHT6RFdWJ/t5fa
+         kZkn3eT+bQKDuIZbyX+KdFGTZlx/r1PFcgLzEr1Wa9Gxr4hkCtQiDoaruQAnT9TdaoLw
+         Lk8iZytyVRi3Hc982kBcXwdfyLV5KKQ7qefdk6LDk/U0aXwxhIAfzfZc7PFdV29YdBRj
+         k6fRmlWHQ+eJ/xaWFtECSUf0Xd7QCXN5TOpRM4YTq/E0wPiTnPiEcvndPYLYKtNKLhqs
+         A6tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695722156; x=1696326956;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oCGAB9bjd2rRkobql917EBDyBbo8Xf1tmOkuieid9Qw=;
+        b=sr9Lfnr8pNDReSHOgZZnSJ7Awzi5042aHIeJZQzvpHu+cVTK4+LzDU+WPSQIMOtNDh
+         4nElTA1jpHR8aYBQQJefZIYujBENwwBYHMPIXxrZ5lzBYP/OxR5y1uEJ0GyErOfdp509
+         S2YJOAkmjzq5rAu4B7MGRKtpX+5+xFs5SqgCwji6ZuFKERMpVaU1gpucK1ST3N5gtOyL
+         lqbtsDkM6/QG67pDQe0Abx8ILRKXS8vW1YRgjLIw8ZLHxP2fGEqrEGYeC5ftJkuPAUdo
+         7KzLf6dwRiLwTdldejVUU7zVZDOvaJnDWsOncCDiFsJKi7Vp4ipEZ78zepy3yFiabka5
+         cVJw==
+X-Gm-Message-State: AOJu0Yxj579lB2Mxleg823/a4pOfWNGlLSgaSkTmfuviiWmd1SHU97rL
+        CIbPe0qqXhVpQvE0u1UIcp30Uw==
+X-Google-Smtp-Source: AGHT+IEiQ8iJO3tEsrKT6DurQH2FvKo0uS+xJFcGLGiCr6SvtCfNXfJUyT6nkOwQSaE5M72oHauuhA==
+X-Received: by 2002:a17:906:3188:b0:9ae:5fdc:aee8 with SMTP id 8-20020a170906318800b009ae5fdcaee8mr8441103ejy.53.1695722156458;
+        Tue, 26 Sep 2023 02:55:56 -0700 (PDT)
+Received: from [192.168.32.2] ([82.78.167.177])
+        by smtp.gmail.com with ESMTPSA id j26-20020a170906831a00b00997d7aa59fasm7698269ejx.14.2023.09.26.02.55.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Sep 2023 02:55:55 -0700 (PDT)
+Message-ID: <1f1b5174-cfd4-4393-3a86-9adfc8c2cce1@tuxon.dev>
+Date:   Tue, 26 Sep 2023 12:55:53 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-099c9
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH 25/37] pinctrl: renesas: rzg2l: adapt function number for
+ RZ/G3S
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        ulf.hansson@linaro.org, linus.walleij@linaro.org,
+        gregkh@linuxfoundation.org, jirislaby@kernel.org,
+        magnus.damm@gmail.com, catalin.marinas@arm.com, will@kernel.org,
+        prabhakar.mahadev-lad.rj@bp.renesas.com,
+        biju.das.jz@bp.renesas.com, quic_bjorande@quicinc.com,
+        arnd@arndb.de, konrad.dybcio@linaro.org, neil.armstrong@linaro.org,
+        nfraprado@collabora.com, rafal@milecki.pl,
+        wsa+renesas@sang-engineering.com,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com>
+ <20230912045157.177966-26-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdVkttQpA-s0MrKbTVxJ6K+xXmhV3sNNLTAPSbDa0f8XYA@mail.gmail.com>
+Content-Language: en-US
+From:   claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <CAMuHMdVkttQpA-s0MrKbTVxJ6K+xXmhV3sNNLTAPSbDa0f8XYA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 29 Aug 2023 19:16:16 +0200, Alex Bee wrote:
-> this series fixes some issues I found when testing my "new" RK3128 board
-> with the mainline kernel and adds some core functionality like SMP bringup,
-> usb and networking.
+Hi, Geert,
+
+On 21.09.2023 15:51, Geert Uytterhoeven wrote:
+> Hi Claudiu,
 > 
-> The propably most distinctive change is the split up of the DTs for the
-> different SoCs of this platform: RK3126 and RK3128. Even if I'm not adding
-> a RK3126 board in this series: I think this change should be done as early
-> as possible in order to avoid issues in future.
-> Actually it should have been done like that in the first place.
+> Thanks for your patch!
 > 
-> [...]
+> On Tue, Sep 12, 2023 at 6:53 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> On RZ/G3S PFC register allow setting 8 functions for individual ports
+>> (function1 to function8). For function1 register need to be configured
+>> with 0, for function8 register need to be configured with 7.
+>> We cannot use zero based addressing when requesting functions from
+>> different code places as documentation (RZG3S_pinfunction_List_r1.0.xlsx)
+>> states explicitly that function0 has different meaning.
+> 
+> According to that table, function0 is GPIO.
 
-Applied to
+Yes, I'll mention it like this in the next version.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+> 
+>> For this add a new member to struct rzg2l_hwcfg that will keep the
+>> offset that need to be substracted before applying a value to PFC register.
+>>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> But one question below...
+> 
+>> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+>> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+>> @@ -136,9 +136,11 @@ struct rzg2l_register_offsets {
+>>  /**
+>>   * struct rzg2l_hwcfg - hardware configuration data structure
+>>   * @regs: hardware specific register offsets
+>> + * @func_base: base number for port function (see register PFC)
+>>   */
+>>  struct rzg2l_hwcfg {
+>>         const struct rzg2l_register_offsets regs;
+>> +       u8 func_base;
+>>  };
+>>
+>>  struct rzg2l_dedicated_configs {
+>> @@ -221,6 +223,7 @@ static int rzg2l_pinctrl_set_mux(struct pinctrl_dev *pctldev,
+>>                                  unsigned int group_selector)
+>>  {
+>>         struct rzg2l_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
+>> +       const struct rzg2l_hwcfg *hwcfg = pctrl->data->hwcfg;
+>>         const struct pinctrl_pin_desc *pin_desc;
+>>         unsigned int i, *psel_val, *pin_data;
+>>         struct function_desc *func;
+>> @@ -247,9 +250,9 @@ static int rzg2l_pinctrl_set_mux(struct pinctrl_dev *pctldev,
+>>                 off = RZG2L_PIN_CFG_TO_PORT_OFFSET(*pin_data);
+>>
+>>                 dev_dbg(pctrl->dev, "port:%u pin: %u off:%x PSEL:%u\n", port,
+>> -                       pin, off, psel_val[i]);
+>> +                       pin, off, psel_val[i] - hwcfg->func_base);
+>>
+>> -               rzg2l_pinctrl_set_pfc_mode(pctrl, pin, off, psel_val[i]);
+>> +               rzg2l_pinctrl_set_pfc_mode(pctrl, pin, off, psel_val[i] - hwcfg->func_base);
+>>         }
+>>
+>>         return 0;
+> 
+> Perhaps the adjustment should be done in rzg2l_dt_subnode_to_map()
+> instead, when obtaining MUX_FUNC() from DT? That would allow you to do
+> some basic validation on it too, which is currently completely missing
+> (reject out-of-range values overflowing into adjacent PFC fields,
+> reject zero on RZ/G3S).
 
-Thanks!
+I'll have a look on this. I see .set_mux() can also be called from sysfs
+though pinmux-select exported file thus, I don't know at the moment if
+validating it on rzg2l_dt_subnode_to_map() will be enough.
 
-[03/31] dt-bindings: ASoC: rockchip: Add compatible for RK3128 spdif
-        commit: 5c8a033f5674ae62d5aa2ebbdb9980b89380c34f
+Would it be OK to have this outside of this series or you would prefer it now?
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+Thank you,
+Claudiu Beznea
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
