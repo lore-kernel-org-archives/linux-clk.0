@@ -2,61 +2,58 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6812FE7E629
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Sep 2023 11:47:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FB49E7E63F
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Sep 2023 14:24:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233755AbjIZLrV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Sep 2023 07:47:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50084 "EHLO
+        id S233405AbjIZOYF convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Sep 2023 10:24:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230231AbjIZLrU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Sep 2023 07:47:20 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6B4310E
-        for <linux-clk@vger.kernel.org>; Tue, 26 Sep 2023 04:47:11 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id 2adb3069b0e04-5033918c09eso13712164e87.2
-        for <linux-clk@vger.kernel.org>; Tue, 26 Sep 2023 04:47:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1695728830; x=1696333630; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LCp3DXpfVKfH2Y0o0M8mCid7ujeQPXx6UqfFbszv1i8=;
-        b=GFkmqM9lLJYapN4xBN0c7JH0ecC/aSpNEUDIAgH0wVZE/sOz9fL5dSc8mVtIEcOmUd
-         KF/3fQt921CGdVlWaw8FyZhfGdQzBNYlNjG/uvesG4Ewzg9I1AMKGE5u/XBrdjw8dlOw
-         NU9mK/8GxX5GZfK6E+K3Lk/odhHG9ZhG64kZCC3D4q7tqtaPxmJrxlRtwdEem6N0Nxfd
-         AWtevtsOlJlmU43ZXEy6KwYK86a9iYIGSF3/+/bd+9oTr8RLDOjoyJvxnJL1Zx1ufehH
-         xwcnQx5JGm0qOUBidz6Lg/yKqdwDMkolGZy0sd/DUfIVuhS14R+FVyL+bt+WFjIN7Q5C
-         IvAw==
+        with ESMTP id S230330AbjIZOYE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Sep 2023 10:24:04 -0400
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 803AD101;
+        Tue, 26 Sep 2023 07:23:56 -0700 (PDT)
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-59f6492b415so68293317b3.0;
+        Tue, 26 Sep 2023 07:23:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695728830; x=1696333630;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LCp3DXpfVKfH2Y0o0M8mCid7ujeQPXx6UqfFbszv1i8=;
-        b=DiYITk5S08a18/AdehWa39GuoSuGAfvaI1xHb0hmtdauID7kfYwqWlz8xlVdMDkhWu
-         aK6tFy2uFcDXAzxSHGhNwBDmckmlZA4lAuWP09pz6sSb7NAemH0R4r+Kc3TdtGOlqSDu
-         CI8FAwYYs8TZ/rQjlDsAj4bKNdua9yyrFRtiRAj3Wk96s7xipiW3GHLBRTNoaGpmXSoV
-         KqJy4CPLfWVEQDVC3beeYx28cuU8e7CW41pGrQ+KY4BsmObjKL/WeAvCxDmbqoA/LDta
-         +gRc/8COR7UBqxiRghP9Cr9QgozWYKZ6J7pQ27urEMFjPSLlP3T9gfBAx6EWJc46vaTU
-         hOOw==
-X-Gm-Message-State: AOJu0YzuXgyA2l/TUEyAOWb6usZKNL/phNPEkmzjTht+mv3nEdWYcPfG
-        PU5wUMZzbhSuaGjqVmp/KturRg==
-X-Google-Smtp-Source: AGHT+IF+jbH7FWr6+cFqAnCyk/CUAIFVAZ8LgGPN4rOxnI4j0tUbuQS0WA4s9y3m/r3g5552xfmfnQ==
-X-Received: by 2002:a05:6512:110e:b0:4fd:d64f:c0a6 with SMTP id l14-20020a056512110e00b004fdd64fc0a6mr9175819lfg.48.1695728829802;
-        Tue, 26 Sep 2023 04:47:09 -0700 (PDT)
-Received: from [192.168.32.2] ([82.78.167.177])
-        by smtp.gmail.com with ESMTPSA id lo18-20020a170906fa1200b0099bd1a78ef5sm7641095ejb.74.2023.09.26.04.47.07
+        d=1e100.net; s=20230601; t=1695738235; x=1696343035;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=b6GInBInFecR+uHBKFfmOCInwlwyJcLVJtZLCIykOZs=;
+        b=ZUZMHEsZto/UkzaDFCGwHe9Z/OJ5naLg3jyeu+5PKrKkJSTvrWPJzxUNX5tw3bGisU
+         TqP3lzoxrMpjtgL1APQU4o9ctAlwYR/70SVoaX83LRFLuurHGVh9LUDMf7olbILQ7zgG
+         i4wIKBfi0vbpEDA5Y4TUFrBmysrBd3YCpyPFMddSR9noX+zxaNu8cN5QImJO35TVIQTV
+         oI14Ghj9yTpnufcI9zsYBw6kd1KxJEixxBz98/9g6Xc5FtXsbKA3awYAFBbgdawc7ZVu
+         RvZ/qBBCxynG7EaZ80s7RGWqwEbsQuLtGMtzg8RgUsXmMMMYD1Pjny/WQiVaIAXDAd4i
+         w6WQ==
+X-Gm-Message-State: AOJu0YzbQ0pihNRBZRM3PzDwe84+K9QIGDI0kH2M3Zh17pa/BQUt3au6
+        +WBS/22K58jB2I2fEEof5FlGVS0XWGJ7Sg==
+X-Google-Smtp-Source: AGHT+IHoy5K5uGXt4Am/NdtVvpfIGtR5dl61OjDvtiyjuLMl/jpu53XB8kamVMkIdz8McXQ2X06j5Q==
+X-Received: by 2002:a05:690c:4808:b0:59f:6440:7eff with SMTP id hc8-20020a05690c480800b0059f64407effmr2242894ywb.15.1695738235335;
+        Tue, 26 Sep 2023 07:23:55 -0700 (PDT)
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com. [209.85.128.172])
+        by smtp.gmail.com with ESMTPSA id x184-20020a0deec1000000b005463e45458bsm3041260ywe.123.2023.09.26.07.23.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Sep 2023 04:47:09 -0700 (PDT)
-Message-ID: <dfe64c7c-2f90-65a2-05fc-e96ec5113a60@tuxon.dev>
-Date:   Tue, 26 Sep 2023 14:47:06 +0300
+        Tue, 26 Sep 2023 07:23:54 -0700 (PDT)
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-59e88a28b98so126177077b3.1;
+        Tue, 26 Sep 2023 07:23:54 -0700 (PDT)
+X-Received: by 2002:a0d:e8c5:0:b0:59f:6489:75ac with SMTP id
+ r188-20020a0de8c5000000b0059f648975acmr1898989ywe.19.1695738234682; Tue, 26
+ Sep 2023 07:23:54 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 09/37] clk: renesas: rzg2l: fix computation formula
-Content-Language: en-US
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
+References: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com>
+ <20230912045157.177966-26-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdVkttQpA-s0MrKbTVxJ6K+xXmhV3sNNLTAPSbDa0f8XYA@mail.gmail.com> <1f1b5174-cfd4-4393-3a86-9adfc8c2cce1@tuxon.dev>
+In-Reply-To: <1f1b5174-cfd4-4393-3a86-9adfc8c2cce1@tuxon.dev>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 26 Sep 2023 16:23:41 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXL=MpBin208aXe95Mp+NunGLGugtDG0MSs1XtYxyZ71Q@mail.gmail.com>
+Message-ID: <CAMuHMdXL=MpBin208aXe95Mp+NunGLGugtDG0MSs1XtYxyZ71Q@mail.gmail.com>
+Subject: Re: [PATCH 25/37] pinctrl: renesas: rzg2l: adapt function number for RZ/G3S
+To:     claudiu beznea <claudiu.beznea@tuxon.dev>
 Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
         ulf.hansson@linaro.org, linus.walleij@linaro.org,
@@ -72,89 +69,100 @@ Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
         linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com>
- <20230912045157.177966-10-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdVNzgHqURohOgpFEaGn+6+rQTqsDomoS1u_-jn=GgmHXw@mail.gmail.com>
-From:   claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <CAMuHMdVNzgHqURohOgpFEaGn+6+rQTqsDomoS1u_-jn=GgmHXw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi, Geert,
+Hi Claudiu,
 
-On 14.09.2023 15:55, Geert Uytterhoeven wrote:
-> Hi Claudiu,
-> 
-> On Tue, Sep 12, 2023 at 6:52 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> According to hardware manual of RZ/G2L (r01uh0914ej0130-rzg2l-rzg2lc.pdf)
->> the computation formula for PLL rate is as follows:
->>
->> Fout = ((m + k/65536) * Fin) / (p * 2^s)
->>
->> and k has values in range [-32768, 32767]. Dividing k by 65536 with
->> integer variables leads all the time to zero. Thus we may have slight
->> differences b/w what has been set vs. what is displayed. Thus,
->> get rid of this and decompose the formula before dividing k by 65536.
->>
->> Fixes: ef3c613ccd68a ("clk: renesas: Add CPG core wrapper for RZ/G2L SoC")
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> Thanks for your patch!
-> 
->> --- a/drivers/clk/renesas/rzg2l-cpg.c
->> +++ b/drivers/clk/renesas/rzg2l-cpg.c
->> @@ -696,18 +696,22 @@ static unsigned long rzg2l_cpg_pll_clk_recalc_rate(struct clk_hw *hw,
->>         struct pll_clk *pll_clk = to_pll(hw);
->>         struct rzg2l_cpg_priv *priv = pll_clk->priv;
->>         unsigned int val1, val2;
->> -       unsigned int mult = 1;
->> -       unsigned int div = 1;
->> +       unsigned int div;
->> +       u64 rate;
->> +       s16 kdiv;
->>
->>         if (pll_clk->type != CLK_TYPE_SAM_PLL)
->>                 return parent_rate;
->>
->>         val1 = readl(priv->base + GET_REG_SAMPLL_CLK1(pll_clk->conf));
->>         val2 = readl(priv->base + GET_REG_SAMPLL_CLK2(pll_clk->conf));
->> -       mult = MDIV(val1) + KDIV(val1) / 65536;
->> +       kdiv = KDIV(val1);
->>         div = PDIV(val1) << SDIV(val2);
->>
->> -       return DIV_ROUND_CLOSEST_ULL((u64)parent_rate * mult, div);
->> +       rate = (u64)MDIV(val1) * parent_rate;
->> +       rate += ((long long)parent_rate * kdiv) / 65536;
-> 
-> As the division is a binary shift, you can use the mul_u64_u32_shr() helper,
-> and incorporate the sdiv shift at the same time:
-> 
->     rate += mul_u64_u32_shr(parent_rate, KDIV(val1), 16 + SDIV(val2));
-> 
-> You can save a multiplication by premultiplying mdiv by 65536:
-> 
->     rate = mul_u64_u32_shr(parent_rate, (MDIV(val1) << 16)) + KDIV(val1),
->                            16 + SDIV(val2));
+On Tue, Sep 26, 2023 at 11:55 AM claudiu beznea
+<claudiu.beznea@tuxon.dev> wrote:
+> On 21.09.2023 15:51, Geert Uytterhoeven wrote:
+> > On Tue, Sep 12, 2023 at 6:53 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+> >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> >>
+> >> On RZ/G3S PFC register allow setting 8 functions for individual ports
+> >> (function1 to function8). For function1 register need to be configured
+> >> with 0, for function8 register need to be configured with 7.
+> >> We cannot use zero based addressing when requesting functions from
+> >> different code places as documentation (RZG3S_pinfunction_List_r1.0.xlsx)
+> >> states explicitly that function0 has different meaning.
+> >
+> > According to that table, function0 is GPIO.
+>
+> Yes, I'll mention it like this in the next version.
+>
+> >> For this add a new member to struct rzg2l_hwcfg that will keep the
+> >> offset that need to be substracted before applying a value to PFC register.
+> >>
+> >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> >
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >
+> > But one question below...
+> >
+> >> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> >> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> >> @@ -136,9 +136,11 @@ struct rzg2l_register_offsets {
+> >>  /**
+> >>   * struct rzg2l_hwcfg - hardware configuration data structure
+> >>   * @regs: hardware specific register offsets
+> >> + * @func_base: base number for port function (see register PFC)
+> >>   */
+> >>  struct rzg2l_hwcfg {
+> >>         const struct rzg2l_register_offsets regs;
+> >> +       u8 func_base;
+> >>  };
+> >>
+> >>  struct rzg2l_dedicated_configs {
+> >> @@ -221,6 +223,7 @@ static int rzg2l_pinctrl_set_mux(struct pinctrl_dev *pctldev,
+> >>                                  unsigned int group_selector)
+> >>  {
+> >>         struct rzg2l_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
+> >> +       const struct rzg2l_hwcfg *hwcfg = pctrl->data->hwcfg;
+> >>         const struct pinctrl_pin_desc *pin_desc;
+> >>         unsigned int i, *psel_val, *pin_data;
+> >>         struct function_desc *func;
+> >> @@ -247,9 +250,9 @@ static int rzg2l_pinctrl_set_mux(struct pinctrl_dev *pctldev,
+> >>                 off = RZG2L_PIN_CFG_TO_PORT_OFFSET(*pin_data);
+> >>
+> >>                 dev_dbg(pctrl->dev, "port:%u pin: %u off:%x PSEL:%u\n", port,
+> >> -                       pin, off, psel_val[i]);
+> >> +                       pin, off, psel_val[i] - hwcfg->func_base);
+> >>
+> >> -               rzg2l_pinctrl_set_pfc_mode(pctrl, pin, off, psel_val[i]);
+> >> +               rzg2l_pinctrl_set_pfc_mode(pctrl, pin, off, psel_val[i] - hwcfg->func_base);
+> >>         }
+> >>
+> >>         return 0;
+> >
+> > Perhaps the adjustment should be done in rzg2l_dt_subnode_to_map()
+> > instead, when obtaining MUX_FUNC() from DT? That would allow you to do
+> > some basic validation on it too, which is currently completely missing
+> > (reject out-of-range values overflowing into adjacent PFC fields,
+> > reject zero on RZ/G3S).
+>
+> I'll have a look on this. I see .set_mux() can also be called from sysfs
+> though pinmux-select exported file thus, I don't know at the moment if
+> validating it on rzg2l_dt_subnode_to_map() will be enough.
 
-Looking again at this: KDIV (aka DIV_K) could have negative values thus
-mul_u64_u32_shr() cannot be used here.
+OK, that's a good reason to keep it as-is.
 
-> 
->> +
->> +       return DIV_ROUND_CLOSEST_ULL(rate, div);
-> 
-> return DIV_ROUND_CLOSEST_ULL(rate, PDIV(val1));
-> 
->>  }
->>
->>  static const struct clk_ops rzg2l_cpg_pll_ops = {
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+> Would it be OK to have this outside of this series or you would prefer it now?
+
+That can be done later. I believe currently there is no validation against
+the register field size limit anyway.
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
