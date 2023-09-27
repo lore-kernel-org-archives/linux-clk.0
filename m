@@ -2,60 +2,143 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB098E810A4
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Sep 2023 08:34:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADB45E810AD
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Sep 2023 09:14:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230416AbjI0IeK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Sep 2023 04:34:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35324 "EHLO
+        id S229685AbjI0JOH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Sep 2023 05:14:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230424AbjI0Idg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Sep 2023 04:33:36 -0400
-Received: from mail.socialglobal.pl (mail.socialglobal.pl [51.195.90.253])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D089CCF
-        for <linux-clk@vger.kernel.org>; Wed, 27 Sep 2023 01:33:05 -0700 (PDT)
-Received: by mail.socialglobal.pl (Postfix, from userid 1002)
-        id 62D4E22A8F; Wed, 27 Sep 2023 08:31:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=socialglobal.pl;
-        s=mail; t=1695803538;
-        bh=XwhyqI/moZPDJ7KCfcA6Gip8fA7ZKcg5SWsKuF/26zk=;
-        h=Date:From:To:Subject:From;
-        b=dYWpMcEsBtJhXZNyZxw8F0duLeTGPO9dcJJNsb4PWP3FbVxd40FzqmuzKxESk0g7U
-         PQGLCWFI6qkityWlt72r+1zYMnQSpn4YoHT9CiNkmQ9n84jUdPcuv80NVULAwEYSa0
-         J1fe51ZhBW5I+YLlg+Rz9cpiT618HtJKdhTrcbwKdDHDk0LZ0w2BaCp5PPMSS6BUzY
-         g4fCG8rB6L16XNoR0qrX6vDKtlhNJIoCj6/oz7+cVx1c52Ty6MIUwiEQl4jGLrKIWo
-         lgPuW5vavrrurGLoL+RWtNL+P5+QObFhw7nUeoPqbeAOohU4ngezmqac6wQatpjInr
-         knWEnKRRNPimg==
-Received: by mail.socialglobal.pl for <linux-clk@vger.kernel.org>; Wed, 27 Sep 2023 08:30:56 GMT
-Message-ID: <20230927075535-0.1.8p.2ysv0.0.aaq7v33wla@socialglobal.pl>
-Date:   Wed, 27 Sep 2023 08:30:56 GMT
-From:   "Dominik Perkowski" <dominik.perkowski@socialglobal.pl>
-To:     <linux-clk@vger.kernel.org>
-Subject: Pozycjonowanie- informacja
-X-Mailer: mail.socialglobal.pl
+        with ESMTP id S229531AbjI0JOG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Sep 2023 05:14:06 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77BD4C0
+        for <linux-clk@vger.kernel.org>; Wed, 27 Sep 2023 02:14:03 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-40566f8a093so75327095e9.3
+        for <linux-clk@vger.kernel.org>; Wed, 27 Sep 2023 02:14:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1695806042; x=1696410842; darn=vger.kernel.org;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
+        bh=RsG+xQ5K7+BJbzhMgY+2l7hI3HJGu/U8Llgo7kKe+d0=;
+        b=mQOK3pCoptalgz2S20iQDY2VGKjXNZEQX+zrOD8+N6MEKZamCDpiaVUjTmaP1kxKqX
+         VdKum8TmiaRHjPIxzT6N9LsW7IoHs+rXELyVh6kzrELPX5sji0n0GjESMeWYjMrkjKj7
+         +ETeo7l4Qhi6qjuce/AbDoXB6IGYyX05XgEEW/GO3D9RuGHAYAgynzM7o0oVlChEGLfO
+         n+6Gpq3A6ZMT4UEVd/VBS33T6IhbHQTGrgEBauKRxsfDZTrdLX8NeZ59TgHDDIQWsh7Q
+         0o9he6bPLjwpfiXYWZ0PWAes1B7QkXFmK36vKZIsw9+LQZYPm/+FMf4X/yclkW8Q/7wk
+         sVsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695806042; x=1696410842;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RsG+xQ5K7+BJbzhMgY+2l7hI3HJGu/U8Llgo7kKe+d0=;
+        b=QTWWHdQIYXy7KHr+H3KQi55nwczNlNwIxqhr6yWfqtpKOUZbpblhwQIzja90Tniwrh
+         +LZSttMpl3jQj2VrXeePh5AFDe+s3fQ2pieoL0Fz4EgJRsdAKad37j6x+j0QpHrYFAbj
+         APm+XwqkjhWmCtpGU/5E7sGChqVBH13Tr2J/EZ105Ak4FbMfIDj6IV2MyM2FYkYpY+dx
+         P0oY50Yzr3AYNJ+3WWBgd8FMFB2QoTEfvQQbn1wKHVxWCziBSd/tTCXHkM94C2UO3oCT
+         hrT7TqO7jzcHbSIgibBo7tWuu1Z4Q5K35gt8rPmOe6AS6du6LB/PJt885pnUx+YULZf5
+         rW/w==
+X-Gm-Message-State: AOJu0Ywc6xiyn8ifjFZZXHMJDXj4hJhgWyzP78oifg3M5vwqrQnwWnA4
+        aOimacsTlWSCl5AQuEzoIYxaVA==
+X-Google-Smtp-Source: AGHT+IE/QudZMKsR1NKWpqHhMWhm3ezMdiqFVqImn30dFuRULpbJwjQjX4JFMweOsN/FbuuxDCxHsg==
+X-Received: by 2002:adf:e9c1:0:b0:31f:fa61:961b with SMTP id l1-20020adfe9c1000000b0031ffa61961bmr1201054wrn.66.1695806041834;
+        Wed, 27 Sep 2023 02:14:01 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:99be:56aa:a730:ad2d])
+        by smtp.gmail.com with ESMTPSA id c17-20020adfe751000000b00317909f9985sm16482378wrn.113.2023.09.27.02.14.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Sep 2023 02:14:01 -0700 (PDT)
+References: <20230904075504.23263-1-yu.tu@amlogic.com>
+User-agent: mu4e 1.8.13; emacs 29.1
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Yu Tu <yu.tu@amlogic.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     kelvin.zhang@amlogic.com, qi.duan@amlogic.com
+Subject: Re: [PATCH V11 0/4] Add S4 SoC PLLs and Peripheral clock
+Date:   Wed, 27 Sep 2023 11:13:32 +0200
+In-reply-to: <20230904075504.23263-1-yu.tu@amlogic.com>
+Message-ID: <1jmsx8kmg7.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dzie=C5=84 dobry,=20
 
-jaki=C5=9B czas temu zg=C5=82osi=C5=82a si=C4=99 do nas firma, kt=C3=B3re=
-j strona internetowa nie pozycjonowa=C5=82a si=C4=99 wysoko w wyszukiwarc=
-e Google.=20
+On Mon 04 Sep 2023 at 15:55, Yu Tu <yu.tu@amlogic.com> wrote:
 
-Na podstawie wykonanego przez nas audytu SEO zoptymalizowali=C5=9Bmy tre=C5=
-=9Bci na stronie pod k=C4=85tem wcze=C5=9Bniej opracowanych s=C5=82=C3=B3=
-w kluczowych. Nasz wewn=C4=99trzny system codziennie analizuje prawid=C5=82=
-owe dzia=C5=82anie witryny.  Dzi=C4=99ki indywidualnej strategii, firma z=
-dobywa coraz wi=C4=99cej Klient=C3=B3w. =20
+> 1. Add S4 SoC PLLs and Peripheral clock controller dt-bindings.
+> 2. Add PLLs and Peripheral clock controller driver for S4 SOC.
+>
+> Yu Tu (4):
+>   dt-bindings: clock: document Amlogic S4 SoC PLL clock controller
+>   dt-bindings: clock: document Amlogic S4 SoC peripherals clock
+>     controller
+>   clk: meson: S4: add support for Amlogic S4 SoC PLL clock driver
+>   clk: meson: S4: add support for Amlogic S4 SoC peripheral clock
+>     controller
+>
+> V10 -> V11:
+> 1. Change patch 0001/0002 dt-bindings tag. Suggested by Krzysztof.
+> 2. Change patch 0002 dt-bindings added minItems. Suggested by Jerome.
+> 3. Change patch 0004 added clock ".flags = 0" and comment. Suggested by Jerome.
+>
+> V9 -> V10:
+> 1. Change the relevant S4 CLK patch based on Neil's recently modified
+> patch.
+> 2. Change patch 0003/0004 clocks comment, format and clock flags suggested
+> by Jerome.
+>
+> V8 -> V9: Add patch 0001/0002 dt-bindings tag. Suggested by Krzysztof.
+> V7 -> V8:
+> 1. Change patch 0001/0002 dt-bindings title description, remove "meson".
+> Suggested by Dmitry, Neil.
+> 2. Change patch 0003/0004 clocks comment, format and clock flags suggested by
+> Dmitry, Neil, Jerome.
+>
+> V6 -> V7: Change send patch series as well change format and clock flags
+> suggested by Jerome. Change dt-bindings suggested by Krzysztof.
+> V5 -> V6: Change send patch series, as well change format and clock flags.
+> V4 -> V5: change format and clock flags and adjust the patch series
+> as suggested by Jerome.
+> V3 -> V4: change format and clock flags.
+> V2 -> V3: Use two clock controller.
+> V1 -> V2: Change format as discussed in the email.
+>
+> Link:https://lore.kernel.org/linux-amlogic/20230822082750.27633-1-yu.tu@amlogic.com/
+>
+>  .../clock/amlogic,s4-peripherals-clkc.yaml    |   96 +
+>  .../bindings/clock/amlogic,s4-pll-clkc.yaml   |   49 +
+>  drivers/clk/meson/Kconfig                     |   23 +
+>  drivers/clk/meson/Makefile                    |    2 +
+>  drivers/clk/meson/s4-peripherals.c            | 3813 +++++++++++++++++
+>  drivers/clk/meson/s4-peripherals.h            |   57 +
+>  drivers/clk/meson/s4-pll.c                    |  867 ++++
+>  drivers/clk/meson/s4-pll.h                    |   38 +
+>  .../clock/amlogic,s4-peripherals-clkc.h       |  236 +
+>  .../dt-bindings/clock/amlogic,s4-pll-clkc.h   |   43 +
+>  10 files changed, 5224 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,s4-peripherals-clkc.yaml
+>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,s4-pll-clkc.yaml
+>  create mode 100644 drivers/clk/meson/s4-peripherals.c
+>  create mode 100644 drivers/clk/meson/s4-peripherals.h
+>  create mode 100644 drivers/clk/meson/s4-pll.c
+>  create mode 100644 drivers/clk/meson/s4-pll.h
+>  create mode 100644 include/dt-bindings/clock/amlogic,s4-peripherals-clkc.h
+>  create mode 100644 include/dt-bindings/clock/amlogic,s4-pll-clkc.h
+>
+>
+> base-commit: 41680df0975e04b959a28bf6ab85fd6a307ae0ea
 
-Czy chcieliby Pa=C5=84stwo zwi=C4=99kszy=C4=87 liczb=C4=99 os=C3=B3b odwi=
-edzaj=C4=85cych stron=C4=99 internetow=C4=85 firmy? M=C3=B3g=C5=82bym prz=
-edstawi=C4=87 ofert=C4=99?=20
-
-
-Pozdrawiam serdecznie,
-Dominik Perkowski
+Applied.
+Thx.
