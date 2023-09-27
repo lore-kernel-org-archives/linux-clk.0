@@ -2,163 +2,60 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 441C3E810A3
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Sep 2023 08:00:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB098E810A4
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Sep 2023 08:34:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230062AbjI0IA4 convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Sep 2023 04:00:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34254 "EHLO
+        id S230416AbjI0IeK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Sep 2023 04:34:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229910AbjI0IAx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Sep 2023 04:00:53 -0400
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A98C113A;
-        Wed, 27 Sep 2023 01:00:52 -0700 (PDT)
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-59c0d002081so129260657b3.2;
-        Wed, 27 Sep 2023 01:00:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695801652; x=1696406452;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=L9uKxj9k47rA9e6YAAq+HYqUB9sFpSTljgGom/9Mr1o=;
-        b=GHpITqGOIODV9SRyT6mVf/Ri1XCvuwXCY3NMbrDz+1sRJa5EeblHNFqzzhv1KEQOPI
-         e0tlrsWI61x4gvRTXCCM9uqBlMQaaVg8ulxP+LYVsnd7XdP+Okg/U9IJHkyLCOsNhgy/
-         n9B468WsKiq6m8oHv1lEwNdYfBqPZaAM9DdnbXBkCaaF3pmK3ZkVmBMbmMWp2c47A0Hg
-         yTjoD9NQdhtr+lwks6kV3WOHF2vVADP1IvqBh3+INuc5ePtrY/I1LX/xbJgNC5TJ/2Zd
-         7lNaAwDVZ/VUxgFQbJnaNE/zSJEf3C9Nq02XXktAREFnzj6IvoI3DIRGsvJp9PMIRyb0
-         BtsA==
-X-Gm-Message-State: AOJu0YzTQ+sl4PzId5R6le4T0IdZRU+EJeCS8tHouj1S49j69QkPBXId
-        1+DxgF0DxJnRdEZZ9kZO9GtAnrSdZ2dxJw==
-X-Google-Smtp-Source: AGHT+IFMY3dYYayoGlZslZsnY5g9lel8MjPuyCVDJ5VKmMA+AoI+O0i51jjBOs1ULav+VX2MmqVPkA==
-X-Received: by 2002:a0d:e20e:0:b0:5a1:d4f7:8b65 with SMTP id l14-20020a0de20e000000b005a1d4f78b65mr1553106ywe.27.1695801651665;
-        Wed, 27 Sep 2023 01:00:51 -0700 (PDT)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
-        by smtp.gmail.com with ESMTPSA id u5-20020a81b605000000b0059f8120ee4dsm1613786ywh.30.2023.09.27.01.00.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Sep 2023 01:00:50 -0700 (PDT)
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-59c00b5c8b2so129387177b3.1;
-        Wed, 27 Sep 2023 01:00:49 -0700 (PDT)
-X-Received: by 2002:a0d:d511:0:b0:595:9770:6914 with SMTP id
- x17-20020a0dd511000000b0059597706914mr1510576ywd.35.1695801648914; Wed, 27
- Sep 2023 01:00:48 -0700 (PDT)
+        with ESMTP id S230424AbjI0Idg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Sep 2023 04:33:36 -0400
+Received: from mail.socialglobal.pl (mail.socialglobal.pl [51.195.90.253])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D089CCF
+        for <linux-clk@vger.kernel.org>; Wed, 27 Sep 2023 01:33:05 -0700 (PDT)
+Received: by mail.socialglobal.pl (Postfix, from userid 1002)
+        id 62D4E22A8F; Wed, 27 Sep 2023 08:31:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=socialglobal.pl;
+        s=mail; t=1695803538;
+        bh=XwhyqI/moZPDJ7KCfcA6Gip8fA7ZKcg5SWsKuF/26zk=;
+        h=Date:From:To:Subject:From;
+        b=dYWpMcEsBtJhXZNyZxw8F0duLeTGPO9dcJJNsb4PWP3FbVxd40FzqmuzKxESk0g7U
+         PQGLCWFI6qkityWlt72r+1zYMnQSpn4YoHT9CiNkmQ9n84jUdPcuv80NVULAwEYSa0
+         J1fe51ZhBW5I+YLlg+Rz9cpiT618HtJKdhTrcbwKdDHDk0LZ0w2BaCp5PPMSS6BUzY
+         g4fCG8rB6L16XNoR0qrX6vDKtlhNJIoCj6/oz7+cVx1c52Ty6MIUwiEQl4jGLrKIWo
+         lgPuW5vavrrurGLoL+RWtNL+P5+QObFhw7nUeoPqbeAOohU4ngezmqac6wQatpjInr
+         knWEnKRRNPimg==
+Received: by mail.socialglobal.pl for <linux-clk@vger.kernel.org>; Wed, 27 Sep 2023 08:30:56 GMT
+Message-ID: <20230927075535-0.1.8p.2ysv0.0.aaq7v33wla@socialglobal.pl>
+Date:   Wed, 27 Sep 2023 08:30:56 GMT
+From:   "Dominik Perkowski" <dominik.perkowski@socialglobal.pl>
+To:     <linux-clk@vger.kernel.org>
+Subject: Pozycjonowanie- informacja
+X-Mailer: mail.socialglobal.pl
 MIME-Version: 1.0
-References: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com>
- <20230912045157.177966-10-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdVNzgHqURohOgpFEaGn+6+rQTqsDomoS1u_-jn=GgmHXw@mail.gmail.com>
- <dfe64c7c-2f90-65a2-05fc-e96ec5113a60@tuxon.dev> <CAMuHMdXJ_gp5cdGpcK-kGk16YGDX8d9MEjQQkSobOGLphbJ5dQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdXJ_gp5cdGpcK-kGk16YGDX8d9MEjQQkSobOGLphbJ5dQ@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 27 Sep 2023 10:00:36 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV=r9704bNemDHWvjMJKbsBQJKqTxkKCeGUNp4iBNBoew@mail.gmail.com>
-Message-ID: <CAMuHMdV=r9704bNemDHWvjMJKbsBQJKqTxkKCeGUNp4iBNBoew@mail.gmail.com>
-Subject: Re: [PATCH 09/37] clk: renesas: rzg2l: fix computation formula
-To:     claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        ulf.hansson@linaro.org, linus.walleij@linaro.org,
-        gregkh@linuxfoundation.org, jirislaby@kernel.org,
-        magnus.damm@gmail.com, catalin.marinas@arm.com, will@kernel.org,
-        prabhakar.mahadev-lad.rj@bp.renesas.com,
-        biju.das.jz@bp.renesas.com, quic_bjorande@quicinc.com,
-        arnd@arndb.de, konrad.dybcio@linaro.org, neil.armstrong@linaro.org,
-        nfraprado@collabora.com, rafal@milecki.pl,
-        wsa+renesas@sang-engineering.com,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Claudiu,
+Dzie=C5=84 dobry,=20
 
-On Tue, Sep 26, 2023 at 4:44 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> On Tue, Sep 26, 2023 at 1:47 PM claudiu beznea <claudiu.beznea@tuxon.dev> wrote:
-> > On 14.09.2023 15:55, Geert Uytterhoeven wrote:
-> > > On Tue, Sep 12, 2023 at 6:52 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
-> > >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> > >>
-> > >> According to hardware manual of RZ/G2L (r01uh0914ej0130-rzg2l-rzg2lc.pdf)
-> > >> the computation formula for PLL rate is as follows:
-> > >>
-> > >> Fout = ((m + k/65536) * Fin) / (p * 2^s)
-> > >>
-> > >> and k has values in range [-32768, 32767]. Dividing k by 65536 with
-> > >> integer variables leads all the time to zero. Thus we may have slight
-> > >> differences b/w what has been set vs. what is displayed. Thus,
-> > >> get rid of this and decompose the formula before dividing k by 65536.
-> > >>
-> > >> Fixes: ef3c613ccd68a ("clk: renesas: Add CPG core wrapper for RZ/G2L SoC")
-> > >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> > >
-> > > Thanks for your patch!
-> > >
-> > >> --- a/drivers/clk/renesas/rzg2l-cpg.c
-> > >> +++ b/drivers/clk/renesas/rzg2l-cpg.c
-> > >> @@ -696,18 +696,22 @@ static unsigned long rzg2l_cpg_pll_clk_recalc_rate(struct clk_hw *hw,
-> > >>         struct pll_clk *pll_clk = to_pll(hw);
-> > >>         struct rzg2l_cpg_priv *priv = pll_clk->priv;
-> > >>         unsigned int val1, val2;
-> > >> -       unsigned int mult = 1;
-> > >> -       unsigned int div = 1;
-> > >> +       unsigned int div;
-> > >> +       u64 rate;
-> > >> +       s16 kdiv;
-> > >>
-> > >>         if (pll_clk->type != CLK_TYPE_SAM_PLL)
-> > >>                 return parent_rate;
-> > >>
-> > >>         val1 = readl(priv->base + GET_REG_SAMPLL_CLK1(pll_clk->conf));
-> > >>         val2 = readl(priv->base + GET_REG_SAMPLL_CLK2(pll_clk->conf));
-> > >> -       mult = MDIV(val1) + KDIV(val1) / 65536;
-> > >> +       kdiv = KDIV(val1);
-> > >>         div = PDIV(val1) << SDIV(val2);
-> > >>
-> > >> -       return DIV_ROUND_CLOSEST_ULL((u64)parent_rate * mult, div);
-> > >> +       rate = (u64)MDIV(val1) * parent_rate;
-> > >> +       rate += ((long long)parent_rate * kdiv) / 65536;
-> > >
-> > > As the division is a binary shift, you can use the mul_u64_u32_shr() helper,
-> > > and incorporate the sdiv shift at the same time:
-> > >
-> > >     rate += mul_u64_u32_shr(parent_rate, KDIV(val1), 16 + SDIV(val2));
->
->  [1]^
->
-> > >
-> > > You can save a multiplication by premultiplying mdiv by 65536:
-> > >
-> > >     rate = mul_u64_u32_shr(parent_rate, (MDIV(val1) << 16)) + KDIV(val1),
-> > >                            16 + SDIV(val2));
->
-> [2]^
->
-> >
-> > Looking again at this: KDIV (aka DIV_K) could have negative values thus
-> > mul_u64_u32_shr() cannot be used here.
->
-> That means you can indeed not use [1].
->
-> But you can still use [2], as MDIV() must be in the range 64..533[3],
-> so "(MDIV(val1) << 16)) + (s16)KDIV(val1)" is always positive.
-> Note that you do need the cast to s16 (which I had missed before), or
-> the intermediate variable kdiv of type s16 (like in your patch).
+jaki=C5=9B czas temu zg=C5=82osi=C5=82a si=C4=99 do nas firma, kt=C3=B3re=
+j strona internetowa nie pozycjonowa=C5=82a si=C4=99 wysoko w wyszukiwarc=
+e Google.=20
 
-Or include the cast to a signed type in the definition of KDIV().
+Na podstawie wykonanego przez nas audytu SEO zoptymalizowali=C5=9Bmy tre=C5=
+=9Bci na stronie pod k=C4=85tem wcze=C5=9Bniej opracowanych s=C5=82=C3=B3=
+w kluczowych. Nasz wewn=C4=99trzny system codziennie analizuje prawid=C5=82=
+owe dzia=C5=82anie witryny.  Dzi=C4=99ki indywidualnej strategii, firma z=
+dobywa coraz wi=C4=99cej Klient=C3=B3w. =20
 
-Gr{oetje,eeting}s,
+Czy chcieliby Pa=C5=84stwo zwi=C4=99kszy=C4=87 liczb=C4=99 os=C3=B3b odwi=
+edzaj=C4=85cych stron=C4=99 internetow=C4=85 firmy? M=C3=B3g=C5=82bym prz=
+edstawi=C4=87 ofert=C4=99?=20
 
-                        Geert
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Pozdrawiam serdecznie,
+Dominik Perkowski
