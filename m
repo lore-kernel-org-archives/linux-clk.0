@@ -2,58 +2,58 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49E37E810D4
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Sep 2023 11:33:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8709BE810D5
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Sep 2023 11:33:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231492AbjI0Ldi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Sep 2023 07:33:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37034 "EHLO
+        id S231459AbjI0Ldp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Sep 2023 07:33:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231467AbjI0Ldf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Sep 2023 07:33:35 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 228AFCC8
-        for <linux-clk@vger.kernel.org>; Wed, 27 Sep 2023 04:33:30 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id 2adb3069b0e04-50435a9f800so16470213e87.2
-        for <linux-clk@vger.kernel.org>; Wed, 27 Sep 2023 04:33:30 -0700 (PDT)
+        with ESMTP id S231542AbjI0Ldj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Sep 2023 07:33:39 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF86B19F
+        for <linux-clk@vger.kernel.org>; Wed, 27 Sep 2023 04:33:35 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-534659061afso3991936a12.3
+        for <linux-clk@vger.kernel.org>; Wed, 27 Sep 2023 04:33:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1695814408; x=1696419208; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1695814414; x=1696419214; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=q7oaQadNI9cp/jqhEK90+7phoQh1W7CA6pqxWC0Ghgw=;
-        b=ItUrV70areHtGnmmkCNLTVwo6pGYL00YrRU//c1kNIR4GutiDjK1gG6h1NFymSZA6q
-         OHyzOdS8vE/UcPQ8Ro4LzJR4I7+7xPHbXsYfONkMDKIu/ovz+H0tInvfphAsKp9fAkW4
-         KD1Lm7zOtZ419YdFa9sikqWZYMW5qlyt0N/0SOGjf5oHlQusO7W95zsCa34g43FJV/Fr
-         SeI5CYgS7GPhC3AcI6Tj262VC/KsHuQP0HOhwU3+4w7m7kIxxQbvXzXu+g5spxhrcQZm
-         4JAMsM8wiM1xwy7+Q/Z/lCpeVDaYZ6gpqbt2lQ4po9ggLgISkssFP1YLdDejgmoHB850
-         FUWQ==
+        bh=NhD4WDTFGHdLBvewCxrX0OSCga6/MEIyTOxdiWNOK6o=;
+        b=imthRC/EVZKfdGNc5lpkAsbb85vDWjDSJfR0sn5npbLiE27Bw+jZsbDjxOBmX+wrLM
+         6qrZM2XblXkpryLTSYcjya3wrjSTZlsQAl2JMdXpTfwyq8CP8bRjJTSphemlYmVXle5t
+         3OruAB/1OMofvez1dbJU/lzOW6RlOD6ilEUi++vPkW777SVg9msrx6t3z72AJ8lwINpG
+         jYFoWUzLSEj0GLx5iC5k2RXQel1ocwHWh7oZfkWFqrRAlKQmNsIO05b3MA8ZIKRzZllj
+         CCcx37+g6rrQQNKHO0H3ZDlBmx/vLE0hgnVDTNp7P2iId9Ek5b0Dc/smJW9t8xOR+FOx
+         2brA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695814408; x=1696419208;
+        d=1e100.net; s=20230601; t=1695814414; x=1696419214;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=q7oaQadNI9cp/jqhEK90+7phoQh1W7CA6pqxWC0Ghgw=;
-        b=MmCkwVzaj7WhVY5UuLnKXhhYOQclV7kXeog3mLWFQ9iKhvPhF9zkAG2yYpHe5Vwpd7
-         vlPxm1MVr79LNS7IkZE1PdoTsU+OvdXSWUhXOb5dfgflfGFS7S5Dzy6RY2+aILELL5B7
-         zpXjqyCQM+J6GbGajj7JwEb9HxqRnqHhk1TtILVCd6Ob5b445D7Ff8FGytRAcVRL1rL6
-         AI42L81p0YssRd15Gj5jPlsTPPi4p4KZ6l6hymbqfKhtlxpN2cl83qUpjxd2BMGlihOk
-         BIXb4vgetG47aq/UyhkQYGeX8uaf0fK2q1jPLwc7XN3gZMxPRnOKdg0xEb8e8ecQKozv
-         w4+Q==
-X-Gm-Message-State: AOJu0YylyfrZ4r4FLH56BITdehqsdgtEweDiySE3Jxpyx7jR7E0HorQb
-        mqudPfb70Hp+AI1ts9Vf9zhfnA==
-X-Google-Smtp-Source: AGHT+IGydO9MbLoH+NEVQ2sd0V/Gc4/0JsWiNU42WUYN2eNNppGR1PGs8YuoZNPHN7MPGeLr9naR/w==
-X-Received: by 2002:ac2:5638:0:b0:501:b97a:9f50 with SMTP id b24-20020ac25638000000b00501b97a9f50mr1492551lff.65.1695814408367;
-        Wed, 27 Sep 2023 04:33:28 -0700 (PDT)
+        bh=NhD4WDTFGHdLBvewCxrX0OSCga6/MEIyTOxdiWNOK6o=;
+        b=QK5eb4OvLBGPjza+aVcTSvFCV4iO/59UBSnUUxM4wT7uNuLCe/yYYnhyuNx6AxCsbt
+         cEU9hD2CWGIsY7ouSu9lgYA3z2b64gPDJk3753M7JV/I1U0p+EKHRnzT2dWWLiACeYmH
+         TFP+/mHqpA0ROWSGRcxonYbdLeUXOSoJQcRiQfgcRzKMoggbl+Nstj0xLKpPmSXISnzU
+         OTsuaqr2v0rVZT0QlyQjsjfH+StYkOs2vn/b1jlKQYD9TXIh+VrJonWyvXRvVPm5HOwk
+         1Nh+Sg+66zbyhh9oV27UdLQqFtONOcQ+4dxnX1MF2Src1Zxp/S3Z1Jp3MmXom2wM2ghT
+         4tXQ==
+X-Gm-Message-State: AOJu0YxTbo7wTiyTa4w4hHUYjdkXBUqM/y6R/7mh0vzqIP8VzNR1HrrR
+        FQ43HOCnw3Fn+/WOjKZmwWEt/w==
+X-Google-Smtp-Source: AGHT+IGREm/oDgCd+x7m4RTrCAy51z5yw9C0K5vLd6tDE2X6hIEZpn+ydTXm24ss+YtNo8VoIVlaDQ==
+X-Received: by 2002:a50:ef16:0:b0:52b:d169:b382 with SMTP id m22-20020a50ef16000000b0052bd169b382mr1705983eds.29.1695814414115;
+        Wed, 27 Sep 2023 04:33:34 -0700 (PDT)
 Received: from [192.168.33.189] (178235177023.dynamic-4-waw-k-1-1-0.vectranet.pl. [178.235.177.23])
-        by smtp.gmail.com with ESMTPSA id a2-20020aa7cf02000000b005232ea6a330sm8065681edy.2.2023.09.27.04.33.26
+        by smtp.gmail.com with ESMTPSA id a2-20020aa7cf02000000b005232ea6a330sm8065681edy.2.2023.09.27.04.33.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Sep 2023 04:33:28 -0700 (PDT)
-Message-ID: <018cf0d4-216f-4b3f-aa00-33a22343ef15@linaro.org>
-Date:   Wed, 27 Sep 2023 13:33:26 +0200
+        Wed, 27 Sep 2023 04:33:33 -0700 (PDT)
+Message-ID: <e2840aa4-9920-4c62-866f-2dc53b7caf25@linaro.org>
+Date:   Wed, 27 Sep 2023 13:33:32 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 09/11] arm64: dts: qcom: ipq6018: include the GPLL0 as
+Subject: Re: [PATCH v2 10/11] arm64: dts: qcom: ipq9574: include the GPLL0 as
  clock provider for mailbox
 Content-Language: en-US
 To:     Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>,
@@ -73,7 +73,7 @@ To:     Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>,
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 References: <20230913-gpll_cleanup-v2-0-c8ceb1a37680@quicinc.com>
- <20230913-gpll_cleanup-v2-9-c8ceb1a37680@quicinc.com>
+ <20230913-gpll_cleanup-v2-10-c8ceb1a37680@quicinc.com>
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
@@ -110,14 +110,14 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <20230913-gpll_cleanup-v2-9-c8ceb1a37680@quicinc.com>
+In-Reply-To: <20230913-gpll_cleanup-v2-10-c8ceb1a37680@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 14.09.2023 08:59, Kathiravan Thirumoorthy wrote:
+On 14.09.2023 09:00, Kathiravan Thirumoorthy wrote:
 > While the kernel is booting up, APSS PLL will be running at 800MHz with
 > GPLL0 as source. Once the cpufreq driver is available, APSS PLL will be
 > configured to the rate based on the opp table and the source also will
