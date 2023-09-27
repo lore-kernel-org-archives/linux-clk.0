@@ -2,143 +2,90 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADB45E810AD
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Sep 2023 09:14:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77203E810D0
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Sep 2023 11:24:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229685AbjI0JOH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Sep 2023 05:14:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39294 "EHLO
+        id S230138AbjI0LYM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Sep 2023 07:24:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229531AbjI0JOG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Sep 2023 05:14:06 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77BD4C0
-        for <linux-clk@vger.kernel.org>; Wed, 27 Sep 2023 02:14:03 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-40566f8a093so75327095e9.3
-        for <linux-clk@vger.kernel.org>; Wed, 27 Sep 2023 02:14:03 -0700 (PDT)
+        with ESMTP id S231256AbjI0LYL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Sep 2023 07:24:11 -0400
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9A17F3
+        for <linux-clk@vger.kernel.org>; Wed, 27 Sep 2023 04:24:09 -0700 (PDT)
+Received: by mail-pl1-x631.google.com with SMTP id d9443c01a7336-1c09673b006so78702205ad.1
+        for <linux-clk@vger.kernel.org>; Wed, 27 Sep 2023 04:24:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1695806042; x=1696410842; darn=vger.kernel.org;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
-        bh=RsG+xQ5K7+BJbzhMgY+2l7hI3HJGu/U8Llgo7kKe+d0=;
-        b=mQOK3pCoptalgz2S20iQDY2VGKjXNZEQX+zrOD8+N6MEKZamCDpiaVUjTmaP1kxKqX
-         VdKum8TmiaRHjPIxzT6N9LsW7IoHs+rXELyVh6kzrELPX5sji0n0GjESMeWYjMrkjKj7
-         +ETeo7l4Qhi6qjuce/AbDoXB6IGYyX05XgEEW/GO3D9RuGHAYAgynzM7o0oVlChEGLfO
-         n+6Gpq3A6ZMT4UEVd/VBS33T6IhbHQTGrgEBauKRxsfDZTrdLX8NeZ59TgHDDIQWsh7Q
-         0o9he6bPLjwpfiXYWZ0PWAes1B7QkXFmK36vKZIsw9+LQZYPm/+FMf4X/yclkW8Q/7wk
-         sVsg==
+        d=linaro.org; s=google; t=1695813849; x=1696418649; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gP1E3ybnFCNnfUSyv6qObP/eYdp0ZyA/1w1KLw4Ai0s=;
+        b=g994XAxScpCtXbkNPu7tVi1r4u2zDiMmriuk5wp3c41cSFbOh5/hCcPXhR+A6K1SWo
+         ac7lJxC40C60Xc17LQrPR1fc+p5eqyDdSdnp3+NsBAkgDajQGKbwNfYaXPpUfhVL16rJ
+         RXM5w16shZUea0b9iAxTKqfRgXaeRbOmrVVM1yXuILMv8CUGAoWyvSc6M1ZCb5ie06/P
+         bLUVpUEai/Qa2mC2AxldFnTfAcaBbJJSDQKfLXT0VUVyxhoyh3q8/iG/OI6RSVcpLVUS
+         qRkPHRPYOazH1luM7MLO6v1sTcOqNGqBIICyI2ip8EClMzSwRFG/K8hGM6Y301VT66nn
+         ap0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695806042; x=1696410842;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1695813849; x=1696418649;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RsG+xQ5K7+BJbzhMgY+2l7hI3HJGu/U8Llgo7kKe+d0=;
-        b=QTWWHdQIYXy7KHr+H3KQi55nwczNlNwIxqhr6yWfqtpKOUZbpblhwQIzja90Tniwrh
-         +LZSttMpl3jQj2VrXeePh5AFDe+s3fQ2pieoL0Fz4EgJRsdAKad37j6x+j0QpHrYFAbj
-         APm+XwqkjhWmCtpGU/5E7sGChqVBH13Tr2J/EZ105Ak4FbMfIDj6IV2MyM2FYkYpY+dx
-         P0oY50Yzr3AYNJ+3WWBgd8FMFB2QoTEfvQQbn1wKHVxWCziBSd/tTCXHkM94C2UO3oCT
-         hrT7TqO7jzcHbSIgibBo7tWuu1Z4Q5K35gt8rPmOe6AS6du6LB/PJt885pnUx+YULZf5
-         rW/w==
-X-Gm-Message-State: AOJu0Ywc6xiyn8ifjFZZXHMJDXj4hJhgWyzP78oifg3M5vwqrQnwWnA4
-        aOimacsTlWSCl5AQuEzoIYxaVA==
-X-Google-Smtp-Source: AGHT+IE/QudZMKsR1NKWpqHhMWhm3ezMdiqFVqImn30dFuRULpbJwjQjX4JFMweOsN/FbuuxDCxHsg==
-X-Received: by 2002:adf:e9c1:0:b0:31f:fa61:961b with SMTP id l1-20020adfe9c1000000b0031ffa61961bmr1201054wrn.66.1695806041834;
-        Wed, 27 Sep 2023 02:14:01 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:99be:56aa:a730:ad2d])
-        by smtp.gmail.com with ESMTPSA id c17-20020adfe751000000b00317909f9985sm16482378wrn.113.2023.09.27.02.14.01
+        bh=gP1E3ybnFCNnfUSyv6qObP/eYdp0ZyA/1w1KLw4Ai0s=;
+        b=NAun7RJbFDICwY/63VJeyotkTSUkWWdwzc55596uwzzBXqzMEI6fXVVoJdFTXA5YsX
+         78VGippRMtEUsmrF/Osr2k7h9U+cAD16eW7MjEAUy/mI6crVtit9c7WuFSrBi6nXbcWu
+         9Qxy1PivxE9bmcXa8up7Hohgb6qiETO5MAMZlOFlK66Up0MoHOKjuo3hubXuhCIaghuc
+         1r6H8Wd8AdYJrnDH/hdjJRh3atEXGjOuvCQWhoi895ubYuYUXvxcqq+WtsyH4rvCXGVP
+         M0fq3hqX0ORB4+p+eFp9i8/d/BF7YvphSwiGirDUZxNoMkk5vuGopZbbMsRgIrZgRMWN
+         FBvA==
+X-Gm-Message-State: AOJu0YywXurKABJYsGjDHfHgTK5LoPx4SroJ5da7V94JCyWtFXqgILDN
+        kq47leQlwOWEFkGI58TKSzO8sQ==
+X-Google-Smtp-Source: AGHT+IGev39zzv4dY6dg+otC4jHEFuclV1L0cE+VDxgx48elDLd1l4JA7PhiLb/3lGC7jEbvJTvjMg==
+X-Received: by 2002:a17:902:e844:b0:1c4:2b87:76f0 with SMTP id t4-20020a170902e84400b001c42b8776f0mr1585486plg.47.1695813849268;
+        Wed, 27 Sep 2023 04:24:09 -0700 (PDT)
+Received: from localhost ([122.172.81.92])
+        by smtp.gmail.com with ESMTPSA id y16-20020a170902b49000b001bd62419744sm12816123plr.147.2023.09.27.04.24.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Sep 2023 02:14:01 -0700 (PDT)
-References: <20230904075504.23263-1-yu.tu@amlogic.com>
-User-agent: mu4e 1.8.13; emacs 29.1
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Yu Tu <yu.tu@amlogic.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     kelvin.zhang@amlogic.com, qi.duan@amlogic.com
-Subject: Re: [PATCH V11 0/4] Add S4 SoC PLLs and Peripheral clock
-Date:   Wed, 27 Sep 2023 11:13:32 +0200
-In-reply-to: <20230904075504.23263-1-yu.tu@amlogic.com>
-Message-ID: <1jmsx8kmg7.fsf@starbuckisacylon.baylibre.com>
+        Wed, 27 Sep 2023 04:24:08 -0700 (PDT)
+Date:   Wed, 27 Sep 2023 16:54:06 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Varadarajan Narayanan <quic_varada@quicinc.com>,
+        ilia.lin@kernel.org, agross@kernel.org, andersson@kernel.org,
+        konrad.dybcio@linaro.org, rafael@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        quic_kathirav@quicinc.com, linux-pm@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v1 08/10] dt-bindings: cpufreq: qcom-cpufreq-nvmem:
+ document IPQ9574
+Message-ID: <20230927112406.teqtqq2phg2nrypk@vireshk-i7>
+References: <cover.1693996662.git.quic_varada@quicinc.com>
+ <e0f54a4b249f24b10d3dc21a0224718e46ebd158.1693996662.git.quic_varada@quicinc.com>
+ <2de8953c-f1c5-3c17-5c95-973ef550bc32@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2de8953c-f1c5-3c17-5c95-973ef550bc32@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 07-09-23, 08:04, Krzysztof Kozlowski wrote:
+> On 07/09/2023 07:21, Varadarajan Narayanan wrote:
+> > Document IPQ9574 compatible for Qcom NVMEM CPUFreq driver.
+> > 
+> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> > ---
+> >  Documentation/devicetree/bindings/cpufreq/qcom-cpufreq-nvmem.yaml | 1 +
+> >  1 file changed, 1 insertion(+)
+> 
+> 
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-On Mon 04 Sep 2023 at 15:55, Yu Tu <yu.tu@amlogic.com> wrote:
+Applied. Thanks.
 
-> 1. Add S4 SoC PLLs and Peripheral clock controller dt-bindings.
-> 2. Add PLLs and Peripheral clock controller driver for S4 SOC.
->
-> Yu Tu (4):
->   dt-bindings: clock: document Amlogic S4 SoC PLL clock controller
->   dt-bindings: clock: document Amlogic S4 SoC peripherals clock
->     controller
->   clk: meson: S4: add support for Amlogic S4 SoC PLL clock driver
->   clk: meson: S4: add support for Amlogic S4 SoC peripheral clock
->     controller
->
-> V10 -> V11:
-> 1. Change patch 0001/0002 dt-bindings tag. Suggested by Krzysztof.
-> 2. Change patch 0002 dt-bindings added minItems. Suggested by Jerome.
-> 3. Change patch 0004 added clock ".flags = 0" and comment. Suggested by Jerome.
->
-> V9 -> V10:
-> 1. Change the relevant S4 CLK patch based on Neil's recently modified
-> patch.
-> 2. Change patch 0003/0004 clocks comment, format and clock flags suggested
-> by Jerome.
->
-> V8 -> V9: Add patch 0001/0002 dt-bindings tag. Suggested by Krzysztof.
-> V7 -> V8:
-> 1. Change patch 0001/0002 dt-bindings title description, remove "meson".
-> Suggested by Dmitry, Neil.
-> 2. Change patch 0003/0004 clocks comment, format and clock flags suggested by
-> Dmitry, Neil, Jerome.
->
-> V6 -> V7: Change send patch series as well change format and clock flags
-> suggested by Jerome. Change dt-bindings suggested by Krzysztof.
-> V5 -> V6: Change send patch series, as well change format and clock flags.
-> V4 -> V5: change format and clock flags and adjust the patch series
-> as suggested by Jerome.
-> V3 -> V4: change format and clock flags.
-> V2 -> V3: Use two clock controller.
-> V1 -> V2: Change format as discussed in the email.
->
-> Link:https://lore.kernel.org/linux-amlogic/20230822082750.27633-1-yu.tu@amlogic.com/
->
->  .../clock/amlogic,s4-peripherals-clkc.yaml    |   96 +
->  .../bindings/clock/amlogic,s4-pll-clkc.yaml   |   49 +
->  drivers/clk/meson/Kconfig                     |   23 +
->  drivers/clk/meson/Makefile                    |    2 +
->  drivers/clk/meson/s4-peripherals.c            | 3813 +++++++++++++++++
->  drivers/clk/meson/s4-peripherals.h            |   57 +
->  drivers/clk/meson/s4-pll.c                    |  867 ++++
->  drivers/clk/meson/s4-pll.h                    |   38 +
->  .../clock/amlogic,s4-peripherals-clkc.h       |  236 +
->  .../dt-bindings/clock/amlogic,s4-pll-clkc.h   |   43 +
->  10 files changed, 5224 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,s4-peripherals-clkc.yaml
->  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,s4-pll-clkc.yaml
->  create mode 100644 drivers/clk/meson/s4-peripherals.c
->  create mode 100644 drivers/clk/meson/s4-peripherals.h
->  create mode 100644 drivers/clk/meson/s4-pll.c
->  create mode 100644 drivers/clk/meson/s4-pll.h
->  create mode 100644 include/dt-bindings/clock/amlogic,s4-peripherals-clkc.h
->  create mode 100644 include/dt-bindings/clock/amlogic,s4-pll-clkc.h
->
->
-> base-commit: 41680df0975e04b959a28bf6ab85fd6a307ae0ea
-
-Applied.
-Thx.
+-- 
+viresh
