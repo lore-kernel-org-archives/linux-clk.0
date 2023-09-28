@@ -2,173 +2,165 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 290E0CE7AFC
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Sep 2023 04:55:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 526DCCE7AFF
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Sep 2023 06:35:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230205AbjI1Ezx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Sep 2023 00:55:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60756 "EHLO
+        id S230347AbjI1Gf1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Sep 2023 02:35:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230200AbjI1Ezw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Sep 2023 00:55:52 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 544DC121
-        for <linux-clk@vger.kernel.org>; Wed, 27 Sep 2023 21:55:49 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id 4fb4d7f45d1cf-5334d78c5f6so14838635a12.2
-        for <linux-clk@vger.kernel.org>; Wed, 27 Sep 2023 21:55:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1695876948; x=1696481748; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GRoZ9U8WPN+Qr3fM7UT4CjFDZZqBDxWZDvc7yR6K5h0=;
-        b=d0oyf8m3qm5rklWiT/R30kvt4WfzwTKMe6jjY5/Iwv/Y8XlJpH8MjUFNrn3+zwNpvY
-         Bya/r3q8L0EvaBav+sxt0WaBF1HjhRuSbmrMO/gub6qLNV3WqAZyRbRaDb051QluCaji
-         c8/4niu+xDJABda20M8xnCOeerIZuV5lECuP/zcXDkrc3XLdQVpCAZi2UPi5SrfVYHu6
-         2+TPUCGktlSDTL1pZUPfFPu0oMB3ePVnGfS3koNuv5X2exSS5DNlItwO+8iaxjRtxqJV
-         Lziyr3kNdaVx31nzizJfYdIhMiSd5mS0ywNlvFl2k2uBHim28zuFOBp/x7EoGQ2OZ7yr
-         hEeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695876948; x=1696481748;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GRoZ9U8WPN+Qr3fM7UT4CjFDZZqBDxWZDvc7yR6K5h0=;
-        b=dQDO+Wus0lE5gFMLCeNE6JDy3RNll1KHC1YTNx47uzZdMN9i9no8nJAGyWb8p4koFP
-         fHY5V9AZQ/vMBcXnFLSCNlX120CvB9jhr2Pco5PV3LAKa55pkhDqDK1JFvbM8K9lS0+z
-         QvGwZOKXkFXD2pQnZfd0bxjVlfWiJNKxg9IiSWcReT37oSoeyI3qqbEFmwvzgzLz/CFY
-         zGKEhshxEocIpxo0AwU+d2CS0WcIruI1XIzhAdNA5cGLZjGOQvWC0dHY0cC2/s/xoCUx
-         UBZfSpUCTQyUKUqOuefdUW5GLHsTpzbO/83AuG2Q5X2yf8yVAyI7kw0HtCPXEpYLUUvR
-         vzEQ==
-X-Gm-Message-State: AOJu0YzNHt3BeICMMGbfkrGEJn+A5w8xhOlEVuZB7+XEJoQTM8GTHAoE
-        ZsmDgJ7b9XDKus1qxC0kdDEjig==
-X-Google-Smtp-Source: AGHT+IE3pAEjLgDO8zlyhmBRQp2g+CFl8YUn7EwT8APbyBoysQf9t3e6/pskUqprJEO69PoIDitB5w==
-X-Received: by 2002:a17:907:78d5:b0:9ae:6ab9:af90 with SMTP id kv21-20020a17090778d500b009ae6ab9af90mr142567ejc.47.1695876947632;
-        Wed, 27 Sep 2023 21:55:47 -0700 (PDT)
-Received: from [192.168.32.2] ([82.78.167.177])
-        by smtp.gmail.com with ESMTPSA id jt24-20020a170906ca1800b009929d998abcsm10195585ejb.209.2023.09.27.21.55.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Sep 2023 21:55:47 -0700 (PDT)
-Message-ID: <25ba20db-6dca-7179-a892-9d9f87442313@tuxon.dev>
-Date:   Thu, 28 Sep 2023 07:55:43 +0300
+        with ESMTP id S230469AbjI1GfW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Sep 2023 02:35:22 -0400
+Received: from mail-sh.amlogic.com (mail-sh.amlogic.com [58.32.228.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30D3419C;
+        Wed, 27 Sep 2023 23:35:17 -0700 (PDT)
+Received: from droid01-cd.amlogic.com (10.98.11.200) by mail-sh.amlogic.com
+ (10.18.11.5) with Microsoft SMTP Server id 15.1.2507.13; Thu, 28 Sep 2023
+ 14:34:57 +0800
+From:   Xianwei Zhao <xianwei.zhao@amlogic.com>
+To:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     Neil Armstrong <neil.armstrong@linaro.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen Boyd" <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Xianwei Zhao <xianwei.zhao@amlogic.com>
+Subject: [PATCH 1/4] dt-bindings: clock: add Amlogic C3 PLL clock controller bindings
+Date:   Thu, 28 Sep 2023 14:34:45 +0800
+Message-ID: <20230928063448.3544464-2-xianwei.zhao@amlogic.com>
+X-Mailer: git-send-email 2.37.1
+In-Reply-To: <20230928063448.3544464-1-xianwei.zhao@amlogic.com>
+References: <20230928063448.3544464-1-xianwei.zhao@amlogic.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 09/37] clk: renesas: rzg2l: fix computation formula
-Content-Language: en-US
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        ulf.hansson@linaro.org, linus.walleij@linaro.org,
-        gregkh@linuxfoundation.org, jirislaby@kernel.org,
-        magnus.damm@gmail.com, catalin.marinas@arm.com, will@kernel.org,
-        prabhakar.mahadev-lad.rj@bp.renesas.com,
-        biju.das.jz@bp.renesas.com, quic_bjorande@quicinc.com,
-        arnd@arndb.de, konrad.dybcio@linaro.org, neil.armstrong@linaro.org,
-        nfraprado@collabora.com, rafal@milecki.pl,
-        wsa+renesas@sang-engineering.com,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com>
- <20230912045157.177966-10-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdVNzgHqURohOgpFEaGn+6+rQTqsDomoS1u_-jn=GgmHXw@mail.gmail.com>
- <dfe64c7c-2f90-65a2-05fc-e96ec5113a60@tuxon.dev>
- <CAMuHMdXJ_gp5cdGpcK-kGk16YGDX8d9MEjQQkSobOGLphbJ5dQ@mail.gmail.com>
- <CAMuHMdV=r9704bNemDHWvjMJKbsBQJKqTxkKCeGUNp4iBNBoew@mail.gmail.com>
-From:   claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <CAMuHMdV=r9704bNemDHWvjMJKbsBQJKqTxkKCeGUNp4iBNBoew@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.98.11.200]
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi, Geert,
+Add the C3 PLL clock controller dt-bindings for Amlogic C3 SoC family
 
-On 27.09.2023 11:00, Geert Uytterhoeven wrote:
-> Hi Claudiu,
-> 
-> On Tue, Sep 26, 2023 at 4:44 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->> On Tue, Sep 26, 2023 at 1:47 PM claudiu beznea <claudiu.beznea@tuxon.dev> wrote:
->>> On 14.09.2023 15:55, Geert Uytterhoeven wrote:
->>>> On Tue, Sep 12, 2023 at 6:52 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
->>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>>
->>>>> According to hardware manual of RZ/G2L (r01uh0914ej0130-rzg2l-rzg2lc.pdf)
->>>>> the computation formula for PLL rate is as follows:
->>>>>
->>>>> Fout = ((m + k/65536) * Fin) / (p * 2^s)
->>>>>
->>>>> and k has values in range [-32768, 32767]. Dividing k by 65536 with
->>>>> integer variables leads all the time to zero. Thus we may have slight
->>>>> differences b/w what has been set vs. what is displayed. Thus,
->>>>> get rid of this and decompose the formula before dividing k by 65536.
->>>>>
->>>>> Fixes: ef3c613ccd68a ("clk: renesas: Add CPG core wrapper for RZ/G2L SoC")
->>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>
->>>> Thanks for your patch!
->>>>
->>>>> --- a/drivers/clk/renesas/rzg2l-cpg.c
->>>>> +++ b/drivers/clk/renesas/rzg2l-cpg.c
->>>>> @@ -696,18 +696,22 @@ static unsigned long rzg2l_cpg_pll_clk_recalc_rate(struct clk_hw *hw,
->>>>>         struct pll_clk *pll_clk = to_pll(hw);
->>>>>         struct rzg2l_cpg_priv *priv = pll_clk->priv;
->>>>>         unsigned int val1, val2;
->>>>> -       unsigned int mult = 1;
->>>>> -       unsigned int div = 1;
->>>>> +       unsigned int div;
->>>>> +       u64 rate;
->>>>> +       s16 kdiv;
->>>>>
->>>>>         if (pll_clk->type != CLK_TYPE_SAM_PLL)
->>>>>                 return parent_rate;
->>>>>
->>>>>         val1 = readl(priv->base + GET_REG_SAMPLL_CLK1(pll_clk->conf));
->>>>>         val2 = readl(priv->base + GET_REG_SAMPLL_CLK2(pll_clk->conf));
->>>>> -       mult = MDIV(val1) + KDIV(val1) / 65536;
->>>>> +       kdiv = KDIV(val1);
->>>>>         div = PDIV(val1) << SDIV(val2);
->>>>>
->>>>> -       return DIV_ROUND_CLOSEST_ULL((u64)parent_rate * mult, div);
->>>>> +       rate = (u64)MDIV(val1) * parent_rate;
->>>>> +       rate += ((long long)parent_rate * kdiv) / 65536;
->>>>
->>>> As the division is a binary shift, you can use the mul_u64_u32_shr() helper,
->>>> and incorporate the sdiv shift at the same time:
->>>>
->>>>     rate += mul_u64_u32_shr(parent_rate, KDIV(val1), 16 + SDIV(val2));
->>
->>  [1]^
->>
->>>>
->>>> You can save a multiplication by premultiplying mdiv by 65536:
->>>>
->>>>     rate = mul_u64_u32_shr(parent_rate, (MDIV(val1) << 16)) + KDIV(val1),
->>>>                            16 + SDIV(val2));
->>
->> [2]^
->>
->>>
->>> Looking again at this: KDIV (aka DIV_K) could have negative values thus
->>> mul_u64_u32_shr() cannot be used here.
->>
->> That means you can indeed not use [1].
+Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+---
+ .../bindings/clock/amlogic,c3-pll-clkc.yaml   | 53 +++++++++++++++++++
+ .../dt-bindings/clock/amlogic,c3-pll-clkc.h   | 42 +++++++++++++++
+ 2 files changed, 95 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,c3-pll-clkc.yaml
+ create mode 100644 include/dt-bindings/clock/amlogic,c3-pll-clkc.h
 
-You're right. Thanks for the input!
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,c3-pll-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,c3-pll-clkc.yaml
+new file mode 100644
+index 000000000000..18c0eb5ac3e4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/amlogic,c3-pll-clkc.yaml
+@@ -0,0 +1,53 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++Documentation/devicetree/bindings/clock/amlogic,s4-pll-clkc.yaml
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/amlogic,c3-pll-clkc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Amlogic C3 serials PLL Clock Controller
++
++maintainers:
++  - Chuan Liu <chuan.liu@amlogic.com>
++
++properties:
++  compatible:
++    const: amlogic,c3-pll-clkc
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    minItems: 2
++    items:
++      - description: input pll_in
++      - description: input mclk_pll_in
++
++  clock-names:
++    minItems: 2
++    items:
++      - const: pll_in
++      - const: mclk_pll_in
++
++  "#clock-cells":
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - "#clock-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    clkc_pll: clock-controller@8000 {
++      compatible = "amlogic,c3-pll-clkc";
++      reg = <0x0 0x8000 0x0 0x1a4>;
++      clocks = <&clkc_periphs CLKID_PLL_IN>,
++		<&clkc_periphs CLKID_MCLK_PLL_IN>;
++      clock-names = "pll_in", "mclk_pll_in";
++      #clock-cells = <1>;
++    };
+diff --git a/include/dt-bindings/clock/amlogic,c3-pll-clkc.h b/include/dt-bindings/clock/amlogic,c3-pll-clkc.h
+new file mode 100644
+index 000000000000..aa731e8fae29
+--- /dev/null
++++ b/include/dt-bindings/clock/amlogic,c3-pll-clkc.h
+@@ -0,0 +1,42 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
++/*
++ * Copyright (c) 2023 Amlogic, Inc. All rights reserved.
++ * Author: Chuan Liu <chuan.liu@amlogic.com>
++ */
++
++#ifndef _DT_BINDINGS_CLOCK_AMLOGIC_C3_PLL_CLKC_H
++#define _DT_BINDINGS_CLOCK_AMLOGIC_C3_PLL_CLKC_H
++
++#define CLKID_FIXED_PLL_DCO			0
++#define CLKID_FIXED_PLL				1
++#define CLKID_FCLK_DIV40_DIV			2
++#define CLKID_FCLK_DIV40			3
++#define CLKID_FCLK_DIV2_DIV			4
++#define CLKID_FCLK_DIV2				5
++#define CLKID_FCLK_DIV2P5_DIV			6
++#define CLKID_FCLK_DIV2P5			7
++#define CLKID_FCLK_DIV3_DIV			8
++#define CLKID_FCLK_DIV3				9
++#define CLKID_FCLK_DIV4_DIV			10
++#define CLKID_FCLK_DIV4				11
++#define CLKID_FCLK_DIV5_DIV			12
++#define CLKID_FCLK_DIV5				13
++#define CLKID_FCLK_DIV7_DIV			14
++#define CLKID_FCLK_DIV7				15
++#define CLKID_GP0_PLL_DCO			16
++#define CLKID_GP0_PLL				17
++#define CLKID_HIFI_PLL_DCO			18
++#define CLKID_HIFI_PLL				19
++#define CLKID_MCLK_PLL_DCO			20
++#define CLKID_MCLK_PLL				21
++#define CLKID_MCLK_PLL_CLK			22
++#define CLKID_MCLK0_SEL				23
++#define CLKID_MCLK0_SEL_OUT			24
++#define CLKID_MCLK0_DIV				25
++#define CLKID_MCLK0				26
++#define CLKID_MCLK1_SEL				27
++#define CLKID_MCLK1_SEL_OUT			28
++#define CLKID_MCLK1_DIV				29
++#define CLKID_MCLK1				30
++
++#endif  /* _DT_BINDINGS_CLOCK_AMLOGIC_C3_PLL_CLKC_H */
+-- 
+2.37.1
 
->>
->> But you can still use [2], as MDIV() must be in the range 64..533[3],
->> so "(MDIV(val1) << 16)) + (s16)KDIV(val1)" is always positive.
->> Note that you do need the cast to s16 (which I had missed before), or
->> the intermediate variable kdiv of type s16 (like in your patch).
-> 
-> Or include the cast to a signed type in the definition of KDIV().
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
