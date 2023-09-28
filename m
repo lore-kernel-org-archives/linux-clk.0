@@ -2,129 +2,130 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 385B6CE7B07
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Sep 2023 07:25:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2529BE732DB
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Sep 2023 14:47:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230355AbjI1HZs convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Sep 2023 03:25:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46604 "EHLO
+        id S231166AbjI1OrZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Sep 2023 10:47:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229835AbjI1HZr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Sep 2023 03:25:47 -0400
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2976191;
-        Thu, 28 Sep 2023 00:25:46 -0700 (PDT)
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-5a1d0fee86aso85654267b3.2;
-        Thu, 28 Sep 2023 00:25:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695885945; x=1696490745;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KNbZ0GOeHkYYiVV5+YvtOG1e74ZHGZHYw1MLYvYebes=;
-        b=gNpKxKBda7Qg5s0g1UTxpJA50ha26PQkLEj3MPqfYXzmGa8DRgRTrryBO20Qo3OSzv
-         MAhKp/mmbZXGhmtsN1FfIpBLdeNq/XIA4fOd6E0CGTtptdQTCYhA3P6YF/9VjM3Sh8ep
-         ZxV9m8pmDv3MmhBOJbN1sDt67x03J1OfhoCQTBSdEeZuENvoFHPqnTlMAJPuSOLZKAJt
-         qhcgMi3Pec4k7dXP33g1E/6pODFKu1Q8a2+y246RvrBngJhm6LxgslrSysvXtkwlpft1
-         mIjkWa3jJ/6Bin2JK2BSSJt4/n6SVePYUdsyoM3my8c4vAt+A8UOoqy5Np7PunfZimP+
-         47AA==
-X-Gm-Message-State: AOJu0YwCOvPHWtcs3eUmejUEO/1kUWyiDf9aP7L4yMrxeSV9iTF1mdJQ
-        1RkdXcJCG5BzVI+abOz1Uxu8BYcXFS0lDQ==
-X-Google-Smtp-Source: AGHT+IGrmBU+7AoECLKdMIYd73ANdOaOLfv9+EjNr3nmhqkwKhIk/37u7sruVa6WtrIK2K7CG2savw==
-X-Received: by 2002:a0d:e841:0:b0:59e:afab:d5a5 with SMTP id r62-20020a0de841000000b0059eafabd5a5mr468421ywe.23.1695885945241;
-        Thu, 28 Sep 2023 00:25:45 -0700 (PDT)
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
-        by smtp.gmail.com with ESMTPSA id n66-20020a817245000000b005704c4d3579sm4375612ywc.40.2023.09.28.00.25.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Sep 2023 00:25:43 -0700 (PDT)
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-59f7f2b1036so100479637b3.3;
-        Thu, 28 Sep 2023 00:25:42 -0700 (PDT)
-X-Received: by 2002:a0d:d041:0:b0:595:80e4:907d with SMTP id
- s62-20020a0dd041000000b0059580e4907dmr367488ywd.32.1695885942137; Thu, 28 Sep
- 2023 00:25:42 -0700 (PDT)
+        with ESMTP id S230466AbjI1OrU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Sep 2023 10:47:20 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87BBD1AE;
+        Thu, 28 Sep 2023 07:47:18 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7281C43395;
+        Thu, 28 Sep 2023 14:47:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695912438;
+        bh=ImbJJt6lxA8I9pgmrzl1yvRbcB2Hjbk9mPdoIz4rOhc=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=r9fyjiAJjrsDcK5xUPyR39tdDZzscjdbcTlaVXqFYJ7f8ZiyLNT+hvLyGmwBuT1EX
+         CCuLc5/7IIiDZSFbAAbJyhLe9tbjkUY2J9fam3hQm2VVKETUs68AZztINVKfPjPvWq
+         c3nPwq9X/9C7W56zW5IzaZXzAb6A+MnKL2HryVomatX0iSPwiITU3hPTuheVLwK4J/
+         pfQFCuBZDMVefdsco7rJxZz2BlRHnqbDSF2ZPepWvgOteyqUkxP1EkJ913nZVtx6tv
+         2pXlC19w43Orm43W3l2poUcEWHscncVxInCoqkpq7dwTuCDUDbzz9al6fchGSi7FGR
+         X9P2qRZlW2c+w==
+Received: (nullmailer pid 408734 invoked by uid 1000);
+        Thu, 28 Sep 2023 14:47:11 -0000
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-References: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com>
- <20230912045157.177966-22-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdWc6yy=oJDo4zMdvB-t8pjCuE1oJ_Y6Ck0aX_hPkfhPug@mail.gmail.com> <154b823e-d532-ede7-5ada-08436ec86804@tuxon.dev>
-In-Reply-To: <154b823e-d532-ede7-5ada-08436ec86804@tuxon.dev>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 28 Sep 2023 09:25:28 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVGWNHxjh6o9bWiuLfbCTd41n232Q5p+onHrM5Urm-d2w@mail.gmail.com>
-Message-ID: <CAMuHMdVGWNHxjh6o9bWiuLfbCTd41n232Q5p+onHrM5Urm-d2w@mail.gmail.com>
-Subject: Re: [PATCH 21/37] dt-bindings: clock: add r9a08g045 CPG clocks and
- resets definitions
-To:     claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        ulf.hansson@linaro.org, linus.walleij@linaro.org,
-        gregkh@linuxfoundation.org, jirislaby@kernel.org,
-        magnus.damm@gmail.com, catalin.marinas@arm.com, will@kernel.org,
-        prabhakar.mahadev-lad.rj@bp.renesas.com,
-        biju.das.jz@bp.renesas.com, quic_bjorande@quicinc.com,
-        arnd@arndb.de, konrad.dybcio@linaro.org, neil.armstrong@linaro.org,
-        nfraprado@collabora.com, rafal@milecki.pl,
-        wsa+renesas@sang-engineering.com,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+From:   Rob Herring <robh@kernel.org>
+To:     Xianwei Zhao <xianwei.zhao@amlogic.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-amlogic@lists.infradead.org,
+        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Kevin Hilman <khilman@baylibre.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20230928063448.3544464-3-xianwei.zhao@amlogic.com>
+References: <20230928063448.3544464-1-xianwei.zhao@amlogic.com>
+ <20230928063448.3544464-3-xianwei.zhao@amlogic.com>
+Message-Id: <169591240804.408241.17087442588468882782.robh@kernel.org>
+Subject: Re: [PATCH 2/4] dt-bindings: clock: add Amlogic C3 peripherals
+ clock controller bindings
+Date:   Thu, 28 Sep 2023 09:47:11 -0500
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Claudiu,
 
-On Thu, Sep 28, 2023 at 6:54 AM claudiu beznea <claudiu.beznea@tuxon.dev> wrote:
-> On 15.09.2023 14:59, Geert Uytterhoeven wrote:
-> > On Tue, Sep 12, 2023 at 6:53 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
-> >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >>
-> >> Add RZ/G3S (R9A08G045) Clock Pulse Generator (CPG) core clocks, module
-> >> clocks and resets.
-> >>
-> >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >
-> > Thanks for your patch!
-> >
-> >> --- /dev/null
-> >> +++ b/include/dt-bindings/clock/r9a08g045-cpg.h
-> >
-> >> +/* R9A08G045 Module Clocks */
-> >
-> >> +#define R9A08G045_USB_U2H0_HCLK                65
-> >> +#define R9A08G045_USB_U2H1_HCLK                66
-> >> +#define R9A08G045_USB_U2P_EXR_CPUCLK   67
-> >> +#define R9A08G045_USB_PCLK             68
-> >> +#define R9A08G045_USB_SCLK             69
-> >
-> > There is no USB_SCLK bit in CPG_CLKON_USB, so please drop
-> > R9A08G045_USB_SCLK.
-> >
-> >> +/* R9A08G045 Resets */
-> >
-> >> +#define R9A08G045_SRAM_ACPU_ARESETN0   11
-> >> +#define R9A08G045_SRAM_ACPU_ARESETN1   12
-> >> +#define R9A08G045_SRAM_ACPU_ARESETN2   13
-> >
-> > There is no SRAM_ACPU_ARESETN2 bit in CPG_RST_SRAM_MCPU,
-> > so please drop R9A08G045_SRAM_ACPU_ARESETN2.
->
-> I see there is SRAM_ACPU_ARESETN2 in CPG_RST_SRAM_*A*CPU register. You are
-> actually saying that the documentation might be wrong?
+On Thu, 28 Sep 2023 14:34:46 +0800, Xianwei Zhao wrote:
+> Add the peripherals clock controller dt-bindings for Amlogic C3 SoC family
+> 
+> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+> ---
+>  .../clock/amlogic,c3-peripherals-clkc.yaml    |  86 +++++++
+>  .../clock/amlogic,c3-peripherals-clkc.h       | 230 ++++++++++++++++++
+>  2 files changed, 316 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,c3-peripherals-clkc.yaml
+>  create mode 100644 include/dt-bindings/clock/amlogic,c3-peripherals-clkc.h
+> 
 
-My mistake, I looked at the wrong register.
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-Gr{oetje,eeting}s,
+yamllint warnings/errors:
 
-                        Geert
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/amlogic,c3-peripherals-clkc.yaml: properties:clocks: 'oneOf' conditional failed, one must be fixed:
+	[{'description': 'input oscillator (usually at 24MHz)'}, {'description': 'input fixed pll'}, {'description': 'input fixed pll div2'}, {'description': 'input fixed pll div2p5'}, {'description': 'input fixed pll div3'}, {'description': 'input fixed pll div4'}, {'description': 'input fixed pll div5'}, {'description': 'input fixed pll div7'}, {'description': 'input gp0 pll'}, {'description': 'input hifi pll'}] is too long
+	[{'description': 'input oscillator (usually at 24MHz)'}, {'description': 'input fixed pll'}, {'description': 'input fixed pll div2'}, {'description': 'input fixed pll div2p5'}, {'description': 'input fixed pll div3'}, {'description': 'input fixed pll div4'}, {'description': 'input fixed pll div5'}, {'description': 'input fixed pll div7'}, {'description': 'input gp0 pll'}, {'description': 'input hifi pll'}] is too short
+	False schema does not allow 10
+	1 was expected
+	10 is greater than the maximum of 2
+	10 is greater than the maximum of 3
+	10 is greater than the maximum of 4
+	10 is greater than the maximum of 5
+	10 is greater than the maximum of 6
+	10 is greater than the maximum of 7
+	10 is greater than the maximum of 8
+	10 is greater than the maximum of 9
+	hint: "minItems" is only needed if less than the "items" list length
+	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/amlogic,c3-peripherals-clkc.yaml: properties:clock-names: 'oneOf' conditional failed, one must be fixed:
+	[{'const': 'xtal'}, {'const': 'fixed_pll'}, {'const': 'fclk_div2'}, {'const': 'fclk_div2p5'}, {'const': 'fclk_div3'}, {'const': 'fclk_div4'}, {'const': 'fclk_div5'}, {'const': 'fclk_div7'}, {'const': 'gp0_pll'}, {'const': 'hifi_pll'}] is too long
+	[{'const': 'xtal'}, {'const': 'fixed_pll'}, {'const': 'fclk_div2'}, {'const': 'fclk_div2p5'}, {'const': 'fclk_div3'}, {'const': 'fclk_div4'}, {'const': 'fclk_div5'}, {'const': 'fclk_div7'}, {'const': 'gp0_pll'}, {'const': 'hifi_pll'}] is too short
+	False schema does not allow 10
+	1 was expected
+	10 is greater than the maximum of 2
+	10 is greater than the maximum of 3
+	10 is greater than the maximum of 4
+	10 is greater than the maximum of 5
+	10 is greater than the maximum of 6
+	10 is greater than the maximum of 7
+	10 is greater than the maximum of 8
+	10 is greater than the maximum of 9
+	hint: "minItems" is only needed if less than the "items" list length
+	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
+Error: Documentation/devicetree/bindings/clock/amlogic,c3-peripherals-clkc.example.dts:23.31-32 syntax error
+FATAL ERROR: Unable to parse input tree
+make[2]: *** [scripts/Makefile.lib:419: Documentation/devicetree/bindings/clock/amlogic,c3-peripherals-clkc.example.dtb] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1427: dt_binding_check] Error 2
+make: *** [Makefile:234: __sub-make] Error 2
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+doc reference errors (make refcheckdocs):
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20230928063448.3544464-3-xianwei.zhao@amlogic.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
