@@ -2,110 +2,119 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 057EEE71D3D
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Sep 2023 13:39:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CFC2E71D40
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Sep 2023 14:05:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233467AbjI2Nj0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Sep 2023 09:39:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48730 "EHLO
+        id S233044AbjI2OF3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Sep 2023 10:05:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233465AbjI2NjQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Sep 2023 09:39:16 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D8D71FDF
-        for <linux-clk@vger.kernel.org>; Fri, 29 Sep 2023 06:39:04 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id 4fb4d7f45d1cf-53639fb0ba4so2559680a12.0
-        for <linux-clk@vger.kernel.org>; Fri, 29 Sep 2023 06:39:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1695994742; x=1696599542; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZdgVOGmpBJUAP+7HbxCX50FnlCzMd0lISLV1dlG15Qw=;
-        b=SNBq/No0QLxGDx62K43Ki+cWsD0/lwGlPSM4vx1bs+P4ELLRQcdu82ap/oetm/Tdjx
-         jHvpXJdu6Xc/mwIdLY0rlq4KUmEUo5RfHsUSO/JMT22NLC65Lv5RMeUpKyGiJ3l853yF
-         aNgRhIqoS+XqVer0GwvoCkvzERqA2Oj3sJU8t5tMGh4fQXDzFLRG679gPGVpwxlt/Wez
-         CPKVMYVNc4iquSimQx0vWwExdo0nHt97o6Hf+/nx/Fz19UoFmlQ1qYQeQ16kyxECUPXh
-         1vDawGQEw25I1HV6ENQw88akiYWcqfV0549mq7M8oAb6flYAMGjmxJZAnoHo+Lc3kyD+
-         Wqtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695994742; x=1696599542;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZdgVOGmpBJUAP+7HbxCX50FnlCzMd0lISLV1dlG15Qw=;
-        b=weV4fQ59TVRrxAALBJH87CBhIm4Cm7ulDKw6ABuzYNHjFlzZ9rCkAlWOmMyTgpbZdJ
-         TA9G7S1ep/i2u7jrdD6Kgk6nE/ymU7I51K5wXLMCRb4esKbJ68aq2aIBr/293Spwerrh
-         pFSEtRExAvBASm4JCLOsqH7e2Q1rVyTJKT45d1QQCxcyCGYXl/jHWMvahAY/12BH2ShX
-         WVg4VmEhIpCc+ny1UE1u7oBW8LAhcWsB8XyIPo+AT+kaGxuruSR6Hu9xUlDkB62/IwyB
-         pe4JMcncU4+QhkEa2rg1s0kCJn7Aj8tX1BqywQXo90DmjxI5epxuY4H30sWu+Ixgd/kF
-         jhIA==
-X-Gm-Message-State: AOJu0YzS38eCuzP5TkbdNrLrE8HO+lzgNhgjfvN0XCgho07leGRKZxfE
-        AcxlOZimq53xMvcRPkjwIVbRHQ==
-X-Google-Smtp-Source: AGHT+IFY+3Mm0DDlSgieB7UJfN1LABvnlHZQG7ZgRzJ2xv3CXHJf+oTuJL/s+erxjFjfOkywa9am6w==
-X-Received: by 2002:aa7:d6d2:0:b0:52f:6641:4ecd with SMTP id x18-20020aa7d6d2000000b0052f66414ecdmr3864911edr.37.1695994742112;
-        Fri, 29 Sep 2023 06:39:02 -0700 (PDT)
-Received: from [127.0.1.1] (178235177217.dynamic-4-waw-k-1-1-0.vectranet.pl. [178.235.177.217])
-        by smtp.gmail.com with ESMTPSA id cx14-20020a05640222ae00b005362bcc089csm2215701edb.67.2023.09.29.06.39.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Sep 2023 06:39:01 -0700 (PDT)
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Fri, 29 Sep 2023 15:38:52 +0200
-Subject: [PATCH 1/2] arm64: dts: qcom: sc8280xp: Use the correct AHB clock
- for DISPSS1
+        with ESMTP id S232911AbjI2OF2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Sep 2023 10:05:28 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCB59DB;
+        Fri, 29 Sep 2023 07:05:26 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B240C433C8;
+        Fri, 29 Sep 2023 14:05:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695996326;
+        bh=tP1APH92nLtf8T7YFL28/R3TCbGHTTmTTaQOdd2zGXg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=n+MjvEB7dRdldT4nfXOKreJu7PIKU3C48OjQTg0KvQk3mRo9hpdBndfaotDjelmrz
+         Z1egO5FlHG6OVvsd3BnafqoOFhE0h0QZNvpFLP6n+94Jf1XQazF1LkWTdA3UyKhU0A
+         qd4lG4878MDE8laeNABtnDuxRe3Ff36uuKwuzhyis6v6/NG/iyHxbNA1+LDLNDOZ1C
+         /YFAEpW8Ga1ykdO23amVSdTmTf3+91n6fHFGnBIMbJVCnTpKZTfpCXQ1pNwi5aBtmk
+         Fmk1q8yumywIGqYsuRnAqyPjSxgoRB/EZXQbuKWKSrwb/YHUtyDxoTPdaSafzvTquq
+         Dl/OOpTYLWbbA==
+Date:   Fri, 29 Sep 2023 15:05:19 +0100
+From:   Conor Dooley <conor@kernel.org>
+To:     Claudiu <claudiu.beznea@tuxon.dev>
+Cc:     geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, linus.walleij@linaro.org,
+        gregkh@linuxfoundation.org, jirislaby@kernel.org,
+        magnus.damm@gmail.com, catalin.marinas@arm.com, will@kernel.org,
+        quic_bjorande@quicinc.com, konrad.dybcio@linaro.org, arnd@arndb.de,
+        neil.armstrong@linaro.org, prabhakar.mahadev-lad.rj@bp.renesas.com,
+        biju.das.jz@bp.renesas.com, linux-renesas-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 26/28] dt-bindings: arm: renesas: document SMARC
+ Carrier-II EVK
+Message-ID: <20230929-spud-negotiate-40f630d2c0ae@spud>
+References: <20230929053915.1530607-1-claudiu.beznea@bp.renesas.com>
+ <20230929053915.1530607-27-claudiu.beznea@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230929-topic-8280_ahbdisp-v1-1-72bdc38309b9@linaro.org>
-References: <20230929-topic-8280_ahbdisp-v1-0-72bdc38309b9@linaro.org>
-In-Reply-To: <20230929-topic-8280_ahbdisp-v1-0-72bdc38309b9@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-X-Mailer: b4 0.13-dev-0438c
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="7a52/xrNV+BUgOSd"
+Content-Disposition: inline
+In-Reply-To: <20230929053915.1530607-27-claudiu.beznea@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SC8280XP has two instances of the display subsystem. Make sure it uses
-the correct clocks.
 
-Fixes: 57d6ef683a15 ("arm64: dts: qcom: sc8280xp: Define some of the display blocks")
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
----
- arch/arm64/boot/dts/qcom/sc8280xp.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+--7a52/xrNV+BUgOSd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
-index cad59af7ccef..92bcbb1770ea 100644
---- a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
-@@ -4562,7 +4562,7 @@ mdss1: display-subsystem@22000000 {
- 			reg = <0 0x22000000 0 0x1000>;
- 			reg-names = "mdss";
- 
--			clocks = <&gcc GCC_DISP_AHB_CLK>,
-+			clocks = <&gcc GCC_DISP1_AHB_CLK>,
- 				 <&dispcc1 DISP_CC_MDSS_AHB_CLK>,
- 				 <&dispcc1 DISP_CC_MDSS_MDP_CLK>;
- 			clock-names = "iface",
-@@ -5002,7 +5002,7 @@ dispcc1: clock-controller@22100000 {
- 			compatible = "qcom,sc8280xp-dispcc1";
- 			reg = <0 0x22100000 0 0x20000>;
- 
--			clocks = <&gcc GCC_DISP_AHB_CLK>,
-+			clocks = <&gcc GCC_DISP1_AHB_CLK>,
- 				 <&rpmhcc RPMH_CXO_CLK>,
- 				 <0>,
- 				 <&mdss1_dp0_phy 0>,
+On Fri, Sep 29, 2023 at 08:39:13AM +0300, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>=20
+> Document Renesas SMARC Carrier-II EVK board which is based on RZ/G3S
+> SMARC SoM. The SMARC Carrier-II EVK consists of RZ/G3S SoM module and
+> SMARC Carrier-II carrier board, the SoM module sits on top of carrier
+> board.
+>=20
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
--- 
-2.39.2
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
+Thanks,
+Conor.
+
+> ---
+>=20
+> Changes in v2:
+> - this patch is new in v2
+>=20
+>  Documentation/devicetree/bindings/soc/renesas/renesas.yaml | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml b=
+/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+> index 31d0539bb168..594a7d7a6ee4 100644
+> --- a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+> +++ b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+> @@ -486,6 +486,13 @@ properties:
+>            - const: renesas,r9a08g045s33 # PCIe support
+>            - const: renesas,r9a08g045
+> =20
+> +      - description: RZ SMARC Carrier-II Evaluation Kit
+> +        items:
+> +          - const: renesas,smarc2-evk # RZ SMARC Carrier-II EVK
+> +          - const: renesas,rzg3s-smarcm # RZ/G3S SMARC SoM
+> +          - const: renesas,r9a08g045s33 # PCIe support
+> +          - const: renesas,r9a08g045
+> +
+>  additionalProperties: true
+> =20
+>  ...
+> --=20
+> 2.39.2
+>=20
+
+--7a52/xrNV+BUgOSd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZRbZnwAKCRB4tDGHoIJi
+0utnAQDDAyM70bskIR+jot5/Uoosxmd3Vo+j0LBWTc2HLt+7tAEAwpX9wgoSxAbO
+QIu3Es/tsf6na3Bwc0oift7ihJBQGgQ=
+=shhc
+-----END PGP SIGNATURE-----
+
+--7a52/xrNV+BUgOSd--
