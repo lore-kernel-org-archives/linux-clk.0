@@ -2,68 +2,69 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 800C3E71D3D
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Sep 2023 14:30:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8200E71D4A
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Sep 2023 15:14:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233424AbjI2Oak (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Sep 2023 10:30:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55032 "EHLO
+        id S233362AbjI2POC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Sep 2023 11:14:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233119AbjI2Oaj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Sep 2023 10:30:39 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C4541A8
-        for <linux-clk@vger.kernel.org>; Fri, 29 Sep 2023 07:30:36 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-9b0168a9e05so1611013766b.3
-        for <linux-clk@vger.kernel.org>; Fri, 29 Sep 2023 07:30:36 -0700 (PDT)
+        with ESMTP id S233313AbjI2POC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Sep 2023 11:14:02 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C2F3DE
+        for <linux-clk@vger.kernel.org>; Fri, 29 Sep 2023 08:14:00 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id a640c23a62f3a-9b0168a9e05so1619795266b.3
+        for <linux-clk@vger.kernel.org>; Fri, 29 Sep 2023 08:14:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1695997835; x=1696602635; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1696000439; x=1696605239; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=bei6ZX5STHPl62uE+IU3ZJNYeMwF+H+x6x7EmZkU53M=;
-        b=oDH7YwjID+98ETfG8WlDoCRy0qOKKHp9EjdvO+3Ypljb+AM5ezujVBMN7pMNkwamYY
-         k7eaXtBgWkml4kfKgRnC/YHMqxAf39XO79I90FLZOaEcehlXb8+3Ht5YGFHQbMsH9FRg
-         axhv6F790yoWu2KQ0Nfm6pHtAZCKXtI8RfSg2ant98Z5o/2t4jjXEYuIM6OJFfdoFTP3
-         LKJi57hPI0UUVEIsf3I3v6Ydnr9tZtYDAw1QBA4P/3Nm3K4YqE19PhnA/2JtWJ6kro97
-         YeiFBFCNYFXy40pmGIf1oRinVOY+TP/3zAM3cnhjfQ9XXfjzNqyldRrWutDfxUTwgUop
-         mJUw==
+        bh=em5sbB45SAV00DDfLTUO5kYgHbyzgg4D3eBRHUaog6A=;
+        b=fodf0ZEZ7jOqiBLp5tjfpX4QgBTJgQ20uxOU0em29dUDbuAhl+AedaGirpf59xCq9R
+         pz7aTTXr5L1wYqj4g6yvOZUu8febqe3vXOzBinENfdCZVj/ffPIBrZg1Es4Z1uxAY8rq
+         NFWHvHRtVNH01LPFZHCBAdm6AdGNCxt52lOQ/4TWZE7Bv1cjT8wQfgfathhGFA4o3Hz6
+         4LHX2WeTkcjqPfKYwBE/OhOX1aQx5ArMzmfscqiSfBDgRYH9SSYMhCgJqI8ESQ8EFSC/
+         m4w4uJA8c7W77io5B2IfKpvNyyyKPjXgdLR8uJ2TJINoOEtfIiyIdrrzet8j6hT7Vbgi
+         G4tQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695997835; x=1696602635;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1696000439; x=1696605239;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bei6ZX5STHPl62uE+IU3ZJNYeMwF+H+x6x7EmZkU53M=;
-        b=cL5RQEZ7BsWeIwEkNPCLyvndMDYJTTVR9qMFONCYbDsh8wR6kQpgGPrnPiAeAOP09v
-         Q/4vJZIJ85xIJFvOx7vaFB7yeJ4CT3YmW7mKc5k3NwmkxtIswRuD5oAHvqJ6MVzLgFL/
-         sXl4c4ed248u12RChRLOd2OWqq0mKJANsvFPkz3XiBxBwMTGt8dwHpatQHrRwbg1A2fu
-         7crc+Lb5M+X4anYr59EqFUkUZQXKmpr6j9EzAEk2df5dk2JoqTpkhgji/3R70QHExZae
-         d2IMEltqIftkzgcCxuOmKLvBy98cK+eUpk2JJ6KVz9/A819mYrq4fcLIJWNL89fYRjsG
-         6kzA==
-X-Gm-Message-State: AOJu0YzMu8gS/UGAo0DUELJly0ckHuD9sAuI2ItlhIYEkpVOxx0RmpvR
-        c2fUs+9gEVVJFRbczCQdVJIUHA==
-X-Google-Smtp-Source: AGHT+IEihqwzfgDNJ6K79nGPXAShlbp4nMp1E+v24AnEnzCVb/w+jvZReouKkACAjk1Rf3qhHmBBLQ==
-X-Received: by 2002:a17:906:30c7:b0:9b2:b95e:3825 with SMTP id b7-20020a17090630c700b009b2b95e3825mr4070649ejb.39.1695997834829;
-        Fri, 29 Sep 2023 07:30:34 -0700 (PDT)
+        bh=em5sbB45SAV00DDfLTUO5kYgHbyzgg4D3eBRHUaog6A=;
+        b=Ra6gdy0fhGamoxbXlqtljjlD46iVJtmdzVljHTgmxxRT8/ZYjXVEjkTLAgtbZwOf/2
+         EqFHoFa1r7cE1L9Ga+vE7erXA5TwXW66BLRK9rIboz0q/zW2KuxDr49BkBi0jC+3oJPo
+         aqTEgsHLb2hz/XIjjivb3nKiHnpTcJgA6/laNzBNfqwFa8uco5izw92H32R4/XQDc7+N
+         xPryL/d1kZ7FpXJfgweM7vS+q8jjokHp7f4w90oCdaQeAYQbMp0shtNflA214hpoRnzL
+         RHnidOdGz4ord03EkYOwOqtoNqZrr8BlnT1zTtxTCOW/r6FqzCIKseOZWiJ8xLuV1jFq
+         9OfA==
+X-Gm-Message-State: AOJu0YzfnSJ4y3/aEa/8kz7I6IJliXEP6AaWS6b4pIcs/WB13jcrgpBz
+        6Eh68g1qI1aP1S9F9XOiCNlyXQ==
+X-Google-Smtp-Source: AGHT+IE5XI5/WseBQjsLLKmaceAohwE7Hk2FlU+YVrzmYUdwINkgBOq7wsk0jK1k8MB8NfHoDHOVfA==
+X-Received: by 2002:a17:906:8a41:b0:9ae:51c8:ded1 with SMTP id gx1-20020a1709068a4100b009ae51c8ded1mr4351347ejc.50.1696000438763;
+        Fri, 29 Sep 2023 08:13:58 -0700 (PDT)
 Received: from [192.168.33.189] (178235177217.dynamic-4-waw-k-1-1-0.vectranet.pl. [178.235.177.217])
-        by smtp.gmail.com with ESMTPSA id j19-20020a170906051300b009937e7c4e54sm12553404eja.39.2023.09.29.07.30.32
+        by smtp.gmail.com with ESMTPSA id b10-20020a056402278a00b0053447d022f9sm5888778ede.18.2023.09.29.08.13.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Sep 2023 07:30:34 -0700 (PDT)
-Message-ID: <b1f097a8-2297-4c6e-aeca-a794d2949054@linaro.org>
-Date:   Fri, 29 Sep 2023 16:30:31 +0200
+        Fri, 29 Sep 2023 08:13:58 -0700 (PDT)
+Message-ID: <8a5297ed-be23-4498-bf8f-27326abc33a8@linaro.org>
+Date:   Fri, 29 Sep 2023 17:13:56 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] arm64: dts: qcom: ipq8074: pass QMP PCI PHY PIPE
- clocks to GCC
+Subject: Re: [PATCH v4 00/10] Fix up icc clock rate calculation on some
+ platforms
 Content-Language: en-US
-To:     Robert Marko <robimarko@gmail.com>, andersson@kernel.org,
-        agross@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, quic_tdas@quicinc.com,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230928211620.1278054-1-robimarko@gmail.com>
- <20230928211620.1278054-2-robimarko@gmail.com>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20230726-topic-icc_coeff-v4-0-c04b60caa467@linaro.org>
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
@@ -100,37 +101,26 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <20230928211620.1278054-2-robimarko@gmail.com>
+In-Reply-To: <20230726-topic-icc_coeff-v4-0-c04b60caa467@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 28.09.2023 23:15, Robert Marko wrote:
-> Pass QMP PCI PHY PIPE clocks to the GCC controller so it does not have to
-> find them by matching globaly by name.
+On 25.08.2023 17:38, Konrad Dybcio wrote:
+> Certain platforms require that some buses (or individual nodes) make
+> some additional changes to the clock rate formula, throwing in some
+> magic, Qualcomm-defined coefficients, to account for "inefficiencies".
 > 
-> If not passed directly, driver maintains backwards compatibility by then
-> falling back to global lookup.
+> Add the framework for it and utilize it on a couple SoCs.
 > 
-> Signed-off-by: Robert Marko <robimarko@gmail.com>
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 > ---
->  arch/arm64/boot/dts/qcom/ipq8074.dtsi | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/ipq8074.dtsi b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-> index 643b586c0dec..1f108ee2e8ba 100644
-> --- a/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-> @@ -407,8 +407,8 @@ qpic_pins: qpic-state {
->  		gcc: gcc@1800000 {
->  			compatible = "qcom,gcc-ipq8074";
->  			reg = <0x01800000 0x80000>;
-> -			clocks = <&xo>, <&sleep_clk>;
-> -			clock-names = "xo", "sleep_clk";
-> +			clocks = <&xo>, <&sleep_clk>, <&pcie_qmp0>, <&pcie_qmp1>;
-> +			clock-names = "xo", "sleep_clk", "pcie0_pipe", "pcie1_pipe";
-Can you turn this to one-per-line?
+Georgi,
+
+since this has been on the list for quite a while and there
+haven't been major objections, could you please review and
+queue them up?
 
 Konrad
