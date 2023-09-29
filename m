@@ -2,37 +2,37 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A114EE71D20
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Sep 2023 12:22:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF6C0E71D23
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Sep 2023 12:22:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233193AbjI2MWZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Sep 2023 08:22:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41786 "EHLO
+        id S233203AbjI2MW0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Sep 2023 08:22:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233170AbjI2MWW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Sep 2023 08:22:22 -0400
+        with ESMTP id S233183AbjI2MWZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Sep 2023 08:22:25 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD61CBE;
-        Fri, 29 Sep 2023 05:22:20 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FE2EC433C8;
-        Fri, 29 Sep 2023 12:22:19 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0ED81AE;
+        Fri, 29 Sep 2023 05:22:23 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F813C433C9;
+        Fri, 29 Sep 2023 12:22:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695990140;
-        bh=uU6BchDTcioDE+msuC5ol+hgAsHPchG9dQMHXe5Agqw=;
+        s=k20201202; t=1695990143;
+        bh=8vtoklAMKyM/uK4ucBw83Q5gp7Y+EKU5jK8pCBlbL8U=;
         h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-        b=K/ZWB86q5PZAg6Lj4RErBAKNzMYkHFlSx+afXqGfdGw5o3RfdQbGZxsMgD03ECFTD
-         +1zCWuZvHFGrpYWwEcWTykYFnGXBf/ncgBfIL6PooNEcpwoI9VV8H27SW8T2heMmyi
-         8jHJ15oNvMSc6ezuH3Og0htyZoRqhY5xbN2EuMZzIsMkb386PEVCP3xK67f3Eyae2E
-         dXD2uZR9iXMEvWSoFAnQa7Qx4XSxYUzGnGIUMi1Bk8bw3xkjQkMeUQxYysLntvJZnh
-         qQ1HH8J6a7R9aATXnbYv8SG4e+UDj7TGGm43JI1lxlHgKUO9TsZbv4r1SiczWIz6BU
-         UlvMOgabb2zXQ==
+        b=LJkRBydTdEF8m6PJ6TAORWNuGdfY737RwaM9YQR+BiFwiduj9WKSTO0xGoTmkhXzg
+         ikkAt2TtVsx0ErhCJAZz+OTJxCUamFnqaS/CA1K9o7Uii7IQHc4fl3yJV7q691DKLB
+         YUxDmq4FvVI29cL2QcXqf9IVa3XyoYBg7a8TirUw9kZ46qpegcJ99LPXtby7QDQAdX
+         I0kaq9giaETMg9Y3M0mCHUFAunMso0xDIezCbh7y4PHJJyIilktOJE65vhovZ5jBD3
+         I6fxjpOwmPuym2i1Ub+yPQfez+/ZRBgaly2Tv9yDLQ09oUHk0aVOqQxyv/hE2YdFoO
+         208ep0sGid5lA==
 From:   Mark Brown <broonie@kernel.org>
-Date:   Fri, 29 Sep 2023 14:21:59 +0200
-Subject: [PATCH 1/5] clk: si514: Convert to use maple tree register cache
+Date:   Fri, 29 Sep 2023 14:22:01 +0200
+Subject: [PATCH 3/5] clk: si5351: Convert to use maple tree register cache
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230929-clk-maple-si-v1-1-e26cfcaf27bd@kernel.org>
+Message-Id: <20230929-clk-maple-si-v1-3-e26cfcaf27bd@kernel.org>
 References: <20230929-clk-maple-si-v1-0-e26cfcaf27bd@kernel.org>
 In-Reply-To: <20230929-clk-maple-si-v1-0-e26cfcaf27bd@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
@@ -40,15 +40,15 @@ To:     Michael Turquette <mturquette@baylibre.com>,
 Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         Mark Brown <broonie@kernel.org>
 X-Mailer: b4 0.13-dev-0438c
-X-Developer-Signature: v=1; a=openpgp-sha256; l=934; i=broonie@kernel.org;
- h=from:subject:message-id; bh=uU6BchDTcioDE+msuC5ol+hgAsHPchG9dQMHXe5Agqw=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBlFsF2oSp0bLsU6l5GRaB9UhQd50lHN4fsDZ3xu
- wUnJOSXAuCJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZRbBdgAKCRAk1otyXVSH
- 0E2mB/40dcBuve26+3Xu+ED2SLwp9FcP+Psk7MJEkz+2rcSnQwi0votUx8oNZHVMn1GSu/H+QC6
- 6Km92X50+OWe8WPXHOpoElORiMat/pW1eKysJWrS3xjeoB+4h6vNRDba1UwDlTIzebP+/6LxKNw
- CDL+KBJ8oyLzlRmuOdxioyEYxi2X/gQW6ma84+QVgNAPrQLEP0t35r+wIu9GGE3SsT29JqlSBh5
- 5KIiiVBScHR+LXwSbTuC6xFzuEGh5UT9P+kg4SVVMUSOz8hkBSadCYeWsc6O9O2lbKnO0pl+gB4
- w6jdOO3QGk6BU91Ffd27Ylqr+6YF/JAnPzVSxCvIKAH1T+Z3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=929; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=8vtoklAMKyM/uK4ucBw83Q5gp7Y+EKU5jK8pCBlbL8U=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBlFsF3EDFMbNr3/tnRU+ZheBnfhZp8JxPFWy6Qr
+ RSKNv5N0BOJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZRbBdwAKCRAk1otyXVSH
+ 0K1GB/40CgeJm4giC6VvFiIsCIhIjhNrO0Q5RLmTQNe4F5X/eqruj9pd8SPwD5Szrk+cLShVYne
+ yDPkh3dOBVhdHP+2JddNcjIjtERQnnA4lTlFcSE9EVRqThMlR7n4EYS+Hk7Vc9b/0FHu5+js2tu
+ e6ARmv7dE0ROhqhIB2zOhBhYNU8CiL6f501j8Rh+W4LTNDr7D6G0c8plA7Gqc6uQDotO7bZ8Wea
+ byULhNHBijIlKN3sIGTablPXsTMCL8RQX2vS11n+iu2uzs8paYDaEXBTc+QSSkd2zXQz895RK+O
+ 0E4WczOdOKWQCVoeAs3rowRqJ38CiZTec9vd2oPKS5N376TO
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 Precedence: bulk
@@ -61,22 +61,22 @@ more appropriate for modern systems than those made by the rbtree cache.
 
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/clk/clk-si514.c | 2 +-
+ drivers/clk/clk-si5351.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-si514.c b/drivers/clk/clk-si514.c
-index e8c18afac184..6ee148e5469d 100644
---- a/drivers/clk/clk-si514.c
-+++ b/drivers/clk/clk-si514.c
-@@ -321,7 +321,7 @@ static bool si514_regmap_is_writeable(struct device *dev, unsigned int reg)
- static const struct regmap_config si514_regmap_config = {
+diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
+index 00fb9b09e030..cbf7cde01157 100644
+--- a/drivers/clk/clk-si5351.c
++++ b/drivers/clk/clk-si5351.c
+@@ -206,7 +206,7 @@ static bool si5351_regmap_is_writeable(struct device *dev, unsigned int reg)
+ static const struct regmap_config si5351_regmap_config = {
  	.reg_bits = 8,
  	.val_bits = 8,
 -	.cache_type = REGCACHE_RBTREE,
 +	.cache_type = REGCACHE_MAPLE,
- 	.max_register = SI514_REG_CONTROL,
- 	.writeable_reg = si514_regmap_is_writeable,
- 	.volatile_reg = si514_regmap_is_volatile,
+ 	.max_register = 187,
+ 	.writeable_reg = si5351_regmap_is_writeable,
+ 	.volatile_reg = si5351_regmap_is_volatile,
 
 -- 
 2.39.2
