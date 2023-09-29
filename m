@@ -2,30 +2,28 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09660E728C6
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 382A9E728C9
 	for <linux-clk@archiver.kernel.org>; Fri, 29 Sep 2023 15:52:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233718AbjI2PwZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S233274AbjI2PwZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Fri, 29 Sep 2023 11:52:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55158 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233704AbjI2PwW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Sep 2023 11:52:22 -0400
-X-Greylist: delayed 569 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 29 Sep 2023 08:52:18 PDT
+        with ESMTP id S233705AbjI2PwX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Sep 2023 11:52:23 -0400
 Received: from mx.skole.hr (mx1.hosting.skole.hr [161.53.165.185])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0589819F;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FFF81AC;
         Fri, 29 Sep 2023 08:52:18 -0700 (PDT)
 Received: from mx1.hosting.skole.hr (localhost.localdomain [127.0.0.1])
-        by mx.skole.hr (mx.skole.hr) with ESMTP id 0A9F482388;
-        Fri, 29 Sep 2023 17:42:47 +0200 (CEST)
+        by mx.skole.hr (mx.skole.hr) with ESMTP id A0C55834CD;
+        Fri, 29 Sep 2023 17:42:52 +0200 (CEST)
 From:   =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Date:   Fri, 29 Sep 2023 17:41:57 +0200
-Subject: [PATCH RESEND v5 1/8] gpio: pxa: disable pinctrl calls for
- MMP_GPIO
+Date:   Fri, 29 Sep 2023 17:42:01 +0200
+Subject: [PATCH RESEND v5 5/8] dt-bindings: marvell: Document PXA1908 SoC
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20230929-pxa1908-lkml-v5-1-5aa5a1109c5f@skole.hr>
+Message-Id: <20230929-pxa1908-lkml-v5-5-5aa5a1109c5f@skole.hr>
 References: <20230929-pxa1908-lkml-v5-0-5aa5a1109c5f@skole.hr>
 In-Reply-To: <20230929-pxa1908-lkml-v5-0-5aa5a1109c5f@skole.hr>
 To:     Robert Jarzmik <robert.jarzmik@free.fr>,
@@ -49,51 +47,54 @@ Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-hardening@vger.kernel.org,
         ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        afaerber@suse.de, balejk@matfyz.cz
+        afaerber@suse.de, balejk@matfyz.cz,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=717;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=890;
  i=duje.mihanovic@skole.hr; h=from:subject:message-id;
- bh=yNr4Eqx9Bi0YeNPlA8O02XTVqPtmRaJFN4LA8s4bBdA=;
- b=owEBbQKS/ZANAwAIAZoRnrBCLZbhAcsmYgBlFvByWVc9E8OD4qhhAbUIxeBnSccOKCeOL4dds
- BFOjRd1vQSJAjMEAAEIAB0WIQRT351NnD/hEPs2LXiaEZ6wQi2W4QUCZRbwcgAKCRCaEZ6wQi2W
- 4Xt+D/0TkYMy0YcQtgCw1tS6bwfNQts/LWwksqUegyHiR+8ItFU8dUPsHHhVUyUETy+QZnZ9yFe
- fdDylRoUvEPfTKXyX1aba+iNDXCNtiRslTIq10o3WgqjhYn7xiZap6MNQw2/npQLRrEv83R2vGN
- BCWApSlXUs3+XcCxU2IJeM1zh6wtZtpwHi+ibfA3DK6e5BW1npgmhlZ+agh8eIwWg8oN/LB6l+x
- H0rBmWO1tykmEqLGz1DoWulk60a94q6PbDUzYVrC1cSjiCLMfIG3lp6cc/Y/Z3TyF/rhLxipy3O
- Q34V5ttDxgT4JRmG4Xw7fQODVW1A9nGsT1KIXRSR17ElB+DtvgA3ySHXSMTrgK+Wgpu9XgraUn2
- 9LfmdNeBPeLfiQqkZLbyEagThieqKEhH/o6yDal+VKtFXOXGUPmQPadERGaW27Z0Ecd8mvwW9a4
- TF/sWvOK3xwfzmVehdYNbpnmxUUsSHWYaCfWmhsxW3s4bBB1ZDTdFba11tBR2Uq89fX3XMc3M3g
- bUbLNE8hrGfkQqklQJokC5iqgpM37srWx3bM49TvzinFl0qr7ljxxwxqkbeUJa5mGSXNSWcuVXs
- 53Qpht9sYMVXc+0oNC06dEs+XGnqgq85xBEGmo2m8AvoiwF5pAh8+Z59UrvM0P4CgWAjZp7CQbt
- oTYCARrGmyFRdVQ==
+ bh=68SP0psZM8Sot29iAM52aLi+c+3JVnNIUMMY8bC0VIc=;
+ b=owEBbQKS/ZANAwAIAZoRnrBCLZbhAcsmYgBlFvBykbMfnls1yGf4fnlrBhT+2giyUpNMrmngY
+ NrnBlnuSCWJAjMEAAEIAB0WIQRT351NnD/hEPs2LXiaEZ6wQi2W4QUCZRbwcgAKCRCaEZ6wQi2W
+ 4Q1UD/0a2+plywFrZfoPOUGfUG21u20/lq32w+NkuuOqs0DPmluvGJ5lXnub50JGVHmZDhS/mW6
+ Ln47gQ/55U0zv6SOIqHXJiR7tw8yZ/fZeny9n5orx7vRUa2GlER2xH9X8Ml8eRjU8mfR1ynopjW
+ PXRSyNCqQeGaBChiK8V0bvZ2pKoLjuJV5iZUaRPGUnHvuy1R68ogDAtiwgPrPs8OS4hmCJVZSdS
+ 9rUuN9TeXaNhIHr5ZRaShmFR1fv4vCgBthvyedVJCrOBJF3ebbvpFCwWdGf72TA5hYnwur2QMZv
+ dKCyFntK5EmICsXlS3L/X8rN154ze0TcbuWZI98hLw9R1GExT1RsbkcNa3Wy6r2wx7KApqGHzRX
+ bB1uGp8haqSOhURcbeAZ8WTszBaJIExB1Jms6SkeDBo1nq4zNPgDGgnKF4E8SH5tLB4DZXy/sf7
+ zjmqXpvZ0ZoFQh5XbRQG0SL3sIzO2SNNprqd6TkbdE7lJiDmB/3TJ4U++EeVzPZ+31WJFPTTT9D
+ ExNtFFTVNBRtHNkIBhxKU5yxFy2s2yvPr+9bWFFV/LEM+Q5XVoVEGPahC7Bxd0FwCTdaTGdKOKi
+ XZw0n8lHbSbB8bQ8Q0ODp36k2nUc3k8oUkk7IztLMv2pAxjEJb+vU8o7nQ26EDnKh55BYtUepuS
+ AewQLy2gKT+t58A==
 X-Developer-Key: i=duje.mihanovic@skole.hr; a=openpgp;
  fpr=53DF9D4D9C3FE110FB362D789A119EB0422D96E1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Similarly to PXA3xx and MMP2, pinctrl-single isn't capable of setting
-pin direction on MMP either.
+Add dt binding for the Marvell PXA1908 SoC.
 
-Fixes: a770d946371e ("gpio: pxa: add pin control gpio direction and request")
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
-Reviewed-by: Andy Shevchenko <andy@kernel.org>
 ---
- drivers/gpio/gpio-pxa.c | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
-index a1630ed4b741..d92650aecb06 100644
---- a/drivers/gpio/gpio-pxa.c
-+++ b/drivers/gpio/gpio-pxa.c
-@@ -238,6 +238,7 @@ static bool pxa_gpio_has_pinctrl(void)
- 	switch (gpio_type) {
- 	case PXA3XX_GPIO:
- 	case MMP2_GPIO:
-+	case MMP_GPIO:
- 		return false;
+diff --git a/Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml b/Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml
+index 4c43eaf3632e..f73bb8ec3a1a 100644
+--- a/Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml
++++ b/Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml
+@@ -35,6 +35,11 @@ properties:
+           - enum:
+               - dell,wyse-ariel
+           - const: marvell,mmp3
++      - description: PXA1908 based boards
++        items:
++          - enum:
++              - samsung,coreprimevelte
++          - const: marvell,pxa1908
  
- 	default:
+ additionalProperties: true
+ 
 
 -- 
 2.42.0
