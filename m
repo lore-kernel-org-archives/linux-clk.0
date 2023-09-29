@@ -2,63 +2,99 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBE54E728CB
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Sep 2023 16:29:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9C4AE7F154
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Sep 2023 21:51:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233691AbjI2Q3X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Sep 2023 12:29:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34028 "EHLO
+        id S233081AbjI2VvH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Sep 2023 17:51:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233773AbjI2Q3W (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Sep 2023 12:29:22 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21789BE;
-        Fri, 29 Sep 2023 09:29:21 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B6419C433CB;
-        Fri, 29 Sep 2023 16:29:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696004960;
-        bh=3OuIUwplRf6LoSMGMWotoN/vi0cekYq75kaAj9KLkqA=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=Mnb5xyRVvdO7PjqTywGoTioMxj292hD6vYhvRvXD6qDXlfP2Gi1I6DeuHZEcXXIdt
-         sbhrZ9pD/5IgkLU9LVFIRpttqhsYFxQjzZI34QAlMGApiEBw38YM3g1R14iY1haKnd
-         cqUnpD3Q+RZfiT36JsszMVi/LKErxowYXNf3r0bGwAX5BlhSsk7vxXvOaiA9K6WZhg
-         EaRJabGBcyqfxinWUYGkx/1zLmUB5OpSEVVB8eK2ZjQu0rb3CP4ywc8z455V2t0gQD
-         wcU2KJ1EwGDTbQhOW6+cBg2RjV9v35QWJIBG7bB4poLogbsmlpKFVAMUe66bqkSJWH
-         HOw0XqbQ0u4cw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 988DEC395C8;
-        Fri, 29 Sep 2023 16:29:20 +0000 (UTC)
-Subject: Re: [GIT PULL] clk fixes for v6.6-rc3
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20230929000635.1480419-1-sboyd@kernel.org>
-References: <20230929000635.1480419-1-sboyd@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20230929000635.1480419-1-sboyd@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-X-PR-Tracked-Commit-Id: a47b44fbb13f5e7a981b4515dcddc93a321ae89c
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: acfdcaeed6e6b954f5b99210b8f05cbc18200945
-Message-Id: <169600496062.31534.13737969081217378263.pr-tracker-bot@kernel.org>
-Date:   Fri, 29 Sep 2023 16:29:20 +0000
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        with ESMTP id S233439AbjI2VvG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Sep 2023 17:51:06 -0400
+Received: from mail-yw1-x1132.google.com (mail-yw1-x1132.google.com [IPv6:2607:f8b0:4864:20::1132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63D0D1BF
+        for <linux-clk@vger.kernel.org>; Fri, 29 Sep 2023 14:51:03 -0700 (PDT)
+Received: by mail-yw1-x1132.google.com with SMTP id 00721157ae682-5a229ac185aso23881057b3.1
+        for <linux-clk@vger.kernel.org>; Fri, 29 Sep 2023 14:51:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1696024262; x=1696629062; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Hskw88hLeAFbdhf2MCWNUtrnHOIlmXUQ4ZL1O7T/y0E=;
+        b=M2ygEO2xao9bi1LsQy8OB5+84c6hVswvmjJwxCoJHSHOM/pIbKXoenew8o0NL1JgGW
+         kxRUK8At0IKdWg2TuKHOrVi9ymb9Eeckmr211X/KOAYMMyfc2BuOyCkWnBdDxVs/c60r
+         m9FF3Q0Vz6Q8ZqFB+m5MxoSLqtg0PwzRA9arXKzXvO3KYW3enAZACmKI8MFDldD05HNl
+         Qd0ZDPm4RbB2K8CtconqBtn0QE/xeC2UiSp5KDOFODfrbEXgRUs/GU1BCMqnMEguarnd
+         4GZn0piAkt8redRma/jLzZza9yszARRsyaXGc/C03Phckc79/4p4X/pbUDWj+zqg6sPk
+         RpdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696024262; x=1696629062;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Hskw88hLeAFbdhf2MCWNUtrnHOIlmXUQ4ZL1O7T/y0E=;
+        b=W4bhJVR/779ftktYoO2Kbk+PhDdT/79RTSGXVdJIKJbq3WSRCV6Y+iwu4fpWkHOF1O
+         DwZ4RdXq0KPiUDl6lDvwdd05A3P2tTlWFrjOA0wNv1Tzm0QHawKhBedCPTIr4IYrMqSH
+         +y+v5EHp9pa15XW/KhVBpYcNEeI/xlbO7pghnCV0tmKzJ4cYoKETO45WHKg71E/bv8E2
+         Ii+WJLpgQeaG3L3oK85XYrx6C4z82FQCn8kl5Buq9sf+wZoxxzV1JUw91KnpCyu01f43
+         eoeerlAofGnSvViWyE1AYvH4PCLmIP/NzlzeeRJda3tgth7ugGo8L+7vnLmUazTMVf9y
+         qDrQ==
+X-Gm-Message-State: AOJu0Yx1VeFJGbL+k3GPKz3FPRtHmU5n4rLHDsLHsxTG5WciAgWu4wwo
+        D7E+s7WZg9HWD1WucvxCTGf8qSBTdS246TjQI2oWYA==
+X-Google-Smtp-Source: AGHT+IE63fBH+1dNUwDRNH6iqlkLqEfx/+NHRsl/1r9uDgfQ0bqotCuiv4a9l+YPI2jFuA031iE6BeH9RXt0OKpKTI8=
+X-Received: by 2002:a0d:dd11:0:b0:59b:e97e:f7ce with SMTP id
+ g17-20020a0ddd11000000b0059be97ef7cemr5210736ywe.22.1696024262418; Fri, 29
+ Sep 2023 14:51:02 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230929-pxa1908-lkml-v5-0-5aa5a1109c5f@skole.hr> <20230929-pxa1908-lkml-v5-2-5aa5a1109c5f@skole.hr>
+In-Reply-To: <20230929-pxa1908-lkml-v5-2-5aa5a1109c5f@skole.hr>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 29 Sep 2023 23:50:51 +0200
+Message-ID: <CACRpkdbgbu=1kD=+f83NUZwXZ80-yjGOdH2CR7Lbg4rhubaR0g@mail.gmail.com>
+Subject: Re: [PATCH RESEND v5 2/8] clk: mmp: Switch to use struct u32_fract
+ instead of custom one
+To:     =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
+Cc:     Robert Jarzmik <robert.jarzmik@free.fr>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Andy Shevchenko <andy@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Tony Luck <tony.luck@intel.com>,
+        "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-hardening@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        afaerber@suse.de, balejk@matfyz.cz,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The pull request you sent on Thu, 28 Sep 2023 17:06:34 -0700:
+On Fri, Sep 29, 2023 at 5:42=E2=80=AFPM Duje Mihanovi=C4=87 <duje.mihanovic=
+@skole.hr> wrote:
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+> From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>
+> The struct mmp_clk_factor_tbl repeats the generic struct u32_fract.
+> Kill the custom one and use the generic one instead.
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Tested-by: Duje Mihanovi=C4=87 <duje.mihanovic@skole.hr>
+> Signed-off-by: Duje Mihanovi=C4=87 <duje.mihanovic@skole.hr>
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/acfdcaeed6e6b954f5b99210b8f05cbc18200945
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Yours,
+Linus Walleij
