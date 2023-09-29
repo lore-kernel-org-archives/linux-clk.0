@@ -2,86 +2,83 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7C88E7F154
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Sep 2023 12:03:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36DACE71D21
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Sep 2023 12:22:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233038AbjI2MDz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Sep 2023 08:03:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55894 "EHLO
+        id S233097AbjI2MWV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Sep 2023 08:22:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229508AbjI2MDz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Sep 2023 08:03:55 -0400
+        with ESMTP id S232859AbjI2MWU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Sep 2023 08:22:20 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC6B3193;
-        Fri, 29 Sep 2023 05:03:52 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 512FEC433C7;
-        Fri, 29 Sep 2023 12:03:51 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 820B4BE;
+        Fri, 29 Sep 2023 05:22:19 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E4B5C433C7;
+        Fri, 29 Sep 2023 12:22:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695989032;
-        bh=3MUaUo9a8Fm8As5/IOjHSuCfUaEwm9T5adZSB4Vnqgg=;
-        h=From:Date:Subject:To:Cc:From;
-        b=cyl3J2tDLRPPt9jYiTGEYEBg290PWjdMrmUJiF/yo6ecmFBfAmR6d91CL/xkPa+Iu
-         JgTVPrxSCm67qIOzQcuVnBVlizrBXeuHNdBrlVhAEPypHh55iyF7PU+Tq2SJF6IP0X
-         tDHtMuc3ZgoHeC+MHf7kp6B55HfbozQLQ2oca/LQjmPFzVRAe/IxeIkFaseavsLLpX
-         R3V6tiW+qbqcoK7wnzr8plQSWSaQta08sUUcmsRmA2390bceInwgHQr6TRxScaEVmy
-         wmb7OgahzSDnEDvWCokSAxXaWLgqsVWlGwf66NZiJMKJU+r6/6VB9ORhE3/eazYqE+
-         Ztfr2xE1Km+RQ==
+        s=k20201202; t=1695990139;
+        bh=ugQ9F3ldM7csW38i+MQy3kNJpEw3zpyEJXmBxHtDrDk=;
+        h=From:Subject:Date:To:Cc:From;
+        b=crqGo8h8ROzoByl/pDFh9RPHNK+Atf0NqYbPN4KUvJT9c/hDr86TosOsdpjGeaCmz
+         pSYMefZekxpS1UKlMBSy8nNs39ZlKoQeVSZlb+tXupB2v0bRVLuCSnQgkdxW56RGfR
+         ztm7l3b6cKgEFfwyfozZRgLJaRu14tmSToOdbR7F2fykzp3lP4QQThd02ax3EtNjl6
+         3b0RyRSbz2MGu+AmRoPv7AM2dTwoEBQ86pwb8h8o3/GpKDhnUXh+B6cQxoPer2Wji1
+         uZ7axsvwKoG0rhhfU2oV4xlT8JY5bfzPQrRxidnwHO72hudGUrpwmeq1sufqZt+o1M
+         IsiuXnRjYhvoQ==
 From:   Mark Brown <broonie@kernel.org>
-Date:   Fri, 29 Sep 2023 14:03:43 +0200
-Subject: [PATCH] clk: cdce925: Convert to use maple tree register cache
+Subject: [PATCH 0/5] clk: Convert Silico Labs drivers to use maple tree
+ register cache
+Date:   Fri, 29 Sep 2023 14:21:58 +0200
+Message-Id: <20230929-clk-maple-si-v1-0-e26cfcaf27bd@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230929-clk-rbtree-cdce925-v1-1-a36b459002f7@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAB69FmUC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI2MDSyML3eScbN2ipJKi1FTd5JTkVEsjU12TtBRLy8Tk1GQTo0QloMaCotS
- 0zAqwodGxtbUAgsvMvWQAAAA=
+X-B4-Tracking: v=1; b=H4sIAGbBFmUC/x3MQQqAIBBA0avIrBswbWNXiRaiUw2ZiUIE4t2Tl
+ m/xf4VCmanALCpkerjwHTvGQYA7bNwJ2XeDkkpLowy6cOJlUyAsjH6ym1TOa08GepIybfz+u2V
+ t7QOij+jRXgAAAA==
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         Mark Brown <broonie@kernel.org>
 X-Mailer: b4 0.13-dev-0438c
-X-Developer-Signature: v=1; a=openpgp-sha256; l=972; i=broonie@kernel.org;
- h=from:subject:message-id; bh=3MUaUo9a8Fm8As5/IOjHSuCfUaEwm9T5adZSB4Vnqgg=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBlFr0mX++amLlVFsZvoIhPSHjijVKWoxwOO9Y8J
- ASdHYviIYuJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZRa9JgAKCRAk1otyXVSH
- 0A6TB/9nUJ69vnNOOluHw2FCB457ryS///MmdvKl/opqNxEzzBTzIdIXhyXSjJbiXuEj1Xu5AW4
- r4p3GUeGvue/gb748+98q07wWHMnFj3bpofiKpYDhQRHYcisXWNF8Pg79Y7lT7BGq2rUAOndrRJ
- TTj+WYXg7KlizdQBmDgNVdZG045XekVH/Q29LrR55Y8aPxx6b867mLUkPxoBkoPjIe7YH8jIsqr
- PsaDk2COqPiNkTnJoDqq3L2Kfqf43vrZAcDArF2lwkAV7HyaLvxdXkALcukNsCMOxWtBsPVwuI1
- Xb+FvfNomVd6j90Llh+znmjHBqELBVGaKdSjc39pCmfTefNj
+X-Developer-Signature: v=1; a=openpgp-sha256; l=973; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=ugQ9F3ldM7csW38i+MQy3kNJpEw3zpyEJXmBxHtDrDk=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBlFsF1fu8GuHMlxFE1Z+Wkz/7riyqSrP+fYLDIY
+ GaF4I121CWJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZRbBdQAKCRAk1otyXVSH
+ 0G2ECACB1gqYs21UPRIOj7efOBD/1QNyjB8FBrKzyBVxuDZ9581neiQsSUDaS43yYEOtPIO6STN
+ Hb7aSL8bqpcfW6pGCsWQOnizkJIXk31uJxzD8lIQoriWELglsSKSbgks5g/Eg/dpk/RSYaWZxuT
+ u4sixVSqsnBcQXNqJIVcJxwHSjl9P5mpma5zSPDrgDIEmLyNQxg7uMtUwm0WlNtP+npUXiot6qc
+ kXacT/PWh+4mWvfW7GZb1RiAI9C0IwhKDbbVmQQU8MUpYWjfOatC9P1F4llCo26e/2ZPhnHHpLK
+ 1eJ9dCcdPotL3DGlJQf97CluQ8NK0/j/sQPhoDz9RBII+CVF
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The maple tree register cache is based on a much more modern data structure
-than the rbtree cache and makes optimisation choices which are probably
-more appropriate for modern systems than those made by the rbtree cache.
+The maple tree register cache uses a more modern data structure than the
+rbtree cache and makes implementation choices which are likely to be
+more sensible for modern systems so let's convert drivers to use it.
 
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/clk/clk-cdce925.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Mark Brown (5):
+      clk: si514: Convert to use maple tree register cache
+      clk: si5341: Convert to use maple tree register cache
+      clk: si5351: Convert to use maple tree register cache
+      clk: si544: Convert to use maple tree register cache
+      clk: si570: Convert to use maple tree register cache
 
-diff --git a/drivers/clk/clk-cdce925.c b/drivers/clk/clk-cdce925.c
-index cdee4958f26d..5ffaf1255ff7 100644
---- a/drivers/clk/clk-cdce925.c
-+++ b/drivers/clk/clk-cdce925.c
-@@ -647,7 +647,7 @@ static int cdce925_probe(struct i2c_client *client)
- 		.name = "configuration0",
- 		.reg_bits = 8,
- 		.val_bits = 8,
--		.cache_type = REGCACHE_RBTREE,
-+		.cache_type = REGCACHE_MAPLE,
- 	};
- 
- 	dev_dbg(&client->dev, "%s\n", __func__);
-
+ drivers/clk/clk-si514.c  | 2 +-
+ drivers/clk/clk-si5341.c | 2 +-
+ drivers/clk/clk-si5351.c | 2 +-
+ drivers/clk/clk-si544.c  | 2 +-
+ drivers/clk/clk-si570.c  | 2 +-
+ 5 files changed, 5 insertions(+), 5 deletions(-)
 ---
 base-commit: 6465e260f48790807eef06b583b38ca9789b6072
-change-id: 20230928-clk-rbtree-cdce925-4fd99acec42a
+change-id: 20230929-clk-maple-si-d4af02cd3de9
 
 Best regards,
 -- 
