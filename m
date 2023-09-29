@@ -2,37 +2,38 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10E2AE71D41
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Sep 2023 14:26:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 341AAE71D3D
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Sep 2023 14:26:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233405AbjI2O0X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Sep 2023 10:26:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45412 "EHLO
+        id S233469AbjI2O01 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Sep 2023 10:26:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229545AbjI2O0W (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Sep 2023 10:26:22 -0400
+        with ESMTP id S233435AbjI2O0Z (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Sep 2023 10:26:25 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30C3E1A4;
-        Fri, 29 Sep 2023 07:26:20 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72D45C433C8;
-        Fri, 29 Sep 2023 14:26:18 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA0FC1A4;
+        Fri, 29 Sep 2023 07:26:23 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 048A8C433CD;
+        Fri, 29 Sep 2023 14:26:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695997579;
-        bh=Zw7LkgQ/jKyOg203queN+Fkkg1u+kROALg4WtGtfvCc=;
+        s=k20201202; t=1695997583;
+        bh=oBY3soSZF3SsFysTGE6a4Btp1eNwflyt47C1uRidxWE=;
         h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-        b=EVH9jRguqswD55Xh3REVy5atRnfNRD7jy5K3A6PMZ2hwYDtVBPPrx22APc/fen2e5
-         lZ8X3uPC6B8R71sKQO0GOiu+fr96b0gCpYCuOG3nmtD2fnI5teqJD/+EC7Ak1LjoLi
-         6FcuZPfAuguQwCQsYWJIHGEuhfXqESB0aFarjt4bKyAKO0VmFaax8czh4pxKw8goDm
-         efEd/jlZnA6/HQyYQ9otdA5xmZ2gZgQBXvQcXdix75pslsI8aWwrxEEwOen6fAZpEK
-         AEKSM0k4vOdnbdkAtJNCzNVVyQUH6Dq0hNzBf0jBtM8JKbd8x/WMw1MxkRNDZhcPYK
-         L5FBjWmvbtg4g==
+        b=uShAj1BKI4qV+ZWq82jsq1cQ3GqJix/mYZCJafDp1fSn733PpFie2sjfDH9gGi6Af
+         u5S6xbU0x9Bqhl3MpNq84tQrwxULfkSAzGKpp1gfpxjCquBC8nvpN/s97OMz5Ky3sc
+         qLMwWK0IekDwJfgw6/3YyJow+4ODijM8uJ/nPdyAvYrqXgBC849+dVy8XvoaLmRdrH
+         hIsrJ5j5F4McuplvgTD8Oiw5ooP/YHRy79w0JKHbofYfKIycLKMawpQSmDPRg13ay5
+         TJ6/g4yxjqRmFR9hV+SQaozK5LwGUvYOR+W1vffpDzwQ7b5mAvF38ZcKLb6S4+OKUR
+         /Z6rC4iijz5jA==
 From:   Mark Brown <broonie@kernel.org>
-Date:   Fri, 29 Sep 2023 16:26:05 +0200
-Subject: [PATCH 1/4] clk: versaclock3: Remove redundant _is_writeable()
+Date:   Fri, 29 Sep 2023 16:26:07 +0200
+Subject: [PATCH 3/4] clk: versaclock5: Convert to use maple tree register
+ cache
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230929-clk-maple-versaclk-v1-1-24dd5b3d8689@kernel.org>
+Message-Id: <20230929-clk-maple-versaclk-v1-3-24dd5b3d8689@kernel.org>
 References: <20230929-clk-maple-versaclk-v1-0-24dd5b3d8689@kernel.org>
 In-Reply-To: <20230929-clk-maple-versaclk-v1-0-24dd5b3d8689@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
@@ -42,53 +43,43 @@ To:     Michael Turquette <mturquette@baylibre.com>,
 Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         Mark Brown <broonie@kernel.org>
 X-Mailer: b4 0.13-dev-0438c
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1042; i=broonie@kernel.org;
- h=from:subject:message-id; bh=Zw7LkgQ/jKyOg203queN+Fkkg1u+kROALg4WtGtfvCc=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBlFt6F7PaipmJ69d/cW/ps7RCYA6xxUmTpTT6T4
- d+4P6XyfryJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZRbehQAKCRAk1otyXVSH
- 0POhB/9KpT0m755dGN/X1/7bXWbyfTwS4nPkXjX8GlPt9lmLuyvpurVy6QnVnn/beGfUanJKlY5
- nQodCL8Y0nH2eHq9oBl216ODJznp+p5Z7KohuuGVkdEghB+tWUyDtC7sI2PQSjzPcpwsxIxO0V8
- GzTG/7Ogxa0WFUxK1AtSb+ruFt2jLWkAvtfKiW9dtO97j0sCm00M+c8B18OAC2gVSLZuoZdg8/c
- R32MJodHAJFAeTuaGMUf3ex5G3AHq0kcJZS5zcSxBwgHa2wV9WNAy45Hg7Ltg1YHs2W7/kiaxwd
- bLO3VUgSDgPjO7jI1WjSRhMut2c1VlKSmDsDbfobn5BhKe/Q
+X-Developer-Signature: v=1; a=openpgp-sha256; l=905; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=oBY3soSZF3SsFysTGE6a4Btp1eNwflyt47C1uRidxWE=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBlFt6GTzdwHoiUGD7uKWSyPtgDql6gcsZWsoEaK
+ 1u8FSkHegSJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZRbehgAKCRAk1otyXVSH
+ 0Ki/B/0Yo7fANFWdcXWG2wo/wCMqLWi1fZD19xJsig5XJRajpdEqS72I3l2kQ8Lr+kz8MbQkLly
+ i1n22pEkX4zwPz0WGB+F+hfQWsk84PzJiy3rx/mB2awh8JZYhsLAdnWcgChgWE8CEDUNPF6C0Tu
+ ZEfUiW+1cOt6UKo4xHc6goqb/Jb7IhhGJc0dSd6Yi5Lt+gfL4wt8jbeTZqT71Uv+tkHPWHF+pLC
+ q9cJ2Gu6lnJa/xMmrASw5RsbW4Ni7G9lCsnRq349B7rvcG+PD0UiFGQSyKeU4aK5IMzXd4k55i5
+ jPOpL13I4G5XynPAKT1cZ12fqhJfz6VEuIVL5Qs6qHledWgs
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The versaclock3 driver provides an _is_writeable() function which returns
-true for all registers. This is the default assumption for regmaps so we
-can remove the function for a very minor improvement in performance and
-code size.
+The maple tree register cache is based on a much more modern data structure
+than the rbtree cache and makes optimisation choices which are probably
+more appropriate for modern systems than those made by the rbtree cache.
 
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/clk/clk-versaclock3.c | 6 ------
- 1 file changed, 6 deletions(-)
+ drivers/clk/clk-versaclock5.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-versaclock3.c b/drivers/clk/clk-versaclock3.c
-index 7ab2447bd203..a5ab48ff242c 100644
---- a/drivers/clk/clk-versaclock3.c
-+++ b/drivers/clk/clk-versaclock3.c
-@@ -586,17 +586,11 @@ static const struct clk_ops vc3_clk_mux_ops = {
- 	.get_parent = vc3_clk_mux_get_parent,
- };
- 
--static bool vc3_regmap_is_writeable(struct device *dev, unsigned int reg)
--{
--	return true;
--}
--
- static const struct regmap_config vc3_regmap_config = {
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index 17cbb30d20ad..6d31cd54d7cf 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -217,7 +217,7 @@ static bool vc5_regmap_is_writeable(struct device *dev, unsigned int reg)
+ static const struct regmap_config vc5_regmap_config = {
  	.reg_bits = 8,
  	.val_bits = 8,
- 	.cache_type = REGCACHE_RBTREE,
- 	.max_register = 0x24,
--	.writeable_reg = vc3_regmap_is_writeable,
+-	.cache_type = REGCACHE_RBTREE,
++	.cache_type = REGCACHE_MAPLE,
+ 	.max_register = 0x76,
+ 	.writeable_reg = vc5_regmap_is_writeable,
  };
- 
- static struct vc3_hw_data clk_div[5];
 
 -- 
 2.39.2
