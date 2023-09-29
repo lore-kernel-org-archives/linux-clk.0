@@ -2,96 +2,88 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A1DBE80A98
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Sep 2023 11:18:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7C88E7F154
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Sep 2023 12:03:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231774AbjI2LSE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Sep 2023 07:18:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47222 "EHLO
+        id S233038AbjI2MDz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Sep 2023 08:03:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229754AbjI2LSE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Sep 2023 07:18:04 -0400
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B0A9B7
-        for <linux-clk@vger.kernel.org>; Fri, 29 Sep 2023 04:18:02 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:c2e7:1eb0:4c87:ebc6])
-        by andre.telenet-ops.be with bizsmtp
-        id rnJ02A0041EgHdD01nJ0ME; Fri, 29 Sep 2023 13:18:00 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtp (Exim 4.95)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1qmBV0-004qOI-V6;
-        Fri, 29 Sep 2023 13:18:00 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1qmBVP-001fwm-Rb;
-        Fri, 29 Sep 2023 13:17:59 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
+        with ESMTP id S229508AbjI2MDz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Sep 2023 08:03:55 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC6B3193;
+        Fri, 29 Sep 2023 05:03:52 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 512FEC433C7;
+        Fri, 29 Sep 2023 12:03:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695989032;
+        bh=3MUaUo9a8Fm8As5/IOjHSuCfUaEwm9T5adZSB4Vnqgg=;
+        h=From:Date:Subject:To:Cc:From;
+        b=cyl3J2tDLRPPt9jYiTGEYEBg290PWjdMrmUJiF/yo6ecmFBfAmR6d91CL/xkPa+Iu
+         JgTVPrxSCm67qIOzQcuVnBVlizrBXeuHNdBrlVhAEPypHh55iyF7PU+Tq2SJF6IP0X
+         tDHtMuc3ZgoHeC+MHf7kp6B55HfbozQLQ2oca/LQjmPFzVRAe/IxeIkFaseavsLLpX
+         R3V6tiW+qbqcoK7wnzr8plQSWSaQta08sUUcmsRmA2390bceInwgHQr6TRxScaEVmy
+         wmb7OgahzSDnEDvWCokSAxXaWLgqsVWlGwf66NZiJMKJU+r6/6VB9ORhE3/eazYqE+
+         Ztfr2xE1Km+RQ==
+From:   Mark Brown <broonie@kernel.org>
+Date:   Fri, 29 Sep 2023 14:03:43 +0200
+Subject: [PATCH] clk: cdce925: Convert to use maple tree register cache
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230929-clk-rbtree-cdce925-v1-1-a36b459002f7@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAB69FmUC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI2MDSyML3eScbN2ipJKi1FTd5JTkVEsjU12TtBRLy8Tk1GQTo0QloMaCotS
+ 0zAqwodGxtbUAgsvMvWQAAAA=
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] clk: renesas: Updates for v6.7
-Date:   Fri, 29 Sep 2023 13:17:57 +0200
-Message-Id: <cover.1695985912.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.13-dev-0438c
+X-Developer-Signature: v=1; a=openpgp-sha256; l=972; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=3MUaUo9a8Fm8As5/IOjHSuCfUaEwm9T5adZSB4Vnqgg=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBlFr0mX++amLlVFsZvoIhPSHjijVKWoxwOO9Y8J
+ ASdHYviIYuJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZRa9JgAKCRAk1otyXVSH
+ 0A6TB/9nUJ69vnNOOluHw2FCB457ryS///MmdvKl/opqNxEzzBTzIdIXhyXSjJbiXuEj1Xu5AW4
+ r4p3GUeGvue/gb748+98q07wWHMnFj3bpofiKpYDhQRHYcisXWNF8Pg79Y7lT7BGq2rUAOndrRJ
+ TTj+WYXg7KlizdQBmDgNVdZG045XekVH/Q29LrR55Y8aPxx6b867mLUkPxoBkoPjIe7YH8jIsqr
+ PsaDk2COqPiNkTnJoDqq3L2Kfqf43vrZAcDArF2lwkAV7HyaLvxdXkALcukNsCMOxWtBsPVwuI1
+ Xb+FvfNomVd6j90Llh+znmjHBqELBVGaKdSjc39pCmfTefNj
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-	Hi Mike, Stephen,
+The maple tree register cache is based on a much more modern data structure
+than the rbtree cache and makes optimisation choices which are probably
+more appropriate for modern systems than those made by the rbtree cache.
 
-The following changes since commit 0bb80ecc33a8fb5a682236443c1e740d5c917d1d:
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/clk/clk-cdce925.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  Linux 6.6-rc1 (2023-09-10 16:28:41 -0700)
+diff --git a/drivers/clk/clk-cdce925.c b/drivers/clk/clk-cdce925.c
+index cdee4958f26d..5ffaf1255ff7 100644
+--- a/drivers/clk/clk-cdce925.c
++++ b/drivers/clk/clk-cdce925.c
+@@ -647,7 +647,7 @@ static int cdce925_probe(struct i2c_client *client)
+ 		.name = "configuration0",
+ 		.reg_bits = 8,
+ 		.val_bits = 8,
+-		.cache_type = REGCACHE_RBTREE,
++		.cache_type = REGCACHE_MAPLE,
+ 	};
+ 
+ 	dev_dbg(&client->dev, "%s\n", __func__);
 
-are available in the Git repository at:
+---
+base-commit: 6465e260f48790807eef06b583b38ca9789b6072
+change-id: 20230928-clk-rbtree-cdce925-4fd99acec42a
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v6.7-tag1
+Best regards,
+-- 
+Mark Brown <broonie@kernel.org>
 
-for you to fetch changes up to 87882525e5ddae7ef6f1b1df5e1eda9bcbcd7720:
-
-  clk: renesas: r8a7795: Constify r8a7795_*_clks (2023-09-26 09:38:00 +0200)
-
-----------------------------------------------------------------
-clk: renesas: Updates for v6.7
-
-  - Miscellaneous fixes and improvements.
-
-Thanks for pulling!
-
-----------------------------------------------------------------
-Claudiu Beznea (4):
-      clk: renesas: rzg2l: Use core->name for clock name
-      clk: renesas: rzg2l: Simplify the logic in rzg2l_mod_clock_endisable()
-      clk: renesas: rzg2l: Use FIELD_GET() for PLL register fields
-      clk: renesas: rzg2l: Use u32 for flag and mux_flags
-
-Marek Vasut (1):
-      clk: renesas: r8a7795: Constify r8a7795_*_clks
-
-Ralph Siemsen (2):
-      clk: renesas: r9a06g032: Fix kerneldoc warning
-      clk: renesas: r9a06g032: Name anonymous structs
-
-Yang Yingliang (1):
-      clk: renesas: r9a06g032: Use for_each_compatible_node()
-
- drivers/clk/renesas/r8a7795-cpg-mssr.c |  4 +-
- drivers/clk/renesas/r9a06g032-clocks.c | 69 ++++++++++++++++++----------------
- drivers/clk/renesas/rzg2l-cpg.c        | 17 ++++-----
- drivers/clk/renesas/rzg2l-cpg.h        |  4 +-
- 4 files changed, 48 insertions(+), 46 deletions(-)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
