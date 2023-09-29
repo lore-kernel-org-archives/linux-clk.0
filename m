@@ -2,204 +2,193 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9F8AE743F7
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Sep 2023 08:29:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C46C1E732D0
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Sep 2023 09:24:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232800AbjI2I3w (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Sep 2023 04:29:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34428 "EHLO
+        id S232732AbjI2JY6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Sep 2023 05:24:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232606AbjI2I3v (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Sep 2023 04:29:51 -0400
-Received: from mail-yw1-x1136.google.com (mail-yw1-x1136.google.com [IPv6:2607:f8b0:4864:20::1136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FACE1AC
-        for <linux-clk@vger.kernel.org>; Fri, 29 Sep 2023 01:29:49 -0700 (PDT)
-Received: by mail-yw1-x1136.google.com with SMTP id 00721157ae682-59bebd5bdadso172137637b3.0
-        for <linux-clk@vger.kernel.org>; Fri, 29 Sep 2023 01:29:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1695976189; x=1696580989; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=AO/uJHLmfHTJFDVuIxPPusBgqH9ox/rasg3E2WmZG1g=;
-        b=dKrxe4IOhWMdnecL3TxzRqEYGGylcXhIGBOC8IJWomqgYY/Cwq0GiDPnpBkTEQTc0Z
-         iqMA9cE2+4SNthocdCCMn97Ou+Uqd9TgmLe9goQvRps8eB0XwCxKEVr5PNOIvkCehEeD
-         N2J+z04wJkLVkD6M8enQ0gM87SmgfFVQs5wl5IVmM+CB6pfaQehZp89wAFDSqwYoXUaz
-         fbFUiJ/kS4jRzVwoabzSUdsc+Q5UYbquwB9PlLsUdR+H27ps1sUG/g7jw3dMuGD34FMy
-         pUWV28W4SQwpFsLLGGIWvAgVQ7qPst7kPtatgc31rKRumBZCm9ISWsMDHNFIIX/72zih
-         J6aQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695976189; x=1696580989;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AO/uJHLmfHTJFDVuIxPPusBgqH9ox/rasg3E2WmZG1g=;
-        b=SyfGszmYPxcpXPFOb4CE9cxavg9lI3Y4keQbyLbMuCdh5W9a45Ayh0ayom+uXQUpoS
-         sm/VfptEdEZl1VpEqgzNp1Y1k+ZkEUzra1dOVBoqMmtcJLlOERNoaSovbARpeYZLvHHw
-         XGuos86vl96o8+Ef6YifHpFDYyW/3D3D8Jy+Ta7DfNHHjyXRAeoXvrtUsheMDk1rAA1L
-         yt78B4PamnNZ0wexynccdEg/+rofbOwdAALvudiHjX+B/+MrpbVxnDaSOd7a0UqsUCtu
-         lvrFpKCmW9NJSRuC7A/dqRfl+smoaUkkX/rbIU7T/OdHelsiNL52XGrWM2C2iH8hTt8j
-         z9Qg==
-X-Gm-Message-State: AOJu0YyAjNG7tSbjr9zG9ISR0/vG9EIAG3M/08B6F7CJ1PKxplHC5QOE
-        Ll6456WA1rWrGLR8VSm6qO99wwt9w9EPqlI11WwYBc0U9ZlXiukToxc=
-X-Google-Smtp-Source: AGHT+IEQryF/Jq6ClcrXeNFwkaLrgTZMOGtwSpYsQb1fq1tuW4ZUQrgK4aRlhvqYry4WQ+Zv62sfUNQpqbZP7hNpur0=
-X-Received: by 2002:a0d:d992:0:b0:59e:7fc1:dba0 with SMTP id
- b140-20020a0dd992000000b0059e7fc1dba0mr3269915ywe.44.1695976188816; Fri, 29
- Sep 2023 01:29:48 -0700 (PDT)
+        with ESMTP id S231774AbjI2JY4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Sep 2023 05:24:56 -0400
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 268CB193;
+        Fri, 29 Sep 2023 02:24:54 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="6.03,186,1694703600"; 
+   d="asc'?scan'208";a="177672704"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 29 Sep 2023 18:24:53 +0900
+Received: from [10.226.92.167] (unknown [10.226.92.167])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 830F94002627;
+        Fri, 29 Sep 2023 18:24:45 +0900 (JST)
+Message-ID: <718a2683-d7a3-ce91-2686-c077d0c48685@bp.renesas.com>
+Date:   Fri, 29 Sep 2023 10:24:44 +0100
 MIME-Version: 1.0
-References: <cover.1693996662.git.quic_varada@quicinc.com> <5e3c29df2b42cceb8072b00546a78e1b99b2d374.1693996662.git.quic_varada@quicinc.com>
- <b0508a69-130d-4b05-9dfc-399e482dc2ae@linaro.org> <20230929073216.GB15001@varda-linux.qualcomm.com>
-In-Reply-To: <20230929073216.GB15001@varda-linux.qualcomm.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Fri, 29 Sep 2023 11:29:36 +0300
-Message-ID: <CAA8EJprD=zuvCrjOdeinPq=NaFLuATYWad4GDHzBH_PJZnOKHw@mail.gmail.com>
-Subject: Re: [PATCH v1 04/10] clk: qcom: apss-ipq6018: ipq5332: add safe
- source switch for a53pll
-To:     Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc:     Konrad Dybcio <konrad.dybcio@linaro.org>, ilia.lin@kernel.org,
-        agross@kernel.org, andersson@kernel.org, rafael@kernel.org,
-        viresh.kumar@linaro.org, robh+dt@kernel.org,
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v2 18/28] pinctrl: renesas: rzg2l: add support for
+ different ds values on different groups
+To:     Claudiu <claudiu.beznea@tuxon.dev>, geert+renesas@glider.be,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        quic_kathirav@quicinc.com, linux-pm@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        linus.walleij@linaro.org, gregkh@linuxfoundation.org,
+        jirislaby@kernel.org, magnus.damm@gmail.com,
+        catalin.marinas@arm.com, will@kernel.org,
+        quic_bjorande@quicinc.com, konrad.dybcio@linaro.org, arnd@arndb.de,
+        neil.armstrong@linaro.org, prabhakar.mahadev-lad.rj@bp.renesas.com,
+        biju.das.jz@bp.renesas.com
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20230929053915.1530607-1-claudiu.beznea@bp.renesas.com>
+ <20230929053915.1530607-19-claudiu.beznea@bp.renesas.com>
+From:   Paul Barker <paul.barker.ct@bp.renesas.com>
+In-Reply-To: <20230929053915.1530607-19-claudiu.beznea@bp.renesas.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------O6zwnXp9OinQvEkI9DGuOLGa"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 29 Sept 2023 at 10:33, Varadarajan Narayanan
-<quic_varada@quicinc.com> wrote:
->
-> On Thu, Sep 07, 2023 at 10:31:55AM +0200, Konrad Dybcio wrote:
-> > On 7.09.2023 07:21, Varadarajan Narayanan wrote:
-> > > Stromer Plus PLL found on IPQ53xx doesn't support dynamic
-> > > frequency scaling. To achieve the same, we need to park the APPS
-> > > PLL source to GPLL0, re configure the PLL and then switch the
-> > > source to APSS_PLL_EARLY.
-> > >
-> > > To support this, register a clock notifier to get the PRE_RATE
-> > > and POST_RATE notification. Change the APSS PLL source to GPLL0
-> > > when PRE_RATE notification is received, then configure the PLL
-> > > and then change back the source to APSS_PLL_EARLY.
-> > >
-> > > Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
-> > > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> > > ---
-> > >  drivers/clk/qcom/apss-ipq6018.c | 54 ++++++++++++++++++++++++++++++++++++++++-
-> > >  1 file changed, 53 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/clk/qcom/apss-ipq6018.c b/drivers/clk/qcom/apss-ipq6018.c
-> > > index 4e13a08..ffb6ab5 100644
-> > > --- a/drivers/clk/qcom/apss-ipq6018.c
-> > > +++ b/drivers/clk/qcom/apss-ipq6018.c
-> > > @@ -9,8 +9,11 @@
-> > >  #include <linux/clk-provider.h>
-> > >  #include <linux/regmap.h>
-> > >  #include <linux/module.h>
-> > > +#include <linux/clk.h>
-> > > +#include <linux/soc/qcom/smem.h>
-> > >
-> > >  #include <dt-bindings/clock/qcom,apss-ipq.h>
-> > > +#include <dt-bindings/arm/qcom,ids.h>
-> > >
-> > >  #include "common.h"
-> > >  #include "clk-regmap.h"
-> > > @@ -84,15 +87,64 @@ static const struct qcom_cc_desc apss_ipq6018_desc = {
-> > >     .num_clks = ARRAY_SIZE(apss_ipq6018_clks),
-> > >  };
-> > >
-> > > +static int cpu_clk_notifier_fn(struct notifier_block *nb, unsigned long action,
-> > > +                           void *data)
-> > > +{
-> > > +   u8 index;
-> > > +   int err;
-> > > +
-> > > +   if (action == PRE_RATE_CHANGE)
-> > > +           index = P_GPLL0;
-> > > +   else if (action == POST_RATE_CHANGE)
-> > > +           index = P_APSS_PLL_EARLY;
-> > > +   else
-> > > +           return 0;
-> > > +
-> > > +   err = clk_rcg2_mux_closest_ops.set_parent(&apcs_alias0_clk_src.clkr.hw,
-> > > +                                             index);
-> > Adding a variable for clk_hw within the apcs_alias0 clock would
-> > make this easier to digest, I think.
-> >
-> > And if we wanna be even less error-prone, you can reference the
-> > ops of this clock in an indirect way.
->
-> Will change it as
->
->         struct clk_hw *hw;
->
->         hw = &apcs_alias0_clk_src.clkr.hw;
->         err = hw->init->ops->set_parent(hw, index);
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------O6zwnXp9OinQvEkI9DGuOLGa
+Content-Type: multipart/mixed; boundary="------------UcQ0D7F82ZDjBYx4thPEnCUx";
+ protected-headers="v1"
+From: Paul Barker <paul.barker.ct@bp.renesas.com>
+To: Claudiu <claudiu.beznea@tuxon.dev>, geert+renesas@glider.be,
+ mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ linus.walleij@linaro.org, gregkh@linuxfoundation.org, jirislaby@kernel.org,
+ magnus.damm@gmail.com, catalin.marinas@arm.com, will@kernel.org,
+ quic_bjorande@quicinc.com, konrad.dybcio@linaro.org, arnd@arndb.de,
+ neil.armstrong@linaro.org, prabhakar.mahadev-lad.rj@bp.renesas.com,
+ biju.das.jz@bp.renesas.com
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Message-ID: <718a2683-d7a3-ce91-2686-c077d0c48685@bp.renesas.com>
+Subject: Re: [PATCH v2 18/28] pinctrl: renesas: rzg2l: add support for
+ different ds values on different groups
+References: <20230929053915.1530607-1-claudiu.beznea@bp.renesas.com>
+ <20230929053915.1530607-19-claudiu.beznea@bp.renesas.com>
+In-Reply-To: <20230929053915.1530607-19-claudiu.beznea@bp.renesas.com>
 
-You can not do this, hw->init is cleared during registration.
+--------------UcQ0D7F82ZDjBYx4thPEnCUx
+Content-Type: multipart/mixed; boundary="------------CKPeGwEVGUuHLHO0kaoGvMTJ"
 
->
-> > > +   return notifier_from_errno(err);
-> > > +}
-> > > +
-> > > +static struct notifier_block cpu_clk_notifier = {
-> > > +   .notifier_call = cpu_clk_notifier_fn,
-> > > +};
-> > > +
-> > >  static int apss_ipq6018_probe(struct platform_device *pdev)
-> > >  {
-> > >     struct regmap *regmap;
-> > > +   u32 soc_id;
-> > > +   int ret;
-> > > +
-> > > +   ret = qcom_smem_get_soc_id(&soc_id);
-> > > +   if (ret)
-> > > +           return ret;
-> > >
-> > >     regmap = dev_get_regmap(pdev->dev.parent, NULL);
-> > >     if (!regmap)
-> > >             return -ENODEV;
-> > >
-> > > -   return qcom_cc_really_probe(pdev, &apss_ipq6018_desc, regmap);
-> > > +   ret = qcom_cc_really_probe(pdev, &apss_ipq6018_desc, regmap);
-> > > +   if (ret)
-> > > +           return ret;
-> > > +
-> > > +   switch (soc_id) {
-> > > +   /*
-> > > +    * Only below variants of IPQ53xx support scaling
-> > > +    */
-> > 1. /* Keep this in a 1-line comment */
->
-> Ok
->
-> > 2. why? explain the reasoning in the commit message
->
-> Ok
->
-> Thanks
-> Varada
->
-> > > +   case QCOM_ID_IPQ5332:
-> > > +   case QCOM_ID_IPQ5322:
-> > > +   case QCOM_ID_IPQ5300:
-> > > +           ret = clk_notifier_register(apcs_alias0_clk_src.clkr.hw.clk,
-> > > +                                           &cpu_clk_notifier);
-> > > +           if (ret)
-> > > +                   return ret;
-> > > +           break;
-> > > +   default:
-> > > +           break;
-> > > +   }
-> > > +
-> > > +   return 0;
-> > >  }
-> > >
-> > >  static struct platform_driver apss_ipq6018_driver = {
+--------------CKPeGwEVGUuHLHO0kaoGvMTJ
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
+On 29/09/2023 06:39, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>=20
+> RZ/G3S supports different drive strength values for different power sou=
+rces
+> and pin groups (A, B, C). On each group there could be up to 4 drive
+> strength values per power source. Available power sources are 1v8, 2v5,=
 
+> 3v3. Drive strength values are fine tuned than what was previously
 
--- 
-With best wishes
-Dmitry
+Should this be "are more fine tuned" or "are less fine tuned"?
+
+> available on the driver thus the necessity of having micro-amp support.=
+
+> As drive strength and power source values are linked together the
+> hardware setup for these was moved at the end of
+> rzg2l_pinctrl_pinconf_set() to ensure proper validation of the new
+> values.
+>=20
+> The drive strength values are expected to be initialized though SoC
+> specific hardware configuration data structure.
+>=20
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+
+Thanks,
+Paul
+
+--------------CKPeGwEVGUuHLHO0kaoGvMTJ
+Content-Type: application/pgp-keys; name="OpenPGP_0x27F4B3459F002257.asc"
+Content-Disposition: attachment; filename="OpenPGP_0x27F4B3459F002257.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+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3D
+=3DsIIN
+-----END PGP PUBLIC KEY BLOCK-----
+
+--------------CKPeGwEVGUuHLHO0kaoGvMTJ--
+
+--------------UcQ0D7F82ZDjBYx4thPEnCUx--
+
+--------------O6zwnXp9OinQvEkI9DGuOLGa
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature"
+
+-----BEGIN PGP SIGNATURE-----
+
+wnsEABYIACMWIQSiu8gv1Xr0fIw/aoLbaV4Vf/JGvQUCZRaX3AUDAAAAAAAKCRDbaV4Vf/JGvYSv
+AQDbYGITbR97jsapOUv2wMwpwoQOOqb0TkSdqMkD1NE5egD/cTolbVXIhOczfmm+jux7+KfUaTg7
+B3iypkOqofYcUQI=
+=dWXy
+-----END PGP SIGNATURE-----
+
+--------------O6zwnXp9OinQvEkI9DGuOLGa--
