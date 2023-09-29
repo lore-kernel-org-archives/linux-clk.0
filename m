@@ -2,95 +2,94 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7061FE743CF
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Sep 2023 23:53:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BD61E743D0
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Sep 2023 00:06:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229541AbjI1XxY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Sep 2023 19:53:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48138 "EHLO
+        id S229972AbjI2AGj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Sep 2023 20:06:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229654AbjI1XxY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Sep 2023 19:53:24 -0400
+        with ESMTP id S229653AbjI2AGj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Sep 2023 20:06:39 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D223199;
-        Thu, 28 Sep 2023 16:53:22 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13C74C433C8;
-        Thu, 28 Sep 2023 23:53:22 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 796A3F3;
+        Thu, 28 Sep 2023 17:06:37 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE1B9C433C8;
+        Fri, 29 Sep 2023 00:06:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695945202;
-        bh=LgHeWUx0JGY5CAGIQsUbCEJNxNMNHJ6aWxCT60chWhs=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ugY856GiT71C7tZvaYRtjifR7PXC7IzDlj//CbKQSWKBPCdrLnOdSVGEIN6/GYdAQ
-         G82ungix+sKip9fdsSTLvkHlkWsbG9jeyjTu6geZBya3De199c8BRzoNuwG6ZoYOcY
-         BlD3EGCUwslgVptUqiyGWfWXbSbgp9VZW+Ct8do87kBqTNozN9pfoi2sZmsmO7nLMN
-         hrPt1KNjBFldaHrvhLnbU2Tlzj3fNlN4k0/KqV+GOPP/8eCNe2LvEGeoEd6FgeqRwb
-         hvX21G+6jXMD8iu6TSG1XzF0V99CjmUehxzWtPbTfOiFb5G+YW/NGZRa3P0neO40H9
-         OcodqH8pMwcvg==
-Message-ID: <be6ec178bec389ee9094dc62692b7b07.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <b6ded7b6-1818-402f-8826-2ab1ecd05056@linaro.org>
-References: <20230913175612.8685-1-danila@jiaxyga.com> <539752971c7a61ce7a5deddc1478686a.sboyd@kernel.org> <b6ded7b6-1818-402f-8826-2ab1ecd05056@linaro.org>
-Subject: Re: [PATCH] clk: qcom: gcc-sm8150: Fix gcc_sdcc2_apps_clk_src
+        s=k20201202; t=1695945997;
+        bh=kX49jEUPzZ2DjHCoxms5cPSwkraOJGucVyEvtCLUo8s=;
+        h=From:To:Cc:Subject:Date:From;
+        b=SNwHhr7TvQVZxVRjtAtw3qsoqTS27o0XJTgtjIOFfSgUCj/0tTLoMmj+3n6bOS07a
+         Jfrq9oUBgRHdqKyyAR6g6WHStZl14TQhm0J8WsogR1mKar3QKLBPkjwHi2Er4/72j9
+         o/rAIF1IaKaw1+E6Yv0rS+6wjjH0yscCA9bPeWENK0MBYNc9xCl2/rMzyNHeVj/S3p
+         F8glDStJ2Ue2EsY3aBF5lG30AYj99+s1x1bvRnVriIsgIsWDL4+eFw1rGPPa3YWYcr
+         tUrBqnPOQ6OuIFu2+a4cjHza5PV9FGUhYRRG5ZGMd8CUnj1KM6MJRF0SyUPMpBC+3j
+         sdOpKoKE126FQ==
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     adomerlee@gmail.com, linux-arm-msm@vger.kernel.org,
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Danila Tikhonov <danila@jiaxyga.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>, agross@kernel.org,
-        andersson@kernel.org, dkatraga@codeaurora.org,
-        mturquette@baylibre.com, quic_tdas@quicinc.com, vkoul@kernel.org
-Date:   Thu, 28 Sep 2023 16:53:19 -0700
-User-Agent: alot/0.10
+Subject: [GIT PULL] clk fixes for v6.6-rc3
+Date:   Thu, 28 Sep 2023 17:06:34 -0700
+Message-ID: <20230929000635.1480419-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.42.0.582.g8ccd20d70d-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Konrad Dybcio (2023-09-15 05:04:41)
-> On 14.09.2023 18:20, Stephen Boyd wrote:
-> > Quoting Danila Tikhonov (2023-09-13 10:56:11)
-> >> Set .flags =3D CLK_OPS_PARENT_ENABLE to fix "gcc_sdcc2_apps_clk_src: r=
-cg
-> >> didn't update its configuration" error.
-> >>
-> >> Fixes: 2a1d7eb854bb ("clk: qcom: gcc: Add global clock controller driv=
-er for SM8150")
-> >> Tested-by: Arseniy Velikanov <adomerlee@gmail.com>
-> >> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
-> >> ---
-> >>  drivers/clk/qcom/gcc-sm8150.c | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm81=
-50.c
-> >> index 41ab210875fb..05d115c52dfe 100644
-> >> --- a/drivers/clk/qcom/gcc-sm8150.c
-> >> +++ b/drivers/clk/qcom/gcc-sm8150.c
-> >> @@ -774,7 +774,7 @@ static struct clk_rcg2 gcc_sdcc2_apps_clk_src =3D {
-> >>                 .name =3D "gcc_sdcc2_apps_clk_src",
-> >>                 .parent_data =3D gcc_parents_6,
-> >>                 .num_parents =3D ARRAY_SIZE(gcc_parents_6),
-> >> -               .flags =3D CLK_SET_RATE_PARENT,
-> >> +               .flags =3D CLK_OPS_PARENT_ENABLE,
-> >>                 .ops =3D &clk_rcg2_floor_ops,
-> >=20
-> > In what case are we getting the rcg stuck? I thought that you could
-> > write the rcg registers while the parent was off and switch to that
-> > parent if the parent isn't enabled and it wouldn't get stuck.
-> I think the better question here would be "why isn't
-> OPS_PARENT_ENABLE the default for all qc clocks on all
-> platforms" :/
->=20
+The following changes since commit 0bb80ecc33a8fb5a682236443c1e740d5c917d1d:
 
-We don't need that flag because of how the hardware works and how the
-clk framework moves the enable of the parent from the old parent to the
-new parent when changing rates. The RCGs only get stuck if we change the
-parent of an RCG to a disabled parent when the current parent is enabled
-and the RCG is enabled. Otherwise we're free to change the parent of the
-RCG because it isn't trying to do a glitch free switch of clk frequency.
+  Linux 6.6-rc1 (2023-09-10 16:28:41 -0700)
 
-Is it possible that the clk is running out of boot on a parent that
-is enabled in the hardware but doesn't look enabled to the clk framework
-because of how we fail to hand off enable state? Maybe the mmc driver
-then calls clk_set_rate() to change the rate (rcg is still off) and that
-causes problems?
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+
+for you to fetch changes up to a47b44fbb13f5e7a981b4515dcddc93a321ae89c:
+
+  clk: tegra: fix error return case for recalc_rate (2023-09-12 10:56:05 -0700)
+
+----------------------------------------------------------------
+A bunch of clk driver fixes for issues found recently.
+
+ - Fix the binding for versaclock3 that was introduced this merge window
+   so we know what the values are for clk consumers
+ - Fix a 64-bit division issue in the versaclock3 driver
+ - Avoid breakage in the versaclock3 driver by rejiggering the enums
+   used to layout clks
+ - Fix the parent name of a clk in the Spreadtrum ums512 clk driver
+ - Fix a suspend/resume issue in Skyworks Si521xx clk driver where
+   regmap restoration fails because writes are wedged
+ - Return zero from Tegra bpmp recalc_rate() implementation when an
+   error occurs so we don't consider an error as a large rate
+
+----------------------------------------------------------------
+Biju Das (4):
+      dt-bindings: clock: versaclock3: Add description for #clock-cells property
+      clk: vc3: Fix 64 by 64 division
+      clk: vc3: Fix output clock mapping
+      clk: vc3: Make vc3_clk_mux enum values based on vc3_clk enum values
+
+Marek Vasut (2):
+      clk: si521xx: Use REGCACHE_FLAT instead of NONE
+      clk: si521xx: Fix regmap write accessor
+
+Timo Alho (1):
+      clk: tegra: fix error return case for recalc_rate
+
+Zhifeng Tang (1):
+      clk: sprd: Fix thm_parents incorrect configuration
+
+ .../devicetree/bindings/clock/renesas,5p35023.yaml |  11 +-
+ drivers/clk/clk-si521xx.c                          |   9 +-
+ drivers/clk/clk-versaclock3.c                      | 117 ++++++++++-----------
+ drivers/clk/sprd/ums512-clk.c                      |   2 +-
+ drivers/clk/tegra/clk-bpmp.c                       |   2 +-
+ 5 files changed, 72 insertions(+), 69 deletions(-)
+
+-- 
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
