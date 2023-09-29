@@ -2,83 +2,106 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7938DE71D55
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Sep 2023 15:24:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03058E728C4
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Sep 2023 15:52:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233655AbjI2PYV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Sep 2023 11:24:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41066 "EHLO
+        id S233638AbjI2PwX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Sep 2023 11:52:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233646AbjI2PYJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Sep 2023 11:24:09 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C534D6;
-        Fri, 29 Sep 2023 08:24:07 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57948C433C7;
-        Fri, 29 Sep 2023 15:24:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696001046;
-        bh=tLMR3aghMf/AhPWtcH9w+gBW2wf07ak+UQvSzPzVblg=;
-        h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-        b=lPugBENK75E1xPTbcI7TkQk5iJUR5UJwI80B5HCMKmXDz2hUS+yyQPiEaZmFwwUXD
-         755Euk3tP9dI8ejzwlPMqudTcEg2Ho534V/Pi6oN652nUVntc4PM3EYxkAM3J6T5A5
-         XJcCyCox6evJWGFjQ79Y4rOOGbNNtcoLf8/Fo51OUG248FeAWQIcNpsIgLUEZ/ApNy
-         MWRiI1K3TcBiVl3oChKOyR4J8ZmzH2cXWmCr9382BUETZ9OeDdo2HuwuESZlyosSlc
-         h+0HsnHpDUzcCNK6m/p9SnO1QryWOx2uhT1b6QqI0kwsTzx8obOYWGhQOg1ezi3d68
-         OSaI2HU4vFwkg==
-From:   Mark Brown <broonie@kernel.org>
-Date:   Fri, 29 Sep 2023 17:23:38 +0200
-Subject: [PATCH 4/4] leds: lp3952: Convert to use maple tree register cache
+        with ESMTP id S233646AbjI2PwW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Sep 2023 11:52:22 -0400
+Received: from mx.skole.hr (mx1.hosting.skole.hr [161.53.165.185])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 201341AE;
+        Fri, 29 Sep 2023 08:52:18 -0700 (PDT)
+Received: from mx1.hosting.skole.hr (localhost.localdomain [127.0.0.1])
+        by mx.skole.hr (mx.skole.hr) with ESMTP id B954F8349A;
+        Fri, 29 Sep 2023 17:42:53 +0200 (CEST)
+From:   =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
+Date:   Fri, 29 Sep 2023 17:42:02 +0200
+Subject: [PATCH RESEND v5 6/8] arm64: Kconfig.platforms: Add config for
+ Marvell PXA1908 platform
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230929-leds-maple-v1-4-ba5f9dcb1e75@kernel.org>
-References: <20230929-leds-maple-v1-0-ba5f9dcb1e75@kernel.org>
-In-Reply-To: <20230929-leds-maple-v1-0-ba5f9dcb1e75@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Lee Jones <lee@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.13-dev-0438c
-X-Developer-Signature: v=1; a=openpgp-sha256; l=824; i=broonie@kernel.org;
- h=from:subject:message-id; bh=tLMR3aghMf/AhPWtcH9w+gBW2wf07ak+UQvSzPzVblg=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBlFuwMEbV1tKZ8nY6RRmPRJ+2AC9dtNMCbEkm1R
- RYyIhWY6JGJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZRbsDAAKCRAk1otyXVSH
- 0L4xB/0TxhhxrltOUFZlHxCGEUR6FDZlIKlKg/YnUQILVybkIhRRHFK4VFZNggnJ7Nsf49UJqj3
- 2vpT9CYxEs89GtgiYZJjIXTAStAoPVE2Y06IMrU4FSY+4M5SHDhD1srw8AB3rUh7Hyl7fW2Y7lA
- EPAloHoLY2/N8j4eEJ10b7JOYN7HlXpxvJDArnP9qSuivMFitFqhuYfq66lbNE3atRYXTTK2GOx
- v3BcsXnLb+yEnSqqSeyIAp8QPdlQJ7W6t94XhupXRZopa1MVPr0CqG0jitSxRQNJyVVc5Spu8hC
- ye3eW/gSfS51jZtohbbFNqlwiPd/0/rS9PKr8IsjOUAifq50
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Transfer-Encoding: 8bit
+Message-Id: <20230929-pxa1908-lkml-v5-6-5aa5a1109c5f@skole.hr>
+References: <20230929-pxa1908-lkml-v5-0-5aa5a1109c5f@skole.hr>
+In-Reply-To: <20230929-pxa1908-lkml-v5-0-5aa5a1109c5f@skole.hr>
+To:     Robert Jarzmik <robert.jarzmik@free.fr>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Andy Shevchenko <andy@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Tony Luck <tony.luck@intel.com>,
+        "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+        =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-hardening@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        afaerber@suse.de, balejk@matfyz.cz
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=848;
+ i=duje.mihanovic@skole.hr; h=from:subject:message-id;
+ bh=EiZLJFEyV4LY8QGlZs87/IL+BtGJZigZwDQYelB5sZM=;
+ b=owEBbQKS/ZANAwAIAZoRnrBCLZbhAcsmYgBlFvBy5uzW/LL/CcRvs8TKhAE2CJDg53uNJXpqB
+ WIj3G5CfaSJAjMEAAEIAB0WIQRT351NnD/hEPs2LXiaEZ6wQi2W4QUCZRbwcgAKCRCaEZ6wQi2W
+ 4eK1D/oDPrI8Qg9Z7g/Nm10aEg0oGnGPrgFYif0TsiH1kF4RdzGfuNlM7Ph+z9VZysWbnCxvcFr
+ JL7IVR5E86SvYVoWbtDyP8gt51aHZeW4wYs0LT+c/9zuZa49I4SGDKdPwHpyTPzYEYuU1clJ7qk
+ oABb32rdSPMhbVHK0g4t0oKhAr0rrHOuQYGVIf0pa8Eyj/IM1HA6NzT6N3eDRY1XY1oBE84FwxW
+ dJCRJ3NaEi0gef08e0kdkVrxx++x+1U8l+c6qWLx6/J+m7BP7/L7IJS5dqumHc15FOgSNtL4Abs
+ MBoviEwxZqrwELp76IQUwK5SKCoJ/hyCnDEoNs8CViHPsZP3o8id3b2DcPauZwEp4+0lB6y08Mn
+ Qfyhx5Ag6WQFMec/fhRG3xEbFBhwnuONl8waiBt0riSVCmkYIvc0HDRbW/c1OrEvmgPD2BCIKeB
+ 4yTRZsRuyefAfCANJ4uXKpQ4Q37BJaPATaAqo6kR7HPrNga6v8+JzA9L3nWoB9ni8P5XfyWKBrp
+ EZR7etx4f70NwLUNAjDw2jk85nwnREnuTKP/7U4NZJ9PhHVX2/J7IisV2MYuLVHj6hReE77M8yO
+ E6S5080StLX2ysPiwQ6m8kYP0BwIuA1oVNriwAjlPUwh0f4bi1hA3r42Q3Fv/JSGRmRpmm0CTC5
+ CYB0hDhLjSL1CPg==
+X-Developer-Key: i=duje.mihanovic@skole.hr; a=openpgp;
+ fpr=53DF9D4D9C3FE110FB362D789A119EB0422D96E1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The maple tree register cache is based on a much more modern data structure
-than the rbtree cache and makes optimisation choices which are probably
-more appropriate for modern systems than those made by the rbtree cache.
+Add ARCH_MMP configuration option for Marvell PXA1908 SoC.
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
 ---
- drivers/leds/leds-lp3952.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/Kconfig.platforms | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/leds/leds-lp3952.c b/drivers/leds/leds-lp3952.c
-index 3bd55652a706..9e6a3d300b2f 100644
---- a/drivers/leds/leds-lp3952.c
-+++ b/drivers/leds/leds-lp3952.c
-@@ -204,7 +204,7 @@ static const struct regmap_config lp3952_regmap = {
- 	.reg_bits = 8,
- 	.val_bits = 8,
- 	.max_register = REG_MAX,
--	.cache_type = REGCACHE_RBTREE,
-+	.cache_type = REGCACHE_MAPLE,
- };
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 6069120199bb..b417cae42c84 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -89,6 +89,17 @@ config ARCH_BERLIN
+ 	help
+ 	  This enables support for Marvell Berlin SoC Family
  
- static int lp3952_probe(struct i2c_client *client)
++config ARCH_MMP
++	bool "Marvell MMP SoC Family"
++	select ARM_GIC
++	select ARM_ARCH_TIMER
++	select ARM_SMMU
++	select MMP_PDMA
++	select PINCTRL_SINGLE
++	help
++	  This enables support for Marvell MMP SoC family, currently
++	  supporting PXA1908 aka IAP140.
++
+ config ARCH_BITMAIN
+ 	bool "Bitmain SoC Platforms"
+ 	help
 
 -- 
-2.39.2
+2.42.0
+
 
