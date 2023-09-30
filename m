@@ -2,104 +2,98 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B12F1E77362
-	for <linux-clk@archiver.kernel.org>; Sat, 30 Sep 2023 09:39:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8248BE77368
+	for <linux-clk@archiver.kernel.org>; Sat, 30 Sep 2023 10:33:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234013AbjI3JjK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 30 Sep 2023 05:39:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52322 "EHLO
+        id S234078AbjI3KdX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 30 Sep 2023 06:33:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234004AbjI3JjJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 30 Sep 2023 05:39:09 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 438CA1A5;
-        Sat, 30 Sep 2023 02:39:07 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3F32C433C8;
-        Sat, 30 Sep 2023 09:39:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696066746;
-        bh=Q0JZczSYb8IZ3ZaIjrDmyo/SCG/lFxNpe9cqL4DbR9M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=g+k2A1eNMfAUeB5DhoWwL0EcXnfvkO3LYkHPCNZ6AaOWavJXdXi9qgXvIrPkgG4TH
-         Lm2oItzKRv/D3E1Des2qSA4uhu7blxdjCoTGBA1YT+Chx+jqKS8/rBqbH6Cnb2WPol
-         bg4eVvmc6tGtD4BhUy2dM5ivJHif4D72tG5Y7ZHpI/xz8V177BZacFljJPmCwfXDhf
-         sLyuLxt8gVz7pohq8ri9EJj6b4IW9VxMOaDz4VEZVnKvmWiI0k0hY8iX2DEknPwaaa
-         ahPmvj+62FRuaRb0pqCLVsnpo5I49mnRT5vysMOrRHaQDKporyTcHWpg1tBpshN4mH
-         tqBED0oKI406w==
-Received: from johan by xi.lan with local (Exim 4.96)
-        (envelope-from <johan@kernel.org>)
-        id 1qmWRI-0001Ou-0P;
-        Sat, 30 Sep 2023 11:39:08 +0200
-Date:   Sat, 30 Sep 2023 11:39:08 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk: qcom: gcc-sc8280xp: Don't keep display AHB
- clocks always-on
-Message-ID: <ZRfsvAJIdlmOWjf2@hovoldconsulting.com>
-References: <20230929-topic-8280_ahbdisp-v1-0-72bdc38309b9@linaro.org>
- <20230929-topic-8280_ahbdisp-v1-2-72bdc38309b9@linaro.org>
+        with ESMTP id S233030AbjI3KdW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 30 Sep 2023 06:33:22 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85D8D193;
+        Sat, 30 Sep 2023 03:33:20 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id 4fb4d7f45d1cf-522bd411679so18964776a12.0;
+        Sat, 30 Sep 2023 03:33:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1696069999; x=1696674799; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HRfD2frfJCrCV8FZTJoVzCkfiyFyj4/PvBoUWy9PR30=;
+        b=jTOE/jJbTKyQCwYWeGs5tL1nrkKdkPWfVR6uCIsFZWAmVok4yMyl9vQxcubiqgRAOJ
+         JDh/wZr6kIZIvPQYxQszcgiOs6Kzjs9meexWdmO3Nwbv/2ZtuPIdfd0hrJaSe/qSt40N
+         yu5hD6HWqbnAu0y3FwuU4S5+FubsuCAop5Z/sdtg7iDaAjRDIIaGS2wTSeGtd2Ssfkkz
+         /1LYpW4Au1VVHwt+sbC7/gMoZ3ryWKeXugokh9kRT93/xEfgpNBbSN9Dh4+cwGhsO+a+
+         vl5Gr5E6HiiCspsLKIfmaoqdoQCqNOk99L6Z2ur6frivmKxDWAExBE3Q0bclGV9m4XRv
+         IdIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696069999; x=1696674799;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HRfD2frfJCrCV8FZTJoVzCkfiyFyj4/PvBoUWy9PR30=;
+        b=Bd19onfnTBPJ9zvq8lQdYbfqUDR9V7d2ADli/2Kw/Smm1DrtDGN4Bl0gf88C4/H24I
+         qDVLsUb41UJCgFT9P2gT5plnB6AggjC22i7T/ktIsRqyHFF4EGX9n7Kb69CFQ6wuUqCx
+         iCcLiKtgNFwIVILIkxBigim0SzbqLGKd06LxpMv2vsCI/BO2LU2erkd9KN5K5tUx4A7T
+         wMwR77kqfWLXOoyixCT3XNEywSzmaqJNlhCF5o4letMMj4ECiufuW9M1E++5kYil88u5
+         WNcYd8Pbonf2bmAVCU2MldPVGqU8Mds0Ukv/DmDNwwxtnkqvUpjW3+EByIc6D8c7Ias2
+         XHCg==
+X-Gm-Message-State: AOJu0YyW2tnODsrY7gC9mp5CCsYr7TrGdL5PFzbVS0fQrs2SOZf03MVl
+        1z3vG4R1Syo/N5vOycQ/b9o=
+X-Google-Smtp-Source: AGHT+IGSAjPXCSuAJi756PZrGHD8E9gNkMqAeOK2j6EnB3ivcMQVACVNWzcMAMGeXQ7WU8uK6gpPdA==
+X-Received: by 2002:a05:6402:1846:b0:530:7ceb:33c with SMTP id v6-20020a056402184600b005307ceb033cmr6334475edy.4.1696069998899;
+        Sat, 30 Sep 2023 03:33:18 -0700 (PDT)
+Received: from fedora.. (dh207-96-216.xnet.hr. [88.207.96.216])
+        by smtp.googlemail.com with ESMTPSA id r22-20020a056402035600b00530ccd180a3sm12406097edw.97.2023.09.30.03.33.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 Sep 2023 03:33:18 -0700 (PDT)
+From:   Robert Marko <robimarko@gmail.com>
+To:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        quic_tdas@quicinc.com, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Robert Marko <robimarko@gmail.com>
+Subject: [PATCH v2 1/2] dt-bindings: clocks: qcom,gcc-ipq8074: allow QMP PCI PHY PIPE clocks
+Date:   Sat, 30 Sep 2023 12:32:24 +0200
+Message-ID: <20230930103316.234103-1-robimarko@gmail.com>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230929-topic-8280_ahbdisp-v1-2-72bdc38309b9@linaro.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Sep 29, 2023 at 03:38:53PM +0200, Konrad Dybcio wrote:
-> These clocks are consumed by the dispcc[01] clock controllers, so there's
-> no reason to keep them on from gcc probe. Remove that hack.
+Allow passing QMP PCI PHY PIPE clocks to the IPQ8074 GCC to avoid having
+to do a global matching by name.
 
-Eh, how did you test this patch?
+Signed-off-by: Robert Marko <robimarko@gmail.com>
+---
+ Documentation/devicetree/bindings/clock/qcom,gcc-ipq8074.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-The GCC_DISP_AHB_CLK clocks are not modelled by the clock driver
-currently so nothing is guaranteeing them to be enabled if we were to
-apply this patch. They just happen to be left on by the bootloader on
-some machines currently (well at least one of them is on one machine).
-
-So this series is broken and should not be applied.
-
-NAK.
-
-Also, please CC me on sc8280xp and X13s related patches.
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-ipq8074.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-ipq8074.yaml
+index 52e7831a8d6d..2d44ddc45aab 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-ipq8074.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-ipq8074.yaml
+@@ -27,11 +27,15 @@ properties:
+     items:
+       - description: board XO clock
+       - description: sleep clock
++      - description: Gen3 QMP PCIe PHY PIPE clock
++      - description: Gen2 QMP PCIe PHY PIPE clock
  
-> Fixes: d65d005f9a6c ("clk: qcom: add sc8280xp GCC driver")
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> ---
->  drivers/clk/qcom/gcc-sc8280xp.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/gcc-sc8280xp.c b/drivers/clk/qcom/gcc-sc8280xp.c
-> index bfb77931e868..bf95f82a3818 100644
-> --- a/drivers/clk/qcom/gcc-sc8280xp.c
-> +++ b/drivers/clk/qcom/gcc-sc8280xp.c
-> @@ -7545,18 +7545,16 @@ static int gcc_sc8280xp_probe(struct platform_device *pdev)
->  
->  	/*
->  	 * Keep the clocks always-ON
-> -	 * GCC_CAMERA_AHB_CLK, GCC_CAMERA_XO_CLK, GCC_DISP_AHB_CLK,
-> +	 * GCC_CAMERA_AHB_CLK, GCC_CAMERA_XO_CLK,
->  	 * GCC_DISP_XO_CLK, GCC_GPU_CFG_AHB_CLK, GCC_VIDEO_AHB_CLK,
-> -	 * GCC_VIDEO_XO_CLK, GCC_DISP1_AHB_CLK, GCC_DISP1_XO_CLK
-> +	 * GCC_VIDEO_XO_CLK, GCC_DISP1_XO_CLK
->  	 */
->  	regmap_update_bits(regmap, 0x26004, BIT(0), BIT(0));
->  	regmap_update_bits(regmap, 0x26020, BIT(0), BIT(0));
-> -	regmap_update_bits(regmap, 0x27004, BIT(0), BIT(0));
->  	regmap_update_bits(regmap, 0x27028, BIT(0), BIT(0));
->  	regmap_update_bits(regmap, 0x71004, BIT(0), BIT(0));
->  	regmap_update_bits(regmap, 0x28004, BIT(0), BIT(0));
->  	regmap_update_bits(regmap, 0x28028, BIT(0), BIT(0));
-> -	regmap_update_bits(regmap, 0xbb004, BIT(0), BIT(0));
->  	regmap_update_bits(regmap, 0xbb028, BIT(0), BIT(0));
+   clock-names:
+     items:
+       - const: xo
+       - const: sleep_clk
++      - const: pcie0_pipe
++      - const: pcie1_pipe
+ 
+ required:
+   - compatible
+-- 
+2.41.0
 
-Johan
