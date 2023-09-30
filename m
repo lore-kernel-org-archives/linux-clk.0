@@ -2,109 +2,145 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0E8FE7737A
-	for <linux-clk@archiver.kernel.org>; Sat, 30 Sep 2023 16:45:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D97C7E748F1
+	for <linux-clk@archiver.kernel.org>; Sat, 30 Sep 2023 22:14:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234573AbjI3QpP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 30 Sep 2023 12:45:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51308 "EHLO
+        id S231715AbjI3WOf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 30 Sep 2023 18:14:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234546AbjI3QpO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 30 Sep 2023 12:45:14 -0400
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A800CF
-        for <linux-clk@vger.kernel.org>; Sat, 30 Sep 2023 09:45:07 -0700 (PDT)
-Received: by mail-lj1-x22e.google.com with SMTP id 38308e7fff4ca-2c124adf469so242518491fa.0
-        for <linux-clk@vger.kernel.org>; Sat, 30 Sep 2023 09:45:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696092305; x=1696697105; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2OuSsmCweocHw0xEUHsPMkncs3DWhyuvlq0QOPGgJ9Q=;
-        b=ll2QEGAPdc70HRn23rXgBNoC+UYgVixIlGjnu+JrHm8cNwFVSl5nzs44NLXKp8nIMR
-         2gcyk58x6gNVRUFrXNyMR4HGIymyt0h/c0Sqfa69Rv10wWOp8PMNBXyMv/8EQSS7K+Hc
-         ph6m7D+n4KcJk0zmjtbfcKcvxSIINzbgdVHeFWnhNSez3YmDRUnboGQl/zmvv53ckwkJ
-         rBrcF1TS+syV5AkHcuQ3kc3IUM4kQd4k52vi0uE6QHAPKiLt3SNwQHGleDaNXQm+F1NP
-         rWzX6xxw2GZDOTz8hACNyd0ZtqBeMb/xlavaHBzEGdERvGfUyGoE13tWE5yHIOxxhbBO
-         MnFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696092305; x=1696697105;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2OuSsmCweocHw0xEUHsPMkncs3DWhyuvlq0QOPGgJ9Q=;
-        b=BkgZEqaPPaPOZknNQ2xYz6LGeBnexh6W6Q4LA5b5coT9AgzDRAFkti2w+IeKrtsW1R
-         j62IlgXTaPswy/t3I3buimrVrFe0aX08HbwjrBfVWWZ00XLptidaDuWAoCZFDBWQW8cp
-         yMAaWcyhOU2OKBZLfFgMl7C8at/YOvg0vOtnH0yGmYem2jM/dC4RAh51HmATIlJjeITC
-         sYJBStJ1EkpnFKD1eIsKukPTj+axQ/UmTxEywj1rgrEuuPuVCzxcWldftFaE29UGiGnd
-         katrd6C14i5rmuqoNfAmpOPLU2aI/DiM4j5GYldsGmc4gP5EUc2vEAZn9WfOfVFG3TaR
-         r3wA==
-X-Gm-Message-State: AOJu0YyIzJo8pX2/FxyndkeXg+LgxCRiIS9VW5wLsGdNdn6dpv9jyxqA
-        qIP9a2HiQsUVKz9+aALEF7Qglg==
-X-Google-Smtp-Source: AGHT+IEztcIi6uLfQza9ishSim0Sae5baVP8tRWAZ590XGKSfpNLbBNUdsVVExc0/L1tshkqYWv4iA==
-X-Received: by 2002:a2e:9b49:0:b0:2c0:10ed:431b with SMTP id o9-20020a2e9b49000000b002c010ed431bmr6392317ljj.23.1696092305499;
-        Sat, 30 Sep 2023 09:45:05 -0700 (PDT)
-Received: from [192.168.156.60] (public-gprs529506.centertel.pl. [31.61.187.163])
-        by smtp.gmail.com with ESMTPSA id k25-20020a2e2419000000b002b9f1214394sm4507731ljk.13.2023.09.30.09.45.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 30 Sep 2023 09:45:05 -0700 (PDT)
-Message-ID: <43473e04-ac33-179e-4343-e5c78eef3faf@linaro.org>
-Date:   Sat, 30 Sep 2023 18:44:47 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 2/2] clk: qcom: gcc-sc8280xp: Don't keep display AHB
- clocks always-on
-Content-Language: en-US
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
+        with ESMTP id S229788AbjI3WOe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 30 Sep 2023 18:14:34 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05F51CF;
+        Sat, 30 Sep 2023 15:14:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=v7APsD/u2oxKfmW91znSSbsDyTPJD7vIhjjteG0qDkE=; b=LF9+YNXA2KLFkZ+c0iFzAflQ/r
+        T+wvUZDIlPflcLcqYpq0rgNblhoZScTM28ulq8FBTtQ8TYr5Mjr5/fbrTGFYhR4SRkm03bYZh8A8B
+        dnI7AH0EcAX57gnXEeQfGV1uv78ySoFpJoPhHE2dNr7AGBJaM5CL9SrS/rfRg92rFyu3rFGb5jOo1
+        0jYi0KLI9BaFwdclG+mdhJlFRdZ2f5HMHTlee7c2MfkToibc0Ix26B8+U/CeJpet3EnRlZpWQw39r
+        n8uP/uCE1xLVUvpHAiQlKKykCo7mTxXNKSqzcgBg7NgWGBI1VCcq9nmRjqYyZqEQG7a/CGmxQADz7
+        atA/zidg==;
+Received: from [50.53.46.231] (helo=bombadil.infradead.org)
+        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1qmiEH-00AAxS-25;
+        Sat, 30 Sep 2023 22:14:29 +0000
+From:   Randy Dunlap <rdunlap@infradead.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20230929-topic-8280_ahbdisp-v1-0-72bdc38309b9@linaro.org>
- <20230929-topic-8280_ahbdisp-v1-2-72bdc38309b9@linaro.org>
- <ZRfsvAJIdlmOWjf2@hovoldconsulting.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <ZRfsvAJIdlmOWjf2@hovoldconsulting.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH] clk: linux/clk-provider.h: fix kernel-doc warnings and typos
+Date:   Sat, 30 Sep 2023 15:14:26 -0700
+Message-ID: <20230930221428.18463-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.42.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Fix spelling of "Structure".
 
+Fix multiple kernel-doc warnings:
 
-On 9/30/23 11:39, Johan Hovold wrote:
-> On Fri, Sep 29, 2023 at 03:38:53PM +0200, Konrad Dybcio wrote:
->> These clocks are consumed by the dispcc[01] clock controllers, so there's
->> no reason to keep them on from gcc probe. Remove that hack.
-> 
-> Eh, how did you test this patch?
-Oehh you're right, I didn't notice that I still had clk_ignore_unused :/
+clk-provider.h:269: warning: Function parameter or member 'recalc_rate' not described in 'clk_ops'
+clk-provider.h:468: warning: Function parameter or member 'parent_data' not described in 'clk_hw_register_fixed_rate_with_accuracy_parent_data'
+clk-provider.h:468: warning: Excess function parameter 'parent_name' description in 'clk_hw_register_fixed_rate_with_accuracy_parent_data'
+clk-provider.h:482: warning: Function parameter or member 'parent_data' not described in 'clk_hw_register_fixed_rate_parent_accuracy'
+clk-provider.h:482: warning: Excess function parameter 'parent_name' description in 'clk_hw_register_fixed_rate_parent_accuracy'
+clk-provider.h:687: warning: Function parameter or member 'flags' not described in 'clk_divider'
+clk-provider.h:1164: warning: Function parameter or member 'flags' not described in 'clk_fractional_divider'
+clk-provider.h:1164: warning: Function parameter or member 'approximation' not described in 'clk_fractional_divider'
+clk-provider.h:1213: warning: Function parameter or member 'flags' not described in 'clk_multiplier'
 
-> 
-> The GCC_DISP_AHB_CLK clocks are not modelled by the clock driver
-> currently so nothing is guaranteeing them to be enabled if we were to
-> apply this patch. They just happen to be left on by the bootloader on
-> some machines currently (well at least one of them is on one machine).
-What fooled me is that despite not being modeled by the clock driver, it 
-is defined in bindings and referenced in the device tree.
+Fixes: 9fba738a53dd ("clk: add duty cycle support")
+Fixes: b2476490ef11 ("clk: introduce the common clock framework")
+Fixes: 2d34f09e79c9 ("clk: fixed-rate: Add support for specifying parents via DT/pointers")
+Fixes: f5290d8e4f0c ("clk: asm9260: use parent index to link the reference clock")
+Fixes: 9d9f78ed9af0 ("clk: basic clock hardware types")
+Fixes: e2d0e90fae82 ("clk: new basic clk type for fractional divider")
+Fixes: f2e0a53271a4 ("clk: Add a basic multiplier clock")
 
-Another thing I'll fix up!
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org
+---
+ include/linux/clk-provider.h |   15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-> So this series is broken and should not be applied.
-Agreed, I'll revisit this tonight or next week.
-
-> 
-> NAK.
-> 
-> Also, please CC me on sc8280xp and X13s related patches.
-Omitting you was not intentional, sorry!
-
-Konrad
+diff -- a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -74,7 +74,7 @@ void clk_hw_forward_rate_request(const s
+ 				 unsigned long parent_rate);
+ 
+ /**
+- * struct clk_duty - Struture encoding the duty cycle ratio of a clock
++ * struct clk_duty - Structure encoding the duty cycle ratio of a clock
+  *
+  * @num:	Numerator of the duty cycle ratio
+  * @den:	Denominator of the duty cycle ratio
+@@ -129,7 +129,7 @@ struct clk_duty {
+  * @restore_context: Restore the context of the clock after a restoration
+  *		of power.
+  *
+- * @recalc_rate	Recalculate the rate of this clock, by querying hardware. The
++ * @recalc_rate: Recalculate the rate of this clock, by querying hardware. The
+  *		parent rate is an input parameter.  It is up to the caller to
+  *		ensure that the prepare_mutex is held across this call. If the
+  *		driver cannot figure out a rate for this clock, it must return
+@@ -456,7 +456,7 @@ struct clk *clk_register_fixed_rate(stru
+  * clock with the clock framework
+  * @dev: device that is registering this clock
+  * @name: name of this clock
+- * @parent_name: name of clock's parent
++ * @parent_data: name of clock's parent
+  * @flags: framework-specific flags
+  * @fixed_rate: non-adjustable clock rate
+  * @fixed_accuracy: non-adjustable clock accuracy
+@@ -471,7 +471,7 @@ struct clk *clk_register_fixed_rate(stru
+  * the clock framework
+  * @dev: device that is registering this clock
+  * @name: name of this clock
+- * @parent_name: name of clock's parent
++ * @parent_data: name of clock's parent
+  * @flags: framework-specific flags
+  * @fixed_rate: non-adjustable clock rate
+  */
+@@ -649,7 +649,7 @@ struct clk_div_table {
+  * Clock with an adjustable divider affecting its output frequency.  Implements
+  * .recalc_rate, .set_rate and .round_rate
+  *
+- * Flags:
++ * @flags:
+  * CLK_DIVIDER_ONE_BASED - by default the divisor is the value read from the
+  *	register plus one.  If CLK_DIVIDER_ONE_BASED is set then the divider is
+  *	the raw value read from the register, with the value of zero considered
+@@ -1130,11 +1130,12 @@ struct clk_hw *clk_hw_register_fixed_fac
+  * @mwidth:	width of the numerator bit field
+  * @nshift:	shift to the denominator bit field
+  * @nwidth:	width of the denominator bit field
++ * @approximation: clk driver's callback for calculating the divider clock
+  * @lock:	register lock
+  *
+  * Clock with adjustable fractional divider affecting its output frequency.
+  *
+- * Flags:
++ * @flags:
+  * CLK_FRAC_DIVIDER_ZERO_BASED - by default the numerator and denominator
+  *	is the value read from the register. If CLK_FRAC_DIVIDER_ZERO_BASED
+  *	is set then the numerator and denominator are both the value read
+@@ -1191,7 +1192,7 @@ void clk_hw_unregister_fractional_divide
+  * Clock with an adjustable multiplier affecting its output frequency.
+  * Implements .recalc_rate, .set_rate and .round_rate
+  *
+- * Flags:
++ * @flags:
+  * CLK_MULTIPLIER_ZERO_BYPASS - By default, the multiplier is the value read
+  *	from the register, with 0 being a valid value effectively
+  *	zeroing the output clock rate. If CLK_MULTIPLIER_ZERO_BYPASS is
