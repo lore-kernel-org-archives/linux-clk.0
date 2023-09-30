@@ -2,70 +2,68 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21A25E77375
-	for <linux-clk@archiver.kernel.org>; Sat, 30 Sep 2023 14:16:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74506E77374
+	for <linux-clk@archiver.kernel.org>; Sat, 30 Sep 2023 14:18:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234218AbjI3OQr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 30 Sep 2023 10:16:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58964 "EHLO
+        id S234250AbjI3OSz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 30 Sep 2023 10:18:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234228AbjI3OQq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 30 Sep 2023 10:16:46 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20FE5FD
-        for <linux-clk@vger.kernel.org>; Sat, 30 Sep 2023 07:16:43 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id a640c23a62f3a-99bf3f59905so2044828166b.3
-        for <linux-clk@vger.kernel.org>; Sat, 30 Sep 2023 07:16:43 -0700 (PDT)
+        with ESMTP id S234228AbjI3OSy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 30 Sep 2023 10:18:54 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EFB9C6
+        for <linux-clk@vger.kernel.org>; Sat, 30 Sep 2023 07:18:52 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-3215f19a13aso14905159f8f.3
+        for <linux-clk@vger.kernel.org>; Sat, 30 Sep 2023 07:18:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696083401; x=1696688201; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1696083531; x=1696688331; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=k64lT6XcmO9jhd+S65sRgmcaNSP3mGxzbdernJf40vs=;
-        b=KvOChHtJAFvEykZbuMQPOun/rr/f4L1c9Cx1s83kQyyLW3am0l4o+BiYV9T8MiVR02
-         o2g/DR2/VWT1+hC923AlmIrPqYW4Df+7eL6tlKYbxyLcjl+kfvcO39nvLFquHi28X1ST
-         4NHbLi5WrnUai1OVHicioMP7AqsXFHjTEafNimLAHMGyun4FZWx3V4wA/V8E5zq4nmZn
-         BDOzvZG7QbcJagTHdaaFzUxcINsSt3JkcsH/sgQw3ReCKwW+8c8vkY3VrBJ9Oet4yTIO
-         M3s30dcDTa2FIGJ15XE4LhFE9q3TfyNw3WAk1/LtF0o2CEQU5KQw7FGoysa6bJodFbPF
-         nerg==
+        bh=dbndJi5YFfypa54vy5nBzBG/Wj840NhBH9tsJciX4N0=;
+        b=EaboqiKaBJSfEPMMPEFaSBJYndyRRlzSjk6G3ePF4/nqvEXEX328l6sTpzNXLb/b54
+         WKOEeCP5QCPifxr2bRM6FX9+GXbYVA3mZjviSt7aOk+QA4RVlalYCtUSVJTDafmLnHRZ
+         1aNqcD3Zn+d0FPV+2tI0k9gPSeUpZS9LBZL0DTVh/9rTMH1YJz/pqUIHxts6/vhMJtWC
+         hFoQk96yVwnfXMo+t1mGdAZH9nmKvX25RSEko+CxWhJP512bXgtJGFgQbLw7UZCKs54i
+         DahSARqP9GnrWWbob6fVfViFHNlQkLEK/stIRerKYD/mchGoBEs7dkhyMlWyb32Huz6F
+         VpJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696083401; x=1696688201;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1696083531; x=1696688331;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=k64lT6XcmO9jhd+S65sRgmcaNSP3mGxzbdernJf40vs=;
-        b=A1dGqRDrKBd2nvXXGSy1wirLPzCnp0O9dZ/y30xAzlkAaoHW/TT1yICMoFQXSRsZ2l
-         8mMrPBjDSD11sV5GLGIzyQjsMeSIO87LDzCd8la/ZvA9gLKPsaavlJ1Zxyq6De4no/wY
-         L09qPJ7g+rLcqa38ECGhQaN66iS/aMrDeqRZVTjpTYeV85O5woXIuvWjjls3UJ362D0g
-         F6zOv/R6VQG4ZLO8/NLOHVqqUTOnGwmKnnzJ036d3m6vvwqbIG5Ngw9uEWbWvfDnWRzW
-         uzHzixfy5wV+3UhER72FwxJxcm50H3rIzHJF+cbqg6zYhsgHvGpGF4wU0UhZmL3e0JWq
-         LgAQ==
-X-Gm-Message-State: AOJu0YxQbNUqY0NjlgoWFjZoJ44xKZWXkJu6LgaEhMc1RuNIoB+WJgzB
-        rDg0nY7A75P0tk6niiK2NgvaBw==
-X-Google-Smtp-Source: AGHT+IFr9xsZjfwDvTwBHGcVgTtLEI1GBBuRSzh3T+EF65VyTJhSbUA2w2LFjVOaI7CnEiC14aVecQ==
-X-Received: by 2002:a17:906:6a19:b0:9a1:c0e9:58ff with SMTP id qw25-20020a1709066a1900b009a1c0e958ffmr8131293ejc.11.1696083401570;
-        Sat, 30 Sep 2023 07:16:41 -0700 (PDT)
+        bh=dbndJi5YFfypa54vy5nBzBG/Wj840NhBH9tsJciX4N0=;
+        b=ZBFWfP+goChbHm3bN09kv4Muc2r/tu2wQ+/Sb105gCzIX4s+j/DFwKBVO6CE9CTmVI
+         kWdeIJyy67gN7x/FM1YC9oO847oZHjI5h3wdcQ9/IB1yf1yCc6Ve7Z4rTjiqaJePeyUb
+         n9iefyz8EW8mW3EsPXrVuAF1uYNtwrZYoobhheNsWV5pl/nxZWGwsTwVQ50FwOWziPUY
+         o2xsQiPqA8h9x9yQtRrJWHDi+qBVpWYAkcfjZEYApBvymGdDKuIVc82sHcNCh17X0QMh
+         aWIa+2Y81dSczLLTQEa/bAEjn5XnlBe4oVkSp9jeWZyDXzLuQUfN1rGoeIVFXADd7D0W
+         +osw==
+X-Gm-Message-State: AOJu0YyfubtEk4Ln6zqkePJndQ8pL1VbmO9pX/+hHCD6OX4gDlC8ttjr
+        RtwLnnm3BhbNpUlStr2/tB1oHw==
+X-Google-Smtp-Source: AGHT+IHih3G2RTH/t2WSx/N9Ziu1QRRP3RWdr0JMxbqO6wO6KvNDOYFFCePqayTuacflmQ7teBkGzA==
+X-Received: by 2002:a5d:564c:0:b0:323:37b4:fbe5 with SMTP id j12-20020a5d564c000000b0032337b4fbe5mr6248488wrw.8.1696083530933;
+        Sat, 30 Sep 2023 07:18:50 -0700 (PDT)
 Received: from [192.168.8.76] ([88.154.47.206])
-        by smtp.gmail.com with ESMTPSA id d2-20020a17090694c200b00977cad140a8sm13939590ejy.218.2023.09.30.07.16.35
+        by smtp.gmail.com with ESMTPSA id b16-20020a5d4d90000000b0031fba0a746bsm3927049wru.9.2023.09.30.07.18.45
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 30 Sep 2023 07:16:41 -0700 (PDT)
-Message-ID: <58ceee36-538c-4427-adf5-2014abfb3fed@linaro.org>
-Date:   Sat, 30 Sep 2023 16:16:35 +0200
+        Sat, 30 Sep 2023 07:18:50 -0700 (PDT)
+Message-ID: <38b9d6fb-2800-4308-bd9e-7e743aa9f175@linaro.org>
+Date:   Sat, 30 Sep 2023 16:18:44 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/5] arm64: boot: dts: qcom: sc8280xp: Add in CAMCC for
- sc8280xp
+Subject: Re: [PATCH v2 1/2] dt-bindings: clocks: qcom,gcc-ipq8074: allow QMP
+ PCI PHY PIPE clocks
 Content-Language: en-US
-To:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        andersson@kernel.org, agross@kernel.org, konrad.dybcio@linaro.org,
+To:     Robert Marko <robimarko@gmail.com>, agross@kernel.org,
+        andersson@kernel.org, konrad.dybcio@linaro.org,
         mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        jonathan@marek.ca, quic_tdas@quicinc.com,
-        vladimir.zapolskiy@linaro.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230930134114.1816590-1-bryan.odonoghue@linaro.org>
- <20230930134114.1816590-6-bryan.odonoghue@linaro.org>
+        quic_tdas@quicinc.com, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230930103316.234103-1-robimarko@gmail.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -111,21 +109,22 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20230930134114.1816590-6-bryan.odonoghue@linaro.org>
+In-Reply-To: <20230930103316.234103-1-robimarko@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 30/09/2023 15:41, Bryan O'Donoghue wrote:
-> Add in CAMCC for sc8280xp. The sc8280xp Camera Clock Controller looks
-> similar to most of the sdmX, smX and now scX controllers.
-> 
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+On 30/09/2023 12:32, Robert Marko wrote:
+> Allow passing QMP PCI PHY PIPE clocks to the IPQ8074 GCC to avoid having
+> to do a global matching by name.
 
-Subject prefix - drop boot:
-arm64: dts: qcom: .........
+I would prefer commit msg refering to hardware, not driver. Basically
+the PCI PHY pipe clocks are inputs to the clock controller.
+
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
