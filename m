@@ -2,60 +2,59 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F864E77375
-	for <linux-clk@archiver.kernel.org>; Sat, 30 Sep 2023 14:15:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BE9CE77374
+	for <linux-clk@archiver.kernel.org>; Sat, 30 Sep 2023 14:16:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234231AbjI3OPC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 30 Sep 2023 10:15:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46048 "EHLO
+        id S234236AbjI3OQD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 30 Sep 2023 10:16:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234194AbjI3OPC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 30 Sep 2023 10:15:02 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DD82C6
-        for <linux-clk@vger.kernel.org>; Sat, 30 Sep 2023 07:14:58 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-98377c5d53eso1975631066b.0
-        for <linux-clk@vger.kernel.org>; Sat, 30 Sep 2023 07:14:58 -0700 (PDT)
+        with ESMTP id S234225AbjI3OQC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 30 Sep 2023 10:16:02 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54ED1CF
+        for <linux-clk@vger.kernel.org>; Sat, 30 Sep 2023 07:15:59 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-9a64619d8fbso2091012666b.0
+        for <linux-clk@vger.kernel.org>; Sat, 30 Sep 2023 07:15:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696083296; x=1696688096; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=UPLUBx2g7DiAOAHNsyhC+pLV3bCH0Ca8LQmdjAxHeBY=;
-        b=gS7A+S1ftQ6NtA9yVkuOyp9/TK52mJaEWmvatOD3p69qB5eAJDOR9GO0bdeuXHvslo
-         Er6+0tQhrYKfDFnBicpF1w2UvIiTxr3VMTyRGVM9cyoWYKDrjGLP1BGUlwxhZm+6g9OP
-         bUqz/vc191Z+cDFyYCZabM+tS0iLIeyuxFMy7dpRkDpdA6iO1RsOUgbBE5qbRrSKd01c
-         W/PV1vUIsEPfWx0s6wYKpi2YXIa6jc2WGibYm7S8hyE/gomCN39Ds1VJMt1PcZPxip4g
-         t3xX/cRYo/Ihaf88t76KfSElC2Q+XfogO35UA1CvlFK+MBhCRRIPNktU+9uL0bjCDWWR
-         YrLw==
+        d=linaro.org; s=google; t=1696083358; x=1696688158; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=m6qCIpSm+6JVcJ+fHCZ4I+fQrJPlPj+kz7Di3jl1By8=;
+        b=caaPlvUh0hcRHMsgUXG4AQB3OLRPuxsV/H5vow+81AhfgJZ1Dy7euirPRw3Ybr0ynf
+         qVEMNsaNvU2EFpNCPUkfAeHFcgH74Yh+u14fWC8wtQNcqPRyIvHnUw0nDPrEMe74WGJY
+         risMZfgjwUOX2JkhfmUOF8l6q+0wZUlQiFGq0/QNg+PDhQPpTeFya2yfzNQn37dMeS+9
+         N7C6szxZWbJXIUqX+8HPieZts8bHx0KLn0WTnMn3BjqALT86lMs8mcYp/s8PeABO4icE
+         6IoLthtrlGqy/dNTxd9wDojvuaSx5dkHy7lTDz03CKc/hqE+Eoc2Kft+StQPRkyvMiZw
+         rq4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696083296; x=1696688096;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UPLUBx2g7DiAOAHNsyhC+pLV3bCH0Ca8LQmdjAxHeBY=;
-        b=coKGE6OcIaltkwxUpWYtWrsnXkDzgxpypB7Gtbg4S1tzNMirFbMbqXQmniJeayscP0
-         Klj4coVle51HTdCU9MrDBfhWxIE3Xlp/aOtENuLPkYOZI5EhSCD7mB+46J4WGFdduUEF
-         8J1HgEicuKzs75QkJhncLT5mY129fdGE8AFEWe34L9a/NBD50Yx67v3o5G37D9F2INbh
-         9fi6vEpNhrwBI0js/9oSxr454XQlReQTBZR19ny+Cuq6t8zWeYAmWAgh9bH+z4p72wro
-         3kBOUpEw8YKC5NficcQaH8IDly5yUZrRtG/PHbGqk2NvWVz6UbPwLz7XoTI59qeSHvwm
-         Al5A==
-X-Gm-Message-State: AOJu0Yykh12zMZ2AnzCDDYkHc3hLZKZ64xyYMyv+7KRWoaxHwr2uUWVb
-        +NAOlJQI+BKstmEm8zrHhB5ObQ==
-X-Google-Smtp-Source: AGHT+IGTmtcOhCXbQH2ItSg1JWeUX1FceFXgDV/bSy9qAQpOW8c4mAVRPIslFCKEzw6PqIReA2/liQ==
-X-Received: by 2002:a17:906:24d:b0:9ae:5db5:149 with SMTP id 13-20020a170906024d00b009ae5db50149mr7390823ejl.35.1696083296519;
-        Sat, 30 Sep 2023 07:14:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1696083358; x=1696688158;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=m6qCIpSm+6JVcJ+fHCZ4I+fQrJPlPj+kz7Di3jl1By8=;
+        b=qVKuk3gm+eLQl80OIZPeV/IfV5RlGdEKy7V9UvUjUMV5ON/n83LOZzVyxHeHqJzdk6
+         Iu6ExmzcA0zloRJVZLV170omJUtUoV6fvxyF6hFi6qk06UOqb9gdljketkv+9H+euN9R
+         r1MkcjR8dzMzcuezG38F025yW1UJHQgDDW1B0YfolZYxmx0DtQOsYcdQyqBraX4g0Wgv
+         zyVdMvMNFoGxK7hQRsqpA1n+iV+ZgXpiY2Q8hip/Xa7risJQukO93ppe/lhhQ+EzWokr
+         xw+l/OlRFyz4l1bpP+hp9r5KCDnyEMhJ75hbV0nR3BNz9ah2gzeDwFVHTb7NaKQ4h85V
+         rAWQ==
+X-Gm-Message-State: AOJu0YxHKD4/I+PcVwxuoAy2e606VJkA3RtQ3BHaEfbLajjeGpDrOaci
+        LsoGwZlhmRdTh/QaiEDjBb7DZA==
+X-Google-Smtp-Source: AGHT+IEk5Nm13dNeGNOTla7qm2LBA5zF98j1XnAPaFHoe7AIXpnptLIteJKo8SPBMie9LMqbnKZZ8w==
+X-Received: by 2002:a17:906:210a:b0:9ae:6ad0:f6db with SMTP id 10-20020a170906210a00b009ae6ad0f6dbmr6095028ejt.71.1696083357690;
+        Sat, 30 Sep 2023 07:15:57 -0700 (PDT)
 Received: from [192.168.8.76] ([88.154.47.206])
-        by smtp.gmail.com with ESMTPSA id d2-20020a17090694c200b00977cad140a8sm13939590ejy.218.2023.09.30.07.14.49
+        by smtp.gmail.com with ESMTPSA id d2-20020a17090694c200b00977cad140a8sm13939590ejy.218.2023.09.30.07.15.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 30 Sep 2023 07:14:56 -0700 (PDT)
-Message-ID: <3b6bf468-cb76-46fb-90be-85a2475cec0e@linaro.org>
-Date:   Sat, 30 Sep 2023 16:14:46 +0200
+        Sat, 30 Sep 2023 07:15:57 -0700 (PDT)
+Message-ID: <d4beb98e-df9e-43a9-9a4b-85962214274d@linaro.org>
+Date:   Sat, 30 Sep 2023 16:15:50 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] dt-bindings: clock: qcom,camcc-common.yaml: Add a
- common file for camcc
+Subject: Re: [PATCH v2 2/5] dt-bindings: clock: Add SM8550 CAMCC yaml
+Content-Language: en-US
 To:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
         andersson@kernel.org, agross@kernel.org, konrad.dybcio@linaro.org,
         mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
@@ -65,8 +64,7 @@ To:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20230930134114.1816590-1-bryan.odonoghue@linaro.org>
- <20230930134114.1816590-2-bryan.odonoghue@linaro.org>
-Content-Language: en-US
+ <20230930134114.1816590-3-bryan.odonoghue@linaro.org>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -112,7 +110,7 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20230930134114.1816590-2-bryan.odonoghue@linaro.org>
+In-Reply-To: <20230930134114.1816590-3-bryan.odonoghue@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -120,89 +118,13 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 30/09/2023 15:41, Bryan O'Donoghue wrote:
-> Various of the camcc bindings are repeated serially. Aggregate the
-> common defintions into one place declaring common required in one place
-> also.
-> 
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> ---
->  .../bindings/clock/qcom,camcc-common.yaml     | 44 +++++++++++++++++++
->  .../bindings/clock/qcom,camcc-sm8250.yaml     | 32 ++------------
->  .../bindings/clock/qcom,sc7180-camcc.yaml     | 23 ++--------
->  .../bindings/clock/qcom,sc7280-camcc.yaml     | 23 ++--------
->  .../bindings/clock/qcom,sdm845-camcc.yaml     | 23 ++--------
->  .../bindings/clock/qcom,sm6350-camcc.yaml     | 13 ++----
->  .../bindings/clock/qcom,sm8450-camcc.yaml     | 33 ++------------
->  7 files changed, 67 insertions(+), 124 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,camcc-common.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,camcc-common.yaml b/Documentation/devicetree/bindings/clock/qcom,camcc-common.yaml
-> new file mode 100644
-> index 000000000000..ce0140985fe7
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,camcc-common.yaml
-> @@ -0,0 +1,44 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,camcc-common.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Camera Clock & Reset Controller common properties
-> +
-> +maintainers:
-> +  - Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> +
-> +description: |
-> +  Qualcomm camera clock control module provides the clocks, resets and power
-> +  domains on Qualcomm SoCs.
-> +
-> +allOf:
-> +  - $ref: qcom,gcc.yaml#
-> +
-> +properties:
-> +  compatible: true
+> The SM8550 should have its own yaml description file, not be listed as a
+> compatible string of the SM8450 CAMCC driver since SM8450 and SM8550
+> have separate CAMCC drivers.
 
-Drop, not needed.
-
-> +
-> +  clocks:
-> +    minItems: 1
-> +    maxItems: 4
-
-No real benefit of these in common schema. It's still not precise :/
-
-> +
-> +  clock-names:
-> +    minItems: 1
-> +    maxItems: 4
-
-The same.
-
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +    description:
-> +      A phandle and PM domain specifier for the MMCX power domain.
-
-Not all bindings have it, so again not much benefits to have it in
-common place.
-
-> +
-> +  required-opps:
-> +    maxItems: 1
-> +    description:
-> +      OPP node describing required MMCX performance point.
-> +
-> +required:
-> +  - compatible
-
-Drop
-
-> +  - clocks
-
-As well... so this leads us to almost empty common binding. That's why I
-suggested to use qcom,gcc.yaml.
+Linux driver architecture does not shape bindings. If devices are
+similar, it does not matter that you have two drivers. It was never a
+valid reason to split bindings.
 
 
 Best regards,
