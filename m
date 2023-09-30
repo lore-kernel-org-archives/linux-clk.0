@@ -2,143 +2,131 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68BBEE77377
-	for <linux-clk@archiver.kernel.org>; Sat, 30 Sep 2023 15:53:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AB15E7735F
+	for <linux-clk@archiver.kernel.org>; Sat, 30 Sep 2023 16:39:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232986AbjI3PxU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 30 Sep 2023 11:53:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53784 "EHLO
+        id S234544AbjI3Qjm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 30 Sep 2023 12:39:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232709AbjI3PxT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 30 Sep 2023 11:53:19 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6E7E9C
-        for <linux-clk@vger.kernel.org>; Sat, 30 Sep 2023 08:53:17 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-9b2cee55056so373789366b.3
-        for <linux-clk@vger.kernel.org>; Sat, 30 Sep 2023 08:53:17 -0700 (PDT)
+        with ESMTP id S234543AbjI3Qjm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 30 Sep 2023 12:39:42 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E16FE3
+        for <linux-clk@vger.kernel.org>; Sat, 30 Sep 2023 09:39:39 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-5046bf37ec1so14254929e87.1
+        for <linux-clk@vger.kernel.org>; Sat, 30 Sep 2023 09:39:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696089196; x=1696693996; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1696091978; x=1696696778; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=/2uVIZFE3aqCQS1tNVd83Z0RiNW7hSOeczOsLxQAFFU=;
-        b=shq+ZTeyMPY+oc3CaoO4atJOOJtMRN8QOjRkBNOSPc6hNIPU15somPdNVNeZPEZk4G
-         pAn2bAaNBb5BXOYtsuIl7bGVx1xz2iAAnmgwHt2lRYJ0JmWX67Q5RBhVjnthLRp1JSIA
-         04cRB95iqQHWXwA2DWUe+itfGcXk0ZRfhfke5+vngPq9HHq0vs6PnCnhKpRiqBzaHSK/
-         Z3oLLwOyXcBG/NV1z+x01uBXTVzC82tA03k4dxFXUm6+05vcD/XgB6PvONyz4S5S34Yf
-         25TN4d4sVeQOMxHnvFpBxSKUbpCWfirLM5hQZEhRSM65v3pISlaCMKc5uVOuvioMsmLZ
-         x+lQ==
+        bh=YsYBBmmijjJDdkK90sdg+zbm+nxIwxTrAlWHp+1fd+Y=;
+        b=tKfzMxouj0rTv7eFFPkSoAy5jZG53xL9Di7sLREnIWQ359Kd/4SbaHXTuw825QOVLL
+         xAn1JpUdC9yhcC3RpUNp76QafwEC5qfrRC42TDECWViN/VbEK8480KaDNdC51yWUPn05
+         CTxO8kGSN96lmcF4Syu0KYkYmtKccTTGIkqpyQxNZrZVog6cNE1L+sNR0jDEHk/i2NvB
+         s5+tLbx6dxBWhG/uM3UHEO8Sh4qiIkfrwg3CCgv4dGPn+AvUCM7wVDmK1a9gEWkeczVz
+         L65xGTZfw9X3synDM8oUM8gBgLfaKLqbimDry9Oe3v19H6A7bUYocPb9cG/M+hMhgA5o
+         7ZdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696089196; x=1696693996;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1696091978; x=1696696778;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/2uVIZFE3aqCQS1tNVd83Z0RiNW7hSOeczOsLxQAFFU=;
-        b=p2b8Oozs6+oBHdhzYX3qXEw2oDPszuPnjfKO5hHkZ0TubLabOtryaMz/PnGqd46rZr
-         oJe/iTJL4JtZtQ75sZ2MLwZXk9enxUHKaFg7gxJd9VdGNzQ/raQRPJT8gk39N4OquWKG
-         VZafWsxcY4lbR2BRUmLAR3ajR+mmZYyyTN9fdaos/lTW3nH9p/SM5d8pLBk2av9hHfga
-         0jFICM27+dfSsHixnjKJTJIAEfKJv4uDeZv6UtgR69hbxinBGjjN8ZuN4TxDozHtbi47
-         957eHVVbf7WtVaCa43FRVnlBDCn2TyBPi2FbwOCEPrpa8yj9wxVwrsTDRUNutUtkVSQF
-         mcFQ==
-X-Gm-Message-State: AOJu0YxW1/LRlHLoFmRlfkC1ZolFCjbviZ8FMXgdPlcqQCATnmi2Z8wN
-        M9K+sgk1Q36tiKoKrguZykdsNw==
-X-Google-Smtp-Source: AGHT+IHv04U+mJ7vZ5Z31pa8YFrhhYBt1IRl/UG6TdlATssdiEqeZL9SEyqOLQu437jPM/gAdYnhCw==
-X-Received: by 2002:a17:906:8a47:b0:994:4095:3abf with SMTP id gx7-20020a1709068a4700b0099440953abfmr6288847ejc.14.1696089196387;
-        Sat, 30 Sep 2023 08:53:16 -0700 (PDT)
-Received: from [192.168.8.76] ([88.155.12.231])
-        by smtp.gmail.com with ESMTPSA id lf11-20020a170907174b00b009ad81554c1bsm14108157ejc.55.2023.09.30.08.53.11
+        bh=YsYBBmmijjJDdkK90sdg+zbm+nxIwxTrAlWHp+1fd+Y=;
+        b=D/FXFeAnx8DIKS5vC19vgSYCvvTR2saA6+pHaxhFJoxPOwAy1yQzs1QOmxRMCott4V
+         VY8PO5eYQQ1T6aGMub3LWml71RWl8MeGWMp9EQ5zlLgau9w/wgSJcrojWoDe1YLoluvl
+         7o0whxsOco0U4cS+TBKTDkwhDqf9lNB4mP91Uk7nSnOBz/VwAcaLeCN3k8EAMj0wE4nb
+         HM7+NVx87Fa0IreqbrZqmRVEJnHEnASieo1r1d731dOgena5i5AP/GUCnWyviWJzOFvf
+         84w0tQjOpOmJCVVOGj//znpQWQDgq/vtFAVnd0ZSzPdGBld1wbHstPqAt7EHoMKS8d4D
+         anrg==
+X-Gm-Message-State: AOJu0YzunHkpvJ8EfOIXEAz874t6W2lbCvDUzkyoG2kpTra2yIWZ3W/Y
+        mm1y7Q2Dzp7+E+Jv+1KATEDWdw==
+X-Google-Smtp-Source: AGHT+IFr3dQkMdLil9aL+fiLH6DJaCxg6l8S9ad5Yn5oom2bZvCmuy/LmStKXHHz+8npOZLwHjMfzA==
+X-Received: by 2002:a05:6512:3e20:b0:503:28cb:c073 with SMTP id i32-20020a0565123e2000b0050328cbc073mr7954114lfv.58.1696091977744;
+        Sat, 30 Sep 2023 09:39:37 -0700 (PDT)
+Received: from ?IPV6:2a00:f41:906b:9c4e:a878:12c9:4d61:a6f2? ([2a00:f41:906b:9c4e:a878:12c9:4d61:a6f2])
+        by smtp.gmail.com with ESMTPSA id c19-20020a197613000000b005033948f108sm3895415lff.272.2023.09.30.09.39.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 30 Sep 2023 08:53:16 -0700 (PDT)
-Message-ID: <51abc760-8d6a-41b6-8a10-e03be5edc486@linaro.org>
-Date:   Sat, 30 Sep 2023 17:53:11 +0200
+        Sat, 30 Sep 2023 09:39:37 -0700 (PDT)
+Message-ID: <ba0399d3-c3a5-0458-3668-e734fafe2f1a@linaro.org>
+Date:   Sat, 30 Sep 2023 18:39:33 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] Add C3 SoC PLLs and Peripheral clock
-Content-Language: en-US
-To:     Xianwei Zhao <xianwei.zhao@amlogic.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v2 4/5] clk: qcom: camcc-sc8280xp: Add sc8280xp CAMCC
+To:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        andersson@kernel.org, agross@kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        jonathan@marek.ca, quic_tdas@quicinc.com,
+        vladimir.zapolskiy@linaro.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Neil Armstrong <neil.armstrong@linaro.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-References: <20230928063448.3544464-1-xianwei.zhao@amlogic.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20230928063448.3544464-1-xianwei.zhao@amlogic.com>
-Content-Type: text/plain; charset=UTF-8
+References: <20230930134114.1816590-1-bryan.odonoghue@linaro.org>
+ <20230930134114.1816590-5-bryan.odonoghue@linaro.org>
+Content-Language: en-US
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20230930134114.1816590-5-bryan.odonoghue@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 28/09/2023 08:34, Xianwei Zhao wrote:
-> Add C3 SoC PLLs and Peripheral clock controller dt-bindings.
-> Add PLLs and Peripheral clock controller driver for C3 SOC.
+
+
+On 9/30/23 15:41, Bryan O'Donoghue wrote:
+> Add the sc8280xp CAMCC driver which follows the sdm845 CAMCC lineage
+> with additional CCI and IFE blocks and more granular clock parentage.
 > 
-> Xianwei Zhao (4):
->   dt-bindings: clock: add Amlogic C3 PLL clock controller bindings
->   dt-bindings: clock: add Amlogic C3 peripherals clock controller
->     bindings
->   clk: meson: C3: add support for the C3 SoC PLL clock
->   clk: meson: c3: add c3 clock peripherals controller driver
-> 
+> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> ---
+[...]
 
-This was absolutely never tested :(
+> +static struct clk_branch camcc_gdsc_clk = {
+> +	.halt_reg = 0xc1e4,
+> +	.halt_check = BRANCH_HALT,
+> +	.clkr = {
+> +		.enable_reg = 0xc1e4,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "camcc_gdsc_clk",
+> +			.parent_hws = (const struct clk_hw*[]){
+> +				&camcc_xo_clk_src.clkr.hw,
+> +			},
+> +			.num_parents = 1,
+> +			.flags = CLK_IS_CRITICAL | CLK_SET_RATE_PARENT,
+"meh"
 
-It does not look like you tested the bindings, at least after quick
-look. Please run `make dt_binding_check` (see
-Documentation/devicetree/bindings/writing-schema.rst for instructions).
-Maybe you need to update your dtschema and yamllint.
+Is this clock only necessary for the GDSC to turn on?
 
-Best regards,
-Krzysztof
+I wanted to say "just chuck it into gdsc.cxcs", but upon actually 
+reading the code, I realized that just doing so doesn't event turn the 
+referenced clocks on.. That's.. a realization.. I think I'll be able to 
+solve a couple bugs with this knowledge..
 
+
+
+[...]
+
+> +	ret = qcom_cc_really_probe(pdev, &camcc_sc8280xp_desc, regmap);
+This conflicts with [1]
+
+> +	if (ret)
+> +		goto err_put_rpm;
+
+[...]
+
+> +
+> +static int __init camcc_sc8280xp_init(void)
+> +{
+> +	return platform_driver_register(&camcc_sc8280xp_driver);
+> +}
+> +subsys_initcall(camcc_sc8280xp_init);
+  module_platform_driver, please
+
+Konrad
+
+[1] 
+https://lore.kernel.org/linux-arm-msm/20230923112105.18102-4-quic_luoj@quicinc.com/
