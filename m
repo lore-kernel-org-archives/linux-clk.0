@@ -2,95 +2,60 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0D43E784B0
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Oct 2023 17:00:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BC2AE784B0
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Oct 2023 17:11:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238602AbjJBRAg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 Oct 2023 13:00:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43418 "EHLO
+        id S238671AbjJBRL3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 Oct 2023 13:11:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238609AbjJBRAe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Oct 2023 13:00:34 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 707ADE1;
-        Mon,  2 Oct 2023 10:00:29 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id ffacd0b85a97d-31f71b25a99so10506f8f.2;
-        Mon, 02 Oct 2023 10:00:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696266028; x=1696870828; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=64nOEqf6/mjPbfcle6tVHCIMmPQhDPH56TTUSyH+RFM=;
-        b=aIy3mFuvz7Llw1SYC1etGsUvvRuSbgA+XCSNe/qA2KbH5XEL9RKE681JAilNrpjglj
-         NqBw8RIf8Gf94stoft6I95EPZTDYvikUxyWFOGd08bLo7qjvZJKm3231bTPxyeaD9GUs
-         skwxsrsyZFHMIhu3NjRIgpAZLZM4+TlxSoIFijLzOpUT/lOcauVE9i3Xm5e41tM//TC9
-         PVY1NZOjK9BEpdE64s3GWDHchGbN4IYi6Mr4vdViPUxdFhjVdNEXn6Gjvficre3Wjuzs
-         GItko1Mgla/0aZvR8P1K6n9KIbWxbjZ6kwmRK60ZjX2B0r8/a4oJeTx60DELQ/zm8VaT
-         snGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696266028; x=1696870828;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=64nOEqf6/mjPbfcle6tVHCIMmPQhDPH56TTUSyH+RFM=;
-        b=EB+Id5sVIhrMr69hEqU9+i0qcOu2It2Em2zBjgN7H7B7TGDxhunoJWiQnIzYNoTyd5
-         5p7Qum/3ajqMTv4PJA1aklmUnF2AZhrzf+4vKFFx09A9YCbVDDFucb6X8bm93HghKCFV
-         xiMaA7HYMH4yU47jJsaeiqNGe9Q8qLsRDI53I93HLrBX2KJIJCgqlR6seiGK5LASf2Ed
-         sNKAcnTXK7vo8pJvf3ZwlZN65/0xfPtzE2s5hI9h3SrGfBfmm2NQDjB5iuN8otg6L9ZT
-         bQDisYuenswv9QdG2FXwltOOH0Tt5sfzw2ln6QNm8PNfDxi59MAYkAkrGsYaZbJsxDJc
-         v1dw==
-X-Gm-Message-State: AOJu0YyP5ezAIU5NGBqnuVEf0wlSYvKzlZrW1RW3+6avt1RVM3NH5Hn4
-        Yusw7051YKmyL6MwQJRTKsQ=
-X-Google-Smtp-Source: AGHT+IHpcMlgO+FESOdL7EI4eJDVfSdlQRwVtLaTvR3QI4UuoRJ/vT5SXk3mgLz5PVu1tjXbHe3UIQ==
-X-Received: by 2002:adf:e912:0:b0:31a:d8c0:cb8b with SMTP id f18-20020adfe912000000b0031ad8c0cb8bmr10447917wrm.25.1696266027424;
-        Mon, 02 Oct 2023 10:00:27 -0700 (PDT)
-Received: from archlinux.local (BC249365.dsl.pool.telekom.hu. [188.36.147.101])
-        by smtp.gmail.com with ESMTPSA id s16-20020a05640217d000b0053420e55616sm11338426edy.75.2023.10.02.10.00.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Oct 2023 10:00:26 -0700 (PDT)
-From:   =?UTF-8?q?Barnab=C3=A1s=20Cz=C3=A9m=C3=A1n?= <trabarni@gmail.com>
-To:     Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        with ESMTP id S238643AbjJBRL2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Oct 2023 13:11:28 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C3F82AD;
+        Mon,  2 Oct 2023 10:11:24 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 026D6C15;
+        Mon,  2 Oct 2023 10:12:03 -0700 (PDT)
+Received: from pluto (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 23EAF3F59C;
+        Mon,  2 Oct 2023 10:11:23 -0700 (PDT)
+Date:   Mon, 2 Oct 2023 18:11:21 +0100
+From:   Cristian Marussi <cristian.marussi@arm.com>
+To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc:     Sudeep Holla <sudeep.holla@arm.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?Barnab=C3=A1s=20Cz=C3=A9m=C3=A1n?= <trabarni@gmail.com>
-Subject: [PATCH] clk: qcom: gcc-msm8953: fix stuck gcc_usb30_master_clk
-Date:   Mon,  2 Oct 2023 19:00:21 +0200
-Message-ID: <20231002170021.192740-1-trabarni@gmail.com>
-X-Mailer: git-send-email 2.42.0
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v3 0/2] firmware: arm_scmi: clock: support parents
+ commands
+Message-ID: <ZRr5udlXF0L3BgPA@pluto>
+References: <20231001-scmi-clock-v2-v3-0-898bd92d8939@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231001-scmi-clock-v2-v3-0-898bd92d8939@nxp.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-According to downstream dwc3-msm source this clock has FSM dependency on
-gcc_pcnoc_usb30_clk so enabling it would fail if latter isn't enabled.
-This patch add works around this issue by changing parent of
-gcc_usb30_master_clk to gcc_pcnoc_usb30_clk. This is acceptable because
-both clocks have same parent and are branches/gates.
+On Sun, Oct 01, 2023 at 12:38:42PM +0800, Peng Fan (OSS) wrote:
+> V2:
+>  Add determine_rate hooks
+> 
+> SCMI v3.2 spec adds parents commands, this patchset is to support them:
+> CLOCK_POSSIBLE_PARENTS_GET
+> CLOCK_PARENT_SET
+> CLOCK_PARENT_GET
+> 
 
-Signed-off-by: Barnabás Czémán <trabarni@gmail.com>
----
- drivers/clk/qcom/gcc-msm8953.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Peng,
 
-diff --git a/drivers/clk/qcom/gcc-msm8953.c b/drivers/clk/qcom/gcc-msm8953.c
-index 3e5a8cb14d4d..20639340e8a6 100644
---- a/drivers/clk/qcom/gcc-msm8953.c
-+++ b/drivers/clk/qcom/gcc-msm8953.c
-@@ -3645,7 +3645,7 @@ static struct clk_branch gcc_usb30_master_clk = {
- 		.hw.init = &(struct clk_init_data) {
- 			.name = "gcc_usb30_master_clk",
- 			.parent_hws = (const struct clk_hw*[]){
--				&usb30_master_clk_src.clkr.hw,
-+				&gcc_pcnoc_usb3_axi_clk.clkr.hw,
- 			},
- 			.num_parents = 1,
- 			.ops = &clk_branch2_ops,
--- 
-2.42.0
+thanks for your update.
 
+The SCMI part looks good to me but I'll made a few notes on clk-scmi
+driver
+
+Thanks,
+Cristian
