@@ -2,52 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFC76E74902
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Oct 2023 18:09:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C0D8E74906
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Oct 2023 18:09:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238740AbjJBSJe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 Oct 2023 14:09:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48496 "EHLO
+        id S229546AbjJBSJf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 Oct 2023 14:09:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238739AbjJBSJc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Oct 2023 14:09:32 -0400
-Received: from mail-qk1-x72d.google.com (mail-qk1-x72d.google.com [IPv6:2607:f8b0:4864:20::72d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E23BAD
-        for <linux-clk@vger.kernel.org>; Mon,  2 Oct 2023 11:09:29 -0700 (PDT)
-Received: by mail-qk1-x72d.google.com with SMTP id af79cd13be357-7740cedd4baso5811085a.2
-        for <linux-clk@vger.kernel.org>; Mon, 02 Oct 2023 11:09:29 -0700 (PDT)
+        with ESMTP id S238745AbjJBSJd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Oct 2023 14:09:33 -0400
+Received: from mail-qk1-x730.google.com (mail-qk1-x730.google.com [IPv6:2607:f8b0:4864:20::730])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3C89C6
+        for <linux-clk@vger.kernel.org>; Mon,  2 Oct 2023 11:09:30 -0700 (PDT)
+Received: by mail-qk1-x730.google.com with SMTP id af79cd13be357-7741c2fae49so7038785a.0
+        for <linux-clk@vger.kernel.org>; Mon, 02 Oct 2023 11:09:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=hefring-com.20230601.gappssmtp.com; s=20230601; t=1696270169; x=1696874969; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NfCq6MAu8bRwi9TEgatpoY4BVdbPJq248wgHhwcLCxU=;
-        b=o4IDCPuTM8iyeYj8RegdYI1xVjbpUCBHKWJXxY37aNY4dpbT3l0sPIoh+rKuDDRw+8
-         bPpPesxNPTMPMM5TJCKsQWxG5Cr0oVocEO5vfZFLTmh0RDl8fUvSchVFArSFLYhap/v3
-         2I/F7mh+85TUWvxMMFChlOr7Wp8CiwrvMq6FLo4tCDFK2U+OFPucTnZ5fCDD9nAiW2+V
-         66tRvMqNJFNe2zgJpxOPLCex4rB9ydbdMaZwF/u4c6irMu6TVAALJO+yT14Hbu6uew5U
-         MmnFEvbmHoqTyaW69kW5qWsKLgSKnm+XWfeGf309RayaU/6RbMnkhGvmMvxKREpUIzWA
-         K+NA==
+        d=hefring-com.20230601.gappssmtp.com; s=20230601; t=1696270170; x=1696874970; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K/9udtHJxdUnIEfNuTeE6b1Yaqw4dJt+yBS5HPABR3I=;
+        b=FXjpC1BfcbSAxOKwAOkJi1e5KiObsmqRyrZ1O755PF3BlijVsKtrR3kQOThxz/+a0k
+         mVXmmmtNfc6ENPieANrBm/FwXLpuoi5mRikMgUENjRRlhiL43fcH+n7VWd+duBxzSCrj
+         FKBb14j83CS2CamlUZBvccctthw1Aumqi1TEW2AyGYnuza60Qk2bzLWt3lIDmT8n7T3J
+         ejMhEBkw/KrCOpdQmW4VVdx5xUpGKhOEFxsoufcQlzxlaqj9+P19GGQO0jEkXpc3UYgN
+         E5Z+FXfq/OT/a1BkePzRvxfI9NZ7lJHqSiTv90gh7P1q/b9Q5PwtkYSqgYZMsVqDpBvd
+         YAQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696270169; x=1696874969;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NfCq6MAu8bRwi9TEgatpoY4BVdbPJq248wgHhwcLCxU=;
-        b=MFDG7iicp2Q/Lz/oru/Fyw3UQ8uueyzrHAMo07s7TnvtneGtNQfJjVszLxYzLdAVT6
-         aqDHlOWB3IY+gj2Tni3XNhJl870DjH9CqNDuYdGdjXjsXTaRpBNiUAl8KSo7/QN58+Qm
-         RaQd4rJ7B0Qhpy6LejGxjeDzMDfLesAV06sg0UOD2lo+RKxJJAU3yZDu+Jk5x6OsSqvu
-         wi7KZkXzHLLLO72fBcz1G4iNuR8t9QWvuT0pleAXXBAi7W+yyBlZ9/HCCKL91jIfFEmx
-         y1juzi1BCPcwDeL9BlAkfqv2feKpv2UMK8zSLsAfQyy5a5R1R8+vUleR0wyevCq0BtHs
-         lWBA==
-X-Gm-Message-State: AOJu0YxGC9gon1y77VUVwdrF2ShAlcIb2fLWsSN399WL5tafSHOkGwWC
-        bhG8keL1QWYwW4y8qFrz8RMBWw==
-X-Google-Smtp-Source: AGHT+IHop+Asiy9bLSfXRnllAQF/F67qbTBnzT0eLQO8TWH47NHOTuxYVaMToaBRfrPoZTYvNxMALg==
-X-Received: by 2002:a05:620a:40c4:b0:774:1ac2:79be with SMTP id g4-20020a05620a40c400b007741ac279bemr16806248qko.53.1696270168810;
-        Mon, 02 Oct 2023 11:09:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1696270170; x=1696874970;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=K/9udtHJxdUnIEfNuTeE6b1Yaqw4dJt+yBS5HPABR3I=;
+        b=Qddxb6oW4nYTKQ088y50CJyWvcU8VlGGtTXcKQnkDEP71bMWGXvtBIHYWz7pgtYwKX
+         2VvfrnMXtb0UczxPTZN4U+XZWkxt67rwdX8YfvepYDqr08U+f4JPM43bV1te4fd4rtXy
+         ncKXtqZnJq3yKTdTPPHbI+hgn4wLEyX9SeetlEdXnmP/D8DhbcrE6VwQKetg+5libEeN
+         WGbo6oVe+HEA+sa81TUCPFV9LytW1sCMB1UGRcwaObyajev9O4wGwydE+g5PTSHGPVUB
+         BTBdL0qRmg53uZTRMMM6DC3PqOQheC+wfh8knK1eDb25h5ZUTwluhNnPP+xty1rJwDgg
+         ZKEA==
+X-Gm-Message-State: AOJu0YwdZl5QOV/OQrospJMYEmUQTksFapR7yRy5sDinZdQzz7hy4IKK
+        FiipdDPeSJDycVZx3G/xPPYi6Q==
+X-Google-Smtp-Source: AGHT+IGwixskDpdw9/a1WqqdPBN+k/f7EbXZs8t1/jSWdyRBC7cYwnhvEjFKQCihuGojDRTAfr1XbA==
+X-Received: by 2002:a05:620a:b5a:b0:770:9bd2:b3be with SMTP id x26-20020a05620a0b5a00b007709bd2b3bemr11139670qkg.5.1696270170028;
+        Mon, 02 Oct 2023 11:09:30 -0700 (PDT)
 Received: from localhost.localdomain ([50.212.55.89])
-        by smtp.gmail.com with ESMTPSA id w15-20020ae9e50f000000b0077423f849c3sm7390255qkf.24.2023.10.02.11.09.27
+        by smtp.gmail.com with ESMTPSA id w15-20020ae9e50f000000b0077423f849c3sm7390255qkf.24.2023.10.02.11.09.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Oct 2023 11:09:28 -0700 (PDT)
+        Mon, 02 Oct 2023 11:09:29 -0700 (PDT)
 From:   Ben Wolsieffer <ben.wolsieffer@hefring.com>
 To:     linux-stm32@st-md-mailman.stormreply.com,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -60,33 +61,73 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Ben Wolsieffer <ben.wolsieffer@hefring.com>
-Subject: [PATCH 0/2] ARM: stm32: add clock for pwrcfg syscon
-Date:   Mon,  2 Oct 2023 14:08:52 -0400
-Message-ID: <20231002180854.1603452-1-ben.wolsieffer@hefring.com>
+Subject: [PATCH 1/2] clk: stm32: initialize syscon after clocks are registered
+Date:   Mon,  2 Oct 2023 14:08:53 -0400
+Message-ID: <20231002180854.1603452-2-ben.wolsieffer@hefring.com>
 X-Mailer: git-send-email 2.42.0
+In-Reply-To: <20231002180854.1603452-1-ben.wolsieffer@hefring.com>
+References: <20231002180854.1603452-1-ben.wolsieffer@hefring.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The STM32F4/7 pwrcfg syscon was missing its clock, making it impossible
-to use after clk_disable_unused(). Simply adding the clock creates a
-circular dependency, because the syscon is used by the clock driver.
-This series resolves this dependency and then adds the clock.
+The stm32-power-config syscon (PWR peripheral) is used in this driver
+and the STM32 RTC driver to enable write access to backup domain
+registers. The syscon's clock has a gate controlled by this clock
+driver, but this clock is currently not registered in the device tree.
+This only happens to work currently because all relevant clock setup and
+RTC initialization happens before clk_disabled_unused(). After this
+point, all syscon register writes are ignored.
 
-I tested this on a STM32F746 and verified that syscon writes now
-succeed even after clk_disable_unused().
+If we simply add the syscon clock in the device tree, we end up with a
+circular dependency because the clock has not been registered at the
+point this driver requests the syscon.
 
-Ben Wolsieffer (2):
-  clk: stm32: initialize syscon after clocks are registered
-  ARM: dts: stm32: add pwrcfg clock for stm32f4/7
+This patch avoids this circular dependency by moving the syscon lookup
+after the clocks are registered. This does appear to create a possible
+race condition where someone could attempt to perform an operation on a
+backup domain clock before the syscon has been initialized. This would
+result in the operation having no effect because backup domain writes
+could not be enabled. I'm not sure if this is a problem or if there is
+a way to avoid it.
 
- arch/arm/boot/dts/st/stm32f429.dtsi |  1 +
- arch/arm/boot/dts/st/stm32f746.dtsi |  1 +
- drivers/clk/clk-stm32f4.c           | 12 ++++++------
- 3 files changed, 8 insertions(+), 6 deletions(-)
+Signed-off-by: Ben Wolsieffer <ben.wolsieffer@hefring.com>
+---
+ drivers/clk/clk-stm32f4.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
+diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+index 07c13ebe327d..a88e762d2b5e 100644
+--- a/drivers/clk/clk-stm32f4.c
++++ b/drivers/clk/clk-stm32f4.c
+@@ -1697,12 +1697,6 @@ static void __init stm32f4_rcc_init(struct device_node *np)
+ 		return;
+ 	}
+ 
+-	pdrm = syscon_regmap_lookup_by_phandle(np, "st,syscfg");
+-	if (IS_ERR(pdrm)) {
+-		pdrm = NULL;
+-		pr_warn("%s: Unable to get syscfg\n", __func__);
+-	}
+-
+ 	match = of_match_node(stm32f4_of_match, np);
+ 	if (WARN_ON(!match))
+ 		return;
+@@ -1894,6 +1888,12 @@ static void __init stm32f4_rcc_init(struct device_node *np)
+ 
+ 	of_clk_add_hw_provider(np, stm32f4_rcc_lookup_clk, NULL);
+ 
++	pdrm = syscon_regmap_lookup_by_phandle(np, "st,syscfg");
++	if (IS_ERR(pdrm)) {
++		pdrm = NULL;
++		pr_warn("%s: Unable to get syscfg\n", __func__);
++	}
++
+ 	return;
+ fail:
+ 	kfree(clks);
 -- 
 2.42.0
 
