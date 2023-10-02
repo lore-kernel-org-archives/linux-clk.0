@@ -2,97 +2,106 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D74C2E784A4
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Oct 2023 07:03:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4CE4E784A4
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Oct 2023 07:04:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235620AbjJBHDR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 Oct 2023 03:03:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38190 "EHLO
+        id S235657AbjJBHEp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 Oct 2023 03:04:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235690AbjJBHDP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Oct 2023 03:03:15 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D99E10C
-        for <linux-clk@vger.kernel.org>; Mon,  2 Oct 2023 00:03:10 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-4054f790190so153395495e9.2
-        for <linux-clk@vger.kernel.org>; Mon, 02 Oct 2023 00:03:10 -0700 (PDT)
+        with ESMTP id S235641AbjJBHEo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Oct 2023 03:04:44 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCB3CBD
+        for <linux-clk@vger.kernel.org>; Mon,  2 Oct 2023 00:04:41 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id ffacd0b85a97d-31fa15f4cc6so15538186f8f.2
+        for <linux-clk@vger.kernel.org>; Mon, 02 Oct 2023 00:04:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696230189; x=1696834989; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8xam3PZVeEtEQPfmOLn7BWSBTDM+HLGUGDwJNItVyho=;
-        b=u5TYZ0LML/BHbbUO6ZE8ywCKS+bO6q05F7c/5FxThqpm8FhB4hPosnXNY9BnVoo/43
-         0PFrjY9hlaivK8J/qDvWj7tIo83hAYbJPQyBWpYAKI6xZ7NcZ/ZyvZo/LG4fsDUDK40E
-         DviiDfcPlkvBmpgTF8VyLnbXv0c3z9a3p4j+mmM1BVENrk4aMMo99BJJesCxf/pHVcWG
-         Bytpy6hLrV46l5rHbyTbuTtr+bynREab8Qt5/KZlqy+3lGD1wGOVHjJVcD8VpGl3ztSU
-         oYC/V6LRaCQs3ZcnhU6Hfp3QxFrgibTEZWiZzfF9Du+PDTKKDrPKvUM2Wxs+sOQbO1h8
-         aUoQ==
+        d=linaro.org; s=google; t=1696230280; x=1696835080; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=S7ijRdP/7w6YuyMyRRQZzwnMWCZUlvsf+At2pKxS9oA=;
+        b=TJLEzUQ51CsBW31A8R8VKBpzY9o/tgTYx+meecwuCsWKldc7bIaXW+lOVXlmaBHh4M
+         kNTaSFoGLJiUiCD0vTHNvuNKXckXuORu8ZBZURhgbsaJxOd/i6yG67+2nzakHNQi4PHd
+         tWOHPGap505zKlB7jxEhZrPHAZG/qqlMS4HOswi/W0+dIFYDZTvwt6xOs3GVTMLktlfV
+         lF5BVX+n2lrxRbaoyU16QxVm9fWvVyjLI6vN/DaMBAS4LPMgdW5QCqkbrys3+sr2B7au
+         v5w/ikyV68gMMxVdqqtbFMo+SzBpxQAvDvyTimSahI7FYWzCqtqUbpzrmV9ltcUvnZQG
+         T/KQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696230189; x=1696834989;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8xam3PZVeEtEQPfmOLn7BWSBTDM+HLGUGDwJNItVyho=;
-        b=mZKif+crFqat1s+0GuuNKOSetEFkGllWD5FCm43GDsJd4A7NHVANzN9SBHar7RGoSf
-         nMJOqIbwoYQtDpEKjbOpeyni8KgCzioclDltVgbVLGT4K61kVPl0Ki+yi9A5WXrqVRfU
-         xLeZW9to8k8V8NoRmohsAOV4WlDO2OnyFxOjywS92+I+AkkFJZD1klfPQdCZ01GY3HbC
-         PVN6YhNjUgje49wc8MuTiZ/QiqY8C8cu112NUrPTuAgpGCKYxW4X3s/WzlHRdGABWg1b
-         vSbn0V0AKWTmcoNwF0wv9wXnyqwhefZP1y1uT8RvdecjsEPrIZtJ3scfLSpGoIpwaIBp
-         ZusQ==
-X-Gm-Message-State: AOJu0Yx9CNPWJBSL73a9qeaLK9enYDsL9Z46lsnn5kEnaphcf4A3UvFw
-        nc3eaEa7a/pzpMyt5LJIgCk22g==
-X-Google-Smtp-Source: AGHT+IHe/uakDLQktyMmNkscQDeTYcwcQmvAInoA17Wx3S0bsUubjmPjLLx5Je6hz+4d9qyLvWv7uA==
-X-Received: by 2002:a7b:cbc8:0:b0:3ff:ca80:eda3 with SMTP id n8-20020a7bcbc8000000b003ffca80eda3mr8715560wmi.10.1696230189198;
-        Mon, 02 Oct 2023 00:03:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1696230280; x=1696835080;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=S7ijRdP/7w6YuyMyRRQZzwnMWCZUlvsf+At2pKxS9oA=;
+        b=IYYJcu7O+myzBdsreiXZ/moKifrT8MZ1C2soAzOtViKApeTUeGW7vqbczYaFRHFgb7
+         Hx4PEi/uIinnqRanoxX/bn8uJx5R1HfmWJbCMN871avWWLjkK9zBOSC5vF9rJ2zeVVI5
+         2qc1kiaTKrZMapTdCMzili/M9UeV7Crk/IEGWg48X+6nyKRiIvTcOrtGegnUEA0p8g0o
+         P6ENUE5smNyAJAGHfMJJ/K+UeR/GVtmji80rjvxNBme3t5o0r+2aXYMgB82/0uUEYTAP
+         Dw7M3pV2MBPawVHI5ImWUTga/LvhM3G5A5gfCFsEdoJqorkGmYmGsALTTo6vq5RBNQq9
+         fTOA==
+X-Gm-Message-State: AOJu0YxTU1ArhHa5wp+s8f4WKZy4JEph/9L5af+J0t4WefudSuHIK7SX
+        zHHt/wreZCOoa+OMvKvCJwzeHg==
+X-Google-Smtp-Source: AGHT+IFsiV7LuyeR2PhowHbyLrLUsKqyjEGfArvG7roW2WS/P1f6n1ITL262F7Y4H8H+JiPhkc6Cfw==
+X-Received: by 2002:a05:6000:110c:b0:313:f0d7:a43 with SMTP id z12-20020a056000110c00b00313f0d70a43mr8788075wrw.23.1696230280362;
+        Mon, 02 Oct 2023 00:04:40 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id d4-20020a05600c34c400b003feea62440bsm6649360wmq.43.2023.10.02.00.03.08
+        by smtp.gmail.com with ESMTPSA id ay13-20020a5d6f0d000000b003179b3fd837sm20220121wrb.33.2023.10.02.00.04.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Oct 2023 00:03:08 -0700 (PDT)
-Date:   Mon, 2 Oct 2023 10:03:05 +0300
+        Mon, 02 Oct 2023 00:04:40 -0700 (PDT)
+Date:   Mon, 2 Oct 2023 10:04:36 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc:     Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+To:     Tero Kristo <t-kristo@ti.com>
+Cc:     Tero Kristo <kristo@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Tony Lindgren <tony@atomide.com>,
+        Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+        linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: [PATCH 2/2] clk: imx: imx8: Fix error code in probe
-Message-ID: <06727485-a142-4ebb-b764-49841537d44b@moroto.mountain>
+Subject: [PATCH] clk: ti: fix double free in of_ti_divider_clk_setup()
+Message-ID: <6d36eeec-6c8a-4f11-a579-aa3cd7c38749@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <44bacaba-848b-4e62-908c-16538330d4dd@moroto.mountain>
 X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Preserve the error code from devm_clk_hw_register_mux_parent_data_table()
-instead of returning success.
+The "div" pointer is freed in _register_divider() and again in
+of_ti_divider_clk_setup().  Delete the free in _register_divider()
 
-Fixes: d3a0946d7ac9 ("clk: imx: imx8: add audio clock mux driver")
+Fixes: fbbc18591585 ("clk: ti: divider: cleanup _register_divider and ti_clk_get_div_table")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/clk/imx/clk-imx8-acm.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/ti/divider.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx8-acm.c b/drivers/clk/imx/clk-imx8-acm.c
-index 83019b986622..550ceac45ff2 100644
---- a/drivers/clk/imx/clk-imx8-acm.c
-+++ b/drivers/clk/imx/clk-imx8-acm.c
-@@ -372,6 +372,7 @@ static int imx8_acm_clk_probe(struct platform_device *pdev)
- 										0, NULL, NULL);
- 		if (IS_ERR(hws[sels[i].clkid])) {
- 			pm_runtime_disable(&pdev->dev);
-+			ret = PTR_ERR(hws[sels[i].clkid]);
- 			goto err_clk_register;
- 		}
- 	}
+diff --git a/drivers/clk/ti/divider.c b/drivers/clk/ti/divider.c
+index 768a1f3398b4..5d5bb123ba94 100644
+--- a/drivers/clk/ti/divider.c
++++ b/drivers/clk/ti/divider.c
+@@ -309,7 +309,6 @@ static struct clk *_register_divider(struct device_node *node,
+ 				     u32 flags,
+ 				     struct clk_omap_divider *div)
+ {
+-	struct clk *clk;
+ 	struct clk_init_data init;
+ 	const char *parent_name;
+ 	const char *name;
+@@ -326,12 +325,7 @@ static struct clk *_register_divider(struct device_node *node,
+ 	div->hw.init = &init;
+ 
+ 	/* register the clock */
+-	clk = of_ti_clk_register(node, &div->hw, name);
+-
+-	if (IS_ERR(clk))
+-		kfree(div);
+-
+-	return clk;
++	return of_ti_clk_register(node, &div->hw, name);
+ }
+ 
+ int ti_clk_parse_divider_data(int *div_table, int num_dividers, int max_div,
 -- 
 2.39.2
 
