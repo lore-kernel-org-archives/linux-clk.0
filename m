@@ -2,59 +2,154 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23271E74911
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Oct 2023 18:54:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCC7FE74914
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Oct 2023 18:59:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229502AbjJBSyP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 Oct 2023 14:54:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50768 "EHLO
+        id S238486AbjJBS7c (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 Oct 2023 14:59:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229482AbjJBSyO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Oct 2023 14:54:14 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D317D94;
-        Mon,  2 Oct 2023 11:54:11 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CE25BC15;
-        Mon,  2 Oct 2023 11:54:49 -0700 (PDT)
-Received: from bogus (unknown [10.57.93.106])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 026533F59C;
-        Mon,  2 Oct 2023 11:54:08 -0700 (PDT)
-Date:   Mon, 2 Oct 2023 19:52:37 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc:     Cristian Marussi <cristian.marussi@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v3 1/2] firmware: arm_scmi: clock: support clock parents
-Message-ID: <20231002185237.alkcszs5ymtylypt@bogus>
-References: <20231001-scmi-clock-v2-v3-0-898bd92d8939@nxp.com>
- <20231001-scmi-clock-v2-v3-1-898bd92d8939@nxp.com>
+        with ESMTP id S231628AbjJBS7b (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Oct 2023 14:59:31 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 895EEC6
+        for <linux-clk@vger.kernel.org>; Mon,  2 Oct 2023 11:59:27 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-50481a0eee7so4266177e87.0
+        for <linux-clk@vger.kernel.org>; Mon, 02 Oct 2023 11:59:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1696273166; x=1696877966; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zrszV3+CYmj+tM+SxyXe+ws7+sNss2kpTTuRI9TMO44=;
+        b=l3THzC0+4/nrU4EP2J4xY6OB+QgWZUNuga2KKWD9KABHiC58aXpg/Y2h4r/PRmlHpR
+         rh0RvFmZ9bFeVIxDGjkcESx5RJUPSjZLNp/luWJ7RPmJKLq+Aih+upuwgykrhedsMIZj
+         QwRIQoea8sPvlVEuhrzwSsCwwJicPjf53k6EnS7haeC04EK6UNqLaeX9W04NNBUFtXHC
+         mKnTKvwqu6qQPOkH0sbjyM3CfE0JF9o+s5d2PsWl4G+U3/qUO9QxIvpImw6n0HmCHqQ4
+         ziq1Jf4xh0Og6mg5knVrIzxd4bezPPWC+zl01K3fSJNxjVvHJ1rq2uX+hak4t7zLua2B
+         vUkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696273166; x=1696877966;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zrszV3+CYmj+tM+SxyXe+ws7+sNss2kpTTuRI9TMO44=;
+        b=icqF9jVffPdC3nauBMlQfOdOyyp8LybVWHC7C7vy97kUbWJF2IKZyyJLHx/L3zORhE
+         qweoPFHPTohFow99JB1d+k2t9oq4QJuxAYQaVCv3YMWxWfYTYYGp3V6LoJ1eTT2SgLyW
+         c5cJylKhT2h9/kDt4T20WXA5ILULQBcw87SrbLZLmvHN83ou1r2/jIUSdkd4kwSuogtd
+         iTv9nxF/JPDli0KAwg93+6Tqp2CKkwge6/RrGBY53jdOY0ntgjzS7ZLAQXHRKn8XzJKa
+         OmfM88IaTfFPnA2o0+idA9/N7ftt5vOWs/QE+NdLBg0LmmI6xGoujHVv8pSVjsD7WIuP
+         eB+Q==
+X-Gm-Message-State: AOJu0YyijeUaGS15zvVGwl2eDft9pF3B65jcfJ4ivJ1DGChkDRAS3hNf
+        pt+d4fmZI2ZFyU8NOWUXf1yQqg==
+X-Google-Smtp-Source: AGHT+IHnqtPBC6A3QMAunGAelevOOZeI9rfO1gpamLiLaCS5CYls3Ko+5rNhEhIuK2FGN5DT8MUPWw==
+X-Received: by 2002:ac2:520e:0:b0:503:cca:e535 with SMTP id a14-20020ac2520e000000b005030ccae535mr375866lfl.12.1696273165667;
+        Mon, 02 Oct 2023 11:59:25 -0700 (PDT)
+Received: from ?IPV6:2001:14ba:a0db:1f00::8a5? (dzdqv0yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::8a5])
+        by smtp.gmail.com with ESMTPSA id j26-20020a19f51a000000b0050420eff124sm2081352lfb.152.2023.10.02.11.59.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Oct 2023 11:59:25 -0700 (PDT)
+Message-ID: <3276666c-8331-490f-be79-c626bd275287@linaro.org>
+Date:   Mon, 2 Oct 2023 21:59:24 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231001-scmi-clock-v2-v3-1-898bd92d8939@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 5/6] cpufreq: qcom-nvmem: provide separate
+ configuration data for apq8064
+Content-Language: en-GB
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Ilia Lin <ilia.lin@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Christian Marangi <ansuelsmth@gmail.com>,
+        Stephan Gerhold <stephan@gerhold.net>
+References: <20230827032803.934819-1-dmitry.baryshkov@linaro.org>
+ <20230827032803.934819-6-dmitry.baryshkov@linaro.org>
+ <8a7af8ce-3ff4-4520-b4e2-dd39570ca796@linaro.org>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <8a7af8ce-3ff4-4520-b4e2-dd39570ca796@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Oct 01, 2023 at 12:38:43PM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
+On 28/08/2023 14:04, Konrad Dybcio wrote:
+> On 27.08.2023 05:28, Dmitry Baryshkov wrote:
+>> APQ8064 can scale core voltage according to the frequency needs. Rather
+>> than reusing the A/B format multiplexer, use a simple fuse parsing
+>> function and configure required regulator.
+>>
+>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>> ---
+>>   drivers/cpufreq/qcom-cpufreq-nvmem.c | 49 ++++++++++++++++++++++++++--
+>>   1 file changed, 47 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/cpufreq/qcom-cpufreq-nvmem.c b/drivers/cpufreq/qcom-cpufreq-nvmem.c
+>> index 81c080b854fe..35e2610c9526 100644
+>> --- a/drivers/cpufreq/qcom-cpufreq-nvmem.c
+>> +++ b/drivers/cpufreq/qcom-cpufreq-nvmem.c
+>> @@ -26,6 +26,7 @@
+>>   #include <linux/platform_device.h>
+>>   #include <linux/pm_domain.h>
+>>   #include <linux/pm_opp.h>
+>> +#include <linux/regulator/consumer.h>
+>>   #include <linux/slab.h>
+>>   #include <linux/soc/qcom/smem.h>
+>>   
+>> @@ -39,6 +40,7 @@ struct qcom_cpufreq_match_data {
+>>   			   char **pvs_name,
+>>   			   struct qcom_cpufreq_drv *drv);
+>>   	const char **genpd_names;
+>> +	const char * const *regulator_names;
+>>   };
+>>   
+>>   struct qcom_cpufreq_drv {
+>> @@ -203,6 +205,34 @@ static int qcom_cpufreq_krait_name_version(struct device *cpu_dev,
+>>   	return ret;
+>>   }
+>>   
+>> +static int qcom_cpufreq_apq8064_name_version(struct device *cpu_dev,
+>> +					     struct nvmem_cell *speedbin_nvmem,
+>> +					     char **pvs_name,
+>> +					     struct qcom_cpufreq_drv *drv)
+>> +{
+>> +	int speed = 0, pvs = 0;
+>> +	u8 *speedbin;
+>> +	size_t len;
+>> +	int ret = 0;
+> Unused, just return 0
 > 
-> SCMI v3.2 spec introduces CLOCK_POSSIBLE_PARENTS_GET, CLOCK_PARENT_SET
-> and CLOCK_PARENT_GET. This patch is to add the upper three new
-> commands.
->
+>> +
+>> +	speedbin = nvmem_cell_read(speedbin_nvmem, &len);
+>> +	if (IS_ERR(speedbin))
+>> +		return PTR_ERR(speedbin);
+>> +
+>> +	if (len != 4)
+>> +		return -EINVAL;
+>> +
+>> +	get_krait_bin_format_a(cpu_dev, &speed, &pvs, speedbin);
+>> +
+>> +	snprintf(*pvs_name, sizeof("speedXX-pvsXX"), "speed%d-pvs%d",
+>> +		 speed, pvs);
+> speed and pvs are both one hex digit long at best (see masking in
+> get_krait_bin_format_a)
 
-Looks good to me as well. Please rebase this on [1] when you address
-Cristian's comment and post v4. I will queue once Stephen is fine with
-clk driver changes.
+One hex translates to two decimal digits (0xf = 15).
+
+> 
+> Konrad
 
 -- 
-Regards,
-Sudeep
+With best wishes
+Dmitry
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/sudeep.holla/linux.git/log/?h=for-next/scmi/updates
