@@ -2,116 +2,93 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C7C5E784A5
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Oct 2023 07:19:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD1BEE784A4
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Oct 2023 08:33:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235730AbjJBHT0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 Oct 2023 03:19:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44490 "EHLO
+        id S235856AbjJBId7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 Oct 2023 04:33:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235599AbjJBHTZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Oct 2023 03:19:25 -0400
-Received: from mail-ua1-x92b.google.com (mail-ua1-x92b.google.com [IPv6:2607:f8b0:4864:20::92b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1979BC
-        for <linux-clk@vger.kernel.org>; Mon,  2 Oct 2023 00:19:22 -0700 (PDT)
-Received: by mail-ua1-x92b.google.com with SMTP id a1e0cc1a2514c-78f1210e27fso7032773241.1
-        for <linux-clk@vger.kernel.org>; Mon, 02 Oct 2023 00:19:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1696231162; x=1696835962; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GJYpofyuAEv4jvR+QfJqDzbesTQIm4BiLwBiP1RFTxg=;
-        b=FD2cCmBvfbdxp2rLmRGjB/OdFADslsSKGVp42pVAxaeWvBZszsCx24W/Kf/JZlwFiM
-         jmXKHNwLPquWnloEZgDT0Qgu3/qLuEaLJGf5CWPSQbuTMXUNkS+nZgFEnc0EmtDMv4G5
-         oNhdzAczo3SAKu/rdINO48fWzDqmTg+Q9/XMrkdDpWjON2s1IJKoIQ45rwG+k8rxsiww
-         F3SptW+aY75B1Eu+t+YjUBtZU5vfD20WIJgOzRClGNdqUsJaE4kzA5/9wXqtGQDv8qgB
-         x+kKLxexiMva5x3RVrzqAS9/gxQDPsnMt8KEDkeGDkHRACtzCVdT2nLSQNHoyjIx9sQX
-         Ny2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696231162; x=1696835962;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GJYpofyuAEv4jvR+QfJqDzbesTQIm4BiLwBiP1RFTxg=;
-        b=OLeZDWxbgGPk+wm9zk6lCXd2DbQm5j26/bydni2tMb7bMTGbXAid2R6vqHOWR9nNpJ
-         fn8WGVSKxu6FXTStxmT5vyjPk0GRQ/keUvvcg1+3+02XZJVOzNoIEH93wl7EpXSmBnBI
-         w0Kj8OrROiZRwVCAmVVkITYVXnBeEXjIOiofFLB9PfnvqcAt7S349Vtt3xWJkpQtkKGU
-         aQfqCTBHATRxddbElSyNuK59ljDNjVdR0fWGenqBdzRtS28WRqh4Wwh/IMLyhbaBG7pV
-         oB8p2MCk2OFv9tSBVLgCQenqYidoBr0JxAro+hSxVEa7Zg1f970rE/V9MEOfI09N88vS
-         gqgw==
-X-Gm-Message-State: AOJu0YxgrgnQPs55aAUrAtMxiD6mvYbknPeu6+NRgbxJ+uBRtIJED9pL
-        p6dTe0AFDqPItbnkU4s5A/Jj6fiwGYaE6Re84inm4A==
-X-Google-Smtp-Source: AGHT+IFzc+4NII5E+Bbq2HSe+Tfh0b+oyGG0oCJoYCRjhheamRaNHC0qOW9XNPegrbm7tafeSUWThKV2MC2+atCwOHc=
-X-Received: by 2002:a67:fdc9:0:b0:452:829e:ac90 with SMTP id
- l9-20020a67fdc9000000b00452829eac90mr9154479vsq.28.1696231162035; Mon, 02 Oct
- 2023 00:19:22 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230929-pxa1908-lkml-v5-0-5aa5a1109c5f@skole.hr> <20230929-pxa1908-lkml-v5-1-5aa5a1109c5f@skole.hr>
-In-Reply-To: <20230929-pxa1908-lkml-v5-1-5aa5a1109c5f@skole.hr>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Mon, 2 Oct 2023 09:19:11 +0200
-Message-ID: <CAMRc=MerAnyZd08S61YEn6Gu0VmK+KmNyChbtBuCfBpaUGFvug@mail.gmail.com>
-Subject: Re: [PATCH RESEND v5 1/8] gpio: pxa: disable pinctrl calls for MMP_GPIO
-To:     =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Cc:     Robert Jarzmik <robert.jarzmik@free.fr>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andy@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        with ESMTP id S230039AbjJBId7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Oct 2023 04:33:59 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 927DD9F;
+        Mon,  2 Oct 2023 01:33:55 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30DF0C433CC;
+        Mon,  2 Oct 2023 08:33:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1696235635;
+        bh=rrrMa7nz3whAggXNqFbdIoDxf26fpbhOB3UDgI26A8Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XnYXux6be/fbot4Sk370rY7pwtyVH7C+57xeMNOGXvwrFCH46RsZ1JHgJfMYLIdOQ
+         VREs+go9LwZeU+luk2OzSML/H1pt/jM0yPc+T1dfn4uio4UXn4FPcd0epqOslab2WX
+         Ex9zo9b0wbNm/AhlEVrJff4CzvLRBdZTjlZGv1c1x0vVEOQSIHw1bf2ELNPXEYK+Pl
+         TcMf76YP78VvhINN2TryzvHR9qVKKEPhKjlhnIlRSAHK3kwQIAZy8al/0UINDwl8aU
+         1aDAW18226pNw4E8R8WYiJJo0nem5V1K/dMz9o87csJaj7ez0XIwas6h3NXLlkCDhB
+         1kW8unWkkzRSw==
+Received: from johan by xi.lan with local (Exim 4.96)
+        (envelope-from <johan@kernel.org>)
+        id 1qnENO-0007kc-0Y;
+        Mon, 02 Oct 2023 10:34:02 +0200
+Date:   Mon, 2 Oct 2023 10:34:02 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Tony Luck <tony.luck@intel.com>,
-        "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-hardening@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        afaerber@suse.de, balejk@matfyz.cz
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 2/2] clk: qcom: gcc-sc8280xp: Don't keep display AHB
+ clocks always-on
+Message-ID: <ZRqAel1pwLom-h45@hovoldconsulting.com>
+References: <20230929-topic-8280_ahbdisp-v1-0-72bdc38309b9@linaro.org>
+ <20230929-topic-8280_ahbdisp-v1-2-72bdc38309b9@linaro.org>
+ <ZRfsvAJIdlmOWjf2@hovoldconsulting.com>
+ <43473e04-ac33-179e-4343-e5c78eef3faf@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <43473e04-ac33-179e-4343-e5c78eef3faf@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Sep 29, 2023 at 5:42=E2=80=AFPM Duje Mihanovi=C4=87 <duje.mihanovic=
-@skole.hr> wrote:
->
-> Similarly to PXA3xx and MMP2, pinctrl-single isn't capable of setting
-> pin direction on MMP either.
->
-> Fixes: a770d946371e ("gpio: pxa: add pin control gpio direction and reque=
-st")
-> Signed-off-by: Duje Mihanovi=C4=87 <duje.mihanovic@skole.hr>
-> Reviewed-by: Andy Shevchenko <andy@kernel.org>
-> ---
->  drivers/gpio/gpio-pxa.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
-> index a1630ed4b741..d92650aecb06 100644
-> --- a/drivers/gpio/gpio-pxa.c
-> +++ b/drivers/gpio/gpio-pxa.c
-> @@ -238,6 +238,7 @@ static bool pxa_gpio_has_pinctrl(void)
->         switch (gpio_type) {
->         case PXA3XX_GPIO:
->         case MMP2_GPIO:
-> +       case MMP_GPIO:
->                 return false;
->
->         default:
->
-> --
-> 2.42.0
->
->
+On Sat, Sep 30, 2023 at 06:44:47PM +0200, Konrad Dybcio wrote:
+> On 9/30/23 11:39, Johan Hovold wrote:
+> > On Fri, Sep 29, 2023 at 03:38:53PM +0200, Konrad Dybcio wrote:
+> >> These clocks are consumed by the dispcc[01] clock controllers, so there's
+> >> no reason to keep them on from gcc probe. Remove that hack.
+> > 
+> > Eh, how did you test this patch?
 
-Queued for fixes, thanks!
+> Oehh you're right, I didn't notice that I still had clk_ignore_unused :/
 
-Bart
+That doesn't matter since these clocks are never even registered with
+the clock framework.
+
+But you'd notice that if you try to verify the clock state by looking at
+/sys/kernel/debug/clk/clk_summary for example.
+
+> > The GCC_DISP_AHB_CLK clocks are not modelled by the clock driver
+> > currently so nothing is guaranteeing them to be enabled if we were to
+> > apply this patch. They just happen to be left on by the bootloader on
+> > some machines currently (well at least one of them is on one machine).
+
+> What fooled me is that despite not being modeled by the clock driver, it 
+> is defined in bindings and referenced in the device tree.
+> 
+> Another thing I'll fix up!
+
+Right, a number of Qualcomm SoCs apparently fail to register these
+clocks. You should start by determining why that is as I assume (hope)
+it was done for a reason.
+
+Then the Qualcomm drivers use sloppy bulk clock look-up and enable so
+that an integrator would never even notice when clocks are missing. Once
+the clocks are registered, that could be tightened up as well.
+
+Johan
