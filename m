@@ -2,86 +2,174 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F118CE75452
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Oct 2023 12:20:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45BDBE75455
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Oct 2023 13:02:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230458AbjJCMUu convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Oct 2023 08:20:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59958 "EHLO
+        id S232550AbjJCNCG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Oct 2023 09:02:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230404AbjJCMUt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Oct 2023 08:20:49 -0400
-Received: from mail.astralinux.ru (mail.astralinux.ru [217.74.38.119])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B17ABAC;
-        Tue,  3 Oct 2023 05:20:45 -0700 (PDT)
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by mail.astralinux.ru (Postfix) with ESMTP id 78D2418688D7;
-        Tue,  3 Oct 2023 15:20:42 +0300 (MSK)
-Received: from mail.astralinux.ru ([127.0.0.1])
-        by localhost (rbta-msk-vsrv-mail01.astralinux.ru [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id DxCA32iw3j8i; Tue,  3 Oct 2023 15:20:42 +0300 (MSK)
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by mail.astralinux.ru (Postfix) with ESMTP id 3536D18688DD;
-        Tue,  3 Oct 2023 15:20:40 +0300 (MSK)
-X-Virus-Scanned: amavisd-new at astralinux.ru
-Received: from mail.astralinux.ru ([127.0.0.1])
-        by localhost (rbta-msk-vsrv-mail01.astralinux.ru [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id f3V6pAVsiGZ3; Tue,  3 Oct 2023 15:20:40 +0300 (MSK)
-Received: from new-mail.astralinux.ru (unknown [10.177.185.102])
-        by mail.astralinux.ru (Postfix) with ESMTPS id 8B17E18688EE;
-        Tue,  3 Oct 2023 15:20:38 +0300 (MSK)
-Received: from [10.177.20.58] (unknown [10.177.20.58])
-        by new-mail.astralinux.ru (Postfix) with ESMTPA id 4S0H3B1Rq0zYcnK;
-        Tue,  3 Oct 2023 15:20:38 +0300 (MSK)
-Message-ID: <c31bcd98-cc0a-4edf-945b-f4e22e122b46@astralinux.ru>
-Date:   Tue, 3 Oct 2023 15:20:16 +0300
+        with ESMTP id S230283AbjJCNCE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Oct 2023 09:02:04 -0400
+Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E257BD;
+        Tue,  3 Oct 2023 06:02:01 -0700 (PDT)
+Received: by mail-pg1-x532.google.com with SMTP id 41be03b00d2f7-53fa455cd94so534854a12.2;
+        Tue, 03 Oct 2023 06:02:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1696338120; x=1696942920; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KOSJ1LD4bOqUpxIFjxXpNvYG4tETz6JJkPH8DncEASw=;
+        b=Q0euPap9gQxXxqis9T5E/DCrDxaFW50eDkILnExesUzzQJhff7kt8VQCOcgE1eer43
+         XqFWloh0RILmC/3bMSvmshyD3mAZF0hOjmWg+IlJ57U+vh79vDNCi69ROQEaKkH7ygUw
+         7d6+pol0EQslwo11EyzEJcijlJ3lK5UaaRyeUqSKhJ5iLYhPHcVJ/HwWHIC1lJMHMdcA
+         CSIIuji3l9Do4J1GkXU753Mj5k/UiDdbOgjzopdvvmI9UCq6u7jVXIh2sX7tUDg7Z9lK
+         CJ5RrmqFHfeas91xA5eSdLXaEy0DruujuQrbVbTYQpR5QYX2WmPT0YB+2QL8cPZXtpSb
+         og0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696338120; x=1696942920;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KOSJ1LD4bOqUpxIFjxXpNvYG4tETz6JJkPH8DncEASw=;
+        b=UQq22MeQFjaDbNMSQLxby5D7gn8EprNLtEbVanE9SVSZMg7t9DXiqGQKGEAazimUKl
+         C3RwBJfWuqOsFOa9onamijO5jGoLbKSao0iQS5YJTcaTMZEDu/E67vD37WVCB3qXfC6y
+         dWda53mVkRFkQRSnXMOqKHj5ePHhywiwyP3RYHwSYxIGHERGMRwcBEChb3IIpZ3w9MkG
+         RuY1xXbUtcNrttXQw1MoJS9ad1DFV1QO07z36N2URoiBkGd14h70QCSB62K89rxTkHxI
+         mLcRPD+Jq1wyElNwtENxnobWBaM84tLqHY3qAeyJOwttDO98ASOTp5ysff251qFT6iMz
+         r9OA==
+X-Gm-Message-State: AOJu0YzOQIQADPs4gjXKOoe9Y18dFD/jobQr0AdcJU4Yzyldsgloimf/
+        xiRIPM6IehVWeP1cctPzVx8//4BHGj58paQaaOs=
+X-Google-Smtp-Source: AGHT+IEu16w6ytf2IPuNE3nxhAFN87R51szRBqXUKJrqIGlckFiZFrvkEdHL/wOHt+LUrSqZd4mUJhAX6D2olpMX8zo=
+X-Received: by 2002:a17:90a:fe8d:b0:269:3cdb:4edf with SMTP id
+ co13-20020a17090afe8d00b002693cdb4edfmr12043422pjb.16.1696338120302; Tue, 03
+ Oct 2023 06:02:00 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: RuPost Desktop
-Subject: Re: [PATCH] clk: cdce925: change condition in cdce925_clk_round_rate
-Content-Language: ru
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Mike Looijmans <mike.looijmans@topic.nl>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lvc-project@linuxtesting.org
-References: <20230901130359.20561-1-abelova@astralinux.ru>
-From:   =?UTF-8?B?0JDQvdCw0YHRgtCw0YHQuNGPINCb0Y7QsdC40LzQvtCy0LA=?= 
-        <abelova@astralinux.ru>
-In-Reply-To: <20230901130359.20561-1-abelova@astralinux.ru>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8BIT
+References: <20230918-imx8mp-dtsi-v1-0-1d008b3237c0@skidata.com> <20230918-imx8mp-dtsi-v1-2-1d008b3237c0@skidata.com>
+In-Reply-To: <20230918-imx8mp-dtsi-v1-2-1d008b3237c0@skidata.com>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Tue, 3 Oct 2023 08:01:49 -0500
+Message-ID: <CAHCN7x+TCxbaE7Y41Yn5SpG0G5V57hwXQ7HX_ExLF1EXKtZs4w@mail.gmail.com>
+Subject: Re: [PATCH 02/13] arm64: dts: imx8mp: re-parent IMX8MP_CLK_MEDIA_MIPI_PHY1_REF
+To:     Benjamin Bara <bbara93@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Frank Oltmanns <frank@oltmanns.dev>,
+        Maxime Ripard <mripard@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Benjamin Bara <benjamin.bara@skidata.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-01/09/23 16:03, Anastasia Belova пишет:
-
-Just a friendly reminder.
-
-> To avoid division by zero add check if
-> divider is zero.
+On Sun, Sep 17, 2023 at 5:40=E2=80=AFPM Benjamin Bara <bbara93@gmail.com> w=
+rote:
 >
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> From: Benjamin Bara <benjamin.bara@skidata.com>
 >
-> Fixes: 19fbbbbcd3a3 ("Add TI CDCE925 I2C controlled clock synthesizer driver")
-> Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
+> Similar to commit 07bb2e368820 ("arm64: dts: imx8mp: Fix video clock
+> parents") the parent of IMX8MP_CLK_MEDIA_MIPI_PHY1_REF should be set in
+> the media_blk_ctrl. Currently, if mipi_dsi is not in use, its parent is
+> set to IMX8MP_VIDEO_PLL1_OUT, and might therefore clash with the
+> constraints coming from a panel.
+
+From what I can see, it looks like the IMX8MP_CLK_MEDIA_MIPI_PHY1_REF
+parent is being set to IMX8MP_CLK_24M.  Isn't that the default? I also
+don't think we need to set a 24MHz clock to 24MHz if that's the
+default.
+
+If that is the case, I would suggest we try to remove the assignment
+altogether to make the device tree simpler and less to untangle if a
+board needs to manually manipulate the clocks for some specific
+reason.
+
+adam
+
+>
+> Cc: Adam Ford <aford173@gmail.com>
+> Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
 > ---
->   drivers/clk/clk-cdce925.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>  arch/arm64/boot/dts/freescale/imx8mp.dtsi | 14 ++++++--------
+>  1 file changed, 6 insertions(+), 8 deletions(-)
 >
-> diff --git a/drivers/clk/clk-cdce925.c b/drivers/clk/clk-cdce925.c
-> index 96ac90364847..d903cdc3ad7d 100644
-> --- a/drivers/clk/clk-cdce925.c
-> +++ b/drivers/clk/clk-cdce925.c
-> @@ -441,7 +441,7 @@ static long cdce925_clk_round_rate(struct clk_hw *hw, unsigned long rate,
->   	unsigned long l_parent_rate = *parent_rate;
->   	u16 divider = cdce925_calc_divider(rate, l_parent_rate);
->   
-> -	if (l_parent_rate / divider != rate) {
-> +	if (divider && l_parent_rate / divider != rate) {
->   		l_parent_rate = cdce925_clk_best_parent_rate(hw, rate);
->   		divider = cdce925_calc_divider(rate, l_parent_rate);
->   		*parent_rate = l_parent_rate;
-
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/=
+dts/freescale/imx8mp.dtsi
+> index c946749a3d73..9539d747e28e 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> @@ -1640,11 +1640,6 @@ mipi_dsi: dsi@32e60000 {
+>                                 clocks =3D <&clk IMX8MP_CLK_MEDIA_APB_ROO=
+T>,
+>                                          <&clk IMX8MP_CLK_MEDIA_MIPI_PHY1=
+_REF>;
+>                                 clock-names =3D "bus_clk", "sclk_mipi";
+> -                               assigned-clocks =3D <&clk IMX8MP_CLK_MEDI=
+A_APB>,
+> -                                                 <&clk IMX8MP_CLK_MEDIA_=
+MIPI_PHY1_REF>;
+> -                               assigned-clock-parents =3D <&clk IMX8MP_S=
+YS_PLL1_800M>,
+> -                                                        <&clk IMX8MP_CLK=
+_24M>;
+> -                               assigned-clock-rates =3D <200000000>, <24=
+000000>;
+>                                 samsung,pll-clock-frequency =3D <24000000=
+>;
+>                                 interrupts =3D <GIC_SPI 18 IRQ_TYPE_LEVEL=
+_HIGH>;
+>                                 power-domains =3D <&media_blk_ctrl IMX8MP=
+_MEDIABLK_PD_MIPI_DSI_1>;
+> @@ -1747,13 +1742,16 @@ media_blk_ctrl: blk-ctrl@32ec0000 {
+>                                                   <&clk IMX8MP_CLK_MEDIA_=
+APB>,
+>                                                   <&clk IMX8MP_CLK_MEDIA_=
+DISP1_PIX>,
+>                                                   <&clk IMX8MP_CLK_MEDIA_=
+DISP2_PIX>,
+> -                                                 <&clk IMX8MP_VIDEO_PLL1=
+>;
+> +                                                 <&clk IMX8MP_VIDEO_PLL1=
+>,
+> +                                                 <&clk IMX8MP_CLK_MEDIA_=
+MIPI_PHY1_REF>;
+>                                 assigned-clock-parents =3D <&clk IMX8MP_S=
+YS_PLL2_1000M>,
+>                                                          <&clk IMX8MP_SYS=
+_PLL1_800M>,
+>                                                          <&clk IMX8MP_VID=
+EO_PLL1_OUT>,
+> -                                                        <&clk IMX8MP_VID=
+EO_PLL1_OUT>;
+> +                                                        <&clk IMX8MP_VID=
+EO_PLL1_OUT>,
+> +                                                        <&clk IMX8MP_CLK=
+_24M>;
+>                                 assigned-clock-rates =3D <500000000>, <20=
+0000000>,
+> -                                                      <0>, <0>, <1039500=
+000>;
+> +                                                      <0>, <0>, <1039500=
+000>,
+> +                                                      <24000000>;
+>                                 #power-domain-cells =3D <1>;
+>
+>                                 lvds_bridge: bridge@5c {
+>
+> --
+> 2.34.1
+>
