@@ -2,212 +2,265 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FC72E7542D
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Oct 2023 06:22:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB4EBE75432
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Oct 2023 07:16:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230421AbjJCGWm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Oct 2023 02:22:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37968 "EHLO
+        id S230386AbjJCHRA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Oct 2023 03:17:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230272AbjJCGWk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Oct 2023 02:22:40 -0400
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2044.outbound.protection.outlook.com [40.107.244.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EE20BD;
-        Mon,  2 Oct 2023 23:22:36 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=VWMN//X/w4qU5JPG0xbyxDrfYMJqvyk/UK7BdZpsiRAjjQMy43qMkfY1ohJZ3G5HxGdeuFx3oJtzoS8invQMZuD3/OTYKGNJ81kNyKb4Xm+BZ4KeMRMq5Rbn6taEwPDK/14YvCzesH+IWVPFjBEfqJcYiG7l1j6xENMxYkQUxaq0aPO7jrjNzW01Yp0cAAjz5+4SAuQag9bzDYOK80HmcBKO/ky33oyr9waZVsOO1Ovfun9CgmCDrs7YH8zoe/+B+hQy6h03vDFkg2o5ZD8ksVTWhl2Y8wTUtArlEaRABrRZw31btUI/4v2MHQpZ5w2HZnTwDG3Zqb+MYNhZng7p6Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aX/ewiwVvxectQk+ywRB3ivU2XZjRqHGNqzA3sRY6ZM=;
- b=B7V5ujDKHjCcJpnr8gpzcuWhvG0sLfDHcezPJVl2cX+zpvL76djE6kju2edbMrd2niBuirfRe99yhogVvSltmhQN+hkDFV2vZPj9WGHwaSIOzYO1hNEd2DuPYqUdMAlsNt8BYHuabjL+HLnIRIYl1+TKbn059EyMOveX7mGaycCEPoa/ovu6ciWJPossYdCcUo6FZapPIXZkg9CuH0VKFfsQJuxsNNrJTTAsMYRMIldwgqZ7ccReKB4i6TDBBfwuwiKODcuGaXQo3CXeZIHhgQU2Lto0qvUqNuc0RYjPoQUCjtc5RLDtZ+swrts7oRYCyo/zEVGcZcYffKMeIU6hCA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=baylibre.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aX/ewiwVvxectQk+ywRB3ivU2XZjRqHGNqzA3sRY6ZM=;
- b=B/9X3C8PpZq85/ti85JEIUWu962TVKtTfeSYf0LSCMYv0ekpSIUctKSAIjGXRsqOT6LjQRW/fxaOvrk0qMD9QLYCGUNuBS/sxxgSbWuBJ07xgZTe5m7fj7mbsM2fI5ZblJ5Tgfx+7ZUscIlTgkcP/AnHnxGBt0os1wflfwVW2kY=
-Received: from CYZPR11CA0014.namprd11.prod.outlook.com (2603:10b6:930:8d::24)
- by SA1PR12MB7271.namprd12.prod.outlook.com (2603:10b6:806:2b8::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6838.29; Tue, 3 Oct
- 2023 06:22:34 +0000
-Received: from CY4PEPF0000E9CF.namprd03.prod.outlook.com
- (2603:10b6:930:8d:cafe::17) by CYZPR11CA0014.outlook.office365.com
- (2603:10b6:930:8d::24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6838.31 via Frontend
- Transport; Tue, 3 Oct 2023 06:22:34 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CY4PEPF0000E9CF.mail.protection.outlook.com (10.167.241.142) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.6838.22 via Frontend Transport; Tue, 3 Oct 2023 06:22:34 +0000
-Received: from SATLEXMB08.amd.com (10.181.40.132) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Tue, 3 Oct
- 2023 01:22:32 -0500
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB08.amd.com
- (10.181.40.132) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Mon, 2 Oct
- 2023 23:22:32 -0700
-Received: from xsjarunbala50.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.27 via Frontend
- Transport; Tue, 3 Oct 2023 01:22:31 -0500
-From:   Jay Buddhabhatti <jay.buddhabhatti@amd.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <michal.simek@amd.com>
-CC:     <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Jay Buddhabhatti <jay.buddhabhatti@amd.com>
-Subject: [PATCH 2/2] drivers: clk: zynqmp: update divider round rate logic
-Date:   Mon, 2 Oct 2023 23:21:53 -0700
-Message-ID: <20231003062153.12215-3-jay.buddhabhatti@amd.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20231003062153.12215-1-jay.buddhabhatti@amd.com>
-References: <20231003062153.12215-1-jay.buddhabhatti@amd.com>
+        with ESMTP id S230369AbjJCHRA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Oct 2023 03:17:00 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E2A4AD
+        for <linux-clk@vger.kernel.org>; Tue,  3 Oct 2023 00:16:55 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id ffacd0b85a97d-32320381a07so665892f8f.0
+        for <linux-clk@vger.kernel.org>; Tue, 03 Oct 2023 00:16:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1696317413; x=1696922213; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :references:cc:to:content-language:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QpUUFq9QU9L0qfPCVG8CBY0uJ76VkGAs+iJNl+MP9Es=;
+        b=sJhBBrN3GaeDcqOU+p77oBSarlc6PW3ioar4bWxsoAoFz2GosjbFvVd25SNEx2THqm
+         Z18tTBadB0XBAw5jXl90yLV5Nah1ALSenD8NNDynn/u3AbxzWu9ljdGBxSr6GpsZCw4b
+         E7Lk16MRF99QK7UNjHFHsj1DfQRAXXqCGOeO4StrX+1IcrC0K46Xg4enrKldlw/3EVUz
+         BFTKq5VlEKfJYO12wLFBpMvqeS5vDAtUcHauPqpKEB7Wrru5b5xOaCVq/+4bPgoYTB0R
+         6NabZIh696r1vfgxAZHwf78A243fIqtRPbsjkLOF8n8gaqQV7RmS6JFIjLm7wOdA3V68
+         d3dA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696317413; x=1696922213;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :references:cc:to:content-language:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=QpUUFq9QU9L0qfPCVG8CBY0uJ76VkGAs+iJNl+MP9Es=;
+        b=wM3LwBuNXLQ5i6c2zT8vl+HOkCJYbQPlx+MUWdR69y57xBJo831/ggnRgZNUUVMjZf
+         gbWV52Rsl/zS9Y9JymK2VrIeIYm7ebBg7RsSdcjEjhONjeDrJQ1hVndtwzMYlPPFq1uX
+         kXGKx15ZWji4ZPWfzuC+FPxE+B+Kx9UlhGsIsz6BRCKoQ89xyNlkVL4+5gcJEwgBElnr
+         SYwp8LxFK1IVXAQy+tRJLZnMD0KwFjpism/CzQjRCTTRew7z+lkcZLOuo8TaVrV8PMtO
+         jWdTLDMROyvE7p/t5ZK+CZJIiulIdDoSXFMj6Iv8zzOWOwJo5J//y8iSNAbFo16lzUYE
+         cIrA==
+X-Gm-Message-State: AOJu0YzAaf53WFBQv3t4ST/yw5eLrm0rqBzadsNCeQTecVqBBv7wLPBs
+        s4Df6BV1z+bvuteZ+CzjQCVJpQ==
+X-Google-Smtp-Source: AGHT+IEWu0xac32pksXzwZMIWt3brB8UIquOiYKnIp7HkLnrNNbaheTXCpeC2KPbOOWCbiefqofD8A==
+X-Received: by 2002:adf:ed02:0:b0:321:6936:c217 with SMTP id a2-20020adfed02000000b003216936c217mr12497257wro.14.1696317413483;
+        Tue, 03 Oct 2023 00:16:53 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:e31a:fe1c:e925:9858? ([2a01:e0a:982:cbb0:e31a:fe1c:e925:9858])
+        by smtp.gmail.com with ESMTPSA id j16-20020a056000125000b00326f5d0ce0asm852877wrx.21.2023.10.03.00.16.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Oct 2023 00:16:52 -0700 (PDT)
+Message-ID: <c6a974ce-511c-47f8-b6cb-baeec5283af9@linaro.org>
+Date:   Tue, 3 Oct 2023 09:16:50 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9CF:EE_|SA1PR12MB7271:EE_
-X-MS-Office365-Filtering-Correlation-Id: 95873bb7-6ea9-463a-a3ee-08dbc3d9218d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Yr0NCl9SVktay39afOXzB7+hn/+GLu6oD+UjGSWY1sw5j7wjkECRnTM38qmKiX3s7zNSISbdKx8ZNc4loxD0pWBSlgabDd9JJOYRVwnCAOYYe2uCv/5oJBmXQ//g5RLAU8LwRgkeqTsigTL9ZnBKessaOor6eXDEKR3CWZ1o+p6jxn+xC/HlVAjPdCsDBQVfm+X+Uef0YMnNe1V7uWy6wqzOv3pYBU+GRIYpfLdp37opXsZAO3pPlpWVNPGevd8gpBk3PhnvFw4zjJ6+xjbX9DK0JNaDZDH1xp33X55rlL84gJCfELzTGkelcWbWCoVHtAL6UPZX4IgwPxEMGLR8UCUQmEuSKu0oJVv2XMYv1K8G7wny+IuCuXKBNUrAQjWY649/sGM/C7myYsuvgrGc2Z2XBwARcWIb++8LCoo9l7cbuW91QWT7h/cl+Lc+tlwJJ6jEgN7vl3U5MEMaiwtxCD41j/SXVvgq60PoV0rkvV6CgxDtNPCx1DSKPNthFx0m8h/IvwxYGPV0e6SzD2S4fSyeRZcMwh3+mlF0PxGa+8IV/rhlZXljJJaGZWEL1Z9Bltitps3p9drJjLScj2rO2+RQlxFADxhMbaZCvFJWce2u7x0cryih1BjUzqqd1kcLiQy7B88x/vetybeAvkEQSPSM3v0yAG1RsteQDg+R3RiXWpDsNkUXOLT4PBtXJAPvnKkSF0KkFsJ8EEckzKQKQxoiMCW0YWk6ayTsj5eQMENYuRHVZMubRG83Idi/tWG0udbIlurYRxwodF6zocrBtg==
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(4636009)(136003)(396003)(346002)(39860400002)(376002)(230922051799003)(1800799009)(451199024)(64100799003)(186009)(82310400011)(36840700001)(46966006)(40470700004)(110136005)(4326008)(70586007)(41300700001)(70206006)(44832011)(8676002)(8936002)(478600001)(54906003)(426003)(26005)(336012)(1076003)(2616005)(83380400001)(2906002)(47076005)(6666004)(36860700001)(81166007)(356005)(5660300002)(6636002)(86362001)(316002)(82740400003)(36756003)(40480700001)(40460700003)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Oct 2023 06:22:34.0369
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 95873bb7-6ea9-463a-a3ee-08dbc3d9218d
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: CY4PEPF0000E9CF.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7271
+User-Agent: Mozilla Thunderbird
+From:   neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v3 3/3] clk: qcom: add SM8550 DISPCC driver
+Content-Language: en-US, fr
+To:     Sophon Wu <wuxilin123@gmail.com>
+Cc:     Andy Gross <agross@kernel.org>, andersson@kernel.org,
+        devicetree@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
+        Rob Herring <robh+dt@kernel.org>, sboyd@kernel.org
+References: <CAEPPPKu=yxS6SgdLZiuhbF2DRURKVUBNgNbUQ96LxHHbtsJ6Sg@mail.gmail.com>
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro Developer Services
+In-Reply-To: <CAEPPPKu=yxS6SgdLZiuhbF2DRURKVUBNgNbUQ96LxHHbtsJ6Sg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Currently zynqmp divider round rate is considering single parent and
-calculating rate and parent rate accordingly. But if divider clock flag
-is set to SET_RATE_PARENT then its not trying to traverse through all
-parent rate and not selecting best parent rate from that. So use common
-divider_round_rate() which is traversing through all clock parents and
-its rate and calculating proper parent rate.
+Hi,
 
-Signed-off-by: Jay Buddhabhatti <jay.buddhabhatti@amd.com>
----
- drivers/clk/zynqmp/divider.c | 70 ++++++------------------------------
- 1 file changed, 10 insertions(+), 60 deletions(-)
+On 03/10/2023 04:17, Sophon Wu wrote:
+> On 09/01/2023 16:47, Neil Armstrong wrote:
+> 
+>> Add support for the display clock controller found in SM8550
+>> based devices.
+> 
+>> This clock controller feeds the Multimedia Display SubSystem (MDSS).
+>> This driver is based on the SM8450 support.
+> 
+>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>> ---
+> 
+> Hi Neil,
+> 
+> I'm trying to enable display on SM8550 but having trouble with clocks. Do you
+> have any idea on this maybe? Full dmesg here: https://bpa.st/7E6Q
 
-diff --git a/drivers/clk/zynqmp/divider.c b/drivers/clk/zynqmp/divider.c
-index 33a3b2a22659..a42c183d7e5d 100644
---- a/drivers/clk/zynqmp/divider.c
-+++ b/drivers/clk/zynqmp/divider.c
-@@ -110,52 +110,6 @@ static unsigned long zynqmp_clk_divider_recalc_rate(struct clk_hw *hw,
- 	return DIV_ROUND_UP_ULL(parent_rate, value);
- }
- 
--static void zynqmp_get_divider2_val(struct clk_hw *hw,
--				    unsigned long rate,
--				    struct zynqmp_clk_divider *divider,
--				    u32 *bestdiv)
--{
--	int div1;
--	int div2;
--	long error = LONG_MAX;
--	unsigned long div1_prate;
--	struct clk_hw *div1_parent_hw;
--	struct zynqmp_clk_divider *pdivider;
--	struct clk_hw *div2_parent_hw = clk_hw_get_parent(hw);
--
--	if (!div2_parent_hw)
--		return;
--
--	pdivider = to_zynqmp_clk_divider(div2_parent_hw);
--	if (!pdivider)
--		return;
--
--	div1_parent_hw = clk_hw_get_parent(div2_parent_hw);
--	if (!div1_parent_hw)
--		return;
--
--	div1_prate = clk_hw_get_rate(div1_parent_hw);
--	*bestdiv = 1;
--	for (div1 = 1; div1 <= pdivider->max_div;) {
--		for (div2 = 1; div2 <= divider->max_div;) {
--			long new_error = ((div1_prate / div1) / div2) - rate;
--
--			if (abs(new_error) < abs(error)) {
--				*bestdiv = div2;
--				error = new_error;
--			}
--			if (divider->flags & CLK_DIVIDER_POWER_OF_TWO)
--				div2 = div2 << 1;
--			else
--				div2++;
--		}
--		if (pdivider->flags & CLK_DIVIDER_POWER_OF_TWO)
--			div1 = div1 << 1;
--		else
--			div1++;
--	}
--}
--
- /**
-  * zynqmp_clk_divider_round_rate() - Round rate of divider clock
-  * @hw:			handle between common and hardware-specific interfaces
-@@ -174,6 +128,8 @@ static long zynqmp_clk_divider_round_rate(struct clk_hw *hw,
- 	u32 div_type = divider->div_type;
- 	u32 bestdiv;
- 	int ret;
-+	u8 width = 0;
-+	u16 max;
- 
- 	/* if read only, just return current value */
- 	if (divider->flags & CLK_DIVIDER_READ_ONLY) {
-@@ -193,23 +149,17 @@ static long zynqmp_clk_divider_round_rate(struct clk_hw *hw,
- 		return DIV_ROUND_UP_ULL((u64)*prate, bestdiv);
- 	}
- 
--	bestdiv = zynqmp_divider_get_val(*prate, rate, divider->flags);
--
--	/*
--	 * In case of two divisors, compute best divider values and return
--	 * divider2 value based on compute value. div1 will  be automatically
--	 * set to optimum based on required total divider value.
--	 */
--	if (div_type == TYPE_DIV2 &&
--	    (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT)) {
--		zynqmp_get_divider2_val(hw, rate, divider, &bestdiv);
-+	max = divider->max_div;
-+	while (max != 0) {
-+		if ((max & 1) == 1)
-+			width++;
-+		max = max >> 1;
- 	}
- 
--	if ((clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) && divider->is_frac)
--		bestdiv = rate % *prate ? 1 : bestdiv;
-+	rate = divider_round_rate(hw, rate, prate, NULL, width, divider->flags);
- 
--	bestdiv = min_t(u32, bestdiv, divider->max_div);
--	*prate = rate * bestdiv;
-+	if (divider->is_frac && (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) && (rate % *prate))
-+		*prate = rate;
- 
- 	return rate;
- }
--- 
-2.17.1
+You may need to remove the cont-splash memory zone and the simple-framebuffer,
+if you leave the cont-splash the bootloader will leave the MDSS on and Linux
+will fail to take over and initialize the clocks.
+
+This is known issue, and for now we re-initialize everything from Linux after
+ABL disables the display subsystem entirely.
+
+Neil
+
+> 
+> Regards,
+> Xilin
+> 
+>   ------------[ cut here ]------------
+>   disp_cc_mdss_mdp_clk_src: rcg didn't update its configuration.
+>   WARNING: CPU: 4 PID: 73 at drivers/clk/qcom/clk-rcg2.c:133
+> update_config+0xd4/0xf0
+>   Modules linked in:
+>   CPU: 4 PID: 73 Comm: kworker/u16:2 Tainted: G S
+> 6.6.0-rc3-next-20230929-00006-g019d41d2e78e-dirty #252
+> d692e32c53d7001f1537e28f80b45291db95a48f
+>   Hardware name: AYN Odin 2 (DT)
+>   Workqueue: events_unbound deferred_probe_work_func
+>   pstate: 614000c5 (nZCv daIF +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+>   pc : update_config+0xd4/0xf0
+>   lr : update_config+0xd4/0xf0
+>   sp : ffff8000861435d0
+>   x29: ffff8000861435d0 x28: 0000000000000000 x27: 0000000000000000
+>   x26: ffff0008011da0f4 x25: 0000000000000000 x24: 0000000000000000
+>   x23: 0000000000000004 x22: ffff000804f0eac0 x21: ffff800082395f68
+>   x20: ffff800085109c20 x19: 0000000000000000 x18: 0000000000000014
+>   x17: 0000000043567dcd x16: 00000000c6ba16a0 x15: 0000000040b16970
+>   x14: 0000000000000001 x13: 2e6e6f6974617275 x12: 6769666e6f632073
+>   x11: 7469206574616470 x10: 752074276e646964 x9 : ffff8000801bfc5c
+>   x8 : 2073746920657461 x7 : 6470752074276e64 x6 : 0000000000000010
+>   x5 : 40000000ffff0254 x4 : ffff8000848907d0 x3 : 00000000ffffffff
+>   x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff000801320000
+>   Call trace:
+>    update_config+0xd4/0xf0
+>    clk_rcg2_shared_enable+0x58/0x98
+>    clk_core_enable+0x78/0x1f8
+>    clk_core_enable+0x58/0x1f8
+>    clk_enable+0x34/0x60
+>    clk_bulk_enable+0x54/0xe8
+>    msm_mdss_enable+0xac/0x250
+>    mdss_runtime_resume+0x3c/0x58
+>    pm_generic_runtime_resume+0x34/0x58
+>    __genpd_runtime_resume+0x38/0x90
+>    genpd_runtime_resume+0x11c/0x2b0
+>    __rpm_callback+0x50/0x1f0
+>    rpm_callback+0x74/0x88
+>    rpm_resume+0x534/0x760
+>    __pm_runtime_resume+0x64/0xc0
+>    __device_attach+0x8c/0x1c0
+>    device_initial_probe+0x1c/0x30
+>    bus_probe_device+0xb4/0xc0
+>    device_add+0x64c/0x848
+>    of_device_add+0x4c/0x70
+>    of_platform_device_create_pdata+0x94/0x130
+>    of_platform_bus_create+0x188/0x4c8
+>    of_platform_populate+0x60/0x160
+>    mdss_probe+0x278/0x398
+>    platform_probe+0x70/0xd8
+>    really_probe+0x190/0x3d8
+>    __driver_probe_device+0x84/0x180
+>    driver_probe_device+0x44/0x120
+>    __device_attach_driver+0xc4/0x168
+>    bus_for_each_drv+0x8c/0xf0
+>    __device_attach+0xa4/0x1c0
+>    device_initial_probe+0x1c/0x30
+>    bus_probe_device+0xb4/0xc0
+>    deferred_probe_work_func+0xbc/0x118
+>    process_one_work+0x154/0x3c8
+>    worker_thread+0x2bc/0x3e0
+>    kthread+0x118/0x128
+>    ret_from_fork+0x10/0x20
+>   ---[ end trace 0000000000000000 ]---
+>   Failed to enable clk '(null)': -16
+>   msm-mdss ae00000.display-subsystem: clock enable failed, ret:-16
+>   ------------[ cut here ]------------
+>   disp_cc_mdss_ahb_clk status stuck at 'off'
+>   WARNING: CPU: 4 PID: 73 at drivers/clk/qcom/clk-branch.c:86
+> clk_branch_wait+0x148/0x168
+>   Modules linked in:
+>   CPU: 4 PID: 73 Comm: kworker/u16:2 Tainted: G S      W
+> 6.6.0-rc3-next-20230929-00006-g019d41d2e78e-dirty #252
+> d692e32c53d7001f1537e28f80b45291db95a48f
+>   Hardware name: AYN Odin 2 (DT)
+>   Workqueue: events_unbound deferred_probe_work_func
+>   pstate: 614000c5 (nZCv daIF +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+>   pc : clk_branch_wait+0x148/0x168
+>   lr : clk_branch_wait+0x148/0x168
+>   sp : ffff800086143650
+>   x29: ffff800086143650 x28: 0000000000000000 x27: 0000000000000000
+>   x26: 0000000000000000 x25: ffff000a7e7b50d8 x24: ffff80008517ac90
+>   x23: ffff800082395ed0 x22: 0000000000000001 x21: ffff800080bb09f0
+>   x20: 0000000000000000 x19: ffff8000851094d0 x18: 0000000000000006
+>   x17: 0000000000000000 x16: 0000000000000020 x15: 0000000000000002
+>   x14: 0000000000000001 x13: 0000000000000004 x12: 0000000000000000
+>   x11: 0000000000000000 x10: 0000000000000020 x9 : ffff8000801bfc5c
+>   x8 : 0000000000000020 x7 : 00000000ffffffff x6 : 0000000000000000
+>   x5 : 0000000000000050 x4 : ffff800083df7e80 x3 : 00000000ffffffff
+>   x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff000801320000
+>   Call trace:
+>    clk_branch_wait+0x148/0x168
+>    clk_branch2_enable+0x38/0x50
+>    clk_core_enable+0x78/0x1f8
+>    clk_enable+0x34/0x60
+>    dsi_phy_enable_resource+0x98/0xb8
+>    dsi_phy_driver_probe+0x26c/0x408
+>    platform_probe+0x70/0xd8
+>    really_probe+0x190/0x3d8
+>    __driver_probe_device+0x84/0x180
+>    driver_probe_device+0x44/0x120
+>    __device_attach_driver+0xc4/0x168
+>    bus_for_each_drv+0x8c/0xf0
+>    __device_attach+0xa4/0x1c0
+>    device_initial_probe+0x1c/0x30
+>    bus_probe_device+0xb4/0xc0
+>    device_add+0x64c/0x848
+>    of_device_add+0x4c/0x70
+>    of_platform_device_create_pdata+0x94/0x130
+>    of_platform_bus_create+0x188/0x4c8
+>    of_platform_populate+0x60/0x160
+>    mdss_probe+0x278/0x398
+>    platform_probe+0x70/0xd8
+>    really_probe+0x190/0x3d8
+>    __driver_probe_device+0x84/0x180
+>    driver_probe_device+0x44/0x120
+>    __device_attach_driver+0xc4/0x168
+>    bus_for_each_drv+0x8c/0xf0
+>    __device_attach+0xa4/0x1c0
+>    device_initial_probe+0x1c/0x30
+>    bus_probe_device+0xb4/0xc0
+>    deferred_probe_work_func+0xbc/0x118
+>    process_one_work+0x154/0x3c8
+>    worker_thread+0x2bc/0x3e0
+>    kthread+0x118/0x128
+>    ret_from_fork+0x10/0x20
+>   ---[ end trace 0000000000000000 ]---
+>   msm_dsi_phy ae97000.phy: [drm:dsi_phy_enable_resource] *ERROR*
+> dsi_phy_enable_resource: can't enable ahb clk, -16
+>   msm_dsi_phy: probe of ae97000.phy failed with error -16
 
