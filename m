@@ -2,265 +2,191 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB4EBE75432
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Oct 2023 07:16:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFC77E7542D
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Oct 2023 07:44:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230386AbjJCHRA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Oct 2023 03:17:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44294 "EHLO
+        id S230047AbjJCHoY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Oct 2023 03:44:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230369AbjJCHRA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Oct 2023 03:17:00 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E2A4AD
-        for <linux-clk@vger.kernel.org>; Tue,  3 Oct 2023 00:16:55 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id ffacd0b85a97d-32320381a07so665892f8f.0
-        for <linux-clk@vger.kernel.org>; Tue, 03 Oct 2023 00:16:55 -0700 (PDT)
+        with ESMTP id S229835AbjJCHoY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Oct 2023 03:44:24 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2086390;
+        Tue,  3 Oct 2023 00:44:21 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-405524e6768so5583545e9.2;
+        Tue, 03 Oct 2023 00:44:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696317413; x=1696922213; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :references:cc:to:content-language:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QpUUFq9QU9L0qfPCVG8CBY0uJ76VkGAs+iJNl+MP9Es=;
-        b=sJhBBrN3GaeDcqOU+p77oBSarlc6PW3ioar4bWxsoAoFz2GosjbFvVd25SNEx2THqm
-         Z18tTBadB0XBAw5jXl90yLV5Nah1ALSenD8NNDynn/u3AbxzWu9ljdGBxSr6GpsZCw4b
-         E7Lk16MRF99QK7UNjHFHsj1DfQRAXXqCGOeO4StrX+1IcrC0K46Xg4enrKldlw/3EVUz
-         BFTKq5VlEKfJYO12wLFBpMvqeS5vDAtUcHauPqpKEB7Wrru5b5xOaCVq/+4bPgoYTB0R
-         6NabZIh696r1vfgxAZHwf78A243fIqtRPbsjkLOF8n8gaqQV7RmS6JFIjLm7wOdA3V68
-         d3dA==
+        d=gmail.com; s=20230601; t=1696319059; x=1696923859; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L2DSaduBdxObJwWZIFqigN3NqgUJkY9BBZwkTlmZj2E=;
+        b=aEwzzkhREJZ1r8YBebW+qRet2zohOlNXB2smdKS7eIVdZ5qxmoqPeEMJQdcYKWqNTj
+         Ky0TjLHsQuGAnC2gIhOMJm6+CysbfwtVF3MObj7sF7ZVS07NmiDXAKe9WCjkAzRqmCVj
+         iH6vLgKCNnhr8jpjoCXBKDzIg6j1HT9Yk6yN+YcfAjiwG9D6o5ESZaT9Z3XKeHm8/IEw
+         FGnVkbkqKojrW2qy7Il9YqIXoxaJReWwuMRfDKOuGXfpHRT8vB6eewuPeO7Svyoua49L
+         AFHngtqbuB7CaHUL1B6afNzoOQnFJP+DfnaAljK1wvM3Jd9TnA9rcebt+d8gGPT3sK9x
+         lqBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696317413; x=1696922213;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :references:cc:to:content-language:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=QpUUFq9QU9L0qfPCVG8CBY0uJ76VkGAs+iJNl+MP9Es=;
-        b=wM3LwBuNXLQ5i6c2zT8vl+HOkCJYbQPlx+MUWdR69y57xBJo831/ggnRgZNUUVMjZf
-         gbWV52Rsl/zS9Y9JymK2VrIeIYm7ebBg7RsSdcjEjhONjeDrJQ1hVndtwzMYlPPFq1uX
-         kXGKx15ZWji4ZPWfzuC+FPxE+B+Kx9UlhGsIsz6BRCKoQ89xyNlkVL4+5gcJEwgBElnr
-         SYwp8LxFK1IVXAQy+tRJLZnMD0KwFjpism/CzQjRCTTRew7z+lkcZLOuo8TaVrV8PMtO
-         jWdTLDMROyvE7p/t5ZK+CZJIiulIdDoSXFMj6Iv8zzOWOwJo5J//y8iSNAbFo16lzUYE
-         cIrA==
-X-Gm-Message-State: AOJu0YzAaf53WFBQv3t4ST/yw5eLrm0rqBzadsNCeQTecVqBBv7wLPBs
-        s4Df6BV1z+bvuteZ+CzjQCVJpQ==
-X-Google-Smtp-Source: AGHT+IEWu0xac32pksXzwZMIWt3brB8UIquOiYKnIp7HkLnrNNbaheTXCpeC2KPbOOWCbiefqofD8A==
-X-Received: by 2002:adf:ed02:0:b0:321:6936:c217 with SMTP id a2-20020adfed02000000b003216936c217mr12497257wro.14.1696317413483;
-        Tue, 03 Oct 2023 00:16:53 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:e31a:fe1c:e925:9858? ([2a01:e0a:982:cbb0:e31a:fe1c:e925:9858])
-        by smtp.gmail.com with ESMTPSA id j16-20020a056000125000b00326f5d0ce0asm852877wrx.21.2023.10.03.00.16.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Oct 2023 00:16:52 -0700 (PDT)
-Message-ID: <c6a974ce-511c-47f8-b6cb-baeec5283af9@linaro.org>
-Date:   Tue, 3 Oct 2023 09:16:50 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From:   neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v3 3/3] clk: qcom: add SM8550 DISPCC driver
-Content-Language: en-US, fr
-To:     Sophon Wu <wuxilin123@gmail.com>
-Cc:     Andy Gross <agross@kernel.org>, andersson@kernel.org,
-        devicetree@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        d=1e100.net; s=20230601; t=1696319059; x=1696923859;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L2DSaduBdxObJwWZIFqigN3NqgUJkY9BBZwkTlmZj2E=;
+        b=J3I/KDgCZixXuTN4xxWP7msxKSfj7q9I+tSuwxjWo0IKhdFHHN/PmyHlHE1BRw6b+J
+         ve4+BUUXoPSrqlBmffm7uJpUbDLSxJpFqsk+OWycall4DMrxWjqYA6ccDSBqf21ozFkl
+         QpvsZByh3K8HNkElaVjargTykihemVMd2HlVyumHExmN+ud5JK2UEd2VPJ4XTw20gfuw
+         Qr2smU3ad+Vtj033QsZFGem6tZRxRvhUN3F6nw/PaHaV50lzKJHqtyjGHzuMSAh3eb1n
+         LIbaFcEgI4WK90JX7rqLbcBA0NdIaGCh/La34Bk0o5ZwdvtjXcFptO9A7OyJQJFCCNcO
+         pZIA==
+X-Gm-Message-State: AOJu0Yy9sbq8FWWmwPzmv0uJ2xjSAtG553NOguoCKjZ7mH/lglR7Dzb8
+        39gmFNIIfqtw7ICuX56Y1NE=
+X-Google-Smtp-Source: AGHT+IEr8LwIruxc8YTUJJ9Vnl/NXdG9wFPnHmn68t7USWR6R9BFhAVuPuoKUX93lwe5t3dQyh/hkw==
+X-Received: by 2002:a05:600c:b59:b0:3ff:233f:2cfb with SMTP id k25-20020a05600c0b5900b003ff233f2cfbmr11346128wmr.23.1696319059238;
+        Tue, 03 Oct 2023 00:44:19 -0700 (PDT)
+Received: from PCBABN.skidata.net ([91.230.2.244])
+        by smtp.gmail.com with ESMTPSA id f14-20020a7bc8ce000000b00402d34ea099sm8679088wml.29.2023.10.03.00.44.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Oct 2023 00:44:18 -0700 (PDT)
+From:   Benjamin Bara <bbara93@gmail.com>
+To:     mripard@kernel.org
+Cc:     aford173@gmail.com, bbara93@gmail.com, benjamin.bara@skidata.com,
+        frank@oltmanns.dev, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        Rob Herring <robh+dt@kernel.org>, sboyd@kernel.org
-References: <CAEPPPKu=yxS6SgdLZiuhbF2DRURKVUBNgNbUQ96LxHHbtsJ6Sg@mail.gmail.com>
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro Developer Services
-In-Reply-To: <CAEPPPKu=yxS6SgdLZiuhbF2DRURKVUBNgNbUQ96LxHHbtsJ6Sg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        sboyd@kernel.org
+Subject: Re: [PATCH RFC 0/4] clk: re-set required rates during clk_set_rate()
+Date:   Tue,  3 Oct 2023 09:44:07 +0200
+Message-Id: <20231003074407.2856447-1-bbara93@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cjow276e3hsgtaqq6e2lzv3xdxyssoh34wan7lcwunh636wsqv@35eyi5cvbbwd>
+References: <cjow276e3hsgtaqq6e2lzv3xdxyssoh34wan7lcwunh636wsqv@35eyi5cvbbwd>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Hi Maxime,
 
-On 03/10/2023 04:17, Sophon Wu wrote:
-> On 09/01/2023 16:47, Neil Armstrong wrote:
-> 
->> Add support for the display clock controller found in SM8550
->> based devices.
-> 
->> This clock controller feeds the Multimedia Display SubSystem (MDSS).
->> This driver is based on the SM8450 support.
-> 
->> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
->> ---
-> 
-> Hi Neil,
-> 
-> I'm trying to enable display on SM8550 but having trouble with clocks. Do you
-> have any idea on this maybe? Full dmesg here: https://bpa.st/7E6Q
+thank you for the feedback!
 
-You may need to remove the cont-splash memory zone and the simple-framebuffer,
-if you leave the cont-splash the bootloader will leave the MDSS on and Linux
-will fail to take over and initialize the clocks.
+On Mon, 2 Oct 2023 at 14:27, Maxime Ripard <mripard@kernel.org> wrote:
+> There's a couple of things you didn't reply on the first version and
+> you didn't really expand it here:
 
-This is known issue, and for now we re-initialize everything from Linux after
-ABL disables the display subsystem entirely.
+Sorry for that, wanted to get the reduced series out first to have a
+better discussion base. Planned to reply to them and link to the
+spin-off later, probably should have mentioned that :/ Thanks for
+summarizing!
 
-Neil
+> Most clocks don't care, and only the clocks that have used
+> clk_set_rate_exclusive actually care.
 
-> 
-> Regards,
-> Xilin
-> 
->   ------------[ cut here ]------------
->   disp_cc_mdss_mdp_clk_src: rcg didn't update its configuration.
->   WARNING: CPU: 4 PID: 73 at drivers/clk/qcom/clk-rcg2.c:133
-> update_config+0xd4/0xf0
->   Modules linked in:
->   CPU: 4 PID: 73 Comm: kworker/u16:2 Tainted: G S
-> 6.6.0-rc3-next-20230929-00006-g019d41d2e78e-dirty #252
-> d692e32c53d7001f1537e28f80b45291db95a48f
->   Hardware name: AYN Odin 2 (DT)
->   Workqueue: events_unbound deferred_probe_work_func
->   pstate: 614000c5 (nZCv daIF +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
->   pc : update_config+0xd4/0xf0
->   lr : update_config+0xd4/0xf0
->   sp : ffff8000861435d0
->   x29: ffff8000861435d0 x28: 0000000000000000 x27: 0000000000000000
->   x26: ffff0008011da0f4 x25: 0000000000000000 x24: 0000000000000000
->   x23: 0000000000000004 x22: ffff000804f0eac0 x21: ffff800082395f68
->   x20: ffff800085109c20 x19: 0000000000000000 x18: 0000000000000014
->   x17: 0000000043567dcd x16: 00000000c6ba16a0 x15: 0000000040b16970
->   x14: 0000000000000001 x13: 2e6e6f6974617275 x12: 6769666e6f632073
->   x11: 7469206574616470 x10: 752074276e646964 x9 : ffff8000801bfc5c
->   x8 : 2073746920657461 x7 : 6470752074276e64 x6 : 0000000000000010
->   x5 : 40000000ffff0254 x4 : ffff8000848907d0 x3 : 00000000ffffffff
->   x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff000801320000
->   Call trace:
->    update_config+0xd4/0xf0
->    clk_rcg2_shared_enable+0x58/0x98
->    clk_core_enable+0x78/0x1f8
->    clk_core_enable+0x58/0x1f8
->    clk_enable+0x34/0x60
->    clk_bulk_enable+0x54/0xe8
->    msm_mdss_enable+0xac/0x250
->    mdss_runtime_resume+0x3c/0x58
->    pm_generic_runtime_resume+0x34/0x58
->    __genpd_runtime_resume+0x38/0x90
->    genpd_runtime_resume+0x11c/0x2b0
->    __rpm_callback+0x50/0x1f0
->    rpm_callback+0x74/0x88
->    rpm_resume+0x534/0x760
->    __pm_runtime_resume+0x64/0xc0
->    __device_attach+0x8c/0x1c0
->    device_initial_probe+0x1c/0x30
->    bus_probe_device+0xb4/0xc0
->    device_add+0x64c/0x848
->    of_device_add+0x4c/0x70
->    of_platform_device_create_pdata+0x94/0x130
->    of_platform_bus_create+0x188/0x4c8
->    of_platform_populate+0x60/0x160
->    mdss_probe+0x278/0x398
->    platform_probe+0x70/0xd8
->    really_probe+0x190/0x3d8
->    __driver_probe_device+0x84/0x180
->    driver_probe_device+0x44/0x120
->    __device_attach_driver+0xc4/0x168
->    bus_for_each_drv+0x8c/0xf0
->    __device_attach+0xa4/0x1c0
->    device_initial_probe+0x1c/0x30
->    bus_probe_device+0xb4/0xc0
->    deferred_probe_work_func+0xbc/0x118
->    process_one_work+0x154/0x3c8
->    worker_thread+0x2bc/0x3e0
->    kthread+0x118/0x128
->    ret_from_fork+0x10/0x20
->   ---[ end trace 0000000000000000 ]---
->   Failed to enable clk '(null)': -16
->   msm-mdss ae00000.display-subsystem: clock enable failed, ret:-16
->   ------------[ cut here ]------------
->   disp_cc_mdss_ahb_clk status stuck at 'off'
->   WARNING: CPU: 4 PID: 73 at drivers/clk/qcom/clk-branch.c:86
-> clk_branch_wait+0x148/0x168
->   Modules linked in:
->   CPU: 4 PID: 73 Comm: kworker/u16:2 Tainted: G S      W
-> 6.6.0-rc3-next-20230929-00006-g019d41d2e78e-dirty #252
-> d692e32c53d7001f1537e28f80b45291db95a48f
->   Hardware name: AYN Odin 2 (DT)
->   Workqueue: events_unbound deferred_probe_work_func
->   pstate: 614000c5 (nZCv daIF +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
->   pc : clk_branch_wait+0x148/0x168
->   lr : clk_branch_wait+0x148/0x168
->   sp : ffff800086143650
->   x29: ffff800086143650 x28: 0000000000000000 x27: 0000000000000000
->   x26: 0000000000000000 x25: ffff000a7e7b50d8 x24: ffff80008517ac90
->   x23: ffff800082395ed0 x22: 0000000000000001 x21: ffff800080bb09f0
->   x20: 0000000000000000 x19: ffff8000851094d0 x18: 0000000000000006
->   x17: 0000000000000000 x16: 0000000000000020 x15: 0000000000000002
->   x14: 0000000000000001 x13: 0000000000000004 x12: 0000000000000000
->   x11: 0000000000000000 x10: 0000000000000020 x9 : ffff8000801bfc5c
->   x8 : 0000000000000020 x7 : 00000000ffffffff x6 : 0000000000000000
->   x5 : 0000000000000050 x4 : ffff800083df7e80 x3 : 00000000ffffffff
->   x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff000801320000
->   Call trace:
->    clk_branch_wait+0x148/0x168
->    clk_branch2_enable+0x38/0x50
->    clk_core_enable+0x78/0x1f8
->    clk_enable+0x34/0x60
->    dsi_phy_enable_resource+0x98/0xb8
->    dsi_phy_driver_probe+0x26c/0x408
->    platform_probe+0x70/0xd8
->    really_probe+0x190/0x3d8
->    __driver_probe_device+0x84/0x180
->    driver_probe_device+0x44/0x120
->    __device_attach_driver+0xc4/0x168
->    bus_for_each_drv+0x8c/0xf0
->    __device_attach+0xa4/0x1c0
->    device_initial_probe+0x1c/0x30
->    bus_probe_device+0xb4/0xc0
->    device_add+0x64c/0x848
->    of_device_add+0x4c/0x70
->    of_platform_device_create_pdata+0x94/0x130
->    of_platform_bus_create+0x188/0x4c8
->    of_platform_populate+0x60/0x160
->    mdss_probe+0x278/0x398
->    platform_probe+0x70/0xd8
->    really_probe+0x190/0x3d8
->    __driver_probe_device+0x84/0x180
->    driver_probe_device+0x44/0x120
->    __device_attach_driver+0xc4/0x168
->    bus_for_each_drv+0x8c/0xf0
->    __device_attach+0xa4/0x1c0
->    device_initial_probe+0x1c/0x30
->    bus_probe_device+0xb4/0xc0
->    deferred_probe_work_func+0xbc/0x118
->    process_one_work+0x154/0x3c8
->    worker_thread+0x2bc/0x3e0
->    kthread+0x118/0x128
->    ret_from_fork+0x10/0x20
->   ---[ end trace 0000000000000000 ]---
->   msm_dsi_phy ae97000.phy: [drm:dsi_phy_enable_resource] *ERROR*
-> dsi_phy_enable_resource: can't enable ahb clk, -16
->   msm_dsi_phy: probe of ae97000.phy failed with error -16
+I think that is one of the main points I don't understand yet... Why? I
+mean, the point of calling clk_set_rate() is to get a certain rate for a
+clock, right? Why should the clock not care if it is changed to
+something completely different? Maybe I am a bit biased here because I
+use the imx8mp as a reference. On this platform, most hardware blocks
+have an own divider and therefore the clocks which are connected to the
+blocks are mostly "exclusive". E.g. the tree for a panel looks like
+this:
+-osc_24m (oscillator)
+-- video_pll1_ref_sel (mux)
+--- video_pll1 (configurable; shared)
+---- video_pll1_bypass (mux; shared)
+----- video_pll1_out (gate; shared)
+------ media_disp2_pix (divider; "panel exclusive")
+------- media_disp2_pix_root_clk (gate; "panel exclusive")
+-------- <PANEL>
 
+> clk_set_rate never provided that guarantee, you're effectively merging
+> clk_set_rate and clk_set_rate_exclusive.
+
+Ah, I guess I see what you mean... Since we would error out now on a
+"conflict", this becomes very close to the "exclusiveness concept".
+However, what I actually try to achieve is to leave the rest of the
+subtree unaffected by a change (if required and possible).
+
+> This might or might not be a good idea (it's probably not unless you
+> want to track down regressions forever), but we should really tie this
+> to clk_set_rate_exclusive or merge both.
+
+I see that the current "conflict handling" might fit very well for
+clk_set_rate_exclusive(). However, I think it's pretty hard to use
+clk_set_rate_exclusive() in a multi-platform driver, as the other
+competing consumers are not known. But maybe it makes sense to have the
+same path and decide on a conflict whether we are allowed to do the
+change or not (exclusive/protected).
+
+> Why do we need a new req_rate, and why req_rate can't be changed to
+> accomodate your changes.
+
+For me, the existing req_rate is a "persistent" rate. It is the rate a
+consumer requires the clock to have. It's something typically for leaves
+of the clock-tree, which are directly connected to (probably
+multi-platform) clock-consuming blocks, e.g. the dividers mentioned.
+The new req_rate is "temporary". It is rather important for the !leaves
+and indicate that a clock is required to change during this
+clk_set_rate() call, in order to fulfill the requested rate.
+
+Short example, let's say we have something like this:
+- Video PLL
+-- LVDS divider
+--- LVDS bridge (HW block)
+-- CRTC divider
+--- Panel (HW block)
+
+From a hardware-description point of view, the CRTC divider is exclusive
+to the panel and the LVDS divider exclusive to the LVDS bridge. However,
+the Video PLL is not the only possible parent of both and it should also
+not be set exclusively by one of them.
+
+When a CRTC rate of 35M is required by the panel, it would be set to the
+following:
+- Video PLL:     req_tmp=35M, req=-1,  new=35M
+-- LVDS divider: req_tmp=-1,  req=-1,  new=35M (div=1)
+-- CRTC divider: req_tmp=35M, req=35M, new=35M (div=1)
+
+Next, the LVDS bridge requires 245M, which would be a multiple of
+35M. The Video PLL is configured again, this time "by" the LVDS divider:
+- Video PLL:     req_tmp=245M, req=-1,   new=245M
+-- LVDS divider: req_tmp=245M, req=245M, new=245M (div=1)
+-- CRTC divider: req_tmp=-1,   req=35M,  new=245M (div=1)
+
+So without additional interaction (current behaviour), we would set the
+CRTC divider to 245M, which contradicts with the unchanged previous
+requirement stored in req. As req_tmp == -1, we know that the new rate
+of the CRTC divider is not crucial for the actual requested change (LVDS
+=> 245M). Therefore, what I would like to achieve is to have some
+component/process that tells the CRTC divider to set its div to 7, as
+this won't affect the ongoing requested change and would restore a
+required rate of a different component, which was changed "unintended".
+
+> Why do you even need the core to be involved in the first place? You
+> say you think it does, but you haven't answered any of my mails to
+> provide more details and figure out if we can do it without it.
+
+We already have this functionality (calc required new rates) inside the
+core and the core currently is the only one knowing all the context
+about the tree-structure and the required and new rates. So I think in
+the example above, calling calc_new_rates() again, this time with the
+CRTC divider and req, might be the simplest solution to the problem.
+
+I think as the Video PLL isn't directly consumed, we don't really have a
+different possibility to achieve the same outcome, except of starting
+Video PLL already with 245M (e.g. via device-tree).
+
+Just for the sake of completeness:
+A "conflict" occurs if this call would try to re-configure Video PLL
+again (if req_tmp is already set; by not involving req here, we
+basically avoid the "exclusiveness"). IMO, there are different ways to
+proceed on a conflict: A possible clk_set_rate() option would be to
+ignore a potential re-change of Video PLL by the second calc_new_rates()
+and just set a somewhat close to the req rate for CRTC divider. A
+possible clk_set_rate_exclusive() option is the one implemented here:
+error out if we cannot guarantee the existing required rates for the
+rest of the subtree.
+
+Thanks & regards
+Benjamin
