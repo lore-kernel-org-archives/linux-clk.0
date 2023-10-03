@@ -2,94 +2,109 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C0ABE7543A
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Oct 2023 09:17:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ED24E7543A
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Oct 2023 09:22:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231454AbjJCJRC convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Oct 2023 05:17:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55742 "EHLO
+        id S239596AbjJCJWy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Oct 2023 05:22:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231506AbjJCJRA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Oct 2023 05:17:00 -0400
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BA3EAB;
-        Tue,  3 Oct 2023 02:16:56 -0700 (PDT)
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-d77ad095f13so710533276.2;
-        Tue, 03 Oct 2023 02:16:56 -0700 (PDT)
+        with ESMTP id S239583AbjJCJWy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Oct 2023 05:22:54 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49BFCA9;
+        Tue,  3 Oct 2023 02:22:50 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id 2adb3069b0e04-5033918c09eso781688e87.2;
+        Tue, 03 Oct 2023 02:22:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1696324968; x=1696929768; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AI28QGsrmaOeIfp5/dnkKIs2m3ja8fuDploYXCzyMN8=;
+        b=iVj5Yc6OnzcOemy4Jf4cEMY1B7VVzvT+oyWyrgBYY3MmfBo/H0gDmFS+ckLatD8kVu
+         ssBaW5V63Gey0Q0RCKbFWnMQdzMfVIzGZJPDGjnDA6JL69BAMymnmFJAIYKgBhnyqFiK
+         XEXl2qZXQ9qlcYiw8zVesoM85bbC9DnClglHTeVfvoYF+YsUG2WejYrlMjWoGjWl7/Q2
+         MMQhD4HO6biRQOIId1O0lTFoLaooc3WjhRxLAPkwLbh9UYm2WPPpwxNno39zY5wO4ylA
+         tt7YZWxo20ilsDHD41RaNjls4YezuiHMAgE958DLhrHzu5fhMDbyA3s+Xn+VEc8nMWfE
+         RE6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696324615; x=1696929415;
+        d=1e100.net; s=20230601; t=1696324968; x=1696929768;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=S6pmxgdMjNksHv7Jn4j84JaWDZ29B4cnPZQJm+PQPzk=;
-        b=R+AXuTVWV3zwtfxhy16IRY03kVUJIvmqV7oD78kxoxQjXKQnGSF8bNTTR9388ZMg69
-         LHoBkcYzhddQNZFSmr+a9EBvgr8uta1sCqcR4a90/6GOWYPAf0lnLdEjGLDoUn5aorTu
-         SqtsuZwPRGWELD3oLvKfWFWRrBiOUD8v+B07cZv0PMC+gza4DgooB1ZHPSjl4aLY+YAf
-         bKfEMPKKz+G+FJHYAoe7ZduTFomRKe0KT9/9fTtpP1T0zHWb7tf0guTYKfHjcGU6PvB8
-         lkkptNaTJLW3vrh8jT7sOg16yffPygeLBxCGy5zF5lZtupVYwnTsMedJUJyRbiTTrqjO
-         8uHw==
-X-Gm-Message-State: AOJu0Yy8NHKaxtVotLO+kmALef00jX44yrxPg5apYiqJkTXOBSwyT75g
-        4wxYt59sHaglgYr4rJNVvY0v0e80rEetbg==
-X-Google-Smtp-Source: AGHT+IGFDR7qM91FuKAihnW46CcO3lwaD4Nguop9Cf4hWt6CG8odTLVvqreY5y6DAAfd9bGIe4Iuvw==
-X-Received: by 2002:a25:106:0:b0:d81:6e88:7cb2 with SMTP id 6-20020a250106000000b00d816e887cb2mr11548396ybb.46.1696324615226;
-        Tue, 03 Oct 2023 02:16:55 -0700 (PDT)
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com. [209.85.128.176])
-        by smtp.gmail.com with ESMTPSA id 14-20020a25050e000000b00d5d4bae6fdfsm287732ybf.30.2023.10.03.02.16.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Oct 2023 02:16:54 -0700 (PDT)
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-59f1dff5298so8369137b3.3;
-        Tue, 03 Oct 2023 02:16:54 -0700 (PDT)
-X-Received: by 2002:a0d:d4c1:0:b0:592:5def:5c03 with SMTP id
- w184-20020a0dd4c1000000b005925def5c03mr13812337ywd.22.1696324614714; Tue, 03
- Oct 2023 02:16:54 -0700 (PDT)
+        bh=AI28QGsrmaOeIfp5/dnkKIs2m3ja8fuDploYXCzyMN8=;
+        b=cSJEKviZ02T/vVHH/O834cegZOT70/l4uAw29Gl/IrvQlkwD/t9pfeaaObwKg/82Nd
+         6cRPTiSvbwJyMSM+++tLJ6ISD+f7lixEHB2PoSxYrUTkGAXbCFnhK9MIHdGuQb4tAyja
+         8Pe240GbrogMhgBBh3nKyDiE05mPsWnm6hW/toGzfqycQB2sd3360urYSaRRSm9iXw+G
+         yrHtODWHRyNnhOXkdaZFZ/m5j3u8HhMliuhLO3byinaV/QNrIEDfTHOt2nkpiMafEOqo
+         SqfOEluhm5DF46T62YNeVU24SUL5NGQuxRX/3b1qiDRiDJm9294KZSQLTh05xlnIbLj/
+         JPNQ==
+X-Gm-Message-State: AOJu0Yxh4sUPmwgNSgpRXOtYwDHca1aWVNacQNhcK6RJsCYsuQJj/iXa
+        2V/gr6X11xKpFYNQfrdAVh8Z20KWXbCwq0ilLDI=
+X-Google-Smtp-Source: AGHT+IEiM4K2h16qnD5cluahgHpj68PkC/JY1V9W6Ee3KLmHPuO3ZMsCY7A+TWPBXNM/4tDuWAbqLfJHbH0T+suu36I=
+X-Received: by 2002:ac2:5453:0:b0:4fe:8c4:44fb with SMTP id
+ d19-20020ac25453000000b004fe08c444fbmr11849690lfn.38.1696324968125; Tue, 03
+ Oct 2023 02:22:48 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1694596125.git.ysato@users.sourceforge.jp> <66ed5e27cb600f3317d315c4fd60bd3e9eb09c17.1694596125.git.ysato@users.sourceforge.jp>
-In-Reply-To: <66ed5e27cb600f3317d315c4fd60bd3e9eb09c17.1694596125.git.ysato@users.sourceforge.jp>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 3 Oct 2023 11:16:42 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWPg7+Qpu1Z_fHDek-isbxjEOzmGHpA=gK05jWvegYH0Q@mail.gmail.com>
-Message-ID: <CAMuHMdWPg7+Qpu1Z_fHDek-isbxjEOzmGHpA=gK05jWvegYH0Q@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 13/30] Documentation/devicetree: Add
- renesas,sh7751-cpg binding document.
-To:     Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc:     linux-sh@vger.kernel.org, glaubitz@physik.fu-berlin.de,
-        linux-clk@vger.kernel.org
+References: <CAEPPPKu=yxS6SgdLZiuhbF2DRURKVUBNgNbUQ96LxHHbtsJ6Sg@mail.gmail.com>
+ <c6a974ce-511c-47f8-b6cb-baeec5283af9@linaro.org>
+In-Reply-To: <c6a974ce-511c-47f8-b6cb-baeec5283af9@linaro.org>
+From:   Sophon Wu <wuxilin123@gmail.com>
+Date:   Tue, 3 Oct 2023 17:22:36 +0800
+Message-ID: <CAEPPPKtf6mo7YrUYdT57TiTjWO=NJ61aMDR0W-D2z95EJxQppQ@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] clk: qcom: add SM8550 DISPCC driver
+To:     neil.armstrong@linaro.org
+Cc:     Andy Gross <agross@kernel.org>, andersson@kernel.org,
+        devicetree@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
+        Rob Herring <robh+dt@kernel.org>, sboyd@kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Sep 13, 2023 at 11:26 AM Yoshinori Sato
-<ysato@users.sourceforge.jp> wrote:
-> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
-> ---
->  .../bindings/clock/renesas,sh7750-cpg.yaml    | 58 +++++++++++++++++++
->  1 file changed, 58 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/renesas,sh7750-cpg.yaml
+<neil.armstrong@linaro.org> =E4=BA=8E2023=E5=B9=B410=E6=9C=883=E6=97=A5=E5=
+=91=A8=E4=BA=8C 15:16=E5=86=99=E9=81=93=EF=BC=9A
 >
-> diff --git a/Documentation/devicetree/bindings/clock/renesas,sh7750-cpg.yaml b/Documentation/devicetree/bindings/clock/renesas,sh7750-cpg.yaml
-> new file mode 100644
-> index 000000000000..bf10a09440ac
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/renesas,sh7750-cpg.yaml
-> @@ -0,0 +1,58 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/renesas,cpg-clocks.yaml#
+> Hi,
+>
+> On 03/10/2023 04:17, Sophon Wu wrote:
+> > On 09/01/2023 16:47, Neil Armstrong wrote:
+> >
+> >> Add support for the display clock controller found in SM8550
+> >> based devices.
+> >
+> >> This clock controller feeds the Multimedia Display SubSystem (MDSS).
+> >> This driver is based on the SM8450 support.
+> >
+> >> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> >> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> >> ---
+> >
+> > Hi Neil,
+> >
+> > I'm trying to enable display on SM8550 but having trouble with clocks. =
+Do you
+> > have any idea on this maybe? Full dmesg here: https://bpa.st/7E6Q
+>
+> You may need to remove the cont-splash memory zone and the simple-framebu=
+ffer,
+> if you leave the cont-splash the bootloader will leave the MDSS on and Li=
+nux
+> will fail to take over and initialize the clocks.
+>
+> This is known issue, and for now we re-initialize everything from Linux a=
+fter
+> ABL disables the display subsystem entirely.
+>
+> Neil
 
-warning: ignoring duplicate '$id' value
-'http://devicetree.org/schemas/clock/renesas,cpg-clocks.yaml#'
+It works! Thanks a lot for the tip.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Regards,
+Xilin
