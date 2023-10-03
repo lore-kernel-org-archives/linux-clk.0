@@ -2,161 +2,287 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8809CE7543E
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Oct 2023 09:50:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E927CE75450
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Oct 2023 11:34:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231785AbjJCJuC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Oct 2023 05:50:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58584 "EHLO
+        id S240038AbjJCLeC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Oct 2023 07:34:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231681AbjJCJuB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Oct 2023 05:50:01 -0400
-Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-db3eur04on2054.outbound.protection.outlook.com [40.107.6.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98B8A9E;
-        Tue,  3 Oct 2023 02:49:58 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=b1CvKh3+ARTNPCzvRo5sfOKZJYt/NWdF/xOTFLCP4T0GWYVroq3VzKAUaNjmQyaTwESr0pEAMzz+P3ZZm7SY+GYuhS+rkNLKJO9UkJT7yfcSgu6hAQ6VO1puTLgHXuUizrZeCRq/Y2r0qpZsZBVCeHrMaZq+7mfSs1U0ZAgp+GdKzgUZlngDwGZODAXnhgTSSXWoQWlRHP3wPIbuJVIJn/D8jciAdWQhWxOXon9M6o+PDdFkDk+NndwG7O3bE0cHDFw1TE2h53nNv1SYDP1iZ8jvYJsV2TcVWaYmxOVfjaS8mOYPNpy1klBn1jiOoqB/f+9796OTzPtYIddM8AabvQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gsRIbwJINvNkoBTaXNZxVaRB2hmHzxGA7qLiT7OlAKI=;
- b=NSOM0L2wcq1OQBhud+Nnp/38iv2fALNhyBGU1kHM9EXnuXtZtjC33vgrvb9xMIPLQIl+bXiwNbGvEw4tZtB62tZC8vVecJp7oOgJQEHtNoSwws+sb076Y9S47l9jklZVO+6K43VxM+ks36IDfDHizKDVPwYHZJ+mDfYSaQjWowDPJukoFGaSG4W8xuUSGaw7FWQkJygK267hcdQRNYmK3JYgpBopo+rQI9+9x7+aORRSkyea07IwWveSxrH2qtkN3R8vzVlBaJF+wy5nMpjyQT7cpvm/VFyPVvNYVh6mmEgdAfQDAquGthzrYUteTgF/eAXrpRsm22gMGAtbtQhRkQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gsRIbwJINvNkoBTaXNZxVaRB2hmHzxGA7qLiT7OlAKI=;
- b=ZMJXiRP/IgVABYrK2uu6uuQ6+QPRkAFWdp+b9xM1aefXfVlcRd9WZ9J7azulCotu6h/YJYV5rIvRngO/dPERrae1aL3/f8FxeHCDRGHoWNjw6WoxMuC+6bp3/HJBidcdW3HPx7ZgiYo7y0zKybdIJBCU7CYXhxQOh4zaafU1COE=
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
- by PAXPR04MB8128.eurprd04.prod.outlook.com (2603:10a6:102:1c8::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6838.26; Tue, 3 Oct
- 2023 09:49:56 +0000
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::2b3:d8de:95c8:b28b]) by DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::2b3:d8de:95c8:b28b%3]) with mapi id 15.20.6838.024; Tue, 3 Oct 2023
- 09:49:56 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     Dan Carpenter <dan.carpenter@linaro.org>,
-        "S.J. Wang" <shengjiu.wang@nxp.com>
-CC:     Abel Vesa <abelvesa@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: RE: [PATCH 1/2] clk: imx: imx8: Fix an IS_ERR() vs NULL check in
- clk_imx_acm_attach_pm_domains()
-Thread-Topic: [PATCH 1/2] clk: imx: imx8: Fix an IS_ERR() vs NULL check in
- clk_imx_acm_attach_pm_domains()
-Thread-Index: AQHZ9P5W8WrJAfrSkk6C0nD89nKDabA309yQ
-Date:   Tue, 3 Oct 2023 09:49:56 +0000
-Message-ID: <DU0PR04MB9417CD110048E038EE848B3488C4A@DU0PR04MB9417.eurprd04.prod.outlook.com>
-References: <44bacaba-848b-4e62-908c-16538330d4dd@moroto.mountain>
-In-Reply-To: <44bacaba-848b-4e62-908c-16538330d4dd@moroto.mountain>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DU0PR04MB9417:EE_|PAXPR04MB8128:EE_
-x-ms-office365-filtering-correlation-id: 10d92b70-d349-41e0-200a-08dbc3f6199e
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: sOG6sk0+xiyHJVrDQiD662PPBoHn50eP+lMQRSKcrJzA/Kb4UpKNNwgWVod00pArPfwuaKfirDCt+KUC3blMkXJyelTGYpJcT9YuFDJrA2n4VaD+jjVm59qRF8I6y3NcMkMA2A8znRBsCAIPYuDj4vRXj4QXw0Ptir/KO2lf5uorZS7JVQx9kBuhErD5jFQp31Wb0Z8+sMPMCPvAyPC85vQTDqAXsu6dPRihpq+CNBcOatBfC1tz+EOo0tfZXsPAcVJiozMntdLqonsnUw1XqmtqIIBwHfv9uzDbrF8LLaIQsEb2KUtEtXo1avaQnHPNAB1AQbgLlzy9MhIsL0JWRRLWRARpZoyjqOuw8D0l/1zw0/irX8tFTytb0rRsXbrLwPVL+NUi5zaC0YB4Bgptrv4+OdEYjYw2vIVqaOTEFPUKV/4sRUOnGZadjtX9rrgMIkqtsBBZ+WjPjg+ShTq4wfFj5rKX9oK+3d3v/7p8kM6URy9NQc8T/10oHXDesUDCvJ1WIafp5ZDrePpKgBjIknfUdCSx6Kj1oRt0F7UUXZinHxmmYZYuDBINLr3LWvRKYvQrzofNdTC+otWt/RSKPYRtqOI8AIQZatZWTAszYqX0TqSttgWUNZdYgGHd+aOq
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(346002)(396003)(366004)(136003)(39860400002)(376002)(230922051799003)(64100799003)(451199024)(1800799009)(186009)(9686003)(64756008)(66446008)(76116006)(66476007)(66556008)(66946007)(6636002)(54906003)(8936002)(4326008)(26005)(41300700001)(8676002)(316002)(478600001)(83380400001)(71200400001)(7696005)(6506007)(122000001)(38070700005)(38100700002)(86362001)(33656002)(110136005)(2906002)(55016003)(7416002)(5660300002)(52536014)(44832011);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?IJOLDxI+htrJlrrUQrkbqHjUdoh1M5P5KkJO7gczeepAu8+wACd61+1Xb+SV?=
- =?us-ascii?Q?MOtyxgPVAsZG5ODBt2WueMePV+bbP+ZZEatly0ds1mInaBXZwTvtei2ONS6j?=
- =?us-ascii?Q?+fhqhkQrS6hOVW07yT8Gi997MPd5ZwGO8hFDWEURlm6fbPBr1h0p/vshOUmu?=
- =?us-ascii?Q?hKklkOPFXEA1Pue2YSGETsNSqeOohPwuTmMqkoG7RolaroJ6S4hnNV1prA9/?=
- =?us-ascii?Q?UldgGpd8doOBM+sZmXeI9ZophZHHyNhA44ZgBrTNbA/MS2unFnpyzBnMU9tT?=
- =?us-ascii?Q?jBJ020NGZbeo/oTUmHDffn0sItYFOWlYVt5qS9ly167TkZnCec8rUWcTi49u?=
- =?us-ascii?Q?wxQqyS2eLHk5WskpPbIt3u7Hw3WITEGAWAhb8Mx1EDcVCgx7M4bSmSll0fML?=
- =?us-ascii?Q?mXoM6ai8zfGCRJPLHrzQnigvQSDQ7rswLXcnqvM6iA1Agnb9fP7WgkDLKOvi?=
- =?us-ascii?Q?QSs+NWsu0y3YBMyQ1gCJgy/TeGhkmj+soOdQzey3e+CsHj0zqVZm7MkzYjoO?=
- =?us-ascii?Q?oF+ldaHV13MLcyByhX4WCBlmLDR6GhJ82gHpXMWetd5NBvS8naXm1ECnjNob?=
- =?us-ascii?Q?avOYg0D6AE/T0p9X4+toWnxI4UV/rAsVjeCAfSzlE5/ecAs9rAFa682rzl+w?=
- =?us-ascii?Q?NqNhctwMJZK1vTEeRMN/pblePB8PP9v7e0nXqUPbcpnk7vEO0Q6LlGwp1dmm?=
- =?us-ascii?Q?2uXfQ+ASQfoL8XVrfT6pQZhR8jSneQ8N1H7LYx3nDmlwqnPymkBKEy/VgCZr?=
- =?us-ascii?Q?MhghjPSYpJw0tEivqpgFMQ59EpchvXJ5cZCUPgLKzQChQGCOvhszG2suhFc9?=
- =?us-ascii?Q?kwbewv76a9w0yhz+IemyasDOs6Kx9NVL45lu88gvU4YMWcais+bk6DONtH8d?=
- =?us-ascii?Q?1g6t7NXJaf0NnWgwIV8Qh0T9oog63ZMFYBrI+wayqlGdfbCdfANtffbKRU7L?=
- =?us-ascii?Q?Boxuzsvu5PTaE/lcoZ2ulqIXA2hR3Frz+VGqsO/zOKSpCJBq9M5DdLhUv7il?=
- =?us-ascii?Q?dEFWHYGwl6gPuR9p9Q9t55MDraOaQXIDpZFRXEITwx8Jbr4aMhh3GgXhuh7z?=
- =?us-ascii?Q?gDAzf0mIltiiy2hivQIhg4ta+4v1cCILnHUY+nMDXp9BK4a/1R2++ceafEzi?=
- =?us-ascii?Q?XocoNtdtAWitwMcqTju8+peKgi3S+ieiMtlgx+eveuG11g8PwnhOIqID4eBw?=
- =?us-ascii?Q?21n5EQ4+XccPC7ohxCIzbNnf+2bHttATGglbL4VcOVgyR3L2BKYAMhH1qt3q?=
- =?us-ascii?Q?WR+VppAATFqZBv0vSvT8GX+xbbBXPkeJh82R9h3tAIINqV7d50VZp1x39KNw?=
- =?us-ascii?Q?/RR2Enbm2kV3AY87Cvp31dUkLm9ssMOd3VdO1XEWudyiyZc98TxBH4jLUnV9?=
- =?us-ascii?Q?3g7zd4fMLz0qLTbAi2QEBHNWKWlKKhiWevlxfCLboalBhwkyi0uBaEqvVZoz?=
- =?us-ascii?Q?p+4xnWC/21aoF5if+OF8xHbkVbxuYelsWY/MKwgfW9AjosvyWOZnoaEAga7C?=
- =?us-ascii?Q?qZsJf0i/sKDBUTu8WLvY3hp40dHfV1eOr76JG5B6k1D2sNKbsdMIfUja4A0R?=
- =?us-ascii?Q?6vMRbFWExV2oThAbukg=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        with ESMTP id S232042AbjJCLeB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Oct 2023 07:34:01 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF1929E;
+        Tue,  3 Oct 2023 04:33:57 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33E29C433C7;
+        Tue,  3 Oct 2023 11:33:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1696332837;
+        bh=jzJQoJEOtgE0PCeISU6Se33lKuEE7ReBhhE5kchD/uY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=K7dDC9WGx6YUj3fhmNLR3sAQzWZOH02ZE5rggptZcUme76kJWI3Paa7A8AQ3NtMpY
+         WhzMOw9W95ZOSwwY+NEUXfhBt885kWRG0FZKclw5DkywTJjAfVHQqDQGjQTeDb0lGQ
+         sq8k9yhLFR+W2VSXvZHMZ72036WCYkH4RAyrpOX07wOfUKS5U6x2mzp6aWZyU3HMjr
+         uU/xhPM2k/LHTK6D8Hu13cjRlo0gGdfmVJoO08O/3mB9e95Nsplm44EZIZBUQX/4Pe
+         vOALXj3KkYX+4KkGpOOEjo+am6YB+M/2/ciWRit20FQDfHuX0ICeckKeL5T2ad37M0
+         KqjWDoJhoDS7w==
+Date:   Tue, 3 Oct 2023 13:33:54 +0200
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Benjamin Bara <bbara93@gmail.com>
+Cc:     aford173@gmail.com, benjamin.bara@skidata.com, frank@oltmanns.dev,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org
+Subject: Re: [PATCH RFC 0/4] clk: re-set required rates during clk_set_rate()
+Message-ID: <koutffkprg3asrokmaxx6optdbw35ouw2o3llc5kaw6dw4ttrd@kgjijzztzor4>
+References: <cjow276e3hsgtaqq6e2lzv3xdxyssoh34wan7lcwunh636wsqv@35eyi5cvbbwd>
+ <20231003074407.2856447-1-bbara93@gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 10d92b70-d349-41e0-200a-08dbc3f6199e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Oct 2023 09:49:56.1962
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: pCyFUjW9As5L09Cg/U/3U3cO/SkTb5Ixx4+V4iYG6ONZzivoamWSGJsBHR+yOAiZJ+rtq6gefL6RgKxK4ZndyQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8128
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="keylsesp7i7kvq27"
+Content-Disposition: inline
+In-Reply-To: <20231003074407.2856447-1-bbara93@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-> Subject: [PATCH 1/2] clk: imx: imx8: Fix an IS_ERR() vs NULL check in
-> clk_imx_acm_attach_pm_domains()
->=20
-> The device_link_add() function returns NULL on error.  It doesn't return =
-error
-> pointers.  Fix the check accordingly.
->=20
-> Fixes: d3a0946d7ac9 ("clk: imx: imx8: add audio clock mux driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/clk/imx/clk-imx8-acm.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/clk/imx/clk-imx8-acm.c b/drivers/clk/imx/clk-imx8-ac=
-m.c
-> index 1e82f72b75c6..83019b986622 100644
-> --- a/drivers/clk/imx/clk-imx8-acm.c
-> +++ b/drivers/clk/imx/clk-imx8-acm.c
-> @@ -287,9 +287,9 @@ static int clk_imx_acm_attach_pm_domains(struct
-> device *dev,
->=20
-> DL_FLAG_STATELESS |
->=20
-> DL_FLAG_PM_RUNTIME |
->=20
-> DL_FLAG_RPM_ACTIVE);
-> -		if (IS_ERR(dev_pm->pd_dev_link[i])) {
-> +		if (!dev_pm->pd_dev_link[i]) {
->  			dev_pm_domain_detach(dev_pm->pd_dev[i], false);
-> -			ret =3D PTR_ERR(dev_pm->pd_dev_link[i]);
-> +			ret =3D -EINVAL;
->  			goto detach_pm;
->  		}
->  	}
-> --
-> 2.39.2
+--keylsesp7i7kvq27
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Oct 03, 2023 at 09:44:07AM +0200, Benjamin Bara wrote:
+> Hi Maxime,
+>
+> thank you for the feedback!
+>
+> On Mon, 2 Oct 2023 at 14:27, Maxime Ripard <mripard@kernel.org> wrote:
+> > There's a couple of things you didn't reply on the first version and
+> > you didn't really expand it here:
+>
+> Sorry for that, wanted to get the reduced series out first to have a
+> better discussion base. Planned to reply to them and link to the
+> spin-off later, probably should have mentioned that :/ Thanks for
+> summarizing!
+
+That's fine, don't worry :)
+
+> > Most clocks don't care, and only the clocks that have used
+> > clk_set_rate_exclusive actually care.
+>=20
+> I think that is one of the main points I don't understand yet... Why? I
+> mean, the point of calling clk_set_rate() is to get a certain rate for a
+> clock, right? Why should the clock not care if it is changed to
+> something completely different?
+
+Because it doesn't matter for most clocks, and doesn't really affect the
+system in any way. Or there's never any conflicting rate change that
+would impact them. I guess it's on a per-clock basis so it's hard to
+generalize, but the fact alone that the CCF is 10+ years old and we only
+have to discuss it now is kind of a proof that things mostly work out
+for most cases :)
+
+Also, some systems have likely side-stepped the entire problem by
+switching different outputs to different PLLs for example if the SoCs
+allow to.
+
+And while the vast majority of those drivers don't really care about the
+rate being strictly enforced, I would expect a reasonable amount of them
+to check the return code of clk_set_rate(). So if you start strictly
+enforcing the rate, you'll also have to fail more often because there's
+configuration that you just can't handle.
+
+And that would lead to more drivers failing for something they don't
+really care about :)
+
+> Maybe I am a bit biased here because I use the imx8mp as a reference.
+> On this platform, most hardware blocks have an own divider and
+> therefore the clocks which are connected to the blocks are mostly
+> "exclusive". E.g. the tree for a panel looks like
+> this:
+> -osc_24m (oscillator)
+> -- video_pll1_ref_sel (mux)
+> --- video_pll1 (configurable; shared)
+> ---- video_pll1_bypass (mux; shared)
+> ----- video_pll1_out (gate; shared)
+> ------ media_disp2_pix (divider; "panel exclusive")
+> ------- media_disp2_pix_root_clk (gate; "panel exclusive")
+> -------- <PANEL>
+
+I guess that's mostly a typical clock tree for a panel. However, notice
+that you only took a handful of clocks as an example, and not the 50-100
+others in your system. While the panel clock rate is critical, the
+register clock speed of the timers probably won't be as much.
+
+And that's what I was mentioning really: out of the 50-100 clocks in
+your system right now, you only really care about the rate of ~5, and
+most of them are going to be in different subtrees.
+
+So, while your problem is indeed a concern, it's also a corner case.
+
+> > clk_set_rate never provided that guarantee, you're effectively merging
+> > clk_set_rate and clk_set_rate_exclusive.
+>=20
+> Ah, I guess I see what you mean... Since we would error out now on a
+> "conflict", this becomes very close to the "exclusiveness concept".
+
+Yeah, exactly. clk_set_rate() gains the "I want this rate to be enforced
+forever" property that clk_set_rate_exclusive() provides already.
+
+> However, what I actually try to achieve is to leave the rest of the
+> subtree unaffected by a change (if required and possible).
+>=20
+> > This might or might not be a good idea (it's probably not unless you
+> > want to track down regressions forever), but we should really tie this
+> > to clk_set_rate_exclusive or merge both.
+>=20
+> I see that the current "conflict handling" might fit very well for
+> clk_set_rate_exclusive(). However, I think it's pretty hard to use
+> clk_set_rate_exclusive() in a multi-platform driver, as the other
+> competing consumers are not known.
+
+You don't know that with clk_set_rate either though?
+
+> But maybe it makes sense to have the same path and decide on a
+> conflict whether we are allowed to do the change or not
+> (exclusive/protected).
+>=20
+> > Why do we need a new req_rate, and why req_rate can't be changed to
+> > accomodate your changes.
+>=20
+> For me, the existing req_rate is a "persistent" rate. It is the rate a
+> consumer requires the clock to have. It's something typically for leaves
+> of the clock-tree, which are directly connected to (probably
+> multi-platform) clock-consuming blocks, e.g. the dividers mentioned.
+> The new req_rate is "temporary". It is rather important for the !leaves
+> and indicate that a clock is required to change during this
+> clk_set_rate() call, in order to fulfill the requested rate.
+>=20
+> Short example, let's say we have something like this:
+> - Video PLL
+> -- LVDS divider
+> --- LVDS bridge (HW block)
+> -- CRTC divider
+> --- Panel (HW block)
+>=20
+> From a hardware-description point of view, the CRTC divider is exclusive
+> to the panel and the LVDS divider exclusive to the LVDS bridge. However,
+> the Video PLL is not the only possible parent of both and it should also
+> not be set exclusively by one of them.
+>=20
+> When a CRTC rate of 35M is required by the panel, it would be set to the
+> following:
+> - Video PLL:     req_tmp=3D35M, req=3D-1,  new=3D35M
+> -- LVDS divider: req_tmp=3D-1,  req=3D-1,  new=3D35M (div=3D1)
+> -- CRTC divider: req_tmp=3D35M, req=3D35M, new=3D35M (div=3D1)
+>=20
+> Next, the LVDS bridge requires 245M, which would be a multiple of
+> 35M. The Video PLL is configured again, this time "by" the LVDS divider:
+> - Video PLL:     req_tmp=3D245M, req=3D-1,   new=3D245M
+> -- LVDS divider: req_tmp=3D245M, req=3D245M, new=3D245M (div=3D1)
+> -- CRTC divider: req_tmp=3D-1,   req=3D35M,  new=3D245M (div=3D1)
+>=20
+> So without additional interaction (current behaviour), we would set the
+> CRTC divider to 245M, which contradicts with the unchanged previous
+> requirement stored in req. As req_tmp =3D=3D -1, we know that the new rate
+> of the CRTC divider is not crucial for the actual requested change (LVDS
+> =3D> 245M). Therefore, what I would like to achieve is to have some
+> component/process that tells the CRTC divider to set its div to 7, as
+> this won't affect the ongoing requested change and would restore a
+> required rate of a different component, which was changed "unintended".
+
+My point earlier was that if we configure the Video PLL from the start
+to be 245MHz, then we don't need to worry about it.
+
+For the temporary requested rate, it's not clear to me why we should
+store it into the struct clk_core itself. It looks to be transient by
+nature, so it would be better in the clk_rate_request structure.
+clk_rate_request are now instantiated by functions, maybe we could add a
+pointer to the clk_rate_request that triggered it (some kind of
+"parent", but most likely to go from the child clock to the parent)?
+
+> > Why do you even need the core to be involved in the first place? You
+> > say you think it does, but you haven't answered any of my mails to
+> > provide more details and figure out if we can do it without it.
+>=20
+> We already have this functionality (calc required new rates) inside the
+> core and the core currently is the only one knowing all the context
+> about the tree-structure and the required and new rates.
+
+I mean, that whole discussion kind of proves that we don't have that
+functionality in the core.
+
+> So I think in the example above, calling calc_new_rates() again, this
+> time with the CRTC divider and req, might be the simplest solution to
+> the problem.
+>=20
+> I think as the Video PLL isn't directly consumed, we don't really have a
+> different possibility to achieve the same outcome, except of starting
+> Video PLL already with 245M (e.g. via device-tree).
+
+It doesn't need to happen in the device tree, but that sounds completely
+reasonable to me.
+
+> Just for the sake of completeness:
+> A "conflict" occurs if this call would try to re-configure Video PLL
+> again (if req_tmp is already set; by not involving req here, we
+> basically avoid the "exclusiveness"). IMO, there are different ways to
+> proceed on a conflict: A possible clk_set_rate() option would be to
+> ignore a potential re-change of Video PLL by the second calc_new_rates()
+> and just set a somewhat close to the req rate for CRTC divider. A
+> possible clk_set_rate_exclusive() option is the one implemented here:
+> error out if we cannot guarantee the existing required rates for the
+> rest of the subtree.
+
+The problem here is that you effectively want to coordinate clocks to
+change their rate. Most of the logic of whether or not they care about
+it, and how they care about it cannot be embedded in the clock
+framework.
+
+If we want to address this properly, I think we would need to switch the
+entire clock framework to some kind of state like KMS does.
+
+Something like:
+
+  - All the affected clocks by a configuration (rate, parent, phase,
+    accuracy, etc.) change are supposed to be within the state.
+
+  - Whenever someone does a clk_set_rate call, we build up a state with
+    the clock it was called on and all its child clocks.
+
+  - We introduce a new hook in clk_ops that will take that state and the
+    clock tells whether it's ok, or whether it needs to modify some
+    parameters. We call every clock, starting from the top most clock,
+    asking whether it's ok or if they need to change anything. If they
+    need to change anything, we start again with the new set of
+    parameters.
+
+  - Clocks are free to pull into the state more clocks (ie, their
+    parent), which in turn will pull their child.
+
+  - Once every driver agrees, we "commit" that state.
+
+That way, we can keep the driver requirements in the driver, and every
+clock affected by a rate change can adapt.
+
+That's a major undertaking, and we would need a bunch of helpers to
+maintain compatibility with the current API we have. Plus tons of kunit
+tests.
+
+Again, if we have the option to just run the PLL at some multiple of
+both, I really think for everyone's sanity that we should do that.
+
+Maxime
+
+--keylsesp7i7kvq27
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZRv8IgAKCRDj7w1vZxhR
+xVVQAQDF35HfjmL/HOOhvk0TTYhKIUjV8PqkzI77bFiZmWhWEAEAz7bZ9L3uKqzs
+MUwMsOx2POBhs5AVo9xrZb9h8pJMQAM=
+=PWXd
+-----END PGP SIGNATURE-----
+
+--keylsesp7i7kvq27--
