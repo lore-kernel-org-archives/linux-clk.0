@@ -2,127 +2,111 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9551E82CAA
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Oct 2023 03:57:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C4AAE7542C
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Oct 2023 06:22:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230061AbjJCD5w (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 Oct 2023 23:57:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48480 "EHLO
+        id S229547AbjJCGWl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Oct 2023 02:22:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230126AbjJCD5v (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Oct 2023 23:57:51 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB653BF
-        for <linux-clk@vger.kernel.org>; Mon,  2 Oct 2023 20:57:46 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-536b39daec1so647582a12.2
-        for <linux-clk@vger.kernel.org>; Mon, 02 Oct 2023 20:57:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1696305465; x=1696910265; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Vcj38yNtA7k/3hr4qGHtjbsEU4GTIRzNMyspAkCjhCA=;
-        b=p3zo2HGEr+2OvrXEoU/Zye/b9aSgFuQ/6Cn7dI+WhkfiRd4RZIr6GEHOBeC2BSX8tJ
-         uqp1SHn/SvcqCMew2MjGS+ooNVKU9t0g2/tR/kjh2uTBXWKX5c9kuhjNxkCoM5fiH/dm
-         +i9aD/Yc3nv9V05xzEh+j3rMzWC8sHi52iIoWvEC0+kFo2H+PHr8znb9Z2q1CPzrXFvu
-         KF4yBL/6uBN3w5zJM4YKXyeLB+qyDxbIs6nDjrXMqT9WJzT7d7/J/hDtdrWmftrVpq3z
-         UIKnj5ci5Dfk0R0ch9bS7xcZDJLMEjvfLGYlxLJZKh59FgBr0qW/sm0j96/LBJOSTnmn
-         /RAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696305465; x=1696910265;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vcj38yNtA7k/3hr4qGHtjbsEU4GTIRzNMyspAkCjhCA=;
-        b=GtD/hyf/xyLsDSvt4ZpqVqOg8PkOSuOJe1sJOFvn6WCumGXuxDbBjwkSXiw+F6uSsN
-         dHI49mRLBJDIfxz94Df+EmBvRZQpUjDeMY3Vj/0AqQ+Z6V8pb/OyP+Jnu081lfATPsvO
-         dwws/0qCehyIT0w+r4QiTCbnRc2Fl7sGukd+aJ2r/5xEUWQkZU25geTVJg1Ad4ZpLYWa
-         j8WQBDbsBeIu3cP3Zl0aNdY24HkW1HzIoQ4chJ7QFAmmGkoVkE6yG3qT8LYIEB6ip3uC
-         hFO+bSHw3KsNwolutXp8mdCEZzJ/Wup7LcZghZNsFUUhgESWMavVQUm9/CsZkUmZGTZW
-         PYcw==
-X-Gm-Message-State: AOJu0YyX8KI/geRliF8EsddJvCiOG3PVc/YXCUFiU3GsVDJ8ZCzPmPnS
-        1oHoRrEszIhlrc7zVJcdzNO7iw==
-X-Google-Smtp-Source: AGHT+IEifMyPHsZPopKOT2VslyFdEw8uEukP8H3uRKxwv6r121ZBGIoVbrBHyNp4qTycGECLs+Yl3A==
-X-Received: by 2002:a50:fa85:0:b0:534:63e:d0b7 with SMTP id w5-20020a50fa85000000b00534063ed0b7mr11688359edr.23.1696305465098;
-        Mon, 02 Oct 2023 20:57:45 -0700 (PDT)
-Received: from [192.168.32.2] ([82.78.167.190])
-        by smtp.gmail.com with ESMTPSA id q17-20020aa7da91000000b00537f44827a8sm160947eds.64.2023.10.02.20.57.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Oct 2023 20:57:44 -0700 (PDT)
-Message-ID: <ae156c07-955a-1257-2b1a-19ee938c1bcd@tuxon.dev>
-Date:   Tue, 3 Oct 2023 06:57:41 +0300
+        with ESMTP id S230234AbjJCGWk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Oct 2023 02:22:40 -0400
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2070.outbound.protection.outlook.com [40.107.237.70])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 936E9BB;
+        Mon,  2 Oct 2023 23:22:36 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=V0Q2373ZZjdElfbVE+ZLkCf1tiEiiIzwke2WZJysQoLg1UFQz7RXFfMCeLMtJAwgUy6wrJBhYP0sFU4WadCOX+GftZzYq2x5BK0BGCLf+rlBtXC3jGIrCxEf6mliUqVHyptrHhjxx7jcUK8pGVwITRskmeBflFMUVfFuUbogbWjS+Itr8LPqFNPP8Un9hJG/IxmGevZXtz5anTOKK6l7a7HM8IP3ealz8wureoqZsEMXc4CMbYG3CIgiM8fozfMgJVF5BOTRggckSTSnL9NvaaZ6uyUaZXJIP4mdB1btCcBIdH3TFJW0YANrc7qI1TgtkMP7j5ujXBapOF2nNzoCQg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EaoOu3CMYkndc/sLaTpOzxKw7/xeOWftlTmvq/r/VL0=;
+ b=LexgDcM0NA1ohSf1L3V1+4yvT47JKB1MlsuLHyK1jTMliRMS4gvm9NTbztXLf21d0gYEtTUZCv8wjrskFxqpQ3JGheGAdjoo07U7Mso/oAOSfe/95F84ApePc4CJ7RcGJtDev8FG5ZFjD6X10lCmNaBU0QzzuuAqo+sV8BartOB6F29FzZ6Nqk02sLl0IldnJSJBOKvX0iyWTenKR9xk5hu2tiqn5hvlFtodkB+i7M9M6bW/1SKWF71l2Pn83vU7U3HlJlhZAb/zXSm0YOSJfhVgXJs92Yv4KopIAgPFLb0f2DjmE6yWaRNs4tXU253+8ZwSP7Lt8pGoN58epsRiQg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=baylibre.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EaoOu3CMYkndc/sLaTpOzxKw7/xeOWftlTmvq/r/VL0=;
+ b=SSOfAfBx+iUEf1f+mHtTCthhiTk4A53s4XwuKMS549hiUgqlQIgZgj0rxBOxm9Ddm55GOB0ozph7VY03rgP3kwO7RA7W0ess3xeV+ROXdMWueItYkAk3BHDCN7ulCjW1Js9qO7HMHMFVbGGsQM9UC4q/LctEGLzsPPd0QZ++NM4=
+Received: from MW4PR03CA0254.namprd03.prod.outlook.com (2603:10b6:303:b4::19)
+ by PH7PR12MB5974.namprd12.prod.outlook.com (2603:10b6:510:1d9::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6838.28; Tue, 3 Oct
+ 2023 06:22:34 +0000
+Received: from CO1PEPF000044FC.namprd21.prod.outlook.com
+ (2603:10b6:303:b4:cafe::9e) by MW4PR03CA0254.outlook.office365.com
+ (2603:10b6:303:b4::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6838.33 via Frontend
+ Transport; Tue, 3 Oct 2023 06:22:33 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ CO1PEPF000044FC.mail.protection.outlook.com (10.167.241.202) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.6863.9 via Frontend Transport; Tue, 3 Oct 2023 06:22:33 +0000
+Received: from SATLEXMB08.amd.com (10.181.40.132) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Tue, 3 Oct
+ 2023 01:22:30 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB08.amd.com
+ (10.181.40.132) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Mon, 2 Oct
+ 2023 23:22:22 -0700
+Received: from xsjarunbala50.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.27 via Frontend
+ Transport; Tue, 3 Oct 2023 01:22:21 -0500
+From:   Jay Buddhabhatti <jay.buddhabhatti@amd.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <michal.simek@amd.com>
+CC:     <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Jay Buddhabhatti <jay.buddhabhatti@amd.com>
+Subject: [PATCH 0/2] update for versal net platform
+Date:   Mon, 2 Oct 2023 23:21:51 -0700
+Message-ID: <20231003062153.12215-1-jay.buddhabhatti@amd.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v2 19/28] dt-bindings: pinctrl: renesas: set
- additionalProperties: false
-To:     Rob Herring <robh@kernel.org>
-Cc:     geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        linus.walleij@linaro.org, gregkh@linuxfoundation.org,
-        jirislaby@kernel.org, magnus.damm@gmail.com,
-        catalin.marinas@arm.com, will@kernel.org,
-        quic_bjorande@quicinc.com, konrad.dybcio@linaro.org, arnd@arndb.de,
-        neil.armstrong@linaro.org, prabhakar.mahadev-lad.rj@bp.renesas.com,
-        biju.das.jz@bp.renesas.com, linux-renesas-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20230929053915.1530607-1-claudiu.beznea@bp.renesas.com>
- <20230929053915.1530607-20-claudiu.beznea@bp.renesas.com>
- <20231002145052.GA1690001-robh@kernel.org>
-Content-Language: en-US
-From:   claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20231002145052.GA1690001-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044FC:EE_|PH7PR12MB5974:EE_
+X-MS-Office365-Filtering-Correlation-Id: f24a7ed4-194a-40e5-8a83-08dbc3d92141
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: mEobcJCUtkNjG0NQeekmrHAwLQZFMxQ2pcVzTSlKlHWB3Xd3ghntBPmd2jt6T0UgNdJ13dXXMSNHV0zTqZ/VlXhs2h5j5VR33pND7hiQDHfGQE66gqVxbslUxX5SAFEIupwWk1BnDvgoAYqzSKLut4JQLMKWiUT+fRjoAKjSlE7sSm3bk7nxiqA0UYryza9U4xG4DQpnQUcaPOFuu2TV7oFUJtuoZ0VwZ+SgQr1Is51zfOQRHdSriV54z4qIxyEgFTxC7MsmOKZpDq4C2iSjOw26+8hoSfnp97zmqd6VzC9zmezoM/U2LMdrFg7vEkX49FGirVDx1SJOvU/YAtTl63dwAJinIQWaMDcMaRP0kIV4pY4yHeDIf4MOAISzXzdpt7aEmV3iq4ZT57WbFCCNHh/1EVqosbWjk2EvzZccEMY0QRTNm/CTvdZ0dnOuv1awz7HvtaVBEwWNiwJIzvn+6AJoeag0NHrWEiLndThJ2VwYeAy67OUPdSfa1Q0LV+jTe8CHhkuw2eMGP0bbGZd5F16fR9Ky3+10zKEB08ldles1rEsGiVf+IKHZ3BE3FZxoT5XfufGHr0uTIAwwDV7taZYNMSED9EDcsivV5GZVSljDNG/Hwhxuy2LRRqvJsUDe006Zg+ePSFumFGVcitHR4hocpZzzXuzkZb/yGfdPhGJPwavRsoMG0DxMpbgAPrGJR5BhA30FZgqqpczbXc/VwQm/bjQGDH1ihIu+NEWuSbD7N06FaXEzZyGsUbmVHPhNB5vMzGeWQuwRrEyM2Yl22A==
+X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(4636009)(396003)(136003)(376002)(346002)(39860400002)(230922051799003)(451199024)(64100799003)(1800799009)(186009)(82310400011)(40470700004)(46966006)(36840700001)(426003)(336012)(2616005)(1076003)(36860700001)(81166007)(40460700003)(82740400003)(356005)(86362001)(36756003)(40480700001)(83380400001)(47076005)(316002)(70206006)(54906003)(44832011)(8676002)(4326008)(5660300002)(41300700001)(4744005)(8936002)(110136005)(70586007)(2906002)(26005)(6636002)(15650500001)(6666004)(478600001)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Oct 2023 06:22:33.4913
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f24a7ed4-194a-40e5-8a83-08dbc3d92141
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1PEPF000044FC.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5974
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Update clock driver to support for Versal NET platforms.
+Versal Net is a new AMD/Xilinx  SoC.
 
+Jay Buddhabhatti (2):
+  drivers: clk: zynqmp: calculate closest mux rate
+  drivers: clk: zynqmp: update divider round rate logic
 
-On 02.10.2023 17:50, Rob Herring wrote:
-> On Fri, Sep 29, 2023 at 08:39:06AM +0300, Claudiu wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> Set additionalProperties: false.
->>
->> Suggested-by: Rob Herring <robh@kernel.org>
-> 
-> I did?
+ drivers/clk/zynqmp/clk-mux-zynqmp.c |  2 +-
+ drivers/clk/zynqmp/divider.c        | 70 +++++------------------------
+ 2 files changed, 11 insertions(+), 61 deletions(-)
 
-It is what I've understood from this:
+-- 
+2.17.1
 
-https://patchwork.kernel.org/project/linux-renesas-soc/patch/20230912045157.177966-30-claudiu.beznea.uj@bp.renesas.com/
-
-> 
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->> ---
->>
->> Changes in v2:
->> - this patch is new in v2 and added as suggested by Rob
->>
->>  .../devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml     | 3 +--
->>  1 file changed, 1 insertion(+), 2 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
->> index 4782f96feb7e..eb726770f571 100644
->> --- a/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
->> +++ b/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
->> @@ -106,8 +106,7 @@ additionalProperties:
->>          line-name: true
->>  
->>      - type: object
->> -      additionalProperties:
->> -        $ref: "#/additionalProperties/anyOf/0"
->> +      additionalProperties: false
-> 
-> With no properties defined, this only allows an empty node which is 
-> probably not what you want. It's the other anyOf entry that needed it, 
-> but I already sent a fix which Linus applied.
-
-Thanks!
-
-> 
-> Rob
