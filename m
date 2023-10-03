@@ -2,313 +2,185 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31995E7AD75
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Oct 2023 16:05:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7422DE8FDC0
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Oct 2023 23:37:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239961AbjJCQFG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Oct 2023 12:05:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48600 "EHLO
+        id S235111AbjJCXht (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Oct 2023 19:37:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232066AbjJCQFF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Oct 2023 12:05:05 -0400
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.167])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 219BAAF;
-        Tue,  3 Oct 2023 09:04:59 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1696349096; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=S6ff578BowUfZj+1y4YbL9FMxYk8NpzCFUvB9oK9VrY2LRwfWN0H+JiPRjJ4vqUlka
-    iOmqvtuPsen7sk+XYwr+qRrEK2qO0l7P712+nsYuVzR7fiDxZCAMLyLhIu/11WRyYo9s
-    Ps7BjssuNp42/9q/Wv9cGcu+MIWphYnXuNxHurj45fet0hZeVhiUhErq5EzilPy9//Nl
-    So4N4V6aa4NdHvMZwCShnFVTDNhKehKfWNJPHan2Vw5IKQQnl6+ccR10bHhzo0GZnl5E
-    mAd1mJDd9uQZ3ePUrH32fQySnR5IaEAXpRhh5aqLwJuUvm+GWVuXygbesURm5V59Pqg6
-    UZZg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1696349096;
-    s=strato-dkim-0002; d=strato.com;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=Fm0HbIGZeonJjTsTuZTF1RqPernihQA9D5wXeryyyjA=;
-    b=ZEqlEC1vDYbAaheXC+lj6aM7qPqno1r2AZn5vE2nlYCv9mASeoYbkPf4bIyjPGFI7x
-    ey8Lgr8kOcPyvcZupFZav0u37x9EVT7+H+n63tSQP+9/UG6lVYcRoxRW04YszF3o+h7x
-    edD5Am0apPhkqbPYuIt3nkRHH6oAOURZiHVTOH7f8XSYZZ3K/I1VJQTyf01vYX48OKGR
-    +0oGvFTQQunvcwjwo+exgfl7asj2UyYE+LJkICZ2L/VnPZE+gJ7WQJgpQC1MfRMqaZCD
-    8U6cF9og/J6rzqVzZ1zmzKT5NKWl+VHeayQIj869iSlXcqflGQBF+Y0bTJQmbBSRNzNf
-    bfRQ==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1696349096;
-    s=strato-dkim-0002; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=Fm0HbIGZeonJjTsTuZTF1RqPernihQA9D5wXeryyyjA=;
-    b=eZOLwXZ/heVgjvqGk3RLwOtgM1AkmobM3dqBjEQlhLtdlAlNiiTNyNe73y9Ref9yO9
-    1AoIUwpyzXwbvxQWSnJqLNX7Sr9GLwXu9uimGBZqlXye2JTEMVk/7TpNYTDeNO7DPx9d
-    rs3Yabvu5KmRWCStOeGxjxv3aXfsKc6xsGy7GyL5hOlotcMoDlHJrpLyttTCVEQf7+hc
-    o8az18aPbKvoQ7JCTqwhWwF0AuB/ql3k2K+jM54GEHIsSvrF24I6evLlBW8LCil7BDwo
-    JpExuz/TekkdtIOuRg+5H9ylqP6YqOqqnXz8e+wpA58hjQbxqoU2tV7S6+eu1F20r4L2
-    KkNw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1696349096;
-    s=strato-dkim-0003; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=Fm0HbIGZeonJjTsTuZTF1RqPernihQA9D5wXeryyyjA=;
-    b=aWQH+0CSM5uZCY8uleo4ZcdHXJNeCnXKqTRK5jDTIy+zlCA9x+9eD0bQ0mbCAjCaBA
-    1XJUpSbKAwNAqjJ1UFDw==
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u261EJF5OxJD4peA8paF1A=="
-Received: from gerhold.net
-    by smtp.strato.de (RZmta 49.8.2 DYNA|AUTH)
-    with ESMTPSA id R04c57z93G4t2dD
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-    Tue, 3 Oct 2023 18:04:55 +0200 (CEST)
-Date:   Tue, 3 Oct 2023 18:04:48 +0200
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>,
-        Ilia Lin <ilia.lin@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Nishanth Menon <nm@ti.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Christian Marangi <ansuelsmth@gmail.com>
-Subject: Re: [PATCH v4 05/23] interconnect: icc-clk: add support for scaling
- using OPP
-Message-ID: <ZRw7oL-7FcTX461o@gerhold.net>
-References: <20230827115033.935089-1-dmitry.baryshkov@linaro.org>
- <20230827115033.935089-6-dmitry.baryshkov@linaro.org>
- <493aff10d698c9ca5bdbeae45250f5fe.sboyd@kernel.org>
- <7312633f-3b53-43a1-b6e3-010513c2a1e2@linaro.org>
- <ZRwQvP_GbvwvLAn8@gerhold.net>
- <CAA8EJpr9WH+MQdOJQ5yockg9TsUnDcenGbs=dq4Nt0SSBaK=0A@mail.gmail.com>
- <ZRwia2_imBfRfv7X@gerhold.net>
- <CAA8EJppK6Qm22r0RhFJS6tSc=g-bLxOwDuxLCScRxS0MiZq3sA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAA8EJppK6Qm22r0RhFJS6tSc=g-bLxOwDuxLCScRxS0MiZq3sA@mail.gmail.com>
+        with ESMTP id S232052AbjJCXht (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Oct 2023 19:37:49 -0400
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2061.outbound.protection.outlook.com [40.107.20.61])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD576AC;
+        Tue,  3 Oct 2023 16:37:45 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=D2dBFByFiUMnVEIAOX88wwW9yTpdwUN4RWv15FjEvlbFu4WYnj8V4n5Ku3VGrTXLrb8eZ82h60dpIvfB3TGNzwsi3YrU14zAE/LS8u4iVXuQ+qVI5VlcpNspeJ7RZWAns5+e3DIOkw1ySe8WiCqTfwJFv/pWSxDD+vV7j5qrRH4TSUCNkRf/pJDb4uQte6QHpLYXmWxPaD4aqDNHqezdnp8+aIO0gYuSftvrhe50xJbCwB+HB4cTRv080fE/+XTz/8g/ooJNz6AkFV14ho3cBsBL0YhaSbf0jwQIUK6Y9q2p/aethrrxlzkIH6dappdOhe2E2GYDKs6HxRMq8Sj+6g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6GQE5y6qbcGwxSdTOva9AnZHoZpFkZFOwcN3pNNv0kU=;
+ b=R3bJVoJ983Lhbz7xxftFtwF3C0fSvx7YYn+bI/agFg3fRAWa3++096ofswBWMVO8WUb9FjUuByQsrQrsKrFsatcZTFzXPu9X3/pJYHfLpMSLE5+6oD9SWl3TXrgwEIC+KvEY9vXqHVaDpcbCqhIpuGqFmkgGNNpJceMeY4hE3Qvb8xMrpvVqWtaMdvnIMkQBm5uBwvlNAzQMk09rlBo1SLNQqrNL/j54oTGolZ4N2Y+GWQl7ljWrhvqyHVQk/T7r4yc2WHhYxu01EAMHx5EZSDMtqZ5Vz8YYzlDf8oNdkcbXMJMQBEV5csfiruJqXkdqLQXpDHX4v1NU6ftILekT6A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6GQE5y6qbcGwxSdTOva9AnZHoZpFkZFOwcN3pNNv0kU=;
+ b=Ff12HbDws6sWjL9eI+NdgjlepYo79c6VO81wOKU0Pm0H6Dy1IUHh0mgBiD26E+B+YOGEcVC64XYypvXCRZrIV1WvnaTlbMBmGQIpx0PNfNuzXHrlkur6DQzK8AVPXi3Vdg4RjLsnqBmShWHmwOhxytVoTShgUsmz8Q/BzCJNST8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
+ by AS8PR04MB8754.eurprd04.prod.outlook.com (2603:10a6:20b:42d::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6838.33; Tue, 3 Oct
+ 2023 23:37:42 +0000
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::2b3:d8de:95c8:b28b]) by DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::2b3:d8de:95c8:b28b%3]) with mapi id 15.20.6838.024; Tue, 3 Oct 2023
+ 23:37:42 +0000
+From:   "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Subject: [PATCH v5 0/2] firmware: arm_scmi: clock: support parents commands
+Date:   Wed, 04 Oct 2023 07:42:22 +0800
+Message-Id: <20231004-scmi-clock-v3-v5-0-1b8a1435673e@nxp.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAN6mHGUC/3XMQQ6CMBCF4auQWTumpQyoK+9hWGA7yEShpDUNh
+ nB3K3uX/0vet0LkIBzhUqwQOEkUP+WgQwF26KYHo7jcUKrSaKUMRjsK2pe3T0wGO66J7w2R0wT
+ 5MwfuZdm9W5t7kPj24bPzqfqt/6RUoUJDJ9f0Z113iq7TMh+tH6Hdtu0LU/LGI6gAAAA=
+To:     Sudeep Holla <sudeep.holla@arm.com>,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Peng Fan <peng.fan@nxp.com>, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1696376552; l=1929;
+ i=peng.fan@nxp.com; s=20230812; h=from:subject:message-id;
+ bh=VR1ydI96zHAgFUiMqFvBNx35vszsMfG8fXTfJpzQe0I=;
+ b=zM7xv1LRBnCOB1p2/c9onEUzBWMjbxYveAXNojXlUxGXc+pcE5rEbeNWLV4xsyTeOVx3C0atX
+ axYhEQCSQxXBQQKVAZ0QYvmhwgDvkHG7rmSLIQj0rWwYYt3pdZDkxLc
+X-Developer-Key: i=peng.fan@nxp.com; a=ed25519;
+ pk=I4sJg7atIT1g63H7bb5lDRGR2gJW14RKDD0wFL8TT1g=
+X-ClientProxiedBy: SI2PR01CA0045.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:193::19) To DU0PR04MB9417.eurprd04.prod.outlook.com
+ (2603:10a6:10:358::11)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU0PR04MB9417:EE_|AS8PR04MB8754:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9afaa3e2-c32f-4d17-82cc-08dbc469bce0
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: CiE5hVJ/WXEOmladGkCaaCPFTvW3eCr72PFLKfLAgyXdGjh6rjtcasCkDbPd7hTyGWKKcdzzthlVJBZ8+ekh7QqpAwN+BpWcI+9MFaHDkb9yduBOUblCn01kWP1cai0PBpFARU1FnxxvrZHb7x9dl3M/skMxVOMr+4XmAvCEzap8Q++c2oYB0pZ2pkPb3G1vPRaxRPa/TikO7XEsLALNAWdZxZPnhfgagfgpPu5oxtf41oWrupoZIhkv51BV6Y59gd30tMZji83ucxqOg6feXUoh5QSvlt6NiTH9pxwO44s/M7TW42vfbx0nUpTMM0hAVTkokFp8fhCa+IEyGbVndAMCIztVb/mP29hlcg5gQpYEg3NiejRfJSdGrIKObTNbdEUKv+Rce8em29qf2pkyYjyO1SByg6be2J39GYfwoLf0Wk0kCr3Zz7pkYkqJkrL9YY5nBH+gd5ab9MpYnYGPApfcWgC20llZBZ70Bg2LYIVANOQfi0sJ0L0QfSOqXwpLLP2R4dXmI4f0rSM1TgdiuU69Phd1rHnmltS3qHc4ihYkYdM4o1JrZCh6tlPYVHrp7tzR4X5bFdT020lTvhZtawrRRddsxMjGrs8cc8+1zsmMyd89F2YkSqBfXaLsYUicbDW9CCULma6AO12plmsXzQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(346002)(376002)(366004)(39860400002)(136003)(230922051799003)(186009)(451199024)(64100799003)(1800799009)(966005)(6506007)(6512007)(6666004)(6486002)(9686003)(52116002)(478600001)(83380400001)(26005)(2906002)(4326008)(110136005)(41300700001)(66946007)(66556008)(66476007)(8936002)(5660300002)(8676002)(316002)(36756003)(86362001)(38100700002)(38350700002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MkpCbjVuOXQwVXlXcGZqdmVGVGxid0pka2QydElTcjc1RXJaci95TFRoMTNJ?=
+ =?utf-8?B?bTlEYUNsQ2JFbWR1REFhalBoUDBpTFlVTlY3VW5YWUZlcEhLT1ZoL3dzUUxX?=
+ =?utf-8?B?SHlLQzZuRlFWQWJhUFFaV0UrclJSZ1FOU2xyeHlMR2xqb0hBTmpHTCs1SXNJ?=
+ =?utf-8?B?a29aMUtPUkh3dlFOeUFVaXJpZ3BtQVlMZ2ExMHM3S2Z3N3JRYVltZjQxSFlo?=
+ =?utf-8?B?NGkySmR5R2V5Y2cwREtlb29IUzB4VmtOaHVkR0tvdzFNdlhYSFNWWms0eVIw?=
+ =?utf-8?B?QWRCNlBpTCtWYTA4Smh3VERjMzYrNGJkcWFXMDlFd1JOWDlhZERsQWhHWDd3?=
+ =?utf-8?B?WC9INFNCclhONkJzZUIyZzlqdWZzSVk5MDF6UTFyWXNXVm94VG12aDI4bEZ1?=
+ =?utf-8?B?a2U0endWQ3A0ampqRUlDOWhOL2N4K0w5MDhhSjZvK0NZYTBCUWh6UU0vYWQ4?=
+ =?utf-8?B?OW5pZFg5bXZ5UUN3NXRYd1VhZG9tSldhVzFvaGNHSWxhV01mNVp2dEM2QVV0?=
+ =?utf-8?B?SWgzSmpWYUkrczROYi9hVzNFcjAwT2E4amM2V0dFN0tGWTUxZFVoZHRFYW1q?=
+ =?utf-8?B?dllqTEd2Rk92SHJUNTVhNkZQRk5EcVBOaHZhYlp2M09EbVRsdDB2Ly9kaUFx?=
+ =?utf-8?B?RlFZbG1zT2tkS25ZdHdkQnNCNURLZ1l1dUg3T2lIV2hkY1oyZk42dzdBa21P?=
+ =?utf-8?B?QmJFYzZ6OVV1MjVWR3dESjBnT2JnZGJOYkdUN0MzelA4aEp4eDZNQS9kd2xi?=
+ =?utf-8?B?VDQwZXdlK1BwTjBOQXAvNmZDa3Z4eFdhdllDeVZZd3g2SEhBbHIrNEd5c3dE?=
+ =?utf-8?B?dFJ0b0NEamp3WW80K3BPZTFYd2lURFZyRjFkUmlLODltMFhCNllXRG9sUVFE?=
+ =?utf-8?B?U3hIREFqV2lldkw1Z0VYelZWeGpEcVhZWEtBdGZ3K2F3RnlweG1oZis0STc5?=
+ =?utf-8?B?elNxcUlDSjhQdlhYWXZ6WWczZ1YwU0FTYklCZ1BJcDRYQVNTTmFDUEhvUzdz?=
+ =?utf-8?B?UGI4QmZPQWllb1hFZTBtcnZzWDhxNEpnZ0dKazdaNWkvTGt4UVhERmN4R09R?=
+ =?utf-8?B?cHhZeW5WajE1alN0aSt2aGFwZDYxWXdFRmpQaFJncWNONEtSd29qTUg3VVRo?=
+ =?utf-8?B?cDVoVVlkMktvdVppeDdnaU13ZlJHU2ZiOUZWUS9pV3lYWVBCWnJ6RTBFdEpl?=
+ =?utf-8?B?cW5jT3NEWGVCUWVHVEhqQUFhejVyMTViNFR2by82VEdJcXIwUWwvRkhvWjV5?=
+ =?utf-8?B?YnlqT2hPWEUwNDZDM2owOGxtbGR5Tzd4UGFNMVE2K2grVG54VFZoVWI3L1ph?=
+ =?utf-8?B?V283a1VjZHBVL3N2WDhuRDREMVNGd3gydjVpOHZ5TXNMTjNTd2p6b09DWGVa?=
+ =?utf-8?B?ZUVGTkhzdEUwbERqSjhmbkdsV2pQbG5zY2lMUGlmd1huT1dTUk8yL1l0cnlk?=
+ =?utf-8?B?cHdGeEIxVFVNRlNzelJ5TTJpYmt0RlBJbmVpb0RMUS9ZVnJaaTZQeGQwNmZO?=
+ =?utf-8?B?UG1JdlhFcHQvaVBXc3A1NmpEblRPY2plQXo5SDVMaTFHUDZXZjczdk1JRG1q?=
+ =?utf-8?B?cjdNUDJpWlBiYjdsYzl3WDdkaThaUnhRdnJsbzJQZVdjQ3hoU0wzWGVjTmwz?=
+ =?utf-8?B?RWRwdm10MUZ3MXFPSFlmUUZJK2sycFNVUlhWZW5LcEc5NEVXZHpRSGE2ZHFX?=
+ =?utf-8?B?RmpWMFdhTENsY013WnVXcVE4elZPcHJaVWg3dXhuOWlteGJHQzZYaHROOUo3?=
+ =?utf-8?B?RG9Lc3BJNHZ6YVRnR09VSk03b1EzZ1hXRTNHTytjeDYyUEN3YW85ZFo0eXMy?=
+ =?utf-8?B?YU5CZXpKNUJGM0cvdHY2dytBQ2lqeHRuOXYxVkszdjZxakRISmN3WFFFTnUr?=
+ =?utf-8?B?Q3JabGtzUjRIVHQ0QzBJdkxIRC9JdkYrSlZRbWNPMWt2cGZXNDFsZ09ya3ZD?=
+ =?utf-8?B?TEg2d2EvcjJBMTlLbi9qT2JXTlRKbTBocUZzdmN2VWg1K1Jqd1lIMGdwWWx3?=
+ =?utf-8?B?eUczZWN0T1YwelhmN2xEQ3BDNHFyU0ZZSXJGNFJERENaU3pSUDBlWldEeFZU?=
+ =?utf-8?B?ZmtnY2xQQ1BLY1JkQ0p4RndQZHR4N01mZmJZYm9UVlRPVWpFWDByM20zVE5Z?=
+ =?utf-8?Q?nVTRBJpsOqOf1xjP6sgeelYHr?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9afaa3e2-c32f-4d17-82cc-08dbc469bce0
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Oct 2023 23:37:42.6083
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: HcUkvnCX+C0Jm/c5+6XwDSASSlOfbysYU1VxGjeYFv9LfWFVghEkwH+YxvUpkCbu7kNvHxZOG6SrM4HXkDXk7w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8754
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Oct 03, 2023 at 06:31:27PM +0300, Dmitry Baryshkov wrote:
-> On Tue, 3 Oct 2023 at 17:17, Stephan Gerhold <stephan@gerhold.net> wrote:
-> > On Tue, Oct 03, 2023 at 04:36:11PM +0300, Dmitry Baryshkov wrote:
-> > > On Tue, 3 Oct 2023 at 16:02, Stephan Gerhold <stephan@gerhold.net> wrote:
-> > > > On Tue, Oct 03, 2023 at 11:30:28AM +0300, Dmitry Baryshkov wrote:
-> > > > > On 28/08/2023 21:09, Stephen Boyd wrote:
-> > > > > > Quoting Dmitry Baryshkov (2023-08-27 04:50:15)
-> > > > > > > diff --git a/drivers/interconnect/icc-clk.c b/drivers/interconnect/icc-clk.c
-> > > > > > > index d787f2ea36d9..45ffb068979d 100644
-> > > > > > > --- a/drivers/interconnect/icc-clk.c
-> > > > > > > +++ b/drivers/interconnect/icc-clk.c
-> > > > > > > @@ -25,12 +28,16 @@ struct icc_clk_provider {
-> > > > > > >   static int icc_clk_set(struct icc_node *src, struct icc_node *dst)
-> > > > > > >   {
-> > > > > > >          struct icc_clk_node *qn = src->data;
-> > > > > > > +       unsigned long rate = icc_units_to_bps(src->peak_bw);
-> > > > > > >          int ret;
-> > > > > > >          if (!qn || !qn->clk)
-> > > > > > >                  return 0;
-> > > > > > > -       if (!src->peak_bw) {
-> > > > > > > +       if (qn->opp)
-> > > > > > > +               return dev_pm_opp_set_rate(qn->dev, rate);
-> > > > > >
-> > > > > > Just curious how does lockdep do with this? Doesn't OPP call into
-> > > > > > interconnect code, so lockdep will complain about ABBA?
-> > > > >
-> > > > > Unfortunately it does. It seems, the icc-clk is not a proper way to go here.
-> > > > > I will take a look at reusing set_required_opps for this case.
-> > > > >
-> > > >
-> > > > Could you elaborate a bit which locks exactly cause trouble here?
-> > > > I'm probably missing something here.
-> > > >
-> > > > From a quick look at the OPP code I don't see a global lock taken there
-> > > > for the entire OPP switch sequence, so I'm not sure how this could cause
-> > > > an ABBA deadlock.
-> > >
-> > > For example:
-> > >
-> > > [    7.680041] Chain exists of:
-> > > [    7.680041]   icc_bw_lock --> regulator_ww_class_acquire --> fs_reclaim
-> > > [    7.680041]
-> > > [    7.687955]  Possible unsafe locking scenario:
-> > > [    7.687955]
-> > > [    7.699039]        CPU0                    CPU1
-> > > [    7.704752]        ----                    ----
-> > > [    7.709266]   lock(fs_reclaim);
-> > > [    7.713779]                                lock(regulator_ww_class_acquire);
-> > > [    7.716919]                                lock(fs_reclaim);
-> > > [    7.724204]   lock(icc_bw_lock);
-> > >
-> >
-> > Hm, I'm not entirely sure how to interpret this. Is there really a
-> > connection between OPP and ICC here? It looks more like ICC <->
-> > regulator and somehow related to memory allocations (the fs_reclaim).
-> >
-> > Was there more output around this?
-> 
-> [    7.362902] ======================================================
-> [    7.363447] WARNING: possible circular locking dependency detected
-> [    7.369434] 6.6.0-rc3-next-20230929-08870-g49503b4b9f55 #129 Not tainted
-> [    7.375604] ------------------------------------------------------
-> [    7.382453] swapper/0/1 is trying to acquire lock:
-> [    7.388437] c143445c (icc_bw_lock){+.+.}-{3:3}, at: icc_init+0x0/0x104
-> [    7.393225]
-> [    7.393225] but task is already holding lock:
-> [    7.399730] c1397444 (fs_reclaim){+.+.}-{0:0}, at: icc_init+0x18/0x104
-> [    7.405547]
-> [    7.405547] which lock already depends on the new lock.
-> [    7.405547]
-> [    7.412077]
-> [    7.412077] the existing dependency chain (in reverse order) is:
-> [    7.420310]
-> [    7.420310] -> #2 (fs_reclaim){+.+.}-{0:0}:
-> [    7.427767]        fs_reclaim_acquire+0x60/0x94
-> [    7.433492]        __kmem_cache_alloc_node+0x30/0x2b4
-> [    7.437742]        __kmalloc_node_track_caller+0x48/0x244
-> [    7.442954]        kstrdup+0x30/0x58
-> [    7.448325]        create_regulator+0x70/0x2b8
-> [    7.451981]        regulator_resolve_supply+0x3bc/0x7f4
-> [    7.456234]        regulator_register+0x9b0/0xb50
-> [    7.461352]        devm_regulator_register+0x50/0x8c
-> [    7.466216]        rpm_reg_probe+0xf4/0x1a0
-> [    7.471244]        platform_probe+0x5c/0xb0
-> [    7.475157]        really_probe+0xc8/0x2d8
-> [    7.479318]        __driver_probe_device+0x88/0x1a0
-> [    7.483488]        driver_probe_device+0x30/0x108
-> [    7.488262]        __driver_attach_async_helper+0x4c/0xa0
-> [    7.493133]        async_run_entry_fn+0x24/0xb0
-> [    7.498504]        process_one_work+0x208/0x5e4
-> [    7.502844]        worker_thread+0x1e0/0x4a4
-> [    7.507356]        kthread+0x100/0x120
-> [    7.511874]        ret_from_fork+0x14/0x28
-> [    7.515428]
-> [    7.515428] -> #1 (regulator_ww_class_acquire){+.+.}-{0:0}:
-> [    7.519528]        lock_release+0x164/0x340
-> [    7.526713]        __mutex_unlock_slowpath+0x3c/0x2fc
-> [    7.530626]        regulator_lock_dependent+0x1a4/0x298
-> [    7.535839]        regulator_set_voltage+0x30/0xfc
-> [    7.540866]        krait_l2_set_one_supply+0x28/0x84
-> [    7.545729]        krait_l2_config_regulators+0x90/0x1c4
-> [    7.550851]        _set_opp+0xf0/0x438
-> [    7.556144]        dev_pm_opp_set_rate+0x118/0x224
-> [    7.559703]        icc_node_add+0xe8/0x15c
-> [    7.564474]        icc_clk_register+0x150/0x208
-> [    7.568556]        krait_l2_probe+0x100/0x114
-> [    7.572988]        platform_probe+0x5c/0xb0
-> [    7.577495]        really_probe+0xc8/0x2d8
-> [    7.581487]        __driver_probe_device+0x88/0x1a0
-> [    7.585658]        driver_probe_device+0x30/0x108
-> [    7.590433]        __device_attach_driver+0x94/0x10c
-> [    7.595300]        bus_for_each_drv+0x84/0xd8
-> [    7.600326]        __device_attach+0xac/0x1a8
-> [    7.604580]        bus_probe_device+0x8c/0x90
-> [    7.608919]        device_add+0x5c8/0x7a4
-> [    7.613265]        of_platform_device_create_pdata+0x90/0xbc
-> [    7.617260]        qcom_cpufreq_init+0xa8/0x130
-> [    7.622984]        do_one_initcall+0x68/0x2d8
-> [    7.627235]        kernel_init_freeable+0x1ac/0x208
-> [    7.631752]        kernel_init+0x18/0x12c
-> [    7.636441]        ret_from_fork+0x14/0x28
-> [    7.640602]
-> [    7.640602] -> #0 (icc_bw_lock){+.+.}-{3:3}:
-> [    7.644607]        __lock_acquire+0x1530/0x28fc
-> [    7.650413]        lock_acquire+0x10c/0x33c
-> [    7.654757]        icc_init+0x40/0x104
-> [    7.658917]        do_one_initcall+0x68/0x2d8
-> [    7.662740]        kernel_init_freeable+0x1ac/0x208
-> [    7.667168]        kernel_init+0x18/0x12c
-> [    7.671855]        ret_from_fork+0x14/0x28
-> [    7.676018]
-> [    7.676018] other info that might help us debug this:
-> [    7.676018]
-> [    7.680041] Chain exists of:
-> [    7.680041]   icc_bw_lock --> regulator_ww_class_acquire --> fs_reclaim
-> [    7.680041]
-> [    7.687955]  Possible unsafe locking scenario:
-> [    7.687955]
-> [    7.699039]        CPU0                    CPU1
-> [    7.704752]        ----                    ----
-> [    7.709266]   lock(fs_reclaim);
-> [    7.713779]                                lock(regulator_ww_class_acquire);
-> [    7.716919]                                lock(fs_reclaim);
-> [    7.724204]   lock(icc_bw_lock);
-> [    7.729833]
-> [    7.729833]  *** DEADLOCK ***
-> [    7.729833]
-> [    7.733071] 1 lock held by swapper/0/1:
-> [    7.738691]  #0: c1397444 (fs_reclaim){+.+.}-{0:0}, at: icc_init+0x18/0x104
-> [    7.742528]
-> [    7.742528] stack backtrace:
-> [    7.749463] CPU: 3 PID: 1 Comm: swapper/0 Not tainted
-> 6.6.0-rc3-next-20230929-08870-g49503b4b9f55 #129
-> [    7.754010] Hardware name: Generic DT based system
-> [    7.763183]  unwind_backtrace from show_stack+0x10/0x14
-> [    7.767957]  show_stack from dump_stack_lvl+0x60/0x90
-> [    7.773082]  dump_stack_lvl from check_noncircular+0x174/0x18c
-> [    7.778288]  check_noncircular from __lock_acquire+0x1530/0x28fc
-> [    7.784018]  __lock_acquire from lock_acquire+0x10c/0x33c
-> [    7.790178]  lock_acquire from icc_init+0x40/0x104
-> [    7.795475]  icc_init from do_one_initcall+0x68/0x2d8
-> [    7.800159]  do_one_initcall from kernel_init_freeable+0x1ac/0x208
-> [    7.805286]  kernel_init_freeable from kernel_init+0x18/0x12c
-> [    7.811361]  kernel_init from ret_from_fork+0x14/0x28
-> [    7.817177] Exception stack(0xf081dfb0 to 0xf081dff8)
-> 
+SCMI v3.2 spec adds parents commands, this patchset is to support them:
+CLOCK_POSSIBLE_PARENTS_GET
+CLOCK_PARENT_SET
+CLOCK_PARENT_GET
 
-Thanks! I assume you haven't noticed an actual deadlock (i.e. cpufreq
-not progressing) without lockdep?
+Besides firmware api clock driver update, the clk_scmi driver also
+updated to support set_parent and get_parent ops.
 
-FWIW I'm not fully convinced that this deadlock can actually happen in
-practice for your particular limited use case (i.e. that it is not a
-false positive).
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-> > In general, I would expect that adjusting a regulator from an
-> > interconnect driver should be made possible somehow. Just because the
-> > RPM firmware or similar typically handles this internally on Qualcomm
-> > platforms doesn't mean no one else will ever need to do this. If you
-> > have a higher bandwidth requests, need to increase the clock, which
-> > again depends on a higher voltage, then you need to be able to do the
-> > regulator_set_voltage() from the ICC driver somehow.
-> 
-> This kind of dependency is handled by the consumer, not by the ICC
-> driver. Usually we explicitly put them to the opp tables, matching
-> rates and volage.
-> 
+To: Sudeep Holla <sudeep.holla@arm.com>
+To: Cristian Marussi <cristian.marussi@arm.com>
+To: Michael Turquette <mturquette@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
 
-Right, but I'm talking about the voltage requirements of the aggregated
-bus clock. The rate for that is calculated from the different bandwidth
-requirements from all the consumers and not just a single one. From the
-kernel perspective, the interconnect driver is the consumer of that
-clock. On Qualcomm SMD RPM platforms the voltage adjustment for those is
-handled behind the scenes by the RPM firmware (no idea about RPMH and
-RPM-old).
+Changes in v5:
+- check return value of devm_kcalloc in patch 2 Per Cristian's comment
+- Link to v4: https://lore.kernel.org/r/20231003-scmi-clock-v3-v4-0-358d7f916a05@nxp.com
 
-But one could easily think of a (non-Qualcomm) SoC without RPM, where
-the interconnect driver calculates a particular bus rate for multiple
-consumers and then needs to vote for a power domain or regulator to be
-able to generate that clock safely.
+Changes in v4:
+ Included Cristian's fix in patch 2 for get parent. Thanks, Cristian.
+ Add Cristian's R-b in patch 1
+ Rebased on https://git.kernel.org/pub/scm/linux/kernel/git/sudeep.holla/linux.git/log/?h=for-next/scmi/updates
+ - Link to v3: https://lore.kernel.org/all/20231001-scmi-clock-v2-v3-0-898bd92d8939@nxp.com/
 
-> I think I'll still check the required-opps approach. It will require
-> manually aggregating the L2 rate requirements, but then we will be
-> safe from such kinds of interdependencies. And maybe then we can also
-> rewrite msm8996 to use required-opps too.
-> 
+Changes in v3:
+  Address Cristian's comments:
+   - Drop SCMI_MAX_NUM_PARENTS, alloc memory dynamically
+   - Check clk_id, parent_id
+   - Add comment for parent_get/set
+ - Link to v2: https://lore.kernel.org/r/20230925-scmi-clock-v2-v2-0-2d4d7127ebc1@nxp.com
 
-Sure, thanks! I think at the moment the required-opps implementation is
-somewhat entangled with power domains/genpd but perhaps it's easy enough
-to refactor that to be more general.
+Changes in V2:
+ - Add determine_rate hooks
 
-Thanks,
-Stephan
+---
+Peng Fan (2):
+      firmware: arm_scmi: clock: support clock parents
+      clk: scmi: add set/get_parent support
+
+ drivers/clk/clk-scmi.c            |  60 ++++++++++++-
+ drivers/firmware/arm_scmi/clock.c | 182 ++++++++++++++++++++++++++++++++++++--
+ include/linux/scmi_protocol.h     |   6 ++
+ 3 files changed, 241 insertions(+), 7 deletions(-)
+---
+base-commit: 8b6022be4c6e3e0d37c3e1378c9ff0a2c8717b09
+change-id: 20231003-scmi-clock-v3-ae65eb755d15
+
+Best regards,
+-- 
+Peng Fan <peng.fan@nxp.com>
+
