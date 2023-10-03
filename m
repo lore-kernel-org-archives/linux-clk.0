@@ -2,213 +2,127 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DB0BE776E9
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Oct 2023 02:17:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9551E82CAA
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Oct 2023 03:57:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229793AbjJCCRR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 Oct 2023 22:17:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55672 "EHLO
+        id S230061AbjJCD5w (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 Oct 2023 23:57:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229737AbjJCCRR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Oct 2023 22:17:17 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0547AD;
-        Mon,  2 Oct 2023 19:17:13 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id 2adb3069b0e04-50305abe5f0so465416e87.2;
-        Mon, 02 Oct 2023 19:17:13 -0700 (PDT)
+        with ESMTP id S230126AbjJCD5v (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Oct 2023 23:57:51 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB653BF
+        for <linux-clk@vger.kernel.org>; Mon,  2 Oct 2023 20:57:46 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-536b39daec1so647582a12.2
+        for <linux-clk@vger.kernel.org>; Mon, 02 Oct 2023 20:57:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696299432; x=1696904232; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=2vy7HP7S+bIn4v9pIEd0dIc0fwjXzhU2HqPC7qUpnLI=;
-        b=FBJW8xNl1igx46yD016YT2TUFSemd7HNidr6igybyqi1iVe7l9ZeZw1N4F6wgAZErx
-         z89LG0gZA5uBDdRIPZu/bl3fzTTxy2ywQ7CTB34CRCrU0WuaEpwfypmnri2W1jlWYwwb
-         HREOlRjmePYdGncN8af/wqxo2uAkS/opXcWBV5oqSmSOFEMiJbiKwuRaU5hh5QQ69+dZ
-         Zny1VuCs+O1XnoOKG7/ZDc5vEkifDbGHOZ8icBYIhlqLzOgCB+FQUPC7jc/UtlPjWlx8
-         8rV2V6l9/805L1n9ZSMQ8VKRjJB4BCso9R6uJkFusGm3lvH9Z/nruEsyZBAvnXqSoLmD
-         D4lQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696299432; x=1696904232;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+        d=tuxon.dev; s=google; t=1696305465; x=1696910265; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=2vy7HP7S+bIn4v9pIEd0dIc0fwjXzhU2HqPC7qUpnLI=;
-        b=ozGz1xfzJCMLj80U7WuNeWhbI9hwMy7CSDJ2G3A04siDwRgcKiP2NBOnzuFLSAsYNU
-         MNRNvny/83SNxldcFuG2Vtc/YSdXzbEmenEvn28wb6hOlZc/SnJ2/57g/winOLzDoRxE
-         raDEs5Xbf1PSaW2fMFkf19RMpWy/2CzxvvNY7VzHMJr04AYygFeSC0tPJviwI/7hDSe1
-         BPW/7zDxL7ur2tfISlMOk3VGOyZ4O1uSwfI/tutY6NhNbMEig2VxNqdSBC+UuY5FEBSb
-         Vd/GSOmKy1fQAV3h28cxo28TKEOfXqozzoVb5SGYiBE/Wc/+CKSMOpmigfUZ4KvZ3ceR
-         R+3g==
-X-Gm-Message-State: AOJu0YyEfm2OgJhVLXhhaAsjU/zGkxkYNG5x+BfKF55gpf3tL2m/uAA+
-        RKQFRf7GnpzXOHS6RRYHevnt7jdao9nbxL60BKo=
-X-Google-Smtp-Source: AGHT+IHJS1T/GroG+DU47CRG6NyZHgzyeh+7aBS/B7HZ38LrhMLxPXT3GdPENECEp/F88DUlqojOhqZNFzy6blEiAUI=
-X-Received: by 2002:a19:8c43:0:b0:4fe:1681:9377 with SMTP id
- i3-20020a198c43000000b004fe16819377mr10120810lfj.44.1696299431581; Mon, 02
- Oct 2023 19:17:11 -0700 (PDT)
+        bh=Vcj38yNtA7k/3hr4qGHtjbsEU4GTIRzNMyspAkCjhCA=;
+        b=p3zo2HGEr+2OvrXEoU/Zye/b9aSgFuQ/6Cn7dI+WhkfiRd4RZIr6GEHOBeC2BSX8tJ
+         uqp1SHn/SvcqCMew2MjGS+ooNVKU9t0g2/tR/kjh2uTBXWKX5c9kuhjNxkCoM5fiH/dm
+         +i9aD/Yc3nv9V05xzEh+j3rMzWC8sHi52iIoWvEC0+kFo2H+PHr8znb9Z2q1CPzrXFvu
+         KF4yBL/6uBN3w5zJM4YKXyeLB+qyDxbIs6nDjrXMqT9WJzT7d7/J/hDtdrWmftrVpq3z
+         UIKnj5ci5Dfk0R0ch9bS7xcZDJLMEjvfLGYlxLJZKh59FgBr0qW/sm0j96/LBJOSTnmn
+         /RAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696305465; x=1696910265;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vcj38yNtA7k/3hr4qGHtjbsEU4GTIRzNMyspAkCjhCA=;
+        b=GtD/hyf/xyLsDSvt4ZpqVqOg8PkOSuOJe1sJOFvn6WCumGXuxDbBjwkSXiw+F6uSsN
+         dHI49mRLBJDIfxz94Df+EmBvRZQpUjDeMY3Vj/0AqQ+Z6V8pb/OyP+Jnu081lfATPsvO
+         dwws/0qCehyIT0w+r4QiTCbnRc2Fl7sGukd+aJ2r/5xEUWQkZU25geTVJg1Ad4ZpLYWa
+         j8WQBDbsBeIu3cP3Zl0aNdY24HkW1HzIoQ4chJ7QFAmmGkoVkE6yG3qT8LYIEB6ip3uC
+         hFO+bSHw3KsNwolutXp8mdCEZzJ/Wup7LcZghZNsFUUhgESWMavVQUm9/CsZkUmZGTZW
+         PYcw==
+X-Gm-Message-State: AOJu0YyX8KI/geRliF8EsddJvCiOG3PVc/YXCUFiU3GsVDJ8ZCzPmPnS
+        1oHoRrEszIhlrc7zVJcdzNO7iw==
+X-Google-Smtp-Source: AGHT+IEifMyPHsZPopKOT2VslyFdEw8uEukP8H3uRKxwv6r121ZBGIoVbrBHyNp4qTycGECLs+Yl3A==
+X-Received: by 2002:a50:fa85:0:b0:534:63e:d0b7 with SMTP id w5-20020a50fa85000000b00534063ed0b7mr11688359edr.23.1696305465098;
+        Mon, 02 Oct 2023 20:57:45 -0700 (PDT)
+Received: from [192.168.32.2] ([82.78.167.190])
+        by smtp.gmail.com with ESMTPSA id q17-20020aa7da91000000b00537f44827a8sm160947eds.64.2023.10.02.20.57.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Oct 2023 20:57:44 -0700 (PDT)
+Message-ID: <ae156c07-955a-1257-2b1a-19ee938c1bcd@tuxon.dev>
+Date:   Tue, 3 Oct 2023 06:57:41 +0300
 MIME-Version: 1.0
-From:   Sophon Wu <wuxilin123@gmail.com>
-Date:   Tue, 3 Oct 2023 10:17:01 +0800
-Message-ID: <CAEPPPKu=yxS6SgdLZiuhbF2DRURKVUBNgNbUQ96LxHHbtsJ6Sg@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] clk: qcom: add SM8550 DISPCC driver
-To:     neil.armstrong@linaro.org
-Cc:     Andy Gross <agross@kernel.org>, andersson@kernel.org,
-        devicetree@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        Rob Herring <robh+dt@kernel.org>, sboyd@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v2 19/28] dt-bindings: pinctrl: renesas: set
+ additionalProperties: false
+To:     Rob Herring <robh@kernel.org>
+Cc:     geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        linus.walleij@linaro.org, gregkh@linuxfoundation.org,
+        jirislaby@kernel.org, magnus.damm@gmail.com,
+        catalin.marinas@arm.com, will@kernel.org,
+        quic_bjorande@quicinc.com, konrad.dybcio@linaro.org, arnd@arndb.de,
+        neil.armstrong@linaro.org, prabhakar.mahadev-lad.rj@bp.renesas.com,
+        biju.das.jz@bp.renesas.com, linux-renesas-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20230929053915.1530607-1-claudiu.beznea@bp.renesas.com>
+ <20230929053915.1530607-20-claudiu.beznea@bp.renesas.com>
+ <20231002145052.GA1690001-robh@kernel.org>
+Content-Language: en-US
+From:   claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20231002145052.GA1690001-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 09/01/2023 16:47, Neil Armstrong wrote:
 
-> Add support for the display clock controller found in SM8550
-> based devices.
 
-> This clock controller feeds the Multimedia Display SubSystem (MDSS).
-> This driver is based on the SM8450 support.
+On 02.10.2023 17:50, Rob Herring wrote:
+> On Fri, Sep 29, 2023 at 08:39:06AM +0300, Claudiu wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> Set additionalProperties: false.
+>>
+>> Suggested-by: Rob Herring <robh@kernel.org>
+> 
+> I did?
 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> ---
+It is what I've understood from this:
 
-Hi Neil,
+https://patchwork.kernel.org/project/linux-renesas-soc/patch/20230912045157.177966-30-claudiu.beznea.uj@bp.renesas.com/
 
-I'm trying to enable display on SM8550 but having trouble with clocks. Do you
-have any idea on this maybe? Full dmesg here: https://bpa.st/7E6Q
+> 
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>> ---
+>>
+>> Changes in v2:
+>> - this patch is new in v2 and added as suggested by Rob
+>>
+>>  .../devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml     | 3 +--
+>>  1 file changed, 1 insertion(+), 2 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
+>> index 4782f96feb7e..eb726770f571 100644
+>> --- a/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
+>> +++ b/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
+>> @@ -106,8 +106,7 @@ additionalProperties:
+>>          line-name: true
+>>  
+>>      - type: object
+>> -      additionalProperties:
+>> -        $ref: "#/additionalProperties/anyOf/0"
+>> +      additionalProperties: false
+> 
+> With no properties defined, this only allows an empty node which is 
+> probably not what you want. It's the other anyOf entry that needed it, 
+> but I already sent a fix which Linus applied.
 
-Regards,
-Xilin
+Thanks!
 
- ------------[ cut here ]------------
- disp_cc_mdss_mdp_clk_src: rcg didn't update its configuration.
- WARNING: CPU: 4 PID: 73 at drivers/clk/qcom/clk-rcg2.c:133
-update_config+0xd4/0xf0
- Modules linked in:
- CPU: 4 PID: 73 Comm: kworker/u16:2 Tainted: G S
-6.6.0-rc3-next-20230929-00006-g019d41d2e78e-dirty #252
-d692e32c53d7001f1537e28f80b45291db95a48f
- Hardware name: AYN Odin 2 (DT)
- Workqueue: events_unbound deferred_probe_work_func
- pstate: 614000c5 (nZCv daIF +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
- pc : update_config+0xd4/0xf0
- lr : update_config+0xd4/0xf0
- sp : ffff8000861435d0
- x29: ffff8000861435d0 x28: 0000000000000000 x27: 0000000000000000
- x26: ffff0008011da0f4 x25: 0000000000000000 x24: 0000000000000000
- x23: 0000000000000004 x22: ffff000804f0eac0 x21: ffff800082395f68
- x20: ffff800085109c20 x19: 0000000000000000 x18: 0000000000000014
- x17: 0000000043567dcd x16: 00000000c6ba16a0 x15: 0000000040b16970
- x14: 0000000000000001 x13: 2e6e6f6974617275 x12: 6769666e6f632073
- x11: 7469206574616470 x10: 752074276e646964 x9 : ffff8000801bfc5c
- x8 : 2073746920657461 x7 : 6470752074276e64 x6 : 0000000000000010
- x5 : 40000000ffff0254 x4 : ffff8000848907d0 x3 : 00000000ffffffff
- x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff000801320000
- Call trace:
-  update_config+0xd4/0xf0
-  clk_rcg2_shared_enable+0x58/0x98
-  clk_core_enable+0x78/0x1f8
-  clk_core_enable+0x58/0x1f8
-  clk_enable+0x34/0x60
-  clk_bulk_enable+0x54/0xe8
-  msm_mdss_enable+0xac/0x250
-  mdss_runtime_resume+0x3c/0x58
-  pm_generic_runtime_resume+0x34/0x58
-  __genpd_runtime_resume+0x38/0x90
-  genpd_runtime_resume+0x11c/0x2b0
-  __rpm_callback+0x50/0x1f0
-  rpm_callback+0x74/0x88
-  rpm_resume+0x534/0x760
-  __pm_runtime_resume+0x64/0xc0
-  __device_attach+0x8c/0x1c0
-  device_initial_probe+0x1c/0x30
-  bus_probe_device+0xb4/0xc0
-  device_add+0x64c/0x848
-  of_device_add+0x4c/0x70
-  of_platform_device_create_pdata+0x94/0x130
-  of_platform_bus_create+0x188/0x4c8
-  of_platform_populate+0x60/0x160
-  mdss_probe+0x278/0x398
-  platform_probe+0x70/0xd8
-  really_probe+0x190/0x3d8
-  __driver_probe_device+0x84/0x180
-  driver_probe_device+0x44/0x120
-  __device_attach_driver+0xc4/0x168
-  bus_for_each_drv+0x8c/0xf0
-  __device_attach+0xa4/0x1c0
-  device_initial_probe+0x1c/0x30
-  bus_probe_device+0xb4/0xc0
-  deferred_probe_work_func+0xbc/0x118
-  process_one_work+0x154/0x3c8
-  worker_thread+0x2bc/0x3e0
-  kthread+0x118/0x128
-  ret_from_fork+0x10/0x20
- ---[ end trace 0000000000000000 ]---
- Failed to enable clk '(null)': -16
- msm-mdss ae00000.display-subsystem: clock enable failed, ret:-16
- ------------[ cut here ]------------
- disp_cc_mdss_ahb_clk status stuck at 'off'
- WARNING: CPU: 4 PID: 73 at drivers/clk/qcom/clk-branch.c:86
-clk_branch_wait+0x148/0x168
- Modules linked in:
- CPU: 4 PID: 73 Comm: kworker/u16:2 Tainted: G S      W
-6.6.0-rc3-next-20230929-00006-g019d41d2e78e-dirty #252
-d692e32c53d7001f1537e28f80b45291db95a48f
- Hardware name: AYN Odin 2 (DT)
- Workqueue: events_unbound deferred_probe_work_func
- pstate: 614000c5 (nZCv daIF +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
- pc : clk_branch_wait+0x148/0x168
- lr : clk_branch_wait+0x148/0x168
- sp : ffff800086143650
- x29: ffff800086143650 x28: 0000000000000000 x27: 0000000000000000
- x26: 0000000000000000 x25: ffff000a7e7b50d8 x24: ffff80008517ac90
- x23: ffff800082395ed0 x22: 0000000000000001 x21: ffff800080bb09f0
- x20: 0000000000000000 x19: ffff8000851094d0 x18: 0000000000000006
- x17: 0000000000000000 x16: 0000000000000020 x15: 0000000000000002
- x14: 0000000000000001 x13: 0000000000000004 x12: 0000000000000000
- x11: 0000000000000000 x10: 0000000000000020 x9 : ffff8000801bfc5c
- x8 : 0000000000000020 x7 : 00000000ffffffff x6 : 0000000000000000
- x5 : 0000000000000050 x4 : ffff800083df7e80 x3 : 00000000ffffffff
- x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff000801320000
- Call trace:
-  clk_branch_wait+0x148/0x168
-  clk_branch2_enable+0x38/0x50
-  clk_core_enable+0x78/0x1f8
-  clk_enable+0x34/0x60
-  dsi_phy_enable_resource+0x98/0xb8
-  dsi_phy_driver_probe+0x26c/0x408
-  platform_probe+0x70/0xd8
-  really_probe+0x190/0x3d8
-  __driver_probe_device+0x84/0x180
-  driver_probe_device+0x44/0x120
-  __device_attach_driver+0xc4/0x168
-  bus_for_each_drv+0x8c/0xf0
-  __device_attach+0xa4/0x1c0
-  device_initial_probe+0x1c/0x30
-  bus_probe_device+0xb4/0xc0
-  device_add+0x64c/0x848
-  of_device_add+0x4c/0x70
-  of_platform_device_create_pdata+0x94/0x130
-  of_platform_bus_create+0x188/0x4c8
-  of_platform_populate+0x60/0x160
-  mdss_probe+0x278/0x398
-  platform_probe+0x70/0xd8
-  really_probe+0x190/0x3d8
-  __driver_probe_device+0x84/0x180
-  driver_probe_device+0x44/0x120
-  __device_attach_driver+0xc4/0x168
-  bus_for_each_drv+0x8c/0xf0
-  __device_attach+0xa4/0x1c0
-  device_initial_probe+0x1c/0x30
-  bus_probe_device+0xb4/0xc0
-  deferred_probe_work_func+0xbc/0x118
-  process_one_work+0x154/0x3c8
-  worker_thread+0x2bc/0x3e0
-  kthread+0x118/0x128
-  ret_from_fork+0x10/0x20
- ---[ end trace 0000000000000000 ]---
- msm_dsi_phy ae97000.phy: [drm:dsi_phy_enable_resource] *ERROR*
-dsi_phy_enable_resource: can't enable ahb clk, -16
- msm_dsi_phy: probe of ae97000.phy failed with error -16
+> 
+> Rob
