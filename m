@@ -2,124 +2,124 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A23BE8FDDA
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Oct 2023 07:50:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F142E8FDD1
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Oct 2023 07:55:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232733AbjJDHu2 convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Oct 2023 03:50:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37706 "EHLO
+        id S241516AbjJDHzO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Oct 2023 03:55:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232638AbjJDHu1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Oct 2023 03:50:27 -0400
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77D6BA1;
-        Wed,  4 Oct 2023 00:50:22 -0700 (PDT)
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-d8168d08bebso1888426276.0;
-        Wed, 04 Oct 2023 00:50:22 -0700 (PDT)
+        with ESMTP id S232638AbjJDHzN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Oct 2023 03:55:13 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20B46A1
+        for <linux-clk@vger.kernel.org>; Wed,  4 Oct 2023 00:55:10 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-5334d78c5f6so3136960a12.2
+        for <linux-clk@vger.kernel.org>; Wed, 04 Oct 2023 00:55:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1696406108; x=1697010908; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+8MtHSb/RNsDy2bsyLe9wq+5v559vVDhKA/xX66EHAE=;
+        b=XES2M0O2gCyOGgxitAc4ea2r1Vu+jkOJ3uDfpuU2vCTeo5sFGxFCpP4aBYn5464JlB
+         RwpdH4GMSnDhsWjg0i2MazAIzLLSIEDnULoTNGlS0lb//5PGL1z25/dz8h+/DGZW5ZJM
+         CGPE0+Fgs3t7kwg+gRbffOkL4kNGH4iJh78UQ/Ld0yLz2wkVE7UJZ79JAjqEz+neThDm
+         9F+YN6OH3QWsxxykZUPibY3w0ufFheN669Ad6duJ0Uoa4aaphoQcX7bD/pexXF0g9cHn
+         I6CeGa5hRbt4SWF3ReQHHFHXxV2yvrp5eVfQjdSMUdE28/9FKc36DwRQK6MAYSgA6d7U
+         3RMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696405821; x=1697010621;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GZrLUdUKNaqNRMGoDoXzKiAU93eO3LpyHUjLsr6Emu0=;
-        b=O6XqHrmsm4sCwXzbfxacYGN+M7ncFCuw2ZrQ6AsZ4EwrZlbnIav4GltV5+hSs75ltC
-         JFDOri0r2RBl+R6BK05TikjdUSOAyLAemcwZ/SdFHKByQndy/KbaydplijIiSpNb29JA
-         wM+OMjWckAL2HYmj+TRlBapZ2SDZI6UrEGoJVKzyxyDOxd8fxIntu82u69xVdNnpHCox
-         DbDRRu6LnxQxPNyaw0h3BGtQVIvKvh9efKQOmYDxLxL7nSVEUsXC4+EeLcKa9oMv3q67
-         eNMSaDnMybRJNcGSkX15h8AKgL1kQQCJ0Pmtfd1OJKmZWruEeyGkUt8l6nMiUQdo8AII
-         0LHg==
-X-Gm-Message-State: AOJu0YzJijS4V5E5kf/jbL1JhwxWKQXBR0w2ctWEh4zkovHlIEiJbdy3
-        GAsEembvgUxtl20es1GfKD6czmlIasUYGw==
-X-Google-Smtp-Source: AGHT+IHX+cU5ArLOrmKiRqAhThtZ3/dnMBnkV0nj8mS4KtoE9J5Tl1Rc9y4+HOrkVAFb4bjintaaeA==
-X-Received: by 2002:a25:8204:0:b0:cec:81af:cf92 with SMTP id q4-20020a258204000000b00cec81afcf92mr1347863ybk.36.1696405821456;
-        Wed, 04 Oct 2023 00:50:21 -0700 (PDT)
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
-        by smtp.gmail.com with ESMTPSA id w7-20020a05690202c700b00d7ba4c5e31fsm884597ybh.39.2023.10.04.00.50.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Oct 2023 00:50:21 -0700 (PDT)
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-59f1dff5298so22031357b3.3;
-        Wed, 04 Oct 2023 00:50:21 -0700 (PDT)
-X-Received: by 2002:a81:5bd5:0:b0:58a:83cd:115d with SMTP id
- p204-20020a815bd5000000b0058a83cd115dmr1449846ywb.50.1696405820988; Wed, 04
- Oct 2023 00:50:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1696406108; x=1697010908;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+8MtHSb/RNsDy2bsyLe9wq+5v559vVDhKA/xX66EHAE=;
+        b=inG/k5qii0Ruk+WmSoryvXQEkDSYKfhIXE7AoUPUPofdDp8n21koM5WkiCfI3pIg0b
+         Jldac1XRy9iSc6C4fs70l8nX0a+yjLjXA/Dg1x1qEBDqO5wE69jz3tpAVLVmux/J4uUY
+         U0tzOen3u/yUr1cOBQZgHUhkrDBWFnXeYzCotiu2GyHMHfSHGXkATYAsIx4X3KD+v5RP
+         nL5np/ePGxRpQ02Nfc+YvdrH0qPmhMFpP5sNRXZGup1oC38OMXO3izA+NQSMZyD3fR4w
+         Z/EQRCB/Lr1bYsa1Q4SZFMEXV2RPXF1HfPd11UdABekF5B9xOu3584koCE8MQ/8iJE6i
+         7CeA==
+X-Gm-Message-State: AOJu0YwlDiPqs7NANbayvBwGZ/EDY8e+LQMRZpQA3CACCcNvtNO/ouI1
+        ScQGV+QZZ71baAHXdKtLe62YcA==
+X-Google-Smtp-Source: AGHT+IGfixRwO8WxB7/Ghxm+3SUGkv8WpbxAjPmH6yRHcFEJgUYrWUtaRRYzSR9XlDxsqH7Ta68lfw==
+X-Received: by 2002:a50:fb90:0:b0:52e:5b10:23ac with SMTP id e16-20020a50fb90000000b0052e5b1023acmr1305874edq.36.1696406108137;
+        Wed, 04 Oct 2023 00:55:08 -0700 (PDT)
+Received: from linaro.org ([86.123.99.172])
+        by smtp.gmail.com with ESMTPSA id c6-20020a056402100600b005381936efa7sm1982410edu.16.2023.10.04.00.55.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Oct 2023 00:55:07 -0700 (PDT)
+Date:   Wed, 4 Oct 2023 10:55:05 +0300
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc:     Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Viorel Suman <viorel.suman@nxp.com>,
+        Robert Chiras <robert.chiras@nxp.com>,
+        Ranjani Vaidyanathan <ranjani.vaidyanathan@nxp.com>,
+        Laurentiu Palcu <laurentiu.palcu@nxp.com>,
+        Shenwei Wang <shenwei.wang@nxp.com>,
+        Jason Liu <jason.hui.liu@nxp.com>
+Subject: Re: [PATCH 0/7] =?utf-8?B?Y2xr77yaaW14?= =?utf-8?Q?=3A?= misc
+ update/fix for i.MX8
+Message-ID: <ZR0aWSviogXjw+od@linaro.org>
+References: <20230912-imx8-clk-v1-v1-0-69a34bcfcae1@nxp.com>
 MIME-Version: 1.0
-References: <20231004064220.31452-1-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20231004064220.31452-1-biju.das.jz@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 4 Oct 2023 09:50:09 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXageyQyqaGXJbmmpcKyjoO-VHWGzGk_WJ1YsAne+iiSw@mail.gmail.com>
-Message-ID: <CAMuHMdXageyQyqaGXJbmmpcKyjoO-VHWGzGk_WJ1YsAne+iiSw@mail.gmail.com>
-Subject: Re: [PATCH] clk: vc3: Use clamp() instead of min_t()
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Biju Das <biju.das.au@gmail.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230912-imx8-clk-v1-v1-0-69a34bcfcae1@nxp.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Biju,
+On 23-09-12 17:18:58, Peng Fan (OSS) wrote:
+> The patchset is to upstream NXP downstream i.MX8 clk misc patches which
+> has been stayed in NXP LTS release for quite some time.
+> 
+> There are a few fixes, but should be fine to put in next tree.
+> 
 
-Thanks for your patch!
+Whole series LGTM.
 
-On Wed, Oct 4, 2023 at 8:42 AM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> The min_t() is often used as a shortcut for clamp(). Secondly, the
-> BIT(16) - 1 is specifically used as the value related to the bits in the
-> hardware and u16 is a software type that coincidentally has the same
-> maximum as the above mentioned bitfield.
+Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
 
-Technically it is two byte-sized registers forming a 16-bit field ;-)
-
-> Replace min_t()->clamp() in vc3_pll_round_rate().
->
-> Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 > ---
->  drivers/clk/clk-versaclock3.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/clk-versaclock3.c b/drivers/clk/clk-versaclock3.c
-> index 3d7de355f8f6..50772f61096f 100644
-> --- a/drivers/clk/clk-versaclock3.c
-> +++ b/drivers/clk/clk-versaclock3.c
-> @@ -402,7 +402,7 @@ static long vc3_pll_round_rate(struct clk_hw *hw, unsigned long rate,
->                 div_frc = rate % *parent_rate;
->                 div_frc *= BIT(16) - 1;
->
-> -               vc3->div_frc = min_t(u64, div64_ul(div_frc, *parent_rate), U16_MAX);
-> +               vc3->div_frc = clamp(div64_ul(div_frc, *parent_rate), 0, BIT(16) - 1);
-
-I'm not sure this is actually an improvement...
-
-While I agree "BIT(16) - 1" matches the expression two lines above,
-I find it harder to read.
-Perhaps introducing a VC3_PLL2_FB_FRC_DIV_MAX definition may help.
-BTW, if the hardware wouldn't use two byte-sized registers, but a real
-bitifield, one could use FIELD_GET(mask, mask) instead.
-
-Second, clamping an unsigned value to zero is futile, and opens us to
-warnings like:
-
-    warning: comparison of unsigned expression in ‘>= 0’ is always
-true [-Wtype-limits]
-
->                 rate = (*parent_rate *
->                         (vc3->div_int * VC3_2_POW_16 + vc3->div_frc) / VC3_2_POW_16);
->         } else {
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> Peng Fan (4):
+>       clk: imx: imx8qm-rsrc: drop VPU_UART/VPUCORE
+>       clk: imx8: remove MLB support
+>       clk: imx: scu: ignore clks not owned by Cortex-A partition
+>       clk: imx: imx8qm/qxp: add more resources to whitelist
+> 
+> Robert Chiras (1):
+>       clk: imx: imx8qxp: Fix elcdif_pll clock
+> 
+> Shenwei Wang (1):
+>       clk: imx: imx8qxp: correct the enet clocks for i.MX8DXL
+> 
+> Viorel Suman (1):
+>       clk: imx: imx8dxl-rsrc: keep sorted in the ascending order
+> 
+>  drivers/clk/imx/clk-imx8-acm.c     |  6 +++---
+>  drivers/clk/imx/clk-imx8dxl-rsrc.c |  3 +--
+>  drivers/clk/imx/clk-imx8qm-rsrc.c  |  5 ++---
+>  drivers/clk/imx/clk-imx8qxp-lpcg.h |  1 -
+>  drivers/clk/imx/clk-imx8qxp-rsrc.c |  4 +++-
+>  drivers/clk/imx/clk-imx8qxp.c      | 13 ++++++++++---
+>  drivers/clk/imx/clk-scu.c          | 20 ++++++++++++++++++++
+>  7 files changed, 39 insertions(+), 13 deletions(-)
+> ---
+> base-commit: cd04b2fab5ee58862674e9bab3cbc8e9a8576845
+> change-id: 20230912-imx8-clk-v1-d2089920a23a
+> 
+> Best regards,
+> -- 
+> Peng Fan <peng.fan@nxp.com>
+> 
