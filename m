@@ -2,98 +2,146 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E762EE8FDD1
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Oct 2023 08:24:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7C6EE8FDDA
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Oct 2023 08:28:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241627AbjJDIYz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Oct 2023 04:24:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46400 "EHLO
+        id S241654AbjJDI2T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Oct 2023 04:28:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241105AbjJDIYz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Oct 2023 04:24:55 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D334F83
-        for <linux-clk@vger.kernel.org>; Wed,  4 Oct 2023 01:24:51 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id 2adb3069b0e04-5045cb9c091so2197816e87.3
-        for <linux-clk@vger.kernel.org>; Wed, 04 Oct 2023 01:24:51 -0700 (PDT)
+        with ESMTP id S232596AbjJDI2S (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Oct 2023 04:28:18 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E83883;
+        Wed,  4 Oct 2023 01:28:15 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-31f71b25a99so1807353f8f.2;
+        Wed, 04 Oct 2023 01:28:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696407890; x=1697012690; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1696408094; x=1697012894; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TBzBZLupXX9UvXePvIFpTAv9OlD36MZ7fOKKYNoR2SQ=;
-        b=kjygUUFE5GnEOOvdYosUeFeICI76kEgoGnj/TRNED9n0JexH/dxJ6y81d3JNTakjdc
-         uCYHMlsV9DuFFxGXecViAF/ydLHvuPoSyZ8kb4Qnq4lyJJ1ZCMTFFzVeL6rqxP9aqmTQ
-         VvZDOAsFCmwpagFT36ojPB484vEbdRMCEJwgH0nsIn3oWFdjL+CD1cW9CY9r6EDe1lSZ
-         bmulkisSvYpF78hUgcZk6Ddb4afE9aR03hz6vZVC9vEylcDyx2pr1HVeMrDg+6RYr9L5
-         UO8UAuTW9hkzfylSXtdGa22WI/AIhFxmF06L2hZ+bk+JiMSW+M3DGjn03QO47DMrMvoN
-         15Qg==
+        bh=R2yRwJ/7iREzqBe4BdcV/tJQGnF/hrf8riPhHgSOhEw=;
+        b=WD9ZQZI7WBN5r8Y6gItR+IEq/sBg/xMiuoYLfPimuyp0RWIwfERDcCmnMAYbkFPNog
+         Xm2Gh4uoM0uyueXbI3ziQK7V7yWWfYXsBug4fkEHQfSJDL+KS1SbS6fPufB6bEN9j3pl
+         TuZfR/HCk0EjKZTCV1EOKrNIAWj7Y3VzlBhCR2wS6khZuxkzAxfd+opWmI9npU5qt4Xx
+         8jtgootzP2vfKeTfDnzrp/QWz7d6VfWjajDbkAOTbKD6ZqRLIRmRJSXYlr7hSimFx7PW
+         lA0sNnfohDCHw5KRJF8mp6oflZ5Gecz5J9eAk3+VXCQaviKDaxAfDQ1L8ulmWKjBorw5
+         7ejw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696407890; x=1697012690;
+        d=1e100.net; s=20230601; t=1696408094; x=1697012894;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TBzBZLupXX9UvXePvIFpTAv9OlD36MZ7fOKKYNoR2SQ=;
-        b=q4rCUC7q8uNu6uQJIXp7cnU5vt5uuuFSyRRSiEG70sFI1QeoNSEhUd5h14gOrTUsSv
-         pL/nGcyeLpEbcKORhIZRRiPrmfPInxWj83YrUPLjviNDk0fxaXC48txPo3fleMspx8vc
-         Hy0tWhvMWXhZ5+PUiPfIKZRBIR04q0duDTfAD4RAWHeAD9CA6V5BclEpSIhhesS/NMxm
-         NdNyjQ3cPprvOGlrLQMuwl7l5psvhthffbVGxhuRCLDIhzPn88JfL+C9u3+WRPXL3C8U
-         M83Lwd3Pg/msl4fYS4FTkYQVGlInmtmQ01GKTyqEAtPEqjfl7USIJUzPRSovGAGRTIwf
-         6gDA==
-X-Gm-Message-State: AOJu0YxU5ZOY8/jsJmHfcfvctY6XUXrr+MTblVbUFNVgf7b96GrogIYb
-        RLe5nFB52/bi+uBqjQKmlBrkAA==
-X-Google-Smtp-Source: AGHT+IEvoV7teqz1BwPrURsFy2E9i2CruD+t5R/jxpizo3Sc5L4ZFkFV6uWGLb5w+yGTlNScGzRgiA==
-X-Received: by 2002:a19:e05b:0:b0:503:56e:ae4 with SMTP id g27-20020a19e05b000000b00503056e0ae4mr1277421lfj.38.1696407890054;
-        Wed, 04 Oct 2023 01:24:50 -0700 (PDT)
-Received: from hackbox.lan ([86.123.99.172])
-        by smtp.gmail.com with ESMTPSA id bo18-20020a0564020b3200b00533f111b61dsm2021467edb.68.2023.10.04.01.24.48
+        bh=R2yRwJ/7iREzqBe4BdcV/tJQGnF/hrf8riPhHgSOhEw=;
+        b=ROIdAjDjbsQyLLnGd8FqAqUwOPN9u3rFgFW3a1sfYVYSX67C+DnY+vbBIftq86Tw9S
+         hCTFCLAR/sE0mnARGqgBPxVc7F/Q2pYCnKeJWevpxP4vospWc4kQPYNZ1K3kSlHuZkJS
+         iFqJrWZ5Hj8zv2JTDIZwYd/aArrEXaKv5fMnZWHDPyN4l6xISj0nlIGn5zMIt6XtECiz
+         +9sjbgGZ3apQPGjZhYwOkaecNbPPFLLR8/OqCBwMkcop2cNavxKCLlD511fza7gNrt6d
+         t5a/1uJrIK9vQQ5CxepodlN1O5SDn1SpIqVFLaAt5NxetgsqKbdGE3/cyjj4TatiMoOV
+         XIKw==
+X-Gm-Message-State: AOJu0YyhFWaSRvKDU9JAqLLEJMqQYmqMqHIoNs6d5nsnljLg/IHBcrwF
+        7GbUB/49Dbxbf1ia24E5qkE=
+X-Google-Smtp-Source: AGHT+IFxQd2U1GXGAXigVpqGDqbCkb54Gqt1CaOxUHcHY0qZp3vpcOLh5uMbRNt0Tm7+Xvt6dWYbcg==
+X-Received: by 2002:a5d:61ce:0:b0:31a:d8c0:cb8b with SMTP id q14-20020a5d61ce000000b0031ad8c0cb8bmr1522942wrv.25.1696408093617;
+        Wed, 04 Oct 2023 01:28:13 -0700 (PDT)
+Received: from PCBABN.skidata.net ([91.230.2.244])
+        by smtp.gmail.com with ESMTPSA id r2-20020a5d4982000000b00323330edbc7sm3432701wrq.20.2023.10.04.01.28.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Oct 2023 01:24:49 -0700 (PDT)
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
-        sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        shengjiu.wang@nxp.com,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] clk: imx: imx8: Fix some error handling paths
-Date:   Wed,  4 Oct 2023 11:24:41 +0300
-Message-Id: <169640782687.164802.380569938820374861.b4-ty@linaro.org>
+        Wed, 04 Oct 2023 01:28:13 -0700 (PDT)
+From:   Benjamin Bara <bbara93@gmail.com>
+To:     alexander.stein@ew.tq-group.com
+Cc:     abelvesa@kernel.org, aford173@gmail.com, bbara93@gmail.com,
+        benjamin.bara@skidata.com, conor+dt@kernel.org,
+        devicetree@vger.kernel.org, festevam@gmail.com, frank@oltmanns.dev,
+        kernel@pengutronix.de, krzysztof.kozlowski+dt@linaro.org,
+        l.stach@pengutronix.de, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org, linux@armlinux.org.uk,
+        mripard@kernel.org, mturquette@baylibre.com, peng.fan@nxp.com,
+        robh+dt@kernel.org, s.hauer@pengutronix.de, sboyd@kernel.org,
+        shawnguo@kernel.org
+Subject: Re: [PATCH 00/13] imx8mp: first clock propagation attempt (for LVDS)
+Date:   Wed,  4 Oct 2023 10:28:06 +0200
+Message-Id: <20231004082806.2895789-1-bbara93@gmail.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1694722339.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1694722339.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <12810050.O9o76ZdvQC@steina-w>
+References: <12810050.O9o76ZdvQC@steina-w>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Adam, Alexander!
 
-On Thu, 14 Sep 2023 22:31:01 +0200, Christophe JAILLET wrote:
-> This serie fix some error handling paths. It is split in different patches to
-> ease review because the issues are unrelated and the proposed fixes are maybe
-> wrong (I don't have the hardware to test anything)
-> 
-> Some of v1 patches had been incorrectly hand modified. There was a extra ')' in
-> patch 3 and 4 that prevented the merge.
-> 
-> [...]
+On Wed, 4 Oct 2023 at 10:04, Alexander Stein <alexander.stein@ew.tq-group.com> wrote:
+> Am Dienstag, 3. Oktober 2023, 15:28:05 CEST schrieb Adam Ford:
+> > On Sun, Sep 17, 2023 at 5:40 PM Benjamin Bara <bbara93@gmail.com> wrote:
+> > > Hi!
+> > >
+> > > Target of this series is to dynamically set the rate of video_pll1 to
+> > > the required LVDS clock rate(s), which are configured by the panel, and
+> > > the lvds-bridge respectively.
+> > >
+> > > Some background:
+> > > The LVDS panel requires two clocks: the crtc clock and the lvds clock.
+> > > The lvds rate is always 7x the crtc rate. On the imx8mp, these are
+> > > assigned to media_disp2_pix and media_ldb, which are both
+> >
+> > Could the LDB driver be updated to take in the crtc clock as a
+> > parameter, then set the media_ldb to 7x crct clock.  I wonder if that
+> > might simplify the task a bit.
+>
+> I'm not sure if you had something different in mind, but I guess this happens
+> already in fsl_ldb_atomic_enable(), although using the mode clock.
+> As this might not always be possible, commit bd43a9844bc6f ("drm: bridge: ldb:
+> Warn if LDB clock does not match requested link frequency") was added to
+> indicate something might be wrong.
+> The main problem here is that both media_ldb and crct clock are not in a
+> parent<->child relationship, but are siblings, configurable individually.
 
-Applied, thanks!
+Yes, this already happens. First, the mode is set (which sets the CRTC
+rate). Next, LDB sets the LVDS rate. Both do not have "access" to the
+PLL, because the clocks haven't configured CLK_SET_RATE_PARENT. What
+might be a working (but IMHO dirty) hack, is to give the LDB the PLL
+clock as input too. Then it could set the PLL, LDB, CRTC rate (CRTC rate
+must be set again after PLL is set!).
 
-[1/5] clk: imx: imx8: Fix an error handling path in clk_imx_acm_attach_pm_domains()
-      commit: 156624e2cf815ce98fad5a24f04370f4459ae6f4
-[2/5] clk: imx: imx8: Fix an error handling path if devm_clk_hw_register_mux_parent_data_table() fails
-      commit: 9a0108acdb1b6189dcc8f9318edfc6b7e0281df4
-[3/5] clk: imx: imx8: Fix an error handling path in imx8_acm_clk_probe()
-      commit: e9a164e367f039629fd5466a79b9f495646e1261
-[4/5] clk: imx: imx8: Add a message in case of devm_clk_hw_register_mux_parent_data_table() error
-      commit: ef23d44b7fcbd19773dcedcb50ca2f625107604f
-[5/5] clk: imx: imx8: Simplify clk_imx_acm_detach_pm_domains()
-      commit: 3af29a89de2c6e49737a1201b7d6fd5ad3f635a4
+> > I still have concerns that the CLK_SET_RATE_PARENT may break the
+> > media_disp1_pix if media_disp2_pix is changing it.
+> > I think we should consider adding some sort of configurable flag to
+> > the CCM that lets people choose  if CLK_SET_RATE_PARENT should be set
+> > or not in the device tree instead of hard-coding it either on or off.
+> > This would give people the flexibility of stating whether
+> > media_disp1_pix, media_disp2_pix, both or neither could set
+> > CLK_SET_RATE_PARENT.
 
-Best regards,
--- 
-Abel Vesa <abel.vesa@linaro.org>
+Probably we could do that (for now) by adding a second (optional) clock
+to LDB. If it is set, the LDB driver should also set the LVDS rate on
+this clock. This would then be set to the parent PLL.
+
+> > I believe the imx8mp-evk can support both LVDS-> HDMI and DSI->HDMI
+> > bridges, and I fear that if they are trying to both set different
+> > clock rates, this may break something and the clocks need to be
+> > selected in advance to give people a bunch of HDMI options as well as
+> > being able to divide down to support the LVDS.
+> >
+> > I think some of the displays could be tied to one of the Audio PLL's,
+> > so I might experiment with splitting the media_disp1_pix and
+> > media_disp2_pix from each other to see how well .
+
+Yes, you probably could also tie them to one of the other available
+PLLs. We "could" also do that automatically, by not setting
+CLK_SET_RATE_REPARENT and adapting the clk-divider driver to look for a
+better suitable parent. However, I guess the outcome is currently quite
+unpredictable, so this would require a lot of additional work. Just to
+mention it here too: I created a small spin-off of this series[1] with
+the changes of this series which affect the core.
+
+Probably using the optional clock for LDB is a suitable short-term
+solution?
+
+Regards
+Benjamin
