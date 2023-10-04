@@ -2,147 +2,98 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04621E7B60C
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Oct 2023 12:53:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ED5FE7B60C
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Oct 2023 12:57:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233213AbjJDMxi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Oct 2023 08:53:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40220 "EHLO
+        id S242426AbjJDM55 convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Oct 2023 08:57:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233133AbjJDMxi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Oct 2023 08:53:38 -0400
-X-Greylist: delayed 2571 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 04 Oct 2023 05:53:32 PDT
-Received: from mx.kernkonzept.com (serv1.kernkonzept.com [IPv6:2a01:4f8:1c1c:b490::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3726A9
-        for <linux-clk@vger.kernel.org>; Wed,  4 Oct 2023 05:53:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kernkonzept.com; s=mx1; h=Cc:To:Message-Id:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:Subject:Date:From:References:In-Reply-To:Reply-To:
-        Content-ID:Content-Description;
-        bh=SmL8ximB3jmibA5ut1EhfI+VT8YUU8o3eptjGal/v/8=; b=dTCUotHndBZzy055HBmkMgW8Jm
-        7PPB9RGNMRO1nXirwbGtECWdOLx0WIetYONPfmMbo90+gSbBQbkAU4U6OInftVy0P+86DMd0UNNly
-        9/wcR5OJXGw2JxBqr22k6IxmiWW7ACc8jiGb0eVPH8hFl3FLWMhVluGG10gb9sU02j3F/uV28vaF2
-        btk3tBNOTKtBBwW6CLfkzY/9D0laZA6oiHTTwi6W11K3CgC2O4OzHQeIEd+iY/ZT60QPgk49RXlbT
-        8frjXUjoEn+a//YGSnkRJUT2jQFAN5aXk9CX4iVzfNVQl+JGjPfM99acVm1zd78AcncjIRuwBH/DJ
-        2B9FUzcg==;
-Received: from [10.22.3.24] (helo=serv1.dd1.int.kernkonzept.com)
-        by mx.kernkonzept.com with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim 4.96)
-        id 1qo0i5-0070GG-12;
-        Wed, 04 Oct 2023 14:10:37 +0200
-From:   Stephan Gerhold <stephan.gerhold@kernkonzept.com>
-Date:   Wed, 04 Oct 2023 14:10:34 +0200
-Subject: [PATCH v2] clk: qcom: smd: Disable unused clocks
+        with ESMTP id S242325AbjJDM54 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Oct 2023 08:57:56 -0400
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAA67C9;
+        Wed,  4 Oct 2023 05:57:52 -0700 (PDT)
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-d9191f0d94cso747192276.3;
+        Wed, 04 Oct 2023 05:57:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696424272; x=1697029072;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nNWbuPqGRcDinjfq6bAk+Y11zIkNJyvZkAmw9q5qsww=;
+        b=Ap1xCr5/lhNzhs2f7YCyAnn4I74pbz66+Dcit47dWg4d0XNqDEA5EIrpXILox6Xru9
+         bNs+QibL5/LWXzHP0e3u5zrB/x9hilhiXykGYd9nQSlH0JZE50SeD+DpoweBmTQo1QOB
+         Aj0sPpudR4rXTBqg1CFB7fk4FI7aIyurIERsTiC1yzupMf3875KZv+/LTktQXJ7iqmlp
+         2LFTOTAN+bhx5IQH2vbjSYnf5vGgM04EQJJyHFb4wwYSqNVCp+n2MoOeUVZbeQkp2bdV
+         Jv4Hschz+lpAJUqvRyVP963wqJKkxQJRJ4K0+2vRHhJh8InI0zHblH8fYGB1vc71H0Fy
+         Jd9g==
+X-Gm-Message-State: AOJu0Yy0exjksxBwnrGZAydmmuSlenbl8u6A57rKhtZ9GOkf1WM554SH
+        tpGFzqq12gX8UwVF94A2/cWGwlOC9oOiUQ==
+X-Google-Smtp-Source: AGHT+IFlI7GrP4XnGy9To4+xeIAvkni+tRCqK79kL7PecDcxv0beM5Q3akBlUZPKMCgklB6n6C31nw==
+X-Received: by 2002:a5b:e8b:0:b0:d85:ae5c:527a with SMTP id z11-20020a5b0e8b000000b00d85ae5c527amr2037242ybr.10.1696424271990;
+        Wed, 04 Oct 2023 05:57:51 -0700 (PDT)
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com. [209.85.128.175])
+        by smtp.gmail.com with ESMTPSA id l14-20020a5b0b8e000000b00d8679407796sm1009449ybq.48.2023.10.04.05.57.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Oct 2023 05:57:51 -0700 (PDT)
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-59bbdb435bfso25087257b3.3;
+        Wed, 04 Oct 2023 05:57:51 -0700 (PDT)
+X-Received: by 2002:a0d:df12:0:b0:59f:4bea:512f with SMTP id
+ i18-20020a0ddf12000000b0059f4bea512fmr2537506ywe.15.1696424271499; Wed, 04
+ Oct 2023 05:57:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20231004-clk-qcom-smd-rpm-unused-v2-1-9a5281f324dc@kernkonzept.com>
-X-B4-Tracking: v=1; b=H4sIADlWHWUC/zWNQQ6CMBAAv0L27JLdilI8+Q/jAekCjVBwC8aE8
- HcbE49zmJkNoqiXCJdsA5W3j34KCcwhg6avQyfoXWIwZI5MVGAzPPHVTCPG0aHOI65hjeLwUVa
- OiI2xzJDsWaX1n1/5dk/canKWXqX+94gsl1xQRTZne6rKMzLGReb0vXai/TS4PMgC+/4FA3ZKe
- KcAAAA=
-To:     Bjorn Andersson <andersson@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stephan Gerhold <stephan@gerhold.net>,
-        Stephan Gerhold <stephan.gerhold@kernkonzept.com>
-X-Mailer: b4 0.12.3
+References: <20230929053915.1530607-1-claudiu.beznea@bp.renesas.com> <20230929053915.1530607-16-claudiu.beznea@bp.renesas.com>
+In-Reply-To: <20230929053915.1530607-16-claudiu.beznea@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 4 Oct 2023 14:57:39 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUC+-=ni44+1UQyEgSvwOVa2pb_TVyWjM-5BrTGjVChuA@mail.gmail.com>
+Message-ID: <CAMuHMdUC+-=ni44+1UQyEgSvwOVa2pb_TVyWjM-5BrTGjVChuA@mail.gmail.com>
+Subject: Re: [PATCH v2 15/28] pinctrl: renesas: rzg2l: adapt for different
+ SD/PWPR register offsets
+To:     Claudiu <claudiu.beznea@tuxon.dev>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        linus.walleij@linaro.org, gregkh@linuxfoundation.org,
+        jirislaby@kernel.org, magnus.damm@gmail.com,
+        catalin.marinas@arm.com, will@kernel.org,
+        quic_bjorande@quicinc.com, konrad.dybcio@linaro.org, arnd@arndb.de,
+        neil.armstrong@linaro.org, prabhakar.mahadev-lad.rj@bp.renesas.com,
+        biju.das.jz@bp.renesas.com, linux-renesas-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-At the moment, clk-smd-rpm forces all clocks on at probe time (for
-"handoff"). However, it does not make the clk core aware of that.
+On Fri, Sep 29, 2023 at 7:39 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> SD, PWPR power registers have different offsets b/w RZ/G2L and RZ/G3S.
+> Commit adds a per SoC configuration data structure that is initialized with
+> proper register offset for individual SoCs. The struct rzg2l_hwcfg will be
+> further extended in next commits.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>
+> Changes in v2:
+> - collected tags
 
-This means that the clocks stay enabled forever if they are not used
-by anything. We can easily disable them again after bootup has been
-completed, by making the clk core aware of the state. This is
-implemented by returning the current state of the clock in
-is_prepared().
+Thanks, will queue in renesas-pinctrl-for-v6.7.
 
-Checking the SPMI clock registers reveals that this allows the RPM to
-disable unused BB/RF clocks. This reduces the power consumption quite
-significantly and is also needed to allow entering low-power states.
+Gr{oetje,eeting}s,
 
-As of commit d6edc31f3a68 ("clk: qcom: smd-rpm: Separate out
-interconnect bus clocks") the interconnect-related clocks are no longer
-managed/exposed by clk-smd-rpm. Also the BI_TCXO_AO clock is now
-critical (and never disabled).
+                        Geert
 
-There is still a slight chance that this change will break boot on some
-devices. However, this will be most likely caused by actual mistakes in
-the device tree (where required clocks were not actually specified).
-
-Signed-off-by: Stephan Gerhold <stephan.gerhold@kernkonzept.com>
----
-Changes in v2:
-- Rebase on latest qcom/for-next, update commit message with other recent
-  related changes
-- Link to v1: https://lore.kernel.org/linux-arm-msm/20200817140908.185976-1-stephan@gerhold.net/
----
-Keeping all unused clocks on makes it very easy to forget to enable
-actually required clocks. [1] is one example of that, where the crypto
-engine worked fine without any clocks. IMHO we should try to get this
-change in sooner than later to avoid introducing more new mistakes.
-
-[1]: https://lore.kernel.org/linux-arm-msm/ZGdLCdSof027mk5u@gerhold.net/
----
- drivers/clk/qcom/clk-smd-rpm.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-index 0191fc0dd7da..eba650ad7291 100644
---- a/drivers/clk/qcom/clk-smd-rpm.c
-+++ b/drivers/clk/qcom/clk-smd-rpm.c
-@@ -335,6 +335,13 @@ static void clk_smd_rpm_unprepare(struct clk_hw *hw)
- 	mutex_unlock(&rpm_smd_clk_lock);
- }
- 
-+static int clk_smd_rpm_is_prepared(struct clk_hw *hw)
-+{
-+	struct clk_smd_rpm *r = to_clk_smd_rpm(hw);
-+
-+	return r->enabled;
-+}
-+
- static int clk_smd_rpm_set_rate(struct clk_hw *hw, unsigned long rate,
- 				unsigned long parent_rate)
- {
-@@ -431,6 +438,7 @@ static int clk_smd_rpm_enable_scaling(void)
- static const struct clk_ops clk_smd_rpm_ops = {
- 	.prepare	= clk_smd_rpm_prepare,
- 	.unprepare	= clk_smd_rpm_unprepare,
-+	.is_prepared	= clk_smd_rpm_is_prepared,
- 	.set_rate	= clk_smd_rpm_set_rate,
- 	.round_rate	= clk_smd_rpm_round_rate,
- 	.recalc_rate	= clk_smd_rpm_recalc_rate,
-@@ -439,6 +447,7 @@ static const struct clk_ops clk_smd_rpm_ops = {
- static const struct clk_ops clk_smd_rpm_branch_ops = {
- 	.prepare	= clk_smd_rpm_prepare,
- 	.unprepare	= clk_smd_rpm_unprepare,
-+	.is_prepared	= clk_smd_rpm_is_prepared,
- 	.recalc_rate	= clk_smd_rpm_recalc_rate,
- };
- 
-@@ -1279,6 +1288,9 @@ static int rpm_smd_clk_probe(struct platform_device *pdev)
- 		ret = clk_smd_rpm_handoff(rpm_smd_clks[i]);
- 		if (ret)
- 			goto err;
-+
-+		/* During handoff we force all clocks on */
-+		rpm_smd_clks[i]->enabled = true;
- 	}
- 
- 	for (i = 0; i < desc->num_icc_clks; i++) {
-
----
-base-commit: 870b5222204243ee6dbeada9ad1b90cda9ecb4da
-change-id: 20231004-clk-qcom-smd-rpm-unused-b79d00122811
-
-Best regards,
 -- 
-Stephan Gerhold <stephan.gerhold@kernkonzept.com>
-Kernkonzept GmbH at Dresden, Germany, HRB 31129, CEO Dr.-Ing. Michael Hohmuth
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
