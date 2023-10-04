@@ -2,223 +2,136 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71548E7B5F8
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Oct 2023 11:31:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 328A8E7B5F5
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Oct 2023 11:33:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233037AbjJDLbN convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Oct 2023 07:31:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36194 "EHLO
+        id S242211AbjJDLdf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Oct 2023 07:33:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242218AbjJDLbM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Oct 2023 07:31:12 -0400
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59809A7;
-        Wed,  4 Oct 2023 04:31:08 -0700 (PDT)
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-1dd1db54d42so1319762fac.3;
-        Wed, 04 Oct 2023 04:31:08 -0700 (PDT)
+        with ESMTP id S232919AbjJDLde (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Oct 2023 07:33:34 -0400
+Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2548BF
+        for <linux-clk@vger.kernel.org>; Wed,  4 Oct 2023 04:33:31 -0700 (PDT)
+Received: by mail-oi1-x233.google.com with SMTP id 5614622812f47-3ae450158ffso166841b6e.0
+        for <linux-clk@vger.kernel.org>; Wed, 04 Oct 2023 04:33:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1696419211; x=1697024011; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FkukSHhnomt94sfNdb927qW6w4syhlErJlsLp434vh4=;
+        b=BCuYIX6dSiHDSI9VooTF+w929W9ApLmjVJX9hKeO7bojyV3JGJau4CXI/cCWIE8iuC
+         Bo28MkM+zoCnv+VOYKiDkIFu1dCKErV5CSfquypxZd+1JF2sgPqrymCV8vKnIVedKlKc
+         RrjJ+ZQA8oNTjDOHsFIRrOypVxr/HmXFly0M0cYC6hWgxmb2Vzt/CrOBRlxu/1dvFgol
+         yO3p3QMJdzfeXP7SuCUNW2xaOFVeqKP/fJAY+SOfhXXqx1U7q8GZc3tnjBUurB/bn5RT
+         oHMtIjz1oIfKyfI8POmJcVHvoDLBj7fcxa7mrvWGQ9HTrEqsRHSk1Zv7YE9D6ZUoDXzd
+         oxvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696419067; x=1697023867;
+        d=1e100.net; s=20230601; t=1696419211; x=1697024011;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Rm6sz8FblgWT0YVLOcQ3cK2z8WT9exIQjwp4AMuRqJQ=;
-        b=FIvDkeol9jRBgalEZ6+OnqMqfJ+PNpgzlPg/zN7Fyk7JBZviSEsrhOMy7gq4u9+e+K
-         4ytDSPBTfFkiOVPt5cJegsd4jMiY4tFAzHNQReyAoA4X+zssNz+nS0OjdcP3MZPSX8n+
-         MVSlOrFlzCb0XiHF2zMwBhj02GY0T8fFHiyvO3gZrJwl/h6Psug1TlG2ggQAcJyjWqNy
-         SiOqB2Nh03q46mC7JQZzE8wXf8MPxs7EJ1+evuQZDZPGgoDNGJNaNN1gFlXVeVThgW6L
-         kBikTCbFO9I7z30++o0Y+n4QK1dLqw/Tc3i0LDioTB5EkoFj7qAX9KetVn1gujbjSQ44
-         ZJ1g==
-X-Gm-Message-State: AOJu0YzZJj/FhN6/eGsfWcyww+Ahw/h/+aoLS+sdxzge/Z0xHuU9t88R
-        tSOfFnBZyw83DQBmZLZsc+cJFs3uqyvqhw==
-X-Google-Smtp-Source: AGHT+IES6mTASs6ofGmEqPVGSEReAyYSPsGg1luXSNH6ohNwi2o6Wgu50apUx7iRhw74tV/1Ya3I9w==
-X-Received: by 2002:a05:6870:c6a4:b0:1b0:3637:2bbe with SMTP id cv36-20020a056870c6a400b001b036372bbemr2302083oab.54.1696419067022;
-        Wed, 04 Oct 2023 04:31:07 -0700 (PDT)
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
-        by smtp.gmail.com with ESMTPSA id s185-20020a8182c2000000b00582b239674esm1076693ywf.129.2023.10.04.04.31.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Oct 2023 04:31:06 -0700 (PDT)
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-59f1dff5298so24256647b3.3;
-        Wed, 04 Oct 2023 04:31:06 -0700 (PDT)
-X-Received: by 2002:a81:918f:0:b0:59b:51d9:1d6e with SMTP id
- i137-20020a81918f000000b0059b51d91d6emr2122018ywg.6.1696419065791; Wed, 04
- Oct 2023 04:31:05 -0700 (PDT)
+        bh=FkukSHhnomt94sfNdb927qW6w4syhlErJlsLp434vh4=;
+        b=E1AYenQIKLZb1PizS5Y5zrTB5E4GuNM4oG0Ftl1ShzieMPIrDmm18SbE+BpP4gyD5t
+         wjrzbdh71UMyZfINLBqFQDGNEGGXTVpbBwhqlUd4Zj9E6+q8ZDws9Xpm2e+Fcjeuxclt
+         T3a4MopslgMWi2YHS2/iHGZ/faZdKE4uigWWzqLIxnb9XcFUHqBs7N4r7POD0BSIXHEf
+         HK9hYl9lr7vT2kxJyI6tsa8M+En3/mbVz1KFQmHm1UsdGTMlwxZ2Yr50CnSIvQkELSck
+         8q0m6EZ/Ia2FYygRkPQpMSXwa9847YI2UglbpERmZGSbCcKT47nmdzmKZ7NeDVA+i/Nr
+         SliA==
+X-Gm-Message-State: AOJu0Yyxa4tqOxzsrxIcfOpJrQjkCJ6ywo76i3PRwIXvjLFRYp4f+WCH
+        TZWgBijQMFIjIiWMsnOgKfdVe5L+6HM9W0PC0p4=
+X-Google-Smtp-Source: AGHT+IHC+bx26ThV7GexUJqlUvDY/KueVTUNcGBY3VvnY7lc5sCx7+4NhYitEfpZ0gl0dpXK8i2FTUSZAwsuHK8A0Xk=
+X-Received: by 2002:a05:6358:c10a:b0:14a:cca4:55d7 with SMTP id
+ fh10-20020a056358c10a00b0014acca455d7mr1647247rwb.3.1696419211010; Wed, 04
+ Oct 2023 04:33:31 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230929053915.1530607-1-claudiu.beznea@bp.renesas.com> <20230929053915.1530607-11-claudiu.beznea@bp.renesas.com>
-In-Reply-To: <20230929053915.1530607-11-claudiu.beznea@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 4 Oct 2023 13:30:53 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUJj+h5LfhQXTNkN3Cp2wP62SX6fY3frzytJQBcKXDJJQ@mail.gmail.com>
-Message-ID: <CAMuHMdUJj+h5LfhQXTNkN3Cp2wP62SX6fY3frzytJQBcKXDJJQ@mail.gmail.com>
-Subject: Re: [PATCH v2 10/28] clk: renesas: rzg2l: refactor sd mux driver
-To:     Claudiu <claudiu.beznea@tuxon.dev>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        linus.walleij@linaro.org, gregkh@linuxfoundation.org,
-        jirislaby@kernel.org, magnus.damm@gmail.com,
-        catalin.marinas@arm.com, will@kernel.org,
-        quic_bjorande@quicinc.com, konrad.dybcio@linaro.org, arnd@arndb.de,
-        neil.armstrong@linaro.org, prabhakar.mahadev-lad.rj@bp.renesas.com,
-        biju.das.jz@bp.renesas.com, linux-renesas-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20230815130923.775117-1-festevam@gmail.com>
+In-Reply-To: <20230815130923.775117-1-festevam@gmail.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Wed, 4 Oct 2023 08:33:18 -0300
+Message-ID: <CAOMZO5DFR25siA4XXjKx5aSWrn6Xq7qSVzF3jMoR5yWzSqGgDQ@mail.gmail.com>
+Subject: Re: [PATCH v4] clk: imx: imx6sx: Allow a different LCDIF1 clock parent
+To:     abelvesa@kernel.org
+Cc:     sboyd@kernel.org, linux-clk@vger.kernel.org,
+        Fabio Estevam <festevam@denx.de>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Claudiu,
+Hi Abel,
 
-On Fri, Sep 29, 2023 at 7:39 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Gentle ping.
+
+On Tue, Aug 15, 2023 at 10:09=E2=80=AFAM Fabio Estevam <festevam@gmail.com>=
+ wrote:
 >
-> Refactor SD MUX driver to be able to reuse the same code on RZ/G3S.
-> RZ/G2{L, UL} has a limitation with regards to switching the clock source
-> for SD MUX (MUX clock source has to be switched to 266MHz before switching
-> b/w 533MHz and 400MHz). This limitation has been introduced as a clock
-> notifier that is registered on platform based initialization data thus the
-> SD MUX code could be reused on RZ/G3S.
+> From: Fabio Estevam <festevam@denx.de>
 >
-> As both RZ/G2{L, UL} and RZ/G3S has specific bits in specific registers
-> to check if the clock switching has been done, this configuration (register
-> offset, register bits and bits width) is now passed though
-> struct cpg_core_clk::sconf (status configuration) from platform specific
-> initialization code.
+> It is not a good idea to hardcode the LCDIF1 parent inside the
+> clock driver because some users may want to use a different clock
+> parent for LCDIF1. One of the reasons could be related to EMI tests.
 >
-> Along with struct cpg_core_clk::sconf the mux table indices are also
-> passed from platform specific initialization code.
+> Remove the harcoded LCDIF1 parent when the LCDIF1 parent is described
+> via devicetree.
 >
-> Also, mux flags are now passed to DEF_SD_MUX() as they will be later
-> used by RZ/G3S.
+> Old dtb's that do not describe the LCDIF1 parent via devicetree will
+> use the same PLL5 clock as parent to keep the original behavior.
 >
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> Signed-off-by: Fabio Estevam <festevam@denx.de>
 > ---
+> Changes since v3:
+> - Check for the presence of 'assigned-clock-parents'. (Stephen)
 >
-> Changes in v2:
-> - s/indexes/indices in commit description
-> - mentioned in commit description that mux flags can now be passed to
->   driver though DEF_SD_MUX() macro
-> - removed SoC specific names from macros' names
-> - added spaces after { and before } when initializing arrays
-> - preserved the order of .[gs]set_parent() API definitions for simpler
->   diff b/w versions
-> - removed SD_MUX_NOTIF macro
-
-Thanks for the update!
-
-> --- a/drivers/clk/renesas/rzg2l-cpg.c
-> +++ b/drivers/clk/renesas/rzg2l-cpg.c
-
-> @@ -142,6 +146,77 @@ static void rzg2l_cpg_del_clk_provider(void *data)
->         of_clk_del_provider(data);
->  }
+>  drivers/clk/imx/clk-imx6sx.c | 14 +++++++++++---
+>  1 file changed, 11 insertions(+), 3 deletions(-)
 >
-> +/* Must be called in atomic context. */
-> +static int rzg2l_cpg_wait_clk_update_done(void __iomem *base, u32 conf)
-> +{
-> +       u32 bitmask = GENMASK(GET_WIDTH(conf) - 1, 0) << GET_SHIFT(conf);
-> +       u32 off = GET_REG_OFFSET(conf);
-> +       u32 val;
-> +
-> +       return readl_poll_timeout_atomic(base + off, val, !(val & bitmask), 10, 200);
-> +}
-> +
-> +int rzg2l_cpg_sd_mux_clk_notifier(struct notifier_block *nb, unsigned long event,
-> +                                 void *data)
-> +{
-> +       struct clk_notifier_data *cnd = data;
-> +       struct clk_hw *hw = __clk_get_hw(cnd->clk);
-> +       struct clk_hw_data *clk_hw_data = to_clk_hw_data(hw);
-> +       struct rzg2l_cpg_priv *priv = clk_hw_data->priv;
-> +       u32 off = GET_REG_OFFSET(clk_hw_data->conf);
-> +       u32 shift = GET_SHIFT(clk_hw_data->conf);
-> +       const u32 clk_src_266 = 3;
-> +       unsigned long flags;
-> +       u32 bitmask;
-> +       int ret;
-> +
-> +       if (event != PRE_RATE_CHANGE || (cnd->new_rate / MEGA == 266))
-> +               return 0;
-
-include/linux/clk.h:
-
- * PRE_RATE_CHANGE - called immediately before the clk rate is changed,
- *     to indicate that the rate change will proceed.  Drivers must
- *     immediately terminate any operations that will be affected by the
- *     rate change.  Callbacks may either return NOTIFY_DONE, NOTIFY_OK,
- *     NOTIFY_STOP or NOTIFY_BAD.
-
-> +
-> +       spin_lock_irqsave(&priv->rmw_lock, flags);
-> +
-> +       /*
-> +        * As per the HW manual, we should not directly switch from 533 MHz to
-> +        * 400 MHz and vice versa. To change the setting from 2’b01 (533 MHz)
-> +        * to 2’b10 (400 MHz) or vice versa, Switch to 2’b11 (266 MHz) first,
-> +        * and then switch to the target setting (2’b01 (533 MHz) or 2’b10
-> +        * (400 MHz)).
-> +        * Setting a value of '0' to the SEL_SDHI0_SET or SEL_SDHI1_SET clock
-> +        * switching register is prohibited.
-> +        * The clock mux has 3 input clocks(533 MHz, 400 MHz, and 266 MHz), and
-> +        * the index to value mapping is done by adding 1 to the index.
-> +        */
-> +       bitmask = (GENMASK(GET_WIDTH(clk_hw_data->conf) - 1, 0) << shift) << 16;
-> +       writel(bitmask | (clk_src_266 << shift), priv->base + off);
-> +
-> +       /* Wait for the update done. */
-> +       ret = rzg2l_cpg_wait_clk_update_done(priv->base, clk_hw_data->sconf);
-> +
-> +       spin_unlock_irqrestore(&priv->rmw_lock, flags);
-> +
-> +       if (ret)
-> +               dev_err(priv->dev, "failed to switch to safe clk source\n");
-> +
-> +       return ret;
-
-Likewise.
-
-> +}
-
+> diff --git a/drivers/clk/imx/clk-imx6sx.c b/drivers/clk/imx/clk-imx6sx.c
+> index 3f1502933e59..69f8f6f9ca49 100644
+> --- a/drivers/clk/imx/clk-imx6sx.c
+> +++ b/drivers/clk/imx/clk-imx6sx.c
+> @@ -121,6 +121,7 @@ static void __init imx6sx_clocks_init(struct device_n=
+ode *ccm_node)
+>  {
+>         struct device_node *np;
+>         void __iomem *base;
+> +       bool lcdif1_assigned_clk;
 >
->  static const struct clk_ops rzg2l_cpg_sd_clk_mux_ops = {
->         .determine_rate = __clk_mux_determine_rate_closest,
-> -       .set_parent     = rzg2l_cpg_sd_clk_mux_set_parent,
-> -       .get_parent     = rzg2l_cpg_sd_clk_mux_get_parent,
-> +       .set_parent     = rzg2l_cpg_sd_mux_clk_set_parent,
-> +       .get_parent     = rzg2l_cpg_sd_mux_clk_get_parent,
-
-Please keep the old names, for consistency with
-__clk_mux_determine_rate_closest() and drivers/clk/clk-mux.c, and to
-reduce the diff.
-
-Any existing inconsistent use of "clk_mux" vs. "mux_clk" can be resolved
-later with a separate patch, if anyone cares.
-
-> --- a/drivers/clk/renesas/rzg2l-cpg.h
-> +++ b/drivers/clk/renesas/rzg2l-cpg.h
-
-> @@ -272,4 +276,6 @@ extern const struct rzg2l_cpg_info r9a07g044_cpg_info;
->  extern const struct rzg2l_cpg_info r9a07g054_cpg_info;
->  extern const struct rzg2l_cpg_info r9a09g011_cpg_info;
+>         clk_hw_data =3D kzalloc(struct_size(clk_hw_data, hws,
+>                                           IMX6SX_CLK_CLK_END), GFP_KERNEL=
+);
+> @@ -498,9 +499,16 @@ static void __init imx6sx_clocks_init(struct device_=
+node *ccm_node)
+>         clk_set_parent(hws[IMX6SX_CLK_EIM_SLOW_SEL]->clk, hws[IMX6SX_CLK_=
+PLL2_PFD2]->clk);
+>         clk_set_rate(hws[IMX6SX_CLK_EIM_SLOW]->clk, 132000000);
 >
-> +int rzg2l_cpg_sd_mux_clk_notifier(struct notifier_block *nb, unsigned long event, void *data);
-
-rzg2l_cpg_sd_clk_mux_notifier()?
-
+> -       /* set parent clock for LCDIF1 pixel clock */
+> -       clk_set_parent(hws[IMX6SX_CLK_LCDIF1_PRE_SEL]->clk, hws[IMX6SX_CL=
+K_PLL5_VIDEO_DIV]->clk);
+> -       clk_set_parent(hws[IMX6SX_CLK_LCDIF1_SEL]->clk, hws[IMX6SX_CLK_LC=
+DIF1_PODF]->clk);
+> +       np =3D of_find_node_by_path("/soc/bus@2200000/spba-bus@2240000/lc=
+dif@2220000");
+> +       lcdif1_assigned_clk =3D of_find_property(np, "assigned-clock-pare=
+nts", NULL);
 > +
->  #endif
-
-The rest LGTM.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> +       /* Set parent clock for LCDIF1 pixel clock if not done via device=
+tree */
+> +       if (!lcdif1_assigned_clk) {
+> +               clk_set_parent(hws[IMX6SX_CLK_LCDIF1_PRE_SEL]->clk,
+> +                              hws[IMX6SX_CLK_PLL5_VIDEO_DIV]->clk);
+> +               clk_set_parent(hws[IMX6SX_CLK_LCDIF1_SEL]->clk,
+> +                              hws[IMX6SX_CLK_LCDIF1_PODF]->clk);
+> +       }
+>
+>         /* Set the parent clks of PCIe lvds1 and pcie_axi to be pcie ref,=
+ axi */
+>         if (clk_set_parent(hws[IMX6SX_CLK_LVDS1_SEL]->clk, hws[IMX6SX_CLK=
+_PCIE_REF_125M]->clk))
+> --
+> 2.34.1
+>
