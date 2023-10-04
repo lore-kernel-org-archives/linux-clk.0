@@ -2,110 +2,114 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF8FEE7B604
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Oct 2023 12:50:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF7C5E7B604
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Oct 2023 12:52:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242462AbjJDMuk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Oct 2023 08:50:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57642 "EHLO
+        id S242354AbjJDMwV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Oct 2023 08:52:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242354AbjJDMuj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Oct 2023 08:50:39 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8319FA9
-        for <linux-clk@vger.kernel.org>; Wed,  4 Oct 2023 05:50:33 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id 4fb4d7f45d1cf-5335725cf84so3445854a12.2
-        for <linux-clk@vger.kernel.org>; Wed, 04 Oct 2023 05:50:33 -0700 (PDT)
+        with ESMTP id S233193AbjJDMwU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Oct 2023 08:52:20 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 146E298
+        for <linux-clk@vger.kernel.org>; Wed,  4 Oct 2023 05:52:17 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-4054f790190so21144755e9.2
+        for <linux-clk@vger.kernel.org>; Wed, 04 Oct 2023 05:52:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696423832; x=1697028632; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I8103+2DoeKFEqiX+fTMq3nBm5GXXZ0NmtyT1CO5doI=;
-        b=meEhAth+VwC6qwtzJ90LzxWJ8pG76D7UE3Q64qp9vif3DSSWIIRuquEig5QVx7EXZs
-         QUG8+dtXh+VyLXQwExnRdcEbG27e+kzrJVH1jfXRYGRs5o/0jwJRTW/EbURnkLCW8YNZ
-         UEnhCiVQczs+QmR4K2Ws8F4slNRfXl/ddyNNs1T0SLASZSGe+glvDY8iZ/X9hVvdkd/l
-         mRlK3RSxfNW4njJdPs/V7kFkfl9Zl/mjear1Sy8VlErB7TBQWYUIZ5ges+WMBShSAJ0e
-         gUjjk1gLGCRrtrWuyjEbEDiXFGl79eAOYSxalPYKIhih8k0XAyB/xGBSCEItNcDG+RGW
-         K77A==
+        d=linaro.org; s=google; t=1696423935; x=1697028735; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QbDugttl8nO7QnKFiEkqSWobIkIULpVRulw4zvA/9Ss=;
+        b=RdM10Roetvp/F7AwBdUeMimTvL1d+ozpcJfIvrfcTnYrttxurFoiAkCKeJnfnZ8c5h
+         /JBnjj+BVS1RpCd8EDoepPKl7Py+/oBIGyNCvesNawPRD8UHn/0RLaa4hS0PqlG1afDN
+         OzjxlbuAUIRWdUD5Z5M7FEJfNZeAg8f2efRuouyYvJRGf6uVvZDX/aJwRTxipsPi3BfV
+         2hJWAoQz+zm+oxLnFiGGFs8DY0iG53XQDi4F3Heq9T8oqKE9DScerrj5CCjgCcAvg4sH
+         YBCRe6OSxOgUteOBPsRBnI8ZnyTxP9DQ+C7HJTlwBK/IG8r8gglES1h2WeBObZluYre1
+         A1mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696423832; x=1697028632;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I8103+2DoeKFEqiX+fTMq3nBm5GXXZ0NmtyT1CO5doI=;
-        b=Fd0cSLK17R6le2ZicgR9JOtEP282OTTgeSjgCMsiA6L/ckXd1Yq9U7eTNf71E1PsXO
-         565H99BDSpZbzKy6LAQYdOFgFt+n36nwOvEvl9DoP8Svklyalvv7HEX+FPSLHgdFhqcp
-         9TvmSaqgRuymU66YQJEgoRhRYH9HV8FIo104IkDAQiVgc3WlmttmVWKPSTFZwxzasoBj
-         FBCsacOWUL+iOfFUtg94CG4YCs7Gs+uZsXIBKKREDLN6OrvOW1moERFDXQXUV5+lD1ES
-         SEFvBMYU0Sz4FOsGbFzkIAWw8Frv+s7c+0kD41GYjOr9YnCzQ1U4QCQvh0oq5vih6RqV
-         943g==
-X-Gm-Message-State: AOJu0Yx17nnQPAndDyp89AExWmTt+6YFVhM5ZViLJ2x1TorPijVTuUL1
-        /PMyorOK0+8lKCsvVA7IR501LA==
-X-Google-Smtp-Source: AGHT+IHBvFKSR1pr+MiEPqf3ArkWFdSnA/IbeXZ32rRS6n2xDUcqWsCH7R5q0f4o2DCdkDZm+j9DBg==
-X-Received: by 2002:a17:906:51d6:b0:9b8:a6aa:a1ba with SMTP id v22-20020a17090651d600b009b8a6aaa1bamr1459153ejk.39.1696423831906;
-        Wed, 04 Oct 2023 05:50:31 -0700 (PDT)
-Received: from hackbox.lan ([86.123.99.172])
-        by smtp.gmail.com with ESMTPSA id pk13-20020a170906d7ad00b0099bc08862b6sm2806580ejb.171.2023.10.04.05.50.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Oct 2023 05:50:31 -0700 (PDT)
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Viorel Suman <viorel.suman@nxp.com>,
-        Robert Chiras <robert.chiras@nxp.com>,
-        Ranjani Vaidyanathan <ranjani.vaidyanathan@nxp.com>,
-        Laurentiu Palcu <laurentiu.palcu@nxp.com>,
-        Shenwei Wang <shenwei.wang@nxp.com>,
-        Jason Liu <jason.hui.liu@nxp.com>
-Subject: Re: [PATCH 0/7] clk: imx: misc update/fix for i.MX8
-Date:   Wed,  4 Oct 2023 15:50:10 +0300
-Message-Id: <169642357601.745453.7013282402695515733.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230912-imx8-clk-v1-v1-0-69a34bcfcae1@nxp.com>
-References: <20230912-imx8-clk-v1-v1-0-69a34bcfcae1@nxp.com>
+        d=1e100.net; s=20230601; t=1696423935; x=1697028735;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QbDugttl8nO7QnKFiEkqSWobIkIULpVRulw4zvA/9Ss=;
+        b=DUydTqH3g7W4m22EItKy3zSYtGMN1rexwxV5ZtuxhyISfSVu6pTS67Uu12Ir+CNhuc
+         11V1111FKYsjV3WTWWExsMjGn12TIjTaz7yYvJwh58ILCPKVHyHCibuu+akE9ihMECTI
+         27UaRaqlguqDTSX+OiVBf80kDYhcPLTSRCJIidIX13zZ1oB8ZB/4FVZx3bQJn9ZXl5s7
+         JPVz4mrm7yOA1YhAj2jCWH0atiMzLLXR+ipLF8lPK4VGB2pXbcfwLC7Af9sO0C5Vn1Tc
+         oIhj52cYIugm63RQFQhUAnOrZ1Nhi1e2wss0BEjdTp6KzJFDQPG/okjMkU4Vx47KU7tG
+         shYg==
+X-Gm-Message-State: AOJu0Ywfc8nblLvcpC6NNjUTXnWdWpIezpvaM5lUhU0Wadyp4wtXr7tH
+        roW7Q1+fBnU2GWgTkuQ9tlVjkg==
+X-Google-Smtp-Source: AGHT+IGJ+zdeWqpzPPRNv7wIiJfoVXE4TrlF8rAbJtAcx3+5BGhrWDha7q+twXf5IEiIS8VaX5i7gA==
+X-Received: by 2002:adf:ec82:0:b0:321:65f3:4100 with SMTP id z2-20020adfec82000000b0032165f34100mr2027993wrn.7.1696423935197;
+        Wed, 04 Oct 2023 05:52:15 -0700 (PDT)
+Received: from [192.168.0.162] (188-141-3-169.dynamic.upc.ie. [188.141.3.169])
+        by smtp.gmail.com with ESMTPSA id a12-20020a5d570c000000b00327bf4f2f16sm3927903wrv.30.2023.10.04.05.52.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Oct 2023 05:52:14 -0700 (PDT)
+Message-ID: <e96499ff-76ec-482b-b18c-ee293259b8a7@linaro.org>
+Date:   Wed, 4 Oct 2023 13:52:13 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/2] clk: qcom: implement RCG2 'parked' clock support
+Content-Language: en-US
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        freedreno@lists.freedesktop.org, Rob Clark <robdclark@gmail.com>
+References: <20231004003125.2289613-1-dmitry.baryshkov@linaro.org>
+ <20231004003125.2289613-2-dmitry.baryshkov@linaro.org>
+ <f129633e-4df7-4984-a19e-c16e6c7c8f3f@linaro.org>
+ <CAA8EJprGfS5x89FOWhjPCdLzSNbEK-U1h8qVmfiLc6+4NjEiNA@mail.gmail.com>
+From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <CAA8EJprGfS5x89FOWhjPCdLzSNbEK-U1h8qVmfiLc6+4NjEiNA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-On Tue, 12 Sep 2023 17:18:58 +0800, Peng Fan (OSS) wrote:
-> The patchset is to upstream NXP downstream i.MX8 clk misc patches which
-> has been stayed in NXP LTS release for quite some time.
+On 04/10/2023 13:08, Dmitry Baryshkov wrote:
+> On Wed, 4 Oct 2023 at 12:27, Bryan O'Donoghue
+> <bryan.odonoghue@linaro.org> wrote:
+>>
+>> On 04/10/2023 01:31, Dmitry Baryshkov wrote:
+>>> clk_rcg2_shared_ops implements support for the case of the RCG which
+>>> must not be completely turned off. However its design has one major
+>>> drawback: it doesn't allow us to properly implement the is_enabled
+>>> callback, which causes different kinds of misbehaviour from the CCF.
+>>>
+>>> Follow the idea behind clk_regmap_phy_mux_ops and implement the new
+>>> clk_rcg2_parked_ops. It also targets the clocks which must not be fully
+>>> switched off (and shared most of the implementation with
+>>> clk_rcg2_shared_ops). The major difference is that it requires that the
+>>> parent map doesn't conain the safe (parked) clock source. Instead if the
+>>> CFG_REG register points to the safe source, the clock is considered to
+>>> be disabled.
+>>
+>> Why not have a new bit in .flags ?
+>>
+>> Instead of lying about the clock being off, mark the clock as "parked",
+>> or "safe parked" or whatever term we choose for it ?
 > 
-> There are a few fixes, but should be fine to put in next tree.
-> 
+> The main problem with adding flags doesn't fully scale. From the CCF
+> perspective, what should be the difference between parked and disabled
+> clocks? How should it treat the parked one?
 
-Applied, thanks!
+Exactly the same as a disabled clock, except you get a "parked" instead 
+of a "disabled" when looking up its state and you don't have to
 
-[1/7] clk: imx: imx8dxl-rsrc: keep sorted in the ascending order
-      commit: ab2c30f6bbe34dbf13ff2cc0cf7bc237de2df013
-[2/7] clk: imx: imx8qxp: Fix elcdif_pll clock
-      commit: 15cee75dacb82ade710d61bfd536011933ef9bf2
-[3/7] clk: imx: imx8qxp: correct the enet clocks for i.MX8DXL
-      commit: 8568b3c499268456b76cdc2e9e1b9d86d8b08837
-[4/7] clk: imx: imx8qm-rsrc: drop VPU_UART/VPUCORE
-      commit: 4fcb51fb0e3084ee81edaf8aea98ac01e456a871
-[5/7] clk: imx8: remove MLB support
-      commit: a699148b8704aa11600321b9f6b6b21f09418c42
-[6/7] clk: imx: scu: ignore clks not owned by Cortex-A partition
-      commit: eaefd1cf36a6507ff7dd2d30f68201de259eec63
-[7/7] clk: imx: imx8qm/qxp: add more resources to whitelist
-      commit: 2838820800dcaa60f32bef715c7e2e87e049aebc
+-	{ .fw_name = "bi_tcxo" },
 
-Best regards,
--- 
-Abel Vesa <abel.vesa@linaro.org>
+Also you can then flag for branch2 clocks the same thing - so parking 
+would be done at a higher level in the CCF.
+
+---
+bod
