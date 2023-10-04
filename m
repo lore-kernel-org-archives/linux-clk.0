@@ -2,122 +2,86 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D300E7B604
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Oct 2023 12:35:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B084E7B604
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Oct 2023 12:37:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233088AbjJDMf0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Oct 2023 08:35:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47320 "EHLO
+        id S242469AbjJDMhy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Oct 2023 08:37:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233165AbjJDMf0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Oct 2023 08:35:26 -0400
-Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F161AD9
-        for <linux-clk@vger.kernel.org>; Wed,  4 Oct 2023 05:35:21 -0700 (PDT)
-Received: by mail-pf1-x431.google.com with SMTP id d2e1a72fcca58-693400e09afso474779b3a.1
-        for <linux-clk@vger.kernel.org>; Wed, 04 Oct 2023 05:35:21 -0700 (PDT)
+        with ESMTP id S242533AbjJDMhq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Oct 2023 08:37:46 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6FDE170C
+        for <linux-clk@vger.kernel.org>; Wed,  4 Oct 2023 05:37:14 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-9ada2e6e75fso392398066b.2
+        for <linux-clk@vger.kernel.org>; Wed, 04 Oct 2023 05:37:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696422921; x=1697027721; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5pIhEk6TIXWTRC7Pe7bfqLe0piZFrp1Th9jvIcny7Gk=;
-        b=CeP+i94OXeTOTMOQiYYErDHHSFgb8H9tK3fcx4DYH8AjXxX1XaWZK4cwmbg/ErkJ/Y
-         6teXwtzuwxJ7YcLngZf2oaLgz7A+bYhhPHNIw3HlbVUPnhQZZ/xWHSX/OnvUg4W2xZNq
-         Z9eVDcEChfenYN92sQZ+gRnLx8mS0GClsJCCdailnrUCEfksjvIUH2oTA+mpc4zznwNC
-         OjctGuddwvuOv2oN/d7rugY/bRT+/W7IeUxzr1bXLHk33OQoHXqCidSfh8MNYmw+oM59
-         LNnJrG4BhuSNasJ8iSxL0+dvfJGgBRRejZdAsoFIMnPAP3PlvHsabBgsu122nYnFNIOA
-         HNTA==
+        d=linaro.org; s=google; t=1696423033; x=1697027833; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7ujoaqTZd1g4Nt2RQJtsj9HWcr4gLmxfF14CAQlkvLU=;
+        b=OSrtpFkEc9qdDH6qmNeSj6A7pTVw8k6mMlvmp/G7liQ64togh+Gcm3RCevhqJiU7gT
+         zDUnvEeOgmxzgmqTxL29l4cwY4Ro5RiiPIPr0hGoypimceE4pcEkSgWZ/GsQSYLQJ+93
+         +/C558bzZIWAxjcwWhgQqQLD+DdWbmNLjl8F0irOdfp3ZMbBVG2rjGDQSDdRIbbZjj1o
+         LTycf5awlMrfcv7Axr6WyPHS72JkwHG4FmXTES+9ldIBKxgjTx+eQVp6tQUEC0Muv3P3
+         OvtOUim15Auu0CeIsc6VyTsOui0O+ldG0AxLLXmScY3PWCULiZHikIDOZpW2Ekqm/VYL
+         3dmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696422921; x=1697027721;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5pIhEk6TIXWTRC7Pe7bfqLe0piZFrp1Th9jvIcny7Gk=;
-        b=OOwQ1D8uzxuiasFGLbtGjnTn5vDKbiLkRonlsNCd3KUEEkhylZc8Ht7zvRG+Ip2012
-         G7DM3Kuhv7CKGAHOdZPySDYMoXYb1nPyZcy6PFRVkJZ0+JLgw31KBXCaZ14dAvziafTo
-         98GybZ12sOwg3PuNThnBfb7RqrAQxz+qRI7b1bagVen3ri+Rt2sm7ChgiEmMPzwG7uLN
-         bsCz8LCJXWwhoqdAbsRznI0zC9xBSHNVuJPh/deXgKPJMXqjSW5GV5sE3bpJqBTVI0Nn
-         5lQbk0S2X4oF6akgdq6Y87Iy5McUgrcHnuIwJJepmfuIFeUkGdSapSJ0zqWgw8G+fMT3
-         Hw4g==
-X-Gm-Message-State: AOJu0Yx1LU0eFPrQR3nA+ZIULjtiKXFgigr+QxgpsYvZwMX6+gRB/qBM
-        kKXwh5k8p2TgqhJtUtropZ4=
-X-Google-Smtp-Source: AGHT+IHvJKpX4xhe5mzK66nCOVIvRp8Dgnyd1jVbM/5cK/1BG0Rc6rF/KvEzao3C8M/GgSrrWHul4A==
-X-Received: by 2002:a17:902:da87:b0:1c6:2902:24f9 with SMTP id j7-20020a170902da8700b001c6290224f9mr2484301plx.1.1696422921280;
-        Wed, 04 Oct 2023 05:35:21 -0700 (PDT)
-Received: from fabio-Precision-3551.. ([2804:14c:485:4b61:cb87:d6f:eb43:afca])
-        by smtp.gmail.com with ESMTPSA id o12-20020a170902778c00b001bdc8a5e96csm3575570pll.169.2023.10.04.05.35.18
+        d=1e100.net; s=20230601; t=1696423033; x=1697027833;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7ujoaqTZd1g4Nt2RQJtsj9HWcr4gLmxfF14CAQlkvLU=;
+        b=BT+/1pNReQPGpPSKTG5k2Q+pJVbZ2tCoVOGcSvbKntNfQSoiNrlJ0hwlpm/D2t9CwK
+         ZeBnZ8G65B8JD6XDfHlMl2WBC05HZDgvQ69lm0rV+piQtSZi95Df9anWRWJ3tByISnSY
+         BFhQlXHOqQ4IdmMKhuUaKWCiH6HyIvOiWgTsfcmBpJ6f8w/dfaVJuT+VLfxfPi5dx9Zo
+         Fdb2MaQfWPEAVG3qrL9zOsmqxtaKJwFrNytgBKRtT8WKKMaGyXU7fRdIM9OdpHlFJl0J
+         Y+hn5efU3++shTKA5u1QfQJTZtIxy3YESZNhb/Qve/vZgJ7J8pikpid10tdjO+NNU2NQ
+         nAxw==
+X-Gm-Message-State: AOJu0Yw+2IDmVfx5JRfEcKbPq8D32nXAKnZkQHScChpHpuvdtm+zUThl
+        GfBZ7Pg3Uwk0LGgrkcRvwPfhCA==
+X-Google-Smtp-Source: AGHT+IHwXMUGlHmxrSjUwpvnWO7SJjwnQE0S7keRLnZgi8Jf2/+sfYEq2aOC8nyVOfAuQC291Lnpwg==
+X-Received: by 2002:a17:906:3051:b0:9a5:7759:19c0 with SMTP id d17-20020a170906305100b009a5775919c0mr1839950ejd.64.1696423033291;
+        Wed, 04 Oct 2023 05:37:13 -0700 (PDT)
+Received: from hackbox.lan ([86.123.99.172])
+        by smtp.gmail.com with ESMTPSA id jx14-20020a170906ca4e00b009ade1a4f795sm2721028ejb.168.2023.10.04.05.37.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Oct 2023 05:35:20 -0700 (PDT)
-From:   Fabio Estevam <festevam@gmail.com>
-To:     abelvesa@kernel.org
-Cc:     peng.fan@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
-        shawnguo@kernel.org, kernel@pengutronix.de, linux-imx@nxp.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Fabio Estevam <festevam@denx.de>,
-        Abel Vesa <abel.vesa@linaro.org>
-Subject: [PATCH RESEND v4] clk: imx: imx6sx: Allow a different LCDIF1 clock parent
-Date:   Wed,  4 Oct 2023 09:34:58 -0300
-Message-Id: <20231004123458.2251635-1-festevam@gmail.com>
+        Wed, 04 Oct 2023 05:37:12 -0700 (PDT)
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     abelvesa@kernel.org, Fabio Estevam <festevam@gmail.com>
+Cc:     sboyd@kernel.org, linux-clk@vger.kernel.org,
+        Fabio Estevam <festevam@denx.de>
+Subject: Re: [PATCH v4] clk: imx: imx6sx: Allow a different LCDIF1 clock parent
+Date:   Wed,  4 Oct 2023 15:36:32 +0300
+Message-Id: <169642294508.713950.12324349089481800725.b4-ty@linaro.org>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230815130923.775117-1-festevam@gmail.com>
+References: <20230815130923.775117-1-festevam@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Fabio Estevam <festevam@denx.de>
 
-It is not a good idea to hardcode the LCDIF1 parent inside the
-clock driver because some users may want to use a different clock
-parent for LCDIF1. One of the reasons could be related to EMI tests.
+On Tue, 15 Aug 2023 10:09:23 -0300, Fabio Estevam wrote:
+> It is not a good idea to hardcode the LCDIF1 parent inside the
+> clock driver because some users may want to use a different clock
+> parent for LCDIF1. One of the reasons could be related to EMI tests.
+> 
+> Remove the harcoded LCDIF1 parent when the LCDIF1 parent is described
+> via devicetree.
+> 
+> [...]
 
-Remove the harcoded LCDIF1 parent when the LCDIF1 parent is described
-via devicetree.
+Applied, thanks!
 
-Old dtb's that do not describe the LCDIF1 parent via devicetree will
-use the same PLL5 clock as parent to keep the original behavior.
+[1/1] clk: imx: imx6sx: Allow a different LCDIF1 clock parent
+      commit: 0a22b3a6f446223aff5bcdcc06003ef6e412bfd8
 
-Signed-off-by: Fabio Estevam <festevam@denx.de>
-Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
----
-Changes since v3:
-- Check for the presence of 'assigned-clock-parents'. (Stephen)
-
- drivers/clk/imx/clk-imx6sx.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/imx/clk-imx6sx.c b/drivers/clk/imx/clk-imx6sx.c
-index 3f1502933e59..69f8f6f9ca49 100644
---- a/drivers/clk/imx/clk-imx6sx.c
-+++ b/drivers/clk/imx/clk-imx6sx.c
-@@ -121,6 +121,7 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
- {
- 	struct device_node *np;
- 	void __iomem *base;
-+	bool lcdif1_assigned_clk;
- 
- 	clk_hw_data = kzalloc(struct_size(clk_hw_data, hws,
- 					  IMX6SX_CLK_CLK_END), GFP_KERNEL);
-@@ -498,9 +499,16 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
- 	clk_set_parent(hws[IMX6SX_CLK_EIM_SLOW_SEL]->clk, hws[IMX6SX_CLK_PLL2_PFD2]->clk);
- 	clk_set_rate(hws[IMX6SX_CLK_EIM_SLOW]->clk, 132000000);
- 
--	/* set parent clock for LCDIF1 pixel clock */
--	clk_set_parent(hws[IMX6SX_CLK_LCDIF1_PRE_SEL]->clk, hws[IMX6SX_CLK_PLL5_VIDEO_DIV]->clk);
--	clk_set_parent(hws[IMX6SX_CLK_LCDIF1_SEL]->clk, hws[IMX6SX_CLK_LCDIF1_PODF]->clk);
-+	np = of_find_node_by_path("/soc/bus@2200000/spba-bus@2240000/lcdif@2220000");
-+	lcdif1_assigned_clk = of_find_property(np, "assigned-clock-parents", NULL);
-+
-+	/* Set parent clock for LCDIF1 pixel clock if not done via devicetree */
-+	if (!lcdif1_assigned_clk) {
-+		clk_set_parent(hws[IMX6SX_CLK_LCDIF1_PRE_SEL]->clk,
-+			       hws[IMX6SX_CLK_PLL5_VIDEO_DIV]->clk);
-+		clk_set_parent(hws[IMX6SX_CLK_LCDIF1_SEL]->clk,
-+			       hws[IMX6SX_CLK_LCDIF1_PODF]->clk);
-+	}
- 
- 	/* Set the parent clks of PCIe lvds1 and pcie_axi to be pcie ref, axi */
- 	if (clk_set_parent(hws[IMX6SX_CLK_LVDS1_SEL]->clk, hws[IMX6SX_CLK_PCIE_REF_125M]->clk))
+Best regards,
 -- 
-2.34.1
-
+Abel Vesa <abel.vesa@linaro.org>
