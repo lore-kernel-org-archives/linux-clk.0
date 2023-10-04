@@ -2,139 +2,94 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8201E8FDDC
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Oct 2023 08:39:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6C03E8FDDA
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Oct 2023 08:40:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241724AbjJDIjT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Oct 2023 04:39:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53562 "EHLO
+        id S241715AbjJDIkP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Oct 2023 04:40:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241722AbjJDIjS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Oct 2023 04:39:18 -0400
-Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A097A83;
-        Wed,  4 Oct 2023 01:39:15 -0700 (PDT)
-Received: by mail-oi1-x233.google.com with SMTP id 5614622812f47-3af5b26d599so1309738b6e.2;
-        Wed, 04 Oct 2023 01:39:15 -0700 (PDT)
+        with ESMTP id S241691AbjJDIkO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Oct 2023 04:40:14 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0913B4
+        for <linux-clk@vger.kernel.org>; Wed,  4 Oct 2023 01:40:10 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-9ad8a822508so338570566b.0
+        for <linux-clk@vger.kernel.org>; Wed, 04 Oct 2023 01:40:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696408755; x=1697013555; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9/MtXqLrtXt958q8e0H362E4aqBcq4uYbsSDrU1xpVo=;
-        b=PhoFhT+k8iXZbJJWigYXQ2gDiWymPPg0UofingBuJzNZGfEwB1SwvSL6vt3eRw9FRx
-         OZp9MLgJegcY8yDW3uWABPAFTmOJT3ZHmJfRUTyp4rh95X++ehEAEstJPFbNNsQQXgDA
-         OoIXTN/pOSdcSa4+Exev4oUm2znAMBRN4r+LR8PtUSL06Vo52nQtuQhnmzZyMkoRaBwr
-         RLcE+57Cqty0YMvxZzzl7dzpWxq6v6dm0uoId5YIZMgcMr3usPLBeGjwzjbBSoIXbumI
-         wyZjnNoCQ2DY0AqaRMPGIqkae9gCa65VqB5orSg7rL2KwJMv2F7XB4wrJ6vimHbyL1C6
-         XxAg==
+        d=linaro.org; s=google; t=1696408809; x=1697013609; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YVHhdkhp4eR4frDUkO6xbt9ArHtMALGKAATK2ZDSFtc=;
+        b=HKj2aZ7MXAxzWjyKDR842YOhCXbR29ilf3dFH0wxG6/cvcLFgwo4s6aUO8RK9Vq/5J
+         UkXhvNBuZbVIsbkZo+znOU8BQLrXsCyY+u7sn/YmGR4CkUXYnGux9eIiGSuCbNn+y+hq
+         QOpAwFfU7F9tgQOMDCyI44cl9FBpHv9fCcRIVlXU3GmKIEmON4x/tkPLFB3273xUU/yp
+         pCD7PwfQr9TwZtSgcNyU0Jh5ktWkjihBagEw5iqVE/kuvboInoqHYsi9oLZHgcQQIvED
+         nXtbTWLEI48Tg9oy7D98knBCATdPYY1baW8ghL+UpaQkPL2XXJKLbh8wr0dhi0808uuA
+         vhVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696408755; x=1697013555;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9/MtXqLrtXt958q8e0H362E4aqBcq4uYbsSDrU1xpVo=;
-        b=ek3xBBikbO6Vuqr+lyakfZWzBidtq5ftM51LMN9NwFhuIsfLNKAgMOdTlRiCgf7Znk
-         qeS0/E/l3NLbC5oEGEA2e84uePCia/6mF0QjJGwYYCrYbGLroMCN9zMvoAuPoAVZRbjN
-         20HtEcqETVw1sx8GAfFvRnRBDlCcpQBdOUkCI8ZYgTm0z57g682PDatR+8btlfTb/Xi+
-         lxkmkfwTZQOnZH6jHa067ibAS7Sf/qShmh4xL5yf0DSHDG1nDcMMNHYvo713UsFGi56I
-         7MBS2tVI1Ao0V0Mnn1sOmDhWgBvI5FyEbferu6Z4S4kL8aKKeTk3wMs25rV4Bvm3qVBm
-         QwYw==
-X-Gm-Message-State: AOJu0Yx0r2WjNmIwJ+Q3Pig2bg7h49NFivjPnKvhr91f+LX6AZm0exnH
-        CNsQc0b/cnF/z4070Q4DKylJPxziUlx10B2evmg=
-X-Google-Smtp-Source: AGHT+IH1aQ0coht5UnO8z19LdQOou4tP5HFtLkJ2ThHn63GXnYbzb+gTd3YZzR0HSSBWWRSrxmNXvqSaVMVjTGYliQM=
-X-Received: by 2002:a05:6808:1ce:b0:3a9:6400:62c6 with SMTP id
- x14-20020a05680801ce00b003a9640062c6mr1734553oic.32.1696408754882; Wed, 04
- Oct 2023 01:39:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1696408809; x=1697013609;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YVHhdkhp4eR4frDUkO6xbt9ArHtMALGKAATK2ZDSFtc=;
+        b=Q4VFhTQaDkqDYerhwJMsiY5DSSL4uEH2z7BkguDsniHW6H7kRs03og02S6KYhOMZPp
+         CG1i9odnoKlCjDhwb998+EW3ryqKbhhFcGT2iOT/eD5CuEtz/aYOp6hIo6trTk5kO9+/
+         oNVIc/yYydIUsIVRqkwbPcmEIBJkB6wsO+MNdk0To8G2pOmdRTfJ0+TMW1VcfAN30iNm
+         mDt2qqB/t8dfn4boGWIIdvK21D5yqyBUPG90yrtZZvpgwas2PxM1t3bpMwWWCCWaTHZ1
+         YejQDuiwfR+p+VuqGGhJRDyHigN8ptglVDOmmcBFt/gPkh5abBVv/4jpXDno/VIcjYwv
+         lUOw==
+X-Gm-Message-State: AOJu0Yzkvcla3jyuF4/FENy1Hg8BFIiSAdIrQZDaGVXiCy1hIUl+zXnu
+        m1J6pZuTAc3lSV0X9Rvt4TdLug==
+X-Google-Smtp-Source: AGHT+IGxGxUBlwF4Y53MwDjX8nT5oc9ijNUlqTAgeGKz6abn9IpaJEhrWZXPB7ixkM3kL1CsQzJt5A==
+X-Received: by 2002:a17:906:31d6:b0:99b:ed44:1a79 with SMTP id f22-20020a17090631d600b0099bed441a79mr1376838ejf.3.1696408809253;
+        Wed, 04 Oct 2023 01:40:09 -0700 (PDT)
+Received: from hackbox.lan ([86.123.99.172])
+        by smtp.gmail.com with ESMTPSA id j24-20020a170906411800b009b65a698c16sm2351094ejk.220.2023.10.04.01.40.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Oct 2023 01:40:08 -0700 (PDT)
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     linux-arm-kernel@lists.infradead.org,
+        Adam Ford <aford173@gmail.com>
+Cc:     marex@denx.de, aford@beaconembedded.com,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: (subset) [PATCH V3 1/3] arm64: dts: imx8mp: Add easrc node
+Date:   Wed,  4 Oct 2023 11:39:40 +0300
+Message-Id: <169640874933.222477.9945058108264507999.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230831044431.250338-1-aford173@gmail.com>
+References: <20230831044431.250338-1-aford173@gmail.com>
 MIME-Version: 1.0
-References: <20230921073217.572151-1-alessandro.carminati@gmail.com>
-In-Reply-To: <20230921073217.572151-1-alessandro.carminati@gmail.com>
-From:   Alessandro Carminati <alessandro.carminati@gmail.com>
-Date:   Wed, 4 Oct 2023 10:38:39 +0200
-Message-ID: <CAPp5cGRSGQGq-4DckxrXTuG=BqwLm9cLHgjY8+MMe8Qgcon4Cw@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: Sanitize possible_parent_show to Handle Return
- Value of of_clk_get_parent_name
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Philip Daly <pdaly@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-gentle ping
 
-In the original email, I acknowledge that I misplaced the maintainers mail
-addresse from the "to" field.
+On Wed, 30 Aug 2023 23:44:29 -0500, Adam Ford wrote:
+> The i.MX8MP has an asynchronous sample rate converter which seems
+> to be the same as what is available on the i.MX8M Nano.
+> 
+> 
 
-Il giorno gio 21 set 2023 alle ore 09:33 Alessandro Carminati (Red
-Hat) <alessandro.carminati@gmail.com> ha scritto:
->
-> From: Alessandro Carminati <alessandro.carminati@gmail.com>
->
-> In the possible_parent_show function, ensure proper handling of the return
-> value from of_clk_get_parent_name to prevent potential issues arising from
-> a NULL return.
-> The current implementation invokes seq_puts directly on the result of
-> of_clk_get_parent_name without verifying the return value, which can lead
-> to kernel panic if the function returns NULL.
->
-> This patch addresses the concern by introducing a check on the return
-> value of of_clk_get_parent_name. If the return value is not NULL, the
-> function proceeds to call seq_puts, providing the returned value as
-> argument.
-> However, if of_clk_get_parent_name returns NULL, the function provides a
-> static string as argument, avoiding the panic.
->
-> Fixes: 1ccc0ddf046a ("clk: Use seq_puts() in possible_parent_show()")
-> Reported-by: Philip Daly <pdaly@redhat.com>
-> Signed-off-by: Alessandro Carminati (Red Hat) <alessandro.carminati@gmail.com>
-> ---
->  drivers/clk/clk.c | 21 ++++++++++++---------
->  1 file changed, 12 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index c249f9791ae8..473563bc7496 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -3416,6 +3416,7 @@ static void possible_parent_show(struct seq_file *s, struct clk_core *core,
->                                  unsigned int i, char terminator)
->  {
->         struct clk_core *parent;
-> +       const char *name = NULL;
->
->         /*
->          * Go through the following options to fetch a parent's name.
-> @@ -3430,18 +3431,20 @@ static void possible_parent_show(struct seq_file *s, struct clk_core *core,
->          * registered (yet).
->          */
->         parent = clk_core_get_parent_by_index(core, i);
-> -       if (parent)
-> +       if (parent) {
->                 seq_puts(s, parent->name);
-> -       else if (core->parents[i].name)
-> +       } else if (core->parents[i].name) {
->                 seq_puts(s, core->parents[i].name);
-> -       else if (core->parents[i].fw_name)
-> +       } else if (core->parents[i].fw_name) {
->                 seq_printf(s, "<%s>(fw)", core->parents[i].fw_name);
-> -       else if (core->parents[i].index >= 0)
-> -               seq_puts(s,
-> -                        of_clk_get_parent_name(core->of_node,
-> -                                               core->parents[i].index));
-> -       else
-> -               seq_puts(s, "(missing)");
-> +       } else {
-> +               if (core->parents[i].index >= 0)
-> +                       name = of_clk_get_parent_name(core->of_node, core->parents[i].index);
-> +               if (!name)
-> +                       name = "(missing)";
-> +
-> +               seq_puts(s, name);
-> +       }
->
->         seq_putc(s, terminator);
->  }
-> --
-> 2.34.1
->
+Applied, thanks!
+
+[3/3] clk: imx8mp: Remove non-existent IMX8MP_CLK_AUDIOMIX_PDM_ROOT
+      commit: 05eeeff22b216e871be76dcf216a2fdda48880e2
+
+Best regards,
+-- 
+Abel Vesa <abel.vesa@linaro.org>
