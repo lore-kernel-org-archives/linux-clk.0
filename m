@@ -2,117 +2,96 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44484E8FDC3
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Oct 2023 01:12:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7F3AE8FDC3
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Oct 2023 01:23:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232430AbjJDBMf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Oct 2023 21:12:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37486 "EHLO
+        id S239603AbjJDBXP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Oct 2023 21:23:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232316AbjJDBMf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Oct 2023 21:12:35 -0400
-Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E458AB;
-        Tue,  3 Oct 2023 18:12:32 -0700 (PDT)
-Received: by mail-pg1-x52a.google.com with SMTP id 41be03b00d2f7-58949a142bfso60456a12.1;
-        Tue, 03 Oct 2023 18:12:32 -0700 (PDT)
+        with ESMTP id S239531AbjJDBXP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Oct 2023 21:23:15 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB933AF
+        for <linux-clk@vger.kernel.org>; Tue,  3 Oct 2023 18:23:11 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id 2adb3069b0e04-50435ad51bbso1776643e87.2
+        for <linux-clk@vger.kernel.org>; Tue, 03 Oct 2023 18:23:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696381952; x=1696986752; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fas0XW9KdFPhCRYKtIjUyg9fUjXrDBEyScssVvJXH/A=;
-        b=UqVyN9seF/pKtvdft4Eo0V+0P0hWx5L8c2TUqMA/z6WeEtwSrNjlb2aoAY8bwYKEvC
-         BQPCRGlQmvPaw6k1YYRd+z+U1+SQEtsHyQ84DBQu+eiuQqqQf+wSCxHnsf0KWlXQMPql
-         qkRz1wPvYgj/dV7Fpa56KKYNzLzQD0t3iSmYXabYbw5Df7iGEN30n87XnGUNryPbniBv
-         CJhq/SefBb+C/QORiPbhtNlBYTTCgld4CzkSVr+h4aV27lCWovSmNyrfWL/oC83j6Foc
-         xi6qHyOH2XEoHv1tDPZMfzwLLrUh7DUdWvXjni0YyB3AVu6wVG2yoDv6O2xdYQCuAStc
-         Asfw==
+        d=linaro.org; s=google; t=1696382590; x=1696987390; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zZOGHdiWccaH+lI+d4c46L7IxfGyvf8H8j4Ss2u6XUM=;
+        b=TBRGA4Yp9FS21O3zyHFbn/8MSIXusOs61P5q5+KmnqsoHUgQMkp0lKoHVrjdQrCuZx
+         ib96chpw89K5A3f6m7dqRaYkuwz4wgMH/kGD9x/FSVw+8DQXsssvnmxAM9hgaO3Nwd9e
+         JARCqCRX7jJnU6qo+mqCpfSHzkYVdx7pZ3RF+VipBvXoWWT8LSoXNiOA2I9KXcTovZx+
+         0p/kvo9BGl00xn4HtfRKj60gFaGuH+pjMUFYA8IcTyargw2WqXgLznTBvDnF98SEQS22
+         fcdW4dCkPe6BdDBCcwBPWPa9sAf4u7Rqj1UcPN+Y2wFTWNM9zZidyWi95HnZW9RFkqYL
+         Wyrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696381952; x=1696986752;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fas0XW9KdFPhCRYKtIjUyg9fUjXrDBEyScssVvJXH/A=;
-        b=PIcfljMI9KMIlKYBhUvToctU2OfbbUs0u81hXV4KD3GXdHNidipdoXbA0R6qXyf/w7
-         3IM5O9nS6sCCB5qqPsVRV1k2SQRwt57rnvxN/SKwVLPwfpwdMBRYypgu8erYykIa/dk9
-         CJin+irIheZFMhjLoiAeBTlNggEF/xUvuLUDnbVV/KXD0ZV1O33XLn91+8ql9PwNYxev
-         SmAb/XnRWqDkxzTeJxjfrYvwzmY/vd4tlhtLWwVDz7hqFEg3StcD2JJ8RDx02sjBCO5M
-         c3RweDJvIzgS5NFBdk30DLn4LZnaAP2cEhtlKvcPRAJrRHUAzCNXuMD/TXXh2qXFzPU2
-         DNjg==
-X-Gm-Message-State: AOJu0YzLZF6MfxvYgfDxftyf6rxbLxpdrEkRKnMyqhfs93iDTkrzSali
-        JP3DNVA5mvf/8T5AR6helEDSnXpBq909TW/03gE=
-X-Google-Smtp-Source: AGHT+IFen0a+X+gv/rudm9g2ZVTwJtB9njJO1Lz/cEwq0MQEtgeUeeSEuWPSIwYeovwRMb7oV3/tUMeNH3CCdZ3MKcc=
-X-Received: by 2002:a05:6a00:10c2:b0:68f:c9f6:f366 with SMTP id
- d2-20020a056a0010c200b0068fc9f6f366mr1240061pfu.0.1696381951815; Tue, 03 Oct
- 2023 18:12:31 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230831044431.250338-1-aford173@gmail.com> <20230831044431.250338-2-aford173@gmail.com>
-In-Reply-To: <20230831044431.250338-2-aford173@gmail.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Tue, 3 Oct 2023 22:12:20 -0300
-Message-ID: <CAOMZO5DyZJuqYswLYhf1f3zP7Rc1ZhnPfq26dpyU2m5mhvRtVw@mail.gmail.com>
-Subject: Re: [PATCH V3 2/3] arm64: dts: imx8mp: Add micfil node
-To:     Adam Ford <aford173@gmail.com>
-Cc:     linux-arm-kernel@lists.infradead.org, marex@denx.de,
-        aford@beaconembedded.com, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        d=1e100.net; s=20230601; t=1696382590; x=1696987390;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zZOGHdiWccaH+lI+d4c46L7IxfGyvf8H8j4Ss2u6XUM=;
+        b=SvLCSNC3D2vDTqMA23raI1KNOKtsi/dC7fR+nGUzJpOUCa0Tcm6XrTxgMJlSYBpzeW
+         4OmBOrQc2k+A6qke1QDaRFLmliCBSXuWBxTrnxQNoizqanwG6n6clDJQiNwe/aXOB4V6
+         0E6iU1itmEbdKN7gJ8vS6cciNOLQX/6/0da2JwspD5l8DASH6CCQX7bzbhTTpxmiZX3l
+         ryqY5O98Lc7mtaCLRge6//U+5pQAA2cyNK35bC1eyWPAQr3xigVQWx/EboEsvHDPJ52V
+         fKsckmSRweL5Mis3ZN0aemCXnDrxCEVwedsnkkpaHwaoYrpScEjKSa+s+HkDPBYOi6wF
+         PB3Q==
+X-Gm-Message-State: AOJu0YzGAvUk1+oFeO47gLm+0MuNMTrmKODPU8NdRbaC0UJ42Qzt4FSe
+        SbKIrV3BVUkgQLWWMzSwkATNrA==
+X-Google-Smtp-Source: AGHT+IG+sf42x5UqgX6/tUnADMw8ywfyluNYFJxrjCn5F89fxCcebmJvXrjI2e0zvbIZZXO7gGVTKg==
+X-Received: by 2002:a05:6512:b1a:b0:500:9a29:bcb8 with SMTP id w26-20020a0565120b1a00b005009a29bcb8mr785860lfu.4.1696382590028;
+        Tue, 03 Oct 2023 18:23:10 -0700 (PDT)
+Received: from umbar.unikie.fi ([192.130.178.91])
+        by smtp.gmail.com with ESMTPSA id w17-20020ac24431000000b004fdbb36a677sm381979lfl.288.2023.10.03.18.23.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Oct 2023 18:23:09 -0700 (PDT)
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Taniya Das <quic_tdas@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        freedreno@lists.freedesktop.org, Rob Clark <robdclark@gmail.com>
+Subject: [RFC PATCH v2 0/3] clk: qcom: provide alternative 'parked' RCG
+Date:   Wed,  4 Oct 2023 04:23:05 +0300
+Message-Id: <20231004012308.2305273-1-dmitry.baryshkov@linaro.org>
+X-Mailer: git-send-email 2.39.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Adam and devicetree folks,
+Implement an alternative for the clk_rcg2_shared_ops, which also
+implements a proper is_enabled callback. Note, to use
+clk_rcg2_parked_ops one must remove XO (safe source) from the
+parent_data, parent_map and freq_table.
 
-On Thu, Aug 31, 2023 at 1:44=E2=80=AFAM Adam Ford <aford173@gmail.com> wrot=
-e:
->
-> The i.MX8MP has a micfil controller which is used for interfacing
-> with a pulse density microphone. Add the node and mark it as
-> disabled by default.
->
-> Signed-off-by: Adam Ford <aford173@gmail.com>
-> ---
-> V3:  The AUDIOMIX_PDM_ROOT doesn't exist and the real clock is
->      called IMX8MP_CLK_AUDIOMIX_PDM_SEL, so swap it out.
->
-> V2:  No change
->
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/=
-dts/freescale/imx8mp.dtsi
-> index 3167706d81e1..341fd0369ce9 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> @@ -1479,6 +1479,27 @@ easrc: easrc@30c90000 {
->                                         fsl,asrc-format =3D <2>;
->                                         status =3D "disabled";
->                                 };
-> +
-> +                               micfil: audio-controller@30ca0000 {
-> +                                       compatible =3D "fsl,imx8mp-micfil=
-";
-> +                                       reg =3D <0x30ca0000 0x10000>;
-> +                                       #sound-dai-cells =3D <0>;
+Changes since v1:
+- Replaced a call to clk_rcg2_is_enabled() with check of the CFG_ROOT_EN
+  field (Stephen Boyd).
+- Added the init function, reading the default clock configuration and
+  then defaulting to the lowest supported freq / parent if the clock was
+  not configured at all (Stephen Boyd).
+- Dropped P_BI_TCXO from freq_tables too.
 
-After this patch, the following schema warning is seen:
+Dmitry Baryshkov (3):
+  clk: qcom: add helper to map parent source to cfg value
+  clk: qcom: implement RCG2 'parked' clock support
+  clk: qcom: dispcc-sm8250: switch to clk_rcg2_parked_ops
 
-imx8mp-beacon-kit.dtb: audio-controller@30ca0000: '#sound-dai-cells'
-does not match any of the regexes: 'pinctrl-[0-9]+'
-from schema $id: http://devicetree.org/schemas/sound/fsl,micfil.yaml#
+ drivers/clk/qcom/clk-rcg.h       |  1 +
+ drivers/clk/qcom/clk-rcg2.c      | 56 ++++++++++++++++++++++++++++++++
+ drivers/clk/qcom/common.c        | 12 +++++++
+ drivers/clk/qcom/common.h        |  2 ++
+ drivers/clk/qcom/dispcc-sm8250.c | 13 ++------
+ 5 files changed, 74 insertions(+), 10 deletions(-)
 
-What is the correct way to solve this?
+-- 
+2.39.2
 
-- Document #sound-dai-cells in fsl,micfil.yaml as an optional property
-- Remove #sound-dai-cells from imx8mp.dtsi
-- Document #sound-dai-cells in fsl,micfil.yaml as a required property
-and pass #sound-dai-cells to imx8mm/imx8mn/imx83.dtsi?
