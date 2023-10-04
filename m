@@ -2,95 +2,376 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9852BE7B611
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Oct 2023 13:34:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89D9EE7C4C4
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Oct 2023 14:39:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242477AbjJDNe6 convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Oct 2023 09:34:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45514 "EHLO
+        id S242870AbjJDOjp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Oct 2023 10:39:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33786 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233319AbjJDNe5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Oct 2023 09:34:57 -0400
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DDAEA9;
-        Wed,  4 Oct 2023 06:34:54 -0700 (PDT)
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-59b5484fbe6so25419887b3.1;
-        Wed, 04 Oct 2023 06:34:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696426493; x=1697031293;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uLCUsporDKIFmsMxBll0mPmZXPU4EoOlZka8Vi8S45s=;
-        b=JqZvrWLJtg+ZgV4flPdwjx4z0V5BLr7AHnCzQS725rYlED0S8qTmrs0h/lPoycrNGJ
-         hyI9L7ogLL8UJC0AaN2c4loIkuhCe0mCCDi8WzD2zmAKZ8h0KGgBfchq5NFWUVf+1ZXd
-         +kEJKNjQB4+LzoMk8a0BHG7GXfXDprCP10YS/z60jJb7xmZC1CC7O3eBIyell2p2QrNt
-         LgE3K5WG6t3bpm0eCMMUSiXjNDJhfcLiX7kE1HUk36GEcq5dkMWR/B1H+XNgxd+yvpiF
-         BJIpfUwXp4ywXYcs3m/NDKHv+HMLRGMREk/f91RF3a5ZfPtGOAX4oq/PcUsJpJNLconG
-         crGw==
-X-Gm-Message-State: AOJu0Yy+yL2Q5ULHuMwTjHnqBnw3ogw9Jb+XpFdfLm7Ae5BSahxaOtEo
-        FL3KCVh2i6YcI/psY/jJVZfJtxBogkcP0A==
-X-Google-Smtp-Source: AGHT+IHfp/PfHchI4K8HSjClRLsre6rlrd11GDlmmSIEVPqOr054sftjUB6yFRW+OGCHLgZFyMnsBw==
-X-Received: by 2002:a81:6203:0:b0:59b:bd55:8452 with SMTP id w3-20020a816203000000b0059bbd558452mr2777290ywb.36.1696426493219;
-        Wed, 04 Oct 2023 06:34:53 -0700 (PDT)
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com. [209.85.128.172])
-        by smtp.gmail.com with ESMTPSA id c2-20020a0dc102000000b00559f1cb8444sm1142888ywd.70.2023.10.04.06.34.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Oct 2023 06:34:52 -0700 (PDT)
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-59b5484fbe6so25419417b3.1;
-        Wed, 04 Oct 2023 06:34:52 -0700 (PDT)
-X-Received: by 2002:a81:7c86:0:b0:59f:687c:fb36 with SMTP id
- x128-20020a817c86000000b0059f687cfb36mr2554657ywc.45.1696426492360; Wed, 04
- Oct 2023 06:34:52 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230929053915.1530607-1-claudiu.beznea@bp.renesas.com> <20230929053915.1530607-29-claudiu.beznea@bp.renesas.com>
-In-Reply-To: <20230929053915.1530607-29-claudiu.beznea@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 4 Oct 2023 15:34:40 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUJkmZG+7gYNav01Y+7pfYKA5fPV3WygV8n_VyEZ-cDfQ@mail.gmail.com>
-Message-ID: <CAMuHMdUJkmZG+7gYNav01Y+7pfYKA5fPV3WygV8n_VyEZ-cDfQ@mail.gmail.com>
-Subject: Re: [PATCH v2 28/28] arm64: defconfig: enable RZ/G3S (R9A08G045) SoC
-To:     Claudiu <claudiu.beznea@tuxon.dev>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        linus.walleij@linaro.org, gregkh@linuxfoundation.org,
-        jirislaby@kernel.org, magnus.damm@gmail.com,
-        catalin.marinas@arm.com, will@kernel.org,
-        quic_bjorande@quicinc.com, konrad.dybcio@linaro.org, arnd@arndb.de,
-        neil.armstrong@linaro.org, prabhakar.mahadev-lad.rj@bp.renesas.com,
-        biju.das.jz@bp.renesas.com, linux-renesas-soc@vger.kernel.org,
+        with ESMTP id S232925AbjJDOjn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Oct 2023 10:39:43 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 348BFC1;
+        Wed,  4 Oct 2023 07:39:40 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28B3BC433C8;
+        Wed,  4 Oct 2023 14:39:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1696430379;
+        bh=U1NGLITL8Rf5crY2/ZChUEDsdN/rfYafMwCe01hDqrM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Mbx+7rdw5z7ej9ZE0HDGdXN+9m4YPieLkiCAUhg4dVbfqSzn883zLJtkYOmWqtnQt
+         mo1JiH5gPe9pp/2bSpW+OHWTwuwMJ0UT2CHZc6732OCqngpcFWYqXE1rVP/JeGXRRQ
+         pVsV90YHhI7LNRYhSK4lMfJWeuSL8I8z15RJDBnkZ2xhu+tu8zYjQ0WsB8TxMgrH+k
+         JQF0poq0QHSIzfF+jpn3T8QO+B0HoY1tUt39OiF9+wq79srYvi1zso8yvpY9QmSc9+
+         YJYmuV7LdT/pQy+6C71boqEHMaq66WsKJ3bkcQlc2ouOHH2Ea/blRvtcSgcEQdgjIs
+         yud/XLSc28Z4A==
+Received: (nullmailer pid 3103312 invoked by uid 1000);
+        Wed, 04 Oct 2023 14:39:37 -0000
+Date:   Wed, 4 Oct 2023 09:39:37 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Alvin =?utf-8?Q?=C5=A0ipraga?= <alvin@pqrs.dk>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        =?utf-8?B?77+9aXByYWdh?= <alsi@bang-olufsen.dk>,
+        Rabeeh Khoury <rabeeh@solid-run.com>,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 1/4] dt-bindings: clock: si5351: convert to yaml
+Message-ID: <20231004143937.GA3091822-robh@kernel.org>
+References: <20231004063712.3348978-1-alvin@pqrs.dk>
+ <20231004063712.3348978-2-alvin@pqrs.dk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20231004063712.3348978-2-alvin@pqrs.dk>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Sep 29, 2023 at 7:40 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Enable config flag for Renesas RZ/G3S (R9A08G045) SoC.
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Wed, Oct 04, 2023 at 08:35:27AM +0200, Alvin Šipraga wrote:
+> From: Alvin Šipraga <alsi@bang-olufsen.dk>
+> 
+> The following additional properties are described:
+> 
+>   - clock-names
+>   - clock-frequency of the clkout child nodes
+> 
+> In order to suppress warnings from the DT schema validator, the clkout
+> child nodes are prescribed names clkout@[0-7] rather than clkout[0-7].
+> The latter form is still admissible but the example has been changed to
+> use the former.
+> 
+> The example is refined as follows:
+> 
+>   - correct the usage of property pll-master -> silabs,pll-master
+>   - give an example of how the silabs,pll-reset property can be used
+> 
+> I made myself maintainer of the file as I cannot presume that anybody
+> else wants the responsibility.
+> 
+> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+> Cc: Rabeeh Khoury <rabeeh@solid-run.com>
+> Signed-off-by: Alvin Šipraga <alsi@bang-olufsen.dk>
 > ---
->
-> Changes in v2:
-> - collected tags
+>  .../bindings/clock/silabs,si5351.txt          | 126 ---------
+>  .../bindings/clock/silabs,si5351.yaml         | 253 ++++++++++++++++++
+>  2 files changed, 253 insertions(+), 126 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/silabs,si5351.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/silabs,si5351.yaml
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.7.
+[...]
 
-Gr{oetje,eeting}s,
+> diff --git a/Documentation/devicetree/bindings/clock/silabs,si5351.yaml b/Documentation/devicetree/bindings/clock/silabs,si5351.yaml
+> new file mode 100644
+> index 000000000000..400c8cec2a3a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/silabs,si5351.yaml
+> @@ -0,0 +1,253 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/silabs,si5351.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Silicon Labs Si5351A/B/C programmable I2C clock generators
+> +
+> +description: |
+> +  The Silicon Labs Si5351A/B/C are programmable I2C clock generators with up to
+> +  8 outputs. Si5351A also has a reduced pin-count package (10-MSOP) where only 3
+> +  output clocks are accessible. The internal structure of the clock generators
+> +  can be found in [1].
+> +
+> +  [1] Si5351A/B/C Data Sheet
+> +      https://www.skyworksinc.com/-/media/Skyworks/SL/documents/public/data-sheets/Si5351-B.pdf
+> +
+> +maintainers:
+> +  - Alvin Šipraga <alsi@bang-olufsen.dk>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - silabs,si5351a      # Si5351A, 20-QFN package
+> +      - silabs,si5351a-msop # Si5351A, 10-MSOP package
+> +      - silabs,si5351b      # Si5351B, 20-QFN package
+> +      - silabs,si5351c      # Si5351C, 20-QFN package
+> +
+> +  reg:
+> +    enum:
+> +      - 0x60
+> +      - 0x61
+> +
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 0
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  silabs,pll-source:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-matrix
+> +    description: |
+> +      A list of cell pairs containing a PLL index and its source. Allows to
+> +      overwrite clock source of the internal PLLs.
+> +    minItems: 1
 
-                        Geert
+The minimum is 1 by default (can't have 0).
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> +    items:
+> +      items:
+> +        - description: PLL A (0) or PLL B (1)
+> +          enum: [ 0, 1 ]
+> +        - description: PLL source, XTAL (0) or CLKIN (1, Si5351C only).
+> +          enum: [ 0, 1 ]
+> +
+> +patternProperties:
+> +  "^clkout@[0-7]$":
+> +    type: object
+> +
+> +    properties:
+> +      reg:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+reg already has a type. Drop.
+
+> +        description: Clock output number.
+> +
+> +      clock-frequency: true
+> +
+> +      silabs,clock-source:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        description: |
+> +          Source clock of the this output's divider stage.
+> +
+> +          0 - use multisynth N for this output, where N is the output number
+> +          1 - use either multisynth 0 (if output number is 0-3) or multisynth 4
+> +              (otherwise) for this output
+> +          2 - use XTAL for this output
+> +          3 - use CLKIN for this output (Si5351C only)
+> +
+> +      silabs,drive-strength:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        enum: [ 2, 4, 6, 8 ]
+> +        description: Output drive strength in mA.
+> +
+> +      silabs,multisynth-source:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        enum: [ 0, 1 ]
+> +        description: |
+
+Don't need '|' if no formatting to preserve.
+
+> +          Source PLL A (0) or B (1) for the corresponding multisynth divider.
+> +
+> +      silabs,pll-master:
+> +        type: boolean
+> +        description: |
+> +          The frequency of the source PLL is allowed to be changed by the
+> +          multisynth when setting the rate of this clock output.
+> +
+> +      silabs,pll-reset:
+> +        type: boolean
+> +        description: Reset the source PLL when enabling this clock output.
+> +
+> +      silabs,disable-state:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        enum: [ 0, 1, 2, 3 ]
+> +        description: |
+> +          Clock output disable state. The state can be one of:
+> +
+> +          0 - clock output is driven LOW when disabled
+> +          1 - clock output is driven HIGH when disabled
+> +          2 - clock output is FLOATING (HIGH-Z) when disabled
+> +          3 - clock output is never disabled
+> +
+> +    allOf:
+> +      - if:
+> +          properties:
+> +            compatible:
+> +              contains:
+> +                const: silabs,si5351a-msop
+> +        then:
+> +          properties:
+> +            reg:
+> +              minimum: 0
+
+The minimum is already 0. Drop.
+
+> +              maximum: 2
+> +        else:
+> +          properties:
+> +            reg:
+> +              minimum: 0
+> +              maximum: 7
+> +
+> +      - if:
+> +          properties:
+> +            compatible:
+> +              contains:
+> +                const: silabs,si5351c
+> +        then:
+> +          properties:
+> +            silabs,clock-source:
+> +              enum: [ 0, 1, 2, 3 ]
+> +        else:
+> +          properties:
+> +            silabs,clock-source:
+> +              enum: [ 0, 1, 2 ]
+> +    required:
+> +      - reg
+> +
+> +    additionalProperties: false
+
+Move this next to 'type: object'
+
+> +
+> +allOf:
+> +  - $ref: /schemas/clock/clock.yaml
+
+Don't need this.
+
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - silabs,si5351a
+> +              - silabs,si5351a-msop
+> +              - silabs,si5351b
+
+Isn't this just the 'else' for the next one? Or more parts are coming?
+
+> +    then:
+> +      properties:
+> +        clocks:
+> +          minItems: 1
+> +          maxItems: 1
+> +        clock-names:
+> +          items:
+> +            - const: xtal
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: silabs,si5351c
+> +    then:
+> +      properties:
+> +        clocks:
+> +          minItems: 1
+> +          maxItems: 2
+> +        clock-names:
+> +          minItems: 1
+> +          items:
+> +            - const: xtal
+> +            - const: clkin
+
+Define clocks and clock-names at the top level and just use 
+minItems/maxItems in the if/then schemas.
+
+> +
+> +required:
+> +  - reg
+> +  - "#address-cells"
+> +  - "#size-cells"
+> +  - "#clock-cells"
+> +  - clocks
+> +  - clock-names
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +
+> +      clock-generator@60 {
+> +        compatible = "silabs,si5351a-msop";
+> +        reg = <0x60>;
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +        #clock-cells = <1>;
+> +
+> +        /* Connect XTAL input to 25MHz reference */
+> +        clocks = <&ref25>;
+> +        clock-names = "xtal";
+> +
+> +        /* Use XTAL input as source of PLL0 and PLL1 */
+> +        silabs,pll-source = <0 0>, <1 0>;
+> +
+> +        /*
+> +         * Overwrite CLK0 configuration with:
+> +         * - 8 mA output drive strength
+> +         * - PLL0 as clock source of multisynth 0
+> +         * - Multisynth 0 as clock source of output divider
+> +         * - Multisynth 0 can change PLL0
+> +         * - Set initial clock frequency of 74.25MHz
+> +         */
+> +        clkout@0 {
+> +          reg = <0>;
+> +          silabs,drive-strength = <8>;
+> +          silabs,multisynth-source = <0>;
+> +          silabs,clock-source = <0>;
+> +          silabs,pll-master;
+> +          clock-frequency = <74250000>;
+> +        };
+> +
+> +        /*
+> +         * Overwrite CLK1 configuration with:
+> +         * - 4 mA output drive strength
+> +         * - PLL1 as clock source of multisynth 1
+> +         * - Multisynth 1 as clock source of output divider
+> +         * - Multisynth 1 can change PLL1
+> +         * - Reset PLL1 when enabling this clock output
+> +         */
+> +        clkout@1 {
+> +          reg = <1>;
+> +          silabs,drive-strength = <4>;
+> +          silabs,multisynth-source = <1>;
+> +          silabs,clock-source = <0>;
+> +          silabs,pll-master;
+> +          silabs,pll-reset;
+> +        };
+> +
+> +        /*
+> +         * Overwrite CLK2 configuration with:
+> +         * - XTAL as clock source of output divider
+> +         */
+> +        clkout@2 {
+> +          reg = <2>;
+> +          silabs,clock-source = <2>;
+> +        };
+> +      };
+> +    };
+> -- 
+> 2.42.0
+> 
