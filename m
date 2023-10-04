@@ -2,86 +2,114 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B084E7B604
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Oct 2023 12:37:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C587E7B604
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Oct 2023 12:38:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242469AbjJDMhy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Oct 2023 08:37:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39370 "EHLO
+        id S242382AbjJDMiI convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Oct 2023 08:38:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242533AbjJDMhq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Oct 2023 08:37:46 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6FDE170C
-        for <linux-clk@vger.kernel.org>; Wed,  4 Oct 2023 05:37:14 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-9ada2e6e75fso392398066b.2
-        for <linux-clk@vger.kernel.org>; Wed, 04 Oct 2023 05:37:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696423033; x=1697027833; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7ujoaqTZd1g4Nt2RQJtsj9HWcr4gLmxfF14CAQlkvLU=;
-        b=OSrtpFkEc9qdDH6qmNeSj6A7pTVw8k6mMlvmp/G7liQ64togh+Gcm3RCevhqJiU7gT
-         zDUnvEeOgmxzgmqTxL29l4cwY4Ro5RiiPIPr0hGoypimceE4pcEkSgWZ/GsQSYLQJ+93
-         +/C558bzZIWAxjcwWhgQqQLD+DdWbmNLjl8F0irOdfp3ZMbBVG2rjGDQSDdRIbbZjj1o
-         LTycf5awlMrfcv7Axr6WyPHS72JkwHG4FmXTES+9ldIBKxgjTx+eQVp6tQUEC0Muv3P3
-         OvtOUim15Auu0CeIsc6VyTsOui0O+ldG0AxLLXmScY3PWCULiZHikIDOZpW2Ekqm/VYL
-         3dmg==
+        with ESMTP id S242371AbjJDMiH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Oct 2023 08:38:07 -0400
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B77B198E;
+        Wed,  4 Oct 2023 05:37:26 -0700 (PDT)
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-d86a0c97ae6so2231390276.2;
+        Wed, 04 Oct 2023 05:37:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696423033; x=1697027833;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1696423045; x=1697027845;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7ujoaqTZd1g4Nt2RQJtsj9HWcr4gLmxfF14CAQlkvLU=;
-        b=BT+/1pNReQPGpPSKTG5k2Q+pJVbZ2tCoVOGcSvbKntNfQSoiNrlJ0hwlpm/D2t9CwK
-         ZeBnZ8G65B8JD6XDfHlMl2WBC05HZDgvQ69lm0rV+piQtSZi95Df9anWRWJ3tByISnSY
-         BFhQlXHOqQ4IdmMKhuUaKWCiH6HyIvOiWgTsfcmBpJ6f8w/dfaVJuT+VLfxfPi5dx9Zo
-         Fdb2MaQfWPEAVG3qrL9zOsmqxtaKJwFrNytgBKRtT8WKKMaGyXU7fRdIM9OdpHlFJl0J
-         Y+hn5efU3++shTKA5u1QfQJTZtIxy3YESZNhb/Qve/vZgJ7J8pikpid10tdjO+NNU2NQ
-         nAxw==
-X-Gm-Message-State: AOJu0Yw+2IDmVfx5JRfEcKbPq8D32nXAKnZkQHScChpHpuvdtm+zUThl
-        GfBZ7Pg3Uwk0LGgrkcRvwPfhCA==
-X-Google-Smtp-Source: AGHT+IHwXMUGlHmxrSjUwpvnWO7SJjwnQE0S7keRLnZgi8Jf2/+sfYEq2aOC8nyVOfAuQC291Lnpwg==
-X-Received: by 2002:a17:906:3051:b0:9a5:7759:19c0 with SMTP id d17-20020a170906305100b009a5775919c0mr1839950ejd.64.1696423033291;
-        Wed, 04 Oct 2023 05:37:13 -0700 (PDT)
-Received: from hackbox.lan ([86.123.99.172])
-        by smtp.gmail.com with ESMTPSA id jx14-20020a170906ca4e00b009ade1a4f795sm2721028ejb.168.2023.10.04.05.37.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Oct 2023 05:37:12 -0700 (PDT)
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     abelvesa@kernel.org, Fabio Estevam <festevam@gmail.com>
-Cc:     sboyd@kernel.org, linux-clk@vger.kernel.org,
-        Fabio Estevam <festevam@denx.de>
-Subject: Re: [PATCH v4] clk: imx: imx6sx: Allow a different LCDIF1 clock parent
-Date:   Wed,  4 Oct 2023 15:36:32 +0300
-Message-Id: <169642294508.713950.12324349089481800725.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230815130923.775117-1-festevam@gmail.com>
-References: <20230815130923.775117-1-festevam@gmail.com>
+        bh=m0eRmMumZAzpcA204HIbmaGshHcqOkFU7CedEjUB2w4=;
+        b=WHpuGKIMw6PHJglUambBsLHBibIdoddNLjl35TCosAiWwzK1FHRIx4GeppfLBHeaqh
+         nJ3qWqAR94uUDta8lHu5VLx1s9dTZ5idFEdYm6nxC8BMRsuzQ2+miFaDoynJJKMhPs2G
+         Z+XKluqj1i270iyQLQk8OcdSPe50pH6Rc239UA/Y9PRZiaZ5d5K0TC0B0tpzSpjLiu+u
+         UEln6+ComQjfzQ7VnSKiTAlM9iMELH09Y/ISY471mh3L5u+RKCdRxHxfFvd3ypuh7w7W
+         gVtcE3LsxuzD39BeNrVf7/wk7xlDmHDhZFXwullxFMKBJ8de0uSC2nZ1saIFo1SJtKnT
+         hOgw==
+X-Gm-Message-State: AOJu0YzFUpRDbb0JHzokQwzBu9K3QmryYZAuKQz5xQqPw8LpFzgUJqzm
+        iM4qLk6r/14rZOAKHF4Scpf+9dtzrmEx9A==
+X-Google-Smtp-Source: AGHT+IE6aiPISN3Sy+GQHhlmGqas7LqydsUQB/Ki8oqiQroN5qUifjPwQEhEdkJyDSMcZLrmJMAqLQ==
+X-Received: by 2002:a25:3601:0:b0:d22:c8b9:8c9b with SMTP id d1-20020a253601000000b00d22c8b98c9bmr1963001yba.13.1696423044823;
+        Wed, 04 Oct 2023 05:37:24 -0700 (PDT)
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
+        by smtp.gmail.com with ESMTPSA id 194-20020a250dcb000000b00d748501d9b4sm1025252ybn.21.2023.10.04.05.37.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Oct 2023 05:37:24 -0700 (PDT)
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-5a1f00b75aaso23789787b3.2;
+        Wed, 04 Oct 2023 05:37:24 -0700 (PDT)
+X-Received: by 2002:a81:a24a:0:b0:59f:7f8e:dc4a with SMTP id
+ z10-20020a81a24a000000b0059f7f8edc4amr2814911ywg.22.1696423044119; Wed, 04
+ Oct 2023 05:37:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20230929053915.1530607-1-claudiu.beznea@bp.renesas.com> <20230929053915.1530607-13-claudiu.beznea@bp.renesas.com>
+In-Reply-To: <20230929053915.1530607-13-claudiu.beznea@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 4 Oct 2023 14:37:11 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUnt-bLeJmQxbviWAmgmCNHb8EDo1QM5LyhYJRA07KGqA@mail.gmail.com>
+Message-ID: <CAMuHMdUnt-bLeJmQxbviWAmgmCNHb8EDo1QM5LyhYJRA07KGqA@mail.gmail.com>
+Subject: Re: [PATCH v2 12/28] dt-bindings: clock: renesas,rzg2l-cpg: document
+ RZ/G3S SoC
+To:     Claudiu <claudiu.beznea@tuxon.dev>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        linus.walleij@linaro.org, gregkh@linuxfoundation.org,
+        jirislaby@kernel.org, magnus.damm@gmail.com,
+        catalin.marinas@arm.com, will@kernel.org,
+        quic_bjorande@quicinc.com, konrad.dybcio@linaro.org, arnd@arndb.de,
+        neil.armstrong@linaro.org, prabhakar.mahadev-lad.rj@bp.renesas.com,
+        biju.das.jz@bp.renesas.com, linux-renesas-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Fri, Sep 29, 2023 at 7:39 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Add documentation for RZ/G3S CPG. RZ/G3S CPG module is almost identical
+> with the one available in RZ/G2{L, UL} the exception being some core
+> clocks as follows:
+> - SD clock is composed by a mux and a divider and the divider
+>   has some limitation (div = 1 cannot be set if mux rate is 800MHz).
+> - there are 3 SD clocks
+> - OCTA and TSU clocks are specific to RZ/G3S
+> - PLL1/4/6 are specific to RZ/G3S with its own computation formula
+> Even with this RZ/G3S could use the same bindings as RZ/G2L.
+>
+> Along with documentation bindings for the RZ/G3S (R9A08G045) Clock Pulse
+> Generator (CPG) core clocks, module clocks and resets were added.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
+>
+> Changes in v2:
+> - collected Rob's tag
+> - squashed with
+>   [PATCH 21/37] dt-bindings: clock: add r9a08g045 CPG clocks and resets
+>   from v1
+> - updated commit message to reflect that bindings were also added to
+>   this patch
+> - removed R9A08G045_USB_SCLK
+> - @Geert: please note I haven't collected your Rb tag as I did the squash
 
-On Tue, 15 Aug 2023 10:09:23 -0300, Fabio Estevam wrote:
-> It is not a good idea to hardcode the LCDIF1 parent inside the
-> clock driver because some users may want to use a different clock
-> parent for LCDIF1. One of the reasons could be related to EMI tests.
-> 
-> Remove the harcoded LCDIF1 parent when the LCDIF1 parent is described
-> via devicetree.
-> 
-> [...]
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in a branch shared by renesas-clk and renesas-dts for v6.7.
 
-Applied, thanks!
+Gr{oetje,eeting}s,
 
-[1/1] clk: imx: imx6sx: Allow a different LCDIF1 clock parent
-      commit: 0a22b3a6f446223aff5bcdcc06003ef6e412bfd8
+                        Geert
 
-Best regards,
 -- 
-Abel Vesa <abel.vesa@linaro.org>
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
