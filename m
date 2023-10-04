@@ -2,148 +2,139 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0868AE8FDDD
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Oct 2023 08:37:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8201E8FDDC
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Oct 2023 08:39:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241626AbjJDIhB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Oct 2023 04:37:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38810 "EHLO
+        id S241724AbjJDIjT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Oct 2023 04:39:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241730AbjJDIhA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Oct 2023 04:37:00 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6121E83;
-        Wed,  4 Oct 2023 01:36:56 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-4060b623e64so3761945e9.0;
-        Wed, 04 Oct 2023 01:36:56 -0700 (PDT)
+        with ESMTP id S241722AbjJDIjS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Oct 2023 04:39:18 -0400
+Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A097A83;
+        Wed,  4 Oct 2023 01:39:15 -0700 (PDT)
+Received: by mail-oi1-x233.google.com with SMTP id 5614622812f47-3af5b26d599so1309738b6e.2;
+        Wed, 04 Oct 2023 01:39:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696408615; x=1697013415; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RkfAdr3F5jJkOyznGJa/M5SZW3t5nD9ld59JmHneym0=;
-        b=YDjDZJfAJCH3BcaPs570WA9qoZ5XKQP9ubMdbJX5athTtjPVLYyhx3NQ/Msau6EVRy
-         GeORU3vvrAJ61K1qaSxTvlWX14BJQNUY9JOTZ02Rf7zs/OIKN+JG4PsQKzfLTEkDuvhd
-         s0p+z8XHryXWtjMSaO+mqtp2zZG+mKuM5owcgBbBcTTtT48kE97Fco/ltVtHjkI8hJoI
-         a+Gt+8C/zqJCPeY3V8x+1HMhm1dc6GbazWW+R38VQuzGaJXVOXxrR46TL7mj4aD6NC7A
-         U48VEZ0QoQiCt7Dfq++/UjpKCR7i5J3gqRMTid0rG0Wr/v6bX/Yt+goix25kvbLL73pD
-         vZmQ==
+        d=gmail.com; s=20230601; t=1696408755; x=1697013555; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9/MtXqLrtXt958q8e0H362E4aqBcq4uYbsSDrU1xpVo=;
+        b=PhoFhT+k8iXZbJJWigYXQ2gDiWymPPg0UofingBuJzNZGfEwB1SwvSL6vt3eRw9FRx
+         OZp9MLgJegcY8yDW3uWABPAFTmOJT3ZHmJfRUTyp4rh95X++ehEAEstJPFbNNsQQXgDA
+         OoIXTN/pOSdcSa4+Exev4oUm2znAMBRN4r+LR8PtUSL06Vo52nQtuQhnmzZyMkoRaBwr
+         RLcE+57Cqty0YMvxZzzl7dzpWxq6v6dm0uoId5YIZMgcMr3usPLBeGjwzjbBSoIXbumI
+         wyZjnNoCQ2DY0AqaRMPGIqkae9gCa65VqB5orSg7rL2KwJMv2F7XB4wrJ6vimHbyL1C6
+         XxAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696408615; x=1697013415;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RkfAdr3F5jJkOyznGJa/M5SZW3t5nD9ld59JmHneym0=;
-        b=BrCMTfDE4UwrGng17rBWYsx9aYdWXrTlZw3gt/A6Qe43uirNRChY5FrygchaWJ+awO
-         anEqQfCrNQsVRMhKiWdRnU0AtSJrnSZ4kYkBZh7rDd6XH9LARqnNEJnqYQ0abKblMxRm
-         K3sfiC3eNttxfUbrRQC+YnrmVx7ohyvzwzVCkxsk4Xw+gRtXmT0/NjkmUDGuNL4QRk1E
-         egpexhEBEFZ70nIlh8/iXRQhNoTrGRJwX6jONtOr9ZCd3rniFoJiiQA23h2UCqo6w+XN
-         YiQQmW7Wj8P/FB+5MCwAh+SExt1EkTAsUrZRKtqIwi2D80kKk9QmwrXbvfCAVOVaUOxa
-         XL0g==
-X-Gm-Message-State: AOJu0YxdS8d2/hiXeUJ4fUrU/NVwaTe0DEaLHXxBtk4EgMGOltTm8ks6
-        FmcetHzyMNmfya/Z+vqMrKc=
-X-Google-Smtp-Source: AGHT+IEjoO8o6Ujp6u7Rku5wwKxupS9sA4x8/wplpXvxlJ/7kFVD2nsNBV21tG3XuLT18o/k1a2lYA==
-X-Received: by 2002:a05:600c:b8d:b0:401:609f:7f9a with SMTP id fl13-20020a05600c0b8d00b00401609f7f9amr4275071wmb.8.1696408614641;
-        Wed, 04 Oct 2023 01:36:54 -0700 (PDT)
-Received: from PCBABN.skidata.net ([91.230.2.244])
-        by smtp.gmail.com with ESMTPSA id l16-20020a7bc450000000b0040536dcec17sm918596wmi.27.2023.10.04.01.36.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Oct 2023 01:36:54 -0700 (PDT)
-From:   Benjamin Bara <bbara93@gmail.com>
-To:     aford173@gmail.com
-Cc:     abelvesa@kernel.org, bbara93@gmail.com, benjamin.bara@skidata.com,
-        conor+dt@kernel.org, devicetree@vger.kernel.org,
-        festevam@gmail.com, frank@oltmanns.dev, kernel@pengutronix.de,
-        krzysztof.kozlowski+dt@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-imx@nxp.com, linux-kernel@vger.kernel.org,
-        linux@armlinux.org.uk, mripard@kernel.org, mturquette@baylibre.com,
-        peng.fan@nxp.com, robh+dt@kernel.org, s.hauer@pengutronix.de,
-        sboyd@kernel.org, shawnguo@kernel.org
-Subject: Re: [PATCH 02/13] arm64: dts: imx8mp: re-parent IMX8MP_CLK_MEDIA_MIPI_PHY1_REF
-Date:   Wed,  4 Oct 2023 10:36:39 +0200
-Message-Id: <20231004083639.2895890-1-bbara93@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <CAHCN7x+TCxbaE7Y41Yn5SpG0G5V57hwXQ7HX_ExLF1EXKtZs4w@mail.gmail.com>
-References: <CAHCN7x+TCxbaE7Y41Yn5SpG0G5V57hwXQ7HX_ExLF1EXKtZs4w@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1696408755; x=1697013555;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9/MtXqLrtXt958q8e0H362E4aqBcq4uYbsSDrU1xpVo=;
+        b=ek3xBBikbO6Vuqr+lyakfZWzBidtq5ftM51LMN9NwFhuIsfLNKAgMOdTlRiCgf7Znk
+         qeS0/E/l3NLbC5oEGEA2e84uePCia/6mF0QjJGwYYCrYbGLroMCN9zMvoAuPoAVZRbjN
+         20HtEcqETVw1sx8GAfFvRnRBDlCcpQBdOUkCI8ZYgTm0z57g682PDatR+8btlfTb/Xi+
+         lxkmkfwTZQOnZH6jHa067ibAS7Sf/qShmh4xL5yf0DSHDG1nDcMMNHYvo713UsFGi56I
+         7MBS2tVI1Ao0V0Mnn1sOmDhWgBvI5FyEbferu6Z4S4kL8aKKeTk3wMs25rV4Bvm3qVBm
+         QwYw==
+X-Gm-Message-State: AOJu0Yx0r2WjNmIwJ+Q3Pig2bg7h49NFivjPnKvhr91f+LX6AZm0exnH
+        CNsQc0b/cnF/z4070Q4DKylJPxziUlx10B2evmg=
+X-Google-Smtp-Source: AGHT+IH1aQ0coht5UnO8z19LdQOou4tP5HFtLkJ2ThHn63GXnYbzb+gTd3YZzR0HSSBWWRSrxmNXvqSaVMVjTGYliQM=
+X-Received: by 2002:a05:6808:1ce:b0:3a9:6400:62c6 with SMTP id
+ x14-20020a05680801ce00b003a9640062c6mr1734553oic.32.1696408754882; Wed, 04
+ Oct 2023 01:39:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20230921073217.572151-1-alessandro.carminati@gmail.com>
+In-Reply-To: <20230921073217.572151-1-alessandro.carminati@gmail.com>
+From:   Alessandro Carminati <alessandro.carminati@gmail.com>
+Date:   Wed, 4 Oct 2023 10:38:39 +0200
+Message-ID: <CAPp5cGRSGQGq-4DckxrXTuG=BqwLm9cLHgjY8+MMe8Qgcon4Cw@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: Sanitize possible_parent_show to Handle Return
+ Value of of_clk_get_parent_name
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Philip Daly <pdaly@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Adam,
+gentle ping
 
-thanks for the feedback!
+In the original email, I acknowledge that I misplaced the maintainers mail
+addresse from the "to" field.
 
-On Tue, 3 Oct 2023 at 15:02, Adam Ford <aford173@gmail.com> wrote:
-> From what I can see, it looks like the IMX8MP_CLK_MEDIA_MIPI_PHY1_REF
-> parent is being set to IMX8MP_CLK_24M.  Isn't that the default? I also
-> don't think we need to set a 24MHz clock to 24MHz if that's the
-> default.
-
-I can retry (have the patch applied since then), but as far as I
-remember, it was not. What was even funnier was that media_mipi_phy1_ref
-hat a divider != 1 set (it is a composite), so it wasn't sufficient to
-just re-parent it to OSC_24M - probably because set_rate() was called
-before it was re-parented to OSC_24M. But thanks for the catch, I will
-take a look again and adapt it if possible.
-
-Regards
-Benjamin
-
-> If that is the case, I would suggest we try to remove the assignment
-> altogether to make the device tree simpler and less to untangle if a
-> board needs to manually manipulate the clocks for some specific
-> reason.
+Il giorno gio 21 set 2023 alle ore 09:33 Alessandro Carminati (Red
+Hat) <alessandro.carminati@gmail.com> ha scritto:
 >
-> adam
+> From: Alessandro Carminati <alessandro.carminati@gmail.com>
 >
-> >
-> > Cc: Adam Ford <aford173@gmail.com>
-> > Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
-> > ---
-> >  arch/arm64/boot/dts/freescale/imx8mp.dtsi | 14 ++++++--------
-> >  1 file changed, 6 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> > index c946749a3d73..9539d747e28e 100644
-> > --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> > +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> > @@ -1640,11 +1640,6 @@ mipi_dsi: dsi@32e60000 {
-> >                                 clocks = <&clk IMX8MP_CLK_MEDIA_APB_ROOT>,
-> >                                          <&clk IMX8MP_CLK_MEDIA_MIPI_PHY1_REF>;
-> >                                 clock-names = "bus_clk", "sclk_mipi";
-> > -                               assigned-clocks = <&clk IMX8MP_CLK_MEDIA_APB>,
-> > -                                                 <&clk IMX8MP_CLK_MEDIA_MIPI_PHY1_REF>;
-> > -                               assigned-clock-parents = <&clk IMX8MP_SYS_PLL1_800M>,
-> > -                                                        <&clk IMX8MP_CLK_24M>;
-> > -                               assigned-clock-rates = <200000000>, <24000000>;
-> >                                 samsung,pll-clock-frequency = <24000000>;
-> >                                 interrupts = <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>;
-> >                                 power-domains = <&media_blk_ctrl IMX8MP_MEDIABLK_PD_MIPI_DSI_1>;
-> > @@ -1747,13 +1742,16 @@ media_blk_ctrl: blk-ctrl@32ec0000 {
-> >                                                   <&clk IMX8MP_CLK_MEDIA_APB>,
-> >                                                   <&clk IMX8MP_CLK_MEDIA_DISP1_PIX>,
-> >                                                   <&clk IMX8MP_CLK_MEDIA_DISP2_PIX>,
-> > -                                                 <&clk IMX8MP_VIDEO_PLL1>;
-> > +                                                 <&clk IMX8MP_VIDEO_PLL1>,
-> > +                                                 <&clk IMX8MP_CLK_MEDIA_MIPI_PHY1_REF>;
-> >                                 assigned-clock-parents = <&clk IMX8MP_SYS_PLL2_1000M>,
-> >                                                          <&clk IMX8MP_SYS_PLL1_800M>,
-> >                                                          <&clk IMX8MP_VIDEO_PLL1_OUT>,
-> > -                                                        <&clk IMX8MP_VIDEO_PLL1_OUT>;
-> > +                                                        <&clk IMX8MP_VIDEO_PLL1_OUT>,
-> > +                                                        <&clk IMX8MP_CLK_24M>;
-> >                                 assigned-clock-rates = <500000000>, <200000000>,
-> > -                                                      <0>, <0>, <1039500000>;
-> > +                                                      <0>, <0>, <1039500000>,
-> > +                                                      <24000000>;
-> >                                 #power-domain-cells = <1>;
-> >
-> >                                 lvds_bridge: bridge@5c {
-> >
-> > --
-> > 2.34.1
-> >
+> In the possible_parent_show function, ensure proper handling of the return
+> value from of_clk_get_parent_name to prevent potential issues arising from
+> a NULL return.
+> The current implementation invokes seq_puts directly on the result of
+> of_clk_get_parent_name without verifying the return value, which can lead
+> to kernel panic if the function returns NULL.
+>
+> This patch addresses the concern by introducing a check on the return
+> value of of_clk_get_parent_name. If the return value is not NULL, the
+> function proceeds to call seq_puts, providing the returned value as
+> argument.
+> However, if of_clk_get_parent_name returns NULL, the function provides a
+> static string as argument, avoiding the panic.
+>
+> Fixes: 1ccc0ddf046a ("clk: Use seq_puts() in possible_parent_show()")
+> Reported-by: Philip Daly <pdaly@redhat.com>
+> Signed-off-by: Alessandro Carminati (Red Hat) <alessandro.carminati@gmail.com>
+> ---
+>  drivers/clk/clk.c | 21 ++++++++++++---------
+>  1 file changed, 12 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index c249f9791ae8..473563bc7496 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -3416,6 +3416,7 @@ static void possible_parent_show(struct seq_file *s, struct clk_core *core,
+>                                  unsigned int i, char terminator)
+>  {
+>         struct clk_core *parent;
+> +       const char *name = NULL;
+>
+>         /*
+>          * Go through the following options to fetch a parent's name.
+> @@ -3430,18 +3431,20 @@ static void possible_parent_show(struct seq_file *s, struct clk_core *core,
+>          * registered (yet).
+>          */
+>         parent = clk_core_get_parent_by_index(core, i);
+> -       if (parent)
+> +       if (parent) {
+>                 seq_puts(s, parent->name);
+> -       else if (core->parents[i].name)
+> +       } else if (core->parents[i].name) {
+>                 seq_puts(s, core->parents[i].name);
+> -       else if (core->parents[i].fw_name)
+> +       } else if (core->parents[i].fw_name) {
+>                 seq_printf(s, "<%s>(fw)", core->parents[i].fw_name);
+> -       else if (core->parents[i].index >= 0)
+> -               seq_puts(s,
+> -                        of_clk_get_parent_name(core->of_node,
+> -                                               core->parents[i].index));
+> -       else
+> -               seq_puts(s, "(missing)");
+> +       } else {
+> +               if (core->parents[i].index >= 0)
+> +                       name = of_clk_get_parent_name(core->of_node, core->parents[i].index);
+> +               if (!name)
+> +                       name = "(missing)";
+> +
+> +               seq_puts(s, name);
+> +       }
+>
+>         seq_putc(s, terminator);
+>  }
+> --
+> 2.34.1
+>
