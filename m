@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6EFEE8FDC3
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Oct 2023 00:31:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 444ECE8FDC4
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Oct 2023 00:31:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239076AbjJDAbe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S239228AbjJDAbe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Tue, 3 Oct 2023 20:31:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36204 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239228AbjJDAbd (ORCPT
+        with ESMTP id S239246AbjJDAbd (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Oct 2023 20:31:33 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 027AAA9
-        for <linux-clk@vger.kernel.org>; Tue,  3 Oct 2023 17:31:30 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-4066692ad35so15017685e9.1
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B86BAA7
+        for <linux-clk@vger.kernel.org>; Tue,  3 Oct 2023 17:31:29 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-50307acd445so1801811e87.0
         for <linux-clk@vger.kernel.org>; Tue, 03 Oct 2023 17:31:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google; t=1696379488; x=1696984288; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aLl0HwSpebHQPe1HZIMtv8j9E/LK6fVYcwfGDJYdmX8=;
-        b=kw3HLBqWKvrAs6IYP2qx3IgcVgn52FNA1LpzanjIptz9x1zKHZrPdlVZdT+e3M9JMR
-         J7IThKbZntaz+LO8WZxOcYNURStxpfZ4el14h5t40UQM9GkHvYUAcuL2nVIVuGQRAFwE
-         n003Lo9rhZlaNxKC8OrSkQZVnjFL7a6XIXldStiLUOZrtYsZuGBgX06nHhB4WgF1uMl3
-         cw3VSujifEE0AOEeb693iuCOwup8k5GEBlyJRUEddKE2Ho+fwuBq9b0KtyMo3eZf5b6d
-         KpG5ZCQ4sjAI28p72sDv43WMURL9kq0i7+vt65sihMs6fFnQ3JSpcJK7XPHzNm26nAyQ
-         XP1g==
+        bh=is6O+bR+gqOt2V7xYDfe09jbtEu4FjLn3UWhcpanc7c=;
+        b=pz5aWqqm8/eE0citirgXnTrY7w9xmhizNT/Y7b/4OjZluyxdjWAj2eLaqobHLOjsBp
+         InC40RuEp0uB1wiZHj0rvn7VdhxR2Nk9Uy7rZLZqzwVrt6fmIt4Z6CTJI9gGg0NlqocK
+         yR8ODRljjXeUQdMu9rJyQNaRRn5tdu2g0Hm9WQkChYgwC/0VMzcfkT/dQ0X7CyIJBuzo
+         76MceW5smhsudyQTBAv/spU+cdDX2PkFhs7AVq43+vzutG0cPg0a1li3Ul/bAlaMk7Ko
+         /unjpL53VWnSwYILBs2q+A++EahvHZpz7QJxrVxsi+DHzr/T+/GDF6qFsXqUT6LeiWbe
+         r8fA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1696379488; x=1696984288;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=aLl0HwSpebHQPe1HZIMtv8j9E/LK6fVYcwfGDJYdmX8=;
-        b=iI3a/o2j0x1AElKSkXqtEEgLViTbfrSvzE+9boJ8/tHQ/cXm9uLgEpPJmfCyRR/tNx
-         EUFXQ6PdXRVpLieUfHpz/sJw8ebCDTPSTAYZJv6iimjHeLpAXV1mfh3fDl7cP4aoSGNj
-         qzH07wZhIuN1fWbIw4sXKoVZI8yvodXQT+JHKL2f6ktSfMPXH2ruiq7zkUHl+/LX1WIu
-         fFEPdYtC5Vw/15LYEx9B/DkKLcQ0e8fLC/BgtNbK03ko5sthcZ7C7/S8WgrFZt0N9xXR
-         9uuXpGdmaVtMB3PiVa0ud28b1bV9pKrdtX7AdIBVfqP2mPvQoaSKrR2VfwLivV0JfSU7
-         LUhg==
-X-Gm-Message-State: AOJu0Ywqz1oSpzHB2u7DH8ck4jHfYjiD1XzHDbSAKG/YnhSUdH4DVskE
-        ZVHw43tncI+muuL+9b8EKkleCQ==
-X-Google-Smtp-Source: AGHT+IGd0wiDCW72fyJSci0cDwyaeDLNNsCxDImCmLd2d9uiLe8TptjX5U3tzlSjXQIbCu490pQpww==
-X-Received: by 2002:a7b:cb8c:0:b0:405:3f19:fc49 with SMTP id m12-20020a7bcb8c000000b004053f19fc49mr935957wmi.34.1696379488521;
-        Tue, 03 Oct 2023 17:31:28 -0700 (PDT)
+        bh=is6O+bR+gqOt2V7xYDfe09jbtEu4FjLn3UWhcpanc7c=;
+        b=d0tTiegN+B2amEdsvYyxTpvcsszqPYJ9Fq9Ce22cZjIukFKYksZ5ABIfDjxcBeJoC6
+         LlvzTdr540Cefe84anorD3HDeubFFRm20KoZyL/Z9dUbJpUt0jHzqjYBuf8u3Mwc3TWY
+         /swDSr0f5VDsje3tMuV3H9ZRUNxkx9H4xSXEJQnehTwKhal9NfgEm2vCFYYHQXYlsRvF
+         L39Ho0mnynN7B7yrYB4komxgbkvHIlknvaRo4u1I3tjAV1zCoUGd3GAyUo/lj/CguKlP
+         Hriv9mI/RAVPTzhZP/MTHPjfvskSMBojRNgx4S6q03Y63CMt7Z1OPy8PsdrLUi3OZNKF
+         OmEA==
+X-Gm-Message-State: AOJu0YzsdKSFqUxaUJfn6xl1kPwXPtca0/cQquhUOWWoQEMw4yFfnV6X
+        kD2IknMWAk41OacHUw6UNpHqPg==
+X-Google-Smtp-Source: AGHT+IFAuBVKaO6Sum5+qKmo5IAu9PD21HlBd1YBSGo05czKi+0TFycKFN/e4FROz0HoJtgKloZSVg==
+X-Received: by 2002:a05:6512:ba3:b0:4f9:51ac:41eb with SMTP id b35-20020a0565120ba300b004f951ac41ebmr771728lfv.16.1696379487750;
+        Tue, 03 Oct 2023 17:31:27 -0700 (PDT)
 Received: from umbar.unikie.fi ([192.130.178.91])
         by smtp.gmail.com with ESMTPSA id u15-20020a056512094f00b005056e8bebb8sm366937lft.124.2023.10.03.17.31.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Oct 2023 17:31:28 -0700 (PDT)
+        Tue, 03 Oct 2023 17:31:27 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -58,9 +58,9 @@ To:     Andy Gross <agross@kernel.org>,
         Taniya Das <quic_tdas@quicinc.com>
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         freedreno@lists.freedesktop.org, Rob Clark <robdclark@gmail.com>
-Subject: [RFC PATCH 2/2] clk: qcom: dispcc-sm8250: switch to clk_rcg2_parked_ops
-Date:   Wed,  4 Oct 2023 03:31:25 +0300
-Message-Id: <20231004003125.2289613-3-dmitry.baryshkov@linaro.org>
+Subject: [RFC PATCH 1/2] clk: qcom: implement RCG2 'parked' clock support
+Date:   Wed,  4 Oct 2023 03:31:24 +0300
+Message-Id: <20231004003125.2289613-2-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20231004003125.2289613-1-dmitry.baryshkov@linaro.org>
 References: <20231004003125.2289613-1-dmitry.baryshkov@linaro.org>
@@ -70,72 +70,89 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Switch MDP, AHB and ROT clocks to the clk_rcg2_parked_ops so that the
-CCF can properly determine if the clock is enabled or disabled.
+clk_rcg2_shared_ops implements support for the case of the RCG which
+must not be completely turned off. However its design has one major
+drawback: it doesn't allow us to properly implement the is_enabled
+callback, which causes different kinds of misbehaviour from the CCF.
+
+Follow the idea behind clk_regmap_phy_mux_ops and implement the new
+clk_rcg2_parked_ops. It also targets the clocks which must not be fully
+switched off (and shared most of the implementation with
+clk_rcg2_shared_ops). The major difference is that it requires that the
+parent map doesn't conain the safe (parked) clock source. Instead if the
+CFG_REG register points to the safe source, the clock is considered to
+be disabled.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/clk/qcom/dispcc-sm8250.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ drivers/clk/qcom/clk-rcg.h  |  1 +
+ drivers/clk/qcom/clk-rcg2.c | 34 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 35 insertions(+)
 
-diff --git a/drivers/clk/qcom/dispcc-sm8250.c b/drivers/clk/qcom/dispcc-sm8250.c
-index e17bb8b543b5..229d32aee431 100644
---- a/drivers/clk/qcom/dispcc-sm8250.c
-+++ b/drivers/clk/qcom/dispcc-sm8250.c
-@@ -144,12 +144,10 @@ static const struct clk_parent_data disp_cc_parent_data_2[] = {
- };
+diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+index e6d84c8c7989..9fbbf1251564 100644
+--- a/drivers/clk/qcom/clk-rcg.h
++++ b/drivers/clk/qcom/clk-rcg.h
+@@ -176,6 +176,7 @@ extern const struct clk_ops clk_byte2_ops;
+ extern const struct clk_ops clk_pixel_ops;
+ extern const struct clk_ops clk_gfx3d_ops;
+ extern const struct clk_ops clk_rcg2_shared_ops;
++extern const struct clk_ops clk_rcg2_parked_ops;
+ extern const struct clk_ops clk_dp_ops;
  
- static const struct parent_map disp_cc_parent_map_3[] = {
--	{ P_BI_TCXO, 0 },
- 	{ P_DISP_CC_PLL1_OUT_MAIN, 4 },
- };
+ struct clk_rcg_dfs_data {
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index 5183c74b074f..3f52abf0025e 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -5,6 +5,7 @@
  
- static const struct clk_parent_data disp_cc_parent_data_3[] = {
--	{ .fw_name = "bi_tcxo" },
- 	{ .hw = &disp_cc_pll1.clkr.hw },
+ #include <linux/kernel.h>
+ #include <linux/bitops.h>
++#include <linux/bitfield.h>
+ #include <linux/err.h>
+ #include <linux/bug.h>
+ #include <linux/export.h>
+@@ -1150,6 +1151,39 @@ const struct clk_ops clk_rcg2_shared_ops = {
  };
+ EXPORT_SYMBOL_GPL(clk_rcg2_shared_ops);
  
-@@ -166,13 +164,11 @@ static const struct clk_parent_data disp_cc_parent_data_4[] = {
- };
- 
- static const struct parent_map disp_cc_parent_map_5[] = {
--	{ P_BI_TCXO, 0 },
- 	{ P_DISP_CC_PLL0_OUT_MAIN, 1 },
- 	{ P_DISP_CC_PLL1_OUT_MAIN, 4 },
- };
- 
- static const struct clk_parent_data disp_cc_parent_data_5[] = {
--	{ .fw_name = "bi_tcxo" },
- 	{ .hw = &disp_cc_pll0.clkr.hw },
- 	{ .hw = &disp_cc_pll1.clkr.hw },
- };
-@@ -219,7 +215,7 @@ static struct clk_rcg2 disp_cc_mdss_ahb_clk_src = {
- 		.parent_data = disp_cc_parent_data_3,
- 		.num_parents = ARRAY_SIZE(disp_cc_parent_data_3),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_shared_ops,
-+		.ops = &clk_rcg2_parked_ops,
- 	},
- };
- 
-@@ -565,7 +561,7 @@ static struct clk_rcg2 disp_cc_mdss_mdp_clk_src = {
- 		.parent_data = disp_cc_parent_data_5,
- 		.num_parents = ARRAY_SIZE(disp_cc_parent_data_5),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_shared_ops,
-+		.ops = &clk_rcg2_parked_ops,
- 	},
- };
- 
-@@ -617,7 +613,7 @@ static struct clk_rcg2 disp_cc_mdss_rot_clk_src = {
- 		.parent_data = disp_cc_parent_data_5,
- 		.num_parents = ARRAY_SIZE(disp_cc_parent_data_5),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_shared_ops,
-+		.ops = &clk_rcg2_parked_ops,
- 	},
- };
- 
++static int clk_rcg2_park_is_enabled(struct clk_hw *hw)
++{
++	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++	u32 cfg;
++	int ret;
++
++	if (!clk_rcg2_is_enabled(hw))
++		return false;
++
++	ret = regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, &cfg);
++	if (ret)
++		return ret;
++
++	return FIELD_GET(CFG_SRC_SEL_MASK, cfg) != rcg->safe_src_index;
++}
++
++/*
++ * Unlike clk_rcg2_shared_ops, the safe_src_index aka XO must NOT be present in
++ * parent_map. This allows us to implement proper is_enabled callback.
++ */
++const struct clk_ops clk_rcg2_parked_ops = {
++	.is_enabled = clk_rcg2_park_is_enabled,
++	.enable = clk_rcg2_shared_enable,
++	.disable = clk_rcg2_shared_disable,
++	.get_parent = clk_rcg2_shared_get_parent,
++	.set_parent = clk_rcg2_shared_set_parent,
++	.recalc_rate = clk_rcg2_shared_recalc_rate,
++	.determine_rate = clk_rcg2_determine_rate,
++	.set_rate = clk_rcg2_shared_set_rate,
++	.set_rate_and_parent = clk_rcg2_shared_set_rate_and_parent,
++};
++EXPORT_SYMBOL_GPL(clk_rcg2_parked_ops);
++
+ /* Common APIs to be used for DFS based RCGR */
+ static void clk_rcg2_dfs_populate_freq(struct clk_hw *hw, unsigned int l,
+ 				       struct freq_tbl *f)
 -- 
 2.39.2
 
