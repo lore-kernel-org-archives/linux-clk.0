@@ -2,201 +2,123 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4CDFE7C4E2
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Oct 2023 16:29:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 001B8E7C4E7
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Oct 2023 17:57:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243276AbjJDQ3v (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Oct 2023 12:29:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40776 "EHLO
+        id S233386AbjJDR5Y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Oct 2023 13:57:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233484AbjJDQ3v (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Oct 2023 12:29:51 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B661BF;
-        Wed,  4 Oct 2023 09:29:46 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 1793966003B0;
-        Wed,  4 Oct 2023 17:29:44 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1696436984;
-        bh=eY3J6B+d3OqRFON8pdfHkkKrg0jpP3yRtk7Fqx4owG0=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=PnTZ8o7+tYlOzZFUqUMVdJWa2t5ikPnSOB9Vdx/fXDEbaeIYvzjGGKqkCZmD4kmv8
-         qm/WNio/tTtJsMwBVKjzm0TWZFnxujkDy6ihwvyCnnVvNVk57rdqq+C3uXI5345vDo
-         yvPORxxKHBWoBQ0WfBFg0IJa6NW7Sqtj6C9ob6kEiw3FNFwbOnR/Sl2jjeWgoWyHpy
-         jQ+HSF1YlbSg4/sJIyUjb2qQknPTJ7pCm6HEQbAFEWlkJtPVq+HkQDqRJ1l0FF2dIr
-         QX9U72uLPVApTFgn3AcuWIXlrhkIvvdP7oBIpTTU2wSRu7gzjGHOZ1fhur/5mCiDvE
-         OPpZJS99IsPEQ==
-Message-ID: <d88b72f1-6a60-dc7d-6922-1dde278a61db@collabora.com>
-Date:   Wed, 4 Oct 2023 18:29:41 +0200
+        with ESMTP id S233946AbjJDR5Y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Oct 2023 13:57:24 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27748A9
+        for <linux-clk@vger.kernel.org>; Wed,  4 Oct 2023 10:57:20 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-505a62d24b9so128917e87.2
+        for <linux-clk@vger.kernel.org>; Wed, 04 Oct 2023 10:57:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1696442238; x=1697047038; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/zKg7f6kpVshrRISQ4xbKZAM7kHw6RbXQvKDo5fo5gI=;
+        b=VMgZPNYvioKdG5vqdYipCQ3eFg+L/N1J4h+ajNTj/xq92mNG0oR1SoM8usHjxZq907
+         eNt+EFiD7brd8yvPqZAoWbbvn0e+9nb5VTbzxOP7QU9XKh99ICnX++6IrWyQCt0PBx/R
+         BGjHuKNj8MBMoQkX7+NtZhXKbImXRDJW7ZA1R+/lNNh9fP4fD/4Y6rG2Uzxl0hjpwk3w
+         Zun5QSsgW29HvPAfM8cVaxFlupV2v5t5lO2bAH3fAG+fO5z+5sEWtkaHRrOBJvZjIplc
+         b8DI51ncUyZYntjhqrQa5h4VQEDTsKMUZy5p4Q3JbRiBeWpskuqn7OjIVJXYvQtD80LH
+         ER/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696442238; x=1697047038;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/zKg7f6kpVshrRISQ4xbKZAM7kHw6RbXQvKDo5fo5gI=;
+        b=gSD6fVDPw+3ydOMOqHNRVmUGooneVFHOrhxcYIoGLyG1rxrDBZmTr+iGWT4JxaBEj6
+         H2WYoq6oLHqvCxHrX4mQG9MOOTcEDAppx6Q8AqxQd+c8K1Al1WkI0ctZBuxy4QAcyoUl
+         fCwSdr0VSuqpFXdBJUjjo4G6W/XBsn8EmYMLoMZw2uqjn4yZsD9yMX1ET3qV7k+xFGZ/
+         35juLsHVeFjMQpP2F0veUhMf3wxMoRctyCxXUJFgeQhIV+mYOIXDlD45WBzGcrn1V84U
+         V/9xGXzD/E+9JKu96gE5vcUv5+waMTeQxeTELoxw/mor5EnVdmYfogZyk92lEt8yp0mG
+         3rlQ==
+X-Gm-Message-State: AOJu0YwLq141dclljttUHG3umOhec+Rkndx5UygXR9Wdk940GNzgK/da
+        S/uTMFL4AWELSUOpv0EihsW8oQ==
+X-Google-Smtp-Source: AGHT+IECOXMOL4C0XYUOKmTR5hKYMMj/PCobgcCBBRPWv6ENacPOxkFttgRQ8wL39jthck2CPNQxcg==
+X-Received: by 2002:a05:6512:3190:b0:500:d8d6:fc5a with SMTP id i16-20020a056512319000b00500d8d6fc5amr3960473lfe.37.1696442238325;
+        Wed, 04 Oct 2023 10:57:18 -0700 (PDT)
+Received: from ?IPV6:2001:14ba:a0db:1f00::8a5? (dzdqv0yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::8a5])
+        by smtp.gmail.com with ESMTPSA id r14-20020ac252ae000000b00505723e56acsm679513lfm.273.2023.10.04.10.57.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Oct 2023 10:57:17 -0700 (PDT)
+Message-ID: <7e28c09b-f2fd-4a42-b4f3-a337ec31a073@linaro.org>
+Date:   Wed, 4 Oct 2023 20:57:16 +0300
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [PATCH 2/2] clk: mediatek: mt8195-topckgen: Refactor parents for
- top_dp/edp muxes
-Content-Language: en-US
-To:     Maxime Ripard <mripard@kernel.org>
-Cc:     Chen-Yu Tsai <wenst@chromium.org>,
-        Alexandre Mergnat <amergnat@baylibre.com>, sboyd@kernel.org,
-        mturquette@baylibre.com, matthias.bgg@gmail.com, msp@baylibre.com,
-        yangyingliang@huawei.com, u.kleine-koenig@pengutronix.de,
-        miles.chen@mediatek.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, kernel@collabora.com
-References: <20230713072138.84117-1-angelogioacchino.delregno@collabora.com>
- <20230713072138.84117-3-angelogioacchino.delregno@collabora.com>
- <9a0817c2-4101-5c21-977d-77ac0d83a067@baylibre.com>
- <CAGXv+5E7YYdkG7GtxG90KzdAG8Kke+74Amtbw4mmyVNZgDZHRA@mail.gmail.com>
- <jv6daj2w3pwjtde3m3m26yg4wyxbbio4zqra5yqc4gb32ri5ub@noinbbkjovwm>
- <25724ee3-858a-01eb-352b-3edbfad31c8e@collabora.com>
- <jxgy2pvns4ri2aj5nmdhb4zbluseuzdejbplh2avwz63df2cfx@grrrdm6ujzi4>
- <24d17b07-1e8d-05f6-46b7-9da1ff1bed7a@collabora.com>
- <hd2ydj33vp3dsri4czx6frxxvir6vxnovc27n6rrgs4qqbtrjz@whhyt2iinq5k>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <hd2ydj33vp3dsri4czx6frxxvir6vxnovc27n6rrgs4qqbtrjz@whhyt2iinq5k>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/2] clk: qcom: implement RCG2 'parked' clock support
+Content-Language: en-GB
+To:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        freedreno@lists.freedesktop.org, Rob Clark <robdclark@gmail.com>
+References: <20231004003125.2289613-1-dmitry.baryshkov@linaro.org>
+ <20231004003125.2289613-2-dmitry.baryshkov@linaro.org>
+ <f129633e-4df7-4984-a19e-c16e6c7c8f3f@linaro.org>
+ <CAA8EJprGfS5x89FOWhjPCdLzSNbEK-U1h8qVmfiLc6+4NjEiNA@mail.gmail.com>
+ <e96499ff-76ec-482b-b18c-ee293259b8a7@linaro.org>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <e96499ff-76ec-482b-b18c-ee293259b8a7@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 18/07/23 11:03, Maxime Ripard ha scritto:
-> On Mon, Jul 17, 2023 at 04:30:48PM +0200, AngeloGioacchino Del Regno wrote:
->>>>>> AFAIK the recommended way to deal with this is to use
->>>>>> clk_set_rate_exclusive() and co. in whatever consumer driver that
->>>>>> needs exclusive control on the clock rate.
->>>>>
->>>>> I guess it works, but it looks to me like the issue here is that the
->>>>> provider should disable it entirely? My expectation for
->>>>> clk_set_rate_exclusive() is that one user needs to lock the clock rate
->>>>> to operate properly.
->>>>>
->>>>> If the provider expectation is that the rate or parent should never
->>>>> changed, then that needs to be dealt with at the provider level, ie
->>>>> through the clk_ops.
->>>>>
->>>>>> However I'm not sure if that works for parents. It should, given the
->>>>>> original use case was for the sunxi platforms, which like the MediaTek
->>>>>> platform here has 2 PLLs for video related consumers, but I couldn't
->>>>>> find code verifying it.
->>>>>
->>>>> If you want to prevent clocks from ever being reparented, you can use
->>>>> the new clk_hw_determine_rate_no_reparent() determine_rate
->>>>> implementation.
->>>>>
->>>>
->>>> We want the clocks to be reparented, as we need them to switch parents as
->>>> explained before... that's more or less how the tree looks:
->>>>
->>>> TVDPLL(x) -> PLL Divider (fixed) -> MUX -> Gate -> Controller
->>>>
->>>> Besides, I think that forcing *one* parent to the dp/edp mux would produce a
->>>> loss of the flexibility that the clock framework provides.
->>>>
->>>> I again want to emphasize on the fact that TVDPLL1 and TVDPLL2 are *identical*
->>>> in specs, and on that there will never be a MT8195 SoC that has only one of
->>>> the two PLLs, for obvious reasons...
->>>>
->>>> P.S.: If you need more context, I'll be glad to answer to any other question!
+On 04/10/2023 15:52, Bryan O'Donoghue wrote:
+> On 04/10/2023 13:08, Dmitry Baryshkov wrote:
+>> On Wed, 4 Oct 2023 at 12:27, Bryan O'Donoghue
+>> <bryan.odonoghue@linaro.org> wrote:
 >>>
->>> Then I have no idea what the question is :)
+>>> On 04/10/2023 01:31, Dmitry Baryshkov wrote:
+>>>> clk_rcg2_shared_ops implements support for the case of the RCG which
+>>>> must not be completely turned off. However its design has one major
+>>>> drawback: it doesn't allow us to properly implement the is_enabled
+>>>> callback, which causes different kinds of misbehaviour from the CCF.
+>>>>
+>>>> Follow the idea behind clk_regmap_phy_mux_ops and implement the new
+>>>> clk_rcg2_parked_ops. It also targets the clocks which must not be fully
+>>>> switched off (and shared most of the implementation with
+>>>> clk_rcg2_shared_ops). The major difference is that it requires that the
+>>>> parent map doesn't conain the safe (parked) clock source. Instead if 
+>>>> the
+>>>> CFG_REG register points to the safe source, the clock is considered to
+>>>> be disabled.
 >>>
->>> What are you trying to achieve / fix, and how can I help you ? :)
+>>> Why not have a new bit in .flags ?
+>>>
+>>> Instead of lying about the clock being off, mark the clock as "parked",
+>>> or "safe parked" or whatever term we choose for it ?
 >>
->> Chen-Yu, Alexandre had/have questions about if there was any other solution instead
->> of using the solution of *this* commit, so, if there's any other better solution
->> than the one that I've sent as this commit.
->>
->> I'm the one saying that this commit is the best solution :-P
+>> The main problem with adding flags doesn't fully scale. From the CCF
+>> perspective, what should be the difference between parked and disabled
+>> clocks? How should it treat the parked one?
 > 
-> I went back to the original patch, and my understanding is that, when
-> running two output in parallel, the modeset of one can affect the second
-> one, and that's bad, right?
+> Exactly the same as a disabled clock, except you get a "parked" instead 
+> of a "disabled" when looking up its state and you don't have to
 > 
-> If so, then you usually have multiple ways to fix this:
+> -    { .fw_name = "bi_tcxo" },
 > 
->   - This patch
->   - Using clk_set_rate_exclusive like Chen-Yu suggested
->   - Using a notifier to react to a rate change and adjust
-> 
-> I'm not aware of any "official" guidelines at the clock framework level
-> regarding which to pick and all are fine.
-> 
-> My opinion though would be to use clk_set_rate_exclusive(), for multiple
-> reasons.
-> 
-> The first one is that it models correctly what you consumer expects:
-> that the rate is left untouched. This can happen in virtually any
-> situation where you have one clock in the same subtree changing rate,
-> while the patch above will only fix that particular interference.
-> 
-> The second one is that, especially with DP, you only have a handful of
-> rates you'll need to reach. 148MHz, 297MHz, 594MHz, and possibly a bunch
-> of others for eDP panels. It's thus likely to have both controllers
-> having the same frequency requirement, and thus it makes it possible to
-> run from only one PLL and shut the other down.
-> 
-> This patch will introduce orphan clocks issues that are always a bit
-> bothersome. A notifier would be troublesome to use and will probably
-> introduce glitches plus some weird interaction with scrambling if you
-> ever support it.
-> 
-> So, yeah, using clk_set_rate_exclusive() seems like the best option to me :)
-> 
-> Maxime
+> Also you can then flag for branch2 clocks the same thing - so parking 
+> would be done at a higher level in the CCF.
 
-Sorry for resurrecting a very old thread, I was able to come back to this issue
-right now: there's an issue that I can't really think about how to solve with
-just the usage of clk_set_rate_exclusive().
-
-Remembering that the clock tree is as following:
-TVDPLL(x) -> PLL Divider (fixed) ->
--> MUX (can choose any of TVDPLL(1/2)_d(2/4/6/8/16)) -> Gate -> Controller
-
-The DPI driver is doing:
-1. Check the best factor for setting rate of a TVDPLL
-2. Set rate of one TVDPLL (specified in DT): clk_set_rate(dpi->tvd_clk, rate);
-    2a. Read the rate of that PLL again to know the precise clock output
-3. Set rate on the Gate clock (forwards to MUX, selecting TVDPLL(x)_d(y)):
-    clk_set_rate(dpi->pixel_clk, rate);
+Without this removal there is no easy way to identify if the clock is 
+parked to XO or if it is reparented to that clock.
 
 
-Now, the issue is: if I change the final pixel_clk rate setting to _exclusive(),
-nothing still guarantees that we will be selecting the TVDPLL that we have
-manipulated in step 2, look at the following example.
+-- 
+With best wishes
+Dmitry
 
-tvd_clk == TVDPLL1
-pixel_clk == TOP_DP (can be muxed to any tvdpll1/2 dividers!)
-
-clk_set_rate(tvdpll1, something); new_rate = clk_get_rate(tvdpll1)
-
-...calculations... new_rate = pixclk * factor;
-...more calculations....
-
-clk_set_rate(pixel_clk, calculated_something)
-        ^^^^^^
-
-There is still no guarantee that pixel_clk is getting parented to one of the
-TVDPLL1 dividers, as it could still get parented to a TVDPLL2 divider instead
-if the other controller has set TVDPLL2 to "an acceptable rate": it's true that
-this would work - yes but suboptimally! - because we want to set a specific
-factor to reduce jitter on the final pixel clock.
-
-
-....And I came back to this commit being again the best solution for me because....
-
-1. You also seem to agree with me that a notifier would be troublesome and would
-    probably introduce glitches; and
-2. clk_set_rate_exclusive() doesn't give me any guarantee about selecting the same
-    PLL that the driver was manipulating before.
-
-
-Am I underestimating and/or ignoring anything else in all of that?
-
-Cheers,
-Angelo
