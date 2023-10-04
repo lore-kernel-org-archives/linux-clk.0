@@ -2,114 +2,133 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C587E7B604
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Oct 2023 12:38:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D69EE7B608
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Oct 2023 12:41:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242382AbjJDMiI convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Oct 2023 08:38:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54298 "EHLO
+        id S233136AbjJDMl4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Oct 2023 08:41:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43652 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242371AbjJDMiH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Oct 2023 08:38:07 -0400
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B77B198E;
-        Wed,  4 Oct 2023 05:37:26 -0700 (PDT)
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-d86a0c97ae6so2231390276.2;
-        Wed, 04 Oct 2023 05:37:25 -0700 (PDT)
+        with ESMTP id S233193AbjJDMlz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Oct 2023 08:41:55 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8E6FC9
+        for <linux-clk@vger.kernel.org>; Wed,  4 Oct 2023 05:41:51 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id 4fb4d7f45d1cf-533edb5ac54so3460645a12.0
+        for <linux-clk@vger.kernel.org>; Wed, 04 Oct 2023 05:41:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1696423310; x=1697028110; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YDhaQgPXjq3b5cu7EVRm2WZ4T3jBC6bUKmu7zNMCCx8=;
+        b=rw6WeJWpXmGYix0zfK6RAFqXNStXuXxfVG2YcF76dFPRi5cb8ZFTyE9U7+qiHVpJvW
+         zI1s3X3CjBsBENP546mTNJuAdT8gEv0SKNWyUSBcAoiR+6qd7ss1VbwJnByzJQWfJYhn
+         XfUZxpgzYtIm1dCK9zygS0ZzOsZlWRMVCtJ4XZnAokGmFKWhXrYnEFVL8nBzArWC0oai
+         tZK9DFfaPqo8AQV1kqdhybhvxHPjGonloyl5mPUh+Ah3kURgmws4PvVEp9rbvY5iBUSc
+         87xwLArBDYCXj9vqNZ3eOA8ti9A59+LYnidG/sN4Ea78tjwonYbGrT3WEQ08N4ud2F1v
+         qUqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696423045; x=1697027845;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=m0eRmMumZAzpcA204HIbmaGshHcqOkFU7CedEjUB2w4=;
-        b=WHpuGKIMw6PHJglUambBsLHBibIdoddNLjl35TCosAiWwzK1FHRIx4GeppfLBHeaqh
-         nJ3qWqAR94uUDta8lHu5VLx1s9dTZ5idFEdYm6nxC8BMRsuzQ2+miFaDoynJJKMhPs2G
-         Z+XKluqj1i270iyQLQk8OcdSPe50pH6Rc239UA/Y9PRZiaZ5d5K0TC0B0tpzSpjLiu+u
-         UEln6+ComQjfzQ7VnSKiTAlM9iMELH09Y/ISY471mh3L5u+RKCdRxHxfFvd3ypuh7w7W
-         gVtcE3LsxuzD39BeNrVf7/wk7xlDmHDhZFXwullxFMKBJ8de0uSC2nZ1saIFo1SJtKnT
-         hOgw==
-X-Gm-Message-State: AOJu0YzFUpRDbb0JHzokQwzBu9K3QmryYZAuKQz5xQqPw8LpFzgUJqzm
-        iM4qLk6r/14rZOAKHF4Scpf+9dtzrmEx9A==
-X-Google-Smtp-Source: AGHT+IE6aiPISN3Sy+GQHhlmGqas7LqydsUQB/Ki8oqiQroN5qUifjPwQEhEdkJyDSMcZLrmJMAqLQ==
-X-Received: by 2002:a25:3601:0:b0:d22:c8b9:8c9b with SMTP id d1-20020a253601000000b00d22c8b98c9bmr1963001yba.13.1696423044823;
-        Wed, 04 Oct 2023 05:37:24 -0700 (PDT)
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
-        by smtp.gmail.com with ESMTPSA id 194-20020a250dcb000000b00d748501d9b4sm1025252ybn.21.2023.10.04.05.37.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Oct 2023 05:37:24 -0700 (PDT)
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-5a1f00b75aaso23789787b3.2;
-        Wed, 04 Oct 2023 05:37:24 -0700 (PDT)
-X-Received: by 2002:a81:a24a:0:b0:59f:7f8e:dc4a with SMTP id
- z10-20020a81a24a000000b0059f7f8edc4amr2814911ywg.22.1696423044119; Wed, 04
- Oct 2023 05:37:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1696423310; x=1697028110;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YDhaQgPXjq3b5cu7EVRm2WZ4T3jBC6bUKmu7zNMCCx8=;
+        b=Xx1sWGqF4SjTowSr7ZHpHdcz1X99BK7XKGfOMuwt2hV01UEqGglGs89B6XmEBsM/MZ
+         C1sZu6fW9/ascC1uoXWchSOSG6gQ5/WVrSuMlYCOArieZrFbsvZt5lC4XSBijNKkXXfK
+         7grdmuOTu+dTvvwjsSKeOsJY0QXAjbQur9hN6lyUpzBq124WjC1ZN/AOFfcDZa+5rDH9
+         Gmrwjo5JbCe4aarAM9xXFAWBfNZ5qXmtrcm9ozgxq66KG+Xus0jx91gg59dE1gz5kG5L
+         W5BwY8yV+PA/36kHjiDlZwtkOz39y7RouLmW7NdygFq45SBtL4fGMxO464NuTvw7kxB7
+         fmjg==
+X-Gm-Message-State: AOJu0YzvKrMLsZh4CMByXye+qdIDKIDBswYqBAa2VfKv6OKnhastYyOO
+        ccMhsG+GzdVILrwcPDPGqJBPpA==
+X-Google-Smtp-Source: AGHT+IGUSjewbg+oyz2vcruD1eShmUAeujLqL60+TMBOMCitcBwDvAQiZBU1TYfRnaDbo6ITIu+Kxw==
+X-Received: by 2002:a05:6402:60c:b0:531:35c4:8ca2 with SMTP id n12-20020a056402060c00b0053135c48ca2mr1578047edv.42.1696423309955;
+        Wed, 04 Oct 2023 05:41:49 -0700 (PDT)
+Received: from linaro.org ([86.123.99.172])
+        by smtp.gmail.com with ESMTPSA id c11-20020aa7df0b000000b00533dd4d2947sm2401974edy.74.2023.10.04.05.41.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Oct 2023 05:41:49 -0700 (PDT)
+Date:   Wed, 4 Oct 2023 15:41:48 +0300
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     Fabio Estevam <festevam@gmail.com>
+Cc:     abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
+        sboyd@kernel.org, shawnguo@kernel.org, kernel@pengutronix.de,
+        linux-imx@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Fabio Estevam <festevam@denx.de>
+Subject: Re: [PATCH RESEND v4] clk: imx: imx6sx: Allow a different LCDIF1
+ clock parent
+Message-ID: <ZR1djK5ODzQ9IpD0@linaro.org>
+References: <20231004123458.2251635-1-festevam@gmail.com>
 MIME-Version: 1.0
-References: <20230929053915.1530607-1-claudiu.beznea@bp.renesas.com> <20230929053915.1530607-13-claudiu.beznea@bp.renesas.com>
-In-Reply-To: <20230929053915.1530607-13-claudiu.beznea@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 4 Oct 2023 14:37:11 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUnt-bLeJmQxbviWAmgmCNHb8EDo1QM5LyhYJRA07KGqA@mail.gmail.com>
-Message-ID: <CAMuHMdUnt-bLeJmQxbviWAmgmCNHb8EDo1QM5LyhYJRA07KGqA@mail.gmail.com>
-Subject: Re: [PATCH v2 12/28] dt-bindings: clock: renesas,rzg2l-cpg: document
- RZ/G3S SoC
-To:     Claudiu <claudiu.beznea@tuxon.dev>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        linus.walleij@linaro.org, gregkh@linuxfoundation.org,
-        jirislaby@kernel.org, magnus.damm@gmail.com,
-        catalin.marinas@arm.com, will@kernel.org,
-        quic_bjorande@quicinc.com, konrad.dybcio@linaro.org, arnd@arndb.de,
-        neil.armstrong@linaro.org, prabhakar.mahadev-lad.rj@bp.renesas.com,
-        biju.das.jz@bp.renesas.com, linux-renesas-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231004123458.2251635-1-festevam@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Sep 29, 2023 at 7:39 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Add documentation for RZ/G3S CPG. RZ/G3S CPG module is almost identical
-> with the one available in RZ/G2{L, UL} the exception being some core
-> clocks as follows:
-> - SD clock is composed by a mux and a divider and the divider
->   has some limitation (div = 1 cannot be set if mux rate is 800MHz).
-> - there are 3 SD clocks
-> - OCTA and TSU clocks are specific to RZ/G3S
-> - PLL1/4/6 are specific to RZ/G3S with its own computation formula
-> Even with this RZ/G3S could use the same bindings as RZ/G2L.
->
-> Along with documentation bindings for the RZ/G3S (R9A08G045) Clock Pulse
-> Generator (CPG) core clocks, module clocks and resets were added.
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> Acked-by: Rob Herring <robh@kernel.org>
+On 23-10-04 09:34:58, Fabio Estevam wrote:
+> From: Fabio Estevam <festevam@denx.de>
+> 
+> It is not a good idea to hardcode the LCDIF1 parent inside the
+> clock driver because some users may want to use a different clock
+> parent for LCDIF1. One of the reasons could be related to EMI tests.
+> 
+> Remove the harcoded LCDIF1 parent when the LCDIF1 parent is described
+> via devicetree.
+> 
+> Old dtb's that do not describe the LCDIF1 parent via devicetree will
+> use the same PLL5 clock as parent to keep the original behavior.
+> 
+> Signed-off-by: Fabio Estevam <festevam@denx.de>
+> Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+
+I applied already the first v4 you sent.
+
+https://lore.kernel.org/all/169642294508.713950.12324349089481800725.b4-ty@linaro.org/
+
+Thanks.
+
 > ---
->
-> Changes in v2:
-> - collected Rob's tag
-> - squashed with
->   [PATCH 21/37] dt-bindings: clock: add r9a08g045 CPG clocks and resets
->   from v1
-> - updated commit message to reflect that bindings were also added to
->   this patch
-> - removed R9A08G045_USB_SCLK
-> - @Geert: please note I haven't collected your Rb tag as I did the squash
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in a branch shared by renesas-clk and renesas-dts for v6.7.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> Changes since v3:
+> - Check for the presence of 'assigned-clock-parents'. (Stephen)
+> 
+>  drivers/clk/imx/clk-imx6sx.c | 14 +++++++++++---
+>  1 file changed, 11 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx6sx.c b/drivers/clk/imx/clk-imx6sx.c
+> index 3f1502933e59..69f8f6f9ca49 100644
+> --- a/drivers/clk/imx/clk-imx6sx.c
+> +++ b/drivers/clk/imx/clk-imx6sx.c
+> @@ -121,6 +121,7 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
+>  {
+>  	struct device_node *np;
+>  	void __iomem *base;
+> +	bool lcdif1_assigned_clk;
+>  
+>  	clk_hw_data = kzalloc(struct_size(clk_hw_data, hws,
+>  					  IMX6SX_CLK_CLK_END), GFP_KERNEL);
+> @@ -498,9 +499,16 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
+>  	clk_set_parent(hws[IMX6SX_CLK_EIM_SLOW_SEL]->clk, hws[IMX6SX_CLK_PLL2_PFD2]->clk);
+>  	clk_set_rate(hws[IMX6SX_CLK_EIM_SLOW]->clk, 132000000);
+>  
+> -	/* set parent clock for LCDIF1 pixel clock */
+> -	clk_set_parent(hws[IMX6SX_CLK_LCDIF1_PRE_SEL]->clk, hws[IMX6SX_CLK_PLL5_VIDEO_DIV]->clk);
+> -	clk_set_parent(hws[IMX6SX_CLK_LCDIF1_SEL]->clk, hws[IMX6SX_CLK_LCDIF1_PODF]->clk);
+> +	np = of_find_node_by_path("/soc/bus@2200000/spba-bus@2240000/lcdif@2220000");
+> +	lcdif1_assigned_clk = of_find_property(np, "assigned-clock-parents", NULL);
+> +
+> +	/* Set parent clock for LCDIF1 pixel clock if not done via devicetree */
+> +	if (!lcdif1_assigned_clk) {
+> +		clk_set_parent(hws[IMX6SX_CLK_LCDIF1_PRE_SEL]->clk,
+> +			       hws[IMX6SX_CLK_PLL5_VIDEO_DIV]->clk);
+> +		clk_set_parent(hws[IMX6SX_CLK_LCDIF1_SEL]->clk,
+> +			       hws[IMX6SX_CLK_LCDIF1_PODF]->clk);
+> +	}
+>  
+>  	/* Set the parent clks of PCIe lvds1 and pcie_axi to be pcie ref, axi */
+>  	if (clk_set_parent(hws[IMX6SX_CLK_LVDS1_SEL]->clk, hws[IMX6SX_CLK_PCIE_REF_125M]->clk))
+> -- 
+> 2.34.1
+> 
