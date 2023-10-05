@@ -2,236 +2,134 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29960E92702
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Oct 2023 14:05:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 777EBE92705
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Oct 2023 14:17:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229801AbjJEOEs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 Oct 2023 10:04:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33066 "EHLO
+        id S229488AbjJEORW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 Oct 2023 10:17:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230331AbjJEOD0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Oct 2023 10:03:26 -0400
-Received: from mail-yw1-x112b.google.com (mail-yw1-x112b.google.com [IPv6:2607:f8b0:4864:20::112b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 893A87A8A
-        for <linux-clk@vger.kernel.org>; Thu,  5 Oct 2023 00:20:02 -0700 (PDT)
-Received: by mail-yw1-x112b.google.com with SMTP id 00721157ae682-59f6e6b206fso6859747b3.3
-        for <linux-clk@vger.kernel.org>; Thu, 05 Oct 2023 00:20:02 -0700 (PDT)
+        with ESMTP id S231230AbjJEOPp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Oct 2023 10:15:45 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC1A5902E
+        for <linux-clk@vger.kernel.org>; Thu,  5 Oct 2023 01:46:43 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id 4fb4d7f45d1cf-52fe27898e9so1260969a12.0
+        for <linux-clk@vger.kernel.org>; Thu, 05 Oct 2023 01:46:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696490401; x=1697095201; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=fhD+4AkRggrUFVCRueZ0EP4NvrMyL09uoQLrgXFHCqg=;
-        b=iKX7e05y5+jAEWh+swf+m1bczWFfBdxrL8viyG20sGbM5iifMvSvrH4oB5FdL7xNPT
-         oXk/RAQxERIvCe6QjawiiieR/wNljWLRbIDLymCbaVarIFEu/Nq56mni3jXnUdFUNvtH
-         mw3NzW0Cpomx7uI8FRlFZmD7TI11/dM0srCfzgW7l1XLDB7w/pPykluZXvzDs/RrqOQS
-         vQw7yC/cgu+XjjjbKd9Nyo4CoPW01JbLm62SMX4S37wM3GCEsDKoMvh5IrVVKjZ6C7iD
-         TS/1AndgFbEvxokgXEgtjwKA2JYU4qeT2gmxfjlTMwNKV91cWmzXrA3maHVen0/1fI/4
-         sg6A==
+        d=linaro.org; s=google; t=1696495602; x=1697100402; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0nyIvbFflBK7dDTk3DAm+L6H3Nw9v1atRiGVXX/kVj4=;
+        b=afKepIY8+7oz+Qc5LGPizvA+bqHXRrASaueXPtwB63Y4CysoYxOd13WviH/pv9z0vz
+         TRNYV1dfl2LU7JEPVAdWoHqM3Uhwa7UH3ubF/Ww7p0S0SsIFpbcVUxghEaqZeoFu/RzF
+         1Li4+Ey5+0z5WvP1NjtEgcs8tUYvtOq4ik5lh5YXF57xkRoIBKEsLela1Tsiva4XzJow
+         wxKTtZi/koLTrKPF4b9h2H/hGRfr7Fb+bW4n3RGnccyishyoA/g2J0uW6cWJvJU0b92V
+         kiplXsYPb6tiwqghW3Ofdjm0/sIMEfmROzMwSo2C+bX2yGjm0kY6JkWMah0vFMapvElm
+         4Y3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696490401; x=1697095201;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fhD+4AkRggrUFVCRueZ0EP4NvrMyL09uoQLrgXFHCqg=;
-        b=RMBQUhVtXVzvc5scL7a6vNli82KE7BitTW2zweTQtk0Pde/pDkhDHiJKhdxZlAW/7Q
-         6WoI03ZQ/auCBTS42KYaToCI4TRbAwXr93OZFAG8AMLuZaBRRBwnu8XSyHNt+Gw7DNk4
-         iPvoQRpdlLfaoy4VNRCF4VpoM9bHmp8UY54CCqMi62cC5ov214cXz8BKE97d0S/hBhQd
-         xBTHH5W5HD86LAeCeMHAnHZDEQ9SedFX1bFGm2iGl3THrTcj2M65eyc9Q1w+cIA+Hme1
-         stdv6HvFgUs4Qg+FJCfCAig7c/nIClF4HS5gUPnZL34hOu+lpnL4wp9KoYt7YO/bn7BQ
-         /dKg==
-X-Gm-Message-State: AOJu0YwXNEn0rNlI5sRIvKT5jt0afCwhXXJTNgOAewxZHnJ8MjaAe4wF
-        5lZcvs0vgPjgOlWU3A54aHQj4PyPE3sT3HLcU4hcZQ==
-X-Google-Smtp-Source: AGHT+IGesqMfmj1nxg+O0YSuQ3VFwBsQSZOi0zTeQfQZtjxFFMjQOoclKS4KUAPCE2zcA4w9XSSdPLdR4QyfVe1uahU=
-X-Received: by 2002:a0d:cc44:0:b0:59f:7d6b:ea42 with SMTP id
- o65-20020a0dcc44000000b0059f7d6bea42mr4835211ywd.23.1696490400983; Thu, 05
- Oct 2023 00:20:00 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1696495602; x=1697100402;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0nyIvbFflBK7dDTk3DAm+L6H3Nw9v1atRiGVXX/kVj4=;
+        b=GPqMANwwK3Qz4X38EwsZcFu9kTzWecMSq/x2GHp5nm/PyeSVLjmUajR1ofOhetSPnb
+         bEDGrFeR4A4kI0bZ42foOybc2i2f1bv4tVsKeTcMYgBEGnmGN9SV+gAdk4BoGUFmfwaK
+         nov4WFGsE9RN27wphzlIQST9ArMA1YPpSVbCilldDcBvY2P4R9qVpVNZrBXYVj5JEhIK
+         qMe4LEAhsg3kiSko0pONaKrftbn6wXseXjvM9kAy6bbYyUJr43t5Im+gS+aJm3+8htuX
+         KcGP4TnnbmduTT2E/SnfB3PwJJqo9Uq7REnLqWve93Iz7St1Sclu19HDqj/msVyO8hJh
+         6oaA==
+X-Gm-Message-State: AOJu0Yw5x/D0xnly0zjU/NufrmVKFmO+hbaFcU2CwourIp8hK1p+l6k+
+        iDC6KhAeFrpfXuynxBZYvCcMHQ==
+X-Google-Smtp-Source: AGHT+IF8ci2GbVdbSryu4l0b197rHPAynt/HopFOKnfXezpREucBtdwtxt/eQu+zv7Ve8Bf9l7iuaw==
+X-Received: by 2002:a17:907:7603:b0:9ae:381a:6c55 with SMTP id jx3-20020a170907760300b009ae381a6c55mr4385292ejc.15.1696495602340;
+        Thu, 05 Oct 2023 01:46:42 -0700 (PDT)
+Received: from [192.168.1.197] (5-157-101-10.dyn.eolo.it. [5.157.101.10])
+        by smtp.gmail.com with ESMTPSA id a1-20020a1709064a4100b009b65a698c5csm815655ejv.57.2023.10.05.01.46.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Oct 2023 01:46:41 -0700 (PDT)
+Message-ID: <c569f808-cdaa-4470-9a80-93714651a5b7@linaro.org>
+Date:   Thu, 5 Oct 2023 10:46:40 +0200
 MIME-Version: 1.0
-References: <20230825091234.32713-1-quic_devipriy@quicinc.com>
- <20230825091234.32713-6-quic_devipriy@quicinc.com> <CAA8EJpr+Wwgot-PDRtj-LVi79aD13B9WVREmjTXiR-8XEEx-rQ@mail.gmail.com>
- <652b55cc-87dd-46d1-e480-e25f5f22b8d8@quicinc.com> <a4c9baae-f328-22b5-48d7-fc7df0b62a79@quicinc.com>
- <CAA8EJpq0uawrOBHA8XHygEpGYF--HyxJWxKG44iiFdAZZz7O2w@mail.gmail.com>
- <45f96567-553c-9214-eb7e-c75c6e09d78b@quicinc.com> <65b030c6-6fab-53ea-2774-48698905dd96@quicinc.com>
-In-Reply-To: <65b030c6-6fab-53ea-2774-48698905dd96@quicinc.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Thu, 5 Oct 2023 10:19:49 +0300
-Message-ID: <CAA8EJprSw4MGQKh01mZ5x5rBcRpgD7t4ph2617RhpR2Qg5SB=g@mail.gmail.com>
-Subject: Re: [PATCH V2 5/7] clk: qcom: Add NSS clock Controller driver for IPQ9574
-To:     Devi Priya <quic_devipriy@quicinc.com>
-Cc:     andersson@kernel.org, agross@kernel.org, konrad.dybcio@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/4] arm64: dts: qcom: sc8280xp: Add in CAMCC for
+ sc8280xp
+Content-Language: en-US
+To:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        andersson@kernel.org, agross@kernel.org, konrad.dybcio@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        dmitry.baryshkov@linaro.org, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de,
-        richardcochran@gmail.com, arnd@arndb.de, geert+renesas@glider.be,
-        nfraprado@collabora.com, rafal@milecki.pl, peng.fan@nxp.com,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
-        quic_saahtoma@quicinc.com
-Content-Type: text/plain; charset="UTF-8"
+        jonathan@marek.ca, quic_tdas@quicinc.com,
+        vladimir.zapolskiy@linaro.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20231004161853.86382-1-bryan.odonoghue@linaro.org>
+ <20231004161853.86382-5-bryan.odonoghue@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
+ m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
+ HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
+ XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
+ mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
+ v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
+ cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
+ rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
+ qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
+ aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
+ gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
+ dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
+ NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
+ hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
+ oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
+ H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
+ yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
+ 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
+ 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
+ +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
+ FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
+ 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
+ DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
+ oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
+ 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
+ Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
+ qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
+ /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
+ qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
+ EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
+ KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
+ fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20231004161853.86382-5-bryan.odonoghue@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 5 Oct 2023 at 09:26, Devi Priya <quic_devipriy@quicinc.com> wrote:
->
->
->
-> On 9/22/2023 5:31 PM, Devi Priya wrote:
-> >
-> >
-> > On 9/20/2023 1:50 PM, Dmitry Baryshkov wrote:
-> >> On Wed, 20 Sept 2023 at 09:39, Devi Priya <quic_devipriy@quicinc.com>
-> >> wrote:
-> >>>
-> >>>
-> >>>
-> >>> On 9/12/2023 7:38 PM, Devi Priya wrote:
-> >>>>
-> >>>>
-> >>>> On 8/25/2023 5:14 PM, Dmitry Baryshkov wrote:
-> >>>>> On Fri, 25 Aug 2023 at 12:15, Devi Priya <quic_devipriy@quicinc.com>
-> >>>>> wrote:
-> >>>>>>
-> >>>>>> Add Networking Sub System Clock Controller(NSSCC) driver for ipq9574
-> >>>>>> based
-> >>>>>> devices.
-> >>>>>>
-> >>>>>> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
-> >>>>>> ---
-> >>>>>>    Changes in V2:
-> >>>>>>           - Added depends on ARM64 || COMPILE_TEST in Kconfig
-> >>>>>>           - Added module_platform_driver
-> >>>>>>           - Dropped patch [2/6] - clk: qcom: gcc-ipq9574: Mark nssnoc
-> >>>>>> clocks as critical
-> >>>>>>              & added pm_clk for nssnoc clocks
-> >>>>>>           - Updated the uniphy clock names
-> >>>>>>
-> >>>>>>    drivers/clk/qcom/Kconfig         |    7 +
-> >>>>>>    drivers/clk/qcom/Makefile        |    1 +
-> >>>>>>    drivers/clk/qcom/nsscc-ipq9574.c | 3109
-> >>>>>> ++++++++++++++++++++++++++++++
-> >>>>>>    3 files changed, 3117 insertions(+)
-> >>>>>>    create mode 100644 drivers/clk/qcom/nsscc-ipq9574.c
-> >>>>>>
-> >>>>>> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> >>>>>> index bd9bfb11b328..3ecc11e2c8e3 100644
-> >>>>>> --- a/drivers/clk/qcom/Kconfig
-> >>>>>> +++ b/drivers/clk/qcom/Kconfig
-> >>>>>> @@ -203,6 +203,13 @@ config IPQ_GCC_9574
-> >>>>>>             i2c, USB, SD/eMMC, etc. Select this for the root clock
-> >>>>>>             of ipq9574.
-> >>>>>>
-> >>>>>> +config IPQ_NSSCC_9574
-> >>>>>> +       tristate "IPQ9574 NSS Clock Controller"
-> >>>>>> +       depends on ARM64 || COMPILE_TEST
-> >>>>>> +       depends on IPQ_GCC_9574
-> >>>>>> +       help
-> >>>>>> +         Support for NSS clock controller on ipq9574 devices.
-> >>>>>> +
-> >>>>>>    config MSM_GCC_8660
-> >>>>>>           tristate "MSM8660 Global Clock Controller"
-> >>>>>>           depends on ARM || COMPILE_TEST
-> >>>>>> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-> >>>>>> index 4790c8cca426..3f084928962e 100644
-> >>>>>> --- a/drivers/clk/qcom/Makefile
-> >>>>>> +++ b/drivers/clk/qcom/Makefile
-> >>>>>> @@ -30,6 +30,7 @@ obj-$(CONFIG_IPQ_GCC_6018) += gcc-ipq6018.o
-> >>>>>>    obj-$(CONFIG_IPQ_GCC_806X) += gcc-ipq806x.o
-> >>>>>>    obj-$(CONFIG_IPQ_GCC_8074) += gcc-ipq8074.o
-> >>>>>>    obj-$(CONFIG_IPQ_GCC_9574) += gcc-ipq9574.o
-> >>>>>> +obj-$(CONFIG_IPQ_NSSCC_9574)   += nsscc-ipq9574.o
-> >>>>>>    obj-$(CONFIG_IPQ_LCC_806X) += lcc-ipq806x.o
-> >>>>>>    obj-$(CONFIG_MDM_GCC_9607) += gcc-mdm9607.o
-> >>>>>>    obj-$(CONFIG_MDM_GCC_9615) += gcc-mdm9615.o
-> >>>>>> diff --git a/drivers/clk/qcom/nsscc-ipq9574.c
-> >>>>>> b/drivers/clk/qcom/nsscc-ipq9574.c
-> >>>>>> new file mode 100644
-> >>>>>> index 000000000000..65bdb449ae5f
-> >>>>>> --- /dev/null
-> >>>>>> +++ b/drivers/clk/qcom/nsscc-ipq9574.c
-> >>>>>> @@ -0,0 +1,3109 @@
-> >>>>>> +// SPDX-License-Identifier: GPL-2.0-only
-> >>>>>> +/*
-> >>>>>> + * Copyright (c) 2021, The Linux Foundation. All rights reserved.
-> >>>>>> + * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights
-> >>>>>> reserved.
-> >>>>>> + */
-> >>>>>> +
-> >>>>>> +#include <linux/clk-provider.h>
-> >>>>>> +#include <linux/err.h>
-> >>>>>> +#include <linux/kernel.h>
-> >>>>>> +#include <linux/module.h>
-> >>>>>> +#include <linux/of.h>
-> >>>>>> +#include <linux/of_device.h>
-> >>>>>> +#include <linux/regmap.h>
-> >>>>>> +#include <linux/pm_clock.h>
-> >>>>>> +#include <linux/pm_runtime.h>
-> >>>>>> +
-> >>>>>> +#include <dt-bindings/clock/qcom,ipq9574-nsscc.h>
-> >>>>>> +#include <dt-bindings/reset/qcom,ipq9574-nsscc.h>
-> >>>>>> +
-> >>>>>> +#include "clk-alpha-pll.h"
-> >>>>>> +#include "clk-branch.h"
-> >>>>>> +#include "clk-pll.h"
-> >>>>>> +#include "clk-rcg.h"
-> >>>>>> +#include "clk-regmap.h"
-> >>>>>> +#include "clk-regmap-divider.h"
-> >>>>>> +#include "clk-regmap-mux.h"
-> >>>>>> +#include "common.h"
-> >>>>>> +#include "reset.h"
-> >>>>>> +
-> >>>>>> +/* Need to match the order of clocks in DT binding */
-> >>>>>> +enum {
-> >>>>>> +       DT_NSSNOC_NSSCC_CLK,
-> >>>>>> +       DT_NSSNOC_SNOC_CLK,
-> >>>>>> +       DT_NSSNOC_SNOC_1_CLK,
-> >>>>>
-> >>>>> Not using the index makes it seem that these clocks are not used,
-> >>>>> until one scrolls down to pm_clks.
-> >>>> Okay, got it
-> >>>>>
-> >>>>> BTW: The NSSNOC_SNOC clocks make it look like there is an interconnect
-> >>>>> here (not a simple NIU).
-> >>>>
-> >>>> Hi Dmitry, We are exploring on the ICC driver. In the meantime to
-> >>>> unblock PCIe/NSS changes getting merged, shall we use
-> >>>> regmap_update_bits
-> >>>> and turn on the critical NSSNOC clocks, ANOC & SNOC pcie clocks in the
-> >>>> probe function of the gcc driver itself as like sm8550 driver to get
-> >>>> the
-> >>>> changes merged?
-> >>>>
-> >>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/qcom/gcc-sm8550.c#n3347
-> >>>
-> >>> Hi Dmitry,
-> >>> Just curious to know if we could send out the next series with the
-> >>> proposed approach if that holds good.
-> >>
-> >> The answer really depends on the structure of your hardware. The issue
-> >> is that once you commit the device bindings,you have to support them
-> >> forever. So, if you commit the NSS clock support without interconnects
-> >> in place, you have to keep this ANOC/SNOC/etc code forever, even after
-> >> you land the interconnect. So I'd suggest landing the icc driver first
-> >> (or at least implementing and sending to the mailing list), so that we
-> >> can see how all these pieces fit together.
-> >
-> > Hi Dmitry,
-> > Unlike MSM chipsets, IPQ chipsets does not have any use case wherein the
-> > NOC clocks have to be scaled. So if these clocks can be enabled in the
-> > probe, there is no need for an interconnect driver at all. The same
-> > applies to both ipq9574 and ipq5332 SoCs.
-> >
->
-> Hi Dmitry,
-> Just curious to know if we can go ahead with the proposed solution of
-> enabling the NOC clocks in the probe as these clocks need not be scaled
-> in IPQ chipsets & hence there would be no need for an ICC driver in
-> ipq9574 & ipq5332 targets.
-
-In the probe of which driver?
+On 04/10/2023 18:18, Bryan O'Donoghue wrote:
+> Add in CAMCC for sc8280xp. The sc8280xp Camera Clock Controller looks
+> similar to most of the sdmX, smX and now scX controllers.
+> 
+> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Suggested-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> ---
 
 
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
--- 
-With best wishes
-Dmitry
+Best regards,
+Krzysztof
+
