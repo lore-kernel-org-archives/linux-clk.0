@@ -2,78 +2,127 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8AC5E92706
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Oct 2023 14:38:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3841E92716
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Oct 2023 14:42:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235569AbjJEOih (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 Oct 2023 10:38:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45846 "EHLO
+        id S236258AbjJEOmb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 Oct 2023 10:42:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235943AbjJEOgQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Oct 2023 10:36:16 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D17D434433
-        for <linux-clk@vger.kernel.org>; Thu,  5 Oct 2023 06:58:51 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3AEFE152B;
-        Thu,  5 Oct 2023 03:20:39 -0700 (PDT)
-Received: from pluto (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CF0813F5A1;
-        Thu,  5 Oct 2023 03:19:59 -0700 (PDT)
-Date:   Thu, 5 Oct 2023 11:19:57 +0100
-From:   Cristian Marussi <cristian.marussi@arm.com>
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
+        with ESMTP id S237184AbjJEOio (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Oct 2023 10:38:44 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 404C95278;
+        Thu,  5 Oct 2023 07:03:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1696514620; x=1728050620;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=7kjCMS9xjATRZqnRQH9aAmYqWQ2qY58Qj/F3YYDj1UI=;
+  b=ewN4PWTZx6BDoufa2TikkvBJVz7IhkFRjwzWsW35wIhyq7wvrCnaCl/D
+   G1POItkUBirWu0HcS6sOijljMMD5fMdjAEFy+O9OV8em1R/O0PikVKktk
+   Gym6JatF0MU0bpk64yh1iMKaN7/K/yFRnyM4uYydNbRr0S24l1FvJEy8m
+   rPIxRXspUZKIYh1ceSe2ImuXy5tWXpi74su4EVpGl9f4/845nAomFYgaI
+   lKF1xgMPIRgbXKxcAc0eQG7oxTMhtEg1S4R/Wp2IIja9SKmT4RCiTukZQ
+   ziFkxSS/82ecKBOvp0WDDEbaYwSeG51u8komMHl8R5AyNlwi2aTzuH9Lr
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10853"; a="380728703"
+X-IronPort-AV: E=Sophos;i="6.03,202,1694761200"; 
+   d="scan'208";a="380728703"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2023 02:07:10 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10853"; a="895374737"
+X-IronPort-AV: E=Sophos;i="6.03,202,1694761200"; 
+   d="scan'208";a="895374737"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmsmga001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2023 02:05:39 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97-RC1)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1qoKK0-00000002yzq-2Mbg;
+        Thu, 05 Oct 2023 12:07:04 +0300
+Date:   Thu, 5 Oct 2023 12:07:04 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        David Laight <David.Laight@aculab.com>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: scmi: Free scmi_clk allocated when the clocks with
- invalid info are skipped
-Message-ID: <ZR6NzUUP2gg3nNiC@pluto>
-References: <20231004193600.66232-1-sudeep.holla@arm.com>
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Biju Das <biju.das.au@gmail.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] clk: vc3: Use clamp() instead of min_t()
+Message-ID: <ZR58uDLC99WUwkr2@smile.fi.intel.com>
+References: <20231004064220.31452-1-biju.das.jz@bp.renesas.com>
+ <CAMuHMdXageyQyqaGXJbmmpcKyjoO-VHWGzGk_WJ1YsAne+iiSw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20231004193600.66232-1-sudeep.holla@arm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdXageyQyqaGXJbmmpcKyjoO-VHWGzGk_WJ1YsAne+iiSw@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Oct 04, 2023 at 08:36:00PM +0100, Sudeep Holla wrote:
-> Add the missing devm_kfree() when we skip the clocks with invalid or
-> missing information from the firmware.
++David
+
+On Wed, Oct 04, 2023 at 09:50:09AM +0200, Geert Uytterhoeven wrote:
+> On Wed, Oct 4, 2023 at 8:42 AM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> > The min_t() is often used as a shortcut for clamp(). Secondly, the
+> > BIT(16) - 1 is specifically used as the value related to the bits in the
+> > hardware and u16 is a software type that coincidentally has the same
+> > maximum as the above mentioned bitfield.
 > 
-
-Hi,
-
-LGTM.
-
-Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
-
-Thanks,
-Cristian
-
-> Cc: Cristian Marussi <cristian.marussi@arm.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: linux-clk@vger.kernel.org
-> Fixes: 6d6a1d82eaef ("clk: add support for clocks provided by SCMI")
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> ---
->  drivers/clk/clk-scmi.c | 1 +
->  1 file changed, 1 insertion(+)
+> Technically it is two byte-sized registers forming a 16-bit field ;-)
 > 
-> diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-> index 2e1337b511eb..3f525bed9794 100644
-> --- a/drivers/clk/clk-scmi.c
-> +++ b/drivers/clk/clk-scmi.c
-> @@ -232,6 +232,7 @@ static int scmi_clocks_probe(struct scmi_device *sdev)
->  		sclk->info = scmi_proto_clk_ops->info_get(ph, idx);
->  		if (!sclk->info) {
->  			dev_dbg(dev, "invalid clock info for idx %d\n", idx);
-> +			devm_kfree(dev, sclk);
->  			continue;
->  		}
->  
-> -- 
-> 2.42.0
+> > Replace min_t()->clamp() in vc3_pll_round_rate().
+> >
+> > Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> > ---
+> >  drivers/clk/clk-versaclock3.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/clk/clk-versaclock3.c b/drivers/clk/clk-versaclock3.c
+> > index 3d7de355f8f6..50772f61096f 100644
+> > --- a/drivers/clk/clk-versaclock3.c
+> > +++ b/drivers/clk/clk-versaclock3.c
+> > @@ -402,7 +402,7 @@ static long vc3_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+> >                 div_frc = rate % *parent_rate;
+> >                 div_frc *= BIT(16) - 1;
+> >
+> > -               vc3->div_frc = min_t(u64, div64_ul(div_frc, *parent_rate), U16_MAX);
+> > +               vc3->div_frc = clamp(div64_ul(div_frc, *parent_rate), 0, BIT(16) - 1);
 > 
+> I'm not sure this is actually an improvement...
+
+That's what Linus actually suggested to do.
+
+> While I agree "BIT(16) - 1" matches the expression two lines above,
+> I find it harder to read.
+> Perhaps introducing a VC3_PLL2_FB_FRC_DIV_MAX definition may help.
+
+Either way, but U16_MAX is really semantically wrong here.
+
+> BTW, if the hardware wouldn't use two byte-sized registers, but a real
+> bitifield, one could use FIELD_GET(mask, mask) instead.
+
+> Second, clamping an unsigned value to zero is futile, and opens us to
+> warnings like:
+> 
+>     warning: comparison of unsigned expression in ‘>= 0’ is always
+> true [-Wtype-limits]
+
+David, is your series fix this as well?
+
+> >                 rate = (*parent_rate *
+> >                         (vc3->div_int * VC3_2_POW_16 + vc3->div_frc) / VC3_2_POW_16);
+> >         } else {
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
