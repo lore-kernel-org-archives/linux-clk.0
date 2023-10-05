@@ -2,245 +2,166 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95E57E92719
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Oct 2023 16:40:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4225DE92716
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Oct 2023 16:41:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231835AbjJEQjn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 Oct 2023 12:39:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40548 "EHLO
+        id S232224AbjJEQlJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 Oct 2023 12:41:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231673AbjJEQix (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Oct 2023 12:38:53 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C4563584
-        for <linux-clk@vger.kernel.org>; Wed,  4 Oct 2023 21:24:35 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-53447d0241eso860763a12.3
-        for <linux-clk@vger.kernel.org>; Wed, 04 Oct 2023 21:24:35 -0700 (PDT)
+        with ESMTP id S232277AbjJEQj4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Oct 2023 12:39:56 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6118161B0
+        for <linux-clk@vger.kernel.org>; Thu,  5 Oct 2023 09:10:23 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-53406799540so2104342a12.1
+        for <linux-clk@vger.kernel.org>; Thu, 05 Oct 2023 09:10:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1696479874; x=1697084674; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1696522221; x=1697127021; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=1FDosmr4pTB4y3KlQsf5VlEUdTtkvwPO8SEeca8pbEI=;
-        b=hX0m0BamELUggdQn39+7vtvWTGBxZchWqIskXYXn0EsJhWiMfZG57nQmTBttxulXPY
-         Xp9GzqCPQRHEHQFrus/zUMu0smuaM4t7G5UDobUNAgHoZUpvQN7S7UFluwh367KmRreo
-         DqT8hXm9WcmWoysGWdYnzJaKgSuu3hGmQQeOvEdijxo1Naa3DOsZEXk8s8TxHmPIsEnP
-         ugJPDN4Fc3n8ceZW0Ko8UWenQn82/RHit9ogb2jacfS1BnaysYHyrwrWLEVKLHObJvMP
-         UWtgKtpPaAJgRiPZtcjXOae2bJDRFAwUYEHyfjwZlQ6YzRtDv+fcB6lltK0jxowXi4k0
-         k61A==
+        bh=23kmFh6+pgy715HOrPmc19FtPEKPTlp4raSs/egX1XA=;
+        b=rDYgAlek7BlJyavgRn2KGZI70UNoxXeJ8/0SCYabU/3aNgmBQYHms96LJd59kPE4iI
+         9NbXUn2Ve9rEiz9WvKKzen1Bfp2htikrxvA5v/vJyfNZlRlYu3EhWmi3U7y8ztI8wkc7
+         bd2Hgchh+0z1H5QI0UGPl2WKuzZht5kFAdbABxg4s4YDkNr9UqkjMLRi9rkqaUMjbVE6
+         /SnbPAHNAv47qqe2GMNmVJ8Ri5p6fv1GAWBDG94XYIBJ1ZaV35sQl5M+1Y6uI2PMADSY
+         Sf1nnpKbajCJCSn33iPqprBDGY1HIvM/dIfxIVkFyku5vbC5PEGoL7u9RymL8LoCKjK0
+         gQjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696479874; x=1697084674;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1696522221; x=1697127021;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1FDosmr4pTB4y3KlQsf5VlEUdTtkvwPO8SEeca8pbEI=;
-        b=gBWfmg9eorwRc/y0hyse71ojXV6xca+oBDZw0S1ee+rafSX21bxtL7nVx9+wvETpRr
-         rCdpl8/ulFt58+hdkfvBhv1lTq4qJD0q09AnLyPwzZFy9geuCwSbNps4R5/q6nfT5PyD
-         WmzA1hi5cUB1vscSma2hpJeele0seEDVW5L0BU4f9ZSC3hPOagGDJEV3N9RO3L3mmlMM
-         Q8Lz1+sN0swj3ry6ZZVo5lisPW3Qie3/mOLy4uSzxHnonwqzRJg5m3PkK3Xqht7Hdoxq
-         rXri1Lk0HgI2LdPj90ll9+fahGZe0nsX4llQX/A0Qna0Xv555qfaj1BJWiImRRaY7pt1
-         aQdw==
-X-Gm-Message-State: AOJu0YyKzr6/Mi1gsYeGsEY+MBhGr8cp+Rs8LvZ/Ej134m4aDrhKH9QA
-        WZNQmmXwRqMhhEXvBerUX3cICw==
-X-Google-Smtp-Source: AGHT+IHa/5RZ0/NvxslXh1L0yV6vSI7aQFJL/Ac85bcm5Do80CLgawrfw75osdtTrQOTg2Bt7hM+iQ==
-X-Received: by 2002:aa7:da83:0:b0:533:d81b:36d5 with SMTP id q3-20020aa7da83000000b00533d81b36d5mr3553479eds.15.1696479873654;
-        Wed, 04 Oct 2023 21:24:33 -0700 (PDT)
-Received: from [192.168.32.2] ([147.161.130.252])
-        by smtp.gmail.com with ESMTPSA id w25-20020a056402071900b00537fd4abdc5sm388339edx.54.2023.10.04.21.24.31
+        bh=23kmFh6+pgy715HOrPmc19FtPEKPTlp4raSs/egX1XA=;
+        b=TnDZ6bWBMMVBuCqXCQIdHEXSo51J6qSO5rUsUyal+NgIZNEFrVY/302xhogCEgpvLV
+         BzfmlVcXunk6FYk1pD6gJU/fUrY9HFzihconMcOiIZuZ2kA8KNYmzgD1d9uONkBgfkSh
+         y2P0YinCozZOW3mrgLy+YsTgznCmy7wobsBUswwZZiaStpUk/dxOcampvSJuKeS+QPmT
+         pNM7QIqaThPuqPWVxGN5WQkjfKbZ/rQrGBFwH0hSoA4WLUhaanLd0sbXvIFUtha+Ddgy
+         ebUM4NKCZpaUdwfCTGRQifI7/T8B0mEbyxtfv9cM/hJiPM7erSVA1sY9ij3b4fKY/hiH
+         IyeA==
+X-Gm-Message-State: AOJu0YyNbdDdmiSIRvjNvHXWUkq0WhGSARY1DDDxLH5MNIUxs9u+1Oht
+        I6BsrTZ/un5xeACxui0rXCOmHg==
+X-Google-Smtp-Source: AGHT+IFAR42nIb2OGbTD1YdZhVFdwEeKAZ32pePyiLvgaLQtJReh5q1u0q+WQH3scbY1A3CBTk5MmA==
+X-Received: by 2002:a50:fa95:0:b0:52c:92e3:1d12 with SMTP id w21-20020a50fa95000000b0052c92e31d12mr5078131edr.11.1696522221373;
+        Thu, 05 Oct 2023 09:10:21 -0700 (PDT)
+Received: from [192.168.1.197] (5-157-101-10.dyn.eolo.it. [5.157.101.10])
+        by smtp.gmail.com with ESMTPSA id u1-20020a05640207c100b005311e934765sm1278866edy.27.2023.10.05.09.10.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Oct 2023 21:24:33 -0700 (PDT)
-Message-ID: <0d0448c7-c33b-8960-d2ed-0a22e2f7fb3d@tuxon.dev>
-Date:   Thu, 5 Oct 2023 07:24:30 +0300
+        Thu, 05 Oct 2023 09:10:20 -0700 (PDT)
+Message-ID: <eca324c1-4e1d-4563-a85a-da646f41b8b0@linaro.org>
+Date:   Thu, 5 Oct 2023 18:10:18 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v2 10/28] clk: renesas: rzg2l: refactor sd mux driver
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 07/21] dt-bindings: pinctrl: samsung: add
+ google,gs101-pinctrl compatible
 Content-Language: en-US
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        linus.walleij@linaro.org, gregkh@linuxfoundation.org,
-        jirislaby@kernel.org, magnus.damm@gmail.com,
-        catalin.marinas@arm.com, will@kernel.org,
-        quic_bjorande@quicinc.com, konrad.dybcio@linaro.org, arnd@arndb.de,
-        neil.armstrong@linaro.org, prabhakar.mahadev-lad.rj@bp.renesas.com,
-        biju.das.jz@bp.renesas.com, linux-renesas-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20230929053915.1530607-1-claudiu.beznea@bp.renesas.com>
- <20230929053915.1530607-11-claudiu.beznea@bp.renesas.com>
- <CAMuHMdUJj+h5LfhQXTNkN3Cp2wP62SX6fY3frzytJQBcKXDJJQ@mail.gmail.com>
-From:   claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <CAMuHMdUJj+h5LfhQXTNkN3Cp2wP62SX6fY3frzytJQBcKXDJJQ@mail.gmail.com>
+To:     Peter Griffin <peter.griffin@linaro.org>, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com,
+        s.nawrocki@samsung.com, linus.walleij@linaro.org,
+        wim@linux-watchdog.org, linux@roeck-us.net,
+        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
+        olof@lixom.net, cw00.choi@samsung.com
+Cc:     tudor.ambarus@linaro.org, andre.draszik@linaro.org,
+        semen.protsenko@linaro.org, soc@kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org
+References: <20231005155618.700312-1-peter.griffin@linaro.org>
+ <20231005155618.700312-8-peter.griffin@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20231005155618.700312-8-peter.griffin@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi, Geert,
+On 05/10/2023 17:56, Peter Griffin wrote:
+> Add the "google,gs101-pinctrl" compatible to the dt-schema bindings
+> documentation.
+> 
+> Add maxItems of 50 for the interrupts property as gs101 can have
+> multiple irqs.
+> 
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+>  .../devicetree/bindings/pinctrl/samsung,pinctrl.yaml          | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
+> index 26614621774a..e0f37f8ae8e7 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
+> @@ -54,11 +54,13 @@ properties:
+>        - samsung,exynos850-pinctrl
+>        - samsung,exynosautov9-pinctrl
+>        - tesla,fsd-pinctrl
+> +      - google,gs101-pinctrl
 
-On 04.10.2023 14:30, Geert Uytterhoeven wrote:
-> Hi Claudiu,
-> 
-> On Fri, Sep 29, 2023 at 7:39 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> Refactor SD MUX driver to be able to reuse the same code on RZ/G3S.
->> RZ/G2{L, UL} has a limitation with regards to switching the clock source
->> for SD MUX (MUX clock source has to be switched to 266MHz before switching
->> b/w 533MHz and 400MHz). This limitation has been introduced as a clock
->> notifier that is registered on platform based initialization data thus the
->> SD MUX code could be reused on RZ/G3S.
->>
->> As both RZ/G2{L, UL} and RZ/G3S has specific bits in specific registers
->> to check if the clock switching has been done, this configuration (register
->> offset, register bits and bits width) is now passed though
->> struct cpg_core_clk::sconf (status configuration) from platform specific
->> initialization code.
->>
->> Along with struct cpg_core_clk::sconf the mux table indices are also
->> passed from platform specific initialization code.
->>
->> Also, mux flags are now passed to DEF_SD_MUX() as they will be later
->> used by RZ/G3S.
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->> ---
->>
->> Changes in v2:
->> - s/indexes/indices in commit description
->> - mentioned in commit description that mux flags can now be passed to
->>   driver though DEF_SD_MUX() macro
->> - removed SoC specific names from macros' names
->> - added spaces after { and before } when initializing arrays
->> - preserved the order of .[gs]set_parent() API definitions for simpler
->>   diff b/w versions
->> - removed SD_MUX_NOTIF macro
-> 
-> Thanks for the update!
-> 
->> --- a/drivers/clk/renesas/rzg2l-cpg.c
->> +++ b/drivers/clk/renesas/rzg2l-cpg.c
-> 
->> @@ -142,6 +146,77 @@ static void rzg2l_cpg_del_clk_provider(void *data)
->>         of_clk_del_provider(data);
->>  }
->>
->> +/* Must be called in atomic context. */
->> +static int rzg2l_cpg_wait_clk_update_done(void __iomem *base, u32 conf)
->> +{
->> +       u32 bitmask = GENMASK(GET_WIDTH(conf) - 1, 0) << GET_SHIFT(conf);
->> +       u32 off = GET_REG_OFFSET(conf);
->> +       u32 val;
->> +
->> +       return readl_poll_timeout_atomic(base + off, val, !(val & bitmask), 10, 200);
->> +}
->> +
->> +int rzg2l_cpg_sd_mux_clk_notifier(struct notifier_block *nb, unsigned long event,
->> +                                 void *data)
->> +{
->> +       struct clk_notifier_data *cnd = data;
->> +       struct clk_hw *hw = __clk_get_hw(cnd->clk);
->> +       struct clk_hw_data *clk_hw_data = to_clk_hw_data(hw);
->> +       struct rzg2l_cpg_priv *priv = clk_hw_data->priv;
->> +       u32 off = GET_REG_OFFSET(clk_hw_data->conf);
->> +       u32 shift = GET_SHIFT(clk_hw_data->conf);
->> +       const u32 clk_src_266 = 3;
->> +       unsigned long flags;
->> +       u32 bitmask;
->> +       int ret;
->> +
->> +       if (event != PRE_RATE_CHANGE || (cnd->new_rate / MEGA == 266))
->> +               return 0;
-> 
-> include/linux/clk.h:
-> 
->  * PRE_RATE_CHANGE - called immediately before the clk rate is changed,
->  *     to indicate that the rate change will proceed.  Drivers must
->  *     immediately terminate any operations that will be affected by the
->  *     rate change.  Callbacks may either return NOTIFY_DONE, NOTIFY_OK,
->  *     NOTIFY_STOP or NOTIFY_BAD.
+Alphanumerical order
 
-Indeed I missed these.
+>  
+>    interrupts:
+>      description:
+>        Required for GPIO banks supporting external GPIO interrupts.
+> -    maxItems: 1
+> +    minItems: 1
+> +    maxItems: 50
 
-> 
->> +
->> +       spin_lock_irqsave(&priv->rmw_lock, flags);
->> +
->> +       /*
->> +        * As per the HW manual, we should not directly switch from 533 MHz to
->> +        * 400 MHz and vice versa. To change the setting from 2’b01 (533 MHz)
->> +        * to 2’b10 (400 MHz) or vice versa, Switch to 2’b11 (266 MHz) first,
->> +        * and then switch to the target setting (2’b01 (533 MHz) or 2’b10
->> +        * (400 MHz)).
->> +        * Setting a value of '0' to the SEL_SDHI0_SET or SEL_SDHI1_SET clock
->> +        * switching register is prohibited.
->> +        * The clock mux has 3 input clocks(533 MHz, 400 MHz, and 266 MHz), and
->> +        * the index to value mapping is done by adding 1 to the index.
->> +        */
->> +       bitmask = (GENMASK(GET_WIDTH(clk_hw_data->conf) - 1, 0) << shift) << 16;
->> +       writel(bitmask | (clk_src_266 << shift), priv->base + off);
->> +
->> +       /* Wait for the update done. */
->> +       ret = rzg2l_cpg_wait_clk_update_done(priv->base, clk_hw_data->sconf);
->> +
->> +       spin_unlock_irqrestore(&priv->rmw_lock, flags);
->> +
->> +       if (ret)
->> +               dev_err(priv->dev, "failed to switch to safe clk source\n");
->> +
->> +       return ret;
-> 
-> Likewise.
-> 
->> +}
-> 
->>
->>  static const struct clk_ops rzg2l_cpg_sd_clk_mux_ops = {
->>         .determine_rate = __clk_mux_determine_rate_closest,
->> -       .set_parent     = rzg2l_cpg_sd_clk_mux_set_parent,
->> -       .get_parent     = rzg2l_cpg_sd_clk_mux_get_parent,
->> +       .set_parent     = rzg2l_cpg_sd_mux_clk_set_parent,
->> +       .get_parent     = rzg2l_cpg_sd_mux_clk_get_parent,
-> 
-> Please keep the old names, for consistency with
-> __clk_mux_determine_rate_closest() and drivers/clk/clk-mux.c, and to
-> reduce the diff.
-> 
-> Any existing inconsistent use of "clk_mux" vs. "mux_clk" can be resolved
-> later with a separate patch, if anyone cares.
+You need to add to allOf: a new "if:then:else:" which will:
+1. narrow this for Google (with some description - is it interrupt per
+GPIO? per bank?)
+2. else: maxItems: 1
 
-ok
 
-> 
->> --- a/drivers/clk/renesas/rzg2l-cpg.h
->> +++ b/drivers/clk/renesas/rzg2l-cpg.h
-> 
->> @@ -272,4 +276,6 @@ extern const struct rzg2l_cpg_info r9a07g044_cpg_info;
->>  extern const struct rzg2l_cpg_info r9a07g054_cpg_info;
->>  extern const struct rzg2l_cpg_info r9a09g011_cpg_info;
->>
->> +int rzg2l_cpg_sd_mux_clk_notifier(struct notifier_block *nb, unsigned long event, void *data);
-> 
-> rzg2l_cpg_sd_clk_mux_notifier()?
 
-ok
 
-> 
->> +
->>  #endif
-> 
-> The rest LGTM.
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+Best regards,
+Krzysztof
+
