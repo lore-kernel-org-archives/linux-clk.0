@@ -2,198 +2,167 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 622FAE92734
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Oct 2023 19:29:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34DE9E92733
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Oct 2023 19:40:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230081AbjJET3f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 Oct 2023 15:29:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57734 "EHLO
+        id S231187AbjJETkK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 Oct 2023 15:40:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229766AbjJET3e (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Oct 2023 15:29:34 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A6BBE5
-        for <linux-clk@vger.kernel.org>; Thu,  5 Oct 2023 12:29:32 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-9ada2e6e75fso255390066b.2
-        for <linux-clk@vger.kernel.org>; Thu, 05 Oct 2023 12:29:31 -0700 (PDT)
+        with ESMTP id S230081AbjJETkJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Oct 2023 15:40:09 -0400
+Received: from mail-yw1-x1132.google.com (mail-yw1-x1132.google.com [IPv6:2607:f8b0:4864:20::1132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F365CE
+        for <linux-clk@vger.kernel.org>; Thu,  5 Oct 2023 12:40:07 -0700 (PDT)
+Received: by mail-yw1-x1132.google.com with SMTP id 00721157ae682-59bebd5bdadso16484307b3.0
+        for <linux-clk@vger.kernel.org>; Thu, 05 Oct 2023 12:40:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696534170; x=1697138970; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8FcIrqBncC9Mrs6EWL94iGiE6FYJb1dG9INjYIsj2wg=;
-        b=Sp+kRiJ60ClUIP33/zrpqR68uGfgHZeMm4+XnQVqUKnwHYLTHDTgipSVBvkvO7lFpR
-         7h1tSOVKgN8l2i/GTjnG0M9DaNczXTUEAG71AvnBnBn42TQYQFhqer5jGKafpJT7WvR6
-         tA5eRjDWdtxxNTE/q8IpFKLILd1+IrqsFz0+HQ5cEedOjtug1P7ljlT+kr5h9L3rcov2
-         VKexLghFPEYp5xgZyK/VHS3hOqF56CEwfJOgLieboNi4pMVXZ0WB5qAlU8Uv79zbLbB7
-         2QvjoKpbF9H6OzYsCphE03nxvt9/6JUQ6Gl1HpjSo29aiG46TVAeLjoE4qZlXqKcJ2ie
-         BVeQ==
+        d=linaro.org; s=google; t=1696534806; x=1697139606; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=q79nbusY6yMg4gDn1/PKHAl0Q1+I2dNo50xbdZnueF8=;
+        b=EMlT6CvJsklF2WEqt6wm9epStnvXaFht8+bWiqX78LUHr+KdXu2AhXMZAZD9KXH1ys
+         Mml3ay1Ju9ht5NDB1Bh3LbnjqgE+7FB6/6tt85tO3TYuPCyUhBkliQYd+M2cwbkhF9Xq
+         mnX4db0kpUVj39MolXfyM76XqF7fMWBciqy/tgOGjUCduoSAgwpmQMk0zBk4jVFTXkV4
+         UnAZmbsvcNB5sBG8IOmcsn3qWW0m9O4Vluuiy5G6cY4SuZVw7J4CpTlpD5ao6bMG0wuU
+         vHW3QP/eNWooS27pZ2KYMC50R9bNmkWpa+4fRr5gr7VTXCmMlwKPZhZq9ELSNf5uHOQF
+         ypwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696534170; x=1697138970;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8FcIrqBncC9Mrs6EWL94iGiE6FYJb1dG9INjYIsj2wg=;
-        b=exuG9o4ielv3s2CfAshwg3g+Ayc4nmtiNEvlwcMLLX84cCYoIMisTDEyJLX+pgDI+i
-         gWMkgGVnyB5dp7RZVDc8cnBOkHs+FMEU0YpR4QGEXgX+eYithIJUj8kgnc1VVO62fyng
-         KnuIvF9HZNPHywRNm4SvKv3dQu/z5pkMIyyz18GgQtRdMOtWJsVt+Qa+fIeENnfzVuxI
-         bewuIMqlIVh+Coea1DF2XmISmtNKTBsWNiwh0q3+JU36LS/khJFq9eWcCMP7mfVhCyYe
-         TvptLgkJtahD/KH9PQ+5WcRP97LKsTduFex3S25IeEvqI3Q/2ozumloYvItmQ5qhBJs+
-         Kqag==
-X-Gm-Message-State: AOJu0YwgQaDJ4Yu/3SIOedP+uB0MlaiSUQef+BBhXGKL/7QyvwcB4bSy
-        F4s8ee7NRyj9Eic+Qgi/dEjLdw==
-X-Google-Smtp-Source: AGHT+IH5OVqZVwFMXRaCd1BDzWuuagJUNL+cVtINgJ+JuCQ4BBFliTN5odpOdP1Nfa2kVem3dld3Pg==
-X-Received: by 2002:a17:906:220c:b0:9b8:a556:87a5 with SMTP id s12-20020a170906220c00b009b8a55687a5mr5241419ejs.22.1696534170424;
-        Thu, 05 Oct 2023 12:29:30 -0700 (PDT)
-Received: from [192.168.1.197] (5-157-101-10.dyn.eolo.it. [5.157.101.10])
-        by smtp.gmail.com with ESMTPSA id u2-20020a17090617c200b009ad8084e08asm1640184eje.0.2023.10.05.12.29.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Oct 2023 12:29:29 -0700 (PDT)
-Message-ID: <efc9f099-9c97-460b-b0c8-9891aa3b772a@linaro.org>
-Date:   Thu, 5 Oct 2023 21:29:26 +0200
+        d=1e100.net; s=20230601; t=1696534806; x=1697139606;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=q79nbusY6yMg4gDn1/PKHAl0Q1+I2dNo50xbdZnueF8=;
+        b=fhOpCqvTLm+HW+PcCv+H2CmxWEnLRaVUGNSWt/K9Oppqe7skXHBe1nl01LbQdXKp3k
+         uigwIm4GnXW40WbrhumL4a7rc1BmQ0DETblw/0i/5bUtXgbVLy64AG6tKygSVf/kc7G5
+         Cx8Y45ePeA2OSbaJcHQE7YRDKDQsloGUjPr3hSYW3xsol7LoyvORilX4Qr35VYQwbI8A
+         dV/ODZtBV5FreKRBb7YDFZjHs8Fd7irGf8/Qdb6cDybR4wHu+B/gSZ43qVw5RMkAWM0p
+         OVFvrRyNkiOHU4+8HjIa80Tr9ocE67hwyg2YJNzMR6kASm2s0CI8OzJPRddN9+WtwsHn
+         PHYA==
+X-Gm-Message-State: AOJu0YypOiCrskQ4+1uo6hyLRTHNa12SFgn7EpyoNvJGAYDGer3fjEq0
+        GcpQOfzxhzoxWOe5TKJVyPLnrBC9+o+XPWfd34oWEw==
+X-Google-Smtp-Source: AGHT+IFQShC1tZUtbtXYspI53MZzv01Vvxe437wz4HHjxC/g/pKFfZTjUpOAcpf9EJqb/h4w/1xXBZOUxuhbwDFl0zU=
+X-Received: by 2002:a81:fd03:0:b0:59b:ce0b:7829 with SMTP id
+ g3-20020a81fd03000000b0059bce0b7829mr5687917ywn.35.1696534806426; Thu, 05 Oct
+ 2023 12:40:06 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 18/21] arm64: dts: google: Add initial Google gs101 SoC
- support
-Content-Language: en-US
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     William McVicker <willmcvicker@google.com>,
-        Peter Griffin <peter.griffin@linaro.org>, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com,
-        s.nawrocki@samsung.com, linus.walleij@linaro.org,
-        wim@linux-watchdog.org, linux@roeck-us.net,
-        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-        olof@lixom.net, cw00.choi@samsung.com, tudor.ambarus@linaro.org,
-        andre.draszik@linaro.org, semen.protsenko@linaro.org,
-        soc@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        kernel-team@google.com
-References: <20231005155618.700312-1-peter.griffin@linaro.org>
- <20231005155618.700312-19-peter.griffin@linaro.org>
- <ZR75cIvnQS2cqTT3@google.com> <2023100520-cleaver-sinless-fbae@gregkh>
- <99419159-cab0-4c79-a4a0-12229bfad3c0@linaro.org>
- <2023100513-mashing-scrubber-ea59@gregkh>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <2023100513-mashing-scrubber-ea59@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <cover.1693996662.git.quic_varada@quicinc.com> <a6d12e3b253d6a55d85f66979ba8b7d9c9ff6072.1693996662.git.quic_varada@quicinc.com>
+ <CAA8EJppNsgUNgwadq9oM0_KyORNR5PBZGVZukN6MzAm2KPzC9g@mail.gmail.com>
+ <20231005095744.GA29795@varda-linux.qualcomm.com> <CAA8EJpr124fymnbZ1bO=Dbbxavn3Z=1xOPmFRPnfSp-UB3p6OQ@mail.gmail.com>
+ <20231005144205.GB29795@varda-linux.qualcomm.com>
+In-Reply-To: <20231005144205.GB29795@varda-linux.qualcomm.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Thu, 5 Oct 2023 22:39:55 +0300
+Message-ID: <CAA8EJppJVzjyKjggkmi8uHGSPaHJ2ChsUV4Bfd0yNNDu3R+Kow@mail.gmail.com>
+Subject: Re: [PATCH v1 07/10] arm64: dts: qcom: ipq5332: populate the opp
+ table based on the eFuse
+To:     Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc:     ilia.lin@kernel.org, agross@kernel.org, andersson@kernel.org,
+        konrad.dybcio@linaro.org, rafael@kernel.org,
+        viresh.kumar@linaro.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        quic_kathirav@quicinc.com, linux-pm@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 05/10/2023 21:23, Greg KH wrote:
-> On Thu, Oct 05, 2023 at 09:18:48PM +0200, Krzysztof Kozlowski wrote:
->>>> I'd like to bring up this thread and discuss the option of not introducing
->>>> another ARCH_* config:
->>>>
->>>>   https://lore.kernel.org/all/20200306103652.GA3634389@kroah.com/
->>>
->>> I agree, PLEASE don't add platform config options as that makes it
->>> impossible to make a unified kernel image that works for more than one
->>> platform at the same time.
->>
->> There is no single problem in making unified image as we were doing
->> since beginning of ARM64. The ARCH_* is not a obstacle for this.
-> 
-> Then why are the ARCH_* options needed at all?  What does this help out
-> with?
+On Thu, 5 Oct 2023 at 17:42, Varadarajan Narayanan
+<quic_varada@quicinc.com> wrote:
+>
+> On Thu, Oct 05, 2023 at 02:39:43PM +0300, Dmitry Baryshkov wrote:
+> > On Thu, 5 Oct 2023 at 12:58, Varadarajan Narayanan
+> > <quic_varada@quicinc.com> wrote:
+> > >
+> > > On Thu, Sep 07, 2023 at 04:59:28PM +0300, Dmitry Baryshkov wrote:
+> > > > On Thu, 7 Sept 2023 at 08:23, Varadarajan Narayanan
+> > > > <quic_varada@quicinc.com> wrote:
+> > > > >
+> > > > > IPQ53xx have different OPPs available for the CPU based on
+> > > > > SoC variant. This can be determined through use of an eFuse
+> > > > > register present in the silicon.
+> > > > >
+> > > > > Add support to read the eFuse and populate the OPPs based on it.
+> > > > >
+> > > > > Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
+> > > > > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> > > > > ---
+> > > > >  arch/arm64/boot/dts/qcom/ipq5332.dtsi | 34 +++++++++++++++++++++++++++++++---
+> > > > >  1 file changed, 31 insertions(+), 3 deletions(-)
+> > > > >
+> > > > > diff --git a/arch/arm64/boot/dts/qcom/ipq5332.dtsi b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
+> > > > > index 82761ae..3ca3f34 100644
+> > > > > --- a/arch/arm64/boot/dts/qcom/ipq5332.dtsi
+> > > > > +++ b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
+> > > > > @@ -91,11 +91,34 @@
+> > > > >         };
+> > > > >
+> > > > >         cpu_opp_table: opp-table-cpu {
+> > > > > -               compatible = "operating-points-v2";
+> > > > > +               compatible = "operating-points-v2-kryo-cpu";
+> > > > >                 opp-shared;
+> > > > > +               nvmem-cells = <&cpu_speed_bin>;
+> > > > > +               nvmem-cell-names = "speed_bin";
+> > > > > +
+> > > > > +               /*
+> > > > > +                * Listed all supported CPU frequencies and opp-supported-hw
+> > > > > +                * values to select CPU frequencies based on the limits fused.
+> > > > > +                * ------------------------------------------------------------
+> > > > > +                * Frequency     BIT3   BIT2   BIT1    BIT0    opp-supported-hw
+> > > > > +                *              1.0GHz 1.2GHz 1.5GHz No Limit
+> > > > > +                * ------------------------------------------------------------
+> > > > > +                * 1100000000     1      1      1       1            0xF
+> > > > > +                * 1500000000     0      0      1       1            0x3
+> > > > > +                * -----------------------------------------------------------
+> > > > > +                */
+> > > >
+> > > > This can probably go to the commit message instead.
+> > >
+> > > Ok
+> > >
+> > > > > +
+> > > > > +               opp-1100000000 {
+> > > > > +                       opp-hz = /bits/ 64 <1100000000>;
+> > > >
+> > > > But your table shows 1.0 GHz and 1.2 GHz instead of 1.1 GHz
+> > >
+> > > Will update it.
+> > >
+> > > > > +                       opp-microvolt = <850000>;
+> > > > > +                       opp-supported-hw = <0xF>;
+> > > > > +                       clock-latency-ns = <200000>;
+> > > > > +               };
+> > > > >
+> > > > > -               opp-1488000000 {
+> > > > > -                       opp-hz = /bits/ 64 <1488000000>;
+> > > > > +               opp-1500000000 {
+> > > > > +                       opp-hz = /bits/ 64 <1500000000>;
+> > > >
+> > > > So, 1.488 GHz or 1.5 GHz?
+> > >
+> > > 1.5 GHz
+> > >
+> > > > > +                       opp-microvolt = <950000>;
+> > > >
+> > > > Which regulator is controlled by this microvolt?
+> > >
+> > > Based on the SKU, the XBL sets up the regulator to provide 950000uV
+> > > on CPUs capable of running 1.5G and 850000uV on other SKUs. Linux
+> > > doesn't control it.
+> >
+> > Then why do you need this property here in the first place?
+>
+> I get these errors without this property
+>
+> [    1.018065] cpu cpu0: opp_parse_microvolt: opp-microvolt missing although OPP managing regulators
 
-It helps all the people and distros who do not want to build/package
-drivers or modules for unrelated hardware or architectures.
+But you have said that "Linux doesn't control it" [the regulator]!
 
-Let's take Samsung Exynos UART driver. It will never, 100% never, work
-on x86, x86_64. There is no single need to package it for kernels build
-for these products. It will not work on nVidia Tegra ARM64, Qualcomm
-ARM64 SoC, so if you do not want to run on Exynos, then you do no select
-ARCH_EXYNOS and have significantly smaller image.
+> [    1.018074] cpu cpu0: _of_add_opp_table_v2: Failed to add OPP, -22
 
-Now, there is no problem to have one kernel for nVidia Tegra + Qualcomm
-+ Samsung Exynos with everything you need. The ARCH_EXYNOS or SOC_EXYNOS
-or SOC_GOOGLE serves only the purpose to allow distros and people
-customize build for specific hardware.
-
-It does not limit anyone on anything.
-
-
-
-> 
->>>> I especially don't like the "depends on ARCH_EXYNOS" because that forces one to
->>>> include all the other Exynos drivers that ARCH_EXYNOS selects that Google
->>>> Tensor SoCs don't need. Can we consider using SOC_GOOGLE instead and for all
->>>> drivers that actually depend on the SoC hardware, we can just add "depends on
->>>> SOC_GOOGLE"?
->>>
->>> Why do any of this at all?  It should not be needed.
->>>
->>>> The idea is that drivers should be tied to hardware -- not a specific vendor.
->>>
->>> And drivers should be auto-loaded.
->>>
->>> All of these drivers are not vendor-specific at all, they are based on
->>> the same IP blocks as others, so that is how they should be unified.
->>
->> They are vendor specific. All of them are specifically for Exynos
->> hardwre, because this is Exynos. We call it Google GS/Tensor SoC just
->> for fancy convenience, but this just Exynos.
-> 
-> Ok, then why is this ARCH_ option needed if these IP blocks really are
-> from something else and are part of other drivers?
-
-For the same reason above, because if I want to build kernel for
-Qualcomm, I want to drop easily anything not related. If I want to build
-kernel without I2C, I disable I2C bus which effectively disables all
-drivers which work on I2C. If I want to build kernel without Exynos, I
-disable ARCH_EXYNOS which effectively disables entire Exynos hardware.
-
-Think of SoC as a bus or interface.
-
-Best regards,
-Krzysztof
-
+-- 
+With best wishes
+Dmitry
