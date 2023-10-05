@@ -2,181 +2,119 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8274AE9271C
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Oct 2023 14:43:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4628FE92708
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Oct 2023 15:08:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238445AbjJEOnl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 Oct 2023 10:43:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55950 "EHLO
+        id S229552AbjJEPIU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 Oct 2023 11:08:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238539AbjJEOkk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Oct 2023 10:40:40 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ACA477644;
-        Thu,  5 Oct 2023 07:12:58 -0700 (PDT)
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3958A1lg012152;
-        Thu, 5 Oct 2023 09:57:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=date : from : to :
- cc : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=qcppdkim1; bh=TULmcO8l188rP5vtjqFrkpttdGmBezWswKLwM6tqT+k=;
- b=Qj7I3eeKQbICxxNLcDf5mcOHdj3UtQIdHYHW2wnUCyZU6x6xlHzHPqqBsPyfiY3rOw9A
- 0b03WbvtDQ3foBmuYteEiAO4in9C/+s9ZBh/4D9ICpLfNdRljEkkN1OEanDWjzgsel8z
- iOS/6pFb3Tdht6vV4XSmSWp91aKKZos440p/+oTTJhIDQ6VMhhgAjtNNq1oHIqIk6B93
- iCfHE3/F6fwZpB8mi7iRyRs86dQGDqc7MSmKTViYighBvUG19YiOAhqV5cliyTt0oYKD
- GJau/y+OshTswMi4sZMfaI8RLcyJCpK5o6/k7tgysj3CB8AbYw8FLeVcE9qd5TKZmyPv mA== 
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3th8e1teue-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 05 Oct 2023 09:57:56 +0000
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3959vtAJ028265
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 5 Oct 2023 09:57:55 GMT
-Received: from varda-linux.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.36; Thu, 5 Oct 2023 02:57:49 -0700
-Date:   Thu, 5 Oct 2023 15:27:45 +0530
-From:   Varadarajan Narayanan <quic_varada@quicinc.com>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC:     <ilia.lin@kernel.org>, <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <rafael@kernel.org>,
-        <viresh.kumar@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <quic_kathirav@quicinc.com>, <linux-pm@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v1 07/10] arm64: dts: qcom: ipq5332: populate the opp
- table based on the eFuse
-Message-ID: <20231005095744.GA29795@varda-linux.qualcomm.com>
-References: <cover.1693996662.git.quic_varada@quicinc.com>
- <a6d12e3b253d6a55d85f66979ba8b7d9c9ff6072.1693996662.git.quic_varada@quicinc.com>
- <CAA8EJppNsgUNgwadq9oM0_KyORNR5PBZGVZukN6MzAm2KPzC9g@mail.gmail.com>
+        with ESMTP id S233225AbjJEPHi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Oct 2023 11:07:38 -0400
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 605B122E01
+        for <linux-clk@vger.kernel.org>; Thu,  5 Oct 2023 07:41:32 -0700 (PDT)
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-59-we0tadfBPmiF8azyarhGZw-1; Thu, 05 Oct 2023 10:40:11 +0100
+X-MC-Unique: we0tadfBPmiF8azyarhGZw-1
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Thu, 5 Oct
+ 2023 10:40:10 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Thu, 5 Oct 2023 10:40:09 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Andy Shevchenko' <andriy.shevchenko@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+CC:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "Prabhakar Mahadev Lad" <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Biju Das <biju.das.au@gmail.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] clk: vc3: Use clamp() instead of min_t()
+Thread-Topic: [PATCH] clk: vc3: Use clamp() instead of min_t()
+Thread-Index: AQHZ92tiRFkl3d0ZyU+GXpw6cHGohrA66bOQ
+Date:   Thu, 5 Oct 2023 09:40:09 +0000
+Message-ID: <2fd4fce6142b43a19cd39e94e316f059@AcuMS.aculab.com>
+References: <20231004064220.31452-1-biju.das.jz@bp.renesas.com>
+ <CAMuHMdXageyQyqaGXJbmmpcKyjoO-VHWGzGk_WJ1YsAne+iiSw@mail.gmail.com>
+ <ZR58uDLC99WUwkr2@smile.fi.intel.com>
+In-Reply-To: <ZR58uDLC99WUwkr2@smile.fi.intel.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CAA8EJppNsgUNgwadq9oM0_KyORNR5PBZGVZukN6MzAm2KPzC9g@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: oIcgO5TZ66_7muH1tFN8rHdOi-fpZKDV
-X-Proofpoint-ORIG-GUID: oIcgO5TZ66_7muH1tFN8rHdOi-fpZKDV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-10-05_06,2023-10-02_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
- adultscore=0 priorityscore=1501 mlxscore=0 lowpriorityscore=0 spamscore=0
- bulkscore=0 mlxlogscore=999 malwarescore=0 impostorscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2309180000
- definitions=main-2310050077
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Sep 07, 2023 at 04:59:28PM +0300, Dmitry Baryshkov wrote:
-> On Thu, 7 Sept 2023 at 08:23, Varadarajan Narayanan
-> <quic_varada@quicinc.com> wrote:
-> >
-> > IPQ53xx have different OPPs available for the CPU based on
-> > SoC variant. This can be determined through use of an eFuse
-> > register present in the silicon.
-> >
-> > Add support to read the eFuse and populate the OPPs based on it.
-> >
-> > Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
-> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> > ---
-> >  arch/arm64/boot/dts/qcom/ipq5332.dtsi | 34 +++++++++++++++++++++++++++++++---
-> >  1 file changed, 31 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/arch/arm64/boot/dts/qcom/ipq5332.dtsi b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
-> > index 82761ae..3ca3f34 100644
-> > --- a/arch/arm64/boot/dts/qcom/ipq5332.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
-> > @@ -91,11 +91,34 @@
-> >         };
-> >
-> >         cpu_opp_table: opp-table-cpu {
-> > -               compatible = "operating-points-v2";
-> > +               compatible = "operating-points-v2-kryo-cpu";
-> >                 opp-shared;
-> > +               nvmem-cells = <&cpu_speed_bin>;
-> > +               nvmem-cell-names = "speed_bin";
-> > +
-> > +               /*
-> > +                * Listed all supported CPU frequencies and opp-supported-hw
-> > +                * values to select CPU frequencies based on the limits fused.
-> > +                * ------------------------------------------------------------
-> > +                * Frequency     BIT3   BIT2   BIT1    BIT0    opp-supported-hw
-> > +                *              1.0GHz 1.2GHz 1.5GHz No Limit
-> > +                * ------------------------------------------------------------
-> > +                * 1100000000     1      1      1       1            0xF
-> > +                * 1500000000     0      0      1       1            0x3
-> > +                * -----------------------------------------------------------
-> > +                */
->
-> This can probably go to the commit message instead.
+RnJvbTogQW5keSBTaGV2Y2hlbmtvDQo+IFNlbnQ6IDA1IE9jdG9iZXIgMjAyMyAxMDowNw0KPiAN
+Cj4gK0RhdmlkDQo+IA0KPiBPbiBXZWQsIE9jdCAwNCwgMjAyMyBhdCAwOTo1MDowOUFNICswMjAw
+LCBHZWVydCBVeXR0ZXJob2V2ZW4gd3JvdGU6DQo+ID4gT24gV2VkLCBPY3QgNCwgMjAyMyBhdCA4
+OjQy4oCvQU0gQmlqdSBEYXMgPGJpanUuZGFzLmp6QGJwLnJlbmVzYXMuY29tPiB3cm90ZToNCj4g
+PiA+IFRoZSBtaW5fdCgpIGlzIG9mdGVuIHVzZWQgYXMgYSBzaG9ydGN1dCBmb3IgY2xhbXAoKS4g
+U2Vjb25kbHksIHRoZQ0KPiA+ID4gQklUKDE2KSAtIDEgaXMgc3BlY2lmaWNhbGx5IHVzZWQgYXMg
+dGhlIHZhbHVlIHJlbGF0ZWQgdG8gdGhlIGJpdHMgaW4gdGhlDQo+ID4gPiBoYXJkd2FyZSBhbmQg
+dTE2IGlzIGEgc29mdHdhcmUgdHlwZSB0aGF0IGNvaW5jaWRlbnRhbGx5IGhhcyB0aGUgc2FtZQ0K
+PiA+ID4gbWF4aW11bSBhcyB0aGUgYWJvdmUgbWVudGlvbmVkIGJpdGZpZWxkLg0KPiA+DQo+ID4g
+VGVjaG5pY2FsbHkgaXQgaXMgdHdvIGJ5dGUtc2l6ZWQgcmVnaXN0ZXJzIGZvcm1pbmcgYSAxNi1i
+aXQgZmllbGQgOy0pDQo+ID4NCj4gPiA+IFJlcGxhY2UgbWluX3QoKS0+Y2xhbXAoKSBpbiB2YzNf
+cGxsX3JvdW5kX3JhdGUoKS4NCj4gPiA+DQo+ID4gPiBTdWdnZXN0ZWQtYnk6IEFuZHkgU2hldmNo
+ZW5rbyA8YW5kcml5LnNoZXZjaGVua29AbGludXguaW50ZWwuY29tPg0KPiA+ID4gU2lnbmVkLW9m
+Zi1ieTogQmlqdSBEYXMgPGJpanUuZGFzLmp6QGJwLnJlbmVzYXMuY29tPg0KPiA+ID4gLS0tDQo+
+ID4gPiAgZHJpdmVycy9jbGsvY2xrLXZlcnNhY2xvY2szLmMgfCAyICstDQo+ID4gPiAgMSBmaWxl
+IGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pDQo+ID4gPg0KPiA+ID4gZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvY2xrL2Nsay12ZXJzYWNsb2NrMy5jIGIvZHJpdmVycy9jbGsvY2xr
+LXZlcnNhY2xvY2szLmMNCj4gPiA+IGluZGV4IDNkN2RlMzU1ZjhmNi4uNTA3NzJmNjEwOTZmIDEw
+MDY0NA0KPiA+ID4gLS0tIGEvZHJpdmVycy9jbGsvY2xrLXZlcnNhY2xvY2szLmMNCj4gPiA+ICsr
+KyBiL2RyaXZlcnMvY2xrL2Nsay12ZXJzYWNsb2NrMy5jDQo+ID4gPiBAQCAtNDAyLDcgKzQwMiw3
+IEBAIHN0YXRpYyBsb25nIHZjM19wbGxfcm91bmRfcmF0ZShzdHJ1Y3QgY2xrX2h3ICpodywgdW5z
+aWduZWQgbG9uZyByYXRlLA0KPiA+ID4gICAgICAgICAgICAgICAgIGRpdl9mcmMgPSByYXRlICUg
+KnBhcmVudF9yYXRlOw0KPiA+ID4gICAgICAgICAgICAgICAgIGRpdl9mcmMgKj0gQklUKDE2KSAt
+IDE7DQo+ID4gPg0KPiA+ID4gLSAgICAgICAgICAgICAgIHZjMy0+ZGl2X2ZyYyA9IG1pbl90KHU2
+NCwgZGl2NjRfdWwoZGl2X2ZyYywgKnBhcmVudF9yYXRlKSwgVTE2X01BWCk7DQo+ID4gPiArICAg
+ICAgICAgICAgICAgdmMzLT5kaXZfZnJjID0gY2xhbXAoZGl2NjRfdWwoZGl2X2ZyYywgKnBhcmVu
+dF9yYXRlKSwgMCwgQklUKDE2KSAtIDEpOw0KPiA+DQo+ID4gSSdtIG5vdCBzdXJlIHRoaXMgaXMg
+YWN0dWFsbHkgYW4gaW1wcm92ZW1lbnQuLi4NCj4gDQo+IFRoYXQncyB3aGF0IExpbnVzIGFjdHVh
+bGx5IHN1Z2dlc3RlZCB0byBkby4NCj4gDQo+ID4gV2hpbGUgSSBhZ3JlZSAiQklUKDE2KSAtIDEi
+IG1hdGNoZXMgdGhlIGV4cHJlc3Npb24gdHdvIGxpbmVzIGFib3ZlLA0KPiA+IEkgZmluZCBpdCBo
+YXJkZXIgdG8gcmVhZC4NCj4gPiBQZXJoYXBzIGludHJvZHVjaW5nIGEgVkMzX1BMTDJfRkJfRlJD
+X0RJVl9NQVggZGVmaW5pdGlvbiBtYXkgaGVscC4NCj4gDQo+IEVpdGhlciB3YXksIGJ1dCBVMTZf
+TUFYIGlzIHJlYWxseSBzZW1hbnRpY2FsbHkgd3JvbmcgaGVyZS4NCg0KVGhhdCBjb2RlIGFsbCBs
+b29rcyBjb21wbGV0ZWx5IGhvcnJpZCBhbmQgc3RyYW5nZS4NCkknZCBoYXZlIHRob3VnaHQgdGhl
+IDE2LWJpdCBmcmFjdGlvbmFsIHBhcnQgKDAuLjB4ZmZmZikgd291bGQNCmJhc2ljYWxseSBiZSAo
+KHJhdGUgKiAweDEwMDAwKS9wYXJlbnRfcmF0ZSkgJiAweGZmZmY7DQpCdXQgdGhhdCBpc24ndCB3
+aGF0IGlzIGJlaW5nIGNhbGN1bGF0ZWQuDQooSXQgbWF5IG5lZWQgdHdlYWtpbmcgdG8gYXZvaWQg
+dGhlIG11bHRpcGx5IG92ZXJmbG93aW5nLikNClRoZW4gdGhlcmUgaXMgdGhlIG11bHRpcGx5IGFu
+ZCBkaXZpZGUgYnkgMHgxMDAwMSB3aGljaCBpcw0KZXF1YWxseSBzdHJhbmdlLg0KDQpCdXQgSSdk
+IGp1c3Qgd3JpdGUgMHgxMDAwMHUgYW5kL29yIDB4ZmZmZnUuDQoNCj4gDQo+ID4gQlRXLCBpZiB0
+aGUgaGFyZHdhcmUgd291bGRuJ3QgdXNlIHR3byBieXRlLXNpemVkIHJlZ2lzdGVycywgYnV0IGEg
+cmVhbA0KPiA+IGJpdGlmaWVsZCwgb25lIGNvdWxkIHVzZSBGSUVMRF9HRVQobWFzaywgbWFzaykg
+aW5zdGVhZC4NCj4gDQo+ID4gU2Vjb25kLCBjbGFtcGluZyBhbiB1bnNpZ25lZCB2YWx1ZSB0byB6
+ZXJvIGlzIGZ1dGlsZSwgYW5kIG9wZW5zIHVzIHRvDQo+ID4gd2FybmluZ3MgbGlrZToNCj4gPg0K
+PiA+ICAgICB3YXJuaW5nOiBjb21wYXJpc29uIG9mIHVuc2lnbmVkIGV4cHJlc3Npb24gaW4g4oCY
+Pj0gMOKAmSBpcyBhbHdheXMNCj4gPiB0cnVlIFstV3R5cGUtbGltaXRzXQ0KPiANCj4gRGF2aWQs
+IGlzIHlvdXIgc2VyaWVzIGZpeCB0aGlzIGFzIHdlbGw/DQoNCkl0IHdvdWxkIGxldCBtaW4oKSBi
+ZSB1c2VkLg0KVGhlIGNvbXBpbGVycyBzaG91bGQgcmVhbGx5IGJlIGxlc3MgcGVkYW50aWMgYWJv
+dXQgdGVzdHMgZm9yDQp1bnNpZ25lZCBiZWluZyA+PSAwIC0gZXNwZWNpYWxseSB3aGVuIHRoZXJl
+IGlzIGFuIHVwcGVyIGxpbWl0IGNoZWNrLg0KDQpJIGNvdWxkIG1ha2UgY2xhbXAoKSBhY3QgYXMg
+bWluKCkgZm9yIHVuc2lnbmVkIHdpdGggdGhlIGxvdyBsaW1pdA0KaXMgemVybyAtIGJ1dCBpdCB3
+b3VsZCBiZSByYXRoZXIgb3Zlci1jb21wbGljYXRlZC4NCg0KCURhdmlkDQoNCj4gDQo+ID4gPiAg
+ICAgICAgICAgICAgICAgcmF0ZSA9ICgqcGFyZW50X3JhdGUgKg0KPiA+ID4gICAgICAgICAgICAg
+ICAgICAgICAgICAgKHZjMy0+ZGl2X2ludCAqIFZDM18yX1BPV18xNiArIHZjMy0+ZGl2X2ZyYykg
+LyBWQzNfMl9QT1dfMTYpOw0KPiA+ID4gICAgICAgICB9IGVsc2Ugew0KPiANCj4gLS0NCj4gV2l0
+aCBCZXN0IFJlZ2FyZHMsDQo+IEFuZHkgU2hldmNoZW5rbw0KPiANCg0KLQ0KUmVnaXN0ZXJlZCBB
+ZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMs
+IE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
 
-Ok
-
-> > +
-> > +               opp-1100000000 {
-> > +                       opp-hz = /bits/ 64 <1100000000>;
->
-> But your table shows 1.0 GHz and 1.2 GHz instead of 1.1 GHz
-
-Will update it.
-
-> > +                       opp-microvolt = <850000>;
-> > +                       opp-supported-hw = <0xF>;
-> > +                       clock-latency-ns = <200000>;
-> > +               };
-> >
-> > -               opp-1488000000 {
-> > -                       opp-hz = /bits/ 64 <1488000000>;
-> > +               opp-1500000000 {
-> > +                       opp-hz = /bits/ 64 <1500000000>;
->
-> So, 1.488 GHz or 1.5 GHz?
-
-1.5 GHz
-
-> > +                       opp-microvolt = <950000>;
->
-> Which regulator is controlled by this microvolt?
-
-Based on the SKU, the XBL sets up the regulator to provide 950000uV
-on CPUs capable of running 1.5G and 850000uV on other SKUs. Linux
-doesn't control it.
-
-Thanks
-Varada
-> > +                       opp-supported-hw = <0x3>;
-> >                         clock-latency-ns = <200000>;
-> >                 };
-> >         };
-> > @@ -150,6 +173,11 @@
-> >                         reg = <0x000a4000 0x721>;
-> >                         #address-cells = <1>;
-> >                         #size-cells = <1>;
-> > +
-> > +                       cpu_speed_bin: cpu_speed_bin@1d {
-> > +                               reg = <0x1d 0x2>;
-> > +                               bits = <7 2>;
-> > +                       };
-> >                 };
-> >
-> >                 rng: rng@e3000 {
-> > --
-> > 2.7.4
-> >
->
->
-> --
-> With best wishes
-> Dmitry
