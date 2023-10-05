@@ -2,59 +2,59 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C77AE92719
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Oct 2023 16:21:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7778DE7B614
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Oct 2023 16:24:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241013AbjJEQUi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 Oct 2023 12:20:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52296 "EHLO
+        id S241802AbjJEQXm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 Oct 2023 12:23:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242530AbjJEQSM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Oct 2023 12:18:12 -0400
+        with ESMTP id S242617AbjJEQVY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Oct 2023 12:21:24 -0400
 Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0939CAF85
-        for <linux-clk@vger.kernel.org>; Thu,  5 Oct 2023 09:07:53 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-533d9925094so2045258a12.2
-        for <linux-clk@vger.kernel.org>; Thu, 05 Oct 2023 09:07:52 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EAF21FFE
+        for <linux-clk@vger.kernel.org>; Thu,  5 Oct 2023 09:11:45 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-538575a38ffso1949754a12.1
+        for <linux-clk@vger.kernel.org>; Thu, 05 Oct 2023 09:11:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696522071; x=1697126871; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1696522304; x=1697127104; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=A9d7j0cYZDsIK9/MC/sZKybXO+oQ0zJyvFJ3Yr4FRco=;
-        b=N3tWq/5w6PYkmVxLN0+/E4dQ+Ch2UbQy8drKpdpMv/BS/DhIaZ+cs2rD//GrgjxczL
-         zKGJWr2yzYZyDOwAQtkZTKflAYBuCOovDBRbjG1ODUGBKB9FQVM9pEyTCQDo7jQn8QZI
-         C51OkE1Pmk+bRR9hxGPL4A5hpLpbOvMrzPF68b3SRBFbCQil9OAhvQZZ758vxwsnh7ag
-         XBCoaR+0qI9EgbEIO4q254iLlylBSbBdvWWn6Mr6nBd9VTBV+703aL7I8ExeH3qFSKti
-         0DW37XBjoENo8Ot1buflEVmHJYj2UfH5ulcB4cLeF0qb6RDVbgVeFf7hEwthhlc4uVsu
-         7qaw==
+        bh=0O5FdMEjI2AitxA1SslmIPPgMaTqESzX6TEk7dD7d5k=;
+        b=Po/HUAGBSuTrY3mV+rvEpU1BPg6VC7kO3nMC/ng4as9KG9SMxQ7xrVVtbTySDZlH2M
+         EBw2Uq88OYrQR09/Gv953LrwdPMta6N7BenhTLFs/cDTGic4ttD+bOhYYqBs4d/UVtlr
+         WOM9RnR/+idWU7TuTKrX7IgpKg0WsVEJ4STeHKbToiD6QHa8xw/UALx5eJ6/YAbQnzEI
+         c7CCqglNkpUHaMD57YzMDk73fGJBodcO63AliWko+zSLdsKmmvCzyD6vAkdFBp3rK0vi
+         NLMUV8yQBRyIbsJJ1+3SGjg4nLbn+E/jAy5CGvxTCB/69xt5EkF/tydvjJk3xLGFP4RL
+         LurA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696522071; x=1697126871;
+        d=1e100.net; s=20230601; t=1696522304; x=1697127104;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A9d7j0cYZDsIK9/MC/sZKybXO+oQ0zJyvFJ3Yr4FRco=;
-        b=TlS3wVIbirXQDGOl1ArkBKUmgGnnWrTYY4+YlRwgi64mnPvtyjeTEoTQEXhIz8rq8F
-         N4qG5vOaw3WyUtSmFUcwR45Ug26R9O8f39eV10e5Zn0hpARbrkfwpworNhsjUldQdGzT
-         p6yD8I0Ak+m+jq1D6QfRt+RHvMkxT7XwP70o/2xyGu6V4KiTqAXt5lwWhJbAKj4n1W9n
-         PLn7cCk+DLlDGMgbY054c7f0tWmy0RSoLh6lQ05HawOI0tJyWKYa1AUX3580VNTTf85M
-         NqpGb0dkGVJikCkZGFP80CAGSN3ImFbuvhaGCtUybQLbO/gEve4YyqABSOmN98sRunUF
-         B2jQ==
-X-Gm-Message-State: AOJu0YyutmLnd+/WU/kdquOr3U+jVl/yPuS8qyjl/ft8vA4uz5+OerpN
-        AbJO9D1FouiKVkcRah4oUfLbgg==
-X-Google-Smtp-Source: AGHT+IFnG+SZs3IDSCXOJSAJ+vJQT9juwlVzYZDKjmMBVRNUOXbrO3Ff4JPb47IziseOqAiusbxhTQ==
-X-Received: by 2002:aa7:c6c4:0:b0:532:ec54:bfff with SMTP id b4-20020aa7c6c4000000b00532ec54bfffmr4972794eds.16.1696522071287;
-        Thu, 05 Oct 2023 09:07:51 -0700 (PDT)
+        bh=0O5FdMEjI2AitxA1SslmIPPgMaTqESzX6TEk7dD7d5k=;
+        b=xKJ7/phBe2a6GjDF47EarQ9aWeROGu4A/yaDEPEH/lduPY+pkihkLu35YeuKuqxg0r
+         ZtqKgWzCwnd6fMae6GF8V5zc5MHb9yWsmLOo7YiWxuZHXbqtzw7hifqI93GhkTi8B9dt
+         5ZiIfYXFQSKV4NzwZ+lqD2A6HFdBrXIgrjIGESynat/+01P8IgPKiRZd2AKalH1+uotU
+         JMeGzYC0sngHcVL0SEHSJP10MzTulM/+k0uDol8X+dMkeTWiJ0l/eS2YgL9E8hwUHZXX
+         D2QUnD8nIFmiiwLnKRgWkRgjqJRjiNXbcOroMp5+N+L9JaNWn/nsKGmFWiCaFoY4RXAE
+         Eiqg==
+X-Gm-Message-State: AOJu0YzH2CCvTtm6TD/H0nr5IKWEXJwOBj7tsxfP3lQDDklqGSgIOf3q
+        FmqLZm8wZwpbAzw/iVaqwitWmA==
+X-Google-Smtp-Source: AGHT+IG4MEtuagvRCLMRUpJlXPomS8iBJDxtG9g1tyH0aeTWICfB7VrkfDj0VNb+2+Lhgr78SQXt1A==
+X-Received: by 2002:aa7:d947:0:b0:531:9c1:8271 with SMTP id l7-20020aa7d947000000b0053109c18271mr5363562eds.14.1696522304327;
+        Thu, 05 Oct 2023 09:11:44 -0700 (PDT)
 Received: from [192.168.1.197] (5-157-101-10.dyn.eolo.it. [5.157.101.10])
-        by smtp.gmail.com with ESMTPSA id n19-20020a056402515300b0053495596f42sm1278344edd.30.2023.10.05.09.07.49
+        by smtp.gmail.com with ESMTPSA id u1-20020a05640207c100b005311e934765sm1278866edy.27.2023.10.05.09.11.41
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Oct 2023 09:07:50 -0700 (PDT)
-Message-ID: <f997c21d-d85b-4ad1-ad5b-999524fc72ac@linaro.org>
-Date:   Thu, 5 Oct 2023 18:07:48 +0200
+        Thu, 05 Oct 2023 09:11:43 -0700 (PDT)
+Message-ID: <331ebdbd-bd38-4b64-9cc0-5bb75d983717@linaro.org>
+Date:   Thu, 5 Oct 2023 18:11:41 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/21] dt-bindings: soc: google: exynos-sysreg: add
- dedicated SYSREG compatibles to GS101
+Subject: Re: [PATCH 09/21] dt-bindings: clock: gs101: Add cmu_top clock
+ indices
 Content-Language: en-US
 To:     Peter Griffin <peter.griffin@linaro.org>, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
@@ -69,7 +69,7 @@ Cc:     tudor.ambarus@linaro.org, andre.draszik@linaro.org,
         linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org
 References: <20231005155618.700312-1-peter.griffin@linaro.org>
- <20231005155618.700312-5-peter.griffin@linaro.org>
+ <20231005155618.700312-10-peter.griffin@linaro.org>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -115,7 +115,7 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231005155618.700312-5-peter.griffin@linaro.org>
+In-Reply-To: <20231005155618.700312-10-peter.griffin@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -123,40 +123,29 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 05/10/2023 17:56, Peter Griffin wrote:
-> GS101 has three different SYSREG controllers, add dedicated
-> compatibles for them to the documentation.
+> CMU_TOP geneerates clocks for all the other CMU units. Add clock
+> indices for those PLLs, muxes, dividers and gates.
 > 
 > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 > ---
->  .../bindings/soc/samsung/samsung,exynos-sysreg.yaml        | 7 +++++++
->  1 file changed, 7 insertions(+)
+>  include/dt-bindings/clock/gs101.h | 204 ++++++++++++++++++++++++++++++
+>  1 file changed, 204 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/gs101.h
+
+This patch should be squashed with bindings for this clock. Header on
+its own makes little sense.
+
+Also, filename should match compatible (vendor prefix, Soc-clock etc).
+
 > 
-> diff --git a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-> index 163e912e9cad..02f580d6489b 100644
-> --- a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-> +++ b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-> @@ -50,6 +50,13 @@ properties:
->                - samsung,exynosautov9-peric1-sysreg
->            - const: samsung,exynosautov9-sysreg
->            - const: syscon
-> +      - items:
-> +          - enum:
-> +              - google,gs101-peric0-sysreg
-> +              - google,gs101-peric1-sysreg
-> +              - google,gs101-apm-sysreg
-> +          - const: google,gs101-sysreg
-
-Please drop this one compatible. Exynos has it only for backwards
-compatibility.
-
-Also, please put entire list ("items") before such entry for
-samsung,exynos5433-sysreg, so everything is more-or-less ordered
-alphabetically, by the fallback compatible.
-
-> +          - const: syscon
->  
->    reg:
->      maxItems: 1
+> diff --git a/include/dt-bindings/clock/gs101.h b/include/dt-bindings/clock/gs101.h
+> new file mode 100644
+> index 000000000000..d1e216a33aeb
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/gs101.h
+> @@ -0,0 +1,204 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
 
 Best regards,
 Krzysztof
