@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72A29E9272A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBC7AE9272D
 	for <linux-clk@archiver.kernel.org>; Thu,  5 Oct 2023 16:05:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236576AbjJEQFB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 Oct 2023 12:05:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57928 "EHLO
+        id S237224AbjJEQFC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 Oct 2023 12:05:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237224AbjJEQD7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Oct 2023 12:03:59 -0400
+        with ESMTP id S237110AbjJEQDx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Oct 2023 12:03:53 -0400
 Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFE9487220
-        for <linux-clk@vger.kernel.org>; Thu,  5 Oct 2023 08:57:38 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id ffacd0b85a97d-32483535e51so1174838f8f.0
-        for <linux-clk@vger.kernel.org>; Thu, 05 Oct 2023 08:57:38 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4371E87200
+        for <linux-clk@vger.kernel.org>; Thu,  5 Oct 2023 08:57:34 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id ffacd0b85a97d-323ef9a8b59so1133862f8f.3
+        for <linux-clk@vger.kernel.org>; Thu, 05 Oct 2023 08:57:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696521457; x=1697126257; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1696521452; x=1697126252; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yQQEqZ6dgoMIiE150E7fSsiHYzKXaQCMbIzJ/S4ZYh0=;
-        b=gCDzUgoGnRiM+ARNjj+9qPWYmacwg5ohZ1fKUdPb3L23S2fECFE2E8xQfrBHr7axwo
-         gIz1yemXGLgorCSLbenlSYrPIZwnxJuFQzVOpu/U7LX5CHm8TOgxRHhSp0tkrJEHNskU
-         9d8zdPVd8LU21Bmg+pcACSDqPoi9LjitbwkOMHtBYCmjRURDpFgZdTWVPCvIfRM8UVXu
-         CK6sUtXI4xY+HYiC90CyPOAG+AFZ0qLVVvvndSSI4rxITtc0dfnJvKj1Y/5NT2YLoKSp
-         ykp99j9jwtHqynQ2dpRy9YvWIVeI2EIdcbG1JGpRoK4049iH+foaAojurpSEviQId2YW
-         ovDg==
+        bh=d11cqKfS+fdxtmrtzzZxvBU5OTmGMgE/XCozhQBkInQ=;
+        b=bolZ88a0qh+aaO+SvY1rYXgLvMveRT0hAU94nU6iInNhb2Jeya1jffxpvoB6en3bFU
+         ccOCAx+kzaq6JNgSBHJ3GKIS68hRhSGeDWNZzUqn+qs8x6KwvPzgeLi4j+vk5S3k+2Nr
+         EZivjsGOVAfSQeBn2Uos2x7rcWu3w4h3LzUDHDIcjoQ1/Upfk3HyY61cPTA/pbSV2gDt
+         2PYvOFpqicIaTIAgaPx0tJrFyLxB2hty1zEQHHVIorFoqcJ6sZ7l8/RNpTYg4Z2oy4UC
+         krqa7Ql2hboQmnOmWNd6jGysl/OS7PAW7JnECNJICLKT0PXVqj6f0Sbjc5OgXyzBi32N
+         ZIaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696521457; x=1697126257;
+        d=1e100.net; s=20230601; t=1696521452; x=1697126252;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yQQEqZ6dgoMIiE150E7fSsiHYzKXaQCMbIzJ/S4ZYh0=;
-        b=id+WbVcRfxovzLDzF0Xntj8HklTJSVFvwcZLbSUMRJzD/Jv9uO7FuoT6xxvv9mj9zp
-         Sztbm4abOX6h/CLgRrvatNWPLSmV3rz7qK9YmmbOjujwkhchsGGxL3Ob9ARhzWMwSEB8
-         RnQHdVHiSBI1dpphZ8eMp5NIfSJ0YdPt/0AKKT6klC9zoASXVr/R6Qa7fYlqrO0qC5xH
-         RZkPAKN8hj4JkZjh2iKc2aK19jqcSgh60g1zUx7tAIIxPLJKY5y33vMyDk9Gt56aXkk5
-         ZEBsBXw7fro+BwONCTyYOhBk1uAo7Tpu53GSJ3v4x2B/w3hqkC/9ES8vCt/FdrrZ873Z
-         QCqA==
-X-Gm-Message-State: AOJu0Yxxb8A3/v9Ul1urL0A0VaXnjF2XY3EBu7i7OYBjlx7b4eKoDAI0
-        Du8wETHt7S8a0sgFvLokwrkdUg==
-X-Google-Smtp-Source: AGHT+IF/lcHc9XUltM5UGXmSAYqRcd/8VSrf26P8R3iLwmpTL9VeuYYzrZE6bmpvvFoO8WJJ0m9ktQ==
-X-Received: by 2002:a5d:6909:0:b0:314:dc0:2fca with SMTP id t9-20020a5d6909000000b003140dc02fcamr5280803wru.29.1696521457202;
-        Thu, 05 Oct 2023 08:57:37 -0700 (PDT)
+        bh=d11cqKfS+fdxtmrtzzZxvBU5OTmGMgE/XCozhQBkInQ=;
+        b=XenQwQMRCygkqH0sr4xUzulxAVX84nJ9PsOXPZmw3mA4QlW+xLWk7VV1lxC+7mI4Jq
+         gPC7iYmQbgEM3H/ETZdoPEw8RVp/uu33UBLjbKnRW/7Fh2Y2boRhzCZ1zAs4yNfvBtTu
+         NPDQ/ZXeHc9s1Y33cvXJgMoMh7TPA1U8W6ZD1Y2wJca4gzbmq6A4N5rI6OyXPCky7IeR
+         BmDJ+XIIYzobbJ31yd4pE0oax8vYWBZ48ue5397WNfKzJLdBCGfahcbTkeYuRb2ji8yW
+         tfjH4c1mht3GotVlzX+cDo32aemLa+jHHFXw/26d3bfxr/DbGO7aQnW06gnJzGnz/rqk
+         lfTQ==
+X-Gm-Message-State: AOJu0YwZgSggf+mIxg8FSBB3oxRMad111rDfs78yMYlDf0TDk63yZcKk
+        Ns/CL/OM0/jPiSagCrMGeEY6cA==
+X-Google-Smtp-Source: AGHT+IF5JxaO9+rCy97IxTy5wUsRkgWUCcXCf+iMUE0xXftzVtEU+uJrHfiP+TqDv55krBbjdkA52Q==
+X-Received: by 2002:adf:ec52:0:b0:321:6de5:68b4 with SMTP id w18-20020adfec52000000b003216de568b4mr5417975wrn.52.1696521452740;
+        Thu, 05 Oct 2023 08:57:32 -0700 (PDT)
 Received: from gpeter-l.lan (host-92-12-225-146.as13285.net. [92.12.225.146])
-        by smtp.gmail.com with ESMTPSA id t9-20020a5d4609000000b0031f8a59dbeasm2084336wrq.62.2023.10.05.08.57.35
+        by smtp.gmail.com with ESMTPSA id t9-20020a5d4609000000b0031f8a59dbeasm2084336wrq.62.2023.10.05.08.57.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Oct 2023 08:57:36 -0700 (PDT)
+        Thu, 05 Oct 2023 08:57:32 -0700 (PDT)
 From:   Peter Griffin <peter.griffin@linaro.org>
 To:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
         mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
@@ -62,9 +62,9 @@ Cc:     peter.griffin@linaro.org, tudor.ambarus@linaro.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org
-Subject: [PATCH 12/21] clk: samsung: clk-pll: Add support for pll_{0516,0517,518}
-Date:   Thu,  5 Oct 2023 16:56:09 +0100
-Message-ID: <20231005155618.700312-13-peter.griffin@linaro.org>
+Subject: [PATCH 09/21] dt-bindings: clock: gs101: Add cmu_top clock indices
+Date:   Thu,  5 Oct 2023 16:56:06 +0100
+Message-ID: <20231005155618.700312-10-peter.griffin@linaro.org>
 X-Mailer: git-send-email 2.42.0.582.g8ccd20d70d-goog
 In-Reply-To: <20231005155618.700312-1-peter.griffin@linaro.org>
 References: <20231005155618.700312-1-peter.griffin@linaro.org>
@@ -74,79 +74,225 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Thesee plls are found in the Tensor gs101 SoC found in the Pixel 6.
-
-pll0516x: Integrer PLL with high frequency
-pll0517x: Integrer PLL with middle frequency
-pll0518x: Integrer PLL with low frequency
-
-PLL0516x
-FOUT = (MDIV * 2 * FIN)/PDIV * 2^SDIV)
-
-PLL0517x and PLL0518x
-FOUT = (MDIV * FIN)/PDIV*2^SDIV)
-
-The PLLs are similar enough to pll_0822x that the same code can handle
-both. The main difference is the change in the fout formula for the
-high frequency 0516 pll.
-
-Locktime for 516,517 & 518 is 150 the same as the pll_0822x lock factor.
-MDIV, SDIV PDIV masks and bit shifts are also the same as 0822x.
-
-When defining the PLL the "con" parameter should be set to CON3
-register, like this
-
-PLL(pll_0517x, CLK_FOUT_SHARED0_PLL, "fout_shared0_pll", "oscclk",
-    PLL_LOCKTIME_PLL_SHARED0, PLL_CON3_PLL_SHARED0,
-    NULL),
+CMU_TOP geneerates clocks for all the other CMU units. Add clock
+indices for those PLLs, muxes, dividers and gates.
 
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- drivers/clk/samsung/clk-pll.c | 9 ++++++++-
- drivers/clk/samsung/clk-pll.h | 3 +++
- 2 files changed, 11 insertions(+), 1 deletion(-)
+ include/dt-bindings/clock/gs101.h | 204 ++++++++++++++++++++++++++++++
+ 1 file changed, 204 insertions(+)
+ create mode 100644 include/dt-bindings/clock/gs101.h
 
-diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-index 74934c6182ce..4ef9fea2a425 100644
---- a/drivers/clk/samsung/clk-pll.c
-+++ b/drivers/clk/samsung/clk-pll.c
-@@ -442,7 +442,11 @@ static unsigned long samsung_pll0822x_recalc_rate(struct clk_hw *hw,
- 	pdiv = (pll_con3 >> PLL0822X_PDIV_SHIFT) & PLL0822X_PDIV_MASK;
- 	sdiv = (pll_con3 >> PLL0822X_SDIV_SHIFT) & PLL0822X_SDIV_MASK;
- 
--	fvco *= mdiv;
-+	if (pll->type == pll_0516x)
-+		fvco = fvco * 2 * mdiv;
-+	else
-+		fvco *= mdiv;
+diff --git a/include/dt-bindings/clock/gs101.h b/include/dt-bindings/clock/gs101.h
+new file mode 100644
+index 000000000000..d1e216a33aeb
+--- /dev/null
++++ b/include/dt-bindings/clock/gs101.h
+@@ -0,0 +1,204 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (C) 2023 Linaro Ltd.
++ * Author: Peter Griffin <peter.griffin@linaro.org>
++ *
++ * Device Tree binding constants for Google gs101 clock controller.
++ */
 +
- 	do_div(fvco, (pdiv << sdiv));
- 
- 	return (unsigned long)fvco;
-@@ -1316,6 +1320,9 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
- 	case pll_1417x:
- 	case pll_0818x:
- 	case pll_0822x:
-+	case pll_0516x:
-+	case pll_0517x:
-+	case pll_0518x:
- 		pll->enable_offs = PLL0822X_ENABLE_SHIFT;
- 		pll->lock_offs = PLL0822X_LOCK_STAT_SHIFT;
- 		if (!pll->rate_table)
-diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
-index 0725d485c6ee..ffd3d52c0dec 100644
---- a/drivers/clk/samsung/clk-pll.h
-+++ b/drivers/clk/samsung/clk-pll.h
-@@ -38,6 +38,9 @@ enum samsung_pll_type {
- 	pll_0822x,
- 	pll_0831x,
- 	pll_142xx,
-+	pll_0516x,
-+	pll_0517x,
-+	pll_0518x,
- };
- 
- #define PLL_RATE(_fin, _m, _p, _s, _k, _ks) \
++#ifndef _DT_BINDINGS_CLOCK_GOOGLE_GS101_H
++#define _DT_BINDINGS_CLOCK_GOOGLE_GS101_H
++
++/* CMU_TOP PLL*/
++#define CLK_FOUT_SHARED0_PLL		1
++#define CLK_FOUT_SHARED1_PLL		2
++#define CLK_FOUT_SHARED2_PLL		3
++#define CLK_FOUT_SHARED3_PLL		4
++#define CLK_FOUT_SPARE_PLL		5
++
++/* CMU_TOP MUX*/
++#define CLK_MOUT_SHARED0_PLL		6
++#define CLK_MOUT_SHARED1_PLL		7
++#define CLK_MOUT_SHARED2_PLL		8
++#define CLK_MOUT_SHARED3_PLL		9
++#define CLK_MOUT_SPARE_PLL		10
++#define CLK_MOUT_BUS0_BUS		11
++#define CLK_MOUT_CMU_BOOST		12
++#define CLK_MOUT_BUS1_BUS		13
++#define CLK_MOUT_BUS2_BUS		14
++#define CLK_MOUT_CORE_BUS		15
++#define CLK_MOUT_EH_BUS			16
++#define CLK_MOUT_CPUCL2_SWITCH		17
++#define CLK_MOUT_CPUCL1_SWITCH		18
++#define CLK_MOUT_CPUCL0_SWITCH		19
++#define CLK_MOUT_CPUCL0_DBG		20
++#define CLK_MOUT_CMU_HPM		21
++#define CLK_MOUT_G3D_SWITCH		22
++#define CLK_MOUT_G3D_GLB		23
++#define CLK_MOUT_DPU_BUS		24
++#define CLK_MOUT_DISP_BUS		25
++#define CLK_MOUT_G2D_G2D		26
++#define CLK_MOUT_G2D_MSCL		27
++#define CLK_MOUT_HSI0_USB31DRD		28
++#define CLK_MOUT_HSI0_BUS		29
++#define CLK_MOUT_HSI0_DPGTC		30
++#define CLK_MOUT_HSI0_USBDPDGB		31
++#define CLK_MOUT_HSI1_BUS		32
++#define CLK_MOUT_HSI1_PCIE		33
++#define CLK_MOUT_HSI2_BUS		34
++#define CLK_MOUT_HSI2_PCIE		35
++#define CLK_MOUT_HSI2_UFS_EMBD		36
++#define CLK_MOUT_HSI2_MMC_CARD		37
++#define CLK_MOUT_CSIS			38
++#define CLK_MOUT_PDP_BUS		39
++#define CLK_MOUT_PDP_VRA		40
++#define CLK_MOUT_IPP_BUS		41
++#define CLK_MOUT_G3AA			42
++#define CLK_MOUT_ITP			43
++#define CLK_MOUT_DNS_BUS		44
++#define CLK_MOUT_TNR_BUS		45
++#define CLK_MOUT_MCSC_ITSC		46
++#define CLK_MOUT_MCSC_MCSC		47
++#define CLK_MOUT_GDC_SCSC		48
++#define CLK_MOUT_GDC_GDC0		49
++#define CLK_MOUT_GDC_GDC1		50
++#define CLK_MOUT_MFC_MFC		51
++#define CLK_MOUT_MIF_SWITCH		52
++#define CLK_MOUT_MIF_BUS		53
++#define CLK_MOUT_MISC_BUS		54
++#define CLK_MOUT_MISC_SSS		55
++#define CLK_MOUT_PERIC0_IP		56
++#define CLK_MOUT_PERIC0_BUS		57
++#define CLK_MOUT_PERIC1_IP		58
++#define CLK_MOUT_PERIC1_BUS		59
++#define CLK_MOUT_TPU_TPU		60
++#define CLK_MOUT_TPU_TPUCTL		61
++#define CLK_MOUT_TPU_BUS		62
++#define CLK_MOUT_TPU_UART		63
++#define CLK_MOUT_TPU_HPM		64
++#define CLK_MOUT_BO_BUS			65
++#define CLK_MOUT_G3D_BUSD		66
++
++/* CMU_TOP Dividers*/
++#define CLK_DOUT_SHARED0_DIV3		67
++#define CLK_DOUT_SHARED0_DIV2		68
++#define CLK_DOUT_SHARED0_DIV4		69
++#define CLK_DOUT_SHARED0_DIV5		70
++#define CLK_DOUT_SHARED1_DIV3		71
++#define CLK_DOUT_SHARED1_DIV2		72
++#define CLK_DOUT_SHARED1_DIV4		73
++#define CLK_DOUT_SHARED2_DIV2		74
++#define CLK_DOUT_SHARED3_DIV2		75
++#define CLK_DOUT_BUS0_BUS		76
++#define CLK_DOUT_CMU_BOOST		77
++#define CLK_DOUT_BUS1_BUS		78
++#define CLK_DOUT_BUS2_BUS		79
++#define CLK_DOUT_CORE_BUS		80
++#define CLK_DOUT_EH_BUS			81
++#define CLK_DOUT_CPUCL2_SWITCH		82
++#define CLK_DOUT_CPUCL1_SWITCH		83
++#define CLK_DOUT_CPUCL0_SWITCH		84
++#define CLK_DOUT_CPUCL0_DBG		85
++#define CLK_DOUT_CMU_HPM		86
++#define CLK_DOUT_G3D_SWITCH		87
++#define CLK_DOUT_G3D_GLB		88
++#define CLK_DOUT_DPU_BUS		89
++#define CLK_DOUT_DISP_BUS		90
++#define CLK_DOUT_G2D_G2D		91
++#define CLK_DOUT_G2D_MSCL		92
++#define CLK_DOUT_HSI0_USB31DRD		93
++#define CLK_DOUT_HSI0_BUS		94
++#define CLK_DOUT_HSI0_DPGTC		95
++#define CLK_DOUT_HSI0_USBDPDGB		96
++#define CLK_DOUT_HSI1_BUS		97
++#define CLK_DOUT_HSI1_PCIE		98
++#define CLK_DOUT_HSI2_BUS		100
++#define CLK_DOUT_HSI2_PCIE		101
++#define CLK_DOUT_HSI2_UFS_EMBD		102
++#define CLK_DOUT_HSI2_MMC_CARD		103
++#define CLK_DOUT_CSIS			104
++#define CLK_DOUT_PDP_BUS		105
++#define CLK_DOUT_PDP_VRA		106
++#define CLK_DOUT_IPP_BUS		107
++#define CLK_DOUT_G3AA			108
++#define CLK_DOUT_ITP			109
++#define CLK_DOUT_DNS_BUS		110
++#define CLK_DOUT_TNR_BUS		111
++#define CLK_DOUT_MCSC_ITSC		112
++#define CLK_DOUT_MCSC_MCSC		113
++#define CLK_DOUT_GDC_SCSC		114
++#define CLK_DOUT_GDC_GDC0		115
++#define CLK_DOUT_GDC_GDC1		116
++#define CLK_DOUT_MFC_MFC		117
++#define CLK_DOUT_MIF_BUS		118
++#define CLK_DOUT_MISC_BUS		119
++#define CLK_DOUT_MISC_SSS		120
++#define CLK_DOUT_PERIC0_BUS		121
++#define CLK_DOUT_PERIC0_IP		122
++#define CLK_DOUT_PERIC1_BUS		123
++#define CLK_DOUT_PERIC1_IP		124
++#define CLK_DOUT_TPU_TPU		125
++#define CLK_DOUT_TPU_TPUCTL		126
++#define CLK_DOUT_TPU_BUS		127
++#define CLK_DOUT_TPU_UART		128
++#define CLK_DOUT_TPU_HPM		129
++#define CLK_DOUT_BO_BUS			130
++
++/* CMU_TOP Gates*/
++#define CLK_GOUT_BUS0_BUS		131
++#define CLK_GOUT_BUS1_BUS		132
++#define CLK_GOUT_BUS2_BUS		133
++#define CLK_GOUT_CORE_BUS		134
++#define CLK_GOUT_EH_BUS			135
++#define CLK_GOUT_CPUCL2_SWITCH		136
++#define CLK_GOUT_CPUCL1_SWITCH		137
++#define CLK_GOUT_CPUCL0_SWITCH		138
++#define CLK_GOUT_CPUCL0_DBG		139
++#define CLK_GOUT_CMU_HPM		140
++#define CLK_GOUT_G3D_SWITCH		141
++#define CLK_GOUT_G3D_GLB		142
++#define CLK_GOUT_DPU_BUS		143
++#define CLK_GOUT_DISP_BUS		144
++#define CLK_GOUT_G2D_G2D		145
++#define CLK_GOUT_G2D_MSCL		146
++#define CLK_GOUT_HSI0_USB31DRD		147
++#define CLK_GOUT_HSI0_BUS		148
++#define CLK_GOUT_HSI0_DPGTC		149
++#define CLK_GOUT_HSI0_USBDPDGB		150
++#define CLK_GOUT_HSI1_BUS		151
++#define CLK_GOUT_HSI1_PCIE		152
++#define CLK_GOUT_HSI2_BUS		153
++#define CLK_GOUT_HSI2_PCIE		154
++#define CLK_GOUT_HSI2_UFS_EMBD		155
++#define CLK_GOUT_HSI2_MMC_CARD		156
++#define CLK_GOUT_CSIS			157
++#define CLK_GOUT_PDP_BUS		158
++#define CLK_GOUT_PDP_VRA		159
++#define CLK_GOUT_IPP_BUS		160
++#define CLK_GOUT_G3AA			161
++#define CLK_GOUT_ITP			162
++#define CLK_GOUT_DNS_BUS		163
++#define CLK_GOUT_TNR_BUS		164
++#define CLK_GOUT_MCSC_ITSC		165
++#define CLK_GOUT_MCSC_MCSC		166
++#define CLK_GOUT_GDC_SCSC		167
++#define CLK_GOUT_GDC_GDC0		168
++#define CLK_GOUT_GDC_GDC1		169
++#define CLK_GOUT_MFC_MFC		170
++#define CLK_GOUT_MIF_SWITCH		171
++#define CLK_GOUT_MIF_BUS		172
++#define CLK_GOUT_MISC_BUS		173
++#define CLK_GOUT_MISC_SSS		174
++#define CLK_GOUT_PERIC0_BUS		175
++#define CLK_GOUT_PERIC0_IP		176
++#define CLK_GOUT_PERIC1_BUS		177
++#define CLK_GOUT_PERIC1_IP		178
++#define CLK_GOUT_TPU_TPU		179
++#define CLK_GOUT_TPU_TPUCTL		180
++#define CLK_GOUT_TPU_BUS		181
++#define CLK_GOUT_TPU_UART		182
++#define CLK_GOUT_TPU_HPM		183
++#define CLK_GOUT_BO_BUS			184
++#define CLK_GOUT_CMU_BOOST		185
++
++#endif /* _DT_BINDINGS_CLOCK_GOOGLE_GS101_H */
 -- 
 2.42.0.582.g8ccd20d70d-goog
 
