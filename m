@@ -2,58 +2,59 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25A6DE75451
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Oct 2023 16:36:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05852E71D4F
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Oct 2023 16:38:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235337AbjJEQfb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 Oct 2023 12:35:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38714 "EHLO
+        id S232345AbjJEQim (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 Oct 2023 12:38:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239141AbjJEQe6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Oct 2023 12:34:58 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16BBA270B
-        for <linux-clk@vger.kernel.org>; Thu,  5 Oct 2023 09:33:47 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-51e28cac164so5052944a12.1
-        for <linux-clk@vger.kernel.org>; Thu, 05 Oct 2023 09:33:46 -0700 (PDT)
+        with ESMTP id S232245AbjJEQiK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Oct 2023 12:38:10 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BDD1768A
+        for <linux-clk@vger.kernel.org>; Thu,  5 Oct 2023 09:10:40 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id 4fb4d7f45d1cf-5384975e34cso2125144a12.0
+        for <linux-clk@vger.kernel.org>; Thu, 05 Oct 2023 09:10:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696523624; x=1697128424; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1696522239; x=1697127039; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=8c40JhfrTc8etKT/g7b53nFSNQXzN0Fl4j0k9i1c50c=;
-        b=uvgr1ExE52F6AvpHwAgp0A3esS28/Y6S/SirxPWveUVZhyM31cSxJk8nRl2gqX/D3v
-         dijaxuTu8ikXNlbYIFeOUqphfV6x/QFakyoE1FXYeX39KqOKAidSYKdD1DyUHmE/YExX
-         lGAdQFFcVaAZFVlxcuQhtaphcVcmoh4EB8A4gGr7ROlEF8HmMM237cSBjkUhF4woaAnX
-         nmIC8gT+dhoq7yghwo45K5zWy+2te9AbxfVHhHDbeYXf/7gSHCSMRjmRDgPpuNsJKk3o
-         xYbdOQfiK+dgmA6ydg7c7G63UrRsQjt4wM05+R+nnwJQT4zGiBqp0//ruzGgNrN2Dgon
-         ZcPQ==
+        bh=rbASzbIUc3xaFW2/mk6fLZQLTe1Mo/0p0hvLfVcSKGs=;
+        b=ac6pa+00jw+2hZYPCxFaSBeivFKYDhjjlvrHWLdH+H10gJAG7gspHZlkSUNz7vFwxa
+         oZVPq1q72MwoSASAneTkyVVw1yeXoAmhgKA7nbSHnEPvGmnqctS9NUSRUgxKV9SJrbAr
+         oWP7d20aVKbFt9SyR7RRYyr1WcOsbBDAake5kDwtP0yB32+ceaQ2MNZVSlhmKgti3XBo
+         qcjOARTCLm3gJP7w6EFqWPdcYUUD8D9R8T1vzOyC2cfdc35mYyCkuZBVH7AswDhRes77
+         gF4RhWayLzGQSFI91m0l69HYjYK/dAXPrUhF5pu0kj10ipwknZ52lBdjELeuAPDzzyVV
+         1QQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696523624; x=1697128424;
+        d=1e100.net; s=20230601; t=1696522239; x=1697127039;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8c40JhfrTc8etKT/g7b53nFSNQXzN0Fl4j0k9i1c50c=;
-        b=YbNalBj4POspyKW6khUoLychbrOGO63aK2LzPKQemL4mDaVEG+XT1SUt0FkEfDp3qr
-         rggELfj9MXM2HnFjvKXYd8yd259x8oAnAl2/1cKmPBTty8ahD4v1TIY2omKGJnOyCNLM
-         qhmxfOg5lwxPHyDjH55sIxaHYzTveMQnjLW1avxhg4dyEfPYnasmLuUDQQHQ6dhM1coG
-         HkLm712xVWVX8QHOOeNyB9dWHDNM33ZZydVa9XHSxxuanr1DMpLXkgG+nmvUdW2ud1MB
-         X/zKvd1YtPcxcM1jVBh52i+XS0Pdlzh0f48OnlJDTSoK/NUZ2UnKsVKxBRVIBKxOVPeh
-         hL/Q==
-X-Gm-Message-State: AOJu0Yxs5nlOGlLnS0IudLvgPtQyv/v3JHiX/wp4bpHjNG0dv6lXLSYX
-        7dh0+BQM42yocol/5KsnpfffMA==
-X-Google-Smtp-Source: AGHT+IETn24FX7/1T/kDc4QOjDrxp9ZvFLhxbbmIfgTYNc/2p2nKVIlvw0uHwZKgefemP2ctnYPI+Q==
-X-Received: by 2002:a05:6402:12d8:b0:523:b37e:b83b with SMTP id k24-20020a05640212d800b00523b37eb83bmr2762146edx.13.1696523623941;
-        Thu, 05 Oct 2023 09:33:43 -0700 (PDT)
+        bh=rbASzbIUc3xaFW2/mk6fLZQLTe1Mo/0p0hvLfVcSKGs=;
+        b=GixrDftdkrFVt5gIHGs87SU9IQKbKn4iW3VxBJPH1/q0jNMs5zerbpHXifNleE7jyx
+         UQihigmkNCFI2optspzd4L7/6PxV/mSK7ti7OaJCligF/cvHrGVMsh3edZiTMazXIufj
+         ay0FKjKMJS9JCLmE9Qc62H0lRzCwXdAkNPXL46pxho9prlSwVHmquYw0TPQaQ8AFVFzV
+         jeXbGst6hTEQ8EcHKNoivmJKbJ15rQlIwxbwNrmxotFZwjNp2nrptiII4qUbhhqvO5yc
+         m7Bh6YOz5yLxnc4AnpvVxR/QcPPWP/2XEhJkHoS8ApO2KBe1sboPM27tdcR++9Fhbhg2
+         g8Yg==
+X-Gm-Message-State: AOJu0Ywlo94Cx8vlZN61CZ7dr2iNtRKvT8mLdjM10ArCFcl2R1tf8XjM
+        Ke8pcYSjyHVx9mVTetQAxncfmw==
+X-Google-Smtp-Source: AGHT+IEs0tHPBrA0lAKMdCX/q8h4M7MDStu/0ujSqjkFqqVquKT+YTpOQ/EGm+6VNyv3hPqyVcaRkA==
+X-Received: by 2002:a50:fa99:0:b0:523:bfec:4913 with SMTP id w25-20020a50fa99000000b00523bfec4913mr4794286edr.0.1696522239300;
+        Thu, 05 Oct 2023 09:10:39 -0700 (PDT)
 Received: from [192.168.1.197] (5-157-101-10.dyn.eolo.it. [5.157.101.10])
-        by smtp.gmail.com with ESMTPSA id b6-20020a056402138600b00536031525e5sm1277462edv.91.2023.10.05.09.33.41
+        by smtp.gmail.com with ESMTPSA id u1-20020a05640207c100b005311e934765sm1278866edy.27.2023.10.05.09.10.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Oct 2023 09:33:43 -0700 (PDT)
-Message-ID: <7f2032c2-812a-46b5-8914-056cd53c37cb@linaro.org>
-Date:   Thu, 5 Oct 2023 18:33:41 +0200
+        Thu, 05 Oct 2023 09:10:38 -0700 (PDT)
+Message-ID: <816700a9-0c81-4ef5-8ca3-6d5147e2dd0d@linaro.org>
+Date:   Thu, 5 Oct 2023 18:10:36 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 19/21] google/gs101: Add dt overlay for oriole board
+Subject: Re: [PATCH 08/21] dt-bindings: pinctrl: samsung: add
+ gs101-wakeup-eint compatible
 Content-Language: en-US
 To:     Peter Griffin <peter.griffin@linaro.org>, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
@@ -68,7 +69,7 @@ Cc:     tudor.ambarus@linaro.org, andre.draszik@linaro.org,
         linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org
 References: <20231005155618.700312-1-peter.griffin@linaro.org>
- <20231005155618.700312-20-peter.griffin@linaro.org>
+ <20231005155618.700312-9-peter.griffin@linaro.org>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -114,7 +115,7 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231005155618.700312-20-peter.griffin@linaro.org>
+In-Reply-To: <20231005155618.700312-9-peter.griffin@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -122,68 +123,26 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 05/10/2023 17:56, Peter Griffin wrote:
-> The LK bootloader on Pixel6 searches for a dt overlay in the
-> dtbo partition with a board_id and board_rev that matches
-> what is baked into the device. If this overlay is not present
-> then the phone will bootloop in fastboot and you can't boot
-> the upstream kernel.
-> 
-> This commit adds a dtbo for the production oriole variant.
-> The other pre-production board overlays are not included
-> at this time.
-> 
-> Adding the dtbo here allows for a better experience when
-> building/booting the upstream kernel on Pixel devices
-> as all the DT required to boot the device will be created
-> as part of the kernel build process. Rather than having to
-> fetch the dtbo from some other repo.
+> gs101 is similar to newer Exynos SoCs like Exynos850 and ExynosAutov9
+> where more than one pin controller can do external wake-up interrupt.
+> So add a dedicated compatible for it.
 > 
 > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 > ---
->  arch/arm64/boot/dts/google/Makefile          |  1 +
->  arch/arm64/boot/dts/google/gs101-oriole.dtso | 21 ++++++++++++++++++++
->  2 files changed, 22 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/google/gs101-oriole.dtso
+>  .../bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml      | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/google/Makefile b/arch/arm64/boot/dts/google/Makefile
-> index 6d2026a767d4..3f1761f8daa9 100644
-> --- a/arch/arm64/boot/dts/google/Makefile
-> +++ b/arch/arm64/boot/dts/google/Makefile
-> @@ -2,5 +2,6 @@
->  
->  dtb-$(CONFIG_ARCH_GOOGLE_TENSOR) += \
->  	gs101-oriole.dtb \
-> +	gs101-oriole.dtbo
->  
->  
-> diff --git a/arch/arm64/boot/dts/google/gs101-oriole.dtso b/arch/arm64/boot/dts/google/gs101-oriole.dtso
-> new file mode 100644
-> index 000000000000..50832fd94204
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/google/gs101-oriole.dtso
-> @@ -0,0 +1,21 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Oriole DVT Device Tree
-> + *
-> + * Copyright 2021-2023 Google,LLC
-> + */
-> +
-> +/dts-v1/;
-> +/plugin/;
-> +
-> +/ {
-> +	board_id = <0x20304>;
-> +	board_rev = <0x10000>;
+> diff --git a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml
+> index 1de91a51234d..668fd903d06f 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml
+> @@ -37,6 +37,7 @@ properties:
+>        - samsung,exynos7-wakeup-eint
+>        - samsung,exynos850-wakeup-eint
+>        - samsung,exynosautov9-wakeup-eint
+> +      - google,gs101-wakeup-eint
 
-Undocumented properties. Please propose bindings... Also, underscores
-are not allowed, so in this form it is a no-go... although I understand
-the pain of not being able to change the bootloader.
-
-For reference:
-https://lore.kernel.org/all/20220605150747.GA3465286-robh@kernel.org/
-https://lore.kernel.org/all/20220610163343.GA1787330-robh@kernel.org/
-
+Alphanumerical order, if possible.
 
 Best regards,
 Krzysztof
