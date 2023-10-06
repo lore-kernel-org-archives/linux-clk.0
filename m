@@ -2,81 +2,134 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F94DE81E04
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Oct 2023 14:53:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE729E81E04
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Oct 2023 15:01:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232658AbjJFOxW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 Oct 2023 10:53:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55308 "EHLO
+        id S232677AbjJFPBm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 Oct 2023 11:01:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232637AbjJFOxW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Oct 2023 10:53:22 -0400
+        with ESMTP id S232698AbjJFPBj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Oct 2023 11:01:39 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6661AC6;
-        Fri,  6 Oct 2023 07:53:21 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73D73C433C7;
-        Fri,  6 Oct 2023 14:53:20 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30E37CF;
+        Fri,  6 Oct 2023 08:01:37 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79F93C433C8;
+        Fri,  6 Oct 2023 15:01:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696604001;
-        bh=hrgggEGosELvz7tO/RqZ7JUeXLjbLpkBBVEktBc+OzU=;
+        s=k20201202; t=1696604496;
+        bh=6taXQRftrWSlYCOuvDdqeV/zIbzOd5VDuZw/kWcNpik=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FUoSK0RyDwIcxEH0ffclHP1EAduYZpTlsvDqRskZieqin/bDUDy0NfLfBt5JQZtg1
-         u1D6dOeK0pOSd9DLa5AHuGBxTNKhTa889M3k8HRKwGo6AY3G1Ve/e2lUzIaSPuscNz
-         E7LURfSlYGJAVz31eOjjlH4pB/JANz08Puf+04V3CK6jUvGKRk5CnPBku9duaTZbBG
-         Y9K0lMHVp2RGdrNcXhM2VCb2XMRnVVYeTCDTNUym5Qw0T1ufXhm14djgsnQJd1grEi
-         5J7o/k+CxJusbREvVsqiaLeMVFhnwaPksgeA5Q4rjO5sGoht5TLs190HqXAXaozSLh
-         nDllmk1JGarYw==
-Date:   Fri, 6 Oct 2023 16:53:17 +0200
+        b=VkJ3KAzd4vcVvX6xiPHSbtkGwjeSa5rv83UMX2sp7Ri1A+pzL9+txKqW/Mi1DjPj1
+         QxuWSk0knUwSQ7Vi4/0OpC5Roc/jB3ScHJD3Rs648JR2VFivpTTmqIidXNSfTtgCzR
+         hG/jz9WMh3UrdIWtPsYfBuqUGFELjxYPj8e6kkhV0PWy04dTKT6+fWvJbzBMgXGJbN
+         M15DStIKz3J4v0NJMsw4LUkNFfbUOo2e6AojXzR7J0UHs8UA3BHZnVnanMwHbG4fWU
+         ARsT3Zw6e/zOxFbGTn/ITERCU+V1B0B3JL0whfJR3yLlWY8mpXTXzeztcYnTPEgHz/
+         MCZdT5NB6r8bA==
+Date:   Fri, 6 Oct 2023 17:01:34 +0200
 From:   Maxime Ripard <mripard@kernel.org>
 To:     Benedikt Spranger <b.spranger@linutronix.de>
-Cc:     Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org,
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Dinh Nguyen <dinguyen@kernel.org>
 Subject: Re: [PATCH 1/1] clk: socfpga: gate: Fix of by factor 2 for serial
  console
-Message-ID: <h6j2pl35gxckhytyab5gsa3uypdv6trwseiludnwaxlnskuq2e@2bgyswbpbhwx>
+Message-ID: <ujs6kaisllqu3qzm76qkwpmdy2vnulp6z742ooclbsdz36zl5f@m7ujgar4pwqs>
 References: <20231005095927.12398-1-b.spranger@linutronix.de>
  <20231005095927.12398-2-b.spranger@linutronix.de>
  <qpskbgigcaoyjuhzeguz366cjukv3ij7utlbkra5edhwn6uzh4@bdedm6vs62y5>
  <20231005203202.08b5d1cf@mitra>
- <77d94f6a6a4b45f8ad711f52ca6ba86c.sboyd@kernel.org>
- <20231006053906.1bb2a7d8@mitra>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ohme6vguvci4zhdr"
+        protocol="application/pgp-signature"; boundary="c7koskstu2fnzmv5"
 Content-Disposition: inline
-In-Reply-To: <20231006053906.1bb2a7d8@mitra>
+In-Reply-To: <20231005203202.08b5d1cf@mitra>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---ohme6vguvci4zhdr
+--c7koskstu2fnzmv5
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 06, 2023 at 05:39:06AM +0200, Benedikt Spranger wrote:
-> > What's your analysis?
-> Commit 9607beb917df ("clk: socfpga: gate: Add a determine_rate hook")
-> breaks serial console output and changing the determine_rate hook to=20
-> __clk_mux_determine_rate() fix the issue.
+On Thu, Oct 05, 2023 at 08:32:23PM +0200, Benedikt Spranger wrote:
+> On Thu, 5 Oct 2023 13:34:01 +0200
+> Maxime Ripard <mripard@kernel.org> wrote:
+>=20
+> > Hi,
+> >=20
+> > On Thu, Oct 05, 2023 at 11:59:27AM +0200, Benedikt Spranger wrote:
+> > > Commit 9607beb917df ("clk: socfpga: gate: Add a determine_rate
+> > > hook") introduce a specific determine_rate hook. As a result the
+> > > calculated clock for the serial IP is off by factor 2 after that
+> > > i.e. if the system configures a baudrate of 115200 it is set
+> > > physicaly to 57600. =20
+> >=20
+> > Where is that factor 2 coming from?
+> In drivers/tty/serial/8250/8250_dw.c p->uartclk is set twice as high,
+> as it should be:=20
+>=20
+> dw8250_set_termios() is called and rate is evaluated to 20000000 in the
+> bad and 10000000 in the good case. As a result p->uartclk is set to
+> 20000000 in the bad case.
 
-That's not a sickness, that's a symptom. There's something wrong
-somewhere, and you're just papering over it.
+Sure, sorry I worded that poorly. What I meant was what clock tree
+decision is taken now that wasn't taken before that leads to that factor
+2 difference.
+
+> > > Change the determine_rate hook to the reparent variant
+> > > __clk_mux_determine_rate() to fix the issue. =20
+> >=20
+> > It's also not clear to me why that would fix anything. This patch
+> > should only make the old behaviour explicit, could you expand a bit
+> > on what happens?
+> Booting the kernel with console=3DttyS0,115200 result in a corrupted
+> character output. Setting the serial terminal application to 57600
+> make the serial console working.
+>=20
+> I dug deeper and added some debug output (see patch below):
+
+Thanks for the traces, that's helpful. It looks like the culprit is:
+
+Good:
+
+            init-1       [001] .....     0.125643: clk_rate_request_start: =
+l4_sp_clk min 0 max 4294967295, parent per_base_clk (200000000)
+            init-1       [001] .....     0.125651: clk_rate_request_done: l=
+4_sp_clk min 0 max 4294967295, parent per_base_clk (200000000)
+            init-1       [001] .....     0.125657: dw8250_set_termios: dw82=
+50_set_termios: rate =3D 200000000 newrate =3D 1843200
+
+vs Bad:
+
+            init-1       [001] .....     0.116063: clk_rate_request_start: =
+l4_sp_clk min 0 max 4294967295, parent per_base_clk (200000000)
+            init-1       [001] .....     0.116089: clk_rate_request_done: l=
+4_sp_clk min 0 max 4294967295, parent per_base_clk (200000000)
+            init-1       [001] .....     0.116096: dw8250_set_termios: dw82=
+50_set_termios: rate =3D 4294967274 newrate =3D 1843200
+
+The rate returned is super suspicious, as it's an -EINVAL casted into an
+unsigned long. So I think something on that clock chain is returning an
+error for some reason, which is then treated as a rate by the rest and
+everybody's just confused.
+
+What is the board that you're using?
 
 Maxime
 
---ohme6vguvci4zhdr
+--c7koskstu2fnzmv5
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZSAfXQAKCRDj7w1vZxhR
-xV0ZAQCPKV9Ohe5ffLhTlsBGIFaJzXXHBZqoLRzKHrfWiLKtKgEA/MY/ea7a/A0c
-QaXJhAFkt7vpAB634d2TDU6eTsKI1Qo=
-=SBiv
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZSAhTgAKCRDj7w1vZxhR
+xeT0AQDcFNiOR/+IMa3C4XSivPlYKI73G6KloGXxOE73v2Vo9AEAgvqnRE1jXgiI
+kLWtgVV+spXXVKvAklp/yyq/3OfC7AQ=
+=b2Cu
 -----END PGP SIGNATURE-----
 
---ohme6vguvci4zhdr--
+--c7koskstu2fnzmv5--
