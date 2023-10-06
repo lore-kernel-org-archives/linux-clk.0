@@ -2,106 +2,139 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84C63E81E19
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Oct 2023 16:40:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A378CE94118
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Oct 2023 20:44:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232738AbjJFQkn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 Oct 2023 12:40:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53746 "EHLO
+        id S233525AbjJFUof (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 Oct 2023 16:44:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232496AbjJFQkn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Oct 2023 12:40:43 -0400
-Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2567FC2;
-        Fri,  6 Oct 2023 09:40:40 -0700 (PDT)
-Date:   Fri, 6 Oct 2023 18:40:36 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1696610438;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=xJK9V2VtLPnBrImfjMOmFTNsUiDy1Y0fI2z1sk+3JmU=;
-        b=1uoOGzSonar2EkeoparSKR9fpxQO4KWP9mczppZnHMlBSeaTPqCqtigTWCZJ3XFCDtecad
-        G1L9RRBTaWv+ds1u7J9/x8WnhL9MLdYkDkGHszVTd7pRYndKjWotV/GG1dQR5rEi2G3M3d
-        v53c4q7xCOmH/13Sp/ylOVcRhFfWVQIoDzcNAHI4iiegIkFvgd1CyFpKLHaKe/8OtVXQid
-        SeqnVVChA8exJYD9p/KbyIxL1zF7DgcFO16wPwuNE0tTnEmlGjY5EyR9KC1rth3Z1vRIGT
-        XA3MNp2PhpBSY4GQERrXN6APSzbjwntKvCYRguDWYNWjFYut3XC8880gxIwiaw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1696610438;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=xJK9V2VtLPnBrImfjMOmFTNsUiDy1Y0fI2z1sk+3JmU=;
-        b=74pAOyjNU+plxaJMGG2ktItK+APbVyqDvDy1lePId2QUmYEWVnhs5OppTY+ms9MDHHfPQ9
-        zKL2rsyKf7o9yMCA==
-From:   Benedikt Spranger <b.spranger@linutronix.de>
-To:     Maxime Ripard <mripard@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Dinh Nguyen <dinguyen@kernel.org>
-Subject: Re: [PATCH 1/1] clk: socfpga: gate: Fix of by factor 2 for serial
- console
-Message-ID: <20231006184020.7fb6f509@mitra>
-In-Reply-To: <ujs6kaisllqu3qzm76qkwpmdy2vnulp6z742ooclbsdz36zl5f@m7ujgar4pwqs>
-References: <20231005095927.12398-1-b.spranger@linutronix.de>
-        <20231005095927.12398-2-b.spranger@linutronix.de>
-        <qpskbgigcaoyjuhzeguz366cjukv3ij7utlbkra5edhwn6uzh4@bdedm6vs62y5>
-        <20231005203202.08b5d1cf@mitra>
-        <ujs6kaisllqu3qzm76qkwpmdy2vnulp6z742ooclbsdz36zl5f@m7ujgar4pwqs>
-Organization: Linutronix GmbH
+        with ESMTP id S233133AbjJFUoe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Oct 2023 16:44:34 -0400
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED33FC2;
+        Fri,  6 Oct 2023 13:44:31 -0700 (PDT)
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-6c63117a659so1595281a34.0;
+        Fri, 06 Oct 2023 13:44:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696625071; x=1697229871;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QVeSFOcC2dk0ctOlaTvU697lvAQuyZRAWFETqFvTV5k=;
+        b=jbtKxs7I+IGJLCk5LvGgCUlu3Q3aNjekC6b7LF9OXSqp6dfWYny2lq00LKKDplAQKc
+         zy/OJYhpIBObRtqMCvnNJdmofX8iLRrkbsXg/Nlteh5Qn7aoecLzb5VI9oMjFC1CQScc
+         m/FHXI/qh8pAccsrKHyAiYD6DrlRfvf02Y5MjbhexdNjW340ejJ9N60TVa41elhnwqvo
+         ssuSkQdY6c0hX34uduGy1eGMggnLoC4niuwsqcUMhLCnZPmAD8cCxsS4XUrSX0NzDnAp
+         U4emfECJ85TL655r/9BwHy4qFjczIxNu2sr49lsptFBWxRfs8sb73bBa1H4ueKuYloqy
+         OONQ==
+X-Gm-Message-State: AOJu0Ywb2phqbEAz+fd7uBBZr84OUv91eWK3j880F0t49K8JwzllvOkn
+        s6gIE2FDSRY+ofeVJjU4WA==
+X-Google-Smtp-Source: AGHT+IEwEFUtgK5CZxwluzpBUXw0YyfFoQ+xTnFLszG5vqKToMmpIR0Khu/GYDeAFgRyI1o1TgrJ9Q==
+X-Received: by 2002:a05:6870:5608:b0:1de:84a3:bb91 with SMTP id m8-20020a056870560800b001de84a3bb91mr10491581oao.16.1696625071080;
+        Fri, 06 Oct 2023 13:44:31 -0700 (PDT)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id br26-20020a056871b41a00b001c4ede43955sm877065oac.31.2023.10.06.13.44.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Oct 2023 13:44:30 -0700 (PDT)
+Received: (nullmailer pid 267686 invoked by uid 1000);
+        Fri, 06 Oct 2023 20:44:28 -0000
+Date:   Fri, 6 Oct 2023 15:44:28 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Peter Griffin <peter.griffin@linaro.org>
+Cc:     krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com,
+        s.nawrocki@samsung.com, linus.walleij@linaro.org,
+        wim@linux-watchdog.org, linux@roeck-us.net,
+        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
+        olof@lixom.net, cw00.choi@samsung.com, tudor.ambarus@linaro.org,
+        andre.draszik@linaro.org, semen.protsenko@linaro.org,
+        soc@kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH 06/21] dt-bindings: arm: google: Add bindings for Google
+ ARM platforms
+Message-ID: <20231006204428.GA265726-robh@kernel.org>
+References: <20231005155618.700312-1-peter.griffin@linaro.org>
+ <20231005155618.700312-7-peter.griffin@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231005155618.700312-7-peter.griffin@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 6 Oct 2023 17:01:34 +0200
-Maxime Ripard <mripard@kernel.org> wrote:
+On Thu, Oct 05, 2023 at 04:56:03PM +0100, Peter Griffin wrote:
+> This introduces bindings and dt-schema for the Google tensor SoCs.
+> Currently just gs101 and pixel 6 are supported.
+> 
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+>  .../devicetree/bindings/arm/google.yaml       | 46 +++++++++++++++++++
+>  1 file changed, 46 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/google.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/google.yaml b/Documentation/devicetree/bindings/arm/google.yaml
+> new file mode 100644
+> index 000000000000..3759d423d9cb
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/google.yaml
+> @@ -0,0 +1,46 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/arm/google.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Google Tensor platforms
+> +
+> +maintainers:
+> +  - Peter Griffin <peter.griffin@linaro.org>
+> +
+> +description: |
+> +  ARM platforms using SoCs designed by Google branded "Tensor"
+> +  used in Pixel devices.
+> +
+> +  Currently upstream this is devices using "gs101" SoC which
+> +  is found in Pixel 6, Pixel 6 Pro and Pixel 6a.
+> +
+> +  Google have a few different names for the SoC.
+> +  - Marketing name ("Tensor")
+> +  - Codename ("Whitechapel")
+> +  - SoC ID ("gs101")
+> +  - Die ID ("S5P9845");
+> +
+> +  Likewise there are a couple of names for the actual device
+> +  - Marketing name ("Pixel 6")
+> +  - Codename ("Oriole")
+> +
+> +  Devicetrees should use the lowercased SoC ID and lowercased
+> +  board codename. e.g. gs101 and gs101-oriole
 
-> On Thu, Oct 05, 2023 at 08:32:23PM +0200, Benedikt Spranger wrote:
-> > On Thu, 5 Oct 2023 13:34:01 +0200
-> > Maxime Ripard <mripard@kernel.org> wrote:
-> > 
-> > > Where is that factor 2 coming from?
-> > In drivers/tty/serial/8250/8250_dw.c p->uartclk is set twice as high,
-> > as it should be: 
-> > 
-> > dw8250_set_termios() is called and rate is evaluated to 20000000 in the
-> > bad and 10000000 in the good case. As a result p->uartclk is set to
-> > 20000000 in the bad case.
-> 
-> Sure, sorry I worded that poorly. What I meant was what clock tree
-> decision is taken now that wasn't taken before that leads to that factor
-> 2 difference.
-OK.
+Wrap lines at 80 char.
 
-> Thanks for the traces, that's helpful. It looks like the culprit is:
-> 
-> Good:
-> 
->             init-1       [001] .....     0.125643: clk_rate_request_start: l4_sp_clk min 0 max 4294967295, parent per_base_clk (200000000)
->             init-1       [001] .....     0.125651: clk_rate_request_done: l4_sp_clk min 0 max 4294967295, parent per_base_clk (200000000)
->             init-1       [001] .....     0.125657: dw8250_set_termios: dw8250_set_termios: rate = 200000000 newrate = 1843200
-> 
-> vs Bad:
-> 
->             init-1       [001] .....     0.116063: clk_rate_request_start: l4_sp_clk min 0 max 4294967295, parent per_base_clk (200000000)
->             init-1       [001] .....     0.116089: clk_rate_request_done: l4_sp_clk min 0 max 4294967295, parent per_base_clk (200000000)
->             init-1       [001] .....     0.116096: dw8250_set_termios: dw8250_set_termios: rate = 4294967274 newrate = 1843200
-> 
-> The rate returned is super suspicious, as it's an -EINVAL casted into an
-> unsigned long. So I think something on that clock chain is returning an
-> error for some reason, which is then treated as a rate by the rest and
-> everybody's just confused.
-OK.
+Otherwise,
 
-> What is the board that you're using?
-I am using a Cyclone5 DE0-Nano-Soc/Atlas board
-(socfpga_cyclone5_de0_nano_soc.dts). 
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-Regards
-    Benedikt Spranger
+> +
+> +properties:
+> +  $nodename:
+> +    const: '/'
+> +  compatible:
+> +    oneOf:
+> +
+> +      - description: Google Pixel 6 / Oriole
+> +        items:
+> +          - enum:
+> +              - google,gs101-oriole
+> +          - const: google,gs101
+> +
+> +additionalProperties: true
+> +
+> +...
+> -- 
+> 2.42.0.582.g8ccd20d70d-goog
+> 
