@@ -2,156 +2,250 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75DDBE92FF9
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Oct 2023 08:49:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99C32E92FDE
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Oct 2023 10:05:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231134AbjJFIta (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 Oct 2023 04:49:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51108 "EHLO
+        id S231594AbjJFKFu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 Oct 2023 06:05:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230434AbjJFIt3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Oct 2023 04:49:29 -0400
-Received: from wout4-smtp.messagingengine.com (wout4-smtp.messagingengine.com [64.147.123.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E142B83;
-        Fri,  6 Oct 2023 01:49:27 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id 553463200B27;
-        Fri,  6 Oct 2023 04:49:22 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Fri, 06 Oct 2023 04:49:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-        :cc:content-type:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; t=1696582161; x=1696668561; bh=fq
-        7jUTQDYY98nWZgnWeYl6Cagk6XWBLFE67pLot1gWo=; b=kBZzKMgJZsyJhJ4jkw
-        jQU20dAsOX6gV5+9PEwOC6EDKw7Yrab03w7x2jeKDOi5U8sb/zmQ8Do9RTmngNC8
-        yW1XTJd1bUm/rTmNlB9F9TExc3icsyP1glN07DJTwfqW+FzA7E339NrTeU5sRc/L
-        n3VnfG7n+yfSNcSvAHPhilUJEguUWvbqXhCccmjZaMBvxEY4yFK+ZSL9Gp0LtFha
-        cZ0A9UoKYcf32ekNsano2pLPsmc54RzW/g3tPBuRro7L3uPt90fH3hIN8BzDhNze
-        p9rH9D8bX843QRBOTm7lQAd41lszXDeeJikGphg72AEiyROyBJHPvmCE3IgtC1B8
-        I8xw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; t=1696582161; x=1696668561; bh=fq7jUTQDYY98n
-        WZgnWeYl6Cagk6XWBLFE67pLot1gWo=; b=Z9wduYnbaSjO4hO9z4ThmB4lkJ+ww
-        qv48JvZetC68Oy7Cwu1FZTuWCiNrKWgPVlC3WfLZq9CQAtRwtR+Hgmm5hm7ogHvR
-        g0HhACHoO4MLD7fxHHWj2C3pZU6RASeeLf/9XyNP46PxJ9+Wl/0D6WC9DBYJNVUx
-        mtNhY7IAXC9PqRSim+iZ7rzPLHV0BIft9I6alaUUj3XxUqUv5l7FauuYS80Rf78F
-        T7iw5HeL/xcklmoBHAfAZMLxvFOyUulgeZzpl67xGf0yowfKAw8nWtTXzHAQ8HCE
-        psBkN+QRkt9PJmeDlBFt3h9VAeNTcJJeZFH8l8liepztop+DKATVvf2XQ==
-X-ME-Sender: <xms:EMofZT2i-9GISWVnjxgMhlfr_K0J1DDCikeZffdfaxxvS-c9ZvWmTA>
-    <xme:EMofZSH-GDrTlbKrOc09JAu6xzst-K08JW-bRaweoc7LuQJp4GgEj665KOBjFQo1J
-    Ga257VUxycRUUCsOyk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrgeeigddtjecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
-    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
-    hnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:EMofZT4ywgzN7LkzmXzXPySCJeAKjukN8v43qGhqwxizLsQRUilCXg>
-    <xmx:EMofZY2E3kF4qLgYpdHd4RbTBZENJnE3pcBjp3j1fIuAPC4cUrEcNA>
-    <xmx:EMofZWHiFKv5E0Dvozm7fdb71mAiOQ7Sue59rxI-niu4_MbVJRdtNw>
-    <xmx:EcofZZYKcoYBWJfaMLlaG0rL0xmTDuYDJQLE8dL3BH9l1IWy6uP6mQ>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id ABDB6B60089; Fri,  6 Oct 2023 04:49:20 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.9.0-alpha0-958-g1b1b911df8-fm-20230927.002-g1b1b911d
+        with ESMTP id S231605AbjJFKFu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Oct 2023 06:05:50 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FAAA9F;
+        Fri,  6 Oct 2023 03:05:48 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8316C433C8;
+        Fri,  6 Oct 2023 10:05:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1696586748;
+        bh=8PFHT//NMbMZR23rMrKHsrDEG54VwQXT1ipKQX/aKUQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NzIpDAmqqmws/MQtX+6LJJuiOg9b8f3tG0FT9Af2tBkJwJGO3laO4Qxy2YepUrrQL
+         JKXpxd3UUFR6oBsLy/pVb7ODa2f6Nj+mGwgtkXwmPdlMaxiHZLCEezOBWeZdUYshHH
+         Z7r0l+pBPJNVF6H5lNSxlnYpEiCIdRRHmsRsMRI78jOR8P4NHUL6FKcSi2t2CBJeh5
+         af4NQJ9uTc/uHsPuX7xfEsUOIkCNJILryGvygHnWL3LpZrpreh1EogQ4iKjiSfOmlr
+         wHWWveFozv+Bsn/VUCKour1nCUWDhkmLDGth92Jvhc3W19jdp/daR6uxjYehzXFS/e
+         i5ah4xIyn6OSw==
+Date:   Fri, 6 Oct 2023 12:05:45 +0200
+From:   Maxime Ripard <mripard@kernel.org>
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     Chen-Yu Tsai <wenst@chromium.org>,
+        Alexandre Mergnat <amergnat@baylibre.com>, sboyd@kernel.org,
+        mturquette@baylibre.com, matthias.bgg@gmail.com, msp@baylibre.com,
+        yangyingliang@huawei.com, u.kleine-koenig@pengutronix.de,
+        miles.chen@mediatek.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, kernel@collabora.com
+Subject: Re: [PATCH 2/2] clk: mediatek: mt8195-topckgen: Refactor parents for
+ top_dp/edp muxes
+Message-ID: <jgfb66mjw6nfdypfazpjyhdprackhgdpwyx2moohpj7kzz3rii@lvvkt4upxo4e>
+References: <20230713072138.84117-1-angelogioacchino.delregno@collabora.com>
+ <20230713072138.84117-3-angelogioacchino.delregno@collabora.com>
+ <9a0817c2-4101-5c21-977d-77ac0d83a067@baylibre.com>
+ <CAGXv+5E7YYdkG7GtxG90KzdAG8Kke+74Amtbw4mmyVNZgDZHRA@mail.gmail.com>
+ <jv6daj2w3pwjtde3m3m26yg4wyxbbio4zqra5yqc4gb32ri5ub@noinbbkjovwm>
+ <25724ee3-858a-01eb-352b-3edbfad31c8e@collabora.com>
+ <jxgy2pvns4ri2aj5nmdhb4zbluseuzdejbplh2avwz63df2cfx@grrrdm6ujzi4>
+ <24d17b07-1e8d-05f6-46b7-9da1ff1bed7a@collabora.com>
+ <hd2ydj33vp3dsri4czx6frxxvir6vxnovc27n6rrgs4qqbtrjz@whhyt2iinq5k>
+ <d88b72f1-6a60-dc7d-6922-1dde278a61db@collabora.com>
 MIME-Version: 1.0
-Message-Id: <e8b23683-36ac-4547-9386-935a1b211d7d@app.fastmail.com>
-In-Reply-To: <44816879-a3a7-4bd0-bb20-19a645107b4b@linaro.org>
-References: <20231005155618.700312-1-peter.griffin@linaro.org>
- <20231005155618.700312-19-peter.griffin@linaro.org>
- <ZR75cIvnQS2cqTT3@google.com> <2023100520-cleaver-sinless-fbae@gregkh>
- <99419159-cab0-4c79-a4a0-12229bfad3c0@linaro.org>
- <2023100513-mashing-scrubber-ea59@gregkh>
- <efc9f099-9c97-460b-b0c8-9891aa3b772a@linaro.org>
- <ZR9EnFw3vB92vlYM@google.com>
- <44816879-a3a7-4bd0-bb20-19a645107b4b@linaro.org>
-Date:   Fri, 06 Oct 2023 10:48:58 +0200
-From:   "Arnd Bergmann" <arnd@arndb.de>
-To:     "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
-        "William McVicker" <willmcvicker@google.com>
-Cc:     "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Peter Griffin" <peter.griffin@linaro.org>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        krzysztof.kozlowski+dt@linaro.org,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        "Conor Dooley" <conor+dt@kernel.org>,
-        "Stephen Boyd" <sboyd@kernel.org>,
-        "Tomasz Figa" <tomasz.figa@gmail.com>,
-        "Sylwester Nawrocki" <s.nawrocki@samsung.com>,
-        "Linus Walleij" <linus.walleij@linaro.org>,
-        "Wim Van Sebroeck" <wim@linux-watchdog.org>,
-        "Guenter Roeck" <linux@roeck-us.net>,
-        "Catalin Marinas" <catalin.marinas@arm.com>,
-        "Will Deacon" <will@kernel.org>, "Olof Johansson" <olof@lixom.net>,
-        "Chanwoo Choi" <cw00.choi@samsung.com>,
-        "Tudor Ambarus" <tudor.ambarus@linaro.org>,
-        andre.draszik@linaro.org, semen.protsenko@linaro.org,
-        soc@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-watchdog@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH 18/21] arm64: dts: google: Add initial Google gs101 SoC support
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="75xqvzb34y2tmjoa"
+Content-Disposition: inline
+In-Reply-To: <d88b72f1-6a60-dc7d-6922-1dde278a61db@collabora.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Oct 6, 2023, at 08:06, Krzysztof Kozlowski wrote:
-> On 06/10/2023 01:19, William McVicker wrote:
->> On 10/05/2023, Krzysztof Kozlowski wrote:
->>> On 05/10/2023 21:23, Greg KH wrote:
->>
->> Being able to include SERIAL_SAMSUNG and SERIAL_MSM without all the vendor> specific drivers that ARCH_EXYNOS and ARCH_QCOM select is very
-> valuable for
->> debugging early boot issues.
->
-> Really? How related? The drivers are independent. You describe some
-> out-of-tree development process which we never needed for upstream work.
-> And we did here quite a lot of upstream, specially if you look at ARCH_QCOM.
 
-Right: in general, all drivers are independent of the platform
-besides the typical 'depends on ARCH_FOO || COMPILE_TEST' dependency,
-but I think it's worth mentioning the known exceptions, so Greg and
-Will can take that fight to the respective places rather than
-discussing it in the platform submission:
+--75xqvzb34y2tmjoa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-- Some subsystems are considered 'special' and the maintainers
-  prefer the drivers to be automatically selected based on the
-  ARCH_* settings instead of having user-visible options. This is
-  traditionally true for large chunks of drivers/irqchip,
-  drivers/clocksource and drivers/pinctrl, though it has gotten
-  better over time on all of them.
+On Wed, Oct 04, 2023 at 06:29:41PM +0200, AngeloGioacchino Del Regno wrote:
+> Il 18/07/23 11:03, Maxime Ripard ha scritto:
+> > On Mon, Jul 17, 2023 at 04:30:48PM +0200, AngeloGioacchino Del Regno wr=
+ote:
+> > > > > > > AFAIK the recommended way to deal with this is to use
+> > > > > > > clk_set_rate_exclusive() and co. in whatever consumer driver =
+that
+> > > > > > > needs exclusive control on the clock rate.
+> > > > > >=20
+> > > > > > I guess it works, but it looks to me like the issue here is tha=
+t the
+> > > > > > provider should disable it entirely? My expectation for
+> > > > > > clk_set_rate_exclusive() is that one user needs to lock the clo=
+ck rate
+> > > > > > to operate properly.
+> > > > > >=20
+> > > > > > If the provider expectation is that the rate or parent should n=
+ever
+> > > > > > changed, then that needs to be dealt with at the provider level=
+, ie
+> > > > > > through the clk_ops.
+> > > > > >=20
+> > > > > > > However I'm not sure if that works for parents. It should, gi=
+ven the
+> > > > > > > original use case was for the sunxi platforms, which like the=
+ MediaTek
+> > > > > > > platform here has 2 PLLs for video related consumers, but I c=
+ouldn't
+> > > > > > > find code verifying it.
+> > > > > >=20
+> > > > > > If you want to prevent clocks from ever being reparented, you c=
+an use
+> > > > > > the new clk_hw_determine_rate_no_reparent() determine_rate
+> > > > > > implementation.
+> > > > > >=20
+> > > > >=20
+> > > > > We want the clocks to be reparented, as we need them to switch pa=
+rents as
+> > > > > explained before... that's more or less how the tree looks:
+> > > > >=20
+> > > > > TVDPLL(x) -> PLL Divider (fixed) -> MUX -> Gate -> Controller
+> > > > >=20
+> > > > > Besides, I think that forcing *one* parent to the dp/edp mux woul=
+d produce a
+> > > > > loss of the flexibility that the clock framework provides.
+> > > > >=20
+> > > > > I again want to emphasize on the fact that TVDPLL1 and TVDPLL2 ar=
+e *identical*
+> > > > > in specs, and on that there will never be a MT8195 SoC that has o=
+nly one of
+> > > > > the two PLLs, for obvious reasons...
+> > > > >=20
+> > > > > P.S.: If you need more context, I'll be glad to answer to any oth=
+er question!
+> > > >=20
+> > > > Then I have no idea what the question is :)
+> > > >=20
+> > > > What are you trying to achieve / fix, and how can I help you ? :)
+> > >=20
+> > > Chen-Yu, Alexandre had/have questions about if there was any other so=
+lution instead
+> > > of using the solution of *this* commit, so, if there's any other bett=
+er solution
+> > > than the one that I've sent as this commit.
+> > >=20
+> > > I'm the one saying that this commit is the best solution :-P
+> >=20
+> > I went back to the original patch, and my understanding is that, when
+> > running two output in parallel, the modeset of one can affect the second
+> > one, and that's bad, right?
+> >=20
+> > If so, then you usually have multiple ways to fix this:
+> >=20
+> >   - This patch
+> >   - Using clk_set_rate_exclusive like Chen-Yu suggested
+> >   - Using a notifier to react to a rate change and adjust
+> >=20
+> > I'm not aware of any "official" guidelines at the clock framework level
+> > regarding which to pick and all are fine.
+> >=20
+> > My opinion though would be to use clk_set_rate_exclusive(), for multiple
+> > reasons.
+> >=20
+> > The first one is that it models correctly what you consumer expects:
+> > that the rate is left untouched. This can happen in virtually any
+> > situation where you have one clock in the same subtree changing rate,
+> > while the patch above will only fix that particular interference.
+> >=20
+> > The second one is that, especially with DP, you only have a handful of
+> > rates you'll need to reach. 148MHz, 297MHz, 594MHz, and possibly a bunch
+> > of others for eDP panels. It's thus likely to have both controllers
+> > having the same frequency requirement, and thus it makes it possible to
+> > run from only one PLL and shut the other down.
+> >=20
+> > This patch will introduce orphan clocks issues that are always a bit
+> > bothersome. A notifier would be troublesome to use and will probably
+> > introduce glitches plus some weird interaction with scrambling if you
+> > ever support it.
+> >=20
+> > So, yeah, using clk_set_rate_exclusive() seems like the best option to =
+me :)
+> >=20
+> > Maxime
+>=20
+> Sorry for resurrecting a very old thread, I was able to come back to this=
+ issue
+> right now: there's an issue that I can't really think about how to solve =
+with
+> just the usage of clk_set_rate_exclusive().
+>=20
+> Remembering that the clock tree is as following:
+> TVDPLL(x) -> PLL Divider (fixed) ->
+> -> MUX (can choose any of TVDPLL(1/2)_d(2/4/6/8/16)) -> Gate -> Controller
+>=20
+> The DPI driver is doing:
+> 1. Check the best factor for setting rate of a TVDPLL
+> 2. Set rate of one TVDPLL (specified in DT): clk_set_rate(dpi->tvd_clk, r=
+ate);
+>    2a. Read the rate of that PLL again to know the precise clock output
+> 3. Set rate on the Gate clock (forwards to MUX, selecting TVDPLL(x)_d(y)):
+>    clk_set_rate(dpi->pixel_clk, rate);
+>=20
+>=20
+> Now, the issue is: if I change the final pixel_clk rate setting to _exclu=
+sive(),
+> nothing still guarantees that we will be selecting the TVDPLL that we have
+> manipulated in step 2, look at the following example.
+>=20
+> tvd_clk =3D=3D TVDPLL1
+> pixel_clk =3D=3D TOP_DP (can be muxed to any tvdpll1/2 dividers!)
+>=20
+> clk_set_rate(tvdpll1, something); new_rate =3D clk_get_rate(tvdpll1)
+>=20
+> ...calculations... new_rate =3D pixclk * factor;
+> ...more calculations....
+>=20
+> clk_set_rate(pixel_clk, calculated_something)
+>        ^^^^^^
+>=20
+> There is still no guarantee that pixel_clk is getting parented to one of =
+the
+> TVDPLL1 dividers, as it could still get parented to a TVDPLL2 divider ins=
+tead
+> if the other controller has set TVDPLL2 to "an acceptable rate": it's tru=
+e that
+> this would work - yes but suboptimally! - because we want to set a specif=
+ic
+> factor to reduce jitter on the final pixel clock.
 
-- Some older 32-bit platforms are still not as modular as we'd
-  like them to be, especially the StrongARM (ARMv4) platforms that
-  require a custom kernel build, and some of ARMv4T and ARMv5
-  boards that are still missing DT support. These tend to require
-  drivers they directly link to from board code, so disabling
-  the drivers would cause a link failure until this gets
-  cleaned up.
+If your clock ends up with a suboptimal set of parameters, you have a
+problem with determine_rate.
 
-- A couple of drivers are force-enabled based on the ARCH_*
-  options because booting without these drivers would risk
-  permanent damage to hardware, e.g. in overtemp or overcurrent
-  scenarios.
+> ....And I came back to this commit being again the best solution for me b=
+ecause....
+>=20
+> 1. You also seem to agree with me that a notifier would be troublesome an=
+d would
+>    probably introduce glitches; and
+> 2. clk_set_rate_exclusive() doesn't give me any guarantee about selecting=
+ the same
+>    PLL that the driver was manipulating before.
+>=20
+>=20
+> Am I underestimating and/or ignoring anything else in all of that?
 
-- ACPI based platforms require the PCI host bridge driver to
-  be built-in rather than a loadable module because ACPI
-  needs to probe PCI devices during early boot.
+I guess I'm still confused about why you want to allow reparenting in
+the first place, but still don't want to reparent to the other PLL?
 
-- Some subsystems (notably drivers/gpu/, but others as well)
-  have an excessive number of 'select' statements, so you
-  end up surprise-enabling a number of additional drivers
-  and subsystems by enabling certain less important platform
-  specific drivers.
+Anyway, it's not a big deal. Whatever works for you I guess :)
 
-      Arnd
+Maxime
+
+--75xqvzb34y2tmjoa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZR/b+QAKCRDj7w1vZxhR
+xSmtAQDmKsVFm7LxpronCns/ubhF36eZSB4LCFVSHzfsHkN5/AEAgl17iNbKTAIp
+0jl5NxH23VLajNx8vwlPUJ4rZOd0vQ4=
+=Iz1c
+-----END PGP SIGNATURE-----
+
+--75xqvzb34y2tmjoa--
