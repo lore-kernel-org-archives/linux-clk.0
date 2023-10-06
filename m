@@ -2,117 +2,152 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6046CE94115
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Oct 2023 20:52:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E89EEE94120
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Oct 2023 21:08:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233549AbjJFUwK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 Oct 2023 16:52:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39754 "EHLO
+        id S233651AbjJFVIs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 Oct 2023 17:08:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233558AbjJFUwJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Oct 2023 16:52:09 -0400
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 890A5F4;
-        Fri,  6 Oct 2023 13:52:07 -0700 (PDT)
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-6c67060fdfaso1681029a34.2;
-        Fri, 06 Oct 2023 13:52:07 -0700 (PDT)
+        with ESMTP id S233652AbjJFVIr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Oct 2023 17:08:47 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3823BE
+        for <linux-clk@vger.kernel.org>; Fri,  6 Oct 2023 14:08:43 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-9b29186e20aso454517866b.2
+        for <linux-clk@vger.kernel.org>; Fri, 06 Oct 2023 14:08:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1696626522; x=1697231322; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=/eZ+baChX62/XFQYAtL7KxuFGmIsac+98wOC92qP+Vo=;
+        b=AVelWM3G8DTl1US9TwU+M/f0KazfVUqFLqm3qI93zxfY4qIasxISJmPzoonMYtx4Zw
+         3V+AbPM7zL3MA8QS+JjqQGNmBW4EbKvfm0JGAHlGz2v94YpH8ERwJdfurFWXA0EJBijf
+         vCmVLaKEOX4uQ5yUSMp9IsWfjkTcNPUF4DaSklELH5jX0wuR31bXXd9+8BoRQsYVVnCW
+         YP3jQmLe7xn5fqL0PQPyjcr/NUtvgZG369vGFbjkdocLhnzugi/0ZE75WG8S8OpZF6nI
+         Rdu5p+5QIwLC0aN1i0jAnxSci3/Jm/p61m51Ed5Ck5CDSfOOyt/5joFfmb2rn5No5L1D
+         cGoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696625527; x=1697230327;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1696626522; x=1697231322;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AxA7X0kfXMYgoBV1O1X+yHhp+zy1lafQd7Biqyk0F6I=;
-        b=w7zT9BLoUeSBTR+8fZauwIDkdcKhM7PW8kT9dwPHXsI0mBcGjFpV8iMH6bhI5CDCPw
-         ZKLDeUhyYtjwPzyOB0SjhhOKSdDEfX6wJrJ4YFg1N2+aZRZy9Bv3CLfjvW1vLf1AcMoh
-         DB0dCfWW5+uRZDTkR0T38x+Ir4rPGu8LVVJh4foasAiBZXupT3UhDsBp38uW12UqukWw
-         1cG/+AUULPnh1iFhP1cFJO4Ukjx0vMND5zjbEQ0dWPvuC8lnZrZvxE7CXpUBFGQFi5Ch
-         f1FOjmADeRvJ4yWuGsUZj54SHTD8QbqmgxhyBq4pHXjkG9Col6/fpr9rPHPuLKbSdqfP
-         3D7A==
-X-Gm-Message-State: AOJu0YyG6dfGEPJ5HPRI877Vy+5Pa/C1jaUCiS9XU24/ozHOlzhwLuib
-        Bx9d49On9IWpSqxyrBuh2Q==
-X-Google-Smtp-Source: AGHT+IHX3H8MRm6KCZ4S+gOcfHJbAyvk4Xms+EtBBj4/O9yoRvZYjP9vx8dfGltszT00mRSHuPIzXA==
-X-Received: by 2002:a05:6830:442:b0:6c6:42ca:ed52 with SMTP id d2-20020a056830044200b006c642caed52mr9250691otc.30.1696625526665;
-        Fri, 06 Oct 2023 13:52:06 -0700 (PDT)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id n24-20020a9d4d18000000b006bee51de9f6sm679314otf.18.2023.10.06.13.52.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Oct 2023 13:52:05 -0700 (PDT)
-Received: (nullmailer pid 275984 invoked by uid 1000);
-        Fri, 06 Oct 2023 20:52:04 -0000
-Date:   Fri, 6 Oct 2023 15:52:04 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Peter Griffin <peter.griffin@linaro.org>
-Cc:     krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com,
-        s.nawrocki@samsung.com, linus.walleij@linaro.org,
-        wim@linux-watchdog.org, linux@roeck-us.net,
-        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-        olof@lixom.net, cw00.choi@samsung.com, tudor.ambarus@linaro.org,
-        andre.draszik@linaro.org, semen.protsenko@linaro.org,
-        soc@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH 19/21] google/gs101: Add dt overlay for oriole board
-Message-ID: <20231006205204.GA269353-robh@kernel.org>
-References: <20231005155618.700312-1-peter.griffin@linaro.org>
- <20231005155618.700312-20-peter.griffin@linaro.org>
+        bh=/eZ+baChX62/XFQYAtL7KxuFGmIsac+98wOC92qP+Vo=;
+        b=J+Heq2sxIQ6DAzW26/x6Ud5tu91UrSMgz8ea0Ik45wwXYF5KVQp2ZZU905fjJt9i5B
+         bLiChEQVSjifDC8f7lJx/01Ojc6hqavpayUPIE8p9gc7uVkvFFfeWJSuGRAxWMGxq4Qf
+         Px2FBBxfFY9FPSlxWDE6AF4pmMuJ0XTgpuEQT6fTZzvwrw9esqRCL+cS4knINa5+zQRP
+         +jpmA+rQkFeDlxio4ZNAGIqK4/WQ3MLAETqI7WmZWaWlPCKMyGbJpKdqvIQuHgiBmpIJ
+         uEzaPaaaYg0WgftCbldV4ZmEvKEogCkDsG4p4AE3PZzq4HDC0pTfO/ymZe7DtoFi5YAF
+         bwwA==
+X-Gm-Message-State: AOJu0Yx1Fypad8QzGWuAR/nzRpMfNGiswL8V6AK73dSVIEEUm1+Tj5eQ
+        qY0DcwVSmL2v4fKKFUY+rjWzog==
+X-Google-Smtp-Source: AGHT+IG8Yms6t5wo23tONA1+PCuYA6/OoOa7XwEE5xoFjtOeUUmAYpssGeokoXvEAN23wjKXUB8KHw==
+X-Received: by 2002:a17:906:535e:b0:9ae:42da:803c with SMTP id j30-20020a170906535e00b009ae42da803cmr7412194ejo.48.1696626522211;
+        Fri, 06 Oct 2023 14:08:42 -0700 (PDT)
+Received: from [192.168.200.140] (178235177147.dynamic-4-waw-k-1-1-0.vectranet.pl. [178.235.177.147])
+        by smtp.gmail.com with ESMTPSA id p11-20020a1709061b4b00b0097404f4a124sm3450228ejg.2.2023.10.06.14.08.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Oct 2023 14:08:41 -0700 (PDT)
+Message-ID: <bc8fa799-aa64-4b69-97ce-8f1872c8eb11@linaro.org>
+Date:   Fri, 6 Oct 2023 23:08:39 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231005155618.700312-20-peter.griffin@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] clk: qcom: smd: Disable unused clocks
+To:     Stephan Gerhold <stephan.gerhold@kernkonzept.com>,
+        Bjorn Andersson <andersson@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Stephan Gerhold <stephan@gerhold.net>
+References: <20231004-clk-qcom-smd-rpm-unused-v2-1-9a5281f324dc@kernkonzept.com>
+Content-Language: en-US
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20231004-clk-qcom-smd-rpm-unused-v2-1-9a5281f324dc@kernkonzept.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Oct 05, 2023 at 04:56:16PM +0100, Peter Griffin wrote:
-> The LK bootloader on Pixel6 searches for a dt overlay in the
-> dtbo partition with a board_id and board_rev that matches
-> what is baked into the device. If this overlay is not present
-> then the phone will bootloop in fastboot and you can't boot
-> the upstream kernel.
+On 4.10.2023 14:10, Stephan Gerhold wrote:
+> At the moment, clk-smd-rpm forces all clocks on at probe time (for
+> "handoff"). However, it does not make the clk core aware of that.
 > 
-> This commit adds a dtbo for the production oriole variant.
-> The other pre-production board overlays are not included
-> at this time.
+> This means that the clocks stay enabled forever if they are not used
+> by anything. We can easily disable them again after bootup has been
+> completed, by making the clk core aware of the state. This is
+> implemented by returning the current state of the clock in
+> is_prepared().
 > 
-> Adding the dtbo here allows for a better experience when
-> building/booting the upstream kernel on Pixel devices
-> as all the DT required to boot the device will be created
-> as part of the kernel build process. Rather than having to
-> fetch the dtbo from some other repo.
+> Checking the SPMI clock registers reveals that this allows the RPM to
+> disable unused BB/RF clocks. This reduces the power consumption quite
+> significantly and is also needed to allow entering low-power states.
 > 
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
->  arch/arm64/boot/dts/google/Makefile          |  1 +
->  arch/arm64/boot/dts/google/gs101-oriole.dtso | 21 ++++++++++++++++++++
->  2 files changed, 22 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/google/gs101-oriole.dtso
+> As of commit d6edc31f3a68 ("clk: qcom: smd-rpm: Separate out
+> interconnect bus clocks") the interconnect-related clocks are no longer
+> managed/exposed by clk-smd-rpm. Also the BI_TCXO_AO clock is now
+> critical (and never disabled).
 > 
-> diff --git a/arch/arm64/boot/dts/google/Makefile b/arch/arm64/boot/dts/google/Makefile
-> index 6d2026a767d4..3f1761f8daa9 100644
-> --- a/arch/arm64/boot/dts/google/Makefile
-> +++ b/arch/arm64/boot/dts/google/Makefile
-> @@ -2,5 +2,6 @@
->  
->  dtb-$(CONFIG_ARCH_GOOGLE_TENSOR) += \
->  	gs101-oriole.dtb \
-> +	gs101-oriole.dtbo
+> There is still a slight chance that this change will break boot on some
+> devices. However, this will be most likely caused by actual mistakes in
+> the device tree (where required clocks were not actually specified).
+Precisely this, and solely as a consequence of the interconnect driver
+not covering all the required clocks (usually named GCC_SOME_NOC_XYZ_CLK,
+but there's quite a lot more).
 
-Overlays in the kernel must be able to be applied to a base DT in the 
-kernel. Add a rule to apply this (hint: a '-dtbs' variable does this 
-similar to -objs variables).
+For platforms without an interconnect driver, breaking stuff this **MOST
+LIKELY** means that Linux uses some hw that isn't voted for (e.g. missing
+crypto clock under scm or something).
 
-> diff --git a/arch/arm64/boot/dts/google/gs101-oriole.dtso b/arch/arm64/boot/dts/google/gs101-oriole.dtso
-> new file mode 100644
-> index 000000000000..50832fd94204
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/google/gs101-oriole.dtso
-> @@ -0,0 +1,21 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Oriole DVT Device Tree
+For those with an interconnect driver, this will uncover issues that were
+previously hidden because of the smd-rpm interconnect being essentially
+broken for most of its existence. I can smell 660 breaking from however
+many miles you are away from me, but it's "good", as we were relying on
+(board specific) magic..
 
-Doesn't DVT mean pre-production?
+I've been carrying an equivalent patch in my tree for over half a year now
+and IIRC 8996 was mostly fine. It's also a good idea to test suspend
+(echo mem > /sys/power/state) and wakeup.
 
-Rob
+For reasons that I don't fully recall, I do have both .is_prepared and
+.is_enabled though..
+
+Konrad
