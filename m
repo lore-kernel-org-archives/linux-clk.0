@@ -2,186 +2,255 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92907E95A61
-	for <linux-clk@archiver.kernel.org>; Sat,  7 Oct 2023 10:08:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9DC2E95A61
+	for <linux-clk@archiver.kernel.org>; Sat,  7 Oct 2023 14:34:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234148AbjJGKId (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 7 Oct 2023 06:08:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40850 "EHLO
+        id S233614AbjJGOeY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 7 Oct 2023 10:34:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234180AbjJGKIc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 7 Oct 2023 06:08:32 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A69693
-        for <linux-clk@vger.kernel.org>; Sat,  7 Oct 2023 03:08:29 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-5031ccf004cso3565528e87.2
-        for <linux-clk@vger.kernel.org>; Sat, 07 Oct 2023 03:08:29 -0700 (PDT)
+        with ESMTP id S231310AbjJGOeX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 7 Oct 2023 10:34:23 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8781BC
+        for <linux-clk@vger.kernel.org>; Sat,  7 Oct 2023 07:34:21 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-40651a72807so30134625e9.1
+        for <linux-clk@vger.kernel.org>; Sat, 07 Oct 2023 07:34:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696673308; x=1697278108; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=H03AGC3mY8S2A5kkALRELBA0XRYLcrppA+IjF5hoOWI=;
-        b=ce6DohzcxJmCs/FIa8rAs20mTBjP/U9JvRJhxRw4h1L7YnqLWuX7rfw/TbxLvW7R7x
-         aTjQBl5kZ7HIH2j7Ml/RHBkkriM2/INCqkUUA1j2rKClU/IpYRuLEACII763JUM1uu3M
-         u0LTLh8mnZQovHu/Kr4O4B8kD05ns7U8yPIjtcliFoqtn+/21jPnkQ9tTAbU95b+Gzwc
-         yO8J8OW3MY3EGWmu0c3dahVabiibLmvTGW6b3fHYb7BnN7Up0MnSY2ikn8nxNeynX/aG
-         FYewRpIVij9vSj0AMB9GLLwuwt59u9g/oTEArwXpNHmIMlPnn16FLVOCyFZo+fFEnBXP
-         quLg==
+        d=linaro.org; s=google; t=1696689260; x=1697294060; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=94eEVt3eVoDmwE+DGvSN0/z74qQyYZ21QAkDJv+Ws28=;
+        b=uFD7+6Z+KZV+50uhhUvsBPI6ae2eKYFtfrptUvTiGeJvv44s7Wb2gg2FAq9J4BdtuD
+         7mFZ/1neaOa9g0VKOuCxXSlOVKSNZp7+9tOUqz1TsPnZaa8T1kP0EbHGDbQNrBcnBq88
+         Y0tPxahVLyf+7vs1G56MDw4Z1itt8N4gLByuN5IDjxZW3is3+bub0u+29aXxNlEoZqd4
+         soSW2jpiGpSxMmhtm9z15gN2ZLuqfa8mnzzSv+lNu9/viquf9kXfKKrXdEWxDRCOvwh+
+         K/UebwR3dUYMOb/+QoyNm8AlJC67d8OIcdXiQe3zxxhUpOJHe5f0+VfTC7Do31veMjqR
+         CdDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696673308; x=1697278108;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=H03AGC3mY8S2A5kkALRELBA0XRYLcrppA+IjF5hoOWI=;
-        b=p/1a8lT5+cYh9IE7u/bn3rv9DIjCcqeJgsUgQ+vodnu7ULqzoOosnMAwagnD4PKf1Q
-         Kn5I0Oi4E5jpLuaqlwvaujbfzJJ2VreyQi17XugozxAs0xwFE+wZbnWZrvhmKKe9M30y
-         jD8K5bG/ZdK9VmRnVIbN6L/Bi8gBDXbY0RRLPflfzC7YvjBU3rJwneie2Ki58uhLPhP/
-         MeF9bGGA65H9t9cRNyFonwiJVSkQUSqy1zv9xCTz6MPZH6iZCJBpS5B2chZaMclsuZ2T
-         ew3HHX4u+3KdG+jTzQla0l5IFqURVVODuDu4Ilw4puMAF8spAl8CqW/xPQ8kusHtlMu5
-         hL4A==
-X-Gm-Message-State: AOJu0YxheZ2hnt/RYu3i2nPMrhHrjHO09rXHY0jtfc2bM8AauPEBSPuk
-        aGwrpwQgbHlPOiOtTos4nmgivFFwZuMPE7ndcG7Img==
-X-Google-Smtp-Source: AGHT+IEHXMeiMRMehN1vthTqQFQXS3bmSjNSlXv1jgvT+p5vqLnnp//aevTDSF+zzxLFw5ARAvYaUg==
-X-Received: by 2002:a05:6512:220b:b0:500:a66b:b189 with SMTP id h11-20020a056512220b00b00500a66bb189mr11437022lfu.51.1696673307672;
-        Sat, 07 Oct 2023 03:08:27 -0700 (PDT)
-Received: from [192.168.100.213] ([37.228.218.3])
-        by smtp.gmail.com with ESMTPSA id z8-20020a05600c220800b003fee8793911sm5725072wml.44.2023.10.07.03.08.26
+        d=1e100.net; s=20230601; t=1696689260; x=1697294060;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=94eEVt3eVoDmwE+DGvSN0/z74qQyYZ21QAkDJv+Ws28=;
+        b=eWLxn+XkuFE1xxHTQ5ZrF3gL/fhLe/UPoPwgGr4a8nghhcMKbu3yVfz9jSwrwaApy4
+         9LdkOQNIACErMYhEsU3rYT/rSco0mqeuvusZvlItA+tz1lxZ3FtLJXJVtgblQYpokSWS
+         odTg3diyCnYwgoj2w321bRbOBN8j3rnsHbXUgwJSckRo2uTm+caMpFOVmU+XGRTWvzRW
+         BqtHdCyziA/XnnjKlB4XZm6mWqLNDmFAD5DAN8zEz2ZeCz/T6UCt5KStQAHQpA3TbYMn
+         umGjOyXMwTXSzLFti0SXNX9dbFlWr/NuDUfhemllXr1PlB2qW7/ydYQa+gZc+6JSji3U
+         5OtA==
+X-Gm-Message-State: AOJu0Yxdp3n+0WUn6fB996ZrdXpDBNicv9cL3+Tt2KwekYTLZVatdN0y
+        VSkV02ZDeApBurpj/k+pXHRk5Q==
+X-Google-Smtp-Source: AGHT+IGVX5SR4JeejKaTLpcg0bv3C9LXR9eUhIRivYb51KXifgCHFqoiZab4mWlNwtjMPLVWQZhUIg==
+X-Received: by 2002:a5d:4b11:0:b0:31f:ecb2:1bed with SMTP id v17-20020a5d4b11000000b0031fecb21bedmr10644289wrq.15.1696689260133;
+        Sat, 07 Oct 2023 07:34:20 -0700 (PDT)
+Received: from [192.168.1.197] (5-157-101-10.dyn.eolo.it. [5.157.101.10])
+        by smtp.gmail.com with ESMTPSA id c4-20020a5d4cc4000000b003247d3e5d99sm4383849wrt.55.2023.10.07.07.34.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 07 Oct 2023 03:08:27 -0700 (PDT)
-Message-ID: <a9c805b5-5c3e-9e25-ad82-021a421c309b@linaro.org>
-Date:   Sat, 7 Oct 2023 11:08:25 +0100
+        Sat, 07 Oct 2023 07:34:19 -0700 (PDT)
+Message-ID: <c4ea7ce3-5132-484c-870b-a62d30e2ee7a@linaro.org>
+Date:   Sat, 7 Oct 2023 16:34:16 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [RFC PATCH 1/2] clk: qcom: implement RCG2 'parked' clock support
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 18/21] arm64: dts: google: Add initial Google gs101 SoC
+ support
+To:     William McVicker <willmcvicker@google.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Griffin <peter.griffin@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        krzysztof.kozlowski+dt@linaro.org,
         Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        freedreno@lists.freedesktop.org, Rob Clark <robdclark@gmail.com>
-References: <20231004003125.2289613-1-dmitry.baryshkov@linaro.org>
- <20231004003125.2289613-2-dmitry.baryshkov@linaro.org>
- <f129633e-4df7-4984-a19e-c16e6c7c8f3f@linaro.org>
- <CAA8EJprGfS5x89FOWhjPCdLzSNbEK-U1h8qVmfiLc6+4NjEiNA@mail.gmail.com>
- <e96499ff-76ec-482b-b18c-ee293259b8a7@linaro.org>
- <55293371-9d7c-404b-a969-81248bf55e24@linaro.org>
+        Conor Dooley <conor+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Olof Johansson <olof@lixom.net>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Tudor Ambarus <tudor.ambarus@linaro.org>,
+        andre.draszik@linaro.org, semen.protsenko@linaro.org,
+        soc@kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-watchdog@vger.kernel.org, kernel-team@android.com
+References: <20231005155618.700312-1-peter.griffin@linaro.org>
+ <20231005155618.700312-19-peter.griffin@linaro.org>
+ <ZR75cIvnQS2cqTT3@google.com> <2023100520-cleaver-sinless-fbae@gregkh>
+ <99419159-cab0-4c79-a4a0-12229bfad3c0@linaro.org>
+ <2023100513-mashing-scrubber-ea59@gregkh>
+ <efc9f099-9c97-460b-b0c8-9891aa3b772a@linaro.org>
+ <ZR9EnFw3vB92vlYM@google.com>
+ <44816879-a3a7-4bd0-bb20-19a645107b4b@linaro.org>
+ <e8b23683-36ac-4547-9386-935a1b211d7d@app.fastmail.com>
+ <ZSA27y5CVs4yQC4a@google.com>
 Content-Language: en-US
-From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <55293371-9d7c-404b-a969-81248bf55e24@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <ZSA27y5CVs4yQC4a@google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 07/10/2023 00:45, Konrad Dybcio wrote:
-> On 4.10.2023 14:52, Bryan O'Donoghue wrote:
->> On 04/10/2023 13:08, Dmitry Baryshkov wrote:
->>> On Wed, 4 Oct 2023 at 12:27, Bryan O'Donoghue
->>> <bryan.odonoghue@linaro.org> wrote:
+On 06/10/2023 18:33, William McVicker wrote:
+> On 10/06/2023, Arnd Bergmann wrote:
+>> On Fri, Oct 6, 2023, at 08:06, Krzysztof Kozlowski wrote:
+>>> On 06/10/2023 01:19, William McVicker wrote:
+>>>> On 10/05/2023, Krzysztof Kozlowski wrote:
+>>>>> On 05/10/2023 21:23, Greg KH wrote:
 >>>>
->>>> On 04/10/2023 01:31, Dmitry Baryshkov wrote:
->>>>> clk_rcg2_shared_ops implements support for the case of the RCG which
->>>>> must not be completely turned off. However its design has one major
->>>>> drawback: it doesn't allow us to properly implement the is_enabled
->>>>> callback, which causes different kinds of misbehaviour from the CCF.
->>>>>
->>>>> Follow the idea behind clk_regmap_phy_mux_ops and implement the new
->>>>> clk_rcg2_parked_ops. It also targets the clocks which must not be fully
->>>>> switched off (and shared most of the implementation with
->>>>> clk_rcg2_shared_ops). The major difference is that it requires that the
->>>>> parent map doesn't conain the safe (parked) clock source. Instead if the
->>>>> CFG_REG register points to the safe source, the clock is considered to
->>>>> be disabled.
->>>>
->>>> Why not have a new bit in .flags ?
->>>>
->>>> Instead of lying about the clock being off, mark the clock as "parked",
->>>> or "safe parked" or whatever term we choose for it ?
+>>>> Being able to include SERIAL_SAMSUNG and SERIAL_MSM without all the vendor> specific drivers that ARCH_EXYNOS and ARCH_QCOM select is very
+>>> valuable for
+>>>> debugging early boot issues.
 >>>
->>> The main problem with adding flags doesn't fully scale. From the CCF
->>> perspective, what should be the difference between parked and disabled
->>> clocks? How should it treat the parked one?
+>>> Really? How related? The drivers are independent. You describe some
+>>> out-of-tree development process which we never needed for upstream work.
+>>> And we did here quite a lot of upstream, specially if you look at ARCH_QCOM.
 >>
->> Exactly the same as a disabled clock, except you get a "parked" instead of a "disabled" when looking up its state and you don't have to
-> The thing is that currently there's only the notion of "enabled"
-> or "not enabled".. Introducing a third state here would be the
-> jump from boolean to quantum logic!
+>> Right: in general, all drivers are independent of the platform
+>> besides the typical 'depends on ARCH_FOO || COMPILE_TEST' dependency,
+>> but I think it's worth mentioning the known exceptions, so Greg and
+>> Will can take that fight to the respective places rather than
+>> discussing it in the platform submission:
+>>
+>> - Some subsystems are considered 'special' and the maintainers
+>>   prefer the drivers to be automatically selected based on the
+>>   ARCH_* settings instead of having user-visible options. This is
+>>   traditionally true for large chunks of drivers/irqchip,
+>>   drivers/clocksource and drivers/pinctrl, though it has gotten
+>>   better over time on all of them.
+>>
+>> - Some older 32-bit platforms are still not as modular as we'd
+>>   like them to be, especially the StrongARM (ARMv4) platforms that
+>>   require a custom kernel build, and some of ARMv4T and ARMv5
+>>   boards that are still missing DT support. These tend to require
+>>   drivers they directly link to from board code, so disabling
+>>   the drivers would cause a link failure until this gets
+>>   cleaned up.
+>>
+>> - A couple of drivers are force-enabled based on the ARCH_*
+>>   options because booting without these drivers would risk
+>>   permanent damage to hardware, e.g. in overtemp or overcurrent
+>>   scenarios.
+>>
+>> - ACPI based platforms require the PCI host bridge driver to
+>>   be built-in rather than a loadable module because ACPI
+>>   needs to probe PCI devices during early boot.
+>>
+>> - Some subsystems (notably drivers/gpu/, but others as well)
+>>   have an excessive number of 'select' statements, so you
+>>   end up surprise-enabling a number of additional drivers
+>>   and subsystems by enabling certain less important platform
+>>   specific drivers.
+>>
+>>       Arnd
 > 
-> I think that abstracting this information away from Linux is not
-> an issue.. These clocks "can't be any more off", or the SoC will
-> explode badly and Linux will be unusable..
+> So if the argument is that the existing upstream Exynos platforms are required
+> to have these drivers built-in to the kernel to boot:
+>     COMMON_CLK_SAMSUNG
+>     CLKSRC_EXYNOS_MCT
+>     EXYNOS_PM_DOMAINS if PM_GENERIC_DOMAINS
+>     EXYNOS_PMU
+>     PINCTRL
+>     PINCTRL_EXYNOS
+>     PM_GENERIC_DOMAINS if PM
+>     SOC_SAMSUNG
 > 
-> Think of it like CPUs with a hypervisor, you shut them down, but
-> the physical number crunchers on the host CPU may not actually
-> get cut off from their power source, but there's no reason for
-> the VM to know that. That's probably what happens on our little
-> virtualized snapdragons anyway..
+> ...then that is understandable and we can work to fix that.
 > 
-> Konrad
+> My last question then is -- why do we need a new ARCH_GOOGLE_TENSOR config in
+> the platform Kconfig? For example, I don't really like this:
+> 
+> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
+> index 76a494e95027..4c8f173c4dec 100644
+> --- a/drivers/clk/samsung/Kconfig
+> +++ b/drivers/clk/samsung/Kconfig
+> @@ -13,6 +13,7 @@ config COMMON_CLK_SAMSUNG
+>         select EXYNOS_5420_COMMON_CLK if ARM && SOC_EXYNOS5420
+>         select EXYNOS_ARM64_COMMON_CLK if ARM64 && ARCH_EXYNOS
+>         select TESLA_FSD_COMMON_CLK if ARM64 && ARCH_TESLA_FSD
+> +       select GOOGLE_GS101_COMMON_CLK if ARM64 && ARCH_GOOGLE_TENSOR
+> 
+> What happens when we have GOOGLE_GS101_COMMON_CLK, GOOGLE_GS201_COMMON_CLK, and
+> so on? 
 
-So not a state but a flag.
+Nothing happens... or happens anything you wish. Did you read the
+motivation why this was created like this?
 
-1. The clock tree we declare _should_ be a fair and complete description
-    of the hardware clock tree.
 
-2. If we remove XO from some trees with the only indication of
-    differentiation being the callback you bind the tree to you need
-    someone reading the code both know about parking, derive that
-    information from reading the callback, which means you require that
-    person to read the code in detail and understand it.
+> How are we going to pick the right driver when e have a generic
+> ARCH_GOOGLE_TENSOR config?
 
-    That's alot of tribal knowledge we are storing up there.
+You do not have to pick. You select ARCH_GOOGLE_TENSOR and proper pick
+is done by you. Nothing to do more.
 
-3. A different approach is to add a new CLK_DISABLE_PARKS_TO_XO - or
-    whatever name makes sense.
+> Ideally, we should have one Exynos clock driver that
+> can detect what hardware is running (using the DT) to determine what it needs
 
-    a) The clock tree declared in the gcc, camcc, dispcc, videocc or
-       is correct and aligned with the documentation and silicon.
-       Right away this avoids patches sent to 'fixup' incomplete trees.
+It's already like this. We're done.
 
-    b) When you look at a clock struct clk_branch_gcc.clk.hw.init.flags
-       there is a big dirty CLK_DOES_THIS_THING flag which doesn't
-       require a developer to have tribal knowledge about how we've
-       hacked up clock parking.
+> to do. If you really want to compile out the other vendor's clock drivers using
+> some configs, then we should do that with SOC_GS101, SOC_GS201, SOC_TESLA_FSD
 
-My basic point here is the declaration of a parked clock should be 
-obvious, easy to understand and not lend itself to "helpful" patches to 
-"fix" the clock tree.
+Whether you call it SOC or ARCH it is the same. We organized it as ARCH.
 
-Also consider precedent. When you want to quickly get your clock 
-controller up and running - you generally open existing upstream stuff 
-to clone and own as much as possible. A BIT_DIRTY_FLAG transmits more 
-information than a small callback with esoteric logic buried inside of 
-the disable path.
+> configs (not ideal though). With that approach, we could drop the platform
+> ARCH_GOOGLE_TENSOR config and create an SOC_GS101 config that can be used for
+> things like the COMMON_CLK_SAMSUNG driver (for now) and building the GS101 dtb.
 
-I agree with your point on a new state but similarly I think the 
-callback buries too much information away. IMO the top level clock 
-declaration - rather like the DT should as closely as possible declare 
-an accurate clock tree.
+There is no need for this. ARCH does exactly the same.
 
-If we need to do special stuff to an individual tree, then CLK_FLAG it. 
-Are qcom clocks really the only clocks in the world that need to park to 
-XO on the disable path ?
+Best regards,
+Krzysztof
 
-Alternatively continue on with the callback but make the name more 
-instructive not "park" since we are dealing with people who have English 
-as a second language, third language. English is my first language but 
-still a "parked" clock means little to me except that like you and 
-Dmitry I work with qcom stuff so I understand it.
-
-"disable_park_xo->clk_disable" or something - even still I think 
-removing XO from the clock tree is asking for trouble.
-
-Start from the principle that gcc/camcc/dispcc clock trees should be 
-complete and work from there.
-
-That's my 0.02 anyway.
-
----
-bod
