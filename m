@@ -2,156 +2,91 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A58FCE95A8E
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Oct 2023 11:57:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A955CE95A8E
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Oct 2023 12:01:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346384AbjJIL5z convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Oct 2023 07:57:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43956 "EHLO
+        id S1346437AbjJIMBP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Oct 2023 08:01:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346354AbjJIL5y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Oct 2023 07:57:54 -0400
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85D6C99;
-        Mon,  9 Oct 2023 04:57:52 -0700 (PDT)
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-5a7af20c488so766257b3.1;
-        Mon, 09 Oct 2023 04:57:52 -0700 (PDT)
+        with ESMTP id S1346415AbjJIMBL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Oct 2023 08:01:11 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6B1BCA
+        for <linux-clk@vger.kernel.org>; Mon,  9 Oct 2023 05:01:07 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-32003aae100so3323147f8f.0
+        for <linux-clk@vger.kernel.org>; Mon, 09 Oct 2023 05:01:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1696852866; x=1697457666; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1dQhgAOJRNqoOh1Ien+h0xhg7sd11cwuiObrfM0AE80=;
+        b=xRHRdrOBS7i3FSEfOc0nQZDmpxypTmFqSxHK4neDlGWtXksaLgdUcZ0iXazzFx+JUg
+         VZwo/2sqGbE53guSpgOzTC/9PHsw/O9CTev4niZU6T9ja78osZMZog5zbH0nSxP/9209
+         54gtl3pmcpEyCwakaQbjf4RuES2Mvi0KR7oVrWhMjyGPNn2K79AV8kmDaWjVp8m8/4bb
+         gMtSpOoMvH/9C9Nk6U0t0lf/z0U0hLYaVT/pUXok0rWWJuR5AIkG17oQ1FjxqvwTCIkE
+         kv658P3oxVN9Mfh1NVp+U+C81bxT5/bWJDHBcp7dN9stHjrq5zEYLGgbWwJ+aSFfSTGK
+         7hIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696852671; x=1697457471;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9f0PTv84uwB8e7Frsy1nJ0Q69ieHgE7cDk3dtnj/+BE=;
-        b=rWO97CYX/yvxXutuSPIEOSpJUP7+A8mPmqV2fhJsqbISajtO1X44kbUGgdhRwMI9Cw
-         5TaUjO35xq8EI8nF+Zt7EHI39YK+OMb4x4wMHUTSjwJKNy80blc9C7fhokD7ZEvo7zbA
-         LCJ/492kc6EIDOrvA5mMnwm/SMr3dgI7v5N7lWHMHzo8T/L4fUnQqA1uO5uxtXeIWcuQ
-         9w0iGfpN8ghTn0OqrnaTNzgVcwG4qlQjOrrKLfLvHzcu3xZ35TpaXyKuJ7EMv5PqPzRf
-         RPrz0LuMXiQJJqvrEIOcnMyt7tIomAEec0cqBGktxLWN94ghrmdQmvr24xpL9xhsKOp7
-         98CQ==
-X-Gm-Message-State: AOJu0YyxgwUHv5tUPHVuKUVT0NS0jBS7ISjKretPGSRi9+ageTNg7IOu
-        NOb2N2KYFR/Pivww0DlUKSM1/HvxRMWxAw==
-X-Google-Smtp-Source: AGHT+IHhc33szlhZCOgodX5aT1yqL7F0k04W0I4Y5OfqHlKE0gqx1D4i4dS8q2o7cfiCtAu8OARmDg==
-X-Received: by 2002:a81:5387:0:b0:591:8d06:e4e8 with SMTP id h129-20020a815387000000b005918d06e4e8mr15952268ywb.38.1696852671468;
-        Mon, 09 Oct 2023 04:57:51 -0700 (PDT)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
-        by smtp.gmail.com with ESMTPSA id u17-20020a81a511000000b0059af9f2ee68sm3563640ywg.66.2023.10.09.04.57.50
+        d=1e100.net; s=20230601; t=1696852866; x=1697457666;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1dQhgAOJRNqoOh1Ien+h0xhg7sd11cwuiObrfM0AE80=;
+        b=wDMJtW2cm4S6R8KAnXBwzeeOqgPgyALjEaBKNJRyraNlrIIkp/2TnDTq5N9xyhsRx5
+         2Z4gQiuq6cqf4mjzsc2B1WXpK0/mLqdWY6a8hty6IVFJxFI26NKPlPCZypg3CmiguMwZ
+         1SzTWjvSGsJVEHK+9oTXYK3Umcnbd3m9fVuFYJR4j1WIgd3VzZCmQh1mXeF4kM1VPnRi
+         1P5oe772DyxCctUorKI81P2kTn3qVnzozZaAv0hIXGx0s5eGaV1pzrTSaDxREPBS9JYK
+         uWHYe70Vtk7M9RpeorJFa3esUbGTHzFSLEtcjBp88xq4O3YaegOM8QW0XyiwRMGXEFXD
+         SdBg==
+X-Gm-Message-State: AOJu0YzAxQNnL5n5/V5ZzMYvKbUFOHkZL6Ck00dD19i1KvSAo38FT3Aq
+        DaILBRYlOwJASlJr1DjG5nJyLw==
+X-Google-Smtp-Source: AGHT+IH7e7GhrAvk0ajA9tZ0NEiTbxzb/d1XRPhB3D/cod7tcEkZk77rF0aFAvoTRaN60f7E0kWhBw==
+X-Received: by 2002:a5d:658e:0:b0:329:6b53:2c82 with SMTP id q14-20020a5d658e000000b003296b532c82mr7129118wru.31.1696852864934;
+        Mon, 09 Oct 2023 05:01:04 -0700 (PDT)
+Received: from [192.168.2.107] ([79.115.63.123])
+        by smtp.gmail.com with ESMTPSA id v11-20020a5d6b0b000000b00324853fc8adsm9384768wrw.104.2023.10.09.05.01.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Oct 2023 04:57:51 -0700 (PDT)
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-5a505762c9dso54520607b3.2;
-        Mon, 09 Oct 2023 04:57:50 -0700 (PDT)
-X-Received: by 2002:a0d:ea95:0:b0:5a1:ed8d:111f with SMTP id
- t143-20020a0dea95000000b005a1ed8d111fmr15870851ywe.1.1696852670754; Mon, 09
- Oct 2023 04:57:50 -0700 (PDT)
+        Mon, 09 Oct 2023 05:01:04 -0700 (PDT)
+Message-ID: <5c2442e7-8e03-433e-9b6e-bc9aa6881cd3@linaro.org>
+Date:   Mon, 9 Oct 2023 13:01:01 +0100
 MIME-Version: 1.0
-References: <20230929053915.1530607-1-claudiu.beznea@bp.renesas.com>
- <20230929053915.1530607-12-claudiu.beznea@bp.renesas.com> <CAMuHMdX8wPNr4LsPJR7zk3Ktb8NnqcSMUEjsAURc2NJ_dpiDHw@mail.gmail.com>
-In-Reply-To: <CAMuHMdX8wPNr4LsPJR7zk3Ktb8NnqcSMUEjsAURc2NJ_dpiDHw@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 9 Oct 2023 13:57:39 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdX5W60nG_iPgDzcQiD2zByu734gM3d8J5Bn3V2RTTG=jg@mail.gmail.com>
-Message-ID: <CAMuHMdX5W60nG_iPgDzcQiD2zByu734gM3d8J5Bn3V2RTTG=jg@mail.gmail.com>
-Subject: Re: [PATCH v2 11/28] clk: renesas: rzg2l: add a divider clock for RZ/G3S
-To:     Claudiu <claudiu.beznea@tuxon.dev>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        linus.walleij@linaro.org, gregkh@linuxfoundation.org,
-        jirislaby@kernel.org, magnus.damm@gmail.com,
-        catalin.marinas@arm.com, will@kernel.org,
-        quic_bjorande@quicinc.com, konrad.dybcio@linaro.org, arnd@arndb.de,
-        neil.armstrong@linaro.org, prabhakar.mahadev-lad.rj@bp.renesas.com,
-        biju.das.jz@bp.renesas.com, linux-renesas-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 18/21] arm64: dts: google: Add initial Google gs101 SoC
+ support
+Content-Language: en-US
+To:     Peter Griffin <peter.griffin@linaro.org>, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com,
+        s.nawrocki@samsung.com, linus.walleij@linaro.org,
+        wim@linux-watchdog.org, linux@roeck-us.net,
+        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
+        olof@lixom.net, cw00.choi@samsung.com
+Cc:     andre.draszik@linaro.org, semen.protsenko@linaro.org,
+        soc@kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org
+References: <20231005155618.700312-1-peter.griffin@linaro.org>
+ <20231005155618.700312-19-peter.griffin@linaro.org>
+From:   Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20231005155618.700312-19-peter.griffin@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Claudiu,
+Hi, Peter,
 
-On Wed, Oct 4, 2023 at 2:30 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> On Fri, Sep 29, 2023 at 7:39 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
-> > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >
-> > Add a divider clock driver for RZ/G3S. This will be used in RZ/G3S
-> > by SDHI, SPI, OCTA, I, I2, I3, P0, P1, P2, P3 core clocks.
-> > The divider has some limitation for SDHI and OCTA clocks:
-> > - SD div cannot be 1 if parent rate is 800MHz
-> > - OCTA div cannot be 1 if parent rate is 400MHz
-> > For these clocks a notifier could be registered from platform specific
-> > clock driver and proper actions are taken before clock rate is changed,
-> > if needed.
-> >
-> > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> > ---
-> >
-> > Changes in v2:
-> > - removed DIV_NOTIF macro
+On 10/5/23 16:56, Peter Griffin wrote:
 
-> > --- a/drivers/clk/renesas/rzg2l-cpg.c
-> > +++ b/drivers/clk/renesas/rzg2l-cpg.c
+> +	serial_0: serial@10a00000 {
+> +		compatible = "samsung,exynos850-uart";
 
-> > +static struct clk * __init
-> > +rzg3s_cpg_div_clk_register(const struct cpg_core_clk *core, struct clk **clks,
-> > +                          void __iomem *base, struct rzg2l_cpg_priv *priv)
-> > +{
-> > +       struct div_hw_data *div_hw_data;
-> > +       struct clk_init_data init = {};
-> > +       const struct clk_div_table *clkt;
-> > +       struct clk_hw *clk_hw;
-> > +       const struct clk *parent;
-> > +       const char *parent_name;
-> > +       u32 max;
-> > +       int ret;
-> > +
-> > +       parent = clks[core->parent & 0xffff];
-> > +       if (IS_ERR(parent))
-> > +               return ERR_CAST(parent);
-> > +
-> > +       parent_name = __clk_get_name(parent);
-> > +
-> > +       div_hw_data = devm_kzalloc(priv->dev, sizeof(*div_hw_data), GFP_KERNEL);
-> > +       if (!div_hw_data)
-> > +               return ERR_PTR(-ENOMEM);
-> > +
-> > +       init.name = core->name;
-> > +       init.flags = core->flag;
-> > +       init.ops = &rzg3s_div_clk_ops;
-> > +       init.parent_names = &parent_name;
-> > +       init.num_parents = 1;
-> > +
-> > +       /* Get the maximum divider to retrieve div width. */
-> > +       for (clkt = core->dtable; clkt->div; clkt++) {
-> > +               if (max < clkt->div)
->
-> "max" is used uninitialized
->
-> > +                       max = clkt->div;
-> > +       }
-> > +
-> > +       div_hw_data->hw_data.priv = priv;
-> > +       div_hw_data->hw_data.conf = core->conf;
-> > +       div_hw_data->hw_data.sconf = core->sconf;
-> > +       div_hw_data->dtable = core->dtable;
-> > +       div_hw_data->invalid_rate = core->invalid_rate;
-> > +       div_hw_data->width = fls(max) - 1;
->
-> Isn't that
+This deserves a SoC specific compatible so that any further quirks or
+incompatibilities can be easily addressed.
 
-My apologies for not finishing my sentence; I wanted to write "Isn't
-that identical to __fls(max)?".  But as the latter generates slightly
-worse code, it's not worth making that change.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Cheers,
+ta
