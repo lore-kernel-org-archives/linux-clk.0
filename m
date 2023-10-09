@@ -2,142 +2,76 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50709CD6133
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Oct 2023 20:16:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3087CD613C
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Oct 2023 21:38:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378542AbjJIUQA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Oct 2023 16:16:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33210 "EHLO
+        id S1378729AbjJIViT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Oct 2023 17:38:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378520AbjJIUP7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Oct 2023 16:15:59 -0400
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.167])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14FC3B0;
-        Mon,  9 Oct 2023 13:15:56 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1696882555; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=Qg+dZpi+/R1E4e4+pVxCWQsb3XD+L7ATn7IyaRI9b7KJo/coaIeKdZ+9v1NweIiCow
-    zaaLwEQz6FJtwdZE0VlUccn1u5OhMaC410YbVtx11hwPE3kLDMWgXl0eBAc3YXnls0xF
-    b4wZgpu7ngM6WJRzTZYME87DcS4wXy5BX7e4H7qnCFfq3GrxQ7BfWsHLq3s2pk+NMKIF
-    4Yoiyv7dkDfqUN/fWCexhmOdB1kRJVKEJ3nq6apz/TLatTXg9KiQjmNzeBSgS78yJWar
-    f9gifxW6dpXfWEK2Ka9HQtba+RSBcZujCqArfRu8+4PSGBzLbpZCrPcgTJntDe67agMP
-    /e3w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1696882555;
-    s=strato-dkim-0002; d=strato.com;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=AYYFuvbioLJ/DNuT39655GA/XjuNrzG4+t4D6P7ZPxM=;
-    b=bmIZqvCYezw3FgevxhjbBIAZGTRiYzWF9CpZ9pnC0IkM8a3GumW2xiJrzbkhQl/u1O
-    ppFHKl8vIZsOToN3voj+AZHqAbmWpHDGFhkTNHnZXRWiNBMv1WHZqmTHPgMA2FeQ+dVA
-    lro31YNnPa5UVrMxqV+yA90qT/vg5e/ymuZZmP6EFRrlVtz/6pGLOWIw0cP6O+2xGVA+
-    Bw8DoG51zPC1LBOzZNmEnZHoYOeK4bHGuTVprsE/TR9U3rmWFTA1qugnBFvpkbh15BR1
-    BW6lg2wm6E6ARIxZ6xbdA4wmrrkrPnJSGgOnHepurC0Ld9sYlI1X4JCqwvRyskFu85/U
-    HSpA==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1696882555;
-    s=strato-dkim-0002; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=AYYFuvbioLJ/DNuT39655GA/XjuNrzG4+t4D6P7ZPxM=;
-    b=kemEecyB9igwhkxSNvuSZAWzJhyu/PlpE6TZnQP9oAPGADrnscYoBIfON49nj/ItcN
-    sG62cdOITay1iDblYPpZuQP0Zab7JAfx90PMosr236VSHvo1gATG//CBuW1prvcds6ll
-    mlfibzIHvzFqNOIp/O6sq8v7ScOmincmtNItfghyu+63EjTWIk3Y4J/ERaWsmhSe69C4
-    6hE1NZqVTOdmsVjtyQAclsEYBzlCrjfK34ipv4DplhioCVfqLAXLhmgcVKS0DjK65Cl7
-    uzoz1cjSNE70NqiUQk2yDQXc2FwFvr7xXartLN2IDngIi427QlDZ4kRTxM6zJ1lya6BH
-    UXrQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1696882555;
-    s=strato-dkim-0003; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=AYYFuvbioLJ/DNuT39655GA/XjuNrzG4+t4D6P7ZPxM=;
-    b=9onSfLjRRRFSwCg4g4dOQ5szZ8bPhdei4mUguXpDJTrchNm3lAIINhjz2xAI0rK8Zw
-    t7L+4gh7Tw+hS1E7czBQ==
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u261EJF5OxJD4peA+p3h"
-Received: from gerhold.net
-    by smtp.strato.de (RZmta 49.8.2 DYNA|AUTH)
-    with ESMTPSA id R04c57z99KFsQBY
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-    Mon, 9 Oct 2023 22:15:54 +0200 (CEST)
-Date:   Mon, 9 Oct 2023 22:15:47 +0200
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc:     Stephan Gerhold <stephan.gerhold@kernkonzept.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: qcom: smd: Disable unused clocks
-Message-ID: <ZSRfc_w19h-55Bib@gerhold.net>
-References: <20231004-clk-qcom-smd-rpm-unused-v2-1-9a5281f324dc@kernkonzept.com>
- <bc8fa799-aa64-4b69-97ce-8f1872c8eb11@linaro.org>
+        with ESMTP id S1378731AbjJIViS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Oct 2023 17:38:18 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7B3199;
+        Mon,  9 Oct 2023 14:38:17 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47504C433C8;
+        Mon,  9 Oct 2023 21:38:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1696887497;
+        bh=bERebXPDUaNc/lQltowjvc5/z7bVq/9gDNUCTZ2cnXY=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=j0ZiwlfXwpIUT66IaHHI/4ENkgcqpr9c6pfwQBdrLSXKxd08Tf5PCMu1SjuZ7v5EM
+         Sc6sC/YTHl0XzeSow+xEiycD7s5T18sN6pb1LMZXeE9OfaI6Dw+i+IO5p6OlRr7yjo
+         isrzZVYdxCuQf42zTUqZdrq39Mh2m5UQMJdY6t35Gk0l2p0mG3VRA8v+nf6X0q0tcw
+         inFUcefTazRnBapDqNgS4JUzzPkmrQ4zt9zHiRWwzd4+fa5ufzYkt1q3YAY6ZqP6ww
+         svTX2vtY/AIiH2+KNb8OjI4iEpCFk5f2lDM/YZjjv5O0St0vA2ONYSG78bqBmX5FdX
+         Xekj/N0qeQEQQ==
+Message-ID: <86d2d69c-f72b-4510-b3b8-46f207609232@kernel.org>
+Date:   Tue, 10 Oct 2023 00:38:10 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bc8fa799-aa64-4b69-97ce-8f1872c8eb11@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 00/10] Fix up icc clock rate calculation on some
+ platforms
+Content-Language: en-US
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20230726-topic-icc_coeff-v4-0-c04b60caa467@linaro.org>
+ <8a5297ed-be23-4498-bf8f-27326abc33a8@linaro.org>
+From:   Georgi Djakov <djakov@kernel.org>
+In-Reply-To: <8a5297ed-be23-4498-bf8f-27326abc33a8@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Oct 06, 2023 at 11:08:39PM +0200, Konrad Dybcio wrote:
-> On 4.10.2023 14:10, Stephan Gerhold wrote:
-> > At the moment, clk-smd-rpm forces all clocks on at probe time (for
-> > "handoff"). However, it does not make the clk core aware of that.
-> > 
-> > This means that the clocks stay enabled forever if they are not used
-> > by anything. We can easily disable them again after bootup has been
-> > completed, by making the clk core aware of the state. This is
-> > implemented by returning the current state of the clock in
-> > is_prepared().
-> > 
-> > Checking the SPMI clock registers reveals that this allows the RPM to
-> > disable unused BB/RF clocks. This reduces the power consumption quite
-> > significantly and is also needed to allow entering low-power states.
-> > 
-> > As of commit d6edc31f3a68 ("clk: qcom: smd-rpm: Separate out
-> > interconnect bus clocks") the interconnect-related clocks are no longer
-> > managed/exposed by clk-smd-rpm. Also the BI_TCXO_AO clock is now
-> > critical (and never disabled).
-> > 
-> > There is still a slight chance that this change will break boot on some
-> > devices. However, this will be most likely caused by actual mistakes in
-> > the device tree (where required clocks were not actually specified).
-> Precisely this, and solely as a consequence of the interconnect driver
-> not covering all the required clocks (usually named GCC_SOME_NOC_XYZ_CLK,
-> but there's quite a lot more).
+On 29.09.23 18:13, Konrad Dybcio wrote:
+> On 25.08.2023 17:38, Konrad Dybcio wrote:
+>> Certain platforms require that some buses (or individual nodes) make
+>> some additional changes to the clock rate formula, throwing in some
+>> magic, Qualcomm-defined coefficients, to account for "inefficiencies".
+>>
+>> Add the framework for it and utilize it on a couple SoCs.
+>>
+>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>> ---
+> Georgi,
 > 
-> For platforms without an interconnect driver, breaking stuff this **MOST
-> LIKELY** means that Linux uses some hw that isn't voted for (e.g. missing
-> crypto clock under scm or something).
-> 
-> For those with an interconnect driver, this will uncover issues that were
-> previously hidden because of the smd-rpm interconnect being essentially
-> broken for most of its existence. I can smell 660 breaking from however
-> many miles you are away from me, but it's "good", as we were relying on
-> (board specific) magic..
-> 
-> I've been carrying an equivalent patch in my tree for over half a year now
-> and IIRC 8996 was mostly fine. It's also a good idea to test suspend
-> (echo mem > /sys/power/state) and wakeup.
-> 
+> since this has been on the list for quite a while and there
+> haven't been major objections, could you please review and
+> queue them up?
 
-I didn't notice any problems on 8916 and 8909 either. :-)
-
-> For reasons that I don't fully recall, I do have both .is_prepared and
-> .is_enabled though..
-> 
-
-clk-smd-rpm doesn't have any .enable()/.disable() ops (only .prepare()
-and .unprepare()) so I don't think is_enabled is needed. For the unused
-clock cleanup in drivers/clk/clk.c (clk_disable_unused()) we just care
-about the clk_unprepare_unused_subtree() part. That part is run when the
-clock reports true in .is_prepared(). The equivalent for .is_enabled()
-would just be a no-op because there are no .enable()/.disable() ops.
+Hi Konrad,
+I have applied patches 1-9. Apologies for the delay. It looks like
+patch 10 is unrelated to the rest and can be applied independently
+by Bjorn. I can also take it with ack.
 
 Thanks,
-Stephan
+Georgi
+
