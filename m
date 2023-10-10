@@ -2,119 +2,95 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AC76CD80D4
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Oct 2023 13:27:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15AB8CD80D2
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Oct 2023 13:35:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232243AbjJJN1b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Oct 2023 09:27:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35718 "EHLO
+        id S232258AbjJJNfl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Oct 2023 09:35:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232326AbjJJN13 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Oct 2023 09:27:29 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7F72D6
-        for <linux-clk@vger.kernel.org>; Tue, 10 Oct 2023 06:27:19 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-9ba081173a3so586428266b.1
-        for <linux-clk@vger.kernel.org>; Tue, 10 Oct 2023 06:27:19 -0700 (PDT)
+        with ESMTP id S232243AbjJJNfk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Oct 2023 09:35:40 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5C18B8
+        for <linux-clk@vger.kernel.org>; Tue, 10 Oct 2023 06:35:32 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-31427ddd3fbso5365150f8f.0
+        for <linux-clk@vger.kernel.org>; Tue, 10 Oct 2023 06:35:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1696944438; x=1697549238; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Qkrku1fg1ZERvoA0RMDfwo6BvhBgxWwyN5hzG0/9pUM=;
-        b=fV3bkSN7GnViWSjZw6dO38V6viMaqIIltan5Z0CyuVt43mbdKhwmIDkuUqdRj0SkgG
-         NFgxS51eSQKb2XD6UkzniRdZTR40VIDw1VTwqxIg7n1LIYgL0VyRlCVDktpTopw5MRvI
-         7nFxtJzizTjwGh32jXUSC5KbIpOOWJLZRdzfBh4F+5S4ZjDlAqzzsmQfF1UcgPRnrZWH
-         el9v7Ya/oh14zQwLZlApBQXnkWzQ7H77fsGCpXeHhhdH8rgBlWm/1cgOd1u6QYQgGXf+
-         xHgIdsIZ/0iwGyVaS+yxTGSmd+pwVuQ7fqoUdtRV+kP6yWwd5PxRLteDPTQoq0FUZfVO
-         E7Cg==
+        d=linaro.org; s=google; t=1696944931; x=1697549731; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Aw6UgjAaJ8qgdoYorSKFrZHMQyZGneinKTuRi4ShVJM=;
+        b=YVLLAT5osZiogBgOw0c+ojKV+UqOqDiOv1IhJBWW++yYXUnbrH2a2UWSTW2fzZRGcc
+         va/uTmRxNLd8HpNiRniwz2QE0GUsvMpFVFJdbnPTpgSOmyt85bgeEUDAQdm6AVcFqG13
+         NKTdrkCjMT6ReKxlaNd0faulxSryLq3n2PMBWwS+GTIgrNF9A0+5+vJdmNR/3xPINfTp
+         /ktLdu1WNUquIVVxxb4lq58oDhD5ljcjBqRobNpMkWWOJAlT31oswncDjMZTkyG/1uDn
+         u88/YjUUp1ZCZWAP3REiqV75hFP5ocp8DBqotDFusMgh5Cu1CmLP9lxLwuK8WEN1Kdvj
+         XqHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696944438; x=1697549238;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Qkrku1fg1ZERvoA0RMDfwo6BvhBgxWwyN5hzG0/9pUM=;
-        b=Vby3n6LYWUj5ekn4jEDdKrF4xarMsBh9GpaH4x1EGpQ6PEKu5c8OBs6DJ/0lSx9cyr
-         LE7j1m5nS4d1huVcJF0HfYd6QLtU2IYVdB65mHF0gfwuO1Pj+iqB9seXvobtc71aHpjX
-         IzGXLDSk9+f3Q2+N9LhhTdAALZ6hVXDnqaTtASAw5cRf9IyONH1Fpl3ZHvQShkonjAGH
-         NqxbfBUJy0j13jYubnK/9j4V6MEZii6OiZmbIqpf2VZjb+NqQWOpk26VjJHbvK6+1CVm
-         n62fDUQCqrMUxzTs2/C+QTkc0lVR/RWVcKkGB/EOV0/Vi6h5r7yrAL4kWdaUp5b7SEj9
-         Al7A==
-X-Gm-Message-State: AOJu0YxYTRmybdHwbHUD8mueGZ58LtWKXTCAgmksSe/l+TKUaujmI9z6
-        zfs9spGpuvd/0peqHEiW8UwX3w==
-X-Google-Smtp-Source: AGHT+IEl9t6FRqcsOeqelqNqjCpGD0EHxzHxZXfuUwkHHG2ydOEmu/vjceFDSGDNxovT0X7EtnZ44g==
-X-Received: by 2002:a17:907:2715:b0:9b2:babd:cd44 with SMTP id w21-20020a170907271500b009b2babdcd44mr15731791ejk.44.1696944438037;
-        Tue, 10 Oct 2023 06:27:18 -0700 (PDT)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.152])
-        by smtp.gmail.com with ESMTPSA id i16-20020a1709064ed000b0099bd0b5a2bcsm8526578ejv.101.2023.10.10.06.27.16
+        d=1e100.net; s=20230601; t=1696944931; x=1697549731;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Aw6UgjAaJ8qgdoYorSKFrZHMQyZGneinKTuRi4ShVJM=;
+        b=wAYQmy5T9X/aT/eXj0UdgkeQcyMLQZrc42buMQ0UGnh30yVGeknpRT7i9TCeZk2a9v
+         u8uW86jfRMASdSu7cdqsGu0pfRhhPvBDW+t55H4Qc1R8+f6Zvn9QOaJ90HTsdVIaSVDu
+         9MQQGwoHkZA1GNupgPCeWZPWz3CdK4urc9NjK9PU/SUNYrKA4S2LwprKSu+zMOVCqRes
+         jNDhKv2I+aHPw+R44hxyUQOMDQPVj4E7TJtQme61FO7xdz1Xsf5GbhHREvty3jh7HPBs
+         i4SdSs3dsBu1/Hu85TE2fHl+qoIyFkfhQ/4aaPz/Tj7fjbLkrGeE9J8xPGaZsylA4tnM
+         EHPA==
+X-Gm-Message-State: AOJu0YyNRAA1Pj/LzFg4bqmbbjoT+T+3kjeKrojtcAwAap7rCL6gDxRy
+        G589hKLqMLDcvzMszyEMFawxRRCaTdoYXIfZJgM=
+X-Google-Smtp-Source: AGHT+IFw0S6b8g/kvtjWSB5E2ensCP7thl7P6ePtjXo8nKPhrToH5H95gZBpPNqgpHUyhd5SXj2FaQ==
+X-Received: by 2002:a05:6000:1f87:b0:32d:24c7:a268 with SMTP id bw7-20020a0560001f8700b0032d24c7a268mr1899178wrb.4.1696944931382;
+        Tue, 10 Oct 2023 06:35:31 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id q9-20020adfcd89000000b00317f70240afsm12596738wrj.27.2023.10.10.06.35.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Oct 2023 06:27:17 -0700 (PDT)
-From:   Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To:     geert+renesas@glider.be, magnus.damm@gmail.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 6/6] arm64: dts: renesas: rzg3s: Fix dtbs_check
-Date:   Tue, 10 Oct 2023 16:27:01 +0300
-Message-Id: <20231010132701.1658737-7-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20231010132701.1658737-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20231010132701.1658737-1-claudiu.beznea.uj@bp.renesas.com>
+        Tue, 10 Oct 2023 06:35:31 -0700 (PDT)
+Date:   Tue, 10 Oct 2023 16:35:28 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Maxime Ripard <mripard@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        linux-clk@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] clk: stm32: Fix a signedness issue in
+ clk_stm32_composite_determine_rate()
+Message-ID: <d9a78453-9b40-48c1-830e-00751ba3ecb8@kili.mountain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+The divider_ro_round_rate() function could potentially return -EINVAL on
+error but the error handling doesn't work because "rate" is unsigned.
+It should be a type long.
 
-Fix the following DTBS check warnings:
-
-arch/arm64/boot/dts/renesas/r9a08g045s33-smarc.dt: /: memory@48000000: 'device-type' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/memory.yaml#
-arch/arm64/boot/dts/renesas/r9a08g045s33-smarc.dtb: /: memory@48000000: 'device_type' is a required property
-	from schema $id: http://devicetree.org/schemas/memory.yaml#
-arch/arm64/boot/dts/renesas/r9a08g045s33-smarc.dtb: cache-controller-0: 'cache-level' is a required property
-	from schema $id: http://devicetree.org/schemas/cache.yaml#
-arch/arm64/boot/dts/renesas/r9a08g045s33-smarc.dtb: cache-controller-0: 'cache-level' is a required property
-	from schema $id: http://devicetree.org/schemas/cache.yaml#
-arch/arm64/boot/dts/renesas/r9a08g045s33-smarc.dtb: cache-controller-0: Unevaluated properties are not allowed ('cache-size', 'cache-unified' were unexpected)
-	from schema $id: http://devicetree.org/schemas/cache.yaml#
-
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Fixes: 06ed0fc0fbac ("clk: stm32: composite: Switch to determine_rate")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- arch/arm64/boot/dts/renesas/r9a08g045.dtsi       | 1 +
- arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/stm32/clk-stm32-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-index 534b728a8e14..6c7b29b69d0e 100644
---- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-@@ -29,6 +29,7 @@ cpu0: cpu@0 {
+diff --git a/drivers/clk/stm32/clk-stm32-core.c b/drivers/clk/stm32/clk-stm32-core.c
+index d5aa09e9fce4..067b918a8894 100644
+--- a/drivers/clk/stm32/clk-stm32-core.c
++++ b/drivers/clk/stm32/clk-stm32-core.c
+@@ -431,7 +431,7 @@ static int clk_stm32_composite_determine_rate(struct clk_hw *hw,
+ {
+ 	struct clk_stm32_composite *composite = to_clk_stm32_composite(hw);
+ 	const struct stm32_div_cfg *divider;
+-	unsigned long rate;
++	long rate;
  
- 		L3_CA55: cache-controller-0 {
- 			compatible = "cache";
-+			cache-level = <3>;
- 			cache-unified;
- 			cache-size = <0x40000>;
- 		};
-diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-index 58a68356b9d7..fdb8053adde9 100644
---- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-@@ -36,7 +36,7 @@ chosen {
- 	};
- 
- 	memory@48000000 {
--		device-type = "memory";
-+		device_type = "memory";
- 		/* First 128MB is reserved for secure area. */
- 		reg = <0x0 0x48000000 0x0 0x38000000>;
- 	};
+ 	if (composite->div_id == NO_STM32_DIV)
+ 		return 0;
 -- 
 2.39.2
 
