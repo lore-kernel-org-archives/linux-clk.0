@@ -2,113 +2,141 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A84E5CD8CB4
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Oct 2023 19:27:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDB10CD98C1
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Oct 2023 20:45:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231320AbjJJT11 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Oct 2023 15:27:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52144 "EHLO
+        id S1344002AbjJJUp1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Oct 2023 16:45:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234105AbjJJT10 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Oct 2023 15:27:26 -0400
-Received: from wout2-smtp.messagingengine.com (wout2-smtp.messagingengine.com [64.147.123.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2883CA;
-        Tue, 10 Oct 2023 12:27:14 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id CCECF3200A9C;
-        Tue, 10 Oct 2023 15:27:12 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Tue, 10 Oct 2023 15:27:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-        :cc:content-type:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; t=1696966032; x=1697052432; bh=G+
-        O2giSg3nsUU1PmtjUETbakIyQRebZUgOxuV8S3Wko=; b=RbBKakaxR01yy02owi
-        8Gd5RUvkBg8X0tGsC6TH0Aj/8iu+gvTmGowey/8bKcRL9i31/AUzE4HE0RmwKjC8
-        0vddXWeZI68Lrjh+jRNqEJzSC8HcLkukJ9Y3jRcu1MwbgFBGWCJq7lB+fUC7Ov1r
-        MPTuEvuPfuDJjNJBgTffyWrUduDHeEARiYyV/PXbyadmNhu9Fu9kf8SDaKfqX/Uq
-        IRysHs+R8BDLCImwKzZPelmusoLakH7qx5kYOGr8y6XMDc1NeZKl2e5QN9gw1Aic
-        A7qNFGIR1X4WzOuKmibG2zQ1uR3CEk0402cWyjm564moiRH8Qn1N/sB/OSYvuUdQ
-        b/3A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; t=1696966032; x=1697052432; bh=G+O2giSg3nsUU
-        1PmtjUETbakIyQRebZUgOxuV8S3Wko=; b=lE7Ci95rsVy7uu1yNxofaex0A/upg
-        toWEMkTBdujv8KKMAldAIWM5m3BAUs87IwUzZx5kDIvWITdjstSPQJ6ZYxxXlH67
-        0C0V66IjahRlg8/ap5/UO9UrDKAQ2cA/vOyyb0s36uE80ocmDXb5A1OeAUhFTCq4
-        voMrlHVHzfjEy/pZPXwd3gq96Dzno4KD4HlQRrNyrDKVwKw06mjeM0VnK6VooEHZ
-        oX8CqSjmpTyEOrwCh6pTz2aFlb6qV7XwC8ZQw8yCJWZB2nGh6F7AcMp+VM2xCjFB
-        Mks9cYQCq+Ah+M/YETnVevaLxvMXjxTv0gDef0aMxOOKaMZflmr8Bw49Q==
-X-ME-Sender: <xms:j6UlZcsIY4YOfcxTFm5kWR-r9SNvnzm_GHQx3iNNBQCBQCYNDAdjBw>
-    <xme:j6UlZZc8K59RS64WSGWzBhd-NeeWszYWTzSyDb01QQuRXKk0kr4H5dAoga3PLWXHb
-    2ZmVVoEN6cyUvtjZjs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrheehgddufeehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepvefhffeltdegheeffffhtdegvdehjedtgfekueevgfduffettedtkeekueef
-    hedunecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpe
-    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:j6UlZXzObGJYPQwH1C-3EXr4t_iuhjg1a_5gZu56xUYKpv3zR5JQXA>
-    <xmx:j6UlZfO-CtFK2I2kz2QDZW5ILwCdzPFIPgAH8zwRP0CdQ523PRYALQ>
-    <xmx:j6UlZc9jaacYc5wYDjIlNsZ7Iz4NWPSDPfNUFbj4zQyLtNFe4HJemA>
-    <xmx:kKUlZWcpif-uFlmOZSNzyMep3pyZdXMt7Gp51heMTBA5Adp9OmQN8g>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 448A7B60089; Tue, 10 Oct 2023 15:27:11 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.9.0-alpha0-1019-ged83ad8595-fm-20231002.001-ged83ad85
+        with ESMTP id S1344011AbjJJUpX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Oct 2023 16:45:23 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 449CCBA
+        for <linux-clk@vger.kernel.org>; Tue, 10 Oct 2023 13:45:21 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id 2adb3069b0e04-50585357903so8175238e87.2
+        for <linux-clk@vger.kernel.org>; Tue, 10 Oct 2023 13:45:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1696970719; x=1697575519; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QPVTHJ1SRjIYGSGNIrfYEdJa5KfN1v9ZTP/0pcmtqxU=;
+        b=cc7LsnXhRy+qAQYoYK7e7aQJnPD36+2OCtGqKZw/yBpneGg2mPNsCai10tK6Iyf9ks
+         w0E0WCErM6MXGPXxtpELIU4FuQ2vo4umC0/kSYoDIyPsXV+kAH3quMQnHdjQdUExYd2c
+         Noc3fWmeArwIflvxka5kG/kDXy7n7KoYx3z04JZbHXeTdzYhFWhHQ7escXRqomHEOZ45
+         6luilGsNJAC+f4TVSJe+AVVihYIKW5wHUrae5huFhfPEmAXdaeMnn+AfuDK82MleHgJR
+         0UynI0doH46XuLxHeqAoKdtI9e9pnH+DjV37NfEQsrnmufhaAqbHh7Zeroj8OrmdQfVG
+         +rDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696970719; x=1697575519;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QPVTHJ1SRjIYGSGNIrfYEdJa5KfN1v9ZTP/0pcmtqxU=;
+        b=JFDICdu3AP/HgrdvWSYsU9ESOIclU7UOL4c/CfIxag6nbZ8ogjHdDRs/03BTW2DG1B
+         mhNDIdyuwWmtX3u1DvMOcMIVXnDZIN3//51kSPEcTAjpRrjuKVcuG5GU008oV/mCozEb
+         V0Fz7/j2zXQfDjLMY9/DfUyhBKsa17G+woXmnN9hwp2KlD29g6Vt/95/upgXkzr7Oa3F
+         KPg1b+LEFJ/FwqrKewnsV9ppipPKrJ0HKmsG+xkSvIriqM+IGuwv4eKi7Lz0lAVjfjNC
+         3pJY3ykT4kzZKJLGhtqEWZWcUCvy0tkSYr4O8ye4vapJKzUGRjcyLpv47HT1H24XpJNn
+         ipTQ==
+X-Gm-Message-State: AOJu0Yx8psxnToW016RowmIZsMJopQJG7pFOEFS9m5N9wU4LS/4nFBvd
+        fjb03M7Fn7qD9zG5v8hsZvYwhZGRJjTAZbVea4Y=
+X-Google-Smtp-Source: AGHT+IH2U0m+t021BDI/5PGBjkzHuCgOLH/WWVyyc7thxzv3HkotLuRpbgoFwGPTSXw65L9pWGr/bg==
+X-Received: by 2002:ac2:5b1b:0:b0:503:2924:f8dd with SMTP id v27-20020ac25b1b000000b005032924f8ddmr16884240lfn.47.1696970719415;
+        Tue, 10 Oct 2023 13:45:19 -0700 (PDT)
+Received: from ?IPV6:2a00:f41:8004:ab80:24a8:5e5d:e0b2:5884? ([2a00:f41:8004:ab80:24a8:5e5d:e0b2:5884])
+        by smtp.gmail.com with ESMTPSA id v21-20020ac25935000000b00505723e56acsm1943851lfi.273.2023.10.10.13.45.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Oct 2023 13:45:18 -0700 (PDT)
+Message-ID: <da02414c-a151-464b-8976-d353c6da7b8e@linaro.org>
+Date:   Tue, 10 Oct 2023 22:45:15 +0200
 MIME-Version: 1.0
-Message-Id: <a010cff7-176c-47a0-91bf-92177a9945b5@app.fastmail.com>
-In-Reply-To: <7b764568ea372f0a947798fb3c2dac75.sboyd@kernel.org>
-References: <20231009114514.120130-1-arnd@kernel.org>
- <7b764568ea372f0a947798fb3c2dac75.sboyd@kernel.org>
-Date:   Tue, 10 Oct 2023 21:26:50 +0200
-From:   "Arnd Bergmann" <arnd@arndb.de>
-To:     "Stephen Boyd" <sboyd@kernel.org>,
-        "Abel Vesa" <abelvesa@kernel.org>,
-        "Arnd Bergmann" <arnd@kernel.org>,
-        "Michael Turquette" <mturquette@baylibre.com>
-Cc:     "Peng Fan" <peng.fan@nxp.com>, "Shawn Guo" <shawnguo@kernel.org>,
-        "Sascha Hauer" <s.hauer@pengutronix.de>,
-        "Pengutronix Kernel Team" <kernel@pengutronix.de>,
-        "Fabio Estevam" <festevam@gmail.com>,
-        "NXP Linux Team" <linux-imx@nxp.com>,
-        "Randy Dunlap" <rdunlap@infradead.org>,
-        "Jesse Taube" <Mr.Bossman075@gmail.com>,
-        "Shengjiu Wang" <shengjiu.wang@nxp.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: imx: imx8: build base support for scu clk
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] clk: qcom: smd: Disable unused clocks
+Content-Language: en-US
+To:     Stephan Gerhold <stephan@gerhold.net>
+Cc:     Stephan Gerhold <stephan.gerhold@kernkonzept.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20231004-clk-qcom-smd-rpm-unused-v2-1-9a5281f324dc@kernkonzept.com>
+ <bc8fa799-aa64-4b69-97ce-8f1872c8eb11@linaro.org>
+ <ZSRfc_w19h-55Bib@gerhold.net>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <ZSRfc_w19h-55Bib@gerhold.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Oct 10, 2023, at 20:56, Stephen Boyd wrote:
-> Quoting Arnd Bergmann (2023-10-09 04:44:55)
->> From: Arnd Bergmann <arnd@arndb.de>
->> 
->> There is now a dependency on a function from the clk.c file, so
->> this also needs to be built:
->> 
->> aarch64-linux-ld: Unexpected GOT/PLT entries detected!
->> aarch64-linux-ld: Unexpected run-time procedure linkages detected!
->> aarch64-linux-ld: drivers/clk/imx/clk-imx8-acm.o: in function `imx8_acm_clk_probe':
->> clk-imx8-acm.c:(.text+0xbf0): undefined reference to `imx_check_clk_hws'
->> 
->> Fixes: d3a0946d7ac9a ("clk: imx: imx8: add audio clock mux driver")
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->> ---
->
-> Is this another 
-> https://lore.kernel.org/r/20230921093647.3901752-1-abel.vesa@linaro.org
 
-I think that's correct and my patch is not needed any more now.
-It looks like it was already obsolete when I sent it, but I can't
-find out why that is. I'll let you know if it comes back.
 
-     Arnd
+On 10/9/23 22:15, Stephan Gerhold wrote:
+> On Fri, Oct 06, 2023 at 11:08:39PM +0200, Konrad Dybcio wrote:
+>> On 4.10.2023 14:10, Stephan Gerhold wrote:
+>>> At the moment, clk-smd-rpm forces all clocks on at probe time (for
+>>> "handoff"). However, it does not make the clk core aware of that.
+>>>
+>>> This means that the clocks stay enabled forever if they are not used
+>>> by anything. We can easily disable them again after bootup has been
+>>> completed, by making the clk core aware of the state. This is
+>>> implemented by returning the current state of the clock in
+>>> is_prepared().
+>>>
+>>> Checking the SPMI clock registers reveals that this allows the RPM to
+>>> disable unused BB/RF clocks. This reduces the power consumption quite
+>>> significantly and is also needed to allow entering low-power states.
+>>>
+>>> As of commit d6edc31f3a68 ("clk: qcom: smd-rpm: Separate out
+>>> interconnect bus clocks") the interconnect-related clocks are no longer
+>>> managed/exposed by clk-smd-rpm. Also the BI_TCXO_AO clock is now
+>>> critical (and never disabled).
+>>>
+>>> There is still a slight chance that this change will break boot on some
+>>> devices. However, this will be most likely caused by actual mistakes in
+>>> the device tree (where required clocks were not actually specified).
+>> Precisely this, and solely as a consequence of the interconnect driver
+>> not covering all the required clocks (usually named GCC_SOME_NOC_XYZ_CLK,
+>> but there's quite a lot more).
+>>
+>> For platforms without an interconnect driver, breaking stuff this **MOST
+>> LIKELY** means that Linux uses some hw that isn't voted for (e.g. missing
+>> crypto clock under scm or something).
+>>
+>> For those with an interconnect driver, this will uncover issues that were
+>> previously hidden because of the smd-rpm interconnect being essentially
+>> broken for most of its existence. I can smell 660 breaking from however
+>> many miles you are away from me, but it's "good", as we were relying on
+>> (board specific) magic..
+>>
+>> I've been carrying an equivalent patch in my tree for over half a year now
+>> and IIRC 8996 was mostly fine. It's also a good idea to test suspend
+>> (echo mem > /sys/power/state) and wakeup.
+>>
+> 
+> I didn't notice any problems on 8916 and 8909 either. :-)
+> 
+>> For reasons that I don't fully recall, I do have both .is_prepared and
+>> .is_enabled though..
+>>
+> 
+> clk-smd-rpm doesn't have any .enable()/.disable() ops (only .prepare()
+> and .unprepare()) so I don't think is_enabled is needed. For the unused
+> clock cleanup in drivers/clk/clk.c (clk_disable_unused()) we just care
+> about the clk_unprepare_unused_subtree() part. That part is run when the
+> clock reports true in .is_prepared(). The equivalent for .is_enabled()
+> would just be a no-op because there are no .enable()/.disable() ops.
+Oh I found out why :D
+
+"""
+The RPM clock enabling state can be found with 'enabled' in struct
+clk_smd_rpm. Add .is_enabled hook so that clk_summary in debugfs
+can a correct enabling state for RPM clocks.
+"""
+
+Konrad
+
