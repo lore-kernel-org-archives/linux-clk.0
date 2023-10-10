@@ -2,101 +2,104 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94A13CD68F1
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Oct 2023 06:32:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89486CD68ED
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Oct 2023 07:22:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1442233AbjJJGcl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Oct 2023 02:32:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47270 "EHLO
+        id S1442473AbjJJHW4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Oct 2023 03:22:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1442220AbjJJGck (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Oct 2023 02:32:40 -0400
-Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64DC5A3
-        for <linux-clk@vger.kernel.org>; Mon,  9 Oct 2023 23:32:39 -0700 (PDT)
-Received: by mail-io1-xd34.google.com with SMTP id ca18e2360f4ac-76c64da0e46so213251639f.0
-        for <linux-clk@vger.kernel.org>; Mon, 09 Oct 2023 23:32:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696919559; x=1697524359; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TMjAqcpLnIT/rrI7hIEQLgNPdRLO8Rld137dNw3SF7I=;
-        b=mP8I8d6e5a5ShtHsoOZr83t0almE7JYNg5YZ6NV/SnQDGUb79i6xA6b7xjWu9mh4bH
-         hyB1+eZWuhlmIiT7PCBILsMlUO49kQfTqEfu4SuYdyoo41ZLzlUEwC/cSJqonBOyOgxS
-         uAJURKxKWPXFXhGEGebvl0Qzgz3OGJkSW9EBdvuzV/WAc5zFVvHhbWxKTESaZAQOyNXi
-         iGqKBKeFTi536sVR9+KlgUcKR36uTUCp+beRa7ezXd/bdb2US5APZf1F6PQmSclYTtCt
-         gJTQTsm8XEzrWjN4W2lJ0FgiAY/j+H2ZdbH8SuXIECZHm8QtkR/+H+sOVnJs8qslygI+
-         BOpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696919559; x=1697524359;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TMjAqcpLnIT/rrI7hIEQLgNPdRLO8Rld137dNw3SF7I=;
-        b=NltrCQqNXAWABz4cZ0/Qa3ASV4yx1+mJpPZ6ZPTnrzx53xO4GsGlojlgwZbq3bJSji
-         sjSnMcMYg8d2D7TG3Yn3tjrw55ZRmPE7oMbQ9sRwXayHKtevbJPrmZzMnSJxKP/Ui+4T
-         cEB3GZN2pPsO5V5rGYUTXLwAd51hrDesaPi0/KZdG0vbKC/5yrwKFRKbXRkZ6lmPUU6s
-         vmdjUkQxZwDZcQDQJRkLSdYHc8Pj20+q4SoA9dwjaRqNORVPvN8oGZFzLlJthnavjRN+
-         4EejIzvzh0oOW6BNCJRT2o8oK3xH8GLlQoLUmlTV9fOY7mcm5+OaSBN/F4FuGOUQXc1z
-         cXkQ==
-X-Gm-Message-State: AOJu0YyhPsbyJ87Ubbo+SOgEg8DsFu9wyeidzD3TcbAO7BgrYDqxwzp5
-        bXDyXVPq5na2ICCL9rx6wkmhzg==
-X-Google-Smtp-Source: AGHT+IFudao3PbpP569Ne+5jwXH4fImT8uscTRIidiWKdGzpzFr6qyIB+LvshslYWivEZAwnbXVarQ==
-X-Received: by 2002:a05:6e02:180a:b0:357:3d82:2d48 with SMTP id a10-20020a056e02180a00b003573d822d48mr381725ilv.8.1696919558757;
-        Mon, 09 Oct 2023 23:32:38 -0700 (PDT)
-Received: from localhost ([122.172.81.92])
-        by smtp.gmail.com with ESMTPSA id u7-20020a637907000000b005776446f7cbsm9400467pgc.66.2023.10.09.23.32.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Oct 2023 23:32:38 -0700 (PDT)
-Date:   Tue, 10 Oct 2023 12:02:35 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Ilia Lin <ilia.lin@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Christian Marangi <ansuelsmth@gmail.com>,
-        Stephan Gerhold <stephan@gerhold.net>
-Subject: Re: [PATCH v5 0/6] cpufreq: qcom-nvmem: support apq8064 cpufreq
- scaling
-Message-ID: <20231010063235.rj2ehxugtjr5x2xr@vireshk-i7>
-References: <20231002185940.1271800-1-dmitry.baryshkov@linaro.org>
+        with ESMTP id S1442463AbjJJHWx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Oct 2023 03:22:53 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E841BA9;
+        Tue, 10 Oct 2023 00:22:49 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5955CC433C9;
+        Tue, 10 Oct 2023 07:22:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1696922569;
+        bh=HdveOZcCi6fbx2k3SXgqy9feZFP15W5KsiQ52J4+Hl4=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=P0kX3vICr8l+I3vZqvv2Rw5r6agrRkILfihq9evNZ2MXgUs5DcLz0PTcWivxYskBj
+         WrTtur4NQUJ4G6GYtQMKJEx4/gduo/bWcr7spDibbRdwZNWj0JJx3FcOHrP/s+STE9
+         BZEKEC/lb7l8Om6t47ujTuLFJsGcS8f0gfnjj2r6zPXJ56JH0bI5g7haNxuGU98Ban
+         NdA88UPAsUeCQNnD8YYnbESvt1p43n6XJ+lOuwEhXIXCkEb0+8JjB2r/9Kdkx755R1
+         NCuVfXkyKG5+n0Vsi4ipckAsUSnO7LefkHR4+j2OIrXMSX1/A2hQ3iMbzOZdR0q2b1
+         OUtEBWgVpsuyQ==
+Received: (nullmailer pid 4170099 invoked by uid 1000);
+        Tue, 10 Oct 2023 07:22:47 -0000
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231002185940.1271800-1-dmitry.baryshkov@linaro.org>
+From:   Rob Herring <robh@kernel.org>
+To:     Xianwei Zhao <xianwei.zhao@amlogic.com>
+Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-clk@vger.kernel.org, Chuan Liu <chuan.liu@amlogic.com>,
+        linux-amlogic@lists.infradead.org,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>
+In-Reply-To: <20231010062917.3624223-2-xianwei.zhao@amlogic.com>
+References: <20231010062917.3624223-1-xianwei.zhao@amlogic.com>
+ <20231010062917.3624223-2-xianwei.zhao@amlogic.com>
+Message-Id: <169692256667.4170036.13538067012213224006.robh@kernel.org>
+Subject: Re: [PATCH V2 1/4] dt-bindings: clock: add Amlogic C3 PLL clock
+ controller bindings
+Date:   Tue, 10 Oct 2023 02:22:47 -0500
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 02-10-23, 21:59, Dmitry Baryshkov wrote:
-> This is a split of APQ8064 cpufreq series, as requested by Viresh. This
-> series includes only opp and cpufreq parts, with the DT and soc parts
-> being split to a separate patchset.
-> 
-> Each core has independent power and frequency control. Additionally the
-> L2 cache is scaled to follow the CPU frequencies (failure to do so
-> results in strange semi-random crashes).
-> 
-> Core voltage is controlled through the SAW2 devices, one for each core.
-> The L2 has two regulators, vdd-mem and vdd-dig.
-> 
-> Changes since v4:
-> - Reordered variables in qcom_cpufreq_init() (Konrad)
-> - Fixed of_platform_device_create() error check (Konrad)
-> - Dropped unused ret variable in qcom_cpufreq_apq8064_name_version() (Konrad)
 
-Applied. Thanks.
+On Tue, 10 Oct 2023 14:29:14 +0800, Xianwei Zhao wrote:
+> Add the C3 PLL clock controller dt-bindings for Amlogic C3 SoC family
+> 
+> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+> ---
+> V1 -> V2: Fix errors when check dtbinding use "make dt_binding_check"
+> ---
+>  .../bindings/clock/amlogic,c3-pll-clkc.yaml   | 59 +++++++++++++++++++
+>  .../dt-bindings/clock/amlogic,c3-pll-clkc.h   | 42 +++++++++++++
+>  2 files changed, 101 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,c3-pll-clkc.yaml
+>  create mode 100644 include/dt-bindings/clock/amlogic,c3-pll-clkc.h
+> 
 
--- 
-viresh
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/clock/amlogic,c3-pll-clkc.example.dts:18:18: fatal error: dt-bindings/clock/amlogic,c3-peripherals-clkc.h: No such file or directory
+   18 |         #include <dt-bindings/clock/amlogic,c3-peripherals-clkc.h>
+      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+make[2]: *** [scripts/Makefile.lib:419: Documentation/devicetree/bindings/clock/amlogic,c3-pll-clkc.example.dtb] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1427: dt_binding_check] Error 2
+make: *** [Makefile:234: __sub-make] Error 2
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20231010062917.3624223-2-xianwei.zhao@amlogic.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
