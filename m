@@ -2,104 +2,106 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8460CD8C99
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Oct 2023 14:51:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 417B4CD8C9C
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Oct 2023 14:52:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232586AbjJJOvZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Oct 2023 10:51:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44850 "EHLO
+        id S232818AbjJJOw4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Oct 2023 10:52:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232818AbjJJOvY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Oct 2023 10:51:24 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE81399;
-        Tue, 10 Oct 2023 07:51:22 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB2B0C433C7;
-        Tue, 10 Oct 2023 14:51:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696949482;
-        bh=SmnMtoX0iHU4aj5Y/R+pD8vcwMWh9G5W6HyDrrmUaTQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TeGBwgxuRrY08gx0uXxKezhZHvPEPEw/4QLhYDwSKKTa0vpeOO6RTR0zMcg4eEOHP
-         d3VtSsIyWMTSrjpMkqO2K2SPwnyWeDTETtB3Z4XTCJj7ctLw3qvlkR4UO04E5kO8ZC
-         ikptBekNtPknPLqcNVgtNla3AQA4BT24Bq33oQK7Wm7s20Bz+lTN+rszpMxMpx5mhz
-         cINn3zfdjFkdglmiM4N80t7YJy3W81aD6xkcqHkdfzWmuv5MB4QRGOu8IbqIczS6H5
-         Y5/DqrALMDcbLRHRf9TIrRzA1ksYtAanuom2KZXb2W1j9agxg2wRogB0DlVupRFLBC
-         csJJ0bWJusT5w==
-Received: (nullmailer pid 864750 invoked by uid 1000);
-        Tue, 10 Oct 2023 14:51:20 -0000
-Date:   Tue, 10 Oct 2023 09:51:20 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Alvin =?utf-8?Q?=C5=A0ipraga?= <alvin@pqrs.dk>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        =?utf-8?B?77+9aXByYWdh?= <alsi@bang-olufsen.dk>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/3] clk: si5351: add option to adjust PLL without
- glitches
-Message-ID: <20231010145120.GA847407-robh@kernel.org>
-References: <20231008111324.582595-1-alvin@pqrs.dk>
+        with ESMTP id S233175AbjJJOww (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Oct 2023 10:52:52 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8664B6;
+        Tue, 10 Oct 2023 07:52:49 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-50336768615so7554274e87.0;
+        Tue, 10 Oct 2023 07:52:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1696949568; x=1697554368; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NUkVmCPpadfaQWhNaIF6MgMWdRIKYVJjqWjOHwXj0+M=;
+        b=Pvcp2L4H/n5MrjMlX+4ChK8D4NfrneG5m4ht+I+7Qa4NUwdnR6c32KXd78/j1Y0kch
+         HLBqOIBRuXJeLbzVaE2j5uCV1w+uVhxzGAFay5nCUHsDzk+vFIv5SPY9wOftgkEJxFuH
+         c6HA+QIYAifmlG7iTQhn4bZQpC+xAyK2Ql03E/P+0VObUPczL7oLWdusdgRvI/rkMAC1
+         fV9W2HC8mgOG7/2gkADTHxQyt9KJxHrZYB8oyEOXmsLrqT9P7LaAxkA4Vao/102aXSln
+         NuvPEqkKfas+pxFsdPkYdA9rfK3hJ8mX4Gg5JTpVTdC/NFHRkFuwRJH+a1UG1K+n/+VS
+         6ktg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696949568; x=1697554368;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NUkVmCPpadfaQWhNaIF6MgMWdRIKYVJjqWjOHwXj0+M=;
+        b=BCC3wWGAKnXYnJJ29bFVcGc/glqjWQZos/o3tu5do/TO49Wg6VJXvo+QZzxNvZchbf
+         uMqmZvmEMmyhEQLHSuOHUTwl76NDFWwrI0slClDWef57CbK5eqr/MWXi8mlYmos1R3mp
+         17T/gHV943kqgtx0mFu/ljMiw8CRkGXM6+4zRVCbBifHUS6SYIXbdzLkCx/9/+sVrb7C
+         lfWoxXGwHxNJBLcd/zuqyFDjSCFVQNg+DqvnQYI2sR652OnXPaCFfJQuJ3pCaBo3tUo4
+         PnEjSQggpXKu50IUbANNOhgBfrW5oLxlTnxdwxtuv+McO00BPiTU125HOKnvwU05eg9u
+         LEIA==
+X-Gm-Message-State: AOJu0YyjSRdeod04VuWljAXpnCh6ZtsQqgUfmSYbDdrGJkoRIG4V3+9+
+        9WCU6oXlXrwlxagWm4CWxLI=
+X-Google-Smtp-Source: AGHT+IHO5E5YV/KKLewCzVIm1cEGcf6Poaf/0tI/To+Cb4NOLcjUdSdP7uCOnzJ52UrXqYpIrAKptg==
+X-Received: by 2002:a05:6512:3608:b0:4ff:9a75:211e with SMTP id f8-20020a056512360800b004ff9a75211emr13113617lfs.42.1696949567369;
+        Tue, 10 Oct 2023 07:52:47 -0700 (PDT)
+Received: from [192.168.1.103] ([178.176.74.144])
+        by smtp.gmail.com with ESMTPSA id o9-20020a05651238a900b00501c8959f6asm1840709lft.98.2023.10.10.07.52.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Oct 2023 07:52:46 -0700 (PDT)
+Subject: Re: [PATCH 1/6] clk: renesas: rzg2l: Use %x format specifier to print
+ CLK_ON_R()
+To:     Claudiu <claudiu.beznea@tuxon.dev>, geert+renesas@glider.be,
+        magnus.damm@gmail.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20231010132701.1658737-1-claudiu.beznea.uj@bp.renesas.com>
+ <20231010132701.1658737-2-claudiu.beznea.uj@bp.renesas.com>
+From:   Sergei Shtylyov <sergei.shtylyov@gmail.com>
+Message-ID: <8226bd48-4297-0b32-c733-2e569114a934@gmail.com>
+Date:   Tue, 10 Oct 2023 17:52:44 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
+In-Reply-To: <20231010132701.1658737-2-claudiu.beznea.uj@bp.renesas.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20231008111324.582595-1-alvin@pqrs.dk>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Oct 08, 2023 at 01:09:36PM +0200, Alvin Šipraga wrote:
-> From: Alvin Šipraga <alsi@bang-olufsen.dk>
-> 
-> This series intends to address a problem I had when using the Si5351A as
-> a runtime adjustable audio bit clock. The basic issue is that the driver
-> in its current form unconditionally resets the PLL whenever adjusting
-> its rate. But this reset causes an unwanted ~1.4 ms LOW signal glitch in
-> the clock output.
-> 
-> As a remedy, a new property is added to control the reset behaviour of
-> the PLLs more precisely. In the process I also converted the bindings to
-> YAML.
-> 
-> Changes:
-> 
-> v2 -> v3:
-> 
-> - address further comments from Rob:
->   - drop unnecessary refs and minItems
->   - simplify if conditions for chip variants
->   - ignore his comment about dropping '|', as line would be >80 columns
+Hello!
 
-I've commented on v2 again.
+On 10/10/23 4:26 PM, Claudiu wrote:
 
->   - move additionalProperties: false close to type: object
->   - define clocks/clock-names at top-level
-> - drop patch to dove-cubox dts per Krzysztof's comment - will send
->   separately
-> - collect Sebastian's Acked-by
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > 
-> v1 -> v2:
+> Use %x format specifier to print CLK_ON_R(). This is easier when
+> debugging as the value printed will be hexadecimal like in the hardware
+> manual. Along with it "0x" has been added in front of the printed value.
 > 
-> - address Rob's comments on the two dt-bindings patches
-> - new patch to correct the clock node names in the only upstream device
->   tree using si5351
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+>  drivers/clk/renesas/rzg2l-cpg.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Alvin Šipraga (3):
->   dt-bindings: clock: si5351: convert to yaml
->   dt-bindings: clock: si5351: add PLL reset mode property
->   clk: si5351: allow PLLs to be adjusted without reset
-> 
->  .../bindings/clock/silabs,si5351.txt          | 126 --------
->  .../bindings/clock/silabs,si5351.yaml         | 268 ++++++++++++++++++
->  drivers/clk/clk-si5351.c                      |  47 ++-
->  include/linux/platform_data/si5351.h          |   2 +
->  4 files changed, 314 insertions(+), 129 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/silabs,si5351.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/silabs,si5351.yaml
-> 
-> -- 
-> 2.42.0
-> 
+> diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
+> index d62f1bc1f60e..764bd72cf059 100644
+> --- a/drivers/clk/renesas/rzg2l-cpg.c
+> +++ b/drivers/clk/renesas/rzg2l-cpg.c
+> @@ -1213,7 +1213,7 @@ static int rzg2l_mod_clock_endisable(struct clk_hw *hw, bool enable)
+>  		return 0;
+>  	}
+>  
+> -	dev_dbg(dev, "CLK_ON %u/%pC %s\n", CLK_ON_R(reg), hw->clk,
+> +	dev_dbg(dev, "CLK_ON 0x%x/%pC %s\n", CLK_ON_R(reg), hw->clk,
+
+   Perhaps "%#x" instead of "0x%x"?
+
+[...]
+
+MBR, Sergey
