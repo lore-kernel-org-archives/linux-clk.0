@@ -2,118 +2,138 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79813CD6914
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Oct 2023 09:35:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40ED5CD80BB
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Oct 2023 12:09:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229731AbjJJJfQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Oct 2023 05:35:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36812 "EHLO
+        id S231311AbjJJMJq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Oct 2023 08:09:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229516AbjJJJfP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Oct 2023 05:35:15 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E71C493;
-        Tue, 10 Oct 2023 02:35:13 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E96391FB;
-        Tue, 10 Oct 2023 02:35:53 -0700 (PDT)
-Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0B4C43F762;
-        Tue, 10 Oct 2023 02:35:11 -0700 (PDT)
-Date:   Tue, 10 Oct 2023 10:35:09 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Cristian Marussi <cristian.marussi@arm.com>
-Cc:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ranjani.vaidyanathan@nxp.com,
-        souvik.chakravarty@arm.com, glen.wienecke@nxp.com,
-        Peng Fan <peng.fan@nxp.com>
-Subject: Re: [RFC] firmware: arm_scmi: clock: add fixed clock attribute
- support
-Message-ID: <20231010093509.ddy75og4jd72n6cq@bogus>
-References: <20231010022911.4106863-1-peng.fan@oss.nxp.com>
- <20231010091223.rvcyrgbjcrmjzmvp@bogus>
- <ZSUXu65bOYVG689E@pluto>
+        with ESMTP id S231580AbjJJMJp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Oct 2023 08:09:45 -0400
+Received: from mail-qv1-xf2b.google.com (mail-qv1-xf2b.google.com [IPv6:2607:f8b0:4864:20::f2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C4EBB6
+        for <linux-clk@vger.kernel.org>; Tue, 10 Oct 2023 05:09:43 -0700 (PDT)
+Received: by mail-qv1-xf2b.google.com with SMTP id 6a1803df08f44-65b0c9fb673so29509556d6.1
+        for <linux-clk@vger.kernel.org>; Tue, 10 Oct 2023 05:09:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1696939782; x=1697544582; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=DgSEBJcUi7PZ5OXedvwInXaFNURNqtsaL0h7wFFXk5g=;
+        b=Df3KmV6NzyoruKmJufGdyQeVIeM94xePXheDrzzm9/krPQ0jAEIvv5Ien2F0RrmPkc
+         uKtla/0xPvuSxqAgH3p7HrD1gT5kWUMhkFfSaj2ib46V3FRNFcTfUaSMQCuPpFR8yOY3
+         ixA9gJeTCoBtX65NfpE1VpxFHHWM1IdKP+fgDyZFX/UGcvBbWstNlDicBgxoYFenAWBj
+         G+VdxULEkMAl7xmCRg6IDmZ1apVCjQz4IXjBbkj+kPs1eOuakvTCAqcIKrqoHV+PT5rb
+         dhg1fPXp3J9LipxYR2CpFtPNfBMnW3oIB2gC/ElJ0ChXIvUEDMcqENyf/3GxkwMykgQM
+         FIfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696939782; x=1697544582;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DgSEBJcUi7PZ5OXedvwInXaFNURNqtsaL0h7wFFXk5g=;
+        b=HPgj+B+fW7drewFkDrqejRxVZK4wW9siED6aKgB8iaA5Jz3rukixsfDucrfXLRaf40
+         6BTclWeN3ReIRvGZKIBblIy9GqT6mr69Ol63MzlnvOjYdYRKelf4xti46Gr+I4eZvjey
+         noRA5kUqWtDKyPEr4GeE9TmFBvj/TOq0FGZElzI6LWARoHlLv/tcsQI7Ec7NtVIic+CZ
+         1PqxK2WjJajMoS5Bug0e1+/Gcf9doTklBvWvPqikehHB02IM9oEMHD7bM+f9uNsXBgew
+         5Pc9wcfTQOOIq/yVH2JiNXFDJTtRKlGefreSXSWno3VJrufzJzSU60bTZlzzSIAJO1M8
+         D2lQ==
+X-Gm-Message-State: AOJu0Yy2ZzVafoAwqZZi39GSv28fKTkBPiatRiFmsI9CmCcYSfgwjWf0
+        YCJqu5AR/5nlWG7ClipCy384zBmDpx6YNHuRyEzaJw==
+X-Google-Smtp-Source: AGHT+IEkobWfRAv+hk9GeXAgYbAsdwwHInRJB4q4A/k6gLUZyJCTapOQUejfM/de0SvYVTlXeCdNVMlVoHapdH1mpY8=
+X-Received: by 2002:ad4:5cc7:0:b0:65d:dcc:9754 with SMTP id
+ iu7-20020ad45cc7000000b0065d0dcc9754mr22900149qvb.30.1696939782310; Tue, 10
+ Oct 2023 05:09:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZSUXu65bOYVG689E@pluto>
+References: <20231005155618.700312-1-peter.griffin@linaro.org>
+ <20231005155618.700312-20-peter.griffin@linaro.org> <20231006205204.GA269353-robh@kernel.org>
+In-Reply-To: <20231006205204.GA269353-robh@kernel.org>
+From:   Peter Griffin <peter.griffin@linaro.org>
+Date:   Tue, 10 Oct 2023 13:09:31 +0100
+Message-ID: <CADrjBPpEFo4gRTsWau+xGoBAr2j7srhbxYefJGDer+PRu9QxBg@mail.gmail.com>
+Subject: Re: [PATCH 19/21] google/gs101: Add dt overlay for oriole board
+To:     Rob Herring <robh@kernel.org>
+Cc:     krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com,
+        s.nawrocki@samsung.com, linus.walleij@linaro.org,
+        wim@linux-watchdog.org, linux@roeck-us.net,
+        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
+        olof@lixom.net, cw00.choi@samsung.com, tudor.ambarus@linaro.org,
+        andre.draszik@linaro.org, semen.protsenko@linaro.org,
+        soc@kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Oct 10, 2023 at 10:22:03AM +0100, Cristian Marussi wrote:
-> On Tue, Oct 10, 2023 at 10:12:23AM +0100, Sudeep Holla wrote:
-> > On Tue, Oct 10, 2023 at 10:29:11AM +0800, Peng Fan (OSS) wrote:
-> > > From: Peng Fan <peng.fan@nxp.com>
-> > > 
-> > > There are clocks:
-> > >  system critical, not allow linux to disable, change rate
-> > >  allow linux to get rate, because some periphals will use the frequency
-> > >  to configure periphals.
-> > > 
-> > >  So introduce an attribute to indicated FIXED clock
-> > > 
-> > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > > ---
-> > >  drivers/clk/clk-scmi.c            | 6 ++++++
-> > >  drivers/firmware/arm_scmi/clock.c | 5 ++++-
-> > >  include/linux/scmi_protocol.h     | 1 +
-> > >  3 files changed, 11 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-> > > index 8cbe24789c24..a539a35bd45a 100644
-> > > --- a/drivers/clk/clk-scmi.c
-> > > +++ b/drivers/clk/clk-scmi.c
-> > > @@ -182,6 +182,10 @@ static const struct clk_ops scmi_clk_ops = {
-> > >  	.determine_rate = scmi_clk_determine_rate,
-> > >  };
-> > >  
-> > > +static const struct clk_ops scmi_fixed_rate_clk_ops = {
-> > > +	.recalc_rate = scmi_clk_recalc_rate,
-> > > +};
-> > > +
-> > >  static const struct clk_ops scmi_atomic_clk_ops = {
-> > >  	.recalc_rate = scmi_clk_recalc_rate,
-> > >  	.round_rate = scmi_clk_round_rate,
-> > > @@ -293,6 +297,8 @@ static int scmi_clocks_probe(struct scmi_device *sdev)
-> > >  		if (is_atomic &&
-> > >  		    sclk->info->enable_latency <= atomic_threshold)
-> > >  			scmi_ops = &scmi_atomic_clk_ops;
-> > > +		else if (sclk->info->rate_fixed)
-> > > +			scmi_ops = &scmi_fixed_rate_clk_ops;
-> > >  		else
-> > >  			scmi_ops = &scmi_clk_ops;
-> > >  
-> > > diff --git a/drivers/firmware/arm_scmi/clock.c b/drivers/firmware/arm_scmi/clock.c
-> > > index ddaef34cd88b..8c52db539e54 100644
-> > > --- a/drivers/firmware/arm_scmi/clock.c
-> > > +++ b/drivers/firmware/arm_scmi/clock.c
-> > > @@ -46,6 +46,7 @@ struct scmi_msg_resp_clock_attributes {
-> > >  #define SUPPORTS_RATE_CHANGE_REQUESTED_NOTIF(x)	((x) & BIT(30))
-> > >  #define SUPPORTS_EXTENDED_NAMES(x)		((x) & BIT(29))
-> > >  #define SUPPORTS_PARENT_CLOCK(x)		((x) & BIT(28))
-> > > +#define SUPPORTS_FIXED_RATE_CLOCK(x)		((x) & BIT(27))
-> > 
-> > I don't see this in the specification, am I missing something ?
-> > 
-> > And why do we need it. Can't this be discrete clock with only one clock
-> > rate ? Or step clock with both lowest and highest the same and step being 0.
-> > At-least I don't see the need to change the spec for this and hence no need
-> > to assign any attribute bit-field to represent the same.
-> > 
-> 
-> No this is not in the spec, it would require a spec change.
-> 
-> My understanding is that they have clocks that CAN have more than one rate BUT
-> such clock cannot be changed by Linux, only other agents can
-> enable/disable/set_rate BUT they still want to be able to query the
-> current rate for configuration purposes.
-> 
+Hi Rob,
 
-Fair enough. As I mentioned to Peng on the other thread, it is *not a fixed*
-clock. It is read only for this agent.
+Thanks for your review!
 
--- 
-Regards,
-Sudeep
+On Fri, 6 Oct 2023 at 21:52, Rob Herring <robh@kernel.org> wrote:
+>
+> On Thu, Oct 05, 2023 at 04:56:16PM +0100, Peter Griffin wrote:
+> > The LK bootloader on Pixel6 searches for a dt overlay in the
+> > dtbo partition with a board_id and board_rev that matches
+> > what is baked into the device. If this overlay is not present
+> > then the phone will bootloop in fastboot and you can't boot
+> > the upstream kernel.
+> >
+> > This commit adds a dtbo for the production oriole variant.
+> > The other pre-production board overlays are not included
+> > at this time.
+> >
+> > Adding the dtbo here allows for a better experience when
+> > building/booting the upstream kernel on Pixel devices
+> > as all the DT required to boot the device will be created
+> > as part of the kernel build process. Rather than having to
+> > fetch the dtbo from some other repo.
+> >
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > ---
+> >  arch/arm64/boot/dts/google/Makefile          |  1 +
+> >  arch/arm64/boot/dts/google/gs101-oriole.dtso | 21 ++++++++++++++++++++
+> >  2 files changed, 22 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/google/gs101-oriole.dtso
+> >
+> > diff --git a/arch/arm64/boot/dts/google/Makefile b/arch/arm64/boot/dts/google/Makefile
+> > index 6d2026a767d4..3f1761f8daa9 100644
+> > --- a/arch/arm64/boot/dts/google/Makefile
+> > +++ b/arch/arm64/boot/dts/google/Makefile
+> > @@ -2,5 +2,6 @@
+> >
+> >  dtb-$(CONFIG_ARCH_GOOGLE_TENSOR) += \
+> >       gs101-oriole.dtb \
+> > +     gs101-oriole.dtbo
+>
+> Overlays in the kernel must be able to be applied to a base DT in the
+> kernel. Add a rule to apply this (hint: a '-dtbs' variable does this
+> similar to -objs variables).
+
+Ok will do, thanks for the hint
+
+>
+> > diff --git a/arch/arm64/boot/dts/google/gs101-oriole.dtso b/arch/arm64/boot/dts/google/gs101-oriole.dtso
+> > new file mode 100644
+> > index 000000000000..50832fd94204
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/google/gs101-oriole.dtso
+> > @@ -0,0 +1,21 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * Oriole DVT Device Tree
+>
+> Doesn't DVT mean pre-production?
+
+Yes, DVT stands for Design Verification Testing. I can remove that
+DVT suffix for v2.
+I suppose that means there were no changes between DVT and production as this
+is the overlay used by the production devices.
+
+regards,
+
+Peter
