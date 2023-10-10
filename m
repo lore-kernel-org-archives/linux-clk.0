@@ -2,111 +2,145 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10B1FCD690C
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Oct 2023 09:23:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09565CD6911
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Oct 2023 09:32:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230085AbjJJJXa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Oct 2023 05:23:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54750 "EHLO
+        id S229568AbjJJJcW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Oct 2023 05:32:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230372AbjJJJXQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Oct 2023 05:23:16 -0400
+        with ESMTP id S230223AbjJJJcV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Oct 2023 05:32:21 -0400
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3E5D61998;
-        Tue, 10 Oct 2023 02:22:07 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8F9BAA9;
+        Tue, 10 Oct 2023 02:32:18 -0700 (PDT)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ACC341FB;
-        Tue, 10 Oct 2023 02:22:47 -0700 (PDT)
-Received: from pluto (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D95103F762;
-        Tue, 10 Oct 2023 02:22:05 -0700 (PDT)
-Date:   Tue, 10 Oct 2023 10:22:03 +0100
-From:   Cristian Marussi <cristian.marussi@arm.com>
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ranjani.vaidyanathan@nxp.com,
-        glen.wienecke@nxp.com, Peng Fan <peng.fan@nxp.com>
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 015F61FB;
+        Tue, 10 Oct 2023 02:32:59 -0700 (PDT)
+Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ED4C63F762;
+        Tue, 10 Oct 2023 02:32:16 -0700 (PDT)
+Date:   Tue, 10 Oct 2023 10:32:14 +0100
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Peng Fan <peng.fan@nxp.com>
+Cc:     Cristian Marussi <cristian.marussi@arm.com>,
+        "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Ranjani Vaidyanathan <ranjani.vaidyanathan@nxp.com>,
+        Glen G Wienecke <glen.wienecke@nxp.com>,
+        "souvik.chakravarty@arm.com" <souvik.chakravarty@arm.com>,
+        Chuck Cannon <chuck.cannon@nxp.com>
 Subject: Re: [RFC] firmware: arm_scmi: clock: add fixed clock attribute
  support
-Message-ID: <ZSUXu65bOYVG689E@pluto>
+Message-ID: <20231010093214.fea3axm45adawuvi@bogus>
 References: <20231010022911.4106863-1-peng.fan@oss.nxp.com>
- <20231010091223.rvcyrgbjcrmjzmvp@bogus>
+ <ZSUCDdfJjs1blK1T@e120937-lin>
+ <DU0PR04MB9417DCEC4CA9DA488796194C88CDA@DU0PR04MB9417.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231010091223.rvcyrgbjcrmjzmvp@bogus>
+In-Reply-To: <DU0PR04MB9417DCEC4CA9DA488796194C88CDA@DU0PR04MB9417.eurprd04.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Oct 10, 2023 at 10:12:23AM +0100, Sudeep Holla wrote:
-> On Tue, Oct 10, 2023 at 10:29:11AM +0800, Peng Fan (OSS) wrote:
-> > From: Peng Fan <peng.fan@nxp.com>
+On Tue, Oct 10, 2023 at 08:08:01AM +0000, Peng Fan wrote:
+> > On Tue, Oct 10, 2023 at 08:49:33AM +0100, Cristian Marussi wrote:
 > > 
-> > There are clocks:
-> >  system critical, not allow linux to disable, change rate
-> >  allow linux to get rate, because some periphals will use the frequency
-> >  to configure periphals.
+> > (CCed souvik.chakravarty@arm.com)
 > > 
-> >  So introduce an attribute to indicated FIXED clock
-> > 
-> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > ---
-> >  drivers/clk/clk-scmi.c            | 6 ++++++
-> >  drivers/firmware/arm_scmi/clock.c | 5 ++++-
-> >  include/linux/scmi_protocol.h     | 1 +
-> >  3 files changed, 11 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-> > index 8cbe24789c24..a539a35bd45a 100644
-> > --- a/drivers/clk/clk-scmi.c
-> > +++ b/drivers/clk/clk-scmi.c
-> > @@ -182,6 +182,10 @@ static const struct clk_ops scmi_clk_ops = {
-> >  	.determine_rate = scmi_clk_determine_rate,
-> >  };
-> >  
-> > +static const struct clk_ops scmi_fixed_rate_clk_ops = {
-> > +	.recalc_rate = scmi_clk_recalc_rate,
-> > +};
-> > +
-> >  static const struct clk_ops scmi_atomic_clk_ops = {
-> >  	.recalc_rate = scmi_clk_recalc_rate,
-> >  	.round_rate = scmi_clk_round_rate,
-> > @@ -293,6 +297,8 @@ static int scmi_clocks_probe(struct scmi_device *sdev)
-> >  		if (is_atomic &&
-> >  		    sclk->info->enable_latency <= atomic_threshold)
-> >  			scmi_ops = &scmi_atomic_clk_ops;
-> > +		else if (sclk->info->rate_fixed)
-> > +			scmi_ops = &scmi_fixed_rate_clk_ops;
-> >  		else
-> >  			scmi_ops = &scmi_clk_ops;
-> >  
-> > diff --git a/drivers/firmware/arm_scmi/clock.c b/drivers/firmware/arm_scmi/clock.c
-> > index ddaef34cd88b..8c52db539e54 100644
-> > --- a/drivers/firmware/arm_scmi/clock.c
-> > +++ b/drivers/firmware/arm_scmi/clock.c
-> > @@ -46,6 +46,7 @@ struct scmi_msg_resp_clock_attributes {
-> >  #define SUPPORTS_RATE_CHANGE_REQUESTED_NOTIF(x)	((x) & BIT(30))
-> >  #define SUPPORTS_EXTENDED_NAMES(x)		((x) & BIT(29))
-> >  #define SUPPORTS_PARENT_CLOCK(x)		((x) & BIT(28))
-> > +#define SUPPORTS_FIXED_RATE_CLOCK(x)		((x) & BIT(27))
+> > so AFAIU here you are describing a clock that really is NOT fixed in general, it
+> > is just that the Linux SCMI Agent cannot touch it, but other SCMI agents on
+> > the system CAN change it and so, on one side, you keep the ability for the
+> > Linux agent to read back the current rate with
+> > recalc_rate() and remove all the Clk frameworks callbacks needed to modify
+> > its state, am I right ?
 > 
-> I don't see this in the specification, am I missing something ?
-> 
-> And why do we need it. Can't this be discrete clock with only one clock
-> rate ? Or step clock with both lowest and highest the same and step being 0.
-> At-least I don't see the need to change the spec for this and hence no need
-> to assign any attribute bit-field to represent the same.
-> 
+> Right.
+>
 
-No this is not in the spec, it would require a spec change.
+OK, let me try to understand this better. The SCMI platform provides all the
+permissions to change to the Linux(agent) but it is just that you need to
+enforce this policy of fixed rate in the kernel ? Or the SCMI platform
+restricts the Linux agent to do anything other than fetch the rate ?
 
-My understanding is that they have clocks that CAN have more than one rate BUT
-such clock cannot be changed by Linux, only other agents can
-enable/disable/set_rate BUT they still want to be able to query the
-current rate for configuration purposes.
+> > 
+> > In this scenario, it is really the SCMI platform fw (server) that has to
+> > implement the checks and simply DENY the requests coming from an agent
+> > that is not supposed to touch that clock, while allowing the current rate to be
+> > retrieved.
 
-Thanks,
-Cristian
++1, that is exactly why I asked the above question.
 
+>
+> Linux will try to enable, get rate, runtime disable the clock.
+> But the server does not allow enable/disable the clock, so the driver probe
+> will fail.
+>
+
+Interesting, if you can make the driver work with fixed clock, what can't
+you make it work with failure to adjust the clock rates ?
+
+> The SCMI server could bypass enable/disable and only allow get rate,
+> But this introduces heavy RPC, so just wanna whether it is ok to register
+> fixed clock and avoid RPC.
+>
+
+I need to study the clock layer in details, but would this happen if the
+clock is present with just one fixed clock rate ?
+
+> >
+> > JUNO/SCP is an example of how the CPUs clocks are visible to Linux BUT
+> > cannot be touched directly via Clock protocol by Linux since in the SCMI
+> > world you are supposed to use the Perf protocol instead to change the OPPs
+> > when you want to modify the performance level of the runnning CPU.
+> >
+
+Indeed.
+
+> > This kind of server-side permissions checks, meant to filter access to resources
+> > based on the requesting agent, are part of the SCMI declared aim to push the
+> > responsibility of such controls out of the kernel into the platform fw in order
+> > to avoid attacks like CLOCK_SCREW by letting the SCMI firmware be the one
+> > and only final arbiter on the requests coming from the agents; you can ask
+> > teh server whatever you like as an agent but your request can be DENIED or
+> > silently ignored (in case of shared resources) at the will of the platform which
+> > has the final say and it is implemented in a physically distinct code-base.
+> >
+> > It seems to me that this patch and the possible associated SCMI specification
+> > change would give back the control to the Linux agent and could allow the
+> > implementation of an SCMI Server that does NOT perform any of these
+> > permission checks.
+> >
+
+Unless I am missing something, I already replied to Peng with reasons why
+I don't see the need for change in the specification to represent this case.
+
+> > So, IMO, while this change, on one side, could be certainly useful by removing
+> > a bunch of unused/uneeded callbacks from the CLK SCMI driver when a fixed
+> > clock is identified, it could open the door to a bad implementation like the
+> > one mentioned above which does NOT perform any agent-based permission
+> > check.
+
+Agree.
+
+>
+> Thanks for detailed information, let me check whether our SCMI firmware
+> could do more on the permission side. But if RPC could be removed,
+> it could save some time.
+
+I would like to check why would clk framework ask to recalculate the clock
+rate if it is fixed clock.
+
+Or you are trying to paper over the issue that it is not a fixed clock. The
+other agents can change but not Linux agent but it must always read back the
+set clock rate. It is sort of read only clock. That may be an attribute you
+want to obtain from the firmware and see if that can be utilised in the clk
+framework. But the way you have presented it as fixed is simply wrong to me.
+
+--
+Regards,
+Sudeep
