@@ -2,138 +2,117 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40ED5CD80BB
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Oct 2023 12:09:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10003CD80BD
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Oct 2023 12:25:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231311AbjJJMJq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Oct 2023 08:09:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47044 "EHLO
+        id S231638AbjJJMZq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Oct 2023 08:25:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231580AbjJJMJp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Oct 2023 08:09:45 -0400
-Received: from mail-qv1-xf2b.google.com (mail-qv1-xf2b.google.com [IPv6:2607:f8b0:4864:20::f2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C4EBB6
-        for <linux-clk@vger.kernel.org>; Tue, 10 Oct 2023 05:09:43 -0700 (PDT)
-Received: by mail-qv1-xf2b.google.com with SMTP id 6a1803df08f44-65b0c9fb673so29509556d6.1
-        for <linux-clk@vger.kernel.org>; Tue, 10 Oct 2023 05:09:43 -0700 (PDT)
+        with ESMTP id S231637AbjJJMZp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Oct 2023 08:25:45 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9DD2A9
+        for <linux-clk@vger.kernel.org>; Tue, 10 Oct 2023 05:25:43 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-40535597f01so52571805e9.3
+        for <linux-clk@vger.kernel.org>; Tue, 10 Oct 2023 05:25:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696939782; x=1697544582; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=DgSEBJcUi7PZ5OXedvwInXaFNURNqtsaL0h7wFFXk5g=;
-        b=Df3KmV6NzyoruKmJufGdyQeVIeM94xePXheDrzzm9/krPQ0jAEIvv5Ien2F0RrmPkc
-         uKtla/0xPvuSxqAgH3p7HrD1gT5kWUMhkFfSaj2ib46V3FRNFcTfUaSMQCuPpFR8yOY3
-         ixA9gJeTCoBtX65NfpE1VpxFHHWM1IdKP+fgDyZFX/UGcvBbWstNlDicBgxoYFenAWBj
-         G+VdxULEkMAl7xmCRg6IDmZ1apVCjQz4IXjBbkj+kPs1eOuakvTCAqcIKrqoHV+PT5rb
-         dhg1fPXp3J9LipxYR2CpFtPNfBMnW3oIB2gC/ElJ0ChXIvUEDMcqENyf/3GxkwMykgQM
-         FIfg==
+        d=linaro.org; s=google; t=1696940742; x=1697545542; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QJoGOmHf3rDEIH9ZhsJ2Ddsd34yzBngjw1VZp8Xb8gs=;
+        b=xriTuVC5oWZyFAVHIhNUhdwhOOh24Lauv5qih3neAZNNkHiMbZV47s20oXSS5JT2ir
+         Wb0YW5kmkM4kmvHonVqaLJ2JqXV0nQfWpifCzx+64TOL6NHBYHwVWsspscjg9sPSG7om
+         Exc5Qe9K/2Nst+AnLK1tilxOAXtIH9npxpvHORQPrzXjElAyZLj4YWQKkPrw6Nvwt2Q6
+         GeR4UUcvkgJ2CNp5/bAP8OXrBJOsYRR6ParuFDj1fQ20oN+Q8L3qwJYqNF92qpgrEVfD
+         zVrJ2GoPy07rVHHzUEtf50h/Vmq/hSnUWt9y+dnfCWyPltB+wdDzDpWLGXpLHzoo7ije
+         aKAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696939782; x=1697544582;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1696940742; x=1697545542;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=DgSEBJcUi7PZ5OXedvwInXaFNURNqtsaL0h7wFFXk5g=;
-        b=HPgj+B+fW7drewFkDrqejRxVZK4wW9siED6aKgB8iaA5Jz3rukixsfDucrfXLRaf40
-         6BTclWeN3ReIRvGZKIBblIy9GqT6mr69Ol63MzlnvOjYdYRKelf4xti46Gr+I4eZvjey
-         noRA5kUqWtDKyPEr4GeE9TmFBvj/TOq0FGZElzI6LWARoHlLv/tcsQI7Ec7NtVIic+CZ
-         1PqxK2WjJajMoS5Bug0e1+/Gcf9doTklBvWvPqikehHB02IM9oEMHD7bM+f9uNsXBgew
-         5Pc9wcfTQOOIq/yVH2JiNXFDJTtRKlGefreSXSWno3VJrufzJzSU60bTZlzzSIAJO1M8
-         D2lQ==
-X-Gm-Message-State: AOJu0Yy2ZzVafoAwqZZi39GSv28fKTkBPiatRiFmsI9CmCcYSfgwjWf0
-        YCJqu5AR/5nlWG7ClipCy384zBmDpx6YNHuRyEzaJw==
-X-Google-Smtp-Source: AGHT+IEkobWfRAv+hk9GeXAgYbAsdwwHInRJB4q4A/k6gLUZyJCTapOQUejfM/de0SvYVTlXeCdNVMlVoHapdH1mpY8=
-X-Received: by 2002:ad4:5cc7:0:b0:65d:dcc:9754 with SMTP id
- iu7-20020ad45cc7000000b0065d0dcc9754mr22900149qvb.30.1696939782310; Tue, 10
- Oct 2023 05:09:42 -0700 (PDT)
+        bh=QJoGOmHf3rDEIH9ZhsJ2Ddsd34yzBngjw1VZp8Xb8gs=;
+        b=ocQps2rrxBTILTfN4kDlsSN4C2oxjdSlLgeEKkg9dsHbLBuEo77YBr9yLCgQeAhlcj
+         D3SO8Hn7B8mf6yjo1x65mmaxoEmJBOwv3ERG8vq6FelAjrr44Z6g2QqtvsyYiLCahn/z
+         J0CaGRHaYfYwT9sE7b2y5BJkT6lTEFCic5GFC4v40GsjeQbykq0D/D3prTPvDvz4mbCe
+         86AzqyYYwo5bc111hh9dBL8MRTXfXejwv4k6Uf6xqi9DOqtghMhUopLNiNCl8lDBDynl
+         SsqSuRK/19rYABzx49C4tjzR+XEgwBt0WKtyJrMSFr/8WftzYUcGUh5PIKTdx4zidh6C
+         ObbA==
+X-Gm-Message-State: AOJu0YzY7k45gJWSQK0cK9crwTDPqBlVmD86v5drdhNhWCK7YT+9m4iI
+        jP71HG3u8Mmh2dkWfdLu9/2Rgw==
+X-Google-Smtp-Source: AGHT+IEMFE7+jZ2E6qIyXz13dvkGAue4LRino7VKu9st5WEkc5wvqXhVsCTMXxrxQej5JckFDuAY3A==
+X-Received: by 2002:a1c:f710:0:b0:400:ce4f:f184 with SMTP id v16-20020a1cf710000000b00400ce4ff184mr16792201wmh.41.1696940742160;
+        Tue, 10 Oct 2023 05:25:42 -0700 (PDT)
+Received: from x13s-linux.nxsw.local ([37.228.218.3])
+        by smtp.gmail.com with ESMTPSA id bv28-20020a0560001f1c00b0032d402f816csm1404316wrb.98.2023.10.10.05.25.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Oct 2023 05:25:41 -0700 (PDT)
+From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+To:     andersson@kernel.org, agross@kernel.org, konrad.dybcio@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        dmitry.baryshkov@linaro.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        jonathan@marek.ca, quic_tdas@quicinc.com,
+        vladimir.zapolskiy@linaro.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bryan.odonoghue@linaro.org
+Subject: [PATCH v2 0/3] Add sc8280xp CCI and CAMSS core dtsi
+Date:   Tue, 10 Oct 2023 13:25:36 +0100
+Message-Id: <20231010122539.1768825-1-bryan.odonoghue@linaro.org>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
-References: <20231005155618.700312-1-peter.griffin@linaro.org>
- <20231005155618.700312-20-peter.griffin@linaro.org> <20231006205204.GA269353-robh@kernel.org>
-In-Reply-To: <20231006205204.GA269353-robh@kernel.org>
-From:   Peter Griffin <peter.griffin@linaro.org>
-Date:   Tue, 10 Oct 2023 13:09:31 +0100
-Message-ID: <CADrjBPpEFo4gRTsWau+xGoBAr2j7srhbxYefJGDer+PRu9QxBg@mail.gmail.com>
-Subject: Re: [PATCH 19/21] google/gs101: Add dt overlay for oriole board
-To:     Rob Herring <robh@kernel.org>
-Cc:     krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com,
-        s.nawrocki@samsung.com, linus.walleij@linaro.org,
-        wim@linux-watchdog.org, linux@roeck-us.net,
-        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-        olof@lixom.net, cw00.choi@samsung.com, tudor.ambarus@linaro.org,
-        andre.draszik@linaro.org, semen.protsenko@linaro.org,
-        soc@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Rob,
+V2:
+- Drops specific sc8280xp-cci compat - Konrad
+- Drops minItems where maxItems are equal - Krzysztof
+- Uses suggested description for CAMSS - Krzysztof
+- Leaves indentation of ports/properties - Rob
+- NoISP. Supports bayer encoded upstream currently only - Krzysztof
+- Endpoint. Adds an example endpoint - Krzysztof
 
-Thanks for your review!
+Link next:
+https://git.codelinaro.org/bryan.odonoghue/kernel/-/tree/linux-next-23-10-10-sc8280xp-camss-v2
 
-On Fri, 6 Oct 2023 at 21:52, Rob Herring <robh@kernel.org> wrote:
->
-> On Thu, Oct 05, 2023 at 04:56:16PM +0100, Peter Griffin wrote:
-> > The LK bootloader on Pixel6 searches for a dt overlay in the
-> > dtbo partition with a board_id and board_rev that matches
-> > what is baked into the device. If this overlay is not present
-> > then the phone will bootloop in fastboot and you can't boot
-> > the upstream kernel.
-> >
-> > This commit adds a dtbo for the production oriole variant.
-> > The other pre-production board overlays are not included
-> > at this time.
-> >
-> > Adding the dtbo here allows for a better experience when
-> > building/booting the upstream kernel on Pixel devices
-> > as all the DT required to boot the device will be created
-> > as part of the kernel build process. Rather than having to
-> > fetch the dtbo from some other repo.
-> >
-> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> > ---
-> >  arch/arm64/boot/dts/google/Makefile          |  1 +
-> >  arch/arm64/boot/dts/google/gs101-oriole.dtso | 21 ++++++++++++++++++++
-> >  2 files changed, 22 insertions(+)
-> >  create mode 100644 arch/arm64/boot/dts/google/gs101-oriole.dtso
-> >
-> > diff --git a/arch/arm64/boot/dts/google/Makefile b/arch/arm64/boot/dts/google/Makefile
-> > index 6d2026a767d4..3f1761f8daa9 100644
-> > --- a/arch/arm64/boot/dts/google/Makefile
-> > +++ b/arch/arm64/boot/dts/google/Makefile
-> > @@ -2,5 +2,6 @@
-> >
-> >  dtb-$(CONFIG_ARCH_GOOGLE_TENSOR) += \
-> >       gs101-oriole.dtb \
-> > +     gs101-oriole.dtbo
->
-> Overlays in the kernel must be able to be applied to a base DT in the
-> kernel. Add a rule to apply this (hint: a '-dtbs' variable does this
-> similar to -objs variables).
+V1:
+The sc8280xp provides a standard Camera Control Interface and Camera
+SubSystem hardware interface similar to antecedent parts sdm845 and
+sm8250.
 
-Ok will do, thanks for the hint
+Per the target segments for this part, sc8280xp has more of everything.
+More CCI, VFE, CSIPHY and therefore more interrupt lines and clocks to
+declare.
 
->
-> > diff --git a/arch/arm64/boot/dts/google/gs101-oriole.dtso b/arch/arm64/boot/dts/google/gs101-oriole.dtso
-> > new file mode 100644
-> > index 000000000000..50832fd94204
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/google/gs101-oriole.dtso
-> > @@ -0,0 +1,21 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * Oriole DVT Device Tree
->
-> Doesn't DVT mean pre-production?
+CCI x 4
+CSIPHY x 4
+VFE x 4
+VFE Lite x 4
+CSID x 4
 
-Yes, DVT stands for Design Verification Testing. I can remove that
-DVT suffix for v2.
-I suppose that means there were no changes between DVT and production as this
-is the overlay used by the production devices.
+Bootable 6.5.y x13s:
+https://git.codelinaro.org/bryan.odonoghue/kernel/-/tree/lenovo-x13s-linux-6.5.y
 
-regards,
+Linux next:
+https://git.codelinaro.org/bryan.odonoghue/kernel/-/tree/linux-next-23-10-06-sc8280xp-camss
 
-Peter
+This patch depends-on:
+https://lore.kernel.org/lkml/20231004161853.86382-2-bryan.odonoghue@linaro.org/T/
+
+Bryan O'Donoghue (3):
+  arm64: dts: qcom: sc8280xp: camss: Add CCI definitions
+  media: dt-bindings: media: camss: Add qcom,sc8280xp-camss binding
+  arm64: dts: qcom: sc8280xp: camss: Add CAMSS block definition
+
+ .../bindings/media/qcom,sc8280xp-camss.yaml   | 582 +++++++++++++++++
+ arch/arm64/boot/dts/qcom/sc8280xp.dtsi        | 609 ++++++++++++++++++
+ 2 files changed, 1191 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/qcom,sc8280xp-camss.yaml
+
+-- 
+2.40.1
+
