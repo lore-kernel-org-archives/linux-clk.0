@@ -2,111 +2,93 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7613CD6E7F
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Oct 2023 14:43:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AE09CD8C9F
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Oct 2023 15:49:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232262AbjJKOn3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Oct 2023 10:43:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59620 "EHLO
+        id S1343920AbjJKPtk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Oct 2023 11:49:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234992AbjJKOn1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Oct 2023 10:43:27 -0400
-Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76ED2A7
-        for <linux-clk@vger.kernel.org>; Wed, 11 Oct 2023 07:43:24 -0700 (PDT)
-Received: by mail-yb1-xb32.google.com with SMTP id 3f1490d57ef6-d8168d08bebso7281616276.0
-        for <linux-clk@vger.kernel.org>; Wed, 11 Oct 2023 07:43:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697035403; x=1697640203; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=QHSGgNwplrQByUQEFDMoiW6T88xkz7+Z7CzZX4tel1c=;
-        b=del6lvyz8L/ympiDcQdKBYdjBpFmPkmZ7Hr6GrQOkREWEDZcGYfYb4WMWOZLH2TMts
-         o6WSTmSS2ny1c1H8OSRu1fyqeJdqcYrklcELEuMoEC/sPc3oTqdvu0GX+GckmWgNEgez
-         3pyiWkpYVMugu6DSqC3J1iqh2se1SgoYzuspzkGnh7sY7z81mwf66lE/QrIisDhxRsvZ
-         DLpLxRIFzTqKNMpCukYEsAJhnfZHF5ntiGCUmiSLQbWUpEKqxwlENPyS2GMU3P47Xick
-         mXWSkcVyTq0b4ML0CCwo/ZZu8n4tBWcLA+dAjCL6ZVWDVQQIJz2rV2Skmm8kIQRzLCxO
-         LWNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697035403; x=1697640203;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QHSGgNwplrQByUQEFDMoiW6T88xkz7+Z7CzZX4tel1c=;
-        b=wsIa5jZQAjgkbiEWRXafpRrpaM0g8chTpRO47d96fyB1rfQmCATuyhbTOgrEa8ZytT
-         uja6MCAeeaHW6mpHVLStYxVsXs2/wtqnYLUOnR/0TSytfwtpLkcqTnPTdEeu8G2AuH2E
-         2F+VNN/OSy7CtXIZuqJlEcnAEBSy0Q3OmBnNVcEApkbiAj2XNGbEY9WmHkP98WXdtzZS
-         5YXyGk9kClGNqApLsSfKU4ZMw8QGYLsBeal/UuEwVyXl4kyx3qHN2U2W8SJkoHum4jl3
-         fr1gkVf4vEIFL5DavOZtmKpGqP9TZkNrOFgabwLaraWbEAxgWKWYeGu8+QaJKEx9WIgU
-         0gcw==
-X-Gm-Message-State: AOJu0YwKUNPLO5sikSltEg3KlXcYYVZBVQac6jn+N9racg+XecOKCekb
-        EeiNY1gkpghBWpHN7WMWvtkXOcRTdxxy+QkQgBSkTw==
-X-Google-Smtp-Source: AGHT+IG6ejFYIQqSBlCuZeoLJFdvXD5HM2pcfGye3trv5p0ja9AYy6Vps/U8uovRHfUX5MkuYivucvBJhgbz9bJ3CCY=
-X-Received: by 2002:a25:5d1:0:b0:d9a:501e:95d7 with SMTP id
- 200-20020a2505d1000000b00d9a501e95d7mr4970434ybf.8.1697035403592; Wed, 11 Oct
- 2023 07:43:23 -0700 (PDT)
+        with ESMTP id S235075AbjJKPtj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Oct 2023 11:49:39 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0EC7A4;
+        Wed, 11 Oct 2023 08:49:38 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E50FCC433C7;
+        Wed, 11 Oct 2023 15:49:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1697039378;
+        bh=+4vMMnbz6QM3xqt6SUWU/u/wTBq1TQ2bMWhWyVpP1ck=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=neKr/JAWpIGZ6cQ0odUAwAzsX3izewlUsu5qdv35VN0D0QoFSqseHZk/VhagElKQ7
+         xO/Ep7SaCKgWM9l2v3e9586y8od72dvk7klu6xqQROrtbzceADDqAQZ9HU88O8eEo2
+         A1tkawJa3OkYvdouGHXKnYtjiLqtobcRHjy3L+13H6maeJxrYjzpnWAWNutUG/BOFg
+         K5vncX1Z4QhvXx3Rm9P3k7es1t7wWcZyDH3bM812FIHy1bi7WyNrx8MlmX+FYoSxF+
+         GErynuIp6oa2BbpPsQdRkeeggaHiZHdJkCL7/U+mh/ld31fKEpSxLaOpxR/y7NvWsB
+         YHcVjWyd/pqaQ==
+Received: (nullmailer pid 793454 invoked by uid 1000);
+        Wed, 11 Oct 2023 15:49:35 -0000
+Date:   Wed, 11 Oct 2023 10:49:35 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Ilia Lin <ilia.lin@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Christian Marangi <ansuelsmth@gmail.com>,
+        Stephan Gerhold <stephan@gerhold.net>
+Subject: Re: [PATCH v4 08/23] soc: qcom: Add driver for Qualcomm Krait L2
+ cache scaling
+Message-ID: <20231011154935.GA785564-robh@kernel.org>
+References: <20230827115033.935089-1-dmitry.baryshkov@linaro.org>
+ <20230827115033.935089-9-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
-References: <20231010224928.2296997-1-peter.griffin@linaro.org>
- <20231010224928.2296997-16-peter.griffin@linaro.org> <e2320e90-5e3b-4b50-8af9-56dee639d022@roeck-us.net>
-In-Reply-To: <e2320e90-5e3b-4b50-8af9-56dee639d022@roeck-us.net>
-From:   Peter Griffin <peter.griffin@linaro.org>
-Date:   Wed, 11 Oct 2023 15:43:12 +0100
-Message-ID: <CADrjBPoaG2XPx-hrxXAVj9xFQeCPJrJMX0sM-cOkv0gRV=zAOw@mail.gmail.com>
-Subject: Re: [PATCH v2 15/20] watchdog: s3c2410_wdt: Add support for Google
- tensor SoCs
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
-        tomasz.figa@gmail.com, s.nawrocki@samsung.com,
-        linus.walleij@linaro.org, wim@linux-watchdog.org,
-        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-        olof@lixom.net, cw00.choi@samsung.com, tudor.ambarus@linaro.org,
-        andre.draszik@linaro.org, semen.protsenko@linaro.org,
-        saravanak@google.com, willmcvicker@google.com, soc@kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        kernel-team@android.com, linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230827115033.935089-9-dmitry.baryshkov@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Guenter,
+On Sun, Aug 27, 2023 at 02:50:18PM +0300, Dmitry Baryshkov wrote:
+> Add a simple driver that handles scaling of L2 frequency and voltages.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
 
-Thanks for your review.
+[...]
 
-On Wed, 11 Oct 2023 at 00:56, Guenter Roeck <linux@roeck-us.net> wrote:
->
-> On Tue, Oct 10, 2023 at 11:49:23PM +0100, Peter Griffin wrote:
-> > This patch adds the compatibles and drvdata for the Google
-> > gs101 & gs201 SoCs found in Pixel 6 and Pixel 7 phones. Similar
-> > to Exynos850 it has two watchdog instances, one for each cluster
-> > and has some control bits in PMU registers.
-> >
-> > The watchdog IP found in gs101 SoCs also supports a few
-> > additional bits/features in the WTCON register which we add
-> > support for and an additional register detailed below.
-> >
-> > dbgack-mask - Enables masking WDT interrupt and reset request
-> > according to asserted DBGACK input
-> >
-> > windowed-mode - Enabled Windowed watchdog mode
-> >
-> > Windowed watchdog mode also has an additional register WTMINCNT.
-> > If windowed watchdog is enabled and you reload WTCNT when the
-> > value is greater than WTMINCNT, it prompts interrupt or reset
-> > request as if the watchdog time has expired.
->
-> I am a bit lost with this one. The patch adds QUIRK_HAS_WTMINCNT_REG
-> but doesn't use it. It also adds S3C2410_WTMINCNT but does not use it
-> either.
->
-> What is the point of doing that ? It is just confusing.
+> +static const struct of_device_id krait_l2_match_table[] = {
+> +	{ .compatible = "qcom,krait-l2-cache" },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, krait_l2_match_table);
+> +
+> +static struct platform_driver krait_l2_driver = {
+> +	.probe = krait_l2_probe,
+> +	.remove = krait_l2_remove,
+> +	.driver = {
+> +		.name = "qcom-krait-l2",
+> +		.of_match_table = krait_l2_match_table,
+> +		.sync_state = icc_sync_state,
+> +	},
+> +};
 
-Good spot, it seems I lost a few hunks from this patch at some point, sorry
-about that. I will update and send a v3.
+As I mentioned in the other thread, cache devices already have a struct 
+device. Specifically, they have a struct device (no subclass) on the 
+cpu_subsys bus type. So there should be no need for a platform device 
+and second struct device.
 
-regards,
+See drivers/acpi/processor_driver.c for an example. Or grep any use of 
+"cpu_subsys".
 
-Peter.
+Rob
