@@ -2,89 +2,126 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 870E9CD6E72
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Oct 2023 13:41:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09FDCCD6E6E
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Oct 2023 14:04:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232324AbjJKNll (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Oct 2023 09:41:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36384 "EHLO
+        id S235016AbjJKOEP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Oct 2023 10:04:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232091AbjJKNlj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Oct 2023 09:41:39 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4055090;
-        Wed, 11 Oct 2023 06:41:38 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8121EC15;
-        Wed, 11 Oct 2023 06:42:18 -0700 (PDT)
-Received: from bogus (unknown [10.57.93.106])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C229D3F5A1;
-        Wed, 11 Oct 2023 06:41:35 -0700 (PDT)
-Date:   Wed, 11 Oct 2023 14:40:03 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Ranjani Vaidyanathan <ranjani.vaidyanathan@nxp.com>
-Cc:     Cristian Marussi <cristian.marussi@arm.com>,
-        "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "souvik.chakravarty@arm.com" <souvik.chakravarty@arm.com>,
-        Glen G Wienecke <glen.wienecke@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>
-Subject: Re: [EXT] Re: [RFC] firmware: arm_scmi: clock: add fixed clock
- attribute support
-Message-ID: <20231011134003.lhb5yiicgr5cbzr2@bogus>
-References: <20231010022911.4106863-1-peng.fan@oss.nxp.com>
- <20231010091223.rvcyrgbjcrmjzmvp@bogus>
- <ZSUXu65bOYVG689E@pluto>
- <20231010093509.ddy75og4jd72n6cq@bogus>
- <PA4PR04MB94859C7729B19C8B88541F8692CCA@PA4PR04MB9485.eurprd04.prod.outlook.com>
+        with ESMTP id S235168AbjJKOD7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Oct 2023 10:03:59 -0400
+Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5FEF1AA;
+        Wed, 11 Oct 2023 07:03:50 -0700 (PDT)
+Date:   Wed, 11 Oct 2023 16:03:47 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1697033028;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=/ryEPlAkCfnJebPNGelFxUu+Exl4LiDYxPfbPUhgQHM=;
+        b=0tIyDf3E/7ceKdkTn+Bk4QcH0B8CgZDdg2PHfOYp4XRpDjQR+fg4H8OPwFaCJUuqFeqHL2
+        R5F6YFLSHAU9GAE0miJbUPLFEJVs+zqPaZSzlhteq5VsQgyStsBMX3ewa5sqSpshMn8a3t
+        LqqUTxuK3cAVtek/pLxLFUE7rkHEVDjbTHiJUomHZOEa7VTlvG2zmeIrsf8s5Gc9VG+6Sp
+        RYdXlqFnuGOWOm8PhsK/lw/s/tFsYprecreWkJhCQVIqKv2cvLZiAU5mYTOwyn8lVEr75g
+        dZAJEvqWwJ9Pai2IsWOkfD8ZPtf8ragn3F3CG7MPbE1GWzrUj2BgnWN9kxV4tA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1697033028;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=/ryEPlAkCfnJebPNGelFxUu+Exl4LiDYxPfbPUhgQHM=;
+        b=XR4TPWAkuaMPAhKQWqLauiWnZWk4PYD1G+fUxdKno3O6+LMGMLmcP2sxUMJLwE8j7Ypo2p
+        b1EmuD1WvQBNxhCQ==
+From:   Benedikt Spranger <b.spranger@linutronix.de>
+To:     Maxime Ripard <mripard@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Dinh Nguyen <dinguyen@kernel.org>
+Subject: Re: [PATCH 1/1] clk: socfpga: gate: Fix of by factor 2 for serial
+ console
+Message-ID: <20231011160339.51e3ff1e@mitra>
+In-Reply-To: <xcq3wiayrfa67pn4thepgewrcif4fdhplykvb4nkwgmxd3i7yo@vcimkuy32qd4>
+References: <20231005095927.12398-1-b.spranger@linutronix.de>
+        <20231005095927.12398-2-b.spranger@linutronix.de>
+        <qpskbgigcaoyjuhzeguz366cjukv3ij7utlbkra5edhwn6uzh4@bdedm6vs62y5>
+        <20231005203202.08b5d1cf@mitra>
+        <ujs6kaisllqu3qzm76qkwpmdy2vnulp6z742ooclbsdz36zl5f@m7ujgar4pwqs>
+        <xcq3wiayrfa67pn4thepgewrcif4fdhplykvb4nkwgmxd3i7yo@vcimkuy32qd4>
+Organization: Linutronix GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PA4PR04MB94859C7729B19C8B88541F8692CCA@PA4PR04MB9485.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Oct 11, 2023 at 03:54:59AM +0000, Ranjani Vaidyanathan wrote:
-> From what I see SCMI clock protocol could benefit from an attribute for the
-> clock that describes what operations are possible on a clock. There are many
-> bus clocks that only the SCMI server manages and the error code DENIED
-> should be handled gracefully by the agent.
->
+On Wed, 11 Oct 2023 11:17:22 +0200
+Maxime Ripard <mripard@kernel.org> wrote:
 
-Agreed, but we need to understand if we need it per operation basis or
-at the higher granularity such as any write or set operations not allowed.
-Just my initial thoughts, we can discuss.
+Hi,
 
-> In the case of Linux, perhaps this should be handled by the SCMI clock
-> driver, instead of allowing the error to propagate up the Linux clock
-> framework?
+> Could you test that patch?
+The system booted fine. Serial console is working as expected
 
-Yes but even for that we need information from the firmware.
+> ----8<----
+> 
+> diff --git a/drivers/clk/socfpga/clk-gate.c b/drivers/clk/socfpga/clk-gate.c
+> index 8dd601bd8538..486a4d84e418 100644
+> --- a/drivers/clk/socfpga/clk-gate.c
+> +++ b/drivers/clk/socfpga/clk-gate.c
+> @@ -87,10 +87,8 @@ static int socfpga_clk_set_parent(struct clk_hw *hwclk, u8 parent)
+>  	return 0;
+>  }
+> 
+> -static unsigned long socfpga_clk_recalc_rate(struct clk_hw *hwclk,
+> -	unsigned long parent_rate)
+> +static u32 socfpga_clk_get_div(struct socfpga_gate_clk *socfpgaclk)
+>  {
+> -	struct socfpga_gate_clk *socfpgaclk = to_socfpga_gate_clk(hwclk);
+>  	u32 div = 1, val;
+> 
+>  	if (socfpgaclk->fixed_div)
+> @@ -105,12 +103,33 @@ static unsigned long socfpga_clk_recalc_rate(struct clk_hw *hwclk,
+>  			div = (1 << val);
+>  	}
+> 
+> +	return div;
+> +}
+> +
+> +static unsigned long socfpga_clk_recalc_rate(struct clk_hw *hwclk,
+> +					     unsigned long parent_rate)
+> +{
+> +	struct socfpga_gate_clk *socfpgaclk = to_socfpga_gate_clk(hwclk);
+> +	u32 div = socfpga_clk_get_div(socfpgaclk);
+> +
+>  	return parent_rate / div;
+>  }
+> 
+> +
+> +static int socfpga_clk_determine_rate(struct clk_hw *hw,
+                                                       *hwclk,
+> +				      struct clk_rate_request *req)
+> +{
+> +	struct socfpga_gate_clk *socfpgaclk = to_socfpga_gate_clk(hwclk);
+> +	u32 div = socfpga_clk_get_div(socfpgaclk);
+> +
+> +	req->rate = req->best_parent_rate / div;
+> +
+> +	return 0;
+> +}
+> +
+>  static struct clk_ops gateclk_ops = {
+>  	.recalc_rate = socfpga_clk_recalc_rate,
+> -	.determine_rate = clk_hw_determine_rate_no_reparent,
+> +	.determine_rate = socfpga_clk_determine_rate,
+>  	.get_parent = socfpga_clk_get_parent,
+>  	.set_parent = socfpga_clk_set_parent,
+>  };
 
-> It seems strange that the SCMI server should swallow the error (silently
-> fail) only for certain agents.
-
-I am bit confused by this statement. The SCMI server/platform must not
-ignore or fail silently. Since the agent is not allowed, if it attempts
-it must return the apt error.
-
-While Linux may choose to ignore the error but I think this is what
-we are discussing to figure out what is the best way to avoid it or
-worst case handle it gracefully. With any extra info from the firmware,
-the former option must be possible and we need not think of the latter
-option IMO.
-
-> I would think this would make debug quite difficult and having a "DENIED"
-> error code not very useful.
->
-
-Agreed especially if it can and is expected to continue functioning as normal.
-
--- 
-Regards,
-Sudeep
+Regards
+    Benedikt Spranger
