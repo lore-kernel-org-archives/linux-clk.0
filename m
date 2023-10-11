@@ -2,108 +2,122 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59120CD98F5
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Oct 2023 06:10:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59334CD98F5
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Oct 2023 07:19:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344305AbjJKGK5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Oct 2023 02:10:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60194 "EHLO
+        id S229662AbjJKHTK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Oct 2023 03:19:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344090AbjJKGK4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Oct 2023 02:10:56 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A244AA7
-        for <linux-clk@vger.kernel.org>; Tue, 10 Oct 2023 23:10:53 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id 2adb3069b0e04-5043a01ee20so7833929e87.0
-        for <linux-clk@vger.kernel.org>; Tue, 10 Oct 2023 23:10:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697004652; x=1697609452; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rs18PpUTYGWS2Th+7r2apLAIVKCdnE29uQIUA8oLSLc=;
-        b=IFS/XObEQu8N2atOHdejXRWDS0/5390hx78wtOwEkAf0xWTiX7pMl2cA/B+WrLGgH+
-         /5O7Dd5XkTkNl5vqD7NZ2mMr+1N6Y5KchOcOuQSpIxCwe9Fxw3lDkIHft5yEwiX0XLbk
-         efEUqB74Owv+jZlPljD4Z9WjfrrV8ZRqmIqMDjtKU8vjTN99Bek2ipbp72wto86743m6
-         VghDbl6TDBDAiy5V6VsfOGfQW6+oFHM7YVMU4/lfFbzg5tex22tyIDpDqnCahHN6+GNf
-         9JGAWlQdQB/W0DctVllr9VLMYXjF82E7ATj7C+xZ11NVMZRWZ+yJVyNKVWQEROefJAZE
-         AFnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697004652; x=1697609452;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rs18PpUTYGWS2Th+7r2apLAIVKCdnE29uQIUA8oLSLc=;
-        b=hGtUN1+T9EAVgMOB67JbuESow5oEP+4RjuMzXvXGm7/w2pTw4qFpF218m6bjnG7FH8
-         H+m7zOOl9rhG8/sK1gN8qtb34cVQ5t1lZPvYvS5pmTykjFn4fb1L0YVRbXJWV8uKxFU/
-         A2e+hrHOA1xMR+wVNyuVtnQ/ustdJFhaJZkcyTE9+ghqHr3Yh7MQseFotl2VDYAd6sC/
-         SrdsQE/ATFUXvBu9kXdU0xcMjTFsDi+S+gUpj2psqmsjXn9J8dkXGL6suK0IXuAJ/IRo
-         bauQyc/M7IQIdtVAPmmMp8iUnbyqWiFqeRGCxkhApCTK67QTNVwoR2zfTNjZfIassxcE
-         EcDw==
-X-Gm-Message-State: AOJu0YwyBcLbRFvSpMQzXR2OHOvEXqrfUAm/xH+zu5aL+lp3AbAlTHvw
-        Wl1I/WTXC/WXyeNdlNlxlLM1Dw==
-X-Google-Smtp-Source: AGHT+IE89HVDFcFfC44P/nItl+VCGsnDCkj5yP8HJ1NhznNZ/lQEYkHEO99NParLo+oTfKlWtRa/Pg==
-X-Received: by 2002:a19:7b03:0:b0:500:aed0:cb1b with SMTP id w3-20020a197b03000000b00500aed0cb1bmr16439849lfc.24.1697004651641;
-        Tue, 10 Oct 2023 23:10:51 -0700 (PDT)
-Received: from [192.168.2.107] ([79.115.63.123])
-        by smtp.gmail.com with ESMTPSA id q14-20020ac24a6e000000b00504211d2a73sm2102818lfp.230.2023.10.10.23.10.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Oct 2023 23:10:50 -0700 (PDT)
-Message-ID: <92de302a-f6b5-465c-a5da-2a711861089e@linaro.org>
-Date:   Wed, 11 Oct 2023 07:10:47 +0100
+        with ESMTP id S229821AbjJKHTJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Oct 2023 03:19:09 -0400
+Received: from muru.com (muru.com [72.249.23.125])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 05B658F;
+        Wed, 11 Oct 2023 00:19:06 -0700 (PDT)
+Received: from hillo.muru.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTP id D6CB180E1;
+        Wed, 11 Oct 2023 07:19:04 +0000 (UTC)
+From:   Tony Lindgren <tony@atomide.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Tero Kristo <kristo@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-omap@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>,
+        =?UTF-8?q?P=C3=A9ter=20Ujfalusi?= <peter.ujfalusi@gmail.com>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>
+Subject: [PATCH 1/2] clk: ti: Fix missing omap4 mcbsp functional clock and aliases
+Date:   Wed, 11 Oct 2023 10:18:55 +0300
+Message-ID: <20231011071856.11594-1-tony@atomide.com>
+X-Mailer: git-send-email 2.42.0
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/20] Add minimal Tensor/GS101 SoC support and
- Oriole/Pixel6 board
-Content-Language: en-US
-To:     Peter Griffin <peter.griffin@linaro.org>, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com,
-        s.nawrocki@samsung.com, linus.walleij@linaro.org,
-        wim@linux-watchdog.org, linux@roeck-us.net,
-        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-        olof@lixom.net, cw00.choi@samsung.com
-Cc:     andre.draszik@linaro.org, semen.protsenko@linaro.org,
-        saravanak@google.com, willmcvicker@google.com, soc@kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        kernel-team@android.com, linux-serial@vger.kernel.org
-References: <20231010224928.2296997-1-peter.griffin@linaro.org>
-From:   Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20231010224928.2296997-1-peter.griffin@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi, Peter,
+We are using a wrong mcbsp functional clock. The interconnect target module
+driver provided clock for mcbsp is not same as the mcbsp functional clock
+known as the gfclk main_clk. The mcbsp functional clocks for mcbsp should
+have been added before we dropped the legacy platform data.
 
-On 10/10/23 23:49, Peter Griffin wrote:
-> Note 3: In `dt-bindings: pinctrl: samsung: add google,gs101-pinctrl
-> compatible` I tried to narrow the interrupts check to
-> google,gs101-pinctrl but I still see a warning: gs101-oriole.dtb:
-> pinctrl@174d0000: interrupts: [[0, 0, 4],[..] is too long If anyone can
-> educate me on what I've done wrong here it would be most appreciated!
+Additionally we are also missing the clock aliases for the clocks used by
+the audio driver if reparenting is needed. This causes audio driver errors
+like "CLKS: could not clk_get() prcm_fck" for mcbsp as reported by Andreas.
+The mcbsp clock aliases too should have been added before we dropped the
+legacy platform data.
 
-I guess the initial definition of the number of interrupts should
-include the largest min/maxItems. I no longer see the warning with this
-change:
+Let's add the clocks and aliases with a single patch to fix the issue.
 
-diff --git
-a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
-b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
-index 2464bc43aacb..6dc648490668 100644
---- a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
-@@ -59,7 +59,8 @@ properties:
-   interrupts:
-     description:
-       Required for GPIO banks supporting external GPIO interrupts.
--    maxItems: 1
-+    minItems: 1
-+    maxItems: 50
+Fixes: 349355ce3a05 ("ARM: OMAP2+: Drop legacy platform data for omap4 mcbsp")
+Reported-by: Andreas Kemnade <andreas@kemnade.info>
+Reported-by: Péter Ujfalusi <peter.ujfalusi@gmail.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+---
+ arch/arm/boot/dts/ti/omap/omap4-l4-abe.dtsi | 6 ++++++
+ arch/arm/boot/dts/ti/omap/omap4-l4.dtsi     | 2 ++
+ drivers/clk/ti/clk-44xx.c                   | 5 +++++
+ 3 files changed, 13 insertions(+)
 
-   power-domains:
-     maxItems: 1
+diff --git a/arch/arm/boot/dts/ti/omap/omap4-l4-abe.dtsi b/arch/arm/boot/dts/ti/omap/omap4-l4-abe.dtsi
+--- a/arch/arm/boot/dts/ti/omap/omap4-l4-abe.dtsi
++++ b/arch/arm/boot/dts/ti/omap/omap4-l4-abe.dtsi
+@@ -109,6 +109,8 @@ mcbsp1: mcbsp@0 {
+ 				reg = <0x0 0xff>, /* MPU private access */
+ 				      <0x49022000 0xff>; /* L3 Interconnect */
+ 				reg-names = "mpu", "dma";
++				clocks = <&abe_clkctrl OMAP4_MCBSP1_CLKCTRL 24>;
++				clock-names = "fck";
+ 				interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
+ 				interrupt-names = "common";
+ 				ti,buffer-size = <128>;
+@@ -142,6 +144,8 @@ mcbsp2: mcbsp@0 {
+ 				reg = <0x0 0xff>, /* MPU private access */
+ 				      <0x49024000 0xff>; /* L3 Interconnect */
+ 				reg-names = "mpu", "dma";
++				clocks = <&abe_clkctrl OMAP4_MCBSP2_CLKCTRL 24>;
++				clock-names = "fck";
+ 				interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
+ 				interrupt-names = "common";
+ 				ti,buffer-size = <128>;
+@@ -175,6 +179,8 @@ mcbsp3: mcbsp@0 {
+ 				reg = <0x0 0xff>, /* MPU private access */
+ 				      <0x49026000 0xff>; /* L3 Interconnect */
+ 				reg-names = "mpu", "dma";
++				clocks = <&abe_clkctrl OMAP4_MCBSP3_CLKCTRL 24>;
++				clock-names = "fck";
+ 				interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
+ 				interrupt-names = "common";
+ 				ti,buffer-size = <128>;
+diff --git a/arch/arm/boot/dts/ti/omap/omap4-l4.dtsi b/arch/arm/boot/dts/ti/omap/omap4-l4.dtsi
+--- a/arch/arm/boot/dts/ti/omap/omap4-l4.dtsi
++++ b/arch/arm/boot/dts/ti/omap/omap4-l4.dtsi
+@@ -2043,6 +2043,8 @@ mcbsp4: mcbsp@0 {
+ 				compatible = "ti,omap4-mcbsp";
+ 				reg = <0x0 0xff>; /* L4 Interconnect */
+ 				reg-names = "mpu";
++				clocks = <&l4_per_clkctrl OMAP4_MCBSP4_CLKCTRL 24>;
++				clock-names = "fck";
+ 				interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
+ 				interrupt-names = "common";
+ 				ti,buffer-size = <128>;
+diff --git a/drivers/clk/ti/clk-44xx.c b/drivers/clk/ti/clk-44xx.c
+--- a/drivers/clk/ti/clk-44xx.c
++++ b/drivers/clk/ti/clk-44xx.c
+@@ -749,9 +749,14 @@ static struct ti_dt_clk omap44xx_clks[] = {
+ 	DT_CLK(NULL, "mcbsp1_sync_mux_ck", "abe-clkctrl:0028:26"),
+ 	DT_CLK(NULL, "mcbsp2_sync_mux_ck", "abe-clkctrl:0030:26"),
+ 	DT_CLK(NULL, "mcbsp3_sync_mux_ck", "abe-clkctrl:0038:26"),
++	DT_CLK("40122000.mcbsp", "prcm_fck", "abe-clkctrl:0028:26"),
++	DT_CLK("40124000.mcbsp", "prcm_fck", "abe-clkctrl:0030:26"),
++	DT_CLK("40126000.mcbsp", "prcm_fck", "abe-clkctrl:0038:26"),
+ 	DT_CLK(NULL, "mcbsp4_sync_mux_ck", "l4-per-clkctrl:00c0:26"),
++	DT_CLK("48096000.mcbsp", "prcm_fck", "l4-per-clkctrl:00c0:26"),
+ 	DT_CLK(NULL, "ocp2scp_usb_phy_phy_48m", "l3-init-clkctrl:00c0:8"),
+ 	DT_CLK(NULL, "otg_60m_gfclk", "l3-init-clkctrl:0040:24"),
++	DT_CLK(NULL, "pad_fck", "pad_clks_ck"),
+ 	DT_CLK(NULL, "per_mcbsp4_gfclk", "l4-per-clkctrl:00c0:24"),
+ 	DT_CLK(NULL, "pmd_stm_clock_mux_ck", "emu-sys-clkctrl:0000:20"),
+ 	DT_CLK(NULL, "pmd_trace_clk_mux_ck", "emu-sys-clkctrl:0000:22"),
+-- 
+2.42.0
