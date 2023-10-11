@@ -2,152 +2,163 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21FBBCD6E5D
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Oct 2023 12:23:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CA95CD6E65
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Oct 2023 12:41:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235017AbjJKMXj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Oct 2023 08:23:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36210 "EHLO
+        id S232124AbjJKMlR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Oct 2023 08:41:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234971AbjJKMXL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Oct 2023 08:23:11 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E91282D5B
-        for <linux-clk@vger.kernel.org>; Wed, 11 Oct 2023 05:11:18 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-4065f29e933so66620275e9.1
-        for <linux-clk@vger.kernel.org>; Wed, 11 Oct 2023 05:11:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697026268; x=1697631068; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QPLserjwwsbucCfxghBr6ZgzGZTYvBNBd9opTNn+n1g=;
-        b=ZzZ2luOYO8aq+BRA3v7LWBeMv/r6vy842m679iVQxc46Xgc2oowbI4gm5twPApK1D1
-         23IEIpNk824P4N808VNNfcc2YD1dFW2e/shixR4h9ULxUDwZuT5EKU36u2HSmLVqUX4P
-         Ry2QYFV2OalOeXikgbWv3vrNmjVK5+soai0iaK1u4wT57cmtIyqUNCym32gk014cKyca
-         OPdRXBJT22unB94WooWrJ8CZhfrQAfm55jPj6F81ORAoYK1xW48Ew3wFg/Bgq8xLBVi/
-         AYVVky+r417DQbbalUi56CIfTmu+NUH9ea3PSvK2lmNWpxx+q9wrGhavsFzsIYOxgDH0
-         qALw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697026268; x=1697631068;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QPLserjwwsbucCfxghBr6ZgzGZTYvBNBd9opTNn+n1g=;
-        b=MRwM31uTHltT0wbT9mNaAejSmYCD9PvGRxDC0VHEfHa1f6MaBPzBPOPNWebYLhowzQ
-         cn6hrK+pPBEYFpx0vIgDxD0jN77o9f0NVhBINfCEMf6lkvOJwGUfnu+0az1QLJOVbnzx
-         2IooKgdWxb2qcH2i2Gp67wHF8Yt9SZeBnkY8V3IhNW6u9zEqm2/deghOShevCunet0yb
-         cK96GiAOgfpywGK4m+egltDT68L946PZCtEVDliYdY/s2K3Iw1gyXLlEru0FHCsQhJKD
-         c4BRD7rVRK3r8/oSNiQwewI3IyqZbT5OZhCjWfCMmQNO4xDxuomKPD/2lIEzLvX63Ud+
-         sqmw==
-X-Gm-Message-State: AOJu0Yy8ofm1fu6T6SXyOj6nwYFZEHLKwMxQCrcE89mnWbRjAnaZPldK
-        36WZizUanuxrpAcdEAlDOqymiQ==
-X-Google-Smtp-Source: AGHT+IE64a5xkV0na2V2QKvpWQnIDZTy/kQyX3TYj6F0p8SjSaAETAL17LJW0hN0q6oe9Igo6VSGpw==
-X-Received: by 2002:a05:600c:c10:b0:407:536d:2e93 with SMTP id fm16-20020a05600c0c1000b00407536d2e93mr4434583wmb.8.1697026268499;
-        Wed, 11 Oct 2023 05:11:08 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.100])
-        by smtp.gmail.com with ESMTPSA id e24-20020a05600c219800b004013797efb6sm18902138wme.9.2023.10.11.05.11.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Oct 2023 05:11:07 -0700 (PDT)
-Message-ID: <fa75fdbd-6058-44ff-a65f-825837d85205@linaro.org>
-Date:   Wed, 11 Oct 2023 14:11:05 +0200
+        with ESMTP id S231327AbjJKMlQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Oct 2023 08:41:16 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D054491;
+        Wed, 11 Oct 2023 05:41:14 -0700 (PDT)
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39BCOpTH024354;
+        Wed, 11 Oct 2023 12:40:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=UZpYFbzXOrXENSAWmRlHpKkAEdevo6eS+r/KdkhBvk4=;
+ b=lDPWi64w5irorUuxteH6raNoS9ZNXTmDjRWJybaI9r8HDaPuHJbyxLAlMP7Sv0n04WKt
+ 7X2FnzSnSENqQEbP6qV879MJfI1MNjVlQMj3yP1yD0ecoJfsHWmmFoho/g3Ey58w8ub0
+ omb1kQHB3ENs6iTsZn5aSbqK0gzrjw+929QQ7gwizQB1YK9kAoOlq/DaOg1+wvC0fsYH
+ a+IkAwmFATZaHOvBEN/8p7JhcukYJD8VLhzYAc/NJ3eCk6dSAWuxmhvqbA9URZ2NyQjf
+ NS431fZmcrzTkhRCTzkd9aNtyPFn9ulw/sH79oxv2luembky03RTkNnC60sBeiHWyKbI vA== 
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3tnmds90nn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 11 Oct 2023 12:40:59 +0000
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 39BCewWw022591
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 11 Oct 2023 12:40:58 GMT
+Received: from [10.253.39.162] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Wed, 11 Oct
+ 2023 05:40:54 -0700
+Message-ID: <c3914104-e2eb-44c1-4d5f-304c51b89c1a@quicinc.com>
+Date:   Wed, 11 Oct 2023 20:40:52 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/20] Add minimal Tensor/GS101 SoC support and
- Oriole/Pixel6 board
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v9 4/4] clk: qcom: add clock controller driver for
+ qca8386/qca8084
 Content-Language: en-US
-To:     Greg KH <greg@kroah.com>, Peter Griffin <peter.griffin@linaro.org>
-Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
-        tomasz.figa@gmail.com, s.nawrocki@samsung.com,
-        linus.walleij@linaro.org, wim@linux-watchdog.org,
-        linux@roeck-us.net, catalin.marinas@arm.com, will@kernel.org,
-        arnd@arndb.de, olof@lixom.net, cw00.choi@samsung.com,
-        tudor.ambarus@linaro.org, andre.draszik@linaro.org,
-        semen.protsenko@linaro.org, saravanak@google.com,
-        willmcvicker@google.com, soc@kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        kernel-team@android.com, linux-serial@vger.kernel.org
-References: <20231010224928.2296997-1-peter.griffin@linaro.org>
- <2023101101-mauve-underarm-1b48@gregkh>
- <CADrjBPr2UAfpuuw6M8T5UaiTmCYz0e3jabfDCcUJtH+35mwBKw@mail.gmail.com>
- <2023101139-skinless-lash-b777@gregkh>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <2023101139-skinless-lash-b777@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        <andersson@kernel.org>, <agross@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <conor+dt@kernel.org>, <catalin.marinas@arm.com>,
+        <will@kernel.org>, <p.zabel@pengutronix.de>
+CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_srichara@quicinc.com>
+References: <20230923112105.18102-1-quic_luoj@quicinc.com>
+ <20230923112105.18102-5-quic_luoj@quicinc.com>
+ <10bcb0cc-19db-4914-bbc4-ef79c238a70d@linaro.org>
+ <49c8a8ff-bdb9-a523-9587-d2a46d401e41@quicinc.com>
+ <f97d167e-688e-428d-8463-5b315b9a9593@linaro.org>
+From:   Jie Luo <quic_luoj@quicinc.com>
+In-Reply-To: <f97d167e-688e-428d-8463-5b315b9a9593@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: CYuis6oZakva4pExzS48HlWBAcD-Sq5-
+X-Proofpoint-GUID: CYuis6oZakva4pExzS48HlWBAcD-Sq5-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-10-11_09,2023-10-11_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 bulkscore=0 lowpriorityscore=0 adultscore=0 suspectscore=0
+ clxscore=1015 spamscore=0 phishscore=0 impostorscore=0 mlxlogscore=802
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2309180000 definitions=main-2310110111
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/10/2023 11:11, Greg KH wrote:
->>>
->>> So you have sent a patch series that crosses multiple subsystems, who is
->>> supposed to be taking these patches?  Or do you not want them actually
->>> merged?
+
+
+On 10/11/2023 7:32 PM, Konrad Dybcio wrote:
+> 
+> 
+> On 10/11/23 13:26, Jie Luo wrote:
 >>
->> Krzysztof indicated here:
->> https://lore.kernel.org/all/b1598405-b01f-426a-aaba-89f2d2dc9c2e@linaro.org/
->> that he would like to be the one applying the entire series through the Samsung
->> SoC tree. If that's fine with everyone (it's OK with me).
+>>
+>> On 10/11/2023 6:25 PM, Bryan O'Donoghue wrote:
+>>> On 23/09/2023 12:21, Luo Jie wrote:
+>>>> The clock controller driver of qca8386/qca8084 is registered
+>>>> as the MDIO device, the hardware register is accessed by MDIO bus
+>>>> that is normally used to access general PHY device, which is
+>>>> different from the current existed qcom clock controller drivers
+>>>> using ioremap to access hardware clock registers.
+>>>
+>>> "nsscc-qca8k is accessed via an MDIO bus"
+>>>
+>>>> MDIO bus is common utilized by both qca8386/qca8084 and other
+>>>
+>>> commonly
+>>>
+>>>> PHY devices, so the mutex lock mdio_bus->mdio_lock should be
+>>>> used instead of using the mutex lock of remap.
+>>>>
+>>>> To access the hardware clock registers of qca8386/qca8084, there
+>>>> is special MDIO frame sequence(three MDIO read/write operations)
+>>>> need to be sent to device.
+>>>
+>>> "there is a special MDIO frame sequence"
+>>>
+>>> "which needs to be sent to the device"
+>>
+>> I will update the comments, thanks Bryan.
+>>
+>>>
+>>> the following indentation splat from checkpatch
+>>>
+>>> CHECK: Alignment should match open parenthesis
+>>> #2071: FILE: drivers/clk/qcom/nsscc-qca8k.c:2004:
+>>> +        ret = __mdiobus_write(bus, switch_phy_id, (reg | 
+>>> QCA8K_REG_DATA_UPPER_16_BITS),
+>>> +                upper_16_bits(val));
+>>>
+>>> CHECK: Alignment should match open parenthesis
+>>> #2131: FILE: drivers/clk/qcom/nsscc-qca8k.c:2064:
+>>> +static int qca8k_regmap_update_bits(void *context, unsigned int 
+>>> regaddr,
+>>> +        unsigned int mask, unsigned int value)
+>>>
+>>> total: 0 errors, 1 warnings, 2 checks, 2162 lines checked
+>>>
+>>> NOTE: For some of the reported defects, checkpatch may be able to
+>>>        mechanically convert to the typical style using --fix or 
+>>> --fix-inplace.
+>>>
+>>> 0004-clk-qcom-add-clock-controller-driver-for-qca8386-qca.patch has 
+>>> style problems, please review.
+>>
+>> Thanks Bryan for the review. The code line mentioned by CHECK is more 
+>> than 100 columns, so i separate the lines.
+> Please read what checkpatch tells you.
 > 
-> As the serial changes are not ok (see my comments on them), I don't
-> think they should be going through any tree at this point in time :)
-
-Yes, of course, I still need (or will need) your Ack.
-
+> It asks you to change
 > 
-> Also, in your 00/XX email, say what tree you expect them to go through
-> so we have a chance to know that please.
+> very_long_func_name(arg1, arg2,
+>      arg3);
+> 
+> to
+> 
+> very_long_func_name(arg1, arg2,
+>              arg3);
+> 
+> (remember tab len is 8 for the linux kernel)
+> 
+> Konrad
 
-+1
-
-Best regards,
-Krzysztof
-
+Got it, thanks Konrad for the reminder.
