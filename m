@@ -2,157 +2,144 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42978CD6E56
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Oct 2023 09:30:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF4C4CD6E55
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Oct 2023 09:51:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231346AbjJKJat (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Oct 2023 05:30:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38568 "EHLO
+        id S231367AbjJKJvp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Oct 2023 05:51:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231196AbjJKJas (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Oct 2023 05:30:48 -0400
-Received: from out2-smtp.messagingengine.com (out2-smtp.messagingengine.com [66.111.4.26])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77EDA91;
-        Wed, 11 Oct 2023 02:30:47 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id E49215C0405;
-        Wed, 11 Oct 2023 05:30:46 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Wed, 11 Oct 2023 05:30:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-        :cc:content-type:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; t=1697016646; x=1697103046; bh=My
-        dUnUPnqP4XgOECsshcETx4T1rbtS5G02GTgyxloFc=; b=mR63FrpGWOxiA39bji
-        bL87POz/TU+oMIgdhC3BK7mten8GzqVq52WEAqA+B6YcFX91pfOwTwbK37r95Hh8
-        gFB4czJU64Tzgc8/0g38dQRMffuOwGH34XF825OBlX8BJrIrpFPStsTaK2fBYBFb
-        99SEeS76pskMXyf4JUubM/76GRmy/iRG3QZlUCnK+0RslQAxfpNecw3xI8RIV+VQ
-        DmXNEja3/6CumagKfAdxTXYMWsJ1dWKxPy1/nWgv0+qitSCGb0IgGFMeJVvlM+Ov
-        +b+lRMuazAQ2JX7kQtwHdE7cPThlLQEAPmHnf14X/zTBDdhb0lIEoeL455dcJlwD
-        Bd0g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; t=1697016646; x=1697103046; bh=MydUnUPnqP4Xg
-        OECsshcETx4T1rbtS5G02GTgyxloFc=; b=aAdpurWhi7zXAIQm4DOLBW1tUAkyE
-        BeXzteePaZRGMjQcsE+uFqK6IdI7k9WBxW4HSsoYiX4gIEd1X6TtkTHQkM0cHNwF
-        P2QRxVM5pEwKpWAojF8RCqscPqo7NaYKVJXoJ6sMae7BiXSBAnambeI839AZzLW9
-        37cBqeqnPxlgx05Y5zK5NbAYADks8ka4ckff8sXfabXitD1hTM3m56qnkBOXsl9P
-        N1q2/3mk3fu2tNyau6padx2H2Gpy6wbfeKV+pSpJQ8xRibwpuXdH6gUFcBuxa6VK
-        zbomiTpxU76dA8b2ktJ4+9p4NUQXwgJi8C+LBfscH040I1NMnHeMGF5/w==
-X-ME-Sender: <xms:RWsmZcWYRcc5bVYCJgHMljeVekRBQUXx0bK7R7LMrSKcXPYAt9RLIw>
-    <xme:RWsmZQkmdVOtIGPmYvR3UJfe2DR6drxpQwZnrSP0GCQYaXyRHd6tpAYdki44OkBsI
-    6q3VE0fQI0R3ugPadE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrheekgddugecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpeevhfffledtgeehfeffhfdtgedvheejtdfgkeeuvefgudffteettdekkeeufeeh
-    udenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
-    enucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:RWsmZQaguZ4L-9eHOW4iZOWUHxiQf6OcjyTYrLw-RVo3RKt6kpljdQ>
-    <xmx:RWsmZbXyOVkoK7A1DQ_KlTQj0ImogMiD-a2jyCtNjKtQJdiStbVjJA>
-    <xmx:RWsmZWm52v4WVDlloYrZITw4qh6QHXlNOhlgRWIgLycm9PMjeGZI3Q>
-    <xmx:RmsmZU2gZ8ZTHa8PLabbUfn3SI5NQ-zWu8H9Jv7AGOfoo0h6zYWD8A>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id A62E6B60089; Wed, 11 Oct 2023 05:30:45 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.9.0-alpha0-1019-ged83ad8595-fm-20231002.001-ged83ad85
+        with ESMTP id S231215AbjJKJvo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Oct 2023 05:51:44 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74ED494
+        for <linux-clk@vger.kernel.org>; Wed, 11 Oct 2023 02:51:42 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-40675f06f1fso4261315e9.1
+        for <linux-clk@vger.kernel.org>; Wed, 11 Oct 2023 02:51:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1697017901; x=1697622701; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Mx2O9LvJ3u9j57vC8yl+GJ60dYLRS7SdOeY49WiO/Ug=;
+        b=VAxof5lsMa6Tguwk3Kbj2SYrKSZSwdnJLKEgC6CdDUiyMSD9cSiVRbnrN36oLyHtHO
+         t1ee8XX1EAYAMND2BeE+0uCY4/AO3FLzoWF4RgVZ25BLuAnS44a8qAmBrrF2AkPwZMNb
+         yGWziOBG92wnNQ18HC2vbGalLvLsYjCqhtEv5uhPcnDM06rIUM3tfF6Sbj7E811S20Pn
+         qHf/66rCIoZrgHZ8t/wuP80W9ppeagP6+x3TLhVuDrpcmM53wroHA+KoG2HaSETH3Txv
+         xH50FQnUoHrg/AqbjmbJWITvoZ4MzHjLC9VtTl80QKE7/oLX97mzPxDCKge72bStYjtd
+         AP3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697017901; x=1697622701;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mx2O9LvJ3u9j57vC8yl+GJ60dYLRS7SdOeY49WiO/Ug=;
+        b=FrGnrZuQRhGNgTNjHlsvm9jP6r1E835RsV6PhSowSNHvVYgVuXNHTpcmX99R+GP0yH
+         MjMergz/qHB1wWXLS5AJUM+JlC6pig0z+XsDLk/Nor7L1feWESCnl0Y0bDZPbnY0pFRR
+         tz/aa3ERZdFNFlF5RThaYcGRHuliIXXSk9KTfiUb5Vl5p7ql8wSFANNfmeDZIhb7/xtW
+         R/j1UeXtuJRomGNEkcq3KVTBW//MfT3vcYF6R57sWkOQStdvxNx/k764eN+ruyain1+t
+         0/xLgBVU9y7AE6fguo8jxR88JkzmpVpUHl8E4/AbwMFwnGFpX0JNrZw/2ArnPr2c1vnt
+         aZkQ==
+X-Gm-Message-State: AOJu0YxoW04DOQllHGiL9hKvinPJ/rcoEBV9YtRb2BXjoizQLC+hWOcG
+        TV919WCUOfqm8o3EKsqkgjEUjw==
+X-Google-Smtp-Source: AGHT+IGRm9S+iDcNgkRLNy2rPtHQKT7OJSqDxOIUjCChPJozR/FiDEnaBZFHqXYGtkUSzokN8dK/0w==
+X-Received: by 2002:a7b:c044:0:b0:3fb:c075:b308 with SMTP id u4-20020a7bc044000000b003fbc075b308mr16319058wmc.12.1697017900872;
+        Wed, 11 Oct 2023 02:51:40 -0700 (PDT)
+Received: from [172.30.204.44] (UNUSED.212-182-62-129.lubman.net.pl. [212.182.62.129])
+        by smtp.gmail.com with ESMTPSA id y6-20020a1c4b06000000b00405588aa40asm16372580wma.24.2023.10.11.02.51.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Oct 2023 02:51:40 -0700 (PDT)
+Message-ID: <ac3fc5fd-b6fa-4386-aa62-f182547d1a59@linaro.org>
+Date:   Wed, 11 Oct 2023 11:51:38 +0200
 MIME-Version: 1.0
-Message-Id: <fe7cf585-622a-420e-8138-10de1cbca511@app.fastmail.com>
-In-Reply-To: <2023101137-fester-rerun-5c39@gregkh>
-References: <20231010224928.2296997-1-peter.griffin@linaro.org>
- <20231010224928.2296997-9-peter.griffin@linaro.org>
- <2023101111-banknote-satin-1f77@gregkh>
- <a6c57156-d3a5-4524-8ef8-6f27cf0a2c97@linaro.org>
- <2023101137-fester-rerun-5c39@gregkh>
-Date:   Wed, 11 Oct 2023 11:30:25 +0200
-From:   "Arnd Bergmann" <arnd@arndb.de>
-To:     "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Tudor Ambarus" <tudor.ambarus@linaro.org>
-Cc:     "Peter Griffin" <peter.griffin@linaro.org>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        krzysztof.kozlowski+dt@linaro.org,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        "Conor Dooley" <conor+dt@kernel.org>,
-        "Stephen Boyd" <sboyd@kernel.org>,
-        "Tomasz Figa" <tomasz.figa@gmail.com>,
-        "Sylwester Nawrocki" <s.nawrocki@samsung.com>,
-        "Linus Walleij" <linus.walleij@linaro.org>,
-        "Wim Van Sebroeck" <wim@linux-watchdog.org>,
-        "Guenter Roeck" <linux@roeck-us.net>,
-        "Catalin Marinas" <catalin.marinas@arm.com>,
-        "Will Deacon" <will@kernel.org>, "Olof Johansson" <olof@lixom.net>,
-        "Chanwoo Choi" <cw00.choi@samsung.com>, andre.draszik@linaro.org,
-        semen.protsenko@linaro.org, saravanak@google.com,
-        "William McVicker" <willmcvicker@google.com>, soc@kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-watchdog@vger.kernel.org, kernel-team@android.com,
-        linux-serial@vger.kernel.org
-Subject: Re: [PATCH v2 08/20] dt-bindings: serial: samsung: Add google-gs101-uart
- compatible
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 2/4] clk: qcom: branch: Add mem ops support for branch2
+ clocks
+Content-Language: en-US
+To:     Imran Shaik <quic_imrashai@quicinc.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>
+References: <20231011090028.1706653-1-quic_imrashai@quicinc.com>
+ <20231011090028.1706653-3-quic_imrashai@quicinc.com>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20231011090028.1706653-3-quic_imrashai@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Oct 11, 2023, at 10:57, Greg KH wrote:
-> On Wed, Oct 11, 2023 at 09:49:07AM +0100, Tudor Ambarus wrote:
->> On 10/11/23 08:48, Greg KH wrote:
->> > On Tue, Oct 10, 2023 at 11:49:16PM +0100, Peter Griffin wrote:
->> >> Add dedicated google-gs101-uart compatible to the dt-schema for
->> >> representing uart of the Google Tensor gs101 SoC.
->> >>
->> >> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
->> >> ---
->> >>  Documentation/devicetree/bindings/serial/samsung_uart.yaml | 2 ++
->> >>  1 file changed, 2 insertions(+)
->> >>
->> >>      oneOf:
->> >>        - items:
->> >> +          - const: google,gs101-uart
->> >>            - const: samsung,exynosautov9-uart
->> >>            - const: samsung,exynos850-uart
->> >>        - enum:
->> >>            - apple,s5l-uart
->> >>            - axis,artpec8-uart
->> >> +          - google,gs101-uart
->> > 
->> > These shouldn't be needed, just declare the device as the same as what
->> 
->> We should have SoC specific compatibles so that any further quirks or
->> incompatibilities can be easily addressed.
->
-> "further" work on quirks or incompatibilities can be added when they are
-> found and needed.  We don't add stuff for no good reason to the kernel.
->
->> It's not only the IP itself
->> that can differ, it's also the integration of the IP into the final
->> product that could have an influence on the behavior.
->
-> This is for the Pixel 6, a device that is no longer even shipping.  The
-> "final product" is long stable, so this should not be an issue.
 
-The driver does have soc specific settings for each compatible
-string, in this case it looks like it overrides the FIFO size
-based on driver specific data and the order in which the
-ports are probed [1]. I don't understand why the driver does
-this, but my impression is that if we wanted to change it to no
-longer rely on that data, we'd also need a new compatible
-string.
 
-Ideally, the actual compatible list in the DTB lists both the
-specific implementation (google,gs101-uart) in order to allow
-such hacks if needed, and a more generic string (e.g. 
-"samsung,exynos850-uart" for an older device that is entirely
-compatible) in order to not actually need driver changes.
+On 10/11/23 11:00, Imran Shaik wrote:
+> From: Taniya Das <quic_tdas@quicinc.com>
+> 
+> Clock CBCRs with memories need an update for memory before enable/disable
+> of the clock, which helps retain the respective block's register contents.
+> Add support for the mem ops to handle this sequence.
+> 
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
+> ---
+>   drivers/clk/qcom/clk-branch.c | 37 +++++++++++++++++++++++++++++++++++
+>   drivers/clk/qcom/clk-branch.h | 21 ++++++++++++++++++++
+>   2 files changed, 58 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/clk-branch.c b/drivers/clk/qcom/clk-branch.c
+> index fc4735f74f0f..9ac8d04b425a 100644
+> --- a/drivers/clk/qcom/clk-branch.c
+> +++ b/drivers/clk/qcom/clk-branch.c
+> @@ -1,6 +1,7 @@
+>   // SPDX-License-Identifier: GPL-2.0
+>   /*
+>    * Copyright (c) 2013, The Linux Foundation. All rights reserved.
+> + * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
+>    */
+>   
+>   #include <linux/kernel.h>
+> @@ -134,6 +135,42 @@ static void clk_branch2_disable(struct clk_hw *hw)
+>   	clk_branch_toggle(hw, false, clk_branch2_check_halt);
+>   }
+>   
+> +static int clk_branch2_mem_enable(struct clk_hw *hw)
+> +{
+> +	struct clk_mem_branch *mem_br = to_clk_mem_branch(hw);
+> +	const char *name = clk_hw_get_name(&mem_br->branch.clkr.hw);
+> +	u32 val;
+> +	int timeout = 200, ret;
+Reverse-Christmas-tree, please
 
-      Arnd
+You can drop the timeout variable and pass the int literal.
 
-[1] https://lore.kernel.org/linux-arm-kernel/20231010224928.2296997-17-peter.griffin@linaro.org/
+> +
+> +	regmap_update_bits(mem_br->branch.clkr.regmap, mem_br->mem_enable_reg,
+> +			mem_br->mem_enable_ack_bit, mem_br->mem_enable_ack_bit);
+This is a mask, not a bit.
+
+> +
+> +	ret = regmap_read_poll_timeout(mem_br->branch.clkr.regmap, mem_br->mem_ack_reg,
+> +			val, val & mem_br->mem_enable_ack_bit, 0, timeout);
+
+[...]
+
+> +/**
+> + * struct clk_mem_branch - gating clock which are associated with memories
+> + *
+> + * @mem_enable_reg: branch clock memory gating register
+> + * @mem_ack_reg: branch clock memory ack register
+> + * @mem_enable_ack_bit: ANDed with @mem_ack_reg to check memory enablement
+@dog: woofs
+
+Describe what it is instead.
+
+Konrad
