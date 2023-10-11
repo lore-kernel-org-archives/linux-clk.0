@@ -2,90 +2,162 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51264CD6E5A
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Oct 2023 11:33:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE386CD6E60
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Oct 2023 11:55:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346360AbjJKLdb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Oct 2023 07:33:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45898 "EHLO
+        id S234743AbjJKLzi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Oct 2023 07:55:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346246AbjJKLda (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Oct 2023 07:33:30 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 872619D
-        for <linux-clk@vger.kernel.org>; Wed, 11 Oct 2023 04:33:28 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-4075c58ac39so11265685e9.3
-        for <linux-clk@vger.kernel.org>; Wed, 11 Oct 2023 04:33:28 -0700 (PDT)
+        with ESMTP id S231678AbjJKLzh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Oct 2023 07:55:37 -0400
+Received: from mail-qv1-xf2c.google.com (mail-qv1-xf2c.google.com [IPv6:2607:f8b0:4864:20::f2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 006C0A4
+        for <linux-clk@vger.kernel.org>; Wed, 11 Oct 2023 04:55:34 -0700 (PDT)
+Received: by mail-qv1-xf2c.google.com with SMTP id 6a1803df08f44-66d09b6d007so1864026d6.1
+        for <linux-clk@vger.kernel.org>; Wed, 11 Oct 2023 04:55:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697024007; x=1697628807; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NZzIfsUIMKmIPZuNBx7E7QsUZucBviLZv516iI+4Ocg=;
-        b=XI0cRoLaEk0gElbpQX2B2oKaOHoLEPNWsFPXilKB56OVnnnhxp7U8TJSTwrhAoNiSy
-         CkR7DBeSD3WPuzb0DC+fiS16GD28nmp/q8y79L3ACQ6sywwIUTaIaEldJ10LX2Z4hg6G
-         ySeiOn2MTA/0f0WRK8PMdxow0BvLdhsH6bdxspc8KDbLi+2JEoUJNTT/UwnZzvJRVCdL
-         m1yT9vjcdDqqcKgmsGgjqYfxgwOUvepF2f5+10Ga/tTv5JYyJN4xY3PMWm4x/wDgTEtC
-         zqrQ5erlbRS8cVLqeQBl0tJtP2a7GIHGx9W8qmrvS9vMXh3F4lTHSr/muM4yHWtU+j+F
-         eEgA==
+        d=linaro.org; s=google; t=1697025334; x=1697630134; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=7cvXO7x5gI5C47ss6Zq2+fePRAxMCbTat+Dh3Sp9OFA=;
+        b=lMydwga41zA6WI8F5LYb5U1SFCCyxLVhOCyfsl0M7MVvaFjkHZtGRbYR/5RBfhOi6J
+         wPpd7KrRlAg6Z4Aj7TBaFL6x5Zc3rsMfupoR5SUf/eM0+lY6d/HpvbmA8amtM/AxTGC0
+         XIK7vEguyW2miqMSI6MnWZ+0bSQRuSWreKrqgMrDUeuhyJ8v2YveAOQmHj4CwpXVXZ6d
+         /iNlBKGn85jZNECaafYe+08y5G4ds49lH6dSB2tLshjeF/bA3dxlgIZyn+ON3ijlRNuj
+         ewtJ8fVH9/qJ64RpQ8sW2biMq3z41ZIPktI+CSdSnoADFsNKlpxXRLFwtQgARs88CFhf
+         3xuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697024007; x=1697628807;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NZzIfsUIMKmIPZuNBx7E7QsUZucBviLZv516iI+4Ocg=;
-        b=iRJiHb3+1/yQvKTS9XoXzJJRKJwV9eldaX+vjI6QU6woHQIBAqA42mB0B7SERx3f0Q
-         ANDXz8nwxmvMguJyC/n5GcmIEWdYWvpSD8H8YTHN6OjuHwfUzBVFDIS+1OZT//LecS7X
-         yMMsXa0tH+dFNIkRHMI/xG6qT/m2CWd7Qr7Y9Kq5cD19UUKJlaO+ir4k0SXV9GBqG+Yt
-         AYLLq8Mjz4eCmnzohMrIhZ/n23dsgkFBa3QhWIwPbPVXdkUX29dtZsfmxnLmxQ6Uf5CK
-         QKLlfdHpRw3M9Zqsk7PsZP47afNDaLxhDKKU6J0o1jejyfasOCs1hZRfVxQqAHj/ofHE
-         tADw==
-X-Gm-Message-State: AOJu0YxtXbF3Zfj6g41ZYkxqak3HuUMszOvjUGbGfZ+UzL9LUv53wmTk
-        pdM5pFbSCDGxyq5qoqF1Ypf7Vw==
-X-Google-Smtp-Source: AGHT+IHlFqTVAI33hYFedRn8qsiDw/z0zk+fcz9qZApVa3GB0mCrn5UsiF2BvKhEkad1pfHh4TclxQ==
-X-Received: by 2002:a7b:ce19:0:b0:405:3e9a:f1e3 with SMTP id m25-20020a7bce19000000b004053e9af1e3mr18935659wmc.11.1697024006816;
-        Wed, 11 Oct 2023 04:33:26 -0700 (PDT)
-Received: from [192.168.100.102] ([37.228.218.3])
-        by smtp.gmail.com with ESMTPSA id u6-20020a05600c00c600b00402ff8d6086sm16479381wmm.18.2023.10.11.04.33.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Oct 2023 04:33:26 -0700 (PDT)
-Message-ID: <fc35b4e4-a1ef-4200-a7d4-1f8ea3afa5c9@linaro.org>
-Date:   Wed, 11 Oct 2023 12:33:25 +0100
+        d=1e100.net; s=20230601; t=1697025334; x=1697630134;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7cvXO7x5gI5C47ss6Zq2+fePRAxMCbTat+Dh3Sp9OFA=;
+        b=ZTkMfLywHJON7ty+oJJBzrXjtEmoreRp/su1JggdJKrVxgyJujCYB/G8eBFC/3W+9H
+         08soZcn420i+iJUp/nXM4xD84FWECfN2T7DFqqp16byRl37yyiBEE45mktSxvJT/pxEX
+         /g+mGe9H0VEfHW15l2LLzAZLdNHMjvqx6PZvB7kTf/43hEQwoSGV/1mh7uX8HEvgqeK9
+         mjWpp2P89psnWEvHNyQaJyhBcoL5QLYolAeJYumhd+k7Q7GJDR5otH9Ed1DMX4b6N5yl
+         Kk0oyZHCIVFQsqLNIgE8xBJCtLLterhA3DIrbs3jBFOx3uPCdT/Tr8R+o6dEnHdLWUAp
+         syiw==
+X-Gm-Message-State: AOJu0YyTPKbomw7kQjyDnp/2SxgLVwOZTo2l1USf3fJlVsEQB/28Tc0A
+        dRFi5WjTlRcfsAt/1dS63pfqa0CS7YsysJzIg+YwYA==
+X-Google-Smtp-Source: AGHT+IHe2JDHf5GLsILYW0FI9jDBRkvodk/k8lYoYKPnNONC72RAopfMzahZ/vKq9W2HnpUivorIyRfGPJ/qy+LqbFg=
+X-Received: by 2002:a05:6214:5010:b0:65b:31df:df76 with SMTP id
+ jo16-20020a056214501000b0065b31dfdf76mr27858740qvb.44.1697025333986; Wed, 11
+ Oct 2023 04:55:33 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 4/4] clk: qcom: add clock controller driver for
- qca8386/qca8084
-Content-Language: en-US
-To:     Jie Luo <quic_luoj@quicinc.com>, andersson@kernel.org,
-        agross@kernel.org, konrad.dybcio@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        quic_srichara@quicinc.com
-References: <20230923112105.18102-1-quic_luoj@quicinc.com>
- <20230923112105.18102-5-quic_luoj@quicinc.com>
- <10bcb0cc-19db-4914-bbc4-ef79c238a70d@linaro.org>
- <49c8a8ff-bdb9-a523-9587-d2a46d401e41@quicinc.com>
-From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <49c8a8ff-bdb9-a523-9587-d2a46d401e41@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20231010224928.2296997-1-peter.griffin@linaro.org>
+ <20231010224928.2296997-9-peter.griffin@linaro.org> <2023101111-banknote-satin-1f77@gregkh>
+ <a6c57156-d3a5-4524-8ef8-6f27cf0a2c97@linaro.org> <2023101137-fester-rerun-5c39@gregkh>
+ <fe7cf585-622a-420e-8138-10de1cbca511@app.fastmail.com> <2023101126-stash-manor-7162@gregkh>
+ <c454503a-8f89-4bcf-949d-4970595540fc@app.fastmail.com>
+In-Reply-To: <c454503a-8f89-4bcf-949d-4970595540fc@app.fastmail.com>
+From:   Peter Griffin <peter.griffin@linaro.org>
+Date:   Wed, 11 Oct 2023 12:55:22 +0100
+Message-ID: <CADrjBPq6HVVFRyrqFJhQ5_cj12HRAzCO6yKGW8c3Txmv1vcPhw@mail.gmail.com>
+Subject: Re: [PATCH v2 08/20] dt-bindings: serial: samsung: Add
+ google-gs101-uart compatible
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tudor Ambarus <tudor.ambarus@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        krzysztof.kozlowski+dt@linaro.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Olof Johansson <olof@lixom.net>,
+        Chanwoo Choi <cw00.choi@samsung.com>, andre.draszik@linaro.org,
+        semen.protsenko@linaro.org, saravanak@google.com,
+        William McVicker <willmcvicker@google.com>, soc@kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-watchdog@vger.kernel.org, kernel-team@android.com,
+        linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/10/2023 12:26, Jie Luo wrote:
->>
->> 0004-clk-qcom-add-clock-controller-driver-for-qca8386-qca.patch has 
->> style problems, please review.
-> 
-> Thanks Bryan for the review. The code line mentioned by CHECK is more 
-> than 100 columns, so i separate the lines.
+Hi Arnd,
 
-Yep. Remember to align the indentation as much as possible/reasonable. 
-Use your discretion.
+Thanks for your feedback.
 
----
-bod
+On Wed, 11 Oct 2023 at 11:19, Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Wed, Oct 11, 2023, at 11:42, Greg Kroah-Hartman wrote:
+> > On Wed, Oct 11, 2023 at 11:30:25AM +0200, Arnd Bergmann wrote:
+> >> On Wed, Oct 11, 2023, at 10:57, Greg KH wrote:
+> >> >
+> >> >> It's not only the IP itself
+> >> >> that can differ, it's also the integration of the IP into the final
+> >> >> product that could have an influence on the behavior.
+> >> >
+> >> > This is for the Pixel 6, a device that is no longer even shipping.  The
+> >> > "final product" is long stable, so this should not be an issue.
+> >>
+> >> The driver does have soc specific settings for each compatible
+> >> string, in this case it looks like it overrides the FIFO size
+> >> based on driver specific data and the order in which the
+> >> ports are probed [1]. I don't understand why the driver does
+> >> this, but my impression is that if we wanted to change it to no
+> >> longer rely on that data, we'd also need a new compatible
+> >> string.
+> >
+> > As I reviewed that patch already, it is just duplicating an existing
+> > quirk/device that the driver already supports, so there is no need for
+> > any "new device type" to be added to that driver, just use the existing
+> > hardware description in the dt and all should be fine.
+>
+> The thing is, I suspect that the FIFO size override is actually
+> wrong for the exynos850 as well, and is almost certainly wrong
+> for both exynosautov9 and google-gs101:
+>
+> - The driver overrides an exynos850 compatible uart to use a
+>   256 byte FIFO on whichever port is probed first, 64 byte
+>   on the next three ports, and the setting from DT on any
+>   later ones, falling back to 16 bytes if the DT does not set
+>   anything.
+>
+> - exynos850 only actually has three of these ports, not
+>   four. It does not lists  FIFO size in the dts at all.
+>
+> - exynosautov9 has a total of 11 ports, each of these
+>   compatible with both "samsung,exynosautov9-uart" as
+>   the specific value and "samsung,exynos850-uart" as
+>   the generic fallback. The DT lists a FIFO size of 256
+>   bytes for ports 0, 1, and 6, but lists FIFO size 64
+>   for each of the other ones.
+>
+> - google-gs101 only lists a single uart in the dts,
+>   and sets it to a 256 byte FIFO.
+>
+> - testla-fsd claims to be compatible with exynos4210,
+>   which also overrides the first two ports in probe
+>   order to 256 and 64 bytes respectively (like exynos850),
+>   but it only has two ports.
+>
+> - artpec8 has a separate compatible string so it overrides
+>   all ports to 64 bytes.
+>
+> I don't know why probe order would have anything to do
+> with this, so most likely these are all the same thing
+> and should just put a fixed FIFO size into the DT for
+> each port instance.
+
+I agree, I just looked again at gs101 and in total we can have
+19 uarts on this SoC. 3 of them are 256byte rx/tx fifo and the
+other 16 have 64byte tx/rx fifo size, but this is a SoC design
+choice and has nothing to do with probe order.
+
+I will update in v3 to get fifo size from DT.
+
+regards,
+
+Peter.
