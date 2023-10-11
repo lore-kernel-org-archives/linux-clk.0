@@ -2,61 +2,52 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1601CDB476
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Oct 2023 18:20:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD09ECDB475
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Oct 2023 18:44:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234906AbjJKSUJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Oct 2023 14:20:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55322 "EHLO
+        id S232851AbjJKSoo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Oct 2023 14:44:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233301AbjJKSUI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Oct 2023 14:20:08 -0400
-Received: from mail-yw1-x1130.google.com (mail-yw1-x1130.google.com [IPv6:2607:f8b0:4864:20::1130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95C4693
-        for <linux-clk@vger.kernel.org>; Wed, 11 Oct 2023 11:20:06 -0700 (PDT)
-Received: by mail-yw1-x1130.google.com with SMTP id 00721157ae682-59f6441215dso1698117b3.2
-        for <linux-clk@vger.kernel.org>; Wed, 11 Oct 2023 11:20:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697048406; x=1697653206; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/JGcSKg2l3kPMqygix6rwTD+Mo3CQavgi0LGq8Bh/Wk=;
-        b=pY1qUOyxKu8vS37dVQzkIHQ2R/+X7fPG3offu6exOmtyVnAH49eyb6cOwrhAphQKuS
-         WPFkZaESpt8Ei+Y7VcxRbii3wPV9sRhyFd2ByOWkXx6eziyrWk+8Hxw2S1VvzblKj6yh
-         gGSudcImT0yj9qZiDx+sIbYWMAiId91M1FT1HnBozR6qAkY9nBM6HKkoSL/VPwOVNU96
-         A5EgukhtbWx33ocQ7A/dyjgNLNOZdTQgGhDVia4ZHu3ncJ3K8Vd/wwkftCGrtywtm3Cw
-         os61Cg6aS/zYrTxOXoqtOuiggzesZePM56h1mqIPzPY1fndyhDr7LoBggCvovK9ZAIdI
-         LrmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697048406; x=1697653206;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/JGcSKg2l3kPMqygix6rwTD+Mo3CQavgi0LGq8Bh/Wk=;
-        b=Lf7blxoyUAiFkLUGSIrf3q5KESQewvJC1uqgec5SxiAJFUCsz4up3J4oJbPdyuMt2f
-         KXKF/Ki5S8pBGnOnqgGxas3J7Yi/synIEtIBxhs+gDhFcSmq9194whupkriHhFGmdxsO
-         8XPX7oIxFKwS3e2h3BfYVNS4pPqyDcDoGSby6wj2H6VQrHpFyI2VfE/8cSlLT7ODwxb3
-         2RJqFZ/qXF+0EH5YuxAfJfw/CPaIacPFvq8SXxUvvEg5m27zziB6DA8jYVrXQ6yvRoX/
-         6zj+Rq4FNdZjFKCgYMRrgVC9QpUPV/RSgQwcpds5BH14AtVQYaqgpF+n2RICSxnmE21S
-         Szzg==
-X-Gm-Message-State: AOJu0YytJXaBsHi/DvgVouwzmJ/SCB957cyxVO8RWSusxf0iX/kjd5+v
-        9meHwzGn5JM5NNBwGJsoRikzhIlAHcU5YFRMTFo84g==
-X-Google-Smtp-Source: AGHT+IEPs2KKEsTpfPnTbGZKibXu8BySXACq2P2NXAPCOtWj6cnAtMkDIuxRTY/loz5JISVAmNDkdtyrmjKM7KVREco=
-X-Received: by 2002:a81:4314:0:b0:5a7:aa54:42b1 with SMTP id
- q20-20020a814314000000b005a7aa5442b1mr7992527ywa.28.1697048405767; Wed, 11
- Oct 2023 11:20:05 -0700 (PDT)
+        with ESMTP id S232496AbjJKSoo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Oct 2023 14:44:44 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9772B90;
+        Wed, 11 Oct 2023 11:44:42 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30B94C433C7;
+        Wed, 11 Oct 2023 18:44:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1697049882;
+        bh=ylZaV++7ZjN3KRW2Z9BOD+W2D0KBhJmDzQo5TNXOUz0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=JW9UJMdnJP6H8H/q8Dj1f5eVyX+Y+4ZQfxQbAe0rcC8eVXFG84HbGc9UF6eOB0JO6
+         DxwHkAqyYPf1GCL2P3UCIwfwUVxBOt1Zvpawrjc2Bn1EZB79gNUunOYNO3tQX/9eCE
+         4Nae+4bymCM1AVhRPs1zFZ8qKs7JvoT7pwmb2Sm/TP1HTCo4DrUALjfLL9/VS3a3gy
+         XQS3qg76/K5QV93d8anhBnA7fQCbsJSlbKkyAhN2yZmoVo+MCH8LmkYEJ1wOmyYoMn
+         mbKPUPWKEAPs6e08lgsJXvrP1VpM65JzaYajRbzvHKrEJrhAjKHhs5rqQpzrCWLKi9
+         N6Y0RraE2U9tg==
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2c16757987fso1592841fa.3;
+        Wed, 11 Oct 2023 11:44:42 -0700 (PDT)
+X-Gm-Message-State: AOJu0YypKuPdXxLyCxRL4HGUlbWj+7ZplFRNKn1kCHTPEERQy+7XwkNU
+        YjEhlZ+ldOQrttdlcnLrBbgPtHviFFH3leYPtg==
+X-Google-Smtp-Source: AGHT+IHfqb7aFDsjOrYahLvU3eH/O1zPin1Cajj+w1qOGsVcidBGVG/Uikeb8o7GgWW95EG5nLlMEsWEH3Q6ghDENck=
+X-Received: by 2002:a05:6512:e99:b0:500:86b4:5282 with SMTP id
+ bi25-20020a0565120e9900b0050086b45282mr21166230lfb.34.1697049880370; Wed, 11
+ Oct 2023 11:44:40 -0700 (PDT)
 MIME-Version: 1.0
 References: <20230827115033.935089-1-dmitry.baryshkov@linaro.org>
  <20230827115033.935089-9-dmitry.baryshkov@linaro.org> <20231011154935.GA785564-robh@kernel.org>
-In-Reply-To: <20231011154935.GA785564-robh@kernel.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Wed, 11 Oct 2023 21:19:54 +0300
-Message-ID: <CAA8EJpqf4Q7wh657==C45Ka8YmmyopkCQnyEFcXkaoRwnCRZLQ@mail.gmail.com>
+ <CAA8EJpqf4Q7wh657==C45Ka8YmmyopkCQnyEFcXkaoRwnCRZLQ@mail.gmail.com>
+In-Reply-To: <CAA8EJpqf4Q7wh657==C45Ka8YmmyopkCQnyEFcXkaoRwnCRZLQ@mail.gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Wed, 11 Oct 2023 13:44:28 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKwWyoPdt3C0FdsgN087xK0jGyp3PVgiCaETZK9FX2JdQ@mail.gmail.com>
+Message-ID: <CAL_JsqKwWyoPdt3C0FdsgN087xK0jGyp3PVgiCaETZK9FX2JdQ@mail.gmail.com>
 Subject: Re: [PATCH v4 08/23] soc: qcom: Add driver for Qualcomm Krait L2
  cache scaling
-To:     Rob Herring <robh@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -72,55 +63,79 @@ Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Christian Marangi <ansuelsmth@gmail.com>,
         Stephan Gerhold <stephan@gerhold.net>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 11 Oct 2023 at 18:49, Rob Herring <robh@kernel.org> wrote:
+On Wed, Oct 11, 2023 at 1:20=E2=80=AFPM Dmitry Baryshkov
+<dmitry.baryshkov@linaro.org> wrote:
 >
-> On Sun, Aug 27, 2023 at 02:50:18PM +0300, Dmitry Baryshkov wrote:
-> > Add a simple driver that handles scaling of L2 frequency and voltages.
+> On Wed, 11 Oct 2023 at 18:49, Rob Herring <robh@kernel.org> wrote:
 > >
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
+> > On Sun, Aug 27, 2023 at 02:50:18PM +0300, Dmitry Baryshkov wrote:
+> > > Add a simple driver that handles scaling of L2 frequency and voltages=
+.
+> > >
+> > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > ---
+> >
+> > [...]
+> >
+> > > +static const struct of_device_id krait_l2_match_table[] =3D {
+> > > +     { .compatible =3D "qcom,krait-l2-cache" },
+> > > +     {}
+> > > +};
+> > > +MODULE_DEVICE_TABLE(of, krait_l2_match_table);
+> > > +
+> > > +static struct platform_driver krait_l2_driver =3D {
+> > > +     .probe =3D krait_l2_probe,
+> > > +     .remove =3D krait_l2_remove,
+> > > +     .driver =3D {
+> > > +             .name =3D "qcom-krait-l2",
+> > > +             .of_match_table =3D krait_l2_match_table,
+> > > +             .sync_state =3D icc_sync_state,
+> > > +     },
+> > > +};
+> >
+> > As I mentioned in the other thread, cache devices already have a struct
+> > device. Specifically, they have a struct device (no subclass) on the
+> > cpu_subsys bus type. So there should be no need for a platform device
+> > and second struct device.
+> >
+> > See drivers/acpi/processor_driver.c for an example. Or grep any use of
+> > "cpu_subsys".
 >
-> [...]
->
-> > +static const struct of_device_id krait_l2_match_table[] = {
-> > +     { .compatible = "qcom,krait-l2-cache" },
-> > +     {}
-> > +};
-> > +MODULE_DEVICE_TABLE(of, krait_l2_match_table);
-> > +
-> > +static struct platform_driver krait_l2_driver = {
-> > +     .probe = krait_l2_probe,
-> > +     .remove = krait_l2_remove,
-> > +     .driver = {
-> > +             .name = "qcom-krait-l2",
-> > +             .of_match_table = krait_l2_match_table,
-> > +             .sync_state = icc_sync_state,
-> > +     },
-> > +};
->
-> As I mentioned in the other thread, cache devices already have a struct
-> device. Specifically, they have a struct device (no subclass) on the
-> cpu_subsys bus type. So there should be no need for a platform device
-> and second struct device.
->
-> See drivers/acpi/processor_driver.c for an example. Or grep any use of
-> "cpu_subsys".
+> Most likely you mean drivers/base/cacheinfo.c. I saw this code, I
+> don't think it makes a good fit here. The cacheinfo devices provide
+> information only, they are not tied to DT nodes in any way.
 
-Most likely you mean drivers/base/cacheinfo.c. I saw this code, I
-don't think it makes a good fit here. The cacheinfo devices provide
-information only, they are not tied to DT nodes in any way. cpu_subsys
-doesn't provide a way to match drivers with subsys devices in the
-non-ACPI case, etc. Moreover, the whole cacheinfo subsys is
-non-existing on arm32, there is no cacheinfo implementation there,
-thanks to the overall variety of architectures.
+They are completely tied to DT nodes beyond L1.
 
-Thus said, I don't think cacheinfo makes a good fit for the case of
-scaling L2 cache.
+>  cpu_subsys
+> doesn't provide a way to match drivers with subsys devices in the
+> non-ACPI case, etc.
 
--- 
-With best wishes
-Dmitry
+That's a 2 line addition to add DT support.
+
+> Moreover, the whole cacheinfo subsys is
+> non-existing on arm32, there is no cacheinfo implementation there,
+> thanks to the overall variety of architectures.
+
+Humm, well I don't think it would be too hard to add, but I won't ask
+you to do that. All the info comes from DT or can come from DT, so it
+should be just a matter of arm32 calling the cacheinfo init.
+
+> Thus said, I don't think cacheinfo makes a good fit for the case of
+> scaling L2 cache.
+
+I still disagree. It's not really cacheinfo. That is what creates the
+devices, but it's the cpu_subsys bus type. Why do you care that it is
+platform bus vs. cpu_subsys?
+
+On a separate issue, I'd propose you move this to drivers/cache/
+instead of the dumping ground that is drivers/soc/. It's nothing more
+than a location to collect cache related drivers ATM because we seem
+to be accumulating more of them.
+
+Rob
