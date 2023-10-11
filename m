@@ -2,167 +2,125 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80AB4CDB473
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Oct 2023 18:04:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1601CDB476
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Oct 2023 18:20:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376273AbjJKSEI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Oct 2023 14:04:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39076 "EHLO
+        id S234906AbjJKSUJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Oct 2023 14:20:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234947AbjJKSEA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Oct 2023 14:04:00 -0400
-Received: from mail-qv1-xf29.google.com (mail-qv1-xf29.google.com [IPv6:2607:f8b0:4864:20::f29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 878D793
-        for <linux-clk@vger.kernel.org>; Wed, 11 Oct 2023 11:03:56 -0700 (PDT)
-Received: by mail-qv1-xf29.google.com with SMTP id 6a1803df08f44-66cfd3a0e61so607676d6.1
-        for <linux-clk@vger.kernel.org>; Wed, 11 Oct 2023 11:03:56 -0700 (PDT)
+        with ESMTP id S233301AbjJKSUI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Oct 2023 14:20:08 -0400
+Received: from mail-yw1-x1130.google.com (mail-yw1-x1130.google.com [IPv6:2607:f8b0:4864:20::1130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95C4693
+        for <linux-clk@vger.kernel.org>; Wed, 11 Oct 2023 11:20:06 -0700 (PDT)
+Received: by mail-yw1-x1130.google.com with SMTP id 00721157ae682-59f6441215dso1698117b3.2
+        for <linux-clk@vger.kernel.org>; Wed, 11 Oct 2023 11:20:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697047435; x=1697652235; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1697048406; x=1697653206; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=2+lwLhk0eIlh4K7WyRSQjzGji/fhcQWQbO8LhvSYCpU=;
-        b=owlY9VP3yJws5dPieY1MCmI25kzOUzN6RWEIJrq+XDSu08zFW6cIo4FXj4usxImWrN
-         VhVny9whMaq9GrmqVhSSOVlu/wf7jwD2i12tsHFYj1j3P5mA6CuWmH97mhIrKsDtl2tN
-         JbGH0Lh+QT3NMccLO0bX8qAtpejq2XJ+2CEJ948JV0K90gkAvZUquBWRefnlOo06zgMD
-         lWSlaTAJMLew025SC0vxjXXADNReflUPGIIfg5q34PAvFzznWkFQ2juhGgueLgfEHEo8
-         OU4Zb4EWOgXYW76XVvrytXFve49emW8ZW4YWq1DMjG7VfTwRdyCTyQaJ/KS44mA6tEWm
-         BYHA==
+        bh=/JGcSKg2l3kPMqygix6rwTD+Mo3CQavgi0LGq8Bh/Wk=;
+        b=pY1qUOyxKu8vS37dVQzkIHQ2R/+X7fPG3offu6exOmtyVnAH49eyb6cOwrhAphQKuS
+         WPFkZaESpt8Ei+Y7VcxRbii3wPV9sRhyFd2ByOWkXx6eziyrWk+8Hxw2S1VvzblKj6yh
+         gGSudcImT0yj9qZiDx+sIbYWMAiId91M1FT1HnBozR6qAkY9nBM6HKkoSL/VPwOVNU96
+         A5EgukhtbWx33ocQ7A/dyjgNLNOZdTQgGhDVia4ZHu3ncJ3K8Vd/wwkftCGrtywtm3Cw
+         os61Cg6aS/zYrTxOXoqtOuiggzesZePM56h1mqIPzPY1fndyhDr7LoBggCvovK9ZAIdI
+         LrmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697047435; x=1697652235;
+        d=1e100.net; s=20230601; t=1697048406; x=1697653206;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=2+lwLhk0eIlh4K7WyRSQjzGji/fhcQWQbO8LhvSYCpU=;
-        b=s1+FwMidYid1XL/bbQlFFk4J2qHSWPWDZ8I0EYRu1aJKsq9UjHsfoO2LX4SB0Ujw5p
-         i9h1miEzTiyWYY1pcC+ivU9plVFwtBZXKZLH5OFSHlJ0A93kB46D04gfz1YINmmJg9E+
-         IqKUvXc5/6plDy6kMDi/2uxiaMZ6ZIy3tF+GqMkc1Owrr/V1LyohUP/dhSL2uBbR92yT
-         mK8bDBne8egjgOCqdNc9itax26doAm2P0d0F1T9ei+7lwpLm6334aw6aNRE4gznseK80
-         u634ODLSsutOcERsNXVWbiQ7sFCurQB9VLJ/KtasznmMM/NHEgq5aEbgVXQRLD8fvAgZ
-         gN5A==
-X-Gm-Message-State: AOJu0Ywn3hMXauBJ1yvybQAGgTJno5NO5c3MlOg2BF3eLFz7QdPcE38Y
-        +zS0EM9Z0fq0rN/CFC9JB4+eDEvTC5jnpUrbOMlGwja72I56rr9SDMsuRw==
-X-Google-Smtp-Source: AGHT+IGt+0fVENikMfRGv423wq596E+D6hAqM0KbzwaZfRzrT8CBCTVaa4eh0NSbF1Brpy+RH3NFuekBbLkzj8qn004=
-X-Received: by 2002:a0c:b213:0:b0:64f:3de6:d502 with SMTP id
- x19-20020a0cb213000000b0064f3de6d502mr21163979qvd.5.1697047435542; Wed, 11
- Oct 2023 11:03:55 -0700 (PDT)
+        bh=/JGcSKg2l3kPMqygix6rwTD+Mo3CQavgi0LGq8Bh/Wk=;
+        b=Lf7blxoyUAiFkLUGSIrf3q5KESQewvJC1uqgec5SxiAJFUCsz4up3J4oJbPdyuMt2f
+         KXKF/Ki5S8pBGnOnqgGxas3J7Yi/synIEtIBxhs+gDhFcSmq9194whupkriHhFGmdxsO
+         8XPX7oIxFKwS3e2h3BfYVNS4pPqyDcDoGSby6wj2H6VQrHpFyI2VfE/8cSlLT7ODwxb3
+         2RJqFZ/qXF+0EH5YuxAfJfw/CPaIacPFvq8SXxUvvEg5m27zziB6DA8jYVrXQ6yvRoX/
+         6zj+Rq4FNdZjFKCgYMRrgVC9QpUPV/RSgQwcpds5BH14AtVQYaqgpF+n2RICSxnmE21S
+         Szzg==
+X-Gm-Message-State: AOJu0YytJXaBsHi/DvgVouwzmJ/SCB957cyxVO8RWSusxf0iX/kjd5+v
+        9meHwzGn5JM5NNBwGJsoRikzhIlAHcU5YFRMTFo84g==
+X-Google-Smtp-Source: AGHT+IEPs2KKEsTpfPnTbGZKibXu8BySXACq2P2NXAPCOtWj6cnAtMkDIuxRTY/loz5JISVAmNDkdtyrmjKM7KVREco=
+X-Received: by 2002:a81:4314:0:b0:5a7:aa54:42b1 with SMTP id
+ q20-20020a814314000000b005a7aa5442b1mr7992527ywa.28.1697048405767; Wed, 11
+ Oct 2023 11:20:05 -0700 (PDT)
 MIME-Version: 1.0
-References: <20231010224928.2296997-1-peter.griffin@linaro.org>
- <20231010224928.2296997-17-peter.griffin@linaro.org> <2023101109-crispy-escapable-0801@gregkh>
-In-Reply-To: <2023101109-crispy-escapable-0801@gregkh>
-From:   Peter Griffin <peter.griffin@linaro.org>
-Date:   Wed, 11 Oct 2023 19:03:44 +0100
-Message-ID: <CADrjBPouDPfcj9eCN0BN0Lfd1sOb=Q3jmkeD1aO2on5VHmROJg@mail.gmail.com>
-Subject: Re: [PATCH v2 16/20] tty: serial: samsung: Add gs101 compatible and
- SoC data
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
-        tomasz.figa@gmail.com, s.nawrocki@samsung.com,
-        linus.walleij@linaro.org, wim@linux-watchdog.org,
-        linux@roeck-us.net, catalin.marinas@arm.com, will@kernel.org,
-        arnd@arndb.de, olof@lixom.net, cw00.choi@samsung.com,
-        tudor.ambarus@linaro.org, andre.draszik@linaro.org,
-        semen.protsenko@linaro.org, saravanak@google.com,
-        willmcvicker@google.com, soc@kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        kernel-team@android.com, linux-serial@vger.kernel.org
+References: <20230827115033.935089-1-dmitry.baryshkov@linaro.org>
+ <20230827115033.935089-9-dmitry.baryshkov@linaro.org> <20231011154935.GA785564-robh@kernel.org>
+In-Reply-To: <20231011154935.GA785564-robh@kernel.org>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Wed, 11 Oct 2023 21:19:54 +0300
+Message-ID: <CAA8EJpqf4Q7wh657==C45Ka8YmmyopkCQnyEFcXkaoRwnCRZLQ@mail.gmail.com>
+Subject: Re: [PATCH v4 08/23] soc: qcom: Add driver for Qualcomm Krait L2
+ cache scaling
+To:     Rob Herring <robh@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Ilia Lin <ilia.lin@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Christian Marangi <ansuelsmth@gmail.com>,
+        Stephan Gerhold <stephan@gerhold.net>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Greg,
-
-Thanks for the review.
-
-On Wed, 11 Oct 2023 at 08:47, Greg KH <gregkh@linuxfoundation.org> wrote:
+On Wed, 11 Oct 2023 at 18:49, Rob Herring <robh@kernel.org> wrote:
 >
-> On Tue, Oct 10, 2023 at 11:49:24PM +0100, Peter Griffin wrote:
-> > Add serial driver data for Google Tensor gs101 SoC.
+> On Sun, Aug 27, 2023 at 02:50:18PM +0300, Dmitry Baryshkov wrote:
+> > Add a simple driver that handles scaling of L2 frequency and voltages.
 > >
-> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > > ---
-> >  drivers/tty/serial/samsung_tty.c | 12 ++++++++++++
-> >  1 file changed, 12 insertions(+)
-> >
-> > diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-> > index 07fb8a9dac63..79a1a184d5c1 100644
-> > --- a/drivers/tty/serial/samsung_tty.c
-> > +++ b/drivers/tty/serial/samsung_tty.c
-> > @@ -2597,14 +2597,21 @@ static const struct s3c24xx_serial_drv_data exynos850_serial_drv_data = {
-> >       .fifosize = { 256, 64, 64, 64 },
-> >  };
-> >
-> > +static const struct s3c24xx_serial_drv_data gs101_serial_drv_data = {
-> > +     EXYNOS_COMMON_SERIAL_DRV_DATA(),
-> > +     .fifosize = { 256, 64, 64, 64 },
+>
+> [...]
+>
+> > +static const struct of_device_id krait_l2_match_table[] = {
+> > +     { .compatible = "qcom,krait-l2-cache" },
+> > +     {}
+> > +};
+> > +MODULE_DEVICE_TABLE(of, krait_l2_match_table);
+> > +
+> > +static struct platform_driver krait_l2_driver = {
+> > +     .probe = krait_l2_probe,
+> > +     .remove = krait_l2_remove,
+> > +     .driver = {
+> > +             .name = "qcom-krait-l2",
+> > +             .of_match_table = krait_l2_match_table,
+> > +             .sync_state = icc_sync_state,
+> > +     },
 > > +};
 >
-> Why are you duplicating a structure that is already in the same file?
-> What is the benifit here?
-
-There is a mistake here, the struct shouldn't be the same as e850 it
-should look like this
-
-static const struct s3c24xx_serial_drv_data gs101_serial_drv_data = {
-     EXYNOS_COMMON_SERIAL_DRV_DATA(),
-     /* rely on samsung,uart-fifosize DT property for fifosize */
-     .fifosize = { 0 },
-};
-
-This then allows the fifosize to be taken from the samsung,uart-fifosize
-DT property for each of the 19 UARTs on this SoC.
-
+> As I mentioned in the other thread, cache devices already have a struct
+> device. Specifically, they have a struct device (no subclass) on the
+> cpu_subsys bus type. So there should be no need for a platform device
+> and second struct device.
 >
-> >  #define EXYNOS4210_SERIAL_DRV_DATA (&exynos4210_serial_drv_data)
-> >  #define EXYNOS5433_SERIAL_DRV_DATA (&exynos5433_serial_drv_data)
-> >  #define EXYNOS850_SERIAL_DRV_DATA (&exynos850_serial_drv_data)
-> > +#define GS101_SERIAL_DRV_DATA (&gs101_serial_drv_data)
->
-> What is "GS101"?
+> See drivers/acpi/processor_driver.c for an example. Or grep any use of
+> "cpu_subsys".
 
-gs101 is the name of the SoC in Pixel 6, 6 pro, 6a phones. I've put
-some more info
-about the various names of the SoC in the bindings documentation. See
-https://lore.kernel.org/linux-arm-kernel/20231010224928.2296997-9-peter.griffin@linaro.org/T/#mb45492e58de0bef566df8cdf6191ab8f96f0cf99
+Most likely you mean drivers/base/cacheinfo.c. I saw this code, I
+don't think it makes a good fit here. The cacheinfo devices provide
+information only, they are not tied to DT nodes in any way. cpu_subsys
+doesn't provide a way to match drivers with subsys devices in the
+non-ACPI case, etc. Moreover, the whole cacheinfo subsys is
+non-existing on arm32, there is no cacheinfo implementation there,
+thanks to the overall variety of architectures.
 
->
-> >  #else
-> >  #define EXYNOS4210_SERIAL_DRV_DATA NULL
-> >  #define EXYNOS5433_SERIAL_DRV_DATA NULL
-> >  #define EXYNOS850_SERIAL_DRV_DATA NULL
-> > +#define GS101_SERIAL_DRV_DATA NULL
-> >  #endif
-> >
-> >  #ifdef CONFIG_ARCH_APPLE
-> > @@ -2688,6 +2695,9 @@ static const struct platform_device_id s3c24xx_serial_driver_ids[] = {
-> >       }, {
-> >               .name           = "artpec8-uart",
-> >               .driver_data    = (kernel_ulong_t)ARTPEC8_SERIAL_DRV_DATA,
-> > +     }, {
-> > +             .name           = "gs101-uart",
-> > +             .driver_data    = (kernel_ulong_t)GS101_SERIAL_DRV_DATA,
-> >       },
-> >       { },
-> >  };
-> > @@ -2709,6 +2719,8 @@ static const struct of_device_id s3c24xx_uart_dt_match[] = {
-> >               .data = EXYNOS850_SERIAL_DRV_DATA },
-> >       { .compatible = "axis,artpec8-uart",
-> >               .data = ARTPEC8_SERIAL_DRV_DATA },
-> > +     { .compatible = "google,gs101-uart",
-> > +             .data =  GS101_SERIAL_DRV_DATA },
->
-> Why aren't you just listing this hardware as the same one above?  There
-> doesn't need to be a new entry if you just fix up the DT for the board
-> to declare it as the proper type of device.  No need to keep adding new
-> entries that do the exact same thing, we don't normally like that at all
-> for other bus types, why is DT different?
->
+Thus said, I don't think cacheinfo makes a good fit for the case of
+scaling L2 cache.
 
-I believe Krzysztof already answered this from a dt maintainer point of view.
-
-regards,
-
-Peter.
+-- 
+With best wishes
+Dmitry
