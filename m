@@ -2,58 +2,61 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22763CD68E3
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Oct 2023 08:16:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F3B5E92FD2
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Oct 2023 08:42:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230313AbjJKIQo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Oct 2023 04:16:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43010 "EHLO
+        id S230461AbjJKImw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Oct 2023 04:42:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230287AbjJKIQn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Oct 2023 04:16:43 -0400
-Received: from mail-qv1-xf31.google.com (mail-qv1-xf31.google.com [IPv6:2607:f8b0:4864:20::f31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75C70B8
-        for <linux-clk@vger.kernel.org>; Wed, 11 Oct 2023 01:16:40 -0700 (PDT)
-Received: by mail-qv1-xf31.google.com with SMTP id 6a1803df08f44-66cef33a4bdso9835406d6.1
-        for <linux-clk@vger.kernel.org>; Wed, 11 Oct 2023 01:16:40 -0700 (PDT)
+        with ESMTP id S230492AbjJKImv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Oct 2023 04:42:51 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90356DA
+        for <linux-clk@vger.kernel.org>; Wed, 11 Oct 2023 01:42:49 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-99357737980so1135690366b.2
+        for <linux-clk@vger.kernel.org>; Wed, 11 Oct 2023 01:42:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697012199; x=1697616999; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=nA0RDDaTkiz/7JWtA8mSntXcdVkGEnyXDFoq63BjRlY=;
-        b=xl8Go/6yojwnAlAX/9Y6ZEG3orREXWGbRUwpZPFNBqMyv7+E9gYYFpTqJvQbokYEG8
-         mx9jPMhbcdZKuVCIXKYR2B7/0UoxrvSQb0Kndcwv5Scrd0lzhYIlpKH9BLDeRGXmo8RC
-         MSGJZJ20Ohu7A4jy6JuZKSpgNe0oihcy1jgLyzBeAYKnihl9GzfzJfVrMxMQJrJm1zHy
-         TZ7NoxjwHh+6UgQNr9Jc+GxunvO0Vhtneql7YrT5NlkmKL2H7Jo7hGeOlrxXKBIiQyvy
-         q7KtpPOg2DcBQYC1silkk3dmQgLFldWfUGA2LJTuQUEcBC9RckC+LIKw7oGVm3kpjFqh
-         vhsg==
+        d=linaro.org; s=google; t=1697013768; x=1697618568; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SQVblcaazyZyyU0Xz3jnKqUUTme4HT3sP0gqd9Rl6LQ=;
+        b=nGskIy8t17VQGUMqu+P1RGj8PpN/Cncib72u3CzB1TeWEWCjp11pkjflmMwI9VTxhx
+         1PGwA8U2r4l6UCuXh26mNq3ZM6ZBHtnXlSEW+FjPg0C7XtjJsfziE1NGkdI5dK0AMBNu
+         Y+z/BgKyuME17W3hraarej06cbrDSvQGQBA2WGvs2mSTqQAYzyVVeBi7SXYrrMfw4HP8
+         +Q7Wh2tJxu21x06a84E4CdhcGIakC3bOncY+rJoHtbBStsgGQIcnQWLbZRhdGPgr5VqF
+         2LsFuWupNM7ywYzskw3SlV4GNvBlA7p4iaOjUcegLHia+o8htd6K2NrCyzYzKpZl7zdD
+         LCXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697012199; x=1697616999;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nA0RDDaTkiz/7JWtA8mSntXcdVkGEnyXDFoq63BjRlY=;
-        b=QTmjTuK4n7pa7x29puBTrU2bgBfQQnt3YUPGLjn5UKJIfryYmo7Hd5tLGelNxmOPGn
-         obH6eO5StbVGtsMbJwP4HmxeWAWQ4Rn2hTS8grGlWssIM01mZu1BhlRnRH578l2Q5x4Z
-         5K2I8iHCo2oH0Q7jL++8/yFKtEFkj/Ge6Ha8vkXfnBBfldGULwJauz0RtkSau22PawBF
-         D37nRx5QbVEAir/NeIvr/r+DS2dHs0MePD630vp2ovXvk8BOlT6W8iRPpHElWNX+SOHH
-         HgRTIAVPqRftQI27NDWh4qUv8hNI2X0JhT1B3co1pH2aYT9ki4O2s9UDFYPzgtZ4aLDs
-         K1HQ==
-X-Gm-Message-State: AOJu0YzRBv+NpvVrLrT6LVBa2pluUc1h9nNNj73d+LCfAYXNpicynPTd
-        sS3L8kaBW2I1mJq1NJ9Oh26JekAD6uzwYoeCDX7m1Q==
-X-Google-Smtp-Source: AGHT+IG+0ROOZO1mYXDe5AanejoBg3TXGpWOGx8a61SnY82+auoDhpY/ZD9spxpXsT1DrFa9tocnRlQSlCFjBmjz/zI=
-X-Received: by 2002:a0c:aa9a:0:b0:65b:771:f2ea with SMTP id
- f26-20020a0caa9a000000b0065b0771f2eamr15590074qvb.53.1697012199437; Wed, 11
- Oct 2023 01:16:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1697013768; x=1697618568;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SQVblcaazyZyyU0Xz3jnKqUUTme4HT3sP0gqd9Rl6LQ=;
+        b=cbYDLYxFsrjPr0Ib0xPUr7E9uSB2kYxub7oHlcfw8D/CccVMPHqNkjj0tDPBKlJela
+         YYpdzK7qm+x9HwdVMGycEjc7t46R+YQar2bob5j2rJucdXy0OJ781GXqKDZfCAF0zlmX
+         jwSI1Pomi1zpQTide+7B27e1lQBbtvKt5SEmGRTKKRfnbi4laLM4WWTKnYhdE4rxy+Ia
+         f9uvBRKqewa+oEsPFYA+jjLvH1r6zzCD8r30ef5hO8eY9dDmPh47PSodrzk+3j0tdwAF
+         hEWQ/7zVtKA/lOcV7l8exOuJNYe1mPCMJyiWfn8nXFAfLkls4uPiKYilEgi5oMQ4wcP6
+         GXRw==
+X-Gm-Message-State: AOJu0YwqZTCa9z24y5A7xgvz6q0I1ojhI/0BsaiV+PdYds5p7FpIvwig
+        5GL9HARgLIQ25O6RoDZonlUy+w==
+X-Google-Smtp-Source: AGHT+IFFg9jr8zTjiY0TW0V0idrabs2Pvc3T+NkXfL0RZxNQvIFEQsPwLLN6izM2Z3nlnBAnK9uYbg==
+X-Received: by 2002:a17:906:1097:b0:9b2:b786:5e9c with SMTP id u23-20020a170906109700b009b2b7865e9cmr17958158eju.28.1697013767910;
+        Wed, 11 Oct 2023 01:42:47 -0700 (PDT)
+Received: from [192.168.2.107] ([79.115.63.123])
+        by smtp.gmail.com with ESMTPSA id e12-20020a17090681cc00b009a9fbeb15f2sm9536588ejx.62.2023.10.11.01.42.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Oct 2023 01:42:47 -0700 (PDT)
+Message-ID: <14bb7d8d-0f99-4a5e-aee6-b0db1d17c1e6@linaro.org>
+Date:   Wed, 11 Oct 2023 09:42:43 +0100
 MIME-Version: 1.0
-References: <20231010224928.2296997-1-peter.griffin@linaro.org> <92de302a-f6b5-465c-a5da-2a711861089e@linaro.org>
-In-Reply-To: <92de302a-f6b5-465c-a5da-2a711861089e@linaro.org>
-From:   Peter Griffin <peter.griffin@linaro.org>
-Date:   Wed, 11 Oct 2023 09:16:27 +0100
-Message-ID: <CADrjBPqOmGEzeVEKiysxQNo9+B0=zD3Z+G24fPDKrFsgUXYJjQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v2 00/20] Add minimal Tensor/GS101 SoC support and
  Oriole/Pixel6 board
-To:     Tudor Ambarus <tudor.ambarus@linaro.org>
+Content-Language: en-US
+To:     Peter Griffin <peter.griffin@linaro.org>
 Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
         mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
         tomasz.figa@gmail.com, s.nawrocki@samsung.com,
@@ -66,53 +69,45 @@ Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
         linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
         kernel-team@android.com, linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+References: <20231010224928.2296997-1-peter.griffin@linaro.org>
+ <92de302a-f6b5-465c-a5da-2a711861089e@linaro.org>
+ <CADrjBPqOmGEzeVEKiysxQNo9+B0=zD3Z+G24fPDKrFsgUXYJjQ@mail.gmail.com>
+From:   Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <CADrjBPqOmGEzeVEKiysxQNo9+B0=zD3Z+G24fPDKrFsgUXYJjQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Tudor,
 
-Thanks for your reply.
 
-On Wed, 11 Oct 2023 at 07:10, Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
+On 10/11/23 09:16, Peter Griffin wrote:
+> Hi Tudor,
+> 
+> Thanks for your reply.
+> 
+> On Wed, 11 Oct 2023 at 07:10, Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
+>>
+>> Hi, Peter,
+>>
+>> On 10/10/23 23:49, Peter Griffin wrote:
+>>> Note 3: In `dt-bindings: pinctrl: samsung: add google,gs101-pinctrl
+>>> compatible` I tried to narrow the interrupts check to
+>>> google,gs101-pinctrl but I still see a warning: gs101-oriole.dtb:
+>>> pinctrl@174d0000: interrupts: [[0, 0, 4],[..] is too long If anyone can
+>>> educate me on what I've done wrong here it would be most appreciated!
+>>
+>> I guess the initial definition of the number of interrupts should
+>> include the largest min/maxItems. I no longer see the warning with this
+>> change:
+> 
+> Yes that is how it was in v1. The review feedback though was to narrow
+> the scope to just google,gs101-pinctrl compatible using if: then: else: which
+> is what I can't get to work properly.
 >
-> Hi, Peter,
->
-> On 10/10/23 23:49, Peter Griffin wrote:
-> > Note 3: In `dt-bindings: pinctrl: samsung: add google,gs101-pinctrl
-> > compatible` I tried to narrow the interrupts check to
-> > google,gs101-pinctrl but I still see a warning: gs101-oriole.dtb:
-> > pinctrl@174d0000: interrupts: [[0, 0, 4],[..] is too long If anyone can
-> > educate me on what I've done wrong here it would be most appreciated!
->
-> I guess the initial definition of the number of interrupts should
-> include the largest min/maxItems. I no longer see the warning with this
-> change:
 
-Yes that is how it was in v1. The review feedback though was to narrow
-the scope to just google,gs101-pinctrl compatible using if: then: else: which
-is what I can't get to work properly.
-
-regards,
-
-Peter.
-
-
->
-> diff --git
-> a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
-> b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
-> index 2464bc43aacb..6dc648490668 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
-> +++ b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
-> @@ -59,7 +59,8 @@ properties:
->    interrupts:
->      description:
->        Required for GPIO banks supporting external GPIO interrupts.
-> -    maxItems: 1
-> +    minItems: 1
-> +    maxItems: 50
->
->    power-domains:
->      maxItems: 1
+Right. The diff that I sent is on top of your changes (patch 6/20).
+I expect that when the interrupts property is defined it should include
+the min/maxItems of all the available SoCs. Then use "if Soc" to narrow
+the range.
