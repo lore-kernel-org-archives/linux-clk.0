@@ -2,100 +2,142 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6282CD6E5A
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Oct 2023 11:07:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A40A2CD6E5A
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Oct 2023 11:26:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234754AbjJKLHw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Oct 2023 07:07:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44104 "EHLO
+        id S234777AbjJKL05 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Oct 2023 07:26:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346135AbjJKK2y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Oct 2023 06:28:54 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE708C9
-        for <linux-clk@vger.kernel.org>; Wed, 11 Oct 2023 03:28:51 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id 2adb3069b0e04-5041bb9ce51so8456651e87.1
-        for <linux-clk@vger.kernel.org>; Wed, 11 Oct 2023 03:28:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697020130; x=1697624930; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ht5utTuG5wW1wq2rrU2pauj363H+uTmJt1GixQr1DSM=;
-        b=EVRtXE67gk+LC0mXBwljVYzi7ZwnklKR9lIwbViIMLS3LuACZ2Ry91HKub8sBBvcuJ
-         RkRbXaFKh5xJZypm8mBJf53ajuE+YprOBiwkDheoECB3fBFAxDffEIgfC/svXUpyBfPj
-         qfBGh6SeTRH42VEABkdZrlk5pud2VkPC9Z3wbbGwqWg5VJyjGrLq8HWkXltiiObQ83Pm
-         0XA3JuhDADijpZMLFoEQaN7adtiB9nl8nENDKH1k35upik1KfHMPW5Y5kD9uPyk8w0S6
-         mWAxFA6jriXiW3sFn+uYXhdc/QiYGadLly1xxn3kMJsHV1+R3N4AE8Ww0QOVVu8cEurV
-         LPAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697020130; x=1697624930;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ht5utTuG5wW1wq2rrU2pauj363H+uTmJt1GixQr1DSM=;
-        b=se48QA3IUJS0teaZrD5mrm6oBsPykEMuQV6qORb52Wu/d9gi0q8aoUrQLsL14jvELk
-         PexmDwEngKWXze/oABefkDPqNnZfreRfkoQfSAft7VzXpBx6AMEx0FoTefeNflmLWhC1
-         uO5BHm9Aw53YBsewkediKJ4Cr6ZjNJoLfEz9lhQh9YvLkRbBHE6SCR7pgMsnzM9AFBGo
-         CxKWLKG7y1gfaespbf3TxirOXtLzZBGMo+4zXTUFtpQ8GuM6dYTVohRPlj4gf2vLxjeb
-         hdUQvXGBC20Uh2M4MYTYKwf1GUCIk/WXePf2WIhsRnnyHPGeetWfauRO5ExDHsRRoJ3H
-         P6Iw==
-X-Gm-Message-State: AOJu0Yz2kdC8gFARmq7YCP/i/uGo4g5/ygtVC/90YO64ld/Z3sdBg+z3
-        VRFnlysB3vgYfeYc+EmqQ/QRJw==
-X-Google-Smtp-Source: AGHT+IF/+tcyWJy167xh1iz46cHV+3zXA/HdYlUn1jZqjis4ijk83UImTqPXKpAuX5ROU8uJiy4E0w==
-X-Received: by 2002:a05:6512:34c8:b0:503:200f:47a9 with SMTP id w8-20020a05651234c800b00503200f47a9mr14500380lfr.15.1697020129912;
-        Wed, 11 Oct 2023 03:28:49 -0700 (PDT)
-Received: from [87.246.221.93] (netpanel-87-246-221-93.pol.akademiki.lublin.pl. [87.246.221.93])
-        by smtp.gmail.com with ESMTPSA id v1-20020a056512096100b0050480e8a676sm2213434lft.268.2023.10.11.03.28.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Oct 2023 03:28:49 -0700 (PDT)
-Message-ID: <427980eb-3235-4d63-bb8f-3af06978a3eb@linaro.org>
-Date:   Wed, 11 Oct 2023 12:28:48 +0200
+        with ESMTP id S234781AbjJKL04 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Oct 2023 07:26:56 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 472669D;
+        Wed, 11 Oct 2023 04:26:54 -0700 (PDT)
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39BAxlA4013997;
+        Wed, 11 Oct 2023 11:26:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=tnGoTFkoJrPWMi3LmZbVVptnwMyne89C+2c9NCHF0uo=;
+ b=BNvxTM+N0ynRdL0Uq9EyC4wxqecZjxpcun18xBn/dceJ6ELX3dAlHk2EqYtpnovXVeBr
+ Q3wyHMQ7w35ESDD4kzEycPojLUK2Jc9U8KnKWkF42n0A6GXKU9C/JqXhYXR60VEOCUFi
+ KcBx7iD0eekexHTE+0m0cQJwuZ7BqxJ4/qb2yAXq8Fb9ejl5RwbbMKGa81v1nkFY3wMd
+ Dp3GlbSBMiPDhjoQv49dr8gPfFkrOwenYPhMmUtSJkz9Ynq02CCauYolYevTJH6ke+kK
+ uRGOncFrgCTBMTaotgZaWPwsLoLa5/nYRsuTXvnJQxpJ+my6rLQAENVKnUxL5gOWNmmR QQ== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3tnstyr512-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 11 Oct 2023 11:26:38 +0000
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 39BBQc2f029508
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 11 Oct 2023 11:26:38 GMT
+Received: from [10.253.39.162] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Wed, 11 Oct
+ 2023 04:26:34 -0700
+Message-ID: <49c8a8ff-bdb9-a523-9587-d2a46d401e41@quicinc.com>
+Date:   Wed, 11 Oct 2023 19:26:31 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 0/4] Add support for Qualcomm ECPRI clock controller
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v9 4/4] clk: qcom: add clock controller driver for
+ qca8386/qca8084
+To:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        <andersson@kernel.org>, <agross@kernel.org>,
+        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <p.zabel@pengutronix.de>
+CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_srichara@quicinc.com>
+References: <20230923112105.18102-1-quic_luoj@quicinc.com>
+ <20230923112105.18102-5-quic_luoj@quicinc.com>
+ <10bcb0cc-19db-4914-bbc4-ef79c238a70d@linaro.org>
 Content-Language: en-US
-To:     Imran Shaik <quic_imrashai@quicinc.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc:     Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Ajit Pandey <quic_ajipan@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>
-References: <20231011090028.1706653-1-quic_imrashai@quicinc.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20231011090028.1706653-1-quic_imrashai@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From:   Jie Luo <quic_luoj@quicinc.com>
+In-Reply-To: <10bcb0cc-19db-4914-bbc4-ef79c238a70d@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: dUA-wU0uTkaeUhmTA2v6l2Rxv4Ly_Y8H
+X-Proofpoint-GUID: dUA-wU0uTkaeUhmTA2v6l2Rxv4Ly_Y8H
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-10-11_09,2023-10-11_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
+ bulkscore=0 malwarescore=0 suspectscore=0 priorityscore=1501
+ impostorscore=0 mlxlogscore=861 lowpriorityscore=0 clxscore=1011
+ spamscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2309180000 definitions=main-2310110100
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
 
-On 10/11/23 11:00, Imran Shaik wrote:
-> The ECPRI clock controller support for QDU1000 and QRU1000. The clock
-> controller has a special branch which requires an additional memory to
-> be enabled/disabled before the branch ops.
+On 10/11/2023 6:25 PM, Bryan O'Donoghue wrote:
+> On 23/09/2023 12:21, Luo Jie wrote:
+>> The clock controller driver of qca8386/qca8084 is registered
+>> as the MDIO device, the hardware register is accessed by MDIO bus
+>> that is normally used to access general PHY device, which is
+>> different from the current existed qcom clock controller drivers
+>> using ioremap to access hardware clock registers.
 > 
-> Changes since v1:
->   - Updated the dt-bindings
->   - Modified mem ops logic as per the review comments
->   - Update all the hex values to lowercase
->   - Aligned the clock entries in DT as per the review comment
+> "nsscc-qca8k is accessed via an MDIO bus"
 > 
-> Previous series:
-> v1 - https://patchwork.kernel.org/project/linux-arm-msm/list/?series=774092
-That link is gone by now, as patchwork is periodically purged.
+>> MDIO bus is common utilized by both qca8386/qca8084 and other
+> 
+> commonly
+> 
+>> PHY devices, so the mutex lock mdio_bus->mdio_lock should be
+>> used instead of using the mutex lock of remap.
+>>
+>> To access the hardware clock registers of qca8386/qca8084, there
+>> is special MDIO frame sequence(three MDIO read/write operations)
+>> need to be sent to device.
+> 
+> "there is a special MDIO frame sequence"
+> 
+> "which needs to be sent to the device"
 
-Please use lore links instead.
+I will update the comments, thanks Bryan.
 
-https://lore.kernel.org/linux-arm-msm/20230808051407.647395-1-quic_imrashai@quicinc.com/
+> 
+> the following indentation splat from checkpatch
+> 
+> CHECK: Alignment should match open parenthesis
+> #2071: FILE: drivers/clk/qcom/nsscc-qca8k.c:2004:
+> +        ret = __mdiobus_write(bus, switch_phy_id, (reg | 
+> QCA8K_REG_DATA_UPPER_16_BITS),
+> +                upper_16_bits(val));
+> 
+> CHECK: Alignment should match open parenthesis
+> #2131: FILE: drivers/clk/qcom/nsscc-qca8k.c:2064:
+> +static int qca8k_regmap_update_bits(void *context, unsigned int regaddr,
+> +        unsigned int mask, unsigned int value)
+> 
+> total: 0 errors, 1 warnings, 2 checks, 2162 lines checked
+> 
+> NOTE: For some of the reported defects, checkpatch may be able to
+>        mechanically convert to the typical style using --fix or 
+> --fix-inplace.
+> 
+> 0004-clk-qcom-add-clock-controller-driver-for-qca8386-qca.patch has 
+> style problems, please review.
 
-Konrad
+Thanks Bryan for the review. The code line mentioned by CHECK is more 
+than 100 columns, so i separate the lines.
+
+> 
+> Once fixed
+> 
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
