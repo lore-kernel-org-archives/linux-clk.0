@@ -2,166 +2,124 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19B1ECD6E5A
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Oct 2023 10:19:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADD02CD6E54
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Oct 2023 10:26:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231590AbjJKKTq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Oct 2023 06:19:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38498 "EHLO
+        id S1345729AbjJKK0H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Oct 2023 06:26:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231207AbjJKKTp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Oct 2023 06:19:45 -0400
-Received: from out2-smtp.messagingengine.com (out2-smtp.messagingengine.com [66.111.4.26])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA79192;
-        Wed, 11 Oct 2023 03:19:42 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 961635C0116;
-        Wed, 11 Oct 2023 06:19:39 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Wed, 11 Oct 2023 06:19:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-        :cc:content-type:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; t=1697019579; x=1697105979; bh=do
-        IlIC9EeuIMVa/VZ1WnSYIgbZ+zY86Stgz8IJ2yHW4=; b=ZPTus0CyEZNzQ3ZYKm
-        vLTrtlZZoL2M6dMhXvw7rdMMA3wsa1FYnEACrecc2ztl1WDIhfslaXER4S5jbcgb
-        hrDzBxPG1Tvy/cu/cRxuoRxOocI/ilrFu8QeXpoWTaKNDQIg7rwfNoB/TVKml2fU
-        JdjYlo0AIDlLAhIOISWCEJlWzXc5Fu/bhQMwDQWXIUU/Vx1npy+zkmNn7ctCE4P9
-        9Acrw62yBDVubO8PIMtRxhu2B3aYMuqwz4cxO/vWHYNlTih+fmQ+eMTvB5Sdsda2
-        6ok0s4mIi74f9u92Kt8QdHWdAxfz/e46T2kOki+C/8OBV5ZCZrPIV0DBiDDkprOZ
-        SkoQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; t=1697019579; x=1697105979; bh=doIlIC9EeuIMV
-        a/VZ1WnSYIgbZ+zY86Stgz8IJ2yHW4=; b=BlWfsK3XtX6m9FTqsj5z+1lUlMtVa
-        uSmnhdJzR9VOmXkLB8Sg7CqlmHnsdQrCS9nff7eODRcC0FLRrX4dpKgs4JpDK5uJ
-        ymtB7FHWWwyXprS3R33M66wU24sHYVMYG9vnBO5gKIED7l3Y71rlJqplNDRvGvLL
-        XqfFxbMTUWedWoqXKeifaPqHOcDtjTfd4b0jcBJJxnylBAFyt69//H8G82sczviD
-        Zc15LmU9PssJ1peroeRSsjlh/pqbKT3yiSrAaImPXAkd5Q6sZ7ucvOzT9pOLybO2
-        cySWW720H6hmb/0RZrsqaCI7I5KqEdLTYCfqh7OeHbu2l+VwyWP+yIUxA==
-X-ME-Sender: <xms:unYmZQET4dYl0UoyJjuZ_fB3T1xzGXWTaEpTBatGe-U2yFN3tlqJYA>
-    <xme:unYmZZUZyl_2BgDDmlQsE-0cD7Q8ehnanhh1grHoC6sIKH3IjNwup37wWtGtVx1z0
-    F3apLa6N32LtyOaNTc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrheekgddvgecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
-    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
-    hnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:unYmZaIaxR6H4udLyS5OVwVlsBNx6B9mLcmyLeuDThy_R7jQ9TzNMQ>
-    <xmx:unYmZSFPFX4dh4pSv2FHaQfC4fvguak-1Pdc4tFpdUO0do8tM0jeBg>
-    <xmx:unYmZWUb2qBaTOgabSaKnUOm46EBwGyf30U_NflTf0hSL3j1KH3gGw>
-    <xmx:u3YmZZnW7p2LztIhQz51H5hhZsTE5xhCBwF_Cy8pNMRab5eVYrtLgg>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 85FC8B60089; Wed, 11 Oct 2023 06:19:38 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.9.0-alpha0-1019-ged83ad8595-fm-20231002.001-ged83ad85
+        with ESMTP id S234261AbjJKK0G (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Oct 2023 06:26:06 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8265B7
+        for <linux-clk@vger.kernel.org>; Wed, 11 Oct 2023 03:26:01 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-40566f8a093so61376565e9.3
+        for <linux-clk@vger.kernel.org>; Wed, 11 Oct 2023 03:26:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1697019960; x=1697624760; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vz9dCTUAJHMkFUSxm9pCk3ylD/I/tndawRxu31ITP+g=;
+        b=NbroL8VydLiF/5U4EpkKQ4StM5WWEKQ35TLnXoAKraN3kIydq9kiZUazLDgb7GXc53
+         ws3SVH8R7oOqfIhjow3dpzQTzGS4NoH97txFgFCCp7TEdTS6TSI20tnxwkMuI+BQzujV
+         ufO1yBUTKCRp7XXzKxpTeEKKyxyZUEstXvB0/Ji2hRz2QmEMGjX3/4Ry0BZMb5lo5IoF
+         D/zBmMwmY1+BryQG9juaGKG3+Y7/iuh1LNk3OmcEOCCQ15mK+aG+X5aXFTbn77JKsaVK
+         u2lem2HO369VCMEBkOyKvgmLQAoPct7EupxjWnR4Lkl+NmNtNjHhcHbMm47pFll9EeDs
+         zHag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697019960; x=1697624760;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vz9dCTUAJHMkFUSxm9pCk3ylD/I/tndawRxu31ITP+g=;
+        b=IChJSbchT5O8DKiFNTOKgEaq7sR6pD+8J5IqsTkxtRtmDY4fmeYJF8sl2KzCT1PKGY
+         K+h/a9IihDk8g1WZ7nEyLsAlVIslPOPw6tnnXwvQiVNZxuqBq0+nPVtcH4m7/3FF0Nc6
+         kp1MZ0A4npyS+SAKhxuPTb7axUrO9w+I+ZJwP1MDgJtQlVksk/CyuWjhGOFP3dMmRtrO
+         ME0G6ofD5df2tyvfUg0TmO05Qu6xr5w1IJf1tGCDqUJLBl3OxEwtOP1FZEVkTmpezWXj
+         jRkx1K1QCJXuEPn3fNl0+lKIWid4XjT0VrqMFlXPL6IzSI4az0iPTfgMD5NPhu3oevIp
+         G/rg==
+X-Gm-Message-State: AOJu0Yz9SjUdjek4Z5UUlQbr0tbZ1pkRkcxHb18EWDEi4kxsWsFjtfRv
+        1gReRhU6i31gnwrgDMIwP4wM3A==
+X-Google-Smtp-Source: AGHT+IHg9KTXtScFiRCbZ8fBRugfwTlzviYfywyydhnaZBwWrCVCnC/2QxDGezuFnwgYpHW1pqa8WA==
+X-Received: by 2002:adf:ef91:0:b0:31f:f1f4:ca8b with SMTP id d17-20020adfef91000000b0031ff1f4ca8bmr16588499wro.40.1697019960263;
+        Wed, 11 Oct 2023 03:26:00 -0700 (PDT)
+Received: from [192.168.100.102] ([37.228.218.3])
+        by smtp.gmail.com with ESMTPSA id j16-20020adff010000000b0032008f99216sm15058111wro.96.2023.10.11.03.25.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Oct 2023 03:25:59 -0700 (PDT)
+Message-ID: <10bcb0cc-19db-4914-bbc4-ef79c238a70d@linaro.org>
+Date:   Wed, 11 Oct 2023 11:25:58 +0100
 MIME-Version: 1.0
-Message-Id: <c454503a-8f89-4bcf-949d-4970595540fc@app.fastmail.com>
-In-Reply-To: <2023101126-stash-manor-7162@gregkh>
-References: <20231010224928.2296997-1-peter.griffin@linaro.org>
- <20231010224928.2296997-9-peter.griffin@linaro.org>
- <2023101111-banknote-satin-1f77@gregkh>
- <a6c57156-d3a5-4524-8ef8-6f27cf0a2c97@linaro.org>
- <2023101137-fester-rerun-5c39@gregkh>
- <fe7cf585-622a-420e-8138-10de1cbca511@app.fastmail.com>
- <2023101126-stash-manor-7162@gregkh>
-Date:   Wed, 11 Oct 2023 12:19:18 +0200
-From:   "Arnd Bergmann" <arnd@arndb.de>
-To:     "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-Cc:     "Tudor Ambarus" <tudor.ambarus@linaro.org>,
-        "Peter Griffin" <peter.griffin@linaro.org>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        krzysztof.kozlowski+dt@linaro.org,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        "Conor Dooley" <conor+dt@kernel.org>,
-        "Stephen Boyd" <sboyd@kernel.org>,
-        "Tomasz Figa" <tomasz.figa@gmail.com>,
-        "Sylwester Nawrocki" <s.nawrocki@samsung.com>,
-        "Linus Walleij" <linus.walleij@linaro.org>,
-        "Wim Van Sebroeck" <wim@linux-watchdog.org>,
-        "Guenter Roeck" <linux@roeck-us.net>,
-        "Catalin Marinas" <catalin.marinas@arm.com>,
-        "Will Deacon" <will@kernel.org>, "Olof Johansson" <olof@lixom.net>,
-        "Chanwoo Choi" <cw00.choi@samsung.com>, andre.draszik@linaro.org,
-        semen.protsenko@linaro.org, saravanak@google.com,
-        "William McVicker" <willmcvicker@google.com>, soc@kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-watchdog@vger.kernel.org, kernel-team@android.com,
-        linux-serial@vger.kernel.org
-Subject: Re: [PATCH v2 08/20] dt-bindings: serial: samsung: Add google-gs101-uart
- compatible
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 4/4] clk: qcom: add clock controller driver for
+ qca8386/qca8084
+Content-Language: en-US
+To:     Luo Jie <quic_luoj@quicinc.com>, andersson@kernel.org,
+        agross@kernel.org, konrad.dybcio@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        quic_srichara@quicinc.com
+References: <20230923112105.18102-1-quic_luoj@quicinc.com>
+ <20230923112105.18102-5-quic_luoj@quicinc.com>
+From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20230923112105.18102-5-quic_luoj@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Oct 11, 2023, at 11:42, Greg Kroah-Hartman wrote:
-> On Wed, Oct 11, 2023 at 11:30:25AM +0200, Arnd Bergmann wrote:
->> On Wed, Oct 11, 2023, at 10:57, Greg KH wrote:
->> >
->> >> It's not only the IP itself
->> >> that can differ, it's also the integration of the IP into the final
->> >> product that could have an influence on the behavior.
->> >
->> > This is for the Pixel 6, a device that is no longer even shipping.  The
->> > "final product" is long stable, so this should not be an issue.
->> 
->> The driver does have soc specific settings for each compatible
->> string, in this case it looks like it overrides the FIFO size
->> based on driver specific data and the order in which the
->> ports are probed [1]. I don't understand why the driver does
->> this, but my impression is that if we wanted to change it to no
->> longer rely on that data, we'd also need a new compatible
->> string.
->
-> As I reviewed that patch already, it is just duplicating an existing
-> quirk/device that the driver already supports, so there is no need for
-> any "new device type" to be added to that driver, just use the existing
-> hardware description in the dt and all should be fine.
+On 23/09/2023 12:21, Luo Jie wrote:
+> The clock controller driver of qca8386/qca8084 is registered
+> as the MDIO device, the hardware register is accessed by MDIO bus
+> that is normally used to access general PHY device, which is
+> different from the current existed qcom clock controller drivers
+> using ioremap to access hardware clock registers.
 
-The thing is, I suspect that the FIFO size override is actually
-wrong for the exynos850 as well, and is almost certainly wrong
-for both exynosautov9 and google-gs101:
+"nsscc-qca8k is accessed via an MDIO bus"
 
-- The driver overrides an exynos850 compatible uart to use a
-  256 byte FIFO on whichever port is probed first, 64 byte
-  on the next three ports, and the setting from DT on any
-  later ones, falling back to 16 bytes if the DT does not set
-  anything.
+> MDIO bus is common utilized by both qca8386/qca8084 and other
 
-- exynos850 only actually has three of these ports, not
-  four. It does not lists  FIFO size in the dts at all.
+commonly
 
-- exynosautov9 has a total of 11 ports, each of these
-  compatible with both "samsung,exynosautov9-uart" as
-  the specific value and "samsung,exynos850-uart" as
-  the generic fallback. The DT lists a FIFO size of 256
-  bytes for ports 0, 1, and 6, but lists FIFO size 64
-  for each of the other ones.
+> PHY devices, so the mutex lock mdio_bus->mdio_lock should be
+> used instead of using the mutex lock of remap.
+> 
+> To access the hardware clock registers of qca8386/qca8084, there
+> is special MDIO frame sequence(three MDIO read/write operations)
+> need to be sent to device.
 
-- google-gs101 only lists a single uart in the dts,
-  and sets it to a 256 byte FIFO.
+"there is a special MDIO frame sequence"
 
-- testla-fsd claims to be compatible with exynos4210,
-  which also overrides the first two ports in probe
-  order to 256 and 64 bytes respectively (like exynos850),
-  but it only has two ports.
+"which needs to be sent to the device"
 
-- artpec8 has a separate compatible string so it overrides
-  all ports to 64 bytes.
+the following indentation splat from checkpatch
 
-I don't know why probe order would have anything to do
-with this, so most likely these are all the same thing
-and should just put a fixed FIFO size into the DT for
-each port instance.
+CHECK: Alignment should match open parenthesis
+#2071: FILE: drivers/clk/qcom/nsscc-qca8k.c:2004:
++		ret = __mdiobus_write(bus, switch_phy_id, (reg | 
+QCA8K_REG_DATA_UPPER_16_BITS),
++				upper_16_bits(val));
 
-      Arnd
+CHECK: Alignment should match open parenthesis
+#2131: FILE: drivers/clk/qcom/nsscc-qca8k.c:2064:
++static int qca8k_regmap_update_bits(void *context, unsigned int regaddr,
++		unsigned int mask, unsigned int value)
+
+total: 0 errors, 1 warnings, 2 checks, 2162 lines checked
+
+NOTE: For some of the reported defects, checkpatch may be able to
+       mechanically convert to the typical style using --fix or 
+--fix-inplace.
+
+0004-clk-qcom-add-clock-controller-driver-for-qca8386-qca.patch has 
+style problems, please review.
+
+Once fixed
+
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
