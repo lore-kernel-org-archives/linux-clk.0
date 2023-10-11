@@ -2,93 +2,127 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AE09CD8C9F
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Oct 2023 15:49:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 417C8CD98EA
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Oct 2023 15:55:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343920AbjJKPtk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Oct 2023 11:49:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49486 "EHLO
+        id S1346952AbjJKPze (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Oct 2023 11:55:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235075AbjJKPtj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Oct 2023 11:49:39 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0EC7A4;
-        Wed, 11 Oct 2023 08:49:38 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E50FCC433C7;
-        Wed, 11 Oct 2023 15:49:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1697039378;
-        bh=+4vMMnbz6QM3xqt6SUWU/u/wTBq1TQ2bMWhWyVpP1ck=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=neKr/JAWpIGZ6cQ0odUAwAzsX3izewlUsu5qdv35VN0D0QoFSqseHZk/VhagElKQ7
-         xO/Ep7SaCKgWM9l2v3e9586y8od72dvk7klu6xqQROrtbzceADDqAQZ9HU88O8eEo2
-         A1tkawJa3OkYvdouGHXKnYtjiLqtobcRHjy3L+13H6maeJxrYjzpnWAWNutUG/BOFg
-         K5vncX1Z4QhvXx3Rm9P3k7es1t7wWcZyDH3bM812FIHy1bi7WyNrx8MlmX+FYoSxF+
-         GErynuIp6oa2BbpPsQdRkeeggaHiZHdJkCL7/U+mh/ld31fKEpSxLaOpxR/y7NvWsB
-         YHcVjWyd/pqaQ==
-Received: (nullmailer pid 793454 invoked by uid 1000);
-        Wed, 11 Oct 2023 15:49:35 -0000
-Date:   Wed, 11 Oct 2023 10:49:35 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Ilia Lin <ilia.lin@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Christian Marangi <ansuelsmth@gmail.com>,
-        Stephan Gerhold <stephan@gerhold.net>
-Subject: Re: [PATCH v4 08/23] soc: qcom: Add driver for Qualcomm Krait L2
- cache scaling
-Message-ID: <20231011154935.GA785564-robh@kernel.org>
-References: <20230827115033.935089-1-dmitry.baryshkov@linaro.org>
- <20230827115033.935089-9-dmitry.baryshkov@linaro.org>
+        with ESMTP id S1346939AbjJKPzd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Oct 2023 11:55:33 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23F5EB0
+        for <linux-clk@vger.kernel.org>; Wed, 11 Oct 2023 08:55:31 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id 4fb4d7f45d1cf-53dd3f169d8so25661a12.3
+        for <linux-clk@vger.kernel.org>; Wed, 11 Oct 2023 08:55:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1697039729; x=1697644529; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KbOpE5VKjIMjXNX7bXqdn8URAwp8xkDDntfrb/FwR4w=;
+        b=TBV6E1D2JK263ZDj6oMrEJtO8JnZbEOmWj+afjWEctnm8Dsqu50FFbTmeFjo6ITZZX
+         cbpRqvHFfm9IN5kBMIsVSERK+48FwXiS/KHSZfwYMvKivBRgIDLni+g0OIUfkffTDx99
+         85ZTqByVHg7rIXdNejmpuPADvBgQqCS4AtDLyjER2za7wljt9FZjwHzwhurGi1AQqKxB
+         TpGVeGt/sEtcRSN4pL6NaysaE7tNHx1HRDAYnYCFcUvq3MwAWoUfBzp74rx8GwVA2VgR
+         KHkiM9ilp+JbkSuUhce72PiQZ0eko1VQoxayjjXmwlEcN0eGgnwKUMsDfcW8BEuRq1hY
+         YZ7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697039729; x=1697644529;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KbOpE5VKjIMjXNX7bXqdn8URAwp8xkDDntfrb/FwR4w=;
+        b=GBYo8JM7eZ+qs5Ml1RXTfyKFataB1vJnG9E7wo5fEA6fVSYaE5tz1ApaXw8drjD+c6
+         2sG2Sr/husBIbZAaPWsWoiJAD4knUCf/JiQHf1WOFWXQpOx53v1i4tLGtM8IRm/De2d+
+         Nhn/Iw0DKwLXnD9UXyqBKxRNdmDR2j0L/qnD43zVApNPa/PjyQewhMi/in8bWuORzshU
+         cqh7lD1UpW6/tZzq2VP5rHKsNW0H3hVXBo1VWgxw7YePWYPGU2I3rzDgCcvDjvlmqtJs
+         kl9OB27ZqdqLOJQ4YFByE7el2PsKUxZBKNKb0vzdtLA4xI1t6TQ8bO0wQoN7PwUzGCo7
+         /y/g==
+X-Gm-Message-State: AOJu0YwUEs9/l9P7x77pNy5dAnOQ5fL0lxOjeIMunHE7/1eYeuuSRWjj
+        iL3HcZ3lrnSySHiyEO9lSRruBg==
+X-Google-Smtp-Source: AGHT+IHtErofZM2x+uE8kBiPaK1/HljWwfQi6sW2rbSCUwN2JiCvdsMVCdEYynwvsBJNVVTBtUob8w==
+X-Received: by 2002:aa7:c998:0:b0:530:ccf7:37af with SMTP id c24-20020aa7c998000000b00530ccf737afmr18702868edt.12.1697039729420;
+        Wed, 11 Oct 2023 08:55:29 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.133])
+        by smtp.gmail.com with ESMTPSA id ec22-20020a0564020d5600b0053defc8c15asm460905edb.51.2023.10.11.08.55.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Oct 2023 08:55:28 -0700 (PDT)
+Message-ID: <fe375d1d-29b1-4514-963b-7a65a645a58d@tuxon.dev>
+Date:   Wed, 11 Oct 2023 18:55:27 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230827115033.935089-9-dmitry.baryshkov@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/6] clk: renesas: rzg2l: Use %x format specifier to print
+ CLK_ON_R()
+Content-Language: en-US
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Sergei Shtylyov <sergei.shtylyov@gmail.com>, magnus.damm@gmail.com,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20231010132701.1658737-1-claudiu.beznea.uj@bp.renesas.com>
+ <20231010132701.1658737-2-claudiu.beznea.uj@bp.renesas.com>
+ <8226bd48-4297-0b32-c733-2e569114a934@gmail.com>
+ <e1c9c2ca-144c-49fe-940c-9ca8ad40e377@tuxon.dev>
+ <CAMuHMdW7jXSFx5kU6PKr55cXw2+Hu_J-Z4NdUk=m_2AxuaOC0g@mail.gmail.com>
+From:   claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <CAMuHMdW7jXSFx5kU6PKr55cXw2+Hu_J-Z4NdUk=m_2AxuaOC0g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Aug 27, 2023 at 02:50:18PM +0300, Dmitry Baryshkov wrote:
-> Add a simple driver that handles scaling of L2 frequency and voltages.
+Hi, Geert,
+
+On 11.10.2023 10:43, Geert Uytterhoeven wrote:
+> Hi Claudiu,
 > 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
+> On Wed, Oct 11, 2023 at 9:37 AM claudiu beznea <claudiu.beznea@tuxon.dev> wrote:
+>> On 10.10.2023 17:52, Sergei Shtylyov wrote:
+>>> On 10/10/23 4:26 PM, Claudiu wrote:
+>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>
+>>>> Use %x format specifier to print CLK_ON_R(). This is easier when
+>>>> debugging as the value printed will be hexadecimal like in the hardware
+>>>> manual. Along with it "0x" has been added in front of the printed value.
+>>>>
+>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>> ---
+>>>>  drivers/clk/renesas/rzg2l-cpg.c | 2 +-
+>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
+>>>> index d62f1bc1f60e..764bd72cf059 100644
+>>>> --- a/drivers/clk/renesas/rzg2l-cpg.c
+>>>> +++ b/drivers/clk/renesas/rzg2l-cpg.c
+>>>> @@ -1213,7 +1213,7 @@ static int rzg2l_mod_clock_endisable(struct clk_hw *hw, bool enable)
+>>>>              return 0;
+>>>>      }
+>>>>
+>>>> -    dev_dbg(dev, "CLK_ON %u/%pC %s\n", CLK_ON_R(reg), hw->clk,
+>>>> +    dev_dbg(dev, "CLK_ON 0x%x/%pC %s\n", CLK_ON_R(reg), hw->clk,
+>>>
+>>>    Perhaps "%#x" instead of "0x%x"?
+>>
+>> Yes, better, thanks!
+> 
+> "%#" is not very common in drivers/clk/.
+> 
+> And to me it always raises the question: What does "alternate form" mean
+> for this conversion specifier and this implementation of vsnprintf()?
 
-[...]
+OK, I have no strong opinion on this. Please let me know in case you need
+me to send a new version.
 
-> +static const struct of_device_id krait_l2_match_table[] = {
-> +	{ .compatible = "qcom,krait-l2-cache" },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(of, krait_l2_match_table);
-> +
-> +static struct platform_driver krait_l2_driver = {
-> +	.probe = krait_l2_probe,
-> +	.remove = krait_l2_remove,
-> +	.driver = {
-> +		.name = "qcom-krait-l2",
-> +		.of_match_table = krait_l2_match_table,
-> +		.sync_state = icc_sync_state,
-> +	},
-> +};
+Thank you,
+Claudiu Beznea
 
-As I mentioned in the other thread, cache devices already have a struct 
-device. Specifically, they have a struct device (no subclass) on the 
-cpu_subsys bus type. So there should be no need for a platform device 
-and second struct device.
-
-See drivers/acpi/processor_driver.c for an example. Or grep any use of 
-"cpu_subsys".
-
-Rob
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
