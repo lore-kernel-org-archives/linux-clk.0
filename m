@@ -2,113 +2,120 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17C4ACD98F8
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Oct 2023 07:44:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B7DACD98F8
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Oct 2023 07:51:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229821AbjJKHoL convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Oct 2023 03:44:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41626 "EHLO
+        id S229848AbjJKHvW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Oct 2023 03:51:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229708AbjJKHoK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Oct 2023 03:44:10 -0400
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02644A7;
-        Wed, 11 Oct 2023 00:44:08 -0700 (PDT)
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-5a7ab31fb8bso27191877b3.1;
-        Wed, 11 Oct 2023 00:44:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697010248; x=1697615048;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TAbstOtgr1+rfCeSYFk49UDtYafhh+G+CKqe3mK9hKE=;
-        b=OCYNSo9Pwoueo0hUDZZyu9IrweR8X0lE2hwm6+wskOGDrJFJsJv2a/rLFojq4RB7z2
-         WNbe3ItyBFkSesBdpRtw+dGdppx/8rqjEgpnKvAxJXnBCcNgHrpdUG/VJZZvTK8ypQYI
-         9EIfyC9DU6ANVKMH05eejInAmchMZpLK7YsejzgeXbHOHHdkh/EVbwN11Kr90Ud7gorp
-         fNTwqMdrJZqBl0O09TgH5rKbOF2ULe0xB7CXW4NoIeYjCcHuN1E07uoBEPW036G2B8LC
-         SlZjaEDiaTcoC4eWae7Y8LRWYIZaz94+DBoNG+5S/U7vXB4cjUBCeZxgR7wcH8RD7aeH
-         SzwQ==
-X-Gm-Message-State: AOJu0YzLJXm4WHbTZO8bB0RoPhJEeMTygclLb/+xjZxEm/4STBNLOUx6
-        jRIbB+Ht3qzwih/C6GQzKRDkb+GWFhilBA==
-X-Google-Smtp-Source: AGHT+IHdLacTtW4sW/jjWkcl0xGv09d1La3FoEDUqUukceZWTSqqBhtyI+n0KZvHhXOgXMPduM5ZDg==
-X-Received: by 2002:a81:d24f:0:b0:5a1:d398:2e with SMTP id m15-20020a81d24f000000b005a1d398002emr24707493ywl.37.1697010247892;
-        Wed, 11 Oct 2023 00:44:07 -0700 (PDT)
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
-        by smtp.gmail.com with ESMTPSA id i84-20020a819157000000b005a7bfec6c34sm1075535ywg.46.2023.10.11.00.44.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Oct 2023 00:44:07 -0700 (PDT)
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-5a7ab31fb8bso27191687b3.1;
-        Wed, 11 Oct 2023 00:44:07 -0700 (PDT)
-X-Received: by 2002:a0d:ead5:0:b0:5a7:e5de:79a4 with SMTP id
- t204-20020a0dead5000000b005a7e5de79a4mr562439ywe.17.1697010247014; Wed, 11
- Oct 2023 00:44:07 -0700 (PDT)
+        with ESMTP id S230287AbjJKHvN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Oct 2023 03:51:13 -0400
+X-Greylist: delayed 362 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 11 Oct 2023 00:51:01 PDT
+Received: from new3-smtp.messagingengine.com (new3-smtp.messagingengine.com [66.111.4.229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5459F10B;
+        Wed, 11 Oct 2023 00:51:00 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 891765804C1;
+        Wed, 11 Oct 2023 03:44:57 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Wed, 11 Oct 2023 03:44:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+        :cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm2; t=1697010297; x=1697017497; bh=JZ
+        ToOnQlaLQI+R1OJZjMd5txCt25LannQJkkFemkr7A=; b=2I1Uee41GqQiS5mRa7
+        b+oLFHaHse24HaozrZAH5aB5O6tH1OPeNXTHMFgWUHQJ+EJrC95eZNw0k/kn8TZb
+        d6GCEPJJATP1hL/7LLiPs0dvVLy8RoNLfmxVDGtXO4ipZcHbiVIT1NI8sArIRDOi
+        YDGadkOLR5hnJyg7EPvK9G+ig7LRP5tS9geD5LCHiKDX6NUQw4JC1uWIZt65jSZK
+        8bRYsHbC42O24GL2BsXZKGaB7ycIUgDZ35VrUzyduSd68q8XBij2krCyq+GZQNYh
+        Kq6ZqaWI+slgetPhXhJo7c8WPDuI73LD4ayto3V5YDYrbx0gsQ5OfiDcVInJZ40p
+        0gYQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; t=1697010297; x=1697017497; bh=JZToOnQlaLQI+
+        R1OJZjMd5txCt25LannQJkkFemkr7A=; b=QQKKGB5UoVL3YQ4FtdrsWsjqKcufn
+        37TnvP56+FqTFex/vwIupr3qRdQVV6X2EN77rH/ZNuY6bb9D6MP4/rZPooCFVk0M
+        F3SPsWyKMjwEqeO3KolFnelceT5+rSaIEmm58c62wdJ9G1IURsJzIPoswNjDRAdI
+        173HETIxvG91z1fOkEvVRki7NY2I8XbVCOX5F/V/3gnuDO2SjoOHesDFb/8Q6Ey6
+        0kqrfdQ2i+Ntru8WNRY5wDWQFPgF0Hf/fChlcV2REkh171SUXjK3YlRDy0EYodqE
+        WHcNY7lzlv0ZeiyxZNbNcBJmmH7Nv72e+moVHzabqtZ631FoEb0nogqYw==
+X-ME-Sender: <xms:eFImZej4eHDXn_Ru6WgufJrf4kJLu_4wat-r3vbGWJUgjAli7pT8ww>
+    <xme:eFImZfCG-IC8RIx8_MLrdpmX8ABknJIFkLOnpp2QKfWhOnzcg-Iaj3U2K7p8oHRMs
+    k3Cx-zzzijiAw>
+X-ME-Received: <xmr:eFImZWFsra_F7BfmAimk0JZCBx8cgzCGV50sPziqXQC9edJzx9dShwXQ-JKfpVct_6WI9-87IMUeO-zHEUAuLxI_XpSraHxY-E5fMczONP4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrheejgdekudcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgvghcu
+    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeehgedvve
+    dvleejuefgtdduudfhkeeltdeihfevjeekjeeuhfdtueefhffgheekteenucevlhhushht
+    vghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhh
+    drtghomh
+X-ME-Proxy: <xmx:eFImZXS3hehWydKzE9FCS1Sofv1sITbomg94NeHwJ3ml1wLj3qFBvw>
+    <xmx:eFImZbwY9RZWoEXZgGd9ZlKbXYRoRshZv_o6MT-02QoNXjo085Itgw>
+    <xmx:eFImZV4My1BsUQZ15GES-Nc6HIUF3bbFldSh1_jvRjCuSEZbj6fhBw>
+    <xmx:eVImZTMd-gdYVE_hUjMN2G9PoVBnopKaS3wkDx9nBKgBmBcMR6ZgLw>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 11 Oct 2023 03:44:55 -0400 (EDT)
+Date:   Wed, 11 Oct 2023 09:44:52 +0200
+From:   Greg KH <greg@kroah.com>
+To:     Peter Griffin <peter.griffin@linaro.org>
+Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
+        tomasz.figa@gmail.com, s.nawrocki@samsung.com,
+        linus.walleij@linaro.org, wim@linux-watchdog.org,
+        linux@roeck-us.net, catalin.marinas@arm.com, will@kernel.org,
+        arnd@arndb.de, olof@lixom.net, cw00.choi@samsung.com,
+        tudor.ambarus@linaro.org, andre.draszik@linaro.org,
+        semen.protsenko@linaro.org, saravanak@google.com,
+        willmcvicker@google.com, soc@kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        kernel-team@android.com, linux-serial@vger.kernel.org
+Subject: Re: [PATCH v2 00/20] Add minimal Tensor/GS101 SoC support and
+ Oriole/Pixel6 board
+Message-ID: <2023101101-mauve-underarm-1b48@gregkh>
+References: <20231010224928.2296997-1-peter.griffin@linaro.org>
 MIME-Version: 1.0
-References: <20231010132701.1658737-1-claudiu.beznea.uj@bp.renesas.com>
- <20231010132701.1658737-2-claudiu.beznea.uj@bp.renesas.com>
- <8226bd48-4297-0b32-c733-2e569114a934@gmail.com> <e1c9c2ca-144c-49fe-940c-9ca8ad40e377@tuxon.dev>
-In-Reply-To: <e1c9c2ca-144c-49fe-940c-9ca8ad40e377@tuxon.dev>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 11 Oct 2023 09:43:56 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdW7jXSFx5kU6PKr55cXw2+Hu_J-Z4NdUk=m_2AxuaOC0g@mail.gmail.com>
-Message-ID: <CAMuHMdW7jXSFx5kU6PKr55cXw2+Hu_J-Z4NdUk=m_2AxuaOC0g@mail.gmail.com>
-Subject: Re: [PATCH 1/6] clk: renesas: rzg2l: Use %x format specifier to print CLK_ON_R()
-To:     claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc:     Sergei Shtylyov <sergei.shtylyov@gmail.com>, magnus.damm@gmail.com,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231010224928.2296997-1-peter.griffin@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Claudiu,
+On Tue, Oct 10, 2023 at 11:49:08PM +0100, Peter Griffin wrote:
+> Hi folks,
+> 
+> Firstly, thanks to everyone who reviewed the v1 series! V2 incorporates all
+> the review feedback received so far.
+> 
+> This series adds initial SoC support for the GS101 SoC and also initial board
+> support for Pixel 6 phone (Oriole).
+> 
+> The gs101 / Tensor SoC is also used in Pixel6a (bluejay) and Pixel 6 Pro
+> (raven) phones. Currently DT is added for the gs101 SoC and Oriole.
+> As you can see from the patches the SoC is based on a Samsung Exynos SoC,
+> and therefore lots of the low level Exynos drivers can be re-used.
+> 
+> The support added in this series consists of:
+> * cpus
+> * pinctrl
+> * some CCF implementation
+> * watchdog
+> * uart
+> * gpio
 
-On Wed, Oct 11, 2023 at 9:37 AM claudiu beznea <claudiu.beznea@tuxon.dev> wrote:
-> On 10.10.2023 17:52, Sergei Shtylyov wrote:
-> > On 10/10/23 4:26 PM, Claudiu wrote:
-> >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >>
-> >> Use %x format specifier to print CLK_ON_R(). This is easier when
-> >> debugging as the value printed will be hexadecimal like in the hardware
-> >> manual. Along with it "0x" has been added in front of the printed value.
-> >>
-> >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >> ---
-> >>  drivers/clk/renesas/rzg2l-cpg.c | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-> >> index d62f1bc1f60e..764bd72cf059 100644
-> >> --- a/drivers/clk/renesas/rzg2l-cpg.c
-> >> +++ b/drivers/clk/renesas/rzg2l-cpg.c
-> >> @@ -1213,7 +1213,7 @@ static int rzg2l_mod_clock_endisable(struct clk_hw *hw, bool enable)
-> >>              return 0;
-> >>      }
-> >>
-> >> -    dev_dbg(dev, "CLK_ON %u/%pC %s\n", CLK_ON_R(reg), hw->clk,
-> >> +    dev_dbg(dev, "CLK_ON 0x%x/%pC %s\n", CLK_ON_R(reg), hw->clk,
-> >
-> >    Perhaps "%#x" instead of "0x%x"?
->
-> Yes, better, thanks!
+So you have sent a patch series that crosses multiple subsystems, who is
+supposed to be taking these patches?  Or do you not want them actually
+merged?
 
-"%#" is not very common in drivers/clk/.
+confused,
 
-And to me it always raises the question: What does "alternate form" mean
-for this conversion specifier and this implementation of vsnprintf()?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+greg k-h
