@@ -2,126 +2,116 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09FDCCD6E6E
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Oct 2023 14:04:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FCF8CD6E73
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Oct 2023 14:16:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235016AbjJKOEP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Oct 2023 10:04:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51358 "EHLO
+        id S234723AbjJKOQt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Oct 2023 10:16:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235168AbjJKOD7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Oct 2023 10:03:59 -0400
-Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5FEF1AA;
-        Wed, 11 Oct 2023 07:03:50 -0700 (PDT)
-Date:   Wed, 11 Oct 2023 16:03:47 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1697033028;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=/ryEPlAkCfnJebPNGelFxUu+Exl4LiDYxPfbPUhgQHM=;
-        b=0tIyDf3E/7ceKdkTn+Bk4QcH0B8CgZDdg2PHfOYp4XRpDjQR+fg4H8OPwFaCJUuqFeqHL2
-        R5F6YFLSHAU9GAE0miJbUPLFEJVs+zqPaZSzlhteq5VsQgyStsBMX3ewa5sqSpshMn8a3t
-        LqqUTxuK3cAVtek/pLxLFUE7rkHEVDjbTHiJUomHZOEa7VTlvG2zmeIrsf8s5Gc9VG+6Sp
-        RYdXlqFnuGOWOm8PhsK/lw/s/tFsYprecreWkJhCQVIqKv2cvLZiAU5mYTOwyn8lVEr75g
-        dZAJEvqWwJ9Pai2IsWOkfD8ZPtf8ragn3F3CG7MPbE1GWzrUj2BgnWN9kxV4tA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1697033028;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=/ryEPlAkCfnJebPNGelFxUu+Exl4LiDYxPfbPUhgQHM=;
-        b=XR4TPWAkuaMPAhKQWqLauiWnZWk4PYD1G+fUxdKno3O6+LMGMLmcP2sxUMJLwE8j7Ypo2p
-        b1EmuD1WvQBNxhCQ==
-From:   Benedikt Spranger <b.spranger@linutronix.de>
-To:     Maxime Ripard <mripard@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Dinh Nguyen <dinguyen@kernel.org>
-Subject: Re: [PATCH 1/1] clk: socfpga: gate: Fix of by factor 2 for serial
- console
-Message-ID: <20231011160339.51e3ff1e@mitra>
-In-Reply-To: <xcq3wiayrfa67pn4thepgewrcif4fdhplykvb4nkwgmxd3i7yo@vcimkuy32qd4>
-References: <20231005095927.12398-1-b.spranger@linutronix.de>
-        <20231005095927.12398-2-b.spranger@linutronix.de>
-        <qpskbgigcaoyjuhzeguz366cjukv3ij7utlbkra5edhwn6uzh4@bdedm6vs62y5>
-        <20231005203202.08b5d1cf@mitra>
-        <ujs6kaisllqu3qzm76qkwpmdy2vnulp6z742ooclbsdz36zl5f@m7ujgar4pwqs>
-        <xcq3wiayrfa67pn4thepgewrcif4fdhplykvb4nkwgmxd3i7yo@vcimkuy32qd4>
-Organization: Linutronix GmbH
+        with ESMTP id S232244AbjJKOQs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Oct 2023 10:16:48 -0400
+Received: from mail-yw1-x1131.google.com (mail-yw1-x1131.google.com [IPv6:2607:f8b0:4864:20::1131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE35AB6
+        for <linux-clk@vger.kernel.org>; Wed, 11 Oct 2023 07:16:44 -0700 (PDT)
+Received: by mail-yw1-x1131.google.com with SMTP id 00721157ae682-5a7a77e736dso34108827b3.1
+        for <linux-clk@vger.kernel.org>; Wed, 11 Oct 2023 07:16:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1697033804; x=1697638604; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=5AcAEIgQaz/GIuBtTUVaPCRo9z2CF/BUIUZyLtSgPXo=;
+        b=RVTC9QS0hJLBGokhiZDDFTDJbg2al4+dzIq8+ZBwJtPO248UQm4rVOa0kbNvljlPPu
+         eGhAcTBPa+Z4I/QwhmoO4TDKmUQfVwhLFzLLb2wWDXaI1hSAhxCJ+qfzGq7DJ6PlOD5/
+         DgvfmmXoMjgsH3tYMc4QsIcwo7d8r9uoz4cQ+XIFIQp1TCvz5LTjishYAEcZSzy/CnaA
+         uHFgmUfhYsOdZ45aOyvTSI7XY1f50iNsZ+/uPcf0qHv2uJ9VgFYiEtRdMl1kcfc9Yhmo
+         mg2Wa3MwcUwanTNfNVZEQWZ9rwC3IFSNG1iAi91S95veeEnxsVaaL6rpWbxSHyw6E22j
+         pL4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697033804; x=1697638604;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5AcAEIgQaz/GIuBtTUVaPCRo9z2CF/BUIUZyLtSgPXo=;
+        b=ELprlwaaf+5vimstQewLr1nskY7venFG9y9boWSQ5m9oAM1cGa4cuJc9Cu6bygLKGo
+         IaVplDt8E5V/DL9zW7Oh5UDC1rjxjHlg5I0+k37P4qomHe+RkMmpwYpW1Lwx1B+Vvptu
+         T2g3CNT5w09+uyYULW53D2E5DFC7J/gsdxQmsmxuwOwK9Dkcv2VTYAL1IDR5NQAqZfg9
+         cGws8nRLoi7nPujd/9D7sHcKJZOSDEcJ2F89nvTHRB9+1AM3mp45NFlRb/nKXpcxlNRg
+         xRB55DjT13rhhSKY/48AvaJpyVwEyhhRk6OvpO3UPAE/p4AGSdTuG5z4RClIxkE+p8ER
+         AXUQ==
+X-Gm-Message-State: AOJu0Yz3tGtnvIyl6cY+/Vlh5UGJypEZ67bHBMP6H//FhLrfbYDQxIz4
+        HIPJtdxT1D8ZS6KzlbQ2SXKJd6QjKLotIPM7UuY2bw==
+X-Google-Smtp-Source: AGHT+IEbqOax8oDVUgvao/QFTefyxeAVM5knikoYE8lBFFTckEkNGgmTmdLGag/DK7OcWkY2U7XRu7hK5hNHqf19Ykk=
+X-Received: by 2002:a25:8e06:0:b0:d44:af:3cce with SMTP id p6-20020a258e06000000b00d4400af3ccemr20446932ybl.27.1697033803795;
+ Wed, 11 Oct 2023 07:16:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20231010224928.2296997-1-peter.griffin@linaro.org>
+ <92de302a-f6b5-465c-a5da-2a711861089e@linaro.org> <CADrjBPqOmGEzeVEKiysxQNo9+B0=zD3Z+G24fPDKrFsgUXYJjQ@mail.gmail.com>
+ <14bb7d8d-0f99-4a5e-aee6-b0db1d17c1e6@linaro.org>
+In-Reply-To: <14bb7d8d-0f99-4a5e-aee6-b0db1d17c1e6@linaro.org>
+From:   Peter Griffin <peter.griffin@linaro.org>
+Date:   Wed, 11 Oct 2023 15:16:32 +0100
+Message-ID: <CADrjBPoJryV_WObRa+EQ38DxV2iTE4167m=HHBMM=eUpWgfzrw@mail.gmail.com>
+Subject: Re: [PATCH v2 00/20] Add minimal Tensor/GS101 SoC support and
+ Oriole/Pixel6 board
+To:     Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
+        tomasz.figa@gmail.com, s.nawrocki@samsung.com,
+        linus.walleij@linaro.org, wim@linux-watchdog.org,
+        linux@roeck-us.net, catalin.marinas@arm.com, will@kernel.org,
+        arnd@arndb.de, olof@lixom.net, cw00.choi@samsung.com,
+        andre.draszik@linaro.org, semen.protsenko@linaro.org,
+        saravanak@google.com, willmcvicker@google.com, soc@kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        kernel-team@android.com, linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 11 Oct 2023 11:17:22 +0200
-Maxime Ripard <mripard@kernel.org> wrote:
+Hi Tudor,
 
-Hi,
+Thanks for your review feedback.
 
-> Could you test that patch?
-The system booted fine. Serial console is working as expected
+On Wed, 11 Oct 2023 at 09:42, Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
+>
+>
+>
+> On 10/11/23 09:16, Peter Griffin wrote:
+> > Hi Tudor,
+> >
+> > Thanks for your reply.
+> >
+> > On Wed, 11 Oct 2023 at 07:10, Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
+> >>
+> >> Hi, Peter,
+> >>
+> >> On 10/10/23 23:49, Peter Griffin wrote:
+> >>> Note 3: In `dt-bindings: pinctrl: samsung: add google,gs101-pinctrl
+> >>> compatible` I tried to narrow the interrupts check to
+> >>> google,gs101-pinctrl but I still see a warning: gs101-oriole.dtb:
+> >>> pinctrl@174d0000: interrupts: [[0, 0, 4],[..] is too long If anyone can
+> >>> educate me on what I've done wrong here it would be most appreciated!
+> >>
+> >> I guess the initial definition of the number of interrupts should
+> >> include the largest min/maxItems. I no longer see the warning with this
+> >> change:
+> >
+> > Yes that is how it was in v1. The review feedback though was to narrow
+> > the scope to just google,gs101-pinctrl compatible using if: then: else: which
+> > is what I can't get to work properly.
+> >
+>
+> Right. The diff that I sent is on top of your changes (patch 6/20).
+> I expect that when the interrupts property is defined it should include
+> the min/maxItems of all the available SoCs. Then use "if Soc" to narrow
+> the range.
 
-> ----8<----
-> 
-> diff --git a/drivers/clk/socfpga/clk-gate.c b/drivers/clk/socfpga/clk-gate.c
-> index 8dd601bd8538..486a4d84e418 100644
-> --- a/drivers/clk/socfpga/clk-gate.c
-> +++ b/drivers/clk/socfpga/clk-gate.c
-> @@ -87,10 +87,8 @@ static int socfpga_clk_set_parent(struct clk_hw *hwclk, u8 parent)
->  	return 0;
->  }
-> 
-> -static unsigned long socfpga_clk_recalc_rate(struct clk_hw *hwclk,
-> -	unsigned long parent_rate)
-> +static u32 socfpga_clk_get_div(struct socfpga_gate_clk *socfpgaclk)
->  {
-> -	struct socfpga_gate_clk *socfpgaclk = to_socfpga_gate_clk(hwclk);
->  	u32 div = 1, val;
-> 
->  	if (socfpgaclk->fixed_div)
-> @@ -105,12 +103,33 @@ static unsigned long socfpga_clk_recalc_rate(struct clk_hw *hwclk,
->  			div = (1 << val);
->  	}
-> 
-> +	return div;
-> +}
-> +
-> +static unsigned long socfpga_clk_recalc_rate(struct clk_hw *hwclk,
-> +					     unsigned long parent_rate)
-> +{
-> +	struct socfpga_gate_clk *socfpgaclk = to_socfpga_gate_clk(hwclk);
-> +	u32 div = socfpga_clk_get_div(socfpgaclk);
-> +
->  	return parent_rate / div;
->  }
-> 
-> +
-> +static int socfpga_clk_determine_rate(struct clk_hw *hw,
-                                                       *hwclk,
-> +				      struct clk_rate_request *req)
-> +{
-> +	struct socfpga_gate_clk *socfpgaclk = to_socfpga_gate_clk(hwclk);
-> +	u32 div = socfpga_clk_get_div(socfpgaclk);
-> +
-> +	req->rate = req->best_parent_rate / div;
-> +
-> +	return 0;
-> +}
-> +
->  static struct clk_ops gateclk_ops = {
->  	.recalc_rate = socfpga_clk_recalc_rate,
-> -	.determine_rate = clk_hw_determine_rate_no_reparent,
-> +	.determine_rate = socfpga_clk_determine_rate,
->  	.get_parent = socfpga_clk_get_parent,
->  	.set_parent = socfpga_clk_set_parent,
->  };
+Ah I see, yes thanks Tudor! I will incorporate this in v3.
 
-Regards
-    Benedikt Spranger
+regards,
+
+Peter
