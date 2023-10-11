@@ -2,199 +2,89 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2C9ECD6E6C
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Oct 2023 13:32:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 870E9CD6E72
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Oct 2023 13:41:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234976AbjJKNc3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Oct 2023 09:32:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44180 "EHLO
+        id S232324AbjJKNll (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Oct 2023 09:41:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235015AbjJKNc2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Oct 2023 09:32:28 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24732A4
-        for <linux-clk@vger.kernel.org>; Wed, 11 Oct 2023 06:32:25 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id a640c23a62f3a-9b2cee40de8so205907966b.1
-        for <linux-clk@vger.kernel.org>; Wed, 11 Oct 2023 06:32:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697031143; x=1697635943; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=s4EU3H66ilYHzxqiApK5KfKo/gZlOzNLji37b+64dZg=;
-        b=ikBjklsuPhiru9OJuOUZ/X6G7xERXcSx/0UZYAo7vZvRPIZOSIEPDpdZ3C1AqCedI3
-         x4wtAeNHopanYcP88x+q7q8q/MyLaihOur1cryuLR6X+yoyqG0vY+v0Lxp/5Akqx7kG6
-         xrWFgPZ1Inw6IUdDYP85l5CQUUFwqliQTWh+97XY1lbctTgc+zMVKsWlKXCcJOqzwcWL
-         4b6Bos7yXcCxjlEHixiBWL86YeEQHGLsXTEXBnMspsjeCNvGVfelon6HcH9D7YSfKQ7z
-         B1CzI8q9RqOhQMXmypUPqX3Hho7+ZwtthI90eIk2WnaVd/eLn91wAKRkh7//6+r9VULt
-         mqZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697031143; x=1697635943;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s4EU3H66ilYHzxqiApK5KfKo/gZlOzNLji37b+64dZg=;
-        b=UUnsCRrMrAiGo2ST5RftlayumpmCA5tzdE+jLknXjvaKsiLSHWBBqgirwoBa1IYY+2
-         iFbhcT45tIw5HK7wbZD5UNc0YYXZz85uo5ryL3GsDf8v9xDlBNrGnwiSs2CO6WLD8fAf
-         OjsdyvEmL/lBKUHbOT2z5nvd9qlFv0TOruv/yXUeg482l1dZ8b3Jeq1TKB9eGiNsTyg/
-         HE7bbiv3rC5l+hakuC7jnLrP4rQaFOELZ7mTlERwRz1ohheOAYsDjfxIku2oCpeQf08s
-         aZ39vnpV9/O8E6h7Lcj26WOYeTyPgoNc6BalPhV7BDptD8qmU275ZIC1Y/IMPdI7XMO7
-         D0+A==
-X-Gm-Message-State: AOJu0YxKzO6k3kIfBxuS5/KFASNgLJ8g2eGXQSc+iFGpvQiTwx6E2JgF
-        wAN6sYoWzG/U/GkZHyS6CFNA+Q==
-X-Google-Smtp-Source: AGHT+IHHCu8POi+AnydQOfVU8ke0j0pbOr8mzfgN8NAp0BGyBVyTDd2Jxf02RFVznbOHiz0/g8d6xQ==
-X-Received: by 2002:a17:907:9409:b0:9ae:577b:3832 with SMTP id dk9-20020a170907940900b009ae577b3832mr16101505ejc.24.1697031143573;
-        Wed, 11 Oct 2023 06:32:23 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.100])
-        by smtp.gmail.com with ESMTPSA id q23-20020a17090622d700b009930308425csm9716783eja.31.2023.10.11.06.32.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Oct 2023 06:32:23 -0700 (PDT)
-Message-ID: <066d8b5c-d23b-4cbb-95ec-285c349ebae0@linaro.org>
-Date:   Wed, 11 Oct 2023 15:32:19 +0200
+        with ESMTP id S232091AbjJKNlj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Oct 2023 09:41:39 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4055090;
+        Wed, 11 Oct 2023 06:41:38 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8121EC15;
+        Wed, 11 Oct 2023 06:42:18 -0700 (PDT)
+Received: from bogus (unknown [10.57.93.106])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C229D3F5A1;
+        Wed, 11 Oct 2023 06:41:35 -0700 (PDT)
+Date:   Wed, 11 Oct 2023 14:40:03 +0100
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Ranjani Vaidyanathan <ranjani.vaidyanathan@nxp.com>
+Cc:     Cristian Marussi <cristian.marussi@arm.com>,
+        "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "souvik.chakravarty@arm.com" <souvik.chakravarty@arm.com>,
+        Glen G Wienecke <glen.wienecke@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>
+Subject: Re: [EXT] Re: [RFC] firmware: arm_scmi: clock: add fixed clock
+ attribute support
+Message-ID: <20231011134003.lhb5yiicgr5cbzr2@bogus>
+References: <20231010022911.4106863-1-peng.fan@oss.nxp.com>
+ <20231010091223.rvcyrgbjcrmjzmvp@bogus>
+ <ZSUXu65bOYVG689E@pluto>
+ <20231010093509.ddy75og4jd72n6cq@bogus>
+ <PA4PR04MB94859C7729B19C8B88541F8692CCA@PA4PR04MB9485.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 08/20] dt-bindings: serial: samsung: Add
- google-gs101-uart compatible
-To:     Peter Griffin <peter.griffin@linaro.org>
-Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
-        tomasz.figa@gmail.com, s.nawrocki@samsung.com,
-        linus.walleij@linaro.org, wim@linux-watchdog.org,
-        linux@roeck-us.net, catalin.marinas@arm.com, will@kernel.org,
-        arnd@arndb.de, olof@lixom.net, cw00.choi@samsung.com,
-        tudor.ambarus@linaro.org, andre.draszik@linaro.org,
-        semen.protsenko@linaro.org, saravanak@google.com,
-        willmcvicker@google.com, soc@kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        kernel-team@android.com, linux-serial@vger.kernel.org
-References: <20231010224928.2296997-1-peter.griffin@linaro.org>
- <20231010224928.2296997-9-peter.griffin@linaro.org>
- <1b7dcc34-1c9c-44cb-ae14-f63aca2317ea@linaro.org>
- <CADrjBPqz=7L-cP5-muJbFWZ0DTH4LP-gqCxXRDGKebxpG1FYvQ@mail.gmail.com>
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <CADrjBPqz=7L-cP5-muJbFWZ0DTH4LP-gqCxXRDGKebxpG1FYvQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PA4PR04MB94859C7729B19C8B88541F8692CCA@PA4PR04MB9485.eurprd04.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/10/2023 15:27, Peter Griffin wrote:
-> Hi Krzysztof,
-> 
-> Thanks for your review.
-> 
-> On Wed, 11 Oct 2023 at 13:09, Krzysztof Kozlowski
-> <krzysztof.kozlowski@linaro.org> wrote:
->>
->> On 11/10/2023 00:49, Peter Griffin wrote:
->>> Add dedicated google-gs101-uart compatible to the dt-schema for
->>> representing uart of the Google Tensor gs101 SoC.
->>>
->>> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
->>> ---
->>>  Documentation/devicetree/bindings/serial/samsung_uart.yaml | 2 ++
->>>  1 file changed, 2 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/serial/samsung_uart.yaml b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
->>> index 8bd88d5cbb11..72471ebe5734 100644
->>> --- a/Documentation/devicetree/bindings/serial/samsung_uart.yaml
->>> +++ b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
->>> @@ -19,11 +19,13 @@ properties:
->>>    compatible:
->>>      oneOf:
->>>        - items:
->>> +          - const: google,gs101-uart
->>
->> You just broke existing users.
->>
->> It does not look like you tested the DTS against bindings. Please run
->> `make dtbs_check W=1` (see
->> Documentation/devicetree/bindings/writing-schema.rst or
->> https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
->> for instructions).
->>
-> 
-> Will fix in v3
-> 
-> fyi I've been running with
-> 
-> make -j$js ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
-> dt_binding_check DT_SCHEMA_FILES=google
-> make -j$js ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
-> dt_binding_check DT_SCHEMA_FILES=samsung
-> make -j$js ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-  CHECK_DTBS=y
-> W=1 google/gs101-oriole.dtb
-> 
-> But clearly that wasn't enough to catch this.  
+On Wed, Oct 11, 2023 at 03:54:59AM +0000, Ranjani Vaidyanathan wrote:
+> From what I see SCMI clock protocol could benefit from an attribute for the
+> clock that describes what operations are possible on a clock. There are many
+> bus clocks that only the SCMI server manages and the error code DENIED
+> should be handled gracefully by the agent.
+>
 
-None of the commands above test existing DTS...
+Agreed, but we need to understand if we need it per operation basis or
+at the higher granularity such as any write or set operations not allowed.
+Just my initial thoughts, we can discuss.
 
->`make dtbs_check W=1`
-> takes a long time
-> and gives so much output. I suppose adding a few of the other exynos
-> based boards should
-> still be fairly quick and hopefully catch things like this. For example adding
-> 
-> make -j$js ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CHECK_DTBS=y
-> W=1 exynos/exynos850-e850-96.dtb
-> make -j$js ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CHECK_DTBS=y
-> W=1 exynos/exynos5433-tm2.dtb
-> make -j$js ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CHECK_DTBS=y
-> W=1 exynos/exynosautov9-sadk.dtb
-> 
-> regards,
-> 
-> Peter.
+> In the case of Linux, perhaps this should be handled by the SCMI clock
+> driver, instead of allowing the error to propagate up the Linux clock
+> framework?
 
-Best regards,
-Krzysztof
+Yes but even for that we need information from the firmware.
 
+> It seems strange that the SCMI server should swallow the error (silently
+> fail) only for certain agents.
+
+I am bit confused by this statement. The SCMI server/platform must not
+ignore or fail silently. Since the agent is not allowed, if it attempts
+it must return the apt error.
+
+While Linux may choose to ignore the error but I think this is what
+we are discussing to figure out what is the best way to avoid it or
+worst case handle it gracefully. With any extra info from the firmware,
+the former option must be possible and we need not think of the latter
+option IMO.
+
+> I would think this would make debug quite difficult and having a "DENIED"
+> error code not very useful.
+>
+
+Agreed especially if it can and is expected to continue functioning as normal.
+
+-- 
+Regards,
+Sudeep
