@@ -2,55 +2,56 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09E98CDB482
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Oct 2023 12:37:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE1B9C46CA1
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Oct 2023 13:22:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235710AbjJLMhm convert rfc822-to-8bit (ORCPT
+        id S1347221AbjJLNWR convert rfc822-to-8bit (ORCPT
         <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Oct 2023 08:37:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44204 "EHLO
+        Thu, 12 Oct 2023 09:22:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235730AbjJLMhi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Oct 2023 08:37:38 -0400
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B9A1E4;
-        Thu, 12 Oct 2023 05:37:35 -0700 (PDT)
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-59f6492b415so7565457b3.0;
-        Thu, 12 Oct 2023 05:37:35 -0700 (PDT)
+        with ESMTP id S1347216AbjJLNWQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Oct 2023 09:22:16 -0400
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01F76CF;
+        Thu, 12 Oct 2023 06:22:15 -0700 (PDT)
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-5a7dafb659cso12021967b3.0;
+        Thu, 12 Oct 2023 06:22:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697114254; x=1697719054;
+        d=1e100.net; s=20230601; t=1697116934; x=1697721734;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8VvU3puvotE/99F5YQMan21kUt/9MD2QqcXXWV38kAE=;
-        b=R53+kKnSDdmZpHcGIJvdIPVjbYGNRwJc5MWQ0gtuVs5qhfyHvZTeIy9yZnCQQFo9GW
-         0t2HDFSKHud0KyTBVcmXvdXrLepmXROBe35HzhCG2YflPeWbLgOgGKD7qeRPxX0uplU+
-         L4h0R3ZqbY/oWm4jETc0MzT9EFnPxZwhhJxZcWQIZGqznEveyH5oyoHZn+f0LYZpSkBC
-         Lx0nlTP2CTjv8ESX+k3XrfVigGfGAgaTGs1+TLfAYSFNQ0BSMj/SdzI+Vu6xdI2FX4MQ
-         jmWwXgGDi5vM6tzGd3+8sWpX4plq2jb0wrN4lzHkSnmobVC0THdLxNYsf1CbiXinh9MV
-         VvCA==
-X-Gm-Message-State: AOJu0Yz7HVSyMIm5tKbCSabQLfjID6ZJPPjk35DC5K6IfPf9VpDbvXxB
-        cvPtLmRC+ZBW9n249cTzOfLRRuN9aEFreA==
-X-Google-Smtp-Source: AGHT+IEDeW0U4ZqiltY3Jtm1U8rlmTuQSaZd9uOZZm2tf4ot+MoTbfP6rjKFQ50vUAgVMVjM+NUQIQ==
-X-Received: by 2002:a0d:d797:0:b0:5a7:d4d7:aaa1 with SMTP id z145-20020a0dd797000000b005a7d4d7aaa1mr4693324ywd.16.1697114254108;
-        Thu, 12 Oct 2023 05:37:34 -0700 (PDT)
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com. [209.85.128.175])
-        by smtp.gmail.com with ESMTPSA id o206-20020a8173d7000000b00583e52232f1sm5901880ywc.112.2023.10.12.05.37.33
+        bh=AIuI2uTX18VQPC9BHJlaZd8vFXkZjrOtgINb889VA28=;
+        b=eCHFmY/UQ5M8Hglfe3rocNg930JCqnaEDtypHXAT7RXLyt9DocHYChIAZ0c9djyWMb
+         Oyv80iEAcMzusPRk6cNeFxXyvXzTRDHPk4+pF+XlWEX/HiunBkLVR4UmOSwmDxxvcIKN
+         PVWeoZOT4LrQzct9/hViZMyD42jGCjblihxxn9YGnrShKeK8l2h6iE1uMMOIVcBkE2/N
+         tPylgmxxCykIbRY1x3diJu+qFNDj27xmWJKAiORu/d7u8/P5SGt9y06riLb9wl0iXsuG
+         0UZm/deWb7faVyzI+F/GJZGark+Z5rulxnumEhU9razzusG6mjijIzzw1lE8Q8iwPnJJ
+         fq9A==
+X-Gm-Message-State: AOJu0Yz8U0AKbgaCODbjTcDSq1R/6IgZiFKo/NRNs2p/qCI6emiMiTrX
+        CAe5MrYm8aWu8P0dUhVFiXN1NnIoH7pM5Q==
+X-Google-Smtp-Source: AGHT+IFohiDCOMCqK+Nd8DkbnJ2qG4u+A/2XF/G4pyd4gZMfQTJ4BUTWp3zMwWjQk8AhIZYmDQgIhA==
+X-Received: by 2002:a05:690c:f92:b0:5a7:e85b:b8e8 with SMTP id df18-20020a05690c0f9200b005a7e85bb8e8mr4474586ywb.26.1697116934078;
+        Thu, 12 Oct 2023 06:22:14 -0700 (PDT)
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com. [209.85.219.176])
+        by smtp.gmail.com with ESMTPSA id x132-20020a817c8a000000b005925c896bc3sm5934126ywc.53.2023.10.12.06.22.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Oct 2023 05:37:33 -0700 (PDT)
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-59e88a28b98so7353417b3.1;
-        Thu, 12 Oct 2023 05:37:33 -0700 (PDT)
-X-Received: by 2002:a0d:cad1:0:b0:5a8:11de:a7f1 with SMTP id
- m200-20020a0dcad1000000b005a811dea7f1mr179712ywd.9.1697114253605; Thu, 12 Oct
- 2023 05:37:33 -0700 (PDT)
+        Thu, 12 Oct 2023 06:22:13 -0700 (PDT)
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-d81d09d883dso1051508276.0;
+        Thu, 12 Oct 2023 06:22:13 -0700 (PDT)
+X-Received: by 2002:a25:e20b:0:b0:d85:b765:782c with SMTP id
+ h11-20020a25e20b000000b00d85b765782cmr21873299ybe.20.1697116933432; Thu, 12
+ Oct 2023 06:22:13 -0700 (PDT)
 MIME-Version: 1.0
-References: <20231010132701.1658737-1-claudiu.beznea.uj@bp.renesas.com> <20231010132701.1658737-2-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20231010132701.1658737-2-claudiu.beznea.uj@bp.renesas.com>
+References: <20231010132701.1658737-1-claudiu.beznea.uj@bp.renesas.com> <20231010132701.1658737-3-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20231010132701.1658737-3-claudiu.beznea.uj@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 12 Oct 2023 14:37:21 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWAz+c5xDS0RXhaMHzPDZ-Co82Wibg6kMZrJ89n6cHccg@mail.gmail.com>
-Message-ID: <CAMuHMdWAz+c5xDS0RXhaMHzPDZ-Co82Wibg6kMZrJ89n6cHccg@mail.gmail.com>
-Subject: Re: [PATCH 1/6] clk: renesas: rzg2l: Use %x format specifier to print CLK_ON_R()
+Date:   Thu, 12 Oct 2023 15:22:01 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXcQcu2ra7EDEdCw4ZPw=ucu-PFzfR2JoB70=HML5t2Fg@mail.gmail.com>
+Message-ID: <CAMuHMdXcQcu2ra7EDEdCw4ZPw=ucu-PFzfR2JoB70=HML5t2Fg@mail.gmail.com>
+Subject: Re: [PATCH 2/6] clk: renesas: r9a08g045: Add clock and reset support
+ for SDHI1 and SDHI2
 To:     Claudiu <claudiu.beznea@tuxon.dev>
 Cc:     magnus.damm@gmail.com, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
@@ -67,9 +68,8 @@ X-Mailing-List: linux-clk@vger.kernel.org
 On Tue, Oct 10, 2023 at 3:27 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
 > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >
-> Use %x format specifier to print CLK_ON_R(). This is easier when
-> debugging as the value printed will be hexadecimal like in the hardware
-> manual. Along with it "0x" has been added in front of the printed value.
+> Add clock and reset support for SDHI1 and SDHI2 blocks on
+> RZ/G3S (R9A08G045).
 >
 > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
