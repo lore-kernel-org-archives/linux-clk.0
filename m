@@ -2,102 +2,87 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 770BDCDB46E
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Oct 2023 12:24:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09E98CDB482
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Oct 2023 12:37:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343903AbjJLMYy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Oct 2023 08:24:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59136 "EHLO
+        id S235710AbjJLMhm convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Oct 2023 08:37:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233496AbjJLMYx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Oct 2023 08:24:53 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50096B7;
-        Thu, 12 Oct 2023 05:24:52 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 703CCC433C7;
-        Thu, 12 Oct 2023 12:24:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1697113492;
-        bh=1GyAZLXBp65moRKSORYgOCHrvhgp+SxDzz7EnfVjVUk=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=aXAo4H2341hCLiNHeYtUIkEE8BIZpaaoCB0X8Xl5ewS0BVCn69f7haypyvkcPPIu4
-         dB6E8XstAvbZpOkfhtmE0cs5tYGcQbfxg/TmwlpmB23wZaLx9vvbNVIEHgRh3ZzLrA
-         LheqF5JlnNNk3/7I5cgbUtpdrbP39NRSk6KK+8zvmGu1h0YbRRmBzSpdGAd+RJhkGC
-         twuAC/6CQJqWhDw2PHPz47IjC1LuELgfbCstxM9EktBRM0dWvahPGzF9wU3fJZuxK7
-         +aM4/Nx2RV/KIhiOEhUp5fRCTzdo/dn6DsPnzUNWF7+YqDG/PbbWQRGm4WWDVCpgwp
-         bNmqclV3cVCrQ==
-Received: (nullmailer pid 393373 invoked by uid 1000);
-        Thu, 12 Oct 2023 12:24:49 -0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        with ESMTP id S235730AbjJLMhi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Oct 2023 08:37:38 -0400
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B9A1E4;
+        Thu, 12 Oct 2023 05:37:35 -0700 (PDT)
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-59f6492b415so7565457b3.0;
+        Thu, 12 Oct 2023 05:37:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697114254; x=1697719054;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8VvU3puvotE/99F5YQMan21kUt/9MD2QqcXXWV38kAE=;
+        b=R53+kKnSDdmZpHcGIJvdIPVjbYGNRwJc5MWQ0gtuVs5qhfyHvZTeIy9yZnCQQFo9GW
+         0t2HDFSKHud0KyTBVcmXvdXrLepmXROBe35HzhCG2YflPeWbLgOgGKD7qeRPxX0uplU+
+         L4h0R3ZqbY/oWm4jETc0MzT9EFnPxZwhhJxZcWQIZGqznEveyH5oyoHZn+f0LYZpSkBC
+         Lx0nlTP2CTjv8ESX+k3XrfVigGfGAgaTGs1+TLfAYSFNQ0BSMj/SdzI+Vu6xdI2FX4MQ
+         jmWwXgGDi5vM6tzGd3+8sWpX4plq2jb0wrN4lzHkSnmobVC0THdLxNYsf1CbiXinh9MV
+         VvCA==
+X-Gm-Message-State: AOJu0Yz7HVSyMIm5tKbCSabQLfjID6ZJPPjk35DC5K6IfPf9VpDbvXxB
+        cvPtLmRC+ZBW9n249cTzOfLRRuN9aEFreA==
+X-Google-Smtp-Source: AGHT+IEDeW0U4ZqiltY3Jtm1U8rlmTuQSaZd9uOZZm2tf4ot+MoTbfP6rjKFQ50vUAgVMVjM+NUQIQ==
+X-Received: by 2002:a0d:d797:0:b0:5a7:d4d7:aaa1 with SMTP id z145-20020a0dd797000000b005a7d4d7aaa1mr4693324ywd.16.1697114254108;
+        Thu, 12 Oct 2023 05:37:34 -0700 (PDT)
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com. [209.85.128.175])
+        by smtp.gmail.com with ESMTPSA id o206-20020a8173d7000000b00583e52232f1sm5901880ywc.112.2023.10.12.05.37.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Oct 2023 05:37:33 -0700 (PDT)
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-59e88a28b98so7353417b3.1;
+        Thu, 12 Oct 2023 05:37:33 -0700 (PDT)
+X-Received: by 2002:a0d:cad1:0:b0:5a8:11de:a7f1 with SMTP id
+ m200-20020a0dcad1000000b005a811dea7f1mr179712ywd.9.1697114253605; Thu, 12 Oct
+ 2023 05:37:33 -0700 (PDT)
 MIME-Version: 1.0
-From:   Rob Herring <robh@kernel.org>
-To:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc:     agross@kernel.org, dmitry.baryshkov@linaro.org,
-        quic_tdas@quicinc.com, linux-arm-msm@vger.kernel.org,
-        andersson@kernel.org, vladimir.zapolskiy@linaro.org,
-        devicetree@vger.kernel.org, mturquette@baylibre.com,
-        krzysztof.kozlowski+dt@linaro.org, jonathan@marek.ca,
-        sboyd@kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, robh+dt@kernel.org,
-        konrad.dybcio@linaro.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        conor+dt@kernel.org
-In-Reply-To: <20231012113100.3656480-4-bryan.odonoghue@linaro.org>
-References: <20231012113100.3656480-1-bryan.odonoghue@linaro.org>
- <20231012113100.3656480-4-bryan.odonoghue@linaro.org>
-Message-Id: <169711348945.393357.13855655138263608622.robh@kernel.org>
-Subject: Re: [PATCH v4 3/4] media: dt-bindings: media: camss: Add
- qcom,sc8280xp-camss binding
-Date:   Thu, 12 Oct 2023 07:24:49 -0500
+References: <20231010132701.1658737-1-claudiu.beznea.uj@bp.renesas.com> <20231010132701.1658737-2-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20231010132701.1658737-2-claudiu.beznea.uj@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 12 Oct 2023 14:37:21 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWAz+c5xDS0RXhaMHzPDZ-Co82Wibg6kMZrJ89n6cHccg@mail.gmail.com>
+Message-ID: <CAMuHMdWAz+c5xDS0RXhaMHzPDZ-Co82Wibg6kMZrJ89n6cHccg@mail.gmail.com>
+Subject: Re: [PATCH 1/6] clk: renesas: rzg2l: Use %x format specifier to print CLK_ON_R()
+To:     Claudiu <claudiu.beznea@tuxon.dev>
+Cc:     magnus.damm@gmail.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Tue, Oct 10, 2023 at 3:27 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Use %x format specifier to print CLK_ON_R(). This is easier when
+> debugging as the value printed will be hexadecimal like in the hardware
+> manual. Along with it "0x" has been added in front of the printed value.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-On Thu, 12 Oct 2023 12:30:59 +0100, Bryan O'Donoghue wrote:
-> Add bindings for qcom,sc8280xp-camss in order to support the camera
-> subsystem for sc8280xp as found in the Lenovo x13s Laptop.
-> 
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
-> This patch depends-on:
-> https://lore.kernel.org/lkml/20231004161853.86382-2-bryan.odonoghue@linaro.org/T
->  .../bindings/media/qcom,sc8280xp-camss.yaml   | 581 ++++++++++++++++++
->  1 file changed, 581 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/qcom,sc8280xp-camss.yaml
-> 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk-for-v6.7.
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+Gr{oetje,eeting}s,
 
-yamllint warnings/errors:
+                        Geert
 
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/media/qcom,sc8280xp-camss.example.dts:26:18: fatal error: dt-bindings/clock/qcom,sc8280xp-camcc.h: No such file or directory
-   26 |         #include <dt-bindings/clock/qcom,sc8280xp-camcc.h>
-      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[2]: *** [scripts/Makefile.lib:419: Documentation/devicetree/bindings/media/qcom,sc8280xp-camss.example.dtb] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1427: dt_binding_check] Error 2
-make: *** [Makefile:234: __sub-make] Error 2
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20231012113100.3656480-4-bryan.odonoghue@linaro.org
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
