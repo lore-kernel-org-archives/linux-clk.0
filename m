@@ -2,185 +2,215 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BB02CDB46E
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Oct 2023 10:11:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E57D5CDB47E
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Oct 2023 10:15:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343691AbjJLKLk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Oct 2023 06:11:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45060 "EHLO
+        id S1347135AbjJLKPY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Oct 2023 06:15:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347073AbjJLKLj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Oct 2023 06:11:39 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03CBDD8;
-        Thu, 12 Oct 2023 03:11:36 -0700 (PDT)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39CA7OIX001877;
-        Thu, 12 Oct 2023 10:11:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=date : from : to :
- cc : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=qcppdkim1; bh=vAX90PP85Yb4sr/auFBh5RzBVFlgXiKa9q/nycAJa5g=;
- b=dMQGfWSYHjhl7XPE/2tqtRx5/2iUAS/M3MR4ZuTmIvjGMUsXO9JZE9NgJ8xFgCYo1yC+
- iBT4t+X5Vk6WSAPPpVT829+mfU7ERHTbCR9xFChNpY67/64Umq+LBLHA/IbS7TjIPPSq
- OYdAyA9uRiN+ZI1pL0Cla9ygLpV/Gi226QFR+WxqPi9yvNLclRdx3r2hWJnukbqrXKnp
- w6ohUgosodf31LPX4l2R61cfBbxZCGgxvlPeW5i5tUhRsAyGDRyz/sv/v6eiIP9N0jJ4
- JG+Rinwak9SldUNYGRdAMK74cQtVks16AP5/3m6xkggh3bdYbEWlfhCJYsPv9mwovfDQ VQ== 
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3tnv1raj0h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 12 Oct 2023 10:11:31 +0000
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 39CABU8O027544
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 12 Oct 2023 10:11:30 GMT
-Received: from varda-linux.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.36; Thu, 12 Oct 2023 03:11:24 -0700
-Date:   Thu, 12 Oct 2023 15:41:20 +0530
-From:   Varadarajan Narayanan <quic_varada@quicinc.com>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC:     <ilia.lin@kernel.org>, <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <rafael@kernel.org>,
-        <viresh.kumar@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <quic_kathirav@quicinc.com>, <linux-pm@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v1 07/10] arm64: dts: qcom: ipq5332: populate the opp
- table based on the eFuse
-Message-ID: <20231012101119.GA32310@varda-linux.qualcomm.com>
-References: <cover.1693996662.git.quic_varada@quicinc.com>
- <a6d12e3b253d6a55d85f66979ba8b7d9c9ff6072.1693996662.git.quic_varada@quicinc.com>
- <CAA8EJppNsgUNgwadq9oM0_KyORNR5PBZGVZukN6MzAm2KPzC9g@mail.gmail.com>
- <20231005095744.GA29795@varda-linux.qualcomm.com>
- <CAA8EJpr124fymnbZ1bO=Dbbxavn3Z=1xOPmFRPnfSp-UB3p6OQ@mail.gmail.com>
- <20231005144205.GB29795@varda-linux.qualcomm.com>
- <CAA8EJppJVzjyKjggkmi8uHGSPaHJ2ChsUV4Bfd0yNNDu3R+Kow@mail.gmail.com>
+        with ESMTP id S1347133AbjJLKPW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Oct 2023 06:15:22 -0400
+Received: from mail-qv1-xf2b.google.com (mail-qv1-xf2b.google.com [IPv6:2607:f8b0:4864:20::f2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03DD6E4
+        for <linux-clk@vger.kernel.org>; Thu, 12 Oct 2023 03:15:19 -0700 (PDT)
+Received: by mail-qv1-xf2b.google.com with SMTP id 6a1803df08f44-66d0ceba445so4771056d6.0
+        for <linux-clk@vger.kernel.org>; Thu, 12 Oct 2023 03:15:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1697105718; x=1697710518; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4bfmHiCpC0jdM/8Nmc5CLWmrrts9axW4w44tXuO9DcI=;
+        b=Mau7NHR0b2aPF+Txd8J6JkUTo8sF3sv0sAg5q4yO03xHdzTYYdHql4+KxeQ3xOnyHX
+         P7J2cVnmz29UDTphZg9aWrZA7aF2xkrAOvQ7SyYYHd9szBsMjILvQzRK5E5Ptrx8eBfN
+         c5GleJal1Jgi6QNFa7qxzZo6YzkVN/rORwOGeAvMFd244uikpMNadh3OsJb9hQtg8Ys6
+         7iuLf2r/erNhleLjMwmCUGNKqjoaMLL/iZQkwlu3gCZBpoLRF2wKXgmkEWkb0hL3muav
+         H7bYLqekLbZuKiSWbroDui5xku444r6o02QRzlY2i53OWEMP9atOsv6r3/LZ7Qh1awIW
+         4iDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697105718; x=1697710518;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4bfmHiCpC0jdM/8Nmc5CLWmrrts9axW4w44tXuO9DcI=;
+        b=bWEr2EIGtgb1lqLizKdwrkJeP38R9NGFezLeydLxMtdaX2ALfyaOQnV0MdgkKQ/PtU
+         oL/doaiu87wlERzZ09CdD3gYlmS4EdJ0H52yZNc2tKO00fBnvgUUHVxgctpZGACdg9dw
+         KMbLGgWN27cHC8pSAJSQFxF0XOT5voZ9qssHsSE482nxDgKdhXOGSQGQBbgJ5yMo9ZSd
+         Py/NfEVcOf45nlf5HO135k4aRiG5jA/dTb/7hxumoAcqNeGJIPgopzS74Fv35s0TlVdT
+         FaU1wQG+prBdHHTl2si2RPzCUhVm5idY/au4LVX1wzWZQ0TugEbC/E+NrBuP9xfX0qRv
+         yarA==
+X-Gm-Message-State: AOJu0YznRJq977NNzD5XHAQOywXd2dHaGSd+EWNPKvrIpIDUDsGBbE0v
+        1mMNJUZZlj0E9g93GAE09nSVup+dtoRcr2Q2G07CuA==
+X-Google-Smtp-Source: AGHT+IEr9WuwYaxxoqJYFrbfAwBrWEHdqAE5exk8Mtmrx/Nk29qQXhDrGvuFAVS7ncKWTmolqk5rMwGO1qR3JFlm9Cg=
+X-Received: by 2002:a05:6214:2c04:b0:65a:fcd1:1d85 with SMTP id
+ qq4-20020a0562142c0400b0065afcd11d85mr24813204qvb.60.1697105718086; Thu, 12
+ Oct 2023 03:15:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CAA8EJppJVzjyKjggkmi8uHGSPaHJ2ChsUV4Bfd0yNNDu3R+Kow@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: IdE7GPfk822aRGIe1QEeTC7ZFG-hDa_t
-X-Proofpoint-GUID: IdE7GPfk822aRGIe1QEeTC7ZFG-hDa_t
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-10-12_05,2023-10-12_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- priorityscore=1501 impostorscore=0 lowpriorityscore=0 phishscore=0
- mlxscore=0 clxscore=1015 spamscore=0 suspectscore=0 adultscore=0
- bulkscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2309180000 definitions=main-2310120083
+References: <20231011184823.443959-1-peter.griffin@linaro.org>
+ <20231011184823.443959-3-peter.griffin@linaro.org> <5907e2b3-9a0b-4871-be08-6ca42200b8ec@linaro.org>
+In-Reply-To: <5907e2b3-9a0b-4871-be08-6ca42200b8ec@linaro.org>
+From:   Peter Griffin <peter.griffin@linaro.org>
+Date:   Thu, 12 Oct 2023 11:15:06 +0100
+Message-ID: <CADrjBPqF67bcTnssQO8cN2n1ZbevziVNa+gA5azEDz_1wXzaNQ@mail.gmail.com>
+Subject: Re: [PATCH v3 02/20] dt-bindings: clock: Add Google gs101 clock
+ management unit bindings
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
+        tomasz.figa@gmail.com, s.nawrocki@samsung.com,
+        linus.walleij@linaro.org, wim@linux-watchdog.org,
+        linux@roeck-us.net, catalin.marinas@arm.com, will@kernel.org,
+        arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org,
+        cw00.choi@samsung.com, tudor.ambarus@linaro.org,
+        andre.draszik@linaro.org, semen.protsenko@linaro.org,
+        saravanak@google.com, willmcvicker@google.com, soc@kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        kernel-team@android.com, linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Oct 05, 2023 at 10:39:55PM +0300, Dmitry Baryshkov wrote:
-> On Thu, 5 Oct 2023 at 17:42, Varadarajan Narayanan
-> <quic_varada@quicinc.com> wrote:
-> >
-> > On Thu, Oct 05, 2023 at 02:39:43PM +0300, Dmitry Baryshkov wrote:
-> > > On Thu, 5 Oct 2023 at 12:58, Varadarajan Narayanan
-> > > <quic_varada@quicinc.com> wrote:
-> > > >
-> > > > On Thu, Sep 07, 2023 at 04:59:28PM +0300, Dmitry Baryshkov wrote:
-> > > > > On Thu, 7 Sept 2023 at 08:23, Varadarajan Narayanan
-> > > > > <quic_varada@quicinc.com> wrote:
-> > > > > >
-> > > > > > IPQ53xx have different OPPs available for the CPU based on
-> > > > > > SoC variant. This can be determined through use of an eFuse
-> > > > > > register present in the silicon.
-> > > > > >
-> > > > > > Add support to read the eFuse and populate the OPPs based on it.
-> > > > > >
-> > > > > > Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
-> > > > > > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> > > > > > ---
-> > > > > >  arch/arm64/boot/dts/qcom/ipq5332.dtsi | 34 +++++++++++++++++++++++++++++++---
-> > > > > >  1 file changed, 31 insertions(+), 3 deletions(-)
-> > > > > >
-> > > > > > diff --git a/arch/arm64/boot/dts/qcom/ipq5332.dtsi b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
-> > > > > > index 82761ae..3ca3f34 100644
-> > > > > > --- a/arch/arm64/boot/dts/qcom/ipq5332.dtsi
-> > > > > > +++ b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
-> > > > > > @@ -91,11 +91,34 @@
-> > > > > >         };
-> > > > > >
-> > > > > >         cpu_opp_table: opp-table-cpu {
-> > > > > > -               compatible = "operating-points-v2";
-> > > > > > +               compatible = "operating-points-v2-kryo-cpu";
-> > > > > >                 opp-shared;
-> > > > > > +               nvmem-cells = <&cpu_speed_bin>;
-> > > > > > +               nvmem-cell-names = "speed_bin";
-> > > > > > +
-> > > > > > +               /*
-> > > > > > +                * Listed all supported CPU frequencies and opp-supported-hw
-> > > > > > +                * values to select CPU frequencies based on the limits fused.
-> > > > > > +                * ------------------------------------------------------------
-> > > > > > +                * Frequency     BIT3   BIT2   BIT1    BIT0    opp-supported-hw
-> > > > > > +                *              1.0GHz 1.2GHz 1.5GHz No Limit
-> > > > > > +                * ------------------------------------------------------------
-> > > > > > +                * 1100000000     1      1      1       1            0xF
-> > > > > > +                * 1500000000     0      0      1       1            0x3
-> > > > > > +                * -----------------------------------------------------------
-> > > > > > +                */
-> > > > >
-> > > > > This can probably go to the commit message instead.
-> > > >
-> > > > Ok
-> > > >
-> > > > > > +
-> > > > > > +               opp-1100000000 {
-> > > > > > +                       opp-hz = /bits/ 64 <1100000000>;
-> > > > >
-> > > > > But your table shows 1.0 GHz and 1.2 GHz instead of 1.1 GHz
-> > > >
-> > > > Will update it.
-> > > >
-> > > > > > +                       opp-microvolt = <850000>;
-> > > > > > +                       opp-supported-hw = <0xF>;
-> > > > > > +                       clock-latency-ns = <200000>;
-> > > > > > +               };
-> > > > > >
-> > > > > > -               opp-1488000000 {
-> > > > > > -                       opp-hz = /bits/ 64 <1488000000>;
-> > > > > > +               opp-1500000000 {
-> > > > > > +                       opp-hz = /bits/ 64 <1500000000>;
-> > > > >
-> > > > > So, 1.488 GHz or 1.5 GHz?
-> > > >
-> > > > 1.5 GHz
-> > > >
-> > > > > > +                       opp-microvolt = <950000>;
-> > > > >
-> > > > > Which regulator is controlled by this microvolt?
-> > > >
-> > > > Based on the SKU, the XBL sets up the regulator to provide 950000uV
-> > > > on CPUs capable of running 1.5G and 850000uV on other SKUs. Linux
-> > > > doesn't control it.
-> > >
-> > > Then why do you need this property here in the first place?
-> >
-> > I get these errors without this property
-> >
-> > [    1.018065] cpu cpu0: opp_parse_microvolt: opp-microvolt missing although OPP managing regulators
+Hi Krzysztof,
+
+Thanks for your review.
+
+On Thu, 12 Oct 2023 at 07:11, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
 >
-> But you have said that "Linux doesn't control it" [the regulator]!
-
-Got confused between the ipq9574 and ipq5332 patches.
-Have removed and addressed other comments too and
-posted v2 - https://lore.kernel.org/linux-arm-msm/cover.1697101543.git.quic_varada@quicinc.com/
-
-Please take a look.
-
-Thanks
-Varada
+> On 11/10/2023 20:48, Peter Griffin wrote:
+> > Provide dt-schema documentation for Google gs101 SoC clock controller.
+> > Currently this adds support for cmu_top, cmu_misc and cmu_apm.
+> >
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > ---
+> >  .../bindings/clock/google,gs101-clock.yaml    | 125 ++++++++++
+> >  include/dt-bindings/clock/google,gs101.h      | 232 ++++++++++++++++++
+> >  2 files changed, 357 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+> >  create mode 100644 include/dt-bindings/clock/google,gs101.h
+> >
+> > diff --git a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+> > new file mode 100644
+> > index 000000000000..f74494594b3b
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+> > @@ -0,0 +1,125 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/clock/google,gs101-clock.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Google GS101 SoC clock controller
+> > +
+> > +maintainers:
+> > +  - Peter Griffin <peter.griffin@linaro.org>
+> > +
+> > +description: |
+> > +  Google GS101 clock controller is comprised of several CMU units, generating
+> > +  clocks for different domains. Those CMU units are modeled as separate device
+> > +  tree nodes, and might depend on each other. The root clock in that clock tree
+> > +  is OSCCLK (24.576 MHz). That external clock must be defined as a fixed-rate
+> > +  clock in dts.
+> > +
+> > +  CMU_TOP is a top-level CMU, where all base clocks are prepared using PLLs and
+> > +  dividers; all other leaf clocks (other CMUs) are usually derived from CMU_TOP.
+> > +
+> > +  Each clock is assigned an identifier and client nodes can use this identifier
+> > +  to specify the clock which they consume. All clocks available for usage
+> > +  in clock consumer nodes are defined as preprocessor macros in
+> > +  'dt-bindings/clock/gs101.h' header.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - google,gs101-cmu-top
+> > +      - google,gs101-cmu-apm
+> > +      - google,gs101-cmu-misc
+> > +
+> > +  clocks:
+> > +    minItems: 1
+> > +    maxItems: 2
+> > +
+> > +  clock-names:
+> > +    minItems: 1
+> > +    maxItems: 2
+> > +
+> > +  "#clock-cells":
+> > +    const: 1
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +allOf:
 >
-> > [    1.018074] cpu cpu0: _of_add_opp_table_v2: Failed to add OPP, -22
+> No improvements here from v1.
+
+Seems I missed the
+"required:" go before "allOf:" comment here. Sorry about that I've fixed that
+in v4.
+
+Seems like a few other exynos clock yaml bindings need that fix to.
+
+>
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            const: google,gs101-cmu-top
+> > +
+> > +    then:
+> > +      properties:
+> > +        clocks:
+> > +          items:
+> > +            - description: External reference clock (24.576 MHz)
+> > +
+> > +        clock-names:
+> > +          items:
+> > +            - const: oscclk
+> > +
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+>
+> enum:
+>   - google,gs101-cmu-apm
+>   - google,gs101-cmu-misc
+
+Ok just to be clear, are you saying I should have it like this?
+
+  - if:
+      properties:
+        compatible:
+          contains:
+            enum:
+              - google,gs101-cmu-misc
+              - google,gs101-cmu-apm
+
+    then:
+      properties:
+        clocks:
+          minItems: 1
+          items:
+            - description: External reference clock (24.576 MHz)
+            - description: Misc bus clock (from CMU_TOP)
+
+        clock-names:
+          minItems: 1
+          items:
+            - const: oscclk
+            - const: dout_cmu_misc_bus
+
+Instead of a dedicated  'if: const <compatible> then: ' for each CMU?
+
+If I'm wrong above would you been kind enough to elaborate a bit
+more on what you want, as all this dt-schema yaml stuff is a bit new
+for me
+
+Many thanks,
+
+Peter
