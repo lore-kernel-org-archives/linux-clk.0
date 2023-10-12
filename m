@@ -2,99 +2,101 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B509CDB46E
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Oct 2023 19:59:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67063CDB46E
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Oct 2023 20:19:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1442316AbjJLT7r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Oct 2023 15:59:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57732 "EHLO
+        id S1347385AbjJLUTz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Oct 2023 16:19:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344135AbjJLT7q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Oct 2023 15:59:46 -0400
+        with ESMTP id S1347375AbjJLUTy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Oct 2023 16:19:54 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6D12B7;
-        Thu, 12 Oct 2023 12:59:44 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42606C43397;
-        Thu, 12 Oct 2023 19:59:44 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBCB2BB;
+        Thu, 12 Oct 2023 13:19:53 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B5FFC433C7;
+        Thu, 12 Oct 2023 20:19:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1697140784;
-        bh=xtxzdksc5dl0r8+k5pleTaspKNJ+Zn9WfG06u94llFg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=dg/IWe59hkWjSTXCX7pxouQ7rtqEu1pELE8X2UFbPeE5AU/mCMjFEuJcH23nUcTPq
-         ZKqFLBrWgAQkAxNSjtThu6s6HAP8z+qQ9YRUgp8+nqFujzMPo/+lbDlohGCuotgl2m
-         BTbysQuVG1uqdjjLh0w1qXKktOid333JKvkR3F9zHpMQK8ZNLivzoMaL+dZvekCCGD
-         jGHCvPp8NCXzd72b0s13kmM4os9zqXQnPkx6SGPEe4Aj63iJRFQC/XuIpAQuaSFwBL
-         6LfR//Y9cElvJrVPHdChprisBhxuLsDXYNi3tjo7ygxqHwqJKsqJpSrOnv24TOT5af
-         r3AFygNiZPWIg==
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2c5056059e0so1313851fa.3;
-        Thu, 12 Oct 2023 12:59:44 -0700 (PDT)
-X-Gm-Message-State: AOJu0YzQJ0D882gj0CTt7IviEo3AykUDbf/yLfA6UJ5U7Y5l77g/q/xb
-        ATcqOHy7UZ7dNGQycIviqQyiWTiTxrMOP25Odw==
-X-Google-Smtp-Source: AGHT+IG5Giia/8iFXS++Hrtrgo9gbNcDu1M68Jz8U/9hXSm+ZWLSfwFKE5D3t4OBA10dstNAPnw63Gfl6mY1QeId0T4=
-X-Received: by 2002:a2e:b893:0:b0:2c5:634:b45e with SMTP id
- r19-20020a2eb893000000b002c50634b45emr87993ljp.36.1697140782413; Thu, 12 Oct
- 2023 12:59:42 -0700 (PDT)
+        s=k20201202; t=1697141993;
+        bh=1w9tmt3+s2Cw6gjksSzd4+LnjhCxmFxThwc7u2OEO40=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=kDq3ZB8Yzrdfi+09U4iPx/0bycBidEiPLQhB7JjcFFAK8Lbgbq+204TE0qvE0geMr
+         IsLBuwR4c/WMDO5N5RAsg4OwdhtqKcHRsQ/ch7SUm/v/QrnYfC+KMXKdv8LwaCdqIf
+         YfqSm5JzU6xvlezsAlTmUU5rs7GMV+ZS6pO2E7ARPfLJvdvjF2zo6xvewp3k8v/vha
+         t52xxy8238rabB9uRmFSyXq/rf0gs7cbOsWYlGx03wowKIHVH2XYIZrEtmQmL5FLZ8
+         g39uxc13xMEDPWCyLbIwgSCJVRN24EnK2g8Vj+79UP8F8ZZCSnAyEJNs3xOKti/7Id
+         ZPRkOzWbppIEw==
+Message-ID: <c656a6b8ac2feefda16e6d1d548a9f80.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20231010-pxa1908-lkml-v6-0-b2fe09240cf8@skole.hr>
- <20231010-pxa1908-lkml-v6-2-b2fe09240cf8@skole.hr> <20231012195337.GA1579632-robh@kernel.org>
-In-Reply-To: <20231012195337.GA1579632-robh@kernel.org>
-From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 12 Oct 2023 14:59:30 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+cFeo4eoXfi66otrHnHvJ44Oj42=AxmZmqqdxQ53k1FA@mail.gmail.com>
-Message-ID: <CAL_Jsq+cFeo4eoXfi66otrHnHvJ44Oj42=AxmZmqqdxQ53k1FA@mail.gmail.com>
-Subject: Re: [PATCH v6 2/9] dt-bindings: pinctrl: pinctrl-single: add
- marvell,pxa1908-padconf compatible
-To:     =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Haojian Zhuang <haojian.zhuang@linaro.org>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Tony Luck <tony.luck@intel.com>,
-        "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20231011090028.1706653-4-quic_imrashai@quicinc.com>
+References: <20231011090028.1706653-1-quic_imrashai@quicinc.com> <20231011090028.1706653-4-quic_imrashai@quicinc.com>
+Subject: Re: [PATCH V2 3/4] clk: qcom: Add ECPRICC driver support for QDU1000 and QRU1000
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Taniya Das <quic_tdas@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 12 Oct 2023 13:19:51 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Oct 12, 2023 at 2:53=E2=80=AFPM Rob Herring <robh@kernel.org> wrote=
-:
->
-> On Tue, Oct 10, 2023 at 07:27:19PM +0200, Duje Mihanovi=C4=87 wrote:
-> > Add the "marvell,pxa1908-padconf" compatible to allow migrating to a
-> > separate pinctrl driver later.
-> >
-> > Signed-off-by: Duje Mihanovi=C4=87 <duje.mihanovic@skole.hr>
-> > ---
-> >  Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-single.y=
-aml b/Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml
-> > index 45a307d3ce16..0f7e16a28990 100644
-> > --- a/Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml
-> > +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml
-> > @@ -32,6 +32,10 @@ properties:
-> >                - ti,omap4-padconf
-> >                - ti,omap5-padconf
-> >            - const: pinctrl-single
-> > +      - items:
-> > +          - enum:
-> > +              - marvell,pxa1908-padconf
->
-> Just add this to the existing enum above.
+Quoting Imran Shaik (2023-10-11 02:00:27)
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index 3194c8beb06d..60a981ff2bac 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -667,6 +667,14 @@ config QDU_GCC_1000
+>           QRU1000 devices. Say Y if you want to use peripheral
+>           devices such as UART, SPI, I2C, USB, SD, PCIe, etc.
+> =20
+> +config QDU_ECPRICC_1000
+> +       tristate "QDU1000/QRU1000 ECPRI Clock Controller"
 
-NM, I see it's pinconf-single, not pinctrl-single.
+This needs a 'depends on ARM64 || COMPILE_TEST' type of line here.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+> +       select QDU_GCC_1000
+> +       help
+> +         Support for the ECPRI clock controller on QDU1000 and
+> +         QRU1000 devices. Say Y if you want to support the ECPRI
+> +         clock controller functionality such as Ethernet.
+> +
+>  config SDM_GCC_845
+>         tristate "SDM845/SDM670 Global Clock Controller"
+>         depends on ARM64 || COMPILE_TEST
+> diff --git a/drivers/clk/qcom/ecpricc-qdu1000.c b/drivers/clk/qcom/ecpric=
+c-qdu1000.c
+> new file mode 100644
+> index 000000000000..e26912f3dd39
+> --- /dev/null
+> +++ b/drivers/clk/qcom/ecpricc-qdu1000.c
+> @@ -0,0 +1,2466 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2022-2023, Qualcomm Innovation Center, Inc. All rights =
+reserved.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+
+What is the of.h include for? Did you mean mod_devicetable.h instead of
+of_device_id?
+
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +
