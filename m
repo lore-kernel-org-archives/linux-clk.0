@@ -2,108 +2,143 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C885FCDB47E
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Oct 2023 03:42:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 447BDCDB47E
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Oct 2023 05:38:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234100AbjJLDms (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Oct 2023 23:42:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48854 "EHLO
+        id S235296AbjJLFiV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Oct 2023 01:38:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234050AbjJLDmr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Oct 2023 23:42:47 -0400
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52F90B8
-        for <linux-clk@vger.kernel.org>; Wed, 11 Oct 2023 20:42:45 -0700 (PDT)
-Received: by mail-pl1-x629.google.com with SMTP id d9443c01a7336-1c9b7c234a7so4780905ad.3
-        for <linux-clk@vger.kernel.org>; Wed, 11 Oct 2023 20:42:45 -0700 (PDT)
+        with ESMTP id S233879AbjJLFiU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Oct 2023 01:38:20 -0400
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F4BEB8
+        for <linux-clk@vger.kernel.org>; Wed, 11 Oct 2023 22:38:18 -0700 (PDT)
+Received: by mail-pg1-x530.google.com with SMTP id 41be03b00d2f7-5809d5fe7f7so437831a12.3
+        for <linux-clk@vger.kernel.org>; Wed, 11 Oct 2023 22:38:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697082165; x=1697686965; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7nADTi8p/TYCcFoqwy7wIdRGyUAvcVuWu1MGhn66nEA=;
-        b=Qe8o0U3g4ZajNWQpqJrfqnjeVRhtgFz6SqZYXAmyUP4UibufYVfyoIK9ilgZwlhD9C
-         /ivgEKBq/VazLMpAhhHa+Ev5i0JNpM1/nJzerAN/59/lOxEju7bP8k3J69RvO5g2yOfO
-         ads1hoMxg2yMiL8+qUCalIizd3iH5LhTrGdU4il+F9UcCcC0eRXgkbXGiBX6eaVOY27A
-         AI8iB2Bxb7XyTIjDgAvUaxVLw8eoFsmGD0YkT4cU7AZGQ4JMdL6ictFitGZIvpZbYzEE
-         6eClqQ7XggtjlsHVwGNIqLYLhBq95Dbh6Z2dff6XX4FmsEBu/rNEOdz5LNI7uTZT/4CU
-         4Asw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697082165; x=1697686965;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1697089098; x=1697693898; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7nADTi8p/TYCcFoqwy7wIdRGyUAvcVuWu1MGhn66nEA=;
-        b=nx2l9TVsStP/WEx0zCi8n+HtxsqaV9Tl9dCyujY7nkDXUnxkljeDEWP0k+DN27XQ+n
-         lniwstK1s7hzkHiJKGl8J+r5NJUzabHnuXYxCb8PARkWaKDlVWxz3nFw5yxy6bVbN/rU
-         tK04qyzlLtTTqqIIJrDB3dlWqrepAFGatALC0AvvAN1GuNxY7majf/kOUAkoO4F0hH61
-         vZHs+Zn+bww5jLmdzX7ZKjTTLF4k5w/hNcz8jWdUwZPqy/MSzvM9vlAIBDoIfqjkMbL7
-         Nn2gf/WBdR2THly/muhzOkpCs1HHFzkkpsjLlwME0GcvqGdr7tEK6NENfXdirkNL+m21
-         EVAQ==
-X-Gm-Message-State: AOJu0Yzxv5MvKRkxtO4mXFM5mJgGLNLsql3m3eKDbfSpJjceCGKnkJ7j
-        kTccA/iTEUHfmJgLtci9WiLBBw==
-X-Google-Smtp-Source: AGHT+IH5vhqHicRELepcn9OOPQFFmVMWymakQt2rn9zy2Upu2MiP4JWmXB4wVeUfWQoNqfdb5giMlw==
-X-Received: by 2002:a17:903:810:b0:1c9:e257:f88 with SMTP id kr16-20020a170903081000b001c9e2570f88mr108445plb.10.1697082164766;
-        Wed, 11 Oct 2023 20:42:44 -0700 (PDT)
-Received: from localhost ([122.172.80.14])
-        by smtp.gmail.com with ESMTPSA id p6-20020a170902e74600b001c9c5a1b477sm685950plf.169.2023.10.11.20.42.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Oct 2023 20:42:44 -0700 (PDT)
-Date:   Thu, 12 Oct 2023 09:12:41 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Ilia Lin <ilia.lin@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Christian Marangi <ansuelsmth@gmail.com>,
-        Stephan Gerhold <stephan@gerhold.net>
-Subject: Re: [PATCH v5 0/6] cpufreq: qcom-nvmem: support apq8064 cpufreq
- scaling
-Message-ID: <20231012034241.jwtsq22w2lwzfbvn@vireshk-i7>
-References: <20231002185940.1271800-1-dmitry.baryshkov@linaro.org>
- <20231010063235.rj2ehxugtjr5x2xr@vireshk-i7>
+        bh=wwWnNHAbWyeAscY15FX+TU6dhJaouDy+zgSEChH3FwY=;
+        b=hrhdeNL+xrFwt5JwZw2WTndkt3uiH1J30wKia9q7VffNmYl4iEhp32agj2z88CKH2q
+         B1PZ0h0mz/aygSprMv+aUJ0etTN6MZzdmpThC7MSs/IKZIRX4d23Buf9OkWtORpbqLq2
+         NrpkE8FLNrmAnDzTH47YWGRffztAQ1/vDPm+B+Ii5jNcKPSHIqu5SpGCqFKfXrjGXm+A
+         CGxGxgReWs13EJ1d3vG8ALrwgdsKiqrcgnTf+H6qhS16qVdGuvS5jjwCOrrSIgxH+GAf
+         pGPeXjxU2riHHxXosc5fneN9e/KBDDWBx5xWxbqlGawA8Ga2N+c1P+rgIANSduNugJQm
+         mDLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697089098; x=1697693898;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wwWnNHAbWyeAscY15FX+TU6dhJaouDy+zgSEChH3FwY=;
+        b=FDuDtM4MEPqK+GDt1BTF9uhhMrGdhgd5BwMsTHn4zn+v2ZMnlh+yLm4xeyw1coDUkc
+         bb7MuU5LpQ9j9kdP3N8EUL2RZVJSHiRaYt+0iqUn5EXOHsu+t1mmmhaE3Dri8BXBtLmL
+         8lCEu3zQHP9QWKKb4cxliEbpm7fNhxIIuIRxQasI3INOtUTgcxhhyNmpotjeQC7VnsPX
+         dQwTikjJIzy7t/W+CoSmjvFlVqgyvrn+N0OJ4562jHoieFPZI2irSOlZQkRf42ujoT5I
+         1m3bvz9PJ19LalMmcAgerwuGSGILZrUYCrByou+9Yctq8lk4OuGYdLr5j8V6B2bR/qki
+         d6Gg==
+X-Gm-Message-State: AOJu0YzihuPkn1SVn1PP4fqyv8E2HnqYmYxEBfoChNT6Ir+ku2vOaVze
+        6VmMnTgM5IpliZ7U0fW52OtqjbKX85xNXjoyPDTpGmnE7rEEKRT+Uk8IFA==
+X-Google-Smtp-Source: AGHT+IGSsE9UdV0Qgkc/+49sBerKsPKwjip2GPaMvf0yjDHtLvarJUP6ASq6DTMnyLnKKYmGaxwKGOUUUcsGQWvpu/Q=
+X-Received: by 2002:a17:90b:1c83:b0:274:616e:3fc4 with SMTP id
+ oo3-20020a17090b1c8300b00274616e3fc4mr19950072pjb.34.1697089097916; Wed, 11
+ Oct 2023 22:38:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231010063235.rj2ehxugtjr5x2xr@vireshk-i7>
+References: <20231011184823.443959-1-peter.griffin@linaro.org> <20231011184823.443959-17-peter.griffin@linaro.org>
+In-Reply-To: <20231011184823.443959-17-peter.griffin@linaro.org>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Thu, 12 Oct 2023 00:38:06 -0500
+Message-ID: <CAPLW+4m1KLXJ67uDJ83V+zdSA0qU4cDh9Q+irpcixz1btMVv7Q@mail.gmail.com>
+Subject: Re: [PATCH v3 16/20] tty: serial: samsung: Add gs101 compatible and
+ SoC data
+To:     Peter Griffin <peter.griffin@linaro.org>
+Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
+        tomasz.figa@gmail.com, s.nawrocki@samsung.com,
+        linus.walleij@linaro.org, wim@linux-watchdog.org,
+        linux@roeck-us.net, catalin.marinas@arm.com, will@kernel.org,
+        arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org,
+        cw00.choi@samsung.com, tudor.ambarus@linaro.org,
+        andre.draszik@linaro.org, saravanak@google.com,
+        willmcvicker@google.com, soc@kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        kernel-team@android.com, linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 10-10-23, 12:02, Viresh Kumar wrote:
-> On 02-10-23, 21:59, Dmitry Baryshkov wrote:
-> > This is a split of APQ8064 cpufreq series, as requested by Viresh. This
-> > series includes only opp and cpufreq parts, with the DT and soc parts
-> > being split to a separate patchset.
-> > 
-> > Each core has independent power and frequency control. Additionally the
-> > L2 cache is scaled to follow the CPU frequencies (failure to do so
-> > results in strange semi-random crashes).
-> > 
-> > Core voltage is controlled through the SAW2 devices, one for each core.
-> > The L2 has two regulators, vdd-mem and vdd-dig.
-> > 
-> > Changes since v4:
-> > - Reordered variables in qcom_cpufreq_init() (Konrad)
-> > - Fixed of_platform_device_create() error check (Konrad)
-> > - Dropped unused ret variable in qcom_cpufreq_apq8064_name_version() (Konrad)
-> 
-> Applied. Thanks.
+On Wed, Oct 11, 2023 at 1:49=E2=80=AFPM Peter Griffin <peter.griffin@linaro=
+.org> wrote:
+>
+> Add serial driver data for Google Tensor gs101 SoC.
+>
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
 
-Since these are causing build issues, and it isn't entirely clear what's the
-right approach for now, I have dropped the changes from my branch to avoid any
-further issues. You don't need to resend these, lets finalize a solution and
-then I can apply them again.
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
--- 
-viresh
+>  drivers/tty/serial/samsung_tty.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+>
+> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsun=
+g_tty.c
+> index 07fb8a9dac63..26bc52e681a4 100644
+> --- a/drivers/tty/serial/samsung_tty.c
+> +++ b/drivers/tty/serial/samsung_tty.c
+> @@ -2597,14 +2597,22 @@ static const struct s3c24xx_serial_drv_data exyno=
+s850_serial_drv_data =3D {
+>         .fifosize =3D { 256, 64, 64, 64 },
+>  };
+>
+> +static const struct s3c24xx_serial_drv_data gs101_serial_drv_data =3D {
+> +       EXYNOS_COMMON_SERIAL_DRV_DATA(),
+> +       /* rely on samsung,uart-fifosize DT property for fifosize */
+> +       .fifosize =3D { 0 },
+> +};
+> +
+>  #define EXYNOS4210_SERIAL_DRV_DATA (&exynos4210_serial_drv_data)
+>  #define EXYNOS5433_SERIAL_DRV_DATA (&exynos5433_serial_drv_data)
+>  #define EXYNOS850_SERIAL_DRV_DATA (&exynos850_serial_drv_data)
+> +#define GS101_SERIAL_DRV_DATA (&gs101_serial_drv_data)
+>
+>  #else
+>  #define EXYNOS4210_SERIAL_DRV_DATA NULL
+>  #define EXYNOS5433_SERIAL_DRV_DATA NULL
+>  #define EXYNOS850_SERIAL_DRV_DATA NULL
+> +#define GS101_SERIAL_DRV_DATA NULL
+>  #endif
+>
+>  #ifdef CONFIG_ARCH_APPLE
+> @@ -2688,6 +2696,9 @@ static const struct platform_device_id s3c24xx_seri=
+al_driver_ids[] =3D {
+>         }, {
+>                 .name           =3D "artpec8-uart",
+>                 .driver_data    =3D (kernel_ulong_t)ARTPEC8_SERIAL_DRV_DA=
+TA,
+> +       }, {
+> +               .name           =3D "gs101-uart",
+> +               .driver_data    =3D (kernel_ulong_t)GS101_SERIAL_DRV_DATA=
+,
+>         },
+>         { },
+>  };
+> @@ -2709,6 +2720,8 @@ static const struct of_device_id s3c24xx_uart_dt_ma=
+tch[] =3D {
+>                 .data =3D EXYNOS850_SERIAL_DRV_DATA },
+>         { .compatible =3D "axis,artpec8-uart",
+>                 .data =3D ARTPEC8_SERIAL_DRV_DATA },
+> +       { .compatible =3D "google,gs101-uart",
+> +               .data =3D  GS101_SERIAL_DRV_DATA },
+>         {},
+>  };
+>  MODULE_DEVICE_TABLE(of, s3c24xx_uart_dt_match);
+> --
+> 2.42.0.655.g421f12c284-goog
+>
