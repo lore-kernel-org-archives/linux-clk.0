@@ -2,118 +2,99 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDD54CDB482
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Oct 2023 08:40:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7320CC41513
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Oct 2023 08:56:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235465AbjJLIkq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Oct 2023 04:40:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60706 "EHLO
+        id S233182AbjJLI4f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Oct 2023 04:56:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235438AbjJLIkp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Oct 2023 04:40:45 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D75090;
-        Thu, 12 Oct 2023 01:40:43 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-405497850dbso7584075e9.0;
-        Thu, 12 Oct 2023 01:40:43 -0700 (PDT)
+        with ESMTP id S233712AbjJLI4e (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Oct 2023 04:56:34 -0400
+Received: from mail-ua1-x929.google.com (mail-ua1-x929.google.com [IPv6:2607:f8b0:4864:20::929])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88877A9
+        for <linux-clk@vger.kernel.org>; Thu, 12 Oct 2023 01:56:31 -0700 (PDT)
+Received: by mail-ua1-x929.google.com with SMTP id a1e0cc1a2514c-7a8b5ec9a6fso331011241.2
+        for <linux-clk@vger.kernel.org>; Thu, 12 Oct 2023 01:56:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697100041; x=1697704841; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=d6hjwO0QYem7wB9ncQJktw2M9ObYxqHAubvFpZ1Se2I=;
-        b=l9bUcRVFBha3paASp+Zkvrv8qQp1W/idiFA1iTNBLkpvOnafVSnzW4IL3NUTlkG0ZL
-         hSaL98+uhRK07bxQmXFASZMOSPo4j5g5XKgwYcLkY5HXtBVL2pQIUZLsYzgV8IkwBw5q
-         K46EvntplAh2ZE3zv/4+F1lMJB8uIyoTmrMFlSKti0mEQioX9OzxT2n7dmcHV4gnpnM0
-         D7x0JwGsmJYBLPdJAcKOrR9+fujAZLEJsKTS8uGrdrzxYHradNUYZs5OWWpNwXE6HCsM
-         GZRAtaFMxB3O7jtKNXirGg5AXtv8gbdeJ/u4MPfp838zRZAhaLcz7uWd4gAFzNnGgwiV
-         Uk6A==
+        d=linaro.org; s=google; t=1697100990; x=1697705790; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=pPBtRkAyR8/yvLpXM2v/s42WseLth6/jHTmdZIsTmP0=;
+        b=h+nB6pHrr77EtQ4S5o4MRd7OTpOniGIk1qmH0SD7P1yihaFadtNX08ZAa3UC4n+z+w
+         egb3mxjqXvdZVieow3GbzQ0T8dPal4vUmMeILL1RDrVf8ni43FoTUwCHvr2Z6uENnib9
+         zv+O0fuspWiqBIEcJF/7nyw48/R1tj+B+ENxZhdQpyX2CxWToMaDGNAG12M9pdKErOci
+         1Ke1h3Uj0y/TuNBElQ/h3w66J8/o2p70L8KrTkEyNhYJP6G8OuTzeMCXhxulXgOkfSrx
+         D2jXyaoFNlq3EoYUKZmP2v+J12ptE0XY3qKRcpZu504cKvXK9yAXdUu71AOoWYIfBYkS
+         sfHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697100041; x=1697704841;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d6hjwO0QYem7wB9ncQJktw2M9ObYxqHAubvFpZ1Se2I=;
-        b=knqxBGRMcznCdJkyhT8Ow3YGKiIjaAY9p4YiwupWq4z/0EXI0NJ32ZbMXoDl7enwnf
-         xDo/ENxKD+XgNgs8ATyGs7rQB2CN6CQWMLBWDY3mexDrFaexBbqgTdOGfsbywCDX22NJ
-         OnW+KDZRkSvAmp48kR0mtrKIS0dohWk0S7IFy/BItglZQUUqSVYSP3y9wFa/zyHo0yLY
-         UyunpHgBD1WkD2jq4nVTCri/oLWwpQBOLd7LBrs5QhuylpACgExDaA1s/CmK0/PO1TdG
-         7NKwa9wHOVUZpIlvnY1hj/c3nt7+cd/T4XqzJ+N50q3wD+mJN+C8MjBi3qywevvYvL7G
-         qRqw==
-X-Gm-Message-State: AOJu0YxK2snFY/dwb8vlbR5c3NY46/AwR3If8eXjL81F6xzKa1cf+mtw
-        +dHmJSau2zm6Ei+r4SWXBtg=
-X-Google-Smtp-Source: AGHT+IFn0DQmOtn/DUZmU7WVv+0Qp2ojqN902C4Z3/Vk+y14x5P0E/Pq1nUVNf+Hk8fdVD3YSj/W/w==
-X-Received: by 2002:a05:600c:b41:b0:405:499a:7fc1 with SMTP id k1-20020a05600c0b4100b00405499a7fc1mr20623780wmr.40.1697100041235;
-        Thu, 12 Oct 2023 01:40:41 -0700 (PDT)
-Received: from Ansuel-xps. (93-34-89-13.ip49.fastwebnet.it. [93.34.89.13])
-        by smtp.gmail.com with ESMTPSA id n24-20020a1c7218000000b004065e235417sm21047460wmc.21.2023.10.12.01.40.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Oct 2023 01:40:40 -0700 (PDT)
-Message-ID: <6527b108.1c0a0220.bc8fa.7fd2@mx.google.com>
-X-Google-Original-Message-ID: <ZSexBuiBkh0z5oiB@Ansuel-xps.>
-Date:   Thu, 12 Oct 2023 10:40:38 +0200
-From:   Christian Marangi <ansuelsmth@gmail.com>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Ilia Lin <ilia.lin@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Stephan Gerhold <stephan@gerhold.net>
-Subject: Re: [PATCH v5 0/6] cpufreq: qcom-nvmem: support apq8064 cpufreq
- scaling
-References: <20231002185940.1271800-1-dmitry.baryshkov@linaro.org>
- <20231010063235.rj2ehxugtjr5x2xr@vireshk-i7>
- <20231012034241.jwtsq22w2lwzfbvn@vireshk-i7>
+        d=1e100.net; s=20230601; t=1697100990; x=1697705790;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pPBtRkAyR8/yvLpXM2v/s42WseLth6/jHTmdZIsTmP0=;
+        b=ZDK7Xw5q9FiyGn36smdWz412Bkbpx02kVFOzfwuCTrKOVCKmPS+23z7zs58CAWfSTH
+         iD9EfcZjCpqMtv4eD5KWd4Pfx7z4EooQgvKndZJ8NdAc+SuEOdGmohQ3CAl8x/BGTHSy
+         AYbl0hVW9pj1AZNtH157Ggq5TTVCtzYLOY/+GqYib1vN/zu3pJT3vxczeNVO9Kq7YjY1
+         9PBNkLWKLPf7xwvHuuMLMDsmVua4yUjB/G1iy0HyN/djSODt72lp6mc+rcAuCtjBVRNQ
+         m0p79dFURtr4uHExkfzI2UcuNs6mHWaSPwYbN5tmD2tUwhIqu+6Ibp5Ign/KiOuMD/0K
+         o9XA==
+X-Gm-Message-State: AOJu0YxcYdS1KIxJT6BnMAx0TqnItuZXMZDwCFKGbQM+Ogaz7SfJ6vDk
+        UY6cHMbEBTM5gts2UoiS+hl0VvAgyu4KLfutOdPI8A==
+X-Google-Smtp-Source: AGHT+IFo3Lm+2RcnGTHf/V2J1XBT43I24bimP6qoGhCOeQNixS13RWY5pVJxbWa7Xp+lhHh0Is6YyxIfDwTn7aNz6FQ=
+X-Received: by 2002:a67:e2cb:0:b0:452:c3a4:1f8c with SMTP id
+ i11-20020a67e2cb000000b00452c3a41f8cmr18858896vsm.2.1697100990608; Thu, 12
+ Oct 2023 01:56:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231012034241.jwtsq22w2lwzfbvn@vireshk-i7>
+References: <20231011184823.443959-1-peter.griffin@linaro.org>
+ <20231011184823.443959-3-peter.griffin@linaro.org> <ZScYOUi7qhvGmMIF@google.com>
+ <e4523fc3-e1dd-4791-b950-98dfc6dce1f5@linaro.org>
+In-Reply-To: <e4523fc3-e1dd-4791-b950-98dfc6dce1f5@linaro.org>
+From:   Peter Griffin <peter.griffin@linaro.org>
+Date:   Thu, 12 Oct 2023 09:56:19 +0100
+Message-ID: <CADrjBPpntJMsxb6oGQ7zuX3f0dgE3oYFepL4OdxamBz=_or7kw@mail.gmail.com>
+Subject: Re: [PATCH v3 02/20] dt-bindings: clock: Add Google gs101 clock
+ management unit bindings
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     William McVicker <willmcvicker@google.com>, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com,
+        s.nawrocki@samsung.com, linus.walleij@linaro.org,
+        wim@linux-watchdog.org, linux@roeck-us.net,
+        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
+        olof@lixom.net, gregkh@linuxfoundation.org, cw00.choi@samsung.com,
+        tudor.ambarus@linaro.org, andre.draszik@linaro.org,
+        semen.protsenko@linaro.org, saravanak@google.com, soc@kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        kernel-team@android.com, linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Oct 12, 2023 at 09:12:41AM +0530, Viresh Kumar wrote:
-> On 10-10-23, 12:02, Viresh Kumar wrote:
-> > On 02-10-23, 21:59, Dmitry Baryshkov wrote:
-> > > This is a split of APQ8064 cpufreq series, as requested by Viresh. This
-> > > series includes only opp and cpufreq parts, with the DT and soc parts
-> > > being split to a separate patchset.
-> > > 
-> > > Each core has independent power and frequency control. Additionally the
-> > > L2 cache is scaled to follow the CPU frequencies (failure to do so
-> > > results in strange semi-random crashes).
-> > > 
-> > > Core voltage is controlled through the SAW2 devices, one for each core.
-> > > The L2 has two regulators, vdd-mem and vdd-dig.
-> > > 
-> > > Changes since v4:
-> > > - Reordered variables in qcom_cpufreq_init() (Konrad)
-> > > - Fixed of_platform_device_create() error check (Konrad)
-> > > - Dropped unused ret variable in qcom_cpufreq_apq8064_name_version() (Konrad)
-> > 
-> > Applied. Thanks.
-> 
-> Since these are causing build issues, and it isn't entirely clear what's the
-> right approach for now, I have dropped the changes from my branch to avoid any
-> further issues. You don't need to resend these, lets finalize a solution and
-> then I can apply them again.
-> 
+Hi Krzysztof,
 
-Hi we have a qcom-cpufreq series that depends on this (or better say we
-have rebased it on top of these changes to prevent merge conflicts)
+On Thu, 12 Oct 2023 at 07:07, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 11/10/2023 23:48, William McVicker wrote:
+> > On 10/11/2023, Peter Griffin wrote:
+> >> Provide dt-schema documentation for Google gs101 SoC clock controller.
+> >> Currently this adds support for cmu_top, cmu_misc and cmu_apm.
+> >>
+> >> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> >
+> > Tested-by: Will McVicker <willmcvicker@google.com>
+>
+> And how do you perform testing of a binding?
 
-Can you link where this was applied, also can I help in fixing the
-compile error to speed things up?
+I guess if William is using my script to build and flash the kernel it actually
+runs the DTC checks as part of the build process.
 
--- 
-	Ansuel
+See https://git.codelinaro.org/linaro/googlelt/pixelscripts/-/blob/clo/main/buildp21upstream.sh#L44
+
+regards,
+
+Peter.
