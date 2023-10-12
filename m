@@ -2,539 +2,149 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DE91CDB482
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Oct 2023 16:02:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 157CECDB46E
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Oct 2023 16:21:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344030AbjJLQCe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Oct 2023 12:02:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53850 "EHLO
+        id S235745AbjJLQVf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Oct 2023 12:21:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235745AbjJLQCd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Oct 2023 12:02:33 -0400
-Received: from mail-qk1-x72c.google.com (mail-qk1-x72c.google.com [IPv6:2607:f8b0:4864:20::72c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 175EFCA
-        for <linux-clk@vger.kernel.org>; Thu, 12 Oct 2023 09:02:29 -0700 (PDT)
-Received: by mail-qk1-x72c.google.com with SMTP id af79cd13be357-7740cedd4baso75275185a.2
-        for <linux-clk@vger.kernel.org>; Thu, 12 Oct 2023 09:02:29 -0700 (PDT)
+        with ESMTP id S235776AbjJLQVc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Oct 2023 12:21:32 -0400
+Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10BB0F2
+        for <linux-clk@vger.kernel.org>; Thu, 12 Oct 2023 09:21:30 -0700 (PDT)
+Received: by mail-pf1-x431.google.com with SMTP id d2e1a72fcca58-694ed847889so980958b3a.2
+        for <linux-clk@vger.kernel.org>; Thu, 12 Oct 2023 09:21:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697126548; x=1697731348; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=auzWZTkNkOhSnTuWwifp7L9TKLyMwCJTlnFYF7BkftM=;
-        b=D4CNdc2VXIPeidiYcN/HdWfbyddSZSZ0S903iUbjOang3AYsC19NHdWXwZC1WOdcHH
-         zq7xVVRlpyXUOlj3mSfKQUpSkmzhyFvMtNL2vLNOlstzmvSWKkWHt/vljVD11SIQvOi2
-         XzB7/e+A/MFmTjhCr/PTpnBPhn5l8x2eMG2qmfituzVFmdK43reMu/MbDqXUT5D/iMA2
-         v3LI6PNW/BHCY/YIeQZ8m468Mrw4I73OXcz6LonqbwQB2UWPwykwPM6kglUl7FaL3O1w
-         Mu4gBxdchYbQ4IGiL+GLq8XLktM6uCxkVqO86VylcdeEsroBXhNVEtpIEBr3CuLI2V/u
-         T0vQ==
+        d=chromium.org; s=google; t=1697127689; x=1697732489; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yNWVejFTVcyzLtYuIOHAfjVjETmGqKuawTBPQ3WoJZ8=;
+        b=XLNQFC9UBO3HfdR3oXalLULMpw9+BsoxH1aiFtdfAI6w0Q+80xrIAwFjEnrKfpDvZr
+         bfXnL2ejKZB7ZA/yi7S9xI0FYni/5L8R+VTaeMuxqldpFW6MvgVruqZc52hKgIggmwni
+         x5HcEGpWOnPAU6YnYs9EY8WDroOpKwZm9TQ4g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697126548; x=1697731348;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=auzWZTkNkOhSnTuWwifp7L9TKLyMwCJTlnFYF7BkftM=;
-        b=SmO4uJL+nWomVHxxU0Ea02uFNRIEPc/GjIsQJZkBFKQGEDc53S+TIE1MMtKx0BBP/X
-         ZVZ/nVKkS7tyB0WwC0faCSTW1b5KCVab4mhvmp7QrVSdyms5Ag/l4PZUz1PqUw/Ueo+6
-         hQO1VIZYPHNRp11+K5OGWEZW47CK9OayXxIxpn9T9dd3UqPhfPCSqT78nWEbjVKUknlk
-         qBkMAuRRV/XYVbPFPiM4JGx6+eNb98pprgPbVae5mNuAjiwtVnjhz6WWO2CBaFl6TOYG
-         7EuBpU4fExhHNF9Wj0Iia/zlgemJNb87XyFzS+VVNA3/3zeythi4U/yAUlRgwKWpn5lf
-         mm3w==
-X-Gm-Message-State: AOJu0YyGhB7MmqH0207t5pTRpCYOzOzVQLHWnA2+GKYnNbx2zM3NsubX
-        9pbl/fsBhKJrjnqG3zabo6nrMyCoIVOSQ77LaWOXvQ==
-X-Google-Smtp-Source: AGHT+IEZFm6hn8divcDTbNqZkY7iwajNMa6Y2EKv+TVHjBCKsaRklEAPZxFKBkloX0lXBqL29OYHYEDQ/CKrUv4xxHE=
-X-Received: by 2002:a0c:eccf:0:b0:65b:a66:3109 with SMTP id
- o15-20020a0ceccf000000b0065b0a663109mr27898247qvq.8.1697126548118; Thu, 12
- Oct 2023 09:02:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1697127689; x=1697732489;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yNWVejFTVcyzLtYuIOHAfjVjETmGqKuawTBPQ3WoJZ8=;
+        b=fx9mWLnYyE6WiG7KBvW1+v0m3PjrvcbF134fodhpPBsHHvvZcSQlQGAF7tzChFXt9J
+         eJJ4nUnXXQGCKhb/vRoTmqRVLiC6u15+pCk+sr06S3XvlplHR9KKJS+zK9GAMZPwvofB
+         rP67DcxjbnEdpFEWog7S+iSkHd89S4MlI0VtrVWTAEaniV01kwoQsYTu4kG8Z+yX+4Uo
+         sjgiK2JUYVw1+3Ya5wO8FVZ8skNeVE4MTi/Rv5rUroEWvhVkrBuPpnPCCiBqdCvFZyb3
+         KOr1DjIU7dRVKfU5JU5XT40IboD/WlAwuF91/RkJr/nv5GnLxZGyqmh/Vl6l+g3tb8Nm
+         5LVg==
+X-Gm-Message-State: AOJu0YycdTlsonOyWRttQpMwshw85K7I29DlczXrbzsYERBUrxmwnHBH
+        Q2o4Buw6ZXaZAqaEqoUcgpIBsw==
+X-Google-Smtp-Source: AGHT+IFeOYmmrH1RYpChLn+mja+VTaPqsmPBs6JvFB7bcaiNtAxd4zJhq+olfYBAqqyB17X/qvWusw==
+X-Received: by 2002:a05:6a20:7291:b0:157:b453:dbb9 with SMTP id o17-20020a056a20729100b00157b453dbb9mr26465216pzk.6.1697127689467;
+        Thu, 12 Oct 2023 09:21:29 -0700 (PDT)
+Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id s5-20020a637705000000b00578b40a4903sm1929961pgc.22.2023.10.12.09.21.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Oct 2023 09:21:29 -0700 (PDT)
+Date:   Thu, 12 Oct 2023 09:21:28 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 1/2][next] clk: visconti: Fix undefined behavior bug in
+ struct visconti_pll_provider
+Message-ID: <202310120921.08062349C7@keescook>
+References: <cover.1697076650.git.gustavoars@kernel.org>
+ <0a59a721d54b557076cc94eabeb694d463773204.1697076650.git.gustavoars@kernel.org>
 MIME-Version: 1.0
-References: <20231011184823.443959-1-peter.griffin@linaro.org>
- <20231011184823.443959-13-peter.griffin@linaro.org> <CAPLW+4n_ay5Mjq_0u=wZBhv4m6pta8nYDJctGHTH81pWV5yZ_w@mail.gmail.com>
-In-Reply-To: <CAPLW+4n_ay5Mjq_0u=wZBhv4m6pta8nYDJctGHTH81pWV5yZ_w@mail.gmail.com>
-From:   Peter Griffin <peter.griffin@linaro.org>
-Date:   Thu, 12 Oct 2023 17:02:16 +0100
-Message-ID: <CADrjBPooSiDhsBnue6E9XX=xpV3=cZ05+U5Pm75h6_X5JpK-qw@mail.gmail.com>
-Subject: Re: [PATCH v3 12/20] clk: samsung: clk-gs101: Add support for
- CMU_MISC clock unit
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
-        tomasz.figa@gmail.com, s.nawrocki@samsung.com,
-        linus.walleij@linaro.org, wim@linux-watchdog.org,
-        linux@roeck-us.net, catalin.marinas@arm.com, will@kernel.org,
-        arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org,
-        cw00.choi@samsung.com, tudor.ambarus@linaro.org,
-        andre.draszik@linaro.org, saravanak@google.com,
-        willmcvicker@google.com, soc@kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        kernel-team@android.com, linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0a59a721d54b557076cc94eabeb694d463773204.1697076650.git.gustavoars@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Sam,
+On Wed, Oct 11, 2023 at 08:17:36PM -0600, Gustavo A. R. Silva wrote:
+> `struct clk_hw_onecell_data` is a flexible structure, which means that
+> it contains flexible-array member at the bottom, in this case array
+> `hws`:
+> 
+> include/linux/clk-provider.h:
+> 1380 struct clk_hw_onecell_data {
+> 1381         unsigned int num;
+> 1382         struct clk_hw *hws[] __counted_by(num);
+> 1383 };
+> 
+> This could potentially lead to an overwrite of the objects following
+> `clk_data` in `struct visconti_pll_provider`, in this case
+> `struct device_node *node;`, at run-time:
+> 
+> drivers/clk/visconti/pll.h:
+>  16 struct visconti_pll_provider {
+>  17         void __iomem *reg_base;
+>  18         struct clk_hw_onecell_data clk_data;
+>  19         struct device_node *node;
+>  20 };
+> 
+> Notice that a total of 56 bytes are allocated for flexible-array `hws`
+> at line 328. See below:
+> 
+> include/dt-bindings/clock/toshiba,tmpv770x.h:
+>  14 #define TMPV770X_NR_PLL		7
+> 
+> drivers/clk/visconti/pll-tmpv770x.c:
+>  69 ctx = visconti_init_pll(np, reg_base, TMPV770X_NR_PLL);
+> 
+> drivers/clk/visconti/pll.c:
+> 321 struct visconti_pll_provider * __init visconti_init_pll(struct device_node *np,
+> 322                                                         void __iomem *base,
+> 323                                                         unsigned long nr_plls)
+> 324 {
+> 325         struct visconti_pll_provider *ctx;
+> ...
+> 328         ctx = kzalloc(struct_size(ctx, clk_data.hws, nr_plls), GFP_KERNEL);
+> 
+> `struct_size(ctx, clk_data.hws, nr_plls)` above translates to
+> sizeof(struct visconti_pll_provider) + sizeof(struct clk_hw *) * 7 ==
+> 24 + 8 * 7 == 24 + 56
+> 		  ^^^^
+> 		   |
+> 	allocated bytes for flex array `hws`
+> 
+> $ pahole -C visconti_pll_provider drivers/clk/visconti/pll.o
+> struct visconti_pll_provider {
+> 	void *                     reg_base;             /*     0     8 */
+> 	struct clk_hw_onecell_data clk_data;             /*     8     8 */
+> 	struct device_node *       node;                 /*    16     8 */
+> 
+> 	/* size: 24, cachelines: 1, members: 3 */
+> 	/* last cacheline: 24 bytes */
+> };
+> 
+> And then, after the allocation, some data is written into all members
+> of `struct visconti_pll_provider`:
+> 
+> 332         for (i = 0; i < nr_plls; ++i)
+> 333                 ctx->clk_data.hws[i] = ERR_PTR(-ENOENT);
+> 334
+> 335         ctx->node = np;
+> 336         ctx->reg_base = base;
+> 337         ctx->clk_data.num = nr_plls;
+> 
+> Fix all these by placing the declaration of object `clk_data` at the
+> end of `struct visconti_pll_provider`. Also, add a comment to make it
+> clear that this object must always be last in the structure, and
+> prevent this bug from being introduced again in the future.
+> 
+> Fixes: b4cbe606dc36 ("clk: visconti: Add support common clock driver and reset driver")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 
-On Thu, 12 Oct 2023 at 01:12, Sam Protsenko <semen.protsenko@linaro.org> wr=
-ote:
->
-> On Wed, Oct 11, 2023 at 1:49=E2=80=AFPM Peter Griffin <peter.griffin@lina=
-ro.org> wrote:
-> >
-> > CMU Misc clocks IPs such as Watchdog. Add support for the
-> > muxes, dividers and gates in this CMU.
-> >
-> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> > ---
-> >  drivers/clk/samsung/clk-gs101.c | 312 ++++++++++++++++++++++++++++++++
-> >  1 file changed, 312 insertions(+)
-> >
-> > diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-=
-gs101.c
-> > index 525f95e60665..bf2bd8cd39d0 100644
-> > --- a/drivers/clk/samsung/clk-gs101.c
-> > +++ b/drivers/clk/samsung/clk-gs101.c
-> > @@ -20,6 +20,7 @@
-> >  /* NOTE: Must be equal to the last clock ID increased by one */
-> >  #define TOP_NR_CLK                     (CLK_GOUT_CMU_BOOST + 1)
-> >  #define APM_NR_CLK                     (CLK_APM_PLL_DIV16_APM + 1)
-> > +#define MISC_NR_CLK                    (CLK_GOUT_MISC_WDT_CLUSTER1 + 1=
-)
->
-> Tabs for the indentation.
+Another good catch. :)
 
-Thanks for the review. Will fix in v4.
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
-Peter
-
->
-> >
-> >  /* ---- CMU_TOP ------------------------------------------------------=
-------- */
-> >
-> > @@ -1815,6 +1816,314 @@ static const struct samsung_cmu_info apm_cmu_in=
-fo __initconst =3D {
-> >         .nr_clk_regs            =3D ARRAY_SIZE(apm_clk_regs),
-> >  };
-> >
-> > +/* ---- CMU_MISC -----------------------------------------------------=
--------- */
-> > +/* Register Offset definitions for CMU_MISC (0x10010000) */
-> > +#define PLL_CON0_MUX_CLKCMU_MISC_BUS_USER      0x0600
-> > +#define PLL_CON1_MUX_CLKCMU_MISC_BUS_USER      0x0604
-> > +#define PLL_CON0_MUX_CLKCMU_MISC_SSS_USER      0x0610
-> > +#define PLL_CON1_MUX_CLKCMU_MISC_SSS_USER      0x0614
-> > +#define MISC_CMU_MISC_CONTROLLER_OPTION                0x0800
-> > +#define CLKOUT_CON_BLK_MISC_CMU_MISC_CLKOUT0   0x0810
-> > +#define CLK_CON_MUX_MUX_CLK_MISC_GIC           0x1000
-> > +#define CLK_CON_DIV_DIV_CLK_MISC_BUSP          0x1800
-> > +#define CLK_CON_DIV_DIV_CLK_MISC_GIC           0x1804
-> > +#define CLK_CON_GAT_CLK_BLK_MISC_UID_MISC_CMU_MISC_IPCLKPORT_PCLK     =
-         0x2000
-> > +#define CLK_CON_GAT_CLK_BLK_MISC_UID_OTP_CON_BIRA_IPCLKPORT_I_OSCCLK  =
-         0x2004
-> > +#define CLK_CON_GAT_CLK_BLK_MISC_UID_OTP_CON_BISR_IPCLKPORT_I_OSCCLK  =
-         0x2008
-> > +#define CLK_CON_GAT_CLK_BLK_MISC_UID_OTP_CON_TOP_IPCLKPORT_I_OSCCLK   =
-         0x200c
-> > +#define CLK_CON_GAT_CLK_BLK_MISC_UID_RSTNSYNC_CLK_MISC_OSCCLK_IPCLKPOR=
-T_CLK    0x2010
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_ADM_AHB_SSS_IPCLKPORT_HCLKM     =
-         0x2014
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_AD_APB_DIT_IPCLKPORT_PCLKM      =
-         0x2018
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_AD_APB_PUF_IPCLKPORT_PCLKM      =
-         0x201c
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_DIT_IPCLKPORT_ICLKL2A           =
-         0x2020
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_D_TZPC_MISC_IPCLKPORT_PCLK      =
-         0x2024
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_GIC_IPCLKPORT_GICCLK            =
-         0x2028
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_GPC_MISC_IPCLKPORT_PCLK         =
-         0x202c
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_LHM_AST_ICC_CPUGIC_IPCLKPORT_I_C=
-LK       0x2030
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_LHM_AXI_D_SSS_IPCLKPORT_I_CLK   =
-         0x2034
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_LHM_AXI_P_GIC_IPCLKPORT_I_CLK   =
-         0x2038
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_LHM_AXI_P_MISC_IPCLKPORT_I_CLK  =
-         0x203c
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_LHS_ACEL_D_MISC_IPCLKPORT_I_CLK =
-         0x2040
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_LHS_AST_IRI_GICCPU_IPCLKPORT_I_C=
-LK       0x2044
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_LHS_AXI_D_SSS_IPCLKPORT_I_CLK   =
-         0x2048
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_MCT_IPCLKPORT_PCLK              =
-         0x204c
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_OTP_CON_BIRA_IPCLKPORT_PCLK     =
-         0x2050
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_OTP_CON_BISR_IPCLKPORT_PCLK     =
-         0x2054
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_OTP_CON_TOP_IPCLKPORT_PCLK      =
-         0x2058
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_PDMA_IPCLKPORT_ACLK             =
-         0x205c
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_PPMU_DMA_IPCLKPORT_ACLK         =
-         0x2060
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_PPMU_MISC_IPCLKPORT_ACLK        =
-         0x2064
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_PPMU_MISC_IPCLKPORT_PCLK        =
-         0x2068
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_PUF_IPCLKPORT_I_CLK             =
-         0x206c
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_QE_DIT_IPCLKPORT_ACLK           =
-         0x2070
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_QE_DIT_IPCLKPORT_PCLK           =
-         0x2074
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_QE_PDMA_IPCLKPORT_ACLK          =
-         0x2078
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_QE_PDMA_IPCLKPORT_PCLK          =
-         0x207c
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_QE_PPMU_DMA_IPCLKPORT_ACLK      =
-         0x2080
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_QE_PPMU_DMA_IPCLKPORT_PCLK      =
-         0x2084
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_QE_RTIC_IPCLKPORT_ACLK          =
-         0x2088
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_QE_RTIC_IPCLKPORT_PCLK          =
-         0x208c
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_QE_SPDMA_IPCLKPORT_ACLK         =
-         0x2090
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_QE_SPDMA_IPCLKPORT_PCLK         =
-         0x2094
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_QE_SSS_IPCLKPORT_ACLK           =
-         0x2098
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_QE_SSS_IPCLKPORT_PCLK           =
-         0x209c
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_RSTNSYNC_CLK_MISC_BUSD_IPCLKPORT=
-_CLK     0x20a0
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_RSTNSYNC_CLK_MISC_BUSP_IPCLKPORT=
-_CLK     0x20a4
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_RSTNSYNC_CLK_MISC_GIC_IPCLKPORT_=
-CLK      0x20a8
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_RSTNSYNC_CLK_MISC_SSS_IPCLKPORT_=
-CLK      0x20ac
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_RTIC_IPCLKPORT_I_ACLK           =
-         0x20b0
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_RTIC_IPCLKPORT_I_PCLK           =
-         0x20b4
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_SPDMA_IPCLKPORT_ACLK            =
-         0x20b8
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_SSMT_DIT_IPCLKPORT_ACLK         =
-         0x20bc
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_SSMT_DIT_IPCLKPORT_PCLK         =
-         0x20c0
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_SSMT_PDMA_IPCLKPORT_ACLK        =
-         0x20c4
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_SSMT_PDMA_IPCLKPORT_PCLK        =
-         0x20c8
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_SSMT_PPMU_DMA_IPCLKPORT_ACLK    =
-         0x20cc
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_SSMT_PPMU_DMA_IPCLKPORT_PCLK    =
-         0x20d0
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_SSMT_RTIC_IPCLKPORT_ACLK        =
-         0x20d4
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_SSMT_RTIC_IPCLKPORT_PCLK        =
-         0x20d8
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_SSMT_SPDMA_IPCLKPORT_ACLK       =
-                 0x20dc
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_SSMT_SPDMA_IPCLKPORT_PCLK       =
-                 0x20e0
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_SSMT_SSS_IPCLKPORT_ACLK         =
-         0x20e4
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_SSMT_SSS_IPCLKPORT_PCLK         =
-         0x20e8
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_SSS_IPCLKPORT_I_ACLK            =
-         0x20ec
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_SSS_IPCLKPORT_I_PCLK            =
-         0x20f0
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_SYSMMU_MISC_IPCLKPORT_CLK_S2    =
-         0x20f4
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_SYSMMU_SSS_IPCLKPORT_CLK_S1     =
-         0x20f8
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_SYSREG_MISC_IPCLKPORT_PCLK      =
-         0x20fc
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_TMU_SUB_IPCLKPORT_PCLK          =
-         0x2100
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_TMU_TOP_IPCLKPORT_PCLK          =
-         0x2104
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_WDT_CLUSTER0_IPCLKPORT_PCLK     =
-         0x2108
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_WDT_CLUSTER1_IPCLKPORT_PCLK     =
-         0x210c
-> > +#define CLK_CON_GAT_GOUT_BLK_MISC_UID_XIU_D_MISC_IPCLKPORT_ACLK       =
-                 0x2110
-> > +#define DMYQCH_CON_PPMU_DMA_QCH                        0x3000
-> > +#define DMYQCH_CON_PUF_QCH                     0x3004
-> > +#define PCH_CON_LHM_AXI_D_SSS_PCH              0x300c
-> > +#define PCH_CON_LHM_AXI_P_GIC_PCH              0x3010
-> > +#define PCH_CON_LHM_AXI_P_MISC_PCH             0x3014
-> > +#define PCH_CON_LHS_ACEL_D_MISC_PCH            0x3018
-> > +#define PCH_CON_LHS_AST_IRI_GICCPU_PCH         0x301c
-> > +#define PCH_CON_LHS_AXI_D_SSS_PCH              0x3020
-> > +#define QCH_CON_ADM_AHB_SSS_QCH                        0x3024
-> > +#define QCH_CON_DIT_QCH                                0x3028
-> > +#define QCH_CON_GIC_QCH                                0x3030
-> > +#define QCH_CON_LHM_AST_ICC_CPUGIC_QCH         0x3038
-> > +#define QCH_CON_LHM_AXI_D_SSS_QCH              0x303c
-> > +#define QCH_CON_LHM_AXI_P_GIC_QCH              0x3040
-> > +#define QCH_CON_LHM_AXI_P_MISC_QCH             0x3044
-> > +#define QCH_CON_LHS_ACEL_D_MISC_QCH            0x3048
-> > +#define QCH_CON_LHS_AST_IRI_GICCPU_QCH         0x304c
-> > +#define QCH_CON_LHS_AXI_D_SSS_QCH              0x3050
-> > +#define QCH_CON_MCT_QCH                                0x3054
-> > +#define QCH_CON_MISC_CMU_MISC_QCH              0x3058
-> > +#define QCH_CON_OTP_CON_BIRA_QCH               0x305c
-> > +#define QCH_CON_OTP_CON_BISR_QCH               0x3060
-> > +#define QCH_CON_OTP_CON_TOP_QCH                        0x3064
-> > +#define QCH_CON_PDMA_QCH                       0x3068
-> > +#define QCH_CON_PPMU_MISC_QCH                  0x306c
-> > +#define QCH_CON_QE_DIT_QCH                     0x3070
-> > +#define QCH_CON_QE_PDMA_QCH                    0x3074
-> > +#define QCH_CON_QE_PPMU_DMA_QCH                        0x3078
-> > +#define QCH_CON_QE_RTIC_QCH                    0x307c
-> > +#define QCH_CON_QE_SPDMA_QCH                   0x3080
-> > +#define QCH_CON_QE_SSS_QCH                     0x3084
-> > +#define QCH_CON_RTIC_QCH                       0x3088
-> > +#define QCH_CON_SPDMA_QCH                      0x308c
-> > +#define QCH_CON_SSMT_DIT_QCH                   0x3090
-> > +#define QCH_CON_SSMT_PDMA_QCH                  0x3094
-> > +#define QCH_CON_SSMT_PPMU_DMA_QCH              0x3098
-> > +#define QCH_CON_SSMT_RTIC_QCH                  0x309c
-> > +#define QCH_CON_SSMT_SPDMA_QCH                 0x30a0
-> > +#define QCH_CON_SSMT_SSS_QCH                   0x30a4
-> > +#define QCH_CON_SSS_QCH                                0x30a8
-> > +#define QCH_CON_SYSMMU_MISC_QCH                        0x30ac
-> > +#define QCH_CON_SYSMMU_SSS_QCH                 0x30b0
-> > +#define QCH_CON_SYSREG_MISC_QCH                        0x30b4
-> > +#define QCH_CON_TMU_SUB_QCH                    0x30b8
-> > +#define QCH_CON_TMU_TOP_QCH                    0x30bc
-> > +#define QCH_CON_WDT_CLUSTER0_QCH               0x30c0
-> > +#define QCH_CON_WDT_CLUSTER1_QCH               0x30c4
-> > +#define QUEUE_CTRL_REG_BLK_MISC_CMU_MISC       0x3c00
-> > +
-> > +static const unsigned long misc_clk_regs[] __initconst =3D {
-> > +       PLL_CON0_MUX_CLKCMU_MISC_BUS_USER,
-> > +       PLL_CON1_MUX_CLKCMU_MISC_BUS_USER,
-> > +       PLL_CON0_MUX_CLKCMU_MISC_SSS_USER,
-> > +       PLL_CON1_MUX_CLKCMU_MISC_SSS_USER,
-> > +       MISC_CMU_MISC_CONTROLLER_OPTION,
-> > +       CLKOUT_CON_BLK_MISC_CMU_MISC_CLKOUT0,
-> > +       CLK_CON_MUX_MUX_CLK_MISC_GIC,
-> > +       CLK_CON_DIV_DIV_CLK_MISC_BUSP,
-> > +       CLK_CON_DIV_DIV_CLK_MISC_GIC,
-> > +       CLK_CON_GAT_CLK_BLK_MISC_UID_MISC_CMU_MISC_IPCLKPORT_PCLK,
-> > +       CLK_CON_GAT_CLK_BLK_MISC_UID_OTP_CON_BIRA_IPCLKPORT_I_OSCCLK,
-> > +       CLK_CON_GAT_CLK_BLK_MISC_UID_OTP_CON_BISR_IPCLKPORT_I_OSCCLK,
-> > +       CLK_CON_GAT_CLK_BLK_MISC_UID_OTP_CON_TOP_IPCLKPORT_I_OSCCLK,
-> > +       CLK_CON_GAT_CLK_BLK_MISC_UID_RSTNSYNC_CLK_MISC_OSCCLK_IPCLKPORT=
-_CLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_ADM_AHB_SSS_IPCLKPORT_HCLKM,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_AD_APB_DIT_IPCLKPORT_PCLKM,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_AD_APB_PUF_IPCLKPORT_PCLKM,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_DIT_IPCLKPORT_ICLKL2A,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_D_TZPC_MISC_IPCLKPORT_PCLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_GIC_IPCLKPORT_GICCLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_GPC_MISC_IPCLKPORT_PCLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_LHM_AST_ICC_CPUGIC_IPCLKPORT_I_CL=
-K,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_LHM_AXI_D_SSS_IPCLKPORT_I_CLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_LHM_AXI_P_GIC_IPCLKPORT_I_CLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_LHM_AXI_P_MISC_IPCLKPORT_I_CLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_LHS_ACEL_D_MISC_IPCLKPORT_I_CLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_LHS_AST_IRI_GICCPU_IPCLKPORT_I_CL=
-K,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_LHS_AXI_D_SSS_IPCLKPORT_I_CLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_MCT_IPCLKPORT_PCLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_OTP_CON_BIRA_IPCLKPORT_PCLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_OTP_CON_BISR_IPCLKPORT_PCLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_OTP_CON_TOP_IPCLKPORT_PCLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_PDMA_IPCLKPORT_ACLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_PPMU_DMA_IPCLKPORT_ACLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_PPMU_MISC_IPCLKPORT_ACLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_PPMU_MISC_IPCLKPORT_PCLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_PUF_IPCLKPORT_I_CLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_QE_DIT_IPCLKPORT_ACLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_QE_DIT_IPCLKPORT_PCLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_QE_PDMA_IPCLKPORT_ACLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_QE_PDMA_IPCLKPORT_PCLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_QE_PPMU_DMA_IPCLKPORT_ACLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_QE_PPMU_DMA_IPCLKPORT_PCLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_QE_RTIC_IPCLKPORT_ACLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_QE_RTIC_IPCLKPORT_PCLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_QE_SPDMA_IPCLKPORT_ACLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_QE_SPDMA_IPCLKPORT_PCLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_QE_SSS_IPCLKPORT_ACLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_QE_SSS_IPCLKPORT_PCLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_RSTNSYNC_CLK_MISC_BUSD_IPCLKPORT_=
-CLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_RSTNSYNC_CLK_MISC_BUSP_IPCLKPORT_=
-CLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_RSTNSYNC_CLK_MISC_GIC_IPCLKPORT_C=
-LK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_RSTNSYNC_CLK_MISC_SSS_IPCLKPORT_C=
-LK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_RTIC_IPCLKPORT_I_ACLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_RTIC_IPCLKPORT_I_PCLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_SPDMA_IPCLKPORT_ACLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_SSMT_DIT_IPCLKPORT_ACLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_SSMT_DIT_IPCLKPORT_PCLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_SSMT_PDMA_IPCLKPORT_ACLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_SSMT_PDMA_IPCLKPORT_PCLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_SSMT_PPMU_DMA_IPCLKPORT_ACLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_SSMT_PPMU_DMA_IPCLKPORT_PCLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_SSMT_RTIC_IPCLKPORT_ACLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_SSMT_RTIC_IPCLKPORT_PCLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_SSMT_SPDMA_IPCLKPORT_ACLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_SSMT_SPDMA_IPCLKPORT_PCLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_SSMT_SSS_IPCLKPORT_ACLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_SSMT_SSS_IPCLKPORT_PCLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_SSS_IPCLKPORT_I_ACLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_SSS_IPCLKPORT_I_PCLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_SYSMMU_MISC_IPCLKPORT_CLK_S2,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_SYSMMU_SSS_IPCLKPORT_CLK_S1,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_SYSREG_MISC_IPCLKPORT_PCLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_TMU_SUB_IPCLKPORT_PCLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_TMU_TOP_IPCLKPORT_PCLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_WDT_CLUSTER0_IPCLKPORT_PCLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_WDT_CLUSTER1_IPCLKPORT_PCLK,
-> > +       CLK_CON_GAT_GOUT_BLK_MISC_UID_XIU_D_MISC_IPCLKPORT_ACLK,
-> > +       DMYQCH_CON_PPMU_DMA_QCH,
-> > +       DMYQCH_CON_PUF_QCH,
-> > +       PCH_CON_LHM_AXI_D_SSS_PCH,
-> > +       PCH_CON_LHM_AXI_P_GIC_PCH,
-> > +       PCH_CON_LHM_AXI_P_MISC_PCH,
-> > +       PCH_CON_LHS_ACEL_D_MISC_PCH,
-> > +       PCH_CON_LHS_AST_IRI_GICCPU_PCH,
-> > +       PCH_CON_LHS_AXI_D_SSS_PCH,
-> > +       QCH_CON_ADM_AHB_SSS_QCH,
-> > +       QCH_CON_DIT_QCH,
-> > +       QCH_CON_GIC_QCH,
-> > +       QCH_CON_LHM_AST_ICC_CPUGIC_QCH,
-> > +       QCH_CON_LHM_AXI_D_SSS_QCH,
-> > +       QCH_CON_LHM_AXI_P_GIC_QCH,
-> > +       QCH_CON_LHM_AXI_P_MISC_QCH,
-> > +       QCH_CON_LHS_ACEL_D_MISC_QCH,
-> > +       QCH_CON_LHS_AST_IRI_GICCPU_QCH,
-> > +       QCH_CON_LHS_AXI_D_SSS_QCH,
-> > +       QCH_CON_MCT_QCH,
-> > +       QCH_CON_MISC_CMU_MISC_QCH,
-> > +       QCH_CON_OTP_CON_BIRA_QCH,
-> > +       QCH_CON_OTP_CON_BISR_QCH,
-> > +       QCH_CON_OTP_CON_TOP_QCH,
-> > +       QCH_CON_PDMA_QCH,
-> > +       QCH_CON_PPMU_MISC_QCH,
-> > +       QCH_CON_QE_DIT_QCH,
-> > +       QCH_CON_QE_PDMA_QCH,
-> > +       QCH_CON_QE_PPMU_DMA_QCH,
-> > +       QCH_CON_QE_RTIC_QCH,
-> > +       QCH_CON_QE_SPDMA_QCH,
-> > +       QCH_CON_QE_SSS_QCH,
-> > +       QCH_CON_RTIC_QCH,
-> > +       QCH_CON_SPDMA_QCH,
-> > +       QCH_CON_SSMT_DIT_QCH,
-> > +       QCH_CON_SSMT_PDMA_QCH,
-> > +       QCH_CON_SSMT_PPMU_DMA_QCH,
-> > +       QCH_CON_SSMT_RTIC_QCH,
-> > +       QCH_CON_SSMT_SPDMA_QCH,
-> > +       QCH_CON_SSMT_SSS_QCH,
-> > +       QCH_CON_SSS_QCH,
-> > +       QCH_CON_SYSMMU_MISC_QCH,
-> > +       QCH_CON_SYSMMU_SSS_QCH,
-> > +       QCH_CON_SYSREG_MISC_QCH,
-> > +       QCH_CON_TMU_SUB_QCH,
-> > +       QCH_CON_TMU_TOP_QCH,
-> > +       QCH_CON_WDT_CLUSTER0_QCH,
-> > +       QCH_CON_WDT_CLUSTER1_QCH,
-> > +       QUEUE_CTRL_REG_BLK_MISC_CMU_MISC,
-> > +};
-> > +
-> > +/* List of parent clocks for Muxes in CMU_MISC */
-> > +PNAME(mout_misc_bus_user_p)            =3D { "oscclk", "dout_cmu_misc_=
-bus" };
-> > +PNAME(mout_misc_sss_user_p)            =3D { "oscclk", "dout_cmu_misc_=
-sss" };
-> > +
-> > +static const struct samsung_mux_clock misc_mux_clks[] __initconst =3D =
-{
-> > +       MUX(CLK_MOUT_MISC_BUS_USER, "mout_misc_bus_user", mout_misc_bus=
-_user_p,
-> > +           PLL_CON0_MUX_CLKCMU_MISC_BUS_USER, 4, 1),
-> > +       MUX(CLK_MOUT_MISC_SSS_USER, "mout_misc_sss_user", mout_misc_sss=
-_user_p,
-> > +           PLL_CON0_MUX_CLKCMU_MISC_SSS_USER, 4, 1),
-> > +};
-> > +
-> > +static const struct samsung_div_clock misc_div_clks[] __initconst =3D =
-{
-> > +       DIV(CLK_DOUT_MISC_BUSP, "dout_misc_busp", "mout_misc_bus_user",
-> > +           CLK_CON_DIV_DIV_CLK_MISC_BUSP, 0, 3),
-> > +       DIV(CLK_DOUT_MISC_GIC, "dout_misc_gic", "mout_misc_bus_user",
-> > +           CLK_CON_DIV_DIV_CLK_MISC_GIC, 0, 3),
-> > +};
-> > +
-> > +static const struct samsung_gate_clock misc_gate_clks[] __initconst =
-=3D {
-> > +       GATE(CLK_GOUT_MISC_PCLK, "gout_misc_pclk", "dout_misc_busp",
-> > +            CLK_CON_GAT_CLK_BLK_MISC_UID_MISC_CMU_MISC_IPCLKPORT_PCLK,
-> > +            21, 0, 0),
-> > +
->
-> No need in empty lines.
->
-> > +       GATE(CLK_GOUT_MISC_SYSREG_PCLK, "gout_misc_sysreg_pclk", "dout_=
-misc_busp",
-> > +            CLK_CON_GAT_GOUT_BLK_MISC_UID_SYSREG_MISC_IPCLKPORT_PCLK,
-> > +            21, 0, 0),
-> > +
-> > +       GATE(CLK_GOUT_MISC_WDT_CLUSTER0, "gout_misc_wdt_cluster0", "dou=
-t_misc_busp",
-> > +            CLK_CON_GAT_GOUT_BLK_MISC_UID_WDT_CLUSTER0_IPCLKPORT_PCLK,
-> > +            21, 0, 0),
-> > +
-> > +       GATE(CLK_GOUT_MISC_WDT_CLUSTER1, "gout_misc_wdt_cluster1", "dou=
-t_misc_busp",
-> > +            CLK_CON_GAT_GOUT_BLK_MISC_UID_WDT_CLUSTER1_IPCLKPORT_PCLK,
-> > +            21, 0, 0),
-> > +
->
-> Unnecessary empty line.
->
-> > +};
-> > +
-> > +static const struct samsung_cmu_info misc_cmu_info __initconst =3D {
-> > +       .mux_clks               =3D misc_mux_clks,
-> > +       .nr_mux_clks            =3D ARRAY_SIZE(misc_mux_clks),
-> > +       .div_clks               =3D misc_div_clks,
-> > +       .nr_div_clks            =3D ARRAY_SIZE(misc_div_clks),
-> > +       .gate_clks              =3D misc_gate_clks,
-> > +       .nr_gate_clks           =3D ARRAY_SIZE(misc_gate_clks),
-> > +       .nr_clk_ids             =3D MISC_NR_CLK,
-> > +       .clk_regs               =3D misc_clk_regs,
-> > +       .nr_clk_regs            =3D ARRAY_SIZE(misc_clk_regs),
-> > +       .clk_name               =3D "dout_misc_bus",
-> > +};
-> > +
-> >  /* ---- platform_driver ----------------------------------------------=
-------- */
-> >
-> >  static int __init gs101_cmu_probe(struct platform_device *pdev)
-> > @@ -1832,6 +2141,9 @@ static const struct of_device_id gs101_cmu_of_mat=
-ch[] =3D {
-> >         {
-> >                 .compatible =3D "google,gs101-cmu-apm",
-> >                 .data =3D &apm_cmu_info,
-> > +       }, {
-> > +               .compatible =3D "google,gs101-cmu-misc",
-> > +               .data =3D &misc_cmu_info,
-> >         }, {
-> >         },
-> >  };
-> > --
-> > 2.42.0.655.g421f12c284-goog
-> >
+-- 
+Kees Cook
