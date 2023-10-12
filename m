@@ -2,71 +2,130 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D453BCDB474
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Oct 2023 23:21:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7480CDB474
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Oct 2023 23:30:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1443053AbjJLXV6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Oct 2023 19:21:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43322 "EHLO
+        id S1443085AbjJLXaH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Oct 2023 19:30:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1443006AbjJLXV6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Oct 2023 19:21:58 -0400
+        with ESMTP id S1443083AbjJLXaG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Oct 2023 19:30:06 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 720BEA9;
-        Thu, 12 Oct 2023 16:21:57 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E20AC433C8;
-        Thu, 12 Oct 2023 23:21:57 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 856C2A9;
+        Thu, 12 Oct 2023 16:30:05 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 207B5C433C8;
+        Thu, 12 Oct 2023 23:30:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1697152917;
-        bh=EA6Bl+hhODmC0/E8k4cIgSih/ZiH5lISftxciVURJ/E=;
+        s=k20201202; t=1697153405;
+        bh=y/FkUr/MyNlRX1DbU8ygsuC1i4kJtlBIup5GFvsNN7o=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=k2Xv5ewEz5mm7XAmyzk48w9floovjPuJtd9MQLAHpAbU2AUUz/zfcXdbppK+BWnzW
-         3xm+kZzb7CLusCkj52UvQjxq66Lnq4YrYzib90M1Tpsac6hxfyBFJ9SAbthpRXQUb/
-         B7DGSlzntsrElca2mcILI66lPuTPyCiKJBoUWWyJT8k0ihwIkMSnre65noLGUUBs6r
-         sKeWY9Eod3+pLx4OaJn8ofOn+dMfs9g47Uj3rQD1FTBdBPO6WumirFADMhPcu2a+w5
-         6pGodNQWQcsylhC+vEZPsYnGCtCEW3XBr62uaJl/WRYt1oJ5ZoStRTQ/ePdQXq2hc6
-         mxAfWiJ2sUw3Q==
-Message-ID: <2350c4a3e6c2ed214dd232abc73b2074.sboyd@kernel.org>
+        b=FbEckeNT8863IDZcMhJEvoKu4qKnHW9uHgJgKAsxiaDLTh1rJGi6NZkaLacieVXSs
+         vM6bgM0ct4LBwaCiKEIdJZ4m7lVM5iUqFQ15/cGEtblSA3fPAvQDEl+smVp4mxaRqO
+         rQlzaxVszZQYWQ6gw4wvXbGz29Tr0ZNSUDseyQii4UHwUj01uE525Gjp+bzTjV/HoP
+         yb+5UqFcw7ojUGr/fKRjeKV5y4OMOiLtdp+c9Af+XLsEylOOrjCaPBXguo8f0wfC+w
+         8igvMVRLD+j4BH/GB/lOBgzoKMVT/bzzFGL64QCkKeFuRMoUzMBzpgADHmWJak070k
+         SvltBycBwV1+g==
+Message-ID: <4be60c499a39fcca374bc8f8574a952e.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230921073217.572151-1-alessandro.carminati@gmail.com>
-References: <20230921073217.572151-1-alessandro.carminati@gmail.com>
-Subject: Re: [PATCH v2] clk: Sanitize possible_parent_show to Handle Return Value of of_clk_get_parent_name
+In-Reply-To: <20231003120402.4186270-1-niravkumar.l.rabara@intel.com>
+References: <20231003120402.4186270-1-niravkumar.l.rabara@intel.com>
+Subject: Re: [PATCH v3] clk: socfpga: agilex: add support for the Intel Agilex5
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Alessandro Carminati <alessandro.carminati@gmail.com>,
-        linux-kernel@vger.kernel.org,
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        netdev@vger.kernel.org,
+        Niravkumar L Rabara <niravkumar.l.rabara@intel.com>,
+        Teh Wen Ping <wen.ping.teh@intel.com>
+To:     Dinh Nguyen <dinguyen@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Philip Daly <pdaly@redhat.com>
-To:     Alessandro Carminati (Red Hat) <alessandro.carminati@gmail.com>,
-        linux-clk@vger.kernel.org
-Date:   Thu, 12 Oct 2023 16:21:54 -0700
+        niravkumar.l.rabara@intel.com
+Date:   Thu, 12 Oct 2023 16:30:02 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Alessandro Carminati (Red Hat) (2023-09-21 00:32:17)
-> From: Alessandro Carminati <alessandro.carminati@gmail.com>
+Quoting niravkumar.l.rabara@intel.com (2023-10-03 05:04:02)
+> From: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
 >=20
-> In the possible_parent_show function, ensure proper handling of the return
-> value from of_clk_get_parent_name to prevent potential issues arising from
-> a NULL return.
-> The current implementation invokes seq_puts directly on the result of
-> of_clk_get_parent_name without verifying the return value, which can lead
-> to kernel panic if the function returns NULL.
+> Add support for Intel's SoCFPGA Agilex5 platform. The clock manager
+> driver for the Agilex5 is very similar to the Agilex platform, so
+> it is reusing most of the Agilex clock driver code.
 >=20
-> This patch addresses the concern by introducing a check on the return
-> value of of_clk_get_parent_name. If the return value is not NULL, the
-> function proceeds to call seq_puts, providing the returned value as
-> argument.
-> However, if of_clk_get_parent_name returns NULL, the function provides a
-> static string as argument, avoiding the panic.
->=20
-> Fixes: 1ccc0ddf046a ("clk: Use seq_puts() in possible_parent_show()")
-> Reported-by: Philip Daly <pdaly@redhat.com>
-> Signed-off-by: Alessandro Carminati (Red Hat) <alessandro.carminati@gmail=
-.com>
+> Signed-off-by: Teh Wen Ping <wen.ping.teh@intel.com>
+> Reviewed-by: Dinh Nguyen <dinguyen@kernel.org>
+> Signed-off-by: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
 > ---
+>=20
+> Changes in v3:
+> - Used different name for stratix10_clock_data pointer.
+> - Used a single function call, devm_platform_ioremap_resource().
+> - Used only .name in clk_parent_data.
+>=20
+> Stephen suggested to use .fw_name or .index, But since the changes are on=
+ top
+> of existing driver and current driver code is not using clk_hw and removi=
+ng
+> .name and using .fw_name and/or .index resulting in parent clock_rate &
+> recalc_rate to 0.
+>=20
+> In order to use .index, I would need to refactor the common code that is =
+shared
+> by a few Intel SoCFPGA platforms (S10, Agilex and N5x). So, if using .nam=
+e for
+> this patch is acceptable then I will upgrade clk-agilex.c in future submi=
+ssion.
 
-Applied to clk-fixes
+It is not acceptable. We don't want there to only be a name member set
+in a clk_parent_data structure. In fact, this driver is simply wrong
+because it has many clk_parent_data structures with .fw_name =3D=3D .name
+and I don't see any 'clock-names' property in the DT bindings. The
+driver looks like it should simply use clk_hw pointers directly and stop
+using clk_parent_data structures entirely.
+
+> diff --git a/drivers/clk/socfpga/clk-agilex.c b/drivers/clk/socfpga/clk-a=
+gilex.c
+> index 6b65a74aefa6..38ea7e7f600b 100644
+> --- a/drivers/clk/socfpga/clk-agilex.c
+> +++ b/drivers/clk/socfpga/clk-agilex.c
+> @@ -1,6 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  /*
+> - * Copyright (C) 2019, Intel Corporation
+> + * Copyright (C) 2019-2023, Intel Corporation
+>   */
+>  #include <linux/slab.h>
+>  #include <linux/clk-provider.h>
+> @@ -8,6 +8,7 @@
+>  #include <linux/platform_device.h>
+> =20
+>  #include <dt-bindings/clock/agilex-clock.h>
+> +#include <dt-bindings/clock/intel,agilex5-clkmgr.h>
+> =20
+>  #include "stratix10-clk.h"
+> =20
+> @@ -40,6 +41,44 @@ static const struct clk_parent_data mpu_free_mux[] =3D=
+ {
+>           .name =3D "f2s-free-clk", },
+>  };
+> =20
+> +static const struct clk_parent_data core0_free_mux[] =3D {
+> +       { .name =3D "main_pll_c1" },
+
+This is equivalent to the above.
+
+	{ .name =3D "main_pll_c1", .index =3D 0 },
+
+and thus the index will be used. Luckily there's no clocks property in
+DT? But it also means that you're trying to lookup a clk from DT and
+falling back to the name field eventually, i.e. we're wasting time
+during parent discovery.
+
+> +       { .name =3D "peri_pll_c0" },
+> +       { .name =3D "osc1" },
+> +       { .name =3D "cb-intosc-hs-div2-clk" },
+> +       { .name =3D "f2s-free-clk" },
+> +};
+> +
