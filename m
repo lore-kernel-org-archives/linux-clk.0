@@ -2,215 +2,91 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE2B0CDB482
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Oct 2023 07:40:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23973CDB46E
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Oct 2023 08:31:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377933AbjJLHk0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Oct 2023 03:40:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34644 "EHLO
+        id S233712AbjJLIb2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Oct 2023 04:31:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235331AbjJLHkW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Oct 2023 03:40:22 -0400
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D689D3
-        for <linux-clk@vger.kernel.org>; Thu, 12 Oct 2023 00:40:20 -0700 (PDT)
-Received: by mail-pf1-x42f.google.com with SMTP id d2e1a72fcca58-690bd8f89baso536253b3a.2
-        for <linux-clk@vger.kernel.org>; Thu, 12 Oct 2023 00:40:20 -0700 (PDT)
+        with ESMTP id S235431AbjJLIb1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Oct 2023 04:31:27 -0400
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D16B91;
+        Thu, 12 Oct 2023 01:31:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697096420; x=1697701220; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WeyFnsq7kj9nc73z+mJcYj/SpiIQNbMhSQED5EpeFnk=;
-        b=J2YsdFYQ2M8Nck2NuIb55XvT7ouEU99gTX4h7OsZE8vL7D6pwGoK60bwO2T9BJXbG8
-         JMNo062PU3Cc/fUPbDKWoblALxERXIlGXz/95ioDPWKGk8zE0xuqZXe7VqTXFofxncQ2
-         25z4J9nW5vDhCkYUMWfFanRyG6YFUeV2At7B/k/4FbcTTYx+ABDS6qNu7a/iC1WTF6Ud
-         o1ZUZ4vAvLQspjUMSl+reTDAqkgw1wrlelzXINM2IMONcV+F88uaehpjRnOpFotNMHfN
-         mEFDcQoUCmxZy0O3SXOcNDlxOV/avXxkAGukvubRWpPeyE5Gpmc7yxE7JPai1lDhSWYk
-         Nb0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697096420; x=1697701220;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WeyFnsq7kj9nc73z+mJcYj/SpiIQNbMhSQED5EpeFnk=;
-        b=lCr0w1KsuYfi9a8en3+JlUVo1ynb9FD+SeFmMSYDVOrO9j+JOAOXFmMOke5BqgC/Pi
-         21f5iJZbg6bPgg693HUN+xZ9vL5wmMzNFQWcDZ9LAQuDx0UoqFolYVWxjRq7HFJrDEAr
-         SaFKOn7vuPuoBQZ+kQsgVQegjDjLZOJEKmP02c22kazHmHVXud0ji78qt7zru0J3MDlM
-         w4E3qu3axPM0yG99Chmj3Psl/NUq2+DAKwVMDUuUwbi2kr6Az5HzS9wDLYAG4u6m1Vye
-         1t7honuhFr8FQxun79Ow9TUvO8hL9FsFCqbb1YJn4QdEBH54BsAmuTBF9WqqNTKD3q3p
-         03Hw==
-X-Gm-Message-State: AOJu0Yy05EeboMVvb5YBEZ19CM5hBsjlKFapBe2TAkpFwmM4EgFjPB8c
-        QXPJfMyjrFx6uEbhYioLemV4WkC5E7onao3L7XYLuw==
-X-Google-Smtp-Source: AGHT+IH/pqOJSGAUpimWG1P472lbC+Hea49S/OE3uBkgKRUitvR9pB1D0mSrJquRil0M1gwvWAx/gEyoiscMqY9skRo=
-X-Received: by 2002:a05:6a20:4286:b0:159:e0b9:bd02 with SMTP id
- o6-20020a056a20428600b00159e0b9bd02mr25980791pzj.40.1697096419671; Thu, 12
- Oct 2023 00:40:19 -0700 (PDT)
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1697099485; x=1728635485;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=annNMPKhKuxfgD9AX+6CdDKWsjBnFe8TKZvClcTuvys=;
+  b=lsWZVj5XWEAc4Vdd65hlYMOehaplVEFvm6FM/F1dPc0E0XSnomvczAOA
+   VP5xJ+iHanVSJbFKLBzCXi7CfEKldbPyjZHDoJj99lb2qFCtx5gmIoUBj
+   GTNjIOHeuxBrs3xJYHkKMIXkZm0thkdpzuQj8Z68m4Yox9suPXy2J/2ft
+   8H5kyipTW60PDfm3e/w3ShI9cU50lGECfCVwo7ItRGkMmscLKcpt7XyiP
+   2bys09F1HgO0bl8IAHY5S0mo0w/yvYfdEs8r1/u9tx7OqxrBA2eTHC7jT
+   IQOpRlWw0qQy7IwgKcCh5F0IPW+5y+hB1wbfiE2tUXo/LsOpVHqBAYj6F
+   Q==;
+X-IronPort-AV: E=Sophos;i="6.03,218,1694728800"; 
+   d="scan'208";a="33423940"
+Received: from vtuxmail01.tq-net.de ([10.115.0.20])
+  by mx1.tq-group.com with ESMTP; 12 Oct 2023 10:31:23 +0200
+Received: from steina-w.tq-net.de (steina-w.tq-net.de [10.123.53.18])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id 508B7280082;
+        Thu, 12 Oct 2023 10:31:23 +0200 (CEST)
+From:   Alexander Stein <alexander.stein@ew.tq-group.com>
+To:     Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>
+Cc:     Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 0/3] imx8m: Add CCM interrupts
+Date:   Thu, 12 Oct 2023 10:31:20 +0200
+Message-Id: <20231012083123.2729494-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20231011184823.443959-1-peter.griffin@linaro.org> <20231011184823.443959-19-peter.griffin@linaro.org>
-In-Reply-To: <20231011184823.443959-19-peter.griffin@linaro.org>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Thu, 12 Oct 2023 02:40:07 -0500
-Message-ID: <CAPLW+4mX5bK7zxpxS_1a5Gi1gG8UFRDpMehnSxxXibTFCn_Txg@mail.gmail.com>
-Subject: Re: [PATCH v3 18/20] arm64: dts: google: Add initial Oriole/pixel 6
- board support
-To:     Peter Griffin <peter.griffin@linaro.org>
-Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
-        tomasz.figa@gmail.com, s.nawrocki@samsung.com,
-        linus.walleij@linaro.org, wim@linux-watchdog.org,
-        linux@roeck-us.net, catalin.marinas@arm.com, will@kernel.org,
-        arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org,
-        cw00.choi@samsung.com, tudor.ambarus@linaro.org,
-        andre.draszik@linaro.org, saravanak@google.com,
-        willmcvicker@google.com, soc@kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        kernel-team@android.com, linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Oct 11, 2023 at 1:49=E2=80=AFPM Peter Griffin <peter.griffin@linaro=
-.org> wrote:
->
-> Add initial board support for the Pixel 6 phone code named Oriole. This
-> has been tested with a minimal busybox initramfs and boots to a shell.
->
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
->  arch/arm64/boot/dts/google/Makefile         |  4 ++
->  arch/arm64/boot/dts/google/gs101-oriole.dts | 79 +++++++++++++++++++++
->  2 files changed, 83 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/google/Makefile
->  create mode 100644 arch/arm64/boot/dts/google/gs101-oriole.dts
->
-> diff --git a/arch/arm64/boot/dts/google/Makefile b/arch/arm64/boot/dts/go=
-ogle/Makefile
-> new file mode 100644
-> index 000000000000..5cea8ff27141
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/google/Makefile
-> @@ -0,0 +1,4 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +dtb-$(CONFIG_ARCH_GOOGLE_TENSOR) +=3D \
-> +       gs101-oriole.dtb \
-> diff --git a/arch/arm64/boot/dts/google/gs101-oriole.dts b/arch/arm64/boo=
-t/dts/google/gs101-oriole.dts
-> new file mode 100644
-> index 000000000000..3bebca989d34
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/google/gs101-oriole.dts
-> @@ -0,0 +1,79 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Oriole Device Tree
-> + *
-> + * Copyright 2021-2023 Google,LLC
-> + */
-> +
-> +/dts-v1/;
-> +/plugin/;
+Hi,
 
-Why is this needed? Is that really not possible to build this board
-dts as actual dtb, not dtbo (and remove this 'plugin' line)? If GS
-bootloader is similar to Exynos850 bootloader, it should be possible
-to only use dtb, and flash empty dtbo image. Just a thought.
+this is v2 of the series adding i.MX8M CCM interrupts to SoC-DT.
+Patch 1 of v2 has already been applied in commit 6e6bb1639136f
+("dt-bindings: clock: imx8m: Add missing interrupt property").
 
-> +
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/input/input.h>
-> +#include "gs101-pinctrl.h"
-> +#include "gs101.dtsi"
-> +
-> +/ {
-> +       model =3D "Oriole";
-> +       compatible =3D "google,gs101-oriole", "google,gs101";
-> +
-> +       chosen {
-> +               bootargs =3D "earlycon=3Dexynos4210,mmio32,0x10A00000 con=
-sole=3DttySAC0";
+It's worth mentioning that these interrupts are mentioned in RM, but are
+currently unused by the CCM driver.
 
-Why is that earlycon is needed here? The serial should work fine (and
-actually even better) without that. Might be very useful for debugging
-though, but in production dts I'd remove that bit. Also, not sure why
-console is needed. Isn't it enough to just have something like:
+Changes in v2:
+* Rebased to next-20231012
 
-        stdout-path =3D &serial_0;
+Thanks,
+Alexander
 
-inside of /chosen node?
+Alexander Stein (3):
+  arm64: dts: imx8mp: Add CCM interrupts
+  arm64: dts: imx8mn: Add CCM interrupts
+  arm64: dts: imx8mm: Add CCM interrupts
 
-Btw, why isn't serial node enabled somewhere in this dts?
+ arch/arm64/boot/dts/freescale/imx8mm.dtsi | 2 ++
+ arch/arm64/boot/dts/freescale/imx8mn.dtsi | 2 ++
+ arch/arm64/boot/dts/freescale/imx8mp.dtsi | 2 ++
+ 3 files changed, 6 insertions(+)
 
-> +       };
-> +
-> +       gpio-keys {
-> +               compatible =3D "gpio-keys";
-> +               pinctrl-names =3D "default";
-> +               pinctrl-0 =3D <&key_voldown &key_volup &key_power>;
-> +
-> +               button-vol-down {
-> +                       label =3D "KEY_VOLUMEDOWN";
-> +                       linux,code =3D <KEY_VOLUMEDOWN>;
-> +                       gpios =3D <&gpa7 3 GPIO_ACTIVE_LOW>;
-> +                       wakeup-source;
-> +               };
-> +
-> +               button-vol-up {
-> +                       label =3D "KEY_VOLUMEUP";
-> +                       linux,code =3D <KEY_VOLUMEUP>;
-> +                       gpios =3D <&gpa8 1 GPIO_ACTIVE_LOW>;
-> +                       wakeup-source;
-> +               };
-> +
-> +               button-power {
-> +                       label =3D "KEY_POWER";
-> +                       linux,code =3D <KEY_POWER>;
-> +                       gpios =3D <&gpa10 1 GPIO_ACTIVE_LOW>;
-> +                       wakeup-source;
-> +               };
-> +       };
-> +};
-> +
-> +&pinctrl_1 {
-> +       key_voldown: key-voldown-pins {
-> +               samsung,pins =3D "gpa7-3";
-> +               samsung,pin-function =3D <0xf>;
-> +               samsung,pin-pud =3D <0>;
+-- 
+2.34.1
 
-Here and further: maybe replace pid-function and pin-pud hard-coded
-values with corresponding named constants?
-
-> +               samsung,pin-drv =3D <GS101_PIN_DRV_2_5_MA>;
-> +       };
-> +
-> +       key_volup: key-volup-pins {
-> +               samsung,pins =3D "gpa8-1";
-> +               samsung,pin-function =3D <0xf>;
-> +               samsung,pin-pud =3D <0>;
-> +               samsung,pin-drv =3D <GS101_PIN_DRV_2_5_MA>;
-> +       };
-> +};
-> +
-> +&pinctrl_0 {
-> +       key_power: key-power-pins {
-> +               samsung,pins =3D "gpa10-1";
-> +               samsung,pin-function =3D <0xf>;
-> +               samsung,pin-pud =3D <0>;
-> +               samsung,pin-drv =3D <GS101_PIN_DRV_2_5_MA>;
-> +       };
-> +};
-> +
-> +&watchdog_cl0 {
-> +       timeout-sec =3D <30>;
-
-No status =3D "okay" here? The same question goes for wdt_cl1.
-
-> +};
-> --
-> 2.42.0.655.g421f12c284-goog
->
