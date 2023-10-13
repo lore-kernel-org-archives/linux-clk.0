@@ -2,116 +2,60 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2227ECDB47E
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Oct 2023 05:55:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2729ECDB47E
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Oct 2023 06:09:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229632AbjJMFzT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Oct 2023 01:55:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43388 "EHLO
+        id S229671AbjJMGJF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Oct 2023 02:09:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229684AbjJMFzS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Oct 2023 01:55:18 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B780AC0
-        for <linux-clk@vger.kernel.org>; Thu, 12 Oct 2023 22:55:15 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id 4fb4d7f45d1cf-53e0d21a4easo2389558a12.1
-        for <linux-clk@vger.kernel.org>; Thu, 12 Oct 2023 22:55:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1697176514; x=1697781314; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oYHZdMFA6OQbagkrLvPrbN3TwwM9BrhoqWPjC6tbAtk=;
-        b=NqjM2d63W9cMlsFqB+kwBGI6Zdb5Et0SdPJnSI74XlYSl7xneWpEc4G6feGNJB7cMJ
-         gKD4EhWJkN7wKmiElaKZ7tBxCNiOGLLlOuYK+B976HEEkHDzVr9jK836VarI+NzaZtek
-         TWDEHpVrXcfzczy67VqAzvlkc48jR6zicuRARqjJJ6rSFyQtPZ5FpiEBlMtIT577MD2J
-         sXZVAicVnmFVsUtsYCX/+HTbEx8No4p1GAJMhq/YbqHdzEjmDP/Kmp4mKO8d+yjcCRXo
-         TkY2PCM1efcj/XQ4PDvQxhichr7TEGaLtsHMWfyBaA68MN/ZGeZbkH9jwLdhSQG0i9fO
-         Hdlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697176514; x=1697781314;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oYHZdMFA6OQbagkrLvPrbN3TwwM9BrhoqWPjC6tbAtk=;
-        b=C0APDNBJio8el1nnXm134sUVX5c9aKjmTKFD40Si1cMGtiCzuSP1Rr8VK8xWExHb7X
-         3hX1iJ1iyStvTb5lCDKIyKxqAx/jFhE2pEgaeDRZ/CZLZeEVThJAmcqO0RWhg37kT7AP
-         tveMNs9S/W1rR2q6lu0xiAwbEnESemzbOlRjYsFXPvGb1hhrYa7MkQZ6tcmXODr4IK8u
-         arKRYC/jitk8Q70csAK67gbe8yVewtRPR6WnzWvUlSPnTlaxrbdKVfGaFVZfXXNE6Ca8
-         wU4+AQac0VDD7JupHLsH3blASYfgYu1ePZdbkDtZQ6v/EiiVPWL4LyucE0PrAw6e05D8
-         oQpg==
-X-Gm-Message-State: AOJu0YwJWAa3yi2PA5Qw1SYdfwOutPlIGfXWxJh4V6+QMBeiTgUNhe8B
-        su7G2vQ8fCd12w84DztlUIB8fA==
-X-Google-Smtp-Source: AGHT+IFFh3iNNCKrv7qa7ps1KepqR4A5yjCxBztpy/J6r0rr1ZsGCqYF7OpwdshOCE+3/c95sGEksA==
-X-Received: by 2002:aa7:d947:0:b0:531:9c1:8271 with SMTP id l7-20020aa7d947000000b0053109c18271mr23383511eds.14.1697176514187;
-        Thu, 12 Oct 2023 22:55:14 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.133])
-        by smtp.gmail.com with ESMTPSA id f26-20020a50ee9a000000b0052e1783ab25sm11073824edr.70.2023.10.12.22.55.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Oct 2023 22:55:13 -0700 (PDT)
-Message-ID: <acc14d48-7b9c-4d7e-a642-077c3841b937@tuxon.dev>
-Date:   Fri, 13 Oct 2023 08:55:10 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/6] arm64: dts: renesas: rzg3s: Fix dtbs_check
-Content-Language: en-US
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     magnus.damm@gmail.com, robh+dt@kernel.org,
+        with ESMTP id S229437AbjJMGJF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Oct 2023 02:09:05 -0400
+Received: from mail.andi.de1.cc (unknown [IPv6:2a02:c205:3004:2154::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39DE5C0;
+        Thu, 12 Oct 2023 23:09:02 -0700 (PDT)
+Received: from p5dc58bc7.dip0.t-ipconnect.de ([93.197.139.199] helo=aktux)
+        by mail.andi.de1.cc with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <andreas@kemnade.info>)
+        id 1qrBLs-004u5D-Rg; Fri, 13 Oct 2023 08:08:48 +0200
+Date:   Fri, 13 Oct 2023 08:08:46 +0200
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     dmitry.torokhov@gmail.com, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20231010132701.1658737-1-claudiu.beznea.uj@bp.renesas.com>
- <20231010132701.1658737-7-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdVwO--GrdDP8pUHq-k5cVR31dGdvEM73z2E+NLEbD8GRw@mail.gmail.com>
-From:   claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <CAMuHMdVwO--GrdDP8pUHq-k5cVR31dGdvEM73z2E+NLEbD8GRw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        lee@kernel.org, bcousson@baylibre.com, tony@atomide.com,
+        mturquette@baylibre.com, sboyd@kernel.org, andreas@kemnade.info,
+        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 4/5] clk: twl: add clock driver for TWL6032
+Message-ID: <20231013080846.2422475f@aktux>
+In-Reply-To: <20230916100515.1650336-5-andreas@kemnade.info>
+References: <20230916100515.1650336-1-andreas@kemnade.info>
+        <20230916100515.1650336-5-andreas@kemnade.info>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.37; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi, Geert,
+On Sat, 16 Sep 2023 12:05:14 +0200
+Andreas Kemnade <andreas@kemnade.info> wrote:
 
-On 12.10.2023 17:49, Geert Uytterhoeven wrote:
-> Hi Claudiu,
+> The TWL6032 has some clock outputs which are controlled like
+> fixed-voltage regulators, in some drivers for these chips
+> found in the wild, just the regulator api is abused for controlling
+> them, so simply use something similar to the regulator functions.
+> Due to a lack of hardware available for testing, leave out the
+> TWL6030-specific part of those functions.
 > 
-> On Tue, Oct 10, 2023 at 3:27 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> Fix the following DTBS check warnings:
->>
->> arch/arm64/boot/dts/renesas/r9a08g045s33-smarc.dt: /: memory@48000000: 'device-type' does not match any of the regexes: 'pinctrl-[0-9]+'
->>         from schema $id: http://devicetree.org/schemas/memory.yaml#
->> arch/arm64/boot/dts/renesas/r9a08g045s33-smarc.dtb: /: memory@48000000: 'device_type' is a required property
->>         from schema $id: http://devicetree.org/schemas/memory.yaml#
->> arch/arm64/boot/dts/renesas/r9a08g045s33-smarc.dtb: cache-controller-0: 'cache-level' is a required property
->>         from schema $id: http://devicetree.org/schemas/cache.yaml#
->> arch/arm64/boot/dts/renesas/r9a08g045s33-smarc.dtb: cache-controller-0: 'cache-level' is a required property
->>         from schema $id: http://devicetree.org/schemas/cache.yaml#
->> arch/arm64/boot/dts/renesas/r9a08g045s33-smarc.dtb: cache-controller-0: Unevaluated properties are not allowed ('cache-size', 'cache-unified' were unexpected)
->>         from schema $id: http://devicetree.org/schemas/cache.yaml#
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> Thanks for your patch!
-> 
->>  arch/arm64/boot/dts/renesas/r9a08g045.dtsi       | 1 +
->>  arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi | 2 +-
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> i.e. will queue in renesas-devel for v6.7, split in two parts.
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> ---
+ping...
 
-I see you already did the split and applied, thank you for that. I was in
-between choosing to split it or to have it like a bulk patch.
+anything left to do here?
 
-Thank you,
-Claudiu Beznea
-
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+Regards,
+Andreas
