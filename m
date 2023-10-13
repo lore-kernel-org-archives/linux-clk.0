@@ -2,60 +2,236 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2729ECDB47E
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Oct 2023 06:09:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6BE6C41513
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Oct 2023 07:37:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229671AbjJMGJF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Oct 2023 02:09:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36496 "EHLO
+        id S229886AbjJMHhN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Oct 2023 03:37:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229437AbjJMGJF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Oct 2023 02:09:05 -0400
-Received: from mail.andi.de1.cc (unknown [IPv6:2a02:c205:3004:2154::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39DE5C0;
-        Thu, 12 Oct 2023 23:09:02 -0700 (PDT)
-Received: from p5dc58bc7.dip0.t-ipconnect.de ([93.197.139.199] helo=aktux)
-        by mail.andi.de1.cc with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <andreas@kemnade.info>)
-        id 1qrBLs-004u5D-Rg; Fri, 13 Oct 2023 08:08:48 +0200
-Date:   Fri, 13 Oct 2023 08:08:46 +0200
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     dmitry.torokhov@gmail.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        lee@kernel.org, bcousson@baylibre.com, tony@atomide.com,
-        mturquette@baylibre.com, sboyd@kernel.org, andreas@kemnade.info,
-        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 4/5] clk: twl: add clock driver for TWL6032
-Message-ID: <20231013080846.2422475f@aktux>
-In-Reply-To: <20230916100515.1650336-5-andreas@kemnade.info>
-References: <20230916100515.1650336-1-andreas@kemnade.info>
-        <20230916100515.1650336-5-andreas@kemnade.info>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.37; x86_64-pc-linux-gnu)
+        with ESMTP id S229441AbjJMHhM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Oct 2023 03:37:12 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82BC7BF
+        for <linux-clk@vger.kernel.org>; Fri, 13 Oct 2023 00:37:09 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-3296b49c546so1507813f8f.3
+        for <linux-clk@vger.kernel.org>; Fri, 13 Oct 2023 00:37:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1697182628; x=1697787428; darn=vger.kernel.org;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
+        bh=QwkBCdmPcWNU+7PsxxS80Z7HY5APZAn6IaUDRF9z/7g=;
+        b=afrbKrDIKG/tg4AdpJONU+1GImk7PLAJzJpO+ZX8JRaBXM4M+Busu6qDuqN2+B/sSg
+         3IYcuGFpvGtnCpGtZ7C/KA4RxgCG9YEzaxtYklQMKHWE7ft/+ds7f7jm3K4WWTkYSX16
+         gHlFMpPCJP5WRjbvJ6+mzx7m9Eqfa+lheP0FNno7j97JJ7aCu8CSe4feI+wIunYjU+mx
+         p2175nWu+jM2X/XQ/nm57blM7RQ5LhlZLvh+VwWNkEybViALHHEDV3rUS6TVbRSFlgRb
+         S0B755R4uxKlK/VmgVwk1r7ftbIWm7cyc9Xy8l/s7KKipc4A3re3PVAICWi7nxk5voq6
+         g9ZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697182628; x=1697787428;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QwkBCdmPcWNU+7PsxxS80Z7HY5APZAn6IaUDRF9z/7g=;
+        b=M0xf0h11oxDjpFbaPHDfheXhOVVw5PxpyZ+2UEGK1tM6KVwwcj4NtfoxdT3IDBOmjp
+         Nf87hgAkRQKjQTurQBwgJezJda2bCsIUvX++M/HNlWQ8HzgcbuXa4nQtQQdaVYSBHB8F
+         4SCyrXdUsQsAK7WQVfStZHoTWOxZ9X8+cVTZ+Mux/xo92JyTgERmfyDDfrzYl4JGMO9X
+         CYomn7zGG7riVMyOx7MVnep0wziM5+mQLneJIJhwR7YWRVLFlndoBkzbO5kECd84B+9K
+         uusfUa5LZfImW5oR5vsynW0wcALrRBvQ2EGaH++KG3s5KuDWIGEK6S2bEf9shgQPbgJP
+         wtiw==
+X-Gm-Message-State: AOJu0YzG2NYDrjR1xrjYPJrA4cNGHr1iq92anAHpenSwb/elyTx/wRlX
+        QnhUNpNytvzWt7hjlg8KhpcsKw==
+X-Google-Smtp-Source: AGHT+IF47D5nfuOO1fNDgKrLpZfZIR3LU3/kd21Io+xC0N4oet37n+Sg+1yz+OLQlDvBMZndbRb35Q==
+X-Received: by 2002:a05:6000:5c6:b0:32d:5870:8b8a with SMTP id bh6-20020a05600005c600b0032d58708b8amr9030172wrb.56.1697182627837;
+        Fri, 13 Oct 2023 00:37:07 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:b50c:c5d5:8b1b:e06d])
+        by smtp.gmail.com with ESMTPSA id r6-20020a5d4946000000b0032da022855fsm235205wrs.111.2023.10.13.00.37.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Oct 2023 00:37:07 -0700 (PDT)
+References: <20231010062917.3624223-1-xianwei.zhao@amlogic.com>
+ <20231010062917.3624223-2-xianwei.zhao@amlogic.com>
+ <20231010132151.GA557938-robh@kernel.org>
+ <291f03f9-72aa-2842-b44a-c88c812df4f1@amlogic.com>
+User-agent: mu4e 1.8.13; emacs 29.1
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Xianwei Zhao <xianwei.zhao@amlogic.com>,
+        Rob Herring <robh@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Chuan Liu <chuan.liu@amlogic.com>
+Subject: Re: [PATCH V2 1/4] dt-bindings: clock: add Amlogic C3 PLL clock
+ controller bindings
+Date:   Fri, 13 Oct 2023 09:35:26 +0200
+In-reply-to: <291f03f9-72aa-2842-b44a-c88c812df4f1@amlogic.com>
+Message-ID: <1jr0lzvuql.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 16 Sep 2023 12:05:14 +0200
-Andreas Kemnade <andreas@kemnade.info> wrote:
 
-> The TWL6032 has some clock outputs which are controlled like
-> fixed-voltage regulators, in some drivers for these chips
-> found in the wild, just the regulator api is abused for controlling
-> them, so simply use something similar to the regulator functions.
-> Due to a lack of hardware available for testing, leave out the
-> TWL6030-specific part of those functions.
-> 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> ---
-ping...
+On Wed 11 Oct 2023 at 10:50, Xianwei Zhao <xianwei.zhao@amlogic.com> wrote:
 
-anything left to do here?
+> Hi Rob,
+>     Thanks for your advise.
+>
+> On 2023/10/10 21:21, Rob Herring wrote:
+>> [ EXTERNAL EMAIL ]
+>> On Tue, Oct 10, 2023 at 02:29:14PM +0800, Xianwei Zhao wrote:
+>>> Add the C3 PLL clock controller dt-bindings for Amlogic C3 SoC family
+>>>
+>>> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+>>> ---
+>>> V1 -> V2: Fix errors when check dtbinding use "make dt_binding_check"
+>> Your patches aren't bisectable. It's fine if you want to combine patch 1
+>> and 2 into 1 patch. Or just use the raw numbers here instead of the
+>> header.
+>> 
+> I will combine patch 1 and 2 into 1 patch in V3.
 
-Regards,
-Andreas
+I'd prefer if you used raw ids or even fake node for the example, like
+<&pll_in> and <&mpll_in> for readability, rather than combining the patches
+
+>>> ---
+>>>   .../bindings/clock/amlogic,c3-pll-clkc.yaml   | 59 +++++++++++++++++++
+>>>   .../dt-bindings/clock/amlogic,c3-pll-clkc.h   | 42 +++++++++++++
+>>>   2 files changed, 101 insertions(+)
+>>>   create mode 100644 Documentation/devicetree/bindings/clock/amlogic,c3-pll-clkc.yaml
+>>>   create mode 100644 include/dt-bindings/clock/amlogic,c3-pll-clkc.h
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/clock/amlogic,c3-pll-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,c3-pll-clkc.yaml
+>>> new file mode 100644
+>>> index 000000000000..a646992917b7
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/clock/amlogic,c3-pll-clkc.yaml
+>>> @@ -0,0 +1,59 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>> +# Copyright (C) 2022-2023 Amlogic, Inc. All rights reserved
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/clock/amlogic,c3-pll-clkc.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Amlogic C3 serials PLL Clock Controller
+>> s/serials/Serials/
+>> 
+> Will fix
+>>> +
+>>> +maintainers:
+>>> +  - Chuan Liu <chuan.liu@amlogic.com>
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    const: amlogic,c3-pll-clkc
+>>> +
+>>> +  reg:
+>>> +    maxItems: 1
+>>> +
+>>> +  clocks:
+>>> +    minItems: 1
+>>> +    items:
+>>> +      - description: input pll_in
+>>> +      - description: input mclk_pll_in
+>>> +
+>>> +  clock-names:
+>>> +    minItems: 1
+>>> +    items:
+>>> +      - const: pll_in
+>>> +      - const: mclk_pll_in
+>>> +
+>>> +  "#clock-cells":
+>>> +    const: 1
+>>> +
+>>> +required:
+>>> +  - compatible
+>>> +  - reg
+>>> +  - clocks
+>>> +  - clock-names
+>>> +  - "#clock-cells"
+>>> +
+>>> +additionalProperties: false
+>>> +
+>>> +examples:
+>>> +  - |
+>>> +    #include <dt-bindings/clock/amlogic,c3-peripherals-clkc.h>
+>>> +    apb {
+>>> +        #address-cells = <2>;
+>>> +        #size-cells = <2>;
+>>> +
+>>> +        clkc_pll: clock-controller@8000 {
+>> Drop unused labels.
+>> 
+> Will delete clkc_pll.
+>>> +          compatible = "amlogic,c3-pll-clkc";
+>> Your indentation is not consistent.
+>> 
+> Will fix it in V3.
+>>> +          reg = <0x0 0x8000 0x0 0x1a4>;
+>>> +          clocks = <&clkc_periphs CLKID_PLL_IN>,
+>>> +                   <&clkc_periphs CLKID_MCLK_PLL_IN>;
+>>> +          clock-names = "pll_in", "mclk_pll_in";
+>>> +          #clock-cells = <1>;
+>>> +        };
+>>> +    };
+>>> diff --git a/include/dt-bindings/clock/amlogic,c3-pll-clkc.h b/include/dt-bindings/clock/amlogic,c3-pll-clkc.h
+>>> new file mode 100644
+>>> index 000000000000..aa731e8fae29
+>>> --- /dev/null
+>>> +++ b/include/dt-bindings/clock/amlogic,c3-pll-clkc.h
+>>> @@ -0,0 +1,42 @@
+>>> +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
+>>> +/*
+>>> + * Copyright (c) 2023 Amlogic, Inc. All rights reserved.
+>>> + * Author: Chuan Liu <chuan.liu@amlogic.com>
+>>> + */
+>>> +
+>>> +#ifndef _DT_BINDINGS_CLOCK_AMLOGIC_C3_PLL_CLKC_H
+>>> +#define _DT_BINDINGS_CLOCK_AMLOGIC_C3_PLL_CLKC_H
+>>> +
+>>> +#define CLKID_FIXED_PLL_DCO                  0
+>>> +#define CLKID_FIXED_PLL                              1
+>>> +#define CLKID_FCLK_DIV40_DIV                 2
+>>> +#define CLKID_FCLK_DIV40                     3
+>>> +#define CLKID_FCLK_DIV2_DIV                  4
+>>> +#define CLKID_FCLK_DIV2                              5
+>>> +#define CLKID_FCLK_DIV2P5_DIV                        6
+>>> +#define CLKID_FCLK_DIV2P5                    7
+>>> +#define CLKID_FCLK_DIV3_DIV                  8
+>>> +#define CLKID_FCLK_DIV3                              9
+>>> +#define CLKID_FCLK_DIV4_DIV                  10
+>>> +#define CLKID_FCLK_DIV4                              11
+>>> +#define CLKID_FCLK_DIV5_DIV                  12
+>>> +#define CLKID_FCLK_DIV5                              13
+>>> +#define CLKID_FCLK_DIV7_DIV                  14
+>>> +#define CLKID_FCLK_DIV7                              15
+>>> +#define CLKID_GP0_PLL_DCO                    16
+>>> +#define CLKID_GP0_PLL                                17
+>>> +#define CLKID_HIFI_PLL_DCO                   18
+>>> +#define CLKID_HIFI_PLL                               19
+>>> +#define CLKID_MCLK_PLL_DCO                   20
+>>> +#define CLKID_MCLK_PLL                               21
+>>> +#define CLKID_MCLK_PLL_CLK                   22
+>>> +#define CLKID_MCLK0_SEL                              23
+>>> +#define CLKID_MCLK0_SEL_OUT                  24
+>>> +#define CLKID_MCLK0_DIV                              25
+>>> +#define CLKID_MCLK0                          26
+>>> +#define CLKID_MCLK1_SEL                              27
+>>> +#define CLKID_MCLK1_SEL_OUT                  28
+>>> +#define CLKID_MCLK1_DIV                              29
+>>> +#define CLKID_MCLK1                          30
+>>> +
+>>> +#endif  /* _DT_BINDINGS_CLOCK_AMLOGIC_C3_PLL_CLKC_H */
+>>>
+>>> base-commit: 57b55c76aaf1ba50ecc6dcee5cd6843dc4d85239
+>>> --
+>>> 2.37.1
+>>>
+
