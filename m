@@ -2,104 +2,107 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF583CDB47E
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Oct 2023 15:56:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FE63CDB482
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Oct 2023 16:41:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232526AbjJMP4Y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Oct 2023 11:56:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34498 "EHLO
+        id S232280AbjJMQlF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Oct 2023 12:41:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232501AbjJMP4V (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Oct 2023 11:56:21 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A61FBF
-        for <linux-clk@vger.kernel.org>; Fri, 13 Oct 2023 08:56:18 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id ffacd0b85a97d-32d9b507b00so797162f8f.1
-        for <linux-clk@vger.kernel.org>; Fri, 13 Oct 2023 08:56:18 -0700 (PDT)
+        with ESMTP id S232399AbjJMQkx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Oct 2023 12:40:53 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5D11D49;
+        Fri, 13 Oct 2023 09:40:31 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-9bdf5829000so67243666b.0;
+        Fri, 13 Oct 2023 09:40:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nexus-software-ie.20230601.gappssmtp.com; s=20230601; t=1697212577; x=1697817377; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rL18hk5JsFe4nXO4KOVUi65U7rixgreCJydX/X6y9mk=;
-        b=MFNMVQWIr33fr2xNVIQ62hr6045OYsT6A6NdQDqCN+o3+1kM5q5Or/4WEYsuErirFq
-         h+XAaFwTsxn0/IUjegURXb0zWIm9GewtqwPgVHCsr6QGQPM0MJaHpYlsFsWH7/BzX62v
-         bXepjcwN5coQQGwRpzBuiLgxlQJo70X5Db/qShAvK2c+lAeKwFprLQyu7jZBFCiCcBXY
-         rFcd6g9XPqqvsxEA/hA7tsnoCMqCxLAAFQ1n9ET1mHdHHpF6p58o8VReK9m5V4bIFTrd
-         EgOGeH2FHeAujzddTdb4mTJXAegRZ2AEmDh1nWSGy6zTXMmflP4UV6cESzN9CHwQQkJy
-         nEZg==
+        d=gmail.com; s=20230601; t=1697215230; x=1697820030; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qbunySK2ORAUFspaIT6piWBLusGPbytUTvQrXLVvdqg=;
+        b=mPmROBSlvXpT35Fcc9zEtnWZfD/e+bw0E0QTw1VyaRtVhkbT7m7ZX7os1wCOVEHArY
+         A9xnok/XQ026tiykVIjzjQ4zHFnYLfsDKWyHMesqljTdG7AscmMt86EfJycfNjseV/ip
+         Xvdc0FpDW+rXshU17ElFo6Z4ofEBBH1CThkRUyVePriPjO2ZwiDUxbPI1jzpDp50y727
+         Q/29PwYmkFF1MKNo6MyMhMEeoBnierHTuUgqAOn8VK2ZiKd/FFUdiqjjFq1CgCsWL1ij
+         hqV4bfb3wYir9YqJwgw7jExEW2HLWO2RXs9dgVNbgWTlf+KN3I9VxzGvOQmNOpyzXAiR
+         +P/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697212577; x=1697817377;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rL18hk5JsFe4nXO4KOVUi65U7rixgreCJydX/X6y9mk=;
-        b=N+q5new+118mQZ5+0y1OAUR6HejIevdz4m9f7sbDw/ScvJ7IM8FhJUhHaVc1HOnwsf
-         nu766s//v7/x8H2PsYWzLzoOffApERL2LVBwMZLuR+iHn2+N80FMmHfXTLjooBhvYjI1
-         BuOft/aKu46opo//w/hEl35y90KXWss3bINrTi06d3z6e2/7CqpEf4IH00V+ITEub0ul
-         0mNuhUVoAfy0z4QTbCmSK1pz+O072QV8gpsIp6pMIDGCLw7wNpEn45YRNzSzLl5jJDsb
-         xfsdA2xE3aYY90f3CPhl/wKpOQQhsCRXOaWLbf2TJBhbOv4eoZ8T3N0Pkl+8b1ZKh8yJ
-         lrmQ==
-X-Gm-Message-State: AOJu0YyQugcaYXfxVX7MrsgeJUZf3wFxTZO4U588xtSD/GyQb52B+6U+
-        39/irBXrmn/7HODFKhBixLqWrA==
-X-Google-Smtp-Source: AGHT+IFCoo0IzBlMAA4TrE2I6pvmzmCXr+kr/lGD7qgNi5epMPiamTtxMdZhyMwsiYp+iIcP5iaD6w==
-X-Received: by 2002:a05:6000:1001:b0:32d:81fe:7104 with SMTP id a1-20020a056000100100b0032d81fe7104mr7622602wrx.63.1697212576925;
-        Fri, 13 Oct 2023 08:56:16 -0700 (PDT)
-Received: from [192.168.100.102] ([37.228.218.3])
-        by smtp.gmail.com with ESMTPSA id t15-20020a05600c450f00b0040651505684sm488980wmo.29.2023.10.13.08.56.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Oct 2023 08:56:16 -0700 (PDT)
-Message-ID: <6fab7459-42f1-4d3c-a777-d92ee000f243@nexus-software.ie>
-Date:   Fri, 13 Oct 2023 16:56:15 +0100
+        d=1e100.net; s=20230601; t=1697215230; x=1697820030;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qbunySK2ORAUFspaIT6piWBLusGPbytUTvQrXLVvdqg=;
+        b=hr4hhOWKFHX237KlA/fVzZYWmSpEUhXO9h2uo+0qi77ADG8FdlMxKPkS1DpOpzFjCp
+         Eyq3i/oYmkncMoLcSZSymKGaJCxFPCUOGohrGY9DV0Pm3X0ZbGdMmSFj29Mh83mv9hYI
+         7S6fIzzq4q3iYWvlpKTGSjV7wzf9gJ8Aq33jrjfYzCRubtf2PuJixPo2RRlV/jbF9E0c
+         IqHVUzq6wFJqhQYVaUN9L1cNZV43bxTJvwdgHJKc2j1VTYBdv1bHgMKAgniGSr8OzD58
+         IozRx0FCpZUKHRsMPYck/ovqZ2NbCk4qCSpzPIxsDVrn/dd1bM9GU7160T8OTjyGizuf
+         j38A==
+X-Gm-Message-State: AOJu0Yxi5+gtAaO7EcqRMC6eFMQW3oRTIq4rT58jZh+R58UUso0KH95k
+        V1Fva6W5otthqlCHz5WB9Hw=
+X-Google-Smtp-Source: AGHT+IHmj1mtIYgjRhCi/gpFtIh/PLAzhsfuBCj6bliBeaAAdrg4q4rzfoFqrlmUqK9Dw/TRupKN6w==
+X-Received: by 2002:a17:907:94cf:b0:9be:705:d7d0 with SMTP id dn15-20020a17090794cf00b009be0705d7d0mr833914ejc.0.1697215230003;
+        Fri, 13 Oct 2023 09:40:30 -0700 (PDT)
+Received: from fedora.. ([213.149.38.59])
+        by smtp.googlemail.com with ESMTPSA id rn4-20020a170906d92400b0099bc038eb2bsm12531902ejb.58.2023.10.13.09.40.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Oct 2023 09:40:29 -0700 (PDT)
+From:   Robert Marko <robimarko@gmail.com>
+To:     andersson@kernel.org, agross@kernel.org, konrad.dybcio@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Robert Marko <robimarko@gmail.com>
+Subject: [PATCH v3 2/2] arm64: dts: qcom: ipq8074: pass QMP PCI PHY PIPE clocks to GCC
+Date:   Fri, 13 Oct 2023 18:39:34 +0200
+Message-ID: <20231013164025.3541606-2-robimarko@gmail.com>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20231013164025.3541606-1-robimarko@gmail.com>
+References: <20231013164025.3541606-1-robimarko@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/4] media: dt-bindings: media: camss: Add
- qcom,sc8280xp-camss binding
-Content-Language: en-US
-To:     Rob Herring <robh@kernel.org>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc:     andersson@kernel.org, agross@kernel.org, konrad.dybcio@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        dmitry.baryshkov@linaro.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, jonathan@marek.ca, quic_tdas@quicinc.com,
-        vladimir.zapolskiy@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20231012113100.3656480-1-bryan.odonoghue@linaro.org>
- <20231012113100.3656480-4-bryan.odonoghue@linaro.org>
- <20231013140921.GA3773179-robh@kernel.org>
-From:   Bryan O'Donoghue <pure.logic@nexus-software.ie>
-In-Reply-To: <20231013140921.GA3773179-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 13/10/2023 15:09, Rob Herring wrote:
-> On Thu, Oct 12, 2023 at 12:30:59PM +0100, Bryan O'Donoghue wrote:
->> Add bindings for qcom,sc8280xp-camss in order to support the camera
->> subsystem for sc8280xp as found in the Lenovo x13s Laptop.
-> 
-> You don't need 2 'media' in the subject.
-> 
->>
->> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> ---
->> This patch depends-on:
->> https://lore.kernel.org/lkml/20231004161853.86382-2-bryan.odonoghue@linaro.org/T
-> 
-> Who is supposed to apply the above and this patch? Normally, this would
-> go thru the media tree, but you didn't send it to them or the media
-> list. 
+Pass QMP PCI PHY PIPE clocks to the GCC controller so it does not have to
+find them by matching globaly by name.
 
-Ah you're right.
+If not passed directly, driver maintains backwards compatibility by then
+falling back to global lookup.
 
-I've reused the list of recipients for the camcc series and missed Hans 
-from linux-media.
-
+Signed-off-by: Robert Marko <robimarko@gmail.com>
 ---
-bod
+Changes in v2:
+* Make clocks and clock-names one-per-line
+
+ arch/arm64/boot/dts/qcom/ipq8074.dtsi | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/qcom/ipq8074.dtsi b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
+index 38fcb2675b9a..d8e8a5cded64 100644
+--- a/arch/arm64/boot/dts/qcom/ipq8074.dtsi
++++ b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
+@@ -579,8 +579,14 @@ qpic_pins: qpic-state {
+ 		gcc: gcc@1800000 {
+ 			compatible = "qcom,gcc-ipq8074";
+ 			reg = <0x01800000 0x80000>;
+-			clocks = <&xo>, <&sleep_clk>;
+-			clock-names = "xo", "sleep_clk";
++			clocks = <&xo>,
++				 <&sleep_clk>,
++				 <&pcie_qmp0>,
++				 <&pcie_qmp1>;
++			clock-names = "xo",
++				      "sleep_clk",
++				      "pcie0_pipe",
++				      "pcie1_pipe";
+ 			#clock-cells = <1>;
+ 			#power-domain-cells = <1>;
+ 			#reset-cells = <1>;
+-- 
+2.41.0
 
