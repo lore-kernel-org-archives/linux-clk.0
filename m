@@ -2,284 +2,126 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E25DEC41513
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Oct 2023 17:11:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76753CDB47E
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Oct 2023 18:17:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230373AbjJMRLR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Oct 2023 13:11:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56388 "EHLO
+        id S231320AbjJMSRg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Oct 2023 14:17:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230458AbjJMRLQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Oct 2023 13:11:16 -0400
-Received: from mail-ua1-x932.google.com (mail-ua1-x932.google.com [IPv6:2607:f8b0:4864:20::932])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF251BB
-        for <linux-clk@vger.kernel.org>; Fri, 13 Oct 2023 10:11:12 -0700 (PDT)
-Received: by mail-ua1-x932.google.com with SMTP id a1e0cc1a2514c-7afc13d58c6so977008241.1
-        for <linux-clk@vger.kernel.org>; Fri, 13 Oct 2023 10:11:12 -0700 (PDT)
+        with ESMTP id S229988AbjJMSRd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Oct 2023 14:17:33 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9AFF83;
+        Fri, 13 Oct 2023 11:17:31 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-4054496bde3so24506175e9.1;
+        Fri, 13 Oct 2023 11:17:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697217072; x=1697821872; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=LCaH9FAxcQll+uhN0AKMs+mxsjgEJ8l5KA3S9uEcl4A=;
-        b=xa7SOz3ImD/jJ9BHFgcTMf35+J6DxSOy9LwYeruewsefIzhsDW1iQoku3mwO9xKGU/
-         sTmo8cYAgSSkAKQZWuWqA8mLkgcMTlYwZh4ImmMmq2wcyLi8muLeupaS0FYmrlrS+AaL
-         /uUXMGcQXDA+IYPyvpG+2d77DJu5hYV5KeVgxiVJLZ/hhiD2BFEZfiofaESpiWFQYpT/
-         f5wSZQ7Oen0+pLZBrke3u1rC3+1CoyTAUIqeZP8dEoHB40eGogsyoi2Iic/SKO38DbdE
-         WW+87Kw1sqoqcBMRoziOS6OI1GzY4mN3VhtMtbxQ+iRtx2ffsxFXPdhT7cSDk48NJorL
-         yM1A==
+        d=gmail.com; s=20230601; t=1697221050; x=1697825850; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=U9nTHaFndFfh4gMEpmSZ2pg3B4FHQG8rnUIGTQ2gc1Q=;
+        b=eaDVRIETxZjuepcdt4NyIkGX8DjgfMPiCg3UZ1SI3ZOGen8Qv32+NEXu2P1cnpqsG2
+         nJHMcLpQaUqjzF/lzsl4Dj9JhAilk2YoZMIxQ+tbGdaW2kKDbenYi68D+sO+XmTDJZmt
+         3EUibuAhdxtAsDT28rUIO/7F9UThZPmnYAAwG5XVHBSb2DIn1retqsc7mypS2gJdOYbK
+         nWP7Tqw7NhBpynaxFctiU59FDP9PNhJQUx3j5Um0xpfFjlpYu4ownkDH/yib/HPkGPzk
+         9+EAW7l8C6pZ6+TAgr40tu4ODCVdw4GW33bDd8dsoNKp5/s+FXKPJRbmiNnJ5i3E5bZj
+         ii2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697217072; x=1697821872;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LCaH9FAxcQll+uhN0AKMs+mxsjgEJ8l5KA3S9uEcl4A=;
-        b=c/zS2J3RstoDFnK/kASDe4zr453LzqJe2MmnGgZ/BxSZbxtZa3qFWmCbKNRAIH0DMl
-         u8wx4IncXFeBiNMPxOGx3W3i8/5pHHsqzI2sHLcRT+p2pzciFyT1zaH2ITp+GF1+P93g
-         1+8y1assJPtinR3JggUnxYlrF2FwHwoj6S12FjhPzgzYDTXKpP6GSjmRiZKy0R5ADqYS
-         2OSXJ4iXt8Z2ZSDQp3btr2WW/71EyXPQZWAvwQxmmZK/J4HwRrOiPci8jeiILFoKYOgx
-         Hk3yOsCszJBBL1yUSbTZhlupHuidDsizHvV9RxoMN1ugkKEAFOo16ZT37aER8fj34vVQ
-         wovA==
-X-Gm-Message-State: AOJu0YwCGSqlwiGLc5lJ7EBPduNn1e9Bn6AtPCr2HnJqFX/mIfUx+z4V
-        Kgvbmbc8EwHzpwTXDAbH/uMIEfMKM9XynFPWqGUzazAu5IllTmG/8hmcIQ==
-X-Google-Smtp-Source: AGHT+IHOQcE813YfP/iMX27AlZRWO0IvLUbkSTVcV/hLmWlwz9goai0MMXKoP5CmhUwHWKjXN1mkFEetWcaFy6yQgeA=
-X-Received: by 2002:a1f:4b85:0:b0:49d:d73e:5d07 with SMTP id
- y127-20020a1f4b85000000b0049dd73e5d07mr18361683vka.16.1697217071583; Fri, 13
- Oct 2023 10:11:11 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1697221050; x=1697825850;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=U9nTHaFndFfh4gMEpmSZ2pg3B4FHQG8rnUIGTQ2gc1Q=;
+        b=Cwl5xPcL+6x35yFvRgcpZNnTeaLtbzvjWShhdbZQsVZ295ZHAlE2LcbvGQEeychZVI
+         vmknV7SZVR14aImVWsdQpw8V6Fti4OL0XEJztmGcDh1C5qpPQ08kMYfVf1QmLrgZlaMM
+         ekd2DemolqVX41rw23evxOxtQrgUQaqWIJ5ZlqImxr90WtBQyZ7tid3FncgmXDQUH4sB
+         D7ymG5PuyZAAuXfevcymuHLvqhSUaCQqI3dwlokV5ebBEBUydAYJZxA2ZCZeivfdH7lg
+         xXJ99rmefvALx0+MszNptdzwWxZAbLvFQx7k2B+pEarsnAmfpG2+6EvZxNS5AjIq6hCG
+         az8Q==
+X-Gm-Message-State: AOJu0Yz6n0TiNK5j2VfO5+I2hH8mVQ+64QresdplR1LmaRCw0nzN5ppg
+        bpoZ8h9L9/r7fEydVjBvn3E=
+X-Google-Smtp-Source: AGHT+IEMQY+8CQG2bWBaKCxftHAZJe3ebRiK21zhKCFBNlUyZOjkFnTF7uZ1aniwLQKOsBk9CH5xOA==
+X-Received: by 2002:a05:600c:3586:b0:406:849c:52c3 with SMTP id p6-20020a05600c358600b00406849c52c3mr23139477wmq.22.1697221049878;
+        Fri, 13 Oct 2023 11:17:29 -0700 (PDT)
+Received: from localhost.localdomain ([188.159.248.16])
+        by smtp.gmail.com with ESMTPSA id r8-20020a05600c458800b004064cd71aa8sm800127wmo.34.2023.10.13.11.17.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Oct 2023 11:17:29 -0700 (PDT)
+From:   Jernej Skrabec <jernej.skrabec@gmail.com>
+To:     wens@csie.org, samuel@sholland.org
+Cc:     sboyd@kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Chad Wagner <wagnerch42@gmail.com>
+Subject: [PATCH] clk: sunxi-ng: h6: Reparent CPUX during PLL CPUX rate change
+Date:   Fri, 13 Oct 2023 20:17:12 +0200
+Message-ID: <20231013181712.2128037-1-jernej.skrabec@gmail.com>
+X-Mailer: git-send-email 2.42.0
 MIME-Version: 1.0
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Fri, 13 Oct 2023 22:41:00 +0530
-Message-ID: <CA+G9fYvFkJy=e2-CZz_GhTRr2DBDA3-ZBBrASmF9nQMPf-KrQA@mail.gmail.com>
-Subject: WARNING: possible circular locking dependency detected -
- clk_smd_rpm_set_rate (drivers/clk/qcom/clk-smd-rpm.c:321)
-To:     linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        lkft-triage@lists.linaro.org,
-        open list <linux-kernel@vger.kernel.org>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Dan Carpenter <dan.carpenter@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Following deadlock warning noticed on arm64 Qcom APQ 8016 SBC device with
-a given config (kselftest merge configs) while booting.
+While PLL CPUX clock rate change when CPU is running from it works in
+vast majority of cases, now and then it causes instability. This leads
+to system crashes and other undefined behaviour. After a lot of testing
+(30+ hours) while also doing a lot of frequency switches, we can't
+observe any instability issues anymore when doing reparenting to stable
+clock like 24 MHz oscillator.
 
-This is almost always reproducible with a given config.
-started happening from stable-rc v6.1.55.
+Fixes: 524353ea480b ("clk: sunxi-ng: add support for the Allwinner H6 CCU")
+Reported-by: Chad Wagner <wagnerch42@gmail.com>
+Link: https://forum.libreelec.tv/thread/27295-orange-pi-3-lts-freezes/
+Tested-by: Chad Wagner <wagnerch42@gmail.com>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+---
+ drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+index 42568c616181..892df807275c 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+@@ -1181,11 +1181,18 @@ static const u32 usb2_clk_regs[] = {
+ 	SUN50I_H6_USB3_CLK_REG,
+ };
+ 
++static struct ccu_mux_nb sun50i_h6_cpu_nb = {
++	.common		= &cpux_clk.common,
++	.cm		= &cpux_clk.mux,
++	.delay_us       = 1,
++	.bypass_index   = 0, /* index of 24 MHz oscillator */
++};
++
+ static int sun50i_h6_ccu_probe(struct platform_device *pdev)
+ {
+ 	void __iomem *reg;
++	int i, ret;
+ 	u32 val;
+-	int i;
+ 
+ 	reg = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(reg))
+@@ -1252,7 +1259,15 @@ static int sun50i_h6_ccu_probe(struct platform_device *pdev)
+ 	val |= BIT(24);
+ 	writel(val, reg + SUN50I_H6_HDMI_CEC_CLK_REG);
+ 
+-	return devm_sunxi_ccu_probe(&pdev->dev, reg, &sun50i_h6_ccu_desc);
++	ret = devm_sunxi_ccu_probe(&pdev->dev, reg, &sun50i_h6_ccu_desc);
++	if (ret)
++		return ret;
++
++	/* Reparent CPU during PLL CPUX rate changes */
++	ccu_mux_notifier_register(pll_cpux_clk.common.hw.clk,
++				  &sun50i_h6_cpu_nb);
++
++	return 0;
+ }
+ 
+ static const struct of_device_id sun50i_h6_ccu_ids[] = {
+-- 
+2.42.0
 
-Boot log:
--------
-[   28.082133] ======================================================
-[   28.082673] WARNING: possible circular locking dependency detected
-[   28.088664] 6.1.55 #1 Not tainted
-[   28.094813] ------------------------------------------------------
-[   28.098211] (udev-worker)/278 is trying to acquire lock:
-[   28.104285] ffff80000b2b2d30 (rpm_smd_clk_lock){+.+.}-{3:3}, at:
-clk_smd_rpm_set_rate (drivers/clk/qcom/clk-smd-rpm.c:321)
-[   28.109772]
-[   28.109772] but task is already holding lock:
-[   28.118525] ffff80000b49f3e0 (icc_bw_lock){+.+.}-{3:3}, at:
-icc_node_add (drivers/interconnect/core.c:973)
-[   28.124175]
-[   28.124175] which lock already depends on the new lock.
-[   28.124175]
-[   28.131729]
-[   28.131729] the existing dependency chain (in reverse order) is:
-[   28.140058]
-[   28.140058] -> #2 (icc_bw_lock){+.+.}-{3:3}:
-[   28.147518] icc_init (drivers/interconnect/core.c:1159 (discriminator 1))
-[   28.153235] do_one_initcall (init/main.c:1292)
-[   28.156884] kernel_init_freeable (init/main.c:1364 (discriminator
-3) init/main.c:1381 (discriminator 3) init/main.c:1400 (discriminator
-3) init/main.c:1620 (discriminator 3))
-[   28.161227] kernel_init (init/main.c:1510)
-[   28.165910] ret_from_fork (arch/arm64/kernel/entry.S:861)
-[   28.170077]
-[   28.170077] -> #1 (fs_reclaim){+.+.}-{0:0}:
-[   28.174079] fs_reclaim_acquire (mm/page_alloc.c:4700 mm/page_alloc.c:4691)
-[   28.179890] __kmem_cache_alloc_node (include/linux/sched/mm.h:272
-mm/slab.h:710 mm/slub.c:3318 mm/slub.c:3437)
-[   28.184492] __kmalloc (mm/slab_common.c:956 mm/slab_common.c:968)
-[   28.189434] qcom_rpm_smd_write (include/linux/slab.h:558
-drivers/soc/qcom/smd-rpm.c:116)
-[   28.193084] clk_smd_rpm_prepare (drivers/clk/qcom/clk-smd-rpm.c:192
-drivers/clk/qcom/clk-smd-rpm.c:253)
-[   28.197945] clk_core_prepare (drivers/clk/clk.c:971)
-[   28.202545] clk_prepare (drivers/clk/clk.c:1004
-drivers/clk/clk.c:1027 drivers/clk/clk.c:1022)
-[   28.206881] amba_get_enable_pclk (include/linux/clk.h:1072
-drivers/amba/bus.c:70)
-[   28.211052] amba_read_periphid (drivers/amba/bus.c:146)
-[   28.215653] amba_match (drivers/amba/bus.c:222)
-[   28.220336] __device_attach_driver (drivers/base/base.h:147
-(discriminator 1) drivers/base/dd.c:913 (discriminator 1))
-[   28.223900] bus_for_each_drv (drivers/base/bus.c:427)
-[   28.229106] __device_attach (drivers/base/dd.c:1017)
-[   28.233359] device_initial_probe (drivers/base/dd.c:1065)
-[   28.237699] bus_probe_device (drivers/base/bus.c:489)
-[   28.242385] deferred_probe_work_func (drivers/base/dd.c:124)
-[   28.246729] process_one_work (kernel/workqueue.c:2297)
-[   28.251761] worker_thread (include/linux/list.h:292 (discriminator
-2) kernel/workqueue.c:2352 (discriminator 2) kernel/workqueue.c:2444
-(discriminator 2))
-[   28.256186] kthread (kernel/kthread.c:376)
-[   28.260697] ret_from_fork (arch/arm64/kernel/entry.S:861)
-[   28.264258]
-[   28.264258] -> #0 (rpm_smd_clk_lock){+.+.}-{3:3}:
-[   28.268351] __lock_acquire (kernel/locking/lockdep.c:3091
-(discriminator 1) kernel/locking/lockdep.c:3209 (discriminator 1)
-kernel/locking/lockdep.c:3824 (discriminator 1)
-kernel/locking/lockdep.c:5048 (discriminator 1))
-[   28.274503] lock_acquire (arch/arm64/include/asm/percpu.h:40
-kernel/locking/lockdep.c:467 kernel/locking/lockdep.c:5663
-kernel/locking/lockdep.c:5626)
-[   28.278929] __mutex_lock (kernel/locking/mutex.c:605
-kernel/locking/mutex.c:747)
-[   28.283095] mutex_lock_nested (kernel/locking/mutex.c:800)
-[   28.287263] clk_smd_rpm_set_rate (drivers/clk/qcom/clk-smd-rpm.c:321)
-[   28.291691] clk_change_rate (drivers/clk/clk.c:2278)
-[   28.296464] clk_core_set_rate_nolock (drivers/clk/clk.c:2382
-drivers/clk/clk.c:2340)
-[   28.300895] clk_set_rate (drivers/clk/clk.c:2423 drivers/clk/clk.c:2410)
-[   28.306012] qcom_icc_set+0x1d4/0x270 icc_smd_rpm
-[   28.310186] icc_node_add (drivers/interconnect/core.c:994)
-[   28.315561] qnoc_probe+0x240/0x420 icc_smd_rpm
-[   28.319558] platform_probe (drivers/base/platform.c:1400)
-[   28.324675] really_probe (drivers/base/dd.c:560 drivers/base/dd.c:639)
-[   28.328841] __driver_probe_device (drivers/base/dd.c:785)
-[   28.333011] driver_probe_device (drivers/base/dd.c:815)
-[   28.337786] __driver_attach (drivers/base/dd.c:1202)
-[   28.342646] bus_for_each_dev (drivers/base/bus.c:301)
-[   28.346984] driver_attach (drivers/base/dd.c:1219)
-[   28.351411] bus_add_driver (drivers/base/bus.c:618)
-[   28.355404] driver_register (drivers/base/driver.c:246)
-[   28.359832] __platform_driver_register (drivers/base/platform.c:868)
-[   28.364177] msm8916_noc_driver_init+0x28/0x1000 qnoc_msm8916
-[   28.369217] do_one_initcall (init/main.c:1292)
-[   28.375804] do_init_module (kernel/module/main.c:2464)
-[   28.380144] load_module (kernel/module/main.c:2873)
-[   28.384485] __do_sys_finit_module (kernel/module/main.c:2973
-(discriminator 1))
-[   28.388742] __arm64_sys_finit_module (kernel/module/main.c:2940)
-[   28.393342] invoke_syscall (arch/arm64/include/asm/current.h:19
-arch/arm64/kernel/syscall.c:57)
-[   28.398546] el0_svc_common.constprop.0 (arch/arm64/kernel/syscall.c:149)
-[   28.402894] do_el0_svc (arch/arm64/kernel/syscall.c:207)
-[   28.408179] el0_svc (arch/arm64/include/asm/daifflags.h:28
-arch/arm64/kernel/entry-common.c:133
-arch/arm64/kernel/entry-common.c:142
-arch/arm64/kernel/entry-common.c:638)
-[   28.411825] el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:656)
-[   28.415651] el0t_64_sync (arch/arm64/kernel/entry.S:581)
-[   28.420248]
-[   28.420248] other info that might help us debug this:
-[   28.420248]
-[   28.424438] Chain exists of:
-[   28.424438]   rpm_smd_clk_lock --> fs_reclaim --> icc_bw_lock
-[   28.424438]
-[   28.432432]  Possible unsafe locking scenario:
-[   28.432432]
-[   28.442481]        CPU0                    CPU1
-[   28.448374]        ----                    ----
-[   28.452888]   lock(icc_bw_lock);
-Linux runner-vwmj3eza-project-40964107-concurrent-0 6.1.55 #1 SMP
-PREEMPT @1695871287 aarch6[   28.457396]
- lock(fs_reclaim);
-4
-[   28.475726]   lock(rpm_smd_clk_lock);
-[   28.475770]
-[   28.475770]  *** DEADLOCK ***
-[   28.475770]
-[   28.478630] 4 locks held by (udev-worker)/278:
-[   28.484350] #0: ffff000004e968f8 (&dev->mutex){....}-{3:3}, at:
-__driver_attach (drivers/base/dd.c:1201)
-[   28.488885] #1: ffff80000b49f2e8 (icc_lock){+.+.}-{3:3}, at:
-icc_node_add (drivers/interconnect/core.c:971)
-[   28.497475] #2: ffff80000b49f3e0 (icc_bw_lock){+.+.}-{3:3}, at:
-icc_node_add (drivers/interconnect/core.c:973)
-[   28.505202] #3: ffff80000b23eeb8 (prepare_lock){+.+.}-{3:3}, at:
-clk_prepare_lock (drivers/clk/clk.c:129 (discriminator 1))
-[   28.513363]
-[   28.513363] stack backtrace:
-[   28.521766] CPU: 3 PID: 278 Comm: (udev-worker) Not tainted 6.1.55 #1
-[   28.526028] Hardware name: Qualcomm Technologies, Inc. APQ 8016 SBC (DT)
-[   28.532453] Call trace:
-[   28.539202] dump_backtrace (arch/arm64/kernel/stacktrace.c:160
-arch/arm64/kernel/stacktrace.c:143)
-[   28.541379] show_stack (arch/arm64/kernel/stacktrace.c:167)
-[   28.545194] dump_stack_lvl (lib/dump_stack.c:107)
-[   28.548582] dump_stack (lib/dump_stack.c:114)
-[   28.552225] print_circular_bug (kernel/locking/lockdep.c:2048)
-[   28.555529] check_noncircular (kernel/locking/lockdep.c:2173)
-[   28.559521] __lock_acquire (kernel/locking/lockdep.c:3091
-(discriminator 1) kernel/locking/lockdep.c:3209 (discriminator 1)
-kernel/locking/lockdep.c:3824 (discriminator 1)
-kernel/locking/lockdep.c:5048 (discriminator 1))
-[   28.563687] lock_acquire (arch/arm64/include/asm/percpu.h:40
-kernel/locking/lockdep.c:467 kernel/locking/lockdep.c:5663
-kernel/locking/lockdep.c:5626)
-[   28.567767] __mutex_lock (kernel/locking/mutex.c:605
-kernel/locking/mutex.c:747)
-[   28.571411] mutex_lock_nested (kernel/locking/mutex.c:800)
-[   28.575059] clk_smd_rpm_set_rate (drivers/clk/qcom/clk-smd-rpm.c:321)
-[   28.578968] clk_change_rate (drivers/clk/clk.c:2278)
-[   28.583220] clk_core_set_rate_nolock (drivers/clk/clk.c:2382
-drivers/clk/clk.c:2340)
-[   28.587128] clk_set_rate (drivers/clk/clk.c:2423 drivers/clk/clk.c:2410)
-[   28.591724] qcom_icc_set+0x1d4/0x270 icc_smd_rpm
-[   28.595029] icc_node_add (drivers/interconnect/core.c:994)
-[   28.599884] qnoc_probe+0x240/0x420 icc_smd_rpm
-[   28.603709] platform_probe (drivers/base/platform.c:1400)
-[   28.608305] really_probe (drivers/base/dd.c:560 drivers/base/dd.c:639)
-[   28.611949] __driver_probe_device (drivers/base/dd.c:785)
-[   28.615599] driver_probe_device (drivers/base/dd.c:815)
-[   28.619851] __driver_attach (drivers/base/dd.c:1202)
-[   28.623844] bus_for_each_dev (drivers/base/bus.c:301)
-[   28.628010] driver_attach (drivers/base/dd.c:1219)
-[   28.631568] bus_add_driver (drivers/base/bus.c:618)
-[   28.635388] driver_register (drivers/base/driver.c:246)
-[   28.638948] __platform_driver_register (drivers/base/platform.c:868)
-[   28.642771] msm8916_noc_driver_init+0x28/0x1000 qnoc_msm8916
-[   28.647638] do_one_initcall (init/main.c:1292)
-[   28.653356] do_init_module (kernel/module/main.c:2464)
-[   28.657176] load_module (kernel/module/main.c:2873)
-[   28.660995] __do_sys_finit_module (kernel/module/main.c:2973
-(discriminator 1))
-[   28.664732] __arm64_sys_finit_module (kernel/module/main.c:2940)
-[   28.669159] invoke_syscall (arch/arm64/include/asm/current.h:19
-arch/arm64/kernel/syscall.c:57)
-[   28.673496] el0_svc_common.constprop.0 (arch/arm64/kernel/syscall.c:149)
-[   28.677321] do_el0_svc (arch/arm64/kernel/syscall.c:207)
-[   28.682087] el0_svc (arch/arm64/include/asm/daifflags.h:28
-arch/arm64/kernel/entry-common.c:133
-arch/arm64/kernel/entry-common.c:142
-arch/arm64/kernel/entry-common.c:638)
-[   28.685558] el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:656)
-[   28.688516] el0t_64_sync (arch/arm64/kernel/entry.S:581)
-
-Links:
- - https://lkft.validation.linaro.org/scheduler/job/6819688#L3326
- - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1.57-7-g3fe61dd155ac/testrun/20473398/suite/log-parser-test/tests/
-
-metadata:
-  git_ref: linux-6.1.y
-  git_repo: https://gitlab.com/Linaro/lkft/mirrors/stable/linux-stable-rc
-  git_sha: d23900f974e0fb995b36ef47283a5aa74ca25f51
-  git_describe: v6.1.55
-  kernel_version: 6.1.55
-  kernel-config:
-    https://storage.tuxsuite.com/public/linaro/lkft/builds/2W0YTi5jyhwfHW8YVU86FdmCI85/config
-  artifact-location:
-    https://storage.tuxsuite.com/public/linaro/lkft/builds/2W0YTi5jyhwfHW8YVU86FdmCI85/
-  toolchain: gcc-13
-
-
---
-Linaro LKFT
-https://lkft.linaro.org
