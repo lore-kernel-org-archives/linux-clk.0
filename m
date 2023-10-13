@@ -2,116 +2,88 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF190C41513
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Oct 2023 12:48:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F29F9CDB47E
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Oct 2023 14:09:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231618AbjJMMsa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Oct 2023 08:48:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38758 "EHLO
+        id S231963AbjJMOJ2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Oct 2023 10:09:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231359AbjJMMs3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Oct 2023 08:48:29 -0400
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A78C5C2
-        for <linux-clk@vger.kernel.org>; Fri, 13 Oct 2023 05:48:27 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:f151:5551:1af6:b316])
-        by baptiste.telenet-ops.be with bizsmtp
-        id xQoS2A00456FAx301QoSrl; Fri, 13 Oct 2023 14:48:26 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtp (Exim 4.95)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1qrHaY-006Gh0-Gc;
-        Fri, 13 Oct 2023 14:48:26 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1qrHab-002JuK-St;
-        Fri, 13 Oct 2023 14:48:25 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] clk: renesas: Updates for v6.7 (take two)
-Date:   Fri, 13 Oct 2023 14:48:24 +0200
-Message-Id: <cover.1697200833.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+        with ESMTP id S231194AbjJMOJ2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Oct 2023 10:09:28 -0400
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 406D2BD;
+        Fri, 13 Oct 2023 07:09:26 -0700 (PDT)
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3b2b1a6fd5eso321281b6e.0;
+        Fri, 13 Oct 2023 07:09:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697206165; x=1697810965;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=32q64sOF2d1XvMlGkpm0O35o7axtMas1mV8rP6bTVn8=;
+        b=iw2k+HAuEPDhkAuHndh1Z9Uj5WBQ4OongTYhFJlddtTIlntpd+2nxt/bBcndzM82MR
+         VTrOHtGmcxV9KUrOVmnAFAeepuDiPnFS0appF0iNbIHu5mcfGP64LlPPUTuzLkmUskF5
+         KwZH+EK6+uUEgPKPtiOeVQ6qlct/rPglDWQPoCvTVyNoAocojp08PMA5JVht/WhwaR1W
+         otdiT2nrzxScEjEGR6dPcNJBJIRGGsZl26GkdoaXN/DN/tx4BWVAps4/ryv5JV1rKMhu
+         0k7MApEkDjDn8vrroPkJ92oNYonBZ2Fm0z3f2PkwaglhH5Pcu/b5sKwTKnfTdhPjkc0Z
+         qeXg==
+X-Gm-Message-State: AOJu0YzAnYZ6Y6n4qTVouyd3WVgau7WAAn4yxCgs518j+Wp0L/ibo54j
+        SH4gvBBQId7I2TaLkB82kAhmGElLHg==
+X-Google-Smtp-Source: AGHT+IE3WfnWPCV4ZgQOO+7n+hC2sS/a0WY7WfHDYyEnWNzabar4DxPdMiXBJQCW6Gy4BMVdliteAg==
+X-Received: by 2002:a05:6808:1302:b0:3a9:9bb4:485c with SMTP id y2-20020a056808130200b003a99bb4485cmr37530634oiv.8.1697206165505;
+        Fri, 13 Oct 2023 07:09:25 -0700 (PDT)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id o15-20020a0568080f8f00b003a747ea96a8sm747696oiw.43.2023.10.13.07.09.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Oct 2023 07:09:23 -0700 (PDT)
+Received: (nullmailer pid 3793059 invoked by uid 1000);
+        Fri, 13 Oct 2023 14:09:21 -0000
+Date:   Fri, 13 Oct 2023 09:09:21 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc:     andersson@kernel.org, agross@kernel.org, konrad.dybcio@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        dmitry.baryshkov@linaro.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, jonathan@marek.ca, quic_tdas@quicinc.com,
+        vladimir.zapolskiy@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v4 3/4] media: dt-bindings: media: camss: Add
+ qcom,sc8280xp-camss binding
+Message-ID: <20231013140921.GA3773179-robh@kernel.org>
+References: <20231012113100.3656480-1-bryan.odonoghue@linaro.org>
+ <20231012113100.3656480-4-bryan.odonoghue@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231012113100.3656480-4-bryan.odonoghue@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-	Hi Mike, Stephen,
+On Thu, Oct 12, 2023 at 12:30:59PM +0100, Bryan O'Donoghue wrote:
+> Add bindings for qcom,sc8280xp-camss in order to support the camera
+> subsystem for sc8280xp as found in the Lenovo x13s Laptop.
 
+You don't need 2 'media' in the subject.
 
-The following changes since commit 87882525e5ddae7ef6f1b1df5e1eda9bcbcd7720:
+> 
+> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+> This patch depends-on:
+> https://lore.kernel.org/lkml/20231004161853.86382-2-bryan.odonoghue@linaro.org/T
 
-  clk: renesas: r8a7795: Constify r8a7795_*_clks (2023-09-26 09:38:00 +0200)
+Who is supposed to apply the above and this patch? Normally, this would 
+go thru the media tree, but you didn't send it to them or the media 
+list. You did Cc the clock maintainers which seems weird on its own, but 
+I suppose based on the bot error that's because the above patch is a 
+clock patch. But why would the clock maintainers care about this one. I 
+can only guess your intent is for all of this to be merged thru the QCom 
+tree. We shouldn't have to sort thru these series and guess though. You 
+should state that unless you really don't know, but I'd expect you've 
+been around long enough to know.
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v6.7-tag2
-
-for you to fetch changes up to 4bce4bedbe6daa54cf701184601f913a0c00bb1c:
-
-  clk: renesas: r9a08g045: Add clock and reset support for SDHI1 and SDHI2 (2023-10-12 20:05:52 +0200)
-
-----------------------------------------------------------------
-clk: renesas: Updates for v6.7 (take two)
-
-  - Add support for the RZ/G3S (R9A08G045) SoC,
-  - Miscellaneous fixes and improvements.
-
-Note that the clock definitions for the Renesas RZ/G3S (R9A08G045) SoC
-are shared by clock driver and DT source files, and are part of a PR for
-SoC, too.
-
-Thanks for pulling!
-
-----------------------------------------------------------------
-Claudiu Beznea (14):
-      dt-bindings: clock: renesas,rzg2l-cpg: Document RZ/G3S SoC
-      clk: renesas: rzg2l: Wait for status bit of SD mux before continuing
-      clk: renesas: rzg2l: Lock around writes to mux register
-      clk: renesas: rzg2l: Trust value returned by hardware
-      clk: renesas: rzg2l: Fix computation formula
-      clk: renesas: rzg2l: Remove critical area
-      clk: renesas: rzg2l: Add support for RZ/G3S PLL
-      clk: renesas: rzg2l: Add struct clk_hw_data
-      clk: renesas: rzg2l: Remove CPG_SDHI_DSEL from generic header
-      clk: renesas: rzg2l: Refactor SD mux driver
-      clk: renesas: rzg2l: Add divider clock for RZ/G3S
-      clk: renesas: Add minimal boot support for RZ/G3S SoC
-      clk: renesas: rzg2l: Use %x format specifier to print CLK_ON_R()
-      clk: renesas: r9a08g045: Add clock and reset support for SDHI1 and SDHI2
-
-Dirk Behme (1):
-      clk: renesas: rcar-gen3: Extend SDnH divider table
-
-Geert Uytterhoeven (1):
-      Merge tag 'renesas-r9a08g045-dt-binding-defs-tag' into renesas-clk-for-v6.7
-
- .../bindings/clock/renesas,rzg2l-cpg.yaml          |   1 +
- drivers/clk/renesas/Kconfig                        |   7 +-
- drivers/clk/renesas/Makefile                       |   1 +
- drivers/clk/renesas/r9a07g043-cpg.c                |  19 +-
- drivers/clk/renesas/r9a07g044-cpg.c                |  19 +-
- drivers/clk/renesas/r9a08g045-cpg.c                | 248 +++++++++++
- drivers/clk/renesas/rcar-cpg-lib.c                 |  15 +-
- drivers/clk/renesas/rzg2l-cpg.c                    | 452 +++++++++++++++++----
- drivers/clk/renesas/rzg2l-cpg.h                    |  35 +-
- include/dt-bindings/clock/r9a08g045-cpg.h          | 242 +++++++++++
- 10 files changed, 954 insertions(+), 85 deletions(-)
- create mode 100644 drivers/clk/renesas/r9a08g045-cpg.c
- create mode 100644 include/dt-bindings/clock/r9a08g045-cpg.h
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Rob
