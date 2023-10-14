@@ -2,87 +2,106 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0B86CDB47E
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Oct 2023 23:08:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46BF5CDB47E
+	for <linux-clk@archiver.kernel.org>; Sat, 14 Oct 2023 02:06:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232021AbjJMXIE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Oct 2023 19:08:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39900 "EHLO
+        id S232559AbjJNCG3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Oct 2023 22:06:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230469AbjJMXID (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Oct 2023 19:08:03 -0400
-Received: from mail-yw1-x112c.google.com (mail-yw1-x112c.google.com [IPv6:2607:f8b0:4864:20::112c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C890BC0
-        for <linux-clk@vger.kernel.org>; Fri, 13 Oct 2023 16:07:59 -0700 (PDT)
-Received: by mail-yw1-x112c.google.com with SMTP id 00721157ae682-5a822f96aedso12271987b3.2
-        for <linux-clk@vger.kernel.org>; Fri, 13 Oct 2023 16:07:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697238479; x=1697843279; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GTZAp68ttuyTxKkLmjiKDcnt+ot03nWQqCAoiuWLPj4=;
-        b=XgUYQp9VvazENLlju8K1vLaG5E6Pd4U/7P1yfNrguASJ4IjSLNW+Hvyj/EQeuzTQBM
-         9NqGuyf45rliaT/JBLcg0mPLyWaIgTS9uP661Zpsr/3vCJTo9x1uyYb6zP4vUR0IlmZN
-         ITAxnHSYq0say4s8Zmgq4PIMtF6w0gac3OiJCf/Pg0fgf3v6DACvPZF46l+B4WBZAq0P
-         g9QmcmYIRS274JsmVP3iRM0L3mcOGLD5p62algh+RIgnlFAcKrB8vsa9AnLNQfrFGRX5
-         ZihNikwH2Eh2mPi2J+nh/Jiit5c1kmXBuZOBVwD6PES2G8VPMLja1tg4W7fccJoUHSUS
-         Ym/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697238479; x=1697843279;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GTZAp68ttuyTxKkLmjiKDcnt+ot03nWQqCAoiuWLPj4=;
-        b=V+xa+ckpI+B4YjonPwd3a2lo9ktVjJ6kD7tNQoElhDk8hGdcGrhELUiY0RHIJbngVN
-         sOYe7QIpInSg8NwpSO5wCngf19YLyrTej2lN7oRlDSQbpXdoicUrQDWWkZAolL+cc0hS
-         0TCQIaLsKKcEZlSFBjHbUEtEUUcTEDXmWpyb0ChPFLHxIPVbIZLfQFuw0JzN+X0EULrB
-         4c6+X2MgnmXOVtrwqIlv0x1iC8zZ2dx9q2Nz67MC20ss6EhSF84p5UQLjurhT2jCyLDY
-         W9CxsHh68OdsvH2cNqNrXpvxRMI6MUMekwvfqNaJgwoTLaNhJ5507Rusn6GwPV1ykhqc
-         0tPA==
-X-Gm-Message-State: AOJu0YwdAhRBLbQQK1BDv9uKyIZrZo8Qr+XrvdzF688dY+bUJqTRl45E
-        iNdZipaGtWUreWUux7mNnMhu6Eg+BcXvgw9g/j1jBDnPOnMAos9k
-X-Google-Smtp-Source: AGHT+IEV/6cjtm5aswWQE7+Xj1dG/j34dWuGSndGd1o4xDdSx/J/e4MW+VMXlArDM1lZpgch8aAfkjCvTI8QUarCcvU=
-X-Received: by 2002:a0d:d796:0:b0:5a8:2b82:a031 with SMTP id
- z144-20020a0dd796000000b005a82b82a031mr2481006ywd.26.1697238478953; Fri, 13
- Oct 2023 16:07:58 -0700 (PDT)
+        with ESMTP id S229518AbjJNCG3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Oct 2023 22:06:29 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA347A9;
+        Fri, 13 Oct 2023 19:06:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1697249187; x=1728785187;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xyjrz+nCGtVP4cpNDKqWDKVaYylaSAY+4OG7ML8ydcU=;
+  b=iFkmK4IhZHzcBMlH+dtJjLUysZqJk5vi93PncWoN4+9r19+QNNJ38yIa
+   qivKClZlMRKQxTPHRqtM5gPO4pNsSAeRCF6iTE4Yrh4kyacbQSl7u2rm+
+   OkphSbTaY9kQidEgZUsjgxSu/FZZYD6UE3dI+RwB8W6vpu83upYv+K9We
+   blbCzHXVE92rY0ZQqQ1hTef9MCTGXS0D1iRX3AR3SqVgDVzpk38DfXm2r
+   4+UA0pW+SxHpiAU2cfql9E9nj6JjX40ctsaAzMszILBlB4tYQtnjYaJH3
+   /xAEkzw1UWEDdS2c0oFALfr/rrhqfg1YzZjaV+4mDvBJy1EMbzHDFVvLh
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10862"; a="384166978"
+X-IronPort-AV: E=Sophos;i="6.03,223,1694761200"; 
+   d="scan'208";a="384166978"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2023 19:06:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10862"; a="754918435"
+X-IronPort-AV: E=Sophos;i="6.03,223,1694761200"; 
+   d="scan'208";a="754918435"
+Received: from lkp-server02.sh.intel.com (HELO f64821696465) ([10.239.97.151])
+  by orsmga002.jf.intel.com with ESMTP; 13 Oct 2023 19:06:23 -0700
+Received: from kbuild by f64821696465 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1qrU2m-0005bv-2y;
+        Sat, 14 Oct 2023 02:06:20 +0000
+Date:   Sat, 14 Oct 2023 10:05:27 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Claudiu <claudiu.beznea@tuxon.dev>, geert+renesas@glider.be,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        gregkh@linuxfoundation.org, jirislaby@kernel.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, magnus.damm@gmail.com
+Cc:     oe-kbuild-all@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v3 4/4] clk: renesas: add minimal boot support for RZ/G3S
+ SoC
+Message-ID: <202310140917.e8Qm1PYJ-lkp@intel.com>
+References: <20231006103959.197485-5-claudiu.beznea.uj@bp.renesas.com>
 MIME-Version: 1.0
-References: <20231013164025.3541606-1-robimarko@gmail.com> <20231013164025.3541606-2-robimarko@gmail.com>
-In-Reply-To: <20231013164025.3541606-2-robimarko@gmail.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Sat, 14 Oct 2023 02:07:47 +0300
-Message-ID: <CAA8EJpqG0fL2j-+4qN9kw8fDdGmE7LpRYdJtqEPsGFScwRz4AQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] arm64: dts: qcom: ipq8074: pass QMP PCI PHY PIPE
- clocks to GCC
-To:     Robert Marko <robimarko@gmail.com>
-Cc:     andersson@kernel.org, agross@kernel.org, konrad.dybcio@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231006103959.197485-5-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 13 Oct 2023 at 19:41, Robert Marko <robimarko@gmail.com> wrote:
->
-> Pass QMP PCI PHY PIPE clocks to the GCC controller so it does not have to
-> find them by matching globaly by name.
->
-> If not passed directly, driver maintains backwards compatibility by then
-> falling back to global lookup.
->
-> Signed-off-by: Robert Marko <robimarko@gmail.com>
-> ---
-> Changes in v2:
-> * Make clocks and clock-names one-per-line
->
->  arch/arm64/boot/dts/qcom/ipq8074.dtsi | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
+Hi Claudiu,
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+kernel test robot noticed the following build errors:
 
+[auto build test ERROR on geert-renesas-drivers/renesas-clk]
+[cannot apply to tty/tty-testing tty/tty-next tty/tty-linus usb/usb-testing usb/usb-next usb/usb-linus linus/master v6.6-rc5 next-20231013]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Claudiu/dt-bindings-serial-renesas-scif-document-r9a08g045-support/20231006-184301
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git renesas-clk
+patch link:    https://lore.kernel.org/r/20231006103959.197485-5-claudiu.beznea.uj%40bp.renesas.com
+patch subject: [PATCH v3 4/4] clk: renesas: add minimal boot support for RZ/G3S SoC
+config: xtensa-allyesconfig (https://download.01.org/0day-ci/archive/20231014/202310140917.e8Qm1PYJ-lkp@intel.com/config)
+compiler: xtensa-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231014/202310140917.e8Qm1PYJ-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202310140917.e8Qm1PYJ-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/clk/renesas/r9a08g045-cpg.c:13:10: fatal error: dt-bindings/clock/r9a08g045-cpg.h: No such file or directory
+      13 | #include <dt-bindings/clock/r9a08g045-cpg.h>
+         |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   compilation terminated.
+
+
+vim +13 drivers/clk/renesas/r9a08g045-cpg.c
+
+    12	
+  > 13	#include <dt-bindings/clock/r9a08g045-cpg.h>
+    14	
 
 -- 
-With best wishes
-Dmitry
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
