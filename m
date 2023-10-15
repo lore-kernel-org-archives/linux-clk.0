@@ -2,119 +2,114 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 359DACDB465
-	for <linux-clk@archiver.kernel.org>; Sun, 15 Oct 2023 02:30:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A1A2CDB47E
+	for <linux-clk@archiver.kernel.org>; Sun, 15 Oct 2023 16:21:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233405AbjJOCaZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 14 Oct 2023 22:30:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53940 "EHLO
+        id S229522AbjJOQVV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 15 Oct 2023 12:21:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233328AbjJOCaX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 14 Oct 2023 22:30:23 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA5E0CC;
-        Sat, 14 Oct 2023 19:30:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1697337021; x=1728873021;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=BUwl6/usmRlti/+3fPO0RhkKrPW43T4KsDphTzMcrXo=;
-  b=KvDeQ0n/ZR9SstlDI3+EINLBVOO7eOCLQ5bUbxdafprKdyz5GhVat6ky
-   rivAailrd4I0oXNK3QTtPkUtH45LnCtl+bAeBxakq6nEeo9PF6JvXJZGG
-   BnNSQ7TzeotQUAflzU8LqtlQlLML+mKZaZvYzwoMH8F2p/aWWqNIL0Ib1
-   CORKNYZ4nyRpKOx34jgsLKPF/di36SkxDfckcg6NnVXHt16C5rktj6QUt
-   PGgOlHVI4HL9KAAM8dUQUm8ugI4MuMxK+YlIrB7IXcS6huFBwAVeXESkJ
-   thd7HSpwlhUuqwIXJwotu/WK9FsjBzYkDBhBORbu43fZRdZ2TdwGDSof0
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10863"; a="388217590"
-X-IronPort-AV: E=Sophos;i="6.03,226,1694761200"; 
-   d="scan'208";a="388217590"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2023 19:30:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10863"; a="748833713"
-X-IronPort-AV: E=Sophos;i="6.03,226,1694761200"; 
-   d="scan'208";a="748833713"
-Received: from lkp-server02.sh.intel.com (HELO f64821696465) ([10.239.97.151])
-  by orsmga007.jf.intel.com with ESMTP; 14 Oct 2023 19:30:14 -0700
-Received: from kbuild by f64821696465 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qrqtQ-0006wJ-0q;
-        Sun, 15 Oct 2023 02:30:12 +0000
-Date:   Sun, 15 Oct 2023 10:29:22 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        andersson@kernel.org, agross@kernel.org, konrad.dybcio@linaro.org,
+        with ESMTP id S230026AbjJOQVU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 15 Oct 2023 12:21:20 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A54D8AD;
+        Sun, 15 Oct 2023 09:21:18 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-53ed4688b9fso14816a12.0;
+        Sun, 15 Oct 2023 09:21:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1697386877; x=1697991677; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VVvP6gIzo5NMsNtQkyvSKq66SlaBegSVzjmTq/QrGEI=;
+        b=gIiY7Wy0MHHbOnMFrtsxiwrR585CQ2bL5j+QTv0YkgJIivQJtP6Cr6+HtW9nA5QuVE
+         NuvysFk1NJJIgJXd2ZNVy3KH31Z+KUz+7djQRVXteEjViRw1yS2/oCNHSdKXYRrCpcz3
+         ZFNNrDoG27uSt/xuJrAdEh1XV0LDETnUbp6o3ZIQqAjCEWDfMJHD6pQVWHyLmWdHp8D4
+         8loTqmWcBf5MDwCvFv3eoZxuR12t/8CCIhFGaDXL+tU13MG7eqFA69yj8oYDC9EpnMlr
+         5Bgwm6Xm8+qHTR53bqSB2cF3s3AybSCdZj309G7XP1FJqCzvcx8OmkQpg5Lx2xcmi4Ih
+         lb6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697386877; x=1697991677;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VVvP6gIzo5NMsNtQkyvSKq66SlaBegSVzjmTq/QrGEI=;
+        b=Kox1+gn6BG1B2p15NkVqfhx3mYzBHywonTG6U8P8bZ1wEF1pk0rlkQm204zSr8AtNW
+         xxl0DyDoSSE2iqUzz/zqAFnfWf8I92MydhqYPOIIZrzIQhadz5WCEhZ408QcTt4vexoP
+         wVgcce5aBQh2ruEqg3I5iKo3vP107yS37H2/Zs/VZ3girKIXbTb92yyTplkFLkWQ4rvs
+         4zmmagRCL+bUrS+QlLG4OBztZYTe3ygkBMm3XAWH6uzQUtXr1hqgo7GWaBAmo7aEIYWQ
+         Pq/sYjMJsINeBdKcoRVYpWj5OvhJpgFvvrIXk1NWroTos+HqzzTtts/Pls1xmz/4BdNK
+         gXZg==
+X-Gm-Message-State: AOJu0YxMCtuOKpeysjN+9m8GWG6Cy4cp5uju/w0KMuUqSohsAuiHbPFi
+        FuuVHjLzvsPZCY7fUOSyBiQ=
+X-Google-Smtp-Source: AGHT+IEpPki57B1BRR5L7Qj22LeLgFCGJRoYRGdy39/Py6az4VE4U0VYk7EF43oDwQqGJ0x5ZpOuPQ==
+X-Received: by 2002:a50:d709:0:b0:53e:9387:40fc with SMTP id t9-20020a50d709000000b0053e938740fcmr1995732edi.26.1697386876914;
+        Sun, 15 Oct 2023 09:21:16 -0700 (PDT)
+Received: from fedora.. ([213.149.38.35])
+        by smtp.googlemail.com with ESMTPSA id a26-20020a50e71a000000b00537963f692esm14202024edn.0.2023.10.15.09.21.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 Oct 2023 09:21:16 -0700 (PDT)
+From:   Robert Marko <robimarko@gmail.com>
+To:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
         mturquette@baylibre.com, sboyd@kernel.org,
-        dmitry.baryshkov@linaro.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        jonathan@marek.ca, quic_tdas@quicinc.com,
-        vladimir.zapolskiy@linaro.org
-Cc:     oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bryan.odonoghue@linaro.org
-Subject: Re: [PATCH v3 1/4] arm64: dts: qcom: sc8280xp: Add in CAMCC for
- sc8280xp
-Message-ID: <202310151043.01L92wwx-lkp@intel.com>
-References: <20231011185540.2282975-2-bryan.odonoghue@linaro.org>
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Robert Marko <robimarko@gmail.com>
+Subject: [PATCH] clk: qcom: gcc-ipq6018: add QUP6 I2C clock
+Date:   Sun, 15 Oct 2023 18:20:40 +0200
+Message-ID: <20231015162114.976202-1-robimarko@gmail.com>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231011185540.2282975-2-bryan.odonoghue@linaro.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Bryan,
+QUP6 I2C clock is listed in the dt bindings but it was never included in
+the GCC driver.
+So lets add support for it, its intentionally marked to never be disabled
+as its somehow affecting DVFS and if disabled it sometimes crashes the
+board.
 
-kernel test robot noticed the following build errors:
+Signed-off-by: Robert Marko <robimarko@gmail.com>
+---
+ drivers/clk/qcom/gcc-ipq6018.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-[auto build test ERROR on robh/for-next]
-[also build test ERROR on linus/master v6.6-rc5 next-20231013]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Bryan-O-Donoghue/arm64-dts-qcom-sc8280xp-Add-in-CAMCC-for-sc8280xp/20231012-025807
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20231011185540.2282975-2-bryan.odonoghue%40linaro.org
-patch subject: [PATCH v3 1/4] arm64: dts: qcom: sc8280xp: Add in CAMCC for sc8280xp
-config: arm64-allyesconfig (https://download.01.org/0day-ci/archive/20231015/202310151043.01L92wwx-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231015/202310151043.01L92wwx-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202310151043.01L92wwx-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from arch/arm64/boot/dts/qcom/sa8540p.dtsi:7,
-                    from arch/arm64/boot/dts/qcom/sa8295p-adp.dts:13:
->> arch/arm64/boot/dts/qcom/sc8280xp.dtsi:11:10: fatal error: dt-bindings/clock/qcom,sc8280xp-camcc.h: No such file or directory
-      11 | #include <dt-bindings/clock/qcom,sc8280xp-camcc.h>
-         |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   compilation terminated.
-
-
-vim +11 arch/arm64/boot/dts/qcom/sc8280xp.dtsi
-
-  > 11	#include <dt-bindings/clock/qcom,sc8280xp-camcc.h>
-    12	#include <dt-bindings/clock/qcom,sc8280xp-lpasscc.h>
-    13	#include <dt-bindings/interconnect/qcom,osm-l3.h>
-    14	#include <dt-bindings/interconnect/qcom,sc8280xp.h>
-    15	#include <dt-bindings/interrupt-controller/arm-gic.h>
-    16	#include <dt-bindings/mailbox/qcom-ipcc.h>
-    17	#include <dt-bindings/phy/phy-qcom-qmp.h>
-    18	#include <dt-bindings/power/qcom-rpmpd.h>
-    19	#include <dt-bindings/soc/qcom,gpr.h>
-    20	#include <dt-bindings/soc/qcom,rpmh-rsc.h>
-    21	#include <dt-bindings/sound/qcom,q6afe.h>
-    22	#include <dt-bindings/thermal/thermal.h>
-    23	
-
+diff --git a/drivers/clk/qcom/gcc-ipq6018.c b/drivers/clk/qcom/gcc-ipq6018.c
+index 31eef38c5864c..126d87df80c5b 100644
+--- a/drivers/clk/qcom/gcc-ipq6018.c
++++ b/drivers/clk/qcom/gcc-ipq6018.c
+@@ -2125,6 +2125,22 @@ static struct clk_branch gcc_blsp1_qup5_spi_apps_clk = {
+ 	},
+ };
+ 
++static struct clk_branch gcc_blsp1_qup6_i2c_apps_clk = {
++	.halt_reg = 0x07010,
++	.clkr = {
++		.enable_reg = 0x07010,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_blsp1_qup6_i2c_apps_clk",
++			.parent_hws = (const struct clk_hw *[]){
++					&blsp1_qup6_i2c_apps_clk_src.clkr.hw },
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
+ static struct clk_branch gcc_blsp1_qup6_spi_apps_clk = {
+ 	.halt_reg = 0x0700c,
+ 	.clkr = {
+@@ -4281,6 +4297,7 @@ static struct clk_regmap *gcc_ipq6018_clks[] = {
+ 	[GCC_BLSP1_QUP4_SPI_APPS_CLK] = &gcc_blsp1_qup4_spi_apps_clk.clkr,
+ 	[GCC_BLSP1_QUP5_I2C_APPS_CLK] = &gcc_blsp1_qup5_i2c_apps_clk.clkr,
+ 	[GCC_BLSP1_QUP5_SPI_APPS_CLK] = &gcc_blsp1_qup5_spi_apps_clk.clkr,
++	[GCC_BLSP1_QUP6_I2C_APPS_CLK] = &gcc_blsp1_qup6_i2c_apps_clk.clkr,
+ 	[GCC_BLSP1_QUP6_SPI_APPS_CLK] = &gcc_blsp1_qup6_spi_apps_clk.clkr,
+ 	[GCC_BLSP1_UART1_APPS_CLK] = &gcc_blsp1_uart1_apps_clk.clkr,
+ 	[GCC_BLSP1_UART2_APPS_CLK] = &gcc_blsp1_uart2_apps_clk.clkr,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.41.0
+
