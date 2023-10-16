@@ -2,118 +2,143 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49C7ECDB483
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Oct 2023 08:44:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98485CDB465
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Oct 2023 08:47:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232532AbjJPIoI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Oct 2023 04:44:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36434 "EHLO
+        id S232745AbjJPIrR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Oct 2023 04:47:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232527AbjJPIoI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Oct 2023 04:44:08 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20DA9E5
-        for <linux-clk@vger.kernel.org>; Mon, 16 Oct 2023 01:44:06 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id 4fb4d7f45d1cf-51e28cac164so11046357a12.1
-        for <linux-clk@vger.kernel.org>; Mon, 16 Oct 2023 01:44:06 -0700 (PDT)
+        with ESMTP id S232861AbjJPIrK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Oct 2023 04:47:10 -0400
+Received: from mail-yw1-x112a.google.com (mail-yw1-x112a.google.com [IPv6:2607:f8b0:4864:20::112a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF3D6107
+        for <linux-clk@vger.kernel.org>; Mon, 16 Oct 2023 01:47:07 -0700 (PDT)
+Received: by mail-yw1-x112a.google.com with SMTP id 00721157ae682-5a822f96aedso33160757b3.2
+        for <linux-clk@vger.kernel.org>; Mon, 16 Oct 2023 01:47:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697445844; x=1698050644; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t0rRmLP9fjkilMgxeFjtjmzdH7ixA8dxS/1mEKnbj6c=;
-        b=iSq/vkjTALUFrY/gSMgmb6DrdO/bFrClUmM713ttq/AaV0MnrYUEjlzhOgdpv+dA54
-         8n3BTlbhV0YWXsGi0lwL8AkxSz5Y0mI5cm4ubpddzJmOyVNpeb6oI7WItHl6i6yPJegl
-         SjBnh7CDviyQROMx2/+Td9xFke7kHl3nljEnosLy3+Z+/PeDfXEhtS+mTrg/pnQaA2VS
-         NtWQrOW+h5gF40qOVKqTMOqfLcNlQzh+H1eXaoCq46LJpVDLK7tBZ56YfheuQjK1IhCa
-         baB8qfqPAtVkaQdlYtJMVwAQfD9xLGVEBGQZfaXUxr6ige+oV4r9iFwT5LCoAhYdUeVd
-         EtOw==
+        d=linaro.org; s=google; t=1697446027; x=1698050827; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=W5NJ69kX6Bm+ubsFCLmuvdrCURMYuhfL3kxTQtdRQ+o=;
+        b=NDfzuOtuFXPrbza2/JIvk8SJzRnoHadvnc4lSEoz3ZoB1hxYL/9U4eNiPtfpC7e0oY
+         g1CaX6WftO0AaYzWCA3Y4bJJAdw2zeWFRAeDwMoGInJYqmBievaBPkYpFJjpzDm2yjv4
+         KwpTGHDJM8boc1r23WOYKu3qh9S/vbVigURfoE4C+nkPO2zWlqLKD92jKc/YnB+IdP7I
+         FCsi4CYb8etuLw8KJCgPUfPkqPgHq6+BvtfFQnLlPKAn7+jm6vRSbzRT8eb4aOF6bX07
+         LJarDWzLy99oJRE/KVCpl0RqauR+k7tVlY4LiQuSF+cL1QpLQqeHddgpVPAvMKHhwBNc
+         XzBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697445844; x=1698050644;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=t0rRmLP9fjkilMgxeFjtjmzdH7ixA8dxS/1mEKnbj6c=;
-        b=kdwKEEDg5zhUjw/6zRzI3qU+2UuIm7tHAVAN2gVYVmtq5iUifI4Cc1uKQS3w5MNOlq
-         NwlI0fjb/Ezf9WgahdWDOoI+ezEdy+kNaeJPU3hOHfMhnlwRWAB0itmC+d3TC9VSPTgL
-         bdZUl0vpO/TNw1dueY2zDL8tsC8cMJtLuuZ94aQv5HVDgk8D+IGlZI/huxe51oQp3STD
-         nG4rNKWQNlFpyAbvBw4r5TdehcAD6HUtJ5m9lURdKLNf5qcfHoZebbQgcd5nEOpwS+/s
-         vTNfjfXP/QvvhR6/kPceKP8Dt4SegFkQQbQzNwsZnFXZAaNOsv/7lyDoleFxpbPniR3T
-         fJDw==
-X-Gm-Message-State: AOJu0Yy0/zwVRU7+uY4Ca4QONuF0MgEQdDPIUCyXEwjg5KXrkeRplrdP
-        ceD3wZIdkIDYNjKU1xlh7APlZ7JlHSicBkvjOjn7UgZV
-X-Google-Smtp-Source: AGHT+IHrYWALOoBqZKJ1TG7otqxucdJ1/0uNs2khdKNAQS9zMidfhGYJpoelH+5hCyY6zCqV7rIH5w==
-X-Received: by 2002:aa7:d4d5:0:b0:52e:3ce8:e333 with SMTP id t21-20020aa7d4d5000000b0052e3ce8e333mr6876446edr.18.1697445844516;
-        Mon, 16 Oct 2023 01:44:04 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (i68975BB5.versanet.de. [104.151.91.181])
-        by smtp.gmail.com with ESMTPSA id l18-20020a056402029200b0053443c8fd90sm15021814edv.24.2023.10.16.01.44.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Oct 2023 01:44:04 -0700 (PDT)
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <quic_tdas@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Jagadeesh Kona <quic_jkona@quicinc.com>
-Subject: [PATCH 2/2] clk: qcom: videocc-sm8550: switch to clk_lucid_ole_pll_configure
-Date:   Mon, 16 Oct 2023 11:43:56 +0300
-Message-ID: <20231016084356.1301854-2-dmitry.baryshkov@linaro.org>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20231016084356.1301854-1-dmitry.baryshkov@linaro.org>
-References: <20231016084356.1301854-1-dmitry.baryshkov@linaro.org>
+        d=1e100.net; s=20230601; t=1697446027; x=1698050827;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=W5NJ69kX6Bm+ubsFCLmuvdrCURMYuhfL3kxTQtdRQ+o=;
+        b=sDdiw37Gx7wswTplCaZMfoTC4xtYRtmLS874xlmD+KtR0q2Vnt+LNJ4SwH2ZVSASio
+         6BYoPINmanZVBDASEVqp7cQPXgxKu3TkBy4ZDkNc5AWTT4JgcUebK07btWXeSDdkz1ET
+         SH0CgBB4wUmrXYY3toO5TeTbmv7agtQGyuxWURcTJB3fP+Z7yITQtb8zJrB9FRlBlR0z
+         ewg5e6DXX/ult+hpjUrn3w2dAkyMVHYj2Yv9Mx45WFUHqh/HTRUUiEb09K7CSlKNR7oU
+         Ow5eMUrukN5uYVToAaasBkdu22iW2G/KwKSKJFuAbJGmvsQfd+AFXqcJOsE24WtFSZ/z
+         fVbA==
+X-Gm-Message-State: AOJu0YxfRh3TeAPCnSMi0kWHCHKn+dfcFTCelnvcHzwonhHmIdusmn9D
+        gaa8tLAgye7uuczCQ0fR0KXvIUOjV/Mnn9Y3aOfMKw==
+X-Google-Smtp-Source: AGHT+IG8XvfaO2iDQZru45tosMwj2yXei141FG7yCZLeVf1EhFA7GavmH/c+LB3Hs9LuIeU78Tz3RVP03MeUP/zdExg=
+X-Received: by 2002:a05:690c:a08:b0:5a7:af51:e274 with SMTP id
+ cg8-20020a05690c0a0800b005a7af51e274mr17967004ywb.18.1697446027019; Mon, 16
+ Oct 2023 01:47:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1697101543.git.quic_varada@quicinc.com> <8f578277cc015cfe9cdca06586b2c82f1a728bad.1697101543.git.quic_varada@quicinc.com>
+ <06b823d5c2ec05a940849ac341c48090.sboyd@kernel.org> <20231016070256.GA24128@varda-linux.qualcomm.com>
+In-Reply-To: <20231016070256.GA24128@varda-linux.qualcomm.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Mon, 16 Oct 2023 11:46:56 +0300
+Message-ID: <CAA8EJpoQwDaUa+-WyM6FBzQJo9gn1k2rYLmKSFBLUH00epGJ0Q@mail.gmail.com>
+Subject: Re: [PATCH v2 1/8] clk: qcom: clk-alpha-pll: introduce stromer plus ops
+To:     Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>, agross@kernel.org,
+        andersson@kernel.org, conor+dt@kernel.org,
+        devicetree@vger.kernel.org, ilia.lin@kernel.org,
+        konrad.dybcio@linaro.org, krzysztof.kozlowski+dt@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        mturquette@baylibre.com, quic_kathirav@quicinc.com,
+        rafael@kernel.org, robh+dt@kernel.org, viresh.kumar@linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Instead of manually specifying the RINGOSC_CAL_L and CAL_L values in the
-alpha_pll_config.l field, use the proper clk_lucid_ole_pll_configure()
-function to configure the PLL.
+On Mon, 16 Oct 2023 at 10:03, Varadarajan Narayanan
+<quic_varada@quicinc.com> wrote:
+>
+> On Thu, Oct 12, 2023 at 01:55:36PM -0700, Stephen Boyd wrote:
+> > Quoting Varadarajan Narayanan (2023-10-12 02:26:17)
+> > > Stromer plus APSS PLL does not support dynamic frequency scaling.
+> > > To switch between frequencies, we have to shut down the PLL,
+> > > configure the L and ALPHA values and turn on again. So introduce the
+> > > separate set of ops for Stromer Plus PLL.
+> >
+> > Does this assume the PLL is always on?
+>
+> Yes once the PLL is configured by apss-ipq-pll driver, it is always on.
+>
+> > > Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
+> > > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> > > ---
+> > > v2:     Use clk_alpha_pll_stromer_determine_rate, instead of adding new
+> > >         clk_alpha_pll_stromer_plus_determine_rate as the alpha pll width
+> > >         is same for both
+> > >
+> > >         Fix review comments
+> > >                 udelay(50) -> usleep_range(50, 60)
+> > >                 Remove SoC-specific from print message
+> > > ---
+> > >  drivers/clk/qcom/clk-alpha-pll.c | 57 ++++++++++++++++++++++++++++++++++++++++
+> > >  drivers/clk/qcom/clk-alpha-pll.h |  1 +
+> > >  2 files changed, 58 insertions(+)
+> > >
+> > > diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+> > > index 4edbf77..5221b6c 100644
+> > > --- a/drivers/clk/qcom/clk-alpha-pll.c
+> > > +++ b/drivers/clk/qcom/clk-alpha-pll.c
+> > > @@ -2508,3 +2508,60 @@ const struct clk_ops clk_alpha_pll_stromer_ops = {
+> > >         .set_rate = clk_alpha_pll_stromer_set_rate,
+> > >  };
+> > >  EXPORT_SYMBOL_GPL(clk_alpha_pll_stromer_ops);
+> > > +
+> > > +static int clk_alpha_pll_stromer_plus_set_rate(struct clk_hw *hw,
+> > > +                                              unsigned long rate,
+> > > +                                              unsigned long prate)
+> > > +{
+> > > +       struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+> > > +       u32 l, alpha_width = pll_alpha_width(pll);
+> > > +       int ret;
+> > > +       u64 a;
+> > > +
+> > > +       rate = alpha_pll_round_rate(rate, prate, &l, &a, alpha_width);
+> > > +
+> > > +       regmap_write(pll->clkr.regmap, PLL_MODE(pll), 0);
+> >
+> > There's a theoretical problem here if I understand correctly. A call to
+> > clk_enable() can happen while clk_set_rate() is in progress or vice
+> > versa. Probably we need some sort of spinlock for this PLL that
+> > synchronizes any enable/disable with the rate change so that when we
+> > restore the enable bit the clk isn't enabled when it was supposed to be
+> > off.
+>
+> Since the PLL is always on, should we worry about enable/disable?
+> If you feel it is better to synchronize with a spin lock, will
+> add and post a new revision. Please let me know.
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/clk/qcom/videocc-sm8550.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+Probably another option might be to change stromer PLL ops to use
+prepare/unprepare instead of enable/disable. This way the
+clk_prepare_lock() in clk_set_rate() will take care of locking.
 
-diff --git a/drivers/clk/qcom/videocc-sm8550.c b/drivers/clk/qcom/videocc-sm8550.c
-index 3bb136ec31b1..f3c9dfaee968 100644
---- a/drivers/clk/qcom/videocc-sm8550.c
-+++ b/drivers/clk/qcom/videocc-sm8550.c
-@@ -36,8 +36,7 @@ static const struct pll_vco lucid_ole_vco[] = {
- };
- 
- static const struct alpha_pll_config video_cc_pll0_config = {
--	/* .l includes RINGOSC_CAL_L_VAL, CAL_L_VAL, L_VAL fields */
--	.l = 0x44440025,
-+	.l = 0x25,
- 	.alpha = 0x8000,
- 	.config_ctl_val = 0x20485699,
- 	.config_ctl_hi_val = 0x00182261,
-@@ -68,8 +67,7 @@ static struct clk_alpha_pll video_cc_pll0 = {
- };
- 
- static const struct alpha_pll_config video_cc_pll1_config = {
--	/* .l includes RINGOSC_CAL_L_VAL, CAL_L_VAL, L_VAL fields */
--	.l = 0x44440036,
-+	.l = 0x36,
- 	.alpha = 0xb000,
- 	.config_ctl_val = 0x20485699,
- 	.config_ctl_hi_val = 0x00182261,
-@@ -427,8 +425,8 @@ static int video_cc_sm8550_probe(struct platform_device *pdev)
- 		return PTR_ERR(regmap);
- 	}
- 
--	clk_lucid_evo_pll_configure(&video_cc_pll0, regmap, &video_cc_pll0_config);
--	clk_lucid_evo_pll_configure(&video_cc_pll1, regmap, &video_cc_pll1_config);
-+	clk_lucid_ole_pll_configure(&video_cc_pll0, regmap, &video_cc_pll0_config);
-+	clk_lucid_ole_pll_configure(&video_cc_pll1, regmap, &video_cc_pll1_config);
- 
- 	/*
- 	 * Keep clocks always enabled:
+>
+> Thanks
+> Varada
+
+
+
 -- 
-2.42.0
-
+With best wishes
+Dmitry
