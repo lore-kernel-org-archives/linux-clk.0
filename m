@@ -2,176 +2,140 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C303CDB465
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Oct 2023 06:50:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F28CDCDB465
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Oct 2023 07:03:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231690AbjJPGul (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Oct 2023 02:50:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53074 "EHLO
+        id S230257AbjJPHDS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Oct 2023 03:03:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231796AbjJPGuk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Oct 2023 02:50:40 -0400
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2131.outbound.protection.outlook.com [40.107.117.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9952B97;
-        Sun, 15 Oct 2023 23:49:58 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ZP/v8gD6Gh+45nuxN3+jXoFtmAA0iHG49sf5SPNjkKKlAbTolhjANSFXETjenaDWSb1chcwnqEYFN0ZX0rx3wigzMNg9YHX2EM+RVDWrjw/O3HvLEVbwZJDfgauviA1mNx7BaXMVTcpUfCBQAYNNKfw5GePlkDVZCKtyXKVv2PMWcbUClSzp13omXOfVbJ/sNi3IVYiMSvqSPa0N72qLeqnRxaJy9ZAubHqva2W95Zh6Y8LrHbL4oMQmdrnMsTV16aexI1KREqtt9g6GaV6jA7C2iocLO35ySiDs+z16e8OwlW8wOEom9gN0MRNNosFowXK1NnqPHg5ZyMqWnSQTgA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8Xk9upDCMy0vf6RhD1vTAHHrvZYLgHYLWmUcsKSnwog=;
- b=hDBWh5jZCE3JT2/+EucXHQhp3ab6LIckDnbDhxk1NV7EeNnf4Jxhy61tqCzqTj/gwVmZZ0rfjohl4GHM8FugDQzbUZ/BLmm9PChyUrYRpsN/pWxenGBOhxLI2oywSWPkUuGh3pnNAn5Ik+LZLzPB5/0x2TvDUbZ0X6DeqytTwAhHasSznEaSB/+SUCgFiuUV6js+tcRFYpeeEapsFmHWbF1hHOs3yLI3Hk7EE4cZuM6QrFI+0EHSfX6wMDGUG9jizbcKumVI5aXUp+Oxphd4ntmxzV1Rj6c4Vac0zhzc8+Kf1yQtDNbRLXj97JwSYiWPOhqtX6xE4zlD8HTPX4U8qw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8Xk9upDCMy0vf6RhD1vTAHHrvZYLgHYLWmUcsKSnwog=;
- b=nU22Zioa7rXTugvjR6Q+cUGOjpJ0mNkqwLqS5YM5LpUao5IxKQ/t43EKmQ+gRtgBORxPXK7rD5W1Xr/1AuzErAf1W5ySglfy0AAhDBg0pgyIk3JgCLADubLOwvwCzymrD9nnDIP6KgpML+/oO0m71YG9+8zJzQwZ/oNx1MydA37GkoYxX0C67yO8b/4qpGoKTcoMf4I6Wz/gh2bJ/K3igZelyByw9XrlmDB66/8wOMYcj0kOOcYncdrB7OmE0Aa1a72KYX17UQ+Hffp9Cha7SlmLGVqRSDexFUdmJ379ljembhL1O2OTqA9rCQt7k1TR0jULy9V3TyKFL2LWtfGrMQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from TYZPR03MB6896.apcprd03.prod.outlook.com (2603:1096:400:289::14)
- by SEYPR03MB6578.apcprd03.prod.outlook.com (2603:1096:101:87::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6886.34; Mon, 16 Oct
- 2023 06:49:54 +0000
-Received: from TYZPR03MB6896.apcprd03.prod.outlook.com
- ([fe80::792a:209d:4919:5db6]) by TYZPR03MB6896.apcprd03.prod.outlook.com
- ([fe80::792a:209d:4919:5db6%7]) with mapi id 15.20.6886.034; Mon, 16 Oct 2023
- 06:49:54 +0000
-Message-ID: <05a5c068-6766-ade4-0e7c-e94b48c4d754@amlogic.com>
-Date:   Mon, 16 Oct 2023 14:49:48 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH V2 4/4] clk: meson: c3: add c3 clock peripherals
- controller driver
-Content-Language: en-US
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Neil Armstrong <neil.armstrong@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Chuan Liu <chuan.liu@amlogic.com>
-References: <20231010062917.3624223-1-xianwei.zhao@amlogic.com>
- <20231010062917.3624223-5-xianwei.zhao@amlogic.com>
- <5e0bd4bba88701dd1a7a3e89d18412f0.sboyd@kernel.org>
- <1jmswnvub2.fsf@starbuckisacylon.baylibre.com>
- <2fb931d1aa2190b918d0ddba87579eeb.sboyd@kernel.org>
-From:   Xianwei Zhao <xianwei.zhao@amlogic.com>
-In-Reply-To: <2fb931d1aa2190b918d0ddba87579eeb.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SI2PR04CA0012.apcprd04.prod.outlook.com
- (2603:1096:4:197::14) To TYZPR03MB6896.apcprd03.prod.outlook.com
- (2603:1096:400:289::14)
+        with ESMTP id S229590AbjJPHDR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Oct 2023 03:03:17 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3D9297;
+        Mon, 16 Oct 2023 00:03:15 -0700 (PDT)
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39G6H59K028812;
+        Mon, 16 Oct 2023 07:03:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=date : from : to :
+ cc : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=qcppdkim1; bh=17sxN1p7rORK+aDYPpUNLI9nkqxS5BmjqXxXbni6Ke4=;
+ b=pkKpausmx3Qh6II+766RwgsTw7pfGUSLaGPYu0m2A6c/xJa4xGRyhASCX1PHERVRuYDd
+ orRPQIXpr2EgDUTurfFBK4F9kgqJuDiWyxDZ0sWUC2xhRjgLgxlF8OFCra+IZO1TQ0X1
+ CuEI9/Mkgj7JmNU+cf7VlJu9ab06pVFcVcss7ljs4i4sVMzcCG4F26d0VOhbF3Kc5p6K
+ UOYlzgFIEFBBpUdvXt14+eZX69nOHfrQKhgZ9xz5L1CiKYREu+gHEEv1/ErDyqlmRAqB
+ hGvAzpHHPuKYxuVAChe+6uYYD3yIgcuPlD94rcWpsT2lw2tuzpgHsSUKuLslvAoWUbxd 2g== 
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3tqkrpbd87-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 16 Oct 2023 07:03:06 +0000
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 39G736kW004835
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 16 Oct 2023 07:03:06 GMT
+Received: from varda-linux.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.36; Mon, 16 Oct 2023 00:03:00 -0700
+Date:   Mon, 16 Oct 2023 12:32:56 +0530
+From:   Varadarajan Narayanan <quic_varada@quicinc.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+CC:     <agross@kernel.org>, <andersson@kernel.org>, <conor+dt@kernel.org>,
+        <devicetree@vger.kernel.org>, <ilia.lin@kernel.org>,
+        <konrad.dybcio@linaro.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <mturquette@baylibre.com>, <quic_kathirav@quicinc.com>,
+        <rafael@kernel.org>, <robh+dt@kernel.org>,
+        <viresh.kumar@linaro.org>
+Subject: Re: [PATCH v2 1/8] clk: qcom: clk-alpha-pll: introduce stromer plus
+ ops
+Message-ID: <20231016070256.GA24128@varda-linux.qualcomm.com>
+References: <cover.1697101543.git.quic_varada@quicinc.com>
+ <8f578277cc015cfe9cdca06586b2c82f1a728bad.1697101543.git.quic_varada@quicinc.com>
+ <06b823d5c2ec05a940849ac341c48090.sboyd@kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR03MB6896:EE_|SEYPR03MB6578:EE_
-X-MS-Office365-Filtering-Correlation-Id: 978ebec6-6b94-4cea-9af9-08dbce141a4c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 69S+DDA6kHtI3lq+vg0+Mh6QiQ6eew99zteSMrd2L6CAThmROb68ls11aISlI5OA1bK8CLcoOTz2p7bSGtcBe/Lo4XG/tf4RVRlvFMF0OsUj1+hbF5qGhSKoHfZfbwCBgpRgvDl+QUfwL7yFby+/9uEM9B58pLPgOr1taKR5uw846N/8WygRnD3a34r/uj+BMeKyrFLwt8hUUtbTJtvXtwXw81AmDBbYtDXTo84lu24TS+twIcbvDWflHNOwNwWgJLl5pNT45IjrpdMXvMKudpk+As6NFWaUqy09W4d/aseDMpDF5eeVHof9164JOMKftPOAqkpGvDMXqQniw5gGA/kaGNXp1NAifQEO9RbW2Kw4iRAHST4DdAXwIhBdN5hXP6JQme+YGYiDL4daQNQMIYj4ZC45uBp6ZQdU40JOlVXJR4P9RbhUHB1RhgMc0L2z+rLkBkuno9hPIOGb3VmhLnNnKjs1vqpiXEM5o1PE2jSd+zk7HL2+PIf1gnapfHWyuxj90/ywVzROG3dt2J51hrxwxUuFbza3s2nOQdyQQLoxVUSn7or2t3aKEBgCdTrkEPterzgNp9fsPbTJcq0VZkM8JZCI5NsnQ+gqQ1fvNJhDaDVkRXitY71vALP1ahMoPyXa2ZpQDdAjaubNkhdqwg//QBcPTe+jiOIO5FFsBA6dyoyNwDABFG9qzwGMlMoQZj2QeyOPXJzLhiYxbOibvw==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6896.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(136003)(346002)(376002)(366004)(39850400004)(230922051799003)(1800799009)(186009)(451199024)(64100799003)(31686004)(36756003)(66476007)(66556008)(110136005)(54906003)(66946007)(316002)(86362001)(31696002)(38100700002)(53546011)(83380400001)(107886003)(2616005)(26005)(6666004)(6512007)(6506007)(8676002)(4001150100001)(8936002)(2906002)(6486002)(478600001)(41300700001)(7416002)(44832011)(5660300002)(4326008)(45980500001)(43740500002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dm8xdHROUTZrb3BodTYxZkx6VU5zc29yaE5tV2VnTTNSYk9LeVlSbGFqZFdV?=
- =?utf-8?B?VTlPc3RuMVp3S2RwdjlpWmt2YmtiN1lqMERzZisvaU1IU1A3M3VJcU9pYjMz?=
- =?utf-8?B?anhIbWN3Sk9QQ09UOFRGQnRJdDdnSWVJcSs4Qk8zWnNudFdDbUdlQ2JSMFhO?=
- =?utf-8?B?UWROdVJhRk5NdXJYUXliVG11NktHVWVRQlBuM2FvQzFZNGR2Y3V4NERsOEFu?=
- =?utf-8?B?MzlHMnNXZUZOY2dWTnRSdEZvQmVhY1dBaTdFaGJiZnJZWWx6TTJobGNZdW5h?=
- =?utf-8?B?ajlkV0xBMHQzcC9ONUplbVBvQmZDTEo2QnppcnYxekljSGhYeEhSZ2xoemc4?=
- =?utf-8?B?LzJTdUVmWFdKdko5U0xDbEZXenZFQ05ITzJZanArbkZyRzZ6LytzOUtDNXNG?=
- =?utf-8?B?ZHRqTUUwRVlYdHhNYnBsT3FBYmVsN1VNR05QbDlMUlpjUC9ER0JpTVZnYkNJ?=
- =?utf-8?B?WTF1SWZJWWZtUjY1WTNqMjhPbXZFYW11SkNhU3JyMTQ5bzZZbEt3MEhtMFBK?=
- =?utf-8?B?U0dLb3hNcStDdDFRcDVLRmZ4SU9NUjkxTFFKOHFETUdNU1hBbWNiNm1JR0Nh?=
- =?utf-8?B?My9CeHRTRi9VbG8ydnFzbnd0L2NUT1FFRTQzZzZQdHR5M2wydW9sMW51MFl5?=
- =?utf-8?B?bXN0Y2lhem16RGs4RlgwU0RlOU5yeVY5Sk95encvTUYvd1J2VXhUZTZWMWJK?=
- =?utf-8?B?d2pQVmhCUDRpaGdGQTdCL0xxMlhudVZEb2E4S3JueDlOTVpkNzlRM2x3UDNM?=
- =?utf-8?B?ZEJRbE1wTDlqYVJaY2Z5UU9aQk4vK1BkWWREajhYQ0FQV2xnTGR5Y3pqK2VF?=
- =?utf-8?B?ZVZ4eXFQSG1DRmlkc2tKVUMzOXI1RnlPaytoNXo2VG4wa1lKYkZHTGxpVGN5?=
- =?utf-8?B?SDJhekV6YWpDeXdRcmtoK09McjM2Tmc5N0JTRGtKV3JHNU9XVlp1bmpGd244?=
- =?utf-8?B?OS96UjBXYWFBZ1hyYkIyaTU5Y3pKY0hpN0ZlVkh1azI5bEM3aFJPYlRmMlZF?=
- =?utf-8?B?ZWZjNVhFSlpGQldZd0RGNVpWL1pNMUd2Q21haGthcGRSOE9qcXRmNVpFRFMy?=
- =?utf-8?B?Y0gvRlhGVDdsc0xWekZDU0F1TFZmZmNPOHJydGQzamdvZDZMZldmKzR6UkxT?=
- =?utf-8?B?SVBwNVQvcEF3R2RCeUNNOWh1SFZBUHVuSWhYQmp3aHpBRFlJb0g0NHZUV3gz?=
- =?utf-8?B?cTlGQTY5aEF1TXd0VUdSMzcwKzRlamxZL3RIZnByQjFVb015WXZpNmMxUmVt?=
- =?utf-8?B?d2pnWjlUb1ZZSmR2bE9PcStTQ29QOE82UGVUcWhUNFM2VE5rNDFORG9NQThy?=
- =?utf-8?B?bUVDdFB6WEtXMEVPaVdsdERmdWhTb1BOc3dFUUNBN3BVUXpKaFVJZWdFT2tn?=
- =?utf-8?B?UEExSTlEZWNQbUV3czNRUVM0UWlMeXhuMXdNZE1kNXRuU3BxMzFuRE54NWZq?=
- =?utf-8?B?U3lrSkFsb09hTW0vV1JHYi9CZU5tSFRsVTFvQ2NWekVwSGxCU05qL0NDTkxE?=
- =?utf-8?B?YTkxSkdIbjhvbURLak9LYWpiS09XRUp1ZDNuZVNOaFF0bjVEZlVoZUowRTJ5?=
- =?utf-8?B?b0EwVzdCa2MyVXZKSGZRUlZkbXRnakdxRXNEallYVk9ydjZjdysxakVZamlQ?=
- =?utf-8?B?bFlKeFRneTY0SEVrQ0RJZzFIVTc2TFpzN2Mxam9kUlc3YUlEdEZZUmNnMmpq?=
- =?utf-8?B?VjloNTNRYUgwek5BZnAzeTRFVnlkc2dGMlVpSmhmWEFHc3pIdkxtWVFwTmFS?=
- =?utf-8?B?a1R6SmlJVS9iSmVIa21la3VOUTVINjBSZ3BSK3FObnVvb3p0R0tmc2dGeTJj?=
- =?utf-8?B?N1Z2TlFZOXNuMWl5SmlMOU43V2lhUXZqQm9RLzZUdVVxOWc0OS9ra0tKZW1X?=
- =?utf-8?B?WTltUGhOQjhTblNFU1BYcEVoQlhaaGp3RVE1N2p2RUs0bVlSU084K25NUjhk?=
- =?utf-8?B?SmxrVEhrT1pZRmllQm5OaUowTCsxRUM5M25UNzlEa2QyQ2xxd21aZE9kQmJX?=
- =?utf-8?B?T3U3YnFNV2ZnS3ZnekdOT3dueDNwT1ZMT3ByRC9JcGFHQ1B2anZBWGZsK3Bl?=
- =?utf-8?B?SWh5cVEweEkrZ3ptaDBpVThrOWQ3M3lsV1pXOTl3anJna0ZnZ3VEc00zQ3Ju?=
- =?utf-8?B?bWRXRG1kQVB6OXV3OFBzUm5mZG5HTUFVelBvblVtUm5FaHNoZ0NsTXZ6aCtk?=
- =?utf-8?B?Z2c9PQ==?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 978ebec6-6b94-4cea-9af9-08dbce141a4c
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6896.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2023 06:49:54.0748
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: EoyM4FVZqU2iYx7JQPnMXB14/ErAMq5DSbyh1yeHyfbYpscht9QLrDOuPHakGF0NBmobVqQaoj1FSeFh5HUlE4OxcKyDbkqIvkyAi2Mu/XU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR03MB6578
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <06b823d5c2ec05a940849ac341c48090.sboyd@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Is35Iy1OTMyWouqkVf0a2KM7CBzvmL3C
+X-Proofpoint-GUID: Is35Iy1OTMyWouqkVf0a2KM7CBzvmL3C
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-10-15_09,2023-10-12_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
+ malwarescore=0 adultscore=0 bulkscore=0 spamscore=0 priorityscore=1501
+ mlxscore=0 lowpriorityscore=0 suspectscore=0 mlxlogscore=999 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2309180000
+ definitions=main-2310160060
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen & Jerome,
-        Thanks for your reply.
+On Thu, Oct 12, 2023 at 01:55:36PM -0700, Stephen Boyd wrote:
+> Quoting Varadarajan Narayanan (2023-10-12 02:26:17)
+> > Stromer plus APSS PLL does not support dynamic frequency scaling.
+> > To switch between frequencies, we have to shut down the PLL,
+> > configure the L and ALPHA values and turn on again. So introduce the
+> > separate set of ops for Stromer Plus PLL.
+>
+> Does this assume the PLL is always on?
 
-On 2023/10/14 06:01, Stephen Boyd wrote:
-> [ EXTERNAL EMAIL ]
-> 
-> Quoting Jerome Brunet (2023-10-13 00:38:14)
->>
->> On Thu 12 Oct 2023 at 16:51, Stephen Boyd <sboyd@kernel.org> wrote:
->>
->>> Quoting Xianwei Zhao (2023-10-09 23:29:17)
->>>> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
->>>> index 76be4bbd2afb..c8d59d28c8ff 100644
->>>> --- a/drivers/clk/meson/Kconfig
->>>> +++ b/drivers/clk/meson/Kconfig
->>>> @@ -140,6 +140,19 @@ config COMMON_CLK_C3_PLL
->>>>            Say Y if you want the board to work, because PLLs are the parent of most
->>>>            peripherals.
->>>>
->>>> +config COMMON_CLK_C3_PERIPHERALS
->>>> +       tristate "Amlogic C3 peripherals clock controller"
->>>> +       default y
->>>
->>> Why are these default y? They should depend on something like ARM64 and
->>> even then I don't see why we want to enable them by default if we're
->>> building the ARM64 kernel.
->>
->> Should indeed depend on ARM64.
-> 
-> Cool. >
-Will add depend on ARM64  in next version.
->>
->> Those are the main clock controllers. Like for other AML SoC families,
->> they are necessary to boot the device which is why they use 'default y'
->>
->> Is it a problem ?
->>
->> The whole meson directory depends on ARCH_MESON, so the drivers will go
->> away if Amlogic support is removed on ARM64.
-> 
-> No it isn't a problem if the entire section is implicitly depending on
-> ARCH_MESON.
+Yes once the PLL is configured by apss-ipq-pll driver, it is always on.
+
+> > Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
+> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> > ---
+> > v2:     Use clk_alpha_pll_stromer_determine_rate, instead of adding new
+> >         clk_alpha_pll_stromer_plus_determine_rate as the alpha pll width
+> >         is same for both
+> >
+> >         Fix review comments
+> >                 udelay(50) -> usleep_range(50, 60)
+> >                 Remove SoC-specific from print message
+> > ---
+> >  drivers/clk/qcom/clk-alpha-pll.c | 57 ++++++++++++++++++++++++++++++++++++++++
+> >  drivers/clk/qcom/clk-alpha-pll.h |  1 +
+> >  2 files changed, 58 insertions(+)
+> >
+> > diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+> > index 4edbf77..5221b6c 100644
+> > --- a/drivers/clk/qcom/clk-alpha-pll.c
+> > +++ b/drivers/clk/qcom/clk-alpha-pll.c
+> > @@ -2508,3 +2508,60 @@ const struct clk_ops clk_alpha_pll_stromer_ops = {
+> >         .set_rate = clk_alpha_pll_stromer_set_rate,
+> >  };
+> >  EXPORT_SYMBOL_GPL(clk_alpha_pll_stromer_ops);
+> > +
+> > +static int clk_alpha_pll_stromer_plus_set_rate(struct clk_hw *hw,
+> > +                                              unsigned long rate,
+> > +                                              unsigned long prate)
+> > +{
+> > +       struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+> > +       u32 l, alpha_width = pll_alpha_width(pll);
+> > +       int ret;
+> > +       u64 a;
+> > +
+> > +       rate = alpha_pll_round_rate(rate, prate, &l, &a, alpha_width);
+> > +
+> > +       regmap_write(pll->clkr.regmap, PLL_MODE(pll), 0);
+>
+> There's a theoretical problem here if I understand correctly. A call to
+> clk_enable() can happen while clk_set_rate() is in progress or vice
+> versa. Probably we need some sort of spinlock for this PLL that
+> synchronizes any enable/disable with the rate change so that when we
+> restore the enable bit the clk isn't enabled when it was supposed to be
+> off.
+
+Since the PLL is always on, should we worry about enable/disable?
+If you feel it is better to synchronize with a spin lock, will
+add and post a new revision. Please let me know.
+
+Thanks
+Varada
