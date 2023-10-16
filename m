@@ -2,183 +2,297 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6AE3CDB47E
-	for <linux-clk@archiver.kernel.org>; Sun, 15 Oct 2023 23:21:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B615CDB465
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Oct 2023 06:41:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229567AbjJOXVh convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 15 Oct 2023 19:21:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38302 "EHLO
+        id S229636AbjJPGla (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Oct 2023 02:41:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229500AbjJOXVg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 15 Oct 2023 19:21:36 -0400
-Received: from mo-csw-fb.securemx.jp (mo-csw-fb1801.securemx.jp [210.130.202.160])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE239A9;
-        Sun, 15 Oct 2023 16:21:34 -0700 (PDT)
-Received: by mo-csw-fb.securemx.jp (mx-mo-csw-fb1801) id 39FMouak634900; Mon, 16 Oct 2023 07:50:56 +0900
-Received: by mo-csw.securemx.jp (mx-mo-csw1800) id 39FMoS9q1779506; Mon, 16 Oct 2023 07:50:29 +0900
-X-Iguazu-Qid: 2yAbn6s0GZ3E7cqpM0
-X-Iguazu-QSIG: v=2; s=0; t=1697410228; q=2yAbn6s0GZ3E7cqpM0; m=nv43srUfvixbPAZsBANMrJNL3Y/yk/ZyK6tJU6Wv3tA=
-Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-        by relay.securemx.jp (mx-mr1801) id 39FMoQrH1898351
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Mon, 16 Oct 2023 07:50:27 +0900
+        with ESMTP id S229478AbjJPGl3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Oct 2023 02:41:29 -0400
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2135.outbound.protection.outlook.com [40.107.117.135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ED058E;
+        Sun, 15 Oct 2023 23:41:26 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=b2QuTO4Uog/Zb6mg4iSMO0y0FfU+w/+o+E26U1atOt+CQeiZI+wY2ojLV9UA0EGxZuAXXzr1nJSq0NI1x6g+adACDIrHvkpO8BIC9jPp2Af4KKQo87Bte1suMq/vOO27ioyzO7/StTQeGRtwm10SisbuMrrOGR8ru8KH2lnWvjQEc1cEBE7ixV+/EEDCYbioV5Gy32NGn5xSkTZqNH4877ieMgn8hHrdPRmEkfrUoA4arpezJncsMDLDMtgZMnRetT1BQjPrvppkSXQqmpK7s+v0Dc3PijPXiliJRkP5rFhK+40YjYcVTUZq/P/u8qM+cPRIad3zZ2SsSJdtplETyQ==
+ b=H/DLTCLTJCpjYwVm8DJEor0Zw7QMmX2HRswzs4GvVFcSjZEZPlgqYfi6DkbcF5in4x5ASPrlipNjeKmbw/OrGdY2HmHlrNzhJ7qcKvwB+CXX/6cgdzKrt29aSkKkd9VXNLnfGS9xDOsrEZ6bAdqA4qXO+QXtt/hjBqLArrLKvwFE6u3QIp+pHdFMP9kBGqV91lRWE81PHRmXhBabXcXWprf0pQyqN798fUH0MYx5sElu63fy1sr5TdjB+T5oldfMhnBulXVw/hDfF59kNDDcIjkQYpS/rnQiAlA9EXvgsb4Iq+c2eXlXh5NN1jr7cMQNjP8EVuzMoTeAJ6Z3D4MhJQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JL/ggxVdMHugFO7wYGOT57XnnX8FFo/zrLQmR6iFBX0=;
- b=DYoHNSIDAY4CGKE0EUxBOU/noTEkmxRkevbdpibbBRkZoNL/eAqSTWD2En3l5cdZODNPsejuFecuETW5Y5LRDwm+pD0LdTIbzDEJFBJokZ8iJ31DeJLoPQxydD/XYbxv42qk2+MX4fkI+G6k1y7NpCyuJO4iGOgeDJOh6F8ATRKd5VLIfJ7JEGAx63Wut4XJLoa7f7+hAT+V55OcnnGnvlUpmYXmvNehrfFiL3gmsKVxpKtM5T3N/NCORxXm4rm++GVgdlTHAjUxtLw4ILZPKJfZyK0RAu2ND9DoqFO7BPvGRrEQ5PmbRkJDwVU+QjDj+7uc8FGgyDZwF+shGVv3QQ==
+ bh=OVFK3r0GEoaXyBMF6BvTbPcXH6q6NW2aqcze9N4nl04=;
+ b=NS5VMStd5noFLPRm85xzN8UZ01fEZDMfAGmoZPQvaZy2PI8FwRTh65roP21Uziis81E/OAKlUZY9c8Vk50EXrwErO2VSdB03xYjXiFFivDWFXQzJMwrhaoi+aRAiHVd0ae6ijVs5E08gnmbC5LOcURXEi3fiDkeZOZ6gH1+MGaoHwnEr5czWw3pYIvCg1EtEWOqlMyPYHw8cJZgFZze3Itb1HU2tbD0A5QJ5tAtc0HScdQXb1raktFSCaJO1SjxZvTh3MgKefe5x231d6xF5Sw1mlPdjgtPkFUb6S+f0OtrDKjDbJlOIruRMJ+dGEwsuuRCM9S7A2G5UmyKyQgs8mA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
- header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
-From:   <nobuhiro1.iwamatsu@toshiba.co.jp>
-To:     <gustavoars@kernel.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>
-CC:     <keescook@chromium.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-hardening@vger.kernel.org>
-Subject: RE: [PATCH 2/2][next] clk: visconti: Add bounds-checking coverage for
- struct visconti_pll_provider
-Thread-Topic: [PATCH 2/2][next] clk: visconti: Add bounds-checking coverage
- for struct visconti_pll_provider
-Thread-Index: AQHZ/LJ2dpVjEBIgOEOHBXIfYO2wnbBLemLg
-Date:   Sun, 15 Oct 2023 22:50:25 +0000
-X-TSB-HOP2: ON
-Message-ID: <TYVPR01MB11245A06AA4A22CE6A1B5676792D0A@TYVPR01MB11245.jpnprd01.prod.outlook.com>
-References: <cover.1697076650.git.gustavoars@kernel.org>
- <675633f7ae9893371d35b238f06fd02a3acffebb.1697076650.git.gustavoars@kernel.org>
-In-Reply-To: <675633f7ae9893371d35b238f06fd02a3acffebb.1697076650.git.gustavoars@kernel.org>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=toshiba.co.jp;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYVPR01MB11245:EE_|TY3PR01MB10015:EE_
-x-ms-office365-filtering-correlation-id: 65110d56-d330-4edd-9665-08dbcdd11ebb
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 2tkAWnix0QEO9AkaGxPFLzFhbDzlAE89Ljn8hP8UnNHzqs7u+Fs3fYkGVrb9SSfHwLs1N6vmR+IgAr5yge7rUzBEApmx7nu5YsGLemqQPUXMbAoa8x1bDwKtbS0DYAfGNkd6pznn2N3GF0lOG+H78IDEKXzKgIWgo0zF1xSj7YCyO4HLeASK7HHIQkdrl2tt+ZDSsHQCvJG0y7SL/GQnVbBs4ajkTTIT5W/LrtpWppwswk8GwBa5KD7k4AYEFaf1fT653wX7iO8wqON6xOlaUVTmWu0sjo32HAWLZ//hfvV00VOtdodM1NzVHnlTKB77aOQ1sW9z4pvvc2R0EncmZSpWek8ezb/53OFZJqxtRht8wH3V4zjoRmMKW2EI8J6K0eFVo6yt9A+WEIPiRtl7WXostPU3iH45YREuRgkclOX0FxfhjeDbUlnRd6h9cBL8odNPQ7N/fVfqQb9IkytcGdOwRx5olU8fDwGxRd8vpibfqkwNoyeCUzG9PMnocdBu2mgO+u8BLma4HaKHhFWvmSidUiPLq5M7hvLc0BQTu4bAsfUFTT2GkvsGfYvI0BeqYAkPethJ0GRAbTRUVYRNDrw9aAtx6qd7YpW/aiyNYxFmd06SI4j8edKoMNc7Uru8zIryfdeHie19+bUu6//GRA==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYVPR01MB11245.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376002)(366004)(346002)(39860400002)(396003)(136003)(230922051799003)(1800799009)(64100799003)(186009)(451199024)(478600001)(316002)(110136005)(66556008)(41300700001)(66446008)(8936002)(8676002)(4326008)(76116006)(66946007)(66476007)(54906003)(64756008)(55236004)(5660300002)(71200400001)(52536014)(6506007)(7696005)(53546011)(55016003)(122000001)(38100700002)(38070700005)(86362001)(9686003)(26005)(83380400001)(2906002)(33656002)(95630200002);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-2022-jp?B?V1VFL1hNZnpXVlB4MnMrcWZKK1VCVXAzV005VXo4U2ttQ04yOTlVSFI2?=
- =?iso-2022-jp?B?dlhyWFpvNEdidXB1VWJqa3h4ejJCSHB5YXVqUjRYd1lEL3h6TitIMERQ?=
- =?iso-2022-jp?B?bVkzcFVrVGZyWFA3TTh0bitVeHdkWmdISkYrTXJjM205Y1NOcGZaWW5i?=
- =?iso-2022-jp?B?MzVNVlY5dy9iSDFyZ1cxaCtYQzFWTjJJTjNMOXlVQ2YydHJ1TmdEVlFL?=
- =?iso-2022-jp?B?SWdSZ0NDVTJPeFRnenA4cmVtTzA5L1BoL20vQUJqdERwWEZ0em1aUTlN?=
- =?iso-2022-jp?B?QlJ1bmx3SmpyMTg4MUVJb3Z5QkFvS1lLQTU0VmtidWp2NEdpTUNkS3JD?=
- =?iso-2022-jp?B?aW4rZVB4KzZPczBJZ2JheGVCZlh3UkREOTRRVFFNOEJON2dhbkNsRVlt?=
- =?iso-2022-jp?B?cGYzTHozajBGYmZKWGtsSHJJMHFLZDltRTVPc1p4Unp2OWFWNTF4T1BJ?=
- =?iso-2022-jp?B?b25sOVEwRXA2MjMyM3RwaE9XZmRCQUk1a3JPdVZzMUplSy80dk9KeVNO?=
- =?iso-2022-jp?B?OTYyV1VKVzNsVHJ4VzYvelJmS3BIUU4xMTFkTnRYYkd4eEJFVDRPWHd6?=
- =?iso-2022-jp?B?N2c0OUI3a1d0bjFNaXQ1UmhxQllPSGNSN1JFQm42dlB1anJSY1hZa0dr?=
- =?iso-2022-jp?B?ZmFFSTl5K3VmRGppTjV1SHpwK3BqY1B3VXBlOGdWT2NSYi8vS3V6d29z?=
- =?iso-2022-jp?B?VWNBd3pudEZWUWJkRmtiLzRNZUZGaVU3LzBpTUU0bDVWZGNlMkttalpm?=
- =?iso-2022-jp?B?WkVqODc2Rkc4S1k3cXRuc2RzUXIyZ0txYnovWk0ra2w5MVpjLzN2emFy?=
- =?iso-2022-jp?B?WVVlbk5jZDZiQWhyU3g5ZXJFaGZ1Ynp6TW9QQVBaYmlHRm16dE5CMjdP?=
- =?iso-2022-jp?B?M05yM29iUGJ0NWFTZExPeHY3bWxEVitkb0h6Y2FkZEFubXNsbDZIM1NL?=
- =?iso-2022-jp?B?NjlaVW5VN3VicUZCM3dhbGNMNjRsbWJIL1NLdXd4SGdiUGdqb0hlZ2dZ?=
- =?iso-2022-jp?B?YTVnNE10Ri9GYWNwYTlpMWQyWHgxa2toTi9KTU5FNC9SZy93Ymg2STY5?=
- =?iso-2022-jp?B?MW5lbFhRMGgwTThSa2prTFBKYThxR0h2YmVRaFA2eGZldEhiYWs0c2FI?=
- =?iso-2022-jp?B?bHJSd2NaQnVSTDFBVS9LdWdLd0ppcGZhaWlETjVZMEhtRld3YU14cTls?=
- =?iso-2022-jp?B?RGh0cFh2RjNteUhKQ2Zhb0pHMzlRMmI5U2ZFaU1FZ2RnQW5JZGg4KzRn?=
- =?iso-2022-jp?B?cEFOQnc1Q3dKSEhOanpxVlVOWmc2VC8yTXE5eG5KVFlzVlBsNHZRT3NH?=
- =?iso-2022-jp?B?V1lEYjNMMmNXbmt3NFpsZW1ENUNXWXl3VUVzbWpPSVdrOHUySWwwbEoy?=
- =?iso-2022-jp?B?NFZ4dWY5RVA1NURHSXg1akpKM1dsSlVSYXk2Qlk2QUZDR29HWFM1R2o3?=
- =?iso-2022-jp?B?NlJ4ak5CellIbUdUM1VZQ01RMWVtRnBVWFA5NmpQTVpUWk1NUWpHU0hm?=
- =?iso-2022-jp?B?OWtsWnJCWWpwWHRqamNqTTV5WG0zSGZiUXRDVkxWeGExRzNZakV6eGxi?=
- =?iso-2022-jp?B?diswQUtIc0dldzZKVVBzbzFPbm5LOXNHVW8xWWhnYXBPSzg4cEFFQlI2?=
- =?iso-2022-jp?B?MUZ2cTJNMXVLSnlGSjIvNzQ4WnFvSHNrbDRSalE0Rlc2ZEdacHFOTjhk?=
- =?iso-2022-jp?B?TWpIclVXQlBxbUZqamlOTHVqeVhub3dUU0NwN1VhZjg2Rm5lM3FaQitz?=
- =?iso-2022-jp?B?eEJJSG1CSndxUXVxdCtETTFweVAwakMzZ1dIdUFEWTVrZ0V5TVZVTkhw?=
- =?iso-2022-jp?B?dnNhcHpCcnBFSnVUOFNJWk9tVVA5bVZRcE1ibkNNY1ltemFsem9CRDAy?=
- =?iso-2022-jp?B?NkhDZTR3SDJmdlpuQ0t5Q3hvL2prYlNOdU1xTXg5TUEvZDVYYW5GKzU3?=
- =?iso-2022-jp?B?NlF0anR1aXdtTFdWMHlWZFdQWFpiWFowNnJoUGxVVDloczVLYTRoWWV6?=
- =?iso-2022-jp?B?L3RhT00xN1ZGMDMycmYzbnY0OStQdnkxVUVtSENlZFU3d0hDeUpidDlv?=
- =?iso-2022-jp?B?T3g1ZWt1ajFJRnUvNUllOTFaWlN1TC9FaVU5ZWRFa0tyR0JaRUphT1B3?=
- =?iso-2022-jp?B?bUhtZWlCbzQ4QjdPZGpHM24xTEQveGlQVG92TjdaRFl3TUFlUHdINWtY?=
- =?iso-2022-jp?B?dFUrQW5VUHlGQkZxcGNJWlJkMFJiUGpMRUlISkZsSzRTRVRBZ1ZGSDd6?=
- =?iso-2022-jp?B?NkJoWm42YUpvUUF4RmF4SVZabnpCR3F1YVBscTR0UmM3MEI0MzBvWWJk?=
- =?iso-2022-jp?B?ZHl3MjBsNFV4ODdHdkZmalpuQVRsUU9TMHc9PQ==?=
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: 8BIT
+ smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
+ dkim=pass header.d=amlogic.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OVFK3r0GEoaXyBMF6BvTbPcXH6q6NW2aqcze9N4nl04=;
+ b=uX3XzTir5KS+gIl3CmJ5FQVFk0wt/JVL/C4e3+mn0OFaSZClKFT5C2YWzAr9nvF+5FozpES/BWdzWif0IYk2MC89syKLfT7OOXtlnYy5bjFVgXTBMW9yd0J65D7vVul2Q8ENaKAyRfjoj1fQ9TeZcxAtPM7RJT1IZIociK/B4xhpA/ZZcXOLI6Owm7p7QuBmg68HwLY2t/UYJBbZGJWRdhGN1puYOdj9hhFp3JapnJ5cA2TImsWiILm+j3hq2wV4aapS6JQbcEd4ZbfllI7xKYzr9lMNd4evej07fPujyc5J9xKRr/pV7dSpws2G0peyAHZtUxP9S5nbwTtKbisoAA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amlogic.com;
+Received: from TYZPR03MB6896.apcprd03.prod.outlook.com (2603:1096:400:289::14)
+ by SI2PR03MB5916.apcprd03.prod.outlook.com (2603:1096:4:148::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6886.35; Mon, 16 Oct
+ 2023 06:41:21 +0000
+Received: from TYZPR03MB6896.apcprd03.prod.outlook.com
+ ([fe80::792a:209d:4919:5db6]) by TYZPR03MB6896.apcprd03.prod.outlook.com
+ ([fe80::792a:209d:4919:5db6%7]) with mapi id 15.20.6886.034; Mon, 16 Oct 2023
+ 06:41:21 +0000
+Message-ID: <4da5dae6-6f94-9ab9-3a25-8ed7f4be30b1@amlogic.com>
+Date:   Mon, 16 Oct 2023 14:41:13 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH V2 1/4] dt-bindings: clock: add Amlogic C3 PLL clock
+ controller bindings
+Content-Language: en-US
+To:     Jerome Brunet <jbrunet@baylibre.com>, Rob Herring <robh@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Chuan Liu <chuan.liu@amlogic.com>
+References: <20231010062917.3624223-1-xianwei.zhao@amlogic.com>
+ <20231010062917.3624223-2-xianwei.zhao@amlogic.com>
+ <20231010132151.GA557938-robh@kernel.org>
+ <291f03f9-72aa-2842-b44a-c88c812df4f1@amlogic.com>
+ <1jr0lzvuql.fsf@starbuckisacylon.baylibre.com>
+From:   Xianwei Zhao <xianwei.zhao@amlogic.com>
+In-Reply-To: <1jr0lzvuql.fsf@starbuckisacylon.baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: TY2PR01CA0017.jpnprd01.prod.outlook.com
+ (2603:1096:404:a::29) To TYZPR03MB6896.apcprd03.prod.outlook.com
+ (2603:1096:400:289::14)
 MIME-Version: 1.0
-X-OriginatorOrg: toshiba.co.jp
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR03MB6896:EE_|SI2PR03MB5916:EE_
+X-MS-Office365-Filtering-Correlation-Id: 44a66031-aefe-4344-10fb-08dbce12e7c1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: gPyKY3l12l6Eidolo/e9YY6z1dgs9QNQT5y6+ecSGtwoJ0plqFvCE9/y0pbFsH8gcHNF1mAOhMIX2fykCS//TgNbn4je6TzeVxoCXKTMVH1psBc1eSrAYtBKXF3Lye009L/rPd9LJqFf7hGHgDjVFMxkQxAg1cdFkEyCfRIj88WHE3Ra3JCkB87IA/zsEGIA+TP2VCH0Niu6nV2CcSy0CM+B+IbKqqDI9PSRpf/aljQW4vzHyAsw4HvyVBuj1H+tbGMVuSe0kDeVdeVfvmSqea0PfJ7ghtLsTJ8MtlSswlglqdEsAznAW0JY+9FozIsn2XW2+BpAixFOoDFLZpJwSLnLZ+NO1PmzyO+pPsTinuh7vuaGxMeNr73lyLiY8BBUDV7w5rFsgcCfQgaCecKtEtwORE6BdK84x9SAIxldvQFN1xkDWyg7dmkipEjHls76uRGt5cn7uQTjNH94cXU4cxp0a6n3LLfdPQdVoMn0a0iZmx006PJ2Wmd/PHLUG3z3KPMyJz1y3zO96d8+19MKtIfTDD/2RStgyp6nHz22xKarRhjlbvdpi2cjGhUECzuFD+d5XbhC6o2pJQZAl2b8KXPoUv2vKg5CaM483eM5+5x2QZiM5iRxO8iMnCI0oOpOOKefBRWKJOlKQJCDZ6NSTrZ4OqvpS0hZQ7+AUthztiR1FDfmK3Ea04+iaW0/94N9
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6896.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376002)(39850400004)(366004)(136003)(396003)(346002)(230922051799003)(451199024)(64100799003)(186009)(1800799009)(31686004)(478600001)(966005)(6486002)(110136005)(66946007)(66476007)(54906003)(6666004)(66556008)(83380400001)(31696002)(86362001)(38100700002)(2616005)(6512007)(316002)(26005)(107886003)(53546011)(6506007)(41300700001)(44832011)(5660300002)(36756003)(8936002)(8676002)(4326008)(7416002)(2906002)(45980500001)(43740500002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?eFF6NVRDNnlGL1ZnMlN5STJ1ZkRRdTU4Y2t2RUI0WjNhaUdRTXhKQjNSUkw0?=
+ =?utf-8?B?TWlCSnovWWFhb0lwSmVOMno1WlAzRDlrRkdKT0RjSUJRaW1zVWtkcStwSlN0?=
+ =?utf-8?B?QUhYb3BCbnlVa3BZRkVFQ2RwVC9TdkZTVzFVb21jUk1oNTVTeEFxZ0pFQ2Rp?=
+ =?utf-8?B?dnRsYzlGeTg0WXVraGVLYW5nVUI0cGVTbXFyWTVFS1JPN0VNaTFmNUljWi9P?=
+ =?utf-8?B?MzNDbmNqL2c5MFZtRjZMRzA3aWdPbmRkbDRBa0FBSlJxTkp3SVlwZ1JrUWRm?=
+ =?utf-8?B?Wm03V1o1VnpQOE9CQkc2Z2wwRVJ5M25lUGlnN1QwdzNTUlQ2d0JGVkkyYlh0?=
+ =?utf-8?B?ZDFJb2JpUktWWHkwWXJ6OXh5RUdFVm91MVRXdGovRVNqd3U5YUMvWXRyK2tB?=
+ =?utf-8?B?Wk84SUY2eHd5SGhlK3h0SXo4YVhLSGoxM3FpZHlCY0dOWWg0d21zS1BiTWtT?=
+ =?utf-8?B?azRXSnRMQ2dRVkRDbHhkeEhoTittZmtiL1pkVldmaUxqWjBFR05aUHJLR1Zj?=
+ =?utf-8?B?ZFhXYjNjM28rTTBTWng5M08yU2Y0cTZ2Q0R3MmQxM1NFYXVqQU9QK1RIZ2lt?=
+ =?utf-8?B?MGlHNDR2MEhzQnhSUlErd29mcGNINjhqNDcyaDNkRittTXAveDNkZTRRN2Jo?=
+ =?utf-8?B?Nm1ma2hzUGxEMFpQL2JmOFRCR2kwaW41NHdkNnE3SjByZURKcEtRdEZZWnZj?=
+ =?utf-8?B?RVdhWUxQYVhjWkVKdGxUTkk5NythSit2WFk5bG9GbDdIL20yM0g4R1JVYkFr?=
+ =?utf-8?B?YUhsVUlxa3J6OFlxa0Jwa3JmN0k3MDk5bFV6eUZxTW9VaWp4UkJCVnpFTVpZ?=
+ =?utf-8?B?NUNMWDVDbzRRYnR3clpMQVZLWUtpZzJYOUE1NG9UTWtySU5hU2hQb2RPYmFn?=
+ =?utf-8?B?MVZneS8reFNMd2N5R0JFZkdkOGhsOURud1RSZUlxakJsZEovSEI1c2d5T3d0?=
+ =?utf-8?B?NElOY1hpNVJObm9PNGkrQVlNaVprdlJWTnl4czBXcUhjWDY4STVYVWdlSWZs?=
+ =?utf-8?B?TTFUSTBuOG1kKzVNT1NFeEQxOGdqUnV5MzdMSnAySTdOWlVXTngwMzJLOVRp?=
+ =?utf-8?B?WTNVNlBEQVdHUzlXUzhMMWFHRndHSjltb0VVNS9RTWUyY1VlNUdJb3NGNVRH?=
+ =?utf-8?B?TjJSL2VUU0p4K0hwOUdabm5qOXU3a3BQUml6c2NZcTJNMTh2Zy90MStrWG1H?=
+ =?utf-8?B?bWEvTGNVRmZHUnU5NjlmSUsxOVVRaER6bC96NVV6dmh6ak9UQU9weEpRM0x0?=
+ =?utf-8?B?YUpCSWhNOVRiMFcwUUZWQU41NkNaa3A3dWdtTkRqWmRLdHpLeS9jMjlmaURF?=
+ =?utf-8?B?K25JdHRnL2V1eERhaE9XNlF4dFl1Q2NUZ0JCR1o3QkVoWTQyaUlkWmNhODhV?=
+ =?utf-8?B?WDBYS2NpbDg2VitCajFuL294UVhDaUlJTkx5R1BFaUE3US9lbnRVS29HcHhl?=
+ =?utf-8?B?MUVVV3YybEE0dmRVZlpKR3U3dlhoWnFQNE1XMm1aZ0NSd3g5aFJTR0YxT2lv?=
+ =?utf-8?B?RjYrMHR5Z2JseXhOM0RTYUtOOTdnSkk1WkR1dHdKdmkrREpZeHZqQ25oVStZ?=
+ =?utf-8?B?eTArUVVDb3BkWnZIWTdXUkx5SWYxL3ZzSERnNUVTUjRLbW1BbHlNNDZQaWhI?=
+ =?utf-8?B?UFZ0U3kzSk1qcWVOU0psMDBLUjBqVytzQ1VjZmJCa3Z2Y2tVL1J4MnYxQXFT?=
+ =?utf-8?B?aVByMEdFakFvenpST0Z4RFB4TVExMlVqSXFZaHI4c0tJZW41TkRoZ3Uva29B?=
+ =?utf-8?B?dHVTR2FpbUlTMXhvdGpwWnlMNUZwSEdEUUtZR3VmN0kyS3BpOVl6SjZPMElX?=
+ =?utf-8?B?bno3ODByVlBaeTJtZE5wNkE4d1VtU0ZUOEpoeGQrZ29Wb2JYZVVvMi9UU2JS?=
+ =?utf-8?B?QVpkUXdmUVcxUnhoZ2ovSVcySWw5dkJVY2xjL3NIdmxuamgwT0QvZGI0M3BC?=
+ =?utf-8?B?eGU0a290dmR4K0w3dmtLOXFVRXZNU1hUVEU3dWtKOVZaRWt1KzI3NW1jZ3ph?=
+ =?utf-8?B?dGpmeU5KbHU5bWJjZEE5aG83VW1sZUQ3cGdVdGt5eVJsZXJTMW9VOHN0RzBR?=
+ =?utf-8?B?WEJlTmZyRkdQN01BQ2FVUnZYYVNwenN6V2pVdHZTTGhkczh0aXQ1V2pUQzgv?=
+ =?utf-8?B?Y3duYzM3Rko5cmE0YTAveVMrVis1TkhaNGhFZHR6YUZRYVFpaG1BSHFIakEy?=
+ =?utf-8?B?SEE9PQ==?=
+X-OriginatorOrg: amlogic.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 44a66031-aefe-4344-10fb-08dbce12e7c1
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6896.apcprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYVPR01MB11245.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 65110d56-d330-4edd-9665-08dbcdd11ebb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Oct 2023 22:50:25.0447
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2023 06:41:19.9485
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: mdCyyMhvKAE2qiZGg8Fx06ryprnLE4fdCZwSnkHpt/O9L2/S1n8hMr4aXi41zChvxo3Wx2Y2tr9qOUcR++evDuNT0CfpTY1L71R+BBaFHwNkfjB/0Eu3094QDf7K1EBR
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY3PR01MB10015
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Cd3cBD1WCMFdKb2Ze5Ezq9LX/YD9Rr4MO48COWBU5vNyVI2kxhiK2GgWfzR/R+T7l2yqLvKCag9Q9iccPx+HIRPFnsvAjV4HCElenUcIAXI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI2PR03MB5916
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Gustavo A. R. Silva,
+Hi Jerome,
+     Thanks for your reply.
 
-Thanks for your patch!
-
-> -----Original Message-----
-> From: Gustavo A. R. Silva <gustavoars@kernel.org>
-> Sent: Thursday, October 12, 2023 11:19 AM
-> To: Michael Turquette <mturquette@baylibre.com>; Stephen Boyd
-> <sboyd@kernel.org>; iwamatsu nobuhiro(岩松 信洋 ○ＤＩＴＣ□ＤＩＴ○Ｏ
-> ＳＴ) <nobuhiro1.iwamatsu@toshiba.co.jp>
-> Cc: Kees Cook <keescook@chromium.org>; linux-clk@vger.kernel.org;
-> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org; Gustavo A.
-> R. Silva <gustavoars@kernel.org>; linux-hardening@vger.kernel.org
-> Subject: [PATCH 2/2][next] clk: visconti: Add bounds-checking coverage for
-> struct visconti_pll_provider
+On 2023/10/13 15:35, Jerome Brunet wrote:
+> [ EXTERNAL EMAIL ]
 > 
-> In order to gain the bounds-checking coverage that __counted_by provides to
-> flexible-array members at run-time via CONFIG_UBSAN_BOUNDS (for array
-> indexing) and CONFIG_FORTIFY_SOURCE (for strcpy/memcpy-family
-> functions), we must make sure that the counter member, in this particular case
-> `num`, is updated before the first access to the flex-array member, in this
-> particular case array `hws`. See below:
+> On Wed 11 Oct 2023 at 10:50, Xianwei Zhao <xianwei.zhao@amlogic.com> wrote:
 > 
-> commit f316cdff8d67 ("clk: Annotate struct clk_hw_onecell_data with
-> __counted_by") introduced `__counted_by` for `struct clk_hw_onecell_data`
-> together with changes to relocate some of assignments of counter `num`
-> before `hws` is accessed:
+>> Hi Rob,
+>>      Thanks for your advise.
+>>
+>> On 2023/10/10 21:21, Rob Herring wrote:
+>>> [ EXTERNAL EMAIL ]
+>>> On Tue, Oct 10, 2023 at 02:29:14PM +0800, Xianwei Zhao wrote:
+>>>> Add the C3 PLL clock controller dt-bindings for Amlogic C3 SoC family
+>>>>
+>>>> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+>>>> ---
+>>>> V1 -> V2: Fix errors when check dtbinding use "make dt_binding_check"
+>>> Your patches aren't bisectable. It's fine if you want to combine patch 1
+>>> and 2 into 1 patch. Or just use the raw numbers here instead of the
+>>> header.
+>>>
+>> I will combine patch 1 and 2 into 1 patch in V3.
 > 
-> include/linux/clk-provider.h:
-> 1380 struct clk_hw_onecell_data {
-> 1381         unsigned int num;
-> 1382         struct clk_hw *hws[] __counted_by(num);
-> 1383 };
+> I'd prefer if you used raw ids or even fake node for the example, like
+> <&pll_in> and <&mpll_in> for readability, rather than combining the patches
 > 
-> However, this structure is used as a member in other structs, in this case in
-> `struct visconti_pll_provider`:
+Will do.
+>>>> ---
+>>>>    .../bindings/clock/amlogic,c3-pll-clkc.yaml   | 59 +++++++++++++++++++
+>>>>    .../dt-bindings/clock/amlogic,c3-pll-clkc.h   | 42 +++++++++++++
+>>>>    2 files changed, 101 insertions(+)
+>>>>    create mode 100644 Documentation/devicetree/bindings/clock/amlogic,c3-pll-clkc.yaml
+>>>>    create mode 100644 include/dt-bindings/clock/amlogic,c3-pll-clkc.h
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/clock/amlogic,c3-pll-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,c3-pll-clkc.yaml
+>>>> new file mode 100644
+>>>> index 000000000000..a646992917b7
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/clock/amlogic,c3-pll-clkc.yaml
+>>>> @@ -0,0 +1,59 @@
+>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>>> +# Copyright (C) 2022-2023 Amlogic, Inc. All rights reserved
+>>>> +%YAML 1.2
+>>>> +---
+>>>> +$id: http://devicetree.org/schemas/clock/amlogic,c3-pll-clkc.yaml#
+>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>>> +
+>>>> +title: Amlogic C3 serials PLL Clock Controller
+>>> s/serials/Serials/
+>>>
+>> Will fix
+>>>> +
+>>>> +maintainers:
+>>>> +  - Chuan Liu <chuan.liu@amlogic.com>
+>>>> +
+>>>> +properties:
+>>>> +  compatible:
+>>>> +    const: amlogic,c3-pll-clkc
+>>>> +
+>>>> +  reg:
+>>>> +    maxItems: 1
+>>>> +
+>>>> +  clocks:
+>>>> +    minItems: 1
+>>>> +    items:
+>>>> +      - description: input pll_in
+>>>> +      - description: input mclk_pll_in
+>>>> +
+>>>> +  clock-names:
+>>>> +    minItems: 1
+>>>> +    items:
+>>>> +      - const: pll_in
+>>>> +      - const: mclk_pll_in
+>>>> +
+>>>> +  "#clock-cells":
+>>>> +    const: 1
+>>>> +
+>>>> +required:
+>>>> +  - compatible
+>>>> +  - reg
+>>>> +  - clocks
+>>>> +  - clock-names
+>>>> +  - "#clock-cells"
+>>>> +
+>>>> +additionalProperties: false
+>>>> +
+>>>> +examples:
+>>>> +  - |
+>>>> +    #include <dt-bindings/clock/amlogic,c3-peripherals-clkc.h>
+>>>> +    apb {
+>>>> +        #address-cells = <2>;
+>>>> +        #size-cells = <2>;
+>>>> +
+>>>> +        clkc_pll: clock-controller@8000 {
+>>> Drop unused labels.
+>>>
+>> Will delete clkc_pll.
+>>>> +          compatible = "amlogic,c3-pll-clkc";
+>>> Your indentation is not consistent.
+>>>
+>> Will fix it in V3.
+>>>> +          reg = <0x0 0x8000 0x0 0x1a4>;
+>>>> +          clocks = <&clkc_periphs CLKID_PLL_IN>,
+>>>> +                   <&clkc_periphs CLKID_MCLK_PLL_IN>;
+>>>> +          clock-names = "pll_in", "mclk_pll_in";
+>>>> +          #clock-cells = <1>;
+>>>> +        };
+>>>> +    };
+>>>> diff --git a/include/dt-bindings/clock/amlogic,c3-pll-clkc.h b/include/dt-bindings/clock/amlogic,c3-pll-clkc.h
+>>>> new file mode 100644
+>>>> index 000000000000..aa731e8fae29
+>>>> --- /dev/null
+>>>> +++ b/include/dt-bindings/clock/amlogic,c3-pll-clkc.h
+>>>> @@ -0,0 +1,42 @@
+>>>> +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
+>>>> +/*
+>>>> + * Copyright (c) 2023 Amlogic, Inc. All rights reserved.
+>>>> + * Author: Chuan Liu <chuan.liu@amlogic.com>
+>>>> + */
+>>>> +
+>>>> +#ifndef _DT_BINDINGS_CLOCK_AMLOGIC_C3_PLL_CLKC_H
+>>>> +#define _DT_BINDINGS_CLOCK_AMLOGIC_C3_PLL_CLKC_H
+>>>> +
+>>>> +#define CLKID_FIXED_PLL_DCO                  0
+>>>> +#define CLKID_FIXED_PLL                              1
+>>>> +#define CLKID_FCLK_DIV40_DIV                 2
+>>>> +#define CLKID_FCLK_DIV40                     3
+>>>> +#define CLKID_FCLK_DIV2_DIV                  4
+>>>> +#define CLKID_FCLK_DIV2                              5
+>>>> +#define CLKID_FCLK_DIV2P5_DIV                        6
+>>>> +#define CLKID_FCLK_DIV2P5                    7
+>>>> +#define CLKID_FCLK_DIV3_DIV                  8
+>>>> +#define CLKID_FCLK_DIV3                              9
+>>>> +#define CLKID_FCLK_DIV4_DIV                  10
+>>>> +#define CLKID_FCLK_DIV4                              11
+>>>> +#define CLKID_FCLK_DIV5_DIV                  12
+>>>> +#define CLKID_FCLK_DIV5                              13
+>>>> +#define CLKID_FCLK_DIV7_DIV                  14
+>>>> +#define CLKID_FCLK_DIV7                              15
+>>>> +#define CLKID_GP0_PLL_DCO                    16
+>>>> +#define CLKID_GP0_PLL                                17
+>>>> +#define CLKID_HIFI_PLL_DCO                   18
+>>>> +#define CLKID_HIFI_PLL                               19
+>>>> +#define CLKID_MCLK_PLL_DCO                   20
+>>>> +#define CLKID_MCLK_PLL                               21
+>>>> +#define CLKID_MCLK_PLL_CLK                   22
+>>>> +#define CLKID_MCLK0_SEL                              23
+>>>> +#define CLKID_MCLK0_SEL_OUT                  24
+>>>> +#define CLKID_MCLK0_DIV                              25
+>>>> +#define CLKID_MCLK0                          26
+>>>> +#define CLKID_MCLK1_SEL                              27
+>>>> +#define CLKID_MCLK1_SEL_OUT                  28
+>>>> +#define CLKID_MCLK1_DIV                              29
+>>>> +#define CLKID_MCLK1                          30
+>>>> +
+>>>> +#endif  /* _DT_BINDINGS_CLOCK_AMLOGIC_C3_PLL_CLKC_H */
+>>>>
+>>>> base-commit: 57b55c76aaf1ba50ecc6dcee5cd6843dc4d85239
+>>>> --
+>>>> 2.37.1
+>>>>
 > 
-> drivers/clk/visconti/pll.h:
->  16 struct visconti_pll_provider {
->  17         void __iomem *reg_base;
->  18         struct device_node *node;
->  19
->  20         /* Must be last */
->  21         struct clk_hw_onecell_data clk_data;
->  22 };
-> 
-> Hence, we need to move the assignments to `ctx->clk_data.num` after
-> allocation for `struct visconti_pll_provider` and before accessing the flexible
-> array `ctx->clk_data.hws`. And, as assignments for all members in `struct
-> visconti_pll_provider` are originally adjacent to each other, relocate all
-> assignments together, so we don't split up `ctx->clk_data.hws = nr_plls` from
-> the rest. :)
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-
-Acked-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-
-Best regards,
-  Nobuhiro
-
