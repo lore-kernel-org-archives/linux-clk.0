@@ -2,332 +2,127 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA6C2CDB474
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Oct 2023 15:36:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB059CDB483
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Oct 2023 15:53:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344409AbjJQPgf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Oct 2023 11:36:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36378 "EHLO
+        id S1343939AbjJQPxC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Oct 2023 11:53:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344416AbjJQPge (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Oct 2023 11:36:34 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA30BB0
-        for <linux-clk@vger.kernel.org>; Tue, 17 Oct 2023 08:36:31 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-32d8c2c6dfdso5533939f8f.1
-        for <linux-clk@vger.kernel.org>; Tue, 17 Oct 2023 08:36:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1697556990; x=1698161790; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
-         :subject:cc:to:from:user-agent:references:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qMFse6qVP0SKpr/9/PirQcPWYPKukXqLgPReMEjtkyg=;
-        b=vMWF7WsxKmrNoeM/6d/Zv3fnVITYgT0f1TU0W06gfEuGewsKCAiphEko1vFlMX38Wn
-         WDy9BdE+eW5A70lN26/1+9+efXQC2yxHHeNYd00DLMTDATv47ElopwuoA1PndsM2WXX1
-         oNSTiQFVQGRRLTcGO0lIazvnRmZ7QIt7AXf0SdLf8ovu0cMgMc30MNS41u1nclFkcLTu
-         GbhWZhbEuG8TLl9mGgkRuHghI+UYvT/VukqR1yLd5vIWZzFa0IX/3KJSgAILNFaMSIDL
-         vjhxIdh1xeejI7bLCk6BFPqG8jA3rr5XB9HLwCu/56JFMMdIxdEATm1LVpCr9L7kmDJo
-         CsLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697556990; x=1698161790;
-        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
-         :subject:cc:to:from:user-agent:references:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=qMFse6qVP0SKpr/9/PirQcPWYPKukXqLgPReMEjtkyg=;
-        b=REvWHD5VhM6+LzqOLXeLg2VZS3/Kdoc7OmW+gZd7r0DYRUYiITFD06+To7du2IRJ9N
-         ZCEKmrhaRGD8hzjrZs+e5IyBNwnMBnhY9o7IuGtYXsC36yP+XKvXdfSLdTE4AFNfQVHV
-         yeoZ2r73KG7Dl6JUtuAMRMMJ7VFPyIInjt5U25CA8vr3c8yP7c8+06c4KSuGAmW5VK+V
-         G4wHgGqoAf7CNwU56BLRuGPceNkxlTAmMMDh/PPkAZWwkTLR7qHVUJr5St25IJiq5HCx
-         X/fg+lOjWsC+gaWZmwUTKO7fp6e5J2uWTyCclQbmFqpgCMTYf1/LGwPszhJxF94n/M/T
-         7hQg==
-X-Gm-Message-State: AOJu0YwGAM2dKXUV4uJTpS0f67lBcGzya6JJpgJX77HN6V9z9vm5PBsd
-        xjjypjfzCG5Ve79CYuD8cCLjaQ==
-X-Google-Smtp-Source: AGHT+IG6qN9wBjL2Wth0TPezlyQFv7dXwIHqnQPMkZ8jhf7CGi38w5msaJWBtTzjglxTf+LTJqzB5Q==
-X-Received: by 2002:adf:e5c6:0:b0:319:72f8:7249 with SMTP id a6-20020adfe5c6000000b0031972f87249mr2399021wrn.66.1697556990016;
-        Tue, 17 Oct 2023 08:36:30 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:93d3:2aab:95bb:3a09])
-        by smtp.gmail.com with ESMTPSA id a15-20020a056000100f00b0032d9337e7d1sm40889wrx.11.2023.10.17.08.36.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Oct 2023 08:36:29 -0700 (PDT)
-References: <20231010062917.3624223-1-xianwei.zhao@amlogic.com>
- <20231010062917.3624223-5-xianwei.zhao@amlogic.com>
- <1jedhyx51m.fsf@starbuckisacylon.baylibre.com>
- <376968a3-a0f0-3045-96fe-881c2e36be7e@amlogic.com>
- <1jbkcxv02x.fsf@starbuckisacylon.baylibre.com>
- <ce3b4fa4-5823-4784-b41f-397ad07df3c6@amlogic.com>
-User-agent: mu4e 1.8.13; emacs 29.1
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Chuan Liu <chuan.liu@amlogic.com>,
-        Xianwei Zhao <xianwei.zhao@amlogic.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Neil Armstrong <neil.armstrong@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: Re: [PATCH V2 4/4] clk: meson: c3: add c3 clock peripherals
- controller driver
-Date:   Tue, 17 Oct 2023 17:21:36 +0200
-In-reply-to: <ce3b4fa4-5823-4784-b41f-397ad07df3c6@amlogic.com>
-Message-ID: <1jy1g1tg5e.fsf@starbuckisacylon.baylibre.com>
+        with ESMTP id S235003AbjJQPxB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Oct 2023 11:53:01 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 401109E;
+        Tue, 17 Oct 2023 08:53:00 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51BB6C433C8;
+        Tue, 17 Oct 2023 15:52:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1697557979;
+        bh=OuFCZ+mYBxI9aVlshoc+ddPbEgGI46T/EB1CuvYd5qI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=O0X0OfUBXEveGf+R6NCA1uaCZYBR5VaujRjI25ewIyjGS2C36IiAzeE/vClaOcb44
+         T5oQTLhp8UsMpVhDI2axpM+vxATQO3m6woP7QzHBmFcYr912env/r7qbJ+yYaMfuDL
+         usfx9uuaVlpHGxYmCfrNT2VK4Fo1aA52tWE0mTbd5Ycj3eFsvLrOsC7XkeXpZ3Nnk6
+         s4i89Aygtx6Tj/2allA08CpvR71vE28Uo12PVRt51LQDPKWNVj1HDIbQS6Gkmu4PCH
+         tWgaruXeG6ofkNOHgegijWhyawiI7R2bhIFZx2FUNJ2FR1frrISZt43q+OKKsZSqAJ
+         5x1U95qw7bhQw==
+Date:   Tue, 17 Oct 2023 08:52:57 -0700
+From:   Nathan Chancellor <nathan@kernel.org>
+To:     Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Cc:     linux-clk@vger.kernel.org, tsbogend@alpha.franken.de,
+        sboyd@kernel.org, mturquette@baylibre.com,
+        linux-kernel@vger.kernel.org, ndesaulniers@google.com,
+        arnd@kernel.org, yangshiji66@outlook.com,
+        kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v2] clk: ralink: mtmips: quiet unused variable warning
+Message-ID: <20231017155257.GA710773@dev-arch.thelio-3990X>
+References: <20230827023932.501102-1-sergio.paracuellos@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230827023932.501102-1-sergio.paracuellos@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Sun, Aug 27, 2023 at 04:39:32AM +0200, Sergio Paracuellos wrote:
+> When CONFIG_OF is disabled then the matching table is not referenced and
+> the following warning appears:
+> 
+> drivers/clk/ralink/clk-mtmips.c:821:34: warning: unused variable 'mtmips_of_match' [-Wunused-const-variable]
+> 821 |   static const struct of_device_id mtmips_of_match[] = {
+>     |                          ^
+> 
+> There are two match tables in the driver: one for the clock driver and the
+> other for the reset driver. The only difference between them is that the
+> clock driver uses 'data' and does not have 'ralink,rt2880-reset' compatible.
+> Both just can be merged into a single one just by adding the compatible
+> 'ralink,rt2880-reset' entry to 'mtmips_of_match[]', which will allow it to
+> be used for 'mtmips_clk_driver' (which doesn't use the data) as well as for
+> 'mtmips_clk_init()' (which doesn't need get called for 'ralink,rt2880-reset').
+> 
+> Doing in this way ensures that 'CONFIG_OF' is not disabled anymore so the
+> above warning disapears.
+> 
+> Fixes: 6f3b15586eef ("clk: ralink: add clock and reset driver for MTMIPS SoCs")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202307242310.CdOnd2py-lkp@intel.com/
+> Suggested-by: Arnd Bergmann <arnd@kernel.org>
+> Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
 
-On Tue 17 Oct 2023 at 22:59, Chuan Liu <chuan.liu@amlogic.com> wrote:
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
 
->>>>> +
->>>>> +static struct clk_regmap saradc =3D {
->>>>> +     .data =3D &(struct clk_regmap_gate_data){
->>>>> +             .offset =3D SAR_CLK_CTRL0,
->>>>> +             .bit_idx =3D 8,
->>>>> +     },
->>>>> +     .hw.init =3D &(struct clk_init_data) {
->>>>> +             .name =3D "saradc",
->>>>> +             .ops =3D &clk_regmap_gate_ops,
->>>>> +             .parent_hws =3D (const struct clk_hw *[]) {
->>>>> +                     &saradc_div.hw
->>>>> +             },
->>>>> +             .num_parents =3D 1,
->>>>> +             .flags =3D CLK_SET_RATE_PARENT,
->>>>> +     },
->>>>> +};
->>>>> +
->>>>> +static u32 pwm_parent_table[] =3D { 0, 2, 3 };
->>>> What's pwm parent 1, why can't it be used ?
->>> This 1 corresponds to gp1 pll, which is currently dedicated to emmc.
->> Given that gp1 does not exist in your PLL controller, it is going to be
->> hard to dedicate it to eMMC ;)
-> Because the register corresponding to gp1_pll has permission restrictions,
-> the corresponding register is read-only in the kernel (can read and write
-> in the bl31 environment), here first mask the source to solve the
-> permission problem before opening
-
-The PWM sel clock does not have CLK_SET_RATE_PARENT so it is not going to
-request rate change for any parent clock, it will just what is available.
-
-Your reason does not apply here.
-
-Also, if gp1 registers are read-only from the kernel, you can still
-expose it with RO ops, possibly with CLK_GET_RATE_NOCACHE if the bl31
-may change at runtime.
-
->>
->>>>> +
->>>>> +static const struct clk_parent_data pwm_parent_data[] =3D {
->>>>> +     { .fw_name =3D "xtal" },
->>>>> +     { .fw_name =3D "fclk_div4" },
->>>>> +     { .fw_name =3D "fclk_div3" }
->>>>> +};
->>>>> +
->>>>> +static struct clk_regmap pwm_a_sel =3D {
->>>>> +     .data =3D &(struct clk_regmap_mux_data){
->>>>> +             .offset =3D PWM_CLK_AB_CTRL,
->>>>> +             .mask =3D 0x3,
->>>>> +             .shift =3D 9,
->>>>> +             .table =3D pwm_parent_table,
->>>>> +     },
->>>>> +     .hw.init =3D &(struct clk_init_data){
->>>>> +             .name =3D "pwm_a_sel",
->>>>> +             .ops =3D &clk_regmap_mux_ops,
->>>>> +             .parent_data =3D pwm_parent_data,
->>>>> +             .num_parents =3D ARRAY_SIZE(pwm_parent_data),
->>>>> +     },
->>>>> +};
->>>>> +
->>>>> +static struct clk_regmap pwm_a_div =3D {
->>>>> +     .data =3D &(struct clk_regmap_div_data){
->>>>> +             .offset =3D PWM_CLK_AB_CTRL,
->>>>> +             .shift =3D 0,
->>>>> +             .width =3D 8,
->>>>> +     },
->>>>> +     .hw.init =3D &(struct clk_init_data){
->>>>> +             .name =3D "pwm_a_div",
->>>>> +             .ops =3D &clk_regmap_divider_ops,
->>>>> +             .parent_hws =3D (const struct clk_hw *[]) {
->>>>> +                     &pwm_a_sel.hw
->>>>> +             },
->>>>> +             .num_parents =3D 1,
->>>>> +             .flags =3D CLK_SET_RATE_PARENT,
->>>>> +     },
->>>>> +};
-
-[...]
-
->>>>> +
->>>>> +static struct clk_regmap spifc =3D {
->>>>> +     .data =3D &(struct clk_regmap_gate_data){
->>>>> +             .offset =3D SPIFC_CLK_CTRL,
->>>>> +             .bit_idx =3D 8,
->>>>> +     },
->>>>> +     .hw.init =3D &(struct clk_init_data) {
->>>>> +             .name =3D "spifc",
->>>>> +             .ops =3D &clk_regmap_gate_ops,
->>>>> +             .parent_hws =3D (const struct clk_hw *[]) {
->>>>> +                     &spifc_div.hw
->>>>> +             },
->>>>> +             .num_parents =3D 1,
->>>>> +             .flags =3D CLK_SET_RATE_PARENT,
->>>>> +     },
->>>>> +};
->>>>> +
->>>>> +static u32 emmc_parent_table[] =3D { 0, 1, 2, 3, 4, 5, 7 };
->>>> What's 6 ? why can't it be used ?
->>>>
->> No answer ?
-> 6 - gp1_pll,The permission reason is that the patch is submitted to open
-> after the solution is resolved
->>
->>>>> +
->>>>> +static const struct clk_parent_data emmc_parent_data[] =3D {
->>>>> +     { .fw_name =3D "xtal" },
->>>>> +     { .fw_name =3D "fclk_div2" },
->>>>> +     { .fw_name =3D "fclk_div3" },
->>>>> +     { .fw_name =3D "hifi_pll" },
->>>>> +     { .fw_name =3D "fclk_div2p5" },
->>>>> +     { .fw_name =3D "fclk_div4" },
->>>>> +     { .fw_name =3D "gp0_pll" }
->>>>> +};
->> Not seeing gp1 there ? why would you need to dedicate an GP pll for MMC
->> ? Maybe I missing something but it seems to me the usual MMC rate are
->> acheivable with the fclks, especially 2p5.
-> Permission reason
-
-use RO ops.
-
->>
->>>>> +
->>>>> +static struct clk_regmap sd_emmc_a_sel =3D {
->>>>> +     .data =3D &(struct clk_regmap_mux_data){
->>>>> +             .offset =3D SD_EMMC_CLK_CTRL,
->>>>> +             .mask =3D 0x7,
->>>>> +             .shift =3D 9,
->>>>> +             .table =3D emmc_parent_table,
->>>>> +     },
->>>>> +     .hw.init =3D &(struct clk_init_data){
->>>>> +             .name =3D "sd_emmc_a_sel",
->>>>> +             .ops =3D &clk_regmap_mux_ops,
->>>>> +             .parent_data =3D emmc_parent_data,
->>>>> +             .num_parents =3D ARRAY_SIZE(emmc_parent_data),
->>>>> +     },
->>>>> +};
->>>>> +
->>>>> +static struct clk_regmap sd_emmc_a_div =3D {
->>>>> +     .data =3D &(struct clk_regmap_div_data){
->>>>> +             .offset =3D SD_EMMC_CLK_CTRL,
->>>>> +             .shift =3D 0,
->>>>> +             .width =3D 7,
->>>>> +     },
->>>>> +     .hw.init =3D &(struct clk_init_data){
->>>>> +             .name =3D "sd_emmc_a_div",
->>>>> +             .ops =3D &clk_regmap_divider_ops,
->>>>> +             .parent_hws =3D (const struct clk_hw *[]) {
->>>>> +                     &sd_emmc_a_sel.hw
->>>>> +             },
->>>>> +             .num_parents =3D 1,
->>>>> +             .flags =3D CLK_SET_RATE_PARENT,
->>>>> +     },
->>>>> +};
->>>>> +
->>>>> +static struct clk_regmap sd_emmc_a =3D {
->>>>> +     .data =3D &(struct clk_regmap_gate_data){
->>>>> +             .offset =3D SD_EMMC_CLK_CTRL,
->>>>> +             .bit_idx =3D 7,
->>>>> +     },
->>>>> +     .hw.init =3D &(struct clk_init_data) {
->>>>> +             .name =3D "sd_emmc_a",
->>>>> +             .ops =3D &clk_regmap_gate_ops,
->>>>> +             .parent_hws =3D (const struct clk_hw *[]) {
->>>>> +                     &sd_emmc_a_div.hw
->>>>> +             },
->>>>> +             .num_parents =3D 1,
->>>>> +             .flags =3D CLK_SET_RATE_PARENT,
->>>>> +     },
->>>>> +};
-
-[...]
-
->>>>> +static u32 csi_phy_parent_table[] =3D { 0, 1, 2, 3, 4, 5, 7 };
->>>> Same here and all following instance
->>>>
->>> This 1 corresponds to gp1 pll, which is currently dedicated to emmc.
->> No it is not. Again mainline drivers are slightly different from AML
->> fork you might be used to. No PLL is dedicated to the mmc driver.
->> Unless you can make a strong case for it, I don't think it will happen
->> in the near future.
-> For performance considerations, emmc needs to use a higher frequency clock
-> source (currently our emmc driver has been adapted to 1152M), so we
-> internally allocate gp1_pll to emmc.As mentioned above, the gp1_pll
-> register permission problem is masked here first=F0=9F=99=82
-
-Your GP1 is controlled by the SCP FW and RO for the kernel. That's all from
-the clock controller POV.
-
-No reason to remove it here and elsewhere AFAICT
-
->>>>> +
->>>>> +static const struct clk_parent_data csi_phy_parent_data[] =3D {
->>>>> +     { .fw_name =3D "fclk_div2p5" },
->>>>> +     { .fw_name =3D "fclk_div3" },
->>>>> +     { .fw_name =3D "fclk_div4" },
->>>>> +     { .fw_name =3D "fclk_div5" },
->>>>> +     { .fw_name =3D "gp0_pll" },
->>>>> +     { .fw_name =3D "hifi_pll" },
->>>>> +     { .fw_name =3D "xtal" }
->>>>> +};
->>>>> +
->>>>> +static struct clk_regmap csi_phy0_sel =3D {
->>>>> +     .data =3D &(struct clk_regmap_mux_data){
->>>>> +             .offset =3D ISP0_CLK_CTRL,
->>>>> +             .mask =3D 0x7,
->>>>> +             .shift =3D 25,
->>>>> +             .table =3D csi_phy_parent_table,
->>>>> +     },
->>>>> +     .hw.init =3D &(struct clk_init_data){
->>>>> +             .name =3D "csi_phy0_sel",
->>>>> +             .ops =3D &clk_regmap_mux_ops,
->>>>> +             .parent_data =3D csi_phy_parent_data,
->>>>> +             .num_parents =3D ARRAY_SIZE(csi_phy_parent_data),
->>>>> +     },
->>>>> +};
->>>>> +
->>>>> +static struct clk_regmap csi_phy0_div =3D {
->>>>> +     .data =3D &(struct clk_regmap_div_data){
->>>>> +             .offset =3D ISP0_CLK_CTRL,
->>>>> +             .shift =3D 16,
->>>>> +             .width =3D 7,
->>>>> +     },
->>>>> +     .hw.init =3D &(struct clk_init_data){
->>>>> +             .name =3D "csi_phy0_div",
->>>>> +             .ops =3D &clk_regmap_divider_ops,
->>>>> +             .parent_hws =3D (const struct clk_hw *[]) {
->>>>> +                     &csi_phy0_sel.hw
->>>>> +             },
->>>>> +             .num_parents =3D 1,
->>>>> +             .flags =3D CLK_SET_RATE_PARENT,
->>>>> +     },
->>>>> +};
->>>>> +
->>>>> +static struct clk_regmap csi_phy0 =3D {
->>>>> +     .data =3D &(struct clk_regmap_gate_data){
->>>>> +             .offset =3D ISP0_CLK_CTRL,
->>>>> +             .bit_idx =3D 24,
->>>>> +     },
->>>>> +     .hw.init =3D &(struct clk_init_data) {
->>>>> +             .name =3D "csi_phy0",
->>>>> +             .ops =3D &clk_regmap_gate_ops,
->>>>> +             .parent_hws =3D (const struct clk_hw *[]) {
->>>>> +                     &csi_phy0_div.hw
->>>>> +             },
->>>>> +             .num_parents =3D 1,
->>>>> +             .flags =3D CLK_SET_RATE_PARENT,
->>>>> +     },
->>>>> +};
+> ---
+> Changes in v2:
+> - Merge two match tables into one to properly avoid this warning.
+> 
+> PATCH in v1: https://lore.kernel.org/lkml/20230802092647.3000666-1-sergio.paracuellos@gmail.com/T/
+> 
+>  drivers/clk/ralink/clk-mtmips.c | 20 +++++---------------
+>  1 file changed, 5 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/clk/ralink/clk-mtmips.c b/drivers/clk/ralink/clk-mtmips.c
+> index 1e7991439527..50a443bf79ec 100644
+> --- a/drivers/clk/ralink/clk-mtmips.c
+> +++ b/drivers/clk/ralink/clk-mtmips.c
+> @@ -821,6 +821,10 @@ static const struct mtmips_clk_data mt76x8_clk_data = {
+>  };
+>  
+>  static const struct of_device_id mtmips_of_match[] = {
+> +	{
+> +		.compatible = "ralink,rt2880-reset",
+> +		.data = NULL,
+> +	},
+>  	{
+>  		.compatible = "ralink,rt2880-sysc",
+>  		.data = &rt2880_clk_data,
+> @@ -1088,25 +1092,11 @@ static int mtmips_clk_probe(struct platform_device *pdev)
+>  	return 0;
+>  }
+>  
+> -static const struct of_device_id mtmips_clk_of_match[] = {
+> -	{ .compatible = "ralink,rt2880-reset" },
+> -	{ .compatible = "ralink,rt2880-sysc" },
+> -	{ .compatible = "ralink,rt3050-sysc" },
+> -	{ .compatible = "ralink,rt3052-sysc" },
+> -	{ .compatible = "ralink,rt3352-sysc" },
+> -	{ .compatible = "ralink,rt3883-sysc" },
+> -	{ .compatible = "ralink,rt5350-sysc" },
+> -	{ .compatible = "ralink,mt7620-sysc" },
+> -	{ .compatible = "ralink,mt7628-sysc" },
+> -	{ .compatible = "ralink,mt7688-sysc" },
+> -	{}
+> -};
+> -
+>  static struct platform_driver mtmips_clk_driver = {
+>  	.probe = mtmips_clk_probe,
+>  	.driver = {
+>  		.name = "mtmips-clk",
+> -		.of_match_table = mtmips_clk_of_match,
+> +		.of_match_table = mtmips_of_match,
+>  	},
+>  };
+>  
+> -- 
+> 2.25.1
+> 
