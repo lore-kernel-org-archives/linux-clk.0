@@ -2,58 +2,59 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74569CDB474
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Oct 2023 14:45:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA6C2CDB474
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Oct 2023 15:36:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344077AbjJQOpt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Oct 2023 10:45:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35344 "EHLO
+        id S1344409AbjJQPgf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Oct 2023 11:36:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344131AbjJQOpp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Oct 2023 10:45:45 -0400
+        with ESMTP id S1344416AbjJQPge (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Oct 2023 11:36:34 -0400
 Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F56411D
-        for <linux-clk@vger.kernel.org>; Tue, 17 Oct 2023 07:45:41 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-31427ddd3fbso4922735f8f.0
-        for <linux-clk@vger.kernel.org>; Tue, 17 Oct 2023 07:45:41 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA30BB0
+        for <linux-clk@vger.kernel.org>; Tue, 17 Oct 2023 08:36:31 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-32d8c2c6dfdso5533939f8f.1
+        for <linux-clk@vger.kernel.org>; Tue, 17 Oct 2023 08:36:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1697553940; x=1698158740; darn=vger.kernel.org;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
-        bh=+DWlrz0x76UjYkaGdGnLZ2Rh1fZ6zXslYKfY1dC+IHA=;
-        b=qMo6sN7cYVmS6jAa1w0Od1vvUvwGXAgoVLFkjEsaBT0TrKTNFHu+yAIbGOzn1SYw0i
-         Z/doFIDljkUMcHhlvHaEKSvBom4kEb7SHF+KcGU72x5ApYcNs84+NPbEx1npVpbp9O1P
-         Pm1ClnAbipPL/M3EFQMwh9iSNBPPa9VNAYU0biQKM3YGNso82ekvYnEibX62wFY0s34r
-         G5ceVHqUcEZORd7FZB9KkIbfodKBlZOtxA2ZqOxxAIzheOTTmDKtg/UJ/emHpKLkQdja
-         mVWAPkNyXTfF/+2smtTKomwZdZkV/wtaTm61ztd0ITbmfB/4DlMLA2Vq/uEkbq1N5yMP
-         /vCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697553940; x=1698158740;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1697556990; x=1698161790; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
+         :subject:cc:to:from:user-agent:references:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+DWlrz0x76UjYkaGdGnLZ2Rh1fZ6zXslYKfY1dC+IHA=;
-        b=Q91UXJ+Hj0b8iVQLc8AZULSls7G2WF3tLanDI0M85Q3K0PbGZmye5WbBL+2gjxi4oj
-         qE5PI5bdPmCEh2LIWhHhwpGN8hT961L78tKM9kg70d+3eU1sirD6omKrXVR6xSQf4cOQ
-         STuCUKlCBpQkhVELz16CN11c6LDPO+WT/uBOmWKIc7l/12lAOawQ9REySkO9mLVAPMQx
-         bU8eRliZPWmJNLzARpQlJWVKh7arCDDpLYLVN8eDPhY9DAEFi3Uh3fGb4MijBfUII5Sh
-         ChsfnPLaMsUsvwMS0E0PRE1Rq0EnfrjOMRZTPlDFtxHuvk+MW1ZmNL2jPTKw9IHa+NFM
-         kckQ==
-X-Gm-Message-State: AOJu0YwSaNEiGodV6pCIQm9ZV/zNneIgwtrXhO48h27AxctZbl/0ktAD
-        eK7tfm7gVMxYZE3pn6thOTXNbA==
-X-Google-Smtp-Source: AGHT+IHv4tMX6UOg3kp7PY1gGcIQM6g1TDAYAriGkQzPC8aBujNF8FwzAx86QVQ0PfLQQ8q7Fyek6A==
-X-Received: by 2002:adf:f006:0:b0:32c:ea14:89e5 with SMTP id j6-20020adff006000000b0032cea1489e5mr2086062wro.39.1697553939617;
-        Tue, 17 Oct 2023 07:45:39 -0700 (PDT)
+        bh=qMFse6qVP0SKpr/9/PirQcPWYPKukXqLgPReMEjtkyg=;
+        b=vMWF7WsxKmrNoeM/6d/Zv3fnVITYgT0f1TU0W06gfEuGewsKCAiphEko1vFlMX38Wn
+         WDy9BdE+eW5A70lN26/1+9+efXQC2yxHHeNYd00DLMTDATv47ElopwuoA1PndsM2WXX1
+         oNSTiQFVQGRRLTcGO0lIazvnRmZ7QIt7AXf0SdLf8ovu0cMgMc30MNS41u1nclFkcLTu
+         GbhWZhbEuG8TLl9mGgkRuHghI+UYvT/VukqR1yLd5vIWZzFa0IX/3KJSgAILNFaMSIDL
+         vjhxIdh1xeejI7bLCk6BFPqG8jA3rr5XB9HLwCu/56JFMMdIxdEATm1LVpCr9L7kmDJo
+         CsLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697556990; x=1698161790;
+        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
+         :subject:cc:to:from:user-agent:references:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=qMFse6qVP0SKpr/9/PirQcPWYPKukXqLgPReMEjtkyg=;
+        b=REvWHD5VhM6+LzqOLXeLg2VZS3/Kdoc7OmW+gZd7r0DYRUYiITFD06+To7du2IRJ9N
+         ZCEKmrhaRGD8hzjrZs+e5IyBNwnMBnhY9o7IuGtYXsC36yP+XKvXdfSLdTE4AFNfQVHV
+         yeoZ2r73KG7Dl6JUtuAMRMMJ7VFPyIInjt5U25CA8vr3c8yP7c8+06c4KSuGAmW5VK+V
+         G4wHgGqoAf7CNwU56BLRuGPceNkxlTAmMMDh/PPkAZWwkTLR7qHVUJr5St25IJiq5HCx
+         X/fg+lOjWsC+gaWZmwUTKO7fp6e5J2uWTyCclQbmFqpgCMTYf1/LGwPszhJxF94n/M/T
+         7hQg==
+X-Gm-Message-State: AOJu0YwGAM2dKXUV4uJTpS0f67lBcGzya6JJpgJX77HN6V9z9vm5PBsd
+        xjjypjfzCG5Ve79CYuD8cCLjaQ==
+X-Google-Smtp-Source: AGHT+IG6qN9wBjL2Wth0TPezlyQFv7dXwIHqnQPMkZ8jhf7CGi38w5msaJWBtTzjglxTf+LTJqzB5Q==
+X-Received: by 2002:adf:e5c6:0:b0:319:72f8:7249 with SMTP id a6-20020adfe5c6000000b0031972f87249mr2399021wrn.66.1697556990016;
+        Tue, 17 Oct 2023 08:36:30 -0700 (PDT)
 Received: from localhost ([2a01:e0a:3c5:5fb1:93d3:2aab:95bb:3a09])
-        by smtp.gmail.com with ESMTPSA id d18-20020adff2d2000000b0032da40fd7bdsm1836412wrp.24.2023.10.17.07.45.39
+        by smtp.gmail.com with ESMTPSA id a15-20020a056000100f00b0032d9337e7d1sm40889wrx.11.2023.10.17.08.36.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Oct 2023 07:45:39 -0700 (PDT)
+        Tue, 17 Oct 2023 08:36:29 -0700 (PDT)
 References: <20231010062917.3624223-1-xianwei.zhao@amlogic.com>
- <20231010062917.3624223-4-xianwei.zhao@amlogic.com>
- <1jil7ax64i.fsf@starbuckisacylon.baylibre.com>
- <3238e57a-1141-53ad-8170-c6ad9df03acb@amlogic.com>
- <1jfs29v0n3.fsf@starbuckisacylon.baylibre.com>
- <8011f0c0-0d21-447f-9a6b-07ede7db8713@amlogic.com>
+ <20231010062917.3624223-5-xianwei.zhao@amlogic.com>
+ <1jedhyx51m.fsf@starbuckisacylon.baylibre.com>
+ <376968a3-a0f0-3045-96fe-881c2e36be7e@amlogic.com>
+ <1jbkcxv02x.fsf@starbuckisacylon.baylibre.com>
+ <ce3b4fa4-5823-4784-b41f-397ad07df3c6@amlogic.com>
 User-agent: mu4e 1.8.13; emacs 29.1
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Chuan Liu <chuan.liu@amlogic.com>,
@@ -68,64 +69,265 @@ Cc:     Neil Armstrong <neil.armstrong@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Kevin Hilman <khilman@baylibre.com>,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: Re: [PATCH V2 3/4] clk: meson: c3: add support for the C3 SoC PLL
- clock
-Date:   Tue, 17 Oct 2023 16:42:25 +0200
-In-reply-to: <8011f0c0-0d21-447f-9a6b-07ede7db8713@amlogic.com>
-Message-ID: <1j34y9ux2l.fsf@starbuckisacylon.baylibre.com>
+Subject: Re: [PATCH V2 4/4] clk: meson: c3: add c3 clock peripherals
+ controller driver
+Date:   Tue, 17 Oct 2023 17:21:36 +0200
+In-reply-to: <ce3b4fa4-5823-4784-b41f-397ad07df3c6@amlogic.com>
+Message-ID: <1jy1g1tg5e.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On Tue 17 Oct 2023 at 22:39, Chuan Liu <chuan.liu@amlogic.com> wrote:
-
+On Tue 17 Oct 2023 at 22:59, Chuan Liu <chuan.liu@amlogic.com> wrote:
 
 >>>>> +
->>>>> +static struct clk_fixed_factor fclk_div2p5_div = {
->>>>> +     .mult = 2,
->>>>> +     .div = 5,
->>>>> +     .hw.init = &(struct clk_init_data){
->>>>> +             .name = "fclk_div2p5_div",
->>>>> +             .ops = &clk_fixed_factor_ops,
->>>>> +             .parent_hws = (const struct clk_hw *[]) {
->>>>> +                     &fixed_pll.hw
+>>>>> +static struct clk_regmap saradc =3D {
+>>>>> +     .data =3D &(struct clk_regmap_gate_data){
+>>>>> +             .offset =3D SAR_CLK_CTRL0,
+>>>>> +             .bit_idx =3D 8,
+>>>>> +     },
+>>>>> +     .hw.init =3D &(struct clk_init_data) {
+>>>>> +             .name =3D "saradc",
+>>>>> +             .ops =3D &clk_regmap_gate_ops,
+>>>>> +             .parent_hws =3D (const struct clk_hw *[]) {
+>>>>> +                     &saradc_div.hw
 >>>>> +             },
->>>>> +             .num_parents = 1,
+>>>>> +             .num_parents =3D 1,
+>>>>> +             .flags =3D CLK_SET_RATE_PARENT,
 >>>>> +     },
 >>>>> +};
->>>> This one is wrong if I follow the doc.
->>>> It is supposed to be fixed 8 divider taking it's source directly from
->>>> the DCO, skipping the OD post divider ... assuming the doc is up to date.
+>>>>> +
+>>>>> +static u32 pwm_parent_table[] =3D { 0, 2, 3 };
+>>>> What's pwm parent 1, why can't it be used ?
+>>> This 1 corresponds to gp1 pll, which is currently dedicated to emmc.
+>> Given that gp1 does not exist in your PLL controller, it is going to be
+>> hard to dedicate it to eMMC ;)
+> Because the register corresponding to gp1_pll has permission restrictions,
+> the corresponding register is read-only in the kernel (can read and write
+> in the bl31 environment), here first mask the source to solve the
+> permission problem before opening
+
+The PWM sel clock does not have CLK_SET_RATE_PARENT so it is not going to
+request rate change for any parent clock, it will just what is available.
+
+Your reason does not apply here.
+
+Also, if gp1 registers are read-only from the kernel, you can still
+expose it with RO ops, possibly with CLK_GET_RATE_NOCACHE if the bl31
+may change at runtime.
+
+>>
+>>>>> +
+>>>>> +static const struct clk_parent_data pwm_parent_data[] =3D {
+>>>>> +     { .fw_name =3D "xtal" },
+>>>>> +     { .fw_name =3D "fclk_div4" },
+>>>>> +     { .fw_name =3D "fclk_div3" }
+>>>>> +};
+>>>>> +
+>>>>> +static struct clk_regmap pwm_a_sel =3D {
+>>>>> +     .data =3D &(struct clk_regmap_mux_data){
+>>>>> +             .offset =3D PWM_CLK_AB_CTRL,
+>>>>> +             .mask =3D 0x3,
+>>>>> +             .shift =3D 9,
+>>>>> +             .table =3D pwm_parent_table,
+>>>>> +     },
+>>>>> +     .hw.init =3D &(struct clk_init_data){
+>>>>> +             .name =3D "pwm_a_sel",
+>>>>> +             .ops =3D &clk_regmap_mux_ops,
+>>>>> +             .parent_data =3D pwm_parent_data,
+>>>>> +             .num_parents =3D ARRAY_SIZE(pwm_parent_data),
+>>>>> +     },
+>>>>> +};
+>>>>> +
+>>>>> +static struct clk_regmap pwm_a_div =3D {
+>>>>> +     .data =3D &(struct clk_regmap_div_data){
+>>>>> +             .offset =3D PWM_CLK_AB_CTRL,
+>>>>> +             .shift =3D 0,
+>>>>> +             .width =3D 8,
+>>>>> +     },
+>>>>> +     .hw.init =3D &(struct clk_init_data){
+>>>>> +             .name =3D "pwm_a_div",
+>>>>> +             .ops =3D &clk_regmap_divider_ops,
+>>>>> +             .parent_hws =3D (const struct clk_hw *[]) {
+>>>>> +                     &pwm_a_sel.hw
+>>>>> +             },
+>>>>> +             .num_parents =3D 1,
+>>>>> +             .flags =3D CLK_SET_RATE_PARENT,
+>>>>> +     },
+>>>>> +};
+
+[...]
+
+>>>>> +
+>>>>> +static struct clk_regmap spifc =3D {
+>>>>> +     .data =3D &(struct clk_regmap_gate_data){
+>>>>> +             .offset =3D SPIFC_CLK_CTRL,
+>>>>> +             .bit_idx =3D 8,
+>>>>> +     },
+>>>>> +     .hw.init =3D &(struct clk_init_data) {
+>>>>> +             .name =3D "spifc",
+>>>>> +             .ops =3D &clk_regmap_gate_ops,
+>>>>> +             .parent_hws =3D (const struct clk_hw *[]) {
+>>>>> +                     &spifc_div.hw
+>>>>> +             },
+>>>>> +             .num_parents =3D 1,
+>>>>> +             .flags =3D CLK_SET_RATE_PARENT,
+>>>>> +     },
+>>>>> +};
+>>>>> +
+>>>>> +static u32 emmc_parent_table[] =3D { 0, 1, 2, 3, 4, 5, 7 };
+>>>> What's 6 ? why can't it be used ?
 >>>>
->>> No, C3 SoC div2p5 is not skipping the OD post divider.
->> I a bit surprised there would be a frequency multiplier considering the
->> complexity of it, when skiping a divider is possible HW wise. Are you
->> sure ?
-> This part confirms with our chip design engineer that fclk_div2p5 here is
-> actually a clock output by a divider with decimal (divider factor is
-> 2.5). The divider factor in clk-divider.c is int, so this description is
-> used in the software. Or what do you suggest would be a better way to
-> describe this type of divider with decimals?
-
-It's alright. keep it that way then.
-Consider fixing the doc maybe.
-
+>> No answer ?
+> 6 - gp1_pll,The permission reason is that the patch is submitted to open
+> after the solution is resolved
+>>
 >>>>> +
->>>>> +static struct clk_regmap fclk_div2p5 = {
->>>>> +     .data = &(struct clk_regmap_gate_data){
->>>>> +             .offset = ANACTRL_FIXPLL_CTRL4,
->>>>> +             .bit_idx = 4,
+>>>>> +static const struct clk_parent_data emmc_parent_data[] =3D {
+>>>>> +     { .fw_name =3D "xtal" },
+>>>>> +     { .fw_name =3D "fclk_div2" },
+>>>>> +     { .fw_name =3D "fclk_div3" },
+>>>>> +     { .fw_name =3D "hifi_pll" },
+>>>>> +     { .fw_name =3D "fclk_div2p5" },
+>>>>> +     { .fw_name =3D "fclk_div4" },
+>>>>> +     { .fw_name =3D "gp0_pll" }
+>>>>> +};
+>> Not seeing gp1 there ? why would you need to dedicate an GP pll for MMC
+>> ? Maybe I missing something but it seems to me the usual MMC rate are
+>> acheivable with the fclks, especially 2p5.
+> Permission reason
+
+use RO ops.
+
+>>
+>>>>> +
+>>>>> +static struct clk_regmap sd_emmc_a_sel =3D {
+>>>>> +     .data =3D &(struct clk_regmap_mux_data){
+>>>>> +             .offset =3D SD_EMMC_CLK_CTRL,
+>>>>> +             .mask =3D 0x7,
+>>>>> +             .shift =3D 9,
+>>>>> +             .table =3D emmc_parent_table,
 >>>>> +     },
->>>>> +     .hw.init = &(struct clk_init_data) {
->>>>> +             .name = "fclk_div2p5",
->>>>> +             .ops = &clk_regmap_gate_ro_ops,
->>>>> +             .parent_hws = (const struct clk_hw *[]) {
->>>>> +                     &fclk_div2p5_div.hw
->>>>> +             },
->>>>> +             .num_parents = 1,
+>>>>> +     .hw.init =3D &(struct clk_init_data){
+>>>>> +             .name =3D "sd_emmc_a_sel",
+>>>>> +             .ops =3D &clk_regmap_mux_ops,
+>>>>> +             .parent_data =3D emmc_parent_data,
+>>>>> +             .num_parents =3D ARRAY_SIZE(emmc_parent_data),
 >>>>> +     },
 >>>>> +};
 >>>>> +
+>>>>> +static struct clk_regmap sd_emmc_a_div =3D {
+>>>>> +     .data =3D &(struct clk_regmap_div_data){
+>>>>> +             .offset =3D SD_EMMC_CLK_CTRL,
+>>>>> +             .shift =3D 0,
+>>>>> +             .width =3D 7,
+>>>>> +     },
+>>>>> +     .hw.init =3D &(struct clk_init_data){
+>>>>> +             .name =3D "sd_emmc_a_div",
+>>>>> +             .ops =3D &clk_regmap_divider_ops,
+>>>>> +             .parent_hws =3D (const struct clk_hw *[]) {
+>>>>> +                     &sd_emmc_a_sel.hw
+>>>>> +             },
+>>>>> +             .num_parents =3D 1,
+>>>>> +             .flags =3D CLK_SET_RATE_PARENT,
+>>>>> +     },
+>>>>> +};
+>>>>> +
+>>>>> +static struct clk_regmap sd_emmc_a =3D {
+>>>>> +     .data =3D &(struct clk_regmap_gate_data){
+>>>>> +             .offset =3D SD_EMMC_CLK_CTRL,
+>>>>> +             .bit_idx =3D 7,
+>>>>> +     },
+>>>>> +     .hw.init =3D &(struct clk_init_data) {
+>>>>> +             .name =3D "sd_emmc_a",
+>>>>> +             .ops =3D &clk_regmap_gate_ops,
+>>>>> +             .parent_hws =3D (const struct clk_hw *[]) {
+>>>>> +                     &sd_emmc_a_div.hw
+>>>>> +             },
+>>>>> +             .num_parents =3D 1,
+>>>>> +             .flags =3D CLK_SET_RATE_PARENT,
+>>>>> +     },
+>>>>> +};
+
+[...]
+
+>>>>> +static u32 csi_phy_parent_table[] =3D { 0, 1, 2, 3, 4, 5, 7 };
+>>>> Same here and all following instance
+>>>>
+>>> This 1 corresponds to gp1 pll, which is currently dedicated to emmc.
+>> No it is not. Again mainline drivers are slightly different from AML
+>> fork you might be used to. No PLL is dedicated to the mmc driver.
+>> Unless you can make a strong case for it, I don't think it will happen
+>> in the near future.
+> For performance considerations, emmc needs to use a higher frequency clock
+> source (currently our emmc driver has been adapted to 1152M), so we
+> internally allocate gp1_pll to emmc.As mentioned above, the gp1_pll
+> register permission problem is masked here first=F0=9F=99=82
+
+Your GP1 is controlled by the SCP FW and RO for the kernel. That's all from
+the clock controller POV.
+
+No reason to remove it here and elsewhere AFAICT
+
+>>>>> +
+>>>>> +static const struct clk_parent_data csi_phy_parent_data[] =3D {
+>>>>> +     { .fw_name =3D "fclk_div2p5" },
+>>>>> +     { .fw_name =3D "fclk_div3" },
+>>>>> +     { .fw_name =3D "fclk_div4" },
+>>>>> +     { .fw_name =3D "fclk_div5" },
+>>>>> +     { .fw_name =3D "gp0_pll" },
+>>>>> +     { .fw_name =3D "hifi_pll" },
+>>>>> +     { .fw_name =3D "xtal" }
+>>>>> +};
+>>>>> +
+>>>>> +static struct clk_regmap csi_phy0_sel =3D {
+>>>>> +     .data =3D &(struct clk_regmap_mux_data){
+>>>>> +             .offset =3D ISP0_CLK_CTRL,
+>>>>> +             .mask =3D 0x7,
+>>>>> +             .shift =3D 25,
+>>>>> +             .table =3D csi_phy_parent_table,
+>>>>> +     },
+>>>>> +     .hw.init =3D &(struct clk_init_data){
+>>>>> +             .name =3D "csi_phy0_sel",
+>>>>> +             .ops =3D &clk_regmap_mux_ops,
+>>>>> +             .parent_data =3D csi_phy_parent_data,
+>>>>> +             .num_parents =3D ARRAY_SIZE(csi_phy_parent_data),
+>>>>> +     },
+>>>>> +};
+>>>>> +
+>>>>> +static struct clk_regmap csi_phy0_div =3D {
+>>>>> +     .data =3D &(struct clk_regmap_div_data){
+>>>>> +             .offset =3D ISP0_CLK_CTRL,
+>>>>> +             .shift =3D 16,
+>>>>> +             .width =3D 7,
+>>>>> +     },
+>>>>> +     .hw.init =3D &(struct clk_init_data){
+>>>>> +             .name =3D "csi_phy0_div",
+>>>>> +             .ops =3D &clk_regmap_divider_ops,
+>>>>> +             .parent_hws =3D (const struct clk_hw *[]) {
+>>>>> +                     &csi_phy0_sel.hw
+>>>>> +             },
+>>>>> +             .num_parents =3D 1,
+>>>>> +             .flags =3D CLK_SET_RATE_PARENT,
+>>>>> +     },
+>>>>> +};
+>>>>> +
+>>>>> +static struct clk_regmap csi_phy0 =3D {
+>>>>> +     .data =3D &(struct clk_regmap_gate_data){
+>>>>> +             .offset =3D ISP0_CLK_CTRL,
+>>>>> +             .bit_idx =3D 24,
+>>>>> +     },
+>>>>> +     .hw.init =3D &(struct clk_init_data) {
+>>>>> +             .name =3D "csi_phy0",
+>>>>> +             .ops =3D &clk_regmap_gate_ops,
+>>>>> +             .parent_hws =3D (const struct clk_hw *[]) {
+>>>>> +                     &csi_phy0_div.hw
+>>>>> +             },
+>>>>> +             .num_parents =3D 1,
+>>>>> +             .flags =3D CLK_SET_RATE_PARENT,
+>>>>> +     },
+>>>>> +};
