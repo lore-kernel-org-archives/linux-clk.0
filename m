@@ -2,140 +2,155 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11E14CDB474
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Oct 2023 19:29:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1FB0C41513
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Oct 2023 20:39:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232593AbjJQT3G (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Oct 2023 15:29:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45764 "EHLO
+        id S235012AbjJQUjm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Oct 2023 16:39:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235043AbjJQT3F (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Oct 2023 15:29:05 -0400
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A37ECED;
-        Tue, 17 Oct 2023 12:29:03 -0700 (PDT)
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3af6bd48093so3972056b6e.3;
-        Tue, 17 Oct 2023 12:29:03 -0700 (PDT)
+        with ESMTP id S232568AbjJQUjm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Oct 2023 16:39:42 -0400
+Received: from mail-qv1-xf34.google.com (mail-qv1-xf34.google.com [IPv6:2607:f8b0:4864:20::f34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83D10ED
+        for <linux-clk@vger.kernel.org>; Tue, 17 Oct 2023 13:39:39 -0700 (PDT)
+Received: by mail-qv1-xf34.google.com with SMTP id 6a1803df08f44-65b162328edso35699886d6.2
+        for <linux-clk@vger.kernel.org>; Tue, 17 Oct 2023 13:39:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1697575178; x=1698179978; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=XA1skjAgHjdCnqisORMj4wpVmNxlLSwRWz+H3/RjpJo=;
+        b=kxEuL/2GwvpkzB7xAIT6KFwv6Omi5zuwHYy8Z8vu/aryxvxaiDa+3af6p4i/tIOzE3
+         gQHw79+RwVooLEUbODzSqRrUpUiehxVeLGvA4UxHAuQwggMlEcc63avcgQrlrCrbSCNl
+         rbuRX0N7gkbgC9T98TxcjJ9IsqRipR1b0CubyZn7TBI6RsX0Wuy0axSrSBD3PYyo/CW1
+         JxilSmFmgX4yCgOaqZ3j0TUiFULtOjOzoh6Pu6JlW91v+kTH7nEPdRiI5lcZT59n4R0p
+         wmVKTiPB7+cifR98lPjZxi7Lv3KX2qv/yns5hI0CJx2xGloth38jwIKLXbE/YuMRWLDj
+         dWjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697570943; x=1698175743;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cClk5aKpdEmHCYWR3pE5BYIwnM1+GggDeTeYY2IMW1s=;
-        b=RX6aGeU4XK9StblL0epVPIrN3qpMxDlBzSKCyHjVzSIQwk8bKacW+zeFs7lmO20vjS
-         Tey0+WVUcDYe/Kn4zu5iYT3ACaEY7jbqnCw5XbG4iEToa9ky0MgAeemFHL+wh0VkMzB1
-         k/EyZw2uRg/po/TeKGPKjU96WNulofx+1riw5WtWG7PFvb2eAfZUEE4xxToLL+r0r94r
-         XLFmgQiVsH846G/M/OMGbo0iHlF2R9gVVkg6Fz1Ac3AobTWXTlTopcBaaHHusNa1WSs1
-         x+IXb2XIO7emgll28JvbvTgdyKYpPwvawLhFdDcLSDFWJVkfV+gVol9CmoBIYtfbTY3X
-         Nfgg==
-X-Gm-Message-State: AOJu0Yy99bPXz3mTb0iLWphPmybZM+CxZRtVv1Px0VgVxjgeUfQ57fwx
-        eNSjTwZkgCO5ZlYs++KpEPlsQkjTIw==
-X-Google-Smtp-Source: AGHT+IGcMdkVV6al4MOlEPkTvoFb6kKb/+o+yG5ZgqwPclpmzp5pU4x0e2kObfKY3Jdkho1lXsvP8A==
-X-Received: by 2002:a05:6808:181a:b0:3ae:2877:9b31 with SMTP id bh26-20020a056808181a00b003ae28779b31mr4035483oib.20.1697570942873;
-        Tue, 17 Oct 2023 12:29:02 -0700 (PDT)
-Received: from herring.priv (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id n6-20020a05687104c600b001d6e9bb67d2sm388822oai.7.2023.10.17.12.28.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Oct 2023 12:29:02 -0700 (PDT)
-Received: (nullmailer pid 2548219 invoked by uid 1000);
-        Tue, 17 Oct 2023 19:28:59 -0000
-Date:   Tue, 17 Oct 2023 14:28:59 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Alvin =?utf-8?Q?=C5=A0ipraga?= <alvin@pqrs.dk>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Alvin =?utf-8?Q?=C5=A0ipraga?= <alsi@bang-olufsen.dk>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Rabeeh Khoury <rabeeh@solid-run.com>,
-        Jacob Siverskog <jacob@teenage.engineering>,
-        Sergej Sawazki <sergej@taudac.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] dt-bindings: clock: si5351: add PLL reset mode
- property
-Message-ID: <20231017192859.GA2544830-robh@kernel.org>
-References: <20231014-alvin-clk-si5351-no-pll-reset-v4-0-a3567024007d@bang-olufsen.dk>
- <20231014-alvin-clk-si5351-no-pll-reset-v4-2-a3567024007d@bang-olufsen.dk>
+        d=1e100.net; s=20230601; t=1697575178; x=1698179978;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XA1skjAgHjdCnqisORMj4wpVmNxlLSwRWz+H3/RjpJo=;
+        b=IeP8wfjJyZfta0HRtTpX80VO1LiBl3CvZsvgY1Vh+lyl4nkU8YAYO0RhnuN0loYUvr
+         UGGOtdvibzdY49j73jrPGCxd8c/WjZMw+C3SZpK6ChYOvziam+SmdakHD+vXi75xFng8
+         HsmTBdbjR5tqHLEOHPztmbvgUkwZ5wxyvvS1xdTmKaqLfNncNJNz5V8bW2dawGVjZSM/
+         iz1uCkFEZxo0uQV0Y5y+PFhaG67tKvHXsfqQv0nopmpRQ5eXIHn+9DqBfNxClFalomw5
+         WOSl91++fXcfRAD1e6Q4oep6FLsfOIszk7KUcpLKslJ7Fc2CDTUhv6Qv/msd/NK6I13P
+         aWFA==
+X-Gm-Message-State: AOJu0YxOSsWUGwX7nX4aqP1NRWka6ixaQ14YsvLMRT9SQC9DcPkQRFL8
+        TCTyYG09Ug3Ho0L/yHSPTDUGbIt1ECQ994qHwoSbQg==
+X-Google-Smtp-Source: AGHT+IG0jZyX5mwItbRNqua2+caVQuoRBxev+i2K+Vc8lTvA4KemQ/ckZaqEBKGa2oMjPe/6P4JpungwpD5qkdU5/AQ=
+X-Received: by 2002:ad4:5ae8:0:b0:64f:49d1:3fe7 with SMTP id
+ c8-20020ad45ae8000000b0064f49d13fe7mr4054747qvh.23.1697575178600; Tue, 17 Oct
+ 2023 13:39:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20231014-alvin-clk-si5351-no-pll-reset-v4-2-a3567024007d@bang-olufsen.dk>
+References: <20231011184823.443959-1-peter.griffin@linaro.org>
+ <20231011184823.443959-10-peter.griffin@linaro.org> <ef25ed87-f065-4a75-9e57-1f1073d9c805@kernel.org>
+In-Reply-To: <ef25ed87-f065-4a75-9e57-1f1073d9c805@kernel.org>
+From:   Peter Griffin <peter.griffin@linaro.org>
+Date:   Tue, 17 Oct 2023 21:39:27 +0100
+Message-ID: <CADrjBPqHKG84k0YDMzKcxdLJL-Vcp2HqTPm9vMWYnmZBYNX2Pw@mail.gmail.com>
+Subject: Re: [PATCH v3 09/20] clk: samsung: clk-pll: Add support for pll_{0516,0517,518}
+To:     Chanwoo Choi <chanwoo@kernel.org>
+Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
+        tomasz.figa@gmail.com, s.nawrocki@samsung.com,
+        linus.walleij@linaro.org, wim@linux-watchdog.org,
+        linux@roeck-us.net, catalin.marinas@arm.com, will@kernel.org,
+        arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org,
+        cw00.choi@samsung.com, tudor.ambarus@linaro.org,
+        andre.draszik@linaro.org, semen.protsenko@linaro.org,
+        saravanak@google.com, willmcvicker@google.com, soc@kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        kernel-team@android.com, linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Oct 14, 2023 at 08:19:42PM +0200, Alvin Šipraga wrote:
-> From: Alvin Šipraga <alsi@bang-olufsen.dk>
-> 
-> For applications where the PLL must be adjusted without glitches in the
-> clock output(s), a new silabs,pll-reset-mode property is added. It
-> can be used to specify whether or not the PLL should be reset after
-> adjustment. Resetting is known to cause glitches.
-> 
-> For compatibility with older device trees, it must be assumed that the
-> default PLL reset mode is to unconditionally reset after adjustment.
-> 
-> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-> Cc: Rabeeh Khoury <rabeeh@solid-run.com>
-> Cc: Jacob Siverskog <jacob@teenage.engineering>
-> Cc: Sergej Sawazki <sergej@taudac.com>
-> Signed-off-by: Alvin Šipraga <alsi@bang-olufsen.dk>
-> ---
->  .../devicetree/bindings/clock/silabs,si5351.yaml   | 24 ++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/silabs,si5351.yaml b/Documentation/devicetree/bindings/clock/silabs,si5351.yaml
-> index 16d1142c4a2f..9621b534f30e 100644
-> --- a/Documentation/devicetree/bindings/clock/silabs,si5351.yaml
-> +++ b/Documentation/devicetree/bindings/clock/silabs,si5351.yaml
-> @@ -60,6 +60,27 @@ properties:
->          - description: PLL source, XTAL (0) or CLKIN (1, Si5351C only).
->            enum: [ 0, 1 ]
->  
-> +  silabs,pll-reset-mode:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-matrix
-> +    minItems: 1
+On Tue, 17 Oct 2023 at 09:52, Chanwoo Choi <chanwoo@kernel.org> wrote:
+>
+> On 23. 10. 12. 03:48, Peter Griffin wrote:
+> > These plls are found in the Tensor gs101 SoC found in the Pixel 6.
+> >
+> > pll0516x: Integer PLL with high frequency
+> > pll0517x: Integer PLL with middle frequency
+> > pll0518x: Integer PLL with low frequency
+> >
+> > PLL0516x
+> > FOUT = (MDIV * 2 * FIN)/PDIV * 2^SDIV)
+> >
+> > PLL0517x and PLL0518x
+> > FOUT = (MDIV * FIN)/PDIV*2^SDIV)
+> >
+> > The PLLs are similar enough to pll_0822x that the same code can handle
+> > both. The main difference is the change in the fout formula for the
+> > high frequency 0516 pll.
+> >
+> > Locktime for 516,517 & 518 is 150 the same as the pll_0822x lock factor.
+> > MDIV, SDIV PDIV masks and bit shifts are also the same as 0822x.
+> >
+> > When defining the PLL the "con" parameter should be set to CON3
+> > register, like this
+> >
+> > PLL(pll_0517x, CLK_FOUT_SHARED0_PLL, "fout_shared0_pll", "oscclk",
+> >     PLL_LOCKTIME_PLL_SHARED0, PLL_CON3_PLL_SHARED0,
+> >     NULL),
+> >
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > ---
+> >  drivers/clk/samsung/clk-pll.c | 9 ++++++++-
+> >  drivers/clk/samsung/clk-pll.h | 3 +++
+> >  2 files changed, 11 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+> > index 74934c6182ce..4ef9fea2a425 100644
+> > --- a/drivers/clk/samsung/clk-pll.c
+> > +++ b/drivers/clk/samsung/clk-pll.c
+> > @@ -442,7 +442,11 @@ static unsigned long samsung_pll0822x_recalc_rate(struct clk_hw *hw,
+> >       pdiv = (pll_con3 >> PLL0822X_PDIV_SHIFT) & PLL0822X_PDIV_MASK;
+> >       sdiv = (pll_con3 >> PLL0822X_SDIV_SHIFT) & PLL0822X_SDIV_MASK;
+> >
+> > -     fvco *= mdiv;
+> > +     if (pll->type == pll_0516x)
+> > +             fvco = fvco * 2 * mdiv;
+> > +     else
+> > +             fvco *= mdiv;
+> > +
+> >       do_div(fvco, (pdiv << sdiv));
+> >
+> >       return (unsigned long)fvco;
+> > @@ -1316,6 +1320,9 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
+> >       case pll_1417x:
+> >       case pll_0818x:
+> >       case pll_0822x:
+> > +     case pll_0516x:
+> > +     case pll_0517x:
+> > +     case pll_0518x:
+> >               pll->enable_offs = PLL0822X_ENABLE_SHIFT;
+> >               pll->lock_offs = PLL0822X_LOCK_STAT_SHIFT;
+> >               if (!pll->rate_table)
+> > diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
+> > index 0725d485c6ee..ffd3d52c0dec 100644
+> > --- a/drivers/clk/samsung/clk-pll.h
+> > +++ b/drivers/clk/samsung/clk-pll.h
+> > @@ -38,6 +38,9 @@ enum samsung_pll_type {
+> >       pll_0822x,
+> >       pll_0831x,
+> >       pll_142xx,
+> > +     pll_0516x,
+> > +     pll_0517x,
+> > +     pll_0518x,
+> >  };
+> >
+> >  #define PLL_RATE(_fin, _m, _p, _s, _k, _ks) \
+>
+> I replied it with ack before. Again, reply it with ack.
+>
+> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-If there's only 2 PLLs, then the maximum is 2 entries, right? So 
-'maxItems: 2' in addition.
-
-> +    description: |
-
-Don't need '|'
-
-> +      A list of cell pairs containing a PLL index and its reset mode.
-> +    items:
-> +      items:
-> +        - description: PLL A (0) or PLL B (1)
-> +          enum: [ 0, 1 ]
-> +        - description: |
-> +            Reset mode for the PLL. Mode can be one of:
-> +
-> +                0 - reset whenever PLL rate is adjusted (default mode)
-> +                1 - do not reset when PLL rate is adjusted
-> +
-> +            In mode 1, the PLL is only reset if the silabs,pll-reset is
-> +            specified in one of the clock output child nodes that also sources
-> +            the PLL. This mode may be preferable if output clocks are expected
-> +            to be adjusted without glitches.
-> +          enum: [ 0, 1 ]
-> +
->  patternProperties:
->    "^clkout@[0-7]$":
->      type: object
-> @@ -199,6 +220,9 @@ examples:
->          /* Use XTAL input as source of PLL0 and PLL1 */
->          silabs,pll-source = <0 0>, <1 0>;
->  
-> +        /* Don't reset PLL1 on rate adjustment */
-> +        silabs,pll-reset-mode = <1 1>;
-> +
->          /*
->           * Overwrite CLK0 configuration with:
->           * - 8 mA output drive strength
-> 
-> -- 
-> 2.42.0
-> 
+Thanks Chanwoo. I will add that in v4
