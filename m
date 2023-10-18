@@ -2,26 +2,26 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04C31CDB47E
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Oct 2023 07:02:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA118CDB482
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Oct 2023 07:02:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344528AbjJRHCj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Oct 2023 03:02:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33032 "EHLO
+        id S1344545AbjJRHCl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Oct 2023 03:02:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229676AbjJRHCh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Oct 2023 03:02:37 -0400
-Received: from mail-m12744.qiye.163.com (mail-m12744.qiye.163.com [115.236.127.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7349CB6;
+        with ESMTP id S229933AbjJRHCi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Oct 2023 03:02:38 -0400
+Received: from mail-m12753.qiye.163.com (mail-m12753.qiye.163.com [115.236.127.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B250FA;
         Wed, 18 Oct 2023 00:02:34 -0700 (PDT)
 DKIM-Signature: a=rsa-sha256;
-        b=E0PSZ4VK2U+/fIZEgreSbpMcd05lTrtevdu+RBVmosKtnpF/jy/Q4nheKL3OBZPLO1TUlndl6QXwvqLOfnkHFyk+0UaSuAeTUqgAoAm8Y9BwCZL4D83LpcLW6BNRTZ8ZhbjtyY0yt0EzX5bcWXMsRz0n+lSdZHFhHrxDoxP2lUw=;
+        b=clevkeJHxmkImd5rNGXgy+wljbZjbx20SaKZbIQO1OM6vPWfkTSTvWidHsDW/xnIDUky8q1GM79wVtoumUy/cZIJC4390tOkNpY0b13VQ3JceqR/m1i7oKVmyNtaYg4dL0/HUL+DMg5zBrKi52LltoeIvAt+2oqS+1bDtUJhv1Y=;
         c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-        bh=DtH/oCtKJde1sjDyS3pl41/qKJ2ZiN3kvC/owDT8wEA=;
+        bh=iJaVYbSTpczdBhWJPIW5w3elZBe0oOC8axYTv8wA/2M=;
         h=date:mime-version:subject:message-id:from;
 Received: from localhost.localdomain (unknown [58.22.7.114])
-        by mail-m11877.qiye.163.com (Hmail) with ESMTPA id 8A8F4400353;
-        Wed, 18 Oct 2023 15:01:51 +0800 (CST)
+        by mail-m11877.qiye.163.com (Hmail) with ESMTPA id 6CCCB40034A;
+        Wed, 18 Oct 2023 15:01:54 +0800 (CST)
 From:   Elaine Zhang <zhangqing@rock-chips.com>
 To:     mturquette@baylibre.com, sboyd@kernel.org,
         kever.yang@rock-chips.com, zhangqing@rock-chips.com,
@@ -31,66 +31,207 @@ Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
         linux-kernel@vger.kernel.org, huangtao@rock-chips.com,
         andy.yan@rock-chips.com
-Subject: [PATCH v4 1/4] clk: gate: export clk_gate_endisable
-Date:   Wed, 18 Oct 2023 15:01:41 +0800
-Message-Id: <20231018070144.8512-2-zhangqing@rock-chips.com>
+Subject: [PATCH v4 4/4] clk: rockchip: rk3588: Adjust the GATE_LINK parameter
+Date:   Wed, 18 Oct 2023 15:01:44 +0800
+Message-Id: <20231018070144.8512-5-zhangqing@rock-chips.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20231018070144.8512-1-zhangqing@rock-chips.com>
 References: <20231018070144.8512-1-zhangqing@rock-chips.com>
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-        tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGR5CHlYeTBlDTx0aTxkfSElVEwETFh
-        oSFyQUDg9ZV1kYEgtZQVlOQ1VJSVVMVUpKT1lXWRYaDxIVHRRZQVlPS0hVSk1PSU5JVUpLS1VKQl
+        tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQh5JSlYfGE4fGUpIQ05LSUJVEwETFh
+        oSFyQUDg9ZV1kYEgtZQVlOQ1VJSVVMVUpKT1lXWRYaDxIVHRRZQVlPS0hVSk5MSUpJVUpLS1VKQl
         kG
-X-HM-Tid: 0a8b41973abe2eb3kusn8a8f4400353
+X-HM-Tid: 0a8b419745ea2eb3kusn6cccb40034a
 X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PzY6ECo4MTw9IksOCC8yGgMO
-        HTowCx1VSlVKTUJMTUpJTkpJT0xLVTMWGhIXVQETGhUcChIVHDsJFBgQVhgTEgsIVRgUFkVZV1kS
-        C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUhLSUw3Bg++
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6KzY6Fyo*Vjw0IksWTS85GkM*
+        FjgaCz1VSlVKTUJMTUpJTkpOT0hJVTMWGhIXVQETGhUcChIVHDsJFBgQVhgTEgsIVRgUFkVZV1kS
+        C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUpJQ0NMNwY+
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-make clk_gate_endisable not static, export API for other use.
+Export PCLK_VO1GRF clk id.
+Using Id instead of name, if use name needs to use __clk_lookup().
+But __clk_lookup() is not exported and is not friendly for GKI.
 
 Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 ---
- drivers/clk/clk-gate.c       | 3 ++-
- include/linux/clk-provider.h | 1 +
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ drivers/clk/rockchip/clk-rk3588.c | 110 ++++++++++++++++--------------
+ 1 file changed, 59 insertions(+), 51 deletions(-)
 
-diff --git a/drivers/clk/clk-gate.c b/drivers/clk/clk-gate.c
-index 64283807600b..5a9d10370237 100644
---- a/drivers/clk/clk-gate.c
-+++ b/drivers/clk/clk-gate.c
-@@ -53,7 +53,7 @@ static inline void clk_gate_writel(struct clk_gate *gate, u32 val)
-  *
-  * So, result is always: enable xor set2dis.
-  */
--static void clk_gate_endisable(struct clk_hw *hw, int enable)
-+void clk_gate_endisable(struct clk_hw *hw, int enable)
- {
- 	struct clk_gate *gate = to_clk_gate(hw);
- 	int set = gate->flags & CLK_GATE_SET_TO_DISABLE ? 1 : 0;
-@@ -87,6 +87,7 @@ static void clk_gate_endisable(struct clk_hw *hw, int enable)
- 	else
- 		__release(gate->lock);
- }
-+EXPORT_SYMBOL_GPL(clk_gate_endisable);
+diff --git a/drivers/clk/rockchip/clk-rk3588.c b/drivers/clk/rockchip/clk-rk3588.c
+index 6994165e0395..4135e96f44ee 100644
+--- a/drivers/clk/rockchip/clk-rk3588.c
++++ b/drivers/clk/rockchip/clk-rk3588.c
+@@ -12,28 +12,6 @@
+ #include <dt-bindings/clock/rockchip,rk3588-cru.h>
+ #include "clk.h"
  
- static int clk_gate_enable(struct clk_hw *hw)
- {
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index ec32ec58c59f..e81266199742 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -630,6 +630,7 @@ struct clk *clk_register_gate(struct device *dev, const char *name,
- void clk_unregister_gate(struct clk *clk);
- void clk_hw_unregister_gate(struct clk_hw *hw);
- int clk_gate_is_enabled(struct clk_hw *hw);
-+void clk_gate_endisable(struct clk_hw *hw, int enable);
+-/*
+- * Recent Rockchip SoCs have a new hardware block called Native Interface
+- * Unit (NIU), which gates clocks to devices behind them. These effectively
+- * need two parent clocks.
+- *
+- * Downstream enables the linked clock via runtime PM whenever the gate is
+- * enabled. This implementation uses separate clock nodes for each of the
+- * linked gate clocks, which leaks parts of the clock tree into DT.
+- *
+- * The GATE_LINK macro instead takes the second parent via 'linkname', but
+- * ignores the information. Once the clock framework is ready to handle it, the
+- * information should be passed on here. But since these clocks are required to
+- * access multiple relevant IP blocks, such as PCIe or USB, we mark all linked
+- * clocks critical until a better solution is available. This will waste some
+- * power, but avoids leaking implementation details into DT or hanging the
+- * system.
+- */
+-#define GATE_LINK(_id, cname, pname, linkname, f, o, b, gf) \
+-	GATE(_id, cname, pname, f, o, b, gf)
+-#define RK3588_LINKED_CLK		CLK_IS_CRITICAL
+-
+-
+ #define RK3588_GRF_SOC_STATUS0		0x600
+ #define RK3588_PHYREF_ALT_GATE		0xc38
  
- struct clk_div_table {
- 	unsigned int	val;
+@@ -1456,7 +1434,7 @@ static struct rockchip_clk_branch rk3588_clk_branches[] __initdata = {
+ 	COMPOSITE_NODIV(HCLK_NVM_ROOT,  "hclk_nvm_root", mux_200m_100m_50m_24m_p, 0,
+ 			RK3588_CLKSEL_CON(77), 0, 2, MFLAGS,
+ 			RK3588_CLKGATE_CON(31), 0, GFLAGS),
+-	COMPOSITE(ACLK_NVM_ROOT, "aclk_nvm_root", gpll_cpll_p, RK3588_LINKED_CLK,
++	COMPOSITE(ACLK_NVM_ROOT, "aclk_nvm_root", gpll_cpll_p, 0,
+ 			RK3588_CLKSEL_CON(77), 7, 1, MFLAGS, 2, 5, DFLAGS,
+ 			RK3588_CLKGATE_CON(31), 1, GFLAGS),
+ 	GATE(ACLK_EMMC, "aclk_emmc", "aclk_nvm_root", 0,
+@@ -1685,13 +1663,13 @@ static struct rockchip_clk_branch rk3588_clk_branches[] __initdata = {
+ 			RK3588_CLKGATE_CON(42), 9, GFLAGS),
+ 
+ 	/* vdpu */
+-	COMPOSITE(ACLK_VDPU_ROOT, "aclk_vdpu_root", gpll_cpll_aupll_p, RK3588_LINKED_CLK,
++	COMPOSITE(ACLK_VDPU_ROOT, "aclk_vdpu_root", gpll_cpll_aupll_p, 0,
+ 			RK3588_CLKSEL_CON(98), 5, 2, MFLAGS, 0, 5, DFLAGS,
+ 			RK3588_CLKGATE_CON(44), 0, GFLAGS),
+ 	COMPOSITE_NODIV(ACLK_VDPU_LOW_ROOT, "aclk_vdpu_low_root", mux_400m_200m_100m_24m_p, 0,
+ 			RK3588_CLKSEL_CON(98), 7, 2, MFLAGS,
+ 			RK3588_CLKGATE_CON(44), 1, GFLAGS),
+-	COMPOSITE_NODIV(HCLK_VDPU_ROOT, "hclk_vdpu_root", mux_200m_100m_50m_24m_p, RK3588_LINKED_CLK,
++	COMPOSITE_NODIV(HCLK_VDPU_ROOT, "hclk_vdpu_root", mux_200m_100m_50m_24m_p, 0,
+ 			RK3588_CLKSEL_CON(98), 9, 2, MFLAGS,
+ 			RK3588_CLKGATE_CON(44), 2, GFLAGS),
+ 	COMPOSITE(ACLK_JPEG_DECODER_ROOT, "aclk_jpeg_decoder_root", gpll_cpll_aupll_spll_p, 0,
+@@ -1742,9 +1720,9 @@ static struct rockchip_clk_branch rk3588_clk_branches[] __initdata = {
+ 	COMPOSITE(ACLK_RKVENC0_ROOT, "aclk_rkvenc0_root", gpll_cpll_npll_p, 0,
+ 			RK3588_CLKSEL_CON(102), 7, 2, MFLAGS, 2, 5, DFLAGS,
+ 			RK3588_CLKGATE_CON(47), 1, GFLAGS),
+-	GATE(HCLK_RKVENC0, "hclk_rkvenc0", "hclk_rkvenc0_root", RK3588_LINKED_CLK,
++	GATE(HCLK_RKVENC0, "hclk_rkvenc0", "hclk_rkvenc0_root", 0,
+ 			RK3588_CLKGATE_CON(47), 4, GFLAGS),
+-	GATE(ACLK_RKVENC0, "aclk_rkvenc0", "aclk_rkvenc0_root", RK3588_LINKED_CLK,
++	GATE(ACLK_RKVENC0, "aclk_rkvenc0", "aclk_rkvenc0_root", 0,
+ 			RK3588_CLKGATE_CON(47), 5, GFLAGS),
+ 	COMPOSITE(CLK_RKVENC0_CORE, "clk_rkvenc0_core", gpll_cpll_aupll_npll_p, 0,
+ 			RK3588_CLKSEL_CON(102), 14, 2, MFLAGS, 9, 5, DFLAGS,
+@@ -1754,10 +1732,10 @@ static struct rockchip_clk_branch rk3588_clk_branches[] __initdata = {
+ 			RK3588_CLKGATE_CON(48), 6, GFLAGS),
+ 
+ 	/* vi */
+-	COMPOSITE(ACLK_VI_ROOT, "aclk_vi_root", gpll_cpll_npll_aupll_spll_p, RK3588_LINKED_CLK,
++	COMPOSITE(ACLK_VI_ROOT, "aclk_vi_root", gpll_cpll_npll_aupll_spll_p, 0,
+ 			RK3588_CLKSEL_CON(106), 5, 3, MFLAGS, 0, 5, DFLAGS,
+ 			RK3588_CLKGATE_CON(49), 0, GFLAGS),
+-	COMPOSITE_NODIV(HCLK_VI_ROOT, "hclk_vi_root", mux_200m_100m_50m_24m_p, RK3588_LINKED_CLK,
++	COMPOSITE_NODIV(HCLK_VI_ROOT, "hclk_vi_root", mux_200m_100m_50m_24m_p, 0,
+ 			RK3588_CLKSEL_CON(106), 8, 2, MFLAGS,
+ 			RK3588_CLKGATE_CON(49), 1, GFLAGS),
+ 	COMPOSITE_NODIV(PCLK_VI_ROOT, "pclk_vi_root", mux_100m_50m_24m_p, 0,
+@@ -1929,10 +1907,10 @@ static struct rockchip_clk_branch rk3588_clk_branches[] __initdata = {
+ 	COMPOSITE(ACLK_VOP_ROOT, "aclk_vop_root", gpll_cpll_dmyaupll_npll_spll_p, 0,
+ 			RK3588_CLKSEL_CON(110), 5, 3, MFLAGS, 0, 5, DFLAGS,
+ 			RK3588_CLKGATE_CON(52), 0, GFLAGS),
+-	COMPOSITE_NODIV(ACLK_VOP_LOW_ROOT, "aclk_vop_low_root", mux_400m_200m_100m_24m_p, RK3588_LINKED_CLK,
++	COMPOSITE_NODIV(ACLK_VOP_LOW_ROOT, "aclk_vop_low_root", mux_400m_200m_100m_24m_p, 0,
+ 			RK3588_CLKSEL_CON(110), 8, 2, MFLAGS,
+ 			RK3588_CLKGATE_CON(52), 1, GFLAGS),
+-	COMPOSITE_NODIV(HCLK_VOP_ROOT, "hclk_vop_root", mux_200m_100m_50m_24m_p, RK3588_LINKED_CLK,
++	COMPOSITE_NODIV(HCLK_VOP_ROOT, "hclk_vop_root", mux_200m_100m_50m_24m_p, 0,
+ 			RK3588_CLKSEL_CON(110), 10, 2, MFLAGS,
+ 			RK3588_CLKGATE_CON(52), 2, GFLAGS),
+ 	COMPOSITE_NODIV(PCLK_VOP_ROOT, "pclk_vop_root", mux_100m_50m_24m_p, 0,
+@@ -2433,26 +2411,56 @@ static struct rockchip_clk_branch rk3588_clk_branches[] __initdata = {
+ 	GATE(ACLK_AV1, "aclk_av1", "aclk_av1_pre", 0,
+ 			RK3588_CLKGATE_CON(68), 2, GFLAGS),
+ 
+-	GATE_LINK(ACLK_ISP1_PRE, "aclk_isp1_pre", "aclk_isp1_root", "aclk_vi_root", 0, RK3588_CLKGATE_CON(26), 6, GFLAGS),
+-	GATE_LINK(HCLK_ISP1_PRE, "hclk_isp1_pre", "hclk_isp1_root", "hclk_vi_root", 0, RK3588_CLKGATE_CON(26), 8, GFLAGS),
+-	GATE_LINK(HCLK_NVM, "hclk_nvm", "hclk_nvm_root", "aclk_nvm_root", RK3588_LINKED_CLK, RK3588_CLKGATE_CON(31), 2, GFLAGS),
+-	GATE_LINK(ACLK_USB, "aclk_usb", "aclk_usb_root", "aclk_vo1usb_top_root", 0, RK3588_CLKGATE_CON(42), 2, GFLAGS),
+-	GATE_LINK(HCLK_USB, "hclk_usb", "hclk_usb_root", "hclk_vo1usb_top_root", 0, RK3588_CLKGATE_CON(42), 3, GFLAGS),
+-	GATE_LINK(ACLK_JPEG_DECODER_PRE, "aclk_jpeg_decoder_pre", "aclk_jpeg_decoder_root", "aclk_vdpu_root", 0, RK3588_CLKGATE_CON(44), 7, GFLAGS),
+-	GATE_LINK(ACLK_VDPU_LOW_PRE, "aclk_vdpu_low_pre", "aclk_vdpu_low_root", "aclk_vdpu_root", 0, RK3588_CLKGATE_CON(44), 5, GFLAGS),
+-	GATE_LINK(ACLK_RKVENC1_PRE, "aclk_rkvenc1_pre", "aclk_rkvenc1_root", "aclk_rkvenc0", 0, RK3588_CLKGATE_CON(48), 3, GFLAGS),
+-	GATE_LINK(HCLK_RKVENC1_PRE, "hclk_rkvenc1_pre", "hclk_rkvenc1_root", "hclk_rkvenc0", 0, RK3588_CLKGATE_CON(48), 2, GFLAGS),
+-	GATE_LINK(HCLK_RKVDEC0_PRE, "hclk_rkvdec0_pre", "hclk_rkvdec0_root", "hclk_vdpu_root", 0, RK3588_CLKGATE_CON(40), 5, GFLAGS),
+-	GATE_LINK(ACLK_RKVDEC0_PRE, "aclk_rkvdec0_pre", "aclk_rkvdec0_root", "aclk_vdpu_root", 0, RK3588_CLKGATE_CON(40), 6, GFLAGS),
+-	GATE_LINK(HCLK_RKVDEC1_PRE, "hclk_rkvdec1_pre", "hclk_rkvdec1_root", "hclk_vdpu_root", 0, RK3588_CLKGATE_CON(41), 4, GFLAGS),
+-	GATE_LINK(ACLK_RKVDEC1_PRE, "aclk_rkvdec1_pre", "aclk_rkvdec1_root", "aclk_vdpu_root", 0, RK3588_CLKGATE_CON(41), 5, GFLAGS),
+-	GATE_LINK(ACLK_HDCP0_PRE, "aclk_hdcp0_pre", "aclk_vo0_root", "aclk_vop_low_root", 0, RK3588_CLKGATE_CON(55), 9, GFLAGS),
+-	GATE_LINK(HCLK_VO0, "hclk_vo0", "hclk_vo0_root", "hclk_vop_root", 0, RK3588_CLKGATE_CON(55), 5, GFLAGS),
+-	GATE_LINK(ACLK_HDCP1_PRE, "aclk_hdcp1_pre", "aclk_hdcp1_root", "aclk_vo1usb_top_root", 0, RK3588_CLKGATE_CON(59), 6, GFLAGS),
+-	GATE_LINK(HCLK_VO1, "hclk_vo1", "hclk_vo1_root", "hclk_vo1usb_top_root", 0, RK3588_CLKGATE_CON(59), 9, GFLAGS),
+-	GATE_LINK(ACLK_AV1_PRE, "aclk_av1_pre", "aclk_av1_root", "aclk_vdpu_root", 0, RK3588_CLKGATE_CON(68), 1, GFLAGS),
+-	GATE_LINK(PCLK_AV1_PRE, "pclk_av1_pre", "pclk_av1_root", "hclk_vdpu_root", 0, RK3588_CLKGATE_CON(68), 4, GFLAGS),
+-	GATE_LINK(HCLK_SDIO_PRE, "hclk_sdio_pre", "hclk_sdio_root", "hclk_nvm", 0, RK3588_CLKGATE_CON(75), 1, GFLAGS),
++	/*
++	 * Recent Rockchip SoCs have a new hardware block called Native Interface
++	 * Unit (NIU), which gates clocks to devices behind them. These effectively
++	 * need two parent clocks.
++	 */
++	GATE_LINK(ACLK_ISP1_PRE, "aclk_isp1_pre", "aclk_isp1_root", ACLK_VI_ROOT, 0,
++			RK3588_CLKGATE_CON(26), 6, GFLAGS),
++	GATE_LINK(HCLK_ISP1_PRE, "hclk_isp1_pre", "hclk_isp1_root", HCLK_VI_ROOT, 0,
++			RK3588_CLKGATE_CON(26), 8, GFLAGS),
++	GATE_LINK(HCLK_NVM, "hclk_nvm", "hclk_nvm_root", ACLK_NVM_ROOT, 0,
++			RK3588_CLKGATE_CON(31), 2, GFLAGS),
++	GATE_LINK(ACLK_USB, "aclk_usb", "aclk_usb_root", ACLK_VO1USB_TOP_ROOT, 0,
++			RK3588_CLKGATE_CON(42), 2, GFLAGS),
++	GATE_LINK(HCLK_USB, "hclk_usb", "hclk_usb_root", HCLK_VO1USB_TOP_ROOT, 0,
++			RK3588_CLKGATE_CON(42), 3, GFLAGS),
++	GATE_LINK(ACLK_JPEG_DECODER_PRE, "aclk_jpeg_decoder_pre", "aclk_jpeg_decoder_root",
++			ACLK_VDPU_ROOT, 0,
++			RK3588_CLKGATE_CON(44), 7, GFLAGS),
++	GATE_LINK(ACLK_VDPU_LOW_PRE, "aclk_vdpu_low_pre", "aclk_vdpu_low_root", ACLK_VDPU_ROOT, 0,
++			RK3588_CLKGATE_CON(44), 5, GFLAGS),
++	GATE_LINK(ACLK_RKVENC1_PRE, "aclk_rkvenc1_pre", "aclk_rkvenc1_root", ACLK_RKVENC0, 0,
++			RK3588_CLKGATE_CON(48), 3, GFLAGS),
++	GATE_LINK(HCLK_RKVENC1_PRE, "hclk_rkvenc1_pre", "hclk_rkvenc1_root", HCLK_RKVENC0, 0,
++			RK3588_CLKGATE_CON(48), 2, GFLAGS),
++	GATE_LINK(HCLK_RKVDEC0_PRE, "hclk_rkvdec0_pre", "hclk_rkvdec0_root", HCLK_VDPU_ROOT, 0,
++			RK3588_CLKGATE_CON(40), 5, GFLAGS),
++	GATE_LINK(ACLK_RKVDEC0_PRE, "aclk_rkvdec0_pre", "aclk_rkvdec0_root", ACLK_VDPU_ROOT, 0,
++			RK3588_CLKGATE_CON(40), 6, GFLAGS),
++	GATE_LINK(HCLK_RKVDEC1_PRE, "hclk_rkvdec1_pre", "hclk_rkvdec1_root", HCLK_VDPU_ROOT, 0,
++			RK3588_CLKGATE_CON(41), 4, GFLAGS),
++	GATE_LINK(ACLK_RKVDEC1_PRE, "aclk_rkvdec1_pre", "aclk_rkvdec1_root", ACLK_VDPU_ROOT, 0,
++			RK3588_CLKGATE_CON(41), 5, GFLAGS),
++	GATE_LINK(ACLK_HDCP0_PRE, "aclk_hdcp0_pre", "aclk_vo0_root", ACLK_VOP_LOW_ROOT, 0,
++			RK3588_CLKGATE_CON(55), 9, GFLAGS),
++	GATE_LINK(HCLK_VO0, "hclk_vo0", "hclk_vo0_root", HCLK_VOP_ROOT, 0,
++			RK3588_CLKGATE_CON(55), 5, GFLAGS),
++	GATE_LINK(ACLK_HDCP1_PRE, "aclk_hdcp1_pre", "aclk_hdcp1_root", ACLK_VO1USB_TOP_ROOT, 0,
++			RK3588_CLKGATE_CON(59), 6, GFLAGS),
++	GATE_LINK(HCLK_VO1, "hclk_vo1", "hclk_vo1_root", HCLK_VO1USB_TOP_ROOT, 0,
++			RK3588_CLKGATE_CON(59), 9, GFLAGS),
++	GATE_LINK(ACLK_AV1_PRE, "aclk_av1_pre", "aclk_av1_root", ACLK_VDPU_ROOT, 0,
++			RK3588_CLKGATE_CON(68), 1, GFLAGS),
++	GATE_LINK(PCLK_AV1_PRE, "pclk_av1_pre", "pclk_av1_root", HCLK_VDPU_ROOT, 0,
++			RK3588_CLKGATE_CON(68), 4, GFLAGS),
++	GATE_LINK(HCLK_SDIO_PRE, "hclk_sdio_pre", "hclk_sdio_root", HCLK_NVM, 0,
++			RK3588_CLKGATE_CON(75), 1, GFLAGS),
++	GATE_LINK(PCLK_VO0GRF, "pclk_vo0grf", "pclk_vo0_root", HCLK_VO0, CLK_IGNORE_UNUSED,
++			RK3588_CLKGATE_CON(55), 10, GFLAGS),
++	GATE_LINK(PCLK_VO1GRF, "pclk_vo1grf", "pclk_vo1_root", HCLK_VO1, CLK_IGNORE_UNUSED,
++			RK3588_CLKGATE_CON(59), 12, GFLAGS),
+ };
+ 
+ static void __init rk3588_clk_init(struct device_node *np)
 -- 
 2.17.1
 
