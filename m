@@ -2,122 +2,169 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66FA4CDB483
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Oct 2023 13:50:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFAB8CDB47E
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Oct 2023 14:09:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231821AbjJRNuQ convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Oct 2023 09:50:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52192 "EHLO
+        id S1344993AbjJROJ6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Oct 2023 10:09:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231824AbjJRNuP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Oct 2023 09:50:15 -0400
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E9B583;
-        Wed, 18 Oct 2023 06:50:10 -0700 (PDT)
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-5a7db1f864bso81487187b3.3;
-        Wed, 18 Oct 2023 06:50:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697637009; x=1698241809;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3xK9RfUzKYO3igl+qYfqRgLxv0TmNUU4m39Yeu7GndI=;
-        b=tZWoOO6M0wyGWVE19yVkQ68eX2I3dtf6h0yqWQmmH1noR5A/2bOqHVBceHu8v6exst
-         8SceBKYFR3qcnbWRjQ8HoEGNF+qpNWYWKD89/CjRife6GuL7u5qF3o5oNafwF1yjBSF1
-         /Zcybr9gyGQZptpRtkqOltuQk1Osy2KM9L1nIJ+/cfkmsvnUGLMpiohx56d8oikIFMqW
-         2FXEtt+uD4aCWT6o1+N/th+75BrFl0NArAUqjx8GMDG+RIdpYzdVB/O2vK9kHy1+Ms2z
-         uAjEpVpIdOhpJFtuzAE2inMPLhkcmYxRcBL9TupIgb6pojqHv0eyZSQYOQmkNUr8FPS1
-         TiDA==
-X-Gm-Message-State: AOJu0YzvdlI+rW0BdMH68E6fz0spUBYoVgJtQXVJrBENeSZONLyb52jX
-        4luQk0RNUhWpcyA/nMurtzbI+7fjlKyEcQ==
-X-Google-Smtp-Source: AGHT+IFJ72LAMCcMCUMVmJm+nn16khsu3nYajsmn7ZudXc9mavCJgkqTLDRPEVg/qlRfXbCRoeA2IA==
-X-Received: by 2002:a81:7b85:0:b0:5a1:d398:2e with SMTP id w127-20020a817b85000000b005a1d398002emr5826514ywc.37.1697637009201;
-        Wed, 18 Oct 2023 06:50:09 -0700 (PDT)
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com. [209.85.128.179])
-        by smtp.gmail.com with ESMTPSA id h81-20020a815354000000b0059a34cfa2a8sm1504888ywb.62.2023.10.18.06.50.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Oct 2023 06:50:08 -0700 (PDT)
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-5a7c93507d5so81470907b3.2;
-        Wed, 18 Oct 2023 06:50:08 -0700 (PDT)
-X-Received: by 2002:a81:4917:0:b0:5a7:d016:bffa with SMTP id
- w23-20020a814917000000b005a7d016bffamr5333912ywa.8.1697637008052; Wed, 18 Oct
- 2023 06:50:08 -0700 (PDT)
+        with ESMTP id S1344879AbjJROJm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Oct 2023 10:09:42 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AED6619B;
+        Wed, 18 Oct 2023 07:09:20 -0700 (PDT)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39IDkGLG017627;
+        Wed, 18 Oct 2023 14:09:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=o4XBTkJlvarejnZV8pC470v6+3DYRzBxpiH+Yo4yy20=;
+ b=Y2M5WhxHER5RKIvsMW6x4BCK6Yd7cRXarn7/Rdameqpf7ryiGrSAZccyo8/R9zy+w0bY
+ JRU7b2K4D5xC3YGid8xwoKw1hsbiIYu94ZNSF9LEqzkPBzEgPsNw5W0aVtykBbn4u+NT
+ JKke6kkBl1U8EZMUaacLywkPZ1Z4tc1GxBKLhralhC3EQ9z9UPhhj6706LHZF7SkVDEU
+ C5UgxiCTyQAEEMDOfrd0of51xu9y+tF62ETfZSSl4yxbHOnCO1S5/AuVaeiX8KuXjSp9
+ 54gD0McHM8rSjZVysEtHq49IgFZ2B55RxyL7Zhy8tt0cxD6M6xcNRbIEXPh59s1TAul9 5g== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3tt8xs952p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 18 Oct 2023 14:09:15 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 39IE8vV8023216
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 18 Oct 2023 14:08:58 GMT
+Received: from [10.216.42.121] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.39; Wed, 18 Oct
+ 2023 07:08:49 -0700
+Message-ID: <ee431c51-1474-47f9-b298-8ca284ea353b@quicinc.com>
+Date:   Wed, 18 Oct 2023 19:38:44 +0530
 MIME-Version: 1.0
-References: <cover.1697199949.git.ysato@users.sourceforge.jp> <953cf1cef945a7081734ebc5304e3820214dca35.1697199949.git.ysato@users.sourceforge.jp>
-In-Reply-To: <953cf1cef945a7081734ebc5304e3820214dca35.1697199949.git.ysato@users.sourceforge.jp>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 18 Oct 2023 15:49:55 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWrLi9-pyNrv9WviZ7zNtcvfjr-qa0m2e4=2Jqv8QZtrQ@mail.gmail.com>
-Message-ID: <CAMuHMdWrLi9-pyNrv9WviZ7zNtcvfjr-qa0m2e4=2Jqv8QZtrQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 11/35] include/dt-bindings/clock/sh7750.h:
- cpg-sh7750 binding header.
-To:     Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc:     linux-sh@vger.kernel.org, glaubitz@physik.fu-berlin.de,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/11] Add GPLL0 as clock provider for the Qualcomm's
+ IPQ mailbox controller
+Content-Language: en-US
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Sricharan Ramabadhran" <quic_srichara@quicinc.com>,
+        Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>,
+        Varadarajan Narayanan <quic_varada@quicinc.com>,
+        Anusha Rao <quic_anusha@quicinc.com>,
+        Devi Priya <quic_devipriy@quicinc.com>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <stable@vger.kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Robert Marko <robimarko@gmail.com>
+References: <20230913-gpll_cleanup-v2-0-c8ceb1a37680@quicinc.com>
+From:   Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+In-Reply-To: <20230913-gpll_cleanup-v2-0-c8ceb1a37680@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ijw9qUUhIq2d-FlkW1rzCJGjGOrf2wun
+X-Proofpoint-ORIG-GUID: ijw9qUUhIq2d-FlkW1rzCJGjGOrf2wun
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-10-18_12,2023-10-18_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ lowpriorityscore=0 spamscore=0 mlxscore=0 suspectscore=0 clxscore=1011
+ impostorscore=0 phishscore=0 adultscore=0 priorityscore=1501
+ mlxlogscore=999 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2309180000 definitions=main-2310180117
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Sato-san,
 
-On Sat, Oct 14, 2023 at 4:54 PM Yoshinori Sato
-<ysato@users.sourceforge.jp> wrote:
-> SH7750 CPG driver binding definition.
+On 9/14/2023 12:29 PM, Kathiravan Thirumoorthy wrote:
+> Currently mailbox controller takes the XO and APSS PLL as the input. It
+> can take the GPLL0 also as an input. This patch series adds the same and
+> fixes the issue caused by this.
 >
-> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
+> Once the cpufreq driver is up, it tries to bump up the cpu frequency
+> above 800MHz, while doing so system is going to unusable state. Reason
+> being, with the GPLL0 included as clock source, clock framework tries to
+> achieve the required rate with the possible parent and since GPLL0
+> carries the CLK_SET_RATE_PARENT flag, clock rate of the GPLL0 is getting
+> changed, causing the issue.
+>
+> First half of the series, removes the CLK_SET_RATE_PARENT flag from the
+> PLL clocks since the PLL clock rates shouldn't be changed. Another
+> half, add the necessary support to include the GPLL0 as clock provider
+> for mailbox and accomodate the changes in APSS clock driver.
+>
+> This is also the preparatory series to enable the CPUFreq on IPQ5332
+> SoC. Dynamic scaling of CPUFreq is not supported on IPQ5332, so to
+> switch between the frequencies we need to park the APSS PLL in safe
+> source, here it is GPLL0 and then shutdown and bring up the APSS PLL in
+> the desired rate.
+>
+> For IPQ5332 SoC, this series depends on the below patch
+> https://lore.kernel.org/linux-arm-msm/1693474133-10467-1-git-send-email-quic_varada@quicinc.com/
 
-Thanks for your patch!
 
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/sh7750.h
-> @@ -0,0 +1,26 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> + *
-> + * Copyright 2023 Yoshinori Sato
-> + */
-> +
-> +#ifndef __DT_BINDINGS_CLOCK_SH7750_H__
-> +#define __DT_BINDINGS_CLOCK_SH7750_H__
-> +
-> +#define SH7750_CPG_PLLOUT      0
-> +
-> +#define SH7750_CPG_FCK         1
-> +#define SH7750_CPG_BCK         2
-> +#define SH7750_CPG_ICK         3
-> +
-> +#define SH7750_CPG_SCI_CLK     4
-> +#define SH7750_CPG_RTC_CLK     5
-> +#define SH7750_CPG_TMU012_CLK  6
-> +#define SH7750_CPG_SCIF_CLK    7
-> +#define SH7750_CPG_DMAC_CLK    8
-> +#define SH7750_CPG_UBC_CLK     9
-> +#define SH7750_CPG_SQ_CLK      10
+Bjorn, can this series picked up for v6.7?
 
-The above 7 clocks are not CPG core clocks, but part of the Power-Down
-Modes block.  The documentation calls them MSTPx (Module Stop).
+There is a minor nit the commit message. The statement "APSS PLL will be 
+running at 800MHz" should be "APSS clock / CPU clock will be running at 
+800MHz" and this should be taken care for clk and the dts patches. Do 
+let me know if I need to re-spin the address to address this.
 
-So I'd go for SH7750_MSTP_SCI_CLK etc.
-And perhaps drop the "_CLK" suffix?
+Thanks,
 
-> +#define SH7750_CPG_INTC_CLK    11
-> +#define SH7750_CPG_TMU34_CLK   12
-> +#define SH7750_CPG_PCIC_CLK    13
 
-Similarly, but the documentation calls these CSTPx (Clock Stop).
-So I'd go for SH7750_CSTP_INTC_CLK etc.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+>
+> Signed-off-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+> ---
+> Changes in v2:
+> - included the patch to drop the CLK_SET_RATE_PARENT from IPQ5018 GCC driver
+> - Splitted the DTS changes per target
+> - For IPQ8074 and IPQ6018 keep the CLK_SET_RATE_PARENT for UBI32 PLL
+>    since the PLL clock rates can be changed
+> - Pick up the tags in the relevant patches
+> - Link to v1: https://lore.kernel.org/r/20230904-gpll_cleanup-v1-0-de2c448f1188@quicinc.com
+>
+> ---
+> Kathiravan Thirumoorthy (11):
+>        clk: qcom: ipq8074: drop the CLK_SET_RATE_PARENT flag from PLL clocks
+>        clk: qcom: ipq6018: drop the CLK_SET_RATE_PARENT flag from PLL clocks
+>        clk: qcom: ipq5018: drop the CLK_SET_RATE_PARENT flag from GPLL clocks
+>        clk: qcom: ipq9574: drop the CLK_SET_RATE_PARENT flag from GPLL clocks
+>        clk: qcom: ipq5332: drop the CLK_SET_RATE_PARENT flag from GPLL clocks
+>        dt-bindings: mailbox: qcom: add one more clock provider for IPQ mailbox
+>        clk: qcom: apss-ipq6018: add the GPLL0 clock also as clock provider
+>        arm64: dts: qcom: ipq8074: include the GPLL0 as clock provider for mailbox
+>        arm64: dts: qcom: ipq6018: include the GPLL0 as clock provider for mailbox
+>        arm64: dts: qcom: ipq9574: include the GPLL0 as clock provider for mailbox
+>        arm64: dts: qcom: ipq5332: include the GPLL0 as clock provider for mailbox
+>
+>   .../devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml          | 2 ++
+>   arch/arm64/boot/dts/qcom/ipq5332.dtsi                               | 4 ++--
+>   arch/arm64/boot/dts/qcom/ipq6018.dtsi                               | 4 ++--
+>   arch/arm64/boot/dts/qcom/ipq8074.dtsi                               | 4 ++--
+>   arch/arm64/boot/dts/qcom/ipq9574.dtsi                               | 4 ++--
+>   drivers/clk/qcom/apss-ipq6018.c                                     | 3 +++
+>   drivers/clk/qcom/gcc-ipq5018.c                                      | 3 ---
+>   drivers/clk/qcom/gcc-ipq5332.c                                      | 2 --
+>   drivers/clk/qcom/gcc-ipq6018.c                                      | 6 ------
+>   drivers/clk/qcom/gcc-ipq8074.c                                      | 6 ------
+>   drivers/clk/qcom/gcc-ipq9574.c                                      | 4 ----
+>   11 files changed, 13 insertions(+), 29 deletions(-)
+> ---
+> base-commit: e143016b56ecb0fcda5bb6026b0a25fe55274f56
+> change-id: 20230913-gpll_cleanup-5d0a339ebd17
+>
+> Best regards,
