@@ -2,62 +2,65 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99018CDB47E
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Oct 2023 15:34:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B10FCDB47E
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Oct 2023 15:34:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231582AbjJRPeP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Oct 2023 11:34:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40100 "EHLO
+        id S231686AbjJRPeS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Oct 2023 11:34:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231472AbjJRPeP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Oct 2023 11:34:15 -0400
-Received: from mail-oo1-xc2a.google.com (mail-oo1-xc2a.google.com [IPv6:2607:f8b0:4864:20::c2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1E53111;
-        Wed, 18 Oct 2023 08:34:11 -0700 (PDT)
-Received: by mail-oo1-xc2a.google.com with SMTP id 006d021491bc7-581e92f615fso838050eaf.2;
-        Wed, 18 Oct 2023 08:34:11 -0700 (PDT)
+        with ESMTP id S231472AbjJRPeR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Oct 2023 11:34:17 -0400
+Received: from mail-oo1-xc29.google.com (mail-oo1-xc29.google.com [IPv6:2607:f8b0:4864:20::c29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A8B4114;
+        Wed, 18 Oct 2023 08:34:16 -0700 (PDT)
+Received: by mail-oo1-xc29.google.com with SMTP id 006d021491bc7-57b5f0d658dso4061743eaf.0;
+        Wed, 18 Oct 2023 08:34:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697643251; x=1698248051; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6tQJZrmwh77q4KJG6d4/vwBiNQFUJwablon8OTMlyfA=;
-        b=a8O67gN4R1090TEuHQEAADcW1YIy4CvfnSRlSoHHslvq4pJ3SilqrvR2UmUuc/RYXY
-         KhSst6cMf77AVAnAk8p2qHePcXFLiPBjfhzezqZpZQd/fl/E6XgdeDx7qIgDByJBU+Gp
-         vABEbB9CpdYn/xSGNTFwF2ECUEFr09jHfXETRGXZvyd5hOlQelddk31/AaVaD9pMKk0m
-         yZPtToN/ky4w/xQZuLc3y4C79OvmL+v72MBtUvTow7+QstEQXoIDwavD0QMXUe5xhvuu
-         e1HajBSpy3OD8aWlPQql08BUnoDlCRO7ITKAfgD5nLMN4zn9HFdqj42KbO+KHRLnCaBS
-         WaWw==
+        d=gmail.com; s=20230601; t=1697643255; x=1698248055; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HmlZgOTohheR5Sz3o+FLczWrX2zS7o2K2yAxRk2cDpU=;
+        b=alZ4ou26L6vg8BAJDXWQzMFghsZDt6elNCdFUfa6mZjxHplv4AxnP5i/OWrFV/8GH1
+         /2l3SRuL52mo4F5Wrj9QWeGIfyRTmY5mqy1qE6gdAPP+/fhPWJuD8QeC+rKvhe1a/Ssd
+         3dKpXit3ca+BPb2JNwbDMLhd2plDD7k82ie9rYtsupwz3ou1k/cevpHTFFaFsPX+sges
+         BfbnjpfWHX7OcrPLoZYw4NBa+YNN8tDN+dSL1xxVyKDhi22nAe+MDcKUZGYO7FC78QGS
+         y7G1KIQrz5J/8fia+hX/i9QDwOeRrLdDU2AQSW4xROVAh/mdJFWTZ6QA29LmMLOl3iNl
+         UL5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697643251; x=1698248051;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6tQJZrmwh77q4KJG6d4/vwBiNQFUJwablon8OTMlyfA=;
-        b=JrM2m+hfw2JpUnrYPUYpCNvQ0IIZCMP3OPYJ14A81CL1qeQYpNK7g0Or+tRGxs7hZa
-         maL/pcAKDWvfJLL7jD8qNJdbSMOiXKvbqONuUKEy04196POlDGRu65o1sGTPtsXV1zUf
-         SaDAJht2N+BMOxi3ZVpprt35Xfwi2N1Sbh+i7ee6xL0Ugyqd9kAzY39vbP+FsaJxR5Xb
-         KNPmvYLFzbQ1n2V+vWsj0CanFnByZfKCziR9BmOtFE4PZ/0FkzN1zVxMRErSpB71wTg1
-         LNdrxervQWdGZxa3oDAKfk+Dfj/8uPVdkLBgSUDazb5FXlzy9Q38+kX7qzAQK0WZtmcD
-         0vKQ==
-X-Gm-Message-State: AOJu0YwEFGBuHX3eNRoEC3QMffNGeVT+mxjed5ELxsFi8nx5IQsxYDGs
-        kxCp+bg9KRSleYdASQ/ZvxM=
-X-Google-Smtp-Source: AGHT+IFTBAebvUI3C/PnjHyGd/EVx2sycdpXqSQObZD9ieoQ4sejU2vINPA6JY+WSFXYippZGc5xDg==
-X-Received: by 2002:a4a:dc8f:0:b0:57b:6ab1:87c9 with SMTP id g15-20020a4adc8f000000b0057b6ab187c9mr5965150oou.0.1697643250979;
-        Wed, 18 Oct 2023 08:34:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1697643255; x=1698248055;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HmlZgOTohheR5Sz3o+FLczWrX2zS7o2K2yAxRk2cDpU=;
+        b=aLNfjCdpBNjQGgnpTSNM79lgvRa3TVCCOE3zk/QdF/d8EfdpQ+EGBi8i/HaySg7O9/
+         qGo7tRlSiFyfxsaey8Q6ABM62jvhgIirJev+Tjfsjqk7OmywUbsv/IFE1pgA6RJYnO6c
+         m3X5DOhShGB8TjtoTuU82dI/G1s3AyZmKNBDI/nDC8Vhlt9IDH9Gdra3LKEO/GtIR4f/
+         +3YiknWup9DaiCiqi+ZhLx1dl9nazHplq5MzWJAli3lnsgjcoGM9b88fe6XlsmhuL7Rj
+         aejfDGJ+fqWJZ6ASLVrLj+tQRj90eNWJhQUMXRFEMmx+gMdtbH5nGhYrbPqLYL5sDAvy
+         HtGg==
+X-Gm-Message-State: AOJu0YzjeyuV02jqhVg7lbvyhgiB/VTCCtkWAmjYeMBK90ZnEaeLXA+R
+        AP30eRTHzn3szBcv3SQ2YEI=
+X-Google-Smtp-Source: AGHT+IEVNbZ56UZRmNC6SHChpVibk8/f3CmobKd/aVSmcbaI5+8ojfX7HdJisupGUtNmr2zqNWv3Ug==
+X-Received: by 2002:a05:6820:200e:b0:571:1fad:ebe0 with SMTP id by14-20020a056820200e00b005711fadebe0mr6705464oob.3.1697643255377;
+        Wed, 18 Oct 2023 08:34:15 -0700 (PDT)
 Received: from localhost.localdomain ([75.28.21.198])
-        by smtp.gmail.com with ESMTPSA id h16-20020a4ad750000000b00581e090fd1fsm523782oot.8.2023.10.18.08.34.06
+        by smtp.gmail.com with ESMTPSA id h16-20020a4ad750000000b00581e090fd1fsm523782oot.8.2023.10.18.08.34.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Oct 2023 08:34:08 -0700 (PDT)
+        Wed, 18 Oct 2023 08:34:12 -0700 (PDT)
 From:   Chris Morgan <macroalpha82@gmail.com>
 To:     linux-rockchip@lists.infradead.org
 Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         sboyd@kernel.org, mturquette@baylibre.com, heiko@sntech.de,
         conor+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
         robh+dt@kernel.org, Chris Morgan <macromorgan@hotmail.com>
-Subject: [PATCH 0/3] Fixes for RGB30
-Date:   Wed, 18 Oct 2023 10:33:54 -0500
-Message-Id: <20231018153357.343142-1-macroalpha82@gmail.com>
+Subject: [PATCH 1/3] clk: rockchip: rk3568: Add PLL rate for 292.5MHz
+Date:   Wed, 18 Oct 2023 10:33:55 -0500
+Message-Id: <20231018153357.343142-2-macroalpha82@gmail.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20231018153357.343142-1-macroalpha82@gmail.com>
+References: <20231018153357.343142-1-macroalpha82@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -66,27 +69,30 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Chris Morgan <macromorgan@hotmail.com>
 
-After preliminary testing, a few users requested that I see if I can
-make the panel run at precisely 60hz. As the device is typically used
-for retro gaming, getting the panel to refresh as close to 60hz as
-possible is important.
+Add support for a PLL rate of 292.5MHz so that the Powkiddy RGB30 panel
+can run at a requested 60hz (59.96, close enough).
 
-Additionally, I accidentially left the UART2 enabled, even though this
-device does not have an exposed serial port on the board. Disable the
-UART in the device tree.
+I have confirmed this rate fits with all the constraints
+listed in the TRM for the VPLL (as an integer PLL) in Part 1 "Chapter
+2 Clock & Reset Unit (CRU)."
 
-This patch series applies on top of the already applied commit here:
-https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git/commit/?h=for-next&id=1e9ac3e8a6a9d4da9efbad2d8e95cc1140e0e23f
+Signed-off-by: Chris Morgan <macromorgan@hotmail.com>
+---
+ drivers/clk/rockchip/clk-rk3568.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Chris Morgan (3):
-  clk: rockchip: rk3568: Add PLL rate for 292.5MHz
-  arm64: dts: rockchip: Update VPLL Frequency for RGB30
-  arm64: dts: rockchip: Remove UART2 from RGB30
-
- .../arm64/boot/dts/rockchip/rk3566-powkiddy-rgb30.dts | 11 ++++++++++-
- drivers/clk/rockchip/clk-rk3568.c                     |  1 +
- 2 files changed, 11 insertions(+), 1 deletion(-)
-
+diff --git a/drivers/clk/rockchip/clk-rk3568.c b/drivers/clk/rockchip/clk-rk3568.c
+index 16dabe2b9c47..db713e1526cd 100644
+--- a/drivers/clk/rockchip/clk-rk3568.c
++++ b/drivers/clk/rockchip/clk-rk3568.c
+@@ -72,6 +72,7 @@ static struct rockchip_pll_rate_table rk3568_pll_rates[] = {
+ 	RK3036_PLL_RATE(408000000, 1, 68, 2, 2, 1, 0),
+ 	RK3036_PLL_RATE(312000000, 1, 78, 6, 1, 1, 0),
+ 	RK3036_PLL_RATE(297000000, 2, 99, 4, 1, 1, 0),
++	RK3036_PLL_RATE(292500000, 1, 195, 4, 4, 1, 0),
+ 	RK3036_PLL_RATE(241500000, 2, 161, 4, 2, 1, 0),
+ 	RK3036_PLL_RATE(216000000, 1, 72, 4, 2, 1, 0),
+ 	RK3036_PLL_RATE(200000000, 1, 100, 3, 4, 1, 0),
 -- 
 2.34.1
 
