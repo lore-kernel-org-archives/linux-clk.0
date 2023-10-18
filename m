@@ -2,62 +2,62 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F162CCDB47E
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Oct 2023 15:34:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 028B1CDB47E
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Oct 2023 15:34:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231933AbjJRPeW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Oct 2023 11:34:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48674 "EHLO
+        id S231932AbjJRPeZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Oct 2023 11:34:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231472AbjJRPeV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Oct 2023 11:34:21 -0400
-Received: from mail-oo1-xc33.google.com (mail-oo1-xc33.google.com [IPv6:2607:f8b0:4864:20::c33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDADD111;
-        Wed, 18 Oct 2023 08:34:19 -0700 (PDT)
-Received: by mail-oo1-xc33.google.com with SMTP id 006d021491bc7-581d487f8dbso1034162eaf.1;
-        Wed, 18 Oct 2023 08:34:19 -0700 (PDT)
+        with ESMTP id S231472AbjJRPeZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Oct 2023 11:34:25 -0400
+Received: from mail-oo1-xc34.google.com (mail-oo1-xc34.google.com [IPv6:2607:f8b0:4864:20::c34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD3F2111;
+        Wed, 18 Oct 2023 08:34:23 -0700 (PDT)
+Received: by mail-oo1-xc34.google.com with SMTP id 006d021491bc7-581cb88f645so1256980eaf.1;
+        Wed, 18 Oct 2023 08:34:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697643259; x=1698248059; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1697643263; x=1698248063; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/KzXz3q7UxD8yzrIaZqXLlJtzg+A1VIwmVfWbANSNxk=;
-        b=cE2qKWZAi2J/5TDbkZVNEsKwgIWwK/PcJ/ssP2ts9QpckE3j2+4+bo+I4kZWFyEa2k
-         NozhDWWoRnCHOs3RIkJnltdTei8inIg+Qi0EIb31/BpM2K7tCIVD77v1yNsLgMPGR1wp
-         3uVEfDeRfGOvuvA5lPyDyo7LrBiHWVYEjLuIAvGBnDmRwfaxPmsUSXc2R52zvvDeHuKv
-         TTTAjYWc8sIr/R4stk1IFZRm5BZ+nrpDxGbcYymVFxc/HNvm4Z17OGB0H/nNvNXS4CmJ
-         LGknh1j0exw2VfMm3ExlpLKV75lNNZr2PO2xYdsjw7FIH7gui/h08+pIeop26qW2uWsx
-         jWzA==
+        bh=jIiKTx5IOMw+xS6ILlA9ImHqJslhy4Q4M/1NT+5NQHI=;
+        b=BpnEEnr1/QJgHIvNKsa1S51vEqowy9iNRIRC5FtS/K9o4n2L85A0akdbaY3atOMNtT
+         CT8yPvh2xC5MkaCJww/Sjs1YUD0uMu+Q/2Byvy075yTdZiPFRuiQMcZTF2py/TT9lPkk
+         IZWOmmipJSlNzXAhslPhHa2obM6i7JfpNWxgzMI3cdQ24OOgjg7N7oiOOdMMK0yvsVI/
+         56zJG7sveGGrCau/+Fh2WhK6y4LXYwUdZ6eIw6I+GqvKHNfcO0CnfWLu7+3Egbb22p5r
+         YeOSNNIWdJ8mTi+ZE5Fgo6NcsY37yvSKJLR5vU/HRv7FA3c+nbEm+yZtn5y62qg8jWDx
+         A08A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697643259; x=1698248059;
+        d=1e100.net; s=20230601; t=1697643263; x=1698248063;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/KzXz3q7UxD8yzrIaZqXLlJtzg+A1VIwmVfWbANSNxk=;
-        b=eidVVr9phdBsKBxKvIDvC35ruu2nZcAtX9XGxxAK8EJsYSlFhy0GnSLwcBBnZvm9/C
-         TPFePsbWuf8brSdWSpJtXDKTnbSJx9vAHKrK9nUfgfKrDIgacheMFmaQLS84kBtmJJD3
-         iACAWDZP5RMK28YXXAFJC5qAy93Mb0oMf6HpMqDhg2WQB/rib4uprCEgXFL9Y/6PAsXW
-         7kRPWDX1/eP/7pg9cccQ+MrLBEzbifAmjsy7lEALGtz72QS1hO1aJmV7Res2xTd+u2Rr
-         UI4RGaexAc2CwhEmTAIV3m5zKnqQfZ2L4NtqCffnQIVxk5iCQNho0jQe1RcD5rEbzFrq
-         1uBw==
-X-Gm-Message-State: AOJu0YyEHd6nG4lkyEAjzQuewP+vFRPc+tQicNW7aRV2wCUN8IE1fTJg
-        kUt+Go/hXqCcJt5Rrfa4IWQ=
-X-Google-Smtp-Source: AGHT+IEL1iEm/4noFAPKBHY/aZb1xaW7voyUJp5gaU5xNsKksALHSoYPn96HXOSnmMvff6IagNC7tg==
-X-Received: by 2002:a4a:4304:0:b0:581:3e09:2623 with SMTP id k4-20020a4a4304000000b005813e092623mr5207123ooj.2.1697643259195;
-        Wed, 18 Oct 2023 08:34:19 -0700 (PDT)
+        bh=jIiKTx5IOMw+xS6ILlA9ImHqJslhy4Q4M/1NT+5NQHI=;
+        b=dI8Hh7qe/17c+6uBGi9t15ouaB0Op8r7xiTjw82JwjuTnX0BjT6E0mOymTEg9FES90
+         lpMIDyLS9GXtkvuxUzJnQQYmZfFEWHcu+PzLbRUparWjVSBiEM3dsJIt6fZebaBDE0uE
+         td9X5J99r9zyJIBHwFs31qU8+yzMRA0IhkOgnJS5esbeNIW6AXEm4hCkijhGUrg7LT8S
+         om0gmavWHwaPtquq6Re+jPv7dsdLkx2nLDHqQ1Cayt32bh5mbftsuZgqBKVsz7ulaguZ
+         JD10sHh492wZpJx+SEvXq/4imx9q4v5yIePKh14A7WTNHxp8R+jVN3FLDcZoPb/MmEbp
+         Go4g==
+X-Gm-Message-State: AOJu0YxVrBmWtoTNSzS1hWBgerFDjGMck1I505LtdADYfQw7zyYM60kt
+        VJoavURuR8j+m0XuVopWrBM=
+X-Google-Smtp-Source: AGHT+IFN49iYKj94sO+Ii7NyZhe0uPOWsh2AzoBd1cwspGvFw5CSngytJLUvZOSbCwldCkXh2Jbjpw==
+X-Received: by 2002:a4a:bf0b:0:b0:581:ed12:98c6 with SMTP id r11-20020a4abf0b000000b00581ed1298c6mr3410894oop.4.1697643263134;
+        Wed, 18 Oct 2023 08:34:23 -0700 (PDT)
 Received: from localhost.localdomain ([75.28.21.198])
-        by smtp.gmail.com with ESMTPSA id h16-20020a4ad750000000b00581e090fd1fsm523782oot.8.2023.10.18.08.34.15
+        by smtp.gmail.com with ESMTPSA id h16-20020a4ad750000000b00581e090fd1fsm523782oot.8.2023.10.18.08.34.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Oct 2023 08:34:17 -0700 (PDT)
+        Wed, 18 Oct 2023 08:34:21 -0700 (PDT)
 From:   Chris Morgan <macroalpha82@gmail.com>
 To:     linux-rockchip@lists.infradead.org
 Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         sboyd@kernel.org, mturquette@baylibre.com, heiko@sntech.de,
         conor+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
         robh+dt@kernel.org, Chris Morgan <macromorgan@hotmail.com>
-Subject: [PATCH 2/3] arm64: dts: rockchip: Update VPLL Frequency for RGB30
-Date:   Wed, 18 Oct 2023 10:33:56 -0500
-Message-Id: <20231018153357.343142-3-macroalpha82@gmail.com>
+Subject: [PATCH 3/3] arm64: dts: rockchip: Remove UART2 from RGB30
+Date:   Wed, 18 Oct 2023 10:33:57 -0500
+Message-Id: <20231018153357.343142-4-macroalpha82@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231018153357.343142-1-macroalpha82@gmail.com>
 References: <20231018153357.343142-1-macroalpha82@gmail.com>
@@ -69,28 +69,40 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Chris Morgan <macromorgan@hotmail.com>
 
-Set the VPLL frequency for the RGB30 to 292.5MHz to support running
-the 720x720 display panel at 59.97hz. Without this change, the panel
-runs at 59.08hz.
+The Powkiddy RGB30 has no onboard UART header, so remove the reference
+to it in the device tree. This was left on by mistake in the initial
+commit.
 
 Signed-off-by: Chris Morgan <macromorgan@hotmail.com>
 ---
- arch/arm64/boot/dts/rockchip/rk3566-powkiddy-rgb30.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/rockchip/rk3566-powkiddy-rgb30.dts | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/rockchip/rk3566-powkiddy-rgb30.dts b/arch/arm64/boot/dts/rockchip/rk3566-powkiddy-rgb30.dts
-index c7828c99a1bb..3ebc21608213 100644
+index 3ebc21608213..1ead3c5c24b3 100644
 --- a/arch/arm64/boot/dts/rockchip/rk3566-powkiddy-rgb30.dts
 +++ b/arch/arm64/boot/dts/rockchip/rk3566-powkiddy-rgb30.dts
-@@ -68,7 +68,7 @@ &cru {
+@@ -64,6 +64,10 @@ simple-audio-card,cpu {
+ 
+ /delete-node/ &adc_keys;
+ 
++&chosen {
++	/delete-property/ stdout-path;
++};
++
+ &cru {
  	assigned-clocks = <&pmucru CLK_RTC_32K>, <&cru PLL_GPLL>,
  			  <&pmucru PLL_PPLL>, <&cru PLL_VPLL>;
- 	assigned-clock-rates = <32768>, <1200000000>,
--			       <200000000>, <108000000>;
-+			       <200000000>, <292500000>;
+@@ -149,4 +153,9 @@ rk817_charger: charger {
+ 	};
  };
  
- &gpio_keys_control {
++/* There is no UART header visible on the board for this device. */
++&uart2 {
++	status = "disabled";
++};
++
+ /delete-node/ &vibrator;
 -- 
 2.34.1
 
