@@ -2,58 +2,58 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB2CBCDB47E
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Oct 2023 17:51:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40DEECDB47E
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Oct 2023 20:10:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231375AbjJRRvr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Oct 2023 13:51:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59102 "EHLO
+        id S231636AbjJRUK0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Oct 2023 16:10:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231266AbjJRRvr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Oct 2023 13:51:47 -0400
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C67D114
-        for <linux-clk@vger.kernel.org>; Wed, 18 Oct 2023 10:51:45 -0700 (PDT)
-Received: by mail-lj1-x233.google.com with SMTP id 38308e7fff4ca-2c503da4fd6so80620261fa.1
-        for <linux-clk@vger.kernel.org>; Wed, 18 Oct 2023 10:51:45 -0700 (PDT)
+        with ESMTP id S229702AbjJRUKZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Oct 2023 16:10:25 -0400
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B2ADF7
+        for <linux-clk@vger.kernel.org>; Wed, 18 Oct 2023 13:10:22 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id 2adb3069b0e04-5046bf37ec1so9122408e87.1
+        for <linux-clk@vger.kernel.org>; Wed, 18 Oct 2023 13:10:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697651503; x=1698256303; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1697659820; x=1698264620; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=gHJSF5X1nkWgGuo3YQxKlNnSL2Jb3AlzWdUDQa0ejrA=;
-        b=s82zJd5YurNSHwIlkxxXvaugD8+71EV9KMohp5SjSHngLsC1Rn2yM5RziwTJ7yFafC
-         BfcHav6U41G6MpSuahq5sprt+oHC3z/fVr5IolHlC1bEw5DxDEOINIBTYgapmsEb9Q51
-         v6lsV6HNDZ+vUr/HDAQ6dQsXMZdmdKf7RZp9UID09OPMyhBPLqdDf83hvQr+hi1E9an/
-         DklhOjEqat+97H32YIpZMI7U4p3fqR9ixORxITWDXaQfnmb6dZtcWlL8Web2JfjAmNlH
-         qa0KEzm9YJpAKxLLqPEkP3ebBZAeGR+a3RKgYFR0FU9pQOt49E/RWqBYI1ocx04kmdH0
-         yMvA==
+        bh=vC8BSO57sX+RFvEjTRkQdrl0WXBXIli5ij6sBpRlpmY=;
+        b=qp1Ttjd7bg4NjuZFjqHRmkIOMEi5eZZT+fmctQsM9QeVK52AlHj+pQuntQyJzTHJup
+         tMocsb7Y8g1w277Flaw3inb6Ae548IXWa6+xs4PzI+k90VXTV4TEYVQeAjXCWUp0cwxB
+         Vxn9/OQonQYbSfTvUw4HauQDqZTOTEp6ir1r0d3/hYKtuaNBQNI1EQgvpZaHJPegviUI
+         eGTFP9q3l+7owQdLsOnwGVkJA5aqZviIgSU8qZZhvp3j+/36VuhH6bjn/F43sQkE+2jK
+         H5WdKDEIAPmC6d6oOBNj0fJvTz9tOm36GSbxtLRn3Ggz0rDFS8RquSQtbfM6qtaIpRqs
+         ZkuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697651503; x=1698256303;
+        d=1e100.net; s=20230601; t=1697659820; x=1698264620;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gHJSF5X1nkWgGuo3YQxKlNnSL2Jb3AlzWdUDQa0ejrA=;
-        b=cjjOnwD3VcyRGZbBlf1CeFGY7xJZ/nP/RbIGawBT6P9edT1WNSnr+tf+gxnyXoF0Tt
-         p8n8UY2HBSHK2vf9fCWM8xu5DA2uvmRPkFcJ3YV5xGA/pwfKtEkmaTA2ssqiET/bVvHl
-         e/f64e1cgOL77IFvFFviWKJDAFOoOq9+s02WivNhot0iwGNh9QrfwrNVYYVR58qcFHo5
-         JGJrYI2oSVsgNMqMb1kzlv2Hr7Vx6zTgsSpSrF5QSVf7Gkkz42tlOJDs80CEUUV6yU/L
-         LlEwZZP6V5LgxWk4e48zB37gcnPPIokhwBUKZGZSI22hxS8wRLuNWC5KzEjpz7/TXddy
-         h5fA==
-X-Gm-Message-State: AOJu0Yyo75oh+YYt1+YYzxUY4Gq4SkjZP5oiPoNEO6Ijd9NSbgwYsleO
-        ABgiqywrUSBdTKBTpXYdTdtnbg==
-X-Google-Smtp-Source: AGHT+IGp5OwXk3ooeeFdICyeMDEnuecQP80Ve5odqVSAvaMAzznXCIvH5bx9jBx+HtZf6/Le6CMARA==
-X-Received: by 2002:ac2:484c:0:b0:503:35b3:aa31 with SMTP id 12-20020ac2484c000000b0050335b3aa31mr4419418lfy.27.1697651503384;
-        Wed, 18 Oct 2023 10:51:43 -0700 (PDT)
+        bh=vC8BSO57sX+RFvEjTRkQdrl0WXBXIli5ij6sBpRlpmY=;
+        b=f0A7PVWW2Cd3J7oxA3+ESn1+4jM3tdcZ84bW0xbg0CiGiLfToHqgqlvu230XHMbBiA
+         tZN4M7KZJ9fiCG9iCAPoUnEh7uGbCeulgQYdqUkLLRvbMxzoevYM0nS1BoFWGoBafJrD
+         fIdeE+PCGOcuB4YTG8hkohRDdWWiFgBbmCfcNkjJatSQU7jKnxLVK3Jk4KUvvwjlD542
+         0YvLhnsz805kThf4nzBjITDjjI64HlfT3XzMg7vNlkYvXLc4bETh2VMi0wpYZ/afduEN
+         lIyc/dbAvVcvSItlYLiXRzuhXUZea01Jc+GvePPg7q7wEmwzIQ8foMzZudlXfLxm7KsX
+         Kgjg==
+X-Gm-Message-State: AOJu0YxTyBJiZOphql25VKy9dUIYEk1Z9Qt2RSjZ3Ws8pqarOxwAh7nL
+        xvOC6TAwO6nGbzwH8f8ACkhGSA==
+X-Google-Smtp-Source: AGHT+IEoV8GqxarhRZJW+0Q9BZA1W9wzW1qrmKIldTts6mlhYjR/7ldyMGUwHxDYw3kBmonbwYz5Ug==
+X-Received: by 2002:a05:6512:15b:b0:507:a984:bf40 with SMTP id m27-20020a056512015b00b00507a984bf40mr40011lfo.47.1697659820172;
+        Wed, 18 Oct 2023 13:10:20 -0700 (PDT)
 Received: from [172.30.205.86] (UNUSED.212-182-62-129.lubman.net.pl. [212.182.62.129])
-        by smtp.gmail.com with ESMTPSA id x25-20020a19f619000000b0050797a35f8csm779407lfe.162.2023.10.18.10.51.40
+        by smtp.gmail.com with ESMTPSA id v7-20020a056512048700b0050336e38735sm816806lfq.92.2023.10.18.13.10.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Oct 2023 10:51:43 -0700 (PDT)
-Message-ID: <b1926ed8-fbe2-4428-aa23-dc4279553417@linaro.org>
-Date:   Wed, 18 Oct 2023 19:51:39 +0200
+        Wed, 18 Oct 2023 13:10:19 -0700 (PDT)
+Message-ID: <5e1eacc5-721e-4ac1-a62f-ece6a1c4355c@linaro.org>
+Date:   Wed, 18 Oct 2023 22:10:16 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 6/8] arm64: dts: qcom: ipq5332: populate the opp table
+Subject: Re: [PATCH v3 8/8] arm64: dts: qcom: ipq9574: populate the opp table
  based on the eFuse
 Content-Language: en-US
 To:     Varadarajan Narayanan <quic_varada@quicinc.com>, agross@kernel.org,
@@ -65,9 +65,9 @@ To:     Varadarajan Narayanan <quic_varada@quicinc.com>, agross@kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
 References: <cover.1697600121.git.quic_varada@quicinc.com>
- <fbd343f731973f532496c2ccfe65e6b487a14db3.1697600121.git.quic_varada@quicinc.com>
+ <5d1bf44de58db10a20d1b116c7fd4b073d01271e.1697600121.git.quic_varada@quicinc.com>
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <fbd343f731973f532496c2ccfe65e6b487a14db3.1697600121.git.quic_varada@quicinc.com>
+In-Reply-To: <5d1bf44de58db10a20d1b116c7fd4b073d01271e.1697600121.git.quic_varada@quicinc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -77,52 +77,30 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 
 On 10/18/23 11:29, Varadarajan Narayanan wrote:
-> IPQ53xx have different OPPs available for the CPU based on
-> SoC variant. This can be determined through use of an eFuse
-> register present in the silicon.
+> IPQ95xx SoCs have different OPPs available for the CPU based on
+> SoC variant. This can be determined from an eFuse register
+> present in the silicon.
 > 
 > Add support to read the eFuse and populate the OPPs based on it.
 > 
-> 	------------------------------------------------
-> 	Frequency	BIT2	BIT1	opp-supported-hw
-> 			1.1GHz	1.5GHz
-> 	------------------------------------------------
-> 	1100000000	1	1	0xf
-BIT(0) | BIT(1) | BIT(2) is 0x7
-
-> 	1500000000	0	1	0x3
-> 	------------------------------------------------
+> Frequency	1.2GHz	1.8GHz	1.5GHz	No	opp-supported-hw
+> 					Limit
+> ------------------------------------------------------------
+> 936000000	1	1	1	1	0xf
+> 1104000000	1	1	1	1	0xf
+> 1200000000	1	1	1	1	0xf
+> 1416000000	0	1	1	1	0x7
+> 1488000000	0	1	1	1	0x7
+> 1800000000	0	1	0	1	0x5
+> 2208000000	0	0	0	1	0x1
+> -----------------------------------------------------------
 > 
 > Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
 > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
 > ---
-> v2:	Fix inconsistencies in comment and move it to commit log
-> 	as suggested
-> 	Remove opp-microvolt entries as no regulator is managed by Linux
-> 	cpu_speed_bin -> cpu-speed-bin in node name
-> 	Remove "nvmem-cell-names" due to dtbs_check error
+> v2:	cpu_speed_bin -> cpu-speed-bin in node name
+> 	Move comment to commit log
 > ---
->   arch/arm64/boot/dts/qcom/ipq5332.dtsi | 19 ++++++++++++++++---
->   1 file changed, 16 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/ipq5332.dtsi b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
-> index 4206f05..a0dcba3 100644
-> --- a/arch/arm64/boot/dts/qcom/ipq5332.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
-> @@ -91,11 +91,19 @@
->   	};
->   
->   	cpu_opp_table: opp-table-cpu {
-> -		compatible = "operating-points-v2";
-> +		compatible = "operating-points-v2-kryo-cpu";
->   		opp-shared;
-> +		nvmem-cells = <&cpu_speed_bin>;
->   
-> -		opp-1488000000 {
-> -			opp-hz = /bits/ 64 <1488000000>;
-> +		opp-1100000000 {
-> +			opp-hz = /bits/ 64 <1100000000>;
-> +			opp-supported-hw = <0xF>;
-hex literals must be lowercase.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
 Konrad
