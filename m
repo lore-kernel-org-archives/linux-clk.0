@@ -2,137 +2,93 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E497CDB47E
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Oct 2023 09:37:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D569ACDB47E
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Oct 2023 10:35:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229732AbjJRJhy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Oct 2023 05:37:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48096 "EHLO
+        id S230107AbjJRKf6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Oct 2023 06:35:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234992AbjJRJcc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Oct 2023 05:32:32 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D86ABD44;
-        Wed, 18 Oct 2023 02:31:37 -0700 (PDT)
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39I8HTIH017351;
-        Wed, 18 Oct 2023 09:31:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=qcppdkim1;
- bh=71SDrbCHhggW77N4ET/lTU7t3o/T2Zf+gfsOoMco9/w=;
- b=El2eEPp2kr9nYe/WIi7GiUaXqmFlO5uUuLvNWOfNxkTi65Lmf3ecb1YEIE7AbDyHg0r4
- ldrwO70WNqdEL8Gme+P8/UFbYizZAhlAHcBGua2eJ4R1rmI87DqTGWadwZgqo53i4lVO
- oCo5q9Gc8zK9QGAWxu0sFQ7V20plR/eVw9mAS5rL1YiE+HBtEaMVgjF/QTVfsOOrvlP8
- bFvzRVJ5i0sifxEzVz9J1AB4xZbN+wn24PIB5CYrE5cMVtaqvpHnYpFeQVid7llkw0RJ
- VxF2F8y2vIFqXXgqUhZN2Cm0Y82AVu7U6nLCPf4KUe5ClSOC/BEs36r7d8yrwJcEVnaL AQ== 
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3tsr7c2mk0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 18 Oct 2023 09:31:04 +0000
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-        by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 39I9V2ef026356
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 18 Oct 2023 09:31:02 GMT
-Received: from varda-linux.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.39; Wed, 18 Oct 2023 02:30:56 -0700
-From:   Varadarajan Narayanan <quic_varada@quicinc.com>
-To:     <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>, <rafael@kernel.org>,
-        <viresh.kumar@linaro.org>, <ilia.lin@kernel.org>,
-        <quic_kathirav@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-pm@vger.kernel.org>
-CC:     Varadarajan Narayanan <quic_varada@quicinc.com>,
-        Praveenkumar I <ipkumar@codeaurora.org>
-Subject: [PATCH v3 7/8] cpufreq: qti: Introduce cpufreq for ipq95xx
-Date:   Wed, 18 Oct 2023 14:59:20 +0530
-Message-ID: <da0cdb5efdfc84c854807e6fbe57654871125ffb.1697600121.git.quic_varada@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1697600121.git.quic_varada@quicinc.com>
-References: <cover.1697600121.git.quic_varada@quicinc.com>
+        with ESMTP id S230359AbjJRKf5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Oct 2023 06:35:57 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 502C2B0;
+        Wed, 18 Oct 2023 03:35:55 -0700 (PDT)
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id EABEF66072F7;
+        Wed, 18 Oct 2023 11:35:52 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1697625353;
+        bh=rgrq6lFblmtQKHs08zZJsf2wZX+fKwB97omH3vm95yg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=oKMwVkZ5wT5CfuEMV6sfTfD0+oi3EnHYshpFpCaToMLS3rca1dLqMpXMCrQJz9wYD
+         MSZ3HWEVfw38wjWdlAUJX83CLG3nu58zC7ph5JIlW0k9kS0mYd5CnCpBE8tNBiFAaS
+         oXoJvLK7d9oJciv22j4ch9+T1ubcQnN6tZirvNRRMYf1iXEQExRdQHgpjLv/sH+csz
+         8iFMeF5lEh6K2Mc/V2gA6bmc6LtHWlzUc1ev38keShuwJNFTADaJI9ye6GsA41XMUC
+         0GGPLuNmXw66dlGMbgMqY5qYMxP3uLRtxzm+DmKs6lPGzlWBY6a/enf0fh17li1aXQ
+         b6MXtFLQiqxUA==
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+To:     sboyd@kernel.org
+Cc:     mturquette@baylibre.com, matthias.bgg@gmail.com,
+        angelogioacchino.delregno@collabora.com, wenst@chromium.org,
+        msp@baylibre.com, amergnat@baylibre.com, yangyingliang@huawei.com,
+        u.kleine-koenig@pengutronix.de, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, kernel@collabora.com
+Subject: [PATCH v2 0/2] MediaTek clocks: Support mux indices list and 8195 DP
+Date:   Wed, 18 Oct 2023 12:35:44 +0200
+Message-ID: <20231018103546.48174-1-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.42.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: a82e-l75JEBiHhdDS8ltw7kLtYeAcyh2
-X-Proofpoint-GUID: a82e-l75JEBiHhdDS8ltw7kLtYeAcyh2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-10-18_07,2023-10-17_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
- lowpriorityscore=0 spamscore=0 clxscore=1015 bulkscore=0 adultscore=0
- impostorscore=0 mlxscore=0 priorityscore=1501 mlxlogscore=999
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2309180000 definitions=main-2310180080
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-IPQ95xx SoCs have different OPPs available for the CPU based on
-the SoC variant. This can be determined from an eFuse register
-present in the silicon.
+Changes in v2:
+ - Rebased on next-20231018
 
-Added support for ipq95xx on nvmem driver which helps to
-determine OPPs at runtime based on the eFuse register which
-has the CPU frequency limits. opp-supported-hw dt binding
-can be used to indicate the available OPPs for each limit.
+This series adds support to specify custom parent indices for MediaTek
+MUX clocks, necessary to avoid setting the same parent PLL for MT8195's
+top_dp and top_edp clocks, solving DP+eDP concurrent output issues.
 
-Signed-off-by: Praveenkumar I <ipkumar@codeaurora.org>
-Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
-Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
----
-v2:	Simplify bin selection by tweaking the order in dts
----
- drivers/cpufreq/cpufreq-dt-platdev.c | 1 +
- drivers/cpufreq/qcom-cpufreq-nvmem.c | 8 ++++++++
- 2 files changed, 9 insertions(+)
+No fixes tags are provided as the clk-mux commit introduces new logic
+and the actual MT8195 fix depends on that.
 
-diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-index f43e5cd..4f794ba 100644
---- a/drivers/cpufreq/cpufreq-dt-platdev.c
-+++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-@@ -183,6 +183,7 @@ static const struct of_device_id blocklist[] __initconst = {
- 	{ .compatible = "qcom,ipq5332", },
- 	{ .compatible = "qcom,ipq8064", },
- 	{ .compatible = "qcom,ipq8074", },
-+	{ .compatible = "qcom,ipq9574", },
- 	{ .compatible = "qcom,apq8064", },
- 	{ .compatible = "qcom,msm8974", },
- 	{ .compatible = "qcom,msm8960", },
-diff --git a/drivers/cpufreq/qcom-cpufreq-nvmem.c b/drivers/cpufreq/qcom-cpufreq-nvmem.c
-index 0014909..d44be4e 100644
---- a/drivers/cpufreq/qcom-cpufreq-nvmem.c
-+++ b/drivers/cpufreq/qcom-cpufreq-nvmem.c
-@@ -166,6 +166,13 @@ static int qcom_cpufreq_kryo_name_version(struct device *cpu_dev,
- 	case QCOM_ID_IPQ5300:
- 		drv->versions = 1 << (unsigned int)(*speedbin);
- 		break;
-+	case QCOM_ID_IPQ9514:
-+	case QCOM_ID_IPQ9550:
-+	case QCOM_ID_IPQ9554:
-+	case QCOM_ID_IPQ9570:
-+	case QCOM_ID_IPQ9574:
-+		drv->versions = 1 << (unsigned int)(*speedbin);
-+		break;
- 	default:
- 		BUG();
- 		break;
-@@ -417,6 +424,7 @@ static const struct of_device_id qcom_cpufreq_match_list[] __initconst = {
- 	{ .compatible = "qcom,ipq8064", .data = &match_data_krait },
- 	{ .compatible = "qcom,ipq8074", .data = &match_data_ipq8074 },
- 	{ .compatible = "qcom,apq8064", .data = &match_data_krait },
-+	{ .compatible = "qcom,ipq9574", .data = &match_data_kryo },
- 	{ .compatible = "qcom,msm8974", .data = &match_data_krait },
- 	{ .compatible = "qcom,msm8960", .data = &match_data_krait },
- 	{},
+This commit was tested on the Acer Tomato Chromebook (MT8195) with
+dual concurrent display outputs (internal eDP panel and TypeC->DP->HDMI
+adapter connected to Samsung UE40JU6400 4k TV); resolution switch on
+DP was also tested; eDP output is not paused and internal display keeps
+working as expected.
+
+
+After feedback on v1 of this series (effectively the same as v2, except
+for the rebase), I looked for an alternative solution with using
+clk_set_rate_exclusive() as proposed. Couldn't find any, as that still
+doesn't give any guarantee about selecting the same PLL that the driver
+was manipulating before setting the right divider MUX, hence that still
+wouldn't work correctly.
+
+For more context, please look at the conversation at [1].
+
+Cheers!
+
+[1] https://lore.kernel.org/linux-arm-kernel/20230713072138.84117-1-angelogioacchino.delregno@collabora.com
+
+AngeloGioacchino Del Regno (2):
+  clk: mediatek: clk-mux: Support custom parent indices for muxes
+  clk: mediatek: mt8195-topckgen: Refactor parents for top_dp/edp muxes
+
+ drivers/clk/mediatek/clk-mt8195-topckgen.c | 22 +++++++----
+ drivers/clk/mediatek/clk-mux.c             | 14 +++++++
+ drivers/clk/mediatek/clk-mux.h             | 43 ++++++++++++++++++++--
+ 3 files changed, 67 insertions(+), 12 deletions(-)
+
 -- 
-2.7.4
+2.42.0
 
