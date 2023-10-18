@@ -2,144 +2,170 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAA65CDB47E
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Oct 2023 07:14:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC2C7C41513
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Oct 2023 08:59:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229805AbjJRHO2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Oct 2023 03:14:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60480 "EHLO
+        id S229568AbjJRI7y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Oct 2023 04:59:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229777AbjJRHO1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Oct 2023 03:14:27 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1CFEC6
-        for <linux-clk@vger.kernel.org>; Wed, 18 Oct 2023 00:14:25 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-4083ac51d8aso4050095e9.2
-        for <linux-clk@vger.kernel.org>; Wed, 18 Oct 2023 00:14:25 -0700 (PDT)
+        with ESMTP id S229499AbjJRI7x (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Oct 2023 04:59:53 -0400
+Received: from mail-oa1-x35.google.com (mail-oa1-x35.google.com [IPv6:2001:4860:4864:20::35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B00FAFD;
+        Wed, 18 Oct 2023 01:59:51 -0700 (PDT)
+Received: by mail-oa1-x35.google.com with SMTP id 586e51a60fabf-1e9baf16a86so3448614fac.1;
+        Wed, 18 Oct 2023 01:59:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697613263; x=1698218063; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=B1IInBDsbBk5GPM+QsmE05nXSTJeImB+YIHmL3qSplw=;
-        b=W7jaSLYpGUpcMNA58b3R02DOSKNO8aij8WqQrVjel39PgFrMWSLQLXFNQhwR8FWqOu
-         exj9knIC9fSJ8HzoH+qQcaLN5MlJTyJY0LXRbi8wNmOpvoQ8m0tomhFrX04DVxGm19PW
-         EEZeXknTleTxBCtoQUdC++Mat8YzYLiZ1vlmYarkL1KT6KAr6GQ7wzZJCmmWwwo37p8Z
-         jDBeL31PEuqgwT7ztLU2saWTubx4hDimFwIZhew7X0kvAPM8+NVEWloVB1HUl7SM1LYt
-         Sbt+DtEYyV2dcs3FEKCz7DvgWtXdLUm2UHC8tAMmJr+KotqD9MqwLxY7mabgGAGGClb3
-         RDTw==
+        d=gmail.com; s=20230601; t=1697619591; x=1698224391; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wLg1o9DOF3VnHtMnC8PASVDsIiegad5WKGOMGpmn+Ec=;
+        b=ndnn/ryij66BIvxFAtAUGEEKwcuDFnhOf0Ag63I/9eYtfrX/pGRZeB9XgOeszSZ3GI
+         g+UcU+ALVUTCvTVtoWqFD8PG+ygpsz6TTaQJMueYaqsVILV0rrkzN4XZU77ocjF/R50I
+         Jd694UXQAZ5dWdrbtClPSN76Q/0M+i0kwbaCmtR3OZRtk7GfY24P9SPQd5w5Czbu1duB
+         uDJK9TNM/gUbTXbIGiHKk9Q/8+3bysfl/Ajc85Mfyfi0XQbO0TdHzaNtbjY+Q9VmGGd2
+         s1hy05Krg936YFxuPZoB4JH5rHIJ/BTuQrwHpUpIi9Nkz9hQviTDpQiK4XJSZQJK+GxL
+         5F4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697613263; x=1698218063;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=B1IInBDsbBk5GPM+QsmE05nXSTJeImB+YIHmL3qSplw=;
-        b=Yhlxe643VuZM2Q4ElYzKbRb3B/QoPDMqoHjLYVMOn9dnDzBTRvuttQ67uH7EVp/zX3
-         mbw3jk15ZBE2KArBvz8RwZM9yML1ddZKjxyHVp8YHKJTNwNJPvHRdQRMQo15Y9tqsQ5N
-         EEe6dcFg6YtjbMtdE//RT15Vqy3EBsLhLso5sqFRyq0s+BITXOISXOonMW/5g2WQEK7b
-         yckqDmj7kSGsjSoM8piDc69le+YUGOmMicvPeXgypv3ALfMzdEVp+ExZ4SytkthKDaW2
-         yte9etU89NvSGgJiaH+e4GvEgmyTLfAPCf3A9b+tN7FXvyhYojg3GGBYBdLRS2DKQxO2
-         I7AA==
-X-Gm-Message-State: AOJu0Yw0odv3roZaiqsvzEU77eIrF61dc3qZT3HF9vIzhlywWrTWpF7u
-        VFT/D36A0SlmdOns30e3Co6dHeNbAjKpwUNe2DU=
-X-Google-Smtp-Source: AGHT+IFKA133D8TkyPvW9TIPtQJEvPW0+QrYoUrodSm1xQ4XJr38DX3qfM6d6l2ahAvTb3Ens9ZUKQ==
-X-Received: by 2002:a05:600c:a686:b0:3fc:dd9:91fd with SMTP id ip6-20020a05600ca68600b003fc0dd991fdmr3179161wmb.40.1697613263072;
-        Wed, 18 Oct 2023 00:14:23 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.154])
-        by smtp.gmail.com with ESMTPSA id iv7-20020a05600c548700b004064cd71aa8sm869800wmb.34.2023.10.18.00.14.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Oct 2023 00:14:22 -0700 (PDT)
-Message-ID: <7d54a96e-17b0-4055-b546-a670d1536af5@linaro.org>
-Date:   Wed, 18 Oct 2023 09:14:20 +0200
+        d=1e100.net; s=20230601; t=1697619591; x=1698224391;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wLg1o9DOF3VnHtMnC8PASVDsIiegad5WKGOMGpmn+Ec=;
+        b=VE84AxipUxfEWtxVXZq3BNEx5NdcbwrvQw5x4cAaYpK4LUu3clQIzZlNFtRPTk7R7l
+         9zrgk3HWWT3BneRTdNm7krJIgtRdwaSVRq/Tna3Aj12SYYhILWzgyM/56Akm8VMpl13v
+         4nmR0KVsqnbLmOwdfzmIYYPxdOKbGgVCZYCXiAc37zigfK8hfTW8BSAsGXdmxuSg5APC
+         6KbQWapCr7TPZXc8OzA+NSpCgJbVDJ+JxBPWTdza/2YOKwKKnFarTtkDvUVUBpknSG5X
+         8mnJ4NHymqnQgCMV29+zO777oRin+SQ871+doDMxDhUeAVIXXMsFOg1tGbWm0+WFlTNw
+         JOFw==
+X-Gm-Message-State: AOJu0YybcrhLaeuC+61KH6dNSsds1ZI46PtYUrMsm9ACxrb6y1Wt2jpE
+        lB9wZp0PPLYlZS8tSj9KLLeOQ7ayddxGKMqfxSg=
+X-Google-Smtp-Source: AGHT+IEwmg6hKMx5NyEARa7yEZGHlf4iBHwoIM3/a+e2XvCgZXkBJX5beUIBiBA4x9a5zAMY8Xeq9izSd5tpItfzcJI=
+X-Received: by 2002:a05:6870:4202:b0:1d0:f5bd:6cf with SMTP id
+ u2-20020a056870420200b001d0f5bd06cfmr5715015oac.43.1697619590829; Wed, 18 Oct
+ 2023 01:59:50 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/4] dt-bindings: clock: rk3588: export PCLK_VO1GRF clk
- id
-Content-Language: en-US
-To:     Elaine Zhang <zhangqing@rock-chips.com>, mturquette@baylibre.com,
-        sboyd@kernel.org, kever.yang@rock-chips.com, heiko@sntech.de,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-kernel@vger.kernel.org, huangtao@rock-chips.com,
-        andy.yan@rock-chips.com
-References: <20231018070144.8512-1-zhangqing@rock-chips.com>
- <20231018070144.8512-4-zhangqing@rock-chips.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
- m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
- HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
- XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
- mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
- v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
- cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
- rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
- qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
- aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
- gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
- dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
- NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
- hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
- oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
- H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
- yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
- 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
- 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
- +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
- FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
- 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
- DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
- oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
- 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
- Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
- qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
- /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
- qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
- EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
- KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
- fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231018070144.8512-4-zhangqing@rock-chips.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20230827023932.501102-1-sergio.paracuellos@gmail.com> <20231017155257.GA710773@dev-arch.thelio-3990X>
+In-Reply-To: <20231017155257.GA710773@dev-arch.thelio-3990X>
+From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date:   Wed, 18 Oct 2023 10:59:39 +0200
+Message-ID: <CAMhs-H8cLcHNX5yOinyYcHe8-wNS5sBk9sW9U913Lph_JQG_dA@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: ralink: mtmips: quiet unused variable warning
+To:     Nathan Chancellor <nathan@kernel.org>
+Cc:     linux-clk@vger.kernel.org, tsbogend@alpha.franken.de,
+        sboyd@kernel.org, mturquette@baylibre.com,
+        linux-kernel@vger.kernel.org, ndesaulniers@google.com,
+        arnd@kernel.org, yangshiji66@outlook.com,
+        kernel test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 18/10/2023 09:01, Elaine Zhang wrote:
-> MBIST_MCLK_PDM1 is not used,
-> Use PCLK_VO1GRF to replace it.
-> 
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> ---
->  include/dt-bindings/clock/rockchip,rk3588-cru.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/dt-bindings/clock/rockchip,rk3588-cru.h b/include/dt-bindings/clock/rockchip,rk3588-cru.h
-> index 5790b1391201..5816cd71a4e3 100644
-> --- a/include/dt-bindings/clock/rockchip,rk3588-cru.h
-> +++ b/include/dt-bindings/clock/rockchip,rk3588-cru.h
-> @@ -36,7 +36,7 @@
->  #define PCLK_DSU			21
->  #define PCLK_S_DAPLITE			22
->  #define PCLK_M_DAPLITE			23
-> -#define MBIST_MCLK_PDM1			24
-> +#define PCLK_VO1GRF			24
+On Tue, Oct 17, 2023 at 5:53=E2=80=AFPM Nathan Chancellor <nathan@kernel.or=
+g> wrote:
+>
+> On Sun, Aug 27, 2023 at 04:39:32AM +0200, Sergio Paracuellos wrote:
+> > When CONFIG_OF is disabled then the matching table is not referenced an=
+d
+> > the following warning appears:
+> >
+> > drivers/clk/ralink/clk-mtmips.c:821:34: warning: unused variable 'mtmip=
+s_of_match' [-Wunused-const-variable]
+> > 821 |   static const struct of_device_id mtmips_of_match[] =3D {
+> >     |                          ^
+> >
+> > There are two match tables in the driver: one for the clock driver and =
+the
+> > other for the reset driver. The only difference between them is that th=
+e
+> > clock driver uses 'data' and does not have 'ralink,rt2880-reset' compat=
+ible.
+> > Both just can be merged into a single one just by adding the compatible
+> > 'ralink,rt2880-reset' entry to 'mtmips_of_match[]', which will allow it=
+ to
+> > be used for 'mtmips_clk_driver' (which doesn't use the data) as well as=
+ for
+> > 'mtmips_clk_init()' (which doesn't need get called for 'ralink,rt2880-r=
+eset').
+> >
+> > Doing in this way ensures that 'CONFIG_OF' is not disabled anymore so t=
+he
+> > above warning disapears.
+> >
+> > Fixes: 6f3b15586eef ("clk: ralink: add clock and reset driver for MTMIP=
+S SoCs")
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Closes: https://lore.kernel.org/oe-kbuild-all/202307242310.CdOnd2py-lkp=
+@intel.com/
+> > Suggested-by: Arnd Bergmann <arnd@kernel.org>
+> > Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+>
+> Reviewed-by: Nathan Chancellor <nathan@kernel.org>
 
-That's an ABI break without justification.
+Thanks, Nathan!
 
 Best regards,
-Krzysztof
-
+    Sergio Paracuellos
+>
+> > ---
+> > Changes in v2:
+> > - Merge two match tables into one to properly avoid this warning.
+> >
+> > PATCH in v1: https://lore.kernel.org/lkml/20230802092647.3000666-1-serg=
+io.paracuellos@gmail.com/T/
+> >
+> >  drivers/clk/ralink/clk-mtmips.c | 20 +++++---------------
+> >  1 file changed, 5 insertions(+), 15 deletions(-)
+> >
+> > diff --git a/drivers/clk/ralink/clk-mtmips.c b/drivers/clk/ralink/clk-m=
+tmips.c
+> > index 1e7991439527..50a443bf79ec 100644
+> > --- a/drivers/clk/ralink/clk-mtmips.c
+> > +++ b/drivers/clk/ralink/clk-mtmips.c
+> > @@ -821,6 +821,10 @@ static const struct mtmips_clk_data mt76x8_clk_dat=
+a =3D {
+> >  };
+> >
+> >  static const struct of_device_id mtmips_of_match[] =3D {
+> > +     {
+> > +             .compatible =3D "ralink,rt2880-reset",
+> > +             .data =3D NULL,
+> > +     },
+> >       {
+> >               .compatible =3D "ralink,rt2880-sysc",
+> >               .data =3D &rt2880_clk_data,
+> > @@ -1088,25 +1092,11 @@ static int mtmips_clk_probe(struct platform_dev=
+ice *pdev)
+> >       return 0;
+> >  }
+> >
+> > -static const struct of_device_id mtmips_clk_of_match[] =3D {
+> > -     { .compatible =3D "ralink,rt2880-reset" },
+> > -     { .compatible =3D "ralink,rt2880-sysc" },
+> > -     { .compatible =3D "ralink,rt3050-sysc" },
+> > -     { .compatible =3D "ralink,rt3052-sysc" },
+> > -     { .compatible =3D "ralink,rt3352-sysc" },
+> > -     { .compatible =3D "ralink,rt3883-sysc" },
+> > -     { .compatible =3D "ralink,rt5350-sysc" },
+> > -     { .compatible =3D "ralink,mt7620-sysc" },
+> > -     { .compatible =3D "ralink,mt7628-sysc" },
+> > -     { .compatible =3D "ralink,mt7688-sysc" },
+> > -     {}
+> > -};
+> > -
+> >  static struct platform_driver mtmips_clk_driver =3D {
+> >       .probe =3D mtmips_clk_probe,
+> >       .driver =3D {
+> >               .name =3D "mtmips-clk",
+> > -             .of_match_table =3D mtmips_clk_of_match,
+> > +             .of_match_table =3D mtmips_of_match,
+> >       },
+> >  };
+> >
+> > --
+> > 2.25.1
+> >
