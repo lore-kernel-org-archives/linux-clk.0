@@ -2,109 +2,78 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07E91CDB482
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Oct 2023 06:47:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9960CDB465
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Oct 2023 07:18:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344716AbjJSGrE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Oct 2023 02:47:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40316 "EHLO
+        id S1344773AbjJSHSn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Oct 2023 03:18:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232822AbjJSGrC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Oct 2023 02:47:02 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF433129;
-        Wed, 18 Oct 2023 23:46:59 -0700 (PDT)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39J6Ax0q021596;
-        Thu, 19 Oct 2023 06:46:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=br6+Z//OonCZjY0jaV7sAbQUXzyAjhH/ygBUQZbeG4U=;
- b=TEAKw5U2QoeW3rF1haljhCE/8K7XIM25b7TkXQiezKC/wTWppp8+Szs30nZI/Wtyu/Fj
- el+92SEAXVCCkYruqstH4p2sfQ+waRZMeK7cJE1jckFMwUQuX8dvrG1+Z8PZQmpKQcGq
- RUh+cl8e0giuvcMxn6k6TYtRB/Pgzb1QXXMwqNyrcv5PTjcVXE5YfOlcWfDndBt+cBIS
- mtNQ9D6Z9VhbH8aFdOPk8RDns3oBRHffVCEzrko873BLileKwnhEELNXzKm06fzwM87d
- /nVskQ1zhskUX4QtIrCHqr64CfmHdlvJ7fkuztZ4zG96Dkc6DNQtmNvu17yxHPoFz/W3 Sw== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3tt5v839vh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 19 Oct 2023 06:46:51 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 39J6koYE022328
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 19 Oct 2023 06:46:50 GMT
-Received: from [10.201.2.96] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.39; Wed, 18 Oct
- 2023 23:46:47 -0700
-Message-ID: <8dce62b2-562c-4e00-840b-68e1cc865972@quicinc.com>
-Date:   Thu, 19 Oct 2023 12:16:09 +0530
+        with ESMTP id S232788AbjJSHSn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Oct 2023 03:18:43 -0400
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [IPv6:2a02:c205:3004:2154::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F7839F;
+        Thu, 19 Oct 2023 00:18:41 -0700 (PDT)
+Received: from p200300ccff1c8300db3b230b99381d47.dip0.t-ipconnect.de ([2003:cc:ff1c:8300:db3b:230b:9938:1d47] helo=akair)
+        by mail.andi.de1.cc with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <andreas@kemnade.info>)
+        id 1qtNIj-005BiP-OC; Thu, 19 Oct 2023 09:18:37 +0200
+Date:   Thu, 19 Oct 2023 09:18:35 +0200
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     bcousson@baylibre.com, conor+dt@kernel.org,
+        devicetree@vger.kernel.org, dmitry.torokhov@gmail.com,
+        krzysztof.kozlowski+dt@linaro.org, lee@kernel.org,
+        linux-clk@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        mturquette@baylibre.com, robh+dt@kernel.org, tony@atomide.com
+Subject: Re: [PATCH v4 4/5] clk: twl: add clock driver for TWL6032
+Message-ID: <20231019091835.6d8df469@akair>
+In-Reply-To: <8c63372175266d42efbfca0104e19a14.sboyd@kernel.org>
+References: <20230916100515.1650336-1-andreas@kemnade.info>
+        <20230916100515.1650336-5-andreas@kemnade.info>
+        <8c63372175266d42efbfca0104e19a14.sboyd@kernel.org>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.37; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: gcc-ipq6018: add QUP6 I2C clock
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Robert Marko <robimarko@gmail.com>, <agross@kernel.org>,
-        <andersson@kernel.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20231015162114.976202-1-robimarko@gmail.com>
- <f27ff251-58b1-4fc5-8ad5-cd365b7eb976@linaro.org>
-Content-Language: en-US
-From:   Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-In-Reply-To: <f27ff251-58b1-4fc5-8ad5-cd365b7eb976@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: j_RNWGCpKnB_l9CD9omjLei1tVFOzZbY
-X-Proofpoint-ORIG-GUID: j_RNWGCpKnB_l9CD9omjLei1tVFOzZbY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-10-19_05,2023-10-18_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- mlxlogscore=911 lowpriorityscore=0 phishscore=0 impostorscore=0
- suspectscore=0 mlxscore=0 clxscore=1015 bulkscore=0 priorityscore=1501
- spamscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2309180000 definitions=main-2310190057
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Am Wed, 18 Oct 2023 18:20:22 -0700
+schrieb Stephen Boyd <sboyd@kernel.org>:
 
-On 10/19/2023 1:59 AM, Konrad Dybcio wrote:
->
->
-> On 10/15/23 18:20, Robert Marko wrote:
->> QUP6 I2C clock is listed in the dt bindings but it was never included in
->> the GCC driver.
->> So lets add support for it, its intentionally marked to never be 
->> disabled
->> as its somehow affecting DVFS and if disabled it sometimes crashes the
->> board.
->>
->> Signed-off-by: Robert Marko <robimarko@gmail.com>
->> ---
-> Bjorn, would you be able to get an idea of what could be sitting
-> on that bus?
->
-> Or maybe the IPQ folks could know?
->
+> Quoting Andreas Kemnade (2023-09-16 03:05:14)
+> > The TWL6032 has some clock outputs which are controlled like
+> > fixed-voltage regulators, in some drivers for these chips
+> > found in the wild, just the regulator api is abused for controlling
+> > them, so simply use something similar to the regulator functions.
+> > Due to a lack of hardware available for testing, leave out the
+> > TWL6030-specific part of those functions.
+> > 
+> > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> > ---  
+> 
+> Did you want me to pick this up in clk tree?
+> 
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> 
+Well, Lee has picked up 1-3 of this series, so I think it is a good idea
+if you take it. I do not think it will make things any easier if it goes
+through Tony's tree because part 5 is a bit tricky.
+If picked up independently (of the whole set and not only part 4), there
+will be a range of commits were WLAN will not work at all instead of
+basically working randomly by the clock is enabled for some reason (can
+happen if warm-booted from the vendor kernel).
 
-Konrad / Robert,
+So IMHO for part 5 we have to decide wether to decide if above is
+considered to break bisectability and take the patch for 6.8 or
+ignore that and take it for 6.7.
 
-Similar to IPQ9574, RPM needs this clock to communicate with PMIC over 
-I2C interface. Discussion happened here[1] is pretty much applicable to 
-IPQ6018 as well. Based on previous experience, we may need to document 
-the reason for CLK_IGNORE_UNUSED in driver as well. Nevertheless,
+But no matter how we decide, that should not affect the route for this
+part 4. So it is a good idea to have it through the clk tree.
 
-Reviewed-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-
-[1] 
-https://lore.kernel.org/linux-arm-msm/2852fc37-284f-6534-f163-45b37b153db1@quicinc.com/
-
-
-> Konrad
+Regrads,
+Andreas
