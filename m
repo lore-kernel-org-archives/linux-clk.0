@@ -2,58 +2,59 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 221D2CDB465
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Oct 2023 09:21:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9285BCDB465
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Oct 2023 09:22:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232788AbjJSJV4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Oct 2023 05:21:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57946 "EHLO
+        id S232788AbjJSJWZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Oct 2023 05:22:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229830AbjJSJV4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Oct 2023 05:21:56 -0400
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B7F7A3
-        for <linux-clk@vger.kernel.org>; Thu, 19 Oct 2023 02:21:51 -0700 (PDT)
-Received: by mail-lj1-x234.google.com with SMTP id 38308e7fff4ca-2c50906f941so91413941fa.2
-        for <linux-clk@vger.kernel.org>; Thu, 19 Oct 2023 02:21:51 -0700 (PDT)
+        with ESMTP id S231984AbjJSJWY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Oct 2023 05:22:24 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2191CA3
+        for <linux-clk@vger.kernel.org>; Thu, 19 Oct 2023 02:22:23 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-4083740f92dso18233015e9.3
+        for <linux-clk@vger.kernel.org>; Thu, 19 Oct 2023 02:22:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697707310; x=1698312110; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1697707341; x=1698312141; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=yXjT8p0w2WOajyEpbpgr/2SPJ8/jTEv8hAwGe2hZCqc=;
-        b=D91ZHMSvYyDNq+BRv/ZmNT3Pg5Oon7Zbj+fyPm7WnE8Hhwd2mtNsbUMPLCp98jQFeJ
-         A1vWNTYeMGUBF6Gv2c2kymUbkkOO0G9O/+phTfw13s88fyHSVkLepvgsT20s5a5EeQ3/
-         w2E22EqmRv0Chmc7PkhyGA+0B3ncKYSHbUnLVsp3yOJcqrn1bhzCX7/d0ddGfy/yAYs0
-         NKl3ChzG51sMWtReUH31SyzdASGH/kT6/RR5DwKPgJZ2fF9L7w0SR9VYlUrQ1+MHgaCj
-         mQDtNlgUP2S0LSZfrYCL1+KFq78rNHXYWI7SUjre+fjHoaJk2WEXRiM73zNx7Zk9jX+i
-         gCAA==
+        bh=ic2g+m7HOOL78ghtdW2686g2sSZe6K2KnAhqlhmzomY=;
+        b=VglUWAlwLulNnzDqL1PndEJdfIPgdlxMPusVt32LxpoFI4cZPWSv0+DgkMX9rC7iHL
+         L/ktZ2SWo+uLQMY2rlLA94FkcwOw1QaJ1OFKP3Rcz9bl85HkLvNccfZ3vs4sELO7iVLC
+         N/W7XwgFecnoX89ljzSB73UNsKQdzAdx07AqGEQhCN2Lx9fNu1cQ4S5ZZF2pZgUmZFbz
+         ia2UF87WT793Knd8LPBx+3K+g0z09bZsKzoqBUT0JNCtAF0+6wGbEY7oYlf0krg7epy/
+         Q6uRfQ+suJuqGhyh7DvG6JNm3kIYdrT8yy0ty4sKNFF9lsKm8+THn4TUPdOxveLAFUYZ
+         mDmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697707310; x=1698312110;
+        d=1e100.net; s=20230601; t=1697707341; x=1698312141;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yXjT8p0w2WOajyEpbpgr/2SPJ8/jTEv8hAwGe2hZCqc=;
-        b=fmuDCN41Oyit/8mTP3oqA4VDQZBUCc2kpeen3+dDQ73lBH1y4TNciXY6h3/gfikqBr
-         av7//3EOi/8/P+ylHQbLDhapItZxMWAqqBSjQaLHkPZsctJZxpt2m+NulHfd2UrqxeiT
-         UKGrCKDrH8ojsqjn3d5V4J9pd41LFGr4V7GaFNhemk7hmUazoxEdGKVN6zfXD/KTRG5A
-         C2zSglEQs0jtMAT4jp9kbYV/YCvoq/W2TKAzu6bsHIUuMAmS4Lgzk8wo8toebm9Y0d6w
-         cWi9Bs31AZY3RsljlVQn1/cnE7RmR1ZSmUteqH9S1apvRdrsq/lzRDL2NaUBoM4iukCj
-         l8Ug==
-X-Gm-Message-State: AOJu0YzZp31lnvAADlzeRdE6Ltwb0QAe0nONzVwfX37fD+d0YaKyA+7T
-        /MEwHRolfPWRRDxuQfWdEQourg==
-X-Google-Smtp-Source: AGHT+IGuxtMdWdK0zIKfDvAo02KGHVuPKg6EGMQFQPvL+iESuudFCKhTS13DZsoaYuTTcxcl5+uYAQ==
-X-Received: by 2002:a05:6512:604:b0:500:c534:3e4e with SMTP id b4-20020a056512060400b00500c5343e4emr1156636lfe.60.1697707309793;
-        Thu, 19 Oct 2023 02:21:49 -0700 (PDT)
+        bh=ic2g+m7HOOL78ghtdW2686g2sSZe6K2KnAhqlhmzomY=;
+        b=NZRJWIRtopQIhHu3390/IdK1i/ol44NG6J3An1Q52e8XhooTS3OxUgTVjU4+EpMNBV
+         QhQcd4dlxKqmWWJXhwUUtCnbK4sFSVhAelJHp9HVP2bjTncnk+Upf1uBeOCEpOF/XZr0
+         0YTMMRB1zJos511RLYQaDLrkQuQUX7JltEmXrX9BwLLC5uUtRrQzRBqv4Dc6N4Q0OYOj
+         k9K3va10nmKBytNhCjU1zINvpqtX//iKFs7fE6cY4drd601GJLs50mc4k1GY236dwBP0
+         7TN7hE3xWltBdMNShMmAcSzbuLu5SoK8Eq8Qo8njBAZZYRQlas9kT3r89qNPXFnOT00w
+         S+Rw==
+X-Gm-Message-State: AOJu0Yzhg7fN6BeSpC11LxdNLUAcwXFvs93X7Pd3UUdaI8WaOfDPeZZC
+        D7n5nbiWgHuTndpOel19ekhj6Q==
+X-Google-Smtp-Source: AGHT+IHNZjUVfg3XmjgHME2EfthcfcD3exzkWraKwyJzB1eQzA5d4Y+aR5ilYQDy0QgEmRZPhgQlGg==
+X-Received: by 2002:a05:600c:4fcb:b0:407:7ea1:e9a4 with SMTP id o11-20020a05600c4fcb00b004077ea1e9a4mr1215758wmq.5.1697707341552;
+        Thu, 19 Oct 2023 02:22:21 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.218.126])
-        by smtp.gmail.com with ESMTPSA id f13-20020a1c6a0d000000b003fe23b10fdfsm3850668wmc.36.2023.10.19.02.21.48
+        by smtp.gmail.com with ESMTPSA id f13-20020a1c6a0d000000b003fe23b10fdfsm3850668wmc.36.2023.10.19.02.22.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Oct 2023 02:21:49 -0700 (PDT)
-Message-ID: <df3c067f-8732-46bf-aa93-852f41e9e4e9@linaro.org>
-Date:   Thu, 19 Oct 2023 11:21:47 +0200
+        Thu, 19 Oct 2023 02:22:21 -0700 (PDT)
+Message-ID: <e684983a-9399-4fd7-8fe5-41faeabbfab1@linaro.org>
+Date:   Thu, 19 Oct 2023 11:22:19 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] dt-bindings: arm: rockchip: Add Powkiddy RK2023
+Subject: Re: [PATCH 1/5] dt-bindings: display: panel: Update NewVision NV3051D
+ compatibles
 Content-Language: en-US
 To:     Chris Morgan <macroalpha82@gmail.com>,
         linux-rockchip@lists.infradead.org
@@ -65,7 +66,7 @@ Cc:     linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
         krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
         Chris Morgan <macromorgan@hotmail.com>
 References: <20231018161848.346947-1-macroalpha82@gmail.com>
- <20231018161848.346947-5-macroalpha82@gmail.com>
+ <20231018161848.346947-2-macroalpha82@gmail.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -111,7 +112,7 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231018161848.346947-5-macroalpha82@gmail.com>
+In-Reply-To: <20231018161848.346947-2-macroalpha82@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -121,32 +122,14 @@ X-Mailing-List: linux-clk@vger.kernel.org
 On 18/10/2023 18:18, Chris Morgan wrote:
 > From: Chris Morgan <macromorgan@hotmail.com>
 > 
-> The Powkiddy RK2023 is a handheld gaming device made by Powkiddy and
-> powered by the Rockchip RK3566 SoC.
-> 
-> Signed-off-by: Chris Morgan <macromorgan@hotmail.com>
-> ---
->  Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
-> index a349bf4da6bc..a6612185a7ff 100644
-> --- a/Documentation/devicetree/bindings/arm/rockchip.yaml
-> +++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
-> @@ -674,6 +674,11 @@ properties:
->            - const: powkiddy,rgb30
->            - const: rockchip,rk3566
->  
-> +      - description: Powkiddy RK2023
-> +        items:
-> +          - const: powkiddy,rk2023
+> Update the NewVision NV3051D compatible strings by adding a new panel,
+> the powkiddy,rk2023-panel, and removing another entry, the
+> anbernic,rg353v-panel. The rg353v-panel is exactly identical to the
+> rg353p-panel and is not currently in use by any existing device tree.
+> The rk2023-panel is similar to the rg353p-panel but has slightly
+> different timings.
 
-This cuold be just enum in previous entry :/ but I remember we talked
-about this once with Heiko.
-
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-> +          - const: rockchip,rk3566
+This still does not explain me why do you want to remove old panel.
 
 
 
