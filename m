@@ -2,137 +2,59 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A14ECC004C0
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Oct 2023 22:08:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7623C001DF
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Oct 2023 23:43:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233357AbjJSWIq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Oct 2023 18:08:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59454 "EHLO
+        id S1346716AbjJSXnX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Oct 2023 19:43:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230120AbjJSWIp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Oct 2023 18:08:45 -0400
+        with ESMTP id S233335AbjJSXnW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Oct 2023 19:43:22 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AF29A4;
-        Thu, 19 Oct 2023 15:08:44 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7149C433C7;
-        Thu, 19 Oct 2023 22:08:43 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 328FC113;
+        Thu, 19 Oct 2023 16:43:21 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6121C433C7;
+        Thu, 19 Oct 2023 23:43:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1697753323;
-        bh=0xUExZaCnpOZe09w1IymOILE+jJMJDYlYAh9fZjofMw=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=qCC/P6Z7UE87jxBHLuDwBwT+KgZtuqPAHBmCFVYxig53subGe5m/UnXrOlQ1Kttxa
-         jHQ9vw1yma/irMtt9GBQsWafuxPEoxiRWnA0GU7VmuaxbveT4JBxu/b3ck3oQljMbu
-         J+rIs5mj40Ud/DefXs1Jzmu6Frp/rEI/BujGJIChvpy4PcE4+izgmrkMSHyUtVIG3Z
-         Xka4WoIrLTURuZrBfnFMC1SN/ijke3yG0jWrNymZ1tbywZ4jprIOCnnS5Wg6KUOxLr
-         J5f9qRyKtnqNXVlVSsS6DJ0jQxSBipUNP1vQCFrMYW5/mLuoBOOAi2Twt2xDZT9wuH
-         9WvO+5K4DSVMg==
-Message-ID: <4f4803d538c6727990cda8f2e4fd7397.sboyd@kernel.org>
+        s=k20201202; t=1697759000;
+        bh=fggoXZ8ybZvMC7HbEMQdngXXOLUAC2C2LgXwXWkInjM=;
+        h=In-Reply-To:References:Subject:From:To:Date:From;
+        b=u/J+mknHI+BtbrJX38Z4d6fYnNfHjcNPstGgoOMEGc4wsOiYCPiGlZG4ZsA+Uy0uG
+         PotHuJy1eBlPUNoFXkNbsssnEzHblf80T7gRPH5OR6KOgGwR9750Mgn4Z6i0sfwhug
+         mJ40NRqtsF3OWuCyoBplZfjPV20MKYc+P2MfjvAIxdrSRdBs/hIf0ZkjyUcHuNA11N
+         X64DIszkTAWLEI0jRYerSyhaT0peo/2USECCiEBtHIbEnnZw7GdazR3g51zKTCPKNM
+         6Y568M1s8hkDORBxL5bt89BofpzLEHv2A8qnc7aom+bIpxfQMotulkQzRdhF3hX4TL
+         JyNYHCsji6ekg==
+Message-ID: <bae818c0f067fd7ef9a7c7fdb15a2022.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <76b652c8-041c-49d6-9804-2781fe2ccfe3@linaro.org>
-References: <20230913-gpll_cleanup-v2-0-c8ceb1a37680@quicinc.com> <20230913-gpll_cleanup-v2-1-c8ceb1a37680@quicinc.com> <76f3bc23-8677-42bd-a3a5-43b17cbe552e@linaro.org> <c3dfeecf5cde513cf675b2f1a382f7a4.sboyd@kernel.org> <76b652c8-041c-49d6-9804-2781fe2ccfe3@linaro.org>
-Subject: Re: [PATCH v2 01/11] clk: qcom: ipq8074: drop the CLK_SET_RATE_PARENT flag from PLL clocks
+In-Reply-To: <20230916100515.1650336-5-andreas@kemnade.info>
+References: <20230916100515.1650336-1-andreas@kemnade.info> <20230916100515.1650336-5-andreas@kemnade.info>
+Subject: Re: [PATCH v4 4/5] clk: twl: add clock driver for TWL6032
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        stable@vger.kernel.org
-To:     Andy Gross <agross@kernel.org>,
-        Anusha Rao <quic_anusha@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Devi Priya <quic_devipriy@quicinc.com>,
-        Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sricharan Ramabadhran <quic_srichara@quicinc.com>,
-        Varadarajan Narayanan <quic_varada@quicinc.com>
-Date:   Thu, 19 Oct 2023 15:08:41 -0700
+To:     andreas@kemnade.info, bcousson@baylibre.com, conor+dt@kernel.org,
+        devicetree@vger.kernel.org, dmitry.torokhov@gmail.com,
+        krzysztof.kozlowski+dt@linaro.org, lee@kernel.org,
+        linux-clk@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        mturquette@baylibre.com, robh+dt@kernel.org, tony@atomide.com
+Date:   Thu, 19 Oct 2023 16:43:18 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Konrad Dybcio (2023-10-19 04:22:33)
+Quoting Andreas Kemnade (2023-09-16 03:05:14)
+> The TWL6032 has some clock outputs which are controlled like
+> fixed-voltage regulators, in some drivers for these chips
+> found in the wild, just the regulator api is abused for controlling
+> them, so simply use something similar to the regulator functions.
+> Due to a lack of hardware available for testing, leave out the
+> TWL6030-specific part of those functions.
 >=20
->=20
-> On 10/19/23 02:16, Stephen Boyd wrote:
-> > Quoting Konrad Dybcio (2023-09-15 05:19:56)
-> >> On 14.09.2023 08:59, Kathiravan Thirumoorthy wrote:
-> >>> GPLL, NSS crypto PLL clock rates are fixed and shouldn't be scaled ba=
-sed
-> >>> on the request from dependent clocks. Doing so will result in the
-> >>> unexpected behaviour. So drop the CLK_SET_RATE_PARENT flag from the P=
-LL
-> >>> clocks.
-> >>>
-> >>> Cc: stable@vger.kernel.org
-> >>> Fixes: b8e7e519625f ("clk: qcom: ipq8074: add remaining PLL=E2=80=99s=
-")
-> >>> Signed-off-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-> >>> ---
-> >> Stephen, do you think there should be some sort of error
-> >> or at least warning thrown when SET_RATE_PARENT is used with
-> >> RO ops?
-> >>
-> >=20
-> > Sure? How would that be implemented?
-> drivers/clk/clk.c : static void clk_change_rate()
->=20
-> if (!skip_set_rate && core->ops->set_rate)
->         core->ops->set_rate(core->hw, core->new_rate, best_parent_rate);
->=20
-> ->
->=20
-> if (!skip_set_rate) {
->         if (core->ops->set_rate)
->                 core->ops->set_rate(core->hw, core->new_rate,
->                                     best_parent_rate);
->         else
->                 pr_err("bad idea");
-> }
->=20
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> ---
 
-CLK_SET_RATE_PARENT means that "calling clk_set_rate() on this clk will
-propagate up to the parent". Changing the rate of the parent could
-change the rate of this clk to be the same frequency as the parent if
-this clk doesn't have a set_rate clk op, or it could be that this clk
-has a fixed divider so during the determine_rate() callback it
-calculated what rate the parent should be to achieve the requested rate
-in clk_set_rate().
-
-It really matters what determine_rate() returns for a clk and if after
-changing rates that rate is actually achieved. I suppose if the
-determine_rate() callback returns some rate, and then we recalc rates
-and notice that the rate determined earlier doesn't match we're
-concerned. So far in the last decade we've never cared about this though
-and I'm hesitant to start adding that check. I believe some qcom clk
-drivers take a shortcut and round the rate in frequency tables so
-whatever is returned in determine_rate() doesn't match what
-recalc_rate() calculates.
-
-It would be interesting to get rid of the CLK_SET_RATE_PARENT check in
-clk_calc_new_rates() and simply always call clk_calc_new_rates() on the
-parent if the parent->rate doesn't match what determine_rate thought it
-should be. The framework currently calls the rounding clk op for a clk
-and gets back the parent rate that the clk requires to achieve that rate
-and then it blindly trusts that the parent rate is going to be achieved.
-If the CLK_SET_RATE_PARENT flag is set it calls clk_calc_new_rates()
-recursively on the parent, but then it doesn't check that the parent
-rate is what was requested. That's mostly there to figure out if the
-parent also needs to change rate, i.e. calculating the 'top' clk in a
-rate change. Note that this also calls determine_rate again on the
-parent, once from the child clk's determine_rate clk op and once from
-the framework.
-
-I wouldn't be surprised if some driver is relying on this behavior where
-the rate isn't checked after being set. Maybe when we extend struct
-clk_rate_request to have a linked list that allows a clk to build up a
-chain of rate requests we can also enforce more things like matching
-rates on recalc. Then any drivers that are relying on this behavior will
-have to opt in to a different method of changing rates and notice that
-things aren't working.
+Applied to clk-next
