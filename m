@@ -2,78 +2,124 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9960CDB465
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Oct 2023 07:18:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C859DC46CA1
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Oct 2023 07:19:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344773AbjJSHSn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Oct 2023 03:18:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37470 "EHLO
+        id S232846AbjJSHTQ convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Oct 2023 03:19:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232788AbjJSHSn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Oct 2023 03:18:43 -0400
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [IPv6:2a02:c205:3004:2154::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F7839F;
-        Thu, 19 Oct 2023 00:18:41 -0700 (PDT)
-Received: from p200300ccff1c8300db3b230b99381d47.dip0.t-ipconnect.de ([2003:cc:ff1c:8300:db3b:230b:9938:1d47] helo=akair)
-        by mail.andi.de1.cc with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <andreas@kemnade.info>)
-        id 1qtNIj-005BiP-OC; Thu, 19 Oct 2023 09:18:37 +0200
-Date:   Thu, 19 Oct 2023 09:18:35 +0200
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     bcousson@baylibre.com, conor+dt@kernel.org,
-        devicetree@vger.kernel.org, dmitry.torokhov@gmail.com,
-        krzysztof.kozlowski+dt@linaro.org, lee@kernel.org,
-        linux-clk@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        mturquette@baylibre.com, robh+dt@kernel.org, tony@atomide.com
-Subject: Re: [PATCH v4 4/5] clk: twl: add clock driver for TWL6032
-Message-ID: <20231019091835.6d8df469@akair>
-In-Reply-To: <8c63372175266d42efbfca0104e19a14.sboyd@kernel.org>
-References: <20230916100515.1650336-1-andreas@kemnade.info>
-        <20230916100515.1650336-5-andreas@kemnade.info>
-        <8c63372175266d42efbfca0104e19a14.sboyd@kernel.org>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.37; x86_64-pc-linux-gnu)
+        with ESMTP id S232800AbjJSHTN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Oct 2023 03:19:13 -0400
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 551BD9F;
+        Thu, 19 Oct 2023 00:19:12 -0700 (PDT)
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-579de633419so94650487b3.3;
+        Thu, 19 Oct 2023 00:19:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697699951; x=1698304751;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Qe8JMzEOoVEtr+s55csrTBv3rV8C974uRP6q9AzcSlc=;
+        b=skPvRB7m3TPYol2Jp1traRsUBedEXYp1Kc2EYx0NRnBKE8pC9QBiH/r2GZtLpIw2vS
+         FRWE/8yyESbHgAaOYUK3K2mO3kN4vXu/+yf0y4wklindcrNiG3JEy+feXdfoc0PLohu3
+         ZCQ1+ZUheI2GYB5Vwoz3IXv1VOBgsJzEc+4cDvrRWRE+jZaEVpnbDqWJDZ0CGx8MCjjh
+         I2k9gayazj8XcCuscuFuxro/aSXvjljQRZcsJrAIIoFpVcRxSE8n5PpA3ZfNV21ttU8y
+         GhbcEKFdIJG+XBsn079NwdciwOr6w94s2kNjmH1Ofjwri2McveeuG7Q+6l9EOeoY8BoN
+         djxQ==
+X-Gm-Message-State: AOJu0YxucrV4KMxGNe2nbAngFTU55BckCj8tQVI+KOnchqQ90U9Hiifh
+        hGeceQomh8hcALXF2oIOhA2qWC8gzD6e1A==
+X-Google-Smtp-Source: AGHT+IGED7tXdL8IAc70SjR61szELnOTsuYyuVCXjj3vRfscxcVgB/wK3KM4tTCTaUxbCU34nMGl9g==
+X-Received: by 2002:a0d:e644:0:b0:569:479f:6d7f with SMTP id p65-20020a0de644000000b00569479f6d7fmr1577351ywe.43.1697699950944;
+        Thu, 19 Oct 2023 00:19:10 -0700 (PDT)
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com. [209.85.128.171])
+        by smtp.gmail.com with ESMTPSA id n69-20020a0dcb48000000b0059f8120ee4dsm2234203ywd.30.2023.10.19.00.19.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Oct 2023 00:19:10 -0700 (PDT)
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-5a86b6391e9so54428857b3.0;
+        Thu, 19 Oct 2023 00:19:10 -0700 (PDT)
+X-Received: by 2002:a81:b40e:0:b0:59b:c6a4:15c7 with SMTP id
+ h14-20020a81b40e000000b0059bc6a415c7mr1407978ywi.46.1697699950549; Thu, 19
+ Oct 2023 00:19:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <cover.1697199949.git.ysato@users.sourceforge.jp> <a772e1b6de89af22057d3af31cc03dcad7964fc7.1697199949.git.ysato@users.sourceforge.jp>
+In-Reply-To: <a772e1b6de89af22057d3af31cc03dcad7964fc7.1697199949.git.ysato@users.sourceforge.jp>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 19 Oct 2023 09:18:57 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVtNcUAh5ZeeXyfvS+F=zyJ_4KFoEYxuXONMJ_xH1zwDg@mail.gmail.com>
+Message-ID: <CAMuHMdVtNcUAh5ZeeXyfvS+F=zyJ_4KFoEYxuXONMJ_xH1zwDg@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 12/35] drivers/clk/renesas: clk-sh7750.c
+ SH7750/7751 CPG driver.
+To:     Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc:     linux-sh@vger.kernel.org, glaubitz@physik.fu-berlin.de,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Am Wed, 18 Oct 2023 18:20:22 -0700
-schrieb Stephen Boyd <sboyd@kernel.org>:
+Hi Sato-san,
 
-> Quoting Andreas Kemnade (2023-09-16 03:05:14)
-> > The TWL6032 has some clock outputs which are controlled like
-> > fixed-voltage regulators, in some drivers for these chips
-> > found in the wild, just the regulator api is abused for controlling
-> > them, so simply use something similar to the regulator functions.
-> > Due to a lack of hardware available for testing, leave out the
-> > TWL6030-specific part of those functions.
-> > 
-> > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> > ---  
-> 
-> Did you want me to pick this up in clk tree?
-> 
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
-> 
-Well, Lee has picked up 1-3 of this series, so I think it is a good idea
-if you take it. I do not think it will make things any easier if it goes
-through Tony's tree because part 5 is a bit tricky.
-If picked up independently (of the whole set and not only part 4), there
-will be a range of commits were WLAN will not work at all instead of
-basically working randomly by the clock is enabled for some reason (can
-happen if warm-booted from the vendor kernel).
+On Sat, Oct 14, 2023 at 4:54 PM Yoshinori Sato
+<ysato@users.sourceforge.jp> wrote:
+> This driver supported SH7750/7751 PLL/Divider clock and module stop.
+>
+> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
 
-So IMHO for part 5 we have to decide wether to decide if above is
-considered to break bisectability and take the patch for 6.8 or
-ignore that and take it for 6.7.
+Thanks for your patch!
 
-But no matter how we decide, that should not affect the route for this
-part 4. So it is a good idea to have it through the clk tree.
+> --- /dev/null
+> +++ b/drivers/clk/renesas/clk-sh7750.c
 
-Regrads,
-Andreas
+> +static void sbcr_sw(struct clk_hw *hw, bool on)
+> +{
+> +       struct clk_gate *gate = to_clk_gate(hw);
+> +       u8 msk = BIT(gate->bit_idx);
+> +       u8 val;
+> +
+> +       val = readb(gate->reg);
+> +       if (on)
+> +               val &= ~msk;
+> +       else
+> +               val |= msk;
+> +       writeb(val, gate->reg);
+> +}
+> +
+> +static int sbcr_enable(struct clk_hw *hw)
+> +{
+> +       sbcr_sw(hw, true);
+> +       return 0;
+> +}
+> +
+> +static void sbcr_disable(struct clk_hw *hw)
+> +{
+> +       sbcr_sw(hw, false);
+> +}
+> +
+> +static int sbcr_is_enabled(struct clk_hw *hw)
+> +{
+> +       u8 val;
+> +       struct clk_gate *gate = to_clk_gate(hw);
+> +
+> +       val = readb(gate->reg);
+> +       val &= 1 << gate->bit_idx;
+> +       return val != 0;
+
+This condition is inverted: 0 is enabled, 1 is stopped.
+
+> +}
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
