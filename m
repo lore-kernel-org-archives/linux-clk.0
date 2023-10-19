@@ -2,111 +2,109 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B78ECDB465
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Oct 2023 04:10:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07E91CDB482
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Oct 2023 06:47:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230297AbjJSEKp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Oct 2023 00:10:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41172 "EHLO
+        id S1344716AbjJSGrE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Oct 2023 02:47:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230051AbjJSEKo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Oct 2023 00:10:44 -0400
-Received: from mail-oa1-x33.google.com (mail-oa1-x33.google.com [IPv6:2001:4860:4864:20::33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00730119;
-        Wed, 18 Oct 2023 21:10:42 -0700 (PDT)
-Received: by mail-oa1-x33.google.com with SMTP id 586e51a60fabf-1ea05b3f228so3047934fac.1;
-        Wed, 18 Oct 2023 21:10:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697688642; x=1698293442; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=exlx/JOZFhxO7je5a84RZcfHQL1GXgStxtSXicAG0t8=;
-        b=Upf3vdHBJlJkC/QBNyAXGQPR/Out9kyx1WScJMSinCajOLR+S2OiX43j2g2RF+aVYY
-         FqEcGxSe/j99LMkkp7/SDJ4z8WW6TLcjIdPbdziO6CEzwMYfEyFIp876Ex4I9aotC93T
-         S1SWDf2+n51GVQPLjK8f6edc++8srOoerIEFBD4NJxBu71vt8i4+pZhV/yNlWZNRmgNs
-         DH6HoSNS2/3c/UqQWvDwOA03i6oMt5wL8AJnXQcHV0j1uLaRTheQmjGw/rm8bT2vrOCs
-         AO2/m2NKb1WTvzpqYUDv0ynLITp7Lma5PnlHvQG9IMgU9mFw2IE1AhjOq9zuMnvMAuMn
-         s2Bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697688642; x=1698293442;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=exlx/JOZFhxO7je5a84RZcfHQL1GXgStxtSXicAG0t8=;
-        b=YhFeNKGpZG0UeDnSTpkrbhH8x2IsHOs37FsqViK3GTZpuW2bp6EfCmRjcAUj4oRn0M
-         PEETqoqERwEQ81BlQvrfPEDzzS99UwL2D/uHGDuuto8FoQDjGYulBkWZt7h9usqEU9r/
-         X5lE/8YwQ53V+7GOFr+7AzIpmkcbyIX7zUUVcZgyf3w+ptrF8z+tfHnzLELLh0gG3tYZ
-         7CCfsWTm8x4eCB54CIUezG1WEKUSvwNQQOR+oKlrFhUrIYDQBHcyo9Y+O7++l0S5hcWW
-         zBby4HeVKJuCdAb0oU8XWBud3SVOIBSw/Xxc2LEWQDKIKbt0HF8D7qIsTIMBOydqf4/M
-         3HEw==
-X-Gm-Message-State: AOJu0YzIyTHjpc8Cd+XrmrTcK1sfPQYRrRMaAECI93h7SjMP1DKapTxV
-        PB8d1RAHjPQNs99/h76VO/LFu2IuRi16+afukur5Ky3J
-X-Google-Smtp-Source: AGHT+IFpttNbHnNs4OZvxDAywxepXeRJm16GxFMmxIIWBmhA+hzcWgp/FQNpot0HCKRlnpenGHI1MeRAOPKnF1J/on8=
-X-Received: by 2002:a05:6870:aa92:b0:1e9:64f1:9c30 with SMTP id
- gr18-20020a056870aa9200b001e964f19c30mr1632950oab.18.1697688642232; Wed, 18
- Oct 2023 21:10:42 -0700 (PDT)
+        with ESMTP id S232822AbjJSGrC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Oct 2023 02:47:02 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF433129;
+        Wed, 18 Oct 2023 23:46:59 -0700 (PDT)
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39J6Ax0q021596;
+        Thu, 19 Oct 2023 06:46:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=br6+Z//OonCZjY0jaV7sAbQUXzyAjhH/ygBUQZbeG4U=;
+ b=TEAKw5U2QoeW3rF1haljhCE/8K7XIM25b7TkXQiezKC/wTWppp8+Szs30nZI/Wtyu/Fj
+ el+92SEAXVCCkYruqstH4p2sfQ+waRZMeK7cJE1jckFMwUQuX8dvrG1+Z8PZQmpKQcGq
+ RUh+cl8e0giuvcMxn6k6TYtRB/Pgzb1QXXMwqNyrcv5PTjcVXE5YfOlcWfDndBt+cBIS
+ mtNQ9D6Z9VhbH8aFdOPk8RDns3oBRHffVCEzrko873BLileKwnhEELNXzKm06fzwM87d
+ /nVskQ1zhskUX4QtIrCHqr64CfmHdlvJ7fkuztZ4zG96Dkc6DNQtmNvu17yxHPoFz/W3 Sw== 
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3tt5v839vh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 19 Oct 2023 06:46:51 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 39J6koYE022328
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 19 Oct 2023 06:46:50 GMT
+Received: from [10.201.2.96] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.39; Wed, 18 Oct
+ 2023 23:46:47 -0700
+Message-ID: <8dce62b2-562c-4e00-840b-68e1cc865972@quicinc.com>
+Date:   Thu, 19 Oct 2023 12:16:09 +0530
 MIME-Version: 1.0
-References: <20230827023932.501102-1-sergio.paracuellos@gmail.com> <13d7cf46270082855174414b691fb3be.sboyd@kernel.org>
-In-Reply-To: <13d7cf46270082855174414b691fb3be.sboyd@kernel.org>
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date:   Thu, 19 Oct 2023 06:10:30 +0200
-Message-ID: <CAMhs-H8ek=bGOQpeF7i7CnSnu-AYCUN+jTxTtOXW2EgLAmQXfg@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: ralink: mtmips: quiet unused variable warning
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, tsbogend@alpha.franken.de,
-        mturquette@baylibre.com, linux-kernel@vger.kernel.org,
-        ndesaulniers@google.com, arnd@kernel.org, yangshiji66@outlook.com,
-        kernel test robot <lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: qcom: gcc-ipq6018: add QUP6 I2C clock
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Robert Marko <robimarko@gmail.com>, <agross@kernel.org>,
+        <andersson@kernel.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20231015162114.976202-1-robimarko@gmail.com>
+ <f27ff251-58b1-4fc5-8ad5-cd365b7eb976@linaro.org>
+Content-Language: en-US
+From:   Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+In-Reply-To: <f27ff251-58b1-4fc5-8ad5-cd365b7eb976@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: j_RNWGCpKnB_l9CD9omjLei1tVFOzZbY
+X-Proofpoint-ORIG-GUID: j_RNWGCpKnB_l9CD9omjLei1tVFOzZbY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-10-19_05,2023-10-18_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ mlxlogscore=911 lowpriorityscore=0 phishscore=0 impostorscore=0
+ suspectscore=0 mlxscore=0 clxscore=1015 bulkscore=0 priorityscore=1501
+ spamscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2309180000 definitions=main-2310190057
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Oct 19, 2023 at 2:32=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> wro=
-te:
->
-> Quoting Sergio Paracuellos (2023-08-26 19:39:32)
-> > When CONFIG_OF is disabled then the matching table is not referenced an=
-d
-> > the following warning appears:
-> >
-> > drivers/clk/ralink/clk-mtmips.c:821:34: warning: unused variable 'mtmip=
-s_of_match' [-Wunused-const-variable]
-> > 821 |   static const struct of_device_id mtmips_of_match[] =3D {
-> >     |                          ^
-> >
-> > There are two match tables in the driver: one for the clock driver and =
-the
-> > other for the reset driver. The only difference between them is that th=
-e
-> > clock driver uses 'data' and does not have 'ralink,rt2880-reset' compat=
-ible.
-> > Both just can be merged into a single one just by adding the compatible
-> > 'ralink,rt2880-reset' entry to 'mtmips_of_match[]', which will allow it=
- to
-> > be used for 'mtmips_clk_driver' (which doesn't use the data) as well as=
- for
-> > 'mtmips_clk_init()' (which doesn't need get called for 'ralink,rt2880-r=
-eset').
-> >
-> > Doing in this way ensures that 'CONFIG_OF' is not disabled anymore so t=
-he
-> > above warning disapears.
-> >
-> > Fixes: 6f3b15586eef ("clk: ralink: add clock and reset driver for MTMIP=
-S SoCs")
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes: https://lore.kernel.org/oe-kbuild-all/202307242310.CdOnd2py-lkp=
-@intel.com/
-> > Suggested-by: Arnd Bergmann <arnd@kernel.org>
-> > Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-> > ---
->
-> Applied to clk-next
 
-Thanks Stephen!
+On 10/19/2023 1:59 AM, Konrad Dybcio wrote:
+>
+>
+> On 10/15/23 18:20, Robert Marko wrote:
+>> QUP6 I2C clock is listed in the dt bindings but it was never included in
+>> the GCC driver.
+>> So lets add support for it, its intentionally marked to never be 
+>> disabled
+>> as its somehow affecting DVFS and if disabled it sometimes crashes the
+>> board.
+>>
+>> Signed-off-by: Robert Marko <robimarko@gmail.com>
+>> ---
+> Bjorn, would you be able to get an idea of what could be sitting
+> on that bus?
+>
+> Or maybe the IPQ folks could know?
+>
 
-Best regards,
-    Sergio Paracuellos
+Konrad / Robert,
+
+Similar to IPQ9574, RPM needs this clock to communicate with PMIC over 
+I2C interface. Discussion happened here[1] is pretty much applicable to 
+IPQ6018 as well. Based on previous experience, we may need to document 
+the reason for CLK_IGNORE_UNUSED in driver as well. Nevertheless,
+
+Reviewed-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+
+[1] 
+https://lore.kernel.org/linux-arm-msm/2852fc37-284f-6534-f163-45b37b153db1@quicinc.com/
+
+
+> Konrad
