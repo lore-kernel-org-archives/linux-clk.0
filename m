@@ -2,149 +2,205 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C5C1C41513
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Oct 2023 14:50:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF3CDCDB465
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Oct 2023 17:22:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233265AbjJSOuq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Oct 2023 10:50:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49244 "EHLO
+        id S235472AbjJSRWn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Oct 2023 13:22:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233200AbjJSOup (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Oct 2023 10:50:45 -0400
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12olkn2062.outbound.protection.outlook.com [40.92.21.62])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CACFDC2;
-        Thu, 19 Oct 2023 07:50:43 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=FuGD60ROio8VGWA7kdrfRMCF73A2UBi69JQnUpap93hW8dksO7xF/DNgJeGfdhMjeQMMDE980DZsbwkx0zoMsTPA6qyPLNernTTk379TBEn4548f4yzobcLm+/62RluB4AdN3guw/P48KYKod+r2bI+Ihfi5y32hzwxCjiZozkVmUd1+IjVSaGtUvXT4CtTCtjX/rAjm4NHtQP9IUki5C3+SoQaLXmdzr6XNXZPjJ9Hm8D1z0CPpr5ihOQEasb1mYivzqgH/DAZSmpxpo0zDWxvxJCjTZb63BwPDd1CG/QhMdNR4TlQp92MOFImi27dZ+Fzh6k/UGCbc1Y3geBD1FQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1I4ZZkoqhjSuOARM339cgVz4z+/KI3kg7BtPs7E/RGM=;
- b=Pxy1kn/RB3a38mVpwwYIsp0A6smcHQvgDkaVHQ9wtTa5ODSKuRFReghxw46Z9Z5aU5o8tKKByG+sWgNzeyTaHxngXmtTjPkZJ8WGfwmF9Kyymn8FdMq7Mwi+JaeVV7UyO9cv5RNT9d0wK3qYaT2gW4kY1o8bzaq1qh/7zW3DY6Nbueu9qHnKiXb+dIRkBU68WWPl6/C38Cg+Tt2uSJkKlEp6aTOzWQZ+U1K6fVgiPOFtM//f7X4qxTv8zfeqsU8eQ1RQG5krttGRIwjNpCEwepPvFic7W1jH+Hd0b7aUknkhoJT85eKK+Oi8meaYBBplgXjFJvSm+fr4FGax431HZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1I4ZZkoqhjSuOARM339cgVz4z+/KI3kg7BtPs7E/RGM=;
- b=GmJ8icQ/zz3HwUZF1CiNP+Nx6wCUCVRvazVPrGEjgJz/oeYk9C9Q7hACtzVkpA6SmTx4g/gEKA1xvGmTnjd0iyXh1e+OBV6k/RoW+6LWFt2TSoyc43mi0l0m3bC1VKMzcHSXPk6qOt5ooKhjvtdKLsnBMKw1DBglL5QdI9NTCardEaLNJknIzgaiwOvww7Si4ZkNjsDeEpvz1JB+vxCkwCmvNuY4AaS5ka/4xZBe1TZ9XaJZZGcTJNZ8slroCbJvXsQZZAoMHG9I6t19Ctb/vhoFzL3kQsx3A7o8H9FRN2C08i+fhUHGOj/Cox53+51gbaOFxG4MvuZUhgLKMgKW1Q==
-Received: from SN6PR06MB5342.namprd06.prod.outlook.com (2603:10b6:805:f9::31)
- by DS7PR06MB6855.namprd06.prod.outlook.com (2603:10b6:5:2c6::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6907.24; Thu, 19 Oct
- 2023 14:50:41 +0000
-Received: from SN6PR06MB5342.namprd06.prod.outlook.com
- ([fe80::c40c:bbc8:b103:459c]) by SN6PR06MB5342.namprd06.prod.outlook.com
- ([fe80::c40c:bbc8:b103:459c%2]) with mapi id 15.20.6863.032; Thu, 19 Oct 2023
- 14:50:41 +0000
-Date:   Thu, 19 Oct 2023 09:50:38 -0500
-From:   Chris Morgan <macromorgan@hotmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Chris Morgan <macroalpha82@gmail.com>,
-        linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        sebastian.reichel@collabora.com, sboyd@kernel.org,
-        mturquette@baylibre.com, daniel@ffwll.ch, airlied@gmail.com,
-        sam@ravnborg.org, neil.armstrong@linaro.org, heiko@sntech.de,
-        conor+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        robh+dt@kernel.org
-Subject: Re: [PATCH 1/5] dt-bindings: display: panel: Update NewVision
- NV3051D compatibles
-Message-ID: <SN6PR06MB534271680DB8A3A3F0A1A31CA5D4A@SN6PR06MB5342.namprd06.prod.outlook.com>
-References: <20231018161848.346947-1-macroalpha82@gmail.com>
- <20231018161848.346947-2-macroalpha82@gmail.com>
- <e684983a-9399-4fd7-8fe5-41faeabbfab1@linaro.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e684983a-9399-4fd7-8fe5-41faeabbfab1@linaro.org>
-X-TMN:  [6kSOxYNG+c2QUq5xdZxnXtJwuxNNPM4j]
-X-ClientProxiedBy: SN1PR12CA0095.namprd12.prod.outlook.com
- (2603:10b6:802:21::30) To SN6PR06MB5342.namprd06.prod.outlook.com
- (2603:10b6:805:f9::31)
-X-Microsoft-Original-Message-ID: <ZTFCPiR4Jbmjrq2E@wintermute.localhost.fail>
+        with ESMTP id S233238AbjJSRWn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Oct 2023 13:22:43 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D810DCF;
+        Thu, 19 Oct 2023 10:22:40 -0700 (PDT)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39JGOGSH021821;
+        Thu, 19 Oct 2023 17:22:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=IJr8fuPvD0+QxFvkh5JG+nAzSYmbclC8d3lKeP0zjjw=;
+ b=N4oiVpmC+0KfZaDbEA+sXv9N2tD5wjrIbdp9tsZgx8p5rNL5ZZGzgbmdTjt+CzBeMtd0
+ +aCalMR4YsHIdhLFjY402KzDO/JHYqifwrZEfIoSbrpe2yKO3h+aR1sTXn70sHAeEd9s
+ qwWrGzZT7HMin406QqGYQt99asC4JAn4lM93Bvh2qee4SvohjrICxt463RTlunB9BXd0
+ V3bJQeBbN4smuvYHtA0EW8LKDNKGUPGrwMR1J2P5T4rq7I6WNQcFGdbthNyXa1WeD4VP
+ p+Rd7MQauEGECKUWWPjWqKRbD3eKRTAq3V67cKdfccA+NP/gkP9+Evc5otboxcjw75DL JA== 
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3tu1t6s30d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 19 Oct 2023 17:22:26 +0000
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+        by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 39JHMPBW025162
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 19 Oct 2023 17:22:25 GMT
+Received: from [10.110.13.99] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.39; Thu, 19 Oct
+ 2023 10:22:25 -0700
+Message-ID: <c5e2929c-ef05-4e74-947e-579706f2b4aa@quicinc.com>
+Date:   Thu, 19 Oct 2023 10:22:24 -0700
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN6PR06MB5342:EE_|DS7PR06MB6855:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9e912031-acf8-442b-fdbd-08dbd0b2c377
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: GKcqmupYMxW/zjBY2VTtwT2SqNTCzo3FEI8Zk/kMbO1arH51W0oLCkhJo6RHah2NyDSCrUngUfFpy/lxCpJ06T8PTN96yGmfTzoi5AoA5/ETOls0dkOcuIUz+nrI6qWjSfLZvnBg8aYqTnT2/Q6jKKKxN3oET0BY09G0cZxwGxtzIAlIPSPYafAg0LYpdV9+6fxVbCRJx+NAh7l9ExibdZ5RJ1TMK9SkgOm7JlCyAUqhtMEA/MkZf/jE509dGtZg9+hWLXsH/0IxdRriHs2I4BWwyJNWu0jwflOomPKLXEwd7DygEmkH1RBYIB7LcD7IUa0OICMHVN0Envhi9zF/T1j8G+kqbEleEbFhOIF+n/F+fP0X0+qMH2Tf2xMwQg7+pFdXZU3R93ed4VGrwz4FjYmfNYBxV/Gx/raFOK6dz3gRJfiG6VTzybzBVDGnEKqn79S/QRd0CAQxx/lI8D0UvmFCbDwARJAgOc8GsfGRKLfYi63Mo9+o0LjuCdTVdGxPt3XG8A2m00j6AA+awSPZGxb0YEr2/5W24s2F4Q2p2DIZ8w80lB4YMULEM83PJ9RA
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?X/dDOkNZifF4L7VjVs4ea57uBuY2twV5Eg//F/V2m4ie9wXtBH2wMvjuKX0B?=
- =?us-ascii?Q?om8fpUp9CqwGUl7eG/oK2CwWrUX/7u/lwYfU1/MGFgSRjfrOHfMA6FLrHYtT?=
- =?us-ascii?Q?WvizjgOH3lj6ujCQs9qY6lfFBQrTLTeX4xvb+G/VWC2Rk8Pq6ZL/YPZ4UMo1?=
- =?us-ascii?Q?EfrZKOba964RksJ8PFub9UZfZv3JaoyugGHomNzl6WXLtS2yQvYzbkX1mFfQ?=
- =?us-ascii?Q?eLhkUfZZfMSZ7GqpZ9GPPiiYSxQ8afjm3t33ZbBYdlGKq1R4UQfslqW0uyW8?=
- =?us-ascii?Q?wR7x1AA63nJ8QlSVJ0lHPxbnfZm3iuU2H3X5fNjfnVdg2CpKS3M0EkoyMS2Z?=
- =?us-ascii?Q?sVReYUqNg7BTyigBwIYsQHuQZh0+UuoY58H8If0cccccuen0/YbKr9Zn8eey?=
- =?us-ascii?Q?SaHDYCZEzjvqZKRzq3FdgfzUuLPcHvDQS3wtnjkD+L9f3kCzrGizYxVeD8P2?=
- =?us-ascii?Q?hDhWMk6c8XydkLEsxwIoIGnrlCUMz0QhBNtFLYI6tNB0s7IdGABHjsg9/bxr?=
- =?us-ascii?Q?VnD2nCQHv+bWsMrQmcg1N+bp6qxEWqiGom4ZQxWNJ+zBX51LFoQ72xy+uDgX?=
- =?us-ascii?Q?N+6W+6XtuYl8tvl+RQdLAK+G/JBKTzNtlJsJVERT5+aNMupKsut7Dzh6/6Am?=
- =?us-ascii?Q?nZxl2euxz0bvHaGuCbILw12iUQ3+5fOn77ua0tgeLGqOwxrat1yKacjcOswO?=
- =?us-ascii?Q?m8WjYnkb9l1wZRX/RzdAuPwgboDydH8kN9UhY3DnyOgaAAQGY+Uc0W2uDqWs?=
- =?us-ascii?Q?uzYDjZ6XUx4J3EgvrQ8fOKn/vK9m/d+WGNm4II/M0Pb9DABewJuF3NQlB3oy?=
- =?us-ascii?Q?a4HY+XwBAMMWqSknWRQsWdpH9L/ED2ZLZKzRoD04AGzLjXtVdtxHhCKxkwAS?=
- =?us-ascii?Q?iwJIk3AWAaK+HbDbAJbh+XiVwgUfIVwJRsSVVOWoFrH8J5J3CiXDsosZoaPg?=
- =?us-ascii?Q?r2BlL6RcG6RdgowMlyJ1PiVb5UNSFEGh1qNuwI9ucg74FtJ160tTrx9APHCM?=
- =?us-ascii?Q?c4fCWyjOVDfo8RBVZAO28SYM1yHXB14HJGGH03mYZu0YnAJaVGhTDtenXjRs?=
- =?us-ascii?Q?f9Z9YygigHnVVu/k/aPukdIwE01uLh+0WCRqwqk2+V+UmPf6sj8vBPGFTNO2?=
- =?us-ascii?Q?4MUrSdPt9h3Qtq6PeHM2OrftQhNba3E6KaqtLLICqJHllcdagnDUX4qosBul?=
- =?us-ascii?Q?En19lR47ydSEolGLznAtleoTURzUUSI2O1twm/wSLaviMptyW+tRtr4NOVY?=
- =?us-ascii?Q?=3D?=
-X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-89723.templateTenant
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9e912031-acf8-442b-fdbd-08dbd0b2c377
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR06MB5342.namprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Oct 2023 14:50:41.1239
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR06MB6855
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] drm/panel: nv3051d: Add Powkiddy RK2023 Panel Support
+Content-Language: en-US
+To:     Chris Morgan <macroalpha82@gmail.com>
+CC:     <devicetree@vger.kernel.org>, <conor+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <neil.armstrong@linaro.org>,
+        <sboyd@kernel.org>, <sam@ravnborg.org>, <mturquette@baylibre.com>,
+        Chris Morgan <macromorgan@hotmail.com>,
+        <sebastian.reichel@collabora.com>,
+        <dri-devel@lists.freedesktop.org>, <robh+dt@kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-rockchip@lists.infradead.org>
+References: <20231018161848.346947-1-macroalpha82@gmail.com>
+ <20231018161848.346947-3-macroalpha82@gmail.com>
+From:   Jessica Zhang <quic_jesszhan@quicinc.com>
+In-Reply-To: <20231018161848.346947-3-macroalpha82@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: LQd-PePtMDL8B_p0WDQtge_mdZTOIkXn
+X-Proofpoint-ORIG-GUID: LQd-PePtMDL8B_p0WDQtge_mdZTOIkXn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-10-19_16,2023-10-19_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
+ priorityscore=1501 mlxscore=0 lowpriorityscore=0 suspectscore=0
+ adultscore=0 malwarescore=0 mlxlogscore=999 phishscore=0 spamscore=0
+ impostorscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2309180000 definitions=main-2310190147
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Oct 19, 2023 at 11:22:19AM +0200, Krzysztof Kozlowski wrote:
-> On 18/10/2023 18:18, Chris Morgan wrote:
-> > From: Chris Morgan <macromorgan@hotmail.com>
-> > 
-> > Update the NewVision NV3051D compatible strings by adding a new panel,
-> > the powkiddy,rk2023-panel, and removing another entry, the
-> > anbernic,rg353v-panel. The rg353v-panel is exactly identical to the
-> > rg353p-panel and is not currently in use by any existing device tree.
-> > The rk2023-panel is similar to the rg353p-panel but has slightly
-> > different timings.
-> 
-> This still does not explain me why do you want to remove old panel.
 
-When I originally wrote the driver I only had one piece of hardware
-and I set the compatible string in the driver as newvision,nv3051d.
-Unfortunately since then I've found 2 more devices in use that are
-*just* different enough to require the driver to do things a bit
-differently. In the case of the anbernic,rg351v-panel I need to
-enable a new DSI flag; in the case of the powkiddy,rk2023-panel I need
-to decrease the vertical back porch and drop the higher frequency
-timings.
 
-The best way to accomplish this was to change the strategy from having
-a single binding in the driver of newvision,nv3051d to a binding for
-each distinct hardware where the differences apply. Note that I've
-looked at querying the DSI panel ID, but for each device the value
-is identical (so it can't be used to differentiate the hardware sadly).
-So the driver now has 3 different compatible strings. I could in this
-case add a 4th compatible string of anbernic,rg353v-panel but it would
-be identical to anbernic,rg353p-panel. For the moment we are using
-anbernic,rg353p-panel everywhere (including the rg353v), so it makes
-sense to drop this unused value while we can, at least to me.
+On 10/18/2023 9:18 AM, Chris Morgan wrote:
+> From: Chris Morgan <macromorgan@hotmail.com>
+> 
+> Refactor the driver to add support for the powkiddy,rk2023-panel
+> panel. This panel is extremely similar to the rg353p-panel but
+> requires a smaller vertical back porch and isn't as tolerant of
+> higher speeds.
+> 
+> Tested on my RG351V, RG353P, RG353V, and RK2023.
+> 
+> Signed-off-by: Chris Morgan <macromorgan@hotmail.com>
 
-Let me know if you have any more questions, thank you.
-Chris
+Hi Chris,
 
+Thanks for the patch. Just have a minor question below.
+
+> ---
+>   .../gpu/drm/panel/panel-newvision-nv3051d.c   | 56 +++++++++++++++----
+>   1 file changed, 45 insertions(+), 11 deletions(-)
 > 
-> 
-> 
-> Best regards,
-> Krzysztof
+> diff --git a/drivers/gpu/drm/panel/panel-newvision-nv3051d.c b/drivers/gpu/drm/panel/panel-newvision-nv3051d.c
+> index 79de6c886292..d24c51503d68 100644
+> --- a/drivers/gpu/drm/panel/panel-newvision-nv3051d.c
+> +++ b/drivers/gpu/drm/panel/panel-newvision-nv3051d.c
+> @@ -28,6 +28,7 @@ struct nv3051d_panel_info {
+>   	unsigned int num_modes;
+>   	u16 width_mm, height_mm;
+>   	u32 bus_flags;
+> +	u32 mode_flags;
+>   };
+>   
+>   struct panel_nv3051d {
+> @@ -385,15 +386,7 @@ static int panel_nv3051d_probe(struct mipi_dsi_device *dsi)
+>   
+>   	dsi->lanes = 4;
+>   	dsi->format = MIPI_DSI_FMT_RGB888;
+> -	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
+> -			  MIPI_DSI_MODE_LPM | MIPI_DSI_MODE_NO_EOT_PACKET;
+> -
+> -	/*
+> -	 * The panel in the RG351V is identical to the 353P, except it
+> -	 * requires MIPI_DSI_CLOCK_NON_CONTINUOUS to operate correctly.
+> -	 */
+> -	if (of_device_is_compatible(dev->of_node, "anbernic,rg351v-panel"))
+> -		dsi->mode_flags |= MIPI_DSI_CLOCK_NON_CONTINUOUS;
+> +	dsi->mode_flags = ctx->panel_info->mode_flags;
+>   
+>   	drm_panel_init(&ctx->panel, &dsi->dev, &panel_nv3051d_funcs,
+>   		       DRM_MODE_CONNECTOR_DSI);
+> @@ -481,18 +474,59 @@ static const struct drm_display_mode nv3051d_rgxx3_modes[] = {
+>   	},
+>   };
+>   
+> -static const struct nv3051d_panel_info nv3051d_rgxx3_info = {
+> +static const struct drm_display_mode nv3051d_rk2023_modes[] = {
+> +	{
+> +		.hdisplay       = 640,
+> +		.hsync_start    = 640 + 40,
+> +		.hsync_end      = 640 + 40 + 2,
+> +		.htotal         = 640 + 40 + 2 + 80,
+> +		.vdisplay       = 480,
+> +		.vsync_start    = 480 + 18,
+> +		.vsync_end      = 480 + 18 + 2,
+> +		.vtotal         = 480 + 18 + 2 + 4,
+> +		.clock          = 24150,
+> +		.flags          = DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC,
+> +	},
+> +};
+> +
+> +static const struct nv3051d_panel_info nv3051d_rg351v_info = {
+>   	.display_modes = nv3051d_rgxx3_modes,
+>   	.num_modes = ARRAY_SIZE(nv3051d_rgxx3_modes),
+>   	.width_mm = 70,
+>   	.height_mm = 57,
+>   	.bus_flags = DRM_BUS_FLAG_DE_LOW | DRM_BUS_FLAG_PIXDATA_DRIVE_NEGEDGE,
+> +	.mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
+> +		      MIPI_DSI_MODE_LPM | MIPI_DSI_MODE_NO_EOT_PACKET |
+> +		      MIPI_DSI_CLOCK_NON_CONTINUOUS,
+> +};
+> +
+> +static const struct nv3051d_panel_info nv3051d_rg353p_info = {
+> +	.display_modes = nv3051d_rgxx3_modes,
+> +	.num_modes = ARRAY_SIZE(nv3051d_rgxx3_modes),
+> +	.width_mm = 70,
+> +	.height_mm = 57,
+
+Will all the panels for this driver be 70x57? If so, would it be better 
+to set display_info.[width_mm|height_mm] directly?
+
+> +	.bus_flags = DRM_BUS_FLAG_DE_LOW | DRM_BUS_FLAG_PIXDATA_DRIVE_NEGEDGE,
+> +	.mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
+> +		      MIPI_DSI_MODE_LPM | MIPI_DSI_MODE_NO_EOT_PACKET,
+> +};
+> +
+> +static const struct nv3051d_panel_info nv3051d_rk2023_info = {
+> +	.display_modes = nv3051d_rk2023_modes,
+> +	.num_modes = ARRAY_SIZE(nv3051d_rk2023_modes),
+> +	.width_mm = 70,
+> +	.height_mm = 57,
+> +	.bus_flags = DRM_BUS_FLAG_DE_LOW | DRM_BUS_FLAG_PIXDATA_DRIVE_NEGEDGE,
+> +	.mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
+> +		      MIPI_DSI_MODE_LPM | MIPI_DSI_MODE_NO_EOT_PACKET,
+>   };
+>   
+>   static const struct of_device_id newvision_nv3051d_of_match[] = {
+> -	{ .compatible = "newvision,nv3051d", .data = &nv3051d_rgxx3_info },
+> +	{ .compatible = "anbernic,rg351v-panel", .data = &nv3051d_rg351v_info },
+> +	{ .compatible = "anbernic,rg353p-panel", .data = &nv3051d_rg353p_info },
+> +	{ .compatible = "powkiddy,rk2023-panel", .data = &nv3051d_rk2023_info },
+>   	{ /* sentinel */ }
+>   };
+> +
+
+I think you can drop this stray newline.
+
+Thanks,
+
+Jessica Zhang
+
+>   MODULE_DEVICE_TABLE(of, newvision_nv3051d_of_match);
+>   
+>   static struct mipi_dsi_driver newvision_nv3051d_driver = {
+> -- 
+> 2.34.1
 > 
