@@ -2,144 +2,113 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30EF5CDB465
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Oct 2023 14:10:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9FC7CDB483
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Oct 2023 14:23:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345856AbjJSOKQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Oct 2023 10:10:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39814 "EHLO
+        id S1345958AbjJSOXk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Oct 2023 10:23:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345723AbjJSOKP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Oct 2023 10:10:15 -0400
-Received: from mail-yw1-x112c.google.com (mail-yw1-x112c.google.com [IPv6:2607:f8b0:4864:20::112c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD39A124
-        for <linux-clk@vger.kernel.org>; Thu, 19 Oct 2023 07:10:13 -0700 (PDT)
-Received: by mail-yw1-x112c.google.com with SMTP id 00721157ae682-5a8628e54d4so7470897b3.0
-        for <linux-clk@vger.kernel.org>; Thu, 19 Oct 2023 07:10:13 -0700 (PDT)
+        with ESMTP id S1345647AbjJSOXj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Oct 2023 10:23:39 -0400
+Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0D4EB0;
+        Thu, 19 Oct 2023 07:23:37 -0700 (PDT)
+Received: by mail-pg1-x535.google.com with SMTP id 41be03b00d2f7-53fa455cd94so5466743a12.2;
+        Thu, 19 Oct 2023 07:23:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697724613; x=1698329413; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1697725417; x=1698330217; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5wSys4rsbeW6TJksuzBXo91tDTJzxZoqvYBGXuczrwg=;
-        b=yPt6+hyn0q8nRh+xJGcVVTd6aBELI925YFc4Hf7saH4IKPLVQO0j8whP6+fM9MGr5Y
-         cF0sKckARWxNs6zAB9lHr0MX+N9cnuirub19j7P8mfSrqAoQhrgaPQpzdGFQT4GBhSIv
-         Cpx+hP11MQRChRJhNywc2ufMs4f0N9OV862GbTOMzcuKInGUIMJy3GoISH3kdJiXN8/H
-         ZnIYq+efp8nqF/j0cLhcilYBZslhCQnFn/YUGMbisQ2VuKq0BVeC10U2McOZXvvF/CTg
-         qPldp3+qrQczWdenq+/hz1sEdM/eFFeJe/gyFUspYGiuvXzi8baps++qJof0YLrw9oTU
-         cUpg==
+        bh=t/BPqihyPeth/YaDAwwKeryj5x6nuyNPp4la/eCYYSU=;
+        b=mmQHz8ovJZQuhK170AJJHTVR3BMtYaVVHy1I/6kg+4UiFxK1KYhsJdrxKTASAnGMm9
+         TfaF/tDgDThxIStR+uDs7dGXFUDmH4e4TCFL7axeYLiIJgO4oGF1hiZVJ75IuHVaquV4
+         Jw3fIJEIV/zhjWQzz4Qi9G98r0GmJsDYr7/pIWsKUIeom3tPnqTTcLKkH1sQG4N+8x1h
+         fRhLfBVRjOgQTtm2eRY48tRtaBdMbARKQERA+0HNcDJruBDEm1PaBMrZw2NmnptSry5f
+         cMJ6fG+H4A0uFrFcw87xDL1EmSMd/2+TQ0/085L3PHR0B9/odKFYDUt+MeAteNtBcnvv
+         5haw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697724613; x=1698329413;
+        d=1e100.net; s=20230601; t=1697725417; x=1698330217;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=5wSys4rsbeW6TJksuzBXo91tDTJzxZoqvYBGXuczrwg=;
-        b=ae1opLpNAzYT9JJxBDWnbmY9YwmvTCwb5Uyz1LU8z6UoEAleLvNr+MadEBM6p33Tvd
-         MIOFJITfNL7eTcg34qBkzb6bKq8+J46QdepSBa/mHsfrIRDnRK335YcWpc4vEPDGHRpd
-         CDAcP/Z5RKKkTOJyXT51ph8MSAPyIwSkWj2oDzJ1xAlw7BS/WV2TLtH8nkc0+zJt0BAV
-         Y54MZRD8APR7ETdIUJXaoJBWm3mAa+/eNKuN8wem3IiHWt8gromXXNWKbUs+b7gUoWro
-         gmoZvZDkKi1ds9pu9eQBhHuue9o6l4O0ZgRrQ1rceIto4FdxRxxtBDBo4K+bIHCmFWeq
-         b1/w==
-X-Gm-Message-State: AOJu0YzYImhkEWewgerIbRTjA37+G7OpAFtaE60slt/MUNixj2JvvIh3
-        4AKjPs2CDia6v++LzcJY8aR7fV9vtwYqvITKF5Fn9w==
-X-Google-Smtp-Source: AGHT+IEwlHRy2zOcM/DBgHA9BJNVulUDdOwJQE0MV7FcIHalKrDfpv+nVUZHKKrRg9DXCMmv+RzV1EjO/cCl4dw43LI=
-X-Received: by 2002:a81:5251:0:b0:5a7:ba3e:d1d1 with SMTP id
- g78-20020a815251000000b005a7ba3ed1d1mr1315335ywb.25.1697724612881; Thu, 19
- Oct 2023 07:10:12 -0700 (PDT)
+        bh=t/BPqihyPeth/YaDAwwKeryj5x6nuyNPp4la/eCYYSU=;
+        b=TxZtvNiIrcq4QFfupq4YszdYnjNoZfTCyG/dx+OQv7faax01R69kFHmx/tbPnEDMCL
+         uPZeEcC6gaJ9p/Y+/BFDrNA6TAlirUBkZwJH+0tXMnLsbtFL58/NdsVROBgYngSx1duS
+         CAY7p+P2/HqvviG4AfANlgc5OiDPwuNkepeQD6+K9dmB1S0h2x1lZDP8AXaGK3BxIAgp
+         6eLzWOyUjdnlfwbHEjThMvjjp9HoEQ2Q3Sw8UIoJ0Sg4RekfWg9DZR0ZIvVXVacsbP0G
+         iQThRtAlcbhVuIiqjrfnT13DOaBTUijAl9zHZHwniyiUfXpq0Km2TqPVs7kAV4kA2+/f
+         0RwQ==
+X-Gm-Message-State: AOJu0YzGJdhCuoidUssa+0eo1LnvT92lu6b6L/4fJBwpAImjrmPNv1rb
+        nJRaAqPjRhnzV5+8zkHVzAXeAni3LM7LBGYXO+xj2SlJ
+X-Google-Smtp-Source: AGHT+IGBw5cywWDrc/8pUnDwbRBRUklWCGbuWYzqR3evGfv/RcwLcxz+VVPXAxg86IhH/2WIPGckvKV5wTwl/MkasP4=
+X-Received: by 2002:a05:6a20:c19d:b0:15e:1351:f33a with SMTP id
+ bg29-20020a056a20c19d00b0015e1351f33amr2441278pzb.47.1697725417214; Thu, 19
+ Oct 2023 07:23:37 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1697694811.git.quic_varada@quicinc.com> <7369c6d5186d2b9b5f62a210878e9f864b57e11a.1697694811.git.quic_varada@quicinc.com>
-In-Reply-To: <7369c6d5186d2b9b5f62a210878e9f864b57e11a.1697694811.git.quic_varada@quicinc.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Thu, 19 Oct 2023 17:10:01 +0300
-Message-ID: <CAA8EJprFcs471e6Jd6RZxBL4+cFdrvn2oOdsm+oN09A81iYoFA@mail.gmail.com>
-Subject: Re: [PATCH v4 8/9] cpufreq: qti: Introduce cpufreq for ipq95xx
-To:     Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        rafael@kernel.org, viresh.kumar@linaro.org, ilia.lin@kernel.org,
-        sivaprak@codeaurora.org, quic_kathirav@quicinc.com,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org, Praveenkumar I <ipkumar@codeaurora.org>
+References: <20231015162114.976202-1-robimarko@gmail.com> <f27ff251-58b1-4fc5-8ad5-cd365b7eb976@linaro.org>
+ <8dce62b2-562c-4e00-840b-68e1cc865972@quicinc.com>
+In-Reply-To: <8dce62b2-562c-4e00-840b-68e1cc865972@quicinc.com>
+From:   Robert Marko <robimarko@gmail.com>
+Date:   Thu, 19 Oct 2023 16:23:26 +0200
+Message-ID: <CAOX2RU4n8caVL33KkqgYK1_mTZv-oZtd0p=_dzPh-ntBBfH1zA@mail.gmail.com>
+Subject: Re: [PATCH] clk: qcom: gcc-ipq6018: add QUP6 I2C clock
+To:     Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+Cc:     Konrad Dybcio <konrad.dybcio@linaro.org>, agross@kernel.org,
+        andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 19 Oct 2023 at 11:43, Varadarajan Narayanan
-<quic_varada@quicinc.com> wrote:
+On Thu, 19 Oct 2023 at 08:46, Kathiravan Thirumoorthy
+<quic_kathirav@quicinc.com> wrote:
 >
-> IPQ95xx SoCs have different OPPs available for the CPU based on
-> the SoC variant. This can be determined from an eFuse register
-> present in the silicon.
 >
-> Added support for ipq95xx on nvmem driver which helps to
-> determine OPPs at runtime based on the eFuse register which
-> has the CPU frequency limits. opp-supported-hw dt binding
-> can be used to indicate the available OPPs for each limit.
+> On 10/19/2023 1:59 AM, Konrad Dybcio wrote:
+> >
+> >
+> > On 10/15/23 18:20, Robert Marko wrote:
+> >> QUP6 I2C clock is listed in the dt bindings but it was never included in
+> >> the GCC driver.
+> >> So lets add support for it, its intentionally marked to never be
+> >> disabled
+> >> as its somehow affecting DVFS and if disabled it sometimes crashes the
+> >> board.
+> >>
+> >> Signed-off-by: Robert Marko <robimarko@gmail.com>
+> >> ---
+> > Bjorn, would you be able to get an idea of what could be sitting
+> > on that bus?
+> >
+> > Or maybe the IPQ folks could know?
+> >
 >
-> Signed-off-by: Praveenkumar I <ipkumar@codeaurora.org>
-> Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> ---
-> v2:     Simplify bin selection by tweaking the order in dts
-> ---
->  drivers/cpufreq/cpufreq-dt-platdev.c | 1 +
->  drivers/cpufreq/qcom-cpufreq-nvmem.c | 8 ++++++++
->  2 files changed, 9 insertions(+)
+> Konrad / Robert,
 >
-> diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-> index f43e5cd..4f794ba 100644
-> --- a/drivers/cpufreq/cpufreq-dt-platdev.c
-> +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-> @@ -183,6 +183,7 @@ static const struct of_device_id blocklist[] __initconst = {
->         { .compatible = "qcom,ipq5332", },
->         { .compatible = "qcom,ipq8064", },
->         { .compatible = "qcom,ipq8074", },
-> +       { .compatible = "qcom,ipq9574", },
->         { .compatible = "qcom,apq8064", },
->         { .compatible = "qcom,msm8974", },
->         { .compatible = "qcom,msm8960", },
-> diff --git a/drivers/cpufreq/qcom-cpufreq-nvmem.c b/drivers/cpufreq/qcom-cpufreq-nvmem.c
-> index 0014909..d44be4e 100644
-> --- a/drivers/cpufreq/qcom-cpufreq-nvmem.c
-> +++ b/drivers/cpufreq/qcom-cpufreq-nvmem.c
-> @@ -166,6 +166,13 @@ static int qcom_cpufreq_kryo_name_version(struct device *cpu_dev,
->         case QCOM_ID_IPQ5300:
->                 drv->versions = 1 << (unsigned int)(*speedbin);
->                 break;
-> +       case QCOM_ID_IPQ9514:
-> +       case QCOM_ID_IPQ9550:
-> +       case QCOM_ID_IPQ9554:
-> +       case QCOM_ID_IPQ9570:
-> +       case QCOM_ID_IPQ9574:
-
-Can we please merge this to the previous set of cases (and maybe to
-apq8096)? I don't see a great benefit in repeating `1 << (unsigned
-int)(*speedbin)` several times.
-
-Other than that:
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
-> +               drv->versions = 1 << (unsigned int)(*speedbin);
-> +               break;
->         default:
->                 BUG();
->                 break;
-> @@ -417,6 +424,7 @@ static const struct of_device_id qcom_cpufreq_match_list[] __initconst = {
->         { .compatible = "qcom,ipq8064", .data = &match_data_krait },
->         { .compatible = "qcom,ipq8074", .data = &match_data_ipq8074 },
->         { .compatible = "qcom,apq8064", .data = &match_data_krait },
-> +       { .compatible = "qcom,ipq9574", .data = &match_data_kryo },
->         { .compatible = "qcom,msm8974", .data = &match_data_krait },
->         { .compatible = "qcom,msm8960", .data = &match_data_krait },
->         {},
-> --
-> 2.7.4
+> Similar to IPQ9574, RPM needs this clock to communicate with PMIC over
+> I2C interface. Discussion happened here[1] is pretty much applicable to
+> IPQ6018 as well. Based on previous experience, we may need to document
+> the reason for CLK_IGNORE_UNUSED in driver as well. Nevertheless,
 >
+> Reviewed-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
 
+Thanks for the explanation, it makes sense as I used to control the
+MP5496 directly
+via I2C.
 
--- 
-With best wishes
-Dmitry
+Is it possible to disable RPM so it doesn't conflict and just use the
+full MP5496 driver instead?
+I find the RPM quite limiting as there is no way to actually retrieve
+the current-voltage.
+
+Regards,
+Robert
+>
+> [1]
+> https://lore.kernel.org/linux-arm-msm/2852fc37-284f-6534-f163-45b37b153db1@quicinc.com/
+>
+>
+> > Konrad
