@@ -2,113 +2,154 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9FC7CDB483
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Oct 2023 14:23:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 916B4CDB465
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Oct 2023 14:44:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345958AbjJSOXk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Oct 2023 10:23:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33162 "EHLO
+        id S1346205AbjJSOoF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Oct 2023 10:44:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345647AbjJSOXj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Oct 2023 10:23:39 -0400
-Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0D4EB0;
-        Thu, 19 Oct 2023 07:23:37 -0700 (PDT)
-Received: by mail-pg1-x535.google.com with SMTP id 41be03b00d2f7-53fa455cd94so5466743a12.2;
-        Thu, 19 Oct 2023 07:23:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697725417; x=1698330217; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=t/BPqihyPeth/YaDAwwKeryj5x6nuyNPp4la/eCYYSU=;
-        b=mmQHz8ovJZQuhK170AJJHTVR3BMtYaVVHy1I/6kg+4UiFxK1KYhsJdrxKTASAnGMm9
-         TfaF/tDgDThxIStR+uDs7dGXFUDmH4e4TCFL7axeYLiIJgO4oGF1hiZVJ75IuHVaquV4
-         Jw3fIJEIV/zhjWQzz4Qi9G98r0GmJsDYr7/pIWsKUIeom3tPnqTTcLKkH1sQG4N+8x1h
-         fRhLfBVRjOgQTtm2eRY48tRtaBdMbARKQERA+0HNcDJruBDEm1PaBMrZw2NmnptSry5f
-         cMJ6fG+H4A0uFrFcw87xDL1EmSMd/2+TQ0/085L3PHR0B9/odKFYDUt+MeAteNtBcnvv
-         5haw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697725417; x=1698330217;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=t/BPqihyPeth/YaDAwwKeryj5x6nuyNPp4la/eCYYSU=;
-        b=TxZtvNiIrcq4QFfupq4YszdYnjNoZfTCyG/dx+OQv7faax01R69kFHmx/tbPnEDMCL
-         uPZeEcC6gaJ9p/Y+/BFDrNA6TAlirUBkZwJH+0tXMnLsbtFL58/NdsVROBgYngSx1duS
-         CAY7p+P2/HqvviG4AfANlgc5OiDPwuNkepeQD6+K9dmB1S0h2x1lZDP8AXaGK3BxIAgp
-         6eLzWOyUjdnlfwbHEjThMvjjp9HoEQ2Q3Sw8UIoJ0Sg4RekfWg9DZR0ZIvVXVacsbP0G
-         iQThRtAlcbhVuIiqjrfnT13DOaBTUijAl9zHZHwniyiUfXpq0Km2TqPVs7kAV4kA2+/f
-         0RwQ==
-X-Gm-Message-State: AOJu0YzGJdhCuoidUssa+0eo1LnvT92lu6b6L/4fJBwpAImjrmPNv1rb
-        nJRaAqPjRhnzV5+8zkHVzAXeAni3LM7LBGYXO+xj2SlJ
-X-Google-Smtp-Source: AGHT+IGBw5cywWDrc/8pUnDwbRBRUklWCGbuWYzqR3evGfv/RcwLcxz+VVPXAxg86IhH/2WIPGckvKV5wTwl/MkasP4=
-X-Received: by 2002:a05:6a20:c19d:b0:15e:1351:f33a with SMTP id
- bg29-20020a056a20c19d00b0015e1351f33amr2441278pzb.47.1697725417214; Thu, 19
- Oct 2023 07:23:37 -0700 (PDT)
+        with ESMTP id S1345829AbjJSOoE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Oct 2023 10:44:04 -0400
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12olkn2024.outbound.protection.outlook.com [40.92.22.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4E58112;
+        Thu, 19 Oct 2023 07:44:02 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Nzo9qPamj+VI/SC/jKERhVaPhS0oqN9iRgpWtxksAwh1NtGLX9Y4BttYLPNPLfLu17HyUqZ+4zJ83NS5LtUB7TJWxJsguyYPbjCu1LJh0u7vHlOrhc4yWzXaUlXurC2IXcFffXGvshk+xHl5UW2WqMryPkdkT76x32kzU/KzIk2Lu5LNJHN/LLTsuS8fkTlpCcGduN3szUL+Tsps2Aoanm0zaYaWSKs5RAbIBywNkGSIf9htQ96tEX1DJMiB8KNL00CENIMi2g9GwALg1pFt+Z4w0ELBTcG/ovLnTKv4yxV13wOaj2VXoMiffZOfReILSKoqtL3ArTdnl1CCOBkhEw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2y+EIp0nXZk1mFv0SDz3jwWYWJlSi4ihm0X9ovHYPfE=;
+ b=mFE4JUDmL49h3ZytD5Tu7dBGJwWTp/LapIvC2Hy84PARVvChwOm06dlRJ+l0jUIdrjLrQw2UD+77Z/NgP1iMPz47qCe3Gt5gwQd1pmbe+fI4HEiB5//R0Fv/Ft3QOnSHhRp4+aNi9MFqiKisB2pIzTPH3xSXBtHupJu7GcIdjrqBukyZ+cbm4wzGme6X3EERZrhRPY8M9oxqTC4GsiAmthFptYJxvvpPZ9jzhpetf9e9yHG3tJ1e3mKsKvhxCp21wYagqJyaWdyBC6yMtuQpC4Yfd8rHZeH/v5uj/DPQN86uev0DEu902Rpc86Ykp0+SlBnxugLQvjl8QTRBts3bTQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2y+EIp0nXZk1mFv0SDz3jwWYWJlSi4ihm0X9ovHYPfE=;
+ b=qKMpT8cs+NKJ/bEmDcJ7GH6E05/I6J23tiI/GdFGXTOU6ePuTU1+O2KtJzpucZnHwa6gBjtZ9/ZJft/gMoHIQhwQ8XqaIlIA/7JkTTECZa8OL2hRf13D2iHYlY4HvBMTccjo1edFAGZvKilJ2e6N8rARO/zMMNryJyTAReemA1GMT5pZXLk1hSwR+woRWe1ioACYO0F5k7UEU+6b8xxnbCF0TnGbvd/iapcCPpV1RelFhkKVvA9wnjgXpX1QAs45fg+gx1uH0NCwYmr65/8BOIcamJw+YaIuBJakyBHXdqMI6nVAycyK2tauUGOCMGq/Nwtk4VWatFhNiaMD6s4a2A==
+Received: from SN6PR06MB5342.namprd06.prod.outlook.com (2603:10b6:805:f9::31)
+ by CO6PR06MB7475.namprd06.prod.outlook.com (2603:10b6:303:b1::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6907.24; Thu, 19 Oct
+ 2023 14:43:59 +0000
+Received: from SN6PR06MB5342.namprd06.prod.outlook.com
+ ([fe80::c40c:bbc8:b103:459c]) by SN6PR06MB5342.namprd06.prod.outlook.com
+ ([fe80::c40c:bbc8:b103:459c%2]) with mapi id 15.20.6863.032; Thu, 19 Oct 2023
+ 14:43:59 +0000
+Date:   Thu, 19 Oct 2023 09:43:56 -0500
+From:   Chris Morgan <macromorgan@hotmail.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Chris Morgan <macroalpha82@gmail.com>,
+        linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        sebastian.reichel@collabora.com, sboyd@kernel.org,
+        mturquette@baylibre.com, daniel@ffwll.ch, airlied@gmail.com,
+        sam@ravnborg.org, neil.armstrong@linaro.org, heiko@sntech.de,
+        conor+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        robh+dt@kernel.org
+Subject: Re: [PATCH 4/5] dt-bindings: arm: rockchip: Add Powkiddy RK2023
+Message-ID: <SN6PR06MB534289953F0A72345D679A7EA5D4A@SN6PR06MB5342.namprd06.prod.outlook.com>
+References: <20231018161848.346947-1-macroalpha82@gmail.com>
+ <20231018161848.346947-5-macroalpha82@gmail.com>
+ <df3c067f-8732-46bf-aa93-852f41e9e4e9@linaro.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <df3c067f-8732-46bf-aa93-852f41e9e4e9@linaro.org>
+X-TMN:  [OoKevhk96AX8dEsf6OpRCmsBS4n5LRBC]
+X-ClientProxiedBy: SA1PR04CA0014.namprd04.prod.outlook.com
+ (2603:10b6:806:2ce::20) To SN6PR06MB5342.namprd06.prod.outlook.com
+ (2603:10b6:805:f9::31)
+X-Microsoft-Original-Message-ID: <ZTFArLbO58mDLC6l@wintermute.localhost.fail>
 MIME-Version: 1.0
-References: <20231015162114.976202-1-robimarko@gmail.com> <f27ff251-58b1-4fc5-8ad5-cd365b7eb976@linaro.org>
- <8dce62b2-562c-4e00-840b-68e1cc865972@quicinc.com>
-In-Reply-To: <8dce62b2-562c-4e00-840b-68e1cc865972@quicinc.com>
-From:   Robert Marko <robimarko@gmail.com>
-Date:   Thu, 19 Oct 2023 16:23:26 +0200
-Message-ID: <CAOX2RU4n8caVL33KkqgYK1_mTZv-oZtd0p=_dzPh-ntBBfH1zA@mail.gmail.com>
-Subject: Re: [PATCH] clk: qcom: gcc-ipq6018: add QUP6 I2C clock
-To:     Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-Cc:     Konrad Dybcio <konrad.dybcio@linaro.org>, agross@kernel.org,
-        andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN6PR06MB5342:EE_|CO6PR06MB7475:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4eed62be-d70e-46e0-af22-08dbd0b1d401
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Cl6wbuAwDyplp0PSnmhuLlRZUUCK3ntapSo/LzPOBiMdUNy5aPJkWVXfwwjPWEF3vxOyHh1xV81BFZvJRAoncJ0xvcvsVJtoVW26WGnrD5b5hOHywsq71+ZvtgIDH+Z4dvTiIhqncrUCDz2HGXEOGKgbJ84t6i+/X4KeLgFAPOB59E8qbjeF0KyIUW4EJMQuti2f/3FoyWzc5Xvo96Zo0MWdq09y9/u3cI2ujShYG0uEE0Xrvh9cf+7JNGhgKm5K9tWE/l1mlFIRqGPjCjSMmGIxpqYTEDyeMZt8YAi0frEMQYly95rpsSoHME/m7WxfKJSa3je2ifM1J6j2Ps6l3q1r+I9haXPwlTIkDpa1vX+hgjP8QbOuIhL2J+xxjZnVtMrJ1xnrODxoORyWgLpXcOH7avbpFdB6eao0rjgon2LiXNKVueA5Oz9hZQ2mOXFWt6X2VQtK+MzSs7+/5AUwGc3ojyGI94jt2J3aVe+48t3yvKNFLPvtZOu5fY3uNLtfJTHW3RSEvK0ZrmLRbWejFjmQKj9hpt+dX1GmzXe/5OnPQ21a52NijyIrFpjb1tKR
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?wMsOr+fcYGOMaPXt6At+iKDJy57jktg78fKFCOCFwgNDLer8+arMQ1qttAvp?=
+ =?us-ascii?Q?WBBuAH4DnRSn1LWMzYb0W/jYckrwVGAy1qmmWjE89xL0atcKE/CyGrRaFdTj?=
+ =?us-ascii?Q?zUXqDr+wopty9DfXhNDYJzF6ONNCvtscTuXlbVP/coan+ilNUXbkfFRcwltE?=
+ =?us-ascii?Q?iGs+0X1ybBkLq6nDfIjGX97jQi1eYhyxwCxyGymQBwJtJFGsNLLaelvUbAqN?=
+ =?us-ascii?Q?3K8NedisvlMs4UXY4VcoFejE/CP8oxER6Ska3MiyOWIWIi1lMziOe9jPqPEM?=
+ =?us-ascii?Q?ouGib9B675d52esjRTE7Z2APj/+Hh+q8u8HZE3yeyf2MDzPa6b+2XF62f0Nv?=
+ =?us-ascii?Q?+zW8JAy202uDmPP3rnFFUiw9IqCuQJpLRunT4weCFZNGuanmSXnTNfVRrSrc?=
+ =?us-ascii?Q?oE1/TratyySTW2JpaMdsOr3mfJPZznrX6KhoipG+bJe4C8W1PJS3cFSm6x2r?=
+ =?us-ascii?Q?DNpqLPgFqODCtYUXxRbEnPr5BcY7Knessz05MRJeyxgavWrFFsHS1AUGXmrI?=
+ =?us-ascii?Q?YsnEa0LZZd4/3928IY0BA6aasPsVm5Eq3KiSqKmHZ7Zgou1dVUoTMOUaeHJC?=
+ =?us-ascii?Q?693Q+v7Ojp6bnCLWgFx0fPcwvyO4Ytqji20c6rgVEjojz3hKEDgSsBanGZYD?=
+ =?us-ascii?Q?PPsz24sfyI/5vZJ029W7cipg26ro4mTLy/mrthLtfe4Zy0kJ5nlHlXAmWdn1?=
+ =?us-ascii?Q?zo0w2pEVwxkUJ0r0EstpsKbp+aflIljMTCTQ/N3sKUoy7qwdk7MsHtKXBGZm?=
+ =?us-ascii?Q?JOuup8Rz5jnFlBpcGB9LLxqsm1Xj/RLGHmZ+9jQJmDZxqttiBqu14WlOPmpW?=
+ =?us-ascii?Q?7ZUePj2YeK9K3arRzO395SPFu2ZdfU2Bjq5W6FseW17NFKmBTE8HbTtbWFlG?=
+ =?us-ascii?Q?udRi23hjT4XoNmr0toB0ZaRlhc/ik8nDdysrPOh+K3Scw9BqzSB6i4E7vA97?=
+ =?us-ascii?Q?5Uye+7iYWUSWS44H+E1C3+xc83a5nM8pPnFjGKHUyYxh0n81BjzkSbM0DoYn?=
+ =?us-ascii?Q?KOinFJ3XtDmsftP9SvVPRUPAEI5zRnFPHH7SIIG097/lZwSo8/3HPtnNg+mW?=
+ =?us-ascii?Q?itPWqo1d+wXtCnaMSAy8SHr5d521+hcX/YCDDBzGD+NSeqf1BfVYQ4m8j8cl?=
+ =?us-ascii?Q?IvovawCO+2/ds3HJoj8UuIys4qfdgjGjndXvRU6lTNRXvU7QD1EO55kbPilb?=
+ =?us-ascii?Q?+nCq0gDwef+IUedkiEZ6327RFy8/X5YTnEKP5OpnKnzDbRKaGvqqgG5r+ZI?=
+ =?us-ascii?Q?=3D?=
+X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-89723.templateTenant
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4eed62be-d70e-46e0-af22-08dbd0b1d401
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR06MB5342.namprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Oct 2023 14:43:59.8080
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO6PR06MB7475
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 19 Oct 2023 at 08:46, Kathiravan Thirumoorthy
-<quic_kathirav@quicinc.com> wrote:
->
->
-> On 10/19/2023 1:59 AM, Konrad Dybcio wrote:
-> >
-> >
-> > On 10/15/23 18:20, Robert Marko wrote:
-> >> QUP6 I2C clock is listed in the dt bindings but it was never included in
-> >> the GCC driver.
-> >> So lets add support for it, its intentionally marked to never be
-> >> disabled
-> >> as its somehow affecting DVFS and if disabled it sometimes crashes the
-> >> board.
-> >>
-> >> Signed-off-by: Robert Marko <robimarko@gmail.com>
-> >> ---
-> > Bjorn, would you be able to get an idea of what could be sitting
-> > on that bus?
-> >
-> > Or maybe the IPQ folks could know?
-> >
->
-> Konrad / Robert,
->
-> Similar to IPQ9574, RPM needs this clock to communicate with PMIC over
-> I2C interface. Discussion happened here[1] is pretty much applicable to
-> IPQ6018 as well. Based on previous experience, we may need to document
-> the reason for CLK_IGNORE_UNUSED in driver as well. Nevertheless,
->
-> Reviewed-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+On Thu, Oct 19, 2023 at 11:21:47AM +0200, Krzysztof Kozlowski wrote:
+> On 18/10/2023 18:18, Chris Morgan wrote:
+> > From: Chris Morgan <macromorgan@hotmail.com>
+> > 
+> > The Powkiddy RK2023 is a handheld gaming device made by Powkiddy and
+> > powered by the Rockchip RK3566 SoC.
+> > 
+> > Signed-off-by: Chris Morgan <macromorgan@hotmail.com>
+> > ---
+> >  Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
+> > index a349bf4da6bc..a6612185a7ff 100644
+> > --- a/Documentation/devicetree/bindings/arm/rockchip.yaml
+> > +++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
+> > @@ -674,6 +674,11 @@ properties:
+> >            - const: powkiddy,rgb30
+> >            - const: rockchip,rk3566
+> >  
+> > +      - description: Powkiddy RK2023
+> > +        items:
+> > +          - const: powkiddy,rk2023
+> 
+> This cuold be just enum in previous entry :/ but I remember we talked
+> about this once with Heiko.
 
-Thanks for the explanation, it makes sense as I used to control the
-MP5496 directly
-via I2C.
+For hardware that requires a different device tree, is that possible?
+While most of the devices I've worked on for the RK3566 series are very
+similar for the moment only 1 is identical (the RG353P and the RG353M)
+and can use the same device tree.
 
-Is it possible to disable RPM so it doesn't conflict and just use the
-full MP5496 driver instead?
-I find the RPM quite limiting as there is no way to actually retrieve
-the current-voltage.
+Also I have one more Powkiddy device to send probably in the next week
+or two, then I'll be breaking for a while from new devices. :-)
 
-Regards,
-Robert
->
-> [1]
-> https://lore.kernel.org/linux-arm-msm/2852fc37-284f-6534-f163-45b37b153db1@quicinc.com/
->
->
-> > Konrad
+Thank you,
+Chris
+
+> 
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> > +          - const: rockchip,rk3566
+> 
+> 
+> 
+> Best regards,
+> Krzysztof
+> 
