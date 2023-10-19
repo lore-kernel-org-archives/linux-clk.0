@@ -2,59 +2,61 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5041FCDB47E
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Oct 2023 01:16:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83EBDCDB47E
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Oct 2023 01:20:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231341AbjJSBQ7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Oct 2023 21:16:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42116 "EHLO
+        id S231828AbjJSBU1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Oct 2023 21:20:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229632AbjJSBQ6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Oct 2023 21:16:58 -0400
+        with ESMTP id S229894AbjJSBU0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Oct 2023 21:20:26 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C56BB0;
-        Wed, 18 Oct 2023 18:16:57 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38A68C433C8;
-        Thu, 19 Oct 2023 01:16:57 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26FB0112;
+        Wed, 18 Oct 2023 18:20:25 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEE20C433C8;
+        Thu, 19 Oct 2023 01:20:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1697678217;
-        bh=t1TklU9qUL66rgk0DGUbyrm6spkuXcGIBxohjbWjYzk=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=o4veyHpA0PGtgf1yjNmv1t+x3rl/W3WjM0vivvwxZXCxdsGUPzJmmRlBdjmFmfMQK
-         6lF4AFZQ3m5wNmOGOAQ7bvcUsaG6CfdaeKyO43nkNv6NBiaM1hMX+AlESKCB9N4mJT
-         7vUJBtKiBPcFzGihnQhy+Gx2VFPinxheROltw+QjBApmttRcYEebjh/5hCx4Gz5xam
-         N/GhP/UUf5/fcTKFaHvppyK9VyK2YIt3JpJl9HvkZcSnrLHF7Con4qkjhHLBxtjCQO
-         +D3Es6qXHqSJchxfmpHIZSvPBgIK6mZj42cz9ZSvdcnNVb3ScKDIkH5dvYcbtHgd/A
-         T+0lOABVLwAUw==
-Message-ID: <ecd552b9cb8d56dcf86a382385f39ef4.sboyd@kernel.org>
+        s=k20201202; t=1697678424;
+        bh=OEFMKzkQUdF2lkI84d/oCDnjWjpkF/2CWqt1c/w7l5I=;
+        h=In-Reply-To:References:Subject:From:To:Date:From;
+        b=agAqvCUC0fJ6MgF36t0nVVeo0JjmWk1vYdPA2ssuFUKM7Gt+UgXVYgSva4rh2RyOC
+         bnxXbiVJDZ8XLApdewHDkCqrtgUztHXar5GeJzG4Jv8CoAFBmH8qWf5/CtiRXJxCUV
+         bTYXEoMCLJUpPpL7xzWkO8579xz/b3qFxTO49nHhz4UNiMkTzal4d8yvAdZX/wB5nh
+         1zjTKZNLrXEPvqamhtckXKtOrlxKZw398nnAbkXEfqsNJFd6ChHfEMdshrvHMhDtfS
+         zozTJ4mt3u69iEGT5hj1dV4h/MxGy8X76t5IQlzNMI8rEpVVuRxfToKzhFDPKm/nUR
+         cDNMYRpmEA5Tg==
+Message-ID: <8c63372175266d42efbfca0104e19a14.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230901024658.23405-1-jiasheng@iscas.ac.cn>
-References: <20230901024658.23405-1-jiasheng@iscas.ac.cn>
-Subject: Re: [PATCH] clk: mediatek: clk-mt2701: Add check for mtk_alloc_clk_data
+In-Reply-To: <20230916100515.1650336-5-andreas@kemnade.info>
+References: <20230916100515.1650336-1-andreas@kemnade.info> <20230916100515.1650336-5-andreas@kemnade.info>
+Subject: Re: [PATCH v4 4/5] clk: twl: add clock driver for TWL6032
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Jiasheng Jiang <jiasheng@iscas.ac.cn>
-To:     Jiasheng Jiang <jiasheng@iscas.ac.cn>,
-        angelogioacchino.delregno@collabora.com, erin.lo@mediatek.com,
-        frank.li@vivo.com, jamesjj.liao@mediatek.com,
-        matthias.bgg@gmail.com, msp@baylibre.com, mturquette@baylibre.com,
-        robh@kernel.org, shunli.wang@mediatek.com, wenst@chromium.org
-Date:   Wed, 18 Oct 2023 18:16:55 -0700
+To:     andreas@kemnade.info, bcousson@baylibre.com, conor+dt@kernel.org,
+        devicetree@vger.kernel.org, dmitry.torokhov@gmail.com,
+        krzysztof.kozlowski+dt@linaro.org, lee@kernel.org,
+        linux-clk@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        mturquette@baylibre.com, robh+dt@kernel.org, tony@atomide.com
+Date:   Wed, 18 Oct 2023 18:20:22 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jiasheng Jiang (2023-08-31 19:46:58)
-> Add the check for the return value of mtk_alloc_clk_data() in order to
-> avoid NULL pointer dereference.
+Quoting Andreas Kemnade (2023-09-16 03:05:14)
+> The TWL6032 has some clock outputs which are controlled like
+> fixed-voltage regulators, in some drivers for these chips
+> found in the wild, just the regulator api is abused for controlling
+> them, so simply use something similar to the regulator functions.
+> Due to a lack of hardware available for testing, leave out the
+> TWL6030-specific part of those functions.
 >=20
-> Fixes: e9862118272a ("clk: mediatek: Add MT2701 clock support")
-> Signed-off-by: Jiasheng Jiang <jiasheng@iscas.ac.cn>
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
 > ---
 
-Applied to clk-next
+Did you want me to pick this up in clk tree?
+
+Acked-by: Stephen Boyd <sboyd@kernel.org>
