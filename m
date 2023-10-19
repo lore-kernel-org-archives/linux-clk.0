@@ -2,63 +2,65 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F643CDB482
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Oct 2023 00:58:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0CB2CDB47E
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Oct 2023 01:06:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229726AbjJSA6p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Oct 2023 20:58:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57902 "EHLO
+        id S229702AbjJSBGX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Oct 2023 21:06:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229688AbjJSA6o (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Oct 2023 20:58:44 -0400
+        with ESMTP id S229632AbjJSBGW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Oct 2023 21:06:22 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4621611D;
-        Wed, 18 Oct 2023 17:58:42 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7DC9C433C8;
-        Thu, 19 Oct 2023 00:58:41 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3BC7B8;
+        Wed, 18 Oct 2023 18:06:20 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FFB4C433C7;
+        Thu, 19 Oct 2023 01:06:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1697677121;
-        bh=ih+ytPv4nxpq0a5mnqxIN76oDxBc4L1G0wNYPAVRMGE=;
+        s=k20201202; t=1697677580;
+        bh=64x4DMR9WJmGdd362zblo6FJofeDBwyFBwAvoTeE+tM=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=JLQjRFD4nWYcmeWUiYVKzwRBAOw8CqTn7BpbDYNqKjoCArBB21vo4+1kCsVbvlBf8
-         8uyfWLl4V3qCO5p9YthHUrbuFspPBVZLYUlC6nqPeWBc2c3h5ungXN2CrRHjMbGj4G
-         eFRfr8oXPckwk27ZpZF53A2pOO/6G0H9iW7FPH2/3GKoj8FWTPi8dyQkF9zAhBpYL5
-         zqT/qUsRJlAY4c74FM+hzd3S/08Y8hAL7SNoFrKx7ODSnlHB/015uvqkF8WD0zpd3j
-         zXTzkmPHNtoow9W6rOtcAWPu91mHHgZD4/dJriQK6NUOhLYypzjJKn2OCBptAfhkSw
-         wtTXcJYRwmvZw==
-Message-ID: <e38ae24c09ef321c224a6b6aeb97e73b.sboyd@kernel.org>
+        b=H3xlOcCmbdfrlbStbX7qyC2+1tccKl62m4RuhR3aw0fTjilSG2GVcd0X525VfIZmE
+         +xT5CC+IDOJnZgVyNv0SL3dvY6/AS85SchslrFjKl4xE+52nrmneSe0sKr9AUxcmHJ
+         eDArIfn6EjfAKc2cfBVPe4F1iXZMzEVMI+Rz5mQXFOz5BPg/WYPEafdQom8gHDEgDr
+         Sghg/CZnnEkVwFzXnB+0+9mirKKR+2eUoLUb+xbWwOcH2imPxClCkK1mSwCTyK9cxX
+         kW8ZEzVkjTBUk9vmkCUsS4coo7tmQhD01QxDXO3odcq4XT8UIXzkdPY7pg7J6qEiAo
+         kAl1oCjttcG6g==
+Message-ID: <0da1eb8c9b8ef294309c1027896c409b.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20231017131944.8356-1-quic_kriskura@quicinc.com>
-References: <20231017131944.8356-1-quic_kriskura@quicinc.com>
-Subject: Re: [RFC 4/8] clk: qcom: gcc-sm8450: Keep usb30 prim gdsc on during runtime suspend
+In-Reply-To: <20230923133127.1815621-1-j.neuschaefer@gmx.net>
+References: <20230923133127.1815621-1-j.neuschaefer@gmx.net>
+Subject: Re: [PATCH] clk: npcm7xx: Fix incorrect kfree
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, quic_ppratap@quicinc.com,
-        quic_jackp@quicinc.com,
-        Krishna Kurapati <quic_kriskura@quicinc.com>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krishna Kurapati <quic_kriskura@quicinc.com>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Wed, 18 Oct 2023 17:58:38 -0700
+Cc:     Jonathan =?utf-8?q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        openbmc@lists.ozlabs.org, linux-kernel@vger.kernel.org
+To:     Jonathan =?utf-8?q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        linux-clk@vger.kernel.org
+Date:   Wed, 18 Oct 2023 18:06:16 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Krishna Kurapati (2023-10-17 06:19:44)
-> When runtime suspend happens in host mode, if cable is removed at this
-> instant, it triggers a resume where a xhci register access is done when
-> gdsc is not on leading to a crash. Keep usb30 prim gdsc as on during
-> runtime suspend to avoid this crash.
+Quoting Jonathan Neusch=C3=A4fer (2023-09-23 06:31:27)
+> The corresponding allocation is:
 >=20
-> Signed-off-by: Krishna Kurapati <quic_kriskura@quicinc.com>
+> > npcm7xx_clk_data =3D kzalloc(struct_size(npcm7xx_clk_data, hws,
+> >                            NPCM7XX_NUM_CLOCKS), GFP_KERNEL);
+>=20
+> ... so, kfree should be applied to npcm7xx_clk_data, not
+> npcm7xx_clk_data->hws.
+>=20
+> Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
 > ---
-> Note: I am not sure if this is the right way or setting GDSC flags to
-> PWRSTS_RET_ON is the right approach. So for now made this change to
 
-Does using PWRSTS_RET_ON work? Does the GDSC support being turned off or
-is the lowest power state retention?
+Applied to clk-next
