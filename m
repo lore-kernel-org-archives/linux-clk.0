@@ -2,75 +2,80 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BFBECDB47E
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Oct 2023 00:16:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A1CFCDB483
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Oct 2023 00:32:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229891AbjJSAQm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Oct 2023 20:16:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55530 "EHLO
+        id S229688AbjJSAcH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Oct 2023 20:32:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229632AbjJSAQm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Oct 2023 20:16:42 -0400
+        with ESMTP id S229632AbjJSAcH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Oct 2023 20:32:07 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD063FE;
-        Wed, 18 Oct 2023 17:16:40 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73910C433C7;
-        Thu, 19 Oct 2023 00:16:40 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71B39FE;
+        Wed, 18 Oct 2023 17:32:05 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFFE6C433C7;
+        Thu, 19 Oct 2023 00:32:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1697674600;
-        bh=6uPwkZ4yiG6o3MMwW++45pNUHDSPtK16RZV1nf9Kw6w=;
+        s=k20201202; t=1697675525;
+        bh=iZGL4wXAMICOUSQLyjE/36oHOPVmQqhi52ipPzUGeYw=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=f8izOVvgCNr3OCTnTZBVaFgBngHWPPx/mayolA5yr1fNK+U0NeZnCH63olaVpZGGC
-         NfJ9vsf3uh9bJK3bafY3C7e/J/GQcot0sgkqx7Rmc8TdKzGpBSem4ZEXcCKofmgz4I
-         X44gX+Z3yI1l5CGVHHmVwtRAPoZZ2Ottgaf6P82ir6k0eCzDpe2JUcXQXakXz2hTSm
-         GpvDSGHF5cl9AiuFxtArZGfoeINVdu3sYMBYiIvPyhiJmvZOkb2E5BXlTjiQrzFkH8
-         b9ZnHMLKHf4QeBiAWXy1HqKZ9I7NuNaWr5ZoCxh7oHkLsRvFlEsRZ1Wzfy7qILT2xm
-         CjQi+eAGTOKqg==
-Message-ID: <c3dfeecf5cde513cf675b2f1a382f7a4.sboyd@kernel.org>
+        b=pvcQUM17nHbvllmRLn1w5S27ng0/xLgzsSqEHrhlwPtI9KqXwCOnqVzfVQ+W2R0LW
+         5XGZGQ0WDiXaamqqF1XkxLKzweaEia53bLeqlnjZFdZ16rDNSFhmnwE4fOPNjANOE/
+         1k7cED0ubG5P6RiT5hxaAjmiFmFe70Q6gqfmBw3nmBZwVQI6Gz3a7VAOeMGZmbpTxe
+         9nzhiAP5wcqT+zBrxjuxv86wwSX3nhS6UPjBULhJVsKFHazZuIw3fi2ycFH4Ff8ybk
+         +Vks/CAOKs/yvnxy/pfD3OYwgLqaWyb4mlqJwotDWryulYQgA8zhBbtcizc3tVCM/m
+         2a0H+dmJ2rD5Q==
+Message-ID: <13d7cf46270082855174414b691fb3be.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <76f3bc23-8677-42bd-a3a5-43b17cbe552e@linaro.org>
-References: <20230913-gpll_cleanup-v2-0-c8ceb1a37680@quicinc.com> <20230913-gpll_cleanup-v2-1-c8ceb1a37680@quicinc.com> <76f3bc23-8677-42bd-a3a5-43b17cbe552e@linaro.org>
-Subject: Re: [PATCH v2 01/11] clk: qcom: ipq8074: drop the CLK_SET_RATE_PARENT flag from PLL clocks
+In-Reply-To: <20230827023932.501102-1-sergio.paracuellos@gmail.com>
+References: <20230827023932.501102-1-sergio.paracuellos@gmail.com>
+Subject: Re: [PATCH v2] clk: ralink: mtmips: quiet unused variable warning
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        stable@vger.kernel.org
-To:     Andy Gross <agross@kernel.org>,
-        Anusha Rao <quic_anusha@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Devi Priya <quic_devipriy@quicinc.com>,
-        Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sricharan Ramabadhran <quic_srichara@quicinc.com>,
-        Varadarajan Narayanan <quic_varada@quicinc.com>
-Date:   Wed, 18 Oct 2023 17:16:38 -0700
+Cc:     tsbogend@alpha.franken.de, mturquette@baylibre.com,
+        linux-kernel@vger.kernel.org, ndesaulniers@google.com,
+        arnd@kernel.org, yangshiji66@outlook.com,
+        kernel test robot <lkp@intel.com>
+To:     Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+        linux-clk@vger.kernel.org
+Date:   Wed, 18 Oct 2023 17:32:02 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Konrad Dybcio (2023-09-15 05:19:56)
-> On 14.09.2023 08:59, Kathiravan Thirumoorthy wrote:
-> > GPLL, NSS crypto PLL clock rates are fixed and shouldn't be scaled based
-> > on the request from dependent clocks. Doing so will result in the
-> > unexpected behaviour. So drop the CLK_SET_RATE_PARENT flag from the PLL
-> > clocks.
-> >=20
-> > Cc: stable@vger.kernel.org
-> > Fixes: b8e7e519625f ("clk: qcom: ipq8074: add remaining PLL=E2=80=99s")
-> > Signed-off-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-> > ---
-> Stephen, do you think there should be some sort of error
-> or at least warning thrown when SET_RATE_PARENT is used with
-> RO ops?
+Quoting Sergio Paracuellos (2023-08-26 19:39:32)
+> When CONFIG_OF is disabled then the matching table is not referenced and
+> the following warning appears:
 >=20
+> drivers/clk/ralink/clk-mtmips.c:821:34: warning: unused variable 'mtmips_=
+of_match' [-Wunused-const-variable]
+> 821 |   static const struct of_device_id mtmips_of_match[] =3D {
+>     |                          ^
+>=20
+> There are two match tables in the driver: one for the clock driver and the
+> other for the reset driver. The only difference between them is that the
+> clock driver uses 'data' and does not have 'ralink,rt2880-reset' compatib=
+le.
+> Both just can be merged into a single one just by adding the compatible
+> 'ralink,rt2880-reset' entry to 'mtmips_of_match[]', which will allow it to
+> be used for 'mtmips_clk_driver' (which doesn't use the data) as well as f=
+or
+> 'mtmips_clk_init()' (which doesn't need get called for 'ralink,rt2880-res=
+et').
+>=20
+> Doing in this way ensures that 'CONFIG_OF' is not disabled anymore so the
+> above warning disapears.
+>=20
+> Fixes: 6f3b15586eef ("clk: ralink: add clock and reset driver for MTMIPS =
+SoCs")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202307242310.CdOnd2py-lkp@i=
+ntel.com/
+> Suggested-by: Arnd Bergmann <arnd@kernel.org>
+> Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+> ---
 
-Sure? How would that be implemented?
+Applied to clk-next
