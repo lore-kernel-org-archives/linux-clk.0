@@ -2,62 +2,58 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81548CDB482
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Oct 2023 01:16:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5041FCDB47E
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Oct 2023 01:16:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232320AbjJSBQO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Oct 2023 21:16:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40484 "EHLO
+        id S231341AbjJSBQ7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Oct 2023 21:16:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232362AbjJSBQL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Oct 2023 21:16:11 -0400
+        with ESMTP id S229632AbjJSBQ6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Oct 2023 21:16:58 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EFFC112;
-        Wed, 18 Oct 2023 18:16:09 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88C68C433CA;
-        Thu, 19 Oct 2023 01:16:08 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C56BB0;
+        Wed, 18 Oct 2023 18:16:57 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38A68C433C8;
+        Thu, 19 Oct 2023 01:16:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1697678168;
-        bh=c/JyApc13y5twAwPFapbUHbj9jCE/KHWhQ+y/DCn/AM=;
+        s=k20201202; t=1697678217;
+        bh=t1TklU9qUL66rgk0DGUbyrm6spkuXcGIBxohjbWjYzk=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=lHWYwkNjlBiA8wJpDrH0MLWI3yBGF4Uu1fWPFyRcmUrN6ykv+nqQ+rfoSO6Z8z3r9
-         nCRn8Ll2MNi7Sj+IQiQy3byRAW7/4/94TjHK0SmmUZrSKfiMTc99vLyD/UPLSY9PH/
-         zh4o7Qsi9I3Bi8M6c2sWkXba3pG4Ox7jcO0pTapuF8pSeBU73pcNtOPdz6iy2uEkLz
-         TIS98jLBtlEqKTyWughwJVbaokyr3RoEeh6q9WchYM2yMkmczc+wrWn9HshVOHrM2Y
-         tLTIgI4ee1fkoedCWXQjVbSyPHjr3l3bgU96xMPNhdE9qDadlDcJ4y8RRIld0JIZo+
-         d3vU4ZIab3BHA==
-Message-ID: <ff3136f73ea21e52e6ae0bfa5a496a82.sboyd@kernel.org>
+        b=o4veyHpA0PGtgf1yjNmv1t+x3rl/W3WjM0vivvwxZXCxdsGUPzJmmRlBdjmFmfMQK
+         6lF4AFZQ3m5wNmOGOAQ7bvcUsaG6CfdaeKyO43nkNv6NBiaM1hMX+AlESKCB9N4mJT
+         7vUJBtKiBPcFzGihnQhy+Gx2VFPinxheROltw+QjBApmttRcYEebjh/5hCx4Gz5xam
+         N/GhP/UUf5/fcTKFaHvppyK9VyK2YIt3JpJl9HvkZcSnrLHF7Con4qkjhHLBxtjCQO
+         +D3Es6qXHqSJchxfmpHIZSvPBgIK6mZj42cz9ZSvdcnNVb3ScKDIkH5dvYcbtHgd/A
+         T+0lOABVLwAUw==
+Message-ID: <ecd552b9cb8d56dcf86a382385f39ef4.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230912093407.21505-5-jiasheng@iscas.ac.cn>
-References: <20230912093407.21505-1-jiasheng@iscas.ac.cn> <20230912093407.21505-5-jiasheng@iscas.ac.cn>
-Subject: Re: [PATCH 5/5] clk: mediatek: clk-mt7629: Add check for mtk_alloc_clk_data
+In-Reply-To: <20230901024658.23405-1-jiasheng@iscas.ac.cn>
+References: <20230901024658.23405-1-jiasheng@iscas.ac.cn>
+Subject: Re: [PATCH] clk: mediatek: clk-mt2701: Add check for mtk_alloc_clk_data
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org,
         Jiasheng Jiang <jiasheng@iscas.ac.cn>
-To:     Jiasheng Jiang <jiasheng@iscas.ac.cn>, amergnat@baylibre.com,
-        angelogioacchino.delregno@collabora.com, cw00.choi@samsung.com,
-        frank.li@vivo.com, kevin-cw.chen@mediatek.com,
-        luca.ceresoli@bootlin.com, macpaul.lin@mediatek.com,
-        mars.cheng@mediatek.com, matthias.bgg@gmail.com, msp@baylibre.com,
-        mturquette@baylibre.com, owen.chen@mediatek.com, robh@kernel.org,
-        ryder.lee@mediatek.com, u.kleine-koenig@pengutronix.de,
-        wendell.lin@mediatek.com, wenst@chromium.org,
-        wenzhen.yu@mediatek.com
-Date:   Wed, 18 Oct 2023 18:16:06 -0700
+To:     Jiasheng Jiang <jiasheng@iscas.ac.cn>,
+        angelogioacchino.delregno@collabora.com, erin.lo@mediatek.com,
+        frank.li@vivo.com, jamesjj.liao@mediatek.com,
+        matthias.bgg@gmail.com, msp@baylibre.com, mturquette@baylibre.com,
+        robh@kernel.org, shunli.wang@mediatek.com, wenst@chromium.org
+Date:   Wed, 18 Oct 2023 18:16:55 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jiasheng Jiang (2023-09-12 02:34:07)
+Quoting Jiasheng Jiang (2023-08-31 19:46:58)
 > Add the check for the return value of mtk_alloc_clk_data() in order to
 > avoid NULL pointer dereference.
 >=20
-> Fixes: 3b5e748615e7 ("clk: mediatek: add clock support for MT7629 SoC")
+> Fixes: e9862118272a ("clk: mediatek: Add MT2701 clock support")
 > Signed-off-by: Jiasheng Jiang <jiasheng@iscas.ac.cn>
 > ---
 
