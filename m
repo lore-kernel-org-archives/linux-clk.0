@@ -2,161 +2,139 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 329DEC00A98
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Oct 2023 15:03:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CA44CDB474
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Oct 2023 15:37:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377607AbjJTPDS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Oct 2023 11:03:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49470 "EHLO
+        id S1377709AbjJTPhU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Oct 2023 11:37:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377597AbjJTPDQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Oct 2023 11:03:16 -0400
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12olkn2070.outbound.protection.outlook.com [40.92.21.70])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFA9AD5D;
-        Fri, 20 Oct 2023 08:03:14 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=VHwa+nEPG3M82kPoiRYj+wyabrT7erjIrNJ8rWe6pb3miolZjc/xWK23JHOhOzKfDRn6ZGmsLZgibOQlyLwh8B0JIIcKrJqWIjVi2kiUCDNNgne2zkKB0WgR590RCNbqq2aFJ6BREutQmdyo94CdbkqThGCfKLYlPIyFXX9iOWStP2GFYWcuxB3Vqi0rVYJRE0FVV4XPhTiAX6p0h/StB7e3qUug4FfjbEjYmNIG/pFas0oNV31/8YbOTwMdV/g8l6j7g+fDLAIBhs5Z3QlxeUpeiyVKTdsm0VSMZGphShM/rAz5/xvyJXjLt7UjMfUJe6+9uvxWJhrzT3CXmzbbMg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3Puiq7iX+dPTRN5eSVbIKzBd24MB8P/DYwXvjFFOJR0=;
- b=TdO+1F74mYThqnyMkH5oPXBHgq132dTD5+Wo/nRjx3M4qG3U3dHi8iGK10ez9IyYEtQehbasBLBQyJnrpf5T86ly1RA0L6SrGTsGchg8IJZ3MIu/yYjVRnP2/sTrBf3oFQAezMT4+hg2/TThSOgCGBf/XFe5pO+6op1UTPNP1WRy2y/rdrpBmGBfJT+LRp4/REktlY0eOK2wtXKUp3kX7/bSAlCgXvWmr2JwH+cVL2+a8fG+JQ7LAuNqza7IG2jGmbEzYg1lqIL1PLD3ivGg3jywMnnsGGPQ8+dPX5AdnLB99sEGO/+OLaxEyYSThHCvtCapSgLy/E697vQy9tfZWg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3Puiq7iX+dPTRN5eSVbIKzBd24MB8P/DYwXvjFFOJR0=;
- b=qFW08pwzMd5HB8W2hd5a2psnE8F6Z9UbRrT3qxvDzPDEHaYL+fUixm/5m2U47O05KL7ws7oElzaX6gFWePGiaOcGpRTKRlewJoJ6ka/IjL9GqB+3pv4jX6jDwhfTT3/0/GAcNy06dFNClttIE8QhZ+JFQvgYDF6r2uPdDE/gC/6N8Dkdsz4jTH709GAlROyDuvffWbpKAYbbgWtjmhyBsxIaTSCejuvcx2nrPkAxViCSmvNWjXkfrsEcv+1U+NZMhwhI9uNRRCyXCGQqFjkI7s7STP0TaMFadD4Es5UB5DnBFGdQt8o8EnO6jS886NEAeDwxTBrZI7AVeb5IKbKFKA==
-Received: from SN6PR06MB5342.namprd06.prod.outlook.com (2603:10b6:805:f9::31)
- by SA1PR06MB8241.namprd06.prod.outlook.com (2603:10b6:806:1c4::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6907.24; Fri, 20 Oct
- 2023 15:03:12 +0000
-Received: from SN6PR06MB5342.namprd06.prod.outlook.com
- ([fe80::c40c:bbc8:b103:459c]) by SN6PR06MB5342.namprd06.prod.outlook.com
- ([fe80::c40c:bbc8:b103:459c%2]) with mapi id 15.20.6863.032; Fri, 20 Oct 2023
- 15:03:11 +0000
-Date:   Fri, 20 Oct 2023 10:03:08 -0500
-From:   Chris Morgan <macromorgan@hotmail.com>
-To:     Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Chris Morgan <macroalpha82@gmail.com>,
-        linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        sebastian.reichel@collabora.com, sboyd@kernel.org,
-        mturquette@baylibre.com, daniel@ffwll.ch, airlied@gmail.com,
-        sam@ravnborg.org, neil.armstrong@linaro.org, conor+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org
-Subject: Re: [PATCH 4/5] dt-bindings: arm: rockchip: Add Powkiddy RK2023
-Message-ID: <SN6PR06MB534206AB35C00B3D003765AAA5DBA@SN6PR06MB5342.namprd06.prod.outlook.com>
-References: <20231018161848.346947-1-macroalpha82@gmail.com>
- <df3c067f-8732-46bf-aa93-852f41e9e4e9@linaro.org>
- <SN6PR06MB534289953F0A72345D679A7EA5D4A@SN6PR06MB5342.namprd06.prod.outlook.com>
- <3083498.U7HbjWM52l@diego>
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3083498.U7HbjWM52l@diego>
-X-TMN:  [YAcPVPsMtNKLmyCDpoXP40ic1TkBJoG7]
-X-ClientProxiedBy: SA9PR13CA0058.namprd13.prod.outlook.com
- (2603:10b6:806:22::33) To SN6PR06MB5342.namprd06.prod.outlook.com
- (2603:10b6:805:f9::31)
-X-Microsoft-Original-Message-ID: <ZTKWrOmdtMwmG+Lr@wintermute.localhost.fail>
+        with ESMTP id S1377651AbjJTPhT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Oct 2023 11:37:19 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 168B3D63
+        for <linux-clk@vger.kernel.org>; Fri, 20 Oct 2023 08:37:16 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-9ada2e6e75fso147793166b.2
+        for <linux-clk@vger.kernel.org>; Fri, 20 Oct 2023 08:37:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1697816234; x=1698421034; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BcjhE/VDAP/vUUzCJ5UsdBYIA+V/VX3Pzs2a+6tDBk0=;
+        b=DPT5PnNa8mJCnKthHN449tMAbgDaAVvmnWz93V7a6pmBh0OaH/7waVtlK7kwZ5glry
+         siiM/1bglLhTH7bhsLancP82MDDC08qEqESSbd7pZgegOmGWSoVfFD1yhWJf5on0ACEA
+         G5Olav9y9ShwNSaI003NSQDa+vjt78UTsrsFQNfAU/rbV4ZhqmF5wRCDI60NSDDQdSN3
+         kpdLAEzV9Eo6sq2QfopPYYbD5HFeiyqE3kpNWxwZIwQT4mn3s71ClYvQbV78aiVQLllo
+         TCLyr3iaDT83ex6wOw4H0mvuKxCxGqOEC/1XBzRkTta2fTSr98X04lCTQDEwANkbumpM
+         FJQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697816234; x=1698421034;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BcjhE/VDAP/vUUzCJ5UsdBYIA+V/VX3Pzs2a+6tDBk0=;
+        b=uEOP4beWXYZc0GQYjjtOLdbDQHRzfXJp9F2VAePYURSZTCKBhHMGh5CEsnlvyYYwnj
+         zXFlXWNYt1kv3nY97hn2fx/PNE1TG51yprsmIlaEvQz2Qce2U7xxntMTPsXceATI1EcD
+         ZnYKUUU1zdcs3zh29tatEK8FNjFgxla8rRvnc2M3hQS3cauR3IXk6VJJf0BIjQSyH4oU
+         mlk2AfBF+Y+warFCQqoZBBbxWWyonA8NMNS5kpgG8YHLvKHhviKn9ZgNZaoofQfp6dkH
+         rqe1GrS57xXN1sD9Nn7yIkEVTVDw4ZlWgVR0C0rL253310lz2kD06iZAYT2f54QV8StJ
+         uygA==
+X-Gm-Message-State: AOJu0YxBhs/N1x61m3Qiegz1R6nGrHPTW2BvLep/kwzwziMm3NgJDCeg
+        PHw/8DXwZSX18K1DtLlsNFIP0g==
+X-Google-Smtp-Source: AGHT+IHZPN2+UrCMVFrf3KNUsmji8s01Mviv4I64tQ8tn/u/gi1W+3A4Y/35RW/yDbc3Pj+6dUwMVw==
+X-Received: by 2002:a17:907:3688:b0:9c2:a072:78bf with SMTP id bi8-20020a170907368800b009c2a07278bfmr1701512ejc.26.1697816234418;
+        Fri, 20 Oct 2023 08:37:14 -0700 (PDT)
+Received: from hackbox.lan ([79.115.22.174])
+        by smtp.gmail.com with ESMTPSA id x13-20020a170906710d00b009ad87fd4e65sm1692162ejj.108.2023.10.20.08.37.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Oct 2023 08:37:13 -0700 (PDT)
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] clk: imx: Updates for v6.7
+Date:   Fri, 20 Oct 2023 18:37:11 +0300
+Message-Id: <20231020153711.1979439-1-abel.vesa@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN6PR06MB5342:EE_|SA1PR06MB8241:EE_
-X-MS-Office365-Filtering-Correlation-Id: 96b01782-bfb4-4e64-ddb5-08dbd17dace5
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: X0q4CuYbN6MS6KWtZmbE7A8YBqYoacsx1d/Y4+Vxo6cQbk5GYfgXYKV/9DD01R3tP/ioBvFTJyJRomTCSMiRBrEveCSczEaoWULhWziFAvmw6msNbCoZK7jojigmVs8Q4qvngYwmkrdGZgX/kxUPKLjiQnB7GOC+6o9rbspJ9apb1VyN3xYu7Jvc0zD3w1yWNewZ7imkPxzkbn1VGF81B7obzNMuFXpoOMhjzPXMD37SKbokqiiMxpop7X6bSZRNv8h0XcQOkavcpHJCxk7+6zMpAo6XY9+o1xrR6pCkgRtws7jdakOYeg3MdX8dihMk1qyG/RW2LXJPKYAwKdyk3b4UT9HjqeBCIjghtdZG5Y4cxN2EM/jODLbbQvYjoAX0EK3FBmUECaHx4HR1tXN6IZGb+9b0tGBqZHymxHw7HeNxfZP0o6ozQ05g75b/dnd84h1UMF5/d0oEH1+MJpa7V+/j5bhtNd5RdOG1z1uMqp5iUTva9mUSGGWEZtEi1y/xRtBuEeJAhrf2123ceXJUG6aFLm2ZxZue97lOw2bNb6/Io3f+r2pPcUf5SxoxTPni
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?/uT4Ay0sW0tG5wHhbg0e4iTmd20Q5BMc3mAKp0jg7PPpK29jEjlhGlStkG?=
- =?iso-8859-1?Q?DNtxhyOg16oBiCS45hjRZucAlz7r1vFUq1s3mHroeIE0VOnYm3GT+4U3fk?=
- =?iso-8859-1?Q?txWd9M5WzKAa5uuaDbwdnLLh3cNWqrpHtbbYtiUbBsxrZFQLZRVw5ptxgc?=
- =?iso-8859-1?Q?NnCmOxqRp9cafQdwVcsqkDIXzfYpxO8QGYf7+P85BN/Lnh2WG4EyqBcabY?=
- =?iso-8859-1?Q?gnc0IQAOwJLtgAs493diwNF+2xiAT5eA4Bp2Zb3NL2xqm6FnzT6a9QvHIj?=
- =?iso-8859-1?Q?ABlXWKzX0ckZRTXujS1aLbwkd7ZktHY8jXhRdJSz+hie6bnMUEa3SyPFcm?=
- =?iso-8859-1?Q?XcS5OYxHUn4CDmBHdX0en57KvWbh2nziuHR5Gl9hFFBBO1/NzzFHnqCifJ?=
- =?iso-8859-1?Q?GVLqelch2mUl+Gqg/70bBNfxW8MugJAlLJfzOYaBxk4OoV++o5vE0OXj48?=
- =?iso-8859-1?Q?pRDGHSLLNeW47cD/i4hsPnaHnL6g7ii0N3L15hubMNu7mMuve/vHIuHSlg?=
- =?iso-8859-1?Q?t0M/f+Xhvw+s7aRwz7wsDZ0CtPX1f6Jhp4CpMitsJgrtFE5+v7xsk0/wHZ?=
- =?iso-8859-1?Q?bQu6JZmnvxbMykFCrcZl/kXw7NMq/cqf0/kxkaeO4qvKMjmAnvI81q7rBd?=
- =?iso-8859-1?Q?gkoW0R9XAdIM1ZEp3Nw/6ifetesj9FcPGnonumJaJpYf0ZVbohsKp/v8xI?=
- =?iso-8859-1?Q?XQY4yjKR59g9v7PDrom0B+FCGOYk3ACJWwUm4zWTWZw3gKgmu6Eue8aIy3?=
- =?iso-8859-1?Q?7fGfQhmCBglPtGsAvmL19qNErDDWzNZ+jeK1NuwFy401oxp57RfeGlg7+b?=
- =?iso-8859-1?Q?MjZTLm+JwT7gCUwf3c0SCmkNhUrkwMB6TQgH6wdMmObLKaImg5XFzUCpvm?=
- =?iso-8859-1?Q?upvvHnGYbhWAgh0/KpL579HONt6vWAVuUE6dtwLcQKbwptXWFUMsTRR+cb?=
- =?iso-8859-1?Q?aPcQXrZq3smBMryvM5ECuIuLS1w8R+2iVPT6S8mi6kZZr467tvkneXxI7N?=
- =?iso-8859-1?Q?IBt8OMRJRVorD2QqtN9bHLm3Pqa05Kwo9VHXarI5VpFJAFnGOCBk/WpIZj?=
- =?iso-8859-1?Q?8Ongjix3fxJJuvdEowQEGV2qKJ79vdxGTdJ0BR+x0lOg/kvucG64XVWkuX?=
- =?iso-8859-1?Q?cx2qaUru6l9q8YIjXXRx0qfhOtZxH1LWLm1fx+DQ0s1wcLNOu2Z+fAGNWd?=
- =?iso-8859-1?Q?NqAvtG/ab34Hw1HREuHYAT+/1t4Mnqcw3qiSaALzI3LKLdTPdOw4hScyFM?=
- =?iso-8859-1?Q?136EiRATsHDgmIl3wwAEbN4NgBBJfrOEFVBQVaJTE=3D?=
-X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-89723.templateTenant
-X-MS-Exchange-CrossTenant-Network-Message-Id: 96b01782-bfb4-4e64-ddb5-08dbd17dace5
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR06MB5342.namprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2023 15:03:11.0497
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR06MB8241
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Oct 19, 2023 at 07:45:17PM +0200, Heiko Stübner wrote:
-> Hey Chris,
-> 
-> Am Donnerstag, 19. Oktober 2023, 16:43:56 CEST schrieb Chris Morgan:
-> > On Thu, Oct 19, 2023 at 11:21:47AM +0200, Krzysztof Kozlowski wrote:
-> > > On 18/10/2023 18:18, Chris Morgan wrote:
-> > > > From: Chris Morgan <macromorgan@hotmail.com>
-> > > > 
-> > > > The Powkiddy RK2023 is a handheld gaming device made by Powkiddy and
-> > > > powered by the Rockchip RK3566 SoC.
-> > > > 
-> > > > Signed-off-by: Chris Morgan <macromorgan@hotmail.com>
-> > > > ---
-> > > >  Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
-> > > >  1 file changed, 5 insertions(+)
-> > > > 
-> > > > diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
-> > > > index a349bf4da6bc..a6612185a7ff 100644
-> > > > --- a/Documentation/devicetree/bindings/arm/rockchip.yaml
-> > > > +++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
-> > > > @@ -674,6 +674,11 @@ properties:
-> > > >            - const: powkiddy,rgb30
-> > > >            - const: rockchip,rk3566
-> > > >  
-> > > > +      - description: Powkiddy RK2023
-> > > > +        items:
-> > > > +          - const: powkiddy,rk2023
-> > > 
-> > > This cuold be just enum in previous entry :/ but I remember we talked
-> > > about this once with Heiko.
-> > 
-> > For hardware that requires a different device tree, is that possible?
-> > While most of the devices I've worked on for the RK3566 series are very
-> > similar for the moment only 1 is identical (the RG353P and the RG353M)
-> > and can use the same device tree.
-> 
-> In my reply I pointed to the Rock PI 4A/4A+/B/B+/C family, which also has
-> different devicetrees but is part of the same family of device designs.
-> 
-> So similar Powkiddy RK3568 based gaming handhelds also sound like
-> a nice family name in the description ;-) .
+The following changes since commit 0bb80ecc33a8fb5a682236443c1e740d5c917d1d:
 
-Gotcha, I can do that. Would you like for me to go back and do the same
-for the Anbernic devices as well? I can do it as part of a seperate
-patch series.
+  Linux 6.6-rc1 (2023-09-10 16:28:41 -0700)
 
-Thank you.
+are available in the Git repository at:
 
-> 
-> 
-> Heiko
-> 
-> 
+  git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/clk-imx-6.7
+
+for you to fetch changes up to 2838820800dcaa60f32bef715c7e2e87e049aebc:
+
+  clk: imx: imx8qm/qxp: add more resources to whitelist (2023-10-04 15:44:19 +0300)
+
+----------------------------------------------------------------
+i.MX clocks changes for 6.7
+
+- Select MXC_CLK when building in the CLK_IMX8QXP
+- Fixes for error handling paths in i.MX8 ACM driver
+- Move the clocks check in i.MX8 ACM driver in order to log any error
+- Drop the unused return value of clk_imx_acm_detach_pm_domains
+- Drop non-existant IMX8MP_CLK_AUDIOMIX_PDM_ROOT clock
+- Fix error handling in i.MX8MQ clock driver
+- Allow a different LCDIF1 clock parent if DT describes it for i.MX6SX
+- Keep the SCU resource table sorted in the i.MX8DXL rsrc driver
+- Move the elcdif PLL clock registration above lcd_clk, as it is its parent
+- Correct some ENET specific clocks for i.MX8DXL platform
+- Drop the VPU_UART and VPUCORE from i.MX8QM as latest HW revision doesn't have them
+- Remove "de-featured" MLB support from i.MX8QM/QXP/DXL platforms
+- Skip registering clocks owned by Cortex-A partition SCU-based platforms
+- Add CAN_1/2 to i.MX8QM and M4_0, PI_0_PWM_0 and PI_0_I2C_0 to i.MX8QXP resources
+
+----------------------------------------------------------------
+Abel Vesa (1):
+      clk: imx: Select MXC_CLK for CLK_IMX8QXP
+
+Adam Ford (1):
+      clk: imx8mp: Remove non-existent IMX8MP_CLK_AUDIOMIX_PDM_ROOT
+
+Christophe JAILLET (5):
+      clk: imx: imx8: Fix an error handling path in clk_imx_acm_attach_pm_domains()
+      clk: imx: imx8: Fix an error handling path if devm_clk_hw_register_mux_parent_data_table() fails
+      clk: imx: imx8: Fix an error handling path in imx8_acm_clk_probe()
+      clk: imx: imx8: Add a message in case of devm_clk_hw_register_mux_parent_data_table() error
+      clk: imx: imx8: Simplify clk_imx_acm_detach_pm_domains()
+
+Fabio Estevam (1):
+      clk: imx: imx6sx: Allow a different LCDIF1 clock parent
+
+Peng Fan (5):
+      clk: imx: imx8mq: correct error handling path
+      clk: imx: imx8qm-rsrc: drop VPU_UART/VPUCORE
+      clk: imx8: remove MLB support
+      clk: imx: scu: ignore clks not owned by Cortex-A partition
+      clk: imx: imx8qm/qxp: add more resources to whitelist
+
+Robert Chiras (1):
+      clk: imx: imx8qxp: Fix elcdif_pll clock
+
+Shenwei Wang (1):
+      clk: imx: imx8qxp: correct the enet clocks for i.MX8DXL
+
+Viorel Suman (1):
+      clk: imx: imx8dxl-rsrc: keep sorted in the ascending order
+
+ drivers/clk/imx/Kconfig                  |  1 +
+ drivers/clk/imx/clk-imx6sx.c             | 14 +++++++++++---
+ drivers/clk/imx/clk-imx8-acm.c           | 33 +++++++++++++++++---------------
+ drivers/clk/imx/clk-imx8dxl-rsrc.c       |  3 +--
+ drivers/clk/imx/clk-imx8mq.c             | 17 +++++++++-------
+ drivers/clk/imx/clk-imx8qm-rsrc.c        |  5 ++---
+ drivers/clk/imx/clk-imx8qxp-lpcg.h       |  1 -
+ drivers/clk/imx/clk-imx8qxp-rsrc.c       |  4 +++-
+ drivers/clk/imx/clk-imx8qxp.c            | 13 ++++++++++---
+ drivers/clk/imx/clk-scu.c                | 20 +++++++++++++++++++
+ include/dt-bindings/clock/imx8mp-clock.h |  1 -
+ 11 files changed, 76 insertions(+), 36 deletions(-)
