@@ -2,41 +2,41 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 121D8C25B40
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Oct 2023 13:00:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37F3CC25B41
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Oct 2023 13:00:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377413AbjJTNAe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Oct 2023 09:00:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46864 "EHLO
+        id S1377401AbjJTNAf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Oct 2023 09:00:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377396AbjJTNAc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Oct 2023 09:00:32 -0400
+        with ESMTP id S1377017AbjJTNAe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Oct 2023 09:00:34 -0400
 Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E349CD6A;
-        Fri, 20 Oct 2023 06:00:29 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0C17D68;
+        Fri, 20 Oct 2023 06:00:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1697806830; x=1729342830;
+  t=1697806831; x=1729342831;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=6NsjdVRKrU1cywbzFwvQUQKcvsrnAUc1urD+yHBG+gw=;
-  b=GMrSKwaT94mK7uFMHwo1rlQbIAwfiSeRGZx6hSLPZhOciekVPSCJmVFL
-   7WCeKOu6660Zt/78JVnwHm7Kg1xl+DBARCVbOJPFjdyn4eqVGKk7I18Gk
-   Rj4B+rFK8lFtcBJEGnplYULeln6npw94CmaM4Mm//eyzEiwQIxi3zXmRF
-   K7xE+c8Dhyj7KAJZRKxXsauUe66VjFAQN0LTjBsEp2IR3b19l8lr9ruu8
-   A3rjDmGQa2zaVIujUh1dYi7pD2BqC3fctZchKcGRCm6Zn3hvEa56Z30J2
-   LgcabJv6B0AxOhmhjziFSUmIYF9cWm0rkeCQhOK36+vRMneNBLrdQsZ8W
+  bh=1v0FIctfXRxXXdGfP79mZdDhr3QMXDS4n7+VsOpM9N4=;
+  b=jayYf5Ruc9xm4OmC3zZHU9ayycL/bCn+Mu4PLDPQUlIm1R0fTLUNhdAV
+   CSZVpcP6fRRdfCPuqSwnLGTMorE4DklwfrxWxI1ig/CwkBgDD+s8gKK4B
+   9s6NMmxPfKOdDDrhOQTekuGO2SuV6CIB9jlqyXqUgLNXipJHkP+ma7eff
+   4KkZBL9J6bmzU3t0XHQzV29JMz5RU53wGrDa+IIdFSOmdS0fb+UWBrK1o
+   SLnKAP/jojUHubjVBzfOUfK8F8hB9050MEu+58rRhQybTl7pW8b1ae03F
+   g1U9Sa6iKV08iA5Lv0eRmM5upRdY74qMm4MwJnsLJbptjlmauBen9gsSg
    A==;
 X-IronPort-AV: E=Sophos;i="6.03,238,1694728800"; 
-   d="scan'208";a="33575471"
+   d="scan'208";a="33575474"
 Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 20 Oct 2023 15:00:22 +0200
+  by mx1.tq-group.com with ESMTP; 20 Oct 2023 15:00:23 +0200
 Received: from steina-w.tq-net.de (steina-w.tq-net.de [10.123.53.18])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id 74C8B280086;
-        Fri, 20 Oct 2023 15:00:22 +0200 (CEST)
+        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id 21D4E280086;
+        Fri, 20 Oct 2023 15:00:23 +0200 (CEST)
 From:   Alexander Stein <alexander.stein@ew.tq-group.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -55,9 +55,9 @@ Cc:     Alexander Stein <alexander.stein@ew.tq-group.com>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux@ew.tq-group.com, linux-clk@vger.kernel.org,
         linux-pm@vger.kernel.org
-Subject: [PATCH 3/5] arm64: dts: imx93: Add LCDIF & LDB nodes
-Date:   Fri, 20 Oct 2023 15:00:16 +0200
-Message-Id: <20231020130019.665853-4-alexander.stein@ew.tq-group.com>
+Subject: [PATCH 5/5] arm64: dts: mba93xxla: Add LVDS overlay
+Date:   Fri, 20 Oct 2023 15:00:18 +0200
+Message-Id: <20231020130019.665853-6-alexander.stein@ew.tq-group.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231020130019.665853-1-alexander.stein@ew.tq-group.com>
 References: <20231020130019.665853-1-alexander.stein@ew.tq-group.com>
@@ -67,110 +67,126 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-LCDIF port 1 is directly attached to the LVDS Display Bridge (LDB).
-Both need the same clock source (VIDEO_PLL1).
+This adds the overlay for the Tinma TM070JVHG33 LVDS display.
 
 Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 ---
- arch/arm64/boot/dts/freescale/imx93.dtsi | 76 ++++++++++++++++++++++++
- 1 file changed, 76 insertions(+)
+ arch/arm64/boot/dts/freescale/Makefile        |  3 ++
+ ...3-tqma9352-mba93xxla-lvds-tm070jvhg33.dtso | 45 +++++++++++++++++++
+ .../freescale/imx93-tqma9352-mba93xxla.dts    | 27 +++++++++++
+ 3 files changed, 75 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxla-lvds-tm070jvhg33.dtso
 
-diff --git a/arch/arm64/boot/dts/freescale/imx93.dtsi b/arch/arm64/boot/dts/freescale/imx93.dtsi
-index ceccf4766440..c0213850445d 100644
---- a/arch/arm64/boot/dts/freescale/imx93.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx93.dtsi
-@@ -1037,6 +1037,8 @@ s4muap: mailbox@47520000 {
- 		media_blk_ctrl: system-controller@4ac10000 {
- 			compatible = "fsl,imx93-media-blk-ctrl", "syscon";
- 			reg = <0x4ac10000 0x10000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
- 			power-domains = <&mediamix>;
- 			clocks = <&clk IMX93_CLK_MEDIA_APB>,
- 				 <&clk IMX93_CLK_MEDIA_AXI>,
-@@ -1050,8 +1052,82 @@ media_blk_ctrl: system-controller@4ac10000 {
- 				 <&clk IMX93_CLK_MIPI_DSI_GATE>;
- 			clock-names = "apb", "axi", "nic", "disp", "cam",
- 				      "pxp", "lcdif", "isi", "csi", "dsi";
-+			assigned-clocks = <&clk IMX93_CLK_MEDIA_AXI>,
-+					  <&clk IMX93_CLK_MEDIA_APB>,
-+					  <&clk IMX93_CLK_VIDEO_PLL>,
-+					  <&clk IMX93_CLK_MEDIA_DISP_PIX>;
-+			assigned-clock-parents = <&clk IMX93_CLK_SYS_PLL_PFD1>,
-+						 <&clk IMX93_CLK_SYS_PLL_PFD1_DIV2>,
-+						 <&clk IMX93_CLK_24M>,
-+						 <&clk IMX93_CLK_VIDEO_PLL>;
-+			assigned-clock-rates = <400000000>, <133333333>;
- 			#power-domain-cells = <1>;
- 			status = "disabled";
+diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
+index ba70adc51bef..85802bc1639f 100644
+--- a/arch/arm64/boot/dts/freescale/Makefile
++++ b/arch/arm64/boot/dts/freescale/Makefile
+@@ -191,6 +191,9 @@ dtb-$(CONFIG_ARCH_MXC) += imx93-11x11-evk.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx93-tqma9352-mba93xxca.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx93-tqma9352-mba93xxla.dtb
+ 
++imx93-tqma9352-mba93xxla-lvds-tm070jvhg33-dtbs += imx93-tqma9352-mba93xxla.dtb imx93-tqma9352-mba93xxla-lvds-tm070jvhg33.dtbo
++dtb-$(CONFIG_ARCH_MXC) += imx93-tqma9352-mba93xxla-lvds-tm070jvhg33.dtb
 +
-+			lvds_bridge: bridge@20 {
-+				compatible = "fsl,imx93-ldb";
-+				reg = <0x20 0x4>, <0x24 0x4>;
-+				reg-names = "ldb", "lvds";
-+				clocks = <&clk IMX93_CLK_LVDS_GATE>;
-+				clock-names = "ldb";
-+				assigned-clocks = <&clk IMX93_CLK_MEDIA_LDB>;
-+				assigned-clock-parents = <&clk IMX93_CLK_VIDEO_PLL>;
-+				status = "disabled";
+ imx8mm-venice-gw72xx-0x-imx219-dtbs	:= imx8mm-venice-gw72xx-0x.dtb imx8mm-venice-gw72xx-0x-imx219.dtbo
+ imx8mm-venice-gw72xx-0x-rpidsi-dtbs	:= imx8mm-venice-gw72xx-0x.dtb imx8mm-venice-gw72xx-0x-rpidsi.dtbo
+ imx8mm-venice-gw72xx-0x-rs232-rts-dtbs	:= imx8mm-venice-gw72xx-0x.dtb imx8mm-venice-gw72xx-0x-rs232-rts.dtbo
+diff --git a/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxla-lvds-tm070jvhg33.dtso b/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxla-lvds-tm070jvhg33.dtso
+new file mode 100644
+index 000000000000..9eb24abca6bf
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxla-lvds-tm070jvhg33.dtso
+@@ -0,0 +1,45 @@
++// SPDX-License-Identifier: (GPL-2.0-or-later OR MIT)
++/*
++ * Copyright (c) 2023 TQ-Systems GmbH <linux@ew.tq-group.com>,
++ * D-82229 Seefeld, Germany.
++ * Author: Alexander Stein
++ */
 +
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
++#include <dt-bindings/clock/imx93-clock.h>
++#include <dt-bindings/gpio/gpio.h>
 +
-+					port@0 {
-+						reg = <0>;
++/dts-v1/;
++/plugin/;
 +
-+						ldb_from_lcdif: endpoint {
-+							remote-endpoint = <&lcdif_to_ldb>;
-+						};
-+					};
++&{/} {
++	compatible = "tq,imx93-tqma9352-mba93xxla",
++		     "tq,imx93-tqma9352", "fsl,imx93";
++};
 +
-+					port@1 {
-+						reg = <1>;
++&backlight_lvds {
++	status = "okay";
++};
 +
-+						ldb_lvds: endpoint {
-+						};
-+					};
-+				};
++&display {
++	compatible = "tianma,tm070jvhg33";
++	status = "okay";
++};
++
++&lcdif {
++	assigned-clocks = <&clk IMX93_CLK_VIDEO_PLL>,
++			  <&clk IMX93_CLK_MEDIA_DISP_PIX>;
++	assigned-clock-rates = <477400000>;
++	status = "okay";
++};
++
++&lvds_bridge {
++	status = "okay";
++};
++
++&media_blk_ctrl {
++	status = "okay";
++};
++
++&tpm5 {
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxla.dts b/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxla.dts
+index f0d0bf84f6ba..84fdeaaaea44 100644
+--- a/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxla.dts
++++ b/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxla.dts
+@@ -40,6 +40,23 @@ backlight_lvds: backlight {
+ 		status = "disabled";
+ 	};
+ 
++	display: display {
++		/*
++		 * Display is not fixed, so compatible has to be added from
++		 * DT overlay
++		 */
++		power-supply = <&reg_3v3>;
++		enable-gpios = <&expander2 1 GPIO_ACTIVE_HIGH>;
++		backlight = <&backlight_lvds>;
++		status = "disabled";
++
++		port {
++			panel_in_lvds0: endpoint {
++				remote-endpoint = <&ldb_lvds>;
 +			};
 +		};
++	};
 +
-+		lcdif: display-controller@4ae30000 {
-+			compatible = "fsl,imx93-lcdif";
-+			reg = <0x4ae30000 0x23c>;
-+			interrupts = <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clk IMX93_CLK_MEDIA_DISP_PIX>,
-+				 <&clk IMX93_CLK_LCDIF_GATE>,
-+				 <&clk IMX93_CLK_MEDIA_AXI>;
-+			clock-names = "pix", "axi", "disp_axi";
-+			assigned-clocks = <&clk IMX93_CLK_VIDEO_PLL>,
-+					  <&clk IMX93_CLK_MEDIA_DISP_PIX>;
-+			assigned-clock-parents = <&clk IMX93_CLK_24M>,
-+						 <&clk IMX93_CLK_VIDEO_PLL>;
-+			power-domains = <&media_blk_ctrl IMX93_MEDIABLK_PD_LCDIF>;
-+			status = "disabled";
-+
-+			port {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				lcdif_to_dsi: endpoint@0 {
-+					reg = <0>;
-+				};
-+
-+				lcdif_to_ldb: endpoint@1 {
-+					reg = <1>;
-+					remote-endpoint = <&ldb_from_lcdif>;
-+				};
-+
-+				lcdif_to_dpi: endpoint@2 {
-+					reg = <2>;
-+				};
-+			};
- 		};
+ 	clk_dp: clk-dp {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+@@ -420,6 +437,16 @@ &lpuart8 {
+ 	status = "okay";
+ };
  
- 		ddr-pmu@4e300dc0 {
++&lvds_bridge {
++	ports {
++		port@1 {
++			ldb_lvds: endpoint {
++				remote-endpoint = <&panel_in_lvds0>;
++			};
++		};
++	};
++};
++
+ &pcf85063 {
+ 	/* RTC_EVENT# is connected on MBa93xxLA */
+ 	pinctrl-names = "default";
 -- 
 2.34.1
 
