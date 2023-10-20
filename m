@@ -2,165 +2,153 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D568FCDB47E
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Oct 2023 05:06:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EAA9CDB474
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Oct 2023 06:20:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345092AbjJTFGw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Oct 2023 01:06:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44598 "EHLO
+        id S1346966AbjJTGU0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Oct 2023 02:20:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231542AbjJTFGv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Oct 2023 01:06:51 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFE5ED4C
-        for <linux-clk@vger.kernel.org>; Thu, 19 Oct 2023 22:06:48 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id 2adb3069b0e04-507a936f4a9so487565e87.1
-        for <linux-clk@vger.kernel.org>; Thu, 19 Oct 2023 22:06:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1697778407; x=1698383207; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e0jgQzh15tbFUAVOhe9LIEhZLsMkajruBrfzpNc5b9w=;
-        b=kzWF0HkC/gBYvQ53HKn0xRQyQNf5kiYfD/seJb6mKvt/ZwyiI1h5rBDX8C84Unbvnw
-         gJl40GfQ1MyFwmwnYyGB0ToQUzbiGNLRkQiXnU6a4lB1XT1rnEQLDenOQ1WafRZXTFiY
-         6cPo3CEseAxc94Pb++1ppswTCdMTukdogN4Aw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697778407; x=1698383207;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e0jgQzh15tbFUAVOhe9LIEhZLsMkajruBrfzpNc5b9w=;
-        b=ECqqY4LmRiPCeO5zrV4MfwNextvvWDZWO4cmOjS6zeMZ7fOIVyMoBAuNmU8sfRosRs
-         h48R8f20mAw6LyU+Y/SRfiRSh/a8Iy77nyO96alShSV5mPsGQpZNGj2HjZ97E9Vcjt8S
-         ZJ9TEE9+34AKk3suBMgDY4Q8ccWA8gvQNkZdGe8QjKLyxJZGwEvGUckbUSzU+3z6fUUv
-         DDJ3l7tv5sU0N685VwAiG2FkG6P6oQVTzpUnJdvhZUlB4X9T//pSZyxs3/qSObYXFYUV
-         wQcvPRa0NmEyqP6bH/Y+1NcBJjFfKk5Gl65m1P9IlV+ct4FzmdNywon0qZnVfeZEfnSu
-         ZhWw==
-X-Gm-Message-State: AOJu0YzvGkaAjCngITLPndSWToocMgi4+qHe/MDtJa5JFAq63kA5NNhD
-        6uxt2NMaV/Rp2ycNsiQEPoI6lT+Q1AOWOWzZaMD+lQ==
-X-Google-Smtp-Source: AGHT+IFmCdlNIlds8uaCs9bu6h6l6p+rnQ0UHqe7D43uyuGzPJgRp6m8F0GVh5IYUPL/Omk3FKAR5Km/rjyluUqBl80=
-X-Received: by 2002:a05:6512:20d2:b0:500:bf33:3add with SMTP id
- u18-20020a05651220d200b00500bf333addmr380886lfr.47.1697778406807; Thu, 19 Oct
- 2023 22:06:46 -0700 (PDT)
+        with ESMTP id S1346657AbjJTGUZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Oct 2023 02:20:25 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48444D46;
+        Thu, 19 Oct 2023 23:20:24 -0700 (PDT)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39K4jL25008824;
+        Fri, 20 Oct 2023 06:19:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=HFa/WvIz9fMd/sjLZAHrqLbilC8HNxmewxOYOV9Hvgc=;
+ b=b8gM4kDv1qMTapnXLGh2KPHt/9NXM9hFNlIAFj4/4JiXdKzbbh2Bk5NgI2oBYOqlU7R2
+ J7lcMEZIvNl02rCJoKUBnaN9dmrM/ccAlo0hkcNAhOISouugyEW77DvR0hnzX8YwOOTe
+ FvCD8neOLPM8x5gdZ6UtxZeG74Vhg/JKrLyfeIYczSK1VXBalFevI7RD/f1rWsqZGkfE
+ 1fJEjvZPLJBeAvs6gcU/PUsE7DkkNYPGAlWmJwfVQpT5Yqn9CP0/O8r6Tu9JbZGgMnr/
+ jcplexlQSGW0fAH9YWB4h7NwAzdloUAeTVQm88bUGt7UYw0LmiiYHHuAtH80rcYcEyQd mg== 
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3tubwr8wa5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 20 Oct 2023 06:19:54 +0000
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+        by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 39K6JrIN006105
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 20 Oct 2023 06:19:53 GMT
+Received: from varda-linux.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.39; Thu, 19 Oct 2023 23:19:48 -0700
+From:   Varadarajan Narayanan <quic_varada@quicinc.com>
+To:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>, <rafael@kernel.org>,
+        <viresh.kumar@linaro.org>, <ilia.lin@kernel.org>,
+        <sivaprak@codeaurora.org>, <quic_kathirav@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>
+CC:     Varadarajan Narayanan <quic_varada@quicinc.com>
+Subject: [PATCH v5 0/9] Enable cpufreq for IPQ5332 & IPQ9574
+Date:   Fri, 20 Oct 2023 11:49:30 +0530
+Message-ID: <cover.1697781921.git.quic_varada@quicinc.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-References: <20231019124914.13545-1-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20231019124914.13545-1-angelogioacchino.delregno@collabora.com>
-From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Fri, 20 Oct 2023 13:06:35 +0800
-Message-ID: <CAGXv+5H0rUajeU-i8nYyV2xWFQTnzqxioZCCyyP_RZXKqmcugQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: mediatek: mt8186: Change I2C 4/5/6 ap clocks parent
- to infra
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     sboyd@kernel.org, mturquette@baylibre.com, matthias.bgg@gmail.com,
-        u.kleine-koenig@pengutronix.de, chun-jie.chen@mediatek.com,
-        miles.chen@mediatek.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: _t9DdBR2r8hfVrj6Sp2voBzTwx9dtkwn
+X-Proofpoint-GUID: _t9DdBR2r8hfVrj6Sp2voBzTwx9dtkwn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-10-20_04,2023-10-19_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=939
+ priorityscore=1501 impostorscore=0 spamscore=0 clxscore=1015 bulkscore=0
+ mlxscore=0 malwarescore=0 phishscore=0 lowpriorityscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2310170001
+ definitions=main-2310200053
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Oct 19, 2023 at 8:49=E2=80=AFPM AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
->
-> Fix the parenting of clocks imp_iic_wrap_ap_clock_i2c{4-6}, as those
-> are effectively parented to infra_ao_i2c{4-6} and not to the I2C_AP.
-> This permits the correct (and full) enablement and disablement of the
-> I2C4, I2C5 and I2C6 bus clocks, satisfying the whole clock tree of
-> those.
->
-> As an example, when requesting to enable imp_iic_wrap_ap_clock_i2c4:
->
-> Before: infra_ao_i2c_ap -> imp_iic_wrap_ap_clock_i2c4
-> After:  infra_ao_i2c_ap -> infra_ao_i2c4 -> imp_iic_wrap_ap_clock_i2c4
->
-> Fixes: 66cd0b4b0ce5 ("clk: mediatek: Add MT8186 imp i2c wrapper clock sup=
-port")
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
-abora.com>
+Depends On:
+https://lore.kernel.org/lkml/20230913-gpll_cleanup-v2-6-c8ceb1a37680@quicinc.com/T/
 
-I'm curious about what led to discovering this error?
+This patch series aims to enable cpufreq for IPQ5332 and IPQ9574.
+For IPQ5332, a minor enhancement to Stromer Plus ops and a safe
+source switch is needed before cpu freq can be enabled.
 
-ChenYu
+These are also included in this series. Posting this as a single
+series. Please let me know if this is not correct, will split in
+the subsequent revisions.
 
-> ---
->  drivers/clk/mediatek/clk-mt8186-imp_iic_wrap.c | 6 +++---
->  drivers/clk/mediatek/clk-mt8186-infra_ao.c     | 6 +++---
->  2 files changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/clk/mediatek/clk-mt8186-imp_iic_wrap.c b/drivers/clk=
-/mediatek/clk-mt8186-imp_iic_wrap.c
-> index 640ccb553274..871b8ff4c287 100644
-> --- a/drivers/clk/mediatek/clk-mt8186-imp_iic_wrap.c
-> +++ b/drivers/clk/mediatek/clk-mt8186-imp_iic_wrap.c
-> @@ -29,11 +29,11 @@ static const struct mtk_gate imp_iic_wrap_clks[] =3D =
-{
->         GATE_IMP_IIC_WRAP(CLK_IMP_IIC_WRAP_AP_CLOCK_I2C3,
->                 "imp_iic_wrap_ap_clock_i2c3", "infra_ao_i2c_ap", 3),
->         GATE_IMP_IIC_WRAP(CLK_IMP_IIC_WRAP_AP_CLOCK_I2C4,
-> -               "imp_iic_wrap_ap_clock_i2c4", "infra_ao_i2c_ap", 4),
-> +               "imp_iic_wrap_ap_clock_i2c4", "infra_ao_i2c4", 4),
->         GATE_IMP_IIC_WRAP(CLK_IMP_IIC_WRAP_AP_CLOCK_I2C5,
-> -               "imp_iic_wrap_ap_clock_i2c5", "infra_ao_i2c_ap", 5),
-> +               "imp_iic_wrap_ap_clock_i2c5", "infra_ao_i2c5", 5),
->         GATE_IMP_IIC_WRAP(CLK_IMP_IIC_WRAP_AP_CLOCK_I2C6,
-> -               "imp_iic_wrap_ap_clock_i2c6", "infra_ao_i2c_ap", 6),
-> +               "imp_iic_wrap_ap_clock_i2c6", "infra_ao_i2c6", 6),
->         GATE_IMP_IIC_WRAP(CLK_IMP_IIC_WRAP_AP_CLOCK_I2C7,
->                 "imp_iic_wrap_ap_clock_i2c7", "infra_ao_i2c_ap", 7),
->         GATE_IMP_IIC_WRAP(CLK_IMP_IIC_WRAP_AP_CLOCK_I2C8,
-> diff --git a/drivers/clk/mediatek/clk-mt8186-infra_ao.c b/drivers/clk/med=
-iatek/clk-mt8186-infra_ao.c
-> index 837304cd0ed7..c490f1a310f8 100644
-> --- a/drivers/clk/mediatek/clk-mt8186-infra_ao.c
-> +++ b/drivers/clk/mediatek/clk-mt8186-infra_ao.c
-> @@ -132,7 +132,7 @@ static const struct mtk_gate infra_ao_clks[] =3D {
->         GATE_INFRA_AO2(CLK_INFRA_AO_AUDIO_26M_BCLK, "infra_ao_audio26m", =
-"clk26m", 4),
->         GATE_INFRA_AO2(CLK_INFRA_AO_SSUSB_TOP_P1_HCLK, "infra_ao_ssusb_p1=
-_hclk", "top_axi", 5),
->         GATE_INFRA_AO2(CLK_INFRA_AO_SPI1, "infra_ao_spi1", "top_spi", 6),
-> -       GATE_INFRA_AO2(CLK_INFRA_AO_I2C4, "infra_ao_i2c4", "top_i2c", 7),
-> +       GATE_INFRA_AO2(CLK_INFRA_AO_I2C4, "infra_ao_i2c4", "infra_ao_i2c_=
-ap", 7),
->         GATE_INFRA_AO2(CLK_INFRA_AO_MODEM_TEMP_SHARE, "infra_ao_mdtemp", =
-"clk26m", 8),
->         GATE_INFRA_AO2(CLK_INFRA_AO_SPI2, "infra_ao_spi2", "top_spi", 9),
->         GATE_INFRA_AO2(CLK_INFRA_AO_SPI3, "infra_ao_spi3", "top_spi", 10)=
-,
-> @@ -145,7 +145,7 @@ static const struct mtk_gate infra_ao_clks[] =3D {
->         GATE_INFRA_AO2_FLAGS(CLK_INFRA_AO_SSPM, "infra_ao_sspm", "top_ssp=
-m", 15, CLK_IS_CRITICAL),
->         GATE_INFRA_AO2(CLK_INFRA_AO_SSUSB_TOP_P1_SYS,
->                        "infra_ao_ssusb_p1_sys", "top_ssusb_1p", 16),
-> -       GATE_INFRA_AO2(CLK_INFRA_AO_I2C5, "infra_ao_i2c5", "top_i2c", 18)=
-,
-> +       GATE_INFRA_AO2(CLK_INFRA_AO_I2C5, "infra_ao_i2c5", "infra_ao_i2c_=
-ap", 18),
->         GATE_INFRA_AO2(CLK_INFRA_AO_I2C5_ARBITER, "infra_ao_i2c5a", "top_=
-i2c", 19),
->         GATE_INFRA_AO2(CLK_INFRA_AO_I2C5_IMM, "infra_ao_i2c5_imm", "top_i=
-2c", 20),
->         GATE_INFRA_AO2(CLK_INFRA_AO_I2C1_ARBITER, "infra_ao_i2c1a", "top_=
-i2c", 21),
-> @@ -167,7 +167,7 @@ static const struct mtk_gate infra_ao_clks[] =3D {
->                              CLK_IS_CRITICAL),
->         GATE_INFRA_AO3_FLAGS(CLK_INFRA_AO_SSPM_32K_SELF, "infra_ao_sspm_3=
-2k", "clk32k", 4,
->                              CLK_IS_CRITICAL),
-> -       GATE_INFRA_AO3(CLK_INFRA_AO_I2C6, "infra_ao_i2c6", "top_i2c", 6),
-> +       GATE_INFRA_AO3(CLK_INFRA_AO_I2C6, "infra_ao_i2c6", "infra_ao_i2c_=
-ap", 6),
->         GATE_INFRA_AO3(CLK_INFRA_AO_AP_MSDC0, "infra_ao_ap_msdc0", "top_a=
-xi", 7),
->         GATE_INFRA_AO3(CLK_INFRA_AO_MD_MSDC0, "infra_ao_md_msdc0", "top_a=
-xi", 8),
->         GATE_INFRA_AO3(CLK_INFRA_AO_MSDC0_SRC, "infra_ao_msdc0_clk", "top=
-_msdc50_0", 9),
-> --
-> 2.42.0
->
+Passed the following DT related validations
+make W=1 ARCH=arm64 -j16 DT_CHECKER_FLAGS='-v -m' dt_binding_check DT_SCHEMA_FILES=qcom
+make W=1 ARCH=arm64 -j16 CHECK_DTBS=y DT_SCHEMA_FILES=qcom dtbs_check
+
+For IPQ5332:
+~~~~~~~~~~~
+	* This patch series introduces stromer plus ops which
+	  builds on stromer ops and implements a different
+	  set_rate and determine_rate.
+
+	  A different set_rate is needed since stromer plus PLLs
+	  do not support dynamic frequency scaling. To switch
+	  between frequencies, we have to shut down the PLL,
+	  configure the L and ALPHA values and turn on again. So
+	  introduce the separate set of ops for Stromer Plus PLL.
+
+	* Update ipq_pll_stromer_plus to use clk_alpha_pll_stromer_plus_ops
+	  instead of clk_alpha_pll_stromer_ops.
+
+	* Set 'l' value to a value that is supported on all SKUs.
+
+	* Provide safe source switch for a53pll
+
+	* Include IPQ5332 in cpufreq nvmem framework
+
+	* Add OPP details to device tree
+
+For IPQ9574:
+~~~~~~~~~~~
+	* Include IPQ9574 in cpufreq nvmem framework
+
+	* Add OPP details to device tree
+
+Removed 2 patches from V1 as they have been merged
+	* dt-bindings: cpufreq: qcom-cpufreq-nvmem: document IPQ5332
+	* dt-bindings: cpufreq: qcom-cpufreq-nvmem: document IPQ9574
+
+v4:	Included a patch to fix 'kernel test robot' build error --
+	https://lore.kernel.org/r/202310181650.g8THtfsm-lkp@intel.com/
+
+v5:	Use devm_clk_notifier_register
+	Merge IPQ53xx and IPQ95xx cases with APQ8096 for speed bin selection
+	Add reviewed by tags
+Varadarajan Narayanan (9):
+  clk: qcom: config IPQ_APSS_6018 should depend on QCOM_SMEM
+  clk: qcom: clk-alpha-pll: introduce stromer plus ops
+  clk: qcom: apss-ipq-pll: Use stromer plus ops for stromer plus pll
+  clk: qcom: apss-ipq-pll: Fix 'l' value for ipq5332_pll_config
+  clk: qcom: apss-ipq6018: ipq5332: add safe source switch for a53pll
+  cpufreq: qti: Enable cpufreq for ipq53xx
+  arm64: dts: qcom: ipq5332: populate the opp table based on the eFuse
+  cpufreq: qti: Introduce cpufreq for ipq95xx
+  arm64: dts: qcom: ipq9574: populate the opp table based on the eFuse
+
+ arch/arm64/boot/dts/qcom/ipq5332.dtsi | 19 +++++++++--
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi | 21 +++++++++++-
+ drivers/clk/qcom/Kconfig              |  1 +
+ drivers/clk/qcom/apss-ipq-pll.c       |  4 +--
+ drivers/clk/qcom/apss-ipq6018.c       | 58 +++++++++++++++++++++++++++++++-
+ drivers/clk/qcom/clk-alpha-pll.c      | 63 +++++++++++++++++++++++++++++++++++
+ drivers/clk/qcom/clk-alpha-pll.h      |  1 +
+ drivers/cpufreq/cpufreq-dt-platdev.c  |  2 ++
+ drivers/cpufreq/qcom-cpufreq-nvmem.c  | 12 +++++++
+ 9 files changed, 174 insertions(+), 7 deletions(-)
+
+-- 
+2.7.4
+
