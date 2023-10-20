@@ -2,79 +2,144 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CE49C001DF
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Oct 2023 07:09:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 497C0C001DF
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Oct 2023 07:52:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376380AbjJTHJy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Oct 2023 03:09:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51144 "EHLO
+        id S235636AbjJTHws (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Oct 2023 03:52:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235628AbjJTHJx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Oct 2023 03:09:53 -0400
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE5A51AE
-        for <linux-clk@vger.kernel.org>; Fri, 20 Oct 2023 00:09:50 -0700 (PDT)
-Received: by mail-pj1-x1035.google.com with SMTP id 98e67ed59e1d1-27d1aee5aa1so423192a91.0
-        for <linux-clk@vger.kernel.org>; Fri, 20 Oct 2023 00:09:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697785790; x=1698390590; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CcNPWYHZsV1jl4Y6m712SS9BEogduv8nGwwMCSKf3jc=;
-        b=MVcyaPq5vwEGkbz0OxE4C2wShgo50AIMusLupnmjKwa0fJkJApLkKodQc8QHnYqp3/
-         XFtEB/OV61TH0+3t0O+JOTpGLJbOn8zSXbJs3vHPpRiPt8hbeJLZs1xX4ew8v94ZKagl
-         9yPwibQFin8xZHp+FkXeB/BmqFWaRIAFJ9BErkab6xxIQMWb6kCj4IDJZEPzEAbVwKdc
-         OARsNzbYtvyCr1uLOguJM63TaU00HowTIBzVQmh1n5fpYcSd2EmURshAzyFLUpc6GoSi
-         FrDi4q74p9qFup3PLmxSr7FqCOpstSxANN/et4csZUTq42zPb4/yDJBOQMESzxi0pcv1
-         eIQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697785790; x=1698390590;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CcNPWYHZsV1jl4Y6m712SS9BEogduv8nGwwMCSKf3jc=;
-        b=qlJV7Mtme1NUNEeUyX4tke7VjPq0mZBkVsHAxN5kY1I50g0xP5LVY57RXMEbozTXq7
-         5L3k4b2kO+p2QH8Zx/AG0OXo++FuMgkTtslg7iSX/ABKG27ME1hwB8Dy+aifG+zj2yWW
-         7DALUg2eoVg+q/HJtHr0OeagVrzerMI//dHE3Bah3g3Yx5P/T8IivnWoWHRHYldIIz9j
-         2vOnLyPAzYGrJZKops4OIk/HhLeD64YzePKUd28OmUPEfvH8WXJEIQN2NQ97GWI6tkJF
-         E77qD60qlNkLtkzms5Cnykk2vuA+Z607wA4HiGxWnaljkbaxymQ5nMQmiV1Zj9FSULAI
-         x0BQ==
-X-Gm-Message-State: AOJu0YzPkjiX4lZLM7TTvxvpT/d3EIC4Lh+fkQDnn/o4CIfXJr6CaIQB
-        r7jxbcE0nWpka7zjsyCZ5BupRA==
-X-Google-Smtp-Source: AGHT+IEGbSTpFO9vjBNdmRVUt1VTUISUjGcuoWitbvQsLR23qQQ7aO6ak2oavK26Yyl9K+kiLs8tsw==
-X-Received: by 2002:a17:90a:52:b0:27d:237b:5592 with SMTP id 18-20020a17090a005200b0027d237b5592mr1623090pjb.13.1697785790342;
-        Fri, 20 Oct 2023 00:09:50 -0700 (PDT)
-Received: from localhost ([122.172.80.14])
-        by smtp.gmail.com with ESMTPSA id bf15-20020a17090b0b0f00b0027463889e72sm813515pjb.55.2023.10.20.00.09.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Oct 2023 00:09:49 -0700 (PDT)
-Date:   Fri, 20 Oct 2023 12:39:47 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        rafael@kernel.org, ilia.lin@kernel.org, sivaprak@codeaurora.org,
-        quic_kathirav@quicinc.com, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v5 0/9] Enable cpufreq for IPQ5332 & IPQ9574
-Message-ID: <20231020070947.cwigtaa2haij56hz@vireshk-i7>
-References: <cover.1697781921.git.quic_varada@quicinc.com>
+        with ESMTP id S230371AbjJTHwr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Oct 2023 03:52:47 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 908C1E8;
+        Fri, 20 Oct 2023 00:52:45 -0700 (PDT)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 7E974660734D;
+        Fri, 20 Oct 2023 08:52:43 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1697788364;
+        bh=s6xNo054UbCmvOigN/xb7evicnVwrAIzmcYcO9sC4HE=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=b0IaizazmmKSDzATXVjDiDjuLemdxVvtGRYn996pLgephr1lWEZqMVrNYJChj0LB0
+         FauAoQ/w+XXMFfhniM08Wdipt1DJGI8CjuK8HKX4auu2pQPGkP6XFh71QTWwJ265ea
+         Pl+MzL4qicK0k06YStkLzIrJrzuoRyXwDRr9x98atSPXnEkBFuwgom1IUCh2VD/wd1
+         0SPkkJu1+JyJUEmSdlmeiEoIc6mbaEySint/40eTGZ1pV+YIlZORnCkwddrNkWjfu7
+         3HY7ix3DucBa2WtvafdSdN0mIEiLsff+e6tWZjgkd1bXwBKaYQ87tiuEuVxXsraVdQ
+         BWYTqmEsPmXOA==
+Message-ID: <0572689f-c127-4603-b21a-303f4f20f7d7@collabora.com>
+Date:   Fri, 20 Oct 2023 09:52:40 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1697781921.git.quic_varada@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: mediatek: mt8186: Change I2C 4/5/6 ap clocks parent
+ to infra
+To:     Chen-Yu Tsai <wenst@chromium.org>
+Cc:     sboyd@kernel.org, mturquette@baylibre.com, matthias.bgg@gmail.com,
+        u.kleine-koenig@pengutronix.de, chun-jie.chen@mediatek.com,
+        miles.chen@mediatek.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+References: <20231019124914.13545-1-angelogioacchino.delregno@collabora.com>
+ <CAGXv+5H0rUajeU-i8nYyV2xWFQTnzqxioZCCyyP_RZXKqmcugQ@mail.gmail.com>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <CAGXv+5H0rUajeU-i8nYyV2xWFQTnzqxioZCCyyP_RZXKqmcugQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 20-10-23, 11:49, Varadarajan Narayanan wrote:
-> Varadarajan Narayanan (9):
->   cpufreq: qti: Enable cpufreq for ipq53xx
->   cpufreq: qti: Introduce cpufreq for ipq95xx
+Il 20/10/23 07:06, Chen-Yu Tsai ha scritto:
+> On Thu, Oct 19, 2023 at 8:49 PM AngeloGioacchino Del Regno
+> <angelogioacchino.delregno@collabora.com> wrote:
+>>
+>> Fix the parenting of clocks imp_iic_wrap_ap_clock_i2c{4-6}, as those
+>> are effectively parented to infra_ao_i2c{4-6} and not to the I2C_AP.
+>> This permits the correct (and full) enablement and disablement of the
+>> I2C4, I2C5 and I2C6 bus clocks, satisfying the whole clock tree of
+>> those.
+>>
+>> As an example, when requesting to enable imp_iic_wrap_ap_clock_i2c4:
+>>
+>> Before: infra_ao_i2c_ap -> imp_iic_wrap_ap_clock_i2c4
+>> After:  infra_ao_i2c_ap -> infra_ao_i2c4 -> imp_iic_wrap_ap_clock_i2c4
+>>
+>> Fixes: 66cd0b4b0ce5 ("clk: mediatek: Add MT8186 imp i2c wrapper clock support")
+>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> 
+> I'm curious about what led to discovering this error?
+> 
 
-Can I pick just these two ?
+I had lockups during boot when probing I2C, so some research led me to
+discover that the clock tree wasn't fully satisfied... :-)
 
--- 
-viresh
+Cheers,
+Angelo
+
+> ChenYu
+> 
+>> ---
+>>   drivers/clk/mediatek/clk-mt8186-imp_iic_wrap.c | 6 +++---
+>>   drivers/clk/mediatek/clk-mt8186-infra_ao.c     | 6 +++---
+>>   2 files changed, 6 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/clk/mediatek/clk-mt8186-imp_iic_wrap.c b/drivers/clk/mediatek/clk-mt8186-imp_iic_wrap.c
+>> index 640ccb553274..871b8ff4c287 100644
+>> --- a/drivers/clk/mediatek/clk-mt8186-imp_iic_wrap.c
+>> +++ b/drivers/clk/mediatek/clk-mt8186-imp_iic_wrap.c
+>> @@ -29,11 +29,11 @@ static const struct mtk_gate imp_iic_wrap_clks[] = {
+>>          GATE_IMP_IIC_WRAP(CLK_IMP_IIC_WRAP_AP_CLOCK_I2C3,
+>>                  "imp_iic_wrap_ap_clock_i2c3", "infra_ao_i2c_ap", 3),
+>>          GATE_IMP_IIC_WRAP(CLK_IMP_IIC_WRAP_AP_CLOCK_I2C4,
+>> -               "imp_iic_wrap_ap_clock_i2c4", "infra_ao_i2c_ap", 4),
+>> +               "imp_iic_wrap_ap_clock_i2c4", "infra_ao_i2c4", 4),
+>>          GATE_IMP_IIC_WRAP(CLK_IMP_IIC_WRAP_AP_CLOCK_I2C5,
+>> -               "imp_iic_wrap_ap_clock_i2c5", "infra_ao_i2c_ap", 5),
+>> +               "imp_iic_wrap_ap_clock_i2c5", "infra_ao_i2c5", 5),
+>>          GATE_IMP_IIC_WRAP(CLK_IMP_IIC_WRAP_AP_CLOCK_I2C6,
+>> -               "imp_iic_wrap_ap_clock_i2c6", "infra_ao_i2c_ap", 6),
+>> +               "imp_iic_wrap_ap_clock_i2c6", "infra_ao_i2c6", 6),
+>>          GATE_IMP_IIC_WRAP(CLK_IMP_IIC_WRAP_AP_CLOCK_I2C7,
+>>                  "imp_iic_wrap_ap_clock_i2c7", "infra_ao_i2c_ap", 7),
+>>          GATE_IMP_IIC_WRAP(CLK_IMP_IIC_WRAP_AP_CLOCK_I2C8,
+>> diff --git a/drivers/clk/mediatek/clk-mt8186-infra_ao.c b/drivers/clk/mediatek/clk-mt8186-infra_ao.c
+>> index 837304cd0ed7..c490f1a310f8 100644
+>> --- a/drivers/clk/mediatek/clk-mt8186-infra_ao.c
+>> +++ b/drivers/clk/mediatek/clk-mt8186-infra_ao.c
+>> @@ -132,7 +132,7 @@ static const struct mtk_gate infra_ao_clks[] = {
+>>          GATE_INFRA_AO2(CLK_INFRA_AO_AUDIO_26M_BCLK, "infra_ao_audio26m", "clk26m", 4),
+>>          GATE_INFRA_AO2(CLK_INFRA_AO_SSUSB_TOP_P1_HCLK, "infra_ao_ssusb_p1_hclk", "top_axi", 5),
+>>          GATE_INFRA_AO2(CLK_INFRA_AO_SPI1, "infra_ao_spi1", "top_spi", 6),
+>> -       GATE_INFRA_AO2(CLK_INFRA_AO_I2C4, "infra_ao_i2c4", "top_i2c", 7),
+>> +       GATE_INFRA_AO2(CLK_INFRA_AO_I2C4, "infra_ao_i2c4", "infra_ao_i2c_ap", 7),
+>>          GATE_INFRA_AO2(CLK_INFRA_AO_MODEM_TEMP_SHARE, "infra_ao_mdtemp", "clk26m", 8),
+>>          GATE_INFRA_AO2(CLK_INFRA_AO_SPI2, "infra_ao_spi2", "top_spi", 9),
+>>          GATE_INFRA_AO2(CLK_INFRA_AO_SPI3, "infra_ao_spi3", "top_spi", 10),
+>> @@ -145,7 +145,7 @@ static const struct mtk_gate infra_ao_clks[] = {
+>>          GATE_INFRA_AO2_FLAGS(CLK_INFRA_AO_SSPM, "infra_ao_sspm", "top_sspm", 15, CLK_IS_CRITICAL),
+>>          GATE_INFRA_AO2(CLK_INFRA_AO_SSUSB_TOP_P1_SYS,
+>>                         "infra_ao_ssusb_p1_sys", "top_ssusb_1p", 16),
+>> -       GATE_INFRA_AO2(CLK_INFRA_AO_I2C5, "infra_ao_i2c5", "top_i2c", 18),
+>> +       GATE_INFRA_AO2(CLK_INFRA_AO_I2C5, "infra_ao_i2c5", "infra_ao_i2c_ap", 18),
+>>          GATE_INFRA_AO2(CLK_INFRA_AO_I2C5_ARBITER, "infra_ao_i2c5a", "top_i2c", 19),
+>>          GATE_INFRA_AO2(CLK_INFRA_AO_I2C5_IMM, "infra_ao_i2c5_imm", "top_i2c", 20),
+>>          GATE_INFRA_AO2(CLK_INFRA_AO_I2C1_ARBITER, "infra_ao_i2c1a", "top_i2c", 21),
+>> @@ -167,7 +167,7 @@ static const struct mtk_gate infra_ao_clks[] = {
+>>                               CLK_IS_CRITICAL),
+>>          GATE_INFRA_AO3_FLAGS(CLK_INFRA_AO_SSPM_32K_SELF, "infra_ao_sspm_32k", "clk32k", 4,
+>>                               CLK_IS_CRITICAL),
+>> -       GATE_INFRA_AO3(CLK_INFRA_AO_I2C6, "infra_ao_i2c6", "top_i2c", 6),
+>> +       GATE_INFRA_AO3(CLK_INFRA_AO_I2C6, "infra_ao_i2c6", "infra_ao_i2c_ap", 6),
+>>          GATE_INFRA_AO3(CLK_INFRA_AO_AP_MSDC0, "infra_ao_ap_msdc0", "top_axi", 7),
+>>          GATE_INFRA_AO3(CLK_INFRA_AO_MD_MSDC0, "infra_ao_md_msdc0", "top_axi", 8),
+>>          GATE_INFRA_AO3(CLK_INFRA_AO_MSDC0_SRC, "infra_ao_msdc0_clk", "top_msdc50_0", 9),
+>> --
+>> 2.42.0
+>>
+
