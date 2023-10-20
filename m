@@ -2,64 +2,63 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB8B6CDB474
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Oct 2023 11:34:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BFDBC004C0
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Oct 2023 11:34:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377113AbjJTLeb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Oct 2023 07:34:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37622 "EHLO
+        id S1377053AbjJTLec (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Oct 2023 07:34:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377060AbjJTLea (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Oct 2023 07:34:30 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5CB5D4C
-        for <linux-clk@vger.kernel.org>; Fri, 20 Oct 2023 04:34:26 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-9936b3d0286so111957966b.0
-        for <linux-clk@vger.kernel.org>; Fri, 20 Oct 2023 04:34:26 -0700 (PDT)
+        with ESMTP id S1377070AbjJTLeb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Oct 2023 07:34:31 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B95DAD57
+        for <linux-clk@vger.kernel.org>; Fri, 20 Oct 2023 04:34:28 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-9bdf5829000so112201666b.0
+        for <linux-clk@vger.kernel.org>; Fri, 20 Oct 2023 04:34:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=pqrs.dk; s=google; t=1697801665; x=1698406465; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=o/lwy8WHjVXC6iZ/BJfjFekCT6EMOppAC3IWeHaAw3M=;
-        b=B5HxzUyX0e7cUREKt4T5c16c+pnDkb2FQ7ELlc+pLDarGoIgrKrVQG6D31bm6cV00g
-         bj3duNFg2cPrp68by4ThHBq1MxoJXfmbjBSl1agAy59Gguixj1fJxBy8dS0f1dF/NRro
-         HM5TAGIq6+d6QckEOVsrmELVXnFa+rY+UZtCyfFtHStZdT52xaAycvyDSzfpr5lAqRFd
-         0CSs1uEHnf68pmmGeVhtuJehicK4YQQ/A2JOypTE9hU8Td7wb+LWgcypzCMvoetWrOky
-         9jLW8kKnoaTl6jxC39WIWsHPcS1Eg36yPcj1kU5OtBmbQ9TwLeiCsalP8RLJiq1MnLuI
-         E0Tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697801665; x=1698406465;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=pqrs.dk; s=google; t=1697801667; x=1698406467; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=o/lwy8WHjVXC6iZ/BJfjFekCT6EMOppAC3IWeHaAw3M=;
-        b=qEyofEf1cWU7dvfhHQZF67u6X4s4ENC+MEg0xWQXuMGSPWYnRkNDU5IHXDXp398FdD
-         ljIz6hQrq66XBMe01t4HxQ2OQShCKfZUAp135xKcfaIxLB6j/gGpzcgxbsTYXySxgsCC
-         +jMZQTw8nYZkjcoIP6IY3LRjtCGkdGeCgNAA5TT895A7JNdA/oK/F2hstwnZEHHnSR//
-         H32HMzg0ikrt5dccnWS29F//GUfkNLi2rEGL2LYpdkfoNIedi6/O6cjDKwYR0KzPsQ8E
-         KlZNamjU+46k/TbJ2TZbHXmpIb6XndU82BMdOYzHkatzwpN6ouhmezaEMD9XECzZv6hV
-         PufQ==
-X-Gm-Message-State: AOJu0YzsznyFkm/Yew5glwDDGEhSJYKc/pFnJpo5YzCFVz7sstX3SI2i
-        zS5LxxkpP/JlzkrDF2oTg3mfrw==
-X-Google-Smtp-Source: AGHT+IEc8GT5EtFnLsJhmGBlj0etNMKoCfBRUju6KuKZeg3Dj2iO+BlaE7KYpMmCTiCevtHie4gT5g==
-X-Received: by 2002:a17:907:d388:b0:9bf:4915:22ca with SMTP id vh8-20020a170907d38800b009bf491522camr1032497ejc.45.1697801664707;
-        Fri, 20 Oct 2023 04:34:24 -0700 (PDT)
+        bh=qxGWL09T/U8ViEdhIaJ8zHze/hctW85nUnnCuD7crpg=;
+        b=OlAcPWgLgD5XQa2g1oABOiYlOkQ0cmgeab74PrKT4ZPAsADa30zkJVqQSz7AkiMysC
+         73c4cAX3+oK2eT1qRc5hZpj5+kUo12hVA2hWISPQAB2xu4BmOWaC5n0Sp/fV/gNKlCK5
+         UMVnSf3hg/5JVGD3nMhotEI2gjIyiSebOBTZFEvotRyEZrIk2u3W3StuSvtfojAuJ0eW
+         RLsQGrjhW7rhLeO5PQ4+Apld9ljYI6A/V/kD1/mlTXEbJOcNL55u2rG7NqE2vW2KVltN
+         QwauF6QN/zmJTbv99T9knK67PyUlPg47AbtHQQfs02+KoHEQ74+2HBsURq1rudKc9J2+
+         7Qdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697801667; x=1698406467;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qxGWL09T/U8ViEdhIaJ8zHze/hctW85nUnnCuD7crpg=;
+        b=bRHLDSU+220P21Zb/m0JwZ8RzOT+BSg4AUHmgwMjDy+iVVh7gHMkakt0qvbOhzJDUP
+         qyJN6KXQa8Vjf5C4DP7Zo0TDkLoNyyG7U3EO8HCD45KxQ5XXo3i0a4Tq6XJHbonvTmOC
+         lUu0Ftd3ysKBGP7A3EA4h6RPEQA9dUBfiZoEMIhRzoF1vviOom5H1xypMP6iSzL5Iv6H
+         eg/H3ON62On/E++8Vqw9ykvkYiuqEJD2ghoJJ9muPu1w3s6PoET2D0l7m8PMhQlJkHWM
+         uS+Ji+0fnOtu6rHXP+7hn4gYwnBkR0v4qaP5rpOtkHEOPheGH5iYJgiSDkIUIQuTZFRK
+         wxyg==
+X-Gm-Message-State: AOJu0YxFbb4HQl0R1KcchtGpBtWtz9QxYK1Xr1IZ6o53x8UURfz6K7CE
+        drv+Hl1XzWQY9JIwKnmNhQzQkg==
+X-Google-Smtp-Source: AGHT+IHMEcSQYLg9QnANE/SCuKGkV1bpDxt4qIA1Ne26TTi2jlK39j64HmyMxOHY7QP2okztXw4xzQ==
+X-Received: by 2002:a17:907:741:b0:9a5:9038:b1e7 with SMTP id xc1-20020a170907074100b009a59038b1e7mr1093606ejb.36.1697801667115;
+        Fri, 20 Oct 2023 04:34:27 -0700 (PDT)
 Received: from capella.localdomain ([193.89.194.60])
-        by smtp.gmail.com with ESMTPSA id ce10-20020a170906b24a00b009b654751c14sm1300320ejb.47.2023.10.20.04.34.23
+        by smtp.gmail.com with ESMTPSA id ce10-20020a170906b24a00b009b654751c14sm1300320ejb.47.2023.10.20.04.34.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Oct 2023 04:34:24 -0700 (PDT)
+        Fri, 20 Oct 2023 04:34:26 -0700 (PDT)
 From:   =?utf-8?q?Alvin_=C5=A0ipraga?= <alvin@pqrs.dk>
-Subject: [PATCH v5 0/3] clk: si5351: add option to adjust PLL without
- glitches
-Date:   Fri, 20 Oct 2023 13:34:13 +0200
-Message-Id: <20231020-alvin-clk-si5351-no-pll-reset-v5-0-f0c1ba537f88@bang-olufsen.dk>
+Date:   Fri, 20 Oct 2023 13:34:15 +0200
+Subject: [PATCH v5 2/3] dt-bindings: clock: si5351: add PLL reset mode
+ property
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIALVlMmUC/4WPyw7CIBBFf8WwdpqBMr5W/Q/jAulUiYRWUKIx/
- XdpdeHO5bnJPXfmJRJHx0nsFi8RObvk+lCAlgthzyacGFxbWChUtUSpwfjsAlh/geSoJgmhh8F
- 7iJz4Bmw7Y9GsiNCK4hgid+4x+/eHwmeXbn18znNZTunXjBspZa10RRtFWwL5GWqGa0xVexFTO
- eufwt9TsgYEU9NqjUojrtvmWP6B3t+7xGF2juP4BqsNVZQBAQAA
+Message-Id: <20231020-alvin-clk-si5351-no-pll-reset-v5-2-f0c1ba537f88@bang-olufsen.dk>
+References: <20231020-alvin-clk-si5351-no-pll-reset-v5-0-f0c1ba537f88@bang-olufsen.dk>
+In-Reply-To: <20231020-alvin-clk-si5351-no-pll-reset-v5-0-f0c1ba537f88@bang-olufsen.dk>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -76,62 +75,68 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This series intends to address a problem I had when using the Si5351A as
-a runtime adjustable audio bit clock. The basic issue is that the driver
-in its current form unconditionally resets the PLL whenever adjusting
-its rate. But this reset causes an unwanted ~1.4 ms LOW signal glitch in
-the clock output.
+From: Alvin Šipraga <alsi@bang-olufsen.dk>
 
-As a remedy, a new property is added to control the reset behaviour of
-the PLLs more precisely. In the process I also converted the bindings to
-YAML.
+For applications where the PLL must be adjusted without glitches in the
+clock output(s), a new silabs,pll-reset-mode property is added. It
+can be used to specify whether or not the PLL should be reset after
+adjustment. Resetting is known to cause glitches.
 
-Changes:
+For compatibility with older device trees, it must be assumed that the
+default PLL reset mode is to unconditionally reset after adjustment.
 
-v4 -> v5:
-- address Rob's comments:
-    - min/maxItems on top-level clocks:
-    - remove unnecessary else:
-    - remove spurious |
-
-v3 -> v4:
-
-- remove spurious | per Rob's suggestion
-- simplify conditional clocks/clock-names per Rob's suggestion
-- remove mention of clkout[0-7] still being admissible in the commit
-  body of patch 1 - while the Linux driver still tolerates this, the
-  new dt-bindings do not
-
-v2 -> v3:
-
-- address further comments from Rob:
-  - drop unnecessary refs and minItems
-  - simplify if conditions for chip variants
-  - ignore his comment about dropping '|', as line would be >80 columns
-  - move additionalProperties: false close to type: object
-  - define clocks/clock-names at top-level
-- drop patch to dove-cubox dts per Krzysztof's comment - will send
-  separately
-- collect Sebastian's Acked-by
-
-v1 -> v2:
-
-- address Rob's comments on the two dt-bindings patches
-- new patch to correct the clock node names in the only upstream device
-  tree using si5351
-
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Rabeeh Khoury <rabeeh@solid-run.com>
+Cc: Jacob Siverskog <jacob@teenage.engineering>
+Cc: Sergej Sawazki <sergej@taudac.com>
+Signed-off-by: Alvin Šipraga <alsi@bang-olufsen.dk>
 ---
-Alvin Šipraga (3):
-      dt-bindings: clock: si5351: convert to yaml
-      dt-bindings: clock: si5351: add PLL reset mode property
-      clk: si5351: allow PLLs to be adjusted without reset
+ .../devicetree/bindings/clock/silabs,si5351.yaml   | 24 ++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
- .../devicetree/bindings/clock/silabs,si5351.txt    | 126 ----------
- .../devicetree/bindings/clock/silabs,si5351.yaml   | 265 +++++++++++++++++++++
- drivers/clk/clk-si5351.c                           |  47 +++-
- include/linux/platform_data/si5351.h               |   2 +
- 4 files changed, 311 insertions(+), 129 deletions(-)
----
-base-commit: f6abdcb2444f6ebe06e19cd9eee767c7c46612ae
-change-id: 20231014-alvin-clk-si5351-no-pll-reset-ecfac0a6550c
+diff --git a/Documentation/devicetree/bindings/clock/silabs,si5351.yaml b/Documentation/devicetree/bindings/clock/silabs,si5351.yaml
+index 494fa49a0c1b..d3e0ec29993b 100644
+--- a/Documentation/devicetree/bindings/clock/silabs,si5351.yaml
++++ b/Documentation/devicetree/bindings/clock/silabs,si5351.yaml
+@@ -62,6 +62,27 @@ properties:
+         - description: PLL source, XTAL (0) or CLKIN (1, Si5351C only).
+           enum: [ 0, 1 ]
+ 
++  silabs,pll-reset-mode:
++    $ref: /schemas/types.yaml#/definitions/uint32-matrix
++    minItems: 1
++    maxItems: 2
++    description: A list of cell pairs containing a PLL index and its reset mode.
++    items:
++      items:
++        - description: PLL A (0) or PLL B (1)
++          enum: [ 0, 1 ]
++        - description: |
++            Reset mode for the PLL. Mode can be one of:
++
++                0 - reset whenever PLL rate is adjusted (default mode)
++                1 - do not reset when PLL rate is adjusted
++
++            In mode 1, the PLL is only reset if the silabs,pll-reset is
++            specified in one of the clock output child nodes that also sources
++            the PLL. This mode may be preferable if output clocks are expected
++            to be adjusted without glitches.
++          enum: [ 0, 1 ]
++
+ patternProperties:
+   "^clkout@[0-7]$":
+     type: object
+@@ -195,6 +216,9 @@ examples:
+         /* Use XTAL input as source of PLL0 and PLL1 */
+         silabs,pll-source = <0 0>, <1 0>;
+ 
++        /* Don't reset PLL1 on rate adjustment */
++        silabs,pll-reset-mode = <1 1>;
++
+         /*
+          * Overwrite CLK0 configuration with:
+          * - 8 mA output drive strength
+
+-- 
+2.42.0
 
