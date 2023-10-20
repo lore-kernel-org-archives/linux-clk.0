@@ -2,144 +2,93 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 497C0C001DF
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Oct 2023 07:52:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAB53CDB47E
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Oct 2023 08:04:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235636AbjJTHws (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Oct 2023 03:52:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36390 "EHLO
+        id S235640AbjJTIEX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Oct 2023 04:04:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230371AbjJTHwr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Oct 2023 03:52:47 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 908C1E8;
-        Fri, 20 Oct 2023 00:52:45 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 7E974660734D;
-        Fri, 20 Oct 2023 08:52:43 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1697788364;
-        bh=s6xNo054UbCmvOigN/xb7evicnVwrAIzmcYcO9sC4HE=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=b0IaizazmmKSDzATXVjDiDjuLemdxVvtGRYn996pLgephr1lWEZqMVrNYJChj0LB0
-         FauAoQ/w+XXMFfhniM08Wdipt1DJGI8CjuK8HKX4auu2pQPGkP6XFh71QTWwJ265ea
-         Pl+MzL4qicK0k06YStkLzIrJrzuoRyXwDRr9x98atSPXnEkBFuwgom1IUCh2VD/wd1
-         0SPkkJu1+JyJUEmSdlmeiEoIc6mbaEySint/40eTGZ1pV+YIlZORnCkwddrNkWjfu7
-         3HY7ix3DucBa2WtvafdSdN0mIEiLsff+e6tWZjgkd1bXwBKaYQ87tiuEuVxXsraVdQ
-         BWYTqmEsPmXOA==
-Message-ID: <0572689f-c127-4603-b21a-303f4f20f7d7@collabora.com>
-Date:   Fri, 20 Oct 2023 09:52:40 +0200
+        with ESMTP id S235637AbjJTIEW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Oct 2023 04:04:22 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 595C1114;
+        Fri, 20 Oct 2023 01:04:20 -0700 (PDT)
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39K59fDg021735;
+        Fri, 20 Oct 2023 08:03:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=date : from : to :
+ cc : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=qcppdkim1; bh=E+vIHWF/VOHbQWF6DKPX7lBOBO/cN3atD6Cyf9pPEZE=;
+ b=I4x70mWgsspem5v5hqZK+HgA2c4ihNr4uO8V78xJqGhxmWy9ShLn3/iUKw13w73ajXUu
+ 5Mh9rs2AYn21hXyT0tAXyPRnXx+enxSb+e7AnN36YqqC9h0aC6qoKUEYRc3ub2Ock4ah
+ nEMi/a5zh30gBPzjYvrZm8nvQoNH9kqZC2LdTXfExbQzHJdsvTk9t9Czl0IqE6x/uizC
+ xoFhpgLGh8J+OoRnX0x/ZiQs9iIivUIL+grAj+u377BZ4gq8cbpg4yLU/hq0ofIJURmQ
+ ZO8icFwdZoysESgZCzvwvKMOUlg6WN1k7per9EqCrV//hePLRDktM+2Gl/1v29eCYUK5 Lg== 
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3tubxd1500-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 20 Oct 2023 08:03:50 +0000
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+        by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 39K83n8L027193
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 20 Oct 2023 08:03:49 GMT
+Received: from varda-linux.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.39; Fri, 20 Oct 2023 01:03:43 -0700
+Date:   Fri, 20 Oct 2023 13:33:39 +0530
+From:   Varadarajan Narayanan <quic_varada@quicinc.com>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+CC:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>, <rafael@kernel.org>,
+        <ilia.lin@kernel.org>, <sivaprak@codeaurora.org>,
+        <quic_kathirav@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH v5 0/9] Enable cpufreq for IPQ5332 & IPQ9574
+Message-ID: <20231020080339.GA6197@varda-linux.qualcomm.com>
+References: <cover.1697781921.git.quic_varada@quicinc.com>
+ <20231020070947.cwigtaa2haij56hz@vireshk-i7>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: mediatek: mt8186: Change I2C 4/5/6 ap clocks parent
- to infra
-To:     Chen-Yu Tsai <wenst@chromium.org>
-Cc:     sboyd@kernel.org, mturquette@baylibre.com, matthias.bgg@gmail.com,
-        u.kleine-koenig@pengutronix.de, chun-jie.chen@mediatek.com,
-        miles.chen@mediatek.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-References: <20231019124914.13545-1-angelogioacchino.delregno@collabora.com>
- <CAGXv+5H0rUajeU-i8nYyV2xWFQTnzqxioZCCyyP_RZXKqmcugQ@mail.gmail.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <CAGXv+5H0rUajeU-i8nYyV2xWFQTnzqxioZCCyyP_RZXKqmcugQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20231020070947.cwigtaa2haij56hz@vireshk-i7>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: kl9QQGze8np2GKWYd7S3IcrDapboGmle
+X-Proofpoint-ORIG-GUID: kl9QQGze8np2GKWYd7S3IcrDapboGmle
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-10-20_06,2023-10-19_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
+ phishscore=0 mlxlogscore=594 lowpriorityscore=0 suspectscore=0
+ impostorscore=0 malwarescore=0 priorityscore=1501 mlxscore=0 adultscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2310170001 definitions=main-2310200066
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 20/10/23 07:06, Chen-Yu Tsai ha scritto:
-> On Thu, Oct 19, 2023 at 8:49 PM AngeloGioacchino Del Regno
-> <angelogioacchino.delregno@collabora.com> wrote:
->>
->> Fix the parenting of clocks imp_iic_wrap_ap_clock_i2c{4-6}, as those
->> are effectively parented to infra_ao_i2c{4-6} and not to the I2C_AP.
->> This permits the correct (and full) enablement and disablement of the
->> I2C4, I2C5 and I2C6 bus clocks, satisfying the whole clock tree of
->> those.
->>
->> As an example, when requesting to enable imp_iic_wrap_ap_clock_i2c4:
->>
->> Before: infra_ao_i2c_ap -> imp_iic_wrap_ap_clock_i2c4
->> After:  infra_ao_i2c_ap -> infra_ao_i2c4 -> imp_iic_wrap_ap_clock_i2c4
->>
->> Fixes: 66cd0b4b0ce5 ("clk: mediatek: Add MT8186 imp i2c wrapper clock support")
->> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> 
-> I'm curious about what led to discovering this error?
-> 
+On Fri, Oct 20, 2023 at 12:39:47PM +0530, Viresh Kumar wrote:
+> On 20-10-23, 11:49, Varadarajan Narayanan wrote:
+> > Varadarajan Narayanan (9):
+> >   cpufreq: qti: Enable cpufreq for ipq53xx
+> >   cpufreq: qti: Introduce cpufreq for ipq95xx
+>
+> Can I pick just these two ?
 
-I had lockups during boot when probing I2C, so some research led me to
-discover that the clock tree wasn't fully satisfied... :-)
+ipq53xx patch is dependent on the previous safe source switching
+patch, hence not safe to pick that.
 
-Cheers,
-Angelo
+	No -> cpufreq: qti: Enable cpufreq for ipq53xx
+	Yes -> cpufreq: qti: Introduce cpufreq for ipq95xx
 
-> ChenYu
-> 
->> ---
->>   drivers/clk/mediatek/clk-mt8186-imp_iic_wrap.c | 6 +++---
->>   drivers/clk/mediatek/clk-mt8186-infra_ao.c     | 6 +++---
->>   2 files changed, 6 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/clk/mediatek/clk-mt8186-imp_iic_wrap.c b/drivers/clk/mediatek/clk-mt8186-imp_iic_wrap.c
->> index 640ccb553274..871b8ff4c287 100644
->> --- a/drivers/clk/mediatek/clk-mt8186-imp_iic_wrap.c
->> +++ b/drivers/clk/mediatek/clk-mt8186-imp_iic_wrap.c
->> @@ -29,11 +29,11 @@ static const struct mtk_gate imp_iic_wrap_clks[] = {
->>          GATE_IMP_IIC_WRAP(CLK_IMP_IIC_WRAP_AP_CLOCK_I2C3,
->>                  "imp_iic_wrap_ap_clock_i2c3", "infra_ao_i2c_ap", 3),
->>          GATE_IMP_IIC_WRAP(CLK_IMP_IIC_WRAP_AP_CLOCK_I2C4,
->> -               "imp_iic_wrap_ap_clock_i2c4", "infra_ao_i2c_ap", 4),
->> +               "imp_iic_wrap_ap_clock_i2c4", "infra_ao_i2c4", 4),
->>          GATE_IMP_IIC_WRAP(CLK_IMP_IIC_WRAP_AP_CLOCK_I2C5,
->> -               "imp_iic_wrap_ap_clock_i2c5", "infra_ao_i2c_ap", 5),
->> +               "imp_iic_wrap_ap_clock_i2c5", "infra_ao_i2c5", 5),
->>          GATE_IMP_IIC_WRAP(CLK_IMP_IIC_WRAP_AP_CLOCK_I2C6,
->> -               "imp_iic_wrap_ap_clock_i2c6", "infra_ao_i2c_ap", 6),
->> +               "imp_iic_wrap_ap_clock_i2c6", "infra_ao_i2c6", 6),
->>          GATE_IMP_IIC_WRAP(CLK_IMP_IIC_WRAP_AP_CLOCK_I2C7,
->>                  "imp_iic_wrap_ap_clock_i2c7", "infra_ao_i2c_ap", 7),
->>          GATE_IMP_IIC_WRAP(CLK_IMP_IIC_WRAP_AP_CLOCK_I2C8,
->> diff --git a/drivers/clk/mediatek/clk-mt8186-infra_ao.c b/drivers/clk/mediatek/clk-mt8186-infra_ao.c
->> index 837304cd0ed7..c490f1a310f8 100644
->> --- a/drivers/clk/mediatek/clk-mt8186-infra_ao.c
->> +++ b/drivers/clk/mediatek/clk-mt8186-infra_ao.c
->> @@ -132,7 +132,7 @@ static const struct mtk_gate infra_ao_clks[] = {
->>          GATE_INFRA_AO2(CLK_INFRA_AO_AUDIO_26M_BCLK, "infra_ao_audio26m", "clk26m", 4),
->>          GATE_INFRA_AO2(CLK_INFRA_AO_SSUSB_TOP_P1_HCLK, "infra_ao_ssusb_p1_hclk", "top_axi", 5),
->>          GATE_INFRA_AO2(CLK_INFRA_AO_SPI1, "infra_ao_spi1", "top_spi", 6),
->> -       GATE_INFRA_AO2(CLK_INFRA_AO_I2C4, "infra_ao_i2c4", "top_i2c", 7),
->> +       GATE_INFRA_AO2(CLK_INFRA_AO_I2C4, "infra_ao_i2c4", "infra_ao_i2c_ap", 7),
->>          GATE_INFRA_AO2(CLK_INFRA_AO_MODEM_TEMP_SHARE, "infra_ao_mdtemp", "clk26m", 8),
->>          GATE_INFRA_AO2(CLK_INFRA_AO_SPI2, "infra_ao_spi2", "top_spi", 9),
->>          GATE_INFRA_AO2(CLK_INFRA_AO_SPI3, "infra_ao_spi3", "top_spi", 10),
->> @@ -145,7 +145,7 @@ static const struct mtk_gate infra_ao_clks[] = {
->>          GATE_INFRA_AO2_FLAGS(CLK_INFRA_AO_SSPM, "infra_ao_sspm", "top_sspm", 15, CLK_IS_CRITICAL),
->>          GATE_INFRA_AO2(CLK_INFRA_AO_SSUSB_TOP_P1_SYS,
->>                         "infra_ao_ssusb_p1_sys", "top_ssusb_1p", 16),
->> -       GATE_INFRA_AO2(CLK_INFRA_AO_I2C5, "infra_ao_i2c5", "top_i2c", 18),
->> +       GATE_INFRA_AO2(CLK_INFRA_AO_I2C5, "infra_ao_i2c5", "infra_ao_i2c_ap", 18),
->>          GATE_INFRA_AO2(CLK_INFRA_AO_I2C5_ARBITER, "infra_ao_i2c5a", "top_i2c", 19),
->>          GATE_INFRA_AO2(CLK_INFRA_AO_I2C5_IMM, "infra_ao_i2c5_imm", "top_i2c", 20),
->>          GATE_INFRA_AO2(CLK_INFRA_AO_I2C1_ARBITER, "infra_ao_i2c1a", "top_i2c", 21),
->> @@ -167,7 +167,7 @@ static const struct mtk_gate infra_ao_clks[] = {
->>                               CLK_IS_CRITICAL),
->>          GATE_INFRA_AO3_FLAGS(CLK_INFRA_AO_SSPM_32K_SELF, "infra_ao_sspm_32k", "clk32k", 4,
->>                               CLK_IS_CRITICAL),
->> -       GATE_INFRA_AO3(CLK_INFRA_AO_I2C6, "infra_ao_i2c6", "top_i2c", 6),
->> +       GATE_INFRA_AO3(CLK_INFRA_AO_I2C6, "infra_ao_i2c6", "infra_ao_i2c_ap", 6),
->>          GATE_INFRA_AO3(CLK_INFRA_AO_AP_MSDC0, "infra_ao_ap_msdc0", "top_axi", 7),
->>          GATE_INFRA_AO3(CLK_INFRA_AO_MD_MSDC0, "infra_ao_md_msdc0", "top_axi", 8),
->>          GATE_INFRA_AO3(CLK_INFRA_AO_MSDC0_SRC, "infra_ao_msdc0_clk", "top_msdc50_0", 9),
->> --
->> 2.42.0
->>
-
+Thanks
+Varada
