@@ -2,77 +2,165 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0FD0C0032E
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Oct 2023 00:06:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D568FCDB47E
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Oct 2023 05:06:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346716AbjJTAGE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Oct 2023 20:06:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48720 "EHLO
+        id S1345092AbjJTFGw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Oct 2023 01:06:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346711AbjJTAGD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Oct 2023 20:06:03 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F94B114;
-        Thu, 19 Oct 2023 17:06:01 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9A55C433C7;
-        Fri, 20 Oct 2023 00:05:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1697760360;
-        bh=O9MAEXEEnD8PbgYOZLMCqbHxoOdKvoMUqekx/eQ6PMI=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=pJwZeiQP69B+aICkseQkPHLtJPGyN5w/39KHR0BR27H2ziCIQUqpjn79bzLmU1SYN
-         bqW6A9FRXDxcq+DWB7nhe89zQWF+bypTT8DYgav8dMfI5FDzbqicJoNEjP1TsQqtHM
-         7hhXvIFVY6t5pnkBTbb9Rd0PdthTZO5ORJV0lrxMXk4HOuiF0zPLKsAELBQ/jF19ux
-         8pbZGaXlrXE/iQqqCJID4rm6qUKQWN0sa5T6rBntLuJzIsJMXE8LvvB8ECM67YOQex
-         kreSlww85XPYiugjq4gXim/H/X5nVAHBYMpk6Bg7wQ6Btc8atl7QiVAMcxPh6DRxeN
-         N2HFzrOmAw72g==
-Message-ID: <ac00b49505e926ac4f3d0d0ba315b366.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S231542AbjJTFGv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Oct 2023 01:06:51 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFE5ED4C
+        for <linux-clk@vger.kernel.org>; Thu, 19 Oct 2023 22:06:48 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id 2adb3069b0e04-507a936f4a9so487565e87.1
+        for <linux-clk@vger.kernel.org>; Thu, 19 Oct 2023 22:06:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1697778407; x=1698383207; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e0jgQzh15tbFUAVOhe9LIEhZLsMkajruBrfzpNc5b9w=;
+        b=kzWF0HkC/gBYvQ53HKn0xRQyQNf5kiYfD/seJb6mKvt/ZwyiI1h5rBDX8C84Unbvnw
+         gJl40GfQ1MyFwmwnYyGB0ToQUzbiGNLRkQiXnU6a4lB1XT1rnEQLDenOQ1WafRZXTFiY
+         6cPo3CEseAxc94Pb++1ppswTCdMTukdogN4Aw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697778407; x=1698383207;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e0jgQzh15tbFUAVOhe9LIEhZLsMkajruBrfzpNc5b9w=;
+        b=ECqqY4LmRiPCeO5zrV4MfwNextvvWDZWO4cmOjS6zeMZ7fOIVyMoBAuNmU8sfRosRs
+         h48R8f20mAw6LyU+Y/SRfiRSh/a8Iy77nyO96alShSV5mPsGQpZNGj2HjZ97E9Vcjt8S
+         ZJ9TEE9+34AKk3suBMgDY4Q8ccWA8gvQNkZdGe8QjKLyxJZGwEvGUckbUSzU+3z6fUUv
+         DDJ3l7tv5sU0N685VwAiG2FkG6P6oQVTzpUnJdvhZUlB4X9T//pSZyxs3/qSObYXFYUV
+         wQcvPRa0NmEyqP6bH/Y+1NcBJjFfKk5Gl65m1P9IlV+ct4FzmdNywon0qZnVfeZEfnSu
+         ZhWw==
+X-Gm-Message-State: AOJu0YzvGkaAjCngITLPndSWToocMgi4+qHe/MDtJa5JFAq63kA5NNhD
+        6uxt2NMaV/Rp2ycNsiQEPoI6lT+Q1AOWOWzZaMD+lQ==
+X-Google-Smtp-Source: AGHT+IFmCdlNIlds8uaCs9bu6h6l6p+rnQ0UHqe7D43uyuGzPJgRp6m8F0GVh5IYUPL/Omk3FKAR5Km/rjyluUqBl80=
+X-Received: by 2002:a05:6512:20d2:b0:500:bf33:3add with SMTP id
+ u18-20020a05651220d200b00500bf333addmr380886lfr.47.1697778406807; Thu, 19 Oct
+ 2023 22:06:46 -0700 (PDT)
 MIME-Version: 1.0
+References: <20231019124914.13545-1-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20231019124914.13545-1-angelogioacchino.delregno@collabora.com>
+From:   Chen-Yu Tsai <wenst@chromium.org>
+Date:   Fri, 20 Oct 2023 13:06:35 +0800
+Message-ID: <CAGXv+5H0rUajeU-i8nYyV2xWFQTnzqxioZCCyyP_RZXKqmcugQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: mediatek: mt8186: Change I2C 4/5/6 ap clocks parent
+ to infra
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     sboyd@kernel.org, mturquette@baylibre.com, matthias.bgg@gmail.com,
+        u.kleine-koenig@pengutronix.de, chun-jie.chen@mediatek.com,
+        miles.chen@mediatek.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <b8fa17a7-296e-4e17-9438-a8be04dbd476@quicinc.com>
-References: <20231017131944.8356-1-quic_kriskura@quicinc.com> <e38ae24c09ef321c224a6b6aeb97e73b.sboyd@kernel.org> <b8fa17a7-296e-4e17-9438-a8be04dbd476@quicinc.com>
-Subject: Re: [RFC 4/8] clk: qcom: gcc-sm8450: Keep usb30 prim gdsc on during runtime suspend
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, quic_ppratap@quicinc.com,
-        quic_jackp@quicinc.com, Udipto Goswami <quic_ugoswami@quicinc.com>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krishna Kurapati PSSNV <quic_kriskura@quicinc.com>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Thu, 19 Oct 2023 17:05:54 -0700
-User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Krishna Kurapati PSSNV (2023-10-19 01:37:20)
->=20
->=20
-> On 10/19/2023 6:28 AM, Stephen Boyd wrote:
-> > Quoting Krishna Kurapati (2023-10-17 06:19:44)
-> >> When runtime suspend happens in host mode, if cable is removed at this
-> >> instant, it triggers a resume where a xhci register access is done when
-> >> gdsc is not on leading to a crash. Keep usb30 prim gdsc as on during
-> >> runtime suspend to avoid this crash.
-> >>
-> >> Signed-off-by: Krishna Kurapati <quic_kriskura@quicinc.com>
-> >> ---
-> >> Note: I am not sure if this is the right way or setting GDSC flags to
-> >> PWRSTS_RET_ON is the right approach. So for now made this change to
-> >=20
-> > Does using PWRSTS_RET_ON work? Does the GDSC support being turned off or
-> > is the lowest power state retention?
->=20
-> I didn't see any issue when I put it as PWRSTS_RET_ON. If the GDSC is=20
-> off, when we remove cable in host mode, we see a crash because of xhci=20
-> register access. But when I try putting PWRSTS_RET_ON /=20
-> CLK_RPM_ALWAYS_ON it doesn't crash.
->=20
+On Thu, Oct 19, 2023 at 8:49=E2=80=AFPM AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
+>
+> Fix the parenting of clocks imp_iic_wrap_ap_clock_i2c{4-6}, as those
+> are effectively parented to infra_ao_i2c{4-6} and not to the I2C_AP.
+> This permits the correct (and full) enablement and disablement of the
+> I2C4, I2C5 and I2C6 bus clocks, satisfying the whole clock tree of
+> those.
+>
+> As an example, when requesting to enable imp_iic_wrap_ap_clock_i2c4:
+>
+> Before: infra_ao_i2c_ap -> imp_iic_wrap_ap_clock_i2c4
+> After:  infra_ao_i2c_ap -> infra_ao_i2c4 -> imp_iic_wrap_ap_clock_i2c4
+>
+> Fixes: 66cd0b4b0ce5 ("clk: mediatek: Add MT8186 imp i2c wrapper clock sup=
+port")
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
+abora.com>
 
-You need to find out if the GDSC only supports retention mode. Otherwise
-it sounds like the xhci register access is happening when the genpd is
-off, and thus the driver needs to power on the device before accessing
-it.
+I'm curious about what led to discovering this error?
+
+ChenYu
+
+> ---
+>  drivers/clk/mediatek/clk-mt8186-imp_iic_wrap.c | 6 +++---
+>  drivers/clk/mediatek/clk-mt8186-infra_ao.c     | 6 +++---
+>  2 files changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/clk/mediatek/clk-mt8186-imp_iic_wrap.c b/drivers/clk=
+/mediatek/clk-mt8186-imp_iic_wrap.c
+> index 640ccb553274..871b8ff4c287 100644
+> --- a/drivers/clk/mediatek/clk-mt8186-imp_iic_wrap.c
+> +++ b/drivers/clk/mediatek/clk-mt8186-imp_iic_wrap.c
+> @@ -29,11 +29,11 @@ static const struct mtk_gate imp_iic_wrap_clks[] =3D =
+{
+>         GATE_IMP_IIC_WRAP(CLK_IMP_IIC_WRAP_AP_CLOCK_I2C3,
+>                 "imp_iic_wrap_ap_clock_i2c3", "infra_ao_i2c_ap", 3),
+>         GATE_IMP_IIC_WRAP(CLK_IMP_IIC_WRAP_AP_CLOCK_I2C4,
+> -               "imp_iic_wrap_ap_clock_i2c4", "infra_ao_i2c_ap", 4),
+> +               "imp_iic_wrap_ap_clock_i2c4", "infra_ao_i2c4", 4),
+>         GATE_IMP_IIC_WRAP(CLK_IMP_IIC_WRAP_AP_CLOCK_I2C5,
+> -               "imp_iic_wrap_ap_clock_i2c5", "infra_ao_i2c_ap", 5),
+> +               "imp_iic_wrap_ap_clock_i2c5", "infra_ao_i2c5", 5),
+>         GATE_IMP_IIC_WRAP(CLK_IMP_IIC_WRAP_AP_CLOCK_I2C6,
+> -               "imp_iic_wrap_ap_clock_i2c6", "infra_ao_i2c_ap", 6),
+> +               "imp_iic_wrap_ap_clock_i2c6", "infra_ao_i2c6", 6),
+>         GATE_IMP_IIC_WRAP(CLK_IMP_IIC_WRAP_AP_CLOCK_I2C7,
+>                 "imp_iic_wrap_ap_clock_i2c7", "infra_ao_i2c_ap", 7),
+>         GATE_IMP_IIC_WRAP(CLK_IMP_IIC_WRAP_AP_CLOCK_I2C8,
+> diff --git a/drivers/clk/mediatek/clk-mt8186-infra_ao.c b/drivers/clk/med=
+iatek/clk-mt8186-infra_ao.c
+> index 837304cd0ed7..c490f1a310f8 100644
+> --- a/drivers/clk/mediatek/clk-mt8186-infra_ao.c
+> +++ b/drivers/clk/mediatek/clk-mt8186-infra_ao.c
+> @@ -132,7 +132,7 @@ static const struct mtk_gate infra_ao_clks[] =3D {
+>         GATE_INFRA_AO2(CLK_INFRA_AO_AUDIO_26M_BCLK, "infra_ao_audio26m", =
+"clk26m", 4),
+>         GATE_INFRA_AO2(CLK_INFRA_AO_SSUSB_TOP_P1_HCLK, "infra_ao_ssusb_p1=
+_hclk", "top_axi", 5),
+>         GATE_INFRA_AO2(CLK_INFRA_AO_SPI1, "infra_ao_spi1", "top_spi", 6),
+> -       GATE_INFRA_AO2(CLK_INFRA_AO_I2C4, "infra_ao_i2c4", "top_i2c", 7),
+> +       GATE_INFRA_AO2(CLK_INFRA_AO_I2C4, "infra_ao_i2c4", "infra_ao_i2c_=
+ap", 7),
+>         GATE_INFRA_AO2(CLK_INFRA_AO_MODEM_TEMP_SHARE, "infra_ao_mdtemp", =
+"clk26m", 8),
+>         GATE_INFRA_AO2(CLK_INFRA_AO_SPI2, "infra_ao_spi2", "top_spi", 9),
+>         GATE_INFRA_AO2(CLK_INFRA_AO_SPI3, "infra_ao_spi3", "top_spi", 10)=
+,
+> @@ -145,7 +145,7 @@ static const struct mtk_gate infra_ao_clks[] =3D {
+>         GATE_INFRA_AO2_FLAGS(CLK_INFRA_AO_SSPM, "infra_ao_sspm", "top_ssp=
+m", 15, CLK_IS_CRITICAL),
+>         GATE_INFRA_AO2(CLK_INFRA_AO_SSUSB_TOP_P1_SYS,
+>                        "infra_ao_ssusb_p1_sys", "top_ssusb_1p", 16),
+> -       GATE_INFRA_AO2(CLK_INFRA_AO_I2C5, "infra_ao_i2c5", "top_i2c", 18)=
+,
+> +       GATE_INFRA_AO2(CLK_INFRA_AO_I2C5, "infra_ao_i2c5", "infra_ao_i2c_=
+ap", 18),
+>         GATE_INFRA_AO2(CLK_INFRA_AO_I2C5_ARBITER, "infra_ao_i2c5a", "top_=
+i2c", 19),
+>         GATE_INFRA_AO2(CLK_INFRA_AO_I2C5_IMM, "infra_ao_i2c5_imm", "top_i=
+2c", 20),
+>         GATE_INFRA_AO2(CLK_INFRA_AO_I2C1_ARBITER, "infra_ao_i2c1a", "top_=
+i2c", 21),
+> @@ -167,7 +167,7 @@ static const struct mtk_gate infra_ao_clks[] =3D {
+>                              CLK_IS_CRITICAL),
+>         GATE_INFRA_AO3_FLAGS(CLK_INFRA_AO_SSPM_32K_SELF, "infra_ao_sspm_3=
+2k", "clk32k", 4,
+>                              CLK_IS_CRITICAL),
+> -       GATE_INFRA_AO3(CLK_INFRA_AO_I2C6, "infra_ao_i2c6", "top_i2c", 6),
+> +       GATE_INFRA_AO3(CLK_INFRA_AO_I2C6, "infra_ao_i2c6", "infra_ao_i2c_=
+ap", 6),
+>         GATE_INFRA_AO3(CLK_INFRA_AO_AP_MSDC0, "infra_ao_ap_msdc0", "top_a=
+xi", 7),
+>         GATE_INFRA_AO3(CLK_INFRA_AO_MD_MSDC0, "infra_ao_md_msdc0", "top_a=
+xi", 8),
+>         GATE_INFRA_AO3(CLK_INFRA_AO_MSDC0_SRC, "infra_ao_msdc0_clk", "top=
+_msdc50_0", 9),
+> --
+> 2.42.0
+>
