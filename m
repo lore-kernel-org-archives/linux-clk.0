@@ -2,93 +2,136 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAB53CDB47E
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Oct 2023 08:04:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB8B6CDB474
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Oct 2023 11:34:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235640AbjJTIEX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Oct 2023 04:04:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54508 "EHLO
+        id S1377113AbjJTLeb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Oct 2023 07:34:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235637AbjJTIEW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Oct 2023 04:04:22 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 595C1114;
-        Fri, 20 Oct 2023 01:04:20 -0700 (PDT)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39K59fDg021735;
-        Fri, 20 Oct 2023 08:03:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=date : from : to :
- cc : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=qcppdkim1; bh=E+vIHWF/VOHbQWF6DKPX7lBOBO/cN3atD6Cyf9pPEZE=;
- b=I4x70mWgsspem5v5hqZK+HgA2c4ihNr4uO8V78xJqGhxmWy9ShLn3/iUKw13w73ajXUu
- 5Mh9rs2AYn21hXyT0tAXyPRnXx+enxSb+e7AnN36YqqC9h0aC6qoKUEYRc3ub2Ock4ah
- nEMi/a5zh30gBPzjYvrZm8nvQoNH9kqZC2LdTXfExbQzHJdsvTk9t9Czl0IqE6x/uizC
- xoFhpgLGh8J+OoRnX0x/ZiQs9iIivUIL+grAj+u377BZ4gq8cbpg4yLU/hq0ofIJURmQ
- ZO8icFwdZoysESgZCzvwvKMOUlg6WN1k7per9EqCrV//hePLRDktM+2Gl/1v29eCYUK5 Lg== 
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3tubxd1500-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 20 Oct 2023 08:03:50 +0000
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-        by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 39K83n8L027193
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 20 Oct 2023 08:03:49 GMT
-Received: from varda-linux.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.39; Fri, 20 Oct 2023 01:03:43 -0700
-Date:   Fri, 20 Oct 2023 13:33:39 +0530
-From:   Varadarajan Narayanan <quic_varada@quicinc.com>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-CC:     <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>, <rafael@kernel.org>,
-        <ilia.lin@kernel.org>, <sivaprak@codeaurora.org>,
-        <quic_kathirav@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v5 0/9] Enable cpufreq for IPQ5332 & IPQ9574
-Message-ID: <20231020080339.GA6197@varda-linux.qualcomm.com>
-References: <cover.1697781921.git.quic_varada@quicinc.com>
- <20231020070947.cwigtaa2haij56hz@vireshk-i7>
+        with ESMTP id S1377060AbjJTLea (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Oct 2023 07:34:30 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5CB5D4C
+        for <linux-clk@vger.kernel.org>; Fri, 20 Oct 2023 04:34:26 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-9936b3d0286so111957966b.0
+        for <linux-clk@vger.kernel.org>; Fri, 20 Oct 2023 04:34:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=pqrs.dk; s=google; t=1697801665; x=1698406465; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=o/lwy8WHjVXC6iZ/BJfjFekCT6EMOppAC3IWeHaAw3M=;
+        b=B5HxzUyX0e7cUREKt4T5c16c+pnDkb2FQ7ELlc+pLDarGoIgrKrVQG6D31bm6cV00g
+         bj3duNFg2cPrp68by4ThHBq1MxoJXfmbjBSl1agAy59Gguixj1fJxBy8dS0f1dF/NRro
+         HM5TAGIq6+d6QckEOVsrmELVXnFa+rY+UZtCyfFtHStZdT52xaAycvyDSzfpr5lAqRFd
+         0CSs1uEHnf68pmmGeVhtuJehicK4YQQ/A2JOypTE9hU8Td7wb+LWgcypzCMvoetWrOky
+         9jLW8kKnoaTl6jxC39WIWsHPcS1Eg36yPcj1kU5OtBmbQ9TwLeiCsalP8RLJiq1MnLuI
+         E0Tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697801665; x=1698406465;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o/lwy8WHjVXC6iZ/BJfjFekCT6EMOppAC3IWeHaAw3M=;
+        b=qEyofEf1cWU7dvfhHQZF67u6X4s4ENC+MEg0xWQXuMGSPWYnRkNDU5IHXDXp398FdD
+         ljIz6hQrq66XBMe01t4HxQ2OQShCKfZUAp135xKcfaIxLB6j/gGpzcgxbsTYXySxgsCC
+         +jMZQTw8nYZkjcoIP6IY3LRjtCGkdGeCgNAA5TT895A7JNdA/oK/F2hstwnZEHHnSR//
+         H32HMzg0ikrt5dccnWS29F//GUfkNLi2rEGL2LYpdkfoNIedi6/O6cjDKwYR0KzPsQ8E
+         KlZNamjU+46k/TbJ2TZbHXmpIb6XndU82BMdOYzHkatzwpN6ouhmezaEMD9XECzZv6hV
+         PufQ==
+X-Gm-Message-State: AOJu0YzsznyFkm/Yew5glwDDGEhSJYKc/pFnJpo5YzCFVz7sstX3SI2i
+        zS5LxxkpP/JlzkrDF2oTg3mfrw==
+X-Google-Smtp-Source: AGHT+IEc8GT5EtFnLsJhmGBlj0etNMKoCfBRUju6KuKZeg3Dj2iO+BlaE7KYpMmCTiCevtHie4gT5g==
+X-Received: by 2002:a17:907:d388:b0:9bf:4915:22ca with SMTP id vh8-20020a170907d38800b009bf491522camr1032497ejc.45.1697801664707;
+        Fri, 20 Oct 2023 04:34:24 -0700 (PDT)
+Received: from capella.localdomain ([193.89.194.60])
+        by smtp.gmail.com with ESMTPSA id ce10-20020a170906b24a00b009b654751c14sm1300320ejb.47.2023.10.20.04.34.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Oct 2023 04:34:24 -0700 (PDT)
+From:   =?utf-8?q?Alvin_=C5=A0ipraga?= <alvin@pqrs.dk>
+Subject: [PATCH v5 0/3] clk: si5351: add option to adjust PLL without
+ glitches
+Date:   Fri, 20 Oct 2023 13:34:13 +0200
+Message-Id: <20231020-alvin-clk-si5351-no-pll-reset-v5-0-f0c1ba537f88@bang-olufsen.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20231020070947.cwigtaa2haij56hz@vireshk-i7>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: kl9QQGze8np2GKWYd7S3IcrDapboGmle
-X-Proofpoint-ORIG-GUID: kl9QQGze8np2GKWYd7S3IcrDapboGmle
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-10-20_06,2023-10-19_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
- phishscore=0 mlxlogscore=594 lowpriorityscore=0 suspectscore=0
- impostorscore=0 malwarescore=0 priorityscore=1501 mlxscore=0 adultscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2310170001 definitions=main-2310200066
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIALVlMmUC/4WPyw7CIBBFf8WwdpqBMr5W/Q/jAulUiYRWUKIx/
+ XdpdeHO5bnJPXfmJRJHx0nsFi8RObvk+lCAlgthzyacGFxbWChUtUSpwfjsAlh/geSoJgmhh8F
+ 7iJz4Bmw7Y9GsiNCK4hgid+4x+/eHwmeXbn18znNZTunXjBspZa10RRtFWwL5GWqGa0xVexFTO
+ eufwt9TsgYEU9NqjUojrtvmWP6B3t+7xGF2juP4BqsNVZQBAQAA
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        =?utf-8?q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>
+Cc:     Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Rabeeh Khoury <rabeeh@solid-run.com>,
+        Jacob Siverskog <jacob@teenage.engineering>,
+        Sergej Sawazki <sergej@taudac.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+X-Mailer: b4 0.12.3
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Oct 20, 2023 at 12:39:47PM +0530, Viresh Kumar wrote:
-> On 20-10-23, 11:49, Varadarajan Narayanan wrote:
-> > Varadarajan Narayanan (9):
-> >   cpufreq: qti: Enable cpufreq for ipq53xx
-> >   cpufreq: qti: Introduce cpufreq for ipq95xx
->
-> Can I pick just these two ?
+This series intends to address a problem I had when using the Si5351A as
+a runtime adjustable audio bit clock. The basic issue is that the driver
+in its current form unconditionally resets the PLL whenever adjusting
+its rate. But this reset causes an unwanted ~1.4 ms LOW signal glitch in
+the clock output.
 
-ipq53xx patch is dependent on the previous safe source switching
-patch, hence not safe to pick that.
+As a remedy, a new property is added to control the reset behaviour of
+the PLLs more precisely. In the process I also converted the bindings to
+YAML.
 
-	No -> cpufreq: qti: Enable cpufreq for ipq53xx
-	Yes -> cpufreq: qti: Introduce cpufreq for ipq95xx
+Changes:
 
-Thanks
-Varada
+v4 -> v5:
+- address Rob's comments:
+    - min/maxItems on top-level clocks:
+    - remove unnecessary else:
+    - remove spurious |
+
+v3 -> v4:
+
+- remove spurious | per Rob's suggestion
+- simplify conditional clocks/clock-names per Rob's suggestion
+- remove mention of clkout[0-7] still being admissible in the commit
+  body of patch 1 - while the Linux driver still tolerates this, the
+  new dt-bindings do not
+
+v2 -> v3:
+
+- address further comments from Rob:
+  - drop unnecessary refs and minItems
+  - simplify if conditions for chip variants
+  - ignore his comment about dropping '|', as line would be >80 columns
+  - move additionalProperties: false close to type: object
+  - define clocks/clock-names at top-level
+- drop patch to dove-cubox dts per Krzysztof's comment - will send
+  separately
+- collect Sebastian's Acked-by
+
+v1 -> v2:
+
+- address Rob's comments on the two dt-bindings patches
+- new patch to correct the clock node names in the only upstream device
+  tree using si5351
+
+---
+Alvin Šipraga (3):
+      dt-bindings: clock: si5351: convert to yaml
+      dt-bindings: clock: si5351: add PLL reset mode property
+      clk: si5351: allow PLLs to be adjusted without reset
+
+ .../devicetree/bindings/clock/silabs,si5351.txt    | 126 ----------
+ .../devicetree/bindings/clock/silabs,si5351.yaml   | 265 +++++++++++++++++++++
+ drivers/clk/clk-si5351.c                           |  47 +++-
+ include/linux/platform_data/si5351.h               |   2 +
+ 4 files changed, 311 insertions(+), 129 deletions(-)
+---
+base-commit: f6abdcb2444f6ebe06e19cd9eee767c7c46612ae
+change-id: 20231014-alvin-clk-si5351-no-pll-reset-ecfac0a6550c
+
