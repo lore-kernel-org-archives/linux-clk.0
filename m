@@ -2,131 +2,148 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17224C001E0
-	for <linux-clk@archiver.kernel.org>; Sat, 21 Oct 2023 11:57:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDB7BC001E0
+	for <linux-clk@archiver.kernel.org>; Sat, 21 Oct 2023 12:50:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230200AbjJUL5b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 21 Oct 2023 07:57:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35324 "EHLO
+        id S229478AbjJUMux (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 21 Oct 2023 08:50:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230177AbjJUL5b (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 21 Oct 2023 07:57:31 -0400
-Received: from mail-oi1-x230.google.com (mail-oi1-x230.google.com [IPv6:2607:f8b0:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84692D51;
-        Sat, 21 Oct 2023 04:57:29 -0700 (PDT)
-Received: by mail-oi1-x230.google.com with SMTP id 5614622812f47-3b2ec9a79bdso1261356b6e.3;
-        Sat, 21 Oct 2023 04:57:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697889449; x=1698494249; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=FxNz9djPi2ZFZLmpxAIXb8X9Wg3dZxfYM3EqSIAWSDg=;
-        b=g2wq64GTFlf+UyXvUUFB9kuU+pZT6wzK6Pap1BkVrO4ySfk+Jb07lTia+G9yU4dO1z
-         /MMOSzEDUUSFfNTrc7XkoaJ5J0zcsF/U3wbp9s+2WMosCYKGvQiJvEYouQFQ8oFPUuMl
-         SV2otip1MSjEZTIweOOzlUk/y6LjDnty5XD9S1G+8ZqWq0jSpaVua66SRockqb6w0kLX
-         S4tgpcmW+5EWBN9+GziZ8iw36cXFMt0Pl+1azsewGSxsYCsGU4bpfZ7MHQynGrYuBiB9
-         ci/d8yi1U5ilUKcMwnjai/NJCqBwkSDAlCoafEXop2fqz0PYvRNvJH/cCpD5iYS6m7+j
-         S9Pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697889449; x=1698494249;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FxNz9djPi2ZFZLmpxAIXb8X9Wg3dZxfYM3EqSIAWSDg=;
-        b=aSMCREsOWMiXVw7wl3wAYVWjMvyhI8q4+L8miPTlHYbU4UaGsE0LcIHT7ZNgtmMCDV
-         qUvXxP+PlGeiH2+ooo7Rpdl7ItwJxZfuC7JqTax4f5RdSvuBJ/XhF+QyHfIUUE6uMiNj
-         f8tUXK8TG34E91nT0CkFutfxXAPnRql3M7JTehqtl09o7a5HOs0+9PsqlnfhfD0cKjjR
-         sm1Z1wrUOTypOirmE8KAW2gCXUuOHzWVxNPeOG0z0FR5QCz2GiFkBxBZMWhq26V50/tz
-         fZiG9ssFu6bGAJscD9cMRD4FLeyKOGbalZpug/UI1/vpDBClesfjgH0U7w3E9E+R9cWZ
-         o1dg==
-X-Gm-Message-State: AOJu0Yxowp8z0ODbeAessnMHK8BFwYRD0f4S8HE28PAtKmb0CMnV81vY
-        +81c4+bxW9WRKjDFHASuSPYvyWYy2TfNw8BzXK4=
-X-Google-Smtp-Source: AGHT+IErCwbPPf2d1W2hR6YumknJe5gd9sptBaKAtjtmuKDZW7EB8QqNK+Wv7inqupTOwAHWQSjuO7Mf4Y/mKTyWbuk=
-X-Received: by 2002:a05:6808:12:b0:3ae:a81:55ba with SMTP id
- u18-20020a056808001200b003ae0a8155bamr4812229oic.22.1697889448746; Sat, 21
- Oct 2023 04:57:28 -0700 (PDT)
+        with ESMTP id S231171AbjJUMuw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 21 Oct 2023 08:50:52 -0400
+Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D979D63;
+        Sat, 21 Oct 2023 05:50:45 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailout.nyi.internal (Postfix) with ESMTP id 828545C018E;
+        Sat, 21 Oct 2023 08:50:44 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Sat, 21 Oct 2023 08:50:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ryhl.io; h=cc:cc
+        :content-transfer-encoding:content-type:content-type:date:date
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to; s=fm3; t=
+        1697892644; x=1697979044; bh=LZyCmcPb3bs6dxzfD7O4vP4x6LlTAn9BCEy
+        VR9eXHL8=; b=iBqvZiG3n8KgYBbFHbF2xctT73LpdD4hKaif19KqqHMFzEQlSU6
+        nGALyUI4+9tOYUsxH9aXSXWx90XzPNNk2TrmCGskrUmvBt0FqvG8fxwBVCp/RVDg
+        FxY4VbwtxlwaHTG287v4ejL8/HUBF7O9/R8wh5hMEOwMSaGp8wP/FfuKfim+xL0u
+        LPTlmr1leMXRZz329W8rt9NE4vkozyH+e8erFG+md9tyGWUQpAoi9k7M80gGDOsf
+        lFG7K9PCPUyOk2YEk1e02qTZDJjdNrG5QtN8ycTWq5EqJFe4O/NPjKVEi8NbnKka
+        HuRi/sisqy0TwLARwG6tu2QWeYgEO//nqTQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:content-type:date:date:feedback-id:feedback-id
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+        1697892644; x=1697979044; bh=LZyCmcPb3bs6dxzfD7O4vP4x6LlTAn9BCEy
+        VR9eXHL8=; b=f1vv9/SWu+NcFbXIaWZ7BqLJmD7CqMxZlaDW840cNqrPUVaODPG
+        MQXe9YK5+TSC9bCIP1bWTHdH5Zrq1sjjMFjqlLBXzEBDt4tNNp2ELG5WYar826qs
+        Qt++cqzDAifxSIMse3/2Wa9cTjqNg66jVfycd00tH0C7LRKG0nLvWUL4QLYi5vU4
+        IKIx2YktymJEXnAyBQG15PhxMtDn7sbeUNSCZouKTsBXXHfuE9gN+EK33OzgkLQ/
+        B0uQ0w6xdoHFL0Qd3YnpmhQB02OUoHWHkXFu4PI/cvMnerg/5b2gt6oIASvSfvc7
+        aI42/Z7nhz+daiGUZwNMCTIkJ1nr2m3JbPw==
+X-ME-Sender: <xms:IskzZYVPyfaPIU8837JrZwXBvXFzCC5nGMYQk06iVPfgHAtj9D_32g>
+    <xme:IskzZcl1ut1un5kQb870XrqbHbVeMZH-7RUysnQokDhEkCZdyAbeLwtpFVkq6uLEo
+    tmtYtsQMLUs73Kz2Q>
+X-ME-Received: <xmr:IskzZcYU48hC_uMWA7_WDZwDXFGFixr8s7VDL3EgPgypQgQyfxbUks_pUCiHTLjSuoJ07B46Ah-yTMPkiPIUSQ1GbSAjWcREaMpY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrkedtgdehfecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomheptehlihgt
+    vgcutfihhhhluceorghlihgtvgesrhihhhhlrdhioheqnecuggftrfgrthhtvghrnhepfe
+    fguefgtdeghfeuieduffejhfevueehueehkedvteefgfehhedtffdutdfgudejnecuvehl
+    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghlihgtvgesrh
+    ihhhhlrdhioh
+X-ME-Proxy: <xmx:IskzZXUoxaxUR5li_ZsMsOm0pJ3sDWP0PSOD7Y2iwkI2cJCtAlYbuw>
+    <xmx:IskzZSkca7DRnXGr4bzmUCs-nMxCgJAVqgtxMBe3AIm-dI_50kzzhw>
+    <xmx:IskzZcdvml0wtvfsXHvCUDhcH9vGgSnbjNMzO0VAM0zoO5ja9VyKeA>
+    <xmx:JMkzZUcC2H0lkedVoOI8AfzdnUq-rdPJAhTLCQKBXkUXn-XgD2DkTQ>
+Feedback-ID: i56684263:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 21 Oct 2023 08:50:40 -0400 (EDT)
+Message-ID: <7bd5d863-0cee-49ef-8d53-f41f8bc8a904@ryhl.io>
+Date:   Sat, 21 Oct 2023 14:50:39 +0200
 MIME-Version: 1.0
-References: <20231015162114.976202-1-robimarko@gmail.com> <f27ff251-58b1-4fc5-8ad5-cd365b7eb976@linaro.org>
- <8dce62b2-562c-4e00-840b-68e1cc865972@quicinc.com> <CAOX2RU4n8caVL33KkqgYK1_mTZv-oZtd0p=_dzPh-ntBBfH1zA@mail.gmail.com>
- <b4ce1fdf-0a05-479d-90f8-3a2a2e40b07f@quicinc.com>
-In-Reply-To: <b4ce1fdf-0a05-479d-90f8-3a2a2e40b07f@quicinc.com>
-From:   Robert Marko <robimarko@gmail.com>
-Date:   Sat, 21 Oct 2023 13:57:17 +0200
-Message-ID: <CAOX2RU7Z1BS0u_k=cx58oq8RODPV=a3kV26OsbYpkDaN1atixg@mail.gmail.com>
-Subject: Re: [PATCH] clk: qcom: gcc-ipq6018: add QUP6 I2C clock
-To:     Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-Cc:     Konrad Dybcio <konrad.dybcio@linaro.org>, agross@kernel.org,
-        andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] arm64: rust: Enable Rust support for AArch64
+Content-Language: en-US-large
+To:     Boqun Feng <boqun.feng@gmail.com>, Andrew Lunn <andrew@lunn.ch>
+Cc:     Jamie Cunliffe <Jamie.Cunliffe@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, steve.capper@arm.com,
+        Asahi Lina <lina@asahilina.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+References: <20231020155056.3495121-1-Jamie.Cunliffe@arm.com>
+ <20231020155056.3495121-3-Jamie.Cunliffe@arm.com>
+ <3cc3b66d-7190-477c-af04-a5d06a0d50fe@lunn.ch>
+ <ZTLH5o0GlFBYsAHq@boqun-archlinux>
+From:   Alice Ryhl <alice@ryhl.io>
+In-Reply-To: <ZTLH5o0GlFBYsAHq@boqun-archlinux>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 20 Oct 2023 at 08:40, Kathiravan Thirumoorthy
-<quic_kathirav@quicinc.com> wrote:
->
->
-> On 10/19/2023 7:53 PM, Robert Marko wrote:
-> > On Thu, 19 Oct 2023 at 08:46, Kathiravan Thirumoorthy
-> > <quic_kathirav@quicinc.com> wrote:
-> >>
-> >> On 10/19/2023 1:59 AM, Konrad Dybcio wrote:
-> >>>
-> >>> On 10/15/23 18:20, Robert Marko wrote:
-> >>>> QUP6 I2C clock is listed in the dt bindings but it was never included in
-> >>>> the GCC driver.
-> >>>> So lets add support for it, its intentionally marked to never be
-> >>>> disabled
-> >>>> as its somehow affecting DVFS and if disabled it sometimes crashes the
-> >>>> board.
-> >>>>
-> >>>> Signed-off-by: Robert Marko <robimarko@gmail.com>
-> >>>> ---
-> >>> Bjorn, would you be able to get an idea of what could be sitting
-> >>> on that bus?
-> >>>
-> >>> Or maybe the IPQ folks could know?
-> >>>
-> >> Konrad / Robert,
-> >>
-> >> Similar to IPQ9574, RPM needs this clock to communicate with PMIC over
-> >> I2C interface. Discussion happened here[1] is pretty much applicable to
-> >> IPQ6018 as well. Based on previous experience, we may need to document
-> >> the reason for CLK_IGNORE_UNUSED in driver as well. Nevertheless,
-> >>
-> >> Reviewed-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-> > Thanks for the explanation, it makes sense as I used to control the
-> > MP5496 directly
-> > via I2C.
-> >
-> > Is it possible to disable RPM so it doesn't conflict and just use the
-> > full MP5496 driver instead?
-> > I find the RPM quite limiting as there is no way to actually retrieve
-> > the current-voltage.
->
->
-> Robert, checked with the team and currently we don't have any option to
-> disable the RPM as such.
+On 10/20/23 20:33, Boqun Feng wrote:
+> On Fri, Oct 20, 2023 at 07:21:08PM +0200, Andrew Lunn wrote:
+>>> +``arm64``     Maintained        Little Endian only.
+>>
+>> This question is just out of curiosity, not the patchset itself.
+>>
+>> What is missing to make big endian work?
+>>
+> 
+> FWIW, I tried the following:
+> 
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index 8784284988e5..b697c2d7da68 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -227,7 +227,7 @@ config ARM64
+>          select HAVE_FUNCTION_ARG_ACCESS_API
+>          select MMU_GATHER_RCU_TABLE_FREE
+>          select HAVE_RSEQ
+> -       select HAVE_RUST if CPU_LITTLE_ENDIAN
+> +       select HAVE_RUST
+>          select HAVE_STACKPROTECTOR
+>          select HAVE_SYSCALL_TRACEPOINTS
+>          select HAVE_KPROBES
+> diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
+> index 4562a8173e90..4621f1e00e06 100644
+> --- a/arch/arm64/Makefile
+> +++ b/arch/arm64/Makefile
+> @@ -41,7 +41,11 @@ KBUILD_CFLAGS        += -mgeneral-regs-only  \
+>   KBUILD_CFLAGS  += $(call cc-disable-warning, psabi)
+>   KBUILD_AFLAGS  += $(compat_vdso)
+> 
+> +ifeq ($(CONFIG_CPU_BIG_ENDIAN), y)
+> +KBUILD_RUSTFLAGS += --target aarch64_be-unknown-linux-gnu -C target-feature="-neon"
+> +else
+>   KBUILD_RUSTFLAGS += --target aarch64-unknown-none -C target-feature="-neon"
+> +endif
+> 
+>   KBUILD_CFLAGS  += $(call cc-option,-mabi=lp64)
+>   KBUILD_AFLAGS  += $(call cc-option,-mabi=lp64)
+> 
+> and ran the following kunit command (it will run a few tests in a qemu
+> emulated VM):
+> 
+> 	./tools/testing/kunit/kunit.py run --make_options LLVM=1 --arch arm64 --kconfig_add CONFIG_RUST=y --kconfig_add CONFIG_CPU_BIG_ENDIAN=y
+> 
+> The kernel was built successfully, and all Rust related tests passed.
+> 
+> Of course this doesn't mean a lot, we still need people with deep
+> Rust compiler knowledge to confirm whether the support is completed or
+> not. But I think if people want to do experiments, the tool is there.
 
-Thanks for checking.
+For what it's worth, I have some experience with big endian Rust in 
+userspace, and it generally works without issues. I would expect that it 
+doesn't need any special support beyond setting the target architecture 
+properly.
 
-BTW, is there any information you could share on the USB GDSC-s?
-I tried converting them to GDSC-s like IPQ8074 has, but it seems that
-they have different features.
-It would be great to use proper GSDC support instead of manually
-setting bits during GCC probe.
-
-Regards,
-Robert
->
->
-> >
-> > Regards,
-> > Robert
-> >> [1]
-> >> https://lore.kernel.org/linux-arm-msm/2852fc37-284f-6534-f163-45b37b153db1@quicinc.com/
-> >>
-> >>
-> >>> Konrad
+Alice
