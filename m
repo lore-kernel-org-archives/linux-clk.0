@@ -2,74 +2,62 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDB7BC001E0
-	for <linux-clk@archiver.kernel.org>; Sat, 21 Oct 2023 12:50:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FBABC001E0
+	for <linux-clk@archiver.kernel.org>; Sat, 21 Oct 2023 13:42:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229478AbjJUMux (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 21 Oct 2023 08:50:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60246 "EHLO
+        id S229588AbjJUNmI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 21 Oct 2023 09:42:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231171AbjJUMuw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 21 Oct 2023 08:50:52 -0400
-Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D979D63;
-        Sat, 21 Oct 2023 05:50:45 -0700 (PDT)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-        by mailout.nyi.internal (Postfix) with ESMTP id 828545C018E;
-        Sat, 21 Oct 2023 08:50:44 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Sat, 21 Oct 2023 08:50:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ryhl.io; h=cc:cc
-        :content-transfer-encoding:content-type:content-type:date:date
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm3; t=
-        1697892644; x=1697979044; bh=LZyCmcPb3bs6dxzfD7O4vP4x6LlTAn9BCEy
-        VR9eXHL8=; b=iBqvZiG3n8KgYBbFHbF2xctT73LpdD4hKaif19KqqHMFzEQlSU6
-        nGALyUI4+9tOYUsxH9aXSXWx90XzPNNk2TrmCGskrUmvBt0FqvG8fxwBVCp/RVDg
-        FxY4VbwtxlwaHTG287v4ejL8/HUBF7O9/R8wh5hMEOwMSaGp8wP/FfuKfim+xL0u
-        LPTlmr1leMXRZz329W8rt9NE4vkozyH+e8erFG+md9tyGWUQpAoi9k7M80gGDOsf
-        lFG7K9PCPUyOk2YEk1e02qTZDJjdNrG5QtN8ycTWq5EqJFe4O/NPjKVEi8NbnKka
-        HuRi/sisqy0TwLARwG6tu2QWeYgEO//nqTQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-        1697892644; x=1697979044; bh=LZyCmcPb3bs6dxzfD7O4vP4x6LlTAn9BCEy
-        VR9eXHL8=; b=f1vv9/SWu+NcFbXIaWZ7BqLJmD7CqMxZlaDW840cNqrPUVaODPG
-        MQXe9YK5+TSC9bCIP1bWTHdH5Zrq1sjjMFjqlLBXzEBDt4tNNp2ELG5WYar826qs
-        Qt++cqzDAifxSIMse3/2Wa9cTjqNg66jVfycd00tH0C7LRKG0nLvWUL4QLYi5vU4
-        IKIx2YktymJEXnAyBQG15PhxMtDn7sbeUNSCZouKTsBXXHfuE9gN+EK33OzgkLQ/
-        B0uQ0w6xdoHFL0Qd3YnpmhQB02OUoHWHkXFu4PI/cvMnerg/5b2gt6oIASvSfvc7
-        aI42/Z7nhz+daiGUZwNMCTIkJ1nr2m3JbPw==
-X-ME-Sender: <xms:IskzZYVPyfaPIU8837JrZwXBvXFzCC5nGMYQk06iVPfgHAtj9D_32g>
-    <xme:IskzZcl1ut1un5kQb870XrqbHbVeMZH-7RUysnQokDhEkCZdyAbeLwtpFVkq6uLEo
-    tmtYtsQMLUs73Kz2Q>
-X-ME-Received: <xmr:IskzZcYU48hC_uMWA7_WDZwDXFGFixr8s7VDL3EgPgypQgQyfxbUks_pUCiHTLjSuoJ07B46Ah-yTMPkiPIUSQ1GbSAjWcREaMpY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrkedtgdehfecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomheptehlihgt
-    vgcutfihhhhluceorghlihgtvgesrhihhhhlrdhioheqnecuggftrfgrthhtvghrnhepfe
-    fguefgtdeghfeuieduffejhfevueehueehkedvteefgfehhedtffdutdfgudejnecuvehl
-    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghlihgtvgesrh
-    ihhhhlrdhioh
-X-ME-Proxy: <xmx:IskzZXUoxaxUR5li_ZsMsOm0pJ3sDWP0PSOD7Y2iwkI2cJCtAlYbuw>
-    <xmx:IskzZSkca7DRnXGr4bzmUCs-nMxCgJAVqgtxMBe3AIm-dI_50kzzhw>
-    <xmx:IskzZcdvml0wtvfsXHvCUDhcH9vGgSnbjNMzO0VAM0zoO5ja9VyKeA>
-    <xmx:JMkzZUcC2H0lkedVoOI8AfzdnUq-rdPJAhTLCQKBXkUXn-XgD2DkTQ>
-Feedback-ID: i56684263:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 21 Oct 2023 08:50:40 -0400 (EDT)
-Message-ID: <7bd5d863-0cee-49ef-8d53-f41f8bc8a904@ryhl.io>
-Date:   Sat, 21 Oct 2023 14:50:39 +0200
+        with ESMTP id S229478AbjJUNmH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 21 Oct 2023 09:42:07 -0400
+Received: from mail-yw1-x112e.google.com (mail-yw1-x112e.google.com [IPv6:2607:f8b0:4864:20::112e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFC96E7;
+        Sat, 21 Oct 2023 06:42:05 -0700 (PDT)
+Received: by mail-yw1-x112e.google.com with SMTP id 00721157ae682-5a7af20c488so18940337b3.1;
+        Sat, 21 Oct 2023 06:42:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1697895725; x=1698500525; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UWvD7IHIUqyshOcL0r6h0e1PZfUfOzLb/jePav/l2nM=;
+        b=DUm6hI/oxe43rYTdatPKuKGbyPAiZ+K5iY7UykEkhH7O1T15GFWsDxwIzDl4cqZ1Dl
+         Vi6W0FAMTxHg3a9uJP7p4mbkX/w51SE8qFmCjZuJnOfdfljJqvutf0eyBnBx/z4avIwh
+         NIxdldO0VFzdMhybbKT7DxAPQCyzfmOEsrUyvSOlT0GdKdt6mQgrGVq4Lb0KE2hXudPF
+         lRnDBiVe/heiCuNUJvX5kkzmoIvRDcOgGvQMagwecMJH05rlNaO67EvInaeIbbadl2Qv
+         aKOMculCTXdkblgus2V7ZPwRl+Ttt2fOFI3F43mSoh5KrnZ7aKL8i4/D5A2TrQpFhAO0
+         FXnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697895725; x=1698500525;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UWvD7IHIUqyshOcL0r6h0e1PZfUfOzLb/jePav/l2nM=;
+        b=vBQDmBGfMMumUXvJPX/ggXU6QJK57grOJpruQKD5lbc/ZuxvuOV9n+YlIASHXv1z37
+         iM6WLiBmOI+5qGl0H47JdM0pV9rp42X316yEL37UpDFfRSF6RiUojJgPF8cUpK9aGI9f
+         c/cdVRnzio6+Zd5EwrSP1X4rmEj3T5wDGsWmMLhYQT6+jym6RhoAFJqK4LMf6qgOIrzy
+         RlWvjkz1zi3fFENVMMPPJpQEVZgCCZqz5Vt9Y4kSggb2BZXjja3RRj/KpGm4OcroQg4N
+         hKsokbAERGEJg9yuohdRZbvAzY8pPDXP4xGfhl/dJ01YdtXO0PcLbNiU6trN/2t0jXRr
+         SA+g==
+X-Gm-Message-State: AOJu0Yx2HNmCvq97pxwfQHX+ffLV4fhfUgm0SvJ7ebnv/UbWdxJ1jnMQ
+        b1piIVH5oJ3cTFwvbFe3u9lHocKXLCZ1ZGVrQSg=
+X-Google-Smtp-Source: AGHT+IFuYaPg1ybE22FyiKtvPvCNxCh9A2couonV/P/uYpqgWj97i+ZgsG8kj0sotcNLagiTG/o6ZONdZKeI351Lo+4=
+X-Received: by 2002:a05:690c:10c:b0:5a7:fb11:90f8 with SMTP id
+ bd12-20020a05690c010c00b005a7fb1190f8mr4479643ywb.16.1697895724960; Sat, 21
+ Oct 2023 06:42:04 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+References: <20231020155056.3495121-1-Jamie.Cunliffe@arm.com>
+ <20231020155056.3495121-3-Jamie.Cunliffe@arm.com> <3cc3b66d-7190-477c-af04-a5d06a0d50fe@lunn.ch>
+ <ZTLH5o0GlFBYsAHq@boqun-archlinux>
+In-Reply-To: <ZTLH5o0GlFBYsAHq@boqun-archlinux>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Sat, 21 Oct 2023 15:41:54 +0200
+Message-ID: <CANiq72kjJu=P=19kqq1+5uPpfdS=N4Ucv2okbcWFJVnvR+Hkug@mail.gmail.com>
 Subject: Re: [PATCH v4 2/2] arm64: rust: Enable Rust support for AArch64
-Content-Language: en-US-large
-To:     Boqun Feng <boqun.feng@gmail.com>, Andrew Lunn <andrew@lunn.ch>
-Cc:     Jamie Cunliffe <Jamie.Cunliffe@arm.com>,
+To:     Boqun Feng <boqun.feng@gmail.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Jamie Cunliffe <Jamie.Cunliffe@arm.com>,
         linux-arm-kernel@lists.infradead.org,
         rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
@@ -77,73 +65,21 @@ Cc:     Jamie Cunliffe <Jamie.Cunliffe@arm.com>,
         Asahi Lina <lina@asahilina.net>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-References: <20231020155056.3495121-1-Jamie.Cunliffe@arm.com>
- <20231020155056.3495121-3-Jamie.Cunliffe@arm.com>
- <3cc3b66d-7190-477c-af04-a5d06a0d50fe@lunn.ch>
- <ZTLH5o0GlFBYsAHq@boqun-archlinux>
-From:   Alice Ryhl <alice@ryhl.io>
-In-Reply-To: <ZTLH5o0GlFBYsAHq@boqun-archlinux>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 10/20/23 20:33, Boqun Feng wrote:
-> On Fri, Oct 20, 2023 at 07:21:08PM +0200, Andrew Lunn wrote:
->>> +``arm64``     Maintained        Little Endian only.
->>
->> This question is just out of curiosity, not the patchset itself.
->>
->> What is missing to make big endian work?
->>
-> 
-> FWIW, I tried the following:
-> 
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index 8784284988e5..b697c2d7da68 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -227,7 +227,7 @@ config ARM64
->          select HAVE_FUNCTION_ARG_ACCESS_API
->          select MMU_GATHER_RCU_TABLE_FREE
->          select HAVE_RSEQ
-> -       select HAVE_RUST if CPU_LITTLE_ENDIAN
-> +       select HAVE_RUST
->          select HAVE_STACKPROTECTOR
->          select HAVE_SYSCALL_TRACEPOINTS
->          select HAVE_KPROBES
-> diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
-> index 4562a8173e90..4621f1e00e06 100644
-> --- a/arch/arm64/Makefile
-> +++ b/arch/arm64/Makefile
-> @@ -41,7 +41,11 @@ KBUILD_CFLAGS        += -mgeneral-regs-only  \
->   KBUILD_CFLAGS  += $(call cc-disable-warning, psabi)
->   KBUILD_AFLAGS  += $(compat_vdso)
-> 
-> +ifeq ($(CONFIG_CPU_BIG_ENDIAN), y)
-> +KBUILD_RUSTFLAGS += --target aarch64_be-unknown-linux-gnu -C target-feature="-neon"
-> +else
->   KBUILD_RUSTFLAGS += --target aarch64-unknown-none -C target-feature="-neon"
-> +endif
-> 
->   KBUILD_CFLAGS  += $(call cc-option,-mabi=lp64)
->   KBUILD_AFLAGS  += $(call cc-option,-mabi=lp64)
-> 
-> and ran the following kunit command (it will run a few tests in a qemu
-> emulated VM):
-> 
-> 	./tools/testing/kunit/kunit.py run --make_options LLVM=1 --arch arm64 --kconfig_add CONFIG_RUST=y --kconfig_add CONFIG_CPU_BIG_ENDIAN=y
-> 
-> The kernel was built successfully, and all Rust related tests passed.
-> 
-> Of course this doesn't mean a lot, we still need people with deep
-> Rust compiler knowledge to confirm whether the support is completed or
-> not. But I think if people want to do experiments, the tool is there.
+On Fri, Oct 20, 2023 at 8:33=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> w=
+rote:
+>
+> But I think if people want to do experiments, the tool is there.
 
-For what it's worth, I have some experience with big endian Rust in 
-userspace, and it generally works without issues. I would expect that it 
-doesn't need any special support beyond setting the target architecture 
-properly.
+Yeah. If the Arm maintainers are OK adding it, I think we should also
+put it in (next cycle perhaps) -- the sooner we have it in-tree, the
+more testing it will hopefully get over time, and we can eventually
+ask the CIs to add a run with it if they have the resources.
 
-Alice
+Cheers,
+Miguel
