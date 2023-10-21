@@ -2,171 +2,125 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C262BC25B42
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Oct 2023 21:48:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9035C001E0
+	for <linux-clk@archiver.kernel.org>; Sat, 21 Oct 2023 11:55:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345451AbjJTVsH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Oct 2023 17:48:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36302 "EHLO
+        id S230090AbjJULzw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 21 Oct 2023 07:55:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345199AbjJTVsG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Oct 2023 17:48:06 -0400
-Received: from mail-qv1-xf36.google.com (mail-qv1-xf36.google.com [IPv6:2607:f8b0:4864:20::f36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E4C110C3
-        for <linux-clk@vger.kernel.org>; Fri, 20 Oct 2023 14:48:00 -0700 (PDT)
-Received: by mail-qv1-xf36.google.com with SMTP id 6a1803df08f44-66d0760cd20so11325906d6.0
-        for <linux-clk@vger.kernel.org>; Fri, 20 Oct 2023 14:48:00 -0700 (PDT)
+        with ESMTP id S229478AbjJULzw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 21 Oct 2023 07:55:52 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9966FD67;
+        Sat, 21 Oct 2023 04:55:50 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id a640c23a62f3a-9ba1eb73c27so269860466b.3;
+        Sat, 21 Oct 2023 04:55:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697838479; x=1698443279; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/mBv1buCpcnwBc220mZjRsjDHmbRRP2xfyJ2lFdmR6s=;
-        b=fkQSFbeTNaotD+CG4FKQHumTVggsF4QQ1QA1edAb3YoOcjsvemrDs8zsMNkGu8wPXk
-         oAgYd+57Et82jKpaGhkZ75Y1hHIdDtaCiAA5rF8ge6XQaC4O9pD2CYSBjNz2uPwIn6tV
-         sGHY4IrTsZcuOg6d+uCtLwqow3Iu/LVm/UHyHTUHRcYN5PNYRtTKiamZvH+raxvq+qgD
-         8hM6sHMSRlABL5JBLc1XL9igXG0ZIoHslLimSfvDAcYpMUzkDwwdmJcjtSulMFPyYXd6
-         O0iTtB1UJfvENqmACX6Z1BwL7l/Q+RC5Pt1a62/rxF1VRwMC0PyUI6ixz/gYgrUA24s8
-         WmWw==
+        d=gmail.com; s=20230601; t=1697889349; x=1698494149; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Dz6kcRDJs2sEmG1mhBttulVCf9cJKsKoCbJ9XgaIGgs=;
+        b=NThi9T/NQtO+DIVymox1UIs0qdoClL1Xl1JGUVgLmmfEE7tqBqas9XXKlIpvA2S1mG
+         IPYb05Jv6HDFVWVGUbsbg9LYSGyD2AQSbyAMHuzEYdvtLUj//jlwQmouIYnR3sEvEXKI
+         HqPht0GDAyJKN4nRzlqsw4UF4sThwihR7woLgiG2S+ihQtijakea9eR46un4LVB7IFfi
+         ouEzQ2iL/1HnRYG0Esj29eQynwwrkqrP69O+tTv/iWoW6ZCbE3u63nQfDQtqqSciUOXP
+         YPVSHyyklqw8Pk2lapNryuwLF/wZvHuYsHhZRIHWNEEYqLB1417drr552VMsXQA7Ua3r
+         YFLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697838479; x=1698443279;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1697889349; x=1698494149;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=/mBv1buCpcnwBc220mZjRsjDHmbRRP2xfyJ2lFdmR6s=;
-        b=JgXp2m38HN1HeH7zeoB71f7izUv/kUK4auOD1b681WtbnMt2OylYu494XVbKk4gitw
-         +b8hl5cKJbU0AR9VTj0n794wUkthAYjIsPJ4Al3PmbS9Xj7l25/E3wrq6+lBitP18p6A
-         +dV+qcjhlTSmg2tow9LI0ms8vuBCI5f4n78ampnNeJeiCxsDWZY6rgAt6J5ELoWGWPPR
-         DiCxYseVShIPkrdy1VcT+CsqLxvAm53jKmvsFEXOuE81nUQ2DU+WXRf8imO9I6Ge/7w2
-         /ZqAnMjxj3z8xqeLNFUXjxBlSb8WEkQk4YK4VosG4UDoGu8m+PRiy0xWKk+VO3ySmoWq
-         DhOw==
-X-Gm-Message-State: AOJu0Yy/BPmVswG9K7HxHascYrCzUzgVTHOWQgjhLjdOW5pvhKztzNqp
-        9eeR9lBjBG0OkOHhSivWy4SOESxcKF1tmTDbYijmTw==
-X-Google-Smtp-Source: AGHT+IHQJ7x9/SuQ4EBTGwOQciXDqQRU/H0wUJap6zldAAHxxJLfRsl7IevqZUOUANlVf9xne6BrdF0f6OpD88sD5HM=
-X-Received: by 2002:ad4:5dc2:0:b0:66d:9b63:72fb with SMTP id
- m2-20020ad45dc2000000b0066d9b6372fbmr2943620qvh.5.1697838479398; Fri, 20 Oct
- 2023 14:47:59 -0700 (PDT)
+        bh=Dz6kcRDJs2sEmG1mhBttulVCf9cJKsKoCbJ9XgaIGgs=;
+        b=GdmaRCySNRldG3vsNNp29WGIvXt/hxNWaqpw9EVtpdFjtPkJHDJCaXBk+UHOvBe776
+         uxD1zoU3JZ3VTS2OCB8FYBdde7zpWui+9E1if1hRXTEhm2wExSQnp5X/aSTjx3Vg67rX
+         IooT5CbvR/e8e3yrCYoQlPOKp/6aIDIOWc/oR3mjXSfU/csy7BSQyiWX1xhq7serjVID
+         HbX8FGM2U+ARBK09jD4ihLdzzfoJlmEBmSJTtDPYv7N4LDyzN6rDWQsTzq85bQG1XUOx
+         BoIfqYzIeLRePP9DSTdRlemEzwsIdukpXK4zoD7POFr9Pzkc7m9+WT0wltrYGWAL01Tg
+         F7bA==
+X-Gm-Message-State: AOJu0Yx95exTsaSuklEOIl4FMrgoSsSwDj80PeBAEE/qDv+3DfRdHu/C
+        iykY/g0PGAoU1sVLU7i49hs=
+X-Google-Smtp-Source: AGHT+IHkEf2EQxbrNrvaL5WKe+RLiysLnfunng5mNwk66YE9zvvl876DnFUnJ2kIn5NEnWuLkE6pUg==
+X-Received: by 2002:a17:907:3688:b0:9be:2991:81fa with SMTP id bi8-20020a170907368800b009be299181famr3136291ejc.39.1697889348834;
+        Sat, 21 Oct 2023 04:55:48 -0700 (PDT)
+Received: from fedora.. (cpezg-94-253-130-100-cbl.xnet.hr. [94.253.130.100])
+        by smtp.googlemail.com with ESMTPSA id d11-20020a170906040b00b0099bd046170fsm3502776eja.104.2023.10.21.04.55.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 21 Oct 2023 04:55:48 -0700 (PDT)
+From:   Robert Marko <robimarko@gmail.com>
+To:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Robert Marko <robimarko@gmail.com>,
+        Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+Subject: [PATCH v2] clk: qcom: gcc-ipq6018: add QUP6 I2C clock
+Date:   Sat, 21 Oct 2023 13:55:18 +0200
+Message-ID: <20231021115545.229060-1-robimarko@gmail.com>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-References: <20231011184823.443959-1-peter.griffin@linaro.org>
- <20231011184823.443959-17-peter.griffin@linaro.org> <eca9feea-b4a6-438c-83c7-452e8fe388c6@app.fastmail.com>
-In-Reply-To: <eca9feea-b4a6-438c-83c7-452e8fe388c6@app.fastmail.com>
-From:   Peter Griffin <peter.griffin@linaro.org>
-Date:   Fri, 20 Oct 2023 22:47:47 +0100
-Message-ID: <CADrjBPqPR54FqsdG1irrAYVn+Bkuc5hU3Vip7mUS8Aeq1b=JOw@mail.gmail.com>
-Subject: Re: [PATCH v3 16/20] tty: serial: samsung: Add gs101 compatible and
- SoC data
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        krzysztof.kozlowski+dt@linaro.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Olof Johansson <olof@lixom.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Tudor Ambarus <tudor.ambarus@linaro.org>,
-        andre.draszik@linaro.org,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        saravanak@google.com, William McVicker <willmcvicker@google.com>,
-        soc@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-watchdog@vger.kernel.org, kernel-team@android.com,
-        linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Arnd,
+QUP6 I2C clock is listed in the dt bindings but it was never included in
+the GCC driver.
+So lets add support for it, it is marked as criticial as it is used by RPM
+to communicate to the external PMIC over I2C so this clock must not be
+disabled.
 
-On Thu, 12 Oct 2023 at 07:07, Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Wed, Oct 11, 2023, at 20:48, Peter Griffin wrote:
-> > Add serial driver data for Google Tensor gs101 SoC.
-> >
-> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
->
-> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Robert Marko <robimarko@gmail.com>
+Reviewed-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+---
+Changes in v2:
+* Mark the clock as critical
+* Add comment as to why its marked as critical
+* Update commit description thanks for explanation from Kathiravan
 
-Thanks!
+ drivers/clk/qcom/gcc-ipq6018.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
->
-> While the patch is now correct, I would point out a few
-> improvements we could make on top:
->
-> > +static const struct s3c24xx_serial_drv_data gs101_serial_drv_data = {
-> > +     EXYNOS_COMMON_SERIAL_DRV_DATA(),
-> > +     /* rely on samsung,uart-fifosize DT property for fifosize */
-> > +     .fifosize = { 0 },
-> > +};
-> > +
-> >  #define EXYNOS4210_SERIAL_DRV_DATA (&exynos4210_serial_drv_data)
-> >  #define EXYNOS5433_SERIAL_DRV_DATA (&exynos5433_serial_drv_data)
-> >  #define EXYNOS850_SERIAL_DRV_DATA (&exynos850_serial_drv_data)
-> > +#define GS101_SERIAL_DRV_DATA (&gs101_serial_drv_data)
->
-> Since this is now actually correct for any Exynos variant that
-> has the FIFO size listed in the DT, we could use a variable/macro
-> name that leads itself to being used by future chips.
+diff --git a/drivers/clk/qcom/gcc-ipq6018.c b/drivers/clk/qcom/gcc-ipq6018.c
+index aa94fcb1e4aa5..e24c2c2c0db71 100644
+--- a/drivers/clk/qcom/gcc-ipq6018.c
++++ b/drivers/clk/qcom/gcc-ipq6018.c
+@@ -2118,6 +2118,26 @@ static struct clk_branch gcc_blsp1_qup5_spi_apps_clk = {
+ 	},
+ };
+ 
++static struct clk_branch gcc_blsp1_qup6_i2c_apps_clk = {
++	.halt_reg = 0x07010,
++	.clkr = {
++		.enable_reg = 0x07010,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_blsp1_qup6_i2c_apps_clk",
++			.parent_hws = (const struct clk_hw *[]){
++					&blsp1_qup6_i2c_apps_clk_src.clkr.hw },
++			.num_parents = 1,
++			/*
++			 * RPM uses QUP6 I2C to communicate with the external
++			 * PMIC so it must not be disabled.
++			 */
++			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
+ static struct clk_branch gcc_blsp1_qup6_spi_apps_clk = {
+ 	.halt_reg = 0x0700c,
+ 	.clkr = {
+@@ -4274,6 +4294,7 @@ static struct clk_regmap *gcc_ipq6018_clks[] = {
+ 	[GCC_BLSP1_QUP4_SPI_APPS_CLK] = &gcc_blsp1_qup4_spi_apps_clk.clkr,
+ 	[GCC_BLSP1_QUP5_I2C_APPS_CLK] = &gcc_blsp1_qup5_i2c_apps_clk.clkr,
+ 	[GCC_BLSP1_QUP5_SPI_APPS_CLK] = &gcc_blsp1_qup5_spi_apps_clk.clkr,
++	[GCC_BLSP1_QUP6_I2C_APPS_CLK] = &gcc_blsp1_qup6_i2c_apps_clk.clkr,
+ 	[GCC_BLSP1_QUP6_SPI_APPS_CLK] = &gcc_blsp1_qup6_spi_apps_clk.clkr,
+ 	[GCC_BLSP1_UART1_APPS_CLK] = &gcc_blsp1_uart1_apps_clk.clkr,
+ 	[GCC_BLSP1_UART2_APPS_CLK] = &gcc_blsp1_uart2_apps_clk.clkr,
+-- 
+2.41.0
 
-I've updated this to exynos_fifoszdt_serial_drv_data and
-EXYNOS_FIFOSZDT_SERIAL_DRV_DATA in v4 and added a
-comment that it is common struct for platforms that specify
-uart,fifosize in DT.
-
-I've also updated the YAML to make this a required property for
-google,gs101-uart.
-
->
-> There is also the question of whether we want to address the
-> ordering bug for the other SoC types. The way I understand it,
-> the .fifosize array logic is wrong because it relies on having
-> a particular alias for each of the ports to match the entry in
-> the array.
-> For the exynosautov9, this would be trivially fixed
-> by using the same data as gs101 (since it already lists the
-> correct size in DT), but for the other ones we'd need a different
-> logic.
->
-
-It seems samsung,exynosautov9-uart is in the yaml bindings and
-exynosautov9.dtsi but never actually made it into the driver. But
-it could be added to the driver and made to use the common
-exynos_fifoszdt_serial_drv_data mentioned above.
-
-I think any new platform should specify this in DT as many of these
-UARTs on newer Exynos are actually universal serial IPs which can
-be UART, I2C or SPI which is board dependent. So having the fifosize
-in the driver, based on a SoC compatible and relying on probe order
-and DT aliases seems very prone to error.
-
-regards,
-
-Peter.
-
-> > @@ -2688,6 +2696,9 @@ static const struct platform_device_id
-> > s3c24xx_serial_driver_ids[] = {
-> >       }, {
-> >               .name           = "artpec8-uart",
-> >               .driver_data    = (kernel_ulong_t)ARTPEC8_SERIAL_DRV_DATA,
-> > +     }, {
-> > +             .name           = "gs101-uart",
-> > +             .driver_data    = (kernel_ulong_t)GS101_SERIAL_DRV_DATA,
-> >       },
-> >       { },
-> >  };
->
-> I just noticed that the platform_device_id array is currently
-> only used for mach-crag6410, since everything else uses DT
-> based probing. s3c64xx is scheduled for removal in early 2024
-> (though no patch has been sent), and we can probably just
-> remove all the atags/platform_device based code when that happens.
->
->       Arnd
