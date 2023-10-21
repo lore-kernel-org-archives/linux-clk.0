@@ -2,69 +2,73 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99ACDC25B48
-	for <linux-clk@archiver.kernel.org>; Sat, 21 Oct 2023 15:55:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7954C001E0
+	for <linux-clk@archiver.kernel.org>; Sat, 21 Oct 2023 16:04:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231722AbjJUPzD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 21 Oct 2023 11:55:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54968 "EHLO
+        id S231701AbjJUQEI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 21 Oct 2023 12:04:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231701AbjJUPzC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 21 Oct 2023 11:55:02 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F8CB197;
-        Sat, 21 Oct 2023 08:55:00 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72F85C433CB;
-        Sat, 21 Oct 2023 15:54:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1697903700;
-        bh=rADjEC3+J56oQ24XMQsTgK76ldNR17htP9+GmNLvZY8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ko2w6dkscB1fGgRvomBzvk/oWxlAu+0gzt3Oyt23oTTf+lDp0eJMnI0/zSKdo/YCS
-         R5Hb/6yM2mezlNACoasYC/Z8tHqbo42qxqU60VXyntO1JcJbjpyehSt9ygpAgSue/q
-         2jLXbMP/jMvdb39qWYEBeJ+35ObaxEdx39sbbgVl8HmAu4yNL1eI3+X8wBE5PYEUFU
-         hmzkpsg0RexTPIuSfeg1ARDwU9afMp2td8Slv0632+nHCDMPwqCk/X8+bUdFBXK2sC
-         GlsX7Cdusb0IdhdJNZYhj6esSnvEEejdQLgP3JGrR/x8ZTzC0kZHAd213znE/UJaNQ
-         vQHZRVaRdDrZA==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, kernel@pengutronix.de
-Subject: Re: [PATCH] clk: qcom: cbf-msm8996: Convert to platform remove callback returning void
-Date:   Sat, 21 Oct 2023 08:58:35 -0700
-Message-ID: <169790390705.1690547.7623433071492517440.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20230911151548.672485-1-u.kleine-koenig@pengutronix.de>
-References: <20230911151548.672485-1-u.kleine-koenig@pengutronix.de>
+        with ESMTP id S231667AbjJUQEH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 21 Oct 2023 12:04:07 -0400
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 707F71A4;
+        Sat, 21 Oct 2023 09:04:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+        Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+        In-Reply-To:References; bh=3FGReTuXmhH3y0Fc5mTzj3aGtkA7sokBoPAvsIr0GEM=; b=1D
+        eSB+WzW72SYwgSE77QCV0XXPXOrogjtuWs9Vb8MCjeyBkFMRPQHeyVbeZp0w4i0nqEECNqnZmCSDw
+        nMtBu7qiGy8Qg+n7dOxWWeNLT4CHvf6zhQcIAgHh5V9TRwE+HGjt1iqoU5wkVPmqvgFDRW1s+l7er
+        +vdp06j1j9m9df8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1quES5-002toP-8y; Sat, 21 Oct 2023 18:03:49 +0200
+Date:   Sat, 21 Oct 2023 18:03:49 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Boqun Feng <boqun.feng@gmail.com>,
+        Jamie Cunliffe <Jamie.Cunliffe@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, steve.capper@arm.com,
+        Asahi Lina <lina@asahilina.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] arm64: rust: Enable Rust support for AArch64
+Message-ID: <94ab3de4-8687-4bc9-a1eb-18a37d7944cd@lunn.ch>
+References: <20231020155056.3495121-1-Jamie.Cunliffe@arm.com>
+ <20231020155056.3495121-3-Jamie.Cunliffe@arm.com>
+ <3cc3b66d-7190-477c-af04-a5d06a0d50fe@lunn.ch>
+ <ZTLH5o0GlFBYsAHq@boqun-archlinux>
+ <CANiq72kjJu=P=19kqq1+5uPpfdS=N4Ucv2okbcWFJVnvR+Hkug@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72kjJu=P=19kqq1+5uPpfdS=N4Ucv2okbcWFJVnvR+Hkug@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-On Mon, 11 Sep 2023 17:15:48 +0200, Uwe Kleine-König wrote:
-> The .remove() callback for a platform driver returns an int which makes
-> many driver authors wrongly assume it's possible to do error handling by
-> returning an error code. However the value returned is ignored (apart
-> from emitting a warning) and this typically results in resource leaks.
-> To improve here there is a quest to make the remove callback return
-> void. In the first step of this quest all drivers are converted to
-> .remove_new() which already returns void. Eventually after all drivers
-> are converted, .remove_new() is renamed to .remove().
+On Sat, Oct 21, 2023 at 03:41:54PM +0200, Miguel Ojeda wrote:
+> On Fri, Oct 20, 2023 at 8:33 PM Boqun Feng <boqun.feng@gmail.com> wrote:
+> >
+> > But I think if people want to do experiments, the tool is there.
 > 
-> [...]
+> Yeah. If the Arm maintainers are OK adding it, I think we should also
+> put it in (next cycle perhaps) -- the sooner we have it in-tree, the
+> more testing it will hopefully get over time, and we can eventually
+> ask the CIs to add a run with it if they have the resources.
 
-Applied, thanks!
+As i said elsewhere, endiannes is interesting for networking.
 
-[1/1] clk: qcom: cbf-msm8996: Convert to platform remove callback returning void
-      commit: abaf59c470a7c9c59bda8da3517ec2ff0513f5a6
+Maybe at the netdev conference next month, how to handle endiannes can
+be part of the presentation? I'm guessing, but is it part of the type
+system? So long as a type is marked as 'cpu endian', little endian, or
+big endian, the compiler will take care of adding the needed swaps?
 
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+    Andrew
