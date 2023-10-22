@@ -2,65 +2,175 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD2D6C25B49
-	for <linux-clk@archiver.kernel.org>; Sun, 22 Oct 2023 16:23:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7609CDB474
+	for <linux-clk@archiver.kernel.org>; Sun, 22 Oct 2023 17:39:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231945AbjJVQXy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 22 Oct 2023 12:23:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57296 "EHLO
+        id S232582AbjJVRjV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 22 Oct 2023 13:39:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232243AbjJVPqU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 22 Oct 2023 11:46:20 -0400
+        with ESMTP id S229500AbjJVRjU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 22 Oct 2023 13:39:20 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70382126;
-        Sun, 22 Oct 2023 08:46:18 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B0A1C43391;
-        Sun, 22 Oct 2023 15:46:17 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D97BBF2;
+        Sun, 22 Oct 2023 10:39:18 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B49A0C433C8;
+        Sun, 22 Oct 2023 17:39:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1697989578;
-        bh=HJ9McRNuINbftQ/frhPnfJqJLCcpGxFtBEJ97xDyd2U=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aw8SpN4wn9ISAerKFsfRL0XQluZ3Hzjv4WfzuSdoiK4WMJY/Jw+cRKGYo346Pf8mo
-         2bWHTdJ/xlQyOMc5pu3PcMZzJBED5HIiJ6oGtT56UtWmj56e0bVPmhr/IO9Lz8Brwl
-         CN3TH+Ab8X7iPlseTJajmVNkYRl4VAV+8bSzJ5BPhPl3gONMaF0iskNDTJKqZtjVfy
-         PaCWCxKuWBF0a7GiLZksrM5yosrbJiGNviSKuoM1TbRNlS1YQ+ap1fzwRTgGXbg8TK
-         nTflSQ0GKOjM+vPTQbFsOe5LUMlalULahJpLIraBoS6pLEB8zM8fP5wgxgq0J9NzAU
-         WC74S0a66zljA==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     agross@kernel.org, konrad.dybcio@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Robert Marko <robimarko@gmail.com>
-Cc:     Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-Subject: Re: [PATCH v2] clk: qcom: gcc-ipq6018: add QUP6 I2C clock
-Date:   Sun, 22 Oct 2023 08:50:24 -0700
-Message-ID: <169798982247.271027.17003524820041381973.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20231021115545.229060-1-robimarko@gmail.com>
-References: <20231021115545.229060-1-robimarko@gmail.com>
+        s=k20201202; t=1697996358;
+        bh=V2tHPMR1TOkzDOcp6KPYSszP9A29fq1AuLXpL5Br5NM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=K6/4L4H7VtSF3BDW3Lq6DK9X1E8D3f58bD2SDrSbnNAGYVFktdLMflOBllDGlYWoC
+         GIiHZIuL8+AfxBwjT+JTZAcPcjA7TfMFEXeaYSIy6H3i1EL3MuuGrmPLGMaGXtxcHn
+         L2iTgbKxkiU3ufeX30VLqh1pcCWhMw6pOfvLwAQVPrLbiKRtXnh2YKFqBPsRoQrsIn
+         YSm2UF9eJISTXVDKPKU1q5Hy1i52Ze9JT3TX3KAHhujFayx9ME/oYAVZG+q38n0Vvl
+         lx6oMuZ6+zcugE2dq0PNpBkH6Pdv/ODEzfnZR0bMMrkk9V2ID3hKA6Z3Jxy3DTSf23
+         TR7830cTppCgA==
+Date:   Sun, 22 Oct 2023 18:39:12 +0100
+From:   Conor Dooley <conor@kernel.org>
+To:     Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Marek Vasut <marex@denx.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux@ew.tq-group.com, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH 2/5] dt-bindings: soc: imx93-media-blk-ctrl: Add LDB
+ subnode into schema and example
+Message-ID: <20231022-helper-dating-a0f65a8f6f72@spud>
+References: <20231020130019.665853-1-alexander.stein@ew.tq-group.com>
+ <20231020130019.665853-3-alexander.stein@ew.tq-group.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="OjkkNCobwn9OU9NU"
+Content-Disposition: inline
+In-Reply-To: <20231020130019.665853-3-alexander.stein@ew.tq-group.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On Sat, 21 Oct 2023 13:55:18 +0200, Robert Marko wrote:
-> QUP6 I2C clock is listed in the dt bindings but it was never included in
-> the GCC driver.
-> So lets add support for it, it is marked as criticial as it is used by RPM
-> to communicate to the external PMIC over I2C so this clock must not be
-> disabled.
-> 
-> 
-> [...]
+--OjkkNCobwn9OU9NU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Applied, thanks!
+Yo,
 
-[1/1] clk: qcom: gcc-ipq6018: add QUP6 I2C clock
-      commit: 3dcf7b59393812a5fbd83f8cd8d34b94afb4c4d1
+On Fri, Oct 20, 2023 at 03:00:15PM +0200, Alexander Stein wrote:
+> Document the LDB bridge subnode and add the subnode into the example.
+> For the subnode to work, the block control must scan its subnodes and
+> bind drivers to them, do not misuse either simple-bus or simple-mfd
+> here.
+>=20
+> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> ---
+>  .../soc/imx/fsl,imx93-media-blk-ctrl.yaml     | 44 +++++++++++++++++++
+>  1 file changed, 44 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-bl=
+k-ctrl.yaml b/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk=
+-ctrl.yaml
+> index b3554e7f9e76..5ba66dfb0e05 100644
+> --- a/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.=
+yaml
+> +++ b/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.=
+yaml
+> @@ -24,6 +24,12 @@ properties:
+>    reg:
+>      maxItems: 1
+> =20
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 1
+> +
+>    '#power-domain-cells':
+>      const: 1
+> =20
+> @@ -46,9 +52,16 @@ properties:
+>        - const: csi
+>        - const: dsi
+> =20
+> +  bridge@20:
+> +    type: object
+> +    $ref: /schemas/display/bridge/fsl,ldb.yaml#
+> +    unevaluatedProperties: false
+> +
+>  required:
+>    - compatible
+>    - reg
 
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+> +  - '#address-cells'
+> +  - '#size-cells'
+
+It seems to make little sense to me that these would become required
+when the bridge is optional. Is it valid to have one of these
+media-blk-ctrls without the ldb subnode?
+
+>    - power-domains
+>    - clocks
+>    - clock-names
+> @@ -77,4 +90,35 @@ examples:
+>                 clock-names =3D "apb", "axi", "nic", "disp", "cam",
+>                               "pxp", "lcdif", "isi", "csi", "dsi";
+>        #power-domain-cells =3D <1>;
+> +      #address-cells =3D <1>;
+> +      #size-cells =3D <1>;
+> +
+> +      bridge@20 {
+> +          compatible =3D "fsl,imx93-ldb";
+> +          reg =3D <0x20 0x4>, <0x24 0x4>;
+> +          reg-names =3D "ldb", "lvds";
+> +          clocks =3D <&clk IMX93_CLK_LVDS_GATE>;
+> +          clock-names =3D "ldb";
+> +
+> +          ports {
+> +              #address-cells =3D <1>;
+> +              #size-cells =3D <0>;
+> +
+> +              port@0 {
+> +                  reg =3D <0>;
+> +
+> +                  ldb_from_lcdif2: endpoint {
+> +                      remote-endpoint =3D <&lcdif2_to_ldb>;
+> +                  };
+> +              };
+> +
+> +              port@1 {
+> +                  reg =3D <1>;
+> +
+> +                  ldb_lvds: endpoint {
+> +                      remote-endpoint =3D <&ldb_to_panel>;
+> +                  };
+> +              };
+> +          };
+> +        };
+>      };
+> --=20
+> 2.34.1
+>=20
+
+--OjkkNCobwn9OU9NU
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZTVeQAAKCRB4tDGHoIJi
+0l9qAP0VlEaAluBRXsbW8N9Eandg3TOavmfUjpyH+1wBFkQQOwEA0yPLz0di2m0x
+pDXwKnhPdmOAymwdxMVUVzBgnfeRrgs=
+=7x7o
+-----END PGP SIGNATURE-----
+
+--OjkkNCobwn9OU9NU--
