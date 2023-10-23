@@ -2,87 +2,104 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28340CDB474
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Oct 2023 12:33:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C3F8CDB474
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Oct 2023 13:35:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233392AbjJWMdu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Oct 2023 08:33:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36370 "EHLO
+        id S230044AbjJWNfI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Oct 2023 09:35:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59158 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229835AbjJWMdt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Oct 2023 08:33:49 -0400
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 931CF110
-        for <linux-clk@vger.kernel.org>; Mon, 23 Oct 2023 05:33:47 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1quu7f-0004Jk-Nk; Mon, 23 Oct 2023 14:33:31 +0200
-Received: from [2a0a:edc0:2:b01:1d::c0] (helo=ptx.whiteo.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1quu7e-003hrK-Nk; Mon, 23 Oct 2023 14:33:30 +0200
-Received: from mfe by ptx.whiteo.stw.pengutronix.de with local (Exim 4.92)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1quu7e-00Fvg8-Kg; Mon, 23 Oct 2023 14:33:30 +0200
-Date:   Mon, 23 Oct 2023 14:33:30 +0200
-From:   Marco Felsch <m.felsch@pengutronix.de>
-To:     Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Marek Vasut <marex@denx.de>, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        with ESMTP id S229613AbjJWNfH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Oct 2023 09:35:07 -0400
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7638C9B;
+        Mon, 23 Oct 2023 06:35:05 -0700 (PDT)
+Received: by mail-lj1-x22b.google.com with SMTP id 38308e7fff4ca-2c509f2c46cso47039161fa.1;
+        Mon, 23 Oct 2023 06:35:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1698068103; x=1698672903; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wx0BrSEgwwqDaJo2A/cSmzYDiAma8W23poMJduSA6Ow=;
+        b=nhlSRXDksbUM/cjLOmKub52Fp2knTiFJOY8CcD/notS3ykAd7cOSRXoYuyFOnf4YZ2
+         XVPF+G5HL7nVTkrfNwJC2fAVUephG1JbZ+hSwQK5hP8ixX1slVwurkH41IypOwW6SjZ9
+         ZWfc34x8ViyeXRubNeAUHHEpPvUIFqxzU8saYOrEvH8VXN5s8hH8m6dJ0g8NWEqiA8nY
+         cIroRwyZOiAPo7vD/itfofybMS18hVegWQMqdtYTduiOgoXlrXc1ZT+r8I2KhYbWcinh
+         grgpYBDYhT0mJEkUkls5Yiy8ojfZx2YOq7uTYFZJKJcd6caJ0VCQCvo9pUT0R5za/1he
+         YhUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698068103; x=1698672903;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Wx0BrSEgwwqDaJo2A/cSmzYDiAma8W23poMJduSA6Ow=;
+        b=JkitEktwUl2HzRxkPEwLRmav2+P5kPPsxH0RhIGVwcgxqZREuvPFx2z5AIySYfxEbv
+         Fe6Er8CplKL5Bv1BlE15NyMU1NlAEynM3cWU4ypyCJOMLG+b2wXSkQa2vyAzHYD6TTQ3
+         L5J/UC9OuP56MqOFZr5+ItICbmn+TiK4Ato+fQ+XmriGYrxq1ncl8OJYhY81VE/c0WIc
+         fB5n62nLEI3S0DzuOYmc0WU8JxEFjM1ct5qYPJE2JprIhXXTomLq9etI196H08iDFyPE
+         xHpaQ7WjI+ZgbTl3Gt9SszxK9M8idwaOZYaqhMUCXulNY/Hd360Sc049gkVPlZS9SFsg
+         ivcQ==
+X-Gm-Message-State: AOJu0YzWSoCM+okuKQtgwaTj7cZKJZ34JWTfTkz1pWgAYIUBFCDXXOgB
+        Q3QW63bD80mzF9M63CZlphc=
+X-Google-Smtp-Source: AGHT+IF6iFCOYLHVJ673/GenbGT2JYzGsYEv1qorObhiXC5W33ZMltiL1xwut1ShRpGUTtslY+tkdw==
+X-Received: by 2002:a2e:9f50:0:b0:2bc:f39b:d1a8 with SMTP id v16-20020a2e9f50000000b002bcf39bd1a8mr5834000ljk.46.1698068103373;
+        Mon, 23 Oct 2023 06:35:03 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id m29-20020a05600c3b1d00b003fe61c33df5sm14469380wms.3.2023.10.23.06.35.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Oct 2023 06:35:02 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux@ew.tq-group.com
-Subject: Re: [PATCH 4/5] clk: imx: clk-fracn-gppll: Add 477.4MHz config for
- video pll
-Message-ID: <20231023123330.2z37jzwdsx52w7p3@pengutronix.de>
-References: <20231020130019.665853-1-alexander.stein@ew.tq-group.com>
- <20231020130019.665853-5-alexander.stein@ew.tq-group.com>
- <20231020142055.xnxbumcg2o6cfpfl@pengutronix.de>
- <10361180.nUPlyArG6x@steina-w>
+        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org
+Subject: [PATCH][next] clk: sunxi-ng: nkm: remove redundant initialization of tmp_parent
+Date:   Mon, 23 Oct 2023 14:35:02 +0100
+Message-Id: <20231023133502.666559-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <10361180.nUPlyArG6x@steina-w>
-User-Agent: NeoMutt/20180716
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23-10-23, Alexander Stein wrote:
-> Hi Marco,
-> 
-> Am Freitag, 20. Oktober 2023, 16:20:55 CEST schrieb Marco Felsch:
-> > Hi Alexander,
-> > 
-> > On 23-10-20, Alexander Stein wrote:
-> > > Add the 477.4MHz frequency support that will be used by video subsystem
-> > > on imx93.
-> > 
-> > albeit the change is fine, could we consider adding support to calc the
-> > params dynamically?
-> 
-> Agreed, I would prefer that as well: But unfortunately I will not be able to 
-> add dynamic calculation right now.
+Variable tmp_parent is being ininitialized with a value that is never
+read, the initialization is redundant and can be removed. Move the
+initialization and move the variable to the inner loop scope.
 
-Okay, just wanted to ask if someone (maybe TQ) has the time to implement
-and test it.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/clk/sunxi-ng/ccu_nkm.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Regards,
-  Marco
+diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
+index eed64547ad42..853f84398e2b 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkm.c
++++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+@@ -21,17 +21,16 @@ static unsigned long ccu_nkm_find_best_with_parent_adj(struct ccu_common *common
+ 						       unsigned long *parent, unsigned long rate,
+ 						       struct _ccu_nkm *nkm)
+ {
+-	unsigned long best_rate = 0, best_parent_rate = *parent, tmp_parent = *parent;
++	unsigned long best_rate = 0, best_parent_rate = *parent;
+ 	unsigned long best_n = 0, best_k = 0, best_m = 0;
+ 	unsigned long _n, _k, _m;
+ 
+ 	for (_k = nkm->min_k; _k <= nkm->max_k; _k++) {
+ 		for (_n = nkm->min_n; _n <= nkm->max_n; _n++) {
+ 			for (_m = nkm->min_m; _m <= nkm->max_m; _m++) {
+-				unsigned long tmp_rate;
++				unsigned long tmp_rate, tmp_parent;
+ 
+ 				tmp_parent = clk_hw_round_rate(parent_hw, rate * _m / (_n * _k));
+-
+ 				tmp_rate = tmp_parent * _n * _k / _m;
+ 
+ 				if (ccu_is_better_rate(common, rate, tmp_rate, best_rate) ||
+-- 
+2.39.2
+
