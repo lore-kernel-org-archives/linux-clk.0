@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF239C001E0
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Oct 2023 10:23:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 702A9CDB474
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Oct 2023 10:23:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233064AbjJWKXV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Oct 2023 06:23:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51512 "EHLO
+        id S232536AbjJWKX0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Oct 2023 06:23:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230064AbjJWKXG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Oct 2023 06:23:06 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97937D73
-        for <linux-clk@vger.kernel.org>; Mon, 23 Oct 2023 03:22:59 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id 2adb3069b0e04-5079f6efd64so4235483e87.2
-        for <linux-clk@vger.kernel.org>; Mon, 23 Oct 2023 03:22:59 -0700 (PDT)
+        with ESMTP id S232913AbjJWKXV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Oct 2023 06:23:21 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 963E310E3
+        for <linux-clk@vger.kernel.org>; Mon, 23 Oct 2023 03:23:04 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-4084095722aso25503125e9.1
+        for <linux-clk@vger.kernel.org>; Mon, 23 Oct 2023 03:23:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1698056578; x=1698661378; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1698056581; x=1698661381; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DGt7Al+kGOhABFI1AhgrdMNJArcSe/mnGzlQw6oBpxk=;
-        b=NJvDDllK2yzaDs0FrM/ZEQD6LofmpNHfAG+9aWyGkAqWIIxI1r5cUOO7fgvJRMelfM
-         brH9Hdy7InoU83DTuiVvyRd4qJ/jwWXYB40GdxpNzr//M+qkbeUnTnOCHxGILOh5btRe
-         hqI5Ov8fcKWmBpHrvBAA4ZHyxJgPHAhxUfVmvvo5EvV0gGe4MFTzQb4zPV4HgjdYQKz+
-         m5sdfeY5dB9CsQgxwVe3ZKotUGgVDqKWY5sp8jtHh2l92wMq/LyvwMiE4RGEPaXIeTdF
-         r37maysnm1pjfTQ3ZEp08HRouVZ2axAXm22KLeA+1tcfxRP4NKfIMCZ3mj7KCd/pAXPk
-         rUwA==
+        bh=8k0EshLjUbr1rifjRs+LM2thRC9AnbfURENQfGj3YpQ=;
+        b=AOfZKPQSAysvBShUn6OhBwZz0U2uqB8/WTZquhn1yeVwbkDOhCZcwky8zXukYKGHd1
+         KwO/Ax1aM4E/WWjGePaaMXoHJbCm9k5t5MOGLzRaRuXcenxLOEvLbzlfF9m6J7VHndIZ
+         unIF19g0XCtbWFO6u86qoiNGD4ibo2hUigGaqfivKjHBo5/V2kBDe2z5Q9WP+xlj411p
+         xXxHzf245VB9nOTcd5xfrTgN9FuDcsdvKEvHMGgNs3RnK/EbLzg5gslsBZYcHPVWrxSe
+         IdJj+iMvy1URciafBG1M/jXM14RCaPj5nYtkjjJZyzyCn/Ex5RUV8+waEEvHp1mCJBg9
+         m01w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698056578; x=1698661378;
+        d=1e100.net; s=20230601; t=1698056581; x=1698661381;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DGt7Al+kGOhABFI1AhgrdMNJArcSe/mnGzlQw6oBpxk=;
-        b=wmZgqRb/N7mob6sd4RnmgsoM8UIZNItLPs2CxAvGqMT3iM5LBFW8tr49vsPRfff2T2
-         H2uvzbyzwiWrzAvIYzS74Vcq+PnxAyr7pNr/2rwnhZRayNvz8xcrMg6EqocDCcFGbQ8Z
-         fZL4/QnpD+4HHKM54OQSrcmomepl0QA9oZjFqrPRQrYGP63kMPBE4TX7py1fO5kJlGmi
-         F8t2HYngUUt8gJucrO5sPlXmrR7kCCbNEwgiYb/ASIalvAu5wE8nDQoNhZdVDVe0qVtP
-         ursc4V2wNGLFbvKI6/D7UKM/y/qyhsGMsSecOlQH0T3Z5Gn19oug/BjaLvVcTJx6hJkh
-         PTMg==
-X-Gm-Message-State: AOJu0YzJOy19SirQpmn2j8jD58f6ezX7yaIMVlvjeEZ2MbEuEjLv5LY0
-        gjrZAt+vipSv/aYAP0qUGdQCYw==
-X-Google-Smtp-Source: AGHT+IG1A2rjeG7FTf+YUXCRDv4d4+GXzTBYBVrZoCV3GNqvprajomL3vgjcmNNoSlBt50iG/V+nhw==
-X-Received: by 2002:a19:8c1c:0:b0:503:2877:67e3 with SMTP id o28-20020a198c1c000000b00503287767e3mr5712726lfd.6.1698056577645;
-        Mon, 23 Oct 2023 03:22:57 -0700 (PDT)
+        bh=8k0EshLjUbr1rifjRs+LM2thRC9AnbfURENQfGj3YpQ=;
+        b=jRBUjGMqFiSipvN/bUK0xNPZYtlXWPZZoZdAbYwEr8MQQBdSu5MhHJFFLlOiF7FAb9
+         BuTuxl3j9XcZhn9Sm1p7rgRoodUOTM+Y9aP0AShFtKiHFPyM+06l2XvpkbIMSFYnCiK9
+         bK6A2BnaUL4m7JuwGHnZ0qnhgOB//q6f4qJ+mImBN15T/TyLeEdZReNkBL6vxeErp3z2
+         G7tyG6XUeoXWIPHjGW+/czdZKBl5vCvYz9Mt0lVPb7vosbU4D/O7JU9AWHKD3w1jWdd8
+         mEnAhK0JIjRZUwBcZwOwrGtH3RMgs8/IckWfPjkW/H18D/Wk6T8Ggu2eQUBdRdYX/vLe
+         hwdg==
+X-Gm-Message-State: AOJu0Yw1pKnAZ/Eu1k8yUmLVYUOzEDibLUrbKSuchyLX1qm94wr9VwK+
+        FO3X6ZeE+9qEpogxgsekn896DQ==
+X-Google-Smtp-Source: AGHT+IG3jAIdQfmC2Z+L5C+d69j5tDElEciqTF1dG/PBhVBTrAoiiDhk1pI0XMhW2i7pOJkPSg/a1Q==
+X-Received: by 2002:a05:600c:354b:b0:3fe:1b4e:c484 with SMTP id i11-20020a05600c354b00b003fe1b4ec484mr6753113wmq.5.1698056581462;
+        Mon, 23 Oct 2023 03:23:01 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.185])
-        by smtp.gmail.com with ESMTPSA id 1-20020a05600c228100b0040596352951sm13593275wmf.5.2023.10.23.03.22.56
+        by smtp.gmail.com with ESMTPSA id 1-20020a05600c228100b0040596352951sm13593275wmf.5.2023.10.23.03.22.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Oct 2023 03:22:57 -0700 (PDT)
+        Mon, 23 Oct 2023 03:23:01 -0700 (PDT)
 From:   Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To:     tglx@linutronix.de, robh+dt@kernel.org,
@@ -59,9 +59,9 @@ To:     tglx@linutronix.de, robh+dt@kernel.org,
 Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 5/7] irqchip/renesas-rzg2l: cache registers on suspend/resume
-Date:   Mon, 23 Oct 2023 13:22:21 +0300
-Message-Id: <20231023102223.1309614-6-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 7/7] arm64: dts: renesas: r9108g045: add irqc
+Date:   Mon, 23 Oct 2023 13:22:23 +0300
+Message-Id: <20231023102223.1309614-8-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20231023102223.1309614-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20231023102223.1309614-1-claudiu.beznea.uj@bp.renesas.com>
@@ -73,152 +73,99 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Cache registers content when going to suspend and restore them in resume
-as these may be lost when switching to deep sleep states. With this
-driver data has been marked as static to be able to play with it
-in struct syscon_ops::{suspend, resume}. Because IA55 input is from
-pin controller and IA55 resumes before pin controller we don't restore
-interrupt enable bits here but let the pinctrl to do it on IA55 behalf
-after pins are in proper state to avoid invalid interrupts.
+Add irqc node and set it as interrupt parent for pin controller.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/irqchip/irq-renesas-rzg2l.c | 67 +++++++++++++++++++++++------
- 1 file changed, 54 insertions(+), 13 deletions(-)
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi | 68 ++++++++++++++++++++++
+ 1 file changed, 68 insertions(+)
 
-diff --git a/drivers/irqchip/irq-renesas-rzg2l.c b/drivers/irqchip/irq-renesas-rzg2l.c
-index 1ed9cb7178fa..e5e158bf028d 100644
---- a/drivers/irqchip/irq-renesas-rzg2l.c
-+++ b/drivers/irqchip/irq-renesas-rzg2l.c
-@@ -18,6 +18,7 @@
- #include <linux/pm_runtime.h>
- #include <linux/reset.h>
- #include <linux/spinlock.h>
-+#include <linux/syscore_ops.h>
+diff --git a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
+index 6c7b29b69d0e..010bca626855 100644
+--- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
+@@ -96,6 +96,7 @@ pinctrl: pinctrl@11030000 {
+ 			#gpio-cells = <2>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
++			interrupt-parent = <&irqc>;
+ 			gpio-ranges = <&pinctrl 0 0 152>;
+ 			clocks = <&cpg CPG_MOD R9A08G045_GPIO_HCLK>;
+ 			power-domains = <&cpg>;
+@@ -104,6 +105,73 @@ pinctrl: pinctrl@11030000 {
+ 				 <&cpg R9A08G045_GPIO_SPARE_RESETN>;
+ 		};
  
- #define IRQC_IRQ_START			1
- #define IRQC_IRQ_COUNT			8
-@@ -39,6 +40,7 @@
- 
- #define TSSR_OFFSET(n)			((n) % 4)
- #define TSSR_INDEX(n)			((n) / 4)
-+#define TSSR_MAX_INDEX			8
- 
- #define TITSR_TITSEL_EDGE_RISING	0
- #define TITSR_TITSEL_EDGE_FALLING	1
-@@ -57,11 +59,22 @@
- #define TINT_EXTRACT_HWIRQ(x)           FIELD_GET(GENMASK(15, 0), (x))
- #define TINT_EXTRACT_GPIOINT(x)         FIELD_GET(GENMASK(31, 16), (x))
- 
--struct rzg2l_irqc_priv {
-+/**
-+ * struct rzg2l_irqc_reg_cache - register cache
-+ * @iitsr: IITSR register
-+ * @titsr: TITSR registers
-+ */
-+struct rzg2l_irqc_reg_cache {
-+	u32 iitsr;
-+	u32 titsr[2];
-+};
++		irqc: interrupt-controller@11050000 {
++			compatible = "renesas,r9a08g045-irqc", "renesas,rzg2l-irqc";
++			#interrupt-cells = <2>;
++			#address-cells = <0>;
++			interrupt-controller;
++			reg = <0 0x11050000 0 0x10000>;
++			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 429 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 430 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 431 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 432 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 433 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 434 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 435 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 436 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 437 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 438 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 439 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 440 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 441 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 442 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 443 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 444 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 445 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 446 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 447 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 448 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 449 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 450 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 451 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 452 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 453 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 454 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 455 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 456 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 457 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 458 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 459 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 460 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "nmi",
++					  "irq0", "irq1", "irq2", "irq3",
++					  "irq4", "irq5", "irq6", "irq7",
++					  "tint0", "tint1", "tint2", "tint3",
++					  "tint4", "tint5", "tint6", "tint7",
++					  "tint8", "tint9", "tint10", "tint11",
++					  "tint12", "tint13", "tint14", "tint15",
++					  "tint16", "tint17", "tint18", "tint19",
++					  "tint20", "tint21", "tint22", "tint23",
++					  "tint24", "tint25", "tint26", "tint27",
++					  "tint28", "tint29", "tint30", "tint31",
++					  "bus-err";
++			clocks = <&cpg CPG_MOD R9A08G045_IA55_CLK>,
++				 <&cpg CPG_MOD R9A08G045_IA55_PCLK>;
++			clock-names = "clk", "pclk";
++			power-domains = <&cpg>;
++			resets = <&cpg R9A08G045_IA55_RESETN>;
++		};
 +
-+static struct rzg2l_irqc_priv {
- 	void __iomem *base;
- 	struct irq_fwspec fwspec[IRQC_NUM_IRQ];
- 	raw_spinlock_t lock;
--};
-+	struct rzg2l_irqc_reg_cache cache;
-+} priv;
- 
- static struct rzg2l_irqc_priv *irq_data_to_priv(struct irq_data *data)
- {
-@@ -238,6 +251,37 @@ static int rzg2l_irqc_set_type(struct irq_data *d, unsigned int type)
- 	return irq_chip_set_type_parent(d, IRQ_TYPE_LEVEL_HIGH);
- }
- 
-+static int rzg2l_irqc_irq_suspend(void)
-+{
-+	struct rzg2l_irqc_reg_cache *cache = &priv.cache;
-+
-+	cache->iitsr = readl_relaxed(priv.base + IITSR);
-+	for (u8 i = 0; i < 2; i++)
-+		cache->titsr[i] = readl_relaxed(priv.base + TITSR(i));
-+
-+	return 0;
-+}
-+
-+static void rzg2l_irqc_irq_resume(void)
-+{
-+	struct rzg2l_irqc_reg_cache *cache = &priv.cache;
-+	u8 i;
-+
-+	/*
-+	 * Restore only interrupt type. TSSRx will be restored at the
-+	 * request of pin controller to avoid spurious interrupts due
-+	 * to invalid PIN states.
-+	 */
-+	for (i = 0; i < 2; i++)
-+		writel_relaxed(cache->titsr[i], priv.base + TITSR(i));
-+	writel_relaxed(cache->iitsr, priv.base + IITSR);
-+}
-+
-+static struct syscore_ops rzg2l_irqc_syscore_ops = {
-+	.suspend = rzg2l_irqc_irq_suspend,
-+	.resume = rzg2l_irqc_irq_resume,
-+};
-+
- static const struct irq_chip irqc_chip = {
- 	.name			= "rzg2l-irqc",
- 	.irq_eoi		= rzg2l_irqc_eoi,
-@@ -323,7 +367,6 @@ static int rzg2l_irqc_init(struct device_node *node, struct device_node *parent)
- 	struct irq_domain *irq_domain, *parent_domain;
- 	struct platform_device *pdev;
- 	struct reset_control *resetn;
--	struct rzg2l_irqc_priv *priv;
- 	int ret;
- 
- 	pdev = of_find_device_by_node(node);
-@@ -336,15 +379,11 @@ static int rzg2l_irqc_init(struct device_node *node, struct device_node *parent)
- 		return -ENODEV;
- 	}
- 
--	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
--	if (!priv)
--		return -ENOMEM;
-+	priv.base = devm_of_iomap(&pdev->dev, pdev->dev.of_node, 0, NULL);
-+	if (IS_ERR(priv.base))
-+		return PTR_ERR(priv.base);
- 
--	priv->base = devm_of_iomap(&pdev->dev, pdev->dev.of_node, 0, NULL);
--	if (IS_ERR(priv->base))
--		return PTR_ERR(priv->base);
--
--	ret = rzg2l_irqc_parse_interrupts(priv, node);
-+	ret = rzg2l_irqc_parse_interrupts(&priv, node);
- 	if (ret) {
- 		dev_err(&pdev->dev, "cannot parse interrupts: %d\n", ret);
- 		return ret;
-@@ -367,17 +406,19 @@ static int rzg2l_irqc_init(struct device_node *node, struct device_node *parent)
- 		goto pm_disable;
- 	}
- 
--	raw_spin_lock_init(&priv->lock);
-+	raw_spin_lock_init(&priv.lock);
- 
- 	irq_domain = irq_domain_add_hierarchy(parent_domain, 0, IRQC_NUM_IRQ,
- 					      node, &rzg2l_irqc_domain_ops,
--					      priv);
-+					      &priv);
- 	if (!irq_domain) {
- 		dev_err(&pdev->dev, "failed to add irq domain\n");
- 		ret = -ENOMEM;
- 		goto pm_put;
- 	}
- 
-+	register_syscore_ops(&rzg2l_irqc_syscore_ops);
-+
- 	return 0;
- 
- pm_put:
+ 		sdhi0: mmc@11c00000  {
+ 			compatible = "renesas,sdhi-r9a08g045", "renesas,rcar-gen3-sdhi";
+ 			reg = <0x0 0x11c00000 0 0x10000>;
 -- 
 2.39.2
 
