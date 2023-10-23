@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A486C00A8F
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Oct 2023 10:23:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48CF2CDB474
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Oct 2023 10:23:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229870AbjJWKXB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Oct 2023 06:23:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51426 "EHLO
+        id S232798AbjJWKXM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Oct 2023 06:23:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229935AbjJWKW7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Oct 2023 06:22:59 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F1BFD73
-        for <linux-clk@vger.kernel.org>; Mon, 23 Oct 2023 03:22:57 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-4083f61312eso25491725e9.3
-        for <linux-clk@vger.kernel.org>; Mon, 23 Oct 2023 03:22:57 -0700 (PDT)
+        with ESMTP id S230465AbjJWKXD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Oct 2023 06:23:03 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5C36D76
+        for <linux-clk@vger.kernel.org>; Mon, 23 Oct 2023 03:23:00 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-4084e49a5e5so26919775e9.3
+        for <linux-clk@vger.kernel.org>; Mon, 23 Oct 2023 03:23:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1698056576; x=1698661376; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1698056579; x=1698661379; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SN/3LO5tvVwfDdWFrwqMG2p+XEYGEFttmBsUPHkc9hE=;
-        b=Q8eyWNMVYCFPXdQCKD+uFAz3sNMSJ/bCz/vX3s/eoIsQoPwC16JVibDJtkaXC1GHhW
-         3/NzzkFJ8fhj+P6BmeMlvs2eHUvGQlpNTHBwcQ3t5H3Yq7ga78igm/3Kc0MRrIyiVgE2
-         b4hwgqR9Yp8/4OOjkf4/C4WjhE3SHTcWJtlH4KBx+Aj5uhmeBTe3oAmCLrgQ7QWPJOKu
-         zBANkvXNtdUve7m85YNp6xJZF1zHsUN+S5ABcAnPySUnSvllEmkIu21pDWDQ3g9nLnkC
-         2A+bcclW1CZDmBTV4trkJXvq5cp74FsMEAs+MhYU6+icNqWQX9ZdVH1AxZqIUQGv2xGg
-         OG5w==
+        bh=X82FS37MpATKittBab30iZpigNPQeNpIZ7vC4jhKrjE=;
+        b=oIfulWeSARbFBk5Tn2nGzAEftSL4CgvfON24Xo+SOvu/LySpcOe+jLZ6ccebBcYzG9
+         zeEFoIVlVK+fr27H+vdzzdlnU2cEvT4BIm6glYWSBfjoH6ja7oHPryMB0TNRucXhXpEZ
+         N5SqdOcLieansqETjXiOLitCOPaUog/MIzeF078S1i3v6XqNuthw7BXI0EZQGxKH6cjF
+         7VopqMbhfKFkSFBVnDvYnBT5fx00ClgdCsnfSUIjv0/G5631Dj5h5EOzuZPOWOljIhIx
+         MTzG8BbY/F3FyXItqvUDzg8ZQsMD09Iw4wamPYaCtX4XjUY/juadb4b+W/miCsRpvet2
+         9CYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698056576; x=1698661376;
+        d=1e100.net; s=20230601; t=1698056579; x=1698661379;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SN/3LO5tvVwfDdWFrwqMG2p+XEYGEFttmBsUPHkc9hE=;
-        b=bzwdh0mHDjkI0JDw0zMNAjBLb1tNG0VbNGwWsTiSTR8ooZzQonizUn/hpWydizS9Aj
-         mZyx1Qx+oVPZTfBBc4IDgK8vUL6Ee1nZp5SKxOuPuEPDlxwp0SjuYrVXL9DyFGOJSgAV
-         P9bNS+1G5zZGvGleAAIA7JCNMHeHgjhaVdsEdXLbSMcVq/ZzKL8KHsADu0MUTP16vZIM
-         J6myaULXId2eF7cBjAQeqayZejlvECQ8fuaknsDn6r0h4qQ/D+viYCckUuswxFHM7ogO
-         7EkSKSYVPMAzcDhB6KDcMFMUIrqZohp8c/LVPZuVjXaiUangW+liEcb+VHWaqzILaxJ1
-         PVeA==
-X-Gm-Message-State: AOJu0YxpmwpmpHQUM9khZ6gPdABWRRGMKaNrKyo0jzIvJLzsrKp2+qNw
-        4kOoXOWHdHLlEmDXYumA6igYSQ==
-X-Google-Smtp-Source: AGHT+IGe6Tqmo8KBv27r4U/I4sG811IvcqDvhd8343Xi3gHNdWdtBLdm9FzmPugPuFUNj4KbgtYP1A==
-X-Received: by 2002:a05:600c:9a5:b0:406:599f:f934 with SMTP id w37-20020a05600c09a500b00406599ff934mr7577051wmp.12.1698056575778;
-        Mon, 23 Oct 2023 03:22:55 -0700 (PDT)
+        bh=X82FS37MpATKittBab30iZpigNPQeNpIZ7vC4jhKrjE=;
+        b=gH5OTT2ejlJMbWWhEpWiSHwP2VZznsS3xoZJPgo5/yPKZNzflyrco//MMMHVS+tREI
+         43P6VkEPUSfNDORjNZS72QQ0m/dy2fUDqR91Ho/WmnU8GHdmVeWBNGonlH49E+zOBjvW
+         q7J+K5/Igrs8h/N2gHcedIIy3S3eKKDOfZ7jfxc4Rmucbg/4ODPSL/9VVgPvywBDgRgA
+         sd5+GcTe0uliO53k/XuT9EXNYLslm3iRcPkmAwy+MHrehy4lMU6FqQUi0o2TyhHp0+Eq
+         7QGwiP63PL2IUlJAdgH+iqa3MrvVmXcrnsUAL0XYRbTvpQRudGkZzO8SlZ2qW8d5cmKZ
+         MuUw==
+X-Gm-Message-State: AOJu0Yxr+bDPAQWOKV4thwqYp+zVXnQBNe15qGzjBoDzYP+bVf+FKZkK
+        M35C68rKfDMKm+Vezd1iXwCQYw==
+X-Google-Smtp-Source: AGHT+IFljXMqxHrslhD3f5aaczqeFQBtBIQnWV+U2sbvpYvMW9byaeQIqLPtr2IOqZNiNuJ+/np7GA==
+X-Received: by 2002:a05:600c:4f86:b0:408:f9ce:56c5 with SMTP id n6-20020a05600c4f8600b00408f9ce56c5mr3226751wmq.24.1698056579471;
+        Mon, 23 Oct 2023 03:22:59 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.185])
-        by smtp.gmail.com with ESMTPSA id 1-20020a05600c228100b0040596352951sm13593275wmf.5.2023.10.23.03.22.54
+        by smtp.gmail.com with ESMTPSA id 1-20020a05600c228100b0040596352951sm13593275wmf.5.2023.10.23.03.22.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Oct 2023 03:22:55 -0700 (PDT)
+        Mon, 23 Oct 2023 03:22:59 -0700 (PDT)
 From:   Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To:     tglx@linutronix.de, robh+dt@kernel.org,
@@ -59,14 +59,13 @@ To:     tglx@linutronix.de, robh+dt@kernel.org,
 Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 4/7] irqchip/renesas-rzg2l: implement restriction when writing ISCR register
-Date:   Mon, 23 Oct 2023 13:22:20 +0300
-Message-Id: <20231023102223.1309614-5-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 6/7] irqchip/renesas-rzg2l: use tabs instead of spaces
+Date:   Mon, 23 Oct 2023 13:22:22 +0300
+Message-Id: <20231023102223.1309614-7-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20231023102223.1309614-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20231023102223.1309614-1-claudiu.beznea.uj@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -74,55 +73,29 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-In hardware manual of RZ/G2L (r01uh0914ej0130-rzg2l-rzg2lc.pdf)
-is available the following statement with regards to clearing interrupts
-though ISCR register:
-
-[Write operation]
-When "Falling-edge detection", "Rising-edge detection" or
-"Falling/Rising-edge detection" is set in ISCR.:
-- In case ISTAT is 1
-	0: IRQn interrupt detection status is cleared.
-	1: Invalid to write.
-- In case ISTAT is 0
-	Invalid to write.
-When “Low-level detection” is set in IITSR.:
-	Invalid to write.
-
-Thus, take into account interrupt type when clearing interrupts though
-ISCR register.
+Use tabs instead of spaces in definition of TINT_EXTRACT_HWIRQ()
+and TINT_EXTRACT_GPIOINT() macros.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/irqchip/irq-renesas-rzg2l.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ drivers/irqchip/irq-renesas-rzg2l.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/irqchip/irq-renesas-rzg2l.c b/drivers/irqchip/irq-renesas-rzg2l.c
-index 9ce0d6d67486..1ed9cb7178fa 100644
+index e5e158bf028d..ce50745bba87 100644
 --- a/drivers/irqchip/irq-renesas-rzg2l.c
 +++ b/drivers/irqchip/irq-renesas-rzg2l.c
-@@ -73,11 +73,17 @@ static void rzg2l_irq_eoi(struct irq_data *d)
- 	unsigned int hw_irq = irqd_to_hwirq(d) - IRQC_IRQ_START;
- 	struct rzg2l_irqc_priv *priv = irq_data_to_priv(d);
- 	u32 bit = BIT(hw_irq);
--	u32 reg;
-+	u32 iitsr, iscr;
+@@ -56,8 +56,8 @@
+ #define IITSR_IITSEL_EDGE_BOTH		3
+ #define IITSR_IITSEL_MASK(n)		IITSR_IITSEL((n), 3)
  
--	reg = readl_relaxed(priv->base + ISCR);
--	if (reg & bit)
--		writel_relaxed(reg & ~bit, priv->base + ISCR);
-+	iscr = readl_relaxed(priv->base + ISCR);
-+	iitsr = readl_relaxed(priv->base + IITSR);
-+
-+	/*
-+	 * ISCR could be cleared only if type is falling-edge, rising-edge or
-+	 * falling/rising-edge.
-+	 */
-+	if ((iscr & bit) && (iitsr & IITSR_IITSEL_MASK(hw_irq)))
-+		writel_relaxed(iscr & ~bit, priv->base + ISCR);
- }
+-#define TINT_EXTRACT_HWIRQ(x)           FIELD_GET(GENMASK(15, 0), (x))
+-#define TINT_EXTRACT_GPIOINT(x)         FIELD_GET(GENMASK(31, 16), (x))
++#define TINT_EXTRACT_HWIRQ(x)		FIELD_GET(GENMASK(15, 0), (x))
++#define TINT_EXTRACT_GPIOINT(x)		FIELD_GET(GENMASK(31, 16), (x))
  
- static void rzg2l_tint_eoi(struct irq_data *d)
+ /**
+  * struct rzg2l_irqc_reg_cache - register cache
 -- 
 2.39.2
 
