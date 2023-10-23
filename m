@@ -2,205 +2,242 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50EE5CDB474
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Oct 2023 06:27:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AEADCDB474
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Oct 2023 06:43:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229663AbjJWG1X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Oct 2023 02:27:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33296 "EHLO
+        id S233489AbjJWGnr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Oct 2023 02:43:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229469AbjJWG1X (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Oct 2023 02:27:23 -0400
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD481DF;
-        Sun, 22 Oct 2023 23:27:19 -0700 (PDT)
+        with ESMTP id S233337AbjJWGnq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Oct 2023 02:43:46 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EE26188
+        for <linux-clk@vger.kernel.org>; Sun, 22 Oct 2023 23:43:43 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-9bf0ac97fdeso406134066b.2
+        for <linux-clk@vger.kernel.org>; Sun, 22 Oct 2023 23:43:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1698042440; x=1729578440;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=B4cdU/iC1dUVeB9k49fZxtcHN1oJA8yJgehxpOxX72I=;
-  b=YtSpZJ2J824Ok1NK+o4a7hgSJmenFLdvn/Ss3kvBi0oHQ6xIi8894V8m
-   5RgitfL9VFr5P1iGHWYKGs7M3APadeCv9Vh/hpTQKpWeQqqUdqLL8z5WQ
-   lZam5ehrWE9sR49zJfBsVqXRFuIebQ3H+kqdKxeRHcpWbXBPDo7fqkPsJ
-   pfKiR7qR9wCrjzRrlFlUm0FLGuydtMFjOsifH/ndAjQnXTIjMO0laf3Xn
-   PJwuHYHZIK6t2VSmkJGjUedDdeGjXJU90Mfk3n3vAppXjEBD32H9O0kxj
-   E2qWLPbMvLuvZ9aPRxuGs+SZNLvlb0kXyh/39dE+GSlH3autmMMVSEFyK
-   w==;
-X-IronPort-AV: E=Sophos;i="6.03,244,1694728800"; 
-   d="scan'208";a="33590173"
-Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 23 Oct 2023 08:27:17 +0200
-Received: from steina-w.localnet (steina-w.tq-net.de [10.123.53.18])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id E556728007F;
-        Mon, 23 Oct 2023 08:27:16 +0200 (CEST)
-From:   Alexander Stein <alexander.stein@ew.tq-group.com>
-To:     Conor Dooley <conor@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Marek Vasut <marex@denx.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux@ew.tq-group.com, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH 2/5] dt-bindings: soc: imx93-media-blk-ctrl: Add LDB subnode into schema and example
-Date:   Mon, 23 Oct 2023 08:27:20 +0200
-Message-ID: <5986192.lOV4Wx5bFT@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20231022-helper-dating-a0f65a8f6f72@spud>
-References: <20231020130019.665853-1-alexander.stein@ew.tq-group.com> <20231020130019.665853-3-alexander.stein@ew.tq-group.com> <20231022-helper-dating-a0f65a8f6f72@spud>
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1698043422; x=1698648222; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yWXUo8yCgMuDx89RGa0kAK4HpnZZTCnBiMnPnYY2pRQ=;
+        b=097ZdUF/XepxXf526TcCEMCYiO38twVGakj+iKGQjRR6siQTuHslmvIxmW2u12Np3J
+         A0DzP1ABbhOP+3nWvD5vD7Pz0sDqrUPXBw2pI3TWiweJ31i/1V3qtTiAu4VyoQTAkF1w
+         6HeuEPc725W1Ha253NHWzXwLYhY3NMS2lMzleHjduisSiXnaF5z1LHyAhQ11QdlISVtS
+         LPSrY0DNoMZ/4tXVCsVwOArRqiclYLlD48MPkS8kqR8BTqN6zrH2+a0VAjN5znzBDcd3
+         cQ4R8KJMj4WIuxBDMEOqYJReCvswPK0PM4FqqpfzyX1Cp4FReZNXwsOnafcvGC8gppur
+         WtYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698043422; x=1698648222;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yWXUo8yCgMuDx89RGa0kAK4HpnZZTCnBiMnPnYY2pRQ=;
+        b=wMLyl01a1bHGOQHGEJ2V3EQph9y7dGVBn6pU+f0A6pN9rdGithbRreK3Gh5MSQjOJW
+         sr4zPMf4L5ZsiO1ysaQZYSYKsM0fKGEZ4BAN9lp9gika0m6LXv7MiCsM6TVyiMpGh/kb
+         TLhTKNbA6t9HDAYFVOh/X1gxqUcLEIlUIGa9glmbq5Zqq1dQSSTi5fQY+APr7GryzD/5
+         RNoy4VgcU1mTu0pYesoG2T+pLBHQrMO6/nEoMlWk2p/gaxfW0aam4TJYx+gJoFvTsBg+
+         ytihfPjysZrKLswSNr9tNNG0IyQ3BZNRWoMZu/ss1thqC22VtZhCpri/dOBGCSP3gYO1
+         J8Yw==
+X-Gm-Message-State: AOJu0YwXCKKNqUxOEDsR7MlqsUHamj/R55J+Deqvo43nWS1qhUJp0ohW
+        uX3HhgzS7Jr24KSJDoV8z36SDw==
+X-Google-Smtp-Source: AGHT+IE2xY1XLdZ1hoY/wzt/KAdqJlDerMt0ySpo7bm5amO3+RX0ik8kud4565r/9WcFz81IXd6xhg==
+X-Received: by 2002:a17:906:db0a:b0:9bf:270d:8c37 with SMTP id xj10-20020a170906db0a00b009bf270d8c37mr6654997ejb.58.1698043421658;
+        Sun, 22 Oct 2023 23:43:41 -0700 (PDT)
+Received: from blmsp ([2001:4091:a246:81ba:bcf:e8b4:ca:c434])
+        by smtp.gmail.com with ESMTPSA id j12-20020a170906050c00b00977eec7b7e8sm6070287eja.68.2023.10.22.23.43.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Oct 2023 23:43:40 -0700 (PDT)
+Date:   Mon, 23 Oct 2023 08:43:39 +0200
+From:   Markus Schneider-Pargmann <msp@baylibre.com>
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     sboyd@kernel.org, mturquette@baylibre.com, matthias.bgg@gmail.com,
+        wenst@chromium.org, amergnat@baylibre.com,
+        yangyingliang@huawei.com, u.kleine-koenig@pengutronix.de,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, kernel@collabora.com
+Subject: Re: [PATCH v2 1/2] clk: mediatek: clk-mux: Support custom parent
+ indices for muxes
+Message-ID: <20231023064339.xglriq6ycedjlyd4@blmsp>
+References: <20231018103546.48174-1-angelogioacchino.delregno@collabora.com>
+ <20231018103546.48174-2-angelogioacchino.delregno@collabora.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20231018103546.48174-2-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Conor,
+Hi Angelo,
 
-Am Sonntag, 22. Oktober 2023, 19:39:12 CEST schrieb Conor Dooley:
-> Yo,
->=20
-> On Fri, Oct 20, 2023 at 03:00:15PM +0200, Alexander Stein wrote:
-> > Document the LDB bridge subnode and add the subnode into the example.
-> > For the subnode to work, the block control must scan its subnodes and
-> > bind drivers to them, do not misuse either simple-bus or simple-mfd
-> > here.
-> >=20
-> > Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> > ---
-> >=20
-> >  .../soc/imx/fsl,imx93-media-blk-ctrl.yaml     | 44 +++++++++++++++++++
-> >  1 file changed, 44 insertions(+)
-> >=20
-> > diff --git
-> > a/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.ya=
-ml
-> > b/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.ya=
-ml
-> > index b3554e7f9e76..5ba66dfb0e05 100644
-> > ---
-> > a/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.ya=
-ml
-> > +++
-> > b/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.ya=
-ml>=20
-> > @@ -24,6 +24,12 @@ properties:
-> >    reg:
-> >      maxItems: 1
-> >=20
-> > +  '#address-cells':
-> > +    const: 1
-> > +
-> > +  '#size-cells':
-> > +    const: 1
-> > +
-> >=20
-> >    '#power-domain-cells':
-> >      const: 1
-> >=20
-> > @@ -46,9 +52,16 @@ properties:
-> >        - const: csi
-> >        - const: dsi
-> >=20
-> > +  bridge@20:
-> > +    type: object
-> > +    $ref: /schemas/display/bridge/fsl,ldb.yaml#
-> > +    unevaluatedProperties: false
-> > +
-> >=20
-> >  required:
-> >    - compatible
-> >    - reg
-> >=20
-> > +  - '#address-cells'
-> > +  - '#size-cells'
->=20
-> It seems to make little sense to me that these would become required
-> when the bridge is optional. Is it valid to have one of these
-> media-blk-ctrls without the ldb subnode?
+On Wed, Oct 18, 2023 at 12:35:45PM +0200, AngeloGioacchino Del Regno wrote:
+> Add support for customized parent indices for MediaTek muxes: this is
+> necessary for the case in which we want to exclude some clocks from
+> a mux's parent clocks list, where the exclusions are not from the
+> very bottom of the list but either in the middle or the beginning.
+> 
+> Example:
+> - MUX1 (all parents)
+>   - parent1; idx=0
+>   - parent2; idx=1
+>   - parent3; idx=2
+> 
+> - MUX1 (wanted parents)
+>   - parent1; idx=0
+>   - parent3; idx=2
+> 
+> To achieve that add a `parent_index` array pointer to struct mtk_mux,
+> then in .set_parent(), .get_parent() callbacks check if this array
+> was populated and eventually get the index from that.
+> 
+> Also, to avoid updating all clock drivers for all SoCs, rename the
+> "main" macro to __GATE_CLR_SET_UPD_FLAGS (so, `__` was added) and
+> add the new member to it; furthermore, GATE_CLK_SET_UPD_FLAGS has
+> been reintroduced as being fully compatible with the older version.
+> 
+> The new parent_index can be specified with the new `_INDEXED`
+> variants of the MUX_GATE_CLR_SET_UPD_xxxx macros.
+> 
+> Reviewed-by: Alexandre Mergnat <amergnat@baylibre.com>
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> ---
+>  drivers/clk/mediatek/clk-mux.c | 14 +++++++++++
+>  drivers/clk/mediatek/clk-mux.h | 43 ++++++++++++++++++++++++++++++----
+>  2 files changed, 53 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/mediatek/clk-mux.c b/drivers/clk/mediatek/clk-mux.c
+> index c93bc7f926e5..60990296450b 100644
+> --- a/drivers/clk/mediatek/clk-mux.c
+> +++ b/drivers/clk/mediatek/clk-mux.c
+> @@ -89,6 +89,17 @@ static u8 mtk_clk_mux_get_parent(struct clk_hw *hw)
+>  	regmap_read(mux->regmap, mux->data->mux_ofs, &val);
+>  	val = (val >> mux->data->mux_shift) & mask;
+>  
+> +	if (mux->data->parent_index) {
+> +		int i;
+> +
+> +		for (i = 0; i < mux->data->num_parents; i++)
+> +			if (mux->data->parent_index[i] == val)
+> +				return i;
+> +
+> +		/* Not found: return an impossible index to generate error */
+> +		return mux->data->num_parents + 1;
+> +	}
+> +
+>  	return val;
+>  }
+>  
+> @@ -104,6 +115,9 @@ static int mtk_clk_mux_set_parent_setclr_lock(struct clk_hw *hw, u8 index)
+>  	else
+>  		__acquire(mux->lock);
+>  
+> +	if (mux->data->parent_index)
+> +		index = mux->data->parent_index[index];
+> +
+>  	regmap_read(mux->regmap, mux->data->mux_ofs, &orig);
+>  	val = (orig & ~(mask << mux->data->mux_shift))
+>  			| (index << mux->data->mux_shift);
+> diff --git a/drivers/clk/mediatek/clk-mux.h b/drivers/clk/mediatek/clk-mux.h
+> index 7ecb963b0ec6..943ad1d7ce4b 100644
+> --- a/drivers/clk/mediatek/clk-mux.h
+> +++ b/drivers/clk/mediatek/clk-mux.h
+> @@ -21,6 +21,7 @@ struct mtk_mux {
+>  	int id;
+>  	const char *name;
+>  	const char * const *parent_names;
+> +	const u8 *parent_index;
+>  	unsigned int flags;
 
-fsl,imx93-media-blk-ctrl privides several power-domains (DSI, CSI, ISI, PXP=
-=20
-and LCDIF), currently unused. This series introduces the usage for LCDIF po=
-wer=20
-domain. LDB is the LVDS display bridge. So there are several power domains=
-=20
-which don't requires the usage of ldb.
-On the other hand I prefer consistency, so I opted to keep things similar t=
-o=20
-commit 1cb0c87d27dc. If it shall not be added here, it should be removed in=
-=20
-Documentation/devicetree/bindings/soc/imx/fsl,imx8mp-media-blk-ctrl.yaml as=
-=20
-well.
+I think at some point it would be nice to have a documentation of these
+fields.
 
-Best regards,
-Alexander
+>  
+>  	u32 mux_ofs;
+> @@ -37,9 +38,10 @@ struct mtk_mux {
+>  	signed char num_parents;
+>  };
+>  
+> -#define GATE_CLR_SET_UPD_FLAGS(_id, _name, _parents, _mux_ofs,		\
+> -			_mux_set_ofs, _mux_clr_ofs, _shift, _width,	\
+> -			_gate, _upd_ofs, _upd, _flags, _ops) {		\
+> +#define __GATE_CLR_SET_UPD_FLAGS(_id, _name, _parents, _paridx,		\
+> +			 _num_parents, _mux_ofs, _mux_set_ofs,		\
+> +			 _mux_clr_ofs, _shift, _width, _gate, _upd_ofs,	\
+> +			 _upd, _flags, _ops) {				\
+>  		.id = _id,						\
+>  		.name = _name,						\
+>  		.mux_ofs = _mux_ofs,					\
+> @@ -51,11 +53,28 @@ struct mtk_mux {
+>  		.gate_shift = _gate,					\
+>  		.upd_shift = _upd,					\
+>  		.parent_names = _parents,				\
+> -		.num_parents = ARRAY_SIZE(_parents),			\
+> +		.parent_index = _paridx,				\
+> +		.num_parents = _num_parents,				\
 
->=20
-> >    - power-domains
-> >    - clocks
-> >    - clock-names
-> >=20
-> > @@ -77,4 +90,35 @@ examples:
-> >                 clock-names =3D "apb", "axi", "nic", "disp", "cam",
-> >                =20
-> >                               "pxp", "lcdif", "isi", "csi", "dsi";
-> >       =20
-> >        #power-domain-cells =3D <1>;
-> >=20
-> > +      #address-cells =3D <1>;
-> > +      #size-cells =3D <1>;
-> > +
-> > +      bridge@20 {
-> > +          compatible =3D "fsl,imx93-ldb";
-> > +          reg =3D <0x20 0x4>, <0x24 0x4>;
-> > +          reg-names =3D "ldb", "lvds";
-> > +          clocks =3D <&clk IMX93_CLK_LVDS_GATE>;
-> > +          clock-names =3D "ldb";
-> > +
-> > +          ports {
-> > +              #address-cells =3D <1>;
-> > +              #size-cells =3D <0>;
-> > +
-> > +              port@0 {
-> > +                  reg =3D <0>;
-> > +
-> > +                  ldb_from_lcdif2: endpoint {
-> > +                      remote-endpoint =3D <&lcdif2_to_ldb>;
-> > +                  };
-> > +              };
-> > +
-> > +              port@1 {
-> > +                  reg =3D <1>;
-> > +
-> > +                  ldb_lvds: endpoint {
-> > +                      remote-endpoint =3D <&ldb_to_panel>;
-> > +                  };
-> > +              };
-> > +          };
-> > +        };
-> >=20
-> >      };
+I was wondering why you moved the ARRAY_SIZE() to the outer macros and
+add another argument to the already huge list of arguments? I couldn't
+find a use-case for this in the patches you sent.
 
+Best,
+Markus
 
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
-
-
+>  		.flags = _flags,					\
+>  		.ops = &_ops,						\
+>  	}
+>  
+> +#define GATE_CLR_SET_UPD_FLAGS(_id, _name, _parents, _mux_ofs,		\
+> +			_mux_set_ofs, _mux_clr_ofs, _shift, _width,	\
+> +			_gate, _upd_ofs, _upd, _flags, _ops)		\
+> +		__GATE_CLR_SET_UPD_FLAGS(_id, _name, _parents,		\
+> +			NULL, ARRAY_SIZE(_parents), _mux_ofs,		\
+> +			_mux_set_ofs, _mux_clr_ofs, _shift, _width,	\
+> +			_gate, _upd_ofs, _upd, _flags, _ops)		\
+> +
+> +#define GATE_CLR_SET_UPD_FLAGS_INDEXED(_id, _name, _parents, _paridx,	\
+> +			 _mux_ofs, _mux_set_ofs, _mux_clr_ofs, _shift,	\
+> +			 _width, _gate, _upd_ofs, _upd, _flags, _ops)	\
+> +		__GATE_CLR_SET_UPD_FLAGS(_id, _name, _parents,		\
+> +			_paridx, ARRAY_SIZE(_paridx), _mux_ofs,		\
+> +			_mux_set_ofs, _mux_clr_ofs, _shift, _width,	\
+> +			_gate, _upd_ofs, _upd, _flags, _ops)		\
+> +
+>  extern const struct clk_ops mtk_mux_clr_set_upd_ops;
+>  extern const struct clk_ops mtk_mux_gate_clr_set_upd_ops;
+>  
+> @@ -67,6 +86,14 @@ extern const struct clk_ops mtk_mux_gate_clr_set_upd_ops;
+>  			_gate, _upd_ofs, _upd, _flags,			\
+>  			mtk_mux_gate_clr_set_upd_ops)
+>  
+> +#define MUX_GATE_CLR_SET_UPD_FLAGS_INDEXED(_id, _name, _parents,	\
+> +			_paridx, _mux_ofs, _mux_set_ofs, _mux_clr_ofs,	\
+> +			_shift, _width, _gate, _upd_ofs, _upd, _flags)	\
+> +		GATE_CLR_SET_UPD_FLAGS_INDEXED(_id, _name, _parents,	\
+> +			_paridx, _mux_ofs, _mux_set_ofs, _mux_clr_ofs,	\
+> +			_shift, _width, _gate, _upd_ofs, _upd, _flags,	\
+> +			mtk_mux_gate_clr_set_upd_ops)
+> +
+>  #define MUX_GATE_CLR_SET_UPD(_id, _name, _parents, _mux_ofs,		\
+>  			_mux_set_ofs, _mux_clr_ofs, _shift, _width,	\
+>  			_gate, _upd_ofs, _upd)				\
+> @@ -75,6 +102,14 @@ extern const struct clk_ops mtk_mux_gate_clr_set_upd_ops;
+>  			_width, _gate, _upd_ofs, _upd,			\
+>  			CLK_SET_RATE_PARENT)
+>  
+> +#define MUX_GATE_CLR_SET_UPD_INDEXED(_id, _name, _parents, _paridx,	\
+> +			_mux_ofs, _mux_set_ofs, _mux_clr_ofs, _shift,	\
+> +			_width, _gate, _upd_ofs, _upd)			\
+> +		MUX_GATE_CLR_SET_UPD_FLAGS_INDEXED(_id, _name,		\
+> +			_parents, _paridx, _mux_ofs, _mux_set_ofs,	\
+> +			_mux_clr_ofs, _shift, _width, _gate, _upd_ofs,	\
+> +			_upd, CLK_SET_RATE_PARENT)
+> +
+>  #define MUX_CLR_SET_UPD(_id, _name, _parents, _mux_ofs,			\
+>  			_mux_set_ofs, _mux_clr_ofs, _shift, _width,	\
+>  			_upd_ofs, _upd)					\
+> -- 
+> 2.42.0
+> 
