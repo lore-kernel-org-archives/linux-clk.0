@@ -2,125 +2,101 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35EDACDB474
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Oct 2023 14:22:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ACE6C004C0
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Oct 2023 14:45:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230274AbjJWOWf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Oct 2023 10:22:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43956 "EHLO
+        id S233939AbjJWOpO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Oct 2023 10:45:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230158AbjJWOWe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Oct 2023 10:22:34 -0400
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF1E210A
-        for <linux-clk@vger.kernel.org>; Mon, 23 Oct 2023 07:22:30 -0700 (PDT)
-Received: by mail-lj1-x229.google.com with SMTP id 38308e7fff4ca-2c50ec238aeso48072581fa.0
-        for <linux-clk@vger.kernel.org>; Mon, 23 Oct 2023 07:22:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1698070949; x=1698675749; darn=vger.kernel.org;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
-        bh=E+6RuqzMvi6/cl8AxQsj75tOfUbUu+K7Xht0IansoAI=;
-        b=P1Eapi9MKhLNW032vehQNJudaQcFzxexhOGUDPNuglr8Ahy5jK1FCbe9oo+MGymiRj
-         g1W5WVoltfgOqw2gLXfyo2Yk5IbSMzcIYfhLW1QgZbCMM2wpBVFMVEVTTV4rzv7uxTPN
-         dfWNSn/V7rlYl20JjURKnQ9NBL3ERa0jV78rCg+VautEsy7GlARpxctV2iG+SEU4KOSk
-         ScijY2aMASFGqEzICBFP9BIY2UzerL1B8QlVhcF2YYmXHklHLkO/sQFj/d55IKJ2FEIS
-         qUkL8fU4aTVXuhHMZhbc2aVaNcUFNkjc3eTvirAUCMUWFanCLwspvI7F2MSph3/foEN5
-         CbEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698070949; x=1698675749;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E+6RuqzMvi6/cl8AxQsj75tOfUbUu+K7Xht0IansoAI=;
-        b=hHlHCH14skm3MUplGOFcBw1od8WblCzYCcE5oOAGm9fJcEKdrpRf+kGBjp+NZhogYC
-         p6VxAKSp5W8MvJ17ihhCA+LURMkEaD6fDTdVykhiM1laXgaV1ZiwKNznUYKGlzfgl9cN
-         s85Ry+tZ7+mNiy4yoy3K28cB2y52ILMVdd7DP4dIn88k/HjaQy/aZ8Rey0vHJdLrRKdr
-         lttCFFvrYydkdUlAlJ5SNOWm6ahBiuTdMbdI3dopAvuF9EGEWN868VuRQwzs9GcRwuXK
-         b2x3otuUTHlZ+iSivA7pvH441JLxrdCDWxslhExZPIJyt0dbBlNk7Z3kLecBA+RX2nSl
-         QSBw==
-X-Gm-Message-State: AOJu0Yz6r0uR9Ccdir++VXWHFuaG86P00KkGfp13CSijZMit5OKrw2uk
-        bWqpJ2QEwiToacExbUUUFCqZpj/TZRSgZj0wu2M=
-X-Google-Smtp-Source: AGHT+IHc6CmbwwWmCnTdzGhXOAKUQkxUhWrqELC5YNvIOIMaavPZPWSg5xlXBNXGrT5DBzHza0MHgQ==
-X-Received: by 2002:a2e:9051:0:b0:2c5:19e9:422c with SMTP id n17-20020a2e9051000000b002c519e9422cmr6179488ljg.24.1698070948940;
-        Mon, 23 Oct 2023 07:22:28 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:f0e1:712a:7682:b4ff])
-        by smtp.gmail.com with ESMTPSA id e16-20020adfef10000000b0032d8354fb43sm7934803wro.76.2023.10.23.07.22.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Oct 2023 07:22:28 -0700 (PDT)
-References: <20231023102810.4001943-1-arnd@kernel.org>
-User-agent: mu4e 1.8.13; emacs 29.1
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Arnd Bergmann <arnd@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>, Yu Tu <yu.tu@amlogic.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Dmitry Rokosov <ddrokosov@sberdevices.ru>,
-        Jian Hu <jian.hu@amlogic.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] [v2] clk: meson: S4: select
- CONFIG_COMMON_CLK_MESON_CLKC_UTILS
-Date:   Mon, 23 Oct 2023 16:20:42 +0200
-In-reply-to: <20231023102810.4001943-1-arnd@kernel.org>
-Message-ID: <1j1qdlpgf0.fsf@starbuckisacylon.baylibre.com>
+        with ESMTP id S233964AbjJWOpD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Oct 2023 10:45:03 -0400
+Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E340F1BF2;
+        Mon, 23 Oct 2023 07:43:56 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 529E75C0368;
+        Mon, 23 Oct 2023 10:43:56 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Mon, 23 Oct 2023 10:43:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+        :cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm2; t=1698072236; x=1698158636; bh=LQ
+        3mQFLL5edFDiS47lGR9808SL3EsFpdSI3BztByio0=; b=LPel3AAy/6vzLYDh8Y
+        Z3UbDeFGbTmUStPUg6sw7950XvTsu/LB73xT2WdH7iretw1kLUfXiFK7azKpv+pC
+        NbTieHNl/2I9OOSX97UE4LvJs9jvxyusMr/b+bfwQQbgFpiXztkrX9Bj7eJI4V3b
+        SGlHyKkQzXzgEkrK0A3zsnnE0zzoPt55lgBbdHHkjIs7rYI1xMkY7783evs9p5Gz
+        kIljJ6jDDNi0Gxfy7qHvoMAvD7DqxwPw7kGjGYeR+8Skk2sezWY9d/h+dYLPqLaJ
+        xzdFhxokhpvBr3U0dtmEqdszFmuUExsrXHeQHKYyBPPGZ2QPv2AGC473vij5O0Rp
+        nrZQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; t=1698072236; x=1698158636; bh=LQ3mQFLL5edFD
+        iS47lGR9808SL3EsFpdSI3BztByio0=; b=BYSEWn2MEQtkSKUFEZlo6kqPOvlls
+        H49NmpBLjZJ/eXwbcNMosHKRPpf3gz4VRViq4NfJTZWmB9fc2OMNs0w5ttrwBUzx
+        lt9l/T6MEwlzdRczFXi3fNnk0uNYtluYpjlqNkoKbif9vx37piVjtrm1d5/+KwHU
+        ig462CAIzamIyCLP7RGl5NAj27BSLoQY8szTVtWT2JeOKreDVanEc6Rb6wYv1lL0
+        ZbKD3sWtNTj+LkZbfeIXjEkCAR56OfMRr+igZI/XzlQAYVmNVe7H0Xn25B7R/nQA
+        CiyVX8U49XekNV0UJ6G2xxFKaxoOj5Ye43vQl0rm/lMXWvoxcGgwdDokw==
+X-ME-Sender: <xms:q4Y2ZdcdjzKzlNrKR536Il2i9TXVBiU0ZZhCqseprek0UcwlEzEBNw>
+    <xme:q4Y2ZbP66FfBoVrUGDdV1Ka3FOUlEEIXGTH_Yeo6cHMRsxHKfP_QbQ3ncwcc8VcPr
+    EQ1pPX9nQAlNxi_4lU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrkeeigdejkecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
+    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
+    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
+    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
+    hnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:q4Y2ZWjo0w3CIZllXxtYtTE-rqFNdE0RIeqC2_f3vTx4NPonNkQ-Jw>
+    <xmx:q4Y2ZW_QyvqhnCIo-1oFZFlsvn_pyVwET1qabXsQuO7D8ZwQhmU_gA>
+    <xmx:q4Y2ZZs9NqSZPdaeVobj_EKthwMGkRxPHEUzPbr0A4p3-6KOdOe4kg>
+    <xmx:rIY2ZVEiv_pfQ_0h-XsfW-hNx9JUi5Y2G6O4bWRCZgNroShvlAYOkg>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 234CEB60089; Mon, 23 Oct 2023 10:43:55 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-1048-g9229b632c5-fm-20231019.001-g9229b632
 MIME-Version: 1.0
+Message-Id: <6fea22fa-86ec-48b2-93ad-56f77313d53a@app.fastmail.com>
+In-Reply-To: <1j1qdlpgf0.fsf@starbuckisacylon.baylibre.com>
+References: <20231023102810.4001943-1-arnd@kernel.org>
+ <1j1qdlpgf0.fsf@starbuckisacylon.baylibre.com>
+Date:   Mon, 23 Oct 2023 16:43:32 +0200
+From:   "Arnd Bergmann" <arnd@arndb.de>
+To:     "Jerome Brunet" <jbrunet@baylibre.com>,
+        "Arnd Bergmann" <arnd@kernel.org>,
+        "Neil Armstrong" <neil.armstrong@linaro.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        "Stephen Boyd" <sboyd@kernel.org>,
+        "Kevin Hilman" <khilman@baylibre.com>, "Yu Tu" <yu.tu@amlogic.com>
+Cc:     "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>,
+        "Dmitry Rokosov" <ddrokosov@sberdevices.ru>,
+        "Jian Hu" <jian.hu@amlogic.com>, linux-amlogic@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] [v2] clk: meson: S4: select CONFIG_COMMON_CLK_MESON_CLKC_UTILS
 Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Mon, Oct 23, 2023, at 16:20, Jerome Brunet wrote:
+> On Mon 23 Oct 2023 at 12:28, Arnd Bergmann <arnd@kernel.org> wrote:
 
-On Mon 23 Oct 2023 at 12:28, Arnd Bergmann <arnd@kernel.org> wrote:
-
-> From: Arnd Bergmann <arnd@arndb.de>
+> Applied fixing this minor checkpatch warning (1 extra char)
 >
-> Without this, the newly added drivers fail to link:
+> WARNING: Please use correct Fixes: style 'Fixes: <12 chars of sha1> 
+> ("<title line>")' - ie: 'Fixes: e787c9c55eda ("clk: meson: S4: add 
+> support for Amlogic S4 SoC PLL clock driver")'
 >
-> aarch64-linux-ld: drivers/clk/meson/s4-pll.o: in function `meson_s4_pll_probe':
-> s4-pll.c:(.text+0x13c): undefined reference to `meson_clk_hw_get'
-> aarch64-linux-ld: drivers/clk/meson/s4-peripherals.o: in function `meson_s4_periphs_probe':
-> s4-peripherals.c:(.text+0xb0): undefined reference to `meson_clk_hw_get'
->
-> Fixes: e787c9c55edad ("clk: meson: S4: add support for Amlogic S4 SoC PLL clock driver")
-> Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
-> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Applied fixing this minor checkpatch warning (1 extra char)
+Thanks for pointing this out, I have no idea where this was set to 13,
+but I've changed it to 12 in my ~/.gitconfig now.
 
-WARNING: Please use correct Fixes: style 'Fixes: <12 chars of sha1> ("<title line>")' - ie: 'Fixes: e787c9c55eda ("clk: meson: S4: add support for Amlogic S4 SoC PLL clock driver")'
-
-and preparing the PR for Stephen now.
-Thanks Arnd.
-
-> ---
-> v2: fix up both drivers, the first version only addressed the s4-pll one.
-> ---
->  drivers/clk/meson/Kconfig | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-> index c5303e4c16043..29ffd14d267b6 100644
-> --- a/drivers/clk/meson/Kconfig
-> +++ b/drivers/clk/meson/Kconfig
-> @@ -149,6 +149,7 @@ config COMMON_CLK_S4_PLL
->  	tristate "S4 SoC PLL clock controllers support"
->  	depends on ARM64
->  	default y
-> +	select COMMON_CLK_MESON_CLKC_UTILS
->  	select COMMON_CLK_MESON_MPLL
->  	select COMMON_CLK_MESON_PLL
->  	select COMMON_CLK_MESON_REGMAP
-> @@ -161,6 +162,7 @@ config COMMON_CLK_S4_PERIPHERALS
->  	tristate "S4 SoC peripherals clock controllers support"
->  	depends on ARM64
->  	default y
-> +	select COMMON_CLK_MESON_CLKC_UTILS
->  	select COMMON_CLK_MESON_REGMAP
->  	select COMMON_CLK_MESON_DUALDIV
->  	select COMMON_CLK_MESON_VID_PLL_DIV
-
+     Arnd
