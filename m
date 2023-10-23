@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12C25C25B41
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A486C00A8F
 	for <linux-clk@archiver.kernel.org>; Mon, 23 Oct 2023 10:23:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230269AbjJWKXA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Oct 2023 06:23:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51412 "EHLO
+        id S229870AbjJWKXB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Oct 2023 06:23:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229912AbjJWKW7 (ORCPT
+        with ESMTP id S229935AbjJWKW7 (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Oct 2023 06:22:59 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9AADD66
-        for <linux-clk@vger.kernel.org>; Mon, 23 Oct 2023 03:22:55 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-4084e49a5e5so26918615e9.3
-        for <linux-clk@vger.kernel.org>; Mon, 23 Oct 2023 03:22:55 -0700 (PDT)
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F1BFD73
+        for <linux-clk@vger.kernel.org>; Mon, 23 Oct 2023 03:22:57 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-4083f61312eso25491725e9.3
+        for <linux-clk@vger.kernel.org>; Mon, 23 Oct 2023 03:22:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1698056574; x=1698661374; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1698056576; x=1698661376; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3Z3b5R3aVTqODhp8NQxqeuw9pHs0voRMGZXxgXHi6Uc=;
-        b=ZRHh/8fTc+bG5lyErmfv3eNjCjr5VDO8Xod1FwiHOqr8/YDJYHg8+dvRmfSY2CSrud
-         UzJ4ElchPZ87xGsoOZfr31KL1QOKvcFejmj/cydrg0hrKMNgVz8qepwb4x7M1W+oZ5sI
-         ynqzVVTiUeP2hqeBKfO8DlY/K9r3MZtZyDP3R721G6E+Ub433CMOioLI5pDPOvd3vCvw
-         QCJg1bJ/OLBG5vqgZbuwFbkWuD5/vcH4FbGf8SmhwhdYf0RMGa916RJVy9WPbIQVvmF1
-         1pp8bvtZieM3HGma12E5EiBOeNFQmJEt9F3uPCG7H1AArM+3g8huU7+gOtLiBv/ADhPC
-         pL7g==
+        bh=SN/3LO5tvVwfDdWFrwqMG2p+XEYGEFttmBsUPHkc9hE=;
+        b=Q8eyWNMVYCFPXdQCKD+uFAz3sNMSJ/bCz/vX3s/eoIsQoPwC16JVibDJtkaXC1GHhW
+         3/NzzkFJ8fhj+P6BmeMlvs2eHUvGQlpNTHBwcQ3t5H3Yq7ga78igm/3Kc0MRrIyiVgE2
+         b4hwgqR9Yp8/4OOjkf4/C4WjhE3SHTcWJtlH4KBx+Aj5uhmeBTe3oAmCLrgQ7QWPJOKu
+         zBANkvXNtdUve7m85YNp6xJZF1zHsUN+S5ABcAnPySUnSvllEmkIu21pDWDQ3g9nLnkC
+         2A+bcclW1CZDmBTV4trkJXvq5cp74FsMEAs+MhYU6+icNqWQX9ZdVH1AxZqIUQGv2xGg
+         OG5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698056574; x=1698661374;
+        d=1e100.net; s=20230601; t=1698056576; x=1698661376;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3Z3b5R3aVTqODhp8NQxqeuw9pHs0voRMGZXxgXHi6Uc=;
-        b=JOHbOQS6j6MWKHNw44d+P/Es/KPS3+8JPhUiFNnXQFs/F8M93c/a4IeVdIhQswPBIB
-         ASqU2nTBPODU28BZEWTFHiFI6VrNFQds/PPjt+M1y9KXCxxPcHSlAYWMZA6nUugajzqp
-         EJGCexxBUnn4F7/vIw4ntKFqN2rCVNVxljIuf44kE1Wi+0ThdCpa9B9yI7BrfKXhluiv
-         huEmGLHfkJj/k91RWpG6wjo4b9QgxE+VtblDRrZfYyg1D6BXpRds9XZftVryqXiy9QzY
-         elfi22dP7sbOrfBY0wzrSyuOIhtZyRQnu/nxOMqBHv0UVbf6jK11tt7tblhQEk2hMRZY
-         Jr8A==
-X-Gm-Message-State: AOJu0Yzw5tUVow/LFQm3olr89cgYj3S2D0WhzBYN1KMe1eFEaPbJUIUz
-        TuFQWg/1wV7Hr0BtV2xSEJnc4w==
-X-Google-Smtp-Source: AGHT+IFPNP9wFXpWAeNUc8oSbtz4KZ3/HL1DkO3btuCTk2wBwJPnDj961HvE0OE5JIunNgsa235u5w==
-X-Received: by 2002:a05:600c:a47:b0:408:3e7a:82ea with SMTP id c7-20020a05600c0a4700b004083e7a82eamr7010065wmq.1.1698056574124;
-        Mon, 23 Oct 2023 03:22:54 -0700 (PDT)
+        bh=SN/3LO5tvVwfDdWFrwqMG2p+XEYGEFttmBsUPHkc9hE=;
+        b=bzwdh0mHDjkI0JDw0zMNAjBLb1tNG0VbNGwWsTiSTR8ooZzQonizUn/hpWydizS9Aj
+         mZyx1Qx+oVPZTfBBc4IDgK8vUL6Ee1nZp5SKxOuPuEPDlxwp0SjuYrVXL9DyFGOJSgAV
+         P9bNS+1G5zZGvGleAAIA7JCNMHeHgjhaVdsEdXLbSMcVq/ZzKL8KHsADu0MUTP16vZIM
+         J6myaULXId2eF7cBjAQeqayZejlvECQ8fuaknsDn6r0h4qQ/D+viYCckUuswxFHM7ogO
+         7EkSKSYVPMAzcDhB6KDcMFMUIrqZohp8c/LVPZuVjXaiUangW+liEcb+VHWaqzILaxJ1
+         PVeA==
+X-Gm-Message-State: AOJu0YxpmwpmpHQUM9khZ6gPdABWRRGMKaNrKyo0jzIvJLzsrKp2+qNw
+        4kOoXOWHdHLlEmDXYumA6igYSQ==
+X-Google-Smtp-Source: AGHT+IGe6Tqmo8KBv27r4U/I4sG811IvcqDvhd8343Xi3gHNdWdtBLdm9FzmPugPuFUNj4KbgtYP1A==
+X-Received: by 2002:a05:600c:9a5:b0:406:599f:f934 with SMTP id w37-20020a05600c09a500b00406599ff934mr7577051wmp.12.1698056575778;
+        Mon, 23 Oct 2023 03:22:55 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.185])
-        by smtp.gmail.com with ESMTPSA id 1-20020a05600c228100b0040596352951sm13593275wmf.5.2023.10.23.03.22.52
+        by smtp.gmail.com with ESMTPSA id 1-20020a05600c228100b0040596352951sm13593275wmf.5.2023.10.23.03.22.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Oct 2023 03:22:53 -0700 (PDT)
+        Mon, 23 Oct 2023 03:22:55 -0700 (PDT)
 From:   Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To:     tglx@linutronix.de, robh+dt@kernel.org,
@@ -59,13 +59,14 @@ To:     tglx@linutronix.de, robh+dt@kernel.org,
 Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 3/7] irqchip/renesas-rzg2l: add macros to retrieve TITSR index and associated selector
-Date:   Mon, 23 Oct 2023 13:22:19 +0300
-Message-Id: <20231023102223.1309614-4-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 4/7] irqchip/renesas-rzg2l: implement restriction when writing ISCR register
+Date:   Mon, 23 Oct 2023 13:22:20 +0300
+Message-Id: <20231023102223.1309614-5-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20231023102223.1309614-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20231023102223.1309614-1-claudiu.beznea.uj@bp.renesas.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -73,75 +74,55 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Add macros to retrieve TITSR register index and associated selector.
+In hardware manual of RZ/G2L (r01uh0914ej0130-rzg2l-rzg2lc.pdf)
+is available the following statement with regards to clearing interrupts
+though ISCR register:
+
+[Write operation]
+When "Falling-edge detection", "Rising-edge detection" or
+"Falling/Rising-edge detection" is set in ISCR.:
+- In case ISTAT is 1
+	0: IRQn interrupt detection status is cleared.
+	1: Invalid to write.
+- In case ISTAT is 0
+	Invalid to write.
+When “Low-level detection” is set in IITSR.:
+	Invalid to write.
+
+Thus, take into account interrupt type when clearing interrupts though
+ISCR register.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/irqchip/irq-renesas-rzg2l.c | 26 +++++++++++---------------
- 1 file changed, 11 insertions(+), 15 deletions(-)
+ drivers/irqchip/irq-renesas-rzg2l.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/irqchip/irq-renesas-rzg2l.c b/drivers/irqchip/irq-renesas-rzg2l.c
-index fe8d516f3614..9ce0d6d67486 100644
+index 9ce0d6d67486..1ed9cb7178fa 100644
 --- a/drivers/irqchip/irq-renesas-rzg2l.c
 +++ b/drivers/irqchip/irq-renesas-rzg2l.c
-@@ -28,8 +28,7 @@
- #define ISCR				0x10
- #define IITSR				0x14
- #define TSCR				0x20
--#define TITSR0				0x24
--#define TITSR1				0x28
-+#define TITSR(n)			(0x24 + (n) * 4)
- #define TITSR0_MAX_INT			16
- #define TITSEL_WIDTH			0x2
- #define TSSR(n)				(0x30 + ((n) * 4))
-@@ -45,6 +44,8 @@
- #define TITSR_TITSEL_EDGE_FALLING	1
- #define TITSR_TITSEL_LEVEL_HIGH		2
- #define TITSR_TITSEL_LEVEL_LOW		3
-+#define TITSR_HWIRQ_TO_INDEX(hwirq)	((hwirq) >> TITSR0_MAX_INT)
-+#define TITSR_HWIRQ_TO_SEL(hwirq)	((hwirq) & 0xF)		/* 0xF = TITSR0_MAX_INT - 1*/
- 
- #define IITSR_IITSEL(n, sense)		((sense) << ((n) * 2))
- #define IITSR_IITSEL_LEVEL_LOW		0
-@@ -185,12 +186,10 @@ static int rzg2l_irq_set_type(struct irq_data *d, unsigned int type)
- 
- static int rzg2l_tint_set_edge(struct irq_data *d, unsigned int type)
- {
-+	unsigned int hwirq = irqd_to_hwirq(d) - IRQC_TINT_START;
+@@ -73,11 +73,17 @@ static void rzg2l_irq_eoi(struct irq_data *d)
+ 	unsigned int hw_irq = irqd_to_hwirq(d) - IRQC_IRQ_START;
  	struct rzg2l_irqc_priv *priv = irq_data_to_priv(d);
--	unsigned int hwirq = irqd_to_hwirq(d);
--	u32 titseln = hwirq - IRQC_TINT_START;
--	u32 offset;
-+	u32 index, sel, reg;
- 	u8 sense;
+ 	u32 bit = BIT(hw_irq);
 -	u32 reg;
++	u32 iitsr, iscr;
  
- 	switch (type & IRQ_TYPE_SENSE_MASK) {
- 	case IRQ_TYPE_EDGE_RISING:
-@@ -205,17 +204,14 @@ static int rzg2l_tint_set_edge(struct irq_data *d, unsigned int type)
- 		return -EINVAL;
- 	}
+-	reg = readl_relaxed(priv->base + ISCR);
+-	if (reg & bit)
+-		writel_relaxed(reg & ~bit, priv->base + ISCR);
++	iscr = readl_relaxed(priv->base + ISCR);
++	iitsr = readl_relaxed(priv->base + IITSR);
++
++	/*
++	 * ISCR could be cleared only if type is falling-edge, rising-edge or
++	 * falling/rising-edge.
++	 */
++	if ((iscr & bit) && (iitsr & IITSR_IITSEL_MASK(hw_irq)))
++		writel_relaxed(iscr & ~bit, priv->base + ISCR);
+ }
  
--	offset = TITSR0;
--	if (titseln >= TITSR0_MAX_INT) {
--		titseln -= TITSR0_MAX_INT;
--		offset = TITSR1;
--	}
-+	index = TITSR_HWIRQ_TO_INDEX(hwirq);
-+	sel = TITSR_HWIRQ_TO_SEL(hwirq);
- 
- 	raw_spin_lock(&priv->lock);
--	reg = readl_relaxed(priv->base + offset);
--	reg &= ~(IRQ_MASK << (titseln * TITSEL_WIDTH));
--	reg |= sense << (titseln * TITSEL_WIDTH);
--	writel_relaxed(reg, priv->base + offset);
-+	reg = readl_relaxed(priv->base + TITSR(index));
-+	reg &= ~(IRQ_MASK << (sel * TITSEL_WIDTH));
-+	reg |= sense << (sel * TITSEL_WIDTH);
-+	writel_relaxed(reg, priv->base + TITSR(index));
- 	raw_spin_unlock(&priv->lock);
- 
- 	return 0;
+ static void rzg2l_tint_eoi(struct irq_data *d)
 -- 
 2.39.2
 
