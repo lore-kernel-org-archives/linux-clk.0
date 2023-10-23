@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68E25C001E0
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Oct 2023 15:38:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5D12C001E0
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Oct 2023 15:38:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231564AbjJWPid (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Oct 2023 11:38:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44136 "EHLO
+        id S232476AbjJWPin (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Oct 2023 11:38:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231787AbjJWPic (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Oct 2023 11:38:32 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9206ABC
-        for <linux-clk@vger.kernel.org>; Mon, 23 Oct 2023 08:38:29 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-32d849cc152so2756525f8f.1
-        for <linux-clk@vger.kernel.org>; Mon, 23 Oct 2023 08:38:29 -0700 (PDT)
+        with ESMTP id S232020AbjJWPig (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Oct 2023 11:38:36 -0400
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 315E1102
+        for <linux-clk@vger.kernel.org>; Mon, 23 Oct 2023 08:38:33 -0700 (PDT)
+Received: by mail-lj1-x22a.google.com with SMTP id 38308e7fff4ca-2bb9a063f26so50281891fa.2
+        for <linux-clk@vger.kernel.org>; Mon, 23 Oct 2023 08:38:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698075508; x=1698680308; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1698075511; x=1698680311; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=T4XZNPM68jw0wXa2l6ywigfz2ladHhOAMBv/JP8ne0E=;
-        b=IpD0w1RmhF+/JRRRA7I5s8eHhzMiXHOB/maKhPw0aW4+NKaeiTIjwFBdHMkKFTrohV
-         ZyRi1ZdG0lo/0yn7s9kWeVngTQppgvH0qSnUfbUnhxrMFCsLooOo6zctqw+Xs+PUkhqB
-         8/TORfmrDTBJ2AbtRzyJRKBxr2NaytfVbAfPYhAagCs1sVj64NkKftpjFo1qTwxyd0IW
-         MbFdDU9rPiYqFP64Ogx2p/NQUTRhrLhd/+qOfwHFfEfj+4cPuzcCcZ8BZpYwQ7N7uVNq
-         8Q7yo30uYFJVK5JpxWTtH0eZy4CQNy+kMGdBa6hJrlE1moQZXeOIWhbJu1pwhPiwXmFn
-         L6cQ==
+        bh=i/dkqG7TFqhS22WCtOJCYFAnzbujpg+JGXvYF9Z8Jtw=;
+        b=qWTNjPXBXo02bg2JHbXcWVUvQi6uUlqULZ4dp/6ehrzn3gZJ44BxqzyYbkjS9lZd4m
+         eqJbN3ArmiAJhidSJuggjX7OrQmw9udwlQdfXwmXBN8SzDp5dDGT8abNR+5SYQVxnzAZ
+         oqUThjzYBHxpMftXe04NAbtK5LYRTuIvixecYgfP/FMA1HnZ+ot4WOyBspMQgkXQeMLh
+         PL/lg07mLYfiYU2yXIthAKnICyUXPJ2GXE51iG2Z5rwrt45Wi0u3MkSH51gMoXDPBsfj
+         W6Ql6WuIamK8yeG9fNeLsOgifZuWHl6ORLZwUTNveXbfMYmAe9Z6Yw1xPdGKMuJHob+G
+         mv0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698075508; x=1698680308;
+        d=1e100.net; s=20230601; t=1698075511; x=1698680311;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=T4XZNPM68jw0wXa2l6ywigfz2ladHhOAMBv/JP8ne0E=;
-        b=NMNF8xctUgVISfn/1jsTWS7dHeXU9Js7udD39hR7t3WatIfKOCeHkvVa/5hSF40VaC
-         /vxDBy+qAWCkj6ikuy62KNg0bJOGpEzVIliXKx5zS7WdBAR6QbDesPsGW4rHjLJrNmj0
-         F3UKgYV1bsrWlDWW2398uTJbMQZEIJ89i3SArfQxv50U8Mjc8VXziMN2qlCVAhFxM+Me
-         dsZPr6220KswgWYsBkxWNdnilBZ2bfERAeC8T7KuAzfNJ+6zytHL94hxEhBdCZuh4hMK
-         478l0Q1lviwXZguzBm5Kt+k4BfHB4SdrPJGMvYtOEU0fHcf37rYyR9cOKOKD2DQv7HVj
-         fBSQ==
-X-Gm-Message-State: AOJu0YwxKqNWvTkPS9RcHQhHcoJ+3qWnPm5L73oVR+VnTZwVPRHcclWF
-        ENvppa+uRGWrVK3+keaxQk4Htg==
-X-Google-Smtp-Source: AGHT+IEtEBiW0rU8qW5pflx+yAO9KqAw60pYlCql0g5DDMkr5nkm0WzzXbvEpL1QFRojGgcl4bLbUg==
-X-Received: by 2002:a05:6000:a15:b0:32d:8db5:59ff with SMTP id co21-20020a0560000a1500b0032d8db559ffmr9771619wrb.5.1698075508032;
-        Mon, 23 Oct 2023 08:38:28 -0700 (PDT)
+        bh=i/dkqG7TFqhS22WCtOJCYFAnzbujpg+JGXvYF9Z8Jtw=;
+        b=Y7VbPsSDPijbJdJdECzvaS718qJbV6GpekaY0QpAq7tWv2yi6cwI3LkMJfwS8ao7lF
+         RLUE8sKk/LQWZeo3ZCQ4mOYazOifJx8OKO/VQ6w9D32c7e2OocYFh+Cw0zgaYojg8yDt
+         y5+tOHbirerTQK5AB/B3ML+dc7e9cTpD1UqO0Y8/LsBIdJrbEZMmCY8bwvowLP8bM84J
+         DG0xHnZbtz5KcZAbKfbNlr0FjQdAtpOHKaZ8COa3tSf3L9slXKSsRsFRum9TUZwDaaL8
+         JuxxC0A87udJ5aoxEfS0piNqS4gc1lIMpXNfIcx21Jsy7923sw765B2h5SRuk2DueIjd
+         9zuw==
+X-Gm-Message-State: AOJu0YxD340O/pdrdlk+JwF2lLzFetZm5FwuTpAopKYiRUHwL7RuqmPW
+        c+n7OJ/5cnWrWBJISG4UBfWqwQ==
+X-Google-Smtp-Source: AGHT+IGngUR8rAtE5PrJsk2wr4hxv06C9qj0fa4jQ7I8UYFXCU2Nwn1OFEnlZtFqOWcVgZkXoUM5mg==
+X-Received: by 2002:a2e:8619:0:b0:2c5:1989:ce1c with SMTP id a25-20020a2e8619000000b002c51989ce1cmr5983085lji.26.1698075511078;
+        Mon, 23 Oct 2023 08:38:31 -0700 (PDT)
 Received: from x13s-linux.nxsw.local ([37.228.218.3])
-        by smtp.gmail.com with ESMTPSA id f4-20020a5d50c4000000b0032da319a27asm8096929wrt.9.2023.10.23.08.38.26
+        by smtp.gmail.com with ESMTPSA id f4-20020a5d50c4000000b0032da319a27asm8096929wrt.9.2023.10.23.08.38.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Oct 2023 08:38:27 -0700 (PDT)
+        Mon, 23 Oct 2023 08:38:30 -0700 (PDT)
 From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 To:     andersson@kernel.org, agross@kernel.org, konrad.dybcio@linaro.org,
         mturquette@baylibre.com, sboyd@kernel.org,
@@ -60,9 +60,9 @@ Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         bryan.odonoghue@linaro.org,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v3.1 2/4] dt-bindings: clock: Add SC8280XP CAMCC
-Date:   Mon, 23 Oct 2023 16:38:19 +0100
-Message-Id: <20231023153821.189331-3-bryan.odonoghue@linaro.org>
+Subject: [PATCH v3.1 4/4] arm64: dts: qcom: sc8280xp: Add in CAMCC for sc8280xp
+Date:   Mon, 23 Oct 2023 16:38:21 +0100
+Message-Id: <20231023153821.189331-5-bryan.odonoghue@linaro.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20231023153821.189331-1-bryan.odonoghue@linaro.org>
 References: <20231023153821.189331-1-bryan.odonoghue@linaro.org>
@@ -72,222 +72,49 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add device tree bindings for the camera clock controller on
-Qualcomm SC8280XP platform.
+Add in CAMCC for sc8280xp. The sc8280xp Camera Clock Controller looks
+similar to most of the sdmX, smX and now scX controllers.
 
 Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Suggested-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- .../bindings/clock/qcom,sm8450-camcc.yaml     |   2 +
- .../dt-bindings/clock/qcom,sc8280xp-camcc.h   | 179 ++++++++++++++++++
- 2 files changed, 181 insertions(+)
- create mode 100644 include/dt-bindings/clock/qcom,sc8280xp-camcc.h
+ arch/arm64/boot/dts/qcom/sc8280xp.dtsi | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
-index 6915498deacf..48986460f994 100644
---- a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
-@@ -16,6 +16,7 @@ description: |
-   See also::
-     include/dt-bindings/clock/qcom,sm8450-camcc.h
-     include/dt-bindings/clock/qcom,sm8550-camcc.h
-+    include/dt-bindings/clock/qcom,sc8280xp-camcc.h
+diff --git a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
+index cad59af7ccef..fafea0f34fd9 100644
+--- a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
+@@ -8,6 +8,7 @@
+ #include <dt-bindings/clock/qcom,gcc-sc8280xp.h>
+ #include <dt-bindings/clock/qcom,gpucc-sc8280xp.h>
+ #include <dt-bindings/clock/qcom,rpmh.h>
++#include <dt-bindings/clock/qcom,sc8280xp-camcc.h>
+ #include <dt-bindings/clock/qcom,sc8280xp-lpasscc.h>
+ #include <dt-bindings/interconnect/qcom,osm-l3.h>
+ #include <dt-bindings/interconnect/qcom,sc8280xp.h>
+@@ -3450,6 +3451,20 @@ usb_1_role_switch: endpoint {
+ 			};
+ 		};
  
- allOf:
-   - $ref: qcom,gcc.yaml#
-@@ -23,6 +24,7 @@ allOf:
- properties:
-   compatible:
-     enum:
-+      - qcom,sc8280xp-camcc
-       - qcom,sm8450-camcc
-       - qcom,sm8550-camcc
- 
-diff --git a/include/dt-bindings/clock/qcom,sc8280xp-camcc.h b/include/dt-bindings/clock/qcom,sc8280xp-camcc.h
-new file mode 100644
-index 000000000000..ea5ec73c8c6a
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,sc8280xp-camcc.h
-@@ -0,0 +1,179 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (c) 2021, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2023, Linaro Ltd.
-+ */
++		camcc: clock-controller@ad00000 {
++			compatible = "qcom,sc8280xp-camcc";
++			reg = <0 0x0ad00000 0 0x20000>;
++			clocks = <&gcc GCC_CAMERA_AHB_CLK>,
++				 <&rpmhcc RPMH_CXO_CLK>,
++				 <&rpmhcc RPMH_CXO_CLK_A>,
++				 <&sleep_clk>;
++			power-domains = <&rpmhpd SC8280XP_MMCX>;
++			required-opps = <&rpmhpd_opp_low_svs>;
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++			#power-domain-cells = <1>;
++		};
 +
-+#ifndef __DT_BINDINGS_CLK_QCOM_CAMCC_SC8280XP_H__
-+#define __DT_BINDINGS_CLK_QCOM_CAMCC_SC8280XP_H__
-+
-+/* CAMCC clocks */
-+#define CAMCC_PLL0					0
-+#define CAMCC_PLL0_OUT_EVEN				1
-+#define CAMCC_PLL0_OUT_ODD				2
-+#define CAMCC_PLL1					3
-+#define CAMCC_PLL1_OUT_EVEN				4
-+#define CAMCC_PLL2					5
-+#define CAMCC_PLL3					6
-+#define CAMCC_PLL3_OUT_EVEN				7
-+#define CAMCC_PLL4					8
-+#define CAMCC_PLL4_OUT_EVEN				9
-+#define CAMCC_PLL5					10
-+#define CAMCC_PLL5_OUT_EVEN				11
-+#define CAMCC_PLL6					12
-+#define CAMCC_PLL6_OUT_EVEN				13
-+#define CAMCC_PLL7					14
-+#define CAMCC_PLL7_OUT_EVEN				15
-+#define CAMCC_PLL7_OUT_ODD				16
-+#define CAMCC_BPS_AHB_CLK				17
-+#define CAMCC_BPS_AREG_CLK				18
-+#define CAMCC_BPS_AXI_CLK				19
-+#define CAMCC_BPS_CLK					20
-+#define CAMCC_BPS_CLK_SRC				21
-+#define CAMCC_CAMNOC_AXI_CLK				22
-+#define CAMCC_CAMNOC_AXI_CLK_SRC			23
-+#define CAMCC_CAMNOC_DCD_XO_CLK				24
-+#define CAMCC_CCI_0_CLK					25
-+#define CAMCC_CCI_0_CLK_SRC				26
-+#define CAMCC_CCI_1_CLK					27
-+#define CAMCC_CCI_1_CLK_SRC				28
-+#define CAMCC_CCI_2_CLK					29
-+#define CAMCC_CCI_2_CLK_SRC				30
-+#define CAMCC_CCI_3_CLK					31
-+#define CAMCC_CCI_3_CLK_SRC				32
-+#define CAMCC_CORE_AHB_CLK				33
-+#define CAMCC_CPAS_AHB_CLK				34
-+#define CAMCC_CPHY_RX_CLK_SRC				35
-+#define CAMCC_CSI0PHYTIMER_CLK				36
-+#define CAMCC_CSI0PHYTIMER_CLK_SRC			37
-+#define CAMCC_CSI1PHYTIMER_CLK				38
-+#define CAMCC_CSI1PHYTIMER_CLK_SRC			39
-+#define CAMCC_CSI2PHYTIMER_CLK				40
-+#define CAMCC_CSI2PHYTIMER_CLK_SRC			41
-+#define CAMCC_CSI3PHYTIMER_CLK				42
-+#define CAMCC_CSI3PHYTIMER_CLK_SRC			43
-+#define CAMCC_CSIPHY0_CLK				44
-+#define CAMCC_CSIPHY1_CLK				45
-+#define CAMCC_CSIPHY2_CLK				46
-+#define CAMCC_CSIPHY3_CLK				47
-+#define CAMCC_FAST_AHB_CLK_SRC				48
-+#define CAMCC_GDSC_CLK					49
-+#define CAMCC_ICP_AHB_CLK				50
-+#define CAMCC_ICP_CLK					51
-+#define CAMCC_ICP_CLK_SRC				52
-+#define CAMCC_IFE_0_AXI_CLK				53
-+#define CAMCC_IFE_0_CLK					54
-+#define CAMCC_IFE_0_CLK_SRC				55
-+#define CAMCC_IFE_0_CPHY_RX_CLK				56
-+#define CAMCC_IFE_0_CSID_CLK				57
-+#define CAMCC_IFE_0_CSID_CLK_SRC			58
-+#define CAMCC_IFE_0_DSP_CLK				59
-+#define CAMCC_IFE_1_AXI_CLK				60
-+#define CAMCC_IFE_1_CLK					61
-+#define CAMCC_IFE_1_CLK_SRC				62
-+#define CAMCC_IFE_1_CPHY_RX_CLK				63
-+#define CAMCC_IFE_1_CSID_CLK				64
-+#define CAMCC_IFE_1_CSID_CLK_SRC			65
-+#define CAMCC_IFE_1_DSP_CLK				66
-+#define CAMCC_IFE_2_AXI_CLK				67
-+#define CAMCC_IFE_2_CLK					68
-+#define CAMCC_IFE_2_CLK_SRC				69
-+#define CAMCC_IFE_2_CPHY_RX_CLK				70
-+#define CAMCC_IFE_2_CSID_CLK				71
-+#define CAMCC_IFE_2_CSID_CLK_SRC			72
-+#define CAMCC_IFE_2_DSP_CLK				73
-+#define CAMCC_IFE_3_AXI_CLK				74
-+#define CAMCC_IFE_3_CLK					75
-+#define CAMCC_IFE_3_CLK_SRC				76
-+#define CAMCC_IFE_3_CPHY_RX_CLK				77
-+#define CAMCC_IFE_3_CSID_CLK				78
-+#define CAMCC_IFE_3_CSID_CLK_SRC			79
-+#define CAMCC_IFE_3_DSP_CLK				80
-+#define CAMCC_IFE_LITE_0_CLK				81
-+#define CAMCC_IFE_LITE_0_CLK_SRC			82
-+#define CAMCC_IFE_LITE_0_CPHY_RX_CLK			83
-+#define CAMCC_IFE_LITE_0_CSID_CLK			84
-+#define CAMCC_IFE_LITE_0_CSID_CLK_SRC			85
-+#define CAMCC_IFE_LITE_1_CLK				86
-+#define CAMCC_IFE_LITE_1_CLK_SRC			87
-+#define CAMCC_IFE_LITE_1_CPHY_RX_CLK			88
-+#define CAMCC_IFE_LITE_1_CSID_CLK			89
-+#define CAMCC_IFE_LITE_1_CSID_CLK_SRC			90
-+#define CAMCC_IFE_LITE_2_CLK				91
-+#define CAMCC_IFE_LITE_2_CLK_SRC			92
-+#define CAMCC_IFE_LITE_2_CPHY_RX_CLK			93
-+#define CAMCC_IFE_LITE_2_CSID_CLK			94
-+#define CAMCC_IFE_LITE_2_CSID_CLK_SRC			95
-+#define CAMCC_IFE_LITE_3_CLK				96
-+#define CAMCC_IFE_LITE_3_CLK_SRC			97
-+#define CAMCC_IFE_LITE_3_CPHY_RX_CLK			98
-+#define CAMCC_IFE_LITE_3_CSID_CLK			99
-+#define CAMCC_IFE_LITE_3_CSID_CLK_SRC			100
-+#define CAMCC_IPE_0_AHB_CLK				101
-+#define CAMCC_IPE_0_AREG_CLK				102
-+#define CAMCC_IPE_0_AXI_CLK				103
-+#define CAMCC_IPE_0_CLK					104
-+#define CAMCC_IPE_0_CLK_SRC				105
-+#define CAMCC_IPE_1_AHB_CLK				106
-+#define CAMCC_IPE_1_AREG_CLK				107
-+#define CAMCC_IPE_1_AXI_CLK				108
-+#define CAMCC_IPE_1_CLK					109
-+#define CAMCC_JPEG_CLK					110
-+#define CAMCC_JPEG_CLK_SRC				111
-+#define CAMCC_LRME_CLK					112
-+#define CAMCC_LRME_CLK_SRC				113
-+#define CAMCC_MCLK0_CLK					114
-+#define CAMCC_MCLK0_CLK_SRC				115
-+#define CAMCC_MCLK1_CLK					116
-+#define CAMCC_MCLK1_CLK_SRC				117
-+#define CAMCC_MCLK2_CLK					118
-+#define CAMCC_MCLK2_CLK_SRC				119
-+#define CAMCC_MCLK3_CLK					120
-+#define CAMCC_MCLK3_CLK_SRC				121
-+#define CAMCC_MCLK4_CLK					122
-+#define CAMCC_MCLK4_CLK_SRC				123
-+#define CAMCC_MCLK5_CLK					124
-+#define CAMCC_MCLK5_CLK_SRC				125
-+#define CAMCC_MCLK6_CLK					126
-+#define CAMCC_MCLK6_CLK_SRC				127
-+#define CAMCC_MCLK7_CLK					128
-+#define CAMCC_MCLK7_CLK_SRC				129
-+#define CAMCC_SLEEP_CLK					130
-+#define CAMCC_SLEEP_CLK_SRC				131
-+#define CAMCC_SLOW_AHB_CLK_SRC				132
-+#define CAMCC_XO_CLK_SRC				133
-+
-+/* CAMCC resets */
-+#define CAMCC_BPS_BCR					0
-+#define CAMCC_CAMNOC_BCR				1
-+#define CAMCC_CCI_BCR					2
-+#define CAMCC_CPAS_BCR					3
-+#define CAMCC_CSI0PHY_BCR				4
-+#define CAMCC_CSI1PHY_BCR				5
-+#define CAMCC_CSI2PHY_BCR				6
-+#define CAMCC_CSI3PHY_BCR				7
-+#define CAMCC_ICP_BCR					8
-+#define CAMCC_IFE_0_BCR					9
-+#define CAMCC_IFE_1_BCR					10
-+#define CAMCC_IFE_2_BCR					11
-+#define CAMCC_IFE_3_BCR					12
-+#define CAMCC_IFE_LITE_0_BCR				13
-+#define CAMCC_IFE_LITE_1_BCR				14
-+#define CAMCC_IFE_LITE_2_BCR				15
-+#define CAMCC_IFE_LITE_3_BCR				16
-+#define CAMCC_IPE_0_BCR					17
-+#define CAMCC_IPE_1_BCR					18
-+#define CAMCC_JPEG_BCR					19
-+#define CAMCC_LRME_BCR					20
-+
-+/* CAMCC GDSCRs */
-+#define BPS_GDSC					0
-+#define IFE_0_GDSC					1
-+#define IFE_1_GDSC					2
-+#define IFE_2_GDSC					3
-+#define IFE_3_GDSC					4
-+#define IPE_0_GDSC					5
-+#define IPE_1_GDSC					6
-+#define TITAN_TOP_GDSC					7
-+
-+#endif /* __DT_BINDINGS_CLK_QCOM_CAMCC_SC8280XP_H__ */
+ 		mdss0: display-subsystem@ae00000 {
+ 			compatible = "qcom,sc8280xp-mdss";
+ 			reg = <0 0x0ae00000 0 0x1000>;
 -- 
 2.40.1
 
