@@ -2,92 +2,125 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96B07C00A8F
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Oct 2023 19:36:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC41CC07545
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Oct 2023 19:49:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343815AbjJXTgh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Oct 2023 15:36:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45234 "EHLO
+        id S1344306AbjJXTty (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Oct 2023 15:49:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344046AbjJXTgg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Oct 2023 15:36:36 -0400
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CCAAB3;
-        Tue, 24 Oct 2023 12:36:34 -0700 (PDT)
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-6ce322b62aeso3153151a34.3;
-        Tue, 24 Oct 2023 12:36:34 -0700 (PDT)
+        with ESMTP id S1344305AbjJXTtx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Oct 2023 15:49:53 -0400
+Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C8E8129;
+        Tue, 24 Oct 2023 12:49:49 -0700 (PDT)
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-581fb6f53fcso2891841eaf.2;
+        Tue, 24 Oct 2023 12:49:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698176194; x=1698780994;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xw/76vCr0PLDGu+ObHw0El452oG4pXRjVAV5SmwwM50=;
-        b=ZWDBnnedHDFNZSKmDYFEx9c6kJyJLMlJIUvCqqQJENtTeM5dXhpWEWRer+zKFmOl0j
-         5IlSVahJDQUkzJA7Xq2WjFgCixrv/ZHAxiJOwvx0wuQdo3BhQ6FX1qYF1NrELcNh/X9Y
-         PnjoJR6l3jtciN1Yv5uCnTKjc+lkc/057+IPcNRj4YlyZy2snSLLzlyPFMJtXtFIfztc
-         8MTIIuO1n4KtFIIoEMowS1RClhumkQrjbw1zexnxstzSibnyJRvFtrOSuVx7dfOdWsj8
-         NTbuPK4etT3obkHF7LJ2jQa2EVVQ5GRvanqf4K7pcOykhjJCWfIE/WPABBTe2GR5ZoCt
-         8fMg==
-X-Gm-Message-State: AOJu0YzbtGgnbJ820ChbOMPMJk0nrJ2QkKHFv87ICfjnEGO/6UySmEAR
-        /LmtgW5d9jWJEGj2IGHRew==
-X-Google-Smtp-Source: AGHT+IGAF+x9ZUitcV7dAlZnDe47vxmPt4py4fpRetqxMJ7bZjP220rsXPpzI50pM4oM+BNkX6P1HQ==
-X-Received: by 2002:a9d:73c3:0:b0:6b9:b226:d08e with SMTP id m3-20020a9d73c3000000b006b9b226d08emr14910421otk.34.1698176193747;
-        Tue, 24 Oct 2023 12:36:33 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1698176989; x=1698781789;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=agKMir3qcuKi14ldHG71aEKuRkt+lScGsRzAjnaqW/E=;
+        b=vF9xmLUxrZ5rPMx5sOUnehlSIul6bvhfnarpTXse7o6u5CXkoykX0ta43F1mHFb/lW
+         IVUK9/0RdYFtZ2D3pwj5g007ksyGJ29nob9MOSN5Mo/muRM+UfK8QY5eM1IVJcuAXGjc
+         nJklLRMp0gdyS1zloK4+xEua/D4ZpY7wcGNcIY3uOcU+MlndOMGrvTi1ElvjGznxEcvV
+         Ba7UZtwB6ovNuD4D/BP5LWeMyXU3nC6F/m1hOi8YrvMubiC4rKEsES0BjcgSYFDVVguX
+         v6L2jG467lV70QCXTr+BHGVQ8ZORYL0QqMNbDi8Q99MAODS2hQivRYF61flLQKZUIcGz
+         qudA==
+X-Gm-Message-State: AOJu0YyIQ0DbowtRm1kw1qaDKpR/Fediqt7GM4+nHPgSa9jb/BLpOiFb
+        K9CZZ8W0D2spoGAjsyO28A==
+X-Google-Smtp-Source: AGHT+IHyx9HB+5+xduv+DWRMK6EwebWorzR3T6o2xTNeFxgl5EwZIRIwryDhY3qLSLdiLQZ2wQLsaQ==
+X-Received: by 2002:a4a:e0ca:0:b0:581:e303:807c with SMTP id e10-20020a4ae0ca000000b00581e303807cmr12970213oot.5.1698176988888;
+        Tue, 24 Oct 2023 12:49:48 -0700 (PDT)
 Received: from herring.priv (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id z10-20020a4ad1aa000000b00581daa5c5fdsm2049818oor.29.2023.10.24.12.36.32
+        by smtp.gmail.com with ESMTPSA id r134-20020a4a378c000000b00582014b0138sm2165972oor.39.2023.10.24.12.49.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Oct 2023 12:36:33 -0700 (PDT)
-Received: (nullmailer pid 434690 invoked by uid 1000);
-        Tue, 24 Oct 2023 19:36:31 -0000
-Date:   Tue, 24 Oct 2023 14:36:31 -0500
+        Tue, 24 Oct 2023 12:49:48 -0700 (PDT)
+Received: (nullmailer pid 452036 invoked by uid 1000);
+        Tue, 24 Oct 2023 19:49:46 -0000
+Date:   Tue, 24 Oct 2023 14:49:46 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Alvin =?utf-8?Q?=C5=A0ipraga?= <alvin@pqrs.dk>
-Cc:     linux-clk@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
-        Jacob Siverskog <jacob@teenage.engineering>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+To:     Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rabeeh Khoury <rabeeh@solid-run.com>,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Sergej Sawazki <sergej@taudac.com>,
-        Alvin =?utf-8?Q?=C5=A0ipraga?= <alsi@bang-olufsen.dk>,
-        linux-kernel@vger.kernel.org,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Subject: Re: [PATCH v5 2/3] dt-bindings: clock: si5351: add PLL reset mode
- property
-Message-ID: <169817619092.434632.12338153362080945824.robh@kernel.org>
-References: <20231020-alvin-clk-si5351-no-pll-reset-v5-0-f0c1ba537f88@bang-olufsen.dk>
- <20231020-alvin-clk-si5351-no-pll-reset-v5-2-f0c1ba537f88@bang-olufsen.dk>
+        Stephen Boyd <sboyd@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Marek Vasut <marex@denx.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux@ew.tq-group.com, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH 2/5] dt-bindings: soc: imx93-media-blk-ctrl: Add LDB
+ subnode into schema and example
+Message-ID: <20231024194946.GA434797-robh@kernel.org>
+References: <20231020130019.665853-1-alexander.stein@ew.tq-group.com>
+ <20231020130019.665853-3-alexander.stein@ew.tq-group.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20231020-alvin-clk-si5351-no-pll-reset-v5-2-f0c1ba537f88@bang-olufsen.dk>
+In-Reply-To: <20231020130019.665853-3-alexander.stein@ew.tq-group.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-On Fri, 20 Oct 2023 13:34:15 +0200, Alvin Šipraga wrote:
-> From: Alvin Šipraga <alsi@bang-olufsen.dk>
+On Fri, Oct 20, 2023 at 03:00:15PM +0200, Alexander Stein wrote:
+> Document the LDB bridge subnode and add the subnode into the example.
+> For the subnode to work, the block control must scan its subnodes and
+> bind drivers to them, do not misuse either simple-bus or simple-mfd
+> here.
 > 
-> For applications where the PLL must be adjusted without glitches in the
-> clock output(s), a new silabs,pll-reset-mode property is added. It
-> can be used to specify whether or not the PLL should be reset after
-> adjustment. Resetting is known to cause glitches.
-> 
-> For compatibility with older device trees, it must be assumed that the
-> default PLL reset mode is to unconditionally reset after adjustment.
-> 
-> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-> Cc: Rabeeh Khoury <rabeeh@solid-run.com>
-> Cc: Jacob Siverskog <jacob@teenage.engineering>
-> Cc: Sergej Sawazki <sergej@taudac.com>
-> Signed-off-by: Alvin Šipraga <alsi@bang-olufsen.dk>
+> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 > ---
->  .../devicetree/bindings/clock/silabs,si5351.yaml   | 24 ++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
+>  .../soc/imx/fsl,imx93-media-blk-ctrl.yaml     | 44 +++++++++++++++++++
+>  1 file changed, 44 insertions(+)
 > 
+> diff --git a/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.yaml b/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.yaml
+> index b3554e7f9e76..5ba66dfb0e05 100644
+> --- a/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.yaml
+> +++ b/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.yaml
+> @@ -24,6 +24,12 @@ properties:
+>    reg:
+>      maxItems: 1
+>  
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 1
+> +
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Presumably the child nodes are MMIO? If so, missing 'ranges'.
 
+>    '#power-domain-cells':
+>      const: 1
+>  
+> @@ -46,9 +52,16 @@ properties:
+>        - const: csi
+>        - const: dsi
+>  
+> +  bridge@20:
+> +    type: object
+> +    $ref: /schemas/display/bridge/fsl,ldb.yaml#
+> +    unevaluatedProperties: false
+
+We do this style a lot, but another way to do child nodes is:
+
+type: object
+additionalProperties: true
+
+properties:
+  compatible:
+    contains:
+      const: fsl,imx93-ldb
+
+This way avoids applying the fsl,ldb.yaml schema twice and ensures the 
+right LDB compatible is used. 
+
+Rob
