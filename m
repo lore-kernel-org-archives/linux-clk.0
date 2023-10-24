@@ -2,192 +2,217 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AE48C25B6B
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Oct 2023 20:47:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C2FFC07545
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Oct 2023 22:53:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234931AbjJXUrY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Oct 2023 16:47:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50742 "EHLO
+        id S1344509AbjJXWx1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Oct 2023 18:53:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232399AbjJXUrY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Oct 2023 16:47:24 -0400
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04olkn2081.outbound.protection.outlook.com [40.92.46.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1544010CE;
-        Tue, 24 Oct 2023 13:47:21 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=GGujnBWBtAl9td4ghMdigk2SixFQKmeMukPcw14ANkpgPoqFECsl9hJ9pi6IVh5eevaVPFRMAjSAexA6zKmDeTFEAOBOq3tQTA7L5cQG6Y3eWTrg6bdALCoF0mHdmlxhrU7NW/GWCKSuZMKEg94Es0sp5p9S2C0hJ9hT+wW4mVolAzJeHHuYB9VMoa9KOOTbpmLRnii0wiHCzI4DMTwoNfPFtxMFGWTxNmU2w6FyG5iSbNMSjNwR3bSwXonTaqrtw4SD/IIZIbLAKhCxHZUIwPvOdmo3aeqMa5GUlRjTS9jEUHAItDgnuE5ruS/cAI6AcR1uxjtIqAB5O9bFScF0jw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=g/CC8eZ10WUhdA2EXZhDI0IFzxIgJDZx2RVdgLZdIRw=;
- b=h1oyy09kxoayZ5PidPIA8qb2b/i1m9EgVSiR11RCoVPQVAB/ITPjZ39Asi029iweyKVAOqBp3ZXC6b6IP5crQfSwOiP15d13o2/PbI/NnCmxb/VBZMRfWxZFo9GXV3u4PgJT8hmg9a2Yt2g8WvPC3k32JSWtAj2w0rNYaEceg1aC0wY3GtqI5AGBZXPDxUibWZ8Foi20RsjnUVUotZ/qrCjlCBsqJRe9IULPdVwe8iRoNBsvu06zArVIy/C96O2IQFwuwTFXEJotCEjb8toVkVLVmLDa+j2Ych0RqnVhoZN+uS2Vp8R2M+YyYFgCdfn7KbfKore1iQTpSyYWqteqfw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=g/CC8eZ10WUhdA2EXZhDI0IFzxIgJDZx2RVdgLZdIRw=;
- b=F+VkOaZXSm+iaKV2UeahrPQjoHTBuXVSaKDEeZqqgqs3YRQ6Zj4Kafy0SCOQf0cIJswV9BKcjqmGka2Tyuf2CVRmkr2xpF28Q7MtWjD9ixuF9zTcQiZwDaMaYcVSwj3J2lrVMWT1dVHzHtlwsuTTCzCt9+OYRjsjJNf85Z6Pdlf1mFgR1QfbZi3EaPobO7f60hheAviTPNjn/wMu4BRDMXwnX5TrBu3HQAtAjEywbZ/40tipRiqn9ASfvWsjO/cUT+aedEL4CCI4Wg7g9kGHOdGxBz5Us1EA9HqXRosY3zDrfTFbZjBwAQjYBMJQfLVGUmXssoZfICQH6AhtntAlcQ==
-Received: from SN6PR06MB5342.namprd06.prod.outlook.com (2603:10b6:805:f9::31)
- by SA0PR06MB6761.namprd06.prod.outlook.com (2603:10b6:806:c0::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6907.33; Tue, 24 Oct
- 2023 20:47:16 +0000
-Received: from SN6PR06MB5342.namprd06.prod.outlook.com
- ([fe80::c40c:bbc8:b103:459c]) by SN6PR06MB5342.namprd06.prod.outlook.com
- ([fe80::c40c:bbc8:b103:459c%2]) with mapi id 15.20.6863.032; Tue, 24 Oct 2023
- 20:47:15 +0000
-Date:   Tue, 24 Oct 2023 15:47:11 -0500
-From:   Chris Morgan <macromorgan@hotmail.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Chris Morgan <macroalpha82@gmail.com>,
-        linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        sebastian.reichel@collabora.com, sboyd@kernel.org,
-        mturquette@baylibre.com, daniel@ffwll.ch, airlied@gmail.com,
-        sam@ravnborg.org, neil.armstrong@linaro.org, heiko@sntech.de,
-        conor+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org
-Subject: Re: [PATCH 1/5] dt-bindings: display: panel: Update NewVision
- NV3051D compatibles
-Message-ID: <SN6PR06MB5342DB69A98959C9D5D275E9A5DFA@SN6PR06MB5342.namprd06.prod.outlook.com>
-References: <20231018161848.346947-1-macroalpha82@gmail.com>
- <20231018161848.346947-2-macroalpha82@gmail.com>
- <e684983a-9399-4fd7-8fe5-41faeabbfab1@linaro.org>
- <SN6PR06MB534271680DB8A3A3F0A1A31CA5D4A@SN6PR06MB5342.namprd06.prod.outlook.com>
- <20231024182755.GA215478-robh@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231024182755.GA215478-robh@kernel.org>
-X-TMN:  [OFs7ACKd2LOOUegdBZd37n2gO+77QOKH]
-X-ClientProxiedBy: SA1P222CA0162.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:806:3c3::13) To SN6PR06MB5342.namprd06.prod.outlook.com
- (2603:10b6:805:f9::31)
-X-Microsoft-Original-Message-ID: <ZTgtT5NLlQmqA2eP@wintermute.localhost.fail>
+        with ESMTP id S1344466AbjJXWx0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Oct 2023 18:53:26 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13358129
+        for <linux-clk@vger.kernel.org>; Tue, 24 Oct 2023 15:53:24 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id a640c23a62f3a-9be3b66f254so707519666b.3
+        for <linux-clk@vger.kernel.org>; Tue, 24 Oct 2023 15:53:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1698188002; x=1698792802; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=aAens+Ipl64zEiOYHIFXDI/wJ7R3A+fEEheNo8jpcMc=;
+        b=NzEkeMaKiLmbLn9PMEF4bvMbrpKwVWYVts9Ii4dCapO/SX4TQYjt5E9pLrVHvf6ziG
+         xsSck+ZHZ1bSLXob+fAzIf0fNKsreZyZjpy5PC+AzEDxCaW2nIqBzpblUnUZumJwAyy2
+         d5IqPrX5agixJAcvO4bgtcsgcEj6/EzFUPa68=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698188002; x=1698792802;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aAens+Ipl64zEiOYHIFXDI/wJ7R3A+fEEheNo8jpcMc=;
+        b=Ncf4JpKiVMuMqhnVLvSCV+yTOJPmYEg0h/kO4GiQB7nnmetFUW0W9cqOCL7b2fN17J
+         Z40nPR3h9LmsOXNiyW2ey/8Umtt+wk5yIVC/bk60Wg4uh1ydMxYdPpP6Hv20wxyuHDsu
+         0vMcRriGzmH+glvngTnJPXwrRE3Og9rwG3kRd9LoE57eZ6MvbwDHpCdHU8BMy6h1NcQs
+         pZKw82VuZ0PUCNOiLHJb7LviieijxgTVWYba99yu8OGFryLp2wrqSXYsdM+jVArCEkk8
+         oxc9oTH9+EdeN/XsY21cxWlOfyEHbVE8JG+n1JYVTM1Xbhx2qbAmGNOHAs/LBVe9DU8z
+         09Yg==
+X-Gm-Message-State: AOJu0YwpDBXm8T1eeWC+xXy3ic4in2+ohILGHTEaUhVVmfj07M+zBoGB
+        bZZ0nJ9jKYOp/QkyAKhx28V2Mjx0SUr+3AVH5Vj07ut0
+X-Google-Smtp-Source: AGHT+IFAwu3fKnNmMzYpn3TXL440bzTCMWjNKF1qA+NnEldQ8s8AktIdUzEqHXqGx+QW3KBywx62nw==
+X-Received: by 2002:a17:907:3e11:b0:9be:6bf0:2f95 with SMTP id hp17-20020a1709073e1100b009be6bf02f95mr10267380ejc.20.1698188001991;
+        Tue, 24 Oct 2023 15:53:21 -0700 (PDT)
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com. [209.85.218.49])
+        by smtp.gmail.com with ESMTPSA id n13-20020a17090673cd00b009b65a834dd6sm8942462ejl.215.2023.10.24.15.53.21
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Oct 2023 15:53:21 -0700 (PDT)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-9c5b313b3ffso711297266b.0
+        for <linux-clk@vger.kernel.org>; Tue, 24 Oct 2023 15:53:21 -0700 (PDT)
+X-Received: by 2002:a17:906:7956:b0:9be:e153:3b82 with SMTP id
+ l22-20020a170906795600b009bee1533b82mr10560167ejo.17.1698188000824; Tue, 24
+ Oct 2023 15:53:20 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN6PR06MB5342:EE_|SA0PR06MB6761:EE_
-X-MS-Office365-Filtering-Correlation-Id: b20d3043-bbd8-471e-8db5-08dbd4d26786
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: P23mG/nfm3vBMXmdjuAhx6w2gQB4/DWO2TGGrHh3hYb/qsZac99mkMtiZPsdGwvBC/Dvk9iLEnpv2dt33wAOMdm0ZfyVZPQCzTW5TsT0JB2ArlY00+7Les4cC/Q+hGRreMYskxAh85U1JylB/PKzvD+AsCpaqBuENwfM2Pooh6fVZUSe/awrK86yU6u7qROrCgzXyv+XffzfWIkaWqsBH46ub6lkv6NfoPuLL4LTe+tFBga/hScMek8U41W3VDnVoiwCk/7J07Zlw6fR+UUnnxVitjT3totc9NnzZZt3oEHAZhkeXYG9Vc6bnAgSXIE/+2GG+DHqu/0GIMi5Zo3PwaLXsGEiiEGhIf5SvH98AhsBtibq/FoOJy5usP0bPKUf2Y6gatwS4pGuj2LtMRrLFFo0r82+jF52XHRXeLV8KsHfHZc3QZrKsrYYANquIJIS0P7RTkGo6yaZWEAqwCgfAtYvdiaC68Fk5ZKZbuJyVZGng8dMRN6yiCokZfPoTxKNHXi9GouAe6GH4c3PVkhnZxAJA4mi2vri3erbfHxdcqQHbiqOAT4tDQmvnkAUeQvT
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?pWJKjUzxXq8DND91cu/gF6BjjocBGv2s8cAZI43H5OA51OTNEDRMVujLdSiY?=
- =?us-ascii?Q?bePC8VtC3/LXM5iQ93J1F8cgxcYgyFMaLXPBnjn9cf6TgacpS4glumnVSt50?=
- =?us-ascii?Q?aX1bY6Xa8zJLHmarhxq0Al98ZqcqJiYWPskq074JIiu3ui3Ze41sOLBGS3tV?=
- =?us-ascii?Q?bcAq2/RUxVjMK9A8OS2PS4vLtK5em8KuFLHM8uxhgkU2lzkg7QfKckv1Dndb?=
- =?us-ascii?Q?7gF/i4fp8Vv8yxejPrOWiHB4kj6CwXMlduFodYc51HWmmGMd3BT+5nIF/HUd?=
- =?us-ascii?Q?q9fewT9Y58Fbx0RDw9Bjsx7Lrujd0DQMTFDWJOTIRF953ewEZKX80sJkd721?=
- =?us-ascii?Q?VTA8WFV9Lida4tWzY30haOACUV5zxSNrEc0OjdAcDg0ct2ybmpZfft2EpUjC?=
- =?us-ascii?Q?BrSxLQSqyVApM9W5fhyL7sFsCzUutnl989TTF4H423p8LxxX29VCcwDQSJMn?=
- =?us-ascii?Q?60fx8x56nvl1O/XEdIYTYqHsbDG2F1dpL7L6rFkpT9J8CscuwDhje42VWa+E?=
- =?us-ascii?Q?ZxvQb5AjXIDi3Y8GTVeumFP3WsCdLMdXArxU3ikORsDxd7XeHTVkgXq6ffp4?=
- =?us-ascii?Q?Js97kk+78pZxb4oNbbknPOVSo4QNlbHIxHi6m3/OC/7xgmVkBo06+yLl5+r/?=
- =?us-ascii?Q?QtALNyS1MLZjps4q9YlEdcnMKPPRGmas5+tvPDpT3pudujypXHbbQjcLsj2Q?=
- =?us-ascii?Q?xxGpvIK2glT93hXEcseaaR+GpMAyvD3e2Ync31vLaEOPvyiol+YCAbgKXEqQ?=
- =?us-ascii?Q?u/8trQjPco75FVJrrRVxFkdjy0088ykvgFvyT3C5IE/elDShosusVkug7c+/?=
- =?us-ascii?Q?8PX7pLBb93CD6QN+yGQho4RVK3ttuJXdPDgwA/06SMzwS1zfSxs15QYRM9+j?=
- =?us-ascii?Q?n1QZIFqLbdKYoMv8XAhI4M49wj3Iz0ff05arUJtcFmuq828x0+mYtyMJLw8o?=
- =?us-ascii?Q?u2lo3JkZGFLDuOalfdTGdKZWaXDaZ0OVuGgPSKxz5saBmayxEDMVywvA//Da?=
- =?us-ascii?Q?qHJnq7fj75WSxb745ApvgPBZquEIxv03ZBHlk1XBdJnHtH+MJOM12ciTjSw+?=
- =?us-ascii?Q?OC07LRgbPIczUW1p8YzsrsXlitBsGvnIrfjRzJN02dHdKQp2xPzxccH5S29E?=
- =?us-ascii?Q?59PcjaIa3lXZlH/PF7sbCYBgyJGoBYtePpOa9Y/naP5fjna2q+cDC7ysHTN8?=
- =?us-ascii?Q?Ty6uoPi3tvx/Uew1fSXWc6Nh83oEqhH6YLHs/XK6ux+M8H0u+A5B5ymyYZ8?=
- =?us-ascii?Q?=3D?=
-X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-89723.templateTenant
-X-MS-Exchange-CrossTenant-Network-Message-Id: b20d3043-bbd8-471e-8db5-08dbd4d26786
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR06MB5342.namprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2023 20:47:15.9294
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR06MB6761
+References: <20231024161931.78567-1-sebastian.reichel@collabora.com>
+ <20231024161931.78567-2-sebastian.reichel@collabora.com> <CAHk-=whYDbZ29fx_xeSxtYSjtF8WJkaLjzyB8RN5_Rk9Sh-YyQ@mail.gmail.com>
+In-Reply-To: <CAHk-=whYDbZ29fx_xeSxtYSjtF8WJkaLjzyB8RN5_Rk9Sh-YyQ@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 24 Oct 2023 12:53:03 -1000
+X-Gmail-Original-Message-ID: <CAHk-=wjO5ivM6k7iMiThO9JfxH0dhLe=mcC4TQwReU0nBCnWpg@mail.gmail.com>
+Message-ID: <CAHk-=wjO5ivM6k7iMiThO9JfxH0dhLe=mcC4TQwReU0nBCnWpg@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] math.h: add DIV_ROUND_UP_NO_OVERFLOW
+To:     Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        David Laight <David.Laight@aculab.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Niklas Schnelle <schnelle@linux.ibm.com>, kernel@collabora.com
+Content-Type: multipart/mixed; boundary="0000000000008d36ec06087e3461"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Oct 24, 2023 at 01:27:55PM -0500, Rob Herring wrote:
-> On Thu, Oct 19, 2023 at 09:50:38AM -0500, Chris Morgan wrote:
-> > On Thu, Oct 19, 2023 at 11:22:19AM +0200, Krzysztof Kozlowski wrote:
-> > > On 18/10/2023 18:18, Chris Morgan wrote:
-> > > > From: Chris Morgan <macromorgan@hotmail.com>
-> > > > 
-> > > > Update the NewVision NV3051D compatible strings by adding a new panel,
-> > > > the powkiddy,rk2023-panel, and removing another entry, the
-> > > > anbernic,rg353v-panel. The rg353v-panel is exactly identical to the
-> > > > rg353p-panel and is not currently in use by any existing device tree.
-> > > > The rk2023-panel is similar to the rg353p-panel but has slightly
-> > > > different timings.
-> > > 
-> > > This still does not explain me why do you want to remove old panel.
-> > 
-> > When I originally wrote the driver I only had one piece of hardware
-> > and I set the compatible string in the driver as newvision,nv3051d.
-> > Unfortunately since then I've found 2 more devices in use that are
-> > *just* different enough to require the driver to do things a bit
-> > differently. In the case of the anbernic,rg351v-panel I need to
-> > enable a new DSI flag; in the case of the powkiddy,rk2023-panel I need
-> > to decrease the vertical back porch and drop the higher frequency
-> > timings.
-> > 
-> > The best way to accomplish this was to change the strategy from having
-> > a single binding in the driver of newvision,nv3051d to a binding for
-> > each distinct hardware where the differences apply. 
-> 
-> Exactly why the DT maintainers annoyingly ask for specific compatible 
-> strings which may not be used immediately.
+--0000000000008d36ec06087e3461
+Content-Type: text/plain; charset="UTF-8"
 
-You're not wrong. Sorry for making this difficult. I should have done
-it this way from the start.
+On Tue, 24 Oct 2023 at 09:32, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> I would really prefer to just make our regular DIV_ROUND_UP() DTRT.  But:
+>
+>  - people do use it with complex first arguments (ie function calls
+> etc) that we don't want to evaluate twice
+>
+>  - we can't make it an inline function, because the types aren't fixed
+>
+>  - we can't even use a statement expression and __auto_type, because
+> these things are used in type definitions etc and need to be constant
+> expressions
 
-> 
-> > Note that I've
-> > looked at querying the DSI panel ID, but for each device the value
-> > is identical (so it can't be used to differentiate the hardware sadly).
-> > So the driver now has 3 different compatible strings. I could in this
-> > case add a 4th compatible string of anbernic,rg353v-panel but it would
-> > be identical to anbernic,rg353p-panel. For the moment we are using
-> > anbernic,rg353p-panel everywhere (including the rg353v), so it makes
-> > sense to drop this unused value while we can, at least to me.
-> 
-> Your reasoning is the compatible string is unused, so remove it. 
-> 
-> If there's some reasoning about how the 2 panels are the same hardware 
-> or the rg353v is never going to be used or show up at some point, then 
-> that would be a reason to remove.
+Ok. I have a potential beginning of a solution.
 
-The compatible string of 353v-panel is unused, and the hardware is
-identical to the 353p-panel (so only one string is necessary). Sorry
-if that wasn't clear.
+It is unbelievably disgustingly complicated. But it might approach
+being correct.
 
-Panel 1 - The original anbernic,rg353p-panel which is also
-anbernic,rg353v-panel.
+And by that "it might approach being correct" I obviously mean "this
+is untested, but builds at least some kernel code".
 
-Panel 2 - anbernic,rg351v-panel. This is almost identical to Panel 1
-except it requires an additional flag.
+I'm almost certain it will fail on more complex cases, because I
+already found a lot of questionable stuff that was simply hidden by
+the old macro just silently doing the C arithmetic type conversions,
+and this thing does type handling manually.
 
-Panel 3 - powkiddy,rk2023-panel. This is almost identical to Panel 1
-except it requires a change to the VBP timing parameter and isn't
-tolerant of speeds much higher than 60hz.
+I'm hoping that somebody will go "Linus, you're just being
+*completely* silly, it's much easier to do XYZ".
 
-The issue I had is I originally wrote the driver checking for the
-newvision,nv3051d compatible string which worked fine when there was
-only 1 panel type. When I added support for the 351v-panel I *should*
-have changed how the compatible string was handled, but instead I
-simply added a check in the probe function to look for the secondary
-string of "anbernic,rg351v-panel". When the 3rd panel type of
-"powkiddy,rk2023-panel" was needed I took this time to correct the
-driver and do it the right way by checking for the specific
-compatibles.
+            Linus
 
-Thank you, and sorry for the headaches this caused you.
-Chris
+--0000000000008d36ec06087e3461
+Content-Type: text/x-patch; charset="US-ASCII"; 
+	name="0001-Introduce-complicated-non-overflowing-DIV_ROUND_UP.patch"
+Content-Disposition: attachment; 
+	filename="0001-Introduce-complicated-non-overflowing-DIV_ROUND_UP.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_lo4x9kjn0>
+X-Attachment-Id: f_lo4x9kjn0
 
-> 
-> You could also say the rg353v is just wrong because it should have a 
-> fallback compatible to rg353p and rather than fix it, just remove it 
-> for now since there are no known users of it.
-> 
-> Rob
+RnJvbSA3MTJjOWVhY2RlZDViNzE3Y2JiODhkYjFkZjVlNDMwMzQyMDEyMjY5IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBMaW51cyBUb3J2YWxkcyA8dG9ydmFsZHNAbGludXgtZm91bmRh
+dGlvbi5vcmc+CkRhdGU6IFR1ZSwgMjQgT2N0IDIwMjMgMTI6NTE6MDYgLTEwMDAKU3ViamVjdDog
+W1BBVENIXSBJbnRyb2R1Y2UgKGNvbXBsaWNhdGVkKSBub24tb3ZlcmZsb3dpbmcgRElWX1JPVU5E
+X1VQKCkKCkRvaW5nIGEgbm9uLW92ZXJmbG93aW5nIERJVl9ST1VORF9VUCgpIHRoYXQgaXMgdXNh
+YmxlIGluIGFsbCBjb250ZXh0cyBpcwphY3R1YWxseSB2ZXJ5IG5hc3R5LgoKVGhpcyBpcyBhIHRy
+aWFsIGJhbGxvb24uLiAgVGhlIHNpZ25lZCBjYXNlcyBuZWVkIG1vcmUgdGhvdWdodC4gIFRoZSBi
+ZXN0Cm9wdGlvbiB3b3VsZCBiZSB0byBkaXNhbGxvdyB0aGVtIChieSBub3QgbGlzdGluZyB0aGVt
+IGluIHRoZSBfR2VuZXJpYygpCnJ1bGVzKS4gQnV0IHRoZXkgY3VycmVudGx5IGhhcHBlbiwgb2Z0
+ZW4gZm9yIGJhZCByZWFzb25zLCBpZSB3aXJlbGVzcyBoYXMKCglESVZfUk9VTkRfVVAoaW50ZXJ2
+YWwsIE1TRUNfUEVSX1NFQyk7CgphbmQgd2hpbGUgJ2ludGVydmFsJyBpcyBhIHByb3BlciB1MzIs
+IE1TRUNfUEVSX1NFQyBpcyBkZWZpbmVkIHRvIGJlCicxMDAwTCcsIHNvIHRoZSByZXN1bHRpbmcg
+QyBhcml0aG1ldGljIGlzIGRvbmUgaW4gc2lnbmVkICdsb25nJy4KCldlIGFsc28gaGF2ZSB0aGlu
+Z3MgbGlrZQoKCURJVl9ST1VORF9VUChtYXhfcGZuIDw8IFBBR0VfU0hJRlQsIDFVTCA8PCBUQl9T
+SElGVCkKCmluIHRoZSBrYXNsciBjb2RlLCB3aGVyZSB0aGUgY29tcGlsZXIgY29tcGxhaW5zIGlm
+IHdlIGV2ZXIgdGhlbiB1c2UgdGhhdAonMVVMIDw8IFRCX1NISUZUJyBhcyBhbiAnaW50JyBpbiB0
+aGUgbWFjcm8gZXhwYW5zaW9uLCBzbyB0aGUKdHlwZS1zcGVjaWZpYyBtYWNyb3MgYWxsIHRha2Ug
+dGhlIGRpdmlzb3IgYXMgYSAndW5zaWduZWQgbG9uZycgZXZlbiBpZgp0aGF0IG1pZ2h0IGJlIHdp
+ZGVyIHRoYW4gdGhlIHRhcmdldCB0eXBlLgoKTm90LXlldC1zaWduZWQtb2ZmLWJ5OiBMaW51cyBU
+b3J2YWxkcyA8dG9ydmFsZHNAbGludXgtZm91bmRhdGlvbi5vcmc+Ci0tLQogaW5jbHVkZS9saW51
+eC9kaXZfcm91bmRfdXAuaCB8IDEwNCArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KwogaW5jbHVkZS91YXBpL2xpbnV4L2NvbnN0LmggICB8ICAgNiArLQogMiBmaWxlcyBjaGFuZ2Vk
+LCAxMDggaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkKIGNyZWF0ZSBtb2RlIDEwMDY0NCBp
+bmNsdWRlL2xpbnV4L2Rpdl9yb3VuZF91cC5oCgpkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9k
+aXZfcm91bmRfdXAuaCBiL2luY2x1ZGUvbGludXgvZGl2X3JvdW5kX3VwLmgKbmV3IGZpbGUgbW9k
+ZSAxMDA2NDQKaW5kZXggMDAwMDAwMDAwMDAwLi5kN2ZkMzE5YmE1YzEKLS0tIC9kZXYvbnVsbAor
+KysgYi9pbmNsdWRlL2xpbnV4L2Rpdl9yb3VuZF91cC5oCkBAIC0wLDAgKzEsMTA0IEBACisjaWZu
+ZGVmIF9ESVZfUk9VTkRfVVBfSAorI2RlZmluZSBfRElWX1JPVU5EX1VQX0gKKworLyoKKyAqICdE
+SVZfUk9VTkRfVVAobixkKScgaXMgYW5ub3lpbmdseSBjb21wbGljYXRlZCB0byBkbywgYmVjYXVz
+ZSB3aGlsZQorICogd2UndmUgaGlzdG9yaWNhbGx5IGV2YWx1YXRlZCAnZCcgbXVsdGlwbGUgdGlt
+ZXMgdXNpbmcgdGhlIHNpbXBsZQorICogZXhwcmVzc2lvbgorICoKKyAqICAgICgoKG4pICsgKGQp
+IC0gMSkgLyAoZCkpCisgKgorICogd2UgZG8gX25vdF8gd2FudCB0byBldmFsdWF0ZSAnbicgbXVs
+dGlwbGUgdGltZXMuIEFuZCB0aGUgc2ltcGxlCisgKiBleHByZXNzaW9uIGNhbiBvdmVyZmxvdyB0
+byB6ZXJvIGZvciBiaWcgdmFsdWVzIG9mICduJy4KKyAqCisgKiBBIG5vbi1vdmVyZmxvd2luZyB2
+ZXJzaW9uIChieSBEYXZpZCBMYWlnaHQpIGlzCisgKgorICogICAgKCgobikgLSAxKS8oZCkgKyAx
+KQorICoKKyAqIGJ1dCB0aGVyZSB0aGUgJ24tMScgd2lsbCB1bmRlcmZsb3cgd2hlbiAnbicgaXMg
+emVybywgYW5kIGFkZGluZyB0aGUKKyAqIGNvbmRpdGlvbmFsIGZvciB0aGF0IHdvdWxkIHRoZW4g
+ZXZhbHVhdGUgJ24nIHR3aWNlLgorICoKKyAqIEF2b2lkaW5nIHRoZSBkb3VibGUgZXZhbHVhdGlv
+biB3aXRoIGEgc3RhdGVtZW50IGV4cHJlc3Npb24gdXNpbmcKKyAqCisgKiAgICAoeyBfX2F1dG9f
+dHlwZSBfX24gPSAobikgLi4uLiB9KQorICoKKyAqIGxpa2Ugd2UgZG8gd2l0aCB0aGUgc2ltaWxh
+cmx5IGNvbnN0cmFpbmVkICdtaW4oKScgYW5kICdtYXgoKScKKyAqIGRlZmluZXMgd291bGQgYmUg
+dHJpdmlhbCwgYnV0IGNhbm5vdCBiZSB1c2VkIGluIGEgdG9wLWxldmVsCisgKiBjb250ZXh0IGxp
+a2UgYSB0eXBlIGRlZmluaXRpb24sIHdoaWNoIGlzIGEgY29tbW9uIGNhc2UuCisgKgorICogRXZl
+biB1c2luZyBfX2J1aWx0aW5fY2hvb3NlX2V4cHIoKSBhbmQgb25seSB1c2luZyB0aGUgc3RhdGVt
+ZW50CisgKiBleHByZXNzaW9uIGZvciB0aGUgbm9uLWNvbnN0YW50IGNhc2UsIGdjYyByZWZ1c2Vz
+IHRvIGV2ZW4gcGFyc2UKKyAqIHN0YXRlbWVudCBleHByZXNzaW9ucyBvdXRzaWRlIG9mIGZ1bmN0
+aW9uIGNvbnRleHQ6CisgKgorICogICBlcnJvcjogYnJhY2VkLWdyb3VwIHdpdGhpbiBleHByZXNz
+aW9uIGFsbG93ZWQgb25seSBpbnNpZGUgYSBmdW5jdGlvbgorICoKKyAqIFRoZSBvYnZpb3VzIHNv
+bHV0aW9uIGlzIHRvIHVzZSBhbiBpbmxpbmUgZnVuY3Rpb24sIGJ1dCB0aGF0IGZhaWxzCisgKiBk
+dWUgdG8gZm9yY2VkIHR5cGUgY29udmVyc2lvbi4gQW5kIHdpZGVuaW5nIHRoZSB0eXBlcyB0byB0
+aGUgbWF4aW11bQorICogc2l6ZSBnZW5lcmF0ZXMgaG9ycmlmaWMgY29kZS4KKyAqCisgKiBFbmQg
+cmVzdWx0OiB0aGlzIGhvcnJvci4KKyAqLworCisvKgorICogU3BsaXQgdGhlIGxvZ2ljIGludG8g
+dGhlIGNvbnN0YW50IGNhc2UgKHdoaWNoIGNhbiBiZSB1c2VkIGV2ZXJ5d2hlcmUpCisgKiBhbmQg
+dGhlIG5vbi1jb25zdGFudCBjYXNlIChsaW1pdGVkIHRvIGZ1bmN0aW9uIGNvbnRleHQsIGJ1dCBu
+ZWVkcyB0bworICogcGFyc2UgZXZlcnl3aGVyZSkuCisgKi8KKyNkZWZpbmUgX19rZWVwX2NvbnN0
+KGNvbmQsIGV4cHIpIFwKKwlfX2J1aWx0aW5fY2hvb3NlX2V4cHIoX19pc19jb25zdGV4cHIoY29u
+ZCksIF9fY29uc3RfIyNleHByLCBfXyMjZXhwcikKKyNkZWZpbmUgX19LRVJORUxfRElWX1JPVU5E
+X1VQKG4sIGQpIFwKKwlfX2tlZXBfY29uc3QobiwgZGl2X3JvdW5kX3VwKG4sZCkpCisKKy8qCisg
+KiBUaGUgY29uc3RhbnQgY2FzZSBpcyB0cml2aWFsLCBzaW5jZSB0aGVuIHdlIGNhbiBqdXN0IHJl
+LWV2YWx1YXRlIHRvCisgKiBvdXIgaGVhcnRzIGNvbnRlbnQuCisgKi8KKyNkZWZpbmUgX19jb25z
+dF9kaXZfcm91bmRfdXAobixkKSAoKG4pICE9IDAgPyAoKG4pLTEpLyhkKSsxIDogMCkKKworLyoK
+KyAqIFRoZSBvdGhlciBjYXNlcyBuZWVkIHRvIGJlIHNwbGl0IGJ5IHR5cGUuCisgKgorICogU2ln
+bmVkIGNhc2VzIHNlZW0gYmFkbHkgZGVmaW5lZCwgYnV0IGRvIGV4aXN0LiBXZSBzaG91bGQKKyAq
+IGNvbnNpZGVyIHJlbW92aW5nIHRoZW0gZnJvbSB0aGlzIF9HZW5lcmljKCksIGFuZCBmaXhpbmcg
+YW55CisgKiByZXN1bHQgJ25vdCBjb21wYXRpYmxlIHdpdGggYW55IGFzc29jaWF0aW9uJyBjYXNl
+cy4KKyAqLworI2RlZmluZSBfX2Rpdl9yb3VuZF91cChuLGQpIF9HZW5lcmljKChuKSsoZCksCQlc
+CisJdW5zaWduZWQgbG9uZyBsb25nOiBfX2Rpdl9yb3VuZF91cF91bGwobixkKSwJXAorCWxvbmcg
+bG9uZzogX19kaXZfcm91bmRfdXBfbGwobixkKSwJCVwKKwl1bnNpZ25lZCBsb25nOiBfX2Rpdl9y
+b3VuZF91cF91bChuLGQpLAkJXAorCWxvbmc6IF9fZGl2X3JvdW5kX3VwX2wobixkKSwJCQlcCisJ
+dW5zaWduZWQgaW50OiBfX2Rpdl9yb3VuZF91cF91KG4sZCksCQlcCisJaW50OiBfX2Rpdl9yb3Vu
+ZF91cF9pKG4sZCkpCisKK3N0YXRpYyBpbmxpbmUgdW5zaWduZWQgbG9uZyBsb25nIF9fZGl2X3Jv
+dW5kX3VwX3VsbCh1bnNpZ25lZCBsb25nIGxvbmcgbiwgdW5zaWduZWQgbG9uZyBkKQoreworI2lm
+ZGVmIENPTkZJR18zMkJJVAorCWlmICghbikKKwkJcmV0dXJuIDAKKwlkb19kaXYobi0xLCBkKTsK
+KwlyZXR1cm4gbisxOworI2Vsc2UKKwlyZXR1cm4gX19jb25zdF9kaXZfcm91bmRfdXAobixkKTsK
+KyNlbmRpZgorfQorCitzdGF0aWMgaW5saW5lIHVuc2lnbmVkIGxvbmcgX19kaXZfcm91bmRfdXBf
+dWwodW5zaWduZWQgbG9uZyBuLCB1bnNpZ25lZCBsb25nIGQpCit7IHJldHVybiBfX2NvbnN0X2Rp
+dl9yb3VuZF91cChuLGQpOyB9CisKK3N0YXRpYyBpbmxpbmUgdW5zaWduZWQgaW50IF9fZGl2X3Jv
+dW5kX3VwX3UodW5zaWduZWQgaW50IG4sIHVuc2lnbmVkIGxvbmcgZCkKK3sgcmV0dXJuIF9fY29u
+c3RfZGl2X3JvdW5kX3VwKG4sKHVuc2lnbmVkIGludClkKTsgfQorCisvLyBWZXJ5IHF1ZXN0aW9u
+YWJsZSBzaWduZWQgY2FzZXMuLi4KK3N0YXRpYyBpbmxpbmUgbG9uZyBsb25nIF9fZGl2X3JvdW5k
+X3VwX2xsKGxvbmcgbG9uZyBuLCB1bnNpZ25lZCBsb25nIGQpCit7CisJaWYgKG4gPCAwKSByZXR1
+cm4gMDsKKwlyZXR1cm4gX19kaXZfcm91bmRfdXBfdWxsKG4sZCk7Cit9CisKK3N0YXRpYyBpbmxp
+bmUgbG9uZyBfX2Rpdl9yb3VuZF91cF9sKGxvbmcgbiwgdW5zaWduZWQgbG9uZyBkKQoreyByZXR1
+cm4gX19jb25zdF9kaXZfcm91bmRfdXAobiwobG9uZylkKTsgfQorCitzdGF0aWMgaW5saW5lIGlu
+dCBfX2Rpdl9yb3VuZF91cF9pKGludCBuLCB1bnNpZ25lZCBsb25nIGQpCit7IHJldHVybiBfX2Nv
+bnN0X2Rpdl9yb3VuZF91cChuLChpbnQpZCk7IH0KKworI2VuZGlmCmRpZmYgLS1naXQgYS9pbmNs
+dWRlL3VhcGkvbGludXgvY29uc3QuaCBiL2luY2x1ZGUvdWFwaS9saW51eC9jb25zdC5oCmluZGV4
+IGE0MjkzODFlN2NhNS4uOGVmYTFkNzdjNDE0IDEwMDY0NAotLS0gYS9pbmNsdWRlL3VhcGkvbGlu
+dXgvY29uc3QuaAorKysgYi9pbmNsdWRlL3VhcGkvbGludXgvY29uc3QuaApAQCAtMjAsNiArMjAs
+MTAgQEAKICNkZWZpbmUgX19BQyhYLFkpCShYIyNZKQogI2RlZmluZSBfQUMoWCxZKQlfX0FDKFgs
+WSkKICNkZWZpbmUgX0FUKFQsWCkJKChUKShYKSkKKworLyogT2RkIGhpc3RvcmljYWwgcGxhY2Vt
+ZW50ICovCisjaW5jbHVkZSA8bGludXgvZGl2X3JvdW5kX3VwLmg+CisKICNlbmRpZgogCiAjZGVm
+aW5lIF9VTCh4KQkJKF9BQyh4LCBVTCkpCkBAIC0zMSw2ICszNSw0IEBACiAjZGVmaW5lIF9fQUxJ
+R05fS0VSTkVMKHgsIGEpCQlfX0FMSUdOX0tFUk5FTF9NQVNLKHgsIChfX3R5cGVvZl9fKHgpKShh
+KSAtIDEpCiAjZGVmaW5lIF9fQUxJR05fS0VSTkVMX01BU0soeCwgbWFzaykJKCgoeCkgKyAobWFz
+aykpICYgfihtYXNrKSkKIAotI2RlZmluZSBfX0tFUk5FTF9ESVZfUk9VTkRfVVAobiwgZCkgKCgo
+bikgKyAoZCkgLSAxKSAvIChkKSkKLQogI2VuZGlmIC8qIF9VQVBJX0xJTlVYX0NPTlNUX0ggKi8K
+LS0gCjIuNDIuMC4zOTguZ2E5ZWNkYTI3ODgKCg==
+--0000000000008d36ec06087e3461--
