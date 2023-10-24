@@ -2,100 +2,97 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CA33C07545
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Oct 2023 15:47:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE6FCC00A8F
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Oct 2023 16:19:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229441AbjJXPrw convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Oct 2023 11:47:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51074 "EHLO
+        id S234525AbjJXQTk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Oct 2023 12:19:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234724AbjJXPrw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Oct 2023 11:47:52 -0400
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C9DB1B3;
-        Tue, 24 Oct 2023 08:47:46 -0700 (PDT)
-Received: from i53875a19.versanet.de ([83.135.90.25] helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <heiko@sntech.de>)
-        id 1qvJd5-0005MZ-2h; Tue, 24 Oct 2023 17:47:39 +0200
-From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To:     Chris Morgan <macromorgan@hotmail.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Chris Morgan <macroalpha82@gmail.com>,
-        linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        sebastian.reichel@collabora.com, sboyd@kernel.org,
-        mturquette@baylibre.com, daniel@ffwll.ch, airlied@gmail.com,
-        sam@ravnborg.org, neil.armstrong@linaro.org, conor+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org
-Subject: Re: [PATCH 4/5] dt-bindings: arm: rockchip: Add Powkiddy RK2023
-Date:   Tue, 24 Oct 2023 17:47:37 +0200
-Message-ID: <11399368.MucGe3eQFb@diego>
-In-Reply-To: <SN6PR06MB534206AB35C00B3D003765AAA5DBA@SN6PR06MB5342.namprd06.prod.outlook.com>
-References: <20231018161848.346947-1-macroalpha82@gmail.com> <3083498.U7HbjWM52l@diego>
- <SN6PR06MB534206AB35C00B3D003765AAA5DBA@SN6PR06MB5342.namprd06.prod.outlook.com>
+        with ESMTP id S231349AbjJXQTi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Oct 2023 12:19:38 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E39EE8;
+        Tue, 24 Oct 2023 09:19:36 -0700 (PDT)
+Received: from jupiter.universe (cola.collaboradmins.com [195.201.22.229])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: sre)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 2345E6605769;
+        Tue, 24 Oct 2023 17:19:35 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1698164375;
+        bh=gG1wa+QK44vc5DoGN8jxvkVeaZvhmJly0NBZ+F4cHfs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=hRGvAocZiHFegacKg4KCrNHzcZlUbLVwGqB8nI+I22CZYBWvP01fsOzPbhCaSPV13
+         hYPQTPSkKODQ5zmZZDyi7dfR60xTRPXL34/Y/tfBMdSd2S4pbd0QlI3I3F7Lnoio0c
+         TDyDA4REntMF2NuByrCMo1C2bo4fw4osPDaCi9Dl8mXYKHxGAbQUM5iPFColCuWMWF
+         WIr2Sarlsc/axTL2/lDR4QcPyvV55oM48pTyeORiia40u1EXv6MjKRN40NDtEHXPog
+         A1C9JN998UyoE23ctRdpCYUz1oKJbdn/tYIMiga5dNkNo5HIUvdz8tG3EkiqghIPSL
+         n7881mWaL9pcg==
+Received: by jupiter.universe (Postfix, from userid 1000)
+        id 9A7D4482AD9; Tue, 24 Oct 2023 18:19:32 +0200 (CEST)
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        David Laight <David.Laight@ACULAB.COM>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Vasily Gorbik <gor@linux.ibm.com>,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        kernel@collabora.com
+Subject: [PATCH v4 0/3] Fix clock division overflow problem
+Date:   Tue, 24 Oct 2023 18:18:14 +0200
+Message-ID: <20231024161931.78567-1-sebastian.reichel@collabora.com>
+X-Mailer: git-send-email 2.42.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Chris,
+Hi,
 
-Am Freitag, 20. Oktober 2023, 17:03:08 CEST schrieb Chris Morgan:
-> On Thu, Oct 19, 2023 at 07:45:17PM +0200, Heiko Stübner wrote:
-> > Hey Chris,
-> > 
-> > Am Donnerstag, 19. Oktober 2023, 16:43:56 CEST schrieb Chris Morgan:
-> > > On Thu, Oct 19, 2023 at 11:21:47AM +0200, Krzysztof Kozlowski wrote:
-> > > > On 18/10/2023 18:18, Chris Morgan wrote:
-> > > > > From: Chris Morgan <macromorgan@hotmail.com>
-> > > > > 
-> > > > > The Powkiddy RK2023 is a handheld gaming device made by Powkiddy and
-> > > > > powered by the Rockchip RK3566 SoC.
-> > > > > 
-> > > > > Signed-off-by: Chris Morgan <macromorgan@hotmail.com>
-> > > > > ---
-> > > > >  Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
-> > > > >  1 file changed, 5 insertions(+)
-> > > > > 
-> > > > > diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
-> > > > > index a349bf4da6bc..a6612185a7ff 100644
-> > > > > --- a/Documentation/devicetree/bindings/arm/rockchip.yaml
-> > > > > +++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
-> > > > > @@ -674,6 +674,11 @@ properties:
-> > > > >            - const: powkiddy,rgb30
-> > > > >            - const: rockchip,rk3566
-> > > > >  
-> > > > > +      - description: Powkiddy RK2023
-> > > > > +        items:
-> > > > > +          - const: powkiddy,rk2023
-> > > > 
-> > > > This cuold be just enum in previous entry :/ but I remember we talked
-> > > > about this once with Heiko.
-> > > 
-> > > For hardware that requires a different device tree, is that possible?
-> > > While most of the devices I've worked on for the RK3566 series are very
-> > > similar for the moment only 1 is identical (the RG353P and the RG353M)
-> > > and can use the same device tree.
-> > 
-> > In my reply I pointed to the Rock PI 4A/4A+/B/B+/C family, which also has
-> > different devicetrees but is part of the same family of device designs.
-> > 
-> > So similar Powkiddy RK3568 based gaming handhelds also sound like
-> > a nice family name in the description ;-) .
-> 
-> Gotcha, I can do that. Would you like for me to go back and do the same
-> for the Anbernic devices as well? I can do it as part of a seperate
-> patch series.
+I noticed the overflow issue while debugging an issue related to the Rockchip
+RK3588 eMMC. It's not an issue on that particular platform and it does not seem
+this has been an issue on any other platform so far, so I did not add any
+stable Tags. Considering 64 bit platforms are the standard nowadays and 3GHz is
+a reasonable small value, I expect this to become an issue soon, though.
 
-that doing that for the Anberic devices would be really nice too, so
-yes please :-) .
+Changes since PATCHv3:
+ * https://lore.kernel.org/all/20230630183835.464216-1-sebastian.reichel@collabora.com/
+ * Add some people to Cc, because similar overflow issue came up during s390 pull request
+ * Split DIV_ROUND_UP_NO_OVERFLOW into its own patch
+ * Add patch replacing open-coded abs_diff() from the previously applied patch
 
-Thanks
-Heiko
+Changes since PATCHv2:
+ * https://lore.kernel.org/all/20230526171057.66876-1-sebastian.reichel@collabora.com/
+ * Drop first patch (applied)
+ * Update second patch to use newly introduced DIV_ROUND_UP_NO_OVERFLOW
 
+Changes since PATCHv1:
+ * https://lore.kernel.org/linux-clk/20230519190522.194729-1-sebastian.reichel@collabora.com/
+ * Add Christopher Obbard's Reviewed-by to the first patch
+ * Update the second patch to use DIV_ROUND_UP instead of DIV64_U64_ROUND_UP
+
+Greetings,
+
+-- Sebastian
+
+
+Sebastian Reichel (3):
+  math.h: add DIV_ROUND_UP_NO_OVERFLOW
+  clk: divider: Fix divisor masking on 64 bit platforms
+  clk: composite: replace open-coded abs_diff()
+
+ drivers/clk/clk-composite.c |  6 ++----
+ drivers/clk/clk-divider.c   |  6 +++---
+ include/linux/math.h        | 11 +++++++++++
+ 3 files changed, 16 insertions(+), 7 deletions(-)
+
+-- 
+2.42.0
 
