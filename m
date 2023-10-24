@@ -2,97 +2,91 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7AE8C00A8F
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Oct 2023 19:35:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96B07C00A8F
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Oct 2023 19:36:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234912AbjJXTfZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Oct 2023 15:35:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53374 "EHLO
+        id S1343815AbjJXTgh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Oct 2023 15:36:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234736AbjJXTfY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Oct 2023 15:35:24 -0400
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCD5BC4;
-        Tue, 24 Oct 2023 12:35:22 -0700 (PDT)
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-57f0f81b2aeso2749345eaf.3;
-        Tue, 24 Oct 2023 12:35:22 -0700 (PDT)
+        with ESMTP id S1344046AbjJXTgg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Oct 2023 15:36:36 -0400
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CCAAB3;
+        Tue, 24 Oct 2023 12:36:34 -0700 (PDT)
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-6ce322b62aeso3153151a34.3;
+        Tue, 24 Oct 2023 12:36:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698176122; x=1698780922;
+        d=1e100.net; s=20230601; t=1698176194; x=1698780994;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=p9ar8bhIueC5EydnDePnLjCuAwDCm56UQXxamDo5GgY=;
-        b=TCFcU03PPtIQhHvGwvJsJIOqUayxohPvcbw0QhAH+keQqIdG52rs7E/k4Ol6hUvlYA
-         H1ZaCqu6PjgH495/PyXSWs7HKMgtNSwDThz9oRjlsAOn8TznnJw1voKqBeUi495cr+kN
-         +lS3jhOy0YHLTK2Nt2CfaxGirWCiGpV6G49eVppAF4uvWdvg0bB48m7MAkork1LJZN5q
-         fOEW94sWA1VEl+qWXZGysEWx9xob2Gdzr1EOx57q9FuVY7FiZkoh/zPjyrm0Wls5r85z
-         rwAR5M5BsR2qd/XijJiH8197sjBxJ9bLc5KZUV2RPAhzo4IjkkhzQpZF2Xst0x3ibHBa
-         OENA==
-X-Gm-Message-State: AOJu0Yxt0jgM8gr2+lnHxVDqz4kvJn/lZHGYfd/V0bdTI/6ZQDhUCDA1
-        sdylBiPMZFuxGoQjfwgGVg==
-X-Google-Smtp-Source: AGHT+IErGorSYkZZFwTnmlJa0hWA/l7r/75pzydg4QiS1LHnTWY+BN+UvK5QJKPJ7zg/ixNZFuWCgA==
-X-Received: by 2002:a4a:b789:0:b0:581:df34:15c with SMTP id a9-20020a4ab789000000b00581df34015cmr12117696oop.5.1698176122031;
-        Tue, 24 Oct 2023 12:35:22 -0700 (PDT)
+        bh=xw/76vCr0PLDGu+ObHw0El452oG4pXRjVAV5SmwwM50=;
+        b=ZWDBnnedHDFNZSKmDYFEx9c6kJyJLMlJIUvCqqQJENtTeM5dXhpWEWRer+zKFmOl0j
+         5IlSVahJDQUkzJA7Xq2WjFgCixrv/ZHAxiJOwvx0wuQdo3BhQ6FX1qYF1NrELcNh/X9Y
+         PnjoJR6l3jtciN1Yv5uCnTKjc+lkc/057+IPcNRj4YlyZy2snSLLzlyPFMJtXtFIfztc
+         8MTIIuO1n4KtFIIoEMowS1RClhumkQrjbw1zexnxstzSibnyJRvFtrOSuVx7dfOdWsj8
+         NTbuPK4etT3obkHF7LJ2jQa2EVVQ5GRvanqf4K7pcOykhjJCWfIE/WPABBTe2GR5ZoCt
+         8fMg==
+X-Gm-Message-State: AOJu0YzbtGgnbJ820ChbOMPMJk0nrJ2QkKHFv87ICfjnEGO/6UySmEAR
+        /LmtgW5d9jWJEGj2IGHRew==
+X-Google-Smtp-Source: AGHT+IGAF+x9ZUitcV7dAlZnDe47vxmPt4py4fpRetqxMJ7bZjP220rsXPpzI50pM4oM+BNkX6P1HQ==
+X-Received: by 2002:a9d:73c3:0:b0:6b9:b226:d08e with SMTP id m3-20020a9d73c3000000b006b9b226d08emr14910421otk.34.1698176193747;
+        Tue, 24 Oct 2023 12:36:33 -0700 (PDT)
 Received: from herring.priv (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id r24-20020a05683001d800b006ce1f9c62a1sm1927297ota.39.2023.10.24.12.35.20
+        by smtp.gmail.com with ESMTPSA id z10-20020a4ad1aa000000b00581daa5c5fdsm2049818oor.29.2023.10.24.12.36.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Oct 2023 12:35:21 -0700 (PDT)
-Received: (nullmailer pid 433054 invoked by uid 1000);
-        Tue, 24 Oct 2023 19:35:20 -0000
-Date:   Tue, 24 Oct 2023 14:35:20 -0500
+        Tue, 24 Oct 2023 12:36:33 -0700 (PDT)
+Received: (nullmailer pid 434690 invoked by uid 1000);
+        Tue, 24 Oct 2023 19:36:31 -0000
+Date:   Tue, 24 Oct 2023 14:36:31 -0500
 From:   Rob Herring <robh@kernel.org>
 To:     Alvin =?utf-8?Q?=C5=A0ipraga?= <alvin@pqrs.dk>
-Cc:     linux-clk@vger.kernel.org, Sergej Sawazki <sergej@taudac.com>,
+Cc:     linux-clk@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
         Jacob Siverskog <jacob@teenage.engineering>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
-        devicetree@vger.kernel.org,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Alvin =?utf-8?Q?=C5=A0ipraga?= <alsi@bang-olufsen.dk>,
-        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Rabeeh Khoury <rabeeh@solid-run.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v5 1/3] dt-bindings: clock: si5351: convert to yaml
-Message-ID: <169817611957.433015.13808354686090868209.robh@kernel.org>
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Sergej Sawazki <sergej@taudac.com>,
+        Alvin =?utf-8?Q?=C5=A0ipraga?= <alsi@bang-olufsen.dk>,
+        linux-kernel@vger.kernel.org,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH v5 2/3] dt-bindings: clock: si5351: add PLL reset mode
+ property
+Message-ID: <169817619092.434632.12338153362080945824.robh@kernel.org>
 References: <20231020-alvin-clk-si5351-no-pll-reset-v5-0-f0c1ba537f88@bang-olufsen.dk>
- <20231020-alvin-clk-si5351-no-pll-reset-v5-1-f0c1ba537f88@bang-olufsen.dk>
+ <20231020-alvin-clk-si5351-no-pll-reset-v5-2-f0c1ba537f88@bang-olufsen.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20231020-alvin-clk-si5351-no-pll-reset-v5-1-f0c1ba537f88@bang-olufsen.dk>
+In-Reply-To: <20231020-alvin-clk-si5351-no-pll-reset-v5-2-f0c1ba537f88@bang-olufsen.dk>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On Fri, 20 Oct 2023 13:34:14 +0200, Alvin Šipraga wrote:
+On Fri, 20 Oct 2023 13:34:15 +0200, Alvin Šipraga wrote:
 > From: Alvin Šipraga <alsi@bang-olufsen.dk>
 > 
-> The following additional properties are described:
+> For applications where the PLL must be adjusted without glitches in the
+> clock output(s), a new silabs,pll-reset-mode property is added. It
+> can be used to specify whether or not the PLL should be reset after
+> adjustment. Resetting is known to cause glitches.
 > 
->   - clock-names
->   - clock-frequency of the clkout child nodes
-> 
-> In order to suppress warnings from the DT schema validator, the clkout
-> child nodes are prescribed names clkout@[0-7] rather than clkout[0-7].
-> 
-> The example is refined as follows:
-> 
->   - correct the usage of property pll-master -> silabs,pll-master
->   - give an example of how the silabs,pll-reset property can be used
-> 
-> I made myself maintainer of the file as I cannot presume that anybody
-> else wants the responsibility.
+> For compatibility with older device trees, it must be assumed that the
+> default PLL reset mode is to unconditionally reset after adjustment.
 > 
 > Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 > Cc: Rabeeh Khoury <rabeeh@solid-run.com>
+> Cc: Jacob Siverskog <jacob@teenage.engineering>
+> Cc: Sergej Sawazki <sergej@taudac.com>
 > Signed-off-by: Alvin Šipraga <alsi@bang-olufsen.dk>
 > ---
->  .../devicetree/bindings/clock/silabs,si5351.txt    | 126 -----------
->  .../devicetree/bindings/clock/silabs,si5351.yaml   | 241 +++++++++++++++++++++
->  2 files changed, 241 insertions(+), 126 deletions(-)
+>  .../devicetree/bindings/clock/silabs,si5351.yaml   | 24 ++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
