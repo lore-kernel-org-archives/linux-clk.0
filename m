@@ -2,125 +2,195 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC41CC07545
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Oct 2023 19:49:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6169EC07545
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Oct 2023 19:59:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344306AbjJXTty (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Oct 2023 15:49:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46824 "EHLO
+        id S1344046AbjJXT7x (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Oct 2023 15:59:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344305AbjJXTtx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Oct 2023 15:49:53 -0400
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C8E8129;
-        Tue, 24 Oct 2023 12:49:49 -0700 (PDT)
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-581fb6f53fcso2891841eaf.2;
-        Tue, 24 Oct 2023 12:49:49 -0700 (PDT)
+        with ESMTP id S1344012AbjJXT7w (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Oct 2023 15:59:52 -0400
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A010210C9;
+        Tue, 24 Oct 2023 12:59:50 -0700 (PDT)
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-6c7b3adbeb6so3199443a34.0;
+        Tue, 24 Oct 2023 12:59:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698176989; x=1698781789;
+        d=1e100.net; s=20230601; t=1698177590; x=1698782390;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=agKMir3qcuKi14ldHG71aEKuRkt+lScGsRzAjnaqW/E=;
-        b=vF9xmLUxrZ5rPMx5sOUnehlSIul6bvhfnarpTXse7o6u5CXkoykX0ta43F1mHFb/lW
-         IVUK9/0RdYFtZ2D3pwj5g007ksyGJ29nob9MOSN5Mo/muRM+UfK8QY5eM1IVJcuAXGjc
-         nJklLRMp0gdyS1zloK4+xEua/D4ZpY7wcGNcIY3uOcU+MlndOMGrvTi1ElvjGznxEcvV
-         Ba7UZtwB6ovNuD4D/BP5LWeMyXU3nC6F/m1hOi8YrvMubiC4rKEsES0BjcgSYFDVVguX
-         v6L2jG467lV70QCXTr+BHGVQ8ZORYL0QqMNbDi8Q99MAODS2hQivRYF61flLQKZUIcGz
-         qudA==
-X-Gm-Message-State: AOJu0YyIQ0DbowtRm1kw1qaDKpR/Fediqt7GM4+nHPgSa9jb/BLpOiFb
-        K9CZZ8W0D2spoGAjsyO28A==
-X-Google-Smtp-Source: AGHT+IHyx9HB+5+xduv+DWRMK6EwebWorzR3T6o2xTNeFxgl5EwZIRIwryDhY3qLSLdiLQZ2wQLsaQ==
-X-Received: by 2002:a4a:e0ca:0:b0:581:e303:807c with SMTP id e10-20020a4ae0ca000000b00581e303807cmr12970213oot.5.1698176988888;
-        Tue, 24 Oct 2023 12:49:48 -0700 (PDT)
+        bh=X34cwpBpiuP3aqf5QjDCKfEoi+InD6TZZpa1Cm188qc=;
+        b=Pv2pZVK+Je40RwnG8Ae1km7ocgLJvXvhzpRBZcwBbMvD+/78oK+wUydfKathlhsROV
+         8+PN2h7cQ6tHT5xwoSqe/4iHflrkYy4VX+w0rG1oPGpTku9LKlh95rjtM2chomxsLRfB
+         S7chYLHLx0Rt5nkN7yHLSYJkdqM2K8IBxCAwXaHCGnx/2rTRdXs7GEwAQMee9iTov0LO
+         vkTfYv+Yo+p0IVtnsHY5KdnoI0WUTKYmvbHlVpyFfMBChpWP3jNfbkn5dUSzKLGQIFZ/
+         ewWjQYl39ifGznDDBxfyfT6JuLq8JnPe5F7I+wlq0kLtHoJMyJi/ejI4MLkUDKTAgVw4
+         yKXQ==
+X-Gm-Message-State: AOJu0YyoORVT2IKYK9eAjxvimho2w/ctT6xiu4YZd7ftsk71MHMa2aoB
+        utUdfOgxELX1zcgabHgUsQ==
+X-Google-Smtp-Source: AGHT+IHIr4W8mfEnqO6DkV45UgvYeE2TGYjTXkCq8izEC3MLiXPtFc1Gm393ANejfie00c/rIq/f4w==
+X-Received: by 2002:a9d:6286:0:b0:6bd:152f:9918 with SMTP id x6-20020a9d6286000000b006bd152f9918mr14956463otk.14.1698177589921;
+        Tue, 24 Oct 2023 12:59:49 -0700 (PDT)
 Received: from herring.priv (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id r134-20020a4a378c000000b00582014b0138sm2165972oor.39.2023.10.24.12.49.47
+        by smtp.gmail.com with ESMTPSA id q13-20020a9d57cd000000b006ce2f4861c5sm1961116oti.62.2023.10.24.12.59.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Oct 2023 12:49:48 -0700 (PDT)
-Received: (nullmailer pid 452036 invoked by uid 1000);
-        Tue, 24 Oct 2023 19:49:46 -0000
-Date:   Tue, 24 Oct 2023 14:49:46 -0500
+        Tue, 24 Oct 2023 12:59:49 -0700 (PDT)
+Received: (nullmailer pid 465614 invoked by uid 1000);
+        Tue, 24 Oct 2023 19:59:48 -0000
+Date:   Tue, 24 Oct 2023 14:59:48 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+To:     Stanislav Jakubek <stano.jakubek@gmail.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Marek Vasut <marex@denx.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux@ew.tq-group.com, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH 2/5] dt-bindings: soc: imx93-media-blk-ctrl: Add LDB
- subnode into schema and example
-Message-ID: <20231024194946.GA434797-robh@kernel.org>
-References: <20231020130019.665853-1-alexander.stein@ew.tq-group.com>
- <20231020130019.665853-3-alexander.stein@ew.tq-group.com>
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Artur Weber <aweber.kernel@gmail.com>
+Subject: Re: [PATCH] dt-bindings: clock: brcm,kona-ccu: convert to YAML
+Message-ID: <20231024195948.GA459344-robh@kernel.org>
+References: <ZTUIJrTc6KKyT4xj@standask-GA-A55M-S2HP>
+ <3df06d79-ea51-4202-8cc8-468f741603bf@linaro.org>
+ <ZTbU0rkGMhja+J24@standask-GA-A55M-S2HP>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231020130019.665853-3-alexander.stein@ew.tq-group.com>
+In-Reply-To: <ZTbU0rkGMhja+J24@standask-GA-A55M-S2HP>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Oct 20, 2023 at 03:00:15PM +0200, Alexander Stein wrote:
-> Document the LDB bridge subnode and add the subnode into the example.
-> For the subnode to work, the block control must scan its subnodes and
-> bind drivers to them, do not misuse either simple-bus or simple-mfd
-> here.
+On Mon, Oct 23, 2023 at 10:17:22PM +0200, Stanislav Jakubek wrote:
+> On Mon, Oct 23, 2023 at 09:54:49AM +0200, Krzysztof Kozlowski wrote:
+> > On 22/10/2023 13:31, Stanislav Jakubek wrote:
+> > > Convert Broadcom Kona family clock controller unit (CCU) bindings
+> > > to DT schema.
+> > > 
+> > > Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+> > 
+> > Thank you for your patch. There is something to discuss/improve.
+> > 
+> > > +description:
+> > > +  Broadcom "Kona" style clock control unit (CCU) is a clock provider that
+> > > +  manages a set of clock signals.
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    enum:
+> > > +      - brcm,bcm11351-aon-ccu
+> > > +      - brcm,bcm11351-hub-ccu
+> > > +      - brcm,bcm11351-master-ccu
+> > > +      - brcm,bcm11351-root-ccu
+> > > +      - brcm,bcm11351-slave-ccu
+> > > +      - brcm,bcm21664-aon-ccu
+> > > +      - brcm,bcm21664-master-ccu
+> > > +      - brcm,bcm21664-root-ccu
+> > > +      - brcm,bcm21664-slave-ccu
+> > > +
+> > > +  reg:
+> > > +    maxItems: 1
+> > > +
+> > > +  '#clock-cells':
+> > > +    const: 1
+> > > +
+> > > +  clock-output-names:
+> > > +    minItems: 1
+> > > +    maxItems: 10
+> > > +
+> > > +allOf:
+> > > +  - if:
+> > > +      properties:
+> > > +        compatible:
+> > > +          contains:
+> > > +            enum:
+> > > +              - brcm,bcm11351-aon-ccu
+> > > +              - brcm,bcm11351-hub-ccu
+> > > +              - brcm,bcm11351-master-ccu
+> > > +              - brcm,bcm11351-root-ccu
+> > > +              - brcm,bcm11351-slave-ccu
+> > > +    then:
+> > > +      properties:
+> > > +        clock-output-names:
+> > > +          description: |
+> > > +            The following table defines the set of CCUs and clock specifiers
+> > > +            for BCM281XX family clocks.
+> > > +            These clock specifiers are defined in:
+> > > +                "include/dt-bindings/clock/bcm281xx.h"
+> > > +
+> > > +            CCU     Clock        Type  Index  Specifier
+> > > +            ---     -----        ----  -----  ---------
+> > > +            root    frac_1m      peri    0    BCM281XX_ROOT_CCU_FRAC_1M
+> > > +
+> > > +            aon     hub_timer    peri    0    BCM281XX_AON_CCU_HUB_TIMER
+> > > +            aon     pmu_bsc      peri    1    BCM281XX_AON_CCU_PMU_BSC
+> > > +            aon     pmu_bsc_var  peri    2    BCM281XX_AON_CCU_PMU_BSC_VAR
+> > > +
+> > > +            hub     tmon_1m      peri    0    BCM281XX_HUB_CCU_TMON_1M
+> > > +
+> > > +            master  sdio1        peri    0    BCM281XX_MASTER_CCU_SDIO1
+> > > +            master  sdio2        peri    1    BCM281XX_MASTER_CCU_SDIO2
+> > > +            master  sdio3        peri    2    BCM281XX_MASTER_CCU_SDIO3
+> > > +            master  sdio4        peri    3    BCM281XX_MASTER_CCU_SDIO4
+> > > +            master  dmac         peri    4    BCM281XX_MASTER_CCU_DMAC
+> > > +            master  usb_ic       peri    5    BCM281XX_MASTER_CCU_USB_IC
+> > > +            master  hsic2_48m    peri    6    BCM281XX_MASTER_CCU_HSIC_48M
+> > > +            master  hsic2_12m    peri    7    BCM281XX_MASTER_CCU_HSIC_12M
+> > > +
+> > > +            slave   uartb        peri    0    BCM281XX_SLAVE_CCU_UARTB
+> > > +            slave   uartb2       peri    1    BCM281XX_SLAVE_CCU_UARTB2
+> > > +            slave   uartb3       peri    2    BCM281XX_SLAVE_CCU_UARTB3
+> > > +            slave   uartb4       peri    3    BCM281XX_SLAVE_CCU_UARTB4
+> > > +            slave   ssp0         peri    4    BCM281XX_SLAVE_CCU_SSP0
+> > > +            slave   ssp2         peri    5    BCM281XX_SLAVE_CCU_SSP2
+> > > +            slave   bsc1         peri    6    BCM281XX_SLAVE_CCU_BSC1
+> > > +            slave   bsc2         peri    7    BCM281XX_SLAVE_CCU_BSC2
+> > > +            slave   bsc3         peri    8    BCM281XX_SLAVE_CCU_BSC3
+> > > +            slave   pwm          peri    9    BCM281XX_SLAVE_CCU_PWM
+> > 
+> > I don't really understand why this is in the binding schema. I guess you
+> > wanted to copy it from the old binding, but, unless there is real reason
+> > for it, don't. The clock IDs should be in the header file and that's it.
+> > Nothing here.
 > 
-> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> ---
->  .../soc/imx/fsl,imx93-media-blk-ctrl.yaml     | 44 +++++++++++++++++++
->  1 file changed, 44 insertions(+)
+> Hi Krzysztof, you're correct that I just copied this from the old bindings.
+> brcm,iproc-clocks.yaml has a similar table, so I thought this would be fine.
+> I'm OK with dropping it, but how should I document the clock-output-names
+> values then? A bunch of if-then blocks (per compatible)? Or should I not even
+> bother and just keep minItems/maxItems without documenting the values?
 > 
-> diff --git a/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.yaml b/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.yaml
-> index b3554e7f9e76..5ba66dfb0e05 100644
-> --- a/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.yaml
-> +++ b/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.yaml
-> @@ -24,6 +24,12 @@ properties:
->    reg:
->      maxItems: 1
->  
-> +  '#address-cells':
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 1
-> +
+> > 
+> > > +  - if:
+> > > +      properties:
+> > > +        compatible:
+> > > +          contains:
+> > > +            enum:
+> > > +              - brcm,bcm21664-aon-ccu
+> > > +              - brcm,bcm21664-master-ccu
+> > > +              - brcm,bcm21664-root-ccu
+> > > +              - brcm,bcm21664-slave-ccu
+> > > +    then:
+> > > +      properties:
+> > > +        clock-output-names:
+> > > +          maxItems: 8
+> 
+> I've also noticed that dtbs_check gives out warnings(?) like this for
+> bcm21664 ccu nodes:
+> 
+> /arch/arm/boot/dts/broadcom/bcm21664-garnet.dtb:
+>     root_ccu@35001000: clock-output-names: ['frac_1m'] is too short
+>     from schema $id: http://devicetree.org/schemas/clock/brcm,kona-ccu.yaml#
+> 
+> and this maxItems:8 seems to me like the culprit (since the bcm11351 if-then
+> doesn't have that). Seems to me like it also overrides the minItems to be 8
+> as well. I don't understand why it would do that though.
 
-Presumably the child nodes are MMIO? If so, missing 'ranges'.
-
->    '#power-domain-cells':
->      const: 1
->  
-> @@ -46,9 +52,16 @@ properties:
->        - const: csi
->        - const: dsi
->  
-> +  bridge@20:
-> +    type: object
-> +    $ref: /schemas/display/bridge/fsl,ldb.yaml#
-> +    unevaluatedProperties: false
-
-We do this style a lot, but another way to do child nodes is:
-
-type: object
-additionalProperties: true
-
-properties:
-  compatible:
-    contains:
-      const: fsl,imx93-ldb
-
-This way avoids applying the fsl,ldb.yaml schema twice and ensures the 
-right LDB compatible is used. 
+Indeed it does. That should be fixed soon such that minItems/maxItems 
+will never be added implicitly to if/then/else schemas.
 
 Rob
