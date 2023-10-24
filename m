@@ -2,54 +2,67 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFE46C25B6D
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Oct 2023 02:33:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 892B2C25B67
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Oct 2023 02:36:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232032AbjJXCdr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Oct 2023 22:33:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37026 "EHLO
+        id S232111AbjJXCgA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Oct 2023 22:36:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229510AbjJXCdq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Oct 2023 22:33:46 -0400
+        with ESMTP id S232023AbjJXCfy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Oct 2023 22:35:54 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB588E5;
-        Mon, 23 Oct 2023 19:33:39 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A34AC433C7;
-        Tue, 24 Oct 2023 02:33:39 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D983C10D9;
+        Mon, 23 Oct 2023 19:35:42 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54EFAC433CA;
+        Tue, 24 Oct 2023 02:35:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1698114819;
-        bh=VHcurXXSVkvkAK2DzgY2dDmLC7I9sifMTFd/DQGKmkg=;
+        s=k20201202; t=1698114941;
+        bh=Q5OM8zqw2zTU56yqEkXyN/h5VL/CRznzcuemWZ4Rs7M=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=r/snLQnTJ95Wlg+c22LIo09Tx2/flpcOel9RGgxnIL6oaazo1K2PRRJN97/p4PhWH
-         9sushNZI0lpCZx5zTSd+Rs3uhu2XFc5dLExoJdFyR2eoKB8dEgRDCuencGJv94y50m
-         3dzCHo0VFEG/OaNQBQGcQ4hXo9zayZmZIwvdls/w6Aizpm5749/qLN2xi6D/oRUvUH
-         xP3/KHAQXdZQZfsyyCxkSMO4orlzXamCa0j4TL6gSSaa7mP8KrbR8M6rhWh8I+TeLG
-         zZt0AfyUltYk/qaHaHvccUNBQdpvJv36OkXp1bg0LC2/X+ZGm0CuwgpO9DR0Gcb3Mf
-         vqgu+IW873RPQ==
-Message-ID: <c63250265a1a4509675f8791756c064b.sboyd@kernel.org>
+        b=hs2b5UDqeY393JE+uSBUAt7n+HPyEIt+z2MOBLqksFSaPzbRimYeg36SYSh+owlz/
+         PDxevHw8dqQi3C8Xeh2mF97D8a3uORuooqWjoWSFyubnNmkgLs0UAwmx/t8HQnqkwk
+         v1mk79YQhGXrrYVSsm7C8PREE1d6Le1Rya1N3HsUeTwfLJghDSJWz+TzTk/5qhZscP
+         SdCGQeXS9nWcZM1D590CFYXw5nJ60hJVi1lo+VMp5QchM+OEWXcpTPf25i6G1eiWcE
+         kSfE9oHwfACs9biD5tj7ovtBnxppLIddvsR+rTTdnrJ0Mk85XQiodiFxRSQddqeqEe
+         L3TfzyizRiP8A==
+Message-ID: <961ca9d413ac51ff26d59f5190c8970e.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230909152847.16216-1-biju.das.jz@bp.renesas.com>
-References: <20230909152847.16216-1-biju.das.jz@bp.renesas.com>
-Subject: Re: [PATCH] clk: si521xx:  Use i2c_get_match_data() instead of device_get_match_data()
+In-Reply-To: <20230909155418.24426-1-biju.das.jz@bp.renesas.com>
+References: <20230909155418.24426-1-biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH] clk: clk-si544: Simplify probe() and is_valid_frequency()
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     Biju Das <biju.das.jz@bp.renesas.com>, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, Biju Das <biju.das.au@gmail.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Biju Das <biju.das.jz@bp.renesas.com>,
         Michael Turquette <mturquette@baylibre.com>
-Date:   Mon, 23 Oct 2023 19:33:37 -0700
+Date:   Mon, 23 Oct 2023 19:35:39 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Biju Das (2023-09-09 08:28:47)
-> The device_get_match_data(), is to get match data for firmware interfaces
-> such as just OF/ACPI. This driver has I2C matching table as well. Use
-> i2c_get_match_data() to get match data for I2C, ACPI and DT-based
-> matching.
+Quoting Biju Das (2023-09-09 08:54:18)
+> The driver has an OF match table, still, it uses an ID lookup table for
+> retrieving match data. Currently, the driver is working on the
+> assumption that an I2C device registered via OF will always match a
+> legacy I2C device ID. The correct approach is to have an OF device ID
+> table using i2c_get_match_data() if the devices are registered via OF/ID.
+>=20
+> Unify the OF/ID table by using max_freq as match data instead of
+> enum si544_speed_grade and replace the ID lookup table for
+> the match data by i2c_get_match_data(). This allows to simplify both
+> probe() and is_valid_frequency().
+>=20
+> Drop enum si544_speed_grade as there is no user.
+>=20
+> While at it, remove the trailing comma in the terminator entry for the OF
+> table making code robust against (theoretical) misrebases or other similar
+> things where the new entry goes _after_ the termination without the
+> compiler noticing.
 >=20
 > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 > ---
