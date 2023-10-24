@@ -2,90 +2,163 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F32D4C25B6B
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Oct 2023 00:34:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7732FC25B67
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Oct 2023 00:48:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231207AbjJXAei (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Oct 2023 20:34:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58386 "EHLO
+        id S231682AbjJXAs0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Oct 2023 20:48:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231396AbjJXAeh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Oct 2023 20:34:37 -0400
+        with ESMTP id S231152AbjJXAs0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Oct 2023 20:48:26 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECCFB10C;
-        Mon, 23 Oct 2023 17:34:35 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62F2CC433C8;
-        Tue, 24 Oct 2023 00:34:35 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB80210C;
+        Mon, 23 Oct 2023 17:48:23 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AE16C433C8;
+        Tue, 24 Oct 2023 00:48:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1698107675;
-        bh=jm4cUu1Woa9OgzmQ0ndOww8g+k+sCkruBbPjIo/bzSI=;
+        s=k20201202; t=1698108503;
+        bh=hDqlVLfIF2Hifcp5Msw9iNRqkC7H0PnW326FpusT624=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=cZgLuAbJKNEvWLyOR74XM+R4BpOsqsUlKiwSAyO1Rt/CXI503XfP2CZUH1o9xqXGT
-         lcsuSg/4ZslXnZq8UaPmriUnofQ3jt/dL64yJmDHsB3L1cI8t1OpxrexNNOjE91AqX
-         Zj3iVm4N1392ZxZfhyLL97wlR7owtPU+FmihSaHRlbd5/UZM8vXnQVm1VkWkp3Brbs
-         bPu/1vvGfIjMWk0O5RZkignc2zgB8L8wM4DsqxRo9Kuy0cKFCp8SSS1XgE0VFeBABF
-         KPKT5eUZeFUAOTckC2fx4ZtWO3WQqGBxHhI741OlLBUhKo7uH7hDauEclOdrjdwFrb
-         j/NX3P5H0MG3A==
-Message-ID: <aef93a48cf270d5078ccdc39d95113a4.sboyd@kernel.org>
+        b=UHXuYbFPF1F6hZViXJ4I+IIPTzjRGgeNgsoruXx/gOSCuCUuLXgw9TdAE4jPQafBf
+         n/V/GSlflJtVk6fUDGt3RabMKlZRmbpJvyp2JelB0SrG3mc64V7BP0XF40OJsCpSzr
+         g1FRvq2rDzws6QNzTf5k4YX/In63m0L7UoQd9FdQJGXBCterDC80UeukE+ZXjN3Sg5
+         hNdhfrxfAZ94Tv77jyz1oc+GjD3i+9kF5/HvwJb2i3FWbcB5N/pi0dz29JV7/iryag
+         FJ83oHo73zJSvfp2aLcD/OcrYd8GXEJzkFw3OxRvtH4VkiBua+HFsaUYSBVNtYpkr5
+         URjqaczsK8CsQ==
+Message-ID: <73db289df68b179ac0e0388260b4f939.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20231023153821.189331-4-bryan.odonoghue@linaro.org>
-References: <20231023153821.189331-1-bryan.odonoghue@linaro.org> <20231023153821.189331-4-bryan.odonoghue@linaro.org>
-Subject: Re: [PATCH v3.1 3/4] clk: qcom: camcc-sc8280xp: Add sc8280xp CAMCC
+In-Reply-To: <49422d258d67d33a2547fbb7f4f6e72d489c2301.1697781921.git.quic_varada@quicinc.com>
+References: <cover.1697781921.git.quic_varada@quicinc.com> <49422d258d67d33a2547fbb7f4f6e72d489c2301.1697781921.git.quic_varada@quicinc.com>
+Subject: Re: [PATCH v5 5/9] clk: qcom: apss-ipq6018: ipq5332: add safe source switch for a53pll
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bryan.odonoghue@linaro.org
-To:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>, agross@kernel.org,
+Cc:     Varadarajan Narayanan <quic_varada@quicinc.com>
+To:     Varadarajan Narayanan <quic_varada@quicinc.com>, agross@kernel.org,
         andersson@kernel.org, conor+dt@kernel.org,
-        dmitry.baryshkov@linaro.org, jonathan@marek.ca,
+        devicetree@vger.kernel.org, ilia.lin@kernel.org,
         konrad.dybcio@linaro.org, krzysztof.kozlowski+dt@linaro.org,
-        mturquette@baylibre.com, quic_tdas@quicinc.com, robh+dt@kernel.org,
-        vladimir.zapolskiy@linaro.org
-Date:   Mon, 23 Oct 2023 17:34:33 -0700
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        mturquette@baylibre.com, quic_kathirav@quicinc.com,
+        rafael@kernel.org, robh+dt@kernel.org, sivaprak@codeaurora.org,
+        viresh.kumar@linaro.org
+Date:   Mon, 23 Oct 2023 17:48:21 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Bryan O'Donoghue (2023-10-23 08:38:20)
-> diff --git a/drivers/clk/qcom/camcc-sc8280xp.c b/drivers/clk/qcom/camcc-s=
-c8280xp.c
-> new file mode 100644
-> index 000000000000..0631bd5fad57
-> --- /dev/null
-> +++ b/drivers/clk/qcom/camcc-sc8280xp.c
-> @@ -0,0 +1,3048 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) 2021, The Linux Foundation. All rights reserved.
-> + * Copyright (c) 2023, Linaro Ltd.
-> + */
+Quoting Varadarajan Narayanan (2023-10-19 23:19:35)
+> Stromer Plus PLL found on IPQ53xx doesn't support dynamic
+> frequency scaling. To achieve the same, we need to park the APPS
+> PLL source to GPLL0, re configure the PLL and then switch the
+> source to APSS_PLL_EARLY.
+>=20
+> To support this, register a clock notifier to get the PRE_RATE
+> and POST_RATE notification. Change the APSS PLL source to GPLL0
+> when PRE_RATE notification is received, then configure the PLL
+> and then change back the source to APSS_PLL_EARLY.
+>=20
+> Additionally, not all SKUs of IPQ53xx support scaling. Hence,
+> do the above to the SKUs that support scaling.
+>=20
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+
+The Kconfig change (patch#1) should be squashed into here. Otherwise
+there isn't a call to qcom_smem_get_soc_id() in the clk driver.
+
+> ---
+> v5:     clk_notifier_register -> devm_clk_notifier_register
+> v3:     devm_kzalloc for cpu_clk_notifier instead of global static
+> v2:     Handle ABORT_RATE_CHANGE
+>         Use local variable for apcs_alias0_clk_src.clkr.hw
+>         Use single line comment instead of multi line style
+> ---
+>  drivers/clk/qcom/apss-ipq6018.c | 58 +++++++++++++++++++++++++++++++++++=
++++++-
+>  1 file changed, 57 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/qcom/apss-ipq6018.c b/drivers/clk/qcom/apss-ipq6=
+018.c
+> index 4e13a08..e6295b8 100644
+> --- a/drivers/clk/qcom/apss-ipq6018.c
+> +++ b/drivers/clk/qcom/apss-ipq6018.c
+> @@ -9,8 +9,11 @@
+>  #include <linux/clk-provider.h>
+>  #include <linux/regmap.h>
+>  #include <linux/module.h>
+> +#include <linux/clk.h>
+> +#include <linux/soc/qcom/smem.h>
+> =20
+>  #include <dt-bindings/clock/qcom,apss-ipq.h>
+> +#include <dt-bindings/arm/qcom,ids.h>
+> =20
+>  #include "common.h"
+>  #include "clk-regmap.h"
+> @@ -84,15 +87,68 @@ static const struct qcom_cc_desc apss_ipq6018_desc =
+=3D {
+>         .num_clks =3D ARRAY_SIZE(apss_ipq6018_clks),
+>  };
+> =20
+> +static int cpu_clk_notifier_fn(struct notifier_block *nb, unsigned long =
+action,
+> +                               void *data)
+> +{
+> +       struct clk_hw *hw;
+> +       u8 index;
+> +       int err;
 > +
-> +#include <linux/clk-provider.h>
-> +#include <linux/err.h>
-
-Is this include used?
-
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/of_device.h>
-
-Should be mod_devicetable.h instead?
-
-> +#include <linux/of.h>
-
-Is this include used?
-
-> +#include <linux/pm_clock.h>
-> +#include <linux/pm_runtime.h>
-> +#include <linux/regmap.h>
-> +#include <linux/pm_runtime.h>
-
-This got included twice.
-
+> +       if (action =3D=3D PRE_RATE_CHANGE)
+> +               index =3D P_GPLL0;
+> +       else if (action =3D=3D POST_RATE_CHANGE || action =3D=3D ABORT_RA=
+TE_CHANGE)
+> +               index =3D P_APSS_PLL_EARLY;
+> +       else
+> +               return NOTIFY_OK;
 > +
-> +#include <dt-bindings/clock/qcom,sc8280xp-camcc.h>
+> +       hw =3D &apcs_alias0_clk_src.clkr.hw;
+> +       err =3D clk_rcg2_mux_closest_ops.set_parent(hw, index);
 > +
-> +#include "clk-alpha-pll.h"
+> +       return notifier_from_errno(err);
+> +}
+> +
+>  static int apss_ipq6018_probe(struct platform_device *pdev)
+>  {
+> +       struct clk_hw *hw =3D &apcs_alias0_clk_src.clkr.hw;
+> +       struct notifier_block *cpu_clk_notifier;
+>         struct regmap *regmap;
+> +       u32 soc_id;
+> +       int ret;
+> +
+> +       ret =3D qcom_smem_get_soc_id(&soc_id);
+
+You need to explain why this information can't come from the compatible str=
+ing.
+
+> +       if (ret)
+> +               return ret;
+> =20
+>         regmap =3D dev_get_regmap(pdev->dev.parent, NULL);
+>         if (!regmap)
+>                 return -ENODEV;
+> =20
+> -       return qcom_cc_really_probe(pdev, &apss_ipq6018_desc, regmap);
+> +       ret =3D qcom_cc_really_probe(pdev, &apss_ipq6018_desc, regmap);
+> +       if (ret)
+> +               return ret;
+> +
+> +       switch (soc_id) {
+> +       /* Only below variants of IPQ53xx support scaling */
+> +       case QCOM_ID_IPQ5332:
+> +       case QCOM_ID_IPQ5322:
+> +       case QCOM_ID_IPQ5300:
+> +               cpu_clk_notifier =3D devm_kzalloc(&pdev->dev,
+> +                                               sizeof(*cpu_clk_notifier),
+> +                                               GFP_KERNEL);
+> +               if (!cpu_clk_notifier)
+> +                       return -ENOMEM;
+> +
