@@ -2,432 +2,116 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5299C00A8F
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Oct 2023 16:45:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F9B7C07545
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Oct 2023 18:28:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234887AbjJXQpa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Oct 2023 12:45:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40618 "EHLO
+        id S1344016AbjJXS2D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Oct 2023 14:28:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234630AbjJXQp2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Oct 2023 12:45:28 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFBB5DA;
-        Tue, 24 Oct 2023 09:45:25 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-53e2dc8fa02so7240994a12.2;
-        Tue, 24 Oct 2023 09:45:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698165924; x=1698770724; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jxuGhpNGtJ+zqgKLXgyAMQpaTE0+UJFO6HlZOAzBPzY=;
-        b=Huq/8BTCkcLQFgIArsWadX0JleXLOOiik7dQEesUMZkgFzmPo/+BETtVdYzsfuMoav
-         MsSSA7NW/4QJcuFE7qy0JD65ZYXTYL9/FlfuIzksTEGQsd1+WS5f1Yi/oTuIcpU14IVA
-         LKm3yCfvuKgpPoLWb8ajnOfauRAXvBlaq2PqMm2ELe6FFVqcY6vX1K0RAqhz7cTyYWIW
-         KeC/A91tcnyiHtoaSxLGHGMfjqHrDBE2uJlUnIFHzvOM5+fac8CAmehNZPT+6vdb1XGt
-         ZsNNjZiRMqwk308JLAkunde6HPWhtR0EsYZnNxH0fRVpgEsavAZBUQmHZXtP6pn525f0
-         Uw1A==
+        with ESMTP id S1343918AbjJXS2C (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Oct 2023 14:28:02 -0400
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41CD510D0;
+        Tue, 24 Oct 2023 11:27:58 -0700 (PDT)
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5820299b99cso21786eaf.1;
+        Tue, 24 Oct 2023 11:27:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698165924; x=1698770724;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jxuGhpNGtJ+zqgKLXgyAMQpaTE0+UJFO6HlZOAzBPzY=;
-        b=C7YjJDxFu8Zsm+rPkO2jgyzF/cm+M6MtckoxmRo0dXZ2VnPNCXqv+CTblOGtO3jAAo
-         8go6AC4edbh7tjfR8v2U4GpivbGjjMgBjbuMhn0EPf7zXtbXRxBo/kcvWpP/vghpEYOv
-         1VRWJw1QFNI5EqSYxRcgvwc2CFg/iyvdo1jezuejwJEuiHhI3xdCBSNLd+kF26k/3dD6
-         0Gt2+AEEqxVbgvD0lN/1xYpAtHcUNtD96yPTUR+zSVMAX8QNFdSYY77nIpTNrKH8zUDS
-         x7+r8fI2qsPlVPiUQXKbqkdal16uJNo1x2m5qI6dyWMXxb/mVsb5C7SFpyKhLOZ/e+f5
-         xMNA==
-X-Gm-Message-State: AOJu0YwlD3vQt+5NRbr+zmP0oc2V61OcttSgWx8awBHJAAaANOxBBlWL
-        Z3SWgWaBflWr/l3exgnQoio=
-X-Google-Smtp-Source: AGHT+IHZwL8TzHQ/L9zgOe1NM7uItN4foeM7z/EgDSYCD31DpN8Jj8yw4VgMQ8AVq046TwBDofvVkg==
-X-Received: by 2002:a17:907:a0c:b0:9bf:b129:5984 with SMTP id bb12-20020a1709070a0c00b009bfb1295984mr7936137ejc.77.1698165924141;
-        Tue, 24 Oct 2023 09:45:24 -0700 (PDT)
-Received: from standask-GA-A55M-S2HP ([188.123.113.247])
-        by smtp.gmail.com with ESMTPSA id j12-20020a170906050c00b00977eec7b7e8sm8455084eja.68.2023.10.24.09.45.23
+        d=1e100.net; s=20230601; t=1698172077; x=1698776877;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZNng016sWlIYuCE41qXO+ZMCuxWjt/SPYUfNc1rT6qY=;
+        b=ik/553zb1evi4APqNyK1rARicGq6vrnYhVvJDaj9j+rLlBPk5XHSvfcjzv4oUUy1a8
+         3uE1O7IkKDLfoM0BGqjaFGEHyZCVhtChTzFb588TksSPV+UvpGFaeQ8uWlEuBk8n8BiW
+         ce9p4aJG75pH/zY17+a/uYn6+BB9IqZgn3iw2fkmUi+GCr9PAG1J+ooDul87vIkPRjCh
+         gztgT4C2C0kSBK/wupUAeQCdLG275QQxhCsLa72lBQ1OgSWcPsmSV7Y2hf9zHkiN/rDY
+         pW+KeAf6njxUruAzFW63X7Zv9pHHF19qwNfca6zUL1Q0wYwxG2hjY8aKJ+DmsFD+m8Ca
+         JlvQ==
+X-Gm-Message-State: AOJu0YwakbTc6909Fb2PynZ2E7D7PAJ3d60zQ/Z04cm4X/RPo8YHft/j
+        XgLyE9wD1lCO8BZu6PTPVQ==
+X-Google-Smtp-Source: AGHT+IF4Mo7SI7+Mkd9TqQMoBcw8WQzBGoqowxfYx/0ojUXzi24Q6N3YSxHT8mMusatDWtCimTP/wg==
+X-Received: by 2002:a05:6870:13c6:b0:1e9:b5d7:4000 with SMTP id 6-20020a05687013c600b001e9b5d74000mr6763342oat.7.1698172077184;
+        Tue, 24 Oct 2023 11:27:57 -0700 (PDT)
+Received: from herring.priv (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id cj19-20020a05687c041300b001c02f12abd0sm2231435oac.38.2023.10.24.11.27.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Oct 2023 09:45:23 -0700 (PDT)
-Date:   Tue, 24 Oct 2023 18:45:21 +0200
-From:   Stanislav Jakubek <stano.jakubek@gmail.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>
-Cc:     bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Artur Weber <aweber.kernel@gmail.com>
-Subject: [PATCH v2] dt-bindings: clock: brcm,kona-ccu: convert to YAML
-Message-ID: <ZTf0oWfOqnyMEKbF@standask-GA-A55M-S2HP>
+        Tue, 24 Oct 2023 11:27:56 -0700 (PDT)
+Received: (nullmailer pid 243306 invoked by uid 1000);
+        Tue, 24 Oct 2023 18:27:55 -0000
+Date:   Tue, 24 Oct 2023 13:27:55 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Chris Morgan <macromorgan@hotmail.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Chris Morgan <macroalpha82@gmail.com>,
+        linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        sebastian.reichel@collabora.com, sboyd@kernel.org,
+        mturquette@baylibre.com, daniel@ffwll.ch, airlied@gmail.com,
+        sam@ravnborg.org, neil.armstrong@linaro.org, heiko@sntech.de,
+        conor+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org
+Subject: Re: [PATCH 1/5] dt-bindings: display: panel: Update NewVision
+ NV3051D compatibles
+Message-ID: <20231024182755.GA215478-robh@kernel.org>
+References: <20231018161848.346947-1-macroalpha82@gmail.com>
+ <20231018161848.346947-2-macroalpha82@gmail.com>
+ <e684983a-9399-4fd7-8fe5-41faeabbfab1@linaro.org>
+ <SN6PR06MB534271680DB8A3A3F0A1A31CA5D4A@SN6PR06MB5342.namprd06.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <SN6PR06MB534271680DB8A3A3F0A1A31CA5D4A@SN6PR06MB5342.namprd06.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert Broadcom Kona family clock controller unit (CCU) bindings
-to DT schema.
+On Thu, Oct 19, 2023 at 09:50:38AM -0500, Chris Morgan wrote:
+> On Thu, Oct 19, 2023 at 11:22:19AM +0200, Krzysztof Kozlowski wrote:
+> > On 18/10/2023 18:18, Chris Morgan wrote:
+> > > From: Chris Morgan <macromorgan@hotmail.com>
+> > > 
+> > > Update the NewVision NV3051D compatible strings by adding a new panel,
+> > > the powkiddy,rk2023-panel, and removing another entry, the
+> > > anbernic,rg353v-panel. The rg353v-panel is exactly identical to the
+> > > rg353p-panel and is not currently in use by any existing device tree.
+> > > The rk2023-panel is similar to the rg353p-panel but has slightly
+> > > different timings.
+> > 
+> > This still does not explain me why do you want to remove old panel.
+> 
+> When I originally wrote the driver I only had one piece of hardware
+> and I set the compatible string in the driver as newvision,nv3051d.
+> Unfortunately since then I've found 2 more devices in use that are
+> *just* different enough to require the driver to do things a bit
+> differently. In the case of the anbernic,rg351v-panel I need to
+> enable a new DSI flag; in the case of the powkiddy,rk2023-panel I need
+> to decrease the vertical back porch and drop the higher frequency
+> timings.
+> 
+> The best way to accomplish this was to change the strategy from having
+> a single binding in the driver of newvision,nv3051d to a binding for
+> each distinct hardware where the differences apply. 
 
-Changes during conversion:
-  - remove "dmac" from clock-output-names for brcm,bcm11351-master-ccu,
-    it is not used in DT nor the dt-bindings
-  - remove "uartb4" from clock-output-names for brcm,bcm21664-slave-ccu,
-    it is not used in DT nor the dt-bindings
+Exactly why the DT maintainers annoyingly ask for specific compatible 
+strings which may not be used immediately.
 
-Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
----
+> Note that I've
+> looked at querying the DSI panel ID, but for each device the value
+> is identical (so it can't be used to differentiate the hardware sadly).
+> So the driver now has 3 different compatible strings. I could in this
+> case add a 4th compatible string of anbernic,rg353v-panel but it would
+> be identical to anbernic,rg353p-panel. For the moment we are using
+> anbernic,rg353p-panel everywhere (including the rg353v), so it makes
+> sense to drop this unused value while we can, at least to me.
 
-Changes in V2:
-  - remove the table copied from the old txt bindings, replace it with if-then
-    blocks individually listing the allowed clock-output-names per compatible
-  - remove "dmac" from clock-output-names for brcm,bcm11351-master-ccu,
-    it is not used in DT nor the dt-bindings
-  - remove "uartb4" from clock-output-names for brcm,bcm21664-slave-ccu,
-    it is not used in DT nor the dt-bindings
-  - move allOf: after required:
-  - Link to V1: https://lore.kernel.org/lkml/ZTUIJrTc6KKyT4xj@standask-GA-A55M-S2HP/
+Your reasoning is the compatible string is unused, so remove it. 
 
- .../bindings/clock/brcm,kona-ccu.txt          | 138 -------------
- .../bindings/clock/brcm,kona-ccu.yaml         | 181 ++++++++++++++++++
- 2 files changed, 181 insertions(+), 138 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/brcm,kona-ccu.txt
- create mode 100644 Documentation/devicetree/bindings/clock/brcm,kona-ccu.yaml
+If there's some reasoning about how the 2 panels are the same hardware 
+or the rg353v is never going to be used or show up at some point, then 
+that would be a reason to remove.
 
-diff --git a/Documentation/devicetree/bindings/clock/brcm,kona-ccu.txt b/Documentation/devicetree/bindings/clock/brcm,kona-ccu.txt
-deleted file mode 100644
-index 8e5a7d868557..000000000000
---- a/Documentation/devicetree/bindings/clock/brcm,kona-ccu.txt
-+++ /dev/null
-@@ -1,138 +0,0 @@
--Broadcom Kona Family Clocks
--
--This binding is associated with Broadcom SoCs having "Kona" style
--clock control units (CCUs).  A CCU is a clock provider that manages
--a set of clock signals.  Each CCU is represented by a node in the
--device tree.
--
--This binding uses the common clock binding:
--    Documentation/devicetree/bindings/clock/clock-bindings.txt
--
--Required properties:
--- compatible
--	Shall have a value of the form "brcm,<model>-<which>-ccu",
--	where <model> is a Broadcom SoC model number and <which> is
--	the name of a defined CCU.  For example:
--	    "brcm,bcm11351-root-ccu"
--	The compatible strings used for each supported SoC family
--	are defined below.
--- reg
--	Shall define the base and range of the address space
--	containing clock control registers
--- #clock-cells
--	Shall have value <1>.  The permitted clock-specifier values
--	are defined below.
--- clock-output-names
--	Shall be an ordered list of strings defining the names of
--	the clocks provided by the CCU.
--
--Device tree example:
--
--	slave_ccu: slave_ccu {
--		compatible = "brcm,bcm11351-slave-ccu";
--		reg = <0x3e011000 0x0f00>;
--		#clock-cells = <1>;
--		clock-output-names = "uartb",
--				     "uartb2",
--				     "uartb3",
--				     "uartb4";
--	};
--
--	ref_crystal_clk: ref_crystal {
--		#clock-cells = <0>;
--		compatible = "fixed-clock";
--		clock-frequency = <26000000>;
--	};
--
--	uart@3e002000 {
--		compatible = "brcm,bcm11351-dw-apb-uart", "snps,dw-apb-uart";
--		reg = <0x3e002000 0x1000>;
--		clocks = <&slave_ccu BCM281XX_SLAVE_CCU_UARTB3>;
--		interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>;
--		reg-shift = <2>;
--		reg-io-width = <4>;
--	};
--
--BCM281XX family
-----------------
--CCU compatible string values for SoCs in the BCM281XX family are:
--    "brcm,bcm11351-root-ccu"
--    "brcm,bcm11351-aon-ccu"
--    "brcm,bcm11351-hub-ccu"
--    "brcm,bcm11351-master-ccu"
--    "brcm,bcm11351-slave-ccu"
--
--The following table defines the set of CCUs and clock specifiers for
--BCM281XX family clocks.  When a clock consumer references a clocks,
--its symbolic specifier (rather than its numeric index value) should
--be used.  These specifiers are defined in:
--    "include/dt-bindings/clock/bcm281xx.h"
--
--    CCU     Clock           Type    Index   Specifier
--    ---     -----           ----    -----   ---------
--    root    frac_1m         peri      0     BCM281XX_ROOT_CCU_FRAC_1M
--
--    aon     hub_timer       peri      0     BCM281XX_AON_CCU_HUB_TIMER
--    aon     pmu_bsc         peri      1     BCM281XX_AON_CCU_PMU_BSC
--    aon     pmu_bsc_var     peri      2     BCM281XX_AON_CCU_PMU_BSC_VAR
--
--    hub     tmon_1m         peri      0     BCM281XX_HUB_CCU_TMON_1M
--
--    master  sdio1           peri      0     BCM281XX_MASTER_CCU_SDIO1
--    master  sdio2           peri      1     BCM281XX_MASTER_CCU_SDIO2
--    master  sdio3           peri      2     BCM281XX_MASTER_CCU_SDIO3
--    master  sdio4           peri      3     BCM281XX_MASTER_CCU_SDIO4
--    master  dmac            peri      4     BCM281XX_MASTER_CCU_DMAC
--    master  usb_ic          peri      5     BCM281XX_MASTER_CCU_USB_IC
--    master  hsic2_48m       peri      6     BCM281XX_MASTER_CCU_HSIC_48M
--    master  hsic2_12m       peri      7     BCM281XX_MASTER_CCU_HSIC_12M
--
--    slave   uartb           peri      0     BCM281XX_SLAVE_CCU_UARTB
--    slave   uartb2          peri      1     BCM281XX_SLAVE_CCU_UARTB2
--    slave   uartb3          peri      2     BCM281XX_SLAVE_CCU_UARTB3
--    slave   uartb4          peri      3     BCM281XX_SLAVE_CCU_UARTB4
--    slave   ssp0            peri      4     BCM281XX_SLAVE_CCU_SSP0
--    slave   ssp2            peri      5     BCM281XX_SLAVE_CCU_SSP2
--    slave   bsc1            peri      6     BCM281XX_SLAVE_CCU_BSC1
--    slave   bsc2            peri      7     BCM281XX_SLAVE_CCU_BSC2
--    slave   bsc3            peri      8     BCM281XX_SLAVE_CCU_BSC3
--    slave   pwm             peri      9     BCM281XX_SLAVE_CCU_PWM
--
--
--BCM21664 family
-----------------
--CCU compatible string values for SoCs in the BCM21664 family are:
--    "brcm,bcm21664-root-ccu"
--    "brcm,bcm21664-aon-ccu"
--    "brcm,bcm21664-master-ccu"
--    "brcm,bcm21664-slave-ccu"
--
--The following table defines the set of CCUs and clock specifiers for
--BCM21664 family clocks.  When a clock consumer references a clocks,
--its symbolic specifier (rather than its numeric index value) should
--be used.  These specifiers are defined in:
--    "include/dt-bindings/clock/bcm21664.h"
--
--    CCU     Clock           Type    Index   Specifier
--    ---     -----           ----    -----   ---------
--    root    frac_1m         peri      0     BCM21664_ROOT_CCU_FRAC_1M
--
--    aon     hub_timer       peri      0     BCM21664_AON_CCU_HUB_TIMER
--
--    master  sdio1           peri      0     BCM21664_MASTER_CCU_SDIO1
--    master  sdio2           peri      1     BCM21664_MASTER_CCU_SDIO2
--    master  sdio3           peri      2     BCM21664_MASTER_CCU_SDIO3
--    master  sdio4           peri      3     BCM21664_MASTER_CCU_SDIO4
--    master  sdio1_sleep     peri      4     BCM21664_MASTER_CCU_SDIO1_SLEEP
--    master  sdio2_sleep     peri      5     BCM21664_MASTER_CCU_SDIO2_SLEEP
--    master  sdio3_sleep     peri      6     BCM21664_MASTER_CCU_SDIO3_SLEEP
--    master  sdio4_sleep     peri      7     BCM21664_MASTER_CCU_SDIO4_SLEEP
--
--    slave   uartb           peri      0     BCM21664_SLAVE_CCU_UARTB
--    slave   uartb2          peri      1     BCM21664_SLAVE_CCU_UARTB2
--    slave   uartb3          peri      2     BCM21664_SLAVE_CCU_UARTB3
--    slave   uartb4          peri      3     BCM21664_SLAVE_CCU_UARTB4
--    slave   bsc1            peri      4     BCM21664_SLAVE_CCU_BSC1
--    slave   bsc2            peri      5     BCM21664_SLAVE_CCU_BSC2
--    slave   bsc3            peri      6     BCM21664_SLAVE_CCU_BSC3
--    slave   bsc4            peri      7     BCM21664_SLAVE_CCU_BSC4
-diff --git a/Documentation/devicetree/bindings/clock/brcm,kona-ccu.yaml b/Documentation/devicetree/bindings/clock/brcm,kona-ccu.yaml
-new file mode 100644
-index 000000000000..e5656950b3bd
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/brcm,kona-ccu.yaml
-@@ -0,0 +1,181 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/brcm,kona-ccu.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Broadcom Kona family clock control units (CCU)
-+
-+maintainers:
-+  - Florian Fainelli <florian.fainelli@broadcom.com>
-+  - Ray Jui <rjui@broadcom.com>
-+  - Scott Branden <sbranden@broadcom.com>
-+
-+description: |
-+  Broadcom "Kona" style clock control unit (CCU) is a clock provider that
-+  manages a set of clock signals.
-+
-+  All available clock IDs are defined in
-+  - include/dt-bindings/clock/bcm281xx.h for BCM281XX family
-+  - include/dt-bindings/clock/bcm21664.h for BCM21664 family
-+
-+properties:
-+  compatible:
-+    enum:
-+      - brcm,bcm11351-aon-ccu
-+      - brcm,bcm11351-hub-ccu
-+      - brcm,bcm11351-master-ccu
-+      - brcm,bcm11351-root-ccu
-+      - brcm,bcm11351-slave-ccu
-+      - brcm,bcm21664-aon-ccu
-+      - brcm,bcm21664-master-ccu
-+      - brcm,bcm21664-root-ccu
-+      - brcm,bcm21664-slave-ccu
-+
-+  reg:
-+    maxItems: 1
-+
-+  '#clock-cells':
-+    const: 1
-+
-+  clock-output-names:
-+    minItems: 1
-+    maxItems: 10
-+
-+required:
-+  - compatible
-+  - reg
-+  - '#clock-cells'
-+  - clock-output-names
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: brcm,bcm11351-aon-ccu
-+    then:
-+      properties:
-+        clock-output-names:
-+          items:
-+            - const: hub_timer
-+            - const: pmu_bsc
-+            - const: pmu_bsc_var
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: brcm,bcm11351-hub-ccu
-+    then:
-+      properties:
-+        clock-output-names:
-+          const: tmon_1m
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: brcm,bcm11351-master-ccu
-+    then:
-+      properties:
-+        clock-output-names:
-+          items:
-+            - const: sdio1
-+            - const: sdio2
-+            - const: sdio3
-+            - const: sdio4
-+            - const: usb_ic
-+            - const: hsic2_48m
-+            - const: hsic2_12m
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - brcm,bcm11351-root-ccu
-+              - brcm,bcm21664-root-ccu
-+    then:
-+      properties:
-+        clock-output-names:
-+          const: frac_1m
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: brcm,bcm11351-slave-ccu
-+    then:
-+      properties:
-+        clock-output-names:
-+          items:
-+            - const: uartb
-+            - const: uartb2
-+            - const: uartb3
-+            - const: uartb4
-+            - const: ssp0
-+            - const: ssp2
-+            - const: bsc1
-+            - const: bsc2
-+            - const: bsc3
-+            - const: pwm
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: brcm,bcm21664-aon-ccu
-+    then:
-+      properties:
-+        clock-output-names:
-+          const: hub_timer
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: brcm,bcm21664-master-ccu
-+    then:
-+      properties:
-+        clock-output-names:
-+          items:
-+            - const: sdio1
-+            - const: sdio2
-+            - const: sdio3
-+            - const: sdio4
-+            - const: sdio1_sleep
-+            - const: sdio2_sleep
-+            - const: sdio3_sleep
-+            - const: sdio4_sleep
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: brcm,bcm21664-slave-ccu
-+    then:
-+      properties:
-+        clock-output-names:
-+          items:
-+            - const: uartb
-+            - const: uartb2
-+            - const: uartb3
-+            - const: bsc1
-+            - const: bsc2
-+            - const: bsc3
-+            - const: bsc4
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    clock-controller@3e011000 {
-+      compatible = "brcm,bcm11351-slave-ccu";
-+      reg = <0x3e011000 0x0f00>;
-+      #clock-cells = <1>;
-+      clock-output-names = "uartb",
-+                           "uartb2",
-+                           "uartb3",
-+                           "uartb4",
-+                           "ssp0",
-+                           "ssp2",
-+                           "bsc1",
-+                           "bsc2",
-+                           "bsc3",
-+                           "pwm";
-+    };
-+...
--- 
-2.34.1
+You could also say the rg353v is just wrong because it should have a 
+fallback compatible to rg353p and rather than fix it, just remove it 
+for now since there are no known users of it.
 
+Rob
