@@ -2,173 +2,265 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A70EEC07545
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Oct 2023 06:30:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38FD6C00A8F
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Oct 2023 07:28:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232449AbjJXGaU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Oct 2023 02:30:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44694 "EHLO
+        id S232396AbjJXH2e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Oct 2023 03:28:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232441AbjJXGaT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Oct 2023 02:30:19 -0400
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 191C8EA;
-        Mon, 23 Oct 2023 23:30:15 -0700 (PDT)
+        with ESMTP id S232808AbjJXH2d (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Oct 2023 03:28:33 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B403A12B
+        for <linux-clk@vger.kernel.org>; Tue, 24 Oct 2023 00:28:29 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id 4fb4d7f45d1cf-53d9b94731aso6461899a12.1
+        for <linux-clk@vger.kernel.org>; Tue, 24 Oct 2023 00:28:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1698129016; x=1729665016;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=9AUC3WlKvozWisL0AjNz7g2p54DmQxQY/G1iKkNelTY=;
-  b=nX11cSps315ss6+O40IjlsSkOxnWiTbPCaO1lCJO9QgWYGEMgRfzuQDy
-   f08YNDE0230LOYIDgkWr51tk9MAXVQL9FstowdYC/zgtADoUquGeW+dKT
-   dhXgo6dMtnC2KddSTlNqTQzjpJVX7hWGBvUBpHxD7/Mi6CDmIH2rGyIE6
-   xHMQV8u0L0A6s/3ZEDj+Yq/FgQm8W7nQqnCRq6VFbTsme0rpPwPspUnuW
-   QANZw89+PKHaE3zOARBFplR77N5GzQFHHyLuMZEQTtv16xwqdquhbLdkp
-   vD0M0I77T3Uh3B4WBcydNIaUmg87B7Zu72aJ+iAsi+ZVNbJsc1sI8cMIW
-   A==;
-X-IronPort-AV: E=Sophos;i="6.03,246,1694728800"; 
-   d="scan'208";a="33614186"
-Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 24 Oct 2023 08:30:14 +0200
-Received: from steina-w.localnet (steina-w.tq-net.de [10.123.53.18])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id B490B28007F;
-        Tue, 24 Oct 2023 08:30:13 +0200 (CEST)
-From:   Alexander Stein <alexander.stein@ew.tq-group.com>
-To:     Conor Dooley <conor@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
+        d=linaro.org; s=google; t=1698132508; x=1698737308; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZnZkVrsoY7zwDrGLoc+7S+JxSd/YvHNPT4sbpJbAdmQ=;
+        b=dDsUthjjtHEOMi5I2il5N0gd2FTSGgy8UJIt0hWaRx0noKuwF9hFIsfHPsP9xRJC/i
+         tmY07UGLg2wS8TSnzxT9Tvpdp/qnd7scRR1uCRwvi0o+aAdsm/jgWMdlRXII66U6PV3F
+         A5mJnkDhqWyTNWiBCXArdLYr1zGYAV2yPDM6cD+6f01h9YLKdH6FOur/Kw51/VDUJqOX
+         5KYAohzbVfjbz7oWGhN81gbuhHCbLHeeHqOsTa5pCSf1JOFRByY3nnJlXX4ocNaAmzWx
+         sqcPoVEx4pNFqLHg2jFA/4Wxd4yNpW1bOrAnbBiiWYErpmuPQpjeq/XQ9bmc47jn36cd
+         CQXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698132508; x=1698737308;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZnZkVrsoY7zwDrGLoc+7S+JxSd/YvHNPT4sbpJbAdmQ=;
+        b=JTaHfMGB6YE9xIZXUrSbfnEH77VsC1aYZzmMEvViEmCxzb8Fzp0Ew3rwaD9bM3ObsF
+         +syXVI1ZM7pXtrXY19R5QvuuGMZyt4j0EqcXA4REQ1CFJkaY4M8xt5G9ohOj9WJ6OQIN
+         gcLiZbpzaXxOYnVA3HBrd3iUwAoWqmeuWRu1+xFh9XvFO5gzc8GwfY2xirjrgbymZMFg
+         kNs5UrWZQLuuZ18+iPwwqO6vbpNAaHIXoi+pSBgKfs5g/o/qDjmrX+NMD0Q1QS1tOkxy
+         WsB1TjYDekxlk3LG8AmjfxHPVmNZV3uvRyaZemsvglc9dUns8OlBs0rEQ3DIc5rztyWh
+         TQjw==
+X-Gm-Message-State: AOJu0YwqBDDL9AQkFdGkiEvuyFB3ydawpkD5HfviuESJXoTtwvjuQdB3
+        zAnxtWW0O90anOcBGUT/jCJxPw==
+X-Google-Smtp-Source: AGHT+IFRlwdu+2MJ0YreEpllmOwZWoeIxrBcI5UwTltE2GQbYThynHTGHulOhHfnuFsX0GObLJJulQ==
+X-Received: by 2002:a50:d756:0:b0:53d:a1c0:410e with SMTP id i22-20020a50d756000000b0053da1c0410emr7399614edj.7.1698132508068;
+        Tue, 24 Oct 2023 00:28:28 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.218.126])
+        by smtp.gmail.com with ESMTPSA id ec31-20020a0564020d5f00b00530a9488623sm7426096edb.46.2023.10.24.00.28.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Oct 2023 00:28:27 -0700 (PDT)
+Message-ID: <958604e1-bfb0-4b9e-bf7c-a9345f3978ae@linaro.org>
+Date:   Tue, 24 Oct 2023 09:28:24 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: clock: brcm,kona-ccu: convert to YAML
+Content-Language: en-US
+To:     Stanislav Jakubek <stano.jakubek@gmail.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Marek Vasut <marex@denx.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux@ew.tq-group.com, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH 2/5] dt-bindings: soc: imx93-media-blk-ctrl: Add LDB subnode into schema and example
-Date:   Tue, 24 Oct 2023 08:30:16 +0200
-Message-ID: <8331331.NyiUUSuA9g@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20231023-quote-wrongly-ed07265e12ac@spud>
-References: <20231020130019.665853-1-alexander.stein@ew.tq-group.com> <5986192.lOV4Wx5bFT@steina-w> <20231023-quote-wrongly-ed07265e12ac@spud>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Artur Weber <aweber.kernel@gmail.com>
+References: <ZTUIJrTc6KKyT4xj@standask-GA-A55M-S2HP>
+ <3df06d79-ea51-4202-8cc8-468f741603bf@linaro.org>
+ <ZTbU0rkGMhja+J24@standask-GA-A55M-S2HP>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
+ m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
+ HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
+ XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
+ mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
+ v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
+ cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
+ rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
+ qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
+ aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
+ gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
+ dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
+ NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
+ hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
+ oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
+ H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
+ yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
+ 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
+ 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
+ +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
+ FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
+ 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
+ DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
+ oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
+ 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
+ Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
+ qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
+ /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
+ qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
+ EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
+ KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
+ fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <ZTbU0rkGMhja+J24@standask-GA-A55M-S2HP>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Am Montag, 23. Oktober 2023, 18:37:29 CEST schrieb Conor Dooley:
-> On Mon, Oct 23, 2023 at 08:27:20AM +0200, Alexander Stein wrote:
-> > Am Sonntag, 22. Oktober 2023, 19:39:12 CEST schrieb Conor Dooley:
-> > > On Fri, Oct 20, 2023 at 03:00:15PM +0200, Alexander Stein wrote:
-> > > > Document the LDB bridge subnode and add the subnode into the exampl=
-e.
-> > > > For the subnode to work, the block control must scan its subnodes a=
-nd
-> > > > bind drivers to them, do not misuse either simple-bus or simple-mfd
-> > > > here.
-> > > >=20
-> > > > Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> > > > ---
-> > > >=20
-> > > >  .../soc/imx/fsl,imx93-media-blk-ctrl.yaml     | 44
-> > > >  +++++++++++++++++++
-> > > >  1 file changed, 44 insertions(+)
-> > > >=20
-> > > > diff --git
-> > > > a/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctr=
-l.y
-> > > > aml
-> > > > b/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctr=
-l.y
-> > > > aml
-> > > > index b3554e7f9e76..5ba66dfb0e05 100644
-> > > > ---
-> > > > a/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctr=
-l.y
-> > > > aml
-> > > > +++
-> > > > b/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctr=
-l.y
-> > > > aml>
-> > > >=20
-> > > > @@ -24,6 +24,12 @@ properties:
-> > > >    reg:
-> > > >      maxItems: 1
-> > > >=20
-> > > > +  '#address-cells':
-> > > > +    const: 1
-> > > > +
-> > > > +  '#size-cells':
-> > > > +    const: 1
-> > > > +
-> > > >=20
-> > > >    '#power-domain-cells':
-> > > >      const: 1
-> > > >=20
-> > > > @@ -46,9 +52,16 @@ properties:
-> > > >        - const: csi
-> > > >        - const: dsi
-> > > >=20
-> > > > +  bridge@20:
-> > > > +    type: object
-> > > > +    $ref: /schemas/display/bridge/fsl,ldb.yaml#
-> > > > +    unevaluatedProperties: false
-> > > > +
-> > > >=20
-> > > >  required:
-> > > >    - compatible
-> > > >    - reg
-> > > >=20
-> > > > +  - '#address-cells'
-> > > > +  - '#size-cells'
-> > >=20
-> > > It seems to make little sense to me that these would become required
-> > > when the bridge is optional. Is it valid to have one of these
-> > > media-blk-ctrls without the ldb subnode?
-> >=20
-> > fsl,imx93-media-blk-ctrl privides several power-domains (DSI, CSI, ISI,
-> > PXP
-> > and LCDIF), currently unused. This series introduces the usage for LCDIF
-> > power domain. LDB is the LVDS display bridge. So there are several power
-> > domains which don't requires the usage of ldb.
-> > On the other hand I prefer consistency, so I opted to keep things simil=
-ar
-> > to commit 1cb0c87d27dc. If it shall not be added here, it should be
-> > removed in
-> > Documentation/devicetree/bindings/soc/imx/fsl,imx8mp-media-blk-ctrl.yaml
-> > as well.
->=20
-> IIRC the tooling will complain if you have an enabled node containing
-> #address-cells and/or #size-cells but no child nodes, so making
-> #address-cells or #size-cells required will cause problems. Looks like
-> the only user has the child node, so it didn't crop up yet.
+On 23/10/2023 22:17, Stanislav Jakubek wrote:
+> On Mon, Oct 23, 2023 at 09:54:49AM +0200, Krzysztof Kozlowski wrote:
+>> On 22/10/2023 13:31, Stanislav Jakubek wrote:
+>>> Convert Broadcom Kona family clock controller unit (CCU) bindings
+>>> to DT schema.
+>>>
+>>> Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+>>
+>> Thank you for your patch. There is something to discuss/improve.
+>>
+>>> +description:
+>>> +  Broadcom "Kona" style clock control unit (CCU) is a clock provider that
+>>> +  manages a set of clock signals.
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    enum:
+>>> +      - brcm,bcm11351-aon-ccu
+>>> +      - brcm,bcm11351-hub-ccu
+>>> +      - brcm,bcm11351-master-ccu
+>>> +      - brcm,bcm11351-root-ccu
+>>> +      - brcm,bcm11351-slave-ccu
+>>> +      - brcm,bcm21664-aon-ccu
+>>> +      - brcm,bcm21664-master-ccu
+>>> +      - brcm,bcm21664-root-ccu
+>>> +      - brcm,bcm21664-slave-ccu
+>>> +
+>>> +  reg:
+>>> +    maxItems: 1
+>>> +
+>>> +  '#clock-cells':
+>>> +    const: 1
+>>> +
+>>> +  clock-output-names:
+>>> +    minItems: 1
+>>> +    maxItems: 10
+>>> +
+>>> +allOf:
+>>> +  - if:
+>>> +      properties:
+>>> +        compatible:
+>>> +          contains:
+>>> +            enum:
+>>> +              - brcm,bcm11351-aon-ccu
+>>> +              - brcm,bcm11351-hub-ccu
+>>> +              - brcm,bcm11351-master-ccu
+>>> +              - brcm,bcm11351-root-ccu
+>>> +              - brcm,bcm11351-slave-ccu
+>>> +    then:
+>>> +      properties:
+>>> +        clock-output-names:
+>>> +          description: |
+>>> +            The following table defines the set of CCUs and clock specifiers
+>>> +            for BCM281XX family clocks.
+>>> +            These clock specifiers are defined in:
+>>> +                "include/dt-bindings/clock/bcm281xx.h"
+>>> +
+>>> +            CCU     Clock        Type  Index  Specifier
+>>> +            ---     -----        ----  -----  ---------
+>>> +            root    frac_1m      peri    0    BCM281XX_ROOT_CCU_FRAC_1M
+>>> +
+>>> +            aon     hub_timer    peri    0    BCM281XX_AON_CCU_HUB_TIMER
+>>> +            aon     pmu_bsc      peri    1    BCM281XX_AON_CCU_PMU_BSC
+>>> +            aon     pmu_bsc_var  peri    2    BCM281XX_AON_CCU_PMU_BSC_VAR
+>>> +
+>>> +            hub     tmon_1m      peri    0    BCM281XX_HUB_CCU_TMON_1M
+>>> +
+>>> +            master  sdio1        peri    0    BCM281XX_MASTER_CCU_SDIO1
+>>> +            master  sdio2        peri    1    BCM281XX_MASTER_CCU_SDIO2
+>>> +            master  sdio3        peri    2    BCM281XX_MASTER_CCU_SDIO3
+>>> +            master  sdio4        peri    3    BCM281XX_MASTER_CCU_SDIO4
+>>> +            master  dmac         peri    4    BCM281XX_MASTER_CCU_DMAC
+>>> +            master  usb_ic       peri    5    BCM281XX_MASTER_CCU_USB_IC
+>>> +            master  hsic2_48m    peri    6    BCM281XX_MASTER_CCU_HSIC_48M
+>>> +            master  hsic2_12m    peri    7    BCM281XX_MASTER_CCU_HSIC_12M
+>>> +
+>>> +            slave   uartb        peri    0    BCM281XX_SLAVE_CCU_UARTB
+>>> +            slave   uartb2       peri    1    BCM281XX_SLAVE_CCU_UARTB2
+>>> +            slave   uartb3       peri    2    BCM281XX_SLAVE_CCU_UARTB3
+>>> +            slave   uartb4       peri    3    BCM281XX_SLAVE_CCU_UARTB4
+>>> +            slave   ssp0         peri    4    BCM281XX_SLAVE_CCU_SSP0
+>>> +            slave   ssp2         peri    5    BCM281XX_SLAVE_CCU_SSP2
+>>> +            slave   bsc1         peri    6    BCM281XX_SLAVE_CCU_BSC1
+>>> +            slave   bsc2         peri    7    BCM281XX_SLAVE_CCU_BSC2
+>>> +            slave   bsc3         peri    8    BCM281XX_SLAVE_CCU_BSC3
+>>> +            slave   pwm          peri    9    BCM281XX_SLAVE_CCU_PWM
+>>
+>> I don't really understand why this is in the binding schema. I guess you
+>> wanted to copy it from the old binding, but, unless there is real reason
+>> for it, don't. The clock IDs should be in the header file and that's it.
+>> Nothing here.
+> 
+> Hi Krzysztof, you're correct that I just copied this from the old bindings.
+> brcm,iproc-clocks.yaml has a similar table, so I thought this would be fine.
+> I'm OK with dropping it, but how should I document the clock-output-names
+> values then?
 
-I was not able to raise a warning with enabled media_blk_ctrl having #addre=
-ss-
-cells/#size-cells being set but no subnode.
-I don't have a strong opinion on this, but I prefer having both bindings as=
-=20
-similar as possible.
+Your schema does not document them, so I don't understand what would you
+loose.
 
-best regards,
-Alexander
+> A bunch of if-then blocks (per compatible)? Or should I not even
+> bother and just keep minItems/maxItems without documenting the values?
 
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
+But what do you want to document exactly? Only number of items is
+reasonable to constrain and it can be done with if:then blocks.
 
+
+> 
+>>
+>>> +  - if:
+>>> +      properties:
+>>> +        compatible:
+>>> +          contains:
+>>> +            enum:
+>>> +              - brcm,bcm21664-aon-ccu
+>>> +              - brcm,bcm21664-master-ccu
+>>> +              - brcm,bcm21664-root-ccu
+>>> +              - brcm,bcm21664-slave-ccu
+>>> +    then:
+>>> +      properties:
+>>> +        clock-output-names:
+>>> +          maxItems: 8
+> 
+> I've also noticed that dtbs_check gives out warnings(?) like this for
+> bcm21664 ccu nodes:
+> 
+> /arch/arm/boot/dts/broadcom/bcm21664-garnet.dtb:
+>     root_ccu@35001000: clock-output-names: ['frac_1m'] is too short
+>     from schema $id: http://devicetree.org/schemas/clock/brcm,kona-ccu.yaml#
+> 
+> and this maxItems:8 seems to me like the culprit (since the bcm11351 if-then
+> doesn't have that). Seems to me like it also overrides the minItems to be 8
+> as well. I don't understand why it would do that though.
+> 
+> I suppose just adding minItems: 1 would be the correct fix in this case?
+
+https://elixir.bootlin.com/linux/v5.19-rc6/source/Documentation/devicetree/bindings/clock/samsung,exynos7-clock.yaml#L57
+
+
+Best regards,
+Krzysztof
 
