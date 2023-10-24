@@ -2,37 +2,37 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF5BC25B48
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Oct 2023 16:19:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16FC0C25B6E
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Oct 2023 16:19:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234699AbjJXQTk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Oct 2023 12:19:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39448 "EHLO
+        id S1343587AbjJXQTm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Oct 2023 12:19:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233585AbjJXQTi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Oct 2023 12:19:38 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B39E111;
+        with ESMTP id S234658AbjJXQTj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Oct 2023 12:19:39 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5E7B83;
         Tue, 24 Oct 2023 09:19:36 -0700 (PDT)
 Received: from jupiter.universe (cola.collaboradmins.com [195.201.22.229])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: sre)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 264DD66072A2;
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 3B62B6607328;
         Tue, 24 Oct 2023 17:19:35 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
         s=mail; t=1698164375;
-        bh=SqKf4LNwvpIYJ9bi8s2HSgXa96OgNa0HbeVAslfV1tU=;
+        bh=x58O7/yeMCAwTvVvYfypW/Y5RY/B1MgCHBqd2HZdSiM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A2hGpIqV1ZIGRSd6+nUApqHDqsXu2jtpQy8gHMlDfLtCXGef8ux0LOtJzTL4eLJu2
-         DUMaQUGSKyHGUHrOvPJjQgrhf4TD/pV9lYOP0rursa+TUzxci2toviIHXet9ksthcq
-         hQWjVEeC4WAMatPGuv3DUauC5Q/LsNcEW9MCtVp9Y6JLS1ZUNV7klUwT8MQTe6IrDx
-         w1z244Fv0hXQ/z3SmxPaRtFOXFIx6aMuTUzJ6SAVx/BbgDZHcdVh+qfxMzJwdKFoGo
-         gAjeXhoZdk/zOXs1qMzCcLtDvfXn1gfJllO7jvBePlPNqf4hhc1VTbjfO3YhdAg1FG
-         Z9ZOc+kgg7ZaA==
+        b=baHTv0Q9SNhDPpjT/nA2urEKIhWdb+u2YwV8EXqJfF8sbpAiX9q/0UlN7Wxo5LB36
+         d0WqNO17GD/3nVB9KNG+S1Nb3rfRJKUvrdOyEBd9MHOPCTsDuoCOv45Z2dNHcq1dCN
+         sBmYuLFuAMgT/iVJlXpbIAST4i2ejJEuC2pbMXAEiYgMK9tkFQMa5Uky/LcDKEq8Xb
+         Ln9e8eAOWvUyT4CA9/XpNxm0SPgXR5rlOrAu5TeIZGY3D8s6LEKJeG6LjxBxJRw6rp
+         /WcSXWRJdTkmv6gx8tlVU9X49FCvAwhI+uvWy3t+//Op6qU8pc/6cevg8QtsKzdBX2
+         P2Jpfo3Md/0Dg==
 Received: by jupiter.universe (Postfix, from userid 1000)
-        id 9BC2B482AD8; Tue, 24 Oct 2023 18:19:32 +0200 (CEST)
+        id 9FA15482ADD; Tue, 24 Oct 2023 18:19:32 +0200 (CEST)
 From:   Sebastian Reichel <sebastian.reichel@collabora.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -43,10 +43,10 @@ Cc:     Vasily Gorbik <gor@linux.ibm.com>,
         Niklas Schnelle <schnelle@linux.ibm.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sebastian Reichel <sebastian.reichel@collabora.com>,
-        kernel@collabora.com
-Subject: [PATCH v4 1/3] math.h: add DIV_ROUND_UP_NO_OVERFLOW
-Date:   Tue, 24 Oct 2023 18:18:15 +0200
-Message-ID: <20231024161931.78567-2-sebastian.reichel@collabora.com>
+        kernel@collabora.com, Andy Shevchenko <andriy.shevchenko@intel.com>
+Subject: [PATCH v4 3/3] clk: composite: replace open-coded abs_diff()
+Date:   Tue, 24 Oct 2023 18:18:17 +0200
+Message-ID: <20231024161931.78567-4-sebastian.reichel@collabora.com>
 X-Mailer: git-send-email 2.42.0
 In-Reply-To: <20231024161931.78567-1-sebastian.reichel@collabora.com>
 References: <20231024161931.78567-1-sebastian.reichel@collabora.com>
@@ -56,36 +56,38 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add a new DIV_ROUND_UP helper, which cannot overflow when
-big numbers are being used.
+Replace the open coded abs_diff() with the existing helper function.
 
+Suggested-by: Andy Shevchenko <andriy.shevchenko@intel.com>
 Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 ---
- include/linux/math.h | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/clk/clk-composite.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/math.h b/include/linux/math.h
-index dd4152711de7..f80bfb375ab9 100644
---- a/include/linux/math.h
-+++ b/include/linux/math.h
-@@ -36,6 +36,17 @@
+diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
+index 66759fe28fad..478a4e594336 100644
+--- a/drivers/clk/clk-composite.c
++++ b/drivers/clk/clk-composite.c
+@@ -6,6 +6,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/device.h>
+ #include <linux/err.h>
++#include <linux/math.h>
+ #include <linux/slab.h>
  
- #define DIV_ROUND_UP __KERNEL_DIV_ROUND_UP
+ static u8 clk_composite_get_parent(struct clk_hw *hw)
+@@ -119,10 +120,7 @@ static int clk_composite_determine_rate(struct clk_hw *hw,
+ 			if (ret)
+ 				continue;
  
-+/**
-+ * DIV_ROUND_UP_NO_OVERFLOW - divide two numbers and always round up
-+ * @n: numerator / dividend
-+ * @d: denominator / divisor
-+ *
-+ * This functions does the same as DIV_ROUND_UP, but internally uses a
-+ * division and a modulo operation instead of math tricks. This way it
-+ * avoids overflowing when handling big numbers.
-+ */
-+#define DIV_ROUND_UP_NO_OVERFLOW(n, d) (((n) / (d)) + !!((n) % (d)))
-+
- #define DIV_ROUND_DOWN_ULL(ll, d) \
- 	({ unsigned long long _tmp = (ll); do_div(_tmp, d); _tmp; })
+-			if (req->rate >= tmp_req.rate)
+-				rate_diff = req->rate - tmp_req.rate;
+-			else
+-				rate_diff = tmp_req.rate - req->rate;
++			rate_diff = abs_diff(req->rate, tmp_req.rate);
  
+ 			if (!rate_diff || !req->best_parent_hw
+ 				       || best_rate_diff > rate_diff) {
 -- 
 2.42.0
 
