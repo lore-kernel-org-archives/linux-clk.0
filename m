@@ -2,122 +2,101 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9036C00A8F
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Oct 2023 09:40:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E31C9C00A8F
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Oct 2023 10:55:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234103AbjJXJkM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Oct 2023 05:40:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34980 "EHLO
+        id S232042AbjJXKzy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Oct 2023 06:55:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234143AbjJXJkL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Oct 2023 05:40:11 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56D2E10C2
-        for <linux-clk@vger.kernel.org>; Tue, 24 Oct 2023 02:40:07 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-407c3adef8eso36484505e9.2
-        for <linux-clk@vger.kernel.org>; Tue, 24 Oct 2023 02:40:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698140406; x=1698745206; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=s5f7lk/sUG2K+sQIa3tjkVyEh0bsGlRfNvy9ZFNdKNY=;
-        b=QTQWkmhc0BqLIA8qDMKzNV2MkliYchZ7Dxm897HUywGCxC6j1/b4focsMmuvLrL8PN
-         TPChlrWSht0h/dOBDIxH6gl092z6jR/R4HGSp6S+WChgS/XoiKQPozVztn0SBb45GXup
-         rMmiTJa5HJ/CjvaqQfDzIsgrMLzvgesglTxeNPv3ScBwUJGKu3Uli7AvoCkaxFBefguZ
-         HGFnWh+IWNEtazj99eEbtJGSMw9QQLm2ONhy3arCjh78WB5t3loK74+LsbB/cSDetIWm
-         OjciaiQGT79d/r0Ss7chH0bDBfdrpIT5HcLtanr82JCIGfw9+5WKrSKfBR2Amy5fMUXe
-         j4kQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698140406; x=1698745206;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=s5f7lk/sUG2K+sQIa3tjkVyEh0bsGlRfNvy9ZFNdKNY=;
-        b=U2FHmVl81O4JXu8U8ILNOL2x+a0d/QoSymVtGNf/WNnvunowca7BZXSN8BikwOmIW2
-         v7/tuS8f4kfLgDsy6ggeGeJOIDlCgtvfG+/RblHcTYE1Hotljtwp7ndaP44EMwn+1U0u
-         sjKaClHqgfrxdrG8hoRY/08VHbCr3tmD4OOnpusnrMGVXHKoMR/iBtna4ezLnNY/tZ1k
-         dlR6uyJt538rz+BFoYSX42UFzJvrBSWhWYtUDNs/aux+VxFhLcGPuW8Mo3yiAfxO23ti
-         sHi/LDeK0xLyy2aDC6xrgTOgdW89KB4ZvYboDUiCO92kCRMnzelETLDHBdwfivU1Pday
-         07hQ==
-X-Gm-Message-State: AOJu0Ywel5B4yuonCweCpKlNxgnICS7XjC6wQZ9zTvPJlKDuy/ndBrfI
-        0N9syUm2ANYDpQwcCRPJLh34Eg==
-X-Google-Smtp-Source: AGHT+IE5TFlYkZdpsRZM+iH9l+SKXhZgWmaMXLLCnEWvyFWT59f5AvnVu7eLhTN1BnA5As6Hb9uDhw==
-X-Received: by 2002:a05:600c:3109:b0:408:5bc6:a7d with SMTP id g9-20020a05600c310900b004085bc60a7dmr6475543wmo.19.1698140405732;
-        Tue, 24 Oct 2023 02:40:05 -0700 (PDT)
-Received: from [192.168.100.102] ([37.228.218.3])
-        by smtp.gmail.com with ESMTPSA id l22-20020a05600c1d1600b004042dbb8925sm16576200wms.38.2023.10.24.02.40.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Oct 2023 02:40:05 -0700 (PDT)
-Message-ID: <866d5582-a4e2-4b98-a291-6e41939bd9f3@linaro.org>
-Date:   Tue, 24 Oct 2023 10:40:04 +0100
+        with ESMTP id S232854AbjJXKzx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Oct 2023 06:55:53 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F92510C6;
+        Tue, 24 Oct 2023 03:55:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1698144950; x=1729680950;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=rP21uFRnfVWXZ25USLUeupGk34jQ/H1beVBH1jodnfM=;
+  b=kUukX/5FAYHUo7Yffbwg5xd5rzltW2nXM0q34AH8L7xGhrLvq0vY/+PS
+   HNqZei+GjOlAwMszQ39DQJ3fiPBLzJ87ZTyNl7JxyYiayUL+DDjHCVRS2
+   flQLSdALx5/8TyLDWfZqwa9AIn9lri5V7k0eeuNREEGhJwrrjNB9nKh1g
+   faYSwqajL0qWcV3OY2dfU1w6lEb/yzlrwgeIYzA0jDz+866DYLXKL13sK
+   2CiTPF1ZZZHARHpwa8Cr3zWMNbkzWfR65gzIkoel2MI7lfJD3muRx83Ja
+   aYzL0taA414vToDqfQvDTmJmTdRZExUJFIBNjt9rSr4FsotGF+Mdo4eii
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10872"; a="389879602"
+X-IronPort-AV: E=Sophos;i="6.03,247,1694761200"; 
+   d="scan'208";a="389879602"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2023 03:55:49 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10872"; a="1089802807"
+X-IronPort-AV: E=Sophos;i="6.03,247,1694761200"; 
+   d="scan'208";a="1089802807"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmsmga005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2023 03:55:47 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97-RC2)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1qvF4a-00000008BgP-3Kkn;
+        Tue, 24 Oct 2023 13:55:44 +0300
+Date:   Tue, 24 Oct 2023 13:55:44 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     David Laight <David.Laight@aculab.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com
+Subject: Re: [PATCH v3 1/1] clk: divider: Fix divisor masking on 64 bit
+ platforms
+Message-ID: <ZTeisLk5zvF2Fh/B@smile.fi.intel.com>
+References: <20230630183835.464216-1-sebastian.reichel@collabora.com>
+ <a9756c11ea3f111d45e85e0f3928bdd8.sboyd@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3.1 3/4] clk: qcom: camcc-sc8280xp: Add sc8280xp CAMCC
-To:     Stephen Boyd <sboyd@kernel.org>, agross@kernel.org,
-        andersson@kernel.org, conor+dt@kernel.org,
-        dmitry.baryshkov@linaro.org, jonathan@marek.ca,
-        konrad.dybcio@linaro.org, krzysztof.kozlowski+dt@linaro.org,
-        mturquette@baylibre.com, quic_tdas@quicinc.com, robh+dt@kernel.org,
-        vladimir.zapolskiy@linaro.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20231023153821.189331-1-bryan.odonoghue@linaro.org>
- <20231023153821.189331-4-bryan.odonoghue@linaro.org>
- <aef93a48cf270d5078ccdc39d95113a4.sboyd@kernel.org>
-Content-Language: en-US
-From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <aef93a48cf270d5078ccdc39d95113a4.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a9756c11ea3f111d45e85e0f3928bdd8.sboyd@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 24/10/2023 01:34, Stephen Boyd wrote:
-> Quoting Bryan O'Donoghue (2023-10-23 08:38:20)
->> diff --git a/drivers/clk/qcom/camcc-sc8280xp.c b/drivers/clk/qcom/camcc-sc8280xp.c
->> new file mode 100644
->> index 000000000000..0631bd5fad57
->> --- /dev/null
->> +++ b/drivers/clk/qcom/camcc-sc8280xp.c
->> @@ -0,0 +1,3048 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * Copyright (c) 2021, The Linux Foundation. All rights reserved.
->> + * Copyright (c) 2023, Linaro Ltd.
->> + */
->> +
->> +#include <linux/clk-provider.h>
->> +#include <linux/err.h>
-> 
-> Is this include used?
-> 
->> +#include <linux/kernel.h>
->> +#include <linux/module.h>
->> +#include <linux/of_device.h>
-> 
-> Should be mod_devicetable.h instead?
-> 
->> +#include <linux/of.h>
-> 
-> Is this include used?
-> 
->> +#include <linux/pm_clock.h>
->> +#include <linux/pm_runtime.h>
->> +#include <linux/regmap.h>
->> +#include <linux/pm_runtime.h>
-> 
-> This got included twice.
-> 
->> +
->> +#include <dt-bindings/clock/qcom,sc8280xp-camcc.h>
->> +
->> +#include "clk-alpha-pll.h"
+On Mon, Oct 23, 2023 at 08:34:12PM -0700, Stephen Boyd wrote:
+> Quoting Sebastian Reichel (2023-06-30 11:38:35)
 
-You're right, I didn't scrub the autogen headers.
+> > --- a/include/linux/math.h
+> > +++ b/include/linux/math.h
+> > @@ -36,6 +36,17 @@
+> >  
+> >  #define DIV_ROUND_UP __KERNEL_DIV_ROUND_UP
+> >  
+> > +/**
+> > + * DIV_ROUND_UP_NO_OVERFLOW - divide two numbers and always round up
+> > + * @n: numerator / dividend
+> > + * @d: denominator / divisor
+> > + *
+> > + * This functions does the same as DIV_ROUND_UP, but internally uses a
+> > + * division and a modulo operation instead of math tricks. This way it
+> > + * avoids overflowing when handling big numbers.
+> > + */
+> > +#define DIV_ROUND_UP_NO_OVERFLOW(n, d) (((n) / (d)) + !!((n) % (d)))
+> 
+> Can you get someone to review/ack this macro? Maybe Andy?
+> 
+> > +
+> >  #define DIV_ROUND_DOWN_ULL(ll, d) \
+> >         ({ unsigned long long _tmp = (ll); do_div(_tmp, d); _tmp; })
 
-Update sent as v3.2.
+First of all, it should be a separate patch and second, same issue is being
+discussed here (as it needs to be fixed in UAPI header directly):
 
----
-bod
+https://lore.kernel.org/all/your-ad-here.call-01697881440-ext-2458@work.hours/
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
