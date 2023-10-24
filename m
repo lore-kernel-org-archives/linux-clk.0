@@ -2,70 +2,58 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 099B7C00A8F
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Oct 2023 03:16:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E19AC07545
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Oct 2023 03:22:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232249AbjJXDQ2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Oct 2023 23:16:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39252 "EHLO
+        id S231865AbjJXDWY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Oct 2023 23:22:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231254AbjJXDQ2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Oct 2023 23:16:28 -0400
+        with ESMTP id S231982AbjJXDWX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Oct 2023 23:22:23 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFDDB10C2;
-        Mon, 23 Oct 2023 20:16:18 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35D32C433C8;
-        Tue, 24 Oct 2023 03:16:18 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 990FF10C9;
+        Mon, 23 Oct 2023 20:22:21 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CBCBC433C7;
+        Tue, 24 Oct 2023 03:22:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1698117378;
-        bh=p1hhuvIPakueBhPkMTsnJZD7jEV0fRvqzqRBD6XqoAY=;
+        s=k20201202; t=1698117741;
+        bh=wM4Q7H3OavnQ2yEHWK7SQy8Yee4IvRBdIbXvUqtz4jg=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=SE3dOp5CnQIijBCv2/Tuk2N4/tJy1tJRKwkt4QY2fAckQY3nvjFfuOk/rWdfS2hsa
-         4hYgfVdHEpLBPAL18XB/epo72m//06issvriq+/QVME8U9xbsJIlgDS2Ox/TNUMYYQ
-         OsTJigJIEFNtPRbfYFCJPIu3fPdVGqvF3ghSKKRZZQ28d3pDzWQFipgl1XzEoI+agd
-         OF5SGEipUz11F8M4oe/FTq+UHsEqJQzFNHe4edOCzzooKRCzIH9IzTi7TIMv/TBZVy
-         5DTp3R/X75YtHc6ds4iQixbF8azq9YERs0H6291L0+7ZfHv0al2AMscD9A8zgCp65R
-         QwRjPV6RdN/OA==
-Message-ID: <d5fb4c972273c5e18662e5d6914b04fe.sboyd@kernel.org>
+        b=g8zLe5kWhlLOGKrl9Mm7y/s1MTAjKukW/u7ZF4M3P5olPgNkYX13oSPzwfQGVMV93
+         TWuKX+oUU9Erw2gYS7wDYb35GJWWOtTUmhX9GKUl3kMKOQjpVDZmgsvKPpL7UjpYoE
+         dYdCkx2HJKAoC6yp5De2c49n+FopqLHl+89AMrTt9+Lgkl0Ws0TCJSQCF+lfEUL+G7
+         aBdYd0vPRQCxpZ+GNAPdE49/sO9LJ6dzVwAvHnsHj608jJ4lDv9hADsFSxpahriVYW
+         11KEXWxqMeV6QdtIen01cv/OzFpg3XqQUjNggpNOt0D3Ll9FT7UBX/UyFQm/+XHq0w
+         xadigELmjGAWg==
+Message-ID: <9431003c15a024f7fb4ec28609b16975.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20231006213959.334439-1-robh@kernel.org>
-References: <20231006213959.334439-1-robh@kernel.org>
-Subject: Re: [PATCH] clk: Use device_get_match_data()
+In-Reply-To: <20230420103805.125246-1-john@metanate.com>
+References: <20230420103805.125246-1-john@metanate.com>
+Subject: Re: [PATCH] clk: Allow phase adjustment from debugfs
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     patches@opensource.cirrus.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
-To:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        David Lechner <david@lechnology.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+Cc:     John Keeping <john@metanate.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Rob Herring <robh@kernel.org>, Sekhar Nori <nsekhar@ti.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tero Kristo <kristo@kernel.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>
-Date:   Mon, 23 Oct 2023 20:16:16 -0700
+        linux-kernel@vger.kernel.org
+To:     John Keeping <john@metanate.com>, linux-clk@vger.kernel.org
+Date:   Mon, 23 Oct 2023 20:22:18 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Rob Herring (2023-10-06 14:39:58)
-> Use preferred device_get_match_data() instead of of_match_device() to
-> get the driver match data. With this, adjust the includes to explicitly
-> include the correct headers.
+Quoting John Keeping (2023-04-20 03:38:04)
+> For testing it may be useful to manually adjust a clock's phase.  Add
+> support for writing to the existing clk_phase debugfs file, with the
+> written value clamped to [0, 360) to match the behaviour of the
+> clk_set_phase() function.
 >=20
-> Signed-off-by: Rob Herring <robh@kernel.org>
+> This is a dangerous feature, so use the existing define
+> CLOCK_ALLOW_WRITE_DEBUGFS to allow it only if the source is modified.
+>=20
+> Signed-off-by: John Keeping <john@metanate.com>
 > ---
 
 Applied to clk-next
