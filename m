@@ -2,84 +2,133 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23953C07545
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Oct 2023 11:17:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 534A6C00A8F
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Oct 2023 14:18:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229487AbjJXLRq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Oct 2023 07:17:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54606 "EHLO
+        id S234675AbjJXOSV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Oct 2023 10:18:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229783AbjJXLRp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Oct 2023 07:17:45 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32E21D7B;
-        Tue, 24 Oct 2023 04:17:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1698146262; x=1729682262;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=yT3C7M/uPNjTrUCibeAzmCQLBq5xF4IThdbPcRCFoCc=;
-  b=BHNtX25p9driK0xvzuo7A5z3P7nDwFqQvZ5L9VMbxN31Lge9Fz6DwElv
-   R6/J98zc7/j9FYytYItXAMsaoCVjlmD/EOAABm/d3n4rqtncpt39/UDJO
-   lUkrBMme+H1LLUMt+yjDK6i5vXYBnsuHelLwonsxGc7zjIWYjisGcVGhO
-   pJLySIbd2WJnRn2+jwX6Y2AEXQ3qiRY2aSUmOsPk7WVu5NMQ/jtn4JAVD
-   FfK+zqFE1Q1ToHGYCzk/lZQG40ufy3KlLCU2jO4iAn47pnY8O+2MkL0QZ
-   p7wZYke3XNJ5rgcGQO0jkubBAUpS7Qp/vRF/sJod44d3TsZcf3vPhwuuf
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10872"; a="384234774"
-X-IronPort-AV: E=Sophos;i="6.03,247,1694761200"; 
-   d="scan'208";a="384234774"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2023 04:17:41 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10872"; a="882091615"
-X-IronPort-AV: E=Sophos;i="6.03,247,1694761200"; 
-   d="scan'208";a="882091615"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2023 04:17:39 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97-RC2)
-        (envelope-from <andriy.shevchenko@intel.com>)
-        id 1qvFPk-00000008C7P-0TDP;
-        Tue, 24 Oct 2023 14:17:36 +0300
-Date:   Tue, 24 Oct 2023 14:17:35 +0300
-From:   Andy Shevchenko <andriy.shevchenko@intel.com>
-To:     Christopher Obbard <chris.obbard@collabora.com>
-Cc:     Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@collabora.com,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] clk: composite: Fix handling of high clock rates
-Message-ID: <ZTenz66dqsdUfz1t@smile.fi.intel.com>
-References: <20230519190522.194729-1-sebastian.reichel@collabora.com>
- <20230519190522.194729-2-sebastian.reichel@collabora.com>
- <c8befb46085c43e1d09f27709b90e92dbce52c82.camel@collabora.com>
+        with ESMTP id S234567AbjJXOSV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Oct 2023 10:18:21 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C7F7C4;
+        Tue, 24 Oct 2023 07:18:18 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-9be02fcf268so661954666b.3;
+        Tue, 24 Oct 2023 07:18:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1698157097; x=1698761897; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=k2PK1fU8QWuwhD6iIY5Em92nwMiyyUjXYffcjg6qNGA=;
+        b=LhSTlCJLitHnBYmOH79Q1bEk63DIg8DPmf4NeJD+mTr2MV79+L/9ENzUDh/N0QUDWA
+         v2O8N0c1lCH1XduMXtsJHAaw5QOkMLNTE5zLCdMKOo73xyxznBozRBKMJO3h9lQKzTeJ
+         DZevPU1jKwlkykGoDbCKPK+NNK+vSIhHqI78Xecsw51B1edhBSUKzaxp+Csj4jT1pXB8
+         XHRsm7ISisDKoxn1a9EjsU8mRZVYoSkuaNAMFKgWRgXZ2fPkxz5/y7aN3crE0KQVI6Y+
+         QKCTP7RJo3gGtXfuNECLvjGytALzOx93PUOUlXF2sUuSWTQLZY096H5ZFd5d2ryPhjRb
+         +yaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698157097; x=1698761897;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=k2PK1fU8QWuwhD6iIY5Em92nwMiyyUjXYffcjg6qNGA=;
+        b=uJ0VOgQhJtD3CsKx5NYzFfAEeCWIsvFL/KVM4goOm1wNoFEBSD6xLbzXBVT2M8Pctc
+         qCwGZbELWQS+TyK3BfVLHMQLDwiwbmuOoge3MqSr/x3c2kX6ub8ahvQWEFQLpSLthIvR
+         rLxBlGU5TVe4xccpK6M4U2RPyI4OlfDjEesBR67dWjp5hjfE+X/3NrdvG4OULhZUgLJq
+         qASKDWrKasqdE8Z90chRgvTvlQ5a/Euy96QvtkIl/qgjRqSPXQ6vBzOfu5IKCVQbt8wS
+         9JHqhCYunmtgt5f5OsS0mDAVJeV8gUZfBCH3RM+DLCEpgyYK3sUaF17GetzpKvfYYYof
+         wtUw==
+X-Gm-Message-State: AOJu0YyZbHegvGwNmtYwyHDyRSvnPN29HU9wh2WcxgeopFfiMFzLH3Eq
+        SKNUvMF+8cJlHvvVXPMUPyQeTtAFBNWGFi9ghANz0/4ltk1T
+X-Google-Smtp-Source: AGHT+IGBMOD8/0GagH9LdaLzB0aYbQMv1yqCrUSOzjESFzYdKqb3PjjAOJSYq92IFXqOfZ821NgeGfxdi6UgMT69VIg=
+X-Received: by 2002:a17:906:6a13:b0:9ae:74d1:4b45 with SMTP id
+ qw19-20020a1709066a1300b009ae74d14b45mr10412646ejc.65.1698157096776; Tue, 24
+ Oct 2023 07:18:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c8befb46085c43e1d09f27709b90e92dbce52c82.camel@collabora.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From:   Pratham Patel <thefirst1322@gmail.com>
+Date:   Tue, 24 Oct 2023 19:47:40 +0530
+Message-ID: <CAM+6MoE1DyOay-fMWQP0hsenz174hSuGJnKM7symh0C-y1mqZw@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] arm64: rust: Enable Rust support for AArch64
+To:     boqun.feng@gmail.com
+Cc:     Jamie.Cunliffe@arm.com, andrew@lunn.ch, catalin.marinas@arm.com,
+        lina@asahilina.net, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, mturquette@baylibre.com,
+        ojeda@kernel.org, rust-for-linux@vger.kernel.org, sboyd@kernel.org,
+        steve.capper@arm.com, will@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, May 20, 2023 at 08:57:16AM +0100, Christopher Obbard wrote:
-> On Fri, 2023-05-19 at 21:05 +0200, Sebastian Reichel wrote:
+On Fri, 20 Oct 2023 11:33:10 -0700, Boqun Feng wrote:
+> FWIW, I tried the following:
+>
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index 8784284988e5..b697c2d7da68 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -227,7 +227,7 @@ config ARM64
+>         select HAVE_FUNCTION_ARG_ACCESS_API
+>         select MMU_GATHER_RCU_TABLE_FREE
+>         select HAVE_RSEQ
+> -       select HAVE_RUST if CPU_LITTLE_ENDIAN
+> +       select HAVE_RUST
+>         select HAVE_STACKPROTECTOR
+>         select HAVE_SYSCALL_TRACEPOINTS
+>         select HAVE_KPROBES
+> diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
+> index 4562a8173e90..4621f1e00e06 100644
+> --- a/arch/arm64/Makefile
+> +++ b/arch/arm64/Makefile
+> @@ -41,7 +41,11 @@ KBUILD_CFLAGS        +=3D -mgeneral-regs-only  \
+>  KBUILD_CFLAGS  +=3D $(call cc-disable-warning, psabi)
+>  KBUILD_AFLAGS  +=3D $(compat_vdso)
+>
+> +ifeq ($(CONFIG_CPU_BIG_ENDIAN), y)
+> +KBUILD_RUSTFLAGS +=3D --target aarch64_be-unknown-linux-gnu -C target-fe=
+ature=3D"-neon"
+> +else
+>  KBUILD_RUSTFLAGS +=3D --target aarch64-unknown-none -C target-feature=3D=
+"-neon"
+> +endif
+>
+>  KBUILD_CFLAGS  +=3D $(call cc-option,-mabi=3Dlp64)
+>  KBUILD_AFLAGS  +=3D $(call cc-option,-mabi=3Dlp64)
+>
 
-...
+This comes from a nobody (quite literally my first email on the kernel
+mailing list), but I would rather that the support for AArch64 BE be
+not added at all. My reasoning for this is because the rustc target
+`aarch64_be-unknown-linux-gnu` is in the tier 3 of support. More
+details can be found in the official documentation [0], but a few,
+**select** key points from that section:
 
-> > -                       rate_diff = abs(req->rate - tmp_req.rate);
-> > +                       if (req->rate >= tmp_req.rate)
-> > +                               rate_diff = req->rate - tmp_req.rate;
-> > +                       else
-> > +                               rate_diff = tmp_req.rate - req->rate;
+> At this tier, the Rust project provides no official support for a target,=
+ so we place minimal requirements on the introduction of targets.
 
-Btw, we have abs_diff() helper for this kind of cases.
+> Tier 3 targets should attempt to implement as much of the standard librar=
+ies as possible and appropriate (core for most targets, alloc for targets t=
+hat can support dynamic memory allocation, std for targets with an operatin=
+g system or equivalent layer of system-provided functionality), but may lea=
+ve some code unimplemented (either unavailable or stubbed out as appropriat=
+e), whether because the target makes it impossible to implement or challeng=
+ing to implement. The authors of pull requests are not obligated to avoid c=
+alling any portions of the standard library on the basis of a tier 3 target=
+ not implementing those portions.
 
--- 
-With Best Regards,
-Andy Shevchenko
+I am not an owner of any AArch64 BE machines, but if I were, this
+would be concerning to _me_. I would prefer waiting for the Rust side
+to be a bit more stable, at least in tier 2 support, for adding
+AArch64 BE support. Though from the user of the Linux kernel, it may
+not be that much of an issue, but from a developer's and packager's
+perspective, this will lead to a few wasted hours until the
+metaphorical person figures out why said Rust code failed to build for
+AArch64 BE.
 
+[0]: https://doc.rust-lang.org/rustc/target-tier-policy.html#tier-3-target-=
+policy
 
+P.S. This is my first time sending an email to a mailing list, sorry
+if I mucked something up.
