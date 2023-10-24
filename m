@@ -2,101 +2,70 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CA07C25B67
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Oct 2023 02:59:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 099B7C00A8F
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Oct 2023 03:16:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232499AbjJXC7U (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Oct 2023 22:59:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55860 "EHLO
+        id S232249AbjJXDQ2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Oct 2023 23:16:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231820AbjJXC7T (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Oct 2023 22:59:19 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56761120
-        for <linux-clk@vger.kernel.org>; Mon, 23 Oct 2023 19:59:13 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-507b96095abso5965612e87.3
-        for <linux-clk@vger.kernel.org>; Mon, 23 Oct 2023 19:59:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1698116351; x=1698721151; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cvrqgGSngoJnXhESnfS3t+NdB91nFoYVT3tITLPVU4M=;
-        b=i6dAKWjzP8barq/3IpEpyqf9ssxXqAGHROwrf3JijTpIXBWtc5gt9BV3bE0noUFbV0
-         keTtas6Lc4R2EBM/qvtpjuYRgoPnu5VVFPPvK8ySztD/YRpPSnQTFf5xQ+lt1nImXw/j
-         6Lk014crdk1PDc5+S2x9v4grmtE6io0haf4y0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698116351; x=1698721151;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cvrqgGSngoJnXhESnfS3t+NdB91nFoYVT3tITLPVU4M=;
-        b=mScM/uQmWSYephd30sVkf3xgp69RQONat9usfLbiEORKoNGsOuDf9Q72SJT/z/rx9q
-         LSu7RS/D0kJATfldK3jfCcQ0IV+BSMf41M71slkzi0fjS8RJQc1WyADUYHLYP8zeHkO9
-         loDKrYYmXAtwst8DdybPH1XVpjhIp7vzdryK5R9x8XmdjUp6up3BDtEZY0AxGthcAQ1S
-         81TTbxVyg2d03/eo9fk6glQd8+KvZaURdA78X69gofnA7H0b1bT7zujLwjVJ74gDmYj0
-         3uEpU4+sPs/17f48AslAy2F1/yZYjb7jo7ruZxeLHxTUQQVIZsNuwTAPvwyZxhxv3oxF
-         xLdg==
-X-Gm-Message-State: AOJu0YzYRYuICpAnRaWaZOWWH68sp9w26wC2+NvwOGpoFcmAKYUPX7pU
-        gf41IryiD5ykL/n3MCNWMOrd89X3eTB0bh9dUJcvMA==
-X-Google-Smtp-Source: AGHT+IGBrjxdShgGwLm/nKBlp6mMXyHZKc8GJR6Sa8BG8WPw9au3jcqx4fC7Aiq/VT+UoJbUAgQ50zuQjPdOXvQt81c=
-X-Received: by 2002:ac2:562a:0:b0:500:94c3:8e3b with SMTP id
- b10-20020ac2562a000000b0050094c38e3bmr7076723lff.57.1698116350988; Mon, 23
- Oct 2023 19:59:10 -0700 (PDT)
+        with ESMTP id S231254AbjJXDQ2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Oct 2023 23:16:28 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFDDB10C2;
+        Mon, 23 Oct 2023 20:16:18 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35D32C433C8;
+        Tue, 24 Oct 2023 03:16:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1698117378;
+        bh=p1hhuvIPakueBhPkMTsnJZD7jEV0fRvqzqRBD6XqoAY=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=SE3dOp5CnQIijBCv2/Tuk2N4/tJy1tJRKwkt4QY2fAckQY3nvjFfuOk/rWdfS2hsa
+         4hYgfVdHEpLBPAL18XB/epo72m//06issvriq+/QVME8U9xbsJIlgDS2Ox/TNUMYYQ
+         OsTJigJIEFNtPRbfYFCJPIu3fPdVGqvF3ghSKKRZZQ28d3pDzWQFipgl1XzEoI+agd
+         OF5SGEipUz11F8M4oe/FTq+UHsEqJQzFNHe4edOCzzooKRCzIH9IzTi7TIMv/TBZVy
+         5DTp3R/X75YtHc6ds4iQixbF8azq9YERs0H6291L0+7ZfHv0al2AMscD9A8zgCp65R
+         QwRjPV6RdN/OA==
+Message-ID: <d5fb4c972273c5e18662e5d6914b04fe.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20231019124914.13545-1-angelogioacchino.delregno@collabora.com>
- <CAGXv+5H0rUajeU-i8nYyV2xWFQTnzqxioZCCyyP_RZXKqmcugQ@mail.gmail.com> <283d18028590d57025e5654d18b8b5b7.sboyd@kernel.org>
-In-Reply-To: <283d18028590d57025e5654d18b8b5b7.sboyd@kernel.org>
-From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Tue, 24 Oct 2023 10:58:59 +0800
-Message-ID: <CAGXv+5EpBLnXVdxnk9wBZi5F7U5wdJRfYH7fgg4Lkr1HJXm+WA@mail.gmail.com>
-Subject: Re: [PATCH] clk: mediatek: mt8186: Change I2C 4/5/6 ap clocks parent
- to infra
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>, mturquette@baylibre.com,
-        matthias.bgg@gmail.com, u.kleine-koenig@pengutronix.de,
-        chun-jie.chen@mediatek.com, miles.chen@mediatek.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20231006213959.334439-1-robh@kernel.org>
+References: <20231006213959.334439-1-robh@kernel.org>
+Subject: Re: [PATCH] clk: Use device_get_match_data()
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     patches@opensource.cirrus.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
+To:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        David Lechner <david@lechnology.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Rob Herring <robh@kernel.org>, Sekhar Nori <nsekhar@ti.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tero Kristo <kristo@kernel.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>
+Date:   Mon, 23 Oct 2023 20:16:16 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Oct 24, 2023 at 10:52=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> wr=
-ote:
->
-> Quoting Chen-Yu Tsai (2023-10-19 22:06:35)
-> > On Thu, Oct 19, 2023 at 8:49=E2=80=AFPM AngeloGioacchino Del Regno
-> > <angelogioacchino.delregno@collabora.com> wrote:
-> > >
-> > > Fix the parenting of clocks imp_iic_wrap_ap_clock_i2c{4-6}, as those
-> > > are effectively parented to infra_ao_i2c{4-6} and not to the I2C_AP.
-> > > This permits the correct (and full) enablement and disablement of the
-> > > I2C4, I2C5 and I2C6 bus clocks, satisfying the whole clock tree of
-> > > those.
-> > >
-> > > As an example, when requesting to enable imp_iic_wrap_ap_clock_i2c4:
-> > >
-> > > Before: infra_ao_i2c_ap -> imp_iic_wrap_ap_clock_i2c4
-> > > After:  infra_ao_i2c_ap -> infra_ao_i2c4 -> imp_iic_wrap_ap_clock_i2c=
-4
-> > >
-> > > Fixes: 66cd0b4b0ce5 ("clk: mediatek: Add MT8186 imp i2c wrapper clock=
- support")
-> > > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@=
-collabora.com>
-> >
-> > I'm curious about what led to discovering this error?
-> >
->
-> Is that an acked-by?
+Quoting Rob Herring (2023-10-06 14:39:58)
+> Use preferred device_get_match_data() instead of of_match_device() to
+> get the driver match data. With this, adjust the includes to explicitly
+> include the correct headers.
+>=20
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
 
-MediaTek engineers are saying the original code already matches the
-documentation provided by their hardware engineers. I'm trying to get
-them to respond on the mailing list.
-
-ChenYu
+Applied to clk-next
