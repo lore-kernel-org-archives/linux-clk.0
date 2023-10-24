@@ -2,83 +2,101 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 067ADC00A8F
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Oct 2023 02:59:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CA07C25B67
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Oct 2023 02:59:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232428AbjJXC7M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Oct 2023 22:59:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42238 "EHLO
+        id S232499AbjJXC7U (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Oct 2023 22:59:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231820AbjJXC7M (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Oct 2023 22:59:12 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28885120;
-        Mon, 23 Oct 2023 19:59:05 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B237FC433C7;
-        Tue, 24 Oct 2023 02:59:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1698116344;
-        bh=q+zOUHNZpyyfySvjLWIAqk44DXAPWzP6dh5SDkzRPYI=;
-        h=In-Reply-To:References:Subject:From:To:Date:From;
-        b=odmdHcyty6crbW0U+CjvVuCb+kmm2FHxS0OwOe2smlYNgqAsM2wH893MGTDvNZ6wJ
-         nmt5SD6reBpgTJQ4lwloOChOZwURJ08xI2kVbLklHKq9HrujOORvRRNRnAF//Svu/P
-         Mgq6bCl+jhHEOcsRaSA+fVqmfRzjJ2t2KZVjRGoHejyPVLvdH4z2VS2dhAj4xA5Zjd
-         2wa2OZCInGrR8Rc843syr1g/qwihWUQvR7nVdELEFOFqgArvKFaeGpU9YObOXQUCZv
-         SbNPGQjOc1FaDis2b86Lo5grKlhwKiLn6R0dQ+eU96ulvuIFGrLfG4KmXarqpOhQKi
-         kpBL2SNyNgouQ==
-Message-ID: <07937184481af74c65108bae26526605.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S231820AbjJXC7T (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Oct 2023 22:59:19 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56761120
+        for <linux-clk@vger.kernel.org>; Mon, 23 Oct 2023 19:59:13 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-507b96095abso5965612e87.3
+        for <linux-clk@vger.kernel.org>; Mon, 23 Oct 2023 19:59:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1698116351; x=1698721151; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cvrqgGSngoJnXhESnfS3t+NdB91nFoYVT3tITLPVU4M=;
+        b=i6dAKWjzP8barq/3IpEpyqf9ssxXqAGHROwrf3JijTpIXBWtc5gt9BV3bE0noUFbV0
+         keTtas6Lc4R2EBM/qvtpjuYRgoPnu5VVFPPvK8ySztD/YRpPSnQTFf5xQ+lt1nImXw/j
+         6Lk014crdk1PDc5+S2x9v4grmtE6io0haf4y0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698116351; x=1698721151;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cvrqgGSngoJnXhESnfS3t+NdB91nFoYVT3tITLPVU4M=;
+        b=mScM/uQmWSYephd30sVkf3xgp69RQONat9usfLbiEORKoNGsOuDf9Q72SJT/z/rx9q
+         LSu7RS/D0kJATfldK3jfCcQ0IV+BSMf41M71slkzi0fjS8RJQc1WyADUYHLYP8zeHkO9
+         loDKrYYmXAtwst8DdybPH1XVpjhIp7vzdryK5R9x8XmdjUp6up3BDtEZY0AxGthcAQ1S
+         81TTbxVyg2d03/eo9fk6glQd8+KvZaURdA78X69gofnA7H0b1bT7zujLwjVJ74gDmYj0
+         3uEpU4+sPs/17f48AslAy2F1/yZYjb7jo7ruZxeLHxTUQQVIZsNuwTAPvwyZxhxv3oxF
+         xLdg==
+X-Gm-Message-State: AOJu0YzYRYuICpAnRaWaZOWWH68sp9w26wC2+NvwOGpoFcmAKYUPX7pU
+        gf41IryiD5ykL/n3MCNWMOrd89X3eTB0bh9dUJcvMA==
+X-Google-Smtp-Source: AGHT+IGBrjxdShgGwLm/nKBlp6mMXyHZKc8GJR6Sa8BG8WPw9au3jcqx4fC7Aiq/VT+UoJbUAgQ50zuQjPdOXvQt81c=
+X-Received: by 2002:ac2:562a:0:b0:500:94c3:8e3b with SMTP id
+ b10-20020ac2562a000000b0050094c38e3bmr7076723lff.57.1698116350988; Mon, 23
+ Oct 2023 19:59:10 -0700 (PDT)
 MIME-Version: 1.0
+References: <20231019124914.13545-1-angelogioacchino.delregno@collabora.com>
+ <CAGXv+5H0rUajeU-i8nYyV2xWFQTnzqxioZCCyyP_RZXKqmcugQ@mail.gmail.com> <283d18028590d57025e5654d18b8b5b7.sboyd@kernel.org>
+In-Reply-To: <283d18028590d57025e5654d18b8b5b7.sboyd@kernel.org>
+From:   Chen-Yu Tsai <wenst@chromium.org>
+Date:   Tue, 24 Oct 2023 10:58:59 +0800
+Message-ID: <CAGXv+5EpBLnXVdxnk9wBZi5F7U5wdJRfYH7fgg4Lkr1HJXm+WA@mail.gmail.com>
+Subject: Re: [PATCH] clk: mediatek: mt8186: Change I2C 4/5/6 ap clocks parent
+ to infra
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>, mturquette@baylibre.com,
+        matthias.bgg@gmail.com, u.kleine-koenig@pengutronix.de,
+        chun-jie.chen@mediatek.com, miles.chen@mediatek.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <0eebfc14-dbcd-4987-9e94-ea5630b6c268@linaro.org>
-References: <20231002170021.192740-1-trabarni@gmail.com> <0eebfc14-dbcd-4987-9e94-ea5630b6c268@linaro.org>
-Subject: Re: [PATCH] clk: qcom: gcc-msm8953: fix stuck gcc_usb30_master_clk
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Andy Gross <agross@kernel.org>,
-        =?utf-8?b?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 23 Oct 2023 19:59:02 -0700
-User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Konrad Dybcio (2023-10-06 16:50:18)
-> On 2.10.2023 19:00, Barnab=C3=A1s Cz=C3=A9m=C3=A1n wrote:
-> > According to downstream dwc3-msm source this clock has FSM dependency on
-> > gcc_pcnoc_usb30_clk so enabling it would fail if latter isn't enabled.
-> > This patch add works around this issue by changing parent of
-> > gcc_usb30_master_clk to gcc_pcnoc_usb30_clk. This is acceptable because
-> > both clocks have same parent and are branches/gates.
-> >=20
-> > Signed-off-by: Barnab=C3=A1s Cz=C3=A9m=C3=A1n <trabarni@gmail.com>
-> > ---
-> "meh"
->=20
-> There are multiple cases, especially with qcom, where there are some
-> magic "dependencies" without parent-child relationship. The common
-> clock framework doesn't currently have any good way to handle this,
-> other than some mind gymnastics like you had to do here with matching
-> them against a common parent/ancestor..
->=20
-> Stephen, what do you say?
->=20
+On Tue, Oct 24, 2023 at 10:52=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> wr=
+ote:
+>
+> Quoting Chen-Yu Tsai (2023-10-19 22:06:35)
+> > On Thu, Oct 19, 2023 at 8:49=E2=80=AFPM AngeloGioacchino Del Regno
+> > <angelogioacchino.delregno@collabora.com> wrote:
+> > >
+> > > Fix the parenting of clocks imp_iic_wrap_ap_clock_i2c{4-6}, as those
+> > > are effectively parented to infra_ao_i2c{4-6} and not to the I2C_AP.
+> > > This permits the correct (and full) enablement and disablement of the
+> > > I2C4, I2C5 and I2C6 bus clocks, satisfying the whole clock tree of
+> > > those.
+> > >
+> > > As an example, when requesting to enable imp_iic_wrap_ap_clock_i2c4:
+> > >
+> > > Before: infra_ao_i2c_ap -> imp_iic_wrap_ap_clock_i2c4
+> > > After:  infra_ao_i2c_ap -> infra_ao_i2c4 -> imp_iic_wrap_ap_clock_i2c=
+4
+> > >
+> > > Fixes: 66cd0b4b0ce5 ("clk: mediatek: Add MT8186 imp i2c wrapper clock=
+ support")
+> > > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@=
+collabora.com>
+> >
+> > I'm curious about what led to discovering this error?
+> >
+>
+> Is that an acked-by?
 
-You can't change the parent to be not the actual parent. The consumer of
-the branch probably wants to call clk_set_rate() on the branch and have
-it propagate up to the parent to set the actual rate. Can the axi clk
-simply be left enabled all the time? That seems simpler. Otherwise we
-probably need to leave the axi clk control to the interconnect driver
-and make sure drivers enable interconnects before enabling this branch.
+MediaTek engineers are saying the original code already matches the
+documentation provided by their hardware engineers. I'm trying to get
+them to respond on the mailing list.
 
-When things start to get this tangled I tend to think that we need to
-remove control of the clk from the general drivers and put the logic to
-control interconnects and clks into some SoC glue driver and expose a
-single interface, like genpd power_on/power_off so that general drivers
-can't get the sequence of steps wrong. Instead all they can do is "power
-on" their device, and the SoC glue driver can do the proper sequence of
-framework calls to power up the device.
+ChenYu
