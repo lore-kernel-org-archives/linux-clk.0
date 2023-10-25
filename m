@@ -2,222 +2,137 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7A96C0032E
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Oct 2023 09:47:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A312C0032E
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Oct 2023 09:47:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232691AbjJYJrN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Oct 2023 05:47:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49584 "EHLO
+        id S232808AbjJYJry (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Oct 2023 05:47:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234769AbjJYJrB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Oct 2023 05:47:01 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC2E02D5E
-        for <linux-clk@vger.kernel.org>; Wed, 25 Oct 2023 02:45:26 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-50797cf5b69so7430038e87.2
-        for <linux-clk@vger.kernel.org>; Wed, 25 Oct 2023 02:45:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698227122; x=1698831922; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MsjAaqN9iQ0Nkn90LUrowVZcqqplmGKwBm93B8d6nXI=;
-        b=eYx/Ztkj075Q2Aj1tMFuUrm3yql+Z0lI6yhW8XmEMhecZm5Yfd5tuaAT9wMkYpR225
-         rUIC1PqKosX3wI5M/4k6ZTSBWgkyaOuPzQvjLxHPyqh8xfO/BQRtwPs6QwIr8Dw12tki
-         FfHYoaEXghmZhUUZvSKXw3pkGuT54/2WPL4T7n62HMaBprMwT1WHo7F/nzTlBJz6FyHw
-         PBYYWvYpjT6cbeY1Wkmx/EtwJGdFFQ0TlMFGKkB9H5qhEIbMu7eP9N/yLPkduFxN3ODo
-         eFtvSNi3HAauxUfd5x3nge/hgOPqtsWPxiPtP7lYfjXtPn3dzwH23v2pZlsTsCk1WRv6
-         5iuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698227122; x=1698831922;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MsjAaqN9iQ0Nkn90LUrowVZcqqplmGKwBm93B8d6nXI=;
-        b=dWscXLIehiMLemYmWGs+sxIaJXe8nBT3EmwIGb67nBvolPtatwBdFLEo6zO09lNrE/
-         zz8LEj/LK6M5dGhU+DorESzayoHXsd547rNrTg54Wy9uR3goHJuhAPpRxkUaeeAyrpx7
-         Ywuncq4GkaBZTwtofOcnlMSg4WZ1oloZTfxJa2M+OP+OFmxYU474dMagHG5+Cv2jpuU1
-         MQuqBr3BGGhIlabVctrhwetGVI3Fn6y0wmf+rFXIESmq+7owcZAU1CA/dAYMzTv7HPkN
-         Zyr0eRcNvYcNwWw94UihrkMy3z1jUWsbAniYIqS7YRfQ1hInZOq0YvhLk+4oIJ/PuVav
-         F51w==
-X-Gm-Message-State: AOJu0YxHbqapK0Mfg9ldgmLwqNuZInkeBbLBt6Q3fLS1tObP9bBqmQjE
-        WmlLpNt19ruq3RST93ujDQk55w==
-X-Google-Smtp-Source: AGHT+IEnEo1+RjkiO+az80sgQGWuS5PtpoiZ767Uk/FmfH696W7m+7r9mZZBsxcOs4GPycOhU6Z78w==
-X-Received: by 2002:a05:6512:62:b0:503:385c:4319 with SMTP id i2-20020a056512006200b00503385c4319mr10767995lfo.19.1698227121559;
-        Wed, 25 Oct 2023 02:45:21 -0700 (PDT)
-Received: from [192.168.1.212] ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id k6-20020ac24f06000000b005007fc9ccd0sm2461452lfr.113.2023.10.25.02.45.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Oct 2023 02:45:20 -0700 (PDT)
-Message-ID: <6e4408d8-2270-4abc-b9a7-24cae489a08b@linaro.org>
-Date:   Wed, 25 Oct 2023 12:45:20 +0300
+        with ESMTP id S234943AbjJYJrn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Oct 2023 05:47:43 -0400
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2136.outbound.protection.outlook.com [40.107.20.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96B32D62
+        for <linux-clk@vger.kernel.org>; Wed, 25 Oct 2023 02:47:36 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=c8d43peXyrKjbLqygHSqHLKwWXJB7XXVwdyxLJ4tbnfYsQU+KUPCwVMFSJStHSIrJaMQIqkFcPbEDu/4h9ss2cxGeTZIq58BZO4JREKTZOMPnoOJb0W8Vjk0OoMBbxFbqLCDKG58UAgVLh2u3AwaOc4F52NWrO5H4PkBo9zP2o7w/jtQeWdThuf72wOfc0iWDqiSCVG+bheHu0gZHJ6FfChfpEu3ABr1TnuFs6rWDvIuS/NAywiCvxYYggMIEJoCKRfcEYdxK8hmf8Lj1O4vR57JfLk+ZkRmNeYw8xOk97wPR/9cSGpYjGkcSLfSjd7bXsauedtHEWMBH9xirdFgcg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WNIOSG+uOIizIp7ltCOZWvprp+O45MI7RopEfR+cVBQ=;
+ b=U2Yn3oGVpOyCHoGLPLMUQuvDEMKNtaccaDtakoFSFU/SjvMcDydsbqiXRBRRaFyZXvWOD+tj6juamzbAvbAGas2DRTpOCUzlOlEuqyubHiVAm8b/Tt6ZZKtjxRrT1g98ByYcoaF86ohONHEISdjN6sj8QS2KXxlpnZK6rwQC59ochpoieIw7UeIz8Y7pm6QVWM28fRdDKxlRErDpLbFMgHmTVEad47bP8Bspa+21CsBiwwrjBP2aDTpGHC/AtF7IwfUiQ4wy0TPddEJYYZQvlc7+z3WQyltZ3ENhdqaFxNOjv7YJq9l6f1PkIZimnL1ZFYOkdb7IS9NKGRyIIGMubw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bang-olufsen.dk; dmarc=pass action=none
+ header.from=bang-olufsen.dk; dkim=pass header.d=bang-olufsen.dk; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bang-olufsen.dk;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WNIOSG+uOIizIp7ltCOZWvprp+O45MI7RopEfR+cVBQ=;
+ b=GrkcrZ886yfQEVW1bpmRZ+IxepEnDotRtnv/0CvlVwOsl8qfAr6REEBNUQKJhrXKPAYs5OOJVaDr4hFHrAW4LurLrB99TB0qrGZnxKvrX/F2PfWpCAFS9OTDpxeEn5mDRDfw3BUYkYwL6FPqqXjwkivaNLAdTa2gGhPeFdlxRQ8=
+Received: from VI1PR03MB4942.eurprd03.prod.outlook.com (2603:10a6:803:b6::20)
+ by AM9PR03MB7679.eurprd03.prod.outlook.com (2603:10a6:20b:41c::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6907.33; Wed, 25 Oct
+ 2023 09:47:34 +0000
+Received: from VI1PR03MB4942.eurprd03.prod.outlook.com
+ ([fe80::67c9:f19a:51af:df35]) by VI1PR03MB4942.eurprd03.prod.outlook.com
+ ([fe80::67c9:f19a:51af:df35%6]) with mapi id 15.20.6907.032; Wed, 25 Oct 2023
+ 09:47:34 +0000
+From:   Emil Abildgaard Svendsen <EMAS@bang-olufsen.dk>
+To:     Stephen Boyd <sboyd@kernel.org>
+CC:     Michael Turquette <mturquette@baylibre.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH] clk: fixed: handle failed clk setup
+Thread-Topic: [PATCH] clk: fixed: handle failed clk setup
+Thread-Index: AQHZbs/wg8NYgL3w6keZ8goPOXqOOq8wPYWAgSs1aIA=
+Date:   Wed, 25 Oct 2023 09:47:34 +0000
+Message-ID: <ZTjkNcz5bS9TbmoR@emil-HP-ZBook-Studio-G5>
+References: <20230414125207.33722-1-emas@bang-olufsen.dk>
+ <48bd83b09adf698976fd10f71463a553.sboyd@kernel.org>
+In-Reply-To: <48bd83b09adf698976fd10f71463a553.sboyd@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bang-olufsen.dk;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: VI1PR03MB4942:EE_|AM9PR03MB7679:EE_
+x-ms-office365-filtering-correlation-id: b8e472e1-5250-40f8-a939-08dbd53f69f8
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: xhE2lDY5X8gKK7K+AxfibQcE4cHjKaNeTzp2Tt74B1kPY3uvu4I4vc4EFaDGyJxaAx9WcrzjTcovCk+gnQeSS7FCYhPj+s7ATsdvabhaBR3zo799Vt8WDgALn50NhvnxGahDf6H1pRyddAODHHbp16FQSmGq/9HdDUr2OANVpwT64M/65pe76wbe84H2pWTuAyv8wZ990VUqwIBVSNuAyLTS/Zh7IJ9c9+jI1nKxgCKiZA3fPKbLCu3446TKnfolXtT2/8NanSvOOkF0maBphXURuap+y35Ejh3xqY5y/5A0Gbij//IR9L0EMk5juGRuAOAUOTtAggD7o45qrYAxmlmxkBnLS9Ei3pqAGUSF6tGMCg9NVLypy5gMaY1hFO2f7/RibKHQEuLCGmYR4Bdp+FDzaYf5KE4/hszEka0TRlkeDaIMpyQPggW3EwQ7qxrQh/wuwRIOkWmRIz9gDlQ+GBSmda9Wjpd+5XeKh8FkrSLA2X2n3bu5SR+2W/hQCZ8zd0r3zNOY8radd1KkHpEEdhNFUGHXmeyrXdI9ax+TOmh1XIvHUDKGag29iERmnHN7Y6m0+4yX/k5u1sG6lc+Fbj/bk33jJ/eV2dg1bzy+Ujq14fQ+RG4BdTpKcB/sDq5L
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR03MB4942.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7916004)(136003)(39850400004)(376002)(396003)(346002)(366004)(230922051799003)(64100799003)(186009)(1800799009)(451199024)(6506007)(5660300002)(71200400001)(41300700001)(26005)(83380400001)(38100700002)(86362001)(6512007)(33716001)(122000001)(2906002)(9686003)(478600001)(91956017)(76116006)(316002)(6916009)(66946007)(66556008)(66476007)(66446008)(54906003)(64756008)(6486002)(4326008)(8676002)(8936002)(38070700009);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?c79lIZi8rgqE4XAIQGKBQWKM0VfQ/YH46iu/Ha5yWnoYo3efANxYilEHxnc9?=
+ =?us-ascii?Q?/+8yzkesEoqUd0qFuOysd4VaefsoQO+d8idS7TIhsadXyY5YV0QUhytGroft?=
+ =?us-ascii?Q?mJytlT/YPoqjaMGrkxFC1QpmYmlSjVPQ/nsUd7UqNaO6Gev/lU9XBRs8gSDw?=
+ =?us-ascii?Q?uvmk3+/ri0oS9d2zhQguxKgecWZS+2VJFw7c0UJ0dYDNWcqFvi76y5kMPtvN?=
+ =?us-ascii?Q?vnInK1v/tyxrseS6pFk4rLcfSS6mDLR/oj3JgHxPcUPQoVFEmevO+I6dcerq?=
+ =?us-ascii?Q?rY9cVfGnNLLROni9m4hFIJavD/ZL1xYYIcEA7MvRRss+cUK7DaZrLyNuzThy?=
+ =?us-ascii?Q?hSRGjLQl37HBGGstIFxJx0uIlIrhO/mV6cifAStUi8b3WpnM5y+V0qR+gVeu?=
+ =?us-ascii?Q?Fwb1t5Gr0X69QN85fvbgssxcf/j+BUapv/ExdaEl+0EEk36IWvGeuV0DEzqG?=
+ =?us-ascii?Q?N1+C7AULOFxvjR8vtIdW8lQSr3ny8uAK6364rulS5vXxx9E6Wnxk6xiA7ULs?=
+ =?us-ascii?Q?5EVrl8lPNljO/FCxkhXBVn2yRbI1jCSoj3J7c55L+zWpCgwNqWw2WC5vZcUk?=
+ =?us-ascii?Q?6VKn7zf+7fPHScK+eBpoG0IS2o+gg+d++68SJoO+l/0nIx8aBczwQ3y9MKVU?=
+ =?us-ascii?Q?+e5DxrMUOsxgZUTget14avoahfprv8P9c9X6FvkXHPalV5fzlqjtr4QXrmnp?=
+ =?us-ascii?Q?qO+6tINnnbFptKdAaO5pQJpzDsW63CxhJkta30qda0aYiTcn0xBAvIj3VbvB?=
+ =?us-ascii?Q?sRXZ4BVPek5ue35gNcvGACEumojiCsCWsHUzt1SnIgch9Gw6S346LXSJSS7l?=
+ =?us-ascii?Q?cbtacs8SV4ZFlNQMMMlr988tRDQtf/sQ0CDFTyO1RLpyZTeoxiXU6DSpZHev?=
+ =?us-ascii?Q?QqxOhzfzGzZg/xsyOJvGEPf+yg7A9MnqoY7plzTJTrtRLeUh3p8TRRmH1Dy6?=
+ =?us-ascii?Q?eH2rXpUe5OqcGVaAOsAbuCO+9GoMT+wzrCC56Agns/AOW0n1cwWv0YGuBHWN?=
+ =?us-ascii?Q?wFJ/X/2F42ShWX5W4dBdtSVTDH+jhV5CT2ji2EBBewmP1vy3uIKCidW9cSxz?=
+ =?us-ascii?Q?agfv01ZSpofbvyjwBBJj1dW/2DN1ycrjXjT6KYmAwvaj65Ab/UDYMz41HhZ6?=
+ =?us-ascii?Q?TqqTdshphYi1dWh4WHyiZXVZNZNBAFXHFc6AJ2qk3mAHcpPSCR0Ktph18qIP?=
+ =?us-ascii?Q?4A8xTPc7iREXVprQsH2T9DZRQS6gC4PGJlP4UNqbJ5QEF72Y/w3It8ZbZDGb?=
+ =?us-ascii?Q?NZule/L3M0K4s7Q6rQ7xZZEFX9aF/bx+5HHs7X8axClRtv/DpgB7QSkcStVG?=
+ =?us-ascii?Q?D0mkQg+CtVkmsJXncdUX7MfP78G/+L+oL0B+x43V6bWNlYjqvgV2ROx5A62A?=
+ =?us-ascii?Q?EdPBwU99ZNwgEYquf+ntydGugPZhof3nUBHBu+DBzbGaF3DbuttHPS1p/56e?=
+ =?us-ascii?Q?2jyskMByCXsHJaTd2XQLaPoMTnb7dsNnPh82HkS1MYCZs4jhLpINnTcD0F0H?=
+ =?us-ascii?Q?gZmhuoKsvGo6sdPsgDpS7oH+TgIK8WyIl6j8+NrRHutKY0/MhhtYhU0WVz0a?=
+ =?us-ascii?Q?AHS3dDVbDrscbZ/u5qX+D3uzCEcG6hjsR+9OO7mWsrxhs8BzVpJEbFX+spla?=
+ =?us-ascii?Q?Vw=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <23C63036C435BC468D9274EBF55373CB@eurprd03.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/2] clk: qcom: implement RCG2 'parked' clock support
-To:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        freedreno@lists.freedesktop.org, Rob Clark <robdclark@gmail.com>
-References: <20231004003125.2289613-1-dmitry.baryshkov@linaro.org>
- <20231004003125.2289613-2-dmitry.baryshkov@linaro.org>
- <f129633e-4df7-4984-a19e-c16e6c7c8f3f@linaro.org>
- <CAA8EJprGfS5x89FOWhjPCdLzSNbEK-U1h8qVmfiLc6+4NjEiNA@mail.gmail.com>
- <e96499ff-76ec-482b-b18c-ee293259b8a7@linaro.org>
- <55293371-9d7c-404b-a969-81248bf55e24@linaro.org>
- <a9c805b5-5c3e-9e25-ad82-021a421c309b@linaro.org>
-Content-Language: en-GB
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <a9c805b5-5c3e-9e25-ad82-021a421c309b@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: bang-olufsen.dk
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR03MB4942.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b8e472e1-5250-40f8-a939-08dbd53f69f8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Oct 2023 09:47:34.0609
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 210d08b8-83f7-470a-bc96-381193ca14a1
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: RLw6d7EkgLZ91xEbbuimuqW6+0uwORr049ypqzL52Wtj5DigcX6cpNEsKyNaumKzmLpaopZ/PsuK2taad7ajKA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR03MB7679
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 07/10/2023 13:08, Bryan O'Donoghue wrote:
-> On 07/10/2023 00:45, Konrad Dybcio wrote:
->> On 4.10.2023 14:52, Bryan O'Donoghue wrote:
->>> On 04/10/2023 13:08, Dmitry Baryshkov wrote:
->>>> On Wed, 4 Oct 2023 at 12:27, Bryan O'Donoghue
->>>> <bryan.odonoghue@linaro.org> wrote:
->>>>>
->>>>> On 04/10/2023 01:31, Dmitry Baryshkov wrote:
->>>>>> clk_rcg2_shared_ops implements support for the case of the RCG which
->>>>>> must not be completely turned off. However its design has one major
->>>>>> drawback: it doesn't allow us to properly implement the is_enabled
->>>>>> callback, which causes different kinds of misbehaviour from the CCF.
->>>>>>
->>>>>> Follow the idea behind clk_regmap_phy_mux_ops and implement the new
->>>>>> clk_rcg2_parked_ops. It also targets the clocks which must not be 
->>>>>> fully
->>>>>> switched off (and shared most of the implementation with
->>>>>> clk_rcg2_shared_ops). The major difference is that it requires 
->>>>>> that the
->>>>>> parent map doesn't conain the safe (parked) clock source. Instead 
->>>>>> if the
->>>>>> CFG_REG register points to the safe source, the clock is 
->>>>>> considered to
->>>>>> be disabled.
->>>>>
->>>>> Why not have a new bit in .flags ?
->>>>>
->>>>> Instead of lying about the clock being off, mark the clock as 
->>>>> "parked",
->>>>> or "safe parked" or whatever term we choose for it ?
->>>>
->>>> The main problem with adding flags doesn't fully scale. From the CCF
->>>> perspective, what should be the difference between parked and disabled
->>>> clocks? How should it treat the parked one?
->>>
->>> Exactly the same as a disabled clock, except you get a "parked" 
->>> instead of a "disabled" when looking up its state and you don't have to
->> The thing is that currently there's only the notion of "enabled"
->> or "not enabled".. Introducing a third state here would be the
->> jump from boolean to quantum logic!
->>
->> I think that abstracting this information away from Linux is not
->> an issue.. These clocks "can't be any more off", or the SoC will
->> explode badly and Linux will be unusable..
->>
->> Think of it like CPUs with a hypervisor, you shut them down, but
->> the physical number crunchers on the host CPU may not actually
->> get cut off from their power source, but there's no reason for
->> the VM to know that. That's probably what happens on our little
->> virtualized snapdragons anyway..
->>
->> Konrad
-> 
-> So not a state but a flag.
-> 
-> 1. The clock tree we declare _should_ be a fair and complete description
->     of the hardware clock tree.
+On Mon, Apr 17, 2023 at 05:34:45PM -0700, Stephen Boyd wrote:
+> Quoting Emil Abildgaard Svendsen (2023-04-14 05:52:16)
+> > When initializing clock providers "of_clk_init" will try and init
+> > parents first. But if parent clock is provided by a platform driver it
+> > can't. Then clocks will be forced on and OF_POPULATED flag will be set
+> > blindly. So if setup failes e.g. with -EPROBE_DEFER the clock will not
+> > be probed later on.
+>=20
+> Did something break this recently? For example, commit c28cd1f3433c
+> ("clk: Mark a fwnode as initialized when using CLK_OF_DECLARE() macro")?
 
-Yes and no. We already have clocks not present in the tree for different 
-reasons: being handled by the RPM(h), being critical to the platform 
-integrity, being useless for Linux, etc.
+Sorry for missing this mail. But no nothing broke I just added support
+for some HW in a DT where the clock parent has a lot of dependencies and
+has a likelihood of getting deferred until all the dependencies has been
+probed.=20
 
-> 
-> 2. If we remove XO from some trees with the only indication of
->     differentiation being the callback you bind the tree to you need
->     someone reading the code both know about parking, derive that
->     information from reading the callback, which means you require that
->     person to read the code in detail and understand it.
-> 
->     That's alot of tribal knowledge we are storing up there.
+> >=20
+> > This patch will clear the OF_POPULATED falg if clock setup failes.
+>=20
+> s/falg/flag/
 
-I think adding a huge comment should help. Because otherwise you sound 
-like 'we should not expect kernel developers to read the code', which is 
-not true.
-
-> 
-> 3. A different approach is to add a new CLK_DISABLE_PARKS_TO_XO - or
->     whatever name makes sense.
-> 
->     a) The clock tree declared in the gcc, camcc, dispcc, videocc or
->        is correct and aligned with the documentation and silicon.
->        Right away this avoids patches sent to 'fixup' incomplete trees.
-> 
->     b) When you look at a clock struct clk_branch_gcc.clk.hw.init.flags
->        there is a big dirty CLK_DOES_THIS_THING flag which doesn't
->        require a developer to have tribal knowledge about how we've
->        hacked up clock parking.
-
-But the problem is that this flag is not generic at all. I think we will 
-be damned and prosecuted if we try adding anything about PARK_TO_XO to 
-<linux/clk-provider.h>.
-
-And also there is always a question on the state integrity: if the clock 
-is parented with the XO on the driver bootstrap, should CCF treat it as 
-'parked' or as 'enabled, clocked by XO'?
-
-> 
-> My basic point here is the declaration of a parked clock should be 
-> obvious, easy to understand and not lend itself to "helpful" patches to 
-> "fix" the clock tree.
-
-We already tried doing that... And it failed. For the PHY PIPE clocks we 
-ended up doing exactly the same thing, because it simplified the code 
-_a_lot_.
-
-> Also consider precedent. When you want to quickly get your clock 
-> controller up and running - you generally open existing upstream stuff 
-> to clone and own as much as possible. A BIT_DIRTY_FLAG transmits more 
-> information than a small callback with esoteric logic buried inside of 
-> the disable path.
-> 
-> I agree with your point on a new state but similarly I think the 
-> callback buries too much information away. IMO the top level clock 
-> declaration - rather like the DT should as closely as possible declare 
-> an accurate clock tree.
-> 
-> If we need to do special stuff to an individual tree, then CLK_FLAG it. 
-> Are qcom clocks really the only clocks in the world that need to park to 
-> XO on the disable path ?
-> 
-> Alternatively continue on with the callback but make the name more 
-> instructive not "park" since we are dealing with people who have English 
-> as a second language, third language. English is my first language but 
-> still a "parked" clock means little to me except that like you and 
-> Dmitry I work with qcom stuff so I understand it.
-> 
-> "disable_park_xo->clk_disable" or something - even still I think 
-> removing XO from the clock tree is asking for trouble.
-
-clk_rcg2_disable_parks_to_tcxo_ops ? Slightly ugly but I'm fine with that.
-
-> 
-> Start from the principle that gcc/camcc/dispcc clock trees should be 
-> complete and work from there.
-> 
-> That's my 0.02 anyway.
-> 
-
--- 
-With best wishes
-Dmitry
-
+Thank you! I will update the commit message. I'm still new to the
+mailing list. What is the preferred way? Sending PATCH v2 or just resend
+the updated patch to the mailing list?
