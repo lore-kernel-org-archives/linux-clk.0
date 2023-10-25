@@ -2,125 +2,146 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5634BC25B6E
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Oct 2023 17:36:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45D9CC0032E
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Oct 2023 17:37:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229453AbjJYRgR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Oct 2023 13:36:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44046 "EHLO
+        id S231263AbjJYRhc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Oct 2023 13:37:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229485AbjJYRgM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Oct 2023 13:36:12 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C24F1182;
-        Wed, 25 Oct 2023 10:36:10 -0700 (PDT)
-Received: from mercury (cola.collaboradmins.com [195.201.22.229])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: sre)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 70F1E6607349;
-        Wed, 25 Oct 2023 18:36:09 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1698255369;
-        bh=R1j0yF7ON9HljamXpo4RStWWAUzHA+3I02cIzDZbN+E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Js86oV2d5JuhzHjZBL0v0OkFlQkw+AifCEvxM/t9mTYki5BalgXOkp5gmI8wV83Xd
-         8iWv5m+l4CNyIRFgNK8Nsb5i06jR/fuClZUAwKicSAnGcWEede9YyhanVMfva7PGOS
-         lhU4lLIzi2tGr2CrX7qmUqI0XeMxPNN85z6BOF+GzV4S956EqmhkR1tWVWKZTsLabz
-         gbFyGDN2swhB+M9lmdy5v7bQBrfaj8+MZrLBCWpOmPq3+24UAB8u97orvp0ZHfZaqg
-         hYbxzEX8O995BF6niTasSFM2cSZxtlOI0NfH6X07aCrtz5sV6jgrr3ogLl8yubPtOB
-         zWonJwi33UgSg==
-Received: by mercury (Postfix, from userid 1000)
-        id 873DD106057B; Wed, 25 Oct 2023 19:36:06 +0200 (CEST)
-Date:   Wed, 25 Oct 2023 19:36:06 +0200
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        with ESMTP id S229561AbjJYRhb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Oct 2023 13:37:31 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C12A413A
+        for <linux-clk@vger.kernel.org>; Wed, 25 Oct 2023 10:37:29 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-9b9faf05f51so4371566b.2
+        for <linux-clk@vger.kernel.org>; Wed, 25 Oct 2023 10:37:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1698255448; x=1698860248; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yl2dU+9nKTty0GF9smAcA+fSgOnuLvaP8a1ykaCWH2s=;
+        b=GDT5CQLsLmsaYAcNThygAaspOpag/SlpISPnmecK//fJguIXXv0WSqoRAv4pwX1NZ7
+         FgYq90wJt4XfjjANVZUBhJ/xFuysIUIT/gNvqCJNXbL4O+tmYCrzcJBOlofQ9wnfg9OO
+         dRbATjDlG1hV3agJN4CFhmnJ6JXhUFuzu1hks=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698255448; x=1698860248;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Yl2dU+9nKTty0GF9smAcA+fSgOnuLvaP8a1ykaCWH2s=;
+        b=Ww6DcxdOjBEOSletkbTV2C3VyzVXaOASdGvh8uTFXn7f9duTLWQTT3w3MsTzTvJ9Ou
+         Tl78hqMK3ubZuBb2Fnj+cFo+Mca8QGmDjyXp87Y1CciCX9eJsaxJGfZbLzAgTeJNMEU3
+         9qEM0moBDcfvszjeFaZnFl8BA2kEhhCce5hnIfjsbul/JzMABUufOnPtztRn6+ITrvPK
+         E605YsIhSCDVXj6tqjJfeGndn3DhIsZ1PnABVw/7yQbh27XgDHBUFGxkufmExp9w6jdK
+         /9gxR+nGmAWQsuV+yeA+J3yhEVBCuZyjAQtqKWouHOQoU5NqloxIaaxtupnLIDXBeTWL
+         LoZg==
+X-Gm-Message-State: AOJu0YxJNQd6B+MS8SCP3L1dfj6fFq5AzvsBV396BWHIWYa5CcMJz4Kr
+        8ZC0E372uiULxfYt3B/uHGq5TEtWwHWNFTPEJwTGyQ==
+X-Google-Smtp-Source: AGHT+IGSuo8BYOOXzP+uIxsEBW0usEmOIaX+84BPhYJhLQkcsi9z3sNfuQ7MINSZ3SHhQg/mUQWJdg==
+X-Received: by 2002:a17:907:7285:b0:9b2:be5e:7545 with SMTP id dt5-20020a170907728500b009b2be5e7545mr12387020ejc.36.1698255447674;
+        Wed, 25 Oct 2023 10:37:27 -0700 (PDT)
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
+        by smtp.gmail.com with ESMTPSA id o1-20020a170906774100b009c6e58437dasm10316507ejn.37.2023.10.25.10.37.26
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Oct 2023 10:37:26 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-9be1ee3dc86so5919866b.1
+        for <linux-clk@vger.kernel.org>; Wed, 25 Oct 2023 10:37:26 -0700 (PDT)
+X-Received: by 2002:a17:906:c155:b0:9be:3c7e:7f38 with SMTP id
+ dp21-20020a170906c15500b009be3c7e7f38mr12949467ejc.10.1698255446403; Wed, 25
+ Oct 2023 10:37:26 -0700 (PDT)
+MIME-Version: 1.0
+References: <20231024161931.78567-1-sebastian.reichel@collabora.com>
+ <20231024161931.78567-2-sebastian.reichel@collabora.com> <CAHk-=whYDbZ29fx_xeSxtYSjtF8WJkaLjzyB8RN5_Rk9Sh-YyQ@mail.gmail.com>
+ <CAHk-=wjO5ivM6k7iMiThO9JfxH0dhLe=mcC4TQwReU0nBCnWpg@mail.gmail.com> <7ba90240-33ba-4e08-af38-3ec2d40c3837@rasmusvillemoes.dk>
+In-Reply-To: <7ba90240-33ba-4e08-af38-3ec2d40c3837@rasmusvillemoes.dk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 25 Oct 2023 07:37:09 -1000
+X-Gmail-Original-Message-ID: <CAHk-=wieb+dUFet+pNqB7MTy88iYQU3KtTK9V0JHnxwwKoMGpQ@mail.gmail.com>
+Message-ID: <CAHk-=wieb+dUFet+pNqB7MTy88iYQU3KtTK9V0JHnxwwKoMGpQ@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] math.h: add DIV_ROUND_UP_NO_OVERFLOW
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         David Laight <David.Laight@aculab.com>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         Vasily Gorbik <gor@linux.ibm.com>,
         Niklas Schnelle <schnelle@linux.ibm.com>, kernel@collabora.com
-Subject: Re: [PATCH v4 1/3] math.h: add DIV_ROUND_UP_NO_OVERFLOW
-Message-ID: <20231025173606.i2e74tfpbo6as5u4@mercury.elektranox.org>
-References: <20231024161931.78567-1-sebastian.reichel@collabora.com>
- <20231024161931.78567-2-sebastian.reichel@collabora.com>
- <CAHk-=whYDbZ29fx_xeSxtYSjtF8WJkaLjzyB8RN5_Rk9Sh-YyQ@mail.gmail.com>
- <CAHk-=wjO5ivM6k7iMiThO9JfxH0dhLe=mcC4TQwReU0nBCnWpg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="3xdyay7hajk67vjt"
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjO5ivM6k7iMiThO9JfxH0dhLe=mcC4TQwReU0nBCnWpg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Tue, 24 Oct 2023 at 22:03, Rasmus Villemoes <linux@rasmusvillemoes.dk> wrote:
+>
+> Both the existing and new implementation are simply wrong for negative
+> n, because / doesn't do floor(), it does round-towards-0 (I do believe
+> that's a bug in the C standard, but not much one can do about that).
 
---3xdyay7hajk67vjt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Honestly, while I found several cases where the arithmetic was done
+with a signed type, all the ones I looked at were purely about the
+_type_, not the values.
 
-Hi,
+Any actual negative values would have been too random before to make a
+difference. In that patch, I tried to keep the signed type around
+mainly to at least get *similar* values to the old code, but honestly,
+it was all broken before already if the values were actually signed.
 
-On Tue, Oct 24, 2023 at 12:53:03PM -1000, Linus Torvalds wrote:
-> On Tue, 24 Oct 2023 at 09:32, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > I would really prefer to just make our regular DIV_ROUND_UP() DTRT.  Bu=
-t:
-> >
-> >  - people do use it with complex first arguments (ie function calls
-> > etc) that we don't want to evaluate twice
-> >
-> >  - we can't make it an inline function, because the types aren't fixed
-> >
-> >  - we can't even use a statement expression and __auto_type, because
-> > these things are used in type definitions etc and need to be constant
-> > expressions
->=20
-> Ok. I have a potential beginning of a solution.
->=20
-> It is unbelievably disgustingly complicated. But it might approach
-> being correct.
->=20
-> And by that "it might approach being correct" I obviously mean "this
-> is untested, but builds at least some kernel code".
->=20
-> I'm almost certain it will fail on more complex cases, because I
-> already found a lot of questionable stuff that was simply hidden by
-> the old macro just silently doing the C arithmetic type conversions,
-> and this thing does type handling manually.
->=20
-> I'm hoping that somebody will go "Linus, you're just being
-> *completely* silly, it's much easier to do XYZ".
+If it were to change the result and somebody would find a bug due to
+that, that would be a good thing, in other words. The negative value
+would need to be fixed anyway - as you say, integer division of signed
+values is simply not rgeat in the first place.
 
-I think your new __div_round_up_ull() should also be used by
-DIV_ROUND_UP_ULL, which is defined in linux/math.h.
+Side note: if you dislike the "round towards zero" behavior, I can
+tell you that it is better than the historical alternative, which was
+"implementation defined".
 
--- Sebastian
+IIRC, the rule used to be that signed division could either round down
+or towards zero, and the only rule was that (a) it had to be
+documented (ie "implementation defined" rather than "undefined") and
+(b) the modulus had to follow the same rules, ie regardless of
+rounding, you'd have
 
---3xdyay7hajk67vjt
-Content-Type: application/pgp-signature; name="signature.asc"
+  (a/b)*b + a%b = a
 
------BEGIN PGP SIGNATURE-----
+That said:
 
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmU5UgYACgkQ2O7X88g7
-+pr6lxAAney3xsyWL9nxuzXlOqg2Bt+J+bDxMLJpjmNnsXbt3UjeyNOkBd1GBaaF
-4rkeE1wVapAmWMdt+zoNmX+1A/r0gF6So80qAf622+Ae2L+78h36M1cnb4KPoBoD
-ffNmWVaf7lJeuNfwbYfOs/ymXx2b0abs7Pf8IbrKl04ER+oCzWlaeaxzsMocyvw2
-0CKoYw/jyWDnFhREC0qOJTb8oiUQHfSAa5mo61jBzjMErtdizF0rBG389W6GGgXA
-N8pMZg502VAAOqxQRke3XS5Zk8IEHBj/aKrGRUvKDd5IbqwYWJT74p3/TionUs06
-Z/TEr3X8NW4TElNRyxCqgudNXWqs7KYDB4tj7cDWHktPysw65Ow60M8BHExSKWc0
-hfSbbdnN88DRhP8KP6m//dArD7cN+EVmLUmfNNzJ8GKxVdOGWvLbOUDCWq2+/Vzg
-lsnv9CkWGjkCwzz8fzATkMfB0SW9SeCtAz1/9QGfWsV5M7rVWalkUyd1DCKSmtgG
-G3V0+tTVJunazyhKBxzY1Y40HZB7BCfABuHTNwnWsu7yNQi52o1+GpkbSf9ieRD+
-NmW4jgxqJzp8wzxpGhlHm1/R59vLSaTXWHP7UvaUQD/Jp4adik45m++iykv0XkTW
-ErDfEJPQWkxVjybb6RIKdl9I1qQfbBVgOUzgOa1tb298xc8Ngys=
-=jhkV
------END PGP SIGNATURE-----
+> Preventing signed types from being used is probably too difficult.
 
---3xdyay7hajk67vjt--
+It might not be. My horror with _Generic() is certainly not pretty,
+but it *does* have the advantage that we could error out for signed
+cases.
+
+I did that initially, and it didn't look horrific, particularly if you
+just accept signed positive constants as unsigned values (which
+requires another bit of macro magic but is not conceptually hard).
+
+The patch I sent out was not it, though - it was meant really as a
+minimal "something like this" that still compiled my defconfig.
+
+> Aside: I don't think uapi/ stuff can include non-uapi/ stuff.
+
+Yeah, no, I left it in that uapi header just for the same reason I
+didn't bother trying to fix any signed type cases - actively avoiding
+changes *outside* the DIV_ROUND_UP() case itself.
+
+In reality, I'd just make any users of __KERNEL_DIV_ROUND_UP include
+<linux/div_round_up.h> and get rid of the crazy UAPI thing entirely.
+
+So ignore that part.
+
+> Aside2: do_div(n-1, d); probably doesn't compile :)
+
+.. I did say it was untested and "might approach being correct".
+
+That 32-bit ULL case should also have some attempt at checking that
+the divisor really fits in 32 bits. Because I still refuse to believe
+that the full 64-by-64 divisions are sane on a 32-bit machine, and
+anybody who does that needs to go to extra lengths for them. No
+"silently do them without telling the programmer they are doing
+something horrendously bad".
+
+                Linus
