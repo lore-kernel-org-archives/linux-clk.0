@@ -2,87 +2,89 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0E46C25B6E
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Oct 2023 08:45:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 490E5C25B47
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Oct 2023 08:46:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234006AbjJYIpi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Oct 2023 04:45:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39734 "EHLO
+        id S234431AbjJYIql (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Oct 2023 04:46:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232666AbjJYIph (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Oct 2023 04:45:37 -0400
-Received: from mail-yb1-xb2f.google.com (mail-yb1-xb2f.google.com [IPv6:2607:f8b0:4864:20::b2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5340A136
-        for <linux-clk@vger.kernel.org>; Wed, 25 Oct 2023 01:45:30 -0700 (PDT)
-Received: by mail-yb1-xb2f.google.com with SMTP id 3f1490d57ef6-d9a6399cf78so580134276.0
-        for <linux-clk@vger.kernel.org>; Wed, 25 Oct 2023 01:45:30 -0700 (PDT)
+        with ESMTP id S234358AbjJYIqh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Oct 2023 04:46:37 -0400
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 569A1136
+        for <linux-clk@vger.kernel.org>; Wed, 25 Oct 2023 01:46:31 -0700 (PDT)
+Received: by mail-lj1-x229.google.com with SMTP id 38308e7fff4ca-2c5056059e0so82068611fa.3
+        for <linux-clk@vger.kernel.org>; Wed, 25 Oct 2023 01:46:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698223529; x=1698828329; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=RUjEKPPK1HVvfm5iMA1jsGeiAQzbP3C1OGLLdP7j+F0=;
-        b=kSM011+WAbhKhCRdz24MzwZyamjVKjC/cB3FztXBlYvS0d7bsbuzPYja3I9/Q09xm0
-         gsF4aVwWcbkGNVnRqNkcamg7dVf/7LGH8turTSUXWcrDh5wzN7wiAEYtnpAIzsGMy4bD
-         BMwY6gWhdDRicHXaA569SlHyTA55BxTqxWA+LtBT2QHi8x6mQAUKvHk7+pbnqk1hKZkv
-         idwO3Iw0UCKwyULLyjvBKSH5zZhDcvI8aaT9PKb4NQoLOW3hVzXqmzzkpQ8HTCRjjkkv
-         Eyc/rv4A1hGRti6z9yxJEsuCXHy/KOMZTq6GRsbc/dsuMU1WchD8OapOEKeedNoRaYR5
-         djLQ==
+        d=linaro.org; s=google; t=1698223589; x=1698828389; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2/qDJt2TktcCTAjVqQQhY9/t4tuTrwTtLlHAGkujnds=;
+        b=L0rH+BHDTRJltVtYgGHibtc2kAhZRpfQzX17xTaf3FYZUoehotgfexGZAO95Qkwgfq
+         if397bM3mt7YLJHPb9Th3IP1sbeuZsdX3XZf+kkLx4vtkpl6VfEV9fsQh2XbAMNvelsw
+         V/pCYBedExVegIoHtCxuAUWLdj/sF3a1pWr97uMFh5w8PsADJLZKUYcIAzmJ0eVmlb9W
+         i4B4iX5dUBtNbOQX+E1BpVoKcK9CXXCOoMkzDqhcjpWqnXateDLDRMTqGOyf+vRMVhJ6
+         +BSZdyfHti2XZIRpvKvSAvDVxt9sTyQr60Ys9XjWypganqFvsTgOnaIFJeNic1AmF3Po
+         2VVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698223529; x=1698828329;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RUjEKPPK1HVvfm5iMA1jsGeiAQzbP3C1OGLLdP7j+F0=;
-        b=hj3RpETjfCBht9JSJw+ZNU/GlMbRN4w4+XVeZJTOJjvjSjnqOCUOoVPElCoJGfoqnu
-         OMGT65wmsS7Ztx2MH/Wsuwdq9T7jJQmLy3NgU3dE88Kp3MkjW+5LZJhS6EHlNWanXmME
-         p49UxhoXMa1ghrvZgtMndXxDLedY8Hg/MbOF7nrx7VePURgpV4OitNiIi+Y4L2LElGrI
-         H7dPA/kkSuxtqkOzo0xfhagjeNWzuvdnP0ZDf90mc03BlPMQtQU2UGRvfopc1ZP9bByo
-         OSHue2p8IiACKsgZZ135OKrNz9qyCvuwvRPxUMOVMXTnLZvJaG2TSPNvVJjPVheActPt
-         0MBQ==
-X-Gm-Message-State: AOJu0YyPi5OJl7LG4SmUx6GjQlNi9Hx6U5uX9q87FjEZk6SovJjksiBX
-        c9FIhAGp3qIBb4i3k2kJvPCd5Yo2kLIUBVZOx7vdxA==
-X-Google-Smtp-Source: AGHT+IGyTbrxVs7VFxCmBF9leqPAvlEBqZar6fx6efgCVXxbDR6j2gqXzGwebhUh2fQozM72QqmvnBQQTeXly8PMoB8=
-X-Received: by 2002:a25:7687:0:b0:d9c:28cb:2e54 with SMTP id
- r129-20020a257687000000b00d9c28cb2e54mr21029326ybc.18.1698223529452; Wed, 25
- Oct 2023 01:45:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1698223589; x=1698828389;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2/qDJt2TktcCTAjVqQQhY9/t4tuTrwTtLlHAGkujnds=;
+        b=dNsya9P/cu7+NIUgvJ9hrqTbb+WtcSiIxmCOeVvP5ltY/Gd/DtVaIGlzjvnw5Vqjw5
+         sBhDpktx2JkCSDNOaLHEfW7uQh6w/KAvnP7wcZTZLBXnD00mSACfB7fAD0TJ9d0+90zN
+         gxrUJV3Qzki2iKT3QADf/+hogElOY1Qx6itxx2sXQPFluKhL8Z266soiy6l54yM31Gs+
+         ChFM44R6n7E3rT+Uy6jnUpNvNnqt+j6XxpgVs//+R3crNwTyJfOIjRWhZdOoTVUeC3ye
+         bqCRlEhxuXUvUnWmDKpMBegxxG2eDuA+YVm6+UUpH/W/HdUxta9dsTxLmr2xpKP1XsJT
+         Qpnw==
+X-Gm-Message-State: AOJu0YygbxvY3rXqnjA9P/B97ofiTRaU5klFMBsMMLyoiiGDuvwnjF14
+        kXTInuhqEFCEJ8Qo6Bui7dnRLw==
+X-Google-Smtp-Source: AGHT+IHrkSVsX7DyHcQJ6Dgs3IFMRhs0xM2WvS141qWk0u9YzRxXAMgcw/0DND/s9rBxWOKyOBFj7A==
+X-Received: by 2002:a2e:81cc:0:b0:2c0:2ef8:9716 with SMTP id s12-20020a2e81cc000000b002c02ef89716mr10491238ljg.1.1698223589554;
+        Wed, 25 Oct 2023 01:46:29 -0700 (PDT)
+Received: from [172.30.204.57] (UNUSED.212-182-62-129.lubman.net.pl. [212.182.62.129])
+        by smtp.gmail.com with ESMTPSA id p13-20020a2e9a8d000000b002c5122f13b8sm2320875lji.30.2023.10.25.01.46.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Oct 2023 01:46:28 -0700 (PDT)
+Message-ID: <73409bba-b27a-4c8d-af4b-9efb4c0a5efb@linaro.org>
+Date:   Wed, 25 Oct 2023 10:46:27 +0200
 MIME-Version: 1.0
-References: <20231025-topic-sm8650-upstream-clocks-v1-0-c89b59594caf@linaro.org>
- <20231025-topic-sm8650-upstream-clocks-v1-10-c89b59594caf@linaro.org>
-In-Reply-To: <20231025-topic-sm8650-upstream-clocks-v1-10-c89b59594caf@linaro.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Wed, 25 Oct 2023 11:45:18 +0300
-Message-ID: <CAA8EJprbfWZs+hofu4PhfdtYox96vhE3FFY1XK5vEds1dX213Q@mail.gmail.com>
-Subject: Re: [PATCH 10/10] clk: qcom: rpmh: add clocks for SM8650
-To:     Neil Armstrong <neil.armstrong@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 09/10] clk: qcom: add the SM8650 GPU Clock Controller
+ driver
+Content-Language: en-US
+To:     Neil Armstrong <neil.armstrong@linaro.org>,
+        Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
         Philipp Zabel <p.zabel@pengutronix.de>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Taniya Das <quic_tdas@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+References: <20231025-topic-sm8650-upstream-clocks-v1-0-c89b59594caf@linaro.org>
+ <20231025-topic-sm8650-upstream-clocks-v1-9-c89b59594caf@linaro.org>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20231025-topic-sm8650-upstream-clocks-v1-9-c89b59594caf@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 25 Oct 2023 at 10:40, Neil Armstrong <neil.armstrong@linaro.org> wrote:
->
-> Add RPMH Clocks for the SM8650 platform.
->
+
+
+On 10/25/23 09:32, Neil Armstrong wrote:
+> Add Graphics Clock Controller (GPUCC) support for SM8650 platform.
+> 
 > Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 > ---
->  drivers/clk/qcom/clk-rpmh.c | 29 +++++++++++++++++++++++++++++
->  1 file changed, 29 insertions(+)
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
-
--- 
-With best wishes
-Dmitry
+Konrad
