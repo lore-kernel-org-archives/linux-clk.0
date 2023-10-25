@@ -2,112 +2,134 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87C51C25B47
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Oct 2023 08:38:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16D68C0032E
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Oct 2023 08:41:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234064AbjJYIis (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Oct 2023 04:38:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53858 "EHLO
+        id S232897AbjJYIlT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Oct 2023 04:41:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232807AbjJYIir (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Oct 2023 04:38:47 -0400
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E471412A
-        for <linux-clk@vger.kernel.org>; Wed, 25 Oct 2023 01:38:44 -0700 (PDT)
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-117-IHdEVsP-No-ljDSTXp_RpQ-1; Wed, 25 Oct 2023 09:38:41 +0100
-X-MC-Unique: IHdEVsP-No-ljDSTXp_RpQ-1
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 25 Oct
- 2023 09:38:39 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Wed, 25 Oct 2023 09:38:39 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Linus Torvalds' <torvalds@linux-foundation.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>
-CC:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        with ESMTP id S229537AbjJYIlR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Oct 2023 04:41:17 -0400
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C567012A
+        for <linux-clk@vger.kernel.org>; Wed, 25 Oct 2023 01:41:14 -0700 (PDT)
+Received: by mail-lj1-x22a.google.com with SMTP id 38308e7fff4ca-2c594196344so24288751fa.3
+        for <linux-clk@vger.kernel.org>; Wed, 25 Oct 2023 01:41:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1698223273; x=1698828073; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wwbaq49bUIJIzGkkWKUf0VmMFkjnuPsGrEUtSJczEhU=;
+        b=M1KJj6oaJs1lxK0kDgMxKtcYBHJyp5Ot1UpWuoae9u4OphyRH+QpjYe2SGdD39vzLV
+         xiCDVzJFeqzFrbE1l/IFf264NIyVqoe7HPCeIk5esbX5OMhpYYFMOpBczL2+sOOwEjZJ
+         zz7Rq8wJI2/c9QxGcm/ItxasllfqEI9WSlk7EGt9kVSudilgQLXvhtzuSsPA3FVOo4LR
+         GUz+Qm5Se2c6Ny/Xu6vCOVYD5saHLEwPwBWBLqfrTFOfUtrOw/jnTkBknUVWUeU3T4pw
+         CM9P3YT1rrp12aHrIPdXOaY67CsBWJhbeX/u66DQOeGoysCAdD09QNl5m63qYPz4ptsL
+         kDSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698223273; x=1698828073;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wwbaq49bUIJIzGkkWKUf0VmMFkjnuPsGrEUtSJczEhU=;
+        b=R8sm9mm6KKq3Bllc9Da6+cKrQmU2tjemvuANumoiWAKpRy3Ly6kr0oXr+cR+oxxHh8
+         Kv7n/x9yy05PRfDbLFN6bnNvzQAEYCGEbnoFvrdm6Dsty728/M9Kh6+J0g/YjPTlrXwY
+         SMRiMyp7mx1E2y6oC4yDnT/617wh0g/3nzykmXpELfw+XtCkXFBxw+A227W/PSdBhOvW
+         9hu1oONyRGP30wSjbRsGDXvTlouSH+JI1sLK5IhdWvjMXxk8r3NgLcshAxfvflwd9te0
+         uI2hwoLh9bniWnn95TP/9GTbuHXF0c5bLMhFV4uQoC0xpQcUXuu9R+nIj+1NbprevO8D
+         Soaw==
+X-Gm-Message-State: AOJu0Yz7U4Tyf7V2ILFKNPpzfbOtH+Itx91gHk2meMvsU+P7tXeAjW8v
+        /3U7RkPBxUKJLXPJGrDWrpE2+Q==
+X-Google-Smtp-Source: AGHT+IFbZCmqnL+To2ghaph1BbbLrSVf/oae4tU1RJTeeP+QGgB2Y2IDMC0Pdfc+1HXMun1MVY+fvA==
+X-Received: by 2002:a2e:a589:0:b0:2c5:21e3:f209 with SMTP id m9-20020a2ea589000000b002c521e3f209mr10149890ljp.23.1698223272898;
+        Wed, 25 Oct 2023 01:41:12 -0700 (PDT)
+Received: from [172.30.204.57] (UNUSED.212-182-62-129.lubman.net.pl. [212.182.62.129])
+        by smtp.gmail.com with ESMTPSA id z14-20020a2eb52e000000b002b724063010sm2355545ljm.47.2023.10.25.01.41.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Oct 2023 01:41:12 -0700 (PDT)
+Message-ID: <ccd24edd-b713-49f3-96f4-af653a8fd6b7@linaro.org>
+Date:   Wed, 25 Oct 2023 10:41:10 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 06/10] clk: qcom: add the SM8650 Global Clock Controller
+ driver
+Content-Language: en-US
+To:     Neil Armstrong <neil.armstrong@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
-        "kernel@collabora.com" <kernel@collabora.com>
-Subject: RE: [PATCH v4 1/3] math.h: add DIV_ROUND_UP_NO_OVERFLOW
-Thread-Topic: [PATCH v4 1/3] math.h: add DIV_ROUND_UP_NO_OVERFLOW
-Thread-Index: AQHaBszYM+Cp9N+qfkK9yv140Cm+RbBaJ2TA
-Date:   Wed, 25 Oct 2023 08:38:39 +0000
-Message-ID: <4c2d36375bd74d94a2e6ef5d2fa0df99@AcuMS.aculab.com>
-References: <20231024161931.78567-1-sebastian.reichel@collabora.com>
- <20231024161931.78567-2-sebastian.reichel@collabora.com>
- <CAHk-=whYDbZ29fx_xeSxtYSjtF8WJkaLjzyB8RN5_Rk9Sh-YyQ@mail.gmail.com>
- <CAHk-=wjO5ivM6k7iMiThO9JfxH0dhLe=mcC4TQwReU0nBCnWpg@mail.gmail.com>
-In-Reply-To: <CAHk-=wjO5ivM6k7iMiThO9JfxH0dhLe=mcC4TQwReU0nBCnWpg@mail.gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
-MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Taniya Das <quic_tdas@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20231025-topic-sm8650-upstream-clocks-v1-0-c89b59594caf@linaro.org>
+ <20231025-topic-sm8650-upstream-clocks-v1-6-c89b59594caf@linaro.org>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20231025-topic-sm8650-upstream-clocks-v1-6-c89b59594caf@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMjQgT2N0b2JlciAyMDIzIDIzOjUzDQo+IA0K
-PiBPbiBUdWUsIDI0IE9jdCAyMDIzIGF0IDA5OjMyLCBMaW51cyBUb3J2YWxkcw0KPiA8dG9ydmFs
-ZHNAbGludXgtZm91bmRhdGlvbi5vcmc+IHdyb3RlOg0KPiA+DQo+ID4gSSB3b3VsZCByZWFsbHkg
-cHJlZmVyIHRvIGp1c3QgbWFrZSBvdXIgcmVndWxhciBESVZfUk9VTkRfVVAoKSBEVFJULiAgQnV0
-Og0KPiA+DQo+ID4gIC0gcGVvcGxlIGRvIHVzZSBpdCB3aXRoIGNvbXBsZXggZmlyc3QgYXJndW1l
-bnRzIChpZSBmdW5jdGlvbiBjYWxscw0KPiA+IGV0YykgdGhhdCB3ZSBkb24ndCB3YW50IHRvIGV2
-YWx1YXRlIHR3aWNlDQo+ID4NCj4gPiAgLSB3ZSBjYW4ndCBtYWtlIGl0IGFuIGlubGluZSBmdW5j
-dGlvbiwgYmVjYXVzZSB0aGUgdHlwZXMgYXJlbid0IGZpeGVkDQo+ID4NCj4gPiAgLSB3ZSBjYW4n
-dCBldmVuIHVzZSBhIHN0YXRlbWVudCBleHByZXNzaW9uIGFuZCBfX2F1dG9fdHlwZSwgYmVjYXVz
-ZQ0KPiA+IHRoZXNlIHRoaW5ncyBhcmUgdXNlZCBpbiB0eXBlIGRlZmluaXRpb25zIGV0YyBhbmQg
-bmVlZCB0byBiZSBjb25zdGFudA0KPiA+IGV4cHJlc3Npb25zDQoNCkRvZXNuJ3QgbWluKCkgZ2V0
-IGFyb3VuZCB0aGF0IGJ5IHVzaW5nIGlzX2NvbnN0ZXhwcigpIGFuZA0KX19idWlsdGluX2Nob29z
-ZV9leHB0cigpIC0gdGhlIHNhbWUgY291bGQgYmUgZG9uZSBoZXJlLg0KDQo+IA0KPiBPay4gSSBo
-YXZlIGEgcG90ZW50aWFsIGJlZ2lubmluZyBvZiBhIHNvbHV0aW9uLg0KPiANCj4gSXQgaXMgdW5i
-ZWxpZXZhYmx5IGRpc2d1c3RpbmdseSBjb21wbGljYXRlZC4gQnV0IGl0IG1pZ2h0IGFwcHJvYWNo
-DQo+IGJlaW5nIGNvcnJlY3QuDQo+IA0KPiBBbmQgYnkgdGhhdCAiaXQgbWlnaHQgYXBwcm9hY2gg
-YmVpbmcgY29ycmVjdCIgSSBvYnZpb3VzbHkgbWVhbiAidGhpcw0KPiBpcyB1bnRlc3RlZCwgYnV0
-IGJ1aWxkcyBhdCBsZWFzdCBzb21lIGtlcm5lbCBjb2RlIi4NCj4gDQo+IEknbSBhbG1vc3QgY2Vy
-dGFpbiBpdCB3aWxsIGZhaWwgb24gbW9yZSBjb21wbGV4IGNhc2VzLCBiZWNhdXNlIEkNCj4gYWxy
-ZWFkeSBmb3VuZCBhIGxvdCBvZiBxdWVzdGlvbmFibGUgc3R1ZmYgdGhhdCB3YXMgc2ltcGx5IGhp
-ZGRlbiBieQ0KPiB0aGUgb2xkIG1hY3JvIGp1c3Qgc2lsZW50bHkgZG9pbmcgdGhlIEMgYXJpdGht
-ZXRpYyB0eXBlIGNvbnZlcnNpb25zLA0KPiBhbmQgdGhpcyB0aGluZyBkb2VzIHR5cGUgaGFuZGxp
-bmcgbWFudWFsbHkuDQo+IA0KPiBJJ20gaG9waW5nIHRoYXQgc29tZWJvZHkgd2lsbCBnbyAiTGlu
-dXMsIHlvdSdyZSBqdXN0IGJlaW5nDQo+ICpjb21wbGV0ZWx5KiBzaWxseSwgaXQncyBtdWNoIGVh
-c2llciB0byBkbyBYWVoiLg0KDQo+IERvaW5nIGEgbm9uLW92ZXJmbG93aW5nIERJVl9ST1VORF9V
-UCgpIHRoYXQgaXMgdXNhYmxlIGluIGFsbCBjb250ZXh0cyBpcw0KPiBhY3R1YWxseSB2ZXJ5IG5h
-c3R5Lg0KPg0KPiBUaGlzIGlzIGEgdHJpYWwgYmFsbG9vbi4uICBUaGUgc2lnbmVkIGNhc2VzIG5l
-ZWQgbW9yZSB0aG91Z2h0LiAgVGhlIGJlc3QNCj4gb3B0aW9uIHdvdWxkIGJlIHRvIGRpc2FsbG93
-IHRoZW0gKGJ5IG5vdCBsaXN0aW5nIHRoZW0gaW4gdGhlIF9HZW5lcmljKCkNCj4gcnVsZXMpLiBC
-dXQgdGhleSBjdXJyZW50bHkgaGFwcGVuLCBvZnRlbiBmb3IgYmFkIHJlYXNvbnMsIGllIHdpcmVs
-ZXNzIGhhcw0KPg0KPiAJRElWX1JPVU5EX1VQKGludGVydmFsLCBNU0VDX1BFUl9TRUMpOw0KPg0K
-PiBhbmQgd2hpbGUgJ2ludGVydmFsJyBpcyBhIHByb3BlciB1MzIsIE1TRUNfUEVSX1NFQyBpcyBk
-ZWZpbmVkIHRvIGJlDQo+ICcxMDAwTCcsIHNvIHRoZSByZXN1bHRpbmcgQyBhcml0aG1ldGljIGlz
-IGRvbmUgaW4gc2lnbmVkICdsb25nJy4NCg0KTWF5YmUgdXNlIHNvbWUgb2YgdGhlICdzdHVmZicg
-ZnJvbSBtaW4oKSBhbmQgY29udmVydCBjb21waWxlLXRpbWUNCmNvbnN0YW50ICdkJyB0byBzaWdu
-ZWQgaW50IHRvIGF2b2lkIHByb21vdGlvbnMuDQoNCkluZGVlZCB0aGUgd2hvbGUgdGhpbmcgcmVh
-bGx5IG9ubHkgbWFrZXMgc2Vuc2UgZm9yIChkID4gMCAmJiBuID49IDApDQpzbyBmb3JjaW5nIGFu
-IHVuc2lnbmVkIGRpdmlkZSB3b3VsZG4ndCBiZSBhIGJhZCB0aGluZyBhdCBhbGwuDQpJdCB3aWxs
-IGFsc28gZ2VuZXJhdGUgYmV0dGVyIGNvZGUgd2hlbiAnZCcgaXMgYSBwb3dlciBvZiAyLg0KDQpJ
-Z25vcmluZyB0aGUgbj09MCBjYXNlIEkgdGhpbmsgdGhpcyBhbHdheXMgZ2VuZXJhdGVzIGFuIHVu
-c2lnbmVkDQpkaXZpZGUsIG5ldmVyIGRvZXMgc2lnbiBleHRlbnNpb24gYW5kIGRvZXMgYSAzMmJp
-dCBkaXZpZGUNCmZvciAzMmJpdCBhcmd1bWVudHMuDQoNCiNkZWZpbmUgQ1ZUX1VMTCh4KSAoKHgp
-ICsgMHUgKyAwdWwgKyAwdWxsKQ0KI2RlZmluZSBESVZfUk9VTkRfVVAobiwgZCkgKChDVlRfVUxM
-KG4pICsgQ1ZUX1VMTChkKSAtIDEpIC8gQ1ZUX1VMTChkKSArIDEpDQoNCkl0IHNob3VsZCBiZSBw
-b3NzaWJsZSB0byBlcnJvciBpZiAnZCcgaXMgYSBzaWduZWQgdmFyaWFibGUgb3INCmEgbm9uLXBv
-c2l0aXZlIGNvbnN0YW50Lg0KSSdkIGd1ZXNzIG1vc3QgJ2QnIGFyZSBjb25zdGFudHMuDQoNCkVy
-cm9yaW5nIHNpZ25lZCAnbicgaXMgcG9zc2libGUgYnV0IG1pZ2h0IGJlIGFubm95aW5nLg0KDQoJ
-RGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1v
-dW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEz
-OTczODYgKFdhbGVzKQ0K
 
+
+On 10/25/23 09:32, Neil Armstrong wrote:
+> Add Global Clock Controller (GCC) support for SM8650 platform.
+> 
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+Just a couple remarks
+
+1. looks like there's no usage of shared ops (corresponding
+    to enable_safe_parent or something along these lines
+    downstream)
+
+2. none of the GDSCs have interesting flags.. I have this
+    little cheat sheet that you may find handy:
+
+qcom,retain-regs -> RETAIN_FF_ENABLE
+qcom,support-hw-trigger + set_mode in driver -> HW_CONTROL
+qcom,no-status-check-on-disable -> VOTABLE
+qcom,reset-aon-logic -> AON_RESET
+domain-addr  = clamp_io_ctrl
+
+3. gcc_cpuss_ubwcp_clk_src uses the XO_A clock as parent, but
+    it's not there in the ftbl.. Could you confirm whether this
+    clock should even be accessed from HLOS?
+
+[...]
+
+> +static int gcc_sm8650_probe(struct platform_device *pdev)
+> +{
+> +	struct regmap *regmap;
+> +	int ret;
+> +
+> +	regmap = qcom_cc_map(pdev, &gcc_sm8650_desc);
+> +	if (IS_ERR(regmap))
+> +		return PTR_ERR(regmap);
+> +
+> +	ret = qcom_cc_register_rcg_dfs(regmap, gcc_dfs_clocks,
+> +				       ARRAY_SIZE(gcc_dfs_clocks));
+> +	if (ret)
+> +		return ret;
+> +
+> +	/*
+> +	 * Keep the critical clock always-On
+> +	 * gcc_camera_ahb_clk, gcc_camera_xo_clk, gcc_disp_ahb_clk,
+> +	 * gcc_disp_xo_clk, gcc_gpu_cfg_ahb_clk, gcc_video_ahb_clk,
+> +	 * gcc_video_xo_clk
+> +	 */
+Could you make these comments inline, i.e.
+
+regmap_update_bits(regmap, 0x26004, BIT(0), BIT(0)); /* gcc_camera_ahb_clk */
+
+?
+
+Konrad
