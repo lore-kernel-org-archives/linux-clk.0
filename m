@@ -2,111 +2,174 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B9AFC25B47
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Oct 2023 10:45:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F168C0032E
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Oct 2023 11:29:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343963AbjJYKpS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Oct 2023 06:45:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50038 "EHLO
+        id S232076AbjJYL3N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Oct 2023 07:29:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234823AbjJYKpJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Oct 2023 06:45:09 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 569D2130;
-        Wed, 25 Oct 2023 03:45:05 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-9becde9ea7bso157075466b.0;
-        Wed, 25 Oct 2023 03:45:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698230703; x=1698835503; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b5Q/ILeNPwJV2QjahLVWKif6XkSVenjAn/qwU0ighgI=;
-        b=TCeB9jmfs1mbxcE4FVTNTcSWsRrkn26YIpP/aaX0JaTb+qbjplZiRgncaL3MObP/Id
-         e0xmWiapIHlB8kQ9O1DqJxGMBA5fFvV1oX39ipOAI5J9WtpPYD+jgXRDwEstq2ZH5pWJ
-         kJXQaZzO2Dx/uv8XQ+wMjDoukpoYW8Dxw4W6KPAHhtqm0rHrU4vptsIUQzz5xX8KyVB6
-         vZ4AdHDquJT5YGSzsbtrarILRLqC5hgZ5VJjr0bssRgbcDLNN/qUKtkbeQp3RpizRaVd
-         SYy3MZVFTtBtM3tl+ODZal9phcvDXRA3Bi9pVv3hUsfcN7gaFSeN/JK7opNGGmc9mXR/
-         U11g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698230703; x=1698835503;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b5Q/ILeNPwJV2QjahLVWKif6XkSVenjAn/qwU0ighgI=;
-        b=fR/KHOW59I4ON2C2QygnU6r7UI2yTVuQt7LZ2QvFoCqlA6YHB7J/AzxHP83fpbh5sW
-         92V9Ma9IRyTo1LWNF7tlfdG8SmBByNA00a3RXGjCMnXHJmP8sTOhXtvTFH7RQ8pcTl4B
-         gtzq8q0FvFkDV+1U0QEsNQrOlemDs7OuAwwRZ4YsbW0cbfuzGyZhafZTgjTg86i3rCdr
-         4+/44xsuKcJALPufyBbMQ4g8ckIpWIrEizRHDm7S6DxxziPTYk4NPpCrxXqdOzOUXEwG
-         /hkvY54DOiFhwFtcpQZQ+R0g18EYpckvero8bxOYBc1H2tWQPNSaddzRM7B4rmgRqg2Y
-         odkg==
-X-Gm-Message-State: AOJu0YwdWQhVCsNQEl7Ux2M6/8C/hlz/m2uMtoPZvz9QK/WDDw3VHimy
-        K3fG+WRB6ZLfj0wOQqcpQFc=
-X-Google-Smtp-Source: AGHT+IHzKyCpvZWhaCMz6XJErxrbVu8BO1pTjJeTxOZVkEtgWaMQ1uDkJotO6VTnitq2RlPEvUYJQg==
-X-Received: by 2002:a17:907:7212:b0:9bd:d405:4e8a with SMTP id dr18-20020a170907721200b009bdd4054e8amr13626532ejc.17.1698230703511;
-        Wed, 25 Oct 2023 03:45:03 -0700 (PDT)
-Received: from fedora.. (dh207-97-46.xnet.hr. [88.207.97.46])
-        by smtp.googlemail.com with ESMTPSA id t11-20020a1709066bcb00b009be14e5cd54sm9626292ejs.57.2023.10.25.03.45.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Oct 2023 03:45:02 -0700 (PDT)
-From:   Robert Marko <robimarko@gmail.com>
-To:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Cc:     Robert Marko <robimarko@gmail.com>
-Subject: [PATCH 3/3] arm64: dts: qcom: ipq6018: add USB power domains
-Date:   Wed, 25 Oct 2023 12:44:11 +0200
-Message-ID: <20231025104457.628109-3-robimarko@gmail.com>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20231025104457.628109-1-robimarko@gmail.com>
-References: <20231025104457.628109-1-robimarko@gmail.com>
+        with ESMTP id S230217AbjJYL3N (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Oct 2023 07:29:13 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5F7A10A;
+        Wed, 25 Oct 2023 04:29:10 -0700 (PDT)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 34B9766071C9;
+        Wed, 25 Oct 2023 12:29:08 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1698233348;
+        bh=YcIUG+bFG3gCP/KGT755SKLbRpNGiug2TGJ8Qy80gUA=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=aAfy4Taoi7eEhWJhC0q5SXJZ6OWE+V4gv4d7aT6Ge/Roi5iW8GZvhJzVM0rO7hjtb
+         JtZPD7oPTYddIwZ7+EhBn/b/D48b/05qyX8kI3vVAtRtbn3ZZFKzMlWRcETrqmJeHq
+         M/ZqnMeOWCOmdNxN+4wVA7NuYugeYveW/TmbkoibFU3D675qvpeTK6VFQiAr/58jl4
+         Yq2+v8bEWgufMNBSdpIE3L2qUQrnu5pLz7E5NnZEGZuocWpcQwprwrv2oOM7s049La
+         240tPMxBQPDCROAJZNkUxnlXE1oVjlOTTtKT//ea/3D6mKtMBis43FF20Uh7hoRNt8
+         7wyGG/inj3fEQ==
+Message-ID: <eb4f7d6e-0e4c-4b2d-b889-cad9fc9262d8@collabora.com>
+Date:   Wed, 25 Oct 2023 13:29:05 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: mediatek: mt8186: Change I2C 4/5/6 ap clocks parent
+ to infra
+Content-Language: en-US
+To:     =?UTF-8?B?WXUtY2hhbmcgTGVlICjmnY7nprnnkosp?= 
+        <Yu-chang.Lee@mediatek.com>,
+        "wenst@chromium.org" <wenst@chromium.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        =?UTF-8?B?Q2h1bi1KaWUgQ2hlbiAo6Zmz5rWa5qGAKQ==?= 
+        <Chun-Jie.Chen@mediatek.com>,
+        =?UTF-8?B?TWlsZXMgQ2hlbiAo6Zmz5rCR5qi6KQ==?= 
+        <Miles.Chen@mediatek.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>
+References: <20231019124914.13545-1-angelogioacchino.delregno@collabora.com>
+ <CAGXv+5H0rUajeU-i8nYyV2xWFQTnzqxioZCCyyP_RZXKqmcugQ@mail.gmail.com>
+ <283d18028590d57025e5654d18b8b5b7.sboyd@kernel.org>
+ <CAGXv+5EpBLnXVdxnk9wBZi5F7U5wdJRfYH7fgg4Lkr1HJXm+WA@mail.gmail.com>
+ <9c1e10b56db315e03daa3df5918cde844297c680.camel@mediatek.com>
+ <CAGXv+5HQ2sVx=F3my2jOGMw3j3pU2aarEg+Dj1XgNzwio98ezA@mail.gmail.com>
+ <e049985de9da9958ba425824ab5f38c7cf41025b.camel@mediatek.com>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <e049985de9da9958ba425824ab5f38c7cf41025b.camel@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add USB power domains provided by GCC GDSCs.
-Add the required #power-domain-cells to the GCC as well.
+Il 25/10/23 11:50, Yu-chang Lee (李禹璋) ha scritto:
+> On Tue, 2023-10-24 at 17:20 +0800, Chen-Yu Tsai wrote:
+>>   	
+>> External email : Please do not click links or open attachments until
+>> you have verified the sender or the content.
+>>   On Tue, Oct 24, 2023 at 3:47 PM Yu-chang Lee (李禹璋)
+>> <Yu-chang.Lee@mediatek.com> wrote:
+>>>
+>>> On Tue, 2023-10-24 at 10:58 +0800, Chen-Yu Tsai wrote:
+>>>> On Tue, Oct 24, 2023 at 10:52 AM Stephen Boyd <sboyd@kernel.org>
+>>>> wrote:
+>>>>>
+>>>>> Quoting Chen-Yu Tsai (2023-10-19 22:06:35)
+>>>>>> On Thu, Oct 19, 2023 at 8:49 PM AngeloGioacchino Del Regno
+>>>>>> <angelogioacchino.delregno@collabora.com> wrote:
+>>>>>>>
+>>>>>>> Fix the parenting of clocks imp_iic_wrap_ap_clock_i2c{4-6},
+>> as
+>>>>>>> those
+>>>>>>> are effectively parented to infra_ao_i2c{4-6} and not to
+>> the
+>>>>>>> I2C_AP.
+>>>>>>> This permits the correct (and full) enablement and
+>> disablement
+>>>>>>> of the
+>>>>>>> I2C4, I2C5 and I2C6 bus clocks, satisfying the whole clock
+>> tree
+>>>>>>> of
+>>>>>>> those.
+>>>>>>>
+>>>>>>> As an example, when requesting to enable
+>>>>>>> imp_iic_wrap_ap_clock_i2c4:
+>>>>>>>
+>>>>>>> Before: infra_ao_i2c_ap -> imp_iic_wrap_ap_clock_i2c4
+>>>>>>> After:  infra_ao_i2c_ap -> infra_ao_i2c4 ->
+>>>>>>> imp_iic_wrap_ap_clock_i2c4
+>>>>>>>
+>>>>>>> Fixes: 66cd0b4b0ce5 ("clk: mediatek: Add MT8186 imp i2c
+>> wrapper
+>>>>>>> clock support")
+>>>>>>> Signed-off-by: AngeloGioacchino Del Regno <
+>>>>>>> angelogioacchino.delregno@collabora.com>
+>>>>>>
+>>>>>> I'm curious about what led to discovering this error?
+>>>>>>
+>>>>>
+>>>>> Is that an acked-by?
+>>>>
+>>>> MediaTek engineers are saying the original code already matches
+>> the
+>>>> documentation provided by their hardware engineers. I'm trying to
+>> get
+>>>> them to respond on the mailing list.
+>>>>
+>>>> ChenYu
+>>>>
+>>> After checking with I2C clock hardware designer there is no
+>>> infra_ao_i2c{4-6} clock gate in between. And the clock document at
+>> hand
+>>> aslo shows the same result. Generallly speaking, we would like to
+>> keep
+>>> sw setting align with the hardware design document. I would
+>> recommand
+>>> not to change this part of code, but enable infra_ao_i2c{4-6} prior
+>> to
+>>> the usage of imp_iic_wrap_ap_clock_i2c clock.
+>>
+>> Are infra_ao_i2c{4-6} actually used by the hardware? If so, for what
+>> purpose?
+> 
+> According to hardware designer it servers no purpose. Just a legacy of
+> previous design...
+> 
+>> If it is actually needed by the hardware and it is not in the
+>> existing path,
+>> then it needs to be described in the device tree and handled by the
+>> driver.
+>>
+>> ChenYu
+> 
+> After reviewing hardware design diagram, hardware designer concludes
+> that the clock tree is indeed
+> 
+> top_i2c -> infra_ao_i2c{4-6}
+> top_i2c -> infra_ao_i2c_ap -> imp_iic_wrap_ap_clock_i2c{4-6}
+> 
+> so I think we should keep this clock relation unchanged.
+> 
+> Thanks
+> YuChang
+> 
 
-Signed-off-by: Robert Marko <robimarko@gmail.com>
----
- arch/arm64/boot/dts/qcom/ipq6018.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+Can you please also expand on CLK_INFRA_AO_I2C{1,2,5}_ARBITER clocks?
+Is the I2C arbiter also legacy of previous designs?
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq6018.dtsi b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
-index 846cd73c7436b..720f1eeaf0443 100644
---- a/arch/arm64/boot/dts/qcom/ipq6018.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
-@@ -402,6 +402,7 @@ gcc: gcc@1800000 {
- 			clocks = <&xo>, <&sleep_clk>;
- 			clock-names = "xo", "sleep_clk";
- 			#clock-cells = <1>;
-+			#power-domain-cells = <1>;
- 			#reset-cells = <1>;
- 		};
- 
-@@ -433,6 +434,9 @@ usb2: usb@70f8800 {
- 					  <&gcc GCC_USB1_MOCK_UTMI_CLK>;
- 			assigned-clock-rates = <133330000>,
- 					       <24000000>;
-+
-+			power-domains = <&gcc USB1_GDSC>;
-+
- 			resets = <&gcc GCC_USB1_BCR>;
- 			status = "disabled";
- 
-@@ -581,6 +585,8 @@ usb3: usb@8af8800 {
- 					       <133330000>,
- 					       <20000000>;
- 
-+			power-domains = <&gcc USB0_GDSC>;
-+
- 			resets = <&gcc GCC_USB0_BCR>;
- 			status = "disabled";
- 
--- 
-2.41.0
+Please check [1], as I've sent a commit adding those in the devicetree.
 
+Thanks,
+Angelo
+
+[1]: 
+https://lore.kernel.org/all/20231020075540.15191-1-angelogioacchino.delregno@collabora.com/
