@@ -2,89 +2,91 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D5AC25B47
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Oct 2023 08:49:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23892C0032E
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Oct 2023 09:07:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233306AbjJYItw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Oct 2023 04:49:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53964 "EHLO
+        id S233766AbjJYJH5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Oct 2023 05:07:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234240AbjJYIjA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Oct 2023 04:39:00 -0400
-Received: from mail-qk1-x733.google.com (mail-qk1-x733.google.com [IPv6:2607:f8b0:4864:20::733])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38026133
-        for <linux-clk@vger.kernel.org>; Wed, 25 Oct 2023 01:38:58 -0700 (PDT)
-Received: by mail-qk1-x733.google.com with SMTP id af79cd13be357-773ac11de71so363794585a.2
-        for <linux-clk@vger.kernel.org>; Wed, 25 Oct 2023 01:38:58 -0700 (PDT)
+        with ESMTP id S233804AbjJYJH4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Oct 2023 05:07:56 -0400
+Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73D8F182;
+        Wed, 25 Oct 2023 02:07:54 -0700 (PDT)
+Received: by mail-pl1-x641.google.com with SMTP id d9443c01a7336-1ca79b731f1so10492315ad.0;
+        Wed, 25 Oct 2023 02:07:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698223137; x=1698827937; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=p+HrZtoWX4MGej1kjpZeux1yQTbKjE1+8I/SDf43PFI=;
-        b=Bq/z0A4i6cXYzFRa/C4Ohea5ucTSdbw42mzdqEd2b3sC+GWDmGAiOCQY7rjbt3OvFI
-         Mhw6bRcPNodDrHxfy9xTUOwIyVUJO6JgIPtQL6DwcnZORjtnWDqpYIZl+nDcIg+KMGY4
-         tBhePpT2k3qP3qtYZ8Ok2gYKlMUuasjCXoJfzxK2iaNUjLghs0wzB2Js9+uqRH9Ufeji
-         eqhjnJLRz7PNSg573xlSWbgI0sgo8UdYBIv8xh08QFgKqJAY0o8/xcLMZdMGutRpgi0S
-         V5KOIgbA5jsU2r0mtHoB3NNfqd1TzsqBM7NADFnIN7XpVJcwEhr/2JnFpP8AtSFrLgHU
-         /e+Q==
+        d=gmail.com; s=20230601; t=1698224874; x=1698829674; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=16RyNcr8fXdSv8PEk5/PP5mj/W1hB9JFhs/uYMnfilQ=;
+        b=RKT6Zd7oyfLASImUzgGsagN+d+jp6Sq64RQZRdIhcSJYnIeojtQsvVE3lC00tXr4fp
+         TsoRkpc6elMcXPn8HDQO0Wdl0x+pBYJd3ku4ZhY/9ABhGZ8ZkvlE65KdyiNy9NSTrI9g
+         EEshxj8cDeiJCDCUY4tBdgSNogRyO5iZ3TqDv9I70WwK/LaKacFK1hsJ+WmbeUQUWAYB
+         ggun/GPphPgenG7eNjkeDbwAVySUf/FGdpMBahitrHV2sxNoUvomSj2gJvD8ORBoentc
+         qXqhnHTaG9cETb2ArhOU9k4dbds8gfU8pBtrPBrkuJsLkXuXo4Uz0wcrIuvvFOf3ElJs
+         0FWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698223137; x=1698827937;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1698224874; x=1698829674;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=p+HrZtoWX4MGej1kjpZeux1yQTbKjE1+8I/SDf43PFI=;
-        b=XD5Hb13D/AzuDZfQeqYPyCv6Ara8VRzh9mbFxgHk48IAnT2thrGSoiMItKlH1mnsZl
-         S0Qloww3emhKOt398VYO2CJDjCV5ZlMvegVLBxvBaLPjITcmtakD55vVG83QmAlX7d9c
-         btVNe+n0EMKS9jWJJasRmemj1VzTx1DuVLYb6PJeSdSRaiePnqe3fsezVgfIDRzQ2z/N
-         mRrG1nllnFCh0/lqPsWUFLWvletmjENwMThbqa9ZaYOLbRz3D8Sjnt06NGJPp6j12gSH
-         Mvp1Ro/7iFvObKWigbJ0w8aPG3pTRsNWUfEg3vsNFvRX52LpCQv5b0Wf/xqIpfziqxbF
-         3CaQ==
-X-Gm-Message-State: AOJu0Yxzejd9XCIkUshDf3wY2VZCrECCejDiInDk1BQ4uAMZOMb+0wi9
-        0RfkfqFcRoiN5Aa6PT3YQvxi0krIkNU5eaWwo65cMQ==
-X-Google-Smtp-Source: AGHT+IFpttfLKc+8yhH0Vs/Ju8O18uR5VvebR6HGULWTGLk7A35/Y9mGhceIgeo2cuprDThVebXDaO9qppJzZ6aqMls=
-X-Received: by 2002:a05:620a:2590:b0:775:79d6:9e57 with SMTP id
- x16-20020a05620a259000b0077579d69e57mr14950031qko.61.1698223137246; Wed, 25
- Oct 2023 01:38:57 -0700 (PDT)
+        bh=16RyNcr8fXdSv8PEk5/PP5mj/W1hB9JFhs/uYMnfilQ=;
+        b=rpxkLzHije5djOlM9lE/DJZ/DGzvrcTrlQQrrMT8miPLepJ525Mwr0LnQ+W9KRAdTT
+         +ladgPmI6iw/HrzVr999H/AxAf6w1iiZtjk5B48PRmn7qQDOBzbQ60xOU8fKgsDAT312
+         IlmtjKh380pN8egVm2Ha7FoY5BDIqVfmb0FdQ5Dyaz5Nt5qApDVJ63XhhH1x++awDI7M
+         oAcnxNjay6+vQwzxFWlyaDv1gt0YgX5c6tXc5FdkUS8c03SjtXJiYXdto7flDLBAryNJ
+         kCmFUCfXnk2DmaHkonNbFCS6H4/eKx3/NtO954hYjiuhMkTqGysbSCyTCNvPnTzs7O08
+         /Odw==
+X-Gm-Message-State: AOJu0YwpE2cRdHgmVAJPbXnyfNJNU/83YU3MXTez2HU3NBsS99GG2mbo
+        uJpPLewdG/lEvI410KQLcU0=
+X-Google-Smtp-Source: AGHT+IFyNuBmzwGlUgWsDXNy99+YoXF0mB0httpc8mHUXkVXr17vpkP5ZRkYrBTffvPCzjO3gw6qbQ==
+X-Received: by 2002:a17:902:e291:b0:1ca:273d:232 with SMTP id o17-20020a170902e29100b001ca273d0232mr13712988plc.0.1698224873774;
+        Wed, 25 Oct 2023 02:07:53 -0700 (PDT)
+Received: from hbh25y.mshome.net ([103.114.158.1])
+        by smtp.gmail.com with ESMTPSA id l20-20020a170903005400b001bba7aab822sm8824870pla.5.2023.10.25.02.07.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Oct 2023 02:07:53 -0700 (PDT)
+From:   Hangyu Hua <hbh25y@gmail.com>
+To:     kristo@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        tony@atomide.com, claudiu.beznea@microchip.com, robh@kernel.org,
+        andriy.shevchenko@linux.intel.com,
+        dario.binacchi@amarulasolutions.com
+Cc:     linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Hangyu Hua <hbh25y@gmail.com>
+Subject: [PATCH] ti: fix possible memory leak in _ti_omap4_clkctrl_setup
+Date:   Wed, 25 Oct 2023 17:07:41 +0800
+Message-Id: <20231025090741.32997-1-hbh25y@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20231025-topic-sm8650-upstream-clocks-v1-0-c89b59594caf@linaro.org>
- <20231025-topic-sm8650-upstream-clocks-v1-7-c89b59594caf@linaro.org>
-In-Reply-To: <20231025-topic-sm8650-upstream-clocks-v1-7-c89b59594caf@linaro.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Wed, 25 Oct 2023 11:38:46 +0300
-Message-ID: <CAA8EJppurAdn=sX8YvZ=x+6dq6GHGbE_kp5bVRS69NiYnNGeiw@mail.gmail.com>
-Subject: Re: [PATCH 07/10] clk: qcom: add the SM8650 TCSR Clock Controller driver
-To:     Neil Armstrong <neil.armstrong@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 25 Oct 2023 at 10:36, Neil Armstrong <neil.armstrong@linaro.org> wrote:
->
-> Add TCSR Clock Controller support for SM8650 platform.
->
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
->  drivers/clk/qcom/Kconfig         |   7 ++
->  drivers/clk/qcom/Makefile        |   1 +
->  drivers/clk/qcom/tcsrcc-sm8650.c | 192 +++++++++++++++++++++++++++++++++++++++
->  3 files changed, 200 insertions(+)
+kstrndup and kstrdup_and_replace in clkctrl_get_name can perform
+dynamic memory allocation. So clkctrl_name needs to be freed when
+provider->clkdm_name is NULL.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Fixes: bd46cd0b802d ("clk: ti: clkctrl: check return value of kasprintf()")
+Signed-off-by: Hangyu Hua <hbh25y@gmail.com>
+---
+ drivers/clk/ti/clkctrl.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-
+diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
+index 607e34d8e289..cb4aa8a45bb2 100644
+--- a/drivers/clk/ti/clkctrl.c
++++ b/drivers/clk/ti/clkctrl.c
+@@ -591,6 +591,7 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
+ 		provider->clkdm_name = kasprintf(GFP_KERNEL,
+ 						 "%s_clkdm", clkctrl_name);
+ 		if (!provider->clkdm_name) {
++			kfree(clkctrl_name);
+ 			kfree(provider);
+ 			return;
+ 		}
 -- 
-With best wishes
-Dmitry
+2.34.1
+
