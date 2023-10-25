@@ -2,151 +2,146 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0CEDC25B47
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Oct 2023 07:18:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F7A9C0032E
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Oct 2023 07:33:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232537AbjJYHS2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Oct 2023 03:18:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39040 "EHLO
+        id S233903AbjJYHdi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Oct 2023 03:33:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231648AbjJYHS1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Oct 2023 03:18:27 -0400
-Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-db3eur04on2072.outbound.protection.outlook.com [40.107.6.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67AD9AF;
-        Wed, 25 Oct 2023 00:18:24 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=HVsLPRjvZUOpzDqDhD7ZuhaDn9j/19qV/vDv2gC+WXAo6bFWg6Qu7Jg4UnKwyMebWomHxyB61Rpq6k/5U8IGL+EA3/W9A614pMmsOAHO4b9iM+m0LmorKFs03guwb6ka3JM5buDZzpZv7Aka7gw4mHjos4mRSYNhSU0t3P2M9vVk1a2oCRe4pOq0Lv0/tUXNF5SNAvqkRKGt/OgqEVlFkrI317RyJ80cS5h4tWw/2YXRoG6B2xZh6U2cQZF3Duf8WxIJlhgM+WQ6kR1oKle3zIN5Xgr62O8bfVARmw74/LXcuba0FsfHSdVgHtR+fJe+25Bc+zBdYtcmlupGmcnu6g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DWjxSn0cUaUw8CsEnle1NPosdEXhCX/DVl9AurKBj0A=;
- b=FuvQkI7AP5BXen6g5x8hy5NPxbkRVV3Cbl5EL/6PSSPnLszeCtuKG/YSMWfkASJV5XXGZLQoVi0CgcyGx8sj+kiemriojkacNFoAqhaipwViG3PsObAtbfwX8kYL22XtBwFvIb1SEpQMTXET+ACgmOspzVea6E0VLKLLA/xUuMkvG630Iwyk3xmQGK+zaCpcSPgdhPWEnSqcSodOe1baJ8XlN/uiQl9NeGQw5eG9HMSFr8pKzPenCQbCHrdBL3xqcHbEy0jdBnl2zqr10gjLVu/7edDfvSEVHEbFk5e7Uvcouadrx+ZlFIHE8sPXfBz5vwehU3FyGm03wQwWf7693g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector2-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DWjxSn0cUaUw8CsEnle1NPosdEXhCX/DVl9AurKBj0A=;
- b=bNW50soAfW79XHnVkiT5S35xdknS0Efz4mpMF8bgav/lli2kvlfUF55clQCfXaJPjXRyaPOtZG13wl/8PrbR5/1sjR6UWx92m/up91xVRVh8pS6x2pCRkPzpo9NZALRikm7lvywE6+wFBpBryxVIyJ4hXNzC2E9iKgzft1lcN78=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
- by DB9PR04MB9234.eurprd04.prod.outlook.com (2603:10a6:10:372::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6933.19; Wed, 25 Oct
- 2023 07:18:21 +0000
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::50bf:dcd6:885e:32c4]) by DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::50bf:dcd6:885e:32c4%4]) with mapi id 15.20.6933.011; Wed, 25 Oct 2023
- 07:18:21 +0000
-From:   "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-To:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        sboyd@kernel.org, abelvesa@kernel.org
-Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH V3 2/2] arm64: dts: imx93: update analog node
-Date:   Wed, 25 Oct 2023 15:22:42 +0800
-Message-Id: <20231025072242.1134090-2-peng.fan@oss.nxp.com>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20231025072242.1134090-1-peng.fan@oss.nxp.com>
-References: <20231025072242.1134090-1-peng.fan@oss.nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR02CA0024.apcprd02.prod.outlook.com
- (2603:1096:4:195::18) To DU0PR04MB9417.eurprd04.prod.outlook.com
- (2603:10a6:10:358::11)
+        with ESMTP id S233039AbjJYHdS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Oct 2023 03:33:18 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B29A1BC5
+        for <linux-clk@vger.kernel.org>; Wed, 25 Oct 2023 00:32:48 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-40907b82ab9so2800425e9.1
+        for <linux-clk@vger.kernel.org>; Wed, 25 Oct 2023 00:32:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1698219167; x=1698823967; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xq0cbI7ATIX2dCfVH1JmvlcYZDaKB44YRWErgjgISlc=;
+        b=GTL2SUzwWY9+1BJa7I/mhby+w8Vz/veg08QNVmMSveGJJ83oNnkvBYRTKdJcyG8XUJ
+         fOne39OLwJwILJ5OhusB5Z0IuHGz1KKtfOtiB972THgw0k7+oaccEN//l6Q/F+1DTqS1
+         MVspuX1uUiEzQGrdyZbEwBAIraKZAtmotZpD0ZJ5SAuJkvcGPSnQsBjsGbsCIMiSIUM0
+         gcRKJVOhtHKMuGxUdOReDpOd/OsJjBRuVxb9OCRpwPQNpLO9BnK5cIo1Gt0w50/wKiy2
+         n192von+6wDZA8QZgMETafhVi9x1ACcL2jN4gzXQVEsREURgubxcnGFRf9QWSr+jTYNU
+         ie0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698219167; x=1698823967;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xq0cbI7ATIX2dCfVH1JmvlcYZDaKB44YRWErgjgISlc=;
+        b=cKAEE9uEe1BtC0Yl5EbVhBBvOaJWGNnsm8PZ9lcvV8ZyoI0Hkwkuw/x/nOX5bbo69r
+         Dc9cRAxNnG84UxnKjlkvrPYRcgrpbnWhBEyZI8vqUM9RsWgIocf9SKSlYfML9QEimVFS
+         6ICx7Q9t3dQmro8/QdwvGF3c/e27k0/TelsWNbpTnbZmHvasb/0Jut81MotzCPNDFHg2
+         5aQ+/UC70F4Yh5St9sj83px1Sg3YiUmwkqFz92JpdeBpcctw1Klp8r9196NZk6ctJMrf
+         1oDzid4c2geqgpKvjv6CMYmYP6fITeQHXvIopLjw/GEeh6zv9tMMSTXBg72W+ylytFog
+         wbgg==
+X-Gm-Message-State: AOJu0YxoWZFPWG4dLz0BWNv82PZALRvDacv3ALcNpCKCWiOBzhTGdiNw
+        JlO6HLZ6ZP2U/fUZtaqiqQPUdkHr/9h/R88Ru4b2KbRg
+X-Google-Smtp-Source: AGHT+IEi6To7pOCtAJ8dkEof1rxKHQNZGTwOGSXRhefp44y3nyeEchnv1hoSnoqnduU1f1PjVtXvcA==
+X-Received: by 2002:a5d:46c9:0:b0:32d:de87:1085 with SMTP id g9-20020a5d46c9000000b0032dde871085mr16172082wrs.10.1698219166620;
+        Wed, 25 Oct 2023 00:32:46 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
+        by smtp.gmail.com with ESMTPSA id v18-20020a05600c15d200b004063d8b43e7sm18422239wmf.48.2023.10.25.00.32.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Oct 2023 00:32:46 -0700 (PDT)
+From:   Neil Armstrong <neil.armstrong@linaro.org>
+Subject: [PATCH 00/10] clk: qcom: Introduce clocks drivers for SM8650
+Date:   Wed, 25 Oct 2023 09:32:37 +0200
+Message-Id: <20231025-topic-sm8650-upstream-clocks-v1-0-c89b59594caf@linaro.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU0PR04MB9417:EE_|DB9PR04MB9234:EE_
-X-MS-Office365-Filtering-Correlation-Id: 38c905de-def8-4b0b-566a-08dbd52a91a1
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: n3Tf3AMAF/G49PermYeXxf1SiozOoxDYx/esECOh1obioHTcA/HL3P4iC2ofslSPUbscWubb1po8Q68lMj0MKNiOohjsyOsXN8BwaK6D+z2iEUXdG1/sl6Dbs+lQxQNW6zsF5gYzaoIWPNKniuI7DD6Z/J0/tb2cIw003Ba3BOYg/t+aWLAWKUxx8WnMed1421/73ROFkqWdXbHlVWFB1Zeg+vaYXDLWwAFoLQ9jaqp0+lUpCob7pultLJ94lUgSfF8FpV7ckAqTmB7TKS5+HXovbyvqG2FO26gqs4FOQrYYHF8buv+NsSQZOW1In3geAlUd61cDQ+2iTXM3heCk+at88kclL6j4+rD9UZpj/OKKWgrm1WkZpwmjf4bolsPFOG2EvnVysu84l9whyiujaGeuO3LMoTFBPtcLtfLvRPLVVwfu3/trSddMpFwiPpl6eM+0XSHG4VV2sf1woLqvc0FCnTIVvmAPq38rOjGDgKEazFLIwU1K/KA0i5aAF8iQgfW54/3NSHbl87Jj3G44XsTz4OkvtMe1TeL52kgMl3I3K9C8LCfO9LIALlmFFy6c21yobbYfVeoTVifyxeR34wA4XNAWxLGprVD0Ad7L7sdboWmShaYS9fwMj82y00Wo
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(136003)(376002)(346002)(396003)(366004)(230922051799003)(1800799009)(64100799003)(186009)(451199024)(52116002)(1076003)(26005)(6512007)(38100700002)(86362001)(38350700005)(83380400001)(7416002)(2906002)(15650500001)(6486002)(4744005)(478600001)(6666004)(6506007)(2616005)(8676002)(4326008)(8936002)(316002)(5660300002)(41300700001)(66556008)(66946007)(66476007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Y+Fs/ooqBfolCcCV3mMl10Zx6RjaNUhOnEu7ThKXUQ/luaP6+JO6PUpLqIfs?=
- =?us-ascii?Q?Bkw8hfR3+zE3ZdZjnbL3Zn4yWVMGn+H6jnnoXcffq7pxW4exUj/GS/LLWzFS?=
- =?us-ascii?Q?kqRHFeP0PzEU0I3lurMgT1NgFGVPtzrehU6kB3lnHoBJw8ZCgoQ08t3bqn2G?=
- =?us-ascii?Q?mXhpdsZw1wekZ+vMzPP29qvQjej8YDEfQLpDmhnhixsQ1TrfCTRd9zaxNRbr?=
- =?us-ascii?Q?jQVuJTTsDdNkDCMVi1j5T1roGkvZR4rl0qHgBzRz3CKWuOB4qGTyqsdzHDEC?=
- =?us-ascii?Q?IN4PKrRVlf57mZzkD8w0JtpsoTmxpxn6/pTn1XEEk/H/+Y2PtNoPDg6DyKE8?=
- =?us-ascii?Q?H0IDpFYw2r3fqUDpE5G941tThT2uaaTwCYklGwZRFJmbOCb4jLti8qECtSr9?=
- =?us-ascii?Q?f0VOLR6YYD+xMEmncOT2zhuFA9aB0wFoeySPbhXOBd8kXYGSYXH2lvxNyW0m?=
- =?us-ascii?Q?ivwh2Dv7lxjAZYYgM4FwTqj/u1GaSElnEe8WOuoqR4+Oo/CFCDsDgRyIuUEA?=
- =?us-ascii?Q?Yszy8aUvaxwqETb9OTZUy1Xa/SZFKZXdGsoI7e4dZL1j7FrAwokK5d6wJ9q6?=
- =?us-ascii?Q?GBA53mIe2/KzD5RBCGY44IRvCMKS8di3+8hmB7NaiBq4wXKo92iB9h9s/b1/?=
- =?us-ascii?Q?ZzzkqIyxpfmPffUyCMMYvo1F+kSduPBitoLomEjcDbjhxH++7Bb3jbJ6Gnwr?=
- =?us-ascii?Q?RmU2xCs+Rk2B8MjzKoNHyJrEXAuVsDkT76FtfBKKnbS/sRa8/qOuIZE6SQQP?=
- =?us-ascii?Q?weGeJpZhq2MOfrkfqxA6AHU0HcCbtDWLU0d1v7YNBa06oq/NKc2DeXAD9uIL?=
- =?us-ascii?Q?Oou2z7DdVgCdN6s5JhhU0ABDCpxsg1Hm+K7qr5rVmc1YHU5X0oZBoeT4tW5f?=
- =?us-ascii?Q?EhuxGjjGP2QtkMhsuKcHi97sYWU/U3SlKiP8UJZL3/YkIvgtPr3BW9y55XJN?=
- =?us-ascii?Q?Aj0KkTXHbJqZ2qlCAL39XwdUlSlhWmYEbVg23VUHNHCx9isMU0w2KCyeWC/B?=
- =?us-ascii?Q?RwhNxvr9tjvjSPPzbQpWsy+T4O811dBgJmfpQDNp5/ZWehYSdkXvPq8I+IBz?=
- =?us-ascii?Q?b62dNl7+Vjq4GTxOZKF4NmGap3/JqwZaAvBBxdhKMazI6xaZhSX9MlvTL+ud?=
- =?us-ascii?Q?2QSL7CK92gRGrSYMoN2PnVVXC7xBAJCAUxNj8wWpi7iSpXmBi1CFHES1esap?=
- =?us-ascii?Q?Bk6oq7/T0wcIUeT7Uj2lsUPDIk13ixTpRRIB7jz3/6vKZtw/VunYsk4ooZjE?=
- =?us-ascii?Q?3wXefIlBFh6dXYNNDZKObppKaIIWNXl1G85RpJMw2jQjWJ3H8tvzJkCoD+CJ?=
- =?us-ascii?Q?FAbCVr90uH8yLyJmsEgoV+ZV3h2QiHCgbQpxJ+99+UqBMa3FCwk6KsKBlYB1?=
- =?us-ascii?Q?PwxjpntkGtUP4nHFfK+RBeKbRYHA3Bwcjz+eMcs5S3/Vkl5+CdrZvMRI1Na8?=
- =?us-ascii?Q?pb5aRy2tYIVgas3hxtZZDwf5CY9LILROoXEe0RCNfqwV9JdTrOffSQx84bWS?=
- =?us-ascii?Q?4f8L5OWFvlcVjGw8315h56i/g1QNKzQBuPAzIkrryD5jwq0Pae6r2Be+92+D?=
- =?us-ascii?Q?GRtr1bAwGVyhBU2+cP9mtUylhHFKJ2gTvqIP9y0I?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 38c905de-def8-4b0b-566a-08dbd52a91a1
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Oct 2023 07:18:21.5803
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rEF196bqZHejOvHsIGDuMzbA48d0uGcGroWyyip2LxZ2HBIdwsvOPV7g40e3+PkkX9dZUyRKMUtBBxcNgQxJjQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9234
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJXEOGUC/x3MwQqDMAwA0F+RnA202nWbvyIeNMYtbNrSqAjiv
+ 6/s+C7vBOUkrNAUJyTeRSUsGbYsgN798mKUMRsqU9XWWI9riEKo88PfDG5R18T9jPQN9FGsyTw
+ n591wHx3kIiae5Pj3bXddPzlO1o9uAAAA
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Taniya Das <quic_tdas@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2528;
+ i=neil.armstrong@linaro.org; h=from:subject:message-id;
+ bh=bP16mZ4/DuDRAzR3CIC1ABEU1UBCMAoiO2clbM/lJeg=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBlOMSYh/zAXdQqUhu/yl8Yk6Qi0ckNxzSLU6MF9v1n
+ tKQrIbqJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZTjEmAAKCRB33NvayMhJ0SCxD/
+ 9hpldl/uLaOjQQzplSi8bHtiz4nsUxnoyazeyf4a/SZT+Fqp5E4zzkyCBFYjp7g+pKX1KAK22aabXi
+ QJ1DZaPltQ3eOzstw8a6F0NpVG2X1qPTdsZ1h84bBq51p13hQ3hNo1gDotF7DLq1w446IxM9tM7R7Z
+ 1rFYY/dsM8///Nx0Vb7saacVKOyORsCXI0a9dBFDeAbhnYvOer5wht2N/3VkW4DMeot3lS04kE4SR+
+ JKxt0HaGO1oOgl1qhJPvDQhatXW5nJSl0xMvnwNL1RkU+hmK1fpR3FYA870u36VTKUTT6OMIk3RsxI
+ X/tDKPR9cJCNjK95lxvarnOLudrRD+T/0XYAmbE22nQQJ0oFzpYS2LJwy22JKpYKPrHBkbs0Ii1anl
+ s4zIsLETffIiTzD+sXMM1bw920bZAH8tOT80ul/RVTY0ImipYZ4vg8yDlDQUjn+CmCUXEdQnkpNhK1
+ 96vTyOVFVtVFT5UE9Uo9Md071g8ktkQEAgySbDPzfKQ58Th2XNcJj5RJk2RxOxagcz23fACB8KQ9/j
+ y+ZFlum9t8oVSy85XmIf3ztoov8ge5Jzk6iOgHMTdMMm4ycz/wP1YoWTlnqiPVJQFHW4/yv9BqqLXT
+ uQ287LU20rCNIrJ7rXIJA0B7jhntvrTeBa7qbikKREy8/eWWuDVnXv7iQ92A==
+X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
+ fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+This patchset introduces the following SM8650 Clock drivers:
+- GCC: Global Clock Controller
+- DISPCC: Display Clock Controller
+- TCSR Clock Controller
+- GPUCC: GPU Clock Controller driver
+- rpmh clocks
 
-The analog module produces PLL and OSC for Clock Controller Module. Since
-the binding doc has been updated to clock-controller for this module,
-Let's also update the device tree node.
+Dependencies: None
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
+For convenience, a regularly refreshed linux-next based git tree containing
+all the SM8650 related work is available at:
+https://git.codelinaro.org/neil.armstrong/linux/-/tree/topic/sm85650/upstream/integ
+
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 ---
-V3:
- None
-V2:
- Update subject/commit
- Drop node alias
+Neil Armstrong (10):
+      dt-bindings: clock: qcom: document the SM8650 TCSR Clock Controller
+      dt-bindings: clock: qcom: document the SM8650 General Clock Controller
+      dt-bindings: clock: qcom: document the SM8650 Display Clock Controller
+      dt-bindings: clock: qcom: document the SM8650 GPU Clock Controller
+      dt-bindings: clock: qcom-rpmhcc: document the SM8650 RPMH Clock Controller
+      clk: qcom: add the SM8650 Global Clock Controller driver
+      clk: qcom: add the SM8650 TCSR Clock Controller driver
+      clk: qcom: add the SM8650 Display Clock Controller driver
+      clk: qcom: add the SM8650 GPU Clock Controller driver
+      clk: qcom: rpmh: add clocks for SM8650
 
- arch/arm64/boot/dts/freescale/imx93.dtsi | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/clock/qcom,rpmhcc.yaml     |    1 +
+ .../bindings/clock/qcom,sm8450-gpucc.yaml          |    2 +
+ .../bindings/clock/qcom,sm8650-dispcc.yaml         |  106 +
+ .../devicetree/bindings/clock/qcom,sm8650-gcc.yaml |   65 +
+ .../bindings/clock/qcom,sm8650-tcsr.yaml           |   55 +
+ drivers/clk/qcom/Kconfig                           |   32 +
+ drivers/clk/qcom/Makefile                          |    4 +
+ drivers/clk/qcom/clk-rpmh.c                        |   29 +
+ drivers/clk/qcom/dispcc-sm8650.c                   | 1806 +++++++++
+ drivers/clk/qcom/gcc-sm8650.c                      | 3931 ++++++++++++++++++++
+ drivers/clk/qcom/gpucc-sm8650.c                    |  660 ++++
+ drivers/clk/qcom/tcsrcc-sm8650.c                   |  192 +
+ include/dt-bindings/clock/qcom,sm8650-dispcc.h     |  101 +
+ include/dt-bindings/clock/qcom,sm8650-gcc.h        |  257 ++
+ include/dt-bindings/clock/qcom,sm8650-gpucc.h      |   43 +
+ include/dt-bindings/clock/qcom,sm8650-tcsr.h       |   18 +
+ include/dt-bindings/reset/qcom,sm8650-gpucc.h      |   20 +
+ 17 files changed, 7322 insertions(+)
+---
+base-commit: fe1998aa935b44ef873193c0772c43bce74f17dc
+change-id: 20231016-topic-sm8650-upstream-clocks-3c09f464b7d4
 
-diff --git a/arch/arm64/boot/dts/freescale/imx93.dtsi b/arch/arm64/boot/dts/freescale/imx93.dtsi
-index ceccf4766440..235f1ae583e5 100644
---- a/arch/arm64/boot/dts/freescale/imx93.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx93.dtsi
-@@ -422,9 +422,10 @@ mediamix: power-domain@44462400 {
- 				};
- 			};
- 
--			anatop: anatop@44480000 {
--				compatible = "fsl,imx93-anatop", "syscon";
-+			clock-controller@44480000 {
-+				compatible = "fsl,imx93-anatop";
- 				reg = <0x44480000 0x2000>;
-+				#clock-cells = <1>;
- 			};
- 
- 			tmu: tmu@44482000 {
+Best regards,
 -- 
-2.37.1
+Neil Armstrong <neil.armstrong@linaro.org>
 
