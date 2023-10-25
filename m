@@ -2,38 +2,38 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C690DC07545
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Oct 2023 17:28:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5634BC25B6E
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Oct 2023 17:36:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229485AbjJYR2s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Oct 2023 13:28:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50506 "EHLO
+        id S229453AbjJYRgR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Oct 2023 13:36:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229441AbjJYR2r (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Oct 2023 13:28:47 -0400
+        with ESMTP id S229485AbjJYRgM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Oct 2023 13:36:12 -0400
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7303112F;
-        Wed, 25 Oct 2023 10:28:45 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C24F1182;
+        Wed, 25 Oct 2023 10:36:10 -0700 (PDT)
 Received: from mercury (cola.collaboradmins.com [195.201.22.229])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
         (Authenticated sender: sre)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id D9E5F6607349;
-        Wed, 25 Oct 2023 18:28:43 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 70F1E6607349;
+        Wed, 25 Oct 2023 18:36:09 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1698254924;
-        bh=Z4WtJ1xqFzmPBgctE13UKDki4+fr/pOhtB+GxP+i85A=;
+        s=mail; t=1698255369;
+        bh=R1j0yF7ON9HljamXpo4RStWWAUzHA+3I02cIzDZbN+E=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Kszb2A+7dBcNadiOxkvyHf9+5QoAZZs4MehyZirD41VQYHIj58SwXW6CV3MN4EFKX
-         WPTCOx3mr7qrlQgJ0990AKfOWe2ivq5bg0uZNAoDlOJ0DA9jqhTrI4JaEbco39XNy8
-         2dXFYAY+1OShZ0lrd0/onfSetuV8u5qmkGQKQ8DfKhz3sOaOOCpuzgU1CcwWIRvR50
-         DIiaifRMBnTRfbGiTrJqmqQSKKiePvgy14hvCh1BlsxkXEP0NSAaBCf/0gswt0aP+O
-         gYiBOmFDsinsQjN4qJhYMkyhqeQ/1M4kZy5wX0Ds5uHLzBOIgajrC1AxoPrRZMdso8
-         Okbw3tG0+bRTg==
+        b=Js86oV2d5JuhzHjZBL0v0OkFlQkw+AifCEvxM/t9mTYki5BalgXOkp5gmI8wV83Xd
+         8iWv5m+l4CNyIRFgNK8Nsb5i06jR/fuClZUAwKicSAnGcWEede9YyhanVMfva7PGOS
+         lhU4lLIzi2tGr2CrX7qmUqI0XeMxPNN85z6BOF+GzV4S956EqmhkR1tWVWKZTsLabz
+         gbFyGDN2swhB+M9lmdy5v7bQBrfaj8+MZrLBCWpOmPq3+24UAB8u97orvp0ZHfZaqg
+         hYbxzEX8O995BF6niTasSFM2cSZxtlOI0NfH6X07aCrtz5sV6jgrr3ogLl8yubPtOB
+         zWonJwi33UgSg==
 Received: by mercury (Postfix, from userid 1000)
-        id 54DE3106057B; Wed, 25 Oct 2023 19:28:41 +0200 (CEST)
-Date:   Wed, 25 Oct 2023 19:28:41 +0200
+        id 873DD106057B; Wed, 25 Oct 2023 19:36:06 +0200 (CEST)
+Date:   Wed, 25 Oct 2023 19:36:06 +0200
 From:   Sebastian Reichel <sebastian.reichel@collabora.com>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -44,109 +44,83 @@ Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Vasily Gorbik <gor@linux.ibm.com>,
         Niklas Schnelle <schnelle@linux.ibm.com>, kernel@collabora.com
 Subject: Re: [PATCH v4 1/3] math.h: add DIV_ROUND_UP_NO_OVERFLOW
-Message-ID: <20231025172841.awb7s6o4ourqu4w5@mercury.elektranox.org>
+Message-ID: <20231025173606.i2e74tfpbo6as5u4@mercury.elektranox.org>
 References: <20231024161931.78567-1-sebastian.reichel@collabora.com>
  <20231024161931.78567-2-sebastian.reichel@collabora.com>
  <CAHk-=whYDbZ29fx_xeSxtYSjtF8WJkaLjzyB8RN5_Rk9Sh-YyQ@mail.gmail.com>
+ <CAHk-=wjO5ivM6k7iMiThO9JfxH0dhLe=mcC4TQwReU0nBCnWpg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="uxr4h7e7k7nksmyc"
+        protocol="application/pgp-signature"; boundary="3xdyay7hajk67vjt"
 Content-Disposition: inline
-In-Reply-To: <CAHk-=whYDbZ29fx_xeSxtYSjtF8WJkaLjzyB8RN5_Rk9Sh-YyQ@mail.gmail.com>
+In-Reply-To: <CAHk-=wjO5ivM6k7iMiThO9JfxH0dhLe=mcC4TQwReU0nBCnWpg@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---uxr4h7e7k7nksmyc
+--3xdyay7hajk67vjt
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-On Tue, Oct 24, 2023 at 09:32:27AM -1000, Linus Torvalds wrote:
-> [ Since you're cc'ing the s390 people, I assume that means that this
-> all ended up being a follow-up to the s390 issue discussion ]
-
-Actually I've noticed the issue in the clock framework some time
-ago and Andy Shevchenko pointed me towards the s390 thread, which
-is more or less about the same fundamental problem. So I added
-everyone in Cc, to make sure this is solved properly and not just
-s390 specific.
-
-> On Tue, 24 Oct 2023 at 06:19, Sebastian Reichel
-> <sebastian.reichel@collabora.com> wrote:
+On Tue, Oct 24, 2023 at 12:53:03PM -1000, Linus Torvalds wrote:
+> On Tue, 24 Oct 2023 at 09:32, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
 > >
-> > Add a new DIV_ROUND_UP helper, which cannot overflow when
-> > big numbers are being used.
+> > I would really prefer to just make our regular DIV_ROUND_UP() DTRT.  Bu=
+t:
+> >
+> >  - people do use it with complex first arguments (ie function calls
+> > etc) that we don't want to evaluate twice
+> >
+> >  - we can't make it an inline function, because the types aren't fixed
+> >
+> >  - we can't even use a statement expression and __auto_type, because
+> > these things are used in type definitions etc and need to be constant
+> > expressions
 >=20
-> This is really horrendously bad on some architectures (ie it might
-> require *two* divisions):
+> Ok. I have a potential beginning of a solution.
+>=20
+> It is unbelievably disgustingly complicated. But it might approach
+> being correct.
+>=20
+> And by that "it might approach being correct" I obviously mean "this
+> is untested, but builds at least some kernel code".
+>=20
+> I'm almost certain it will fail on more complex cases, because I
+> already found a lot of questionable stuff that was simply hidden by
+> the old macro just silently doing the C arithmetic type conversions,
+> and this thing does type handling manually.
+>=20
+> I'm hoping that somebody will go "Linus, you're just being
+> *completely* silly, it's much easier to do XYZ".
 
-I came up with this helper for the issue in the clock framework,
-which currently use DIV_ROUND_UP_ULL() as a workaround. That solves
-the issue on 32 bit systems (input arguments are of type 'unsigned
-long'). But it also means doing u64 / u32 and I expect that do be
-much more more expensive on 32 bit platforms than two divisons.
-
-On 64 bit platforms the workaround is wrong, since the second
-argument is reduced from 64 bit to 32 bit. It effectively breaks
-platforms trying to request a frequency above 4.3 GHz from a clock
-divider. Since that's not yet a common thing I guess this has not
-yet been found and fixed by somebody else. I also just found it as
-bycatch.
-
-> > +#define DIV_ROUND_UP_NO_OVERFLOW(n, d) (((n) / (d)) + !!((n) % (d)))
->=20
-> but David Laight at least had a suggestion for that: when allowing
-> multiple uses, you can just do
->=20
->    #define DIV_ROUND_UP(n,d) ((n) ? ((n)-1)/(d)+1 : 0)
->=20
-> so now you're back to just one division and no horrible extra expense.
->=20
-> But we can't allow those multiple uses in general, sadly.
->=20
-> I would really prefer to just make our regular DIV_ROUND_UP() DTRT.  But:
->=20
->  - people do use it with complex first arguments (ie function calls
-> etc) that we don't want to evaluate twice
->=20
->  - we can't make it an inline function, because the types aren't fixed
->=20
->  - we can't even use a statement expression and __auto_type, because
-> these things are used in type definitions etc and need to be constant
-> expressions
->=20
-> That last thing means that even the "__builtin_choose_expr()" doesn't
-> work, because the statement expression still needs to be _parsed_ as
-> such, and that's not something we can do in those contexts.
->=20
-> Very annoying. Let me think about this.
-
-Thanks.
+I think your new __div_round_up_ull() should also be used by
+DIV_ROUND_UP_ULL, which is defined in linux/math.h.
 
 -- Sebastian
 
---uxr4h7e7k7nksmyc
+--3xdyay7hajk67vjt
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmU5UDgACgkQ2O7X88g7
-+poOpRAAkKKlCxY29dsN0u34xy/kd+1FGx+PGnCfzcjfAQ7bRCrxVR8aprksEv6H
-aODRrJMygHPJCNuEm6wssL1y/UuDbyFxi6Xt7eTvBKAnlv83i51d6j/Nke8aZdqV
-pFpBvQ6Joueu1s9Gz1f0bRGqPjtUiRzdgqspjkC/nKs1oO7qvZfNigWYMIaYpXSF
-+ffjEq3F4VMKMLtoQfzJ6YQXzanWDT8B5SDmi/59Rr09qa0WmROAYTDDhXUadq3w
-W2OgQPA1Iq3XcahaH19bZXLH9XUoBu+TSit6ybE77y3pCwmGZxbVUszEy96oyKs4
-G2qYRvwCrlOAEDZgjST87bdSKbSo5oEhTKGiwwfKFCwIUHudGDurcn0ii7VqMynz
-xUoa2efbk7I1HY48swLycUjqdc4M6mu+ARWD7em9852TqUBaJeuNqfwrPXJmeDdh
-OgpFm4N9leZWaL/6m+xbuE7POPPcVxBSENC9fyMCKWmIZan4Tj3VdKV+gY4p0P4G
-Ho670ITG4CoFm0gAZl1khJNbibLWYOjPQAGTC5CqZZX1B1LrPWlfG74kMQKg9aX7
-ujQ/jnwKLVyMpnOO2PeuZy/QkcmVPUvN8++z6hOCsdq/8+GJ4CVr5fPqcrroL0FM
-oiMd4ScT1uLisUBI9tzDsykTvXmimKv8l83DzFKM25EGNYUh+BE=
-=J0Yz
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmU5UgYACgkQ2O7X88g7
++pr6lxAAney3xsyWL9nxuzXlOqg2Bt+J+bDxMLJpjmNnsXbt3UjeyNOkBd1GBaaF
+4rkeE1wVapAmWMdt+zoNmX+1A/r0gF6So80qAf622+Ae2L+78h36M1cnb4KPoBoD
+ffNmWVaf7lJeuNfwbYfOs/ymXx2b0abs7Pf8IbrKl04ER+oCzWlaeaxzsMocyvw2
+0CKoYw/jyWDnFhREC0qOJTb8oiUQHfSAa5mo61jBzjMErtdizF0rBG389W6GGgXA
+N8pMZg502VAAOqxQRke3XS5Zk8IEHBj/aKrGRUvKDd5IbqwYWJT74p3/TionUs06
+Z/TEr3X8NW4TElNRyxCqgudNXWqs7KYDB4tj7cDWHktPysw65Ow60M8BHExSKWc0
+hfSbbdnN88DRhP8KP6m//dArD7cN+EVmLUmfNNzJ8GKxVdOGWvLbOUDCWq2+/Vzg
+lsnv9CkWGjkCwzz8fzATkMfB0SW9SeCtAz1/9QGfWsV5M7rVWalkUyd1DCKSmtgG
+G3V0+tTVJunazyhKBxzY1Y40HZB7BCfABuHTNwnWsu7yNQi52o1+GpkbSf9ieRD+
+NmW4jgxqJzp8wzxpGhlHm1/R59vLSaTXWHP7UvaUQD/Jp4adik45m++iykv0XkTW
+ErDfEJPQWkxVjybb6RIKdl9I1qQfbBVgOUzgOa1tb298xc8Ngys=
+=jhkV
 -----END PGP SIGNATURE-----
 
---uxr4h7e7k7nksmyc--
+--3xdyay7hajk67vjt--
