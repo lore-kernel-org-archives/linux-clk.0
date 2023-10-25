@@ -2,174 +2,136 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F168C0032E
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Oct 2023 11:29:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BF0AC25B47
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Oct 2023 11:56:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232076AbjJYL3N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Oct 2023 07:29:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55488 "EHLO
+        id S234981AbjJYL4s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Oct 2023 07:56:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230217AbjJYL3N (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Oct 2023 07:29:13 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5F7A10A;
-        Wed, 25 Oct 2023 04:29:10 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 34B9766071C9;
-        Wed, 25 Oct 2023 12:29:08 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1698233348;
-        bh=YcIUG+bFG3gCP/KGT755SKLbRpNGiug2TGJ8Qy80gUA=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=aAfy4Taoi7eEhWJhC0q5SXJZ6OWE+V4gv4d7aT6Ge/Roi5iW8GZvhJzVM0rO7hjtb
-         JtZPD7oPTYddIwZ7+EhBn/b/D48b/05qyX8kI3vVAtRtbn3ZZFKzMlWRcETrqmJeHq
-         M/ZqnMeOWCOmdNxN+4wVA7NuYugeYveW/TmbkoibFU3D675qvpeTK6VFQiAr/58jl4
-         Yq2+v8bEWgufMNBSdpIE3L2qUQrnu5pLz7E5NnZEGZuocWpcQwprwrv2oOM7s049La
-         240tPMxBQPDCROAJZNkUxnlXE1oVjlOTTtKT//ea/3D6mKtMBis43FF20Uh7hoRNt8
-         7wyGG/inj3fEQ==
-Message-ID: <eb4f7d6e-0e4c-4b2d-b889-cad9fc9262d8@collabora.com>
-Date:   Wed, 25 Oct 2023 13:29:05 +0200
+        with ESMTP id S234911AbjJYL4r (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Oct 2023 07:56:47 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A667C181
+        for <linux-clk@vger.kernel.org>; Wed, 25 Oct 2023 04:56:44 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-407c3adef8eso46825285e9.2
+        for <linux-clk@vger.kernel.org>; Wed, 25 Oct 2023 04:56:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1698235003; x=1698839803; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :references:cc:to:content-language:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ntZ1JpiCH0v861EMwiiZzKp1eCEOCRwWhzRC0rD+sjU=;
+        b=q10paYoDIv2nf/ax2UvnFmK+diqyx4zZrT5XhtLcmQt+zCX29pNxOhGnzdMESPNxO7
+         3PQ6uewYkDTmK4F5GKLrO8piIhDEXMhqPVJM6Qqv6ivSZOLUE0y5mffsyWSrVj9IGi2g
+         TovZa/NVKlHo/5cBGa9FUgndbb4v6sRCaxAM+izgaprTT55QtmdgwXOvAMV+oIE1GAfO
+         LbHcsbHHwyJfS8Ka5ljjosxAJ11T4t8KELIbsTp6H1diDkG+2aDQiixXDnLf31ip0Hmt
+         l1zZBlKe3oH21SEP74bU9mzIUFA3/UcdYwzBjucdq6EIRiXrRZiqk+FE2sAur6tT0ZoE
+         gSvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698235003; x=1698839803;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :references:cc:to:content-language:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ntZ1JpiCH0v861EMwiiZzKp1eCEOCRwWhzRC0rD+sjU=;
+        b=Ih4w4dx1KlcC1Zhy+FFxaya9Oa1ZuGgxbUpwnFfkXWjYcrTPFw20P1A4BqyFr84h+z
+         nCFOqAgamGqYSYiYfT5T8mDlDWI57GGm+VX5l/Y6Tf5TEf3X/HUcWTlgN6vpar7i1Iiv
+         +BYEU8xh8VcH+ssy3J1jJM0v7TuukmpjquIDP+yIPbOSg3Q+YrearcUzg8sQ07YB8WUV
+         E+/CJa/H1bCmmGu9uQnlQ0bRm+vCl3BqUkjghQoFniT/cPN5xD+7mZ/3NMzS2CRzG0B5
+         nsPma225tnvFw3soMzPGk1FFd2H+iyZut8+Xa7uKQeYT97KDzZ4/OSNjBMvyG15KiCHA
+         lLjQ==
+X-Gm-Message-State: AOJu0YwnSBfk/GaS5gDHRU4qstmRY/FMAV3tDstjJGl8AwvPGyCydtH2
+        B8SQpJzZ8yZv21zZisj/bZjaSw==
+X-Google-Smtp-Source: AGHT+IHX2FpNSPui81nBWrWZlfjK7IPn3Gl11Lt3FKEXEZcYYE4ZqQ/og+64TR5FVWtIiB6N05U0Bg==
+X-Received: by 2002:a5d:500b:0:b0:324:8239:2873 with SMTP id e11-20020a5d500b000000b0032482392873mr10403313wrt.37.1698235002980;
+        Wed, 25 Oct 2023 04:56:42 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:4b03:ec74:6374:5430? ([2a01:e0a:982:cbb0:4b03:ec74:6374:5430])
+        by smtp.gmail.com with ESMTPSA id t13-20020a5d49cd000000b003176c6e87b1sm11797593wrs.81.2023.10.25.04.56.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Oct 2023 04:56:42 -0700 (PDT)
+Message-ID: <7202ad7c-5568-4abd-9fde-e374428225ab@linaro.org>
+Date:   Wed, 25 Oct 2023 13:56:41 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: mediatek: mt8186: Change I2C 4/5/6 ap clocks parent
- to infra
-Content-Language: en-US
-To:     =?UTF-8?B?WXUtY2hhbmcgTGVlICjmnY7nprnnkosp?= 
-        <Yu-chang.Lee@mediatek.com>,
-        "wenst@chromium.org" <wenst@chromium.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        =?UTF-8?B?Q2h1bi1KaWUgQ2hlbiAo6Zmz5rWa5qGAKQ==?= 
-        <Chun-Jie.Chen@mediatek.com>,
-        =?UTF-8?B?TWlsZXMgQ2hlbiAo6Zmz5rCR5qi6KQ==?= 
-        <Miles.Chen@mediatek.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>
-References: <20231019124914.13545-1-angelogioacchino.delregno@collabora.com>
- <CAGXv+5H0rUajeU-i8nYyV2xWFQTnzqxioZCCyyP_RZXKqmcugQ@mail.gmail.com>
- <283d18028590d57025e5654d18b8b5b7.sboyd@kernel.org>
- <CAGXv+5EpBLnXVdxnk9wBZi5F7U5wdJRfYH7fgg4Lkr1HJXm+WA@mail.gmail.com>
- <9c1e10b56db315e03daa3df5918cde844297c680.camel@mediatek.com>
- <CAGXv+5HQ2sVx=F3my2jOGMw3j3pU2aarEg+Dj1XgNzwio98ezA@mail.gmail.com>
- <e049985de9da9958ba425824ab5f38c7cf41025b.camel@mediatek.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <e049985de9da9958ba425824ab5f38c7cf41025b.camel@mediatek.com>
+From:   Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 07/10] clk: qcom: add the SM8650 TCSR Clock Controller
+ driver
+Content-Language: en-US, fr
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Taniya Das <quic_tdas@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20231025-topic-sm8650-upstream-clocks-v1-0-c89b59594caf@linaro.org>
+ <20231025-topic-sm8650-upstream-clocks-v1-7-c89b59594caf@linaro.org>
+ <c9aa685b-b746-4901-a374-4e9d4d5b6cfb@linaro.org>
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro Developer Services
+In-Reply-To: <c9aa685b-b746-4901-a374-4e9d4d5b6cfb@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 25/10/23 11:50, Yu-chang Lee (李禹璋) ha scritto:
-> On Tue, 2023-10-24 at 17:20 +0800, Chen-Yu Tsai wrote:
->>   	
->> External email : Please do not click links or open attachments until
->> you have verified the sender or the content.
->>   On Tue, Oct 24, 2023 at 3:47 PM Yu-chang Lee (李禹璋)
->> <Yu-chang.Lee@mediatek.com> wrote:
->>>
->>> On Tue, 2023-10-24 at 10:58 +0800, Chen-Yu Tsai wrote:
->>>> On Tue, Oct 24, 2023 at 10:52 AM Stephen Boyd <sboyd@kernel.org>
->>>> wrote:
->>>>>
->>>>> Quoting Chen-Yu Tsai (2023-10-19 22:06:35)
->>>>>> On Thu, Oct 19, 2023 at 8:49 PM AngeloGioacchino Del Regno
->>>>>> <angelogioacchino.delregno@collabora.com> wrote:
->>>>>>>
->>>>>>> Fix the parenting of clocks imp_iic_wrap_ap_clock_i2c{4-6},
->> as
->>>>>>> those
->>>>>>> are effectively parented to infra_ao_i2c{4-6} and not to
->> the
->>>>>>> I2C_AP.
->>>>>>> This permits the correct (and full) enablement and
->> disablement
->>>>>>> of the
->>>>>>> I2C4, I2C5 and I2C6 bus clocks, satisfying the whole clock
->> tree
->>>>>>> of
->>>>>>> those.
->>>>>>>
->>>>>>> As an example, when requesting to enable
->>>>>>> imp_iic_wrap_ap_clock_i2c4:
->>>>>>>
->>>>>>> Before: infra_ao_i2c_ap -> imp_iic_wrap_ap_clock_i2c4
->>>>>>> After:  infra_ao_i2c_ap -> infra_ao_i2c4 ->
->>>>>>> imp_iic_wrap_ap_clock_i2c4
->>>>>>>
->>>>>>> Fixes: 66cd0b4b0ce5 ("clk: mediatek: Add MT8186 imp i2c
->> wrapper
->>>>>>> clock support")
->>>>>>> Signed-off-by: AngeloGioacchino Del Regno <
->>>>>>> angelogioacchino.delregno@collabora.com>
->>>>>>
->>>>>> I'm curious about what led to discovering this error?
->>>>>>
->>>>>
->>>>> Is that an acked-by?
->>>>
->>>> MediaTek engineers are saying the original code already matches
->> the
->>>> documentation provided by their hardware engineers. I'm trying to
->> get
->>>> them to respond on the mailing list.
->>>>
->>>> ChenYu
->>>>
->>> After checking with I2C clock hardware designer there is no
->>> infra_ao_i2c{4-6} clock gate in between. And the clock document at
->> hand
->>> aslo shows the same result. Generallly speaking, we would like to
->> keep
->>> sw setting align with the hardware design document. I would
->> recommand
->>> not to change this part of code, but enable infra_ao_i2c{4-6} prior
->> to
->>> the usage of imp_iic_wrap_ap_clock_i2c clock.
+On 25/10/2023 10:43, Konrad Dybcio wrote:
+> 
+> 
+> On 10/25/23 09:32, Neil Armstrong wrote:
+>> Add TCSR Clock Controller support for SM8650 platform.
 >>
->> Are infra_ao_i2c{4-6} actually used by the hardware? If so, for what
->> purpose?
+>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>> ---
+> [...]
 > 
-> According to hardware designer it servers no purpose. Just a legacy of
-> previous design...
-> 
->> If it is actually needed by the hardware and it is not in the
->> existing path,
->> then it needs to be described in the device tree and handled by the
->> driver.
->>
->> ChenYu
-> 
-> After reviewing hardware design diagram, hardware designer concludes
-> that the clock tree is indeed
-> 
-> top_i2c -> infra_ao_i2c{4-6}
-> top_i2c -> infra_ao_i2c_ap -> imp_iic_wrap_ap_clock_i2c{4-6}
-> 
-> so I think we should keep this clock relation unchanged.
-> 
-> Thanks
-> YuChang
-> 
+>> +static int tcsr_cc_sm8650_probe(struct platform_device *pdev)
+>> +{
+>> +    struct regmap *regmap;
+>> +
+>> +    regmap = qcom_cc_map(pdev, &tcsr_cc_sm8650_desc);
+>> +    if (IS_ERR(regmap))
+>> +        return PTR_ERR(regmap);
+>> +
+>> +    return qcom_cc_really_probe(pdev, &tcsr_cc_sm8650_desc, regmap);
+> qcom_cc_probe?
 
-Can you please also expand on CLK_INFRA_AO_I2C{1,2,5}_ARBITER clocks?
-Is the I2C arbiter also legacy of previous designs?
+Ack, missed this one.
 
-Please check [1], as I've sent a commit adding those in the devicetree.
+Neil
 
-Thanks,
-Angelo
+> 
+> Konrad
 
-[1]: 
-https://lore.kernel.org/all/20231020075540.15191-1-angelogioacchino.delregno@collabora.com/
