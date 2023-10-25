@@ -2,80 +2,90 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63CCEC25B6B
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Oct 2023 19:50:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73087C07545
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Oct 2023 20:38:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230085AbjJYTt7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Oct 2023 15:49:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35000 "EHLO
+        id S229975AbjJYUiK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Oct 2023 16:38:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229971AbjJYTt7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Oct 2023 15:49:59 -0400
-Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86FD3E5;
-        Wed, 25 Oct 2023 12:49:57 -0700 (PDT)
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-1dceb2b8823so49914fac.1;
-        Wed, 25 Oct 2023 12:49:57 -0700 (PDT)
+        with ESMTP id S229596AbjJYUiJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Oct 2023 16:38:09 -0400
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87B03138
+        for <linux-clk@vger.kernel.org>; Wed, 25 Oct 2023 13:38:06 -0700 (PDT)
+Received: by mail-lj1-x22b.google.com with SMTP id 38308e7fff4ca-2c514cbbe7eso2153671fa.1
+        for <linux-clk@vger.kernel.org>; Wed, 25 Oct 2023 13:38:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1698266285; x=1698871085; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bkNNejbCmL/k7pWRnrsJGwZqih1Jcn9nw5isK0ZcLhI=;
+        b=BqFf2MHxH8RheMmwKqkJvx6gQAkizRpw+qnQqERHcsX8hjnF0eMrGg/5S0z1V5f7Dp
+         mS5G+ZEcT3GDbiC5U7PvMZp2Fe6+T6ETsN2fNvz7XXSH+HTOsyy3xSv0EvzvI71FteF9
+         QJZSJeVGkmq6aZVucENJgTZ7KFmm59YtZkiVPM34VvsIOeOhZrxCW5RMY1SdmZsDC86j
+         pyU7b3eUsrhGVCgyYPvCDV+/kMWE+6PLAqcpMtd+ntEyP56O8qBDk9NRvrlPZyKXpnRb
+         X1wgeNtQg6epvPnpGIJQ5vlG6SK7/wY9kLDhYWqKUSd1WEN2TlzmW53HbQMmlQVQKsjD
+         zhHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698263397; x=1698868197;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n3vKikt6OYeWXb3oAjUYhU4Xuj5wy7N9Rjuk8Md7fhc=;
-        b=g76KLeCzyyZPv5HIQ1m3nFoccoFTfdHIVNfKTr4rIpQD2Ljbqn2Xy9/F9oB1uG7F/S
-         wL+GLksCHbaglU3Y8XZ0qXMFKnuUwhj79v1eCaemCUcnzM6G4gS5MZGIuvf1E/wF3Y0s
-         UbYRa07nGvzRC3d7hxrM+4b2htV99k7DvXvvAyWDKfCBETnAjsjsKzw4s/Ld2hhL7jZa
-         65sWNp3SZ5A9Dp2JEKD4Vg3iz2oBdHtivBw4gw9wF6gyGsSCt9hkRY3G48DEWJwNuJHn
-         gEUm3oMXWR9SYpa3VNJTZW2oNHRqBylNWTuWeB1Innc7G3EFaJib23BTiTzLfZQQRZZr
-         kD3A==
-X-Gm-Message-State: AOJu0YwMnSrEO636jb1B6qf+n3779Klx0DK7ndyI0ct7+pPuCIRAJOfV
-        ePWP9vQ2EKpRIkTLSsBpmA==
-X-Google-Smtp-Source: AGHT+IG+ATueitqR135p6yft5vgODyhSKOGqBS2G/7od18w9fuimk/yuzsnNtLNqNNkrXHyYBFZ81Q==
-X-Received: by 2002:a05:6871:458a:b0:1e9:7912:3bd9 with SMTP id nl10-20020a056871458a00b001e979123bd9mr487526oab.9.1698263396674;
-        Wed, 25 Oct 2023 12:49:56 -0700 (PDT)
-Received: from herring.priv (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id le25-20020a05687c341900b001eae28db525sm2726904oac.23.2023.10.25.12.49.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Oct 2023 12:49:56 -0700 (PDT)
-Received: (nullmailer pid 1048441 invoked by uid 1000);
-        Wed, 25 Oct 2023 19:49:55 -0000
-Date:   Wed, 25 Oct 2023 14:49:55 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Neil Armstrong <neil.armstrong@linaro.org>
-Cc:     Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
-        Bjorn Andersson <andersson@kernel.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 05/10] dt-bindings: clock: qcom-rpmhcc: document the
- SM8650 RPMH Clock Controller
-Message-ID: <169826339456.1048387.10202962523113487323.robh@kernel.org>
-References: <20231025-topic-sm8650-upstream-clocks-v1-0-c89b59594caf@linaro.org>
- <20231025-topic-sm8650-upstream-clocks-v1-5-c89b59594caf@linaro.org>
+        d=1e100.net; s=20230601; t=1698266285; x=1698871085;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bkNNejbCmL/k7pWRnrsJGwZqih1Jcn9nw5isK0ZcLhI=;
+        b=mrjoAK44EQkanfLzT+FMLPElHiLbjBJ+vwZHzyLHxgCtezxLJbO8VekhkvguxLa4QE
+         K207A7eK9P4zIe1bmhdSGZoNA2qNd3qK+ghPDF5VH++Jt5BVyNW5xMicT0h3vDhTZtXS
+         rRFLehGuJZwg6mZFI0mXVXLYXTWqPkaJQD/Dy9B+RIsLSF2Tw4uLQoOmWYiCy9bfgQXo
+         zHo/z2xMAEMLy3bHHCrBaF2bkoKv/jpvGmNFH8JPeZ9LYZ6r2Q/QEgfXa4n8v3q1MbcU
+         Qce4OGXv5ADUVc3qt5+j9UQJr4YgprLVF8DwWvdwwGXW+4sgNzKvL8Yo7NC9/cBpwa2v
+         UDJw==
+X-Gm-Message-State: AOJu0YwlOEPywKNzRnloCZ9BWzLeVFL9Iv7sqRw6WRG0SL7QTkq9dGzu
+        NlFf+XBDl2bBqjLi5Fk1I4lU1g==
+X-Google-Smtp-Source: AGHT+IFEsNWUEVHLgy9no9zt5n/oSi9ff1FZksTxjp/VP/wDM1Yxxc6Zxk7YI/vaALGIt3FYIrQlCQ==
+X-Received: by 2002:a2e:bb12:0:b0:2bf:6852:9339 with SMTP id v18-20020a2ebb12000000b002bf68529339mr10819527lje.3.1698266284776;
+        Wed, 25 Oct 2023 13:38:04 -0700 (PDT)
+Received: from [192.168.100.102] ([37.228.218.3])
+        by smtp.gmail.com with ESMTPSA id c18-20020a05600c0a5200b0040770ec2c19sm669758wmq.10.2023.10.25.13.38.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Oct 2023 13:38:04 -0700 (PDT)
+Message-ID: <c9c6b20e-cac2-43a1-a026-ea01b0e245bd@linaro.org>
+Date:   Wed, 25 Oct 2023 21:38:02 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231025-topic-sm8650-upstream-clocks-v1-5-c89b59594caf@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] clk: qcom: rpmh: Add support for SC8380XP rpmh clocks
+Content-Language: en-US
+To:     Sibi Sankar <quic_sibis@quicinc.com>, andersson@kernel.org,
+        konrad.dybcio@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org
+Cc:     agross@kernel.org, conor+dt@kernel.org, quic_tdas@quicinc.com,
+        quic_rjendra@quicinc.com, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, neil.armstrong@linaro.org,
+        abel.vesa@linaro.org, quic_tsoni@quicinc.com
+References: <20231025133320.4720-1-quic_sibis@quicinc.com>
+ <20231025133320.4720-5-quic_sibis@quicinc.com>
+From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20231025133320.4720-5-quic_sibis@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-On Wed, 25 Oct 2023 09:32:42 +0200, Neil Armstrong wrote:
-> Add bindings documentation for the SM8650 RPMH Clock Controller.
+On 25/10/2023 14:33, Sibi Sankar wrote:
+> From: Rajendra Nayak <quic_rjendra@quicinc.com>
 > 
+> Adds the RPMH clocks present in SC8380XP SoC
+> 
+> Co-developed-by: Neil Armstrong <neil.armstrong@linaro.org>
 > Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
+> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
 > ---
->  Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
 
-Acked-by: Rob Herring <robh@kernel.org>
+This looks pretty straight forward.
+
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
