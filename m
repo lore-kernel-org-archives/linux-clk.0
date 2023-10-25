@@ -2,103 +2,170 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E41F5C07545
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Oct 2023 17:43:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B66A9C07545
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Oct 2023 19:17:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229854AbjJYRn7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Oct 2023 13:43:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46908 "EHLO
+        id S229583AbjJYTRQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Oct 2023 15:17:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234388AbjJYRn6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Oct 2023 13:43:58 -0400
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31717CC
-        for <linux-clk@vger.kernel.org>; Wed, 25 Oct 2023 10:43:56 -0700 (PDT)
-Received: by mail-lj1-x236.google.com with SMTP id 38308e7fff4ca-2c59a4dcdacso26651141fa.1
-        for <linux-clk@vger.kernel.org>; Wed, 25 Oct 2023 10:43:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1698255834; x=1698860634; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=KvqI5bmHaI6r/r4Bh4STYH/OzlrCkqHPpu4GTwS1+V8=;
-        b=OXVx2Du9VeuoBLpGr8hGnI+yHnRo1H15KqUJ3t0u1Ue2uobLcr44mIAhhwOdukrrrg
-         LVs3YoANZB2J4V0WXYID/6sxWRXiWImDWi3qU571wz0aHCOc2gDHgUbT8qMt/hwt8eZ9
-         8Bj7iWgbk7Icylx7RVQGOYetMVl+Wy3zZV5ek=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698255834; x=1698860634;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KvqI5bmHaI6r/r4Bh4STYH/OzlrCkqHPpu4GTwS1+V8=;
-        b=isVf9kRplifHbQOpIz2PeFE8voFf+juU0gi4UApUNi1+UZ65UzhAQkfN81ovqqmfFA
-         phDgpc7Brg3lBVBAlV0+X5k95ufNY5CNh1VvLzBT2Psd8GRlb/pkKAqEtyACdABNFgHq
-         261Cg65Y29Vnf3iWtTyvZrd7yvLXYtZIaMfSwoVP60ckpVq8/yIkdxFFXUE4ZGvZmRQT
-         1cihYJ2RnAUEA9qgwo5YodtwtNJfpJUn9QoopwjYVT0DAMnjJXLfYh16/MpDcp4Kb9Fq
-         Hp6XNH9wS1pwddcX5MUz+xEu/dZrNVhHMXQjs5HhfUxtw8tBfZjwKCQa7POAeCrpBj6u
-         Etcw==
-X-Gm-Message-State: AOJu0YzSunMohv/7x6EnAQZOdVmtcanWmTPSC3ZNGnMsJ7L/q1HcZ8+M
-        TYeXanvZYC+CxydAsS10LwtLWr5uohYVYwtnsrfNzXbq
-X-Google-Smtp-Source: AGHT+IHgmJuJrLf/iUDi75OGTkdSUJthDTJO42qzQoGi+pgzgupZpuVfdhwzYxvBKZvtkJ5RIRN4Vw==
-X-Received: by 2002:ac2:58e2:0:b0:507:b8e5:dfd5 with SMTP id v2-20020ac258e2000000b00507b8e5dfd5mr10337302lfo.5.1698255834213;
-        Wed, 25 Oct 2023 10:43:54 -0700 (PDT)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
-        by smtp.gmail.com with ESMTPSA id h10-20020a19700a000000b004fe64b0109asm2632364lfc.176.2023.10.25.10.43.52
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Oct 2023 10:43:52 -0700 (PDT)
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-507a55302e0so7998665e87.0
-        for <linux-clk@vger.kernel.org>; Wed, 25 Oct 2023 10:43:52 -0700 (PDT)
-X-Received: by 2002:ac2:52aa:0:b0:505:6fcd:d7bf with SMTP id
- r10-20020ac252aa000000b005056fcdd7bfmr10111613lfm.19.1698255831687; Wed, 25
- Oct 2023 10:43:51 -0700 (PDT)
+        with ESMTP id S229498AbjJYTRP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Oct 2023 15:17:15 -0400
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04olkn2087.outbound.protection.outlook.com [40.92.46.87])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E51FBB;
+        Wed, 25 Oct 2023 12:17:13 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=PWzvzpsUlhh1/w/YsPeTvi92ex360JDVR41aaPbj8n3V+ohXzw83efCMitnckfvqNWAIIqihskM0UqjqDKRIbxhWpNcI6n+p5fc6czVMq2jc0+uAZDKx8k/q+bwgxk4AS3xWmhXSHxJ8R1cZGmoshDzJJNJ8MjjLp5lR1Y+9lXBBwXjYchVG5cWW0MzDnsUHsbz/CTI0SageUVJvuEvRIGY+F+dbGsLfQ69ITh4IW8i/GfkXSVu+LtdrUWg1WaWnW25FmskcxoiTUUJnkVq/HLU8aTM9MlTMrKzDfeBhui1sZtWJDmjtPi+OWL1STzb3R7y/3vIp8e+rfsb0dO2iYQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=d3aT9anVxfUBj5s/CCoChFGogY5tOp3fSZ5HgzHc7Jc=;
+ b=eawvSPpcECGb78agczDLfGxQixyBRC2IuAjEmKkwbvurImzEHxPBxnKe87dFgc9XtSDtqvpFzO6hA0osk8WONYP6zx1Eyl+6hGZlEX+jU7nRd+EJOwKmOWb02gTKH21tyRGh5fhSwgEKNZSBFyeDJJPoiLlouC4zRcJdGcGA3oyvGePH5HyE9rlkOjuKDtobjyhddiOrw4T5VTWK3JE4kE2eSj5QaFXLMWwT3ANPxUHo0t1SdcVNH7SaS+JMFKzoUPF2MJ+u7qO8yRQIHm1bHBGfqDBmlxuIZThX50BACnKbtIaJ0hgOW7tLpVgBEqCXPtxaKLVh5PDMEcyQqVTazg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=d3aT9anVxfUBj5s/CCoChFGogY5tOp3fSZ5HgzHc7Jc=;
+ b=DrThoyo7ZoNv++Jk9lqJrH3yXHGTNZpfjw2v39uCd0Dvg6GDUWauFM1iAjcD+Ziip6opgXBEY5BxAr/U2LYlK8r1h1bH8hLgYCYZIx/0fageaBV1gdZzwAY49J8SCPLjwiazKXcZ/Q9YDx8aHEj2+3onYiXFZpq2XNUyrJ3xcH601nqaja0mk29IbS8L1nwjKL6//ZfyC1ys8cdBzNaOtV/e9V2wiG4r1BOvzK/7F93ummNCLbUN0YtbRvGav2J1eNjbQ7+Scjxg5sn3dBIk8wtJ2H0fpU9P/yO7o14TPJs+qngwW0twSylHPDpM6Q9/NJdewCaR0wrzo1BKDK9qGA==
+Received: from SN6PR06MB5342.namprd06.prod.outlook.com (2603:10b6:805:f9::31)
+ by SJ0PR06MB7067.namprd06.prod.outlook.com (2603:10b6:a03:2e6::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6907.26; Wed, 25 Oct
+ 2023 19:17:08 +0000
+Received: from SN6PR06MB5342.namprd06.prod.outlook.com
+ ([fe80::c40c:bbc8:b103:459c]) by SN6PR06MB5342.namprd06.prod.outlook.com
+ ([fe80::c40c:bbc8:b103:459c%2]) with mapi id 15.20.6863.032; Wed, 25 Oct 2023
+ 19:17:08 +0000
+Date:   Wed, 25 Oct 2023 14:17:05 -0500
+From:   Chris Morgan <macromorgan@hotmail.com>
+To:     Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Chris Morgan <macroalpha82@gmail.com>,
+        linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        sebastian.reichel@collabora.com, sboyd@kernel.org,
+        mturquette@baylibre.com, daniel@ffwll.ch, airlied@gmail.com,
+        sam@ravnborg.org, neil.armstrong@linaro.org, conor+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org
+Subject: Re: [PATCH 4/5] dt-bindings: arm: rockchip: Add Powkiddy RK2023
+Message-ID: <SN6PR06MB534242C3DB235AF76F2AA81CA5DEA@SN6PR06MB5342.namprd06.prod.outlook.com>
+References: <20231018161848.346947-1-macroalpha82@gmail.com>
+ <3083498.U7HbjWM52l@diego>
+ <SN6PR06MB534206AB35C00B3D003765AAA5DBA@SN6PR06MB5342.namprd06.prod.outlook.com>
+ <11399368.MucGe3eQFb@diego>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <11399368.MucGe3eQFb@diego>
+X-TMN:  [I0mlsDPvpUUiNCARqLIuQ/vAt5pJVNvx]
+X-ClientProxiedBy: DM5PR08CA0028.namprd08.prod.outlook.com
+ (2603:10b6:4:60::17) To SN6PR06MB5342.namprd06.prod.outlook.com
+ (2603:10b6:805:f9::31)
+X-Microsoft-Original-Message-ID: <ZTlpsVL++wO++21Y@wintermute.localhost.fail>
 MIME-Version: 1.0
-References: <20231024161931.78567-1-sebastian.reichel@collabora.com>
- <20231024161931.78567-2-sebastian.reichel@collabora.com> <CAHk-=whYDbZ29fx_xeSxtYSjtF8WJkaLjzyB8RN5_Rk9Sh-YyQ@mail.gmail.com>
- <CAHk-=wjO5ivM6k7iMiThO9JfxH0dhLe=mcC4TQwReU0nBCnWpg@mail.gmail.com> <your-ad-here.call-01698246313-ext-3263@work.hours>
-In-Reply-To: <your-ad-here.call-01698246313-ext-3263@work.hours>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 25 Oct 2023 07:43:34 -1000
-X-Gmail-Original-Message-ID: <CAHk-=wgs2DDdckcONG+YbB-GDH2QFCoZJ=Vm+YXxb1moZzuDgQ@mail.gmail.com>
-Message-ID: <CAHk-=wgs2DDdckcONG+YbB-GDH2QFCoZJ=Vm+YXxb1moZzuDgQ@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] math.h: add DIV_ROUND_UP_NO_OVERFLOW
-To:     Vasily Gorbik <gor@linux.ibm.com>
-Cc:     Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        David Laight <David.Laight@aculab.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Niklas Schnelle <schnelle@linux.ibm.com>, kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN6PR06MB5342:EE_|SJ0PR06MB7067:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9e0ea563-e5e0-4209-108b-08dbd58efb49
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: LaE/pzd9djx/agyVbuJfESNS9Luqda0tHZWZM10IdUMh/l8L7jdN5dy5vMrPSfQjsVpVnjlqlFvamh5LYJgUn3k5lAYobxwzf+ZvE1WnwrnciqMAJkkhwSZdK09o0kmPBIy14cL85nfRQj9LrkdEHuiT49b9VQYO22dFM2l3qszc/d3WTPtErgq2gXhN4Wpy4RGIZq2FJMvEffx0f6XG3cCdCj9FQLI6iMWxqX7I0kNGCEqtJmCfi//WzTbc30Z3zcfvrcP81JVIGfoXOppwzljETGBRkCpDpisBsaU07R56NnFnqTz8Ad1eIV9689bDEz7gUGAWK784h+swYYtRWBTRmdsFCVQrkHgdtuvzx62YVZIU8sUL1KTMe8t7dyEW4JDbzlNzIafCHRXBENBH0o5PDWhmiYc2zLx3oGAbT+6UFpCDWP4Bhv6DmP+py5XXXzTYx7D4Pe1yxsSlUNKEi7kdI+M6s/Qx0Kr2RpsERpH/By/Z/J5H8RXHTXOgQdfZlTHesAgRl7/61K9sTp+fxN1yCKuapPCPDo9g/maKPz0NocgVXXsQGo7pA0W//TjL
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?zsKRoEUqllasQNGBP7Uskpx7vjv9sohAY7eh6xwazyYhtf2Gdhz5geR+Qy?=
+ =?iso-8859-1?Q?etLGAu8+WH1pxeMqP3TC3AIZtWiYrHmgAbi512EJ1pSnVhPTPY8PcPy4fH?=
+ =?iso-8859-1?Q?78YhHgc927PeII60yn9E0vrujqvXLyvlYzw1hPpisiCnBL+075+WTAOtvT?=
+ =?iso-8859-1?Q?Uvgtr8dcKwE1CRcov1nq9Vxv3gkm+zPf9Mrx9dm2IcL9eSE6+rFIfXYj5d?=
+ =?iso-8859-1?Q?X4kecA96Z+kQpCpq6vIxSy0oxGlewe+1cA/4lpXtg4wzI1mj2G0Icfn5Z1?=
+ =?iso-8859-1?Q?dFV5NJXCpYItVwTuFCocD8CaZ7CzB9Pc1HsBhsfcDBZ5LjDKDsmuNXIqwb?=
+ =?iso-8859-1?Q?sFujV126ziDfUGvDcS5V/tv4sqKKbKqjEGKyidShoFGMXRaeZUOGJ8swuX?=
+ =?iso-8859-1?Q?D6TxYj+aXJGKFb0urL33XNmXDv5xwJ62TWozy2aj3cMfx73dV9cqBagbPD?=
+ =?iso-8859-1?Q?a8/1AhMqhe08HXt0z+8Ad4kajWLEmH1I8UfAcsZWn6jYKeHgp282P4+PYm?=
+ =?iso-8859-1?Q?HL6vLzOcc2IsZfczM3OlR0uWSWoSljhIDyhzpSIhOAgXeilEQD1kPEfFsG?=
+ =?iso-8859-1?Q?Fkj7luke11zc2kz+x18GhmV47rXrw4XOWp9g+xvgM6YnglJp3JbhX45TxM?=
+ =?iso-8859-1?Q?2irBafs9yj/+0nPFwDahnJTXefQymhqUKKn3tWIQEsyvYg/yphMk3mh/R7?=
+ =?iso-8859-1?Q?jjWYo/8+2gtpIn0xg5RFW5vulYwTWTrEf0w7ajoY1MiqCwJxgxQQLErIeb?=
+ =?iso-8859-1?Q?22CyT4WDYptEJimed7bDVgDZUVjZrsVfjuEd+jjFV7IjRRiAuUXmDCeKMg?=
+ =?iso-8859-1?Q?KA0c6BAtbt7qV1vkQRc/5m3rSI6unseqjaQqh3716O7i6AHzqbC+umuIRB?=
+ =?iso-8859-1?Q?eJtF3HpNmy8TmsA8khEAzC6IzReCNma3fUwNgWfNBLAaZ0p6kf/UOtZ7hL?=
+ =?iso-8859-1?Q?NzGs0iRZI7KwJCAqK/cHMnbupgSKMPjVmumznthQhJwl5neu9/BwsoTDUT?=
+ =?iso-8859-1?Q?gwvTcjmTVgrwwOkGNArcH7HkjCLRrEeJEP/9swOoQu/gB7dvISsBtxV4TW?=
+ =?iso-8859-1?Q?Ht7ZxMirHs97d6yXVb3ZLVl35SB0TAvoOfIo7XTlJ838aEIpUGU6mR9vqq?=
+ =?iso-8859-1?Q?4KCZRxHQPC0VVut4VcHlgVRhQWUgbhD5ZnE0JNWIdYHkUQzxJ5g6SKGKhI?=
+ =?iso-8859-1?Q?fL7qtQ1nzTyTCxNLGG5UCzm0+lkJFfd4GPnu3nneRFeBnI6UsqxS0SZ1fh?=
+ =?iso-8859-1?Q?mn9uN9/QcrG+IEl6YCdLOiwiRVa8EfLYjhEq1pVcA=3D?=
+X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-89723.templateTenant
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9e0ea563-e5e0-4209-108b-08dbd58efb49
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR06MB5342.namprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Oct 2023 19:17:08.7365
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR06MB7067
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 25 Oct 2023 at 05:05, Vasily Gorbik <gor@linux.ibm.com> wrote:
->
-> You probably want
->
->  #define __div_round_up(n,d) _Generic((n)+(d),          \
->         unsigned long long: __div_round_up_ull,         \
->         long long: __div_round_up_ll,                   \
->         unsigned long: __div_round_up_ul,               \
->         long: __div_round_up_l,                         \
->         unsigned int: __div_round_up_u,                 \
->         int: __div_round_up_i)(n,d)
->
-> to avoid early type-checking for expressions that will be discarded
-> and prevent errors like:
+On Tue, Oct 24, 2023 at 05:47:37PM +0200, Heiko Stübner wrote:
+> Hi Chris,
+> 
+> Am Freitag, 20. Oktober 2023, 17:03:08 CEST schrieb Chris Morgan:
+> > On Thu, Oct 19, 2023 at 07:45:17PM +0200, Heiko Stübner wrote:
+> > > Hey Chris,
+> > > 
+> > > Am Donnerstag, 19. Oktober 2023, 16:43:56 CEST schrieb Chris Morgan:
+> > > > On Thu, Oct 19, 2023 at 11:21:47AM +0200, Krzysztof Kozlowski wrote:
+> > > > > On 18/10/2023 18:18, Chris Morgan wrote:
+> > > > > > From: Chris Morgan <macromorgan@hotmail.com>
+> > > > > > 
+> > > > > > The Powkiddy RK2023 is a handheld gaming device made by Powkiddy and
+> > > > > > powered by the Rockchip RK3566 SoC.
+> > > > > > 
+> > > > > > Signed-off-by: Chris Morgan <macromorgan@hotmail.com>
+> > > > > > ---
+> > > > > >  Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
+> > > > > >  1 file changed, 5 insertions(+)
+> > > > > > 
+> > > > > > diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
+> > > > > > index a349bf4da6bc..a6612185a7ff 100644
+> > > > > > --- a/Documentation/devicetree/bindings/arm/rockchip.yaml
+> > > > > > +++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
+> > > > > > @@ -674,6 +674,11 @@ properties:
+> > > > > >            - const: powkiddy,rgb30
+> > > > > >            - const: rockchip,rk3566
+> > > > > >  
+> > > > > > +      - description: Powkiddy RK2023
+> > > > > > +        items:
+> > > > > > +          - const: powkiddy,rk2023
+> > > > > 
+> > > > > This cuold be just enum in previous entry :/ but I remember we talked
+> > > > > about this once with Heiko.
+> > > > 
+> > > > For hardware that requires a different device tree, is that possible?
+> > > > While most of the devices I've worked on for the RK3566 series are very
+> > > > similar for the moment only 1 is identical (the RG353P and the RG353M)
+> > > > and can use the same device tree.
+> > > 
+> > > In my reply I pointed to the Rock PI 4A/4A+/B/B+/C family, which also has
+> > > different devicetrees but is part of the same family of device designs.
+> > > 
+> > > So similar Powkiddy RK3568 based gaming handhelds also sound like
+> > > a nice family name in the description ;-) .
+> > 
+> > Gotcha, I can do that. Would you like for me to go back and do the same
+> > for the Anbernic devices as well? I can do it as part of a seperate
+> > patch series.
+> 
+> that doing that for the Anberic devices would be really nice too, so
+> yes please :-) .
+> 
+> Thanks
+> Heiko
+> 
+> 
 
-Ack. I noticed that later when I tried to do a bigger config build -
-the compiler would warn about the implicit truncation of the integer
-arguments (for the cases where they weren't used).
+Did you want me to resubmit the series or just push the changes on top
+of this one? I'll get them both queued up.
 
-> Plus typos fixes below passes allyesconfig for s390, 32-bit x86 and arm.
-
-Lovely.
-
-It would have been even better if somebody told me that I was stupid
-and there was some nice trick to it, but at least the _Generic()
-approach doesn't seem broken - just a few tweaks needed.
-
-               Linus
+Thank you.
