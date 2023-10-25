@@ -2,58 +2,58 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48FA7C25B6E
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Oct 2023 08:43:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBEEAC25B6B
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Oct 2023 08:45:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234111AbjJYInY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Oct 2023 04:43:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35860 "EHLO
+        id S232807AbjJYIpg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Oct 2023 04:45:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232807AbjJYInY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Oct 2023 04:43:24 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E61F8B0
-        for <linux-clk@vger.kernel.org>; Wed, 25 Oct 2023 01:43:21 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id 2adb3069b0e04-507cd62472dso727309e87.0
-        for <linux-clk@vger.kernel.org>; Wed, 25 Oct 2023 01:43:21 -0700 (PDT)
+        with ESMTP id S232666AbjJYIpf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Oct 2023 04:45:35 -0400
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61243123
+        for <linux-clk@vger.kernel.org>; Wed, 25 Oct 2023 01:45:29 -0700 (PDT)
+Received: by mail-lj1-x229.google.com with SMTP id 38308e7fff4ca-2c503da4fd6so80090141fa.1
+        for <linux-clk@vger.kernel.org>; Wed, 25 Oct 2023 01:45:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698223400; x=1698828200; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1698223527; x=1698828327; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=tbLrXjBZXO+3rnUIjlVT/ww0YCi+1hft+XaLG33lx2o=;
-        b=Mb3c9zlREbnhbaMnJvoP6riky0KyBsKEFuLU85e1uYhpXn+2bA7akhCD/tNJQ8Hcdk
-         TLxoODt9AatDDhuK4WEW4hJ0n6LiizjZ5HDyCV4bDsmpcXZ5vA7YJzKut2P1DGitYZ+r
-         /XI/E1ybzHOqv1ReGx7d2va6a0COvxI2TuF1H+nv3D+wKSa2vTqgKbnmBLqveJZcOZoN
-         0k7ndc887GRc5GIRO2NMTwRrSLyEFZTx/lD+qe/V/ghZs8QQ+2PjuthEECdUJgcU37wt
-         GB0TZCbrWIytCjaF/zotSCIQ9uq4aC5iXe/c6/sBMG8QnXfsxCjv8S9dDltZZkN4kriQ
-         jNGw==
+        bh=Lz4GBEe2iYd2hPiUbHjNhJfJE8hAsaCc8WBmk1URiJY=;
+        b=b7rhufxxmcb94qp3i2N35UWGm/z6Xl42Rl8pQWlvmy155jjhjEEfHwrPfFkOdOPOtA
+         T+iOduuURmv4p3C7bmcz05q7D7AHR0pOi8PyPuv0U7CXTpX6Zr+sFHrzamyTQv1lY4jh
+         FquSufL5cluBloDJI3LyJ2WYYIge1M+cvauTtfTs68U05MFWZ5H2Msy+I6NQz9W17B86
+         8K1/Rh1BflYCUA7ATD3Knznog8BNGtaTOzVYEskfnV7+JxBObbx9l83c7ud57/N0YUwG
+         54qTrCEYDlx5JrVTTiyOhDV1dgQ2hiGvP1UIuZtlehZ1P1wl0OS8tA7HhLtp9uSs3svJ
+         gG1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698223400; x=1698828200;
+        d=1e100.net; s=20230601; t=1698223527; x=1698828327;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tbLrXjBZXO+3rnUIjlVT/ww0YCi+1hft+XaLG33lx2o=;
-        b=HhSpy/pO2ReFVn7bhYhUkKAKtcs5C0byz4RVOTTJWU66yY97qb9Q99TUq5MTsM7FFx
-         3KQFIaGVlELXCeP3DZ2nO+aDCKNvJZ5aNVCvedpYGO5cXlF09hv53rQ96TTIq3Y5I92J
-         BXfJVcoFuiLKK6WyMBQ1IPAFJIPg+o2Y65rVE9TTRRe+BAWCOURNModbzhZeQh59CMcX
-         kfR3i/LRtlW3jzOAAw4xCok+r2SOB1MFPeG1kSHi8dPVT0QHRuYOELU5gFAM+r8WNvn5
-         FjN7Vh/YsKcTzEAJhFdMwJujdlylUM9LPrl7uMcQnv9Qk+gU0CfrGKBj5wGHTPizeFIa
-         2GrQ==
-X-Gm-Message-State: AOJu0YzP9w2f+ykEn4Rv7PrYO05w+/ccrLuaVitm77gvlm0gSPKIShbd
-        cw3ckJ8zW0ONR2YW3Dcc79UXSA==
-X-Google-Smtp-Source: AGHT+IEjC9Ga1pWJ9JCoPsNumAlAtpl1XkhctgTpX8WDk3zx7MGDnwcD7bo66SBnpwb8RDdyBGo5Bw==
-X-Received: by 2002:a05:6512:1287:b0:507:cfcf:d3ce with SMTP id u7-20020a056512128700b00507cfcfd3cemr5556653lfs.12.1698223400115;
-        Wed, 25 Oct 2023 01:43:20 -0700 (PDT)
+        bh=Lz4GBEe2iYd2hPiUbHjNhJfJE8hAsaCc8WBmk1URiJY=;
+        b=RALu03L6baDMUZHbUaEJgeQGFFW0AFy44MptRo4CT/pr/Q1chctRKU57A7WmfshY8h
+         XPsHgsHtnMtc3onBkqmgvjOyxYAI8qt7xlavS2X/659H8rzNi1Bf/HUf34Pq8pf0Ddji
+         p6lwAN+tTqlaGS4TuDfzwy5rXfM8KDaK3ZgapNEL/Nks8KO4Uy5fl1VMKp/3Zpn11xWo
+         niCjshTLSGC2YRTB3gtiWIMvmwGSEpgfPXQ5rOGi+8avgmjoYVwOhAMWGN1Mvl49QMq4
+         Jjb+eMlD5Kr4uJEPryWbgCwqn3P5B06E41Oux7WwYOhAsr3vNKhVlke0nr+K2cXJyMzK
+         h14g==
+X-Gm-Message-State: AOJu0YzE9plas/aFOBEH/9e3nVyu8puCrSnP0MKoOvgHkM2ysOOxAivt
+        oCAOSlngu+XX4sgJFxG62vXzsA==
+X-Google-Smtp-Source: AGHT+IHRs8ioYUF0uiv43OgYZEf/cTRv3dTA9nQGwcK/q3lIqgD/wBvpiIIeY+3yK3L3jwhMQp7voQ==
+X-Received: by 2002:a2e:2e06:0:b0:2c5:cac:e9a3 with SMTP id u6-20020a2e2e06000000b002c50cace9a3mr10482614lju.52.1698223527595;
+        Wed, 25 Oct 2023 01:45:27 -0700 (PDT)
 Received: from [172.30.204.57] (UNUSED.212-182-62-129.lubman.net.pl. [212.182.62.129])
-        by smtp.gmail.com with ESMTPSA id v17-20020ac258f1000000b005056fb1d6fbsm2449489lfo.238.2023.10.25.01.43.19
+        by smtp.gmail.com with ESMTPSA id p13-20020a2e9a8d000000b002c5122f13b8sm2320875lji.30.2023.10.25.01.45.25
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Oct 2023 01:43:19 -0700 (PDT)
-Message-ID: <c9aa685b-b746-4901-a374-4e9d4d5b6cfb@linaro.org>
-Date:   Wed, 25 Oct 2023 10:43:18 +0200
+        Wed, 25 Oct 2023 01:45:26 -0700 (PDT)
+Message-ID: <4d6b8e54-8ec2-4774-9a7e-881af58093e2@linaro.org>
+Date:   Wed, 25 Oct 2023 10:45:25 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/10] clk: qcom: add the SM8650 TCSR Clock Controller
+Subject: Re: [PATCH 08/10] clk: qcom: add the SM8650 Display Clock Controller
  driver
 Content-Language: en-US
 To:     Neil Armstrong <neil.armstrong@linaro.org>,
@@ -69,9 +69,9 @@ To:     Neil Armstrong <neil.armstrong@linaro.org>,
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20231025-topic-sm8650-upstream-clocks-v1-0-c89b59594caf@linaro.org>
- <20231025-topic-sm8650-upstream-clocks-v1-7-c89b59594caf@linaro.org>
+ <20231025-topic-sm8650-upstream-clocks-v1-8-c89b59594caf@linaro.org>
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20231025-topic-sm8650-upstream-clocks-v1-7-c89b59594caf@linaro.org>
+In-Reply-To: <20231025-topic-sm8650-upstream-clocks-v1-8-c89b59594caf@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -81,21 +81,28 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 
 On 10/25/23 09:32, Neil Armstrong wrote:
-> Add TCSR Clock Controller support for SM8650 platform.
+> Add Display Clock Controller (DISPCC) support for SM8650 platform.
 > 
 > Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 > ---
 [...]
 
-> +static int tcsr_cc_sm8650_probe(struct platform_device *pdev)
+> +static int disp_cc_sm8650_probe(struct platform_device *pdev)
 > +{
 > +	struct regmap *regmap;
+> +	int ret;
 > +
-> +	regmap = qcom_cc_map(pdev, &tcsr_cc_sm8650_desc);
+> +	ret = devm_pm_runtime_enable(&pdev->dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = pm_runtime_resume_and_get(&pdev->dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	regmap = qcom_cc_map(pdev, &disp_cc_sm8650_desc);
 > +	if (IS_ERR(regmap))
 > +		return PTR_ERR(regmap);
-> +
-> +	return qcom_cc_really_probe(pdev, &tcsr_cc_sm8650_desc, regmap);
-qcom_cc_probe?
+need to clean up RPM
 
 Konrad
