@@ -2,90 +2,80 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73087C07545
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Oct 2023 20:38:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41CA2C0032E
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Oct 2023 21:40:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229975AbjJYUiK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Oct 2023 16:38:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50326 "EHLO
+        id S230046AbjJYVkf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Oct 2023 17:40:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229596AbjJYUiJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Oct 2023 16:38:09 -0400
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87B03138
-        for <linux-clk@vger.kernel.org>; Wed, 25 Oct 2023 13:38:06 -0700 (PDT)
-Received: by mail-lj1-x22b.google.com with SMTP id 38308e7fff4ca-2c514cbbe7eso2153671fa.1
-        for <linux-clk@vger.kernel.org>; Wed, 25 Oct 2023 13:38:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698266285; x=1698871085; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bkNNejbCmL/k7pWRnrsJGwZqih1Jcn9nw5isK0ZcLhI=;
-        b=BqFf2MHxH8RheMmwKqkJvx6gQAkizRpw+qnQqERHcsX8hjnF0eMrGg/5S0z1V5f7Dp
-         mS5G+ZEcT3GDbiC5U7PvMZp2Fe6+T6ETsN2fNvz7XXSH+HTOsyy3xSv0EvzvI71FteF9
-         QJZSJeVGkmq6aZVucENJgTZ7KFmm59YtZkiVPM34VvsIOeOhZrxCW5RMY1SdmZsDC86j
-         pyU7b3eUsrhGVCgyYPvCDV+/kMWE+6PLAqcpMtd+ntEyP56O8qBDk9NRvrlPZyKXpnRb
-         X1wgeNtQg6epvPnpGIJQ5vlG6SK7/wY9kLDhYWqKUSd1WEN2TlzmW53HbQMmlQVQKsjD
-         zhHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698266285; x=1698871085;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bkNNejbCmL/k7pWRnrsJGwZqih1Jcn9nw5isK0ZcLhI=;
-        b=mrjoAK44EQkanfLzT+FMLPElHiLbjBJ+vwZHzyLHxgCtezxLJbO8VekhkvguxLa4QE
-         K207A7eK9P4zIe1bmhdSGZoNA2qNd3qK+ghPDF5VH++Jt5BVyNW5xMicT0h3vDhTZtXS
-         rRFLehGuJZwg6mZFI0mXVXLYXTWqPkaJQD/Dy9B+RIsLSF2Tw4uLQoOmWYiCy9bfgQXo
-         zHo/z2xMAEMLy3bHHCrBaF2bkoKv/jpvGmNFH8JPeZ9LYZ6r2Q/QEgfXa4n8v3q1MbcU
-         Qce4OGXv5ADUVc3qt5+j9UQJr4YgprLVF8DwWvdwwGXW+4sgNzKvL8Yo7NC9/cBpwa2v
-         UDJw==
-X-Gm-Message-State: AOJu0YwlOEPywKNzRnloCZ9BWzLeVFL9Iv7sqRw6WRG0SL7QTkq9dGzu
-        NlFf+XBDl2bBqjLi5Fk1I4lU1g==
-X-Google-Smtp-Source: AGHT+IFEsNWUEVHLgy9no9zt5n/oSi9ff1FZksTxjp/VP/wDM1Yxxc6Zxk7YI/vaALGIt3FYIrQlCQ==
-X-Received: by 2002:a2e:bb12:0:b0:2bf:6852:9339 with SMTP id v18-20020a2ebb12000000b002bf68529339mr10819527lje.3.1698266284776;
-        Wed, 25 Oct 2023 13:38:04 -0700 (PDT)
-Received: from [192.168.100.102] ([37.228.218.3])
-        by smtp.gmail.com with ESMTPSA id c18-20020a05600c0a5200b0040770ec2c19sm669758wmq.10.2023.10.25.13.38.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Oct 2023 13:38:04 -0700 (PDT)
-Message-ID: <c9c6b20e-cac2-43a1-a026-ea01b0e245bd@linaro.org>
-Date:   Wed, 25 Oct 2023 21:38:02 +0100
+        with ESMTP id S229672AbjJYVke (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Oct 2023 17:40:34 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16B1B132;
+        Wed, 25 Oct 2023 14:40:33 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F36DC433C7;
+        Wed, 25 Oct 2023 21:40:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1698270032;
+        bh=ObgKYH0fS2mj/mvGmpx0d95XPn9BwP7C8YrKDWzCovk=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=OeJhxYPboBK9ff7+ZjAslTD2fIqdeh0FrTxfSIPime7vzUJU/fooEUtZSFrjba7m1
+         2kV+6SB9OXWRiwWJId/Ufw8gFs7dSeo4T9a8IoB/FKWTv4f7r8V3Pf/q+ggoD6l7xG
+         /lDRH8qUW7a0/9ALY0UYkKK/mCqCrgO5wfYuETCef92QYbtd9pSjUWOYDUEAncfSrd
+         yraO/WFH1lJC1TYbeasVWZrfjTKy5bYbOHoc1NwRNwnRjgbftW9WB9iUwDX9/0ZEsh
+         4fb+bFJrq4WNZZmiD8meyc90OC1TPxTaxt355RZH+l7+sZnzGaNiVXkNR8ZpWViiPT
+         IFFTM3zuxWGlA==
+Message-ID: <dc96dc36c6df1d3bfa3006298e353f39.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] clk: qcom: rpmh: Add support for SC8380XP rpmh clocks
-Content-Language: en-US
-To:     Sibi Sankar <quic_sibis@quicinc.com>, andersson@kernel.org,
-        konrad.dybcio@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org
-Cc:     agross@kernel.org, conor+dt@kernel.org, quic_tdas@quicinc.com,
-        quic_rjendra@quicinc.com, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, neil.armstrong@linaro.org,
-        abel.vesa@linaro.org, quic_tsoni@quicinc.com
-References: <20231025133320.4720-1-quic_sibis@quicinc.com>
- <20231025133320.4720-5-quic_sibis@quicinc.com>
-From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20231025133320.4720-5-quic_sibis@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20231025194849.4esjw4w2trgalp55@mercury.elektranox.org>
+References: <20231018070144.8512-1-zhangqing@rock-chips.com> <b0af9e04bafb07e8a73e8f242a4ff556.sboyd@kernel.org> <20231025194849.4esjw4w2trgalp55@mercury.elektranox.org>
+Subject: Re: [PATCH v4 0/4] rockchip: add GATE_LINK
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     conor+dt@kernel.org, heiko@sntech.de, kever.yang@rock-chips.com,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        robh+dt@kernel.org, zhangqing@rock-chips.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        linux-kernel@vger.kernel.org, huangtao@rock-chips.com,
+        andy.yan@rock-chips.com
+To:     Sebastian Reichel <sebastian.reichel@collabora.com>
+Date:   Wed, 25 Oct 2023 14:40:30 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 25/10/2023 14:33, Sibi Sankar wrote:
-> From: Rajendra Nayak <quic_rjendra@quicinc.com>
-> 
-> Adds the RPMH clocks present in SC8380XP SoC
-> 
-> Co-developed-by: Neil Armstrong <neil.armstrong@linaro.org>
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
-> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
-> ---
+Quoting Sebastian Reichel (2023-10-25 12:48:49)
+> Hello Stephen,
+>=20
+> On Mon, Oct 23, 2023 at 06:47:17PM -0700, Stephen Boyd wrote:
+> > Quoting Elaine Zhang (2023-10-18 00:01:40)
+> > > Recent Rockchip SoCs have a new hardware block called Native Interface
+> > > Unit (NIU), which gates clocks to devices behind them. These effectiv=
+ely
+> > > need two parent clocks.
+> > > Use GATE_LINK to handle this.
+> >=20
+> > Why can't pm clks be used here? The qcom clk driver has been doing that
+> > for some time now.=20
+> >=20
+> >  $ git grep pm_clk_add -- drivers/clk/qcom/
+>=20
+> Maybe I'm mistaken, but as far as I can tell this is adding the
+> dependency on controller level and only works because Qualcomm
+> has multiple separate clock controllers. In the Rockchip design
+> there is only one platform device.
+>=20
+> Note, that the original downstream code from Rockchip actually used
+> pm_clk infrastructure by moving these clocks to separate platform
+> devices. I changed this when upstreaming the code, since that leaks
+> into DT and from DT point of view there should be only one clock
+> controller.
+>=20
 
-This looks pretty straight forward.
-
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-
+Why can't the rockchip driver bind to a single device node and make
+sub-devices for each clk domain and register clks for those? Maybe it
+can use the auxiliary driver infrastructure to do that?
