@@ -2,41 +2,42 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F052BC0032E
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Oct 2023 13:34:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0362CC07545
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Oct 2023 13:34:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232864AbjJYNeY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Oct 2023 09:34:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48448 "EHLO
+        id S1344576AbjJYNed (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Oct 2023 09:34:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59222 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234778AbjJYNeX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Oct 2023 09:34:23 -0400
+        with ESMTP id S1344572AbjJYNec (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Oct 2023 09:34:32 -0400
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A0CA138;
-        Wed, 25 Oct 2023 06:34:21 -0700 (PDT)
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39PCoixf031789;
-        Wed, 25 Oct 2023 13:34:17 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD56A13D;
+        Wed, 25 Oct 2023 06:34:30 -0700 (PDT)
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39PCI8eF012021;
+        Wed, 25 Oct 2023 13:34:27 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type; s=qcppdkim1;
- bh=jwDPbpSVbcPqvdBlNUpUiQ+j5CT511wjOh2N2JAIA+8=;
- b=Ie8PN6HKcQJXI6XxPbplV58Nr+AFP1sBOA3PjQjTKlG1SudEL0PlAnjP/4UxVSHIIaF0
- Fdutt/58XP7dq0yi9I2cFRz58coKD00UjJc8UcOaxX6I27I4KkYsX1jyY4JfFcNk6GXx
- kBmXUjRDovdV6hEb1ZDx+9o0DuHb4WDWvLYLxkNGsqxmRnLE/KLMLBRmza2Vbsg4uaKh
- SSKqZ6w0Glu8kwN2dv2tyzbHXXT2HR+Kmw+GZvcMQ5wPp5zVpiQZBcpDVGItdP3XsUfG
- +W1Ug9V9ttiWvTvqd4I7gNcIrldDiP08vuDXi1s5DhhfIYP1gmMWb7pO49eOdPg0geTG zw== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3txmhx9r90-1
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=qcppdkim1;
+ bh=jUBoIVOonMLOebQ4F4MSzoY7T7uFqOAdh+2+YIjMsfs=;
+ b=fRMgn9ynEV2sRrYPN0m2FICpFDZG2hoo55DSFaEwwa73j8Dkti5KS5Rw34CTBxGhP35m
+ 5guP7cLHeFEEUPokuqlSph518vUkCOVXoa9s2JOFAHbpHVVx/INTiO3FRF4lW2OlMXqO
+ JWo7Zr376O0mD9kdQl3HwbE1vdu/9vedKrsQzWifuN46QiJUBuhORmg3BQ2c4JyLfDnx
+ Ej0psvB1N1IIyryVPWUntG02fkLZcxzYluqEPzn9iDfIDpO0tX90fmR/TQzMDDi+yHcn
+ NvjfWnY/mmQna1W47szu8ndLLCQ8bCtXID8Pq00QS+AO6WbPrYGm39iUoeF6/PAn8RQl tA== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3txtbf153k-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 25 Oct 2023 13:34:17 +0000
+        Wed, 25 Oct 2023 13:34:27 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 39PDY4r6029801
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 39PDYQsc000519
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 25 Oct 2023 13:34:04 GMT
+        Wed, 25 Oct 2023 13:34:26 GMT
 Received: from blr-ubuntu-87.ap.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.39; Wed, 25 Oct 2023 06:33:59 -0700
+ 15.2.1118.39; Wed, 25 Oct 2023 06:34:20 -0700
 From:   Sibi Sankar <quic_sibis@quicinc.com>
 To:     <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
         <mturquette@baylibre.com>, <sboyd@kernel.org>,
@@ -47,10 +48,12 @@ CC:     <agross@kernel.org>, <conor+dt@kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <neil.armstrong@linaro.org>, <abel.vesa@linaro.org>,
         <quic_tsoni@quicinc.com>, Sibi Sankar <quic_sibis@quicinc.com>
-Subject: [PATCH 0/4] clk: qcom: Introduce clocks drivers for SC8380XP
-Date:   Wed, 25 Oct 2023 19:03:16 +0530
-Message-ID: <20231025133320.4720-1-quic_sibis@quicinc.com>
+Subject: [PATCH 3/4] dt-bindings: clock: qcom-rpmhcc: Add RPMHCC bindings for SC8380XP
+Date:   Wed, 25 Oct 2023 19:03:19 +0530
+Message-ID: <20231025133320.4720-4-quic_sibis@quicinc.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20231025133320.4720-1-quic_sibis@quicinc.com>
+References: <20231025133320.4720-1-quic_sibis@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.80.80.8]
@@ -58,43 +61,43 @@ X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: eu4pHySoNVB25NuPW-GIGigO-pxPe1w4
-X-Proofpoint-GUID: eu4pHySoNVB25NuPW-GIGigO-pxPe1w4
+X-Proofpoint-GUID: Euqkb6PwFM3Yq0KQAOK2JpmAJb_f8hi-
+X-Proofpoint-ORIG-GUID: Euqkb6PwFM3Yq0KQAOK2JpmAJb_f8hi-
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.272,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
  definitions=2023-10-25_02,2023-10-25_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 bulkscore=0
- phishscore=0 malwarescore=0 spamscore=0 adultscore=0 mlxscore=0
- priorityscore=1501 mlxlogscore=491 impostorscore=0 suspectscore=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 clxscore=1015 bulkscore=0 phishscore=0 adultscore=0
+ mlxlogscore=809 spamscore=0 suspectscore=0 impostorscore=0 mlxscore=0
  lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2310170001 definitions=main-2310250118
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This series adds initial clock support for the Qualcomm SC8380XP platform, aka Snapdragon X Elite.
+From: Rajendra Nayak <quic_rjendra@quicinc.com>
 
-Dependencies: None
-Release Link: https://www.qualcomm.com/news/releases/2023/10/qualcomm-unleashes-snapdragon-x-elite--the-ai-super-charged-plat
+Add bindings and update documentation for clock rpmh driver on SC8380XP
+SoCs.
 
-Rajendra Nayak (4):
-  dt-bindings: clock: qcom: Add SC8380XP GCC clocks
-  clk: qcom: Add Global Clock controller (GCC) driver for SC8380XP
-  dt-bindings: clock: qcom-rpmhcc: Add RPMHCC bindings for SC8380XP
-  clk: qcom: rpmh: Add support for SC8380XP rpmh clocks
+Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
+Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+---
+ Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
- .../bindings/clock/qcom,rpmhcc.yaml           |    1 +
- .../bindings/clock/qcom,sc8380xp-gcc.yaml     |   72 +
- drivers/clk/qcom/Kconfig                      |   10 +
- drivers/clk/qcom/Makefile                     |    1 +
- drivers/clk/qcom/clk-rpmh.c                   |   26 +
- drivers/clk/qcom/gcc-sc8380xp.c               | 6812 +++++++++++++++++
- include/dt-bindings/clock/qcom,sc8380xp-gcc.h |  485 ++
- 7 files changed, 7407 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc8380xp-gcc.yaml
- create mode 100644 drivers/clk/qcom/gcc-sc8380xp.c
- create mode 100644 include/dt-bindings/clock/qcom,sc8380xp-gcc.h
-
+diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
+index 4eb5e59f6772..b1faf99b75c6 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
+@@ -23,6 +23,7 @@ properties:
+       - qcom,sc7280-rpmh-clk
+       - qcom,sc8180x-rpmh-clk
+       - qcom,sc8280xp-rpmh-clk
++      - qcom,sc8380xp-rpmh-clk
+       - qcom,sdm670-rpmh-clk
+       - qcom,sdm845-rpmh-clk
+       - qcom,sdx55-rpmh-clk
 -- 
 2.17.1
 
