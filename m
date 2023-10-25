@@ -2,80 +2,136 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41CA2C0032E
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Oct 2023 21:40:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A74C5C25B6B
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Oct 2023 21:46:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230046AbjJYVkf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Oct 2023 17:40:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55404 "EHLO
+        id S229677AbjJYVqC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Oct 2023 17:46:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229672AbjJYVke (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Oct 2023 17:40:34 -0400
+        with ESMTP id S229649AbjJYVqB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Oct 2023 17:46:01 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16B1B132;
-        Wed, 25 Oct 2023 14:40:33 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F36DC433C7;
-        Wed, 25 Oct 2023 21:40:32 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D436133;
+        Wed, 25 Oct 2023 14:46:00 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FB8DC433C7;
+        Wed, 25 Oct 2023 21:45:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1698270032;
-        bh=ObgKYH0fS2mj/mvGmpx0d95XPn9BwP7C8YrKDWzCovk=;
+        s=k20201202; t=1698270359;
+        bh=D7K9D5FkQxgI+SxQC2ZWcKW+hmigiiDTP+3F/4Ccoos=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=OeJhxYPboBK9ff7+ZjAslTD2fIqdeh0FrTxfSIPime7vzUJU/fooEUtZSFrjba7m1
-         2kV+6SB9OXWRiwWJId/Ufw8gFs7dSeo4T9a8IoB/FKWTv4f7r8V3Pf/q+ggoD6l7xG
-         /lDRH8qUW7a0/9ALY0UYkKK/mCqCrgO5wfYuETCef92QYbtd9pSjUWOYDUEAncfSrd
-         yraO/WFH1lJC1TYbeasVWZrfjTKy5bYbOHoc1NwRNwnRjgbftW9WB9iUwDX9/0ZEsh
-         4fb+bFJrq4WNZZmiD8meyc90OC1TPxTaxt355RZH+l7+sZnzGaNiVXkNR8ZpWViiPT
-         IFFTM3zuxWGlA==
-Message-ID: <dc96dc36c6df1d3bfa3006298e353f39.sboyd@kernel.org>
+        b=jwAbudX9bC9v0VbbXMfuHgmVqzQuXUqOLU4dWO87PvFwb66c9JF6EgyOGqeih7bFH
+         q2p1WxFlZKTO+rZjt6AbBHWETd6deW6TIHCCwSAmXK1kRu8Z8d9vKc57NVM1RFD0nI
+         L5uSZMNQyxs4/aZBM+y7/J0HixEBFgODVTU8C9b72h5GFif1AK+AMT9KfNvldB9eWr
+         e2PgGWY/WL9bdWHOfmbOlzzGxTQoo1V3sLhkU9fnF/uwSjHIkx6ewHc4Y3znTDQcrB
+         yEbKCuKGrzhc17pwd0MoFyzRx/LpCBR5+iWCJNqlZsbJBPSTo3mscgBR/vRo6YVXA6
+         z0PblSkximmiw==
+Message-ID: <a939ef1a4c2cad763fe484cc943f44d5.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20231025194849.4esjw4w2trgalp55@mercury.elektranox.org>
-References: <20231018070144.8512-1-zhangqing@rock-chips.com> <b0af9e04bafb07e8a73e8f242a4ff556.sboyd@kernel.org> <20231025194849.4esjw4w2trgalp55@mercury.elektranox.org>
-Subject: Re: [PATCH v4 0/4] rockchip: add GATE_LINK
+In-Reply-To: <20231025-topic-sm8650-upstream-clocks-v1-8-c89b59594caf@linaro.org>
+References: <20231025-topic-sm8650-upstream-clocks-v1-0-c89b59594caf@linaro.org> <20231025-topic-sm8650-upstream-clocks-v1-8-c89b59594caf@linaro.org>
+Subject: Re: [PATCH 08/10] clk: qcom: add the SM8650 Display Clock Controller driver
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     conor+dt@kernel.org, heiko@sntech.de, kever.yang@rock-chips.com,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        robh+dt@kernel.org, zhangqing@rock-chips.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-kernel@vger.kernel.org, huangtao@rock-chips.com,
-        andy.yan@rock-chips.com
-To:     Sebastian Reichel <sebastian.reichel@collabora.com>
-Date:   Wed, 25 Oct 2023 14:40:30 -0700
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Neil Armstrong <neil.armstrong@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>
+Date:   Wed, 25 Oct 2023 14:45:57 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Sebastian Reichel (2023-10-25 12:48:49)
-> Hello Stephen,
->=20
-> On Mon, Oct 23, 2023 at 06:47:17PM -0700, Stephen Boyd wrote:
-> > Quoting Elaine Zhang (2023-10-18 00:01:40)
-> > > Recent Rockchip SoCs have a new hardware block called Native Interface
-> > > Unit (NIU), which gates clocks to devices behind them. These effectiv=
-ely
-> > > need two parent clocks.
-> > > Use GATE_LINK to handle this.
-> >=20
-> > Why can't pm clks be used here? The qcom clk driver has been doing that
-> > for some time now.=20
-> >=20
-> >  $ git grep pm_clk_add -- drivers/clk/qcom/
->=20
-> Maybe I'm mistaken, but as far as I can tell this is adding the
-> dependency on controller level and only works because Qualcomm
-> has multiple separate clock controllers. In the Rockchip design
-> there is only one platform device.
->=20
-> Note, that the original downstream code from Rockchip actually used
-> pm_clk infrastructure by moving these clocks to separate platform
-> devices. I changed this when upstreaming the code, since that leaks
-> into DT and from DT point of view there should be only one clock
-> controller.
->=20
+Quoting Neil Armstrong (2023-10-25 00:32:45)
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index c04b6526f4f3..5bf25e8d033c 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -842,6 +842,15 @@ config SM_DISPCC_8550
+>           Say Y if you want to support display devices and functionality =
+such as
+>           splash screen.
+> =20
+> +config SM_DISPCC_8650
+> +       tristate "SM8650 Display Clock Controller"
+> +       depends on SM_GCC_8650
 
-Why can't the rockchip driver bind to a single device node and make
-sub-devices for each clk domain and register clks for those? Maybe it
-can use the auxiliary driver infrastructure to do that?
+selects?
+
+We use selects instead of depends so that the driver can be built-in or
+modular regardless of parent clks that provide clks to this device.
+Orphan clk handling resolves issues with the driver registering clks
+before parents. And with fw_devlink the driver isn't even attempted to
+probe before the GCC driver is probed so there's no build dependency
+between these drivers.
+
+> +       help
+> +         Support for the display clock controller on Qualcomm Technologi=
+es, Inc
+> +         SM8650 devices.
+> +         Say Y if you want to support display devices and functionality =
+such as
+> +         splash screen.
+> +
+>  config SM_GCC_4450
+>         tristate "SM4450 Global Clock Controller"
+>         depends on ARM64 || COMPILE_TEST
+> diff --git a/drivers/clk/qcom/dispcc-sm8650.c b/drivers/clk/qcom/dispcc-s=
+m8650.c
+> new file mode 100644
+> index 000000000000..7cb91306e895
+> --- /dev/null
+> +++ b/drivers/clk/qcom/dispcc-sm8650.c
+> @@ -0,0 +1,1806 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2021, The Linux Foundation. All rights reserved.
+> + * Copyright (c) 2023, Linaro Ltd.
+> + */
+> +
+> +#include <linux/clk.h>
+
+Is this include used?
+
+> +#include <linux/clk-provider.h>
+> +#include <linux/err.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of_device.h>
+
+Is this mod_devicetable.h?
+
+> +#include <linux/of.h>
+
+Is this include used?
+
+> +#include <linux/regmap.h>
+> +#include <linux/pm_runtime.h>
+> +
+> +#include <dt-bindings/clock/qcom,sm8650-dispcc.h>
+> +
+> +#include "common.h"
+> +#include "clk-alpha-pll.h"
+> +#include "clk-branch.h"
+> +#include "clk-pll.h"
+> +#include "clk-rcg.h"
+> +#include "clk-regmap.h"
+> +#include "clk-regmap-divider.h"
+> +#include "clk-regmap-mux.h"
+
+Is this include used?
+
+> +#include "reset.h"
+> +#include "gdsc.h"
+> +
