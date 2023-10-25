@@ -2,81 +2,113 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA8C4C0032E
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Oct 2023 19:40:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04236C0032E
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Oct 2023 19:48:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229779AbjJYTkn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Oct 2023 15:40:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39452 "EHLO
+        id S229596AbjJYTs4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Oct 2023 15:48:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229733AbjJYTkm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Oct 2023 15:40:42 -0400
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA22793;
-        Wed, 25 Oct 2023 12:40:40 -0700 (PDT)
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-6ce2de8da87so69574a34.1;
-        Wed, 25 Oct 2023 12:40:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698262840; x=1698867640;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+7MAwKpUzwgGAIVoiREv1kIxax6UFmWki8e8KL5W6jo=;
-        b=SVe2jvw8i6/4cszuGs5cJ8qU/3Vw4qzSyReXyOV1XYw+GwcXV5jKCqp6axjPcMBDje
-         NkAIwPcpoPWUOWqWE1L8p0XfOmr62uSsivsi2aI3mV/oExMcMdZqZDyZh6/ac07d58Up
-         m9xkPUfiU9q49HwzBQND/BeOcUK112EeQak2RgtY93ivFwXWgn+RFevBaPr2A27+rEhY
-         23328X4VMirfqYse+icI0oCD2um6J/UA7iHWr+UqtsLbMN5eKXLZ90ILJ2C4coZ0Du67
-         u3MRexBSqLl8CK0wPn9NApSYUoZh6bN3wRMIfwt5lxiiKv9G9oFBPM/T94EzZM8OnBHB
-         Q2Nw==
-X-Gm-Message-State: AOJu0Yw7Cxk+L9vOdVKbKFtYh8buC9xKXULBwYXNx4EzwohQQtuSiWmP
-        iXQIznTDMFrkrdvYk5YTVQ==
-X-Google-Smtp-Source: AGHT+IFcxU6mqudgZMrEKBzvcu7nowVTZw5K+NHrR50t+qC3ehsoBRlv3lsYw/T2o5QFSBYYgrSKzA==
-X-Received: by 2002:a05:6830:4412:b0:6ce:29cd:b69e with SMTP id q18-20020a056830441200b006ce29cdb69emr21421396otv.6.1698262839991;
-        Wed, 25 Oct 2023 12:40:39 -0700 (PDT)
-Received: from herring.priv (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id r24-20020a05683001d800b006ce1f9c62a1sm2329537ota.39.2023.10.25.12.40.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Oct 2023 12:40:39 -0700 (PDT)
-Received: (nullmailer pid 1038207 invoked by uid 1000);
-        Wed, 25 Oct 2023 19:40:38 -0000
-Date:   Wed, 25 Oct 2023 14:40:38 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Neil Armstrong <neil.armstrong@linaro.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: [PATCH 04/10] dt-bindings: clock: qcom: document the SM8650 GPU
- Clock Controller
-Message-ID: <169826283738.1038135.10919191785530268283.robh@kernel.org>
-References: <20231025-topic-sm8650-upstream-clocks-v1-0-c89b59594caf@linaro.org>
- <20231025-topic-sm8650-upstream-clocks-v1-4-c89b59594caf@linaro.org>
+        with ESMTP id S231469AbjJYTsz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Oct 2023 15:48:55 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7520493;
+        Wed, 25 Oct 2023 12:48:53 -0700 (PDT)
+Received: from mercury (cola.collaboradmins.com [195.201.22.229])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: sre)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id A76D66607331;
+        Wed, 25 Oct 2023 20:48:51 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1698263331;
+        bh=4C0knIOWZSCqz/j853cFCQSGyZP8bkVC+6liKLv+oVM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=U0dTNgmUY1CMPIH0+Dt8SUXHELGlSctli8R80RvqsaGhDMVMMWOzUM1L6F6I8mzoN
+         E8Z7ZZ1itNj0j0VKV203EA2p7LcdTmiPA2vZQgokyOfPnoRKMOjDhUmddTYSLuYsqn
+         ADzrAb9j8ACihiX5dCdAIm5Ccp/bOZ3dBWaw31v1N4dED8dHGe8NxtQ+tshcJO/QS5
+         Y49iA4cp+Km7CBQA4LKjgVNlE7HdZcflH3x2/o7tfODgdtGZ3sghAuDoZCoqteL3nZ
+         hIk871DhA3ySDmONlW9Rf9j2fPVi/DYw6KpM6haJlN5ihzF4x/vqcCzafhIA20iYA4
+         BDf0GGY4hGLeg==
+Received: by mercury (Postfix, from userid 1000)
+        id 23927106057B; Wed, 25 Oct 2023 21:48:49 +0200 (CEST)
+Date:   Wed, 25 Oct 2023 21:48:49 +0200
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     conor+dt@kernel.org, heiko@sntech.de, kever.yang@rock-chips.com,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        robh+dt@kernel.org, zhangqing@rock-chips.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        linux-kernel@vger.kernel.org, huangtao@rock-chips.com,
+        andy.yan@rock-chips.com
+Subject: Re: [PATCH v4 0/4] rockchip: add GATE_LINK
+Message-ID: <20231025194849.4esjw4w2trgalp55@mercury.elektranox.org>
+References: <20231018070144.8512-1-zhangqing@rock-chips.com>
+ <b0af9e04bafb07e8a73e8f242a4ff556.sboyd@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="tqfdiz36ofh6j432"
 Content-Disposition: inline
-In-Reply-To: <20231025-topic-sm8650-upstream-clocks-v1-4-c89b59594caf@linaro.org>
+In-Reply-To: <b0af9e04bafb07e8a73e8f242a4ff556.sboyd@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On Wed, 25 Oct 2023 09:32:41 +0200, Neil Armstrong wrote:
-> Add bindings documentation for the SM8650 Graphics Clock Controller.
-> 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
->  .../bindings/clock/qcom,sm8450-gpucc.yaml          |  2 +
->  include/dt-bindings/clock/qcom,sm8650-gpucc.h      | 43 ++++++++++++++++++++++
->  include/dt-bindings/reset/qcom,sm8650-gpucc.h      | 20 ++++++++++
->  3 files changed, 65 insertions(+)
-> 
+--tqfdiz36ofh6j432
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Hello Stephen,
 
+On Mon, Oct 23, 2023 at 06:47:17PM -0700, Stephen Boyd wrote:
+> Quoting Elaine Zhang (2023-10-18 00:01:40)
+> > Recent Rockchip SoCs have a new hardware block called Native Interface
+> > Unit (NIU), which gates clocks to devices behind them. These effectively
+> > need two parent clocks.
+> > Use GATE_LINK to handle this.
+>=20
+> Why can't pm clks be used here? The qcom clk driver has been doing that
+> for some time now.=20
+>=20
+>  $ git grep pm_clk_add -- drivers/clk/qcom/
+
+Maybe I'm mistaken, but as far as I can tell this is adding the
+dependency on controller level and only works because Qualcomm
+has multiple separate clock controllers. In the Rockchip design
+there is only one platform device.
+
+Note, that the original downstream code from Rockchip actually used
+pm_clk infrastructure by moving these clocks to separate platform
+devices. I changed this when upstreaming the code, since that leaks
+into DT and from DT point of view there should be only one clock
+controller.
+
+Greetings,
+
+-- Sebastian
+
+--tqfdiz36ofh6j432
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmU5cR0ACgkQ2O7X88g7
++poZyA/+KGnTXYS/rnZLCMXb/+17hHTvzcgSIdn/BeQmRnEBHE9sjPFzD1KQ8Wy3
+304qrkQt4azButXo31zUjB0creBEH1ZvhDV6tX8s7Gy+8mT2LmvvArVIWinZFnDj
+YskCNEgiDFFDitOEh19nofsINcZO3YaHiVU1qUksXmvj9l350AD4vxsX6L+3f/lj
+tF9RS81EzPZjyHci6j1LRttHnr8N8UBxGMZiSctcehrCcZPAYlrIfZh9NX1W5zRg
+Rz2lhpPw22eh8Y07NHmiaDYvSWQTLQhBf4cAvBvNf/flzQ1V4U/Epaz3PJ7dob8h
+xNZqNDn1/gEFUJeUtgsyXsZdnMnU3gnauiHlMU6jvAWo2fmh0MUJckysF/clUfBm
+o05It58JOT1pjpHfIo7QRfK+NtW9z0Oi/YcsbxxzF0E9i7fuWd+tXgYK7ct0tGT2
+dZo6eMm/RWQ7iUGgqvFoWhznuibG3vTyyJJ0n8hRySNtcrdUT6xsC7dnk7uzGyJn
+U2afY2D+URGaEVX5h0xIL5dbPn0T2gnUmQoKeSdQgJHlCjoDUcOCkM7RTFr63x/6
+k7ehuFax9yDUFfa83vK9TL1VsTPsiJoj9CFAjZEIL2HXlR2Iq2XbBCpweWIaA3Zz
+gecnzHef2NW/Pi5znStuOQEcy0/HZAZq25N58364hewLcxFtrDE=
+=xiVS
+-----END PGP SIGNATURE-----
+
+--tqfdiz36ofh6j432--
