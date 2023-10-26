@@ -2,117 +2,225 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD9F9C25B6B
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Oct 2023 08:04:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4A23C25B48
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Oct 2023 08:24:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229841AbjJZIEI convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 Oct 2023 04:04:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40492 "EHLO
+        id S229642AbjJZIYx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 Oct 2023 04:24:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229567AbjJZIEI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Oct 2023 04:04:08 -0400
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 643ACAC;
-        Thu, 26 Oct 2023 01:04:06 -0700 (PDT)
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-5a7af52ee31so4622797b3.2;
-        Thu, 26 Oct 2023 01:04:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698307445; x=1698912245;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BB0o43vI8z74zHN6iTW8mGP9lEUheGzyrHw+L3QBcAU=;
-        b=JeA1TQpH5XF6GXKsOr36H4iFgCCgLV0o7V3peAva9X6sAt9c/S5O7CK77q5k9bcO+J
-         HICNMC2D+8nua+W28UGgzdIlEieu4Qqw2OYxXHbCY4DKj/W8CCAjuxVrqwYaoyAibF3h
-         P7FehwUNz7ZRxVK/2Byjov9+KsdTjSPT0P5+W2y6ll8NV/msn7MdGGNY4YDPqusf+l4X
-         nBCb4zvcwfYoiQk9B+ILLKkaz3p2rp91/kFyjRhWw7gw64/E+tBlaTFfOnjX97PhCYs9
-         FaYKQ9dnCWeXDwLWhSVhHKWZJUWocnn88Iw006zchI72uKmZkaPVuL6v1lJCTztHxcBR
-         RIQA==
-X-Gm-Message-State: AOJu0YyB//pSvqqNTPaLeJfpxgFrr+UEmLDEhh+XOUom2c1wr9TZjxB1
-        rnlpuQv7jq6TE2POMSzDXbcdSv1w5gGsrQ==
-X-Google-Smtp-Source: AGHT+IE9ex1R+42ZVJcYrtkyoj3B4oqnZd2OfHE5JGCl6BPlE6pkYARcDhF/dg4Cg2aLDESbuS4wCQ==
-X-Received: by 2002:a81:48ca:0:b0:5a7:c973:c82 with SMTP id v193-20020a8148ca000000b005a7c9730c82mr18888071ywa.13.1698307445417;
-        Thu, 26 Oct 2023 01:04:05 -0700 (PDT)
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
-        by smtp.gmail.com with ESMTPSA id j143-20020a819295000000b005a8a7d4f9a5sm5745999ywg.28.2023.10.26.01.04.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Oct 2023 01:04:05 -0700 (PDT)
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-5a7af52ee31so4622687b3.2;
-        Thu, 26 Oct 2023 01:04:04 -0700 (PDT)
-X-Received: by 2002:a0d:e84b:0:b0:589:8b55:f7f7 with SMTP id
- r72-20020a0de84b000000b005898b55f7f7mr17337962ywe.39.1698307444821; Thu, 26
- Oct 2023 01:04:04 -0700 (PDT)
+        with ESMTP id S229567AbjJZIYw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Oct 2023 04:24:52 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 803C8B8;
+        Thu, 26 Oct 2023 01:24:50 -0700 (PDT)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 991F6660737B;
+        Thu, 26 Oct 2023 09:24:48 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1698308689;
+        bh=xFr+dcF//FmM0tUjLIKhS6D6UUL0Ug+PSZV1DwTl5/A=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=eNTBdOIMSW9ZNkW1K86v8hoE1kbJkzrak/LxbVXkK8x2H42pJzu0f8XO98dwr6x46
+         unD18Ed+z4bw+tq2jHMLrNwqyDUy4UMGl/K/yR8296Yg7NV7+LW5rZkytBYgZAengt
+         XWYj508wsiPDvgZACKzoRJWfmtLDXAvb+HEDLSlOn6mGt3KL+3vrvF48qCmApBqqx1
+         ce5Q8KK4s3R58jhCcPH6kUeGGnF47uC1P3XMazItcQJwb/i+AFdk+xZMt8Xtc2AaP3
+         kdAdVC5lYWAkYKVJq5bXOo+lbx4Ud2mxpqq6edP5wP20RPQjFvmofUsIAXPDfDxHqP
+         O0HK55irXi4pw==
+Message-ID: <32d51e40-5d9c-47dd-bb62-2ccc811ac6dc@collabora.com>
+Date:   Thu, 26 Oct 2023 10:24:45 +0200
 MIME-Version: 1.0
-References: <20231026063941.1882023-1-peng.fan@oss.nxp.com>
- <CAMuHMdUA_OOvQmkZXn21pxC=nTw6wHQZp1P8mNjTca65+KjxAQ@mail.gmail.com> <DU0PR04MB9417B338597E78EA51B7F6DF88DDA@DU0PR04MB9417.eurprd04.prod.outlook.com>
-In-Reply-To: <DU0PR04MB9417B338597E78EA51B7F6DF88DDA@DU0PR04MB9417.eurprd04.prod.outlook.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 26 Oct 2023 10:03:52 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXR1K9+HsJcq+E=BLJpNpgF2vgYY0kv2_2H85oGq6wpXQ@mail.gmail.com>
-Message-ID: <CAMuHMdXR1K9+HsJcq+E=BLJpNpgF2vgYY0kv2_2H85oGq6wpXQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: clk-conf: bypass setting rate/parent if already same
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "abelvesa@kernel.org" <abelvesa@kernel.org>,
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: mediatek: mt8186: Change I2C 4/5/6 ap clocks parent
+ to infra
+Content-Language: en-US
+To:     =?UTF-8?B?WXUtY2hhbmcgTGVlICjmnY7nprnnkosp?= 
+        <Yu-chang.Lee@mediatek.com>,
+        "wenst@chromium.org" <wenst@chromium.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
         "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "clement.leger@bootlin.com" <clement.leger@bootlin.com>,
-        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-        "cristian.marussi@arm.com" <cristian.marussi@arm.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "pure.logic@nexus-software.ie" <pure.logic@nexus-software.ie>,
-        "a.fatoum@pengutronix.de" <a.fatoum@pengutronix.de>,
-        "aford173@gmail.com" <aford173@gmail.com>,
-        "absahu@codeaurora.org" <absahu@codeaurora.org>,
+        "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        =?UTF-8?B?Q2h1bi1KaWUgQ2hlbiAo6Zmz5rWa5qGAKQ==?= 
+        <Chun-Jie.Chen@mediatek.com>,
+        =?UTF-8?B?TWlsZXMgQ2hlbiAo6Zmz5rCR5qi6KQ==?= 
+        <Miles.Chen@mediatek.com>,
         "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>
+References: <20231019124914.13545-1-angelogioacchino.delregno@collabora.com>
+ <CAGXv+5H0rUajeU-i8nYyV2xWFQTnzqxioZCCyyP_RZXKqmcugQ@mail.gmail.com>
+ <283d18028590d57025e5654d18b8b5b7.sboyd@kernel.org>
+ <CAGXv+5EpBLnXVdxnk9wBZi5F7U5wdJRfYH7fgg4Lkr1HJXm+WA@mail.gmail.com>
+ <9c1e10b56db315e03daa3df5918cde844297c680.camel@mediatek.com>
+ <CAGXv+5HQ2sVx=F3my2jOGMw3j3pU2aarEg+Dj1XgNzwio98ezA@mail.gmail.com>
+ <e049985de9da9958ba425824ab5f38c7cf41025b.camel@mediatek.com>
+ <eb4f7d6e-0e4c-4b2d-b889-cad9fc9262d8@collabora.com>
+ <1a734157709adc0cd85e084174bb4889301f1c1a.camel@mediatek.com>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <1a734157709adc0cd85e084174bb4889301f1c1a.camel@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Peng,
+Il 26/10/23 05:49, Yu-chang Lee (李禹璋) ha scritto:
+> On Wed, 2023-10-25 at 13:29 +0200, AngeloGioacchino Del Regno wrote:
+>> Il 25/10/23 11:50, Yu-chang Lee (李禹璋) ha scritto:
+>>> On Tue, 2023-10-24 at 17:20 +0800, Chen-Yu Tsai wrote:
+>>>>    	
+>>>> External email : Please do not click links or open attachments
+>>>> until
+>>>> you have verified the sender or the content.
+>>>>    On Tue, Oct 24, 2023 at 3:47 PM Yu-chang Lee (李禹璋)
+>>>> <Yu-chang.Lee@mediatek.com> wrote:
+>>>>>
+>>>>> On Tue, 2023-10-24 at 10:58 +0800, Chen-Yu Tsai wrote:
+>>>>>> On Tue, Oct 24, 2023 at 10:52 AM Stephen Boyd <
+>>>>>> sboyd@kernel.org>
+>>>>>> wrote:
+>>>>>>>
+>>>>>>> Quoting Chen-Yu Tsai (2023-10-19 22:06:35)
+>>>>>>>> On Thu, Oct 19, 2023 at 8:49 PM AngeloGioacchino Del
+>>>>>>>> Regno
+>>>>>>>> <angelogioacchino.delregno@collabora.com> wrote:
+>>>>>>>>>
+>>>>>>>>> Fix the parenting of clocks
+>>>>>>>>> imp_iic_wrap_ap_clock_i2c{4-6},
+>>>>
+>>>> as
+>>>>>>>>> those
+>>>>>>>>> are effectively parented to infra_ao_i2c{4-6} and not
+>>>>>>>>> to
+>>>>
+>>>> the
+>>>>>>>>> I2C_AP.
+>>>>>>>>> This permits the correct (and full) enablement and
+>>>>
+>>>> disablement
+>>>>>>>>> of the
+>>>>>>>>> I2C4, I2C5 and I2C6 bus clocks, satisfying the whole
+>>>>>>>>> clock
+>>>>
+>>>> tree
+>>>>>>>>> of
+>>>>>>>>> those.
+>>>>>>>>>
+>>>>>>>>> As an example, when requesting to enable
+>>>>>>>>> imp_iic_wrap_ap_clock_i2c4:
+>>>>>>>>>
+>>>>>>>>> Before: infra_ao_i2c_ap -> imp_iic_wrap_ap_clock_i2c4
+>>>>>>>>> After:  infra_ao_i2c_ap -> infra_ao_i2c4 ->
+>>>>>>>>> imp_iic_wrap_ap_clock_i2c4
+>>>>>>>>>
+>>>>>>>>> Fixes: 66cd0b4b0ce5 ("clk: mediatek: Add MT8186 imp i2c
+>>>>
+>>>> wrapper
+>>>>>>>>> clock support")
+>>>>>>>>> Signed-off-by: AngeloGioacchino Del Regno <
+>>>>>>>>> angelogioacchino.delregno@collabora.com>
+>>>>>>>>
+>>>>>>>> I'm curious about what led to discovering this error?
+>>>>>>>>
+>>>>>>>
+>>>>>>> Is that an acked-by?
+>>>>>>
+>>>>>> MediaTek engineers are saying the original code already
+>>>>>> matches
+>>>>
+>>>> the
+>>>>>> documentation provided by their hardware engineers. I'm
+>>>>>> trying to
+>>>>
+>>>> get
+>>>>>> them to respond on the mailing list.
+>>>>>>
+>>>>>> ChenYu
+>>>>>>
+>>>>>
+>>>>> After checking with I2C clock hardware designer there is no
+>>>>> infra_ao_i2c{4-6} clock gate in between. And the clock document
+>>>>> at
+>>>>
+>>>> hand
+>>>>> aslo shows the same result. Generallly speaking, we would like
+>>>>> to
+>>>>
+>>>> keep
+>>>>> sw setting align with the hardware design document. I would
+>>>>
+>>>> recommand
+>>>>> not to change this part of code, but enable infra_ao_i2c{4-6}
+>>>>> prior
+>>>>
+>>>> to
+>>>>> the usage of imp_iic_wrap_ap_clock_i2c clock.
+>>>>
+>>>> Are infra_ao_i2c{4-6} actually used by the hardware? If so, for
+>>>> what
+>>>> purpose?
+>>>
+>>> According to hardware designer it servers no purpose. Just a legacy
+>>> of
+>>> previous design...
+>>>
+>>>> If it is actually needed by the hardware and it is not in the
+>>>> existing path,
+>>>> then it needs to be described in the device tree and handled by
+>>>> the
+>>>> driver.
+>>>>
+>>>> ChenYu
+>>>
+>>> After reviewing hardware design diagram, hardware designer
+>>> concludes
+>>> that the clock tree is indeed
+>>>
+>>> top_i2c -> infra_ao_i2c{4-6}
+>>> top_i2c -> infra_ao_i2c_ap -> imp_iic_wrap_ap_clock_i2c{4-6}
+>>>
+>>> so I think we should keep this clock relation unchanged.
+>>>
+>>> Thanks
+>>> YuChang
+>>>
+>>
+>> Can you please also expand on CLK_INFRA_AO_I2C{1,2,5}_ARBITER clocks?
+>> Is the I2C arbiter also legacy of previous designs?
+>>
+>> Please check [1], as I've sent a commit adding those in the
+>> devicetree.
+>>
+>> Thanks,
+>> Angelo
+>>
+>> [1]:
+>>
+> https://lore.kernel.org/all/20231020075540.15191-1-angelogioacchino.delregno@collabora.com/
+> 
+> According to Hardware designer this arbiter clock is also lagecy of
+> previous design and serve no function. And they are conneted to top_i2c
+> as well.
+> 
+> top_i2c-> CLK_INFRA_AO_I2C{1,2,5}_ARBITER
+> 
+> Also may I know the experiment that lead to the conclusion that you
+> need the ARBITER clock, and the clock tree is incorrect? I will bring
+> it back to discuss with our I2C owner.
+> 
 
-On Thu, Oct 26, 2023 at 10:01 AM Peng Fan <peng.fan@nxp.com> wrote:
-> > Subject: Re: [PATCH] clk: clk-conf: bypass setting rate/parent if already same
-> > On Thu, Oct 26, 2023 at 8:35 AM Peng Fan (OSS) <peng.fan@oss.nxp.com>
-> > wrote:
-> > > From: Peng Fan <peng.fan@nxp.com>
-> > >
-> > > If the original rate and parent is already the same as what users
-> > > wanna to configure through assigned clock rate and parent, there is no
-> > > need to configure them again which may cause more cpu cycles or more
-> > > SCMI RPC calls.
-> > >
-> > > So check the rate and parent first, and bypass when the original rate
-> > > and parent are same as requested by device tree node.
-> > >
-> > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+I had lockups during boot and PM suspend/resume, plus, I was getting issues with
+losing trackpad functionality; adding the arbiter clocks fixed the issue.
 
-> >     /**
-> >      * clk_get_rate - obtain the current clock rate (in Hz) for a clock source.
-> >      *                This is only valid once the clock source has been enabled.
-> >      * @clk: clock source
-> >      */
-> >
-> > So at least the second part is not guaranteed to work?
->
-> I am not sure, but seems there is no clk enabled check in clk_get_rate
-> function.
+Regards,
+Angelo
 
-There is indeed no such check.  On most hardware, clk_get_rate()
-works fine when the clock is disabled, but that is not guaranteed to
-work everywhere.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
