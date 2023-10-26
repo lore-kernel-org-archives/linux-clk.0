@@ -2,70 +2,72 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68274C25B48
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Oct 2023 18:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CA44C25B48
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Oct 2023 18:57:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230078AbjJZSpx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 Oct 2023 14:45:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46212 "EHLO
+        id S230271AbjJZS5n (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 Oct 2023 14:57:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229649AbjJZSpw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Oct 2023 14:45:52 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52ACF10A
-        for <linux-clk@vger.kernel.org>; Thu, 26 Oct 2023 11:45:50 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id 2adb3069b0e04-508126afc88so1875632e87.1
-        for <linux-clk@vger.kernel.org>; Thu, 26 Oct 2023 11:45:50 -0700 (PDT)
+        with ESMTP id S230143AbjJZS5m (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Oct 2023 14:57:42 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37DC11A5
+        for <linux-clk@vger.kernel.org>; Thu, 26 Oct 2023 11:57:40 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id 2adb3069b0e04-507b9408c61so1789204e87.0
+        for <linux-clk@vger.kernel.org>; Thu, 26 Oct 2023 11:57:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698345948; x=1698950748; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:from:subject:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Dfq44KtpvVoTi226YXMj5pM9/ZBtfwTToNeSkmatPXk=;
-        b=kPPKS60s7Gx2wy9Oj0La519Iquo3rC/zpwmJcUtDPOl5BZFEGhBWliSCdrgodyjYRh
-         5jK0IVIlUKlCy7T/KiRJq3wpNhhOOvtHzl3vEOXogyORYqmZ8A/zsCcjfSu11cMMVCb1
-         QB4WwNCYdsZbcoxvaXmJUH1Y2CCi//WwH5xmCteeViBlUSyIfL8IKQX9bMEFgQyywuPZ
-         JxrL6ONOYBPUkEqIeNveR8YYp/A9El5QSEpUfapEiflCcjd8otSdt5hIbNMlKWQYnkBv
-         7pa/Du4IF8WGy4JoSVbFvT2nVkoxolTHhzH/vpi5N76YxQ/QF0BPiE8x/EVOq2d7r6NJ
-         UFVA==
+        d=linaro.org; s=google; t=1698346658; x=1698951458; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AMg17KxuWBUiUv6A0i2QEQW2s5Z+lVHigup08bOBCUE=;
+        b=GJt0pnL2HhZ7bg7hoDu6hX6zOlhVov1KtQOK0rCg+bX1Xfzb+sDTGyBz8WuNeoOFoG
+         k9/Fy9eBoz2yiwVgthf6bTpHuqL4g5QSZBr4YoBxUpe6kvpcZaQ2L26ppxFh5k9Js6Mi
+         9BzunVqjDEYGrlQRum13EmqbQqOfuVP7PbkDe/VCb0OghrbTJKib/N2jGWea4hU/WWTA
+         uEkcs2rJeJYEV95d28mHDWJOJ0frKPyvJzp+C+jDCAYy+fFQzKpdawZ321SIitLD6Xyb
+         CWSgnSxmjP0nqZrZx5EYyZ1CAiJ0LhTT0bqLqWqzaMygldYFlO+MooSKLGEw5Cadq45Q
+         OdJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698345948; x=1698950748;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:from:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1698346658; x=1698951458;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Dfq44KtpvVoTi226YXMj5pM9/ZBtfwTToNeSkmatPXk=;
-        b=A95Pxkvli40Z7uyTBjETgXG/KzsnWnA2fSa1LMLH0yPcsIOQ4luVY6mq63sQlCTJFG
-         Wk/LSQUdS53FAPWJ0tl+v88w0Qp27+bvBVVY7EXewuHU/UI95fpabpkJ2UvYxR+SfbhM
-         p5EBfHEL9z3E6dkK+OwvpMnHiv+pI5FisU/KvNpSuKzZz8r7tZIpRtNiQN5PDUhNS2Nw
-         M4Rus4M0+m5An2n+RH/VJCKv7qm6vf049Z0cfVpC07V2ceB8wMvOQmr694KTKTAsIYM3
-         5GdgamFNh1TwJbmFGLHfQggRnsBWP5tGffQhi9e09jhbhpf9FF7b7h7Zo6qk8JSyI3a+
-         NyEw==
-X-Gm-Message-State: AOJu0Yxh7RgzWVh8HdSnBxctN6gHXlkaBO7aHqpK5Ri0lkePsp8VPeF3
-        3Ebmueco9Q3lwvxF1gG8abD78w==
-X-Google-Smtp-Source: AGHT+IFujQppv52TAisp40xugmwbZaGNvITv9y42W1AvnCP4R391ggguFC+CGFL20f2whKEh/xoHkQ==
-X-Received: by 2002:a19:c510:0:b0:503:34b8:20b with SMTP id w16-20020a19c510000000b0050334b8020bmr143296lfe.65.1698345948438;
-        Thu, 26 Oct 2023 11:45:48 -0700 (PDT)
-Received: from [172.30.204.255] (UNUSED.212-182-62-129.lubman.net.pl. [212.182.62.129])
-        by smtp.gmail.com with ESMTPSA id n21-20020a05651203f500b005079f69e019sm3092962lfq.59.2023.10.26.11.45.46
+        bh=AMg17KxuWBUiUv6A0i2QEQW2s5Z+lVHigup08bOBCUE=;
+        b=xLDQk/AtWVtb6wcv5iWMFH1XyXkjxzYJC5zJWCjFgikQyjNG4yyR57uBcjTxvV1Vha
+         o4jp9l+PwBZIUeFo/whVobFtV5DdrmDCooyCP9l1Oseh16c/YfN619otqzCD+dVbEI/C
+         5hvWv8qJLikshVtUQeYZ2/w1+8gmr1lqYAio5XJkDNZsShgaFLK5521vGnq33qQg6J+9
+         /8FUXkkkQ8Tk5grGaObRMC2sA8pPhKnnHvjZSEVG4V0OUjGM+mKHFr81Qiw5PmZ43yKe
+         SPSTZiwkPmTFRdDwVRgi/cWj0XRBK40P5OUtcnVjt+REwpN2zXnmMUFERUz2Fx9/659P
+         nN+w==
+X-Gm-Message-State: AOJu0Ywdr2bnhqK2Ik5AD31rd8Tw5cpzOT7oh97JFGp3LgwvhhfNpl0C
+        lCN7zoTEEC6fLPuzW6mnh7rQzg==
+X-Google-Smtp-Source: AGHT+IHuQWDn7OUiBtFrH0a1lZxUUGtlxrPanh02+ZPMGloHbEwjjoFN8dI3E0sKr4JffKJU2N8AoQ==
+X-Received: by 2002:a05:6512:2256:b0:503:1aae:eca0 with SMTP id i22-20020a056512225600b005031aaeeca0mr175782lfu.44.1698346658359;
+        Thu, 26 Oct 2023 11:57:38 -0700 (PDT)
+Received: from [172.30.205.8] (UNUSED.212-182-62-129.lubman.net.pl. [212.182.62.129])
+        by smtp.gmail.com with ESMTPSA id q18-20020a194312000000b0050797cbfa82sm3122255lfa.17.2023.10.26.11.57.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Oct 2023 11:45:48 -0700 (PDT)
-Message-ID: <1b99abed-6572-4550-98cc-56667a507883@linaro.org>
-Date:   Thu, 26 Oct 2023 20:45:45 +0200
+        Thu, 26 Oct 2023 11:57:37 -0700 (PDT)
+Message-ID: <ed18292b-efe8-48fc-8696-79e51acf8ab4@linaro.org>
+Date:   Thu, 26 Oct 2023 20:57:36 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] clk: qcom: ipq6018: add USB GDSCs
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-To:     Robert Marko <robimarko@gmail.com>, agross@kernel.org,
-        andersson@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20231025104457.628109-1-robimarko@gmail.com>
- <20231025104457.628109-2-robimarko@gmail.com>
- <77314fe2-2936-4f89-a347-4eb288507c47@linaro.org>
+Subject: Re: [RFC PATCH 1/2] clk: qcom: implement RCG2 'parked' clock support
 Content-Language: en-US
-In-Reply-To: <77314fe2-2936-4f89-a347-4eb288507c47@linaro.org>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <quic_tdas@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        freedreno@lists.freedesktop.org, Rob Clark <robdclark@gmail.com>
+References: <20231004003125.2289613-1-dmitry.baryshkov@linaro.org>
+ <20231004003125.2289613-2-dmitry.baryshkov@linaro.org>
+ <abc36c33-bfd9-4451-80ab-a631492044de@linaro.org>
+In-Reply-To: <abc36c33-bfd9-4451-80ab-a631492044de@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -74,30 +76,24 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 
 
-On 10/26/23 20:42, Konrad Dybcio wrote:
-> 
-> 
-> On 10/25/23 12:44, Robert Marko wrote:
->> IPQ6018 has GDSC-s for each of the USB ports, so lets define them as such
->> and drop the curent code that is de-asserting the USB GDSC-s as part of
->> the GCC probe.
+On 10/7/23 01:43, Konrad Dybcio wrote:
+> On 4.10.2023 02:31, Dmitry Baryshkov wrote:
+>> clk_rcg2_shared_ops implements support for the case of the RCG which
+>> must not be completely turned off. However its design has one major
+>> drawback: it doesn't allow us to properly implement the is_enabled
+>> callback, which causes different kinds of misbehaviour from the CCF.
 >>
->> Signed-off-by: Robert Marko <robimarko@gmail.com>
+>> Follow the idea behind clk_regmap_phy_mux_ops and implement the new
+>> clk_rcg2_parked_ops. It also targets the clocks which must not be fully
+>> switched off (and shared most of the implementation with
+>> clk_rcg2_shared_ops). The major difference is that it requires that the
+>> parent map doesn't conain the safe (parked) clock source. Instead if the
+>> CFG_REG register points to the safe source, the clock is considered to
+>> be disabled.
+>>
+>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 >> ---
-> Applying patches 1 and 3 without this one breaks usb, no?
-Sorry, my hands don't keep up with my brain - that's almost another
-speculative execution vulnerability!
-
-What I meant to say is:
-
-applying patches 1 and 2 breaks USB
-
-but
-
-the solution here would be to apply patch 1 and patch 3, followed
-by patch 2 (unless it will make the USB defer, IDK, it's probably
-easier to just test than to dive deep into the code)
-
-with Bjorn taking both subsystems, we can make that work I think
+> Would the intention here be to replace all usages of _shared_?
+?
 
 Konrad
