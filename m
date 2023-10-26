@@ -2,238 +2,452 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 363D4C25B48
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Oct 2023 10:40:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98C37C25B48
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Oct 2023 10:50:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230154AbjJZKkK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 Oct 2023 06:40:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56856 "EHLO
+        id S230285AbjJZKur (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 Oct 2023 06:50:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229803AbjJZKkK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Oct 2023 06:40:10 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1E572189;
-        Thu, 26 Oct 2023 03:40:07 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 68C182F4;
-        Thu, 26 Oct 2023 03:40:48 -0700 (PDT)
-Received: from pluto (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DD38D3F738;
-        Thu, 26 Oct 2023 03:40:04 -0700 (PDT)
-Date:   Thu, 26 Oct 2023 11:40:02 +0100
-From:   Cristian Marussi <cristian.marussi@arm.com>
-To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc:     sudeep.holla@arm.com, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ranjani.vaidyanathan@nxp.com, glen.wienecke@nxp.com,
-        nitin.garg@nxp.com, chuck.cannon@nxp.com, sboyd@kernel.org,
-        Peng Fan <peng.fan@nxp.com>,
-        Souvik Chakravarty <Souvik.Chakravarty@arm.com>
-Subject: Re: [RFC] firmware: arm_scmi: support clock denied attributes
-Message-ID: <ZTpCAgUxjbVnFEkB@pluto>
-References: <20231026034125.1823954-1-peng.fan@oss.nxp.com>
+        with ESMTP id S229710AbjJZKuq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Oct 2023 06:50:46 -0400
+Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-he1eur04on2123.outbound.protection.outlook.com [40.107.7.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76D9CAB
+        for <linux-clk@vger.kernel.org>; Thu, 26 Oct 2023 03:50:42 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=h28C4F66rE27rncxRAUaPQ7cT+UE+EkDutkA503++y+mOTo4XOqo50Z5LHbyADcYOvecr0Ob0PfAWMjwj0mAtFZ6/NBVqSE/qIqNnT7TL0GhGGiwzuW4lruNZifPFUuRAuucd/o0Xv383Nsuy0IVqm7D4v60jXXhcxaorLfHviZhHuIDCNukOX/luFPjyEVdHoYpE553tSRJnN54OJKwRIrSpOn2ZXUUg88Mfn8x63yV7fGteCKwHTa7EP2U4ca5aOJnTFXqUxF9JXL9GBdJkhleAgZCGPBOH+Yet5ec4YuTfnvwGt/5o0LPsRJfebFQaNUgu4ZglrPMWp5SA/hBoQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UFcClSiCTjWQgGD7OMfOF2pNIHYq4KZP8fdnNk1AvQs=;
+ b=AYOg8uPimGPdwCnvmNow4/z0RFcRWleAXCFd9qxL2RZAXfHRgjfPxRsp8htF6WbFgD8ANb+BTL/HbW2MY3/kiWns6H6gPdiupm2JSPJhfZMtNP35Xv+UqTYB2KqVFS6XS6Rn7Jcr6XKr14SG4OqR/X7dbFh/KkerQ4sgkZGbf7j/JaZgeYZJtSfA2aVWEdFo/vsToBUs2KQdBCxcJoqNy4M2oADj7rLUdST94qNFW2AAT532D+dUI5q9iZOuM6h1qKSYMPdtodAS854bKKLuK/eF7AxSQQyZleSsc+eBDFskjdaEIuGYm0aaf71YUgqO7moQrn1xHwsiJjIupHnv3g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bang-olufsen.dk; dmarc=pass action=none
+ header.from=bang-olufsen.dk; dkim=pass header.d=bang-olufsen.dk; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bang-olufsen.dk;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UFcClSiCTjWQgGD7OMfOF2pNIHYq4KZP8fdnNk1AvQs=;
+ b=NvP+lSIR0l4DqNdU7chzYf2HNBrJsu854Bxkq6LwCIQIN9iEQKRkD/wGnTceKfqMrH9kvIFT9EOHsVs8CWaRlwaCTs4yjZ790J4RPRoKs7058Jhi2leM5nzJzyS/FNUsQ5CJ2/iKmhX2E6fJJ64k2maCuaVCVi+whoMCpIZcCZ4=
+Received: from VI1PR03MB4942.eurprd03.prod.outlook.com (2603:10a6:803:b6::20)
+ by AS2PR03MB8770.eurprd03.prod.outlook.com (2603:10a6:20b:551::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6933.19; Thu, 26 Oct
+ 2023 10:50:37 +0000
+Received: from VI1PR03MB4942.eurprd03.prod.outlook.com
+ ([fe80::67c9:f19a:51af:df35]) by VI1PR03MB4942.eurprd03.prod.outlook.com
+ ([fe80::67c9:f19a:51af:df35%6]) with mapi id 15.20.6907.032; Thu, 26 Oct 2023
+ 10:50:37 +0000
+Content-Type: multipart/mixed;
+        boundary="_000_202310261050235736741emasbangolufsendk_"
+From:   Emil Abildgaard Svendsen <EMAS@bang-olufsen.dk>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     Emil Abildgaard Svendsen <EMAS@bang-olufsen.dk>,
+        Emil Abildgaard Svendsen <EMAS@bang-olufsen.dk>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: [PATCH v2] clk: fixed: handle failed clk setup
+Thread-Topic: [PATCH v2] clk: fixed: handle failed clk setup
+Thread-Index: AQHaB/pBeROGV7WVFEa/tmLjmo3DFw==
+Date:   Thu, 26 Oct 2023 10:50:37 +0000
+Message-ID: <20231026105023.573674-1-emas@bang-olufsen.dk>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: <20231026105023.573674-1-emas@bang-olufsen.dk>
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bang-olufsen.dk;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: VI1PR03MB4942:EE_|AS2PR03MB8770:EE_
+x-ms-office365-filtering-correlation-id: 73caf8c8-e910-4a42-d6d1-08dbd61163b6
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 5VyT3oRM6pbDBqeqKPcseu57OArPu9zKl1ySQTSQBRY/5O2ePtWlfSn/emjlmOx+q+Z5NbeEr6XyI4R8mpfGoZyYG04hDR+MZyK12ID2on0ikVmVf3UuHozQ5Wbp/GB5UjWUNqWZz8PXgXPV0c3HE8aCvJ1jzE/fTYErK5N/7YoGHpXgTau4ukYif5+msvW48Un5HfzSCIXBVtWRZUE2v2A7NT0LJzIp9wLebb2DElPkLmgIJWRdyMlmQyCek3wvDe89Cw9wrvjidKyAGXdWB1gEDxaonZuy9v/123gmZHcZ67NcwaQzzTg7FguHaQJ8ieMsdcxL5urCWEtPHZDXqggHIg2lwHLH+c8J+8vPZlNaQnYQK7jTpn95uT9uakv3qcARchP5m11Q2jZn6vD8uxJ5ZZot8h9yTqgskUAfLHhujb2yogBMy5UCufPhUodPjlNuPLqYCQs63nKWJxi1ptX6gE8EtUatagBkvXzEcPom95tIYtztWWR8jPNjZkVP8PAP/5RtcOqLoXEdlDcl0YSom9ahLTwZ+SY96W9gss9yyan02KdEOy8xTm58xRA42Jyq0roy8GZgmfhOaGH5RFUONad80JEWKknJHS4v/yyhcnjPCZAv9rSyhCvyd5v5
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR03MB4942.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366004)(136003)(39850400004)(346002)(376002)(396003)(230922051799003)(186009)(64100799003)(451199024)(1800799009)(26005)(6512007)(1076003)(2616005)(38070700009)(38100700002)(122000001)(86362001)(36756003)(83380400001)(66556008)(76116006)(66946007)(66476007)(66446008)(64756008)(8676002)(4326008)(8976002)(8936002)(54906003)(6506007)(110136005)(91956017)(41300700001)(5660300002)(2906002)(316002)(71200400001)(6486002)(478600001);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?kxB/nRNQOmdQNY1kz9NZXFhn4HH8hoOSH33BG3fOXZeqVfibRW+cmbey92?=
+ =?iso-8859-1?Q?YeoqjTtr2fuOAQYXYcTGNPSE/oX6x1DilXAHWtocNomorNjQw8FojxUvap?=
+ =?iso-8859-1?Q?yMia04nGP5ZB6NrPkgcT0b4KiXD6IhOaB5s+MIEOpCf1p0VXRhGot8Xh4I?=
+ =?iso-8859-1?Q?LckYIK3mFRqDkgoILosL9/qVmrgKTpZ9P+gWHCFGC4eIl94EF+GW4w755L?=
+ =?iso-8859-1?Q?lhaOJkP1K5vPiTcd8TtXiLlAABo4g4FQAWP56w+rFtuE/StZ9Wvb2t2wud?=
+ =?iso-8859-1?Q?OA/MRRp6zMgxxbrJxt6W5X1/0g7zxmZr2oOOqnLP3xN0nSbpeas/Bq/r81?=
+ =?iso-8859-1?Q?VrVg1t5EAhOgM/VQ9EnIKF6TKxZeSbJs5TZyKDJmRvYkVYdlxWfP73PY8O?=
+ =?iso-8859-1?Q?Y4AVku75pp5gSnxGJS8cUuQstIhmHeGpKTeaWCOWuttK8830V71ZN2+Xgs?=
+ =?iso-8859-1?Q?nNKU89+izQE+KmV4oX27zvJIoIDQnxhFQM1KovEWI2jC3ZmliaFbPMv9Yl?=
+ =?iso-8859-1?Q?R2O0VMk0uztFb3qc1H4UXNViF9H4349UHL8q0zDpaYqkL2FbSRF0J73NLi?=
+ =?iso-8859-1?Q?JsnibU7Yy1JAvZ7tnYoqUhijp/awgjyrQc8NRlcQL0qrJjg2U4zpVdLkjf?=
+ =?iso-8859-1?Q?KrUpL5zmgrbOAKArOrBCGd9A3IfGWlUaf2/8jCRbspj+VnKsaAUsPCjpHo?=
+ =?iso-8859-1?Q?qein5Av1ed+bqc16Xc8gByxqjV/HBjgP5+cNxVDsCA2Pu24BPSANlncKT0?=
+ =?iso-8859-1?Q?R6bRWMHJCNkk8X7oN/dWSL12WMRafNqL6ES1CSkdI+/8FYcPXNKOmD26NE?=
+ =?iso-8859-1?Q?SzvTV41q0S60WBOpw11aCaWMkifEXihdH1ClkQq+72YiBnWr1KO0tpH2MH?=
+ =?iso-8859-1?Q?4Lgh3GCYTkoPLFIfXUlb0R0HwDnozkalngVcbmLCDJqOgYlxAm8BA0Ofl4?=
+ =?iso-8859-1?Q?51OnaE/T/DOq/OpwYhHyTjGyeWEMf5opao4iJhGCuaVZNH5Qw9eZzdK711?=
+ =?iso-8859-1?Q?NBVEttm0bgbNZ/qYaTHDVzsrTZ1ZcWfB3ZoOa3O8A754zswwePpE9j13yj?=
+ =?iso-8859-1?Q?SLHbqoGHPqO18IQ1rpweXl00ouRD8WL6gwkFH85mon9/wDJTxvF/P7XEl9?=
+ =?iso-8859-1?Q?D1noT5sJhoqXtWgORmI8HpHD4IGTmhOLSy8D/1S2ObgYv77LB+//g4yN9S?=
+ =?iso-8859-1?Q?SthlOlBbK7j+GAxHejPwf5zqK+v0IVDMkeC07a2wsVmbxDs7YKdK/naiHE?=
+ =?iso-8859-1?Q?BOXhEA8JOpGaxejVuwM1VXHmd83xvJl/+jLnm6JpyIMCUIkdluYQp3XVj9?=
+ =?iso-8859-1?Q?KZd7mp13IaM9igFOXQF/WhB73JatPY47C7Q+XgXSGNUAfqwdUxthu7onb+?=
+ =?iso-8859-1?Q?njfpGO+ch/+Tdr6iXmAuvvSgV8HZ0tqXAFTxVXH4OB/rU9EX197NvhcLn0?=
+ =?iso-8859-1?Q?CQlQPrlifAgv+H0k2nOmpL8wuxLJAHFw8FF2Xj+jBZLxyCsPlwKEiELqLx?=
+ =?iso-8859-1?Q?z4KF3+XX2APyJm1MSsCZDsoGESuYJaF9B+/xFKocKPRw02gdP44LxGDiIV?=
+ =?iso-8859-1?Q?DK1oHVfb8GVNgDPitBELIGOMUENX5r9sbTAqh/qJggdEqh/6dfOU3aU8Nu?=
+ =?iso-8859-1?Q?Pa7InHLnOUCsnbz7s25PWEQF6aApOerRSLd8Cz3mzYAFIM4kMok7in7w?=
+ =?iso-8859-1?Q?=3D=3D?=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231026034125.1823954-1-peng.fan@oss.nxp.com>
+X-OriginatorOrg: bang-olufsen.dk
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR03MB4942.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 73caf8c8-e910-4a42-d6d1-08dbd61163b6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Oct 2023 10:50:37.8395
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 210d08b8-83f7-470a-bc96-381193ca14a1
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: o5JHnN1LXCFHFRyBRe2d8Swb7AJYwmRhdIBsAmVyyNVWzsMNvaAvZtkhnRxMGB2nEmKQUcTQY+Y+2t+gVSsq0w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR03MB8770
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Oct 26, 2023 at 11:41:25AM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> This is not in SPEC and is just defined by NXP. This patch is
-> to start the discussion to start include them in SPEC.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
+--_000_202310261050235736741emasbangolufsendk_
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Peng,
+From: Emil Abildgaard Svendsen <EMAS@bang-olufsen.dk>
 
-thanks for validating this scenario.
+When initializing clock providers "of_clk_init" will try and init
+parents first. But if parent clock is provided by a platform driver it
+can't. Then clocks will be forced on and OF_POPULATED flag will be set
+blindly. So if setup failes e.g. with -EPROBE_DEFER the clock will not
+be probed later on.
 
-[CC Souvik]
+This patch will clear the OF_POPULATED flag if clock setup failes.
 
-So at the end, you are returning -EACCESS anyway, it is just that you
-are avoiding to send any SCMI message at all if the flag reports that
-you cannot touch this and you will get back a DENY.
+Signed-off-by: Emil Svendsen <emas@bang-olufsen.dk>
+---
+v2:
+ - Fix spelling mistake in commit message
 
-Does this solve your usecase where your other drivers (callers) were
-failing to probe due to such error being reported from the server ?
+ drivers/clk/clk-fixed-factor.c | 19 +++++++++++--------
+ drivers/clk/clk-fixed-rate.c   | 11 ++++++++++-
+ 2 files changed, 21 insertions(+), 9 deletions(-)
 
-From our offline discussions my understanding was that, beside un-needed
-SCMI msg exchanges, your main issue was receiving a DENY error from the
-server when trying to modify a clock, how does this solves that ?
-Basically You are just returning the same error from the clk driver,
-just avoiding (rightly so) needless SCMI exchanges.
-(..in your last RFC patch you attempt was indeed different, to refrain
- from registering any clk framework callbacks at all for untocuhable
- clocks...)
+diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.=
+c
+index b3e66202b942..6f5ce5eb893f 100644
+--- a/drivers/clk/clk-fixed-factor.c
++++ b/drivers/clk/clk-fixed-factor.c
+@@ -268,14 +268,8 @@ static struct clk_hw *_of_fixed_factor_clk_setup(struc=
+t device_node *node)
+=20
+ 	hw =3D __clk_hw_register_fixed_factor(NULL, node, clk_name, NULL, NULL, 0=
+,
+ 					    0, mult, div, false);
+-	if (IS_ERR(hw)) {
+-		/*
+-		 * Clear OF_POPULATED flag so that clock registration can be
+-		 * attempted again from probe function.
+-		 */
+-		of_node_clear_flag(node, OF_POPULATED);
++	if (IS_ERR(hw))
+ 		return ERR_CAST(hw);
+-	}
+=20
+ 	ret =3D of_clk_add_hw_provider(node, of_clk_hw_simple_get, hw);
+ 	if (ret) {
+@@ -292,7 +286,16 @@ static struct clk_hw *_of_fixed_factor_clk_setup(struc=
+t device_node *node)
+  */
+ void __init of_fixed_factor_clk_setup(struct device_node *node)
+ {
+-	_of_fixed_factor_clk_setup(node);
++	struct clk_hw *hw;
++
++	hw =3D _of_fixed_factor_clk_setup(node);
++	if (IS_ERR(hw)) {
++		/*
++		 * Clear OF_POPULATED flag so that clock registration can be
++		 * attempted again from probe function.
++		 */
++		of_node_clear_flag(node, OF_POPULATED);
++	}
+ }
+ CLK_OF_DECLARE(fixed_factor_clk, "fixed-factor-clock",
+ 		of_fixed_factor_clk_setup);
+diff --git a/drivers/clk/clk-fixed-rate.c b/drivers/clk/clk-fixed-rate.c
+index 3481eb8cdeb3..46921cf5b3b2 100644
+--- a/drivers/clk/clk-fixed-rate.c
++++ b/drivers/clk/clk-fixed-rate.c
+@@ -192,7 +192,16 @@ static struct clk_hw *_of_fixed_clk_setup(struct devic=
+e_node *node)
+  */
+ void __init of_fixed_clk_setup(struct device_node *node)
+ {
+-	_of_fixed_clk_setup(node);
++	struct clk_hw *hw;
++
++	hw =3D _of_fixed_clk_setup(node);
++	if (IS_ERR(hw)) {
++		/*
++		 * Clear OF_POPULATED flag so that clock registration can be
++		 * attempted again from probe function.
++		 */
++		of_node_clear_flag(node, OF_POPULATED);
++	}
+ }
+ CLK_OF_DECLARE(fixed_clk, "fixed-clock", of_fixed_clk_setup);
+=20
+--=20
+2.34.1
 
-Does this work with upstream drivers, or just with some downstream
-solution properly crafted to handle the EACCESS ?
+--_000_202310261050235736741emasbangolufsendk_
+Content-Disposition: attachment; filename="winmail.dat"
+Content-Transfer-Encoding: base64
+Content-Type: application/ms-tnef; name="winmail.dat"
 
-Anyway IMO, these changes in this scenario are certainly valuable in
-general since they avoid needless exchanges with the server around
-clocks that we know upfront we cannot touch.
+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
+irW1za+4qWdWwTEk9XtZwL6gLgBQJQQVQvFgAAAfAEIAAQAAADIAAABFAG0AaQBsACAAQQBiAGkA
+bABkAGcAYQBhAHIAZAAgAFMAdgBlAG4AZABzAGUAbgAAAAAAHwBlAAEAAAAqAAAARQBNAEEAUwBA
+AGIAYQBuAGcALQBvAGwAdQBmAHMAZQBuAC4AZABrAAAAAAAfAGQAAQAAAAoAAABTAE0AVABQAAAA
+AAACAUEAAQAAAH4AAAAAAAAAgSsfpL6jEBmdbgDdAQ9UAgAAAIBFAG0AaQBsACAAQQBiAGkAbABk
+AGcAYQBhAHIAZAAgAFMAdgBlAG4AZABzAGUAbgAAAFMATQBUAFAAAABFAE0AQQBTAEAAYgBhAG4A
+ZwAtAG8AbAB1AGYAcwBlAG4ALgBkAGsAAAAAAB8AAl0BAAAAKgAAAEUATQBBAFMAQABiAGEAbgBn
+AC0AbwBsAHUAZgBzAGUAbgAuAGQAawAAAAAAHwDlXwEAAAAyAAAAcwBpAHAAOgBlAG0AYQBzAEAA
+YgBhAG4AZwAtAG8AbAB1AGYAcwBlAG4ALgBkAGsAAAAAAB8AGgwBAAAAMgAAAEUAbQBpAGwAIABB
+AGIAaQBsAGQAZwBhAGEAcgBkACAAUwB2AGUAbgBkAHMAZQBuAAAAAAAfAB8MAQAAACoAAABFAE0A
+QQBTAEAAYgBhAG4AZwAtAG8AbAB1AGYAcwBlAG4ALgBkAGsAAAAAAB8AHgwBAAAACgAAAFMATQBU
+AFAAAAAAAAIBGQwBAAAAfgAAAAAAAACBKx+kvqMQGZ1uAN0BD1QCAAAAgEUAbQBpAGwAIABBAGIA
+aQBsAGQAZwBhAGEAcgBkACAAUwB2AGUAbgBkAHMAZQBuAAAAUwBNAFQAUAAAAEUATQBBAFMAQABi
+AGEAbgBnAC0AbwBsAHUAZgBzAGUAbgAuAGQAawAAAAAAHwABXQEAAAAqAAAARQBNAEEAUwBAAGIA
+YQBuAGcALQBvAGwAdQBmAHMAZQBuAC4AZABrAAAAAAALAEA6AQAAAB8AGgABAAAAEgAAAEkAUABN
+AC4ATgBvAHQAZQAAAAAAAwDxPwkEAAALAEA6AQAAAAMA/T/kBAAAAgELMAEAAAAQAAAAVCnPWFGL
+hUOSiy3PS82VugMAFwABAAAAQAA5AID8uUD6B9oBQAAIMPsMNkH6B9oBCwApAAAAAAAfANk/AQAA
+AAACAABGAHIAbwBtADoAIABFAG0AaQBsACAAQQBiAGkAbABkAGcAYQBhAHIAZAAgAFMAdgBlAG4A
+ZABzAGUAbgAgADwARQBNAEEAUwBAAGIAYQBuAGcALQBvAGwAdQBmAHMAZQBuAC4AZABrAD4ADQAK
+AA0ACgBXAGgAZQBuACAAaQBuAGkAdABpAGEAbABpAHoAaQBuAGcAIABjAGwAbwBjAGsAIABwAHIA
+bwB2AGkAZABlAHIAcwAgACIAbwBmAF8AYwBsAGsAXwBpAG4AaQB0ACIAIAB3AGkAbABsACAAdABy
+AHkAIABhAG4AZAAgAGkAbgBpAHQADQAKAHAAYQByAGUAbgB0AHMAIABmAGkAcgBzAHQALgAgAEIA
+dQB0ACAAaQBmACAAcABhAHIAZQBuAHQAIABjAGwAbwBjAGsAIABpAHMAIABwAHIAbwB2AGkAZABl
+AGQAIABiAHkAIABhACAAcABsAGEAdABmAG8AcgBtACAAZAByAGkAdgBlAHIAIABpAHQADQAKAGMA
+YQBuACcAdAAuACAAVABoAGUAbgAgAGMAbABvAGMAawBzACAAdwBpAGwAbAAgAGIAZQAgAGYAbwBy
+AGMAZQBkACAAbwBuACAAYQBuAGQAIABPAEYAXwBQAE8AUABVAEwAQQBUAEUARAAgAGYAbABhAGcA
+IAAAAAsAAIAIIAYAAAAAAMAAAAAAAABGAAAAABSFAAAAAAAAHwAAgIYDAgAAAAAAwAAAAAAAAEYB
+AAAAHgAAAGEAYwBjAGUAcAB0AGwAYQBuAGcAdQBhAGcAZQAAAAAAAQAAAAwAAABlAG4ALQBVAFMA
+AAADAACACCAGAAAAAADAAAAAAAAARgEAAAAyAAAARQB4AGMAaABhAG4AZwBlAEEAcABwAGwAaQBj
+AGEAdABpAG8AbgBGAGwAYQBnAHMAAAAAACAAAABIAACACCAGAAAAAADAAAAAAAAARgEAAAAiAAAA
+TgBlAHQAdwBvAHIAawBNAGUAcwBzAGEAZwBlAEkAZAAAAAAAyPjKcxDpQkrW0Qjb1hFjth8AAIAT
+j/JB9IMUQaWE7ttaawv/AQAAABYAAABDAGwAaQBlAG4AdABJAG4AZgBvAAAAAAABAAAALgEAAEMA
+bABpAGUAbgB0AD0AVwBlAGIAUwBlAHIAdgBpAGMAZQBzADsATQBvAHoAaQBsAGwAYQAvADUALgAw
+ACAAKABXAGkAbgBkAG8AdwBzACAATgBUACAAMQAwAC4AMAA7ACAAVwBpAG4ANgA0ADsAIAB4ADYA
+NAApACAAQQBwAHAAbABlAFcAZQBiAEsAaQB0AC8ANQAzADcALgAzADYAIAAoAEsASABUAE0ATAAs
+ACAAbABpAGsAZQAgAEcAZQBjAGsAbwApACAAQwBoAHIAbwBtAGUALwA5ADAALgAwAC4ANAA0ADMA
+MAAuADkAMwAgAFMAYQBmAGEAcgBpAC8ANQAzADcALgAzADYAIABFAGQAZwAvADkAMAAuADAALgA4
+ADEAOAAuADQAOQA7AAAAAAAfAPo/AQAAADIAAABFAG0AaQBsACAAQQBiAGkAbABkAGcAYQBhAHIA
+ZAAgAFMAdgBlAG4AZABzAGUAbgAAAAAAHwA3AAEAAABeAAAAWwBQAEEAVABDAEgAIAB2ADIAXQAg
+AGMAbABrADoAIABmAGkAeABlAGQAOgAgAGgAYQBuAGQAbABlACAAZgBhAGkAbABlAGQAIABjAGwA
+awAgAHMAZQB0AHUAcAAAAAAAHwA9AAEAAAACAAAAAAAAAAMANgAAAAAAAgFxAAEAAAAWAAAAAQHa
+B/pBeROGV7WVFEa/tmLjmo3DFwAAHwBwAAEAAABeAAAAWwBQAEEAVABDAEgAIAB2ADIAXQAgAGMA
+bABrADoAIABmAGkAeABlAGQAOgAgAGgAYQBuAGQAbABlACAAZgBhAGkAbABlAGQAIABjAGwAawAg
+AHMAZQB0AHUAcAAAAAAAHwA1EAEAAABeAAAAPAAyADAAMgAzADEAMAAyADYAMQAwADUAMAAyADMA
+LgA1ADcAMwA2ADcANAAtADEALQBlAG0AYQBzAEAAYgBhAG4AZwAtAG8AbAB1AGYAcwBlAG4ALgBk
+AGsAPgAAAAAAAwDeP69vAAADABMSAAAAAAIBAIATj/JB9IMUQaWE7ttaawv/AQAAAC4AAABIAGUA
+YQBkAGUAcgBCAG8AZAB5AEYAcgBhAGcAbQBlAG4AdABMAGkAcwB0AAAAAAABAAAAIgAAAAEACgAA
+AAQAAAAAAAAAFAAAAAAAAAAAAAAA/////wAAAAAAAAsAAIATj/JB9IMUQaWE7ttaawv/AQAAABwA
+AABIAGEAcwBRAHUAbwB0AGUAZABUAGUAeAB0AAAAAAAAAAsAAIATj/JB9IMUQaWE7ttaawv/AQAA
+ACgAAABJAHMAUQB1AG8AdABlAGQAVABlAHgAdABDAGgAYQBuAGcAZQBkAAAAAQAAAEAABzDNZy5B
++gfaAQMAJgAAAAAACwAGDAAAAAACARMwAQAAABAAAAB5E4ZXtZUURr+2YuOajcMXAgEUMAEAAAAM
+AAAA/wAAACKnZKRGAAAAAwBbMwEAAAADAFo2AAAAAAMAaDYNAAAACwD6NgEAAAAfAPg/AQAAADIA
+AABFAG0AaQBsACAAQQBiAGkAbABkAGcAYQBhAHIAZAAgAFMAdgBlAG4AZABzAGUAbgAAAAAAHwAi
+QAEAAAAGAAAARQBYAAAAAAAfACNAAQAAAPQAAAAvAE8APQBFAFgAQwBIAEEATgBHAEUATABBAEIA
+UwAvAE8AVQA9AEUAWABDAEgAQQBOAEcARQAgAEEARABNAEkATgBJAFMAVABSAEEAVABJAFYARQAg
+AEcAUgBPAFUAUAAgACgARgBZAEQASQBCAE8ASABGADIAMwBTAFAARABMAFQAKQAvAEMATgA9AFIA
+RQBDAEkAUABJAEUATgBUAFMALwBDAE4APQAzADkAMwA4AEQAMAAzAEEARQA1AEIAMAA0AEYAOQA4
+AEEAQgBFADAANABDAEIAQgA4AEYANABEADcAQgBBADkALQBFAE0AQQBTAAAAHwAkQAEAAAAGAAAA
+RQBYAAAAAAAfACVAAQAAAPQAAAAvAE8APQBFAFgAQwBIAEEATgBHAEUATABBAEIAUwAvAE8AVQA9
+AEUAWABDAEgAQQBOAEcARQAgAEEARABNAEkATgBJAFMAVABSAEEAVABJAFYARQAgAEcAUgBPAFUA
+UAAgACgARgBZAEQASQBCAE8ASABGADIAMwBTAFAARABMAFQAKQAvAEMATgA9AFIARQBDAEkAUABJ
+AEUATgBUAFMALwBDAE4APQAzADkAMwA4AEQAMAAzAEEARQA1AEIAMAA0AEYAOQA4AEEAQgBFADAA
+NABDAEIAQgA4AEYANABEADcAQgBBADkALQBFAE0AQQBTAAAAHwAwQAEAAAAyAAAARQBtAGkAbAAg
+AEEAYgBpAGwAZABnAGEAYQByAGQAIABTAHYAZQBuAGQAcwBlAG4AAAAAAB8AMUABAAAAMgAAAEUA
+bQBpAGwAIABBAGIAaQBsAGQAZwBhAGEAcgBkACAAUwB2AGUAbgBkAHMAZQBuAAAAAAAfADhAAQAA
+ADIAAABFAG0AaQBsACAAQQBiAGkAbABkAGcAYQBhAHIAZAAgAFMAdgBlAG4AZABzAGUAbgAAAAAA
+HwA5QAEAAAAyAAAARQBtAGkAbAAgAEEAYgBpAGwAZABnAGEAYQByAGQAIABTAHYAZQBuAGQAcwBl
+AG4AAAAAAAMAWUAAAAAAAwBaQAAAAAADADdQAQAAAB8ACl0BAAAAKgAAAEUATQBBAFMAQABiAGEA
+bgBnAC0AbwBsAHUAZgBzAGUAbgAuAGQAawAAAAAAHwALXQEAAAAqAAAARQBNAEEAUwBAAGIAYQBu
+AGcALQBvAGwAdQBmAHMAZQBuAC4AZABrAAAAAAACARVdAQAAABAAAAC4CA0h94MKR7yWOBGTyhSh
+AgEWXQEAAAAQAAAAuAgNIfeDCke8ljgRk8oUoQMAAIBQ42MLzJzQEbzbAIBfzM4EAQAAACQAAABJ
+AG4AZABlAHgAaQBuAGcARQByAHIAbwByAEMAbwBkAGUAAAAbAAAAHwAAgFDjYwvMnNARvNsAgF/M
+zgQBAAAAKgAAAEkAbgBkAGUAeABpAG4AZwBFAHIAcgBvAHIATQBlAHMAcwBhAGcAZQAAAAAAAQAA
+AHAAAABJAG4AZABlAHgAaQBuAGcAIABQAGUAbgBkAGkAbgBnACAAdwBoAGkAbABlACAAQgBpAGcA
+RgB1AG4AbgBlAGwAUABPAEkASQBzAFUAcABUAG8ARABhAHQAZQAgAGkAcwAgAGYAYQBsAHMAZQAu
+AAAACwAAgFDjYwvMnNARvNsAgF/MzgQBAAAAJgAAAEkAcwBQAGUAcgBtAGEAbgBlAG4AdABGAGEA
+aQBsAHUAcgBlAAAAAAAAAAAAHwAAgB+k6zOoei5Cvnt54amOVLMBAAAAOAAAAEMAbwBuAHYAZQBy
+AHMAYQB0AGkAbwBuAEkAbgBkAGUAeABUAHIAYQBjAGsAaQBuAGcARQB4AAAAAQAAAEQBAABJAEkA
+PQBbAEMASQBEAD0ANQA3ADgANgAxADMANwA5AC0AOQA1AGIANQAtADQANgAxADQALQBiAGYAYgA2
+AC0ANgAyAGUAMwA5AGEAOABkAGMAMwAxADcAOwBJAEQAWABIAEUAQQBEAD0AMAAxAEQAQQAwADcA
+RgBBADQAMQA7AEkARABYAEMATwBVAE4AVAA9ADEAXQA7AFQARgBSAD0AVABoAHIAZQBhAGQARgBv
+AHIAawBpAG4AZwBJAHMARABpAHMAYQBiAGwAZQBkADsAVgBlAHIAcwBpAG8AbgA9AFYAZQByAHMA
+aQBvAG4AIAAxADUALgAyADAAIAAoAEIAdQBpAGwAZAAgADYAOQAwADcALgAwACkALAAgAFMAdABh
+AGcAZQA9AEgANAA7AFUAUAA9ADEAMAA7AEQAUAA9ADEAAAADAA00/T8AAB8AAICGAwIAAAAAAMAA
+AAAAAABGAQAAAC4AAABhAHUAdABoAGUAbgB0AGkAYwBhAHQAaQBvAG4ALQByAGUAcwB1AGwAdABz
+AAAAAAABAAAAwgAAAGQAawBpAG0APQBuAG8AbgBlACAAKABtAGUAcwBzAGEAZwBlACAAbgBvAHQA
+IABzAGkAZwBuAGUAZAApACAAaABlAGEAZABlAHIALgBkAD0AbgBvAG4AZQA7AGQAbQBhAHIAYwA9
+AG4AbwBuAGUAIABhAGMAdABpAG8AbgA9AG4AbwBuAGUAIABoAGUAYQBkAGUAcgAuAGYAcgBvAG0A
+PQBiAGEAbgBnAC0AbwBsAHUAZgBzAGUAbgAuAGQAawA7AAAAAAAfAACAhgMCAAAAAADAAAAAAAAA
+RgEAAAAgAAAAeAAtAG0AcwAtAGgAYQBzAC0AYQB0AHQAYQBjAGgAAAABAAAAAgAAAAAAAAAfAACA
+hgMCAAAAAADAAAAAAAAARgEAAAAuAAAAeAAtAG0AcwAtAHAAdQBiAGwAaQBjAHQAcgBhAGYAZgBp
+AGMAdAB5AHAAZQAAAAAAAQAAAAwAAABFAG0AYQBpAGwAAAAfAACAhgMCAAAAAADAAAAAAAAARgEA
+AAA2AAAAeAAtAG0AcwAtAHQAcgBhAGYAZgBpAGMAdAB5AHAAZQBkAGkAYQBnAG4AbwBzAHQAaQBj
+AAAAAAABAAAASAAAAFYASQAxAFAAUgAwADMATQBCADQAOQA0ADIAOgBFAEUAXwB8AEEAUwAyAFAA
+UgAwADMATQBCADgANwA3ADAAOgBFAEUAXwAAAB8AAICGAwIAAAAAAMAAAAAAAABGAQAAAFAAAAB4
+AC0AbQBzAC0AbwBmAGYAaQBjAGUAMwA2ADUALQBmAGkAbAB0AGUAcgBpAG4AZwAtAGMAbwByAHIA
+ZQBsAGEAdABpAG8AbgAtAGkAZAAAAAEAAABKAAAANwAzAGMAYQBmADgAYwA4AC0AZQA5ADEAMAAt
+ADQAYQA0ADIALQBkADYAZAAxAC0AMAA4AGQAYgBkADYAMQAxADYAMwBiADYAAAAAAB8AAICGAwIA
+AAAAAMAAAAAAAABGAQAAADgAAAB4AC0AbQBzAC0AZQB4AGMAaABhAG4AZwBlAC0AcwBlAG4AZABl
+AHIAYQBkAGMAaABlAGMAawAAAAEAAAAEAAAAMQAAAB8AAICGAwIAAAAAAMAAAAAAAABGAQAAADoA
+AAB4AC0AbQBzAC0AZQB4AGMAaABhAG4AZwBlAC0AYQBuAHQAaQBzAHAAYQBtAC0AcgBlAGwAYQB5
+AAAAAAABAAAABAAAADAAAAAfAACAhgMCAAAAAADAAAAAAAAARgEAAAAqAAAAeAAtAG0AaQBjAHIA
+bwBzAG8AZgB0AC0AYQBuAHQAaQBzAHAAYQBtAAAAAAABAAAADgAAAEIAQwBMADoAMAA7AAAAAAAf
+AACAhgMCAAAAAADAAAAAAAAARgEAAABEAAAAeAAtAG0AaQBjAHIAbwBzAG8AZgB0AC0AYQBuAHQA
+aQBzAHAAYQBtAC0AbQBlAHMAcwBhAGcAZQAtAGkAbgBmAG8AAAABAAAAAgUAADUAVgB5AFQAMwBv
+AFIATQA2AHAAYgBEAEIAcQBlAHEASwBQAGMAcwBlAHUANQA3AE8AQQByAFAAdQA5AHoASwBsADEA
+eQBTAFEAVABTAFEAQgBSAFkALwA1AE8AMgBlAFAAdABXAGwAZgBTAG4ALwBlAG0AagBsAG0ATwB4
+ACsAcQArAFoANQBOAGIAZQBFAHIANgBYAHkASQA0AFIAOABtAHAAZgBHAG8AWgB5AFkARwAwADQA
+aABEAFIAKwBNAFoAeQBLADEAMgBJAEQAMgBvAG4AMABpAGsAVgBtAFYAZgAzAFUAdQBIAG8AegBR
+ADUAVwBiAHAALwBHAEIANQBVAGoAVwBVAE4AcQBXAFoAegA4AFAAWABnAFgAUABWADAAYwAzAEgA
+RQA4AGEAQwB2AEoAMQBqAHoARQAvAGYAVABZAEUAcgBLADUATgAvADcAWQBvAEcASABwAFgAZwBU
+AGEAdQA0AHUAawBZAGkAZgA1ACsAbQBzAHYAVwA0ADgAVQBuADUASABmAHoAUwBDAEkAWABCAFYA
+dABXAFIAWgBVAEUAMgB2ADIAQQA3AE4AVAAwAEwASgB6AEkAcAA5AHcATABlAGIAYgAyAEQARQBs
+AFAAawBMAG0AZwBJAEoAVwBSAGQAeQBNAGwAbQBRAHkAQwBlAGsAMwB3AHYARABlADgAOQBDAHcA
+OQB3AHIAdgBqAGkAZABLAHkAQQBHAFgAZABXAEIAMQBnAEUARAB4AGEAbwBuAFoAdQB5ADkAdgAv
+ADEAMgAzAGcAbQBaAEgAYwBaADYANwBOAGMAdwBhAFEAegB6AFQAZwA3AEYAZwB1AEgAYQBRAEoA
+OABpAGUATQBzAGQAYwB4AEwANQB1AHIAQwBXAEUAdABQAEgAWgBEAFgAcQBnAGcASABJAGcAMgBs
+AHcASABMAEgAKwBjADgASgArADgAdgBQAFoAbABOAGEAUQBuAFkAUQBLADcAagBUAHAAbgA5ADUA
+dQBUADkAdQBhAGsAdgAzAHEAYwBBAFIAYwBoAFAANQBtADEAMQBRADIAagBaAG4ANgB2AEQAOAB1
+AHgASgA1AFoAWgBvAHQAOABoADkAeQBUAHEAZwBzAGsAVQBBAGYATABIAGgAdQBqAGIAMgB5AG8A
+ZwBCAE0AeQA1AFUAQwB1AGYAUABoAFUAbwBkAFAAagBsAE4AdQBQAEwAcQBZAEMAUQBzADYAMwBu
+AEsAVwBKAHgAaQAxAHAAdABYADYAZwBFADgARQB0AFUAYQB0AGEAZwBCAGsAdgBYAHoARQBjAFAA
+bwBtADkANQB0AEkAWQB0AHoAdABXAFcAUgA4AGoAUABOAGoAWgBrAFYAUAA4AFAAQQBQAC8ANQBS
+AHQAYwBPAHEATABvAFgARQBkAGwARABjAGwAMABZAFMAbwBtADkAYQBoAEwAVAB3AFoAKwBTAFkA
+OQA2AFcAOQBnAHMAcwA5AHkAeQBhAG4AMAAyAEsAZABFAE8AeQA4AHgAVABtADUAOAB4AFIAQQA0
+ADIASgB5AHEAMAByAG8AeQA4AEcAWgBnAG0AZgBoAE8AYQBHAEgANQBSAEYAVQBPAE4AYQBkADgA
+MABKAEUAVwBLAGsAbgBKAEgAUwA0AHYALwB5AHkAaABjAG4AagBQAEMAWgBBAHYAOQByAFMAeQBo
+AEMAdgB5AGQANQB2ADUAAAAAAB8AAICGAwIAAAAAAMAAAAAAAABGAQAAADgAAAB4AC0AZgBvAHIA
+ZQBmAHIAbwBuAHQALQBhAG4AdABpAHMAcABhAG0ALQByAGUAcABvAHIAdAAAAAEAAACIBAAAQwBJ
+AFAAOgAyADUANQAuADIANQA1AC4AMgA1ADUALgAyADUANQA7AEMAVABSAFkAOgA7AEwAQQBOAEcA
+OgBlAG4AOwBTAEMATAA6ADEAOwBTAFIAVgA6ADsASQBQAFYAOgBOAEwASQA7AFMARgBWADoATgBT
+AFAATQA7AEgAOgBWAEkAMQBQAFIAMAAzAE0AQgA0ADkANAAyAC4AZQB1AHIAcAByAGQAMAAzAC4A
+cAByAG8AZAAuAG8AdQB0AGwAbwBvAGsALgBjAG8AbQA7AFAAVABSADoAOwBDAEEAVAA6AE4ATwBO
+AEUAOwBTAEYAUwA6ACgAMQAzADIAMwAwADAAMwAxACkAKAAzADYANgAwADAANAApACgAMQAzADYA
+MAAwADMAKQAoADMAOQA4ADUAMAA0ADAAMAAwADAANAApACgAMwA0ADYAMAAwADIAKQAoADMANwA2
+ADAAMAAyACkAKAAzADkANgAwADAAMwApACgAMgAzADAAOQAyADIAMAA1ADEANwA5ADkAMAAwADMA
+KQAoADEAOAA2ADAAMAA5ACkAKAA2ADQAMQAwADAANwA5ADkAMAAwADMAKQAoADQANQAxADEAOQA5
+ADAAMgA0ACkAKAAxADgAMAAwADcAOQA5ADAAMAA5ACkAKAAyADYAMAAwADUAKQAoADYANQAxADIA
+MAAwADcAKQAoADEAMAA3ADYAMAAwADMAKQAoADIANgAxADYAMAAwADUAKQAoADMAOAAwADcAMAA3
+ADAAMAAwADAAOQApACgAMwA4ADEAMAAwADcAMAAwADAAMAAyACkAKAAxADIAMgAwADAAMAAwADAA
+MQApACgAOAA2ADMANgAyADAAMAAxACkAKAAzADYANwA1ADYAMAAwADMAKQAoADgAMwAzADgAMAA0
+ADAAMAAwADAAMQApACgANgA2ADUANQA2ADAAMAA4ACkAKAA3ADYAMQAxADYAMAAwADYAKQAoADYA
+NgA5ADQANgAwADAANwApACgANgA2ADQANwA2ADAAMAA3ACkAKAA2ADYANAA0ADYAMAAwADgAKQAo
+ADYANAA3ADUANgAwADAAOAApACgAOAA2ADcANgAwADAAMgApACgANAAzADIANgAwADAAOAApACgA
+OAA5ADcANgAwADAAMgApACgAOAA5ADMANgAwADAAMgApACgANQA0ADkAMAA2ADAAMAAzACkAKAA2
+ADUAMAA2ADAAMAA3ACkAKAAxADEAMAAxADMANgAwADAANQApACgAOQAxADkANQA2ADAAMQA3ACkA
+KAA0ADEAMwAwADAANwAwADAAMAAwADEAKQAoADUANgA2ADAAMwAwADAAMAAwADIAKQAoADIAOQAw
+ADYAMAAwADIAKQAoADMAMQA2ADAAMAAyACkAKAA3ADEAMgAwADAANAAwADAAMAAwADEAKQAoADYA
+NAA4ADYAMAAwADIAKQAoADQANwA4ADYAMAAwADAAMAAxACkAOwBEAEkAUgA6AE8AVQBUADsAUwBG
+AFAAOgAxADEAMAAyADsAAAAfAACAhgMCAAAAAADAAAAAAAAARgEAAABcAAAAeAAtAG0AcwAtAGUA
+eABjAGgAYQBuAGcAZQAtAGEAbgB0AGkAcwBwAGEAbQAtAG0AZQBzAHMAYQBnAGUAZABhAHQAYQAt
+AGMAaAB1AG4AawBjAG8AdQBuAHQAAAABAAAABAAAADEAAAAfAACAhgMCAAAAAADAAAAAAAAARgEA
+AABKAAAAeAAtAG0AcwAtAGUAeABjAGgAYQBuAGcAZQAtAGEAbgB0AGkAcwBwAGEAbQAtAG0AZQBz
+AHMAYQBnAGUAZABhAHQAYQAtADAAAAAAAAEAAACyDAAAawB4AEIALwBuAFIATgBRAE8AbQBkAFEA
+TgBZADEAawB6ADkATgBaAFgARgBoAG4ANABIAEgAOABoAG8ATwBTAEgAMwAzAEIARwAzAGYATwBY
+AFoAZQBxAFYAZgBpAGIAUgBXACsAYwBtAGIAZQB5ADkAMgBZAGUAbwBxAGoAVAB0AHIAMgBmAHUA
+TwBBAFEAWQBYAFkAYwBUAEcATgBQAFMARQAvAG8AWAA2AHgAMQBEAGkAbABYAEEASABXAHQAbwBj
+AE4AbwBtAG8AcgBOAGoAUQB3ADgARgBvAGoAeABVAHYAYQBwAHkATQBpAGEAMAA0AG4ARwBQADUA
+WgBCADYATgByAFAAawBnAGMAVAAwAGIANABLAGkAWABEADYASQBoAE8AYQBCADUAcwArAE0ASQBF
+AE8AcABDAGYAMQBwADAAVgBYAFIAaABHAG8AdAA4AFgAaAA0AEkATABjAGsAWQBJAEsAMwBtAEYA
+UgBxAEQAawBnAG8ASQBMAG8AcwBMADkALwBxAFYAbQByAGcASwBUAHAAWgA5AFAAKwBnAFcASABD
+AEYARwBDADQAZQBJAGwAOQA0AEUARgArAEcAVwA0AHcANwA1ADUATABsAGgAYQBPAEoAawBQADEA
+SwA1AHYAUABpAFQAYwBkADgAVAB0AFgAaQBMAGwAQQBBAEIAbwA0AGcANABGAFEAQQBXAFAANQA2
+AHcAKwByAEYAdAB1AEUALwBTAHQAWgA5AFcAdgBiADIAdAAyAHcAdQBkAE8AQQAvAE0AUgBSAHAA
+NgB6AE0AZwB4AHgAYgByAEoAeAB0ADYAVwA1AFgAMQAvADAAZwA3AHoAeABtAFoAcgAyAG8ATwBP
+AHEAbgBMAFAAMwB4AE4AMABuAFMAYgBwAGUAYQBzAC8AQgBxAC8AcgA4ADEAVgByAFYAZwAxAHQA
+NQBFAEEAaABPAGcATQAvAFYAUQA5AEUAbgBJAEsARgA2AFQASwB4AFoAZQBTAGIASgBzADUAVABa
+AHkASwBEAEoAbQBSAHYAWQBrAFYAWQBkAGwAeABXAGYAUAA3ADMAUABZADgATwBZADQAQQBWAGsA
+dQA3ADUAcABwADUAZwBTAG4AeABHAEoAUwA4AGMAVQB1AFEAcwB0AEkAaABtAEgAZQBHAHAASwBU
+AGUAYQBXAEMATwBXAHUAdAB0AEsAOAA4ADMAMABWADcAMQBaAE4AMgArAFgAZwBzAG4ATgBLAFUA
+OAA5ACsAaQB6AFEARQArAEsAbQBWADQAbwBYADIANwB6AHYASgBJAG8ASQBEAFEAbgB4AGgARgBR
+AE0AMQBLAG8AdgBFAFcASQAyAGoAQwAzAFoAbQBsAGkAYQBGAGIAUABNAHYAOQBZAGwAUgAyAE8A
+MABWAE0AawAwAHUAegB0AEYAYgAzAHEAYwAxAEgANABVAFgATgBWAGkARgA5AEgANAAzADQAOQBV
+AEgATAA4AHEAMAB6AEQAcABhAFkAcQBrAEwAMgBGAGIAUwBSAEYAMABKADcAMwBOAEwAaQBKAHMA
+bgBpAGIAVQA3AFkAeQAxAEoAQQB2AFoANwB0AG4AWQBvAHEAVQBoAGkAagBwAC8AYQB3AGcAagB5
+AHIAUQBjADgATgBSAGwAYwBRAEwAMABxAHIASgBqAGcAMgBVADQAegBwAFYAZABMAGsAagBmAEsA
+cgBVAHAATAA1AHoAbQBnAHIAYgBPAEEASwBBAHIATwByAEIAQwBHAGQAOQBBADMASQBmAEcAVwBs
+AFUAYQBmADIALwA4AGoAQwBSAGIAcwBwAGoAKwBWAG4ASwBzAGEAQQBVAHMAUABDAGoAcABIAG8A
+cQBlAGkAbgA1AEEAdgAxAGUAZAArAGIAcQBjADEANgBYAGMAOABnAEIAeQB4AHEAagBWAC8ASABC
+AGoAZwBQADUAKwBjAE4AeABWAEQAcwBDAEEAMgBQAHUAMgA0AEIAUABTAEEATgBsAG4AYwBLAFQA
+MABSADYAYgBSAFcATQBIAEoAQwBOAGsAawA4AFgANwBvAE4ALwBkAFcAUwBMADEAMgBXAE0AUgBh
+AGYATgBxAEwANgBFAFMAMQBDAFMAawBkAEkAKwAvADgARgBZAGMAUABYAE4ASwBPAG0ARAAyADYA
+TgBFAFMAegB2AFQAVgA0ADEAcQAwAFMANgAwAFcAQgBPAHAAdwAxADEAYQBDAGEAVwBNAGsAaQBm
+AEUAWABpAGgAZABIADEAQwBsAGsAUQBxACsANwAyAFkAaQBCAG4AVwByADEASwBPADAAdABwAEgA
+MgBNAEgANABMAGcAaAAzAEcAQwBZAFQAawBvAFAATABGAEkAZgBYAFUAbABiADAAUgAwAEgAdwBE
+AG4AbwB6AGsAYQBsAG4AZwBWAGMAYgBtAEwAQwBEAEoAcQBPAGcAWQBsAHgAQQBtADgAQgBBADAA
+TwBmAGwANAA1ADEATwBuAGEARQAvAFQALwBEAE8AcQAvAE8AcAB3AFkAaABIAHkAVABqAEcAeQBl
+AFcARQBNAGYANQBvAHAAYQBvADQAaQBKAGgARwBDAHUAYQBWAFoATgBIADUAUQB3ADkAZQBaAHoA
+ZABLADcAMQAxAE4AQgBWAEUAdAB0AG0AMABiAGcAYgBOAFoALwBxAFkAYQBUAEgARABWAHoAcwBy
+AFQAWgAxAFoAYwBXAGYAQgAzAFoAbwBPAGEAMwBPADgAQQA3ADUANAB6AHMAdwB3AGUAUABwAEUA
+OQBqADEAMwB5AGoAUwBMAEgAYgBxAG8ARwBIAFAAcQBPADEAOABJAFEAMQByAHAAdwBlAFgAbAAw
+ADAAbwB1AFIARAA4AFcATAA2AGcAdwBrAEYASAA4ADUAbQBvAG4AOQAvAHcARABKAFQAeAB2AEYA
+LwBQADcAWABFAGwAOQBEADEAbgBvAFQANQBzAEoAaABvAHEAWAB0AFcAZwBPAFIAbQBJADgASABw
+AEgARAA0AEkARwBUAG0AaABPAEwAUwB5ADgARAAvADEAUwAyAE8AYgBnAFkAdgA3ADcATABCACsA
+LwAvAGcANAB5AE4AOQBTAFMAdABoAGwATwBsAEIAYgBLADcAagArAEcAQQB4AEgAZQBqAFAAdwBm
+ADUAegBxAEsAKwB2ADAASQBWAEQATQBrAGUAQwAwADcAYQAyAHcAcwBWAG0AYgB4AEQAcwA3AFkA
+SwBkAEsALwBuAGEAaQBIAEUAQgBPAFgAaABFAEEAOABKAE8AcABHAGEAeABlAGoAVgB1AHcATQAx
+AFYAWABIAG0AZAA4ADMAeAB2AEoAbAAvACsAagBMAG4AbQA2AEoAcAB5AEkATQBDAFUASQBrAGQA
+bAB1AFkAUQBwADMAWABWAGoAOQBLAFoAZAA3AG0AcAAxADMASQBhAE0AOQBpAGcARgBPAFgAUQBG
+AC8AVwBoAEIANwAzAEoAYQB0AFAAWQA0ADcAQwA3AFEAKwBYAGcAWABTAEcATgBVAEEAZgBxAHcA
+ZABVAHgAdABoAHUANwBvAG4AYgArAG4AagBmAHAARwBPACsAYwBoAC8AKwBUAGQAcgA2AGkAWABt
+AEEAdQB2AHYAUwBnAFYAOABIAFoAMAB0AHEAWABBAEYAVAB4AFYAWABIADQATwBCAC8AcgBVADkA
+RQBYADEAOQA3AE4AdgBoAGMATABuADAAQwBRAGwAUQBQAHIAbABpAGYAQQBnAHYAKwBIADAAawAy
+AG4ATwBtAHAATAA4AHcAdQB4AEwASgBBAEgARgB3ADgARgBGADIAWABqACsAagBCAFoATAB4AHkA
+QwBzAFAAbAB3AEsARQBpAEUATABxAEwAeAB6ADQASwBGADMAKwBYAFgAMgBBAFAAeQBKAG0AMQBN
+AFMAcwBDAFoARABzAG8ARwBFAFMAdQBZAEoAYQBGADkAQgArAC8AeABGAEsAbwBjAEsAUABSAHcA
+MAAyAGcAZABQADQANABMAHgARwBEAGkASQBWAEQASwAxAG8ASABWAGYAYgA4AEcAVgBOAGcARABQ
+AGkAdABCAEUATABJAEcATwBNAFUARQBOAFgANQByADkAcwBiAFQAQQBxAGgALwBxAEoAZwBnAGQA
+RQBxAGgALwA2AGQAZgBPAFUAMwBhAFUAOABOAHUAUABhADcASQBuAEgATABuAE8AVQBDAHMAbgBi
+AHoANwBzADIANQBQAFcARQBRAEYANgBhAEEAcABPAGUAcgBSAFMATABkADgAQwB6ADMAbQB6AFkA
+QQBGAEkATQA0AGsATQBvAGsANwBpAG4ANwB3AD0APQAAAAAAl3o=
 
-BUT, hvaing said that, if this series goes further as it is and the
-spec is changed accordingly, please move all of this logic inside the
-protocol layer: there is no reason to change the clk-scmi driver at
-all for this.
-
-You can just check that same new flags (that you set in clk discovery)
-upfront inside the related clock operations in drivers/firmware/arm/clock.c
-and just return EACCESS from there avoiding any SCMI exchanges if the
-flags are set.
-
-This way you dont either need to re-define and expose such new flags in
-scmi_protocol.h, it can just all handled inside the SCMI protocol layer.
-
-Thank,
-Cristian
-
->  drivers/clk/clk-scmi.c            | 39 +++++++++++++++++++++++++------
->  drivers/firmware/arm_scmi/clock.c |  9 +++++++
->  include/linux/scmi_protocol.h     |  4 ++++
->  3 files changed, 45 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-> index 8cbe24789c24..303f8a8ec8e0 100644
-> --- a/drivers/clk/clk-scmi.c
-> +++ b/drivers/clk/clk-scmi.c
-> @@ -75,15 +75,13 @@ static int scmi_clk_set_rate(struct clk_hw *hw, unsigned long rate,
->  			     unsigned long parent_rate)
->  {
->  	struct scmi_clk *clk = to_scmi_clk(hw);
-> +	const struct scmi_clock_info *info = clk->info;
-> +	u64 rate1 = 0;
->  
-> -	return scmi_proto_clk_ops->rate_set(clk->ph, clk->id, rate);
-> -}
-> -
-> -static int scmi_clk_set_parent(struct clk_hw *hw, u8 parent_index)
-> -{
-> -	struct scmi_clk *clk = to_scmi_clk(hw);
-> +	if (info->flags & SCMI_CLOCK_SET_RATE_DENIED)
-> +		return -EACCES;
->  
-> -	return scmi_proto_clk_ops->parent_set(clk->ph, clk->id, parent_index);
-> +	return scmi_proto_clk_ops->rate_set(clk->ph, clk->id, rate);
->  }
->  
->  static u8 scmi_clk_get_parent(struct clk_hw *hw)
-> @@ -107,6 +105,17 @@ static u8 scmi_clk_get_parent(struct clk_hw *hw)
->  	return p_idx;
->  }
->  
-> +static int scmi_clk_set_parent(struct clk_hw *hw, u8 parent_index)
-> +{
-> +	struct scmi_clk *clk = to_scmi_clk(hw);
-> +	const struct scmi_clock_info *info = clk->info;
-> +
-> +	if (info->flags & SCMI_CLOCK_SET_ENABLE_DENIED)
-> +		return -EACCES;
-> +
-> +	return scmi_proto_clk_ops->parent_set(clk->ph, clk->id, parent_index);
-> +}
-> +
->  static int scmi_clk_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
->  {
->  	/*
-> @@ -119,6 +128,10 @@ static int scmi_clk_determine_rate(struct clk_hw *hw, struct clk_rate_request *r
->  static int scmi_clk_enable(struct clk_hw *hw)
->  {
->  	struct scmi_clk *clk = to_scmi_clk(hw);
-> +	const struct scmi_clock_info *info = clk->info;
-> +
-> +	if (info->flags & SCMI_CLOCK_SET_ENABLE_DENIED)
-> +		return 0;
->  
->  	return scmi_proto_clk_ops->enable(clk->ph, clk->id, NOT_ATOMIC);
->  }
-> @@ -126,6 +139,10 @@ static int scmi_clk_enable(struct clk_hw *hw)
->  static void scmi_clk_disable(struct clk_hw *hw)
->  {
->  	struct scmi_clk *clk = to_scmi_clk(hw);
-> +	const struct scmi_clock_info *info = clk->info;
-> +
-> +	if (info->flags & SCMI_CLOCK_SET_ENABLE_DENIED)
-> +		return;
->  
->  	scmi_proto_clk_ops->disable(clk->ph, clk->id, NOT_ATOMIC);
->  }
-> @@ -133,6 +150,10 @@ static void scmi_clk_disable(struct clk_hw *hw)
->  static int scmi_clk_atomic_enable(struct clk_hw *hw)
->  {
->  	struct scmi_clk *clk = to_scmi_clk(hw);
-> +	const struct scmi_clock_info *info = clk->info;
-> +
-> +	if (info->flags & SCMI_CLOCK_SET_ENABLE_DENIED)
-> +		return 0;
->  
->  	return scmi_proto_clk_ops->enable(clk->ph, clk->id, ATOMIC);
->  }
-> @@ -140,6 +161,10 @@ static int scmi_clk_atomic_enable(struct clk_hw *hw)
->  static void scmi_clk_atomic_disable(struct clk_hw *hw)
->  {
->  	struct scmi_clk *clk = to_scmi_clk(hw);
-> +	const struct scmi_clock_info *info = clk->info;
-> +
-> +	if (info->flags & SCMI_CLOCK_SET_ENABLE_DENIED)
-> +		return;
->  
->  	scmi_proto_clk_ops->disable(clk->ph, clk->id, ATOMIC);
->  }
-> diff --git a/drivers/firmware/arm_scmi/clock.c b/drivers/firmware/arm_scmi/clock.c
-> index 42b81c181d68..1a62e3b82d34 100644
-> --- a/drivers/firmware/arm_scmi/clock.c
-> +++ b/drivers/firmware/arm_scmi/clock.c
-> @@ -46,6 +46,9 @@ struct scmi_msg_resp_clock_attributes {
->  #define SUPPORTS_RATE_CHANGE_REQUESTED_NOTIF(x)	((x) & BIT(30))
->  #define SUPPORTS_EXTENDED_NAMES(x)		((x) & BIT(29))
->  #define SUPPORTS_PARENT_CLOCK(x)		((x) & BIT(28))
-> +#define SETS_ENABLE_DENIED(x)			((x) & BIT(15))
-> +#define SETS_RATE_DENIED(x)			((x) & BIT(14))
-> +#define SETS_PARENT_DENIED(x)			((x) & BIT(13))
->  	u8 name[SCMI_SHORT_NAME_MAX_SIZE];
->  	__le32 clock_enable_latency;
->  };
-> @@ -327,6 +330,12 @@ static int scmi_clock_attributes_get(const struct scmi_protocol_handle *ph,
->  			clk->rate_change_requested_notifications = true;
->  		if (SUPPORTS_PARENT_CLOCK(attributes))
->  			scmi_clock_possible_parents(ph, clk_id, clk);
-> +		if (SETS_PARENT_DENIED(attributes))
-> +			clk->flags |= SCMI_CLOCK_SET_PARENT_DENIED;
-> +		if (SETS_RATE_DENIED(attributes))
-> +			clk->flags |= SCMI_CLOCK_SET_RATE_DENIED;
-> +		if (SETS_ENABLE_DENIED(attributes))
-> +			clk->flags |= SCMI_CLOCK_SET_ENABLE_DENIED;
->  	}
->  
->  	return ret;
-> diff --git a/include/linux/scmi_protocol.h b/include/linux/scmi_protocol.h
-> index f2f05fb42d28..71911dcd8117 100644
-> --- a/include/linux/scmi_protocol.h
-> +++ b/include/linux/scmi_protocol.h
-> @@ -41,12 +41,16 @@ struct scmi_revision_info {
->  	char sub_vendor_id[SCMI_SHORT_NAME_MAX_SIZE];
->  };
->  
-> +#define SCMI_CLOCK_SET_PARENT_DENIED	BIT(13)
-> +#define SCMI_CLOCK_SET_RATE_DENIED	BIT(14)
-> +#define SCMI_CLOCK_SET_ENABLE_DENIED	BIT(15)
->  struct scmi_clock_info {
->  	char name[SCMI_MAX_STR_SIZE];
->  	unsigned int enable_latency;
->  	bool rate_discrete;
->  	bool rate_changed_notifications;
->  	bool rate_change_requested_notifications;
-> +	unsigned int flags;
->  	union {
->  		struct {
->  			int num_rates;
-> -- 
-> 2.37.1
-> 
+--_000_202310261050235736741emasbangolufsendk_--
