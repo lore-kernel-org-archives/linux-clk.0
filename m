@@ -2,167 +2,238 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F524C25B6B
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Oct 2023 10:19:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 363D4C25B48
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Oct 2023 10:40:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229647AbjJZKTj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 Oct 2023 06:19:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37952 "EHLO
+        id S230154AbjJZKkK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 Oct 2023 06:40:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229611AbjJZKTi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Oct 2023 06:19:38 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2493FDC;
-        Thu, 26 Oct 2023 03:19:36 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-9a6190af24aso119051766b.0;
-        Thu, 26 Oct 2023 03:19:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698315574; x=1698920374; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=R6xRovC9oM8uLuvwYTTHSjPfu/zUQK1EzagTxS/ZS6I=;
-        b=jqdC2gdQJ1hQzKmF7j1iUolY8F7BIEbVqFSo/M8VO//FAk15m0e9yKcer7rMKIpA4J
-         aox8XnW25dzP0h7jvRpbIwSbLGRHB93iY5lJHuuKZu0qLDOmFHgcOYevsfrIY5BLADmN
-         APJyAdTN6EYKvDwFLO0YciDnn/FcBLJN8c7jWDQjHsGu4F2YKl+jpF8WsbwTgGt7m0+I
-         BIPwGd/boaU4TVAWSStJdAsUX4ZLfsa1AuzHpNvKulBRwr/iqKdFCg4EMRck8358A22f
-         Ju/Df4pqvm1hOrQuUAEtqIUqX60OXZJvCCGpCxLv4QPei6vCWLrr9SNZIjhNJJfGtvxp
-         9B5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698315574; x=1698920374;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=R6xRovC9oM8uLuvwYTTHSjPfu/zUQK1EzagTxS/ZS6I=;
-        b=jZBTuG2jdMP5yXGNSJkzdJf1iZvX7oCMPQkEI3qGRx/zChuiFXriy1kD7mnhiggUP4
-         rK3TJetAmxyLyQxV6w1pf8/MZf6IG9tEvfeLnHPow2is8t93sijS8Rn0/P5WqZFPoJB9
-         Um5+kl/ZE/OVRqZkfZQPAAu08ZpGxT328hA6GxG9GlcvxgYsePtXj4/ZmKV7hjI5xPUu
-         2v99ujkDNOys2p3pkQXtOV+keuIohwO5ThDd9O9B5gEkGaJ75IVyjungIoGzz/YPlqiE
-         TskSAbV10q5lA42g3A6PaLyWLLu30a7sHCM0gNuaCESMviOR8Suti4tQFcEC92KdE6Ck
-         vdIA==
-X-Gm-Message-State: AOJu0YxHV1BTGfdgPzkQBbTvwvt1p0UAxgahma2a8A24j7fUKI+ykpy7
-        I6Cp8OZmdyCM2oM9fXDS0EY=
-X-Google-Smtp-Source: AGHT+IFONz4Km/NGUBE/juLsEkByLkDuNJBDP7znncsLKTroN2coU2vhl00r8C/0cgDi630dR+GuEg==
-X-Received: by 2002:a17:907:608b:b0:9b2:9e44:222e with SMTP id ht11-20020a170907608b00b009b29e44222emr17653637ejc.19.1698315574319;
-        Thu, 26 Oct 2023 03:19:34 -0700 (PDT)
-Received: from fedora.. (cpezg-94-253-130-190-cbl.xnet.hr. [94.253.130.190])
-        by smtp.googlemail.com with ESMTPSA id jy20-20020a170907763400b009b97d9ae329sm11457552ejc.198.2023.10.26.03.19.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Oct 2023 03:19:33 -0700 (PDT)
-From:   Robert Marko <robimarko@gmail.com>
-To:     andersson@kernel.org, agross@kernel.org, konrad.dybcio@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        quic_tdas@quicinc.com, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Robert Marko <robimarko@gmail.com>
-Subject: [PATCH] dt-bindings: clock: qcom,gcc-ipq6018: split to separate schema
-Date:   Thu, 26 Oct 2023 12:18:37 +0200
-Message-ID: <20231026101931.695497-1-robimarko@gmail.com>
-X-Mailer: git-send-email 2.41.0
+        with ESMTP id S229803AbjJZKkK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Oct 2023 06:40:10 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1E572189;
+        Thu, 26 Oct 2023 03:40:07 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 68C182F4;
+        Thu, 26 Oct 2023 03:40:48 -0700 (PDT)
+Received: from pluto (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DD38D3F738;
+        Thu, 26 Oct 2023 03:40:04 -0700 (PDT)
+Date:   Thu, 26 Oct 2023 11:40:02 +0100
+From:   Cristian Marussi <cristian.marussi@arm.com>
+To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc:     sudeep.holla@arm.com, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ranjani.vaidyanathan@nxp.com, glen.wienecke@nxp.com,
+        nitin.garg@nxp.com, chuck.cannon@nxp.com, sboyd@kernel.org,
+        Peng Fan <peng.fan@nxp.com>,
+        Souvik Chakravarty <Souvik.Chakravarty@arm.com>
+Subject: Re: [RFC] firmware: arm_scmi: support clock denied attributes
+Message-ID: <ZTpCAgUxjbVnFEkB@pluto>
+References: <20231026034125.1823954-1-peng.fan@oss.nxp.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231026034125.1823954-1-peng.fan@oss.nxp.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The Qualcomm IPQ6018 GCC clock controller has clock inputs, thus existing
-gcc-other.yaml was not describing it fully so move it to a separate schema.
+On Thu, Oct 26, 2023 at 11:41:25AM +0800, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> This is not in SPEC and is just defined by NXP. This patch is
+> to start the discussion to start include them in SPEC.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
 
-Fully document the allowed and required XO and sleep clock inputs, as well
-as update the provided example.
+Hi Peng,
 
-Signed-off-by: Robert Marko <robimarko@gmail.com>
----
- .../bindings/clock/qcom,gcc-ipq6018.yaml      | 57 +++++++++++++++++++
- .../bindings/clock/qcom,gcc-other.yaml        |  3 -
- 2 files changed, 57 insertions(+), 3 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-ipq6018.yaml
+thanks for validating this scenario.
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-ipq6018.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-ipq6018.yaml
-new file mode 100644
-index 0000000000000..af5d883cfdc86
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,gcc-ipq6018.yaml
-@@ -0,0 +1,57 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/qcom,gcc-ipq6018.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm Global Clock & Reset Controller on IPQ6018
-+
-+maintainers:
-+  - Stephen Boyd <sboyd@kernel.org>
-+  - Taniya Das <quic_tdas@quicinc.com>
-+  - Robert Marko <robimarko@gmail.com>
-+
-+description: |
-+  Qualcomm global clock control module provides the clocks, resets and power
-+  domains on IPQ6018.
-+
-+  See also::
-+    include/dt-bindings/clock/qcom,gcc-ipq6018.h
-+    include/dt-bindings/reset/qcom,gcc-ipq6018.h
-+
-+allOf:
-+  - $ref: qcom,gcc.yaml#
-+
-+properties:
-+  compatible:
-+    const: qcom,gcc-ipq6018
-+
-+  clocks:
-+    items:
-+      - description: board XO clock
-+      - description: sleep clock
-+
-+  clock-names:
-+    items:
-+      - const: xo
-+      - const: sleep_clk
-+
-+required:
-+  - compatible
-+  - clocks
-+  - clock-names
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    clock-controller@1800000 {
-+      compatible = "qcom,gcc-ipq6018";
-+      reg = <0x01800000 0x80000>;
-+      clocks = <&xo>, <&sleep_clk>;
-+      clock-names = "xo", "sleep_clk";
-+      #clock-cells = <1>;
-+      #power-domain-cells = <1>;
-+      #reset-cells = <1>;
-+    };
-+...
-diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
-index 559fc21435c8d..7d05f0f63cef2 100644
---- a/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
-@@ -15,8 +15,6 @@ description: |
-   domains.
- 
-   See also::
--    include/dt-bindings/clock/qcom,gcc-ipq6018.h
--    include/dt-bindings/reset/qcom,gcc-ipq6018.h
-     include/dt-bindings/clock/qcom,gcc-msm8953.h
-     include/dt-bindings/clock/qcom,gcc-mdm9607.h
- 
-@@ -26,7 +24,6 @@ allOf:
- properties:
-   compatible:
-     enum:
--      - qcom,gcc-ipq6018
-       - qcom,gcc-mdm9607
- 
- required:
--- 
-2.41.0
+[CC Souvik]
 
+So at the end, you are returning -EACCESS anyway, it is just that you
+are avoiding to send any SCMI message at all if the flag reports that
+you cannot touch this and you will get back a DENY.
+
+Does this solve your usecase where your other drivers (callers) were
+failing to probe due to such error being reported from the server ?
+
+From our offline discussions my understanding was that, beside un-needed
+SCMI msg exchanges, your main issue was receiving a DENY error from the
+server when trying to modify a clock, how does this solves that ?
+Basically You are just returning the same error from the clk driver,
+just avoiding (rightly so) needless SCMI exchanges.
+(..in your last RFC patch you attempt was indeed different, to refrain
+ from registering any clk framework callbacks at all for untocuhable
+ clocks...)
+
+Does this work with upstream drivers, or just with some downstream
+solution properly crafted to handle the EACCESS ?
+
+Anyway IMO, these changes in this scenario are certainly valuable in
+general since they avoid needless exchanges with the server around
+clocks that we know upfront we cannot touch.
+
+BUT, hvaing said that, if this series goes further as it is and the
+spec is changed accordingly, please move all of this logic inside the
+protocol layer: there is no reason to change the clk-scmi driver at
+all for this.
+
+You can just check that same new flags (that you set in clk discovery)
+upfront inside the related clock operations in drivers/firmware/arm/clock.c
+and just return EACCESS from there avoiding any SCMI exchanges if the
+flags are set.
+
+This way you dont either need to re-define and expose such new flags in
+scmi_protocol.h, it can just all handled inside the SCMI protocol layer.
+
+Thank,
+Cristian
+
+>  drivers/clk/clk-scmi.c            | 39 +++++++++++++++++++++++++------
+>  drivers/firmware/arm_scmi/clock.c |  9 +++++++
+>  include/linux/scmi_protocol.h     |  4 ++++
+>  3 files changed, 45 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
+> index 8cbe24789c24..303f8a8ec8e0 100644
+> --- a/drivers/clk/clk-scmi.c
+> +++ b/drivers/clk/clk-scmi.c
+> @@ -75,15 +75,13 @@ static int scmi_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+>  			     unsigned long parent_rate)
+>  {
+>  	struct scmi_clk *clk = to_scmi_clk(hw);
+> +	const struct scmi_clock_info *info = clk->info;
+> +	u64 rate1 = 0;
+>  
+> -	return scmi_proto_clk_ops->rate_set(clk->ph, clk->id, rate);
+> -}
+> -
+> -static int scmi_clk_set_parent(struct clk_hw *hw, u8 parent_index)
+> -{
+> -	struct scmi_clk *clk = to_scmi_clk(hw);
+> +	if (info->flags & SCMI_CLOCK_SET_RATE_DENIED)
+> +		return -EACCES;
+>  
+> -	return scmi_proto_clk_ops->parent_set(clk->ph, clk->id, parent_index);
+> +	return scmi_proto_clk_ops->rate_set(clk->ph, clk->id, rate);
+>  }
+>  
+>  static u8 scmi_clk_get_parent(struct clk_hw *hw)
+> @@ -107,6 +105,17 @@ static u8 scmi_clk_get_parent(struct clk_hw *hw)
+>  	return p_idx;
+>  }
+>  
+> +static int scmi_clk_set_parent(struct clk_hw *hw, u8 parent_index)
+> +{
+> +	struct scmi_clk *clk = to_scmi_clk(hw);
+> +	const struct scmi_clock_info *info = clk->info;
+> +
+> +	if (info->flags & SCMI_CLOCK_SET_ENABLE_DENIED)
+> +		return -EACCES;
+> +
+> +	return scmi_proto_clk_ops->parent_set(clk->ph, clk->id, parent_index);
+> +}
+> +
+>  static int scmi_clk_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
+>  {
+>  	/*
+> @@ -119,6 +128,10 @@ static int scmi_clk_determine_rate(struct clk_hw *hw, struct clk_rate_request *r
+>  static int scmi_clk_enable(struct clk_hw *hw)
+>  {
+>  	struct scmi_clk *clk = to_scmi_clk(hw);
+> +	const struct scmi_clock_info *info = clk->info;
+> +
+> +	if (info->flags & SCMI_CLOCK_SET_ENABLE_DENIED)
+> +		return 0;
+>  
+>  	return scmi_proto_clk_ops->enable(clk->ph, clk->id, NOT_ATOMIC);
+>  }
+> @@ -126,6 +139,10 @@ static int scmi_clk_enable(struct clk_hw *hw)
+>  static void scmi_clk_disable(struct clk_hw *hw)
+>  {
+>  	struct scmi_clk *clk = to_scmi_clk(hw);
+> +	const struct scmi_clock_info *info = clk->info;
+> +
+> +	if (info->flags & SCMI_CLOCK_SET_ENABLE_DENIED)
+> +		return;
+>  
+>  	scmi_proto_clk_ops->disable(clk->ph, clk->id, NOT_ATOMIC);
+>  }
+> @@ -133,6 +150,10 @@ static void scmi_clk_disable(struct clk_hw *hw)
+>  static int scmi_clk_atomic_enable(struct clk_hw *hw)
+>  {
+>  	struct scmi_clk *clk = to_scmi_clk(hw);
+> +	const struct scmi_clock_info *info = clk->info;
+> +
+> +	if (info->flags & SCMI_CLOCK_SET_ENABLE_DENIED)
+> +		return 0;
+>  
+>  	return scmi_proto_clk_ops->enable(clk->ph, clk->id, ATOMIC);
+>  }
+> @@ -140,6 +161,10 @@ static int scmi_clk_atomic_enable(struct clk_hw *hw)
+>  static void scmi_clk_atomic_disable(struct clk_hw *hw)
+>  {
+>  	struct scmi_clk *clk = to_scmi_clk(hw);
+> +	const struct scmi_clock_info *info = clk->info;
+> +
+> +	if (info->flags & SCMI_CLOCK_SET_ENABLE_DENIED)
+> +		return;
+>  
+>  	scmi_proto_clk_ops->disable(clk->ph, clk->id, ATOMIC);
+>  }
+> diff --git a/drivers/firmware/arm_scmi/clock.c b/drivers/firmware/arm_scmi/clock.c
+> index 42b81c181d68..1a62e3b82d34 100644
+> --- a/drivers/firmware/arm_scmi/clock.c
+> +++ b/drivers/firmware/arm_scmi/clock.c
+> @@ -46,6 +46,9 @@ struct scmi_msg_resp_clock_attributes {
+>  #define SUPPORTS_RATE_CHANGE_REQUESTED_NOTIF(x)	((x) & BIT(30))
+>  #define SUPPORTS_EXTENDED_NAMES(x)		((x) & BIT(29))
+>  #define SUPPORTS_PARENT_CLOCK(x)		((x) & BIT(28))
+> +#define SETS_ENABLE_DENIED(x)			((x) & BIT(15))
+> +#define SETS_RATE_DENIED(x)			((x) & BIT(14))
+> +#define SETS_PARENT_DENIED(x)			((x) & BIT(13))
+>  	u8 name[SCMI_SHORT_NAME_MAX_SIZE];
+>  	__le32 clock_enable_latency;
+>  };
+> @@ -327,6 +330,12 @@ static int scmi_clock_attributes_get(const struct scmi_protocol_handle *ph,
+>  			clk->rate_change_requested_notifications = true;
+>  		if (SUPPORTS_PARENT_CLOCK(attributes))
+>  			scmi_clock_possible_parents(ph, clk_id, clk);
+> +		if (SETS_PARENT_DENIED(attributes))
+> +			clk->flags |= SCMI_CLOCK_SET_PARENT_DENIED;
+> +		if (SETS_RATE_DENIED(attributes))
+> +			clk->flags |= SCMI_CLOCK_SET_RATE_DENIED;
+> +		if (SETS_ENABLE_DENIED(attributes))
+> +			clk->flags |= SCMI_CLOCK_SET_ENABLE_DENIED;
+>  	}
+>  
+>  	return ret;
+> diff --git a/include/linux/scmi_protocol.h b/include/linux/scmi_protocol.h
+> index f2f05fb42d28..71911dcd8117 100644
+> --- a/include/linux/scmi_protocol.h
+> +++ b/include/linux/scmi_protocol.h
+> @@ -41,12 +41,16 @@ struct scmi_revision_info {
+>  	char sub_vendor_id[SCMI_SHORT_NAME_MAX_SIZE];
+>  };
+>  
+> +#define SCMI_CLOCK_SET_PARENT_DENIED	BIT(13)
+> +#define SCMI_CLOCK_SET_RATE_DENIED	BIT(14)
+> +#define SCMI_CLOCK_SET_ENABLE_DENIED	BIT(15)
+>  struct scmi_clock_info {
+>  	char name[SCMI_MAX_STR_SIZE];
+>  	unsigned int enable_latency;
+>  	bool rate_discrete;
+>  	bool rate_changed_notifications;
+>  	bool rate_change_requested_notifications;
+> +	unsigned int flags;
+>  	union {
+>  		struct {
+>  			int num_rates;
+> -- 
+> 2.37.1
+> 
