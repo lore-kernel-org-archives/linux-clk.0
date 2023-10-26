@@ -2,110 +2,97 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA299C25B48
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Oct 2023 16:54:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 371A2C25B6B
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Oct 2023 18:39:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230340AbjJZQye (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 Oct 2023 12:54:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55664 "EHLO
+        id S230078AbjJZSjt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 Oct 2023 14:39:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231699AbjJZQya (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Oct 2023 12:54:30 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6726A4
-        for <linux-clk@vger.kernel.org>; Thu, 26 Oct 2023 09:54:27 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-53e2dc8fa02so1919265a12.2
-        for <linux-clk@vger.kernel.org>; Thu, 26 Oct 2023 09:54:27 -0700 (PDT)
+        with ESMTP id S230008AbjJZSjt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Oct 2023 14:39:49 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A75381AD
+        for <linux-clk@vger.kernel.org>; Thu, 26 Oct 2023 11:39:45 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-4079ed65471so9260415e9.1
+        for <linux-clk@vger.kernel.org>; Thu, 26 Oct 2023 11:39:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1698339266; x=1698944066; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ant3aW5o4UfJ9+pGAMWn3sv1qIYaJ3ZE24ECRvWTTJY=;
-        b=RampxnR4KBqfIh3i/GkpCQ4mSOOYVRkDhFLjkxsvIqZ7EvRa/6SCmJYCCKBu81dgvb
-         +TseekiscFTBC+7lee+ymiWvP2MATt7qMOTyFnbSGCvOjQYjvCR021d+eBZDilgUXeO/
-         ilxa6oOy/rh81nBbHRg4tPAo7Yvko3gz568tc=
+        d=linaro.org; s=google; t=1698345584; x=1698950384; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8cB3WogQP9E/Yo/vPH/w87eDiej54ju5fgOVr2+Kfho=;
+        b=WIvXU7sqhfbH3YDpHN7jSJzOb+bDD4WyXYZ70rOiO151jKA9v69yR8ZfcUqSdjIUJ8
+         QpWPg0NWq+xkY/o2hVHvNvusCQAM+kosPNkUxY9mzZMvbHQaWkUnTbOy7DZnrpYm6wy4
+         YOTGGrfeQt2wCEhHKisPZRruoCTSpSQ35/PG6qOF3bCDDbW1i8fLA/Qc/ZpixOHRxwTH
+         U5qfzv3MKipJEAQxUfjSK0E0ZKwrar3FzpuoFVAONRwRo4ZSVOaHJpb5cWSRCWuvxUsc
+         uzQUTTKpNPqiVD/vScQHVR1duVvZ9kPWRP5NrEZrlAO1PuLzOr4Ch7unTg3icTr5B5fX
+         KR8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698339266; x=1698944066;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ant3aW5o4UfJ9+pGAMWn3sv1qIYaJ3ZE24ECRvWTTJY=;
-        b=i0M4tGrltcNhymUvC/awAhDmG1s52sYYXGIT9o4G41uS+Yo66tNiHPr913xsumzCaG
-         IP02mkBIzWIeiml04jMvoOAZClqis3CmWrfbwePWPRU3GgApHrjMaokCZarmkpmnOa1o
-         VqNIbzC489oLgVw8rbuFRpEqJvll/vu8+bkpNiuprCFpD96mIRVOTdQVptCaXmQ0uQ/8
-         DnzBKDjiY1DCHRB8gNVqZb6PxCi0Wr9hNsK3ARZ/UoPvxv9Hnkn9SfMOTR/Rufta/RRY
-         FlSMKUVe86l5At1vA4SCmAhaw0Grd4vB0x5aa/FPiuBQR2N5BBAVp1MhE+pV5wUcqLRZ
-         4s3g==
-X-Gm-Message-State: AOJu0YwqThbm2EkCTAkTCeyQQ1pcUarUPwTa9Q8aJnjDWe54CVLetc2G
-        387FgiOQKA5RCVGFR7uOAGfPJ+1WAACzvpKAk3z+8OvY
-X-Google-Smtp-Source: AGHT+IEltVo5dQHQ5aafJe0HclAmyaBFxDwXIwxWU+PHarrZDWvmf8Ticwr6WmE60v/+6vvkvK1SOQ==
-X-Received: by 2002:a05:6402:1bc4:b0:53e:3b8f:8a58 with SMTP id ch4-20020a0564021bc400b0053e3b8f8a58mr323849edb.11.1698339265879;
-        Thu, 26 Oct 2023 09:54:25 -0700 (PDT)
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
-        by smtp.gmail.com with ESMTPSA id n4-20020a05640205c400b0053f9578ec97sm11521618edx.56.2023.10.26.09.54.25
-        for <linux-clk@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1698345584; x=1698950384;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8cB3WogQP9E/Yo/vPH/w87eDiej54ju5fgOVr2+Kfho=;
+        b=BvY4uzaoQQRu5+SU1VVAqdcVVmx/CfsFQla0LPOQCGEbcevwSjG8WBTwY/3hPAr3z0
+         vmPugdpkfv2tKxvFRoN0fFSav3O/UGFQg0FyVVBI4EIZCQe2GR79tG9BCi3jgTeoj0Ko
+         evQmTy64yOkraB7o0gktPV8H5epoxNpgy1tRVCWz1mkjBLa/Gek+7Q8I8iq36bIItz3H
+         I5CmCUAhcTa/2Z2UunPQXr6xb4k6ufje5nJs/znShIA/QndVPQjnTNazbrCw+MjPSr9F
+         dkySo72xwpDw6sSXrM3aTHIHOQ2DIcEAWd78C3Xqq366eZgaMC2e7flkE9UlBNk8Dpsa
+         jB2A==
+X-Gm-Message-State: AOJu0Yx5YgS6wZDoYtjWSfP188a+PU4leozL4bVvjvzj3cEeKdRS2ry7
+        YKHqS8cYwGh2N7JgtWVGBpGaig==
+X-Google-Smtp-Source: AGHT+IHp3j6FbSt0YlnznWf5C/IaEfvtRmV8renKJJWRPyNjtbsvjH55uId5HEXYhiTGnM8WeYJBtg==
+X-Received: by 2002:adf:f391:0:b0:32d:92fd:9f73 with SMTP id m17-20020adff391000000b0032d92fd9f73mr369098wro.10.1698345584085;
+        Thu, 26 Oct 2023 11:39:44 -0700 (PDT)
+Received: from [172.30.204.255] (UNUSED.212-182-62-129.lubman.net.pl. [212.182.62.129])
+        by smtp.gmail.com with ESMTPSA id x11-20020adfffcb000000b003258934a4bcsm34968wrs.42.2023.10.26.11.39.41
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Oct 2023 09:54:25 -0700 (PDT)
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-53e2dc8fa02so1919170a12.2
-        for <linux-clk@vger.kernel.org>; Thu, 26 Oct 2023 09:54:25 -0700 (PDT)
-X-Received: by 2002:a05:6402:3586:b0:538:a47:89d3 with SMTP id
- y6-20020a056402358600b005380a4789d3mr295557edc.21.1698339264715; Thu, 26 Oct
- 2023 09:54:24 -0700 (PDT)
+        Thu, 26 Oct 2023 11:39:43 -0700 (PDT)
+Message-ID: <b0fa21f7-252f-47b7-abe2-23f96767983e@linaro.org>
+Date:   Thu, 26 Oct 2023 20:39:41 +0200
 MIME-Version: 1.0
-References: <20231024161931.78567-1-sebastian.reichel@collabora.com>
- <20231024161931.78567-2-sebastian.reichel@collabora.com> <CAHk-=whYDbZ29fx_xeSxtYSjtF8WJkaLjzyB8RN5_Rk9Sh-YyQ@mail.gmail.com>
- <CAHk-=wjO5ivM6k7iMiThO9JfxH0dhLe=mcC4TQwReU0nBCnWpg@mail.gmail.com>
- <your-ad-here.call-01698246313-ext-3263@work.hours> <CAHk-=wgs2DDdckcONG+YbB-GDH2QFCoZJ=Vm+YXxb1moZzuDgQ@mail.gmail.com>
- <055dd714f98f4e45b2add561b7663378@AcuMS.aculab.com>
-In-Reply-To: <055dd714f98f4e45b2add561b7663378@AcuMS.aculab.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 26 Oct 2023 06:54:07 -1000
-X-Gmail-Original-Message-ID: <CAHk-=wgBM7Swi7wmvi0M+sBFjzn-vEv1KzgM-hbJ4h3J3BR+UA@mail.gmail.com>
-Message-ID: <CAHk-=wgBM7Swi7wmvi0M+sBFjzn-vEv1KzgM-hbJ4h3J3BR+UA@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] math.h: add DIV_ROUND_UP_NO_OVERFLOW
-To:     David Laight <David.Laight@aculab.com>
-Cc:     Vasily Gorbik <gor@linux.ibm.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
-        "kernel@collabora.com" <kernel@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH v4 3/4] clk: qcom: camcc-sc8280xp: Add sc8280xp
+ CAMCC
+To:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        andersson@kernel.org, agross@kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, dmitry.baryshkov@linaro.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        jonathan@marek.ca, quic_tdas@quicinc.com,
+        vladimir.zapolskiy@linaro.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20231026105345.3376-1-bryan.odonoghue@linaro.org>
+ <20231026105345.3376-4-bryan.odonoghue@linaro.org>
+ <20e2801d-df4f-436e-a677-2c81d43e3273@linaro.org>
+ <6d44b972-9337-472a-9010-71ebaa0d45cf@linaro.org>
+Content-Language: en-US
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <6d44b972-9337-472a-9010-71ebaa0d45cf@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 25 Oct 2023 at 22:57, David Laight <David.Laight@aculab.com> wrote:
->
-> Doesn't that version end up calling inline functions?
-> So won't be usable in static initialisers - the same as statement functions.
 
-David, please either read what I write, or actually test things out,
-instead of just adding noise.
 
-It is not a problem to have a _Generic() - or a
-__builtin_chooise_expr() - that has an inline function that doesn't
-get used. The compiler will remove it.
+On 10/26/23 13:34, Bryan O'Donoghue wrote:
+> On 26/10/2023 12:21, Konrad Dybcio wrote:
+>>> +    .flags = HW_CTRL | RETAIN_FF_ENABLE,
+>> This should really be HW_CTRL_TRIGGER from [1]
+>>
+>> and then downstream uses cam_bps_transfer_gdsc_control and
+>> cam_bps_get_gdsc_control to control hw (fast) or sw (normal) mode
+>>
+>> similarly in drivers/cam_icp/icp_hw/ipe_hw/ipe_soc.c for IPE
+> 
+> I'm happy to do such a conversion if said patch hits -next, qcom-next or clk-next before this patch, otherwise I'd rather not gate this driver on stuff that's not queued anywhere.
+> 
+> There's alot of CAMSS stuff driver/compat/dtsi that is gated on having the CAMCC upstream, effectively all of the CAMSS stuff for sc8280xp.
+> 
+> Fair ?
+Fair
 
-The problem is literally that you can't use "__auto_type", because
-*STATEMENT EXPRESSIONS* do not work outside of function definitions,
-because gcc won't even *parse* them, and just says
-
-  error: braced-group within expression allowed only inside a function
-
-exactly like I explained in the comment of the patch that does the _Generic().
-
-Which is why my solution ended up using those inline functions, and
-splitting manually by type, instead of an expression statement and
-__auto_type.
-
-Whether you then split into different expressions with _Generic() or
-by using __builtin_choose_expr() is irrelevant, although once you do
-"split by type", _Generic() ends up being much more convenient because
-that's what it's designed for (and you don't end up trying to figure
-out the size with sizeof() and typeof tricks).
-
-               Linus
+Konrad
