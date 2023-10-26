@@ -2,356 +2,196 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E57BC25B48
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Oct 2023 12:20:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D12A7C25B48
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Oct 2023 12:27:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234684AbjJZMUo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 Oct 2023 08:20:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37262 "EHLO
+        id S1344917AbjJZM13 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 Oct 2023 08:27:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230405AbjJZMUn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Oct 2023 08:20:43 -0400
-Received: from EUR01-DB5-obe.outbound.protection.outlook.com (mail-db5eur01on2074.outbound.protection.outlook.com [40.107.15.74])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 973D2D44;
-        Thu, 26 Oct 2023 05:20:38 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=AUUx4Y53p1NNXKIMvmVDtKRVH1+lA2G3ujg3qIRddiffHQ/AWKgjR78iX0XCSq4NiK2lgDlP3SPiSJJKdCOOck6JUIPB/lKeJGRBG4HpQzrmNOl6Frx5UKGYpv9Ry9jLJLmLHgQdyiKomP0vpgwez9pOJBoNMsjERZ3gmn/vZCu6zY45FzdQ2T3nTW2W7DdDrd6dLInnQYbRmwhsJndQ0Dca6LR09gG3wNqe53L0kiNUiA8Bp6OzQ9UbGlkxKQaOK6PhFLMaLrJgLaPGaylzXnKvEs4XayKrpblXPjNpK7bwdkwzgzAci4A/mTgBscWjGJ51EpuYJrG7l8ByvLk23A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RxPzHgJoxX159CwOGgYWKS7+8THx2cSPswD4ry3qA74=;
- b=SgugeEPH+izmuU4TYDzVhpCAW+EJwYiAuX4WjDthmqRUm+lE/vnfV6Uq6XpXQyYrmPoM8YHyMdDl6YC3qGYnb4glQr9zBWfX7h9SEqOdjsb2qtxkvLExTgMedPT1SynfjOBScZH2n63vg/gTTS0HfSwMYy69w8fNpCw0ukewfAtNiGmNbDVMKLNJ2EM8XAvQFIohbxM+U47IlaZJE+KEbyyHvK6SR2SYFf85Z7f0s1hnoBiAH7F7a5BxbPWOyc/gQ17lJZx8BF9B5GXtm6sNKYGHasYBLIQ+Uiz+194rIIw4VMT/fshZMmm/Co9Fn5lnW+ccvjUd0iwEe2nHm9+Yfg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RxPzHgJoxX159CwOGgYWKS7+8THx2cSPswD4ry3qA74=;
- b=Jx/FrhBLV7IcBFsU+ofAYslzy42p8ZKV74FI1SGte1PgFv+G+D01A3sbFs82htqzo6TLGMj0ZwRAn8ssfcDG2IL4cR+i8gtRoCFntJk1wmHT8gJFLH72jnyIJ5XMNb6zOiCATUOt0FMx2AZv1w0NNPQQgUblVocv9AuilArDJf0=
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
- by AS8PR04MB8884.eurprd04.prod.outlook.com (2603:10a6:20b:42f::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6933.14; Thu, 26 Oct
- 2023 12:20:35 +0000
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::50bf:dcd6:885e:32c4]) by DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::50bf:dcd6:885e:32c4%4]) with mapi id 15.20.6933.011; Thu, 26 Oct 2023
- 12:20:34 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     Cristian Marussi <cristian.marussi@arm.com>,
-        "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-CC:     "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Ranjani Vaidyanathan <ranjani.vaidyanathan@nxp.com>,
-        Glen G Wienecke <glen.wienecke@nxp.com>,
-        Nitin Garg <nitin.garg_3@nxp.com>,
-        Chuck Cannon <chuck.cannon@nxp.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        Souvik Chakravarty <Souvik.Chakravarty@arm.com>
-Subject: RE: [RFC] firmware: arm_scmi: support clock denied attributes
-Thread-Topic: [RFC] firmware: arm_scmi: support clock denied attributes
-Thread-Index: AQHaB72txrUateKD6ESfQTu2QRStRbBb4hEAgAATkpA=
-Date:   Thu, 26 Oct 2023 12:20:34 +0000
-Message-ID: <DU0PR04MB9417977827068BFD4903486988DDA@DU0PR04MB9417.eurprd04.prod.outlook.com>
-References: <20231026034125.1823954-1-peng.fan@oss.nxp.com>
- <ZTpCAgUxjbVnFEkB@pluto>
-In-Reply-To: <ZTpCAgUxjbVnFEkB@pluto>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DU0PR04MB9417:EE_|AS8PR04MB8884:EE_
-x-ms-office365-filtering-correlation-id: 451e9206-e430-4dce-5e1d-08dbd61df49a
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: nypHcObKxb3C9psdDk4HAoq4VkZM4dAD/e/KMpDhMvZoC1oHrX0z3U7LYIrB7/Yw+YfH1+5qVlexAxQqDP3HynR+BBZCn2hS/2IniYRsY1dSbhPaixOOn4CaBdk9PXDCc0ON9jCuMLsONEC6cJtQnt608VBh/KFTfUUv921Wm+s1GvnAtZjIrdsfXxt23cK7BEvXie9UocTKfXiRg/8FF7bLvR3q5PRru/aSPJRavMCUiUeWlQBfAob837WltZvcRtq3s5snAgQ19nyOYoNKv4bFzbCQZA+mhxpEowecb2NwfZOg0vvqdgyuc9cJ6dj6Xn9CZkxYnPskK+TRGbImJqEHvcGRJ+v+/x7Mk6h0qYCcW0tGeiK7whnjVkQiGQvt2f+iyarjLKTyKOFKvCQ03MKENePYGunRFoBm6Lo1YkCtvcGUNN/FaqeL/2Xq9bXwqD1fkbvAz332v4OJkvDQK/0bN33xAd3JzcuU4ag9MPk3tWwSijVktd3JkBHaKkbgGDKlh2Q4YCmV0AJveEDa8Nl0nOat8ummZrI44Fw2l4ykcUYv7CZ1oQcLSIUxJLTqMzYwAMPDywWV28grNZxPp9mY8MJZrTQOU2VRJ2EfXKVMfD10a3m5FbHJtd/Mbwcc
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(376002)(346002)(366004)(136003)(39860400002)(230922051799003)(451199024)(64100799003)(1800799009)(186009)(71200400001)(52536014)(83380400001)(122000001)(7696005)(6506007)(9686003)(316002)(26005)(66556008)(33656002)(55016003)(54906003)(66446008)(66476007)(478600001)(64756008)(66946007)(110136005)(38100700002)(76116006)(86362001)(41300700001)(4326008)(8676002)(8936002)(44832011)(38070700009)(2906002)(5660300002);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?QG3eH+FkixzaP3gwrl4v0nboIU0GiiETWB01vQkgwATtMH5yiapzpT+PnDPi?=
- =?us-ascii?Q?rUq2e0s1QxMFuqUcvNwHEAo/LctIDF51llfehqE0mCubhuOWkUJtR9NtJcY7?=
- =?us-ascii?Q?DB/NfOjOyi6ICxzxhHnMpRSIwEcV67tfMyyZSV+zIn0VoOXtL4IJ4/bZ9Chu?=
- =?us-ascii?Q?kQHA2CG/x8DuFaXgfm1orEHUe8x7oADtSL8LxDXsMJ7/+dgG73GvpaT8pM4t?=
- =?us-ascii?Q?Sl/2epwhc1achJ/IN8fCLGpyetPa1tKkejlgaF2ukcqVr0QfxLl20a/79zbO?=
- =?us-ascii?Q?u8YX85otkv3LMu1TtyounMSW4atKpsPSPdCtBrgsoA8/dD0JWS6bQ8NTdC+U?=
- =?us-ascii?Q?ByxB5zfDhNe+frokUOuHwdbbidiZbvOTX/OE/EZOFCPfX6zHSZylj+ZnFPw8?=
- =?us-ascii?Q?pYJI8lx+DacQyWb7L21embPg6kLzLs7AYlVqTexAT4DlAxzozg2SBy8IGzf8?=
- =?us-ascii?Q?0dm4ZB/vGkowDGI0u5esOXTo30RsaNvpeCdxcfg823tpoe11lwUtdHJM2kOp?=
- =?us-ascii?Q?f8SZWwLpA/AIxFMNr7kZuAtuori7W/HE/5j1xwio0/fFErFqCvtq61hJERi3?=
- =?us-ascii?Q?AsR9yCfJMSZKqQ6QzxaceGAQmvkKmlE1PpMtGYl+2E3AWi38iSplYcGfHq7Q?=
- =?us-ascii?Q?IEsDZLmPi6xWmlfqLAyqeAqDYJcR1LaR4tULjjmC8wljJHEzlGV/c8eLkhsB?=
- =?us-ascii?Q?KOi1foff4FHro1dPe2db4ZBTs44JS6Afv2E+4AlobfBvExLKGREbigfsAera?=
- =?us-ascii?Q?z5iaLNLA0LA0MP/t/Ink16NvZpKnhfunAQ+a4DprFBqCThMNoVUfcMoDvj7t?=
- =?us-ascii?Q?voCQqj2E6ck/+sUBQi5OpWltTnD7wloIf2kJdZxneTSi5CybDVgkYjjlEatf?=
- =?us-ascii?Q?cH9kqzjS4cFiv/RCG4NNBHFw752/rpczPNUghTiGXPYedHKBhnCvOgv9OTxv?=
- =?us-ascii?Q?MiTISLIeuaFEoyVlRsZ49Yixk7pTsWNGWrIA8q+h6BojDtu0SvNbq9bnicEq?=
- =?us-ascii?Q?3abY2yAe8u51JLnjZ1aPKIERA9HmTwNdeKFHNMh3b8pgCgi5QUR2U92NC1FS?=
- =?us-ascii?Q?DPuhJMHIwAqt3Fcf9FozbsuTuksKZkgOxJJaJe1URLLswtsLAh7MzdFmcHSO?=
- =?us-ascii?Q?6uvHyFoasZxM8UwU27zs6eU69wkxnKyIE94wWqeq/jbN0pQS6XBH4RZK53V5?=
- =?us-ascii?Q?NVHELs3fXIoHTD4q0Z0yte2wDH8/ManSHlrhc0Uq+Q/X1zS3E2sbdX1KVFM/?=
- =?us-ascii?Q?m8pf0iNhFf4q6KOkths2YvI+0KEsP8QVCGTJ8IC/q2YdeHVfE/6ZEw45j+OU?=
- =?us-ascii?Q?I77arO6IfeToins1radW/K4DiVv75gVvfUhkdKCCNWIsuVTEtTQKZh18VK08?=
- =?us-ascii?Q?yLwfFF26/wc44pKM6ox36aVXWn5amoHXdy4l1Kxk/Fq+aA2r0qYedTAPmhsU?=
- =?us-ascii?Q?pnIZL5O8rGo1qkIbWYNV6qNtMnS8k+EYvM56ax0mc0M8+v8etSxZ/5wb7cYo?=
- =?us-ascii?Q?sACG4ss1V3PcNvQzaMciFhqTZeQRdBYGLoOiQzgEHRCmgzKEMFTkrFiVF56I?=
- =?us-ascii?Q?d/4L4PDFE5bFk6fQ0+A=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        with ESMTP id S231168AbjJZM12 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Oct 2023 08:27:28 -0400
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72E0B194
+        for <linux-clk@vger.kernel.org>; Thu, 26 Oct 2023 05:27:25 -0700 (PDT)
+Received: by mail-lj1-x233.google.com with SMTP id 38308e7fff4ca-2c503dbe50dso12640861fa.1
+        for <linux-clk@vger.kernel.org>; Thu, 26 Oct 2023 05:27:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1698323244; x=1698928044; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :references:cc:to:content-language:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=H0P71wVS48La4jPQi6tVCrTZ6bHsJV48oqbwPiJ0ir8=;
+        b=i0VU0Q49MxXZaymYGujsfz0vwzMVzGcYp7zWMKjmPpl4gcssfStUjjlwLvgk2CE3mB
+         10AnmZMGtP1ceYW+mv6DsQNCsepyI759cCDdHduxrZto8l8+ECpM7ckiTQJPJ4MCrPYV
+         cEIhT4yXRzPav6pI/54CfyqCTOYkEWSGzJ+oo33ksw4wvb9nkmtdNmYyc3fhOeQPt7M+
+         DCrBgrURK7bsk1fRVwp+X9SIRC9QTWdRge4o4i3l7Milhz0ZQeTFahyzQGmHNnMELM7Q
+         jhBm+o2QNcHjt05TosktuRtC60UXfnUOwSk+CRoPsXcTT6a4I5BM4A4d92KM4bozb1oR
+         A2Zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698323244; x=1698928044;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :references:cc:to:content-language:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=H0P71wVS48La4jPQi6tVCrTZ6bHsJV48oqbwPiJ0ir8=;
+        b=tnh26/Pidhu4jlY5Xta+PlLG0XcmiuRyGCJXej5hy5a/oMTYvWTPuBffXAqlEuIlIo
+         LXcEIm4DygIVDhDVEoC16+L9ME6BUqx/88AgkN/PJyuVB1YfXSK9WhGJAFmlR4n6njYK
+         5G2nSQwSE+0lUOklhZirlp0reteNjIxcWTbA9qbUJ5I7CRVnzhKPLjvN6z9UVUSoze4n
+         Me5tweLyDw2tC6aeXrydQu368jbfVSaQqDxptgRt49eXc6wFaRimo+bASabKtiyA1/c/
+         +Z4YP+/00D4kLnW9IOp+pTZ6okQHuRFlKvn28AFtWK9lzbKommabV95oIeNP2wpLiI4I
+         pIuw==
+X-Gm-Message-State: AOJu0YwcuYDEPaqn/K3skgl7NZAlWTRgVZFIoAKaxy40rudohm+iPNJQ
+        7spFATHN32kDjzZASuivdFBb4Q==
+X-Google-Smtp-Source: AGHT+IEEmdwW+QLsNrn6w7xcamSTlEPh/aCQ9HPZZqWMpOGzQKV/c/f1WbC/70g14sO/MG0eoyVgKQ==
+X-Received: by 2002:ac2:5337:0:b0:505:72bf:43a4 with SMTP id f23-20020ac25337000000b0050572bf43a4mr13167156lfh.39.1698323243561;
+        Thu, 26 Oct 2023 05:27:23 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:f57f:eb08:d29b:8c9c? ([2a01:e0a:982:cbb0:f57f:eb08:d29b:8c9c])
+        by smtp.gmail.com with ESMTPSA id e8-20020adffc48000000b0031c5e9c2ed7sm11264703wrs.92.2023.10.26.05.27.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Oct 2023 05:27:22 -0700 (PDT)
+Message-ID: <afb778da-ec0a-4451-b853-4b1eba14a68a@linaro.org>
+Date:   Thu, 26 Oct 2023 14:27:22 +0200
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 451e9206-e430-4dce-5e1d-08dbd61df49a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Oct 2023 12:20:34.8638
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: p7nRcDK8GPXO9toUvHj3ich7spW/sCiCEZ2rPb67EIZYVFUdAJEGJplf1Cjkth3puHJzRAYdd9SkuSFDMe9A8w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8884
+User-Agent: Mozilla Thunderbird
+From:   Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 08/10] clk: qcom: add the SM8650 Display Clock Controller
+ driver
+Content-Language: en-US, fr
+To:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20231025-topic-sm8650-upstream-clocks-v1-0-c89b59594caf@linaro.org>
+ <20231025-topic-sm8650-upstream-clocks-v1-8-c89b59594caf@linaro.org>
+ <a939ef1a4c2cad763fe484cc943f44d5.sboyd@kernel.org>
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro Developer Services
+In-Reply-To: <a939ef1a4c2cad763fe484cc943f44d5.sboyd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Cristian
+On 25/10/2023 23:45, Stephen Boyd wrote:
+> Quoting Neil Armstrong (2023-10-25 00:32:45)
+>> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+>> index c04b6526f4f3..5bf25e8d033c 100644
+>> --- a/drivers/clk/qcom/Kconfig
+>> +++ b/drivers/clk/qcom/Kconfig
+>> @@ -842,6 +842,15 @@ config SM_DISPCC_8550
+>>            Say Y if you want to support display devices and functionality such as
+>>            splash screen.
+>>   
+>> +config SM_DISPCC_8650
+>> +       tristate "SM8650 Display Clock Controller"
+>> +       depends on SM_GCC_8650
+> 
+> selects?
+> 
+> We use selects instead of depends so that the driver can be built-in or
+> modular regardless of parent clks that provide clks to this device.
+> Orphan clk handling resolves issues with the driver registering clks
+> before parents. And with fw_devlink the driver isn't even attempted to
+> probe before the GCC driver is probed so there's no build dependency
+> between these drivers.
 
-> Subject: Re: [RFC] firmware: arm_scmi: support clock denied attributes
->=20
-> On Thu, Oct 26, 2023 at 11:41:25AM +0800, Peng Fan (OSS) wrote:
-> > From: Peng Fan <peng.fan@nxp.com>
-> >
-> > This is not in SPEC and is just defined by NXP. This patch is to start
-> > the discussion to start include them in SPEC.
-> >
-> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > ---
->=20
-> Hi Peng,
->=20
-> thanks for validating this scenario.
->=20
-> [CC Souvik]
->=20
-> So at the end, you are returning -EACCESS anyway, it is just that you are
-> avoiding to send any SCMI message at all if the flag reports that you can=
-not
-> touch this and you will get back a DENY.
+All current DISPCC entries uses depends, but CAM_CC doesn't,
+I'll switch to select and re-sync Kconfig for all 8650 entries.
 
-Yes, except enable/disable, rate/parent both return DENY.
+> 
+>> +       help
+>> +         Support for the display clock controller on Qualcomm Technologies, Inc
+>> +         SM8650 devices.
+>> +         Say Y if you want to support display devices and functionality such as
+>> +         splash screen.
+>> +
+>>   config SM_GCC_4450
+>>          tristate "SM4450 Global Clock Controller"
+>>          depends on ARM64 || COMPILE_TEST
+>> diff --git a/drivers/clk/qcom/dispcc-sm8650.c b/drivers/clk/qcom/dispcc-sm8650.c
+>> new file mode 100644
+>> index 000000000000..7cb91306e895
+>> --- /dev/null
+>> +++ b/drivers/clk/qcom/dispcc-sm8650.c
+>> @@ -0,0 +1,1806 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Copyright (c) 2021, The Linux Foundation. All rights reserved.
+>> + * Copyright (c) 2023, Linaro Ltd.
+>> + */
+>> +
+>> +#include <linux/clk.h>
+> 
+> Is this include used?
+> 
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/err.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of_device.h>
+> 
+> Is this mod_devicetable.h?
+> 
+>> +#include <linux/of.h>
+> 
+> Is this include used?
+> 
+>> +#include <linux/regmap.h>
+>> +#include <linux/pm_runtime.h>
+>> +
+>> +#include <dt-bindings/clock/qcom,sm8650-dispcc.h>
+>> +
+>> +#include "common.h"
+>> +#include "clk-alpha-pll.h"
+>> +#include "clk-branch.h"
+>> +#include "clk-pll.h"
+>> +#include "clk-rcg.h"
+>> +#include "clk-regmap.h"
+>> +#include "clk-regmap-divider.h"
+>> +#include "clk-regmap-mux.h"
+> 
+> Is this include used?
+> 
+>> +#include "reset.h"
+>> +#include "gdsc.h"
+>> +
 
->=20
-> Does this solve your usecase where your other drivers (callers) were fail=
-ing to
-> probe due to such error being reported from the server ?
-
-We removed the assigned-clock-rates and assigned-clock-parents from device
-tree nodes to avoid failure.
-
-The peripheral driver call clk_enable/disable, since it return success, so =
-issue
-resolved.
-
->=20
-> From our offline discussions my understanding was that, beside un-needed
-> SCMI msg exchanges, your main issue was receiving a DENY error from the
-> server when trying to modify a clock, how does this solves that ?
-
-See above, removed the assigned-clock-parents and assigned-clock-rates.
-The scmi firmware configured the parent and rate ready.
-
-> Basically You are just returning the same error from the clk driver, just
-> avoiding (rightly so) needless SCMI exchanges.
-> (..in your last RFC patch you attempt was indeed different, to refrain  f=
-rom
-> registering any clk framework callbacks at all for untocuhable
->  clocks...)
-
-The last RFC was to register clocks as fixed clock, so no parent/rate call =
-needed.
-But actually we may need get new rate because the scmi firmware could
-update rate per device performance level setting.
->=20
-> Does this work with upstream drivers, or just with some downstream soluti=
-on
-> properly crafted to handle the EACCESS ?
-
-The patch tested in downstream repo, 6.6.
-
->=20
-> Anyway IMO, these changes in this scenario are certainly valuable in gene=
-ral
-> since they avoid needless exchanges with the server around clocks that we
-> know upfront we cannot touch.
->=20
-> BUT, hvaing said that, if this series goes further as it is and the spec =
-is
-> changed accordingly, please move all of this logic inside the protocol la=
-yer:
-> there is no reason to change the clk-scmi driver at all for this.
->=20
-> You can just check that same new flags (that you set in clk discovery) up=
-front
-> inside the related clock operations in drivers/firmware/arm/clock.c and j=
-ust
-> return EACCESS from there avoiding any SCMI exchanges if the flags are se=
-t.
->=20
-> This way you dont either need to re-define and expose such new flags in
-> scmi_protocol.h, it can just all handled inside the SCMI protocol layer.
-
-Thanks for your suggestions, I will give a look and prepare a new version
-patch.
+Did a include cleanup aswell on all drivers.
 
 Thanks,
-Peng.
+Neil
 
->=20
-> Thank,
-> Cristian
->=20
-> >  drivers/clk/clk-scmi.c            | 39 +++++++++++++++++++++++++------
-> >  drivers/firmware/arm_scmi/clock.c |  9 +++++++
-> >  include/linux/scmi_protocol.h     |  4 ++++
-> >  3 files changed, 45 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c index
-> > 8cbe24789c24..303f8a8ec8e0 100644
-> > --- a/drivers/clk/clk-scmi.c
-> > +++ b/drivers/clk/clk-scmi.c
-> > @@ -75,15 +75,13 @@ static int scmi_clk_set_rate(struct clk_hw *hw,
-> unsigned long rate,
-> >  			     unsigned long parent_rate)
-> >  {
-> >  	struct scmi_clk *clk =3D to_scmi_clk(hw);
-> > +	const struct scmi_clock_info *info =3D clk->info;
-> > +	u64 rate1 =3D 0;
-> >
-> > -	return scmi_proto_clk_ops->rate_set(clk->ph, clk->id, rate);
-> > -}
-> > -
-> > -static int scmi_clk_set_parent(struct clk_hw *hw, u8 parent_index) -{
-> > -	struct scmi_clk *clk =3D to_scmi_clk(hw);
-> > +	if (info->flags & SCMI_CLOCK_SET_RATE_DENIED)
-> > +		return -EACCES;
-> >
-> > -	return scmi_proto_clk_ops->parent_set(clk->ph, clk->id,
-> parent_index);
-> > +	return scmi_proto_clk_ops->rate_set(clk->ph, clk->id, rate);
-> >  }
-> >
-> >  static u8 scmi_clk_get_parent(struct clk_hw *hw) @@ -107,6 +105,17 @@
-> > static u8 scmi_clk_get_parent(struct clk_hw *hw)
-> >  	return p_idx;
-> >  }
-> >
-> > +static int scmi_clk_set_parent(struct clk_hw *hw, u8 parent_index) {
-> > +	struct scmi_clk *clk =3D to_scmi_clk(hw);
-> > +	const struct scmi_clock_info *info =3D clk->info;
-> > +
-> > +	if (info->flags & SCMI_CLOCK_SET_ENABLE_DENIED)
-> > +		return -EACCES;
-> > +
-> > +	return scmi_proto_clk_ops->parent_set(clk->ph, clk->id,
-> > +parent_index); }
-> > +
-> >  static int scmi_clk_determine_rate(struct clk_hw *hw, struct
-> > clk_rate_request *req)  {
-> >  	/*
-> > @@ -119,6 +128,10 @@ static int scmi_clk_determine_rate(struct clk_hw
-> > *hw, struct clk_rate_request *r  static int scmi_clk_enable(struct
-> > clk_hw *hw)  {
-> >  	struct scmi_clk *clk =3D to_scmi_clk(hw);
-> > +	const struct scmi_clock_info *info =3D clk->info;
-> > +
-> > +	if (info->flags & SCMI_CLOCK_SET_ENABLE_DENIED)
-> > +		return 0;
-> >
-> >  	return scmi_proto_clk_ops->enable(clk->ph, clk->id, NOT_ATOMIC);  }
-> > @@ -126,6 +139,10 @@ static int scmi_clk_enable(struct clk_hw *hw)
-> > static void scmi_clk_disable(struct clk_hw *hw)  {
-> >  	struct scmi_clk *clk =3D to_scmi_clk(hw);
-> > +	const struct scmi_clock_info *info =3D clk->info;
-> > +
-> > +	if (info->flags & SCMI_CLOCK_SET_ENABLE_DENIED)
-> > +		return;
-> >
-> >  	scmi_proto_clk_ops->disable(clk->ph, clk->id, NOT_ATOMIC);  } @@
-> > -133,6 +150,10 @@ static void scmi_clk_disable(struct clk_hw *hw)
-> > static int scmi_clk_atomic_enable(struct clk_hw *hw)  {
-> >  	struct scmi_clk *clk =3D to_scmi_clk(hw);
-> > +	const struct scmi_clock_info *info =3D clk->info;
-> > +
-> > +	if (info->flags & SCMI_CLOCK_SET_ENABLE_DENIED)
-> > +		return 0;
-> >
-> >  	return scmi_proto_clk_ops->enable(clk->ph, clk->id, ATOMIC);  } @@
-> > -140,6 +161,10 @@ static int scmi_clk_atomic_enable(struct clk_hw *hw)
-> > static void scmi_clk_atomic_disable(struct clk_hw *hw)  {
-> >  	struct scmi_clk *clk =3D to_scmi_clk(hw);
-> > +	const struct scmi_clock_info *info =3D clk->info;
-> > +
-> > +	if (info->flags & SCMI_CLOCK_SET_ENABLE_DENIED)
-> > +		return;
-> >
-> >  	scmi_proto_clk_ops->disable(clk->ph, clk->id, ATOMIC);  } diff --git
-> > a/drivers/firmware/arm_scmi/clock.c
-> > b/drivers/firmware/arm_scmi/clock.c
-> > index 42b81c181d68..1a62e3b82d34 100644
-> > --- a/drivers/firmware/arm_scmi/clock.c
-> > +++ b/drivers/firmware/arm_scmi/clock.c
-> > @@ -46,6 +46,9 @@ struct scmi_msg_resp_clock_attributes {
-> >  #define SUPPORTS_RATE_CHANGE_REQUESTED_NOTIF(x)	((x) &
-> BIT(30))
-> >  #define SUPPORTS_EXTENDED_NAMES(x)		((x) & BIT(29))
-> >  #define SUPPORTS_PARENT_CLOCK(x)		((x) & BIT(28))
-> > +#define SETS_ENABLE_DENIED(x)			((x) & BIT(15))
-> > +#define SETS_RATE_DENIED(x)			((x) & BIT(14))
-> > +#define SETS_PARENT_DENIED(x)			((x) & BIT(13))
-> >  	u8 name[SCMI_SHORT_NAME_MAX_SIZE];
-> >  	__le32 clock_enable_latency;
-> >  };
-> > @@ -327,6 +330,12 @@ static int scmi_clock_attributes_get(const struct
-> scmi_protocol_handle *ph,
-> >  			clk->rate_change_requested_notifications =3D true;
-> >  		if (SUPPORTS_PARENT_CLOCK(attributes))
-> >  			scmi_clock_possible_parents(ph, clk_id, clk);
-> > +		if (SETS_PARENT_DENIED(attributes))
-> > +			clk->flags |=3D SCMI_CLOCK_SET_PARENT_DENIED;
-> > +		if (SETS_RATE_DENIED(attributes))
-> > +			clk->flags |=3D SCMI_CLOCK_SET_RATE_DENIED;
-> > +		if (SETS_ENABLE_DENIED(attributes))
-> > +			clk->flags |=3D SCMI_CLOCK_SET_ENABLE_DENIED;
-> >  	}
-> >
-> >  	return ret;
-> > diff --git a/include/linux/scmi_protocol.h
-> > b/include/linux/scmi_protocol.h index f2f05fb42d28..71911dcd8117
-> > 100644
-> > --- a/include/linux/scmi_protocol.h
-> > +++ b/include/linux/scmi_protocol.h
-> > @@ -41,12 +41,16 @@ struct scmi_revision_info {
-> >  	char sub_vendor_id[SCMI_SHORT_NAME_MAX_SIZE];
-> >  };
-> >
-> > +#define SCMI_CLOCK_SET_PARENT_DENIED	BIT(13)
-> > +#define SCMI_CLOCK_SET_RATE_DENIED	BIT(14)
-> > +#define SCMI_CLOCK_SET_ENABLE_DENIED	BIT(15)
-> >  struct scmi_clock_info {
-> >  	char name[SCMI_MAX_STR_SIZE];
-> >  	unsigned int enable_latency;
-> >  	bool rate_discrete;
-> >  	bool rate_changed_notifications;
-> >  	bool rate_change_requested_notifications;
-> > +	unsigned int flags;
-> >  	union {
-> >  		struct {
-> >  			int num_rates;
-> > --
-> > 2.37.1
-> >
