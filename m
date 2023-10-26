@@ -2,196 +2,110 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D12A7C25B48
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Oct 2023 12:27:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA299C25B48
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Oct 2023 16:54:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344917AbjJZM13 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 Oct 2023 08:27:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42824 "EHLO
+        id S230340AbjJZQye (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 Oct 2023 12:54:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231168AbjJZM12 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Oct 2023 08:27:28 -0400
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72E0B194
-        for <linux-clk@vger.kernel.org>; Thu, 26 Oct 2023 05:27:25 -0700 (PDT)
-Received: by mail-lj1-x233.google.com with SMTP id 38308e7fff4ca-2c503dbe50dso12640861fa.1
-        for <linux-clk@vger.kernel.org>; Thu, 26 Oct 2023 05:27:25 -0700 (PDT)
+        with ESMTP id S231699AbjJZQya (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Oct 2023 12:54:30 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6726A4
+        for <linux-clk@vger.kernel.org>; Thu, 26 Oct 2023 09:54:27 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-53e2dc8fa02so1919265a12.2
+        for <linux-clk@vger.kernel.org>; Thu, 26 Oct 2023 09:54:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698323244; x=1698928044; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :references:cc:to:content-language:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=H0P71wVS48La4jPQi6tVCrTZ6bHsJV48oqbwPiJ0ir8=;
-        b=i0VU0Q49MxXZaymYGujsfz0vwzMVzGcYp7zWMKjmPpl4gcssfStUjjlwLvgk2CE3mB
-         10AnmZMGtP1ceYW+mv6DsQNCsepyI759cCDdHduxrZto8l8+ECpM7ckiTQJPJ4MCrPYV
-         cEIhT4yXRzPav6pI/54CfyqCTOYkEWSGzJ+oo33ksw4wvb9nkmtdNmYyc3fhOeQPt7M+
-         DCrBgrURK7bsk1fRVwp+X9SIRC9QTWdRge4o4i3l7Milhz0ZQeTFahyzQGmHNnMELM7Q
-         jhBm+o2QNcHjt05TosktuRtC60UXfnUOwSk+CRoPsXcTT6a4I5BM4A4d92KM4bozb1oR
-         A2Zw==
+        d=linux-foundation.org; s=google; t=1698339266; x=1698944066; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ant3aW5o4UfJ9+pGAMWn3sv1qIYaJ3ZE24ECRvWTTJY=;
+        b=RampxnR4KBqfIh3i/GkpCQ4mSOOYVRkDhFLjkxsvIqZ7EvRa/6SCmJYCCKBu81dgvb
+         +TseekiscFTBC+7lee+ymiWvP2MATt7qMOTyFnbSGCvOjQYjvCR021d+eBZDilgUXeO/
+         ilxa6oOy/rh81nBbHRg4tPAo7Yvko3gz568tc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698323244; x=1698928044;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :references:cc:to:content-language:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=H0P71wVS48La4jPQi6tVCrTZ6bHsJV48oqbwPiJ0ir8=;
-        b=tnh26/Pidhu4jlY5Xta+PlLG0XcmiuRyGCJXej5hy5a/oMTYvWTPuBffXAqlEuIlIo
-         LXcEIm4DygIVDhDVEoC16+L9ME6BUqx/88AgkN/PJyuVB1YfXSK9WhGJAFmlR4n6njYK
-         5G2nSQwSE+0lUOklhZirlp0reteNjIxcWTbA9qbUJ5I7CRVnzhKPLjvN6z9UVUSoze4n
-         Me5tweLyDw2tC6aeXrydQu368jbfVSaQqDxptgRt49eXc6wFaRimo+bASabKtiyA1/c/
-         +Z4YP+/00D4kLnW9IOp+pTZ6okQHuRFlKvn28AFtWK9lzbKommabV95oIeNP2wpLiI4I
-         pIuw==
-X-Gm-Message-State: AOJu0YwcuYDEPaqn/K3skgl7NZAlWTRgVZFIoAKaxy40rudohm+iPNJQ
-        7spFATHN32kDjzZASuivdFBb4Q==
-X-Google-Smtp-Source: AGHT+IEEmdwW+QLsNrn6w7xcamSTlEPh/aCQ9HPZZqWMpOGzQKV/c/f1WbC/70g14sO/MG0eoyVgKQ==
-X-Received: by 2002:ac2:5337:0:b0:505:72bf:43a4 with SMTP id f23-20020ac25337000000b0050572bf43a4mr13167156lfh.39.1698323243561;
-        Thu, 26 Oct 2023 05:27:23 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:f57f:eb08:d29b:8c9c? ([2a01:e0a:982:cbb0:f57f:eb08:d29b:8c9c])
-        by smtp.gmail.com with ESMTPSA id e8-20020adffc48000000b0031c5e9c2ed7sm11264703wrs.92.2023.10.26.05.27.22
+        d=1e100.net; s=20230601; t=1698339266; x=1698944066;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ant3aW5o4UfJ9+pGAMWn3sv1qIYaJ3ZE24ECRvWTTJY=;
+        b=i0M4tGrltcNhymUvC/awAhDmG1s52sYYXGIT9o4G41uS+Yo66tNiHPr913xsumzCaG
+         IP02mkBIzWIeiml04jMvoOAZClqis3CmWrfbwePWPRU3GgApHrjMaokCZarmkpmnOa1o
+         VqNIbzC489oLgVw8rbuFRpEqJvll/vu8+bkpNiuprCFpD96mIRVOTdQVptCaXmQ0uQ/8
+         DnzBKDjiY1DCHRB8gNVqZb6PxCi0Wr9hNsK3ARZ/UoPvxv9Hnkn9SfMOTR/Rufta/RRY
+         FlSMKUVe86l5At1vA4SCmAhaw0Grd4vB0x5aa/FPiuBQR2N5BBAVp1MhE+pV5wUcqLRZ
+         4s3g==
+X-Gm-Message-State: AOJu0YwqThbm2EkCTAkTCeyQQ1pcUarUPwTa9Q8aJnjDWe54CVLetc2G
+        387FgiOQKA5RCVGFR7uOAGfPJ+1WAACzvpKAk3z+8OvY
+X-Google-Smtp-Source: AGHT+IEltVo5dQHQ5aafJe0HclAmyaBFxDwXIwxWU+PHarrZDWvmf8Ticwr6WmE60v/+6vvkvK1SOQ==
+X-Received: by 2002:a05:6402:1bc4:b0:53e:3b8f:8a58 with SMTP id ch4-20020a0564021bc400b0053e3b8f8a58mr323849edb.11.1698339265879;
+        Thu, 26 Oct 2023 09:54:25 -0700 (PDT)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
+        by smtp.gmail.com with ESMTPSA id n4-20020a05640205c400b0053f9578ec97sm11521618edx.56.2023.10.26.09.54.25
+        for <linux-clk@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Oct 2023 05:27:22 -0700 (PDT)
-Message-ID: <afb778da-ec0a-4451-b853-4b1eba14a68a@linaro.org>
-Date:   Thu, 26 Oct 2023 14:27:22 +0200
+        Thu, 26 Oct 2023 09:54:25 -0700 (PDT)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-53e2dc8fa02so1919170a12.2
+        for <linux-clk@vger.kernel.org>; Thu, 26 Oct 2023 09:54:25 -0700 (PDT)
+X-Received: by 2002:a05:6402:3586:b0:538:a47:89d3 with SMTP id
+ y6-20020a056402358600b005380a4789d3mr295557edc.21.1698339264715; Thu, 26 Oct
+ 2023 09:54:24 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From:   Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 08/10] clk: qcom: add the SM8650 Display Clock Controller
- driver
-Content-Language: en-US, fr
-To:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+References: <20231024161931.78567-1-sebastian.reichel@collabora.com>
+ <20231024161931.78567-2-sebastian.reichel@collabora.com> <CAHk-=whYDbZ29fx_xeSxtYSjtF8WJkaLjzyB8RN5_Rk9Sh-YyQ@mail.gmail.com>
+ <CAHk-=wjO5ivM6k7iMiThO9JfxH0dhLe=mcC4TQwReU0nBCnWpg@mail.gmail.com>
+ <your-ad-here.call-01698246313-ext-3263@work.hours> <CAHk-=wgs2DDdckcONG+YbB-GDH2QFCoZJ=Vm+YXxb1moZzuDgQ@mail.gmail.com>
+ <055dd714f98f4e45b2add561b7663378@AcuMS.aculab.com>
+In-Reply-To: <055dd714f98f4e45b2add561b7663378@AcuMS.aculab.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 26 Oct 2023 06:54:07 -1000
+X-Gmail-Original-Message-ID: <CAHk-=wgBM7Swi7wmvi0M+sBFjzn-vEv1KzgM-hbJ4h3J3BR+UA@mail.gmail.com>
+Message-ID: <CAHk-=wgBM7Swi7wmvi0M+sBFjzn-vEv1KzgM-hbJ4h3J3BR+UA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] math.h: add DIV_ROUND_UP_NO_OVERFLOW
+To:     David Laight <David.Laight@aculab.com>
+Cc:     Vasily Gorbik <gor@linux.ibm.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20231025-topic-sm8650-upstream-clocks-v1-0-c89b59594caf@linaro.org>
- <20231025-topic-sm8650-upstream-clocks-v1-8-c89b59594caf@linaro.org>
- <a939ef1a4c2cad763fe484cc943f44d5.sboyd@kernel.org>
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro Developer Services
-In-Reply-To: <a939ef1a4c2cad763fe484cc943f44d5.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Stephen Boyd <sboyd@kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        "kernel@collabora.com" <kernel@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 25/10/2023 23:45, Stephen Boyd wrote:
-> Quoting Neil Armstrong (2023-10-25 00:32:45)
->> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
->> index c04b6526f4f3..5bf25e8d033c 100644
->> --- a/drivers/clk/qcom/Kconfig
->> +++ b/drivers/clk/qcom/Kconfig
->> @@ -842,6 +842,15 @@ config SM_DISPCC_8550
->>            Say Y if you want to support display devices and functionality such as
->>            splash screen.
->>   
->> +config SM_DISPCC_8650
->> +       tristate "SM8650 Display Clock Controller"
->> +       depends on SM_GCC_8650
-> 
-> selects?
-> 
-> We use selects instead of depends so that the driver can be built-in or
-> modular regardless of parent clks that provide clks to this device.
-> Orphan clk handling resolves issues with the driver registering clks
-> before parents. And with fw_devlink the driver isn't even attempted to
-> probe before the GCC driver is probed so there's no build dependency
-> between these drivers.
+On Wed, 25 Oct 2023 at 22:57, David Laight <David.Laight@aculab.com> wrote:
+>
+> Doesn't that version end up calling inline functions?
+> So won't be usable in static initialisers - the same as statement functions.
 
-All current DISPCC entries uses depends, but CAM_CC doesn't,
-I'll switch to select and re-sync Kconfig for all 8650 entries.
+David, please either read what I write, or actually test things out,
+instead of just adding noise.
 
-> 
->> +       help
->> +         Support for the display clock controller on Qualcomm Technologies, Inc
->> +         SM8650 devices.
->> +         Say Y if you want to support display devices and functionality such as
->> +         splash screen.
->> +
->>   config SM_GCC_4450
->>          tristate "SM4450 Global Clock Controller"
->>          depends on ARM64 || COMPILE_TEST
->> diff --git a/drivers/clk/qcom/dispcc-sm8650.c b/drivers/clk/qcom/dispcc-sm8650.c
->> new file mode 100644
->> index 000000000000..7cb91306e895
->> --- /dev/null
->> +++ b/drivers/clk/qcom/dispcc-sm8650.c
->> @@ -0,0 +1,1806 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * Copyright (c) 2021, The Linux Foundation. All rights reserved.
->> + * Copyright (c) 2023, Linaro Ltd.
->> + */
->> +
->> +#include <linux/clk.h>
-> 
-> Is this include used?
-> 
->> +#include <linux/clk-provider.h>
->> +#include <linux/err.h>
->> +#include <linux/kernel.h>
->> +#include <linux/module.h>
->> +#include <linux/of_device.h>
-> 
-> Is this mod_devicetable.h?
-> 
->> +#include <linux/of.h>
-> 
-> Is this include used?
-> 
->> +#include <linux/regmap.h>
->> +#include <linux/pm_runtime.h>
->> +
->> +#include <dt-bindings/clock/qcom,sm8650-dispcc.h>
->> +
->> +#include "common.h"
->> +#include "clk-alpha-pll.h"
->> +#include "clk-branch.h"
->> +#include "clk-pll.h"
->> +#include "clk-rcg.h"
->> +#include "clk-regmap.h"
->> +#include "clk-regmap-divider.h"
->> +#include "clk-regmap-mux.h"
-> 
-> Is this include used?
-> 
->> +#include "reset.h"
->> +#include "gdsc.h"
->> +
+It is not a problem to have a _Generic() - or a
+__builtin_chooise_expr() - that has an inline function that doesn't
+get used. The compiler will remove it.
 
-Did a include cleanup aswell on all drivers.
+The problem is literally that you can't use "__auto_type", because
+*STATEMENT EXPRESSIONS* do not work outside of function definitions,
+because gcc won't even *parse* them, and just says
 
-Thanks,
-Neil
+  error: braced-group within expression allowed only inside a function
 
+exactly like I explained in the comment of the patch that does the _Generic().
+
+Which is why my solution ended up using those inline functions, and
+splitting manually by type, instead of an expression statement and
+__auto_type.
+
+Whether you then split into different expressions with _Generic() or
+by using __builtin_choose_expr() is irrelevant, although once you do
+"split by type", _Generic() ends up being much more convenient because
+that's what it's designed for (and you don't end up trying to figure
+out the size with sizeof() and typeof tricks).
+
+               Linus
