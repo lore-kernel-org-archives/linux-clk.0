@@ -2,225 +2,92 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4A23C25B48
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Oct 2023 08:24:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0233C25B6B
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Oct 2023 08:41:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229642AbjJZIYx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 Oct 2023 04:24:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53278 "EHLO
+        id S234825AbjJZIl4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 Oct 2023 04:41:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229567AbjJZIYw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Oct 2023 04:24:52 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 803C8B8;
-        Thu, 26 Oct 2023 01:24:50 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 991F6660737B;
-        Thu, 26 Oct 2023 09:24:48 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1698308689;
-        bh=xFr+dcF//FmM0tUjLIKhS6D6UUL0Ug+PSZV1DwTl5/A=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=eNTBdOIMSW9ZNkW1K86v8hoE1kbJkzrak/LxbVXkK8x2H42pJzu0f8XO98dwr6x46
-         unD18Ed+z4bw+tq2jHMLrNwqyDUy4UMGl/K/yR8296Yg7NV7+LW5rZkytBYgZAengt
-         XWYj508wsiPDvgZACKzoRJWfmtLDXAvb+HEDLSlOn6mGt3KL+3vrvF48qCmApBqqx1
-         ce5Q8KK4s3R58jhCcPH6kUeGGnF47uC1P3XMazItcQJwb/i+AFdk+xZMt8Xtc2AaP3
-         kdAdVC5lYWAkYKVJq5bXOo+lbx4Ud2mxpqq6edP5wP20RPQjFvmofUsIAXPDfDxHqP
-         O0HK55irXi4pw==
-Message-ID: <32d51e40-5d9c-47dd-bb62-2ccc811ac6dc@collabora.com>
-Date:   Thu, 26 Oct 2023 10:24:45 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: mediatek: mt8186: Change I2C 4/5/6 ap clocks parent
- to infra
-Content-Language: en-US
-To:     =?UTF-8?B?WXUtY2hhbmcgTGVlICjmnY7nprnnkosp?= 
-        <Yu-chang.Lee@mediatek.com>,
-        "wenst@chromium.org" <wenst@chromium.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        =?UTF-8?B?Q2h1bi1KaWUgQ2hlbiAo6Zmz5rWa5qGAKQ==?= 
-        <Chun-Jie.Chen@mediatek.com>,
-        =?UTF-8?B?TWlsZXMgQ2hlbiAo6Zmz5rCR5qi6KQ==?= 
-        <Miles.Chen@mediatek.com>,
+        with ESMTP id S229678AbjJZIlz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Oct 2023 04:41:55 -0400
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF97C189
+        for <linux-clk@vger.kernel.org>; Thu, 26 Oct 2023 01:41:51 -0700 (PDT)
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-405-HugBNGsgMPCUITDyO-WHrA-1; Thu, 26 Oct 2023 09:41:48 +0100
+X-MC-Unique: HugBNGsgMPCUITDyO-WHrA-1
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Thu, 26 Oct
+ 2023 09:41:47 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Thu, 26 Oct 2023 09:41:47 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Linus Torvalds' <torvalds@linux-foundation.org>
+CC:     Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>
-References: <20231019124914.13545-1-angelogioacchino.delregno@collabora.com>
- <CAGXv+5H0rUajeU-i8nYyV2xWFQTnzqxioZCCyyP_RZXKqmcugQ@mail.gmail.com>
- <283d18028590d57025e5654d18b8b5b7.sboyd@kernel.org>
- <CAGXv+5EpBLnXVdxnk9wBZi5F7U5wdJRfYH7fgg4Lkr1HJXm+WA@mail.gmail.com>
- <9c1e10b56db315e03daa3df5918cde844297c680.camel@mediatek.com>
- <CAGXv+5HQ2sVx=F3my2jOGMw3j3pU2aarEg+Dj1XgNzwio98ezA@mail.gmail.com>
- <e049985de9da9958ba425824ab5f38c7cf41025b.camel@mediatek.com>
- <eb4f7d6e-0e4c-4b2d-b889-cad9fc9262d8@collabora.com>
- <1a734157709adc0cd85e084174bb4889301f1c1a.camel@mediatek.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <1a734157709adc0cd85e084174bb4889301f1c1a.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        "kernel@collabora.com" <kernel@collabora.com>
+Subject: RE: [PATCH v4 1/3] math.h: add DIV_ROUND_UP_NO_OVERFLOW
+Thread-Topic: [PATCH v4 1/3] math.h: add DIV_ROUND_UP_NO_OVERFLOW
+Thread-Index: AQHaBszYM+Cp9N+qfkK9yv140Cm+RbBaJ2TAgACPJoCAAQKN4A==
+Date:   Thu, 26 Oct 2023 08:41:47 +0000
+Message-ID: <2873863a22f441c9889ba405d8a71d97@AcuMS.aculab.com>
+References: <20231024161931.78567-1-sebastian.reichel@collabora.com>
+ <20231024161931.78567-2-sebastian.reichel@collabora.com>
+ <CAHk-=whYDbZ29fx_xeSxtYSjtF8WJkaLjzyB8RN5_Rk9Sh-YyQ@mail.gmail.com>
+ <CAHk-=wjO5ivM6k7iMiThO9JfxH0dhLe=mcC4TQwReU0nBCnWpg@mail.gmail.com>
+ <4c2d36375bd74d94a2e6ef5d2fa0df99@AcuMS.aculab.com>
+ <CAHk-=whrytmsiaLS=rn==qrYw81y2Qiv6dAZxvGzwgX=dMFxng@mail.gmail.com>
+In-Reply-To: <CAHk-=whrytmsiaLS=rn==qrYw81y2Qiv6dAZxvGzwgX=dMFxng@mail.gmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
+MIME-Version: 1.0
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 26/10/23 05:49, Yu-chang Lee (李禹璋) ha scritto:
-> On Wed, 2023-10-25 at 13:29 +0200, AngeloGioacchino Del Regno wrote:
->> Il 25/10/23 11:50, Yu-chang Lee (李禹璋) ha scritto:
->>> On Tue, 2023-10-24 at 17:20 +0800, Chen-Yu Tsai wrote:
->>>>    	
->>>> External email : Please do not click links or open attachments
->>>> until
->>>> you have verified the sender or the content.
->>>>    On Tue, Oct 24, 2023 at 3:47 PM Yu-chang Lee (李禹璋)
->>>> <Yu-chang.Lee@mediatek.com> wrote:
->>>>>
->>>>> On Tue, 2023-10-24 at 10:58 +0800, Chen-Yu Tsai wrote:
->>>>>> On Tue, Oct 24, 2023 at 10:52 AM Stephen Boyd <
->>>>>> sboyd@kernel.org>
->>>>>> wrote:
->>>>>>>
->>>>>>> Quoting Chen-Yu Tsai (2023-10-19 22:06:35)
->>>>>>>> On Thu, Oct 19, 2023 at 8:49 PM AngeloGioacchino Del
->>>>>>>> Regno
->>>>>>>> <angelogioacchino.delregno@collabora.com> wrote:
->>>>>>>>>
->>>>>>>>> Fix the parenting of clocks
->>>>>>>>> imp_iic_wrap_ap_clock_i2c{4-6},
->>>>
->>>> as
->>>>>>>>> those
->>>>>>>>> are effectively parented to infra_ao_i2c{4-6} and not
->>>>>>>>> to
->>>>
->>>> the
->>>>>>>>> I2C_AP.
->>>>>>>>> This permits the correct (and full) enablement and
->>>>
->>>> disablement
->>>>>>>>> of the
->>>>>>>>> I2C4, I2C5 and I2C6 bus clocks, satisfying the whole
->>>>>>>>> clock
->>>>
->>>> tree
->>>>>>>>> of
->>>>>>>>> those.
->>>>>>>>>
->>>>>>>>> As an example, when requesting to enable
->>>>>>>>> imp_iic_wrap_ap_clock_i2c4:
->>>>>>>>>
->>>>>>>>> Before: infra_ao_i2c_ap -> imp_iic_wrap_ap_clock_i2c4
->>>>>>>>> After:  infra_ao_i2c_ap -> infra_ao_i2c4 ->
->>>>>>>>> imp_iic_wrap_ap_clock_i2c4
->>>>>>>>>
->>>>>>>>> Fixes: 66cd0b4b0ce5 ("clk: mediatek: Add MT8186 imp i2c
->>>>
->>>> wrapper
->>>>>>>>> clock support")
->>>>>>>>> Signed-off-by: AngeloGioacchino Del Regno <
->>>>>>>>> angelogioacchino.delregno@collabora.com>
->>>>>>>>
->>>>>>>> I'm curious about what led to discovering this error?
->>>>>>>>
->>>>>>>
->>>>>>> Is that an acked-by?
->>>>>>
->>>>>> MediaTek engineers are saying the original code already
->>>>>> matches
->>>>
->>>> the
->>>>>> documentation provided by their hardware engineers. I'm
->>>>>> trying to
->>>>
->>>> get
->>>>>> them to respond on the mailing list.
->>>>>>
->>>>>> ChenYu
->>>>>>
->>>>>
->>>>> After checking with I2C clock hardware designer there is no
->>>>> infra_ao_i2c{4-6} clock gate in between. And the clock document
->>>>> at
->>>>
->>>> hand
->>>>> aslo shows the same result. Generallly speaking, we would like
->>>>> to
->>>>
->>>> keep
->>>>> sw setting align with the hardware design document. I would
->>>>
->>>> recommand
->>>>> not to change this part of code, but enable infra_ao_i2c{4-6}
->>>>> prior
->>>>
->>>> to
->>>>> the usage of imp_iic_wrap_ap_clock_i2c clock.
->>>>
->>>> Are infra_ao_i2c{4-6} actually used by the hardware? If so, for
->>>> what
->>>> purpose?
->>>
->>> According to hardware designer it servers no purpose. Just a legacy
->>> of
->>> previous design...
->>>
->>>> If it is actually needed by the hardware and it is not in the
->>>> existing path,
->>>> then it needs to be described in the device tree and handled by
->>>> the
->>>> driver.
->>>>
->>>> ChenYu
->>>
->>> After reviewing hardware design diagram, hardware designer
->>> concludes
->>> that the clock tree is indeed
->>>
->>> top_i2c -> infra_ao_i2c{4-6}
->>> top_i2c -> infra_ao_i2c_ap -> imp_iic_wrap_ap_clock_i2c{4-6}
->>>
->>> so I think we should keep this clock relation unchanged.
->>>
->>> Thanks
->>> YuChang
->>>
->>
->> Can you please also expand on CLK_INFRA_AO_I2C{1,2,5}_ARBITER clocks?
->> Is the I2C arbiter also legacy of previous designs?
->>
->> Please check [1], as I've sent a commit adding those in the
->> devicetree.
->>
->> Thanks,
->> Angelo
->>
->> [1]:
->>
-> https://lore.kernel.org/all/20231020075540.15191-1-angelogioacchino.delregno@collabora.com/
-> 
-> According to Hardware designer this arbiter clock is also lagecy of
-> previous design and serve no function. And they are conneted to top_i2c
-> as well.
-> 
-> top_i2c-> CLK_INFRA_AO_I2C{1,2,5}_ARBITER
-> 
-> Also may I know the experiment that lead to the conclusion that you
-> need the ARBITER clock, and the clock tree is incorrect? I will bring
-> it back to discuss with our I2C owner.
-> 
-
-I had lockups during boot and PM suspend/resume, plus, I was getting issues with
-losing trackpad functionality; adding the arbiter clocks fixed the issue.
-
-Regards,
-Angelo
+RnJvbTogTGludXMgVG9ydmFsZHMgDQo+IFNlbnQ6IDI1IE9jdG9iZXIgMjAyMyAxODo0MQ0KPiAN
+Cj4gT24gVHVlLCAyNCBPY3QgMjAyMyBhdCAyMjozOCwgRGF2aWQgTGFpZ2h0IDxEYXZpZC5MYWln
+aHRAYWN1bGFiLmNvbT4gd3JvdGU6DQo+ID4NCj4gPiBGcm9tOiBMaW51cyBUb3J2YWxkcw0KPiA+
+ID4gPiAgLSB3ZSBjYW4ndCBldmVuIHVzZSBhIHN0YXRlbWVudCBleHByZXNzaW9uIGFuZCBfX2F1
+dG9fdHlwZSwgYmVjYXVzZQ0KPiA+ID4gPiB0aGVzZSB0aGluZ3MgYXJlIHVzZWQgaW4gdHlwZSBk
+ZWZpbml0aW9ucyBldGMgYW5kIG5lZWQgdG8gYmUgY29uc3RhbnQNCj4gPiA+ID4gZXhwcmVzc2lv
+bnMNCj4gPg0KPiA+IERvZXNuJ3QgbWluKCkgZ2V0IGFyb3VuZCB0aGF0IGJ5IHVzaW5nIGlzX2Nv
+bnN0ZXhwcigpIGFuZA0KPiA+IF9fYnVpbHRpbl9jaG9vc2VfZXhwdHIoKSAtIHRoZSBzYW1lIGNv
+dWxkIGJlIGRvbmUgaGVyZS4NCj4gDQo+IE5vcGUuIEkgd2FudGVkIHRvIGRvIGl0IHRoYXQgd2F5
+IC0gaXQgd291bGQgaGF2ZSBtYWRlIHRoaW5ncyBtdWNoDQo+IHNpbXBsZXIgYW5kIGF2b2lkIHRo
+ZSB3aG9sZSBfR2VuZXJpYygpIHRoaW5nLCBidXQgdHJ5IGl0IC0geW91IGNhbm5vdA0KPiB1c2Ug
+c3RhdGVtZW50IGV4cHJlc3Npb25zIGluIGEgbm9uLWZ1bmN0aW9uIGNvbnRleHQgZXZlbiB3aXRo
+DQo+IF9fYnVpbHRpbl9jaG9vc2VfZXhwcigpLg0KDQpfR2VuZXJpYygpIGhhcyBleGFjdGx5IHRo
+ZSBzYW1lIGlzc3VlcyBhcyBfX2J1aWx0aW5fY2hvb3NlX2V4cHIoKS4NCkFsbCB0aGUgY29kZSBo
+YXMgdG8gYmUgdmFsaWQgZm9yIGFsbCB0eXBlcy4NCk1ha2VzIHRlc3RpbmcgZm9yIG5lZ2F0aXZl
+IGNvbnN0YW50cyBhIFBJVEEuDQpTb21ldGhpbmcgbGlrZSB0aGlzIHdvcmtlZDoNCgkoX19idWl0
+aW5fY2hvb3NlX2V4cHIoX19pc19jb25zdGV4cHIoKHgpICYmIGlzX3NpZ25lZF90eXBlKF9fdHlw
+ZW9mKHgpKSwgeCwgMSkgPCAwKQ0KQWx0aG91Z2ggb3VyIGlzX3NpZ25lZF90eXBlKCkgaXNuJ3Qg
+Y29uc3RhbnQgKGVub3VnaCkgZm9yIHBvaW50ZXIgdHlwZXMuDQpTbyB5b3UgbmVlZCBhbm90aGVy
+IGNoZWNrIGZvciAodHlwZW9mKHgpKTEgYmVpbmcgY29uc3RhbnQuDQoNCj4gQW5kIG5vLCBtaW4v
+bWF4IGhhdmUgbmV2ZXIgYmVlbiB1c2FibGUgaW4gdGhhdCBjb250ZXh0DQoNCkkndmUgY2xlYXJs
+eSBub3QgdGVzdGVkIGl0IGFuZCBhc3N1bWVkIHRoZSBjb21tZW50IGltcGxpZWQNCnRoYXQgd2Fz
+IG9rLg0KDQpJdCdkIHByb2JhYmx5IHdvcmsgaW4gQysrIC0gd2hpY2ggaXMgcGVyZmVjdGx5IHdp
+bGxpbmcgdG8NCmFkZCBmdW5jdGlvbnMgdG8gaW5pdGlhbGlzZSBzdGF0aWMgZGF0YSAtIGV2ZW4g
+d2hlbiB5b3UnZA0KcmF0aGVyIGhhdmUgYSBjb21waWxlIHRpbWUgZXJyb3IuDQoNCglEYXZpZA0K
+DQo+IA0KPiAgICAgICAgICAgICAgICAgIExpbnVzDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBM
+YWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBU
+LCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
 
