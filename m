@@ -2,86 +2,312 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEE21C25B6F
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Oct 2023 10:52:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84A58C25B6F
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Oct 2023 10:53:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230517AbjJZKw2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 Oct 2023 06:52:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58530 "EHLO
+        id S230285AbjJZKx7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 Oct 2023 06:53:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229649AbjJZKw1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Oct 2023 06:52:27 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5EA1AB
-        for <linux-clk@vger.kernel.org>; Thu, 26 Oct 2023 03:52:24 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-408425c7c10so6351975e9.0
-        for <linux-clk@vger.kernel.org>; Thu, 26 Oct 2023 03:52:24 -0700 (PDT)
+        with ESMTP id S1344687AbjJZKxz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Oct 2023 06:53:55 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 395931A7
+        for <linux-clk@vger.kernel.org>; Thu, 26 Oct 2023 03:53:51 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-40842752c6eso6061215e9.1
+        for <linux-clk@vger.kernel.org>; Thu, 26 Oct 2023 03:53:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nexus-software-ie.20230601.gappssmtp.com; s=20230601; t=1698317543; x=1698922343; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wcf0XYPF/4Pt1WTkCKmw6RYdqKYjvunGflDfl8xXWCk=;
-        b=cN611ao+9KSkXr+6EiE8PStPFjXFddtJYJAXEFCesRkZ3x+A2CCpfyMjymw7KDygy4
-         gkM0kG5JR/mbLJ+h37ByfIXSaQ6bqFvICTtHc6xY282rZcXDnn1UW9MrYljyE/YNk7KZ
-         HI/lzWpzQlrBn5H2fNByWW+6zs6iZjssjybssoG4f2CEds4cJSfG1R7r3ipDRubaAxQX
-         S3w9GnaamCyh5QAba0RTzOGx6giU8C6NogGTlk0/7fykTjFJ1o+69nRYLLWvKetG0rtH
-         ilJkwVWoY4eznvAJYZwrum4rgcNZixzE3EJF8PR70g7Gx1HzSKumhosauJdHOZ1SStiT
-         OxkQ==
+        d=linaro.org; s=google; t=1698317629; x=1698922429; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BDj7JS/KJD1xRdPBFzxvlUHQ3OGRor14p4p7hBbICLs=;
+        b=YSV/gM/FcGPN2t6Yi0liGDQpWU7g50BgrQ5/Jgr7rVEZ6dx+jdUB2yvxog2scQ5Lt+
+         r5LSDryDEglwNCbbWfvimqih0efTIY4YKUOTqKcglHxln8LPk1IsoTmVomwsfwOOdPDX
+         2sWNtBKWTx2VOFnWjEzq5sZzNAhG7mEJY2aswEK+w8JD1agbHk7/eq2Oegv6krtVtL8o
+         ytLi/Cvp4nnyL/sMZeiwgM4TDvwNBdsHv/NGqUnwNyfe/1mV6oqt2fuWp5PvCbjFatsa
+         6+InZvp7AR03TxRxx+146qMY+IpSEDyQhQxM8/AlmkB3PKb5cDx+PKkFBulOk/EXnLrr
+         8UDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698317543; x=1698922343;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wcf0XYPF/4Pt1WTkCKmw6RYdqKYjvunGflDfl8xXWCk=;
-        b=vqIuWLQi0619+Zb8jgAKIVDrG8NKXWcFjSW9qF1Ec2xNV07SOkq00T/ZIRiS2yCIUW
-         pTyoa/O1vSKqigB1y33zNeOlZoVM9yAGBvHEQ6GQP5ltofLCBjPgNVF/AMAc/zDIyB5A
-         SfXc1AE5TJMNeRFO3QMDnDxBk83DFHoHpLo1HlgdtJnMyubJLN7RWZdlpIXm90svKIQI
-         WaMSKr8r/i5INKP0wDU31VbXh0nd5/pWnFv13uN5/wPQKyD+nh1Tv6n35kVCj+Un5uOs
-         oIk1FZoppyM3llwbo5kdToxc3Z5nTZFWg/HWUUUWM03QKbdctLSMqvTXW/N9o1eNi9B+
-         2xeQ==
-X-Gm-Message-State: AOJu0Yw8ARyIq8rouO8IvRPggf65TIIUzoBU+Ko2peK/C+cAZgqlEYf2
-        VT6lm4y/f6N1+q8PFDpGQ03ftw==
-X-Google-Smtp-Source: AGHT+IHNO8PwBg8++FTkP/gdxqiLLTOhI2787Z+RbXvW3hrzEuZDY6YEtNSQwiQJufCzPG2uzKwZKA==
-X-Received: by 2002:a05:600c:4ec6:b0:408:54be:d961 with SMTP id g6-20020a05600c4ec600b0040854bed961mr13988868wmq.35.1698317542986;
-        Thu, 26 Oct 2023 03:52:22 -0700 (PDT)
-Received: from [192.168.100.102] ([37.228.218.3])
-        by smtp.gmail.com with ESMTPSA id t10-20020a1c770a000000b0040775fd5bf9sm2229477wmi.0.2023.10.26.03.52.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Oct 2023 03:52:22 -0700 (PDT)
-Message-ID: <1fcebf80-e059-449d-b889-17ca84b4fc5a@nexus-software.ie>
-Date:   Thu, 26 Oct 2023 11:52:21 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/4] Add sc8280xp CAMCC bindings and driver
-Content-Language: en-US
-To:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        andersson@kernel.org, agross@kernel.org, konrad.dybcio@linaro.org,
+        d=1e100.net; s=20230601; t=1698317629; x=1698922429;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BDj7JS/KJD1xRdPBFzxvlUHQ3OGRor14p4p7hBbICLs=;
+        b=UIzGCmuKAbr4MYk+W6rKa9IoTDX68r7bI9EBUkC+IHN9uN8VDdBGZ0L1QAGh6kAwlU
+         3NKuaBRXlWgaPwECzlbJ72hI8vlq18+r4/3eJK1qbh3GTwyMLZx+AGaBdYvRLOezlRvJ
+         5Z1SBtJAEdSYlbTYCNRBSvCbVgzNdOMWvri1W22fnXKXfyy3rPCwsQDli2e4n7ihhGZg
+         Z6qTHlz0//t87l3jMLMXeJd/CJMasunD88T9jR3I/M1h4zDQIuqUWh36fXHBi0lg8nqf
+         EAX0yHAgt+ee8MqUyKpi7LiMbhaNQfqlh8raM/caLc63hYDMAQI2wG49noOZsGQ0XZmA
+         cGdA==
+X-Gm-Message-State: AOJu0Yyq+yDoMllecgErpSrpQ/rTl8ll6WFXJyUS+5yNlMLPlqtwfD0l
+        nmb4dBVZQN2WBM9YOV052kWCAQ==
+X-Google-Smtp-Source: AGHT+IHg86AqIDR3iWFEr0ApFxGrIU4Olk5tVVMANvLAAQcNM3Xo1BxG42iyimObE20CH3iy12686w==
+X-Received: by 2002:a05:600c:a01:b0:406:53c0:3c71 with SMTP id z1-20020a05600c0a0100b0040653c03c71mr14626167wmp.37.1698317629647;
+        Thu, 26 Oct 2023 03:53:49 -0700 (PDT)
+Received: from x13s-linux.nxsw.local ([37.228.218.3])
+        by smtp.gmail.com with ESMTPSA id y9-20020a7bcd89000000b00407efbc4361sm2239465wmj.9.2023.10.26.03.53.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Oct 2023 03:53:49 -0700 (PDT)
+From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+To:     andersson@kernel.org, agross@kernel.org, konrad.dybcio@linaro.org,
         mturquette@baylibre.com, sboyd@kernel.org,
         dmitry.baryshkov@linaro.org, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
         jonathan@marek.ca, quic_tdas@quicinc.com,
         vladimir.zapolskiy@linaro.org
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <aef93a48cf270d5078ccdc39d95113a4.sboyd@kernel.org>
- <20231026101343.3300-1-bryan.odonoghue@linaro.org>
-From:   Bryan O'Donoghue <pure.logic@nexus-software.ie>
-In-Reply-To: <20231026101343.3300-1-bryan.odonoghue@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bryan.odonoghue@linaro.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [RESEND PATCH v4 1/4] dt-bindings: clock: Use gcc.yaml for common clock properties
+Date:   Thu, 26 Oct 2023 11:53:42 +0100
+Message-Id: <20231026105345.3376-2-bryan.odonoghue@linaro.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20231026105345.3376-1-bryan.odonoghue@linaro.org>
+References: <20231026105345.3376-1-bryan.odonoghue@linaro.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 26/10/2023 11:13, Bryan O'Donoghue wrote:
-> v4:
-> - Resend of v3.2 addendum as v4 for tooling purposes
-> 
-> Link: https://lore.kernel.org/linux-arm-msm/20231024093919.226050-1-bryan.odonoghue@linaro.org/
-> Link: https://git.codelinaro.org/bryan.odonoghue/kernel/-/tree/qcom-linux-clk-for-6.7-camcc-sc8280xp-v4
+Various of the camcc bindings are repeated serially. We can use
+qcom,gcc.yaml to encapsulate the generic repeated patterns.
 
-Ah - I had an "--in-reply-to" in this.
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ .../bindings/clock/qcom,camcc-sm8250.yaml      | 18 ++++--------------
+ .../bindings/clock/qcom,sc7180-camcc.yaml      | 18 ++++--------------
+ .../bindings/clock/qcom,sc7280-camcc.yaml      | 18 ++++--------------
+ .../bindings/clock/qcom,sdm845-camcc.yaml      | 18 ++++--------------
+ .../bindings/clock/qcom,sm8450-camcc.yaml      | 18 ++++--------------
+ 5 files changed, 20 insertions(+), 70 deletions(-)
 
-I will resend without
+diff --git a/Documentation/devicetree/bindings/clock/qcom,camcc-sm8250.yaml b/Documentation/devicetree/bindings/clock/qcom,camcc-sm8250.yaml
+index 426335a2841c..3fd3dc1069fb 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,camcc-sm8250.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,camcc-sm8250.yaml
+@@ -15,6 +15,9 @@ description: |
+ 
+   See also:: include/dt-bindings/clock/qcom,camcc-sm8250.h
+ 
++allOf:
++  - $ref: qcom,gcc.yaml#
++
+ properties:
+   compatible:
+     const: qcom,sm8250-camcc
+@@ -33,15 +36,6 @@ properties:
+       - const: bi_tcxo_ao
+       - const: sleep_clk
+ 
+-  '#clock-cells':
+-    const: 1
+-
+-  '#reset-cells':
+-    const: 1
+-
+-  '#power-domain-cells':
+-    const: 1
+-
+   power-domains:
+     items:
+       - description: MMCX power domain
+@@ -56,14 +50,10 @@ properties:
+ 
+ required:
+   - compatible
+-  - reg
+   - clocks
+   - clock-names
+-  - '#clock-cells'
+-  - '#reset-cells'
+-  - '#power-domain-cells'
+ 
+-additionalProperties: false
++unevaluatedProperties: false
+ 
+ examples:
+   - |
+diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7180-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7180-camcc.yaml
+index 2dfc2a4f1918..c7fe6400ea13 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,sc7180-camcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,sc7180-camcc.yaml
+@@ -15,6 +15,9 @@ description: |
+ 
+   See also:: include/dt-bindings/clock/qcom,camcc-sc7180.h
+ 
++allOf:
++  - $ref: qcom,gcc.yaml#
++
+ properties:
+   compatible:
+     const: qcom,sc7180-camcc
+@@ -31,28 +34,15 @@ properties:
+       - const: iface
+       - const: xo
+ 
+-  '#clock-cells':
+-    const: 1
+-
+-  '#reset-cells':
+-    const: 1
+-
+-  '#power-domain-cells':
+-    const: 1
+-
+   reg:
+     maxItems: 1
+ 
+ required:
+   - compatible
+-  - reg
+   - clocks
+   - clock-names
+-  - '#clock-cells'
+-  - '#reset-cells'
+-  - '#power-domain-cells'
+ 
+-additionalProperties: false
++unevaluatedProperties: false
+ 
+ examples:
+   - |
+diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7280-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7280-camcc.yaml
+index 01feef1cab0a..dcef8de3a905 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,sc7280-camcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,sc7280-camcc.yaml
+@@ -15,6 +15,9 @@ description: |
+ 
+   See also:: include/dt-bindings/clock/qcom,camcc-sc7280.h
+ 
++allOf:
++  - $ref: qcom,gcc.yaml#
++
+ properties:
+   compatible:
+     const: qcom,sc7280-camcc
+@@ -31,28 +34,15 @@ properties:
+       - const: bi_tcxo_ao
+       - const: sleep_clk
+ 
+-  '#clock-cells':
+-    const: 1
+-
+-  '#reset-cells':
+-    const: 1
+-
+-  '#power-domain-cells':
+-    const: 1
+-
+   reg:
+     maxItems: 1
+ 
+ required:
+   - compatible
+-  - reg
+   - clocks
+   - clock-names
+-  - '#clock-cells'
+-  - '#reset-cells'
+-  - '#power-domain-cells'
+ 
+-additionalProperties: false
++unevaluatedProperties: false
+ 
+ examples:
+   - |
+diff --git a/Documentation/devicetree/bindings/clock/qcom,sdm845-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sdm845-camcc.yaml
+index 91d1f7918037..810b852ae371 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,sdm845-camcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,sdm845-camcc.yaml
+@@ -15,6 +15,9 @@ description: |
+ 
+   See also:: include/dt-bindings/clock/qcom,camcc-sm845.h
+ 
++allOf:
++  - $ref: qcom,gcc.yaml#
++
+ properties:
+   compatible:
+     const: qcom,sdm845-camcc
+@@ -27,28 +30,15 @@ properties:
+     items:
+       - const: bi_tcxo
+ 
+-  '#clock-cells':
+-    const: 1
+-
+-  '#reset-cells':
+-    const: 1
+-
+-  '#power-domain-cells':
+-    const: 1
+-
+   reg:
+     maxItems: 1
+ 
+ required:
+   - compatible
+-  - reg
+   - clocks
+   - clock-names
+-  - '#clock-cells'
+-  - '#reset-cells'
+-  - '#power-domain-cells'
+ 
+-additionalProperties: false
++unevaluatedProperties: false
+ 
+ examples:
+   - |
+diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+index dc3c18e4ead7..6915498deacf 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+@@ -17,6 +17,9 @@ description: |
+     include/dt-bindings/clock/qcom,sm8450-camcc.h
+     include/dt-bindings/clock/qcom,sm8550-camcc.h
+ 
++allOf:
++  - $ref: qcom,gcc.yaml#
++
+ properties:
+   compatible:
+     enum:
+@@ -40,29 +43,16 @@ properties:
+     description:
+       A phandle to an OPP node describing required MMCX performance point.
+ 
+-  '#clock-cells':
+-    const: 1
+-
+-  '#reset-cells':
+-    const: 1
+-
+-  '#power-domain-cells':
+-    const: 1
+-
+   reg:
+     maxItems: 1
+ 
+ required:
+   - compatible
+-  - reg
+   - clocks
+   - power-domains
+   - required-opps
+-  - '#clock-cells'
+-  - '#reset-cells'
+-  - '#power-domain-cells'
+ 
+-additionalProperties: false
++unevaluatedProperties: false
+ 
+ examples:
+   - |
+-- 
+2.40.1
 
