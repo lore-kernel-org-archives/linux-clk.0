@@ -2,184 +2,260 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 639ACC25B47
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Oct 2023 02:33:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E8C1C0032E
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Oct 2023 03:37:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229596AbjJZCdr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Oct 2023 22:33:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33288 "EHLO
+        id S229705AbjJZDhH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Oct 2023 23:37:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231175AbjJZCdq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Oct 2023 22:33:46 -0400
-X-Greylist: delayed 444 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 25 Oct 2023 19:33:41 PDT
-Received: from mail-m6038.netease.com (mail-m6038.netease.com [210.79.60.38])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85A7512F;
-        Wed, 25 Oct 2023 19:33:41 -0700 (PDT)
-DKIM-Signature: a=rsa-sha256;
-        b=LDFgxL3uu9G/FyUl/0miNPqflqyM0ZlDnNuHW7JJ0KHDYC56vzg6bPuzmZlrzPRdyZGb2FQVAmaXpKstunFzb3+bh2gRjmwubk0huhElTpyhB0WaZYoEnrMrw6M4ujLfmoxlLX9RVnx8YnNdoecscNW+uH2FE6yy2iwBNgexfsk=;
-        c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-        bh=IjUvs9coTf3rg5T0PqaL4rQY2t3YG56G7QS6+2h0y0c=;
-        h=date:mime-version:subject:message-id:from;
-Received: from [172.16.12.49] (unknown [58.22.7.114])
-        by mail-m11877.qiye.163.com (Hmail) with ESMTPA id 4EB68400227;
-        Thu, 26 Oct 2023 10:25:44 +0800 (CST)
-Message-ID: <ac6f04ef-97b1-3dd9-a086-772a10f0a66b@rock-chips.com>
-Date:   Thu, 26 Oct 2023 10:25:43 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v4 0/4] rockchip: add GATE_LINK
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc:     conor+dt@kernel.org, heiko@sntech.de, kever.yang@rock-chips.com,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        huangtao@rock-chips.com, andy.yan@rock-chips.com
-References: <20231018070144.8512-1-zhangqing@rock-chips.com>
- <b0af9e04bafb07e8a73e8f242a4ff556.sboyd@kernel.org>
- <20231025194849.4esjw4w2trgalp55@mercury.elektranox.org>
- <dc96dc36c6df1d3bfa3006298e353f39.sboyd@kernel.org>
-From:   zhangqing <zhangqing@rock-chips.com>
-In-Reply-To: <dc96dc36c6df1d3bfa3006298e353f39.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        with ESMTP id S229554AbjJZDhG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Oct 2023 23:37:06 -0400
+Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02on2049.outbound.protection.outlook.com [40.107.247.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F93C189;
+        Wed, 25 Oct 2023 20:37:03 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=BC/T854k1V0RZtNn5Thvwnu57/qPBtu0YuM7LHMRQo/X09HodDI1XNckD+oO9CEyKDnJ3vVeWcApITYyUNWM4ZETpPodI+MjKC+9ABZA5uwgA4E1ReeXaoWdgsqaMG+3O5tV1CSCNxnOZonIBgC/FqqMSzQ7XbZw2eGKVFe1K+zxkkY8HtdceJNZSeIgyBcCf8Ntu/9PSCWGATcrZMkivgs9aGXuuGk52YYq//uoesBS6dzsRcRTK6T+8+Fc1DLaf8kdOW/U8wFwHH+QaBYJsivReVLojVJ/1x0gUlgAWU/hWjpmyYYHhYK/C4IlNqOaQfHuiCXu872sjH2pRZxR+w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nCzTvmbzfNIJCFVKxtysESVirhnlWl3Ik2F25wwpaww=;
+ b=UmHxoloyJVM/158h7ahHzpfxElzxIx1s1kCk6CiYz7Bjt20K6Am7sYaaH4GSTIy0d6UwU8ldhB16MoljdqeUikpXv6Xv54GWtaUbbR6bJTwH57jARq12xRLP5cckvLu8X0LSzsW8ANPI6uO5vta5bj09Hy8WBxwrAZXySfiwcky2t8zrVB49x5g2wj6SWLbnXQSjmorv6ezwRMFSZOnzRZLjgaRkT4nhmpenMhpizVcnk6EaeFdpnl9y8kSK0OZuPevuU/V+0N6zxivZLoXompu26WhE5ik93DHouaUrawcBek+m4Grm3SiUCpoiL1CN5doR2dNIUigSXR0wpMSaJg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nCzTvmbzfNIJCFVKxtysESVirhnlWl3Ik2F25wwpaww=;
+ b=MDEsScN5LHeD9dZ/oBZL9WqjNgONl48k3SWdij/jF+n0XOgRHeyGzjZBj8gsPmcc8k5EmrzFqhqIMxP/+j2h3qdbFrp9l4OnPkVf6d0OWYUDpgZ2xmR8jb8eu0m+N2XDyBa4Y12mA2xo5iK5JDk8y5WGY2a3Ae6WWuYwtDtJcZY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
+ by AM9PR04MB8424.eurprd04.prod.outlook.com (2603:10a6:20b:3b5::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6933.11; Thu, 26 Oct
+ 2023 03:37:00 +0000
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::50bf:dcd6:885e:32c4]) by DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::50bf:dcd6:885e:32c4%4]) with mapi id 15.20.6933.011; Thu, 26 Oct 2023
+ 03:37:00 +0000
+From:   "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+To:     sudeep.holla@arm.com, cristian.marussi@arm.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ranjani.vaidyanathan@nxp.com,
+        glen.wienecke@nxp.com, nitin.garg@nxp.com, chuck.cannon@nxp.com,
+        sboyd@kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: [RFC] firmware: arm_scmi: support clock denied attributes
+Date:   Thu, 26 Oct 2023 11:41:25 +0800
+Message-Id: <20231026034125.1823954-1-peng.fan@oss.nxp.com>
+X-Mailer: git-send-email 2.37.1
 Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-        tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUNKQlZDHR1CTkMdQ0sYTk1VEwETFh
-        oSFyQUDg9ZV1kYEgtZQVlOQ1VJSVVMVUpKT1lXWRYaDxIVHRRZQVlPS0hVSk5MSUpJVUpLS1VKQl
-        kG
-X-HM-Tid: 0a8b69cd4f412eb3kusn4eb68400227
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NCo6Aww6NDw5AzEpK0IXVk0*
-        Kg4aCy9VSlVKTUJDSUNMSk9OSEJIVTMWGhIXVQETGhUcChIVHDsJFBgQVhgTEgsIVRgUFkVZV1kS
-        C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUxLTE03Bg++
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR01CA0141.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:8f::21) To DU0PR04MB9417.eurprd04.prod.outlook.com
+ (2603:10a6:10:358::11)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU0PR04MB9417:EE_|AM9PR04MB8424:EE_
+X-MS-Office365-Filtering-Correlation-Id: 30768488-46c6-4ab9-c14e-08dbd5d4cfb2
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: dWVoqDYjYCxLMBizUazCSu8pUH6EEibWCYhxj8uwjG0sGxLjGLV9AaVIISBvp1xmFwWb+9oodBS5WL6PCCWppVxaUyo3YmWB+Fu9FN0YoGm78br40pxjSR+PYt7ku4S8n4aaIzln1Ex/DB68csMlYiwOf73JWIOMDaUpSKSw7JhAtXyazUOuLzHDRCOzE8HNyM/ndRx3azWrJkp2ALPOpWCPvoU4JSb4NugNXXBzZwtSQ0FIZkMxdX11UfMc2hwBkva+zcEIcVX931FLqcwrLGLry9e8qq8Ofemfo8FQT1N6tBx38/f6UhtjoiCoTrDbTPacfJmb+CPhtN4MeKAmdiuNV0k0fGLPajp7PT0crtFYmg4YwXAIMFKcGPwmD3UGThmj967OrmqdD4P7i3nVc1uV8A7S+umlfgo/dFraYdK4ypIMKfTyE+zKlU7ZaMG9Pvvhkt/HHOXvpbhx6tZS7PIeQVu+okI2o4f9BQ80qg5M7GIksdSh0qDbnGgpLlAQ1C678nJTzwQp3k8BuVCDeIJ+mKfu6yK6mYhg0tFYXwBIwH7PovrnqxAyukn/nFx7bbOP7O678KQx3D6j8l+4nHFbd0B88aPo1id/F7YJ0OsEsx7+ODjyAA5iCyJtU+yw
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(346002)(396003)(376002)(39860400002)(136003)(366004)(230922051799003)(1800799009)(186009)(451199024)(64100799003)(38350700005)(83380400001)(66556008)(86362001)(316002)(38100700002)(66946007)(66476007)(2616005)(8936002)(52116002)(2906002)(26005)(6512007)(1076003)(6666004)(478600001)(6486002)(5660300002)(41300700001)(8676002)(4326008)(6506007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?H4MG0ywf6JpbA12JY/e8BbkAkRc2N1fz1g3e8t8iCxfw6CxN/i1vIj0Yinp+?=
+ =?us-ascii?Q?Wua8jLbFGXCLt6pYAubp7VWFKTPaEUypUGjBtoLjktPOIiBz4wpz+azCilrp?=
+ =?us-ascii?Q?Hfvo9os3THfPqfhtbLW4vIrKebstwmaTnPK5BF68i5d9xUg8y+BaEi+WOENy?=
+ =?us-ascii?Q?WgQjNO8HMpNuA48v7cien13N4M0Oim7Z7rYyGFbPMpQklPx9NeX4btSPpKwB?=
+ =?us-ascii?Q?i6i34Pe2AyOn00ZXzjn7p1xp/p4uR3pyvEgx+tECX+yYzrwqHs5ngIDFDm82?=
+ =?us-ascii?Q?HSz3kfRJfbXRYeSZ9lx1g8FCyBv/ft2EOpDaXII/IpO77eiIYbUytUeRYfGD?=
+ =?us-ascii?Q?Q/755OkgKOGs+99z+dSgmTQq+dO9xqzEO8bcKwNuxlxgCGymBUntZmOPKkCl?=
+ =?us-ascii?Q?kEx3BsdwHYywLlvmN8N0F64PGgtRWV4PEuQIRb6cXRXLaSmz1Io8ztJ9wzYm?=
+ =?us-ascii?Q?Q7W9Fwqd0EE0EQlriU/aqTR3LIo45WT0noY4Sc3KWez5guTB2OOV1WUc1nos?=
+ =?us-ascii?Q?fvxgCP3eDl2yYmCPdt2bA3iPwoyepCz1f7U+mza+Os0Xj4ZLZZNULsqaOgwK?=
+ =?us-ascii?Q?TO7jenKlbj55SeXNdHZILQ0OQogbTGarafOZ+E3/K7tS9l4k5YiowIasn1Um?=
+ =?us-ascii?Q?27Kj67whX602V+8qmhxFp2vqRAOxjvKkzgmYBis5TiKOYMQyNwY8ooMwDWtJ?=
+ =?us-ascii?Q?Bbfy7VoPjWjaqo9TN+stnzw77m3N0CwSd8riYyG9tuwgaqx2O8/ocbhCNqFE?=
+ =?us-ascii?Q?O7v01Q/LVGnjz9EVwgWPMXn8M1p0ceeeAlfM1QKtPrHs1qqkfEZH3lk9ENtp?=
+ =?us-ascii?Q?jYJjNDeTqk066sC1/KNHXSwt9JMjL42OwlYd2FD5CQaRqLyxAmY0eQYeXFB3?=
+ =?us-ascii?Q?Tk53e3m9iE7coBWZ57ujIK5M2jDHjwcittfi4bnKQSiRFrF+cZyvQozRQxvc?=
+ =?us-ascii?Q?lsz16C+Mhau7U9RRrGNCPtMvLcIdn60t9pa13pWCXCdlWh0DWT+e5QZIgj1i?=
+ =?us-ascii?Q?OvG0hMBexWIYwQenxIF/FC7DRkI7fdS47PhRe9Q4bGc8wlqt2EHzT0nIZObW?=
+ =?us-ascii?Q?tHFKU+y9FVqZWQ1brRClS/qfLUt7qfveBglkwKTjpB83LJSeXJVJRL6bZs2O?=
+ =?us-ascii?Q?nzt3l8r+jBnrow3Uk56iRB9MafaLAjtX/VWJOKnPvA6FwANoMEuX4089Yvn8?=
+ =?us-ascii?Q?yqI7tQop3tKqk/hrzrViY/h6iQSOM7iJo53I0w02kdH/XVffqORhiuj7m6fB?=
+ =?us-ascii?Q?q0gRNAlOBMqBggtOeKC6DQ4qPlstgZzPEK/Y+DBgBPrAxzzt7Oe5EFbR82VY?=
+ =?us-ascii?Q?9HwylaJON5NGhJ9JIUxeNfD8fa8JU0DC9JAoDxZlstPtkGPdMdp/bvfDb5u0?=
+ =?us-ascii?Q?hLGvz0uqwVsHlxCmN5P+eSmdU20h8TyBSb+kIa4hgt627GrT851yJFhzNpZo?=
+ =?us-ascii?Q?EE+q5VHRLxrD3GH2kUWX1jdPQVLEzaLzSFDBU+ZcsQr6t49GJa2ZwBBoOb7Y?=
+ =?us-ascii?Q?0Fu5rQ8yypj0ByzwuHbb6CeLGxA5nYMawQI/50qoEjW8Qqx2Tyh1KLAz0bWy?=
+ =?us-ascii?Q?fytstwJobtTGzrvg7JuyNmDV/LfuJRDk3NxrcOM7?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 30768488-46c6-4ab9-c14e-08dbd5d4cfb2
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Oct 2023 03:37:00.3237
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GQDp3bPIPTDHnfD5k4Q7f4YMQXIoLYs0OOiJShYkCgtN6Kohe5QxyZ1pvJDwcDYZIxxjt2f55DJTRJ1zhju8OQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8424
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+From: Peng Fan <peng.fan@nxp.com>
 
-在 2023/10/26 5:40, Stephen Boyd 写道:
-> Quoting Sebastian Reichel (2023-10-25 12:48:49)
->> Hello Stephen,
->>
->> On Mon, Oct 23, 2023 at 06:47:17PM -0700, Stephen Boyd wrote:
->>> Quoting Elaine Zhang (2023-10-18 00:01:40)
->>>> Recent Rockchip SoCs have a new hardware block called Native Interface
->>>> Unit (NIU), which gates clocks to devices behind them. These effectively
->>>> need two parent clocks.
->>>> Use GATE_LINK to handle this.
->>> Why can't pm clks be used here? The qcom clk driver has been doing that
->>> for some time now.
->>>
->>>   $ git grep pm_clk_add -- drivers/clk/qcom/
->> Maybe I'm mistaken, but as far as I can tell this is adding the
->> dependency on controller level and only works because Qualcomm
->> has multiple separate clock controllers. In the Rockchip design
->> there is only one platform device.
->>
->> Note, that the original downstream code from Rockchip actually used
->> pm_clk infrastructure by moving these clocks to separate platform
->> devices. I changed this when upstreaming the code, since that leaks
->> into DT and from DT point of view there should be only one clock
->> controller.
->>
-> Why can't the rockchip driver bind to a single device node and make
-> sub-devices for each clk domain and register clks for those? Maybe it
-> can use the auxiliary driver infrastructure to do that?
+This is not in SPEC and is just defined by NXP. This patch is
+to start the discussion to start include them in SPEC.
 
-Option 1:
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+ drivers/clk/clk-scmi.c            | 39 +++++++++++++++++++++++++------
+ drivers/firmware/arm_scmi/clock.c |  9 +++++++
+ include/linux/scmi_protocol.h     |  4 ++++
+ 3 files changed, 45 insertions(+), 7 deletions(-)
 
-Use the current patch to adapt the GATE_LINK type upstream.
-
-The real function of GATE_LINK is implemented。
-
-Just to improve and adapt the existing features on upstream.
-
-
-Option 2:
-
-What we use on our internal branches are:
-
-drivers/clk/rockchip/clk-link.c
-
-static int rockchip_clk_link_probe(struct platform_device *pdev)
-{
-     struct rockchip_link_clk *priv;
-     struct device_node *node = pdev->dev.of_node;
-     const struct of_device_id *match;
-     const char *clk_name;
-     const struct rockchip_link_info *link_info;
-     int ret;
-
-     match = of_match_node(rockchip_clk_link_of_match, node);
-     if (!match)
-         return -ENXIO;
-
-     priv = devm_kzalloc(&pdev->dev, sizeof(struct rockchip_link_clk),
-                 GFP_KERNEL);
-     if (!priv)
-         return -ENOMEM;
-
-     priv->link = match->data;
-
-     spin_lock_init(&priv->lock);
-     platform_set_drvdata(pdev, priv);
-
-     priv->base = of_iomap(node, 0);
-     if (IS_ERR(priv->base))
-         return PTR_ERR(priv->base);
-
-     if (of_property_read_string(node, "clock-output-names", &clk_name))
-         priv->name = node->name;
-     else
-         priv->name = clk_name;
-
-     link_info = rockchip_get_link_infos(priv->link, priv->name);
-     priv->shift = link_info->shift;
-     priv->pname = link_info->pname;
-
-     pm_runtime_enable(&pdev->dev);
-     ret = pm_clk_create(&pdev->dev);
-     if (ret)
-         goto disable_pm_runtime;
-
-     ret = pm_clk_add(&pdev->dev, "link");
-
-     if (ret)
-         goto destroy_pm_clk;
-
-     ret = register_clocks(priv, &pdev->dev);
-     if (ret)
-         goto destroy_pm_clk;
-
-     return 0;
-
-destroy_pm_clk:
-     pm_clk_destroy(&pdev->dev);
-disable_pm_runtime:
-     pm_runtime_disable(&pdev->dev);
-
-     return ret;
-}
-
-
-Both of these methods are OK. Whichever one Upstream prefers, I can 
-submit it as required.
-
+diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
+index 8cbe24789c24..303f8a8ec8e0 100644
+--- a/drivers/clk/clk-scmi.c
++++ b/drivers/clk/clk-scmi.c
+@@ -75,15 +75,13 @@ static int scmi_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 			     unsigned long parent_rate)
+ {
+ 	struct scmi_clk *clk = to_scmi_clk(hw);
++	const struct scmi_clock_info *info = clk->info;
++	u64 rate1 = 0;
+ 
+-	return scmi_proto_clk_ops->rate_set(clk->ph, clk->id, rate);
+-}
+-
+-static int scmi_clk_set_parent(struct clk_hw *hw, u8 parent_index)
+-{
+-	struct scmi_clk *clk = to_scmi_clk(hw);
++	if (info->flags & SCMI_CLOCK_SET_RATE_DENIED)
++		return -EACCES;
+ 
+-	return scmi_proto_clk_ops->parent_set(clk->ph, clk->id, parent_index);
++	return scmi_proto_clk_ops->rate_set(clk->ph, clk->id, rate);
+ }
+ 
+ static u8 scmi_clk_get_parent(struct clk_hw *hw)
+@@ -107,6 +105,17 @@ static u8 scmi_clk_get_parent(struct clk_hw *hw)
+ 	return p_idx;
+ }
+ 
++static int scmi_clk_set_parent(struct clk_hw *hw, u8 parent_index)
++{
++	struct scmi_clk *clk = to_scmi_clk(hw);
++	const struct scmi_clock_info *info = clk->info;
++
++	if (info->flags & SCMI_CLOCK_SET_ENABLE_DENIED)
++		return -EACCES;
++
++	return scmi_proto_clk_ops->parent_set(clk->ph, clk->id, parent_index);
++}
++
+ static int scmi_clk_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
+ {
+ 	/*
+@@ -119,6 +128,10 @@ static int scmi_clk_determine_rate(struct clk_hw *hw, struct clk_rate_request *r
+ static int scmi_clk_enable(struct clk_hw *hw)
+ {
+ 	struct scmi_clk *clk = to_scmi_clk(hw);
++	const struct scmi_clock_info *info = clk->info;
++
++	if (info->flags & SCMI_CLOCK_SET_ENABLE_DENIED)
++		return 0;
+ 
+ 	return scmi_proto_clk_ops->enable(clk->ph, clk->id, NOT_ATOMIC);
+ }
+@@ -126,6 +139,10 @@ static int scmi_clk_enable(struct clk_hw *hw)
+ static void scmi_clk_disable(struct clk_hw *hw)
+ {
+ 	struct scmi_clk *clk = to_scmi_clk(hw);
++	const struct scmi_clock_info *info = clk->info;
++
++	if (info->flags & SCMI_CLOCK_SET_ENABLE_DENIED)
++		return;
+ 
+ 	scmi_proto_clk_ops->disable(clk->ph, clk->id, NOT_ATOMIC);
+ }
+@@ -133,6 +150,10 @@ static void scmi_clk_disable(struct clk_hw *hw)
+ static int scmi_clk_atomic_enable(struct clk_hw *hw)
+ {
+ 	struct scmi_clk *clk = to_scmi_clk(hw);
++	const struct scmi_clock_info *info = clk->info;
++
++	if (info->flags & SCMI_CLOCK_SET_ENABLE_DENIED)
++		return 0;
+ 
+ 	return scmi_proto_clk_ops->enable(clk->ph, clk->id, ATOMIC);
+ }
+@@ -140,6 +161,10 @@ static int scmi_clk_atomic_enable(struct clk_hw *hw)
+ static void scmi_clk_atomic_disable(struct clk_hw *hw)
+ {
+ 	struct scmi_clk *clk = to_scmi_clk(hw);
++	const struct scmi_clock_info *info = clk->info;
++
++	if (info->flags & SCMI_CLOCK_SET_ENABLE_DENIED)
++		return;
+ 
+ 	scmi_proto_clk_ops->disable(clk->ph, clk->id, ATOMIC);
+ }
+diff --git a/drivers/firmware/arm_scmi/clock.c b/drivers/firmware/arm_scmi/clock.c
+index 42b81c181d68..1a62e3b82d34 100644
+--- a/drivers/firmware/arm_scmi/clock.c
++++ b/drivers/firmware/arm_scmi/clock.c
+@@ -46,6 +46,9 @@ struct scmi_msg_resp_clock_attributes {
+ #define SUPPORTS_RATE_CHANGE_REQUESTED_NOTIF(x)	((x) & BIT(30))
+ #define SUPPORTS_EXTENDED_NAMES(x)		((x) & BIT(29))
+ #define SUPPORTS_PARENT_CLOCK(x)		((x) & BIT(28))
++#define SETS_ENABLE_DENIED(x)			((x) & BIT(15))
++#define SETS_RATE_DENIED(x)			((x) & BIT(14))
++#define SETS_PARENT_DENIED(x)			((x) & BIT(13))
+ 	u8 name[SCMI_SHORT_NAME_MAX_SIZE];
+ 	__le32 clock_enable_latency;
+ };
+@@ -327,6 +330,12 @@ static int scmi_clock_attributes_get(const struct scmi_protocol_handle *ph,
+ 			clk->rate_change_requested_notifications = true;
+ 		if (SUPPORTS_PARENT_CLOCK(attributes))
+ 			scmi_clock_possible_parents(ph, clk_id, clk);
++		if (SETS_PARENT_DENIED(attributes))
++			clk->flags |= SCMI_CLOCK_SET_PARENT_DENIED;
++		if (SETS_RATE_DENIED(attributes))
++			clk->flags |= SCMI_CLOCK_SET_RATE_DENIED;
++		if (SETS_ENABLE_DENIED(attributes))
++			clk->flags |= SCMI_CLOCK_SET_ENABLE_DENIED;
+ 	}
+ 
+ 	return ret;
+diff --git a/include/linux/scmi_protocol.h b/include/linux/scmi_protocol.h
+index f2f05fb42d28..71911dcd8117 100644
+--- a/include/linux/scmi_protocol.h
++++ b/include/linux/scmi_protocol.h
+@@ -41,12 +41,16 @@ struct scmi_revision_info {
+ 	char sub_vendor_id[SCMI_SHORT_NAME_MAX_SIZE];
+ };
+ 
++#define SCMI_CLOCK_SET_PARENT_DENIED	BIT(13)
++#define SCMI_CLOCK_SET_RATE_DENIED	BIT(14)
++#define SCMI_CLOCK_SET_ENABLE_DENIED	BIT(15)
+ struct scmi_clock_info {
+ 	char name[SCMI_MAX_STR_SIZE];
+ 	unsigned int enable_latency;
+ 	bool rate_discrete;
+ 	bool rate_changed_notifications;
+ 	bool rate_change_requested_notifications;
++	unsigned int flags;
+ 	union {
+ 		struct {
+ 			int num_rates;
 -- 
-张晴
-瑞芯微电子股份有限公司
-Rockchip Electronics Co.,Ltd
-地址：福建省福州市铜盘路软件大道89号软件园A区21号楼
-Add:No.21 Building, A District, No.89 Software Boulevard Fuzhou, Fujian 350003, P.R.China
-Tel:+86-0591-83991906-8601
-邮编：350003
-E-mail:elaine.zhang@rock-chips.com
-****************************************************************************
-保密提示：本邮件及其附件含有机密信息，仅发送给本邮件所指特定收件人。若非该特定收件人，请勿复制、使用或披露本邮件的任何内容。若误收本邮件，请从系统中永久性删除本邮件及所有附件，并以回复邮件或其他方式即刻告知发件人。福州瑞芯微电子有限公司拥有本邮件信息的著作权及解释权，禁止任何未经授权许可的侵权行为。
-
-IMPORTANT NOTICE: This email is from Fuzhou Rockchip Electronics Co., Ltd .The contents of this email and any attachments may contain information that is privileged, confidential and/or exempt from disclosure under applicable law and relevant NDA. If you are not the intended recipient, you are hereby notified that any disclosure, copying, distribution, or use of the information is STRICTLY PROHIBITED. Please immediately contact the sender as soon as possible and destroy the material in its entirety in any format. Thank you.
-
-****************************************************************************
+2.37.1
 
