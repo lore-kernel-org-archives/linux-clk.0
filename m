@@ -2,62 +2,62 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9168EC25B6B
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Oct 2023 11:51:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 840E8C25B6B
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Oct 2023 12:02:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344833AbjJZLv3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 Oct 2023 07:51:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48046 "EHLO
+        id S233035AbjJZMCo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 Oct 2023 08:02:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230321AbjJZLv2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Oct 2023 07:51:28 -0400
+        with ESMTP id S231200AbjJZMCn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Oct 2023 08:02:43 -0400
 Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E38191AD
-        for <linux-clk@vger.kernel.org>; Thu, 26 Oct 2023 04:51:24 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-40842752c6eso6495565e9.1
-        for <linux-clk@vger.kernel.org>; Thu, 26 Oct 2023 04:51:24 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 639411B3
+        for <linux-clk@vger.kernel.org>; Thu, 26 Oct 2023 05:02:40 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-40850b244beso6583235e9.2
+        for <linux-clk@vger.kernel.org>; Thu, 26 Oct 2023 05:02:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698321083; x=1698925883; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1698321759; x=1698926559; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :references:cc:to:content-language:subject:reply-to:from:user-agent
          :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=+bEXKDY0O2dJcBx8PzS4T9juifD+BCTKEs1j4rNwC1s=;
-        b=VTVcVWhcGRkOUFd+5rhYkj+iqsqtMkVgWDX7GVP1GWBFQ90Z4gB/yCqjgNUOSEb42I
-         caFbItMu4G4cABcdR1VcrO8h7N1LdffBy1KPClqqZpy1JCUbBwQzIr9AgpKb3bZ+CmFj
-         abIQeFggxPsS0CJ0ECqy2Wb7r1Rc5bkeIlHDUQIf5KpphR2IjwyNBd1UhrY/Mz5yikNP
-         zgBB2RPqAA8ihia1VnObvmuNbURUqgBTPfmFjexymZLa/T9n+QBGwzJM7yr4Brx4wb5v
-         L//8GncHYTvbt98gUNUynAe8Xtl43zWlShWCSbRyKjQVEpV5YNIQnh67KnRSMmXAZHOB
-         IKGQ==
+        bh=paTNaTpvnpV4RHseAXbcaIi8qJ2kDljARlPE1mIBGfs=;
+        b=PhjUbofKuJmiz1kbGxniTSsomPbL/BFXOT5vLlBS83apEMaVaVrWkUXaFzeMUmF9XR
+         wrMgLalcS3+i67D4W62Pu3ZksfZPepUqI2ec5Um3qK/t2MPpzbS1o182R6Di+rLfomcZ
+         AlW4tBaYF4s0nMgzVAEy2CiPIuNaRLiqMUqLVK4kCb7AkAlKi1pPW6RRIpDKzi5r26iS
+         CrKOMBqHm7wbogMYVFap1XrOOo4ONnlYxp++hrCG/f1QKKq8UUGRAB9146cA/3i4Z51U
+         fY5REXASNx5NaNnHvnh8orybYyKM6p9jq5IvJBEcYB6hlleHEKtRN/RDxmT02BOWjlvK
+         WXBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698321083; x=1698925883;
+        d=1e100.net; s=20230601; t=1698321759; x=1698926559;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :references:cc:to:content-language:subject:reply-to:from:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=+bEXKDY0O2dJcBx8PzS4T9juifD+BCTKEs1j4rNwC1s=;
-        b=vSGh1ALr3+32LEpbdgpH0sF3uONA4tlT9+Aot33Q412hEuQeSFxA0Q7xSg1ICSkifh
-         LYbn6UQ3A4QV7lTbYDrjxXtjdLghQbinit7yMGD/KIQYdZxcajzG6WWP3G9MfWE5kUaR
-         9GEzrFln2y+vA3ZjJ3IOV8t+ZcbtvA7uDwRA6eB2iumq8X1Axxgyb7V5092OgvXjOI34
-         Ke3RzsfW4MNkDg9Hb+khjxVSjyZSLRpomWM+a5Bvch8OwAluSrQAB+qDcnZjPwUBB1oQ
-         Xnh0L9EmHBPGKC78XTRmy2uRfF4YURWzutXufaJdyQS2KShoT7y0q3Sa2aaaX/zdxXVG
-         VFRw==
-X-Gm-Message-State: AOJu0YzrkGxStu3D5Da5rJLva7xacS/sl8o5z+RPnmPHrY32f1ZfCmyb
-        Vtw7W0F6h72Wski2f3OzeDGbCA==
-X-Google-Smtp-Source: AGHT+IH8qEeu0Nv7Dhl0dcFqtz/6wuFEaJuVWtoYvI/ohEGhBwiXHsTI1LdqZ39vCFJmokVpoTlNLA==
-X-Received: by 2002:a05:6000:b4b:b0:32d:a4c4:f700 with SMTP id dk11-20020a0560000b4b00b0032da4c4f700mr13224768wrb.38.1698321083300;
-        Thu, 26 Oct 2023 04:51:23 -0700 (PDT)
+        bh=paTNaTpvnpV4RHseAXbcaIi8qJ2kDljARlPE1mIBGfs=;
+        b=xFAF0WRL/fplv2ID7hkhSRKWY9Z1QmpbCKBzB6RrBufnCcNIH4kgPp2U7Odcd8sywp
+         hrpm9AIDP4vUMd9cPvrQosUqGqzvnYxik3x+xk9c5OARj2Eu48qjksjxFsARcUQGZRyx
+         F2FePQDVEBu4Cdshot/UENs6im3eyiOaQEDunB5ioFV8fvuFFI2iUdTWoSaUu82/eynz
+         IFBaYWghu8gK1f4c/XPZQGgGmTNADLrXtZqTJkwqX77BDgUz1RC7WSlvd9VoNmZd2YP2
+         zKqutOaAwDnsTjEnutsN7bpvcTXkzqKDvWVo3GqPTIZ+xNzqgdqt5gxNbUJfqSbQsED1
+         UkHg==
+X-Gm-Message-State: AOJu0YxZZFPra2+2TvedDgjyA+6KCcfpgyAGGHZSbjxoOvKAPP0RgnFj
+        zds13RZ4MaXBDZ7WclAbb/TI+77GUrH800WNxThhiOg8
+X-Google-Smtp-Source: AGHT+IEmihfvfgXWfelOCluAlCfTnZRODC/sX2nEUu/hUXvNgExReSF3mDPhtjmfWGiJclVcSUFqbQ==
+X-Received: by 2002:a05:600c:3c8f:b0:405:3a65:1b4c with SMTP id bg15-20020a05600c3c8f00b004053a651b4cmr14372770wmb.6.1698321758010;
+        Thu, 26 Oct 2023 05:02:38 -0700 (PDT)
 Received: from ?IPV6:2a01:e0a:982:cbb0:f57f:eb08:d29b:8c9c? ([2a01:e0a:982:cbb0:f57f:eb08:d29b:8c9c])
-        by smtp.gmail.com with ESMTPSA id k12-20020adff5cc000000b00326f5d0ce0asm14094197wrp.21.2023.10.26.04.51.22
+        by smtp.gmail.com with ESMTPSA id cc17-20020a5d5c11000000b0031c52e81490sm14436441wrb.72.2023.10.26.05.02.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Oct 2023 04:51:22 -0700 (PDT)
-Message-ID: <4f0a7c6c-b221-46c8-888a-34b94cafeb8a@linaro.org>
-Date:   Thu, 26 Oct 2023 13:51:21 +0200
+        Thu, 26 Oct 2023 05:02:37 -0700 (PDT)
+Message-ID: <2a72be5a-2545-4cff-a550-f9a53a1ecb83@linaro.org>
+Date:   Thu, 26 Oct 2023 14:02:36 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From:   Neil Armstrong <neil.armstrong@linaro.org>
 Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 06/10] clk: qcom: add the SM8650 Global Clock Controller
+Subject: Re: [PATCH 08/10] clk: qcom: add the SM8650 Display Clock Controller
  driver
 Content-Language: en-US, fr
 To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
@@ -73,8 +73,8 @@ To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20231025-topic-sm8650-upstream-clocks-v1-0-c89b59594caf@linaro.org>
- <20231025-topic-sm8650-upstream-clocks-v1-6-c89b59594caf@linaro.org>
- <ccd24edd-b713-49f3-96f4-af653a8fd6b7@linaro.org>
+ <20231025-topic-sm8650-upstream-clocks-v1-8-c89b59594caf@linaro.org>
+ <4d6b8e54-8ec2-4774-9a7e-881af58093e2@linaro.org>
 Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
  GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
@@ -100,82 +100,46 @@ Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
  QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
 Organization: Linaro Developer Services
-In-Reply-To: <ccd24edd-b713-49f3-96f4-af653a8fd6b7@linaro.org>
+In-Reply-To: <4d6b8e54-8ec2-4774-9a7e-881af58093e2@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 25/10/2023 10:41, Konrad Dybcio wrote:
+On 25/10/2023 10:45, Konrad Dybcio wrote:
 > 
 > 
 > On 10/25/23 09:32, Neil Armstrong wrote:
->> Add Global Clock Controller (GCC) support for SM8650 platform.
+>> Add Display Clock Controller (DISPCC) support for SM8650 platform.
 >>
 >> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 >> ---
-> Just a couple remarks
-> 
-> 1. looks like there's no usage of shared ops (corresponding
->     to enable_safe_parent or something along these lines
->     downstream)
-
-Indeed, it was missing, I'll give a test before posting a v2.
-
-> 
-> 2. none of the GDSCs have interesting flags.. I have this
->     little cheat sheet that you may find handy:
-> 
-> qcom,retain-regs -> RETAIN_FF_ENABLE
-> qcom,support-hw-trigger + set_mode in driver -> HW_CONTROL
-> qcom,no-status-check-on-disable -> VOTABLE
-> qcom,reset-aon-logic -> AON_RESET
-> domain-addr  = clamp_io_ctrl
-
-Thx, I updated the GDSCs.
-
-> 
-> 3. gcc_cpuss_ubwcp_clk_src uses the XO_A clock as parent, but
->     it's not there in the ftbl.. Could you confirm whether this
->     clock should even be accessed from HLOS?
-
-Downstream this clock is only used by gem_noc, since we don't use such
-clock upstream I think it's safer to remove it until we have the usage.
-
-> 
 > [...]
 > 
->> +static int gcc_sm8650_probe(struct platform_device *pdev)
+>> +static int disp_cc_sm8650_probe(struct platform_device *pdev)
 >> +{
 >> +    struct regmap *regmap;
 >> +    int ret;
 >> +
->> +    regmap = qcom_cc_map(pdev, &gcc_sm8650_desc);
->> +    if (IS_ERR(regmap))
->> +        return PTR_ERR(regmap);
->> +
->> +    ret = qcom_cc_register_rcg_dfs(regmap, gcc_dfs_clocks,
->> +                       ARRAY_SIZE(gcc_dfs_clocks));
+>> +    ret = devm_pm_runtime_enable(&pdev->dev);
 >> +    if (ret)
 >> +        return ret;
 >> +
->> +    /*
->> +     * Keep the critical clock always-On
->> +     * gcc_camera_ahb_clk, gcc_camera_xo_clk, gcc_disp_ahb_clk,
->> +     * gcc_disp_xo_clk, gcc_gpu_cfg_ahb_clk, gcc_video_ahb_clk,
->> +     * gcc_video_xo_clk
->> +     */
-> Could you make these comments inline, i.e.
-> 
-> regmap_update_bits(regmap, 0x26004, BIT(0), BIT(0)); /* gcc_camera_ahb_clk */
-> 
-> ?
+>> +    ret = pm_runtime_resume_and_get(&pdev->dev);
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    regmap = qcom_cc_map(pdev, &disp_cc_sm8650_desc);
+>> +    if (IS_ERR(regmap))
+>> +        return PTR_ERR(regmap);
+> need to clean up RPM
 
-Done
+Ack,
+
+Thanks,
+Neil
 
 > 
 > Konrad
 
-Thanks,
-Neil
