@@ -2,107 +2,144 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F83EC25B47
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Oct 2023 08:59:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62A54C25B47
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Oct 2023 17:57:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345601AbjJ0I7A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 27 Oct 2023 04:59:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54146 "EHLO
+        id S232192AbjJ0R52 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 27 Oct 2023 13:57:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345710AbjJ0I65 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Oct 2023 04:58:57 -0400
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A14418F
-        for <linux-clk@vger.kernel.org>; Fri, 27 Oct 2023 01:58:54 -0700 (PDT)
-Received: from tr.lan (ip-86-49-120-218.bb.vodafone.cz [86.49.120.218])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id 3536E871F8;
-        Fri, 27 Oct 2023 10:58:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1698397131;
-        bh=SSLWnbfXBw3dSnXzzWGSP4fBF3N07pMY9vx5Ksakq8o=;
-        h=From:To:Cc:Subject:Date:From;
-        b=OIcdKrGjKsBelQxQvYernzP7nwWtPWyN7UT6aRMUgYyCfRhKXiE5p+a/tQPcXOWb1
-         7IuicJaHXiLrQFSdXzT79OLqq+RvjvgPtvS5HzCk+/sne8gEnFahmsbCdwYr0ua/9i
-         CpG625D4jHR4rAolbu83OnYM83pR9mANqkSI9OyfxMtivjiinLZqSMtY9vpMMYZqrI
-         i1bdpgwYwwXEl02Io8Z2nVVb+7Hc4OqqZHeAbSg5j7rUxBqSUCwAEAm+CFzhRbP3Qs
-         LyLMU61DfXbCwR7ussrpNQj2vh2rJkhJQpQQTGgVUqS96DLpG9t8wx+NtKy5+95N6F
-         NIG+w7HBBdJwg==
-From:   Marek Vasut <marex@denx.de>
-To:     linux-clk@vger.kernel.org
-Cc:     Marek Vasut <marex@denx.de>, kernel test robot <lkp@intel.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH] clk: si521xx: Increase stack based print buffer size in probe
-Date:   Fri, 27 Oct 2023 10:58:24 +0200
-Message-ID: <20231027085840.30098-1-marex@denx.de>
-X-Mailer: git-send-email 2.42.0
+        with ESMTP id S230101AbjJ0R52 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Oct 2023 13:57:28 -0400
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F78512A;
+        Fri, 27 Oct 2023 10:57:25 -0700 (PDT)
+From:   Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1698429443;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=58t0D6ESCSzexSg4v1kt6tJ4hy3mICpcIPZMbCXXn84=;
+        b=keo8ZRjniGvDQH8XixV0C/IW4SmfusttUIfuaDrFMsYMlp9/TLJbbkpIykf1qNT9r2p+X4
+        WOl+pS+ezpf6OmYoxfOTRp+y2m4SKskZ8+gk25re2TmuG22G/++/MukocbZtnKqiIPbrH7
+        wF4CHapZo5B+t0Tqsv0Z+vVQ5KUgR/+TgEkd38qB1EdVSwkm1sX/RC1DlcYHYX3q3LzBif
+        E4u+fhV6uGbQ6Ci+O7aAFp+ANMIsdBObtBs3qCzfiyX2/ZiKEYQg+tmx78X3aerV7zkTm6
+        +bXxdXIt+48AErihL4mNQOE9vr0yWhdCikozeuBbNnBxUJQ8FT2n+Q9gDFUx/w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1698429443;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=58t0D6ESCSzexSg4v1kt6tJ4hy3mICpcIPZMbCXXn84=;
+        b=J8HWFFYgzidROH/s2RBjpBwD4G2jhOYDfrOjJBKITQEJJs9sfRG+xQR+Gff1ptjKKQjZQF
+        O8jeOEWApyIH5jCw==
+To:     Claudiu <claudiu.beznea@tuxon.dev>, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        geert+renesas@glider.be, magnus.damm@gmail.com,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        prabhakar.mahadev-lad.rj@bp.renesas.com
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH 5/7] irqchip/renesas-rzg2l: cache registers on
+ suspend/resume
+In-Reply-To: <20231023102223.1309614-6-claudiu.beznea.uj@bp.renesas.com>
+References: <20231023102223.1309614-1-claudiu.beznea.uj@bp.renesas.com>
+ <20231023102223.1309614-6-claudiu.beznea.uj@bp.renesas.com>
+Date:   Fri, 27 Oct 2023 19:57:23 +0200
+Message-ID: <87h6mc2bjw.ffs@tglx>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Increase the size of temporary print buffer on stack to fix the
-following warnings reported by LKP.
+On Mon, Oct 23 2023 at 13:22, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Cache registers content when going to suspend and restore them in resume
+> as these may be lost when switching to deep sleep states. With this
+> driver data has been marked as static to be able to play with it
+> in struct syscon_ops::{suspend, resume}.
 
-Since all the input parameters of snprintf() are under control
-of this driver, it is not possible to trigger and overflow here,
-but since the print buffer is on stack and discarded once driver
-probe() finishes, it is not an issue to increase it by 10 bytes
-and fix the warning in the process. Make it so.
+I have no idea what you are trying to tell me here. Why do the
+suspend/resume callbacks need a static data structure and cannot operate
+on a pointer which wastes less builtin memory when the driver is not
+used?
 
-"
-   drivers/clk/clk-si521xx.c: In function 'si521xx_probe':
->> drivers/clk/clk-si521xx.c:318:26: warning: '%d' directive output may be truncated writing between 1 and 10 bytes into a region of size 2 [-Wformat-truncation=]
-      snprintf(name, 6, "DIFF%d", i);
-                             ^~
-   drivers/clk/clk-si521xx.c:318:21: note: directive argument in the range [0, 2147483647]
-      snprintf(name, 6, "DIFF%d", i);
-                        ^~~~~~~~
-   drivers/clk/clk-si521xx.c:318:3: note: 'snprintf' output between 6 and 15 bytes into a destination of size 6
-      snprintf(name, 6, "DIFF%d", i);
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-"
+Also "play with it" is definitely not a technical term. See
+Documentation/process/* which has lots of explanations how to write
+proper change logs.
 
-Fixes: edc12763a3a2 ("clk: si521xx: Clock driver for Skyworks Si521xx I2C PCIe clock generators")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202310260412.AGASjFN4-lkp@intel.com/
-Signed-off-by: Marek Vasut <marex@denx.de>
----
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org
----
- drivers/clk/clk-si521xx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> Because IA55 input is from pin controller and IA55 resumes before pin
+> controller we don't restore interrupt enable bits here but let the
+> pinctrl to do it on IA55 behalf after pins are in proper state to
+> avoid invalid interrupts.
+> +
+> +static struct rzg2l_irqc_priv {
+>  	void __iomem *base;
+>  	struct irq_fwspec fwspec[IRQC_NUM_IRQ];
+>  	raw_spinlock_t lock;
+> -};
+> +	struct rzg2l_irqc_reg_cache cache;
+> +} priv;
 
-diff --git a/drivers/clk/clk-si521xx.c b/drivers/clk/clk-si521xx.c
-index 99e6271a4de14..4f7b74f889f1e 100644
---- a/drivers/clk/clk-si521xx.c
-+++ b/drivers/clk/clk-si521xx.c
-@@ -282,7 +282,7 @@ static int si521xx_probe(struct i2c_client *client)
- 	const u16 chip_info = (u16)(uintptr_t)i2c_get_match_data(client);
- 	const struct clk_parent_data clk_parent_data = { .index = 0 };
- 	const u8 data[3] = { SI521XX_REG_BC, 1, 1 };
--	unsigned char name[6] = "DIFF0";
-+	unsigned char name[16] = "DIFF0";
- 	struct clk_init_data init = {};
- 	struct si521xx *si;
- 	int i, ret;
-@@ -316,7 +316,7 @@ static int si521xx_probe(struct i2c_client *client)
- 	/* Register clock */
- 	for (i = 0; i < hweight16(chip_info); i++) {
- 		memset(&init, 0, sizeof(init));
--		snprintf(name, 6, "DIFF%d", i);
-+		snprintf(name, sizeof(name), "DIFF%d", i);
- 		init.name = name;
- 		init.ops = &si521xx_diff_clk_ops;
- 		init.parent_data = &clk_parent_data;
--- 
-2.42.0
+https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#struct-declarations-and-initializers
 
+>  
+>  static struct rzg2l_irqc_priv *irq_data_to_priv(struct irq_data *data)
+>  {
+> @@ -238,6 +251,37 @@ static int rzg2l_irqc_set_type(struct irq_data *d, unsigned int type)
+>  	return irq_chip_set_type_parent(d, IRQ_TYPE_LEVEL_HIGH);
+>  }
+>  
+> +static int rzg2l_irqc_irq_suspend(void)
+> +{
+> +	struct rzg2l_irqc_reg_cache *cache = &priv.cache;
+> +
+> +	cache->iitsr = readl_relaxed(priv.base + IITSR);
+> +	for (u8 i = 0; i < 2; i++)
+> +		cache->titsr[i] = readl_relaxed(priv.base + TITSR(i));
+> +
+> +	return 0;
+> +}
+> +
+> +static void rzg2l_irqc_irq_resume(void)
+> +{
+> +	struct rzg2l_irqc_reg_cache *cache = &priv.cache;
+> +	u8 i;
+> +
+> +	/*
+> +	 * Restore only interrupt type. TSSRx will be restored at the
+> +	 * request of pin controller to avoid spurious interrupts due
+> +	 * to invalid PIN states.
+> +	 */
+> +	for (i = 0; i < 2; i++)
+> +		writel_relaxed(cache->titsr[i], priv.base + TITSR(i));
+> +	writel_relaxed(cache->iitsr, priv.base + IITSR);
+> +}
+> +
+> +static struct syscore_ops rzg2l_irqc_syscore_ops = {
+> +	.suspend = rzg2l_irqc_irq_suspend,
+> +	.resume = rzg2l_irqc_irq_resume,
+> +};
+
+Ditto.
+
+>  static const struct irq_chip irqc_chip = {
+>  	.name			= "rzg2l-irqc",
+>  	.irq_eoi		= rzg2l_irqc_eoi,
+> @@ -323,7 +367,6 @@ static int rzg2l_irqc_init(struct device_node *node, struct device_node *parent)
+>  	struct irq_domain *irq_domain, *parent_domain;
+>  	struct platform_device *pdev;
+>  	struct reset_control *resetn;
+> -	struct rzg2l_irqc_priv *priv;
+
+Make this pointer static at the top level and leave the rest of the code
+alone and please give it a proper name. "priv" at the file level is
+really non-descriptive.
+
+Thanks,
+
+        tglx
