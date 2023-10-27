@@ -2,69 +2,70 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19EBEC25B67
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Oct 2023 08:10:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3A3DC25B6E
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Oct 2023 08:21:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235117AbjJ0IKG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 27 Oct 2023 04:10:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39174 "EHLO
+        id S235189AbjJ0IVr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 27 Oct 2023 04:21:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235092AbjJ0IKF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Oct 2023 04:10:05 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D40641A5
-        for <linux-clk@vger.kernel.org>; Fri, 27 Oct 2023 01:10:01 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id 2adb3069b0e04-507cd62472dso3331042e87.0
-        for <linux-clk@vger.kernel.org>; Fri, 27 Oct 2023 01:10:01 -0700 (PDT)
+        with ESMTP id S235230AbjJ0IV3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Oct 2023 04:21:29 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 628202722
+        for <linux-clk@vger.kernel.org>; Fri, 27 Oct 2023 01:20:32 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-507a3b8b113so2626653e87.0
+        for <linux-clk@vger.kernel.org>; Fri, 27 Oct 2023 01:20:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698394200; x=1698999000; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1698394830; x=1698999630; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=8CisSnqNXXaiB1DfortBil1ZVqBYfAwXV4ZqWoC5H5M=;
-        b=pT6Hc4QC6RMUtYIw3kLtV01p/JqqqiFW7hlBVfsupuKZL9L84832pTKMMcEEmsDKR9
-         imZxW9cO4unsAIB3VTw8lxP3nHtHXlI+2QNkg2uEm3gtEUwLb8g3NGLu1E+7pTykpV04
-         QYpN8FpD76mfpNtncI17niCk5r9z/Yo2Hi8JzRQSLl1BBVR6d53ZUCVM/eiH2AJ5G6Vf
-         5cvAdF0Vs/q5oLCj0H9eeOIQ2FTCjNQPlFOVGbEZqV7VJdQgjEsISSFyuwhFhAKVU9bb
-         pTRHmIyQ9as+e3ecWbQf4SaQbwtVOmS9Hik1dxcJ0tuT2dzdbKWBvocMRWX78awRu9Fs
-         txwg==
+        bh=2qieB7KCwp712m7O/c1DR0bYhYsy/++QuIY78B/AcMs=;
+        b=EyJtff9i6Wuk5bt4Zpx8dbc98l2b6n16KkXp90Mbo3MpyptuHWEyrl4XcGvjFIZJQ7
+         jOiVEXdVAYBl9UjMecyFjDrK+YQ7X1QgtS9dbvBHABZiGUdl5JaWX2nRO4W6PCq487Pg
+         OMggAC6iRsIowzX4OpSbrCngyyYCeJtYLjbT4ZaR+xtPWhWaZsK3BLuKbf6+rvK9VrJK
+         QfvZsmLrbP+vUcm8NPR/dvfHmv/qKvtjvyvBDNuzB0+jbH3CnvGKaPz8+6yfogTvc/eb
+         AHARfaT++3o3GBy6HJSsFvDU59AfMkWnrrFlL2Z/uDj+r8V9O+xKYRtDcfU7anfpcQ2d
+         t3Xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698394200; x=1698999000;
+        d=1e100.net; s=20230601; t=1698394830; x=1698999630;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8CisSnqNXXaiB1DfortBil1ZVqBYfAwXV4ZqWoC5H5M=;
-        b=CLdoctSlRLyD19UGw4aqdUIV199x/m4aIYQ4WX5V2KjoGOD4Lq8CXPnWWiHCtX3gGg
-         4eFdaZzxkd5WndsDPTAceLc1IoFJ7ARvY+4Cn3InVacND5EfTO2ji3maAtzr7JfFvkID
-         oNkeZZ5242ewVcUzxTehmv215wLfdUKT2YgAOJs0WCy+jZWbA6RWAzpY0atlweoOZi+X
-         F1FmL3pR0t9WVDbc7kpgwL2gaJ6j8BaiKAjy+y/Fi3dhf3Ympdqkv93F9l+Fff+U1W0X
-         BcVOxeRVSHgA4S3IXvqzt36UV6m26iqZubaaEWMDroKNykb537jkqc9HNGkBu+d/0zM+
-         OkRA==
-X-Gm-Message-State: AOJu0Yw8c9d0Fr9Y5IT9qPpqVwBQrZbcKff6x9o45ypwuTCyEmZ6AIg/
-        g5ddTOX/E0ig3GZUR+0R2O50XfNmMdTgj34JGd8=
-X-Google-Smtp-Source: AGHT+IF9aUdjHt6JkayY4+H85es/07yOQGSeUFu5/clUd/dVrf/THmJdgTPyLmlFmzfhbp+AW/uiqA==
-X-Received: by 2002:a05:6512:3986:b0:504:3464:b4a1 with SMTP id j6-20020a056512398600b005043464b4a1mr1649133lfu.22.1698394200129;
-        Fri, 27 Oct 2023 01:10:00 -0700 (PDT)
+        bh=2qieB7KCwp712m7O/c1DR0bYhYsy/++QuIY78B/AcMs=;
+        b=vN57e04Bmx0X5nedHXn6FFZ7R8H+CT4KjoTx6BgoPGpOKIEEb4GSuewiKwkV44qlkg
+         Fc1EBu1H+JFHlETNNP4G9vyqVjzLUxfx50GpEm545ZjELsmp46VHpFaV+/Xo1osR0wgD
+         bKSu0RZk1spCN9+Y2i5iyOy3PD02+8RPsCduaezu2W+mIo9b7+ICh81McWdrWl1Iu7JP
+         eavEBuPUnJXFBMAwnsNBe21mTD/HD0I19ZLOE5yaG1uxmKqYuK84CBMv7lssy08QaokU
+         PwkfOUfqh1sCl8Bl/nVZB7SL2tsu7z0Ibl7kmy6CdaEjCkbIERmud+Gwp84kCBwy8Oo0
+         d3UQ==
+X-Gm-Message-State: AOJu0Yx9RCHjr3exogFa8Q0HrAA+mi0PeNGSA862KqSis3YQsBegMudP
+        yB0FAtalcyl74LdpUviu97f2dw==
+X-Google-Smtp-Source: AGHT+IF4Kx6xH+xkOcgQZ7ae0EF5IBj/Q04eCP/go6wRQpE3bdRWuW61CDQzHDQ9pGS7hLR0EXZUfA==
+X-Received: by 2002:a05:6512:3b2c:b0:507:cd2e:5ed8 with SMTP id f44-20020a0565123b2c00b00507cd2e5ed8mr1602042lfv.0.1698394830556;
+        Fri, 27 Oct 2023 01:20:30 -0700 (PDT)
 Received: from [192.168.0.22] ([78.10.206.168])
-        by smtp.gmail.com with ESMTPSA id f21-20020a05651232d500b005079a8b0f19sm181280lfg.62.2023.10.27.01.09.58
+        by smtp.gmail.com with ESMTPSA id v19-20020a05651203b300b00507a96d17b3sm181433lfp.237.2023.10.27.01.20.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Oct 2023 01:09:59 -0700 (PDT)
-Message-ID: <063acbcc-81db-457e-bc4d-c572c8e4b10f@linaro.org>
-Date:   Fri, 27 Oct 2023 10:09:58 +0200
+        Fri, 27 Oct 2023 01:20:30 -0700 (PDT)
+Message-ID: <8f3c9418-0d5c-4769-9ef7-19cd91454130@linaro.org>
+Date:   Fri, 27 Oct 2023 10:20:29 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 0/3] Add APSS clock driver support for IPQ5018
+Subject: Re: [PATCH 1/4] dt-bindings: clock: qcom: Add SC8380XP GCC clocks
 Content-Language: en-US
-To:     Gokul Sriram P <quic_gokulsri@quicinc.com>,
-        dmitry.baryshkov@linaro.org, agross@kernel.org,
-        andersson@kernel.org, konrad.dybcio@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, jassisinghbrar@gmail.com,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     quic_varada@quicinc.com, quic_srichara@quicinc.com
-References: <20230925102826.405446-1-quic_gokulsri@quicinc.com>
- <544f270e-ad62-6b15-13e6-72ca32d46d31@quicinc.com>
+To:     Sibi Sankar <quic_sibis@quicinc.com>, andersson@kernel.org,
+        konrad.dybcio@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org
+Cc:     agross@kernel.org, conor+dt@kernel.org, quic_tdas@quicinc.com,
+        quic_rjendra@quicinc.com, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, neil.armstrong@linaro.org,
+        abel.vesa@linaro.org, quic_tsoni@quicinc.com
+References: <20231025133320.4720-1-quic_sibis@quicinc.com>
+ <20231025133320.4720-2-quic_sibis@quicinc.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -110,18 +111,24 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <544f270e-ad62-6b15-13e6-72ca32d46d31@quicinc.com>
+In-Reply-To: <20231025133320.4720-2-quic_sibis@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 27/10/2023 10:02, Gokul Sriram P wrote:
-> Hi everyone, a gentle remainder to review and acknowledge the change.
+On 25/10/2023 15:33, Sibi Sankar wrote:
+> From: Rajendra Nayak <quic_rjendra@quicinc.com>
+> 
+> Add device tree bindings for global clock controller on SC8380XP SoCs.
+> 
+> Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
+> Co-developed-by: Sibi Sankar <quic_sibis@quicinc.com>
+> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+> ---
 
-Really everyone? So what do you miss from me? Any why do you think that
-I did not perform my duties?
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
