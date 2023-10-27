@@ -2,131 +2,205 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4564CC25B6E
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Oct 2023 07:47:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FE87C25B47
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Oct 2023 07:49:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234981AbjJ0HrU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 27 Oct 2023 03:47:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38028 "EHLO
+        id S231340AbjJ0HtZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 27 Oct 2023 03:49:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345504AbjJ0HrT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Oct 2023 03:47:19 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00408194
-        for <linux-clk@vger.kernel.org>; Fri, 27 Oct 2023 00:47:16 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-507d1cc0538so2441794e87.2
-        for <linux-clk@vger.kernel.org>; Fri, 27 Oct 2023 00:47:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698392835; x=1698997635; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fdPoPykwVMD9RZG4snFdAmpNaz4E+pHELiVqG6ZVCtk=;
-        b=SovH/3oaWDvWyl0okRY5ZRxDYVlMovAHxsSZk9WImv11mamiVbfgOumv7KqGQocJHa
-         yTolE6C6mquZxc47Ue81sk33oqw89oynMAcEv6i94H4H5kHIfMQSTD/SS9Xq7Llx/KtF
-         oZCozS3K5X7l/Ks4nMQZpy6lN2Q9Iip/lyCbOf07q1MCVidtqznEFLG9rko7rzdx2Pnr
-         q+FjJWiER5qkLu1v/8iwVVM34OkaVwLkzAAh0+GRNAazfe9xeB6H+k8zq993B5H3vUfM
-         z4giSsGRAeemGH/YmPKTCkiBYI62Hj9wI/OAtLBxv+IVVcn3awscL/1EWpVYlNI/Jr11
-         Izkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698392835; x=1698997635;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fdPoPykwVMD9RZG4snFdAmpNaz4E+pHELiVqG6ZVCtk=;
-        b=VoeLpLFc6ld7QQQ+l1uLZDApGWR34mCv1tQzVA7XYquAdyJxHZAwXxkdKKqwmJjVV7
-         kBcHuJvEzb/PmqCzmIsHtEKigYUlJm+L9nUhMIJbNrHI9c8KSmZsw2ChL5yCFy5skPoD
-         NyJQm4s+0Ym9loSCZXwlwCXsgRGa31QXu/TXjfCXN3RxrAVPxoyeDbCVapqnFi7O6k0B
-         tZZWYg+cUJ9fqDuDKsz5B2EIQ40qxpunUDXs7P2Nd+ksHg5eOIuI+dvM6KA1V1nOo8QR
-         iACPtblFVIly9jFV6G2pl1e1pL7fD3SXrTUGBJIlXD8Fc/1GmCjaqOmCgLSaFXz+MO2Q
-         KWDw==
-X-Gm-Message-State: AOJu0Yyzn21Tv/zlOVGNwgRkxoyoHLO+stgNdo3IlWtRPvzKYV5GVAQR
-        KXSW4iYLAhmFG9/vWxCSM9b+WQ==
-X-Google-Smtp-Source: AGHT+IGuA7AynijTmGBZmQHcC28fXB76OvPh+wKhEQqg7mAx4aesCy3ptC2gcex9SVq5c3DZT9We5Q==
-X-Received: by 2002:ac2:5e86:0:b0:507:9702:c11d with SMTP id b6-20020ac25e86000000b005079702c11dmr1127936lfq.64.1698392835202;
-        Fri, 27 Oct 2023 00:47:15 -0700 (PDT)
-Received: from [192.168.0.22] ([78.10.206.168])
-        by smtp.gmail.com with ESMTPSA id i18-20020a056512341200b004fdde1db756sm176358lfr.26.2023.10.27.00.47.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Oct 2023 00:47:14 -0700 (PDT)
-Message-ID: <6e01468f-9023-47ed-b5f9-afaef58b03de@linaro.org>
-Date:   Fri, 27 Oct 2023 09:47:13 +0200
+        with ESMTP id S229478AbjJ0HtX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Oct 2023 03:49:23 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 546E010A;
+        Fri, 27 Oct 2023 00:49:21 -0700 (PDT)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 7B91A66071F1;
+        Fri, 27 Oct 2023 08:49:19 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1698392960;
+        bh=Er+OOdHx8cqMGoyhVTFB/h3ZeQ5UpwzOAINq1iZlNLk=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=M63W0c8d6DK7x4LW4zyjIjII746ijWuH/1ezuv/K4K+nH7aQE6DLRqsgmuFA7I0Y3
+         71APbBnTVGs0PTjje78/VwpX3GOKrGPgpyWPAZ4hQZE2wXvrJCuVsrlrGn21TgZLCe
+         j9EWvRpL1pUpq21H/9dqH/bkFqAcIarSLs0tOh/PuNNgYyaCZbcdXwA0OcbvYLdTbn
+         EkvyG6n2oYetTalfwyjHnRmYahgAqk99UfllpMBWAaj1ln2f9QW3EtRoPzvfNKDEEt
+         /3OQKzcSgYNijy3AJquk6n/T6+ZcKMSfAQdJ/gd84gQ/PCA24GzFmhxVZq6oRRtow5
+         +btqrh59MTglA==
+Message-ID: <b8b2ff9d-293d-4e21-b3b2-92b456b8f7c4@collabora.com>
+Date:   Fri, 27 Oct 2023 09:49:17 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: clock: qcom,gcc-ipq6018: split to separate
- schema
+Subject: Re: [PATCH] clk: mediatek: mt8188: probe vpp with
+ mtk_clk_simple_probe()
 Content-Language: en-US
-To:     Robert Marko <robimarko@gmail.com>, andersson@kernel.org,
-        agross@kernel.org, konrad.dybcio@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        quic_tdas@quicinc.com, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20231026101931.695497-1-robimarko@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231026101931.695497-1-robimarko@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     =?UTF-8?B?WXUtY2hhbmcgTGVlICjmnY7nprnnkosp?= 
+        <Yu-chang.Lee@mediatek.com>,
+        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "wenst@chromium.org" <wenst@chromium.org>,
+        "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>,
+        =?UTF-8?B?TW91ZHkgSG8gKOS9leWul+WOnyk=?= <Moudy.Ho@mediatek.com>,
+        Project_Global_Chrome_Upstream_Group 
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+References: <20231026113830.29215-1-yu-chang.lee@mediatek.com>
+ <a7321404-0c8f-430c-b14c-7ffc9e4fc5d7@collabora.com>
+ <aeb71e4321637fdebd414acf58480e520afd2b15.camel@mediatek.com>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <aeb71e4321637fdebd414acf58480e520afd2b15.camel@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 26/10/2023 12:18, Robert Marko wrote:
-> The Qualcomm IPQ6018 GCC clock controller has clock inputs, thus existing
-> gcc-other.yaml was not describing it fully so move it to a separate schema.
+Il 27/10/23 09:42, Yu-chang Lee (李禹璋) ha scritto:
+> On Thu, 2023-10-26 at 13:45 +0200, AngeloGioacchino Del Regno wrote:
+>> Il 26/10/23 13:38, yu-chang.lee ha scritto:
+>>> switch to the common mtk_clk_simple_probe() function for all of the
+>>> clock drivers that are registering as platform drivers.
+>>>
+>>
+>> So VPPSYS0 and VPPSYS1 aren't dependant on MMSYS anymore?
+>>
+>> Like this, it doesn't look like this will ever work fine, so if you
+>> want
+>> that to happen, you must provide a good explanation, and then, since
+>> MT8188
+>> and MT8195's VPPSYS are practically the same, you should also convert
+>> MT8195
+>> to do the same, and make sure that everything works as expected
+>> before sending
+>> a commit upstream.
+>>
+>> Please, explain.
+>>
+>> Thanks,
+>> Angelo
+>>
+> Hi Angelo,
 > 
-> Fully document the allowed and required XO and sleep clock inputs, as well
-> as update the provided example.
+> Thanks for your time and timely feedback. I don't find mt8188-vpp1 and
+> mt8188-vpp0 in mtk-mmsys.c. and thought probed them with
+> mtk_simple_probe(), refer to your comment on in this patch
+> "clk:
+> mediatek: Switch to mtk_clk_simple_probe() where possible", will be a
+
+Just to clarify: mtk_clk_pdev_probe() is mtk_clk_simple_probe() for
+pdev, nothing more and nothing less :-)
+
+> good idea. On the other hand mt8195 does have dependency on MMSYS, so I
+> don't think the same change work on mt8195.
 > 
-> Signed-off-by: Robert Marko <robimarko@gmail.com>
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Ok, then that's simply because MT8188 MDP3 is not upstream yet: that's going to
+happen, meaning that MT8188 will have the same mmsys dependency as MT8195 soon.
 
-Best regards,
-Krzysztof
+Sorry, this commit is not valid. NACK.
+
+Thanks!
+Angelo
+
+> Best Regards,
+> YuChang
+> 
+>>> Signed-off-by: yu-chang.lee <yu-chang.lee@mediatek.com>
+>>> ---
+>>>    drivers/clk/mediatek/clk-mt8188-vpp0.c | 14 +++++++++++---
+>>>    drivers/clk/mediatek/clk-mt8188-vpp1.c | 14 +++++++++++---
+>>>    2 files changed, 22 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/drivers/clk/mediatek/clk-mt8188-vpp0.c
+>>> b/drivers/clk/mediatek/clk-mt8188-vpp0.c
+>>> index e7b02b26fefb..18fffa191ee1 100644
+>>> --- a/drivers/clk/mediatek/clk-mt8188-vpp0.c
+>>> +++ b/drivers/clk/mediatek/clk-mt8188-vpp0.c
+>>> @@ -96,6 +96,15 @@ static const struct mtk_clk_desc vpp0_desc = {
+>>>    	.num_clks = ARRAY_SIZE(vpp0_clks),
+>>>    };
+>>>    
+>>> +static const struct of_device_id of_match_clk_mt8188_vpp0[] = {
+>>> +	{
+>>> +		.compatible = "mediatek,mt8188-vppsys0",
+>>> +		.data = &vpp0_desc,
+>>> +	}, {
+>>> +		/* sentinel */
+>>> +	}
+>>> +};
+>>> +
+>>>    static const struct platform_device_id clk_mt8188_vpp0_id_table[]
+>>> = {
+>>>    	{ .name = "clk-mt8188-vpp0", .driver_data =
+>>> (kernel_ulong_t)&vpp0_desc },
+>>>    	{ /* sentinel */ }
+>>> @@ -103,12 +112,11 @@ static const struct platform_device_id
+>>> clk_mt8188_vpp0_id_table[] = {
+>>>    MODULE_DEVICE_TABLE(platform, clk_mt8188_vpp0_id_table);
+>>>    
+>>>    static struct platform_driver clk_mt8188_vpp0_drv = {
+>>> -	.probe = mtk_clk_pdev_probe,
+>>> -	.remove_new = mtk_clk_pdev_remove,
+>>> +	.probe = mtk_clk_simple_probe,
+>>>    	.driver = {
+>>>    		.name = "clk-mt8188-vpp0",
+>>> +		.of_match_table = of_match_clk_mt8188_vpp0,
+>>>    	},
+>>> -	.id_table = clk_mt8188_vpp0_id_table,
+>>>    };
+>>>    module_platform_driver(clk_mt8188_vpp0_drv);
+>>>    MODULE_LICENSE("GPL");
+>>> diff --git a/drivers/clk/mediatek/clk-mt8188-vpp1.c
+>>> b/drivers/clk/mediatek/clk-mt8188-vpp1.c
+>>> index e8f0f7eca097..f4b35336d427 100644
+>>> --- a/drivers/clk/mediatek/clk-mt8188-vpp1.c
+>>> +++ b/drivers/clk/mediatek/clk-mt8188-vpp1.c
+>>> @@ -91,6 +91,15 @@ static const struct mtk_clk_desc vpp1_desc = {
+>>>    	.num_clks = ARRAY_SIZE(vpp1_clks),
+>>>    };
+>>>    
+>>> +static const struct of_device_id of_match_clk_mt8188_vpp1[] = {
+>>> +	{
+>>> +		.compatible = "mediatek,mt8188-vppsys1",
+>>> +		.data = &vpp1_desc,
+>>> +	}, {
+>>> +		/* sentinel */
+>>> +	}
+>>> +};
+>>> +
+>>>    static const struct platform_device_id clk_mt8188_vpp1_id_table[]
+>>> = {
+>>>    	{ .name = "clk-mt8188-vpp1", .driver_data =
+>>> (kernel_ulong_t)&vpp1_desc },
+>>>    	{ /* sentinel */ }
+>>> @@ -98,12 +107,11 @@ static const struct platform_device_id
+>>> clk_mt8188_vpp1_id_table[] = {
+>>>    MODULE_DEVICE_TABLE(platform, clk_mt8188_vpp1_id_table);
+>>>    
+>>>    static struct platform_driver clk_mt8188_vpp1_drv = {
+>>> -	.probe = mtk_clk_pdev_probe,
+>>> -	.remove_new = mtk_clk_pdev_remove,
+>>> +	.probe = mtk_clk_simple_probe,
+>>>    	.driver = {
+>>>    		.name = "clk-mt8188-vpp1",
+>>> +		.of_match_table = of_match_clk_mt8188_vpp1,
+>>>    	},
+>>> -	.id_table = clk_mt8188_vpp1_id_table,
+>>>    };
+>>>    module_platform_driver(clk_mt8188_vpp1_drv);
+>>>    MODULE_LICENSE("GPL");
+>>
+>>
+
 
