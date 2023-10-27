@@ -2,205 +2,118 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FE87C25B47
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Oct 2023 07:49:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E543C25B67
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Oct 2023 08:03:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231340AbjJ0HtZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 27 Oct 2023 03:49:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46544 "EHLO
+        id S235057AbjJ0ID1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 27 Oct 2023 04:03:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229478AbjJ0HtX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Oct 2023 03:49:23 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 546E010A;
-        Fri, 27 Oct 2023 00:49:21 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 7B91A66071F1;
-        Fri, 27 Oct 2023 08:49:19 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1698392960;
-        bh=Er+OOdHx8cqMGoyhVTFB/h3ZeQ5UpwzOAINq1iZlNLk=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=M63W0c8d6DK7x4LW4zyjIjII746ijWuH/1ezuv/K4K+nH7aQE6DLRqsgmuFA7I0Y3
-         71APbBnTVGs0PTjje78/VwpX3GOKrGPgpyWPAZ4hQZE2wXvrJCuVsrlrGn21TgZLCe
-         j9EWvRpL1pUpq21H/9dqH/bkFqAcIarSLs0tOh/PuNNgYyaCZbcdXwA0OcbvYLdTbn
-         EkvyG6n2oYetTalfwyjHnRmYahgAqk99UfllpMBWAaj1ln2f9QW3EtRoPzvfNKDEEt
-         /3OQKzcSgYNijy3AJquk6n/T6+ZcKMSfAQdJ/gd84gQ/PCA24GzFmhxVZq6oRRtow5
-         +btqrh59MTglA==
-Message-ID: <b8b2ff9d-293d-4e21-b3b2-92b456b8f7c4@collabora.com>
-Date:   Fri, 27 Oct 2023 09:49:17 +0200
+        with ESMTP id S235056AbjJ0IDT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Oct 2023 04:03:19 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69DEA10E0;
+        Fri, 27 Oct 2023 01:03:13 -0700 (PDT)
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39R5unHG001377;
+        Fri, 27 Oct 2023 08:03:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=QYe+vUUvmlRQVC9mRy1pQ1SesCPINZqupQyO3h+FoSc=;
+ b=d6AOnXAhdV1qH03WCrcLYdHxv/17K0BVucyJt7Odx1ScdI94xwMceWiyr/OlnjVE7mbG
+ yJGulWBcLGVTrr6QSezjnz1D1J8mk3RDxBnOllaOETpQ7h6trCYnayBNRP0BCv43qKzV
+ rj4917oWd0jJ0rEWO0LmQSi0elR1aLYfd5X67zCS02PX6hO/Ham8JdvkOayJTtUn+bNG
+ rpHxcaWBGS8Uumi7VQPSlHuYpyEumfcgeOitWQMCWtJgCyUWPg2Y3kHAT+2RgtEF9ths
+ Jhd16DiiTdudahST86bdcgQTWnlWk4XwG533+EA2oA6YundLAXqX550mGtQLSiKlexry vQ== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3tyww71gde-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 27 Oct 2023 08:03:04 +0000
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 39R833DX024079
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 27 Oct 2023 08:03:03 GMT
+Received: from [10.201.192.51] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.39; Fri, 27 Oct
+ 2023 01:02:58 -0700
+Message-ID: <544f270e-ad62-6b15-13e6-72ca32d46d31@quicinc.com>
+Date:   Fri, 27 Oct 2023 13:32:44 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: mediatek: mt8188: probe vpp with
- mtk_clk_simple_probe()
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH V3 0/3] Add APSS clock driver support for IPQ5018
+To:     <dmitry.baryshkov@linaro.org>, <agross@kernel.org>,
+        <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <jassisinghbrar@gmail.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <quic_varada@quicinc.com>, <quic_srichara@quicinc.com>
+References: <20230925102826.405446-1-quic_gokulsri@quicinc.com>
 Content-Language: en-US
-To:     =?UTF-8?B?WXUtY2hhbmcgTGVlICjmnY7nprnnkosp?= 
-        <Yu-chang.Lee@mediatek.com>,
-        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        "wenst@chromium.org" <wenst@chromium.org>,
-        "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>,
-        =?UTF-8?B?TW91ZHkgSG8gKOS9leWul+WOnyk=?= <Moudy.Ho@mediatek.com>,
-        Project_Global_Chrome_Upstream_Group 
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-References: <20231026113830.29215-1-yu-chang.lee@mediatek.com>
- <a7321404-0c8f-430c-b14c-7ffc9e4fc5d7@collabora.com>
- <aeb71e4321637fdebd414acf58480e520afd2b15.camel@mediatek.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <aeb71e4321637fdebd414acf58480e520afd2b15.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From:   Gokul Sriram P <quic_gokulsri@quicinc.com>
+In-Reply-To: <20230925102826.405446-1-quic_gokulsri@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 8HJ8AId7wDL6RMwi4tCqHenK_0bsnGWV
+X-Proofpoint-GUID: 8HJ8AId7wDL6RMwi4tCqHenK_0bsnGWV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-10-27_06,2023-10-26_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
+ impostorscore=0 lowpriorityscore=0 mlxlogscore=830 priorityscore=1501
+ bulkscore=0 clxscore=1011 phishscore=0 adultscore=0 malwarescore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2310240000 definitions=main-2310270069
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 27/10/23 09:42, Yu-chang Lee (李禹璋) ha scritto:
-> On Thu, 2023-10-26 at 13:45 +0200, AngeloGioacchino Del Regno wrote:
->> Il 26/10/23 13:38, yu-chang.lee ha scritto:
->>> switch to the common mtk_clk_simple_probe() function for all of the
->>> clock drivers that are registering as platform drivers.
->>>
->>
->> So VPPSYS0 and VPPSYS1 aren't dependant on MMSYS anymore?
->>
->> Like this, it doesn't look like this will ever work fine, so if you
->> want
->> that to happen, you must provide a good explanation, and then, since
->> MT8188
->> and MT8195's VPPSYS are practically the same, you should also convert
->> MT8195
->> to do the same, and make sure that everything works as expected
->> before sending
->> a commit upstream.
->>
->> Please, explain.
->>
->> Thanks,
->> Angelo
->>
-> Hi Angelo,
-> 
-> Thanks for your time and timely feedback. I don't find mt8188-vpp1 and
-> mt8188-vpp0 in mtk-mmsys.c. and thought probed them with
-> mtk_simple_probe(), refer to your comment on in this patch
-> "clk:
-> mediatek: Switch to mtk_clk_simple_probe() where possible", will be a
+Hi everyone, a gentle remainder to review and acknowledge the change.
 
-Just to clarify: mtk_clk_pdev_probe() is mtk_clk_simple_probe() for
-pdev, nothing more and nothing less :-)
+Regards,
+Gokul
 
-> good idea. On the other hand mt8195 does have dependency on MMSYS, so I
-> don't think the same change work on mt8195.
-> 
-
-Ok, then that's simply because MT8188 MDP3 is not upstream yet: that's going to
-happen, meaning that MT8188 will have the same mmsys dependency as MT8195 soon.
-
-Sorry, this commit is not valid. NACK.
-
-Thanks!
-Angelo
-
-> Best Regards,
-> YuChang
-> 
->>> Signed-off-by: yu-chang.lee <yu-chang.lee@mediatek.com>
->>> ---
->>>    drivers/clk/mediatek/clk-mt8188-vpp0.c | 14 +++++++++++---
->>>    drivers/clk/mediatek/clk-mt8188-vpp1.c | 14 +++++++++++---
->>>    2 files changed, 22 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/drivers/clk/mediatek/clk-mt8188-vpp0.c
->>> b/drivers/clk/mediatek/clk-mt8188-vpp0.c
->>> index e7b02b26fefb..18fffa191ee1 100644
->>> --- a/drivers/clk/mediatek/clk-mt8188-vpp0.c
->>> +++ b/drivers/clk/mediatek/clk-mt8188-vpp0.c
->>> @@ -96,6 +96,15 @@ static const struct mtk_clk_desc vpp0_desc = {
->>>    	.num_clks = ARRAY_SIZE(vpp0_clks),
->>>    };
->>>    
->>> +static const struct of_device_id of_match_clk_mt8188_vpp0[] = {
->>> +	{
->>> +		.compatible = "mediatek,mt8188-vppsys0",
->>> +		.data = &vpp0_desc,
->>> +	}, {
->>> +		/* sentinel */
->>> +	}
->>> +};
->>> +
->>>    static const struct platform_device_id clk_mt8188_vpp0_id_table[]
->>> = {
->>>    	{ .name = "clk-mt8188-vpp0", .driver_data =
->>> (kernel_ulong_t)&vpp0_desc },
->>>    	{ /* sentinel */ }
->>> @@ -103,12 +112,11 @@ static const struct platform_device_id
->>> clk_mt8188_vpp0_id_table[] = {
->>>    MODULE_DEVICE_TABLE(platform, clk_mt8188_vpp0_id_table);
->>>    
->>>    static struct platform_driver clk_mt8188_vpp0_drv = {
->>> -	.probe = mtk_clk_pdev_probe,
->>> -	.remove_new = mtk_clk_pdev_remove,
->>> +	.probe = mtk_clk_simple_probe,
->>>    	.driver = {
->>>    		.name = "clk-mt8188-vpp0",
->>> +		.of_match_table = of_match_clk_mt8188_vpp0,
->>>    	},
->>> -	.id_table = clk_mt8188_vpp0_id_table,
->>>    };
->>>    module_platform_driver(clk_mt8188_vpp0_drv);
->>>    MODULE_LICENSE("GPL");
->>> diff --git a/drivers/clk/mediatek/clk-mt8188-vpp1.c
->>> b/drivers/clk/mediatek/clk-mt8188-vpp1.c
->>> index e8f0f7eca097..f4b35336d427 100644
->>> --- a/drivers/clk/mediatek/clk-mt8188-vpp1.c
->>> +++ b/drivers/clk/mediatek/clk-mt8188-vpp1.c
->>> @@ -91,6 +91,15 @@ static const struct mtk_clk_desc vpp1_desc = {
->>>    	.num_clks = ARRAY_SIZE(vpp1_clks),
->>>    };
->>>    
->>> +static const struct of_device_id of_match_clk_mt8188_vpp1[] = {
->>> +	{
->>> +		.compatible = "mediatek,mt8188-vppsys1",
->>> +		.data = &vpp1_desc,
->>> +	}, {
->>> +		/* sentinel */
->>> +	}
->>> +};
->>> +
->>>    static const struct platform_device_id clk_mt8188_vpp1_id_table[]
->>> = {
->>>    	{ .name = "clk-mt8188-vpp1", .driver_data =
->>> (kernel_ulong_t)&vpp1_desc },
->>>    	{ /* sentinel */ }
->>> @@ -98,12 +107,11 @@ static const struct platform_device_id
->>> clk_mt8188_vpp1_id_table[] = {
->>>    MODULE_DEVICE_TABLE(platform, clk_mt8188_vpp1_id_table);
->>>    
->>>    static struct platform_driver clk_mt8188_vpp1_drv = {
->>> -	.probe = mtk_clk_pdev_probe,
->>> -	.remove_new = mtk_clk_pdev_remove,
->>> +	.probe = mtk_clk_simple_probe,
->>>    	.driver = {
->>>    		.name = "clk-mt8188-vpp1",
->>> +		.of_match_table = of_match_clk_mt8188_vpp1,
->>>    	},
->>> -	.id_table = clk_mt8188_vpp1_id_table,
->>>    };
->>>    module_platform_driver(clk_mt8188_vpp1_drv);
->>>    MODULE_LICENSE("GPL");
->>
->>
-
-
+On 9/25/2023 3:58 PM, Gokul Sriram Palanisamy wrote:
+> This series adds support for the APSS clock to bump the CPU frequency
+> above 800MHz. APSS PLL found in the IPQ5018 is of type Stromer.
+>
+> - The first patch in the series adds the required a53pll compatible.
+>
+> - The second patch reuses Stormer Plus PLL offsets, adds configuration values
+>    for Stromer.
+>
+> - The third patch adds dts nodes to enable the pll along with the cpu
+>    operating frequency table.
+>
+> This series depends on below series
+> https://patchwork.kernel.org/project/linux-arm-msm/cover/20230913-gpll_cleanup-v2-0-c8ceb1a37680@quicinc.com/
+>
+> Changes in v3:
+> - Addressed review comment by Dmitry in patch 3.
+>
+> Changes in v2:
+> - Addressed review comments
+> - Adds dependency on above mentioned patch series for dropping
+>    CLK_SET_RATE_PARENT flag from GPLL clocks, GPLL0 clock provider for
+>    mailbox
+> - Add CPU operating point at 800MHz based on the review comments.
+>
+> Gokul Sriram Palanisamy (3):
+>    dt-bindings: clock: qcom,a53pll: add IPQ5018 compatible
+>    clk: qcom: apss-ipq-pll: add support for IPQ5018
+>    arm64: dts: qcom: ipq5018: enable the CPUFreq support
+>
+>   .../bindings/clock/qcom,a53pll.yaml           |  1 +
+>   arch/arm64/boot/dts/qcom/ipq5018.dtsi         | 40 +++++++++++++++++++
+>   drivers/clk/qcom/apss-ipq-pll.c               | 21 ++++++++++
+>   3 files changed, 62 insertions(+)
+>
