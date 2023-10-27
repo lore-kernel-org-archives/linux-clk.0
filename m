@@ -2,94 +2,80 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D774BC25B48
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Oct 2023 02:51:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3A43C25B47
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Oct 2023 07:24:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229644AbjJ0CvR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 Oct 2023 22:51:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52614 "EHLO
+        id S1345363AbjJ0HYw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 27 Oct 2023 03:24:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229437AbjJ0CvQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Oct 2023 22:51:16 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84349CA;
-        Thu, 26 Oct 2023 19:51:14 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id d9443c01a7336-1ca3c63d7f0so2861165ad.1;
-        Thu, 26 Oct 2023 19:51:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698375074; x=1698979874; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=UwGrPcEsgflO09HAy5rdI9eLTEVTJiCucDlbX44V91o=;
-        b=J/LFoEm9IdBFsHESIa86vrjGvP9DzQQIDomJWdOx9GHR+YXkk3DMsN9JuCWJVSa+Tp
-         B9S5OGtsKFLqxCnBsL56VL60fGkPQLC740AUhZZw8SIHH1+ED3d5zYDXYpVS3dBhUu1K
-         A9Xnuss0pNiOtNcVTeUcmDK80zoGbJtyrZSFPgG7g6c7iXzD9dBtCtMS/PdmD+Hce/ve
-         EgxI6SxtixaXXTRWv+WI3UPs8j1YSDOzqFnG8ELVSTiKyOSC3QqinWl87WsJoZJE3svZ
-         S6EsKoJx9DN3UydekiCH15tD2h6f6XZ5wziZ2hx5Ziln3X8YO+jzHOrcM6K2aebSdzAv
-         pLoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698375074; x=1698979874;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UwGrPcEsgflO09HAy5rdI9eLTEVTJiCucDlbX44V91o=;
-        b=qrewUS9Mcp7D0eNrMWwha46/lMZdU/+uhsyq6LidUbmI2WVO0REVuB1SkFIPOxbTxL
-         r7bneqX/XGMiuAxNnYbZkXGUHyhQJ6fenzfs8HdV6iBUbFUDxAmzUWrzUv8SwFG0q8vH
-         3MXKsm5K8rgRCwbaOCFyH921HnBSU4Z1FSgcjSe69euHZeQc7Vp7al3F/EbW1lUYZOHT
-         9KW6S+dBkZd844k/jGR/1foRZsDaWQ3GctXqocBJ+i5mW3NSPDhvfPB8VijslbeOzika
-         lr6PPMDFzGd6oAyFozaTzYH9QQR9U5+6V0ZBNXJTW69E3dYzkbe4LVEs/6gO+aoSqqgv
-         mVnA==
-X-Gm-Message-State: AOJu0YwnImr2MP5pIqcRdlHq0e4p5I4/k3oHabboI+6oTGvgWfQ+6Pt6
-        iHlsjVTgAJAZP35hbkRduZU=
-X-Google-Smtp-Source: AGHT+IG9Dmz0BzSlr6ni6jNSm45meUAq0sYl4SNSSDX74yGa+mJ5eeHfKMxB6gMgNJkdcEuxgVfkDA==
-X-Received: by 2002:a17:902:d485:b0:1ca:858d:5bef with SMTP id c5-20020a170902d48500b001ca858d5befmr1401151plg.4.1698375073920;
-        Thu, 26 Oct 2023 19:51:13 -0700 (PDT)
-Received: from hbh25y.mshome.net (059149129201.ctinets.com. [59.149.129.201])
-        by smtp.gmail.com with ESMTPSA id r9-20020a170902be0900b001c3be750900sm377882pls.163.2023.10.26.19.51.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Oct 2023 19:51:13 -0700 (PDT)
-From:   Hangyu Hua <hbh25y@gmail.com>
-To:     kristo@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        tony@atomide.com, dario.binacchi@amarulasolutions.com,
-        claudiu.beznea@microchip.com, robh@kernel.org,
-        andriy.shevchenko@linux.intel.com
-Cc:     linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Hangyu Hua <hbh25y@gmail.com>
-Subject: [PATCH v2] ti: fix possible memory leak in _ti_omap4_clkctrl_setup()
-Date:   Fri, 27 Oct 2023 10:50:57 +0800
-Message-Id: <20231027025057.11510-1-hbh25y@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        with ESMTP id S232306AbjJ0HYv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Oct 2023 03:24:51 -0400
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8192194
+        for <linux-clk@vger.kernel.org>; Fri, 27 Oct 2023 00:24:48 -0700 (PDT)
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-99-c3ny-4--NCCoNyvHcCaNEQ-1; Fri, 27 Oct 2023 08:24:46 +0100
+X-MC-Unique: c3ny-4--NCCoNyvHcCaNEQ-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Fri, 27 Oct
+ 2023 08:24:44 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Fri, 27 Oct 2023 08:24:44 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Linus Torvalds' <torvalds@linux-foundation.org>
+CC:     Vasily Gorbik <gor@linux.ibm.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Niklas Schnelle" <schnelle@linux.ibm.com>,
+        "kernel@collabora.com" <kernel@collabora.com>
+Subject: RE: [PATCH v4 1/3] math.h: add DIV_ROUND_UP_NO_OVERFLOW
+Thread-Topic: [PATCH v4 1/3] math.h: add DIV_ROUND_UP_NO_OVERFLOW
+Thread-Index: AQHaB2rGM+Cp9N+qfkK9yv140Cm+RbBbwb/AgAB4uICAAQLGEA==
+Date:   Fri, 27 Oct 2023 07:24:44 +0000
+Message-ID: <57e8138250304f5b9701867949b9ee04@AcuMS.aculab.com>
+References: <20231024161931.78567-1-sebastian.reichel@collabora.com>
+ <20231024161931.78567-2-sebastian.reichel@collabora.com>
+ <CAHk-=whYDbZ29fx_xeSxtYSjtF8WJkaLjzyB8RN5_Rk9Sh-YyQ@mail.gmail.com>
+ <CAHk-=wjO5ivM6k7iMiThO9JfxH0dhLe=mcC4TQwReU0nBCnWpg@mail.gmail.com>
+ <your-ad-here.call-01698246313-ext-3263@work.hours>
+ <CAHk-=wgs2DDdckcONG+YbB-GDH2QFCoZJ=Vm+YXxb1moZzuDgQ@mail.gmail.com>
+ <055dd714f98f4e45b2add561b7663378@AcuMS.aculab.com>
+ <CAHk-=wgBM7Swi7wmvi0M+sBFjzn-vEv1KzgM-hbJ4h3J3BR+UA@mail.gmail.com>
+In-Reply-To: <CAHk-=wgBM7Swi7wmvi0M+sBFjzn-vEv1KzgM-hbJ4h3J3BR+UA@mail.gmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-kstrndup() and kstrdup_and_replace() in clkctrl_get_name() can perform
-dynamic memory allocation. So clkctrl_name() needs to be freed when
-provider->clkdm_name is NULL.
-
-Fixes: bd46cd0b802d ("clk: ti: clkctrl: check return value of kasprintf()")
-Signed-off-by: Hangyu Hua <hbh25y@gmail.com>
----
-
-	v2: fix commit info.
-
- drivers/clk/ti/clkctrl.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
-index 607e34d8e289..cb4aa8a45bb2 100644
---- a/drivers/clk/ti/clkctrl.c
-+++ b/drivers/clk/ti/clkctrl.c
-@@ -591,6 +591,7 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
- 		provider->clkdm_name = kasprintf(GFP_KERNEL,
- 						 "%s_clkdm", clkctrl_name);
- 		if (!provider->clkdm_name) {
-+			kfree(clkctrl_name);
- 			kfree(provider);
- 			return;
- 		}
--- 
-2.34.1
+RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMjYgT2N0b2JlciAyMDIzIDE3OjU0DQo+IFN1
+YmplY3Q6IFJlOiBbUEFUQ0ggdjQgMS8zXSBtYXRoLmg6IGFkZCBESVZfUk9VTkRfVVBfTk9fT1ZF
+UkZMT1cNCj4gDQo+IE9uIFdlZCwgMjUgT2N0IDIwMjMgYXQgMjI6NTcsIERhdmlkIExhaWdodCA8
+RGF2aWQuTGFpZ2h0QGFjdWxhYi5jb20+IHdyb3RlOg0KPiA+DQo+ID4gRG9lc24ndCB0aGF0IHZl
+cnNpb24gZW5kIHVwIGNhbGxpbmcgaW5saW5lIGZ1bmN0aW9ucz8NCj4gPiBTbyB3b24ndCBiZSB1
+c2FibGUgaW4gc3RhdGljIGluaXRpYWxpc2VycyAtIHRoZSBzYW1lIGFzIHN0YXRlbWVudCBmdW5j
+dGlvbnMuDQo+IA0KPiBEYXZpZCwgcGxlYXNlIGVpdGhlciByZWFkIHdoYXQgSSB3cml0ZSwgb3Ig
+YWN0dWFsbHkgdGVzdCB0aGluZ3Mgb3V0LA0KPiBpbnN0ZWFkIG9mIGp1c3QgYWRkaW5nIG5vaXNl
+Lg0KDQpJIGRvIHRlc3QgYSBsb3Qgb2Ygc3R1ZmYuDQpGb3Igc29tZSByZWFzb24gSSdkIGFzc3Vt
+ZWQgdGhhdCB5b3Ugd291bGQgYmUgYWJsZSB0bw0KaGF2ZSBhIGNhbGwgdG8gYSBmdW5jdGlvbiBp
+bnNpZGUgYSBzdGF0aWMgaW5pdGlhbGlzZXIuDQoNCkNsZWFybHkgbm90IGVub3VnaCBjb2ZmZWUg
+Oi0oDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkg
+Um9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlv
+biBObzogMTM5NzM4NiAoV2FsZXMpDQo=
 
