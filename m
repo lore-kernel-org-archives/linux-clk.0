@@ -2,126 +2,80 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44314C25B47
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Oct 2023 18:02:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60275C25B48
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Oct 2023 19:20:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231560AbjJ0SCf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 27 Oct 2023 14:02:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52630 "EHLO
+        id S231302AbjJ0TUo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 27 Oct 2023 15:20:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231461AbjJ0SCe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Oct 2023 14:02:34 -0400
-Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79F32F3;
-        Fri, 27 Oct 2023 11:02:32 -0700 (PDT)
-From:   Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1698429751;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=275/pEO9JSbT2rFQuOaMcx49ECFedNGNEcjTI6T5tHQ=;
-        b=Cnym3aE/MF04lGmNEJ/rj7eiBbiNdk+shih3rRLBMz4VyD7Zf6m1qZDw33ZcSbXjM994/L
-        n6Rk+EubSPDLkicm+IKTuemcD7T8eF0mb/zrxvI+QurSlI361oSl3j+xaEd6NM99jeC5B8
-        vMv4AuFABxjznTyXaVjxyUEe1ArpgGvLfaSMkxV6XDOPgKQq5x8woyBt3MSK8YJuynjHH9
-        8K2qLSMgNUeq97IGvbfvvb9fxKIOjlvJYPkka+EN7oiFdT16YioWtxK3lhrz55Id3XsN8+
-        zGmxT6zssPwUwkJaR3y/SKHilgsR0nI87zc6lfm32GtrGP9ssWa+b26zRKP71A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1698429751;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=275/pEO9JSbT2rFQuOaMcx49ECFedNGNEcjTI6T5tHQ=;
-        b=/Bh6SXcTZYFvCff2EuZ0kRFjPMNMy5Z1grSfncXKCX8u1pJkSJwkiFCPhQ/sQo7G+WpZwX
-        zz0lNb02UgKn53AQ==
-To:     Claudiu <claudiu.beznea@tuxon.dev>, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        geert+renesas@glider.be, magnus.damm@gmail.com,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        prabhakar.mahadev-lad.rj@bp.renesas.com
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH 4/7] irqchip/renesas-rzg2l: implement restriction when
- writing ISCR register
-In-Reply-To: <20231023102223.1309614-5-claudiu.beznea.uj@bp.renesas.com>
-References: <20231023102223.1309614-1-claudiu.beznea.uj@bp.renesas.com>
- <20231023102223.1309614-5-claudiu.beznea.uj@bp.renesas.com>
-Date:   Fri, 27 Oct 2023 20:02:30 +0200
-Message-ID: <878r7o2bbd.ffs@tglx>
+        with ESMTP id S231360AbjJ0TUn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Oct 2023 15:20:43 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC78C186
+        for <linux-clk@vger.kernel.org>; Fri, 27 Oct 2023 12:20:41 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 521ACC433C7;
+        Fri, 27 Oct 2023 19:20:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1698434441;
+        bh=JKKpzqO+6p5kskoHSTC9fZiBdexWLIpncw+xKzTJ1UI=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=utDkT9BxZ9zJNlSchLbWG360/5nYRChqLAKkt93onripBRlf+ZRoeQiOmMaW/eJ3e
+         PA5YSF2IydoHwAbNCGA2US4GyUwC1oRF7IeZdIqOBy16iAT/t4Xlrvv3dA6mk2hfPg
+         7JwBkzAeZayU6QIJQgfzwTyVjbn8ayDySSek9kCpYw6ENM+MtR6Hjr78HaxM8E00m5
+         O0bh7emJtOf4T6x4fv8cKUwZongUCoPI67YsO342sGL4X+2EagcZMHs6zbnzzom/Cf
+         bqaGvtdGz5hqpYZXVhYxWlxzUbFJUTxxYIhmvCHzUN4ef09j+uquFvJzjxOE7vdNjx
+         90no+vpBKENhw==
+Message-ID: <6c2f97c17fdab82782ccc0a09c291d4b.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20231027085840.30098-1-marex@denx.de>
+References: <20231027085840.30098-1-marex@denx.de>
+Subject: Re: [PATCH] clk: si521xx: Increase stack based print buffer size in probe
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Marek Vasut <marex@denx.de>, kernel test robot <lkp@intel.com>,
+        Michael Turquette <mturquette@baylibre.com>
+To:     Marek Vasut <marex@denx.de>, linux-clk@vger.kernel.org
+Date:   Fri, 27 Oct 2023 12:20:39 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Oct 23 2023 at 13:22, Claudiu wrote:
-> In hardware manual of RZ/G2L (r01uh0914ej0130-rzg2l-rzg2lc.pdf)
-
-This filename is completely useless.
-
-> is available the following statement with regards to clearing
-> interrupts
-
-The RZ/G2L manual describes the operation to clear interrupts
-
-> though ISCR register:
-
-through the ISCR ...
-
->
-> [Write operation]
-> When "Falling-edge detection", "Rising-edge detection" or
-> "Falling/Rising-edge detection" is set in ISCR.:
-> - In case ISTAT is 1
-> 	0: IRQn interrupt detection status is cleared.
-> 	1: Invalid to write.
-> - In case ISTAT is 0
-> 	Invalid to write.
-> When =E2=80=9CLow-level detection=E2=80=9D is set in IITSR.:
-> 	Invalid to write.
->
-> Thus, take into account interrupt type when clearing interrupts though
-
-take the interrupt type into account... through the ISCR ...
-
-> ISCR register.
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Quoting Marek Vasut (2023-10-27 01:58:24)
+> Increase the size of temporary print buffer on stack to fix the
+> following warnings reported by LKP.
+>=20
+> Since all the input parameters of snprintf() are under control
+> of this driver, it is not possible to trigger and overflow here,
+> but since the print buffer is on stack and discarded once driver
+> probe() finishes, it is not an issue to increase it by 10 bytes
+> and fix the warning in the process. Make it so.
+>=20
+> "
+>    drivers/clk/clk-si521xx.c: In function 'si521xx_probe':
+> >> drivers/clk/clk-si521xx.c:318:26: warning: '%d' directive output may b=
+e truncated writing between 1 and 10 bytes into a region of size 2 [-Wforma=
+t-truncation=3D]
+>       snprintf(name, 6, "DIFF%d", i);
+>                              ^~
+>    drivers/clk/clk-si521xx.c:318:21: note: directive argument in the rang=
+e [0, 2147483647]
+>       snprintf(name, 6, "DIFF%d", i);
+>                         ^~~~~~~~
+>    drivers/clk/clk-si521xx.c:318:3: note: 'snprintf' output between 6 and=
+ 15 bytes into a destination of size 6
+>       snprintf(name, 6, "DIFF%d", i);
+>       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> "
+>=20
+> Fixes: edc12763a3a2 ("clk: si521xx: Clock driver for Skyworks Si521xx I2C=
+ PCIe clock generators")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202310260412.AGASjFN4-lkp@i=
+ntel.com/
+> Signed-off-by: Marek Vasut <marex@denx.de>
 > ---
->  drivers/irqchip/irq-renesas-rzg2l.c | 14 ++++++++++----
->  1 file changed, 10 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/irqchip/irq-renesas-rzg2l.c b/drivers/irqchip/irq-re=
-nesas-rzg2l.c
-> index 9ce0d6d67486..1ed9cb7178fa 100644
-> --- a/drivers/irqchip/irq-renesas-rzg2l.c
-> +++ b/drivers/irqchip/irq-renesas-rzg2l.c
-> @@ -73,11 +73,17 @@ static void rzg2l_irq_eoi(struct irq_data *d)
->  	unsigned int hw_irq =3D irqd_to_hwirq(d) - IRQC_IRQ_START;
->  	struct rzg2l_irqc_priv *priv =3D irq_data_to_priv(d);
->  	u32 bit =3D BIT(hw_irq);
-> -	u32 reg;
-> +	u32 iitsr, iscr;
->=20=20
-> -	reg =3D readl_relaxed(priv->base + ISCR);
-> -	if (reg & bit)
-> -		writel_relaxed(reg & ~bit, priv->base + ISCR);
-> +	iscr =3D readl_relaxed(priv->base + ISCR);
-> +	iitsr =3D readl_relaxed(priv->base + IITSR);
-> +
-> +	/*
-> +	 * ISCR could be cleared only if type is falling-edge, rising-edge or
 
-ISCR can only be cleared if the type is ...
-
-> +	 * falling/rising-edge.
-> +	 */
-> +	if ((iscr & bit) && (iitsr & IITSR_IITSEL_MASK(hw_irq)))
-> +		writel_relaxed(iscr & ~bit, priv->base + ISCR);
->  }
->=20=20
->  static void rzg2l_tint_eoi(struct irq_data *d)
+Applied to clk-next
