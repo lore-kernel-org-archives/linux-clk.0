@@ -2,80 +2,78 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60275C25B48
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Oct 2023 19:20:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B53C25B48
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Oct 2023 19:32:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231302AbjJ0TUo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 27 Oct 2023 15:20:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59020 "EHLO
+        id S230451AbjJ0TcU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 27 Oct 2023 15:32:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231360AbjJ0TUn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Oct 2023 15:20:43 -0400
+        with ESMTP id S232192AbjJ0TcT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Oct 2023 15:32:19 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC78C186
-        for <linux-clk@vger.kernel.org>; Fri, 27 Oct 2023 12:20:41 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 521ACC433C7;
-        Fri, 27 Oct 2023 19:20:41 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F31401AC;
+        Fri, 27 Oct 2023 12:32:15 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FDECC433C8;
+        Fri, 27 Oct 2023 19:32:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1698434441;
-        bh=JKKpzqO+6p5kskoHSTC9fZiBdexWLIpncw+xKzTJ1UI=;
+        s=k20201202; t=1698435135;
+        bh=fuguKJFE9lKtUWRw70P5TBucVFe6hqfcM6H/II3Mo/U=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=utDkT9BxZ9zJNlSchLbWG360/5nYRChqLAKkt93onripBRlf+ZRoeQiOmMaW/eJ3e
-         PA5YSF2IydoHwAbNCGA2US4GyUwC1oRF7IeZdIqOBy16iAT/t4Xlrvv3dA6mk2hfPg
-         7JwBkzAeZayU6QIJQgfzwTyVjbn8ayDySSek9kCpYw6ENM+MtR6Hjr78HaxM8E00m5
-         O0bh7emJtOf4T6x4fv8cKUwZongUCoPI67YsO342sGL4X+2EagcZMHs6zbnzzom/Cf
-         bqaGvtdGz5hqpYZXVhYxWlxzUbFJUTxxYIhmvCHzUN4ef09j+uquFvJzjxOE7vdNjx
-         90no+vpBKENhw==
-Message-ID: <6c2f97c17fdab82782ccc0a09c291d4b.sboyd@kernel.org>
+        b=MV82OZB3QCcVVKUElTSqoORgwwRJ6uCW3atikncbLA/Aj7i9JubfgWVds3TLsjBMA
+         DQswiqdTzdz2TjFSAIzNQnKZNbufJOrcdeGFiO91EoYZ6eJ9v9DlAPFTZLbxIhDg/o
+         Ee98yFqPzIzdjjFjx+/VxjqjSQAqxb8WD46XKewI/98TvT32NCNHkCgc1gHRjQH/0W
+         jJ4hVgwcwnXUnCFU1082cLYzM9IsO3wvQITaSeIvtLuJk7tkBT+GlftW8Tx3aH5lKi
+         PqVXxxIjzcI7vhXwz8dTGY9D04FpEnfrIyxWzH8cne9qqm3ORClAxjkml7L7rTrYPg
+         0+sLorSisag7A==
+Message-ID: <7e0177324fe451aa9fc7c68511533aaf.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20231027085840.30098-1-marex@denx.de>
-References: <20231027085840.30098-1-marex@denx.de>
-Subject: Re: [PATCH] clk: si521xx: Increase stack based print buffer size in probe
+In-Reply-To: <20231027151105.1317488-1-andersson@kernel.org>
+References: <20231027151105.1317488-1-andersson@kernel.org>
+Subject: Re: [GIT PULL] Qualcomm clock updates for v6.7
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Marek Vasut <marex@denx.de>, kernel test robot <lkp@intel.com>,
-        Michael Turquette <mturquette@baylibre.com>
-To:     Marek Vasut <marex@denx.de>, linux-clk@vger.kernel.org
-Date:   Fri, 27 Oct 2023 12:20:39 -0700
+Cc:     linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Andy Gross <agross@kernel.org>,
+        Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>,
+        Varadarajan Narayanan <quic_varada@quicinc.com>,
+        Adam Skladowski <a39.skl@gmail.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Danila Tikhonov <danila@jiaxyga.com>,
+        Devi Priya <quic_devipriy@quicinc.com>,
+        Luca Weiss <luca@z3ntu.xyz>, Rob Herring <robh@kernel.org>,
+        Robert Marko <robimarko@gmail.com>,
+        Uwe =?utf-8?q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Bjorn Andersson <andersson@kernel.org>, linux-clk@vger.kernel.org
+Date:   Fri, 27 Oct 2023 12:32:13 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Marek Vasut (2023-10-27 01:58:24)
-> Increase the size of temporary print buffer on stack to fix the
-> following warnings reported by LKP.
+Quoting Bjorn Andersson (2023-10-27 08:11:04)
 >=20
-> Since all the input parameters of snprintf() are under control
-> of this driver, it is not possible to trigger and overflow here,
-> but since the print buffer is on stack and discarded once driver
-> probe() finishes, it is not an issue to increase it by 10 bytes
-> and fix the warning in the process. Make it so.
+> The following changes since commit 0bb80ecc33a8fb5a682236443c1e740d5c917d=
+1d:
 >=20
-> "
->    drivers/clk/clk-si521xx.c: In function 'si521xx_probe':
-> >> drivers/clk/clk-si521xx.c:318:26: warning: '%d' directive output may b=
-e truncated writing between 1 and 10 bytes into a region of size 2 [-Wforma=
-t-truncation=3D]
->       snprintf(name, 6, "DIFF%d", i);
->                              ^~
->    drivers/clk/clk-si521xx.c:318:21: note: directive argument in the rang=
-e [0, 2147483647]
->       snprintf(name, 6, "DIFF%d", i);
->                         ^~~~~~~~
->    drivers/clk/clk-si521xx.c:318:3: note: 'snprintf' output between 6 and=
- 15 bytes into a destination of size 6
->       snprintf(name, 6, "DIFF%d", i);
->       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> "
+>   Linux 6.6-rc1 (2023-09-10 16:28:41 -0700)
 >=20
-> Fixes: edc12763a3a2 ("clk: si521xx: Clock driver for Skyworks Si521xx I2C=
- PCIe clock generators")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202310260412.AGASjFN4-lkp@i=
-ntel.com/
-> Signed-off-by: Marek Vasut <marex@denx.de>
-> ---
+> are available in the Git repository at:
+>=20
+>   https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qco=
+m-clk-for-6.7
+>=20
+> for you to fetch changes up to e0e6373d653b7707bf042ecf1538884597c5d0da:
+>=20
+>   clk: qcom: apss-ipq6018: add the GPLL0 clock also as clock provider (20=
+23-10-21 12:59:13 -0700)
+>=20
+> ----------------------------------------------------------------
 
-Applied to clk-next
+Thanks. Pulled into clk-next
