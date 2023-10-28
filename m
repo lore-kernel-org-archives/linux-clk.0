@@ -2,70 +2,71 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 091ECC0032E
-	for <linux-clk@archiver.kernel.org>; Sat, 28 Oct 2023 13:06:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DC4EC0032E
+	for <linux-clk@archiver.kernel.org>; Sat, 28 Oct 2023 13:10:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229698AbjJ1NGl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 28 Oct 2023 09:06:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41388 "EHLO
+        id S229652AbjJ1NKe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 28 Oct 2023 09:10:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229493AbjJ1NGk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 28 Oct 2023 09:06:40 -0400
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55497E0
-        for <linux-clk@vger.kernel.org>; Sat, 28 Oct 2023 06:06:38 -0700 (PDT)
-Received: by mail-lj1-x234.google.com with SMTP id 38308e7fff4ca-2c518a1d83fso45632151fa.3
-        for <linux-clk@vger.kernel.org>; Sat, 28 Oct 2023 06:06:38 -0700 (PDT)
+        with ESMTP id S229521AbjJ1NKc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 28 Oct 2023 09:10:32 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3E3EE1
+        for <linux-clk@vger.kernel.org>; Sat, 28 Oct 2023 06:10:28 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-507bd644a96so4288166e87.3
+        for <linux-clk@vger.kernel.org>; Sat, 28 Oct 2023 06:10:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698498396; x=1699103196; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1698498627; x=1699103427; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=nEJnk1mY1BYpzs+s+eajZKkTegA51coEw5OM/X1PGos=;
-        b=BIFtZzJ+pF0nEBZWK/sXQdVbx0VShfU4k3OswHflU+vcd8zbvSAuVS+M5M1TOUIHUA
-         AZ+/nCwEgGQewfWoks/mo8Ju42QES9oHcBLXgNo0EflBM+B3MBb/w0HOUxckoWDbhtvJ
-         K2tnJmQt45yuubQFoQNlyI2zlhVu8iD+fmk19w3E5gTCeTPbwM6UOkgLlEa4/Pn7LfDM
-         fh4RfY6m2X2lW9AsEKgekCQzFliPT2uP3IKmNbZffryRpZ5/rc7L8mthceMHdA2P7eia
-         chntQO+I6T/6uY/adXwOQsxVPcuZuj2uBwiZQjYP/jgFQdxyCRRezPiRumWM5Gw3qVOp
-         oFvw==
+        bh=ZKXl39cntcXxzT0pKkixzyQYHV2L3p7OIUYBBtLYXxE=;
+        b=Z9Ptt2MVZak4QycK9qN+pC0bqNPR2n/0vlmYfVFySDzs5YTPJ7kePBb/FUNoduqj2Z
+         VYbp+UgOQZvYUYCV44Ry+WhYVAHm79zeY3eteW5u9EU1BqcRlCQSy7hG49njZDQtPZs+
+         uSxh8E7T4gXs1HeOyPGnNfJlIOkEtLQOGnVOpZSIn6SHDzq+60M73EyG5oovWas0WRA6
+         +Hye8cN+UYedIIK466Dli7sKahMY8bBpd8hqgB6mBoLZyckAZjwy12LzzeJOAK5iUgLx
+         K+QPB9Cecm1PBenj5Fcm/p8fqdtlfbhn+VNT1pIEBjlWNZq0qenYgt3yN1l6Uu1vICx3
+         2lhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698498396; x=1699103196;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1698498627; x=1699103427;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nEJnk1mY1BYpzs+s+eajZKkTegA51coEw5OM/X1PGos=;
-        b=n6qheRNXtjvPmLXRxoEJxT0bedFju4VNRTqqgqbdjpt5uOhpEVWrleW7dFJBMyIvtD
-         5JzaWPFw5lmzJASWgTzMJnRcWwXhG/GjEKKnAGvhNgGvq2AMaplWk6OcdhI/L07fmw7D
-         cNSSxvXF4DHy95RoWYG8xE+wEdGEgJkzAI7TvdionFI+dnoXOhqSNjGufljDWJQGkmpu
-         WhNG2kh1NUO3g1g7eDutf7AsPlbeLm/+0mCkMSXhlQL27b+PmddY5fPA1lamD/Ze+Lr8
-         SrclYQ7Zjru88HqVFd+e/gLcPtGCFQ+m513BjCoeGIiG6iZbSy0Q50fiWXTOceAcAg/J
-         BNoQ==
-X-Gm-Message-State: AOJu0YzAF/HYEndUnjmE+OF5sWahRxc+B8Sv9/u8pvX82Igyn9GY0YQ2
-        o03AplEkmRUDrZKKKEiOwFOD57ShnGWCWTgU/mI=
-X-Google-Smtp-Source: AGHT+IGguaRgN4UqqIPRwe20wpwSRSo/M+SCxM/3uc39zLsAzkNVAY4Tr7oBmpFypqAlyqKOlyRklw==
-X-Received: by 2002:a2e:bc81:0:b0:2bf:f32a:1f68 with SMTP id h1-20020a2ebc81000000b002bff32a1f68mr4550182ljf.19.1698498396559;
-        Sat, 28 Oct 2023 06:06:36 -0700 (PDT)
+        bh=ZKXl39cntcXxzT0pKkixzyQYHV2L3p7OIUYBBtLYXxE=;
+        b=pboz4o9HKf2epnD41GtRBhJNs7iZ0CxAJQnM9mPYcZLOV8+kx5eXcrlwyYlkBAZ1D5
+         E4jfeRFmRUJVUjK+OZ41FJl0rG9ul7uGOrND1+1f1xXXufpHupqW7j84CjZuFvUYRrKI
+         mL3gACYQWAFZOTVK9LcjFrLl7KCBcRwGVDCc1cEJb49tRLJr/dPeRqpFKLvxBeiEitBS
+         +LZiCNXD3cU+T3XmjgpnhnaQoRqH2K6wNvMesaYRXZvFyELFxA2Ff3ZmdrfF0MeXvSqM
+         4slpdF5lHN/mu3hIc6iwIn9bp5xdnnGwOYdG4Hbhpet4DFms+2vZ9YmHSS+8ZZrPr+H7
+         npsA==
+X-Gm-Message-State: AOJu0YxfO5fUDD8vBtPGqfVMBK+1EIKp+QIZzWzoF9gMw3AC6gytAJuV
+        VfW2MNRggSBrH4agUnG3Y0Ro+g==
+X-Google-Smtp-Source: AGHT+IGViIQ2XE1JTYIjNWKOnXi9cCUuWGqfMlKPYlE3gSO42U36q8J+DD2FxHEWTtFu0vjZhjlRrA==
+X-Received: by 2002:ac2:4105:0:b0:4fb:bef0:948e with SMTP id b5-20020ac24105000000b004fbbef0948emr3645056lfi.5.1698498626931;
+        Sat, 28 Oct 2023 06:10:26 -0700 (PDT)
 Received: from [192.168.130.123] (178235177183.dynamic-4-waw-k-1-1-0.vectranet.pl. [178.235.177.183])
-        by smtp.gmail.com with ESMTPSA id z21-20020a2e8415000000b002b6ce8b0dd6sm618828ljg.75.2023.10.28.06.06.35
+        by smtp.gmail.com with ESMTPSA id i21-20020a056512225500b004fe2f085d5csm643949lfu.299.2023.10.28.06.10.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 28 Oct 2023 06:06:36 -0700 (PDT)
-Message-ID: <2f8672a3-1ce4-4f8c-a472-3a1ad09e9214@linaro.org>
-Date:   Sat, 28 Oct 2023 15:06:35 +0200
+        Sat, 28 Oct 2023 06:10:26 -0700 (PDT)
+Message-ID: <a39e4e27-3139-4496-9009-81821bd7727e@linaro.org>
+Date:   Sat, 28 Oct 2023 15:10:23 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: gcc-msm8939: Fix mclk0 & mclk1 for 24 MHz
+Subject: Re: [PATCH] clk: qcom: gcc-msm8939: Add missing CSI2 related clocks
 Content-Language: en-US
 To:     Vincent Knecht <vincent.knecht@mailoo.org>,
-        Bjorn Andersson <andersson@kernel.org>,
         Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawn.guo@linaro.org>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Stephan Gerhold <stephan@gerhold.net>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Stephan Gerhold <stephan@gerhold.net>
-References: <20231028120756.316574-1-vincent.knecht@mailoo.org>
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20231028121047.317550-1-vincent.knecht@mailoo.org>
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
@@ -102,23 +103,28 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <20231028120756.316574-1-vincent.knecht@mailoo.org>
+In-Reply-To: <20231028121047.317550-1-vincent.knecht@mailoo.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 28.10.2023 14:07, Vincent Knecht wrote:
-> Fix mclk0 & mclk1 parent map to use correct GPLL6 configuration and
-> freq_tbl to use GPLL6 instead of GPLL0 so that they tick at 24 MHz.
+On 28.10.2023 14:10, Vincent Knecht wrote:
+> When adding in the indexes for this clock-controller we missed
+> GCC_CAMSS_CSI2_AHB_CLK, GCC_CAMSS_CSI2_CLK, GCC_CAMSS_CSI2PHY_CLK,
+> GCC_CAMSS_CSI2PIX_CLK and GCC_CAMSS_CSI2RDI_CLK.
 > 
-> Fixes: 1664014e4679 ("clk: qcom: gcc-msm8939: Add MSM8939 Generic Clock Controller")
-> Suggested-by: Stephan Gerhold <stephan@gerhold.net>
-Reported-by?
-
-
+> Add them in now.
+> 
 > Signed-off-by: Vincent Knecht <vincent.knecht@mailoo.org>
+> ---
+> No fixes tag because camss is a not-yet-enabled feature for msm8939.
+> 
+> Also didn't rename ftbl_gcc_camss_csi0_1_clk now that csi2 uses it
+> to avoid not-required-churn... should it be done anyway ?
+Would make sense IMO
+
 > ---
 Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
