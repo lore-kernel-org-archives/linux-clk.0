@@ -2,88 +2,68 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C528C41535
-	for <linux-clk@archiver.kernel.org>; Sun, 29 Oct 2023 06:20:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2088CC4167D
+	for <linux-clk@archiver.kernel.org>; Sun, 29 Oct 2023 06:49:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229912AbjJ2GUh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 29 Oct 2023 02:20:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45852 "EHLO
+        id S229486AbjJ2GtL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 29 Oct 2023 02:49:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229486AbjJ2GUg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 29 Oct 2023 02:20:36 -0400
+        with ESMTP id S229446AbjJ2GtK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 29 Oct 2023 02:49:10 -0400
 Received: from mailo.com (msg-1.mailo.com [213.182.54.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04587D3;
-        Sat, 28 Oct 2023 23:20:31 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A035ECF;
+        Sat, 28 Oct 2023 23:49:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=mailoo.org; s=mailo;
-        t=1698560417; bh=37Y1s8lOgp7BfOpW5RNDm5P6kGc37j2oLnElaeTQcQ4=;
-        h=X-EA-Auth:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-         MIME-Version:Content-Transfer-Encoding;
-        b=UPBLWjm05o6GLNivdWIB7kTg7lqA0udjjG46xUvl8axET24MmP5Ttmlw8i8qiD6UY
-         pfPAB1ZCgG5TRZKW1TjqxQ4H7gfwoX74poiYDFxZgiOIoDxIbsO5ZB2eOXffKEEkVw
-         iN1ugrbnageit7suGVFiCE1Zzr8cCtozwx6xYXZs=
-Received: by b221-4.in.mailobj.net [192.168.90.24] with ESMTP
+        t=1698562135; bh=il9Fc2Id6aYri4aenoZl3aFbJEXg0M1dBlK1j6kQgZM=;
+        h=X-EA-Auth:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
+         References:Content-Type:Content-Transfer-Encoding:MIME-Version;
+        b=DVneJ5HKDQzvqY5cL7ZJ0zjd296MagKxHeREkyKE4uw2QJbTD+tjfKYW64htSexOe
+         HtbnvFPsjc6tsfJVVtv5DeqnZJ7t3TMqPOfxz6MM69w8kvpwxE2eRy+rvcmS9pIHUb
+         9ufnZcCPOCJ/o12ViRa0F5ZyqHkkAn0KrWTrnFZs=
+Received: by b221-3.in.mailobj.net [192.168.90.23] with ESMTP
         via ip-22.mailoo.org [213.182.54.22]
-        Sun, 29 Oct 2023 07:20:17 +0100 (CET)
-X-EA-Auth: ilAzNe3xxBlE7UdNOUkNEwLBi0hCH6Pw4KM8ysivRuPK1pcxww1VsQ3/z76sIM7TbMpp92rON9AdLxCA8b1mVyokeylgrljR56X03DLU1gk=
+        Sun, 29 Oct 2023 07:48:55 +0100 (CET)
+X-EA-Auth: 0gKghmjOi49/2iYqDCeG6caHkCfjeYJ8z58c0pw/xcedGi7dK9MdswDKuSLkRyxsPWNj5aRzcLU2+dQG5H8uvzY9G44kzR94rxzzc7R0Rds=
+Message-ID: <6a79fd87af45c14aae5205ea1aa3875827fa1d31.camel@mailoo.org>
+Subject: Re: [PATCH] clk: qcom: gcc-msm8939: Fix mclk0 & mclk1 for 24 MHz
 From:   Vincent Knecht <vincent.knecht@mailoo.org>
-To:     Andy Gross <agross@kernel.org>,
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
         Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Stephan Gerhold <stephan@gerhold.net>,
+        Shawn Guo <shawn.guo@linaro.org>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     Vincent Knecht <vincent.knecht@mailoo.org>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Subject: [PATCH v2 1/2] dt-bindings: clock: qcom,gcc-msm8939: Add CSI2 related clocks
-Date:   Sun, 29 Oct 2023 07:19:47 +0100
-Message-ID: <20231029061948.505883-1-vincent.knecht@mailoo.org>
-X-Mailer: git-send-email 2.41.0
+        linux-kernel@vger.kernel.org
+Cc:     Stephan Gerhold <stephan@gerhold.net>
+Date:   Sun, 29 Oct 2023 07:48:55 +0100
+In-Reply-To: <2f8672a3-1ce4-4f8c-a472-3a1ad09e9214@linaro.org>
+References: <20231028120756.316574-1-vincent.knecht@mailoo.org>
+         <2f8672a3-1ce4-4f8c-a472-3a1ad09e9214@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4 (3.46.4-1.fc37) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-When adding in the indexes for this clock-controller we missed
-GCC_CAMSS_CSI2_AHB_CLK, GCC_CAMSS_CSI2_CLK, GCC_CAMSS_CSI2PHY_CLK,
-GCC_CAMSS_CSI2PIX_CLK and GCC_CAMSS_CSI2RDI_CLK.
+Le samedi 28 octobre 2023 =C3=A0 15:06 +0200, Konrad Dybcio a =C3=A9crit=C2=
+=A0:
+> On 28.10.2023 14:07, Vincent Knecht wrote:
+> > Fix mclk0 & mclk1 parent map to use correct GPLL6 configuration and
+> > freq_tbl to use GPLL6 instead of GPLL0 so that they tick at 24 MHz.
+> >=20
+> > Fixes: 1664014e4679 ("clk: qcom: gcc-msm8939: Add MSM8939 Generic Clock=
+ Controller")
+> > Suggested-by: Stephan Gerhold <stephan@gerhold.net>
+> Reported-by?
 
-Add them in now.
-
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Signed-off-by: Vincent Knecht <vincent.knecht@mailoo.org>
----
-v2: split bindings change to a distinct patch (Krzysztof)
-v1: https://lore.kernel.org/linux-arm-msm/e44c751a-f0f5-42d8-aa99-743b349fdf9b@linaro.org/T/
----
- include/dt-bindings/clock/qcom,gcc-msm8939.h | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/include/dt-bindings/clock/qcom,gcc-msm8939.h b/include/dt-bindings/clock/qcom,gcc-msm8939.h
-index 2d545ed0d35a..9a9bc55b49af 100644
---- a/include/dt-bindings/clock/qcom,gcc-msm8939.h
-+++ b/include/dt-bindings/clock/qcom,gcc-msm8939.h
-@@ -193,6 +193,12 @@
- #define GCC_VENUS0_CORE1_VCODEC0_CLK		184
- #define GCC_OXILI_TIMER_CLK			185
- #define SYSTEM_MM_NOC_BFDCD_CLK_SRC		186
-+#define CSI2_CLK_SRC				187
-+#define GCC_CAMSS_CSI2_AHB_CLK			188
-+#define GCC_CAMSS_CSI2_CLK			189
-+#define GCC_CAMSS_CSI2PHY_CLK			190
-+#define GCC_CAMSS_CSI2PIX_CLK			191
-+#define GCC_CAMSS_CSI2RDI_CLK			192
- 
- /* Indexes for GDSCs */
- #define BIMC_GDSC				0
--- 
-2.41.0
+I believe S-b is accurate:
+I mentioned a problem about those clocks on IRC,
+and Stephan pointed to the 2 problems fixed in this patch.
 
 
 
