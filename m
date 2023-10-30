@@ -2,133 +2,125 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CD70C4167B
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Oct 2023 11:41:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCCA2C4332F
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Oct 2023 16:53:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232774AbjJ3Ll4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Oct 2023 07:41:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48132 "EHLO
+        id S231789AbjJ3Qx5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Oct 2023 12:53:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233019AbjJ3Llz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Oct 2023 07:41:55 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BD60D6;
-        Mon, 30 Oct 2023 04:41:53 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65602C433C7;
-        Mon, 30 Oct 2023 11:41:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1698666113;
-        bh=bz6igKuHupvtiNkw5ZoF2Pc2VCrbtGARD3I17VSwiOo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eGe08F3jZZRbIVv+zeX+3ej6MJOvO8BbTuxF4TM8a4QQEctmK5gGGcGSSrzPNndtC
-         ++VoH2AX4C14RrLR/AZaPILnRnqbco6FVT/+kFNOPVVS4NE5dsascnNysqFp4ref2/
-         +FhTtbmC5KSDCu0/tN8hKJsUP/uouNiN74inofe4YyiFOWmX19x6lgeqQgqZ15HHBo
-         e9SCP0HtWw8R25pl1Ah0ULmwyJhAn/zzalSfkR5zM3k5cVeF+YyUyFXn2gcwh7xeBi
-         HQvC/sgdxancozu84+rwT7jgtaLXhNgGdNFHS/HDr0+t5M+G3J9yvvo0cMS5Wvs38g
-         xx5X8cpT2eRLg==
-Date:   Mon, 30 Oct 2023 11:41:47 +0000
-From:   Conor Dooley <conor@kernel.org>
-To:     Artur Weber <aweber.kernel@gmail.com>
-Cc:     Stanislav Jakubek <stano.jakubek@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] dt-bindings: clock: brcm,kona-ccu: convert to YAML
-Message-ID: <20231030-afternoon-traps-f7b20de220e2@spud>
-References: <ZTf0oWfOqnyMEKbF@standask-GA-A55M-S2HP>
- <20231027-bulldog-component-5b84e4660465@spud>
- <ZTzw5c5/MwU3VOBo@standask-GA-A55M-S2HP>
- <5bd796c5-3e9a-4aa5-b284-27fb4fc8ea48@gmail.com>
+        with ESMTP id S229569AbjJ3Qx5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Oct 2023 12:53:57 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C25C1B3;
+        Mon, 30 Oct 2023 09:53:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1698684835; x=1730220835;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=0MNp78TBktcSSvD5TYdlbWZXz2ANgvZ0t7h0WBasLSk=;
+  b=R6Ubol4riWJamMMhV6SwAjIYR5ZyB2caGHWIkxWoiUUIF9mOWJq6X07T
+   /o9UIs1Tdq04h+QM3Z1eR9oOtC8NHiBmPYayrbh01AdzG4nE4BRISRDe9
+   VDnf4tNKCmLCfvT2X0s/v4wPrfRDsXwJXXcoK4uvySx8nYK07D/qFR71r
+   xpeDNnUNJtqes0sO87FhbLoNLe+/ECly7tjDkIa5pwV/+uf66P8cXeH1p
+   9wjDs5iWUBvDPIdnqGp3vha4q1KytSl9ovLygfBUK2q+nAJQmxz2wknKW
+   pEaWMnPmMLtPzCnkIrShf4R2w5Dp7YDRFHd+ioT6gXO21KJmmMr6zBmYt
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10879"; a="990052"
+X-IronPort-AV: E=Sophos;i="6.03,263,1694761200"; 
+   d="scan'208";a="990052"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2023 09:53:55 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10879"; a="933829289"
+X-IronPort-AV: E=Sophos;i="6.03,263,1694761200"; 
+   d="scan'208";a="933829289"
+Received: from mmichali-devpc.igk.intel.com ([10.211.235.239])
+  by orsmga005.jf.intel.com with ESMTP; 30 Oct 2023 09:53:50 -0700
+From:   Michal Michalik <michal.michalik@intel.com>
+To:     netdev@vger.kernel.org
+Cc:     vadim.fedorenko@linux.dev, jiri@resnulli.us,
+        arkadiusz.kubalewski@intel.com, jonathan.lemon@gmail.com,
+        pabeni@redhat.com, poros@redhat.com, milena.olech@intel.com,
+        mschmidt@redhat.com, linux-clk@vger.kernel.org, bvanassche@acm.org,
+        kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
+        Michal Michalik <michal.michalik@intel.com>
+Subject: [PATCH RFC net-next v2 0/2] selftests/dpll: DPLL subsystem integration tests
+Date:   Mon, 30 Oct 2023 17:53:24 +0100
+Message-Id: <20231030165326.24453-1-michal.michalik@intel.com>
+X-Mailer: git-send-email 2.9.5
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="3lNzro6sSew2kpsK"
-Content-Disposition: inline
-In-Reply-To: <5bd796c5-3e9a-4aa5-b284-27fb4fc8ea48@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+The recently merged common DPLL interface discussed on a newsletter[1]
+is introducing new, complex subsystem which requires proper integration
+testing - this patch adds core for such framework, as well as the
+initial test cases. Framework does not require neither any special
+hardware nor any special system architecture.
 
---3lNzro6sSew2kpsK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+To properly test the DPLL subsystem this patch adds fake DPLL devices and it's
+pins implementation to netdevsim. Creating netdevsim devices and adding ports
+to it register new DPLL devices and pins. First port of each netdevsim device
+acts as a entitiy which registers two DPLL devices: EEC and PPS DPLLs. First
+port also register the common pins: PPS and GNSS. Additionally each port
+register also RCLK (recovered clock) pin for itself. That allow us to check
+mutliple scenarios which might be problematic in real implementations (like
+different ordering etc.)
 
-On Sun, Oct 29, 2023 at 10:16:14PM +0100, Artur Weber wrote:
->=20
-> On 28/10/2023 13:30, Stanislav Jakubek wrote:
-> > On Fri, Oct 27, 2023 at 03:47:48PM +0100, Conor Dooley wrote:
-> > > On Tue, Oct 24, 2023 at 06:45:21PM +0200, Stanislav Jakubek wrote:
-> > > > Convert Broadcom Kona family clock controller unit (CCU) bindings
-> > > > to DT schema.
-> > >=20
-> > > I didn't cross-check the clock-output-names, but this conversion most=
-ly
-> > > looks good to me.
-> > >=20
-> > > > Changes during conversion:
-> > > >    - remove "dmac" from clock-output-names for brcm,bcm11351-master=
--ccu,
-> > > >      it is not used in DT nor the dt-bindings
-> > > >    - remove "uartb4" from clock-output-names for brcm,bcm21664-slav=
-e-ccu,
-> > > >      it is not used in DT nor the dt-bindings
-> > >=20
-> > > This I'm not sure about - they _were_ documented in the text-form
-> > > dt-binding, even if they weren't used in the dts. If the clock
-> > > controller does actually produce these clocks, removing them doesn't
-> > > make sense to me.
-> >=20
-> > Hi Conor. Looking at downstream, I was not able to find these clocks, t=
-hough
-> > I admit that I'm not familiar enough with the downstream mess to be 100%
-> > confident.
-> >=20
-> >  From what I can tell, the BCM21664 arch/arm/mach-hawaii/clock.c (e.g. =
-[1])
-> > doesn't contain any mention of uartb4, only uartb, uartb2 and uartb3.
-> > And similarly, for the BCM281XX arch/arm/mach-capri/clock_capri.c (e.g.=
- [2])
-> > I wasn't able to find any mention of dmac, only dmac_mux_apb and dma_axi
-> > (though these two don't seem to be supported on mainline yet).
->=20
-> I've done some digging in the downstream kernel; for the BCM21664, I'm
-> almost certain that the uartb4 clock doesn't exist. Broadcom helpfully
-> left in "RDB" files containing the entire register layout of all of the
-> components; and even in the RDB for the slave clock manager[1] (used by
-> the other uart clocks), there is no uartb4, nor is it mentioned
-> anywhere else in the kernel (judging by a quick grep in the kernel
-> sources).
->=20
-> As for the BCM281XX clocks, there indeed doesn't seem to be an exact
-> "dmac" clock but there is a "dmac" clock gate register[2], which is
-> used for the dma_axi clock, so perhaps that's what this is referring
-> to? Also not 100% certain.
+Patch adds few helper scripts, which are:
+1) tools/testing/selftests/dpll/run_dpll_tests.sh
+    Script is checking for all dependencies, creates temporary
+    environment, installs required libraries and run all tests - can be
+    used standalone
+2) tools/testing/selftests/dpll/ynlfamilyhandler.py˙
+    Library for easier ynl use in the pytest framework - can be used
+    standalone
 
-I'm 99% sure I was happy with this otherwise, so thanks for doing the
-investigation guys :)
+[1] https://lore.kernel.org/netdev/169494842736.21621.10730860855645661664.git-patchwork-notify@kernel.org/
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Changelog:
+v1 -> v2:
+- moved from separate module to implementation in netdevsim
 
-Cheers,
-Conor.
+Michal Michalik (2):
+  netdevsim: implement DPLL for subsystem selftests
+  selftests/dpll: add DPLL system integration selftests
 
---3lNzro6sSew2kpsK
-Content-Type: application/pgp-signature; name="signature.asc"
+ drivers/net/Kconfig                              |   1 +
+ drivers/net/netdevsim/Makefile                   |   2 +-
+ drivers/net/netdevsim/dpll.c                     | 438 +++++++++++++++++++++++
+ drivers/net/netdevsim/dpll.h                     |  81 +++++
+ drivers/net/netdevsim/netdev.c                   |  20 ++
+ drivers/net/netdevsim/netdevsim.h                |   4 +
+ tools/testing/selftests/Makefile                 |   1 +
+ tools/testing/selftests/dpll/Makefile            |   8 +
+ tools/testing/selftests/dpll/__init__.py         |   0
+ tools/testing/selftests/dpll/config              |   2 +
+ tools/testing/selftests/dpll/consts.py           |  34 ++
+ tools/testing/selftests/dpll/dpll_utils.py       | 109 ++++++
+ tools/testing/selftests/dpll/requirements.txt    |   3 +
+ tools/testing/selftests/dpll/run_dpll_tests.sh   |  75 ++++
+ tools/testing/selftests/dpll/test_dpll.py        | 414 +++++++++++++++++++++
+ tools/testing/selftests/dpll/ynlfamilyhandler.py |  49 +++
+ 16 files changed, 1240 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/net/netdevsim/dpll.c
+ create mode 100644 drivers/net/netdevsim/dpll.h
+ create mode 100644 tools/testing/selftests/dpll/Makefile
+ create mode 100644 tools/testing/selftests/dpll/__init__.py
+ create mode 100644 tools/testing/selftests/dpll/config
+ create mode 100644 tools/testing/selftests/dpll/consts.py
+ create mode 100644 tools/testing/selftests/dpll/dpll_utils.py
+ create mode 100644 tools/testing/selftests/dpll/requirements.txt
+ create mode 100755 tools/testing/selftests/dpll/run_dpll_tests.sh
+ create mode 100644 tools/testing/selftests/dpll/test_dpll.py
+ create mode 100644 tools/testing/selftests/dpll/ynlfamilyhandler.py
 
------BEGIN PGP SIGNATURE-----
+-- 
+2.9.5
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZT+WegAKCRB4tDGHoIJi
-0sxPAPwLvrTjRs6fj26uMHvW8nOf+sn8iPT13yt8UCj0kyWmIgD8CiKefsXxXRls
-oDopVlrjt1bwZ+qq7+OGZg3ey9hxQwI=
-=emOG
------END PGP SIGNATURE-----
-
---3lNzro6sSew2kpsK--
+base-commit: 55c900477f5b3897d9038446f72a281cae0efd86
