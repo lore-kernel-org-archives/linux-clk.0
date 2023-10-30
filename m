@@ -2,68 +2,63 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4239AC4167D
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Oct 2023 17:35:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCCFCC4332F
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Oct 2023 18:35:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232665AbjJ3Rf2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Oct 2023 13:35:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45744 "EHLO
+        id S229840AbjJ3SfQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Oct 2023 14:35:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229616AbjJ3Rf1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Oct 2023 13:35:27 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F8C1D9
-        for <linux-clk@vger.kernel.org>; Mon, 30 Oct 2023 10:35:24 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-40839652b97so34711975e9.3
-        for <linux-clk@vger.kernel.org>; Mon, 30 Oct 2023 10:35:24 -0700 (PDT)
+        with ESMTP id S229830AbjJ3SfP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Oct 2023 14:35:15 -0400
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E8DAC9
+        for <linux-clk@vger.kernel.org>; Mon, 30 Oct 2023 11:35:12 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id 2adb3069b0e04-507a62d4788so7323018e87.0
+        for <linux-clk@vger.kernel.org>; Mon, 30 Oct 2023 11:35:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698687323; x=1699292123; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :references:cc:to:content-language:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nipwrIiQ9qIakWKB9HI2X8+oLNnWSz1aN7WP7LIPE2A=;
-        b=TruoFpzVfHsgkls+O/cQUBoz7oTGfQlVQhPuNaN0j+UfoREn3oMAR5lpLgqjVKJAYz
-         eVib9msw0fgEIj4mxf80E4vY1gzOquduYZjjDpd3rzh06ez/adlDHH3EQQ1AKk/ie0w9
-         VpNNjMnycM292v3zkRu+xIvnl/35v7seFjDYsXGYyFrNc8yFPJd5PuOF7wePLqbXlqqJ
-         0smR0AgEoDNaIzgNQYTkGl8HBNiHlJkDZvvcI272tHoQasi0krPjhSq2aBfkFwQQBGK8
-         W5Z4hrhwHEmM13jkWq5C/u05cDbqbwuvGXO1RFAeS2hbQX1SFAA8aJI0dFL3tpOtKRAX
-         c98Q==
+        d=linaro.org; s=google; t=1698690910; x=1699295710; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KbISI+V/Kk/FbRO+GwqIV5VSlGPBOPxdhGkcTRWNkfI=;
+        b=oH+cd1lDP5GBhTXhVd4PZF7E1kqGQ4SxMmfdwLmhKJ+zicTM3FeeyQdBoGft6zkxJ6
+         9r8Thjwor6+VuOuTvqpK48p+yndnfcbMpsXbO0YhzQ+ZrXppDCzg9B+gCOoOtcIqoWim
+         eyTAx41QkmWp6LnstfLfu3C/YvnPqWsQneYpSPk3/joklz3rkoYBJI302vLToH0sn6Zl
+         +nPuU2JkGp6pv3QmUo3JFfTX63VSUvOpfvxihxLtZ4oRGgt0444iz0yTrDew4xnMb8OW
+         eqpaXXNWSXi3dyYKDj4gpGwCcQob2BmTQwL5WTzQtkjl0TYkyPv9EOvobm2UzQSqIhoy
+         7Wsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698687323; x=1699292123;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :references:cc:to:content-language:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=nipwrIiQ9qIakWKB9HI2X8+oLNnWSz1aN7WP7LIPE2A=;
-        b=meEJSqxFPAa2b/RgvGhI1XH/fH/7gNY3qlw55prlFtLXOmNxt0/5aDwlw2Fqq1X83U
-         vGH6dh7T6U3TgtleVvuQhYu5m4/DNo1GtGlMnl+weZd7Cr/I3BR+qboo0ierVX2olpMY
-         +eQ3h89jJ2oHnKoKocHp4tSz/q/VX3w8EBejKhKX7vLzpoM0Hi+Zr5rfLRrZnSa/vXPA
-         Zc5AxooZhK/O98U7SZJqTYIuyXv7n/KZRMgZTVCnkdxQs/FAkc41k1wgCKaqAPOSpEsa
-         40QY5rK6aeYg76ykAwEZbim0YxnPH3MrtbGcwd7YP4V1pCRKwRrZOX+HWu05DxlCyDKY
-         xRtw==
-X-Gm-Message-State: AOJu0YxrhY7Gx7YnpIOrp2YsO2wL4PIcv0ofozMQ7L0Pm7VKrHErow4s
-        4C/tg7sWgNAEyqsThNGjET/z1Q==
-X-Google-Smtp-Source: AGHT+IHAME8z7wSxO+W3LSZkm/MTA1CyH1w3Uh6VQrNuYHT9ioPjZsDoHigiHWQWI/RBc/VGIa05zg==
-X-Received: by 2002:a05:600c:4ecb:b0:407:58e1:24ed with SMTP id g11-20020a05600c4ecb00b0040758e124edmr8321278wmq.39.1698687322648;
-        Mon, 30 Oct 2023 10:35:22 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:a05f:dffd:3e08:6b03? ([2a01:e0a:982:cbb0:a05f:dffd:3e08:6b03])
-        by smtp.gmail.com with ESMTPSA id a22-20020a05600c225600b004078d71be9csm13104493wmm.13.2023.10.30.10.35.21
+        d=1e100.net; s=20230601; t=1698690910; x=1699295710;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KbISI+V/Kk/FbRO+GwqIV5VSlGPBOPxdhGkcTRWNkfI=;
+        b=KPxWX+E2ZkNv/QhWOCetcUcjWCepyc7YJpc2rxfuYKL5hXc6Hd7BTFL+BHl8vjJGLo
+         +14jZX0KHRDTIU3vSQD6XsOL90RRsOCSFvycPG4ghkPEWg9brTrcOMmWrX4comkylANa
+         saTR4jKz47pOMfEohHn4Gvi/+WUmOqDBl25wojPIJOesCEfZCBQG9nCTjsonJaTfHXzM
+         S7Lbykv2g1HWHiggCD3xSjtvcYPHAW9J1DIdp9Uh6E5mMcdaGwe2iQKrEuao4+RLg/Q6
+         oziUFHJP99drfdYdRiySRVgMfLFRkvV6W0pTCKdl6Jf5fFg5MnHVORvWQIyaLDYGm2Ar
+         YBkg==
+X-Gm-Message-State: AOJu0YwV1uzfzx+fJWjb1I5Jgzt5Ke2eXKY815jkByIIJbD1J8b5Zdq6
+        mQLx4TmW1GdhlDa9GFWCA+Byfz912ciOn0OSDdw=
+X-Google-Smtp-Source: AGHT+IE8Pg6gJViUCk0hMf/OJlgUDr/E6BIT8Sf2d351E2omEA0yE4x9VVUqaszfrc69eX1lN/802w==
+X-Received: by 2002:a05:6512:536:b0:507:9787:6776 with SMTP id o22-20020a056512053600b0050797876776mr8116960lfc.5.1698690910368;
+        Mon, 30 Oct 2023 11:35:10 -0700 (PDT)
+Received: from [192.168.133.160] (178235177091.dynamic-4-waw-k-1-1-0.vectranet.pl. [178.235.177.91])
+        by smtp.gmail.com with ESMTPSA id x18-20020a056512047200b004fb9c625b4asm1496892lfd.210.2023.10.30.11.35.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Oct 2023 10:35:21 -0700 (PDT)
-Message-ID: <63beeae0-9362-47d1-bca4-f016dc1db48a@linaro.org>
-Date:   Mon, 30 Oct 2023 18:35:20 +0100
+        Mon, 30 Oct 2023 11:35:09 -0700 (PDT)
+Message-ID: <b6d045ba-6017-491d-b06f-ae701fe50d96@linaro.org>
+Date:   Mon, 30 Oct 2023 19:35:06 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From:   Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v2 01/10] dt-bindings: clock: qcom: document the SM8650
- TCSR Clock Controller
-Content-Language: en-US, fr
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+Subject: Re: [PATCH v2 07/10] clk: qcom: add the SM8650 TCSR Clock Controller
+ driver
+Content-Language: en-US
+To:     Neil Armstrong <neil.armstrong@linaro.org>,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -72,61 +67,59 @@ To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Philipp Zabel <p.zabel@pengutronix.de>,
         Taniya Das <quic_tdas@quicinc.com>
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 References: <20231030-topic-sm8650-upstream-clocks-v2-0-144333e086a2@linaro.org>
- <20231030-topic-sm8650-upstream-clocks-v2-1-144333e086a2@linaro.org>
- <fbf736d9-ed42-4c7b-95fd-769f92838268@linaro.org>
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro Developer Services
-In-Reply-To: <fbf736d9-ed42-4c7b-95fd-769f92838268@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+ <20231030-topic-sm8650-upstream-clocks-v2-7-144333e086a2@linaro.org>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20231030-topic-sm8650-upstream-clocks-v2-7-144333e086a2@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 30/10/2023 18:29, Krzysztof Kozlowski wrote:
-> On 30/10/2023 10:57, Neil Armstrong wrote:
->> Add bindings documentation for the SM8650 TCSR Clock Controller.
->>
->> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->> ---
+On 30.10.2023 10:57, Neil Armstrong wrote:
+> Add TCSR Clock Controller support for SM8650 platform.
 > 
-> I think my comment from v1 was missed somehow. Why not squashing?
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-oops indeed sorry for that, I need to resend a v3 because the GCC patch is rejected
-by the mailing lists.
-
-Yes, I'll squash it.
-
-Thanks,
-Neil
-
-> 
-> Best regards,
-> Krzysztof
-> 
-
+Konrad
