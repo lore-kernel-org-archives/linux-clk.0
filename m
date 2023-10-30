@@ -2,114 +2,166 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6F4EC4167B
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Oct 2023 09:49:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECE86C4167D
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Oct 2023 09:58:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232791AbjJ3Jt0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Oct 2023 05:49:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59760 "EHLO
+        id S231741AbjJ3J6F (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Oct 2023 05:58:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232805AbjJ3Jsz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Oct 2023 05:48:55 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE6B01A8;
-        Mon, 30 Oct 2023 02:48:23 -0700 (PDT)
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39U9B7qq021806;
-        Mon, 30 Oct 2023 09:48:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : date :
- subject : mime-version : content-type : content-transfer-encoding :
- message-id : references : in-reply-to : to : cc; s=qcppdkim1;
- bh=M6YE6usfdiaDl6y22WzZBuFLQNHUK9IyY63njJBeIiI=;
- b=ZInvVHCKKd/kwcx+YNztRkt4tRk3raYDjPhB3aXihDZqfs8wx4Fgagf5WuQFAm8tV0IT
- 70X/I/RczDP3RAXwSrU0cOzghmKtraqKarLqz7rWh4zgKiwYRs3auUZg9ky6Y9+Vckml
- gVB5+8o+JIYTmZOwJ5eEufwT99BUgMkzvqQLVjRaOVRAjWJhLJm+ZavufD7zYIAeTHbM
- +u3rIwp3yAR4FsyO2WEIoaS+MLhNNOT1C63LiVtIQQrrzYUaR9A/NAQaRtSckVVNim9p
- CbJDzCQcNmNH9D95RKbk6F/e9nrbo4In25I0WFycX8c+ASzYnZ9QZGE+l1Sn5qMRwhIl pQ== 
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3u0u2qkaqc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 30 Oct 2023 09:48:15 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 39U9mEFi017824
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 30 Oct 2023 09:48:14 GMT
-Received: from hu-kathirav-blr.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.39; Mon, 30 Oct 2023 02:48:08 -0700
-From:   Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-Date:   Mon, 30 Oct 2023 15:17:23 +0530
-Subject: [PATCH 8/8] arm64: defconfig: build NSS Clock Controller driver
- for IPQ5332
+        with ESMTP id S232502AbjJ3J6B (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Oct 2023 05:58:01 -0400
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28F76188
+        for <linux-clk@vger.kernel.org>; Mon, 30 Oct 2023 02:57:59 -0700 (PDT)
+Received: by mail-lj1-x229.google.com with SMTP id 38308e7fff4ca-2c5210a1515so61778671fa.0
+        for <linux-clk@vger.kernel.org>; Mon, 30 Oct 2023 02:57:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1698659877; x=1699264677; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=boPn1BJjjSE/ytLrgmFhqTRFBvGpmv5D8XGSJlsI6/c=;
+        b=XGfR+XkJkschzG14v+iZz7tfpCZBpyaolER6H8zIRNeejF8TxwQsbAIFMrMTaA8Ykt
+         OH7rdN5H/pwHdMjiO0Gbv61JPv7fIaYstFx28LbjtUdzKXj8hTYig50zjU3aHK078F3V
+         vhxCrBD0A6Wiq7Pz+y4zVrQmsqXACvPdtbM1uNNNFLN+2qNA4q+xEuGYTvX7nXobFIo1
+         6KP1Go3ab3shmTzV7uGRK+A98K1BNrEP9Kw+jb4VGGYIKzpPlhbIL3M/3Jfe7x6q04hz
+         Jp0N0ChlEL+VtfRVybh/7wi+cZvMykLf1bp4Hbb6xQAytKyim360Wth7bsJF/Lfyof5/
+         A5Nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698659877; x=1699264677;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=boPn1BJjjSE/ytLrgmFhqTRFBvGpmv5D8XGSJlsI6/c=;
+        b=RgUG8AEj0UEP+ojaSCDgdhdgNRCHg3BLD+oMGRpvY91HYsYhlViWrjv/d7hBNPFKyH
+         CeZQl0pErks8FVxyIZ7T5yUchtfNEIM9alzZsU1gDJhF93IRu69BaRa/cemlx+wK05FA
+         6qwoUPtjv1QYIu6HEJW0fw4eQ5cWjAHxyDA7OCtUjdTGTe2c3gAM6fsBVJ9wi6JA4f7Z
+         PlFx2MC3S8+kTD0Izig+jNcMnVLmg1ADsWeLms6N46aDmPB1fdrgisgYZhD5RZpYAkTC
+         Dl9FtxSdpW0wYfJOu6hXvnexcFATf0aWBrRtnzafkohLYi1ltUTJePvbUBXiE8qo+rJf
+         Lsrg==
+X-Gm-Message-State: AOJu0YwY0e3ZFW+PWmyFTF10WBLCUB3u8pebQrM3litx21JZmdVSRrmQ
+        4Ma2boRlpPgdXOKKsIP5Tohxsg==
+X-Google-Smtp-Source: AGHT+IEMVQHxFbY6ktxdqB9yv2n6nNHFNFcHUZP8HO2JOU7GFCQS6YBNivSexA+aWjJGhPvo52A8rw==
+X-Received: by 2002:a05:651c:86:b0:2c5:2fa8:716a with SMTP id 6-20020a05651c008600b002c52fa8716amr7968437ljq.9.1698659877407;
+        Mon, 30 Oct 2023 02:57:57 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
+        by smtp.gmail.com with ESMTPSA id a1-20020a05600c348100b00402ff8d6086sm8703714wmq.18.2023.10.30.02.57.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Oct 2023 02:57:56 -0700 (PDT)
+From:   Neil Armstrong <neil.armstrong@linaro.org>
+Subject: [PATCH v2 00/10] clk: qcom: Introduce clocks drivers for SM8650
+Date:   Mon, 30 Oct 2023 10:57:47 +0100
+Message-Id: <20231030-topic-sm8650-upstream-clocks-v2-0-144333e086a2@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20231030-ipq5332-nsscc-v1-8-6162a2c65f0a@quicinc.com>
-References: <20231030-ipq5332-nsscc-v1-0-6162a2c65f0a@quicinc.com>
-In-Reply-To: <20231030-ipq5332-nsscc-v1-0-6162a2c65f0a@quicinc.com>
-To:     Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
+X-B4-Tracking: v=1; b=H4sIABt+P2UC/33NQQ6CMBCF4auQrh3TlhapK+9hWJRSYCJQ0kGiI
+ dzdSly7/N/iexsjH9ETu2Ybi35FwjClkKeMud5OnQdsUjPJZS64KGAJMzqgsSw0h+dMS/R2BDc
+ E9yDIHTetKlR9aRRLxBx9i6+Dv1epe6QlxPfxtorv+oOl/g+vAji40tTaaKOcbW8DTjaGc4gdq
+ /Z9/wAqYeXeyQAAAA==
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        "Kathiravan Thirumoorthy" <quic_kathirav@quicinc.com>
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Taniya Das <quic_tdas@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1698659244; l=619;
- i=quic_kathirav@quicinc.com; s=20230906; h=from:subject:message-id;
- bh=Ka2Puxp6GzvfCF+k1mTawKzWStf8whNbVMFFBPTF228=;
- b=i3HBsZuuL8VZD8ySQ4Ban1f5nOJsZ06tXSn6krN9Gd7P7+mqEAYzZX+NA3fBJffI4TY2phlw7
- HDqkMoN9Px/DYTEQdbyZR5a+3rWVFARbx0aNvuBsq9I4wy5/KQ8b2+S
-X-Developer-Key: i=quic_kathirav@quicinc.com; a=ed25519;
- pk=xWsR7pL6ch+vdZ9MoFGEaP61JUaRf0XaZYWztbQsIiM=
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 1Aw7B_IO2BhtIDyVc4vsUH20pVBjkOv2
-X-Proofpoint-GUID: 1Aw7B_IO2BhtIDyVc4vsUH20pVBjkOv2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-10-30_08,2023-10-27_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
- clxscore=1015 malwarescore=0 suspectscore=0 mlxlogscore=685
- priorityscore=1501 bulkscore=0 lowpriorityscore=0 adultscore=0 mlxscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2310240000 definitions=main-2310300074
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3139;
+ i=neil.armstrong@linaro.org; h=from:subject:message-id;
+ bh=6kOWUwSglVcj5gFYTNNhjlyysqL+sfrTrZAH9+/FiV8=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBlP34fh4uYBtsbMq8xaz7b1Mva0tqDEbw9IcE/D+Mw
+ SgciTNyJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZT9+HwAKCRB33NvayMhJ0QucD/
+ 9MXi4Lr7G32WDtPtRoxxP0HMKxlr9wPP35zJIM5LNxFRHlUBIg88qPdICSqJ52JyOVEXs/4rJOOtym
+ Q3GFZPpDFCjq+9gOxtJy11395tUZUo32pjBcdRfcOBUkjXDJHWEjLvfej40pzATg/iPGPihIyOVv+A
+ cu2HBzaavTGsJ9y4ALzMyG6z2Ez2IvxqstXN3PNn6TpCyLx41YKCw2T5N8XiS/zd1cdc57J/kVq6Xo
+ sguALAt63wGJOB+JrAme5hthdT6DRpQwXXmRAaqlunqGhPzln52ohB9NbRweSMIAgKktnHQSsel7wZ
+ 3hxFASDNOiF78eCecmAxDdwY/fpqYFLvJAxAWY2v6ZEDkWnftfhK098b+LyryVbslWW3aMMU7fUNaE
+ nVklmP9Kyd7j8Y7ceMBRYRao5FpjVJERAljZP4QGCzsYC4ZzUVdtd6Vl6c5p7p20iTbzIyA5hyG2SE
+ 3QlCZ8o6q3AOSPnFBRQjkWXU0ibfv1bLgGnjBycTlDsmDILd0eTe+8NG+qbdBV3FTi3a/Ra+UDCrP8
+ uTkRRYdiED/4hHG4oT+iNFgpSjeMKFm6fvZgNHK5vXFqgPpp3LQC7trczpNa+ANl6VKb6nBreOdqki
+ imsaBw4jPMtFwf/adbkCvcj9u4bKNsd66Ndqbqw5MHPe4nayvnRyPzD43Qmw==
+X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
+ fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Build Qualcomm IPQ9574 NSSCC driver as module.
+This patchset introduces the following SM8650 Clock drivers:
+- GCC: Global Clock Controller
+- DISPCC: Display Clock Controller
+- TCSR Clock Controller
+- GPUCC: GPU Clock Controller driver
+- rpmh clocks
 
-Signed-off-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+Dependencies: None
+
+For convenience, a regularly refreshed linux-next based git tree containing
+all the SM8650 related work is available at:
+https://git.codelinaro.org/neil.armstrong/linux/-/tree/topic/sm8650/upstream/integ
+
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 ---
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Changes in v2:
+- Fix Copyright headers
+- Fix include in all c files
+- Use "select GCC" instead of "depends on GCC"
+- GCC:
+  - remove UBWCP clocks until we know how to use them
+  - switch to clk_rcg2_shared_ops when needed
+  - use RETAIN_FF_ENABLE and/or VOTABLE GDSC flasgs when needed
+  - add GDSC collapse_ctrl/mask when needed
+  - fix "Keep the critical clock always-On" comments
+- TCRSCC: use qcom_cc_probe()
+- DISPCC: fix runtime_pm_sync on error
+- rpmh: expand comment on clk3a
+- Link to v1: https://lore.kernel.org/r/20231025-topic-sm8650-upstream-clocks-v1-0-c89b59594caf@linaro.org
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index b60aa1f89343..c075202d255d 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1223,6 +1223,7 @@ CONFIG_QCOM_CLK_SMD_RPM=y
- CONFIG_QCOM_CLK_RPMH=y
- CONFIG_IPQ_APSS_6018=y
- CONFIG_IPQ_GCC_5332=y
-+CONFIG_IPQ_NSSCC_5332=m
- CONFIG_IPQ_APSS_5018=y
- CONFIG_IPQ_GCC_5018=y
- CONFIG_IPQ_GCC_6018=y
+---
+Neil Armstrong (10):
+      dt-bindings: clock: qcom: document the SM8650 TCSR Clock Controller
+      dt-bindings: clock: qcom: document the SM8650 General Clock Controller
+      dt-bindings: clock: qcom: document the SM8650 Display Clock Controller
+      dt-bindings: clock: qcom: document the SM8650 GPU Clock Controller
+      dt-bindings: clock: qcom-rpmhcc: document the SM8650 RPMH Clock Controller
+      clk: qcom: add the SM8650 Global Clock Controller driver
+      clk: qcom: add the SM8650 TCSR Clock Controller driver
+      clk: qcom: add the SM8650 Display Clock Controller driver
+      clk: qcom: add the SM8650 GPU Clock Controller driver
+      clk: qcom: rpmh: add clocks for SM8650
 
+ .../devicetree/bindings/clock/qcom,rpmhcc.yaml     |    1 +
+ .../bindings/clock/qcom,sm8450-gpucc.yaml          |    2 +
+ .../bindings/clock/qcom,sm8650-dispcc.yaml         |  106 +
+ .../devicetree/bindings/clock/qcom,sm8650-gcc.yaml |   65 +
+ .../bindings/clock/qcom,sm8650-tcsr.yaml           |   55 +
+ drivers/clk/qcom/Kconfig                           |   35 +
+ drivers/clk/qcom/Makefile                          |    4 +
+ drivers/clk/qcom/clk-rpmh.c                        |   34 +
+ drivers/clk/qcom/dispcc-sm8650.c                   | 1810 +++++++++
+ drivers/clk/qcom/gcc-sm8650.c                      | 3849 ++++++++++++++++++++
+ drivers/clk/qcom/gpucc-sm8650.c                    |  661 ++++
+ drivers/clk/qcom/tcsrcc-sm8650.c                   |  182 +
+ include/dt-bindings/clock/qcom,sm8650-dispcc.h     |  102 +
+ include/dt-bindings/clock/qcom,sm8650-gcc.h        |  254 ++
+ include/dt-bindings/clock/qcom,sm8650-gpucc.h      |   43 +
+ include/dt-bindings/clock/qcom,sm8650-tcsr.h       |   18 +
+ include/dt-bindings/reset/qcom,sm8650-gpucc.h      |   20 +
+ 17 files changed, 7241 insertions(+)
+---
+base-commit: fe1998aa935b44ef873193c0772c43bce74f17dc
+change-id: 20231016-topic-sm8650-upstream-clocks-3c09f464b7d4
+
+Best regards,
 -- 
-2.34.1
+Neil Armstrong <neil.armstrong@linaro.org>
 
