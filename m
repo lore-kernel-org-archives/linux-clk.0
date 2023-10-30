@@ -2,92 +2,126 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C85BC4167B
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Oct 2023 18:57:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37ED1C4332F
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Oct 2023 19:25:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229662AbjJ3S5L (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Oct 2023 14:57:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45524 "EHLO
+        id S231728AbjJ3TZw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Oct 2023 15:25:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229721AbjJ3S5K (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Oct 2023 14:57:10 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18656C9;
-        Mon, 30 Oct 2023 11:57:09 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2910C433C7;
-        Mon, 30 Oct 2023 18:57:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1698692228;
-        bh=9k52DOYv+u+3IPK7EG4bgquyoKZQQUrVAKtdXlb4WnM=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=bKfWupyHNM0c0QoHxSHWTIHGryzlBNN1nLRn4EySckDpioPM22Po1PkQfPwZqhv/H
-         K44hqIEEhFYSBsNw10RaA5fE0Kay4Xt9p1Bhtp552C6CPk62Th9dzQZqhAqADO6f9G
-         4AhnCEi2u4EEbUCLsqegrxWK4DV0FHra/UG03VA6h9IsmOqBEpLRibT6Sj4a29qqlH
-         jneXNE/sVmxjkH62aIoP5v8lV31VAmGkItEwkFk2X0rr1t28ff2wWc+SKeTI8BtNEk
-         vOXUVrn1LWZMYCpfseNwGmfINSptJKqPcWXzfmyyw0m1NRPz1OkyXaq5dINeavn/eg
-         ZcmQUAJlVVWDg==
-Message-ID: <ac223f97efea0d5077a4e3e4dbd805b4.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S231222AbjJ3Smv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Oct 2023 14:42:51 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5732D9
+        for <linux-clk@vger.kernel.org>; Mon, 30 Oct 2023 11:42:46 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id 2adb3069b0e04-507bd64814fso6699077e87.1
+        for <linux-clk@vger.kernel.org>; Mon, 30 Oct 2023 11:42:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1698691365; x=1699296165; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JwS8CJS2HdA7L2KwdZuJCSxbmDb03FC3Kv+/WIe4ieY=;
+        b=WxIGKtbWXFCYI5ivU5eIjwGLr0iQVkvI7aAbfCNsAgyq++KauAr95B3+748Ok9i6bd
+         Prq+Ixw9hx9NWw5KjABal4AXaQgDoPIqR1rHzzNPL3X1rd5fTxSVXiYkJyWO55h+yhg/
+         tDKwJ7f5Rm3995u6GIuIIAPcJpeyewR0jabU+mKom/tNkjm254NzgK4B17Ss1UDMejsZ
+         3V8kXGjKsjhbVGa/cFi+e+10a02bubxA9UTCaSkRZt5Pc+KPEPiv9o43XXeiaiT2XxNV
+         WmyJ9Z8HCx6/PjOXTU+vmdEVKXOSfoDRjoxSiPxDqrEQsSgKKHSzyvViCkmY4VfRZy/V
+         vozg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698691365; x=1699296165;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JwS8CJS2HdA7L2KwdZuJCSxbmDb03FC3Kv+/WIe4ieY=;
+        b=Cm/FABS0uBJzzswJIa/MM1m1P4m79JYbT/XaLCslRiK3fDiGe7+fRcWIWSLohdaQsZ
+         G+d/Tb+E6Q2tqmV5efXowzmSDSWIkfC08fhbjaCJWMFJ6JWuIQOWCelU8keVwtYq7MUB
+         SOntvaB5OIcqrwoPKrKRAQYodOo/7IrD7k3ktY6fX7Tl2/QuUzXkiYZi436EWZas3qG3
+         RvyZIG5vtgUXly1AMcvYjLP6gKeshD26Q4vpvGGRm/l/F8hU0lJ2dwQNYKp2QaDDWYoJ
+         USXptX22q5y+UClO5SdQabig3DnXN4eVpfRiUJmZJlEA/RLA1105OB5KjO4dVgEDsFhj
+         Qv8A==
+X-Gm-Message-State: AOJu0YyPD149x9vY1XzniH4FhUNYRfmWn/6TKupOdiFZ7TI/n/7K7oY5
+        CUE+H3T615Wo11tl6uJFtJefAw==
+X-Google-Smtp-Source: AGHT+IFs1SvdKA+y3R0AbD3t9CtVc8ZXEFKCU/X6eYCAWfhtk7OEK2/zil1fF5aDurRg4Z/W4AI5DA==
+X-Received: by 2002:ac2:4db6:0:b0:503:264b:efc9 with SMTP id h22-20020ac24db6000000b00503264befc9mr7219254lfe.18.1698691365005;
+        Mon, 30 Oct 2023 11:42:45 -0700 (PDT)
+Received: from [192.168.133.160] (178235177091.dynamic-4-waw-k-1-1-0.vectranet.pl. [178.235.177.91])
+        by smtp.gmail.com with ESMTPSA id dw24-20020a0565122c9800b00502ae8db086sm1522651lfb.19.2023.10.30.11.42.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Oct 2023 11:42:44 -0700 (PDT)
+Message-ID: <f50102e2-4e81-4e07-aa05-5ecce8024eb3@linaro.org>
+Date:   Mon, 30 Oct 2023 19:42:42 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20231030-ipq5332-nsscc-v1-4-6162a2c65f0a@quicinc.com>
-References: <20231030-ipq5332-nsscc-v1-0-6162a2c65f0a@quicinc.com> <20231030-ipq5332-nsscc-v1-4-6162a2c65f0a@quicinc.com>
-Subject: Re: [PATCH 4/8] clk: qcom: ipq5332: add gpll0_out_aux clock
-From:   Stephen Boyd <sboyd@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/8] clk: qcom: ipq5332: drop the few nssnoc clocks
+Content-Language: en-US
+To:     Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Will Deacon <will@kernel.org>
-Date:   Mon, 30 Oct 2023 11:57:06 -0700
-User-Agent: alot/0.10
+        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20231030-ipq5332-nsscc-v1-0-6162a2c65f0a@quicinc.com>
+ <20231030-ipq5332-nsscc-v1-1-6162a2c65f0a@quicinc.com>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20231030-ipq5332-nsscc-v1-1-6162a2c65f0a@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Kathiravan Thirumoorthy (2023-10-30 02:47:19)
-> Add support for gpll0_out_aux clock which acts as the parent for
-> certain networking subsystem (NSS) clocks.
->=20
-> Signed-off-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-> ---
->  drivers/clk/qcom/gcc-ipq5332.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
->=20
-> diff --git a/drivers/clk/qcom/gcc-ipq5332.c b/drivers/clk/qcom/gcc-ipq533=
-2.c
-> index 235849876a9a..966bb7ca8854 100644
-> --- a/drivers/clk/qcom/gcc-ipq5332.c
-> +++ b/drivers/clk/qcom/gcc-ipq5332.c
-> @@ -87,6 +87,19 @@ static struct clk_alpha_pll_postdiv gpll0 =3D {
->         },
->  };
-> =20
-> +static struct clk_alpha_pll_postdiv gpll0_out_aux =3D {
-> +       .offset =3D 0x20000,
-> +       .regs =3D clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_STROMER_PLUS],
-> +       .width =3D 4,
-> +       .clkr.hw.init =3D &(struct clk_init_data) {
+On 30.10.2023 10:47, Kathiravan Thirumoorthy wrote:
+> gcc_snoc_nssnoc_clk, gcc_snoc_nssnoc_1_clk, gcc_nssnoc_nsscc_clk are
+> enabled by default and it's RCG is properly configured by bootloader.
+The maskrom or something later on?
 
-const initdata
 
-> +               .name =3D "gpll0_out_aux",
-> +               .parent_hws =3D (const struct clk_hw *[]) {
-> +                               &gpll0_main.clkr.hw },
-> +               .num_parents =3D 1,
-> +               .ops =3D &clk_alpha_pll_postdiv_ro_ops,
-> +       },
-> +};
-> +
->  static struct clk_alpha_pll gpll2_main =3D {
->         .offset =3D 0x21000,
->         .regs =3D clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_STROMER_PLUS],
+> Some of the NSS clocks needs these clocks to be enabled. To avoid
+> these clocks being disabled by clock framework, drop these entries.
+Perhaps pm_clk could be an option for you?
+
+Konrad
