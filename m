@@ -2,75 +2,69 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37ED1C4332F
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Oct 2023 19:25:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60207C4332F
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Oct 2023 19:37:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231728AbjJ3TZw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Oct 2023 15:25:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36322 "EHLO
+        id S229788AbjJ3TiA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Oct 2023 15:38:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231222AbjJ3Smv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Oct 2023 14:42:51 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5732D9
-        for <linux-clk@vger.kernel.org>; Mon, 30 Oct 2023 11:42:46 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id 2adb3069b0e04-507bd64814fso6699077e87.1
-        for <linux-clk@vger.kernel.org>; Mon, 30 Oct 2023 11:42:46 -0700 (PDT)
+        with ESMTP id S231222AbjJ3Th4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Oct 2023 15:37:56 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 676C41A7
+        for <linux-clk@vger.kernel.org>; Mon, 30 Oct 2023 12:37:39 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-507c1936fd5so6708429e87.1
+        for <linux-clk@vger.kernel.org>; Mon, 30 Oct 2023 12:37:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698691365; x=1699296165; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1698694657; x=1699299457; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=JwS8CJS2HdA7L2KwdZuJCSxbmDb03FC3Kv+/WIe4ieY=;
-        b=WxIGKtbWXFCYI5ivU5eIjwGLr0iQVkvI7aAbfCNsAgyq++KauAr95B3+748Ok9i6bd
-         Prq+Ixw9hx9NWw5KjABal4AXaQgDoPIqR1rHzzNPL3X1rd5fTxSVXiYkJyWO55h+yhg/
-         tDKwJ7f5Rm3995u6GIuIIAPcJpeyewR0jabU+mKom/tNkjm254NzgK4B17Ss1UDMejsZ
-         3V8kXGjKsjhbVGa/cFi+e+10a02bubxA9UTCaSkRZt5Pc+KPEPiv9o43XXeiaiT2XxNV
-         WmyJ9Z8HCx6/PjOXTU+vmdEVKXOSfoDRjoxSiPxDqrEQsSgKKHSzyvViCkmY4VfRZy/V
-         vozg==
+        bh=5WjIZeZiRK/z4GlDs2YMFbJYgUfec8FrdI9S/Un71yg=;
+        b=KP41biw0rZ+rU1hv7rperYPy6yj7/LDCgqF5V/RP9KG0i4oMWlDbrgUHHiFRx0G9yT
+         LIF6bM6G+Cby/bIlAhx2QvcK9/YHSsE/MYN/+86rMerAzeX/oNjzMGmxYuO4UezM4Ucl
+         e0yXb6pNGs8mXTKJ3ZzgcUNqjnnvMBBIDeA/pcfmWqCkFz6UWsIyyghjqp+vEnOU08L2
+         Soo9y8LOWzilIfSdD0C9CQSVN/YOjLk5E+fK395kfW1AtO8U14TB8woIz2B9dbCejScb
+         BIcEoKXGXFY1dXRt+NZGUUlrzj+9tO/dmi/PP6lLXzORv7Ph3cUYQQ41pgUQ0UBMpbuQ
+         9mMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698691365; x=1699296165;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1698694657; x=1699299457;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JwS8CJS2HdA7L2KwdZuJCSxbmDb03FC3Kv+/WIe4ieY=;
-        b=Cm/FABS0uBJzzswJIa/MM1m1P4m79JYbT/XaLCslRiK3fDiGe7+fRcWIWSLohdaQsZ
-         G+d/Tb+E6Q2tqmV5efXowzmSDSWIkfC08fhbjaCJWMFJ6JWuIQOWCelU8keVwtYq7MUB
-         SOntvaB5OIcqrwoPKrKRAQYodOo/7IrD7k3ktY6fX7Tl2/QuUzXkiYZi436EWZas3qG3
-         RvyZIG5vtgUXly1AMcvYjLP6gKeshD26Q4vpvGGRm/l/F8hU0lJ2dwQNYKp2QaDDWYoJ
-         USXptX22q5y+UClO5SdQabig3DnXN4eVpfRiUJmZJlEA/RLA1105OB5KjO4dVgEDsFhj
-         Qv8A==
-X-Gm-Message-State: AOJu0YyPD149x9vY1XzniH4FhUNYRfmWn/6TKupOdiFZ7TI/n/7K7oY5
-        CUE+H3T615Wo11tl6uJFtJefAw==
-X-Google-Smtp-Source: AGHT+IFs1SvdKA+y3R0AbD3t9CtVc8ZXEFKCU/X6eYCAWfhtk7OEK2/zil1fF5aDurRg4Z/W4AI5DA==
-X-Received: by 2002:ac2:4db6:0:b0:503:264b:efc9 with SMTP id h22-20020ac24db6000000b00503264befc9mr7219254lfe.18.1698691365005;
-        Mon, 30 Oct 2023 11:42:45 -0700 (PDT)
+        bh=5WjIZeZiRK/z4GlDs2YMFbJYgUfec8FrdI9S/Un71yg=;
+        b=aG4GvOW/F14/Z6v1+pEXrw13E81tfmSTS6Hb4E8qFE0BcPIZeUjwb4TwtTi+/THxOg
+         4uuz3JRqP1y9BWKJdxSq0frwOl9ck3wRfyzMpca5OqwSBsawULm2gATSy7Occcw2zHds
+         jN7uPq7P7mR2YJDFKqnrr5oeZMt/5THiyaFk1QSfoO8wa83Vh1ulGsJjg6BeAKTYrtD7
+         PdW7tgb2FMuzbsQwXcnhzp856/wX+dQUKeEYwpGQLL8V/CYC8J0zkAcVcpVn3lWc6mwV
+         5F+KjONlgilU+6GZEvEk7S8KjPh5ubjNF+lLrW2WB+roiQEIoCJIqPU3X0NGkUEDDZve
+         +TwA==
+X-Gm-Message-State: AOJu0YwalZB2Pa5dtoOBBKaxrSFB3O2TGOEtJ0HNUG610AdlMXLME1/k
+        k3GmHwAPWYIXPKJbhBHq6rnnOQ==
+X-Google-Smtp-Source: AGHT+IG80wylw9+1wld4AovcvTqPBgE6+B22P6jiNYJbR+er85JG4Yued9PR/mpEeid8e8eXMaV76w==
+X-Received: by 2002:a19:ca50:0:b0:501:b929:48af with SMTP id h16-20020a19ca50000000b00501b92948afmr176551lfj.34.1698694657568;
+        Mon, 30 Oct 2023 12:37:37 -0700 (PDT)
 Received: from [192.168.133.160] (178235177091.dynamic-4-waw-k-1-1-0.vectranet.pl. [178.235.177.91])
-        by smtp.gmail.com with ESMTPSA id dw24-20020a0565122c9800b00502ae8db086sm1522651lfb.19.2023.10.30.11.42.43
+        by smtp.gmail.com with ESMTPSA id x15-20020a056512046f00b005091665b83asm904778lfd.28.2023.10.30.12.37.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Oct 2023 11:42:44 -0700 (PDT)
-Message-ID: <f50102e2-4e81-4e07-aa05-5ecce8024eb3@linaro.org>
-Date:   Mon, 30 Oct 2023 19:42:42 +0100
+        Mon, 30 Oct 2023 12:37:37 -0700 (PDT)
+Message-ID: <20c8cfde-3f55-45c5-bc23-21979ac9680d@linaro.org>
+Date:   Mon, 30 Oct 2023 20:37:35 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/8] clk: qcom: ipq5332: drop the few nssnoc clocks
+Subject: Re: [PATCH 2/3] clk: qcom: ipq6018: add USB GDSCs
 Content-Language: en-US
-To:     Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20231030-ipq5332-nsscc-v1-0-6162a2c65f0a@quicinc.com>
- <20231030-ipq5332-nsscc-v1-1-6162a2c65f0a@quicinc.com>
+To:     Robert Marko <robimarko@gmail.com>, agross@kernel.org,
+        andersson@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+References: <20231025104457.628109-1-robimarko@gmail.com>
+ <20231025104457.628109-2-robimarko@gmail.com>
+ <CAOX2RU4MBvDZZ767RPS9XKj0U2L3gviVG5cyR8NKyO4LD+sfYQ@mail.gmail.com>
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
@@ -107,21 +101,32 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <20231030-ipq5332-nsscc-v1-1-6162a2c65f0a@quicinc.com>
+In-Reply-To: <CAOX2RU4MBvDZZ767RPS9XKj0U2L3gviVG5cyR8NKyO4LD+sfYQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 30.10.2023 10:47, Kathiravan Thirumoorthy wrote:
-> gcc_snoc_nssnoc_clk, gcc_snoc_nssnoc_1_clk, gcc_nssnoc_nsscc_clk are
-> enabled by default and it's RCG is properly configured by bootloader.
-The maskrom or something later on?
-
-
-> Some of the NSS clocks needs these clocks to be enabled. To avoid
-> these clocks being disabled by clock framework, drop these entries.
-Perhaps pm_clk could be an option for you?
+On 29.10.2023 12:04, Robert Marko wrote:
+> On Wed, 25 Oct 2023 at 12:45, Robert Marko <robimarko@gmail.com> wrote:
+>>
+>> IPQ6018 has GDSC-s for each of the USB ports, so lets define them as such
+>> and drop the curent code that is de-asserting the USB GDSC-s as part of
+>> the GCC probe.
+>>
+>> Signed-off-by: Robert Marko <robimarko@gmail.com>
+> 
+> Unfortunately, after testing on multiple devices I hit the same GDSC
+> issue I had a long time ago
+> that was the reason I did not send this upstream.
+> It seems that USB3 port GDSC (USB0 GDSC in code) works just fine,
+> however the USB2 one
+> (USB1 GDSC in code) it is stuck off and USB2 port will fail due to this:
+>     1.607531] ------------[ cut here ]------------
+> [    1.607559] usb1_gdsc status stuck at 'off'
+> [    1.607592] WARNING: CPU: 0 PID: 35 at gdsc_toggle_logic+0x16c/0x174
+> [    1.615120] Modules linked in:
+Can you dump GDSCR (the entire 32-bit register) at boot and when toggling?
 
 Konrad
