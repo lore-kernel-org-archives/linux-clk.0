@@ -2,59 +2,59 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B100C4332F
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Oct 2023 11:08:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 500EAC4332F
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Oct 2023 11:11:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232860AbjJ3LIz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Oct 2023 07:08:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43050 "EHLO
+        id S232281AbjJ3LLW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Oct 2023 07:11:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232766AbjJ3LIx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Oct 2023 07:08:53 -0400
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5E319C
-        for <linux-clk@vger.kernel.org>; Mon, 30 Oct 2023 04:08:50 -0700 (PDT)
-Received: by mail-lj1-x22b.google.com with SMTP id 38308e7fff4ca-2c5028e5b88so59683901fa.3
-        for <linux-clk@vger.kernel.org>; Mon, 30 Oct 2023 04:08:50 -0700 (PDT)
+        with ESMTP id S232860AbjJ3LLV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Oct 2023 07:11:21 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27262C2
+        for <linux-clk@vger.kernel.org>; Mon, 30 Oct 2023 04:11:18 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id 2adb3069b0e04-508126afb9bso6006831e87.0
+        for <linux-clk@vger.kernel.org>; Mon, 30 Oct 2023 04:11:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698664129; x=1699268929; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1698664276; x=1699269076; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=atBJUT0WBGYVt6zhYd3mjzV/V17w9px/MQvdW4tfAT4=;
-        b=K1JViR9LJ+/3dfB0JJuFODFiEVBFFfQgRV4v3SrLN5BVDgrVvjQr8PUCkIfdX0ZbYl
-         3Qt/uR7HXP6Mxn6GOyAsdLehlz27lpBHAWeTdMPCoIP/HMHspTiisG6qnJtIQ11Gxjh7
-         HR/+BOTnLcmOWhIGMfMmryW6wVm1qSLY7I3yIT9ChEoMuiEHgSpQJbxRot7+isow/wUT
-         vGoj+mkBSntP9MfESroK/rmnE9Q5MQdoDYvvo3ej6a+ThVitF2fxUBWC6aClDIugg+AD
-         UR5gTFkqJDTd2DF/uwTD9tBj9Pm6/TjZ4kBKlfOqA4SUZnv8v7iEIoqxZW0p7DyyWeqq
-         tuzg==
+        bh=ojHq6t613j32ixJLp2uQz84rEU+XqX8cshyS8EwKZk0=;
+        b=WwnDYnxsnZOdwWfAXvp8k7oTlpEj//riCrPjr+mrFWgZaYavoUuECYQj972Z89tHzU
+         Wf2AKXOLFdxu699LIl1ITu2gcsHEQnZFptfPtgq/iqwytFDulkEczC1AsVG+1cGOW648
+         JA4rYKKZPx78l7Nz4GstIwsNPQrbSeZr0N2gvIZYziLLKFt5ojfdK3BPM4KYOHDUxrI8
+         8ir7ixrA714B1Kgim+INr3QM4RVoW275ocrp7opp/76uJm2Y2P+SKbgxnytAyQ+0+PEQ
+         sH5MUDafwOtG0IWEHLKmNGFF576Bawyciuav+kDIqYjfInotwFi3CZzWpnH8PCTicle7
+         FWyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698664129; x=1699268929;
+        d=1e100.net; s=20230601; t=1698664276; x=1699269076;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=atBJUT0WBGYVt6zhYd3mjzV/V17w9px/MQvdW4tfAT4=;
-        b=vQv5mAoV7n1TJHSiHQ5hOOFswYtVw0A7VSVeoplxOQ3ENEozY+gfFOk2X2hLcAonJs
-         jFSp5IP9zZEDngb5UzhALaCFFeRDXSOvlpSOW6GaBA3S94/QYo3/7asGZ+WHcCBSChxX
-         PLdLT50fhATxzKzAQTx2F/9KsTbSGJKUcQmxQv+bx+MTnyhTIwaf+e96IO+wNsoPB61q
-         5NU7/DDLYHtqKbjf6QPsjWchqPk5yusM4aEMvVrHCv0Ydi7fuzfUIIqDw8ZKmFO4c1Ji
-         2VaCAGy7zhWNdPkcscS7qbn0/epmkbT27WDNKME76PGuMMmkd0chKHXtkCm8r/6pm4Qq
-         cL+g==
-X-Gm-Message-State: AOJu0YxfEs2rEh05+XP2WPsTZi5pSVPTvfZ7z/I6Jcyl4RljOBKDK04Q
-        iBhM9T6lu5myTCZbgiDie2zYGw==
-X-Google-Smtp-Source: AGHT+IHiGM4vS0zw1vZwRYa6lqkvncT6SbyZCf6FcQkqCx4mV9qetcpOH5LZfGDziCLj4bxathejOA==
-X-Received: by 2002:a2e:9410:0:b0:2c4:fe14:a85 with SMTP id i16-20020a2e9410000000b002c4fe140a85mr8260002ljh.18.1698664129275;
-        Mon, 30 Oct 2023 04:08:49 -0700 (PDT)
+        bh=ojHq6t613j32ixJLp2uQz84rEU+XqX8cshyS8EwKZk0=;
+        b=hL1YGcrmZzKTt3i9UPcDE8n6sXOtXCAvoEW7NeAtj1QN1l4yrxA+NAI3Dgl7DCha8e
+         wgcvYXY7xnE3KEhTAXE9T5EPe5jdvE4mvRXECYPSaImWadi+o/9MnGzTlRmEGr8Z2yOr
+         QiM+V/TLjc+4fpY4/MLQ+L5TrWCo6L26+A/1PtHBq57K4rHV+63mKFWk1m9fHMF37XMR
+         TXOfJmZDoekU5MBa8VRWlmD1iI0rf7GYPJxruc4wntyP7qkvH9WUuFHVuxvP1/AKD/4v
+         m3LLQLAbKPYOiz1fdOMZwzUSchokNG7udQ5AqvyvIaXLP+WzNMk0CmbQ1ixBM97F1YnD
+         prCg==
+X-Gm-Message-State: AOJu0YzdcXp9SB1HI5OhFJp40Gp5XVH082cSyxlEq4ohfebEjHmGFDvO
+        M2XfHK9+Vv2XMx+ywtnPkRVpGw==
+X-Google-Smtp-Source: AGHT+IG+dPO/PRBYbJrzpexeYYJ5YO4tgN+kC0NSUB9sWJcBAKWqW9Jp3ehM99UHFvY+B0qja378PA==
+X-Received: by 2002:a19:910a:0:b0:500:9214:b308 with SMTP id t10-20020a19910a000000b005009214b308mr6597050lfd.65.1698664276299;
+        Mon, 30 Oct 2023 04:11:16 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.218.126])
-        by smtp.gmail.com with ESMTPSA id f24-20020a1c6a18000000b004063977eccesm12165035wmc.42.2023.10.30.04.08.47
+        by smtp.gmail.com with ESMTPSA id w14-20020a5d544e000000b0032db4e660d9sm7995538wrv.56.2023.10.30.04.11.14
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Oct 2023 04:08:48 -0700 (PDT)
-Message-ID: <18ca181a-8aee-46f5-9e2d-bfba4c8bd99e@linaro.org>
-Date:   Mon, 30 Oct 2023 12:08:47 +0100
+        Mon, 30 Oct 2023 04:11:15 -0700 (PDT)
+Message-ID: <02e2bd74-2509-4cec-a85e-4acfc13eea84@linaro.org>
+Date:   Mon, 30 Oct 2023 12:11:13 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 8/8] arm64: defconfig: build NSS Clock Controller driver
- for IPQ5332
+Subject: Re: [PATCH 5/8] dt-bindings: clock: add IPQ5332 NSSCC clock and reset
+ definitions
 Content-Language: en-US
 To:     Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -72,7 +72,7 @@ Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 References: <20231030-ipq5332-nsscc-v1-0-6162a2c65f0a@quicinc.com>
- <20231030-ipq5332-nsscc-v1-8-6162a2c65f0a@quicinc.com>
+ <20231030-ipq5332-nsscc-v1-5-6162a2c65f0a@quicinc.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -118,7 +118,7 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231030-ipq5332-nsscc-v1-8-6162a2c65f0a@quicinc.com>
+In-Reply-To: <20231030-ipq5332-nsscc-v1-5-6162a2c65f0a@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -126,9 +126,21 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 30/10/2023 10:47, Kathiravan Thirumoorthy wrote:
-> Build Qualcomm IPQ9574 NSSCC driver as module.
+> Add NSSCC clock and reset definitions for IPQ5332.
 
-Why? Commit msg should answer this.
+Qualcomm IPQ5332
+
+This applies to all your patches in all your patchsets in entire
+Qualcomm organisation. You add code to common, upstream Linux kernel
+where hundreds of companies also contribute. Except me and few more
+folks, no one knows what is IPQ5332. Other 5000 developers do not know.
+Other millions of users do not know.
+
+> 
+> Signed-off-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+> ---
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
