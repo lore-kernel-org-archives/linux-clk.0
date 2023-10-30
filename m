@@ -2,128 +2,130 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F545C4332F
-	for <linux-clk@archiver.kernel.org>; Sun, 29 Oct 2023 21:16:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA09DC4332F
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Oct 2023 09:47:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229533AbjJ2VQV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 29 Oct 2023 17:16:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57198 "EHLO
+        id S232119AbjJ3Jrq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Oct 2023 05:47:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229512AbjJ2VQU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 29 Oct 2023 17:16:20 -0400
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B006D97;
-        Sun, 29 Oct 2023 14:16:17 -0700 (PDT)
-Received: by mail-ed1-x532.google.com with SMTP id 4fb4d7f45d1cf-53e2308198eso6140038a12.1;
-        Sun, 29 Oct 2023 14:16:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698614176; x=1699218976; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=QvsKzG+rs1HOWlhjYy4OEuq3sm4Ra3HE4ezTkFwDqiM=;
-        b=UhNfIPk+DRSz+HZMRj9wTUobBajfXCb9fxSkPVF7NNMGMaqyHGvqpzdRJ3It1vxF5Q
-         J0G2nmYNstIytW88HHCvsiHg15POckPeedejFb3C2TqK0Si+wzmzYMnFN911hfnAW07x
-         rFyLBWupdGsp6bZ6mmRQBO6b4cuv/tpsazW17oPC5IoLDq7vfLKcj2UxiKJvIGww5EqM
-         r3/fp+cBWQD5Pu2txrtOW+tgGhshjVM/S9gWtcHhah8ABN1s0JrTxZWLQNSw+tBOT1dr
-         npZ7o1CDYJRyOppbWoHWvSVv8QvWYSn3QVKJaDcv9J2yOfYvJSiaBYravFp/ybwT37o5
-         6nlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698614176; x=1699218976;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QvsKzG+rs1HOWlhjYy4OEuq3sm4Ra3HE4ezTkFwDqiM=;
-        b=VkGtGLFRiGM16vuBiPJHcXSxvDesEFpq3HQYrrlH+9crBgu9pBockpyDtDDiaIrzJN
-         TGGfDDy1TuQ7hzSyWz/wU2z1yXDFBYf/B9uoZfIj3mGZ3Q8c7jVBZws3GU+VK0lYZiD3
-         JlrKfXHU6FBFeZnZVozTyMIS2y61cd9hnfnSl7UmCXczspvBtYs3vHAe+HvX11VKibT3
-         LQty4R0kRtt7D9+r+EthvMfw/OTeESGQS+eGHPVGnbISFI2JlwdtxPY6VXpg6lkWgCwO
-         /K+ubk7WBG5EdvpE6v2TUZtkg7AVkUQPfFirstvOrMzDqk5r1ngKd3QadDiC23RoOxeO
-         lpiQ==
-X-Gm-Message-State: AOJu0Yyv/wTK8rlFfl1egKLEiN1pB/2JuYBTt986NXQ2W6Xe3Locc8L4
-        Uvs7RiakrUU9EcjlZYBpfGU=
-X-Google-Smtp-Source: AGHT+IF7sE5EoaLdZ8ZzvjrwxAns0T3bzFyPglhgZ/pN3bXockxACawGbRmYwmhYVlGo9hG2IWqNCw==
-X-Received: by 2002:a17:906:c10e:b0:9c2:a072:78c8 with SMTP id do14-20020a170906c10e00b009c2a07278c8mr6691256ejc.26.1698614175965;
-        Sun, 29 Oct 2023 14:16:15 -0700 (PDT)
-Received: from [192.168.50.244] (83.11.208.51.ipv4.supernova.orange.pl. [83.11.208.51])
-        by smtp.gmail.com with ESMTPSA id rn20-20020a170906d93400b009930308425csm4890885ejb.31.2023.10.29.14.16.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 29 Oct 2023 14:16:15 -0700 (PDT)
-Message-ID: <5bd796c5-3e9a-4aa5-b284-27fb4fc8ea48@gmail.com>
-Date:   Sun, 29 Oct 2023 22:16:14 +0100
+        with ESMTP id S231467AbjJ3Jrq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Oct 2023 05:47:46 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6266B3;
+        Mon, 30 Oct 2023 02:47:43 -0700 (PDT)
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39U9F9Mr031836;
+        Mon, 30 Oct 2023 09:47:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : subject :
+ date : message-id : mime-version : content-type :
+ content-transfer-encoding : to : cc; s=qcppdkim1;
+ bh=aDLuPNmwH3qDsJ5tX0K+aUJmJTHPeIZoarRXhkJcGLM=;
+ b=fcuDq4jtIA4WZUDx9Xb1zWFo5nmz93aqLhdty6PxCKPCVpnW/14gnJv/51/Zqc2TDU9w
+ iRTcuoMidvfLoSLbhISlheZ9nTYSEJIT831YqlIUoVBkni/mpnmHG4n5mt2lj1eCmjTd
+ LoPdwDavW1Vn4N5pAwiw7h1gOXEOweMDWytIWt5rTTzVN21PF82W7kfttlTWRRj99AFg
+ UyByPBMedZEummW2zHC03b7DBVQRkZ5gfdCxWDmzfpJ2dKvyYTuJGFLaMEEYgB7EGhVq
+ eO7bTDyz+YdDFME0BZpEhkraaTItb75/iTQGb71kc9TUtfc8oybo+yCVoHElu0R5ekX5 9Q== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3u0u2qkank-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 30 Oct 2023 09:47:31 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 39U9lTOM006327
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 30 Oct 2023 09:47:29 GMT
+Received: from hu-kathirav-blr.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.39; Mon, 30 Oct 2023 02:47:24 -0700
+From:   Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+Subject: [PATCH 0/8] Add NSS clock controller support for IPQ5332
+Date:   Mon, 30 Oct 2023 15:17:15 +0530
+Message-ID: <20231030-ipq5332-nsscc-v1-0-6162a2c65f0a@quicinc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From:   Artur Weber <aweber.kernel@gmail.com>
-Subject: Re: [PATCH v2] dt-bindings: clock: brcm,kona-ccu: convert to YAML
-To:     Stanislav Jakubek <stano.jakubek@gmail.com>,
-        Conor Dooley <conor@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKN7P2UC/x3MQQqAIBBA0avIrBPUyUVdJVqITTUbMwciEO+et
+ HyL/ysIFSaBWVUo9LDwlTrsoCCeIR2keesGZxxag0Zzvj2i00kkRh0oxImsRzN66E0utPP7/5a
+ 1tQ9Y0EenXwAAAA==
+To:     Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <ZTf0oWfOqnyMEKbF@standask-GA-A55M-S2HP>
- <20231027-bulldog-component-5b84e4660465@spud>
- <ZTzw5c5/MwU3VOBo@standask-GA-A55M-S2HP>
-Content-Language: en-US
-In-Reply-To: <ZTzw5c5/MwU3VOBo@standask-GA-A55M-S2HP>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Richard Cochran <richardcochran@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
+CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        "Kathiravan Thirumoorthy" <quic_kathirav@quicinc.com>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1698659244; l=1910;
+ i=quic_kathirav@quicinc.com; s=20230906; h=from:subject:message-id;
+ bh=i7HQID1yleIY4kaaaihCohVzkhgNE60JyznG8qgF+qI=;
+ b=bIZzwg28QrD9cib5cZVLQyWnG1PgX9EULd3REkbp3oU2G9kZY0NOjxSOW/cXOK1EjmZnVayim
+ BJrFU6OaJr4C5qkMPzEkMsqy2VXViqvrkV0RBFJnQLoEwhEtah2vqjq
+X-Developer-Key: i=quic_kathirav@quicinc.com; a=ed25519;
+ pk=xWsR7pL6ch+vdZ9MoFGEaP61JUaRf0XaZYWztbQsIiM=
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 7TvSXoqjlaa0_yEg0GnkNJstyIpUaaHa
+X-Proofpoint-GUID: 7TvSXoqjlaa0_yEg0GnkNJstyIpUaaHa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-10-30_08,2023-10-27_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
+ clxscore=1011 malwarescore=0 suspectscore=0 mlxlogscore=838
+ priorityscore=1501 bulkscore=0 lowpriorityscore=0 adultscore=0 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2310240000 definitions=main-2310300074
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Add bindings, driver and devicetree node for networking sub system clock
+controller on IPQ5332. Some of the nssnoc clocks present in GCC driver is
+enabled by default and its RCG is configured by bootloaders, so drop
+those clocks from GCC driver.
 
-On 28/10/2023 13:30, Stanislav Jakubek wrote:
-> On Fri, Oct 27, 2023 at 03:47:48PM +0100, Conor Dooley wrote:
->> On Tue, Oct 24, 2023 at 06:45:21PM +0200, Stanislav Jakubek wrote:
->>> Convert Broadcom Kona family clock controller unit (CCU) bindings
->>> to DT schema.
->>
->> I didn't cross-check the clock-output-names, but this conversion mostly
->> looks good to me.
->>
->>> Changes during conversion:
->>>    - remove "dmac" from clock-output-names for brcm,bcm11351-master-ccu,
->>>      it is not used in DT nor the dt-bindings
->>>    - remove "uartb4" from clock-output-names for brcm,bcm21664-slave-ccu,
->>>      it is not used in DT nor the dt-bindings
->>
->> This I'm not sure about - they _were_ documented in the text-form
->> dt-binding, even if they weren't used in the dts. If the clock
->> controller does actually produce these clocks, removing them doesn't
->> make sense to me.
-> 
-> Hi Conor. Looking at downstream, I was not able to find these clocks, though
-> I admit that I'm not familiar enough with the downstream mess to be 100%
-> confident.
-> 
->  From what I can tell, the BCM21664 arch/arm/mach-hawaii/clock.c (e.g. [1])
-> doesn't contain any mention of uartb4, only uartb, uartb2 and uartb3.
-> And similarly, for the BCM281XX arch/arm/mach-capri/clock_capri.c (e.g. [2])
-> I wasn't able to find any mention of dmac, only dmac_mux_apb and dma_axi
-> (though these two don't seem to be supported on mainline yet).
+The NSS clock controller driver depends on the below patchset which adds
+support for multiple configurations for same frequency.
+https://lore.kernel.org/linux-arm-msm/20230531222654.25475-1-ansuelsmth@gmail.com/
 
-I've done some digging in the downstream kernel; for the BCM21664, I'm
-almost certain that the uartb4 clock doesn't exist. Broadcom helpfully
-left in "RDB" files containing the entire register layout of all of the
-components; and even in the RDB for the slave clock manager[1] (used by
-the other uart clocks), there is no uartb4, nor is it mentioned
-anywhere else in the kernel (judging by a quick grep in the kernel
-sources).
+Signed-off-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+---
+Kathiravan Thirumoorthy (8):
+      clk: qcom: ipq5332: drop the few nssnoc clocks
+      dt-bindings: clock: ipq5332: drop the few nss clocks definition
+      dt-bindings: clock: ipq5332: add definition for GPLL0_OUT_AUX clock
+      clk: qcom: ipq5332: add gpll0_out_aux clock
+      dt-bindings: clock: add IPQ5332 NSSCC clock and reset definitions
+      clk: qcom: add NSS clock Controller driver for IPQ5332
+      arm64: dts: qcom: ipq5332: add support for the NSSCC
+      arm64: defconfig: build NSS Clock Controller driver for IPQ5332
 
-As for the BCM281XX clocks, there indeed doesn't seem to be an exact
-"dmac" clock but there is a "dmac" clock gate register[2], which is
-used for the dma_axi clock, so perhaps that's what this is referring
-to? Also not 100% certain.
+ .../bindings/clock/qcom,ipq5332-nsscc.yaml         |   60 ++
+ arch/arm64/boot/dts/qcom/ipq5332.dtsi              |   28 +
+ arch/arm64/configs/defconfig                       |    1 +
+ drivers/clk/qcom/Kconfig                           |    7 +
+ drivers/clk/qcom/Makefile                          |    1 +
+ drivers/clk/qcom/gcc-ipq5332.c                     |   71 +-
+ drivers/clk/qcom/nsscc-ipq5332.c                   | 1035 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,ipq5332-gcc.h       |    4 +-
+ include/dt-bindings/clock/qcom,ipq5332-nsscc.h     |   86 ++
+ 9 files changed, 1233 insertions(+), 60 deletions(-)
+---
+base-commit: c503e3eec382ac708ee7adf874add37b77c5d312
+change-id: 20231030-ipq5332-nsscc-aeac9e153045
 
 Best regards,
-Artur
+-- 
+Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
 
-[1] https://github.com/Samsung-KYLEPROXX/android_kernel_samsung_kyleproxx/blob/cm-14.1/arch/arm/mach-hawaii/include/mach/rdb/brcm_rdb_kps_rst_mgr_reg.h
-[2] https://github.com/surblazer/android_kernel_samsung_galaxys2plus-common/blob/android-7.1/arch/arm/mach-capri/include/mach/rdb/brcm_rdb_kpm_clk_mgr_reg.h#L417-L433
