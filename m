@@ -2,59 +2,59 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBAD5C4332F
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Oct 2023 11:08:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7DFFC4332F
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Oct 2023 11:08:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232635AbjJ3LIE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Oct 2023 07:08:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54480 "EHLO
+        id S232766AbjJ3LIQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Oct 2023 07:08:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232492AbjJ3LID (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Oct 2023 07:08:03 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76F28B7
-        for <linux-clk@vger.kernel.org>; Mon, 30 Oct 2023 04:08:00 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-40859dee28cso33936655e9.0
-        for <linux-clk@vger.kernel.org>; Mon, 30 Oct 2023 04:08:00 -0700 (PDT)
+        with ESMTP id S232679AbjJ3LIP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Oct 2023 07:08:15 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88440DF
+        for <linux-clk@vger.kernel.org>; Mon, 30 Oct 2023 04:08:12 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-4079ed65471so31708505e9.1
+        for <linux-clk@vger.kernel.org>; Mon, 30 Oct 2023 04:08:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698664079; x=1699268879; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1698664091; x=1699268891; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=LySuM1+hMHdVRTBo4hm5hOVSaASwzItae2Pgu8ozUv8=;
-        b=vHaaAgBBKYXoMaK/d7+QlQRapxniRrSVum9ipCigT6zj8a+yZcXpFOzKUluVRNN3sg
-         EanlC1nJkXEKu3VA5Yjezt2imOmWMDAZtMDhpu6uQTsc5cw9kvJNLFHTiyoTktnnGhS3
-         sboJIfBGPRZXZAG07zaqsTmEVJpNFN2BLUUvRvmP7t6DSAnB2Px6/ebTp0e+7Hvzx+xC
-         DxY7RihMBc6usacxKtDuWnmjgHqFBvZ1PwBE4893vy8uM0F/3yiBKrM1mLRgxFqUYsmD
-         V6h58N+aWJ0bQYYSpXNgqrp4XV40V+9rlxY/lVUbqLR5KLTSogapizdJPMbCfhwMaXku
-         hfpw==
+        bh=c8YUMXVjGsp7QycWhLIdbuMi1zziTusz002mRumFttA=;
+        b=drETaWl147bRlPutpw0BC+6G4dtjBQRoLn8lBvQw6uPytz9lPr4zQ4pyaBcuIyB203
+         53cU8HmVwR6k9rrxxPwlvf4uo4rt94IZ2FDoOsQ96PixodN6Kcu3bjISnUDq3nUIKMd6
+         v6yM/L2CoU5N9dthwdDeDBZbqTaFcFPTpNgpTezeLOeLpzh9SbphwBTd1/bbANLu6iVa
+         DQy5nZ9QL3cjdGvZqE3xtkLN1jAWjlcKDdLrbTmwKhZsmK2Qhgdbp0be7HQf83XNSAMP
+         4RB5stsDgv1FPyQyn7zSlHvSH0fOckhRy+HzMrGPqLykLepLD59nbZ/luXk4+KqUOnwo
+         JX3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698664079; x=1699268879;
+        d=1e100.net; s=20230601; t=1698664091; x=1699268891;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LySuM1+hMHdVRTBo4hm5hOVSaASwzItae2Pgu8ozUv8=;
-        b=JPj/oqPHLZKRnZB8kJ1150OtwcF6FepNwAMLZKjQqjZLvotIl0ODDBG2QPbnd50Dxr
-         1rhFFpw6E58AAubhpq29bQJkhm2TR0+q3YPPdNwjp/n/9VbtzOO4aB4dxhwGZCC2+l6E
-         uzSS+/nKJrYoYed8wGSLnuR/XGWwKBNldw6P5mEzbnK4ueipuIIblivYh6zZka2jbtBS
-         tLCS8ka0MsPURaORMj1440EAm8kRsYhivPr3QXqitcJ/n0KGGEwSouAruIBIMPUcKrDZ
-         cxSNR5KXdSN0CpCB55gtzKoqqw3Hzgo3dh8b78UcAOmBPlcTJku4VrixrXYH49oHcL/v
-         kxaA==
-X-Gm-Message-State: AOJu0YzyX8WDy+W1SIiEqO+Tx+Jr4HvCZPkUt0vro5qZEiTpcQVIn9DG
-        /GlFLHv3/wMW41sW7m2NlJY0sA==
-X-Google-Smtp-Source: AGHT+IGCSXei8ur217aYgeuZWp78IYCsgCMRF77bspaDdGVI6lGKsSgo77Y9TWkNQ26hBrcdGFsa9g==
-X-Received: by 2002:a05:600c:a05:b0:409:773:cf5d with SMTP id z5-20020a05600c0a0500b004090773cf5dmr8004246wmp.28.1698664078803;
-        Mon, 30 Oct 2023 04:07:58 -0700 (PDT)
+        bh=c8YUMXVjGsp7QycWhLIdbuMi1zziTusz002mRumFttA=;
+        b=nW92dHVG0eXWzIOZ0MtakGf8JACv0PxBH1gRsHWAzDnD8UAA8okVCBGV24zWRHvsNV
+         V4bN89KYCA6/OU4uh3yIr7/d64i9ohEx/Fhq9unTkMHqC3VZ/DRgEEinqHfrg6/A6OR8
+         3IbBKvJHltCrUX9UonsmeWp8OLZja+GNvCNUZKim1IHnH6Git6ZSAbCeulwcpvstn4R+
+         GfdjJHgR2RW6w2FNrTGqsNVJ3KlLdLD+rQIr+MdKnl4QWKvhjt9QG0+YPz5ChQiqz3my
+         mDZS2GVp4eebHWPEM1a7AvvXqLFgxhOSuLcxA9zXHsjBMVVzqs7cDT0pLbKQvZ+eAk3R
+         8Rbg==
+X-Gm-Message-State: AOJu0YxHU32gcEW5AZh56lh7VWXP0i2WDuiVaOrGy5hIr0P8/j2ToG1l
+        OBDnUNBg/+64IdIbHHo0cXxeyA==
+X-Google-Smtp-Source: AGHT+IFPATwT+gA7n2SMo0pqpfBec+Mba3Z9T78KW9wESAYjKLzpG0Cq0nCcH6c64eFwLGDIX/r5DQ==
+X-Received: by 2002:a05:600c:444f:b0:406:535a:cfb4 with SMTP id v15-20020a05600c444f00b00406535acfb4mr8468038wmn.1.1698664090891;
+        Mon, 30 Oct 2023 04:08:10 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.218.126])
-        by smtp.gmail.com with ESMTPSA id f24-20020a1c6a18000000b004063977eccesm12165035wmc.42.2023.10.30.04.07.57
+        by smtp.gmail.com with ESMTPSA id f24-20020a1c6a18000000b004063977eccesm12165035wmc.42.2023.10.30.04.08.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Oct 2023 04:07:58 -0700 (PDT)
-Message-ID: <5ec8490a-1f15-4b98-a3f4-f107f424fd0c@linaro.org>
-Date:   Mon, 30 Oct 2023 12:07:56 +0100
+        Mon, 30 Oct 2023 04:08:10 -0700 (PDT)
+Message-ID: <8e2c7363-7544-41bc-a673-26cabdcb60c5@linaro.org>
+Date:   Mon, 30 Oct 2023 12:08:09 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/8] dt-bindings: clock: ipq5332: drop the few nss clocks
- definition
+Subject: Re: [PATCH 3/8] dt-bindings: clock: ipq5332: add definition for
+ GPLL0_OUT_AUX clock
 Content-Language: en-US
 To:     Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -72,7 +72,7 @@ Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 References: <20231030-ipq5332-nsscc-v1-0-6162a2c65f0a@quicinc.com>
- <20231030-ipq5332-nsscc-v1-2-6162a2c65f0a@quicinc.com>
+ <20231030-ipq5332-nsscc-v1-3-6162a2c65f0a@quicinc.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -118,7 +118,7 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231030-ipq5332-nsscc-v1-2-6162a2c65f0a@quicinc.com>
+In-Reply-To: <20231030-ipq5332-nsscc-v1-3-6162a2c65f0a@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -126,15 +126,15 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 30/10/2023 10:47, Kathiravan Thirumoorthy wrote:
-> gcc_snoc_nssnoc_clk, gcc_snoc_nssnoc_1_clk, gcc_nssnoc_nsscc_clk are
-> enabled by default and it's RCG is properly configured by bootloader.
+> Add the definition for GPLL0_OUT_AUX clock.
 > 
-> Some of the NSS clocks needs these clocks to be enabled. To avoid
-> these clocks being disabled by clock framework, drop these entries.
+> Signed-off-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+> ---
+>  include/dt-bindings/clock/qcom,ipq5332-gcc.h | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-This is not the way to prevent Linux from disabling the clocks. The way
-is to mark them as critical, so I do not think you provided accurate
-rationale for bindings change.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
