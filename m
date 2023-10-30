@@ -2,58 +2,58 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A063C4167D
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Oct 2023 18:36:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B5CFC4332F
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Oct 2023 18:36:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229795AbjJ3SgH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Oct 2023 14:36:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34618 "EHLO
+        id S229731AbjJ3Sg4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Oct 2023 14:36:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229891AbjJ3SgF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Oct 2023 14:36:05 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5BE7CC
-        for <linux-clk@vger.kernel.org>; Mon, 30 Oct 2023 11:36:00 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id 2adb3069b0e04-507973f3b65so7295715e87.3
-        for <linux-clk@vger.kernel.org>; Mon, 30 Oct 2023 11:36:00 -0700 (PDT)
+        with ESMTP id S229840AbjJ3Sgz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Oct 2023 14:36:55 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1306D3
+        for <linux-clk@vger.kernel.org>; Mon, 30 Oct 2023 11:36:51 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id 2adb3069b0e04-50797cf5b69so6670841e87.2
+        for <linux-clk@vger.kernel.org>; Mon, 30 Oct 2023 11:36:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698690959; x=1699295759; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1698691010; x=1699295810; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=wL6aPnu239GRAOYjpmf9BD73+S6a/Yjrx1gRMIwVQU4=;
-        b=oxrvqTgIVL99j61V2E5D1jglUX5qN6K+ud4DP03JMrTItvv7EqGfshpQ7gPdmXPlzg
-         v+z9UVVOaYqyKEEI4G6pqCNC3o4J7fmvMH4LohMG0aISP5LBucFmnYljIL8rC2W6sIjt
-         LebG9LBSjmKVyM7o3ee0e27d+2MKaoQsU0v0Mde3zxLvA5cmzYxjYrxMTxlkVMMNTgz+
-         A09Ns2FXxBhHLyx1pIh3740MzqgJ1I3Dr0/H0ziPzVNyUYNUD7eJFoilsXcTC2VnvnCS
-         nh1U2tJ9CXPRkN/LrD9vF7UJie7pEPwO0ZQ2ljzP3V4+1K1ha44Wh86d7tnMupMNatsw
-         g2uQ==
+        bh=nYEvU41dK0YIXvOFvE9+G3a5gAtjifLpm8tJAlXwFbA=;
+        b=GAwfxxQ+QuDZP8nEXXv4YpMk4+RdNARQrtu25qB1js7XYHkIJVeTxqpwbuC47axsYE
+         iuVEfjPU4zcltTFHXcLVmjfeOEGZm9WSsGbgkYKjo6Sb9tAAf+xtTkRac5TBOjp7kBAt
+         eNxvb8goPpc9PnB6yAOofVn5SaEqOlf4hs0GTpLptD4aJrDwxgg9Zay+D9GINNL3mwUd
+         TttaCRog6w0V8JJunhOY7BakqSPw7aZWDCgxQPGA6dmVXcUbgXkPivu6UCcbaLcfTj57
+         7T21/dSqWjMq8qp60Z4ciuHP2o87unW/6UK6eJAK0m8u1rDZjF+DAOeJOtB10QavFTZA
+         PKiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698690959; x=1699295759;
+        d=1e100.net; s=20230601; t=1698691010; x=1699295810;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wL6aPnu239GRAOYjpmf9BD73+S6a/Yjrx1gRMIwVQU4=;
-        b=AMhj/wPk37p952x8xLzMpK5VECZV4f9kujqpv1iOYlmQBoosT8zfO/ZQ8kU/6E4FVu
-         OpM34Cbet7nlLa9jbq+597cXphCYzFvBhKVW2kxTGAqQzUEtocSRyJlB9pjt1JbpvKoA
-         JkzzdoZUar6riZQ5bucmH/mUAQLagD4HEDb3WghbrSHYo4S9V9PunL74N/X14wTw96cS
-         g/876PeWhMdEbw0pZXjW7qsQjFyibcoIHZLSBsofQQDQsbBs8hCvmF+YW7ldXDlNmvTQ
-         PFuRH0Y78Yd7uOESOaS9RvAhq/gqL+yeK3YV8uCMGvAKlc94YPTulD4rQiF68wlmVtfZ
-         3WKA==
-X-Gm-Message-State: AOJu0YyUUn3tRZfxnvHUzAnjwPgYKsoql/VopF7biRsaHnRocUW0Bjr+
-        VPzbURCO0jhOUa4kHS3fk3g2jw==
-X-Google-Smtp-Source: AGHT+IFhJGSom/jWC1b6FIqqsro/nThAfw2pJlrCqVtKF3VUJ83YY1+F+h+wbt+aiNxBI4XUe7R/vg==
-X-Received: by 2002:a19:4f42:0:b0:507:a1bf:8e6f with SMTP id a2-20020a194f42000000b00507a1bf8e6fmr7746406lfk.46.1698690958589;
-        Mon, 30 Oct 2023 11:35:58 -0700 (PDT)
+        bh=nYEvU41dK0YIXvOFvE9+G3a5gAtjifLpm8tJAlXwFbA=;
+        b=I1AqyOv93sRV6+RDzWIcpoL1wlEVEATZ9elVwSs/8tzuavpUUMAp5obRqmRkUMeoLM
+         rucRXZT1VhdbC0IeIM7J0OA4VmBnXgiY1N0P5Ljf+nJLeq3IWWfY55yJJA8OT/ZjacE5
+         IjHA3w1XltrOGs+DKp+DoTkdSS+LxUdYzBemmCAkHLeDc5sdnRg5Jwesq9kLMmtp3yg0
+         0lBOu+dRZmneFVCg4URJe/9Ym6fZq8mQoH4toGSl2/lVOdlRFTZRglUkTvOBpXWRA6y2
+         uE9uFsHazmQ/4p4aSU3uHNZ0NvXtVplc9AtszBBAQtFQIQU7pi52LNlB7NcZshK/pv49
+         bwYA==
+X-Gm-Message-State: AOJu0YwnYmdhmfvjwh7einkn9rQnmPOfgS1K15n/W299ZqNOitU9Mtyz
+        bIlMMmhFhXlRp92Sx7sGye/n7A==
+X-Google-Smtp-Source: AGHT+IF5qrbJbaExIvwhAqwTs27Nu9wSo/3RX2IiMUHHads9Srumbxu0qHj7qs72ezDz5SrPt5neug==
+X-Received: by 2002:ac2:51b0:0:b0:500:b7ed:105a with SMTP id f16-20020ac251b0000000b00500b7ed105amr7229228lfk.29.1698691010017;
+        Mon, 30 Oct 2023 11:36:50 -0700 (PDT)
 Received: from [192.168.133.160] (178235177091.dynamic-4-waw-k-1-1-0.vectranet.pl. [178.235.177.91])
-        by smtp.gmail.com with ESMTPSA id x18-20020a056512047200b004fb9c625b4asm1496892lfd.210.2023.10.30.11.35.56
+        by smtp.gmail.com with ESMTPSA id x18-20020a056512047200b004fb9c625b4asm1496892lfd.210.2023.10.30.11.36.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Oct 2023 11:35:58 -0700 (PDT)
-Message-ID: <85dd5f91-7dc7-419f-88c0-b8024664f0f6@linaro.org>
-Date:   Mon, 30 Oct 2023 19:35:56 +0100
+        Mon, 30 Oct 2023 11:36:49 -0700 (PDT)
+Message-ID: <eaafc2b8-b7b2-4037-a386-96ae169cd5f9@linaro.org>
+Date:   Mon, 30 Oct 2023 19:36:48 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 06/10] clk: qcom: add the SM8650 Global Clock
+Subject: Re: [PATCH v2 08/10] clk: qcom: add the SM8650 Display Clock
  Controller driver
 Content-Language: en-US
 To:     Neil Armstrong <neil.armstrong@linaro.org>,
@@ -69,7 +69,7 @@ To:     Neil Armstrong <neil.armstrong@linaro.org>,
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20231030-topic-sm8650-upstream-clocks-v2-0-144333e086a2@linaro.org>
- <20231030-topic-sm8650-upstream-clocks-v2-6-144333e086a2@linaro.org>
+ <20231030-topic-sm8650-upstream-clocks-v2-8-144333e086a2@linaro.org>
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
@@ -106,7 +106,7 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <20231030-topic-sm8650-upstream-clocks-v2-6-144333e086a2@linaro.org>
+In-Reply-To: <20231030-topic-sm8650-upstream-clocks-v2-8-144333e086a2@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -114,13 +114,10 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 30.10.2023 10:57, Neil Armstrong wrote:
-> Add Global Clock Controller (GCC) support for SM8650 platform.
+> Add Display Clock Controller (DISPCC) support for SM8650 platform.
 > 
 > Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 > ---
 Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-
-the PCIe GDSC mask bug was a funny one, probably leaking power
-like crazy :D
 
 Konrad
