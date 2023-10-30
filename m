@@ -2,137 +2,153 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B464C4332F
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Oct 2023 20:37:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E704C4332F
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Oct 2023 21:12:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231321AbjJ3Uh1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Oct 2023 16:37:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56090 "EHLO
+        id S229982AbjJ3VML (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Oct 2023 17:12:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231761AbjJ3Uh0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Oct 2023 16:37:26 -0400
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A68FB109;
-        Mon, 30 Oct 2023 13:37:22 -0700 (PDT)
-Received: by mail-pj1-x1032.google.com with SMTP id 98e67ed59e1d1-280137f1a1bso2265902a91.1;
-        Mon, 30 Oct 2023 13:37:22 -0700 (PDT)
+        with ESMTP id S229646AbjJ3VMK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Oct 2023 17:12:10 -0400
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 838BBF1
+        for <linux-clk@vger.kernel.org>; Mon, 30 Oct 2023 14:12:07 -0700 (PDT)
+Received: by mail-lj1-x230.google.com with SMTP id 38308e7fff4ca-2c5720a321aso65385601fa.1
+        for <linux-clk@vger.kernel.org>; Mon, 30 Oct 2023 14:12:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698698242; x=1699303042; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9/tyopkMDgCBg9IJqpFJkPLn4LWq8TVkMh2MToeKQVk=;
-        b=LPyVbDBnDyiXR6fmcUxWjGRvG4LKTOMKx/febS/f5/SlWuGl2OjEfeXOWI4BPwZaBw
-         caKmCaixtxEN3EuUZH1G5AtAGX6McEUrknmkaKazet98AvyUe+yTZ0a3S5CSHMG/6Jj0
-         NsweWys0uJ+ZjeISFydIdaEt226on1hkGrLaX3ksabV1P3CbiaFe5r2O8hT8fsNzlqUC
-         rPZTrxUpoTX90Owb6pV8di4LCIvZhZuBGOP7Ig5Zidd2WgHo8nRluErFXnoGUR4GlXgP
-         WUOOAbs0ePuJJgbXm2u29VpiaqepXGoDDWrWaaaM97A1XLbdVw9k6UB4Eik4L4olbmNx
-         0KVg==
+        d=linaro.org; s=google; t=1698700326; x=1699305126; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Yvz7j0aXwqHtGtC2njMkTn9rIFOlYhohzHXfNXUViPE=;
+        b=d5VXwZWbSgGSTUyYSrZIthmO+UpD7rbH6yFErYn/B9/CAn56iLKVXf5rwIENLy80dV
+         LoqJrK/pdTEmC+VBcJcYTitmGRCqGWPwptjzBfTmMtRJTGLvuxrx3JgcmWBJDwIBeWUe
+         ZwvPkLjYUMvC/w1MqNCD17kIoQeYFmTnx+vTCw1c95bY3jhps065yCI1lfuka0/31xku
+         k9ljy+UmINUA8VXWSxOTBWsjuXcdCObWa/kCxp6H5wgs+1dcIjQ383V9kdwdrjV1ie9e
+         igr694XbS58xiDXxUK39aQl2tdUhR16wAEF7nPG+fzXIlqRqJXAHIhxEG5MmNEr25Dfp
+         7DhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698698242; x=1699303042;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9/tyopkMDgCBg9IJqpFJkPLn4LWq8TVkMh2MToeKQVk=;
-        b=YXAgxN4s1LQ5GRLFcAhYVOBeFmGxHNGaEaFRItA45CmnHLP7kvt8lilTULJTxOXwiN
-         6857IFPXzZbbeMk26S/hAlasjhKHHpjPPqd0w+C9y4RdMxJIdERn+LLSxxUbw5lsB2Qe
-         7nsjpQl8VbtGdtBJZxxQ62nh0V8pKXUMkj6Dxcal8AH60XpIKUHCn3RO2uIOGxudXuVi
-         VKmVenw9kQfj0Wt0kdqy4FJM94SlYO+PyGfhY3DKkTm+n+M8En0SudrujhaThnxxrT5x
-         4tB2mpwgynGRM/kIJczEhxN+Mo5zKhh/KMOS8O6ahoKA3J02zZ1zTULCUFD/SQNBL0m5
-         R8xA==
-X-Gm-Message-State: AOJu0YwszRARL0uewqzhfK3EY1LOb9q9n+YHIXd0PGoUgouLzDPebWwc
-        9zHsj9q82JdQqWFuWlnrQv2W8ru/up4jSJ7b3qU=
-X-Google-Smtp-Source: AGHT+IEyszwTBuUXM69NzRLrKZXAPOrNdGf4XC40IKbRok1aPdBnufwVvWTsRcO2sjDNUapfvR7C1s6EocKux2iwN+w=
-X-Received: by 2002:a17:90b:111:b0:27d:c95:b0ad with SMTP id
- p17-20020a17090b011100b0027d0c95b0admr7633906pjz.21.1698698242060; Mon, 30
- Oct 2023 13:37:22 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1698700326; x=1699305126;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yvz7j0aXwqHtGtC2njMkTn9rIFOlYhohzHXfNXUViPE=;
+        b=ANLZBT39edmpD4No5rxReWYXDzzwwExN5T4x2x+Ti1wElxbWs3Mw3stgDds0ZgxL1j
+         /q24wQEW7jGpT8absey7NmrGUo/sINzTR9nNX1hUJNPlO+g9+vW+X+Rh5bzvSKmFO5EQ
+         g4YzoQiDQAwRMdDTJ7mFVoSZKFZGwC47as3b8Hzysm3AHORKtXxbDAj5PtKikGv4DoGn
+         3p0FLb5WBgPHoxm98I6ZiYCis6n/OCklwCO42TfEwfaFR3wW6g3Oyxfn8wd0qlj5C8yp
+         /t51KKoKkqHEs354h2CuiDIj3o3db6kAnmPJRo+ZbbKVqJe0pqabTC3bels98YuRNYtO
+         a+zQ==
+X-Gm-Message-State: AOJu0YzjDheANh1ukDFOoCbj6Fa5U8eNBQwgqVeKEbmpedx1AO7vMx4K
+        VP+OZKyiQCdpKnr51pPo9CePZw==
+X-Google-Smtp-Source: AGHT+IEFbR+mfA4lDi7HYqrqs0Modr8JJ8FBQsQt31RkeWuPoQM8n7kICsNoPWw23UhK+fBo8ALDfQ==
+X-Received: by 2002:a05:651c:333:b0:2c5:1542:57e4 with SMTP id b19-20020a05651c033300b002c5154257e4mr8145853ljp.31.1698700325178;
+        Mon, 30 Oct 2023 14:12:05 -0700 (PDT)
+Received: from [192.168.133.160] (178235177091.dynamic-4-waw-k-1-1-0.vectranet.pl. [178.235.177.91])
+        by smtp.gmail.com with ESMTPSA id z4-20020a2eb524000000b002c5a1d45e95sm1432930ljm.0.2023.10.30.14.12.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Oct 2023 14:12:04 -0700 (PDT)
+Message-ID: <ef377506-4132-4805-a76e-18f241afe319@linaro.org>
+Date:   Mon, 30 Oct 2023 22:12:02 +0100
 MIME-Version: 1.0
-References: <20231025104457.628109-1-robimarko@gmail.com> <20231025104457.628109-2-robimarko@gmail.com>
- <CAOX2RU4MBvDZZ767RPS9XKj0U2L3gviVG5cyR8NKyO4LD+sfYQ@mail.gmail.com> <20c8cfde-3f55-45c5-bc23-21979ac9680d@linaro.org>
-In-Reply-To: <20c8cfde-3f55-45c5-bc23-21979ac9680d@linaro.org>
-From:   Robert Marko <robimarko@gmail.com>
-Date:   Mon, 30 Oct 2023 21:37:10 +0100
-Message-ID: <CAOX2RU5-XFZhGzjigNtu-qFnPWDd2XkpGpY=HXWigRa5SXw4TA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 2/3] clk: qcom: ipq6018: add USB GDSCs
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>
+Content-Language: en-US
+To:     Robert Marko <robimarko@gmail.com>
 Cc:     agross@kernel.org, andersson@kernel.org, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
         mturquette@baylibre.com, sboyd@kernel.org,
         linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
+References: <20231025104457.628109-1-robimarko@gmail.com>
+ <20231025104457.628109-2-robimarko@gmail.com>
+ <CAOX2RU4MBvDZZ767RPS9XKj0U2L3gviVG5cyR8NKyO4LD+sfYQ@mail.gmail.com>
+ <20c8cfde-3f55-45c5-bc23-21979ac9680d@linaro.org>
+ <CAOX2RU5-XFZhGzjigNtu-qFnPWDd2XkpGpY=HXWigRa5SXw4TA@mail.gmail.com>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
+ BB/OmIWU6X+LZW6P88ZmHe+KeyABLMP5s1tJNK1j4ntT7mECcWZDzafPWF4F6m4WJOG27kTJ
+ HGWdmtO+RvadOVi6CoUDqALsmfS3MUG5Pj2Ne9+0jRg4hEnB92AyF9rW2G3qisFcwPgvatt7
+ TXD5E38mLyOPOUyXNj9XpDbt1hNwKQfiidmPh5e7VNAWRnW1iCMMoKqzM1Anzq7e5Afyeifz
+ zRcQPLaqrPjnKqZGL2BKQSZDh6NkI5ZLRhhHQf61fkWcUpTp1oDC6jWVfT7hwRVIQLrrNj9G
+ MpPzrlN4YuAqKeIer1FMt8cq64ifgTzxHzXsMcUdclzq2LTk2RXaPl6Jg/IXWqUClJHbamSk
+ t1bfif3SnmhA6TiNvEpDKPiT3IDs42THU6ygslrBxyROQPWLI9IL1y8S6RtEh8H+NZQWZNzm
+ UQ3imZirlPjxZtvz1BtnnBWS06e7x/UEAguj7VHCuymVgpl2Za17d1jj81YN5Rp5L9GXxkV1
+ aUEwONM3eCI3qcYm5JNc5X+JthZOWsbIPSC1Rhxz3JmWIwP1udr5E3oNRe9u2LIEq+wH/toH
+ kpPDhTeMkvt4KfE5m5ercid9+ZXAqoaYLUL4HCEw+HW0DXcKDwARAQABzShLb25yYWQgRHli
+ Y2lvIDxrb25yYWQuZHliY2lvQGxpbmFyby5vcmc+wsGOBBMBCAA4FiEEU24if9oCL2zdAAQV
+ R4cBcg5dfFgFAmQ5bqwCGwMFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AACgkQR4cBcg5dfFjO
+ BQ//YQV6fkbqQCceYebGg6TiisWCy8LG77zV7DB0VMIWJv7Km7Sz0QQrHQVzhEr3trNenZrf
+ yy+o2tQOF2biICzbLM8oyQPY8B///KJTWI2khoB8IJSJq3kNG68NjPg2vkP6CMltC/X3ohAo
+ xL2UgwN5vj74QnlNneOjc0vGbtA7zURNhTz5P/YuTudCqcAbxJkbqZM4WymjQhe0XgwHLkiH
+ 5LHSZ31MRKp/+4Kqs4DTXMctc7vFhtUdmatAExDKw8oEz5NbskKbW+qHjW1XUcUIrxRr667V
+ GWH6MkVceT9ZBrtLoSzMLYaQXvi3sSAup0qiJiBYszc/VOu3RbIpNLRcXN3KYuxdQAptacTE
+ mA+5+4Y4DfC3rUSun+hWLDeac9z9jjHm5rE998OqZnOU9aztbd6zQG5VL6EKgsVXAZD4D3RP
+ x1NaAjdA3MD06eyvbOWiA5NSzIcC8UIQvgx09xm7dThCuQYJR4Yxjd+9JPJHI6apzNZpDGvQ
+ BBZzvwxV6L1CojUEpnilmMG1ZOTstktWpNzw3G2Gis0XihDUef0MWVsQYJAl0wfiv/0By+XK
+ mm2zRR+l/dnzxnlbgJ5pO0imC2w0TVxLkAp0eo0LHw619finad2u6UPQAkZ4oj++iIGrJkt5
+ Lkn2XgB+IW8ESflz6nDY3b5KQRF8Z6XLP0+IEdLOOARkOW7yEgorBgEEAZdVAQUBAQdAwmUx
+ xrbSCx2ksDxz7rFFGX1KmTkdRtcgC6F3NfuNYkYDAQgHwsF2BBgBCAAgFiEEU24if9oCL2zd
+ AAQVR4cBcg5dfFgFAmQ5bvICGwwACgkQR4cBcg5dfFju1Q//Xta1ShwL0MLSC1KL1lXGXeRM
+ 8arzfyiB5wJ9tb9U/nZvhhdfilEDLe0jKJY0RJErbdRHsalwQCrtq/1ewQpMpsRxXzAjgfRN
+ jc4tgxRWmI+aVTzSRpywNahzZBT695hMz81cVZJoZzaV0KaMTlSnBkrviPz1nIGHYCHJxF9r
+ cIu0GSIyUjZ/7xslxdvjpLth16H27JCWDzDqIQMtg61063gNyEyWgt1qRSaK14JIH/DoYRfn
+ jfFQSC8bffFjat7BQGFz4ZpRavkMUFuDirn5Tf28oc5ebe2cIHp4/kajTx/7JOxWZ80U70mA
+ cBgEeYSrYYnX+UJsSxpzLc/0sT1eRJDEhI4XIQM4ClIzpsCIN5HnVF76UQXh3a9zpwh3dk8i
+ bhN/URmCOTH+LHNJYN/MxY8wuukq877DWB7k86pBs5IDLAXmW8v3gIDWyIcgYqb2v8QO2Mqx
+ YMqL7UZxVLul4/JbllsQB8F/fNI8AfttmAQL9cwo6C8yDTXKdho920W4WUR9k8NT/OBqWSyk
+ bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
+ nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
+ izWDgYvmBE8=
+In-Reply-To: <CAOX2RU5-XFZhGzjigNtu-qFnPWDd2XkpGpY=HXWigRa5SXw4TA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 30 Oct 2023 at 20:37, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
->
-> On 29.10.2023 12:04, Robert Marko wrote:
-> > On Wed, 25 Oct 2023 at 12:45, Robert Marko <robimarko@gmail.com> wrote:
-> >>
-> >> IPQ6018 has GDSC-s for each of the USB ports, so lets define them as such
-> >> and drop the curent code that is de-asserting the USB GDSC-s as part of
-> >> the GCC probe.
-> >>
-> >> Signed-off-by: Robert Marko <robimarko@gmail.com>
-> >
-> > Unfortunately, after testing on multiple devices I hit the same GDSC
-> > issue I had a long time ago
-> > that was the reason I did not send this upstream.
-> > It seems that USB3 port GDSC (USB0 GDSC in code) works just fine,
-> > however the USB2 one
-> > (USB1 GDSC in code) it is stuck off and USB2 port will fail due to this:
-> >     1.607531] ------------[ cut here ]------------
-> > [    1.607559] usb1_gdsc status stuck at 'off'
-> > [    1.607592] WARNING: CPU: 0 PID: 35 at gdsc_toggle_logic+0x16c/0x174
-> > [    1.615120] Modules linked in:
-> Can you dump GDSCR (the entire 32-bit register) at boot and when toggling?
+On 30.10.2023 21:37, Robert Marko wrote:
+> On Mon, 30 Oct 2023 at 20:37, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
+>>
+>> On 29.10.2023 12:04, Robert Marko wrote:
+>>> On Wed, 25 Oct 2023 at 12:45, Robert Marko <robimarko@gmail.com> wrote:
+>>>>
+>>>> IPQ6018 has GDSC-s for each of the USB ports, so lets define them as such
+>>>> and drop the curent code that is de-asserting the USB GDSC-s as part of
+>>>> the GCC probe.
+>>>>
+>>>> Signed-off-by: Robert Marko <robimarko@gmail.com>
+>>>
+>>> Unfortunately, after testing on multiple devices I hit the same GDSC
+>>> issue I had a long time ago
+>>> that was the reason I did not send this upstream.
+>>> It seems that USB3 port GDSC (USB0 GDSC in code) works just fine,
+>>> however the USB2 one
+>>> (USB1 GDSC in code) it is stuck off and USB2 port will fail due to this:
+>>>     1.607531] ------------[ cut here ]------------
+>>> [    1.607559] usb1_gdsc status stuck at 'off'
+>>> [    1.607592] WARNING: CPU: 0 PID: 35 at gdsc_toggle_logic+0x16c/0x174
+>>> [    1.615120] Modules linked in:
+>> Can you dump GDSCR (the entire 32-bit register) at boot and when toggling?
+> 
+> Sure, here it is:
+> [    0.023760] qcom,gcc-ipq6018 1800000.gcc: reg: 0x3e078 val: 0x8222004 init
+> [    0.023782] qcom,gcc-ipq6018 1800000.gcc: reg: 0x3f078 val: 0x8222004 init
+> [    0.988626] qcom,gcc-ipq6018 1800000.gcc: reg: 0x3f078 val:
+> 0x8282000 before toggle
+> [    1.202506] qcom,gcc-ipq6018 1800000.gcc: reg: 0x3f078 val:
+> 0x8282000 after toggle
+> [    1.207208] qcom,gcc-ipq6018 1800000.gcc: reg: 0x3e078 val:
+> 0xa0282000 before toggle
+Any chance
 
-Sure, here it is:
-[    0.023760] qcom,gcc-ipq6018 1800000.gcc: reg: 0x3e078 val: 0x8222004 init
-[    0.023782] qcom,gcc-ipq6018 1800000.gcc: reg: 0x3f078 val: 0x8222004 init
-[    0.988626] qcom,gcc-ipq6018 1800000.gcc: reg: 0x3f078 val:
-0x8282000 before toggle
-[    1.202506] qcom,gcc-ipq6018 1800000.gcc: reg: 0x3f078 val:
-0x8282000 after toggle
-[    1.207208] qcom,gcc-ipq6018 1800000.gcc: reg: 0x3e078 val:
-0xa0282000 before toggle
-[    1.216208] qcom,gcc-ipq6018 1800000.gcc: reg: 0x3e078 val:
-0xa0282000 after toggle
-[    1.648261] qcom,gcc-ipq6018 1800000.gcc: reg: 0x3f078 val:
-0x8282000 before toggle
-[    1.865867] qcom,gcc-ipq6018 1800000.gcc: reg: 0x3f078 val:
-0x8282000 after toggle
-[    1.880638] qcom,gcc-ipq6018 1800000.gcc: reg: 0x3f078 val:
-0x8282000 before toggle
-[    2.108643] qcom,gcc-ipq6018 1800000.gcc: reg: 0x3f078 val:
-0x8282000 after toggle
-[    2.113495] qcom,gcc-ipq6018 1800000.gcc: reg: 0x3f078 val:
-0x8282000 before toggle
-[    2.340844] qcom,gcc-ipq6018 1800000.gcc: reg: 0x3f078 val:
-0x8282000 after toggle
-[   10.588698] qcom,gcc-ipq6018 1800000.gcc: reg: 0x3f078 val:
-0x8282000 before toggle
-[   10.815257] qcom,gcc-ipq6018 1800000.gcc: reg: 0x3f078 val:
-0x8282000 after toggle
-[   11.554561] qcom,gcc-ipq6018 1800000.gcc: reg: 0x3f078 val:
-0x8282000 before toggle
-[   11.774515] qcom,gcc-ipq6018 1800000.gcc: reg: 0x3f078 val:
-0x8282000 after toggle
-[   11.781652] qcom,gcc-ipq6018 1800000.gcc: reg: 0x3f078 val:
-0x8282000 before toggle
-[   12.039619] qcom,gcc-ipq6018 1800000.gcc: reg: 0x3f078 val:
-0x8282000 after toggle
-[   22.233021] qcom,gcc-ipq6018 1800000.gcc: reg: 0x3f078 val:
-0x8282000 before toggle
-[   22.452907] qcom,gcc-ipq6018 1800000.gcc: reg: 0x3f078 val:
-0x8282000 after toggle
+.en_few_wait_val = 0x2
 
-BTW, earlier I tried manually setting BIT(2) to 1 and that will allow
-the USB1 master clock to
-come up.
+(turning BIT(19) into BIT(17))
 
-Regards,
-Robert
->
-> Konrad
+will make a difference?
+
+Konrad
