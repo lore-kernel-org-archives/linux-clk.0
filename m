@@ -2,139 +2,118 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A633C00142
-	for <linux-clk@archiver.kernel.org>; Tue, 31 Oct 2023 08:44:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46AC5C4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 31 Oct 2023 09:02:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233257AbjJaIoS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 31 Oct 2023 04:44:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55590 "EHLO
+        id S235473AbjJaJCC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 31 Oct 2023 05:02:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235617AbjJaIoP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Oct 2023 04:44:15 -0400
-Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 486E2DA
-        for <linux-clk@vger.kernel.org>; Tue, 31 Oct 2023 01:44:13 -0700 (PDT)
-Received: by mail-pl1-x62c.google.com with SMTP id d9443c01a7336-1c434c33ec0so41432065ad.3
-        for <linux-clk@vger.kernel.org>; Tue, 31 Oct 2023 01:44:13 -0700 (PDT)
+        with ESMTP id S235459AbjJaJCB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Oct 2023 05:02:01 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D674091;
+        Tue, 31 Oct 2023 02:01:58 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id 98e67ed59e1d1-2809414efa9so869705a91.1;
+        Tue, 31 Oct 2023 02:01:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698741853; x=1699346653; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YZyTDgOu+Mk84MW1y8TY9+DV7jPCPdy2MJyiStmLRmc=;
-        b=wteoQUuS/mcbK96HWeBn6VsU3LJA4ZC11ZPSxAQreZjuQcceCTeHStrIq22y1/4+c1
-         7hAYNeK3kfNAxIcJBHED1JH+s3z/ECfnvDxHdRH0kCinE298Sv9wJg+/FWL9f13isKzS
-         0C264Zy8PULh7zEEdgYeYUQcVE9ToFgqzNZf/1xUYCjc6PT/aB+u60F2z9gI8SFFQqBl
-         r+QLTHs+5YFbPXtIIen7CQfJoEhEpVU5/Mgk9du6J+RgiGePrE7nUvioqR0ZCa4JR6Bz
-         8Y5TBMsxHNc1XdzkIdS9vFTdDbdeMyuAmqAUAihYXwhlfAETkkeSygkwS8qQevfaSfKB
-         mrBg==
+        d=gmail.com; s=20230601; t=1698742918; x=1699347718; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=zqxJQ8Ni/MPYlzrYNW/kZynf7izc43entk4fRBk4nkQ=;
+        b=Ap2o7LUdBk4Ir+9f3/pkTeWJzgcX5bFRs6qpTpE8B0UVhvIFFO4ZqBTLmQ3Vfuk2EO
+         nk5s5OM0pguUKYBRcJdDzq1so2VJQjIl+w1HBVp37vebxYg15cFyYWc+lTCfKI5PAfOS
+         SAnrN5c04RmRVEvAdS9UceQRXMHAdcjrlX0g6BxL0A4X75n+0p/BJ50Djw5yIKqq3u5V
+         Tjq+y2cDezebL8573ecNgTCi2iBl2JDAgFCkXEY6PfBW04L4UnIKHAmwzE5Y8jSQ+U25
+         37tJSOI59SeWLeaVFLKI3+l5oGlO6Ni1vTCxcIHpRSzUO9GcJ/t25lNHCIGWMkinBuQn
+         XbhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698741853; x=1699346653;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YZyTDgOu+Mk84MW1y8TY9+DV7jPCPdy2MJyiStmLRmc=;
-        b=hKkieS/wYAgvF5d2RkthHvsHyZ1nlVqXFumgtrjlYHl3kcM/xWjTE+if/ahwNbgOu8
-         S7rtTCs2x5+5wXV30lKnBSQQk1CTm74svAxd7n0bpk/+q/h0Cxqfqr+sP5UQaksik3cU
-         COPv1jpHQZo2lBJM994BSLKjbeM8cjl5V6+jdAeQk2ZttxKDPpBARcxc9PGRxrNZuF5Q
-         or7axc73dKDnlITyoMwG1TTCOCE2bb5fxt99lHSNGkvjYyOPuAV9FiwsUkn7j/Wun9Yc
-         gR6JK/u1UA6XgM6TDHJbrwewsi/h1gl/CvGXKUWxrItO7dZzAwQVn72OO/R72JD9tbPM
-         TlaQ==
-X-Gm-Message-State: AOJu0Yx0JOsCJab3NBxVQaUkHp3S6Ec9aCQI8Fxly7T47V8WSKD/+Mi7
-        sA84Yh6ucwu2PF26+mrIz/tPnQ==
-X-Google-Smtp-Source: AGHT+IE46TBsZ8WZ5WIF5n2a0wgB/ZoCaZ+M9uHGlPT7/gAOdKWxWCF6QOdyRyEewyBzqw8yxRCZYA==
-X-Received: by 2002:a17:902:ab81:b0:1cc:e66:3732 with SMTP id f1-20020a170902ab8100b001cc0e663732mr8974222plr.19.1698741852707;
-        Tue, 31 Oct 2023 01:44:12 -0700 (PDT)
-Received: from localhost ([122.172.80.14])
-        by smtp.gmail.com with ESMTPSA id 6-20020a170902c10600b001ca4c20003dsm812711pli.69.2023.10.31.01.44.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Oct 2023 01:44:11 -0700 (PDT)
-Date:   Tue, 31 Oct 2023 14:14:09 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        rafael@kernel.org, ilia.lin@kernel.org, sivaprak@codeaurora.org,
-        quic_kathirav@quicinc.com, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v6 0/2] Enable cpufreq for IPQ5332 & IPQ9574
-Message-ID: <20231031084409.x5kqcs4ubmd5jh47@vireshk-i7>
-References: <cover.1698735972.git.quic_varada@quicinc.com>
+        d=1e100.net; s=20230601; t=1698742918; x=1699347718;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zqxJQ8Ni/MPYlzrYNW/kZynf7izc43entk4fRBk4nkQ=;
+        b=Ibp08OH0E1VeT1+dcMjdMqDNMIv23pORMykay9p+MLNvG1yMFngqv1AQ7sMz4kwHsr
+         nwe9RPxST2swP+7RXYpBLVmLPNNky16TSTyoiD7hXplku7L+qBl56nRCY51z+Amtv8ma
+         XuNHKztFGtXXIWkajBX0GFr9tOO7Z0PL0CrXA5qncsoCQ8w84hkZGPCCEuVCto5xfG7B
+         HSS69U0ORwP66ygrFup6zk/anTr8D3eQEQJknuj6r4wXfzbg7CheofeYSX9oD1S4hexW
+         7ZkaoQFRH8PoZ38MKqXWzJARfFqD5qfVWcBaWUumfl7JPJCL+Vc57VA+kn8EkvVGi5tq
+         ORFw==
+X-Gm-Message-State: AOJu0YwiIOGhXw+jXht93ViGgDFaYsJlo/kq2NTTSJ/6ppZzsSf4c36G
+        NirHG0vE67huxSEkDy60QE50HK3Bvzcyjo772m4=
+X-Google-Smtp-Source: AGHT+IFwrWvxotSFyxfI1rxiJRHMU2JaY4pHGXA3/eAAFwJFmrZc2zszEFL7FLs8uar8EfcStUpR3JRApPolKxCi/t4=
+X-Received: by 2002:a17:90b:4c88:b0:280:8356:10b2 with SMTP id
+ my8-20020a17090b4c8800b00280835610b2mr3199047pjb.5.1698742918210; Tue, 31 Oct
+ 2023 02:01:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1698735972.git.quic_varada@quicinc.com>
+References: <20231025104457.628109-1-robimarko@gmail.com> <20231025104457.628109-2-robimarko@gmail.com>
+ <CAOX2RU4MBvDZZ767RPS9XKj0U2L3gviVG5cyR8NKyO4LD+sfYQ@mail.gmail.com>
+ <20c8cfde-3f55-45c5-bc23-21979ac9680d@linaro.org> <CAOX2RU5-XFZhGzjigNtu-qFnPWDd2XkpGpY=HXWigRa5SXw4TA@mail.gmail.com>
+ <ef377506-4132-4805-a76e-18f241afe319@linaro.org>
+In-Reply-To: <ef377506-4132-4805-a76e-18f241afe319@linaro.org>
+From:   Robert Marko <robimarko@gmail.com>
+Date:   Tue, 31 Oct 2023 10:01:47 +0100
+Message-ID: <CAOX2RU4K67evm10giQvF1rcfqTfR+e--KQT3ZePoHQoqASv_fg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] clk: qcom: ipq6018: add USB GDSCs
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc:     agross@kernel.org, andersson@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 31-10-23, 12:41, Varadarajan Narayanan wrote:
-> This patch series aims to enable cpufreq for IPQ5332 and IPQ9574.
-> For IPQ5332, a minor enhancement to Stromer Plus ops and a safe
-> source switch is needed before cpu freq can be enabled.
-> 
-> These are also included in this series. Posting this as a single
-> series. Please let me know if this is not correct, will split in
-> the subsequent revisions.
-> 
-> Passed the following DT related validations
-> make W=1 ARCH=arm64 -j16 DT_CHECKER_FLAGS='-v -m' dt_binding_check DT_SCHEMA_FILES=qcom
-> make W=1 ARCH=arm64 -j16 CHECK_DTBS=y DT_SCHEMA_FILES=qcom dtbs_check
-> 
-> For IPQ5332:
-> ~~~~~~~~~~~
-> 	* This patch series introduces stromer plus ops which
-> 	  builds on stromer ops and implements a different
-> 	  set_rate and determine_rate.
-> 
-> 	  A different set_rate is needed since stromer plus PLLs
-> 	  do not support dynamic frequency scaling. To switch
-> 	  between frequencies, we have to shut down the PLL,
-> 	  configure the L and ALPHA values and turn on again. So
-> 	  introduce the separate set of ops for Stromer Plus PLL.
-> 
-> 	* Update ipq_pll_stromer_plus to use clk_alpha_pll_stromer_plus_ops
-> 	  instead of clk_alpha_pll_stromer_ops.
-> 
-> 	* Set 'l' value to a value that is supported on all SKUs.
-> 
-> 	* Provide safe source switch for a53pll
-> 
-> 	* Include IPQ5332 in cpufreq nvmem framework
-> 
-> 	* Add OPP details to device tree
-> 
-> For IPQ9574:
-> ~~~~~~~~~~~
-> 	* Include IPQ9574 in cpufreq nvmem framework
-> 
-> 	* Add OPP details to device tree
-> 
-> Removed 2 patches from V1 as they have been merged
-> 	* dt-bindings: cpufreq: qcom-cpufreq-nvmem: document IPQ5332
-> 	* dt-bindings: cpufreq: qcom-cpufreq-nvmem: document IPQ9574
-> 
-> v4:	Included a patch to fix 'kernel test robot' build error --
-> 	https://lore.kernel.org/r/202310181650.g8THtfsm-lkp@intel.com/
-> 
-> v5:	Use devm_clk_notifier_register
-> 	Merge IPQ53xx and IPQ95xx cases with APQ8096 for speed bin selection
-> 	Add reviewed by tags
-> 
-> v6:	Except these 2 patches, rest have been merged...
-> 	Rebased these to latest top as they don't apply cleanly
-> 	(https://lore.kernel.org/linux-arm-msm/20231025062508.vccrmkem45p3fnwe@vireshk-i7/)
-> 
-> Varadarajan Narayanan (2):
->   cpufreq: qti: Enable cpufreq for ipq53xx
->   cpufreq: qti: Introduce cpufreq for ipq95xx
-> 
->  drivers/cpufreq/cpufreq-dt-platdev.c |  2 ++
->  drivers/cpufreq/qcom-cpufreq-nvmem.c | 12 ++++++++++++
->  2 files changed, 14 insertions(+)
+On Mon, 30 Oct 2023 at 22:12, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
+>
+> On 30.10.2023 21:37, Robert Marko wrote:
+> > On Mon, 30 Oct 2023 at 20:37, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
+> >>
+> >> On 29.10.2023 12:04, Robert Marko wrote:
+> >>> On Wed, 25 Oct 2023 at 12:45, Robert Marko <robimarko@gmail.com> wrote:
+> >>>>
+> >>>> IPQ6018 has GDSC-s for each of the USB ports, so lets define them as such
+> >>>> and drop the curent code that is de-asserting the USB GDSC-s as part of
+> >>>> the GCC probe.
+> >>>>
+> >>>> Signed-off-by: Robert Marko <robimarko@gmail.com>
+> >>>
+> >>> Unfortunately, after testing on multiple devices I hit the same GDSC
+> >>> issue I had a long time ago
+> >>> that was the reason I did not send this upstream.
+> >>> It seems that USB3 port GDSC (USB0 GDSC in code) works just fine,
+> >>> however the USB2 one
+> >>> (USB1 GDSC in code) it is stuck off and USB2 port will fail due to this:
+> >>>     1.607531] ------------[ cut here ]------------
+> >>> [    1.607559] usb1_gdsc status stuck at 'off'
+> >>> [    1.607592] WARNING: CPU: 0 PID: 35 at gdsc_toggle_logic+0x16c/0x174
+> >>> [    1.615120] Modules linked in:
+> >> Can you dump GDSCR (the entire 32-bit register) at boot and when toggling?
+> >
+> > Sure, here it is:
+> > [    0.023760] qcom,gcc-ipq6018 1800000.gcc: reg: 0x3e078 val: 0x8222004 init
+> > [    0.023782] qcom,gcc-ipq6018 1800000.gcc: reg: 0x3f078 val: 0x8222004 init
+> > [    0.988626] qcom,gcc-ipq6018 1800000.gcc: reg: 0x3f078 val:
+> > 0x8282000 before toggle
+> > [    1.202506] qcom,gcc-ipq6018 1800000.gcc: reg: 0x3f078 val:
+> > 0x8282000 after toggle
+> > [    1.207208] qcom,gcc-ipq6018 1800000.gcc: reg: 0x3e078 val:
+> > 0xa0282000 before toggle
+> Any chance
+>
+> .en_few_wait_val = 0x2
+>
+> (turning BIT(19) into BIT(17))
+>
+> will make a difference?
 
-Applied. Thanks.
+Sadly, it makes no difference and GDSC status bit newer comes up which is
+rather weird as USB0 one seems to work just fine.
 
--- 
-viresh
+Regards,
+Robert
+>
+> Konrad
