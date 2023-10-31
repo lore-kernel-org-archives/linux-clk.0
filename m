@@ -2,103 +2,139 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F7CDC00144
-	for <linux-clk@archiver.kernel.org>; Tue, 31 Oct 2023 07:25:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A633C00142
+	for <linux-clk@archiver.kernel.org>; Tue, 31 Oct 2023 08:44:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343681AbjJaHZJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 31 Oct 2023 03:25:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56568 "EHLO
+        id S233257AbjJaIoS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 31 Oct 2023 04:44:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343679AbjJaHZF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Oct 2023 03:25:05 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 083A4C1
-        for <linux-clk@vger.kernel.org>; Tue, 31 Oct 2023 00:25:03 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-99357737980so826517266b.2
-        for <linux-clk@vger.kernel.org>; Tue, 31 Oct 2023 00:25:02 -0700 (PDT)
+        with ESMTP id S235617AbjJaIoP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Oct 2023 04:44:15 -0400
+Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 486E2DA
+        for <linux-clk@vger.kernel.org>; Tue, 31 Oct 2023 01:44:13 -0700 (PDT)
+Received: by mail-pl1-x62c.google.com with SMTP id d9443c01a7336-1c434c33ec0so41432065ad.3
+        for <linux-clk@vger.kernel.org>; Tue, 31 Oct 2023 01:44:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1698737101; x=1699341901; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Yjxq8E7gNPB9bFCXU5zCmu0wTmIMA9QI7im5HIAGob8=;
-        b=UDnBLsrtcgKp5mOUD4ecc0dAOd3RJlcwFDNGlrzk6roVkb4SMOz6fOy5llcqV8+LRs
-         QExgROkLruoMEOZKOtmazcUJazusLavMTqgr+/zjHi3qnuUQumzTQfs+e6+yvZZA6h/9
-         7EViawuiKBERIA9HiNSH1PnJm1h7fyWiCEpgujnGDAFOUzrpATVXgmmZN1I3truXWvVr
-         7JpIAKFTgZSotkShgvxpc6kKNfxm3UlgSgksDJJ4BJmiIdc4nFpzbtF4iaNrSfGmQ9u2
-         JeJI3bRdFktDsWtJ0u10BgVOLFkWRGh+3mqiIxI8BIBwCfTuXLRpOHRZjr/yhg1MLMLb
-         5c4Q==
+        d=linaro.org; s=google; t=1698741853; x=1699346653; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YZyTDgOu+Mk84MW1y8TY9+DV7jPCPdy2MJyiStmLRmc=;
+        b=wteoQUuS/mcbK96HWeBn6VsU3LJA4ZC11ZPSxAQreZjuQcceCTeHStrIq22y1/4+c1
+         7hAYNeK3kfNAxIcJBHED1JH+s3z/ECfnvDxHdRH0kCinE298Sv9wJg+/FWL9f13isKzS
+         0C264Zy8PULh7zEEdgYeYUQcVE9ToFgqzNZf/1xUYCjc6PT/aB+u60F2z9gI8SFFQqBl
+         r+QLTHs+5YFbPXtIIen7CQfJoEhEpVU5/Mgk9du6J+RgiGePrE7nUvioqR0ZCa4JR6Bz
+         8Y5TBMsxHNc1XdzkIdS9vFTdDbdeMyuAmqAUAihYXwhlfAETkkeSygkwS8qQevfaSfKB
+         mrBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698737101; x=1699341901;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yjxq8E7gNPB9bFCXU5zCmu0wTmIMA9QI7im5HIAGob8=;
-        b=Bv62cpts/J67IPqoHX4hHegEb0TennrrW3XalbRSLRQ+fJWNoz4Wp+OxCX1AhglXTX
-         kEEQqt/8IQXyS1sjhAKvRE7I4CXmeQ1nA8OjXHywDbgFVfKXMolQZRUUihx/C/78S0UZ
-         PQXXA7m45A8r28yShL0LFkhKs0U8ShScda1DfWPl8S+F0GS5JwnBQ6kZKvE8BR5GQJOy
-         IvFi4eatm/CiKRH61GNZtZ7/rJwcCKDoE3NyMvQkLXDeWOI7n+CYNUqOUsS1fGPoB5tZ
-         Vmk5eG647I2zfDnH9sAwqAODznEdS2RAL6BeUCGrphQmdWoJzYSzPyS2uPsPd7ibLLBR
-         hVcQ==
-X-Gm-Message-State: AOJu0YzHUPORTEO5Bz6x7sVPc/QQJRUDrHKVqfp+Zj9iwNZU/KhH0PqR
-        nQndMgs35ICVO+HhUqAeNhuFJQ==
-X-Google-Smtp-Source: AGHT+IGus17rAhpSQfGY8ZFCpaGrrZP3x/TVDAb5d+Mu4tTL5tpzmnsjSSEyrRdZtvyfw5pG3ZLGgQ==
-X-Received: by 2002:a17:907:3184:b0:9c5:844f:a7f4 with SMTP id xe4-20020a170907318400b009c5844fa7f4mr9965783ejb.35.1698737101232;
-        Tue, 31 Oct 2023 00:25:01 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.98])
-        by smtp.gmail.com with ESMTPSA id w3-20020a170906d20300b009b28ad521f4sm478828ejz.4.2023.10.31.00.25.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 31 Oct 2023 00:25:00 -0700 (PDT)
-Message-ID: <48467507-877c-4789-85a9-932b0e79ed79@tuxon.dev>
-Date:   Tue, 31 Oct 2023 09:24:59 +0200
+        d=1e100.net; s=20230601; t=1698741853; x=1699346653;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YZyTDgOu+Mk84MW1y8TY9+DV7jPCPdy2MJyiStmLRmc=;
+        b=hKkieS/wYAgvF5d2RkthHvsHyZ1nlVqXFumgtrjlYHl3kcM/xWjTE+if/ahwNbgOu8
+         S7rtTCs2x5+5wXV30lKnBSQQk1CTm74svAxd7n0bpk/+q/h0Cxqfqr+sP5UQaksik3cU
+         COPv1jpHQZo2lBJM994BSLKjbeM8cjl5V6+jdAeQk2ZttxKDPpBARcxc9PGRxrNZuF5Q
+         or7axc73dKDnlITyoMwG1TTCOCE2bb5fxt99lHSNGkvjYyOPuAV9FiwsUkn7j/Wun9Yc
+         gR6JK/u1UA6XgM6TDHJbrwewsi/h1gl/CvGXKUWxrItO7dZzAwQVn72OO/R72JD9tbPM
+         TlaQ==
+X-Gm-Message-State: AOJu0Yx0JOsCJab3NBxVQaUkHp3S6Ec9aCQI8Fxly7T47V8WSKD/+Mi7
+        sA84Yh6ucwu2PF26+mrIz/tPnQ==
+X-Google-Smtp-Source: AGHT+IE46TBsZ8WZ5WIF5n2a0wgB/ZoCaZ+M9uHGlPT7/gAOdKWxWCF6QOdyRyEewyBzqw8yxRCZYA==
+X-Received: by 2002:a17:902:ab81:b0:1cc:e66:3732 with SMTP id f1-20020a170902ab8100b001cc0e663732mr8974222plr.19.1698741852707;
+        Tue, 31 Oct 2023 01:44:12 -0700 (PDT)
+Received: from localhost ([122.172.80.14])
+        by smtp.gmail.com with ESMTPSA id 6-20020a170902c10600b001ca4c20003dsm812711pli.69.2023.10.31.01.44.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 31 Oct 2023 01:44:11 -0700 (PDT)
+Date:   Tue, 31 Oct 2023 14:14:09 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        rafael@kernel.org, ilia.lin@kernel.org, sivaprak@codeaurora.org,
+        quic_kathirav@quicinc.com, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v6 0/2] Enable cpufreq for IPQ5332 & IPQ9574
+Message-ID: <20231031084409.x5kqcs4ubmd5jh47@vireshk-i7>
+References: <cover.1698735972.git.quic_varada@quicinc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ti: fix possible memory leak in
- _ti_omap4_clkctrl_setup()
-Content-Language: en-US
-To:     Hangyu Hua <hbh25y@gmail.com>, kristo@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, tony@atomide.com,
-        dario.binacchi@amarulasolutions.com, claudiu.beznea@microchip.com,
-        robh@kernel.org, andriy.shevchenko@linux.intel.com
-Cc:     linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20231027025057.11510-1-hbh25y@gmail.com>
-From:   claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20231027025057.11510-1-hbh25y@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1698735972.git.quic_varada@quicinc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 27.10.2023 05:50, Hangyu Hua wrote:
-> kstrndup() and kstrdup_and_replace() in clkctrl_get_name() can perform
-> dynamic memory allocation. So clkctrl_name() needs to be freed when
-
-s/clkctrl_name()/clkctrl_name
-
-> provider->clkdm_name is NULL.
+On 31-10-23, 12:41, Varadarajan Narayanan wrote:
+> This patch series aims to enable cpufreq for IPQ5332 and IPQ9574.
+> For IPQ5332, a minor enhancement to Stromer Plus ops and a safe
+> source switch is needed before cpu freq can be enabled.
 > 
-> Fixes: bd46cd0b802d ("clk: ti: clkctrl: check return value of kasprintf()")
-> Signed-off-by: Hangyu Hua <hbh25y@gmail.com>
-> ---
+> These are also included in this series. Posting this as a single
+> series. Please let me know if this is not correct, will split in
+> the subsequent revisions.
 > 
-> 	v2: fix commit info.
+> Passed the following DT related validations
+> make W=1 ARCH=arm64 -j16 DT_CHECKER_FLAGS='-v -m' dt_binding_check DT_SCHEMA_FILES=qcom
+> make W=1 ARCH=arm64 -j16 CHECK_DTBS=y DT_SCHEMA_FILES=qcom dtbs_check
 > 
->  drivers/clk/ti/clkctrl.c | 1 +
->  1 file changed, 1 insertion(+)
+> For IPQ5332:
+> ~~~~~~~~~~~
+> 	* This patch series introduces stromer plus ops which
+> 	  builds on stromer ops and implements a different
+> 	  set_rate and determine_rate.
 > 
-> diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
-> index 607e34d8e289..cb4aa8a45bb2 100644
-> --- a/drivers/clk/ti/clkctrl.c
-> +++ b/drivers/clk/ti/clkctrl.c
-> @@ -591,6 +591,7 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
->  		provider->clkdm_name = kasprintf(GFP_KERNEL,
->  						 "%s_clkdm", clkctrl_name);
->  		if (!provider->clkdm_name) {
-> +			kfree(clkctrl_name);
->  			kfree(provider);
->  			return;
->  		}
+> 	  A different set_rate is needed since stromer plus PLLs
+> 	  do not support dynamic frequency scaling. To switch
+> 	  between frequencies, we have to shut down the PLL,
+> 	  configure the L and ALPHA values and turn on again. So
+> 	  introduce the separate set of ops for Stromer Plus PLL.
+> 
+> 	* Update ipq_pll_stromer_plus to use clk_alpha_pll_stromer_plus_ops
+> 	  instead of clk_alpha_pll_stromer_ops.
+> 
+> 	* Set 'l' value to a value that is supported on all SKUs.
+> 
+> 	* Provide safe source switch for a53pll
+> 
+> 	* Include IPQ5332 in cpufreq nvmem framework
+> 
+> 	* Add OPP details to device tree
+> 
+> For IPQ9574:
+> ~~~~~~~~~~~
+> 	* Include IPQ9574 in cpufreq nvmem framework
+> 
+> 	* Add OPP details to device tree
+> 
+> Removed 2 patches from V1 as they have been merged
+> 	* dt-bindings: cpufreq: qcom-cpufreq-nvmem: document IPQ5332
+> 	* dt-bindings: cpufreq: qcom-cpufreq-nvmem: document IPQ9574
+> 
+> v4:	Included a patch to fix 'kernel test robot' build error --
+> 	https://lore.kernel.org/r/202310181650.g8THtfsm-lkp@intel.com/
+> 
+> v5:	Use devm_clk_notifier_register
+> 	Merge IPQ53xx and IPQ95xx cases with APQ8096 for speed bin selection
+> 	Add reviewed by tags
+> 
+> v6:	Except these 2 patches, rest have been merged...
+> 	Rebased these to latest top as they don't apply cleanly
+> 	(https://lore.kernel.org/linux-arm-msm/20231025062508.vccrmkem45p3fnwe@vireshk-i7/)
+> 
+> Varadarajan Narayanan (2):
+>   cpufreq: qti: Enable cpufreq for ipq53xx
+>   cpufreq: qti: Introduce cpufreq for ipq95xx
+> 
+>  drivers/cpufreq/cpufreq-dt-platdev.c |  2 ++
+>  drivers/cpufreq/qcom-cpufreq-nvmem.c | 12 ++++++++++++
+>  2 files changed, 14 insertions(+)
+
+Applied. Thanks.
+
+-- 
+viresh
