@@ -2,194 +2,129 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 336D4C4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 31 Oct 2023 13:35:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B4BFC4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 31 Oct 2023 19:46:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344579AbjJaNfw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 31 Oct 2023 09:35:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53012 "EHLO
+        id S234662AbjJaTqv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 31 Oct 2023 15:46:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344592AbjJaNfv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Oct 2023 09:35:51 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id DB5C4FC;
-        Tue, 31 Oct 2023 06:35:47 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 56924C15;
-        Tue, 31 Oct 2023 06:36:29 -0700 (PDT)
-Received: from pluto (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2DD423F738;
-        Tue, 31 Oct 2023 06:35:46 -0700 (PDT)
-Date:   Tue, 31 Oct 2023 13:35:44 +0000
-From:   Cristian Marussi <cristian.marussi@arm.com>
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Ranjani Vaidyanathan <ranjani.vaidyanathan@nxp.com>,
-        Glen G Wienecke <glen.wienecke@nxp.com>,
-        "nitin.garg@nxp.com" <nitin.garg@nxp.com>,
-        Chuck Cannon <chuck.cannon@nxp.com>,
-        "Souvik.Chakravarty@arm.com" <Souvik.Chakravarty@arm.com>
-Subject: Re: [PATCH V1] firmware: arm_scmi: clock: support clock denied flags
-Message-ID: <ZUECsLFCzroIccgw@pluto>
-References: <20231031122734.1371524-1-peng.fan@oss.nxp.com>
- <ZUD7DGynqkvDzasN@pluto>
- <DU0PR04MB941745E7400113CA3B1635C488A0A@DU0PR04MB9417.eurprd04.prod.outlook.com>
+        with ESMTP id S231253AbjJaTqv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Oct 2023 15:46:51 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8341C83;
+        Tue, 31 Oct 2023 12:46:48 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id 38308e7fff4ca-2c518a1d83fso85530641fa.3;
+        Tue, 31 Oct 2023 12:46:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1698781607; x=1699386407; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=purwZ105GsEhgtQHpkdP9umavsYHSc4ApWwflAbtrrc=;
+        b=EHc4OcE56l85l0RGlsWNTcov1sWKT63o3L/Of/LUVeBPCFjuo5SPXQ/7Rbd0U/3NmD
+         wsm81iz/kxwbKU6ZzRlIlC0UcPjjc2akCn221EPsk0aM0XE+8eJKNVGdsIRJoZ7LVWaO
+         rO3JhfHNFaDAswKuuPnm9wFZ0jElgeQOvaO7p6B7X0yxgeyfRUGHD02rf+KYJM9H+tiG
+         /INcKvOKyIUD3p0RU5tcZcbXDrBmm1bphMc6Ll3kBJmokqVwO1b+mpDsfcJW7uoaf7LR
+         tOJZDdvaHSi18gwxAXz6V+WHhhYh7y4WSfAfArx9/zmTBjX7JeAEm2irPeTa4ySTPh1Z
+         qkYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698781607; x=1699386407;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=purwZ105GsEhgtQHpkdP9umavsYHSc4ApWwflAbtrrc=;
+        b=UKojw2NaElWuJAFqAQ7TEyzuD3J+VFlsTHUeuZX241gp/Orkv6L565QS83/YGUyhTN
+         3x4aGBp6uO52Tt1Uy1xKYuGfGlpjXLmuALkKVXk/kiUPyzcGDvTdB2/AdEWkcw1qXth2
+         Dw0rextBrqA483qrRcMyUpy6z3DbugrW5mfjBfGwX1TXa1TzETaraf9qhSbYV6V6hOXz
+         Ao8rHXMh9YV9MjvI5QEyWVXUti+4EXVPUbuu71YVIOHiAirfIGOlN5DPqPKxy64BgLrZ
+         ksGGjZzMNJgbXCqogpG1M8b7haw6gtxavnKVPbQZfWGedfGeauqOkjMLtDG4BM1cQELZ
+         WgAQ==
+X-Gm-Message-State: AOJu0Yx678i6I8abs+jAVd93dATUO8eS3oRDBUa78y8j5wRgC5ZgSnLX
+        SnMqpFUmUdfoLbACcYGPJI0=
+X-Google-Smtp-Source: AGHT+IEOLRiyG9O+qr6AzZRS5vIZx/36cYDoFO/IMWC9eGiCVgGOswCJxAHnc67RSaD+pLKgSCkFgQ==
+X-Received: by 2002:a05:651c:1a20:b0:2c5:1808:4aa4 with SMTP id by32-20020a05651c1a2000b002c518084aa4mr12208174ljb.12.1698781606309;
+        Tue, 31 Oct 2023 12:46:46 -0700 (PDT)
+Received: from [192.168.3.32] (cpezg-94-253-131-198-cbl.xnet.hr. [94.253.131.198])
+        by smtp.gmail.com with ESMTPSA id 9-20020a2e0f09000000b002b6cd89a3fcsm7524ljp.118.2023.10.31.12.46.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 31 Oct 2023 12:46:45 -0700 (PDT)
+Message-ID: <65cc630c-1d71-48e1-b639-b92221a8d7b1@gmail.com>
+Date:   Tue, 31 Oct 2023 20:46:42 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DU0PR04MB941745E7400113CA3B1635C488A0A@DU0PR04MB9417.eurprd04.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: ipq6018: add SDHCI node
+To:     Mantas Pucka <mantas@8devices.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Bhupesh Sharma <bhupesh.sharma@linaro.org>
+Cc:     Abhishek Sahu <absahu@codeaurora.org>,
+        Anusha Canchi Ramachandra Rao <anusharao@codeaurora.org>,
+        Sricharan R <sricharan@codeaurora.org>,
+        Sivaprakash Murugesan <sivaprak@codeaurora.org>,
+        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org
+References: <1682338412-15420-1-git-send-email-mantas@8devices.com>
+ <1682338412-15420-3-git-send-email-mantas@8devices.com>
+Content-Language: en-US
+From:   Robert Marko <robimarko@gmail.com>
+In-Reply-To: <1682338412-15420-3-git-send-email-mantas@8devices.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Oct 31, 2023 at 01:33:17PM +0000, Peng Fan wrote:
-> > Subject: Re: [PATCH V1] firmware: arm_scmi: clock: support clock denied
-> > flags
-> > 
-> > On Tue, Oct 31, 2023 at 08:27:34PM +0800, Peng Fan (OSS) wrote:
-> > > From: Peng Fan <peng.fan@nxp.com>
-> > >
-> > > The firmware may export flags to indicate whether the clock is allowed
-> > > to set rate, set parent, enable/disable from the Agent.
-> > >
-> > > If Agent is not allowed to enable/disable, directly return success.
-> > 
-> > ... even though, this success on deny built-in policy could be
-> > controversial..
-> Yeah. 
-> 
-> .Have you tried the different approach of not registerig the
-> > enable/prepare callbacks in clk-scmi instead ?
-> 
-> Not yet, I could give a look. But not have much time
-> in the following week.
-> 
-> 
-> > From the Clk framework code it seems could be handled gracefully.
-> > (I have not tried though...)
-> 
-> If there is no enable/disable/prepare/unprepared hooks, the enable
-> counter or prepare counter would be used.
-> 
 
-Yes this is what I could understand.
+On 24. 04. 2023. 14:13, Mantas Pucka wrote:
+> IPQ6018 has one SD/eMMC controller, add node for it.
+>
+> Signed-off-by: Mantas Pucka <mantas@8devices.com>
 
-Thanks,
-Cristian
+Tested-by: Robert Marko <robimarko@gmail.com>
 
-> Thanks,
-> Peng.
-> > 
-> > Thanks,
-> > Cristian
-> > 
-> > > If Agent is not allowed to set rate/parent, directly return -EACCES to
-> > > avoid SCMI RPC calls.
-> > >
-> > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > > ---
-> > >
-> > > V1:
-> > >  drop the changes in clock.c, add an attribute entry in clock info
-> > > which  may be easy for extending new flag.
-> > >
-> > >  SPEC still not have such support, this is for discussion
-> > >
-> > >  drivers/firmware/arm_scmi/clock.c | 19 +++++++++++++++++++
-> > >  include/linux/scmi_protocol.h     |  1 +
-> > >  2 files changed, 20 insertions(+)
-> > >
-> > > diff --git a/drivers/firmware/arm_scmi/clock.c
-> > > b/drivers/firmware/arm_scmi/clock.c
-> > > index 42b81c181d68..fad4329a21fc 100644
-> > > --- a/drivers/firmware/arm_scmi/clock.c
-> > > +++ b/drivers/firmware/arm_scmi/clock.c
-> > > @@ -46,6 +46,9 @@ struct scmi_msg_resp_clock_attributes {
-> > >  #define SUPPORTS_RATE_CHANGE_REQUESTED_NOTIF(x)	((x) &
-> > BIT(30))
-> > >  #define SUPPORTS_EXTENDED_NAMES(x)		((x) & BIT(29))
-> > >  #define SUPPORTS_PARENT_CLOCK(x)		((x) & BIT(28))
-> > > +#define SCMI_CLOCK_SET_ENABLE_DENIED		BIT(15)
-> > > +#define SCMI_CLOCK_SET_RATE_DENIED		BIT(14)
-> > > +#define SCMI_CLOCK_SET_PARENT_DENIED		BIT(13)
-> > >  	u8 name[SCMI_SHORT_NAME_MAX_SIZE];
-> > >  	__le32 clock_enable_latency;
-> > >  };
-> > > @@ -307,6 +310,7 @@ static int scmi_clock_attributes_get(const struct
-> > scmi_protocol_handle *ph,
-> > >  		if (PROTOCOL_REV_MAJOR(version) >= 0x2)
-> > >  			latency = le32_to_cpu(attr->clock_enable_latency);
-> > >  		clk->enable_latency = latency ? : U32_MAX;
-> > > +		clk->attributes = attributes;
-> > >  	}
-> > >
-> > >  	ph->xops->xfer_put(ph, t);
-> > > @@ -499,6 +503,10 @@ static int scmi_clock_rate_set(const struct
-> > scmi_protocol_handle *ph,
-> > >  	struct scmi_xfer *t;
-> > >  	struct scmi_clock_set_rate *cfg;
-> > >  	struct clock_info *ci = ph->get_priv(ph);
-> > > +	struct scmi_clock_info *clk = ci->clk + clk_id;
-> > > +
-> > > +	if (clk->attributes & SCMI_CLOCK_SET_RATE_DENIED)
-> > > +		return -EACCES;
-> > >
-> > >  	ret = ph->xops->xfer_get_init(ph, CLOCK_RATE_SET, sizeof(*cfg), 0,
-> > &t);
-> > >  	if (ret)
-> > > @@ -585,6 +593,9 @@ scmi_clock_set_parent(const struct
-> > scmi_protocol_handle *ph, u32 clk_id,
-> > >  	if (parent_id >= clk->num_parents)
-> > >  		return -EINVAL;
-> > >
-> > > +	if (clk->attributes & SCMI_CLOCK_SET_PARENT_DENIED)
-> > > +		return -EACCES;
-> > > +
-> > >  	ret = ph->xops->xfer_get_init(ph, CLOCK_PARENT_SET,
-> > >  				      sizeof(*cfg), 0, &t);
-> > >  	if (ret)
-> > > @@ -668,6 +679,10 @@ static int scmi_clock_enable(const struct
-> > scmi_protocol_handle *ph, u32 clk_id,
-> > >  			     bool atomic)
-> > >  {
-> > >  	struct clock_info *ci = ph->get_priv(ph);
-> > > +	struct scmi_clock_info *clk = ci->clk + clk_id;
-> > > +
-> > > +	if (clk->attributes & SCMI_CLOCK_SET_ENABLE_DENIED)
-> > > +		return 0;
-> > >
-> > >  	return ci->clock_config_set(ph, clk_id, CLK_STATE_ENABLE,
-> > >  				    NULL_OEM_TYPE, 0, atomic);
-> > > @@ -677,6 +692,10 @@ static int scmi_clock_disable(const struct
-> > scmi_protocol_handle *ph, u32 clk_id,
-> > >  			      bool atomic)
-> > >  {
-> > >  	struct clock_info *ci = ph->get_priv(ph);
-> > > +	struct scmi_clock_info *clk = ci->clk + clk_id;
-> > > +
-> > > +	if (clk->attributes & SCMI_CLOCK_SET_ENABLE_DENIED)
-> > > +		return 0;
-> > >
-> > >  	return ci->clock_config_set(ph, clk_id, CLK_STATE_DISABLE,
-> > >  				    NULL_OEM_TYPE, 0, atomic);
-> > > diff --git a/include/linux/scmi_protocol.h
-> > > b/include/linux/scmi_protocol.h index f2f05fb42d28..ddf5363c8cfd
-> > > 100644
-> > > --- a/include/linux/scmi_protocol.h
-> > > +++ b/include/linux/scmi_protocol.h
-> > > @@ -58,6 +58,7 @@ struct scmi_clock_info {
-> > >  			u64 step_size;
-> > >  		} range;
-> > >  	};
-> > > +	u32 attributes;
-> > >  	int num_parents;
-> > >  	u32 *parents;
-> > >  };
-> > > --
-> > > 2.37.1
-> > >
+> ---
+>   arch/arm64/boot/dts/qcom/ipq6018.dtsi | 23 +++++++++++++++++++++++
+>   1 file changed, 23 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/ipq6018.dtsi b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
+> index 9ff4e9d45065..b129b23d68b1 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq6018.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
+> @@ -414,6 +414,29 @@
+>   			};
+>   		};
+>   
+> +		sdhc_1: mmc@7804000 {
+> +			compatible = "qcom,ipq6018-sdhci", "qcom,sdhci-msm-v5";
+> +			reg = <0x0 0x07804000 0x0 0x1000>,
+> +			      <0x0 0x07805000 0x0 0x1000>,
+> +			      <0x0 0x07808000 0x0 0x2000>;
+> +			reg-names = "hc", "cqhci", "ice";
+> +
+> +			interrupts = <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-names = "hc_irq", "pwr_irq";
+> +
+> +			clocks = <&gcc GCC_SDCC1_AHB_CLK>,
+> +				 <&gcc GCC_SDCC1_APPS_CLK>,
+> +				 <&xo>,
+> +				 <&gcc GCC_SDCC1_ICE_CORE_CLK>;
+> +			clock-names = "iface", "core", "xo", "ice";
+> +
+> +			resets = <&gcc GCC_SDCC1_BCR>;
+> +			supports-cqe;
+> +			bus-width = <8>;
+> +			status = "disabled";
+> +		};
+> +
+>   		blsp_dma: dma-controller@7884000 {
+>   			compatible = "qcom,bam-v1.7.0";
+>   			reg = <0x0 0x07884000 0x0 0x2b000>;
