@@ -2,167 +2,94 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94B19C4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 31 Oct 2023 09:47:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0C89C4167B
+	for <linux-clk@archiver.kernel.org>; Tue, 31 Oct 2023 10:30:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230190AbjJaJrJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 31 Oct 2023 05:47:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33160 "EHLO
+        id S234980AbjJaKaj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 31 Oct 2023 06:30:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229705AbjJaJrI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Oct 2023 05:47:08 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7048C1
-        for <linux-clk@vger.kernel.org>; Tue, 31 Oct 2023 02:47:03 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id ffacd0b85a97d-32f78dcf036so1801782f8f.0
-        for <linux-clk@vger.kernel.org>; Tue, 31 Oct 2023 02:47:03 -0700 (PDT)
+        with ESMTP id S234937AbjJaKac (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Oct 2023 06:30:32 -0400
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86D0FF1;
+        Tue, 31 Oct 2023 03:30:30 -0700 (PDT)
+Received: by mail-pf1-x444.google.com with SMTP id d2e1a72fcca58-6bd20c30831so1307547b3a.1;
+        Tue, 31 Oct 2023 03:30:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1698745622; x=1699350422; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=wp+G2Y0kUCo4IJDDbdOBo/ZQnoQFINk+z53Z+UNOY4c=;
-        b=zFEhtmaj+in90xfM/+FCbtoUxY3Dpi3dYv2nRaIygbghOO70qmeZwdFCWVSVjkDz9o
-         BW1TPJ4/tWGkK6uVgDMD2Au+29iLgnNl/BgalGH2zVnf2af08DIStAmQiH5xNfA7nMrC
-         Vjtg93aQ4BM9+TuGQOKTkUtobRESwC4dn2YjoGDtkCE0U3FZpd1hy+0FxmFPEZJjvboC
-         0VOs8Wk37rNJgLDJZ4Pv1oysHMrP3nig6U+wC0yWKRhHYDSlOSVcixLhla1i28Rd3E/Q
-         rDd4HOrSlt5NjWYw1Wy7PCuTcPNimmQ3jAwux8Fl4mt/wtOaA8zADyOaEuRaZK0cGS2i
-         rNdQ==
+        d=gmail.com; s=20230601; t=1698748230; x=1699353030; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qj37DKOBvq5iOgjYOiYoCEkc6gwIDyLnQahEd9fN5Z4=;
+        b=nVsBGaFaWmff5DB9pQQqPsr0PrnjNcZv1Rscixe6fnQ7uzfNJPhWSQY2RHUFwOLGnU
+         aBMI02zCuT/cRAbaoW0sDELai/9udefXLGwxGET7baH8xX8H3SQXU9uco171l90+HJdX
+         JePKkbsYiTAw4eoE+ZBs+LtOgL0/uSP1W9L4ABlgMrnLnkPSA3hVL289rzftd3Wz5t/D
+         3sNiTUnI7y8H5D/UfFbQcZsgTJrQWseQch/D3eROJX2uSAORdMNhV1INpLIp8KJEIPn5
+         suIdLke+Q5azmi3AyrhqXjriJ/quKLFqRT3cUEoOrvtM8ix/fnk/lQ7gDKWo94fHC1z3
+         Vlpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698745622; x=1699350422;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wp+G2Y0kUCo4IJDDbdOBo/ZQnoQFINk+z53Z+UNOY4c=;
-        b=mgn+oBzqTAL4la932yF3En4s/cD3SFM23GbUGei3dbyPu37NRG9C04KIdI4rEPi+iI
-         gBwkWFPZdtP5dW4fvlPu3aIxXfijl2rUr0beGXy9w8Pc2I7PhmSMX2WNmJ4gRqk68RX7
-         AjO609dYYqznrKkP2czQCn8f0sNrUdHe/AijduPzLjnwaZfFOOMOeqvNF3ARIonOv3iQ
-         SUjiv3K7AL3g1XCM82ieBq5FEo4LdM+V/aAqU1fcbh+gg3/isFumeLMRteaYqOa7m6IQ
-         50Vvw6GyPuNh97FBJdWqkyU9+VhA8Sdduly2AvknX9R3u0TO6XKyfvxvq6bCm4n6EfEx
-         SyOg==
-X-Gm-Message-State: AOJu0YyrpWz328Oxaj9ErliJva38Q4TLZQEUWpkhdmRdhWoXl03NlAXv
-        2YYhojBvWD/Z6GiCqHnRmHcn7g==
-X-Google-Smtp-Source: AGHT+IGn8SP/xXjHKwdkZ0bPOm/kbVTYJ4bFQJVsQu1xLfpeZT18Ofr7kXVDesnbqXwrLabLpgR5oA==
-X-Received: by 2002:a5d:6da9:0:b0:32f:7260:1220 with SMTP id u9-20020a5d6da9000000b0032f72601220mr2335983wrs.17.1698745621939;
-        Tue, 31 Oct 2023 02:47:01 -0700 (PDT)
-Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
-        by smtp.gmail.com with ESMTPSA id s26-20020adfa29a000000b003232380ffd5sm1059487wra.106.2023.10.31.02.47.00
+        d=1e100.net; s=20230601; t=1698748230; x=1699353030;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qj37DKOBvq5iOgjYOiYoCEkc6gwIDyLnQahEd9fN5Z4=;
+        b=UHg9OplCYAz7IKR3esi4eMRF3SOx1lTIfRN6d13ata/jD19oHcFzRcrvOlud/3Ciuw
+         g1rAPknZ1+BrdaByCm7CVz6m32nNExKuOK/n2w3dGeGVwzhMCZuiEdSRBfBw4JCuAv+2
+         Iz7AhoRngRDkSIhJdNtJVFb11ZbLAl27nm2fP5jb5zEAI1xrKJzPRFaNLz0vX7e0R1lU
+         oqggwdlDhF8St+XZoNJgq0G0w2W5OmBx6tELfWs4O3LraZ7BAVANjwXDjw0Eqh9mrTIO
+         MyrlU1bA2pjDgwdxoKNbv33+Y+RMKkZK1AJi6K4frN0YQAsx1Ue1ecs/B3FO3h75gdBR
+         +1rQ==
+X-Gm-Message-State: AOJu0Yyv5K8xbPd+/86pEAlWwh/mWweUN4PdizELT/Uj+E/mBWDibiwo
+        RSj4Ti05frQuc3QWebdfG/U=
+X-Google-Smtp-Source: AGHT+IF+v0D8hOV3q7PGSZAlaU8mLwN5Iy+fxqSjmYlV72q6DrmM8ADNRUW0qbH2RRoO0jBO877UeA==
+X-Received: by 2002:a05:6a00:309b:b0:6b9:7d5c:bb58 with SMTP id bh27-20020a056a00309b00b006b97d5cbb58mr11846810pfb.0.1698748229950;
+        Tue, 31 Oct 2023 03:30:29 -0700 (PDT)
+Received: from hbh25y.mshome.net (059149129201.ctinets.com. [59.149.129.201])
+        by smtp.gmail.com with ESMTPSA id l1-20020a056a00140100b0069029a3196dsm956395pfu.184.2023.10.31.03.30.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Oct 2023 02:47:01 -0700 (PDT)
-Date:   Tue, 31 Oct 2023 10:47:00 +0100
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Michal Michalik <michal.michalik@intel.com>
-Cc:     netdev@vger.kernel.org, vadim.fedorenko@linux.dev,
-        arkadiusz.kubalewski@intel.com, jonathan.lemon@gmail.com,
-        pabeni@redhat.com, poros@redhat.com, milena.olech@intel.com,
-        mschmidt@redhat.com, linux-clk@vger.kernel.org, bvanassche@acm.org,
-        kuba@kernel.org, davem@davemloft.net, edumazet@google.com
-Subject: Re: [PATCH RFC net-next v2 0/2] selftests/dpll: DPLL subsystem
- integration tests
-Message-ID: <ZUDNFHlO4GtA/UAh@nanopsycho>
-References: <20231030165326.24453-1-michal.michalik@intel.com>
+        Tue, 31 Oct 2023 03:30:29 -0700 (PDT)
+From:   Hangyu Hua <hbh25y@gmail.com>
+To:     kristo@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        tony@atomide.com, andriy.shevchenko@linux.intel.com,
+        claudiu.beznea@microchip.com, robh@kernel.org,
+        dario.binacchi@amarulasolutions.com
+Cc:     linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Hangyu Hua <hbh25y@gmail.com>
+Subject: [PATCH v3] ti: fix possible memory leak in _ti_omap4_clkctrl_setup()
+Date:   Tue, 31 Oct 2023 18:30:10 +0800
+Message-Id: <20231031103010.23792-1-hbh25y@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20231030165326.24453-1-michal.michalik@intel.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Mon, Oct 30, 2023 at 05:53:24PM CET, michal.michalik@intel.com wrote:
->The recently merged common DPLL interface discussed on a newsletter[1]
+kstrndup() and kstrdup_and_replace() in clkctrl_get_name() can perform
+dynamic memory allocation. So clkctrl_name needs to be freed when
+provider->clkdm_name is NULL.
 
-"newsletter"? Sounds a bit odd to me :)
+Fixes: bd46cd0b802d ("clk: ti: clkctrl: check return value of kasprintf()")
+Signed-off-by: Hangyu Hua <hbh25y@gmail.com>
+---
 
+	 v2 and v3: fix commit info.
 
->is introducing new, complex subsystem which requires proper integration
->testing - this patch adds core for such framework, as well as the
+ drivers/clk/ti/clkctrl.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-"Patchset" perhaps? Also, what do you mean by "core"? The sentence
-sounds a bit weird to me.
+diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
+index 607e34d8e289..cb4aa8a45bb2 100644
+--- a/drivers/clk/ti/clkctrl.c
++++ b/drivers/clk/ti/clkctrl.c
+@@ -591,6 +591,7 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
+ 		provider->clkdm_name = kasprintf(GFP_KERNEL,
+ 						 "%s_clkdm", clkctrl_name);
+ 		if (!provider->clkdm_name) {
++			kfree(clkctrl_name);
+ 			kfree(provider);
+ 			return;
+ 		}
+-- 
+2.34.1
 
-
->initial test cases. Framework does not require neither any special
->hardware nor any special system architecture.
->
->To properly test the DPLL subsystem this patch adds fake DPLL devices and it's
-
-For patch desctiption, please stay within 72cols.
-Also, "it's" is most probably wrong in this sentence.
-
-
->pins implementation to netdevsim. Creating netdevsim devices and adding ports
->to it register new DPLL devices and pins. First port of each netdevsim device
-
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This sentence does not make
-sense to me. Pehaps rephrase a bit?
-
-
->acts as a entitiy which registers two DPLL devices: EEC and PPS DPLLs. First
-
-typo: "entitiy"
-
->port also register the common pins: PPS and GNSS. Additionally each port
->register also RCLK (recovered clock) pin for itself. That allow us to check
->mutliple scenarios which might be problematic in real implementations (like
->different ordering etc.)
->
->Patch adds few helper scripts, which are:
->1) tools/testing/selftests/dpll/run_dpll_tests.sh
-
-Please make this part of
-tools/testing/selftests/drivers/net/netdevsim/
-No special threat of dpll needed.
-
-
->    Script is checking for all dependencies, creates temporary
->    environment, installs required libraries and run all tests - can be
->    used standalone
->2) tools/testing/selftests/dpll/ynlfamilyhandler.py˙
->    Library for easier ynl use in the pytest framework - can be used
->    standalone
->
->[1] https://lore.kernel.org/netdev/169494842736.21621.10730860855645661664.git-patchwork-notify@kernel.org/
->
->Changelog:
->v1 -> v2:
->- moved from separate module to implementation in netdevsim
->
->Michal Michalik (2):
->  netdevsim: implement DPLL for subsystem selftests
->  selftests/dpll: add DPLL system integration selftests
->
-> drivers/net/Kconfig                              |   1 +
-> drivers/net/netdevsim/Makefile                   |   2 +-
-> drivers/net/netdevsim/dpll.c                     | 438 +++++++++++++++++++++++
-> drivers/net/netdevsim/dpll.h                     |  81 +++++
-> drivers/net/netdevsim/netdev.c                   |  20 ++
-> drivers/net/netdevsim/netdevsim.h                |   4 +
-> tools/testing/selftests/Makefile                 |   1 +
-> tools/testing/selftests/dpll/Makefile            |   8 +
-> tools/testing/selftests/dpll/__init__.py         |   0
-> tools/testing/selftests/dpll/config              |   2 +
-> tools/testing/selftests/dpll/consts.py           |  34 ++
-> tools/testing/selftests/dpll/dpll_utils.py       | 109 ++++++
-> tools/testing/selftests/dpll/requirements.txt    |   3 +
-> tools/testing/selftests/dpll/run_dpll_tests.sh   |  75 ++++
-> tools/testing/selftests/dpll/test_dpll.py        | 414 +++++++++++++++++++++
-> tools/testing/selftests/dpll/ynlfamilyhandler.py |  49 +++
-> 16 files changed, 1240 insertions(+), 1 deletion(-)
-> create mode 100644 drivers/net/netdevsim/dpll.c
-> create mode 100644 drivers/net/netdevsim/dpll.h
-> create mode 100644 tools/testing/selftests/dpll/Makefile
-> create mode 100644 tools/testing/selftests/dpll/__init__.py
-> create mode 100644 tools/testing/selftests/dpll/config
-> create mode 100644 tools/testing/selftests/dpll/consts.py
-> create mode 100644 tools/testing/selftests/dpll/dpll_utils.py
-> create mode 100644 tools/testing/selftests/dpll/requirements.txt
-> create mode 100755 tools/testing/selftests/dpll/run_dpll_tests.sh
-> create mode 100644 tools/testing/selftests/dpll/test_dpll.py
-> create mode 100644 tools/testing/selftests/dpll/ynlfamilyhandler.py
->
->-- 
->2.9.5
->
->base-commit: 55c900477f5b3897d9038446f72a281cae0efd86
