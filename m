@@ -2,25 +2,25 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C81AC4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 31 Oct 2023 12:30:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B33A0C4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 31 Oct 2023 13:03:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235745AbjJaMaM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 31 Oct 2023 08:30:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48962 "EHLO
+        id S1344421AbjJaNDP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 31 Oct 2023 09:03:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229642AbjJaMaL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Oct 2023 08:30:11 -0400
+        with ESMTP id S1344366AbjJaNDP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Oct 2023 09:03:15 -0400
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BA00097;
-        Tue, 31 Oct 2023 05:30:08 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 12918DF;
+        Tue, 31 Oct 2023 06:03:12 -0700 (PDT)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 38192C15;
-        Tue, 31 Oct 2023 05:30:50 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 02A5EC15;
+        Tue, 31 Oct 2023 06:03:53 -0700 (PDT)
 Received: from pluto (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A63E13F738;
-        Tue, 31 Oct 2023 05:30:06 -0700 (PDT)
-Date:   Tue, 31 Oct 2023 12:30:05 +0000
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6EC383F738;
+        Tue, 31 Oct 2023 06:03:09 -0700 (PDT)
+Date:   Tue, 31 Oct 2023 13:03:08 +0000
 From:   Cristian Marussi <cristian.marussi@arm.com>
 To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
 Cc:     sudeep.holla@arm.com, linux-arm-kernel@lists.infradead.org,
@@ -29,7 +29,7 @@ Cc:     sudeep.holla@arm.com, linux-arm-kernel@lists.infradead.org,
         nitin.garg@nxp.com, chuck.cannon@nxp.com,
         Souvik.Chakravarty@arm.com, Peng Fan <peng.fan@nxp.com>
 Subject: Re: [PATCH V1] firmware: arm_scmi: clock: support clock denied flags
-Message-ID: <ZUDzTRjVyqZB6Vbj@pluto>
+Message-ID: <ZUD7DGynqkvDzasN@pluto>
 References: <20231031122734.1371524-1-peng.fan@oss.nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -46,22 +46,21 @@ On Tue, Oct 31, 2023 at 08:27:34PM +0800, Peng Fan (OSS) wrote:
 > is allowed to set rate, set parent, enable/disable from the Agent.
 > 
 > If Agent is not allowed to enable/disable, directly return success.
+
+... even though, this success on deny built-in policy could be
+controversial...Have you tried the different approach of not
+registerig the enable/prepare callbacks in clk-scmi instead ?
+From the Clk framework code it seems could be handled gracefully.
+(I have not tried though...)
+
+Thanks,
+Cristian
+
 > If Agent is not allowed to set rate/parent, directly return -EACCES to
 > avoid SCMI RPC calls.
 > 
 > Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > ---
-
-Hi Peng,
-
-thanks for this, this is what I meant indeed.
-
-I suppose soon-ish a spec proposal will be circulated about this and
-we'll move forward from there when we have details.
-
-Thanks,
-Cristian
-
 > 
 > V1:
 >  drop the changes in clock.c, add an attribute entry in clock info which
