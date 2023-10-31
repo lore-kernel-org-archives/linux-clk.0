@@ -2,102 +2,103 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1001CC4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 31 Oct 2023 07:15:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F7CDC00144
+	for <linux-clk@archiver.kernel.org>; Tue, 31 Oct 2023 07:25:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343590AbjJaHPJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 31 Oct 2023 03:15:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42950 "EHLO
+        id S1343681AbjJaHZJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 31 Oct 2023 03:25:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343556AbjJaHPJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Oct 2023 03:15:09 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2575E6;
-        Tue, 31 Oct 2023 00:15:06 -0700 (PDT)
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39V5vXEm022977;
-        Tue, 31 Oct 2023 07:14:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=date : from : to :
- cc : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=qcppdkim1; bh=fyoVIufeQ3J9szxJL+AgrsKGMVdQwv+n/oXu3lDKeOc=;
- b=AWnLbQzPccylBfyj2ZJ/ox9RbZISURUy9ustAygx1z5znUUVBWY4/jX+5EJC1XjqXh/u
- eEJOUlcI6INRas4SQWtu2grdZAbdc6X0duGIPshMiDC+MsOqJPaWKqK9ScovleJaIHBg
- xJT7/eA4ql9uJ9r3ydrLVjdiWgIMqnOGCnmKhfgESml+h6HfR8WatMoYvhWQwsmHCPJH
- Avpr/dmA/RcENfX8mp5VU6g7zzS8XvAMhW2ZXBrmx3OpsDTZmHQAil15659WjstMvgSR
- y/aGDNq9u+eVlMr2GJ+Ki2c0hcNdM0LS+2NfCFooTbLzAx6IE1BLBFCC2cttbtYwm1Hf GQ== 
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3u2c4rt74u-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 31 Oct 2023 07:14:32 +0000
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-        by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 39V7EVQ1001327
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 31 Oct 2023 07:14:31 GMT
-Received: from varda-linux.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.39; Tue, 31 Oct 2023 00:14:26 -0700
-Date:   Tue, 31 Oct 2023 12:44:21 +0530
-From:   Varadarajan Narayanan <quic_varada@quicinc.com>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-CC:     <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>, <rafael@kernel.org>,
-        <ilia.lin@kernel.org>, <sivaprak@codeaurora.org>,
-        <quic_kathirav@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v5 0/9] Enable cpufreq for IPQ5332 & IPQ9574
-Message-ID: <20231031071420.GA17892@varda-linux.qualcomm.com>
-References: <cover.1697781921.git.quic_varada@quicinc.com>
- <20231020070947.cwigtaa2haij56hz@vireshk-i7>
- <20231020080339.GA6197@varda-linux.qualcomm.com>
- <20231025062508.vccrmkem45p3fnwe@vireshk-i7>
+        with ESMTP id S1343679AbjJaHZF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Oct 2023 03:25:05 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 083A4C1
+        for <linux-clk@vger.kernel.org>; Tue, 31 Oct 2023 00:25:03 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-99357737980so826517266b.2
+        for <linux-clk@vger.kernel.org>; Tue, 31 Oct 2023 00:25:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1698737101; x=1699341901; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Yjxq8E7gNPB9bFCXU5zCmu0wTmIMA9QI7im5HIAGob8=;
+        b=UDnBLsrtcgKp5mOUD4ecc0dAOd3RJlcwFDNGlrzk6roVkb4SMOz6fOy5llcqV8+LRs
+         QExgROkLruoMEOZKOtmazcUJazusLavMTqgr+/zjHi3qnuUQumzTQfs+e6+yvZZA6h/9
+         7EViawuiKBERIA9HiNSH1PnJm1h7fyWiCEpgujnGDAFOUzrpATVXgmmZN1I3truXWvVr
+         7JpIAKFTgZSotkShgvxpc6kKNfxm3UlgSgksDJJ4BJmiIdc4nFpzbtF4iaNrSfGmQ9u2
+         JeJI3bRdFktDsWtJ0u10BgVOLFkWRGh+3mqiIxI8BIBwCfTuXLRpOHRZjr/yhg1MLMLb
+         5c4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698737101; x=1699341901;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yjxq8E7gNPB9bFCXU5zCmu0wTmIMA9QI7im5HIAGob8=;
+        b=Bv62cpts/J67IPqoHX4hHegEb0TennrrW3XalbRSLRQ+fJWNoz4Wp+OxCX1AhglXTX
+         kEEQqt/8IQXyS1sjhAKvRE7I4CXmeQ1nA8OjXHywDbgFVfKXMolQZRUUihx/C/78S0UZ
+         PQXXA7m45A8r28yShL0LFkhKs0U8ShScda1DfWPl8S+F0GS5JwnBQ6kZKvE8BR5GQJOy
+         IvFi4eatm/CiKRH61GNZtZ7/rJwcCKDoE3NyMvQkLXDeWOI7n+CYNUqOUsS1fGPoB5tZ
+         Vmk5eG647I2zfDnH9sAwqAODznEdS2RAL6BeUCGrphQmdWoJzYSzPyS2uPsPd7ibLLBR
+         hVcQ==
+X-Gm-Message-State: AOJu0YzHUPORTEO5Bz6x7sVPc/QQJRUDrHKVqfp+Zj9iwNZU/KhH0PqR
+        nQndMgs35ICVO+HhUqAeNhuFJQ==
+X-Google-Smtp-Source: AGHT+IGus17rAhpSQfGY8ZFCpaGrrZP3x/TVDAb5d+Mu4tTL5tpzmnsjSSEyrRdZtvyfw5pG3ZLGgQ==
+X-Received: by 2002:a17:907:3184:b0:9c5:844f:a7f4 with SMTP id xe4-20020a170907318400b009c5844fa7f4mr9965783ejb.35.1698737101232;
+        Tue, 31 Oct 2023 00:25:01 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.98])
+        by smtp.gmail.com with ESMTPSA id w3-20020a170906d20300b009b28ad521f4sm478828ejz.4.2023.10.31.00.25.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 31 Oct 2023 00:25:00 -0700 (PDT)
+Message-ID: <48467507-877c-4789-85a9-932b0e79ed79@tuxon.dev>
+Date:   Tue, 31 Oct 2023 09:24:59 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20231025062508.vccrmkem45p3fnwe@vireshk-i7>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: KBUZYiSlMm5uy4l7aOsAet9Ytnt1rwd8
-X-Proofpoint-GUID: KBUZYiSlMm5uy4l7aOsAet9Ytnt1rwd8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-10-30_13,2023-10-31_03,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
- phishscore=0 adultscore=0 spamscore=0 priorityscore=1501 mlxlogscore=671
- malwarescore=0 mlxscore=0 suspectscore=0 impostorscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2310240000 definitions=main-2310310054
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] ti: fix possible memory leak in
+ _ti_omap4_clkctrl_setup()
+Content-Language: en-US
+To:     Hangyu Hua <hbh25y@gmail.com>, kristo@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, tony@atomide.com,
+        dario.binacchi@amarulasolutions.com, claudiu.beznea@microchip.com,
+        robh@kernel.org, andriy.shevchenko@linux.intel.com
+Cc:     linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20231027025057.11510-1-hbh25y@gmail.com>
+From:   claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20231027025057.11510-1-hbh25y@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Oct 25, 2023 at 11:55:08AM +0530, Viresh Kumar wrote:
-> On 20-10-23, 13:33, Varadarajan Narayanan wrote:
-> > On Fri, Oct 20, 2023 at 12:39:47PM +0530, Viresh Kumar wrote:
-> > > On 20-10-23, 11:49, Varadarajan Narayanan wrote:
-> > > > Varadarajan Narayanan (9):
-> > > >   cpufreq: qti: Enable cpufreq for ipq53xx
-> > > >   cpufreq: qti: Introduce cpufreq for ipq95xx
-> > >
-> > > Can I pick just these two ?
-> >
-> > ipq53xx patch is dependent on the previous safe source switching
-> > patch, hence not safe to pick that.
-> >
-> > 	No -> cpufreq: qti: Enable cpufreq for ipq53xx
-> > 	Yes -> cpufreq: qti: Introduce cpufreq for ipq95xx
->
-> The patches don't apply cleanly. Please resend.
 
-Have posted v6 with just these two patches and rebased
-to latest top. Please pick that.
 
-Thanks
-Varada
+On 27.10.2023 05:50, Hangyu Hua wrote:
+> kstrndup() and kstrdup_and_replace() in clkctrl_get_name() can perform
+> dynamic memory allocation. So clkctrl_name() needs to be freed when
+
+s/clkctrl_name()/clkctrl_name
+
+> provider->clkdm_name is NULL.
+> 
+> Fixes: bd46cd0b802d ("clk: ti: clkctrl: check return value of kasprintf()")
+> Signed-off-by: Hangyu Hua <hbh25y@gmail.com>
+> ---
+> 
+> 	v2: fix commit info.
+> 
+>  drivers/clk/ti/clkctrl.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
+> index 607e34d8e289..cb4aa8a45bb2 100644
+> --- a/drivers/clk/ti/clkctrl.c
+> +++ b/drivers/clk/ti/clkctrl.c
+> @@ -591,6 +591,7 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
+>  		provider->clkdm_name = kasprintf(GFP_KERNEL,
+>  						 "%s_clkdm", clkctrl_name);
+>  		if (!provider->clkdm_name) {
+> +			kfree(clkctrl_name);
+>  			kfree(provider);
+>  			return;
+>  		}
