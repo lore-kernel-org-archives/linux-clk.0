@@ -2,63 +2,63 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB410C4332F
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Nov 2023 03:17:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80432C4167B
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Nov 2023 04:54:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230337AbjKADRG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 31 Oct 2023 23:17:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34866 "EHLO
+        id S1347636AbjKAEya (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Nov 2023 00:54:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229850AbjKADRG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Oct 2023 23:17:06 -0400
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id EAAB8B4;
-        Tue, 31 Oct 2023 20:17:02 -0700 (PDT)
-Received: from localhost.localdomain (unknown [180.167.10.98])
-        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 2C6C06051EAB4;
-        Wed,  1 Nov 2023 11:16:59 +0800 (CST)
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From:   Su Hui <suhui@nfschina.com>
-To:     mike.looijmans@topic.nl, mturquette@baylibre.com, sboyd@kernel.org
-Cc:     Su Hui <suhui@nfschina.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH v2] clk: si5341: fix an error code problem in si5341_output_clk_set_rate
-Date:   Wed,  1 Nov 2023 11:16:36 +0800
-Message-Id: <20231101031633.996124-1-suhui@nfschina.com>
-X-Mailer: git-send-email 2.30.2
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        with ESMTP id S1347425AbjKAEy2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Nov 2023 00:54:28 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3CFEB9;
+        Tue, 31 Oct 2023 21:54:26 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 42076C433C7;
+        Wed,  1 Nov 2023 04:54:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1698814466;
+        bh=meWhU50y7LafDrRyBWuK/9aGNKfuL+VxjOksseT7cbU=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=VeafnhFajMTqtvGIwN/E4c5NicRv1gXxGvNwoWJTsTcecbg2OsfOLX9E19X+vqnjA
+         M/6fH9RuPFE5FjYFc5lkuF+D7wTy7BpDuHeV2ebLHkAdeLutvbsLuXbCtmXMf/aNPn
+         ijfPTkMAxn6XgwcJi9M1/8OOhxx+TbbxBb4fY0jgCJVDKR42oPmKt+/93PQBWHfbPA
+         IgBW82OYLv3BkQuZDa4XHONyGpD4ZjdRGabdXLL+/8A1Pt8R3n8j+UgOQv7YzyFxqh
+         I6WnDHpeS/nBkNvSW5CRVOYm/lsJpjysQtFsx42vAVZF0zgyam7hpbV9Ylm+W/h91r
+         cBoVa/hfTIISg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 2DF0CC4166F;
+        Wed,  1 Nov 2023 04:54:26 +0000 (UTC)
+Subject: Re: [GIT PULL] clk changes for the merge window
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20231031213051.2294917-1-sboyd@kernel.org>
+References: <20231031213051.2294917-1-sboyd@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20231031213051.2294917-1-sboyd@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
+X-PR-Tracked-Commit-Id: 0a6d7f8275f255eda823c0f0b61d024f6f5b483d
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: fe4ae2fab00b4751265580c5865fdf23b62d80b3
+Message-Id: <169881446618.23637.12053923496145102219.pr-tracker-bot@kernel.org>
+Date:   Wed, 01 Nov 2023 04:54:26 +0000
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-regmap_bulk_write() return zero or negative error code, return the value
-of regmap_bulk_write() rather than '0'.
+The pull request you sent on Tue, 31 Oct 2023 14:30:50 -0700:
 
-Fixes: 3044a860fd09 ("clk: Add Si5341/Si5340 driver")
-Acked-by: Mike Looijmans <mike.looijmans@topic.nl>
-Signed-off-by: Su Hui <suhui@nfschina.com>
----
- drivers/clk/clk-si5341.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
 
-diff --git a/drivers/clk/clk-si5341.c b/drivers/clk/clk-si5341.c
-index 9599857842c7..2920fe2e5e8b 100644
---- a/drivers/clk/clk-si5341.c
-+++ b/drivers/clk/clk-si5341.c
-@@ -895,10 +895,8 @@ static int si5341_output_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 	r[0] = r_div ? (r_div & 0xff) : 1;
- 	r[1] = (r_div >> 8) & 0xff;
- 	r[2] = (r_div >> 16) & 0xff;
--	err = regmap_bulk_write(output->data->regmap,
-+	return regmap_bulk_write(output->data->regmap,
- 			SI5341_OUT_R_REG(output), r, 3);
--
--	return 0;
- }
- 
- static int si5341_output_reparent(struct clk_si5341_output *output, u8 index)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/fe4ae2fab00b4751265580c5865fdf23b62d80b3
+
+Thank you!
+
 -- 
-2.30.2
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
