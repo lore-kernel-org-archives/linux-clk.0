@@ -2,95 +2,63 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63FE6C4332F
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Nov 2023 02:30:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB410C4332F
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Nov 2023 03:17:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233782AbjKACas (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 31 Oct 2023 22:30:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49378 "EHLO
+        id S230337AbjKADRG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 31 Oct 2023 23:17:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233285AbjKACar (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Oct 2023 22:30:47 -0400
-Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD3BFBD;
-        Tue, 31 Oct 2023 19:30:45 -0700 (PDT)
-Received: by mail-pl1-x642.google.com with SMTP id d9443c01a7336-1cc13149621so11834965ad.1;
-        Tue, 31 Oct 2023 19:30:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698805845; x=1699410645; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wJx1gCCJdYe6w1k0ztbhtZDsqbmsvBkB8hSiGVC++eQ=;
-        b=BQ2XJZAXQFn5HrJLnlG6w6f04L8jPKx3/jXVxtoN4qQS9vNJ166Ou0HZ+DrGkoLZYn
-         hFfydrYQr8sw2qAgbyx53IahM25DDwlAezzyycYZMz6Ml9VvnrHorwffpDk5jxwRgY35
-         blc4nL3RbcbFRFviexKVzedSnXX98HTYvfl/YsGcasDmfr5G43jqyzAIeXkXLk0QZ4xO
-         TpFJhe6StTAk3NI8DLETLJQXLMQdMiUIpVvE7Xuu3OpZXK3h1tnUoIvpKjqBGa+pvswy
-         /2ZRmiU/+++cixdPpd4A+EdubuZPQE+6oI9Z0h3ggE/ppXo5F+w6R4yjbNC5hOh5lBmf
-         JJWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698805845; x=1699410645;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wJx1gCCJdYe6w1k0ztbhtZDsqbmsvBkB8hSiGVC++eQ=;
-        b=Sd2Je+IqqjEZiTrl8HxTreYBO8+mbl0vBQ0IQibzSGaADY3Y39o7aJ37lBzizEFRUC
-         jyrpK0HEDdJZc7eePSYUEsBVMwW9dqdhMNJ1abRbXhHY0VFuwlAfnN09e679D1iztk62
-         XkPY+AaIzwpsIYG0NLFmuvp3DUr6ziQjWgcnYEeDEodzNcBRo/RU4felIZqrSf0ptVdL
-         LcrUnNRHbWTpx3AiWFiAr6g77ECY+rv6KDe0wBbZNvrKfYS56ZaoV1Uk52Z2M9/bjtl5
-         OMNb0K8p7aXQyaxpBoczkYz7FXRMZrhlb80i7HnM8uhG6G4M1rbeCdceEPEOdJPz85RC
-         G6HA==
-X-Gm-Message-State: AOJu0YyIi22FKUWPy2x0Y6JGfcd6iZ6R/vgr1YZy2TBTXfvhoDvdKzZp
-        K5Gl+8SGsYq2JrR3wbmX9dk=
-X-Google-Smtp-Source: AGHT+IF6VbUmw7ib/mBsZAQ0gg4BzyuZrjaSSFR7jiz1xHe2BNnC93S25te2VsButXn2Ux3Y49d34g==
-X-Received: by 2002:a17:902:d1c2:b0:1cc:277f:b4f6 with SMTP id g2-20020a170902d1c200b001cc277fb4f6mr12342647plb.6.1698805845113;
-        Tue, 31 Oct 2023 19:30:45 -0700 (PDT)
-Received: from [127.0.0.1] (059149129201.ctinets.com. [59.149.129.201])
-        by smtp.gmail.com with ESMTPSA id c5-20020a170902c1c500b001ca4c7bee0csm219700plc.232.2023.10.31.19.30.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 31 Oct 2023 19:30:44 -0700 (PDT)
-Message-ID: <1aec4977-05dd-49dd-ae59-f3fce8db70b7@gmail.com>
-Date:   Wed, 1 Nov 2023 10:30:36 +0800
+        with ESMTP id S229850AbjKADRG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Oct 2023 23:17:06 -0400
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id EAAB8B4;
+        Tue, 31 Oct 2023 20:17:02 -0700 (PDT)
+Received: from localhost.localdomain (unknown [180.167.10.98])
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 2C6C06051EAB4;
+        Wed,  1 Nov 2023 11:16:59 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From:   Su Hui <suhui@nfschina.com>
+To:     mike.looijmans@topic.nl, mturquette@baylibre.com, sboyd@kernel.org
+Cc:     Su Hui <suhui@nfschina.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH v2] clk: si5341: fix an error code problem in si5341_output_clk_set_rate
+Date:   Wed,  1 Nov 2023 11:16:36 +0800
+Message-Id: <20231101031633.996124-1-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] ti: fix possible memory leak in
- _ti_omap4_clkctrl_setup()
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     kristo@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        tony@atomide.com, claudiu.beznea@microchip.com, robh@kernel.org,
-        dario.binacchi@amarulasolutions.com, linux-omap@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20231031103010.23792-1-hbh25y@gmail.com>
- <ZUDZ_tDvM7oUBfkq@smile.fi.intel.com>
-Content-Language: en-US
-From:   Hangyu Hua <hbh25y@gmail.com>
-In-Reply-To: <ZUDZ_tDvM7oUBfkq@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 31/10/2023 18:42, Andy Shevchenko wrote:
-> On Tue, Oct 31, 2023 at 06:30:10PM +0800, Hangyu Hua wrote:
->> kstrndup() and kstrdup_and_replace() in clkctrl_get_name() can perform
->> dynamic memory allocation. So clkctrl_name needs to be freed when
->> provider->clkdm_name is NULL.
-> 
->> Fixes: bd46cd0b802d ("clk: ti: clkctrl: check return value of kasprintf()")
->> Signed-off-by: Hangyu Hua <hbh25y@gmail.com>
->> ---
->>
->> 	 v2 and v3: fix commit info.
-> 
-> I believe I gave you my Rb tag. It's your responsibility to care it on if you
-> send a new version. Otherwise, please tell what makes you think that tag should
-> not be here?
+regmap_bulk_write() return zero or negative error code, return the value
+of regmap_bulk_write() rather than '0'.
 
-Do you mean "Reviewed-by"? I checked the previous emails and 
-"lore.kernel.org" and didn’t find this tag in any related emails. I am 
-not sure what happened. Can you please resend it?
+Fixes: 3044a860fd09 ("clk: Add Si5341/Si5340 driver")
+Acked-by: Mike Looijmans <mike.looijmans@topic.nl>
+Signed-off-by: Su Hui <suhui@nfschina.com>
+---
+ drivers/clk/clk-si5341.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Thanks,
-Hangyu
->  
+diff --git a/drivers/clk/clk-si5341.c b/drivers/clk/clk-si5341.c
+index 9599857842c7..2920fe2e5e8b 100644
+--- a/drivers/clk/clk-si5341.c
++++ b/drivers/clk/clk-si5341.c
+@@ -895,10 +895,8 @@ static int si5341_output_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	r[0] = r_div ? (r_div & 0xff) : 1;
+ 	r[1] = (r_div >> 8) & 0xff;
+ 	r[2] = (r_div >> 16) & 0xff;
+-	err = regmap_bulk_write(output->data->regmap,
++	return regmap_bulk_write(output->data->regmap,
+ 			SI5341_OUT_R_REG(output), r, 3);
+-
+-	return 0;
+ }
+ 
+ static int si5341_output_reparent(struct clk_si5341_output *output, u8 index)
+-- 
+2.30.2
+
