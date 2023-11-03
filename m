@@ -2,313 +2,149 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D367C0018A
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Nov 2023 13:56:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F2B4C4332F
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Nov 2023 14:00:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233088AbjKCN41 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Nov 2023 09:56:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53026 "EHLO
+        id S1377661AbjKCOBA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Nov 2023 10:01:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45066 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233010AbjKCN4Y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Nov 2023 09:56:24 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5809CD48
-        for <linux-clk@vger.kernel.org>; Fri,  3 Nov 2023 06:56:19 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-507ad511315so2967388e87.0
-        for <linux-clk@vger.kernel.org>; Fri, 03 Nov 2023 06:56:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lpnu-ua.20230601.gappssmtp.com; s=20230601; t=1699019777; x=1699624577; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OvSla+pQAa35HO20KfgCi3+tdVFMt27FXkqNTTyCsmE=;
-        b=gfQg3rj/SitDPe0gF7vVuMT0Wx/n+NGTkBhTc5CY9h/r3SVz+GxgNgtYkKbrySuzT9
-         t5sHXgz9EwGZ43pP3Uhu1F2qCK7qoCgyb0Aij/Rf7AhBPszQbcb7l5uzAfI07sk6WA8a
-         f0VZX0WLYhJPwMyDdoh+G+nrqyQBYFHBPnAHHCU/lOG7cPWqyCzg2hPP+jqaDm1OLRCQ
-         TmoNbbwH/8ixHpPgJo/OtHji5Dqzd4oIxNUwHsJbsknPnSiBwJYpdJHuWB+7PCTD77Gy
-         qbvjjrDPXAvN8bMj2Vr3KNRrSiT9gqWClRjQdRKmjTl0+MY7uar68oEWYB0E4sZ21DKh
-         86RQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699019777; x=1699624577;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OvSla+pQAa35HO20KfgCi3+tdVFMt27FXkqNTTyCsmE=;
-        b=obZgLg9aERRM6Kzg9V2paB7xpHIMkvwJKRdGP/KA96LcxSNvc5cCJG6l8GBfnentU8
-         z5IU+N6HnEHt9o9CguxEB0pKd//94rWAR2U2NmaSqgqaid1vUBaK59Ri5+iIOJTTDF2d
-         +SZLHdf0wYwuc0TwwLPrKlc1rJ4GoxIVwJLvmx/2rUktkX/nVM1nZhtlCZ3t0SoUTi4N
-         1Jy1rBwyuno/EZE6NuHlPeqwnu8zcmYhHczw+7drIV0DZgruwNTw9tCnBVw2uMoMQ9l5
-         9vxZv6BVkCFaYVIX/dxCE66CYVe2t7U6gha4VYqOsxxdZ75lB8hFGEI1axc8FxgpxUXX
-         cOVg==
-X-Gm-Message-State: AOJu0Yz+4OAV9++ytulTIIeUVv2O2L5v6FXfGPQJzFXkFHCirVgQHksr
-        tDL/fqSRSDNwtyxokNKo3G5jtQ==
-X-Google-Smtp-Source: AGHT+IGTMM3f+Kot7bRs0sqvIQifr5/Epix+gjRp4Zzqkcwb2Ezbe0Y180HOL7xZN/rHY+vNJvbW1g==
-X-Received: by 2002:a19:f70c:0:b0:503:3278:3221 with SMTP id z12-20020a19f70c000000b0050332783221mr15089544lfe.69.1699019776704;
-        Fri, 03 Nov 2023 06:56:16 -0700 (PDT)
-Received: from [192.168.1.3] ([37.54.67.136])
-        by smtp.gmail.com with ESMTPSA id bx25-20020a0564020b5900b0053ed70ebd7csm984031edb.31.2023.11.03.06.56.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Nov 2023 06:56:16 -0700 (PDT)
-Message-ID: <48e1c0bd-9518-4927-b490-f3206256bbd4@lpnu.ua>
-Date:   Fri, 3 Nov 2023 15:56:12 +0200
+        with ESMTP id S230132AbjKCOBA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Nov 2023 10:01:00 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A93551A8;
+        Fri,  3 Nov 2023 07:00:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1699020053; x=1730556053;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Rz6eCJm7BKehq5IHsWMYysRTu22nf253QJIHbXShJkA=;
+  b=P8m4ouBSa2Ierr8jXb/xdPcUPBpeFtR9e697xGd5M+DQlSV/Z9UJiw4E
+   hmUdHtQvDDsSczAhy5rcjkE6pOAe5FiBCkYnxqnoFoTWtd1I7ND3olz/2
+   5SI442U8mEUlpsPqsT/vpNHhemOQfVzHuJ4EG0r9LrpLViApIaERoa5uY
+   hzR6gUcaIJk/nIdcyy3r3ALZKTMDUcamnceRwppX8xM5cQSxHb9ifNBud
+   XHa1I58BKVn/gtJbWiNSMt2f5S7lPMlr1uQ4T9kYkc/z75gOymE2n8CTl
+   GcZyECgpCxKh3h0CmoGjJYBpTkAXYcGENQYGRgJ7snEgkUAMzFaDL1mVD
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10883"; a="453243547"
+X-IronPort-AV: E=Sophos;i="6.03,273,1694761200"; 
+   d="scan'208";a="453243547"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2023 07:00:52 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10883"; a="1093065345"
+X-IronPort-AV: E=Sophos;i="6.03,273,1694761200"; 
+   d="scan'208";a="1093065345"
+Received: from lkp-server01.sh.intel.com (HELO 17d9e85e5079) ([10.239.97.150])
+  by fmsmga005.fm.intel.com with ESMTP; 03 Nov 2023 07:00:47 -0700
+Received: from kbuild by 17d9e85e5079 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1qyuj7-0002Yu-1M;
+        Fri, 03 Nov 2023 14:00:45 +0000
+Date:   Fri, 3 Nov 2023 21:59:44 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Luo Jie <quic_luoj@quicinc.com>, andersson@kernel.org,
+        agross@kernel.org, konrad.dybcio@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de
+Cc:     oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_srichara@quicinc.com,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: Re: [PATCH v11 3/4] clk: qcom: common: commonize qcom_cc_really_probe
+Message-ID: <202311032153.n6opqP2e-lkp@intel.com>
+References: <20231103104846.30875-4-quic_luoj@quicinc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/20] Add minimal Tensor/GS101 SoC support and
- Oriole/Pixel6 board
-To:     Peter Griffin <peter.griffin@linaro.org>
-Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
-        tomasz.figa@gmail.com, s.nawrocki@samsung.com,
-        linus.walleij@linaro.org, wim@linux-watchdog.org,
-        linux@roeck-us.net, catalin.marinas@arm.com, will@kernel.org,
-        arnd@arndb.de, olof@lixom.net, cw00.choi@samsung.com,
-        tudor.ambarus@linaro.org, andre.draszik@linaro.org,
-        semen.protsenko@linaro.org, saravanak@google.com,
-        willmcvicker@google.com, soc@kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        kernel-team@android.com, linux-serial@vger.kernel.org
-References: <20231010224928.2296997-1-peter.griffin@linaro.org>
- <3d489d6c-2098-4f0c-9ec4-f6040665753e@lpnu.ua>
- <CADrjBPp+fyNoPdix6=Wp4cDCRFq2Mui8NS6WENejcHn+H1M-jA@mail.gmail.com>
-Content-Language: en-US
-From:   Maksym Holovach <maksym.holovach.an.2022@lpnu.ua>
-In-Reply-To: <CADrjBPp+fyNoPdix6=Wp4cDCRFq2Mui8NS6WENejcHn+H1M-jA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231103104846.30875-4-quic_luoj@quicinc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Peter,
+Hi Luo,
 
-On 11/3/23 15:11, Peter Griffin wrote:
-> Hi Maksym,
->
-> Thanks for your feedback.
->
-> On Thu, 2 Nov 2023 at 22:32, Maksym Holovach
-> <maksym.holovach.an.2022@lpnu.ua> wrote:
->> Hi, all
->>
->> I wanted to inquire about how do you all feel about calling this SoC by
->> the Google "gs101" name.
-> Interesting question, I think calling it gs101 is the correct approach see
-> below for my rationale.
->
->> I believe the proper name for it should be the actual Samsung name,
->> written in the silicon and reported in the Chip ID hardware: Exynos9845.
->> This also touches the Tensor G2 (Exynos9855), Tensor G3 (Exynos9865),
->> and possibly the "Tesla" SoCs.
->>
->> I do not think the Linux kernel should be a marketing material: it
->> should reflect reality. The chip is almost 100% composed of Samsung
->> Exynos IP blocks and should be called that way.
-> As you alluded to Tesla fsd and Axis artpec8 SoCs are also based on
-> Exynos designs and support upstream uses the axis,artpec8* or tesla,fsd*
-> compatibles.
->
-> So using google,gs101 is consistent with the existing upstream naming
-> scheme, for customized ASICs that were based off a Exynos design. But
-> it also reflects the reality that this SoC is not a Exynos9845 as there is
-> also a lot of Google owned and other third party IP integrated that is not
-> found in Exynos9845.
+kernel test robot noticed the following build errors:
 
-A quick question: Do you imply Exynos9845 exists outside of the context 
-of Tensor G1? I used to believe Exynos9845 **is** Tensor G1.
+[auto build test ERROR on ff269e2cd5adce4ae14f883fc9c8803bc43ee1e9]
 
-Also, what kind of Google IP are you talking about? I believe only the 
-neural accelerator should be custom-ish.
+url:    https://github.com/intel-lab-lkp/linux/commits/Luo-Jie/clk-qcom-branch-Add-clk_branch2_prepare_ops/20231103-185251
+base:   ff269e2cd5adce4ae14f883fc9c8803bc43ee1e9
+patch link:    https://lore.kernel.org/r/20231103104846.30875-4-quic_luoj%40quicinc.com
+patch subject: [PATCH v11 3/4] clk: qcom: common: commonize qcom_cc_really_probe
+config: csky-randconfig-002-20231103 (https://download.01.org/0day-ci/archive/20231103/202311032153.n6opqP2e-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231103/202311032153.n6opqP2e-lkp@intel.com/reproduce)
 
-Additionally, I believe it having or not having Google IP is irrelevant: 
-for example, the new Raspberry Pi 5 Broadcom SoC has a lot of 
-Raspberry's own IP, but it's still called Broadcom as it's the real 
-manufacturer and designer of the chip.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202311032153.n6opqP2e-lkp@intel.com/
 
->
-> I guess the same is also true for `axis,artpec8` and `tesla,fsd` SoCs.
-> IMO the SoC compatible string should be uniquely identifying the actual
-> SoC, not a close relative.
->
-> Regarding product_id you are correct this reads 0x09845000 but even
-> within Samsung Exynos family there are examples where the register
-> value does not match the SoC compatible. For example Exynos850 SoC
-> has a product ID value of "E3830". Where the Linux compatible is
-> matching the Samsung marketing name, not the internal/outdated name.
+All errors (new ones prefixed by >>):
 
-I did not know Exynos 850 is also not going under it's real name. 
-Ultimately, I believe all of those SoCs should go under their technical 
-name in the exynos/ directory.
+   drivers/clk/qcom/gcc-sm4450.c: In function 'gcc_sm4450_probe':
+>> drivers/clk/qcom/gcc-sm4450.c:2874:37: error: passing argument 1 of 'qcom_cc_really_probe' from incompatible pointer type [-Werror=incompatible-pointer-types]
+    2874 |         return qcom_cc_really_probe(pdev, &gcc_sm4450_desc, regmap);
+         |                                     ^~~~
+         |                                     |
+         |                                     struct platform_device *
+   In file included from drivers/clk/qcom/clk-regmap-mux.h:11,
+                    from drivers/clk/qcom/gcc-sm4450.c:19:
+   drivers/clk/qcom/common.h:61:48: note: expected 'struct device *' but argument is of type 'struct platform_device *'
+      61 | extern int qcom_cc_really_probe(struct device *dev,
+         |                                 ~~~~~~~~~~~~~~~^~~
+   cc1: some warnings being treated as errors
 
-Another concern is that Google could in the future license other SoC: be 
-it Qualcomm, Nvidia or anything. If we put completely different hw under 
-google/ directory, does it really make sense? In that case, who'll 
-maintain the google/ directory? Exynos people? Qualcomm people if they 
-license it? Some other people?
 
-Then, I don't think Tensor G3 has a proper "GS" name, it goes by "Zuma" 
-in decompiled kernel modules as far as I see.
+vim +/qcom_cc_really_probe +2874 drivers/clk/qcom/gcc-sm4450.c
 
-Finally, Tesla people already tried to submit drivers called by Tesla 
-name, but which basically copied the functionality of the Exynos 
-drivers. We would want to avoid that, ideally.
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2834  
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2835  static int gcc_sm4450_probe(struct platform_device *pdev)
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2836  {
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2837  	struct regmap *regmap;
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2838  	int ret;
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2839  
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2840  	regmap = qcom_cc_map(pdev, &gcc_sm4450_desc);
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2841  	if (IS_ERR(regmap))
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2842  		return PTR_ERR(regmap);
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2843  
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2844  	clk_lucid_evo_pll_configure(&gcc_gpll3, regmap, &gcc_gpll3_config);
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2845  	ret = qcom_cc_register_rcg_dfs(regmap, gcc_dfs_clocks,
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2846  				       ARRAY_SIZE(gcc_dfs_clocks));
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2847  	if (ret)
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2848  		return ret;
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2849  
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2850  	qcom_branch_set_force_mem_core(regmap, gcc_ufs_phy_ice_core_clk, true);
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2851  
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2852  	/*
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2853  	 * Keep clocks always enabled:
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2854  	 * gcc_camera_ahb_clk
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2855  	 * gcc_camera_sleep_clk
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2856  	 * gcc_camera_xo_clk
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2857  	 * gcc_disp_ahb_clk
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2858  	 * gcc_disp_xo_clk
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2859  	 * gcc_gpu_cfg_ahb_clk
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2860  	 * gcc_video_ahb_clk
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2861  	 * gcc_video_xo_clk
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2862  	 */
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2863  	regmap_update_bits(regmap, 0x36004, BIT(0), BIT(0));
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2864  	regmap_update_bits(regmap, 0x36018, BIT(0), BIT(0));
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2865  	regmap_update_bits(regmap, 0x3601c, BIT(0), BIT(0));
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2866  	regmap_update_bits(regmap, 0x37004, BIT(0), BIT(0));
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2867  	regmap_update_bits(regmap, 0x37014, BIT(0), BIT(0));
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2868  	regmap_update_bits(regmap, 0x81004, BIT(0), BIT(0));
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2869  	regmap_update_bits(regmap, 0x42004, BIT(0), BIT(0));
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2870  	regmap_update_bits(regmap, 0x42018, BIT(0), BIT(0));
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2871  
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2872  	regmap_update_bits(regmap, 0x4201c, BIT(21), BIT(21));
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2873  
+c32c4ef98baca6d Ajit Pandey 2023-09-09 @2874  	return qcom_cc_really_probe(pdev, &gcc_sm4450_desc, regmap);
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2875  }
+c32c4ef98baca6d Ajit Pandey 2023-09-09  2876  
 
-My opinion is that all the Tesla and Google SoCs should be in the 
-exynos/ directory, not only because they are basically Samsung Exynos, 
-but also because they don't really need a separate directory: neither 
-Google nor Tesla didn't neither manufacture or design those SoCs from 
-scratch. The only reason I can think of for them to have it in a 
-separate directory is maybe because Google and Tesla actually paid 
-Samsung money for the right to call Exynos "Google designed" SoCs, but I 
-believe the kernel should be left out of that.
-
->
-> regards,
->
-> Peter.
->
->
->
->> Yours,
->>
->> - Markuss
->>
->> On 10/11/23 01:49, Peter Griffin wrote:
->>> Hi folks,
->>>
->>> Firstly, thanks to everyone who reviewed the v1 series! V2 incorporates all
->>> the review feedback received so far.
->>>
->>> This series adds initial SoC support for the GS101 SoC and also initial board
->>> support for Pixel 6 phone (Oriole).
->>>
->>> The gs101 / Tensor SoC is also used in Pixel6a (bluejay) and Pixel 6 Pro
->>> (raven) phones. Currently DT is added for the gs101 SoC and Oriole.
->>> As you can see from the patches the SoC is based on a Samsung Exynos SoC,
->>> and therefore lots of the low level Exynos drivers can be re-used.
->>>
->>> The support added in this series consists of:
->>> * cpus
->>> * pinctrl
->>> * some CCF implementation
->>> * watchdog
->>> * uart
->>> * gpio
->>>
->>> This is enough to boot through to a busybox initramfs and shell using an
->>> upstream kernel though :) More platform support will be added over the
->>> following weeks and months.
->>>
->>> Note 1: I've removed the dtbo overlay from v2 submission and will re-submit once
->>> I have appropriate documentation for it.
->>>
->>> Note 2: I've left the bootargs in dts with earlycon for now, for two reasons.
->>> 1) The bootloader hangs if bootargs isn't present in the dtb as it tries to
->>> re-write this with additional bootargs.
->>> 2) there is a issue whereby the full serial console doesn't come up properly
->>> if earlycon isn't also specified. This issue needs further investigation.
->>>
->>> Note 3: In `dt-bindings: pinctrl: samsung: add google,gs101-pinctrl compatible`
->>> I tried to narrow the interrupts check to google,gs101-pinctrl but I still see
->>> a warning:
->>> gs101-oriole.dtb: pinctrl@174d0000: interrupts: [[0, 0, 4],[..] is too long
->>>
->>> If anyone can educate me on what I've done wrong here it would be most
->>> appreciated!
->>>
->>> kind regards,
->>>
->>> Peter.
->>>
->>> Changes since v1:
->>>    - Remove irq/gs101.h and replace macros with irq numbers globally
->>>    - exynos-pmu - keep alphabetical order
->>>    - add cmu_apm to clock bindings documentation
->>>    - sysreg bindings - remove superfluous `google,gs101-sysreg`
->>>    - watchdog bindings - Alphanumerical order, update gs201 comment
->>>    - samsung,pinctrl.yaml - add new "if:then:else:" to narrow for google SoC
->>>    - samsung,pinctrl-wakeup-interrupt.yaml - Alphanumerical order
->>>    - samsung,pinctrl- add google,gs101-wakeup-eint compatible
->>>    - clk-pll: fixup typos
->>>    - clk-gs101: fix kernel test robot warnings (add 2 new clocks,dividers,gate)
->>>    - clk-gs101: fix alphabetical order
->>>    - clk-gs101: cmu_apm: fixup typo and missing empty entry
->>>    - clk-gs101: cmu_misc: remove clocks that were being registerred twice
->>>    - pinctrl: filter sel: rename/reorder variables, add comment for FLTCON bitfield
->>>    - pinctrl: filter sel: avoid setting reserved bits by loop over FLTCON1 pins as well
->>>    - pinctrl: gs101: rename bank_type_6/7 structs to be more specific, split from filter
->>>    - watchdog: s3c2410_wdt: remove dev_info prints
->>>    - gs101.dtsi/oriole.dts: order by unit node, remove underscores from node name, blank lines
->>>      add SoC node, split dts and dtsi into separate patches, remove 'DVT' suffix
->>>    - gs101-oriole.dtso: Remove overlay until board_id is documented properly
->>>    - Add GS101_PIN_* macros to gs101-pinctrl.h instead of using Exynos ones
->>>    - gpio-keys: update linux,code to use input-event-code macros
->>>    - add dedicated gs101-uart compatible
->>>
->>> Peter Griffin (20):
->>>     dt-bindings: soc: samsung: exynos-pmu: Add gs101 compatible
->>>     dt-bindings: clock: Add Google gs101 clock management unit bindings
->>>     dt-bindings: soc: google: exynos-sysreg: add dedicated SYSREG
->>>       compatibles to GS101
->>>     dt-bindings: watchdog: Document Google gs101 & gs201 watchdog bindings
->>>     dt-bindings: arm: google: Add bindings for Google ARM platforms
->>>     dt-bindings: pinctrl: samsung: add google,gs101-pinctrl compatible
->>>     dt-bindings: pinctrl: samsung: add gs101-wakeup-eint compatible
->>>     dt-bindings: serial: samsung: Add google-gs101-uart compatible
->>>     clk: samsung: clk-pll: Add support for pll_{0516,0517,518}
->>>     clk: samsung: clk-gs101: Add cmu_top registers, plls, mux and gates
->>>     clk: samsung: clk-gs101: add CMU_APM support
->>>     clk: samsung: clk-gs101: Add support for CMU_MISC clock unit
->>>     pinctrl: samsung: Add filter selection support for alive banks
->>>     pinctrl: samsung: Add gs101 SoC pinctrl configuration
->>>     watchdog: s3c2410_wdt: Add support for Google tensor SoCs
->>>     tty: serial: samsung: Add gs101 compatible and SoC data
->>>     arm64: dts: google: Add initial Google gs101 SoC support
->>>     arm64: dts: google: Add initial Oriole/pixel 6 board support
->>>     arm64: defconfig: Enable Google Tensor SoC
->>>     MAINTAINERS: add entry for Google Tensor SoC
->>>
->>>    .../devicetree/bindings/arm/google.yaml       |   46 +
->>>    .../bindings/clock/google,gs101-clock.yaml    |  125 +
->>>    .../samsung,pinctrl-wakeup-interrupt.yaml     |    2 +
->>>    .../bindings/pinctrl/samsung,pinctrl.yaml     |   19 +
->>>    .../bindings/serial/samsung_uart.yaml         |    2 +
->>>    .../bindings/soc/samsung/exynos-pmu.yaml      |    2 +
->>>    .../soc/samsung/samsung,exynos-sysreg.yaml    |    6 +
->>>    .../bindings/watchdog/samsung-wdt.yaml        |   10 +-
->>>    MAINTAINERS                                   |   10 +
->>>    arch/arm64/Kconfig.platforms                  |    6 +
->>>    arch/arm64/boot/dts/Makefile                  |    1 +
->>>    arch/arm64/boot/dts/google/Makefile           |    4 +
->>>    arch/arm64/boot/dts/google/gs101-oriole.dts   |   79 +
->>>    arch/arm64/boot/dts/google/gs101-pinctrl.dtsi | 1275 ++++++++++
->>>    arch/arm64/boot/dts/google/gs101-pinctrl.h    |   32 +
->>>    arch/arm64/boot/dts/google/gs101.dtsi         |  503 ++++
->>>    arch/arm64/configs/defconfig                  |    1 +
->>>    drivers/clk/samsung/Kconfig                   |    9 +
->>>    drivers/clk/samsung/Makefile                  |    2 +
->>>    drivers/clk/samsung/clk-gs101.c               | 2164 +++++++++++++++++
->>>    drivers/clk/samsung/clk-pll.c                 |    9 +-
->>>    drivers/clk/samsung/clk-pll.h                 |    3 +
->>>    .../pinctrl/samsung/pinctrl-exynos-arm64.c    |  163 ++
->>>    drivers/pinctrl/samsung/pinctrl-exynos.c      |   84 +-
->>>    drivers/pinctrl/samsung/pinctrl-exynos.h      |   41 +
->>>    drivers/pinctrl/samsung/pinctrl-samsung.c     |    4 +
->>>    drivers/pinctrl/samsung/pinctrl-samsung.h     |   24 +
->>>    drivers/tty/serial/samsung_tty.c              |   12 +
->>>    drivers/watchdog/s3c2410_wdt.c                |  104 +-
->>>    include/dt-bindings/clock/google,gs101.h      |  232 ++
->>>    30 files changed, 4961 insertions(+), 13 deletions(-)
->>>    create mode 100644 Documentation/devicetree/bindings/arm/google.yaml
->>>    create mode 100644 Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
->>>    create mode 100644 arch/arm64/boot/dts/google/Makefile
->>>    create mode 100644 arch/arm64/boot/dts/google/gs101-oriole.dts
->>>    create mode 100644 arch/arm64/boot/dts/google/gs101-pinctrl.dtsi
->>>    create mode 100644 arch/arm64/boot/dts/google/gs101-pinctrl.h
->>>    create mode 100644 arch/arm64/boot/dts/google/gs101.dtsi
->>>    create mode 100644 drivers/clk/samsung/clk-gs101.c
->>>    create mode 100644 include/dt-bindings/clock/google,gs101.h
->>>
-- Maksym
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
