@@ -2,277 +2,195 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AAB3C4167D
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Nov 2023 20:05:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 332B2C4332F
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Nov 2023 20:11:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229668AbjKCUFh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Nov 2023 16:05:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47200 "EHLO
+        id S1378140AbjKCULt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Nov 2023 16:11:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229527AbjKCUFg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Nov 2023 16:05:36 -0400
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7CEED53
-        for <linux-clk@vger.kernel.org>; Fri,  3 Nov 2023 13:05:33 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id d9443c01a7336-1cc30de471dso39255ad.0
-        for <linux-clk@vger.kernel.org>; Fri, 03 Nov 2023 13:05:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1699041933; x=1699646733; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5VbkSNuwWNxADmq74BTzzOffPoezQ3iEIy9T2gZ4ntQ=;
-        b=LDRnk5T7TIQr+Y9klixAkwPlyYLFTHTQ18cV+Ma8mrHMA6SXhvZk/aSQ898tTlgefi
-         RxZfgi/ir1tC/BKVoO+LFJ/bS04LMLF+nCxh44R7uNt/Nr0AsHr7amk/bliAnq4UsKNY
-         3tYBuycY9ZP/8uOn6I36ciPfZ0koY9YQSC/O1MdAFBGODcDN+Y0JRcDE+lz1GeyBJmbo
-         yMBE6j+6OUovw+G+3uVRqmXZqqdbvv2f/DybmapMGuALn/kNgJ0JTDkDIAX57iobbX3N
-         DrTZLmQWW57YI5D6xUWoqw6Eb7jpspjPwnn7GivyJMNQundJfiyCJK84F64QgRT1sGKy
-         xxsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699041933; x=1699646733;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5VbkSNuwWNxADmq74BTzzOffPoezQ3iEIy9T2gZ4ntQ=;
-        b=dNcYMrLDEncfJDrGcIOk4fyqKSJeE/5kXRJ+uIuwps2XsGhJdzNjRDsU+ZX7AUZFlH
-         sYNe/0OXlOwfybDbKtWd4GfbVMEfHD4xacQkLshsQ3gmM7pwJkWKdil7RfUINotCY2Ag
-         ikzf8rSFh8hHS73MLPex5O1Mms78EZRowO6XisDo0DvZOeNHrTERDhCdj45clEGtqaM+
-         zrZeizcioTz9434KMOI6EB+Eb72LunG1Xd5TkjKhyO96NKq511Sw5zvzzGeCXnxVujA6
-         EmlYeilsOsAB9u6iOlfoTBpA8oc/W9zM4vizsajvbU82LQUzwB9F6ShUbW+Ssq8kNnUR
-         3ZCw==
-X-Gm-Message-State: AOJu0Ywmki2KzIMIQdz4+nwUUhhs4Cb/zMbpdREe2bG/JyiBQf4Rpf1v
-        X1YE0m+0AAnRC/W9t9tHGVd6ng==
-X-Google-Smtp-Source: AGHT+IGSLym7LjReWH2oEnEAARiZ56Hfr6abFPm4QXjfoHgBTcHOJjCKffwUPorSCrtlytrQU0sQdA==
-X-Received: by 2002:a17:903:41cd:b0:1bd:9c78:8031 with SMTP id u13-20020a17090341cd00b001bd9c788031mr9924ple.9.1699041932747;
-        Fri, 03 Nov 2023 13:05:32 -0700 (PDT)
-Received: from google.com (137.22.168.34.bc.googleusercontent.com. [34.168.22.137])
-        by smtp.gmail.com with ESMTPSA id jb20-20020a170903259400b001cc615e6850sm1758011plb.90.2023.11.03.13.05.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Nov 2023 13:05:32 -0700 (PDT)
-Date:   Fri, 3 Nov 2023 13:05:28 -0700
-From:   William McVicker <willmcvicker@google.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Maksym Holovach <maksym.holovach.an.2022@lpnu.ua>,
-        Peter Griffin <peter.griffin@linaro.org>, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com,
-        s.nawrocki@samsung.com, linus.walleij@linaro.org,
-        wim@linux-watchdog.org, linux@roeck-us.net,
-        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-        olof@lixom.net, cw00.choi@samsung.com, tudor.ambarus@linaro.org,
-        andre.draszik@linaro.org, semen.protsenko@linaro.org,
-        saravanak@google.com, soc@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        kernel-team@android.com, linux-serial@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Subject: Re: [PATCH v2 00/20] Add minimal Tensor/GS101 SoC support and
- Oriole/Pixel6 board
-Message-ID: <ZUVSiBvy9SNXFG_A@google.com>
-References: <20231010224928.2296997-1-peter.griffin@linaro.org>
- <3d489d6c-2098-4f0c-9ec4-f6040665753e@lpnu.ua>
- <CADrjBPp+fyNoPdix6=Wp4cDCRFq2Mui8NS6WENejcHn+H1M-jA@mail.gmail.com>
- <48e1c0bd-9518-4927-b490-f3206256bbd4@lpnu.ua>
- <c0b8f356-0f26-459d-850d-ec0fa1fd3987@linaro.org>
- <ZUUvp3kqM7NPlyZ_@google.com>
+        with ESMTP id S230379AbjKCULs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Nov 2023 16:11:48 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68B92D61;
+        Fri,  3 Nov 2023 13:11:45 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40308C433C8;
+        Fri,  3 Nov 2023 20:11:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1699042304;
+        bh=3LHRc8rww849/6wAkBU/sr464fjAyyToo/wNBBArVDM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mLV9uboIii2WaWOBW6KVPc7nBjq7UPg4F0/bfPRm2WrzM1B0UQCZAg7yrJ6mghEDJ
+         ka7eDHgGCSTM33dWvfWmE9yTtGNDbdvUX3DZLefVVoezOI+bbgEPGaGgh10oRg9oVl
+         M1w3CZzdoGJMD+z08Ws67bK9JNpxHj/FBcgGseI3a93Ofr44155ph8W3yHXKe16+ZI
+         RnF7d6VjSp9PIouVAxkCsgVLLQ5Rt1WG7v4iLJ0XSTDtH87Na4BZ4Ik5gxQ9g5Wfiy
+         SWk0xhEQwVFH0p7e7WX1X9I6+ahg2hQDLrFhRWp7TAqiTwx1SVBIfPdxftosbX0uow
+         dEZgmpsCtli+A==
+Date:   Fri, 3 Nov 2023 13:15:49 -0700
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Abel Vesa <abel.vesa@linaro.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+        Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Taniya Das <tdas@qti.qualcomm.com>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-media@vger.kernel.org,
+        Jagadeesh Kona <quic_jkona@quicinc.com>
+Subject: Re: [PATCH RESEND v3 4/5] clk: qcom: Use HW_CTRL_TRIGGER flag to
+ switch video GDSC to HW mode
+Message-ID: <v4dnsawo7s74spccrsvjwmal73tqfq4aptiny25tyyp6ungxha@jlbywvcssqtl>
+References: <20231101-gdsc-hwctrl-v3-0-0740ae6b2b04@linaro.org>
+ <20231101-gdsc-hwctrl-v3-4-0740ae6b2b04@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZUUvp3kqM7NPlyZ_@google.com>
+In-Reply-To: <20231101-gdsc-hwctrl-v3-4-0740ae6b2b04@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/03/2023, William McVicker wrote:
-> Hi Maksym, Krzysztof, Peter,
+On Wed, Nov 01, 2023 at 11:04:10AM +0200, Abel Vesa wrote:
+> From: Jagadeesh Kona <quic_jkona@quicinc.com>
 > 
-> On 11/03/2023, Krzysztof Kozlowski wrote:
-> > On 03/11/2023 14:56, Maksym Holovach wrote:
-> > > Hi Peter,
-> > > 
-> > > On 11/3/23 15:11, Peter Griffin wrote:
-> > >> Hi Maksym,
-> > >>
-> > >> Thanks for your feedback.
-> > >>
-> > >> On Thu, 2 Nov 2023 at 22:32, Maksym Holovach
-> > >> <maksym.holovach.an.2022@lpnu.ua> wrote:
-> > >>> Hi, all
-> > >>>
-> > >>> I wanted to inquire about how do you all feel about calling this SoC by
-> > >>> the Google "gs101" name.
-> > >> Interesting question, I think calling it gs101 is the correct approach see
-> > >> below for my rationale.
-> > >>
-> > >>> I believe the proper name for it should be the actual Samsung name,
-> > >>> written in the silicon and reported in the Chip ID hardware: Exynos9845.
-> > >>> This also touches the Tensor G2 (Exynos9855), Tensor G3 (Exynos9865),
-> > >>> and possibly the "Tesla" SoCs.
-> > >>>
-> > >>> I do not think the Linux kernel should be a marketing material: it
-> > >>> should reflect reality. The chip is almost 100% composed of Samsung
-> > >>> Exynos IP blocks and should be called that way.
-> > >> As you alluded to Tesla fsd and Axis artpec8 SoCs are also based on
-> > >> Exynos designs and support upstream uses the axis,artpec8* or tesla,fsd*
-> > >> compatibles.
-> > >>
-> > >> So using google,gs101 is consistent with the existing upstream naming
-> > >> scheme, for customized ASICs that were based off a Exynos design. But
-> > >> it also reflects the reality that this SoC is not a Exynos9845 as there is
-> > >> also a lot of Google owned and other third party IP integrated that is not
-> > >> found in Exynos9845.
-> > > 
-> > > A quick question: Do you imply Exynos9845 exists outside of the context 
-> > > of Tensor G1? I used to believe Exynos9845 **is** Tensor G1.
+> The current HW_CTRL flag switches the video GDSC to HW control mode as
+> part of GDSC enable itself, instead of that use HW_CTRL_TRIGGER flag to
+> give consumer drivers more control and switch the GDSC mode as and when
+> required.
 > 
-> Yes, the gs101 SoC is *not* equivalent to the Exynos9845. Similar to how Tesla
-> FSD licenses Exynos IP blocks, gs101 does not only comprise of Exynos IP
-> blocks. The final design is unique to Google and comprises of several different
-> vendor IP blocks (not only Exynos).
+> HW_CTRL_TRIGGER flag allows consumer drivers to switch the video GDSC to
+> HW/SW control modes at runtime using dev_pm_genpd_set_hwmode API.
+> 
 
-Sorry, I need to correct this after talking to more people. The Exynos9845 is
-the name that Samsung LSI refers to as the gs101 SoC. However, it was made
-exclusively for Google with Google-designed IP. Since this chip is exclusive to
-the Pixel device line-up, it would make sense to use the well known name that
-is used by Google in the Pixel factory kernel.
+This states what the code currently does, and what the new code will do.
+But I don't find that it adequately describes _why_ this is done.
+
+
+In the current implementation, the hardware is might collapse the GDSC
+anytime between gdsc_enable() and gdsc_disable(). By giving "drivers
+more control" the time spent in this state is reduced to some fraction
+of that span, which to me implies higher power consumption.
+
+Under the assumption that we don't want to consume more power without
+reason, I'm forced to guess that there might be some scenarios that we
+want this feature to keep the GDSC non-collapsed against the indication
+of the hardware - to avoid some instability somewhere, perhaps?
 
 Regards,
-Will
+Bjorn
 
+> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
+>  drivers/clk/qcom/videocc-sc7180.c | 2 +-
+>  drivers/clk/qcom/videocc-sc7280.c | 2 +-
+>  drivers/clk/qcom/videocc-sdm845.c | 4 ++--
+>  drivers/clk/qcom/videocc-sm8250.c | 4 ++--
+>  drivers/clk/qcom/videocc-sm8550.c | 4 ++--
+>  5 files changed, 8 insertions(+), 8 deletions(-)
 > 
-> > > 
-> > > Also, what kind of Google IP are you talking about? I believe only the 
-> > > neural accelerator should be custom-ish.
-> > > 
-> > > Additionally, I believe it having or not having Google IP is irrelevant: 
-> > > for example, the new Raspberry Pi 5 Broadcom SoC has a lot of 
-> > > Raspberry's own IP, but it's still called Broadcom as it's the real 
-> > > manufacturer and designer of the chip.
-> > 
-> > That's a good argument. Indeed BCM2712 contains "New Raspberry
-> > Pi-developed ISP".
-> > https://www.raspberrypi.com/documentation/computers/processors.html
-> > 
-> > There aren't many patches but GPU is still called brcm,2712.
-> > 
-> > For Tesla FSD, there was discussion and output was not very consisting.
-> > First, the name itself was used for everything - SoC architecture, one
-> > given SoC and eventually the board.
-> > https://lore.kernel.org/all/5ab62673-8d46-ec1d-1c80-696421ab69ca@canonical.com/
-> > 
-> > Eventually the last part - board - was renamed to "Evaluation board",
-> > but I don't know how true or real it is.
-> > 
-> > See also:
-> > "I would argue that if this SoC shares the pinctrl, clock, spi, adc,
-> > and timer implementation
-> > with Exynos, we should consider it part of the Exynos family,"
-> > https://lore.kernel.org/all/CAK8P3a31bCHNcNWrLX+QW+4RuK=DBpxLA_j5BFKxXxXKCT8PFQ@mail.gmail.com/
-> > 
-> > However it was also claimed:
-> > 
-> > "AFA architecture is concerns both Exynos and FSD has completely
-> > different architecture (at least at HW level)."
-> > https://lore.kernel.org/all/07ce01d8091e$9a6fd9c0$cf4f8d40$@samsung.com/
-> > 
-> > >> I guess the same is also true for `axis,artpec8` and `tesla,fsd` SoCs.
-> > >> IMO the SoC compatible string should be uniquely identifying the actual
-> > >> SoC, not a close relative.
-> > >>
-> > >> Regarding product_id you are correct this reads 0x09845000 but even
-> > >> within Samsung Exynos family there are examples where the register
-> > >> value does not match the SoC compatible. For example Exynos850 SoC
-> > >> has a product ID value of "E3830". Where the Linux compatible is
-> > >> matching the Samsung marketing name, not the internal/outdated name.
-> > > 
-> > > I did not know Exynos 850 is also not going under it's real name. 
-> > > Ultimately, I believe all of those SoCs should go under their technical 
-> > > name in the exynos/ directory.
-> > 
-> > The initial technical name does not exist outside of vendor sources and
-> > part name. E.g. Winlink E850 board hardware manual calls it:
-> > "Samsung Exynos 850, S5E3830"
-> > and everywhere else Exynos 850 SoC is used.
-> > 
-> > If you start calling it Exynos 3830, only me and Sam (who mainlined it)
-> > would know what is it. Everyone else, all users of kernel, would be
-> > confused.
-> > 
-> > Therefore using well known final product name is for Exynos850 reasonable.
+> diff --git a/drivers/clk/qcom/videocc-sc7180.c b/drivers/clk/qcom/videocc-sc7180.c
+> index 5b9b54f616b8..51439f7ba70c 100644
+> --- a/drivers/clk/qcom/videocc-sc7180.c
+> +++ b/drivers/clk/qcom/videocc-sc7180.c
+> @@ -166,7 +166,7 @@ static struct gdsc vcodec0_gdsc = {
+>  	.pd = {
+>  		.name = "vcodec0_gdsc",
+>  	},
+> -	.flags = HW_CTRL,
+> +	.flags = HW_CTRL_TRIGGER,
+>  	.pwrsts = PWRSTS_OFF_ON,
+>  };
+>  
+> diff --git a/drivers/clk/qcom/videocc-sc7280.c b/drivers/clk/qcom/videocc-sc7280.c
+> index 615695d82319..3d07b1e95986 100644
+> --- a/drivers/clk/qcom/videocc-sc7280.c
+> +++ b/drivers/clk/qcom/videocc-sc7280.c
+> @@ -236,7 +236,7 @@ static struct gdsc mvs0_gdsc = {
+>  		.name = "mvs0_gdsc",
+>  	},
+>  	.pwrsts = PWRSTS_OFF_ON,
+> -	.flags = HW_CTRL | RETAIN_FF_ENABLE,
+> +	.flags = HW_CTRL_TRIGGER | RETAIN_FF_ENABLE,
+>  };
+>  
+>  static struct gdsc mvsc_gdsc = {
+> diff --git a/drivers/clk/qcom/videocc-sdm845.c b/drivers/clk/qcom/videocc-sdm845.c
+> index c77a4dd5d39c..dad011c48973 100644
+> --- a/drivers/clk/qcom/videocc-sdm845.c
+> +++ b/drivers/clk/qcom/videocc-sdm845.c
+> @@ -260,7 +260,7 @@ static struct gdsc vcodec0_gdsc = {
+>  	},
+>  	.cxcs = (unsigned int []){ 0x890, 0x930 },
+>  	.cxc_count = 2,
+> -	.flags = HW_CTRL | POLL_CFG_GDSCR,
+> +	.flags = HW_CTRL_TRIGGER | POLL_CFG_GDSCR,
+>  	.pwrsts = PWRSTS_OFF_ON,
+>  };
+>  
+> @@ -271,7 +271,7 @@ static struct gdsc vcodec1_gdsc = {
+>  	},
+>  	.cxcs = (unsigned int []){ 0x8d0, 0x950 },
+>  	.cxc_count = 2,
+> -	.flags = HW_CTRL | POLL_CFG_GDSCR,
+> +	.flags = HW_CTRL_TRIGGER | POLL_CFG_GDSCR,
+>  	.pwrsts = PWRSTS_OFF_ON,
+>  };
+>  
+> diff --git a/drivers/clk/qcom/videocc-sm8250.c b/drivers/clk/qcom/videocc-sm8250.c
+> index ad46c4014a40..c1b73d852f1c 100644
+> --- a/drivers/clk/qcom/videocc-sm8250.c
+> +++ b/drivers/clk/qcom/videocc-sm8250.c
+> @@ -293,7 +293,7 @@ static struct gdsc mvs0_gdsc = {
+>  	.pd = {
+>  		.name = "mvs0_gdsc",
+>  	},
+> -	.flags = HW_CTRL,
+> +	.flags = HW_CTRL_TRIGGER,
+>  	.pwrsts = PWRSTS_OFF_ON,
+>  };
+>  
+> @@ -302,7 +302,7 @@ static struct gdsc mvs1_gdsc = {
+>  	.pd = {
+>  		.name = "mvs1_gdsc",
+>  	},
+> -	.flags = HW_CTRL,
+> +	.flags = HW_CTRL_TRIGGER,
+>  	.pwrsts = PWRSTS_OFF_ON,
+>  };
+>  
+> diff --git a/drivers/clk/qcom/videocc-sm8550.c b/drivers/clk/qcom/videocc-sm8550.c
+> index f3c9dfaee968..404c6600edae 100644
+> --- a/drivers/clk/qcom/videocc-sm8550.c
+> +++ b/drivers/clk/qcom/videocc-sm8550.c
+> @@ -322,7 +322,7 @@ static struct gdsc video_cc_mvs0_gdsc = {
+>  	},
+>  	.pwrsts = PWRSTS_OFF_ON,
+>  	.parent = &video_cc_mvs0c_gdsc.pd,
+> -	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE | HW_CTRL,
+> +	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE | HW_CTRL_TRIGGER,
+>  };
+>  
+>  static struct gdsc video_cc_mvs1c_gdsc = {
+> @@ -347,7 +347,7 @@ static struct gdsc video_cc_mvs1_gdsc = {
+>  	},
+>  	.pwrsts = PWRSTS_OFF_ON,
+>  	.parent = &video_cc_mvs1c_gdsc.pd,
+> -	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE | HW_CTRL,
+> +	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE | HW_CTRL_TRIGGER,
+>  };
+>  
+>  static struct clk_regmap *video_cc_sm8550_clocks[] = {
 > 
-> I agree with this. By using the final (well known) product SoC name -- gs101 --
-> other developers will be able to easily identify the particular SoC.
+> -- 
+> 2.34.1
 > 
-> > 
-> > > 
-> > > Another concern is that Google could in the future license other SoC: be 
-> > > it Qualcomm, Nvidia or anything. If we put completely different hw under 
-> > > google/ directory, does it really make sense? In that case, who'll 
-> > > maintain the google/ directory? Exynos people? Qualcomm people if they 
-> > > license it? Some other people?
-> 
-> I don't understand why the architecture of the SoC would dictate which folder
-> to put the device tree files under. It makes more sense to group board DT files
-> together based on who distributes them. Having all the Pixel DT board files
-> together allows Google to create a single device tree binary per SoC coupled
-> with the set of device tree overlays per board variant (this is the dtbo.img)
-> to ship to all their devices. If you look at all the in-market Pixel devices
-> with Tensor SoCs, you will find that you could create one dtb (concatenate
-> gs101.dtb, gs201.dtb, and zuma.dtb) and one dtbo image for 10 devices which
-> significantly simplifies the maintenance, testing, and software distribution
-> for all 10 of those products.
-> 
-> > 
-> > That's indeed a problem. Future Tesla SoC might have just few pieces
-> > similar to FSD. There would be no common SoC part, except the actual
-> > Tesla IP.
-> > 
-> > Same for Google. Future GSXXX, if done by Qualcomm, will be absolutely
-> > different than GS101 and the only common part would be the TPU (Tensor).
-> > 
-> > So now let's decide what is the common denominator:
-> > 1. Core SoC architecture, like buses, pinctrl, clocks, timers, serial,
-> > and many IP blocks, which constitute 95% of Devicetree bindings and drivers,
-> > 2. The one, big piece made by Samsung's customer: TPU, NPU or whatever.
-> 
-> As mentioned above, I think this should be based on how the DTBs and DTBOs are
-> used and distributed. What is the benefit of adding the gs101 board files under
-> the exynos folder?
-> 
-> Thanks,
-> Will
-> 
-> > 
-> > > 
-> > > Then, I don't think Tensor G3 has a proper "GS" name, it goes by "Zuma" 
-> > > in decompiled kernel modules as far as I see.
-> > > 
-> > > Finally, Tesla people already tried to submit drivers called by Tesla 
-> > > name, but which basically copied the functionality of the Exynos 
-> > > drivers. We would want to avoid that, ideally.
-> > > 
-> > > My opinion is that all the Tesla and Google SoCs should be in the 
-> > > exynos/ directory, not only because they are basically Samsung Exynos, 
-> > > but also because they don't really need a separate directory: neither 
-> > > Google nor Tesla didn't neither manufacture or design those SoCs from 
-> > > scratch. The only reason I can think of for them to have it in a 
-> > > separate directory is maybe because Google and Tesla actually paid 
-> > > Samsung money for the right to call Exynos "Google designed" SoCs, but I 
-> > > believe the kernel should be left out of that.
-> > 
-> > For some reason, although I know which, Cc-list is here trimmed and
-> > misses Alim...
-> > 
-> > So standard reply follow (it makes me really, really grumpy, because it
-> > means you develop on some crazy old kernel or do not use tools which
-> > automate the process):
-> > 
-> > Please use scripts/get_maintainers.pl to get a list of necessary people
-> > and lists to CC (and consider --no-git-fallback argument). It might
-> > happen, that command when run on an older kernel, gives you outdated
-> > entries. Therefore please be sure you base your patches on recent Linux
-> > kernel.
-> > 
-> > Best regards,
-> > Krzysztof
-> > 
