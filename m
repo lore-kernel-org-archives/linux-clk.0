@@ -2,99 +2,230 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 124EEC4167D
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Nov 2023 17:51:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74357C4332F
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Nov 2023 19:42:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229450AbjKCRvv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Nov 2023 13:51:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44256 "EHLO
+        id S1345150AbjKCTmc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Nov 2023 15:42:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229605AbjKCRvu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Nov 2023 13:51:50 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1B1A1D42;
-        Fri,  3 Nov 2023 10:51:47 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 77F962F4;
-        Fri,  3 Nov 2023 10:52:29 -0700 (PDT)
-Received: from [10.57.81.32] (unknown [10.57.81.32])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7D4DC3F738;
-        Fri,  3 Nov 2023 10:51:41 -0700 (PDT)
-Message-ID: <1cbc6def-8255-4a13-99b0-145d3f8ffcac@arm.com>
-Date:   Fri, 3 Nov 2023 17:51:39 +0000
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 08/10] arm64: Kconfig.platforms: Add config for Marvell
- PXA1908 platform
-Content-Language: en-GB
-To:     =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>,
+        with ESMTP id S230192AbjKCTmb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Nov 2023 15:42:31 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D3B0D50;
+        Fri,  3 Nov 2023 12:42:29 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33E87C433C8;
+        Fri,  3 Nov 2023 19:42:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1699040548;
+        bh=S85mameRPRRNGRNjFJvCP+oPALlyzRxrT6MFpHRCEe0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GzCaKem2q+eRgkJPHAs1kSEEwbZyja+YMIXwdLgxn3tacI/VlZw5Arffaqr4qS6gS
+         MDU9oU1CdkUYttX6hutisSUoEbI+hhqy8eHya+wGV1+o5LpkvAZaNh8A6ms9YhsXub
+         sB/d2h7QO7CJnkNp+LU5MdU8ns0MQ2q7J0CgYBxeDLCyaPxNZUHiQAOsStCoC1+U0L
+         kdDhxsfSUAXfQkzyHPq2LtPz1J99V4ZokwLnptzBMbps4rJU7emN6abn+xEyMGMcoD
+         UNeiqpppc13fg1ljvPTz/sqnDS0ByfGT9RJVNthohdgwSdZx5/nsA9RgOEC7hk9B0K
+         Ym84V8O7uqRhw==
+Date:   Fri, 3 Nov 2023 12:46:33 -0700
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Abel Vesa <abel.vesa@linaro.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Leo Yan <leoy@marvell.com>,
-        Zhangfei Gao <zhangfei.gao@marvell.com>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Tony Luck <tony.luck@intel.com>,
-        "Guilherme G . Piccoli" <gpiccoli@igalia.com>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-hardening@vger.kernel.org,
-        phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
-        Karel Balej <balejk@matfyz.cz>
-References: <20231102152033.5511-1-duje.mihanovic@skole.hr>
- <20231102152033.5511-3-duje.mihanovic@skole.hr>
- <ffb08cc2-705a-468e-b6d2-9ce591c08ab4@arm.com> <2919185.e9J7NaK4W3@radijator>
-From:   Robin Murphy <robin.murphy@arm.com>
-In-Reply-To: <2919185.e9J7NaK4W3@radijator>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+        Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Taniya Das <tdas@qti.qualcomm.com>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH RESEND v3 1/5] PM: domains: Allow devices attached to
+ genpd to be managed by HW
+Message-ID: <f2tufov2amxapubo4r3wqnzuf3qgm2bt2hc6g5zszj4r5w47xf@vmw3on4axns4>
+References: <20231101-gdsc-hwctrl-v3-0-0740ae6b2b04@linaro.org>
+ <20231101-gdsc-hwctrl-v3-1-0740ae6b2b04@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231101-gdsc-hwctrl-v3-1-0740ae6b2b04@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2023-11-03 5:02 pm, Duje Mihanović wrote:
-> On Friday, November 3, 2023 4:34:54 PM CET Robin Murphy wrote:
->> On 2023-11-02 3:20 pm, Duje Mihanović wrote:
->>> +config ARCH_MMP
->>> +	bool "Marvell MMP SoC Family"
->>> +	select ARM_GIC
->>> +	select ARM_ARCH_TIMER
->>> +	select ARM_SMMU
->>
->> NAK, not only is selecting user-visible symbols generally frowned upon,
->> and ignoring their dependencies even worse, but for a multiplatform
->> kernel the user may well want this to be a module.
->>
->> If having the SMMU driver built-in is somehow fundamentally required for
->> this platform to boot, that would represent much bigger problems.
+On Wed, Nov 01, 2023 at 11:04:07AM +0200, Abel Vesa wrote:
+> From: Ulf Hansson <ulf.hansson@linaro.org>
 > 
-> The SoC can boot without SMMU and PDMA, but not GIC, pinctrl or the arch
-> timer. I see that most other SoCs still select drivers and frameworks they
-> presumably need for booting, with the exceptions of ARCH_BITMAIN, ARCH_LG1K
-> and a couple others. Which of these two options should I go for?
+> Some power-domains may be capable of relying on the HW to control the power
+> for a device that's hooked up to it. Typically, for these kinds of
+> configurations the device doesn't really need to be attached to a PM domain
+> (genpd), from Linux point of view.
 
-Well, you don't really need to select ARM_GIC or ARM_ARCH_TIMER here 
-either, since those are already selected by ARM64 itself. Keeping 
-PINCTRL_SINGLE is fair, although you should also select PINCTRL as its 
-dependency.
+Per patch 5, this description isn't correct.
 
-As an additional nit, the file seems to be primarily ordered by symbol 
-name, so it might be nice to slip ARCH_MMC in between ARCH_MESON and 
-ARCH_MVEBU.
+Linux enables the power-domain, which in turn enables parent domains
+etc. Once the firmware is booted the hardware-control mechanism is
+engaged, but until then, and in order to keep the supplies to the domain
+voted for, Linux needs a proper genpd.
 
-Cheers,
-Robin.
+Regards,
+Bjorn
+
+> However, in some cases the behaviour of
+> the power-domain and its device can be changed in runtime.
+> 
+> To allow a consumer driver to change the behaviour of the PM domain for its
+> device, let's provide a new function, dev_pm_genpd_set_hwmode(). Moreover,
+> let's add a corresponding optional genpd callback, ->set_hwmode_dev(),
+> which the genpd provider should implement if it can support switching
+> between HW controlled mode and SW controlled mode. Similarly, add the
+> dev_pm_genpd_get_hwmode() to allow consumers to read the current mode and
+> its corresponding optional genpd callback, ->get_hwmode_dev(), which the
+> genpd provider can also implement for reading back the mode from the
+> hardware.
+> 
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
+>  drivers/base/power/domain.c | 69 +++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/pm_domain.h   | 17 +++++++++++
+>  2 files changed, 86 insertions(+)
+> 
+> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> index da1777e39eaa..3fb1a234c7f2 100644
+> --- a/drivers/base/power/domain.c
+> +++ b/drivers/base/power/domain.c
+> @@ -550,6 +550,75 @@ void dev_pm_genpd_synced_poweroff(struct device *dev)
+>  }
+>  EXPORT_SYMBOL_GPL(dev_pm_genpd_synced_poweroff);
+>  
+> +/**
+> + * dev_pm_genpd_set_hwmode - Set the HW mode for the device and its PM domain.
+> + *
+> + * @dev: Device for which the HW-mode should be changed.
+> + * @enable: Value to set or unset the HW-mode.
+> + *
+> + * Some PM domains can rely on HW signals to control the power for a device. To
+> + * allow a consumer driver to switch the behaviour for its device in runtime,
+> + * which may be beneficial from a latency or energy point of view, this function
+> + * may be called.
+> + *
+> + * It is assumed that the users guarantee that the genpd wouldn't be detached
+> + * while this routine is getting called.
+> + *
+> + * Returns 0 on success and negative error values on failures.
+> + */
+> +int dev_pm_genpd_set_hwmode(struct device *dev, bool enable)
+> +{
+> +	struct generic_pm_domain *genpd;
+> +	int ret = 0;
+> +
+> +	genpd = dev_to_genpd_safe(dev);
+> +	if (!genpd)
+> +		return -ENODEV;
+> +
+> +	if (!genpd->set_hwmode_dev)
+> +		return -EOPNOTSUPP;
+> +
+> +	genpd_lock(genpd);
+> +
+> +	if (dev_gpd_data(dev)->hw_mode == enable)
+> +		goto out;
+> +
+> +	ret = genpd->set_hwmode_dev(genpd, dev, enable);
+> +	if (!ret)
+> +		dev_gpd_data(dev)->hw_mode = enable;
+> +
+> +out:
+> +	genpd_unlock(genpd);
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(dev_pm_genpd_set_hwmode);
+> +
+> +/**
+> + * dev_pm_genpd_get_hwmode - Get the HW mode setting for the device.
+> + *
+> + * @dev: Device for which the current HW-mode setting should be fetched.
+> + *
+> + * This helper function allows consumer drivers to fetch the current HW mode
+> + * setting of its the device.
+> + *
+> + * It is assumed that the users guarantee that the genpd wouldn't be detached
+> + * while this routine is getting called.
+> + */
+> +bool dev_pm_genpd_get_hwmode(struct device *dev)
+> +{
+> +	struct generic_pm_domain *genpd;
+> +
+> +	genpd = dev_to_genpd_safe(dev);
+> +	if (!genpd)
+> +		return false;
+> +
+> +	if (genpd->get_hwmode_dev)
+> +		return genpd->get_hwmode_dev(genpd, dev);
+> +
+> +	return dev_gpd_data(dev)->hw_mode;
+> +}
+> +EXPORT_SYMBOL_GPL(dev_pm_genpd_get_hwmode);
+> +
+>  static int _genpd_power_on(struct generic_pm_domain *genpd, bool timed)
+>  {
+>  	unsigned int state_idx = genpd->state_idx;
+> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+> index 34663d0d5c55..0e7d177fdc3e 100644
+> --- a/include/linux/pm_domain.h
+> +++ b/include/linux/pm_domain.h
+> @@ -151,6 +151,10 @@ struct generic_pm_domain {
+>  	int (*set_performance_state)(struct generic_pm_domain *genpd,
+>  				     unsigned int state);
+>  	struct gpd_dev_ops dev_ops;
+> +	int (*set_hwmode_dev)(struct generic_pm_domain *domain,
+> +			      struct device *dev, bool enable);
+> +	bool (*get_hwmode_dev)(struct generic_pm_domain *domain,
+> +			      struct device *dev);
+>  	int (*attach_dev)(struct generic_pm_domain *domain,
+>  			  struct device *dev);
+>  	void (*detach_dev)(struct generic_pm_domain *domain,
+> @@ -213,6 +217,7 @@ struct generic_pm_domain_data {
+>  	unsigned int performance_state;
+>  	unsigned int default_pstate;
+>  	unsigned int rpm_pstate;
+> +	bool hw_mode;
+>  	void *data;
+>  };
+>  
+> @@ -242,6 +247,8 @@ int dev_pm_genpd_remove_notifier(struct device *dev);
+>  void dev_pm_genpd_set_next_wakeup(struct device *dev, ktime_t next);
+>  ktime_t dev_pm_genpd_get_next_hrtimer(struct device *dev);
+>  void dev_pm_genpd_synced_poweroff(struct device *dev);
+> +int dev_pm_genpd_set_hwmode(struct device *dev, bool enable);
+> +bool dev_pm_genpd_get_hwmode(struct device *dev);
+>  
+>  extern struct dev_power_governor simple_qos_governor;
+>  extern struct dev_power_governor pm_domain_always_on_gov;
+> @@ -310,6 +317,16 @@ static inline ktime_t dev_pm_genpd_get_next_hrtimer(struct device *dev)
+>  static inline void dev_pm_genpd_synced_poweroff(struct device *dev)
+>  { }
+>  
+> +static inline int dev_pm_genpd_set_hwmode(struct device *dev, bool enable)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+> +
+> +static inline bool dev_pm_genpd_get_hwmode(struct device *dev)
+> +{
+> +	return false;
+> +}
+> +
+>  #define simple_qos_governor		(*(struct dev_power_governor *)(NULL))
+>  #define pm_domain_always_on_gov		(*(struct dev_power_governor *)(NULL))
+>  #endif
+> 
+> -- 
+> 2.34.1
+> 
