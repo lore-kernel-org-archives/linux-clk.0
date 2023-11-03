@@ -2,265 +2,246 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52B6CC4332F
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Nov 2023 17:36:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6991AC4332F
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Nov 2023 17:45:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229648AbjKCRgw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Nov 2023 13:36:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47554 "EHLO
+        id S230256AbjKCRp2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Nov 2023 13:45:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230141AbjKCRgv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Nov 2023 13:36:51 -0400
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F322019D
-        for <linux-clk@vger.kernel.org>; Fri,  3 Nov 2023 10:36:43 -0700 (PDT)
-Received: by mail-pl1-x631.google.com with SMTP id d9443c01a7336-1cc209561c3so13105ad.0
-        for <linux-clk@vger.kernel.org>; Fri, 03 Nov 2023 10:36:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1699033003; x=1699637803; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ljFKvtFUqqFsbXgmTSkchkcxGOyzN4hSb2DoRM1Sf0Y=;
-        b=rEIfWicHcvQ5TOaqPpqzrEeeR53a9MnXt1aIu6assMVyezOa+Jrsj+2l8opxDWO4+w
-         87AZjLAw3cWV3jBv9XpsOPWXyzzmqRv4HzcvJgkmRrITkV5ptl9pdbk4AsoaC6I6BDEi
-         mwxTXKnSo3IxPAD6QHSoNkIEjVY0txbshql/Lu+ZbCbawAdhy95a0BeFkBFEriqCPMGr
-         KXSPivFFWgXuovHxL+XL/4+cnvbP9pBTT8iTUxataCw42oJ+qRb/6PtFoXFJSCEmhcaF
-         yMTQ7Jq823eKDIipJYFJJ4lYnwmCjeAg5WgIdpAw+DXvEH9gj0IN5Wnz/rWpgKTJ8mD7
-         SDQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699033003; x=1699637803;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ljFKvtFUqqFsbXgmTSkchkcxGOyzN4hSb2DoRM1Sf0Y=;
-        b=iHIzUzMRkp9H8S62kS16e69qw/xS7SrCtCVjg/IkIQ07+7powePw+wuMAX6DAvYHck
-         bGGfuIVOVIbdeLgZIjWz8YJYVJmrVAbx2me+sSdl2PuojjRJccWsqVsAv1aHlGmZDqyf
-         RCDbJUkckNFpcWpZNpMbreHj1paBYTHQqUfJm5DXlMV0ub3osNJl+rrAnNw904izr3x7
-         xmxk9NnqRvAU/XWQPYrd5b9msSQRGQT6au91mO3Nd0yPmeCz3W+wbCivzjsPCrjRjl0v
-         3wwUma6lWwwiVoP5QZBwumC+/9ZsCtpHuBRFlMkup5rRjxAP8X/x3QwiiwNVM+X8vtOR
-         qacA==
-X-Gm-Message-State: AOJu0YzmHL4ShaIx2F0MTXqSd/tCJq7eKBbsK2AfmH/bY0PggnE7YfPu
-        9baJo7A5W46rFIj3HMneGAl5tw==
-X-Google-Smtp-Source: AGHT+IHNZ7RrKpl3RUjqk7Qy3sQdAOqNm0LQBFDyIHRujlLtgghzH2cAyzRycaalNK3KDTTCVhOc8w==
-X-Received: by 2002:a17:902:7d89:b0:1b8:b564:b528 with SMTP id a9-20020a1709027d8900b001b8b564b528mr13284plm.7.1699033003056;
-        Fri, 03 Nov 2023 10:36:43 -0700 (PDT)
-Received: from google.com (137.22.168.34.bc.googleusercontent.com. [34.168.22.137])
-        by smtp.gmail.com with ESMTPSA id q16-20020a17090311d000b001ca2484e87asm1622600plh.262.2023.11.03.10.36.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Nov 2023 10:36:42 -0700 (PDT)
-Date:   Fri, 3 Nov 2023 10:36:39 -0700
-From:   William McVicker <willmcvicker@google.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Maksym Holovach <maksym.holovach.an.2022@lpnu.ua>,
-        Peter Griffin <peter.griffin@linaro.org>, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com,
-        s.nawrocki@samsung.com, linus.walleij@linaro.org,
-        wim@linux-watchdog.org, linux@roeck-us.net,
-        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-        olof@lixom.net, cw00.choi@samsung.com, tudor.ambarus@linaro.org,
-        andre.draszik@linaro.org, semen.protsenko@linaro.org,
-        saravanak@google.com, soc@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        kernel-team@android.com, linux-serial@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Subject: Re: [PATCH v2 00/20] Add minimal Tensor/GS101 SoC support and
- Oriole/Pixel6 board
-Message-ID: <ZUUvp3kqM7NPlyZ_@google.com>
-References: <20231010224928.2296997-1-peter.griffin@linaro.org>
- <3d489d6c-2098-4f0c-9ec4-f6040665753e@lpnu.ua>
- <CADrjBPp+fyNoPdix6=Wp4cDCRFq2Mui8NS6WENejcHn+H1M-jA@mail.gmail.com>
- <48e1c0bd-9518-4927-b490-f3206256bbd4@lpnu.ua>
- <c0b8f356-0f26-459d-850d-ec0fa1fd3987@linaro.org>
+        with ESMTP id S230109AbjKCRp0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Nov 2023 13:45:26 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47281D4E;
+        Fri,  3 Nov 2023 10:45:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1699033517; x=1730569517;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=dDljHAM9OSZNG3HMmns0nHSTumeP0HEPytTINCIikv8=;
+  b=Yfk9mtY0kINdtCbDzKSWb3rgfybVfj1WnODhgxz5SjCP/BQjr/1yzot0
+   kByBfIsTJyQjM5je/Cgi6j7sEr+TUmnPmPOOImapPFPegsp7L10DipTU2
+   mnjJtR2MyeLEIVAtGEqoF+87nKZd3fozfevV16+HHOkHLhpFy6ujmSjNm
+   SVtfgQcyj8TmwT1ddtTzj0l7ycNLxj4jUoxfxpKoIwnRvGEbq0pBQJC/5
+   4QSaQ8cxv5uSCQo+qMIaVPDBgZq8QQ1P2HMymxuXIrC6skedCiZTFyVe7
+   08/YuLoGvYS11T1zkgXkAXoC14HKsiQMWPehBvi3ZnEjYIWr+rG+TY/bJ
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10883"; a="10525972"
+X-IronPort-AV: E=Sophos;i="6.03,273,1694761200"; 
+   d="scan'208";a="10525972"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2023 10:45:17 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10883"; a="765311124"
+X-IronPort-AV: E=Sophos;i="6.03,273,1694761200"; 
+   d="scan'208";a="765311124"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmsmga007.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 03 Nov 2023 10:45:16 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.34; Fri, 3 Nov 2023 10:45:15 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.34 via Frontend Transport; Fri, 3 Nov 2023 10:45:15 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.168)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.34; Fri, 3 Nov 2023 10:45:14 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=SFw+YEMgUI+uWR4UfwRsuIaFMpohokdYmkxgXQS0NBxee538PqLo+GQ4pWubqYBYZAYwdsIgLmooHAc1bw3HHGTmImLmSLnypHTa/iYHdcUhGBYtZrVl4AziM0GdOL4KV5zTdAHMzo2Kdxxl5lNz0AWpe0QxBdQnsQ9c5hRjnB+PAXEjFto/liVQWz6hiEGkGSgabAiUQ4FH6M7dJrsoaPYVtntS46L2HB+J6t5Zy6AkG66SRBKq9aNxhwE223+HbEly6xOZkzK6k4e8/EtAZmLnLnpqLHYph3djReCOKq99xyXFnDigae172i6BaGH+p2gwti4Ei3knS+CrgzebgA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dDljHAM9OSZNG3HMmns0nHSTumeP0HEPytTINCIikv8=;
+ b=jKdwrrFoLosRJvRvrcauQjTtsRM02mdfShcevxg5zFaKJ5E2FedAIo/1uQ3zuwQoZX7Zbn9NgKGxQK0laBHEjMe+a9LlXafT35u3Gvn5P9Upi74b2h9j41wIICIWXIDvxtQHulQ+DDPLUkxjwIGfHUMOD6s3tiN358Atrkd4Dr6uHM7015DtMhY79ZpPvem7fMXXKFKcYws4lpxoaBp4wr9zVl2GtA/uSD3AS9Z4aK+rvtw1zmcuSQE4+uSqs/mYbll7PaUMGBBJzFpKBX3rUwHunCi359VvJzzD7X7pl8hRXloqvRdo34jdXWFCgH4XhbJKWeI/BWMsEQxgEWZuJw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from CH3PR11MB8414.namprd11.prod.outlook.com (2603:10b6:610:17e::19)
+ by MW4PR11MB6619.namprd11.prod.outlook.com (2603:10b6:303:1eb::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6954.21; Fri, 3 Nov
+ 2023 17:45:11 +0000
+Received: from CH3PR11MB8414.namprd11.prod.outlook.com
+ ([fe80::750d:a434:bc26:3a94]) by CH3PR11MB8414.namprd11.prod.outlook.com
+ ([fe80::750d:a434:bc26:3a94%7]) with mapi id 15.20.6954.021; Fri, 3 Nov 2023
+ 17:45:09 +0000
+From:   "Michalik, Michal" <michal.michalik@intel.com>
+To:     Jiri Pirko <jiri@resnulli.us>
+CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>,
+        "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
+        "jonathan.lemon@gmail.com" <jonathan.lemon@gmail.com>,
+        "pabeni@redhat.com" <pabeni@redhat.com>, poros <poros@redhat.com>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        mschmidt <mschmidt@redhat.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "bvanassche@acm.org" <bvanassche@acm.org>,
+        "kuba@kernel.org" <kuba@kernel.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "edumazet@google.com" <edumazet@google.com>
+Subject: RE: [PATCH RFC net-next v2 0/2] selftests/dpll: DPLL subsystem
+ integration tests
+Thread-Topic: [PATCH RFC net-next v2 0/2] selftests/dpll: DPLL subsystem
+ integration tests
+Thread-Index: AQHaC1Gto14I0BavZEWxQBc41YbWmbBjp8AAgAU653A=
+Date:   Fri, 3 Nov 2023 17:45:09 +0000
+Message-ID: <CH3PR11MB841409F56A8857162B39D1AAE3A5A@CH3PR11MB8414.namprd11.prod.outlook.com>
+References: <20231030165326.24453-1-michal.michalik@intel.com>
+ <ZUDNFHlO4GtA/UAh@nanopsycho>
+In-Reply-To: <ZUDNFHlO4GtA/UAh@nanopsycho>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CH3PR11MB8414:EE_|MW4PR11MB6619:EE_
+x-ms-office365-filtering-correlation-id: 0b108639-bc90-42fc-d65c-08dbdc949fc2
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: BYTBtOXGatSzFyVi2EXMhNE7PwdK7Wk6vQtw/Cq1GOZfrlyeQ+ltgkY8GmGE1xx+lNqsaWnEM8zdvi0CLK5s5ZziVHMiX9LB0DNzgh+qXFVyk7OKZdAO2clxNHIJ60PYrPJP5kZTAkGlnQ0B5mIbOosUSq+7YbBegiaKJ7rK0b73nC/lMQ9+zbBeKH4j2EA74qvRrKtug11WYBMok5DFcgsCcZtr0almpg7818QsKFCJcqkdk+GV/yR29oZl8K1MutM5hFWlReIb0SESzL4oBzavz91FkIbGPchHThmZmGux0Tb61/Uoo+DJ9Nkl224PUoeKwA1zpOWdc8S0qVpJvArAWewHYPygrggQKRp4Mu4IGBhsfo4IdF0zyvBmHZbPcF+eASH0isFte7wnEbXv1HEuxakSVg4yeaI1USx7Mq2LOZrkBD6YuvAq5rF/J02Ayz4Uz3a7OvkJevJ4nusVb0iO+7c9bAdysopOTmXuU1UxTbd/zfC6g3VO0o5DDlbz30Il2mMdQtsQ9scpOaAGlCG74M3//kLw78F/6WfcrmuYHD8c+GCcaEtS44jxDzRE+/oS4TNFyMtN3kSfgKu0MpRKuYfqPLCsYdXE2c52MQg=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8414.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(346002)(396003)(366004)(136003)(39860400002)(376002)(230922051799003)(64100799003)(451199024)(1800799009)(186009)(122000001)(38100700002)(316002)(6916009)(26005)(55016003)(71200400001)(83380400001)(38070700009)(86362001)(7696005)(6506007)(53546011)(33656002)(9686003)(478600001)(966005)(2906002)(7416002)(8936002)(8676002)(4326008)(82960400001)(41300700001)(52536014)(5660300002)(54906003)(66476007)(66446008)(66946007)(66556008)(64756008)(76116006)(66899024);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?Mm52QzAweW9sb3dUbmNVblJDQkwvUWVHQ09IVzYwWm9ycXc3YTFWVGhZWFBR?=
+ =?utf-8?B?aGhOZTlFK2pnOW9Na2YwMzdWZzROUlJwTkdPUkxlWEZnS2VwZEc3bnIwSXNZ?=
+ =?utf-8?B?cklHMVp2Z3VKOE93Nk9XT2RFRlJUNmFBM1NrdlZVWW94cXBUWXlHbEdYMURF?=
+ =?utf-8?B?M3N4eGd5b1lROW1mYUtPbmE1WENOekdmcTU3N2Rud3c5N3dYMVJnOWQ5U3ZV?=
+ =?utf-8?B?TlJONldxSmE0V2dNbHhwd1NLeHVMM0krd0FaYlpUNmRhNGJCclVwMjUxOGUv?=
+ =?utf-8?B?K1d1WVpQYjhMcFQ3QkphN3Yrd1lQSVRCWFBQbnRIL3l3N1VzYkFXSVRCWlpD?=
+ =?utf-8?B?Ykx1UndZVk56OEdNYVBsdmZrREhrWW51YmY3cmg3MlBpUGFQbnQvOU9nWUs1?=
+ =?utf-8?B?WU4xU0ZDUU93enIyZi8zaHpEb3JGTHpTQjBQYTBXWHZzM3g3Nk1iYUdXR2tE?=
+ =?utf-8?B?TXpIR0tBdmtzZXByaU8xM1BiUjBqQ1ZsVlFsY29IdXZORGI1SlVRNDAwc1Bl?=
+ =?utf-8?B?M2xaWFYvL2w0NGtpVW5JQUVTWnltQXNScFBIbnUyaHRxclpFak4zL1FpajZX?=
+ =?utf-8?B?c2hLS1lBMlV3SlJyYXNnZEZNdGNnbE53MHpCbUxiaE1saTIxUnJJam1ITHpj?=
+ =?utf-8?B?VUZUalFUWXF6c0ZJTUptSGtFdTQ5QkxMVEF4VmN5bUVXWVR4MEg1Vk4yVUFo?=
+ =?utf-8?B?dFJYWEc2SUJ5ZGRjanV4UGtDMmxpK3JYSlluZFYxQ1doNnVGNDVuNzFBdFpp?=
+ =?utf-8?B?SU5pYmF3aTMzWVhSa08zeDF0Vmdjam5XMDdxbVh3N0wxcUlzMXV6U3hIWk4z?=
+ =?utf-8?B?eTNrZmNNb0FsMk5zR0RlUDZDYjQ3TG5nQkRVajJxWEdzelZxZWdlMFFtU1BB?=
+ =?utf-8?B?SHZuMjltRVJYQTREUHArYUpCT1ZCYkkzanZEdVMrb1Y2bGxBbnAxZU80UGUy?=
+ =?utf-8?B?TER4TVlsRWJLTURXaDdSc2ZEZHUzaTlZd2M4QUlCaE5LNVlRRUJZVy9rWnla?=
+ =?utf-8?B?SFhMbVgzdTR3c1FhOVduRmpXSXljbUpsdnlXb2JNeUI5QTQ2N2hXSmtCbTZa?=
+ =?utf-8?B?b1RZeEVmLzR4K3FtYXMvM3hLOUVCTUNyaFVYdWpPcFR3RFlkZ09DRkZOMDQv?=
+ =?utf-8?B?UUJ3UzBIaE9GS1VwZnhtdEJJcVdEU3NWeGl0VkU3cmlyRFBjVU9Od0hjYktD?=
+ =?utf-8?B?NjgvNUp0dVBtMCtlekR1anVYc0o2WmxmcHg5SFhxOHRDbVcxRXNuc3VZTHNJ?=
+ =?utf-8?B?RVk0a3JNc3NMdGNuUzZhVitYdVVqOXFyYUxjQm5nRTlVNnU0UUpJNDZ6K01u?=
+ =?utf-8?B?dlhwQU9uRDFZRW9HVEpCcEVZQ0FDSVF4cDhaVU8yNDNKeXNjSHJpTjdaYjJn?=
+ =?utf-8?B?SEQySUlxZ2t1UGsyTVI0aUJic0tGc1p1RXNFM0NMUEtSZUMyWDhLWXRoM0dx?=
+ =?utf-8?B?SXVOSklxN0pLV1RZNVFSeEdrQkRzZG5PdEdnK3c3dXpZb3EyNXJUTSs4SkJs?=
+ =?utf-8?B?NTBFckp2VjEvZFRPU0hnUkFCd0Exa283NTFSMHhFSCtyT0tzc1Ruc2JJaGRp?=
+ =?utf-8?B?endmMkxoNVV0d0pFeG40Y0pVWlFUdjVYZmtIQ0hPbGFEL0dOQmRkQkRXOERu?=
+ =?utf-8?B?c3F5enBqMVBqSGZkY3l3TDN4TnJEMjFac3ZVR0lzRDlyUlYrMFYvOHNKVkdn?=
+ =?utf-8?B?WDgxNW1vdzhqMTBxdUxYQTNuS25vaENHQjVEeVFXcE5MMjBLQmhuRlBrQ3BB?=
+ =?utf-8?B?cmNaekE4NGp0aFVvbUthcXVONGtCbWhrVVVtT3lrSlUrN2NldDV4aDRoalVk?=
+ =?utf-8?B?MUNhT2VLL1RBMkRDalM0V3FkWjJVL1I4MVdzeE0rSXY0ZFFRd0dha1A0RkVt?=
+ =?utf-8?B?NmtqTjJQQXpIaW9RdWorTWk0V08xcllpZ2FsUi9ycWIxY0I4UXRDd0pGUDE4?=
+ =?utf-8?B?NEE5T3M3c0xNQWVvK25PR3ljMmpQN1l5bXNQMHR1SUNIWHF0OHFJTFhWK3BG?=
+ =?utf-8?B?Y21SU3llS0h3dm5qUUwrL1VaNENEbTlESGJjaWx0ZUowYXVWMms2R1RWV2xz?=
+ =?utf-8?B?UXdacHpISk42ekx4WGkwZVhwWW1WUy9zWHJtQThrTXFJRzgySzd0ZUVuZ1pR?=
+ =?utf-8?Q?1O25qq8YXPx32WlO9M5nIRWxC?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c0b8f356-0f26-459d-850d-ec0fa1fd3987@linaro.org>
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8414.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0b108639-bc90-42fc-d65c-08dbdc949fc2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Nov 2023 17:45:09.6109
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: D6Hj9rAteZOdGUt8VPyInE7RN0kjekUzSNUccL/u/bzJVuH05r0CJHPbTK7fctOxrU+2QWA2AG9wMqeVMjhm0q4C+DyyfxycI6aUnBiH7eg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR11MB6619
+X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Maksym, Krzysztof, Peter,
-
-On 11/03/2023, Krzysztof Kozlowski wrote:
-> On 03/11/2023 14:56, Maksym Holovach wrote:
-> > Hi Peter,
-> > 
-> > On 11/3/23 15:11, Peter Griffin wrote:
-> >> Hi Maksym,
-> >>
-> >> Thanks for your feedback.
-> >>
-> >> On Thu, 2 Nov 2023 at 22:32, Maksym Holovach
-> >> <maksym.holovach.an.2022@lpnu.ua> wrote:
-> >>> Hi, all
-> >>>
-> >>> I wanted to inquire about how do you all feel about calling this SoC by
-> >>> the Google "gs101" name.
-> >> Interesting question, I think calling it gs101 is the correct approach see
-> >> below for my rationale.
-> >>
-> >>> I believe the proper name for it should be the actual Samsung name,
-> >>> written in the silicon and reported in the Chip ID hardware: Exynos9845.
-> >>> This also touches the Tensor G2 (Exynos9855), Tensor G3 (Exynos9865),
-> >>> and possibly the "Tesla" SoCs.
-> >>>
-> >>> I do not think the Linux kernel should be a marketing material: it
-> >>> should reflect reality. The chip is almost 100% composed of Samsung
-> >>> Exynos IP blocks and should be called that way.
-> >> As you alluded to Tesla fsd and Axis artpec8 SoCs are also based on
-> >> Exynos designs and support upstream uses the axis,artpec8* or tesla,fsd*
-> >> compatibles.
-> >>
-> >> So using google,gs101 is consistent with the existing upstream naming
-> >> scheme, for customized ASICs that were based off a Exynos design. But
-> >> it also reflects the reality that this SoC is not a Exynos9845 as there is
-> >> also a lot of Google owned and other third party IP integrated that is not
-> >> found in Exynos9845.
-> > 
-> > A quick question: Do you imply Exynos9845 exists outside of the context 
-> > of Tensor G1? I used to believe Exynos9845 **is** Tensor G1.
-
-Yes, the gs101 SoC is *not* equivalent to the Exynos9845. Similar to how Tesla
-FSD licenses Exynos IP blocks, gs101 does not only comprise of Exynos IP
-blocks. The final design is unique to Google and comprises of several different
-vendor IP blocks (not only Exynos).
-
-> > 
-> > Also, what kind of Google IP are you talking about? I believe only the 
-> > neural accelerator should be custom-ish.
-> > 
-> > Additionally, I believe it having or not having Google IP is irrelevant: 
-> > for example, the new Raspberry Pi 5 Broadcom SoC has a lot of 
-> > Raspberry's own IP, but it's still called Broadcom as it's the real 
-> > manufacturer and designer of the chip.
-> 
-> That's a good argument. Indeed BCM2712 contains "New Raspberry
-> Pi-developed ISP".
-> https://www.raspberrypi.com/documentation/computers/processors.html
-> 
-> There aren't many patches but GPU is still called brcm,2712.
-> 
-> For Tesla FSD, there was discussion and output was not very consisting.
-> First, the name itself was used for everything - SoC architecture, one
-> given SoC and eventually the board.
-> https://lore.kernel.org/all/5ab62673-8d46-ec1d-1c80-696421ab69ca@canonical.com/
-> 
-> Eventually the last part - board - was renamed to "Evaluation board",
-> but I don't know how true or real it is.
-> 
-> See also:
-> "I would argue that if this SoC shares the pinctrl, clock, spi, adc,
-> and timer implementation
-> with Exynos, we should consider it part of the Exynos family,"
-> https://lore.kernel.org/all/CAK8P3a31bCHNcNWrLX+QW+4RuK=DBpxLA_j5BFKxXxXKCT8PFQ@mail.gmail.com/
-> 
-> However it was also claimed:
-> 
-> "AFA architecture is concerns both Exynos and FSD has completely
-> different architecture (at least at HW level)."
-> https://lore.kernel.org/all/07ce01d8091e$9a6fd9c0$cf4f8d40$@samsung.com/
-> 
-> >> I guess the same is also true for `axis,artpec8` and `tesla,fsd` SoCs.
-> >> IMO the SoC compatible string should be uniquely identifying the actual
-> >> SoC, not a close relative.
-> >>
-> >> Regarding product_id you are correct this reads 0x09845000 but even
-> >> within Samsung Exynos family there are examples where the register
-> >> value does not match the SoC compatible. For example Exynos850 SoC
-> >> has a product ID value of "E3830". Where the Linux compatible is
-> >> matching the Samsung marketing name, not the internal/outdated name.
-> > 
-> > I did not know Exynos 850 is also not going under it's real name. 
-> > Ultimately, I believe all of those SoCs should go under their technical 
-> > name in the exynos/ directory.
-> 
-> The initial technical name does not exist outside of vendor sources and
-> part name. E.g. Winlink E850 board hardware manual calls it:
-> "Samsung Exynos 850, S5E3830"
-> and everywhere else Exynos 850 SoC is used.
-> 
-> If you start calling it Exynos 3830, only me and Sam (who mainlined it)
-> would know what is it. Everyone else, all users of kernel, would be
-> confused.
-> 
-> Therefore using well known final product name is for Exynos850 reasonable.
-
-I agree with this. By using the final (well known) product SoC name -- gs101 --
-other developers will be able to easily identify the particular SoC.
-
-> 
-> > 
-> > Another concern is that Google could in the future license other SoC: be 
-> > it Qualcomm, Nvidia or anything. If we put completely different hw under 
-> > google/ directory, does it really make sense? In that case, who'll 
-> > maintain the google/ directory? Exynos people? Qualcomm people if they 
-> > license it? Some other people?
-
-I don't understand why the architecture of the SoC would dictate which folder
-to put the device tree files under. It makes more sense to group board DT files
-together based on who distributes them. Having all the Pixel DT board files
-together allows Google to create a single device tree binary per SoC coupled
-with the set of device tree overlays per board variant (this is the dtbo.img)
-to ship to all their devices. If you look at all the in-market Pixel devices
-with Tensor SoCs, you will find that you could create one dtb (concatenate
-gs101.dtb, gs201.dtb, and zuma.dtb) and one dtbo image for 10 devices which
-significantly simplifies the maintenance, testing, and software distribution
-for all 10 of those products.
-
-> 
-> That's indeed a problem. Future Tesla SoC might have just few pieces
-> similar to FSD. There would be no common SoC part, except the actual
-> Tesla IP.
-> 
-> Same for Google. Future GSXXX, if done by Qualcomm, will be absolutely
-> different than GS101 and the only common part would be the TPU (Tensor).
-> 
-> So now let's decide what is the common denominator:
-> 1. Core SoC architecture, like buses, pinctrl, clocks, timers, serial,
-> and many IP blocks, which constitute 95% of Devicetree bindings and drivers,
-> 2. The one, big piece made by Samsung's customer: TPU, NPU or whatever.
-
-As mentioned above, I think this should be based on how the DTBs and DTBOs are
-used and distributed. What is the benefit of adding the gs101 board files under
-the exynos folder?
-
-Thanks,
-Will
-
-> 
-> > 
-> > Then, I don't think Tensor G3 has a proper "GS" name, it goes by "Zuma" 
-> > in decompiled kernel modules as far as I see.
-> > 
-> > Finally, Tesla people already tried to submit drivers called by Tesla 
-> > name, but which basically copied the functionality of the Exynos 
-> > drivers. We would want to avoid that, ideally.
-> > 
-> > My opinion is that all the Tesla and Google SoCs should be in the 
-> > exynos/ directory, not only because they are basically Samsung Exynos, 
-> > but also because they don't really need a separate directory: neither 
-> > Google nor Tesla didn't neither manufacture or design those SoCs from 
-> > scratch. The only reason I can think of for them to have it in a 
-> > separate directory is maybe because Google and Tesla actually paid 
-> > Samsung money for the right to call Exynos "Google designed" SoCs, but I 
-> > believe the kernel should be left out of that.
-> 
-> For some reason, although I know which, Cc-list is here trimmed and
-> misses Alim...
-> 
-> So standard reply follow (it makes me really, really grumpy, because it
-> means you develop on some crazy old kernel or do not use tools which
-> automate the process):
-> 
-> Please use scripts/get_maintainers.pl to get a list of necessary people
-> and lists to CC (and consider --no-git-fallback argument). It might
-> happen, that command when run on an older kernel, gives you outdated
-> entries. Therefore please be sure you base your patches on recent Linux
-> kernel.
-> 
-> Best regards,
-> Krzysztof
-> 
+T24gMzEgT2N0b2JlciAyMDIzIDEwOjQ3IEFNIENFVCwgSmlyaSBQaXJrbyB3cm90ZToNCg0KSmly
+aSwgbXVjaCB0aGFua3MgZm9yIHRha2luZyB0aW1lIGFuZCBkb2luZyBncmVhdCByZXZpZXcgLSBJ
+IGhhdmUgbGVhcm5lZA0KYSBsb3QsIGVzcGVjaWFsbHkgaW4gcGF0Y2ggMS8yIGhhdmluZyB0aGUg
+bmV0ZGV2c2ltIERQTEwgaW1wbGVtZW50YXRpb24uDQoNCkkgd2lsbCBkbyBteSBiZXN0IHRvIHBv
+c3QgdGhlIFJGQyB2MyBlYXJseSBuZXh0IHdlZWsuDQoNCj4gDQo+IE1vbiwgT2N0IDMwLCAyMDIz
+IGF0IDA1OjUzOjI0UE0gQ0VULCBtaWNoYWwubWljaGFsaWtAaW50ZWwuY29tIHdyb3RlOg0KPj5U
+aGUgcmVjZW50bHkgbWVyZ2VkIGNvbW1vbiBEUExMIGludGVyZmFjZSBkaXNjdXNzZWQgb24gYSBu
+ZXdzbGV0dGVyWzFdDQo+IA0KPiAibmV3c2xldHRlciI/IFNvdW5kcyBhIGJpdCBvZGQgdG8gbWUg
+OikNCj4gDQoNClllYWgsIHlvdSBhcmUgcmlnaHQgLSB3aWxsIGZpeC4NCg0KPj5pcyBpbnRyb2R1
+Y2luZyBuZXcsIGNvbXBsZXggc3Vic3lzdGVtIHdoaWNoIHJlcXVpcmVzIHByb3BlciBpbnRlZ3Jh
+dGlvbg0KPj50ZXN0aW5nIC0gdGhpcyBwYXRjaCBhZGRzIGNvcmUgZm9yIHN1Y2ggZnJhbWV3b3Jr
+LCBhcyB3ZWxsIGFzIHRoZQ0KPiANCj4gIlBhdGNoc2V0IiBwZXJoYXBzPyBBbHNvLCB3aGF0IGRv
+IHlvdSBtZWFuIGJ5ICJjb3JlIj8gVGhlIHNlbnRlbmNlDQo+IHNvdW5kcyBhIGJpdCB3ZWlyZCB0
+byBtZS4NCj4gDQoNCldpbGwgd29yayB0byBpbXByb3ZlIHRoaXMuDQoNCj4+aW5pdGlhbCB0ZXN0
+IGNhc2VzLiBGcmFtZXdvcmsgZG9lcyBub3QgcmVxdWlyZSBuZWl0aGVyIGFueSBzcGVjaWFsDQo+
+PmhhcmR3YXJlIG5vciBhbnkgc3BlY2lhbCBzeXN0ZW0gYXJjaGl0ZWN0dXJlLg0KPj4NCj4+VG8g
+cHJvcGVybHkgdGVzdCB0aGUgRFBMTCBzdWJzeXN0ZW0gdGhpcyBwYXRjaCBhZGRzIGZha2UgRFBM
+TCBkZXZpY2VzIGFuZCBpdCdzDQo+IA0KPiBGb3IgcGF0Y2ggZGVzY3RpcHRpb24sIHBsZWFzZSBz
+dGF5IHdpdGhpbiA3MmNvbHMuDQo+IEFsc28sICJpdCdzIiBpcyBtb3N0IHByb2JhYmx5IHdyb25n
+IGluIHRoaXMgc2VudGVuY2UuDQo+IA0KDQpJbXByb3ZlIHRoaXMgYXMgd2VsbC4NCg0KPj5waW5z
+IGltcGxlbWVudGF0aW9uIHRvIG5ldGRldnNpbS4gQ3JlYXRpbmcgbmV0ZGV2c2ltIGRldmljZXMg
+YW5kIGFkZGluZyBwb3J0cw0KPj50byBpdCByZWdpc3RlciBuZXcgRFBMTCBkZXZpY2VzIGFuZCBw
+aW5zLiBGaXJzdCBwb3J0IG9mIGVhY2ggbmV0ZGV2c2ltIGRldmljZQ0KPiANCj4gXl5eXl5eXl5e
+Xl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl4gVGhpcyBzZW50ZW5jZSBkb2VzIG5vdCBt
+YWtlDQo+IHNlbnNlIHRvIG1lLiBQZWhhcHMgcmVwaHJhc2UgYSBiaXQ/DQo+IA0KPiANCj4+YWN0
+cyBhcyBhIGVudGl0aXkgd2hpY2ggcmVnaXN0ZXJzIHR3byBEUExMIGRldmljZXM6IEVFQyBhbmQg
+UFBTIERQTExzLiBGaXJzdA0KPiANCj4gdHlwbzogImVudGl0aXkiDQoNCk9rLg0KDQo+PnBvcnQg
+YWxzbyByZWdpc3RlciB0aGUgY29tbW9uIHBpbnM6IFBQUyBhbmQgR05TUy4gQWRkaXRpb25hbGx5
+IGVhY2ggcG9ydA0KPj5yZWdpc3RlciBhbHNvIFJDTEsgKHJlY292ZXJlZCBjbG9jaykgcGluIGZv
+ciBpdHNlbGYuIFRoYXQgYWxsb3cgdXMgdG8gY2hlY2sNCj4+bXV0bGlwbGUgc2NlbmFyaW9zIHdo
+aWNoIG1pZ2h0IGJlIHByb2JsZW1hdGljIGluIHJlYWwgaW1wbGVtZW50YXRpb25zIChsaWtlDQo+
+PmRpZmZlcmVudCBvcmRlcmluZyBldGMuKQ0KPj4NCj4+UGF0Y2ggYWRkcyBmZXcgaGVscGVyIHNj
+cmlwdHMsIHdoaWNoIGFyZToNCj4+MSkgdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMvZHBsbC9ydW5f
+ZHBsbF90ZXN0cy5zaA0KPiANCj4gUGxlYXNlIG1ha2UgdGhpcyBwYXJ0IG9mDQo+IHRvb2xzL3Rl
+c3Rpbmcvc2VsZnRlc3RzL2RyaXZlcnMvbmV0L25ldGRldnNpbS8NCj4gTm8gc3BlY2lhbCB0aHJl
+YXQgb2YgZHBsbCBuZWVkZWQuDQo+IA0KDQpUaGF0IG1ha2UgYSBsb3Qgb2Ygc2Vuc2UgdG8gbW92
+ZSBpdCB0aGVyZSwgdGhhbmtzIGZvciBub3RpY2luZyB0aGF0Lg0KDQo+PiAgICBTY3JpcHQgaXMg
+Y2hlY2tpbmcgZm9yIGFsbCBkZXBlbmRlbmNpZXMsIGNyZWF0ZXMgdGVtcG9yYXJ5DQo+PiAgICBl
+bnZpcm9ubWVudCwgaW5zdGFsbHMgcmVxdWlyZWQgbGlicmFyaWVzIGFuZCBydW4gYWxsIHRlc3Rz
+IC0gY2FuIGJlDQo+PiAgICB1c2VkIHN0YW5kYWxvbmUNCj4+MikgdG9vbHMvdGVzdGluZy9zZWxm
+dGVzdHMvZHBsbC95bmxmYW1pbHloYW5kbGVyLnB54pWmw5YNCj4+ICAgIExpYnJhcnkgZm9yIGVh
+c2llciB5bmwgdXNlIGluIHRoZSBweXRlc3QgZnJhbWV3b3JrIC0gY2FuIGJlIHVzZWQNCj4+ICAg
+IHN0YW5kYWxvbmUNCj4+DQo+PlsxXSBodHRwczovL2xvcmUua2VybmVsLm9yZy9uZXRkZXYvMTY5
+NDk0ODQyNzM2LjIxNjIxLjEwNzMwODYwODU1NjQ1NjYxNjY0LmdpdC1wYXRjaHdvcmstbm90aWZ5
+QGtlcm5lbC5vcmcvDQo+Pg0KPj5DaGFuZ2Vsb2c6DQo+PnYxIC0+IHYyOg0KPj4tIG1vdmVkIGZy
+b20gc2VwYXJhdGUgbW9kdWxlIHRvIGltcGxlbWVudGF0aW9uIGluIG5ldGRldnNpbQ0KPj4NCj4+
+TWljaGFsIE1pY2hhbGlrICgyKToNCj4+ICBuZXRkZXZzaW06IGltcGxlbWVudCBEUExMIGZvciBz
+dWJzeXN0ZW0gc2VsZnRlc3RzDQo+PiAgc2VsZnRlc3RzL2RwbGw6IGFkZCBEUExMIHN5c3RlbSBp
+bnRlZ3JhdGlvbiBzZWxmdGVzdHMNCj4+DQo+PiBkcml2ZXJzL25ldC9LY29uZmlnICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgfCAgIDEgKw0KPj4gZHJpdmVycy9uZXQvbmV0ZGV2c2ltL01h
+a2VmaWxlICAgICAgICAgICAgICAgICAgIHwgICAyICstDQo+PiBkcml2ZXJzL25ldC9uZXRkZXZz
+aW0vZHBsbC5jICAgICAgICAgICAgICAgICAgICAgfCA0MzggKysrKysrKysrKysrKysrKysrKysr
+KysNCj4+IGRyaXZlcnMvbmV0L25ldGRldnNpbS9kcGxsLmggICAgICAgICAgICAgICAgICAgICB8
+ICA4MSArKysrKw0KPj4gZHJpdmVycy9uZXQvbmV0ZGV2c2ltL25ldGRldi5jICAgICAgICAgICAg
+ICAgICAgIHwgIDIwICsrDQo+PiBkcml2ZXJzL25ldC9uZXRkZXZzaW0vbmV0ZGV2c2ltLmggICAg
+ICAgICAgICAgICAgfCAgIDQgKw0KPj4gdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMvTWFrZWZpbGUg
+ICAgICAgICAgICAgICAgIHwgICAxICsNCj4+IHRvb2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL2RwbGwv
+TWFrZWZpbGUgICAgICAgICAgICB8ICAgOCArDQo+PiB0b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9k
+cGxsL19faW5pdF9fLnB5ICAgICAgICAgfCAgIDANCj4+IHRvb2xzL3Rlc3Rpbmcvc2VsZnRlc3Rz
+L2RwbGwvY29uZmlnICAgICAgICAgICAgICB8ICAgMiArDQo+PiB0b29scy90ZXN0aW5nL3NlbGZ0
+ZXN0cy9kcGxsL2NvbnN0cy5weSAgICAgICAgICAgfCAgMzQgKysNCj4+IHRvb2xzL3Rlc3Rpbmcv
+c2VsZnRlc3RzL2RwbGwvZHBsbF91dGlscy5weSAgICAgICB8IDEwOSArKysrKysNCj4+IHRvb2xz
+L3Rlc3Rpbmcvc2VsZnRlc3RzL2RwbGwvcmVxdWlyZW1lbnRzLnR4dCAgICB8ICAgMyArDQo+PiB0
+b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9kcGxsL3J1bl9kcGxsX3Rlc3RzLnNoICAgfCAgNzUgKysr
+Kw0KPj4gdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMvZHBsbC90ZXN0X2RwbGwucHkgICAgICAgIHwg
+NDE0ICsrKysrKysrKysrKysrKysrKysrKw0KPj4gdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMvZHBs
+bC95bmxmYW1pbHloYW5kbGVyLnB5IHwgIDQ5ICsrKw0KPj4gMTYgZmlsZXMgY2hhbmdlZCwgMTI0
+MCBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pDQo+PiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJp
+dmVycy9uZXQvbmV0ZGV2c2ltL2RwbGwuYw0KPj4gY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMv
+bmV0L25ldGRldnNpbS9kcGxsLmgNCj4+IGNyZWF0ZSBtb2RlIDEwMDY0NCB0b29scy90ZXN0aW5n
+L3NlbGZ0ZXN0cy9kcGxsL01ha2VmaWxlDQo+PiBjcmVhdGUgbW9kZSAxMDA2NDQgdG9vbHMvdGVz
+dGluZy9zZWxmdGVzdHMvZHBsbC9fX2luaXRfXy5weQ0KPj4gY3JlYXRlIG1vZGUgMTAwNjQ0IHRv
+b2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL2RwbGwvY29uZmlnDQo+PiBjcmVhdGUgbW9kZSAxMDA2NDQg
+dG9vbHMvdGVzdGluZy9zZWxmdGVzdHMvZHBsbC9jb25zdHMucHkNCj4+IGNyZWF0ZSBtb2RlIDEw
+MDY0NCB0b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9kcGxsL2RwbGxfdXRpbHMucHkNCj4+IGNyZWF0
+ZSBtb2RlIDEwMDY0NCB0b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9kcGxsL3JlcXVpcmVtZW50cy50
+eHQNCj4+IGNyZWF0ZSBtb2RlIDEwMDc1NSB0b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9kcGxsL3J1
+bl9kcGxsX3Rlc3RzLnNoDQo+PiBjcmVhdGUgbW9kZSAxMDA2NDQgdG9vbHMvdGVzdGluZy9zZWxm
+dGVzdHMvZHBsbC90ZXN0X2RwbGwucHkNCj4+IGNyZWF0ZSBtb2RlIDEwMDY0NCB0b29scy90ZXN0
+aW5nL3NlbGZ0ZXN0cy9kcGxsL3lubGZhbWlseWhhbmRsZXIucHkNCj4+DQo+Pi0tIA0KPj4yLjku
+NQ0KPj4NCj4+YmFzZS1jb21taXQ6IDU1YzkwMDQ3N2Y1YjM4OTdkOTAzODQ0NmY3MmEyODFjYWUw
+ZWZkODYNCg==
