@@ -2,195 +2,154 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 332B2C4332F
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Nov 2023 20:11:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5E86C4167B
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Nov 2023 22:26:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378140AbjKCULt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Nov 2023 16:11:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44560 "EHLO
+        id S234096AbjKCW0X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Nov 2023 18:26:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230379AbjKCULs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Nov 2023 16:11:48 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68B92D61;
-        Fri,  3 Nov 2023 13:11:45 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40308C433C8;
-        Fri,  3 Nov 2023 20:11:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1699042304;
-        bh=3LHRc8rww849/6wAkBU/sr464fjAyyToo/wNBBArVDM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mLV9uboIii2WaWOBW6KVPc7nBjq7UPg4F0/bfPRm2WrzM1B0UQCZAg7yrJ6mghEDJ
-         ka7eDHgGCSTM33dWvfWmE9yTtGNDbdvUX3DZLefVVoezOI+bbgEPGaGgh10oRg9oVl
-         M1w3CZzdoGJMD+z08Ws67bK9JNpxHj/FBcgGseI3a93Ofr44155ph8W3yHXKe16+ZI
-         RnF7d6VjSp9PIouVAxkCsgVLLQ5Rt1WG7v4iLJ0XSTDtH87Na4BZ4Ik5gxQ9g5Wfiy
-         SWk0xhEQwVFH0p7e7WX1X9I6+ahg2hQDLrFhRWp7TAqiTwx1SVBIfPdxftosbX0uow
-         dEZgmpsCtli+A==
-Date:   Fri, 3 Nov 2023 13:15:49 -0700
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Abel Vesa <abel.vesa@linaro.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
-        Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Taniya Das <tdas@qti.qualcomm.com>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-media@vger.kernel.org,
-        Jagadeesh Kona <quic_jkona@quicinc.com>
-Subject: Re: [PATCH RESEND v3 4/5] clk: qcom: Use HW_CTRL_TRIGGER flag to
- switch video GDSC to HW mode
-Message-ID: <v4dnsawo7s74spccrsvjwmal73tqfq4aptiny25tyyp6ungxha@jlbywvcssqtl>
-References: <20231101-gdsc-hwctrl-v3-0-0740ae6b2b04@linaro.org>
- <20231101-gdsc-hwctrl-v3-4-0740ae6b2b04@linaro.org>
+        with ESMTP id S1345087AbjKCW0W (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Nov 2023 18:26:22 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B255CCA;
+        Fri,  3 Nov 2023 15:26:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1699050379; x=1730586379;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=UFiIUIQtxSDpBAFGAQ0MN5i18hTqs/RaF+24duO/53E=;
+  b=TgNXOBJpe9ia+sOCKQMkWJPXS9Zl9GzpzlXd9SQIhg13p6xVMyvgnPv6
+   /5CNX7nbhI53IZN5R4aNTioq+aiPJ3kPJISlU79y0GmKfVKAV2iNrDpwZ
+   UhGsC/F6+j/Cp7NJxwkd8aFuCcHeueL0rRnOq5sVxEnyENmmZMmaWdEbr
+   6lS+lJfMyTwreBF/JecyW1tUItPnZvl4fvXfgw03aGmE7jQ4SRw9uXl+v
+   P3bPm8fw/RwqR6rkgDsvKaO4mvz/53yGhGKlXViGosv7JGBWzAwgTLEN2
+   Q8c+FkHsgZxO4XGlbAmhYfryJjN/QR1ozXY8tuPNZqORRR57Dmm47Q6Qr
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10883"; a="388859591"
+X-IronPort-AV: E=Sophos;i="6.03,275,1694761200"; 
+   d="scan'208";a="388859591"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2023 15:26:19 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10883"; a="796749258"
+X-IronPort-AV: E=Sophos;i="6.03,275,1694761200"; 
+   d="scan'208";a="796749258"
+Received: from lkp-server01.sh.intel.com (HELO 17d9e85e5079) ([10.239.97.150])
+  by orsmga001.jf.intel.com with ESMTP; 03 Nov 2023 15:26:14 -0700
+Received: from kbuild by 17d9e85e5079 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1qz2cG-00030J-0F;
+        Fri, 03 Nov 2023 22:26:12 +0000
+Date:   Sat, 4 Nov 2023 06:25:05 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Luo Jie <quic_luoj@quicinc.com>, andersson@kernel.org,
+        agross@kernel.org, konrad.dybcio@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de
+Cc:     oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_srichara@quicinc.com,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: Re: [PATCH v11 3/4] clk: qcom: common: commonize qcom_cc_really_probe
+Message-ID: <202311040623.9oyUHQ6A-lkp@intel.com>
+References: <20231103104846.30875-4-quic_luoj@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231101-gdsc-hwctrl-v3-4-0740ae6b2b04@linaro.org>
+In-Reply-To: <20231103104846.30875-4-quic_luoj@quicinc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Nov 01, 2023 at 11:04:10AM +0200, Abel Vesa wrote:
-> From: Jagadeesh Kona <quic_jkona@quicinc.com>
-> 
-> The current HW_CTRL flag switches the video GDSC to HW control mode as
-> part of GDSC enable itself, instead of that use HW_CTRL_TRIGGER flag to
-> give consumer drivers more control and switch the GDSC mode as and when
-> required.
-> 
-> HW_CTRL_TRIGGER flag allows consumer drivers to switch the video GDSC to
-> HW/SW control modes at runtime using dev_pm_genpd_set_hwmode API.
-> 
+Hi Luo,
 
-This states what the code currently does, and what the new code will do.
-But I don't find that it adequately describes _why_ this is done.
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on ff269e2cd5adce4ae14f883fc9c8803bc43ee1e9]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Luo-Jie/clk-qcom-branch-Add-clk_branch2_prepare_ops/20231103-185251
+base:   ff269e2cd5adce4ae14f883fc9c8803bc43ee1e9
+patch link:    https://lore.kernel.org/r/20231103104846.30875-4-quic_luoj%40quicinc.com
+patch subject: [PATCH v11 3/4] clk: qcom: common: commonize qcom_cc_really_probe
+config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20231104/202311040623.9oyUHQ6A-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231104/202311040623.9oyUHQ6A-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202311040623.9oyUHQ6A-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/clk/qcom/camcc-sm8550.c: In function 'cam_cc_sm8550_probe':
+>> drivers/clk/qcom/camcc-sm8550.c:3547:36: error: passing argument 1 of 'qcom_cc_really_probe' from incompatible pointer type [-Werror=incompatible-pointer-types]
+    3547 |         ret = qcom_cc_really_probe(pdev, &cam_cc_sm8550_desc, regmap);
+         |                                    ^~~~
+         |                                    |
+         |                                    struct platform_device *
+   In file included from drivers/clk/qcom/camcc-sm8550.c:19:
+   drivers/clk/qcom/common.h:61:48: note: expected 'struct device *' but argument is of type 'struct platform_device *'
+      61 | extern int qcom_cc_really_probe(struct device *dev,
+         |                                 ~~~~~~~~~~~~~~~^~~
+   cc1: some warnings being treated as errors
 
 
-In the current implementation, the hardware is might collapse the GDSC
-anytime between gdsc_enable() and gdsc_disable(). By giving "drivers
-more control" the time spent in this state is reduced to some fraction
-of that span, which to me implies higher power consumption.
+vim +/qcom_cc_really_probe +3547 drivers/clk/qcom/camcc-sm8550.c
 
-Under the assumption that we don't want to consume more power without
-reason, I'm forced to guess that there might be some scenarios that we
-want this feature to keep the GDSC non-collapsed against the indication
-of the hardware - to avoid some instability somewhere, perhaps?
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3505  
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3506  static int cam_cc_sm8550_probe(struct platform_device *pdev)
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3507  {
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3508  	struct regmap *regmap;
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3509  	int ret;
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3510  
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3511  	ret = devm_pm_runtime_enable(&pdev->dev);
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3512  	if (ret)
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3513  		return ret;
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3514  
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3515  	ret = pm_runtime_resume_and_get(&pdev->dev);
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3516  	if (ret)
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3517  		return ret;
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3518  
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3519  	regmap = qcom_cc_map(pdev, &cam_cc_sm8550_desc);
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3520  	if (IS_ERR(regmap)) {
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3521  		pm_runtime_put(&pdev->dev);
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3522  		return PTR_ERR(regmap);
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3523  	}
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3524  
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3525  	clk_lucid_ole_pll_configure(&cam_cc_pll0, regmap, &cam_cc_pll0_config);
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3526  	clk_lucid_ole_pll_configure(&cam_cc_pll1, regmap, &cam_cc_pll1_config);
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3527  	clk_rivian_evo_pll_configure(&cam_cc_pll2, regmap, &cam_cc_pll2_config);
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3528  	clk_lucid_ole_pll_configure(&cam_cc_pll3, regmap, &cam_cc_pll3_config);
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3529  	clk_lucid_ole_pll_configure(&cam_cc_pll4, regmap, &cam_cc_pll4_config);
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3530  	clk_lucid_ole_pll_configure(&cam_cc_pll5, regmap, &cam_cc_pll5_config);
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3531  	clk_lucid_ole_pll_configure(&cam_cc_pll6, regmap, &cam_cc_pll6_config);
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3532  	clk_lucid_ole_pll_configure(&cam_cc_pll7, regmap, &cam_cc_pll7_config);
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3533  	clk_lucid_ole_pll_configure(&cam_cc_pll8, regmap, &cam_cc_pll8_config);
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3534  	clk_lucid_ole_pll_configure(&cam_cc_pll9, regmap, &cam_cc_pll9_config);
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3535  	clk_lucid_ole_pll_configure(&cam_cc_pll10, regmap, &cam_cc_pll10_config);
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3536  	clk_lucid_ole_pll_configure(&cam_cc_pll11, regmap, &cam_cc_pll11_config);
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3537  	clk_lucid_ole_pll_configure(&cam_cc_pll12, regmap, &cam_cc_pll12_config);
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3538  
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3539  	/*
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3540  	 * Keep clocks always enabled:
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3541  	 *	cam_cc_gdsc_clk
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3542  	 *	cam_cc_sleep_clk
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3543  	 */
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3544  	regmap_update_bits(regmap, 0x1419c, BIT(0), BIT(0));
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3545  	regmap_update_bits(regmap, 0x142cc, BIT(0), BIT(0));
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3546  
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07 @3547  	ret = qcom_cc_really_probe(pdev, &cam_cc_sm8550_desc, regmap);
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3548  
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3549  	pm_runtime_put(&pdev->dev);
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3550  
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3551  	return ret;
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3552  }
+ccc4e6a061a21d Jagadeesh Kona 2023-07-07  3553  
 
-Regards,
-Bjorn
-
-> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
->  drivers/clk/qcom/videocc-sc7180.c | 2 +-
->  drivers/clk/qcom/videocc-sc7280.c | 2 +-
->  drivers/clk/qcom/videocc-sdm845.c | 4 ++--
->  drivers/clk/qcom/videocc-sm8250.c | 4 ++--
->  drivers/clk/qcom/videocc-sm8550.c | 4 ++--
->  5 files changed, 8 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/videocc-sc7180.c b/drivers/clk/qcom/videocc-sc7180.c
-> index 5b9b54f616b8..51439f7ba70c 100644
-> --- a/drivers/clk/qcom/videocc-sc7180.c
-> +++ b/drivers/clk/qcom/videocc-sc7180.c
-> @@ -166,7 +166,7 @@ static struct gdsc vcodec0_gdsc = {
->  	.pd = {
->  		.name = "vcodec0_gdsc",
->  	},
-> -	.flags = HW_CTRL,
-> +	.flags = HW_CTRL_TRIGGER,
->  	.pwrsts = PWRSTS_OFF_ON,
->  };
->  
-> diff --git a/drivers/clk/qcom/videocc-sc7280.c b/drivers/clk/qcom/videocc-sc7280.c
-> index 615695d82319..3d07b1e95986 100644
-> --- a/drivers/clk/qcom/videocc-sc7280.c
-> +++ b/drivers/clk/qcom/videocc-sc7280.c
-> @@ -236,7 +236,7 @@ static struct gdsc mvs0_gdsc = {
->  		.name = "mvs0_gdsc",
->  	},
->  	.pwrsts = PWRSTS_OFF_ON,
-> -	.flags = HW_CTRL | RETAIN_FF_ENABLE,
-> +	.flags = HW_CTRL_TRIGGER | RETAIN_FF_ENABLE,
->  };
->  
->  static struct gdsc mvsc_gdsc = {
-> diff --git a/drivers/clk/qcom/videocc-sdm845.c b/drivers/clk/qcom/videocc-sdm845.c
-> index c77a4dd5d39c..dad011c48973 100644
-> --- a/drivers/clk/qcom/videocc-sdm845.c
-> +++ b/drivers/clk/qcom/videocc-sdm845.c
-> @@ -260,7 +260,7 @@ static struct gdsc vcodec0_gdsc = {
->  	},
->  	.cxcs = (unsigned int []){ 0x890, 0x930 },
->  	.cxc_count = 2,
-> -	.flags = HW_CTRL | POLL_CFG_GDSCR,
-> +	.flags = HW_CTRL_TRIGGER | POLL_CFG_GDSCR,
->  	.pwrsts = PWRSTS_OFF_ON,
->  };
->  
-> @@ -271,7 +271,7 @@ static struct gdsc vcodec1_gdsc = {
->  	},
->  	.cxcs = (unsigned int []){ 0x8d0, 0x950 },
->  	.cxc_count = 2,
-> -	.flags = HW_CTRL | POLL_CFG_GDSCR,
-> +	.flags = HW_CTRL_TRIGGER | POLL_CFG_GDSCR,
->  	.pwrsts = PWRSTS_OFF_ON,
->  };
->  
-> diff --git a/drivers/clk/qcom/videocc-sm8250.c b/drivers/clk/qcom/videocc-sm8250.c
-> index ad46c4014a40..c1b73d852f1c 100644
-> --- a/drivers/clk/qcom/videocc-sm8250.c
-> +++ b/drivers/clk/qcom/videocc-sm8250.c
-> @@ -293,7 +293,7 @@ static struct gdsc mvs0_gdsc = {
->  	.pd = {
->  		.name = "mvs0_gdsc",
->  	},
-> -	.flags = HW_CTRL,
-> +	.flags = HW_CTRL_TRIGGER,
->  	.pwrsts = PWRSTS_OFF_ON,
->  };
->  
-> @@ -302,7 +302,7 @@ static struct gdsc mvs1_gdsc = {
->  	.pd = {
->  		.name = "mvs1_gdsc",
->  	},
-> -	.flags = HW_CTRL,
-> +	.flags = HW_CTRL_TRIGGER,
->  	.pwrsts = PWRSTS_OFF_ON,
->  };
->  
-> diff --git a/drivers/clk/qcom/videocc-sm8550.c b/drivers/clk/qcom/videocc-sm8550.c
-> index f3c9dfaee968..404c6600edae 100644
-> --- a/drivers/clk/qcom/videocc-sm8550.c
-> +++ b/drivers/clk/qcom/videocc-sm8550.c
-> @@ -322,7 +322,7 @@ static struct gdsc video_cc_mvs0_gdsc = {
->  	},
->  	.pwrsts = PWRSTS_OFF_ON,
->  	.parent = &video_cc_mvs0c_gdsc.pd,
-> -	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE | HW_CTRL,
-> +	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE | HW_CTRL_TRIGGER,
->  };
->  
->  static struct gdsc video_cc_mvs1c_gdsc = {
-> @@ -347,7 +347,7 @@ static struct gdsc video_cc_mvs1_gdsc = {
->  	},
->  	.pwrsts = PWRSTS_OFF_ON,
->  	.parent = &video_cc_mvs1c_gdsc.pd,
-> -	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE | HW_CTRL,
-> +	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE | HW_CTRL_TRIGGER,
->  };
->  
->  static struct clk_regmap *video_cc_sm8550_clocks[] = {
-> 
-> -- 
-> 2.34.1
-> 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
