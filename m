@@ -2,358 +2,259 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C644C001B5
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Nov 2023 23:23:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 684E7C4332F
+	for <linux-clk@archiver.kernel.org>; Sat,  4 Nov 2023 01:24:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230145AbjKCXXk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Nov 2023 19:23:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59030 "EHLO
+        id S229864AbjKDBYy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Nov 2023 21:24:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231260AbjKCXXj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Nov 2023 19:23:39 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A801D52
-        for <linux-clk@vger.kernel.org>; Fri,  3 Nov 2023 16:23:33 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-99de884ad25so402792366b.3
-        for <linux-clk@vger.kernel.org>; Fri, 03 Nov 2023 16:23:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lpnu-ua.20230601.gappssmtp.com; s=20230601; t=1699053812; x=1699658612; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Jks6FbhmSs4hzvNZcgvuDZWpF6B0QuBWFBpuktgtGik=;
-        b=FxnHrV7+yQzlYDc5EoqivV0yrEdlJOCj9QCqNMlLa9OH3AO4O1biZkiYNfC4l8pa0w
-         LPEmgXTJosUGBiV3P0IxuunrefBox92gHI57Z4UZPrkExF1/c8Egfm2tLjwALFO73rlz
-         2y+D9iaEBicM6mA4lLR1j9ic2dQB7zNEPYWy97hgewkONTI3Ju5subF6x0APw7LbUW3v
-         NOxTgTRLiKFkSv3gZXd2JQm/+IGNyUQEcOInSCMsOq1EdJBJfRSLfDetSUFtg2GNLZar
-         e/wes7cEPUAINdRR96ZL2Is81oz8uQCUpVnRjikom0YzWFQ/zs7OOH4QSHahtvVDHP0E
-         wMVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699053812; x=1699658612;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jks6FbhmSs4hzvNZcgvuDZWpF6B0QuBWFBpuktgtGik=;
-        b=LwD/MLcR2MpTjQEyKUIiyYWkRJ2dUHd6JLIg1GDiGg8mkO+eQA+kCMYAKIgycdcyRM
-         Je688WLD0Ngfo9y0riRtOUSZQJzjbvr8VD0TxQXiBXQJTDFbspNr7FrnQEeJ758oopF7
-         n5k3OewKgLab5QcqKmmlb81H2MvTKVmGbTc0d07Lm+uqIOK8QoGVCTfu9Fl/D+0ntrC/
-         vjzhiw8shcP6Qj9aZXvQEHev9bh/fLuRGVcQf5Ti5dJPNJFy9yzrlTn/xmxzOvMfLA7p
-         sgkble4n9FzUUkXu+hfLTf5yO9mht4Xj2DkENObHz3Eqb2XKO/ovF+Rod/gwOtUBx7iI
-         t66g==
-X-Gm-Message-State: AOJu0Yw9ta7tXuMY+Bj77pBHXGF+HCEt1Ni6BTNkDQ0aqZww2gt9J/DO
-        2tjdWmYrokend+TlpVrnJhXsXQ==
-X-Google-Smtp-Source: AGHT+IGNyUpRdFW5cP+irHLFj7Flx7W1VqIMHELqVFyYiE8rlElERYr9I8TZ4ofT/8OLAKyFUnbBhQ==
-X-Received: by 2002:a17:907:3f20:b0:9ae:41db:c27f with SMTP id hq32-20020a1709073f2000b009ae41dbc27fmr8233065ejc.10.1699053811874;
-        Fri, 03 Nov 2023 16:23:31 -0700 (PDT)
-Received: from [192.168.1.3] ([37.54.67.136])
-        by smtp.gmail.com with ESMTPSA id fx2-20020a170906b74200b0099bd7b26639sm1385819ejb.6.2023.11.03.16.23.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Nov 2023 16:23:31 -0700 (PDT)
-Message-ID: <1b30846e-934a-4ab7-bdaf-c4dba933bc9d@lpnu.ua>
-Date:   Sat, 4 Nov 2023 01:23:08 +0200
+        with ESMTP id S229557AbjKDBYx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Nov 2023 21:24:53 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EF42D5F;
+        Fri,  3 Nov 2023 18:24:50 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ABF8C433C8;
+        Sat,  4 Nov 2023 01:24:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1699061090;
+        bh=kES0qfVWNXA43mUOzfx7bbZfhya/EhlrolZFrykp/mk=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=uiqLKjYYNdmn9eRRgg1sV/bdBbBEGo6kR9BtlHOgm4sPEfDKN/bdzPjgCyQ+pytcO
+         AVUYlz0R4eEumAiwR3YKnModEZTCSaTZ7MyInyoMivC/F90PTJhampMCXVjSgXsZiw
+         3qt3uuDxFlA4cpqjpXmDDRfyLblDXAfDAsMj+AsW56whv7M0BAIIzhFIM/TlJZXxaw
+         2oTYNPCCbGWHdNJviWbTtvBOBDwZXwq08iYqqo0k8fJytX8EaZCe4ZQ597AnWg1EVw
+         4PqYoxYGp3xdNQnOu9nU6ROkqAkX7Va/gHaTr0AGcQrtfiYHAWrBia6azuwBQOd62h
+         KK86xLUwE7+gQ==
+Message-ID: <2346f541be5b8528ad1a16df256a2f50.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/20] Add minimal Tensor/GS101 SoC support and
- Oriole/Pixel6 board
-Content-Language: en-US
-From:   Maksym Holovach <maksym.holovach.an.2022@lpnu.ua>
-To:     William McVicker <willmcvicker@google.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Peter Griffin <peter.griffin@linaro.org>, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com,
-        s.nawrocki@samsung.com, linus.walleij@linaro.org,
-        wim@linux-watchdog.org, linux@roeck-us.net,
-        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-        olof@lixom.net, cw00.choi@samsung.com, tudor.ambarus@linaro.org,
-        andre.draszik@linaro.org, semen.protsenko@linaro.org,
-        saravanak@google.com, soc@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        kernel-team@android.com, linux-serial@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>
-References: <20231010224928.2296997-1-peter.griffin@linaro.org>
- <3d489d6c-2098-4f0c-9ec4-f6040665753e@lpnu.ua>
- <CADrjBPp+fyNoPdix6=Wp4cDCRFq2Mui8NS6WENejcHn+H1M-jA@mail.gmail.com>
- <48e1c0bd-9518-4927-b490-f3206256bbd4@lpnu.ua>
- <c0b8f356-0f26-459d-850d-ec0fa1fd3987@linaro.org>
- <ZUUvp3kqM7NPlyZ_@google.com> <ccb94ff1-d4df-4c18-9c21-a887ad701479@lpnu.ua>
-In-Reply-To: <ccb94ff1-d4df-4c18-9c21-a887ad701479@lpnu.ua>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20231004012308.2305273-3-dmitry.baryshkov@linaro.org>
+References: <20231004012308.2305273-1-dmitry.baryshkov@linaro.org> <20231004012308.2305273-3-dmitry.baryshkov@linaro.org>
+Subject: Re: [RFC PATCH v2 2/3] clk: qcom: implement RCG2 'parked' clock support
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        freedreno@lists.freedesktop.org, Rob Clark <robdclark@gmail.com>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <quic_tdas@quicinc.com>
+Date:   Fri, 03 Nov 2023 18:24:47 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-I believe I misunderstood your point, and now that I'm reading it again 
-I believe grouping device trees based on device manufacturer is 
-definitely an interesting idea and it would definitely make sense for 
-e.g. x86, where there's basically two big SoC vendors and all the DTBs 
-for the motherboards in just those two folders would result in 
-cluttering issues, however it is not currently done in arm64/boot/dts, 
-where the subfolders are per-platform (exynos, qcom, mtk, tegra, ...) - 
-with an exception of Tesla, which perhaps should be also corrected (also 
-CONFIG_ARCH makes it clear what those directory names are actually meant 
-to represent).
+Quoting Dmitry Baryshkov (2023-10-03 18:23:07)
+> clk_rcg2_shared_ops implements support for the case of the RCG which
+> must not be completely turned off. However its design has one major
+> drawback: it doesn't allow us to properly implement the is_enabled
+> callback, which causes different kinds of misbehaviour from the CCF.
+>=20
+> Follow the idea behind clk_regmap_phy_mux_ops and implement the new
+> clk_rcg2_parked_ops. It also targets the clocks which must not be fully
+> switched off (and shared most of the implementation with
+> clk_rcg2_shared_ops). The major difference is that it requires that the
+> parent map doesn't conain the safe (parked) clock source. Instead if the
+> CFG_REG register points to the safe source, the clock is considered to
+> be disabled.
+>=20
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  drivers/clk/qcom/clk-rcg.h  |  1 +
+>  drivers/clk/qcom/clk-rcg2.c | 56 +++++++++++++++++++++++++++++++++++++
+>  2 files changed, 57 insertions(+)
+>=20
+> diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+> index e6d84c8c7989..9fbbf1251564 100644
+> --- a/drivers/clk/qcom/clk-rcg.h
+> +++ b/drivers/clk/qcom/clk-rcg.h
+> @@ -176,6 +176,7 @@ extern const struct clk_ops clk_byte2_ops;
+>  extern const struct clk_ops clk_pixel_ops;
+>  extern const struct clk_ops clk_gfx3d_ops;
+>  extern const struct clk_ops clk_rcg2_shared_ops;
+> +extern const struct clk_ops clk_rcg2_parked_ops;
+>  extern const struct clk_ops clk_dp_ops;
+> =20
+>  struct clk_rcg_dfs_data {
+> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+> index 5183c74b074f..fc75e2bc2d70 100644
+> --- a/drivers/clk/qcom/clk-rcg2.c
+> +++ b/drivers/clk/qcom/clk-rcg2.c
+> @@ -5,6 +5,7 @@
+> =20
+>  #include <linux/kernel.h>
+>  #include <linux/bitops.h>
+> +#include <linux/bitfield.h>
+>  #include <linux/err.h>
+>  #include <linux/bug.h>
+>  #include <linux/export.h>
+> @@ -1150,6 +1151,61 @@ const struct clk_ops clk_rcg2_shared_ops =3D {
+>  };
+>  EXPORT_SYMBOL_GPL(clk_rcg2_shared_ops);
+> =20
+> +static int clk_rcg2_parked_is_enabled(struct clk_hw *hw)
+> +{
+> +       struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
+> +       u32 cmd, cfg;
+> +       int ret;
+> +
+> +       ret =3D regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CMD_REG, &c=
+md);
+> +       if (ret)
+> +               return ret;
+> +
+> +       if ((cmd & CMD_ROOT_EN) =3D=3D 0)
+> +               return false;
 
-If you think the current approach should be changed, it should be 
-changed for all device-trees, and the CONFIG_ARCH_* should be also 
-renamed, but also we'd need to convince everyone that this approach is 
-superior to others...
+return 0?
 
-Maybe the solution to this is to have arch/arm64/boot/dts/exynos/google 
-with Google's boards, and to have the SoC .dtsi files in 
-arch/arm64/boot/dts/exynos, but I'm not sure.
+CMD_ROOT_OFF can be 0 and CMD_ROOT_EN can also be 0 at the same time.
+When that happens, some branch child clk is enabled and the rcg is
+actually enabled. There's a hardware feedback mechanism from the
+branches to the rcg so the rcg is guaranteed enabled. I'm trying to say
+that this bit is unreliable on its own, so we need to take care here. In
+fact, this bit is only used as a software override to make sure the
+branches don't turn off the rcg inadvertently.
 
-Additionally, I believe using .dtbo files like that (per board variant) 
-is not really expected, instead each board should have its own .dtb 
-file, compiled from a board .dts file which includes the SoC .dtsi file 
-but this is not up to me to judge...
+What if a branch is enabled, but the rcg root_en bit isn't set, and XO
+is used? In that case, this will report the clk as disabled when it's
+really enabled. That will look confusing to the clk framework because a
+child will be enabled without the parent being enabled. Things will
+probably still work though, because this only matters during disabling
+unused clks.
 
-On 11/4/23 01:05, Maksym Holovach wrote:
-> Hi William,
->
-> On 11/3/23 19:36, William McVicker wrote:
->> Hi Maksym, Krzysztof, Peter,
->>
->> On 11/03/2023, Krzysztof Kozlowski wrote:
->>> On 03/11/2023 14:56, Maksym Holovach wrote:
->>>> Hi Peter,
->>>>
->>>> On 11/3/23 15:11, Peter Griffin wrote:
->>>>> Hi Maksym,
->>>>>
->>>>> Thanks for your feedback.
->>>>>
->>>>> On Thu, 2 Nov 2023 at 22:32, Maksym Holovach
->>>>> <maksym.holovach.an.2022@lpnu.ua> wrote:
->>>>>> Hi, all
->>>>>>
->>>>>> I wanted to inquire about how do you all feel about calling this 
->>>>>> SoC by
->>>>>> the Google "gs101" name.
->>>>> Interesting question, I think calling it gs101 is the correct 
->>>>> approach see
->>>>> below for my rationale.
->>>>>
->>>>>> I believe the proper name for it should be the actual Samsung name,
->>>>>> written in the silicon and reported in the Chip ID hardware: 
->>>>>> Exynos9845.
->>>>>> This also touches the Tensor G2 (Exynos9855), Tensor G3 
->>>>>> (Exynos9865),
->>>>>> and possibly the "Tesla" SoCs.
->>>>>>
->>>>>> I do not think the Linux kernel should be a marketing material: it
->>>>>> should reflect reality. The chip is almost 100% composed of Samsung
->>>>>> Exynos IP blocks and should be called that way.
->>>>> As you alluded to Tesla fsd and Axis artpec8 SoCs are also based on
->>>>> Exynos designs and support upstream uses the axis,artpec8* or 
->>>>> tesla,fsd*
->>>>> compatibles.
->>>>>
->>>>> So using google,gs101 is consistent with the existing upstream naming
->>>>> scheme, for customized ASICs that were based off a Exynos design. But
->>>>> it also reflects the reality that this SoC is not a Exynos9845 as 
->>>>> there is
->>>>> also a lot of Google owned and other third party IP integrated 
->>>>> that is not
->>>>> found in Exynos9845.
->>>> A quick question: Do you imply Exynos9845 exists outside of the 
->>>> context
->>>> of Tensor G1? I used to believe Exynos9845 **is** Tensor G1.
->> Yes, the gs101 SoC is *not* equivalent to the Exynos9845. Similar to 
->> how Tesla
->> FSD licenses Exynos IP blocks, gs101 does not only comprise of Exynos IP
->> blocks. The final design is unique to Google and comprises of several 
->> different
->> vendor IP blocks (not only Exynos).
->>
->>>> Also, what kind of Google IP are you talking about? I believe only the
->>>> neural accelerator should be custom-ish.
->>>>
->>>> Additionally, I believe it having or not having Google IP is 
->>>> irrelevant:
->>>> for example, the new Raspberry Pi 5 Broadcom SoC has a lot of
->>>> Raspberry's own IP, but it's still called Broadcom as it's the real
->>>> manufacturer and designer of the chip.
->>> That's a good argument. Indeed BCM2712 contains "New Raspberry
->>> Pi-developed ISP".
->>> https://www.raspberrypi.com/documentation/computers/processors.html
->>>
->>> There aren't many patches but GPU is still called brcm,2712.
->>>
->>> For Tesla FSD, there was discussion and output was not very consisting.
->>> First, the name itself was used for everything - SoC architecture, one
->>> given SoC and eventually the board.
->>> https://lore.kernel.org/all/5ab62673-8d46-ec1d-1c80-696421ab69ca@canonical.com/ 
->>>
->>>
->>> Eventually the last part - board - was renamed to "Evaluation board",
->>> but I don't know how true or real it is.
->>>
->>> See also:
->>> "I would argue that if this SoC shares the pinctrl, clock, spi, adc,
->>> and timer implementation
->>> with Exynos, we should consider it part of the Exynos family,"
->>> https://lore.kernel.org/all/CAK8P3a31bCHNcNWrLX+QW+4RuK=DBpxLA_j5BFKxXxXKCT8PFQ@mail.gmail.com/ 
->>>
->>>
->>> However it was also claimed:
->>>
->>> "AFA architecture is concerns both Exynos and FSD has completely
->>> different architecture (at least at HW level)."
->>> https://lore.kernel.org/all/07ce01d8091e$9a6fd9c0$cf4f8d40$@samsung.com/ 
->>>
->>>
->>>>> I guess the same is also true for `axis,artpec8` and `tesla,fsd` 
->>>>> SoCs.
->>>>> IMO the SoC compatible string should be uniquely identifying the 
->>>>> actual
->>>>> SoC, not a close relative.
->>>>>
->>>>> Regarding product_id you are correct this reads 0x09845000 but even
->>>>> within Samsung Exynos family there are examples where the register
->>>>> value does not match the SoC compatible. For example Exynos850 SoC
->>>>> has a product ID value of "E3830". Where the Linux compatible is
->>>>> matching the Samsung marketing name, not the internal/outdated name.
->>>> I did not know Exynos 850 is also not going under it's real name.
->>>> Ultimately, I believe all of those SoCs should go under their 
->>>> technical
->>>> name in the exynos/ directory.
->>> The initial technical name does not exist outside of vendor sources and
->>> part name. E.g. Winlink E850 board hardware manual calls it:
->>> "Samsung Exynos 850, S5E3830"
->>> and everywhere else Exynos 850 SoC is used.
->>>
->>> If you start calling it Exynos 3830, only me and Sam (who mainlined it)
->>> would know what is it. Everyone else, all users of kernel, would be
->>> confused.
->>>
->>> Therefore using well known final product name is for Exynos850 
->>> reasonable.
->> I agree with this. By using the final (well known) product SoC name 
->> -- gs101 --
->> other developers will be able to easily identify the particular SoC.
->>
->>>> Another concern is that Google could in the future license other 
->>>> SoC: be
->>>> it Qualcomm, Nvidia or anything. If we put completely different hw 
->>>> under
->>>> google/ directory, does it really make sense? In that case, who'll
->>>> maintain the google/ directory? Exynos people? Qualcomm people if they
->>>> license it? Some other people?
->> I don't understand why the architecture of the SoC would dictate 
->> which folder
->> to put the device tree files under. It makes more sense to group 
->> board DT files
->> together based on who distributes them. Having all the Pixel DT board 
->> files
->> together allows Google to create a single device tree binary per SoC 
->> coupled
->> with the set of device tree overlays per board variant (this is the 
->> dtbo.img)
->> to ship to all their devices. If you look at all the in-market Pixel 
->> devices
->> with Tensor SoCs, you will find that you could create one dtb 
->> (concatenate
->> gs101.dtb, gs201.dtb, and zuma.dtb) and one dtbo image for 10 devices 
->> which
->> significantly simplifies the maintenance, testing, and software 
->> distribution
->> for all 10 of those products.
->
-> How is that relevant?
->
-> I believe it is none of the kernel concerns, it's up to the user to do 
-> whatever with the built .dtb files.
->
-> Also I do not see an issue in having a file list of all the .dtbo 
-> files you might want.
->>
->>> That's indeed a problem. Future Tesla SoC might have just few pieces
->>> similar to FSD. There would be no common SoC part, except the actual
->>> Tesla IP.
->>>
->>> Same for Google. Future GSXXX, if done by Qualcomm, will be absolutely
->>> different than GS101 and the only common part would be the TPU 
->>> (Tensor).
->>>
->>> So now let's decide what is the common denominator:
->>> 1. Core SoC architecture, like buses, pinctrl, clocks, timers, serial,
->>> and many IP blocks, which constitute 95% of Devicetree bindings and 
->>> drivers,
->>> 2. The one, big piece made by Samsung's customer: TPU, NPU or whatever.
->> As mentioned above, I think this should be based on how the DTBs and 
->> DTBOs are
->> used and distributed. What is the benefit of adding the gs101 board 
->> files under
->> the exynos folder?
->
-> One clear benefit would be the ease of maintaining all the SoC files 
-> at once. It's not that it is a benefit of having it in the Exynos 
-> folder, it's more like that there's no benefit in having a separate 
-> folder, and that also comes with some additional issues.
->
-> As I said earlier, it's pretty similar to the Raspberry Pi 5 example: 
-> It contains Raspberry's in-house IP, but it's still called properly 
-> Broadcom. The only difference is that Raspberry does not want its name 
-> on the chip, but Google does, despite it being just as custom as the 
-> Raspberry SoC is. The company's policy should not be a factor for this 
-> decision, in my opinion.
->
-> However as you've added, gs101 is the same thing as Exynos9845, so I 
-> believe there's no question that the Exynos name should be specified 
-> somewhere too, because this is what's literally wired in hardware, and 
-> not just a "well-known name that is used by Google in the Pixel 
-> factory kernel".
->
-> I agree though that just specifying the internal E9845 name could 
-> mislead some people, but GS101 is a similarly obscure name, and not 
-> even the real name of the hardware.
->
->>
->> Thanks,
->> Will
->>
->>>> Then, I don't think Tensor G3 has a proper "GS" name, it goes by 
->>>> "Zuma"
->>>> in decompiled kernel modules as far as I see.
->>>>
->>>> Finally, Tesla people already tried to submit drivers called by Tesla
->>>> name, but which basically copied the functionality of the Exynos
->>>> drivers. We would want to avoid that, ideally.
->>>>
->>>> My opinion is that all the Tesla and Google SoCs should be in the
->>>> exynos/ directory, not only because they are basically Samsung Exynos,
->>>> but also because they don't really need a separate directory: neither
->>>> Google nor Tesla didn't neither manufacture or design those SoCs from
->>>> scratch. The only reason I can think of for them to have it in a
->>>> separate directory is maybe because Google and Tesla actually paid
->>>> Samsung money for the right to call Exynos "Google designed" SoCs, 
->>>> but I
->>>> believe the kernel should be left out of that.
->>> For some reason, although I know which, Cc-list is here trimmed and
->>> misses Alim...
->>>
->>> So standard reply follow (it makes me really, really grumpy, because it
->>> means you develop on some crazy old kernel or do not use tools which
->>> automate the process):
->>>
->>> Please use scripts/get_maintainers.pl to get a list of necessary people
->>> and lists to CC (and consider --no-git-fallback argument). It might
->>> happen, that command when run on an older kernel, gives you outdated
->>> entries. Therefore please be sure you base your patches on recent Linux
->>> kernel.
->>>
->>> Best regards,
->>> Krzysztof
->>>
-> Yours,
->
-> Maksym
->
-Yours,
+Maybe it's better to not implement an is_enabled() callback for this clk
+and simply call a function to see which parent the hardware is using (XO
+or not). Basically don't go through clk_hw_is_enabled() and just call
+clk_rcg2_parked_is_enabled() directly wherever the clk_hw API is used.
+Then the framework doesn't get confused about enabled children with
+disabled parents, but the downside is that the framework doesn't know if
+the rcg is enabled. This is most likely fine though because an enabled
+rcg doesn't really make a difference. The important thing is knowing
+which branches are enabled at the framework level. Furthermore, the
+framework doesn't currently handle propagating up the enable state at
+boot to parents, so if say we have a child branch that is enabled, the
+enable state of the parent _must_ be enabled as well, or the branch is
+wedged and the only way to unwedge that is to enable the parent. It's
+quite a mess!
 
-Maksym
+Long story short, I question why we need to implement is_enabled() for
+this clk. What's the benefit? The branches being off is more important
+if we're concerned about saving power. There's the problem of handing
+off enable state from when the driver probes, but that's not so easy to
+solve given that a branch could be enabled (or a branch could be enabled
+that isn't even known to linux). And it also sort of doesn't matter
+because we know XO is practically always enabled and what really matters
+is making sure the driver can't wedge the RCG by changing the source to
+something that isn't enabled if it thinks the RCG is disabled when it is
+really enabled.
 
+That's sort of the only rule here, don't write the hardware when the
+current parent isn't enabled or the new parent isn't enabled. We don't
+know if the rcg is ever enabled, so we can only write the "go bit"
+(CMD_UPDATE) when we're 100% certain that the parent (or next parent
+when switching) is enabled. XO we know is always enabled, but otherwise
+we don't know unless the framework has enabled the clk (and therefore
+implicitly enabled the parent). The set_rate op could be called from
+either enabled or disabled state, same for the set_parent op. And we
+want the other clk APIs to report the state of the clk (like the parent
+or rate) even if the hardware hasn't been changed.
+
+> +
+> +       ret =3D regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, &c=
+fg);
+> +       if (ret)
+> +               return ret;
+> +
+> +       return FIELD_GET(CFG_SRC_SEL_MASK, cfg) !=3D rcg->safe_src_index;
+> +}
+> +
+> +static int clk_rcg2_parked_init(struct clk_hw *hw)
+> +{
+> +       struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
+> +       const struct freq_tbl *f =3D rcg->freq_tbl;
+> +
+> +       regmap_read(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), &rcg->parked_c=
+fg);
+
+I need this part today to fix a stuck clk problem I see on trogdor.lazor
+where during registration a call to clk_ops::get_parent() sees the clk
+isn't enabled at boot (because there isn't a clk_ops::is_enabled()
+function) so clk_rcg2_shared_get_parent() reads the parent from the
+'parked_cfg' value, which is zero. If the hardware actually has non-zero
+for the parent then the framework will get the wrong parent, which is
+what happens on trogdor when the devmode screen is shown. The parent is
+the display PLL instead of XO. I haven't dug far enough to understand
+why disabling unused clks wedges the branch when we try to enable it
+again, but not disabling unused clks fixes the problem or reading the
+config register at registration to get the proper parent also fixes it.
+I guess the problem is that we're switching the RCG value when we
+shouldn't be doing that.
+
+> +
+> +       if (FIELD_GET(CFG_SRC_SEL_MASK, rcg->parked_cfg) !=3D rcg->safe_s=
+rc_index)
+> +               return 0;
+> +
+> +       if (WARN_ON(!f) ||
+> +           WARN_ON(qcom_find_src_cfg(hw, rcg->parent_map, f->src) =3D=3D=
+ rcg->safe_src_index))
+> +               return -EINVAL;
+> +
+> +       return __clk_rcg2_configure(rcg, f, &rcg->parked_cfg);
+
+It would be good to have a comment above this like
+
+	/*
+	 * Dirty the rcg registers to point at the first frequency table
+	 * entry which is guaranteed to not use the safe_src_index.
+	 * Setting the rate of the clk with rcg registers containing the
+	 * safe_src_index will confuse clk_rcg2_parked_is_enabled() as
+	 * to the enable state and lead to actually changing the rate of
+	 * the clk when it isn't enabled.
+	 */
+
+> +}
+> +
+> +/*
+> + * Unlike clk_rcg2_shared_ops, the safe_src_index aka XO must NOT be pre=
+sent in
+> + * parent_map. This allows us to implement proper is_enabled callback.
+
+We could also modify clk_ops::set_rate() and clk_ops::determine_rate()
+to ignore frequency table entries with the safe_src_index, so that no
+driver can change the frequency to be XO. Then XO is still "reserved",
+and it still means the clk is disabled when the parent is XO, but we
+don't have to change the RCG registers during clk_rcg2_parked_init() to
+move off the safe_src/XO parent. We also have to prevent the parent from
+being set to XO with clk_set_parent(). That should be doable by failing
+the clk_ops::set_parent() op when the parent is XO.
+
+I'd actually prefer that approach if it's workable, so that we don't
+dirty the RCG registers during clk registration. I think qcom folks were
+unhappy with the rcg registers being dirty for a long time
+(CMD_DIRTY_CFG), because the other entity (the gdsc?) was triggering the
+rcg switch (CMD_UPDATE) and that was causing the wrong parent to be
+used.
+
+I still come back to the why question though. What are we gaining by
+implementing is_enabled for this clk?
+
+> + */
+> +const struct clk_ops clk_rcg2_parked_ops =3D {
+> +       .init =3D clk_rcg2_parked_init,
+> +       .is_enabled =3D clk_rcg2_parked_is_enabled,
+> +       .enable =3D clk_rcg2_shared_enable,
+> +       .disable =3D clk_rcg2_shared_disable,
+> +       .get_parent =3D clk_rcg2_shared_get_parent,
+> +       .set_parent =3D clk_rcg2_shared_set_parent,
+> +       .recalc_rate =3D clk_rcg2_shared_recalc_rate,
+> +       .determine_rate =3D clk_rcg2_determine_rate,
+> +       .set_rate =3D clk_rcg2_shared_set_rate,
+> +       .set_rate_and_parent =3D clk_rcg2_shared_set_rate_and_parent,
+> +};
+> +EXPORT_SYMBOL_GPL(clk_rcg2_parked_ops);
