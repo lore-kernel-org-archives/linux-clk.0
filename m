@@ -2,185 +2,103 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47F30C4167D
-	for <linux-clk@archiver.kernel.org>; Sun,  5 Nov 2023 13:14:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2769C4167D
+	for <linux-clk@archiver.kernel.org>; Sun,  5 Nov 2023 20:07:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229967AbjKENOf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 5 Nov 2023 08:14:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55534 "EHLO
+        id S229489AbjKEUHH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 5 Nov 2023 15:07:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229486AbjKENOe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 5 Nov 2023 08:14:34 -0500
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CE8290
-        for <linux-clk@vger.kernel.org>; Sun,  5 Nov 2023 05:14:31 -0800 (PST)
-Received: by mail-lj1-x229.google.com with SMTP id 38308e7fff4ca-2c503dbe50dso50121471fa.1
-        for <linux-clk@vger.kernel.org>; Sun, 05 Nov 2023 05:14:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1699190069; x=1699794869; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yqSv2UnZ+U1pe5KGwf29GbAFTynYSNuIgS0ilx1Gh6k=;
-        b=uiNdfudBiCcsNQNDXsk+cinHgAvz74PPBwjQ8AgBK8+Ok4/cSY/xJCETjpaKBMtFMx
-         RdjKw8d5QfudrCtWNB82U0RjNJmFoufxnrt0AJfGNAfJDCviawRk1ldDRIkR9oFpDYnz
-         jkgm2WGcQD/2t6WUMCwSmypXf2olRfcq3g8xZPqanu6WN8qsqLDx6FiuYr8FJM5G7lur
-         6T9OBtNQHlg7m33W1U0yhecAcCs8OCPUVyAwPV6c9pMv0o0wLiZBUQw3YjxwDz0aI9kO
-         s0mAceMcdlFMKbAUwKcua7JcK9snqjsnyHQG6VjzBkYmoBf1i5b+ZHlVpQbz7LZyG3WV
-         dv+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699190069; x=1699794869;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yqSv2UnZ+U1pe5KGwf29GbAFTynYSNuIgS0ilx1Gh6k=;
-        b=Vr2UUUQJgEqRNwTiOfZidrqSJEnxQcMz0BGMdGc3gELa80GNyErnEjJhjKf+j7aFew
-         GckZPTMVvNg+2p+p+BF2CxWUdXhnYEjhYTibFbGztHCj+dBl2AaaKve2/pph3eSMhWht
-         Q3z4HwQaI8BLxFPZvBxOhoj1VIUMD3JF0aD5cKQnqaq+ZL3OR1DT313b4pbm557raS8N
-         sHsPT1oqioAW9cudg9GbsITNQxJit6emsd/kznU2jaMSDhFBy0eI5yuE6DOLC1AwTPSt
-         dY/zObxmSI+UPTN4riE761bGUdiDYFBdD3yLXkDzE8SclvskA+AdbD7Vi1H1T7am/wdk
-         VsnA==
-X-Gm-Message-State: AOJu0YzYs+7efKK3G5nOoAvcOT7KgkLlSSR/9Y26qOQAMKBEZ6rODkhX
-        mYfQw9nCvip0ZDjN3bwg4WJV0A==
-X-Google-Smtp-Source: AGHT+IGnKSMKqoVLMGiYGZbCupSjzNBC45bZJAUhZDif0PqgX/r7v34/Obqmw9T2Y6euojIAW4UL7A==
-X-Received: by 2002:a2e:9246:0:b0:2c5:724:fd64 with SMTP id v6-20020a2e9246000000b002c50724fd64mr20383790ljg.46.1699190069521;
-        Sun, 05 Nov 2023 05:14:29 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.218.126])
-        by smtp.gmail.com with ESMTPSA id ay8-20020a05600c1e0800b0040772138bb7sm9025518wmb.2.2023.11.05.05.14.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 05 Nov 2023 05:14:29 -0800 (PST)
-Message-ID: <17aed57a-5e40-494b-a1d6-293533498804@linaro.org>
-Date:   Sun, 5 Nov 2023 14:14:25 +0100
+        with ESMTP id S229451AbjKEUHG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 5 Nov 2023 15:07:06 -0500
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21D78E1;
+        Sun,  5 Nov 2023 12:07:03 -0800 (PST)
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4SNlr3449Dz9sVN;
+        Sun,  5 Nov 2023 21:06:59 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+        t=1699214819;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=aTQFv+jxFsY3X5csA/whB9c77q2hCbYcNxae1TskwzQ=;
+        b=c8MsOHYNKCZq+G4vK28jvelMzuh9vV0bIReZeId4FVGLZrShV70vmH+dn4kmBaLXQweddR
+        0gVPDF0GSXrQwszV3wzR9kSHVy00j53ao+hHWru/h7gzSUO82JnO4H0KtwhWVPH+IC6IR4
+        xCri0Qb2a8dINoLliCPPYRDKwPL4idEBhx1bjGbjZxZPnspfCl7a8Vgxu6z3qyfNJKEew4
+        7PIGcNBmk6tlNiDaSUGpVg01Z7GIYknxmqqcADaH7CuTDBqSUsNPeBFOSQgLdMqCIMRJ3N
+        459olyXiJ7yIx6UXDOTdktTQT1OgDMlpz5hup6A19VHGFCFSJjaLwNbSdnRdKg==
+From:   Marek Vasut <marek.vasut+renesas@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+        t=1699214817;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=aTQFv+jxFsY3X5csA/whB9c77q2hCbYcNxae1TskwzQ=;
+        b=X+55kuiQgnpvrwpqBcNYI9FDdAqRnmhbis7tN9Xo4uWEZOxRJEQaETMHuZTVdoc9DjbLLS
+        MTf1LCx96Kna1fYyHVqzBTp9pFFJICpx5eH4/iIwEKa9TUbEo3snDUMvqTx9+pjZuB5ao0
+        UVPGTN3Vopcu1Jdx9tHXMjJYuwbfjCDvUVy8ck8mIxU+4+QgitHjGLMSxerDP9K9PtSqSw
+        6ll51WSmnlUEjI7AJmsF5yd7A0NPuP/9wtsshtLzEK6zwX9j45o66jroNlZ6pkNe9jzWPC
+        s3DZaRr52qp2Qp5IGvQ8gmgcuH3VFuGtmjBSJ3O1DNLgTiuhxyvURtURxbdtJw==
+To:     linux-clk@vger.kernel.org
+Cc:     Marek Vasut <marek.vasut+renesas@mailbox.org>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] clk: rs9: Fix DIF OEn bit placement on 9FGV0241
+Date:   Sun,  5 Nov 2023 21:06:15 +0100
+Message-ID: <20231105200642.62792-1-marek.vasut+renesas@mailbox.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/20] Add minimal Tensor/GS101 SoC support and
- Oriole/Pixel6 board
-Content-Language: en-US
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     William McVicker <willmcvicker@google.com>,
-        Maksym Holovach <maksym.holovach.an.2022@lpnu.ua>,
-        Peter Griffin <peter.griffin@linaro.org>, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com,
-        s.nawrocki@samsung.com, linus.walleij@linaro.org,
-        wim@linux-watchdog.org, linux@roeck-us.net,
-        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-        olof@lixom.net, cw00.choi@samsung.com, tudor.ambarus@linaro.org,
-        andre.draszik@linaro.org, semen.protsenko@linaro.org,
-        saravanak@google.com, soc@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        kernel-team@android.com, linux-serial@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>
-References: <20231010224928.2296997-1-peter.griffin@linaro.org>
- <3d489d6c-2098-4f0c-9ec4-f6040665753e@lpnu.ua>
- <CADrjBPp+fyNoPdix6=Wp4cDCRFq2Mui8NS6WENejcHn+H1M-jA@mail.gmail.com>
- <48e1c0bd-9518-4927-b490-f3206256bbd4@lpnu.ua>
- <c0b8f356-0f26-459d-850d-ec0fa1fd3987@linaro.org>
- <ZUUvp3kqM7NPlyZ_@google.com>
- <cee1b28d-5bd9-46eb-b9f4-facbad10b5d7@linaro.org>
- <2023110535-rare-underdone-b508@gregkh>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <2023110535-rare-underdone-b508@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-META: 7jnrc1r3hg64n4pus16cxxxnohkj5j8e
+X-MBO-RS-ID: a2288b80ca60afe3830
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 05/11/2023 14:08, Greg KH wrote:
-> On Sun, Nov 05, 2023 at 01:52:22PM +0100, Krzysztof Kozlowski wrote:
->> On 03/11/2023 18:36, William McVicker wrote:
->>
->>>>
->>>> That's indeed a problem. Future Tesla SoC might have just few pieces
->>>> similar to FSD. There would be no common SoC part, except the actual
->>>> Tesla IP.
->>>>
->>>> Same for Google. Future GSXXX, if done by Qualcomm, will be absolutely
->>>> different than GS101 and the only common part would be the TPU (Tensor).
->>>>
->>>> So now let's decide what is the common denominator:
->>>> 1. Core SoC architecture, like buses, pinctrl, clocks, timers, serial,
->>>> and many IP blocks, which constitute 95% of Devicetree bindings and drivers,
->>>> 2. The one, big piece made by Samsung's customer: TPU, NPU or whatever.
->>>
->>> As mentioned above, I think this should be based on how the DTBs and DTBOs are
->>> used and distributed.
->>
->> None of existing platforms do it. Nowhere. All chromebooks are split per
->> SoC, not "how DTBs should be used and distributed". There is no google,
->> no Chromebook directory. None of Samsung phones have it. No
->> Samsung-phone directory. None of Google phones have Pixel directory.
-> 
-> but for code we have:
-> 	drivers/patform/chrome/
-> 	drivers/firmware/google/
-> 	drivers/net/ethernet/google/
-> 
-> don't know if that matters or not, but thought I would mention it...
+On 9FGV0241, the DIF OE0 is BIT(1) and DIF OE1 is BIT(2), on the other
+chips like 9FGV0441 and 9FGV0841 DIF OE0 is BIT(0) and so on. Increment
+the index in BIT() macro instead of the result of BIT() macro to shift
+the bit correctly on 9FGV0241.
 
-Yes, for the drivers for the similar hardware we have it. We have
-drivers for Chromebook's Embedded Controller - let's put it in one
-place, so that maintenance and review will be easier.
+Fixes: 603df193ec51 ("clk: rs9: Support device specific dif bit calculation")
+Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+---
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: devicetree@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+---
+ drivers/clk/clk-renesas-pcie.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Now for DTS, the common hardware is not "Samsung phones", but "Samsung
-SoC". We organize it like:
-1. Samsung phones with Samsung SoC -> arm64/dts/samsung
-2. Samsung phones with Qualcomm SoC -> arm64/dts/qcom
-
-because the main common part is the SoC, not the rest of the phone.
-There is no reviewer or maintainer for Samsung phones. There is no need
-for such. No benefits, almost not many common parts except some touchscreen.
-
-Why Google Pixel suddenly should be exception from the way we handle DTS
-of all ARM64 platforms?
-
-Best regards,
-Krzysztof
+diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
+index 380245f635d6..6606aba253c5 100644
+--- a/drivers/clk/clk-renesas-pcie.c
++++ b/drivers/clk/clk-renesas-pcie.c
+@@ -163,7 +163,7 @@ static u8 rs9_calc_dif(const struct rs9_driver_data *rs9, int idx)
+ 	enum rs9_model model = rs9->chip_info->model;
+ 
+ 	if (model == RENESAS_9FGV0241)
+-		return BIT(idx) + 1;
++		return BIT(idx + 1);
+ 	else if (model == RENESAS_9FGV0441)
+ 		return BIT(idx);
+ 
+-- 
+2.42.0
 
