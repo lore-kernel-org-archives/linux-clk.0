@@ -2,92 +2,259 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C155C4332F
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Nov 2023 08:58:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F1FAC4167D
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Nov 2023 10:01:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231338AbjKFI61 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Nov 2023 03:58:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60216 "EHLO
+        id S229922AbjKFKBC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Nov 2023 05:01:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231324AbjKFI60 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Nov 2023 03:58:26 -0500
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BDC2DB
-        for <linux-clk@vger.kernel.org>; Mon,  6 Nov 2023 00:58:23 -0800 (PST)
-Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-50939d39d0fso5458712e87.1
-        for <linux-clk@vger.kernel.org>; Mon, 06 Nov 2023 00:58:23 -0800 (PST)
+        with ESMTP id S229974AbjKFKBB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Nov 2023 05:01:01 -0500
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D41EA6;
+        Mon,  6 Nov 2023 02:00:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1699261101; x=1699865901; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BhaNPZ5ALKGhgIwmnk7EA8sPdVUBa/gDuKElje8KGZk=;
-        b=JLziYkhUrV+OEVBt7CaBG5mhiS1bY1jxhuk/7vLFvK6BiWMbrjo+n5SiB5vB9Bl15k
-         W0AcA2Bi6Sdc5nqiOMYi1JqI3YOJcb21htw6fl3CsCv0fb2b7YTFhph12/2lSUjVvNTn
-         eK96/0BbgTfAp8Z9YDuwBpe0X6IESmW2YVVwg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699261101; x=1699865901;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BhaNPZ5ALKGhgIwmnk7EA8sPdVUBa/gDuKElje8KGZk=;
-        b=LyfnsvSwyoPy/4x1wpSSZr1Eo4jx6vjjCzYMH/aIYhQfd4UWVnPrTyW8YiXslqwNM6
-         qMZz+TJPTAwRRy2CLUjSBtrX/3qGHiHlfj5sNLmLni2R127VP0PL5fRvzzehG7YDgERV
-         3ZJ3HNMK+MTZ3SeoI3ueHYBj0VaWUdfmLgwxQlEjNRL659pM0d6wGXYBn9be80/x3M7A
-         xyU15nrXZrLFUjZa3PNG59vSSNja3VkTs0mhQgfBC+P52GqLo+bmt0crq90f1AFbLep5
-         OuBvTzYRMItEOjiCDECbY6Cmu+eFDbOBJ4MAJYhCP6qwfhkvt/129oCxj0ARPCEXg77K
-         zBOg==
-X-Gm-Message-State: AOJu0Yzyfg8I91cOJJtKkBMlv0WeOfovNxTAAiOw1HvCYxAKOkaK27E9
-        Fm5QS/rmYCRyuWDl9foUM2Rny3knicaqcIl+uTrjdA==
-X-Google-Smtp-Source: AGHT+IFkEVvTTQVRt+p9CHlozj8K2Y8M2HQgxYsSM7s84s2T7tu9AUMdVItvQURRV6ZxtQMxORH9/2hymWtojECviag=
-X-Received: by 2002:a05:6512:3245:b0:509:49fc:c25c with SMTP id
- c5-20020a056512324500b0050949fcc25cmr8787028lfr.28.1699261101126; Mon, 06 Nov
- 2023 00:58:21 -0800 (PST)
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1699264858; x=1730800858;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=OIDyp/g50d55txnxogYWipBT01q6u2+t7gX+4MtqKDA=;
+  b=ccw0qAUHwFuNap7kh6kWh22G/7t1RJf7S4oSLQblRChYHFNOkClihHkQ
+   FlLUQlLMSzvuNPzJ/lJFKrwOeUFK9jHUnjHtiPVvB5HynrS5haPbEdZA7
+   ijeSX13cFEnlX4ASR4LO0UIhryz0MVzhq0g4KNg2QW0RVbdjVqbYDLIW1
+   lYwdARl0Cwq2TT7/dDQ81xDyeo60l6Yn6W2N5NYREmzvb0gHb1JIqW3l0
+   N/9wxlbXtegFSofgCdNQ2xvDJ1i/G2Atoqepx2KhRVhmDXwWDWeEUOJX6
+   +Ovzmz4KwaGfN8pmFW6V8om8UkEHnl/vQRf3gpV+GEmXzpuyCNQdeHIxF
+   A==;
+X-IronPort-AV: E=Sophos;i="6.03,281,1694728800"; 
+   d="scan'208";a="33823323"
+Received: from vtuxmail01.tq-net.de ([10.115.0.20])
+  by mx1.tq-group.com with ESMTP; 06 Nov 2023 11:00:55 +0100
+Received: from steina-w.localnet (steina-w.tq-net.de [10.123.53.18])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id 7F70428007F;
+        Mon,  6 Nov 2023 11:00:55 +0100 (CET)
+From:   Alexander Stein <alexander.stein@ew.tq-group.com>
+To:     Marek Vasut <marek.vasut+renesas@mailbox.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 2/2] clk: rs9: Add support for 9FGV0841
+Date:   Mon, 06 Nov 2023 11:00:57 +0100
+Message-ID: <5732995.DvuYhMxLoT@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <TYCPR01MB11269765042382E404A16FAB986AAA@TYCPR01MB11269.jpnprd01.prod.outlook.com>
+References: <20231105200812.62849-1-marek.vasut+renesas@mailbox.org> <20231105200812.62849-2-marek.vasut+renesas@mailbox.org> <TYCPR01MB11269765042382E404A16FAB986AAA@TYCPR01MB11269.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-References: <20231103102533.69280-1-angelogioacchino.delregno@collabora.com> <20231103102533.69280-4-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20231103102533.69280-4-angelogioacchino.delregno@collabora.com>
-From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Mon, 6 Nov 2023 16:58:09 +0800
-Message-ID: <CAGXv+5Hjj1=5Tii1-Pt01oVdPE2qCc8E0DVjzm7UeA_m5cMW=A@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] clk: mediatek: mt8188-topckgen: Refactor parents
- for top_dp/edp muxes
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     sboyd@kernel.org, mturquette@baylibre.com, matthias.bgg@gmail.com,
-        msp@baylibre.com, amergnat@baylibre.com, yangyingliang@huawei.com,
-        u.kleine-koenig@pengutronix.de, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Nov 3, 2023 at 6:25=E2=80=AFPM AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
->
-> The top_dp and top_edp muxes can be both parented to either TVDPLL1
-> or TVDPLL2, two identically specced PLLs for the specific purpose of
-> giving out pixel clock: this becomes a problem when the MediaTek
-> DisplayPort Interface (DPI) driver tries to set the pixel clock rate.
->
-> In the usecase of two simultaneous outputs (using two controllers),
-> it was seen that one of the displays would sometimes display garbled
-> output (if any at all) and this was because:
->  - top_edp was set to TVDPLL1, outputting X GHz
->  - top_dp was set to TVDPLL2, outputting Y GHz
->    - mtk_dpi calls clk_set_rate(top_edp, Z GHz)
->  - top_dp is switched to TVDPLL1
->  - TVDPLL1 changes its rate, top_edp outputs the wrong rate.
->  - eDP display is garbled
->
-> To solve this issue, remove all TVDPLL1 parents from `top_dp` and
-> all TVDPLL2 parents from `top_edp`, plus, necessarily switch both
-> clocks to use the new MUX_GATE_CLR_SET_UPD_INDEXED() macro to be
-> able to use the right bit index for the new parents list.
->
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
-abora.com>
+Hi,
 
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+Am Montag, 6. November 2023, 08:49:10 CET schrieb Biju Das:
+> Hi Marek,
+>=20
+> Thanks for the patch.
+>=20
+> > -----Original Message-----
+> > From: Marek Vasut <marek.vasut+renesas@mailbox.org>
+> > Sent: Sunday, November 5, 2023 8:08 PM
+> > Subject: [PATCH 2/2] clk: rs9: Add support for 9FGV0841
+> >=20
+> > This model is similar to 9FGV0441, the DIFx bits start at bit 0 again,
+> > except this chip has 8 outputs. Adjust rs9_calc_dif() to special-case t=
+he
+> > 9FGV0241 where DIFx bits start at 1. Extract only vendor ID from VID
+> > register, the top 4 bits are revision ID which are not useful for the
+> > vendor ID check.
+> >=20
+> > Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+> > ---
+> > Cc: Alexander Stein <alexander.stein@ew.tq-group.com>
+> > Cc: Conor Dooley <conor+dt@kernel.org>
+> > Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+> > Cc: Michael Turquette <mturquette@baylibre.com>
+> > Cc: Rob Herring <robh+dt@kernel.org>
+> > Cc: Stephen Boyd <sboyd@kernel.org>
+> > Cc: devicetree@vger.kernel.org
+> > Cc: linux-clk@vger.kernel.org
+> > Cc: linux-renesas-soc@vger.kernel.org
+> > ---
+> >=20
+> >  drivers/clk/clk-renesas-pcie.c | 23 +++++++++++++++++++----
+> >  1 file changed, 19 insertions(+), 4 deletions(-)
+> >=20
+> > diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-
+> > pcie.c index 6606aba253c5..f8dd79b18d5a 100644
+> > --- a/drivers/clk/clk-renesas-pcie.c
+> > +++ b/drivers/clk/clk-renesas-pcie.c
+> > @@ -7,6 +7,7 @@
+> >=20
+> >   * Currently supported:
+> >   *   - 9FGV0241
+> >   *   - 9FGV0441
+> >=20
+> > + *   - 9FGV0841
+> >=20
+> >   *
+> >   * Copyright (C) 2022 Marek Vasut <marex@denx.de>
+> >   */
+> >=20
+> > @@ -42,6 +43,7 @@
+> >=20
+> >  #define RS9_REG_DID				0x6
+> >  #define RS9_REG_BCP				0x7
+> >=20
+> > +#define RS9_REG_VID_MASK			GENMASK(3, 0)
+> >=20
+> >  #define RS9_REG_VID_IDT				0x01
+> > =20
+> >  #define RS9_REG_DID_TYPE_FGV			(0x0 <<=20
+RS9_REG_DID_TYPE_SHIFT)
+> >=20
+> > @@ -53,6 +55,7 @@
+> >=20
+> >  enum rs9_model {
+> > =20
+> >  	RENESAS_9FGV0241,
+> >  	RENESAS_9FGV0441,
+> >=20
+> > +	RENESAS_9FGV0841,
+> >=20
+> >  };
+> > =20
+> >  /* Structure to describe features of a particular 9-series model */ @@=
+ -
+> >=20
+> > 162,12 +165,15 @@ static u8 rs9_calc_dif(const struct rs9_driver_data
+> > *rs9, int idx)  {
+> >=20
+> >  	enum rs9_model model =3D rs9->chip_info->model;
+> >=20
+> > +	/*
+> > +	 * On 9FGV0241, the DIF OE0 is BIT(1) and DIF OE(1) is BIT(2),
+> > +	 * on 9FGV0441 and 9FGV0841 the DIF OE0 is BIT(0) and so on.
+> > +	 * Increment the index in the 9FGV0241 special case here.
+> > +	 */
+>=20
+> I guess model enum variable in struct rs9_chip_info can be replaced with a
+> variable for the above hardware differences(eg: BIT(idx) value in struct
+> rs9_chip_inf) . Then you don't need this function at all.
+
+That's true for 9FGV family. If support for 9QXL family will ever be added=
+=20
+(the header claims the support can be added), this enum is required again a=
+s=20
+the register model is completely different.
+
+Best regards,
+Alexander
+
+> Cheers,
+> Biju
+>=20
+> >  	if (model =3D=3D RENESAS_9FGV0241)
+> >=20
+> > -		return BIT(idx + 1);
+> > -	else if (model =3D=3D RENESAS_9FGV0441)
+> > -		return BIT(idx);
+> > +		idx++;
+> >=20
+> > -	return 0;
+> > +	return BIT(idx);
+> >=20
+> >  }
+> > =20
+> >  static int rs9_get_output_config(struct rs9_driver_data *rs9, int idx)=
+ @@
+> >=20
+> > -333,6 +339,7 @@ static int rs9_probe(struct i2c_client *client)
+> >=20
+> >  	if (ret < 0)
+> >  =09
+> >  		return ret;
+> >=20
+> > +	vid &=3D RS9_REG_VID_MASK;
+> >=20
+> >  	if (vid !=3D RS9_REG_VID_IDT || did !=3D rs9->chip_info->did)
+> >  =09
+> >  		return dev_err_probe(&client->dev, -ENODEV,
+> >  	=09
+> >  				     "Incorrect VID/DID: %#02x, %#02x.
+> >=20
+> > Expected %#02x, %#02x\n", @@ -391,9 +398,16 @@ static const struct
+> > rs9_chip_info renesas_9fgv0441_info =3D {
+> >=20
+> >  	.did		=3D RS9_REG_DID_TYPE_FGV | 0x04,
+> > =20
+> >  };
+> >=20
+> > +static const struct rs9_chip_info renesas_9fgv0841_info =3D {
+> > +	.model		=3D RENESAS_9FGV0841,
+> > +	.num_clks	=3D 8,
+> > +	.did		=3D RS9_REG_DID_TYPE_FGV | 0x08,
+> > +};
+> > +
+> >=20
+> >  static const struct i2c_device_id rs9_id[] =3D {
+> > =20
+> >  	{ "9fgv0241", .driver_data =3D
+> >=20
+> > (kernel_ulong_t)&renesas_9fgv0241_info },
+> >=20
+> >  	{ "9fgv0441", .driver_data =3D
+> >=20
+> > (kernel_ulong_t)&renesas_9fgv0441_info },
+> > +	{ "9fgv0841", .driver_data =3D
+> > (kernel_ulong_t)&renesas_9fgv0841_info },
+> >=20
+> >  	{ }
+> > =20
+> >  };
+> >  MODULE_DEVICE_TABLE(i2c, rs9_id);
+> >=20
+> > @@ -401,6 +415,7 @@ MODULE_DEVICE_TABLE(i2c, rs9_id);  static const str=
+uct
+> > of_device_id clk_rs9_of_match[] =3D {
+> >=20
+> >  	{ .compatible =3D "renesas,9fgv0241", .data =3D
+> >=20
+> > &renesas_9fgv0241_info },
+> >=20
+> >  	{ .compatible =3D "renesas,9fgv0441", .data =3D
+> >=20
+> > &renesas_9fgv0441_info },
+> > +	{ .compatible =3D "renesas,9fgv0841", .data =3D
+> > &renesas_9fgv0841_info },
+> >=20
+> >  	{ }
+> > =20
+> >  };
+> >  MODULE_DEVICE_TABLE(of, clk_rs9_of_match);
+> >=20
+> > --
+> > 2.42.0
+
+
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
+
