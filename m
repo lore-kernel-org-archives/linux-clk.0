@@ -2,819 +2,274 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7560C4332F
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Nov 2023 13:04:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B4B7C41535
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Nov 2023 13:36:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231747AbjKFNE3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Nov 2023 08:04:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52418 "EHLO
+        id S231240AbjKFNgm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Nov 2023 08:36:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231676AbjKFNE1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Nov 2023 08:04:27 -0500
-Received: from mail-oa1-x2d.google.com (mail-oa1-x2d.google.com [IPv6:2001:4860:4864:20::2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56BD591
-        for <linux-clk@vger.kernel.org>; Mon,  6 Nov 2023 05:04:23 -0800 (PST)
-Received: by mail-oa1-x2d.google.com with SMTP id 586e51a60fabf-1f06931e4f7so2104823fac.1
-        for <linux-clk@vger.kernel.org>; Mon, 06 Nov 2023 05:04:23 -0800 (PST)
+        with ESMTP id S231872AbjKFNgm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Nov 2023 08:36:42 -0500
+Received: from mail-yb1-xb35.google.com (mail-yb1-xb35.google.com [IPv6:2607:f8b0:4864:20::b35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78AC8134
+        for <linux-clk@vger.kernel.org>; Mon,  6 Nov 2023 05:36:37 -0800 (PST)
+Received: by mail-yb1-xb35.google.com with SMTP id 3f1490d57ef6-da077db5145so4341134276.0
+        for <linux-clk@vger.kernel.org>; Mon, 06 Nov 2023 05:36:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1699275862; x=1699880662; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1699277796; x=1699882596; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=C5eVmNAONKBSMMyy+trlqek0ekUCKHBQR7aBuMQnyPY=;
-        b=w5+RSnfIZ1i/wrJLGONhXwhSF2NsxCq/ABmriO19yWQgerpFS4xnVvZnfveHQuYsHl
-         5oegPAailI3FZfe4LQPl5fDCZJVENGtu9eqCXsr95zWGjfLrVSjCItkiFMxQe5vmMB7P
-         gZD5WUY0nORtPLYTowruHUGTptSCdP6ImULotgiCe9VEFEoTjSRW3vZv0pYpAERyTCOY
-         pj6/JAvMb+4WM0DvzQ7den9494khoul24y3M3nKpcBeZUoa4wGxGBXGZSjAf0TaXSNKW
-         9+dfXYdVfyuw4GTeedKGRp5MYz/ImTsAz8JAKOlg/YpxMMnEOLGd5bYzlAZZak8wCX3w
-         6+eg==
+        bh=83490tanbieQpNkzB0DdxUY/5tq5M+Egl36lG1f/02A=;
+        b=FE8QNUieH6xvx3yo0YbjE70G9DShRUXkbc93PobuQO38tpWVLBPaUeqsNl8VhhLgbH
+         EYUi9ByuLqNYa8P+u/WW5mL9rLYP+Nt18a3wJm6tw6WyigcFsLLMt8Kpu8q22tWeXHB3
+         yQdDk3VYETEofuQvgaT2MyLb9BiRzM5rn8UgSX6sTWP5vlT8rSoZVE1pC8dG3ARmKEK+
+         rehjikfOvzkrDFAYghJJAEzQrTFJPe1MN35IpEGABxx4KveoTTBPhGX+4qgVyW0IABof
+         1WfWIZL/DfbBTX9wHWj1YBwLq0d5Cmyjet7urTIIhJBsOUQYtxvNQ7ChWQACjQNKOFxu
+         u1cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699275862; x=1699880662;
+        d=1e100.net; s=20230601; t=1699277796; x=1699882596;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=C5eVmNAONKBSMMyy+trlqek0ekUCKHBQR7aBuMQnyPY=;
-        b=KtZ48lYnIyQKUfZ6BR5bXDfDTsaQEdBYxzX3ZQWnawBQ2jMVs/lIJyK7RO9ai04dyU
-         8UsbgZeO92eex4gs9yPuIuI1YIy0dU/ug4gIBXBkRmWCnuWGqjCeMZQ//SqhGs6Ca2TD
-         bcGE3PQxz4PGkFBpkWSlBsamNO9W18Rv0Qt8UtQiHW5N4jKPyj2iMSgyBUHXKnrx2Mhf
-         kB4ISLyC1erDr0dWnt64aU3/tReKx+xtjfOxR1tvrYoJ902IJC9bv1ShC1BtZ4NfBmEb
-         HYZSi7jknsKopQs/FsHJ5vINtuERyxl8DXREqqTgV67vshO3XxB6/vnEk/oazFkEHFOH
-         ENnA==
-X-Gm-Message-State: AOJu0YwNujeKg8xVuf6GpoyJBY65BnJncjhtb7WnzEXhForUWo/IFoVf
-        H8ICG1XXs5HyVSN+cmxUgnCEqErV4n4Kdw7ZxacvUA==
-X-Google-Smtp-Source: AGHT+IFHqKhB1wMxHu8Srrew3duilO6EXP4mM1DNi+Ebxai0n13IsIUNU62pjLo9Oj624Z2/oLchCiWUtIxMa1P6w8A=
-X-Received: by 2002:a05:6870:90d5:b0:1d0:d9e2:985f with SMTP id
- s21-20020a05687090d500b001d0d9e2985fmr30085226oab.57.1699275862329; Mon, 06
- Nov 2023 05:04:22 -0800 (PST)
+        bh=83490tanbieQpNkzB0DdxUY/5tq5M+Egl36lG1f/02A=;
+        b=xTFKFY8fElGiN6k+iuuFmGy+xdpkAOdg5ypypZLjkGk6fsVPlgMEmbHDotntqgzfSu
+         Kd166Z8VZQlIEnZPj+HSI0GpI4qz3zylmNyZ8EcLQOVmz7g0D2Rl1itmjoAollBlTcCF
+         61ikDiRUI+U2dmi3nf5OXz/kFzNVl4xK0NNdkhc5naQg6UJkZ5cVr0gSG4/qVtVRrDmP
+         IIXsz+7cdIjhq/PeMyoEm/qrkQa37f/dT6x9M6ZiSOtoYpxRicpgaro1kNDio/Da8HcG
+         O0hvMaHqEiKRW5YSs29Bk57XImA7cu2jAgJO1c74v3gdCMk5dQCzSaUkUyvi6R21zwg0
+         krsg==
+X-Gm-Message-State: AOJu0Yw7WXACea9DW8a1uxLJIRwdG4yeM2V3U2IBEHigulkFlq0PRqDU
+        w7y950dCYek3TmorH5aumkUCnV1dfEyCjmMH3H1Brg==
+X-Google-Smtp-Source: AGHT+IGmQY13BxBxBzb0d8lmlJ4oIMy3ib1c8YevIHL2R8UlJ8RMiTrVYzodkbj49vb/zL/CxhLBLD8lDqBmIx+jBDg=
+X-Received: by 2002:a25:8590:0:b0:da0:cf4b:c504 with SMTP id
+ x16-20020a258590000000b00da0cf4bc504mr29059132ybk.8.1699277796488; Mon, 06
+ Nov 2023 05:36:36 -0800 (PST)
 MIME-Version: 1.0
-References: <20231106103027.3988871-1-quic_imrashai@quicinc.com> <20231106103027.3988871-4-quic_imrashai@quicinc.com>
-In-Reply-To: <20231106103027.3988871-4-quic_imrashai@quicinc.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Mon, 6 Nov 2023 15:04:10 +0200
-Message-ID: <CAA8EJpoGLCfrWQ5r8cOcqyWmF2ZTTqPxFy_HVzPC-A-dCiV48A@mail.gmail.com>
-Subject: Re: [PATCH V3 3/4] clk: qcom: Add ECPRICC driver support for QDU1000
- and QRU1000
-To:     Imran Shaik <quic_imrashai@quicinc.com>
-Cc:     Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ajit Pandey <quic_ajipan@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>
+References: <20231010224928.2296997-1-peter.griffin@linaro.org>
+ <3d489d6c-2098-4f0c-9ec4-f6040665753e@lpnu.ua> <CADrjBPp+fyNoPdix6=Wp4cDCRFq2Mui8NS6WENejcHn+H1M-jA@mail.gmail.com>
+ <48e1c0bd-9518-4927-b490-f3206256bbd4@lpnu.ua> <c0b8f356-0f26-459d-850d-ec0fa1fd3987@linaro.org>
+In-Reply-To: <c0b8f356-0f26-459d-850d-ec0fa1fd3987@linaro.org>
+From:   Peter Griffin <peter.griffin@linaro.org>
+Date:   Mon, 6 Nov 2023 13:36:24 +0000
+Message-ID: <CADrjBPqXQa0ZhM3YFToH5kZcOU27ZuSajm-gj5mWybGTRM++-Q@mail.gmail.com>
+Subject: Re: [PATCH v2 00/20] Add minimal Tensor/GS101 SoC support and
+ Oriole/Pixel6 board
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Maksym Holovach <maksym.holovach.an.2022@lpnu.ua>,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
+        tomasz.figa@gmail.com, s.nawrocki@samsung.com,
+        linus.walleij@linaro.org, wim@linux-watchdog.org,
+        linux@roeck-us.net, catalin.marinas@arm.com, will@kernel.org,
+        arnd@arndb.de, olof@lixom.net, cw00.choi@samsung.com,
+        tudor.ambarus@linaro.org, andre.draszik@linaro.org,
+        semen.protsenko@linaro.org, saravanak@google.com,
+        willmcvicker@google.com, soc@kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        kernel-team@android.com, linux-serial@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 6 Nov 2023 at 12:32, Imran Shaik <quic_imrashai@quicinc.com> wrote:
+Hi Krzysztof,
+
+On Fri, 3 Nov 2023 at 14:49, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
 >
-> Add ECPRI Clock Controller (ECPRICC) support for QDU1000 and QRU1000 SoCs.
+> On 03/11/2023 14:56, Maksym Holovach wrote:
+> > Hi Peter,
+> >
+> > On 11/3/23 15:11, Peter Griffin wrote:
+> >> Hi Maksym,
+> >>
+> >> Thanks for your feedback.
+> >>
+> >> On Thu, 2 Nov 2023 at 22:32, Maksym Holovach
+> >> <maksym.holovach.an.2022@lpnu.ua> wrote:
+> >>> Hi, all
+> >>>
+> >>> I wanted to inquire about how do you all feel about calling this SoC by
+> >>> the Google "gs101" name.
+> >> Interesting question, I think calling it gs101 is the correct approach see
+> >> below for my rationale.
+> >>
+> >>> I believe the proper name for it should be the actual Samsung name,
+> >>> written in the silicon and reported in the Chip ID hardware: Exynos9845.
+> >>> This also touches the Tensor G2 (Exynos9855), Tensor G3 (Exynos9865),
+> >>> and possibly the "Tesla" SoCs.
+> >>>
+> >>> I do not think the Linux kernel should be a marketing material: it
+> >>> should reflect reality. The chip is almost 100% composed of Samsung
+> >>> Exynos IP blocks and should be called that way.
+> >> As you alluded to Tesla fsd and Axis artpec8 SoCs are also based on
+> >> Exynos designs and support upstream uses the axis,artpec8* or tesla,fsd*
+> >> compatibles.
+> >>
+> >> So using google,gs101 is consistent with the existing upstream naming
+> >> scheme, for customized ASICs that were based off a Exynos design. But
+> >> it also reflects the reality that this SoC is not a Exynos9845 as there is
+> >> also a lot of Google owned and other third party IP integrated that is not
+> >> found in Exynos9845.
+> >
+> > A quick question: Do you imply Exynos9845 exists outside of the context
+> > of Tensor G1? I used to believe Exynos9845 **is** Tensor G1.
+> >
+> > Also, what kind of Google IP are you talking about? I believe only the
+> > neural accelerator should be custom-ish.
+> >
+> > Additionally, I believe it having or not having Google IP is irrelevant:
+> > for example, the new Raspberry Pi 5 Broadcom SoC has a lot of
+> > Raspberry's own IP, but it's still called Broadcom as it's the real
+> > manufacturer and designer of the chip.
+>
+> That's a good argument. Indeed BCM2712 contains "New Raspberry
+> Pi-developed ISP".
+> https://www.raspberrypi.com/documentation/computers/processors.html
+>
+> There aren't many patches but GPU is still called brcm,2712.
 
-After reading this series I have one main question. What is ECPRI?
-You've never expanded this acronym.
+RPi ISP is named 'raspberrypi,pispbe' in RPi downstream drivers. See
+linux/drivers/media/platform/raspberrypi/pisp_be/ in RPi tree.
 
 >
-> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
-> ---
->  drivers/clk/qcom/Kconfig           |    9 +
->  drivers/clk/qcom/Makefile          |    1 +
->  drivers/clk/qcom/ecpricc-qdu1000.c | 2456 ++++++++++++++++++++++++++++
->  3 files changed, 2466 insertions(+)
->  create mode 100644 drivers/clk/qcom/ecpricc-qdu1000.c
+> For Tesla FSD, there was discussion and output was not very consisting.
+> First, the name itself was used for everything - SoC architecture, one
+> given SoC and eventually the board.
+> https://lore.kernel.org/all/5ab62673-8d46-ec1d-1c80-696421ab69ca@canonical.com/
 >
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index ad1acd9b7426..9e54afc67519 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -668,6 +668,15 @@ config QDU_GCC_1000
->           QRU1000 devices. Say Y if you want to use peripheral
->           devices such as UART, SPI, I2C, USB, SD, PCIe, etc.
+> Eventually the last part - board - was renamed to "Evaluation board",
+> but I don't know how true or real it is.
 >
-> +config QDU_ECPRICC_1000
-> +       tristate "QDU1000/QRU1000 ECPRI Clock Controller"
-> +       depends on ARM64 || COMPILE_TEST
-> +       select QDU_GCC_1000
-> +       help
-> +         Support for the ECPRI clock controller on QDU1000 and
-> +         QRU1000 devices. Say Y if you want to support the ECPRI
-> +         clock controller functionality such as Ethernet.
-> +
->  config SDM_GCC_845
->         tristate "SDM845/SDM670 Global Clock Controller"
->         depends on ARM64 || COMPILE_TEST
-> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-> index 17edd73f9839..607ed0fabf36 100644
-> --- a/drivers/clk/qcom/Makefile
-> +++ b/drivers/clk/qcom/Makefile
-> @@ -65,6 +65,7 @@ obj-$(CONFIG_QCM_DISPCC_2290) += dispcc-qcm2290.o
->  obj-$(CONFIG_QCS_GCC_404) += gcc-qcs404.o
->  obj-$(CONFIG_QCS_Q6SSTOP_404) += q6sstop-qcs404.o
->  obj-$(CONFIG_QCS_TURING_404) += turingcc-qcs404.o
-> +obj-$(CONFIG_QDU_ECPRICC_1000) += ecpricc-qdu1000.o
->  obj-$(CONFIG_QDU_GCC_1000) += gcc-qdu1000.o
->  obj-$(CONFIG_SC_CAMCC_7180) += camcc-sc7180.o
->  obj-$(CONFIG_SC_CAMCC_7280) += camcc-sc7280.o
-> diff --git a/drivers/clk/qcom/ecpricc-qdu1000.c b/drivers/clk/qcom/ecpricc-qdu1000.c
-> new file mode 100644
-> index 000000000000..a430b7228c26
-> --- /dev/null
-> +++ b/drivers/clk/qcom/ecpricc-qdu1000.c
-> @@ -0,0 +1,2456 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-
-[skipped]
-
-
-> +
-> +static struct clk_mem_branch ecpri_cc_eth_phy_0_ock_sram_clk = {
-> +       .mem_enable_reg = 0x8404,
-> +       .mem_ack_reg = 0x8418,
-> +       .mem_enable_ack_mask = BIT(6),
-> +       .branch = {
-> +               .halt_reg = 0xd140,
-> +               .halt_check = BRANCH_HALT,
-> +               .clkr = {
-> +                       .enable_reg = 0xd140,
-> +                       .enable_mask = BIT(0),
-> +                       .hw.init = &(const struct clk_init_data) {
-> +                               .name = "ecpri_cc_eth_phy_0_ock_sram_clk",
-> +                               .ops = &clk_branch2_mem_ops,
-
-This (and several following branch clocks) do not have a parent
-defined. From which clock are they derived from?
-
-> +                       },
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_mem_branch ecpri_cc_eth_phy_1_ock_sram_clk = {
-> +       .mem_enable_reg = 0x8408,
-> +       .mem_ack_reg = 0x841C,
-> +       .mem_enable_ack_mask = BIT(6),
-> +       .branch = {
-> +               .halt_reg = 0xd148,
-> +               .halt_check = BRANCH_HALT,
-> +               .clkr = {
-> +                       .enable_reg = 0xd148,
-> +                       .enable_mask = BIT(0),
-> +                       .hw.init = &(const struct clk_init_data) {
-> +                               .name = "ecpri_cc_eth_phy_1_ock_sram_clk",
-> +                               .ops = &clk_branch2_mem_ops,
-> +                       },
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_mem_branch ecpri_cc_eth_phy_2_ock_sram_clk = {
-> +       .mem_enable_reg = 0x840c,
-> +       .mem_ack_reg = 0x8420,
-> +       .mem_enable_ack_mask = BIT(6),
-> +       .branch = {
-> +               .halt_reg = 0xd150,
-> +               .halt_check = BRANCH_HALT,
-> +               .clkr = {
-> +                       .enable_reg = 0xd150,
-> +                       .enable_mask = BIT(0),
-> +                       .hw.init = &(const struct clk_init_data) {
-> +                               .name = "ecpri_cc_eth_phy_2_ock_sram_clk",
-> +                               .ops = &clk_branch2_mem_ops,
-> +                       },
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_mem_branch ecpri_cc_eth_phy_3_ock_sram_clk = {
-> +       .mem_enable_reg = 0x8410,
-> +       .mem_ack_reg = 0x8424,
-> +       .mem_enable_ack_mask = BIT(6),
-> +       .branch = {
-> +               .halt_reg = 0xd158,
-> +               .halt_check = BRANCH_HALT,
-> +               .clkr = {
-> +                       .enable_reg = 0xd158,
-> +                       .enable_mask = BIT(0),
-> +                       .hw.init = &(const struct clk_init_data) {
-> +                               .name = "ecpri_cc_eth_phy_3_ock_sram_clk",
-> +                               .ops = &clk_branch2_mem_ops,
-> +                       },
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_mem_branch ecpri_cc_eth_phy_4_ock_sram_clk = {
-> +       .mem_enable_reg = 0x8414,
-> +       .mem_ack_reg = 0x8428,
-> +       .mem_enable_ack_mask = BIT(6),
-> +       .branch = {
-> +               .halt_reg = 0xd160,
-> +               .halt_check = BRANCH_HALT,
-> +               .clkr = {
-> +                       .enable_reg = 0xd160,
-> +                       .enable_mask = BIT(0),
-> +                       .hw.init = &(const struct clk_init_data) {
-> +                               .name = "ecpri_cc_eth_phy_4_ock_sram_clk",
-> +                               .ops = &clk_branch2_mem_ops,
-> +                       },
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_mss_emac_clk = {
-> +       .halt_reg = 0xe008,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xe008,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_mss_emac_clk",
-> +                       .parent_hws = (const struct clk_hw*[]) {
-> +                               &ecpri_cc_mss_emac_clk_src.clkr.hw,
-> +                       },
-> +                       .num_parents = 1,
-> +                       .flags = CLK_SET_RATE_PARENT,
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_mss_oran_clk = {
-> +       .halt_reg = 0xe004,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xe004,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_mss_oran_clk",
-> +                       .parent_hws = (const struct clk_hw*[]) {
-> +                               &ecpri_cc_ecpri_oran_clk_src.clkr.hw,
-> +                       },
-> +                       .num_parents = 1,
-> +                       .flags = CLK_SET_RATE_PARENT,
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy0_lane0_rx_clk = {
-> +       .halt_reg = 0xd000,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd000,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy0_lane0_rx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy0_lane0_tx_clk = {
-> +       .halt_reg = 0xd050,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd050,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy0_lane0_tx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy0_lane1_rx_clk = {
-> +       .halt_reg = 0xd004,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd004,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy0_lane1_rx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy0_lane1_tx_clk = {
-> +       .halt_reg = 0xd054,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd054,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy0_lane1_tx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy0_lane2_rx_clk = {
-> +       .halt_reg = 0xd008,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd008,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy0_lane2_rx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy0_lane2_tx_clk = {
-> +       .halt_reg = 0xd058,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd058,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy0_lane2_tx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy0_lane3_rx_clk = {
-> +       .halt_reg = 0xd00c,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd00c,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy0_lane3_rx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy0_lane3_tx_clk = {
-> +       .halt_reg = 0xd05c,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd05c,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy0_lane3_tx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy1_lane0_rx_clk = {
-> +       .halt_reg = 0xd010,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd010,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy1_lane0_rx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy1_lane0_tx_clk = {
-> +       .halt_reg = 0xd060,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd060,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy1_lane0_tx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy1_lane1_rx_clk = {
-> +       .halt_reg = 0xd014,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd014,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy1_lane1_rx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy1_lane1_tx_clk = {
-> +       .halt_reg = 0xd064,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd064,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy1_lane1_tx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy1_lane2_rx_clk = {
-> +       .halt_reg = 0xd018,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd018,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy1_lane2_rx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy1_lane2_tx_clk = {
-> +       .halt_reg = 0xd068,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd068,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy1_lane2_tx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy1_lane3_rx_clk = {
-> +       .halt_reg = 0xd01c,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd01c,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy1_lane3_rx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy1_lane3_tx_clk = {
-> +       .halt_reg = 0xd06c,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd06c,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy1_lane3_tx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy2_lane0_rx_clk = {
-> +       .halt_reg = 0xd020,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd020,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy2_lane0_rx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy2_lane0_tx_clk = {
-> +       .halt_reg = 0xd070,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd070,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy2_lane0_tx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy2_lane1_rx_clk = {
-> +       .halt_reg = 0xd024,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd024,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy2_lane1_rx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy2_lane1_tx_clk = {
-> +       .halt_reg = 0xd074,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd074,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy2_lane1_tx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy2_lane2_rx_clk = {
-> +       .halt_reg = 0xd028,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd028,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy2_lane2_rx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy2_lane2_tx_clk = {
-> +       .halt_reg = 0xd078,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd078,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy2_lane2_tx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy2_lane3_rx_clk = {
-> +       .halt_reg = 0xd02c,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd02c,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy2_lane3_rx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy2_lane3_tx_clk = {
-> +       .halt_reg = 0xd07c,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd07c,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy2_lane3_tx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy3_lane0_rx_clk = {
-> +       .halt_reg = 0xd030,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd030,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy3_lane0_rx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy3_lane0_tx_clk = {
-> +       .halt_reg = 0xd080,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd080,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy3_lane0_tx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy3_lane1_rx_clk = {
-> +       .halt_reg = 0xd034,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd034,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy3_lane1_rx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy3_lane1_tx_clk = {
-> +       .halt_reg = 0xd084,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd084,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy3_lane1_tx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy3_lane2_rx_clk = {
-> +       .halt_reg = 0xd038,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd038,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy3_lane2_rx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy3_lane2_tx_clk = {
-> +       .halt_reg = 0xd088,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd088,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy3_lane2_tx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy3_lane3_rx_clk = {
-> +       .halt_reg = 0xd03c,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd03c,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy3_lane3_rx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy3_lane3_tx_clk = {
-> +       .halt_reg = 0xd08c,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd08c,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy3_lane3_tx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy4_lane0_rx_clk = {
-> +       .halt_reg = 0xd040,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd040,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy4_lane0_rx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy4_lane0_tx_clk = {
-> +       .halt_reg = 0xd090,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd090,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy4_lane0_tx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy4_lane1_rx_clk = {
-> +       .halt_reg = 0xd044,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd044,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy4_lane1_rx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy4_lane1_tx_clk = {
-> +       .halt_reg = 0xd094,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd094,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy4_lane1_tx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy4_lane2_rx_clk = {
-> +       .halt_reg = 0xd048,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd048,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy4_lane2_rx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy4_lane2_tx_clk = {
-> +       .halt_reg = 0xd098,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd098,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy4_lane2_tx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy4_lane3_rx_clk = {
-> +       .halt_reg = 0xd04c,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd04c,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy4_lane3_rx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch ecpri_cc_phy4_lane3_tx_clk = {
-> +       .halt_reg = 0xd09c,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0xd09c,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "ecpri_cc_phy4_lane3_tx_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-
-[skipped]
-
-> +static int ecpri_cc_qdu1000_probe(struct platform_device *pdev)
-> +{
-> +       struct regmap *regmap;
-> +
-> +       regmap = qcom_cc_map(pdev, &ecpri_cc_qdu1000_desc);
-> +       if (IS_ERR(regmap))
-> +               return PTR_ERR(regmap);
-> +
-> +       clk_lucid_evo_pll_configure(&ecpri_cc_pll0, regmap, &ecpri_cc_pll0_config);
-> +       clk_lucid_evo_pll_configure(&ecpri_cc_pll1, regmap, &ecpri_cc_pll1_config);
-> +
-> +       return qcom_cc_really_probe(pdev, &ecpri_cc_qdu1000_desc, regmap);
-> +}
-> +
-> +static struct platform_driver ecpri_cc_qdu1000_driver = {
-> +       .probe = ecpri_cc_qdu1000_probe,
-> +       .driver = {
-> +               .name = "ecpri_cc-qdu1000",
-> +               .of_match_table = ecpri_cc_qdu1000_match_table,
-> +       },
-> +};
-> +
-> +module_platform_driver(ecpri_cc_qdu1000_driver);
-> +
-> +MODULE_DESCRIPTION("QTI ECPRICC QDU1000 Driver");
-> +MODULE_LICENSE("GPL");
-> --
-> 2.25.1
+> See also:
+> "I would argue that if this SoC shares the pinctrl, clock, spi, adc,
+> and timer implementation
+> with Exynos, we should consider it part of the Exynos family,"
+> https://lore.kernel.org/all/CAK8P3a31bCHNcNWrLX+QW+4RuK=DBpxLA_j5BFKxXxXKCT8PFQ@mail.gmail.com/
 >
+> However it was also claimed:
+>
+> "AFA architecture is concerns both Exynos and FSD has completely
+> different architecture (at least at HW level)."
+> https://lore.kernel.org/all/07ce01d8091e$9a6fd9c0$cf4f8d40$@samsung.com/
 
+Thanks for those references.
 
--- 
-With best wishes
-Dmitry
+I know nothing about Tesla FSD SoC internals I'm afraid. But it seems
+plausible to
+me that you would not goto the expense of designing your own SoC if something
+existed off the shelf you could just buy.
+
+I suspect the original SoC series for Tesla, Tensor etc tend to look
+very "exynos"
+centric as it is the non differentiating bits of IP, but also the IP
+that is required first
+to bring up the platform.
+
+>
+> >> I guess the same is also true for `axis,artpec8` and `tesla,fsd` SoCs.
+> >> IMO the SoC compatible string should be uniquely identifying the actual
+> >> SoC, not a close relative.
+> >>
+> >> Regarding product_id you are correct this reads 0x09845000 but even
+> >> within Samsung Exynos family there are examples where the register
+> >> value does not match the SoC compatible. For example Exynos850 SoC
+> >> has a product ID value of "E3830". Where the Linux compatible is
+> >> matching the Samsung marketing name, not the internal/outdated name.
+> >
+> > I did not know Exynos 850 is also not going under it's real name.
+> > Ultimately, I believe all of those SoCs should go under their technical
+> > name in the exynos/ directory.
+>
+> The initial technical name does not exist outside of vendor sources and
+> part name. E.g. Winlink E850 board hardware manual calls it:
+> "Samsung Exynos 850, S5E3830"
+> and everywhere else Exynos 850 SoC is used.
+>
+> If you start calling it Exynos 3830, only me and Sam (who mainlined it)
+> would know what is it. Everyone else, all users of kernel, would be
+> confused.
+>
+> Therefore using well known final product name is for Exynos850 reasonable.
+
+I agree that was the correct decision IMO, and it is a very similar
+situation here
+as far as I'm concerned. Most people don't know Tensor G1 SoC as Exynos
+9845.
+
+>
+> >
+> > Another concern is that Google could in the future license other SoC: be
+> > it Qualcomm, Nvidia or anything. If we put completely different hw under
+> > google/ directory, does it really make sense? In that case, who'll
+> > maintain the google/ directory? Exynos people? Qualcomm people if they
+> > license it? Some other people?
+>
+> That's indeed a problem. Future Tesla SoC might have just few pieces
+> similar to FSD. There would be no common SoC part, except the actual
+> Tesla IP.
+>
+> Same for Google. Future GSXXX, if done by Qualcomm, will be absolutely
+> different than GS101 and the only common part would be the TPU (Tensor).
+
+There is more Google IP than TPU but I see the point you're making.
+
+>
+> So now let's decide what is the common denominator:
+> 1. Core SoC architecture, like buses, pinctrl, clocks, timers, serial,
+> and many IP blocks, which constitute 95% of Devicetree bindings and drivers,
+> 2. The one, big piece made by Samsung's customer: TPU, NPU or whatever.
+
+Or multiple big pieces of IP.
+
+Does having it all under the exynos directory help you somehow with
+maintenance? Has having Alim maintain tesla-fsd in a separate directory
+caused issues?
+
+I structured it like this as I thought it would scale better, and also
+because it was
+consistent with what you had accepted previously for other Exynos derived SoCs
+like Tesla.
+
+>
+> >
+> > Then, I don't think Tensor G3 has a proper "GS" name, it goes by "Zuma"
+> > in decompiled kernel modules as far as I see.
+> >
+> > Finally, Tesla people already tried to submit drivers called by Tesla
+> > name, but which basically copied the functionality of the Exynos
+> > drivers. We would want to avoid that, ideally.
+> >
+> > My opinion is that all the Tesla and Google SoCs should be in the
+> > exynos/ directory, not only because they are basically Samsung Exynos,
+> > but also because they don't really need a separate directory: neither
+> > Google nor Tesla didn't neither manufacture or design those SoCs from
+> > scratch. The only reason I can think of for them to have it in a
+> > separate directory is maybe because Google and Tesla actually paid
+> > Samsung money for the right to call Exynos "Google designed" SoCs, but I
+> > believe the kernel should be left out of that.
+>
+> For some reason, although I know which, Cc-list is here trimmed and
+> misses Alim...
+>
+> So standard reply follow (it makes me really, really grumpy, because it
+> means you develop on some crazy old kernel or do not use tools which
+> automate the process):
+>
+> Please use scripts/get_maintainers.pl to get a list of necessary people
+> and lists to CC (and consider --no-git-fallback argument). It might
+> happen, that command when run on an older kernel, gives you outdated
+> entries. Therefore please be sure you base your patches on recent Linux
+> kernel.
+
+Sorry about that. I can add Alim and others to CC next time around. I didn't
+notice he was listed as a reviewer of Exynos. I thought it was only for Tesla
+FSD SoC. My apologies Alim!
+
+Thanks,
+
+Peter.
