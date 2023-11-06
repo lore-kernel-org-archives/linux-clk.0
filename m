@@ -2,271 +2,169 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67197C4167D
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Nov 2023 14:24:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79F06C4167D
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Nov 2023 15:16:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231277AbjKFOYe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Nov 2023 09:24:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37306 "EHLO
+        id S232125AbjKFPQj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Nov 2023 10:16:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230146AbjKFOYd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Nov 2023 09:24:33 -0500
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AEB5134;
-        Mon,  6 Nov 2023 06:24:30 -0800 (PST)
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3A6CfNv9000794;
-        Mon, 6 Nov 2023 15:24:19 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding:content-type; s=
-        selector1; bh=LV9O0rO7JK3j2ifGDEu1Rw+yCX0BEe+HAzDkOd4hRrM=; b=RC
-        6jDGTuk4M3y+41bAcGF6UWatSH/W2XgeKawDKDEGffZnk+lBsfYaeCtSmbiCufIk
-        pUSswNbQ9mVlXuQcaOaPPYraPDBQHsX+l/EvnMwDOG7IGKWLljlVFL4g+7s9JLKt
-        XeWNzR5MDQ6YSeVIW8nJl7vvW9/dFMrdEHuyHeuxYciatUmxNlxHtCB6UlrdnJrM
-        04LxWSJQBEGEc7Bu/rYWIz8wh3yR44KApvnQ7zZp26eLY7uwVT6rxt8Bu91zZ6Vz
-        atzHA2KIyN7spkg7dd6FbTMeB/ROMC2fIZkFcaP73Gw+dKQ96AAzRqO5AmuZZyQ0
-        hNGDv6e0rKRTNNBmoDMg==
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3u5eqrqhmn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 06 Nov 2023 15:24:19 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 707B5100059;
-        Mon,  6 Nov 2023 15:24:18 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 65A072561B6;
-        Mon,  6 Nov 2023 15:24:18 +0100 (CET)
-Received: from localhost (10.201.21.240) by SHFDAG1NODE1.st.com (10.75.129.69)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Mon, 6 Nov
- 2023 15:24:18 +0100
-From:   <gabriel.fernandez@foss.st.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH 4/4] arm64: dts: st: add rcc support in stm32mp251
-Date:   Mon, 6 Nov 2023 15:18:45 +0100
-Message-ID: <20231106141845.102648-5-gabriel.fernandez@foss.st.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20231106141845.102648-1-gabriel.fernandez@foss.st.com>
-References: <20231106141845.102648-1-gabriel.fernandez@foss.st.com>
+        with ESMTP id S229839AbjKFPQg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Nov 2023 10:16:36 -0500
+X-Greylist: delayed 347 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 06 Nov 2023 07:16:31 PST
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2D4ADB
+        for <linux-clk@vger.kernel.org>; Mon,  6 Nov 2023 07:16:31 -0800 (PST)
+Date:   Mon, 6 Nov 2023 16:10:35 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
+        t=1699283440;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=8IseJkdw2ZJ4O7QHhV2msEv4n+4BZunk72A86TeVvNk=;
+        b=QR638+RBEN1ZHFuLBGLLLrN272CNfvCND66lm1i+46gFJNp6vZDMtp8k1YAKbFmkRujKH+
+        r+YZGpmpBotCu6G1KjbUd8OaC7opFiOjxzygN0tcKlomn/80U23ZP18rLgK0w4t550aIgN
+        jHd1GSjM5rrNfyeFi3RTFyrvDTVcj8A=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Henrik Grimler <henrik@grimler.se>
+To:     Peter Griffin <peter.griffin@linaro.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Maksym Holovach <maksym.holovach.an.2022@lpnu.ua>,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
+        tomasz.figa@gmail.com, s.nawrocki@samsung.com,
+        linus.walleij@linaro.org, wim@linux-watchdog.org,
+        linux@roeck-us.net, catalin.marinas@arm.com, will@kernel.org,
+        arnd@arndb.de, olof@lixom.net, cw00.choi@samsung.com,
+        tudor.ambarus@linaro.org, andre.draszik@linaro.org,
+        semen.protsenko@linaro.org, saravanak@google.com,
+        willmcvicker@google.com, soc@kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        kernel-team@android.com, linux-serial@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [PATCH v2 00/20] Add minimal Tensor/GS101 SoC support and
+ Oriole/Pixel6 board
+Message-ID: <ZUkB6yVyxEmldVPs@samsung-a5>
+References: <20231010224928.2296997-1-peter.griffin@linaro.org>
+ <3d489d6c-2098-4f0c-9ec4-f6040665753e@lpnu.ua>
+ <CADrjBPp+fyNoPdix6=Wp4cDCRFq2Mui8NS6WENejcHn+H1M-jA@mail.gmail.com>
+ <48e1c0bd-9518-4927-b490-f3206256bbd4@lpnu.ua>
+ <c0b8f356-0f26-459d-850d-ec0fa1fd3987@linaro.org>
+ <CADrjBPqXQa0ZhM3YFToH5kZcOU27ZuSajm-gj5mWybGTRM++-Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.201.21.240]
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-11-06_12,2023-11-02_03,2023-05-22_02
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CADrjBPqXQa0ZhM3YFToH5kZcOU27ZuSajm-gj5mWybGTRM++-Q@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+Hi all,
 
-Add RCC support used for to manage clocks and resets on stm32mp251.
+On Mon, Nov 06, 2023 at 01:36:24PM +0000, Peter Griffin wrote:
+> Hi Krzysztof,
+> 
+> On Fri, 3 Nov 2023 at 14:49, Krzysztof Kozlowski
+> <krzysztof.kozlowski@linaro.org> wrote:
+> >
+> > On 03/11/2023 14:56, Maksym Holovach wrote:
+> > > Hi Peter,
+> > >
+> > > On 11/3/23 15:11, Peter Griffin wrote:
+> > >> Hi Maksym,
+> > >>
+> > >> Thanks for your feedback.
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
----
- arch/arm64/boot/dts/st/stm32mp251.dtsi | 59 ++++++++++++++------------
- 1 file changed, 31 insertions(+), 28 deletions(-)
+[ ... ]
 
-diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi b/arch/arm64/boot/dts/st/stm32mp251.dtsi
-index 124403f5f1f4..698d0f68b98d 100644
---- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
-+++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
-@@ -3,7 +3,9 @@
-  * Copyright (C) STMicroelectronics 2023 - All Rights Reserved
-  * Author: Alexandre Torgue <alexandre.torgue@foss.st.com> for STMicroelectronics.
-  */
-+#include <dt-bindings/clock/stm32mp25-clks.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/reset/stm32mp25-resets.h>
- 
- / {
- 	#address-cells = <2>;
-@@ -35,22 +37,10 @@ arm_wdt: watchdog {
- 	};
- 
- 	clocks {
--		ck_flexgen_08: ck-flexgen-08 {
-+		clk_rcbsec: clk-rcbsec {
- 			#clock-cells = <0>;
- 			compatible = "fixed-clock";
--			clock-frequency = <100000000>;
--		};
--
--		ck_flexgen_51: ck-flexgen-51 {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <200000000>;
--		};
--
--		ck_icn_ls_mcu: ck-icn-ls-mcu {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <200000000>;
-+			clock-frequency = <64000000>;
- 		};
- 	};
- 
-@@ -122,7 +112,7 @@ usart2: serial@400e0000 {
- 				compatible = "st,stm32h7-uart";
- 				reg = <0x400e0000 0x400>;
- 				interrupts = <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&ck_flexgen_08>;
-+				clocks = <&rcc CK_KER_USART2>;
- 				status = "disabled";
- 			};
- 
-@@ -131,7 +121,7 @@ sdmmc1: mmc@48220000 {
- 				arm,primecell-periphid = <0x00353180>;
- 				reg = <0x48220000 0x400>, <0x44230400 0x8>;
- 				interrupts = <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&ck_flexgen_51>;
-+				clocks = <&rcc CK_KER_SDMMC1 >;
- 				clock-names = "apb_pclk";
- 				cap-sd-highspeed;
- 				cap-mmc-highspeed;
-@@ -140,6 +130,19 @@ sdmmc1: mmc@48220000 {
- 			};
- 		};
- 
-+		rcc: rcc@44200000 {
-+			compatible = "st,stm32mp25-rcc";
-+			reg = <0x44200000 0x10000>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			clock-names = "hse", "hsi", "msi", "lse", "lsi";
-+			clocks = <&scmi_clk CK_SCMI_HSE>,
-+				<&scmi_clk CK_SCMI_HSI>,
-+				<&scmi_clk CK_SCMI_MSI>,
-+				<&scmi_clk CK_SCMI_LSE>,
-+				<&scmi_clk CK_SCMI_LSI>;
-+		};
-+
- 		syscfg: syscon@44230000 {
- 			compatible = "st,stm32mp25-syscfg", "syscon";
- 			reg = <0x44230000 0x10000>;
-@@ -158,7 +161,7 @@ gpioa: gpio@44240000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x0 0x400>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&scmi_clk CK_SCMI_GPIOA>;
- 				st,bank-name = "GPIOA";
- 				status = "disabled";
- 			};
-@@ -169,7 +172,7 @@ gpiob: gpio@44250000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x10000 0x400>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&scmi_clk CK_SCMI_GPIOB>;
- 				st,bank-name = "GPIOB";
- 				status = "disabled";
- 			};
-@@ -180,7 +183,7 @@ gpioc: gpio@44260000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x20000 0x400>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&scmi_clk CK_SCMI_GPIOC>;
- 				st,bank-name = "GPIOC";
- 				status = "disabled";
- 			};
-@@ -191,7 +194,7 @@ gpiod: gpio@44270000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x30000 0x400>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&scmi_clk CK_SCMI_GPIOD>;
- 				st,bank-name = "GPIOD";
- 				status = "disabled";
- 			};
-@@ -202,7 +205,7 @@ gpioe: gpio@44280000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x40000 0x400>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&scmi_clk CK_SCMI_GPIOE>;
- 				st,bank-name = "GPIOE";
- 				status = "disabled";
- 			};
-@@ -213,7 +216,7 @@ gpiof: gpio@44290000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x50000 0x400>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&scmi_clk CK_SCMI_GPIOF>;
- 				st,bank-name = "GPIOF";
- 				status = "disabled";
- 			};
-@@ -224,7 +227,7 @@ gpiog: gpio@442a0000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x60000 0x400>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&scmi_clk CK_SCMI_GPIOG>;
- 				st,bank-name = "GPIOG";
- 				status = "disabled";
- 			};
-@@ -235,7 +238,7 @@ gpioh: gpio@442b0000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x70000 0x400>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&scmi_clk CK_SCMI_GPIOH>;
- 				st,bank-name = "GPIOH";
- 				status = "disabled";
- 			};
-@@ -246,7 +249,7 @@ gpioi: gpio@442c0000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x80000 0x400>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&scmi_clk CK_SCMI_GPIOI>;
- 				st,bank-name = "GPIOI";
- 				status = "disabled";
- 			};
-@@ -257,7 +260,7 @@ gpioj: gpio@442d0000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x90000 0x400>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&scmi_clk CK_SCMI_GPIOJ>;
- 				st,bank-name = "GPIOJ";
- 				status = "disabled";
- 			};
-@@ -268,7 +271,7 @@ gpiok: gpio@442e0000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0xa0000 0x400>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&scmi_clk CK_SCMI_GPIOK>;
- 				st,bank-name = "GPIOK";
- 				status = "disabled";
- 			};
-@@ -287,7 +290,7 @@ gpioz: gpio@46200000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0 0x400>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&scmi_clk CK_SCMI_GPIOZ>;
- 				st,bank-name = "GPIOZ";
- 				st,bank-ioport = <11>;
- 				status = "disabled";
--- 
-2.25.1
+> > >> I guess the same is also true for `axis,artpec8` and `tesla,fsd` SoCs.
+> > >> IMO the SoC compatible string should be uniquely identifying the actual
+> > >> SoC, not a close relative.
+> > >>
+> > >> Regarding product_id you are correct this reads 0x09845000 but even
+> > >> within Samsung Exynos family there are examples where the register
+> > >> value does not match the SoC compatible. For example Exynos850 SoC
+> > >> has a product ID value of "E3830". Where the Linux compatible is
+> > >> matching the Samsung marketing name, not the internal/outdated name.
+> > >
+> > > I did not know Exynos 850 is also not going under it's real name.
+> > > Ultimately, I believe all of those SoCs should go under their technical
+> > > name in the exynos/ directory.
+> >
+> > The initial technical name does not exist outside of vendor sources and
+> > part name. E.g. Winlink E850 board hardware manual calls it:
+> > "Samsung Exynos 850, S5E3830"
+> > and everywhere else Exynos 850 SoC is used.
+> >
+> > If you start calling it Exynos 3830, only me and Sam (who mainlined it)
+> > would know what is it. Everyone else, all users of kernel, would be
+> > confused.
+> >
+> > Therefore using well known final product name is for Exynos850 reasonable.
+> 
+> I agree that was the correct decision IMO, and it is a very similar
+> situation here
+> as far as I'm concerned. Most people don't know Tensor G1 SoC as Exynos
+> 9845.
 
+I am not sure if Exynos 3830 and the like would be *that* confusing to
+users. It does not seem like the internal names (like Exynos 3830) are
+well guarded secret. The wikipedia article for Exynos even sort of
+gives these names for recent Exynos models, Exynos 850 is called
+S5E3830 for example, see section for Exynos 800:
+https://en.wikipedia.org/wiki/Exynos#Exynos_800_series
+
+Exynos 9845/S5E9845 is not mentioned in the article though.
+
+[ ... ]
+
+> > > Another concern is that Google could in the future license other SoC: be
+> > > it Qualcomm, Nvidia or anything. If we put completely different hw under
+> > > google/ directory, does it really make sense? In that case, who'll
+> > > maintain the google/ directory? Exynos people? Qualcomm people if they
+> > > license it? Some other people?
+> >
+> > That's indeed a problem. Future Tesla SoC might have just few pieces
+> > similar to FSD. There would be no common SoC part, except the actual
+> > Tesla IP.
+> >
+> > Same for Google. Future GSXXX, if done by Qualcomm, will be absolutely
+> > different than GS101 and the only common part would be the TPU (Tensor).
+> 
+> There is more Google IP than TPU but I see the point you're making.
+> 
+> >
+> > So now let's decide what is the common denominator:
+> > 1. Core SoC architecture, like buses, pinctrl, clocks, timers, serial,
+> > and many IP blocks, which constitute 95% of Devicetree bindings and drivers,
+> > 2. The one, big piece made by Samsung's customer: TPU, NPU or whatever.
+> 
+> Or multiple big pieces of IP.
+> 
+> Does having it all under the exynos directory help you somehow with
+> maintenance? Has having Alim maintain tesla-fsd in a separate directory
+> caused issues?
+> 
+> I structured it like this as I thought it would scale better, and also
+> because it was
+> consistent with what you had accepted previously for other Exynos derived SoCs
+> like Tesla.
+
+Another small benefit of putting GS101 in exynos/ is that it makes it
+easier for future contributors to find the code. If someone is for
+example trying to add mainline support for their Samsung Galaxy S21
+(Exynos 2100/Exynos 9840) and want to find somewhat related boards to
+draw inspiration from then it is not clear at a first glance that
+google/gs101-* are (somewhat) related.
+
+[ ... ]
+
+> Thanks,
+> 
+> Peter.
+
+Best regards,
+Henrik Grimler
