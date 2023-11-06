@@ -2,61 +2,61 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6336EC4167D
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Nov 2023 08:26:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0CA7C0032E
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Nov 2023 08:26:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231246AbjKFI0M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Nov 2023 03:26:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58612 "EHLO
+        id S231254AbjKFI0N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Nov 2023 03:26:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231218AbjKFI0L (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Nov 2023 03:26:11 -0500
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B2CEE1
-        for <linux-clk@vger.kernel.org>; Mon,  6 Nov 2023 00:26:07 -0800 (PST)
-Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-40839807e82so24905725e9.0
-        for <linux-clk@vger.kernel.org>; Mon, 06 Nov 2023 00:26:07 -0800 (PST)
+        with ESMTP id S231240AbjKFI0M (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Nov 2023 03:26:12 -0500
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 275B5184
+        for <linux-clk@vger.kernel.org>; Mon,  6 Nov 2023 00:26:09 -0800 (PST)
+Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-40891d38e3fso29575405e9.1
+        for <linux-clk@vger.kernel.org>; Mon, 06 Nov 2023 00:26:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1699259165; x=1699863965; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1699259167; x=1699863967; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=98m6fyahC9yLw85pMFp0rd38Afgy97hAf7i/gXUd1x8=;
-        b=U0mMGdrhNGtukTCHbY8odApf3SDOqnQys9fQ0oIlPWum7EeJFtsAqy+WhvL/QeNshg
-         VovRF8m1QBhfbEv1OigETY9Q41XEyOt2X7H3KGzcWR3rNT6MBnryCYYbCk7acWmmujdM
-         08XCV0aM7tOTPPpbXBxTaEUX4RhbipOHtAbnCYZZsPPRsRpg/B57nVNVlngzP6ReG0JU
-         5Kbn+BAuAK9SbD8iQapOWYREIbWmbPy8nfiorBJ3glVr/HfUOeuUGzpQnesM3tvspPnD
-         yj8ecB4OSs1QtOGS36ok5R8ltRnC0jE3XOpFEbrmQF68KSwn7YKzJS53p0YNJXg3pjA3
-         lpIg==
+        bh=eUKa+dq+yboEToV9c6wS680Ux5CIHHimAdjadaUPKj4=;
+        b=yiGtXIdE2M3yQ7P3KOu38pTKBYQhVqzfjAcieNyRjqeze9c0trLOfd8buGWr7z84Z4
+         RrzZTwPZ00K9h5/9a//8onp1Jhg3Ma7/3n7+5sD3R2nwaF9AjAyGQYVessT3la6hkD6x
+         kcC2ouX/FIB1WO/EOPH8X3KerLBIJ1cAhKgs2qgHhr3qVV/SZoJKPxM72EHEPlFcQsfS
+         4DJwVR46AT+80P0lvb9DDdqvjlqjBpwu3q7jfjebO2Z6iOwy2mw8Zd/sNHsgRs4U8F6u
+         qjm6/i3QXoWfp1QD3Y9nZoqfbpuFOXCxKm5lbyFsmqFErl7vMAygUdnCnsIvEJbRRqjc
+         YaMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699259165; x=1699863965;
+        d=1e100.net; s=20230601; t=1699259167; x=1699863967;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=98m6fyahC9yLw85pMFp0rd38Afgy97hAf7i/gXUd1x8=;
-        b=BR90c7+zOaNAJ0NuJUeBWM7epojDXVCaRFehjsiC8KNyF5L+pho6D+GfHwY3yfvybO
-         fJgLhUpuQwMrvV/BOvcqRi/4mIO8ecUHkrVxPRRgjMYssv1fu/NYltNuXc4mlBcQn6Mb
-         MRhxGgBOOhRn9H3+fjlqP7aWyqY1GBmNPIZNnGivWTG1F41nY5X1/Z7lJnFkxyBBbITL
-         b+LpEeZp7YPKA3D9tNe96MLA3sEJRP4+7mCPGJjOSZ3BD82awMHEChXX+jPm3lnNYCfY
-         n8DnzGGJscgygjh7LgVIr881b7SoLKvn29gjzIMga20K+uN2wATSc5U31BzHaZMOeV5l
-         dtWQ==
-X-Gm-Message-State: AOJu0YyFDBUbVtyHhb58JUKHPGNUTOCFmfSLQ/Lu2JwK8la2DgkvF8QW
-        /ue4OdyjncoIJ11LBCq1jyTEHA==
-X-Google-Smtp-Source: AGHT+IGHVn3oOa0z9zVomBePNQw7sUGQWsOuEQzWfu7LM60kBOjkbsrrXPT9bw/Af/jwNwzq1C0Qzg==
-X-Received: by 2002:a05:600c:358f:b0:405:19dd:ad82 with SMTP id p15-20020a05600c358f00b0040519ddad82mr11401483wmq.16.1699259165554;
-        Mon, 06 Nov 2023 00:26:05 -0800 (PST)
+        bh=eUKa+dq+yboEToV9c6wS680Ux5CIHHimAdjadaUPKj4=;
+        b=qoI8l04BDEmruLoX6wTFBNZRTR+BuC3sQpWHBnEvX2r792PjqV2XB57X0MuNpnYgIp
+         NZn5TclpD6xG8Q5ck4xg1AIJBOfPd2skan20r/l9t8ceq/5DeRJXdQNzmbfvYQT5ZgWT
+         sFFXqrE9OXhAOyA6cSjDPA4xq2k+kq/Ool8R2mXNA7x+LxTiQornbqt9e6D4AFudO8i8
+         vCEg0HZpBI2x9EHRb+ItQnXh6kY+GR/A7RCTkBswSGybv31ZKfZqTNUBaYuulJPzxBpr
+         aECpesLI4lybGmlExy+n2kvdUI90hBGKTJ7HaJws8+T5gV8RWbdwHpgq5fT3HPspWnmx
+         Riqw==
+X-Gm-Message-State: AOJu0Yy9AUbxKuvkRn9+PR11DhVV18WHXC8QUIBGWBZ7+TdzAb+Cd6GS
+        hdS74TirUY59p3SKZnOCxkEEzg==
+X-Google-Smtp-Source: AGHT+IELj8Ab9EVfhzSfFW30uYK7/Bd+5RUxWTV6FjKDoXv0uz2zC5dNlKjeFrruBoz7DUdUu5OF0A==
+X-Received: by 2002:a05:600c:4687:b0:409:5a92:470c with SMTP id p7-20020a05600c468700b004095a92470cmr12523024wmo.13.1699259167613;
+        Mon, 06 Nov 2023 00:26:07 -0800 (PST)
 Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id az25-20020a05600c601900b004095874f6d3sm11610663wmb.28.2023.11.06.00.26.04
+        by smtp.gmail.com with ESMTPSA id az25-20020a05600c601900b004095874f6d3sm11610663wmb.28.2023.11.06.00.26.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Nov 2023 00:26:05 -0800 (PST)
+        Mon, 06 Nov 2023 00:26:07 -0800 (PST)
 From:   Neil Armstrong <neil.armstrong@linaro.org>
-Date:   Mon, 06 Nov 2023 09:25:56 +0100
-Subject: [PATCH v3 03/11] dt-bindings: clock: qcom: document the SM8650
- Display Clock Controller
+Date:   Mon, 06 Nov 2023 09:25:58 +0100
+Subject: [PATCH v3 05/11] dt-bindings: clock: qcom-rpmhcc: document the
+ SM8650 RPMH Clock Controller
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20231106-topic-sm8650-upstream-clocks-v3-3-761a6fadb4c0@linaro.org>
+Message-Id: <20231106-topic-sm8650-upstream-clocks-v3-5-761a6fadb4c0@linaro.org>
 References: <20231106-topic-sm8650-upstream-clocks-v3-0-761a6fadb4c0@linaro.org>
 In-Reply-To: <20231106-topic-sm8650-upstream-clocks-v3-0-761a6fadb4c0@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
@@ -74,255 +74,46 @@ Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         Neil Armstrong <neil.armstrong@linaro.org>,
         Rob Herring <robh@kernel.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8140;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=775;
  i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=e2EuLWV7AJn5boOAv0KiZubzEeivWLsyyQZ/3pdy1ME=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBlSKMVJIVkc1xNDJRg/ZdnXLyLgmhgDqen6GBdyxuq
- iFwrCPeJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZUijFQAKCRB33NvayMhJ0T/HD/
- 419CqwSfzs6f7SOHkVgRmWf+28ep/gbLIVTVaFZQl9FRK2AQg64oNgzwWxiJETQLl6Cyo0oATk0e7y
- fy2ZLCqcwNoAKePIQGV3tv3N8I+A2f4t2R+MCJ+YpoyL88JK3JJ/PIn2wcrHfmClw3JI/3q46WNDiU
- 4b4ufXvQ7SjggI8rSuA86w0WX+qUsTeO0BmuUP3cGAvNUjLttlqOQcgIeY7VnOfTKcTlIjaXsm2qcU
- 7pcKmmt3aLVceWBEW93OROtr7OSV0axrTAEZryRK8F0YA0J2kwefH1RfLOFzBUTZMxUMr1PqOYdvZz
- +Wht2d1gipegPiwB36S3+dmamTnim3pGJS49yCtVEbNAE5quEgKDEgDSJv89b4KrF13wFzLp/5wSzt
- na/ZJBd8jMp0F2Qgz6SeQ1m5YdNdLGr8uwQsg/Z+IePX73kV7eexOpJ1JANg8Ub9ILPMgEy70J9Ov8
- qXdpzZ6eFyckcSw08tkaPAJ/E/ExKWBOqyjG+r6QGg+MPC2FpepYxTs2TLYlJ6IedfriXTEpy814HY
- Wv1YZuBezSOsoK+bpQM0XPGFaarFAGWoAqxKNC3vF0uYXkDFP/gz37g9bkVTZhxAxqRZGR03M7TUIe
- lYLfy40eD/oJII5zgnJEgxV/b1BbWhj8QkSlKB6Hn4GNKO82KgGaMDiTGP2w==
+ bh=3OGk8WniY/E80D7AnGFZsLrGftq5gP+nMB6OXCYdMrI=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBlSKMW7lm9NdzgN0/vkgPrze6K2icFamojsAIHrYw+
+ 1qLo/v2JAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZUijFgAKCRB33NvayMhJ0SvvD/
+ 0RZdvC0Yehcg8shp+KAo9SgSQ6OEzY4kO51PG3CYynKctejqTKshv5pagV8KbM7Q7bhAZW1n0IsmrF
+ 4Jy4uhaGjaKqsHyavByOzJJEhkUsMQHoCl9j4dJYrWxyEPTdmkocd99Bk59NkZK4vwkW1/snCvbPsx
+ xuRAqYXcWWbHpeKkawJdb+jTIY/c3bQDytc8jpoCMgRhm9Extq4IavgodNZYFKTjVuRIvOEJZt18Df
+ oasT/Qp5nStlz8KJBkBOlLiwie6T/fuvhLwfP/tvuEuQ9kvT4crInbGM7G/evMXzlOom+RHQU89R3E
+ 928dSXp9wUTtw6sLN8oKYXeODwtAJjJ5NMVQ07yGhaxoMXNL6EPVM71vf3XrsSPYKMph7oDOwS2kv1
+ J7lVQ8udH6UjF/24B2J/C80SMn+WuC5iKeIeJBtMZ7yNmLghJgorz9uL+DYnN4ixy116B3RoTRI4di
+ KvjW+RV16WDHdfgeZFdsNlq2rQRNBVAUz/KFExpoXLRcezXx9Wpw1KfgadvnuVRMPuVL64wDdBZI2C
+ 9ocf0tdiKskDdSCPBiTxeMBFsAM8+PZWy0Zxu0pnAFxHo3KSezZ3QEvd7Gc9BdxOEQYp1IBNRGE/CU
+ NRiVMbGfvTMiBkfhu0RU3Wbztlsz9o/ghw/PrIhRnIYALPeq8hVKRI3I9VDg==
 X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
  fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add bindings documentation for the SM8650 Display Clock Controller.
+Add bindings documentation for the SM8650 RPMH Clock Controller.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 ---
- .../bindings/clock/qcom,sm8650-dispcc.yaml         | 106 +++++++++++++++++++++
- include/dt-bindings/clock/qcom,sm8650-dispcc.h     | 102 ++++++++++++++++++++
- 2 files changed, 208 insertions(+)
+ Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8650-dispcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8650-dispcc.yaml
-new file mode 100644
-index 000000000000..5e0c45c380f5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,sm8650-dispcc.yaml
-@@ -0,0 +1,106 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/qcom,sm8650-dispcc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm Display Clock & Reset Controller for SM8650
-+
-+maintainers:
-+  - Bjorn Andersson <andersson@kernel.org>
-+  - Neil Armstrong <neil.armstrong@linaro.org>
-+
-+description: |
-+  Qualcomm display clock control module provides the clocks, resets and power
-+  domains on SM8650.
-+
-+  See also:: include/dt-bindings/clock/qcom,sm8650-dispcc.h
-+
-+properties:
-+  compatible:
-+    enum:
-+      - qcom,sm8650-dispcc
-+
-+  clocks:
-+    items:
-+      - description: Board XO source
-+      - description: Board Always On XO source
-+      - description: Display's AHB clock
-+      - description: sleep clock
-+      - description: Byte clock from DSI PHY0
-+      - description: Pixel clock from DSI PHY0
-+      - description: Byte clock from DSI PHY1
-+      - description: Pixel clock from DSI PHY1
-+      - description: Link clock from DP PHY0
-+      - description: VCO DIV clock from DP PHY0
-+      - description: Link clock from DP PHY1
-+      - description: VCO DIV clock from DP PHY1
-+      - description: Link clock from DP PHY2
-+      - description: VCO DIV clock from DP PHY2
-+      - description: Link clock from DP PHY3
-+      - description: VCO DIV clock from DP PHY3
-+
-+  '#clock-cells':
-+    const: 1
-+
-+  '#reset-cells':
-+    const: 1
-+
-+  '#power-domain-cells':
-+    const: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+  power-domains:
-+    description:
-+      A phandle and PM domain specifier for the MMCX power domain.
-+    maxItems: 1
-+
-+  required-opps:
-+    description:
-+      A phandle to an OPP node describing required MMCX performance point.
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - '#clock-cells'
-+  - '#reset-cells'
-+  - '#power-domain-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/qcom,sm8650-gcc.h>
-+    #include <dt-bindings/clock/qcom,rpmh.h>
-+    #include <dt-bindings/power/qcom-rpmpd.h>
-+    #include <dt-bindings/power/qcom,rpmhpd.h>
-+    clock-controller@af00000 {
-+      compatible = "qcom,sm8650-dispcc";
-+      reg = <0x0af00000 0x10000>;
-+      clocks = <&rpmhcc RPMH_CXO_CLK>,
-+               <&rpmhcc RPMH_CXO_CLK_A>,
-+               <&gcc GCC_DISP_AHB_CLK>,
-+               <&sleep_clk>,
-+               <&dsi0_phy 0>,
-+               <&dsi0_phy 1>,
-+               <&dsi1_phy 0>,
-+               <&dsi1_phy 1>,
-+               <&dp0_phy 0>,
-+               <&dp0_phy 1>,
-+               <&dp1_phy 0>,
-+               <&dp1_phy 1>,
-+               <&dp2_phy 0>,
-+               <&dp2_phy 1>,
-+               <&dp3_phy 0>,
-+               <&dp3_phy 1>;
-+      #clock-cells = <1>;
-+      #reset-cells = <1>;
-+      #power-domain-cells = <1>;
-+      power-domains = <&rpmhpd RPMHPD_MMCX>;
-+      required-opps = <&rpmhpd_opp_low_svs>;
-+    };
-+...
-diff --git a/include/dt-bindings/clock/qcom,sm8650-dispcc.h b/include/dt-bindings/clock/qcom,sm8650-dispcc.h
-new file mode 100644
-index 000000000000..b0a668b395a5
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,sm8650-dispcc.h
-@@ -0,0 +1,102 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (c) 2022, Qualcomm Innovation Center, Inc. All rights reserved
-+ * Copyright (c) 2023, Linaro Ltd.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_QCOM_SM8650_DISP_CC_H
-+#define _DT_BINDINGS_CLK_QCOM_SM8650_DISP_CC_H
-+
-+/* DISP_CC clocks */
-+#define DISP_CC_MDSS_ACCU_CLK					0
-+#define DISP_CC_MDSS_AHB1_CLK					1
-+#define DISP_CC_MDSS_AHB_CLK					2
-+#define DISP_CC_MDSS_AHB_CLK_SRC				3
-+#define DISP_CC_MDSS_BYTE0_CLK					4
-+#define DISP_CC_MDSS_BYTE0_CLK_SRC				5
-+#define DISP_CC_MDSS_BYTE0_DIV_CLK_SRC				6
-+#define DISP_CC_MDSS_BYTE0_INTF_CLK				7
-+#define DISP_CC_MDSS_BYTE1_CLK					8
-+#define DISP_CC_MDSS_BYTE1_CLK_SRC				9
-+#define DISP_CC_MDSS_BYTE1_DIV_CLK_SRC				10
-+#define DISP_CC_MDSS_BYTE1_INTF_CLK				11
-+#define DISP_CC_MDSS_DPTX0_AUX_CLK				12
-+#define DISP_CC_MDSS_DPTX0_AUX_CLK_SRC				13
-+#define DISP_CC_MDSS_DPTX0_CRYPTO_CLK				14
-+#define DISP_CC_MDSS_DPTX0_LINK_CLK				15
-+#define DISP_CC_MDSS_DPTX0_LINK_CLK_SRC				16
-+#define DISP_CC_MDSS_DPTX0_LINK_DIV_CLK_SRC			17
-+#define DISP_CC_MDSS_DPTX0_LINK_INTF_CLK			18
-+#define DISP_CC_MDSS_DPTX0_PIXEL0_CLK				19
-+#define DISP_CC_MDSS_DPTX0_PIXEL0_CLK_SRC			20
-+#define DISP_CC_MDSS_DPTX0_PIXEL1_CLK				21
-+#define DISP_CC_MDSS_DPTX0_PIXEL1_CLK_SRC			22
-+#define DISP_CC_MDSS_DPTX0_USB_ROUTER_LINK_INTF_CLK		23
-+#define DISP_CC_MDSS_DPTX1_AUX_CLK				24
-+#define DISP_CC_MDSS_DPTX1_AUX_CLK_SRC				25
-+#define DISP_CC_MDSS_DPTX1_CRYPTO_CLK				26
-+#define DISP_CC_MDSS_DPTX1_LINK_CLK				27
-+#define DISP_CC_MDSS_DPTX1_LINK_CLK_SRC				28
-+#define DISP_CC_MDSS_DPTX1_LINK_DIV_CLK_SRC			29
-+#define DISP_CC_MDSS_DPTX1_LINK_INTF_CLK			30
-+#define DISP_CC_MDSS_DPTX1_PIXEL0_CLK				31
-+#define DISP_CC_MDSS_DPTX1_PIXEL0_CLK_SRC			32
-+#define DISP_CC_MDSS_DPTX1_PIXEL1_CLK				33
-+#define DISP_CC_MDSS_DPTX1_PIXEL1_CLK_SRC			34
-+#define DISP_CC_MDSS_DPTX1_USB_ROUTER_LINK_INTF_CLK		35
-+#define DISP_CC_MDSS_DPTX2_AUX_CLK				36
-+#define DISP_CC_MDSS_DPTX2_AUX_CLK_SRC				37
-+#define DISP_CC_MDSS_DPTX2_CRYPTO_CLK				38
-+#define DISP_CC_MDSS_DPTX2_LINK_CLK				39
-+#define DISP_CC_MDSS_DPTX2_LINK_CLK_SRC				40
-+#define DISP_CC_MDSS_DPTX2_LINK_DIV_CLK_SRC			41
-+#define DISP_CC_MDSS_DPTX2_LINK_INTF_CLK			42
-+#define DISP_CC_MDSS_DPTX2_PIXEL0_CLK				43
-+#define DISP_CC_MDSS_DPTX2_PIXEL0_CLK_SRC			44
-+#define DISP_CC_MDSS_DPTX2_PIXEL1_CLK				45
-+#define DISP_CC_MDSS_DPTX2_PIXEL1_CLK_SRC			46
-+#define DISP_CC_MDSS_DPTX3_AUX_CLK				47
-+#define DISP_CC_MDSS_DPTX3_AUX_CLK_SRC				48
-+#define DISP_CC_MDSS_DPTX3_CRYPTO_CLK				49
-+#define DISP_CC_MDSS_DPTX3_LINK_CLK				50
-+#define DISP_CC_MDSS_DPTX3_LINK_CLK_SRC				51
-+#define DISP_CC_MDSS_DPTX3_LINK_DIV_CLK_SRC			52
-+#define DISP_CC_MDSS_DPTX3_LINK_INTF_CLK			53
-+#define DISP_CC_MDSS_DPTX3_PIXEL0_CLK				54
-+#define DISP_CC_MDSS_DPTX3_PIXEL0_CLK_SRC			55
-+#define DISP_CC_MDSS_ESC0_CLK					56
-+#define DISP_CC_MDSS_ESC0_CLK_SRC				57
-+#define DISP_CC_MDSS_ESC1_CLK					58
-+#define DISP_CC_MDSS_ESC1_CLK_SRC				59
-+#define DISP_CC_MDSS_MDP1_CLK					60
-+#define DISP_CC_MDSS_MDP_CLK					61
-+#define DISP_CC_MDSS_MDP_CLK_SRC				62
-+#define DISP_CC_MDSS_MDP_LUT1_CLK				63
-+#define DISP_CC_MDSS_MDP_LUT_CLK				64
-+#define DISP_CC_MDSS_NON_GDSC_AHB_CLK				65
-+#define DISP_CC_MDSS_PCLK0_CLK					66
-+#define DISP_CC_MDSS_PCLK0_CLK_SRC				67
-+#define DISP_CC_MDSS_PCLK1_CLK					68
-+#define DISP_CC_MDSS_PCLK1_CLK_SRC				69
-+#define DISP_CC_MDSS_RSCC_AHB_CLK				70
-+#define DISP_CC_MDSS_RSCC_VSYNC_CLK				71
-+#define DISP_CC_MDSS_VSYNC1_CLK					72
-+#define DISP_CC_MDSS_VSYNC_CLK					73
-+#define DISP_CC_MDSS_VSYNC_CLK_SRC				74
-+#define DISP_CC_PLL0						75
-+#define DISP_CC_PLL1						76
-+#define DISP_CC_SLEEP_CLK					77
-+#define DISP_CC_SLEEP_CLK_SRC					78
-+#define DISP_CC_XO_CLK						79
-+#define DISP_CC_XO_CLK_SRC					80
-+
-+/* DISP_CC resets */
-+#define DISP_CC_MDSS_CORE_BCR					0
-+#define DISP_CC_MDSS_CORE_INT2_BCR				1
-+#define DISP_CC_MDSS_RSCC_BCR					2
-+
-+/* DISP_CC GDSCR */
-+#define MDSS_GDSC						0
-+#define MDSS_INT2_GDSC						1
-+
-+#endif
+diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
+index 4eb5e59f6772..9be952a5a227 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
+@@ -35,6 +35,7 @@ properties:
+       - qcom,sm8350-rpmh-clk
+       - qcom,sm8450-rpmh-clk
+       - qcom,sm8550-rpmh-clk
++      - qcom,sm8650-rpmh-clk
+ 
+   clocks:
+     maxItems: 1
 
 -- 
 2.34.1
