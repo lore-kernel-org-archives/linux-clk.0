@@ -2,101 +2,107 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DC0BC4332F
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Nov 2023 08:50:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C70F1C4167B
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Nov 2023 08:56:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231202AbjKFIuh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Nov 2023 03:50:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39786 "EHLO
+        id S231220AbjKFI4H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Nov 2023 03:56:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230475AbjKFIuh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Nov 2023 03:50:37 -0500
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBBDCD8
-        for <linux-clk@vger.kernel.org>; Mon,  6 Nov 2023 00:50:32 -0800 (PST)
-Received: by mail-lf1-x134.google.com with SMTP id 2adb3069b0e04-507c5249d55so5441701e87.3
-        for <linux-clk@vger.kernel.org>; Mon, 06 Nov 2023 00:50:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1699260631; x=1699865431; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IvsRfYdBOBRI+2J2urSL+yk+k1mRSeviqg4tt/tKPu4=;
-        b=hO1dO19A4v401DrpNXgLuzSL0P+oB2qcFAqt1L7t9KGJU04IIN5uXcRdXaxpDeko2O
-         mP+hBlE1K1UttF9J2OVmx4oKR4Pmz090OmI/9xOMungGXdWRz35vtI98Dp0iD+PCHlyC
-         ydBpKYlg2lFfthsSxZVSrolqEmHBnYC0j/YT9mIoa0u6T+xlWHEnGxFa2fUgZ2SxJZgw
-         HZq+NcuXuY8z9ZSqVRGEV/ir3PJenUnXKLfCNPabMlqJ/gu87H67aMl51zJJDwIN1Xm0
-         5erkkjT8n2idogH8zfCSn0t85Q/Rwrx+xtSxsZZjMr7Mv3rzsFpQZwdS+ulPua/pe384
-         m/Dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699260631; x=1699865431;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IvsRfYdBOBRI+2J2urSL+yk+k1mRSeviqg4tt/tKPu4=;
-        b=HmprEF5IBxE3RuOwarai1C8eolxynzyqQUmSxBcY5uFKCU4rKQ8DMD4ngXwcoQq8hZ
-         MKADvwzj6ss8BzJ4tHN2j0YsMo+khD+UiYSl9bmuYhuDWUn/wYFDAqALXrCUwLgNt4s8
-         eNPXQuEJzkOjpJE6le96wBiv2YqYhBKtJuY8hXWo0j/9/MhqpcyDfQ1POYBtU3Zgjgiw
-         UDWGpMYF1Qc1XUwAAYf0+mCFw/KzUR0RLMMe4zpxoHsmbUdBwfpog16x8yKrG6NKRZDf
-         ys2Sg14PH2TKxjdLZTf9nkdPi2MMba7w4iLC5MUE2jarm8dwr/aCghJTwP6zMxLYRv2t
-         xwcQ==
-X-Gm-Message-State: AOJu0YwenJ6/R+jP3CXUZ9Ado9F6zAeQ0fVo0RAtTU1ImhEJ12iwQnR3
-        vaY3QgVnTLM+8VGxP2P7z+nuWg==
-X-Google-Smtp-Source: AGHT+IFtG/faO87cJotALJcL+BJ0/q9GgEd4szJRDFIiNksFhPa1PUp3VBl0axOB+aGZEJFN0JWOIQ==
-X-Received: by 2002:ac2:5626:0:b0:507:9ff6:75b6 with SMTP id b6-20020ac25626000000b005079ff675b6mr19451969lff.50.1699260630822;
-        Mon, 06 Nov 2023 00:50:30 -0800 (PST)
-Received: from [192.168.1.172] ([93.5.22.158])
-        by smtp.gmail.com with ESMTPSA id l7-20020a05600c1d0700b00405bbfd5d16sm11521401wms.7.2023.11.06.00.50.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Nov 2023 00:50:30 -0800 (PST)
-Message-ID: <34b7503e-5d1e-4fd2-a909-d7f50e45c8e6@baylibre.com>
-Date:   Mon, 6 Nov 2023 09:50:29 +0100
+        with ESMTP id S231181AbjKFI4H (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Nov 2023 03:56:07 -0500
+Received: from mail-sh.amlogic.com (mail-sh.amlogic.com [58.32.228.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D66F83;
+        Mon,  6 Nov 2023 00:56:02 -0800 (PST)
+Received: from droid01-cd.amlogic.com (10.98.11.200) by mail-sh.amlogic.com
+ (10.18.11.5) with Microsoft SMTP Server id 15.1.2507.13; Mon, 6 Nov 2023
+ 16:55:59 +0800
+From:   Xianwei Zhao <xianwei.zhao@amlogic.com>
+To:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     Neil Armstrong <neil.armstrong@linaro.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen Boyd" <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Chuan Liu <chuan.liu@amlogic.com>,
+        Xianwei Zhao <xianwei.zhao@amlogic.com>
+Subject: [PATCH V6 0/4] Add C3 SoC PLLs and Peripheral clock
+Date:   Mon, 6 Nov 2023 16:55:50 +0800
+Message-ID: <20231106085554.3237511-1-xianwei.zhao@amlogic.com>
+X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] clk: mediatek: mt8188-topckgen: Refactor parents
- for top_dp/edp muxes
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>, sboyd@kernel.org
-Cc:     mturquette@baylibre.com, matthias.bgg@gmail.com,
-        wenst@chromium.org, msp@baylibre.com, yangyingliang@huawei.com,
-        u.kleine-koenig@pengutronix.de, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, kernel@collabora.com
-References: <20231103102533.69280-1-angelogioacchino.delregno@collabora.com>
- <20231103102533.69280-4-angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-From:   Alexandre Mergnat <amergnat@baylibre.com>
-In-Reply-To: <20231103102533.69280-4-angelogioacchino.delregno@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.98.11.200]
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+The patchset adds support for the peripheral and PLL clock controller
+found on the Amlogic C3 SoC family, such as C302X or C308L.
 
-On 03/11/2023 11:25, AngeloGioacchino Del Regno wrote:
-> The top_dp and top_edp muxes can be both parented to either TVDPLL1
-> or TVDPLL2, two identically specced PLLs for the specific purpose of
-> giving out pixel clock: this becomes a problem when the MediaTek
-> DisplayPort Interface (DPI) driver tries to set the pixel clock rate.
-> 
-> In the usecase of two simultaneous outputs (using two controllers),
-> it was seen that one of the displays would sometimes display garbled
-> output (if any at all) and this was because:
->   - top_edp was set to TVDPLL1, outputting X GHz
->   - top_dp was set to TVDPLL2, outputting Y GHz
->     - mtk_dpi calls clk_set_rate(top_edp, Z GHz)
->   - top_dp is switched to TVDPLL1
->   - TVDPLL1 changes its rate, top_edp outputs the wrong rate.
->   - eDP display is garbled
-> 
-> To solve this issue, remove all TVDPLL1 parents from `top_dp` and
-> all TVDPLL2 parents from `top_edp`, plus, necessarily switch both
-> clocks to use the new MUX_GATE_CLR_SET_UPD_INDEXED() macro to be
-> able to use the right bit index for the new parents list.
+Changes since V5 [3]:
+ - Fix some typo and modify formart for MARCO. Suggested by Jerome.
+ - Add pad clock for peripheral input clock in bindings.
+ - Add some description for explaining why ddr_dpll_pt_clk and cts_msr_clk are out of tree.
+Changes since V4 [10]:
+ - Change some fw_name of clocks. Suggested by Jerome.
+ - Delete minItem of clocks.
+ - Add CLk_GET_RATE_NOCACHE flags for gp1_pll
+ - Fix some format. and fix width as 8 for mclk_pll_dco.
+ - exchange gate and divder for fclk_50m clock.
+ - add CLK_SET_RATE_PARENT for axi_a_divder & axi_b_divder.
+ - add CLK_IS_CRITICAL for axi_clk
+ - Optimized macro define for pwm clk.
+ - add cts_oscin_clk mux between 24M and 32k
+ - add some missing gate clock, such as ddr_pll.
+Changes since V3 [7]:
+ - Modify Kconfig desc and PLL yaml clk desc. 
+ - Fix some format.Suggested by Yixun and Jerome.
+ - Add flag CLK_GET_RATE_NOCACHE for sys_clk.
+ - Optimized macro define for pwm clk.
+ - Use flag CLK_IS_CRITICAL for axi_clk.
+ - Add some description for some clocks.
+ - Use FCLK_50M instead of FCLK_DIV40.
+Changes since V2 [4]:
+ - Modify some format, include clk name & inline, and so on.
+ - Define marco for pwm clock.
+ - Add GP1_PLL clock.
+ - Modify yaml use raw instead of macro.
+Changes since V1 [2]:
+ - Fix errors when check binding by using "make dt_binding_check".
+ - Delete macro definition.
 
-Reviewed-by: Alexandre Mergnat <amergnat@baylibre.com>
+Xianwei Zhao (4):
+  dt-bindings: clock: add Amlogic C3 PLL clock controller bindings
+  dt-bindings: clock: add Amlogic C3 peripherals clock controller
+    bindings
+  clk: meson: c3: add support for the C3 SoC PLL clock
+  clk: meson: c3: add c3 clock peripherals controller driver
 
+ .../clock/amlogic,c3-peripherals-clkc.yaml    |  104 +
+ .../bindings/clock/amlogic,c3-pll-clkc.yaml   |   59 +
+ drivers/clk/meson/Kconfig                     |   26 +
+ drivers/clk/meson/Makefile                    |    2 +
+ drivers/clk/meson/c3-peripherals.c            | 2745 +++++++++++++++++
+ drivers/clk/meson/c3-pll.c                    |  895 ++++++
+ .../clock/amlogic,c3-peripherals-clkc.h       |  237 ++
+ .../dt-bindings/clock/amlogic,c3-pll-clkc.h   |   44 +
+ 8 files changed, 4112 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,c3-peripherals-clkc.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,c3-pll-clkc.yaml
+ create mode 100644 drivers/clk/meson/c3-peripherals.c
+ create mode 100644 drivers/clk/meson/c3-pll.c
+ create mode 100644 include/dt-bindings/clock/amlogic,c3-peripherals-clkc.h
+ create mode 100644 include/dt-bindings/clock/amlogic,c3-pll-clkc.h
+
+
+base-commit: 57b55c76aaf1ba50ecc6dcee5cd6843dc4d85239
 -- 
-Regards,
-Alexandre
+2.39.2
+
