@@ -2,42 +2,42 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6FBEC4167D
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Nov 2023 10:31:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FB71C4167B
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Nov 2023 10:31:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231180AbjKFKbN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Nov 2023 05:31:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34600 "EHLO
+        id S231215AbjKFKbR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Nov 2023 05:31:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231377AbjKFKbG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Nov 2023 05:31:06 -0500
+        with ESMTP id S231186AbjKFKbO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Nov 2023 05:31:14 -0500
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6CE0D76;
-        Mon,  6 Nov 2023 02:31:00 -0800 (PST)
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3A6AT8hl005917;
-        Mon, 6 Nov 2023 10:30:57 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74634DB;
+        Mon,  6 Nov 2023 02:31:10 -0800 (PST)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3A6ARSi6004882;
+        Mon, 6 Nov 2023 10:31:07 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=qcppdkim1;
- bh=ui0TpnDxm/PD0ICcBgQgSuY/u4cUR2raymATdRzjfng=;
- b=FXMq7xX4tVFwynOgG67UFoOz/rQKUDDTyn+hF0vtCVvZgbicOCWdm9mdxHduJw++fnhq
- Jjd6cnHq/IUAgVesGpQzjrM0m7/dUUjfxv9ZCvTyyunD80qvscEeC0rJ6/ahn/u+VKHq
- BqZ/Ak4vi+JwLxME9I8yaNW+oxn0QDYVgHN1jS6zroivPxbuUGfce2p6ZamZrr5HhwPW
- +7ZvstWDSVkCOoHIQ4v48Sj8l8mhZK1HOrmFJbqeZNYAcPV2RQt8ffwaEVGoT6aJ6vuu
- ZgT3SiltAvz+mAGCtm+tEc/dcrGzrteDoMEZcZ5y4ZYGcxkCmZuDIw2aHYVobicErPeP Xw== 
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3u6xdu806r-1
+ bh=twDtchG+/R75fbDoRiyiuTcAio91V8MdtWGBxzqo184=;
+ b=D07PgeBVpBolQjmYk0zbY3NYekOmrizGKvAx5s7Ldj+PocOQ7dJYYM+/cA5hgBJoqagV
+ a9CMCfXVsxJYVqXL0F2xAOYTPUSyRWGDyTN9MUIGeTGMqP1PppuO0gLXLUQ6FSBJ/a7v
+ GeA2m9QpCSs9Em7cvmutUWspraBWJ2TaIl71jKRBQoE26BbwbOfW0pdWKw46umPpwJsS
+ 8Py57JqYxijKSzs3Z+QYiCNZsNqq4JP7JVqhD8BkXKN2E9Pc9U/D5m361mxa47IiBkGb
+ zCnbRWQwvfW0O+tndWuHs7XtpEYdRuIk2IqiIeNFWgcleiPpJpvtvZ3fAqTj2/ggzCH8 ZQ== 
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3u5f523pnn-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 06 Nov 2023 10:30:57 +0000
+        Mon, 06 Nov 2023 10:31:07 +0000
 Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3A6AUu3E007848
+        by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3A6AV63n029432
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 6 Nov 2023 10:30:56 GMT
+        Mon, 6 Nov 2023 10:31:06 GMT
 Received: from hu-imrashai-hyd.qualcomm.com (10.80.80.8) by
  nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.39; Mon, 6 Nov 2023 02:30:51 -0800
+ 15.2.1118.39; Mon, 6 Nov 2023 02:31:01 -0800
 From:   Imran Shaik <quic_imrashai@quicinc.com>
 To:     Andy Gross <agross@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
@@ -53,9 +53,9 @@ CC:     Taniya Das <quic_tdas@quicinc.com>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Ajit Pandey <quic_ajipan@quicinc.com>,
         Jagadeesh Kona <quic_jkona@quicinc.com>
-Subject: [PATCH V3 2/4] clk: qcom: branch: Add mem ops support for branch2 clocks
-Date:   Mon, 6 Nov 2023 16:00:25 +0530
-Message-ID: <20231106103027.3988871-3-quic_imrashai@quicinc.com>
+Subject: [PATCH V3 4/4] arm64: dts: qcom: qdu1000: Add ECPRI clock controller
+Date:   Mon, 6 Nov 2023 16:00:27 +0530
+Message-ID: <20231106103027.3988871-5-quic_imrashai@quicinc.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20231106103027.3988871-1-quic_imrashai@quicinc.com>
 References: <20231106103027.3988871-1-quic_imrashai@quicinc.com>
@@ -67,131 +67,53 @@ X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nasanex01a.na.qualcomm.com (10.52.223.231)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 4gvZTFpkkUmhGVkov1VJO46lonNShc6N
-X-Proofpoint-ORIG-GUID: 4gvZTFpkkUmhGVkov1VJO46lonNShc6N
+X-Proofpoint-ORIG-GUID: y_Pm4sEtqHfa9hXkX1NrQmpPSb5xYcp9
+X-Proofpoint-GUID: y_Pm4sEtqHfa9hXkX1NrQmpPSb5xYcp9
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
  definitions=2023-11-06_08,2023-11-02_03,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- lowpriorityscore=0 suspectscore=0 mlxlogscore=999 priorityscore=1501
- spamscore=0 impostorscore=0 mlxscore=0 malwarescore=0 clxscore=1015
- bulkscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1015
+ priorityscore=1501 bulkscore=0 mlxlogscore=803 phishscore=0
+ lowpriorityscore=0 mlxscore=0 suspectscore=0 spamscore=0 adultscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2310240000 definitions=main-2311060087
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Taniya Das <quic_tdas@quicinc.com>
+Add device node for ECPRI clock controller on qcom QDU1000
+and QRU1000 SoCs.
 
-Clock CBCRs with memories need an update for memory before enable/disable
-of the clock, which helps retain the respective block's register contents.
-Add support for the mem ops to handle this sequence.
-
-Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
 Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
 ---
- drivers/clk/qcom/clk-branch.c | 39 +++++++++++++++++++++++++++++++++++
- drivers/clk/qcom/clk-branch.h | 21 +++++++++++++++++++
- 2 files changed, 60 insertions(+)
+ arch/arm64/boot/dts/qcom/qdu1000.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/clk/qcom/clk-branch.c b/drivers/clk/qcom/clk-branch.c
-index fc4735f74f0f..61bdd2147bed 100644
---- a/drivers/clk/qcom/clk-branch.c
-+++ b/drivers/clk/qcom/clk-branch.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (c) 2013, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
-  */
+diff --git a/arch/arm64/boot/dts/qcom/qdu1000.dtsi b/arch/arm64/boot/dts/qcom/qdu1000.dtsi
+index 1c0e5d271e91..1552b5c119bb 100644
+--- a/arch/arm64/boot/dts/qcom/qdu1000.dtsi
++++ b/arch/arm64/boot/dts/qcom/qdu1000.dtsi
+@@ -381,6 +381,20 @@ gcc: clock-controller@80000 {
+ 			#power-domain-cells = <1>;
+ 		};
  
- #include <linux/kernel.h>
-@@ -134,6 +135,44 @@ static void clk_branch2_disable(struct clk_hw *hw)
- 	clk_branch_toggle(hw, false, clk_branch2_check_halt);
- }
- 
-+static int clk_branch2_mem_enable(struct clk_hw *hw)
-+{
-+	struct clk_mem_branch *mem_br = to_clk_mem_branch(hw);
-+	struct clk_branch branch = mem_br->branch;
-+	const char *name = clk_hw_get_name(&branch.clkr.hw);
-+	u32 val;
-+	int ret;
++		ecpricc: clock-controller@280000 {
++			compatible = "qcom,qdu1000-ecpricc";
++			reg = <0x0 0x00280000 0x0 0x31c00>;
++			clocks = <&rpmhcc RPMH_CXO_CLK>,
++				 <&gcc GCC_ECPRI_CC_GPLL0_CLK_SRC>,
++				 <&gcc GCC_ECPRI_CC_GPLL1_EVEN_CLK_SRC>,
++				 <&gcc GCC_ECPRI_CC_GPLL2_EVEN_CLK_SRC>,
++				 <&gcc GCC_ECPRI_CC_GPLL3_CLK_SRC>,
++				 <&gcc GCC_ECPRI_CC_GPLL4_CLK_SRC>,
++				 <&gcc GCC_ECPRI_CC_GPLL5_EVEN_CLK_SRC>;
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++		};
 +
-+	regmap_update_bits(branch.clkr.regmap, mem_br->mem_enable_reg,
-+			mem_br->mem_enable_ack_mask, mem_br->mem_enable_ack_mask);
-+
-+	ret = regmap_read_poll_timeout(branch.clkr.regmap, mem_br->mem_ack_reg,
-+			val, val & mem_br->mem_enable_ack_mask, 0, 200);
-+	if (ret) {
-+		WARN(1, "%s mem enable failed\n", name);
-+		return ret;
-+	}
-+
-+	return clk_branch2_enable(hw);
-+}
-+
-+static void clk_branch2_mem_disable(struct clk_hw *hw)
-+{
-+	struct clk_mem_branch *mem_br = to_clk_mem_branch(hw);
-+
-+	regmap_update_bits(mem_br->branch.clkr.regmap, mem_br->mem_enable_reg,
-+						mem_br->mem_enable_ack_mask, 0);
-+
-+	return clk_branch2_disable(hw);
-+}
-+
-+const struct clk_ops clk_branch2_mem_ops = {
-+	.enable = clk_branch2_mem_enable,
-+	.disable = clk_branch2_mem_disable,
-+	.is_enabled = clk_is_enabled_regmap,
-+};
-+EXPORT_SYMBOL_GPL(clk_branch2_mem_ops);
-+
- const struct clk_ops clk_branch2_ops = {
- 	.enable = clk_branch2_enable,
- 	.disable = clk_branch2_disable,
-diff --git a/drivers/clk/qcom/clk-branch.h b/drivers/clk/qcom/clk-branch.h
-index 0cf800b9d08d..8ffed603c050 100644
---- a/drivers/clk/qcom/clk-branch.h
-+++ b/drivers/clk/qcom/clk-branch.h
-@@ -38,6 +38,23 @@ struct clk_branch {
- 	struct clk_regmap clkr;
- };
- 
-+/**
-+ * struct clk_mem_branch - gating clock which are associated with memories
-+ *
-+ * @mem_enable_reg: branch clock memory gating register
-+ * @mem_ack_reg: branch clock memory ack register
-+ * @mem_enable_ack_mask: branch clock memory enable and ack field in @mem_ack_reg
-+ * @branch: branch clock gating handle
-+ *
-+ * Clock which can gate its memories.
-+ */
-+struct clk_mem_branch {
-+	u32	mem_enable_reg;
-+	u32	mem_ack_reg;
-+	u32	mem_enable_ack_mask;
-+	struct clk_branch branch;
-+};
-+
- /* Branch clock common bits for HLOS-owned clocks */
- #define CBCR_CLK_OFF			BIT(31)
- #define CBCR_NOC_FSM_STATUS		GENMASK(30, 28)
-@@ -85,8 +102,12 @@ extern const struct clk_ops clk_branch_ops;
- extern const struct clk_ops clk_branch2_ops;
- extern const struct clk_ops clk_branch_simple_ops;
- extern const struct clk_ops clk_branch2_aon_ops;
-+extern const struct clk_ops clk_branch2_mem_ops;
- 
- #define to_clk_branch(_hw) \
- 	container_of(to_clk_regmap(_hw), struct clk_branch, clkr)
- 
-+#define to_clk_mem_branch(_hw) \
-+	container_of(to_clk_branch(_hw), struct clk_mem_branch, branch)
-+
- #endif
+ 		gpi_dma0: dma-controller@900000  {
+ 			compatible = "qcom,qdu1000-gpi-dma", "qcom,sm6350-gpi-dma";
+ 			reg = <0x0 0x900000 0x0 0x60000>;
 -- 
 2.25.1
 
