@@ -1,50 +1,50 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E225328AF
-	for <linux-clk@vger.kernel.org>; Tue,  7 Nov 2023 16:20:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF32A328AD
+	for <linux-clk@vger.kernel.org>; Tue,  7 Nov 2023 16:21:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dp+3Oc2m"
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3B8A1FDB
-	for <linux-clk@vger.kernel.org>; Tue,  7 Nov 2023 08:20:49 -0800 (PST)
-Received: by mail-ej1-x62b.google.com with SMTP id a640c23a62f3a-9d2d8343dc4so885896666b.0
-        for <linux-clk@vger.kernel.org>; Tue, 07 Nov 2023 08:20:49 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Et/iSEvl"
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4A432686
+	for <linux-clk@vger.kernel.org>; Tue,  7 Nov 2023 08:21:02 -0800 (PST)
+Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-9d2e7726d5bso879415966b.0
+        for <linux-clk@vger.kernel.org>; Tue, 07 Nov 2023 08:21:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1699374048; x=1699978848; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1699374061; x=1699978861; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Zi4WsQmpgwd6QfsBGUqaWmLWb1Y4ymfyxxy1U+ZNJLU=;
-        b=Dp+3Oc2m33vaHJ1NJUe5rmMZrlcRmxiicO0q7+IyAE/rvunwZFugWhYli6tRTbcIQF
-         byPmIQnVhLvwkp2kmvCZ5iFEq7I11HJ+JqjYdN/L3n6MpUc6a5FUmfWobfNtvIkkWfLM
-         iWFHm/LNRSY6ruWSN84LqoFEDFXhzGfPWNkiIhgUj34jVzctf44v7WajKbQLOJhPhsh3
-         XLR01tl7+1MkokYBDASeZeObh+gQPQiXwsHNE4LrLVfl1Rhc64BYx4eBDfKtd1T9leyV
-         0GD12xiThSDA4xWOrPNKzaVMiaamCZSTgxMp2hbIzIzFlzneZyR8jb1cVt3JtCCOO59S
-         rBEg==
+        bh=IMqOlXOFR9kECMU6XHTC496oIdx8rJ3vcV9iyG+JbQk=;
+        b=Et/iSEvlCUspRQuBd8WNqIZ6BlNJPDz6tTquYIyReTMH60AMR5Ndkd1SvgvvtNrf3d
+         S76sFCejUFRVpbsO4+SDHZo+rHEgf+bAcpvRpoI4pq9ap13nvBtKMQizHh/jOpsT0dx9
+         rF4ulnK9usRd9uCf4t+WCs7COReTinJo8FQvMgNvIZs91KgjiZQE8/kWs007OVbhYWxn
+         Z/OkVdA76cW5t2AUvqoydnlAq7Qjom50mRtefKOzLo+XrMTF454n+/beZhyKHYnixTgo
+         WKHow/K7Ew4A5vY0I/i/a4OMpbDdUP+KQq2WBb3XuQz0xG4JxkkbKoUe8iyq1m9uG4mZ
+         5qBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699374048; x=1699978848;
+        d=1e100.net; s=20230601; t=1699374061; x=1699978861;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zi4WsQmpgwd6QfsBGUqaWmLWb1Y4ymfyxxy1U+ZNJLU=;
-        b=AFJUmLdxSLCv/SJdgSG4y+UBGyt95prjsO+N9M0ngDIFSpK43k3UOebmmfy8t+raTV
-         zwb+JdlZmp24w1tjblc3FVXF7cIDa4o6WvoFHrc6nVr4N0FaGN+5UAM4lEpi50linOOm
-         YobPQNEXlS3zyPfc3+5ERS1YhARSwcr6XhvKRPO6DW+JIs+k/DqVO9/WNeY3tXekQVbS
-         SIPq+lfDIoxAgEZz2PBaWqLpH52wmS+2caY7/HYInPrgq5t1vC3FvVJkkd3xNPf+uKP2
-         LrGkm918Iay6j68g/iGZzqoqi56Ml9OEti5dK/83pLuk4kAhiVPhfXnEtWY4tf4nxX8H
-         8k3w==
-X-Gm-Message-State: AOJu0Yz5XWt/B36Gm48CflAa1pfYEL8U0j05d2LlgraT7nyNxRk9rFHM
-	p4H6h10kYBWHomKR2urtyC99lQ==
-X-Google-Smtp-Source: AGHT+IHcCqpOanizxqDfIUxTNvb6ChZH7XoH+qq6PzYWF7LKKLjgNjiOV3qiVIypGMMqVPS9lh+IwQ==
-X-Received: by 2002:a17:906:dac4:b0:9ae:5120:5147 with SMTP id xi4-20020a170906dac400b009ae51205147mr16972555ejb.38.1699374048163;
-        Tue, 07 Nov 2023 08:20:48 -0800 (PST)
+        bh=IMqOlXOFR9kECMU6XHTC496oIdx8rJ3vcV9iyG+JbQk=;
+        b=NZgv/gTefgGjChcDEOK7xpXxUp/7nssNBDP9qQOIdk8Np/PbGf3upqI8UwQAvXVOMR
+         b8PMne57Q50dGQXystj1EYyTNTi4l4E5z2AEQBycNcSt6nNuqXJnTjnev77qswZf1KsD
+         h0y1hxnLBFwP+RMHgXAv8Ti9xxnewtulnJkXgMFEKs3ucDk0Av0Wh7ZexbEoxbLCyUtO
+         +PFjGBEjEq9M3dczC4/DzRkujUZL1GMIg0wlgtaS40gI7uSKWssPecPaOy/KCMhMqj4c
+         QC4nSHRo8lLx0w5P7IYbwtyEC22Sn6/tSdWYabUoFWCQfehVN4Oe4bjKOsJrWScmhmy7
+         AJ9g==
+X-Gm-Message-State: AOJu0YwaEnQ3M1VzBLTk+zF0HPITusoWquvSuDehejOTDsnT7VUbRsZv
+	zOdXXWjH0MiAjOim/noNYl+9+A==
+X-Google-Smtp-Source: AGHT+IEZL4t/XevZO5sPsulQlvem1QCplFygsTz4d7NLeUPFwrxaxrS/1ubPlS372U12D2g2ycB12Q==
+X-Received: by 2002:a17:906:ce4a:b0:9d7:1388:e554 with SMTP id se10-20020a170906ce4a00b009d71388e554mr12757417ejb.17.1699374061255;
+        Tue, 07 Nov 2023 08:21:01 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.218.126])
-        by smtp.gmail.com with ESMTPSA id cw25-20020a170906c79900b0099c53c44083sm1212333ejb.79.2023.11.07.08.20.46
+        by smtp.gmail.com with ESMTPSA id cw25-20020a170906c79900b0099c53c44083sm1212333ejb.79.2023.11.07.08.20.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Nov 2023 08:20:47 -0800 (PST)
-Message-ID: <6ba4585a-b7a1-46f9-ba89-a1e605cbdda3@linaro.org>
-Date: Tue, 7 Nov 2023 17:20:46 +0100
+        Tue, 07 Nov 2023 08:21:00 -0800 (PST)
+Message-ID: <e049bbd3-c5df-4220-b2b5-c73dfe5c798b@linaro.org>
+Date: Tue, 7 Nov 2023 17:20:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -52,8 +52,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] MAINTAINERS: add new dt-binding doc to the right
- entry
+Subject: Re: [PATCH 3/6] ARM64: dts: rk3588: add crypto node
 Content-Language: en-US
 To: Corentin Labbe <clabbe@baylibre.com>, davem@davemloft.net,
  heiko@sntech.de, herbert@gondor.apana.org.au,
@@ -64,7 +63,7 @@ Cc: ricardo@pardini.net, devicetree@vger.kernel.org,
  linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-rockchip@lists.infradead.org
 References: <20231107155532.3747113-1-clabbe@baylibre.com>
- <20231107155532.3747113-3-clabbe@baylibre.com>
+ <20231107155532.3747113-4-clabbe@baylibre.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -110,17 +109,39 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231107155532.3747113-3-clabbe@baylibre.com>
+In-Reply-To: <20231107155532.3747113-4-clabbe@baylibre.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 07/11/2023 16:55, Corentin Labbe wrote:
-> Rockchip crypto driver have a new file to be added.
+> The rk3588 has a crypto IP handled by the rk3588 crypto driver so adds a
+> node for it.
 > 
+> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+> ---
+>  arch/arm64/boot/dts/rockchip/rk3588s.dtsi | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+> index 7064c0e9179f..a2ba5ebec38d 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+> @@ -1523,6 +1523,18 @@ sdhci: mmc@fe2e0000 {
+>  		status = "disabled";
+>  	};
+>  
+> +	crypto: crypto@fe370000 {
+> +		compatible = "rockchip,rk3588-crypto";
+> +		reg = <0x0 0xfe370000 0x0 0x2000>;
+> +		interrupts = <GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH 0>;
+> +		clocks = <&scmi_clk SCMI_CRYPTO_CORE>, <&scmi_clk SCMI_ACLK_SECURE_NS>,
+> +			 <&scmi_clk SCMI_HCLK_SECURE_NS>;
+> +		clock-names = "core", "aclk", "hclk";
+> +		resets = <&scmi_reset SRST_CRYPTO_CORE>;
+> +		reset-names = "core";
+> +		status = "okay";
 
-It does not have sense patch to be separate commit. It's not like you
-add new entry. New file is introduced in a patch? Then this patch
-touches maintainers.
+Drop.
 
 Best regards,
 Krzysztof
