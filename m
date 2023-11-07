@@ -1,50 +1,50 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40AD029435
-	for <linux-clk@vger.kernel.org>; Tue,  7 Nov 2023 17:45:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6F42A1BB
+	for <linux-clk@vger.kernel.org>; Tue,  7 Nov 2023 21:21:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="k6//Xuk7"
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BFC513A
-	for <linux-clk@vger.kernel.org>; Tue,  7 Nov 2023 09:45:07 -0800 (PST)
-Received: by mail-ed1-x534.google.com with SMTP id 4fb4d7f45d1cf-53dfc28a2afso10074590a12.1
-        for <linux-clk@vger.kernel.org>; Tue, 07 Nov 2023 09:45:07 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QCcldNw3"
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A26110D5
+	for <linux-clk@vger.kernel.org>; Tue,  7 Nov 2023 13:21:19 -0800 (PST)
+Received: by mail-lf1-x12a.google.com with SMTP id 2adb3069b0e04-507d1cc0538so8323387e87.2
+        for <linux-clk@vger.kernel.org>; Tue, 07 Nov 2023 13:21:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1699379106; x=1699983906; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1699392077; x=1699996877; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ILUIzwGAmI1ZGqr+mNktROdUm42J2cs6GtRudtdLn1E=;
-        b=k6//Xuk7EFxONKIWFXKIhqD4lS6yflujqs6eb/A0d9TVQ+qhvd0VMXbWNtQZ8WmEzQ
-         YgALl56qVYGnGpQ0jCH+sXKdUktIIpq0OnCBLUVSi4eFtkR4ncFw14uxyX8HkaqUoUyZ
-         Fvp9YvrOl9cP9MjfRNuMZRoOzBi/y2NTDDH+XDfwfv1kPI7qIhvWlVQTyhrzfhTQmP41
-         b56XCMgxGc0XR+AF3UWBCxZy7pRE4F2IlePbgoHe4+wM9k9cFKhyRZmBTRUtwVpo9/BJ
-         c+aMOQxpuauUDuj2pvFqSjp7fwqs991Y8OVM+zDwmXUgs+w1R2xTnvKk+n9OHohNrcVN
-         eiUg==
+        bh=TP91kUeFUdw5BHZzOadp5Ri1kmnZ7KqGB8htiz8sgvM=;
+        b=QCcldNw3mN3z0Z8vUZCd5DNeglbPRGEEkhyOXF9Wpo2HF8ts8KxTp2geNmnwtDJszr
+         3/juF4/yhivoSZNtL/r0Oe15snGiUrJq+6PcohgCMrhXjEG15ocxHNplTYogBc0qf5kT
+         M0ysQKEju8xvbOK+BuaG7lQlljwwVN1yv+NPokJtZLsG3s1pXVtRW0y/QEYke7HT2mvC
+         w32bliZ6S3gkqtazxwzuAZ7Tr4ZGPXMO0scVx8Aw1eTrkuWGrSkx2P99yQA+IWQEcm2N
+         xd8rvt//zoXivVKs/Z3VjQDGkhN/dKq9t/LR7goPKAtJ7LiLsCOImnkovefWQR1MbFNt
+         LRww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699379106; x=1699983906;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1699392077; x=1699996877;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ILUIzwGAmI1ZGqr+mNktROdUm42J2cs6GtRudtdLn1E=;
-        b=bWMLeuXtH+BSr6EC7NNaN4fFzhdPdrye+8VlMMgzEQ6B5fxPhxCfgkHkn0uZnYoHdq
-         5cXYWUalrh8q+yaLZHxRNNLHVy9eyeUbZuPpigsr0z8Q5OQO2lVb2Avgdggp4sFNJ39g
-         ui+EGs+XNknFmie0Ayj7EAqf34xW6+me4gEIEmCOfu0DSihkkTp70OcgO51DiiFGyBJf
-         57sCXMSnpVj7x0rAk3nCp7nUZF/KZR8GInzWx8WnEP8IJ5uDbPlyYXXSi9mgQ2oi4jFR
-         jgknfV8ArdSXZGDXzav25zceJOGusjA/3+povtUAedIstvWPde/3uiUl8JzQXnQL6En2
-         6zbA==
-X-Gm-Message-State: AOJu0YxPUs5aSfBAKLfo4goqnzQI1ypE6jAkqDMoTlSde7sMD80AaVsq
-	BwjI2ZpqzfPP//WgDOdEIK3tgA==
-X-Google-Smtp-Source: AGHT+IFKDLQKbTn7D5fZTBdaWJNTm4HkaW0LdlsOEsJrS4CxylI8TwfduuE4pveznNmb6DhIWPmxRw==
-X-Received: by 2002:a17:907:6d27:b0:9ba:2fe3:c97e with SMTP id sa39-20020a1709076d2700b009ba2fe3c97emr15896949ejc.11.1699379105480;
-        Tue, 07 Nov 2023 09:45:05 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.218.126])
-        by smtp.gmail.com with ESMTPSA id ox11-20020a170907100b00b009dd949b75c7sm1288243ejb.151.2023.11.07.09.45.03
+        bh=TP91kUeFUdw5BHZzOadp5Ri1kmnZ7KqGB8htiz8sgvM=;
+        b=aP6VWdRDb8e0r5BYRM765S4tpiDo5Stw5mIc+OapNO8vJekffCdshQXocZ+8NPRNdT
+         IiK78n9QWJpQM12OUWvgu/V/wPi1MmxqoSDwL3UJd8LiogWsaO5PDvjM0wPcF9ClgVr5
+         UTe4vXwg4Z/eZA/oOp/3t+zWZQznE7MJ1W3127sdlYyLlPe26FP4EaCvE+CE4ebI25W8
+         HX27UXNH6ul2XoHbjwiAvWSZ96b5/EdMcWf5hP4z/Kdl5ppwua5lQo9ad/7LUFsohIVa
+         6SiUFR4YYiw549xGb87Phnc677BnkO0omppeeQ6W05qez8zJExsxHnzaG5a8MogQoq2g
+         1Sow==
+X-Gm-Message-State: AOJu0YxSSsh5in/sHmyaU/ctvbv6xGxaW5g9sP7kRfPGiLybn+kP0Ga5
+	YVa4vAI+ddrsWzSX6wsszCjp3g==
+X-Google-Smtp-Source: AGHT+IG28nfpF/t/GwBx+w4KQQPZXMRL2WGhzbKjj0Jgx7Vh3vZ3wycUfSAG8mv+ArdcXqahB4xabQ==
+X-Received: by 2002:a05:6512:358e:b0:505:6cc7:e0f7 with SMTP id m14-20020a056512358e00b005056cc7e0f7mr21874519lfr.44.1699392077343;
+        Tue, 07 Nov 2023 13:21:17 -0800 (PST)
+Received: from [172.30.205.109] (UNUSED.212-182-62-129.lubman.net.pl. [212.182.62.129])
+        by smtp.gmail.com with ESMTPSA id g33-20020a0565123ba100b00503200ce35bsm461520lfv.136.2023.11.07.13.21.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Nov 2023 09:45:05 -0800 (PST)
-Message-ID: <d82865bc-29a7-4150-876e-489e0d797699@linaro.org>
-Date: Tue, 7 Nov 2023 18:45:03 +0100
+        Tue, 07 Nov 2023 13:21:16 -0800 (PST)
+Message-ID: <82a25b12-7a63-4c75-8a46-624bc35c6752@linaro.org>
+Date: Tue, 7 Nov 2023 22:21:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -52,211 +52,58 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/6] reset: rockchip: secure reset must be used by SCMI
+Subject: Re: [PATCH RESEND v3 4/5] clk: qcom: Use HW_CTRL_TRIGGER flag to
+ switch video GDSC to HW mode
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Abel Vesa <abel.vesa@linaro.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Bjorn Andersson <andersson@kernel.org>, Andy Gross <agross@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Taniya Das <tdas@qti.qualcomm.com>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-media@vger.kernel.org,
+ Jagadeesh Kona <quic_jkona@quicinc.com>
+References: <20231101-gdsc-hwctrl-v3-0-0740ae6b2b04@linaro.org>
+ <20231101-gdsc-hwctrl-v3-4-0740ae6b2b04@linaro.org>
+ <835a6add-81e9-42e4-abbe-91632aaa6bc9@linaro.org>
 Content-Language: en-US
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- Corentin Labbe <clabbe@baylibre.com>, davem@davemloft.net,
- herbert@gondor.apana.org.au, krzysztof.kozlowski+dt@linaro.org,
- mturquette@baylibre.com, p.zabel@pengutronix.de, robh+dt@kernel.org,
- sboyd@kernel.org
-Cc: ricardo@pardini.net, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org
-References: <20231107155532.3747113-1-clabbe@baylibre.com>
- <20231107155532.3747113-6-clabbe@baylibre.com>
- <f1b24f19-c210-4f55-b40f-ab063e7eeb22@linaro.org> <11278271.CDJkKcVGEf@diego>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <11278271.CDJkKcVGEf@diego>
-Content-Type: text/plain; charset=UTF-8
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <835a6add-81e9-42e4-abbe-91632aaa6bc9@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 07/11/2023 18:35, Heiko Stübner wrote:
-> Am Dienstag, 7. November 2023, 17:21:41 CET schrieb Krzysztof Kozlowski:
->> On 07/11/2023 16:55, Corentin Labbe wrote:
->>> While working on the rk3588 crypto driver, I loose lot of time
->>> understanding why resetting the IP failed.
->>> This is due to RK3588_SECURECRU_RESET_OFFSET being in the secure world,
->>> so impossible to operate on it from the kernel.
->>> All resets in this block must be handled via SCMI call.
->>>
->>> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
->>> ---
->>>  drivers/clk/rockchip/rst-rk3588.c             | 42 ------------
->>>  .../dt-bindings/reset/rockchip,rk3588-cru.h   | 68 +++++++++----------
+
+
+On 11/7/23 14:05, Bryan O'Donoghue wrote:
+> On 01/11/2023 09:04, Abel Vesa wrote:
+>> From: Jagadeesh Kona <quic_jkona@quicinc.com>
 >>
->> Please run scripts/checkpatch.pl and fix reported warnings. Some
->> warnings can be ignored, but the code here looks like it needs a fix.
->> Feel free to get in touch if the warning is not clear.
+>> The current HW_CTRL flag switches the video GDSC to HW control mode as
+>> part of GDSC enable itself, instead of that use HW_CTRL_TRIGGER flag to
+>> give consumer drivers more control and switch the GDSC mode as and when
+>> required.
 >>
->>>  2 files changed, 34 insertions(+), 76 deletions(-)
->>>
->>> diff --git a/drivers/clk/rockchip/rst-rk3588.c b/drivers/clk/rockchip/rst-rk3588.c
->>> index e855bb8d5413..6556d9d3c7ab 100644
->>> --- a/drivers/clk/rockchip/rst-rk3588.c
->>> +++ b/drivers/clk/rockchip/rst-rk3588.c
->>> @@ -16,9 +16,6 @@
->>>  /* 0xFD7C8000 + 0x0A00 */
->>>  #define RK3588_PHPTOPCRU_RESET_OFFSET(id, reg, bit) [id] = (0x8000*4 + reg * 16 + bit)
->>>  
->>> -/* 0xFD7D0000 + 0x0A00 */
->>> -#define RK3588_SECURECRU_RESET_OFFSET(id, reg, bit) [id] = (0x10000*4 + reg * 16 + bit)
->>> -
->>>  /* 0xFD7F0000 + 0x0A00 */
->>>  #define RK3588_PMU1CRU_RESET_OFFSET(id, reg, bit) [id] = (0x30000*4 + reg * 16 + bit)
->>>  
->>> @@ -806,45 +803,6 @@ static const int rk3588_register_offset[] = {
->>>  	RK3588_PMU1CRU_RESET_OFFSET(SRST_P_PMU0IOC, 5, 4),
->>>  	RK3588_PMU1CRU_RESET_OFFSET(SRST_P_GPIO0, 5, 5),
->>>  	RK3588_PMU1CRU_RESET_OFFSET(SRST_GPIO0, 5, 6),
->>> -
->>> -	/* SECURECRU_SOFTRST_CON00 */
->>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_A_SECURE_NS_BIU, 0, 10),
->>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_H_SECURE_NS_BIU, 0, 11),
->>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_A_SECURE_S_BIU, 0, 12),
->>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_H_SECURE_S_BIU, 0, 13),
->>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_P_SECURE_S_BIU, 0, 14),
->>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_CRYPTO_CORE, 0, 15),
->>> -
->>> -	/* SECURECRU_SOFTRST_CON01 */
->>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_CRYPTO_PKA, 1, 0),
->>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_CRYPTO_RNG, 1, 1),
->>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_A_CRYPTO, 1, 2),
->>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_H_CRYPTO, 1, 3),
->>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_KEYLADDER_CORE, 1, 9),
->>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_KEYLADDER_RNG, 1, 10),
->>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_A_KEYLADDER, 1, 11),
->>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_H_KEYLADDER, 1, 12),
->>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_P_OTPC_S, 1, 13),
->>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_OTPC_S, 1, 14),
->>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_WDT_S, 1, 15),
->>> -
->>> -	/* SECURECRU_SOFTRST_CON02 */
->>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_T_WDT_S, 2, 0),
->>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_H_BOOTROM, 2, 1),
->>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_A_DCF, 2, 2),
->>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_P_DCF, 2, 3),
->>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_H_BOOTROM_NS, 2, 5),
->>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_P_KEYLADDER, 2, 14),
->>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_H_TRNG_S, 2, 15),
->>> -
->>> -	/* SECURECRU_SOFTRST_CON03 */
->>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_H_TRNG_NS, 3, 0),
->>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_D_SDMMC_BUFFER, 3, 1),
->>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_H_SDMMC, 3, 2),
->>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_H_SDMMC_BUFFER, 3, 3),
->>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_SDMMC, 3, 4),
->>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_P_TRNG_CHK, 3, 5),
->>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_TRNG_S, 3, 6),
->>>  };
->>>  
->>>  void rk3588_rst_init(struct device_node *np, void __iomem *reg_base)
->>> diff --git a/include/dt-bindings/reset/rockchip,rk3588-cru.h b/include/dt-bindings/reset/rockchip,rk3588-cru.h
->>> index d4264db2a07f..c0d08ae78cd5 100644
->>> --- a/include/dt-bindings/reset/rockchip,rk3588-cru.h
->>> +++ b/include/dt-bindings/reset/rockchip,rk3588-cru.h
->>> @@ -716,39 +716,39 @@
->>>  #define SRST_P_GPIO0			627
->>>  #define SRST_GPIO0			628
->>>  
->>> -#define SRST_A_SECURE_NS_BIU		629
->>> -#define SRST_H_SECURE_NS_BIU		630
->>> -#define SRST_A_SECURE_S_BIU		631
->>> -#define SRST_H_SECURE_S_BIU		632
->>> -#define SRST_P_SECURE_S_BIU		633
->>> -#define SRST_CRYPTO_CORE		634
->>> -
->>> -#define SRST_CRYPTO_PKA			635
->>> -#define SRST_CRYPTO_RNG			636
->>> -#define SRST_A_CRYPTO			637
->>> -#define SRST_H_CRYPTO			638
->>> -#define SRST_KEYLADDER_CORE		639
->>> -#define SRST_KEYLADDER_RNG		640
->>> -#define SRST_A_KEYLADDER		641
->>> -#define SRST_H_KEYLADDER		642
->>> -#define SRST_P_OTPC_S			643
->>> -#define SRST_OTPC_S			644
->>> -#define SRST_WDT_S			645
->>> -
->>> -#define SRST_T_WDT_S			646
->>> -#define SRST_H_BOOTROM			647
->>> -#define SRST_A_DCF			648
->>> -#define SRST_P_DCF			649
->>> -#define SRST_H_BOOTROM_NS		650
->>> -#define SRST_P_KEYLADDER		651
->>> -#define SRST_H_TRNG_S			652
->>> -
->>> -#define SRST_H_TRNG_NS			653
->>> -#define SRST_D_SDMMC_BUFFER		654
->>> -#define SRST_H_SDMMC			655
->>> -#define SRST_H_SDMMC_BUFFER		656
->>> -#define SRST_SDMMC			657
->>> -#define SRST_P_TRNG_CHK			658
->>> -#define SRST_TRNG_S			659
->>> +#define SRST_A_SECURE_NS_BIU		10
+>> HW_CTRL_TRIGGER flag allows consumer drivers to switch the video GDSC to
+>> HW/SW control modes at runtime using dev_pm_genpd_set_hwmode API.
 >>
->> NAK. You just broke all users.
+>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+>> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+>> ---
+>>   drivers/clk/qcom/videocc-sc7180.c | 2 +-
+>>   drivers/clk/qcom/videocc-sc7280.c | 2 +-
+>>   drivers/clk/qcom/videocc-sdm845.c | 4 ++--
+>>   drivers/clk/qcom/videocc-sm8250.c | 4 ++--
+>>   drivers/clk/qcom/videocc-sm8550.c | 4 ++--
+>>   5 files changed, 8 insertions(+), 8 deletions(-)
 > 
-> If I'm reading the commit message correctly, all resets in that area
-> couldn't have any users to begin with, as the registers controlling them
-> are in the secure space, and need a higher exception level
+> So.
 > 
-> So if  anything is trying to handle these resets, would end up with some
-> security exception right now.
-> 
-> Though I guess we might want to use different names and not reuse the
-> existing ones. scmi clocks use a SCMI_CLK_* id scheme, so maybe SCMI_SRST_* ?
+> I'm assuming the rest of this series works however for sc8250 at least this is a NAK, breaks venus on rb5.
+Are you saying that applying this patch alone causes the attached crash?
 
-I don't quite get what the patch wants to achieve. Why dropping driver
-support for given reset ID is connected with changing the value of
-binding for given reset?
-
-What is the point of this define SRST_A_SECURE_NS_BIU 10?
-
-Best regards,
-Krzysztof
-
+Konrad
