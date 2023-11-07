@@ -1,146 +1,379 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D522D1870
-	for <linux-clk@vger.kernel.org>; Tue,  7 Nov 2023 02:00:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED698F40
+	for <linux-clk@vger.kernel.org>; Tue,  7 Nov 2023 03:52:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cDPWvasy"
-Received: from mail-yw1-x1133.google.com (mail-yw1-x1133.google.com [IPv6:2607:f8b0:4864:20::1133])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC80411F
-	for <linux-clk@vger.kernel.org>; Mon,  6 Nov 2023 18:00:16 -0800 (PST)
-Received: by mail-yw1-x1133.google.com with SMTP id 00721157ae682-5a7c95b8d14so56054297b3.3
-        for <linux-clk@vger.kernel.org>; Mon, 06 Nov 2023 18:00:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1699322416; x=1699927216; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=srgMrDERDuArNaxuZd4HI4TnsAEBPNaQibROPDY10RI=;
-        b=cDPWvasyZHWw5JwFQatpWvqBq7EV2FdYKftGLVRTdfRxT6UVmlH+BKL5TCSkiaqReq
-         hPlOPL4JnFGqY4ffDczDW3IkqLT6eCQsd19mMssJWsFuR4lNxFv88nl75hGANCDFzcDe
-         OFCdYQxhuZdxNjXNg6AMrF/UyjehDqqQpTsY0PbUcu599AFvid/mRq4bBWhbacmQKs/6
-         85Zf4n7P3I3Ljg9LnqtrWsIcPyW7e+Qzefptg8eYQbTLIS/Q67MP2xXE7yw3VOnAkwZK
-         oV4R8eyJ3lv6tA/FSZVAB05YJ6CPl9Zq9kUsI31rKZ8Xe+RKTv3hiS6DWjnujGIZlKZX
-         JncQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699322416; x=1699927216;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=srgMrDERDuArNaxuZd4HI4TnsAEBPNaQibROPDY10RI=;
-        b=Oc4TEKqNtXjVSLEpWQcnebrViMFMpdcaCKSIqKTgExKX+kXBPepvmhOEfq70yT18Hb
-         NZmcKSnpIl+Y4j01R0Y8QJZNU1Gr+cFhCECh79QJao6hJGxf9pnTjGnlUk4lfjJ4lSE1
-         fXUco7KjlA+GA+JR61hHBWNKwNlGtDOeDJ4f4PapoUnWlK507+h1cXErFhXwNyTnUTWf
-         QXl/Tyu/5Et5EscsZ3Bke8Jl9BDCEir97Ug1eoeRN2Z2RD8szM0piPcNiugXUHryYuOc
-         aMWcvZ7Qj1FmvpaHfHNCy2mxiZfwoL9xBNdLyOIcm70m+up6Xd6llO7h1HMISkcKliKT
-         ZNyQ==
-X-Gm-Message-State: AOJu0YwL73MnKGf8/uP9+lPqrsg8wF3F+RpC68ETARdTsJqZhsP3gp93
-	lydrBOq/BkZoL49O0UMl7M/Lncv6Os3znxlmkvolVQ==
-X-Google-Smtp-Source: AGHT+IGAbwSZWyye4E84dHHgparQ8O40wfiIiUoHGpNlnz9M5tSIRTKwGliiUOzCtSfXVSHBz472Uh2ULr30uqHoDxs=
-X-Received: by 2002:a0d:d8d1:0:b0:5af:7330:9f1e with SMTP id
- a200-20020a0dd8d1000000b005af73309f1emr9610473ywe.28.1699322415998; Mon, 06
- Nov 2023 18:00:15 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="etq6PgIf"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 268F6D75
+	for <linux-clk@vger.kernel.org>; Mon,  6 Nov 2023 19:52:21 -0800 (PST)
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20231107035217epoutp02f42224550a22497a4dc4c67b4085d980~VOtj4IyQy1155211552epoutp02k
+	for <linux-clk@vger.kernel.org>; Tue,  7 Nov 2023 03:52:17 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20231107035217epoutp02f42224550a22497a4dc4c67b4085d980~VOtj4IyQy1155211552epoutp02k
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1699329137;
+	bh=UTH8SuUbQPHKLc2e7maM9wNCoInY5htpj08w74pBt8A=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=etq6PgIfqtofVU44MPEFtOqpaKla98QdAcfCDPSFWuJ/hqDuCRv7+c3Y1rMX0tM+7
+	 K+SHraZkQ4TaOxNA60LgXCQ8Vxjhw2zZdxDwAIFyhh1rnC1fyhyGw6W0tcILBEGd2b
+	 b6iLxV/czlgA8gjhBX/Sr8LWApF/LRfD6YZSrxR4=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20231107035216epcas5p25c0b3f5c127f275f16161f71b79ed596~VOti_xYpV1433214332epcas5p22;
+	Tue,  7 Nov 2023 03:52:16 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.178]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4SPZ6R33MHz4x9Q0; Tue,  7 Nov
+	2023 03:52:15 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	7C.85.08567.F64B9456; Tue,  7 Nov 2023 12:52:15 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20231107035214epcas5p1e7979487e7406460d43ae4ef44790472~VOtg2Yo-N0876708767epcas5p1r;
+	Tue,  7 Nov 2023 03:52:14 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20231107035214epsmtrp2c910fad55ec81e7c26345a1e604e6d00~VOtg08-6h1894518945epsmtrp2J;
+	Tue,  7 Nov 2023 03:52:14 +0000 (GMT)
+X-AuditID: b6c32a44-3abff70000002177-59-6549b46f2a19
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	75.4A.08817.E64B9456; Tue,  7 Nov 2023 12:52:14 +0900 (KST)
+Received: from INBRO000447 (unknown [107.122.12.5]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20231107035210epsmtip1e85a1b9b4be95fe1118b9995f2f8e9ff~VOtcyc2tN0178001780epsmtip1D;
+	Tue,  7 Nov 2023 03:52:10 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Peter Griffin'" <peter.griffin@linaro.org>, "'Maksym Holovach'"
+	<maksym.holovach.an.2022@lpnu.ua>
+Cc: <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+	<mturquette@baylibre.com>, <conor+dt@kernel.org>, <sboyd@kernel.org>,
+	<tomasz.figa@gmail.com>, <s.nawrocki@samsung.com>,
+	<linus.walleij@linaro.org>, <wim@linux-watchdog.org>, <linux@roeck-us.net>,
+	<catalin.marinas@arm.com>, <will@kernel.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <cw00.choi@samsung.com>, <tudor.ambarus@linaro.org>,
+	<andre.draszik@linaro.org>, <semen.protsenko@linaro.org>,
+	<saravanak@google.com>, <willmcvicker@google.com>, <soc@kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-gpio@vger.kernel.org>, <linux-watchdog@vger.kernel.org>,
+	<kernel-team@android.com>, <linux-serial@vger.kernel.org>
+In-Reply-To: <CADrjBPqB5MOQeMV6uSJHLVyMJYWm7Nm_1XGSq331gPRfO1jkzg@mail.gmail.com>
+Subject: RE: [PATCH v2 00/20] Add minimal Tensor/GS101 SoC support and
+ Oriole/Pixel6 board
+Date: Tue, 7 Nov 2023 09:22:08 +0530
+Message-ID: <02fa01da112d$cb404bc0$61c0e340$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231004012308.2305273-1-dmitry.baryshkov@linaro.org>
- <20231004012308.2305273-3-dmitry.baryshkov@linaro.org> <2346f541be5b8528ad1a16df256a2f50.sboyd@kernel.org>
- <1290a5a0f7f584fcce722eeb2a1fd898.sboyd@kernel.org>
-In-Reply-To: <1290a5a0f7f584fcce722eeb2a1fd898.sboyd@kernel.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 7 Nov 2023 04:00:04 +0200
-Message-ID: <CAA8EJpq_pvtCxuPKrHmUOgsDFmDeG8cuUcynvvk-0SJNY3HJnA@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 2/3] clk: qcom: implement RCG2 'parked' clock support
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, freedreno@lists.freedesktop.org, 
-	Rob Clark <robdclark@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQGPgbmEF6+ub3qtRjh359af8ajCkQMZWII3AhbeOfwCeEklngG7UdjkAXxQE1KwrFSicA==
+Content-Language: en-us
+X-Brightmail-Tracker: H4sIAAAAAAAAA02TfVDTdRzH77ffnuACfg3ML6sQp+VhgVuw+cVzwiXgr9MKj6y7SmGx322T
+	sc09KJjdBgnxoKgcdbTDAOGGjCGPAYKA8pBJC3ziQZC4gFIgJgLSpWO28cPiv9f3832/P0/f
+	+zJRVguDzZQptIRaIZJz6O7Uhs6ALYHK+vcI7q0+L1g/XUeFy7k/MeAj0ykEWlp7KXBw8QEN
+	Fnb10mBTow/Mefg7CvPsZRRYOzFAg49P/UaDdYV2BOb3tVGgteQ0Aw5damPAyWIrBd75tosC
+	b/VEwp7BBTqszndQYVprFwN2/vUNDWZ1LNOhY6CGCh/kOK0Tg3Y6NDc7M80PH4In7/Ohef45
+	AiemHGj4BryhpYGGW36wIPizp7kI/mgojYFfNo4y8KJaHV5rzqTj9weu0PFyi4WG15Xq8bs/
+	p9Lwmku9TtXfBgaeU29G8IVav2ivTxN2SgmRmFD7E4p4pVimkAg5e2Nid8fyBVxeIC8Ubuf4
+	K0SJhJATsS86MEomd66K439UJNc5Q9EijYazbddOtVKnJfylSo1WyCFUYrkqRBWkESVqdApJ
+	kILQ7uBxue/wncK4BGlbZjVD5fgw6fbAEmpAqsOzEDcmwEJASVYK6mIW1oKA8ZEokucR0J0p
+	yELcnbyEgAuWTOoLg/2MgUFetCKgbyaFQh4eOh1lNxkuFR0LBE0l6XQX+2AyUNhuRlyMYkV0
+	UDJJc7Ebth8sT1pWsnpjnwN7Vv5KnIptBrOmeysteWCh4PHcyCq/DG58P0kl87wFTMUzKNmR
+	P/jnD5PTy3TW+hikl7uTkvVgqrtrpVGAOdxATWnGqj4CpOYbKSR7g+nr9QyS2WDB1kp35QEY
+	Di7Y2WRYCmbLqhCSw8DVuwVUlwTFAkBV8zaylCc4/WySQjo9QEY6i1S/Ab629a+u7VVwLjub
+	RjIO/ux7jp5FNhrXzGVcM5dxzQDG/4sVIVQz4kuoNIkSIp6v4imIY/89drwysRZZ+UVbI5qQ
+	oUJHUAdCYSIdCGCiHB+P5TCcYHmIRcnHCbUyVq2TE5oOhO9c9jmUvS5e6fyGCm0sLySUGyIQ
+	CEJCgwU8znqPmbTzYhYmEWmJBIJQEeoXPgrTjW2gtO3Ty+OKv+pM+ihYL33iUKYtVm0fu7nO
+	Nvw6GP8iION4GGdLywHfigp+/+4TzGNcpm95YPhnnqn694VVZwWjbnptNrd4rD041+EtP+jn
+	6ItE36buztw1zP0lvZKpbmbdszVKl5PjqiOv73+3Iu+aRFeQcOOyISpcHPfJKzMNRwqmbqc8
+	MV2sAtf2vPRlUV7/6OCPKRueshbGXjt4wPPO4aDzZ2I8T0SFfzdt67ES3rrIIzkx0iYZ0a6X
+	8Lo5QovMbzZhrvToB3Np/Y2NldYdJ+mjSQtSgzVJX2ALMFUulS1u/tWycRyNO3wouZsdmXFV
+	Wegl3LR3vNHqfiXM5yLrzZFNHKpGKuJtRdUa0b+dLcEazgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBKsWRmVeSWpSXmKPExsWy7bCSnG7eFs9Ug/l7ZC22vNrMYvF30jF2
+	i/fLehgt1uw9x2Rx/ctzVov5R86xWuzYLmLR9+Ihs8WUP8uZLDY9vsZq8bHnHqvF5vl/GC1m
+	nN/HZHFmcS+7xY11+9gtniw8w2RxeeoRJouLp1wtTl3/zGaxYcY/FovWvUfYLQ6/aWe16Dr0
+	l83i37WNLBbP+4BaH1//w2axahfQpE+34ixa7pharPr0n9Hi8ct/zA7yHtt2b2P1WDNvDaPH
+	71+TGD3e32hl99g56y67x4JNpR6bVnWyedy5tofNY+WaNawem5fUe1w50cTqsXHdOaCq7w3s
+	Hn1bVjF6fN4kF8AfxWWTkpqTWZZapG+XwJVxfec9loI9/hXXFy5jbWA8Zt/FyMkhIWAi8ae/
+	gb2LkYtDSGA3o8Tc+UdYIBLSEtc3TmCHsIUlVv57DlX0jFHi4++LzCAJNgFdiR2L29hAbBGB
+	TIlDDbfZQIqYBQ6xSTxeuY0VouMnk8StTX/AOjgFAiX+PlkDtkJYIEri3YWfYDaLgIrE22U3
+	wWp4BSwlPn64DWULSpyc+QSshllAW+Lpzadw9rKFr5khzlOQ+Pl0GdAyDqArwiTaVnJBlIhL
+	vDx6hH0Co/AsJJNmIZk0C8mkWUhaFjCyrGKUTC0ozk3PLTYsMMpLLdcrTswtLs1L10vOz93E
+	CE5MWlo7GPes+qB3iJGJg/EQowQHs5II7197j1Qh3pTEyqrUovz4otKc1OJDjNIcLErivN9e
+	96YICaQnlqRmp6YWpBbBZJk4OKUamC4F8YiZaf19MeOMQti+ngXiixKDv4TO29tbLig1tZHL
+	SDNU15p3P/du3yMNImJ1qadnTarJy2HcrC7ioZVzk+fhKSeOvvzKOW1Tep+kzFnyrdrrQX3R
+	o72i+enXGhhv3zvvv1/yzqSTk/s7WzY2nXd0crvBtv7l6qN11xmY+E9LHE8WyjD2WHdJuEd+
+	8eVZ3zl95fYvbxFyS39ydBZbhoXLxcrHTs4l83VW3PgwTVbl3Cfj6r5ZC8U391a7+2q6y2Ss
+	W8J25UktN7v7RfHF3v2VSalyAlE/00WEErusZv4v4ys0Yg7pTNn0Pu1qefPBzPrDClfLpG7K
+	TT+8LTu5rclQ0Ed2Mpvb5r3sx4yUWIozEg21mIuKEwFXhNtmuwMAAA==
+X-CMS-MailID: 20231107035214epcas5p1e7979487e7406460d43ae4ef44790472
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20231106124623epcas5p20f05ced9527800166c35e9c5a19f4479
+References: <20231010224928.2296997-1-peter.griffin@linaro.org>
+	<3d489d6c-2098-4f0c-9ec4-f6040665753e@lpnu.ua>
+	<CADrjBPp+fyNoPdix6=Wp4cDCRFq2Mui8NS6WENejcHn+H1M-jA@mail.gmail.com>
+	<48e1c0bd-9518-4927-b490-f3206256bbd4@lpnu.ua>
+	<CGME20231106124623epcas5p20f05ced9527800166c35e9c5a19f4479@epcas5p2.samsung.com>
+	<CADrjBPqB5MOQeMV6uSJHLVyMJYWm7Nm_1XGSq331gPRfO1jkzg@mail.gmail.com>
 
-On Tue, 7 Nov 2023 at 03:36, Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Stephen Boyd (2023-11-03 18:24:47)
-> > Quoting Dmitry Baryshkov (2023-10-03 18:23:07)
-> > > +
-> > > +       ret = regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, &cfg);
-> > > +       if (ret)
-> > > +               return ret;
-> > > +
-> > > +       return FIELD_GET(CFG_SRC_SEL_MASK, cfg) != rcg->safe_src_index;
-> > > +}
-> > > +
-> > > +static int clk_rcg2_parked_init(struct clk_hw *hw)
-> > > +{
-> > > +       struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-> > > +       const struct freq_tbl *f = rcg->freq_tbl;
-> > > +
-> > > +       regmap_read(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), &rcg->parked_cfg);
+Hi Peter
+
+> -----Original Message-----
+> From: Peter Griffin <peter.griffin=40linaro.org>
+> Sent: Monday, November 6, 2023 6:16 PM
+> To: Maksym Holovach <maksym.holovach.an.2022=40lpnu.ua>
+> Cc: robh+dt=40kernel.org; krzysztof.kozlowski+dt=40linaro.org;
+> mturquette=40baylibre.com; conor+dt=40kernel.org; sboyd=40kernel.org;
+> tomasz.figa=40gmail.com; s.nawrocki=40samsung.com; linus.walleij=40linaro=
+.org;
+> wim=40linux-watchdog.org; linux=40roeck-us.net; catalin.marinas=40arm.com=
+;
+> will=40kernel.org; arnd=40arndb.de; olof=40lixom.net; cw00.choi=40samsung=
+.com;
+> tudor.ambarus=40linaro.org; andre.draszik=40linaro.org;
+> semen.protsenko=40linaro.org; saravanak=40google.com;
+> willmcvicker=40google.com; soc=40kernel.org; devicetree=40vger.kernel.org=
+;
+> linux-arm-kernel=40lists.infradead.org; linux-samsung-soc=40vger.kernel.o=
+rg;
+> linux-clk=40vger.kernel.org; linux-gpio=40vger.kernel.org; linux-
+> watchdog=40vger.kernel.org; kernel-team=40android.com; linux-
+> serial=40vger.kernel.org; Alim Akhtar <alim.akhtar=40samsung.com>
+> Subject: Re: =5BPATCH v2 00/20=5D Add minimal Tensor/GS101 SoC support an=
+d
+> Oriole/Pixel6 board
+>=20
+> Hi Maksym,
+>=20
+> On Fri, 3 Nov 2023 at 13:56, Maksym Holovach
+> <maksym.holovach.an.2022=40lpnu.ua> wrote:
 > >
-> > I need this part today to fix a stuck clk problem I see on trogdor.lazor
-> > where during registration a call to clk_ops::get_parent() sees the clk
-> > isn't enabled at boot (because there isn't a clk_ops::is_enabled()
-> > function) so clk_rcg2_shared_get_parent() reads the parent from the
-> > 'parked_cfg' value, which is zero. If the hardware actually has non-zero
-> > for the parent then the framework will get the wrong parent, which is
-> > what happens on trogdor when the devmode screen is shown. The parent is
-> > the display PLL instead of XO. I haven't dug far enough to understand
-> > why disabling unused clks wedges the branch when we try to enable it
-> > again, but not disabling unused clks fixes the problem or reading the
-> > config register at registration to get the proper parent also fixes it.
-> > I guess the problem is that we're switching the RCG value when we
-> > shouldn't be doing that.
+> > Hi Peter,
 > >
->
-> I looked at this more today. It seems that I need to both read the
-> config register at init and also move over the rcg to the safe source at
-> init (i.e. park the clk at init). That's doable with a call to
-> clk_rcg2_shared_disable() for the clk_ops::init callback. Otherwise I
-> get a stuck clk warning.
->
-> Either
->
->  disp_cc_mdss_mdp_clk status stuck at 'off'
->
-> or
->
->  disp_cc_mdss_rot_clk status stuck at 'on'
->
-> When I don't park the rcg, the disp_cc_mdss_rot_clk gets stuck during
-> disabling of unused clks. I think I understand that problem. What
-> happens is disp_cc_mdss_mdp_clk_src and disp_cc_mdss_rot_clk_src are
-> both sourcing from disp_cc_pll0 at boot. Fixing the parent mapping makes
-> it so that enabling and then disabling disp_cc_mdss_ahb_clk causes
-> disp_cc_pll0 to be turned off when disp_cc_mdss_rot_clk_src is sourced
-> from it (and the branch disp_cc_mdss_rot_clk is enabled). If we park
-> both the rcgs at clk registration time we avoid this problem because the
-> PLL is disabled but nothing is actually a child clk. The act of reading
-> the config register and stashing that in the 'parked_cfg' only helps
-> avoid duplicate calls to change the rate, and doesn't help when we try
-> to repoint the clk at XO when the parent PLL is off.
->
-> The part I still don't understand is why reading the config register at
-> init and stashing that in 'parked_cfg' fixes the disp_cc_mdss_mdp_clk
-> stuck at off problem. I see that the branch clk is turned off and on
-> many times during boot and there aren't any warnings regardless of
-> stashing the config register. That means we should be moving the RCG to
-> XO source, between forcibly enabling and disabling the RCG, which
-> presumably would complain about being unable to update the config
-> register, but it doesn't. Only after late init does the clk fail to
-> enable, and the source is still XO at that time. Something else must be
-> happening that wedges the branch to the point that it can't be
-> recovered. But simply reporting the proper parent is enough for
-> disp_cc_mdss_mdp_clk.
+> > On 11/3/23 15:11, Peter Griffin wrote:
+> > > Hi Maksym,
+> > >
+> > > Thanks for your feedback.
+> > >
+> > > On Thu, 2 Nov 2023 at 22:32, Maksym Holovach
+> > > <maksym.holovach.an.2022=40lpnu.ua> wrote:
+> > >> Hi, all
+> > >>
+> > >> I wanted to inquire about how do you all feel about calling this
+> > >> SoC by the Google =22gs101=22 name.
+> > > Interesting question, I think calling it gs101 is the correct
+> > > approach see below for my rationale.
+> > >
+> > >> I believe the proper name for it should be the actual Samsung name,
+> > >> written in the silicon and reported in the Chip ID hardware: Exynos9=
+845.
+> > >> This also touches the Tensor G2 (Exynos9855), Tensor G3
+> > >> (Exynos9865), and possibly the =22Tesla=22 SoCs.
+>=20
+> Also Exynos850 as I pointed out previously. I think that is the wrong app=
+roach
+> and very confusing. This SoC is not commonly known by anyone as
+> Exynos9845.
+>=20
+> The same as the Exynos850 isn't known by anyone apart from Samsung folks
+> as Exynos 3830, and the tesla fsd SoC isn't known by whatever internal
+> Samsung name that presumably had.
+>=20
+> Maybe Alim can comment what tesla fsd SoC has in the product id register.
+>=20
+FSD does not contain chip_id IP found in Exynos series of SoCs. And it does=
+ not follow chip ID naming convention like S5Exxxx etc.=20
+Chip ID is vendor specific and its depends on SoC owner/vendor how and what=
+ they want to embed for the chip identification.
 
-I suppose that the issue is caused by mdss_gdsc or mmcx also being
-shut down at the late_init. And if I remember correctly, properly
-parking disp_cc_mdss_mdp_clk to the XO solves this issue. This is
-where is_enabled comes to play. Adding it changes the
-clk_disable_unused behaviour.
+> > >>
+> > >> I do not think the Linux kernel should be a marketing material: it
+> > >> should reflect reality. The chip is almost 100% composed of Samsung
+> > >> Exynos IP blocks and should be called that way.
+>=20
+> Where does this 'almost 100%' number come from? Are you measuring the
+> die area here or something else?
+>=20
+> > > As you alluded to Tesla fsd and Axis artpec8 SoCs are also based on
+> > > Exynos designs and support upstream uses the axis,artpec8* or
+> > > tesla,fsd* compatibles.
+> > >
+> > > So using google,gs101 is consistent with the existing upstream
+> > > naming scheme, for customized ASICs that were based off a Exynos
+> > > design. But it also reflects the reality that this SoC is not a
+> > > Exynos9845 as there is also a lot of Google owned and other third
+> > > party IP integrated that is not found in Exynos9845.
+> >
+> > A quick question: Do you imply Exynos9845 exists outside of the
+> > context of Tensor G1? I used to believe Exynos9845 **is** Tensor G1.
+>=20
+> You are correct. William clarified that point for us. Thanks William=21
+>=20
+> >
+> > Also, what kind of Google IP are you talking about? I believe only the
+> > neural accelerator should be custom-ish.
+>=20
+> This should not be considered an exhaustive list, but whilst looking in t=
+he
+> downstream public drivers at least the following Google IPs in the SoC
+>=20
+> TPU/ML accelerator
+> Bigocean av1 video accelerator
+> Emerald hill compression engine
+> Camera ISP blocks
+> (AoC) Always on Compute
+>=20
+> Plus of course Arm IPs (CPU+GPU), Synopsis IPs (USB, PCI. phys) etc.
+>=20
+> The Exynos based IPs tend to be for things like pinmux, clocks, i2c, spi,=
+ uart,
+> mfc, display controller, timer etc.
+>=20
+> >
+> > Additionally, I believe it having or not having Google IP is irrelevant=
+:
+> > for example, the new Raspberry Pi 5 Broadcom SoC has a lot of
+> > Raspberry's own IP, but it's still called Broadcom as it's the real
+> > manufacturer and designer of the chip.
+>=20
+> I think RPi / Broadcom is a very different situation to this. The origina=
+l SoC in
+> RPi 1 was wholly designed by Broadcom, and marketed as a Broadcom SoC
+> =5B1=5D.
+>=20
+> Further iterations of the SoC until now have also not had RPi IP integrat=
+ed.
+> RPi themselves refer to them as =22Broadcom SoCs=22 on their webpage =5B2=
+=5D, so it
+> is completely expected that they live in a broadcom directory.
+>=20
+> BCM2717 has integrated the RPi ISP, but to all intents and purposes this =
+is a
+> Broadcom owned and designed SoC, albeit only now sold to one customer.
+>=20
+> =5B1=5D https://protect2.fireeye.com/v1/url?k=3Dda5b6ba0-bb20c137-da5ae0e=
+f-
+> 74fe4860001d-7fce4d4e8d7e8af0&q=3D1&e=3Db917214e-9ab0-44fd-9dce-
+> aa4e41be3905&u=3Dhttps%3A%2F%2Fweb.archive.org%2Fweb%2F2012021508
+> 0023%2Fhttps%3A%2F%2Fwww.broadcom.com%2Fproducts%2FBCM2835
+> =5B2=5D
+> https://www.raspberrypi.com/documentation/computers/processors.html
+>=20
+> > >
+> > > I guess the same is also true for =60axis,artpec8=60 and =60tesla,fsd=
+=60 SoCs.
+> > > IMO the SoC compatible string should be uniquely identifying the
+> > > actual SoC, not a close relative.
+> > >
+> > > Regarding product_id you are correct this reads 0x09845000 but even
+> > > within Samsung Exynos family there are examples where the register
+> > > value does not match the SoC compatible. For example Exynos850 SoC
+> > > has a product ID value of =22E3830=22. Where the Linux compatible is
+> > > matching the Samsung marketing name, not the internal/outdated name.
+> >
+> > I did not know Exynos 850 is also not going under it's real name.
+>=20
+> It is going by its real name :) just not by its internal name that nobody=
+ has
+> heard of.
+>=20
+> > Ultimately, I believe all of those SoCs should go under their
+> > technical name in the exynos/ directory.
+> >
+> > Another concern is that Google could in the future license other SoC:
+> > be it Qualcomm, Nvidia or anything. If we put completely different hw
+> > under google/ directory, does it really make sense? In that case,
+> > who'll maintain the google/ directory? Exynos people? Qualcomm people
+> > if they license it? Some other people?
+>=20
+> I expect Google, or Google sponsored devs (as is the case for Linaro) to =
+be
+> helping maintain the Google SoCs upstream. See the MAINTAINERS entry for
+> this series of who I expect to maintain this google directory.
+>=20
+> >
+> > Then, I don't think Tensor G3 has a proper =22GS=22 name, it goes by =
+=22Zuma=22
+> > in decompiled kernel modules as far as I see.
+>=20
+> That is correct, it is named Zuma downstream and they did away with the
+> gs101, gs201 type naming scheme.
+>=20
+> >
+> > Finally, Tesla people already tried to submit drivers called by Tesla
+> > name, but which basically copied the functionality of the Exynos
+> > drivers. We would want to avoid that, ideally.
+>=20
+> As you can see from this series we are not proposing that. Any IPs that u=
+se
+> Exynos IP we are using the existing upstream driver and enhance it where
+> we have features that aren't present upstream.
+>=20
+> >
+> > My opinion is that all the Tesla and Google SoCs should be in the
+> > exynos/ directory, not only because they are basically Samsung Exynos,
+> > but also because they don't really need a separate directory: neither
+> > Google nor Tesla didn't neither manufacture or design those SoCs from
+> > scratch.
+>=20
+> Who manufactures it seems irrelevant. Qcom and Broadcom don't
+> manufacture their SoCs either, but they still live in qcom and broadcom
+> directories upstream. Whether they designed the SoC from scratch or not i=
+s
+> also IMO largely irrelevant. In many cases the upstream community has no
+> way to determine whether things were outsourced or not anyway.
+> Did Apple outsource things in their silicon design? Who knows, and why do
+> we care? It's an apple branded chip in an apple branded product let's cal=
+l the
+> directory apple.
+>=20
+> Interestingly apple uses the same uart driver as Tensor, when I check bac=
+k
+> through the commits in the driver.
+>=20
+> fcbba344907afe26da487f1ed0b0e285c06a547b
+>=20
+> tty: serial: samsung_tty: Add support for Apple UARTs
+>=20
+> Apple SoCs are a distant descendant of Samsung designs and use yet
+> another variant of their UART style, with different interrupt handling.
+>=20
+>=20
+> > The only reason I can think of for them to have it in a separate
+> > directory is maybe because Google and Tesla actually paid Samsung
+> > money for the right to call Exynos =22Google designed=22 SoCs, but I
+> > believe the kernel should be left out of that.
+>=20
+> Also the fact that they contain IPs not found in Samsung designed devices=
+,
+> aren't known to most people as Exynos, and the maintenance issues of
+> having all the Google, Tesla, Axis, Exynos based SoCs in the same directo=
+ry
+> (and who knows how many other ASIC customers in the future).
+>=20
+> Ultimately it is Krzysztof's decision I think. I followed what he had pre=
+viously
+> accepted for other SoCs for consistency and also because it seemed like t=
+he
+> correct approach to help scale up and ease the maintenance burden. If I l=
+ook
+> at the number of tensor based SoCs, phones per SoC and board variants per
+> phone model, then you end up having a lot of files in the exynos director=
+y
+> over time.
+>=20
+> regards,
+>=20
+> Peter
 
--- 
-With best wishes
-Dmitry
