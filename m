@@ -1,24 +1,24 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEACA17C3;
-	Tue,  7 Nov 2023 07:27:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E2EF17C3;
+	Tue,  7 Nov 2023 07:28:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mB1qp55v"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 269A9C433C7;
-	Tue,  7 Nov 2023 07:27:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OVHUiGbY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DA25C433C7;
+	Tue,  7 Nov 2023 07:28:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1699342031;
-	bh=vGMmP2SbG8QW0rKepADVb1kvIx/cDL07UnzdkoIwYDc=;
+	s=k20201202; t=1699342086;
+	bh=Oeo7abSq3CtzoDpqum8ZKNA5cr+aGoQC0Mlx1lKoCrE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mB1qp55vx4ch817u9eU2Y8VdhBifuruRrfu5WkD8+NRovOdls7bGMQEpO13p9l7Bk
-	 zCiBrotlSSJuHptBzxTf6YjBAtzxcRxpH1/mdh39yCF8FR6hTPh1h8PcsPeV8A3nT6
-	 EkKeiod5X+JWehHc5dLVyVBgmOI3Y5Kxx4AbIWHzuQo9rYV0vAZulDuNRoGYXD30Sn
-	 ne77tS9BxdYAntsPEW/7FSYiY4/9p3GiCyDS4nsbrk7Qfmo8TddB2J6jhYT6oQEJ/S
-	 hS6JgO1BKXyQKb/5mDvlLZCIEoIDVyjM8c73fGi15TgPFGzjPzzH54Q1DbWGKz8ybx
-	 OjDACSCen+6zg==
-Message-ID: <a0231a23-89be-4b44-aae0-ee0bb332f2ae@kernel.org>
-Date: Tue, 7 Nov 2023 08:27:03 +0100
+	b=OVHUiGbYydy/W6SH8NuD8f8xIxz2hEb8HNOUZ4gO5g3ro6aCR+ckIcchojCcGC1Ko
+	 FjNf4uVyZBkCA4c2OAM5N6Ng2GgjrNmNn8XfZzBZA/nHC/aWsntzym2o1oUfqSIi3J
+	 j+pMU2XgNX+35D5caua9BGqwoy6ZDgbc3Uv/m+PfwRd/DocmrjZVd3oOtSG8ktZURA
+	 dhxjP9nAnphvA7YtIgCgrlh/Z2Bh5hxqY5QOLCSL9rtz+zYuVlmGx6FOWahbWK8Sb4
+	 n8+lt3ltA32im5to08Dj3F7tXiKDLr7pdFEqSzDt/KdNyRKd9sEU7fo8TjOzKDrweE
+	 u6GOfJVSt1klw==
+Message-ID: <d44ce895-6b88-4db1-9cd4-5913c82a8244@kernel.org>
+Date: Tue, 7 Nov 2023 08:28:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -26,8 +26,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: stm32: add clocks and reset binding for
- stm32mp25 platform
+Subject: Re: [PATCH 4/4] arm64: dts: st: add rcc support in stm32mp251
 Content-Language: en-US
 To: gabriel.fernandez@foss.st.com, Michael Turquette
  <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
@@ -40,7 +39,7 @@ Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
  linux-stm32@st-md-mailman.stormreply.com,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 References: <20231106141845.102648-1-gabriel.fernandez@foss.st.com>
- <20231106141845.102648-2-gabriel.fernandez@foss.st.com>
+ <20231106141845.102648-5-gabriel.fernandez@foss.st.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -85,232 +84,86 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20231106141845.102648-2-gabriel.fernandez@foss.st.com>
+In-Reply-To: <20231106141845.102648-5-gabriel.fernandez@foss.st.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 06/11/2023 15:18, gabriel.fernandez@foss.st.com wrote:
 > From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 > 
-> Adds clock and reset binding entries for STM32MP25 SoC family
+> Add RCC support used for to manage clocks and resets on stm32mp251.
 > 
 > Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-
-This was based on some very old tree. Please work on latest release,
-maintainer's tree or linux-next. Otherwise we need to point the same
-issues we already fixed. This would be quite a waste of time, don't you
-think?
-
-
 > ---
->  .../bindings/clock/st,stm32mp25-rcc.yaml      | 116 +++++
->  include/dt-bindings/clock/stm32mp25-clks.h    | 492 ++++++++++++++++++
->  include/dt-bindings/reset/stm32mp25-resets.h  | 167 ++++++
->  3 files changed, 775 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
->  create mode 100644 include/dt-bindings/clock/stm32mp25-clks.h
->  create mode 100644 include/dt-bindings/reset/stm32mp25-resets.h
+>  arch/arm64/boot/dts/st/stm32mp251.dtsi | 59 ++++++++++++++------------
+>  1 file changed, 31 insertions(+), 28 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml b/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
-> new file mode 100644
-> index 000000000000..27c60f3231ba
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
-> @@ -0,0 +1,116 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/st,stm32mp25-rcc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: STM32MP25 Reset Clock Controller
-> +
-> +maintainers:
-> +  - Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-> +
-> +description: |
-> +  The RCC IP is both a reset and a clock controller.
-> +  RCC makes also power management (resume/supend and wakeup interrupt).
-> +  Please also refer to reset.txt for common reset controller binding usage.
+> diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi b/arch/arm64/boot/dts/st/stm32mp251.dtsi
+> index 124403f5f1f4..698d0f68b98d 100644
+> --- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
+> +++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
+> @@ -3,7 +3,9 @@
+>   * Copyright (C) STMicroelectronics 2023 - All Rights Reserved
+>   * Author: Alexandre Torgue <alexandre.torgue@foss.st.com> for STMicroelectronics.
+>   */
+> +#include <dt-bindings/clock/stm32mp25-clks.h>
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/reset/stm32mp25-resets.h>
+>  
+>  / {
+>  	#address-cells = <2>;
+> @@ -35,22 +37,10 @@ arm_wdt: watchdog {
+>  	};
+>  
+>  	clocks {
+> -		ck_flexgen_08: ck-flexgen-08 {
+> +		clk_rcbsec: clk-rcbsec {
+>  			#clock-cells = <0>;
+>  			compatible = "fixed-clock";
+> -			clock-frequency = <100000000>;
+> -		};
+> -
+> -		ck_flexgen_51: ck-flexgen-51 {
+> -			#clock-cells = <0>;
+> -			compatible = "fixed-clock";
+> -			clock-frequency = <200000000>;
+> -		};
+> -
+> -		ck_icn_ls_mcu: ck-icn-ls-mcu {
+> -			#clock-cells = <0>;
+> -			compatible = "fixed-clock";
+> -			clock-frequency = <200000000>;
+> +			clock-frequency = <64000000>;
+>  		};
+>  	};
+>  
+> @@ -122,7 +112,7 @@ usart2: serial@400e0000 {
+>  				compatible = "st,stm32h7-uart";
+>  				reg = <0x400e0000 0x400>;
+>  				interrupts = <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>;
+> -				clocks = <&ck_flexgen_08>;
+> +				clocks = <&rcc CK_KER_USART2>;
+>  				status = "disabled";
+>  			};
+>  
+> @@ -131,7 +121,7 @@ sdmmc1: mmc@48220000 {
+>  				arm,primecell-periphid = <0x00353180>;
+>  				reg = <0x48220000 0x400>, <0x44230400 0x8>;
+>  				interrupts = <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>;
+> -				clocks = <&ck_flexgen_51>;
+> +				clocks = <&rcc CK_KER_SDMMC1 >;
+>  				clock-names = "apb_pclk";
+>  				cap-sd-highspeed;
+>  				cap-mmc-highspeed;
+> @@ -140,6 +130,19 @@ sdmmc1: mmc@48220000 {
+>  			};
+>  		};
+>  
+> +		rcc: rcc@44200000 {
 
-Sorry, what TXT?
-
-> +
-> +  This binding uses common clock bindings
-> +  Documentation/devicetree/bindings/clock/clock-bindings.txt
-
-Please drop all unrelevant, 5 year old links.
-
-> +
-> +  Specifying clocks
-> +  =================
-> +
-> +  All available clocks are defined as preprocessor macros in
-> +  dt-bindings/clock/stm32mp25-clks.h header and can be used in device
-
-Not even proper path :/
-
-> +  tree sources.
-> +  This file implements defines like:
-> +      #define CK_BUS_SDMMC1 245
-> +      #define CK_KER_SDMMC1 313
-
-Open other bindings to see how it is done. We expect full path only.
-Drop all this irrelevant parts.
-
-> +
-> +  Specifying softreset control of devices
-> +  =======================================
-> +
-> +  Device nodes should specify the reset channel required in their "resets"
-> +  property, containing a phandle to the reset device node and an index
-> +  specifying which channel to use.
-
-Are you now describing how DT and Linux work? Drop.
-
-> +  The index is the bit number within the RCC registers bank, starting from RCC
-> +  base address.
-
-No, it should not be. Use IDs. You will get NAK below anyway.
-
-> +  It is calculated as: index = register_offset / 4 * 32 + bit_offset.
-> +  Where bit_offset is the bit offset within the register.
-> +
-> +  For example on STM32MP25, for LTDC reset:
-> +     ltdc = RCC_LTDCCFGR offset / 4 * 32 + LTDC_bit_offset
-> +          = 0x840 / 4 * 32 + 0 = 16896
-> +
-> +  The list of valid indices for STM32MP25 is available in:
-> +  include/dt-bindings/reset-controller/stm32mp25-resets.h
-> +
-> +  This file implements defines like:
-> +  #define LTDC_R	16896
-
-? I have no clue what you are saying here.
-
-> +
-> +properties:
-> +  "#clock-cells":
-> +    const: 1
-> +
-> +  "#reset-cells":
-> +    const: 1
-> +
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - st,stm32mp25-rcc
-
-Compatible is always first.
-
-> +  clocks: true
-> +  clock-names: true
-
-NAK, missing constraints.
-
-This does not look at all like any decent bindings. Start from scratch
-from recently reviewed bindings.
-
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +required:
-> +  - "#clock-cells"
-> +  - "#reset-cells"
-> +  - compatible
-> +  - reg
-> +
-> +if:
-> +  properties:
-> +    compatible:
-> +      contains:
-> +        enum:
-> +          - st,stm32mp25-rcc
-> +then:
-> +  properties:
-> +    clocks:
-> +      description: Specifies oscillators.
-> +      maxItems: 5
-> +
-> +    clock-names:
-> +      items:
-> +        - const: hse
-> +        - const: hsi
-> +        - const: msi
-> +        - const: lse
-> +        - const: lsi
-> +  required:
-> +    - clocks
-> +    - clock-names
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/stm32mp25-clks.h>
-> +    #include <dt-bindings/reset/stm32mp25-resets.h>
-> +
-> +    rcc: rcc@44200000 {
-> +        compatible = "st,stm32mp25-rcc";
-> +        reg = <0x44200000 0x10000>;
-> +        #clock-cells = <1>;
-> +        #reset-cells = <1>;
-> +        clock-names = "hse", "hsi", "msi", "lse", "lsi";
-> +        clocks = <&scmi_clk CK_SCMI_HSE>,
-> +                 <&scmi_clk CK_SCMI_HSI>,
-> +                 <&scmi_clk CK_SCMI_MSI>,
-> +                 <&scmi_clk CK_SCMI_LSE>,
-> +                 <&scmi_clk CK_SCMI_LSI>;
-> +    };
-> +...
-> diff --git a/include/dt-bindings/clock/stm32mp25-clks.h b/include/dt-bindings/clock/stm32mp25-clks.h
-> new file mode 100644
-> index 000000000000..9876ee0dd1e4
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/stm32mp25-clks.h
-
-Same filename as bindings.
-
-> @@ -0,0 +1,492 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-3-Clause */
-> +/*
-> + * Copyright (C) STMicroelectronics 2023 - All Rights Reserved
-> + * Author: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-> + */
-> +
-> +#ifndef _DT_BINDINGS_STM32MP25_CLKS_H_
-> +#define _DT_BINDINGS_STM32MP25_CLKS_H_
-> +
-
-
-...
-
-> +#endif /* _DT_BINDINGS_STM32MP25_CLKS_H_ */
-> diff --git a/include/dt-bindings/reset/stm32mp25-resets.h b/include/dt-bindings/reset/stm32mp25-resets.h
-> new file mode 100644
-> index 000000000000..3a4a9eef6a95
-> --- /dev/null
-> +++ b/include/dt-bindings/reset/stm32mp25-resets.h
-
-Filename matching compatible format.
-
-> @@ -0,0 +1,167 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-3-Clause */
-> +/*
-> + * Copyright (C) STMicroelectronics 2023 - All Rights Reserved
-> + * Author(s): Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-> + */
-> +
-> +#ifndef _DT_BINDINGS_STM32MP25_RESET_H_
-> +#define _DT_BINDINGS_STM32MP25_RESET_H_
-> +
-> +#define SYS_R		8192
-
-NAK, don't put register values into the bindings. There is no single
-need of it. Use IDs (which start from 0 and are incremented by 1) or
-drop it.
-
+Node names should be generic. See also an explanation and list of
+examples (not exhaustive) in DT specification:
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
 
 
 Best regards,
