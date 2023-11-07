@@ -1,241 +1,113 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7684829414
-	for <linux-clk@vger.kernel.org>; Tue,  7 Nov 2023 13:57:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC248315B8
+	for <linux-clk@vger.kernel.org>; Tue,  7 Nov 2023 15:55:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IjbOo4fa"
-Received: from mail-qv1-xf2c.google.com (mail-qv1-xf2c.google.com [IPv6:2607:f8b0:4864:20::f2c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67C2FBD
-	for <linux-clk@vger.kernel.org>; Tue,  7 Nov 2023 05:57:21 -0800 (PST)
-Received: by mail-qv1-xf2c.google.com with SMTP id 6a1803df08f44-66d09b6d007so39581466d6.1
-        for <linux-clk@vger.kernel.org>; Tue, 07 Nov 2023 05:57:21 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="lb1Z3uYh"
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3952146AF
+	for <linux-clk@vger.kernel.org>; Tue,  7 Nov 2023 07:55:46 -0800 (PST)
+Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-507975d34e8so8406664e87.1
+        for <linux-clk@vger.kernel.org>; Tue, 07 Nov 2023 07:55:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1699365440; x=1699970240; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=CbqpJ5gw9GOJ91Wt05ZBQ3B3ajCS3+ZL+yYMKlVS/7w=;
-        b=IjbOo4faoEMViNBUpWlV1QZx/HopQt16gv26gV9X86KEP+BznglaZRA2Kyg+2RcgIa
-         kB2tYLVfGWnyV1RRKFQgjLg4FIFYiYYLL808Vj7ABZrkZhv7UjnCvy8zIFHYlfzFCjEr
-         6f3AyfnEoZNDcEWae0QE/xQJkjv3nspH8oUtzJ6qDyVuKsc680CMk+LS1RsSOdromTek
-         w0RTpbaWmoYMiPXafccIL482Sg+cXP06FSClyO2WvGrRCBq4u4m8v7BSRuqnJeT7fAOb
-         nhMlVfrKYvTBcEHYLbHT1Mi+chI1SEcRmgS9xkx/cM7TgmPOv+8qOiPhwJBvz/KGVDEg
-         GBHA==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1699372544; x=1699977344; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dwIY2rn/dEbSPVpdhU2+f4uOVwzcygzYY5LLYZc61cU=;
+        b=lb1Z3uYhdRyz+ZQZdcQkp/JsP7erLsukxm7K8ttXw7a4MDTx7nAjWilC6/ykwBsSiz
+         9ah6PDdkJFggacY5pjPL/Dq9458r7WcbRlWSuHNZrawPl+jMNbPcocRSU9L1BsGC77GW
+         FW9k5tqQQ8MZmTjtZWEEPfP74P6wO0N2OKZ/SjGTjTtmLjx4/x06Z09vLqa4MJhaPx5E
+         NPoDdY6iEM7EFGmVlMzlAOqj5jw/Flee7uU1q+yourjDzxHunDhuyLDrpCDqGQMDdHmr
+         3IJKP8KAXqO/2agU9twgDZHpNndk2Uxwycnu60orLpYw6bUYHcN//VsfEJVr2kBmC6qu
+         h1BA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699365440; x=1699970240;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1699372544; x=1699977344;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=CbqpJ5gw9GOJ91Wt05ZBQ3B3ajCS3+ZL+yYMKlVS/7w=;
-        b=NbU9fN3mqcZdskNB2v1JPh3947srSNntSPFW+GIQtXbJBa2o4o+bOslYPQesfhly8+
-         wSwfgAUtuxP2nxFO/nK2n/vOg4sk9q53uws98eR48Q2KSeyep2/pefD3UexaAcK7lrKN
-         EB7Jh8ZeBo4WtJCPNQbAI82MzX9FdiEDZoaK9+bQBR7+JoreiOto5j+ZdV7DcC3xRdXh
-         q6+0A9iLF1QQI+sLoIjqcZTOtRjnaOAjzf1GU7a5qS8P7YbQYFwfjNJEVM4AfvO98nr5
-         S+juBUp84ssa2IJuztd5xNoBu954DNYgdXjKqQCwSEBVXy4AWSkah7LY/J431pOw1c4J
-         W8CA==
-X-Gm-Message-State: AOJu0YzxH0FFEhRXcwy06wELAk5Ku/AbsykgD3J2LOFs7kJy2bU4euJD
-	edYFIqFxrM8u4By/0rcmQYx3kSRGrVbP7epIqaNWOg==
-X-Google-Smtp-Source: AGHT+IFPmCDJWmXuqEspf2Hkzm+uYMa/h3WFcFn4tmvryaRRUPo6gpp0HW4f25qoMF9Xg4paJyLmxWpEpUjIXDfQnzY=
-X-Received: by 2002:a05:6214:529b:b0:66d:3474:a93a with SMTP id
- kj27-20020a056214529b00b0066d3474a93amr37508496qvb.30.1699365440438; Tue, 07
- Nov 2023 05:57:20 -0800 (PST)
+        bh=dwIY2rn/dEbSPVpdhU2+f4uOVwzcygzYY5LLYZc61cU=;
+        b=crrBa2f4ZYv3C8bGfisP23N56BBfJlExrTcclRrb03sSqJ7axrVZMdeKOj+RZnqSWb
+         SO1eEJsM3SmunIbytNCpL1rl/DaEmQrKg4/JgGe9EyUxrbs6GMzH/l1p22XZNo6a3SBm
+         hP06s0AEBDmgdnYFbieIDN6VqfluD+6gMVMBc0K1VecM7pxlPHgMoEfbUUVFbHk7+7Ex
+         Rla1DczIMJbRbSjT2Fp2CcqLYcKKXuKjy3Y/R2Jbi1uezXNiEAXtvxIkPFRdSRDoVJ74
+         TWuq+lvCZVfnvrsPUPEDUNU77VKUL0g2gcI4pXq7v52SP2OoBfnMgAT6zDKXD4y83WDV
+         CN3g==
+X-Gm-Message-State: AOJu0Yx4vbGIxJfC25jVE1VfkcCZBf3m1LlXl9/8yHJz3FfRDKYAVPc/
+	PJSH03GnQy7B+gfxVJyE67CVhA==
+X-Google-Smtp-Source: AGHT+IEW/M54tsfmWAXd/ApYtb7f8HXdpcpbgcYJR/UxDO6jor1uWlDWpgFp9h1Fwj1h6vqEmi/WOg==
+X-Received: by 2002:ac2:430a:0:b0:503:257a:7f5d with SMTP id l10-20020ac2430a000000b00503257a7f5dmr21683796lfh.31.1699372544418;
+        Tue, 07 Nov 2023 07:55:44 -0800 (PST)
+Received: from arnold.baylibre (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id f6-20020a05600c4e8600b003fefb94ccc9sm16579085wmq.11.2023.11.07.07.55.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Nov 2023 07:55:43 -0800 (PST)
+From: Corentin Labbe <clabbe@baylibre.com>
+To: davem@davemloft.net,
+	heiko@sntech.de,
+	herbert@gondor.apana.org.au,
+	krzysztof.kozlowski+dt@linaro.org,
+	mturquette@baylibre.com,
+	p.zabel@pengutronix.de,
+	robh+dt@kernel.org,
+	sboyd@kernel.org
+Cc: ricardo@pardini.net,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Corentin Labbe <clabbe@baylibre.com>
+Subject: [PATCH 0/6] crypto: rockchip: add support for rk3588/rk3568
+Date: Tue,  7 Nov 2023 15:55:26 +0000
+Message-Id: <20231107155532.3747113-1-clabbe@baylibre.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231011184823.443959-1-peter.griffin@linaro.org>
- <20231011184823.443959-11-peter.griffin@linaro.org> <aae4e6cd-dcfc-442d-9ed7-d5a73c419ba8@kernel.org>
-In-Reply-To: <aae4e6cd-dcfc-442d-9ed7-d5a73c419ba8@kernel.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Tue, 7 Nov 2023 13:57:09 +0000
-Message-ID: <CADrjBPrUsSigThoLU9thmZiaG4690B9-BcZYrBn44K9Fc8z3vg@mail.gmail.com>
-Subject: Re: [PATCH v3 10/20] clk: samsung: clk-gs101: Add cmu_top registers,
- plls, mux and gates
-To: Chanwoo Choi <chanwoo@kernel.org>
-Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
-	mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org, 
-	tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, 
-	wim@linux-watchdog.org, linux@roeck-us.net, catalin.marinas@arm.com, 
-	will@kernel.org, arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org, 
-	cw00.choi@samsung.com, tudor.ambarus@linaro.org, andre.draszik@linaro.org, 
-	semen.protsenko@linaro.org, saravanak@google.com, willmcvicker@google.com, 
-	soc@kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, kernel-team@android.com, 
-	linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Chanwoo,
+Hello
 
-Thanks for your review!
+This patch serie add support for the new crypto rockchip IP found on
+rk3568 and rk3588.
+It was tested with CONFIG_CRYPTO_MANAGER_EXTRA_TESTS=y
 
-On Wed, 18 Oct 2023 at 17:51, Chanwoo Choi <chanwoo@kernel.org> wrote:
->
-> Hi Peter,
->
-> On 23. 10. 12. 03:48, Peter Griffin wrote:
-> > CMU_TOP is the top level clock management unit which contains PLLs, muxes
-> > and gates that feed the other clock management units.
-> >
-> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> > ---
-> >  drivers/clk/samsung/Kconfig     |    9 +
-> >  drivers/clk/samsung/Makefile    |    2 +
-> >  drivers/clk/samsung/clk-gs101.c | 1551 +++++++++++++++++++++++++++++++
-> >  3 files changed, 1562 insertions(+)
-> >  create mode 100644 drivers/clk/samsung/clk-gs101.c
-> >
-> > diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
-> > index 76a494e95027..14362ec9c543 100644
-> > --- a/drivers/clk/samsung/Kconfig
-> > +++ b/drivers/clk/samsung/Kconfig
-> > @@ -12,6 +12,7 @@ config COMMON_CLK_SAMSUNG
-> >       select EXYNOS_5410_COMMON_CLK if ARM && SOC_EXYNOS5410
-> >       select EXYNOS_5420_COMMON_CLK if ARM && SOC_EXYNOS5420
-> >       select EXYNOS_ARM64_COMMON_CLK if ARM64 && ARCH_EXYNOS
-> > +     select GOOGLE_GS101_COMMON_CLK if ARM64 && ARCH_GOOGLE_TENSOR
-> >       select TESLA_FSD_COMMON_CLK if ARM64 && ARCH_TESLA_FSD
-> >
-> >  config S3C64XX_COMMON_CLK
-> > @@ -95,6 +96,14 @@ config EXYNOS_CLKOUT
-> >         status of the certains clocks from SoC, but it could also be tied to
-> >         other devices as an input clock.
-> >
-> > +config GOOGLE_GS101_COMMON_CLK
-> > +     bool "Google gs101 clock controller support" if COMPILE_TEST
-> > +     depends on COMMON_CLK_SAMSUNG
-> > +     depends on EXYNOS_ARM64_COMMON_CLK
-> > +     help
-> > +       Support for the clock controller present on the Google gs101 SoC.
-> > +       Choose Y here only if you build for this SoC.
-> > +
->
-> (snip)
->
-> > +
-> > +/* gs101 */
-> > +static const struct samsung_mux_clock cmu_top_mux_clks[] __initconst = {
-> > +     /* CMU_TOP_PURECLKCOMP */
-> > +     MUX(CLK_MOUT_SHARED0_PLL, "mout_shared0_pll", mout_shared0_pll_p,
-> > +         PLL_CON0_PLL_SHARED0, 4, 1),
-> > +     MUX(CLK_MOUT_SHARED1_PLL, "mout_shared1_pll", mout_shared1_pll_p,
-> > +         PLL_CON0_PLL_SHARED1, 4, 1),
-> > +     MUX(CLK_MOUT_SHARED2_PLL, "mout_shared2_pll", mout_shared2_pll_p,
-> > +         PLL_CON0_PLL_SHARED2, 4, 1),
-> > +     MUX(CLK_MOUT_SHARED3_PLL, "mout_shared3_pll", mout_shared3_pll_p,
-> > +         PLL_CON0_PLL_SHARED3, 4, 1),
-> > +     MUX(CLK_MOUT_SPARE_PLL, "mout_spare_pll", mout_spare_pll_p,
-> > +         PLL_CON0_PLL_SPARE, 4, 1),
-> > +
-> > +     /* BUS0 */
-> > +     MUX(CLK_MOUT_BUS0_BUS, "mout_cmu_bus0_bus", mout_cmu_bus0_bus_p,
-> > +         CLK_CON_MUX_MUX_CLKCMU_BUS0_BUS, 0, 2),
-> > +     MUX(CLK_MOUT_CMU_BOOST, "mout_cmu_boost", mout_cmu_cmu_boost_p,
->
-> In order to keep the consistent naming style,
-> I think that need to change from 'mout_cmu_boost' to 'mout_cmu_cmu_boost'.
+I would like to thanks all people which helped to test this driver
 
-Yes, that's a good point, and a good spot! Will fix it in v4.
+Regards
 
->
-> > +         CLK_CON_MUX_MUX_CLKCMU_CMU_BOOST, 0, 2),
-> > +
-> > +     /* BUS1 */
-> > +     MUX(CLK_MOUT_BUS1_BUS, "mout_cmu_bus1_bus", mout_cmu_bus1_bus_p,
-> > +         CLK_CON_MUX_MUX_CLKCMU_BUS1_BUS, 0, 2),
-> > +
-> > +     /* BUS2 */
-> > +     MUX(CLK_MOUT_BUS2_BUS, "mout_cmu_bus2_bus", mout_cmu_bus2_bus_p,
-> > +         CLK_CON_MUX_MUX_CLKCMU_BUS2_BUS, 0, 2),
-> > +
-> > +     /* CORE */
-> > +     MUX(CLK_MOUT_CORE_BUS, "mout_cmu_core_bus", mout_cmu_core_bus_p,
-> > +         CLK_CON_MUX_MUX_CLKCMU_CORE_BUS, 0, 2),
-> > +
-> > +     /* EH */
-> > +     MUX(CLK_MOUT_EH_BUS, "mout_cmu_eh_bus", mout_cmu_eh_bus_p,
-> > +         CLK_CON_MUX_MUX_CLKCMU_CORE_BUS, 0, 2),
->
-> 'mout_cmu_core_bus' and 'mout_cmu_eh_bus' uses the same register/shift/width information.
-> I think it should be modified by changing the regiter or changing the shift/width information.
+Corentin Labbe (6):
+  dt-bindings: crypto: add support for rockchip,crypto-rk3588
+  MAINTAINERS: add new dt-binding doc to the right entry
+  ARM64: dts: rk3588: add crypto node
+  ARM64: dts: rk356x: add crypto node
+  reset: rockchip: secure reset must be used by SCMI
+  crypto: rockchip: add rk3588 driver
 
-It should be using the CLK_CON_MUX_MUX_CLKCMU_EH_BUS register.
-Will fix it in v4.
+ .../crypto/rockchip,rk3588-crypto.yaml        |  65 ++
+ MAINTAINERS                                   |   1 +
+ arch/arm64/boot/dts/rockchip/rk356x.dtsi      |  12 +
+ arch/arm64/boot/dts/rockchip/rk3588s.dtsi     |  12 +
+ drivers/clk/rockchip/rst-rk3588.c             |  42 -
+ drivers/crypto/Kconfig                        |  29 +
+ drivers/crypto/rockchip/Makefile              |   5 +
+ drivers/crypto/rockchip/rk2_crypto.c          | 739 ++++++++++++++++++
+ drivers/crypto/rockchip/rk2_crypto.h          | 246 ++++++
+ drivers/crypto/rockchip/rk2_crypto_ahash.c    | 344 ++++++++
+ drivers/crypto/rockchip/rk2_crypto_skcipher.c | 576 ++++++++++++++
+ .../dt-bindings/reset/rockchip,rk3588-cru.h   |  68 +-
+ 12 files changed, 2063 insertions(+), 76 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/crypto/rockchip,rk3588-crypto.yaml
+ create mode 100644 drivers/crypto/rockchip/rk2_crypto.c
+ create mode 100644 drivers/crypto/rockchip/rk2_crypto.h
+ create mode 100644 drivers/crypto/rockchip/rk2_crypto_ahash.c
+ create mode 100644 drivers/crypto/rockchip/rk2_crypto_skcipher.c
 
->
-> > +
-> > +     /* CPUCL{0,1,2,} */
-> > +     MUX(CLK_MOUT_CPUCL2_SWITCH, "mout_cmu_cpucl2_switch", mout_cmu_cpucl2_switch_p,
-> > +         CLK_CON_MUX_MUX_CLKCMU_CPUCL2_SWITCH, 0, 2),
-> > +
-> > +     MUX(CLK_MOUT_CPUCL1_SWITCH, "mout_cmu_cpucl1_switch", mout_cmu_cpucl1_switch_p,
-> > +         CLK_CON_MUX_MUX_CLKCMU_CPUCL1_SWITCH, 0, 2),
-> > +
-> > +     MUX(CLK_MOUT_CPUCL0_SWITCH, "mout_cmu_cpucl0_switch", mout_cmu_cpucl0_switch_p,
-> > +         CLK_CON_MUX_MUX_CLKCMU_CPUCL0_SWITCH, 0, 2),
-> > +
-> > +     MUX(CLK_MOUT_CPUCL0_DBG, "mout_cmu_cpucl0_dbg", mout_cmu_cpucl0_dbg_p,
-> > +         CLK_CON_DIV_CLKCMU_CPUCL0_DBG, 0, 2),
-> > +
-> > +     MUX(CLK_MOUT_CMU_HPM, "mout_cmu_hpm", mout_cmu_hpm_p,
-> > +         CLK_CON_MUX_MUX_CLKCMU_HPM, 0, 2),
-> >
->
-> (snip)
->
-> > +     /* PDP */
-> > +     MUX(CLK_MOUT_PDP_BUS, "mout_cmu_pdp_bus", mout_cmu_pdp_bus_p,
-> > +         CLK_CON_MUX_MUX_CLKCMU_PDP_BUS, 0, 2),
-> > +
-> > +     /* PDP */
-> > +     MUX(CLK_MOUT_PDP_VRA, "mout_cmu_pdp_vra", mout_cmu_pdp_vra_p,
-> > +         CLK_CON_MUX_MUX_CLKCMU_PDP_VRA, 0, 2),
-> > +
-> > +     /* IPP */
-> > +     MUX(CLK_MOUT_IPP_BUS, "mout_cmu_ipp_bus", mout_cmu_ipp_bus_p,
-> > +         CLK_CON_MUX_MUX_CLKCMU_IPP_BUS, 0, 2),
-> > +
-> > +     /* G3AA */
-> > +     MUX(CLK_MOUT_G3AA, "mout_cmu_g3aa", mout_cmu_g3aa_p,
-> > +         CLK_CON_MUX_MUX_CLKCMU_G3AA_G3AA, 0, 2),
->
-> I think that need to change the mux name and mux parent name
-> because other mux name use the twice word according to the register name
-> even if use the same work such as 'mout_cmu_g2d_g2d', 'mout_cmu_mcsc_mcsc' and 'mout_cmu_mfc_mfc'.
-> - mout_cmu_g3aa -> mout_cmu_g3aa_g3aa
-> - mout_cmu_g3aa_p -> mount_cmu_g3aa_g3aa_p
+-- 
+2.41.0
 
-Will fix in v4
-
->
-> (snip)
->
-> > +     /* CSIS */
-> > +     GATE(CLK_GOUT_CSIS, "gout_cmu_csis_bus", "mout_cmu_csis_bus",
-> > +          CLK_CON_GAT_GATE_CLKCMU_CSIS_BUS, 21, 0, 0),
-> > +     /* PDP */
-> > +     GATE(CLK_GOUT_PDP_BUS, "gout_cmu_pdp_bus", "mout_cmu_pdp_bus",
-> > +          CLK_CON_GAT_GATE_CLKCMU_PDP_BUS, 21, 0, 0),
-> > +
-> > +     GATE(CLK_GOUT_PDP_VRA, "gout_cmu_pdp_vra", "mout_cmu_pdp_vra",
-> > +          CLK_CON_GAT_GATE_CLKCMU_PDP_BUS, 21, 0, 0),
-> > +
-> > +     /* IPP */
-> > +     GATE(CLK_GOUT_IPP_BUS, "gout_cmu_ipp_bus", "mout_cmu_ipp_bus",
-> > +          CLK_CON_GAT_GATE_CLKCMU_IPP_BUS, 21, 0, 0),
-> > +     /* G3AA */
-> > +     GATE(CLK_GOUT_G3AA, "gout_cmu_g3aa", "mout_cmu_g3aa",
-> > +          CLK_CON_MUX_MUX_CLKCMU_G3AA_G3AA, 21, 0, 0),
->
-> ditto.
-> gout_cmu_g3aa -> gout_cmu_g3aa_g3aa
-> mout_cmu_g3aa -> mout_cmu_g3aa_g3aa
-
-Will fix in V4
-
-regards,
-
-Peter.
