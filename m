@@ -1,106 +1,144 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576802D058
-	for <linux-clk@vger.kernel.org>; Tue,  7 Nov 2023 11:18:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D592EB10
+	for <linux-clk@vger.kernel.org>; Tue,  7 Nov 2023 12:23:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EnFiixIy"
-Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEB12119
-	for <linux-clk@vger.kernel.org>; Tue,  7 Nov 2023 03:18:45 -0800 (PST)
-Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-5b35579f475so64573527b3.3
-        for <linux-clk@vger.kernel.org>; Tue, 07 Nov 2023 03:18:45 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yaKLipwy"
+Received: from mail-yw1-x112a.google.com (mail-yw1-x112a.google.com [IPv6:2607:f8b0:4864:20::112a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6030B28A69
+	for <linux-clk@vger.kernel.org>; Tue,  7 Nov 2023 04:18:32 -0800 (PST)
+Received: by mail-yw1-x112a.google.com with SMTP id 00721157ae682-5a822f96aedso67327887b3.2
+        for <linux-clk@vger.kernel.org>; Tue, 07 Nov 2023 04:18:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1699355925; x=1699960725; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1699359512; x=1699964312; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=oQGe6mNztA93E1vhMaP9OoY2/CZNCEpDDK/s+WkFPnI=;
-        b=EnFiixIytwk3XoCxhb3yPTrknvALwow6D5TsvQnzBJwNpCecBOyzkhJ337yXvCXdvX
-         vHzjxIJnCUmIy9HpxrFhtKQoJ783iHCkUmF0OlOpZBHcyd6yXdW4J8528FIBO242Y0wR
-         pwW1GUbPVplxMJ1ZyITIyPqjZt6vKRC+H1fXUJrqU7PWXkasbD2iF2M8WM+HrqDBGaE/
-         7JEZ3D9QW1DLXzDUsWntDgAiyNK2VHaMLp2wTVOxvqSIcsugqlOHLxNw31ka+Jn09oCe
-         +GJI0e2a+87rIqUnOIhY64ThY1FbbWd+C+CTJjsCe/CtLnrvRONVFV4oc9iikj2HS+RH
-         eAAg==
+        bh=AjUrVizqyH1nfI6x/UZaYgw1z+MKM3l8dtyFAmAVDWw=;
+        b=yaKLipwya77Nb9STHS6f5skNVFquQj9pxhrnBIy2ZOUQXhjwxxZ4DX79l/+lRFDIiw
+         zDFUnybuJO3nLdzgtIO+5Cy+DsdzxBer0kY4Bb4KeKdg6w6qZ9mRMWYjpEx+ivHny6vt
+         2nWCGqyaWhriac5mfb+XpB6Vjv1V1yJ12CT7Ii50NVnStSye11JRJuGLParf5lk4xYkk
+         tOUxhS6zXvRTdoFmmV50HkmUuwEW6XH2JlYhKFE+vIrNd6QL8fu/GoDiuSQt6eaIucvQ
+         it3dGbFKcjBQHYGKbveLKw0sJachoGYFKF/dJgSJMen8OrMQySq09VlGpe8Kcd6yZTjk
+         NSrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699355925; x=1699960725;
+        d=1e100.net; s=20230601; t=1699359512; x=1699964312;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=oQGe6mNztA93E1vhMaP9OoY2/CZNCEpDDK/s+WkFPnI=;
-        b=fpwD0dum6av3t6m7DMCB5ECq/A4Xs13RJixDctiG0GJLyXAueMYLG3gbFeZAy/pP6c
-         +CxTxI4HeriJRvNVejHalGwfJ3zn1jhhIdne4rIvES8B9dC6TkqtPCCduU/5nf7ut+hR
-         WMXKEWjlc1BuJYsAUYhJHG5hsP2//iAm5t5ZBVWvAb+mg1ViGY3jWOZLR7jAcAOZU0gq
-         3EBlXw/e124xeQ2zwYn/Y3ND46vS8Y0l20CkXuJ64vdPQQt6GA2VPo3agrbAKYlMqO4G
-         j37nugPWmbq4qNy1sp21yd84QCCv64lbP75OiYyOK5stb22LrJV6+x6GUnDQJ3BVKQqN
-         GH2w==
-X-Gm-Message-State: AOJu0YyZk2ercn54DS4WWtYV2yCNYe+cbEiFtXaMgQWCOIKWgjCzctgm
-	xK4pRkUlN97EvMu5fBpdievTPYOdpYnMMDD63+oORA==
-X-Google-Smtp-Source: AGHT+IFFsEhPnerAY8XwonvVxogJKJiZC9RcaEADdZ7gCKoSrkvwJ/ancft1LPF0r9cwbvoXEpKqianptNR/KAZyYJU=
-X-Received: by 2002:a25:900b:0:b0:d9a:e129:92a1 with SMTP id
- s11-20020a25900b000000b00d9ae12992a1mr31802617ybl.54.1699355924917; Tue, 07
- Nov 2023 03:18:44 -0800 (PST)
+        bh=AjUrVizqyH1nfI6x/UZaYgw1z+MKM3l8dtyFAmAVDWw=;
+        b=FvDqqvyKypePScH/Tywb2giaHf9I0MPca2/PyVSo0t64vuxfhgg8EC7MXMbIfh6r8s
+         3rvC180m9fzcsPrcE43zA2FXZtTPooI7OJUQTdYNojrbQc/fO6pZt717XvTHY1BMgVf/
+         /FOzJNPqL6VyOXmpO3SeGCoolYibY2nJG/WDOLgxbb2dSxFslrX1srbT/krxqkECtByQ
+         z6hOPvhXpDhmit/0XVYnNuWMjGwHSOxAPxKYm49wvICF9tbt2yU+Jyt6ov1t7vPkcPbn
+         csdTkh26QEiYg/A9xqsdUweulh97ae7jbUf8+0okRW7A/pkVAKEVxNDjSEKrrptKO2vd
+         0M1w==
+X-Gm-Message-State: AOJu0Yy/Hhjg0mxJA3XW8f5X9K+zcIWD5zumSTNoLKdZcD3WDFi7D9eQ
+	CrsVBBVAkHuvi+nY8sukarH+mAHlbyFyfQ2OixjrrQHGslRnbAdXM5+MXw==
+X-Google-Smtp-Source: AGHT+IEfNk5GXDy4Op4JDSJ5jjpGKCs5RJ5m+Jq4s18y1HSS1sLqrMJRFHEjKKMGNS3lWsWeWVrZ/XIvsrSt6UA57OM=
+X-Received: by 2002:a0d:e6cb:0:b0:5a8:62f2:996a with SMTP id
+ p194-20020a0de6cb000000b005a862f2996amr14903778ywe.6.1699359511723; Tue, 07
+ Nov 2023 04:18:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231107064545.13120-1-quic_jkona@quicinc.com>
-In-Reply-To: <20231107064545.13120-1-quic_jkona@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 7 Nov 2023 13:18:33 +0200
-Message-ID: <CAA8EJpoLaXgxue-+pry8VK4Ln00Dk-jXG_Ev9ot5k8bbonP3Qw@mail.gmail.com>
-Subject: Re: [PATCH] clk: qcom: Fix SM_CAMCC_8550 dependencies
-To: Jagadeesh Kona <quic_jkona@quicinc.com>
-Cc: Andy Gross <agross@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>, 
-	Imran Shaik <quic_imrashai@quicinc.com>, Randy Dunlap <rdunlap@infradead.org>, 
-	kernel test robot <lkp@intel.com>
+References: <20231011184823.443959-1-peter.griffin@linaro.org>
+ <20231011184823.443959-7-peter.griffin@linaro.org> <20231016134106.GA2643742-robh@kernel.org>
+In-Reply-To: <20231016134106.GA2643742-robh@kernel.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Tue, 7 Nov 2023 12:18:20 +0000
+Message-ID: <CADrjBPqB_tDjo68qODKsJMQLmDRoQo9U-LFR7os8bExjDNeEZw@mail.gmail.com>
+Subject: Re: [PATCH v3 06/20] dt-bindings: pinctrl: samsung: add
+ google,gs101-pinctrl compatible
+To: Rob Herring <robh@kernel.org>
+Cc: krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com, 
+	conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com, 
+	s.nawrocki@samsung.com, linus.walleij@linaro.org, wim@linux-watchdog.org, 
+	linux@roeck-us.net, catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, 
+	olof@lixom.net, gregkh@linuxfoundation.org, cw00.choi@samsung.com, 
+	tudor.ambarus@linaro.org, andre.draszik@linaro.org, 
+	semen.protsenko@linaro.org, saravanak@google.com, willmcvicker@google.com, 
+	soc@kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, kernel-team@android.com, 
+	linux-serial@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 7 Nov 2023 at 08:46, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
->
-> SM_GCC_8550 depends on ARM64 but it is selected by
-> SM_CAMCC_8550, which should have the same dependencies
-> as SM_GCC_8550 to avoid the below Kconfig warning reported
-> by kernel test robot.
->
-> WARNING: unmet direct dependencies detected for SM_GCC_8550
->   Depends on [n]: COMMON_CLK [=y] && COMMON_CLK_QCOM [=y] && (ARM64 || COMPILE_TEST [=n])
->   Selected by [y]:
->   - SM_CAMCC_8550 [=y] && COMMON_CLK [=y] && COMMON_CLK_QCOM [=y]
->
-> Fixes: ccc4e6a061a2 ("clk: qcom: camcc-sm8550: Add camera clock controller driver for SM8550")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202311062309.XugQH7AH-lkp@intel.com/
-> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+Hi Rob,
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Thanks for your review.
 
-> ---
->  drivers/clk/qcom/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
+On Mon, 16 Oct 2023 at 14:41, Rob Herring <robh@kernel.org> wrote:
 >
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index ad1acd9b7426..dbc3950c5960 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -767,6 +767,7 @@ config SM_CAMCC_8450
+> On Wed, Oct 11, 2023 at 07:48:09PM +0100, Peter Griffin wrote:
+> > Add the "google,gs101-pinctrl" compatible to the dt-schema bindings
+> > documentation.
+> >
+> > Add maxItems of 50 for the interrupts property as gs101 can have
+> > multiple irqs.
+> >
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > ---
+> >  .../bindings/pinctrl/samsung,pinctrl.yaml     | 22 ++++++++++++++++++-
+> >  1 file changed, 21 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
+> > index 26614621774a..6dc648490668 100644
+> > --- a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
+> > +++ b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
+> > @@ -35,6 +35,7 @@ properties:
+> >
+> >    compatible:
+> >      enum:
+> > +      - google,gs101-pinctrl
+> >        - samsung,s3c2412-pinctrl
+> >        - samsung,s3c2416-pinctrl
+> >        - samsung,s3c2440-pinctrl
+> > @@ -58,7 +59,8 @@ properties:
+> >    interrupts:
+> >      description:
+> >        Required for GPIO banks supporting external GPIO interrupts.
+> > -    maxItems: 1
+> > +    minItems: 1
+> > +    maxItems: 50
+> >
+> >    power-domains:
+> >      maxItems: 1
+> > @@ -134,6 +136,24 @@ allOf:
+> >            minItems: 1
+> >            maxItems: 1
+> >
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            const: google,gs101-pinctrl
+> > +    then:
+> > +      properties:
+> > +        interrupts:
+> > +          description:
+> > +            Required for external wakeup interrupts. List all external
 >
->  config SM_CAMCC_8550
->         tristate "SM8550 Camera Clock Controller"
-> +       depends on ARM64 || COMPILE_TEST
->         select SM_GCC_8550
->         help
->           Support for the camera clock controller on SM8550 devices.
-> --
-> 2.41.0
->
+> Is it external GPIO interrupts or wakeup interrupts?
 
+These are external wakeup interrupts.
 
--- 
-With best wishes
-Dmitry
+Looking again I believe this can be dropped entirely as re-reading
+samsung,pinctrl-gpio-bank.yaml we are already defining the
+external wake-up interrupts on each bank in gs101-pinctrl.dtsi.
+
+>
+> > +            wakeup interrupts supported by this bank.
+> > +          minItems: 1
+> > +          maxItems: 50
+>
+> For a given SoC, I don't see how this is variable? If it is variable,
+> how do you know which entry is what?
+
+It isn't variable.
+
+Peter.
