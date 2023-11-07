@@ -1,50 +1,24 @@
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 579F2C2DE
-	for <linux-clk@vger.kernel.org>; Tue,  7 Nov 2023 07:17:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEACA17C3;
+	Tue,  7 Nov 2023 07:27:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qiaWWFUJ"
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EA2911D
-	for <linux-clk@vger.kernel.org>; Mon,  6 Nov 2023 23:17:48 -0800 (PST)
-Received: by mail-lj1-x22c.google.com with SMTP id 38308e7fff4ca-2c5039d4e88so73048341fa.3
-        for <linux-clk@vger.kernel.org>; Mon, 06 Nov 2023 23:17:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1699341466; x=1699946266; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nASf+QHEzLORw+EVUpqrol5aZdpAh5vbBF30u3IcjA4=;
-        b=qiaWWFUJmIGVRzuZQCzlqJsQDhIlYgu/1SOrsB6aO7PI2+Gve5TQ7rXLp/HzEYI8oI
-         E5swef/a8NSBJkJ0aex4Cg4JQSka/zvC6ONIXChc40K84vZSubbTljrdAp5tx2gtQbQE
-         nJbbmrck0RpWY8aQBdIx+EpnZ7cXAWnX6M/VrNIM4XdxFn/s0ZZ0XkCZ+YiFOlGyHELf
-         EAra/3DQhFSTxLZZSY1x86wwSbPqPVc0x9bBLK/vDznzIYQ7tZjqO2SEZiIa4v8DMptN
-         2VOW2fsthFfcWFXbOxVLaoBvIq2eRTuHt5mUPIwg80yZuIASbjHOTnSMEVOVKoIAkuje
-         RMQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699341466; x=1699946266;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nASf+QHEzLORw+EVUpqrol5aZdpAh5vbBF30u3IcjA4=;
-        b=mJ6kDH3pJPH27o5mnkG+/7hXbeBJIxiWVkFcE9o36nky7T9a7Su5KNhu9Hg2dhEHbG
-         QUN+Kfg0wbPw23jNelUpQaH5I3yHI3zLBpFx3WUqyJ8GGWix387MOi1vh/OHkLWZjxpo
-         vIkxcad6/8UHhh03Loh/11gnJtgKoKy6d03XD9Fhbtj17cRzY4PuxOAKcXwDNtS10ECz
-         1hcx89hT6Fr3W+oKa++HLZjsltkKozD6KotCDMYz5ftbTIk4aQfqULPWZUfUO3AST/sQ
-         1GiAaBem/TUhtF0M/aKnK0pcQFU2EhvXJ+OjDuKHQ+DYAqgAGcyn5p+SnOcPSMyYA62v
-         0Tug==
-X-Gm-Message-State: AOJu0Yz3J5CyKHxje1uU834lAfMW494SWyggAOIuoBfixshnQwwxX8v4
-	XhKqdkWutuZ7ICCgysjJTuRQ1A==
-X-Google-Smtp-Source: AGHT+IE0+ePQ3C8IzL5uD42npxCkEz93Hpe9E3QTPpvFKXFh18c6VmQk7WB5N6EaMYVPyyOlybUHtQ==
-X-Received: by 2002:a2e:8904:0:b0:2c0:300a:82f1 with SMTP id d4-20020a2e8904000000b002c0300a82f1mr24281212lji.14.1699341466594;
-        Mon, 06 Nov 2023 23:17:46 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.218.126])
-        by smtp.gmail.com with ESMTPSA id bg13-20020a05600c3c8d00b0040644e699a0sm14643720wmb.45.2023.11.06.23.17.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Nov 2023 23:17:46 -0800 (PST)
-Message-ID: <b3366685-f704-41e8-82aa-61efeabef23b@linaro.org>
-Date: Tue, 7 Nov 2023 08:17:43 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mB1qp55v"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 269A9C433C7;
+	Tue,  7 Nov 2023 07:27:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1699342031;
+	bh=vGMmP2SbG8QW0rKepADVb1kvIx/cDL07UnzdkoIwYDc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mB1qp55vx4ch817u9eU2Y8VdhBifuruRrfu5WkD8+NRovOdls7bGMQEpO13p9l7Bk
+	 zCiBrotlSSJuHptBzxTf6YjBAtzxcRxpH1/mdh39yCF8FR6hTPh1h8PcsPeV8A3nT6
+	 EkKeiod5X+JWehHc5dLVyVBgmOI3Y5Kxx4AbIWHzuQo9rYV0vAZulDuNRoGYXD30Sn
+	 ne77tS9BxdYAntsPEW/7FSYiY4/9p3GiCyDS4nsbrk7Qfmo8TddB2J6jhYT6oQEJ/S
+	 hS6JgO1BKXyQKb/5mDvlLZCIEoIDVyjM8c73fGi15TgPFGzjPzzH54Q1DbWGKz8ybx
+	 OjDACSCen+6zg==
+Message-ID: <a0231a23-89be-4b44-aae0-ee0bb332f2ae@kernel.org>
+Date: Tue, 7 Nov 2023 08:27:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -52,23 +26,23 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 01/11] dt-bindings: clock: qcom: document the SM8650
- TCSR Clock Controller
+Subject: Re: [PATCH 1/4] dt-bindings: stm32: add clocks and reset binding for
+ stm32mp25 platform
 Content-Language: en-US
-To: Neil Armstrong <neil.armstrong@linaro.org>, Andy Gross
- <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Taniya Das <quic_tdas@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20231106-topic-sm8650-upstream-clocks-v3-0-761a6fadb4c0@linaro.org>
- <20231106-topic-sm8650-upstream-clocks-v3-1-761a6fadb4c0@linaro.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+To: gabriel.fernandez@foss.st.com, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20231106141845.102648-1-gabriel.fernandez@foss.st.com>
+ <20231106141845.102648-2-gabriel.fernandez@foss.st.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
  JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
@@ -78,51 +52,266 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
  vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
  Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231106-topic-sm8650-upstream-clocks-v3-1-761a6fadb4c0@linaro.org>
+ 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 fv0=
+In-Reply-To: <20231106141845.102648-2-gabriel.fernandez@foss.st.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 06/11/2023 09:25, Neil Armstrong wrote:
-> Add bindings documentation for the SM8650 TCSR Clock Controller.
+On 06/11/2023 15:18, gabriel.fernandez@foss.st.com wrote:
+> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 > 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
+> Adds clock and reset binding entries for STM32MP25 SoC family
+> 
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+This was based on some very old tree. Please work on latest release,
+maintainer's tree or linux-next. Otherwise we need to point the same
+issues we already fixed. This would be quite a waste of time, don't you
+think?
+
+
+> ---
+>  .../bindings/clock/st,stm32mp25-rcc.yaml      | 116 +++++
+>  include/dt-bindings/clock/stm32mp25-clks.h    | 492 ++++++++++++++++++
+>  include/dt-bindings/reset/stm32mp25-resets.h  | 167 ++++++
+>  3 files changed, 775 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
+>  create mode 100644 include/dt-bindings/clock/stm32mp25-clks.h
+>  create mode 100644 include/dt-bindings/reset/stm32mp25-resets.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml b/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
+> new file mode 100644
+> index 000000000000..27c60f3231ba
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
+> @@ -0,0 +1,116 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/st,stm32mp25-rcc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: STM32MP25 Reset Clock Controller
+> +
+> +maintainers:
+> +  - Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+> +
+> +description: |
+> +  The RCC IP is both a reset and a clock controller.
+> +  RCC makes also power management (resume/supend and wakeup interrupt).
+> +  Please also refer to reset.txt for common reset controller binding usage.
+
+Sorry, what TXT?
+
+> +
+> +  This binding uses common clock bindings
+> +  Documentation/devicetree/bindings/clock/clock-bindings.txt
+
+Please drop all unrelevant, 5 year old links.
+
+> +
+> +  Specifying clocks
+> +  =================
+> +
+> +  All available clocks are defined as preprocessor macros in
+> +  dt-bindings/clock/stm32mp25-clks.h header and can be used in device
+
+Not even proper path :/
+
+> +  tree sources.
+> +  This file implements defines like:
+> +      #define CK_BUS_SDMMC1 245
+> +      #define CK_KER_SDMMC1 313
+
+Open other bindings to see how it is done. We expect full path only.
+Drop all this irrelevant parts.
+
+> +
+> +  Specifying softreset control of devices
+> +  =======================================
+> +
+> +  Device nodes should specify the reset channel required in their "resets"
+> +  property, containing a phandle to the reset device node and an index
+> +  specifying which channel to use.
+
+Are you now describing how DT and Linux work? Drop.
+
+> +  The index is the bit number within the RCC registers bank, starting from RCC
+> +  base address.
+
+No, it should not be. Use IDs. You will get NAK below anyway.
+
+> +  It is calculated as: index = register_offset / 4 * 32 + bit_offset.
+> +  Where bit_offset is the bit offset within the register.
+> +
+> +  For example on STM32MP25, for LTDC reset:
+> +     ltdc = RCC_LTDCCFGR offset / 4 * 32 + LTDC_bit_offset
+> +          = 0x840 / 4 * 32 + 0 = 16896
+> +
+> +  The list of valid indices for STM32MP25 is available in:
+> +  include/dt-bindings/reset-controller/stm32mp25-resets.h
+> +
+> +  This file implements defines like:
+> +  #define LTDC_R	16896
+
+? I have no clue what you are saying here.
+
+> +
+> +properties:
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  "#reset-cells":
+> +    const: 1
+> +
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - st,stm32mp25-rcc
+
+Compatible is always first.
+
+> +  clocks: true
+> +  clock-names: true
+
+NAK, missing constraints.
+
+This does not look at all like any decent bindings. Start from scratch
+from recently reviewed bindings.
+
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +required:
+> +  - "#clock-cells"
+> +  - "#reset-cells"
+> +  - compatible
+> +  - reg
+> +
+> +if:
+> +  properties:
+> +    compatible:
+> +      contains:
+> +        enum:
+> +          - st,stm32mp25-rcc
+> +then:
+> +  properties:
+> +    clocks:
+> +      description: Specifies oscillators.
+> +      maxItems: 5
+> +
+> +    clock-names:
+> +      items:
+> +        - const: hse
+> +        - const: hsi
+> +        - const: msi
+> +        - const: lse
+> +        - const: lsi
+> +  required:
+> +    - clocks
+> +    - clock-names
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/stm32mp25-clks.h>
+> +    #include <dt-bindings/reset/stm32mp25-resets.h>
+> +
+> +    rcc: rcc@44200000 {
+> +        compatible = "st,stm32mp25-rcc";
+> +        reg = <0x44200000 0x10000>;
+> +        #clock-cells = <1>;
+> +        #reset-cells = <1>;
+> +        clock-names = "hse", "hsi", "msi", "lse", "lsi";
+> +        clocks = <&scmi_clk CK_SCMI_HSE>,
+> +                 <&scmi_clk CK_SCMI_HSI>,
+> +                 <&scmi_clk CK_SCMI_MSI>,
+> +                 <&scmi_clk CK_SCMI_LSE>,
+> +                 <&scmi_clk CK_SCMI_LSI>;
+> +    };
+> +...
+> diff --git a/include/dt-bindings/clock/stm32mp25-clks.h b/include/dt-bindings/clock/stm32mp25-clks.h
+> new file mode 100644
+> index 000000000000..9876ee0dd1e4
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/stm32mp25-clks.h
+
+Same filename as bindings.
+
+> @@ -0,0 +1,492 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-3-Clause */
+> +/*
+> + * Copyright (C) STMicroelectronics 2023 - All Rights Reserved
+> + * Author: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+> + */
+> +
+> +#ifndef _DT_BINDINGS_STM32MP25_CLKS_H_
+> +#define _DT_BINDINGS_STM32MP25_CLKS_H_
+> +
+
+
+...
+
+> +#endif /* _DT_BINDINGS_STM32MP25_CLKS_H_ */
+> diff --git a/include/dt-bindings/reset/stm32mp25-resets.h b/include/dt-bindings/reset/stm32mp25-resets.h
+> new file mode 100644
+> index 000000000000..3a4a9eef6a95
+> --- /dev/null
+> +++ b/include/dt-bindings/reset/stm32mp25-resets.h
+
+Filename matching compatible format.
+
+> @@ -0,0 +1,167 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-3-Clause */
+> +/*
+> + * Copyright (C) STMicroelectronics 2023 - All Rights Reserved
+> + * Author(s): Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+> + */
+> +
+> +#ifndef _DT_BINDINGS_STM32MP25_RESET_H_
+> +#define _DT_BINDINGS_STM32MP25_RESET_H_
+> +
+> +#define SYS_R		8192
+
+NAK, don't put register values into the bindings. There is no single
+need of it. Use IDs (which start from 0 and are incremented by 1) or
+drop it.
+
+
 
 Best regards,
 Krzysztof
