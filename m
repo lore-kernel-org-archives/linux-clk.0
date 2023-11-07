@@ -1,92 +1,87 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FCFF30D1E;
-	Tue,  7 Nov 2023 15:57:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IORmO3pE"
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E5F310FF;
-	Tue,  7 Nov 2023 07:57:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=5vVjpIK/xSOI0XfHhUdCNQN5Ynt+pxBZ4C8bQOCgVkM=; b=IORmO3pEwqpO41NPi9ZsB4XeQ3
-	2LFuVrsr7iLUoljFBrgU12y1gIvqJR+UczOz0yAGgM5PKNtdPlhwA3XdiBhLLVer9B9EBZ8BqM5up
-	AkKnifJ87rzrz22sl/9g6eA54G5FjQX9NKrB3K5h+XEkU11Pl5IC+eDzAmnIjf8+7iD/+YFwLQsEl
-	vTzJCT+j3YYTqktCrV2y5s+uCvMHrRrqamailCon2Hp4DMKvDGfdL4p66s7FCnbn/C+F9b+ZR09x0
-	CTaHi4oWQm15vpAOF8L2HWrdSa+nPKcYC6Tz0Rp4gyfgRKLq/M+fxzMcFyx2JEBpIGIMIkYC/h+Xv
-	376COy6Q==;
-Received: from [50.53.46.231] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-	id 1r0OSI-001w95-2I;
-	Tue, 07 Nov 2023 15:57:30 +0000
-Message-ID: <2a50dc4b-2b8b-4685-82f9-c521c665abff@infradead.org>
-Date: Tue, 7 Nov 2023 07:57:29 -0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0AC631A83;
+	Tue,  7 Nov 2023 15:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1078F2695;
+	Tue,  7 Nov 2023 07:59:52 -0800 (PST)
+Received: from i53875a93.versanet.de ([83.135.90.147] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1r0OUR-0005mz-Ot; Tue, 07 Nov 2023 16:59:43 +0100
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: davem@davemloft.net, herbert@gondor.apana.org.au,
+ krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+ p.zabel@pengutronix.de, robh+dt@kernel.org, sboyd@kernel.org,
+ Corentin Labbe <clabbe@baylibre.com>
+Cc: ricardo@pardini.net, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, Corentin Labbe <clabbe@baylibre.com>
+Subject: Re: [PATCH 3/6] ARM64: dts: rk3588: add crypto node
+Date: Tue, 07 Nov 2023 16:59:42 +0100
+Message-ID: <10382065.T7Z3S40VBb@diego>
+In-Reply-To: <20231107155532.3747113-4-clabbe@baylibre.com>
+References:
+ <20231107155532.3747113-1-clabbe@baylibre.com>
+ <20231107155532.3747113-4-clabbe@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: Fix SM_CAMCC_8550 dependencies
-Content-Language: en-US
-To: Jagadeesh Kona <quic_jkona@quicinc.com>, Andy Gross <agross@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Bjorn Andersson <andersson@kernel.org>
-Cc: Taniya Das <quic_tdas@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>, kernel test robot <lkp@intel.com>
-References: <20231107064545.13120-1-quic_jkona@quicinc.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20231107064545.13120-1-quic_jkona@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+
+Hi,
+
+Am Dienstag, 7. November 2023, 16:55:29 CET schrieb Corentin Labbe:
+> The rk3588 has a crypto IP handled by the rk3588 crypto driver so adds a
+> node for it.
+
+please follow other commits in the subject line, i.e.:
+
+"arm64: dts: rockchip: add rk3588 crypto node"
 
 
+Thanks
+Heiko
 
-On 11/6/23 22:45, Jagadeesh Kona wrote:
-> SM_GCC_8550 depends on ARM64 but it is selected by
-> SM_CAMCC_8550, which should have the same dependencies
-> as SM_GCC_8550 to avoid the below Kconfig warning reported
-> by kernel test robot.
 > 
-> WARNING: unmet direct dependencies detected for SM_GCC_8550
->   Depends on [n]: COMMON_CLK [=y] && COMMON_CLK_QCOM [=y] && (ARM64 || COMPILE_TEST [=n])
->   Selected by [y]:
->   - SM_CAMCC_8550 [=y] && COMMON_CLK [=y] && COMMON_CLK_QCOM [=y]
-> 
-> Fixes: ccc4e6a061a2 ("clk: qcom: camcc-sm8550: Add camera clock controller driver for SM8550")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202311062309.XugQH7AH-lkp@intel.com/
-> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
-
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-
-Thanks.
-
+> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
 > ---
->  drivers/clk/qcom/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
+>  arch/arm64/boot/dts/rockchip/rk3588s.dtsi | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 > 
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index ad1acd9b7426..dbc3950c5960 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -767,6 +767,7 @@ config SM_CAMCC_8450
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+> index 7064c0e9179f..a2ba5ebec38d 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+> @@ -1523,6 +1523,18 @@ sdhci: mmc@fe2e0000 {
+>  		status = "disabled";
+>  	};
 >  
->  config SM_CAMCC_8550
->  	tristate "SM8550 Camera Clock Controller"
-> +	depends on ARM64 || COMPILE_TEST
->  	select SM_GCC_8550
->  	help
->  	  Support for the camera clock controller on SM8550 devices.
+> +	crypto: crypto@fe370000 {
+> +		compatible = "rockchip,rk3588-crypto";
+> +		reg = <0x0 0xfe370000 0x0 0x2000>;
+> +		interrupts = <GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH 0>;
+> +		clocks = <&scmi_clk SCMI_CRYPTO_CORE>, <&scmi_clk SCMI_ACLK_SECURE_NS>,
+> +			 <&scmi_clk SCMI_HCLK_SECURE_NS>;
+> +		clock-names = "core", "aclk", "hclk";
+> +		resets = <&scmi_reset SRST_CRYPTO_CORE>;
+> +		reset-names = "core";
+> +		status = "okay";
+> +	};
+> +
+>  	i2s0_8ch: i2s@fe470000 {
+>  		compatible = "rockchip,rk3588-i2s-tdm";
+>  		reg = <0x0 0xfe470000 0x0 0x1000>;
+> 
 
--- 
-~Randy
+
+
+
