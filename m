@@ -1,45 +1,45 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79DC019451
-	for <linux-clk@vger.kernel.org>; Wed,  8 Nov 2023 13:44:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE6330338
+	for <linux-clk@vger.kernel.org>; Wed,  8 Nov 2023 17:34:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BQlTNXw6"
-Received: from mail-qv1-xf33.google.com (mail-qv1-xf33.google.com [IPv6:2607:f8b0:4864:20::f33])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E63F81BFE
-	for <linux-clk@vger.kernel.org>; Wed,  8 Nov 2023 05:44:09 -0800 (PST)
-Received: by mail-qv1-xf33.google.com with SMTP id 6a1803df08f44-675b844adc7so8340226d6.0
-        for <linux-clk@vger.kernel.org>; Wed, 08 Nov 2023 05:44:09 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PAs55n9U"
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BC891BE3
+	for <linux-clk@vger.kernel.org>; Wed,  8 Nov 2023 09:33:59 -0800 (PST)
+Received: by mail-pj1-x1031.google.com with SMTP id 98e67ed59e1d1-280137f1a1bso5520561a91.1
+        for <linux-clk@vger.kernel.org>; Wed, 08 Nov 2023 09:33:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1699451049; x=1700055849; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1699464838; x=1700069638; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IKZCqhm8AFVwxssH7/r5DfL10FHFsNmRP1Oyhjan5RA=;
-        b=BQlTNXw6zOjHi/LvJn0KoA2nMQCq6fsPTjpmBbX7i5BJk2ADz/Ngbg+pbrm4Qmmfv5
-         r68x+6zvtgQ7t5qIz8FbaA3UYVUq/jN0NXWhPc8xvuI4rzzK2wujHTwgiTbPa/AxBMQh
-         W2Pa++tdktSG30zsZiELkjMcMb1zvr68nV7v7V1NzGNZ8CGVyqz61fTVCW0p0oumXP0S
-         r9XND1mpPZ1r93J933CphphSMnVRZ5I6QeF/9UUHuH4iVAwXe2HE943Gqo5L9Jv5xf7E
-         LGK6p6etUPXPgAxifPtbIFnMjSdQ0UzcVuPkH2LxEwKztoQnKqFf6g6tmKddZ0tAfFYs
-         VqNQ==
+        bh=sAWSOoeAjfBbJekhTKUv9QwV6bzlMliXHO1btit3MQo=;
+        b=PAs55n9UN0Tt4azZuzlN/v4fOpAQkVUhX1VuQsYZhU0jHvGaVLULti+ZZd2hhS1CPg
+         lcJPvfGofMpQ8x8KjEyqQ37WRb0aeqwbmSt7r8bLqRFOxeKkAxsZiPgH2AVJn6Pfnfnf
+         ROZxj/y8NDoH0G/VUip3RR9Jqnc2sOyGKuQhcfj7mF/DVB9ybWbBzx9rQG/Nj9GxVExg
+         N8U4TR5MAvenuZMFnJOsSS3CBJX7ob6xMg7AV4QDqMEtUZbKLOfMf2Onc/Zpmv2dOcr9
+         iYOEJGKcz897YYDG3ynCmFFDcmU3euYGFCU5QOi6XwttWgO46PIBpu4HalMhZ5RdSYgw
+         jJeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699451049; x=1700055849;
+        d=1e100.net; s=20230601; t=1699464838; x=1700069638;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IKZCqhm8AFVwxssH7/r5DfL10FHFsNmRP1Oyhjan5RA=;
-        b=sF62G6huAtyzSsebqoANPq8EoN8mbtdOT78fM2A+XeQ5549hv1/ama8ZogcZ4NHkSF
-         KGeBiCPRtdQ3qpAUePxgbaoN8Zons+1cuMeewMEUUIHwupHfClgu7x91dHctA1mhpW1R
-         K/HGsjFBMrlus9pDq+M2/pzHQGW/daavmeaSEXNa9/rzfcnvDkRBHSiwJ6F7xeqoG5Xu
-         K2YkS9d/eIXivbATTKvSgy3XFcDY24qVxy/kcarl6m19VtBCmEDgrA7A3Z3qrkIKitcf
-         9M4I7nfmN9rar03crEzkqxjIXQZnXKCDljs7QQpfsgCa8jepfKlYODT0kxr3X6zEDtOb
-         VJOA==
-X-Gm-Message-State: AOJu0YxmjQVc+OgTf0OHOdU/Fu6I1hQmtUUKpJfqcJDnUf9Hxn3r7hhc
-	X/tHSkb14AUKd87WvPCno3jDzlv24fOLGAy4J8f8Fw==
-X-Google-Smtp-Source: AGHT+IFCylc77uwZLvhx0FoVd3Sqb6tdP1R7uRKdeK/yHH/BSnU0lGTI2P0BS/e2M0CMWQshI0m8jEkumkFoqMUNR+c=
-X-Received: by 2002:a05:6214:494:b0:673:b0e7:1916 with SMTP id
- pt20-20020a056214049400b00673b0e71916mr2527276qvb.2.1699451048900; Wed, 08
- Nov 2023 05:44:08 -0800 (PST)
+        bh=sAWSOoeAjfBbJekhTKUv9QwV6bzlMliXHO1btit3MQo=;
+        b=BvOBKn39RIUYivYo42W0QAfdWGh1HH8GutKSYCCE3t+E9VwViWxs/iv3D5mOsrpnqJ
+         JQUpRiyfgvQxxVwBWSd3gm4CbbH0tX3OSeOStkaybLmwNRAR6IAFSxgM2mlWgkRDV9hT
+         QUOM+3lgqvbMXH3Ku+6G/0FGWMbRqL2u4UI04dOaylwL1SjUZNV8Sllyy/AMcAS5KP2d
+         9CBwJ72KodSLI/9md/QoLRQMe0SF94AHCZLMWro5p+2pSF/pXcmqV66rlIZJ1pnt5Uqq
+         NV9nZCYdOlwxCX/oiHTcl+C0ci3VRMkrF/AO4xeWoY6xmEiKxa/egHta5a4mlbCuV6H+
+         0oyg==
+X-Gm-Message-State: AOJu0YzmyZlQQ76Mq0YT07B5jK1UYZIo0Y6sdKxy1gDSSFmxCG7NTCm4
+	6FD9t/j8e7xAcfctIRGaUId0ubzzW5NGoQmq04z8EA==
+X-Google-Smtp-Source: AGHT+IGY4VBAJ38xlUtcmXFmIEhynykPBn3dfo+SVZRmQxxurhZcoKtbYoXN1XDKnlHvImSQIH0q75kjXSAbWt8IHAw=
+X-Received: by 2002:a17:90a:6888:b0:281:da1:4b96 with SMTP id
+ a8-20020a17090a688800b002810da14b96mr2347498pjd.22.1699464838284; Wed, 08 Nov
+ 2023 09:33:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,412 +47,250 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20231011184823.443959-1-peter.griffin@linaro.org>
- <20231011184823.443959-15-peter.griffin@linaro.org> <CAPLW+4=k1qZgOKUUXgJYgXOzzRujyjW+Ua0Sej-gDcZsvCWirw@mail.gmail.com>
-In-Reply-To: <CAPLW+4=k1qZgOKUUXgJYgXOzzRujyjW+Ua0Sej-gDcZsvCWirw@mail.gmail.com>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Wed, 8 Nov 2023 13:43:57 +0000
-Message-ID: <CADrjBPoYqduCmd_j4cp0pSEXzRAOML7=YianTwNsvxuzvGpOtA@mail.gmail.com>
-Subject: Re: [PATCH v3 14/20] pinctrl: samsung: Add gs101 SoC pinctrl configuration
-To: Sam Protsenko <semen.protsenko@linaro.org>
-Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
-	mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org, 
-	tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, 
-	wim@linux-watchdog.org, linux@roeck-us.net, catalin.marinas@arm.com, 
-	will@kernel.org, arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org, 
-	cw00.choi@samsung.com, tudor.ambarus@linaro.org, andre.draszik@linaro.org, 
-	saravanak@google.com, willmcvicker@google.com, soc@kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org, 
-	kernel-team@android.com, linux-serial@vger.kernel.org
+ <20231011184823.443959-11-peter.griffin@linaro.org> <aae4e6cd-dcfc-442d-9ed7-d5a73c419ba8@kernel.org>
+ <CADrjBPrUsSigThoLU9thmZiaG4690B9-BcZYrBn44K9Fc8z3vg@mail.gmail.com>
+In-Reply-To: <CADrjBPrUsSigThoLU9thmZiaG4690B9-BcZYrBn44K9Fc8z3vg@mail.gmail.com>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Wed, 8 Nov 2023 11:33:46 -0600
+Message-ID: <CAPLW+4m+n-U4cAkJZTeCsoE_e6r1j8srYmVjSLawPWwHi6SEAw@mail.gmail.com>
+Subject: Re: [PATCH v3 10/20] clk: samsung: clk-gs101: Add cmu_top registers,
+ plls, mux and gates
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: Chanwoo Choi <chanwoo@kernel.org>, robh+dt@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com, 
+	conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com, 
+	s.nawrocki@samsung.com, linus.walleij@linaro.org, wim@linux-watchdog.org, 
+	linux@roeck-us.net, catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, 
+	olof@lixom.net, gregkh@linuxfoundation.org, cw00.choi@samsung.com, 
+	tudor.ambarus@linaro.org, andre.draszik@linaro.org, saravanak@google.com, 
+	willmcvicker@google.com, soc@kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, kernel-team@android.com, 
+	linux-serial@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Sam,
-
-On Thu, 12 Oct 2023 at 07:00, Sam Protsenko <semen.protsenko@linaro.org> wr=
-ote:
+On Tue, Nov 7, 2023 at 7:57=E2=80=AFAM Peter Griffin <peter.griffin@linaro.=
+org> wrote:
 >
-> On Wed, Oct 11, 2023 at 1:49=E2=80=AFPM Peter Griffin <peter.griffin@lina=
-ro.org> wrote:
+> Hi Chanwoo,
+>
+> Thanks for your review!
+>
+> On Wed, 18 Oct 2023 at 17:51, Chanwoo Choi <chanwoo@kernel.org> wrote:
 > >
-> > Add support for the pin-controller found on the gs101 SoC used in
-> > Pixel 6 phones.
+> > Hi Peter,
 > >
-> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> > ---
-> >  .../pinctrl/samsung/pinctrl-exynos-arm64.c    | 163 ++++++++++++++++++
-> >  drivers/pinctrl/samsung/pinctrl-exynos.c      |   2 +
-> >  drivers/pinctrl/samsung/pinctrl-exynos.h      |  34 ++++
-> >  drivers/pinctrl/samsung/pinctrl-samsung.c     |   2 +
-> >  drivers/pinctrl/samsung/pinctrl-samsung.h     |   1 +
-> >  5 files changed, 202 insertions(+)
+> > On 23. 10. 12. 03:48, Peter Griffin wrote:
+> > > CMU_TOP is the top level clock management unit which contains PLLs, m=
+uxes
+> > > and gates that feed the other clock management units.
+> > >
+> > > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > > ---
+> > >  drivers/clk/samsung/Kconfig     |    9 +
+> > >  drivers/clk/samsung/Makefile    |    2 +
+> > >  drivers/clk/samsung/clk-gs101.c | 1551 +++++++++++++++++++++++++++++=
+++
+> > >  3 files changed, 1562 insertions(+)
+> > >  create mode 100644 drivers/clk/samsung/clk-gs101.c
+> > >
+> > > diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfi=
+g
+> > > index 76a494e95027..14362ec9c543 100644
+> > > --- a/drivers/clk/samsung/Kconfig
+> > > +++ b/drivers/clk/samsung/Kconfig
+> > > @@ -12,6 +12,7 @@ config COMMON_CLK_SAMSUNG
+> > >       select EXYNOS_5410_COMMON_CLK if ARM && SOC_EXYNOS5410
+> > >       select EXYNOS_5420_COMMON_CLK if ARM && SOC_EXYNOS5420
+> > >       select EXYNOS_ARM64_COMMON_CLK if ARM64 && ARCH_EXYNOS
+> > > +     select GOOGLE_GS101_COMMON_CLK if ARM64 && ARCH_GOOGLE_TENSOR
+> > >       select TESLA_FSD_COMMON_CLK if ARM64 && ARCH_TESLA_FSD
+> > >
+> > >  config S3C64XX_COMMON_CLK
+> > > @@ -95,6 +96,14 @@ config EXYNOS_CLKOUT
+> > >         status of the certains clocks from SoC, but it could also be =
+tied to
+> > >         other devices as an input clock.
+> > >
+> > > +config GOOGLE_GS101_COMMON_CLK
+> > > +     bool "Google gs101 clock controller support" if COMPILE_TEST
+> > > +     depends on COMMON_CLK_SAMSUNG
+> > > +     depends on EXYNOS_ARM64_COMMON_CLK
+> > > +     help
+> > > +       Support for the clock controller present on the Google gs101 =
+SoC.
+> > > +       Choose Y here only if you build for this SoC.
+> > > +
 > >
-> > diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c b/drivers/p=
-inctrl/samsung/pinctrl-exynos-arm64.c
-> > index cb965cf93705..db47001d1b35 100644
-> > --- a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-> > +++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-> > @@ -796,3 +796,166 @@ const struct samsung_pinctrl_of_match_data fsd_of=
-_data __initconst =3D {
-> >         .ctrl           =3D fsd_pin_ctrl,
-> >         .num_ctrl       =3D ARRAY_SIZE(fsd_pin_ctrl),
-> >  };
-> > +
-> > +/*
-> > + * bank type for non-alive type
-> > + * (CON bit field: 4, DAT bit field: 1, PUD bit field: 4, DRV bit fiel=
-d: 4)
-> > + * (CONPDN bit field: 2, PUDPDN bit field: 4)
-> > + */
-> > +static struct samsung_pin_bank_type gs101_bank_type_off  =3D {
-> > +       .fld_width =3D { 4, 1, 4, 4, 2, 4, },
-> > +       .reg_offset =3D { 0x00, 0x04, 0x08, 0x0c, 0x10, 0x14, },
-> > +};
-> > +
-> > +/*
-> > + * bank type for alive type
-> > + * (CON bit field: 4, DAT bit field: 1, PUD bit field: 4, DRV bit fiel=
-d: 4)
-> > + */
-> > +static const struct samsung_pin_bank_type gs101_bank_type_alive =3D {
-> > +       .fld_width =3D { 4, 1, 4, 4, },
-> > +       .reg_offset =3D { 0x00, 0x04, 0x08, 0x0c, },
-> > +};
-> > +
-> > +/* pin banks of gs101 pin-controller (ALIVE) */
-> > +static const struct samsung_pin_bank_data gs101_pin_alive[] =3D {
-> > +       EXYNOS9_PIN_BANK_EINTW(gs101_bank_type_alive, 8, 0x0, "gpa0", 0=
-x00, 0x00, FLT_SELECTABLE),
->
-> Here and further: please keep 80 characters per line when possible.
-
-Will fix.
-
->
-> > +       EXYNOS9_PIN_BANK_EINTW(gs101_bank_type_alive, 7, 0x20, "gpa1", =
-0x04, 0x08, FLT_SELECTABLE),
-> > +       EXYNOS9_PIN_BANK_EINTW(gs101_bank_type_alive, 5, 0x40, "gpa2", =
-0x08, 0x10, FLT_SELECTABLE),
-> > +       EXYNOS9_PIN_BANK_EINTW(gs101_bank_type_alive, 4, 0x60, "gpa3", =
-0x0c, 0x18, FLT_SELECTABLE),
-> > +       EXYNOS9_PIN_BANK_EINTW(gs101_bank_type_alive, 4, 0x80, "gpa4", =
-0x10, 0x1c, FLT_SELECTABLE),
-> > +       EXYNOS9_PIN_BANK_EINTW(gs101_bank_type_alive, 7, 0xa0, "gpa5", =
-0x14, 0x20, FLT_SELECTABLE),
-> > +       EXYNOS9_PIN_BANK_EINTW(gs101_bank_type_alive, 8, 0xc0, "gpa9", =
-0x18, 0x28, FLT_SELECTABLE),
-> > +       EXYNOS9_PIN_BANK_EINTW(gs101_bank_type_alive, 2, 0xe0, "gpa10",=
- 0x1c, 0x30, FLT_SELECTABLE),
-> > +};
-> > +
-> > +/* pin banks of gs101 pin-controller (FAR_ALIVE) */
-> > +static const struct samsung_pin_bank_data gs101_pin_far_alive[] =3D {
-> > +       EXYNOS9_PIN_BANK_EINTW(gs101_bank_type_alive, 8, 0x0, "gpa6", 0=
-x00, 0x00, FLT_SELECTABLE),
-> > +       EXYNOS9_PIN_BANK_EINTW(gs101_bank_type_alive, 4, 0x20, "gpa7", =
-0x04, 0x08, FLT_SELECTABLE),
-> > +       EXYNOS9_PIN_BANK_EINTW(gs101_bank_type_alive, 8, 0x40, "gpa8", =
-0x08, 0x0c, FLT_SELECTABLE),
-> > +       EXYNOS9_PIN_BANK_EINTW(gs101_bank_type_alive, 2, 0x60, "gpa11",=
- 0x0c, 0x14, FLT_SELECTABLE),
-> > +};
-> > +
-> > +/* pin banks of gs101 pin-controller (GSACORE) */
-> > +static const struct samsung_pin_bank_data gs101_pin_gsacore[] =3D {
-> > +       EXYNOS9_PIN_BANK_EINTG(gs101_bank_type_off, 2, 0x0, "gps0", 0x0=
-0, 0x00, FLT_DEFAULT),
-> > +       EXYNOS9_PIN_BANK_EINTG(gs101_bank_type_off, 8, 0x20, "gps1", 0x=
-04, 0x04, FLT_DEFAULT),
-> > +       EXYNOS9_PIN_BANK_EINTG(gs101_bank_type_off, 3, 0x40, "gps2", 0x=
-08, 0x0c, FLT_DEFAULT),
-> > +};
-> > +
-> > +/* pin banks of gs101 pin-controller (GSACTRL) */
-> > +static const struct samsung_pin_bank_data gs101_pin_gsactrl[] =3D {
-> > +       EXYNOS9_PIN_BANK_EINTW(gs101_bank_type_alive, 6, 0x0, "gps3", 0=
-x00, 0x00, FLT_DEFAULT),
-> > +};
-> > +
-> > +/* pin banks of gs101 pin-controller (PERIC0) */
-> > +static const struct samsung_pin_bank_data gs101_pin_peric0[] =3D {
-> > +       EXYNOS9_PIN_BANK_EINTG(gs101_bank_type_off, 5, 0x0, "gpp0", 0x0=
-0, 0x00, FLT_DEFAULT),
-> > +       EXYNOS9_PIN_BANK_EINTG(gs101_bank_type_off, 4, 0x20, "gpp1", 0x=
-04, 0x08, FLT_DEFAULT),
-> > +       EXYNOS9_PIN_BANK_EINTG(gs101_bank_type_off, 4, 0x40, "gpp2", 0x=
-08, 0x0c, FLT_DEFAULT),
-> > +       EXYNOS9_PIN_BANK_EINTG(gs101_bank_type_off, 2, 0x60, "gpp3", 0x=
-0c, 0x10, FLT_DEFAULT),
-> > +       EXYNOS9_PIN_BANK_EINTG(gs101_bank_type_off, 4, 0x80, "gpp4", 0x=
-10, 0x14, FLT_DEFAULT),
-> > +       EXYNOS9_PIN_BANK_EINTG(gs101_bank_type_off, 2, 0xa0, "gpp5", 0x=
-14, 0x18, FLT_DEFAULT),
-> > +       EXYNOS9_PIN_BANK_EINTG(gs101_bank_type_off, 4, 0xc0, "gpp6", 0x=
-18, 0x1c, FLT_DEFAULT),
-> > +       EXYNOS9_PIN_BANK_EINTG(gs101_bank_type_off, 2, 0xe0, "gpp7", 0x=
-1c, 0x20, FLT_DEFAULT),
-> > +       EXYNOS9_PIN_BANK_EINTG(gs101_bank_type_off, 4, 0x100, "gpp8", 0=
-x20, 0x24, FLT_DEFAULT),
-> > +       EXYNOS9_PIN_BANK_EINTG(gs101_bank_type_off, 2, 0x120, "gpp9", 0=
-x24, 0x28, FLT_DEFAULT),
-> > +       EXYNOS9_PIN_BANK_EINTG(gs101_bank_type_off, 4, 0x140, "gpp10", =
-0x28, 0x2c, FLT_DEFAULT),
-> > +       EXYNOS9_PIN_BANK_EINTG(gs101_bank_type_off, 2, 0x160, "gpp11", =
-0x2c, 0x30, FLT_DEFAULT),
-> > +       EXYNOS9_PIN_BANK_EINTG(gs101_bank_type_off, 4, 0x180, "gpp12", =
-0x30, 0x34, FLT_DEFAULT),
-> > +       EXYNOS9_PIN_BANK_EINTG(gs101_bank_type_off, 2, 0x1a0, "gpp13", =
-0x34, 0x38, FLT_DEFAULT),
-> > +       EXYNOS9_PIN_BANK_EINTG(gs101_bank_type_off, 4, 0x1c0, "gpp14", =
-0x38, 0x3c, FLT_DEFAULT),
-> > +       EXYNOS9_PIN_BANK_EINTG(gs101_bank_type_off, 2, 0x1e0, "gpp15", =
-0x3c, 0x40, FLT_DEFAULT),
-> > +       EXYNOS9_PIN_BANK_EINTG(gs101_bank_type_off, 4, 0x200, "gpp16", =
-0x40, 0x44, FLT_DEFAULT),
-> > +       EXYNOS9_PIN_BANK_EINTG(gs101_bank_type_off, 2, 0x220, "gpp17", =
-0x44, 0x48, FLT_DEFAULT),
-> > +       EXYNOS9_PIN_BANK_EINTG(gs101_bank_type_off, 4, 0x240, "gpp18", =
-0x48, 0x4c, FLT_DEFAULT),
-> > +       EXYNOS9_PIN_BANK_EINTG(gs101_bank_type_off, 4, 0x260, "gpp19", =
-0x4c, 0x50, FLT_DEFAULT),
-> > +};
-> > +
-> > +/* pin banks of gs101 pin-controller (PERIC1) */
-> > +static const struct samsung_pin_bank_data gs101_pin_peric1[] =3D {
-> > +       EXYNOS9_PIN_BANK_EINTG(gs101_bank_type_off, 8, 0x0, "gpp20", 0x=
-00, 0x00, FLT_DEFAULT),
-> > +       EXYNOS9_PIN_BANK_EINTG(gs101_bank_type_off, 4, 0x20, "gpp21", 0=
-x04, 0x08, FLT_DEFAULT),
-> > +       EXYNOS9_PIN_BANK_EINTG(gs101_bank_type_off, 2, 0x40, "gpp22", 0=
-x08, 0x0c, FLT_DEFAULT),
-> > +       EXYNOS9_PIN_BANK_EINTG(gs101_bank_type_off, 8, 0x60, "gpp23", 0=
-x0c, 0x10, FLT_DEFAULT),
-> > +       EXYNOS9_PIN_BANK_EINTG(gs101_bank_type_off, 4, 0x80, "gpp24", 0=
-x10, 0x18, FLT_DEFAULT),
-> > +       EXYNOS9_PIN_BANK_EINTG(gs101_bank_type_off, 4, 0xa0, "gpp25", 0=
-x14, 0x1c, FLT_DEFAULT),
-> > +       EXYNOS9_PIN_BANK_EINTG(gs101_bank_type_off, 5, 0xc0, "gpp26", 0=
-x18, 0x20, FLT_DEFAULT),
-> > +       EXYNOS9_PIN_BANK_EINTG(gs101_bank_type_off, 4, 0xe0, "gpp27", 0=
-x1c, 0x28, FLT_DEFAULT),
-> > +};
-> > +
-> > +/* pin banks of gs101 pin-controller (HSI1) */
-> > +static const struct samsung_pin_bank_data gs101_pin_hsi1[] =3D {
-> > +       EXYNOS9_PIN_BANK_EINTG(gs101_bank_type_off, 6, 0x0, "gph0", 0x0=
-0, 0x00, FLT_DEFAULT),
-> > +       EXYNOS9_PIN_BANK_EINTG(gs101_bank_type_off, 7, 0x20, "gph1", 0x=
-04, 0x08, FLT_DEFAULT),
-> > +};
-> > +
-> > +/* pin banks of gs101 pin-controller (HSI2) */
-> > +static const struct samsung_pin_bank_data gs101_pin_hsi2[] =3D {
-> > +       EXYNOS9_PIN_BANK_EINTG(gs101_bank_type_off, 6, 0x0, "gph2", 0x0=
-0, 0x00, FLT_DEFAULT),
-> > +       EXYNOS9_PIN_BANK_EINTG(gs101_bank_type_off, 2, 0x20, "gph3", 0x=
-04, 0x08, FLT_DEFAULT),
-> > +       EXYNOS9_PIN_BANK_EINTG(gs101_bank_type_off, 6, 0x40, "gph4", 0x=
-08, 0x0c, FLT_DEFAULT),
-> > +};
-> > +
-> > +static const struct samsung_pin_ctrl gs101_pin_ctrl[] __initconst =3D =
-{
-> > +       {
-> > +               /* pin banks of gs101 pin-controller (ALIVE) */
-> > +               .pin_banks      =3D gs101_pin_alive,
-> > +               .nr_banks       =3D ARRAY_SIZE(gs101_pin_alive),
-> > +               .eint_gpio_init =3D exynos_eint_gpio_init,
-> > +               .eint_wkup_init =3D exynos_eint_wkup_init,
->
-> Is it ok to have both .eint_gpio_init and .eint_wkup_init set here and
-> further? I remember doing something like that for Exynos850 before,
-> only to realize further if was a mistake. Please check commit
-> 96f79935015c ("pinctrl: samsung: Remove EINT handler for Exynos850
-> ALIVE and CMGP gpios"). Maybe it's ok in your case.
-
-Thanks for the hint :) You're correct eint_gpio_init is not required on ali=
-ve,
-far_alive, gsacore and gsactrl banks. Will update in v4.
-
->
-> > +               .suspend        =3D exynos_pinctrl_suspend,
-> > +               .resume         =3D exynos_pinctrl_resume,
->
-> Did you manage to actually test those suspend/resume callbacks
-> somehow? If so, can you please share the procedure? I guess I had some
-> Power Domains and clock related problems on Exynos850 when I tried
-> that before, so just curious.
-
-You can test the callbacks using
-echo mem > /sys/power/state
-
-Thanks,
-
-Peter.
-
-
-
-
->
-> > +       }, {
-> > +               /* pin banks of gs101 pin-controller (FAR_ALIVE) */
-> > +               .pin_banks      =3D gs101_pin_far_alive,
-> > +               .nr_banks       =3D ARRAY_SIZE(gs101_pin_far_alive),
-> > +               .eint_gpio_init =3D exynos_eint_gpio_init,
-> > +               .eint_wkup_init =3D exynos_eint_wkup_init,
-> > +               .suspend        =3D exynos_pinctrl_suspend,
-> > +               .resume         =3D exynos_pinctrl_resume,
-> > +       }, {
-> > +               /* pin banks of gs101 pin-controller (GSACORE) */
-> > +               .pin_banks      =3D gs101_pin_gsacore,
-> > +               .nr_banks       =3D ARRAY_SIZE(gs101_pin_gsacore),
-> > +               .eint_gpio_init =3D exynos_eint_gpio_init,
-> > +       }, {
-> > +               /* pin banks of gs101 pin-controller (GSACTRL) */
-> > +               .pin_banks      =3D gs101_pin_gsactrl,
-> > +               .nr_banks       =3D ARRAY_SIZE(gs101_pin_gsactrl),
-> > +               .eint_gpio_init =3D exynos_eint_gpio_init,
-> > +       }, {
-> > +               /* pin banks of gs101 pin-controller (PERIC0) */
-> > +               .pin_banks      =3D gs101_pin_peric0,
-> > +               .nr_banks       =3D ARRAY_SIZE(gs101_pin_peric0),
-> > +               .eint_gpio_init =3D exynos_eint_gpio_init,
-> > +               .suspend        =3D exynos_pinctrl_suspend,
-> > +               .resume         =3D exynos_pinctrl_resume,
-> > +       }, {
-> > +               /* pin banks of gs101 pin-controller (PERIC1) */
-> > +               .pin_banks      =3D gs101_pin_peric1,
-> > +               .nr_banks       =3D ARRAY_SIZE(gs101_pin_peric1),
-> > +               .eint_gpio_init =3D exynos_eint_gpio_init,
-> > +               .suspend        =3D exynos_pinctrl_suspend,
-> > +               .resume =3D exynos_pinctrl_resume,
-> > +       }, {
-> > +               /* pin banks of gs101 pin-controller (HSI1) */
-> > +               .pin_banks      =3D gs101_pin_hsi1,
-> > +               .nr_banks       =3D ARRAY_SIZE(gs101_pin_hsi1),
-> > +               .eint_gpio_init =3D exynos_eint_gpio_init,
-> > +               .suspend        =3D exynos_pinctrl_suspend,
-> > +               .resume         =3D exynos_pinctrl_resume,
-> > +       }, {
-> > +               /* pin banks of gs101 pin-controller (HSI2) */
-> > +               .pin_banks      =3D gs101_pin_hsi2,
-> > +               .nr_banks       =3D ARRAY_SIZE(gs101_pin_hsi2),
-> > +               .eint_gpio_init =3D exynos_eint_gpio_init,
-> > +               .suspend        =3D exynos_pinctrl_suspend,
-> > +               .resume         =3D exynos_pinctrl_resume,
-> > +       },
-> > +};
-> > +
-> > +const struct samsung_pinctrl_of_match_data gs101_of_data __initconst =
-=3D {
-> > +       .ctrl           =3D gs101_pin_ctrl,
-> > +       .num_ctrl       =3D ARRAY_SIZE(gs101_pin_ctrl),
-> > +};
-> > diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl=
-/samsung/pinctrl-exynos.c
-> > index 800831aa8357..014f0c37f97f 100644
-> > --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-> > +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-> > @@ -533,6 +533,8 @@ static const struct of_device_id exynos_wkup_irq_id=
-s[] =3D {
-> >                         .data =3D &exynos7_wkup_irq_chip },
-> >         { .compatible =3D "samsung,exynosautov9-wakeup-eint",
-> >                         .data =3D &exynos7_wkup_irq_chip },
-> > +       { .compatible =3D "google,gs101-wakeup-eint",
-> > +                       .data =3D &exynos7_wkup_irq_chip },
-> >         { }
-> >  };
+> > (snip)
 > >
-> > diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.h b/drivers/pinctrl=
-/samsung/pinctrl-exynos.h
-> > index 63b2426ad5d6..0dd013654bd2 100644
-> > --- a/drivers/pinctrl/samsung/pinctrl-exynos.h
-> > +++ b/drivers/pinctrl/samsung/pinctrl-exynos.h
-> > @@ -147,6 +147,40 @@
-> >                 .name           =3D id                            \
-> >         }
+> > > +
+> > > +/* gs101 */
+> > > +static const struct samsung_mux_clock cmu_top_mux_clks[] __initconst=
+ =3D {
+> > > +     /* CMU_TOP_PURECLKCOMP */
+> > > +     MUX(CLK_MOUT_SHARED0_PLL, "mout_shared0_pll", mout_shared0_pll_=
+p,
+> > > +         PLL_CON0_PLL_SHARED0, 4, 1),
+> > > +     MUX(CLK_MOUT_SHARED1_PLL, "mout_shared1_pll", mout_shared1_pll_=
+p,
+> > > +         PLL_CON0_PLL_SHARED1, 4, 1),
+> > > +     MUX(CLK_MOUT_SHARED2_PLL, "mout_shared2_pll", mout_shared2_pll_=
+p,
+> > > +         PLL_CON0_PLL_SHARED2, 4, 1),
+> > > +     MUX(CLK_MOUT_SHARED3_PLL, "mout_shared3_pll", mout_shared3_pll_=
+p,
+> > > +         PLL_CON0_PLL_SHARED3, 4, 1),
+> > > +     MUX(CLK_MOUT_SPARE_PLL, "mout_spare_pll", mout_spare_pll_p,
+> > > +         PLL_CON0_PLL_SPARE, 4, 1),
+> > > +
+> > > +     /* BUS0 */
+> > > +     MUX(CLK_MOUT_BUS0_BUS, "mout_cmu_bus0_bus", mout_cmu_bus0_bus_p=
+,
+> > > +         CLK_CON_MUX_MUX_CLKCMU_BUS0_BUS, 0, 2),
+> > > +     MUX(CLK_MOUT_CMU_BOOST, "mout_cmu_boost", mout_cmu_cmu_boost_p,
 > >
-> > +#define EXYNOS9_PIN_BANK_EINTN(types, pins, reg, id)   \
-> > +       {                                               \
-> > +               .type           =3D &types,               \
-> > +               .pctl_offset    =3D reg,                  \
-> > +               .nr_pins        =3D pins,                 \
-> > +               .eint_type      =3D EINT_TYPE_NONE,       \
-> > +               .fltcon_type    =3D FLT_DEFAULT           \
-> > +               .name           =3D id                    \
-> > +       }
-> > +
-> > +#define EXYNOS9_PIN_BANK_EINTG(types, pins, reg, id, offs, fltcon_offs=
-, fltcontype) \
-> > +       {                                               \
-> > +               .type           =3D &types,               \
-> > +               .pctl_offset    =3D reg,                  \
-> > +               .nr_pins        =3D pins,                 \
-> > +               .eint_type      =3D EINT_TYPE_GPIO,       \
-> > +               .eint_offset    =3D offs,                 \
-> > +               .fltcon_type    =3D fltcontype,           \
-> > +               .fltcon_offset  =3D fltcon_offs,          \
-> > +               .name           =3D id                    \
-> > +       }
-> > +
-> > +#define EXYNOS9_PIN_BANK_EINTW(types, pins, reg, id, offs, fltcon_offs=
-, fltcontype) \
-> > +       {                                               \
-> > +               .type           =3D &types,               \
-> > +               .pctl_offset    =3D reg,                  \
-> > +               .nr_pins        =3D pins,                 \
-> > +               .eint_type      =3D EINT_TYPE_WKUP,       \
-> > +               .eint_offset    =3D offs,                 \
-> > +               .fltcon_type    =3D fltcontype,           \
-> > +               .fltcon_offset  =3D fltcon_offs,          \
-> > +               .name           =3D id                    \
-> > +       }
-> > +
+> > In order to keep the consistent naming style,
+> > I think that need to change from 'mout_cmu_boost' to 'mout_cmu_cmu_boos=
+t'.
 >
-> Looks to me that instead of adding new macros the already existing
-> EXYNOS850_PIN_BANK_* should be extended and re-used. Because those
-> pinctrl IP-cores on all modern Exynos chips look very similar, even if
-> you compare the downstream code. If EXYNOS850 prefix looks confusing,
-> maybe it can be renamed to EXYNOS9 or something like that. Those
-> filter parameters are also present in Exynos850 downstream kernel
-> code. So I just feel like the proper way to add that feature would be
-> to add that also for all modern ARM64 Exynos variants while at it.
+> Yes, that's a good point, and a good spot! Will fix it in v4.
 >
-> >  /**
-> >   * struct exynos_weint_data: irq specific data for all the wakeup inte=
-rrupts
-> >   * generated by the external wakeup interrupt controller.
-> > diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctr=
-l/samsung/pinctrl-samsung.c
-> > index 449f8109d8b5..12176f98440d 100644
-> > --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-> > +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> > @@ -1321,6 +1321,8 @@ static const struct of_device_id samsung_pinctrl_=
-dt_match[] =3D {
-> >                 .data =3D &exynosautov9_of_data },
-> >         { .compatible =3D "tesla,fsd-pinctrl",
-> >                 .data =3D &fsd_of_data },
-> > +       { .compatible =3D "google,gs101-pinctrl",
-> > +               .data =3D &gs101_of_data },
-> >  #endif
-> >  #ifdef CONFIG_PINCTRL_S3C64XX
-> >         { .compatible =3D "samsung,s3c64xx-pinctrl",
-> > diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctr=
-l/samsung/pinctrl-samsung.h
-> > index de2ca8e8b378..e62e909fb10d 100644
-> > --- a/drivers/pinctrl/samsung/pinctrl-samsung.h
-> > +++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
-> > @@ -374,6 +374,7 @@ extern const struct samsung_pinctrl_of_match_data e=
-xynos7885_of_data;
-> >  extern const struct samsung_pinctrl_of_match_data exynos850_of_data;
-> >  extern const struct samsung_pinctrl_of_match_data exynosautov9_of_data=
-;
-> >  extern const struct samsung_pinctrl_of_match_data fsd_of_data;
-> > +extern const struct samsung_pinctrl_of_match_data gs101_of_data;
-> >  extern const struct samsung_pinctrl_of_match_data s3c64xx_of_data;
-> >  extern const struct samsung_pinctrl_of_match_data s3c2412_of_data;
-> >  extern const struct samsung_pinctrl_of_match_data s3c2416_of_data;
-> > --
-> > 2.42.0.655.g421f12c284-goog
+
+Why do we need cmu_cmu part at all? From the look of it, renaming all
+*_cmu_cmu_* clocks to just cmu wouldn't cause any naming conflicts. So
+I don't see any benefit of double cmu prefix really.
+
 > >
+> > > +         CLK_CON_MUX_MUX_CLKCMU_CMU_BOOST, 0, 2),
+> > > +
+> > > +     /* BUS1 */
+> > > +     MUX(CLK_MOUT_BUS1_BUS, "mout_cmu_bus1_bus", mout_cmu_bus1_bus_p=
+,
+> > > +         CLK_CON_MUX_MUX_CLKCMU_BUS1_BUS, 0, 2),
+> > > +
+> > > +     /* BUS2 */
+> > > +     MUX(CLK_MOUT_BUS2_BUS, "mout_cmu_bus2_bus", mout_cmu_bus2_bus_p=
+,
+> > > +         CLK_CON_MUX_MUX_CLKCMU_BUS2_BUS, 0, 2),
+> > > +
+> > > +     /* CORE */
+> > > +     MUX(CLK_MOUT_CORE_BUS, "mout_cmu_core_bus", mout_cmu_core_bus_p=
+,
+> > > +         CLK_CON_MUX_MUX_CLKCMU_CORE_BUS, 0, 2),
+> > > +
+> > > +     /* EH */
+> > > +     MUX(CLK_MOUT_EH_BUS, "mout_cmu_eh_bus", mout_cmu_eh_bus_p,
+> > > +         CLK_CON_MUX_MUX_CLKCMU_CORE_BUS, 0, 2),
+> >
+> > 'mout_cmu_core_bus' and 'mout_cmu_eh_bus' uses the same register/shift/=
+width information.
+> > I think it should be modified by changing the regiter or changing the s=
+hift/width information.
+>
+> It should be using the CLK_CON_MUX_MUX_CLKCMU_EH_BUS register.
+> Will fix it in v4.
+>
+> >
+> > > +
+> > > +     /* CPUCL{0,1,2,} */
+> > > +     MUX(CLK_MOUT_CPUCL2_SWITCH, "mout_cmu_cpucl2_switch", mout_cmu_=
+cpucl2_switch_p,
+> > > +         CLK_CON_MUX_MUX_CLKCMU_CPUCL2_SWITCH, 0, 2),
+> > > +
+> > > +     MUX(CLK_MOUT_CPUCL1_SWITCH, "mout_cmu_cpucl1_switch", mout_cmu_=
+cpucl1_switch_p,
+> > > +         CLK_CON_MUX_MUX_CLKCMU_CPUCL1_SWITCH, 0, 2),
+> > > +
+> > > +     MUX(CLK_MOUT_CPUCL0_SWITCH, "mout_cmu_cpucl0_switch", mout_cmu_=
+cpucl0_switch_p,
+> > > +         CLK_CON_MUX_MUX_CLKCMU_CPUCL0_SWITCH, 0, 2),
+> > > +
+> > > +     MUX(CLK_MOUT_CPUCL0_DBG, "mout_cmu_cpucl0_dbg", mout_cmu_cpucl0=
+_dbg_p,
+> > > +         CLK_CON_DIV_CLKCMU_CPUCL0_DBG, 0, 2),
+> > > +
+> > > +     MUX(CLK_MOUT_CMU_HPM, "mout_cmu_hpm", mout_cmu_hpm_p,
+> > > +         CLK_CON_MUX_MUX_CLKCMU_HPM, 0, 2),
+> > >
+> >
+> > (snip)
+> >
+> > > +     /* PDP */
+> > > +     MUX(CLK_MOUT_PDP_BUS, "mout_cmu_pdp_bus", mout_cmu_pdp_bus_p,
+> > > +         CLK_CON_MUX_MUX_CLKCMU_PDP_BUS, 0, 2),
+> > > +
+> > > +     /* PDP */
+> > > +     MUX(CLK_MOUT_PDP_VRA, "mout_cmu_pdp_vra", mout_cmu_pdp_vra_p,
+> > > +         CLK_CON_MUX_MUX_CLKCMU_PDP_VRA, 0, 2),
+> > > +
+> > > +     /* IPP */
+> > > +     MUX(CLK_MOUT_IPP_BUS, "mout_cmu_ipp_bus", mout_cmu_ipp_bus_p,
+> > > +         CLK_CON_MUX_MUX_CLKCMU_IPP_BUS, 0, 2),
+> > > +
+> > > +     /* G3AA */
+> > > +     MUX(CLK_MOUT_G3AA, "mout_cmu_g3aa", mout_cmu_g3aa_p,
+> > > +         CLK_CON_MUX_MUX_CLKCMU_G3AA_G3AA, 0, 2),
+> >
+> > I think that need to change the mux name and mux parent name
+> > because other mux name use the twice word according to the register nam=
+e
+> > even if use the same work such as 'mout_cmu_g2d_g2d', 'mout_cmu_mcsc_mc=
+sc' and 'mout_cmu_mfc_mfc'.
+> > - mout_cmu_g3aa -> mout_cmu_g3aa_g3aa
+> > - mout_cmu_g3aa_p -> mount_cmu_g3aa_g3aa_p
+>
+> Will fix in v4
+>
+
+That consistent name duplication, while not causing any conflicts when
+being removed, looks suspicious to me. That's probably some internal
+scheme which doesn't make much sense for us and doesn't bring any
+value, in terms of clock drivers. Maybe it'll be better to instead get
+rid of such duplication throughout the driver, at least for clock name
+strings? I mention this, because that's what I did in clk-exynos850.
+With the only exception being the main domain clocks, which basically
+enables/disables the whole unit internally, e.g.
+
+    GATE(CLK_GOUT_G3D_CMU_G3D_PCLK, "gout_g3d_cmu_g3d_pclk", ...
+
+which "G3D domain gate clock that enables/disables G3D", or something
+like that. But clk-exynos850 doesn't have any duplicating bits like
+"cmu_cmu" or "g3d_g3d". And the reason why I did that is I wanted
+those clock names appear short and nice in device tree, as there were
+no benefits in those duplicating bits.
+
+> >
+> > (snip)
+> >
+> > > +     /* CSIS */
+> > > +     GATE(CLK_GOUT_CSIS, "gout_cmu_csis_bus", "mout_cmu_csis_bus",
+> > > +          CLK_CON_GAT_GATE_CLKCMU_CSIS_BUS, 21, 0, 0),
+> > > +     /* PDP */
+> > > +     GATE(CLK_GOUT_PDP_BUS, "gout_cmu_pdp_bus", "mout_cmu_pdp_bus",
+> > > +          CLK_CON_GAT_GATE_CLKCMU_PDP_BUS, 21, 0, 0),
+> > > +
+> > > +     GATE(CLK_GOUT_PDP_VRA, "gout_cmu_pdp_vra", "mout_cmu_pdp_vra",
+> > > +          CLK_CON_GAT_GATE_CLKCMU_PDP_BUS, 21, 0, 0),
+> > > +
+> > > +     /* IPP */
+> > > +     GATE(CLK_GOUT_IPP_BUS, "gout_cmu_ipp_bus", "mout_cmu_ipp_bus",
+> > > +          CLK_CON_GAT_GATE_CLKCMU_IPP_BUS, 21, 0, 0),
+> > > +     /* G3AA */
+> > > +     GATE(CLK_GOUT_G3AA, "gout_cmu_g3aa", "mout_cmu_g3aa",
+> > > +          CLK_CON_MUX_MUX_CLKCMU_G3AA_G3AA, 21, 0, 0),
+> >
+> > ditto.
+> > gout_cmu_g3aa -> gout_cmu_g3aa_g3aa
+> > mout_cmu_g3aa -> mout_cmu_g3aa_g3aa
+>
+
+Ditto.
+
+> Will fix in V4
+>
+> regards,
+>
+> Peter.
