@@ -1,109 +1,97 @@
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD13D526;
-	Wed,  8 Nov 2023 10:41:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5ABE46AD;
+	Wed,  8 Nov 2023 12:01:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hnlSDDqD"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEBAE1723;
-	Wed,  8 Nov 2023 02:41:13 -0800 (PST)
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3A89qjdj024523;
-	Wed, 8 Nov 2023 10:41:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=OeUsSoLKavclQgNda6VqukwhXJOhP3aMnXxDNooxqQ0=;
- b=hnlSDDqDaNO6FfZSdaCgW3V0v9VRzfTKzAkIRm8gDWi12rSnyaaN+m1fUfgaR4pM4Tqd
- mg+bdbVM9C213uTts7xbHm6ggb9JyCiD9dkhH8HaR0oQ7zVzIVFKvcNW8uijz7tyVUB7
- YOJ9VGIdEDI74/G9LCa6MbKB0XePxUE9R9bUaX7RPhSmXNcdA0LJw5f4hDUhDuhW3KJ+
- nd54M7cOl4Ak4l0lunuzYx6CHLtJhD9FkJSC3gzM48bAmWUcnOqUJ9cVGnvJPGazQEV1
- OmwrH/X+iO6fZ6N/QJqkvKK2gjKAmpyZg0YST3poVcZIBTaGQs1Mzaj1Jd6qAX5SPj24 SA== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3u7w7r9b83-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 08 Nov 2023 10:41:09 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3A8Af73i004439
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 8 Nov 2023 10:41:08 GMT
-Received: from [10.201.206.238] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.39; Wed, 8 Nov
- 2023 02:41:00 -0800
-Message-ID: <969a2789-ef46-c6ac-dec2-51ef0a362a1e@quicinc.com>
-Date: Wed, 8 Nov 2023 16:10:57 +0530
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FsWY3mQR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E3C1C433C7;
+	Wed,  8 Nov 2023 12:01:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1699444916;
+	bh=kutHs17/gbiKysQ/W1InFavUEoGmwsEhseHr6fk22qQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FsWY3mQRJ//puz3e1Jo4bv+2xsysMMdkCggHX8mUQ/8RD88aMWeocjGRnLbTw2sg2
+	 gS7IMEa6Gbl8M62fvq7nZpelfVky5GKL6AIgtYFYjdlp5majhoG8+5q5hSYw+nz4Un
+	 PTX4A0sW0kE0ARqhLbo/jt0KOni6CB5bpEIU6PMeOWLhEIxkzTlkTqZyUHZpcNsdsH
+	 vsq+gFptzmBxathMBXguyFSq8hav8hPEgl9e1rlVOXhjcH0XslAAMYNrrWWzqVbSab
+	 1zl+NxgwQRqxgyH1ghE4CRGwosUgX7Yq+q8631ryj+PFxvAhp8tWeS2CShK2pgTB7L
+	 v2BkLCMphNZ9A==
+Date: Wed, 8 Nov 2023 12:01:51 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Elaine Zhang <zhangqing@rock-chips.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, kever.yang@rock-chips.com,
+	heiko@sntech.de, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org, huangtao@rock-chips.com,
+	andy.yan@rock-chips.com
+Subject: Re: [PATCH v5 3/4] dt-bindings: clock: rk3588: export PCLK_VO1GRF
+ clk id
+Message-ID: <20231108-donation-uncertain-c4d0f560c420@spud>
+References: <20231108061822.4871-1-zhangqing@rock-chips.com>
+ <20231108061822.4871-4-zhangqing@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Subject: Re: [PATCH v5 09/11] remoteproc: qcom: Add Hexagon based multipd
- rproc driver
-Content-Language: en-US
-To: <agross@kernel.org>, <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
-        <mathieu.poirier@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <quic_eberman@quicinc.com>, <quic_gurus@quicinc.com>,
-        <kvalo@kernel.org>, <loic.poulain@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-CC: <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
-        <quic_kathirav@quicinc.com>, <quic_anusha@quicinc.com>,
-        <quic_varada@quicinc.com>
-References: <20230802140606.2041889-1-quic_mmanikan@quicinc.com>
- <20230802140606.2041889-10-quic_mmanikan@quicinc.com>
-From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-In-Reply-To: <20230802140606.2041889-10-quic_mmanikan@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: XjpLpwTSaL1Vm-AYHlATKhOYIUBbuNhk
-X-Proofpoint-ORIG-GUID: XjpLpwTSaL1Vm-AYHlATKhOYIUBbuNhk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-11-08_01,2023-11-08_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
- lowpriorityscore=0 phishscore=0 malwarescore=0 spamscore=0 impostorscore=0
- mlxscore=0 mlxlogscore=688 priorityscore=1501 suspectscore=0 bulkscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311060000 definitions=main-2311080089
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="iMx7EvP7YSPnohIE"
+Content-Disposition: inline
+In-Reply-To: <20231108061822.4871-4-zhangqing@rock-chips.com>
 
 
+--iMx7EvP7YSPnohIE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 8/2/2023 7:36 PM, Manikanta Mylavarapu wrote:
-> It adds support to bring up remoteproc's on multipd model.
-> Pd means protection domain. It's similar to process in Linux.
-> Here QDSP6 processor runs each wifi radio functionality on a
-> separate process. One process can't access other process
-> resources, so this is termed as PD i.e protection domain.
-> 
-> Here we have two pd's called root and user pd. We can correlate
-> Root pd as root and user pd as user in linux. Root pd has more
-> privileges than user pd. Root will provide services to user pd.
-> 
->  From remoteproc driver perspective, root pd corresponds to QDSP6
-> processor bring up and user pd corresponds to Wifi radio (WCSS)
-> bring up.
-> 
-> Here WCSS(user) PD is dependent on Q6(root) PD, so first
-> q6 pd should be up before wcss pd. After wcss pd goes down,
-> q6 pd should be turned off.
-> 
+On Wed, Nov 08, 2023 at 02:18:21PM +0800, Elaine Zhang wrote:
+> export PCLK_VO1GRF for DT.
+>=20
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> ---
+>  include/dt-bindings/clock/rockchip,rk3588-cru.h | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/include/dt-bindings/clock/rockchip,rk3588-cru.h b/include/dt=
+-bindings/clock/rockchip,rk3588-cru.h
+> index 5790b1391201..50ba72980190 100644
+> --- a/include/dt-bindings/clock/rockchip,rk3588-cru.h
+> +++ b/include/dt-bindings/clock/rockchip,rk3588-cru.h
+> @@ -733,8 +733,9 @@
+>  #define ACLK_AV1_PRE			718
+>  #define PCLK_AV1_PRE			719
+>  #define HCLK_SDIO_PRE			720
+> +#define PCLK_VO1GRF			721
+> =20
 
-Thanks Krzysztof, Kalle, Rob, Bjorn for all your reviews.
-I have addressed them in this series.
-Can you please suggest and help me to take this forward ?
+> -#define CLK_NR_CLKS			(HCLK_SDIO_PRE + 1)
+> +#define CLK_NR_CLKS			(PCLK_VO1GRF + 1)
 
-Thanks & Regards,
-Manikanta.
+This definition is part of the ABI, if it is safe to change it, then it
+is safe to delete it.
+
+> =20
+>  /* scmi-clocks indices */
+> =20
+> --=20
+> 2.17.1
+>=20
+>=20
+
+--iMx7EvP7YSPnohIE
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZUt4rwAKCRB4tDGHoIJi
+0qX4AQCiaZUvu8Hjo9g0xzPpB6/puP40C/jatJp8HVIooO70JgD+NnBufAYVlNOR
+UzY9jxnud216SsWfIFVq8L7Lq+cjEQA=
+=rTEt
+-----END PGP SIGNATURE-----
+
+--iMx7EvP7YSPnohIE--
