@@ -1,170 +1,109 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E485DF6E;
-	Wed,  8 Nov 2023 09:28:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD13D526;
+	Wed,  8 Nov 2023 10:41:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m5dBSPOk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97557C433C8;
-	Wed,  8 Nov 2023 09:28:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1699435734;
-	bh=Slh6F7wmwz4OhdLRrILiLeaxuOyCs+pgESUIHeXm8qY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=m5dBSPOklCkkO/Tfs4uH4TpZHRjeeKOckgPjUT5Ruz2Ahi36RpC5tXioMx8Md0IAo
-	 iJwTqgfifAlMqeUgkO2+fnGYFZGDXFxJWJipH6T7vPNc1NIT8v2EAff5DvYFHCA+gz
-	 00xteEN+ScYcQhUyQEJsH/ZeaIxo7nJIk0S5nQ3RzlPh2ODHBI7JBBH+8FXFLObqFc
-	 AMh/9hCCsjK4gOB7uZJUl/0QFaYOJSowTke7U36eQEcHMyiVOnmeIBGXwR+EmQ5l+y
-	 S7oES8gTRpMiv9yTmlRkIgwODusPwgO1s2BvDEZiluzo88jrxmgXp5ycmj/evrhUPS
-	 zg1ZCceN07Xzg==
-Message-ID: <59913b7c-dec9-4097-b38c-6991c4b48153@kernel.org>
-Date: Wed, 8 Nov 2023 10:28:46 +0100
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hnlSDDqD"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEBAE1723;
+	Wed,  8 Nov 2023 02:41:13 -0800 (PST)
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3A89qjdj024523;
+	Wed, 8 Nov 2023 10:41:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=OeUsSoLKavclQgNda6VqukwhXJOhP3aMnXxDNooxqQ0=;
+ b=hnlSDDqDaNO6FfZSdaCgW3V0v9VRzfTKzAkIRm8gDWi12rSnyaaN+m1fUfgaR4pM4Tqd
+ mg+bdbVM9C213uTts7xbHm6ggb9JyCiD9dkhH8HaR0oQ7zVzIVFKvcNW8uijz7tyVUB7
+ YOJ9VGIdEDI74/G9LCa6MbKB0XePxUE9R9bUaX7RPhSmXNcdA0LJw5f4hDUhDuhW3KJ+
+ nd54M7cOl4Ak4l0lunuzYx6CHLtJhD9FkJSC3gzM48bAmWUcnOqUJ9cVGnvJPGazQEV1
+ OmwrH/X+iO6fZ6N/QJqkvKK2gjKAmpyZg0YST3poVcZIBTaGQs1Mzaj1Jd6qAX5SPj24 SA== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3u7w7r9b83-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 08 Nov 2023 10:41:09 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3A8Af73i004439
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 8 Nov 2023 10:41:08 GMT
+Received: from [10.201.206.238] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.39; Wed, 8 Nov
+ 2023 02:41:00 -0800
+Message-ID: <969a2789-ef46-c6ac-dec2-51ef0a362a1e@quicinc.com>
+Date: Wed, 8 Nov 2023 16:10:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: stm32: add clocks and reset binding for
- stm32mp25 platform
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Subject: Re: [PATCH v5 09/11] remoteproc: qcom: Add Hexagon based multipd
+ rproc driver
 Content-Language: en-US
-To: Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20231106141845.102648-1-gabriel.fernandez@foss.st.com>
- <20231106141845.102648-2-gabriel.fernandez@foss.st.com>
- <a0231a23-89be-4b44-aae0-ee0bb332f2ae@kernel.org>
- <fbd4e006-606c-456a-97de-f74e69e90f3b@foss.st.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <fbd4e006-606c-456a-97de-f74e69e90f3b@foss.st.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-On 08/11/2023 10:13, Gabriel FERNANDEZ wrote:
-> Hi Krzysztof,
-> 
-> Thank you very much for your review.
-> 
-> 
-> On 11/7/23 08:27, Krzysztof Kozlowski wrote:
->> On 06/11/2023 15:18, gabriel.fernandez@foss.st.com wrote:
->>> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
->>>
->>> Adds clock and reset binding entries for STM32MP25 SoC family
->>>
->>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
->> This was based on some very old tree. Please work on latest release,
->> maintainer's tree or linux-next. Otherwise we need to point the same
->> issues we already fixed. This would be quite a waste of time, don't you
->> think?
-> 
-> To make sure I understood the problem and wouldn't repeat it, I pushed 
-> my series starting from the tag 'next-20231031.
-> 
-> Or is it related to the content of the YAML file?
-
-I meant that you:
-1. Worked on old tree and used old files as starting template,
-2. Worked on old tree, used get_maintainers.pl and send it.
-
-This could be any combination of above. All of them are not the way you
-should do. And you should notice it through bounces of incorrect emails.
-Very old emails.
+To: <agross@kernel.org>, <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
+        <mathieu.poirier@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <quic_eberman@quicinc.com>, <quic_gurus@quicinc.com>,
+        <kvalo@kernel.org>, <loic.poulain@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+CC: <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
+        <quic_kathirav@quicinc.com>, <quic_anusha@quicinc.com>,
+        <quic_varada@quicinc.com>
+References: <20230802140606.2041889-1-quic_mmanikan@quicinc.com>
+ <20230802140606.2041889-10-quic_mmanikan@quicinc.com>
+From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In-Reply-To: <20230802140606.2041889-10-quic_mmanikan@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: XjpLpwTSaL1Vm-AYHlATKhOYIUBbuNhk
+X-Proofpoint-ORIG-GUID: XjpLpwTSaL1Vm-AYHlATKhOYIUBbuNhk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-11-08_01,2023-11-08_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
+ lowpriorityscore=0 phishscore=0 malwarescore=0 spamscore=0 impostorscore=0
+ mlxscore=0 mlxlogscore=688 priorityscore=1501 suspectscore=0 bulkscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311060000 definitions=main-2311080089
 
 
->>> @@ -0,0 +1,167 @@
->>> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-3-Clause */
->>> +/*
->>> + * Copyright (C) STMicroelectronics 2023 - All Rights Reserved
->>> + * Author(s): Gabriel Fernandez <gabriel.fernandez@foss.st.com>
->>> + */
->>> +
->>> +#ifndef _DT_BINDINGS_STM32MP25_RESET_H_
->>> +#define _DT_BINDINGS_STM32MP25_RESET_H_
->>> +
->>> +#define SYS_R		8192
->> NAK, don't put register values into the bindings. There is no single
->> need of it. Use IDs (which start from 0 and are incremented by 1) or
->> drop it.
->>
-> My STM32MP25 driver is based on the same binding as the STM32MP13, which 
-> is already upstreamed last year.
-> 
-> I will update also  the YAML file of the STM32MP13 for the above remarks.
-> 
-> But should I update the binding values of the STM32MP13 and try a 
-> solution about backward compatible ?
 
-You cannot change existing binding. I should have given you the same
-comments for STM32MP13 year ago, but that time I was too busy with all
-the reviews to enforce also the register constants in the bindings.
-
+On 8/2/2023 7:36 PM, Manikanta Mylavarapu wrote:
+> It adds support to bring up remoteproc's on multipd model.
+> Pd means protection domain. It's similar to process in Linux.
+> Here QDSP6 processor runs each wifi radio functionality on a
+> separate process. One process can't access other process
+> resources, so this is termed as PD i.e protection domain.
 > 
-> The idea was to have the same reset driver for all STM32MP platforms
+> Here we have two pd's called root and user pd. We can correlate
+> Root pd as root and user pd as user in linux. Root pd has more
+> privileges than user pd. Root will provide services to user pd.
+> 
+>  From remoteproc driver perspective, root pd corresponds to QDSP6
+> processor bring up and user pd corresponds to Wifi radio (WCSS)
+> bring up.
+> 
+> Here WCSS(user) PD is dependent on Q6(root) PD, so first
+> q6 pd should be up before wcss pd. After wcss pd goes down,
+> q6 pd should be turned off.
 > 
 
-You can keep the driver, I care less how it is written. What I oppose is
-to add new register values as binding IDs. Why? Because these are not
-IDs and your driver is not using them. If these were IDs, your driver
-would use them and I would expect them to start from 0. Just like your
-clock driver is doing.
+Thanks Krzysztof, Kalle, Rob, Bjorn for all your reviews.
+I have addressed them in this series.
+Can you please suggest and help me to take this forward ?
 
-So just drop this reset binding header changes. You don't need them.
-Feel free to store such register values in a header in /boot/dts/
-directory, to make it clear these are only helpers for DTS, not
-bindings. This will also allow you in the future to change them, unlike
-bindings.
-
-Best regards,
-Krzysztof
-
+Thanks & Regards,
+Manikanta.
