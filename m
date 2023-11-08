@@ -1,96 +1,103 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5EBE30645;
-	Tue,  7 Nov 2023 22:50:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4347B641
+	for <linux-clk@vger.kernel.org>; Wed,  8 Nov 2023 01:15:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jeDml5Iu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DF90C433C7;
-	Tue,  7 Nov 2023 22:50:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1699397420;
-	bh=vhpxP9W32kSckOc73FHFhFgFKCzMo9dlSgDTjFo24Mc=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=jeDml5Iu/1vS+TGsS0SOoccFl9S4bi4nD8PVxo6ZHTYKaJnlE+EHANnFTyTD+tf6/
-	 O+D1NsLbeT9CNPYxcyf5zTwI/2Xs16dNe8LwM9R0vLjEOsQRC8St3abRGjNlIk4A2J
-	 34Ln2wfbWn4ydNq38CVJ5P/g8i5wiJ78b20dSh7roMmzpUiyu59RA7tUhzsxEti1Lo
-	 0VHgBhEQnZ/qvnBsLTgAKgJNdc4XbGYKQgAHrcIkkjKSRkn65SSQ0NMaa+vB4DOBcF
-	 Wjf6kNVkLaqFfl3oCUE4VzTJ1cYIvMftiDWrPGfXS0pC06DjPhKYyI8ECv8/LV8Y0v
-	 jU9UAOUIzF0lg==
-Message-ID: <849046e96437d11e8fb997597b40979e.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A2okkFp7"
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7800A193
+	for <linux-clk@vger.kernel.org>; Tue,  7 Nov 2023 17:15:19 -0800 (PST)
+Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-40839807e82so1508345e9.0
+        for <linux-clk@vger.kernel.org>; Tue, 07 Nov 2023 17:15:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1699406118; x=1700010918; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XZnznCqM2AjhaZi79PbuLHcHUwpNTpzbw/YuXnI5mfQ=;
+        b=A2okkFp7TX/st0lbMUu2UPI+8NYPHjuLjE/StjD2LuiCQHGOvv44FL84gtaP0OgSZe
+         T6gvaK0gzSUqdBMTKJY6sg1Wfejy8xZCtHMTKhYB91JJ+Mqyn/n6aprV2F2TANk79UAm
+         HRX2bLe7tF4+d8TVDmfEjIXu7p/OSM4O1tGEuUi4qNjqGdOM8HXQBrf8YhI75KrQ5MVF
+         u3Etx60oeKmyFGdScAnvAu71GzJjpMUi781RLWcyw1SYf/1YNPOUhdIRZtREhNuevuNJ
+         BYUOx11YReIQ7KSs2gTGv7uqzfayDIU6C0wpCRQ700VjNUUuhQbiWkxA9bLsa6ibw6fD
+         z5iQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699406118; x=1700010918;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XZnznCqM2AjhaZi79PbuLHcHUwpNTpzbw/YuXnI5mfQ=;
+        b=tdOsfD4dG8WiklMrI+nf3zp61gO1RxlMTMZvjqWHYfKBil5yD3ok1SthHUTSf0rqx6
+         tfU+RhKAflzmr8JGfk7UmZk1fDMuWVApbNbDRuTVp46+EZogOMCoGsht5XS2ogQ2mngn
+         e6uCNja3C3pGZrdF7I8z0E/BsmPEX2a0dYIiN3t9oC292A/YUW4rOYftvmSXLsFsFvqt
+         vaqP+2B35HZCT98kunTr4MdeA3Rgmb0Aa5g2pnzeTva5DrP68i/aYqzf3TuF7F8X2Rkx
+         xNEFTh1NaCGJQt+74a848pFkJvgMH9GPb7s0LA5MX4Ec9V9LGp1vWuwYnNlWrD996JiJ
+         1EPg==
+X-Gm-Message-State: AOJu0Yz+E4pB4JaP2CHjOw9Z5mn8KJ007zfO+/aDxJmC0n99feBCVEbf
+	5hcs1UDrvQ5NPdQ6j7whsosWKg==
+X-Google-Smtp-Source: AGHT+IEIbjP5ubRLbHFuttHbIGtYyTdvZVb5ctg0N4NF3wFeDFArM4/Br06A2vdI/3SJ+YmATJCpTw==
+X-Received: by 2002:a05:600c:c0c:b0:401:b425:2414 with SMTP id fm12-20020a05600c0c0c00b00401b4252414mr4903500wmb.18.1699406117867;
+        Tue, 07 Nov 2023 17:15:17 -0800 (PST)
+Received: from [192.168.100.102] ([37.228.218.3])
+        by smtp.gmail.com with ESMTPSA id f21-20020a7bcc15000000b0040773c69fc0sm17049309wmh.11.2023.11.07.17.15.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Nov 2023 17:15:17 -0800 (PST)
+Message-ID: <ae95c3c7-26b7-42f5-b806-f57b56e6300e@linaro.org>
+Date: Wed, 8 Nov 2023 01:15:14 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAA8EJpq_pvtCxuPKrHmUOgsDFmDeG8cuUcynvvk-0SJNY3HJnA@mail.gmail.com>
-References: <20231004012308.2305273-1-dmitry.baryshkov@linaro.org> <20231004012308.2305273-3-dmitry.baryshkov@linaro.org> <2346f541be5b8528ad1a16df256a2f50.sboyd@kernel.org> <1290a5a0f7f584fcce722eeb2a1fd898.sboyd@kernel.org> <CAA8EJpq_pvtCxuPKrHmUOgsDFmDeG8cuUcynvvk-0SJNY3HJnA@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 2/3] clk: qcom: implement RCG2 'parked' clock support
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, freedreno@lists.freedesktop.org, Rob Clark <robdclark@gmail.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 07 Nov 2023 14:50:18 -0800
-User-Agent: alot/0.10
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND v3 4/5] clk: qcom: Use HW_CTRL_TRIGGER flag to
+ switch video GDSC to HW mode
+Content-Language: en-US
+To: Konrad Dybcio <konrad.dybcio@linaro.org>, Abel Vesa
+ <abel.vesa@linaro.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Bjorn Andersson <andersson@kernel.org>, Andy Gross <agross@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Taniya Das <tdas@qti.qualcomm.com>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-media@vger.kernel.org,
+ Jagadeesh Kona <quic_jkona@quicinc.com>
+References: <20231101-gdsc-hwctrl-v3-0-0740ae6b2b04@linaro.org>
+ <20231101-gdsc-hwctrl-v3-4-0740ae6b2b04@linaro.org>
+ <835a6add-81e9-42e4-abbe-91632aaa6bc9@linaro.org>
+ <82a25b12-7a63-4c75-8a46-624bc35c6752@linaro.org>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <82a25b12-7a63-4c75-8a46-624bc35c6752@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Quoting Dmitry Baryshkov (2023-11-06 18:00:04)
-> On Tue, 7 Nov 2023 at 03:36, Stephen Boyd <sboyd@kernel.org> wrote:
-> >
-> > Quoting Stephen Boyd (2023-11-03 18:24:47)
-> >
-> > I looked at this more today. It seems that I need to both read the
-> > config register at init and also move over the rcg to the safe source at
-> > init (i.e. park the clk at init). That's doable with a call to
-> > clk_rcg2_shared_disable() for the clk_ops::init callback. Otherwise I
-> > get a stuck clk warning.
-> >
-> > Either
-> >
-> >  disp_cc_mdss_mdp_clk status stuck at 'off'
-> >
-> > or
-> >
-> >  disp_cc_mdss_rot_clk status stuck at 'on'
-> >
-> > When I don't park the rcg, the disp_cc_mdss_rot_clk gets stuck during
-> > disabling of unused clks. I think I understand that problem. What
-> > happens is disp_cc_mdss_mdp_clk_src and disp_cc_mdss_rot_clk_src are
-> > both sourcing from disp_cc_pll0 at boot. Fixing the parent mapping makes
-> > it so that enabling and then disabling disp_cc_mdss_ahb_clk causes
-> > disp_cc_pll0 to be turned off when disp_cc_mdss_rot_clk_src is sourced
-> > from it (and the branch disp_cc_mdss_rot_clk is enabled). If we park
-> > both the rcgs at clk registration time we avoid this problem because the
-> > PLL is disabled but nothing is actually a child clk. The act of reading
-> > the config register and stashing that in the 'parked_cfg' only helps
-> > avoid duplicate calls to change the rate, and doesn't help when we try
-> > to repoint the clk at XO when the parent PLL is off.
-> >
-> > The part I still don't understand is why reading the config register at
-> > init and stashing that in 'parked_cfg' fixes the disp_cc_mdss_mdp_clk
-> > stuck at off problem. I see that the branch clk is turned off and on
-> > many times during boot and there aren't any warnings regardless of
-> > stashing the config register. That means we should be moving the RCG to
-> > XO source, between forcibly enabling and disabling the RCG, which
-> > presumably would complain about being unable to update the config
-> > register, but it doesn't. Only after late init does the clk fail to
-> > enable, and the source is still XO at that time. Something else must be
-> > happening that wedges the branch to the point that it can't be
-> > recovered. But simply reporting the proper parent is enough for
-> > disp_cc_mdss_mdp_clk.
->=20
-> I suppose that the issue is caused by mdss_gdsc or mmcx also being
-> shut down at the late_init. And if I remember correctly, properly
-> parking disp_cc_mdss_mdp_clk to the XO solves this issue. This is
-> where is_enabled comes to play. Adding it changes the
-> clk_disable_unused behaviour.
+On 07/11/2023 21:21, Konrad Dybcio wrote:
+>>
+>> So.
+>>
+>> I'm assuming the rest of this series works however for sc8250 at least 
+>> this is a NAK, breaks venus on rb5.
+> Are you saying that applying this patch alone causes the attached crash?
+> 
+> Konrad
 
-The thing is that disp_cc_mdss_mdp_clk_src has been parked to XO by the
-time late_init runs. The branch clk (disp_cc_mdss_mdp_clk) has been
-enabled and disabled repeatedly during boot as well, and all those times
-nothing has signaled a failure. That means the RCG has supposedly
-switched away from the disp_cc_pll0 to XO (parked) and the branch isn't
-stuck on or off. So how does turning the mdss_gdsc or mmcx off during
-late_init cause the branch to get stuck off if the parent of the RCG is
-XO? Is something changing the parent back to the display PLL?
+I tried to revert this patch in isolation and got
+
+->
+
+[  157.083287] qcom-venus aa00000.video-codec: Failed to switch 
+power-domain:1 to SW mode
+[  162.004630] qcom-venus aa00000.video-codec: Failed to switch 
+power-domain:1 to SW mode
+
+I stopped debugging there.
+
+---
+bod
