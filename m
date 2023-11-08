@@ -1,42 +1,24 @@
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0FAADDD5;
-	Wed,  8 Nov 2023 09:14:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E485DF6E;
+	Wed,  8 Nov 2023 09:28:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="uWJC1fMJ"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C18A9F;
-	Wed,  8 Nov 2023 01:14:30 -0800 (PST)
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.17.1.22/8.17.1.22) with ESMTP id 3A87iZwv009134;
-	Wed, 8 Nov 2023 10:14:05 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	selector1; bh=L87qA+hYUUDc7ZNyh0QZSpVsf4kh59NIKRQqk2meU7g=; b=uW
-	JC1fMJ51nVxjQ2k2AIX62Q66xtDCjQtMyyLDI4KtCVaJwfzjsX/jsK1yt3KKq8eP
-	OzGokXBpfgExFYZl94HFY2vP1WzSUNMhrHMpxkfzLyaJ/zcnkhakQYLP8JisE1PE
-	J2tGoKIlWOa5RxhxVNenQITGpgsTaJPlP31gMUghYJX/DdimnNTnFVRYFcno92dp
-	BsUXvGq7esDYzQ9VRhj87spuCoDg+CMDstQ9PJItatAhIFuGjPKu+U9ldSeBb+Wn
-	7Zry7oy4LBFUoTpMqRytGdJn8OzqLtVobnk9zMc9podODXLny0WhPN4tfJdpipTu
-	Qzi/Hj4ctYKhGtdvhd/A==
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3u7w21j8ga-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 08 Nov 2023 10:14:05 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7B463100051;
-	Wed,  8 Nov 2023 10:14:04 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 681A121A21E;
-	Wed,  8 Nov 2023 10:14:04 +0100 (CET)
-Received: from [10.201.21.240] (10.201.21.240) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Wed, 8 Nov
- 2023 10:14:03 +0100
-Message-ID: <fbd4e006-606c-456a-97de-f74e69e90f3b@foss.st.com>
-Date: Wed, 8 Nov 2023 10:13:54 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m5dBSPOk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97557C433C8;
+	Wed,  8 Nov 2023 09:28:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1699435734;
+	bh=Slh6F7wmwz4OhdLRrILiLeaxuOyCs+pgESUIHeXm8qY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=m5dBSPOklCkkO/Tfs4uH4TpZHRjeeKOckgPjUT5Ruz2Ahi36RpC5tXioMx8Md0IAo
+	 iJwTqgfifAlMqeUgkO2+fnGYFZGDXFxJWJipH6T7vPNc1NIT8v2EAff5DvYFHCA+gz
+	 00xteEN+ScYcQhUyQEJsH/ZeaIxo7nJIk0S5nQ3RzlPh2ODHBI7JBBH+8FXFLObqFc
+	 AMh/9hCCsjK4gOB7uZJUl/0QFaYOJSowTke7U36eQEcHMyiVOnmeIBGXwR+EmQ5l+y
+	 S7oES8gTRpMiv9yTmlRkIgwODusPwgO1s2BvDEZiluzo88jrxmgXp5ycmj/evrhUPS
+	 zg1ZCceN07Xzg==
+Message-ID: <59913b7c-dec9-4097-b38c-6991c4b48153@kernel.org>
+Date: Wed, 8 Nov 2023 10:28:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -46,272 +28,143 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 1/4] dt-bindings: stm32: add clocks and reset binding for
  stm32mp25 platform
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre
- Torgue <alexandre.torgue@foss.st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Content-Language: en-US
+To: Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 References: <20231106141845.102648-1-gabriel.fernandez@foss.st.com>
  <20231106141845.102648-2-gabriel.fernandez@foss.st.com>
  <a0231a23-89be-4b44-aae0-ee0bb332f2ae@kernel.org>
-Content-Language: en-US
-From: Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>
-In-Reply-To: <a0231a23-89be-4b44-aae0-ee0bb332f2ae@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+ <fbd4e006-606c-456a-97de-f74e69e90f3b@foss.st.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <fbd4e006-606c-456a-97de-f74e69e90f3b@foss.st.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.201.21.240]
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-11-08_01,2023-11-07_01,2023-05-22_02
 
-Hi Krzysztof,
+On 08/11/2023 10:13, Gabriel FERNANDEZ wrote:
+> Hi Krzysztof,
+> 
+> Thank you very much for your review.
+> 
+> 
+> On 11/7/23 08:27, Krzysztof Kozlowski wrote:
+>> On 06/11/2023 15:18, gabriel.fernandez@foss.st.com wrote:
+>>> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+>>>
+>>> Adds clock and reset binding entries for STM32MP25 SoC family
+>>>
+>>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+>> This was based on some very old tree. Please work on latest release,
+>> maintainer's tree or linux-next. Otherwise we need to point the same
+>> issues we already fixed. This would be quite a waste of time, don't you
+>> think?
+> 
+> To make sure I understood the problem and wouldn't repeat it, I pushed 
+> my series starting from the tag 'next-20231031.
+> 
+> Or is it related to the content of the YAML file?
 
-Thank you very much for your review.
+I meant that you:
+1. Worked on old tree and used old files as starting template,
+2. Worked on old tree, used get_maintainers.pl and send it.
+
+This could be any combination of above. All of them are not the way you
+should do. And you should notice it through bounces of incorrect emails.
+Very old emails.
 
 
-On 11/7/23 08:27, Krzysztof Kozlowski wrote:
-> On 06/11/2023 15:18, gabriel.fernandez@foss.st.com wrote:
->> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+>>> @@ -0,0 +1,167 @@
+>>> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-3-Clause */
+>>> +/*
+>>> + * Copyright (C) STMicroelectronics 2023 - All Rights Reserved
+>>> + * Author(s): Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+>>> + */
+>>> +
+>>> +#ifndef _DT_BINDINGS_STM32MP25_RESET_H_
+>>> +#define _DT_BINDINGS_STM32MP25_RESET_H_
+>>> +
+>>> +#define SYS_R		8192
+>> NAK, don't put register values into the bindings. There is no single
+>> need of it. Use IDs (which start from 0 and are incremented by 1) or
+>> drop it.
 >>
->> Adds clock and reset binding entries for STM32MP25 SoC family
->>
->> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-> This was based on some very old tree. Please work on latest release,
-> maintainer's tree or linux-next. Otherwise we need to point the same
-> issues we already fixed. This would be quite a waste of time, don't you
-> think?
+> My STM32MP25 driver is based on the same binding as the STM32MP13, which 
+> is already upstreamed last year.
+> 
+> I will update also  the YAML file of the STM32MP13 for the above remarks.
+> 
+> But should I update the binding values of the STM32MP13 and try a 
+> solution about backward compatible ?
 
-To make sure I understood the problem and wouldn't repeat it, I pushed 
-my series starting from the tag 'next-20231031.
+You cannot change existing binding. I should have given you the same
+comments for STM32MP13 year ago, but that time I was too busy with all
+the reviews to enforce also the register constants in the bindings.
 
-Or is it related to the content of the YAML file?
+> 
+> The idea was to have the same reset driver for all STM32MP platforms
+> 
 
+You can keep the driver, I care less how it is written. What I oppose is
+to add new register values as binding IDs. Why? Because these are not
+IDs and your driver is not using them. If these were IDs, your driver
+would use them and I would expect them to start from 0. Just like your
+clock driver is doing.
 
->
->> ---
->>   .../bindings/clock/st,stm32mp25-rcc.yaml      | 116 +++++
->>   include/dt-bindings/clock/stm32mp25-clks.h    | 492 ++++++++++++++++++
->>   include/dt-bindings/reset/stm32mp25-resets.h  | 167 ++++++
->>   3 files changed, 775 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
->>   create mode 100644 include/dt-bindings/clock/stm32mp25-clks.h
->>   create mode 100644 include/dt-bindings/reset/stm32mp25-resets.h
->>
->> diff --git a/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml b/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
->> new file mode 100644
->> index 000000000000..27c60f3231ba
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
->> @@ -0,0 +1,116 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/clock/st,stm32mp25-rcc.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: STM32MP25 Reset Clock Controller
->> +
->> +maintainers:
->> +  - Gabriel Fernandez <gabriel.fernandez@foss.st.com>
->> +
->> +description: |
->> +  The RCC IP is both a reset and a clock controller.
->> +  RCC makes also power management (resume/supend and wakeup interrupt).
->> +  Please also refer to reset.txt for common reset controller binding usage.
-> Sorry, what TXT?
->
->> +
->> +  This binding uses common clock bindings
->> +  Documentation/devicetree/bindings/clock/clock-bindings.txt
-> Please drop all unrelevant, 5 year old links.
->
->> +
->> +  Specifying clocks
->> +  =================
->> +
->> +  All available clocks are defined as preprocessor macros in
->> +  dt-bindings/clock/stm32mp25-clks.h header and can be used in device
-> Not even proper path :/
->
->> +  tree sources.
->> +  This file implements defines like:
->> +      #define CK_BUS_SDMMC1 245
->> +      #define CK_KER_SDMMC1 313
-> Open other bindings to see how it is done. We expect full path only.
-> Drop all this irrelevant parts.
->
->> +
->> +  Specifying softreset control of devices
->> +  =======================================
->> +
->> +  Device nodes should specify the reset channel required in their "resets"
->> +  property, containing a phandle to the reset device node and an index
->> +  specifying which channel to use.
-> Are you now describing how DT and Linux work? Drop.
->
->> +  The index is the bit number within the RCC registers bank, starting from RCC
->> +  base address.
-> No, it should not be. Use IDs. You will get NAK below anyway.
->
->> +  It is calculated as: index = register_offset / 4 * 32 + bit_offset.
->> +  Where bit_offset is the bit offset within the register.
->> +
->> +  For example on STM32MP25, for LTDC reset:
->> +     ltdc = RCC_LTDCCFGR offset / 4 * 32 + LTDC_bit_offset
->> +          = 0x840 / 4 * 32 + 0 = 16896
->> +
->> +  The list of valid indices for STM32MP25 is available in:
->> +  include/dt-bindings/reset-controller/stm32mp25-resets.h
->> +
->> +  This file implements defines like:
->> +  #define LTDC_R	16896
-> ? I have no clue what you are saying here.
->
->> +
->> +properties:
->> +  "#clock-cells":
->> +    const: 1
->> +
->> +  "#reset-cells":
->> +    const: 1
->> +
->> +  compatible:
->> +    items:
->> +      - enum:
->> +          - st,stm32mp25-rcc
-> Compatible is always first.
->
->> +  clocks: true
->> +  clock-names: true
-> NAK, missing constraints.
->
-> This does not look at all like any decent bindings. Start from scratch
-> from recently reviewed bindings.
->
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +required:
->> +  - "#clock-cells"
->> +  - "#reset-cells"
->> +  - compatible
->> +  - reg
->> +
->> +if:
->> +  properties:
->> +    compatible:
->> +      contains:
->> +        enum:
->> +          - st,stm32mp25-rcc
->> +then:
->> +  properties:
->> +    clocks:
->> +      description: Specifies oscillators.
->> +      maxItems: 5
->> +
->> +    clock-names:
->> +      items:
->> +        - const: hse
->> +        - const: hsi
->> +        - const: msi
->> +        - const: lse
->> +        - const: lsi
->> +  required:
->> +    - clocks
->> +    - clock-names
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/clock/stm32mp25-clks.h>
->> +    #include <dt-bindings/reset/stm32mp25-resets.h>
->> +
->> +    rcc: rcc@44200000 {
->> +        compatible = "st,stm32mp25-rcc";
->> +        reg = <0x44200000 0x10000>;
->> +        #clock-cells = <1>;
->> +        #reset-cells = <1>;
->> +        clock-names = "hse", "hsi", "msi", "lse", "lsi";
->> +        clocks = <&scmi_clk CK_SCMI_HSE>,
->> +                 <&scmi_clk CK_SCMI_HSI>,
->> +                 <&scmi_clk CK_SCMI_MSI>,
->> +                 <&scmi_clk CK_SCMI_LSE>,
->> +                 <&scmi_clk CK_SCMI_LSI>;
->> +    };
->> +...
->> diff --git a/include/dt-bindings/clock/stm32mp25-clks.h b/include/dt-bindings/clock/stm32mp25-clks.h
->> new file mode 100644
->> index 000000000000..9876ee0dd1e4
->> --- /dev/null
->> +++ b/include/dt-bindings/clock/stm32mp25-clks.h
-> Same filename as bindings.
->
->> @@ -0,0 +1,492 @@
->> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-3-Clause */
->> +/*
->> + * Copyright (C) STMicroelectronics 2023 - All Rights Reserved
->> + * Author: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
->> + */
->> +
->> +#ifndef _DT_BINDINGS_STM32MP25_CLKS_H_
->> +#define _DT_BINDINGS_STM32MP25_CLKS_H_
->> +
->
-> ...
->
->> +#endif /* _DT_BINDINGS_STM32MP25_CLKS_H_ */
->> diff --git a/include/dt-bindings/reset/stm32mp25-resets.h b/include/dt-bindings/reset/stm32mp25-resets.h
->> new file mode 100644
->> index 000000000000..3a4a9eef6a95
->> --- /dev/null
->> +++ b/include/dt-bindings/reset/stm32mp25-resets.h
-> Filename matching compatible format.
+So just drop this reset binding header changes. You don't need them.
+Feel free to store such register values in a header in /boot/dts/
+directory, to make it clear these are only helpers for DTS, not
+bindings. This will also allow you in the future to change them, unlike
+bindings.
 
-Okay, I will fix all the remarks mentioned above
+Best regards,
+Krzysztof
 
-
->> @@ -0,0 +1,167 @@
->> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-3-Clause */
->> +/*
->> + * Copyright (C) STMicroelectronics 2023 - All Rights Reserved
->> + * Author(s): Gabriel Fernandez <gabriel.fernandez@foss.st.com>
->> + */
->> +
->> +#ifndef _DT_BINDINGS_STM32MP25_RESET_H_
->> +#define _DT_BINDINGS_STM32MP25_RESET_H_
->> +
->> +#define SYS_R		8192
-> NAK, don't put register values into the bindings. There is no single
-> need of it. Use IDs (which start from 0 and are incremented by 1) or
-> drop it.
->
-My STM32MP25 driver is based on the same binding as the STM32MP13, which 
-is already upstreamed last year.
-
-I will update also  the YAML file of the STM32MP13 for the above remarks.
-
-But should I update the binding values of the STM32MP13 and try a 
-solution about backward compatible ?
-
-The idea was to have the same reset driver for all STM32MP platforms
-
-Best regards
-
-Gabriel.
-
-
->
-> Best regards,
-> Krzysztof
->
