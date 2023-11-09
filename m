@@ -1,24 +1,24 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C79D225D0;
-	Thu,  9 Nov 2023 16:31:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42CA522308;
+	Thu,  9 Nov 2023 16:32:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dCDKHAWc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35470C433C8;
-	Thu,  9 Nov 2023 16:31:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MEteikMm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AB02C433C7;
+	Thu,  9 Nov 2023 16:31:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1699547470;
-	bh=AK5QOaCNW1qivV+BYTR3YnR/G6fmazfZw1BFo9i/I8Y=;
+	s=k20201202; t=1699547521;
+	bh=eyJy+KB2yrU2jS4YZ2E7jhMtCKTphFUm247LzNYFak0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dCDKHAWc8GzWZaHEeBRX7yAELr/JlykCtzuNyWDV8G6s4IJapux5ievprmDk8hoNh
-	 +IfFY8UUNu7ys7ZoZpQSK4w0vcmV/7zw1cE8Gc7s7SQ01bW5yQh4I/zYsyY1rO8Y78
-	 MnAQUmw4d0Dr6crv2EW+HDqcsYnILfzf1G7n7Wbtr1WNxJ8vBnKfivJ4yyQMxVbps7
-	 e/DPY9xjHf6hk9dbNHNUv4ZXApTbklHffx++AjXNQgJ1kAlvKdJpZT+6CHAQjEJlnt
-	 MQNdRR643rFePXalxe5mT7Jh5bSGMBczLeguxUTptvxc5ZW/0NBR+jVEXqec/vFocR
-	 +TWwlH6TYnTLg==
-Message-ID: <e23e344f-8712-4bd9-a229-763adda6226e@kernel.org>
-Date: Thu, 9 Nov 2023 17:31:04 +0100
+	b=MEteikMmBebP0j32ex8X+OX+01N5y0Nq5pNAgLPKi66pOoDE008T7vpNltppNbzJO
+	 jq0JIcVr+8t+bMejNCRvkmB+/TyKr/ZzRwM7CoCO6++jDLqsmh8L6KXAl68KgJcuCw
+	 MDc0JjIJ44Xn8x/iJEAjyCA0x3Ba4uCS5ntb15+OAjC49EWAiogj5iHMkroHs8Io+9
+	 egrzNgXHKloT5q2R3quq8X+BXl0f3lOVJIZrUIeKhuVOPejh8Zb7eQXWlUnvdX/oWL
+	 6xnTyarKhUHDWptVNF3L5YZORxDxm2omeoxeBYYXfRQDcgtMjRMXxEqfKOFrEIHN/G
+	 UmhThrULFsHYw==
+Message-ID: <17b5c388-7f42-4f7f-9c8b-d4a1f0ee9823@kernel.org>
+Date: Thu, 9 Nov 2023 17:31:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -92,15 +92,8 @@ Content-Transfer-Encoding: 7bit
 
 On 09/11/2023 12:11, yu-chang.lee wrote:
 > Remove VPPSYS0, VPPSYS1 compatible on Mediatek MT8188.
-> 
-> Signed-off-by: yu-chang.lee <yu-chang.lee@mediatek.com>
-> ---
 
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC (and consider --no-git-fallback argument). It might
-happen, that command when run on an older kernel, gives you outdated
-entries. Therefore please be sure you base your patches on recent Linux
-kernel.
+Why? Your commit must answer this, not describe obvious stuff.
 
 Best regards,
 Krzysztof
