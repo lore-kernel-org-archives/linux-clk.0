@@ -1,100 +1,150 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42CA522308;
-	Thu,  9 Nov 2023 16:32:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67715225CF;
+	Thu,  9 Nov 2023 17:34:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MEteikMm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AB02C433C7;
-	Thu,  9 Nov 2023 16:31:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R2MS1QwT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 446C9C433C8;
+	Thu,  9 Nov 2023 17:34:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1699547521;
-	bh=eyJy+KB2yrU2jS4YZ2E7jhMtCKTphFUm247LzNYFak0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MEteikMmBebP0j32ex8X+OX+01N5y0Nq5pNAgLPKi66pOoDE008T7vpNltppNbzJO
-	 jq0JIcVr+8t+bMejNCRvkmB+/TyKr/ZzRwM7CoCO6++jDLqsmh8L6KXAl68KgJcuCw
-	 MDc0JjIJ44Xn8x/iJEAjyCA0x3Ba4uCS5ntb15+OAjC49EWAiogj5iHMkroHs8Io+9
-	 egrzNgXHKloT5q2R3quq8X+BXl0f3lOVJIZrUIeKhuVOPejh8Zb7eQXWlUnvdX/oWL
-	 6xnTyarKhUHDWptVNF3L5YZORxDxm2omeoxeBYYXfRQDcgtMjRMXxEqfKOFrEIHN/G
-	 UmhThrULFsHYw==
-Message-ID: <17b5c388-7f42-4f7f-9c8b-d4a1f0ee9823@kernel.org>
-Date: Thu, 9 Nov 2023 17:31:54 +0100
+	s=k20201202; t=1699551297;
+	bh=veQWpyDM4onYmh1xiPJAD0ivfDvih3X2s70cbv5GcvM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R2MS1QwT+Zqp6WDAybXlZ7u9BeEQIBbtcbs+uG5F7GbZzNgzyp1cxENY4a0RMc2Ba
+	 fDX8qxTGvQlIfsGKUPHTUJtT9aPtABpmcFhgCDWzbn6C5sL3phfs+4YMu0/yOrFP0y
+	 QeL3+/YjuSrTDGgD/tqUQOk4JuxOvpJ5sT848d+a1mOsbCzrq3mrXCzI7qqm+jCbXc
+	 8YibFddiyPWDzcM+Jb87cj8Pfeo6YfEDvtPGoiE1QLmgn2VaCIlIWuyvAk9AvsisKb
+	 BK13LmhwP0amZ6L/zg/VSUp9SxuMYEJQV1R8pwwIgQYL5+2i1Ckv5vi4ipdjLrgM2U
+	 x0sIK1xls0s0w==
+Date: Thu, 9 Nov 2023 17:34:50 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Jagan Teki <jagan@amarulasolutions.com>,
+	Nicolas Belin <nbelin@baylibre.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v8 02/12] dt-bindings: soc: amlogic,meson-gx-hhi-sysctrl:
+ add example covering meson-axg-hhi-sysctrl
+Message-ID: <20231109-dictator-hedging-94b0dec505b5@spud>
+References: <20231109-amlogic-v6-4-upstream-dsi-ccf-vim3-v8-0-81e4aeeda193@linaro.org>
+ <20231109-amlogic-v6-4-upstream-dsi-ccf-vim3-v8-2-81e4aeeda193@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND 2/3] dt-bindings: clock: mediatek: Remove compatible for
- MT8188 VPPSYS
-Content-Language: en-US
-To: "yu-chang.lee" <yu-chang.lee@mediatek.com>,
- Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: "Nancy . Lin" <nancy.lin@mediatek.com>, Nathan Lu
- <nathan.lu@mediatek.com>, Moudy Ho <moudy.ho@mediatek.com>,
- "Jason-JH . Lin" <jason-jh.lin@mediatek.com>,
- Garmin Chang <garmin.chang@mediatek.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20231109111122.371-1-yu-chang.lee@mediatek.com>
- <20231109111122.371-3-yu-chang.lee@mediatek.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20231109111122.371-3-yu-chang.lee@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="sZblbYTITPv0dWts"
+Content-Disposition: inline
+In-Reply-To: <20231109-amlogic-v6-4-upstream-dsi-ccf-vim3-v8-2-81e4aeeda193@linaro.org>
 
-On 09/11/2023 12:11, yu-chang.lee wrote:
-> Remove VPPSYS0, VPPSYS1 compatible on Mediatek MT8188.
 
-Why? Your commit must answer this, not describe obvious stuff.
+--sZblbYTITPv0dWts
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best regards,
-Krzysztof
+On Thu, Nov 09, 2023 at 10:00:03AM +0100, Neil Armstrong wrote:
+> Add a thirst example covering the meson-axg-hhi-sysctrl variant and more
 
+What on earth is a thirst example? Some sort of "hysterical raisins"
+type of thing?
+
+My confusion about that word aside,
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+Cheers,
+Conor.
+
+> importantly the phy subnode.
+>=20
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  .../soc/amlogic/amlogic,meson-gx-hhi-sysctrl.yaml  | 41 ++++++++++++++++=
+++++++
+>  1 file changed, 41 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-=
+gx-hhi-sysctrl.yaml b/Documentation/devicetree/bindings/soc/amlogic/amlogic=
+,meson-gx-hhi-sysctrl.yaml
+> index 16977e4e4357..2edf4ccea845 100644
+> --- a/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-gx-hhi-=
+sysctrl.yaml
+> +++ b/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-gx-hhi-=
+sysctrl.yaml
+> @@ -158,3 +158,44 @@ examples:
+>              };
+>          };
+>      };
+> +
+> +    bus@ff63c000 {
+> +        compatible =3D "simple-bus";
+> +        reg =3D <0xff63c000 0x1c00>;
+> +        #address-cells =3D <1>;
+> +        #size-cells =3D <1>;
+> +        ranges =3D <0x0 0xff63c000 0x1c00>;
+> +
+> +        system-controller@0 {
+> +            compatible =3D "amlogic,meson-axg-hhi-sysctrl", "simple-mfd"=
+, "syscon";
+> +            reg =3D <0 0x400>;
+> +
+> +            clock-controller {
+> +                compatible =3D "amlogic,axg-clkc";
+> +                #clock-cells =3D <1>;
+> +                clocks =3D <&xtal>;
+> +                clock-names =3D "xtal";
+> +            };
+> +
+> +            power-controller {
+> +                compatible =3D "amlogic,meson-axg-pwrc";
+> +                #power-domain-cells =3D <1>;
+> +                amlogic,ao-sysctrl =3D <&sysctrl_AO>;
+> +
+> +                resets =3D <&reset_viu>,
+> +                         <&reset_venc>,
+> +                         <&reset_vcbus>,
+> +                         <&reset_vencl>,
+> +                         <&reset_vid_lock>;
+> +                reset-names =3D "viu", "venc", "vcbus", "vencl", "vid_lo=
+ck";
+> +                clocks =3D <&clk_vpu>, <&clk_vapb>;
+> +                clock-names =3D "vpu", "vapb";
+> +            };
+> +
+> +            phy {
+> +                compatible =3D "amlogic,axg-mipi-pcie-analog-phy";
+> +                #phy-cells =3D <0>;
+> +                status =3D "disabled";
+> +            };
+> +        };
+> +    };
+>=20
+> --=20
+> 2.34.1
+>=20
+
+--sZblbYTITPv0dWts
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZU0YOgAKCRB4tDGHoIJi
+0uT6AP0d47elZ0SGrlap1u+Eghh/HJKast4ARo3Asny2i7xKDQEAuoscsk9XDXKL
+6UJ5EqFhBaW1Jp3Azcaxaou/fLGf4AQ=
+=dC1C
+-----END PGP SIGNATURE-----
+
+--sZblbYTITPv0dWts--
