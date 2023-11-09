@@ -1,127 +1,146 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3ABE32C78;
-	Thu,  9 Nov 2023 18:04:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8094347C9
+	for <linux-clk@vger.kernel.org>; Thu,  9 Nov 2023 19:09:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GVkWWZLA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9222C433C8;
-	Thu,  9 Nov 2023 18:04:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1699553080;
-	bh=Z9CrFEFmEnOL/3Q5XW+qZ/CdeY8ktvSVkXjM1v0v9Bk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GVkWWZLA7o6syfN/8ixVI8y7Kdr61lfB5UBV5DieWn5k8XcuuWkgPoxb3EdxBWnDP
-	 DfI6QayvLB5LE3pbUCN79+3wROAQQ3mEo3tjiBMDAgoWvrKzNTnNXATQM1SKhGLdYd
-	 UfsTP3tfcL9x7DB4q2zaAHlAcAx0pLoeelZd7uFt0XTtiU/Y5mWg8NdbEb++epj1XT
-	 9u/1OVbyyPtXYFlftLsmDkuGEf0poTDvOU4QmBe+4k4d/g40Ejn6n2kflZkWzK1LCI
-	 cIGkoTTZr7D7XB6WsRiR+5of7ldK4F6ZdYNsclZyoN9QxOM9qcexPEYaJtIlL8Gk2K
-	 eE/N+uPZoigng==
-Date: Thu, 9 Nov 2023 18:04:34 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OTo5oK/6"
+Received: from mail-ot1-x329.google.com (mail-ot1-x329.google.com [IPv6:2607:f8b0:4864:20::329])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C0BC3C17
+	for <linux-clk@vger.kernel.org>; Thu,  9 Nov 2023 11:09:27 -0800 (PST)
+Received: by mail-ot1-x329.google.com with SMTP id 46e09a7af769-6ce37683cf6so643148a34.3
+        for <linux-clk@vger.kernel.org>; Thu, 09 Nov 2023 11:09:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1699556966; x=1700161766; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mrQce2fi5joicXGyijMSuzLaWJ9Gi53CJdUsyNCS/ek=;
+        b=OTo5oK/6UirVtA1B4jjv9ymP/qPoprM8OKpC4sESNylk8Tmy0h0Qn/gFjKkHJsufed
+         cFjKqKBPKV7EMQeP+GF/+ZuDTIwI+I1ozS81KcaAHNjUOFpAFzx+NJc5sw7SZPKucmlj
+         7hahqHpyj4YaL5mKsVqk0UPkHN8ESP0n38lvbcUCYzJdYstJIQrh5thyL7Rwm1/SpQ3t
+         mGnLbG1CmSeii1UFXhQPjGfP3p3xShewDg+4yoYjhxYTTEDqu4R6W5Kq14I19X1/JktO
+         5VdGtMN7BPusmTQKbjBU2UsTVqY9b07iHKteQ7pUzV2cNgrwNqmVd0iNOx6VHsI6lL60
+         +MIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699556966; x=1700161766;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mrQce2fi5joicXGyijMSuzLaWJ9Gi53CJdUsyNCS/ek=;
+        b=ijv7hRCTS5FzAccG7i9xrogXONWHMahUwzSChzDJg9j5BjT+jK6CKexVX/JAt37QT7
+         ym3GR7k4MywkkddYyTbAqaWilp/n7uHEjdY+Z6w/CCCSDiNDAV9TFb9LwpU+SS4U0L7M
+         /cqp8aaN/8etvfKLFEuQlsoBSyD4LyZnWWI+273V2U/2mURyhEGKSui43Aw//YrLKPFZ
+         4ZBVxu7//Ecq+ngc26lmTKc+j4q6IzIutHx1NJmFSVdZBuWILaIUSVY8aRK0gRWKIGaV
+         yDwPwzH1fMASqffSq7t5J+YUsRpEkPD7h4bFO7lloLVVOTwp7WXGL3G8/0L375ZHYLiK
+         dASw==
+X-Gm-Message-State: AOJu0YzQkzg9oR3VgbVw57LAPmIcA8IOh+VoJX26wzubzVVCTXSMQ0H5
+	NzaiqoRgNh9fbCt6mVF/Fw+Uew==
+X-Google-Smtp-Source: AGHT+IEqhChy+9PfaLLygYaRjg10mzOliTG5x8L2DEzLyUa75MzGgjDixLGrR6Dvtd6wNHIA3mif1Q==
+X-Received: by 2002:a05:6830:e08:b0:6b8:7880:de9 with SMTP id do8-20020a0568300e0800b006b878800de9mr6195268otb.19.1699556966399;
+        Thu, 09 Nov 2023 11:09:26 -0800 (PST)
+Received: from localhost ([136.62.192.75])
+        by smtp.gmail.com with ESMTPSA id a23-20020a056830009700b006b9443ce478sm2300447oto.27.2023.11.09.11.09.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Nov 2023 11:09:26 -0800 (PST)
+From: Sam Protsenko <semen.protsenko@linaro.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Jagan Teki <jagan@amarulasolutions.com>,
-	Nicolas Belin <nbelin@baylibre.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v8 04/12] dt-bindings: phy:
- amlogic,g12a-mipi-dphy-analog: drop unneeded reg property and example
-Message-ID: <20231109-sterility-unsoiled-e43771c61894@spud>
-References: <20231109-amlogic-v6-4-upstream-dsi-ccf-vim3-v8-0-81e4aeeda193@linaro.org>
- <20231109-amlogic-v6-4-upstream-dsi-ccf-vim3-v8-4-81e4aeeda193@linaro.org>
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] clk: samsung: Fix kernel-doc comments
+Date: Thu,  9 Nov 2023 13:09:24 -0600
+Message-Id: <20231109190925.2066-1-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="tjSRnZL12xJ4z8LE"
-Content-Disposition: inline
-In-Reply-To: <20231109-amlogic-v6-4-upstream-dsi-ccf-vim3-v8-4-81e4aeeda193@linaro.org>
+Content-Transfer-Encoding: 8bit
 
+Fix some issues found in kernel-doc comments in Samsung CCF framework.
+It makes scripts/kernel-doc happy, which can be checked with:
 
---tjSRnZL12xJ4z8LE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+    $ find drivers/clk/samsung/ -name '*.[ch]' -exec \
+      scripts/kernel-doc -v -none {} \;
 
-On Thu, Nov 09, 2023 at 10:00:05AM +0100, Neil Armstrong wrote:
-> Now this bindings is referred from amlogic,meson-gx-hhi-sysctrl.yaml and =
-is
-> documented as a subnode of a simple-mfd, drop the invalid reg property.
+Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+Fixes: ddeac8d968d4 ("clk: samsung: add infrastructure to register cpu clocks")
+Fixes: 721c42a351b1 ("clk: samsung: add common clock framework helper functions for Samsung platforms")
+Fixes: 3ff6e0d8d64d ("clk: samsung: Add support to register rate_table for samsung plls")
+---
+ drivers/clk/samsung/clk-cpu.h | 2 +-
+ drivers/clk/samsung/clk.h     | 9 ++++++---
+ 2 files changed, 7 insertions(+), 4 deletions(-)
 
-I'd expect a note here tbh about how removing reg & relying on being a
-subnode of the simple-mfd is safe to do. It looks like your driver
-was added at the same time as this binding & it was always documented as
-being a child of the simple-mfd system controller, so I'd kinda expect
-to see a Fixes tag on this patch..
+diff --git a/drivers/clk/samsung/clk-cpu.h b/drivers/clk/samsung/clk-cpu.h
+index fc9f67a3b22e..103f64193e42 100644
+--- a/drivers/clk/samsung/clk-cpu.h
++++ b/drivers/clk/samsung/clk-cpu.h
+@@ -11,7 +11,7 @@
+ #include "clk.h"
+ 
+ /**
+- * struct exynos_cpuclk_data: config data to setup cpu clocks.
++ * struct exynos_cpuclk_cfg_data: config data to setup cpu clocks.
+  * @prate: frequency of the primary parent clock (in KHz).
+  * @div0: value to be programmed in the div_cpu0 register.
+  * @div1: value to be programmed in the div_cpu1 register.
+diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
+index ab9c3d7a25b3..4f17d5890a81 100644
+--- a/drivers/clk/samsung/clk.h
++++ b/drivers/clk/samsung/clk.h
+@@ -55,7 +55,7 @@ struct samsung_clock_alias {
+  * @name: name of this fixed-rate clock.
+  * @parent_name: optional parent clock name.
+  * @flags: optional fixed-rate clock flags.
+- * @fixed-rate: fixed clock rate of this clock.
++ * @fixed_rate: fixed clock rate of this clock.
+  */
+ struct samsung_fixed_rate_clock {
+ 	unsigned int		id;
+@@ -74,7 +74,7 @@ struct samsung_fixed_rate_clock {
+ 		.fixed_rate	= frate,		\
+ 	}
+ 
+-/*
++/**
+  * struct samsung_fixed_factor_clock: information about fixed-factor clock
+  * @id: platform specific id of the clock.
+  * @name: name of this fixed-factor clock.
+@@ -146,14 +146,16 @@ struct samsung_mux_clock {
+ 	__MUX(_id, cname, pnames, o, s, w, f, mf)
+ 
+ /**
+- * @id: platform specific id of the clock.
+  * struct samsung_div_clock: information about div clock
++ * @id: platform specific id of the clock.
+  * @name: name of this div clock.
+  * @parent_name: name of the parent clock.
+  * @flags: optional flags for basic clock.
+  * @offset: offset of the register for configuring the div.
+  * @shift: starting bit location of the div control bit-field in @reg.
++ * @width: width of the bitfield.
+  * @div_flags: flags for div-type clock.
++ * @table: array of divider/value pairs ending with a div set to 0.
+  */
+ struct samsung_div_clock {
+ 	unsigned int		id;
+@@ -244,6 +246,7 @@ struct samsung_clk_reg_dump {
+  * @con_offset: offset of the register for configuring the PLL.
+  * @lock_offset: offset of the register for locking the PLL.
+  * @type: Type of PLL to be registered.
++ * @rate_table: array of PLL settings for possible PLL rates.
+  */
+ struct samsung_pll_clock {
+ 	unsigned int		id;
+-- 
+2.39.2
 
-Am I missing something?
-
->=20
-> Also drop the unnecessary example, the top level bindings example should
-> be enough.
->=20
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
->  .../bindings/phy/amlogic,g12a-mipi-dphy-analog.yaml          | 12 ------=
-------
->  1 file changed, 12 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/phy/amlogic,g12a-mipi-dphy=
--analog.yaml b/Documentation/devicetree/bindings/phy/amlogic,g12a-mipi-dphy=
--analog.yaml
-> index c8c83acfb871..81c2654b7e57 100644
-> --- a/Documentation/devicetree/bindings/phy/amlogic,g12a-mipi-dphy-analog=
-=2Eyaml
-> +++ b/Documentation/devicetree/bindings/phy/amlogic,g12a-mipi-dphy-analog=
-=2Eyaml
-> @@ -16,20 +16,8 @@ properties:
->    "#phy-cells":
->      const: 0
-> =20
-> -  reg:
-> -    maxItems: 1
-> -
->  required:
->    - compatible
-> -  - reg
->    - "#phy-cells"
-> =20
->  additionalProperties: false
-> -
-> -examples:
-> -  - |
-> -    phy@0 {
-> -          compatible =3D "amlogic,g12a-mipi-dphy-analog";
-> -          reg =3D <0x0 0xc>;
-> -          #phy-cells =3D <0>;
-> -    };
->=20
-> --=20
-> 2.34.1
->=20
-
---tjSRnZL12xJ4z8LE
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZU0fMgAKCRB4tDGHoIJi
-0iggAQCV2/5BcIW31u6mySyU3aLEob1O1ciipaTd/rc/GvNlSAEAoFfFfmam/hxu
-pqXvBa9dJuXqDDyhraCQHOmyFKSHugs=
-=tBb3
------END PGP SIGNATURE-----
-
---tjSRnZL12xJ4z8LE--
