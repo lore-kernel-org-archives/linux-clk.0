@@ -1,127 +1,172 @@
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE80374CA
-	for <linux-clk@vger.kernel.org>; Wed,  8 Nov 2023 21:38:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B265D6118;
+	Thu,  9 Nov 2023 04:20:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S/5/GOx2"
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E47C12585;
-	Wed,  8 Nov 2023 13:38:12 -0800 (PST)
-Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-4079ed65471so771055e9.1;
-        Wed, 08 Nov 2023 13:38:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1699479491; x=1700084291; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BOY/4TbWJlIh9l54tUoY6OQMnJji9pbyz4aczXm5Onw=;
-        b=S/5/GOx25f/cpSqx2ALbnlXIESL4uoWXxHdzjAUljfQ6z4AwCUCKE5plnVF0SG2IOE
-         /rmxVt0BzB0E/P+DiX5O2IXiv9hgBJ/F3BHz0uIcvCzdUnjRKSwMcYWjBzdNEcM2RmAt
-         14VXcVs6E3ZERKlEs7iCQ4M8u7NFhlq6yV+CjgSjRgcvMa3o7fgFD7hucF97bQBkRWmw
-         HBpVl6+od7rY0m6sqGjp3eVT/S+rVdT3DsS84hrQhEiXNyd4uVimSGekGBPpHShWotuX
-         WaPhSWsRMnC8/X0T9O1YacMFSAZssGygPXmcaSmKz9nVXQ6Zmq8fHjol3oCSKCFb0sH2
-         0OMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699479491; x=1700084291;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BOY/4TbWJlIh9l54tUoY6OQMnJji9pbyz4aczXm5Onw=;
-        b=YFKQbBqKpqVAKsMflYbqXGG53kzZJJEf6WOJIupAblWrBbNRPRhC9L2XHeyrMALiD8
-         yuhbE7NcTPMurAwdXQVbBI6+Pf/JFscGP72BNQlN6Ra4PH3EbkgKxuP8jWL9Upx1MdmZ
-         +SNTA3D/XWiwH/MGojc691Vw56A/BYdlPpY1skiRG5XLewdWPC1ZN0DVp1DbxdnWRhLa
-         Phz9V/kg6PbTYerG875uXxsULh6s5mrDYE4VDULTY8TTRrpnkTtjAwN6fe2K0xhk9i4F
-         jw4hil/QO/Y0IkwnPhlnxyFLgvb7a1Ipi9BZtTw0zyU4GcUcDo2TDrqsN0TWa0F0fZI5
-         psag==
-X-Gm-Message-State: AOJu0Yy1kq4buDm5TYehAE6pNC3OaYZr7kohBRMt/p+YNvq9RsfoLPmg
-	5Bu30HE9M39I/gNQPPyNpIq9yHsXrSI=
-X-Google-Smtp-Source: AGHT+IFaK9xQ+DloNi+NZ+EUiBL2JKwDO76WCe7486uq9CoBenof/WNhhVDU4HR5MYDs/OR/q7vAHw==
-X-Received: by 2002:a05:600c:3b96:b0:407:8ee2:997e with SMTP id n22-20020a05600c3b9600b004078ee2997emr2777339wms.27.1699479491088;
-        Wed, 08 Nov 2023 13:38:11 -0800 (PST)
-Received: from ALPER-PC.. ([178.233.24.52])
-        by smtp.gmail.com with ESMTPSA id u8-20020a05600c138800b004075d5664basm22032wmf.8.2023.11.08.13.38.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Nov 2023 13:38:10 -0800 (PST)
-From: Alper Nebi Yasak <alpernebiyasak@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Chen-Yu Tsai <wenst@chromium.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	linux-mediatek@lists.infradead.org,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Alper Nebi Yasak <alpernebiyasak@gmail.com>
-Subject: [PATCH] clock: mediatek: mt8173: Handle unallocated infracfg clock data
-Date: Thu,  9 Nov 2023 00:33:43 +0300
-Message-ID: <20231108213734.140707-1-alpernebiyasak@gmail.com>
-X-Mailer: git-send-email 2.42.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N9bv8l2M"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FFCAC433C8;
+	Thu,  9 Nov 2023 04:20:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1699503653;
+	bh=0SQWSMIi883/HdwEd1xVNfN88/dFmDtQT/Ub+e7K/QE=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=N9bv8l2MJX2/9VtJpjKeGCALywdzPdblbCdpblnZuVTGWcOP5vIspSBw8RXw/sbg3
+	 aFMtTkNXTb2pMYNGuRbesj125kFJ8FxeAlFuhgLeNQQ7xDrQcWeQjVyTfiIH0+LBu0
+	 dehR5m82qt7m7lyzSjcmj4ruyoWl8J4KJOvXvY9OvcAmfwdC2G4aTAmSwlTs4eKkjN
+	 7WwuYpeEo7ceu+tJPd48hHBIKEp4rBQbQVy6rI1lSJypXclz5zUGUy3FZXMOL1rXRh
+	 SkWpjuKqUsT3uSgHo8zhNJ0KusBYzoJ1OXtDFvr3Ae3VBDhtbOdBijBuJRIEY4yQra
+	 NxkS8IxmFDbAg==
+Message-ID: <28c8559b9eba1a2b7c3554859c095cde.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <e20129cd99e0685de27d48d73cc2b045.sboyd@kernel.org>
+References: <20231004012308.2305273-1-dmitry.baryshkov@linaro.org> <20231004012308.2305273-3-dmitry.baryshkov@linaro.org> <2346f541be5b8528ad1a16df256a2f50.sboyd@kernel.org> <1290a5a0f7f584fcce722eeb2a1fd898.sboyd@kernel.org> <CAA8EJpq_pvtCxuPKrHmUOgsDFmDeG8cuUcynvvk-0SJNY3HJnA@mail.gmail.com> <849046e96437d11e8fb997597b40979e.sboyd@kernel.org> <e20129cd99e0685de27d48d73cc2b045.sboyd@kernel.org>
+Subject: Re: [RFC PATCH v2 2/3] clk: qcom: implement RCG2 'parked' clock support
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, freedreno@lists.freedesktop.org, Rob Clark <robdclark@gmail.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Wed, 08 Nov 2023 20:20:50 -0800
+User-Agent: alot/0.10
 
-The MT8173 infracfg clock driver does initialization in two steps, via a
-CLK_OF_DECLARE_DRIVER declaration. However its early init function
-doesn't get to run when it's built as a module, presumably since it's
-not loaded by the time it would have been called by of_clk_init(). This
-causes its second-step probe() to return -ENOMEM when trying to register
-clocks, as the necessary clock_data struct isn't initialized by the
-first step.
+Quoting Stephen Boyd (2023-11-07 19:18:45)
+>=20
+> I also tried skipping slamming a bunch of PLL config register writes
+> into the PLL at probe by removing the clk_fabia_pll_configure() call but
+> it doesn't fix it. Maybe I need to measure the clk at probe time to see
+> if it is actually on XO or if it is stuck on the PLL but all the
+> registers are saying it is XO.
+>=20
 
-MT2701 and MT6797 clock drivers also use this mechanism, but they try to
-allocate the necessary clock_data structure if missing in the second
-step. Mimic that for the MT8173 infracfg clock as well to make it work
-as a module.
+I'm still chasing this, but I have another update. I tried moving mdp
+and rot to XO from disp_cc_pll0 at init, and left 'parked_cfg' at
+default value of 0. Then I disabled disp_cc_pll0 at the end of clk
+driver probe. This fixes the problem. In this case, the perceived parent
+of mdp and rot is XO because 'parked_cfg' is 0.
 
-Signed-off-by: Alper Nebi Yasak <alpernebiyasak@gmail.com>
----
-I've tried adding cpumux support to clk-mtk.c then switching this over
-to simple probe functions and it appears to work for me, though I don't
-know clock systems enough to recognize if it's subtly broken instead.
-That'd remove this piece of code, but this might still be worth applying
-to backport to stable kernels.
+Then I tried the same sequence above, but disabled and then enabled the
+disp_cc_pll0. This also worked. The disp_cc_pll0 was disabled during
+late init because it was unused, but otherwise everything is fine. This
+means that disabling and then enabling when nothing is sourcing the PLL
+somehow "fixes" it.
 
-If I'm reading things correctly, it looks like it would be possible to
-add cpumux & pll & pllfh support to clk-mtk.c, then move most if not
-every driver to simple probe, with one file per clock and module
-support. How much of that is desirable? In what order do the parts need
-to be registered?
+Then I tried some wacky stuff. I moved rot to XO and left mdp on
+disp_cc_pll0, and left 'parked_cfg' at default value of 0. Then I
+disabled and enabled disp_cc_pll0 at driver probe. This also fixed the
+problem. I would think disabling the PLL while mdp is sourcing from it
+would cause the branch to be stuck, but apparently nothing goes wrong.
+During boot, mdp is switched to XO when the clk is 'restored' for
+clk_enable(), and then the branch is enabled and it reports the clk as
+on.
 
- drivers/clk/mediatek/clk-mt8173-infracfg.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+Then I tried leaving rot on disp_cc_pll0, moving mdp to XO, and leaving
+'parked_cfg' at default value of 0. Then I disabled and enabled
+disp_cc_pll0 at driver probe. This didn't work. During boot and up to
+the time of being stuck off, mdp is parked and unparked but it's always
+sourcing from XO. I don't understand this part. mdp was moved to XO very
+early, while rot was still sourcing from disp_cc_pll0 when we turned off
+the PLL during late init. Presumably mdp shouldn't be stuck.
 
-diff --git a/drivers/clk/mediatek/clk-mt8173-infracfg.c b/drivers/clk/mediatek/clk-mt8173-infracfg.c
-index 2f2f074e231a..ecc8b0063ea5 100644
---- a/drivers/clk/mediatek/clk-mt8173-infracfg.c
-+++ b/drivers/clk/mediatek/clk-mt8173-infracfg.c
-@@ -98,7 +98,17 @@ CLK_OF_DECLARE_DRIVER(mtk_infrasys, "mediatek,mt8173-infracfg",
- static int clk_mt8173_infracfg_probe(struct platform_device *pdev)
- {
- 	struct device_node *node = pdev->dev.of_node;
--	int r;
-+	int r, i;
-+
-+	if (!infra_clk_data) {
-+		infra_clk_data = mtk_alloc_clk_data(CLK_INFRA_NR_CLK);
-+		if (!infra_clk_data)
-+			return -ENOMEM;
-+	} else {
-+		for (i = 0; i < CLK_INFRA_NR_CLK; i++)
-+			if (infra_clk_data->hws[i] == ERR_PTR(-EPROBE_DEFER))
-+				infra_clk_data->hws[i] = ERR_PTR(-ENOENT);
-+	}
- 
- 	r = mtk_clk_register_gates(&pdev->dev, node, infra_gates,
- 				   ARRAY_SIZE(infra_gates), infra_clk_data);
+Then I tried leaving rot on disp_cc_pll0, moving mdp to XO, and leaving
+'parked_cfg' at default value of 0. I skipped the PLL enable/disable
+dance. This didn't work either. During late init, the rot branch clk
+(disp_cc_mdss_rot_clk) is disabled, but the rot rcg is still configured
+to source from disp_cc_pll0.
 
-base-commit: 2220f68f4504aa1ccce0fac721ccdb301e9da32f
--- 
-2.42.0
+Then I tried leaving rot on disp_cc_pll0, moving mdp to XO, and leaving
+'parked_cfg' at default value of 0. I only disable the PLL during probe.
+This didn't work either! In fact, mdp is stuck after being turned on and
+off once (but shouldn't it be sourcing from XO?).
 
+Then I tried leaving rot on disp_cc_pll0, moving mdp to XO, and leaving
+'parked_cfg' at default value of 0. I only enable the PLL during probe.
+This didn't work either. mdp gets stuck after late init, but it is
+supposed to be sourcing from XO.
+
+I'm thinking what's happening is that disabling the PLL during late init
+is hanging the branch, but only when an rcg is sourcing from the PLL.
+Or maybe what's happening is the rot branch register value is wrong and
+it's actually swapped with the mdp branch in the driver, or the rcg for
+mdp and rot are swapped. In the cases above, it only breaks when the rot
+rcg is sourcing from disp_cc_pll0, and disp_cc_pll0 is disabled.
+
+Here's what's happening without any changes
+
+ 1. mdp and rot are sourcing from disp_cc_pll0 at driver probe, disp_cc_pll=
+0 is enabled
+ 2. mdp is configured to restore on XO
+ 3. rot is configured to restore on XO
+ 4. mdp is switched to XO on clk_enable()
+ 5. mdp is switched to XO on clk_disable()
+ 6. disp_cc_pll0 is left untouched
+ 7. rot branch clk is disabled during late init (disp_cc_mdss_rot_clk)
+ 8. rot rcg is still enabled
+ 9. disp_cc_pll0 is disabled during late init
+ 10. mdp is switched to XO on clk_enable()
+ 11. mdp branch is stuck off
+
+I could see the problem happening if mdp branch and rot branch were
+swapped. When we enable/disable mdp branch it will actually
+enable/disable the rot rcg because feedback is going there. During boot
+this is fine because disp_cc_pll0 is enabled. Leaving it enabled
+throughout boot hides the problem because enabling mdp branch is
+actually enabling rot branch. Once we get to late init, we disable rot
+branch (actually mdp branch). The mdp rcg is already parked, so this
+should be OK. The problem is the mdp branch (actually rot branch) has
+been disabled, while the rot rcg is still sourcing disp_cc_pll0. We'll
+disable the pll during late init, and this will wedge the clk off. When
+we go to turn on the mdp branch (actually the rot branch) after late
+init, we'll try to turn on the branch and the rot rcg will be parented
+to the disp_cc_pll0 still (because we never moved it off).
+
+This patch fixes the problem for me. Obviously, things are still bad
+though because we don't report the proper parent to the framework. We
+can do that pretty easily by parking at clk registration time though and
+also by saving the config register.
+
+diff --git a/drivers/clk/qcom/dispcc-sc7180.c b/drivers/clk/qcom/dispcc-sc7=
+180.c
+index 9536bfc72a43..26eea1e962d3 100644
+--- a/drivers/clk/qcom/dispcc-sc7180.c
++++ b/drivers/clk/qcom/dispcc-sc7180.c
+@@ -499,10 +499,10 @@ static struct clk_branch disp_cc_mdss_esc0_clk =3D {
+ };
+=20
+ static struct clk_branch disp_cc_mdss_mdp_clk =3D {
+-	.halt_reg =3D 0x200c,
++	.halt_reg =3D 0x2014,
+ 	.halt_check =3D BRANCH_HALT,
+ 	.clkr =3D {
+-		.enable_reg =3D 0x200c,
++		.enable_reg =3D 0x2014,
+ 		.enable_mask =3D BIT(0),
+ 		.hw.init =3D &(struct clk_init_data){
+ 			.name =3D "disp_cc_mdss_mdp_clk",
+@@ -570,10 +570,10 @@ static struct clk_branch disp_cc_mdss_pclk0_clk =3D {
+ };
+=20
+ static struct clk_branch disp_cc_mdss_rot_clk =3D {
+-	.halt_reg =3D 0x2014,
++	.halt_reg =3D 0x200c,
+ 	.halt_check =3D BRANCH_HALT,
+ 	.clkr =3D {
+-		.enable_reg =3D 0x2014,
++		.enable_reg =3D 0x200c,
+ 		.enable_mask =3D BIT(0),
+ 		.hw.init =3D &(struct clk_init_data){
+ 			.name =3D "disp_cc_mdss_rot_clk",
+
+TL;DR: Taniya or anyone at qcom, please double check that the
+disp_cc_mdss_mdp_clk register is correct and not actually swapped with
+disp_cc_mdss_rot_clk.
+
+I tried swapping the rcg registers, and was met with a blue screen, so I
+believe the rcg registers are correct. testclock confirmed as well. My
+next experiment is to figure out a way to turn off the rot branch
+and measure.
