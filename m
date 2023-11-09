@@ -1,111 +1,117 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1456910A01;
-	Thu,  9 Nov 2023 08:07:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7353A10956
+	for <linux-clk@vger.kernel.org>; Thu,  9 Nov 2023 09:00:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="EX8/MwsR"
-Received: from mail-m12769.qiye.163.com (mail-m12769.qiye.163.com [115.236.127.69])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C13C2737;
-	Thu,  9 Nov 2023 00:07:54 -0800 (PST)
-DKIM-Signature: a=rsa-sha256;
-	b=EX8/MwsRplvL5wtx/0z10jCnhnFrvZ1SfgJWzLg1D9tkfgm26aNnlXtm7Hdqq2vSsHPrLlx4EZRfAVLHDTxL0Cw4IIFoq3SG4VEpN5sRd2pPv/ExJEHWivm+ghuMkRlx1/Oe8g8U+NCPgFRjPk9iJjSYrQ6l2b4O0Frbbwgf4Xk=;
-	c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=18Gkx2GiMHfpYUb29bSeLsFtQHGrYGeLSfPMEOaVu54=;
-	h=date:mime-version:subject:message-id:from;
-Received: from [172.16.12.49] (unknown [58.22.7.114])
-	by mail-m11877.qiye.163.com (Hmail) with ESMTPA id B40A54003F3;
-	Thu,  9 Nov 2023 16:06:44 +0800 (CST)
-Message-ID: <a11c847c-4f95-ea7b-3497-6ada0586c486@rock-chips.com>
-Date: Thu, 9 Nov 2023 16:06:44 +0800
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nJZ+K51g"
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81F79E8
+	for <linux-clk@vger.kernel.org>; Thu,  9 Nov 2023 01:00:15 -0800 (PST)
+Received: by mail-lf1-x133.google.com with SMTP id 2adb3069b0e04-507973f3b65so768436e87.3
+        for <linux-clk@vger.kernel.org>; Thu, 09 Nov 2023 01:00:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1699520414; x=1700125214; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Rfvt+EmrHZv1zbeX+XtXPk6Fy/0gOVGXRVeJ603Il6c=;
+        b=nJZ+K51gzWEXCx3tiayEPNivR1ez+61fwrz3Ykey0+1P2wm7ghFmVuTUz4vROTMLJe
+         QNix/Vpg3Vrn8y18tI0cGPXnLnAhktDSQljkjd024vByQxhgs5tPdU++NwcyWLrnc8Eh
+         nEmhQ9mrB2DG70MXtcNblTcyeFCjNb7hmGA8nsph7ZWu4MR3RHl15VJAg0eXmUCPdMkE
+         4qFQfRW0KmrSot8UVsRFXgNDBxdHyJwnZVXlUllaPigJ1jXknC/kjjDDIz0RKAkE6dU/
+         tkvSUbowfRiRT5VktlvEpFoqwY+fSiJ84507H+CIzNadxaJ6mAddipmhP/uJiid+XrUY
+         nlRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699520414; x=1700125214;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Rfvt+EmrHZv1zbeX+XtXPk6Fy/0gOVGXRVeJ603Il6c=;
+        b=sU13GiNTpkY9BLTuPxFejxWcJORole9/giOfKlevqA0+1ULHTei7VLn42DbfJ7LLOe
+         KK8XFoOfQV0jVUN/dfWUJvwi0LRKX1Qb5ZQgC42TbhaBEx6ytbztwPPYE3SxH3rkC19y
+         H1DiVAwCb0gV+L1xJoVbye80Y/yOD/oII0PZCoGj76MCFA7V6LftvQJd9OUsEeU3HEc1
+         cutV7ZG1V5TVGwpLobN67qotdY4BJ1j2/hDxTf9C7CJny3H/8+DNQ/R5tVstc0V6Wlpp
+         DP+u1+mO4InRDcKYBFF66t2VL2kchQ7BsDTUYOpVMt+WEUy/K/29sMLT0KgY1wTvbfaE
+         1ufQ==
+X-Gm-Message-State: AOJu0YyF0fJdldpY+WtLwG/TUFG7ZKddPzNRV2CyyZ6+TkgD3EYrGl4Z
+	UwKB2bVBSMS+UC32NxtgfZKGROWbY/KcBkbTtU/Jzmtk
+X-Google-Smtp-Source: AGHT+IHbarTLeXs1xRLnlOEthFHXQkLlQGddJUwWyZGyU3T60ayER/TL09SkJXBO48qJCeZljgsIWA==
+X-Received: by 2002:ac2:551b:0:b0:507:a8d1:6e56 with SMTP id j27-20020ac2551b000000b00507a8d16e56mr833623lfk.35.1699520413701;
+        Thu, 09 Nov 2023 01:00:13 -0800 (PST)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id ay36-20020a05600c1e2400b0040472ad9a3dsm1428484wmb.14.2023.11.09.01.00.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Nov 2023 01:00:13 -0800 (PST)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Date: Thu, 09 Nov 2023 10:00:02 +0100
+Subject: [PATCH v8 01/12] dt-bindings: clk: g12a-clkc: add CTS_ENCL clock
+ ids
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v5 3/4] dt-bindings: clock: rk3588: export PCLK_VO1GRF clk
- id
-To: Conor Dooley <conor.dooley@microchip.com>
-Cc: Conor Dooley <conor@kernel.org>, mturquette@baylibre.com,
- sboyd@kernel.org, kever.yang@rock-chips.com, heiko@sntech.de,
- robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, huangtao@rock-chips.com,
- andy.yan@rock-chips.com, Sebastian Reichel <sebastian.reichel@collabora.com>
-References: <20231108061822.4871-1-zhangqing@rock-chips.com>
- <20231108061822.4871-4-zhangqing@rock-chips.com>
- <20231108-donation-uncertain-c4d0f560c420@spud>
- <2e520a06-0ff1-76ef-2a72-ab6663738b45@rock-chips.com>
- <20231109-send-pushchair-45b37551102a@wendy>
-From: zhangqing <zhangqing@rock-chips.com>
-In-Reply-To: <20231109-send-pushchair-45b37551102a@wendy>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQkpJT1YYSkodHk1DGRkYGBhVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlOQ1VJSVVMVUpKT1lXWRYaDxIVHRRZQVlPS0hVSk5DTUtIVUpLS1VKQl
-	kG
-X-HM-Tid: 0a8bb31e8af12eb3kusnb40a54003f3
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Mww6Czo4DDw1Vg8MTj8NKUgv
-	MVEKFBxVSlVKTUJCTkpMSUtOQ0NCVTMWGhIXVQETGhUcChIVHDsJFBgQVhgTEgsIVRgUFkVZV1kS
-	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQU5OT0o3Bg++
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20231109-amlogic-v6-4-upstream-dsi-ccf-vim3-v8-1-81e4aeeda193@linaro.org>
+References: <20231109-amlogic-v6-4-upstream-dsi-ccf-vim3-v8-0-81e4aeeda193@linaro.org>
+In-Reply-To: <20231109-amlogic-v6-4-upstream-dsi-ccf-vim3-v8-0-81e4aeeda193@linaro.org>
+To: Jerome Brunet <jbrunet@baylibre.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Jagan Teki <jagan@amarulasolutions.com>, 
+ Nicolas Belin <nbelin@baylibre.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=761;
+ i=neil.armstrong@linaro.org; h=from:subject:message-id;
+ bh=OBDzXE6zqX89kc7pvzy4CIEH7gf5glqDzs5WzIgtsF0=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBlTJ+VapgP8WHcdrQgPiETykwQUlKVRqJ/4wVyCchQ
+ YXz0F9aJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZUyflQAKCRB33NvayMhJ0RxQD/
+ 9C5ZGRPwcExahOsQp+FbfoxjpmIQhQTF166bZMrK4X3DXIHdj0XEIJf/stW+d9s8ZED+E350vg/VsN
+ R5OhSGMemZL0MEM4w7cjd3pFBN1RXfzpt9UtYGdxkppLZsu/SgvZTnk+q7XTdimznCiJSl0+E5t4Wo
+ R2/R7NbBSM147jSdi5bBeuREcm1exIjb2l48Atuw/a5Ab6EVXu/5nB4ieAkIpDuLLUztCGY8Pk118m
+ yUKm8QsIcqitnSbhrG1pOnfHVmGPpptcLSxZPoG7P0eIJX2EcIFWz+kRo7VKBJpivZ5OJ+KnLoyD4r
+ GI/QJgiVg7cnWNLkw5e+IW/9VCcxsxVcqXOzAl6i2f3NGq+T9IgsJ8I03z5Ppd3do1WshntIh4YMvE
+ gstl29N0lvUGXR0jo3JZ3TVCMSwinf2AUgLS2oibuDIY0k3kdGG3ZuRevRpxjE/UNxSWWqmubUEnTd
+ KtBi/TH3ACCcAsGTGh0VX7resg8xpbrCS7jFKxz3JEVMGa8wQ9Z9zNUcyizV/IvVu911b4KKruocfe
+ DhBLWNPgLVBn2Xl8cAXuQJH3Jmz134RfvYj0UIzLHdbyrTkOB7RIOPUABuwP2jaTj/nD+P2F0OmKFm
+ Ul0YEj/8PhtnUUoDwHdpk51cLMTTq+YhdJsUqgkgsOND5UV3glOI14ooO0ig==
+X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
+ fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
+Add new CLK ids for the CTS_ENCL and CTS_ENCL_SEL clocks
+on G12A compatible SoCs.
 
-在 2023/11/9 15:29, Conor Dooley 写道:
-> On Thu, Nov 09, 2023 at 02:27:38PM +0800, zhangqing wrote:
->> Hi:
->>
->> 在 2023/11/8 20:01, Conor Dooley 写道:
->>> On Wed, Nov 08, 2023 at 02:18:21PM +0800, Elaine Zhang wrote:
->>>> export PCLK_VO1GRF for DT.
->>>>
->>>> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
->>>> ---
->>>>    include/dt-bindings/clock/rockchip,rk3588-cru.h | 3 ++-
->>>>    1 file changed, 2 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/include/dt-bindings/clock/rockchip,rk3588-cru.h b/include/dt-bindings/clock/rockchip,rk3588-cru.h
->>>> index 5790b1391201..50ba72980190 100644
->>>> --- a/include/dt-bindings/clock/rockchip,rk3588-cru.h
->>>> +++ b/include/dt-bindings/clock/rockchip,rk3588-cru.h
->>>> @@ -733,8 +733,9 @@
->>>>    #define ACLK_AV1_PRE			718
->>>>    #define PCLK_AV1_PRE			719
->>>>    #define HCLK_SDIO_PRE			720
->>>> +#define PCLK_VO1GRF			721
->>>> -#define CLK_NR_CLKS			(HCLK_SDIO_PRE + 1)
->>>> +#define CLK_NR_CLKS			(PCLK_VO1GRF + 1)
->>> This definition is part of the ABI, if it is safe to change it, then it
->>> is safe to delete it.
->> The new ID is to solve the niu clock dependency problem(Used in PATCH V5
->> 4/4).This new ID will also be used in DTS in the future.
->>
->> CLK_NR_CLKS represents the number of clocks used by the
->> drivers/clk/rockchip/clk-rkxxx.c. It is safe to modify it, but cannot delete
->> it.
-> Then delete it from the header and move it to clk-rkxxx.c
-I don't think it's more appropriate to move to clk-rkxxx.c.
-Because if there are new requirements later, and add new clk id, it is 
-not in the same file, maybe forget to modify CLK_NR_CLKS.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+ include/dt-bindings/clock/g12a-clkc.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/include/dt-bindings/clock/g12a-clkc.h b/include/dt-bindings/clock/g12a-clkc.h
+index 387767f4e298..636d713f95ff 100644
+--- a/include/dt-bindings/clock/g12a-clkc.h
++++ b/include/dt-bindings/clock/g12a-clkc.h
+@@ -279,5 +279,7 @@
+ #define CLKID_MIPI_DSI_PXCLK_DIV		268
+ #define CLKID_MIPI_DSI_PXCLK_SEL		269
+ #define CLKID_MIPI_DSI_PXCLK			270
++#define CLKID_CTS_ENCL				271
++#define CLKID_CTS_ENCL_SEL			272
+ 
+ #endif /* __G12A_CLKC_H */
 
 -- 
-张晴
-瑞芯微电子股份有限公司
-Rockchip Electronics Co.,Ltd
-地址：福建省福州市铜盘路软件大道89号软件园A区21号楼
-Add:No.21 Building, A District, No.89 Software Boulevard Fuzhou, Fujian 350003, P.R.China
-Tel:+86-0591-83991906-8601
-邮编：350003
-E-mail:elaine.zhang@rock-chips.com
-****************************************************************************
-保密提示：本邮件及其附件含有机密信息，仅发送给本邮件所指特定收件人。若非该特定收件人，请勿复制、使用或披露本邮件的任何内容。若误收本邮件，请从系统中永久性删除本邮件及所有附件，并以回复邮件或其他方式即刻告知发件人。福州瑞芯微电子有限公司拥有本邮件信息的著作权及解释权，禁止任何未经授权许可的侵权行为。
-
-IMPORTANT NOTICE: This email is from Fuzhou Rockchip Electronics Co., Ltd .The contents of this email and any attachments may contain information that is privileged, confidential and/or exempt from disclosure under applicable law and relevant NDA. If you are not the intended recipient, you are hereby notified that any disclosure, copying, distribution, or use of the information is STRICTLY PROHIBITED. Please immediately contact the sender as soon as possible and destroy the material in its entirety in any format. Thank you.
-
-****************************************************************************
+2.34.1
 
