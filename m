@@ -1,172 +1,112 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B265D6118;
-	Thu,  9 Nov 2023 04:20:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB4F81078E;
+	Thu,  9 Nov 2023 06:35:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N9bv8l2M"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FFCAC433C8;
-	Thu,  9 Nov 2023 04:20:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1699503653;
-	bh=0SQWSMIi883/HdwEd1xVNfN88/dFmDtQT/Ub+e7K/QE=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=N9bv8l2MJX2/9VtJpjKeGCALywdzPdblbCdpblnZuVTGWcOP5vIspSBw8RXw/sbg3
-	 aFMtTkNXTb2pMYNGuRbesj125kFJ8FxeAlFuhgLeNQQ7xDrQcWeQjVyTfiIH0+LBu0
-	 dehR5m82qt7m7lyzSjcmj4ruyoWl8J4KJOvXvY9OvcAmfwdC2G4aTAmSwlTs4eKkjN
-	 7WwuYpeEo7ceu+tJPd48hHBIKEp4rBQbQVy6rI1lSJypXclz5zUGUy3FZXMOL1rXRh
-	 SkWpjuKqUsT3uSgHo8zhNJ0KusBYzoJ1OXtDFvr3Ae3VBDhtbOdBijBuJRIEY4yQra
-	 NxkS8IxmFDbAg==
-Message-ID: <28c8559b9eba1a2b7c3554859c095cde.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="AxRQSJZZ"
+X-Greylist: delayed 436 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 08 Nov 2023 22:35:43 PST
+Received: from mail-m12810.netease.com (mail-m12810.netease.com [103.209.128.10])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F8A125AC;
+	Wed,  8 Nov 2023 22:35:42 -0800 (PST)
+DKIM-Signature: a=rsa-sha256;
+	b=AxRQSJZZFXK672SFkbVflogru0527w2+vt0KE1t5uOP5ctl5FD7nB9ydw+KvQQXN8QPE/SlzmKL0hWE8nsXOmZhwqdm7seJuZ4oMnWmNAjMp0z6mtLMCNHfUxurIphGWgbdH77WgeT2pp3D13SvKJlhmoGZDWysIPcVAo1KzPXc=;
+	c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=deohqXdOgJExhg0RUCs+1qaAr3+jnJycAP22GqRuu7M=;
+	h=date:mime-version:subject:message-id:from;
+Received: from [172.16.12.49] (unknown [58.22.7.114])
+	by mail-m11877.qiye.163.com (Hmail) with ESMTPA id AB04F400396;
+	Thu,  9 Nov 2023 14:27:38 +0800 (CST)
+Message-ID: <2e520a06-0ff1-76ef-2a72-ab6663738b45@rock-chips.com>
+Date: Thu, 9 Nov 2023 14:27:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <e20129cd99e0685de27d48d73cc2b045.sboyd@kernel.org>
-References: <20231004012308.2305273-1-dmitry.baryshkov@linaro.org> <20231004012308.2305273-3-dmitry.baryshkov@linaro.org> <2346f541be5b8528ad1a16df256a2f50.sboyd@kernel.org> <1290a5a0f7f584fcce722eeb2a1fd898.sboyd@kernel.org> <CAA8EJpq_pvtCxuPKrHmUOgsDFmDeG8cuUcynvvk-0SJNY3HJnA@mail.gmail.com> <849046e96437d11e8fb997597b40979e.sboyd@kernel.org> <e20129cd99e0685de27d48d73cc2b045.sboyd@kernel.org>
-Subject: Re: [RFC PATCH v2 2/3] clk: qcom: implement RCG2 'parked' clock support
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, freedreno@lists.freedesktop.org, Rob Clark <robdclark@gmail.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 08 Nov 2023 20:20:50 -0800
-User-Agent: alot/0.10
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v5 3/4] dt-bindings: clock: rk3588: export PCLK_VO1GRF clk
+ id
+To: Conor Dooley <conor@kernel.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, kever.yang@rock-chips.com,
+ heiko@sntech.de, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ conor+dt@kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ huangtao@rock-chips.com, andy.yan@rock-chips.com,
+ Sebastian Reichel <sebastian.reichel@collabora.com>
+References: <20231108061822.4871-1-zhangqing@rock-chips.com>
+ <20231108061822.4871-4-zhangqing@rock-chips.com>
+ <20231108-donation-uncertain-c4d0f560c420@spud>
+From: zhangqing <zhangqing@rock-chips.com>
+In-Reply-To: <20231108-donation-uncertain-c4d0f560c420@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ0JMS1YaQ00aTUJNHUhCSxhVEwETFh
+	oSFyQUDg9ZV1kYEgtZQVlOQ1VJSVVMVUpKT1lXWRYaDxIVHRRZQVlPS0hVSk5DTUtIVUpLS1VKQl
+	kG
+X-HM-Tid: 0a8bb2c3d02d2eb3kusnab04f400396
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OVE6NSo*AjwyVg8cPkMyGTAK
+	GA0aC0pVSlVKTUJCTkpKSU5CTENIVTMWGhIXVQETGhUcChIVHDsJFBgQVhgTEgsIVRgUFkVZV1kS
+	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQU9CSkk3Bg++
 
-Quoting Stephen Boyd (2023-11-07 19:18:45)
->=20
-> I also tried skipping slamming a bunch of PLL config register writes
-> into the PLL at probe by removing the clk_fabia_pll_configure() call but
-> it doesn't fix it. Maybe I need to measure the clk at probe time to see
-> if it is actually on XO or if it is stuck on the PLL but all the
-> registers are saying it is XO.
->=20
+Hi:
 
-I'm still chasing this, but I have another update. I tried moving mdp
-and rot to XO from disp_cc_pll0 at init, and left 'parked_cfg' at
-default value of 0. Then I disabled disp_cc_pll0 at the end of clk
-driver probe. This fixes the problem. In this case, the perceived parent
-of mdp and rot is XO because 'parked_cfg' is 0.
+在 2023/11/8 20:01, Conor Dooley 写道:
+> On Wed, Nov 08, 2023 at 02:18:21PM +0800, Elaine Zhang wrote:
+>> export PCLK_VO1GRF for DT.
+>>
+>> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+>> ---
+>>   include/dt-bindings/clock/rockchip,rk3588-cru.h | 3 ++-
+>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/include/dt-bindings/clock/rockchip,rk3588-cru.h b/include/dt-bindings/clock/rockchip,rk3588-cru.h
+>> index 5790b1391201..50ba72980190 100644
+>> --- a/include/dt-bindings/clock/rockchip,rk3588-cru.h
+>> +++ b/include/dt-bindings/clock/rockchip,rk3588-cru.h
+>> @@ -733,8 +733,9 @@
+>>   #define ACLK_AV1_PRE			718
+>>   #define PCLK_AV1_PRE			719
+>>   #define HCLK_SDIO_PRE			720
+>> +#define PCLK_VO1GRF			721
+>>   
+>> -#define CLK_NR_CLKS			(HCLK_SDIO_PRE + 1)
+>> +#define CLK_NR_CLKS			(PCLK_VO1GRF + 1)
+> This definition is part of the ABI, if it is safe to change it, then it
+> is safe to delete it.
+The new ID is to solve the niu clock dependency problem(Used in PATCH V5 
+4/4).This new ID will also be used in DTS in the future.
 
-Then I tried the same sequence above, but disabled and then enabled the
-disp_cc_pll0. This also worked. The disp_cc_pll0 was disabled during
-late init because it was unused, but otherwise everything is fine. This
-means that disabling and then enabling when nothing is sourcing the PLL
-somehow "fixes" it.
+CLK_NR_CLKS represents the number of clocks used by the 
+drivers/clk/rockchip/clk-rkxxx.c. It is safe to modify it, but cannot 
+delete it.
 
-Then I tried some wacky stuff. I moved rot to XO and left mdp on
-disp_cc_pll0, and left 'parked_cfg' at default value of 0. Then I
-disabled and enabled disp_cc_pll0 at driver probe. This also fixed the
-problem. I would think disabling the PLL while mdp is sourcing from it
-would cause the branch to be stuck, but apparently nothing goes wrong.
-During boot, mdp is switched to XO when the clk is 'restored' for
-clk_enable(), and then the branch is enabled and it reports the clk as
-on.
+>
+>>   
+>>   /* scmi-clocks indices */
+>>   
+>> -- 
+>> 2.17.1
+>>
+>>
+-- 
+张晴
+瑞芯微电子股份有限公司
+Rockchip Electronics Co.,Ltd
+地址：福建省福州市铜盘路软件大道89号软件园A区21号楼
+Add:No.21 Building, A District, No.89 Software Boulevard Fuzhou, Fujian 350003, P.R.China
+Tel:+86-0591-83991906-8601
+邮编：350003
+E-mail:elaine.zhang@rock-chips.com
+****************************************************************************
+保密提示：本邮件及其附件含有机密信息，仅发送给本邮件所指特定收件人。若非该特定收件人，请勿复制、使用或披露本邮件的任何内容。若误收本邮件，请从系统中永久性删除本邮件及所有附件，并以回复邮件或其他方式即刻告知发件人。福州瑞芯微电子有限公司拥有本邮件信息的著作权及解释权，禁止任何未经授权许可的侵权行为。
 
-Then I tried leaving rot on disp_cc_pll0, moving mdp to XO, and leaving
-'parked_cfg' at default value of 0. Then I disabled and enabled
-disp_cc_pll0 at driver probe. This didn't work. During boot and up to
-the time of being stuck off, mdp is parked and unparked but it's always
-sourcing from XO. I don't understand this part. mdp was moved to XO very
-early, while rot was still sourcing from disp_cc_pll0 when we turned off
-the PLL during late init. Presumably mdp shouldn't be stuck.
+IMPORTANT NOTICE: This email is from Fuzhou Rockchip Electronics Co., Ltd .The contents of this email and any attachments may contain information that is privileged, confidential and/or exempt from disclosure under applicable law and relevant NDA. If you are not the intended recipient, you are hereby notified that any disclosure, copying, distribution, or use of the information is STRICTLY PROHIBITED. Please immediately contact the sender as soon as possible and destroy the material in its entirety in any format. Thank you.
 
-Then I tried leaving rot on disp_cc_pll0, moving mdp to XO, and leaving
-'parked_cfg' at default value of 0. I skipped the PLL enable/disable
-dance. This didn't work either. During late init, the rot branch clk
-(disp_cc_mdss_rot_clk) is disabled, but the rot rcg is still configured
-to source from disp_cc_pll0.
+****************************************************************************
 
-Then I tried leaving rot on disp_cc_pll0, moving mdp to XO, and leaving
-'parked_cfg' at default value of 0. I only disable the PLL during probe.
-This didn't work either! In fact, mdp is stuck after being turned on and
-off once (but shouldn't it be sourcing from XO?).
-
-Then I tried leaving rot on disp_cc_pll0, moving mdp to XO, and leaving
-'parked_cfg' at default value of 0. I only enable the PLL during probe.
-This didn't work either. mdp gets stuck after late init, but it is
-supposed to be sourcing from XO.
-
-I'm thinking what's happening is that disabling the PLL during late init
-is hanging the branch, but only when an rcg is sourcing from the PLL.
-Or maybe what's happening is the rot branch register value is wrong and
-it's actually swapped with the mdp branch in the driver, or the rcg for
-mdp and rot are swapped. In the cases above, it only breaks when the rot
-rcg is sourcing from disp_cc_pll0, and disp_cc_pll0 is disabled.
-
-Here's what's happening without any changes
-
- 1. mdp and rot are sourcing from disp_cc_pll0 at driver probe, disp_cc_pll=
-0 is enabled
- 2. mdp is configured to restore on XO
- 3. rot is configured to restore on XO
- 4. mdp is switched to XO on clk_enable()
- 5. mdp is switched to XO on clk_disable()
- 6. disp_cc_pll0 is left untouched
- 7. rot branch clk is disabled during late init (disp_cc_mdss_rot_clk)
- 8. rot rcg is still enabled
- 9. disp_cc_pll0 is disabled during late init
- 10. mdp is switched to XO on clk_enable()
- 11. mdp branch is stuck off
-
-I could see the problem happening if mdp branch and rot branch were
-swapped. When we enable/disable mdp branch it will actually
-enable/disable the rot rcg because feedback is going there. During boot
-this is fine because disp_cc_pll0 is enabled. Leaving it enabled
-throughout boot hides the problem because enabling mdp branch is
-actually enabling rot branch. Once we get to late init, we disable rot
-branch (actually mdp branch). The mdp rcg is already parked, so this
-should be OK. The problem is the mdp branch (actually rot branch) has
-been disabled, while the rot rcg is still sourcing disp_cc_pll0. We'll
-disable the pll during late init, and this will wedge the clk off. When
-we go to turn on the mdp branch (actually the rot branch) after late
-init, we'll try to turn on the branch and the rot rcg will be parented
-to the disp_cc_pll0 still (because we never moved it off).
-
-This patch fixes the problem for me. Obviously, things are still bad
-though because we don't report the proper parent to the framework. We
-can do that pretty easily by parking at clk registration time though and
-also by saving the config register.
-
-diff --git a/drivers/clk/qcom/dispcc-sc7180.c b/drivers/clk/qcom/dispcc-sc7=
-180.c
-index 9536bfc72a43..26eea1e962d3 100644
---- a/drivers/clk/qcom/dispcc-sc7180.c
-+++ b/drivers/clk/qcom/dispcc-sc7180.c
-@@ -499,10 +499,10 @@ static struct clk_branch disp_cc_mdss_esc0_clk =3D {
- };
-=20
- static struct clk_branch disp_cc_mdss_mdp_clk =3D {
--	.halt_reg =3D 0x200c,
-+	.halt_reg =3D 0x2014,
- 	.halt_check =3D BRANCH_HALT,
- 	.clkr =3D {
--		.enable_reg =3D 0x200c,
-+		.enable_reg =3D 0x2014,
- 		.enable_mask =3D BIT(0),
- 		.hw.init =3D &(struct clk_init_data){
- 			.name =3D "disp_cc_mdss_mdp_clk",
-@@ -570,10 +570,10 @@ static struct clk_branch disp_cc_mdss_pclk0_clk =3D {
- };
-=20
- static struct clk_branch disp_cc_mdss_rot_clk =3D {
--	.halt_reg =3D 0x2014,
-+	.halt_reg =3D 0x200c,
- 	.halt_check =3D BRANCH_HALT,
- 	.clkr =3D {
--		.enable_reg =3D 0x2014,
-+		.enable_reg =3D 0x200c,
- 		.enable_mask =3D BIT(0),
- 		.hw.init =3D &(struct clk_init_data){
- 			.name =3D "disp_cc_mdss_rot_clk",
-
-TL;DR: Taniya or anyone at qcom, please double check that the
-disp_cc_mdss_mdp_clk register is correct and not actually swapped with
-disp_cc_mdss_rot_clk.
-
-I tried swapping the rcg registers, and was met with a blue screen, so I
-believe the rcg registers are correct. testclock confirmed as well. My
-next experiment is to figure out a way to turn off the rot branch
-and measure.
