@@ -1,145 +1,127 @@
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80931199B4
-	for <linux-clk@vger.kernel.org>; Fri, 10 Nov 2023 13:24:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B192238DE1;
+	Fri, 10 Nov 2023 18:07:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F4xnra2i"
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C54B0A7522
-	for <linux-clk@vger.kernel.org>; Fri, 10 Nov 2023 05:24:42 -0800 (PST)
-Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-4084095722aso15153665e9.1
-        for <linux-clk@vger.kernel.org>; Fri, 10 Nov 2023 05:24:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1699622681; x=1700227481; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mnZfV2q0+s2CpN5/DatQthuQNf7R4Y9ktwlMu9GlmRg=;
-        b=F4xnra2iF6rJJ+g9+H5wfBVUEWN+AyKQSk3W5RKvmfYVY4MQxouhwBDYpqCvFXNUFL
-         AoPgNsOgE2KNfg4vdCR5+VqQaa3zi9pnGY1Ft7UM8zMrGlYM0GFME/VvNAUa2h1UA3yO
-         +W4wtVlh1c22XbAB8cFncy8BN1dPa6E27JWLwDcg+TgTt5I9DcnXsZAKwggoEVaYMrBJ
-         i7UUnBWwsyW/OVIsxB3qNPAUc+XCoCPtmrSyVrfhVoxHj2zYaT1Hl9x0FkTvbyoJntJn
-         0D3v5qyd4i1H6O1TcpG02/wKrPY2mS+4jDer24dfIlwI5lkkmD55yeTZ93yxCa0p4JT+
-         QMzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699622681; x=1700227481;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mnZfV2q0+s2CpN5/DatQthuQNf7R4Y9ktwlMu9GlmRg=;
-        b=f32JSzKcbGXJ7X3XuCfRLlx+T6OWr8fLWGDFy1IIizTa5uATS7MYSrrmuUqwX+9uDf
-         otNukMQZ0YhkzhVXX+Xp68xqWu5u/7OhiiILqYrWwHFSdKGlOrncJHpe6hdR9W1QUBDG
-         pEpGJwSODYCa8H+b5ZLIsHRkweEP5Zbfsob7vhMww4zxtupS9Om62uNeBb9XlR5t+UUF
-         5nO7P8bZMuOEBYEOrqLgoNRFpWW1uRMHaocsQXhBt0clFH8iKjm4m/Z42Ep7XDlKnJCb
-         WN62lE+2q1AV02u7XpdVtQgNh2V/bFOYDwG/lCMhjz8kwhAkMSyX1CSvZqwZGBfRo4bV
-         wVBg==
-X-Gm-Message-State: AOJu0YwPh1QB6xY/JNbdbxGQq0QHd7d5fpvFBuwd2q+rGEAaVwH1v3Pa
-	QF55WwmZTxel9ySKqhBjo0+RlQ==
-X-Google-Smtp-Source: AGHT+IExN1tN1zWwTXGu79ToYWmaOD8R+0nkqDdsx+Z8vmuOqz8sCII3ySxe/8NC79hrJGmcraqczA==
-X-Received: by 2002:a05:600c:4e8a:b0:408:4266:12db with SMTP id f10-20020a05600c4e8a00b00408426612dbmr7150306wmq.13.1699622681107;
-        Fri, 10 Nov 2023 05:24:41 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.218.126])
-        by smtp.gmail.com with ESMTPSA id 8-20020a05600c22c800b0040303a9965asm5083419wmg.40.2023.11.10.05.24.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Nov 2023 05:24:40 -0800 (PST)
-Message-ID: <8d9ec256-fbea-4711-966c-8c68d83eeb1f@linaro.org>
-Date: Fri, 10 Nov 2023 14:24:39 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="osp9Dsib"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30E96C433CC;
+	Fri, 10 Nov 2023 18:07:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1699639673;
+	bh=PwI1HMfc9Px11Tdj+NXcNTpHBZq5il3Ma/LVyONVjRg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=osp9DsibB3jQ/+hYBLD4x+ZLmbK8DShmrosXu7V3XLTAGt+CCQppRvCqC0RUuKl76
+	 w+CtqyYCmBaJlUgB84RCCk8Wx6moRO/0qZAqlIHhRi/8FL9v7rgECe/KF9P+Hq9V6N
+	 L63Pdb+dHcgunih2OyOLPMMpqStmliLveJTVKL36gLi8ekdXeZj6q/oJiEQJGfWqYy
+	 mk/oLWpJiPnGAHL1/0xDn9xsP9YSnuCwEGpy37HAur5gk0zsVoUbhkkrcHaehDFwfp
+	 78HdhQk/WLs2vdMbT30r4AxXWnro9q5opjz+Try3Uen9Y785IjeRibT+QpcXkfS2GZ
+	 eNwKVTfKdx82Q==
+Date: Fri, 10 Nov 2023 18:07:43 +0000
+From: Conor Dooley <conor@kernel.org>
+To: zhangqing <zhangqing@rock-chips.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Conor Dooley <conor.dooley@microchip.com>, mturquette@baylibre.com,
+	sboyd@kernel.org, kever.yang@rock-chips.com, heiko@sntech.de,
+	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	huangtao@rock-chips.com, andy.yan@rock-chips.com,
+	Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: Re: [PATCH v5 3/4] dt-bindings: clock: rk3588: export PCLK_VO1GRF
+ clk id
+Message-ID: <20231110-dreamt-revival-5b360472febd@roley>
+References: <20231108061822.4871-1-zhangqing@rock-chips.com>
+ <20231108061822.4871-4-zhangqing@rock-chips.com>
+ <20231108-donation-uncertain-c4d0f560c420@spud>
+ <2e520a06-0ff1-76ef-2a72-ab6663738b45@rock-chips.com>
+ <20231109-send-pushchair-45b37551102a@wendy>
+ <a11c847c-4f95-ea7b-3497-6ada0586c486@rock-chips.com>
+ <dee8031f-d739-442c-988c-3df61d92c0d3@linaro.org>
+ <f013df81-670e-37c4-c1a7-e1302352ca20@rock-chips.com>
+ <f58c8f3f-7b34-47e7-a33a-bddb6106fec7@linaro.org>
+ <53059eca-5c55-6dde-6246-40ed9f2dca91@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V6 2/4] dt-bindings: clock: add Amlogic C3 peripherals
- clock controller bindings
-Content-Language: en-US
-To: Xianwei Zhao <xianwei.zhao@amlogic.com>,
- linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Chuan Liu <chuan.liu@amlogic.com>
-References: <20231106085554.3237511-1-xianwei.zhao@amlogic.com>
- <20231106085554.3237511-3-xianwei.zhao@amlogic.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231106085554.3237511-3-xianwei.zhao@amlogic.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="OExvhfaQ444Ef20I"
+Content-Disposition: inline
+In-Reply-To: <53059eca-5c55-6dde-6246-40ed9f2dca91@rock-chips.com>
 
-On 06/11/2023 09:55, Xianwei Zhao wrote:
-> @@ -0,0 +1,237 @@
 
-A nit, subject: drop second/last, redundant "bindings". The
-"dt-bindings" prefix is already stating that these are bindings.
+--OExvhfaQ444Ef20I
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
-> +/*
-> + * Copyright (c) 2023 Amlogic, Inc. All rights reserved.
-> + * Author: Chuan Liu <chuan.liu@amlogic.com>
-> + */
-> +
-> +#ifndef _DT_BINDINGS_CLOCK_AMLOGIC_C3_PERIPHERALS_CLKC_H
-> +#define _DT_BINDINGS_CLOCK_AMLOGIC_C3_PERIPHERALS_CLKC_H
-> +
-> +#define CLKID_PLL_SRC				0
-> +#define CLKID_MCLK_PLL_SRC			1
-> +#define CLKID_DDR_PLL_SRC			2
-> +#define CLKID_DDR_PHY_SRC                       3
+> Ok , I'll drop this change in PATCH V6.
 
-Fix the indentation. In all other patchses as well.
+> =E5=BC=A0=E6=99=B4
+> =E7=91=9E=E8=8A=AF=E5=BE=AE=E7=94=B5=E5=AD=90=E8=82=A1=E4=BB=BD=E6=9C=89=
+=E9=99=90=E5=85=AC=E5=8F=B8
+> Rockchip Electronics Co.,Ltd
+> =E5=9C=B0=E5=9D=80=EF=BC=9A=E7=A6=8F=E5=BB=BA=E7=9C=81=E7=A6=8F=E5=B7=9E=
+=E5=B8=82=E9=93=9C=E7=9B=98=E8=B7=AF=E8=BD=AF=E4=BB=B6=E5=A4=A7=E9=81=9389=
+=E5=8F=B7=E8=BD=AF=E4=BB=B6=E5=9B=ADA=E5=8C=BA21=E5=8F=B7=E6=A5=BC
+> Add:No.21 Building, A District, No.89 Software Boulevard Fuzhou, Fujian 3=
+50003, P.R.China
+> Tel:+86-0591-83991906-8601
+> =E9=82=AE=E7=BC=96=EF=BC=9A350003
+> E-mail:elaine.zhang@rock-chips.com
+> *************************************************************************=
+***
+> =E4=BF=9D=E5=AF=86=E6=8F=90=E7=A4=BA=EF=BC=9A=E6=9C=AC=E9=82=AE=E4=BB=B6=
+=E5=8F=8A=E5=85=B6=E9=99=84=E4=BB=B6=E5=90=AB=E6=9C=89=E6=9C=BA=E5=AF=86=E4=
+=BF=A1=E6=81=AF=EF=BC=8C=E4=BB=85=E5=8F=91=E9=80=81=E7=BB=99=E6=9C=AC=E9=82=
+=AE=E4=BB=B6=E6=89=80=E6=8C=87=E7=89=B9=E5=AE=9A=E6=94=B6=E4=BB=B6=E4=BA=BA=
+=E3=80=82=E8=8B=A5=E9=9D=9E=E8=AF=A5=E7=89=B9=E5=AE=9A=E6=94=B6=E4=BB=B6=E4=
+=BA=BA=EF=BC=8C=E8=AF=B7=E5=8B=BF=E5=A4=8D=E5=88=B6=E3=80=81=E4=BD=BF=E7=94=
+=A8=E6=88=96=E6=8A=AB=E9=9C=B2=E6=9C=AC=E9=82=AE=E4=BB=B6=E7=9A=84=E4=BB=BB=
+=E4=BD=95=E5=86=85=E5=AE=B9=E3=80=82=E8=8B=A5=E8=AF=AF=E6=94=B6=E6=9C=AC=E9=
+=82=AE=E4=BB=B6=EF=BC=8C=E8=AF=B7=E4=BB=8E=E7=B3=BB=E7=BB=9F=E4=B8=AD=E6=B0=
+=B8=E4=B9=85=E6=80=A7=E5=88=A0=E9=99=A4=E6=9C=AC=E9=82=AE=E4=BB=B6=E5=8F=8A=
+=E6=89=80=E6=9C=89=E9=99=84=E4=BB=B6=EF=BC=8C=E5=B9=B6=E4=BB=A5=E5=9B=9E=E5=
+=A4=8D=E9=82=AE=E4=BB=B6=E6=88=96=E5=85=B6=E4=BB=96=E6=96=B9=E5=BC=8F=E5=8D=
+=B3=E5=88=BB=E5=91=8A=E7=9F=A5=E5=8F=91=E4=BB=B6=E4=BA=BA=E3=80=82=E7=A6=8F=
+=E5=B7=9E=E7=91=9E=E8=8A=AF=E5=BE=AE=E7=94=B5=E5=AD=90=E6=9C=89=E9=99=90=E5=
+=85=AC=E5=8F=B8=E6=8B=A5=E6=9C=89=E6=9C=AC=E9=82=AE=E4=BB=B6=E4=BF=A1=E6=81=
+=AF=E7=9A=84=E8=91=97=E4=BD=9C=E6=9D=83=E5=8F=8A=E8=A7=A3=E9=87=8A=E6=9D=83=
+=EF=BC=8C=E7=A6=81=E6=AD=A2=E4=BB=BB=E4=BD=95=E6=9C=AA=E7=BB=8F=E6=8E=88=E6=
+=9D=83=E8=AE=B8=E5=8F=AF=E7=9A=84=E4=BE=B5=E6=9D=83=E8=A1=8C=E4=B8=BA=E3=80=
+=82
+>=20
+> IMPORTANT NOTICE: This email is from Fuzhou Rockchip Electronics Co., Ltd=
+ .The contents of this email and any attachments may contain information th=
+at is privileged, confidential and/or exempt from disclosure under applicab=
+le law and relevant NDA. If you are not the intended recipient, you are her=
+eby notified that any disclosure, copying, distribution, or use of the info=
+rmation is STRICTLY PROHIBITED. Please immediately contact the sender as so=
+on as possible and destroy the material in its entirety in any format. Than=
+k you.
+>=20
+> *************************************************************************=
+***
+>=20
 
-Best regards,
-Krzysztof
+Please also drop this legal footers.
 
+Thanks,
+Conor.
+
+--OExvhfaQ444Ef20I
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZU5xagAKCRB4tDGHoIJi
+0mRqAP4yZmW1RPmA4GZetYj3jVRckaKN7UW79TtmSrKLKPJ7xwD9FbIVjxmE/4yT
+Wbc/0ZnYDI9ffUVgJa9bqOCLpHMNGwk=
+=z8Ye
+-----END PGP SIGNATURE-----
+
+--OExvhfaQ444Ef20I--
