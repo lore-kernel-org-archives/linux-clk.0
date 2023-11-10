@@ -1,23 +1,39 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AADF10A33;
-	Fri, 10 Nov 2023 08:30:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9258611CAA;
+	Fri, 10 Nov 2023 08:32:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Xiqeolch"
-Received: from mail-m127102.qiye.163.com (mail-m127102.qiye.163.com [115.236.127.102])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 168CB9EDD;
-	Fri, 10 Nov 2023 00:30:20 -0800 (PST)
-DKIM-Signature: a=rsa-sha256;
-	b=XiqeolchP3njZmt+f79epZWTdAxsmqLbScSw8AQO4RUgwBBXf+74Ueu0wP02Efa2A9iHxM/ISi7pO+dSUve2pewsyyCdKSJDudwTjzFYJ8OQzxeDftCU/zmSx3PalWGuNWg09g70Sjg54LORI0RikiCZLPhc6PlfQoA+UzZSkys=;
-	c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=c8gwyP0bjpv+fHqfLFg4bZJyzgVrMfpkxHsJ3EbC6LY=;
-	h=date:mime-version:subject:message-id:from;
-Received: from [172.16.12.49] (unknown [58.22.7.114])
-	by mail-m11877.qiye.163.com (Hmail) with ESMTPA id E1F2F400389;
-	Fri, 10 Nov 2023 16:29:35 +0800 (CST)
-Message-ID: <01d2844e-8a9f-d529-c523-c846760bc31b@rock-chips.com>
-Date: Fri, 10 Nov 2023 16:29:35 +0800
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FwrtrwUR"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DF5C900D;
+	Fri, 10 Nov 2023 00:32:32 -0800 (PST)
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AA7exJO018675;
+	Fri, 10 Nov 2023 08:32:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=25mtvY+NTGW9DCzRWztwAgArQMlHdGCwKfpiRg2qsK0=;
+ b=FwrtrwUR95NVAjgV+k2R1coe7//+z1by3KpeZ2ar/C6mL+a9qpqXnnmGLkicsvdpWo+i
+ 57SpGz7kl52hKEbeMj4N83SaeKDiq0OmblPkAFaO8JHRqIvnx0IIg3PY6djISSgVvr9Q
+ VJk+gcBi21KmJCdnZOYDGNcBWe9hj8653HA3JskDbSagkHTO6i3BRY41mIM830f38us4
+ NdkP0xozw92ZmEgZmGtWMIiTTedesHjZj8JTPfEL+CRpglbiLrZ7WdpUadQfc/TF74N7
+ YK7zcD1ECARn2y7bhBDNIm7fH3ffZsDrJBdY3HMPI4CXBJx1b4q/Zu9FjuxupNIeyf+M fw== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3u8y39aevj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 10 Nov 2023 08:32:21 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3AA8WKhs016764
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 10 Nov 2023 08:32:20 GMT
+Received: from [10.217.216.47] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.39; Fri, 10 Nov
+ 2023 00:32:13 -0800
+Message-ID: <d716fbbe-b681-af41-bfe7-85448cc47c7c@quicinc.com>
+Date: Fri, 10 Nov 2023 14:02:10 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -26,58 +42,208 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.15.1
-Subject: Re: [PATCH v6 3/3] clk: rockchip: rk3588: Adjust the GATE_LINK
- parameter
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- mturquette@baylibre.com, sboyd@kernel.org, kever.yang@rock-chips.com,
- heiko@sntech.de, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
- conor+dt@kernel.org
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, huangtao@rock-chips.com,
- andy.yan@rock-chips.com
-References: <20231110020358.12840-1-zhangqing@rock-chips.com>
- <20231110020358.12840-4-zhangqing@rock-chips.com>
- <d36d4f7e-03be-4018-be5d-0898f2ae6a15@linaro.org>
-From: zhangqing <zhangqing@rock-chips.com>
-In-Reply-To: <d36d4f7e-03be-4018-be5d-0898f2ae6a15@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGkhNH1ZOS0MeTx9ISh9NHR9VEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlOQ1VJSVVMVUpKT1lXWRYaDxIVHRRZQVlPS0hVSk1PSU5JVUpLS1VKQl
-	kG
-X-HM-Tid: 0a8bb859d2e72eb3kusne1f2f400389
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OlE6PDo*ODw4MQweIR1MTgJP
-	CVEKCS5VSlVKTUJCTUtPQkxMSUhCVTMWGhIXVQETGhUcChIVHDsJFBgQVhgTEgsIVRgUFkVZV1kS
-	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUhDQ0M3Bg++
+Subject: Re: [PATCH RESEND v3 4/5] clk: qcom: Use HW_CTRL_TRIGGER flag to
+ switch video GDSC to HW mode
+Content-Language: en-US
+To: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abel.vesa@linaro.org>
+CC: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Kevin Hilman
+	<khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Pavel Machek
+	<pavel@ucw.cz>,
+        Len Brown <len.brown@intel.com>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Stanimir Varbanov
+	<stanimir.k.varbanov@gmail.com>,
+        Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>,
+        Taniya Das <tdas@qti.qualcomm.com>, <linux-pm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-media@vger.kernel.org>
+References: <20231101-gdsc-hwctrl-v3-0-0740ae6b2b04@linaro.org>
+ <20231101-gdsc-hwctrl-v3-4-0740ae6b2b04@linaro.org>
+ <v4dnsawo7s74spccrsvjwmal73tqfq4aptiny25tyyp6ungxha@jlbywvcssqtl>
+From: Jagadeesh Kona <quic_jkona@quicinc.com>
+In-Reply-To: <v4dnsawo7s74spccrsvjwmal73tqfq4aptiny25tyyp6ungxha@jlbywvcssqtl>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: uP73AjW-MR_JJ8huakF3mrlf6qgG7jJS
+X-Proofpoint-ORIG-GUID: uP73AjW-MR_JJ8huakF3mrlf6qgG7jJS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-11-10_04,2023-11-09_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 clxscore=1015 spamscore=0 phishscore=0 malwarescore=0
+ lowpriorityscore=0 mlxscore=0 priorityscore=1501 adultscore=0
+ mlxlogscore=947 bulkscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2311060000 definitions=main-2311100071
 
 
-在 2023/11/10 15:46, Krzysztof Kozlowski 写道:
-> On 10/11/2023 03:03, Elaine Zhang wrote:
->> Export PCLK_VO1GRF clk id.
-> If the clock is exported, how do you get its reference?
-The export of the clock has been abandoned, and mark the pclk_vo1grf as 
-CLK_IS_CRITICAL.
-Fix The commit message later.
->
-> Best regards,
-> Krzysztof
->
--- 
-张晴
-瑞芯微电子股份有限公司
-Rockchip Electronics Co.,Ltd
-地址：福建省福州市铜盘路软件大道89号软件园A区21号楼
-Add:No.21 Building, A District, No.89 Software Boulevard Fuzhou, Fujian 350003, P.R.China
-Tel:+86-0591-83991906-8601
-邮编：350003
-E-mail:elaine.zhang@rock-chips.com
-****************************************************************************
-保密提示：本邮件及其附件含有机密信息，仅发送给本邮件所指特定收件人。若非该特定收件人，请勿复制、使用或披露本邮件的任何内容。若误收本邮件，请从系统中永久性删除本邮件及所有附件，并以回复邮件或其他方式即刻告知发件人。福州瑞芯微电子有限公司拥有本邮件信息的著作权及解释权，禁止任何未经授权许可的侵权行为。
 
-IMPORTANT NOTICE: This email is from Fuzhou Rockchip Electronics Co., Ltd .The contents of this email and any attachments may contain information that is privileged, confidential and/or exempt from disclosure under applicable law and relevant NDA. If you are not the intended recipient, you are hereby notified that any disclosure, copying, distribution, or use of the information is STRICTLY PROHIBITED. Please immediately contact the sender as soon as possible and destroy the material in its entirety in any format. Thank you.
+On 11/4/2023 1:45 AM, Bjorn Andersson wrote:
+> On Wed, Nov 01, 2023 at 11:04:10AM +0200, Abel Vesa wrote:
+>> From: Jagadeesh Kona <quic_jkona@quicinc.com>
+>>
+>> The current HW_CTRL flag switches the video GDSC to HW control mode as
+>> part of GDSC enable itself, instead of that use HW_CTRL_TRIGGER flag to
+>> give consumer drivers more control and switch the GDSC mode as and when
+>> required.
+>>
+>> HW_CTRL_TRIGGER flag allows consumer drivers to switch the video GDSC to
+>> HW/SW control modes at runtime using dev_pm_genpd_set_hwmode API.
+>>
+> 
+> This states what the code currently does, and what the new code will do.
+> But I don't find that it adequately describes _why_ this is done.
+> 
+> 
+> In the current implementation, the hardware is might collapse the GDSC
+> anytime between gdsc_enable() and gdsc_disable(). By giving "drivers
+> more control" the time spent in this state is reduced to some fraction
+> of that span, which to me implies higher power consumption.
+> 
+> Under the assumption that we don't want to consume more power without
+> reason, I'm forced to guess that there might be some scenarios that we
+> want this feature to keep the GDSC non-collapsed against the indication
+> of the hardware - to avoid some instability somewhere, perhaps?
+> 
 
-****************************************************************************
+Thanks Bjorn for your review. Sure, will update commit text with details 
+in next series.
 
+Normally, consumers will enable the GDSC and then the required clocks. 
+If GDSC is moved to HW mode in gdsc_enable() itself, the subsequent 
+clocks enablement that are dependent on GDSC might fail since GDSC could 
+be turned off by HW. The consumers can still switch the GDSC to HW mode 
+with new API right after the clocks are enabled and the control will be 
+taken back to SW mode just before disabling the GDSC, so even with the 
+newer implementation, HW can collapse the GDSC anytime for most of the 
+duration between gdsc_enable() and gdsc_disable(). This API adds more 
+flexibility for consumer drivers to control the GDSC mode as per their
+requirements.
+
+Thanks,
+Jagadeesh
+
+> Regards,
+> Bjorn
+> 
+>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+>> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+>> ---
+>>   drivers/clk/qcom/videocc-sc7180.c | 2 +-
+>>   drivers/clk/qcom/videocc-sc7280.c | 2 +-
+>>   drivers/clk/qcom/videocc-sdm845.c | 4 ++--
+>>   drivers/clk/qcom/videocc-sm8250.c | 4 ++--
+>>   drivers/clk/qcom/videocc-sm8550.c | 4 ++--
+>>   5 files changed, 8 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/clk/qcom/videocc-sc7180.c b/drivers/clk/qcom/videocc-sc7180.c
+>> index 5b9b54f616b8..51439f7ba70c 100644
+>> --- a/drivers/clk/qcom/videocc-sc7180.c
+>> +++ b/drivers/clk/qcom/videocc-sc7180.c
+>> @@ -166,7 +166,7 @@ static struct gdsc vcodec0_gdsc = {
+>>   	.pd = {
+>>   		.name = "vcodec0_gdsc",
+>>   	},
+>> -	.flags = HW_CTRL,
+>> +	.flags = HW_CTRL_TRIGGER,
+>>   	.pwrsts = PWRSTS_OFF_ON,
+>>   };
+>>   
+>> diff --git a/drivers/clk/qcom/videocc-sc7280.c b/drivers/clk/qcom/videocc-sc7280.c
+>> index 615695d82319..3d07b1e95986 100644
+>> --- a/drivers/clk/qcom/videocc-sc7280.c
+>> +++ b/drivers/clk/qcom/videocc-sc7280.c
+>> @@ -236,7 +236,7 @@ static struct gdsc mvs0_gdsc = {
+>>   		.name = "mvs0_gdsc",
+>>   	},
+>>   	.pwrsts = PWRSTS_OFF_ON,
+>> -	.flags = HW_CTRL | RETAIN_FF_ENABLE,
+>> +	.flags = HW_CTRL_TRIGGER | RETAIN_FF_ENABLE,
+>>   };
+>>   
+>>   static struct gdsc mvsc_gdsc = {
+>> diff --git a/drivers/clk/qcom/videocc-sdm845.c b/drivers/clk/qcom/videocc-sdm845.c
+>> index c77a4dd5d39c..dad011c48973 100644
+>> --- a/drivers/clk/qcom/videocc-sdm845.c
+>> +++ b/drivers/clk/qcom/videocc-sdm845.c
+>> @@ -260,7 +260,7 @@ static struct gdsc vcodec0_gdsc = {
+>>   	},
+>>   	.cxcs = (unsigned int []){ 0x890, 0x930 },
+>>   	.cxc_count = 2,
+>> -	.flags = HW_CTRL | POLL_CFG_GDSCR,
+>> +	.flags = HW_CTRL_TRIGGER | POLL_CFG_GDSCR,
+>>   	.pwrsts = PWRSTS_OFF_ON,
+>>   };
+>>   
+>> @@ -271,7 +271,7 @@ static struct gdsc vcodec1_gdsc = {
+>>   	},
+>>   	.cxcs = (unsigned int []){ 0x8d0, 0x950 },
+>>   	.cxc_count = 2,
+>> -	.flags = HW_CTRL | POLL_CFG_GDSCR,
+>> +	.flags = HW_CTRL_TRIGGER | POLL_CFG_GDSCR,
+>>   	.pwrsts = PWRSTS_OFF_ON,
+>>   };
+>>   
+>> diff --git a/drivers/clk/qcom/videocc-sm8250.c b/drivers/clk/qcom/videocc-sm8250.c
+>> index ad46c4014a40..c1b73d852f1c 100644
+>> --- a/drivers/clk/qcom/videocc-sm8250.c
+>> +++ b/drivers/clk/qcom/videocc-sm8250.c
+>> @@ -293,7 +293,7 @@ static struct gdsc mvs0_gdsc = {
+>>   	.pd = {
+>>   		.name = "mvs0_gdsc",
+>>   	},
+>> -	.flags = HW_CTRL,
+>> +	.flags = HW_CTRL_TRIGGER,
+>>   	.pwrsts = PWRSTS_OFF_ON,
+>>   };
+>>   
+>> @@ -302,7 +302,7 @@ static struct gdsc mvs1_gdsc = {
+>>   	.pd = {
+>>   		.name = "mvs1_gdsc",
+>>   	},
+>> -	.flags = HW_CTRL,
+>> +	.flags = HW_CTRL_TRIGGER,
+>>   	.pwrsts = PWRSTS_OFF_ON,
+>>   };
+>>   
+>> diff --git a/drivers/clk/qcom/videocc-sm8550.c b/drivers/clk/qcom/videocc-sm8550.c
+>> index f3c9dfaee968..404c6600edae 100644
+>> --- a/drivers/clk/qcom/videocc-sm8550.c
+>> +++ b/drivers/clk/qcom/videocc-sm8550.c
+>> @@ -322,7 +322,7 @@ static struct gdsc video_cc_mvs0_gdsc = {
+>>   	},
+>>   	.pwrsts = PWRSTS_OFF_ON,
+>>   	.parent = &video_cc_mvs0c_gdsc.pd,
+>> -	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE | HW_CTRL,
+>> +	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE | HW_CTRL_TRIGGER,
+>>   };
+>>   
+>>   static struct gdsc video_cc_mvs1c_gdsc = {
+>> @@ -347,7 +347,7 @@ static struct gdsc video_cc_mvs1_gdsc = {
+>>   	},
+>>   	.pwrsts = PWRSTS_OFF_ON,
+>>   	.parent = &video_cc_mvs1c_gdsc.pd,
+>> -	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE | HW_CTRL,
+>> +	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE | HW_CTRL_TRIGGER,
+>>   };
+>>   
+>>   static struct clk_regmap *video_cc_sm8550_clocks[] = {
+>>
+>> -- 
+>> 2.34.1
+>>
