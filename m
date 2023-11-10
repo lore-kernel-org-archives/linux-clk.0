@@ -1,258 +1,125 @@
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF88137F;
-	Fri, 10 Nov 2023 02:04:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C976010F2;
+	Fri, 10 Nov 2023 02:25:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="jRjxS4iQ"
-Received: from mail-m25494.xmail.ntesmail.com (mail-m25494.xmail.ntesmail.com [103.129.254.94])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 427E944BF;
-	Thu,  9 Nov 2023 18:04:30 -0800 (PST)
-DKIM-Signature: a=rsa-sha256;
-	b=jRjxS4iQfx3gPJTg+iAIvG37qvDYzTUnDTjZRfoI5TF9wZL7dkuvoj43lsu9Xp67j/4uB9byl5z06JrF7j8AXhTwPD/E0goV1kxq2R+6qWX2RII552uWaLM2z+PEmkBF5Q2K9VCB3597RwfLarpSPKqyAn151X57N37B2xc6hWg=;
-	c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=pta6a7Sz5NwbOb9QwWDewGyiPP/REpqivUkeKLLV+b4=;
-	h=date:mime-version:subject:message-id:from;
-Received: from localhost.localdomain (unknown [58.22.7.114])
-	by mail-m11877.qiye.163.com (Hmail) with ESMTPA id 279FA4001CD;
-	Fri, 10 Nov 2023 10:04:06 +0800 (CST)
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	kever.yang@rock-chips.com,
-	zhangqing@rock-chips.com,
-	heiko@sntech.de,
-	robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	huangtao@rock-chips.com,
-	andy.yan@rock-chips.com
-Subject: [PATCH v6 3/3] clk: rockchip: rk3588: Adjust the GATE_LINK parameter
-Date: Fri, 10 Nov 2023 10:03:58 +0800
-Message-Id: <20231110020358.12840-4-zhangqing@rock-chips.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20231110020358.12840-1-zhangqing@rock-chips.com>
-References: <20231110020358.12840-1-zhangqing@rock-chips.com>
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGR1CT1ZDSxoYTB4dT0xMSEJVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlOQ1VJSVVMVUpKT1lXWRYaDxIVHRRZQVlPS0hVSk5MSUpJVUpLS1VKQl
-	kG
-X-HM-Tid: 0a8bb6f8e3c22eb3kusn279fa4001cd
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OSo6Azo5PDw9MQ0iLhFDPTgO
-	ODxPCQ5VSlVKTUJCTkNKQ09MSkNDVTMWGhIXVQETGhUcChIVHDsJFBgQVhgTEgsIVRgUFkVZV1kS
-	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUpIQ0xONwY+
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qfOw3bKv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35B7DC433C8;
+	Fri, 10 Nov 2023 02:25:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1699583116;
+	bh=nCqJntDqtr3Op8eiSqf8/ZXz/ghvEugYu+jVdT6SWHs=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=qfOw3bKv/WRzdyAGiUKgvzzZJdSjugDsJE5QFa/TwCeRCK/r8X41TCZWewzxPF+dX
+	 26OF5MvxycRdwK11otk17kQC4j3w0m7iMlvMXu3t9xFf2qDgsvDWN0KVMQiXpTWk3L
+	 zm1XNVxu2CiGqApnMBRVeGF3FdSRaOJgkIW2MFNZdhE/QtMPDZrxx639fD/OriYTzK
+	 7LbAZZvW5cPNNbqK7ArdoZ9EoDWod/766RWct9TlgQ7YPqtLhYjyMTSf+tUHqpVWVz
+	 9rdm+dweWTZfVeK1oGxCfF7pf/eAKMI2InCcP5xQMpQLQMQN8MCa3K0M9Kd0i1ptJq
+	 1hCi6cwJaKwLw==
+Message-ID: <d1279446a7eb4109c73355a7983ba3f1.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <28c8559b9eba1a2b7c3554859c095cde.sboyd@kernel.org>
+References: <20231004012308.2305273-1-dmitry.baryshkov@linaro.org> <20231004012308.2305273-3-dmitry.baryshkov@linaro.org> <2346f541be5b8528ad1a16df256a2f50.sboyd@kernel.org> <1290a5a0f7f584fcce722eeb2a1fd898.sboyd@kernel.org> <CAA8EJpq_pvtCxuPKrHmUOgsDFmDeG8cuUcynvvk-0SJNY3HJnA@mail.gmail.com> <849046e96437d11e8fb997597b40979e.sboyd@kernel.org> <e20129cd99e0685de27d48d73cc2b045.sboyd@kernel.org> <28c8559b9eba1a2b7c3554859c095cde.sboyd@kernel.org>
+Subject: Re: [RFC PATCH v2 2/3] clk: qcom: implement RCG2 'parked' clock support
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, freedreno@lists.freedesktop.org, Rob Clark <robdclark@gmail.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Thu, 09 Nov 2023 18:25:13 -0800
+User-Agent: alot/0.10
 
-Export PCLK_VO1GRF clk id.
-Using Id instead of name, if use name needs to use __clk_lookup().
-But __clk_lookup() is not exported and is not friendly for GKI.
+Quoting Stephen Boyd (2023-11-08 20:20:50)
+>=20
+> Here's what's happening without any changes
+>=20
+>  1. mdp and rot are sourcing from disp_cc_pll0 at driver probe, disp_cc_p=
+ll0 is enabled
+>  2. mdp is configured to restore on XO
+>  3. rot is configured to restore on XO
+>  4. mdp is switched to XO on clk_enable()
+>  5. mdp is switched to XO on clk_disable()
+>  6. disp_cc_pll0 is left untouched
+>  7. rot branch clk is disabled during late init (disp_cc_mdss_rot_clk)
+>  8. rot rcg is still enabled
+>  9. disp_cc_pll0 is disabled during late init
+>  10. mdp is switched to XO on clk_enable()
+>  11. mdp branch is stuck off
+>=20
+> I could see the problem happening if mdp branch and rot branch were
+> swapped. When we enable/disable mdp branch it will actually
+> enable/disable the rot rcg because feedback is going there. During boot
+> this is fine because disp_cc_pll0 is enabled. Leaving it enabled
+> throughout boot hides the problem because enabling mdp branch is
+> actually enabling rot branch. Once we get to late init, we disable rot
+> branch (actually mdp branch). The mdp rcg is already parked, so this
+> should be OK. The problem is the mdp branch (actually rot branch) has
+> been disabled, while the rot rcg is still sourcing disp_cc_pll0. We'll
+> disable the pll during late init, and this will wedge the clk off. When
+> we go to turn on the mdp branch (actually the rot branch) after late
+> init, we'll try to turn on the branch and the rot rcg will be parented
+> to the disp_cc_pll0 still (because we never moved it off).
+>=20
+> This patch fixes the problem for me. Obviously, things are still bad
+> though because we don't report the proper parent to the framework. We
+> can do that pretty easily by parking at clk registration time though and
+> also by saving the config register.
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
----
- drivers/clk/rockchip/clk-rk3588.c | 114 ++++++++++++++++--------------
- 1 file changed, 59 insertions(+), 55 deletions(-)
+Argh! I forgot to put back disabling unused clks. This patch is garbage
+and doesn't actually work. I started directly writing things with devmem
+and saw that the branch bits are correct. The status bit in the rcg
+changes when the corresponding branch is enabled.
 
-diff --git a/drivers/clk/rockchip/clk-rk3588.c b/drivers/clk/rockchip/clk-rk3588.c
-index 6994165e0395..ff71c48f07ab 100644
---- a/drivers/clk/rockchip/clk-rk3588.c
-+++ b/drivers/clk/rockchip/clk-rk3588.c
-@@ -12,28 +12,6 @@
- #include <dt-bindings/clock/rockchip,rk3588-cru.h>
- #include "clk.h"
- 
--/*
-- * Recent Rockchip SoCs have a new hardware block called Native Interface
-- * Unit (NIU), which gates clocks to devices behind them. These effectively
-- * need two parent clocks.
-- *
-- * Downstream enables the linked clock via runtime PM whenever the gate is
-- * enabled. This implementation uses separate clock nodes for each of the
-- * linked gate clocks, which leaks parts of the clock tree into DT.
-- *
-- * The GATE_LINK macro instead takes the second parent via 'linkname', but
-- * ignores the information. Once the clock framework is ready to handle it, the
-- * information should be passed on here. But since these clocks are required to
-- * access multiple relevant IP blocks, such as PCIe or USB, we mark all linked
-- * clocks critical until a better solution is available. This will waste some
-- * power, but avoids leaking implementation details into DT or hanging the
-- * system.
-- */
--#define GATE_LINK(_id, cname, pname, linkname, f, o, b, gf) \
--	GATE(_id, cname, pname, f, o, b, gf)
--#define RK3588_LINKED_CLK		CLK_IS_CRITICAL
--
--
- #define RK3588_GRF_SOC_STATUS0		0x600
- #define RK3588_PHYREF_ALT_GATE		0xc38
- 
-@@ -1456,7 +1434,7 @@ static struct rockchip_clk_branch rk3588_clk_branches[] __initdata = {
- 	COMPOSITE_NODIV(HCLK_NVM_ROOT,  "hclk_nvm_root", mux_200m_100m_50m_24m_p, 0,
- 			RK3588_CLKSEL_CON(77), 0, 2, MFLAGS,
- 			RK3588_CLKGATE_CON(31), 0, GFLAGS),
--	COMPOSITE(ACLK_NVM_ROOT, "aclk_nvm_root", gpll_cpll_p, RK3588_LINKED_CLK,
-+	COMPOSITE(ACLK_NVM_ROOT, "aclk_nvm_root", gpll_cpll_p, 0,
- 			RK3588_CLKSEL_CON(77), 7, 1, MFLAGS, 2, 5, DFLAGS,
- 			RK3588_CLKGATE_CON(31), 1, GFLAGS),
- 	GATE(ACLK_EMMC, "aclk_emmc", "aclk_nvm_root", 0,
-@@ -1685,13 +1663,13 @@ static struct rockchip_clk_branch rk3588_clk_branches[] __initdata = {
- 			RK3588_CLKGATE_CON(42), 9, GFLAGS),
- 
- 	/* vdpu */
--	COMPOSITE(ACLK_VDPU_ROOT, "aclk_vdpu_root", gpll_cpll_aupll_p, RK3588_LINKED_CLK,
-+	COMPOSITE(ACLK_VDPU_ROOT, "aclk_vdpu_root", gpll_cpll_aupll_p, 0,
- 			RK3588_CLKSEL_CON(98), 5, 2, MFLAGS, 0, 5, DFLAGS,
- 			RK3588_CLKGATE_CON(44), 0, GFLAGS),
- 	COMPOSITE_NODIV(ACLK_VDPU_LOW_ROOT, "aclk_vdpu_low_root", mux_400m_200m_100m_24m_p, 0,
- 			RK3588_CLKSEL_CON(98), 7, 2, MFLAGS,
- 			RK3588_CLKGATE_CON(44), 1, GFLAGS),
--	COMPOSITE_NODIV(HCLK_VDPU_ROOT, "hclk_vdpu_root", mux_200m_100m_50m_24m_p, RK3588_LINKED_CLK,
-+	COMPOSITE_NODIV(HCLK_VDPU_ROOT, "hclk_vdpu_root", mux_200m_100m_50m_24m_p, 0,
- 			RK3588_CLKSEL_CON(98), 9, 2, MFLAGS,
- 			RK3588_CLKGATE_CON(44), 2, GFLAGS),
- 	COMPOSITE(ACLK_JPEG_DECODER_ROOT, "aclk_jpeg_decoder_root", gpll_cpll_aupll_spll_p, 0,
-@@ -1742,9 +1720,9 @@ static struct rockchip_clk_branch rk3588_clk_branches[] __initdata = {
- 	COMPOSITE(ACLK_RKVENC0_ROOT, "aclk_rkvenc0_root", gpll_cpll_npll_p, 0,
- 			RK3588_CLKSEL_CON(102), 7, 2, MFLAGS, 2, 5, DFLAGS,
- 			RK3588_CLKGATE_CON(47), 1, GFLAGS),
--	GATE(HCLK_RKVENC0, "hclk_rkvenc0", "hclk_rkvenc0_root", RK3588_LINKED_CLK,
-+	GATE(HCLK_RKVENC0, "hclk_rkvenc0", "hclk_rkvenc0_root", 0,
- 			RK3588_CLKGATE_CON(47), 4, GFLAGS),
--	GATE(ACLK_RKVENC0, "aclk_rkvenc0", "aclk_rkvenc0_root", RK3588_LINKED_CLK,
-+	GATE(ACLK_RKVENC0, "aclk_rkvenc0", "aclk_rkvenc0_root", 0,
- 			RK3588_CLKGATE_CON(47), 5, GFLAGS),
- 	COMPOSITE(CLK_RKVENC0_CORE, "clk_rkvenc0_core", gpll_cpll_aupll_npll_p, 0,
- 			RK3588_CLKSEL_CON(102), 14, 2, MFLAGS, 9, 5, DFLAGS,
-@@ -1754,10 +1732,10 @@ static struct rockchip_clk_branch rk3588_clk_branches[] __initdata = {
- 			RK3588_CLKGATE_CON(48), 6, GFLAGS),
- 
- 	/* vi */
--	COMPOSITE(ACLK_VI_ROOT, "aclk_vi_root", gpll_cpll_npll_aupll_spll_p, RK3588_LINKED_CLK,
-+	COMPOSITE(ACLK_VI_ROOT, "aclk_vi_root", gpll_cpll_npll_aupll_spll_p, 0,
- 			RK3588_CLKSEL_CON(106), 5, 3, MFLAGS, 0, 5, DFLAGS,
- 			RK3588_CLKGATE_CON(49), 0, GFLAGS),
--	COMPOSITE_NODIV(HCLK_VI_ROOT, "hclk_vi_root", mux_200m_100m_50m_24m_p, RK3588_LINKED_CLK,
-+	COMPOSITE_NODIV(HCLK_VI_ROOT, "hclk_vi_root", mux_200m_100m_50m_24m_p, 0,
- 			RK3588_CLKSEL_CON(106), 8, 2, MFLAGS,
- 			RK3588_CLKGATE_CON(49), 1, GFLAGS),
- 	COMPOSITE_NODIV(PCLK_VI_ROOT, "pclk_vi_root", mux_100m_50m_24m_p, 0,
-@@ -1851,8 +1829,6 @@ static struct rockchip_clk_branch rk3588_clk_branches[] __initdata = {
- 			RK3588_CLKGATE_CON(56), 0, GFLAGS),
- 	GATE(PCLK_TRNG0, "pclk_trng0", "pclk_vo0_root", 0,
- 			RK3588_CLKGATE_CON(56), 1, GFLAGS),
--	GATE(PCLK_VO0GRF, "pclk_vo0grf", "pclk_vo0_root", CLK_IGNORE_UNUSED,
--			RK3588_CLKGATE_CON(55), 10, GFLAGS),
- 	COMPOSITE(CLK_I2S4_8CH_TX_SRC, "clk_i2s4_8ch_tx_src", gpll_aupll_p, 0,
- 			RK3588_CLKSEL_CON(118), 5, 1, MFLAGS, 0, 5, DFLAGS,
- 			RK3588_CLKGATE_CON(56), 11, GFLAGS),
-@@ -1929,10 +1905,10 @@ static struct rockchip_clk_branch rk3588_clk_branches[] __initdata = {
- 	COMPOSITE(ACLK_VOP_ROOT, "aclk_vop_root", gpll_cpll_dmyaupll_npll_spll_p, 0,
- 			RK3588_CLKSEL_CON(110), 5, 3, MFLAGS, 0, 5, DFLAGS,
- 			RK3588_CLKGATE_CON(52), 0, GFLAGS),
--	COMPOSITE_NODIV(ACLK_VOP_LOW_ROOT, "aclk_vop_low_root", mux_400m_200m_100m_24m_p, RK3588_LINKED_CLK,
-+	COMPOSITE_NODIV(ACLK_VOP_LOW_ROOT, "aclk_vop_low_root", mux_400m_200m_100m_24m_p, 0,
- 			RK3588_CLKSEL_CON(110), 8, 2, MFLAGS,
- 			RK3588_CLKGATE_CON(52), 1, GFLAGS),
--	COMPOSITE_NODIV(HCLK_VOP_ROOT, "hclk_vop_root", mux_200m_100m_50m_24m_p, RK3588_LINKED_CLK,
-+	COMPOSITE_NODIV(HCLK_VOP_ROOT, "hclk_vop_root", mux_200m_100m_50m_24m_p, 0,
- 			RK3588_CLKSEL_CON(110), 10, 2, MFLAGS,
- 			RK3588_CLKGATE_CON(52), 2, GFLAGS),
- 	COMPOSITE_NODIV(PCLK_VOP_ROOT, "pclk_vop_root", mux_100m_50m_24m_p, 0,
-@@ -1998,8 +1974,6 @@ static struct rockchip_clk_branch rk3588_clk_branches[] __initdata = {
- 			RK3588_CLKGATE_CON(60), 9, GFLAGS),
- 	GATE(PCLK_TRNG1, "pclk_trng1", "pclk_vo1_root", 0,
- 			RK3588_CLKGATE_CON(60), 10, GFLAGS),
--	GATE(0, "pclk_vo1grf", "pclk_vo1_root", CLK_IGNORE_UNUSED,
--			RK3588_CLKGATE_CON(59), 12, GFLAGS),
- 	GATE(PCLK_S_EDP0, "pclk_s_edp0", "pclk_vo1_s_root", 0,
- 			RK3588_CLKGATE_CON(59), 14, GFLAGS),
- 	GATE(PCLK_S_EDP1, "pclk_s_edp1", "pclk_vo1_s_root", 0,
-@@ -2433,26 +2407,56 @@ static struct rockchip_clk_branch rk3588_clk_branches[] __initdata = {
- 	GATE(ACLK_AV1, "aclk_av1", "aclk_av1_pre", 0,
- 			RK3588_CLKGATE_CON(68), 2, GFLAGS),
- 
--	GATE_LINK(ACLK_ISP1_PRE, "aclk_isp1_pre", "aclk_isp1_root", "aclk_vi_root", 0, RK3588_CLKGATE_CON(26), 6, GFLAGS),
--	GATE_LINK(HCLK_ISP1_PRE, "hclk_isp1_pre", "hclk_isp1_root", "hclk_vi_root", 0, RK3588_CLKGATE_CON(26), 8, GFLAGS),
--	GATE_LINK(HCLK_NVM, "hclk_nvm", "hclk_nvm_root", "aclk_nvm_root", RK3588_LINKED_CLK, RK3588_CLKGATE_CON(31), 2, GFLAGS),
--	GATE_LINK(ACLK_USB, "aclk_usb", "aclk_usb_root", "aclk_vo1usb_top_root", 0, RK3588_CLKGATE_CON(42), 2, GFLAGS),
--	GATE_LINK(HCLK_USB, "hclk_usb", "hclk_usb_root", "hclk_vo1usb_top_root", 0, RK3588_CLKGATE_CON(42), 3, GFLAGS),
--	GATE_LINK(ACLK_JPEG_DECODER_PRE, "aclk_jpeg_decoder_pre", "aclk_jpeg_decoder_root", "aclk_vdpu_root", 0, RK3588_CLKGATE_CON(44), 7, GFLAGS),
--	GATE_LINK(ACLK_VDPU_LOW_PRE, "aclk_vdpu_low_pre", "aclk_vdpu_low_root", "aclk_vdpu_root", 0, RK3588_CLKGATE_CON(44), 5, GFLAGS),
--	GATE_LINK(ACLK_RKVENC1_PRE, "aclk_rkvenc1_pre", "aclk_rkvenc1_root", "aclk_rkvenc0", 0, RK3588_CLKGATE_CON(48), 3, GFLAGS),
--	GATE_LINK(HCLK_RKVENC1_PRE, "hclk_rkvenc1_pre", "hclk_rkvenc1_root", "hclk_rkvenc0", 0, RK3588_CLKGATE_CON(48), 2, GFLAGS),
--	GATE_LINK(HCLK_RKVDEC0_PRE, "hclk_rkvdec0_pre", "hclk_rkvdec0_root", "hclk_vdpu_root", 0, RK3588_CLKGATE_CON(40), 5, GFLAGS),
--	GATE_LINK(ACLK_RKVDEC0_PRE, "aclk_rkvdec0_pre", "aclk_rkvdec0_root", "aclk_vdpu_root", 0, RK3588_CLKGATE_CON(40), 6, GFLAGS),
--	GATE_LINK(HCLK_RKVDEC1_PRE, "hclk_rkvdec1_pre", "hclk_rkvdec1_root", "hclk_vdpu_root", 0, RK3588_CLKGATE_CON(41), 4, GFLAGS),
--	GATE_LINK(ACLK_RKVDEC1_PRE, "aclk_rkvdec1_pre", "aclk_rkvdec1_root", "aclk_vdpu_root", 0, RK3588_CLKGATE_CON(41), 5, GFLAGS),
--	GATE_LINK(ACLK_HDCP0_PRE, "aclk_hdcp0_pre", "aclk_vo0_root", "aclk_vop_low_root", 0, RK3588_CLKGATE_CON(55), 9, GFLAGS),
--	GATE_LINK(HCLK_VO0, "hclk_vo0", "hclk_vo0_root", "hclk_vop_root", 0, RK3588_CLKGATE_CON(55), 5, GFLAGS),
--	GATE_LINK(ACLK_HDCP1_PRE, "aclk_hdcp1_pre", "aclk_hdcp1_root", "aclk_vo1usb_top_root", 0, RK3588_CLKGATE_CON(59), 6, GFLAGS),
--	GATE_LINK(HCLK_VO1, "hclk_vo1", "hclk_vo1_root", "hclk_vo1usb_top_root", 0, RK3588_CLKGATE_CON(59), 9, GFLAGS),
--	GATE_LINK(ACLK_AV1_PRE, "aclk_av1_pre", "aclk_av1_root", "aclk_vdpu_root", 0, RK3588_CLKGATE_CON(68), 1, GFLAGS),
--	GATE_LINK(PCLK_AV1_PRE, "pclk_av1_pre", "pclk_av1_root", "hclk_vdpu_root", 0, RK3588_CLKGATE_CON(68), 4, GFLAGS),
--	GATE_LINK(HCLK_SDIO_PRE, "hclk_sdio_pre", "hclk_sdio_root", "hclk_nvm", 0, RK3588_CLKGATE_CON(75), 1, GFLAGS),
-+	/*
-+	 * Recent Rockchip SoCs have a new hardware block called Native Interface
-+	 * Unit (NIU), which gates clocks to devices behind them. These effectively
-+	 * need two parent clocks.
-+	 */
-+	GATE_LINK(ACLK_ISP1_PRE, "aclk_isp1_pre", "aclk_isp1_root", ACLK_VI_ROOT, 0,
-+			RK3588_CLKGATE_CON(26), 6, GFLAGS),
-+	GATE_LINK(HCLK_ISP1_PRE, "hclk_isp1_pre", "hclk_isp1_root", HCLK_VI_ROOT, 0,
-+			RK3588_CLKGATE_CON(26), 8, GFLAGS),
-+	GATE_LINK(HCLK_NVM, "hclk_nvm", "hclk_nvm_root", ACLK_NVM_ROOT, 0,
-+			RK3588_CLKGATE_CON(31), 2, GFLAGS),
-+	GATE_LINK(ACLK_USB, "aclk_usb", "aclk_usb_root", ACLK_VO1USB_TOP_ROOT, 0,
-+			RK3588_CLKGATE_CON(42), 2, GFLAGS),
-+	GATE_LINK(HCLK_USB, "hclk_usb", "hclk_usb_root", HCLK_VO1USB_TOP_ROOT, 0,
-+			RK3588_CLKGATE_CON(42), 3, GFLAGS),
-+	GATE_LINK(ACLK_JPEG_DECODER_PRE, "aclk_jpeg_decoder_pre", "aclk_jpeg_decoder_root",
-+			ACLK_VDPU_ROOT, 0,
-+			RK3588_CLKGATE_CON(44), 7, GFLAGS),
-+	GATE_LINK(ACLK_VDPU_LOW_PRE, "aclk_vdpu_low_pre", "aclk_vdpu_low_root", ACLK_VDPU_ROOT, 0,
-+			RK3588_CLKGATE_CON(44), 5, GFLAGS),
-+	GATE_LINK(ACLK_RKVENC1_PRE, "aclk_rkvenc1_pre", "aclk_rkvenc1_root", ACLK_RKVENC0, 0,
-+			RK3588_CLKGATE_CON(48), 3, GFLAGS),
-+	GATE_LINK(HCLK_RKVENC1_PRE, "hclk_rkvenc1_pre", "hclk_rkvenc1_root", HCLK_RKVENC0, 0,
-+			RK3588_CLKGATE_CON(48), 2, GFLAGS),
-+	GATE_LINK(HCLK_RKVDEC0_PRE, "hclk_rkvdec0_pre", "hclk_rkvdec0_root", HCLK_VDPU_ROOT, 0,
-+			RK3588_CLKGATE_CON(40), 5, GFLAGS),
-+	GATE_LINK(ACLK_RKVDEC0_PRE, "aclk_rkvdec0_pre", "aclk_rkvdec0_root", ACLK_VDPU_ROOT, 0,
-+			RK3588_CLKGATE_CON(40), 6, GFLAGS),
-+	GATE_LINK(HCLK_RKVDEC1_PRE, "hclk_rkvdec1_pre", "hclk_rkvdec1_root", HCLK_VDPU_ROOT, 0,
-+			RK3588_CLKGATE_CON(41), 4, GFLAGS),
-+	GATE_LINK(ACLK_RKVDEC1_PRE, "aclk_rkvdec1_pre", "aclk_rkvdec1_root", ACLK_VDPU_ROOT, 0,
-+			RK3588_CLKGATE_CON(41), 5, GFLAGS),
-+	GATE_LINK(ACLK_HDCP0_PRE, "aclk_hdcp0_pre", "aclk_vo0_root", ACLK_VOP_LOW_ROOT, 0,
-+			RK3588_CLKGATE_CON(55), 9, GFLAGS),
-+	GATE_LINK(HCLK_VO0, "hclk_vo0", "hclk_vo0_root", HCLK_VOP_ROOT, 0,
-+			RK3588_CLKGATE_CON(55), 5, GFLAGS),
-+	GATE_LINK(ACLK_HDCP1_PRE, "aclk_hdcp1_pre", "aclk_hdcp1_root", ACLK_VO1USB_TOP_ROOT, 0,
-+			RK3588_CLKGATE_CON(59), 6, GFLAGS),
-+	GATE_LINK(HCLK_VO1, "hclk_vo1", "hclk_vo1_root", HCLK_VO1USB_TOP_ROOT, 0,
-+			RK3588_CLKGATE_CON(59), 9, GFLAGS),
-+	GATE_LINK(ACLK_AV1_PRE, "aclk_av1_pre", "aclk_av1_root", ACLK_VDPU_ROOT, 0,
-+			RK3588_CLKGATE_CON(68), 1, GFLAGS),
-+	GATE_LINK(PCLK_AV1_PRE, "pclk_av1_pre", "pclk_av1_root", HCLK_VDPU_ROOT, 0,
-+			RK3588_CLKGATE_CON(68), 4, GFLAGS),
-+	GATE_LINK(HCLK_SDIO_PRE, "hclk_sdio_pre", "hclk_sdio_root", HCLK_NVM, 0,
-+			RK3588_CLKGATE_CON(75), 1, GFLAGS),
-+	GATE_LINK(PCLK_VO0GRF, "pclk_vo0grf", "pclk_vo0_root", HCLK_VO0, 0,
-+			RK3588_CLKGATE_CON(55), 10, GFLAGS),
-+	GATE_LINK(0, "pclk_vo1grf", "pclk_vo1_root", HCLK_VO1, CLK_IS_CRITICAL,
-+			RK3588_CLKGATE_CON(59), 12, GFLAGS),
- };
- 
- static void __init rk3588_clk_init(struct device_node *np)
--- 
-2.17.1
+It seems that rot must be parked on XO, otherwise mdp branch will fail
+to enable after late init. I was hoping these two clks weren't related,
+but they must be related somehow. I've parked rot on XO right after
+disp_cc_pll0 is disabled and that also works.
 
+My guess is the GDSC is restoring rcg registers, and that restoring
+requires the source clk to be running (maybe they hardcoded that
+requirement in the hardware). In the case of rot, the source clk is
+disp_cc_pll0, which is always enabled during boot. When I hack it so
+that disp_cc_pll0 is disabled at the end of dispcc probe, and rot is the
+only clk still sourcing from it, nothing is busted until the gdsc powers
+off, saves state, and then powers on again. That's the case where I
+reported the stuck clk warning happens early, before late init. Once the
+gdsc powers on the second time, it must wedge the rcg hardware and
+affect mdp even though mdp was parked on XO.
+
+Fun! This must be why qcom didn't want to have dirty registers. It must
+confuse the gdsc hardware and cause it to restore the clk to the parent
+that isn't enabled.
+
+BTW, I tried changing the rcg source for rot after the mdp branch is
+stuck off, and the rot rcg goes from reporting root off, to reporting
+root is on, which is weird. Maybe that's just showing the rot rcg is in
+some sort of wedged state as well.
+
+So long story short, I think I understand the problem now. The gdsc is
+saving and restoring the register contents, and enabling the rcg clks
+when it does so. If that runs into some stuck rcg problem, it will wedge
+the clks in weird ways. The only safe thing to do is make sure that when
+the gdsc is turned off, all the rcgs are parked on sources that are
+going to be enabled when the gdsc powers on the next time. For now,
+we've decided that source is XO, because it is simple. It seems like
+that means we need to park all shared rcg clks at registration time.
+Or we need to teach the clks about their gdsc and switch rcgs over to
+the safe source when disabling the gdsc.
+
+Parking at init is easy, we call clk_rcg2_shared_disable() from the init
+routine, and that parks the clk and stashes the config register. I just
+don't know if that causes some sort of problem for bootsplash logic. The
+mdp clk could be running quite fast, and we'll basically force it over
+to XO immediately. It may be better to teach the gdsc code to park the
+rcgs when disabling the gdsc. Then we can maintain the mdp clk rate out
+of boot for as long as the gdsc is enabled out of boot, and we contain
+the "fix" to where the problem is, gdsc can't restore a clk sourcing
+something that's off. If we did this we still need to fix the parent
+mapping at clk registration, i.e. parked_cfg needs to be read from the
+hardware so that get_parent works.
