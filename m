@@ -1,127 +1,104 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B192238DE1;
-	Fri, 10 Nov 2023 18:07:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA7E2231E
+	for <linux-clk@vger.kernel.org>; Fri, 10 Nov 2023 18:10:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="osp9Dsib"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30E96C433CC;
-	Fri, 10 Nov 2023 18:07:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1699639673;
-	bh=PwI1HMfc9Px11Tdj+NXcNTpHBZq5il3Ma/LVyONVjRg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=osp9DsibB3jQ/+hYBLD4x+ZLmbK8DShmrosXu7V3XLTAGt+CCQppRvCqC0RUuKl76
-	 w+CtqyYCmBaJlUgB84RCCk8Wx6moRO/0qZAqlIHhRi/8FL9v7rgECe/KF9P+Hq9V6N
-	 L63Pdb+dHcgunih2OyOLPMMpqStmliLveJTVKL36gLi8ekdXeZj6q/oJiEQJGfWqYy
-	 mk/oLWpJiPnGAHL1/0xDn9xsP9YSnuCwEGpy37HAur5gk0zsVoUbhkkrcHaehDFwfp
-	 78HdhQk/WLs2vdMbT30r4AxXWnro9q5opjz+Try3Uen9Y785IjeRibT+QpcXkfS2GZ
-	 eNwKVTfKdx82Q==
-Date: Fri, 10 Nov 2023 18:07:43 +0000
-From: Conor Dooley <conor@kernel.org>
-To: zhangqing <zhangqing@rock-chips.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Conor Dooley <conor.dooley@microchip.com>, mturquette@baylibre.com,
-	sboyd@kernel.org, kever.yang@rock-chips.com, heiko@sntech.de,
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	huangtao@rock-chips.com, andy.yan@rock-chips.com,
-	Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: Re: [PATCH v5 3/4] dt-bindings: clock: rk3588: export PCLK_VO1GRF
- clk id
-Message-ID: <20231110-dreamt-revival-5b360472febd@roley>
-References: <20231108061822.4871-1-zhangqing@rock-chips.com>
- <20231108061822.4871-4-zhangqing@rock-chips.com>
- <20231108-donation-uncertain-c4d0f560c420@spud>
- <2e520a06-0ff1-76ef-2a72-ab6663738b45@rock-chips.com>
- <20231109-send-pushchair-45b37551102a@wendy>
- <a11c847c-4f95-ea7b-3497-6ada0586c486@rock-chips.com>
- <dee8031f-d739-442c-988c-3df61d92c0d3@linaro.org>
- <f013df81-670e-37c4-c1a7-e1302352ca20@rock-chips.com>
- <f58c8f3f-7b34-47e7-a33a-bddb6106fec7@linaro.org>
- <53059eca-5c55-6dde-6246-40ed9f2dca91@rock-chips.com>
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="D/J8BKdI"
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65FA5B1143
+	for <linux-clk@vger.kernel.org>; Fri, 10 Nov 2023 10:09:40 -0800 (PST)
+Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-407c3adef8eso18091865e9.2
+        for <linux-clk@vger.kernel.org>; Fri, 10 Nov 2023 10:09:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1699639777; x=1700244577; darn=vger.kernel.org;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
+        bh=ng8cN8zDe0R53w/cTJkEAYIlBVh/fEa75Si1UCaSOlg=;
+        b=D/J8BKdILAV8wMXwLXL8xLtXgoix0sdkX2dL7xB/bEZjOAHu1okNtGz8vcyNowD+4W
+         tTV8k0qAqPKZ7U8Fd0GQVUB9UuDxUbF8LYga3Tcs+tglz69b5xU2psN/+C1SBCuj8P0t
+         4qg7icGHCgxKiA+lIGE3xfMOluE8mj+FOo2nXDnTUmjeSx+VPqYocL38Ygz7ZZDuDoZW
+         FcsDz6p1ehW/UvTW1PAaDQH+DsFGpFbKhEziDLfrX28ylQzNPy9Mg4Angs/5cxRKDvuR
+         IPhagJ84Qex72XiXHyMw0dueNIr3ayW48GHESKa6Fol1TFrusf+2z3iIdRC97QDNvUQE
+         fqNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699639777; x=1700244577;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ng8cN8zDe0R53w/cTJkEAYIlBVh/fEa75Si1UCaSOlg=;
+        b=dtvH4RaNS8qw6Y8341ciHrDRcD13qRwQPvUdZUTsACrCd/tmEpuHb7+6E5f6tnUZqc
+         Z/c8QzHlqqhStPsJA3PTk674e9YZCZM4Hawk5foAWkPdP0mH3fi0MggceAnGVIUyCqvY
+         3s+/RyTqzYYx21bIXK/gqq2b47rM+wafQjYYCggxwcAnqLtOLN5ZSIqB5HcUijc0vt6i
+         9HKogchHL/CI9Dgv3y4icnP4NokL6iWjd2EbkTxywPe93hin/L4oqwMlwb6su415L/eO
+         6RrL+NKl+fbb1836hIUwF5BdfWL1rBGc15MrZ1Z8ynqGxfmZen+8WnHoI7b1gS3Jy/mX
+         X5PQ==
+X-Gm-Message-State: AOJu0YzjcwOZDgeeDG3GXcnSgfFyQ/jA5pTo4bqFe9LHYMzry8ylKZWq
+	fv6goOBTXlr1aYEXbl/DmbO8rA==
+X-Google-Smtp-Source: AGHT+IHFi71LzP56sECK9cPzRrAXiprWtaEqlntnc4nZaUr/6hWWb4qHltt8nbj1kZsiALkEip55Kg==
+X-Received: by 2002:a05:600c:4703:b0:405:3cc5:1105 with SMTP id v3-20020a05600c470300b004053cc51105mr116766wmo.8.1699639777205;
+        Fri, 10 Nov 2023 10:09:37 -0800 (PST)
+Received: from localhost ([2a01:e0a:3c5:5fb1:2169:e902:f0d0:1845])
+        by smtp.gmail.com with ESMTPSA id k4-20020a5d66c4000000b00327b5ca093dsm2359847wrw.117.2023.11.10.10.09.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Nov 2023 10:09:36 -0800 (PST)
+References: <20231106085554.3237511-1-xianwei.zhao@amlogic.com>
+ <eab3869c-7529-484d-983f-dd85ecfbeb0b@linaro.org>
+User-agent: mu4e 1.8.13; emacs 29.1
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Xianwei Zhao
+ <xianwei.zhao@amlogic.com>, linux-arm-kernel@lists.infradead.org,
+ linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
+ <robh+dt@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Kevin Hilman <khilman@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Chuan Liu
+ <chuan.liu@amlogic.com>
+Subject: Re: [PATCH V6 0/4] Add C3 SoC PLLs and Peripheral clock
+Date: Fri, 10 Nov 2023 18:50:25 +0100
+In-reply-to: <eab3869c-7529-484d-983f-dd85ecfbeb0b@linaro.org>
+Message-ID: <1j34xdcwf4.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="OExvhfaQ444Ef20I"
-Content-Disposition: inline
-In-Reply-To: <53059eca-5c55-6dde-6246-40ed9f2dca91@rock-chips.com>
+Content-Type: text/plain
 
 
---OExvhfaQ444Ef20I
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri 10 Nov 2023 at 14:20, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
 
-> Ok , I'll drop this change in PATCH V6.
+> On 06/11/2023 09:55, Xianwei Zhao wrote:
+>> The patchset adds support for the peripheral and PLL clock controller
+>> found on the Amlogic C3 SoC family, such as C302X or C308L.
+>> 
+>> Changes since V5 [3]:
+>>  - Fix some typo and modify formart for MARCO. Suggested by Jerome.
+>>  - Add pad clock for peripheral input clock in bindings.
+>>  - Add some description for explaining why ddr_dpll_pt_clk and cts_msr_clk are out of tree.
+>> Changes since V4 [10]:
+>>  - Change some fw_name of clocks. Suggested by Jerome.
+>>  - Delete minItem of clocks.
+>>  - Add CLk_GET_RATE_NOCACHE flags for gp1_pll
+>>  - Fix some format. and fix width as 8 for mclk_pll_dco.
+>>  - exchange gate and divder for fclk_50m clock.
+>>  - add CLK_SET_RATE_PARENT for axi_a_divder & axi_b_divder.
+>>  - add CLK_IS_CRITICAL for axi_clk
+>>  - Optimized macro define for pwm clk.
+>>  - add cts_oscin_clk mux between 24M and 32k
+>>  - add some missing gate clock, such as ddr_pll.
+>
+> Where are all these versions? Please provide links.
 
-> =E5=BC=A0=E6=99=B4
-> =E7=91=9E=E8=8A=AF=E5=BE=AE=E7=94=B5=E5=AD=90=E8=82=A1=E4=BB=BD=E6=9C=89=
-=E9=99=90=E5=85=AC=E5=8F=B8
-> Rockchip Electronics Co.,Ltd
-> =E5=9C=B0=E5=9D=80=EF=BC=9A=E7=A6=8F=E5=BB=BA=E7=9C=81=E7=A6=8F=E5=B7=9E=
-=E5=B8=82=E9=93=9C=E7=9B=98=E8=B7=AF=E8=BD=AF=E4=BB=B6=E5=A4=A7=E9=81=9389=
-=E5=8F=B7=E8=BD=AF=E4=BB=B6=E5=9B=ADA=E5=8C=BA21=E5=8F=B7=E6=A5=BC
-> Add:No.21 Building, A District, No.89 Software Boulevard Fuzhou, Fujian 3=
-50003, P.R.China
-> Tel:+86-0591-83991906-8601
-> =E9=82=AE=E7=BC=96=EF=BC=9A350003
-> E-mail:elaine.zhang@rock-chips.com
-> *************************************************************************=
-***
-> =E4=BF=9D=E5=AF=86=E6=8F=90=E7=A4=BA=EF=BC=9A=E6=9C=AC=E9=82=AE=E4=BB=B6=
-=E5=8F=8A=E5=85=B6=E9=99=84=E4=BB=B6=E5=90=AB=E6=9C=89=E6=9C=BA=E5=AF=86=E4=
-=BF=A1=E6=81=AF=EF=BC=8C=E4=BB=85=E5=8F=91=E9=80=81=E7=BB=99=E6=9C=AC=E9=82=
-=AE=E4=BB=B6=E6=89=80=E6=8C=87=E7=89=B9=E5=AE=9A=E6=94=B6=E4=BB=B6=E4=BA=BA=
-=E3=80=82=E8=8B=A5=E9=9D=9E=E8=AF=A5=E7=89=B9=E5=AE=9A=E6=94=B6=E4=BB=B6=E4=
-=BA=BA=EF=BC=8C=E8=AF=B7=E5=8B=BF=E5=A4=8D=E5=88=B6=E3=80=81=E4=BD=BF=E7=94=
-=A8=E6=88=96=E6=8A=AB=E9=9C=B2=E6=9C=AC=E9=82=AE=E4=BB=B6=E7=9A=84=E4=BB=BB=
-=E4=BD=95=E5=86=85=E5=AE=B9=E3=80=82=E8=8B=A5=E8=AF=AF=E6=94=B6=E6=9C=AC=E9=
-=82=AE=E4=BB=B6=EF=BC=8C=E8=AF=B7=E4=BB=8E=E7=B3=BB=E7=BB=9F=E4=B8=AD=E6=B0=
-=B8=E4=B9=85=E6=80=A7=E5=88=A0=E9=99=A4=E6=9C=AC=E9=82=AE=E4=BB=B6=E5=8F=8A=
-=E6=89=80=E6=9C=89=E9=99=84=E4=BB=B6=EF=BC=8C=E5=B9=B6=E4=BB=A5=E5=9B=9E=E5=
-=A4=8D=E9=82=AE=E4=BB=B6=E6=88=96=E5=85=B6=E4=BB=96=E6=96=B9=E5=BC=8F=E5=8D=
-=B3=E5=88=BB=E5=91=8A=E7=9F=A5=E5=8F=91=E4=BB=B6=E4=BA=BA=E3=80=82=E7=A6=8F=
-=E5=B7=9E=E7=91=9E=E8=8A=AF=E5=BE=AE=E7=94=B5=E5=AD=90=E6=9C=89=E9=99=90=E5=
-=85=AC=E5=8F=B8=E6=8B=A5=E6=9C=89=E6=9C=AC=E9=82=AE=E4=BB=B6=E4=BF=A1=E6=81=
-=AF=E7=9A=84=E8=91=97=E4=BD=9C=E6=9D=83=E5=8F=8A=E8=A7=A3=E9=87=8A=E6=9D=83=
-=EF=BC=8C=E7=A6=81=E6=AD=A2=E4=BB=BB=E4=BD=95=E6=9C=AA=E7=BB=8F=E6=8E=88=E6=
-=9D=83=E8=AE=B8=E5=8F=AF=E7=9A=84=E4=BE=B5=E6=9D=83=E8=A1=8C=E4=B8=BA=E3=80=
-=82
->=20
-> IMPORTANT NOTICE: This email is from Fuzhou Rockchip Electronics Co., Ltd=
- .The contents of this email and any attachments may contain information th=
-at is privileged, confidential and/or exempt from disclosure under applicab=
-le law and relevant NDA. If you are not the intended recipient, you are her=
-eby notified that any disclosure, copying, distribution, or use of the info=
-rmation is STRICTLY PROHIBITED. Please immediately contact the sender as so=
-on as possible and destroy the material in its entirety in any format. Than=
-k you.
->=20
-> *************************************************************************=
-***
->=20
+I have provided some guidance offline at the request of Amlogic.
 
-Please also drop this legal footers.
+This should have been v4 and the cover-letter should have summarized the
+change from v3 to this. Unfortunately it was sent as v6 :/
 
-Thanks,
-Conor.
+>
+> Best regards,
+> Krzysztof
 
---OExvhfaQ444Ef20I
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEARYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZU5xagAKCRB4tDGHoIJi
-0mRqAP4yZmW1RPmA4GZetYj3jVRckaKN7UW79TtmSrKLKPJ7xwD9FbIVjxmE/4yT
-Wbc/0ZnYDI9ffUVgJa9bqOCLpHMNGwk=
-=z8Ye
------END PGP SIGNATURE-----
-
---OExvhfaQ444Ef20I--
