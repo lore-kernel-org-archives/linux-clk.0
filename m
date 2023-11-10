@@ -1,50 +1,50 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F8F18E08
-	for <linux-clk@vger.kernel.org>; Fri, 10 Nov 2023 13:23:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80931199B4
+	for <linux-clk@vger.kernel.org>; Fri, 10 Nov 2023 13:24:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l3qVCSMp"
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77602A751E
-	for <linux-clk@vger.kernel.org>; Fri, 10 Nov 2023 05:23:11 -0800 (PST)
-Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-4084de32db5so15808355e9.0
-        for <linux-clk@vger.kernel.org>; Fri, 10 Nov 2023 05:23:11 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F4xnra2i"
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C54B0A7522
+	for <linux-clk@vger.kernel.org>; Fri, 10 Nov 2023 05:24:42 -0800 (PST)
+Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-4084095722aso15153665e9.1
+        for <linux-clk@vger.kernel.org>; Fri, 10 Nov 2023 05:24:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1699622590; x=1700227390; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1699622681; x=1700227481; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=BYdCghmYd1Gd+wVY9twL2PNBn7/RrEI+qPFM3x//Sis=;
-        b=l3qVCSMp87zdU4x5KtBnAEU6vxjLkYSZJeY5KDzNP8spgDTd6miSi3S/HqzzZmAWmf
-         7p4Wv0B5IHqqYohuQM6mui7D85ISY25deralQ1NL60eijtSADkeiG5D9nEb0beMcbGDE
-         Stfgdrp7BzfLGK8+qEAgEuuwnqx0rmbDKXGSo2euMXjLv5skDLnJwrMImwBsqD/u1BBf
-         MzqQ21lpeF26JpUcBisEXZjSeynGnVDUx9oq6e1D4dI2G2HZI7q37Um+fpe8YLRzeANy
-         DXLhuFR7ks6fKEQ4I+7W1Xfkj6OEVZz1voBmpTTsVS0Yw8RsGUpl20p3rIBZUnLDKHZW
-         mbJA==
+        bh=mnZfV2q0+s2CpN5/DatQthuQNf7R4Y9ktwlMu9GlmRg=;
+        b=F4xnra2iF6rJJ+g9+H5wfBVUEWN+AyKQSk3W5RKvmfYVY4MQxouhwBDYpqCvFXNUFL
+         AoPgNsOgE2KNfg4vdCR5+VqQaa3zi9pnGY1Ft7UM8zMrGlYM0GFME/VvNAUa2h1UA3yO
+         +W4wtVlh1c22XbAB8cFncy8BN1dPa6E27JWLwDcg+TgTt5I9DcnXsZAKwggoEVaYMrBJ
+         i7UUnBWwsyW/OVIsxB3qNPAUc+XCoCPtmrSyVrfhVoxHj2zYaT1Hl9x0FkTvbyoJntJn
+         0D3v5qyd4i1H6O1TcpG02/wKrPY2mS+4jDer24dfIlwI5lkkmD55yeTZ93yxCa0p4JT+
+         QMzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699622590; x=1700227390;
+        d=1e100.net; s=20230601; t=1699622681; x=1700227481;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BYdCghmYd1Gd+wVY9twL2PNBn7/RrEI+qPFM3x//Sis=;
-        b=mMP93grpRGDZWDp8t0vZu/Jgg3ltr6vgaNf7e77zGwdg3g1atDb9sv+Gi8uJOTPV9B
-         hCJTlsIxgEeXqxWQ1TsWGGW4jevXgUkHNPeZK7476TQHTaFQ4Do7hiNRO3PALoKqpILg
-         JKmpqyFqnYdN8b/JgccRABRNI80YhcLnUZoIgH+QuQKSHnwjkKiKZog+C2dhKirxx2kp
-         iT4ttuLrsDLoYe8mmbiLxBeiWjOzHWAljXEgWQxqqV6xyAh7moZwIj9G0D6AmM8uiKO4
-         M70vKCxEm7byorhv/X8oVsy423a7DTnLktUYisnuVTxdkUFNV/9GC3ZUjBHSXq987FxZ
-         OzIQ==
-X-Gm-Message-State: AOJu0YwqpOxsrYI1KWV9Shhwx3ereucdry4oPpU6sH6EtysHQg/hMn60
-	prTjifXBbDkTJQuZXs1yKgwPMQ==
-X-Google-Smtp-Source: AGHT+IE95msiQt+QGvFTMOS1WPz9UddiJxhiVBF1CyYOsty0Tskrxtvc9jQfKczT52RCWQBoXMmzJQ==
-X-Received: by 2002:a05:600c:19cd:b0:409:3f53:c9c7 with SMTP id u13-20020a05600c19cd00b004093f53c9c7mr6691665wmq.35.1699622589872;
-        Fri, 10 Nov 2023 05:23:09 -0800 (PST)
+        bh=mnZfV2q0+s2CpN5/DatQthuQNf7R4Y9ktwlMu9GlmRg=;
+        b=f32JSzKcbGXJ7X3XuCfRLlx+T6OWr8fLWGDFy1IIizTa5uATS7MYSrrmuUqwX+9uDf
+         otNukMQZ0YhkzhVXX+Xp68xqWu5u/7OhiiILqYrWwHFSdKGlOrncJHpe6hdR9W1QUBDG
+         pEpGJwSODYCa8H+b5ZLIsHRkweEP5Zbfsob7vhMww4zxtupS9Om62uNeBb9XlR5t+UUF
+         5nO7P8bZMuOEBYEOrqLgoNRFpWW1uRMHaocsQXhBt0clFH8iKjm4m/Z42Ep7XDlKnJCb
+         WN62lE+2q1AV02u7XpdVtQgNh2V/bFOYDwG/lCMhjz8kwhAkMSyX1CSvZqwZGBfRo4bV
+         wVBg==
+X-Gm-Message-State: AOJu0YwPh1QB6xY/JNbdbxGQq0QHd7d5fpvFBuwd2q+rGEAaVwH1v3Pa
+	QF55WwmZTxel9ySKqhBjo0+RlQ==
+X-Google-Smtp-Source: AGHT+IExN1tN1zWwTXGu79ToYWmaOD8R+0nkqDdsx+Z8vmuOqz8sCII3ySxe/8NC79hrJGmcraqczA==
+X-Received: by 2002:a05:600c:4e8a:b0:408:4266:12db with SMTP id f10-20020a05600c4e8a00b00408426612dbmr7150306wmq.13.1699622681107;
+        Fri, 10 Nov 2023 05:24:41 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.218.126])
-        by smtp.gmail.com with ESMTPSA id 8-20020a05600c22c800b0040303a9965asm5083419wmg.40.2023.11.10.05.23.08
+        by smtp.gmail.com with ESMTPSA id 8-20020a05600c22c800b0040303a9965asm5083419wmg.40.2023.11.10.05.24.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Nov 2023 05:23:09 -0800 (PST)
-Message-ID: <a7497ecd-8516-4f6d-8ea6-5c2f7a5ea276@linaro.org>
-Date: Fri, 10 Nov 2023 14:23:07 +0100
+        Fri, 10 Nov 2023 05:24:40 -0800 (PST)
+Message-ID: <8d9ec256-fbea-4711-966c-8c68d83eeb1f@linaro.org>
+Date: Fri, 10 Nov 2023 14:24:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -52,8 +52,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V6 1/4] dt-bindings: clock: add Amlogic C3 PLL clock
- controller bindings
+Subject: Re: [PATCH V6 2/4] dt-bindings: clock: add Amlogic C3 peripherals
+ clock controller bindings
 Content-Language: en-US
 To: Xianwei Zhao <xianwei.zhao@amlogic.com>,
  linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
@@ -68,7 +68,7 @@ Cc: Neil Armstrong <neil.armstrong@linaro.org>,
  Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
  Chuan Liu <chuan.liu@amlogic.com>
 References: <20231106085554.3237511-1-xianwei.zhao@amlogic.com>
- <20231106085554.3237511-2-xianwei.zhao@amlogic.com>
+ <20231106085554.3237511-3-xianwei.zhao@amlogic.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -114,21 +114,31 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231106085554.3237511-2-xianwei.zhao@amlogic.com>
+In-Reply-To: <20231106085554.3237511-3-xianwei.zhao@amlogic.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 06/11/2023 09:55, Xianwei Zhao wrote:
-> Add the PLL clock controller dt-bindings for Amlogic C3 SoC family.
-> 
-> Co-developed-by: Chuan Liu <chuan.liu@amlogic.com>
-> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
-> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
-> ---
+> @@ -0,0 +1,237 @@
 
+A nit, subject: drop second/last, redundant "bindings". The
+"dt-bindings" prefix is already stating that these are bindings.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
+> +/*
+> + * Copyright (c) 2023 Amlogic, Inc. All rights reserved.
+> + * Author: Chuan Liu <chuan.liu@amlogic.com>
+> + */
+> +
+> +#ifndef _DT_BINDINGS_CLOCK_AMLOGIC_C3_PERIPHERALS_CLKC_H
+> +#define _DT_BINDINGS_CLOCK_AMLOGIC_C3_PERIPHERALS_CLKC_H
+> +
+> +#define CLKID_PLL_SRC				0
+> +#define CLKID_MCLK_PLL_SRC			1
+> +#define CLKID_DDR_PLL_SRC			2
+> +#define CLKID_DDR_PHY_SRC                       3
 
+Fix the indentation. In all other patchses as well.
 
 Best regards,
 Krzysztof
