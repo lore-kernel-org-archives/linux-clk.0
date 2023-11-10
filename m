@@ -1,136 +1,119 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72CBA46;
-	Fri, 10 Nov 2023 01:40:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D42DDA47
+	for <linux-clk@vger.kernel.org>; Fri, 10 Nov 2023 01:53:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Rdm9QD4y"
-X-Greylist: delayed 592 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 09 Nov 2023 17:40:29 PST
-Received: from mail-m17244.xmail.ntesmail.com (mail-m17244.xmail.ntesmail.com [45.195.17.244])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C4D44689;
-	Thu,  9 Nov 2023 17:40:28 -0800 (PST)
-DKIM-Signature: a=rsa-sha256;
-	b=Rdm9QD4yO6LRbZBNE1A/b+RLokMwSHSQFNyKUAJYTpR4K9xUU8zLPUZ5xR2J69Hxh5A0rXeerIurDn+8czNto4RCBLRqAHgX00bVVDTTD9FXb6CpWOWOHChw2uUyUEgO1exOq+Sf/pstX5QlCHztlp7pu5XOyhEmIdKHwx5I/FI=;
-	c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=P0GaHyRA5mwU4r4OqdCotWnXqFS5RSLvYdfU/GQ9YsU=;
-	h=date:mime-version:subject:message-id:from;
-Received: from [172.16.12.49] (unknown [58.22.7.114])
-	by mail-m11877.qiye.163.com (Hmail) with ESMTPA id C3D5D4001CD;
-	Fri, 10 Nov 2023 09:23:39 +0800 (CST)
-Message-ID: <53059eca-5c55-6dde-6246-40ed9f2dca91@rock-chips.com>
-Date: Fri, 10 Nov 2023 09:23:39 +0800
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="olpycT7m"
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CB9B44BE
+	for <linux-clk@vger.kernel.org>; Thu,  9 Nov 2023 17:53:41 -0800 (PST)
+Received: by mail-pj1-x102d.google.com with SMTP id 98e67ed59e1d1-280200949c3so1376423a91.0
+        for <linux-clk@vger.kernel.org>; Thu, 09 Nov 2023 17:53:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1699581220; x=1700186020; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qnaT0Z5B52WFIm5oJG7or3ermouAvuswFcl8mKgJ3CY=;
+        b=olpycT7mQN47h0ShOHE/rUMv8r+EnZWGZL0dS1L3fOc6dLknBhWFfcJPjHQOZoAj7V
+         GENzIDKqu6Wl5G7KoFrfBY7HkL5g4vkbPQFH68aVlX73+ckmXv3g4ldirNBNAytTWeWt
+         cLpCyjngvIHIzq8eWNl1SlnvdWDDiqQ9qN4pqFG5j64An7acOjtOQBTs7107FoD5Y5+l
+         9I68yaWqS/IyfHYoPHHf8KDW6Eaj5f2SEXD43Xjaddzx/fZ9bq9YRzKXxfO3QdO61X1W
+         hQVJcNRaULHutGejeWcj7BQx1rQQhnh2m74U/zHrysA3CyvSXtGnp5Udx6mgtDvVvX0e
+         wMDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699581220; x=1700186020;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qnaT0Z5B52WFIm5oJG7or3ermouAvuswFcl8mKgJ3CY=;
+        b=FRJvQUSuYWoqGcTaiqD7oXHdgV2b7LBxXEMK9cBok6iscd6RtvhhIacHVHhBE8HdzE
+         rk/gm1hS/gkGqoP5Wui4wWzsDULqni1uRL4aD3FYYisq7ENQKnNFdq1srn7uMTeX/hM0
+         Ln2ZVmYJlkfrnFpl5sEAfqlItKrqaBQEJare6vP35VcpI0N1amoanRHKfS698htuUat3
+         ShxHNhoziIX0u+kaYrcWBEYAw8Cf93JZK8TUL2Z4ociLff1OzUfdgOwOjnIgwJeHhN9A
+         Y/E6IVG+646S5Ui3PEDTPUKZFJjDnb+KxI72+hoTcHX+6PL/kkT5qdeZnRqHnv38RImu
+         7Mmw==
+X-Gm-Message-State: AOJu0Yz3i2A85u2eMJOB3P4/8QP8F+jOG4ixP30PAFSaC3DicaceHdjS
+	KCiPA1KXmopfL9BivnIRzfgzVjKvn7siFWYteGw7tw==
+X-Google-Smtp-Source: AGHT+IF2CvB03hHPzpzbnXtgNai0HmCRBWMpJ5mKjo/l3DAboCyMcV2DzhG5H1Z8kNHGm3PqfcnZOixlZXvdL1XjSbI=
+X-Received: by 2002:a17:90b:1a91:b0:27d:114e:d4a3 with SMTP id
+ ng17-20020a17090b1a9100b0027d114ed4a3mr3203127pjb.14.1699581220612; Thu, 09
+ Nov 2023 17:53:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v5 3/4] dt-bindings: clock: rk3588: export PCLK_VO1GRF clk
- id
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Conor Dooley <conor.dooley@microchip.com>
-Cc: Conor Dooley <conor@kernel.org>, mturquette@baylibre.com,
- sboyd@kernel.org, kever.yang@rock-chips.com, heiko@sntech.de,
- robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, huangtao@rock-chips.com,
- andy.yan@rock-chips.com, Sebastian Reichel <sebastian.reichel@collabora.com>
-References: <20231108061822.4871-1-zhangqing@rock-chips.com>
- <20231108061822.4871-4-zhangqing@rock-chips.com>
- <20231108-donation-uncertain-c4d0f560c420@spud>
- <2e520a06-0ff1-76ef-2a72-ab6663738b45@rock-chips.com>
- <20231109-send-pushchair-45b37551102a@wendy>
- <a11c847c-4f95-ea7b-3497-6ada0586c486@rock-chips.com>
- <dee8031f-d739-442c-988c-3df61d92c0d3@linaro.org>
- <f013df81-670e-37c4-c1a7-e1302352ca20@rock-chips.com>
- <f58c8f3f-7b34-47e7-a33a-bddb6106fec7@linaro.org>
-From: zhangqing <zhangqing@rock-chips.com>
-In-Reply-To: <f58c8f3f-7b34-47e7-a33a-bddb6106fec7@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQkxMH1ZOHRhLTRgYHxgaQhpVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlOQ1VJSVVMVUpKT1lXWRYaDxIVHRRZQVlPS0hVSk5MSUpJVUpLS1VKQl
-	kG
-X-HM-Tid: 0a8bb6d3dea32eb3kusnc3d5d4001cd
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PzY6Qww6Czw0IQ01E0IcMxxC
-	GCJPCT1VSlVKTUJCTkxCT0lKS0tNVTMWGhIXVQETGhUcChIVHDsJFBgQVhgTEgsIVRgUFkVZV1kS
-	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUxLTkI3Bg++
+References: <20231109190925.2066-1-semen.protsenko@linaro.org> <3024abdf-e7e1-4063-a0ba-ed415317c200@infradead.org>
+In-Reply-To: <3024abdf-e7e1-4063-a0ba-ed415317c200@infradead.org>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Thu, 9 Nov 2023 19:53:28 -0600
+Message-ID: <CAPLW+4nKG3D2WmQxWJ=v3_J8y6vz26gLWC2NSSfu5gukgr2RGw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: samsung: Fix kernel-doc comments
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-在 2023/11/9 18:24, Krzysztof Kozlowski 写道:
-> On 09/11/2023 11:05, zhangqing wrote:
->> 在 2023/11/9 17:21, Krzysztof Kozlowski 写道:
->>> On 09/11/2023 09:06, zhangqing wrote:
->>>> 在 2023/11/9 15:29, Conor Dooley 写道:
->>>>> On Thu, Nov 09, 2023 at 02:27:38PM +0800, zhangqing wrote:
->>>>>> Hi:
->>>>>>
->>>>>> 在 2023/11/8 20:01, Conor Dooley 写道:
->>>>>>> On Wed, Nov 08, 2023 at 02:18:21PM +0800, Elaine Zhang wrote:
->>>>>>>> export PCLK_VO1GRF for DT.
->>>>>>>>
->>>>>>>> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
->>>>>>>> ---
->>>>>>>>      include/dt-bindings/clock/rockchip,rk3588-cru.h | 3 ++-
->>>>>>>>      1 file changed, 2 insertions(+), 1 deletion(-)
->>>>>>>>
->>>>>>>> diff --git a/include/dt-bindings/clock/rockchip,rk3588-cru.h b/include/dt-bindings/clock/rockchip,rk3588-cru.h
->>>>>>>> index 5790b1391201..50ba72980190 100644
->>>>>>>> --- a/include/dt-bindings/clock/rockchip,rk3588-cru.h
->>>>>>>> +++ b/include/dt-bindings/clock/rockchip,rk3588-cru.h
->>>>>>>> @@ -733,8 +733,9 @@
->>>>>>>>      #define ACLK_AV1_PRE			718
->>>>>>>>      #define PCLK_AV1_PRE			719
->>>>>>>>      #define HCLK_SDIO_PRE			720
->>>>>>>> +#define PCLK_VO1GRF			721
->>>>>>>> -#define CLK_NR_CLKS			(HCLK_SDIO_PRE + 1)
->>>>>>>> +#define CLK_NR_CLKS			(PCLK_VO1GRF + 1)
->>>>>>> This definition is part of the ABI, if it is safe to change it, then it
->>>>>>> is safe to delete it.
->>>>>> The new ID is to solve the niu clock dependency problem(Used in PATCH V5
->>>>>> 4/4).This new ID will also be used in DTS in the future.
->>>>>>
->>>>>> CLK_NR_CLKS represents the number of clocks used by the
->>>>>> drivers/clk/rockchip/clk-rkxxx.c. It is safe to modify it, but cannot delete
->>>>>> it.
->>>>> Then delete it from the header and move it to clk-rkxxx.c
->>>> I don't think it's more appropriate to move to clk-rkxxx.c.
->>>> Because if there are new requirements later, and add new clk id, it is
->>>> not in the same file, maybe forget to modify CLK_NR_CLKS.
->>> Then you are not allowed to change it. It's part of ABI.
->> If you just don't want me to modify CLK_NR_CLKS, can I use an unused ID,
->> like [PATCH V4 3/4]:
->>
->> -#define MBIST_MCLK_PDM1                        24
->> +#define PCLK_VO1GRF                    24
-> You cannot change the ABI.
+On Thu, Nov 9, 2023 at 4:42=E2=80=AFPM Randy Dunlap <rdunlap@infradead.org>=
+ wrote:
 >
-> I don't understand why do you insist on this path. You got clear
-> comments: either this is ABI, so it cannot be changed, or it has to be
-> dropped. You know insist on some third path. There is no such.
-Ok , I'll drop this change in PATCH V6.
 >
-> Best regards,
-> Krzysztof
 >
--- 
-张晴
-瑞芯微电子股份有限公司
-Rockchip Electronics Co.,Ltd
-地址：福建省福州市铜盘路软件大道89号软件园A区21号楼
-Add:No.21 Building, A District, No.89 Software Boulevard Fuzhou, Fujian 350003, P.R.China
-Tel:+86-0591-83991906-8601
-邮编：350003
-E-mail:elaine.zhang@rock-chips.com
-****************************************************************************
-保密提示：本邮件及其附件含有机密信息，仅发送给本邮件所指特定收件人。若非该特定收件人，请勿复制、使用或披露本邮件的任何内容。若误收本邮件，请从系统中永久性删除本邮件及所有附件，并以回复邮件或其他方式即刻告知发件人。福州瑞芯微电子有限公司拥有本邮件信息的著作权及解释权，禁止任何未经授权许可的侵权行为。
+> On 11/9/23 11:09, Sam Protsenko wrote:
+> > Fix some issues found in kernel-doc comments in Samsung CCF framework.
+> > It makes scripts/kernel-doc happy, which can be checked with:
+> >
+> >     $ find drivers/clk/samsung/ -name '*.[ch]' -exec \
+> >       scripts/kernel-doc -v -none {} \;
+> >
+> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> > Fixes: ddeac8d968d4 ("clk: samsung: add infrastructure to register cpu =
+clocks")
+> > Fixes: 721c42a351b1 ("clk: samsung: add common clock framework helper f=
+unctions for Samsung platforms")
+> > Fixes: 3ff6e0d8d64d ("clk: samsung: Add support to register rate_table =
+for samsung plls")
+> > ---
+> >  drivers/clk/samsung/clk-cpu.h | 2 +-
+> >  drivers/clk/samsung/clk.h     | 9 ++++++---
+> >  2 files changed, 7 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/clk/samsung/clk-cpu.h b/drivers/clk/samsung/clk-cp=
+u.h
+> > index fc9f67a3b22e..103f64193e42 100644
+> > --- a/drivers/clk/samsung/clk-cpu.h
+> > +++ b/drivers/clk/samsung/clk-cpu.h
+> > @@ -11,7 +11,7 @@
+> >  #include "clk.h"
+> >
+> >  /**
+> > - * struct exynos_cpuclk_data: config data to setup cpu clocks.
+> > + * struct exynos_cpuclk_cfg_data: config data to setup cpu clocks.
+>
+> Hm, OK, the ':' separator works. '-' is the documented separator here,
+> but it's not worth updating the patch for that.
+>
 
-IMPORTANT NOTICE: This email is from Fuzhou Rockchip Electronics Co., Ltd .The contents of this email and any attachments may contain information that is privileged, confidential and/or exempt from disclosure under applicable law and relevant NDA. If you are not the intended recipient, you are hereby notified that any disclosure, copying, distribution, or use of the information is STRICTLY PROHIBITED. Please immediately contact the sender as soon as possible and destroy the material in its entirety in any format. Thank you.
+Thanks for reviewing, Randy! As you probably already noticed, I
+updated ':' bits in patch #2. Just wanted to keep this one as minimal
+as possible.
 
-****************************************************************************
-
+> >   * @prate: frequency of the primary parent clock (in KHz).
+> >   * @div0: value to be programmed in the div_cpu0 register.
+> >   * @div1: value to be programmed in the div_cpu1 register.
+>
+> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+> Tested-by: Randy Dunlap <rdunlap@infradead.org>
+>
+> thanks.
+>
+> --
+> ~Randy
