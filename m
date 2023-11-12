@@ -1,433 +1,271 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B48314F7C;
-	Sun, 12 Nov 2023 16:56:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997ED182BD;
+	Sun, 12 Nov 2023 20:26:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SRnwT5KQ"
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 083FF1BEC;
-	Sun, 12 Nov 2023 08:56:56 -0800 (PST)
-Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-9c41e95efcbso551698766b.3;
-        Sun, 12 Nov 2023 08:56:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1699808214; x=1700413014; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=byjIoGTRKKP6Yru0xo4Lk+ItPgk7g9H5HT4yy5ccjk8=;
-        b=SRnwT5KQZ7J7yT+6RGsxu4bnoMVUSYbAOmsnjSHZtQT/9e8H5UVltFB/uFR+02rsM0
-         4D+H/o9FtdOXtX50F0N+vM0WIdo4amxzBEp1N7HUlMsxaqxyyV/ETSTQGji7NvBROoBE
-         2TbnjslaX9B+vDHeEDk+cP4lHR7x0j8jV+HRkYW4mysC8O9bSksD9miA0Ob4vkBhoykL
-         XzMRyLQPjcIGn88xSYTzJGcUqeOYpSiIZFOVWssrzh8KHdkL22F9ogOMbalREuTJ3u46
-         Hsjh/UOJA2y9YPW2JFNd5MvzHMOdcbZSNIWD8XBZHRdX2Pq7bUbAX1Pw0yrSmjhEz4WG
-         DDDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699808214; x=1700413014;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=byjIoGTRKKP6Yru0xo4Lk+ItPgk7g9H5HT4yy5ccjk8=;
-        b=cOLGHghOTHaLk+dGvnAjlK6HqsLePkfbp/iEw9hEBU0eg6Vj/37fNQQhRXHA7wa6/j
-         ZlGOT6AWJbsdughDzXSdCJMbl8ynsbbqBERi+FnQPG95QZK0PpGfm0dL9BJyE0tsb9Ol
-         sdkiN8QsX2BiuOBhcrA5g8cflK6+szFxkPQM1xRTST+//GGHmCDTf8pwf3sSzf1OilT3
-         1U4ehMBaur1XUbMETSjwRqK+g67n/NvyUqHqza4J0oJYCUUFPMwgH3M8vTkpWAP3eo9H
-         zJGcpCYHIynjYfnYdY4f9G6Ej9X/DxeKIY4jKJpLXba4RfgV0Z+6kvJVMMpEQf7ziVw+
-         0xfQ==
-X-Gm-Message-State: AOJu0YwdXeu4x3Hp8/ucPun0XGVaWJBEUf+MBIbt/AOwdAD/gkDN4c2Z
-	qNLDOuDKrKxYXCCg5SUSfKs=
-X-Google-Smtp-Source: AGHT+IE2mS+jzq0gvdaQ/f1Ud55X/x9LNxKqr5zVlPWQxqv5EfYGnUe2Dh7isCAqmIeJ375FJ3fZvw==
-X-Received: by 2002:a17:906:5fc7:b0:9b2:aa2f:ab69 with SMTP id k7-20020a1709065fc700b009b2aa2fab69mr2748317ejv.30.1699808214257;
-        Sun, 12 Nov 2023 08:56:54 -0800 (PST)
-Received: from standask-GA-A55M-S2HP ([188.123.113.247])
-        by smtp.gmail.com with ESMTPSA id k9-20020a170906054900b00997d7aa59fasm2804273eja.14.2023.11.12.08.56.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Nov 2023 08:56:53 -0800 (PST)
-Date: Sun, 12 Nov 2023 17:56:51 +0100
-From: Stanislav Jakubek <stano.jakubek@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>
-Cc: bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Artur Weber <aweber.kernel@gmail.com>
-Subject: [PATCH v3] dt-bindings: clock: brcm,kona-ccu: convert to YAML
-Message-ID: <ZVED01t3+coBd44x@standask-GA-A55M-S2HP>
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="c7awyXEH"
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 303EF210E;
+	Sun, 12 Nov 2023 12:26:43 -0800 (PST)
+Received: from mercury (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sre)
+	by madras.collabora.co.uk (Postfix) with ESMTPSA id 70DC46607285;
+	Sun, 12 Nov 2023 20:26:41 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1699820801;
+	bh=XhOtr6qNHJqXwERbWW6J7QMBUzqPDndZpiOWJCbArdI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c7awyXEHNjcpI2tAMCar+Opag+p/HznWijBw6N31Rr1ujGTxjbivj6GBWZTelHFCH
+	 QBypSn3o68uxcidLeZiik4kn5a/nE3xbb9ySebgXpGgUV6MYM54mFrdymEN2DfcdYo
+	 nNzJye35cz4g6pHLFMproCh4tbLCW/OAj8Y8D2gZzDGRoOKNe4+Dv+rDmsEWer+BGY
+	 ndga6qNX9LPNrq9wI2u+HC6e+ux+X4eSlWFObC6tihOXpZQdd9LoHPAY0GYvE4u5i4
+	 REvp+XVzWTsdHexKDvSRvzwWOWcsbj1f50774f1KhinWn6Bv0JMXM9AsR8/eKsF9f+
+	 2aYBRk072c5yQ==
+Received: by mercury (Postfix, from userid 1000)
+	id 80F43106323E; Sun, 12 Nov 2023 21:26:39 +0100 (CET)
+Date: Sun, 12 Nov 2023 21:26:39 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
+	Corentin Labbe <clabbe@baylibre.com>, davem@davemloft.net,
+	herbert@gondor.apana.org.au, krzysztof.kozlowski+dt@linaro.org,
+	mturquette@baylibre.com, p.zabel@pengutronix.de, robh+dt@kernel.org,
+	sboyd@kernel.org, ricardo@pardini.net, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH 5/6] reset: rockchip: secure reset must be used by SCMI
+Message-ID: <20231112202639.obvmnjlt4mpa52qr@mercury.elektranox.org>
+References: <20231107155532.3747113-1-clabbe@baylibre.com>
+ <20231107155532.3747113-6-clabbe@baylibre.com>
+ <f1b24f19-c210-4f55-b40f-ab063e7eeb22@linaro.org>
+ <11278271.CDJkKcVGEf@diego>
+ <d82865bc-29a7-4150-876e-489e0d797699@linaro.org>
+ <20231111205115.6hkhjj37ypeq45ax@mercury.elektranox.org>
+ <4f86c7da-5589-4451-89cb-739b97b67170@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4f86c7da-5589-4451-89cb-739b97b67170@linaro.org>
 
-Convert Broadcom Kona family clock controller unit (CCU) bindings
-to DT schema.
+Hi,
 
-Changes during conversion:
-  - remove "dmac" from clock-output-names for brcm,bcm11351-master-ccu,
-    such a clock doesn't exist
-  - remove "uartb4" from clock-output-names for brcm,bcm21664-slave-ccu,
-    such a clock doesn't exist
+On Sat, Nov 11, 2023 at 10:28:59PM +0100, Krzysztof Kozlowski wrote:
+> On 11/11/2023 21:51, Sebastian Reichel wrote:
+> > Hi,
+> > 
+> > On Tue, Nov 07, 2023 at 06:45:03PM +0100, Krzysztof Kozlowski wrote:
+> >> On 07/11/2023 18:35, Heiko Stübner wrote:
+> >>> Am Dienstag, 7. November 2023, 17:21:41 CET schrieb Krzysztof Kozlowski:
+> >>>> On 07/11/2023 16:55, Corentin Labbe wrote:
+> >>>>> While working on the rk3588 crypto driver, I loose lot of time
+> >>>>> understanding why resetting the IP failed.
+> >>>>> This is due to RK3588_SECURECRU_RESET_OFFSET being in the secure world,
+> >>>>> so impossible to operate on it from the kernel.
+> >>>>> All resets in this block must be handled via SCMI call.
+> >>>>>
+> >>>>> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+> >>>>> ---
+> >>>>>  drivers/clk/rockchip/rst-rk3588.c             | 42 ------------
+> >>>>>  .../dt-bindings/reset/rockchip,rk3588-cru.h   | 68 +++++++++----------
+> >>>>
+> >>>> Please run scripts/checkpatch.pl and fix reported warnings. Some
+> >>>> warnings can be ignored, but the code here looks like it needs a fix.
+> >>>> Feel free to get in touch if the warning is not clear.
+> >>>>
+> >>>>>  2 files changed, 34 insertions(+), 76 deletions(-)
+> >>>>>
+> >>>>> diff --git a/drivers/clk/rockchip/rst-rk3588.c b/drivers/clk/rockchip/rst-rk3588.c
+> >>>>> index e855bb8d5413..6556d9d3c7ab 100644
+> >>>>> --- a/drivers/clk/rockchip/rst-rk3588.c
+> >>>>> +++ b/drivers/clk/rockchip/rst-rk3588.c
+> >>>>> @@ -16,9 +16,6 @@
+> >>>>>  /* 0xFD7C8000 + 0x0A00 */
+> >>>>>  #define RK3588_PHPTOPCRU_RESET_OFFSET(id, reg, bit) [id] = (0x8000*4 + reg * 16 + bit)
+> >>>>>  
+> >>>>> -/* 0xFD7D0000 + 0x0A00 */
+> >>>>> -#define RK3588_SECURECRU_RESET_OFFSET(id, reg, bit) [id] = (0x10000*4 + reg * 16 + bit)
+> >>>>> -
+> >>>>>  /* 0xFD7F0000 + 0x0A00 */
+> >>>>>  #define RK3588_PMU1CRU_RESET_OFFSET(id, reg, bit) [id] = (0x30000*4 + reg * 16 + bit)
+> >>>>>  
+> >>>>> @@ -806,45 +803,6 @@ static const int rk3588_register_offset[] = {
+> >>>>>  	RK3588_PMU1CRU_RESET_OFFSET(SRST_P_PMU0IOC, 5, 4),
+> >>>>>  	RK3588_PMU1CRU_RESET_OFFSET(SRST_P_GPIO0, 5, 5),
+> >>>>>  	RK3588_PMU1CRU_RESET_OFFSET(SRST_GPIO0, 5, 6),
+> >>>>> -
+> >>>>> -	/* SECURECRU_SOFTRST_CON00 */
+> >>>>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_A_SECURE_NS_BIU, 0, 10),
+> >>>>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_H_SECURE_NS_BIU, 0, 11),
+> >>>>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_A_SECURE_S_BIU, 0, 12),
+> >>>>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_H_SECURE_S_BIU, 0, 13),
+> >>>>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_P_SECURE_S_BIU, 0, 14),
+> >>>>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_CRYPTO_CORE, 0, 15),
+> >>>>> -
+> >>>>> -	/* SECURECRU_SOFTRST_CON01 */
+> >>>>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_CRYPTO_PKA, 1, 0),
+> >>>>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_CRYPTO_RNG, 1, 1),
+> >>>>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_A_CRYPTO, 1, 2),
+> >>>>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_H_CRYPTO, 1, 3),
+> >>>>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_KEYLADDER_CORE, 1, 9),
+> >>>>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_KEYLADDER_RNG, 1, 10),
+> >>>>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_A_KEYLADDER, 1, 11),
+> >>>>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_H_KEYLADDER, 1, 12),
+> >>>>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_P_OTPC_S, 1, 13),
+> >>>>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_OTPC_S, 1, 14),
+> >>>>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_WDT_S, 1, 15),
+> >>>>> -
+> >>>>> -	/* SECURECRU_SOFTRST_CON02 */
+> >>>>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_T_WDT_S, 2, 0),
+> >>>>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_H_BOOTROM, 2, 1),
+> >>>>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_A_DCF, 2, 2),
+> >>>>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_P_DCF, 2, 3),
+> >>>>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_H_BOOTROM_NS, 2, 5),
+> >>>>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_P_KEYLADDER, 2, 14),
+> >>>>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_H_TRNG_S, 2, 15),
+> >>>>> -
+> >>>>> -	/* SECURECRU_SOFTRST_CON03 */
+> >>>>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_H_TRNG_NS, 3, 0),
+> >>>>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_D_SDMMC_BUFFER, 3, 1),
+> >>>>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_H_SDMMC, 3, 2),
+> >>>>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_H_SDMMC_BUFFER, 3, 3),
+> >>>>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_SDMMC, 3, 4),
+> >>>>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_P_TRNG_CHK, 3, 5),
+> >>>>> -	RK3588_SECURECRU_RESET_OFFSET(SRST_TRNG_S, 3, 6),
+> >>>>>  };
+> >>>>>  
+> >>>>>  void rk3588_rst_init(struct device_node *np, void __iomem *reg_base)
+> >>>>> diff --git a/include/dt-bindings/reset/rockchip,rk3588-cru.h b/include/dt-bindings/reset/rockchip,rk3588-cru.h
+> >>>>> index d4264db2a07f..c0d08ae78cd5 100644
+> >>>>> --- a/include/dt-bindings/reset/rockchip,rk3588-cru.h
+> >>>>> +++ b/include/dt-bindings/reset/rockchip,rk3588-cru.h
+> >>>>> @@ -716,39 +716,39 @@
+> >>>>>  #define SRST_P_GPIO0			627
+> >>>>>  #define SRST_GPIO0			628
+> >>>>>  
+> >>>>> -#define SRST_A_SECURE_NS_BIU		629
+> >>>>> -#define SRST_H_SECURE_NS_BIU		630
+> >>>>> -#define SRST_A_SECURE_S_BIU		631
+> >>>>> -#define SRST_H_SECURE_S_BIU		632
+> >>>>> -#define SRST_P_SECURE_S_BIU		633
+> >>>>> -#define SRST_CRYPTO_CORE		634
+> >>>>> -
+> >>>>> -#define SRST_CRYPTO_PKA			635
+> >>>>> -#define SRST_CRYPTO_RNG			636
+> >>>>> -#define SRST_A_CRYPTO			637
+> >>>>> -#define SRST_H_CRYPTO			638
+> >>>>> -#define SRST_KEYLADDER_CORE		639
+> >>>>> -#define SRST_KEYLADDER_RNG		640
+> >>>>> -#define SRST_A_KEYLADDER		641
+> >>>>> -#define SRST_H_KEYLADDER		642
+> >>>>> -#define SRST_P_OTPC_S			643
+> >>>>> -#define SRST_OTPC_S			644
+> >>>>> -#define SRST_WDT_S			645
+> >>>>> -
+> >>>>> -#define SRST_T_WDT_S			646
+> >>>>> -#define SRST_H_BOOTROM			647
+> >>>>> -#define SRST_A_DCF			648
+> >>>>> -#define SRST_P_DCF			649
+> >>>>> -#define SRST_H_BOOTROM_NS		650
+> >>>>> -#define SRST_P_KEYLADDER		651
+> >>>>> -#define SRST_H_TRNG_S			652
+> >>>>> -
+> >>>>> -#define SRST_H_TRNG_NS			653
+> >>>>> -#define SRST_D_SDMMC_BUFFER		654
+> >>>>> -#define SRST_H_SDMMC			655
+> >>>>> -#define SRST_H_SDMMC_BUFFER		656
+> >>>>> -#define SRST_SDMMC			657
+> >>>>> -#define SRST_P_TRNG_CHK			658
+> >>>>> -#define SRST_TRNG_S			659
+> >>>>> +#define SRST_A_SECURE_NS_BIU		10
+> >>>>
+> >>>> NAK. You just broke all users.
+> >>>
+> >>> If I'm reading the commit message correctly, all resets in that area
+> >>> couldn't have any users to begin with, as the registers controlling them
+> >>> are in the secure space, and need a higher exception level
+> >>>
+> >>> So if  anything is trying to handle these resets, would end up with some
+> >>> security exception right now.
+> >>>
+> >>> Though I guess we might want to use different names and not reuse the
+> >>> existing ones. scmi clocks use a SCMI_CLK_* id scheme, so maybe SCMI_SRST_* ?
+> >>
+> >> I don't quite get what the patch wants to achieve. Why dropping driver
+> >> support for given reset ID is connected with changing the value of
+> >> binding for given reset?
+> >>
+> >> What is the point of this define SRST_A_SECURE_NS_BIU 10?
+> > 
+> > This is about two different reset controllers. The IDs defined here
+> > are used by the operating system to access the correct registers.
+> > The kernel has a LUT from the ID to a register addresses, which is
+> > something you asked for during upstreaming.
+> > 
+> > The ID defined by Corentin is for reset control via SCMI firmware,
+> > which has different number scheme than Linux. To me the suggestion
+> > from Heiko looks sensible (i.e. create a new ID scheme and keep the
+> > current one unchanged).
+> 
+> So the binding is not for Linux but for FW? This should be explained in
+> the commit msg.
 
-Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
----
-Changes in V3:
-  - collect Conor's R-b
-  - changed reasoning for the removal of the 2 clocks to "such a clock doesn't
-    exist", as it better reflects the situation
-  - Link to V2: https://lore.kernel.org/lkml/ZTf0oWfOqnyMEKbF@standask-GA-A55M-S2HP/
+No.
 
-Changes in V2:
-  - remove the table copied from the old txt bindings, replace it with if-then
-    blocks individually listing the allowed clock-output-names per compatible
-  - remove "dmac" from clock-output-names for brcm,bcm11351-master-ccu,
-    it is not used in DT nor the dt-bindings
-  - remove "uartb4" from clock-output-names for brcm,bcm21664-slave-ccu,
-    it is not used in DT nor the dt-bindings
-  - move allOf: after required:
-  - Link to V1: https://lore.kernel.org/lkml/ZTUIJrTc6KKyT4xj@standask-GA-A55M-S2HP/
+The current binding describes reset IDs, which are mapped by the
+Linux driver to register offsets in the CRU (clock-reset-unit).
+But accessing the crypto reset line directly from Linux (which
+usually does not run in secure state) will fail. Accessing it
+from correct security context with the current binding is fine
+though. Considering we are sharing the bindings with e.g.
+U-Boot, I suggest to keep the currently defined IDs.
 
- .../bindings/clock/brcm,kona-ccu.txt          | 138 -------------
- .../bindings/clock/brcm,kona-ccu.yaml         | 181 ++++++++++++++++++
- 2 files changed, 181 insertions(+), 138 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/brcm,kona-ccu.txt
- create mode 100644 Documentation/devicetree/bindings/clock/brcm,kona-ccu.yaml
+But Corentin tries to get this running on Linux. For that he
+needs to ask the (SCMI) firmware running in secure state to
+please take care of the reset. The firmware is using different
+reset IDs (apparently the ones used by downstream Linux, which
+are derived from register offset).
 
-diff --git a/Documentation/devicetree/bindings/clock/brcm,kona-ccu.txt b/Documentation/devicetree/bindings/clock/brcm,kona-ccu.txt
-deleted file mode 100644
-index 8e5a7d868557..000000000000
---- a/Documentation/devicetree/bindings/clock/brcm,kona-ccu.txt
-+++ /dev/null
-@@ -1,138 +0,0 @@
--Broadcom Kona Family Clocks
--
--This binding is associated with Broadcom SoCs having "Kona" style
--clock control units (CCUs).  A CCU is a clock provider that manages
--a set of clock signals.  Each CCU is represented by a node in the
--device tree.
--
--This binding uses the common clock binding:
--    Documentation/devicetree/bindings/clock/clock-bindings.txt
--
--Required properties:
--- compatible
--	Shall have a value of the form "brcm,<model>-<which>-ccu",
--	where <model> is a Broadcom SoC model number and <which> is
--	the name of a defined CCU.  For example:
--	    "brcm,bcm11351-root-ccu"
--	The compatible strings used for each supported SoC family
--	are defined below.
--- reg
--	Shall define the base and range of the address space
--	containing clock control registers
--- #clock-cells
--	Shall have value <1>.  The permitted clock-specifier values
--	are defined below.
--- clock-output-names
--	Shall be an ordered list of strings defining the names of
--	the clocks provided by the CCU.
--
--Device tree example:
--
--	slave_ccu: slave_ccu {
--		compatible = "brcm,bcm11351-slave-ccu";
--		reg = <0x3e011000 0x0f00>;
--		#clock-cells = <1>;
--		clock-output-names = "uartb",
--				     "uartb2",
--				     "uartb3",
--				     "uartb4";
--	};
--
--	ref_crystal_clk: ref_crystal {
--		#clock-cells = <0>;
--		compatible = "fixed-clock";
--		clock-frequency = <26000000>;
--	};
--
--	uart@3e002000 {
--		compatible = "brcm,bcm11351-dw-apb-uart", "snps,dw-apb-uart";
--		reg = <0x3e002000 0x1000>;
--		clocks = <&slave_ccu BCM281XX_SLAVE_CCU_UARTB3>;
--		interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>;
--		reg-shift = <2>;
--		reg-io-width = <4>;
--	};
--
--BCM281XX family
-----------------
--CCU compatible string values for SoCs in the BCM281XX family are:
--    "brcm,bcm11351-root-ccu"
--    "brcm,bcm11351-aon-ccu"
--    "brcm,bcm11351-hub-ccu"
--    "brcm,bcm11351-master-ccu"
--    "brcm,bcm11351-slave-ccu"
--
--The following table defines the set of CCUs and clock specifiers for
--BCM281XX family clocks.  When a clock consumer references a clocks,
--its symbolic specifier (rather than its numeric index value) should
--be used.  These specifiers are defined in:
--    "include/dt-bindings/clock/bcm281xx.h"
--
--    CCU     Clock           Type    Index   Specifier
--    ---     -----           ----    -----   ---------
--    root    frac_1m         peri      0     BCM281XX_ROOT_CCU_FRAC_1M
--
--    aon     hub_timer       peri      0     BCM281XX_AON_CCU_HUB_TIMER
--    aon     pmu_bsc         peri      1     BCM281XX_AON_CCU_PMU_BSC
--    aon     pmu_bsc_var     peri      2     BCM281XX_AON_CCU_PMU_BSC_VAR
--
--    hub     tmon_1m         peri      0     BCM281XX_HUB_CCU_TMON_1M
--
--    master  sdio1           peri      0     BCM281XX_MASTER_CCU_SDIO1
--    master  sdio2           peri      1     BCM281XX_MASTER_CCU_SDIO2
--    master  sdio3           peri      2     BCM281XX_MASTER_CCU_SDIO3
--    master  sdio4           peri      3     BCM281XX_MASTER_CCU_SDIO4
--    master  dmac            peri      4     BCM281XX_MASTER_CCU_DMAC
--    master  usb_ic          peri      5     BCM281XX_MASTER_CCU_USB_IC
--    master  hsic2_48m       peri      6     BCM281XX_MASTER_CCU_HSIC_48M
--    master  hsic2_12m       peri      7     BCM281XX_MASTER_CCU_HSIC_12M
--
--    slave   uartb           peri      0     BCM281XX_SLAVE_CCU_UARTB
--    slave   uartb2          peri      1     BCM281XX_SLAVE_CCU_UARTB2
--    slave   uartb3          peri      2     BCM281XX_SLAVE_CCU_UARTB3
--    slave   uartb4          peri      3     BCM281XX_SLAVE_CCU_UARTB4
--    slave   ssp0            peri      4     BCM281XX_SLAVE_CCU_SSP0
--    slave   ssp2            peri      5     BCM281XX_SLAVE_CCU_SSP2
--    slave   bsc1            peri      6     BCM281XX_SLAVE_CCU_BSC1
--    slave   bsc2            peri      7     BCM281XX_SLAVE_CCU_BSC2
--    slave   bsc3            peri      8     BCM281XX_SLAVE_CCU_BSC3
--    slave   pwm             peri      9     BCM281XX_SLAVE_CCU_PWM
--
--
--BCM21664 family
-----------------
--CCU compatible string values for SoCs in the BCM21664 family are:
--    "brcm,bcm21664-root-ccu"
--    "brcm,bcm21664-aon-ccu"
--    "brcm,bcm21664-master-ccu"
--    "brcm,bcm21664-slave-ccu"
--
--The following table defines the set of CCUs and clock specifiers for
--BCM21664 family clocks.  When a clock consumer references a clocks,
--its symbolic specifier (rather than its numeric index value) should
--be used.  These specifiers are defined in:
--    "include/dt-bindings/clock/bcm21664.h"
--
--    CCU     Clock           Type    Index   Specifier
--    ---     -----           ----    -----   ---------
--    root    frac_1m         peri      0     BCM21664_ROOT_CCU_FRAC_1M
--
--    aon     hub_timer       peri      0     BCM21664_AON_CCU_HUB_TIMER
--
--    master  sdio1           peri      0     BCM21664_MASTER_CCU_SDIO1
--    master  sdio2           peri      1     BCM21664_MASTER_CCU_SDIO2
--    master  sdio3           peri      2     BCM21664_MASTER_CCU_SDIO3
--    master  sdio4           peri      3     BCM21664_MASTER_CCU_SDIO4
--    master  sdio1_sleep     peri      4     BCM21664_MASTER_CCU_SDIO1_SLEEP
--    master  sdio2_sleep     peri      5     BCM21664_MASTER_CCU_SDIO2_SLEEP
--    master  sdio3_sleep     peri      6     BCM21664_MASTER_CCU_SDIO3_SLEEP
--    master  sdio4_sleep     peri      7     BCM21664_MASTER_CCU_SDIO4_SLEEP
--
--    slave   uartb           peri      0     BCM21664_SLAVE_CCU_UARTB
--    slave   uartb2          peri      1     BCM21664_SLAVE_CCU_UARTB2
--    slave   uartb3          peri      2     BCM21664_SLAVE_CCU_UARTB3
--    slave   uartb4          peri      3     BCM21664_SLAVE_CCU_UARTB4
--    slave   bsc1            peri      4     BCM21664_SLAVE_CCU_BSC1
--    slave   bsc2            peri      5     BCM21664_SLAVE_CCU_BSC2
--    slave   bsc3            peri      6     BCM21664_SLAVE_CCU_BSC3
--    slave   bsc4            peri      7     BCM21664_SLAVE_CCU_BSC4
-diff --git a/Documentation/devicetree/bindings/clock/brcm,kona-ccu.yaml b/Documentation/devicetree/bindings/clock/brcm,kona-ccu.yaml
-new file mode 100644
-index 000000000000..e5656950b3bd
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/brcm,kona-ccu.yaml
-@@ -0,0 +1,181 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/brcm,kona-ccu.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Broadcom Kona family clock control units (CCU)
-+
-+maintainers:
-+  - Florian Fainelli <florian.fainelli@broadcom.com>
-+  - Ray Jui <rjui@broadcom.com>
-+  - Scott Branden <sbranden@broadcom.com>
-+
-+description: |
-+  Broadcom "Kona" style clock control unit (CCU) is a clock provider that
-+  manages a set of clock signals.
-+
-+  All available clock IDs are defined in
-+  - include/dt-bindings/clock/bcm281xx.h for BCM281XX family
-+  - include/dt-bindings/clock/bcm21664.h for BCM21664 family
-+
-+properties:
-+  compatible:
-+    enum:
-+      - brcm,bcm11351-aon-ccu
-+      - brcm,bcm11351-hub-ccu
-+      - brcm,bcm11351-master-ccu
-+      - brcm,bcm11351-root-ccu
-+      - brcm,bcm11351-slave-ccu
-+      - brcm,bcm21664-aon-ccu
-+      - brcm,bcm21664-master-ccu
-+      - brcm,bcm21664-root-ccu
-+      - brcm,bcm21664-slave-ccu
-+
-+  reg:
-+    maxItems: 1
-+
-+  '#clock-cells':
-+    const: 1
-+
-+  clock-output-names:
-+    minItems: 1
-+    maxItems: 10
-+
-+required:
-+  - compatible
-+  - reg
-+  - '#clock-cells'
-+  - clock-output-names
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: brcm,bcm11351-aon-ccu
-+    then:
-+      properties:
-+        clock-output-names:
-+          items:
-+            - const: hub_timer
-+            - const: pmu_bsc
-+            - const: pmu_bsc_var
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: brcm,bcm11351-hub-ccu
-+    then:
-+      properties:
-+        clock-output-names:
-+          const: tmon_1m
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: brcm,bcm11351-master-ccu
-+    then:
-+      properties:
-+        clock-output-names:
-+          items:
-+            - const: sdio1
-+            - const: sdio2
-+            - const: sdio3
-+            - const: sdio4
-+            - const: usb_ic
-+            - const: hsic2_48m
-+            - const: hsic2_12m
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - brcm,bcm11351-root-ccu
-+              - brcm,bcm21664-root-ccu
-+    then:
-+      properties:
-+        clock-output-names:
-+          const: frac_1m
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: brcm,bcm11351-slave-ccu
-+    then:
-+      properties:
-+        clock-output-names:
-+          items:
-+            - const: uartb
-+            - const: uartb2
-+            - const: uartb3
-+            - const: uartb4
-+            - const: ssp0
-+            - const: ssp2
-+            - const: bsc1
-+            - const: bsc2
-+            - const: bsc3
-+            - const: pwm
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: brcm,bcm21664-aon-ccu
-+    then:
-+      properties:
-+        clock-output-names:
-+          const: hub_timer
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: brcm,bcm21664-master-ccu
-+    then:
-+      properties:
-+        clock-output-names:
-+          items:
-+            - const: sdio1
-+            - const: sdio2
-+            - const: sdio3
-+            - const: sdio4
-+            - const: sdio1_sleep
-+            - const: sdio2_sleep
-+            - const: sdio3_sleep
-+            - const: sdio4_sleep
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: brcm,bcm21664-slave-ccu
-+    then:
-+      properties:
-+        clock-output-names:
-+          items:
-+            - const: uartb
-+            - const: uartb2
-+            - const: uartb3
-+            - const: bsc1
-+            - const: bsc2
-+            - const: bsc3
-+            - const: bsc4
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    clock-controller@3e011000 {
-+      compatible = "brcm,bcm11351-slave-ccu";
-+      reg = <0x3e011000 0x0f00>;
-+      #clock-cells = <1>;
-+      clock-output-names = "uartb",
-+                           "uartb2",
-+                           "uartb3",
-+                           "uartb4",
-+                           "ssp0",
-+                           "ssp2",
-+                           "bsc1",
-+                           "bsc2",
-+                           "bsc3",
-+                           "pwm";
-+    };
-+...
--- 
-2.34.1
+In DT the difference looks like this (check the different phandles):
 
+#define SRST_A_SECURE_NS_BIU 629
+crypto-old {
+    // existing binding from Linux perspective
+    // reset via direct CRU access
+    // NOTE: permission denied
+    resets = <&cru SRST_A_SECURE_NS_BIU>; 
+};
+
+#define SCMI_RST_A_SECURE_NS_BIU 10
+crypto-new {
+    // new binding from Linux perspective
+    // reset via SCMI firmware request
+    resets = <&scmi SCMI_RST_A_SECURE_NS_BIU>;
+};
+
+Instead of introducing SCMI_RST_A_SECURE_NS_BIU, Corentin
+currently just redefines SRST_A_SECURE_NS_BIU. This is quite
+misleading. If somebody does '<&cru SRST_A_SECURE_NS_BIU>'
+with the '10' value for SCMI, it instead resets
+SRST_A_TOP_M300_BIU.
+
+So my suggestion is to go with the suggestion from Heiko and
+introduce SCMI_RST_A_SECURE_NS_BIU (or something similar).
+That also matches how the SCMI clks on RK3588 and some other
+platforms. See e.g.:
+
+of include/dt-bindings/clock/rockchip,rk3588-cru.h.
+
+Greetings,
+
+-- Sebastian
