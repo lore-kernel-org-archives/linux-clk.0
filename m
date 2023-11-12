@@ -1,235 +1,433 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2953D125A8;
-	Sun, 12 Nov 2023 14:05:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B48314F7C;
+	Sun, 12 Nov 2023 16:56:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="fMvKJqxK"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22941273F;
-	Sun, 12 Nov 2023 06:05:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=public-files.de;
-	s=s31663417; t=1699797868; x=1700402668; i=frank-w@public-files.de;
-	bh=p3jF1nL7lYA2/EJPSIJDaTQe95ovTYY7WJc4wEUUhKI=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:
-	 References;
-	b=fMvKJqxKNZI8B3wDOXZcbBXyfyEUXEsd4E9urPIMi6f8uhpjC+/F4L1KwDxNon/1
-	 etwwV60cqpLer7ZU4JtW/9xSytrCNvmm9LhG5Suv9j7baKgDxZwQc0vVUN8i7rOqx
-	 ZmMR3tb6WBSFAkC3kz+eSr9CR0D+38zPJf2GbB9WvIHnVJL+MwZGOim43+az7CwHB
-	 H7Di0yWxNm2XgGOTqy7nNo5yA6nCczqMwgc4+66SyagdPoDcFbL9Q4nmzy8omJjkE
-	 7dnkHr/mgYAQIpCQaZgld35bhd18M1kCPoVNs5Sr3q1OVinoD1+xFtYbLQSYktyWZ
-	 9fuJIHtYi4McuTNWng==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [217.61.158.24] ([217.61.158.24]) by web-mail.gmx.net
- (3c-app-gmx-bs50.server.lan [172.19.170.103]) (via HTTP); Sun, 12 Nov 2023
- 15:04:28 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SRnwT5KQ"
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 083FF1BEC;
+	Sun, 12 Nov 2023 08:56:56 -0800 (PST)
+Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-9c41e95efcbso551698766b.3;
+        Sun, 12 Nov 2023 08:56:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1699808214; x=1700413014; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=byjIoGTRKKP6Yru0xo4Lk+ItPgk7g9H5HT4yy5ccjk8=;
+        b=SRnwT5KQZ7J7yT+6RGsxu4bnoMVUSYbAOmsnjSHZtQT/9e8H5UVltFB/uFR+02rsM0
+         4D+H/o9FtdOXtX50F0N+vM0WIdo4amxzBEp1N7HUlMsxaqxyyV/ETSTQGji7NvBROoBE
+         2TbnjslaX9B+vDHeEDk+cP4lHR7x0j8jV+HRkYW4mysC8O9bSksD9miA0Ob4vkBhoykL
+         XzMRyLQPjcIGn88xSYTzJGcUqeOYpSiIZFOVWssrzh8KHdkL22F9ogOMbalREuTJ3u46
+         Hsjh/UOJA2y9YPW2JFNd5MvzHMOdcbZSNIWD8XBZHRdX2Pq7bUbAX1Pw0yrSmjhEz4WG
+         DDDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699808214; x=1700413014;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=byjIoGTRKKP6Yru0xo4Lk+ItPgk7g9H5HT4yy5ccjk8=;
+        b=cOLGHghOTHaLk+dGvnAjlK6HqsLePkfbp/iEw9hEBU0eg6Vj/37fNQQhRXHA7wa6/j
+         ZlGOT6AWJbsdughDzXSdCJMbl8ynsbbqBERi+FnQPG95QZK0PpGfm0dL9BJyE0tsb9Ol
+         sdkiN8QsX2BiuOBhcrA5g8cflK6+szFxkPQM1xRTST+//GGHmCDTf8pwf3sSzf1OilT3
+         1U4ehMBaur1XUbMETSjwRqK+g67n/NvyUqHqza4J0oJYCUUFPMwgH3M8vTkpWAP3eo9H
+         zJGcpCYHIynjYfnYdY4f9G6Ej9X/DxeKIY4jKJpLXba4RfgV0Z+6kvJVMMpEQf7ziVw+
+         0xfQ==
+X-Gm-Message-State: AOJu0YwdXeu4x3Hp8/ucPun0XGVaWJBEUf+MBIbt/AOwdAD/gkDN4c2Z
+	qNLDOuDKrKxYXCCg5SUSfKs=
+X-Google-Smtp-Source: AGHT+IE2mS+jzq0gvdaQ/f1Ud55X/x9LNxKqr5zVlPWQxqv5EfYGnUe2Dh7isCAqmIeJ375FJ3fZvw==
+X-Received: by 2002:a17:906:5fc7:b0:9b2:aa2f:ab69 with SMTP id k7-20020a1709065fc700b009b2aa2fab69mr2748317ejv.30.1699808214257;
+        Sun, 12 Nov 2023 08:56:54 -0800 (PST)
+Received: from standask-GA-A55M-S2HP ([188.123.113.247])
+        by smtp.gmail.com with ESMTPSA id k9-20020a170906054900b00997d7aa59fasm2804273eja.14.2023.11.12.08.56.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 12 Nov 2023 08:56:53 -0800 (PST)
+Date: Sun, 12 Nov 2023 17:56:51 +0100
+From: Stanislav Jakubek <stano.jakubek@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>
+Cc: bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Artur Weber <aweber.kernel@gmail.com>
+Subject: [PATCH v3] dt-bindings: clock: brcm,kona-ccu: convert to YAML
+Message-ID: <ZVED01t3+coBd44x@standask-GA-A55M-S2HP>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <trinity-a0ee3146-f23d-4f6c-b29c-5fe446c4d4ad-1699797868421@3c-app-gmx-bs50>
-From: Frank Wunderlich <frank-w@public-files.de>
-To: Corentin Labbe <clabbe@baylibre.com>
-Cc: davem@davemloft.net, heiko@sntech.de, herbert@gondor.apana.org.au,
- krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
- p.zabel@pengutronix.de, robh+dt@kernel.org, sboyd@kernel.org,
- ricardo@pardini.net, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, Corentin Labbe <clabbe@baylibre.com>
-Subject: Aw: [PATCH 6/6] crypto: rockchip: add rk3588 driver
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 12 Nov 2023 15:04:28 +0100
-Importance: normal
-Sensitivity: Normal
-In-Reply-To: <20231107155532.3747113-7-clabbe@baylibre.com>
-References: <20231107155532.3747113-1-clabbe@baylibre.com>
- <20231107155532.3747113-7-clabbe@baylibre.com>
-X-UI-Message-Type: mail
-X-Priority: 3
-X-Provags-ID: V03:K1:OoAQhTgJe+OnN14Ltb8pATB1NCHflAApEBwZRkflJMrP0ATga6qVPOdzsQywS95zapWsZ
- nDNEwLBK361alVtcNqDvR0ArMxhkOlIU7PvcYTzpIjgWS1YvLzSkwVoRXV7JU+y7yG5Dj7k5rCvK
- iZ9ApwxRzK4IkYYRAwe/UeIb0c2xbtIlERJ2AUW9d2vIf2XDT4RgAwCHAviGdDXrCKov2VxC/TkK
- otehpuNxb1t2AmnzoUL3pS/I43Lvz+sF5qbaVyou0Mw1OfSaOxHembZz+ZEaMOOQThQCYUI/NMbF
- v0=
-UI-OutboundReport: notjunk:1;M01:P0:Sl09NE6Frd0=;/GSJn2QR97NKCRwp/dLBao2LoRb
- wESdckVa3vNp5KpgBgjr6rsV21sSASn/BKGZOAgctcv1Mc7pQ/2j3xFa7ymOwvQA5+TkN4umy
- EhM9dM7nLtENaoacrpFYWpJJN/vipIfAujPkvB/NN8l1FuW7/CxnqfO8DIsVOcQt1oxWYkf+W
- w1aOl8YPolj+5dEShiE9wdHTH9IwHJTpp7ozdRqiDMOHwVcMINaPgtNHFUpzHryhTdhZAGLdu
- OosdmnXiKPAYbgI83I/gEpjY1y63W8OgCibKpRn745dQd79gtgENTrFtXliXxW3UDvMMjhOaz
- jRhnNQ023hjzrFOUcch3XUvnHy+wjlZN5kF/HZ8+cgIxWD99/ksDKljBefRmq9W2/Ob6eRd2K
- y1CDIfBi1guZ+dFk2fA2cKoYvMg9e7Yz707kcSaSCLoQ6q3c/oVbK0BSW0uUhSzZ1EUKkH+5x
- ilEnox795eexXqvgVGNnUGtowc25ltcleuatGXon4wfZEjWJVbhpqfjhSSS1dOMLBK9dl3ppn
- Qe25FhpF/VIEMRvDBvmfI+E1U0e4CZICN15IhdPOJ0lKpkrSDhv3ExPJRXrPV/4NGy0R7lD+r
- UNF2c6RS/d76msN1USnwORxv/PJsxsR62PRPF486Y/OrPGg3Vyt+1CgjSISCEue+N9J0DYEen
- P9LjqgFHd75v6GOqFJGhQDU+btvP0/yFgZjUPqYniTYZON9v3lfQciHH0P06Od33c00LDCFCu
- mEAyRNVkK9hyNuutJutrpfRUqKvKreZNUb7MyN1nusackIff1CMmBFP6ZhIT0p9mTswu02c5o
- HwgkTPpzHPoSd6MwzVidD61mIXQShmbe9RlhITP1jjRwc=
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi Corentin
+Convert Broadcom Kona family clock controller unit (CCU) bindings
+to DT schema.
 
-thanks for working on it
+Changes during conversion:
+  - remove "dmac" from clock-output-names for brcm,bcm11351-master-ccu,
+    such a clock doesn't exist
+  - remove "uartb4" from clock-output-names for brcm,bcm21664-slave-ccu,
+    such a clock doesn't exist
 
-> Gesendet: Dienstag, 07. November 2023 um 16:55 Uhr
-> Von: "Corentin Labbe" <clabbe@baylibre.com>
-> An: davem@davemloft.net, heiko@sntech.de, herbert@gondor.apana.org.au, k=
-rzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com, p.zabel@pengutr=
-onix.de, robh+dt@kernel.org, sboyd@kernel.org
-> Cc: ricardo@pardini.net, devicetree@vger.kernel.org, linux-arm-kernel@li=
-sts.infradead.org, linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org=
-, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, "Coren=
-tin Labbe" <clabbe@baylibre.com>
-> Betreff: [PATCH 6/6] crypto: rockchip: add rk3588 driver
->
-> RK3588 have a new crypto IP, this patch adds basic support for it.
-> Only hashes and cipher are handled for the moment.
->
-> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
-> ---
->  drivers/crypto/Kconfig                        |  29 +
->  drivers/crypto/rockchip/Makefile              |   5 +
->  drivers/crypto/rockchip/rk2_crypto.c          | 739 ++++++++++++++++++
->  drivers/crypto/rockchip/rk2_crypto.h          | 246 ++++++
->  drivers/crypto/rockchip/rk2_crypto_ahash.c    | 344 ++++++++
->  drivers/crypto/rockchip/rk2_crypto_skcipher.c | 576 ++++++++++++++
->  6 files changed, 1939 insertions(+)
->  create mode 100644 drivers/crypto/rockchip/rk2_crypto.c
->  create mode 100644 drivers/crypto/rockchip/rk2_crypto.h
->  create mode 100644 drivers/crypto/rockchip/rk2_crypto_ahash.c
->  create mode 100644 drivers/crypto/rockchip/rk2_crypto_skcipher.c
->
-> diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
-> index 79c3bb9c99c3..b6a2027b1f9a 100644
-> --- a/drivers/crypto/Kconfig
-> +++ b/drivers/crypto/Kconfig
-> @@ -660,6 +660,35 @@ config CRYPTO_DEV_ROCKCHIP_DEBUG
->  	  the number of requests per algorithm and other internal stats.
->
->
-> +config CRYPTO_DEV_ROCKCHIP2
-> +	tristate "Rockchip's cryptographic offloader V2"
-> +	depends on OF && ARCH_ROCKCHIP
-> +	depends on PM
+Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+---
+Changes in V3:
+  - collect Conor's R-b
+  - changed reasoning for the removal of the 2 clocks to "such a clock doesn't
+    exist", as it better reflects the situation
+  - Link to V2: https://lore.kernel.org/lkml/ZTf0oWfOqnyMEKbF@standask-GA-A55M-S2HP/
 
-it should depend on CONFIG_CRYPTO_DEV_ROCKCHIP as rockchip folder is not i=
-ncluded without it
+Changes in V2:
+  - remove the table copied from the old txt bindings, replace it with if-then
+    blocks individually listing the allowed clock-output-names per compatible
+  - remove "dmac" from clock-output-names for brcm,bcm11351-master-ccu,
+    it is not used in DT nor the dt-bindings
+  - remove "uartb4" from clock-output-names for brcm,bcm21664-slave-ccu,
+    it is not used in DT nor the dt-bindings
+  - move allOf: after required:
+  - Link to V1: https://lore.kernel.org/lkml/ZTUIJrTc6KKyT4xj@standask-GA-A55M-S2HP/
 
-drivers/crypto/Makefile
-obj-$(CONFIG_CRYPTO_DEV_ROCKCHIP) +=3D rockchip/
+ .../bindings/clock/brcm,kona-ccu.txt          | 138 -------------
+ .../bindings/clock/brcm,kona-ccu.yaml         | 181 ++++++++++++++++++
+ 2 files changed, 181 insertions(+), 138 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/brcm,kona-ccu.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/brcm,kona-ccu.yaml
 
-> +	select CRYPTO_ECB
-> +	select CRYPTO_CBC
-> +	select CRYPTO_AES
-> +	select CRYPTO_MD5
-> +	select CRYPTO_SHA1
-> +	select CRYPTO_SHA256
-> +	select CRYPTO_SHA512
-> +	select CRYPTO_SM3_GENERIC
-> +	select CRYPTO_HASH
-> +	select CRYPTO_SKCIPHER
-> +	select CRYPTO_ENGINE
-> +
-> +	help
-> +	  This driver interfaces with the hardware crypto offloader present
-> +	  on RK3566, RK3568 and RK3588.
-> +
-> +config CRYPTO_DEV_ROCKCHIP2_DEBUG
-> +	bool "Enable Rockchip V2 crypto stats"
-> +	depends on CRYPTO_DEV_ROCKCHIP2
-> +	depends on DEBUG_FS
-> +	help
-> +	  Say y to enable Rockchip crypto debug stats.
-> +	  This will create /sys/kernel/debug/rk3588_crypto/stats for displayin=
-g
-> +	  the number of requests per algorithm and other internal stats.
-> +
->  config CRYPTO_DEV_ZYNQMP_AES
->  	tristate "Support for Xilinx ZynqMP AES hw accelerator"
->  	depends on ZYNQMP_FIRMWARE || COMPILE_TEST
-> diff --git a/drivers/crypto/rockchip/Makefile b/drivers/crypto/rockchip/=
-Makefile
-> index 785277aca71e..452a12ff6538 100644
+diff --git a/Documentation/devicetree/bindings/clock/brcm,kona-ccu.txt b/Documentation/devicetree/bindings/clock/brcm,kona-ccu.txt
+deleted file mode 100644
+index 8e5a7d868557..000000000000
+--- a/Documentation/devicetree/bindings/clock/brcm,kona-ccu.txt
++++ /dev/null
+@@ -1,138 +0,0 @@
+-Broadcom Kona Family Clocks
+-
+-This binding is associated with Broadcom SoCs having "Kona" style
+-clock control units (CCUs).  A CCU is a clock provider that manages
+-a set of clock signals.  Each CCU is represented by a node in the
+-device tree.
+-
+-This binding uses the common clock binding:
+-    Documentation/devicetree/bindings/clock/clock-bindings.txt
+-
+-Required properties:
+-- compatible
+-	Shall have a value of the form "brcm,<model>-<which>-ccu",
+-	where <model> is a Broadcom SoC model number and <which> is
+-	the name of a defined CCU.  For example:
+-	    "brcm,bcm11351-root-ccu"
+-	The compatible strings used for each supported SoC family
+-	are defined below.
+-- reg
+-	Shall define the base and range of the address space
+-	containing clock control registers
+-- #clock-cells
+-	Shall have value <1>.  The permitted clock-specifier values
+-	are defined below.
+-- clock-output-names
+-	Shall be an ordered list of strings defining the names of
+-	the clocks provided by the CCU.
+-
+-Device tree example:
+-
+-	slave_ccu: slave_ccu {
+-		compatible = "brcm,bcm11351-slave-ccu";
+-		reg = <0x3e011000 0x0f00>;
+-		#clock-cells = <1>;
+-		clock-output-names = "uartb",
+-				     "uartb2",
+-				     "uartb3",
+-				     "uartb4";
+-	};
+-
+-	ref_crystal_clk: ref_crystal {
+-		#clock-cells = <0>;
+-		compatible = "fixed-clock";
+-		clock-frequency = <26000000>;
+-	};
+-
+-	uart@3e002000 {
+-		compatible = "brcm,bcm11351-dw-apb-uart", "snps,dw-apb-uart";
+-		reg = <0x3e002000 0x1000>;
+-		clocks = <&slave_ccu BCM281XX_SLAVE_CCU_UARTB3>;
+-		interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>;
+-		reg-shift = <2>;
+-		reg-io-width = <4>;
+-	};
+-
+-BCM281XX family
+----------------
+-CCU compatible string values for SoCs in the BCM281XX family are:
+-    "brcm,bcm11351-root-ccu"
+-    "brcm,bcm11351-aon-ccu"
+-    "brcm,bcm11351-hub-ccu"
+-    "brcm,bcm11351-master-ccu"
+-    "brcm,bcm11351-slave-ccu"
+-
+-The following table defines the set of CCUs and clock specifiers for
+-BCM281XX family clocks.  When a clock consumer references a clocks,
+-its symbolic specifier (rather than its numeric index value) should
+-be used.  These specifiers are defined in:
+-    "include/dt-bindings/clock/bcm281xx.h"
+-
+-    CCU     Clock           Type    Index   Specifier
+-    ---     -----           ----    -----   ---------
+-    root    frac_1m         peri      0     BCM281XX_ROOT_CCU_FRAC_1M
+-
+-    aon     hub_timer       peri      0     BCM281XX_AON_CCU_HUB_TIMER
+-    aon     pmu_bsc         peri      1     BCM281XX_AON_CCU_PMU_BSC
+-    aon     pmu_bsc_var     peri      2     BCM281XX_AON_CCU_PMU_BSC_VAR
+-
+-    hub     tmon_1m         peri      0     BCM281XX_HUB_CCU_TMON_1M
+-
+-    master  sdio1           peri      0     BCM281XX_MASTER_CCU_SDIO1
+-    master  sdio2           peri      1     BCM281XX_MASTER_CCU_SDIO2
+-    master  sdio3           peri      2     BCM281XX_MASTER_CCU_SDIO3
+-    master  sdio4           peri      3     BCM281XX_MASTER_CCU_SDIO4
+-    master  dmac            peri      4     BCM281XX_MASTER_CCU_DMAC
+-    master  usb_ic          peri      5     BCM281XX_MASTER_CCU_USB_IC
+-    master  hsic2_48m       peri      6     BCM281XX_MASTER_CCU_HSIC_48M
+-    master  hsic2_12m       peri      7     BCM281XX_MASTER_CCU_HSIC_12M
+-
+-    slave   uartb           peri      0     BCM281XX_SLAVE_CCU_UARTB
+-    slave   uartb2          peri      1     BCM281XX_SLAVE_CCU_UARTB2
+-    slave   uartb3          peri      2     BCM281XX_SLAVE_CCU_UARTB3
+-    slave   uartb4          peri      3     BCM281XX_SLAVE_CCU_UARTB4
+-    slave   ssp0            peri      4     BCM281XX_SLAVE_CCU_SSP0
+-    slave   ssp2            peri      5     BCM281XX_SLAVE_CCU_SSP2
+-    slave   bsc1            peri      6     BCM281XX_SLAVE_CCU_BSC1
+-    slave   bsc2            peri      7     BCM281XX_SLAVE_CCU_BSC2
+-    slave   bsc3            peri      8     BCM281XX_SLAVE_CCU_BSC3
+-    slave   pwm             peri      9     BCM281XX_SLAVE_CCU_PWM
+-
+-
+-BCM21664 family
+----------------
+-CCU compatible string values for SoCs in the BCM21664 family are:
+-    "brcm,bcm21664-root-ccu"
+-    "brcm,bcm21664-aon-ccu"
+-    "brcm,bcm21664-master-ccu"
+-    "brcm,bcm21664-slave-ccu"
+-
+-The following table defines the set of CCUs and clock specifiers for
+-BCM21664 family clocks.  When a clock consumer references a clocks,
+-its symbolic specifier (rather than its numeric index value) should
+-be used.  These specifiers are defined in:
+-    "include/dt-bindings/clock/bcm21664.h"
+-
+-    CCU     Clock           Type    Index   Specifier
+-    ---     -----           ----    -----   ---------
+-    root    frac_1m         peri      0     BCM21664_ROOT_CCU_FRAC_1M
+-
+-    aon     hub_timer       peri      0     BCM21664_AON_CCU_HUB_TIMER
+-
+-    master  sdio1           peri      0     BCM21664_MASTER_CCU_SDIO1
+-    master  sdio2           peri      1     BCM21664_MASTER_CCU_SDIO2
+-    master  sdio3           peri      2     BCM21664_MASTER_CCU_SDIO3
+-    master  sdio4           peri      3     BCM21664_MASTER_CCU_SDIO4
+-    master  sdio1_sleep     peri      4     BCM21664_MASTER_CCU_SDIO1_SLEEP
+-    master  sdio2_sleep     peri      5     BCM21664_MASTER_CCU_SDIO2_SLEEP
+-    master  sdio3_sleep     peri      6     BCM21664_MASTER_CCU_SDIO3_SLEEP
+-    master  sdio4_sleep     peri      7     BCM21664_MASTER_CCU_SDIO4_SLEEP
+-
+-    slave   uartb           peri      0     BCM21664_SLAVE_CCU_UARTB
+-    slave   uartb2          peri      1     BCM21664_SLAVE_CCU_UARTB2
+-    slave   uartb3          peri      2     BCM21664_SLAVE_CCU_UARTB3
+-    slave   uartb4          peri      3     BCM21664_SLAVE_CCU_UARTB4
+-    slave   bsc1            peri      4     BCM21664_SLAVE_CCU_BSC1
+-    slave   bsc2            peri      5     BCM21664_SLAVE_CCU_BSC2
+-    slave   bsc3            peri      6     BCM21664_SLAVE_CCU_BSC3
+-    slave   bsc4            peri      7     BCM21664_SLAVE_CCU_BSC4
+diff --git a/Documentation/devicetree/bindings/clock/brcm,kona-ccu.yaml b/Documentation/devicetree/bindings/clock/brcm,kona-ccu.yaml
+new file mode 100644
+index 000000000000..e5656950b3bd
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/brcm,kona-ccu.yaml
+@@ -0,0 +1,181 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/brcm,kona-ccu.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Broadcom Kona family clock control units (CCU)
++
++maintainers:
++  - Florian Fainelli <florian.fainelli@broadcom.com>
++  - Ray Jui <rjui@broadcom.com>
++  - Scott Branden <sbranden@broadcom.com>
++
++description: |
++  Broadcom "Kona" style clock control unit (CCU) is a clock provider that
++  manages a set of clock signals.
++
++  All available clock IDs are defined in
++  - include/dt-bindings/clock/bcm281xx.h for BCM281XX family
++  - include/dt-bindings/clock/bcm21664.h for BCM21664 family
++
++properties:
++  compatible:
++    enum:
++      - brcm,bcm11351-aon-ccu
++      - brcm,bcm11351-hub-ccu
++      - brcm,bcm11351-master-ccu
++      - brcm,bcm11351-root-ccu
++      - brcm,bcm11351-slave-ccu
++      - brcm,bcm21664-aon-ccu
++      - brcm,bcm21664-master-ccu
++      - brcm,bcm21664-root-ccu
++      - brcm,bcm21664-slave-ccu
++
++  reg:
++    maxItems: 1
++
++  '#clock-cells':
++    const: 1
++
++  clock-output-names:
++    minItems: 1
++    maxItems: 10
++
++required:
++  - compatible
++  - reg
++  - '#clock-cells'
++  - clock-output-names
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: brcm,bcm11351-aon-ccu
++    then:
++      properties:
++        clock-output-names:
++          items:
++            - const: hub_timer
++            - const: pmu_bsc
++            - const: pmu_bsc_var
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: brcm,bcm11351-hub-ccu
++    then:
++      properties:
++        clock-output-names:
++          const: tmon_1m
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: brcm,bcm11351-master-ccu
++    then:
++      properties:
++        clock-output-names:
++          items:
++            - const: sdio1
++            - const: sdio2
++            - const: sdio3
++            - const: sdio4
++            - const: usb_ic
++            - const: hsic2_48m
++            - const: hsic2_12m
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - brcm,bcm11351-root-ccu
++              - brcm,bcm21664-root-ccu
++    then:
++      properties:
++        clock-output-names:
++          const: frac_1m
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: brcm,bcm11351-slave-ccu
++    then:
++      properties:
++        clock-output-names:
++          items:
++            - const: uartb
++            - const: uartb2
++            - const: uartb3
++            - const: uartb4
++            - const: ssp0
++            - const: ssp2
++            - const: bsc1
++            - const: bsc2
++            - const: bsc3
++            - const: pwm
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: brcm,bcm21664-aon-ccu
++    then:
++      properties:
++        clock-output-names:
++          const: hub_timer
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: brcm,bcm21664-master-ccu
++    then:
++      properties:
++        clock-output-names:
++          items:
++            - const: sdio1
++            - const: sdio2
++            - const: sdio3
++            - const: sdio4
++            - const: sdio1_sleep
++            - const: sdio2_sleep
++            - const: sdio3_sleep
++            - const: sdio4_sleep
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: brcm,bcm21664-slave-ccu
++    then:
++      properties:
++        clock-output-names:
++          items:
++            - const: uartb
++            - const: uartb2
++            - const: uartb3
++            - const: bsc1
++            - const: bsc2
++            - const: bsc3
++            - const: bsc4
++
++additionalProperties: false
++
++examples:
++  - |
++    clock-controller@3e011000 {
++      compatible = "brcm,bcm11351-slave-ccu";
++      reg = <0x3e011000 0x0f00>;
++      #clock-cells = <1>;
++      clock-output-names = "uartb",
++                           "uartb2",
++                           "uartb3",
++                           "uartb4",
++                           "ssp0",
++                           "ssp2",
++                           "bsc1",
++                           "bsc2",
++                           "bsc3",
++                           "pwm";
++    };
++...
+-- 
+2.34.1
 
-else i did some tests, but it does not seem that the offloader is used (re=
-quests stay at initial value after the bootup test)
-
-i wonder about the last 3 lines in dmesg (fallback), seems i miss somethin=
-g for these.
-
-root@bpi-r2pro:~# dmesg | grep crypto
-[    0.150643] alg: extra crypto tests enabled.  This is intended for deve=
-loper use only.
-[    2.718110] rk2-crypto fe380000.crypto: will run requests pump with rea=
-ltime priority
-[    2.720605] rk2-crypto fe380000.crypto: Registers crypto algos
-[    2.721910] rk2-crypto fe380000.crypto: Register ecb(aes) as ecb-aes-rk=
-2
-[    2.724435] rk2-crypto fe380000.crypto: Register cbc(aes) as cbc-aes-rk=
-2
-[    2.725072] rk2-crypto fe380000.crypto: Register xts(aes) as xts-aes-rk=
-2
-[    2.725731] rk2-crypto fe380000.crypto: Register md5 as rk2-md5 3
-[    2.726310] rk2-crypto fe380000.crypto: Register sha1 as rk2-sha1 4
-[    2.726901] rk2-crypto fe380000.crypto: Register sha256 as rk2-sha256 5
-[    2.727521] rk2-crypto fe380000.crypto: Register sha384 as rk2-sha384 6
-[    2.728142] rk2-crypto fe380000.crypto: Register sha512 as rk2-sha512 7
-[    2.728763] rk2-crypto fe380000.crypto: Register sm3 as rk2-sm3 8
-[    3.502442] rk2-crypto fe380000.crypto: Fallback for xts-aes-rk2 is xts=
--aes-ce
-[    3.770678] rk2-crypto fe380000.crypto: Fallback for cbc-aes-rk2 is cbc=
--aes-ce
-[    3.939055] rk2-crypto fe380000.crypto: Fallback for ecb-aes-rk2 is ecb=
--aes-ce
-
-root@bpi-r2pro:~# cat /sys/kernel/debug/rk2_crypto/stats
-rk2-crypto fe380000.crypto requests: 581
-ecb-aes-rk2 ecb(aes) reqs=3D132 fallback=3D1994
-        fallback due to length: 342
-        fallback due to alignment: 1648
-        fallback due to SGs: 0
-cbc-aes-rk2 cbc(aes) reqs=3D156 fallback=3D2182
-        fallback due to length: 329
-        fallback due to alignment: 1841
-        fallback due to SGs: 6
-xts-aes-rk2 xts(aes) reqs=3D137 fallback=3D2143
-        fallback due to length: 116
-        fallback due to alignment: 739
-        fallback due to SGs: 0
-rk2-md5 md5 reqs=3D14 fallback=3D739
-rk2-sha1 sha1 reqs=3D28 fallback=3D716
-rk2-sha256 sha256 reqs=3D25 fallback=3D654
-rk2-sha384 sha384 reqs=3D32 fallback=3D656
-rk2-sha512 sha512 reqs=3D34 fallback=3D638
-rk2-sm3 sm3 reqs=3D23 fallback=3D712
-root@bpi-r2pro:~# kcapi-rng -b 512 > rng.bin
-root@bpi-r2pro:~# cat /sys/kernel/debug/rk2_crypto/stats
-rk2-crypto fe380000.crypto requests: 581
-ecb-aes-rk2 ecb(aes) reqs=3D132 fallback=3D1994
-        fallback due to length: 342
-        fallback due to alignment: 1648
-        fallback due to SGs: 0
-cbc-aes-rk2 cbc(aes) reqs=3D156 fallback=3D2182
-        fallback due to length: 329
-        fallback due to alignment: 1841
-        fallback due to SGs: 6
-xts-aes-rk2 xts(aes) reqs=3D137 fallback=3D2143
-        fallback due to length: 116
-        fallback due to alignment: 739
-        fallback due to SGs: 0
-rk2-md5 md5 reqs=3D14 fallback=3D739
-rk2-sha1 sha1 reqs=3D28 fallback=3D716
-rk2-sha256 sha256 reqs=3D25 fallback=3D654
-rk2-sha384 sha384 reqs=3D32 fallback=3D656
-rk2-sha512 sha512 reqs=3D34 fallback=3D638
-rk2-sm3 sm3 reqs=3D23 fallback=3D712
-root@bpi-r2pro:~#
-
-if needed this is my current defconfig/tree:
-
-https://github.com/frank-w/BPI-Router-Linux/blob/6.6-r2pro2/arch/arm64/con=
-figs/quartz64_defconfig#L924
-
-regards Frank
