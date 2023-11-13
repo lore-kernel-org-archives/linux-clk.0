@@ -1,48 +1,48 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705CF1F614;
-	Mon, 13 Nov 2023 13:18:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF221F614;
+	Mon, 13 Nov 2023 13:19:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vm0umlZR"
-Received: from mail-oo1-xc2d.google.com (mail-oo1-xc2d.google.com [IPv6:2607:f8b0:4864:20::c2d])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CFCCD7E;
-	Mon, 13 Nov 2023 05:18:38 -0800 (PST)
-Received: by mail-oo1-xc2d.google.com with SMTP id 006d021491bc7-58a03280aa7so1962754eaf.2;
-        Mon, 13 Nov 2023 05:18:38 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dLtb6C7M"
+Received: from mail-oo1-xc2e.google.com (mail-oo1-xc2e.google.com [IPv6:2607:f8b0:4864:20::c2e])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0033171A;
+	Mon, 13 Nov 2023 05:19:10 -0800 (PST)
+Received: by mail-oo1-xc2e.google.com with SMTP id 006d021491bc7-581f78a0206so2500723eaf.2;
+        Mon, 13 Nov 2023 05:19:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1699881518; x=1700486318; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1699881550; x=1700486350; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jnidoTz18poFRJQVm3zc9EXikrZGMBjL2/WTAOtgT3Q=;
-        b=Vm0umlZRA/A1b0wi2zKdckXjWxVKzodXOCmoj1hVPakva6Wc8yzcvA975FZH23cT3/
-         qZZG6CJ1nuImINgjgggPapP+LqpVUAK6pIB975a1Pl79+FLhDtJX/wLFzBjAGUh4kxkO
-         2YwsImnaIICc8ymXh3jm8RzELwBMHZXDaswxt2sfbFSzauMe7f/G7agSAOecmXEr45Sy
-         6W0iHi9uusl6I3IbP+pDrstcxYlwD0g8pt6jKbKuLAdoYzfrvnh5UIjTan9eimPhmdy2
-         /0l7ZaBuXUR7WQPNMhIQcouplQZmBLqEHk9SNvba5VMi/6zM+UBQxJCbT204Xut90AIf
-         hpvA==
+        bh=cILQpOBvb+TfKiK6ZQZxVGfG6yumttRB0ZdBq3qtuMo=;
+        b=dLtb6C7MSvk0qWMQjorUwfkypOwTsYwHlBu/JrMTn16wfNFT6ArS6CWxUk+LfmpjXt
+         pQ3HLxlX+ksOGcz2nisGoQn05ieTyWqQ8I3DvRCM6FkogLgRjyP5Q2YEiZwmSyE4LfCL
+         tf+E5uUXsaEbSBXaxBaqOaXvttW4+9r9YpfxoXfNfu5PnbiKzVNKNQ5dsxVXDAjBCXNh
+         20a0dVm1ACttH21gVfkhiqbM602ibJTw1NxG0algFwZJy7uIC+XkESsnewM+OxlqlNV2
+         +3HYVNhYn/Em8jTKL/ucoclzauCMEzqDrSnDUDoWREFUonBPMZFAv6zdIBevkJeD2Kso
+         aShQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699881518; x=1700486318;
+        d=1e100.net; s=20230601; t=1699881550; x=1700486350;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jnidoTz18poFRJQVm3zc9EXikrZGMBjL2/WTAOtgT3Q=;
-        b=L8dRoWXsP/4oW8CgDW+Hvhgfnd1Gue7fMGVzgBlZmP+tcfdENWISaS4S7tp4lvRT2O
-         o95bPhrlH+B+X/cXEqKs4Hks202N9fAuqYpwNmG7I24niI/EJcOqDfXP9SYOxxeySdVN
-         RN9+GHaLSebX5koPivMQCJhCGLEwSrIrmrjpSp+AbtETyToCOOUhPgJ23RUIapaWjdfN
-         h3CJtgBnBcLalJc8Ch/B7xGWB36PK/JX350MCQMghJYfHpsUwes+CA8PXnrKUjOpMezK
-         VXRV/1/xx1vcZg31IRFLKU8so44ApkNJnDTr0v3dRtGQxHu/4KhIZ6KPVUuLzU0dTC1T
-         AcTA==
-X-Gm-Message-State: AOJu0Ywl3yVVzNeTSmiN9e48710y5qzrZ4d+fE78RztFL4o7PeiOHFyc
-	VoT/nXD6vDi3ycW2zO3bT+M=
-X-Google-Smtp-Source: AGHT+IErVlENwNFoUaikVtgiveOPcnMlOEvlb7jtsVqbcfIi1GqKdqrG/nLsqJuvi2GnD70tlc268w==
-X-Received: by 2002:a4a:85c1:0:b0:57b:eee7:4a40 with SMTP id u1-20020a4a85c1000000b0057beee74a40mr5924139ooh.7.1699881517629;
-        Mon, 13 Nov 2023 05:18:37 -0800 (PST)
+        bh=cILQpOBvb+TfKiK6ZQZxVGfG6yumttRB0ZdBq3qtuMo=;
+        b=C8PpwN87uKqrrxMcgeBRi3Gko8HSBoIiiRjinLajC1tCoXI2qlcTRfDOo/y37WLYqb
+         6E9KDj0KZc8sGQHf64GVA+Iq4Nzjx1sKXuPanJzXhkD72AoSf/J4lByJT9TGcyp9z2b6
+         DlNCecqGA51iZFJQtK/zpGUeUB0tK0hv8g1/POubAfiRiiAiZb5Q9+dU3qE8fXUx1ZAr
+         kgVLYMiSjBr63BPPgHRyoihcmQhJ8uOHpY5vj64ef7S8J4dYXxDm1v3eMly4jhciinhq
+         nXfNaIQOfiU+ZniJdzCcDswtutHczcq8yPQqOGEsaFHXw82NT8cHjbUntnIfKQp+eGJ4
+         TRNA==
+X-Gm-Message-State: AOJu0YwVu9u6F+9Bs8FLWNGfvx/Cj+HcqZOBuhba5eN1hP8qcuOApwab
+	FCi08JqikORtVTxpMididoo=
+X-Google-Smtp-Source: AGHT+IHGu08XC660yZ66f68Mmebro0V2bn0R5bRMPD2XBiV2hiZPo8vFmbjyr+ZUlNTWZ4ylkZhGwg==
+X-Received: by 2002:a4a:851d:0:b0:581:d922:e7f3 with SMTP id k29-20020a4a851d000000b00581d922e7f3mr6288302ooh.9.1699881550098;
+        Mon, 13 Nov 2023 05:19:10 -0800 (PST)
 Received: from localhost.localdomain ([122.8.183.87])
-        by smtp.gmail.com with ESMTPSA id q8-20020a4ad548000000b0056d361ca33fsm926509oos.16.2023.11.13.05.18.36
+        by smtp.gmail.com with ESMTPSA id j15-20020a4aab4f000000b0057327cecdd8sm908572oon.10.2023.11.13.05.19.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Nov 2023 05:18:37 -0800 (PST)
+        Mon, 13 Nov 2023 05:19:09 -0800 (PST)
 From: Chen Wang <unicornxw@gmail.com>
 To: aou@eecs.berkeley.edu,
 	chao.wei@sophgo.com,
@@ -61,9 +61,9 @@ To: aou@eecs.berkeley.edu,
 	haijiao.liu@sophgo.com,
 	xiaoguang.xing@sophgo.com
 Cc: Chen Wang <unicorn_wang@outlook.com>
-Subject: [PATCH 1/5] dt-bindings: clock: sophgo: Add SG2042 clock definitions
-Date: Mon, 13 Nov 2023 21:18:25 +0800
-Message-Id: <db59acdc99357d52ede5fc9738bdb161649c8fa1.1699879741.git.unicorn_wang@outlook.com>
+Subject: [PATCH 2/5] dt-bindings: soc: sophgo: Add Sophgo syscon module
+Date: Mon, 13 Nov 2023 21:19:02 +0800
+Message-Id: <3c286171af30101b88f0aaf645fb0a7d5880ac0a.1699879741.git.unicorn_wang@outlook.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1699879741.git.unicorn_wang@outlook.com>
 References: <cover.1699879741.git.unicorn_wang@outlook.com>
@@ -77,189 +77,59 @@ Content-Transfer-Encoding: 8bit
 
 From: Chen Wang <unicorn_wang@outlook.com>
 
-Add all clock outputs for the Sophgo SG2042 clock generator.
+Add documentation to describe Sophgo System Controller Registers for
+SG2042.
 
 Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
 ---
- include/dt-bindings/clock/sophgo-sg2042-clk.h | 169 ++++++++++++++++++
- 1 file changed, 169 insertions(+)
- create mode 100644 include/dt-bindings/clock/sophgo-sg2042-clk.h
+ .../soc/sophgo/sophgo,sg2042-syscon.yaml      | 38 +++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/sophgo/sophgo,sg2042-syscon.yaml
 
-diff --git a/include/dt-bindings/clock/sophgo-sg2042-clk.h b/include/dt-bindings/clock/sophgo-sg2042-clk.h
+diff --git a/Documentation/devicetree/bindings/soc/sophgo/sophgo,sg2042-syscon.yaml b/Documentation/devicetree/bindings/soc/sophgo/sophgo,sg2042-syscon.yaml
 new file mode 100644
-index 000000000000..a8e05c00c3bf
+index 000000000000..829abede4fd5
 --- /dev/null
-+++ b/include/dt-bindings/clock/sophgo-sg2042-clk.h
-@@ -0,0 +1,169 @@
-+/* SPDX-License-Identifier: GPL-2.0 OR MIT */
-+/*
-+ * Copyright (C) 2023 Sophgo Technology Inc. All rights reserved.
-+ */
++++ b/Documentation/devicetree/bindings/soc/sophgo/sophgo,sg2042-syscon.yaml
+@@ -0,0 +1,38 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/soc/sophgo/sophgo,sg2042-syscon.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+#ifndef __DT_BINDINGS_CLOCK_SOPHGO_SG2042_H__
-+#define __DT_BINDINGS_CLOCK_SOPHGO_SG2042_H__
++title: Sophgo SG2042 SoC system controller
 +
-+/* Divider clocks */
-+#define DIV_CLK_MPLL_RP_CPU_NORMAL_0 0
-+#define DIV_CLK_MPLL_AXI_DDR_0 1
-+#define DIV_CLK_FPLL_DDR01_1 2
-+#define DIV_CLK_FPLL_DDR23_1 3
-+#define DIV_CLK_FPLL_RP_CPU_NORMAL_1 4
-+#define DIV_CLK_FPLL_50M_A53 5
-+#define DIV_CLK_FPLL_TOP_RP_CMN_DIV2 6
-+#define DIV_CLK_FPLL_UART_500M 7
-+#define DIV_CLK_FPLL_AHB_LPC 8
-+#define DIV_CLK_FPLL_EFUSE 9
-+#define DIV_CLK_FPLL_TX_ETH0 10
-+#define DIV_CLK_FPLL_PTP_REF_I_ETH0 11
-+#define DIV_CLK_FPLL_REF_ETH0 12
-+#define DIV_CLK_FPLL_EMMC 13
-+#define DIV_CLK_FPLL_SD 14
-+#define DIV_CLK_FPLL_TOP_AXI0 15
-+#define DIV_CLK_FPLL_TOP_AXI_HSPERI 16
-+#define DIV_CLK_FPLL_AXI_DDR_1 17
-+#define DIV_CLK_FPLL_DIV_TIMER1 18
-+#define DIV_CLK_FPLL_DIV_TIMER2 19
-+#define DIV_CLK_FPLL_DIV_TIMER3 20
-+#define DIV_CLK_FPLL_DIV_TIMER4 21
-+#define DIV_CLK_FPLL_DIV_TIMER5 22
-+#define DIV_CLK_FPLL_DIV_TIMER6 23
-+#define DIV_CLK_FPLL_DIV_TIMER7 24
-+#define DIV_CLK_FPLL_DIV_TIMER8 25
-+#define DIV_CLK_FPLL_100K_EMMC 26
-+#define DIV_CLK_FPLL_100K_SD 27
-+#define DIV_CLK_FPLL_GPIO_DB 28
-+#define DIV_CLK_DPLL0_DDR01_0 29
-+#define DIV_CLK_DPLL1_DDR23_0 30
++maintainers:
++  - Chen Wang <unicorn_wang@outlook.com>
 +
-+/* Gate clocks */
-+#define GATE_CLK_RP_CPU_NORMAL_DIV0 31
-+#define GATE_CLK_AXI_DDR_DIV0 32
++description:
++  The Sophgo SG2042 SoC system controller provides register information such
++  as offset, mask and shift to configure related modules.
 +
-+#define GATE_CLK_RP_CPU_NORMAL_DIV1 33
-+#define GATE_CLK_A53_50M 34
-+#define GATE_CLK_TOP_RP_CMN_DIV2 35
-+#define GATE_CLK_HSDMA 36
-+#define GATE_CLK_EMMC_100M 37
-+#define GATE_CLK_SD_100M 38
-+#define GATE_CLK_TX_ETH0 39
-+#define GATE_CLK_PTP_REF_I_ETH0 40
-+#define GATE_CLK_REF_ETH0 41
-+#define GATE_CLK_UART_500M 42
-+#define GATE_CLK_EFUSE 43
++properties:
++  compatible:
++    oneOf:
++      - items:
++          - enum:
++              - sophgo,sg2042-syscon
++          - const: syscon
 +
-+#define GATE_CLK_AHB_LPC 44
-+#define GATE_CLK_AHB_ROM 45
-+#define GATE_CLK_AHB_SF 46
++  reg:
++    maxItems: 1
 +
-+#define GATE_CLK_APB_UART 47
-+#define GATE_CLK_APB_TIMER 48
-+#define GATE_CLK_APB_EFUSE 49
-+#define GATE_CLK_APB_GPIO 50
-+#define GATE_CLK_APB_GPIO_INTR 51
-+#define GATE_CLK_APB_SPI 52
-+#define GATE_CLK_APB_I2C 53
-+#define GATE_CLK_APB_WDT 54
-+#define GATE_CLK_APB_PWM 55
-+#define GATE_CLK_APB_RTC 56
++required:
++  - compatible
++  - reg
 +
-+#define GATE_CLK_AXI_PCIE0 57
-+#define GATE_CLK_AXI_PCIE1 58
-+#define GATE_CLK_SYSDMA_AXI 59
-+#define GATE_CLK_AXI_DBG_I2C 60
-+#define GATE_CLK_AXI_SRAM 61
-+#define GATE_CLK_AXI_ETH0 62
-+#define GATE_CLK_AXI_EMMC 63
-+#define GATE_CLK_AXI_SD 64
-+#define GATE_CLK_TOP_AXI0 65
-+#define GATE_CLK_TOP_AXI_HSPERI 66
++additionalProperties: false
 +
-+#define GATE_CLK_TIMER1 67
-+#define GATE_CLK_TIMER2 68
-+#define GATE_CLK_TIMER3 69
-+#define GATE_CLK_TIMER4 70
-+#define GATE_CLK_TIMER5 71
-+#define GATE_CLK_TIMER6 72
-+#define GATE_CLK_TIMER7 73
-+#define GATE_CLK_TIMER8 74
-+#define GATE_CLK_100K_EMMC 75
-+#define GATE_CLK_100K_SD 76
-+#define GATE_CLK_GPIO_DB 77
-+
-+#define GATE_CLK_AXI_DDR_DIV1 78
-+#define GATE_CLK_DDR01_DIV1 79
-+#define GATE_CLK_DDR23_DIV1 80
-+/* DPLL0 */
-+#define GATE_CLK_DDR01_DIV0 81
-+/* DPLL1 */
-+#define GATE_CLK_DDR23_DIV0 82
-+
-+#define GATE_CLK_DDR01 83
-+#define GATE_CLK_DDR23 84
-+#define GATE_CLK_RP_CPU_NORMAL 85
-+#define GATE_CLK_AXI_DDR 86
-+#define GATE_CLK_RXU0 87
-+#define GATE_CLK_RXU1 88
-+#define GATE_CLK_RXU2 89
-+#define GATE_CLK_RXU3 90
-+#define GATE_CLK_RXU4 91
-+#define GATE_CLK_RXU5 92
-+#define GATE_CLK_RXU6 93
-+#define GATE_CLK_RXU7 94
-+#define GATE_CLK_RXU8 95
-+#define GATE_CLK_RXU9 96
-+#define GATE_CLK_RXU10 97
-+#define GATE_CLK_RXU11 98
-+#define GATE_CLK_RXU12 99
-+#define GATE_CLK_RXU13 100
-+#define GATE_CLK_RXU14 101
-+#define GATE_CLK_RXU15 102
-+#define GATE_CLK_RXU16 103
-+#define GATE_CLK_RXU17 104
-+#define GATE_CLK_RXU18 105
-+#define GATE_CLK_RXU19 106
-+#define GATE_CLK_RXU20 107
-+#define GATE_CLK_RXU21 108
-+#define GATE_CLK_RXU22 109
-+#define GATE_CLK_RXU23 110
-+#define GATE_CLK_RXU24 111
-+#define GATE_CLK_RXU25 112
-+#define GATE_CLK_RXU26 113
-+#define GATE_CLK_RXU27 114
-+#define GATE_CLK_RXU28 115
-+#define GATE_CLK_RXU29 116
-+#define GATE_CLK_RXU30 117
-+#define GATE_CLK_RXU31 118
-+#define GATE_CLK_MP0 119
-+#define GATE_CLK_MP1 120
-+#define GATE_CLK_MP2 121
-+#define GATE_CLK_MP3 122
-+#define GATE_CLK_MP4 123
-+#define GATE_CLK_MP5 124
-+#define GATE_CLK_MP6 125
-+#define GATE_CLK_MP7 126
-+#define GATE_CLK_MP8 127
-+#define GATE_CLK_MP9 128
-+#define GATE_CLK_MP10 129
-+#define GATE_CLK_MP11 130
-+#define GATE_CLK_MP12 131
-+#define GATE_CLK_MP13 132
-+#define GATE_CLK_MP14 133
-+#define GATE_CLK_MP15 134
-+
-+/* MUX clocks */
-+#define MUX_CLK_DDR01 135
-+#define MUX_CLK_DDR23 136
-+#define MUX_CLK_RP_CPU_NORMAL 137
-+#define MUX_CLK_AXI_DDR 138
-+
-+/* PLL clocks */
-+#define MPLL_CLK	139
-+#define FPLL_CLK	140
-+#define DPLL0_CLK	141
-+#define DPLL1_CLK	142
-+
-+#endif /* __DT_BINDINGS_CLOCK_SOPHGO_SG2042_H__ */
++examples:
++  - |
++    syscon@30010000 {
++        compatible = "sophgo,sg2042-syscon", "syscon";
++        reg = <0x30010000 0x1000>;
++    };
 -- 
 2.25.1
 
