@@ -1,151 +1,184 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90043156C8;
-	Tue, 14 Nov 2023 13:11:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D02405CF
+	for <linux-clk@vger.kernel.org>; Tue, 14 Nov 2023 14:06:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PmpY5UF1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.120])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C89A618E;
-	Tue, 14 Nov 2023 05:11:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1699967500; x=1731503500;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=fhUtX6YItxSUVcN/cMKxZ8+lBC4Kdn2hHKloSt8uRZ8=;
-  b=PmpY5UF1+zQHFOz3FLE2834e7gVD5OMULRGu+CUjMV5d4ePCjmWCYxPq
-   t0CsPQ11kIqZ3a7E0EI3PqyAWKHlmnoP38IhT1RV4ZSmZDS5zE1hfLvdQ
-   7kMCDNs1yryVicBcX57lRJpYEZ38jz7NUv2kjZGGjPkgexp603QV5d+9a
-   gp4+nDEyvS/rkwgspsCEAUAsJgrikMVxvKdk+MdpvR50ZdonvPQP4JjqC
-   DHumrQy6RqLSg+ZMTcRGuSgA5/EIcZWVinNIwXYNTlgBL/6GbuPdYjv49
-   XVIPsHfaByj5Ggaat7HERnloQt1FtK2rauU60Xm/k6I6CI0QG+RHOLays
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10893"; a="389508709"
-X-IronPort-AV: E=Sophos;i="6.03,302,1694761200"; 
-   d="scan'208";a="389508709"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2023 05:11:40 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10893"; a="764655735"
-X-IronPort-AV: E=Sophos;i="6.03,302,1694761200"; 
-   d="scan'208";a="764655735"
-Received: from lkp-server02.sh.intel.com (HELO 83346ef18697) ([10.239.97.151])
-  by orsmga002.jf.intel.com with ESMTP; 14 Nov 2023 05:11:37 -0800
-Received: from kbuild by 83346ef18697 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1r2tCY-0000GB-2y;
-	Tue, 14 Nov 2023 13:11:34 +0000
-Date: Tue, 14 Nov 2023 21:10:59 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Frank Rowand <frowand.list@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Aymeric Aillet <aymeric.aillet@iot.bzh>,
-	Yusuke Goda <yusuke.goda.sx@renesas.com>
-Subject: Re: [PATCH 4/4] drivers: clk: renesas: enable all clocks which is
- assinged to non Linux system
-Message-ID: <202311142059.XrPUseGq-lkp@intel.com>
-References: <87wmulrynq.wl-kuninori.morimoto.gx@renesas.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J5hhVxcW"
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BE9C10D
+	for <linux-clk@vger.kernel.org>; Tue, 14 Nov 2023 06:06:17 -0800 (PST)
+Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-4083f61322fso44165955e9.1
+        for <linux-clk@vger.kernel.org>; Tue, 14 Nov 2023 06:06:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1699970776; x=1700575576; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :references:cc:to:content-language:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jrai/sdbc7ZGz/hysCFLS6pOSapKhsTENd3DlRn0qxg=;
+        b=J5hhVxcWwBTeZKFT2pGYnN/NobIrCkWzoChkvIuC8bI1z5JioKcL/kAJEzi1/L3/gs
+         avsh/qhuSsPPavfSfLk+HkxQDFsHfrjFMVrfWkwyExNC6bsg1+elTvyDEiNfRlKECZLX
+         T9QZLE5k8mjRvHfrDmJvnRjbOFPzLZjFnicGxpL/q5pfWXajxHNRn/LL2iUD3y/fmH8h
+         +Xfb7ZpUKYDGHjOGKdnFGDQ9K5jGMQVpCwCWajS7b2SeifSfAvvuTgPIVAklqfGQG85q
+         ZgArmNS2im4n9NI/2vBPknxfUPp1MOVeJtOa6knZ1dp/fmzKYlM2aPn4TYOqtFPQ6zIO
+         bczQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699970776; x=1700575576;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :references:cc:to:content-language:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=jrai/sdbc7ZGz/hysCFLS6pOSapKhsTENd3DlRn0qxg=;
+        b=S2+igtxU6k9k0wXuAuqhlt37AMqXayXD97j2cR7ydHBiRF4+6SHMhuY7K488iduaIw
+         tpSiC6zIl9fYVo4xp0tOSxIq2HbSB6qNIQTz2FLYOE0Lhnqi/qbRfzktn0nc80kOEfT7
+         Zj4X8N8v7Ov19b1lNogNsUVRNeM20k1ImUoogW1O//I0FWT82T8flhq29dULqZTm6AU0
+         BY75k0z9/dzfQS5Hf/yU2RwMuSSQfvWrgENpekMr9fafVxKmsuSmF4K8PbQGbwm4toWT
+         tGiDOI7sNCbEMrPiQdWABxMKFYqDYcZgewYH3MudHg9/s16QZMkHBzdq8fPc4Ldmkbdh
+         rogw==
+X-Gm-Message-State: AOJu0YzRi12JfuX+IxmCPPJz6VKnbZRRpWXtieWwxrzmnZo/d3G7pusC
+	5PJuRycaFmQYq+1rtD989/dgEg==
+X-Google-Smtp-Source: AGHT+IGlem3kpd2X8ZlXv4Krn4u2fmtehWx3hmyYlycOZ7Roa+TUkZU62aQgD9nsCpgXZU089vjG5g==
+X-Received: by 2002:a05:600c:474e:b0:401:b2c7:34a8 with SMTP id w14-20020a05600c474e00b00401b2c734a8mr8235339wmo.7.1699970775714;
+        Tue, 14 Nov 2023 06:06:15 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:982:cbb0:a90d:d9d5:9399:5adf? ([2a01:e0a:982:cbb0:a90d:d9d5:9399:5adf])
+        by smtp.gmail.com with ESMTPSA id q9-20020a05600c330900b0040a3f9862e3sm627965wmp.1.2023.11.14.06.06.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Nov 2023 06:06:15 -0800 (PST)
+Message-ID: <1fd6bc47-0044-44c8-ac53-b9b7262606b1@linaro.org>
+Date: Tue, 14 Nov 2023 15:06:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87wmulrynq.wl-kuninori.morimoto.gx@renesas.com>
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v8 02/12] dt-bindings: soc: amlogic,meson-gx-hhi-sysctrl:
+ add example covering meson-axg-hhi-sysctrl
+Content-Language: en-US, fr
+To: Rob Herring <robh@kernel.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Jagan Teki <jagan@amarulasolutions.com>, Nicolas Belin
+ <nbelin@baylibre.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ dri-devel@lists.freedesktop.org
+References: <20231109-amlogic-v6-4-upstream-dsi-ccf-vim3-v8-0-81e4aeeda193@linaro.org>
+ <20231109-amlogic-v6-4-upstream-dsi-ccf-vim3-v8-2-81e4aeeda193@linaro.org>
+ <20231110201223.GA347493-robh@kernel.org>
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro Developer Services
+In-Reply-To: <20231110201223.GA347493-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Kuninori,
+On 10/11/2023 21:12, Rob Herring wrote:
+> On Thu, Nov 09, 2023 at 10:00:03AM +0100, Neil Armstrong wrote:
+>> Add a thirst example covering the meson-axg-hhi-sysctrl variant and more
+>> importantly the phy subnode.
+>>
+>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>> ---
+>>   .../soc/amlogic/amlogic,meson-gx-hhi-sysctrl.yaml  | 41 ++++++++++++++++++++++
+>>   1 file changed, 41 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-gx-hhi-sysctrl.yaml b/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-gx-hhi-sysctrl.yaml
+>> index 16977e4e4357..2edf4ccea845 100644
+>> --- a/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-gx-hhi-sysctrl.yaml
+>> +++ b/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-gx-hhi-sysctrl.yaml
+>> @@ -158,3 +158,44 @@ examples:
+>>               };
+>>           };
+>>       };
+>> +
+> 
+> New example should be separate starting with a '-|'.
+> 
+>> +    bus@ff63c000 {
+>> +        compatible = "simple-bus";
+>> +        reg = <0xff63c000 0x1c00>;
+>> +        #address-cells = <1>;
+>> +        #size-cells = <1>;
+>> +        ranges = <0x0 0xff63c000 0x1c00>;
+> 
+> Why do you need all this? 1 cell is the default for examples.
 
-kernel test robot noticed the following build warnings:
+Bad copy-pasta from previous examples, I'll fix all that and separate examples with '-|'
 
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on geert-renesas-drivers/renesas-clk clk/clk-next linus/master v6.7-rc1 next-20231114]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+>> +
+>> +        system-controller@0 {
+>> +            compatible = "amlogic,meson-axg-hhi-sysctrl", "simple-mfd", "syscon";
+>> +            reg = <0 0x400>;
+>> +
+>> +            clock-controller {
+>> +                compatible = "amlogic,axg-clkc";
+>> +                #clock-cells = <1>;
+>> +                clocks = <&xtal>;
+>> +                clock-names = "xtal";
+>> +            };
+>> +
+>> +            power-controller {
+>> +                compatible = "amlogic,meson-axg-pwrc";
+>> +                #power-domain-cells = <1>;
+>> +                amlogic,ao-sysctrl = <&sysctrl_AO>;
+>> +
+>> +                resets = <&reset_viu>,
+>> +                         <&reset_venc>,
+>> +                         <&reset_vcbus>,
+>> +                         <&reset_vencl>,
+>> +                         <&reset_vid_lock>;
+>> +                reset-names = "viu", "venc", "vcbus", "vencl", "vid_lock";
+>> +                clocks = <&clk_vpu>, <&clk_vapb>;
+>> +                clock-names = "vpu", "vapb";
+>> +            };
+>> +
+>> +            phy {
+>> +                compatible = "amlogic,axg-mipi-pcie-analog-phy";
+>> +                #phy-cells = <0>;
+>> +                status = "disabled";
+> 
+> Examples should not be disabled.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Kuninori-Morimoto/of-add-__of_device_is_status-and-makes-more-generic-status-check/20231114-081044
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/87wmulrynq.wl-kuninori.morimoto.gx%40renesas.com
-patch subject: [PATCH 4/4] drivers: clk: renesas: enable all clocks which is assinged to non Linux system
-config: loongarch-allmodconfig (https://download.01.org/0day-ci/archive/20231114/202311142059.XrPUseGq-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231114/202311142059.XrPUseGq-lkp@intel.com/reproduce)
+Err, thx I 'll fix this
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202311142059.XrPUseGq-lkp@intel.com/
+> 
+>> +            };
+>> +        };
+>> +    };
+>>
+>> -- 
+>> 2.34.1
+>>
 
-All warnings (new ones prefixed by >>):
-
->> drivers/clk/renesas/renesas-cpg-mssr.c:175: warning: Function parameter or member 'reserved_ids' not described in 'cpg_mssr_priv'
->> drivers/clk/renesas/renesas-cpg-mssr.c:175: warning: Function parameter or member 'num_reserved_ids' not described in 'cpg_mssr_priv'
-
-
-vim +175 drivers/clk/renesas/renesas-cpg-mssr.c
-
-17bcc8035d2d19 drivers/clk/renesas/renesas-cpg-mssr.c  Yoshihiro Shimoda   2020-09-11  124  
-f793d1e51705b2 drivers/clk/shmobile/renesas-cpg-mssr.c Geert Uytterhoeven  2015-10-16  125  /**
-b5fb3b8859a491 drivers/clk/renesas/renesas-cpg-mssr.c  Krzysztof Kozlowski 2020-11-03  126   * struct cpg_mssr_priv - Clock Pulse Generator / Module Standby
-b5fb3b8859a491 drivers/clk/renesas/renesas-cpg-mssr.c  Krzysztof Kozlowski 2020-11-03  127   *                        and Software Reset Private Data
-f793d1e51705b2 drivers/clk/shmobile/renesas-cpg-mssr.c Geert Uytterhoeven  2015-10-16  128   *
-6197aa65c49055 drivers/clk/renesas/renesas-cpg-mssr.c  Geert Uytterhoeven  2017-01-20  129   * @rcdev: Optional reset controller entity
-f793d1e51705b2 drivers/clk/shmobile/renesas-cpg-mssr.c Geert Uytterhoeven  2015-10-16  130   * @dev: CPG/MSSR device
-f793d1e51705b2 drivers/clk/shmobile/renesas-cpg-mssr.c Geert Uytterhoeven  2015-10-16  131   * @base: CPG/MSSR register block base address
-ffbf9cf3f9460e drivers/clk/renesas/renesas-cpg-mssr.c  Yoshihiro Shimoda   2020-09-11  132   * @reg_layout: CPG/MSSR register layout
-a4ea6a0f83073f drivers/clk/renesas/renesas-cpg-mssr.c  Geert Uytterhoeven  2017-01-20  133   * @rmw_lock: protects RMW register accesses
-d2e4cb45af8fac drivers/clk/renesas/renesas-cpg-mssr.c  Geert Uytterhoeven  2019-06-12  134   * @np: Device node in DT for this CPG/MSSR module
-f793d1e51705b2 drivers/clk/shmobile/renesas-cpg-mssr.c Geert Uytterhoeven  2015-10-16  135   * @num_core_clks: Number of Core Clocks in clks[]
-f793d1e51705b2 drivers/clk/shmobile/renesas-cpg-mssr.c Geert Uytterhoeven  2015-10-16  136   * @num_mod_clks: Number of Module Clocks in clks[]
-f793d1e51705b2 drivers/clk/shmobile/renesas-cpg-mssr.c Geert Uytterhoeven  2015-10-16  137   * @last_dt_core_clk: ID of the last Core Clock exported to DT
-1f4023cdd1bdbe drivers/clk/renesas/renesas-cpg-mssr.c  Geert Uytterhoeven  2017-06-21  138   * @notifiers: Notifier chain to save/restore clock state for system resume
-8b652aa8a1fb02 drivers/clk/renesas/renesas-cpg-mssr.c  Yoshihiro Shimoda   2020-09-11  139   * @status_regs: Pointer to status registers array
-8b652aa8a1fb02 drivers/clk/renesas/renesas-cpg-mssr.c  Yoshihiro Shimoda   2020-09-11  140   * @control_regs: Pointer to control registers array
-8b652aa8a1fb02 drivers/clk/renesas/renesas-cpg-mssr.c  Yoshihiro Shimoda   2020-09-11  141   * @reset_regs: Pointer to reset registers array
-8b652aa8a1fb02 drivers/clk/renesas/renesas-cpg-mssr.c  Yoshihiro Shimoda   2020-09-11  142   * @reset_clear_regs:  Pointer to reset clearing registers array
-24ece96554a963 drivers/clk/renesas/renesas-cpg-mssr.c  Lee Jones           2021-01-26  143   * @smstpcr_saved: [].mask: Mask of SMSTPCR[] bits under our control
-24ece96554a963 drivers/clk/renesas/renesas-cpg-mssr.c  Lee Jones           2021-01-26  144   *                 [].val: Saved values of SMSTPCR[]
-8f5e20b6b8848b drivers/clk/renesas/renesas-cpg-mssr.c  Geert Uytterhoeven  2019-06-12  145   * @clks: Array containing all Core and Module Clocks
-f793d1e51705b2 drivers/clk/shmobile/renesas-cpg-mssr.c Geert Uytterhoeven  2015-10-16  146   */
-f793d1e51705b2 drivers/clk/shmobile/renesas-cpg-mssr.c Geert Uytterhoeven  2015-10-16  147  struct cpg_mssr_priv {
-6197aa65c49055 drivers/clk/renesas/renesas-cpg-mssr.c  Geert Uytterhoeven  2017-01-20  148  #ifdef CONFIG_RESET_CONTROLLER
-6197aa65c49055 drivers/clk/renesas/renesas-cpg-mssr.c  Geert Uytterhoeven  2017-01-20  149  	struct reset_controller_dev rcdev;
-6197aa65c49055 drivers/clk/renesas/renesas-cpg-mssr.c  Geert Uytterhoeven  2017-01-20  150  #endif
-f793d1e51705b2 drivers/clk/shmobile/renesas-cpg-mssr.c Geert Uytterhoeven  2015-10-16  151  	struct device *dev;
-f793d1e51705b2 drivers/clk/shmobile/renesas-cpg-mssr.c Geert Uytterhoeven  2015-10-16  152  	void __iomem *base;
-ffbf9cf3f9460e drivers/clk/renesas/renesas-cpg-mssr.c  Yoshihiro Shimoda   2020-09-11  153  	enum clk_reg_layout reg_layout;
-a4ea6a0f83073f drivers/clk/renesas/renesas-cpg-mssr.c  Geert Uytterhoeven  2017-01-20  154  	spinlock_t rmw_lock;
-1f7db7bbf03182 drivers/clk/renesas/renesas-cpg-mssr.c  Chris Brandt        2018-09-24  155  	struct device_node *np;
-f793d1e51705b2 drivers/clk/shmobile/renesas-cpg-mssr.c Geert Uytterhoeven  2015-10-16  156  
-f793d1e51705b2 drivers/clk/shmobile/renesas-cpg-mssr.c Geert Uytterhoeven  2015-10-16  157  	unsigned int num_core_clks;
-f793d1e51705b2 drivers/clk/shmobile/renesas-cpg-mssr.c Geert Uytterhoeven  2015-10-16  158  	unsigned int num_mod_clks;
-f793d1e51705b2 drivers/clk/shmobile/renesas-cpg-mssr.c Geert Uytterhoeven  2015-10-16  159  	unsigned int last_dt_core_clk;
-560869100b99a3 drivers/clk/renesas/renesas-cpg-mssr.c  Geert Uytterhoeven  2017-06-07  160  
-1f4023cdd1bdbe drivers/clk/renesas/renesas-cpg-mssr.c  Geert Uytterhoeven  2017-06-21  161  	struct raw_notifier_head notifiers;
-8b652aa8a1fb02 drivers/clk/renesas/renesas-cpg-mssr.c  Yoshihiro Shimoda   2020-09-11  162  	const u16 *status_regs;
-8b652aa8a1fb02 drivers/clk/renesas/renesas-cpg-mssr.c  Yoshihiro Shimoda   2020-09-11  163  	const u16 *control_regs;
-8b652aa8a1fb02 drivers/clk/renesas/renesas-cpg-mssr.c  Yoshihiro Shimoda   2020-09-11  164  	const u16 *reset_regs;
-8b652aa8a1fb02 drivers/clk/renesas/renesas-cpg-mssr.c  Yoshihiro Shimoda   2020-09-11  165  	const u16 *reset_clear_regs;
-560869100b99a3 drivers/clk/renesas/renesas-cpg-mssr.c  Geert Uytterhoeven  2017-06-07  166  	struct {
-560869100b99a3 drivers/clk/renesas/renesas-cpg-mssr.c  Geert Uytterhoeven  2017-06-07  167  		u32 mask;
-560869100b99a3 drivers/clk/renesas/renesas-cpg-mssr.c  Geert Uytterhoeven  2017-06-07  168  		u32 val;
-470e3f0d0b1529 drivers/clk/renesas/renesas-cpg-mssr.c  Yoshihiro Shimoda   2021-12-01  169  	} smstpcr_saved[ARRAY_SIZE(mstpsr_for_gen4)];
-8f5e20b6b8848b drivers/clk/renesas/renesas-cpg-mssr.c  Geert Uytterhoeven  2019-06-12  170  
-b357c19f075f23 drivers/clk/renesas/renesas-cpg-mssr.c  Kuninori Morimoto   2023-11-14  171  	unsigned int *reserved_ids;
-b357c19f075f23 drivers/clk/renesas/renesas-cpg-mssr.c  Kuninori Morimoto   2023-11-14  172  	unsigned int num_reserved_ids;
-b357c19f075f23 drivers/clk/renesas/renesas-cpg-mssr.c  Kuninori Morimoto   2023-11-14  173  
-8f5e20b6b8848b drivers/clk/renesas/renesas-cpg-mssr.c  Geert Uytterhoeven  2019-06-12  174  	struct clk *clks[];
-f793d1e51705b2 drivers/clk/shmobile/renesas-cpg-mssr.c Geert Uytterhoeven  2015-10-16 @175  };
-f793d1e51705b2 drivers/clk/shmobile/renesas-cpg-mssr.c Geert Uytterhoeven  2015-10-16  176  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
