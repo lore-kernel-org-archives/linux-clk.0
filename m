@@ -1,51 +1,51 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F4518655
-	for <linux-clk@vger.kernel.org>; Tue, 14 Nov 2023 10:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B4E18631
+	for <linux-clk@vger.kernel.org>; Tue, 14 Nov 2023 10:14:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oLtoOWIX"
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4909199A
-	for <linux-clk@vger.kernel.org>; Tue, 14 Nov 2023 02:14:50 -0800 (PST)
-Received: by mail-wr1-x433.google.com with SMTP id ffacd0b85a97d-32d9d8284abso3426698f8f.3
-        for <linux-clk@vger.kernel.org>; Tue, 14 Nov 2023 02:14:50 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PWCXkvGo"
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1ED07191
+	for <linux-clk@vger.kernel.org>; Tue, 14 Nov 2023 02:14:53 -0800 (PST)
+Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-32d895584f1so3301456f8f.1
+        for <linux-clk@vger.kernel.org>; Tue, 14 Nov 2023 02:14:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1699956889; x=1700561689; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lP4pwuRhYTWCh+6fGIMGYIpMuMAg/mVMsSJit6b5kb8=;
-        b=oLtoOWIXAw3FMxU0H0pzUAmInplyB6DGTep3pwcdOw18QhdoMNgz5QUhwGw7hEpt8n
-         K7FoEa0Wcwrprj3g7R5605eC2LHAR06w4XuUWM6RAJAxFzmegrsMYwdjJM2IfMFq1/qe
-         AR+K6bdDQ+U/kx2gVMny27Cg5pfuGIc6SK87F1lo1w4QhDoyZE2UGwyDwGm/LsHddwqI
-         y8Uvx0Xojd1VNE7d9V7cST6sr1YesPkbcEoYzslyuoGHB4FPD9gAWbN4aPz9VdgEe9mE
-         TpaMOR7xi+KeMnAJQqORI7xO3vU5iqo84Tb4P6ARoB4gR6ibukfRZpM21OvLZNN7yMhL
-         90+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699956889; x=1700561689;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1699956891; x=1700561691; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=lP4pwuRhYTWCh+6fGIMGYIpMuMAg/mVMsSJit6b5kb8=;
-        b=lbqFdSNsc1+0rNVH6CwJ9iN0TFMHJkF/Wg5QzMg1Mb5MhZCqJmaRrVptakB9UhgXGR
-         sETDI8H9NO7dXSUf0YfbC0QzwZZ/6o5g2gIT0r7DRXE+tZFLaXyOWBE72z5cq//VdJE4
-         KvDEdChkVcjBrhofkqJ4GwR1AO4G8i6vBqdqToW+VUywy8CnQLrhXyn/aEpB5z94ezz8
-         84e7qXSqJrqy4GllC4qeTsnk7nttb3QA6C0rrEGWgtln6GqBqvbvm9Ug04HlL2AQXhAZ
-         M+GjlteyV+9HJ1winBqwGiZJUMT0PTC122rLroq4JqPtYc00LR3xx5QgxVOeZ5P5n5+S
-         RGdA==
-X-Gm-Message-State: AOJu0Yx2viPOSTleTLAwxTcN/M7ATWjspGEKcmTPn1BNOY+9n+LhmMXI
-	E602Kqi6xhdofYd1vh56dynphrKdzPbvFPQbFUkSvhis
-X-Google-Smtp-Source: AGHT+IGjhN6RX4rBNlnSxxeTha7OzGItl9ZV7rvJ03XS0hXAK5QeQ/02Q4ADuftfGRyfvnxSbKrlPw==
-X-Received: by 2002:a5d:4dcd:0:b0:32d:aabf:1db3 with SMTP id f13-20020a5d4dcd000000b0032daabf1db3mr6480680wru.24.1699956889056;
-        Tue, 14 Nov 2023 02:14:49 -0800 (PST)
+        bh=Usa3VquYxAPDycVqQKpd67nWp9ekHUYyeEdbo8Ek7jY=;
+        b=PWCXkvGoyX7xtv9EsP589Z9/O9sTh03ISJYfcQ17mZCmXjxBaI1BeRYPgrtIeW49Wv
+         CzhFDtbRB2cwgnFQPmUvTokkPtrhH9AmPYhTyQaC2aqCGXOsyxIROtJ8+1oc0cFKfSRz
+         WXviwy+H0Ubpq4SO1sYD064G2Iy0vgjdNeveGXgOjCNoykXpzZLQbxRKKzGm8DviLMvn
+         TJd99xgPToetstOwGkEhXDnCxugOObMOzLlQNKc0HdY1TUz3lBGvzOFvdXtuPf60bvMd
+         aFCPDDsmxQud+0sLEFOzLbcA3YRdNBulV3183SnJHVea8OJ0Znqee5/WqMNhrsYChSh4
+         kzlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699956891; x=1700561691;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Usa3VquYxAPDycVqQKpd67nWp9ekHUYyeEdbo8Ek7jY=;
+        b=JuOSTNxy1mAEDR1pxaV5ApJtwpfrPJf3N/MI6Q1ev4UKFOnJHgOiRi/t6LAKyusyAn
+         bvQvUKuE/SmgpJKK8qqTdLjcvrEkdoVV0Tuc2BJOi6Ks+BsMTcJmd89gqhJo3iuemrPV
+         heSMSkY2Vzwxx0RxUPqG3TMXRbRDZXhs6BKJJpUGUawQcUzpiZ8u+ik32zZ7SBY/q9BY
+         abRpty0FqqJV13++QzWARXDIt6HEfijpWkE/NnQiyhKczwA6+ScMFIwh40OzQA1ZGI0N
+         KiOz9NHZIEQmAsVG4TX6h7Vlv2y72tNStlLOc/KwjCFhaDAhML9wY2j7TfRXtFRcdkOX
+         PHpg==
+X-Gm-Message-State: AOJu0YyjQJGU34tXwl+L7gu+xApg/bIDfIu6rRxi1KgSYnowhAO6rg4F
+	Ys7WZeRxl4oDM9b/8Hi6jxRkzQ==
+X-Google-Smtp-Source: AGHT+IEzVZMK67kMUGREpJZSlwqk/XFJZSzmj5Cu4UNpZkY1pqqaaiRElgez6kW52TTfdqVYtkAZjg==
+X-Received: by 2002:a05:6000:1565:b0:32f:7ebe:3e5a with SMTP id 5-20020a056000156500b0032f7ebe3e5amr7525048wrz.50.1699956891208;
+        Tue, 14 Nov 2023 02:14:51 -0800 (PST)
 Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id n2-20020a5d4202000000b0032d886039easm7335585wrq.14.2023.11.14.02.14.48
+        by smtp.gmail.com with ESMTPSA id n2-20020a5d4202000000b0032d886039easm7335585wrq.14.2023.11.14.02.14.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Nov 2023 02:14:48 -0800 (PST)
+        Tue, 14 Nov 2023 02:14:50 -0800 (PST)
 From: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: [PATCH 0/3] clk: meson: add MIPI ISP & CSI PHY clocks
-Date: Tue, 14 Nov 2023 11:14:42 +0100
-Message-Id: <20231114-topic-amlogic-upstream-isp-clocks-v1-0-223958791501@linaro.org>
+Date: Tue, 14 Nov 2023 11:14:44 +0100
+Subject: [PATCH 2/3] clk: meson: g12a: add MIPI ISP clocks
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -54,9 +54,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAJJIU2UC/x2NQQqDMBAAvyJ7dsEkbal+RTws6WqXqgnZKIL4d
- 0NPw1xmTlBOwgpddULiXVTCWsTUFfgvrROjfIqDbawzxjwwhygeaZnDVLhFzYlpQdGIfg7+p0h
- k38+WXs6NDZROTDzK8X/0w3XdoJthzHMAAAA=
+Message-Id: <20231114-topic-amlogic-upstream-isp-clocks-v1-2-223958791501@linaro.org>
+References: <20231114-topic-amlogic-upstream-isp-clocks-v1-0-223958791501@linaro.org>
+In-Reply-To: <20231114-topic-amlogic-upstream-isp-clocks-v1-0-223958791501@linaro.org>
 To: Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
  Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
@@ -68,46 +68,136 @@ Cc: Daniel Scally <dan.scally@ideasonboard.com>, linux-clk@vger.kernel.org,
  linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
  Neil Armstrong <neil.armstrong@linaro.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=904;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3403;
  i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=PwjQ/DLZqY7Bxq2AfQoR8M0lM8zWRFZSzmKQH+USBu0=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBlU0iWvHW+Rz3HPpK51JzL56QxmMmGAg9A3MUNWjOQ
- APjxiOCJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZVNIlgAKCRB33NvayMhJ0bXRD/
- 4l5mSNoYLtkeq1lLfw7E9Ryvnyt5Tg3UaBv10vi18Bi7AZYtmC2+stFD0tdIY4km6Yy8lQlte0W30z
- Z0EoD2SavQ7+Z39dhPXQYeufPMBhDiAvXAIokLI7AZ78Y31GRSK1J26AOkRHrYualoa+MCJo6zpKTU
- AcBHwUpT+QYIHue2dC/XnNMB5xKeHfMF245eGfcAE+CaCKG46BmdNwcgRn+36esq7l398kxAug+U8f
- /m2gRnXEtpktrflsqrnjm0c3ZCInq+nAVA2bMydBBslDs3NjTnzoxFIbL4n4ZJyqn9lK8KDz7uflql
- l1qA4uC6rbi1FSXF4aUGp5JO7U9fM9IVAPQ8epuIus+DT+OkuDhq+qkF9vSGNplKBvm6RM8qb2/r26
- PwNKxDJMrV8foZE8utygOT8hclPcJMbblh3sF6aLklWIvXSxjYVN4+fr5Cj43A26dSICZJG2gomlN7
- Z0z70S72g6lSjcBwr5vmVOe4US+MJitfAGaw+rlA9NZawz1+PzNLoq2sFxhWe/IwCWp+21Rk+H5S/4
- G4wQAtE1H19tA49SyQ/YgFXPEfhkt7XEdP+F1kgyEEK4mww2VlTFYMvx+xcYfWzYi+1D3xOmu37EAC
- XqzReZ3CuG/YJhJl+l3SJq80dVDcgvIub+ItE2KqS8Ml44txcX63tNuv4RNw==
+ bh=dZke1iq4FAITvgVMIUDhLoZap1P+Z6ah4DJyhujVIds=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBlU0iXlwUukpCz/mpc05k9GDypuFrhFLdOZG5tKQ+r
+ wnMvS0yJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZVNIlwAKCRB33NvayMhJ0cx7D/
+ 9z5wa9btnYn9c2UrV+P9UhiZazbpjGG9COykZ17lwepwf4InMJLNjO+5SpCbzT9BV8I+Gr6RdoUozQ
+ P2EbVQKscHgusKvlYKyNza3n/6DZ2VnW33BP40nGIs0Ji1cDCUqSQjKdUKWXgniTL++Mc70l0fM9Ar
+ LfDQ0VJCEVRUaIMU5mCIu7vc0J67V7ebMuM//zvkGkeq3dGGq22yC/1/r3LJuaRBOQXF4Nm7+tKCc9
+ YB/jttKphPf0lHvaeJoKdidTON6c7okJUOLTPTWHqTnkTsYHtosGPJ0R3SJsG8GhZ2CH/KFlJgsjdN
+ gTQ8eJJ7aUwYoh2lVlU8QgNr/urUXcsgrR9e1hgVuneNdkFtrprpwI7/S3Vpfg0jQ5J4SNAtgaohr1
+ vIUw/7WDyctSoRFZF1FSOQHFLEzzTwVQDILOBAAfZTIKs4ISy/RXXk3FL7y09nYDAO2Q1LKJ9Yzn7h
+ YMHIpVnTcyQ9RiB2SsCvCb09SmQ52nF263gMdC6nX/fDyIHqZmHziALJSfaoLME98At8AK2LzaKiKO
+ 0zyHJCHYBgYxqJPuBW8oyoJO4nRU8+UaUo03HQa+dlVVUkSx8oI/nnib35TcwImCuuLUtfxTzDc5Vo
+ VP2M+eyZKiVPxhPysDcyqh3ie419ejLZuJvW5FDAbt37/md2GLj+0cDa+xdw==
 X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
  fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
-Add MIPI ISP & CSI PHY clock bindings and entries for
-the Amlogic G12B SoC.
-
-Based on the CTS_ENCL clock bindings patch at [1]
-
-[1] https://lore.kernel.org/all/20231109-amlogic-v6-4-upstream-dsi-ccf-vim3-v8-1-81e4aeeda193@linaro.org/
+Add the MIPI ISP gate, divider and mux used to feed the MIPI CSI ISP
+(Image Signal Processor) IP on the Amlogic G12B SoC.
 
 Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 ---
-Neil Armstrong (3):
-      dt-bindings: clock: g12a-clkc: add MIPI ISP & CSI PHY clock ids
-      clk: meson: g12a: add MIPI ISP clocks
-      clk: meson: g12a: add CSI & ISP gates clocks
+ drivers/clk/meson/g12a.c | 66 ++++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/meson/g12a.h |  1 +
+ 2 files changed, 67 insertions(+)
 
- drivers/clk/meson/g12a.c              | 75 +++++++++++++++++++++++++++++++++++
- drivers/clk/meson/g12a.h              |  1 +
- include/dt-bindings/clock/g12a-clkc.h |  6 +++
- 3 files changed, 82 insertions(+)
----
-base-commit: 71ea46af56818a97cb5ea5d6554a0f10ea624d6d
-change-id: 20231114-topic-amlogic-upstream-isp-clocks-aa2859a633f0
+diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+index f373a8d48b1d..a8312f29d1cc 100644
+--- a/drivers/clk/meson/g12a.c
++++ b/drivers/clk/meson/g12a.c
+@@ -3722,6 +3722,66 @@ static struct clk_regmap g12a_mipi_dsi_pxclk = {
+ 	},
+ };
+ 
++/* MIPI ISP Clocks */
++
++static const struct clk_parent_data g12b_mipi_isp_parent_data[] = {
++	{ .fw_name = "xtal", },
++	{ .hw = &g12a_gp0_pll.hw },
++	{ .hw = &g12a_hifi_pll.hw },
++	{ .hw = &g12a_fclk_div2p5.hw },
++	{ .hw = &g12a_fclk_div3.hw },
++	{ .hw = &g12a_fclk_div4.hw },
++	{ .hw = &g12a_fclk_div5.hw },
++	{ .hw = &g12a_fclk_div7.hw },
++};
++
++static struct clk_regmap g12b_mipi_isp_sel = {
++	.data = &(struct clk_regmap_mux_data){
++		.offset = HHI_ISP_CLK_CNTL,
++		.mask = 7,
++		.shift = 9,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "mipi_isp_sel",
++		.ops = &clk_regmap_mux_ops,
++		.parent_data = g12b_mipi_isp_parent_data,
++		.num_parents = ARRAY_SIZE(g12b_mipi_isp_parent_data),
++	},
++};
++
++static struct clk_regmap g12b_mipi_isp_div = {
++	.data = &(struct clk_regmap_div_data){
++		.offset = HHI_ISP_CLK_CNTL,
++		.shift = 0,
++		.width = 7,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "mipi_isp_div",
++		.ops = &clk_regmap_divider_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&g12b_mipi_isp_sel.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap g12b_mipi_isp = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = HHI_ISP_CLK_CNTL,
++		.bit_idx = 8,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "mipi_isp",
++		.ops = &clk_regmap_gate_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&g12b_mipi_isp_div.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
+ /* HDMI Clocks */
+ 
+ static const struct clk_parent_data g12a_hdmi_parent_data[] = {
+@@ -4729,6 +4789,9 @@ static struct clk_hw *g12b_hw_clks[] = {
+ 	[CLKID_MIPI_DSI_PXCLK_SEL]	= &g12a_mipi_dsi_pxclk_sel.hw,
+ 	[CLKID_MIPI_DSI_PXCLK_DIV]	= &g12a_mipi_dsi_pxclk_div.hw,
+ 	[CLKID_MIPI_DSI_PXCLK]		= &g12a_mipi_dsi_pxclk.hw,
++	[CLKID_MIPI_ISP_SEL]		= &g12b_mipi_isp_sel.hw,
++	[CLKID_MIPI_ISP_DIV]		= &g12b_mipi_isp_div.hw,
++	[CLKID_MIPI_ISP]		= &g12b_mipi_isp.hw,
+ };
+ 
+ static struct clk_hw *sm1_hw_clks[] = {
+@@ -5221,6 +5284,9 @@ static struct clk_regmap *const g12a_clk_regmaps[] = {
+ 	&g12a_mipi_dsi_pxclk_sel,
+ 	&g12a_mipi_dsi_pxclk_div,
+ 	&g12a_mipi_dsi_pxclk,
++	&g12b_mipi_isp_sel,
++	&g12b_mipi_isp_div,
++	&g12b_mipi_isp,
+ };
+ 
+ static const struct reg_sequence g12a_init_regs[] = {
+diff --git a/drivers/clk/meson/g12a.h b/drivers/clk/meson/g12a.h
+index f11ee3c59849..27df99c4565a 100644
+--- a/drivers/clk/meson/g12a.h
++++ b/drivers/clk/meson/g12a.h
+@@ -70,6 +70,7 @@
+ #define HHI_MALI_CLK_CNTL		0x1b0
+ #define HHI_VPU_CLKC_CNTL		0x1b4
+ #define HHI_VPU_CLK_CNTL		0x1bC
++#define HHI_ISP_CLK_CNTL		0x1C0
+ #define HHI_NNA_CLK_CNTL		0x1C8
+ #define HHI_HDMI_CLK_CNTL		0x1CC
+ #define HHI_VDEC_CLK_CNTL		0x1E0
 
-Best regards,
 -- 
-Neil Armstrong <neil.armstrong@linaro.org>
+2.34.1
 
