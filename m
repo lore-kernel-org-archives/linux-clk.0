@@ -1,164 +1,115 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60CF814F72;
-	Tue, 14 Nov 2023 08:49:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4424C18631
+	for <linux-clk@vger.kernel.org>; Tue, 14 Nov 2023 10:14:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="zOf404rd"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2097.outbound.protection.outlook.com [40.107.215.97])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68E4319D;
-	Tue, 14 Nov 2023 00:49:42 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SRlPjUVCyaCnZjD6mozEgTD4dApBznuXy/cchxqMJJChgYaWQwzdIqrsYq+x46q7pOSlB/sJ+Dldg6kGDZYoBZMC1IaLFXkTedTbdSg0l80v653IQcsUsSLwYkt1/wX9Do6qSJfR4Ca2M0+WIWnLzaVIyurLB9nyYSRa/pFuz7fPJlZaXBqNkx9v6/yN4bVXI0ybt6OhL6ZAaQ0mT+dAuoZxwwQ8+3EnrVpafdn+HQW6JCPgfGDbW906urOIiUbYd3ii/YXrsj1fasnJ8PWcX4wNpqqZ4AVUORr4OY9yo1ewpT1hoTq0mZYA38V2G1Zxjqj460WBa0c7xLhrRamt8A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JgHZZqQVTH0FqIWkC4Iv9cV+RtEGs4uaa9GD/y0cafo=;
- b=edajuc70hUFDsTK7F4L1OY+bgKXXYSrcGA6Prkv7xRWeI47FEfUOPNszfpNz5olTNgJhF+3KwVXYty7XaP1FBJZN6s8GYJo/TFTL6GqPwtJ9fr+Y1Y9zlQq14VFLF6L8ViUlPiv6WmH280EJDGHmMh4Ui2EvH965IuQMTdHgYbOxdQsw/fY0GIOEM2iVECfHLMtaXSHc0nxdRn7sBdejTVUrDq4SN3rQXQ5Ch2h1KMo6QQ55ylWprEgtZRWiH2dp7eQSxccoGar085KlqbIc7+p2RaNObAx1Wvm6Wm1jKMPiZTl8xOO/U18wZMwpx9Vwz9pVdfsIdmb8lGjUGv3z2Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JgHZZqQVTH0FqIWkC4Iv9cV+RtEGs4uaa9GD/y0cafo=;
- b=zOf404rd167+xQ89XHq5OYfIPbNy9oFVAqFBK5W1gKc/PP5SYFY9Id3DZ8Zx8dUD8nA/IY8ZOsreG+5WuUA2/fJ8QzaFN3UiYvNDcMHGMTdGiRYMJewdZ9SDJdwJT3olwLhUvwBPf4JZaUsVgBg6WmSPyEvGQ81Jr6MNJV3J24Ki9kwP2OQrO0GJkbL3qXabk73KaWnaGf13tIafDqJBfFzcz7/TeyQVlKTwPfGW4lvXAWZumOcSTB/Y0QypSIepxdsrIpsNU43ctcMigeg8xCHadDxtDM5fU1R0r7GdrHZ4t9z0sfws7dxkwaMqWrveyvUjaawLUqJmnbfPpXBYwQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from TYZPR03MB6896.apcprd03.prod.outlook.com (2603:1096:400:289::14)
- by SEZPR03MB7171.apcprd03.prod.outlook.com (2603:1096:101:e1::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6977.31; Tue, 14 Nov
- 2023 08:49:37 +0000
-Received: from TYZPR03MB6896.apcprd03.prod.outlook.com
- ([fe80::31a7:e96f:8abd:9a10]) by TYZPR03MB6896.apcprd03.prod.outlook.com
- ([fe80::31a7:e96f:8abd:9a10%6]) with mapi id 15.20.6977.029; Tue, 14 Nov 2023
- 08:49:37 +0000
-Message-ID: <bea3c7d2-ed0d-470d-bbe6-3dc19b41fd01@amlogic.com>
-Date: Tue, 14 Nov 2023 16:49:27 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V6 2/4] dt-bindings: clock: add Amlogic C3 peripherals
- clock controller bindings
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Chuan Liu <chuan.liu@amlogic.com>
-References: <20231106085554.3237511-1-xianwei.zhao@amlogic.com>
- <20231106085554.3237511-3-xianwei.zhao@amlogic.com>
- <8d9ec256-fbea-4711-966c-8c68d83eeb1f@linaro.org>
-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-In-Reply-To: <8d9ec256-fbea-4711-966c-8c68d83eeb1f@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: TYWPR01CA0039.jpnprd01.prod.outlook.com
- (2603:1096:400:17f::14) To TYZPR03MB6896.apcprd03.prod.outlook.com
- (2603:1096:400:289::14)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="US393F4U"
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5108D68
+	for <linux-clk@vger.kernel.org>; Tue, 14 Nov 2023 02:14:51 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id ffacd0b85a97d-32dff08bbdbso3721724f8f.2
+        for <linux-clk@vger.kernel.org>; Tue, 14 Nov 2023 02:14:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1699956890; x=1700561690; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GRDQG90whNGruPKHBuSb0fwlNjOLqK156tQl7yY601s=;
+        b=US393F4UYxK7bCLxY/3lub1L5LkCGPWtNZjESc+RxTLquhIm5M3sAL5JZMxqzgXvvP
+         lVrt4UiUErKJNkG+b/33FH8bBIvO+E6veDoI+z3Z9fmRWAndN8W7gGn0xkAt38RBhuDu
+         lh7tNBnHmQo9yNNI3oPEimbi9bQMvoTwoJYqkd4QqHsWDJk0vHUNEeNpTxZf68lQNX/+
+         ZArnRk5qJPI5lPoUjWueX4zZrQlhRuq0lAMvM8sjIhOu65PM8/6vnH7jt7wDblZ1YY/Y
+         6L1bTVLSPGLXwDvOtnvqddOk5jKZugEmMb/A8VAgp7nRl0xqFRzVg4kt/p/6VQWSVmQO
+         pOyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699956890; x=1700561690;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GRDQG90whNGruPKHBuSb0fwlNjOLqK156tQl7yY601s=;
+        b=SLQHHCdNwsdByu+YtiyUqINLX57RFDoP2fKD5bVfnZF3+851138V1Zm2OQWAJ5jEAe
+         j8u7NuDqDoNS8RIrG1M5JHq2nM8+jp4Xz1uwJY+IUfzNHndzJeWU4UgB4f98CUMQUsri
+         xjh2We30V4dZO8DQjyGOqNVo4T72Y2E97fI7OgzqEvbo+HVROU8rxpF1E/6g64lkiiUP
+         W2duSKw0vf8Xr0Xio3pQDho2wjRY0q2lbXwT3oHR4aY2yGHWP1UkJVEluNNIIy5VUM0W
+         82cK2Gj3787qzPi/7dxVBhIWKQh9Q+RFf95gvILkJ9gpU4LhS5KnsFq1hk1Cf7YaWljb
+         tQkA==
+X-Gm-Message-State: AOJu0YyIwyDek1QVMaDJrLEXtPg+ul/aXw0qyG+/+hQ8/XimRdNx83+k
+	pbVz5KRziMR3+ZUfYEOk22Q+/Q==
+X-Google-Smtp-Source: AGHT+IHmsBNotjLNrikShfJJvLrq11qapucSps8g7MZLwa+tjWVJJCpV7UxEKCvxDB7DcdqG+/7Vxw==
+X-Received: by 2002:a05:6000:146:b0:32d:8ac4:d23f with SMTP id r6-20020a056000014600b0032d8ac4d23fmr5433225wrx.29.1699956890236;
+        Tue, 14 Nov 2023 02:14:50 -0800 (PST)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id n2-20020a5d4202000000b0032d886039easm7335585wrq.14.2023.11.14.02.14.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Nov 2023 02:14:49 -0800 (PST)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Date: Tue, 14 Nov 2023 11:14:43 +0100
+Subject: [PATCH 1/3] dt-bindings: clock: g12a-clkc: add MIPI ISP & CSI PHY
+ clock ids
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR03MB6896:EE_|SEZPR03MB7171:EE_
-X-MS-Office365-Filtering-Correlation-Id: 37253e4d-7d02-44e3-d2e6-08dbe4eea1a0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	ZBUmYL1syod5ZRE2i26cQ1tGpCK9kBdPN1soZCgs2iWTeVhxKQFOXx211qq5RXJe0oiUSK39V+nf1q4rUJxyV8o4JGqQuJRnYdKzJsnNxKORHJ1fvVMAoZzZIuTl5i9oGmvWPA5rW8TYou/96YtxaOQfhgSH9+4lsCamR9t3zM77nlBitODx+cTp6bYrfyvmzel/Xfu0sEzbdxs6l1MlrI68hhsNYWTibRQkOHDvFCgN5R6ts+DNdEwhb4MU/355xO5DoQUbQAK6dsCyYbFfZ4zQcTkUpf0H7xJ6hjmpbUzcqBmWKw9ZlNxOMGiFdbvZb3JT+UkWfpAHrToaX/OAlG85ktXD5WgicYcEdjUHk4qLRoHbVtUaJWpEwCk0km8zp7w2ze10OsGVyHDHAv23Bmde6xZvItBK1a4HrjqKyANP2X+tX6VOREUPNN6/0s91IQXesBE+SyEo6uT6jqYBton2uYi4dLaqt5eb+duFFZuJZB3pEBsi8yG+y/J+XUb1I1HvlU5m3qV9M6NyIhCBG+TGFyux26KOzB6t/o6tt2YVKjcbUXSdCV6r5pTgt2ZBHqXxpMs20lqT/QAvRpPlBjqhGUydV00ppOUIbIKJ6tSiexYpJVWpIlLgGqrEp8viw13tbnhRBPNULjrXgAAVStGmq+GiJCReq4sW3n8ktCu6DyZmeWd+tBxq4kxg6HVbgcJngm74uXNf+dXnU32eciO6Bb+3M1Me+OityMKVAGb72XfWXTcHAe6rRl0wWCPl
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6896.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(136003)(346002)(376002)(366004)(396003)(39850400004)(230273577357003)(230922051799003)(230173577357003)(451199024)(186009)(1800799009)(64100799003)(316002)(66946007)(66556008)(54906003)(66476007)(6486002)(6666004)(478600001)(7416002)(5660300002)(86362001)(4744005)(31696002)(36756003)(41300700001)(2906002)(8676002)(8936002)(44832011)(107886003)(38100700002)(2616005)(26005)(83380400001)(31686004)(53546011)(6506007)(6512007)(4326008)(45980500001)(43740500002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dlZsalZoQ2V0SU1rNEZyMmluZ3dFb1JaaGR3Y3o2MWc2ZU5acWVCN0hDQzdx?=
- =?utf-8?B?MlhIN3NXbUlLRUV5RUZkRGI0Z2FRZ1c2TDNlODRrbzZGTzZPUUN2VzZEUzVk?=
- =?utf-8?B?cFhCTC82WVN3S3ZtUkNKajRyWkd5OVh0WDBEM3plYjVzT0JhMlM5ZkQybkRx?=
- =?utf-8?B?WHM1cGMyd0hMeTVrTzhBcVFLYXF6Y0JqWk1hcDNNZ1dzTFY4SURLcndVY3B1?=
- =?utf-8?B?dWVPQnZMSnFSbkFHREk2dGE5TDVSTEhGeEFVSUlwaFdIbGxQQ0kvUisrY0ty?=
- =?utf-8?B?bm5jWWZkTkFkdU90S0JrWnJudyt5OTM3QVdMU01DY2tCSmdobWJmMGxxS2Ra?=
- =?utf-8?B?VHhQdGN3TEliVWhJaGRDbXZpaHcwUUhtS05TUk5HV1Jma2d4Nm44bitzYVl4?=
- =?utf-8?B?VkREKzFGUkdoRmdSczNYRmZzTTdDbXJ1Vk16dTRXcURIN0VIcXgydU5COWd4?=
- =?utf-8?B?Zm91VHBOSjRSQ0ovRDRpaDVDYnhSWUY4dHA3czllYW5ndG1iUjB6ZndGUURa?=
- =?utf-8?B?enpPMmVJbU54QnZSMUxvdGQ3dFcvTTk5dGN4aHRnQmFXTG5JbG1iUlQvdWph?=
- =?utf-8?B?RU02Y2dFVitRaUNYcXdUb0V5TVo5L3JmenhNSWo5cDNmbG0yTCtBeDJnSXI0?=
- =?utf-8?B?dElJLzRhR3UxOU83eFJFMzJiNE9oN2tTRlh6VVVIQ2wyeVVJaUdJSFNRKy9L?=
- =?utf-8?B?Ykx4TVF5WlR2OURZTjQ1L1d6SDNjdWg4T2t6OE1weE9Mcnd2dlpnL0s4QjBZ?=
- =?utf-8?B?dWJQRVBGY21IU3VQZGJrUEI0R3Q0c2R2UzZlM1VYWmYzUThqWU9HcFJ1TTFa?=
- =?utf-8?B?ZUdnWjZsK1JIZUFPRUdRaGVOaEkwSDcwUWxRazNzemVXNGltRUNoWklaTUlv?=
- =?utf-8?B?WmpjUnJ1cmtPWkl4aUdiVGZMeVZVVEpvdjBmeDN5d0xsaXRmWTZMZzlIeG5J?=
- =?utf-8?B?cENVODMzQkM5VCtPOUVMTSt5WWI0V0dKNnhxeGpTa1JkYjArODFYQ3ZkTWRF?=
- =?utf-8?B?cGd1RHYyYks0bGl0U1dORVUxRlVOb0tDVnpyN0ErQXlDU0pJRzI2RTJrQUt2?=
- =?utf-8?B?RDgzT0k5ajVSeGEvZ1hPczJyL29zOWdOcEVybEllT0Q1RFdkaGlmY0JjdXVi?=
- =?utf-8?B?bUxMRml3SE9sblBhYzFKYVJ6aVJzWnVvT09oQ2NzRUxZQUJrVi9BUXBnV3dt?=
- =?utf-8?B?WklGWUhmVjQrY2k4NFFFV3p1S0JuTWtHMCtib05GRDhSZndKaGkxbnNwd3pk?=
- =?utf-8?B?ZGNMSjZDZGlJbTA3bHFDM2t5c2pKNnRET0NzUkdETDVuYUV2L2U5VVFJa250?=
- =?utf-8?B?UGhidFI3ZFVDTU9sNFNsR2NZeStzN3JnQllqSUZtUUJpRnJKZEVhQ3JidVlI?=
- =?utf-8?B?dXAxY2NlaW1iSnI1Nnp0ZU1zc2Y3N0lkVWVUQmFhUHZFazJhR0ZpdnBIaWJI?=
- =?utf-8?B?S04rQXZnWlVrVVhxMHVFTnRBcTVTZnJyMXVBRzF1NnVLRGFjYWIrY1RuZGpX?=
- =?utf-8?B?NVRPS2FzUXRPY0FCUVVTa2Ztem9hV24rVlJYSzRYZGN5MmJHVW9lU1RyNVJT?=
- =?utf-8?B?SHFBK0ZJOGQ0eExYbnozbHdUb0ppQm4zWVFLYlVybWxvYi9kZ1NTaUVGQnhS?=
- =?utf-8?B?MGpWNHNvTGRhS2c5alZmcFJTWmNFTHlXZVFJYkxkR1lNMnJ2VG8wK2FCd1Jj?=
- =?utf-8?B?Y05VOHFGdkFOZjU3Y205ci9NT2tFMFdLVG54NUViVVhLaWg2MmU5dXM4THFo?=
- =?utf-8?B?YXdHQ0lSd0dYSkpXVkJxSGVrbXZ6aXV0VnZPVVpvckVmSzhqZE5Jai96czZU?=
- =?utf-8?B?N2NtUGtTYkkrek9LNWJxSENJekZCenhkWkNzRy9KNVd3MjJ3ZzY1L2g1Q1Fs?=
- =?utf-8?B?UjZlZTBxY2toSmtYTUcvUlg2N1B5UWVVczlGMmcvbkpwN3FtdzJkaXJnaDFy?=
- =?utf-8?B?dXhjVFlLenJXVlp5TU9aS0FCQnI4SitVWGhDZDNMZHNLNFRYMkdxZUZiZEZG?=
- =?utf-8?B?KzloVytiNlhqcU5CNnpUbzJrREd1WUhDNUZLcW1McGdhTEI1L0dGc1Q0YU9B?=
- =?utf-8?B?dmN3aUsxckZiZ09pRWZyeDRJbmFaUUhhM0NoaDY2MkQvZEYxWC9QMXVlaDkv?=
- =?utf-8?B?Wmc5Qnp2NWkvNVFSSE9BV00wMEUwdDZPZDJGRUFRMHpCcVZmSWUvNk1nVkI2?=
- =?utf-8?B?RFE9PQ==?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 37253e4d-7d02-44e3-d2e6-08dbe4eea1a0
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6896.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Nov 2023 08:49:37.0373
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: FPeVpcW4KQeKEqBOH/gCOa90FYqTW2L0dpbuhD4UyY1MMIqjMpeYs+21wMSDkw82w77u+jyWgCMn8UGoXdQJlhAWgeyyRgbfWS2cT4RCMCI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR03MB7171
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20231114-topic-amlogic-upstream-isp-clocks-v1-1-223958791501@linaro.org>
+References: <20231114-topic-amlogic-upstream-isp-clocks-v1-0-223958791501@linaro.org>
+In-Reply-To: <20231114-topic-amlogic-upstream-isp-clocks-v1-0-223958791501@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Daniel Scally <dan.scally@ideasonboard.com>, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=831;
+ i=neil.armstrong@linaro.org; h=from:subject:message-id;
+ bh=tPtJJ4m8r/duCINFRVQmq1vnhsfEoL+l4IqBBJv4OFw=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBlU0iWrW3bJixBh86isYE3uIDZg0edHMEQSNsOH/tr
+ 2wGdcu+JAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZVNIlgAKCRB33NvayMhJ0anlD/
+ wIbIB19tLkjnhKjUpQ6bxJq1f1aWQ1KhjVUIpQ7ASlwxyFig16JMn8WUBIGhvjnLWqfSzl35us30L5
+ UHO40qf3vj4ZRTwjEeJ3+3ut4Ifd1l+a/DZa/r7sLT2nO4PYBqjdoGhLCEmjywyah0a4yTosnqOl49
+ uFPChwRBc+gB8t4179Ew79CaOQVsDj5V0HJ9e6YGHfprV9Nkbcb2PvTMja93Yd/aaAl6xE0Bq+TYaT
+ 1ZiKTkPqmERwpBQTCQObCQXk5vnK8RejXUIJ3zkn/hk65BRFDilS056YsYn9N9XePaFdwfZEc6RJEo
+ xj2TwDruehIwRanthgjnlc6k1+iDL3PMLe770Ghsr1Zd2A3o28TnSVIMVX3Oy5IOPQ/BYQ61Ykc0jW
+ OcgcsST7i+BXnFDHh5VBlAd3wLNq0zxB6Y0kdrUJYDmu///jxUzvauhhu+IR9f8PYqxwZ5QaAA9aSh
+ SMbslJdDNd24tNIiV49IVwkkaqmpZrYznVlkPnh6cizZUoQVK9LSF465viJBIEHSHSdDeg0WTDBuEa
+ roceDDkzbDqH+9M8DhE+Js0UK0ZytEyXYARScxFh5buD5wrn2reCjg2camoSUyMElS2/0mUIo6DufP
+ UwBTTgQ1X/YGXn2w8rdLdKWQ3qvxkd9LKURzAVJTXPmCYaFxEAv+b/snXHGw==
+X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
+ fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
-Hi Krzysztof,
-      Thanks for your reply.
+Add MIPI ISP & CSI PHY clock ids to G12A clock bindings header
 
-On 2023/11/10 21:24, Krzysztof Kozlowski wrote:
-> [ EXTERNAL EMAIL ]
-> 
-> On 06/11/2023 09:55, Xianwei Zhao wrote:
->> @@ -0,0 +1,237 @@
-> 
-> A nit, subject: drop second/last, redundant "bindings". The
-> "dt-bindings" prefix is already stating that these are bindings.
-> 
-Will delete redundant "bindings" next version.
->> +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
->> +/*
->> + * Copyright (c) 2023 Amlogic, Inc. All rights reserved.
->> + * Author: Chuan Liu <chuan.liu@amlogic.com>
->> + */
->> +
->> +#ifndef _DT_BINDINGS_CLOCK_AMLOGIC_C3_PERIPHERALS_CLKC_H
->> +#define _DT_BINDINGS_CLOCK_AMLOGIC_C3_PERIPHERALS_CLKC_H
->> +
->> +#define CLKID_PLL_SRC                                0
->> +#define CLKID_MCLK_PLL_SRC                   1
->> +#define CLKID_DDR_PLL_SRC                    2
->> +#define CLKID_DDR_PHY_SRC                       3
-> 
-> Fix the indentation. In all other patchses as well.
-> 
-Will do
-> Best regards,
-> Krzysztof
-> 
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+ include/dt-bindings/clock/g12a-clkc.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/include/dt-bindings/clock/g12a-clkc.h b/include/dt-bindings/clock/g12a-clkc.h
+index 636d713f95ff..fd09819da2ec 100644
+--- a/include/dt-bindings/clock/g12a-clkc.h
++++ b/include/dt-bindings/clock/g12a-clkc.h
+@@ -281,5 +281,11 @@
+ #define CLKID_MIPI_DSI_PXCLK			270
+ #define CLKID_CTS_ENCL				271
+ #define CLKID_CTS_ENCL_SEL			272
++#define CLKID_MIPI_ISP_DIV			273
++#define CLKID_MIPI_ISP_SEL			274
++#define CLKID_MIPI_ISP				275
++#define CLKID_MIPI_ISP_GATE			276
++#define CLKID_MIPI_ISP_CSI_PHY0			277
++#define CLKID_MIPI_ISP_CSI_PHY1			278
+ 
+ #endif /* __G12A_CLKC_H */
+
+-- 
+2.34.1
+
