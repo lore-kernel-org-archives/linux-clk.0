@@ -1,113 +1,151 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19F6154B4
-	for <linux-clk@vger.kernel.org>; Tue, 14 Nov 2023 13:10:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90043156C8;
+	Tue, 14 Nov 2023 13:11:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="1EhKFpv9"
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9152D199
-	for <linux-clk@vger.kernel.org>; Tue, 14 Nov 2023 05:10:35 -0800 (PST)
-Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-32fa7d15f4eso3860930f8f.3
-        for <linux-clk@vger.kernel.org>; Tue, 14 Nov 2023 05:10:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1699967434; x=1700572234; darn=vger.kernel.org;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
-        bh=kylEPySB/5FfOKILQp0wcgiznvVbaF9pAdNSaICh0gU=;
-        b=1EhKFpv9vfdMGmBcW+Z6TL893F2Hhzoh1GYxTxra5II3v/4wLitzg9OdchqrJa72lB
-         UUcga1gdhNnJ8ECeWztSYTaEusHoSoiSm/VXYa2o+Ov2pmh1V+yYlbr95WlXzbPBURB2
-         fm0K3sI9kYbkraDxuPKPwVhp7mT7f7FsBZ2ljDLSm8ByFZ8VgBXIUdFXrYyREWuWzTNH
-         C5d/taRxg1GuMUWmkhBc52FGzsWYe6JiXBRrnAAhmtSQyojaL708yvIGzYvjfNVMR6Et
-         Y/AY5kXf7RClVstmBGvFEC85gZaUt++X/5KYV0jOin6ZZadaow+1+3GJhS4kVRuYoVQg
-         vXgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699967434; x=1700572234;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kylEPySB/5FfOKILQp0wcgiznvVbaF9pAdNSaICh0gU=;
-        b=bi3FlJ4uvRlLkRTCeMvZaKx0U4Sd4lxj7PIWJYxghCO0tbNntz9DQlUGl3MHwx6g16
-         QXVtn0PRDMivf/+DYyQha/cPHA6kQELHInfkhApTwlL7JkUatyG97NLiLOYdsQnaca5h
-         meqUGSJ+nGPZAxacxsMDVgmEkYmGb3ywe45NQXoJ5Tx03UhchAbkfWfxfDfldavKs0zM
-         TxPHfB5Bo1y3XUgSA+yt2oXBSp+rbkajwGCvuq4tLCYU/h2fdfxX3CA2P7pt04jnYQOW
-         N2guRNHPebXOglMWU4erv6cw2VfotYIAWSE6kd/AqOemTEY8S69wbTaEt4kYcHd6FniL
-         mUHA==
-X-Gm-Message-State: AOJu0Yy9MnyMiF1uH5NYCnkG/DVjlIVX9JGosFCCJ+8Z/5CSB/xAmveU
-	AlRGW0aOkydoSAT0zY+6UQxIOQ==
-X-Google-Smtp-Source: AGHT+IGziU1soHXdOrIYoiZhkJ3lrSemdXNvFyCejd2ntbWKzDN90NoFHYrl0P9aRWDq0a+dBQ2I1w==
-X-Received: by 2002:a05:6000:4024:b0:32d:b991:1a71 with SMTP id cp36-20020a056000402400b0032db9911a71mr7443849wrb.0.1699967433842;
-        Tue, 14 Nov 2023 05:10:33 -0800 (PST)
-Received: from localhost ([2a01:e0a:3c5:5fb1:8fe7:3223:c57b:4b01])
-        by smtp.gmail.com with ESMTPSA id i20-20020a5d5234000000b003196b1bb528sm7843980wra.64.2023.11.14.05.10.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Nov 2023 05:10:33 -0800 (PST)
-References: <20231106085554.3237511-1-xianwei.zhao@amlogic.com>
- <eab3869c-7529-484d-983f-dd85ecfbeb0b@linaro.org>
- <1j34xdcwf4.fsf@starbuckisacylon.baylibre.com>
-User-agent: mu4e 1.8.13; emacs 29.1
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Xianwei Zhao
- <xianwei.zhao@amlogic.com>, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
- <robh+dt@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Chuan Liu
- <chuan.liu@amlogic.com>
-Subject: Re: [PATCH V6 0/4] Add C3 SoC PLLs and Peripheral clock
-Date: Tue, 14 Nov 2023 14:07:16 +0100
-In-reply-to: <1j34xdcwf4.fsf@starbuckisacylon.baylibre.com>
-Message-ID: <1jleb0bhvb.fsf@starbuckisacylon.baylibre.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PmpY5UF1"
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.120])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C89A618E;
+	Tue, 14 Nov 2023 05:11:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1699967500; x=1731503500;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fhUtX6YItxSUVcN/cMKxZ8+lBC4Kdn2hHKloSt8uRZ8=;
+  b=PmpY5UF1+zQHFOz3FLE2834e7gVD5OMULRGu+CUjMV5d4ePCjmWCYxPq
+   t0CsPQ11kIqZ3a7E0EI3PqyAWKHlmnoP38IhT1RV4ZSmZDS5zE1hfLvdQ
+   7kMCDNs1yryVicBcX57lRJpYEZ38jz7NUv2kjZGGjPkgexp603QV5d+9a
+   gp4+nDEyvS/rkwgspsCEAUAsJgrikMVxvKdk+MdpvR50ZdonvPQP4JjqC
+   DHumrQy6RqLSg+ZMTcRGuSgA5/EIcZWVinNIwXYNTlgBL/6GbuPdYjv49
+   XVIPsHfaByj5Ggaat7HERnloQt1FtK2rauU60Xm/k6I6CI0QG+RHOLays
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10893"; a="389508709"
+X-IronPort-AV: E=Sophos;i="6.03,302,1694761200"; 
+   d="scan'208";a="389508709"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2023 05:11:40 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10893"; a="764655735"
+X-IronPort-AV: E=Sophos;i="6.03,302,1694761200"; 
+   d="scan'208";a="764655735"
+Received: from lkp-server02.sh.intel.com (HELO 83346ef18697) ([10.239.97.151])
+  by orsmga002.jf.intel.com with ESMTP; 14 Nov 2023 05:11:37 -0800
+Received: from kbuild by 83346ef18697 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1r2tCY-0000GB-2y;
+	Tue, 14 Nov 2023 13:11:34 +0000
+Date: Tue, 14 Nov 2023 21:10:59 +0800
+From: kernel test robot <lkp@intel.com>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Frank Rowand <frowand.list@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Aymeric Aillet <aymeric.aillet@iot.bzh>,
+	Yusuke Goda <yusuke.goda.sx@renesas.com>
+Subject: Re: [PATCH 4/4] drivers: clk: renesas: enable all clocks which is
+ assinged to non Linux system
+Message-ID: <202311142059.XrPUseGq-lkp@intel.com>
+References: <87wmulrynq.wl-kuninori.morimoto.gx@renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87wmulrynq.wl-kuninori.morimoto.gx@renesas.com>
+
+Hi Kuninori,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on geert-renesas-drivers/renesas-clk clk/clk-next linus/master v6.7-rc1 next-20231114]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Kuninori-Morimoto/of-add-__of_device_is_status-and-makes-more-generic-status-check/20231114-081044
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/87wmulrynq.wl-kuninori.morimoto.gx%40renesas.com
+patch subject: [PATCH 4/4] drivers: clk: renesas: enable all clocks which is assinged to non Linux system
+config: loongarch-allmodconfig (https://download.01.org/0day-ci/archive/20231114/202311142059.XrPUseGq-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231114/202311142059.XrPUseGq-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202311142059.XrPUseGq-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/clk/renesas/renesas-cpg-mssr.c:175: warning: Function parameter or member 'reserved_ids' not described in 'cpg_mssr_priv'
+>> drivers/clk/renesas/renesas-cpg-mssr.c:175: warning: Function parameter or member 'num_reserved_ids' not described in 'cpg_mssr_priv'
 
 
-On Fri 10 Nov 2023 at 18:50, Jerome Brunet <jbrunet@baylibre.com> wrote:
+vim +175 drivers/clk/renesas/renesas-cpg-mssr.c
 
-> On Fri 10 Nov 2023 at 14:20, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
->
->> On 06/11/2023 09:55, Xianwei Zhao wrote:
->>> The patchset adds support for the peripheral and PLL clock controller
->>> found on the Amlogic C3 SoC family, such as C302X or C308L.
->>> 
->>> Changes since V5 [3]:
->>>  - Fix some typo and modify formart for MARCO. Suggested by Jerome.
->>>  - Add pad clock for peripheral input clock in bindings.
->>>  - Add some description for explaining why ddr_dpll_pt_clk and cts_msr_clk are out of tree.
->>> Changes since V4 [10]:
->>>  - Change some fw_name of clocks. Suggested by Jerome.
->>>  - Delete minItem of clocks.
->>>  - Add CLk_GET_RATE_NOCACHE flags for gp1_pll
->>>  - Fix some format. and fix width as 8 for mclk_pll_dco.
->>>  - exchange gate and divder for fclk_50m clock.
->>>  - add CLK_SET_RATE_PARENT for axi_a_divder & axi_b_divder.
->>>  - add CLK_IS_CRITICAL for axi_clk
->>>  - Optimized macro define for pwm clk.
->>>  - add cts_oscin_clk mux between 24M and 32k
->>>  - add some missing gate clock, such as ddr_pll.
->>
->> Where are all these versions? Please provide links.
->
-> I have provided some guidance offline at the request of Amlogic.
->
-> This should have been v4 and the cover-letter should have summarized the
-> change from v3 to this. Unfortunately it was sent as v6 :/
->
->>
->> Best regards,
->> Krzysztof
+17bcc8035d2d19 drivers/clk/renesas/renesas-cpg-mssr.c  Yoshihiro Shimoda   2020-09-11  124  
+f793d1e51705b2 drivers/clk/shmobile/renesas-cpg-mssr.c Geert Uytterhoeven  2015-10-16  125  /**
+b5fb3b8859a491 drivers/clk/renesas/renesas-cpg-mssr.c  Krzysztof Kozlowski 2020-11-03  126   * struct cpg_mssr_priv - Clock Pulse Generator / Module Standby
+b5fb3b8859a491 drivers/clk/renesas/renesas-cpg-mssr.c  Krzysztof Kozlowski 2020-11-03  127   *                        and Software Reset Private Data
+f793d1e51705b2 drivers/clk/shmobile/renesas-cpg-mssr.c Geert Uytterhoeven  2015-10-16  128   *
+6197aa65c49055 drivers/clk/renesas/renesas-cpg-mssr.c  Geert Uytterhoeven  2017-01-20  129   * @rcdev: Optional reset controller entity
+f793d1e51705b2 drivers/clk/shmobile/renesas-cpg-mssr.c Geert Uytterhoeven  2015-10-16  130   * @dev: CPG/MSSR device
+f793d1e51705b2 drivers/clk/shmobile/renesas-cpg-mssr.c Geert Uytterhoeven  2015-10-16  131   * @base: CPG/MSSR register block base address
+ffbf9cf3f9460e drivers/clk/renesas/renesas-cpg-mssr.c  Yoshihiro Shimoda   2020-09-11  132   * @reg_layout: CPG/MSSR register layout
+a4ea6a0f83073f drivers/clk/renesas/renesas-cpg-mssr.c  Geert Uytterhoeven  2017-01-20  133   * @rmw_lock: protects RMW register accesses
+d2e4cb45af8fac drivers/clk/renesas/renesas-cpg-mssr.c  Geert Uytterhoeven  2019-06-12  134   * @np: Device node in DT for this CPG/MSSR module
+f793d1e51705b2 drivers/clk/shmobile/renesas-cpg-mssr.c Geert Uytterhoeven  2015-10-16  135   * @num_core_clks: Number of Core Clocks in clks[]
+f793d1e51705b2 drivers/clk/shmobile/renesas-cpg-mssr.c Geert Uytterhoeven  2015-10-16  136   * @num_mod_clks: Number of Module Clocks in clks[]
+f793d1e51705b2 drivers/clk/shmobile/renesas-cpg-mssr.c Geert Uytterhoeven  2015-10-16  137   * @last_dt_core_clk: ID of the last Core Clock exported to DT
+1f4023cdd1bdbe drivers/clk/renesas/renesas-cpg-mssr.c  Geert Uytterhoeven  2017-06-21  138   * @notifiers: Notifier chain to save/restore clock state for system resume
+8b652aa8a1fb02 drivers/clk/renesas/renesas-cpg-mssr.c  Yoshihiro Shimoda   2020-09-11  139   * @status_regs: Pointer to status registers array
+8b652aa8a1fb02 drivers/clk/renesas/renesas-cpg-mssr.c  Yoshihiro Shimoda   2020-09-11  140   * @control_regs: Pointer to control registers array
+8b652aa8a1fb02 drivers/clk/renesas/renesas-cpg-mssr.c  Yoshihiro Shimoda   2020-09-11  141   * @reset_regs: Pointer to reset registers array
+8b652aa8a1fb02 drivers/clk/renesas/renesas-cpg-mssr.c  Yoshihiro Shimoda   2020-09-11  142   * @reset_clear_regs:  Pointer to reset clearing registers array
+24ece96554a963 drivers/clk/renesas/renesas-cpg-mssr.c  Lee Jones           2021-01-26  143   * @smstpcr_saved: [].mask: Mask of SMSTPCR[] bits under our control
+24ece96554a963 drivers/clk/renesas/renesas-cpg-mssr.c  Lee Jones           2021-01-26  144   *                 [].val: Saved values of SMSTPCR[]
+8f5e20b6b8848b drivers/clk/renesas/renesas-cpg-mssr.c  Geert Uytterhoeven  2019-06-12  145   * @clks: Array containing all Core and Module Clocks
+f793d1e51705b2 drivers/clk/shmobile/renesas-cpg-mssr.c Geert Uytterhoeven  2015-10-16  146   */
+f793d1e51705b2 drivers/clk/shmobile/renesas-cpg-mssr.c Geert Uytterhoeven  2015-10-16  147  struct cpg_mssr_priv {
+6197aa65c49055 drivers/clk/renesas/renesas-cpg-mssr.c  Geert Uytterhoeven  2017-01-20  148  #ifdef CONFIG_RESET_CONTROLLER
+6197aa65c49055 drivers/clk/renesas/renesas-cpg-mssr.c  Geert Uytterhoeven  2017-01-20  149  	struct reset_controller_dev rcdev;
+6197aa65c49055 drivers/clk/renesas/renesas-cpg-mssr.c  Geert Uytterhoeven  2017-01-20  150  #endif
+f793d1e51705b2 drivers/clk/shmobile/renesas-cpg-mssr.c Geert Uytterhoeven  2015-10-16  151  	struct device *dev;
+f793d1e51705b2 drivers/clk/shmobile/renesas-cpg-mssr.c Geert Uytterhoeven  2015-10-16  152  	void __iomem *base;
+ffbf9cf3f9460e drivers/clk/renesas/renesas-cpg-mssr.c  Yoshihiro Shimoda   2020-09-11  153  	enum clk_reg_layout reg_layout;
+a4ea6a0f83073f drivers/clk/renesas/renesas-cpg-mssr.c  Geert Uytterhoeven  2017-01-20  154  	spinlock_t rmw_lock;
+1f7db7bbf03182 drivers/clk/renesas/renesas-cpg-mssr.c  Chris Brandt        2018-09-24  155  	struct device_node *np;
+f793d1e51705b2 drivers/clk/shmobile/renesas-cpg-mssr.c Geert Uytterhoeven  2015-10-16  156  
+f793d1e51705b2 drivers/clk/shmobile/renesas-cpg-mssr.c Geert Uytterhoeven  2015-10-16  157  	unsigned int num_core_clks;
+f793d1e51705b2 drivers/clk/shmobile/renesas-cpg-mssr.c Geert Uytterhoeven  2015-10-16  158  	unsigned int num_mod_clks;
+f793d1e51705b2 drivers/clk/shmobile/renesas-cpg-mssr.c Geert Uytterhoeven  2015-10-16  159  	unsigned int last_dt_core_clk;
+560869100b99a3 drivers/clk/renesas/renesas-cpg-mssr.c  Geert Uytterhoeven  2017-06-07  160  
+1f4023cdd1bdbe drivers/clk/renesas/renesas-cpg-mssr.c  Geert Uytterhoeven  2017-06-21  161  	struct raw_notifier_head notifiers;
+8b652aa8a1fb02 drivers/clk/renesas/renesas-cpg-mssr.c  Yoshihiro Shimoda   2020-09-11  162  	const u16 *status_regs;
+8b652aa8a1fb02 drivers/clk/renesas/renesas-cpg-mssr.c  Yoshihiro Shimoda   2020-09-11  163  	const u16 *control_regs;
+8b652aa8a1fb02 drivers/clk/renesas/renesas-cpg-mssr.c  Yoshihiro Shimoda   2020-09-11  164  	const u16 *reset_regs;
+8b652aa8a1fb02 drivers/clk/renesas/renesas-cpg-mssr.c  Yoshihiro Shimoda   2020-09-11  165  	const u16 *reset_clear_regs;
+560869100b99a3 drivers/clk/renesas/renesas-cpg-mssr.c  Geert Uytterhoeven  2017-06-07  166  	struct {
+560869100b99a3 drivers/clk/renesas/renesas-cpg-mssr.c  Geert Uytterhoeven  2017-06-07  167  		u32 mask;
+560869100b99a3 drivers/clk/renesas/renesas-cpg-mssr.c  Geert Uytterhoeven  2017-06-07  168  		u32 val;
+470e3f0d0b1529 drivers/clk/renesas/renesas-cpg-mssr.c  Yoshihiro Shimoda   2021-12-01  169  	} smstpcr_saved[ARRAY_SIZE(mstpsr_for_gen4)];
+8f5e20b6b8848b drivers/clk/renesas/renesas-cpg-mssr.c  Geert Uytterhoeven  2019-06-12  170  
+b357c19f075f23 drivers/clk/renesas/renesas-cpg-mssr.c  Kuninori Morimoto   2023-11-14  171  	unsigned int *reserved_ids;
+b357c19f075f23 drivers/clk/renesas/renesas-cpg-mssr.c  Kuninori Morimoto   2023-11-14  172  	unsigned int num_reserved_ids;
+b357c19f075f23 drivers/clk/renesas/renesas-cpg-mssr.c  Kuninori Morimoto   2023-11-14  173  
+8f5e20b6b8848b drivers/clk/renesas/renesas-cpg-mssr.c  Geert Uytterhoeven  2019-06-12  174  	struct clk *clks[];
+f793d1e51705b2 drivers/clk/shmobile/renesas-cpg-mssr.c Geert Uytterhoeven  2015-10-16 @175  };
+f793d1e51705b2 drivers/clk/shmobile/renesas-cpg-mssr.c Geert Uytterhoeven  2015-10-16  176  
 
-While labeling this v6 was a mistake, please continue from there:
-next to be v7. Don't reset to v4 or v5. If more versions are needed, I
-don't want to end up with 2 v6 on the list, that would be even more
-confusing.
-
-Thanks
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
