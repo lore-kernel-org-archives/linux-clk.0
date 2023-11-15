@@ -1,41 +1,40 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29175621;
-	Wed, 15 Nov 2023 01:12:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB46B396;
+	Wed, 15 Nov 2023 01:27:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="uFhzGOOB"
-Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2033.outbound.protection.outlook.com [40.92.103.33])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 739CECB;
-	Tue, 14 Nov 2023 17:12:55 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="XGw5Wcwz"
+Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2105.outbound.protection.outlook.com [40.92.102.105])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F851C9;
+	Tue, 14 Nov 2023 17:27:21 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gcwQsLbt9TpYZzHKnouxqZ3I+WvctIxdjEGFgoss0wtEra35eLfLeYSgYmaetQEfmfPWG4E3ufXUUpHtN3xNVPk5zbk7ZessQsFPGuqsPoEma0grpvXzAjoiAcOt6B4yinjmhOshKNcGmqyFcOQjwvLnr3eeGyqarKlkiljI2MisMM4NFpD0iRD3U+LSyQDFkQOhm32ND7Ijr8I24DXyVlyB4/cyGy9YAWll5FQQ3ckFOvHiEiKud1xDP4Mdf/gFkSqXfuj0MSzNJXtXbWA5kXEiA0cBk20jfo7wO03k/X6sKpkM6Y8BP+YlFbX8hkH8NPhbmbMHtR2p6jKO97Dg6g==
+ b=ezcADoZGu/b8Osb63Ny8Q76SWxJwoC12xOOVGKw5afrxFnlsP6fNZ0Uzq0sQzzW0zoCCWaDCl3Hw7j0gKgSeTrLC5MlPZ1pZq0t/CVsC2NBt1R9y7pXW3Tk8Vi2jYjHu1Cn60OW40X8GwtKRfVF9lCCgJnA0c35V8QYBRaCRaecZlXTsQTrnXebQcLgWDNH4Xrz/aBAL39f31zvC+qluNoMXWSA174O6hc2s+KSCD2Pk+7ulU75cFoVRhlfZCuOkvoYYBznwkKNszEXCIJIIdYii/I8I4h4OheOD047G7UfMWR4U98OavwFdPsBq7Rz6awLruZE8Tek/3ASLLgKqQg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XPNzcwVTvOBWi4YQcsaKIkfPbkm4DJ4Ff/enwf6/rXo=;
- b=d/rrBtCObT25nlmls/LXpz7ZHdbFee7s+sbQZFZ1dsKxiBloRzRJcVOEnLFPKwxturO1h8CKFDsGfpkbXo4WsOoyl8QzeCj8AmWR7js10nLKQVIhxKQ+SHcbaBqNXMOm1QpOiOxMAXNZH+1XwOfyYjz2uYbJwtuz2fM9ZiqpXWrIu2awMez61iW4dYQ0J6cD/7O6E6FewaM1KgpqZy50tZgdg2akFb8fxcjTJ7lU+Jx0H35H3DhUytP8/ADDyYh5B5qyFvSj+CoP4VmMY4UKLI7uIMRDErRB44ENBG1AzDzUAkKjctVqhnCawtZajKBcrFoU73l7gkKfDx0RANXitw==
+ bh=9UyZHq7lvGQsKQ8zO2row1Zb8iCJBS4fecTloL3X4hQ=;
+ b=EwsGsjc+9ONA2FF4hQvl8vk/yKIpXdRfMNvP22CEMuhFBpPH1g2nMuA8+DvWBuhNYYrdYg1NW46WYRx+NVId69geTpz3E55Bjqe8uyPP9cBRkYgVn2iMdgepdBE40m641IvACIe5jCe/j4U08/5xEjF/2FG5hnR9QMaD3Sy9b8GAjb+V+CHhcfOJ61npck+jgEKfXdjBtP1b2wQMBSG8q07uIvtGVkqIufHR4vaMTciBmxjqW8/3vcvCW0IxL+Z8u3AeVhDi4zw0+sETCCyQNrlXS8tD/tZ1umHI3FUlj6AGqWD8er73xjz4aoDY4v/4iXQJ7wIF8kVo0DzJo40ZvA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
  dkim=none; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XPNzcwVTvOBWi4YQcsaKIkfPbkm4DJ4Ff/enwf6/rXo=;
- b=uFhzGOOB4CZqDxXXiAIz2OZNYzYDCwuK+Cn1o2TWQjJb8qspJ+uCcN3vSOAB+uDhzppVMxmP1cbx1AvwVCouMeTRyFfH3fyCaeKEVUg5eQLth8MHD83DK4hIbq+vnobkVzeUVKyAR5qlvmvEOzyq8hXxxqHxTUFY2Yhq4pyIe8WtsJUc2S4OeiLzkcZl/HN4UhwkDMvcVnDDYAYFNqhTLI2+cn7DmBhx34/ju5Jq0IPMs5J9m+mcZVNriWit45Qy1icS3DscEB/lTpl25IE3dCd50wOVK/7L6AcStfWDjDZUPmYMVX+vgOEoWvirtYNwYW+mQpd9cDxc1PXh4Ie8Mw==
+ bh=9UyZHq7lvGQsKQ8zO2row1Zb8iCJBS4fecTloL3X4hQ=;
+ b=XGw5WcwzrSMrvLhtSK6X971Y9t6SkOfbhO9aQLq1J/9te+euVqnquKIXPIkJ0PEtl5ttzd1wkfEtr3pCGhRPJsqIKwQBK9b6lHKnARRPldAveAsPV1IaOzv332JHNfxYelUMETmXuIV9cpUKym1Oivys8Jzm+a+iB+EeK7n4t6Qz/aH74iM6FYBU+DNre1HZwSSXkJk2XMmcBzhz5QCP3bgE3iAof017qxoRsa9HYdPr6H/TVAUMGqrZtSy+OneN3tMoj6sarKwRMppGGyz9RM8hYCYwgOXr4Ab+qkC5Fe8Tv0QF6smu1yYWQ1Ds5svTPONQllzW4uubG8Tvf2j51A==
 Received: from PN3P287MB0324.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:d6::7) by
- PN2P287MB2372.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:1ab::8) with Microsoft
+ PN3P287MB1815.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:19b::7) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7002.18; Wed, 15 Nov 2023 01:12:47 +0000
+ 15.20.7002.19; Wed, 15 Nov 2023 01:27:13 +0000
 Received: from PN3P287MB0324.INDP287.PROD.OUTLOOK.COM
  ([fe80::5a24:3fd5:dd38:3ecd]) by PN3P287MB0324.INDP287.PROD.OUTLOOK.COM
  ([fe80::5a24:3fd5:dd38:3ecd%4]) with mapi id 15.20.7002.018; Wed, 15 Nov 2023
- 01:12:47 +0000
+ 01:27:13 +0000
 Message-ID:
- <PN3P287MB0324B37658F300238640DCBAFEB1A@PN3P287MB0324.INDP287.PROD.OUTLOOK.COM>
-Date: Wed, 15 Nov 2023 09:12:41 +0800
+ <PN3P287MB03247B3C149A6C14E5326A23FEB1A@PN3P287MB0324.INDP287.PROD.OUTLOOK.COM>
+Date: Wed, 15 Nov 2023 09:27:09 +0800
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] dt-bindings: clock: sophgo: Add SG2042 clock
- definitions
+Subject: Re: [PATCH 2/5] dt-bindings: soc: sophgo: Add Sophgo syscon module
 To: Conor Dooley <conor@kernel.org>, Chen Wang <unicornxw@gmail.com>
 Cc: aou@eecs.berkeley.edu, chao.wei@sophgo.com,
  krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
@@ -45,18 +44,18 @@ Cc: aou@eecs.berkeley.edu, chao.wei@sophgo.com,
  linux-riscv@lists.infradead.org, haijiao.liu@sophgo.com,
  xiaoguang.xing@sophgo.com
 References: <cover.1699879741.git.unicorn_wang@outlook.com>
- <db59acdc99357d52ede5fc9738bdb161649c8fa1.1699879741.git.unicorn_wang@outlook.com>
- <20231114-spool-hemlock-f69291a8cfa4@squawk>
+ <3c286171af30101b88f0aaf645fb0a7d5880ac0a.1699879741.git.unicorn_wang@outlook.com>
+ <20231114-timid-habitat-a06e52e59c9c@squawk>
 From: Chen Wang <unicorn_wang@outlook.com>
-In-Reply-To: <20231114-spool-hemlock-f69291a8cfa4@squawk>
+In-Reply-To: <20231114-timid-habitat-a06e52e59c9c@squawk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-TMN: [CEChej6wHWO4bZUJPbWeGI+zKGWbWR5O]
-X-ClientProxiedBy: SI2PR01CA0001.apcprd01.prod.exchangelabs.com
- (2603:1096:4:191::13) To PN3P287MB0324.INDP287.PROD.OUTLOOK.COM
+X-TMN: [vUNqgdIBvElvZLn7WKwYEkAjfidVtjGk]
+X-ClientProxiedBy: SI1PR02CA0022.apcprd02.prod.outlook.com
+ (2603:1096:4:1f4::16) To PN3P287MB0324.INDP287.PROD.OUTLOOK.COM
  (2603:1096:c01:d6::7)
 X-Microsoft-Original-Message-ID:
- <2d60879b-de2b-42ee-9b0d-b4c850f39559@outlook.com>
+ <bbe168a8-4867-4590-8a58-9b7ebaad344a@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -65,249 +64,140 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PN3P287MB0324:EE_|PN2P287MB2372:EE_
-X-MS-Office365-Filtering-Correlation-Id: ab3e9922-cf24-4837-24b8-08dbe577f9cd
+X-MS-TrafficTypeDiagnostic: PN3P287MB0324:EE_|PN3P287MB1815:EE_
+X-MS-Office365-Filtering-Correlation-Id: 67102e2c-a6a7-4b15-3fad-08dbe579fe4a
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info:
-	13moVOEWehUEXW8xRVED509dgbsJM2lmV7jtD/i69Scf/1isRv2lmwWKC9twtMpbCRMRir14MzDZRVb0bANPz17vLOEirjT/Xs5AoAA72CW39yDvL3gSaotRxEOcEvPv9YBzBpPMr1H7GhP7LDrnS3iX4aIPl+ix+oTzaQKqABsIpi9yaaXt9iPtlNryaBWGbXYDU71E09Cv/g/JWyBv5yRqGtyFp/xtm3P2zER1Y6a5feV9/oucIz+Z/4PBa/v0qduRo2y7cQ+Sj2GYEuKrtXJR6joQ5HfrUXrYmFCmWzsvEkFB1vOO74UQz5xil4Qj/72vKekxaZztUgO9lVjWUPkl42ImbxwEDi9Qy85qJj/DAd1YnM9LPafrYH7puR11BY4emREn9FWEjifq7k4jb5lxSZD6/1eGykGYTXX6D19HZxGU2oczQrPLIhcV+KDf923BWsgJAk5tVoY2pagN1ne1g4fVA9PDiSRwbYWuAjfcqJu3X1cafTIMa2XvT9BLdFsCjh6ilyt8f85/KFFMIOXFqIvo1uThvNeE7p/CquMMfm1JEFLbL3zjX0L23pVd
+	NqSXksgKIC/2gxK/6qSxjHAYctc67LkZld71JKjFyxVgrZqWlBwAT91U6vVVUFLzT/5xgXK0irNt3B2Z+GHEqB0RN2QSfOE85uf7Ej3A6VvX0dRtBSLrKRXg2UyUabzj6Y3K1J5woEOnrrmRCQAyuONUS8jLCh8L09E/Q1njoQLV1pNoHRQ0PavKc3m3J4GOXHgNW9uBID9k3Bp0ia66vITxiV44MWLgrI0mnQ6cvuHZPiJKn0D0HktaN8fYy1lcnOYpkQxXqaq/fsPzo+3f7K/nD5p48cbYPYPiQLvzJv3CFxqXa5gsJ0+iLKdJUjow6Yl1MEeax051gIRrXI0vpnnJu1IwYq5fcnPuCZEeHFDHYiL40UrLt+BiHDGTpTCuLsnYby7E/BpjOiT3qRLfUn2FimMZX3yvd7GaO2bTsKPut9q0te+69wvFRDK9GZyQG5WdmDCWQa/tCaZ86kRWNU6mKVeoOv8MCW9+412VhaqCPqROKaVoBS9BWyk5nro90zNss9KFua9hR0KWU2J3Skx+hOffUuuYwJ5P+2Wu06Tfe90/S55BJWbtkiIe8Px7F5lI1ooHrhMxYGtYJFZgR2M1JfQOztTXFX87xWrXAe0=
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZEZWQ3VLb21keE96TVpkTjJTQWJuQ1FFcVByRW1lTGgyYXh1aUwxWGh4Qytu?=
- =?utf-8?B?WDQxcjQyeDlWd1RSdy96MVhmU2xLT1ZHZjd5QVlEVEQ3Q01GMTBlN2QyOSs3?=
- =?utf-8?B?STF1UklDZFBkalRqTm1maDY4bGIwUHc1SXNINi9MbHlicnhtM1FYYTBySjl6?=
- =?utf-8?B?dEZRbTk4UjZLTjNvbmpQUjc1MC9Ub1JWNytWSERobnhaa3laZEpRWnAvOWhn?=
- =?utf-8?B?MHRjR2ZnK0ZwYW1WbDJFcnIvbExPSDB3RzgzQWY4TmlMd0IrWWxZdmZmMFNN?=
- =?utf-8?B?QmJPcHVGeXo5WEF1bE1odDh0a1UvMlhZdFptVmtLUjczQXA2N2pRYWQ4cE1M?=
- =?utf-8?B?NVpEM2pGSGM2blgvUG9ONTVFcEowK0hNWnY4eUw1a1hwVWRxNTdWS3RrOUwv?=
- =?utf-8?B?YnBsUDNxVEZKZ1NHT2dNYlhGaVF2cjlTdytXQUw1OXZjOEQwczRKcE9ESjdD?=
- =?utf-8?B?NEc4dlZSbTZkMnBvZVRoR3RQeVNNd0JmSUpLT1c1SUlkNEZBclpzVFpDODdH?=
- =?utf-8?B?MkN1N25mSXRxaFp4K0xzRzNKcllOc1Y3QXFlZ3NleGZtOVhidXBySkVIajJW?=
- =?utf-8?B?bmQvZTRKTGt2MWl5S3FRd1FhU0I1VUxmNVdQZ0Fwb0htZWNlVkZEMy9wTVN4?=
- =?utf-8?B?elVHSm5EeHI3QS9RVGNSbzBiTHlLRUhEVnExL1MyVEJ4ZjRVK0FYZDNrVU5S?=
- =?utf-8?B?SXppY0VKQ3pyM1c5UXJaM2JmMnJlRk03KzQ1UW02emdkbjFIZzFpZmw3Mncz?=
- =?utf-8?B?MTJaYk16NlJkSVpIampEVktIR0JmRGQ4ckxMTTVpZUFJMWlvL3pZVEJXd1I0?=
- =?utf-8?B?d2twNG5mQ2tUZlgxelArMGtGUFFvNWNVMlorSlU1dVBGZFM2R3hnNXhFN2JX?=
- =?utf-8?B?eW9WdG5QbWtDd3hqSTZEY3B2SE9kV1BtTWQ3MkVqVm5pSEp3QXJhRGxEN29P?=
- =?utf-8?B?dEtGZVFBeHJQUExQUmhtdkhpVnpyNGpPWTFJVkZMcDg3Umd0eEJMRFczMXpM?=
- =?utf-8?B?dXhJTXlXWWYycDVZMXlXZ0liOU5XMFZyaWJJaEJiemhKRTQ2WUVYdU04OWhV?=
- =?utf-8?B?eU13b3pNNVE0RXhvMGNGY0owQUNLMG9GU3pOeGdrVTVvUTFYcDg0RU5BS0pP?=
- =?utf-8?B?UWMra2lHTkdhSWJ6QkFpdzRPb1RIUzc2N0VPK1hzbnBGZ1BCMVVONStuRTR2?=
- =?utf-8?B?a2FGa2RaYUxFK3BYdjh2Y082L3FLTTdJdHdWdUIxTktEK0E4YW1Ub3NZeUN2?=
- =?utf-8?B?b3pzUmVVaU13Rko3SHVaZEI4TTNXak1IZkdXeGFlQ2hleFRiR01WK2tqeVJV?=
- =?utf-8?B?RllHV3JqVzFITlFISnhFWGhtTDlWOTBGRU5VL1YvYU51eWFYT3NOdE5nQWkw?=
- =?utf-8?B?d1hNU0owL1FubndaTHcyNUE3aUx3WDJ6QittZDA0dkcxK29nMkJTdFFtRGlC?=
- =?utf-8?B?V21takp0WDJTSTgwS01qRWM4T3JIcnY1YWxzSTJtVEVrTEFaSkhIZVM5QUFD?=
- =?utf-8?B?eTljdmFSc2RvckNrdEJQVnMrNHNOb0wrNzdkNE56OTcyOXNHRmZHWEdjOC85?=
- =?utf-8?B?V1l6cVIrcXdnSHQrRWQrSHV6dTgxVWh6NnJzaWs0cE5WM3ZyMnJEelRrbUMr?=
- =?utf-8?Q?Kwc6LXEiGhmtxu0gWCIoTPbTUb8qPwXnpTp/sRuEluvE=3D?=
+	=?utf-8?B?V1NGWUVCTjBUSmt2WEl4VEowbHpjdW1yV3ZMN2wxMUpGT1RNa1FTK2p6SCtF?=
+ =?utf-8?B?VWlKYkd1MFVrc0ZnUDZiWm9kWXVGT0JzN0VYUy9VWEp5KzJhOWtKNGl1T1BY?=
+ =?utf-8?B?bXZhSFhEbENXaEpHd3ZDRXN3Z0dIRll6aUFTT2dCQWFkQlh6NXJ0TWVuY2Ew?=
+ =?utf-8?B?T0R6aWt0SlNwSVNMaTRpWGRMM000dGVxL3dVWGdkMi9OTWovOG1jZ3BRQ1FW?=
+ =?utf-8?B?SDdBR1Z3cjNsQVYyZ3RUVE1SUktkSjAyNHpZL1gwOFNHdHNXNjEyeTU3N1Rl?=
+ =?utf-8?B?bE9KOTFnbUkreXVFSlcvQVd0T0plTU1GNG92OEFUenlua005MWR6bjFxTDhN?=
+ =?utf-8?B?RS9QL0RQVjFLRGI3TjQrMjZ4TWFlRytwdVZxYW1EV3ZTcEkwdTB3cCs0TEIw?=
+ =?utf-8?B?QlAyNU5qVjFNbWExR2t1R0hFMlNSczZKaysxNCthUUh2SnFjMTdRTzlGTjdL?=
+ =?utf-8?B?ZXZVQlU4eDdjblhiNU5OZVVidy9XTFpMWVZueDF5RGJ4OHVPM09LVmNwWFRO?=
+ =?utf-8?B?clAxZUFkUk81ZWh6OFhXVml5YVZzcE40QWtZNWpjR2NUZWQ0aWcyaEZoMjFX?=
+ =?utf-8?B?VHgxWGtiMnlqWkpYaDYvcHV1aGJhbFZEbnFYWTQ3YlFyaFA0M0luR1ZxQWFm?=
+ =?utf-8?B?WVFuU1krcmRmK0E0T2RwanptaHdPTjJTNnF4Qnh3T3BNK1lFL1BCN0l5MEE3?=
+ =?utf-8?B?ZTVyMFNXQUlVaW1Iazk3dmVsU0hJd0tBNjZVVzhsdlJUbFFDcmVkb2dZd3Z2?=
+ =?utf-8?B?eHdMam92eWMwR1k1WE91bVJXN2xSamRsRHAvU01yWkMrUGhwTjBCeXpEbW90?=
+ =?utf-8?B?UGVVbFRWdytMNTBLQlZrazltd2NiYWJWWUZLR2dCeWdudHFNVS96SEhvK09Z?=
+ =?utf-8?B?RWcvL0YvU0RCMk0yYVFONjdvcjRVWVgwTm1MRGk3T3FNMDVyY2hhZ0ovRTBU?=
+ =?utf-8?B?N0lxYzd1OGZUaVE1Qlc1dkRFRW4wbFk5R3hIbWxIYS90YVpackUza3NlN1hx?=
+ =?utf-8?B?SnRoeWtuTTFOMlpOYnFhTTF2Qi9xZG9oWEtmNVVSdWdRNEdSMlN3Z2ZpS2dQ?=
+ =?utf-8?B?NkFBK2tJeDZkK3lpN2RCb0hNd2JyUEVadmNPV0l0dXZQWXpaRUVEakFXbEJC?=
+ =?utf-8?B?c0JJT29iWk94OFhVeWx3L1ZkT3ZwUmJCR0lIc25HNW9DcTNKb3NzSFh5VEFC?=
+ =?utf-8?B?dHZuK1RBdW4weFg1NTF3aHEvOGZBb2NPVi9zV2RidktSQStuS0hsQXlVZE13?=
+ =?utf-8?B?aTFMaHhOWkIzbTl5cUJTSC92SlpYQ3lqVEFtdUFCOWp0M09iUTh4T21PTzdY?=
+ =?utf-8?B?Z3RvMXRwWWUzYVhlSkpQUGZZVlFaeTFRMzVpLzRubzBoUFFIV3NLK3VSdTBv?=
+ =?utf-8?B?azV3emUrRm53NUFacnkvZ29sdk82VjdadHNZSFp6dElHUDJraGxua2dMU29H?=
+ =?utf-8?B?OXpBUENHcElqM2g5SGE1RVNFOWIxZC9iOThPeGlUeHR1MXNDRTB1WmVDb1Vi?=
+ =?utf-8?B?dWVTdExRNGNXVUtHQklmOEdISzRiczdURzdQODd5T3R4anh5Y1pIQ2JQK2Rh?=
+ =?utf-8?B?b0FvMUtyemJkWEFzMnRVcURFbGFKWmpWWW5mSndiVDFRM1M5SjEzakRLQURQ?=
+ =?utf-8?Q?LtKsU0sAvwEPsfuqplVr3RLeBp/9dG5pdXpU4chSLtHE=3D?=
 X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ab3e9922-cf24-4837-24b8-08dbe577f9cd
+X-MS-Exchange-CrossTenant-Network-Message-Id: 67102e2c-a6a7-4b15-3fad-08dbe579fe4a
 X-MS-Exchange-CrossTenant-AuthSource: PN3P287MB0324.INDP287.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Nov 2023 01:12:47.5412
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Nov 2023 01:27:13.0506
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
 X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
 	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2P287MB2372
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN3P287MB1815
 
 
-On 2023/11/15 1:35, Conor Dooley wrote:
-> On Mon, Nov 13, 2023 at 09:18:25PM +0800, Chen Wang wrote:
+On 2023/11/15 1:40, Conor Dooley wrote:
+> On Mon, Nov 13, 2023 at 09:19:02PM +0800, Chen Wang wrote:
 >> From: Chen Wang <unicorn_wang@outlook.com>
 >>
->> Add all clock outputs for the Sophgo SG2042 clock generator.
-> This patch can be squashed with the patch adding the binding for the
-> clock controller.
+>> Add documentation to describe Sophgo System Controller Registers for
+>> SG2042.
+>>
+>> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
+>> ---
+>>   .../soc/sophgo/sophgo,sg2042-syscon.yaml      | 38 +++++++++++++++++++
+>>   1 file changed, 38 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/soc/sophgo/sophgo,sg2042-syscon.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/soc/sophgo/sophgo,sg2042-syscon.yaml b/Documentation/devicetree/bindings/soc/sophgo/sophgo,sg2042-syscon.yaml
+>> new file mode 100644
+>> index 000000000000..829abede4fd5
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/soc/sophgo/sophgo,sg2042-syscon.yaml
+>> @@ -0,0 +1,38 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/soc/sophgo/sophgo,sg2042-syscon.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Sophgo SG2042 SoC system controller
+>> +
+>> +maintainers:
+>> +  - Chen Wang <unicorn_wang@outlook.com>
+>> +
+>> +description:
+>> +  The Sophgo SG2042 SoC system controller provides register information such
+>> +  as offset, mask and shift to configure related modules.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    oneOf:
+>> +      - items:
+>> +          - enum:
+>> +              - sophgo,sg2042-syscon
+>> +          - const: syscon
+> THere's only one option here, so the oneOf should be removed. Similarly,
+> since there's only one SoC, and it sounds like the next large sophgo
+> system is going to be using an entirely different core provider, I think
+> should just simplify this to a pair of "const:" entries.
+
+Yes, "oneOf" should be removed.
+
+Regarding the "enum", I heard from Sophgo people, that they will 
+announce a new SG2044 chip next year and it will share some modules from 
+SG2042, including syscon, clock ...
+
+So it is better keeping the "enum" here and we may add another 
+"sophgo,sg2044-syscon" later.
+
+Regarding the next large sophgo system you mentioned, yes, there is 
+anther chip, I think you are talking about SG2380, it will use 
+core(P670) from SiFive. Maybe we can see it in next year also.
+
+More news, I find a report from web: 
+https://www.hpcwire.com/2023/11/13/chinese-company-developing-64-core-risc-v-chip-with-tech-from-u-s/, 
+FYI.
+
+
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    syscon@30010000 {
+>> +        compatible = "sophgo,sg2042-syscon", "syscon";
+>> +        reg = <0x30010000 0x1000>;
+>> +    };
+> Per my comments elsewhere, I think the clock controller should be a
+> child of this node, rather than an unrelated node, linked by a phandle.
+
+Agree, I will correct this in next revision.
+
+
 >
 > Cheers,
 > Conor.
-
-Thanks, I will handle this in next revision.
-
-
->> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
->> ---
->>   include/dt-bindings/clock/sophgo-sg2042-clk.h | 169 ++++++++++++++++++
->>   1 file changed, 169 insertions(+)
->>   create mode 100644 include/dt-bindings/clock/sophgo-sg2042-clk.h
->>
->> diff --git a/include/dt-bindings/clock/sophgo-sg2042-clk.h b/include/dt-bindings/clock/sophgo-sg2042-clk.h
->> new file mode 100644
->> index 000000000000..a8e05c00c3bf
->> --- /dev/null
->> +++ b/include/dt-bindings/clock/sophgo-sg2042-clk.h
->> @@ -0,0 +1,169 @@
->> +/* SPDX-License-Identifier: GPL-2.0 OR MIT */
->> +/*
->> + * Copyright (C) 2023 Sophgo Technology Inc. All rights reserved.
->> + */
->> +
->> +#ifndef __DT_BINDINGS_CLOCK_SOPHGO_SG2042_H__
->> +#define __DT_BINDINGS_CLOCK_SOPHGO_SG2042_H__
->> +
->> +/* Divider clocks */
->> +#define DIV_CLK_MPLL_RP_CPU_NORMAL_0 0
->> +#define DIV_CLK_MPLL_AXI_DDR_0 1
->> +#define DIV_CLK_FPLL_DDR01_1 2
->> +#define DIV_CLK_FPLL_DDR23_1 3
->> +#define DIV_CLK_FPLL_RP_CPU_NORMAL_1 4
->> +#define DIV_CLK_FPLL_50M_A53 5
->> +#define DIV_CLK_FPLL_TOP_RP_CMN_DIV2 6
->> +#define DIV_CLK_FPLL_UART_500M 7
->> +#define DIV_CLK_FPLL_AHB_LPC 8
->> +#define DIV_CLK_FPLL_EFUSE 9
->> +#define DIV_CLK_FPLL_TX_ETH0 10
->> +#define DIV_CLK_FPLL_PTP_REF_I_ETH0 11
->> +#define DIV_CLK_FPLL_REF_ETH0 12
->> +#define DIV_CLK_FPLL_EMMC 13
->> +#define DIV_CLK_FPLL_SD 14
->> +#define DIV_CLK_FPLL_TOP_AXI0 15
->> +#define DIV_CLK_FPLL_TOP_AXI_HSPERI 16
->> +#define DIV_CLK_FPLL_AXI_DDR_1 17
->> +#define DIV_CLK_FPLL_DIV_TIMER1 18
->> +#define DIV_CLK_FPLL_DIV_TIMER2 19
->> +#define DIV_CLK_FPLL_DIV_TIMER3 20
->> +#define DIV_CLK_FPLL_DIV_TIMER4 21
->> +#define DIV_CLK_FPLL_DIV_TIMER5 22
->> +#define DIV_CLK_FPLL_DIV_TIMER6 23
->> +#define DIV_CLK_FPLL_DIV_TIMER7 24
->> +#define DIV_CLK_FPLL_DIV_TIMER8 25
->> +#define DIV_CLK_FPLL_100K_EMMC 26
->> +#define DIV_CLK_FPLL_100K_SD 27
->> +#define DIV_CLK_FPLL_GPIO_DB 28
->> +#define DIV_CLK_DPLL0_DDR01_0 29
->> +#define DIV_CLK_DPLL1_DDR23_0 30
->> +
->> +/* Gate clocks */
->> +#define GATE_CLK_RP_CPU_NORMAL_DIV0 31
->> +#define GATE_CLK_AXI_DDR_DIV0 32
->> +
->> +#define GATE_CLK_RP_CPU_NORMAL_DIV1 33
->> +#define GATE_CLK_A53_50M 34
->> +#define GATE_CLK_TOP_RP_CMN_DIV2 35
->> +#define GATE_CLK_HSDMA 36
->> +#define GATE_CLK_EMMC_100M 37
->> +#define GATE_CLK_SD_100M 38
->> +#define GATE_CLK_TX_ETH0 39
->> +#define GATE_CLK_PTP_REF_I_ETH0 40
->> +#define GATE_CLK_REF_ETH0 41
->> +#define GATE_CLK_UART_500M 42
->> +#define GATE_CLK_EFUSE 43
->> +
->> +#define GATE_CLK_AHB_LPC 44
->> +#define GATE_CLK_AHB_ROM 45
->> +#define GATE_CLK_AHB_SF 46
->> +
->> +#define GATE_CLK_APB_UART 47
->> +#define GATE_CLK_APB_TIMER 48
->> +#define GATE_CLK_APB_EFUSE 49
->> +#define GATE_CLK_APB_GPIO 50
->> +#define GATE_CLK_APB_GPIO_INTR 51
->> +#define GATE_CLK_APB_SPI 52
->> +#define GATE_CLK_APB_I2C 53
->> +#define GATE_CLK_APB_WDT 54
->> +#define GATE_CLK_APB_PWM 55
->> +#define GATE_CLK_APB_RTC 56
->> +
->> +#define GATE_CLK_AXI_PCIE0 57
->> +#define GATE_CLK_AXI_PCIE1 58
->> +#define GATE_CLK_SYSDMA_AXI 59
->> +#define GATE_CLK_AXI_DBG_I2C 60
->> +#define GATE_CLK_AXI_SRAM 61
->> +#define GATE_CLK_AXI_ETH0 62
->> +#define GATE_CLK_AXI_EMMC 63
->> +#define GATE_CLK_AXI_SD 64
->> +#define GATE_CLK_TOP_AXI0 65
->> +#define GATE_CLK_TOP_AXI_HSPERI 66
->> +
->> +#define GATE_CLK_TIMER1 67
->> +#define GATE_CLK_TIMER2 68
->> +#define GATE_CLK_TIMER3 69
->> +#define GATE_CLK_TIMER4 70
->> +#define GATE_CLK_TIMER5 71
->> +#define GATE_CLK_TIMER6 72
->> +#define GATE_CLK_TIMER7 73
->> +#define GATE_CLK_TIMER8 74
->> +#define GATE_CLK_100K_EMMC 75
->> +#define GATE_CLK_100K_SD 76
->> +#define GATE_CLK_GPIO_DB 77
->> +
->> +#define GATE_CLK_AXI_DDR_DIV1 78
->> +#define GATE_CLK_DDR01_DIV1 79
->> +#define GATE_CLK_DDR23_DIV1 80
->> +/* DPLL0 */
->> +#define GATE_CLK_DDR01_DIV0 81
->> +/* DPLL1 */
->> +#define GATE_CLK_DDR23_DIV0 82
->> +
->> +#define GATE_CLK_DDR01 83
->> +#define GATE_CLK_DDR23 84
->> +#define GATE_CLK_RP_CPU_NORMAL 85
->> +#define GATE_CLK_AXI_DDR 86
->> +#define GATE_CLK_RXU0 87
->> +#define GATE_CLK_RXU1 88
->> +#define GATE_CLK_RXU2 89
->> +#define GATE_CLK_RXU3 90
->> +#define GATE_CLK_RXU4 91
->> +#define GATE_CLK_RXU5 92
->> +#define GATE_CLK_RXU6 93
->> +#define GATE_CLK_RXU7 94
->> +#define GATE_CLK_RXU8 95
->> +#define GATE_CLK_RXU9 96
->> +#define GATE_CLK_RXU10 97
->> +#define GATE_CLK_RXU11 98
->> +#define GATE_CLK_RXU12 99
->> +#define GATE_CLK_RXU13 100
->> +#define GATE_CLK_RXU14 101
->> +#define GATE_CLK_RXU15 102
->> +#define GATE_CLK_RXU16 103
->> +#define GATE_CLK_RXU17 104
->> +#define GATE_CLK_RXU18 105
->> +#define GATE_CLK_RXU19 106
->> +#define GATE_CLK_RXU20 107
->> +#define GATE_CLK_RXU21 108
->> +#define GATE_CLK_RXU22 109
->> +#define GATE_CLK_RXU23 110
->> +#define GATE_CLK_RXU24 111
->> +#define GATE_CLK_RXU25 112
->> +#define GATE_CLK_RXU26 113
->> +#define GATE_CLK_RXU27 114
->> +#define GATE_CLK_RXU28 115
->> +#define GATE_CLK_RXU29 116
->> +#define GATE_CLK_RXU30 117
->> +#define GATE_CLK_RXU31 118
->> +#define GATE_CLK_MP0 119
->> +#define GATE_CLK_MP1 120
->> +#define GATE_CLK_MP2 121
->> +#define GATE_CLK_MP3 122
->> +#define GATE_CLK_MP4 123
->> +#define GATE_CLK_MP5 124
->> +#define GATE_CLK_MP6 125
->> +#define GATE_CLK_MP7 126
->> +#define GATE_CLK_MP8 127
->> +#define GATE_CLK_MP9 128
->> +#define GATE_CLK_MP10 129
->> +#define GATE_CLK_MP11 130
->> +#define GATE_CLK_MP12 131
->> +#define GATE_CLK_MP13 132
->> +#define GATE_CLK_MP14 133
->> +#define GATE_CLK_MP15 134
->> +
->> +/* MUX clocks */
->> +#define MUX_CLK_DDR01 135
->> +#define MUX_CLK_DDR23 136
->> +#define MUX_CLK_RP_CPU_NORMAL 137
->> +#define MUX_CLK_AXI_DDR 138
->> +
->> +/* PLL clocks */
->> +#define MPLL_CLK	139
->> +#define FPLL_CLK	140
->> +#define DPLL0_CLK	141
->> +#define DPLL1_CLK	142
->> +
->> +#endif /* __DT_BINDINGS_CLOCK_SOPHGO_SG2042_H__ */
->> -- 
->> 2.25.1
->>
