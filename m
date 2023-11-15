@@ -1,177 +1,160 @@
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EEB441223;
+	Wed, 15 Nov 2023 19:24:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eaMiIGiP"
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB7ACC7;
-	Wed, 15 Nov 2023 09:34:05 -0800 (PST)
-Received: by mail-lj1-x22e.google.com with SMTP id 38308e7fff4ca-2c50906f941so101219621fa.2;
-        Wed, 15 Nov 2023 09:34:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1700069644; x=1700674444; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=godpBCSFxQqlZHremxgBjkYbgRySRSrjQnKEovvSNl8=;
-        b=eaMiIGiPcrpJEtry1OTFo4oEVOHWut1fKLszKxLViJDAeLLLZI+xq3p/s+ah21+s1T
-         3rjU9N+FUdSmEO6tFhBkDQYiZidhwFPi6IqPxlisa8R75WIe/vq5c3uApwMM+iTZ6UzW
-         xqqllojZjePqveQlGQd4zeLUeBBZIwLmtE/agj8+QEqXhPE34rHIbuZQg+ZaraPjZBME
-         nc5qbrvhurOzjGBPDOigvLB04iFwfF92mZ0jaEFoH6fd0PL33vGGxM5aBmKny2HBArWB
-         3VJjQHoYIhKU/Hmpv4GLYCku7Gbbbey1S4/iyjKorr7wPiHKgIMwFmGwwTIIxQMF8Jvs
-         0m9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700069644; x=1700674444;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=godpBCSFxQqlZHremxgBjkYbgRySRSrjQnKEovvSNl8=;
-        b=xAOam/ujh5J194pjx20m9acRtg7+JmYl2KSRyDjO009QkDT2gppv7IaKJotthlGk3s
-         U1e78H5G2AWdtn1fzzC80YQw9VoFzE6pBUYqOksuFfAoqgfawEFm+u/+KD6Lr8S5LaHA
-         HH55J2JXKgx0KiSeawsUNuPdny50+COReETRXyji4WPtP94o1cbWWYBTUDPotmoxQn9P
-         71Deza09PniIGfJ8kDxfnnhd+wtsuR1uiznkSEwhlt3Jt2PJFjS604t2I2VkJrBvn/Zv
-         XJLHnaS5TCCoNObUhwdPfo1WZ9a1mz4Nvwf27gevTAxYzI8lUeDAG9Aq26XwoZfpbC9n
-         U4QA==
-X-Gm-Message-State: AOJu0Yys8bPrOdgonLHNW5eIQbw+8D91JOgzG+fJhZXYHWhaGmEqIbyH
-	3wiK7DSkBQKA7VPxsNGT6eM=
-X-Google-Smtp-Source: AGHT+IGtmWmLQ9lGrvFvey302BpNZiBUBADZO/8kKO9CeuUMeNQ+ecrsA4FeJsOmdULRyPbxZPF0uw==
-X-Received: by 2002:a2e:9b48:0:b0:2c2:9872:dfc1 with SMTP id o8-20020a2e9b48000000b002c29872dfc1mr4795177ljj.42.1700069643684;
-        Wed, 15 Nov 2023 09:34:03 -0800 (PST)
-Received: from [192.168.0.92] ([178.233.24.52])
-        by smtp.gmail.com with ESMTPSA id p1-20020a5d68c1000000b0032fab28e9c9sm11119787wrw.73.2023.11.15.09.34.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Nov 2023 09:34:03 -0800 (PST)
-Message-ID: <04fe725d-c6c9-4db7-9ebe-ce6ea3511844@gmail.com>
-Date: Wed, 15 Nov 2023 20:34:00 +0300
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="tk2qbJ16"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0581C433C8;
+	Wed, 15 Nov 2023 19:24:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1700076287;
+	bh=ymMAk+FtJcQoQiK5/K3FJT/IX19sAPWaEV0Y9PIOfJM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=tk2qbJ165dO2+jg0y1MZ1rYAkG/RkgcoCUwooK5XJhNyiklMsIAjBwSE8T7S+ZmGC
+	 b1VutUa2waOKYYaz109XbgGI4ecHnhjmNU4/oA+AAqXUMDMVqy1GZ3lOCKkeWOOemk
+	 QZ1LjomekP2DZ60UVG/SXWbyHSRrg1700/SP6U0o=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 6.5 169/550] clk: linux/clk-provider.h: fix kernel-doc warnings and typos
+Date: Wed, 15 Nov 2023 14:12:33 -0500
+Message-ID: <20231115191612.423896623@linuxfoundation.org>
+X-Mailer: git-send-email 2.42.1
+In-Reply-To: <20231115191600.708733204@linuxfoundation.org>
+References: <20231115191600.708733204@linuxfoundation.org>
+User-Agent: quilt/0.67
+X-stable: review
+X-Patchwork-Hint: ignore
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clock: mediatek: mt8173: Handle unallocated infracfg
- clock data
-Content-Language: en-US, tr, en-GB
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
- Chen-Yu Tsai <wenst@chromium.org>, linux-arm-kernel@lists.infradead.org,
- Michael Turquette <mturquette@baylibre.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20231108213734.140707-1-alpernebiyasak@gmail.com>
- <3b6c474f-669d-4c6e-8d56-ea65958a3b48@collabora.com>
-From: Alper Nebi Yasak <alpernebiyasak@gmail.com>
-In-Reply-To: <3b6c474f-669d-4c6e-8d56-ea65958a3b48@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi,
+6.5-stable review patch.  If anyone has any objections, please let me know.
 
-Sorry with the late reply. I am trying to get things enabled in Debian
-for MT8173 and MT8183 Chromebooks, and needed to post this so I can
-refer to this there [1]. Then I worked on things related to that, hence
-the delay. Replying here mostly because I wanted to tell you as you
-might be interested -- although I do have some module probe ordering
-problems that could use some insight...
+------------------
 
-[1] https://salsa.debian.org/kernel-team/linux/-/merge_requests/906
+From: Randy Dunlap <rdunlap@infradead.org>
 
-On 2023-11-09 12:05 +03:00, AngeloGioacchino Del Regno wrote:
-> Il 08/11/23 22:33, Alper Nebi Yasak ha scritto:
->> The MT8173 infracfg clock driver does initialization in two steps, via a
->> CLK_OF_DECLARE_DRIVER declaration. However its early init function
->> doesn't get to run when it's built as a module, presumably since it's
->> not loaded by the time it would have been called by of_clk_init(). This
->> causes its second-step probe() to return -ENOMEM when trying to register
->> clocks, as the necessary clock_data struct isn't initialized by the
->> first step.
->>
->> MT2701 and MT6797 clock drivers also use this mechanism, but they try to
->> allocate the necessary clock_data structure if missing in the second
->> step. Mimic that for the MT8173 infracfg clock as well to make it work
->> as a module.
->>
->> Signed-off-by: Alper Nebi Yasak <alpernebiyasak@gmail.com>
->> ---
->> I've tried adding cpumux support to clk-mtk.c then switching this over
->> to simple probe functions and it appears to work for me, though I don't
->> know clock systems enough to recognize if it's subtly broken instead.
->> That'd remove this piece of code, but this might still be worth applying
->> to backport to stable kernels.
->>
->> If I'm reading things correctly, it looks like it would be possible to
->> add cpumux & pll & pllfh support to clk-mtk.c, then move most if not
->> every driver to simple probe, with one file per clock and module
->> support. How much of that is desirable? In what order do the parts need
->> to be registered?
-> 
-> Thing is, if (!infra_clk_data) at infracfg_probe time, then INFRA_CLK_13M==-ENOENT!
-> If you do this, you should at least also send a devicetree commit that adds
-> 
-> 	clk13m: fixed-factor-clock-13m {
-> 		compatible = "fixed-factor-clock";
-> 		#clock-cells = <0>;
-> 		clocks = <&clk26m>;
-> 		clock-div = <2>;
-> 		clock-mult = <1>;
-> 		clock-output-names = "clk13m";
-> 	};
-> 
-> ....otherwise this solution is incomplete! ;-)
+[ Upstream commit 84aefafe6b294041b7fa0757414c4a29c1bdeea2 ]
 
-I'm seeing similar blocks added for other SoCs and tried to match what
-they did, hoping it's correct for MT8173 as well.
+Fix spelling of "Structure".
 
-> Regarding the CPUMUX support, when I've restructured the MediaTek clocks, I've also
-> been thinking about doing this, but decided not to do it because that'd be a check
-> done on ~10 clock drivers per SoC, of which only one is expected to succeed... I
-> see that as a waste of cycles at boot...
-> 
-> ...but if anyone thinks otherwise, I'm fine with it...
+Fix multiple kernel-doc warnings:
 
-Thanks for making it possible to use them as modules, I appreciate it!
-It does look like a maintainability vs performance trade off, and I
-don't know enough about performance profiling to say it doesn't matter here.
+clk-provider.h:269: warning: Function parameter or member 'recalc_rate' not described in 'clk_ops'
+clk-provider.h:468: warning: Function parameter or member 'parent_data' not described in 'clk_hw_register_fixed_rate_with_accuracy_parent_data'
+clk-provider.h:468: warning: Excess function parameter 'parent_name' description in 'clk_hw_register_fixed_rate_with_accuracy_parent_data'
+clk-provider.h:482: warning: Function parameter or member 'parent_data' not described in 'clk_hw_register_fixed_rate_parent_accuracy'
+clk-provider.h:482: warning: Excess function parameter 'parent_name' description in 'clk_hw_register_fixed_rate_parent_accuracy'
+clk-provider.h:687: warning: Function parameter or member 'flags' not described in 'clk_divider'
+clk-provider.h:1164: warning: Function parameter or member 'flags' not described in 'clk_fractional_divider'
+clk-provider.h:1164: warning: Function parameter or member 'approximation' not described in 'clk_fractional_divider'
+clk-provider.h:1213: warning: Function parameter or member 'flags' not described in 'clk_multiplier'
 
-> Anyway.
-> 
-> Can you please fix the commit title to be consistent with the others and send a v2?
-> 
-> In this case, that would be
-> "clk: mediatek: mt8173-infracfg: Handle unallocated infracfg when module"
+Fixes: 9fba738a53dd ("clk: add duty cycle support")
+Fixes: b2476490ef11 ("clk: introduce the common clock framework")
+Fixes: 2d34f09e79c9 ("clk: fixed-rate: Add support for specifying parents via DT/pointers")
+Fixes: f5290d8e4f0c ("clk: asm9260: use parent index to link the reference clock")
+Fixes: 9d9f78ed9af0 ("clk: basic clock hardware types")
+Fixes: e2d0e90fae82 ("clk: new basic clk type for fractional divider")
+Fixes: f2e0a53271a4 ("clk: Add a basic multiplier clock")
 
-Heh, I'm having trouble with titles recently. Sent a v2 just now, with a
-second patch for device-tree.
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org
+Link: https://lore.kernel.org/r/20230930221428.18463-1-rdunlap@infradead.org
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ include/linux/clk-provider.h | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-> P.S.: Good job!
-> 
-> Cheers,
-> Angelo
-> 
->>   drivers/clk/mediatek/clk-mt8173-infracfg.c | 12 +++++++++++-
->>   1 file changed, 11 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/mediatek/clk-mt8173-infracfg.c b/drivers/clk/mediatek/clk-mt8173-infracfg.c
->> index 2f2f074e231a..ecc8b0063ea5 100644
->> --- a/drivers/clk/mediatek/clk-mt8173-infracfg.c
->> +++ b/drivers/clk/mediatek/clk-mt8173-infracfg.c
->> @@ -98,7 +98,17 @@ CLK_OF_DECLARE_DRIVER(mtk_infrasys, "mediatek,mt8173-infracfg",
->>   static int clk_mt8173_infracfg_probe(struct platform_device *pdev)
->>   {
->>   	struct device_node *node = pdev->dev.of_node;
->> -	int r;
->> +	int r, i;
->> +
->> +	if (!infra_clk_data) {
->> +		infra_clk_data = mtk_alloc_clk_data(CLK_INFRA_NR_CLK);
->> +		if (!infra_clk_data)
->> +			return -ENOMEM;
->> +	} else {
->> +		for (i = 0; i < CLK_INFRA_NR_CLK; i++)
->> +			if (infra_clk_data->hws[i] == ERR_PTR(-EPROBE_DEFER))
->> +				infra_clk_data->hws[i] = ERR_PTR(-ENOENT);
->> +	}
->>   
->>   	r = mtk_clk_register_gates(&pdev->dev, node, infra_gates,
->>   				   ARRAY_SIZE(infra_gates), infra_clk_data);
->>
->> base-commit: 2220f68f4504aa1ccce0fac721ccdb301e9da32f
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 0f0cd01906b4c..ec93fb23372b4 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -74,7 +74,7 @@ void clk_hw_forward_rate_request(const struct clk_hw *core,
+ 				 unsigned long parent_rate);
+ 
+ /**
+- * struct clk_duty - Struture encoding the duty cycle ratio of a clock
++ * struct clk_duty - Structure encoding the duty cycle ratio of a clock
+  *
+  * @num:	Numerator of the duty cycle ratio
+  * @den:	Denominator of the duty cycle ratio
+@@ -129,7 +129,7 @@ struct clk_duty {
+  * @restore_context: Restore the context of the clock after a restoration
+  *		of power.
+  *
+- * @recalc_rate	Recalculate the rate of this clock, by querying hardware. The
++ * @recalc_rate: Recalculate the rate of this clock, by querying hardware. The
+  *		parent rate is an input parameter.  It is up to the caller to
+  *		ensure that the prepare_mutex is held across this call. If the
+  *		driver cannot figure out a rate for this clock, it must return
+@@ -456,7 +456,7 @@ struct clk *clk_register_fixed_rate(struct device *dev, const char *name,
+  * clock with the clock framework
+  * @dev: device that is registering this clock
+  * @name: name of this clock
+- * @parent_name: name of clock's parent
++ * @parent_data: name of clock's parent
+  * @flags: framework-specific flags
+  * @fixed_rate: non-adjustable clock rate
+  * @fixed_accuracy: non-adjustable clock accuracy
+@@ -471,7 +471,7 @@ struct clk *clk_register_fixed_rate(struct device *dev, const char *name,
+  * the clock framework
+  * @dev: device that is registering this clock
+  * @name: name of this clock
+- * @parent_name: name of clock's parent
++ * @parent_data: name of clock's parent
+  * @flags: framework-specific flags
+  * @fixed_rate: non-adjustable clock rate
+  */
+@@ -649,7 +649,7 @@ struct clk_div_table {
+  * Clock with an adjustable divider affecting its output frequency.  Implements
+  * .recalc_rate, .set_rate and .round_rate
+  *
+- * Flags:
++ * @flags:
+  * CLK_DIVIDER_ONE_BASED - by default the divisor is the value read from the
+  *	register plus one.  If CLK_DIVIDER_ONE_BASED is set then the divider is
+  *	the raw value read from the register, with the value of zero considered
+@@ -1130,11 +1130,12 @@ struct clk_hw *clk_hw_register_fixed_factor_parent_hw(struct device *dev,
+  * @mwidth:	width of the numerator bit field
+  * @nshift:	shift to the denominator bit field
+  * @nwidth:	width of the denominator bit field
++ * @approximation: clk driver's callback for calculating the divider clock
+  * @lock:	register lock
+  *
+  * Clock with adjustable fractional divider affecting its output frequency.
+  *
+- * Flags:
++ * @flags:
+  * CLK_FRAC_DIVIDER_ZERO_BASED - by default the numerator and denominator
+  *	is the value read from the register. If CLK_FRAC_DIVIDER_ZERO_BASED
+  *	is set then the numerator and denominator are both the value read
+@@ -1191,7 +1192,7 @@ void clk_hw_unregister_fractional_divider(struct clk_hw *hw);
+  * Clock with an adjustable multiplier affecting its output frequency.
+  * Implements .recalc_rate, .set_rate and .round_rate
+  *
+- * Flags:
++ * @flags:
+  * CLK_MULTIPLIER_ZERO_BYPASS - By default, the multiplier is the value read
+  *	from the register, with 0 being a valid value effectively
+  *	zeroing the output clock rate. If CLK_MULTIPLIER_ZERO_BYPASS is
+-- 
+2.42.0
+
+
+
