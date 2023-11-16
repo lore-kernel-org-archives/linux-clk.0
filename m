@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PKNH0bJ8"
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C95921B2
-	for <linux-clk@vger.kernel.org>; Thu, 16 Nov 2023 01:55:18 -0800 (PST)
-Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-4084e49a5e5so5112205e9.3
-        for <linux-clk@vger.kernel.org>; Thu, 16 Nov 2023 01:55:18 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VAzZwAT5"
+Received: from mail-oa1-x2e.google.com (mail-oa1-x2e.google.com [IPv6:2001:4860:4864:20::2e])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54233B4
+	for <linux-clk@vger.kernel.org>; Thu, 16 Nov 2023 04:11:55 -0800 (PST)
+Received: by mail-oa1-x2e.google.com with SMTP id 586e51a60fabf-1ef36a04931so335767fac.2
+        for <linux-clk@vger.kernel.org>; Thu, 16 Nov 2023 04:11:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700128517; x=1700733317; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1700136714; x=1700741514; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=E1oRsx0JkrJpAxhu0TG6CzqhEt1GaBKEgIlWIAk646w=;
-        b=PKNH0bJ8OhT8Yed/uUcTzytBOLIyPy5UjBY4fG7B4PEtm17I2Jcn3i+sfZ3LLkrFuA
-         dwxia2gw8oVJ+kmyM2Bda/W0dp4X2k/br980zJ+qlBojbb4h07yHqpSFz6NodIG2vh4/
-         8+yy8qeBKCkY1xcN2idv06kG+nkQbaKuWTW8PDHshvywF/hTXkZ+4RJxzpHLK1izRW0e
-         yU7vVxR1N08tGazriUdMOChtcyhsihUuByeUij5KE2W3PnJT5JHmMdOTTN28jlUnqRI1
-         I0+xsLP/lEQEcA4GfnO2DwMBcMw+zoN3+UC06cWpkGwfn970Qk7055bfMi/WLdxIcMmW
-         GGPA==
+        bh=A3SrigvTYcxISiVn0Y6GpHs9yzAcuQGISfEl1ZwMQbA=;
+        b=VAzZwAT5I8B6vM0zDhjmpVzGppUxZ3RHzfTMtDxpJlSPrCuZQJYJZ+6qS574EwAc+L
+         l+kYJQJwCD0YgJkjcJu9ZCmX1pTWuHTSPQabFomvYqDzUvNSONTQ+ckUwykIjoNvg+2A
+         N7xlm6hyU/f5vb1z1BXrpniF7TXKWFOai/+5QtmTD2klKgGx2Pq9TtwUfDggCavpZBM4
+         7AvIq3NgQeCH/ZG5HIYpZVy4Fzu0ia7jgA4OQi0gKZi0/ZZpb553s8AP0n6sVInTSbsl
+         dsSQlP11XLl0//80qrimLaqgFlvJibiNrmZVfPCWgRxEs6ar+rgCnVLoF93YxdYpGcWe
+         QJog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700128517; x=1700733317;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1700136714; x=1700741514;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=E1oRsx0JkrJpAxhu0TG6CzqhEt1GaBKEgIlWIAk646w=;
-        b=xQciOYTipNPQms3tTdbzFLJGwitdaJRE1pjqDk3cMdhD5Il+Q/7Dz9gNYUjmHnCnL8
-         F55X1eDy3B3Rw7H8Ympxq02vQoH1bf+F2+QnkIkOBAvSbIYsJrSgQ5AD0813MQkMW8Hk
-         +A7YI4LXsaQ06nF84jbl/orG1dOkQD15OnptXcMoQpbHWDsEEnS1o+140BIdAxRkBWt9
-         VUkNCFpgMZqhG9tp2vmfUl92Dl6R4seOJ/ffEzyaLj8ipmfAEORmT4ELqH5OsflYwwIv
-         BtBlhDpDSFCZ8u6qVTedC6omV6W6Q8yXqgUj/bpVsqRN4OWTAJOw5/NrjeNqVN1YKXT9
-         giSQ==
-X-Gm-Message-State: AOJu0Ywxph7zCUNkCGL5hCac5ZRvaolV4ey27Xss/UUSq3ECiivavT7r
-	Zxk+4iNE5S2aNISLt/E5/1X4YQ==
-X-Google-Smtp-Source: AGHT+IFC0ufUujVImIIcEUUJStMAApGOKU2C7zQcbgEAamM2TCYN0xyoQv6pa0YlLg2206Tv9B8xyA==
-X-Received: by 2002:a05:600c:4ec6:b0:409:3f53:c9c7 with SMTP id g6-20020a05600c4ec600b004093f53c9c7mr11485099wmq.35.1700128517136;
-        Thu, 16 Nov 2023 01:55:17 -0800 (PST)
-Received: from [192.168.100.102] ([37.228.218.3])
-        by smtp.gmail.com with ESMTPSA id y14-20020a05600c2b0e00b0040644e699a0sm2793102wme.45.2023.11.16.01.55.15
+        bh=A3SrigvTYcxISiVn0Y6GpHs9yzAcuQGISfEl1ZwMQbA=;
+        b=YDoiCxR7yJX+egEU9owUnd64fLJQT4gpUMkOLuhWRVO2Ti4vLSYfeyQua43YH6fmn+
+         vSLrwvgECAoIoV79KpUr/KIO0NiomJYbQaPxDrl6xwGK3UfpbLNURkCiVDc6KhipPUQd
+         gUFjQF+J2oaPmlxG3XsXMyuc+QyOSQv8rD1IXSdr+HRUHOCaW/J6IHHVqwx+NSpvwc/z
+         eyFVl38Tewpj4npy/UFhSyFM/EJayaEWetALzqujjSzkFaHJzh5fwsZhQVZNfCS6Na9P
+         xxDpcuLxWaemnkJFjC10El58IOnFzu/KchyZAfco6+ff100QjWWe6V3m/b8/AIR6BYvR
+         qr1w==
+X-Gm-Message-State: AOJu0YzzDbeoGnGM5os8PkDPvfDEICuiXXtbuIPrGJdqYpnBM7bOccjW
+	rf6JWonRAY5H4K1T8ojkIc3NsA==
+X-Google-Smtp-Source: AGHT+IElo3j2ljrkJlF+kTIVi4yDVNCyx+ubaAYzsC7ZJsHg1T2PX3nh3vDd1fIgOenP0+VO8WbBVg==
+X-Received: by 2002:a05:6871:53ca:b0:1f0:597d:fe30 with SMTP id hz10-20020a05687153ca00b001f0597dfe30mr18389572oac.44.1700136714684;
+        Thu, 16 Nov 2023 04:11:54 -0800 (PST)
+Received: from [192.168.212.13] ([12.191.197.195])
+        by smtp.gmail.com with ESMTPSA id g4-20020ac870c4000000b004181e5a724csm4288725qtp.88.2023.11.16.04.11.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Nov 2023 01:55:16 -0800 (PST)
-Message-ID: <3db4549e-9707-48f1-a199-d0155f3ebc16@linaro.org>
-Date: Thu, 16 Nov 2023 09:55:15 +0000
+        Thu, 16 Nov 2023 04:11:54 -0800 (PST)
+Message-ID: <1869c577-1772-4571-98a8-8ec64166fea8@linaro.org>
+Date: Thu, 16 Nov 2023 13:11:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,48 +47,83 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] clk: qcom: videocc-sm8150: Update the videocc resets
+Subject: Re: [PATCH v2 2/3] dt-bindings: clock: mediatek: Remove compatible
+ for MT8188 VPPSYS
 Content-Language: en-US
-To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- Andy Gross <agross@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+To: "yu-chang.lee" <yu-chang.lee@mediatek.com>,
+ Rob Herring <robh+dt@kernel.org>,
  Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20231110065029.2117212-1-quic_skakitap@quicinc.com>
- <20231110065029.2117212-3-quic_skakitap@quicinc.com>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20231110065029.2117212-3-quic_skakitap@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+ Conor Dooley <conor+dt@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Garmin Chang <garmin.chang@mediatek.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20231116080129.20617-1-yu-chang.lee@mediatek.com>
+ <20231116080129.20617-3-yu-chang.lee@mediatek.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20231116080129.20617-3-yu-chang.lee@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10/11/2023 06:50, Satya Priya Kakitapalli wrote:
-> Add all the available resets for the video clock controller
-> on sm8150.
+On 16/11/2023 09:01, yu-chang.lee wrote:
+> MT8188 VPPSYS 0/1 should be probed from mtk-mmsys driver to
+> populate device by platform_device_register_data then start
+> its own clock driver.
 > 
-> Fixes: 5658e8cf1a8a ("clk: qcom: add video clock controller driver for SM8150")
-> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+> Signed-off-by: yu-chang.lee <yu-chang.lee@mediatek.com>
 > ---
->   drivers/clk/qcom/videocc-sm8150.c | 4 ++++
->   1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/videocc-sm8150.c b/drivers/clk/qcom/videocc-sm8150.c
-> index 1afdbe4a249d..6a5f89f53da8 100644
-> --- a/drivers/clk/qcom/videocc-sm8150.c
-> +++ b/drivers/clk/qcom/videocc-sm8150.c
-> @@ -214,6 +214,10 @@ static const struct regmap_config video_cc_sm8150_regmap_config = {
->   
->   static const struct qcom_reset_map video_cc_sm8150_resets[] = {
->   	[VIDEO_CC_MVSC_CORE_CLK_BCR] = { 0x850, 2 },
-> +	[VIDEO_CC_INTERFACE_BCR] = { 0x8f0 },
-> +	[VIDEO_CC_MVS0_BCR] = { 0x870 },
-> +	[VIDEO_CC_MVS1_BCR] = { 0x8b0 },
-> +	[VIDEO_CC_MVSC_BCR] = { 0x810 },
->   };
->   
->   static const struct qcom_cc_desc video_cc_sm8150_desc = {
+>  .../devicetree/bindings/clock/mediatek,mt8188-clock.yaml        | 2 --
+>  1 file changed, 2 deletions(-)
 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+This is not bisectable. Binding patches must be squashed.
+
+Best regards,
+Krzysztof
+
