@@ -1,129 +1,83 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="bfnV8agf"
-Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01on2105.outbound.protection.outlook.com [40.107.113.105])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3DDB194;
-	Wed, 15 Nov 2023 17:04:38 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NDk9kPLcaX1qyODuQ59CuZZo0EKGVOB2Q2F8ZVnfB7meCZlDUyVMN2AbKbhP78fZdOOf2QK9mimqT6J0lyVI7/gg0wt5aiKFso3Nk8tYHZUu0g7Zok0cU1yH3OTICnkryWdSQfJPBVW7LGbYTNJUwoFZWbY/FAWp2l3HXBbTegOf8jAwlgzVAuWLHXTfpuwgXeqGT6QbRVxv0HYqu13X/OQhGv9b8/Hg5SCWvxDiUvBSMjMNBZ6JA/NyM53iymtMuvRye7K/AZONfRV6blsN4qpYt0smP3rnluLlf2Lb+1l6V3fz40xZIsC1FSFALiigGyF4G6sUZWobXQSHr8m2oQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DjQ6xJuZ1xTwIkbGjEy2wfE2BYgDcscqS5bm2+wZdj0=;
- b=aj2BdLxj3V3sVUfx7BweaIaIkLQZsDuhq4WKrtayj7Tmk8OD6+ImHmwC+oNUj0nkzihjezBq2n9GZ9+OsUYD600FKRlqOBWQXQAvq9g0JXvGq2oKxkv1VGvuq8TESg6NtcAjZtHo4M8BxuZQeezrsVyIUtII5CK0Xms/B6IXZ2IFlVesngG3DVNHKWrDxn7V5zwkWEFKrBDyHXqYa3SP13pCnSbDc9Txh8h7O5qNLI3/4a+7GndXw4jy+ytqhMUGJEO9MhvW6OG02kztsItFyZThwPpef8otMcGkwYjAkneEa+jDdTNfE1At6ZANeHsIp9eYjVsEImEXcUpUGynlmA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DjQ6xJuZ1xTwIkbGjEy2wfE2BYgDcscqS5bm2+wZdj0=;
- b=bfnV8agfmq6aj2urDfz+NeAGlTMM5zcpKy6iFteiM7IOgeO6CyGudyqDdljDgx9bgFcmZrPJhxL//N8swDPzdcm33WNSR7jvdw7aVWZ/pz3DO/7WAOFcvJHTnk4B3MzQCAmuo7WBv7wKWTsSQPtQDhX3Bv98OUnePcVKI3s9VxI=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-Received: from OSAPR01MB2178.jpnprd01.prod.outlook.com (2603:1096:603:1a::14)
- by OS3PR01MB10154.jpnprd01.prod.outlook.com (2603:1096:604:1e3::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7002.21; Thu, 16 Nov
- 2023 01:04:32 +0000
-Received: from OSAPR01MB2178.jpnprd01.prod.outlook.com
- ([fe80::173f:d892:3d66:397d]) by OSAPR01MB2178.jpnprd01.prod.outlook.com
- ([fe80::173f:d892:3d66:397d%4]) with mapi id 15.20.7002.021; Thu, 16 Nov 2023
- 01:04:32 +0000
-Message-ID: <874jhmtso0.wl-kuninori.morimoto.gx@renesas.com>
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-To: kernel test robot <lkp@intel.com>
-Cc: Frank Rowand <frowand.list@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	oe-kbuild-all@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Aymeric Aillet <aymeric.aillet@iot.bzh>,
-	Yusuke Goda <yusuke.goda.sx@renesas.com>
-Subject: Re: [PATCH 4/4] drivers: clk: renesas: enable all clocks which is assinged to non Linux system
-In-Reply-To: <202311142059.XrPUseGq-lkp@intel.com>
-References: <87wmulrynq.wl-kuninori.morimoto.gx@renesas.com>
-	<202311142059.XrPUseGq-lkp@intel.com>
-User-Agent: Wanderlust/2.15.9 Emacs/27.1 Mule/6.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Thu, 16 Nov 2023 01:04:31 +0000
-X-ClientProxiedBy: TY2PR06CA0046.apcprd06.prod.outlook.com
- (2603:1096:404:2e::34) To OSAPR01MB2178.jpnprd01.prod.outlook.com
- (2603:1096:603:1a::14)
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="EuHvpbyC"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E3D31B3;
+	Thu, 16 Nov 2023 00:01:42 -0800 (PST)
+X-UUID: 5bf97614845611eea33bb35ae8d461a2-20231116
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=DDgzt+TD+lJqTGXiX5OtoLjS5NStrm3zvY+st4jUBtc=;
+	b=EuHvpbyCQAI9VGtMyngehSsjFUjZcsrMzSXN82rsxm3mL7QxmAXB9mwTRMae+U2irRHB7A7j+IuQ9vFo34+nC9P578f/tQm2LvWGi/lMIr/w+NjVd0AIAHplKlPN6uQ/s4ejIjLVpaqMYFSwc1vk7DebUANlgbYg42LulYWS7Ts=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.33,REQID:d2d37688-8692-4fea-9e2b-e59607507a29,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:364b77b,CLOUDID:5f3a99fc-4a48-46e2-b946-12f04f20af8c,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,
+	DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 5bf97614845611eea33bb35ae8d461a2-20231116
+Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw01.mediatek.com
+	(envelope-from <yu-chang.lee@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1782855376; Thu, 16 Nov 2023 16:01:34 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Thu, 16 Nov 2023 16:01:32 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Thu, 16 Nov 2023 16:01:32 +0800
+From: yu-chang.lee <yu-chang.lee@mediatek.com>
+To: Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>
+CC: Garmin Chang <garmin.chang@mediatek.com>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, "yu-chang . lee"
+	<yu-chang.lee@mediatek.com>
+Subject: [PATCH v2 3/3] dt-bindings: arm: mediatek: mmsys: Add VPPSYS compatible for MT8188
+Date: Thu, 16 Nov 2023 16:01:29 +0800
+Message-ID: <20231116080129.20617-4-yu-chang.lee@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20231116080129.20617-1-yu-chang.lee@mediatek.com>
+References: <20231116080129.20617-1-yu-chang.lee@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OSAPR01MB2178:EE_|OS3PR01MB10154:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0b58215c-f68e-48e5-067c-08dbe63ffdd2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	YEPmCS0XxmS7yGxQ5/nK3NzO4pXde42yYf4qztuHdOA0nlw1aUytTDwKQkBgMhmVXP+R5mwFDlBIeonmjGBS2A0F9BZU8ZGCx3S675hZrz9fptEkWMn3QmSGagLLK2g5DmcqQXZWFBDc4fzZuWG3jzU9KM6nLx33CoiS9HZ/Qdsqgu2VvESjRq7H4xuxYb0sc7yqvSfc6R8vWXBFtq9D/z+CBDUftnv19gyxSikEmbyNqGBlnb5BMAcVr5UVcBNMjmzywJw+r9FzUL6sir5RnIlBWzTfAZEjgVf7JdRQtrVVPBuuMKwrNB+KWXLXVkOSWRSgaJThVGQBbRQw1RhYZmutI8XkWz6vq67v9FoVPJypsNUV0TYPNzOYDZJQx/w6X32QrjMEuqqwdfE6yjVCNT+sL8UO7v8vA/7tM3eWI/N1eINWIqcrO3K0syYK0vpRd4oz2ST6ByTcSXm06uKyb481B8sw6UaACublfgsma4daLZwRZ2tkekrNc780i734VNCnhSNGRjYAieOd24l60iVnvP1Qw1eWKGz1PE059osR+CeeuPj3XxjuibmNXsay32x3Y5eRsYByfWPpQ/4KW1cVvUJNVYhSRAtZUBCMjZPVRRjOhqa7I14FENbwNxiJdSIv2iFPDARXe454MzTIH17cVxB/zZTlx9EJN1jCWhg=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSAPR01MB2178.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(346002)(366004)(376002)(396003)(39860400002)(136003)(230173577357003)(230922051799003)(230273577357003)(451199024)(186009)(1800799009)(64100799003)(7416002)(5660300002)(86362001)(8676002)(8936002)(4326008)(41300700001)(38350700005)(36756003)(2906002)(4744005)(83380400001)(26005)(107886003)(2616005)(38100700002)(66476007)(66556008)(66946007)(54906003)(316002)(6916009)(6506007)(52116002)(6512007)(6486002)(478600001);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?6hfJE+lWOBTM4gbm6LKRUP2QY043LKuIJcyZsN5mevd3hHp35drc3FgUqu9P?=
- =?us-ascii?Q?dt3aJAZFpMtZmF6ci/hVcA8MAquC0+z1NDl8OSAyDsPYggX1h1I82gEWOeEc?=
- =?us-ascii?Q?u0OKX0DiFzWpwGtW9oKoMpNzGMd/DWCdCCCFW61s60/k+DFNBAHTUGtIcoU0?=
- =?us-ascii?Q?AlgiudiSbAalFxjDPHriqgNTbXI9X+4ES9wcdGbMLImovmn0LUYqYaO5tm+q?=
- =?us-ascii?Q?flt+vh/01kl7x+EkQ4QnPrqCiiQi/FXG6rxU5ofQnyc7Lg7fAJaS9AnKASU/?=
- =?us-ascii?Q?lu7s5gdds9IX5zBqFOzMr8gEap6cf63WD/MFQIa46z029gNi1dYJ7Za5ALYZ?=
- =?us-ascii?Q?okwpmRaAMocWMEhoAPgr+g1eo9Gr0jRcP2xkSqAbYMsGfzM3uKtXQ5o2tEBI?=
- =?us-ascii?Q?E2QuU/QCi6B77nqn3gwnM3ZUs7lg182gGlNKJXDLFgqyADLD29gET1glffp+?=
- =?us-ascii?Q?NzwabcvE460zvEJsOo4cRP26LbDeGQEebRc8akk2d1AHAh8UWSJ5RrKC2xtf?=
- =?us-ascii?Q?39uxcq2YeuRfT9lihFnnyA0g7p1P+klMqWp+o9IiwRY7vGSGW4y9+kkASKQh?=
- =?us-ascii?Q?QYGOlkHHKmNosbEw0Kzorm3fS1Ag9sgNFRt6C3YLpqCrierlBvBjYrsi0DVx?=
- =?us-ascii?Q?y32xcSoO52LRotRFG4B+Ypd+xGbKc2lLYy1xD7LYL+Icz7kaG0Rfh+2efMZS?=
- =?us-ascii?Q?y/m1zNirBU/vtQ4Zn9LcV/p30nvKADdcCkWx/EnZgIJu+qBxrok2Lm0SeBth?=
- =?us-ascii?Q?QjEUqf4hVLsSIqZqckj292CYOsOlKVg+Rb8fDPubf6v3pVxkr+kG6VkvCfRK?=
- =?us-ascii?Q?zjwzNY9sUHQ4i05OH7aA11cOvdjyYLgs/+gVw6qq4Q/jOolssIywVx4u7uqH?=
- =?us-ascii?Q?jzxO7RIfiWBHxZx5vqBC3aI61nOolQq9cgkcf8chc+MeKEJ5SBX4eZoaOA0p?=
- =?us-ascii?Q?1W44YPPZfs4xQ3blW7pdTmsxIqj1xl/IBYURfAZUbVaBsjpVVtDX2j/uibqa?=
- =?us-ascii?Q?795N6Sc5eHGNkYwDkSIqd7OXKOfCKyx32M3lWvbWbGYahMK8+e+dnK0B7h7g?=
- =?us-ascii?Q?O4TNa8qpJ0dXqIGG3yG2VJ8Efv8JHP5ZqWpNhXVKtNMGdj2+rZZQAotqSPJy?=
- =?us-ascii?Q?4p1RqaAQQfe+SHFh2WRaw5Y1rdOwTdHHNq3sPF5evg1a9nSs9JidHXgPVFov?=
- =?us-ascii?Q?p2KtEWKhB+1glSVg4gEgeVTEo68rz8BiEbVz6COYLGkFTQR4wp3uDMleD5Ai?=
- =?us-ascii?Q?A/oWTBch7Vayt/6rki3qgRY+cDNSGmzIZLG4HSiivwiNMoVXmKA0lZ7jZgp5?=
- =?us-ascii?Q?0hvtuggD3VfTooQRpWQb7hCdvjMDLcTS0Gx2QLGZEUIR4bYi7ncLBcdXeFp6?=
- =?us-ascii?Q?LR5mf6oi466pJfeoX93WTRXCuLG0izi/glkfBr6pb/vrf268HWiqxdeTArQ2?=
- =?us-ascii?Q?UjduUulOmxuNAA9WRzQP0nIqQPvATvAJpD5xL7cPu+D9CPEeH6ck3S1ryOIs?=
- =?us-ascii?Q?l3OhEiNljIzv63sdF2TCpeM993IUnTNnvREIwGMBAtaeUI7Vrs33o5gNJO6E?=
- =?us-ascii?Q?/1gCdk5s2Ydo/GzZajp1x3KkZRScbzWUkcHWQ7IYp7CdHB6fs1iw5Mo+AF0J?=
- =?us-ascii?Q?1YGVsSuYWtmAF396ho+3P/I=3D?=
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0b58215c-f68e-48e5-067c-08dbe63ffdd2
-X-MS-Exchange-CrossTenant-AuthSource: OSAPR01MB2178.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Nov 2023 01:04:32.0577
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: JA2uxo8TU/qZnkytxKxpP99kVsD7teUKeY2J/F9nzpujdMFgV/QM//oGxruXV0H9D8nivsiM/Ubp28LyOqbeiNsSWzWHGhUh3+dxEViNUlWoYMfJYQv3IsqwZ0bUHP1w
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB10154
+Content-Type: text/plain
+X-MTK: N
 
+For MT8188, VPPSYS0 and VPPSYS1 are 2 display pipes with
+hardware differences in power domains, clocks and subsystem counts,
+which should be determined by compatible names.
 
-Hi kernel test
-
-> kernel test robot noticed the following build warnings:
-(snip)
-> >> drivers/clk/renesas/renesas-cpg-mssr.c:175: warning: Function parameter or member 'reserved_ids' not described in 'cpg_mssr_priv'
-> >> drivers/clk/renesas/renesas-cpg-mssr.c:175: warning: Function parameter or member 'num_reserved_ids' not described in 'cpg_mssr_priv'
-
-Thank you for the report.
-I will fixup it on v2.
-
-Thank you for your help !!
-
-Best regards
+Signed-off-by: yu-chang.lee <yu-chang.lee@mediatek.com>
 ---
-Kuninori Morimoto
+ .../devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml        | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml
+index 536f5a5ebd24..50324248b965 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml
+@@ -32,6 +32,8 @@ properties:
+               - mediatek,mt8183-mmsys
+               - mediatek,mt8186-mmsys
+               - mediatek,mt8188-vdosys0
++              - mediatek,mt8188-vppsys0
++              - mediatek,mt8188-vppsys1
+               - mediatek,mt8192-mmsys
+               - mediatek,mt8195-vdosys1
+               - mediatek,mt8195-vppsys0
+-- 
+2.18.0
+
