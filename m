@@ -1,40 +1,41 @@
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2C9DD56;
-	Thu, 16 Nov 2023 10:18:55 -0800 (PST)
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-6ce2ea3a944so664382a34.1;
-        Thu, 16 Nov 2023 10:18:55 -0800 (PST)
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54CE6B8;
+	Thu, 16 Nov 2023 11:17:16 -0800 (PST)
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-6ce37683cf6so659916a34.3;
+        Thu, 16 Nov 2023 11:17:16 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700158735; x=1700763535;
+        d=1e100.net; s=20230601; t=1700162235; x=1700767035;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Mvdm8s7CLiAWc1zAvkwb+zCVPLYN6IW325FSx81hTfY=;
-        b=uvaiwSezERSvr5uuo6ESbE2Y/GmSfRqUXRKb4NLb/pE9ZgqsSa2jm1zy+JDEr/+nLu
-         9/hwxKhESDiJR3jv43VEo552E4Or/qr+Fda+pdKY8umHkpBL9BeqbGRe3iLngIwGuj6a
-         EOiHFrHQiACge09hLrWsncD1OkH8453F0Aa9F1UinYEK4kGUKPhFSJBrsRxqTyJXe+jA
-         n31/DwQ4ujq9V8EKWSPwTfLLkoog3qQ5d1kVMKwPaCk2Or5CoDD4cvHy9hKa+/YAe4GW
-         Aq41R5cQw1MYuRMTlqPbq3yVnQZZ/7ngfXaeS+1yj41lt9Usg1Ij7/06c3boJr5c5IkE
-         L3Og==
-X-Gm-Message-State: AOJu0YzUE2tW53795m/j0dIWCQWn373sEJzaj7N9gsoIFFc+GgvPlm4r
-	eYjOc5wk4952E5MiKwlgBw==
-X-Google-Smtp-Source: AGHT+IEwmVU0R+k/HtPd1oq3ffY8WltHJ7y4wNFhcwB+B3/35kMpJHdybuQBwbbX2qDPkK5mAxrwNw==
-X-Received: by 2002:a05:6870:418e:b0:1f4:be52:b14b with SMTP id y14-20020a056870418e00b001f4be52b14bmr21955186oac.12.1700158735208;
-        Thu, 16 Nov 2023 10:18:55 -0800 (PST)
+        bh=4w5UhWj3hbb4d/FKde11FknmcVtAxnC2jsZu5oUyN9M=;
+        b=VCQsBH3+K4bCSPi7EpflONnV7CXEwAmUNWUCWB0eIvyAzdWml2gYJaytUlBzIt2QxX
+         u0EY/gy/U2KwfXwLRIRE/jMz9w/P4jVU0BQ3pDqZ6heWG3m33uKZP/rKdQSpwxL1dS4X
+         kbn6PQKRBGfTFisbsOvsMqkApdQrtUq7xNcQhJbovwx/xg9Bnuc6v2UAU7bf1OhQUwf6
+         IlOxpiRnwBlEzNBxqQBHkMiza42l6KUVRBkmOIYXlAEmSidQPQEmd5impiAVZL5XxOO+
+         flCygNjuiKFp589gV2zCqTZYlX3OB/Vi71uKLyJFdnnvLoVGhODleSCfe0OK39rttW/Y
+         76og==
+X-Gm-Message-State: AOJu0Yz0yNObyAFwzumW+idiqOQWRAWQLYL04FCNIk9P8u9iwKATpIR/
+	Nxt3shm/b5y6mYiviL3qkQ==
+X-Google-Smtp-Source: AGHT+IG0dWaW6tFrBElu5QUb3DSisr9iYALjGfSRL29jl6NjzlaYGp019y8ZX6nYjM5CogtUU/RLzg==
+X-Received: by 2002:a9d:7499:0:b0:6bf:5b30:5b69 with SMTP id t25-20020a9d7499000000b006bf5b305b69mr10798478otk.17.1700162235627;
+        Thu, 16 Nov 2023 11:17:15 -0800 (PST)
 Received: from herring.priv (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id y4-20020a056870a34400b001e9ce1b5e8fsm2220517oak.15.2023.11.16.10.18.52
+        by smtp.gmail.com with ESMTPSA id r3-20020a056830418300b006ce32aac3e4sm1034422otu.48.2023.11.16.11.17.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Nov 2023 10:18:54 -0800 (PST)
-Received: (nullmailer pid 2710216 invoked by uid 1000);
-	Thu, 16 Nov 2023 18:18:47 -0000
-Date: Thu, 16 Nov 2023 12:18:47 -0600
+        Thu, 16 Nov 2023 11:17:15 -0800 (PST)
+Received: (nullmailer pid 2970292 invoked by uid 1000);
+	Thu, 16 Nov 2023 19:17:14 -0000
+Date: Thu, 16 Nov 2023 13:17:14 -0600
 From: Rob Herring <robh@kernel.org>
-To: Chen Wang <unicornxw@gmail.com>
-Cc: aou@eecs.berkeley.edu, chao.wei@sophgo.com, conor@kernel.org, krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com, palmer@dabbelt.com, paul.walmsley@sifive.com, richardcochran@gmail.com, sboyd@kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com, Chen Wang <unicorn_wang@outlook.com>
-Subject: Re: [PATCH 3/5] dt-bindings: clock: sophgo: Add SG2042 bindings
-Message-ID: <20231116181847.GA2659392-robh@kernel.org>
-References: <cover.1699879741.git.unicorn_wang@outlook.com>
- <1e5836360485b63e15bdf58da59e83139666b290.1699879741.git.unicorn_wang@outlook.com>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Frank Rowand <frowand.list@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Aymeric Aillet <aymeric.aillet@iot.bzh>, Yusuke Goda <yusuke.goda.sx@renesas.com>
+Subject: Re: [PATCH 1/4] of: add __of_device_is_status() and makes more
+ generic status check
+Message-ID: <20231116191714.GA2821275-robh@kernel.org>
+References: <8734x9tda9.wl-kuninori.morimoto.gx@renesas.com>
+ <871qcttd8v.wl-kuninori.morimoto.gx@renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -43,55 +44,86 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1e5836360485b63e15bdf58da59e83139666b290.1699879741.git.unicorn_wang@outlook.com>
+In-Reply-To: <871qcttd8v.wl-kuninori.morimoto.gx@renesas.com>
 
-On Mon, Nov 13, 2023 at 09:19:31PM +0800, Chen Wang wrote:
-> From: Chen Wang <unicorn_wang@outlook.com>
+On Tue, Nov 14, 2023 at 12:00:49AM +0000, Kuninori Morimoto wrote:
+> Linux Kernel has __of_device_is_available() / __of_device_is_fail(),
+> these are checking if the status was "okay" / "ok" / "fail" / "fail-".
 > 
-> Add bindings for the clock generator on the SG2042 RISC-V SoC.
+> Add more generic __of_device_is_status() function for these.
 > 
-> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Tested-by: Yusuke Goda <yusuke.goda.sx@renesas.com>
 > ---
->  .../clock/sophgo/sophgo,sg2042-clkgen.yaml    | 48 +++++++++++++++++++
->  1 file changed, 48 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/sophgo/sophgo,sg2042-clkgen.yaml
+>  drivers/of/base.c | 53 ++++++++++++++++++++++++++++-------------------
+>  1 file changed, 32 insertions(+), 21 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/sophgo/sophgo,sg2042-clkgen.yaml b/Documentation/devicetree/bindings/clock/sophgo/sophgo,sg2042-clkgen.yaml
-> new file mode 100644
-> index 000000000000..e372d5dca5b9
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/sophgo/sophgo,sg2042-clkgen.yaml
-> @@ -0,0 +1,48 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/sophgo/sophgo,sg2042-clkgen.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> diff --git a/drivers/of/base.c b/drivers/of/base.c
+> index 8d93cb6ea9cd..d67cb650dcd6 100644
+> --- a/drivers/of/base.c
+> +++ b/drivers/of/base.c
+> @@ -415,15 +415,8 @@ int of_machine_is_compatible(const char *compat)
+>  }
+>  EXPORT_SYMBOL(of_machine_is_compatible);
+>  
+> -/**
+> - *  __of_device_is_available - check if a device is available for use
+> - *
+> - *  @device: Node to check for availability, with locks already held
+> - *
+> - *  Return: True if the status property is absent or set to "okay" or "ok",
+> - *  false otherwise
+> - */
+> -static bool __of_device_is_available(const struct device_node *device)
+> +static bool __of_device_is_status(const struct device_node *device,
+> +				  const char * const*strings, bool default_ret)
+>  {
+>  	const char *status;
+>  	int statlen;
+> @@ -433,16 +426,41 @@ static bool __of_device_is_available(const struct device_node *device)
+>  
+>  	status = __of_get_property(device, "status", &statlen);
+>  	if (status == NULL)
+> -		return true;
+> +		return default_ret;
+>  
+>  	if (statlen > 0) {
+> -		if (!strcmp(status, "okay") || !strcmp(status, "ok"))
+> -			return true;
+> +		while (*strings) {
+> +			unsigned int len = strlen(*strings);
 > +
-> +title: Sophgo SG2042 Clock Generator
+> +			if ((*strings)[len - 1] == '-') {
+> +				if (!strncmp(status, *strings, len))
+> +					return true;
+> +			} else {
+> +				if (!strcmp(status, *strings))
+> +					return true;
+> +			}
+> +			strings++;
+> +		}
+>  	}
+>  
+>  	return false;
+>  }
+>  
+> +/**
+> + *  __of_device_is_available - check if a device is available for use
+> + *
+> + *  @device: Node to check for availability, with locks already held
+> + *
+> + *  Return: True if the status property is absent or set to "okay" or "ok",
+> + *  false otherwise
+> + */
+> +static bool __of_device_is_available(const struct device_node *device)
+> +{
+> +	static const char * const ok[] = {"okay", "ok", NULL};
 > +
-> +maintainers:
-> +  - Chen Wang <unicorn_wang@outlook.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: sophgo,sg2042-clkgen
-> +
-> +  system-ctrl:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    items:
-> +      - items:
-> +          - description: phandle to System Register Controller syscon node.
-> +    description:
-> +      The phandle to System Register Controller syscon node.
+> +	return __of_device_is_status(device, ok, true);
 
-Forget what I just said about syscon.yaml...
+Available is special compared to any other status check. Rather than 
+passing a value to return, I would make this:
 
-You don't need a phandle here. Just make this node a child of the 
-syscon. However, why do you need a child at all? Just add 'clocks' and 
-'#clock-cells' to the parent directly. You don't need a child node when 
-there's only 1 child node. Maybe there's other functions, but I have no 
-visibility into that. IOW, define what all the functions are so we can 
-provide better guidance.
+return __of_device_is_status(device, ok) || !__of_get_property(device, "status", NULL);
 
 Rob
