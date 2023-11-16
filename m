@@ -1,125 +1,94 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YclG/s+0"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34B361A3;
-	Thu, 16 Nov 2023 01:32:11 -0800 (PST)
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AG96aDp007732;
-	Thu, 16 Nov 2023 09:32:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=dUkYPespAQaJg5xtS6/bbkbiwvOohnbVFTSW2JL3fU0=;
- b=YclG/s+0KZsF7nwanuVTT/4FMfvSuo+If08jc5rbKwhyVQrcd0lC8Tkrexx+/KEMJX3K
- Cr+eRRC7/igfkxaoyUXUa2m+6BogYliQvFfjR7KOTWfkLDML508V+1xFDnlDaKdaMWNB
- 61vbpvq5huZVRoVRRcoVgrA3edo4XMwR4GCMZcMZ48ftwXev1hbd9Alqb4a6TlwyBv5q
- OD84AeMc4+BoYcbpOld1C2o3j2wju1Htp9MtqTXES8JWcPyxVQZ8shbgP7In1JvW0Byw
- ciOC4j1SmGM8ZmajLoGsXrLUV1Dpav6y7Q7HLlFqwIqHOYGoxG0mP/HIm1N2y8HXHZql kQ== 
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ud5fhhb65-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 Nov 2023 09:32:07 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3AG9W5aO003619
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 Nov 2023 09:32:05 GMT
-Received: from [10.218.19.46] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.39; Thu, 16 Nov
- 2023 01:32:01 -0800
-Message-ID: <91261b98-6bbd-b1d8-4fc8-96387bbcaba4@quicinc.com>
-Date: Thu, 16 Nov 2023 15:01:58 +0530
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PKNH0bJ8"
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C95921B2
+	for <linux-clk@vger.kernel.org>; Thu, 16 Nov 2023 01:55:18 -0800 (PST)
+Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-4084e49a5e5so5112205e9.3
+        for <linux-clk@vger.kernel.org>; Thu, 16 Nov 2023 01:55:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1700128517; x=1700733317; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=E1oRsx0JkrJpAxhu0TG6CzqhEt1GaBKEgIlWIAk646w=;
+        b=PKNH0bJ8OhT8Yed/uUcTzytBOLIyPy5UjBY4fG7B4PEtm17I2Jcn3i+sfZ3LLkrFuA
+         dwxia2gw8oVJ+kmyM2Bda/W0dp4X2k/br980zJ+qlBojbb4h07yHqpSFz6NodIG2vh4/
+         8+yy8qeBKCkY1xcN2idv06kG+nkQbaKuWTW8PDHshvywF/hTXkZ+4RJxzpHLK1izRW0e
+         yU7vVxR1N08tGazriUdMOChtcyhsihUuByeUij5KE2W3PnJT5JHmMdOTTN28jlUnqRI1
+         I0+xsLP/lEQEcA4GfnO2DwMBcMw+zoN3+UC06cWpkGwfn970Qk7055bfMi/WLdxIcMmW
+         GGPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700128517; x=1700733317;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=E1oRsx0JkrJpAxhu0TG6CzqhEt1GaBKEgIlWIAk646w=;
+        b=xQciOYTipNPQms3tTdbzFLJGwitdaJRE1pjqDk3cMdhD5Il+Q/7Dz9gNYUjmHnCnL8
+         F55X1eDy3B3Rw7H8Ympxq02vQoH1bf+F2+QnkIkOBAvSbIYsJrSgQ5AD0813MQkMW8Hk
+         +A7YI4LXsaQ06nF84jbl/orG1dOkQD15OnptXcMoQpbHWDsEEnS1o+140BIdAxRkBWt9
+         VUkNCFpgMZqhG9tp2vmfUl92Dl6R4seOJ/ffEzyaLj8ipmfAEORmT4ELqH5OsflYwwIv
+         BtBlhDpDSFCZ8u6qVTedC6omV6W6Q8yXqgUj/bpVsqRN4OWTAJOw5/NrjeNqVN1YKXT9
+         giSQ==
+X-Gm-Message-State: AOJu0Ywxph7zCUNkCGL5hCac5ZRvaolV4ey27Xss/UUSq3ECiivavT7r
+	Zxk+4iNE5S2aNISLt/E5/1X4YQ==
+X-Google-Smtp-Source: AGHT+IFC0ufUujVImIIcEUUJStMAApGOKU2C7zQcbgEAamM2TCYN0xyoQv6pa0YlLg2206Tv9B8xyA==
+X-Received: by 2002:a05:600c:4ec6:b0:409:3f53:c9c7 with SMTP id g6-20020a05600c4ec600b004093f53c9c7mr11485099wmq.35.1700128517136;
+        Thu, 16 Nov 2023 01:55:17 -0800 (PST)
+Received: from [192.168.100.102] ([37.228.218.3])
+        by smtp.gmail.com with ESMTPSA id y14-20020a05600c2b0e00b0040644e699a0sm2793102wme.45.2023.11.16.01.55.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Nov 2023 01:55:16 -0800 (PST)
+Message-ID: <3db4549e-9707-48f1-a199-d0155f3ebc16@linaro.org>
+Date: Thu, 16 Nov 2023 09:55:15 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH 3/4] clk: qcom: videocc-sm8150: Update the
- video_pll0_config
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] clk: qcom: videocc-sm8150: Update the videocc resets
 Content-Language: en-US
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Andy Gross
-	<agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael
- Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob
- Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: Bjorn Andersson <andersson@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
+To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ Andy Gross <agross@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
 References: <20231110065029.2117212-1-quic_skakitap@quicinc.com>
- <20231110065029.2117212-4-quic_skakitap@quicinc.com>
- <8457b113-bef2-47e4-a138-0f92a4f5798a@linaro.org>
-From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
-In-Reply-To: <8457b113-bef2-47e4-a138-0f92a4f5798a@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: tgnYhZD5NZI0_OnC_ScqY51i_j5nejGy
-X-Proofpoint-ORIG-GUID: tgnYhZD5NZI0_OnC_ScqY51i_j5nejGy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-11-16_07,2023-11-15_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- spamscore=0 lowpriorityscore=0 clxscore=1015 mlxlogscore=999
- suspectscore=0 phishscore=0 priorityscore=1501 impostorscore=0 mlxscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311060000 definitions=main-2311160076
+ <20231110065029.2117212-3-quic_skakitap@quicinc.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20231110065029.2117212-3-quic_skakitap@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-On 11/10/2023 4:46 PM, Bryan O'Donoghue wrote:
-> On 10/11/2023 06:50, Satya Priya Kakitapalli wrote:
->> Update the video_pll0_config to configure the test_ctl_hi and
->> test_ctl_hi1 values.
->>
->> Fixes: 5658e8cf1a8a ("clk: qcom: add video clock controller driver 
->> for SM8150")
->> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
->> ---
->>   drivers/clk/qcom/videocc-sm8150.c | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/clk/qcom/videocc-sm8150.c 
->> b/drivers/clk/qcom/videocc-sm8150.c
->> index 6a5f89f53da8..ddfe784fb9e1 100644
->> --- a/drivers/clk/qcom/videocc-sm8150.c
->> +++ b/drivers/clk/qcom/videocc-sm8150.c
->> @@ -33,6 +33,8 @@ static struct alpha_pll_config video_pll0_config = {
->>       .config_ctl_val = 0x20485699,
->>       .config_ctl_hi_val = 0x00002267,
->>       .config_ctl_hi1_val = 0x00000024,
->> +    .test_ctl_hi_val = 0x00000002,
->> +    .test_ctl_hi1_val = 0x00000020,
->>       .user_ctl_val = 0x00000000,
->>       .user_ctl_hi_val = 0x00000805,
->>       .user_ctl_hi1_val = 0x000000D0,
->
-> It would be nice to get a better description of this change.
->
-> Reading this - I can see it does an update but, the commit log should 
-> contain what it is updating and why plus what effect the update will 
-> have.
->
-> Please update the commit log to capture that data and +cc me on the V2.
->
-
-Sure will check and update.
-
-
-Thanks,
-
-Satya Priya
-
+On 10/11/2023 06:50, Satya Priya Kakitapalli wrote:
+> Add all the available resets for the video clock controller
+> on sm8150.
+> 
+> Fixes: 5658e8cf1a8a ("clk: qcom: add video clock controller driver for SM8150")
+> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
 > ---
-> bod
+>   drivers/clk/qcom/videocc-sm8150.c | 4 ++++
+>   1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/videocc-sm8150.c b/drivers/clk/qcom/videocc-sm8150.c
+> index 1afdbe4a249d..6a5f89f53da8 100644
+> --- a/drivers/clk/qcom/videocc-sm8150.c
+> +++ b/drivers/clk/qcom/videocc-sm8150.c
+> @@ -214,6 +214,10 @@ static const struct regmap_config video_cc_sm8150_regmap_config = {
+>   
+>   static const struct qcom_reset_map video_cc_sm8150_resets[] = {
+>   	[VIDEO_CC_MVSC_CORE_CLK_BCR] = { 0x850, 2 },
+> +	[VIDEO_CC_INTERFACE_BCR] = { 0x8f0 },
+> +	[VIDEO_CC_MVS0_BCR] = { 0x870 },
+> +	[VIDEO_CC_MVS1_BCR] = { 0x8b0 },
+> +	[VIDEO_CC_MVSC_BCR] = { 0x810 },
+>   };
+>   
+>   static const struct qcom_cc_desc video_cc_sm8150_desc = {
+
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
