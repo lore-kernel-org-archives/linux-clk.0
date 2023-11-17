@@ -1,105 +1,104 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8EDFBEB;
-	Fri, 17 Nov 2023 08:13:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hKR2r491"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00B6AC433C7;
-	Fri, 17 Nov 2023 08:13:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1700208800;
-	bh=RPcbB+jdW8SosobxciCWR/egl8ZrKh5jeQWqAfD2+vU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hKR2r491krdpa74I19bkbkY1tFTT5yyVBwSe81sMme0lcZKOwrlp9p5wQsHPX6JCs
-	 OfCvtlHvt91nBQHPPsu16TdT4me5IELzYagjdEhjyirOohQnO18EMcmwakimhiyyB/
-	 zQEcXEUE39SIfrEuALskJDZp+8Rqn7D1+r6Sw94vMSlkky/qX5UiZm6XOSqQMfXVN9
-	 gppN60qQqdoDO3g31P7UAhYZjf27W1auinHQvnTXGp6azipSTK2DQt1rBhNhRtKxEu
-	 qVeNd6EJ9n5RtP5wiDmF7j+23q861zIS2K47YgfUX2O9qBIDmwIFsC0HfOviCaavR5
-	 luomQ9p5tHNiA==
-Received: from johan by xi.lan with local (Exim 4.96.2)
-	(envelope-from <johan@kernel.org>)
-	id 1r3tyb-000629-16;
-	Fri, 17 Nov 2023 09:13:22 +0100
-Date: Fri, 17 Nov 2023 09:13:21 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Sibi Sankar <quic_sibis@quicinc.com>
-Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, andersson@kernel.org,
-	konrad.dybcio@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	agross@kernel.org, conor+dt@kernel.org, quic_tdas@quicinc.com,
-	quic_rjendra@quicinc.com, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, neil.armstrong@linaro.org,
-	abel.vesa@linaro.org, quic_tsoni@quicinc.com
-Subject: Re: [PATCH 2/4] clk: qcom: Add Global Clock controller (GCC) driver
- for SC8380XP
-Message-ID: <ZVcgoX56q0lYWKyw@hovoldconsulting.com>
-References: <20231025133320.4720-1-quic_sibis@quicinc.com>
- <20231025133320.4720-3-quic_sibis@quicinc.com>
- <483c4de3-951c-4ba4-89fb-36fcd44fa99f@linaro.org>
- <e857c853-51ef-8314-2a21-fa6fd25162ca@quicinc.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GnbfWv5B"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 293BAB7;
+	Fri, 17 Nov 2023 01:28:10 -0800 (PST)
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AH7c2BU021895;
+	Fri, 17 Nov 2023 09:28:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=BHCF9LnbimJFinOpOG3HG9Nb3gkW+d7+o8Jglj+Eehs=;
+ b=GnbfWv5BThqVGttQZ9jb5f3NSH0Jq1FMAy7uNAo55tuqp5ji9+YBca6tjp29QHmYsEpe
+ bl9Qog/WV4OkKK3eypa9he/oFxgCmRGwlDg5rRsG0dAXJY9/kgk/Qw3dj0BGF1K2gTYf
+ U9lwzPl0RRlO8cYZVP0PFrgMgqe1DDlR6f3gpY3Q/CdBk6vtr4ehx9vbGNThjBjkHTUb
+ lS11reGGq1xFyeNP/noZ1ANZo+/sENHTVeCqtXbWHOSAVKDoexvmeku7LtlS2YrXLd2Y
+ MFIHyJaoC5DidtfJ8XqJth9Q22t+8eb7LQLfp604QRoVL6fE97wR6GI4IjSLd+5o+Eqq tw== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3udmw429dy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 17 Nov 2023 09:28:06 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3AH9S5nL007799
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 17 Nov 2023 09:28:05 GMT
+Received: from blr-ubuntu-87.ap.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.39; Fri, 17 Nov 2023 01:27:59 -0800
+From: Sibi Sankar <quic_sibis@quicinc.com>
+To: <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>
+CC: <agross@kernel.org>, <conor+dt@kernel.org>, <quic_tdas@quicinc.com>,
+        <quic_rjendra@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <neil.armstrong@linaro.org>,
+        <abel.vesa@linaro.org>, <quic_tsoni@quicinc.com>,
+        Sibi Sankar
+	<quic_sibis@quicinc.com>
+Subject: [PATCH V2 0/4] clk: qcom: Introduce clocks drivers for X1E80100
+Date: Fri, 17 Nov 2023 14:57:33 +0530
+Message-ID: <20231117092737.28362-1-quic_sibis@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e857c853-51ef-8314-2a21-fa6fd25162ca@quicinc.com>
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: nfUvZy-4QDhZdOozExmRLyAEV0avd-7s
+X-Proofpoint-ORIG-GUID: nfUvZy-4QDhZdOozExmRLyAEV0avd-7s
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-11-17_07,2023-11-16_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=679
+ clxscore=1015 suspectscore=0 mlxscore=0 malwarescore=0 bulkscore=0
+ priorityscore=1501 adultscore=0 lowpriorityscore=0 impostorscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311060000 definitions=main-2311170069
 
-On Fri, Nov 17, 2023 at 09:26:18AM +0530, Sibi Sankar wrote:
-> On 10/25/23 22:10, Bryan O'Donoghue wrote:
-> > On 25/10/2023 14:33, Sibi Sankar wrote:
+This series adds initial clock support for the Qualcomm X1E80100 platform,
+aka Snapdragon X Elite.
 
-> >> +static struct clk_rcg2 gcc_sdcc2_apps_clk_src = {
-> >> +    .cmd_rcgr = 0x14018,
-> >> +    .mnd_width = 8,
-> >> +    .hid_width = 5,
-> >> +    .parent_map = gcc_parent_map_9,
-> >> +    .freq_tbl = ftbl_gcc_sdcc2_apps_clk_src,
-> >> +    .clkr.hw.init = &(const struct clk_init_data) {
-> >> +        .name = "gcc_sdcc2_apps_clk_src",
-> >> +        .parent_data = gcc_parent_data_9,
-> >> +        .num_parents = ARRAY_SIZE(gcc_parent_data_9),
-> >> +        .flags = CLK_SET_RATE_PARENT,
-> >> +        .ops = &clk_rcg2_floor_ops,
-> > 
-> > diff sc8280xp..sc8380xp
-> > 
-> > Here you've used floor instead of shared ops, why is that ?
-> 
-> We seem to use floor ops for sdcc clks on all other QC SoCs and
-> sc8280xp seems to be the exception here. So I'll continue to use floor
-> ops for sdcc.
+Our v1 post of the patchsets adding support for Snapdragon X Elite SoC had
+the part number sc8380xp which is now updated to the new part number x1e80100
+based on the new branding scheme and refers to the exact same SoC.
 
-> >> +static struct clk_rcg2 gcc_usb30_mp_mock_utmi_clk_src = {
-> >> +    .cmd_rcgr = 0x17158,
-> >> +    .mnd_width = 0,
-> >> +    .hid_width = 5,
-> >> +    .parent_map = gcc_parent_map_0,
-> >> +    .freq_tbl = ftbl_gcc_pcie_0_aux_clk_src,
-> >> +    .clkr.hw.init = &(const struct clk_init_data) {
-> >> +        .name = "gcc_usb30_mp_mock_utmi_clk_src",
-> >> +        .parent_data = gcc_parent_data_0,
-> >> +        .num_parents = ARRAY_SIZE(gcc_parent_data_0),
-> >> +        .flags = CLK_SET_RATE_PARENT,
-> >> +        .ops = &clk_rcg2_ops,
-> > 
-> > This is another discontinuinty with sc8280xp.
-> > 
-> > Could you have a look through the sc8280xp gcc and do an aduit for 
-> > clk_rcg2_shared_ops as against sc8380xp ?
-> 
-> ack, will do a quick audit before the re-spin.
+v2:
+* Update the part number from sc8380xp to x1e80100.
+* Use shared ops in the x1e80100 gcc driver [Bryan].
+* Inline clock names [Konrad]
+* Fix Kconfig [Krzysztof]
+* Pick-up Rbs from the list.
 
-Please trim unnecessary context from your replies. You quoted some 1400
-lines of irrelevant clock structs when all you needed was something like
-the above.
+Dependencies: None
+Release Link: https://www.qualcomm.com/news/releases/2023/10/qualcomm-unleashes-snapdragon-x-elite--the-ai-super-charged-plat
 
-Not trimming replies makes it a pain to read your mails and to revisit
-threads like this one, for example, in the lore web archives.
+Rajendra Nayak (4):
+  dt-bindings: clock: qcom: Add X1E80100 GCC clocks
+  clk: qcom: Add Global Clock controller (GCC) driver for X1E80100
+  dt-bindings: clock: qcom-rpmhcc: Add RPMHCC bindings for X1E80100
+  clk: qcom: rpmh: Add support for X1E80100 rpmh clocks
 
-Johan
+ .../bindings/clock/qcom,rpmhcc.yaml           |    1 +
+ .../bindings/clock/qcom,x1e80100-gcc.yaml     |   72 +
+ drivers/clk/qcom/Kconfig                      |   10 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/clk-rpmh.c                   |   26 +
+ drivers/clk/qcom/gcc-x1e80100.c               | 6807 +++++++++++++++++
+ include/dt-bindings/clock/qcom,x1e80100-gcc.h |  485 ++
+ 7 files changed, 7402 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,x1e80100-gcc.yaml
+ create mode 100644 drivers/clk/qcom/gcc-x1e80100.c
+ create mode 100644 include/dt-bindings/clock/qcom,x1e80100-gcc.h
+
+-- 
+2.17.1
+
