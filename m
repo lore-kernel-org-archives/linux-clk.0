@@ -1,91 +1,84 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IbjiVYHw"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AB38171F;
-	Fri, 17 Nov 2023 03:05:57 -0800 (PST)
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AH9hFla012456;
-	Fri, 17 Nov 2023 11:05:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=XxGBBu1LffqaXiLyEfTCw9koxnp7zedG1KdbtnKStTY=;
- b=IbjiVYHw456nMwmMCtlw4z8XB31CCIHl9gEyBEr1i/k1BdEdVF0HNf4PyQPLdrMLcFz1
- QZTm7YhUwdJmROzzZ1mlmF11+h5YNT3xplmDDTKb8aKWkztX7k8DQKkn3m4lTNqjx0xR
- LR47HTMvcrbMcU0fXxlHvyMyUu/6QYYqOudhgKvwajxllFpl9OdRNTCEm49UjAcezrSk
- 4elX0aqWH6nZT1hWt373dXrfARbYiTxqvHv0iNr6ovjNIPMDcFLfw/a52f/7oPkJaIwU
- 1jh3EAjMU/yOYiy0m+aVwfEAx/bOco3S9zhirkN7jnOhaVyfwAW9hOZ7kgNjweuYxwHx VQ== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3udw46s617-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 17 Nov 2023 11:05:53 +0000
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3AHB5qVl020225
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 17 Nov 2023 11:05:52 GMT
-Received: from [10.218.19.46] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.39; Fri, 17 Nov
- 2023 03:05:47 -0800
-Message-ID: <afc1277e-1a46-d88c-2b02-58cba756bff4@quicinc.com>
-Date: Fri, 17 Nov 2023 16:35:44 +0530
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xaeaZIYn"
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95D2AD4E
+	for <linux-clk@vger.kernel.org>; Fri, 17 Nov 2023 06:24:04 -0800 (PST)
+Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-408425c7c10so16445475e9.0
+        for <linux-clk@vger.kernel.org>; Fri, 17 Nov 2023 06:24:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1700231043; x=1700835843; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CKxOTnv9JfSvH6BdnkUvc5Oor+bZOeZyCbGjkcr5HZ4=;
+        b=xaeaZIYnVAGCE87yBecmhqhDtOxX79ERrX+VwNQVUizfiAaHy9WEFwNnlT8m3jsfzN
+         JMUFFwX5GpGKQ+hqDQgzz+AU6H0b1015ZIgT7DZ+TFATCWxxD1Kw9yJdUA9LCHVsmsRY
+         Ams9FLtDjIvFNK5yzXlu71HNNUWb4OlExN14ESrcqdzELMK0U9c+hW3OGU2/NBqzgBau
+         PFqQUXub+kDHcrlj9zv5HNt7k5XiDIRtqJFwlRWFHpqLQ9UMkYhX6GC/XasW1uhbRzB2
+         a5z/ucYZ3l7uruOZGOI6+jXJuREFBAvk0Nt173bqnyny10frnRXx1hyfVrn7wWoudPej
+         JCIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700231043; x=1700835843;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CKxOTnv9JfSvH6BdnkUvc5Oor+bZOeZyCbGjkcr5HZ4=;
+        b=Mr91IEf11Jfj7cpVahXUbbKhVHbYh0MMFQp+wqxaSkmgw3bSSA/Weh7maVMeW5HpE2
+         kc9IIWGfElFutde2n9b18VVNOFmgBzVXdT5x2LMQGIJ7laPnxf5HMvUPr3wVfZng7Bbl
+         Rd2WLIvuYhTNVzH8Obt9Ilo9jwJDFr5bBZQUo8RbuwecFCwWRQ1JcMZ3f3Kzu0X1ZSXB
+         9HcrsfkBQq2An1j+nIhkjz9pStNv6lxRi0y5+Kzc+qyfvmW2i5oct8lgGeU/hiyScwDx
+         Eah0c41TkN8PLAxpLbXMc3kS4m7beerL5D70AIA8ww7XQvrW9cy4XwXsfi3Hmd3DlPZ6
+         tHng==
+X-Gm-Message-State: AOJu0YxQzZ3Jt2D/Nn6tG/Pjp9CeG5z5sfEWqyubghhpBanuzOnWV+lA
+	36fVavkjRji5AHLvTsjijnCC0Q==
+X-Google-Smtp-Source: AGHT+IFv9leUNZjNiQIqzlf8v4RMlj/DsgqhXWvcBbAW4P9cdbHdvPz7XGByDyW708WTbz3Wmi+1zA==
+X-Received: by 2002:a05:600c:350f:b0:405:49aa:d578 with SMTP id h15-20020a05600c350f00b0040549aad578mr15287501wmq.37.1700231042824;
+        Fri, 17 Nov 2023 06:24:02 -0800 (PST)
+Received: from [192.168.100.102] ([37.228.218.3])
+        by smtp.gmail.com with ESMTPSA id y3-20020a05600c17c300b0040586360a36sm7047867wmo.17.2023.11.17.06.24.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Nov 2023 06:24:02 -0800 (PST)
+Message-ID: <3d980823-29d5-44a7-9cf2-4246c8ae3c83@linaro.org>
+Date: Fri, 17 Nov 2023 14:24:01 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH 3/4] clk: qcom: videocc-sm8150: Update the
- video_pll0_config
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] clk: qcom: Add Global Clock controller (GCC) driver
+ for SC8380XP
 Content-Language: en-US
-To: Konrad Dybcio <konrad.dybcio@linaro.org>, Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: Bjorn Andersson <andersson@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <20231110065029.2117212-1-quic_skakitap@quicinc.com>
- <20231110065029.2117212-4-quic_skakitap@quicinc.com>
- <651e9b17-5c08-4d6c-b318-cacfa2341d7d@linaro.org>
-From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
-In-Reply-To: <651e9b17-5c08-4d6c-b318-cacfa2341d7d@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+To: Sibi Sankar <quic_sibis@quicinc.com>, andersson@kernel.org,
+ konrad.dybcio@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
+ robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org
+Cc: agross@kernel.org, conor+dt@kernel.org, quic_tdas@quicinc.com,
+ quic_rjendra@quicinc.com, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, neil.armstrong@linaro.org,
+ abel.vesa@linaro.org, quic_tsoni@quicinc.com
+References: <20231025133320.4720-1-quic_sibis@quicinc.com>
+ <20231025133320.4720-3-quic_sibis@quicinc.com>
+ <483c4de3-951c-4ba4-89fb-36fcd44fa99f@linaro.org>
+ <e857c853-51ef-8314-2a21-fa6fd25162ca@quicinc.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <e857c853-51ef-8314-2a21-fa6fd25162ca@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ll6NsppdS19rkruZbYGgy0uScNb9gj5q
-X-Proofpoint-ORIG-GUID: ll6NsppdS19rkruZbYGgy0uScNb9gj5q
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-11-17_09,2023-11-16_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- clxscore=1015 phishscore=0 mlxlogscore=558 suspectscore=0 bulkscore=0
- adultscore=0 spamscore=0 malwarescore=0 lowpriorityscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2311060000
- definitions=main-2311170082
 
-
-On 11/13/2023 5:37 PM, Konrad Dybcio wrote:
-> On 10.11.2023 07:50, Satya Priya Kakitapalli wrote:
->> Update the video_pll0_config to configure the test_ctl_hi and
->> test_ctl_hi1 values.
+On 17/11/2023 03:56, Sibi Sankar wrote:
 >>
->> Fixes: 5658e8cf1a8a ("clk: qcom: add video clock controller driver for SM8150")
->> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
->> ---
-> These values are not present on LA.UM.7.1.r1. Can you confirm internally
-> that they're valid?
+>> This is another discontinuinty with sc8280xp.
+>>
+>> Could you have a look through the sc8280xp gcc and do an aduit for 
+>> clk_rcg2_shared_ops as against sc8380xp ?
+> 
+> ack, will do a quick audit before the re-spin.
 
+A best guess will do, we will "shake out the bugs" through 
+suspend/resume real use cases anyway but, worth a quick pass since you 
+are doing a v2 for the SoC name.
 
-Sure, I'll re-check the values and update if needed while posting v2.
-
-
-> Konrad
+---
+bod
