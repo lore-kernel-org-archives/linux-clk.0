@@ -1,84 +1,137 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xaeaZIYn"
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95D2AD4E
-	for <linux-clk@vger.kernel.org>; Fri, 17 Nov 2023 06:24:04 -0800 (PST)
-Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-408425c7c10so16445475e9.0
-        for <linux-clk@vger.kernel.org>; Fri, 17 Nov 2023 06:24:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700231043; x=1700835843; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CKxOTnv9JfSvH6BdnkUvc5Oor+bZOeZyCbGjkcr5HZ4=;
-        b=xaeaZIYnVAGCE87yBecmhqhDtOxX79ERrX+VwNQVUizfiAaHy9WEFwNnlT8m3jsfzN
-         JMUFFwX5GpGKQ+hqDQgzz+AU6H0b1015ZIgT7DZ+TFATCWxxD1Kw9yJdUA9LCHVsmsRY
-         Ams9FLtDjIvFNK5yzXlu71HNNUWb4OlExN14ESrcqdzELMK0U9c+hW3OGU2/NBqzgBau
-         PFqQUXub+kDHcrlj9zv5HNt7k5XiDIRtqJFwlRWFHpqLQ9UMkYhX6GC/XasW1uhbRzB2
-         a5z/ucYZ3l7uruOZGOI6+jXJuREFBAvk0Nt173bqnyny10frnRXx1hyfVrn7wWoudPej
-         JCIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700231043; x=1700835843;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CKxOTnv9JfSvH6BdnkUvc5Oor+bZOeZyCbGjkcr5HZ4=;
-        b=Mr91IEf11Jfj7cpVahXUbbKhVHbYh0MMFQp+wqxaSkmgw3bSSA/Weh7maVMeW5HpE2
-         kc9IIWGfElFutde2n9b18VVNOFmgBzVXdT5x2LMQGIJ7laPnxf5HMvUPr3wVfZng7Bbl
-         Rd2WLIvuYhTNVzH8Obt9Ilo9jwJDFr5bBZQUo8RbuwecFCwWRQ1JcMZ3f3Kzu0X1ZSXB
-         9HcrsfkBQq2An1j+nIhkjz9pStNv6lxRi0y5+Kzc+qyfvmW2i5oct8lgGeU/hiyScwDx
-         Eah0c41TkN8PLAxpLbXMc3kS4m7beerL5D70AIA8ww7XQvrW9cy4XwXsfi3Hmd3DlPZ6
-         tHng==
-X-Gm-Message-State: AOJu0YxQzZ3Jt2D/Nn6tG/Pjp9CeG5z5sfEWqyubghhpBanuzOnWV+lA
-	36fVavkjRji5AHLvTsjijnCC0Q==
-X-Google-Smtp-Source: AGHT+IFv9leUNZjNiQIqzlf8v4RMlj/DsgqhXWvcBbAW4P9cdbHdvPz7XGByDyW708WTbz3Wmi+1zA==
-X-Received: by 2002:a05:600c:350f:b0:405:49aa:d578 with SMTP id h15-20020a05600c350f00b0040549aad578mr15287501wmq.37.1700231042824;
-        Fri, 17 Nov 2023 06:24:02 -0800 (PST)
-Received: from [192.168.100.102] ([37.228.218.3])
-        by smtp.gmail.com with ESMTPSA id y3-20020a05600c17c300b0040586360a36sm7047867wmo.17.2023.11.17.06.24.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Nov 2023 06:24:02 -0800 (PST)
-Message-ID: <3d980823-29d5-44a7-9cf2-4246c8ae3c83@linaro.org>
-Date: Fri, 17 Nov 2023 14:24:01 +0000
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iJerZlsF"
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.20])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 619CA90;
+	Fri, 17 Nov 2023 11:05:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1700247916; x=1731783916;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ojXatZcyWVDBNEjZqyuSgcR+G6zuPa0I4GRc4/in0jA=;
+  b=iJerZlsFwkO3i8JUcR8MbYCGBDiPd8FDzfMhnYbfyyAnmsYDcgcBJxZ3
+   TdfB+DNIN7xuniR0IJt+oQjddEoQrCCFGwWqMkuywIcxUYYxk7EA1+9n5
+   BkUFaVBEYcn7FneaSSPk9Bhd1+rHwzYFmlTBI+mye5UA8JReCbVWCzLma
+   Ay6tX91q/SL/u6UdKLX66p7CJ0lHW9RdmQ+oDGDaQL22xv+iEjHitNmWo
+   azcB2m5qGnAhdTIxwYBhk2MsQfOpKUQmYPVD3rPzK1WpVjSqSuheo1Bcx
+   y3+5ykpnJnzKdqu7owi1NHT/auWPfrWRasy1eITJffVVv5vVqVKJ87J/u
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10897"; a="381742112"
+X-IronPort-AV: E=Sophos;i="6.04,206,1695711600"; 
+   d="scan'208";a="381742112"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Nov 2023 11:05:15 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10897"; a="800577773"
+X-IronPort-AV: E=Sophos;i="6.04,206,1695711600"; 
+   d="scan'208";a="800577773"
+Received: from mmichali-devpc.igk.intel.com ([10.211.235.239])
+  by orsmga001.jf.intel.com with ESMTP; 17 Nov 2023 11:05:12 -0800
+From: Michal Michalik <michal.michalik@intel.com>
+To: netdev@vger.kernel.org
+Cc: vadim.fedorenko@linux.dev,
+	arkadiusz.kubalewski@intel.com,
+	jonathan.lemon@gmail.com,
+	pabeni@redhat.com,
+	poros@redhat.com,
+	milena.olech@intel.com,
+	mschmidt@redhat.com,
+	linux-clk@vger.kernel.org,
+	bvanassche@acm.org,
+	kuba@kernel.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	Michal Michalik <michal.michalik@intel.com>
+Subject: [PATCH RFC net-next v3 0/2] selftests/dpll: DPLL subsystem integration tests
+Date: Fri, 17 Nov 2023 20:05:03 +0100
+Message-Id: <20231117190505.7819-1-michal.michalik@intel.com>
+X-Mailer: git-send-email 2.9.5
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] clk: qcom: Add Global Clock controller (GCC) driver
- for SC8380XP
-Content-Language: en-US
-To: Sibi Sankar <quic_sibis@quicinc.com>, andersson@kernel.org,
- konrad.dybcio@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
- robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org
-Cc: agross@kernel.org, conor+dt@kernel.org, quic_tdas@quicinc.com,
- quic_rjendra@quicinc.com, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, neil.armstrong@linaro.org,
- abel.vesa@linaro.org, quic_tsoni@quicinc.com
-References: <20231025133320.4720-1-quic_sibis@quicinc.com>
- <20231025133320.4720-3-quic_sibis@quicinc.com>
- <483c4de3-951c-4ba4-89fb-36fcd44fa99f@linaro.org>
- <e857c853-51ef-8314-2a21-fa6fd25162ca@quicinc.com>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <e857c853-51ef-8314-2a21-fa6fd25162ca@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 17/11/2023 03:56, Sibi Sankar wrote:
->>
->> This is another discontinuinty with sc8280xp.
->>
->> Could you have a look through the sc8280xp gcc and do an aduit for 
->> clk_rcg2_shared_ops as against sc8380xp ?
-> 
-> ack, will do a quick audit before the re-spin.
+The recently merged common DPLL interface discussed on a mailing list[1]
+is introducing new, complex subsystem which requires proper integration
+testing - this patchset adds such a framework, as well as the initial
+test cases. Framework does not require neither any special hardware nor
+any special system architecture.
 
-A best guess will do, we will "shake out the bugs" through 
-suspend/resume real use cases anyway but, worth a quick pass since you 
-are doing a v2 for the SoC name.
+To properly test the DPLL subsystem this patch adds fake DPLL devices
+and its pins to netdevsim. Two DPLL devices are added: EEC and PPS.
+There are also common pins for each device: PPS and GNSS. Additionally
+each netdevsim port register RCLK (recovered clock) pin for itself. That
+allow us to check mutliple scenarios which might be problematic in real
+implementations (like different ordering etc.)
 
----
-bod
+Patch adds few helper scripts, which are:
+1) tools/testing/selftests/drivers/net/netdevsim/dpll/run_dpll_tests.sh
+    Script is checking for all dependencies, creates temporary
+    environment, installs required libraries and run all tests - can be
+    used standalone
+2) tools/testing/selftests/drivers/net/netdevsim/dpll/ynlfamilyhandler.py˙
+    Library for easier ynl use in the pytest framework - can be used
+    standalone
+
+[1] https://lore.kernel.org/netdev/169494842736.21621.10730860855645661664.git-patchwork-notify@kernel.org/
+
+Changelog:
+v2 -> v3:
+- updated the cover letter
+- moved framework from selftests/dpll to selftests/drivers/net/netdevsim/dpll/
+- added `nsim_` prefixes to functions and structs
+- dropped unecessary casts
+- added necessary debugfs entries
+- added random clock id
+- improved error patchs on init
+- removed separate dpll.h header
+- removed unnecesary UAPI dpll header import
+- changed struct names
+- changed private data structs to be embedded
+- moved common pin init to device init
+- added netdev_dpll_pin_set/clear()
+
+v1 -> v2:
+- moved from separate module to implementation in netdevsim
+
+
+Michal Michalik (2):
+  netdevsim: implement DPLL for subsystem selftests
+  selftests/dpll: add DPLL system integration selftests
+
+ drivers/net/Kconfig                                |   1 +
+ drivers/net/netdevsim/Makefile                     |   2 +-
+ drivers/net/netdevsim/dev.c                        |  23 +-
+ drivers/net/netdevsim/dpll.c                       | 490 +++++++++++++++++++++
+ drivers/net/netdevsim/netdev.c                     |  10 +
+ drivers/net/netdevsim/netdevsim.h                  |  44 ++
+ tools/testing/selftests/Makefile                   |   1 +
+ .../selftests/drivers/net/netdevsim/dpll/Makefile  |   8 +
+ .../drivers/net/netdevsim/dpll/__init__.py         |   0
+ .../selftests/drivers/net/netdevsim/dpll/config    |   2 +
+ .../selftests/drivers/net/netdevsim/dpll/consts.py |  40 ++
+ .../drivers/net/netdevsim/dpll/dpll_utils.py       |  94 ++++
+ .../drivers/net/netdevsim/dpll/requirements.txt    |   3 +
+ .../drivers/net/netdevsim/dpll/run_dpll_tests.sh   |  75 ++++
+ .../drivers/net/netdevsim/dpll/test_dpll.py        | 376 ++++++++++++++++
+ .../drivers/net/netdevsim/dpll/ynlfamilyhandler.py |  49 +++
+ 16 files changed, 1216 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/net/netdevsim/dpll.c
+ create mode 100644 tools/testing/selftests/drivers/net/netdevsim/dpll/Makefile
+ create mode 100644 tools/testing/selftests/drivers/net/netdevsim/dpll/__init__.py
+ create mode 100644 tools/testing/selftests/drivers/net/netdevsim/dpll/config
+ create mode 100644 tools/testing/selftests/drivers/net/netdevsim/dpll/consts.py
+ create mode 100644 tools/testing/selftests/drivers/net/netdevsim/dpll/dpll_utils.py
+ create mode 100644 tools/testing/selftests/drivers/net/netdevsim/dpll/requirements.txt
+ create mode 100755 tools/testing/selftests/drivers/net/netdevsim/dpll/run_dpll_tests.sh
+ create mode 100644 tools/testing/selftests/drivers/net/netdevsim/dpll/test_dpll.py
+ create mode 100644 tools/testing/selftests/drivers/net/netdevsim/dpll/ynlfamilyhandler.py
+
+-- 
+2.9.5
+
+base-commit: 18de1e517ed37ebaf33e771e46faf052e966e163
