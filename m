@@ -1,113 +1,105 @@
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8EDFBEB;
+	Fri, 17 Nov 2023 08:13:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WkcgXa9J"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E7F4B7;
-	Thu, 16 Nov 2023 22:49:41 -0800 (PST)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AH5xMr5014589;
-	Fri, 17 Nov 2023 06:49:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=kTC0tcok5Ie8ReVC/YEjhAjeA9fVfyXmg09Uiea/CsM=;
- b=WkcgXa9JXgPHm7XqvlstZ3tQTATF16uyVoW0VMPmvU4DxI1n2DGs/qWfmVk23JWcat+y
- v9AlTeN+xTT3R1DaBszBn1ePPTu3rmvlPGpQhRA7wSHgPzVvyvxLmspDNedue3crhE29
- 1FcW6Ip2nXa0IBRcWaZo5iHPT5w+pIdSDXXkOvxr1Yy4KJGH73wTDM9D7pgG7XwDR2AT
- eBIzuDx8puKtoVfGUGfyGmnPTmvDTAX3V0ZXQ3Mf3z6zRlP9OpR2dcNKbDFAEX8E3e5O
- Xf1HX0px5WyLdLFmEuZxFndBQRHUPF2Z0Nqg3ekW7VIpJslIR5aXhDkPK+iqLt8fmmd1 SA== 
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3udpqq1kay-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 17 Nov 2023 06:49:36 +0000
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3AH6nZGR017718
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 17 Nov 2023 06:49:35 GMT
-Received: from [10.216.18.128] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Thu, 16 Nov
- 2023 22:49:30 -0800
-Message-ID: <2bc0e34e-fd4e-0b43-90f9-0ce38eab57b7@quicinc.com>
-Date: Fri, 17 Nov 2023 12:19:23 +0530
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hKR2r491"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00B6AC433C7;
+	Fri, 17 Nov 2023 08:13:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1700208800;
+	bh=RPcbB+jdW8SosobxciCWR/egl8ZrKh5jeQWqAfD2+vU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hKR2r491krdpa74I19bkbkY1tFTT5yyVBwSe81sMme0lcZKOwrlp9p5wQsHPX6JCs
+	 OfCvtlHvt91nBQHPPsu16TdT4me5IELzYagjdEhjyirOohQnO18EMcmwakimhiyyB/
+	 zQEcXEUE39SIfrEuALskJDZp+8Rqn7D1+r6Sw94vMSlkky/qX5UiZm6XOSqQMfXVN9
+	 gppN60qQqdoDO3g31P7UAhYZjf27W1auinHQvnTXGp6azipSTK2DQt1rBhNhRtKxEu
+	 qVeNd6EJ9n5RtP5wiDmF7j+23q861zIS2K47YgfUX2O9qBIDmwIFsC0HfOviCaavR5
+	 luomQ9p5tHNiA==
+Received: from johan by xi.lan with local (Exim 4.96.2)
+	(envelope-from <johan@kernel.org>)
+	id 1r3tyb-000629-16;
+	Fri, 17 Nov 2023 09:13:22 +0100
+Date: Fri, 17 Nov 2023 09:13:21 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Sibi Sankar <quic_sibis@quicinc.com>
+Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, andersson@kernel.org,
+	konrad.dybcio@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
+	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	agross@kernel.org, conor+dt@kernel.org, quic_tdas@quicinc.com,
+	quic_rjendra@quicinc.com, linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, neil.armstrong@linaro.org,
+	abel.vesa@linaro.org, quic_tsoni@quicinc.com
+Subject: Re: [PATCH 2/4] clk: qcom: Add Global Clock controller (GCC) driver
+ for SC8380XP
+Message-ID: <ZVcgoX56q0lYWKyw@hovoldconsulting.com>
+References: <20231025133320.4720-1-quic_sibis@quicinc.com>
+ <20231025133320.4720-3-quic_sibis@quicinc.com>
+ <483c4de3-951c-4ba4-89fb-36fcd44fa99f@linaro.org>
+ <e857c853-51ef-8314-2a21-fa6fd25162ca@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [PATCH V3 3/4] clk: qcom: Add ECPRICC driver support for QDU1000
- and QRU1000
-To: Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>
-CC: Andy Gross <agross@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Ajit Pandey
-	<quic_ajipan@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>
-References: <20231106103027.3988871-1-quic_imrashai@quicinc.com>
- <20231106103027.3988871-4-quic_imrashai@quicinc.com>
- <CAA8EJpoGLCfrWQ5r8cOcqyWmF2ZTTqPxFy_HVzPC-A-dCiV48A@mail.gmail.com>
- <8a1ce949-204a-1c22-c554-67b31379eb7c@quicinc.com>
- <e8dc01a1-f3fd-4c23-9607-62a199b6a2bb@linaro.org>
-Content-Language: en-US
-From: Imran Shaik <quic_imrashai@quicinc.com>
-In-Reply-To: <e8dc01a1-f3fd-4c23-9607-62a199b6a2bb@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: p0gNXc9UnoId_L4FWapz0T36LOWSAzAp
-X-Proofpoint-ORIG-GUID: p0gNXc9UnoId_L4FWapz0T36LOWSAzAp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-11-17_03,2023-11-16_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 phishscore=0 spamscore=0 bulkscore=0 clxscore=1015
- lowpriorityscore=0 mlxlogscore=644 impostorscore=0 suspectscore=0
- mlxscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311060000 definitions=main-2311170047
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e857c853-51ef-8314-2a21-fa6fd25162ca@quicinc.com>
 
+On Fri, Nov 17, 2023 at 09:26:18AM +0530, Sibi Sankar wrote:
+> On 10/25/23 22:10, Bryan O'Donoghue wrote:
+> > On 25/10/2023 14:33, Sibi Sankar wrote:
 
-
-On 11/16/2023 8:31 PM, Konrad Dybcio wrote:
+> >> +static struct clk_rcg2 gcc_sdcc2_apps_clk_src = {
+> >> +    .cmd_rcgr = 0x14018,
+> >> +    .mnd_width = 8,
+> >> +    .hid_width = 5,
+> >> +    .parent_map = gcc_parent_map_9,
+> >> +    .freq_tbl = ftbl_gcc_sdcc2_apps_clk_src,
+> >> +    .clkr.hw.init = &(const struct clk_init_data) {
+> >> +        .name = "gcc_sdcc2_apps_clk_src",
+> >> +        .parent_data = gcc_parent_data_9,
+> >> +        .num_parents = ARRAY_SIZE(gcc_parent_data_9),
+> >> +        .flags = CLK_SET_RATE_PARENT,
+> >> +        .ops = &clk_rcg2_floor_ops,
+> > 
+> > diff sc8280xp..sc8380xp
+> > 
+> > Here you've used floor instead of shared ops, why is that ?
 > 
-> 
-> On 11/10/23 09:34, Imran Shaik wrote:
->>
->>
->> On 11/6/2023 6:34 PM, Dmitry Baryshkov wrote:
->>> On Mon, 6 Nov 2023 at 12:32, Imran Shaik <quic_imrashai@quicinc.com> 
->>> wrote:
->>>>
->>>> Add ECPRI Clock Controller (ECPRICC) support for QDU1000 and QRU1000 
->>>> SoCs.
->>>
->>> After reading this series I have one main question. What is ECPRI?
->>> You've never expanded this acronym.
->>>
->>
->> This is a clock controller for eCPRI Specification V2.0 Common Public 
->> Radio Interface.
-> This should be under description: in bindings
-> 
-> Konrad
+> We seem to use floor ops for sdcc clks on all other QC SoCs and
+> sc8280xp seems to be the exception here. So I'll continue to use floor
+> ops for sdcc.
 
-Sure, will update the bindings description and post the next series.
+> >> +static struct clk_rcg2 gcc_usb30_mp_mock_utmi_clk_src = {
+> >> +    .cmd_rcgr = 0x17158,
+> >> +    .mnd_width = 0,
+> >> +    .hid_width = 5,
+> >> +    .parent_map = gcc_parent_map_0,
+> >> +    .freq_tbl = ftbl_gcc_pcie_0_aux_clk_src,
+> >> +    .clkr.hw.init = &(const struct clk_init_data) {
+> >> +        .name = "gcc_usb30_mp_mock_utmi_clk_src",
+> >> +        .parent_data = gcc_parent_data_0,
+> >> +        .num_parents = ARRAY_SIZE(gcc_parent_data_0),
+> >> +        .flags = CLK_SET_RATE_PARENT,
+> >> +        .ops = &clk_rcg2_ops,
+> > 
+> > This is another discontinuinty with sc8280xp.
+> > 
+> > Could you have a look through the sc8280xp gcc and do an aduit for 
+> > clk_rcg2_shared_ops as against sc8380xp ?
+> 
+> ack, will do a quick audit before the re-spin.
 
-Thanks,
-Imran
+Please trim unnecessary context from your replies. You quoted some 1400
+lines of irrelevant clock structs when all you needed was something like
+the above.
+
+Not trimming replies makes it a pain to read your mails and to revisit
+threads like this one, for example, in the lore web archives.
+
+Johan
