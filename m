@@ -1,136 +1,165 @@
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A55CB9;
-	Thu, 16 Nov 2023 13:09:01 -0800 (PST)
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-5b383b4184fso14720017b3.1;
-        Thu, 16 Nov 2023 13:09:01 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700168940; x=1700773740;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NmAR3Dzl+2Yap6j2yy8l4JfxyLBr+pYiVj7xTuK3lwA=;
-        b=VL8HkbDCk/naPeU/JjvUsnxrA7T7L9rXoD54mtwVpFNX/CHsmiFdYrtsIdK2s0n2Z0
-         Z6XBAmbeIvIewvJMaW/cALyaUIYm3VRmYOwQy6MU1N6eA/wLzMQPF32y44IKHgy/ekk1
-         NDXwL5R2a20NtnP3EHBhsBgqoLxwrkpp6diDpRjIh8121gFMEcppvt6zwlLDV8lnv88R
-         46BHM2sPbwobQA4+Lv8Jwp5ykVg1UATp3+gGTQw7V8Zhu1TuwaljOc/Qg9gqu8z24X11
-         UyynbsOzuB2r8rkrOd0AoD/acr+kTpM+PBNZ9PUTboKVdDtMVaorXwfvTi3TO8s1fe28
-         R3Eg==
-X-Gm-Message-State: AOJu0Yy82tqm2wPUotByOyhSaaCkARO0eaVxXT96tllchHUT/mN93IBz
-	IpXzi7ejN1BJK1hQ6PD9UtaY6cdwrc3UZw==
-X-Google-Smtp-Source: AGHT+IH+MKO1S2qViUWa/qjSyNItu+lV2cKb4Tv5znsbhI8QPdMo0E7jNmnxw5IRAQHURrSp6gy+mA==
-X-Received: by 2002:a81:89c5:0:b0:5b8:d451:9b84 with SMTP id z188-20020a8189c5000000b005b8d4519b84mr16112808ywf.17.1700168940454;
-        Thu, 16 Nov 2023 13:09:00 -0800 (PST)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
-        by smtp.gmail.com with ESMTPSA id j142-20020a819294000000b0059f802fad40sm98443ywg.22.2023.11.16.13.08.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Nov 2023 13:08:59 -0800 (PST)
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-5b383b4184fso14719657b3.1;
-        Thu, 16 Nov 2023 13:08:58 -0800 (PST)
-X-Received: by 2002:a0d:cb0c:0:b0:5a7:bc38:fff2 with SMTP id
- n12-20020a0dcb0c000000b005a7bc38fff2mr17325818ywd.15.1700168938637; Thu, 16
- Nov 2023 13:08:58 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="JJBFYG40"
+Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2097.outbound.protection.outlook.com [40.92.103.97])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E91D7129;
+	Thu, 16 Nov 2023 16:34:29 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hJA93s8w71eQ1W5YXYpuzG6diywWWI5RnLQioFMiCfLzVabdX9VdEdr96r4tmfMh/wlWPyEibBzO0nh3ArHVNCmiCldYcSn1cY965qqb3XUreInkzzmAm4kYFvqxUZXRGg68qeLU0PTUGbciHY+1ypZwBq3MTHjXlIQO7X+lH/RJOe87VoE6qIXKdHEP4W8q/NuDmDpzkwVG13s9nDxqQnyE/XablatUl3FCvDMI0Ueq943c33ItVPWcMaYGGzmq586UsWlA89k0JNvv7uYj1i4w1d9vuTvqXVlDX7q+Zvkbmja508Ra+HJTLpcx3c2eRm8Xs80yUlpKLZq+tYuTZQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=F6ym7RrgI+PlKRERFlZ52zoThX+zqoa5OVYAcBrMVFI=;
+ b=nJZaKiHF0ZC+eFo3vfrDIhfUFp79s6USBGpkEPEwMhzpCBjqmx947s247GXr3c9qoTQdyZK7rE4TsUkOCw9gz19q3yG4jNdIAsaxLhr0vQEH0Q3ZcyYHL2O+SRUq15OOgQA5tmwzpAHy6ZGQLBnEexhpNZgm0cgEtOhlqV0/NJMBcS2dCiMilSqJd6J0WZ79Dm7/wJ72blTStKCmPYbBamuhSr0/YUCTBO2HCwnwMXxpz+eQxiRj0PzKgAC0ElfKktbu+6pnI7+zJD3AFU7jwqLxUcLfFCSYLx7ne//cjgknIevrjg2suhcqY2s2SmqMDbtB+E8gv05tWvItXC3Jew==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=F6ym7RrgI+PlKRERFlZ52zoThX+zqoa5OVYAcBrMVFI=;
+ b=JJBFYG400phBYXjARsbMmovwRCi8blEcGoZ8a82kVNFGoWO8GDel2wBvB0w9DQflkQFSru8DReYKLQHnx/SinoT14xK8Jv25QQDEr+zifCJRophn7g4RY2kDGsNo8nWX0qTCx1kouDe9IsyZ27YVllJ49r9ZOSAWJYcfET/JwJSThN2xAF+6N71sPpFSdy5Tg/hBor2SMsegxTCBeJUHXeSrFfRVZjmACwV74Vr3EhwmzZ+0lrIL2css0Vvb5F87+fX97jCahwPs4dCbqJk01LtldaVAnEwgWwMhF82CRE49nKr17rg+LdZ6Zo+2KYB1LiEzAa7dKYZMYt+HPKX+nQ==
+Received: from MA0P287MB0332.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:ab::5) by
+ PN0P287MB0489.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:11c::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7002.23; Fri, 17 Nov 2023 00:34:21 +0000
+Received: from MA0P287MB0332.INDP287.PROD.OUTLOOK.COM
+ ([fe80::b1a7:eee7:e903:9ef3]) by MA0P287MB0332.INDP287.PROD.OUTLOOK.COM
+ ([fe80::b1a7:eee7:e903:9ef3%7]) with mapi id 15.20.7002.022; Fri, 17 Nov 2023
+ 00:34:21 +0000
+Message-ID:
+ <MA0P287MB033225C00657712137176D22FEB7A@MA0P287MB0332.INDP287.PROD.OUTLOOK.COM>
+Date: Fri, 17 Nov 2023 08:34:18 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/5] dt-bindings: clock: sophgo: Add SG2042 bindings
+To: Rob Herring <robh@kernel.org>, Chen Wang <unicornxw@gmail.com>
+Cc: aou@eecs.berkeley.edu, chao.wei@sophgo.com, conor@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+ palmer@dabbelt.com, paul.walmsley@sifive.com, richardcochran@gmail.com,
+ sboyd@kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com
+References: <cover.1699879741.git.unicorn_wang@outlook.com>
+ <1e5836360485b63e15bdf58da59e83139666b290.1699879741.git.unicorn_wang@outlook.com>
+ <20231116181847.GA2659392-robh@kernel.org>
+From: Chen Wang <unicorn_wang@outlook.com>
+In-Reply-To: <20231116181847.GA2659392-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TMN: [n49AXS2Fpo7PXFEQtktXhPmMqLhxdCJm]
+X-ClientProxiedBy: SI2P153CA0014.APCP153.PROD.OUTLOOK.COM (2603:1096:4:140::6)
+ To MA0P287MB0332.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:ab::5)
+X-Microsoft-Original-Message-ID:
+ <e62fc333-da64-4b2f-ab65-cba3c30347e5@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <8734x9tda9.wl-kuninori.morimoto.gx@renesas.com>
- <87wmulrynq.wl-kuninori.morimoto.gx@renesas.com> <20231116192324.GB2821275-robh@kernel.org>
-In-Reply-To: <20231116192324.GB2821275-robh@kernel.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 16 Nov 2023 22:08:46 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdU0Hqem8Ooehoo64rrGn8q8+5A8_DjGZd9Tvh=Xej6mdA@mail.gmail.com>
-Message-ID: <CAMuHMdU0Hqem8Ooehoo64rrGn8q8+5A8_DjGZd9Tvh=Xej6mdA@mail.gmail.com>
-Subject: Re: [PATCH 4/4] drivers: clk: renesas: enable all clocks which is
- assinged to non Linux system
-To: Rob Herring <robh@kernel.org>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Frank Rowand <frowand.list@gmail.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Aymeric Aillet <aymeric.aillet@iot.bzh>, Yusuke Goda <yusuke.goda.sx@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MA0P287MB0332:EE_|PN0P287MB0489:EE_
+X-MS-Office365-Filtering-Correlation-Id: b62d2489-af08-44ab-34f1-08dbe704f0a9
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	v0jtMvDW/NEUo46jA2lsbhnRGTsu8fO/RJ65VSA3bu4HygCqXR3NO+6O4y8oO05JqjHlepNHTsJuZz2iCLk5jfM0gOB3Pu0iY1ZFSnePMiEsQuc3mw5j23WEhUlTan5vG416mhKts+hxD3TmFWJBZ/QG0j5EI5iwjzGSFJulSG2aiZhtMvsz2nWnBN6zPkJ132UNEdWOhNKRs3feKQS6352OlnNFcaw1miHnKJV57iR9cqgmNYZ2J++fmYH7C9kZ/bvWoARHE29xhy0iQDk6Y+K7jT+QvDTCjdlvAndIpf5nqU9gQDSQjzlMfwbYqbGD9gasse4fdOfhUQ08zEcv1LLIaNj5suGUpA1FUYmKcV7HletwQ9WYGBlR1ytT8esQKsHdH/XwIvGRNnLShdLkJ+AJRQDxc0NiYNx8RfP4Cp1UpPTt6LFwS2T1SRcQ08PGJiQ9j5CTJxDRZdLRCN0TuWhLg9IU1lhGIMomaJJpq9svaNSWNIgYpQAfqqMUPDIoHFEFscA7vZOmPHvNnxzQEFQTirtOMEg2peXYgWZFMtoLaTHrvvduBEsyZHldUIawUTdu5vj/NFB1p/oR3I5KVv1DCbmHoteVkae7okP1RNk=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?N1VpUDNYSS9GeUc5TjJLQU9BTnpDcnY5cVVEcVVMa0w2WmM5ajV4MDVXR1VT?=
+ =?utf-8?B?elkvQ3hybWxCeGVyL3AwcE9xTkNYYVA3LzdvSHZodTBTNGFqaXpuNUQyaFlC?=
+ =?utf-8?B?VndoUG56azNJSmwxN0hvejlPdjlyeGdIT0tvcmdZZzNaSUtHN2tWNjNZRUVC?=
+ =?utf-8?B?RkxyQVVKVGdPK205bXBLUlpKRVFvMDZlRmh3U2dsZnZmb3orc1hiMVl2elYz?=
+ =?utf-8?B?UEVWVXNqdUwyTHJwT3BBV1hJdDVWQUJOMmhMK2RpcVYzWDkvTGVqaTFlTWRp?=
+ =?utf-8?B?Rk0xcTVQeHpaY08wZU5hMHlLR1RRSkZwNnhrdG1XaEFudlZESFBhaUYwdGNB?=
+ =?utf-8?B?RWVkcGVGZjJOSUZFNFRUeEZkRE9vdnpZTWc3R3Z4dWlkS2ptbXJ6R1NzWmVi?=
+ =?utf-8?B?V1pjQWdITGZHaklWTThhVjdzK3poL1V1QnZoQXN2OE8wV0EwdldOK0htamdp?=
+ =?utf-8?B?cm9WcW9ZSFFNUkRKTy9HbFNrQTdGYnYrbjl3SFFtNUdJVXpSLzlhWkc2ZWMv?=
+ =?utf-8?B?YWNlVk92TnZjWE9xaG94MVZrSDZMVEpwUFNkRGpJQWh6K3hEVWhnQ1FvUDJM?=
+ =?utf-8?B?ZTg0VVdrUm10emJuTEhnL1NMMWNJdlRya285cHJzSERsTHp5SFpiVXNkS3NG?=
+ =?utf-8?B?eGdQanlxQzN2Y05OaGRvV1ZjOU4xK0EyUDcxcFRYczVRMXBrdVFtZU9PYlhi?=
+ =?utf-8?B?STBMc3lqOGRoUzdVR3ZGSkN0RTRPV2hIZjZiSENJMUN5dHNRK2Y0OVJlQ3hL?=
+ =?utf-8?B?TXhuM0Z3UkN5SEJ3Q1pwaC94eFBSUDVrUXNoRFdwR0pwYUJHL3gwNFJBRWJn?=
+ =?utf-8?B?b0w1ajBucHlmUmdKaHNGc3pIcy9aaHZGNm5lUVByRlVQYm82WXdwRFpRbUVB?=
+ =?utf-8?B?ays4anN2VnZmL2hGaXZ3dWVLSDltdk5hOWlhd2dqczQ3Sk1TYVRUKy9MMjFT?=
+ =?utf-8?B?ekNydEFFaUtHMUJOVFdpK1lBUk9XeFJmcFN1alVRL3dINlBWTS9PYkV4Q3Q5?=
+ =?utf-8?B?Qmo5aTUvZmZFSjZqTkVoN0ZsQXk2VnZ6VmpPL2lzaU1LL0hOdWxKemhNd2tu?=
+ =?utf-8?B?Vjg5UjRwRStEOHd0L0lZNC9aTUZaTW8relJkMHdlVmxuNEE1cGxqR2ZieUJI?=
+ =?utf-8?B?WUl4MkthZDc5Y2ttanNseGNGOHVKaFFFNVRwUGMxRm9SSEpta0ZTenZwdWdV?=
+ =?utf-8?B?T1B1cW5ZbjVzSDJ4cmIxQVhENFQ1ZjBScW9RNHpBOXc3dWlhZ3pqNVowa2Mz?=
+ =?utf-8?B?a1dDS0YzZHlSYi9tYVhqbzVyWXdRcWxXNGFON3pDNEtPZjY5VE5Rem9od1Nl?=
+ =?utf-8?B?SlkzbWgwRlJONlloVlFQeTJCYVY2cTltR3BvYnVZVWhRaUloSCthblY4alNC?=
+ =?utf-8?B?dDRSczVDMTYvMTFLd1pET2ZiajA1RE5va1BSUDlaVU5xSmZhOHlyR2UvOHBt?=
+ =?utf-8?B?MkVvY09Pb2lvS3loVDdMRCtQNWtGWTBoeHdHZ3FTUEEza2hxL1RYYVpOelpL?=
+ =?utf-8?B?bE55OUh4dy9ndlg1Y2hwMFI0U2lUOWxoTzdiMVk4a3lJbVNtSXJETDdvQXdO?=
+ =?utf-8?B?NTRhekF3a1NNYVNqdWhyVDZNSnJQVloxTU42YUxGa0dtNU1kLzVXZVYrTHhO?=
+ =?utf-8?Q?Ucf3y9wU6iF7XP05wZf7r+6AtIsgKLuYkCC+uD5IUqPk=3D?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b62d2489-af08-44ab-34f1-08dbe704f0a9
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0332.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Nov 2023 00:34:21.1860
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0P287MB0489
 
-Hi Rob,
 
-On Thu, Nov 16, 2023 at 8:23=E2=80=AFPM Rob Herring <robh@kernel.org> wrote=
-:
-> On Tue, Nov 14, 2023 at 12:01:14AM +0000, Kuninori Morimoto wrote:
-> > Some board might use Linux and another OS in the same time. In such
-> > case, current Linux will stop necessary module clock when booting
-> > which is not used on Linux side, but is used on another OS side.
-> >
-> > To avoid such situation, renesas-cpg-mssr try to find
-> > status =3D "reserved" devices (A), and add CLK_IGNORE_UNUSED flag to it=
-s
-> > <&cgp CPG_MOD xxx> clock (B).
+On 2023/11/17 2:18, Rob Herring wrote:
+> On Mon, Nov 13, 2023 at 09:19:31PM +0800, Chen Wang wrote:
+>> From: Chen Wang <unicorn_wang@outlook.com>
+>>
+>> Add bindings for the clock generator on the SG2042 RISC-V SoC.
+>>
+>> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
+>> ---
+>>   .../clock/sophgo/sophgo,sg2042-clkgen.yaml    | 48 +++++++++++++++++++
+>>   1 file changed, 48 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/clock/sophgo/sophgo,sg2042-clkgen.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/sophgo/sophgo,sg2042-clkgen.yaml b/Documentation/devicetree/bindings/clock/sophgo/sophgo,sg2042-clkgen.yaml
+>> new file mode 100644
+>> index 000000000000..e372d5dca5b9
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/sophgo/sophgo,sg2042-clkgen.yaml
+>> @@ -0,0 +1,48 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/clock/sophgo/sophgo,sg2042-clkgen.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Sophgo SG2042 Clock Generator
+>> +
+>> +maintainers:
+>> +  - Chen Wang <unicorn_wang@outlook.com>
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: sophgo,sg2042-clkgen
+>> +
+>> +  system-ctrl:
+>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+>> +    items:
+>> +      - items:
+>> +          - description: phandle to System Register Controller syscon node.
+>> +    description:
+>> +      The phandle to System Register Controller syscon node.
+> Forget what I just said about syscon.yaml...
 >
-> See Stephen's presentation from Plumbers this week. The default behavior
-> for unused clocks may be changing soon.
+> You don't need a phandle here. Just make this node a child of the
+> syscon.
+Yes, making this node a child of syscon is a better solution and then we 
+need not a phandle here.
+> However, why do you need a child at all? Just add 'clocks' and
+> '#clock-cells' to the parent directly. You don't need a child node when
+> there's only 1 child node. Maybe there's other functions, but I have no
+> visibility into that. IOW, define what all the functions are so we can
+> provide better guidance.
 
-Thank you!
+The syscon is a module in SG2042 that provides multipile functions, and 
+clock control is just one of them. I will add more other functions's 
+nodes later under the syscon in coming patches, such as reset, pinctrl etc.
 
-ou mean "Make sync_state()/handoff work for the common clk
-framework"[1]? IIUIC, that presentation didn't cover the problem we are
-facing, except for the big "Kconfig for clk_ignore_unused=3Dtrue" hammer.
-
-> > Table 2.4: Values for status property
-> > https://github.com/devicetree-org/devicetree-specification/releases/dow=
-nload/v0.4/devicetree-specification-v0.4.pdf
-> >
-> > "reserved"
-> >       Indicates that the device is operational, but should not be
-> >       used. Typically this is used for devices that are controlled
-> >       by another software component, such as platform firmware.
-> >
-> > ex)
-> >       scif5: serial@e6f30000 {
-> >               ...
-> > (B)           clocks =3D <&cpg CPG_MOD 202>,
-> >                        <&cpg CPG_CORE R8A7795_CLK_S3D1>,
-> >                        <&scif_clk>;
-> >               ...
-> > (A)           status =3D "reserved";
-> >       };
 >
-> I have some reservations about whether a reserved node should be touched
-> at all by Linux. I suppose since it is platform specific, it's okay. I
-> don't think we could apply such behavior globally.
-
-That's an interesting comment, as the issue is that currently Linux
-does touch (resources belonging to) reserved nodes, and this patch
-would prevent doing that for module clock resources;-)
-
-The core issue is that Linux distinguishes only between two cases:
-  1. "device is used by Linux" (if a driver is available),
-     as indicated by 'status =3D "okay"' in DT, or
-  2. "device is unused by Linux".
-On a heterogenous system, the latter actually comprises two cases:
-  2a. "device is unused", or
-  2b. "device is used by another OS running on another CPU core".
-
-Looking for 'status =3D "reserved"' allows us to distinguish between 2a
-and 2b, and can prevent disabling clocks that are used by another OS.
-Probably we need a similar solution for power domains.
-
-Do you have a better or alternative suggestion?
-Thanks!
-
-[1] https://lpc.events/event/17/contributions/1432/
-    https://www.youtube.com/watch?v=3DNSSSIVQgsIk?t=3D164m
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+> Rob
