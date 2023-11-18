@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LZRZKrJ8"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D2ZhqhFy"
 Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3121510C6
-	for <linux-clk@vger.kernel.org>; Fri, 17 Nov 2023 16:06:11 -0800 (PST)
-Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-507e85ebf50so3371142e87.1
-        for <linux-clk@vger.kernel.org>; Fri, 17 Nov 2023 16:06:11 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA5EFE1
+	for <linux-clk@vger.kernel.org>; Fri, 17 Nov 2023 16:49:00 -0800 (PST)
+Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-50949b7d7ffso3684792e87.0
+        for <linux-clk@vger.kernel.org>; Fri, 17 Nov 2023 16:49:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700265969; x=1700870769; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1700268539; x=1700873339; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=BkuSxfBC4F+DNLrW68HIrLQZh2sF2jMkW+/1oAq+d0E=;
-        b=LZRZKrJ8BEjwR1LlXQQhr49mBNtLxYqUPbXDOS+b2mXWH9cJaAXWM2vWMrrDhTRTj7
-         bSRcRl7bbbmuCeAI5JbqXG+BxoMZHMX9oBRmujnUBhxGdmLC+ZTTNGr6bKEh37nPDf/Y
-         WQ+hcXlK+m2N5k9VLidoFBnxVNVsp+268v3AqQDi5ZMKTraNsriOaHljwKjn0OqXC9yz
-         TTdwqqsq8L+6ZjcMGilQIcFGoa5ph36oNc4lZAYsnHCxYkrzS5PE5HnRDBpF5sVi6Pdf
-         J+HNZgICbLM+tActzsrNUJsK67SwJjVLnguZ8tJela3fjuB5+nastQt3o6xsWoakqa3n
-         FT0A==
+        bh=yJXzr0OE2tNPiyGJ3aKzCqrkEywUIhP19xPsryf4etM=;
+        b=D2ZhqhFy2k22qdWyPiSYxVPXl16y1F+ceBW0mxtE8bDnXmcVP+N+H8eJ8kMe2ufOpG
+         ZR3Npqf/gPntk6c+4w59EEzkURBD6EsAOsAXI7tqqSZRj1vOokOZKWyzt29W3XeURR2v
+         VQ9qTrSgzLNeYoL/uZjxMJ/KRoM3ekeEdgCgDyqMm5FdpaCQKvAnwoKXu4MsTnN2nKBo
+         oCUN9+GF6tqwq5wQZrQqDYjbStSMhAPckpjolj7PJ+OFDBP2LP5/vVe+PplHYh1r3gCx
+         z/ssPJLwznalHA9sXUGyCpGJ+S2iwbdS32iraaA8aEnk2dCY+qOdmgBi9jbMxOFR+WGi
+         49Og==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700265969; x=1700870769;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1700268539; x=1700873339;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BkuSxfBC4F+DNLrW68HIrLQZh2sF2jMkW+/1oAq+d0E=;
-        b=kLLv2b5/6jQu6yRqFZuXsrzkGzU6N9PwtahSmti7DEyoxcpAvJEQT5cBQj0nRQBlza
-         TlpLQB9tHYAax+lcO7W2X6cDO7hpOfSZGc1gjZyL5Gc8Yqrt5dskaLgryaggBA5Cco3L
-         zTNUOXsA/oAGzpzdqO++77xibYsHsmGTOy+n5i4LEXto3pULQYATTpF8JQFf/YFSPT96
-         Py9DMMZH8WwJgBLIVk2T2CfQZnw5sruhHVZLH/Gb7gy22zU18DAvD4KFs8bG1tYyn/3+
-         b9ppuu3JnkQymDnroT1PoqhDwhK6ghaRlPizfD/RFQTGeMD403zpzAfLSi2MJ2mCT9+z
-         RcSg==
-X-Gm-Message-State: AOJu0Yyoamt+QDn8rOAq0d3geCQs8BvKE/udtER2bUmF51C6HXn3g9Ux
-	9w2i7Za4nE/VAmwCBAtiTlO1rA==
-X-Google-Smtp-Source: AGHT+IF3EYLf/B1NjPvHxo4zxynXWYMW6ljJWIj9L+81F5pUXD3r1olmF3CI8NaR46EVAodUBTG9AQ==
-X-Received: by 2002:a05:6512:480f:b0:509:489f:d84e with SMTP id eo15-20020a056512480f00b00509489fd84emr845440lfb.37.1700265969447;
-        Fri, 17 Nov 2023 16:06:09 -0800 (PST)
+        bh=yJXzr0OE2tNPiyGJ3aKzCqrkEywUIhP19xPsryf4etM=;
+        b=Q45ON1iPGFE4CrDGrB6KPkXcAsDTx7/OIqcLNiIl89QcmfKC43pkK1bQ/N21Xn49NY
+         KO4fdaaA+fzU9bjZueobV/sj7jWU2PF8uCzINPvXfGny5xJFxW1O42ruBxtO4xV4pnGs
+         9W54fyyRMkD+1BhY0ME9d/LO4OgmC3B5d02rWJnHs0A8FqALoBiwrvLgzCCgXPP4NxHi
+         DRtB2qdvvu9abx9BOPf64K5K8xewK1RMkbNa2RrzTqvxHCG7n74jH2+mZ7TiyRLQQWA8
+         cy26i98d2bq6i7cvN8BJa4rtzl7URNrXnbvuzHl5KV2XQv8MDuNCPWxZkTolLx7wAmQU
+         GKxg==
+X-Gm-Message-State: AOJu0Yy3vnLN0yyABQmmY0KqAMdlNKYZEhK45VJngLPaf+tmlcLvrNyq
+	LXjklWX5UgJdoMH0bNV3PiqtLQ==
+X-Google-Smtp-Source: AGHT+IGB4OCk+u4eoWOqFWAYCeveslUtHEDKr++sqaTQ5SRyj4P3pZsb6CsDwkGfGDTQRgYjxxNqBg==
+X-Received: by 2002:a19:7616:0:b0:50a:a2cb:cd72 with SMTP id c22-20020a197616000000b0050aa2cbcd72mr719279lff.68.1700268538923;
+        Fri, 17 Nov 2023 16:48:58 -0800 (PST)
 Received: from [192.168.201.100] (178235187040.dynamic-4-waw-k-2-3-0.vectranet.pl. [178.235.187.40])
-        by smtp.gmail.com with ESMTPSA id l19-20020aa7c313000000b0052ffc2e82f1sm1190361edq.4.2023.11.17.16.06.07
+        by smtp.gmail.com with ESMTPSA id y2-20020a056402134200b0054873a656d0sm120563edw.45.2023.11.17.16.48.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Nov 2023 16:06:09 -0800 (PST)
-Message-ID: <2e0d2c55-fb2f-4903-a555-f51019942c6e@linaro.org>
-Date: Sat, 18 Nov 2023 01:06:06 +0100
+        Fri, 17 Nov 2023 16:48:58 -0800 (PST)
+Message-ID: <64a9d171-377c-48df-bdcd-1ac6d13c2da6@linaro.org>
+Date: Sat, 18 Nov 2023 01:48:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,22 +47,16 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 2/4] clk: qcom: Add Global Clock controller (GCC)
- driver for X1E80100
+Subject: Re: [PATCH] clk: qcom: gcc-msm8953: fix stuck gcc_usb30_master_clk
 Content-Language: en-US
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Sibi Sankar <quic_sibis@quicinc.com>, andersson@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: agross@kernel.org, conor+dt@kernel.org, quic_tdas@quicinc.com,
- quic_rjendra@quicinc.com, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, neil.armstrong@linaro.org,
- abel.vesa@linaro.org, quic_tsoni@quicinc.com
-References: <20231117092737.28362-1-quic_sibis@quicinc.com>
- <20231117092737.28362-3-quic_sibis@quicinc.com>
- <ec9d03f7-7158-4309-9a04-b08c69b89f39@linaro.org>
+To: Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
+ =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20231002170021.192740-1-trabarni@gmail.com>
+ <0eebfc14-dbcd-4987-9e94-ea5630b6c268@linaro.org>
+ <07937184481af74c65108bae26526605.sboyd@kernel.org>
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
@@ -99,23 +93,64 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <ec9d03f7-7158-4309-9a04-b08c69b89f39@linaro.org>
+In-Reply-To: <07937184481af74c65108bae26526605.sboyd@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 17.11.2023 21:50, Bryan O'Donoghue wrote:
-> On 17/11/2023 09:27, Sibi Sankar wrote:
->> * Use shared ops in the x1e80100 gcc driver [Bryan].
+On 24.10.2023 04:59, Stephen Boyd wrote:
+> Quoting Konrad Dybcio (2023-10-06 16:50:18)
+>> On 2.10.2023 19:00, Barnabás Czémán wrote:
+>>> According to downstream dwc3-msm source this clock has FSM dependency on
+>>> gcc_pcnoc_usb30_clk so enabling it would fail if latter isn't enabled.
+>>> This patch add works around this issue by changing parent of
+>>> gcc_usb30_master_clk to gcc_pcnoc_usb30_clk. This is acceptable because
+>>> both clocks have same parent and are branches/gates.
+>>>
+>>> Signed-off-by: Barnabás Czémán <trabarni@gmail.com>
+>>> ---
+>> "meh"
+>>
+>> There are multiple cases, especially with qcom, where there are some
+>> magic "dependencies" without parent-child relationship. The common
+>> clock framework doesn't currently have any good way to handle this,
+>> other than some mind gymnastics like you had to do here with matching
+>> them against a common parent/ancestor..
+>>
+>> Stephen, what do you say?
+>>
 > 
-> This looks better to me now / more consistent with what we have in sc8280xp - where we do try to hit suspend and => retention/parking matters.
-Parking the clock is separate from putting the system to sleep.
+> You can't change the parent to be not the actual parent. The consumer of
+> the branch probably wants to call clk_set_rate() on the branch and have
+> it propagate up to the parent to set the actual rate. Can the axi clk
+> simply be left enabled all the time? That seems simpler. Otherwise we
+> probably need to leave the axi clk control to the interconnect driver
+> and make sure drivers enable interconnects before enabling this branch.
+Yeah I'm almost inclined to think adding even more ifs to the icc driver
+will consume more power than just leaving the AXI hanging..
 
-IIUC we usually use shared ops on clocks that may have different users
-(e.g. not only controlled by Linux) and/or that are crucial to the
-functioning of hardware (like AXI clocks, which if gated would make
-the system crash on any access attempt, from any subsystem, unless
-turned on beforehand)
+> 
+> When things start to get this tangled I tend to think that we need to
+> remove control of the clk from the general drivers and put the logic to
+> control interconnects and clks into some SoC glue driver and expose a
+> single interface, like genpd power_on/power_off so that general drivers
+> can't get the sequence of steps wrong. Instead all they can do is "power
+> on" their device, and the SoC glue driver can do the proper sequence of
+> framework calls to power up the device.
+That too, given the structure of qcom SoCs, it should almost look like:
 
-Perhaps Dmitry can use some clearer wording than me..
+xyznoc-bus {
+	compatible = "simple-pm-bus";
+	clocks = <&gcc xyznoc_ahb>,
+		 <&gcc xyznoc_axi>;
+	...
+
+	xyznoc-node@abcd {};
+}
+
+etc.
+
+I've actually discussed this with Bjorn, but we came to a conclusion
+that it's not trivial to determine which peripheral lives on which NoC
++ many of them seem to sorta overlap more than one..
 
 Konrad
