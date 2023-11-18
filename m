@@ -1,134 +1,108 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QnWM9V1J"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41DD710CF;
-	Sat, 18 Nov 2023 04:40:46 -0800 (PST)
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AIC99Zu016888;
-	Sat, 18 Nov 2023 12:40:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=qcppdkim1;
- bh=SBpOQrbp7XlDO8T1tC3fI7fAzNuLm6Fu1U8IgPaTQ4w=;
- b=QnWM9V1JPb5YWCq2JxdpVbeoSYUjcnQ+n7fjzCP6rK5SVWNBY1V4fHyUp+1ymJipTdlE
- iGZvU6Pxga1+7j1btSYZ2+f0yM3Vd1e1viV28S+oT+lxEPf6aGMacuv60kkbw0Mu7Utz
- p3hcAzMx4YmzFYzO5r5U+eHa904tgYc1w6l+kFkX5+LYwxJIWB6AktAeDP5rWpRUKdrx
- LEMp805Hqo12VgelzNf0hPPRmHCzGBnvmDZ2DK8u5+YUwd36Ay+cCVqCENhDuvADGkfb
- zs0mkydMQc5UBjwKnb/cY3DaTKKnwI5fFGNCfE2tMGeKP6odTZVwEDDwKbcziJbieR/7 uQ== 
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3uem9e8jy7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 18 Nov 2023 12:40:42 +0000
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3AICeeH1005596
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 18 Nov 2023 12:40:41 GMT
-Received: from hu-skakitap-hyd.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Sat, 18 Nov 2023 04:40:36 -0800
-From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-To: Andy Gross <agross@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        "Satya
- Priya Kakitapalli" <quic_skakitap@quicinc.com>
-Subject: [PATCH V2 4/4] clk: qcom: videocc-sm8150: Add runtime PM support
-Date: Sat, 18 Nov 2023 18:09:44 +0530
-Message-ID: <20231118123944.2202630-5-quic_skakitap@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20231118123944.2202630-1-quic_skakitap@quicinc.com>
-References: <20231118123944.2202630-1-quic_skakitap@quicinc.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dmTRORBV"
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB88BE5;
+	Sat, 18 Nov 2023 14:21:18 -0800 (PST)
+Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-9becde9ea7bso845754066b.0;
+        Sat, 18 Nov 2023 14:21:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1700346076; x=1700950876; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B119josK+jVs2ecxhPEL/ZG53Ca65uQoC2aDhpf/ABs=;
+        b=dmTRORBVfSzQhGzgDY+x2Ja8fTCSstsx2GUW6Tm6hhIu7bgUugai3CCn+sR900WK3M
+         jw1A6sbHqywLfN/Ld1FvZfw+UIhe/MfDG5UoR/5YrlT7i7bvaIYzaIdjozU2gMH1H7/w
+         PmHJkoJdsow1OzoQizdomp2aE+v9Oks8D/EOf3k3WS5GdvRsoT6in1F+xoc8TOMcJPBQ
+         M2MhIQzBFtl+SS7yCvbQfy4BuVzAolhSmW4zQGuK1/en7C0RiFj5fBz8+pMmEf4W0f3b
+         YtDdxzLP1hpvDQBO0CzdUxLDLrXslKl8sXGT7m3iBfL3Z28fRRoUVM+cIXtGucnjM78F
+         99BQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700346076; x=1700950876;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B119josK+jVs2ecxhPEL/ZG53Ca65uQoC2aDhpf/ABs=;
+        b=mel8Xjk51dE4uWzKuR4iagZBIX4howpnNF40hCKdPnEbN4UeJ6GQNsJ4IKdyDSJxOK
+         Nd1ai+MwFWiSvBaiQ6oVImcOoR4lZ29tiqgX6C3T9qILcSQhl9RYz+P187MiFi/9PdT5
+         SK+Xi+USqFhov2K928K8TiKPJ9pYXUUjUKim4WvR0cXBJdHBg55x2xzrXw5bkaNos6q1
+         WBn7KXZJFgoGnczbw5g1QhcZWSwpQrPtIM4BUgu5nsf2d1XrKVRyCS5OwUxA4Jr3m37T
+         km4PYbM0bY5ztH2//3Hu5tVd80FL99NLiz2KwBFjWF3E+jItS/KqGX7lIB31IDj1eLGm
+         olLg==
+X-Gm-Message-State: AOJu0Yx5BnYL/LCzyIju2AjgA1dFA6+xH6V6DVqjVP++fTEspnfyWTT4
+	TCyO6Z2q55OoaPv3iXfyVAU=
+X-Google-Smtp-Source: AGHT+IHfkQkjALlAHjgb+TbRxpaKzlxrqELSYFI1FqqjNE4iR+HkNWNz19BbiIKxjSub4XKj0ulFtQ==
+X-Received: by 2002:a17:906:10d9:b0:9ef:b466:abe0 with SMTP id v25-20020a17090610d900b009efb466abe0mr3120554ejv.8.1700346076193;
+        Sat, 18 Nov 2023 14:21:16 -0800 (PST)
+Received: from jernej-laptop.localnet (82-149-12-148.dynamic.telemach.net. [82.149.12.148])
+        by smtp.gmail.com with ESMTPSA id u1-20020a170906b10100b009b9977867fbsm2286388ejy.109.2023.11.18.14.21.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 18 Nov 2023 14:21:15 -0800 (PST)
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ Samuel Holland <samuel@sholland.org>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Colin Ian King <colin.i.king@gmail.com>
+Cc: kernel-janitors@vger.kernel.org
+Subject:
+ Re: [PATCH][next] clk: sunxi-ng: nkm: remove redundant initialization of
+ tmp_parent
+Date: Sat, 18 Nov 2023 23:21:14 +0100
+Message-ID: <13391015.uLZWGnKmhe@jernej-laptop>
+In-Reply-To: <20231023133502.666559-1-colin.i.king@gmail.com>
+References: <20231023133502.666559-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: qs6mAs21Uh2vJWaz5MJOdMNxICpF2ME8
-X-Proofpoint-GUID: qs6mAs21Uh2vJWaz5MJOdMNxICpF2ME8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-11-18_11,2023-11-17_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxscore=0
- clxscore=1015 priorityscore=1501 impostorscore=0 mlxlogscore=999
- lowpriorityscore=0 bulkscore=0 phishscore=0 suspectscore=0 adultscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311060000 definitions=main-2311180094
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Add runtime PM support to ensure the supply rails are enabled
-when necessary.
+Dne ponedeljek, 23. oktober 2023 ob 15:35:02 CET je Colin Ian King napisal(a):
+> Variable tmp_parent is being ininitialized with a value that is never
+> read, the initialization is redundant and can be removed. Move the
+> initialization and move the variable to the inner loop scope.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
----
-Changes since v1:
- - None.
+Applied, thanks!
 
- drivers/clk/qcom/videocc-sm8150.c | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
+Best regards,
+Jernej
 
-diff --git a/drivers/clk/qcom/videocc-sm8150.c b/drivers/clk/qcom/videocc-sm8150.c
-index 52a9a453a143..b57df5ff96c4 100644
---- a/drivers/clk/qcom/videocc-sm8150.c
-+++ b/drivers/clk/qcom/videocc-sm8150.c
-@@ -6,6 +6,7 @@
- #include <linux/clk-provider.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
- #include <linux/regmap.h>
- 
- #include <dt-bindings/clock/qcom,videocc-sm8150.h>
-@@ -240,17 +241,32 @@ MODULE_DEVICE_TABLE(of, video_cc_sm8150_match_table);
- static int video_cc_sm8150_probe(struct platform_device *pdev)
- {
- 	struct regmap *regmap;
-+	int ret;
-+
-+	ret = devm_pm_runtime_enable(&pdev->dev);
-+	if (ret)
-+		return ret;
-+
-+	ret = pm_runtime_resume_and_get(&pdev->dev);
-+	if (ret)
-+		return ret;
- 
- 	regmap = qcom_cc_map(pdev, &video_cc_sm8150_desc);
--	if (IS_ERR(regmap))
-+	if (IS_ERR(regmap)) {
-+		pm_runtime_put(&pdev->dev);
- 		return PTR_ERR(regmap);
-+	}
- 
- 	clk_trion_pll_configure(&video_pll0, regmap, &video_pll0_config);
- 
- 	/* Keep VIDEO_CC_XO_CLK ALWAYS-ON */
- 	regmap_update_bits(regmap, 0x984, 0x1, 0x1);
- 
--	return qcom_cc_really_probe(pdev, &video_cc_sm8150_desc, regmap);
-+	ret = qcom_cc_really_probe(pdev, &video_cc_sm8150_desc, regmap);
-+
-+	pm_runtime_put(&pdev->dev);
-+
-+	return ret;
- }
- 
- static struct platform_driver video_cc_sm8150_driver = {
--- 
-2.25.1
+> ---
+>  drivers/clk/sunxi-ng/ccu_nkm.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
+> index eed64547ad42..853f84398e2b 100644
+> --- a/drivers/clk/sunxi-ng/ccu_nkm.c
+> +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+> @@ -21,17 +21,16 @@ static unsigned long ccu_nkm_find_best_with_parent_adj(struct ccu_common *common
+>  						       unsigned long *parent, unsigned long rate,
+>  						       struct _ccu_nkm *nkm)
+>  {
+> -	unsigned long best_rate = 0, best_parent_rate = *parent, tmp_parent = *parent;
+> +	unsigned long best_rate = 0, best_parent_rate = *parent;
+>  	unsigned long best_n = 0, best_k = 0, best_m = 0;
+>  	unsigned long _n, _k, _m;
+>  
+>  	for (_k = nkm->min_k; _k <= nkm->max_k; _k++) {
+>  		for (_n = nkm->min_n; _n <= nkm->max_n; _n++) {
+>  			for (_m = nkm->min_m; _m <= nkm->max_m; _m++) {
+> -				unsigned long tmp_rate;
+> +				unsigned long tmp_rate, tmp_parent;
+>  
+>  				tmp_parent = clk_hw_round_rate(parent_hw, rate * _m / (_n * _k));
+> -
+>  				tmp_rate = tmp_parent * _n * _k / _m;
+>  
+>  				if (ccu_is_better_rate(common, rate, tmp_rate, best_rate) ||
+> 
+
+
+
 
