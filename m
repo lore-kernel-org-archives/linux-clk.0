@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cxymiNZK"
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2319BD6C
-	for <linux-clk@vger.kernel.org>; Fri, 17 Nov 2023 12:51:00 -0800 (PST)
-Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-4084e49a5e5so21041355e9.3
-        for <linux-clk@vger.kernel.org>; Fri, 17 Nov 2023 12:51:00 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cbaxbOvs"
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E191E1AD
+	for <linux-clk@vger.kernel.org>; Fri, 17 Nov 2023 16:01:21 -0800 (PST)
+Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-509c61e0cf4so3654890e87.2
+        for <linux-clk@vger.kernel.org>; Fri, 17 Nov 2023 16:01:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700254258; x=1700859058; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1700265680; x=1700870480; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=3Cfb9CpRJGax+VMCUnz4cwDEpCdrdsrUj8kZuGAr5ZY=;
-        b=cxymiNZKAxhdcmdx5RX7VH/snGLgCNEeorBQnO9tnizwKVQE2SXJljutN7N43zElas
-         HyQJ7684IF0aZC5fZMRCqEF/IIahRnIHfzxvebQzjzEWMxKmEYa4Gl85jzE8l73Caezy
-         jsexBtZD2Cvu3yzv3u6iJegtwdFLqIHpxFgzHdP1Q+bSHaIi8GfX+XRupMhFkWVIqu+u
-         rGpQvhivx4Ek9RxWsVKyM+dF25cllZ5Wv0hCvlcKamiQL4lI7kTRCClg4iY3L588fgCJ
-         nDevZc0uio7RAbo0KDVYnj9UFy7dVEgak0M6kPZB/bYZfyAy7Is90k0B9ACAC4FdGdFe
-         wSmA==
+        bh=TmdYVnabDczkPmlEpci5lqKCRm4aGlo0N/NrM1uCFSA=;
+        b=cbaxbOvsjKHEFf7v4C3FmwfsSPE3fe7N6eekAqbQVSBl19JlUQ5+hR9GhlCA+WnjdY
+         GInsGTU2V3Lez4O+2sWIZYKJWvQuN6Xo4yVzbfSGBKcqDANV8D99ryHozygDci3Xtz2N
+         JeTg5cn0K5IaDJQJ7GQerJfrEY4pqKSyTDc+vDrp0TIjUkOZPcW8/zJwrUxcYIMl6SJF
+         9c3+Vf31jIj5VquCdMGsIDK5c07tsTDxEoeUIq8OESnStS/Ue5kkQML1CnotE9EaL5NF
+         OBTW4nWOkCW6pWgHl93uItApBIEa7xBbPwRr8jO/r+hkpZalNzUqivTR/9QumNOuoeUY
+         QP4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700254258; x=1700859058;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1700265680; x=1700870480;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3Cfb9CpRJGax+VMCUnz4cwDEpCdrdsrUj8kZuGAr5ZY=;
-        b=nOh08TxA+jrQo9geVd9GH+5A7fcn7icPE5NANBb98GDp7Sej2hpPhncuPfQb8EugNS
-         owjUUHLLMeV3E0JVdQDSkvL+Bun0+CV37+w4g6G70pqFR+L4+7XQ4POHU/jq8IYqpSyI
-         INc7LUHL06w1gnGRAZguBzbfTQZAZuC0SFV10JKJtP/dHYZNKVDO2RwXz1eZM3KQP0Q1
-         F/Sg+jNiY/OF0OE9TF/egOT0jSCYod5FS/S4+KtSyzOxrA/ZepWe3Sa8pofdbxu2R4ur
-         04eoG1zWczR3zul6QHYMa4iHs8vZkXpD62onbgaP4ctmJywLELBeM0wsLVPGKOs5wFcz
-         9NaQ==
-X-Gm-Message-State: AOJu0YypLp6WwwneM0fspi/ssP7p01oZw/DFqljvTWr376GtmdIgY1Im
-	jdB06RA2Ms2t0b5IlrX8GZ+Okg==
-X-Google-Smtp-Source: AGHT+IFjAiXluizJ9xFU9rHxpbwZ5V6ciMuUpG4zoA9i1A1H/vCkh74tzaHFHMJWi4Ib6mtXQ4tgSw==
-X-Received: by 2002:a05:600c:45ca:b0:405:499a:7fc1 with SMTP id s10-20020a05600c45ca00b00405499a7fc1mr203435wmo.40.1700254257945;
-        Fri, 17 Nov 2023 12:50:57 -0800 (PST)
-Received: from [192.168.100.102] ([37.228.218.3])
-        by smtp.gmail.com with ESMTPSA id je14-20020a05600c1f8e00b0040596352951sm8679047wmb.5.2023.11.17.12.50.56
+        bh=TmdYVnabDczkPmlEpci5lqKCRm4aGlo0N/NrM1uCFSA=;
+        b=g7vYS61P/e1eX/cr0LVNSMw8S65PJsbMd9IvTBYnIlwstplWt9urXHlNgjzfaSt2FC
+         ABFGJkYW1Xe0S6z9W/I/8eqz4pXmKhMZ+IwVF9PEMjLel8oFsrO47BEG2+qLPNJl/DAK
+         os6HdvKf++KkPySOHRpkcvJDt04X6uvf01GKznO/9pgDttLqgeCyxGM3bQJS4xj6A08W
+         suPsvfQH3wRJJAJQnwYcZTzaI1aGW8a3QHuY2QFL6iO8vPN63p/DvYs6343edbeMuJDu
+         X0wFcVXg8YvayjsIANh3xmTAMoyrCdBFn0K2zc9xrfQRJIGlYBrhQUL8GoZ5hZgbw3va
+         p6nw==
+X-Gm-Message-State: AOJu0YxFXc4+LqGMV9Y57OvDG2GvsmUeZhOriTxZokDmCTRqJB01FpCh
+	CFs1q/KHcNUUAf5efuedUM+nIQ==
+X-Google-Smtp-Source: AGHT+IG/gsUbmvwkJwzl1LYjmIcDG0B+kqiWMJxFy24Yv4JY8EI8QJKCJhTPM7igScF2UPvZaGl4Hw==
+X-Received: by 2002:ac2:532f:0:b0:50a:a337:1f42 with SMTP id f15-20020ac2532f000000b0050aa3371f42mr768384lfh.36.1700265680109;
+        Fri, 17 Nov 2023 16:01:20 -0800 (PST)
+Received: from [192.168.201.100] (178235187040.dynamic-4-waw-k-2-3-0.vectranet.pl. [178.235.187.40])
+        by smtp.gmail.com with ESMTPSA id q11-20020ac2514b000000b004fe2f085d5csm390317lfd.299.2023.11.17.16.01.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Nov 2023 12:50:57 -0800 (PST)
-Message-ID: <ec9d03f7-7158-4309-9a04-b08c69b89f39@linaro.org>
-Date: Fri, 17 Nov 2023 20:50:56 +0000
+        Fri, 17 Nov 2023 16:01:19 -0800 (PST)
+Message-ID: <abf7da98-6213-42d8-a0ef-422ad111c6a9@linaro.org>
+Date: Sat, 18 Nov 2023 01:01:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,8 +51,8 @@ Subject: Re: [PATCH V2 2/4] clk: qcom: Add Global Clock controller (GCC)
  driver for X1E80100
 Content-Language: en-US
 To: Sibi Sankar <quic_sibis@quicinc.com>, andersson@kernel.org,
- konrad.dybcio@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
- robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org
+ mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org
 Cc: agross@kernel.org, conor+dt@kernel.org, quic_tdas@quicinc.com,
  quic_rjendra@quicinc.com, linux-arm-msm@vger.kernel.org,
  linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
@@ -60,19 +60,58 @@ Cc: agross@kernel.org, conor+dt@kernel.org, quic_tdas@quicinc.com,
  abel.vesa@linaro.org, quic_tsoni@quicinc.com
 References: <20231117092737.28362-1-quic_sibis@quicinc.com>
  <20231117092737.28362-3-quic_sibis@quicinc.com>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
 In-Reply-To: <20231117092737.28362-3-quic_sibis@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 17/11/2023 09:27, Sibi Sankar wrote:
-> * Use shared ops in the x1e80100 gcc driver [Bryan].
+On 17.11.2023 10:27, Sibi Sankar wrote:
+> From: Rajendra Nayak <quic_rjendra@quicinc.com>
+> 
+> Add support for the global clock controller found on X1E80100
+> based devices.
+> 
+> Co-developed-by: Abel Vesa <abel.vesa@linaro.org>
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
+> Co-developed-by: Sibi Sankar <quic_sibis@quicinc.com>
+> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+> ---
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-This looks better to me now / more consistent with what we have in 
-sc8280xp - where we do try to hit suspend and => retention/parking matters.
-
-Could you give a bit more detail on why SDCC* doesn't warrant parking on 
-X1E80100 as on SC8280XP though ?
-
----
-bod
+Konrad
