@@ -1,108 +1,136 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dmTRORBV"
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB88BE5;
-	Sat, 18 Nov 2023 14:21:18 -0800 (PST)
-Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-9becde9ea7bso845754066b.0;
-        Sat, 18 Nov 2023 14:21:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1700346076; x=1700950876; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B119josK+jVs2ecxhPEL/ZG53Ca65uQoC2aDhpf/ABs=;
-        b=dmTRORBVfSzQhGzgDY+x2Ja8fTCSstsx2GUW6Tm6hhIu7bgUugai3CCn+sR900WK3M
-         jw1A6sbHqywLfN/Ld1FvZfw+UIhe/MfDG5UoR/5YrlT7i7bvaIYzaIdjozU2gMH1H7/w
-         PmHJkoJdsow1OzoQizdomp2aE+v9Oks8D/EOf3k3WS5GdvRsoT6in1F+xoc8TOMcJPBQ
-         M2MhIQzBFtl+SS7yCvbQfy4BuVzAolhSmW4zQGuK1/en7C0RiFj5fBz8+pMmEf4W0f3b
-         YtDdxzLP1hpvDQBO0CzdUxLDLrXslKl8sXGT7m3iBfL3Z28fRRoUVM+cIXtGucnjM78F
-         99BQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700346076; x=1700950876;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=B119josK+jVs2ecxhPEL/ZG53Ca65uQoC2aDhpf/ABs=;
-        b=mel8Xjk51dE4uWzKuR4iagZBIX4howpnNF40hCKdPnEbN4UeJ6GQNsJ4IKdyDSJxOK
-         Nd1ai+MwFWiSvBaiQ6oVImcOoR4lZ29tiqgX6C3T9qILcSQhl9RYz+P187MiFi/9PdT5
-         SK+Xi+USqFhov2K928K8TiKPJ9pYXUUjUKim4WvR0cXBJdHBg55x2xzrXw5bkaNos6q1
-         WBn7KXZJFgoGnczbw5g1QhcZWSwpQrPtIM4BUgu5nsf2d1XrKVRyCS5OwUxA4Jr3m37T
-         km4PYbM0bY5ztH2//3Hu5tVd80FL99NLiz2KwBFjWF3E+jItS/KqGX7lIB31IDj1eLGm
-         olLg==
-X-Gm-Message-State: AOJu0Yx5BnYL/LCzyIju2AjgA1dFA6+xH6V6DVqjVP++fTEspnfyWTT4
-	TCyO6Z2q55OoaPv3iXfyVAU=
-X-Google-Smtp-Source: AGHT+IHfkQkjALlAHjgb+TbRxpaKzlxrqELSYFI1FqqjNE4iR+HkNWNz19BbiIKxjSub4XKj0ulFtQ==
-X-Received: by 2002:a17:906:10d9:b0:9ef:b466:abe0 with SMTP id v25-20020a17090610d900b009efb466abe0mr3120554ejv.8.1700346076193;
-        Sat, 18 Nov 2023 14:21:16 -0800 (PST)
-Received: from jernej-laptop.localnet (82-149-12-148.dynamic.telemach.net. [82.149.12.148])
-        by smtp.gmail.com with ESMTPSA id u1-20020a170906b10100b009b9977867fbsm2286388ejy.109.2023.11.18.14.21.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 Nov 2023 14:21:15 -0800 (PST)
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Samuel Holland <samuel@sholland.org>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org, Colin Ian King <colin.i.king@gmail.com>
-Cc: kernel-janitors@vger.kernel.org
-Subject:
- Re: [PATCH][next] clk: sunxi-ng: nkm: remove redundant initialization of
- tmp_parent
-Date: Sat, 18 Nov 2023 23:21:14 +0100
-Message-ID: <13391015.uLZWGnKmhe@jernej-laptop>
-In-Reply-To: <20231023133502.666559-1-colin.i.king@gmail.com>
-References: <20231023133502.666559-1-colin.i.king@gmail.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X6m0PWVD"
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.126])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 645B3C4;
+	Sun, 19 Nov 2023 03:12:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1700392364; x=1731928364;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=l6MB7KR6Wqu2v79BBJpxIM6CND7+cD3U13FwZlh4YFU=;
+  b=X6m0PWVDLhkbRuM3U2CSB76y42cxK8lwbr1DyEpRryEAIN9xaAQA9kSJ
+   Gj1NzlHWZMyXCu/p7+tB7zOyNzMOUbeGCG8AIILEkRKj8C6c+9u8ua78o
+   7PtrHBA8vHEwO0i3b45kHmbfA8pjQnS0FBrGBLyskoHRSTU3epPEUPOE0
+   DbvayQEByVdeqG23Oul10GyDlguNF8RIPnV/htEwUpswLELJjE122Oq+B
+   OSm8hlVeH2hnrwi7QCD2eyvgQfR/7gJ4aAXly5tWt6K4I6XtdKhdVxgxD
+   O6XU2ASPo9d2YHYDIawfmPcfyDn2ZC4H9IlP3PlJHvLJIUPWlg0YB1/gE
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10898"; a="376523988"
+X-IronPort-AV: E=Sophos;i="6.04,210,1695711600"; 
+   d="scan'208";a="376523988"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Nov 2023 03:12:43 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10898"; a="769628656"
+X-IronPort-AV: E=Sophos;i="6.04,210,1695711600"; 
+   d="scan'208";a="769628656"
+Received: from lkp-server02.sh.intel.com (HELO b8de5498638e) ([10.239.97.151])
+  by fmsmga007.fm.intel.com with ESMTP; 19 Nov 2023 03:12:39 -0800
+Received: from kbuild by b8de5498638e with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1r4fjB-00051h-08;
+	Sun, 19 Nov 2023 11:12:37 +0000
+Date: Sun, 19 Nov 2023 19:11:43 +0800
+From: kernel test robot <lkp@intel.com>
+To: Chen Wang <unicornxw@gmail.com>, aou@eecs.berkeley.edu,
+	chao.wei@sophgo.com, conor@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+	palmer@dabbelt.com, paul.walmsley@sifive.com,
+	richardcochran@gmail.com, robh+dt@kernel.org, sboyd@kernel.org,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Chen Wang <unicorn_wang@outlook.com>
+Subject: Re: [PATCH 4/5] clk: sophgo: Add SG2042 clock generator driver
+Message-ID: <202311191920.5xIUxW5n-lkp@intel.com>
+References: <1000e8d546514973364478271564356352a46ed5.1699879741.git.unicorn_wang@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1000e8d546514973364478271564356352a46ed5.1699879741.git.unicorn_wang@outlook.com>
 
-Dne ponedeljek, 23. oktober 2023 ob 15:35:02 CET je Colin Ian King napisal(a):
-> Variable tmp_parent is being ininitialized with a value that is never
-> read, the initialization is redundant and can be removed. Move the
-> initialization and move the variable to the inner loop scope.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Hi Chen,
 
-Applied, thanks!
+kernel test robot noticed the following build warnings:
 
-Best regards,
-Jernej
+[auto build test WARNING on b85ea95d086471afb4ad062012a4d73cd328fa86]
 
-> ---
->  drivers/clk/sunxi-ng/ccu_nkm.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
-> index eed64547ad42..853f84398e2b 100644
-> --- a/drivers/clk/sunxi-ng/ccu_nkm.c
-> +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
-> @@ -21,17 +21,16 @@ static unsigned long ccu_nkm_find_best_with_parent_adj(struct ccu_common *common
->  						       unsigned long *parent, unsigned long rate,
->  						       struct _ccu_nkm *nkm)
->  {
-> -	unsigned long best_rate = 0, best_parent_rate = *parent, tmp_parent = *parent;
-> +	unsigned long best_rate = 0, best_parent_rate = *parent;
->  	unsigned long best_n = 0, best_k = 0, best_m = 0;
->  	unsigned long _n, _k, _m;
->  
->  	for (_k = nkm->min_k; _k <= nkm->max_k; _k++) {
->  		for (_n = nkm->min_n; _n <= nkm->max_n; _n++) {
->  			for (_m = nkm->min_m; _m <= nkm->max_m; _m++) {
-> -				unsigned long tmp_rate;
-> +				unsigned long tmp_rate, tmp_parent;
->  
->  				tmp_parent = clk_hw_round_rate(parent_hw, rate * _m / (_n * _k));
-> -
->  				tmp_rate = tmp_parent * _n * _k / _m;
->  
->  				if (ccu_is_better_rate(common, rate, tmp_rate, best_rate) ||
-> 
+url:    https://github.com/intel-lab-lkp/linux/commits/Chen-Wang/dt-bindings-clock-sophgo-Add-SG2042-clock-definitions/20231113-212401
+base:   b85ea95d086471afb4ad062012a4d73cd328fa86
+patch link:    https://lore.kernel.org/r/1000e8d546514973364478271564356352a46ed5.1699879741.git.unicorn_wang%40outlook.com
+patch subject: [PATCH 4/5] clk: sophgo: Add SG2042 clock generator driver
+config: riscv-rv32_defconfig (https://download.01.org/0day-ci/archive/20231119/202311191920.5xIUxW5n-lkp@intel.com/config)
+compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project.git 4a5ac14ee968ff0ad5d2cc1ffa0299048db4c88a)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231119/202311191920.5xIUxW5n-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202311191920.5xIUxW5n-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/clk/sophgo/clk-sophgo-sg2042.c:217:44: warning: overflow in expression; result is -1094967296 with type 'long' [-Winteger-overflow]
+     217 |                         if (foutvco < PLL_FREQ_MIN || foutvco > PLL_FREQ_MAX
+         |                                                                 ^
+   drivers/clk/sophgo/clk-sophgo-sg2042.c:25:28: note: expanded from macro 'PLL_FREQ_MAX'
+      25 | #define PLL_FREQ_MAX (3200 * MHZ)
+         |                            ^
+   1 warning generated.
 
 
+vim +/long +217 drivers/clk/sophgo/clk-sophgo-sg2042.c
 
+   201	
+   202	static int __sg2042_get_pll_ctl_setting(
+   203		struct sg2042_pll_ctrl *best,
+   204		unsigned long req_rate,
+   205		unsigned long parent_rate)
+   206	{
+   207		int ret;
+   208		unsigned int fbdiv, refdiv, fref, postdiv1, postdiv2;
+   209		unsigned long tmp = 0, foutvco;
+   210	
+   211		fref = parent_rate;
+   212	
+   213		for (refdiv = REFDIV_MIN; refdiv < REFDIV_MAX + 1; refdiv++) {
+   214			for (fbdiv = FBDIV_MIN; fbdiv < FBDIV_MAX + 1; fbdiv++) {
+   215				foutvco = fref * fbdiv / refdiv;
+   216				/* check fpostdiv pfd */
+ > 217				if (foutvco < PLL_FREQ_MIN || foutvco > PLL_FREQ_MAX
+   218						|| (fref / refdiv) < 10)
+   219					continue;
+   220	
+   221				ret = __sg2042_pll_get_postdiv_1_2(req_rate, fref, fbdiv,
+   222						refdiv, &postdiv1, &postdiv2);
+   223				if (ret)
+   224					continue;
+   225	
+   226				tmp = foutvco / (postdiv1 * postdiv2);
+   227				if (abs_diff(tmp, req_rate) < abs_diff(best->freq, req_rate)) {
+   228					best->freq = tmp;
+   229					best->refdiv = refdiv;
+   230					best->fbdiv = fbdiv;
+   231					best->postdiv1 = postdiv1;
+   232					best->postdiv2 = postdiv2;
+   233					if (tmp == req_rate)
+   234						return 0;
+   235				}
+   236				continue;
+   237			}
+   238		}
+   239	
+   240		return 0;
+   241	}
+   242	
 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
