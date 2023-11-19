@@ -1,121 +1,184 @@
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E221B5;
-	Sun, 19 Nov 2023 07:23:58 -0800 (PST)
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-1efa01323b4so2202768fac.3;
-        Sun, 19 Nov 2023 07:23:58 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UbNmbWdZ"
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F552E0;
+	Sun, 19 Nov 2023 13:24:28 -0800 (PST)
+Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-5435336ab0bso5470307a12.1;
+        Sun, 19 Nov 2023 13:24:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1700429066; x=1701033866; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=W5AoIs+Bdzh/tLCRglqGhx6SkCLVORYxH3ooAEqDulU=;
+        b=UbNmbWdZ5/HDnXL8BLR3I6EJmZvYTvRDBZ8YEV2sPCerADCndj2KI8lgUsjHGNui5E
+         JuhIC4BHXaYm3JYAbpse2wKzcuqFwZEVeCK+p+cv6xPzScQdlTORhyh5xWoOjQ4aVJwf
+         PIiB/CIIfNAsEmWRhf5iwOUvVUhmJ5ratxpHSfRCZVtLB0Ya1AqyWAZqzO27WQRN/bt4
+         pndvpoH/vfJ8v5GCDoDZnqPyTml5zypwDGwXTuaFEx0DGrQVmiwFSIvzdQQpWaT9kkvy
+         kc5b2Gttt55Q4c/6T/SYWNG7p2w2qPHZZrwFwljM/G+wSVwePnAQsLvAOAzEuiiblAlt
+         /PzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700407437; x=1701012237;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JvBH+EWY74pgOdnostfTvFXJoA0rOQwdXiujVZ07pTs=;
-        b=BgtnF7aRHB9UFtp4uF/p/XioDOed/vZySK1FS/I6vRDmgLf1vtMeG1MtWxkLH6Hvhk
-         3T9IDypWc+3A+4/50ZSPzpV++kFdMMfrnJKiuYZu4ED7Shi+bwoOtw9p36PK7nqoqJoQ
-         w/XjeWglXN9qtBrA4vwEOUhCRPDwiyJhO3VsaJehvpYNUA8T7LtG4RgHztgvO9ZK+oWX
-         8SzcvH9mlRV1NAq3e/WZhI+gS+Fk9MWTUm7at7AJfPmaoab/MFWOIglNyiDmAKBgtkiq
-         tCgvDpB0bKHbEBh8kvxUM7ZINcCPGVPlHiAywmR/nhLLBI2asjUtMfV9bpQut9NGi5n/
-         uA3Q==
-X-Gm-Message-State: AOJu0YxsiUUUmhFzon+u7CKbrY7kC2I4lHnOGVNZhsaZlWoDre5pNVkI
-	UGv82bCBDBPQ4MlixMefBOPKFA4S6Q==
-X-Google-Smtp-Source: AGHT+IGDY8KITDzwXPPX6dbv/Syq98ERWXvGlyDk+aFKC8MDHNnswIHQzkscF5GiPJ//Dn3zZ0QfQw==
-X-Received: by 2002:a05:6870:af05:b0:1f4:a48d:d32f with SMTP id ux5-20020a056870af0500b001f4a48dd32fmr5682063oab.25.1700407437363;
-        Sun, 19 Nov 2023 07:23:57 -0800 (PST)
-Received: from herring.priv ([2607:fb90:45e3:889f:15b4:1348:6d64:224b])
-        by smtp.gmail.com with ESMTPSA id v9-20020a056830090900b006d64f51a94bsm899932ott.34.2023.11.19.07.23.55
+        d=1e100.net; s=20230601; t=1700429066; x=1701033866;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=W5AoIs+Bdzh/tLCRglqGhx6SkCLVORYxH3ooAEqDulU=;
+        b=tLcRPxeAq9RKnmxhjGPQa+STlvV8GMH7eGvOjTsbXT0YhQvXE8Fqh3Mz2JCRQ/AuEs
+         +X68PWyXjMKLudDFxLz7Sd374bxupufmXGpOMxV9W9Q14scbU8lKcBGRVb1a3MJoBV8b
+         oA2Hoyt7GJvldRTGSsAeiAP4GhB6K1mnpyjTQxB+3Z0DyMo+WyZOvmOjZqyDmkKgU60k
+         l6HRSLDnfuPx3bbLGIpkFK2ZIcDm5KVh1PJv/T0xntA/Lfd0kFcJ3t90lNKLHQ5hwolX
+         ZghCEi1mD6C4FRSAlwONZRgXbazm/4uoxWcd79mqd0H0KsRMTUJNLx537POygoxepOOU
+         NTOw==
+X-Gm-Message-State: AOJu0YwKVc5ZDW7rfg26cADn2bzdSFkhEpoGNRhVmhpiOgpPjGcAlhsE
+	8yMgQ+xilZoOVgKnv46R2xY=
+X-Google-Smtp-Source: AGHT+IFajiBloEjzAJqHhZtom0mUOzVwl1XuhnJGi5vMvt9BGAY/DoINKNGYdo4x5DnyARNgwq8GLQ==
+X-Received: by 2002:a17:906:c03:b0:9e2:bbc4:16cb with SMTP id s3-20020a1709060c0300b009e2bbc416cbmr4094055ejf.49.1700429066271;
+        Sun, 19 Nov 2023 13:24:26 -0800 (PST)
+Received: from localhost.lan (031011218106.poznan.vectranet.pl. [31.11.218.106])
+        by smtp.gmail.com with ESMTPSA id u19-20020a1709063b9300b009e5db336137sm3193340ejf.196.2023.11.19.13.24.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Nov 2023 07:23:56 -0800 (PST)
-Received: (nullmailer pid 223586 invoked by uid 1000);
-	Sun, 19 Nov 2023 15:23:54 -0000
-Date: Sun, 19 Nov 2023 09:23:54 -0600
-From: Rob Herring <robh@kernel.org>
-To: gabriel.fernandez@foss.st.com
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/5] dt-bindings: stm32: add clocks and reset binding
- for stm32mp25 platform
-Message-ID: <20231119152354.GA216405-robh@kernel.org>
-References: <20231116154952.1206705-1-gabriel.fernandez@foss.st.com>
- <20231116154952.1206705-4-gabriel.fernandez@foss.st.com>
+        Sun, 19 Nov 2023 13:24:25 -0800 (PST)
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Jianhui Zhao <zhaojh329@gmail.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	James Liao <jamesjj.liao@mediatek.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+	Rob Herring <robh@kernel.org>
+Subject: [PATCH V2] dt-bindings: arm: mediatek: move ethsys controller & convert to DT schema
+Date: Sun, 19 Nov 2023 22:24:16 +0100
+Message-Id: <20231119212416.2682-1-zajec5@gmail.com>
+X-Mailer: git-send-email 2.35.3
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231116154952.1206705-4-gabriel.fernandez@foss.st.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 16, 2023 at 04:49:50PM +0100, gabriel.fernandez@foss.st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-> 
-> Adds clock and reset binding entries for STM32MP25 SoC family
-> 
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-> ---
->  .../bindings/clock/st,stm32mp25-rcc.yaml      |  72 +++
->  include/dt-bindings/clock/st,stm32mp25-rcc.h  | 492 ++++++++++++++++++
->  include/dt-bindings/reset/st,stm32mp25-rcc.h  | 165 ++++++
->  3 files changed, 729 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
->  create mode 100644 include/dt-bindings/clock/st,stm32mp25-rcc.h
->  create mode 100644 include/dt-bindings/reset/st,stm32mp25-rcc.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml b/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
-> new file mode 100644
-> index 000000000000..1bdcfacd62d5
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
-> @@ -0,0 +1,72 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/st,stm32mp25-rcc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: STM32MP25 Reset Clock Controller
-> +
-> +maintainers:
-> +  - Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-> +
-> +description: |
-> +  The RCC hardware block is both a reset and a clock controller.
-> +  RCC makes also power management (resume/supend).
-> +
-> +  See also::
-> +    include/dt-bindings/clock/st,stm32mp25-rcc.h
-> +    include/dt-bindings/reset/st,stm32mp25-rcc.h
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - st,stm32mp25-rcc
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +  '#reset-cells':
-> +    const: 1
-> +
-> +  clocks:
-> +    description: Specifies oscillators.
-> +    maxItems: 5
-> +
-> +  clock-names:
-> +    items:
-> +      - const: hse
-> +      - const: hsi
-> +      - const: msi
-> +      - const: lse
-> +      - const: lsi
+From: Rafał Miłecki <rafal@milecki.pl>
 
-No idea what these TLAs are... Define them in clocks:
+DT schema helps validating DTS files. Binding was moved to clock/ as
+this hardware is a clock provider. Example required a small fix for
+"reg" value (1 address cell + 1 size cell).
 
-clocks:
-  items:
-    - description: what hse is
-    - ...
+Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+V2: Move binding to clock/ dir and document that in commit body
+
+ .../bindings/arm/mediatek/mediatek,ethsys.txt | 29 ----------
+ .../bindings/clock/mediatek,ethsys.yaml       | 54 +++++++++++++++++++
+ 2 files changed, 54 insertions(+), 29 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/mediatek,ethsys.yaml
+
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
+deleted file mode 100644
+index eccd4b706a78..000000000000
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
++++ /dev/null
+@@ -1,29 +0,0 @@
+-Mediatek ethsys controller
+-============================
+-
+-The Mediatek ethsys controller provides various clocks to the system.
+-
+-Required Properties:
+-
+-- compatible: Should be:
+-	- "mediatek,mt2701-ethsys", "syscon"
+-	- "mediatek,mt7622-ethsys", "syscon"
+-	- "mediatek,mt7623-ethsys", "mediatek,mt2701-ethsys", "syscon"
+-	- "mediatek,mt7629-ethsys", "syscon"
+-	- "mediatek,mt7981-ethsys", "syscon"
+-	- "mediatek,mt7986-ethsys", "syscon"
+-- #clock-cells: Must be 1
+-- #reset-cells: Must be 1
+-
+-The ethsys controller uses the common clk binding from
+-Documentation/devicetree/bindings/clock/clock-bindings.txt
+-The available clocks are defined in dt-bindings/clock/mt*-clk.h.
+-
+-Example:
+-
+-ethsys: clock-controller@1b000000 {
+-	compatible = "mediatek,mt2701-ethsys", "syscon";
+-	reg = <0 0x1b000000 0 0x1000>;
+-	#clock-cells = <1>;
+-	#reset-cells = <1>;
+-};
+diff --git a/Documentation/devicetree/bindings/clock/mediatek,ethsys.yaml b/Documentation/devicetree/bindings/clock/mediatek,ethsys.yaml
+new file mode 100644
+index 000000000000..94d42c864777
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/mediatek,ethsys.yaml
+@@ -0,0 +1,54 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/mediatek,ethsys.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Mediatek ethsys controller
++
++description:
++  The available clocks are defined in dt-bindings/clock/mt*-clk.h.
++
++maintainers:
++  - James Liao <jamesjj.liao@mediatek.com>
++
++properties:
++  compatible:
++    oneOf:
++      - items:
++          - enum:
++              - mediatek,mt2701-ethsys
++              - mediatek,mt7622-ethsys
++              - mediatek,mt7629-ethsys
++              - mediatek,mt7981-ethsys
++              - mediatek,mt7986-ethsys
++          - const: syscon
++      - items:
++          - const: mediatek,mt7623-ethsys
++          - const: mediatek,mt2701-ethsys
++          - const: syscon
++
++  reg:
++    maxItems: 1
++
++  "#clock-cells":
++    const: 1
++
++  "#reset-cells":
++    const: 1
++
++required:
++  - reg
++  - "#clock-cells"
++  - "#reset-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    clock-controller@1b000000 {
++        compatible = "mediatek,mt2701-ethsys", "syscon";
++        reg = <0x1b000000 0x1000>;
++        #clock-cells = <1>;
++        #reset-cells = <1>;
++    };
+-- 
+2.35.3
 
