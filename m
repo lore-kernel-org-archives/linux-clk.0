@@ -1,82 +1,121 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD38229B0;
-	Sun, 19 Nov 2023 13:25:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UEyBk9xH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E07EFC433C8;
-	Sun, 19 Nov 2023 13:25:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1700400309;
-	bh=XxhddzwNIgG+bk+3II44/LNd5CBnAQSGnu4afaRF7wc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UEyBk9xHjQgzNe3JUfRMRpC8nhwfSpFiGj7o1bqgDr3/201wAk4mJNJ+NI1jiPF4B
-	 sTEgj9wSfJBDjfOiVuQERo63Nu7u9qgegsXriMdy6uh5++oHykdn1Y0M15OpMauJ+o
-	 rEsGnzT1Zh8c6zgHc066j5/E/hxgFXvOm88vRD/xOkCCR9llw1AaJ1WQ1zE54oT5QR
-	 0bABp9htnT1BfNnaapquepVc0CwKx9S4CRiVAxF/bd6QvNCQ3b3JvVVBaUM4+5rrQR
-	 cG2zlMZwPZZoTlAYidA6RidFgcwWlN8htCWsH+4f164o0pb6yl9drfODminYieHr5k
-	 ODVeVFGUHwfEQ==
-Date: Sun, 19 Nov 2023 13:25:04 +0000
-From: Conor Dooley <conor@kernel.org>
-To: "yu-chang.lee" <yu-chang.lee@mediatek.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Garmin Chang <garmin.chang@mediatek.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH v3 1/2] dt-bindings: clock: mediatek: Remove compatible
- for MT8188 VPPSYS
-Message-ID: <20231119-zestfully-riveting-fe9793281903@spud>
-References: <20231117053934.10571-1-yu-chang.lee@mediatek.com>
- <20231117053934.10571-2-yu-chang.lee@mediatek.com>
- <20231119-gem-plus-3217ffee6278@spud>
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E221B5;
+	Sun, 19 Nov 2023 07:23:58 -0800 (PST)
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-1efa01323b4so2202768fac.3;
+        Sun, 19 Nov 2023 07:23:58 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700407437; x=1701012237;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JvBH+EWY74pgOdnostfTvFXJoA0rOQwdXiujVZ07pTs=;
+        b=BgtnF7aRHB9UFtp4uF/p/XioDOed/vZySK1FS/I6vRDmgLf1vtMeG1MtWxkLH6Hvhk
+         3T9IDypWc+3A+4/50ZSPzpV++kFdMMfrnJKiuYZu4ED7Shi+bwoOtw9p36PK7nqoqJoQ
+         w/XjeWglXN9qtBrA4vwEOUhCRPDwiyJhO3VsaJehvpYNUA8T7LtG4RgHztgvO9ZK+oWX
+         8SzcvH9mlRV1NAq3e/WZhI+gS+Fk9MWTUm7at7AJfPmaoab/MFWOIglNyiDmAKBgtkiq
+         tCgvDpB0bKHbEBh8kvxUM7ZINcCPGVPlHiAywmR/nhLLBI2asjUtMfV9bpQut9NGi5n/
+         uA3Q==
+X-Gm-Message-State: AOJu0YxsiUUUmhFzon+u7CKbrY7kC2I4lHnOGVNZhsaZlWoDre5pNVkI
+	UGv82bCBDBPQ4MlixMefBOPKFA4S6Q==
+X-Google-Smtp-Source: AGHT+IGDY8KITDzwXPPX6dbv/Syq98ERWXvGlyDk+aFKC8MDHNnswIHQzkscF5GiPJ//Dn3zZ0QfQw==
+X-Received: by 2002:a05:6870:af05:b0:1f4:a48d:d32f with SMTP id ux5-20020a056870af0500b001f4a48dd32fmr5682063oab.25.1700407437363;
+        Sun, 19 Nov 2023 07:23:57 -0800 (PST)
+Received: from herring.priv ([2607:fb90:45e3:889f:15b4:1348:6d64:224b])
+        by smtp.gmail.com with ESMTPSA id v9-20020a056830090900b006d64f51a94bsm899932ott.34.2023.11.19.07.23.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 19 Nov 2023 07:23:56 -0800 (PST)
+Received: (nullmailer pid 223586 invoked by uid 1000);
+	Sun, 19 Nov 2023 15:23:54 -0000
+Date: Sun, 19 Nov 2023 09:23:54 -0600
+From: Rob Herring <robh@kernel.org>
+To: gabriel.fernandez@foss.st.com
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/5] dt-bindings: stm32: add clocks and reset binding
+ for stm32mp25 platform
+Message-ID: <20231119152354.GA216405-robh@kernel.org>
+References: <20231116154952.1206705-1-gabriel.fernandez@foss.st.com>
+ <20231116154952.1206705-4-gabriel.fernandez@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="52bn6chajiCX+Q3f"
-Content-Disposition: inline
-In-Reply-To: <20231119-gem-plus-3217ffee6278@spud>
-
-
---52bn6chajiCX+Q3f
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20231116154952.1206705-4-gabriel.fernandez@foss.st.com>
 
-On Sun, Nov 19, 2023 at 01:13:47PM +0000, Conor Dooley wrote:
-> On Fri, Nov 17, 2023 at 01:39:33PM +0800, yu-chang.lee wrote:
-> > MT8188 VPPSYS 0/1 should be probed from mtk-mmsys driver to
-> > populate device by platform_device_register_data then start
-> > its own clock driver.
->=20
-> How does one operating system's driver probing model render these
-> compatibles invalid?
+On Thu, Nov 16, 2023 at 04:49:50PM +0100, gabriel.fernandez@foss.st.com wrote:
+> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+> 
+> Adds clock and reset binding entries for STM32MP25 SoC family
+> 
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+> ---
+>  .../bindings/clock/st,stm32mp25-rcc.yaml      |  72 +++
+>  include/dt-bindings/clock/st,stm32mp25-rcc.h  | 492 ++++++++++++++++++
+>  include/dt-bindings/reset/st,stm32mp25-rcc.h  | 165 ++++++
+>  3 files changed, 729 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
+>  create mode 100644 include/dt-bindings/clock/st,stm32mp25-rcc.h
+>  create mode 100644 include/dt-bindings/reset/st,stm32mp25-rcc.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml b/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
+> new file mode 100644
+> index 000000000000..1bdcfacd62d5
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
+> @@ -0,0 +1,72 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/st,stm32mp25-rcc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: STM32MP25 Reset Clock Controller
+> +
+> +maintainers:
+> +  - Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+> +
+> +description: |
+> +  The RCC hardware block is both a reset and a clock controller.
+> +  RCC makes also power management (resume/supend).
+> +
+> +  See also::
+> +    include/dt-bindings/clock/st,stm32mp25-rcc.h
+> +    include/dt-bindings/reset/st,stm32mp25-rcc.h
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - st,stm32mp25-rcc
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  '#reset-cells':
+> +    const: 1
+> +
+> +  clocks:
+> +    description: Specifies oscillators.
+> +    maxItems: 5
+> +
+> +  clock-names:
+> +    items:
+> +      - const: hse
+> +      - const: hsi
+> +      - const: msi
+> +      - const: lse
+> +      - const: lsi
 
-I see there are 2 patches in the series. Merging them into one would
-likely make it easier to explain the hardware-related reason for this
-change.
+No idea what these TLAs are... Define them in clocks:
 
---52bn6chajiCX+Q3f
-Content-Type: application/pgp-signature; name="signature.asc"
+clocks:
+  items:
+    - description: what hse is
+    - ...
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZVoMsAAKCRB4tDGHoIJi
-0ihkAQDJXXL1MR0xmgwkXWBGLU44bL7kUV19Z5GlMv86zlEa/gEA2ghoULkl2Soy
-4Yog79X3xremp0NR4VN2JldFYg58TgA=
-=gEqL
------END PGP SIGNATURE-----
-
---52bn6chajiCX+Q3f--
