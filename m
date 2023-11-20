@@ -1,394 +1,181 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XHvLLl9f"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B65EBA;
-	Mon, 20 Nov 2023 02:22:08 -0800 (PST)
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AK9TTgB009913;
-	Mon, 20 Nov 2023 10:22:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=yeOjmECxv3sdcrW5VLH3i4ur1hHQkUm1jZjP46bingU=;
- b=XHvLLl9fmpPPieJPdJi+V7AiBpq3c7bNrQ+eaQ1b146k8qQbP3YQb+tjeWjJbUOLHKVu
- HUUtK27fdR0bCwQmslI3s3KoTwVDeWrE8+hvObKxyk0Dk+XLtMfOWv6wpt/7Da4PM6Lq
- CYXToLjisP3JxeCbVM89WV7J7xJDw+XZlqIcZL/votbC8+VdewrxYzzVr3mWKDNJXM6A
- EIm4Pm/PK2wTGIE++hQVAvvp7Sr/UjR2EaroFVrKMITTnsv20MViTlQzaa2T3QQ327VK
- 5XtiJMU8aULR7xsM4q6/lXd1e4/EDwdXstITL3gDKILY104l4v1kCssXVYx8LUgek6dk fg== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3uem9ebpe9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 20 Nov 2023 10:22:03 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3AKAM2aM027727
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 20 Nov 2023 10:22:02 GMT
-Received: from [10.50.58.129] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Mon, 20 Nov
- 2023 02:21:59 -0800
-Message-ID: <419b0e85-5479-30b0-d6a9-b2697d057c55@quicinc.com>
-Date: Mon, 20 Nov 2023 15:51:50 +0530
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="e+78D2nr";
+	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="C1fLZXRW"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EA69A4;
+	Mon, 20 Nov 2023 02:26:27 -0800 (PST)
+X-UUID: 3cef2016878f11ee8051498923ad61e6-20231120
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=hStr/RGwYg1kMBYPmfbLTP0MN+Z5G0A4Rr+EtD4JFZY=;
+	b=e+78D2nrTG5oZ7GnRohk1BtctHWpN+W/KIBMqNQQqH9TCflnvAiBHrkbX60RidpfDcx4svkJgJ5LPxWTIHh0AgGkV613krZuxi932xG315ewevhQ4X6qifJtJCh44XKSRmpkOE04qIWx0VqOReX/dCCtWoZXk2kBoyYpqVi2dhE=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.33,REQID:4efc887b-9c36-419d-92a2-fd94eedb1361,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:364b77b,CLOUDID:d70dbcfc-4a48-46e2-b946-12f04f20af8c,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:1,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,
+	DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: 3cef2016878f11ee8051498923ad61e6-20231120
+Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw02.mediatek.com
+	(envelope-from <yu-chang.lee@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1617468400; Mon, 20 Nov 2023 18:26:16 +0800
+Received: from mtkmbs10n1.mediatek.inc (172.21.101.34) by
+ mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Mon, 20 Nov 2023 18:26:15 +0800
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (172.21.101.237)
+ by mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Mon, 20 Nov 2023 18:26:16 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=N02cyppSi8mBcXj9IyhTh0daW5/lcqA5vwwRqG7WMD8HuPDCXFUnZiz5tkebIIFiYxN1HMAcsETfSntM0X9EAM8N3psXDgVNG89pItV1cLoBb1W4Ed+BQGRTup8W3aDEwCy8c/v9ZdL67e6yz33LhvvFtBwi2AYevpRQdgjf84JcGGDTv8cS6W3mizpmSqsnDFJ3sJu5Z+HmI2MxSr6Eod+M559LquRWR7VbBEbfQqhEit82fgM3O/qUvf5EXarsrXqCSW5QGgL2PbdQArBFnAsY0IYSRgGtySoDu7YqO1hUMaUUVesvx1y0GUVLm8fQ2LhGNpXfWgmDZWcsg5jGrA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hStr/RGwYg1kMBYPmfbLTP0MN+Z5G0A4Rr+EtD4JFZY=;
+ b=bNVflybuX7UXqah+K+ZvuiR+AV5RY85tPZFdYDZrxyoH8yopkrfpn1HImp2zx1FA1cB20RMV+Wxs/BrakQK7sGdRd9HqxuyQEDErDc6W6CcPU+Ca9CQ191iJ9PXLEuGzgrhhyZ02T7CYuZvMhNhFLoZ4l2D9VncxQu3Q1rJHHgHwgOUhtAQ17Y2clmMqzH73xyAlgluZhm44CrzgoSC0YGaGUbPFSZcrLpWWImL//Qj3sw/XUNjAgAf3RlBVFn1AHVnjuvRoUYuM3C3b8wDqMixrSSq7P461P8MYXNIbVansxo7jBL2qPkqzJYXLEZR6mkts6q6GjLyNBG2XLOtkCw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
+ dkim=pass header.d=mediatek.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hStr/RGwYg1kMBYPmfbLTP0MN+Z5G0A4Rr+EtD4JFZY=;
+ b=C1fLZXRWd/yQx7Kr18XxdTXYQm22JKzvo7kDSclFvkSVtg+F3dEpNpr4yQFIS20Izn6xymJiUI424mLRQNsaMODD9mQvtWiURdJeZSrAzNUKXcDqq7jVS/ynsXXWKOFfzssXVAuEeUxfY52I+w9ht0HIRl+wCM/jZ4zij1qNNsg=
+Received: from KL1PR03MB7366.apcprd03.prod.outlook.com (2603:1096:820:ea::9)
+ by SI2PR03MB6859.apcprd03.prod.outlook.com (2603:1096:4:1f8::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7002.27; Mon, 20 Nov
+ 2023 10:26:13 +0000
+Received: from KL1PR03MB7366.apcprd03.prod.outlook.com
+ ([fe80::7fb4:3f3e:cd86:90b5]) by KL1PR03MB7366.apcprd03.prod.outlook.com
+ ([fe80::7fb4:3f3e:cd86:90b5%4]) with mapi id 15.20.7002.027; Mon, 20 Nov 2023
+ 10:26:13 +0000
+From: =?utf-8?B?WXUtY2hhbmcgTGVlICjmnY7nprnnkosp?= <Yu-chang.Lee@mediatek.com>
+To: "robh+dt@kernel.org" <robh+dt@kernel.org>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>,
+	"krzysztof.kozlowski@linaro.org" <krzysztof.kozlowski@linaro.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+	"angelogioacchino.delregno@collabora.com"
+	<angelogioacchino.delregno@collabora.com>
+CC: "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-mediatek@lists.infradead.org"
+	<linux-mediatek@lists.infradead.org>, Project_Global_Chrome_Upstream_Group
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	=?utf-8?B?R2FybWluIENoYW5nICjlvLXlrrbpipgp?= <Garmin.Chang@mediatek.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v4] dt-bindings: arm: mediatek: mmsys: Add VPPSYS
+ compatible for MT8188
+Thread-Topic: [PATCH v4] dt-bindings: arm: mediatek: mmsys: Add VPPSYS
+ compatible for MT8188
+Thread-Index: AQHaG5j3o6fbGXwHTkWoQaQDYJimgbCC/CcAgAAEnYA=
+Date: Mon, 20 Nov 2023 10:26:12 +0000
+Message-ID: <77302f50b5c977011ec26be7a04fa3c6c63653c6.camel@mediatek.com>
+References: <20231120100258.3428-1-yu-chang.lee@mediatek.com>
+	 <6bc4fa28-a98f-46c7-b315-7366307b5206@linaro.org>
+In-Reply-To: <6bc4fa28-a98f-46c7-b315-7366307b5206@linaro.org>
+Accept-Language: zh-TW, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mediatek.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: KL1PR03MB7366:EE_|SI2PR03MB6859:EE_
+x-ms-office365-filtering-correlation-id: 9c530b7c-42d5-42f5-5255-08dbe9b31ee0
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 2FYbpJIPWSj4aTnJyC0GSA/tp62iXQlj58025YWdpdi1LBGG304RGbgZMr22YwgbVDJsGWzS0dPOTlCQs7/PYobiwLiZmuQG61OPOWbmhyw7OtzPAI6J2/1tM+z/ZZgrVM2pdFEFdrwYo0renKvMlVofuC1eVBR3dZeJ1E10SmKLeAY7cJG81A6BDOmEvJY8mDjcH4llDs+k80pvtnqFcoK1WuValsD4ILE1GzGZ8biodpZxK/vA/IaHfdp9miHs5kmCqCZW1PJQzyZPtDPNU9IrJL7I5WAqn4h7VZhAEZZQFzel2DsHWiZpJWxcffMTC+ow18o4wkn5oqYS731LxKYqsYmD0houj8/UXXePGmOhBfZzM1bFuiJsMeoA+CNq3pzN0hI4OJ3UvJSJf3dlSUc95sPshukKqGeCDMadK6RB+qMceB8zqA9LPF0EO7VwScSFZXJLcP3kWnoNDLzscdbblPg78pvZMmd/uYnHoWLKaVmyH2YQpmPOk+VCl3TL/yPqvJejqt5sNZexMD8YAqfL/at0b4YrMsEgeM1uWaHKR0RWwBvy4ufJTUlAGUAvdq/YnIV6a5u8RQ9bUOOnz5wMSgcds3mW7jAzKOzo7scZoBKVILfTaBUvrgG6YWbX/qmT0wylqQ3xAh/dXXg59mCpYpXcF9xhlGt7OzvlVZOu76+NoHxAdGXZODzqDUG9
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB7366.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376002)(346002)(39860400002)(396003)(366004)(136003)(230273577357003)(230173577357003)(230922051799003)(64100799003)(451199024)(186009)(1800799012)(2906002)(7416002)(4001150100001)(5660300002)(4326008)(8936002)(8676002)(38070700009)(85182001)(86362001)(36756003)(38100700002)(41300700001)(66446008)(91956017)(122000001)(478600001)(54906003)(76116006)(66946007)(66476007)(64756008)(66556008)(316002)(26005)(2616005)(110136005)(6486002)(966005)(83380400001)(53546011)(71200400001)(6512007)(6506007);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?Z01xaWVQMXh6ZFpJcXhnRTU1bEUxYVJFS2dza0d2a1VORytuM3lRdkxzVXE4?=
+ =?utf-8?B?d1dBdENoeVpIenJEdTZyb2N2b05NVFVNSmNXNVF3M2VaUnk0NVlGQjJEUUQ5?=
+ =?utf-8?B?QkNJM1h2VGtPWVFVM2pjZTRlMnhlNE5PVU5pc3ZrUlJudGlpU2NIMUhBR1VE?=
+ =?utf-8?B?dis3UTBESWJMSDJHOVJRbDljZis1RlZZZmxKNVhQRENCOGpDcXJ2Q1V5eTI1?=
+ =?utf-8?B?QkJvUFQwQnVvdUpVdU85M0REa1FLZjdpYU9HZVphMERZVkVnNXY1L3NVeEV1?=
+ =?utf-8?B?RzdnSVNMSGkxRkx2MDZCU2pUMlpEMnBUU21uRzcwUDRaMDJzbjY0Y1FkVnFB?=
+ =?utf-8?B?Y2pKQXRBSVNOK2JQNmo2WDFqQWtNek9HeEhCQnJqZjk5TzVWcTAxRVhsRUhD?=
+ =?utf-8?B?NHd6M1BNbDZyWmJBUkNHOEhkVmhJd0h0T3p2bVpmV083TEw5NHA5bWp2VjRK?=
+ =?utf-8?B?VUJvYm94cGVHcGdMa1VKak9Odzl4bjNpZldoNGdWb2w2SVVMU0ZscEp4SkJz?=
+ =?utf-8?B?ZHVvVnZCWTFGUkZ6Rks1Z0VCVjlIUC9WVmdCOWh3V3I2SlZPMTF2ODJDelg3?=
+ =?utf-8?B?MzdsTzBoZFMxOW9PMWgxNmRpQld4aW9yY1dyT1Vwd3QrSUd4ZHNJNmFJV1ZQ?=
+ =?utf-8?B?VHNRSnc5YlhvSjNqSzZIRUVZQ1JnVUtIb2hrbHduWWJMTXVNMyttUVNQY1Qw?=
+ =?utf-8?B?amh0cjdabW1MVHhhd2dLYi9pOVR6MXVMNzhRTmhGL3Y0SFhma0JENFNhN3pC?=
+ =?utf-8?B?Mys5bUUwMGdvcXE4MWxEVGNKZXh1NXRSZWNmVFl1anhNakQ4Snk3M1RsUTNM?=
+ =?utf-8?B?a0l5Q2lRQjZjeW9NRnc5MEpraDlOZ3Z1cnlsVk0vR2M5Q1ZrWmlBZ3FBcU9S?=
+ =?utf-8?B?djJXd1k1ZXc0c1VORm9WMzc5QTFnSnZ5RlVEc3NrTWhUZW5Ud3A3RWdDd2Jz?=
+ =?utf-8?B?SEFuYjFtc3B4cG91U3pTZmU5dWNVYWI2QlByVVhReDJpQ21GY3BzSjI3Y2Uy?=
+ =?utf-8?B?Q0hKL2RqS3ZWLzNyTUJMTWFtV3AwMktDTnFzNVpBNi8zKzZQK3J5RmoyUU8z?=
+ =?utf-8?B?WEpiYXVJYkRweVVwMGhPQUdkUXh3NzdRMFl4Zy8wbW9DM2hEcjhpVC9SRGZL?=
+ =?utf-8?B?V3NjVjBJMWoxcVBnZUtNMnA0bGZFOUl6R1NjR1I1ZmM2d3g2MzA4dzQrMWFt?=
+ =?utf-8?B?SFZ2OUlZSlErbTYxSXQzdkdJd01ucUZaU2JXbG9oWGRwM3djQUpuZUlXRVFq?=
+ =?utf-8?B?SmViZzc0Uk1tT1dtOHh5aTdFY2srNWJHZG44Ry94bGJHNWZOUHFaSlIxUFJx?=
+ =?utf-8?B?MnhQZXRQRTdLZjZNZXA2WWEvYXVJMEVjSjIzOGNaSy9QRXZRTTBYcmZvWFNF?=
+ =?utf-8?B?K2grSXJ0eHZrQmVSN2szbmRnWnJNNkl0WGxxUWUvQU53SlJRbnBhSldDSWYw?=
+ =?utf-8?B?c2IwdUZrSXNXVlBPbmF4RDM5U2hIdEJ5QzJ4WFNoeXB5SHNpYzM3YlhKdW5r?=
+ =?utf-8?B?UGdqZzY5RDRFSDFQMjBMaXd5MWZqK1VxSGpEQW5KYW9KODlsMklUcEdVZ09n?=
+ =?utf-8?B?bVU3elA5UkdGWm1xUERpaDk5WHU1dXJKUGpTMWN1ZG5wTitmM3c1RHMvZ3RT?=
+ =?utf-8?B?bTNwdm1qdW1SR3R4K2pCZmpSd0NqVGt1QUZDajByY1lwenUxNnBBNmdDQXp6?=
+ =?utf-8?B?L3NKak5HazFJZm54UlUwZWtEL1RSQU5RT1ExL2hVRFZYOVo1OFNCcEEwRDBV?=
+ =?utf-8?B?MC9KWG9mT1NSNHJLUEZJaXk0Uko2dW9FbVpHUFJ2STY0OUxTQVhiak9oUkRM?=
+ =?utf-8?B?ajlhNkpQazlxSWk3U0FoZXRCcDZkcnRIdURmRDRGVXloWlExR3lNd0FJWVlO?=
+ =?utf-8?B?ZVl4a2ZaRTl1NllkUDk3WUxZVW1zdUdDL1J5RnUzdFFjclYxT1pYTXlvL1lG?=
+ =?utf-8?B?ODlvWXBoZGJvMGF4M2pEemc0MEVDV2NVc2Y0UEIraXZudFNrdHpEcmxUc3Ry?=
+ =?utf-8?B?UUk3d2psaUc0aVFKZzlDMEI1cDBqaVJLSndVNGNtNlE5QnlkR2thM2VFNHpI?=
+ =?utf-8?B?VzFnV1lTaTUzODY1Wm9WeUdvQmFkZUJGeFJZb1p1Wk9waWczeVRtUHIzN2JX?=
+ =?utf-8?B?MlVyZVpqRWtuOHYvdnhneXY3cXFFcGJ5S2JQeGlGSC9MaDhGVURZeXU3VGZu?=
+ =?utf-8?B?YkE9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <48F934F9F51FEF4391060BAAC3823447@apcprd03.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [PATCH v6 2/3] clk: qcom: clk-rcg2: add support for rcg2 freq
- multi ops
-To: Christian Marangi <ansuelsmth@gmail.com>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20230916140046.7878-1-ansuelsmth@gmail.com>
- <20230916140046.7878-3-ansuelsmth@gmail.com>
-Content-Language: en-US
-From: Devi Priya <quic_devipriy@quicinc.com>
-In-Reply-To: <20230916140046.7878-3-ansuelsmth@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Uw5hDpzZ0rQczi0966v5XZvdnLutJDWx
-X-Proofpoint-GUID: Uw5hDpzZ0rQczi0966v5XZvdnLutJDWx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-11-20_08,2023-11-17_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxscore=0
- clxscore=1011 priorityscore=1501 impostorscore=0 mlxlogscore=999
- lowpriorityscore=0 bulkscore=0 phishscore=0 suspectscore=0 adultscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311060000 definitions=main-2311200069
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB7366.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9c530b7c-42d5-42f5-5255-08dbe9b31ee0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Nov 2023 10:26:12.8939
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: A/ryCP6HqTC/hQ+QDt7LjHHrWIgM+q6XOJUqD2f4f24cggIP/K13bid7CrypskNqJ4jdjAavn4fDXZWunhuG8IzVCHFLDsqxcypNFP0J7Y0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI2PR03MB6859
 
-
-
-On 9/16/2023 7:30 PM, Christian Marangi wrote:
-> Some RCG frequency can be reached by multiple configuration.
-> 
-> Add clk_rcg2_fm_ops ops to support these special RCG configurations.
-> 
-> These alternative ops will select the frequency using a CEIL policy.
-> 
-> When the correct frequency is found, the correct config is selected by
-> calculating the final rate (by checking the defined parent and values
-> in the config that is being checked) and deciding based on the one that
-> is less different than the requested one.
-> 
-> These check are skipped if there is just on config for the requested
-> freq.
-> 
-> qcom_find_freq_multi is added to search the freq with the new struct
-> freq_multi_tbl.
-> __clk_rcg2_select_conf is used to select the correct conf by simulating
-> the final clock.
-> If a conf can't be found due to parent not reachable, a WARN is printed
-> and -EINVAL is returned.
-> 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> ---
->   drivers/clk/qcom/clk-rcg.h  |   1 +
->   drivers/clk/qcom/clk-rcg2.c | 167 ++++++++++++++++++++++++++++++++++++
->   drivers/clk/qcom/common.c   |  18 ++++
->   drivers/clk/qcom/common.h   |   2 +
->   4 files changed, 188 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-> index c81458db6ce4..dc9a77965e68 100644
-> --- a/drivers/clk/qcom/clk-rcg.h
-> +++ b/drivers/clk/qcom/clk-rcg.h
-> @@ -190,6 +190,7 @@ struct clk_rcg2_gfx3d {
->   
->   extern const struct clk_ops clk_rcg2_ops;
->   extern const struct clk_ops clk_rcg2_floor_ops;
-> +extern const struct clk_ops clk_rcg2_fm_ops;
->   extern const struct clk_ops clk_rcg2_mux_closest_ops;
->   extern const struct clk_ops clk_edp_pixel_ops;
->   extern const struct clk_ops clk_byte_ops;
-> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-> index e22baf3a7112..617e7ff0f6a3 100644
-> --- a/drivers/clk/qcom/clk-rcg2.c
-> +++ b/drivers/clk/qcom/clk-rcg2.c
-> @@ -266,6 +266,116 @@ static int _freq_tbl_determine_rate(struct clk_hw *hw, const struct freq_tbl *f,
->   	return 0;
->   }
->   
-> +static const struct freq_conf *
-> +__clk_rcg2_select_conf(struct clk_hw *hw, const struct freq_multi_tbl *f,
-> +		       unsigned long req_rate)
-> +{
-> +	unsigned long rate_diff, best_rate_diff = ULONG_MAX;
-> +	const struct freq_conf *conf, *best_conf;
-> +	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-> +	const char *name = clk_hw_get_name(hw);
-> +	unsigned long parent_rate, rate;
-> +	struct clk_hw *p;
-> +	int index, i;
-> +
-> +	/* Init best_conf to the first conf */
-> +	best_conf = f->confs;
-> +
-> +	/* Exit early if only one config is defined */
-> +	if (f->num_confs == 1)
-> +		goto exit;
-> +
-> +	/* Search in each provided config the one that is near the wanted rate */
-> +	for (i = 0, conf = f->confs; i < f->num_confs; i++, conf++) {
-> +		index = qcom_find_src_index(hw, rcg->parent_map, conf->src);
-> +		if (index < 0)
-> +			continue;
-> +
-> +		p = clk_hw_get_parent_by_index(hw, index);
-> +		if (!p)
-> +			continue;
-> +
-> +		parent_rate =  clk_hw_get_rate(p);
-> +		rate = calc_rate(parent_rate, conf->n, conf->m, conf->n, conf->pre_div);
-> +
-> +		if (rate == req_rate) {
-> +			best_conf = conf;
-> +			goto exit;
-> +		}
-> +
-> +		rate_diff = abs(req_rate - rate);
-> +		if (rate_diff < best_rate_diff) {
-> +			best_rate_diff = rate_diff;
-> +			best_conf = conf;
-> +		}
-> +	}
-> +
-> +	/*
-> +	 * Very unlikely. Warn if we couldn't find a correct config
-> +	 * due to parent not found in every config.
-> +	 */
-> +	if (unlikely(i == f->num_confs)) {
-> +		WARN(1, "%s: can't find a configuration for rate %lu.",
-> +		     name, req_rate);
-> +		return ERR_PTR(-EINVAL);
-> +	}
-Hi Christian,
-
-Thanks a lot for the patch!
-We have incorporated these changes along with the corresponding clock 
-driver changes & tested it on IPQ9574 & IPQ5332 targets.
-
-When setting the clk rate for the nss port clocks, for the requested
-frequency the correct config gets selected and the
-clk rate is set properly.
-We see the WARN getting printed for other frequencies (rate * i where
-i=2 to maxdiv) that is requested by the clk_hw_round_rate function.
-
-Upon analysis, we see that the for loop in clk_divider_bestdiv iterates
-until the maxdiv value and requests (rate*i) via the clk_hw_round_rate
-API to find the bestdiv and best_parent_rate. For frequencies which are
-multiples of the requested frequency (rate*i where i=2 to maxdiv), it
-seems unlikely to see the WARN being printed.
-
-Can you please help us understand when the WARN is likely to be printed
-& Looking forward to your suggestions on how this WARN could
-be suppressed in the afore mentioned scenario!
-
-Thanks,
-Devi Priya
-> +
-> +exit:
-> +	return best_conf;
-> +}
-> +
-> +static int _freq_tbl_fm_determine_rate(struct clk_hw *hw, const struct freq_multi_tbl *f,
-> +				       struct clk_rate_request *req)
-> +{
-> +	unsigned long clk_flags, rate = req->rate;
-> +	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-> +	const struct freq_conf *conf;
-> +	struct clk_hw *p;
-> +	int index;
-> +
-> +	f = qcom_find_freq_multi(f, rate);
-> +	if (!f || !f->confs)
-> +		return -EINVAL;
-> +
-> +	conf = __clk_rcg2_select_conf(hw, f, rate);
-> +	if (IS_ERR(conf))
-> +		return PTR_ERR(conf);
-> +	index = qcom_find_src_index(hw, rcg->parent_map, conf->src);
-> +	if (index < 0)
-> +		return index;
-> +
-> +	clk_flags = clk_hw_get_flags(hw);
-> +	p = clk_hw_get_parent_by_index(hw, index);
-> +	if (!p)
-> +		return -EINVAL;
-> +
-> +	if (clk_flags & CLK_SET_RATE_PARENT) {
-> +		rate = f->freq;
-> +		if (conf->pre_div) {
-> +			if (!rate)
-> +				rate = req->rate;
-> +			rate /= 2;
-> +			rate *= conf->pre_div + 1;
-> +		}
-> +
-> +		if (conf->n) {
-> +			u64 tmp = rate;
-> +
-> +			tmp = tmp * conf->n;
-> +			do_div(tmp, conf->m);
-> +			rate = tmp;
-> +		}
-> +	} else {
-> +		rate =  clk_hw_get_rate(p);
-> +	}
-> +
-> +	req->best_parent_hw = p;
-> +	req->best_parent_rate = rate;
-> +	req->rate = f->freq;
-> +
-> +	return 0;
-> +}
-> +
->   static int clk_rcg2_determine_rate(struct clk_hw *hw,
->   				   struct clk_rate_request *req)
->   {
-> @@ -282,6 +392,14 @@ static int clk_rcg2_determine_floor_rate(struct clk_hw *hw,
->   	return _freq_tbl_determine_rate(hw, rcg->freq_tbl, req, FLOOR);
->   }
->   
-> +static int clk_rcg2_fm_determine_rate(struct clk_hw *hw,
-> +				      struct clk_rate_request *req)
-> +{
-> +	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-> +
-> +	return _freq_tbl_fm_determine_rate(hw, rcg->freq_multi_tbl, req);
-> +}
-> +
->   static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f,
->   				u32 *_cfg)
->   {
-> @@ -377,6 +495,30 @@ static int __clk_rcg2_set_rate(struct clk_hw *hw, unsigned long rate,
->   	return clk_rcg2_configure(rcg, f);
->   }
->   
-> +static int __clk_rcg2_fm_set_rate(struct clk_hw *hw, unsigned long rate)
-> +{
-> +	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-> +	const struct freq_multi_tbl *f;
-> +	const struct freq_conf *conf;
-> +	struct freq_tbl f_tbl;
-> +
-> +	f = qcom_find_freq_multi(rcg->freq_multi_tbl, rate);
-> +	if (!f || !f->confs)
-> +		return -EINVAL;
-> +
-> +	conf = __clk_rcg2_select_conf(hw, f, rate);
-> +	if (IS_ERR(conf))
-> +		return PTR_ERR(conf);
-> +
-> +	f_tbl.freq = f->freq;
-> +	f_tbl.src = conf->src;
-> +	f_tbl.pre_div = conf->pre_div;
-> +	f_tbl.m = conf->m;
-> +	f_tbl.n = conf->n;
-> +
-> +	return clk_rcg2_configure(rcg, &f_tbl);
-> +}
-> +
->   static int clk_rcg2_set_rate(struct clk_hw *hw, unsigned long rate,
->   			    unsigned long parent_rate)
->   {
-> @@ -389,6 +531,12 @@ static int clk_rcg2_set_floor_rate(struct clk_hw *hw, unsigned long rate,
->   	return __clk_rcg2_set_rate(hw, rate, FLOOR);
->   }
->   
-> +static int clk_rcg2_fm_set_rate(struct clk_hw *hw, unsigned long rate,
-> +				unsigned long parent_rate)
-> +{
-> +	return __clk_rcg2_fm_set_rate(hw, rate);
-> +}
-> +
->   static int clk_rcg2_set_rate_and_parent(struct clk_hw *hw,
->   		unsigned long rate, unsigned long parent_rate, u8 index)
->   {
-> @@ -401,6 +549,12 @@ static int clk_rcg2_set_floor_rate_and_parent(struct clk_hw *hw,
->   	return __clk_rcg2_set_rate(hw, rate, FLOOR);
->   }
->   
-> +static int clk_rcg2_fm_set_rate_and_parent(struct clk_hw *hw,
-> +		unsigned long rate, unsigned long parent_rate, u8 index)
-> +{
-> +	return __clk_rcg2_fm_set_rate(hw, rate);
-> +}
-> +
->   static int clk_rcg2_get_duty_cycle(struct clk_hw *hw, struct clk_duty *duty)
->   {
->   	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-> @@ -511,6 +665,19 @@ const struct clk_ops clk_rcg2_floor_ops = {
->   };
->   EXPORT_SYMBOL_GPL(clk_rcg2_floor_ops);
->   
-> +const struct clk_ops clk_rcg2_fm_ops = {
-> +	.is_enabled = clk_rcg2_is_enabled,
-> +	.get_parent = clk_rcg2_get_parent,
-> +	.set_parent = clk_rcg2_set_parent,
-> +	.recalc_rate = clk_rcg2_recalc_rate,
-> +	.determine_rate = clk_rcg2_fm_determine_rate,
-> +	.set_rate = clk_rcg2_fm_set_rate,
-> +	.set_rate_and_parent = clk_rcg2_fm_set_rate_and_parent,
-> +	.get_duty_cycle = clk_rcg2_get_duty_cycle,
-> +	.set_duty_cycle = clk_rcg2_set_duty_cycle,
-> +};
-> +EXPORT_SYMBOL_GPL(clk_rcg2_fm_ops);
-> +
->   const struct clk_ops clk_rcg2_mux_closest_ops = {
->   	.determine_rate = __clk_mux_determine_rate_closest,
->   	.get_parent = clk_rcg2_get_parent,
-> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-> index 75f09e6e057e..48f81e3a5e80 100644
-> --- a/drivers/clk/qcom/common.c
-> +++ b/drivers/clk/qcom/common.c
-> @@ -41,6 +41,24 @@ struct freq_tbl *qcom_find_freq(const struct freq_tbl *f, unsigned long rate)
->   }
->   EXPORT_SYMBOL_GPL(qcom_find_freq);
->   
-> +const struct freq_multi_tbl *qcom_find_freq_multi(const struct freq_multi_tbl *f,
-> +						  unsigned long rate)
-> +{
-> +	if (!f)
-> +		return NULL;
-> +
-> +	if (!f->freq)
-> +		return f;
-> +
-> +	for (; f->freq; f++)
-> +		if (rate <= f->freq)
-> +			return f;
-> +
-> +	/* Default to our fastest rate */
-> +	return f - 1;
-> +}
-> +EXPORT_SYMBOL_GPL(qcom_find_freq_multi);
-> +
->   const struct freq_tbl *qcom_find_freq_floor(const struct freq_tbl *f,
->   					    unsigned long rate)
->   {
-> diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
-> index 9c8f7b798d9f..2d4a8a837e6c 100644
-> --- a/drivers/clk/qcom/common.h
-> +++ b/drivers/clk/qcom/common.h
-> @@ -45,6 +45,8 @@ extern const struct freq_tbl *qcom_find_freq(const struct freq_tbl *f,
->   					     unsigned long rate);
->   extern const struct freq_tbl *qcom_find_freq_floor(const struct freq_tbl *f,
->   						   unsigned long rate);
-> +extern const struct freq_multi_tbl *qcom_find_freq_multi(const struct freq_multi_tbl *f,
-> +							 unsigned long rate);
->   extern void
->   qcom_pll_set_fsm_mode(struct regmap *m, u32 reg, u8 bias_count, u8 lock_count);
->   extern int qcom_find_src_index(struct clk_hw *hw, const struct parent_map *map,
+T24gTW9uLCAyMDIzLTExLTIwIGF0IDExOjA5ICswMTAwLCBLcnp5c3p0b2YgS296bG93c2tpIHdy
+b3RlOg0KPiAgCSANCj4gRXh0ZXJuYWwgZW1haWwgOiBQbGVhc2UgZG8gbm90IGNsaWNrIGxpbmtz
+IG9yIG9wZW4gYXR0YWNobWVudHMgdW50aWwNCj4geW91IGhhdmUgdmVyaWZpZWQgdGhlIHNlbmRl
+ciBvciB0aGUgY29udGVudC4NCj4gIE9uIDIwLzExLzIwMjMgMTE6MDIsIHl1LWNoYW5nLmxlZSB3
+cm90ZToNCj4gPiBGb3IgTVQ4MTg4LCBWUFBTWVMwIGFuZCBWUFBTWVMxIGFyZSAyIGRpc3BsYXkg
+cGlwZXMgd2l0aA0KPiA+IGhhcmR3YXJlIGRpZmZlcmVuY2VzIGluIHBvd2VyIGRvbWFpbnMsIGNs
+b2NrcyBhbmQgc3Vic3lzdGVtIGNvdW50cywNCj4gPiB3aGljaCBzaG91bGQgYmUgcHJvYmVkIGZy
+b20gbXRrLW1tc3lzIGRyaXZlciB0byBwb3B1bGF0ZSBkZXZpY2UgYnkNCj4gPiBwbGF0Zm9ybV9k
+ZXZpY2VfcmVnaXN0ZXJfZGF0YSB0aGVuIHN0YXJ0IGl0cyBvd24gY2xvY2sgZHJpdmVyLg0KPiA+
+IA0KPiA+IFNpZ25lZC1vZmYtYnk6IHl1LWNoYW5nLmxlZSA8eXUtY2hhbmcubGVlQG1lZGlhdGVr
+LmNvbT4NCj4gPiAtLS0NCj4gPiBDaGFuZ2UgaW4gdjQ6DQo+ID4gLSBTcXVhc2hlZCBiaW5kaW5n
+IHBhdGNoZXMNCj4gPiAtIFRoaXMgcGF0Y2ggaXMgYmFzZWQgb24gWzFdDQo+ID4gWzFdIHNvYzog
+bWVkaWF0ZWs6IG1tc3lzOiBBZGQgc3VwcG9ydCBmb3IgTVQ4MTg4IFZQUFNZUw0KPiA+ICAgLSAN
+Cj4gaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wcm9qZWN0L2xpbnV4LW1lZGlhdGVrL3Bh
+dGNoLzIwMjMxMTE3MDU0MzQ1LjE1ODU5LTEteXUtY2hhbmcubGVlQG1lZGlhdGVrLmNvbS8NCj4g
+PiANCj4gDQo+IFRoaXMgcHJvYmFibHkgc2hvdWxkIHN0YXkgcGFydCBvZiBwcmV2aW91cyBwYXRj
+aHNldC4gV2h5IHNwbGl0dGluZw0KPiBpdD8NCj4gDQo+IA0KPiBBY2tlZC1ieTogS3J6eXN6dG9m
+IEtvemxvd3NraSA8a3J6eXN6dG9mLmtvemxvd3NraUBsaW5hcm8ub3JnPg0KPiANCj4gQmVzdCBy
+ZWdhcmRzLA0KPiBLcnp5c3p0b2YNCj4gDQpUaGFuayB5b3UgZm9yIHlvdXIgdGltZSBhbmQgZWZm
+b3J0LiBJIG1pc3VuZGVyc3Rvb2QgdGhhdCB5b3Ugd2FudCBtZSB0bw0Kc2VuZCB0aGUgYmluZGlu
+ZyBwYXRjaGVzIGFzIGEgaW5kZXBlbmRlbnQgc2VyaWUgaW4gcHJldmlvdXMgZGlzY3Vzc2lvbi4N
+Ck9ubHkgdW50aWwgbm93IEkgc3F1YXNoZWQgdGhlbSwgYnV0IHRoZSBkcml2ZXIgcGF0Y2ggaGFz
+IGFscmVhZHkgYmVlbg0Kc3VibWl0dGVkLi4uIFNob3VsZCBJIHJlc2VuZCBhbGwgb2YgdGhlc2Ug
+cGF0aGVzIGFzIGEgc2VyaWUgYWdhaW4/DQoNClRoYW5rcywNCg0KQmVzdCBSZWdhcmRzLA0KeXVj
+aGFuZw0K
