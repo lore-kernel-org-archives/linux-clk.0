@@ -1,122 +1,136 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="fWek+mEM"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E08ECD;
-	Mon, 20 Nov 2023 02:03:04 -0800 (PST)
-X-UUID: fcd11294878b11eea33bb35ae8d461a2-20231120
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=5cnBIGTFta30P7mscy72z68CYY3xkJ8c8wqppX2Iub8=;
-	b=fWek+mEMdXrrEXd3HldEsWJgUSIvoAoxTP1IPVAFgb3hNChyR5V42IjmDwbXYNYki83IT+m8SR9q/Ik8qUbHMhMpm8GaEpv2xGizTae0fUu+Qmz6KVK5p0nv500fMuZGsN5fFOGotLjOJUWpNesdsZLot78ydMN6UlUyozBqufI=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.33,REQID:9c4f0cf3-bb5c-470c-a8e5-754dc6da5237,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:364b77b,CLOUDID:b1d0da72-1bd3-4f48-b671-ada88705968c,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:1,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,
-	DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
-X-UUID: fcd11294878b11eea33bb35ae8d461a2-20231120
-Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw01.mediatek.com
-	(envelope-from <yu-chang.lee@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 779686074; Mon, 20 Nov 2023 18:03:00 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- MTKMBS14N2.mediatek.inc (172.21.101.76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Mon, 20 Nov 2023 18:02:59 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Mon, 20 Nov 2023 18:02:59 +0800
-From: yu-chang.lee <yu-chang.lee@mediatek.com>
-To: Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>
-CC: Garmin Chang <garmin.chang@mediatek.com>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>, "yu-chang . lee"
-	<yu-chang.lee@mediatek.com>
-Subject: [PATCH v4] dt-bindings: arm: mediatek: mmsys: Add VPPSYS compatible for MT8188
-Date: Mon, 20 Nov 2023 18:02:58 +0800
-Message-ID: <20231120100258.3428-1-yu-chang.lee@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K9PWmn2a"
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C83B9E
+	for <linux-clk@vger.kernel.org>; Mon, 20 Nov 2023 02:09:44 -0800 (PST)
+Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-a0029289b1bso34337566b.1
+        for <linux-clk@vger.kernel.org>; Mon, 20 Nov 2023 02:09:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1700474983; x=1701079783; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=T8nD3WjfEER3VE0XMqJypI0JHyBxZJXe8U5XtUW0Co4=;
+        b=K9PWmn2akdMZZyz76G0/uE1xjEv7LkxXDmAuerSmnZm+WaRkIrzw4n3v6Bk0Vc1c+O
+         LFuvY3wZahbdqUC4VgixD+55KesgpOYbwYgW11cKzM98p/fFhvioY7cBqphZxPTy63tR
+         Sxf+LJ5Yx3seshH59Rgq4Kbf2LxQofeFRYg1HU557qDWdEd8BK1ImWPhj0EJVhZofQIR
+         WB+uI2+MUNvftwRl9y8OTbTerQWSluL9douGvpxYcnjmFFXPHdIHyHEndR8KAMsXCbaD
+         pjTgYo8V1eIpDTD7xN7rTk2KMwiy29Wpj33UTjwLQhgN/dBXILKFBzO03bqvZjzhdcm2
+         b2ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700474983; x=1701079783;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=T8nD3WjfEER3VE0XMqJypI0JHyBxZJXe8U5XtUW0Co4=;
+        b=JoLWU8HTQ/c/IC+mcdB2C83MqnPEMj45lK0ZLCRzbAAtiVfW9xDDwjyEDEMnUTL93s
+         4rnTFCdKfUqUsldI8OrLfS2ZsGIoUn8aDkXZKRMrScItoSJUcmZXT+nCxUKEnaBxoM91
+         077eQJ7ZFan8YCXkAgpHqOZ1EDM8R4XOraEoRxrqZ7/L3oL2VLHLrYj3dZmrdrn1m6xg
+         el4NfrkdnYWrMcI5xK0MMMMvjyUm9RLpNT4j8hlnKtt22PObj8GarakmirquobyY7OnR
+         K/5eRFLme+7IUV7nepbano5Jtx9HJWdC3jvg0etKITBl/BOL2QJ9QTs0zB4OumTlUzb4
+         R9DQ==
+X-Gm-Message-State: AOJu0YwGf4RVfXs3H/JZY8tjI7agJlmntYvPJ2rdMa8PWo9eOSF9Nt9B
+	9AbYk3Zpk1DHPjmO5+QIDFtZUg==
+X-Google-Smtp-Source: AGHT+IG7U/IjtWsoxp6M4WG6CPk5ie4W/gni9z76WhOidNSaxxPBaHmFVGpdScIxS/qFiuOoIuiDRA==
+X-Received: by 2002:a17:906:748f:b0:9ad:f7e5:67d9 with SMTP id e15-20020a170906748f00b009adf7e567d9mr4579932ejl.4.1700474982758;
+        Mon, 20 Nov 2023 02:09:42 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.222.11])
+        by smtp.gmail.com with ESMTPSA id n12-20020a17090673cc00b009dd606ce80fsm3755198ejl.31.2023.11.20.02.09.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Nov 2023 02:09:41 -0800 (PST)
+Message-ID: <6bc4fa28-a98f-46c7-b315-7366307b5206@linaro.org>
+Date: Mon, 20 Nov 2023 11:09:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--2.349200-8.000000
-X-TMASE-MatchedRID: BHLx0ZeYtM1eiY7hjuuIsm3NvezwBrVmCt59Uh3p/NVHZg0gWH5yUTP7
-	OSqW2R7sUYCBevv5+axRS7xjEb+dxB9J5bZqJbIJe8FaKRfM2oOy4iyjvVWToqdrpTvh7T6o88Q
-	4SiSCA0uVMlcqqHWd7fNdJKB44KmGkfRhdidsajMURSScn+QSXt0H8LFZNFG76sBnwpOylLOY9r
-	8YLxxS4dgS604jgwkFQVackz7nDBjHrR5lGQU4zkV0FoTjxQgL0J69tGon+X3UgUmiG7ib0MxU6
-	jcX1FK3fA2Q/royHVoXRoPmWO3jekxwdkPqCq7vDEyN+J8hd+jCS9WgDXVPCn7cGd19dSFd
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--2.349200-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP:
-	A2E3637E6938936CF704E8E60C8754BE664BF24B380C333488BD6569875CF8BA2000:8
-X-MTK: N
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] dt-bindings: arm: mediatek: mmsys: Add VPPSYS
+ compatible for MT8188
+Content-Language: en-US
+To: "yu-chang.lee" <yu-chang.lee@mediatek.com>,
+ Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Garmin Chang <garmin.chang@mediatek.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20231120100258.3428-1-yu-chang.lee@mediatek.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20231120100258.3428-1-yu-chang.lee@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-For MT8188, VPPSYS0 and VPPSYS1 are 2 display pipes with
-hardware differences in power domains, clocks and subsystem counts,
-which should be probed from mtk-mmsys driver to populate device by
-platform_device_register_data then start its own clock driver.
+On 20/11/2023 11:02, yu-chang.lee wrote:
+> For MT8188, VPPSYS0 and VPPSYS1 are 2 display pipes with
+> hardware differences in power domains, clocks and subsystem counts,
+> which should be probed from mtk-mmsys driver to populate device by
+> platform_device_register_data then start its own clock driver.
+> 
+> Signed-off-by: yu-chang.lee <yu-chang.lee@mediatek.com>
+> ---
+> Change in v4:
+> - Squashed binding patches
+> - This patch is based on [1]
+> [1] soc: mediatek: mmsys: Add support for MT8188 VPPSYS
+>   - https://patchwork.kernel.org/project/linux-mediatek/patch/20231117054345.15859-1-yu-chang.lee@mediatek.com/
+> 
 
-Signed-off-by: yu-chang.lee <yu-chang.lee@mediatek.com>
----
-Change in v4:
-- Squashed binding patches
-- This patch is based on [1]
-[1] soc: mediatek: mmsys: Add support for MT8188 VPPSYS
-  - https://patchwork.kernel.org/project/linux-mediatek/patch/20231117054345.15859-1-yu-chang.lee@mediatek.com/
+This probably should stay part of previous patchset. Why splitting it?
 
-Changes in v3:
-- Separate binding patch from driver patch
 
-Changes in v2:
-- Refine commit message
-- Refine commit title
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
- .../devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml        | 2 ++
- .../devicetree/bindings/clock/mediatek,mt8188-clock.yaml        | 2 --
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml
-index 536f5a5ebd24..50324248b965 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml
-@@ -32,6 +32,8 @@ properties:
-               - mediatek,mt8183-mmsys
-               - mediatek,mt8186-mmsys
-               - mediatek,mt8188-vdosys0
-+              - mediatek,mt8188-vppsys0
-+              - mediatek,mt8188-vppsys1
-               - mediatek,mt8192-mmsys
-               - mediatek,mt8195-vdosys1
-               - mediatek,mt8195-vppsys0
-diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt8188-clock.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt8188-clock.yaml
-index d7214d97b2ba..860570320545 100644
---- a/Documentation/devicetree/bindings/clock/mediatek,mt8188-clock.yaml
-+++ b/Documentation/devicetree/bindings/clock/mediatek,mt8188-clock.yaml
-@@ -43,8 +43,6 @@ properties:
-       - mediatek,mt8188-vdecsys
-       - mediatek,mt8188-vdecsys-soc
-       - mediatek,mt8188-vencsys
--      - mediatek,mt8188-vppsys0
--      - mediatek,mt8188-vppsys1
-       - mediatek,mt8188-wpesys
-       - mediatek,mt8188-wpesys-vpp0
- 
--- 
-2.18.0
+Best regards,
+Krzysztof
 
