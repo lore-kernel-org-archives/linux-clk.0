@@ -1,130 +1,137 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CHO9NTiu"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D171893;
-	Sun, 19 Nov 2023 22:43:01 -0800 (PST)
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AK6gps8003498;
-	Mon, 20 Nov 2023 06:42:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=F7xqR67JNI2+rkb+W/+ku99i3sosh1nTgLbQXaUahzQ=;
- b=CHO9NTiumdkY7fX4wObmxhKUu4pYEyepe8VcYWGOnIOH8fKKvfx/XWIBdBBilYg6YeGa
- 6iR/qodLO5M4gEFAoNRLC+4Q72P8FrQ0G3uNB3+dYmUaeKDvWDHnlU8EhIJ09zHHxAj7
- ZJLMFzwc9mIEtyZfA2vFkaQqGxzD7tMBoa7CUk48VvThzmCKYmEH51Pmp/XJFUIj0aYe
- GvlMwQxf9bgQcFEenMqTJu3/AFBwX8TSiYoawzbHJh7MWaNCsnUB5TKeAh0llLCZQfdR
- HSeJsJmey/de58ISTADRUiSw4d7FwdrG4Rsf6LDf+JtRPHqB0v0HrvAar66wCTjksBLA Fw== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3uem80k86m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 20 Nov 2023 06:42:57 +0000
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3AK6gue9008974
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 20 Nov 2023 06:42:56 GMT
-Received: from [10.79.43.91] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Sun, 19 Nov
- 2023 22:42:51 -0800
-Message-ID: <4af8e7a4-0506-a08c-f294-d055fb463af8@quicinc.com>
-Date: Mon, 20 Nov 2023 12:12:48 +0530
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="gZ+ZpceU"
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56E29137
+	for <linux-clk@vger.kernel.org>; Sun, 19 Nov 2023 23:00:58 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-32fb190bf9bso2983995f8f.1
+        for <linux-clk@vger.kernel.org>; Sun, 19 Nov 2023 23:00:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1700463656; x=1701068456; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KwevGdkeW/EqmdjRRf8uL4/0rWQsUrZxtLsAgN3TSxo=;
+        b=gZ+ZpceUYbalfqGIXbbkSPcAWX72qAJlUlzAq3hRmziQIMAdDmFV4RNt5irfiJ2gsz
+         xJJtmlnLcHb0Nca7EeXTtRkFegdHoOCF684yjxL9ana2ir2yxhiQMwsIZQEn15kZGi+i
+         zMkmW8P/QxLHjAitWH7Pp+RhNY1RuBtE1+MgNfUsV2m6/rBXI5rsSR7WNLA9eaRrwXIY
+         3ML++obL99bTuXgLOqOE5UAanPuIziRgALXiQ+pZIXGQgfcC4kdGM4/7HgvwZGRVTsAk
+         3lPXjY/DOo9IvT/S0Y3aTsWfoMQozeirSMyuqlpw0Jw+B8+4gNHotbqJQd61KESkUZ9L
+         +XqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700463656; x=1701068456;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KwevGdkeW/EqmdjRRf8uL4/0rWQsUrZxtLsAgN3TSxo=;
+        b=dNGKv3beGViQFBNvGMRALj3VKBpl/Hbx2fFf2HdsaFGcWfABDg9zgtKavEttOavWP4
+         i8zlwEaUeNCC1pnsewMP7RBrfQgDZi1YHkCT6kdeQy6AetSEfmmo+gVnIQcYbhN0WZSY
+         WJ0PziVnD1XOcxVW74tKlk1ITi3N20SQzIlhCl+QvfvkGV/egqDIEjevuprsSwN5SfTx
+         xjDUeJk6NTevsUCm7XDw3rNQXbHqFXAqUxsB9U4N0i3RtPD+zTJo53QKvJzE2xxaugre
+         V6ugz+xinosy8JN2Fg4M1YsEwGzZxrSxpTpWtb7eYkoEjP677zh/l5X28mEDPhDOZ7zf
+         7csw==
+X-Gm-Message-State: AOJu0YwnscgG6fKugaWdoFt9fdnlnLBOYIXsk0ET68mrWsPXDSkzGSkx
+	AXqZR7mljHUim7TnrDjyWT/7Wg==
+X-Google-Smtp-Source: AGHT+IHAdVnQoSWtCtHmQxcPOkXYnnh4RinKnklxlmmTnyowZWsyJ8QW2bmmGUpYQcAPA1Di3ZT2ZA==
+X-Received: by 2002:a5d:5cc2:0:b0:332:c9c2:dd4e with SMTP id cg2-20020a5d5cc2000000b00332c9c2dd4emr639485wrb.31.1700463656622;
+        Sun, 19 Nov 2023 23:00:56 -0800 (PST)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.183])
+        by smtp.gmail.com with ESMTPSA id p2-20020a5d4582000000b003316d1a3b05sm8777667wrq.78.2023.11.19.23.00.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 19 Nov 2023 23:00:56 -0800 (PST)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: s.shtylyov@omp.ru,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org,
+	linux@armlinux.org.uk,
+	geert+renesas@glider.be,
+	magnus.damm@gmail.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	linus.walleij@linaro.org,
+	p.zabel@pengutronix.de,
+	arnd@arndb.de,
+	m.szyprowski@samsung.com,
+	alexandre.torgue@foss.st.com,
+	afd@ti.com,
+	broonie@kernel.org,
+	alexander.stein@ew.tq-group.com,
+	eugen.hristev@collabora.com,
+	sergei.shtylyov@gmail.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	biju.das.jz@bp.renesas.com
+Cc: linux-renesas-soc@vger.kernel.org,
+	netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	claudiu.beznea@tuxon.dev,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 00/14] renesas: rzg3s: Add support for Ethernet
+Date: Mon, 20 Nov 2023 09:00:10 +0200
+Message-Id: <20231120070024.4079344-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH V2 2/4] clk: qcom: Add Global Clock controller (GCC)
- driver for X1E80100
-Content-Language: en-US
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>, <andersson@kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>
-CC: <agross@kernel.org>, <conor+dt@kernel.org>, <quic_tdas@quicinc.com>,
-        <quic_rjendra@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <neil.armstrong@linaro.org>,
-        <abel.vesa@linaro.org>, <quic_tsoni@quicinc.com>
-References: <20231117092737.28362-1-quic_sibis@quicinc.com>
- <20231117092737.28362-3-quic_sibis@quicinc.com>
- <ec9d03f7-7158-4309-9a04-b08c69b89f39@linaro.org>
- <2e0d2c55-fb2f-4903-a555-f51019942c6e@linaro.org>
- <c8cf229b-4d15-4eca-bc4b-61dc67d63e91@linaro.org>
-From: Sibi Sankar <quic_sibis@quicinc.com>
-In-Reply-To: <c8cf229b-4d15-4eca-bc4b-61dc67d63e91@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 1yO-zWFnfgm1pkZ2K0GZ7REihmblx3-_
-X-Proofpoint-ORIG-GUID: 1yO-zWFnfgm1pkZ2K0GZ7REihmblx3-_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-11-20_04,2023-11-17_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxlogscore=729
- adultscore=0 priorityscore=1501 phishscore=0 malwarescore=0
- impostorscore=0 lowpriorityscore=0 mlxscore=0 spamscore=0 bulkscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311060000 definitions=main-2311200042
+Content-Transfer-Encoding: 8bit
 
-On 11/18/23 07:22, Bryan O'Donoghue wrote:
-> On 18/11/2023 00:06, Konrad Dybcio wrote:
->> On 17.11.2023 21:50, Bryan O'Donoghue wrote:
->>> On 17/11/2023 09:27, Sibi Sankar wrote:
->>>> * Use shared ops in the x1e80100 gcc driver [Bryan].
->>>
->>> This looks better to me now / more consistent with what we have in 
->>> sc8280xp - where we do try to hit suspend and => retention/parking 
->>> matters.
->> Parking the clock is separate from putting the system to sleep.
-> 
-> Yes but several of our clocks want to be parked, not switched off.. 
-> which obviously does matter in suspend.
-> 
->> IIUC we usually use shared ops on clocks that may have different users
->> (e.g. not only controlled by Linux) and/or that are crucial to the
->> functioning of hardware (like AXI clocks, which if gated would make
->> the system crash on any access attempt, from any subsystem, unless
->> turned on beforehand)
-> 
-> My question here for Sibi, is why sdcc2_apss_clk_src differs here from 
-> sc8280xp?
-> 
-> Is it wrong on sc8280xp or if correct sc8280xp then why is it not 
-> replicated here ?
-> 
-> https://lore.kernel.org/linux-arm-msm/e857c853-51ef-8314-2a21-fa6fd25162ca@quicinc.com/
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Bryan,
+Hi,
 
-5e4b7e82d497 ("clk: qcom: gcc-sdm845: Use floor ops for sdcc clks")
+Series adds Ethernet support for Renesas RZ/G3S Ethernet.
+Along with it preparatory cleanups and fixes were included.
 
-The floor_ops was introduced in sdm845 ^^ and later propagated to all
-other QC SoCs later on. It makes sense to do the same for sc8280xp as
-well.
+Patches 1-4 are clock specific.
+Patches 5-8 are pinctrl specific.
+Patches 9-13 are device tree specific.
+Patch 14 updates multi_v7_defconfig with RAVB flag.
 
-> 
-> Also @Sibi I realise alot of this code is autogenerated - it would be 
-> worthwhile finding/fixing the script that does the generation to plug in 
-> shared_ops instead of floor_ops if the input material has the necessary 
-> flags.
+Thank you,
+Claudiu Beznea
 
-floor_ops part isn't auto-generated (it comes out as shared_ops,
-but like you said it might make sense to include it as part of the
-generation process itself.
+Claudiu Beznea (14):
+  clk: renesas: rzg2l-cpg: Reuse code in rzg2l_cpg_reset()
+  clk: renesas: rzg2l-cpg: Check reset monitor registers
+  clk: renesas: rzg2l-cpg: Add support for MSTOP
+  clk: renesas: r9a08g045-cpg: Add clock and reset support for ETH0 and
+    ETH1
+  pinctrl: renesas: rzg2l: Move arg in the main function block
+  pinctrl: renesas: rzg2l: Add pin configuration support for pinmux
+    groups
+  pinctrl: renesas: rzg2l: Add support to select power source for
+    Ethernet pins
+  pinctrl: renesas: rzg2l: add output enable support
+  dt-bindings: net: renesas,etheravb: Document RZ/G3S support
+  arm64: renesas: r9a08g045: Add Ethernet nodes
+  arm64: renesas: rzg3s-smarc-som: Invert the logic for SW_SD2_EN macro
+  arm64: dts: renesas: Improve documentation for SW_SD0_DEV_SEL
+  arm64: dts: renesas: rzg3s-smarc-som: Enable Ethernet interfaces
+  arm: multi_v7_defconfig: Enable CONFIG_RAVB
 
--Sibi
+ .../bindings/net/renesas,etheravb.yaml        |   1 +
+ arch/arm/configs/multi_v7_defconfig           |   1 +
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |  32 ++++
+ .../boot/dts/renesas/rzg3s-smarc-som.dtsi     | 153 +++++++++++++++-
+ drivers/clk/renesas/r9a07g043-cpg.c           | 116 ++++++------
+ drivers/clk/renesas/r9a07g044-cpg.c           | 158 ++++++++---------
+ drivers/clk/renesas/r9a08g045-cpg.c           |  64 +++++--
+ drivers/clk/renesas/r9a09g011-cpg.c           | 116 ++++++------
+ drivers/clk/renesas/rzg2l-cpg.c               | 166 +++++++++++++++---
+ drivers/clk/renesas/rzg2l-cpg.h               |  21 ++-
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c       | 166 ++++++++++++++++--
+ 11 files changed, 736 insertions(+), 258 deletions(-)
 
-> 
-> ---
-> bod
+-- 
+2.39.2
+
