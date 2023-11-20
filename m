@@ -1,82 +1,128 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kWsUuo/O"
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80C0EC5
-	for <linux-clk@vger.kernel.org>; Mon, 20 Nov 2023 03:03:47 -0800 (PST)
-Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-32f7abbb8b4so2811951f8f.0
-        for <linux-clk@vger.kernel.org>; Mon, 20 Nov 2023 03:03:47 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="T95/bxIE"
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6409310C0
+	for <linux-clk@vger.kernel.org>; Mon, 20 Nov 2023 03:18:31 -0800 (PST)
+Received: by mail-lj1-x235.google.com with SMTP id 38308e7fff4ca-2c503dbe50dso55651411fa.1
+        for <linux-clk@vger.kernel.org>; Mon, 20 Nov 2023 03:18:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700478226; x=1701083026; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SJvB4sdAi/jLk1JCRFuGNm+4SWox2Y2BPXbersr3knw=;
-        b=kWsUuo/Odrw8SDtRiiK62UnDFFLceWJzOtkC0dRy6QnCUg4+l1OJS91k2pXt01ySO4
-         Ce5mYbO6xwjI9fv43hdFkZdXSKEGSJ8hWnluuEKK3U3VoiGRc5ouOxeJH/JNtoJ2RPkR
-         3uGcuU7ZqRyaohHdH/6GS9ErmEXAp5DOKlAlEiteezbAI8bNxVWoUJzljn7FXDMAmUI1
-         LD4fOj8ZNxil0/bQhdXZZJqGPDoxVMoAuttkw2neJhGE+PBUhm10ZR7oEmRXAsEl1Qxg
-         b6dX3jNXb5Kz9/3yCiHYEYNywcpSL5o9waofxYfapYx3M77oeukYsjgdWiEMLXxvV5Wx
-         CSJw==
+        d=tuxon.dev; s=google; t=1700479109; x=1701083909; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ta0MJxvruSCk3gKB4JBR+iRqy/ulUdX87ERHRuURIrE=;
+        b=T95/bxIEIYzwcKn9k5Xvx0XOEAZuAQl8l2iGsdoYPxHtn82HWEuWq4PqmNO2eGJVLz
+         peRHInLFxOjYY3lgpDoUGkTOLDR0zMB5bX02DzonwATt4T1GHqaiU4zR5ESQcqTTnhmB
+         844P0lLznVbS6Fu7pWH6DiUgbYH7I8L+E8tOTZShEU3eKwhD/NxmB4EGeapHywHh69cg
+         X5cLq+PdG3Lg8vZHnnKe+iKL3JwXHzz4mcs1dJOd+IzodJRFWtiRQgfmmiV6GAVzjjXz
+         EAxNIiHPmHvneVZso5w0sO7IT3v9njTXhiroLJpu0QQTwzFe330kTLomETzLub72olqD
+         etuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700478226; x=1701083026;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SJvB4sdAi/jLk1JCRFuGNm+4SWox2Y2BPXbersr3knw=;
-        b=RW1OdPXe1V1n2vQCTFSFNMxortnvIF5700HD90sEhkxhfv+ZrKFUXLG8yKciZr3NEj
-         buTmuUyqkKoJSYLV3bBAKjAhz8RzgGYcMbfR8lBKt45jzfAavQ0gxuZAMrwfzIh1UB7g
-         KZQMB9RwROq7h62aBAwYupAuajr8vGOibEOB2RQOcjwqo6o2DtA+2UN4xIK1SORDfoBS
-         xyDa4uju0Omatwuj/q9azJ46m+fk2pKyozYfRHi/b5X4f1tJ7jWZbe/+dSo6L5/6BHe/
-         rd4qjfwLspG817k+8dajhBPE9+LVQWb7l390Un1EIplKoA7N5S9Ip0psYgcJmn9o0lwk
-         X30g==
-X-Gm-Message-State: AOJu0YzLjcKJHOUDIivX+Zto3imC8X/2s5a7EEnRK8rgPnytHs4F+w4k
-	j4Nmh5zrcAU6OKi2a6gKYKk0xw==
-X-Google-Smtp-Source: AGHT+IHljDZI7pMKErfkRq93NyuVgn+V5paosGBX7S0hIYwBfzX+b8EbFcZhgq/wqFr4EgRY+Lj48Q==
-X-Received: by 2002:a5d:694f:0:b0:32f:99f4:ebac with SMTP id r15-20020a5d694f000000b0032f99f4ebacmr4497109wrw.18.1700478225919;
-        Mon, 20 Nov 2023 03:03:45 -0800 (PST)
-Received: from [192.168.100.102] ([37.228.218.3])
-        by smtp.gmail.com with ESMTPSA id b11-20020a05600010cb00b00332c0d256c5sm5916490wrx.80.2023.11.20.03.03.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Nov 2023 03:03:45 -0800 (PST)
-Message-ID: <2a912e97-c0e5-47b2-9e3c-99f675283650@linaro.org>
-Date: Mon, 20 Nov 2023 11:03:44 +0000
+        d=1e100.net; s=20230601; t=1700479109; x=1701083909;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ta0MJxvruSCk3gKB4JBR+iRqy/ulUdX87ERHRuURIrE=;
+        b=d3Pt6LSjs5PqRUp7dVc1GyXkJhN6a/eZhKz38QokQMDPeKQJBpFtMhgYkOVMKgSmDT
+         80glcYMSRn53tLbMPjZ0ZJEoiJVbyJoBhalPjpKdFLhl1s+Zac94F77kiZxa+2NTq4ga
+         7xxo59BfrxD1YHzLRNR3sn3kxx+D5Z17g8iAefTUxPHzTePwM3KsIn+39MqUNpwUZeBS
+         AgBpSHG693ASoMhcItAodDylCLcbbeMmmM63ItJK54+FA2b9YmM9H6cuOfmcQ6zhRKKm
+         4o7B07qbTVwUaAgAkPLX6svRvZur1HVpgjnc/1MOlGC1cSKSeiBbNivWQTRZNLW4fljG
+         81Wg==
+X-Gm-Message-State: AOJu0Yw0oBIIKwPxKyiuHGo2PWwGopuq89+FLM+d9uDnM7K9g7FofPgq
+	sJl3adJLqHICijp2fctc+Q+PtXw+4tXRfftq3Gk=
+X-Google-Smtp-Source: AGHT+IF5FLrdx0L0Gk97U8GMzPHq7HmzPfjAM7JslJn77Qof3Ur5QXy4PuCQ6cM1ZuCnRpy7lp15pA==
+X-Received: by 2002:a2e:9bd7:0:b0:2c8:84ff:4a25 with SMTP id w23-20020a2e9bd7000000b002c884ff4a25mr1146973ljj.5.1700479109421;
+        Mon, 20 Nov 2023 03:18:29 -0800 (PST)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.183])
+        by smtp.gmail.com with ESMTPSA id g6-20020a05600c310600b0040651505684sm13142676wmo.29.2023.11.20.03.18.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Nov 2023 03:18:29 -0800 (PST)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: tglx@linutronix.de,
+	robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org,
+	geert+renesas@glider.be,
+	magnus.damm@gmail.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	prabhakar.mahadev-lad.rj@bp.renesas.com
+Cc: linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v3 0/9] irqchip/renesas-rzg2l: add support for RZ/G3S SoC
+Date: Mon, 20 Nov 2023 13:18:11 +0200
+Message-Id: <20231120111820.87398-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 2/4] clk: qcom: Add Global Clock controller (GCC)
- driver for X1E80100
-Content-Language: en-US
-To: Sibi Sankar <quic_sibis@quicinc.com>, andersson@kernel.org,
- konrad.dybcio@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
- robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org
-Cc: agross@kernel.org, conor+dt@kernel.org, quic_tdas@quicinc.com,
- quic_rjendra@quicinc.com, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, neil.armstrong@linaro.org,
- abel.vesa@linaro.org, quic_tsoni@quicinc.com
-References: <20231117092737.28362-1-quic_sibis@quicinc.com>
- <20231117092737.28362-3-quic_sibis@quicinc.com>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20231117092737.28362-3-quic_sibis@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 17/11/2023 09:27, Sibi Sankar wrote:
-> From: Rajendra Nayak <quic_rjendra@quicinc.com>
-> 
-> Add support for the global clock controller found on X1E80100
-> based devices.
-> 
-> Co-developed-by: Abel Vesa <abel.vesa@linaro.org>
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
-> Co-developed-by: Sibi Sankar <quic_sibis@quicinc.com>
-> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
-> ---
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Hi,
+
+Series adds support for IA55 available on RZ/G3S SoC.
+Patches are split as follows:
+- 1/9 adds IA55 clock
+- 2-4/9 minor cleanups to align with the suggestions at [1] and
+  coding style recommendations
+- 5/9 implement restriction described in HW manual for ISCR register
+- 6/9 add a macro to retrieve TITSR base address based on it's index
+- 7/9 add suspend to RAM support
+- 8/9 updates documentation
+- 9/9 adds IA55 device tree node
+
+Thank you,
+Claudiu Beznea
+
+[1] https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#struct-declarations-and-initializers
+
+Changes in v3:
+- kept driver private data object as pointer
+- moved patch 1/9 from v2 (dt-bindings: interrupt-controller: renesas,rzg2l-irqc: Document RZ/G3S)
+  after IRQ controller driver feature patches
+
+Changes in v2:
+- collected Conor's tag
+- updated commit description according to code review comments
+- added patches 4, 5 according to review recommendations
+- updated patch 7/9 to retrieve only TITSR base address; dropped the rest
+  of the changes for the moment
+- in patch 8/9 use local variable in suspend/resume functions for controller's
+  base address, indent initialized structures members to tabs, updated
+  private driver data structure name
+- patch 3/7 from v1 was replaced by patch 7/9 in v2
+- patch 5/7 from v1 was renamed "Add support for suspend to RAM"
+- cleanup patches were kept at the beginning of the series and features at the end
+
+Claudiu Beznea (9):
+  clk: renesas: r9a08g045: Add IA55 pclk and its reset
+  irqchip/renesas-rzg2l: Use tabs instead of spaces
+  irqchip/renesas-rzg2l: Align struct member names to tabs
+  irqchip/renesas-rzg2l: Document structure members
+  irqchip/renesas-rzg2l: Implement restriction when writing ISCR
+    register
+  irqchip/renesas-rzg2l: Add macro to retrieve TITSR register offset
+    based on register's index
+  irqchip/renesas-rzg2l: Add support for suspend to RAM
+  dt-bindings: interrupt-controller: renesas,rzg2l-irqc: Document RZ/G3S
+  arm64: dts: renesas: r9108g045: Add IA55 interrupt controller node
+
+ .../renesas,rzg2l-irqc.yaml                   |   5 +-
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |  68 +++++++++++
+ drivers/clk/renesas/r9a08g045-cpg.c           |   3 +
+ drivers/irqchip/irq-renesas-rzg2l.c           | 110 +++++++++++++-----
+ 4 files changed, 158 insertions(+), 28 deletions(-)
+
+-- 
+2.39.2
 
