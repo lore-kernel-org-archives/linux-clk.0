@@ -1,43 +1,43 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DWC0kgtE"
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94768D2
-	for <linux-clk@vger.kernel.org>; Mon, 20 Nov 2023 13:21:11 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-40b27b498c3so1243495e9.0
-        for <linux-clk@vger.kernel.org>; Mon, 20 Nov 2023 13:21:11 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Mrs1G55o"
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06BC8110
+	for <linux-clk@vger.kernel.org>; Mon, 20 Nov 2023 13:21:12 -0800 (PST)
+Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-4083dbc43cfso16829855e9.3
+        for <linux-clk@vger.kernel.org>; Mon, 20 Nov 2023 13:21:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700515270; x=1701120070; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1700515271; x=1701120071; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FWrC3Ayxx8cA3cHGksIcRtfk+Sj+TKwgMP3l+aAP0Uw=;
-        b=DWC0kgtEj1B0sU2zmF37ICAi8PFRdyLJN3Zy2Z62y6rFr5swCLj0USe4tAXdnaBpCV
-         u6DcddHyqa02SUNjjyVxHgRE95OwugNFZem1eNX4vfNzmYzgF0/bGB6S2rN7uoKkrvoM
-         zPBZJ028DwAZPHhO9lpFedJE4hw/KCG2I23GTvl/mVEw9Lb6fLJb6EqTT77WoccC+SEa
-         df5irjBm5kfY4ROUikT7j3dwt8dUeczfzFppkOGrZ3yIUViSzHy4al/YAhP/jgv2nbuF
-         G3yBYG/kFRUva+5qpY5jpF5EyZEMZpqgI5LLfIBWiE7ta/Xm2kq/SujqmFOePoorm2/S
-         X8HA==
+        bh=KEC9m1sVf+gIOTorVlWOWetqCtBoH8t51Urz8Bp1ZAU=;
+        b=Mrs1G55ohLYtlYqONtbRAAkz8k1igdm/Ae/sybagIa2W6vAksqwjDKefRAdCm3Ce1E
+         wZc65zYJBUEmjbyPIy0xbIxlcBtqE5n/EUjKtsCxAN+Tmmvi4bdK7Yddi7yFO91UPzIX
+         P/UhPU4LB8qLh9lczEiCb4OSL4hhepZE0NoS8mBA7AcQiZytr0DSObWPCI1+0tCiIZ9Q
+         8LwunOXpz2mUULE76EX/Mh9gybCwLcrPK0pWMYL/yPnEo53ThKTFPknfnv4FrfwXlV8t
+         f8LTlvhwYrtZ2kPMBY+ktTcm5GIQtM6wtPTja3lQ7FJE3PqVb+B0ETSxzpjtF8nvcyKs
+         ZofA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700515270; x=1701120070;
+        d=1e100.net; s=20230601; t=1700515271; x=1701120071;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FWrC3Ayxx8cA3cHGksIcRtfk+Sj+TKwgMP3l+aAP0Uw=;
-        b=RrdRGcAxcQIgFggXV02zpkkjIGKng4XlR7biN6DmZP8ci0Jjb+L0gfXkwi8Td5Ke09
-         WkcYNdEbAgS7H0LT/EIvXsjFElPoilAoNdYGti2/0/m3E8uoFkvXULDQIh9iVu+vjq/a
-         S2/f46ZmZgwM5WrR6sl3WW4ORKFO8+CT838tTSuo1uF16V51urhw56wV2Po7ErWgR88t
-         +HoUkrTc+Ggz7XC66/RJTJCeUJth6OaaLp4gUTzATFJMAeTKxcC3vTJSyk6n6URB42F8
-         ydPFtWKv/XEA8+W6wVVW4xQ9fE4+LwCtsQN5KbN9sKvkz4mv6lFaiGh2rgnZf4ilDDFa
-         JEGQ==
-X-Gm-Message-State: AOJu0YxKmf/7GQ9du1GKFebz7fUWZC+O33OD5rBEkgkxFUi6fEXcCMXP
-	BJi5Herle4B221rTIOnW8Y3mDQ==
-X-Google-Smtp-Source: AGHT+IHvnqFqvnhoaj/lvHGCgZoD7uJel+Q84X3YFSUkXyOEOaLu5vJ/ZWuBo/wwxVo2wIMuvSsRCg==
-X-Received: by 2002:a05:600c:4797:b0:3fe:1232:93fa with SMTP id k23-20020a05600c479700b003fe123293famr6449271wmo.22.1700515269893;
-        Mon, 20 Nov 2023 13:21:09 -0800 (PST)
+        bh=KEC9m1sVf+gIOTorVlWOWetqCtBoH8t51Urz8Bp1ZAU=;
+        b=Pt9vFgBxdHB4rxfp/fGVaoavFQsDwiowI/UHMymtkh1ojnfbaPBw2LHPdEEnyXzXx7
+         RQwsQTgA4E9BXbOa5n2vEAZGFOPad5ODIAbeC68AwZ8m9ZqTh4n1PVngyuAIqgAjTYOA
+         9BBuvHbw3vzSNADSW0vBdA35jvceMSkJiCL0wM49xurVcqsaKZ6hUDyXdk57/J+l3Zhg
+         0Dc2NgDUBvLklj55yWyl/q+GfhGu8Dfmmi0BFgcoC7YCZkogn2lq1EszNqepfhhXWIVK
+         xq+kQlRmKBEu+yz+Xs4JdKuo3yNleQoZDzuVSmwviTakaX4H2WaR7843FJDWX34bpV8U
+         VuAg==
+X-Gm-Message-State: AOJu0YygdnsiSWdhNENvd7D8CYRLhPwffW3eJ5LyAV8VptoRtzKnE3vm
+	txH6Y8ibf6gH8pWy6rhYAU02ow==
+X-Google-Smtp-Source: AGHT+IFnkvKJwJBysGZpS8nFvlKDKPHNMjEYxQ4sEoz66mjYdkd3vAWAH3NdAz3AUc2EElNngqiZZw==
+X-Received: by 2002:a05:600c:a4c:b0:40a:4609:9c90 with SMTP id c12-20020a05600c0a4c00b0040a46099c90mr7665820wmq.29.1700515271448;
+        Mon, 20 Nov 2023 13:21:11 -0800 (PST)
 Received: from gpeter-l.lan (host-92-29-24-243.as13285.net. [92.29.24.243])
-        by smtp.gmail.com with ESMTPSA id je14-20020a05600c1f8e00b0040596352951sm19518451wmb.5.2023.11.20.13.21.08
+        by smtp.gmail.com with ESMTPSA id je14-20020a05600c1f8e00b0040596352951sm19518451wmb.5.2023.11.20.13.21.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Nov 2023 13:21:09 -0800 (PST)
+        Mon, 20 Nov 2023 13:21:10 -0800 (PST)
 From: Peter Griffin <peter.griffin@linaro.org>
 To: robh+dt@kernel.org,
 	krzysztof.kozlowski+dt@linaro.org,
@@ -72,9 +72,9 @@ Cc: peter.griffin@linaro.org,
 	linux-watchdog@vger.kernel.org,
 	kernel-team@android.com,
 	linux-serial@vger.kernel.org
-Subject: [PATCH v4 03/19] dt-bindings: soc: google: exynos-sysreg: add dedicated SYSREG compatibles to GS101
-Date: Mon, 20 Nov 2023 21:20:21 +0000
-Message-ID: <20231120212037.911774-4-peter.griffin@linaro.org>
+Subject: [PATCH v4 04/19] dt-bindings: watchdog: Document Google gs101 watchdog bindings
+Date: Mon, 20 Nov 2023 21:20:22 +0000
+Message-ID: <20231120212037.911774-5-peter.griffin@linaro.org>
 X-Mailer: git-send-email 2.43.0.rc1.413.gea7ed67945-goog
 In-Reply-To: <20231120212037.911774-1-peter.griffin@linaro.org>
 References: <20231120212037.911774-1-peter.griffin@linaro.org>
@@ -86,32 +86,64 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-GS101 has three different SYSREG controllers, add dedicated
-compatibles for them to the documentation.
+Add the "google,gs101-wdt" compatible to the dt-schema documentation.
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+gs101 SoC has two CPU clusters and each cluster has its own dedicated
+watchdog timer (similar to exynos850 and exynosautov9 SoCs).
+
+These WDT instances are controlled using different bits in PMU
+registers.
+
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- .../bindings/soc/samsung/samsung,exynos-sysreg.yaml         | 6 ++++++
- 1 file changed, 6 insertions(+)
+ .../devicetree/bindings/watchdog/samsung-wdt.yaml         | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-index 2de4301a467d..127f4ffde76a 100644
---- a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-+++ b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-@@ -22,6 +22,12 @@ properties:
-               - tesla,fsd-fsys1-sysreg
-               - tesla,fsd-peric-sysreg
-           - const: syscon
-+      - items:
-+          - enum:
-+              - google,gs101-apm-sysreg
-+              - google,gs101-peric0-sysreg
-+              - google,gs101-peric1-sysreg
-+          - const: syscon
-       - items:
-           - enum:
-               - samsung,exynos5433-cam0-sysreg
+diff --git a/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml b/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
+index 8fb6656ba0c2..57468c2c5ece 100644
+--- a/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
++++ b/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
+@@ -17,6 +17,7 @@ description: |+
+ properties:
+   compatible:
+     enum:
++      - google,gs101-wdt                      # for Google gs101
+       - samsung,s3c2410-wdt                   # for S3C2410
+       - samsung,s3c6410-wdt                   # for S3C6410, S5PV210 and Exynos4
+       - samsung,exynos5250-wdt                # for Exynos5250
+@@ -42,13 +43,14 @@ properties:
+   samsung,cluster-index:
+     $ref: /schemas/types.yaml#/definitions/uint32
+     description:
+-      Index of CPU cluster on which watchdog is running (in case of Exynos850)
++      Index of CPU cluster on which watchdog is running (in case of Exynos850
++      or Google gs101).
+ 
+   samsung,syscon-phandle:
+     $ref: /schemas/types.yaml#/definitions/phandle
+     description:
+       Phandle to the PMU system controller node (in case of Exynos5250,
+-      Exynos5420, Exynos7 and Exynos850).
++      Exynos5420, Exynos7, Exynos850 and gs101).
+ 
+ required:
+   - compatible
+@@ -64,6 +66,7 @@ allOf:
+         compatible:
+           contains:
+             enum:
++              - google,gs101-wdt
+               - samsung,exynos5250-wdt
+               - samsung,exynos5420-wdt
+               - samsung,exynos7-wdt
+@@ -77,6 +80,7 @@ allOf:
+         compatible:
+           contains:
+             enum:
++              - google,gs101-wdt
+               - samsung,exynos850-wdt
+               - samsung,exynosautov9-wdt
+     then:
 -- 
 2.43.0.rc1.413.gea7ed67945-goog
 
