@@ -1,126 +1,122 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="hUo+Pljd"
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 159B8D5F
-	for <linux-clk@vger.kernel.org>; Mon, 20 Nov 2023 01:05:15 -0800 (PST)
-Received: by mail-wr1-x42d.google.com with SMTP id ffacd0b85a97d-32dff08bbdbso3198222f8f.2
-        for <linux-clk@vger.kernel.org>; Mon, 20 Nov 2023 01:05:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1700471113; x=1701075913; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bkLluJIfs9A2WfK4ws6uTuiWflu7QIwTGk5lEdGrZ8Q=;
-        b=hUo+Pljdj6x5DCjR/jo7P1BtRCgtwcj5R+aXWuUgcTe5aDpa5k2//Bgtbu3Ls9SCsB
-         fJ2CtzrsxrCXB80LUyj8UGgvAgyKbVbVjJOYubMepvOEjjpW6ANw1i+GQnzRRNztUK5x
-         5EG+fr9meG3V1P5Py6rBU8Kp08piIKFYOpJN8aCN2HgPWjtSYVYfOOlwCyokisJYwdUC
-         gOWjAHZen9uqfhrBOxF+m6RcQPhCgMA0hbgQ8tfcUd1pPlf0sZGggvNWKWvH5KMDiBoC
-         /cRHWUF2epMv2Ml/Kbw7xmZ6HSavMtv+5mlRsddVFUVk1Il5fRcBN5T85wXqYcW2QE8x
-         m5vQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700471113; x=1701075913;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bkLluJIfs9A2WfK4ws6uTuiWflu7QIwTGk5lEdGrZ8Q=;
-        b=tNSYTm1AHLIRXmyTLRc8s6sSq0sAqet0Wd6vgQ5IT0WEAVRKI3fqLQYF+VChcKuLFe
-         5WjvCenRs1AJqrs5/bLwxHPfphT7Gpmw2ZT77nfLB59yefGYhoYHRX0A7j7ot0hmJy8h
-         OTdFv1pUx4DyN0naL0ce0FiFIcx2hoez54MMM2mrfML8SrmZhGARKcPCL8sNuSvWgb8X
-         XQ4+yoQc0Hbp9sVU6dadoi6Ak8ZKoMtGBjO/V64zy2voue+OFcoF6jXR+pKxs6nNk0XH
-         zRHRWhN8n3j6zpFZYmtP+dLscXFaqg7MFc8JHnH50NYCUn5aGhF7UbS4lW3kajpsmLC9
-         nkog==
-X-Gm-Message-State: AOJu0YwgSjFxhADcwXdqxz40kRRNYC3I9kP/2/v3Cig21z3I/cVqJe2B
-	0pnaTm35jBpYTrXBcYVN06RFdQ==
-X-Google-Smtp-Source: AGHT+IFq74/v4yVRRxE+pvLLMGOf1Rfctzf+CaYkqnL15lGut/2IP8miObeas0tpSho4tWROmvLB0w==
-X-Received: by 2002:a05:6000:2c1:b0:32f:c369:6b00 with SMTP id o1-20020a05600002c100b0032fc3696b00mr5665046wry.14.1700471112833;
-        Mon, 20 Nov 2023 01:05:12 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.183])
-        by smtp.gmail.com with ESMTPSA id z18-20020a5d4c92000000b00331424a1266sm10473085wrs.84.2023.11.20.01.05.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Nov 2023 01:05:12 -0800 (PST)
-Message-ID: <ea3567ef-1293-4679-bd25-730c1b3e60b9@tuxon.dev>
-Date: Mon, 20 Nov 2023 11:05:08 +0200
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="fWek+mEM"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E08ECD;
+	Mon, 20 Nov 2023 02:03:04 -0800 (PST)
+X-UUID: fcd11294878b11eea33bb35ae8d461a2-20231120
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=5cnBIGTFta30P7mscy72z68CYY3xkJ8c8wqppX2Iub8=;
+	b=fWek+mEMdXrrEXd3HldEsWJgUSIvoAoxTP1IPVAFgb3hNChyR5V42IjmDwbXYNYki83IT+m8SR9q/Ik8qUbHMhMpm8GaEpv2xGizTae0fUu+Qmz6KVK5p0nv500fMuZGsN5fFOGotLjOJUWpNesdsZLot78ydMN6UlUyozBqufI=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.33,REQID:9c4f0cf3-bb5c-470c-a8e5-754dc6da5237,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:364b77b,CLOUDID:b1d0da72-1bd3-4f48-b671-ada88705968c,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:1,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,
+	DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: fcd11294878b11eea33bb35ae8d461a2-20231120
+Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw01.mediatek.com
+	(envelope-from <yu-chang.lee@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 779686074; Mon, 20 Nov 2023 18:03:00 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ MTKMBS14N2.mediatek.inc (172.21.101.76) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Mon, 20 Nov 2023 18:02:59 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Mon, 20 Nov 2023 18:02:59 +0800
+From: yu-chang.lee <yu-chang.lee@mediatek.com>
+To: Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>
+CC: Garmin Chang <garmin.chang@mediatek.com>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, "yu-chang . lee"
+	<yu-chang.lee@mediatek.com>
+Subject: [PATCH v4] dt-bindings: arm: mediatek: mmsys: Add VPPSYS compatible for MT8188
+Date: Mon, 20 Nov 2023 18:02:58 +0800
+Message-ID: <20231120100258.3428-1-yu-chang.lee@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 14/14] arm: multi_v7_defconfig: Enable CONFIG_RAVB
-Content-Language: en-US
-To: Geert Uytterhoeven <geert@linux-m68k.org>, Arnd Bergmann <arnd@arndb.de>
-Cc: Sergey Shtylyov <s.shtylyov@omp.ru>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
- krzysztof.kozlowski+dt@linaro.org, Conor Dooley <conor+dt@kernel.org>,
- Russell King <linux@armlinux.org.uk>, Magnus Damm <magnus.damm@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>, Andrew Davis <afd@ti.com>,
- Mark Brown <broonie@kernel.org>,
- Alexander Stein <alexander.stein@ew.tq-group.com>,
- eugen.hristev@collabora.com, sergei.shtylyov@gmail.com,
- "Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- Biju Das <biju.das.jz@bp.renesas.com>,
- Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
- Netdev <netdev@vger.kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org,
- "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20231120070024.4079344-1-claudiu.beznea.uj@bp.renesas.com>
- <20231120070024.4079344-15-claudiu.beznea.uj@bp.renesas.com>
- <bd25377b-b191-4d81-b144-2936cb5139d9@app.fastmail.com>
- <CAMuHMdUkVO7cXpsHd_oGvEpZdJpP6GP+VC8H5GAZ94KJf2joLA@mail.gmail.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <CAMuHMdUkVO7cXpsHd_oGvEpZdJpP6GP+VC8H5GAZ94KJf2joLA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--2.349200-8.000000
+X-TMASE-MatchedRID: BHLx0ZeYtM1eiY7hjuuIsm3NvezwBrVmCt59Uh3p/NVHZg0gWH5yUTP7
+	OSqW2R7sUYCBevv5+axRS7xjEb+dxB9J5bZqJbIJe8FaKRfM2oOy4iyjvVWToqdrpTvh7T6o88Q
+	4SiSCA0uVMlcqqHWd7fNdJKB44KmGkfRhdidsajMURSScn+QSXt0H8LFZNFG76sBnwpOylLOY9r
+	8YLxxS4dgS604jgwkFQVackz7nDBjHrR5lGQU4zkV0FoTjxQgL0J69tGon+X3UgUmiG7ib0MxU6
+	jcX1FK3fA2Q/royHVoXRoPmWO3jekxwdkPqCq7vDEyN+J8hd+jCS9WgDXVPCn7cGd19dSFd
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--2.349200-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	A2E3637E6938936CF704E8E60C8754BE664BF24B380C333488BD6569875CF8BA2000:8
+X-MTK: N
 
+For MT8188, VPPSYS0 and VPPSYS1 are 2 display pipes with
+hardware differences in power domains, clocks and subsystem counts,
+which should be probed from mtk-mmsys driver to populate device by
+platform_device_register_data then start its own clock driver.
 
+Signed-off-by: yu-chang.lee <yu-chang.lee@mediatek.com>
+---
+Change in v4:
+- Squashed binding patches
+- This patch is based on [1]
+[1] soc: mediatek: mmsys: Add support for MT8188 VPPSYS
+  - https://patchwork.kernel.org/project/linux-mediatek/patch/20231117054345.15859-1-yu-chang.lee@mediatek.com/
 
-On 20.11.2023 10:58, Geert Uytterhoeven wrote:
-> On Mon, Nov 20, 2023 at 9:44 AM Arnd Bergmann <arnd@arndb.de> wrote:
->> On Mon, Nov 20, 2023, at 08:00, Claudiu wrote:
->>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>
->>> ravb driver is used by RZ/G1H. Enable it in multi_v7_defconfig.
-> 
-> Used by:
->   - iWave-RZ/G1M/G1N Qseven carrier board,
->   - iWave-RZ/G1H Qseven board,
->   - iWave-RZG1E SODIMM carrier board,
->   - iWave-RZ/G1C single board computer.
-> 
-> So I'd write "used by various iWave RZ/G1 development boards".
+Changes in v3:
+- Separate binding patch from driver patch
 
-OK, I'll update it in v2.
+Changes in v2:
+- Refine commit message
+- Refine commit title
 
-I noticed it is needed while checking various bits on a RZ/G1H based board
-so I considered that if there is at least one user for it it is enough to
-have it enabled.
+ .../devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml        | 2 ++
+ .../devicetree/bindings/clock/mediatek,mt8188-clock.yaml        | 2 --
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Thank you,
-Claudiu Beznea
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml
+index 536f5a5ebd24..50324248b965 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml
+@@ -32,6 +32,8 @@ properties:
+               - mediatek,mt8183-mmsys
+               - mediatek,mt8186-mmsys
+               - mediatek,mt8188-vdosys0
++              - mediatek,mt8188-vppsys0
++              - mediatek,mt8188-vppsys1
+               - mediatek,mt8192-mmsys
+               - mediatek,mt8195-vdosys1
+               - mediatek,mt8195-vppsys0
+diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt8188-clock.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt8188-clock.yaml
+index d7214d97b2ba..860570320545 100644
+--- a/Documentation/devicetree/bindings/clock/mediatek,mt8188-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/mediatek,mt8188-clock.yaml
+@@ -43,8 +43,6 @@ properties:
+       - mediatek,mt8188-vdecsys
+       - mediatek,mt8188-vdecsys-soc
+       - mediatek,mt8188-vencsys
+-      - mediatek,mt8188-vppsys0
+-      - mediatek,mt8188-vppsys1
+       - mediatek,mt8188-wpesys
+       - mediatek,mt8188-wpesys-vpp0
+ 
+-- 
+2.18.0
 
-> 
->>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> We have a mix of =y and =m for ethernet drivers, and usually
->> only have drivers built-in when they are frequently tested
->> with NFS root booting.
->>
->> Do you need this as well, or could it be =m instead?
-> 
-> As the default chosen/bootargs for the iWave-RZ/G1M/G1N Qseven carrier
-> board contains root=/dev/nfs, builtin is appropriate.
-> The iWave-RZ/G1H Qseven board defaults to root=/dev/mmcblk0p1.
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
