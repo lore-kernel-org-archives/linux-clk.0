@@ -1,36 +1,36 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ASCU4lH8"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB25190;
-	Tue, 21 Nov 2023 06:31:23 -0800 (PST)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3ALE2DS0003250;
-	Tue, 21 Nov 2023 14:31:14 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gjLT1F0M"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BBF9BA;
+	Tue, 21 Nov 2023 06:31:40 -0800 (PST)
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3ALE2Npp011565;
+	Tue, 21 Nov 2023 14:31:30 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : date :
  subject : mime-version : content-type : content-transfer-encoding :
  message-id : references : in-reply-to : to : cc; s=qcppdkim1;
- bh=gqI+CxuXvB2nck6peTPOubE2SjCZOAUdVyrGTve6okI=;
- b=ASCU4lH8yIdXTbYQu9gUAcScKEnrCLM4rRh1FRFoOo1Z2M/QeWvKhmfmMav1bLfbtwsp
- Bh2FqxWnZBtx7jdg/um26w+U9wHR1hbZJcyd+rt5bi+36DJkYHJXRRQ3oe9qHWm/Qj4f
- 8XwUPEYtKpEygUFHunwMKfh+HxCq9jsPkpFyvCfeDrl0K/BefShzrPNjL8uUcZov70FK
- BeI0B7yATUtbc/4fEthuVvE8BnGEkPznSqruY+VyVI1kgeEtxdJ1dlm/pf5MbCacGIjl
- QjpzNfmmqXGUlWBoLTMz1GN42ji+u1nHSWcMHiQDtokFWC7y6oqmAMjQcDOaOHxPid1P zg== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ugu548vpc-1
+ bh=8uj1/UscyWhxbjLgHwlHvWQOAsq2VNOtxd8jtk3Os7o=;
+ b=gjLT1F0MqM87aHH4+PXsZ8CphzW4P/h1NDBMDZ05QKbJMIDsdA/j30fhbw4vFf7ZnTMc
+ bBmbPlY9vPkz3ioQDJ45tMi5IDnupQDFf2u1VSeKszTIelKt2GARV5p2+3ygV7tmycU2
+ IlFvbWmbB8uhc522r5pJd5mYrhl2GR5CDioHkg8eE9lYs0EWCehM4otawTKi/+9Vo32H
+ FfB6pYMpA6kz3l0UuU9+IhcAYUo4NRNW6/IgGfiy4wDNp+GLskwpHPSIxzDll1lsGs60
+ 1EhFAfTxD43DZ1gABvD1y4/GGzdR5nwUU9Ru5HHjJeiogaC4TlN5JNcE4YPhpbCw6c7z Wg== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ugvt2gbvm-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 Nov 2023 14:31:13 +0000
+	Tue, 21 Nov 2023 14:31:30 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3ALEVCrL007741
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3ALEVTEr023988
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 Nov 2023 14:31:12 GMT
+	Tue, 21 Nov 2023 14:31:29 GMT
 Received: from hu-kathirav-blr.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Tue, 21 Nov 2023 06:31:07 -0800
+ 15.2.1118.40; Tue, 21 Nov 2023 06:31:24 -0800
 From: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-Date: Tue, 21 Nov 2023 20:00:43 +0530
-Subject: [PATCH v2 1/9] clk: qcom: ipq5332: add const qualifier to the
- clk_init_data structure
+Date: Tue, 21 Nov 2023 20:00:46 +0530
+Subject: [PATCH v2 4/9] dt-bindings: clock: ipq5332: add definition for
+ GPLL0_OUT_AUX clock
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -39,7 +39,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20231121-ipq5332-nsscc-v2-1-a7ff61beab72@quicinc.com>
+Message-ID: <20231121-ipq5332-nsscc-v2-4-a7ff61beab72@quicinc.com>
 References: <20231121-ipq5332-nsscc-v2-0-a7ff61beab72@quicinc.com>
 In-Reply-To: <20231121-ipq5332-nsscc-v2-0-a7ff61beab72@quicinc.com>
 To: Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
@@ -59,13 +59,15 @@ CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         "Kathiravan
- Thirumoorthy" <quic_kathirav@quicinc.com>
+ Thirumoorthy" <quic_kathirav@quicinc.com>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1700577061; l=7721;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1700577061; l=830;
  i=quic_kathirav@quicinc.com; s=20230906; h=from:subject:message-id;
- bh=+0Hvf6odeN5BU615J2c1Ow0cnXHABxgNEO32lQZZoLs=;
- b=KfY7rf2rGZK5HvUMmizxYsSIwSMJYnC5mNJWiiMuF7R+EVmScAvyHr9w/HDHXXhqbA0uEv6wO
- Y6JZRsYsONaBll4VkGlCMcO4lFjgdmnZXzOq4lzlxoWc8qjYLJnHDcg
+ bh=1OokHmvwteJCUAmVEy95DN2Dhk5e56HSTN8/muz/gOk=;
+ b=f7NLeCvivXSUN+FyIo4Bk8dQYW8dOumPnYCXQ9gTJ+05cvzoUW/PkIWmsYASDx0turh7ZGvgt
+ n+gnC3k76/JDkkZXL2MaRt9smxUPlRyYVbWFHyON48Qt3w9GFqTq2PO
 X-Developer-Key: i=quic_kathirav@quicinc.com; a=ed25519;
  pk=xWsR7pL6ch+vdZ9MoFGEaP61JUaRf0XaZYWztbQsIiM=
 X-Originating-IP: [10.80.80.8]
@@ -73,203 +75,40 @@ X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: kJM-JN6_YoKioih57Q8O9WWiQm-QurjI
-X-Proofpoint-ORIG-GUID: kJM-JN6_YoKioih57Q8O9WWiQm-QurjI
+X-Proofpoint-GUID: WerTszsySi2BF-EnBEVhr2OjVzgVNJGg
+X-Proofpoint-ORIG-GUID: WerTszsySi2BF-EnBEVhr2OjVzgVNJGg
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-11-21_05,2023-11-21_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
- bulkscore=0 phishscore=0 impostorscore=0 priorityscore=1501 spamscore=0
- lowpriorityscore=0 mlxlogscore=900 adultscore=0 suspectscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311060000 definitions=main-2311210113
+ definitions=2023-11-21_07,2023-11-21_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 lowpriorityscore=0 adultscore=0 malwarescore=0
+ suspectscore=0 bulkscore=0 mlxscore=0 spamscore=0 phishscore=0
+ impostorscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2311060000 definitions=main-2311210114
 
-There are few places where clk_init_data structure doesn't carry the const
-qualifier. Let's add the same.
+Add the definition for GPLL0_OUT_AUX clock.
 
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
 ---
 Changes in V2:
-	- New patch
+	- Pick up the A-b tag
 ---
- drivers/clk/qcom/gcc-ipq5332.c | 38 +++++++++++++++++++-------------------
- 1 file changed, 19 insertions(+), 19 deletions(-)
+ include/dt-bindings/clock/qcom,ipq5332-gcc.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/qcom/gcc-ipq5332.c b/drivers/clk/qcom/gcc-ipq5332.c
-index f98591148a97..66d5399798fe 100644
---- a/drivers/clk/qcom/gcc-ipq5332.c
-+++ b/drivers/clk/qcom/gcc-ipq5332.c
-@@ -65,7 +65,7 @@ static struct clk_alpha_pll gpll0_main = {
- static struct clk_fixed_factor gpll0_div2 = {
- 	.mult = 1,
- 	.div = 2,
--	.hw.init = &(struct clk_init_data) {
-+	.hw.init = &(const struct clk_init_data) {
- 		.name = "gpll0_div2",
- 		.parent_hws = (const struct clk_hw *[]) {
- 				&gpll0_main.clkr.hw },
-@@ -78,7 +78,7 @@ static struct clk_alpha_pll_postdiv gpll0 = {
- 	.offset = 0x20000,
- 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_STROMER_PLUS],
- 	.width = 4,
--	.clkr.hw.init = &(struct clk_init_data) {
-+	.clkr.hw.init = &(const struct clk_init_data) {
- 		.name = "gpll0",
- 		.parent_hws = (const struct clk_hw *[]) {
- 				&gpll0_main.clkr.hw },
-@@ -106,7 +106,7 @@ static struct clk_alpha_pll_postdiv gpll2 = {
- 	.offset = 0x21000,
- 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_STROMER_PLUS],
- 	.width = 4,
--	.clkr.hw.init = &(struct clk_init_data) {
-+	.clkr.hw.init = &(const struct clk_init_data) {
- 		.name = "gpll2_main",
- 		.parent_hws = (const struct clk_hw *[]) {
- 				&gpll2_main.clkr.hw },
-@@ -145,7 +145,7 @@ static struct clk_alpha_pll_postdiv gpll4 = {
- 	.offset = 0x22000,
- 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_STROMER_PLUS],
- 	.width = 4,
--	.clkr.hw.init = &(struct clk_init_data) {
-+	.clkr.hw.init = &(const struct clk_init_data) {
- 		.name = "gpll4",
- 		.parent_hws = (const struct clk_hw *[]) {
- 				&gpll4_main.clkr.hw },
-@@ -572,7 +572,7 @@ static struct clk_branch gcc_pcie3x1_0_rchg_clk = {
- 	.clkr = {
- 		.enable_reg = 0x2907c,
- 		.enable_mask = BIT(1),
--		.hw.init = &(struct clk_init_data) {
-+		.hw.init = &(const struct clk_init_data) {
- 			.name = "gcc_pcie3x1_0_rchg_clk",
- 			.parent_hws = (const struct clk_hw *[]) {
- 					&gcc_pcie3x1_0_rchg_clk_src.clkr.hw },
-@@ -615,7 +615,7 @@ static struct clk_branch gcc_pcie3x1_1_rchg_clk = {
- 	.clkr = {
- 		.enable_reg = 0x2a078,
- 		.enable_mask = BIT(1),
--		.hw.init = &(struct clk_init_data) {
-+		.hw.init = &(const struct clk_init_data) {
- 			.name = "gcc_pcie3x1_1_rchg_clk",
- 			.parent_hws = (const struct clk_hw *[]) {
- 					&gcc_pcie3x1_1_rchg_clk_src.clkr.hw },
-@@ -678,7 +678,7 @@ static struct clk_branch gcc_pcie3x2_rchg_clk = {
- 	.clkr = {
- 		.enable_reg = 0x28078,
- 		.enable_mask = BIT(1),
--		.hw.init = &(struct clk_init_data) {
-+		.hw.init = &(const struct clk_init_data) {
- 			.name = "gcc_pcie3x2_rchg_clk",
- 			.parent_hws = (const struct clk_hw *[]) {
- 					&gcc_pcie3x2_rchg_clk_src.clkr.hw },
-@@ -711,7 +711,7 @@ static struct clk_rcg2 gcc_pcie_aux_clk_src = {
- static struct clk_regmap_phy_mux gcc_pcie3x2_pipe_clk_src = {
- 	.reg = 0x28064,
- 	.clkr = {
--		.hw.init = &(struct clk_init_data) {
-+		.hw.init = &(const struct clk_init_data) {
- 			.name = "gcc_pcie3x2_pipe_clk_src",
- 			.parent_data = &(const struct clk_parent_data) {
- 				.index = DT_PCIE_2LANE_PHY_PIPE_CLK,
-@@ -725,7 +725,7 @@ static struct clk_regmap_phy_mux gcc_pcie3x2_pipe_clk_src = {
- static struct clk_regmap_phy_mux gcc_pcie3x1_0_pipe_clk_src = {
- 	.reg = 0x29064,
- 	.clkr = {
--		.hw.init = &(struct clk_init_data) {
-+		.hw.init = &(const struct clk_init_data) {
- 			.name = "gcc_pcie3x1_0_pipe_clk_src",
- 			.parent_data = &(const struct clk_parent_data) {
- 				.index = DT_USB_PCIE_WRAPPER_PIPE_CLK,
-@@ -739,7 +739,7 @@ static struct clk_regmap_phy_mux gcc_pcie3x1_0_pipe_clk_src = {
- static struct clk_regmap_phy_mux gcc_pcie3x1_1_pipe_clk_src = {
- 	.reg = 0x2a064,
- 	.clkr = {
--		.hw.init = &(struct clk_init_data) {
-+		.hw.init = &(const struct clk_init_data) {
- 			.name = "gcc_pcie3x1_1_pipe_clk_src",
- 			.parent_data = &(const struct clk_parent_data) {
- 				.index = DT_PCIE_2LANE_PHY_PIPE_CLK_X1,
-@@ -826,7 +826,7 @@ static struct clk_rcg2 gcc_qdss_tsctr_clk_src = {
- static struct clk_fixed_factor gcc_qdss_tsctr_div2_clk_src = {
- 	.mult = 1,
- 	.div = 2,
--	.hw.init = &(struct clk_init_data) {
-+	.hw.init = &(const struct clk_init_data) {
- 		.name = "gcc_qdss_tsctr_div2_clk_src",
- 		.parent_hws = (const struct clk_hw *[]) {
- 				&gcc_qdss_tsctr_clk_src.clkr.hw },
-@@ -839,7 +839,7 @@ static struct clk_fixed_factor gcc_qdss_tsctr_div2_clk_src = {
- static struct clk_fixed_factor gcc_qdss_tsctr_div3_clk_src = {
- 	.mult = 1,
- 	.div = 3,
--	.hw.init = &(struct clk_init_data) {
-+	.hw.init = &(const struct clk_init_data) {
- 		.name = "gcc_qdss_tsctr_div3_clk_src",
- 		.parent_hws = (const struct clk_hw *[]) {
- 				&gcc_qdss_tsctr_clk_src.clkr.hw },
-@@ -851,7 +851,7 @@ static struct clk_fixed_factor gcc_qdss_tsctr_div3_clk_src = {
- static struct clk_fixed_factor gcc_qdss_tsctr_div4_clk_src = {
- 	.mult = 1,
- 	.div = 4,
--	.hw.init = &(struct clk_init_data) {
-+	.hw.init = &(const struct clk_init_data) {
- 		.name = "gcc_qdss_tsctr_div4_clk_src",
- 		.parent_hws = (const struct clk_hw *[]) {
- 				&gcc_qdss_tsctr_clk_src.clkr.hw },
-@@ -863,7 +863,7 @@ static struct clk_fixed_factor gcc_qdss_tsctr_div4_clk_src = {
- static struct clk_fixed_factor gcc_qdss_tsctr_div8_clk_src = {
- 	.mult = 1,
- 	.div = 8,
--	.hw.init = &(struct clk_init_data) {
-+	.hw.init = &(const struct clk_init_data) {
- 		.name = "gcc_qdss_tsctr_div8_clk_src",
- 		.parent_hws = (const struct clk_hw *[]) {
- 				&gcc_qdss_tsctr_clk_src.clkr.hw },
-@@ -875,7 +875,7 @@ static struct clk_fixed_factor gcc_qdss_tsctr_div8_clk_src = {
- static struct clk_fixed_factor gcc_qdss_tsctr_div16_clk_src = {
- 	.mult = 1,
- 	.div = 16,
--	.hw.init = &(struct clk_init_data) {
-+	.hw.init = &(const struct clk_init_data) {
- 		.name = "gcc_qdss_tsctr_div16_clk_src",
- 		.parent_hws = (const struct clk_hw *[]) {
- 				&gcc_qdss_tsctr_clk_src.clkr.hw },
-@@ -976,7 +976,7 @@ static struct clk_rcg2 gcc_system_noc_bfdcd_clk_src = {
- static struct clk_fixed_factor gcc_system_noc_bfdcd_div2_clk_src = {
- 	.mult = 1,
- 	.div = 2,
--	.hw.init = &(struct clk_init_data) {
-+	.hw.init = &(const struct clk_init_data) {
- 		.name = "gcc_system_noc_bfdcd_div2_clk_src",
- 		.parent_hws = (const struct clk_hw *[]) {
- 				&gcc_system_noc_bfdcd_clk_src.clkr.hw },
-@@ -1069,7 +1069,7 @@ static struct clk_rcg2 gcc_usb0_mock_utmi_clk_src = {
- static struct clk_regmap_phy_mux gcc_usb0_pipe_clk_src = {
- 	.reg = 0x2c074,
- 	.clkr = {
--		.hw.init = &(struct clk_init_data) {
-+		.hw.init = &(const struct clk_init_data) {
- 			.name = "gcc_usb0_pipe_clk_src",
- 			.parent_data = &(const struct clk_parent_data) {
- 				.index = DT_USB_PCIE_WRAPPER_PIPE_CLK,
-@@ -1111,7 +1111,7 @@ static struct clk_rcg2 gcc_xo_clk_src = {
- static struct clk_fixed_factor gcc_xo_div4_clk_src = {
- 	.mult = 1,
- 	.div = 4,
--	.hw.init = &(struct clk_init_data) {
-+	.hw.init = &(const struct clk_init_data) {
- 		.name = "gcc_xo_div4_clk_src",
- 		.parent_hws = (const struct clk_hw *[]) {
- 				&gcc_xo_clk_src.clkr.hw },
-@@ -2431,7 +2431,7 @@ static struct clk_branch gcc_qdss_etr_usb_clk = {
- static struct clk_fixed_factor gcc_eud_at_div_clk_src = {
- 	.mult = 1,
- 	.div = 6,
--	.hw.init = &(struct clk_init_data) {
-+	.hw.init = &(const struct clk_init_data) {
- 		.name = "gcc_eud_at_div_clk_src",
- 		.parent_hws = (const struct clk_hw *[]) {
- 				&gcc_qdss_at_clk_src.clkr.hw },
+diff --git a/include/dt-bindings/clock/qcom,ipq5332-gcc.h b/include/dt-bindings/clock/qcom,ipq5332-gcc.h
+index 4649026da332..486b6cf2e916 100644
+--- a/include/dt-bindings/clock/qcom,ipq5332-gcc.h
++++ b/include/dt-bindings/clock/qcom,ipq5332-gcc.h
+@@ -176,6 +176,7 @@
+ #define GCC_PCIE3X1_0_PIPE_CLK_SRC			170
+ #define GCC_PCIE3X1_1_PIPE_CLK_SRC			171
+ #define GCC_USB0_PIPE_CLK_SRC				172
++#define GPLL0_OUT_AUX					173
+ 
+ #define GCC_ADSS_BCR					0
+ #define GCC_ADSS_PWM_CLK_ARES				1
 
 -- 
 2.34.1
