@@ -1,46 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mVcQYbmu"
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABC5710C
-	for <linux-clk@vger.kernel.org>; Tue, 21 Nov 2023 07:02:31 -0800 (PST)
-Received: by mail-lj1-x229.google.com with SMTP id 38308e7fff4ca-2c876f1e44dso37210531fa.0
-        for <linux-clk@vger.kernel.org>; Tue, 21 Nov 2023 07:02:31 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Hy8aYddk"
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 563BE12F
+	for <linux-clk@vger.kernel.org>; Tue, 21 Nov 2023 07:06:20 -0800 (PST)
+Received: by mail-lj1-x22c.google.com with SMTP id 38308e7fff4ca-2c503dbe50dso72911541fa.1
+        for <linux-clk@vger.kernel.org>; Tue, 21 Nov 2023 07:06:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700578950; x=1701183750; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=sloDLsEmB2TKwm2ViP2RRLNphx2l9PZeRzjesFN9aZQ=;
-        b=mVcQYbmuKS20ZKdLpEQAVQyWOm/ZS5yUihgJ63uDM8Wav8qLnHi1thJva6/Se022Ds
-         GaKcvz4rr2YgMaPI2IeRqMbGY6Z0wfZ+9tIfopkdXW6KsvUkNNbI0Te254MbnLle58DH
-         3YgXKZoo0MPxe4vuFZoQ3VWiq14nvQk2OFu3AEVdaUe3BnjYT/dBswlHMve8RP/iCX6q
-         kqHErjWHAf5jDnuxBniUzDyu5iWGops60zsXxZVBQkL2K5bzC3qAZ9kDb58A4zwaU6Nl
-         1LhavKinPCiamyavQTr3YTSVISorm0c9tc9A1nsYLKUKI1ESpbVM5X1hJyn5iCvPllsA
-         Q3BA==
+        d=linaro.org; s=google; t=1700579178; x=1701183978; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=q5hhhZRHfGe2KU1JRk5bNtC/vyWS7Y/hyQQ+jMEFV7c=;
+        b=Hy8aYddkZ/95OfYlHwCILXA+QWgUCK4fSs70Ig0QGyn1i5dqTEtobc2ybdjkDQJli4
+         vzE+O6K2tDC6bj+3kSyt97ZHOih2UIwduWHisNoRufWbaTv/hlkBKr/Vohd9As+knq8P
+         IGsMrEBAwR/Grf+7fekT+8yNL8FkhYAJMgKZl0CUBRek9B9pUsSswTtFMIw/HmGoAqsL
+         X+kCRWXyJ88Wi1pFoV+JYPpIgbe0Dmbjuk7fjtKNUGLfVyxi3R4Ln2T6okduvYtIb2la
+         l4yYF82cmXZZjb0UqV/CMmRqz18MGLkfsUe3MDFWL29qVB5VVEiIhqgsxLgh/oJSw+u5
+         AHQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700578950; x=1701183750;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sloDLsEmB2TKwm2ViP2RRLNphx2l9PZeRzjesFN9aZQ=;
-        b=vuRDlSmoI5UEl+oErEZ6Vvpy2YScgBIiO9Gm78gvsO+8v5j86BjjEKXrRP+jhDeSiu
-         a41Tu8tam1kmHMC6xzUbm4FSw0jSHrqgBOPlz1THq+sNh4rAqONZm6q2ME4di1AoYh+p
-         kva9rFnWxVoIO+uWc7QFookAGGq1JmG2VOFuWORwdnaXEolQnUVESRskPYIftNveBeRJ
-         4wQtVUCBYnsdspCFN0zdtUUTDGCz+VbnS+A6XhQJakEEoLOOEM1AiTglN8d4ZsER2mEF
-         X4uzWGchGB5svzPZzVyvvq32MynYih1oyqGe5G5/vsGnTASvoPzeSIC2F2RIif1UikkW
-         c7Pw==
-X-Gm-Message-State: AOJu0YzGhFi1xvNnRJlqtI/x6IQxKrRv5wyJq0/PTTxJyJjDFy8rbQvN
-	0LMc+5e+f5+27s441AhyhQ7ODA==
-X-Google-Smtp-Source: AGHT+IHorN5vh3CA1tWqALgISTN/kB068ziOLX+yVm4tctVyzQ6SgRkw72A6zRWf5lQDmVZ2ES0/Bg==
-X-Received: by 2002:a2e:8847:0:b0:2c8:3531:27d1 with SMTP id z7-20020a2e8847000000b002c8353127d1mr8692368ljj.25.1700578949689;
-        Tue, 21 Nov 2023 07:02:29 -0800 (PST)
+        d=1e100.net; s=20230601; t=1700579178; x=1701183978;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=q5hhhZRHfGe2KU1JRk5bNtC/vyWS7Y/hyQQ+jMEFV7c=;
+        b=VY7oXvbWLTBJiB5NeH/pYxW8bhHnzUTXwyyQ7KKaNGUvNG8ibGzL5z9JGBLAmQ53he
+         P9aTyqpvn1eXGkkHdFMGP+YaiW0Ar5JM9vryEaan7i9Haqv1AOduvfKE9YN99LliPgNo
+         KDDxdYThZ0yY2joWdSD/eZN7ISQlNc0KUyjX7Q7ODa627Yxzv/Vc8bj9YCgzcxyjdfGs
+         ARauIJ7M6BPfBFp1anuqt8WFdmhSzCYre6rgfBM2b7jWDn88Rj9NioV685XABzEkqmL5
+         iyl0PDbHN6K9Im4eQKyjQdOtbUffAHhzl/TwAKWbdpRKT6+GRtQnHydw9q10BzjOIEq0
+         W4BQ==
+X-Gm-Message-State: AOJu0YwOBRsR0bXe5nlmjvbDOMp60+xUol1uBRLhQpeJVw2Q5yAyH+YM
+	i1p6ESTFYN2IIhQudburZZWpdQ==
+X-Google-Smtp-Source: AGHT+IH11H6TVmuZTvSyx5lJTpnIVh9+XzTwKDTT+YMmaikYP5vHaHgdagiNt1T+SvZomqdOy58u3w==
+X-Received: by 2002:a05:651c:228:b0:2c5:6cb:2e50 with SMTP id z8-20020a05651c022800b002c506cb2e50mr6756215ljn.27.1700579178502;
+        Tue, 21 Nov 2023 07:06:18 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.222.11])
-        by smtp.gmail.com with ESMTPSA id h20-20020a05600c30d400b004060f0a0fdbsm21294750wmn.41.2023.11.21.07.02.28
+        by smtp.gmail.com with ESMTPSA id r12-20020adfda4c000000b003232380ffd7sm14596987wrl.102.2023.11.21.07.06.14
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Nov 2023 07:02:29 -0800 (PST)
-Message-ID: <d9e64760-f8a5-4950-ad18-c89f234c356e@linaro.org>
-Date: Tue, 21 Nov 2023 16:02:26 +0100
+        Tue, 21 Nov 2023 07:06:15 -0800 (PST)
+Message-ID: <43376552-7e79-4f34-94ca-63767a95564b@linaro.org>
+Date: Tue, 21 Nov 2023 16:06:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -48,8 +47,9 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 9/9] arm64: defconfig: build NSS Clock Controller
- driver for Qualcomm IPQ5332
+Subject: Re: [PATCH v2 3/9] dt-bindings: clock: ipq5332: drop the few nss
+ clocks definition
+Content-Language: en-US
 To: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>,
  Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
  Konrad Dybcio <konrad.dybcio@linaro.org>,
@@ -63,8 +63,7 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
  netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 References: <20231121-ipq5332-nsscc-v2-0-a7ff61beab72@quicinc.com>
- <20231121-ipq5332-nsscc-v2-9-a7ff61beab72@quicinc.com>
-Content-Language: en-US
+ <20231121-ipq5332-nsscc-v2-3-a7ff61beab72@quicinc.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -110,19 +109,23 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231121-ipq5332-nsscc-v2-9-a7ff61beab72@quicinc.com>
+In-Reply-To: <20231121-ipq5332-nsscc-v2-3-a7ff61beab72@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 21/11/2023 15:30, Kathiravan Thirumoorthy wrote:
-> NSSCC driver is needed to enable the ethernet interfaces and not
-> necessary for the bootup of the SoC, hence build it as a module.
-> 
-> Signed-off-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-> ---
+> In commit 0dd3f263c810 ("clk: qcom: ipq5332: enable few nssnoc clocks in
 
+Where is this commit coming from?
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> driver probe"), gcc_snoc_nssnoc_clk, gcc_snoc_nssnoc_1_clk,
+> gcc_nssnoc_nsscc_clk are enabled in driver probe to keep it always-on.
+
+Implementation can change and for example bring back these clocks. Are
+you going to change bindings? No, drop the patch.
+
+Bindings should be dropped only in a few rare cases like clocks not
+available for OS or bugs.
 
 Best regards,
 Krzysztof
