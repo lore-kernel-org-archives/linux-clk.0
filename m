@@ -1,102 +1,86 @@
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 642ABDD;
-	Tue, 21 Nov 2023 07:16:35 -0800 (PST)
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-359343e399fso15592825ab.0;
-        Tue, 21 Nov 2023 07:16:35 -0800 (PST)
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9D5B197;
+	Tue, 21 Nov 2023 08:29:35 -0800 (PST)
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-5cbf946a6f3so4159597b3.2;
+        Tue, 21 Nov 2023 08:29:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700579794; x=1701184594;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MHBJbcTYAJFzd8BQozdA+OUJ8WFFDeZmUm9glBYXWMY=;
-        b=XMFfMNWGezswcSMFIRgJPHxeTNGDRVREXwioKmCOZ8Uv8cmK+eeL5p11X/TGPwzHLV
-         LsWq8njDA0khhQUO7BGMjPQBR+iBfwh5ZXdrep8yd+y5yIke9/Sf9PyY8ox4pBogimC6
-         rPUem/RO2jAlwICWzfg4MTqoJDEtpSgnoXVeVVxq4ICyD1p6HnpbuMYfvS2Ve0c4A0UD
-         0jv1PCU0pM3TfnTugL6PXbH9gCjhFcEjz/W/Jmh1keJfItofz3JmdeGF1NNI2/YhmXfB
-         M2m6hkUjYbqc2c2Jd8IgP9NrR3VrXOSuu4Gvyhrl+Q0sUTKD/E9/pYH9rKkn4Ahz/GpZ
-         ZBDw==
-X-Gm-Message-State: AOJu0Yx4K+G+7pVmdGGpkSl+2kTELWIw3aH9SJy19zk3gsOggsAzxRQ9
-	c7joqsBzdASgkUPPDyI7Jw==
-X-Google-Smtp-Source: AGHT+IGs+KFHExCqkcg3K0j2WE48eh5fwSy6aeVyBcCWydv816/PY/81hpz3b4X9rc/LANFLxc7uYA==
-X-Received: by 2002:a92:c90e:0:b0:35b:4b9:7883 with SMTP id t14-20020a92c90e000000b0035b04b97883mr6859544ilp.25.1700579794614;
-        Tue, 21 Nov 2023 07:16:34 -0800 (PST)
-Received: from herring.priv ([64.188.179.252])
-        by smtp.gmail.com with ESMTPSA id s16-20020a02cf30000000b0046676167055sm170383jar.129.2023.11.21.07.16.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Nov 2023 07:16:33 -0800 (PST)
-Received: (nullmailer pid 1791730 invoked by uid 1000);
-	Tue, 21 Nov 2023 15:16:30 -0000
-Date: Tue, 21 Nov 2023 08:16:30 -0700
-From: Rob Herring <robh@kernel.org>
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, wim@linux-watchdog.org, linux@roeck-us.net, catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org, jirislaby@kernel.org, cw00.choi@samsung.com, alim.akhtar@samsung.com, tudor.ambarus@linaro.org, andre.draszik@linaro.org, semen.protsenko@linaro.org, saravanak@google.com, willmcvicker@google.com, soc@kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org, kernel-team@android.com, linux-serial@vger.kernel.org
-Subject: Re: [PATCH v4 09/19] dt-bindings: serial: samsung: Make
- samsung,uart-fifosize required property
-Message-ID: <20231121151630.GA1692178-robh@kernel.org>
-References: <20231120212037.911774-1-peter.griffin@linaro.org>
- <20231120212037.911774-10-peter.griffin@linaro.org>
+        d=1e100.net; s=20230601; t=1700584175; x=1701188975;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mxHuohagQtGVaCTwDHZT0rRlGCapRZ5dBubyNC4XBAI=;
+        b=wD3rjvABqZ0mEfUikMZgxtCgX+Y12GROjaRorORq4C4LRfLoOyqIlJ3YiBpBpkmM1j
+         UenQLDqUt7EdApTW5Q79wdvzdf3tw8X/OogzlXydiFCgjmtmPj/r7uyJPqzTG6ez16AA
+         LwB2XFzFGBOjr+8w1hi9TNAlCOPkfoTSU+G4IjjaMFWGLeCu9yqPKZLEQ9boMHceUG0t
+         kwvRk/6cxKLOZOMR6EODlnPiPWqKSrZjBQLolwMwbGHXF2kfC1Fp2M4y5zYQ6rOjQEBS
+         2PxurnsjEQcb2eKGQPDphc20QhM/XjCB45Bb3DQsoNSlR1Lso5zC7O9VcDWTXIsFFu78
+         yuhQ==
+X-Gm-Message-State: AOJu0YwSTWcSfcPlechKhl5kWcJGmOXUdnzXWrcbAozL8VJ3hjQj4g1t
+	EyO4ODLkD4a+MJCb51kpmhxKA+gTN1o3aeMq
+X-Google-Smtp-Source: AGHT+IETDdt4IEzFwkdNwFBhLqICCRw+X+4jp5GQEa4bi3FLMJAqg+VD6URF53k4RGJ1wQzCLW3Miw==
+X-Received: by 2002:a81:c246:0:b0:5b3:23f7:4254 with SMTP id t6-20020a81c246000000b005b323f74254mr12006517ywg.25.1700584174938;
+        Tue, 21 Nov 2023 08:29:34 -0800 (PST)
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com. [209.85.128.171])
+        by smtp.gmail.com with ESMTPSA id n3-20020a0dfd03000000b005a7bb193b37sm3106395ywf.27.2023.11.21.08.29.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Nov 2023 08:29:33 -0800 (PST)
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-5cb96ef7ac6so8835107b3.3;
+        Tue, 21 Nov 2023 08:29:31 -0800 (PST)
+X-Received: by 2002:a81:b149:0:b0:5ca:c5e9:938b with SMTP id
+ p70-20020a81b149000000b005cac5e9938bmr5565031ywh.1.1700584171136; Tue, 21 Nov
+ 2023 08:29:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231120212037.911774-10-peter.griffin@linaro.org>
+References: <20231120070024.4079344-1-claudiu.beznea.uj@bp.renesas.com> <20231120070024.4079344-10-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20231120070024.4079344-10-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 21 Nov 2023 17:29:18 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUr8bqQvJE78zMHb2sqQCnTZSZhcMef1x6DgXmUhdTWqg@mail.gmail.com>
+Message-ID: <CAMuHMdUr8bqQvJE78zMHb2sqQCnTZSZhcMef1x6DgXmUhdTWqg@mail.gmail.com>
+Subject: Re: [PATCH 09/14] dt-bindings: net: renesas,etheravb: Document RZ/G3S support
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: s.shtylyov@omp.ru, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, robh+dt@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, linux@armlinux.org.uk, 
+	magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, 
+	linus.walleij@linaro.org, p.zabel@pengutronix.de, arnd@arndb.de, 
+	m.szyprowski@samsung.com, alexandre.torgue@foss.st.com, afd@ti.com, 
+	broonie@kernel.org, alexander.stein@ew.tq-group.com, 
+	eugen.hristev@collabora.com, sergei.shtylyov@gmail.com, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, biju.das.jz@bp.renesas.com, 
+	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 20, 2023 at 09:20:27PM +0000, Peter Griffin wrote:
-> Specifying samsung,uart-fifosize in both DT and driver static data is error
-> prone and relies on driver probe order and dt aliases to be correct.
-> 
-> Additionally on many Exynos platforms these are (USI) universal serial
-> interfaces which can be uart, spi or i2c, so it can change per board.
-> 
-> For google,gs101-uart and exynosautov9-uart make samsung,uart-fifosize a
-> required property. For these platforms fifosize now *only* comes from DT.
-> 
-> It is hoped other Exynos platforms will also switch over time.
+On Mon, Nov 20, 2023 at 8:01=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Document Ethernet RZ/G3S support. Ethernet IP is similar to the one
+> available on RZ/G2L devices.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Then allow the property on them.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> 
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
->  .../bindings/serial/samsung_uart.yaml           | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/serial/samsung_uart.yaml b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-> index ccc3626779d9..22a1edadc4fe 100644
-> --- a/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-> +++ b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-> @@ -133,6 +133,23 @@ allOf:
->              - const: uart
->              - const: clk_uart_baud0
->  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - google,gs101-uart
-> +              - samsung,exynosautov9-uart
-> +    then:
-> +      properties:
-> +        samsung,uart-fifosize:
-> +          description: The fifo size supported by the UART channel.
-> +          $ref: /schemas/types.yaml#/definitions/uint32
-> +          enum: [16, 64, 256]
+Gr{oetje,eeting}s,
 
-We already have 'fifo-size' in several drivers. Use that. Please move 
-its type/description definitions to serial.yaml and make drivers just do 
-'fifo-size: true' if they use it.
+                        Geert
 
-> +
-> +      required:
-> +       - samsung,uart-fifosize
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-A new required property is an ABI break. Please explain why that is okay 
-in the commit message.
-
-Rob
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
