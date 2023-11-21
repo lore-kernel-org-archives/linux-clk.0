@@ -1,307 +1,474 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jqEEDPya"
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82E79112
-	for <linux-clk@vger.kernel.org>; Mon, 20 Nov 2023 23:39:59 -0800 (PST)
-Received: by mail-lf1-x131.google.com with SMTP id 2adb3069b0e04-50aabfa1b75so2827577e87.3
-        for <linux-clk@vger.kernel.org>; Mon, 20 Nov 2023 23:39:59 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zinUxLYS"
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31FDA110
+	for <linux-clk@vger.kernel.org>; Tue, 21 Nov 2023 00:41:31 -0800 (PST)
+Received: by mail-wr1-x42a.google.com with SMTP id ffacd0b85a97d-32d9effe314so3759386f8f.3
+        for <linux-clk@vger.kernel.org>; Tue, 21 Nov 2023 00:41:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700552398; x=1701157198; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FdPdCCCHELZuZbE+Nx/X7BcWbDYhnSVo4Jlo0Z3ZPDU=;
-        b=jqEEDPyamswyc/BHS2vnewRBmTbPf5qDH1yNxTV0MjBtY6Lck/xjPwyNBkvwEI66vE
-         DlOGYqX5wmMf9P+xmhtZz8k+NvnyoPWmLdG0Oa/jW5VrU73kA9OC4qRv8xEVh5FXudkA
-         5mdzY+XrjDRESBnkBHLflBgA8QKPVq10Hvo3mgHXP7FkSxMWOgeQujOWv8VB/Cvyh5bO
-         Ij1f5FXG8MJCkQ9eL+Vew+nmukUxgWzZdLB2338wCgqy1nBQyeIOyxN3UuIj+CYTZY+v
-         8XlpWS8uykiGWtC7iwtbP5AorKwV1sV86k5bl8QRLV3fN1cowxRZQCEidCoLBOJW6v99
-         ChXg==
+        d=linaro.org; s=google; t=1700556089; x=1701160889; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=SCHxMbqw99jM5wJ3HP5Ky8BQ0qy1EingX8oib4vezVc=;
+        b=zinUxLYStgiXNpfyvs79ZhCZGSALQTkxdqjcdtuiYi6lyuGLG0t6a43z5zDkhlBk8C
+         7G7JhgFaM+HSHq7E7ReB8JcgLOXdzDqU/NGVsC2wCP/Qha05g4R7jQOy5f1CwOvSsntI
+         5ZKA6EZUJ+klruAomGV49Asi/bAho5RxnjIBhd587ilqcS0s9f+W6qkA9o7djguHDU9I
+         eVieSR8Yo3SPRkTMOAf8mzbeAnFePsD8XkpqInfaMBv5J/N5Ku4ZMjjDCMy6bRk98Log
+         T5RAK1p12JFYJuxDHxcHDLGSIqMBtLGfmW62uBr5FCPCt+qvmKhvbmCS0oeezv2A6YVC
+         3AlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700552398; x=1701157198;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FdPdCCCHELZuZbE+Nx/X7BcWbDYhnSVo4Jlo0Z3ZPDU=;
-        b=gTahQmyJBSBI8z+5faCTCa6dx69Iwz79CMdThFnRfPk5dRIEztykxvx0ylExoIhKuP
-         dV/MwdN/x3fPlMjyCXVHogY96+++sqrSqD4j2MLBzGjtGPAIdvDyLePFId5b9uPSc+WJ
-         dutHW9t1bp+tw93aSc3c1P6kwS2xM5z4Su0DN5QlOqA38kZWlmZT9kXwjvx8vzg6w0lS
-         0hLOT69c3xro3w50qrYsUF9ojb1MkJogATia433/Sv9MSFpoUWUrtvgx7LL+sRVZUhTj
-         ENPjog0GlIwnOK31ejs8vXP4BCtF6NYLPkThgFJ/sVDW50dAt3nYY+04IPYsldfpkifz
-         ZD9g==
-X-Gm-Message-State: AOJu0Ywi0xadVNw2+AP8lvcHi2KcGytDH5r16hTeLKYmvU0ruex1ISRZ
-	IbstU7qxO8VJZ7GTURMe6KmHwA==
-X-Google-Smtp-Source: AGHT+IEPHsZObDjx4bw5s0XBThPc/nHG46dXuW4hQgzNxNLedU3lmi9/YgNLlDQD3OCIXzKLH04FHw==
-X-Received: by 2002:a05:6512:39c5:b0:50a:a940:2d81 with SMTP id k5-20020a05651239c500b0050aa9402d81mr7755021lfu.68.1700552397619;
-        Mon, 20 Nov 2023 23:39:57 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.222.11])
-        by smtp.gmail.com with ESMTPSA id b15-20020a056000054f00b0031980294e9fsm13563542wrf.116.2023.11.20.23.39.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Nov 2023 23:39:57 -0800 (PST)
-Message-ID: <c6e1461a-fd75-4525-8888-0ffef626b77e@linaro.org>
-Date: Tue, 21 Nov 2023 08:39:53 +0100
+        d=1e100.net; s=20230601; t=1700556089; x=1701160889;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SCHxMbqw99jM5wJ3HP5Ky8BQ0qy1EingX8oib4vezVc=;
+        b=q5aWAmiarq4OOVIJuULnrXt9zrvgEyFgjr8eP5H76/8aw/K0swFvziwF38ciDjKYlg
+         ErL6U8hASUV/0CvjualAJPzrV2AvDSgkmy1sKhsFYLO2mLc+1FvbTlJhVl10lQ0Vf2q1
+         TGXKrjWg2gB45u1jA72wx4II0vGSbRU5zQ/fulZZweygyC6KxbSgR0SxH4MKZ3EBpraY
+         6OjSSg6GKGQ+RYMIiJJsg8ZVrlZIz9HT0J8zCfkUBt00JCgSie/TTsxPHWhyYDpfKAuW
+         /wDGbJPbd0xdBCV9cwhGkWwlD0TcgtqwsMVIfzBKQC5t2txf+maWwSAHS2mOL9d3c7Xo
+         QCdg==
+X-Gm-Message-State: AOJu0YzYMtkQbaEFDz259XiP+AkRq7bXw5kWbGwLeXLccFQGYbrPNYec
+	5NzLgPOT77WCi6xYnr1uhV7ylQ==
+X-Google-Smtp-Source: AGHT+IFPRU2ASHglS//FhOGT8YwLtY74wKLDgPgE2pWlmfa1x1pmOlPojboz4Lh+OEQfDXfzzGz8+A==
+X-Received: by 2002:adf:ef86:0:b0:331:7799:84d8 with SMTP id d6-20020adfef86000000b00331779984d8mr6187499wro.68.1700556089516;
+        Tue, 21 Nov 2023 00:41:29 -0800 (PST)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id bf14-20020a0560001cce00b0032dde679398sm13885709wrb.8.2023.11.21.00.41.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Nov 2023 00:41:29 -0800 (PST)
+Message-ID: <b5e7a95ef3ca5323c06f30c6d1d570d8629ad9a5.camel@linaro.org>
+Subject: Re: [PATCH v4 02/19] dt-bindings: clock: Add Google gs101 clock
+ management unit bindings
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Peter Griffin <peter.griffin@linaro.org>, robh+dt@kernel.org, 
+ krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+ conor+dt@kernel.org,  sboyd@kernel.org, tomasz.figa@gmail.com,
+ s.nawrocki@samsung.com,  linus.walleij@linaro.org, wim@linux-watchdog.org,
+ linux@roeck-us.net,  catalin.marinas@arm.com, will@kernel.org,
+ arnd@arndb.de, olof@lixom.net,  gregkh@linuxfoundation.org,
+ jirislaby@kernel.org, cw00.choi@samsung.com,  alim.akhtar@samsung.com
+Cc: tudor.ambarus@linaro.org, semen.protsenko@linaro.org,
+ saravanak@google.com,  willmcvicker@google.com, soc@kernel.org,
+ devicetree@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org,  linux-clk@vger.kernel.org,
+ linux-gpio@vger.kernel.org,  linux-watchdog@vger.kernel.org,
+ kernel-team@android.com,  linux-serial@vger.kernel.org
+Date: Tue, 21 Nov 2023 08:41:27 +0000
+In-Reply-To: <20231120212037.911774-3-peter.griffin@linaro.org>
+References: <20231120212037.911774-1-peter.griffin@linaro.org>
+	 <20231120212037.911774-3-peter.griffin@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.49.2-2 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] dt-bindings: clock: mediatek: add clock
- controllers of MT7988
-Content-Language: en-US
-To: Daniel Golle <daniel@makrotopia.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Sabrina Dubroca <sd@queasysnail.net>,
- Jianhui Zhao <zhaojh329@gmail.com>, Chen-Yu Tsai <wenst@chromium.org>,
- "Garmin.Chang" <Garmin.Chang@mediatek.com>,
- Edward-JW Yang <edward-jw.yang@mediatek.com>,
- Johnson Wang <johnson.wang@mediatek.com>, Sam Shih <sam.shih@mediatek.com>,
- Frank Wunderlich <frank-w@public-files.de>,
- Dan Carpenter <dan.carpenter@linaro.org>,
- James Liao <jamesjj.liao@mediatek.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
- netdev@vger.kernel.org
-References: <b277c5f084ff35849efb8250510b2536053d1316.1700498124.git.daniel@makrotopia.org>
- <8a30ae45b55842bc04f57714c8e0a962f3288a67.1700498124.git.daniel@makrotopia.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <8a30ae45b55842bc04f57714c8e0a962f3288a67.1700498124.git.daniel@makrotopia.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 20/11/2023 18:18, Daniel Golle wrote:
-> Add various clock controllers found in the MT7988 SoC to existing
-> bindings (if applicable) and add files for the new ethwarp, mcusys
-> and xfi-pll clock controllers not previously present in any SoC.
-> 
-> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+On Mon, 2023-11-20 at 21:20 +0000, Peter Griffin wrote:
+> Provide dt-schema documentation for Google gs101 SoC clock controller.
+> Currently this adds support for cmu_top, cmu_misc and cmu_apm.
+>=20
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 > ---
-> v2:
->  * dropped unused labels
->  * add 'type: object' declaration for reset-controller found in new
->    ethwarp controller and represented as ti,syscon-reset
->  * rebase on top of
->    "dt-bindings: arm: mediatek: move ethsys controller & convert to DT schema"
-> 
->  .../arm/mediatek/mediatek,infracfg.yaml       |  1 +
->  .../arm/mediatek/mediatek,mt7988-ethwarp.yaml | 61 +++++++++++++++++++
->  .../arm/mediatek/mediatek,mt7988-mcusys.yaml  | 46 ++++++++++++++
->  .../arm/mediatek/mediatek,mt7988-xfi-pll.yaml | 49 +++++++++++++++
->  .../bindings/clock/mediatek,apmixedsys.yaml   |  1 +
->  .../bindings/clock/mediatek,ethsys.yaml       |  1 +
->  .../bindings/clock/mediatek,topckgen.yaml     |  1 +
->  .../bindings/net/pcs/mediatek,sgmiisys.yaml   |  2 +
->  8 files changed, 162 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7988-ethwarp.yaml
->  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7988-mcusys.yaml
->  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7988-xfi-pll.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.yaml
-> index ea98043c6ba3d..230b5188a88db 100644
-> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.yaml
-> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.yaml
-> @@ -30,6 +30,7 @@ properties:
->                - mediatek,mt7629-infracfg
->                - mediatek,mt7981-infracfg
->                - mediatek,mt7986-infracfg
-> +              - mediatek,mt7988-infracfg
->                - mediatek,mt8135-infracfg
->                - mediatek,mt8167-infracfg
->                - mediatek,mt8173-infracfg
-> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7988-ethwarp.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7988-ethwarp.yaml
+> =C2=A0.../bindings/clock/google,gs101-clock.yaml=C2=A0=C2=A0=C2=A0 | 110 =
++++++++++
+> =C2=A0include/dt-bindings/clock/google,gs101.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 | 232 ++++++++++++++++++
+> =C2=A02 files changed, 342 insertions(+)
+> =C2=A0create mode 100644 Documentation/devicetree/bindings/clock/google,g=
+s101-clock.yaml
+> =C2=A0create mode 100644 include/dt-bindings/clock/google,gs101.h
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/google,gs101-clock.y=
+aml b/Documentation/devicetree/bindings/clock/google,gs101-
+> clock.yaml
 > new file mode 100644
-> index 0000000000000..5b988efe0cb74
+> index 000000000000..4612886fcc15
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7988-ethwarp.yaml
-> @@ -0,0 +1,61 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +++ b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+> @@ -0,0 +1,110 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 > +%YAML 1.2
 > +---
-> +$id: http://devicetree.org/schemas/arm/mediatek/mediatek,mt7988-ethwarp.yaml#
+> +$id: http://devicetree.org/schemas/clock/google,gs101-clock.yaml#
 > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +title: MediaTek MT7988 ethwarp Controller
+> +title: Google GS101 SoC clock controller
 > +
 > +maintainers:
-> +  - Daniel Golle <daniel@makrotopia.org>
+> +=C2=A0 - Peter Griffin <peter.griffin@linaro.org>
 > +
-> +description:
-> +  The Mediatek MT7988 ethwarp controller provides clocks and resets for the
-> +  Ethernet related subsystems found the MT7988 SoC.
-
-Clock controller bindings should be placed in clocks. Definitely not in arm.
-
-> +  The reset-controller can be represented using the ti,syscon-reset bindings.
-
-? Why do you rely on TI properties? How is this relevant? Describe here
-hardware, not bindings.
-
-> +  The clock values can be found in <dt-bindings/clock/mt*-clk.h>.
+> +description: |
+> +=C2=A0 Google GS101 clock controller is comprised of several CMU units, =
+generating
+> +=C2=A0 clocks for different domains. Those CMU units are modeled as sepa=
+rate device
+> +=C2=A0 tree nodes, and might depend on each other. The root clock in tha=
+t clock tree
+> +=C2=A0 is OSCCLK (24.576 MHz). That external clock must be defined as a =
+fixed-rate
+> +=C2=A0 clock in dts.
+> +
+> +=C2=A0 CMU_TOP is a top-level CMU, where all base clocks are prepared us=
+ing PLLs and
+> +=C2=A0 dividers; all other leaf clocks (other CMUs) are usually derived =
+from CMU_TOP.
+> +
+> +=C2=A0 Each clock is assigned an identifier and client nodes can use thi=
+s identifier
+> +=C2=A0 to specify the clock which they consume. All clocks available for=
+ usage
+> +=C2=A0 in clock consumer nodes are defined as preprocessor macros in
+> +=C2=A0 'dt-bindings/clock/gs101.h' header.
 > +
 > +properties:
-> +  compatible:
-> +    items:
-> +      - const: mediatek,mt7988-ethwarp
-> +      - const: syscon
-> +      - const: simple-mfd
+> +=C2=A0 compatible:
+> +=C2=A0=C2=A0=C2=A0 enum:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - google,gs101-cmu-top
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - google,gs101-cmu-apm
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - google,gs101-cmu-misc
 > +
-> +  reg:
-> +    maxItems: 1
+> +=C2=A0 clocks:
+> +=C2=A0=C2=A0=C2=A0 minItems: 1
+> +=C2=A0=C2=A0=C2=A0 maxItems: 2
 > +
-> +  reset-controller:
-> +    type: object
-
-Need $ref.
-
+> +=C2=A0 clock-names:
+> +=C2=A0=C2=A0=C2=A0 minItems: 1
+> +=C2=A0=C2=A0=C2=A0 maxItems: 2
 > +
-> +  '#clock-cells':
-> +    const: 1
+> +=C2=A0 "#clock-cells":
+> +=C2=A0=C2=A0=C2=A0 const: 1
+> +
+> +=C2=A0 reg:
+> +=C2=A0=C2=A0=C2=A0 maxItems: 1
 > +
 > +required:
-> +  - compatible
-> +  - reg
-> +  - '#clock-cells'
+> +=C2=A0 - compatible
+> +=C2=A0 - "#clock-cells"
+> +=C2=A0 - clocks
+> +=C2=A0 - clock-names
+> +=C2=A0 - reg
+> +
+> +allOf:
+> +=C2=A0 - if:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 properties:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatible:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 contains:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 enum:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 - google,gs101-cmu-top
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 - google,gs101-cmu-apm
+> +=C2=A0=C2=A0=C2=A0 then:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 properties:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clocks:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 items:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - des=
+cription: External reference clock (24.576 MHz)
+> +
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clock-names:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 items:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - con=
+st: oscclk
+> +
+> +=C2=A0 - if:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 properties:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatible:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 contains:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const=
+: google,gs101-cmu-misc
+> +
+> +=C2=A0=C2=A0=C2=A0 then:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 properties:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clocks:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 items:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - des=
+cription: External reference clock (24.576 MHz)
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - des=
+cription: Misc bus clock (from CMU_TOP)
+> +
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clock-names:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 items:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - con=
+st: oscclk
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - con=
+st: dout_cmu_misc_bus
 > +
 > +additionalProperties: false
 > +
 > +examples:
-> +  - |
-> +    #include <dt-bindings/reset/ti-syscon.h>
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
+> +=C2=A0 # Clock controller node for CMU_TOP
+> +=C2=A0 - |
+> +=C2=A0=C2=A0=C2=A0 #include <dt-bindings/clock/google,gs101.h>
+> +=C2=A0=C2=A0=C2=A0 soc {
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #address-cells =3D <2>;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #size-cells =3D <1>;
 > +
-> +        clock-controller@15031000 {
-> +            compatible = "mediatek,mt7988-ethwarp", "syscon", "simple-mfd";
-> +            reg = <0 0x15031000 0 0x1000>;
-> +            #clock-cells = <1>;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cmu_top: clock-controller@1e0=
+80000 {
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compa=
+tible =3D "google,gs101-cmu-top";
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg =
+=3D <0x0 0x1e080000 0x8000>;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #cloc=
+k-cells =3D <1>;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clock=
+s =3D <&ext_24_5m>;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clock=
+-names =3D "oscclk";
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 };
+> +=C2=A0=C2=A0=C2=A0 };
 > +
-> +            reset-controller {
-> +                compatible = "ti,syscon-reset";
-
-??? You do not have TI.
-
-> +                #reset-cells = <1>;
-> +                ti,reset-bits = <
-> +                    0x8 9 0x8 9 0 0 (ASSERT_SET | DEASSERT_CLEAR | STATUS_NONE)
-> +                >;
-> +            };
-> +        };
-> +    };
-> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7988-mcusys.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7988-mcusys.yaml
+> +...
+> diff --git a/include/dt-bindings/clock/google,gs101.h b/include/dt-bindin=
+gs/clock/google,gs101.h
 > new file mode 100644
-> index 0000000000000..b30bd13616875
+> index 000000000000..7765ba68f734
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7988-mcusys.yaml
-> @@ -0,0 +1,46 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/arm/mediatek/mediatek,mt7988-mcusys.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +++ b/include/dt-bindings/clock/google,gs101.h
+> @@ -0,0 +1,232 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Copyright (C) 2023 Linaro Ltd.
+> + * Author: Peter Griffin <peter.griffin@linaro.org>
+> + *
+> + * Device Tree binding constants for Google gs101 clock controller.
+> + */
 > +
-> +title: MediaTek MT7988 MCU System Clock Controller
+> +#ifndef _DT_BINDINGS_CLOCK_GOOGLE_GS101_H
+> +#define _DT_BINDINGS_CLOCK_GOOGLE_GS101_H
 > +
-> +maintainers:
-> +  - Daniel Golle <daniel@makrotopia.org>
+> +/* CMU_TOP PLL*/
+
+Usually there should be a space before */
+Same in many other places in this file.
+
+Cheers,
+Andr=C3=A9
+
+> +#define CLK_FOUT_SHARED0_PLL		1
+> +#define CLK_FOUT_SHARED1_PLL		2
+> +#define CLK_FOUT_SHARED2_PLL		3
+> +#define CLK_FOUT_SHARED3_PLL		4
+> +#define CLK_FOUT_SPARE_PLL		5
 > +
-> +description:
-> +  The Mediatek mcusys controller provides ARM and bus clocks to the system.
-> +  The clock values can be found in <dt-bindings/clock/mt*-clk.h>.
-
-This binding looks like several other Mediatek bindings. Add it to some
-existing binding instead.
-
+> +/* CMU_TOP MUX*/
+> +#define CLK_MOUT_SHARED0_PLL		6
+> +#define CLK_MOUT_SHARED1_PLL		7
+> +#define CLK_MOUT_SHARED2_PLL		8
+> +#define CLK_MOUT_SHARED3_PLL		9
+> +#define CLK_MOUT_SPARE_PLL		10
+> +#define CLK_MOUT_BUS0_BUS		11
+> +#define CLK_MOUT_CMU_BOOST		12
+> +#define CLK_MOUT_BUS1_BUS		13
+> +#define CLK_MOUT_BUS2_BUS		14
+> +#define CLK_MOUT_CORE_BUS		15
+> +#define CLK_MOUT_EH_BUS			16
+> +#define CLK_MOUT_CPUCL2_SWITCH		17
+> +#define CLK_MOUT_CPUCL1_SWITCH		18
+> +#define CLK_MOUT_CPUCL0_SWITCH		19
+> +#define CLK_MOUT_CPUCL0_DBG		20
+> +#define CLK_MOUT_CMU_HPM		21
+> +#define CLK_MOUT_G3D_SWITCH		22
+> +#define CLK_MOUT_G3D_GLB		23
+> +#define CLK_MOUT_DPU_BUS		24
+> +#define CLK_MOUT_DISP_BUS		25
+> +#define CLK_MOUT_G2D_G2D		26
+> +#define CLK_MOUT_G2D_MSCL		27
+> +#define CLK_MOUT_HSI0_USB31DRD		28
+> +#define CLK_MOUT_HSI0_BUS		29
+> +#define CLK_MOUT_HSI0_DPGTC		30
+> +#define CLK_MOUT_HSI0_USBDPDGB		31
+> +#define CLK_MOUT_HSI1_BUS		32
+> +#define CLK_MOUT_HSI1_PCIE		33
+> +#define CLK_MOUT_HSI2_BUS		34
+> +#define CLK_MOUT_HSI2_PCIE		35
+> +#define CLK_MOUT_HSI2_UFS_EMBD		36
+> +#define CLK_MOUT_HSI2_MMC_CARD		37
+> +#define CLK_MOUT_CSIS			38
+> +#define CLK_MOUT_PDP_BUS		39
+> +#define CLK_MOUT_PDP_VRA		40
+> +#define CLK_MOUT_IPP_BUS		41
+> +#define CLK_MOUT_G3AA			42
+> +#define CLK_MOUT_ITP			43
+> +#define CLK_MOUT_DNS_BUS		44
+> +#define CLK_MOUT_TNR_BUS		45
+> +#define CLK_MOUT_MCSC_ITSC		46
+> +#define CLK_MOUT_MCSC_MCSC		47
+> +#define CLK_MOUT_GDC_SCSC		48
+> +#define CLK_MOUT_GDC_GDC0		49
+> +#define CLK_MOUT_GDC_GDC1		50
+> +#define CLK_MOUT_MFC_MFC		51
+> +#define CLK_MOUT_MIF_SWITCH		52
+> +#define CLK_MOUT_MIF_BUS		53
+> +#define CLK_MOUT_MISC_BUS		54
+> +#define CLK_MOUT_MISC_SSS		55
+> +#define CLK_MOUT_PERIC0_IP		56
+> +#define CLK_MOUT_PERIC0_BUS		57
+> +#define CLK_MOUT_PERIC1_IP		58
+> +#define CLK_MOUT_PERIC1_BUS		59
+> +#define CLK_MOUT_TPU_TPU		60
+> +#define CLK_MOUT_TPU_TPUCTL		61
+> +#define CLK_MOUT_TPU_BUS		62
+> +#define CLK_MOUT_TPU_UART		63
+> +#define CLK_MOUT_TPU_HPM		64
+> +#define CLK_MOUT_BO_BUS			65
+> +#define CLK_MOUT_G3D_BUSD		66
 > +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - const: mediatek,mt7988-mcusys
-> +      - const: syscon
+> +/* CMU_TOP Dividers*/
+> +#define CLK_DOUT_SHARED0_DIV3		67
+> +#define CLK_DOUT_SHARED0_DIV2		68
+> +#define CLK_DOUT_SHARED0_DIV4		69
+> +#define CLK_DOUT_SHARED0_DIV5		70
+> +#define CLK_DOUT_SHARED1_DIV3		71
+> +#define CLK_DOUT_SHARED1_DIV2		72
+> +#define CLK_DOUT_SHARED1_DIV4		73
+> +#define CLK_DOUT_SHARED2_DIV2		74
+> +#define CLK_DOUT_SHARED3_DIV2		75
+> +#define CLK_DOUT_BUS0_BUS		76
+> +#define CLK_DOUT_CMU_BOOST		77
+> +#define CLK_DOUT_BUS1_BUS		78
+> +#define CLK_DOUT_BUS2_BUS		79
+> +#define CLK_DOUT_CORE_BUS		80
+> +#define CLK_DOUT_EH_BUS			81
+> +#define CLK_DOUT_CPUCL2_SWITCH		82
+> +#define CLK_DOUT_CPUCL1_SWITCH		83
+> +#define CLK_DOUT_CPUCL0_SWITCH		84
+> +#define CLK_DOUT_CPUCL0_DBG		85
+> +#define CLK_DOUT_CMU_HPM		86
+> +#define CLK_DOUT_G3D_SWITCH		87
+> +#define CLK_DOUT_G3D_GLB		88
+> +#define CLK_DOUT_DPU_BUS		89
+> +#define CLK_DOUT_DISP_BUS		90
+> +#define CLK_DOUT_G2D_G2D		91
+> +#define CLK_DOUT_G2D_MSCL		92
+> +#define CLK_DOUT_HSI0_USB31DRD		93
+> +#define CLK_DOUT_HSI0_BUS		94
+> +#define CLK_DOUT_HSI0_DPGTC		95
+> +#define CLK_DOUT_HSI0_USBDPDGB		96
+> +#define CLK_DOUT_HSI1_BUS		97
+> +#define CLK_DOUT_HSI1_PCIE		98
+> +#define CLK_DOUT_HSI2_BUS		100
+> +#define CLK_DOUT_HSI2_PCIE		101
+> +#define CLK_DOUT_HSI2_UFS_EMBD		102
+> +#define CLK_DOUT_HSI2_MMC_CARD		103
+> +#define CLK_DOUT_CSIS			104
+> +#define CLK_DOUT_PDP_BUS		105
+> +#define CLK_DOUT_PDP_VRA		106
+> +#define CLK_DOUT_IPP_BUS		107
+> +#define CLK_DOUT_G3AA			108
+> +#define CLK_DOUT_ITP			109
+> +#define CLK_DOUT_DNS_BUS		110
+> +#define CLK_DOUT_TNR_BUS		111
+> +#define CLK_DOUT_MCSC_ITSC		112
+> +#define CLK_DOUT_MCSC_MCSC		113
+> +#define CLK_DOUT_GDC_SCSC		114
+> +#define CLK_DOUT_GDC_GDC0		115
+> +#define CLK_DOUT_GDC_GDC1		116
+> +#define CLK_DOUT_MFC_MFC		117
+> +#define CLK_DOUT_MIF_BUS		118
+> +#define CLK_DOUT_MISC_BUS		119
+> +#define CLK_DOUT_MISC_SSS		120
+> +#define CLK_DOUT_PERIC0_BUS		121
+> +#define CLK_DOUT_PERIC0_IP		122
+> +#define CLK_DOUT_PERIC1_BUS		123
+> +#define CLK_DOUT_PERIC1_IP		124
+> +#define CLK_DOUT_TPU_TPU		125
+> +#define CLK_DOUT_TPU_TPUCTL		126
+> +#define CLK_DOUT_TPU_BUS		127
+> +#define CLK_DOUT_TPU_UART		128
+> +#define CLK_DOUT_TPU_HPM		129
+> +#define CLK_DOUT_BO_BUS			130
 > +
-> +  reg:
-> +    maxItems: 1
+> +/* CMU_TOP Gates*/
+> +#define CLK_GOUT_BUS0_BUS		131
+> +#define CLK_GOUT_BUS1_BUS		132
+> +#define CLK_GOUT_BUS2_BUS		133
+> +#define CLK_GOUT_CORE_BUS		134
+> +#define CLK_GOUT_EH_BUS			135
+> +#define CLK_GOUT_CPUCL2_SWITCH		136
+> +#define CLK_GOUT_CPUCL1_SWITCH		137
+> +#define CLK_GOUT_CPUCL0_SWITCH		138
+> +#define CLK_GOUT_CPUCL0_DBG		139
+> +#define CLK_GOUT_CMU_HPM		140
+> +#define CLK_GOUT_G3D_SWITCH		141
+> +#define CLK_GOUT_G3D_GLB		142
+> +#define CLK_GOUT_DPU_BUS		143
+> +#define CLK_GOUT_DISP_BUS		144
+> +#define CLK_GOUT_G2D_G2D		145
+> +#define CLK_GOUT_G2D_MSCL		146
+> +#define CLK_GOUT_HSI0_USB31DRD		147
+> +#define CLK_GOUT_HSI0_BUS		148
+> +#define CLK_GOUT_HSI0_DPGTC		149
+> +#define CLK_GOUT_HSI0_USBDPDGB		150
+> +#define CLK_GOUT_HSI1_BUS		151
+> +#define CLK_GOUT_HSI1_PCIE		152
+> +#define CLK_GOUT_HSI2_BUS		153
+> +#define CLK_GOUT_HSI2_PCIE		154
+> +#define CLK_GOUT_HSI2_UFS_EMBD		155
+> +#define CLK_GOUT_HSI2_MMC_CARD		156
+> +#define CLK_GOUT_CSIS			157
+> +#define CLK_GOUT_PDP_BUS		158
+> +#define CLK_GOUT_PDP_VRA		159
+> +#define CLK_GOUT_IPP_BUS		160
+> +#define CLK_GOUT_G3AA			161
+> +#define CLK_GOUT_ITP			162
+> +#define CLK_GOUT_DNS_BUS		163
+> +#define CLK_GOUT_TNR_BUS		164
+> +#define CLK_GOUT_MCSC_ITSC		165
+> +#define CLK_GOUT_MCSC_MCSC		166
+> +#define CLK_GOUT_GDC_SCSC		167
+> +#define CLK_GOUT_GDC_GDC0		168
+> +#define CLK_GOUT_GDC_GDC1		169
+> +#define CLK_GOUT_MFC_MFC		170
+> +#define CLK_GOUT_MIF_SWITCH		171
+> +#define CLK_GOUT_MIF_BUS		172
+> +#define CLK_GOUT_MISC_BUS		173
+> +#define CLK_GOUT_MISC_SSS		174
+> +#define CLK_GOUT_PERIC0_BUS		175
+> +#define CLK_GOUT_PERIC0_IP		176
+> +#define CLK_GOUT_PERIC1_BUS		177
+> +#define CLK_GOUT_PERIC1_IP		178
+> +#define CLK_GOUT_TPU_TPU		179
+> +#define CLK_GOUT_TPU_TPUCTL		180
+> +#define CLK_GOUT_TPU_BUS		181
+> +#define CLK_GOUT_TPU_UART		182
+> +#define CLK_GOUT_TPU_HPM		183
+> +#define CLK_GOUT_BO_BUS			184
+> +#define CLK_GOUT_CMU_BOOST		185
 > +
-> +  '#clock-cells':
-> +    const: 1
+> +/* CMU_APM */
 > +
-
-...
-
-
+> +#define CLK_MOUT_APM_FUNC					1
+> +#define CLK_MOUT_APM_FUNCSRC					2
+> +#define CLK_DOUT_APM_BOOST					3
+> +#define CLK_DOUT_APM_USI0_UART					4
+> +#define CLK_DOUT_APM_USI0_USI					5
+> +#define CLK_DOUT_APM_USI1_UART					6
+> +#define CLK_GOUT_APM_FUNC					7
+> +#define CLK_GOUT_APM_UID_APBIF_GPIO_ALIVE_IPCLKPORT_PCLK	8
+> +#define CLK_GOUT_APM_UID_APBIF_GPIO_FAR_ALIVE_IPCLKPORT_PCLK	9
+> +#define CLK_GOUT_APM_UID_APBIF_PMU_ALIVE_IPCLKPORT_PCLK		10
+> +#define CLK_GOUT_APM_UID_SYSREG_APM_IPCLKPORT_PCLK		11
+> +#define CLK_APM_PLL_DIV2_APM					12
+> +#define CLK_APM_PLL_DIV4_APM					13
+> +#define CLK_APM_PLL_DIV16_APM					14
 > +
-> +additionalProperties: false
+> +/* CMU_MISC */
 > +
-> +examples:
-> +  - |
-> +    #define MT7988_TOPRGU_XFI_PLL_GRST              16
-
-If you do not have header, use number directly.
-
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +        clock-controller@11f40000 {
-> +            compatible = "mediatek,mt7988-xfi-pll";
-> +            reg = <0 0x11f40000 0 0x1000>;
-> +            resets = <&watchdog MT7988_TOPRGU_XFI_PLL_GRST>;
-> +            #clock-cells = <1>;
-> +        };
-> +    };
-
-
-
-Best regards,
-Krzysztof
+> +#define CLK_MOUT_MISC_BUS_USER					1
+> +#define CLK_MOUT_MISC_SSS_USER					2
+> +#define CLK_DOUT_MISC_BUSP					3
+> +#define CLK_DOUT_MISC_GIC					4
+> +#define CLK_GOUT_MISC_PCLK					5
+> +#define CLK_GOUT_MISC_SYSREG_PCLK				6
+> +#define CLK_GOUT_MISC_WDT_CLUSTER0				7
+> +#define CLK_GOUT_MISC_WDT_CLUSTER1				8
+> +
+> +#endif /* _DT_BINDINGS_CLOCK_GOOGLE_GS101_H */
 
