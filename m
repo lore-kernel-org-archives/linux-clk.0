@@ -1,231 +1,307 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mi4InY3p"
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.151])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 469B590;
-	Mon, 20 Nov 2023 22:42:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1700548935; x=1732084935;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=JmpHPcDR2GOkMATNC2UbhmrpWmY/FEs9q0VQCEmc49s=;
-  b=mi4InY3pJqGjm3KHJOuIk/v4DQO9jbsTy2qmtxfCzrQRdMro20j7BwaZ
-   61o3H9IqAYLVwQhMiCZ/mFDeAEXhcFpPhwFR6xdz43h4M71drYM8S0IUF
-   UGGz6qJbDBjHtPY77J7xO8Gv/RPWRYsz6TY59+bgVqmLicHtRnx7iuURP
-   51IN66mlLZCyDR6lLFGx3ifo3R7qSO0yTNwHflUlUcfXPevzF8mQOmcyA
-   ivUn7u/Sqtk17zI3NdSjz1szRjjyBiJQ4bDQqPUtDp/D7MSrBFOQ72maE
-   2abp7gLixPTD6OR67E6KvIPHblPzaFxYdvYL0/UIajhQlr3J4EDSvAZIa
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10900"; a="371948743"
-X-IronPort-AV: E=Sophos;i="6.04,215,1695711600"; 
-   d="scan'208";a="371948743"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Nov 2023 22:42:12 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10900"; a="760012743"
-X-IronPort-AV: E=Sophos;i="6.04,215,1695711600"; 
-   d="scan'208";a="760012743"
-Received: from lkp-server02.sh.intel.com (HELO b8de5498638e) ([10.239.97.151])
-  by orsmga007.jf.intel.com with ESMTP; 20 Nov 2023 22:42:04 -0800
-Received: from kbuild by b8de5498638e with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1r5KSP-0007RI-2y;
-	Tue, 21 Nov 2023 06:42:01 +0000
-Date: Tue, 21 Nov 2023 14:23:42 +0800
-From: kernel test robot <lkp@intel.com>
-To: Peter Griffin <peter.griffin@linaro.org>, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-	conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com,
-	s.nawrocki@samsung.com, linus.walleij@linaro.org,
-	wim@linux-watchdog.org, linux@roeck-us.net, catalin.marinas@arm.com,
-	will@kernel.org, arnd@arndb.de, olof@lixom.net,
-	gregkh@linuxfoundation.org, jirislaby@kernel.org,
-	cw00.choi@samsung.com, alim.akhtar@samsung.com
-Cc: oe-kbuild-all@lists.linux.dev, peter.griffin@linaro.org,
-	tudor.ambarus@linaro.org, andre.draszik@linaro.org,
-	semen.protsenko@linaro.org, saravanak@google.com,
-	willmcvicker@google.com, soc@kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v4 09/19] dt-bindings: serial: samsung: Make
- samsung,uart-fifosize required property
-Message-ID: <202311211435.CJVOACBE-lkp@intel.com>
-References: <20231120212037.911774-10-peter.griffin@linaro.org>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jqEEDPya"
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82E79112
+	for <linux-clk@vger.kernel.org>; Mon, 20 Nov 2023 23:39:59 -0800 (PST)
+Received: by mail-lf1-x131.google.com with SMTP id 2adb3069b0e04-50aabfa1b75so2827577e87.3
+        for <linux-clk@vger.kernel.org>; Mon, 20 Nov 2023 23:39:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1700552398; x=1701157198; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FdPdCCCHELZuZbE+Nx/X7BcWbDYhnSVo4Jlo0Z3ZPDU=;
+        b=jqEEDPyamswyc/BHS2vnewRBmTbPf5qDH1yNxTV0MjBtY6Lck/xjPwyNBkvwEI66vE
+         DlOGYqX5wmMf9P+xmhtZz8k+NvnyoPWmLdG0Oa/jW5VrU73kA9OC4qRv8xEVh5FXudkA
+         5mdzY+XrjDRESBnkBHLflBgA8QKPVq10Hvo3mgHXP7FkSxMWOgeQujOWv8VB/Cvyh5bO
+         Ij1f5FXG8MJCkQ9eL+Vew+nmukUxgWzZdLB2338wCgqy1nBQyeIOyxN3UuIj+CYTZY+v
+         8XlpWS8uykiGWtC7iwtbP5AorKwV1sV86k5bl8QRLV3fN1cowxRZQCEidCoLBOJW6v99
+         ChXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700552398; x=1701157198;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FdPdCCCHELZuZbE+Nx/X7BcWbDYhnSVo4Jlo0Z3ZPDU=;
+        b=gTahQmyJBSBI8z+5faCTCa6dx69Iwz79CMdThFnRfPk5dRIEztykxvx0ylExoIhKuP
+         dV/MwdN/x3fPlMjyCXVHogY96+++sqrSqD4j2MLBzGjtGPAIdvDyLePFId5b9uPSc+WJ
+         dutHW9t1bp+tw93aSc3c1P6kwS2xM5z4Su0DN5QlOqA38kZWlmZT9kXwjvx8vzg6w0lS
+         0hLOT69c3xro3w50qrYsUF9ojb1MkJogATia433/Sv9MSFpoUWUrtvgx7LL+sRVZUhTj
+         ENPjog0GlIwnOK31ejs8vXP4BCtF6NYLPkThgFJ/sVDW50dAt3nYY+04IPYsldfpkifz
+         ZD9g==
+X-Gm-Message-State: AOJu0Ywi0xadVNw2+AP8lvcHi2KcGytDH5r16hTeLKYmvU0ruex1ISRZ
+	IbstU7qxO8VJZ7GTURMe6KmHwA==
+X-Google-Smtp-Source: AGHT+IEPHsZObDjx4bw5s0XBThPc/nHG46dXuW4hQgzNxNLedU3lmi9/YgNLlDQD3OCIXzKLH04FHw==
+X-Received: by 2002:a05:6512:39c5:b0:50a:a940:2d81 with SMTP id k5-20020a05651239c500b0050aa9402d81mr7755021lfu.68.1700552397619;
+        Mon, 20 Nov 2023 23:39:57 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.222.11])
+        by smtp.gmail.com with ESMTPSA id b15-20020a056000054f00b0031980294e9fsm13563542wrf.116.2023.11.20.23.39.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Nov 2023 23:39:57 -0800 (PST)
+Message-ID: <c6e1461a-fd75-4525-8888-0ffef626b77e@linaro.org>
+Date: Tue, 21 Nov 2023 08:39:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231120212037.911774-10-peter.griffin@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] dt-bindings: clock: mediatek: add clock
+ controllers of MT7988
+Content-Language: en-US
+To: Daniel Golle <daniel@makrotopia.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Sabrina Dubroca <sd@queasysnail.net>,
+ Jianhui Zhao <zhaojh329@gmail.com>, Chen-Yu Tsai <wenst@chromium.org>,
+ "Garmin.Chang" <Garmin.Chang@mediatek.com>,
+ Edward-JW Yang <edward-jw.yang@mediatek.com>,
+ Johnson Wang <johnson.wang@mediatek.com>, Sam Shih <sam.shih@mediatek.com>,
+ Frank Wunderlich <frank-w@public-files.de>,
+ Dan Carpenter <dan.carpenter@linaro.org>,
+ James Liao <jamesjj.liao@mediatek.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+ netdev@vger.kernel.org
+References: <b277c5f084ff35849efb8250510b2536053d1316.1700498124.git.daniel@makrotopia.org>
+ <8a30ae45b55842bc04f57714c8e0a962f3288a67.1700498124.git.daniel@makrotopia.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <8a30ae45b55842bc04f57714c8e0a962f3288a67.1700498124.git.daniel@makrotopia.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Peter,
+On 20/11/2023 18:18, Daniel Golle wrote:
+> Add various clock controllers found in the MT7988 SoC to existing
+> bindings (if applicable) and add files for the new ethwarp, mcusys
+> and xfi-pll clock controllers not previously present in any SoC.
+> 
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+> ---
+> v2:
+>  * dropped unused labels
+>  * add 'type: object' declaration for reset-controller found in new
+>    ethwarp controller and represented as ti,syscon-reset
+>  * rebase on top of
+>    "dt-bindings: arm: mediatek: move ethsys controller & convert to DT schema"
+> 
+>  .../arm/mediatek/mediatek,infracfg.yaml       |  1 +
+>  .../arm/mediatek/mediatek,mt7988-ethwarp.yaml | 61 +++++++++++++++++++
+>  .../arm/mediatek/mediatek,mt7988-mcusys.yaml  | 46 ++++++++++++++
+>  .../arm/mediatek/mediatek,mt7988-xfi-pll.yaml | 49 +++++++++++++++
+>  .../bindings/clock/mediatek,apmixedsys.yaml   |  1 +
+>  .../bindings/clock/mediatek,ethsys.yaml       |  1 +
+>  .../bindings/clock/mediatek,topckgen.yaml     |  1 +
+>  .../bindings/net/pcs/mediatek,sgmiisys.yaml   |  2 +
+>  8 files changed, 162 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7988-ethwarp.yaml
+>  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7988-mcusys.yaml
+>  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7988-xfi-pll.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.yaml
+> index ea98043c6ba3d..230b5188a88db 100644
+> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.yaml
+> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.yaml
+> @@ -30,6 +30,7 @@ properties:
+>                - mediatek,mt7629-infracfg
+>                - mediatek,mt7981-infracfg
+>                - mediatek,mt7986-infracfg
+> +              - mediatek,mt7988-infracfg
+>                - mediatek,mt8135-infracfg
+>                - mediatek,mt8167-infracfg
+>                - mediatek,mt8173-infracfg
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7988-ethwarp.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7988-ethwarp.yaml
+> new file mode 100644
+> index 0000000000000..5b988efe0cb74
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7988-ethwarp.yaml
+> @@ -0,0 +1,61 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/arm/mediatek/mediatek,mt7988-ethwarp.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: MediaTek MT7988 ethwarp Controller
+> +
+> +maintainers:
+> +  - Daniel Golle <daniel@makrotopia.org>
+> +
+> +description:
+> +  The Mediatek MT7988 ethwarp controller provides clocks and resets for the
+> +  Ethernet related subsystems found the MT7988 SoC.
 
-kernel test robot noticed the following build warnings:
+Clock controller bindings should be placed in clocks. Definitely not in arm.
 
-[auto build test WARNING on pinctrl-samsung/for-next]
-[also build test WARNING on next-20231120]
-[cannot apply to krzk/for-next robh/for-next linus/master v6.7-rc2]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> +  The reset-controller can be represented using the ti,syscon-reset bindings.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Peter-Griffin/dt-bindings-soc-samsung-exynos-pmu-Add-gs101-compatible/20231121-052449
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git for-next
-patch link:    https://lore.kernel.org/r/20231120212037.911774-10-peter.griffin%40linaro.org
-patch subject: [PATCH v4 09/19] dt-bindings: serial: samsung: Make samsung,uart-fifosize required property
-compiler: loongarch64-linux-gcc (GCC) 13.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20231121/202311211435.CJVOACBE-lkp@intel.com/reproduce)
+? Why do you rely on TI properties? How is this relevant? Describe here
+hardware, not bindings.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202311211435.CJVOACBE-lkp@intel.com/
+> +  The clock values can be found in <dt-bindings/clock/mt*-clk.h>.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: mediatek,mt7988-ethwarp
+> +      - const: syscon
+> +      - const: simple-mfd
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  reset-controller:
+> +    type: object
 
-dtcheck warnings: (new ones prefixed by >>)
->> Documentation/devicetree/bindings/serial/samsung_uart.yaml:141:8: [warning] wrong indentation: expected 8 but found 7 (indentation)
+Need $ref.
 
-vim +141 Documentation/devicetree/bindings/serial/samsung_uart.yaml
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - '#clock-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/reset/ti-syscon.h>
+> +    soc {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        clock-controller@15031000 {
+> +            compatible = "mediatek,mt7988-ethwarp", "syscon", "simple-mfd";
+> +            reg = <0 0x15031000 0 0x1000>;
+> +            #clock-cells = <1>;
+> +
+> +            reset-controller {
+> +                compatible = "ti,syscon-reset";
 
-     8	
-     9	maintainers:
-    10	  - Krzysztof Kozlowski <krzk@kernel.org>
-    11	  - Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    12	
-    13	description: |+
-    14	  Each Samsung UART should have an alias correctly numbered in the "aliases"
-    15	  node, according to serialN format, where N is the port number (non-negative
-    16	  decimal integer) as specified by User's Manual of respective SoC.
-    17	
-    18	properties:
-    19	  compatible:
-    20	    oneOf:
-    21	      - items:
-    22	          - const: samsung,exynosautov9-uart
-    23	          - const: samsung,exynos850-uart
-    24	      - enum:
-    25	          - apple,s5l-uart
-    26	          - axis,artpec8-uart
-    27	          - google,gs101-uart
-    28	          - samsung,s3c6400-uart
-    29	          - samsung,s5pv210-uart
-    30	          - samsung,exynos4210-uart
-    31	          - samsung,exynos5433-uart
-    32	          - samsung,exynos850-uart
-    33	
-    34	  reg:
-    35	    maxItems: 1
-    36	
-    37	  reg-io-width:
-    38	    description: |
-    39	      The size (in bytes) of the IO accesses that should be performed
-    40	      on the device.
-    41	    enum: [ 1, 4 ]
-    42	
-    43	  clocks:
-    44	    minItems: 2
-    45	    maxItems: 5
-    46	
-    47	  clock-names:
-    48	    description: N = 0 is allowed for SoCs without internal baud clock mux.
-    49	    minItems: 2
-    50	    items:
-    51	      - const: uart
-    52	      - pattern: '^clk_uart_baud[0-3]$'
-    53	      - pattern: '^clk_uart_baud[0-3]$'
-    54	      - pattern: '^clk_uart_baud[0-3]$'
-    55	      - pattern: '^clk_uart_baud[0-3]$'
-    56	
-    57	  dmas:
-    58	    items:
-    59	      - description: DMA controller phandle and request line for RX
-    60	      - description: DMA controller phandle and request line for TX
-    61	
-    62	  dma-names:
-    63	    items:
-    64	      - const: rx
-    65	      - const: tx
-    66	
-    67	  interrupts:
-    68	    description: RX interrupt and optionally TX interrupt.
-    69	    minItems: 1
-    70	    maxItems: 2
-    71	
-    72	  power-domains:
-    73	    maxItems: 1
-    74	
-    75	  samsung,uart-fifosize:
-    76	    description: The fifo size supported by the UART channel.
-    77	    $ref: /schemas/types.yaml#/definitions/uint32
-    78	    enum: [16, 64, 256]
-    79	
-    80	required:
-    81	  - compatible
-    82	  - clocks
-    83	  - clock-names
-    84	  - interrupts
-    85	  - reg
-    86	
-    87	allOf:
-    88	  - $ref: serial.yaml#
-    89	
-    90	  - if:
-    91	      properties:
-    92	        compatible:
-    93	          contains:
-    94	            enum:
-    95	              - samsung,s5pv210-uart
-    96	    then:
-    97	      properties:
-    98	        clocks:
-    99	          minItems: 2
-   100	          maxItems: 3
-   101	        clock-names:
-   102	          minItems: 2
-   103	          items:
-   104	            - const: uart
-   105	            - pattern: '^clk_uart_baud[0-1]$'
-   106	            - pattern: '^clk_uart_baud[0-1]$'
-   107	
-   108	  - if:
-   109	      properties:
-   110	        compatible:
-   111	          contains:
-   112	            enum:
-   113	              - apple,s5l-uart
-   114	              - axis,artpec8-uart
-   115	              - samsung,exynos4210-uart
-   116	              - samsung,exynos5433-uart
-   117	    then:
-   118	      properties:
-   119	        clocks:
-   120	          maxItems: 2
-   121	        clock-names:
-   122	          items:
-   123	            - const: uart
-   124	            - const: clk_uart_baud0
-   125	
-   126	  - if:
-   127	      properties:
-   128	        compatible:
-   129	          contains:
-   130	            enum:
-   131	              - google,gs101-uart
-   132	              - samsung,exynosautov9-uart
-   133	    then:
-   134	      properties:
-   135	        samsung,uart-fifosize:
-   136	          description: The fifo size supported by the UART channel.
-   137	          $ref: /schemas/types.yaml#/definitions/uint32
-   138	          enum: [16, 64, 256]
-   139	
-   140	      required:
- > 141	       - samsung,uart-fifosize
-   142	
+??? You do not have TI.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> +                #reset-cells = <1>;
+> +                ti,reset-bits = <
+> +                    0x8 9 0x8 9 0 0 (ASSERT_SET | DEASSERT_CLEAR | STATUS_NONE)
+> +                >;
+> +            };
+> +        };
+> +    };
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7988-mcusys.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7988-mcusys.yaml
+> new file mode 100644
+> index 0000000000000..b30bd13616875
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7988-mcusys.yaml
+> @@ -0,0 +1,46 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/arm/mediatek/mediatek,mt7988-mcusys.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: MediaTek MT7988 MCU System Clock Controller
+> +
+> +maintainers:
+> +  - Daniel Golle <daniel@makrotopia.org>
+> +
+> +description:
+> +  The Mediatek mcusys controller provides ARM and bus clocks to the system.
+> +  The clock values can be found in <dt-bindings/clock/mt*-clk.h>.
+
+This binding looks like several other Mediatek bindings. Add it to some
+existing binding instead.
+
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: mediatek,mt7988-mcusys
+> +      - const: syscon
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+
+...
+
+
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #define MT7988_TOPRGU_XFI_PLL_GRST              16
+
+If you do not have header, use number directly.
+
+> +    soc {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +        clock-controller@11f40000 {
+> +            compatible = "mediatek,mt7988-xfi-pll";
+> +            reg = <0 0x11f40000 0 0x1000>;
+> +            resets = <&watchdog MT7988_TOPRGU_XFI_PLL_GRST>;
+> +            #clock-cells = <1>;
+> +        };
+> +    };
+
+
+
+Best regards,
+Krzysztof
+
