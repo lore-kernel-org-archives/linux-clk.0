@@ -1,218 +1,231 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="n5fe3Pah"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C680ACB;
-	Mon, 20 Nov 2023 22:31:32 -0800 (PST)
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AL5X1Rt011112;
-	Tue, 21 Nov 2023 06:31:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=V/jXUps7FcsW7n1gITRfSYCcyq9bPOJPSdFvCTOoZyU=;
- b=n5fe3PahwlP97eR0BFHP9EKMfDO0ae7g+VY+7VkPP0PTjqGj55UcM+0V6ig19ESYHPpR
- OiJt2NOsuhkvaC3z3tz5ovYM3YyAKo48H+C+QfhyaqvK4AI2xARZfiosHCmEWhbHPsSs
- Yk/fCJ2R5Tz4UQHJ0tMp/rW+FpW05gBiGytHbjZubx3EhsPhfgLD/zHmGkgoytSbixHg
- ZPqFVvkW/oEymc1YmlLA0rGvWwHOyi/r5yQBcaDg+5Tj+Cistyf9AC90IZXEILY5TFg/
- SqytzmptIJNT/VHfSm818EM78Kffkx0egAA33V9d2J6VduDuBAXM+7etHovZ9T1gVKZ4 7g== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ugcqs19dc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 Nov 2023 06:31:22 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3AL6VLSg010308
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 Nov 2023 06:31:21 GMT
-Received: from [10.50.58.129] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Mon, 20 Nov
- 2023 22:31:18 -0800
-Message-ID: <5540adcd-4ba6-53e7-c7fe-b7116e6403ca@quicinc.com>
-Date: Tue, 21 Nov 2023 12:01:15 +0530
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mi4InY3p"
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.151])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 469B590;
+	Mon, 20 Nov 2023 22:42:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1700548935; x=1732084935;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=JmpHPcDR2GOkMATNC2UbhmrpWmY/FEs9q0VQCEmc49s=;
+  b=mi4InY3pJqGjm3KHJOuIk/v4DQO9jbsTy2qmtxfCzrQRdMro20j7BwaZ
+   61o3H9IqAYLVwQhMiCZ/mFDeAEXhcFpPhwFR6xdz43h4M71drYM8S0IUF
+   UGGz6qJbDBjHtPY77J7xO8Gv/RPWRYsz6TY59+bgVqmLicHtRnx7iuURP
+   51IN66mlLZCyDR6lLFGx3ifo3R7qSO0yTNwHflUlUcfXPevzF8mQOmcyA
+   ivUn7u/Sqtk17zI3NdSjz1szRjjyBiJQ4bDQqPUtDp/D7MSrBFOQ72maE
+   2abp7gLixPTD6OR67E6KvIPHblPzaFxYdvYL0/UIajhQlr3J4EDSvAZIa
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10900"; a="371948743"
+X-IronPort-AV: E=Sophos;i="6.04,215,1695711600"; 
+   d="scan'208";a="371948743"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Nov 2023 22:42:12 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10900"; a="760012743"
+X-IronPort-AV: E=Sophos;i="6.04,215,1695711600"; 
+   d="scan'208";a="760012743"
+Received: from lkp-server02.sh.intel.com (HELO b8de5498638e) ([10.239.97.151])
+  by orsmga007.jf.intel.com with ESMTP; 20 Nov 2023 22:42:04 -0800
+Received: from kbuild by b8de5498638e with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1r5KSP-0007RI-2y;
+	Tue, 21 Nov 2023 06:42:01 +0000
+Date: Tue, 21 Nov 2023 14:23:42 +0800
+From: kernel test robot <lkp@intel.com>
+To: Peter Griffin <peter.griffin@linaro.org>, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+	conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com,
+	s.nawrocki@samsung.com, linus.walleij@linaro.org,
+	wim@linux-watchdog.org, linux@roeck-us.net, catalin.marinas@arm.com,
+	will@kernel.org, arnd@arndb.de, olof@lixom.net,
+	gregkh@linuxfoundation.org, jirislaby@kernel.org,
+	cw00.choi@samsung.com, alim.akhtar@samsung.com
+Cc: oe-kbuild-all@lists.linux.dev, peter.griffin@linaro.org,
+	tudor.ambarus@linaro.org, andre.draszik@linaro.org,
+	semen.protsenko@linaro.org, saravanak@google.com,
+	willmcvicker@google.com, soc@kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v4 09/19] dt-bindings: serial: samsung: Make
+ samsung,uart-fifosize required property
+Message-ID: <202311211435.CJVOACBE-lkp@intel.com>
+References: <20231120212037.911774-10-peter.griffin@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [PATCH v6 2/3] clk: qcom: clk-rcg2: add support for rcg2 freq
- multi ops
-Content-Language: en-US
-To: Christian Marangi <ansuelsmth@gmail.com>
-CC: Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20230916140046.7878-1-ansuelsmth@gmail.com>
- <20230916140046.7878-3-ansuelsmth@gmail.com>
- <419b0e85-5479-30b0-d6a9-b2697d057c55@quicinc.com>
- <655bca09.050a0220.bac1.aa06@mx.google.com>
-From: Devi Priya <quic_devipriy@quicinc.com>
-In-Reply-To: <655bca09.050a0220.bac1.aa06@mx.google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: jEAffWjfJ59uQ5y7mFhjEzWiZm6AHet4
-X-Proofpoint-GUID: jEAffWjfJ59uQ5y7mFhjEzWiZm6AHet4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-11-21_03,2023-11-20_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- priorityscore=1501 phishscore=0 bulkscore=0 clxscore=1015 mlxlogscore=999
- mlxscore=0 spamscore=0 lowpriorityscore=0 impostorscore=0 suspectscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311060000 definitions=main-2311210049
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231120212037.911774-10-peter.griffin@linaro.org>
 
+Hi Peter,
 
+kernel test robot noticed the following build warnings:
 
-On 11/20/2023 11:44 PM, Christian Marangi wrote:
-> On Mon, Nov 20, 2023 at 03:51:50PM +0530, Devi Priya wrote:
->>
->>
->> On 9/16/2023 7:30 PM, Christian Marangi wrote:
->>> Some RCG frequency can be reached by multiple configuration.
->>>
->>> Add clk_rcg2_fm_ops ops to support these special RCG configurations.
->>>
->>> These alternative ops will select the frequency using a CEIL policy.
->>>
->>> When the correct frequency is found, the correct config is selected by
->>> calculating the final rate (by checking the defined parent and values
->>> in the config that is being checked) and deciding based on the one that
->>> is less different than the requested one.
->>>
->>> These check are skipped if there is just on config for the requested
->>> freq.
->>>
->>> qcom_find_freq_multi is added to search the freq with the new struct
->>> freq_multi_tbl.
->>> __clk_rcg2_select_conf is used to select the correct conf by simulating
->>> the final clock.
->>> If a conf can't be found due to parent not reachable, a WARN is printed
->>> and -EINVAL is returned.
->>>
->>> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
->>> ---
->>>    drivers/clk/qcom/clk-rcg.h  |   1 +
->>>    drivers/clk/qcom/clk-rcg2.c | 167 ++++++++++++++++++++++++++++++++++++
->>>    drivers/clk/qcom/common.c   |  18 ++++
->>>    drivers/clk/qcom/common.h   |   2 +
->>>    4 files changed, 188 insertions(+)
->>>
->>> diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
->>> index c81458db6ce4..dc9a77965e68 100644
->>> --- a/drivers/clk/qcom/clk-rcg.h
->>> +++ b/drivers/clk/qcom/clk-rcg.h
->>> @@ -190,6 +190,7 @@ struct clk_rcg2_gfx3d {
->>>    extern const struct clk_ops clk_rcg2_ops;
->>>    extern const struct clk_ops clk_rcg2_floor_ops;
->>> +extern const struct clk_ops clk_rcg2_fm_ops;
->>>    extern const struct clk_ops clk_rcg2_mux_closest_ops;
->>>    extern const struct clk_ops clk_edp_pixel_ops;
->>>    extern const struct clk_ops clk_byte_ops;
->>> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
->>> index e22baf3a7112..617e7ff0f6a3 100644
->>> --- a/drivers/clk/qcom/clk-rcg2.c
->>> +++ b/drivers/clk/qcom/clk-rcg2.c
->>> @@ -266,6 +266,116 @@ static int _freq_tbl_determine_rate(struct clk_hw *hw, const struct freq_tbl *f,
->>>    	return 0;
->>>    }
->>> +static const struct freq_conf *
->>> +__clk_rcg2_select_conf(struct clk_hw *hw, const struct freq_multi_tbl *f,
->>> +		       unsigned long req_rate)
->>> +{
->>> +	unsigned long rate_diff, best_rate_diff = ULONG_MAX;
->>> +	const struct freq_conf *conf, *best_conf;
->>> +	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
->>> +	const char *name = clk_hw_get_name(hw);
->>> +	unsigned long parent_rate, rate;
->>> +	struct clk_hw *p;
->>> +	int index, i;
->>> +
->>> +	/* Init best_conf to the first conf */
->>> +	best_conf = f->confs;
->>> +
->>> +	/* Exit early if only one config is defined */
->>> +	if (f->num_confs == 1)
->>> +		goto exit;
->>> +
->>> +	/* Search in each provided config the one that is near the wanted rate */
->>> +	for (i = 0, conf = f->confs; i < f->num_confs; i++, conf++) {
->>> +		index = qcom_find_src_index(hw, rcg->parent_map, conf->src);
->>> +		if (index < 0)
->>> +			continue;
->>> +
->>> +		p = clk_hw_get_parent_by_index(hw, index);
->>> +		if (!p)
->>> +			continue;
->>> +
->>> +		parent_rate =  clk_hw_get_rate(p);
->>> +		rate = calc_rate(parent_rate, conf->n, conf->m, conf->n, conf->pre_div);
->>> +
->>> +		if (rate == req_rate) {
->>> +			best_conf = conf;
->>> +			goto exit;
->>> +		}
->>> +
->>> +		rate_diff = abs(req_rate - rate);
->>> +		if (rate_diff < best_rate_diff) {
->>> +			best_rate_diff = rate_diff;
->>> +			best_conf = conf;
->>> +		}
->>> +	}
->>> +
->>> +	/*
->>> +	 * Very unlikely. Warn if we couldn't find a correct config
->>> +	 * due to parent not found in every config.
->>> +	 */
->>> +	if (unlikely(i == f->num_confs)) {
->>> +		WARN(1, "%s: can't find a configuration for rate %lu.",
->>> +		     name, req_rate);
->>> +		return ERR_PTR(-EINVAL);
->>> +	}
->> Hi Christian,
->>
->> Thanks a lot for the patch!
->> We have incorporated these changes along with the corresponding clock driver
->> changes & tested it on IPQ9574 & IPQ5332 targets.
->>
->> When setting the clk rate for the nss port clocks, for the requested
->> frequency the correct config gets selected and the
->> clk rate is set properly.
->> We see the WARN getting printed for other frequencies (rate * i where
->> i=2 to maxdiv) that is requested by the clk_hw_round_rate function.
->>
->> Upon analysis, we see that the for loop in clk_divider_bestdiv iterates
->> until the maxdiv value and requests (rate*i) via the clk_hw_round_rate
->> API to find the bestdiv and best_parent_rate. For frequencies which are
->> multiples of the requested frequency (rate*i where i=2 to maxdiv), it
->> seems unlikely to see the WARN being printed.
->>
->> Can you please help us understand when the WARN is likely to be printed
->> & Looking forward to your suggestions on how this WARN could
->> be suppressed in the afore mentioned scenario!
->>
-> 
-> Hi,
-> 
-> thanks a lot for testing this. Maybe was a small oversight by me.
-> 
-> I attached an alternative patch. Can you test it and tell me if the WARN
-> is still printed? (the WARN must be printed only when the parent is not
-> found, I don't think it's your case)
-> 
-Hi Christian,
+[auto build test WARNING on pinctrl-samsung/for-next]
+[also build test WARNING on next-20231120]
+[cannot apply to krzk/for-next robh/for-next linus/master v6.7-rc2]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-WARN does not get printed with the attached patchset.
-Thanks much!
+url:    https://github.com/intel-lab-lkp/linux/commits/Peter-Griffin/dt-bindings-soc-samsung-exynos-pmu-Add-gs101-compatible/20231121-052449
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git for-next
+patch link:    https://lore.kernel.org/r/20231120212037.911774-10-peter.griffin%40linaro.org
+patch subject: [PATCH v4 09/19] dt-bindings: serial: samsung: Make samsung,uart-fifosize required property
+compiler: loongarch64-linux-gcc (GCC) 13.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20231121/202311211435.CJVOACBE-lkp@intel.com/reproduce)
 
-Regards,
-Devi Priya
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202311211435.CJVOACBE-lkp@intel.com/
+
+dtcheck warnings: (new ones prefixed by >>)
+>> Documentation/devicetree/bindings/serial/samsung_uart.yaml:141:8: [warning] wrong indentation: expected 8 but found 7 (indentation)
+
+vim +141 Documentation/devicetree/bindings/serial/samsung_uart.yaml
+
+     8	
+     9	maintainers:
+    10	  - Krzysztof Kozlowski <krzk@kernel.org>
+    11	  - Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    12	
+    13	description: |+
+    14	  Each Samsung UART should have an alias correctly numbered in the "aliases"
+    15	  node, according to serialN format, where N is the port number (non-negative
+    16	  decimal integer) as specified by User's Manual of respective SoC.
+    17	
+    18	properties:
+    19	  compatible:
+    20	    oneOf:
+    21	      - items:
+    22	          - const: samsung,exynosautov9-uart
+    23	          - const: samsung,exynos850-uart
+    24	      - enum:
+    25	          - apple,s5l-uart
+    26	          - axis,artpec8-uart
+    27	          - google,gs101-uart
+    28	          - samsung,s3c6400-uart
+    29	          - samsung,s5pv210-uart
+    30	          - samsung,exynos4210-uart
+    31	          - samsung,exynos5433-uart
+    32	          - samsung,exynos850-uart
+    33	
+    34	  reg:
+    35	    maxItems: 1
+    36	
+    37	  reg-io-width:
+    38	    description: |
+    39	      The size (in bytes) of the IO accesses that should be performed
+    40	      on the device.
+    41	    enum: [ 1, 4 ]
+    42	
+    43	  clocks:
+    44	    minItems: 2
+    45	    maxItems: 5
+    46	
+    47	  clock-names:
+    48	    description: N = 0 is allowed for SoCs without internal baud clock mux.
+    49	    minItems: 2
+    50	    items:
+    51	      - const: uart
+    52	      - pattern: '^clk_uart_baud[0-3]$'
+    53	      - pattern: '^clk_uart_baud[0-3]$'
+    54	      - pattern: '^clk_uart_baud[0-3]$'
+    55	      - pattern: '^clk_uart_baud[0-3]$'
+    56	
+    57	  dmas:
+    58	    items:
+    59	      - description: DMA controller phandle and request line for RX
+    60	      - description: DMA controller phandle and request line for TX
+    61	
+    62	  dma-names:
+    63	    items:
+    64	      - const: rx
+    65	      - const: tx
+    66	
+    67	  interrupts:
+    68	    description: RX interrupt and optionally TX interrupt.
+    69	    minItems: 1
+    70	    maxItems: 2
+    71	
+    72	  power-domains:
+    73	    maxItems: 1
+    74	
+    75	  samsung,uart-fifosize:
+    76	    description: The fifo size supported by the UART channel.
+    77	    $ref: /schemas/types.yaml#/definitions/uint32
+    78	    enum: [16, 64, 256]
+    79	
+    80	required:
+    81	  - compatible
+    82	  - clocks
+    83	  - clock-names
+    84	  - interrupts
+    85	  - reg
+    86	
+    87	allOf:
+    88	  - $ref: serial.yaml#
+    89	
+    90	  - if:
+    91	      properties:
+    92	        compatible:
+    93	          contains:
+    94	            enum:
+    95	              - samsung,s5pv210-uart
+    96	    then:
+    97	      properties:
+    98	        clocks:
+    99	          minItems: 2
+   100	          maxItems: 3
+   101	        clock-names:
+   102	          minItems: 2
+   103	          items:
+   104	            - const: uart
+   105	            - pattern: '^clk_uart_baud[0-1]$'
+   106	            - pattern: '^clk_uart_baud[0-1]$'
+   107	
+   108	  - if:
+   109	      properties:
+   110	        compatible:
+   111	          contains:
+   112	            enum:
+   113	              - apple,s5l-uart
+   114	              - axis,artpec8-uart
+   115	              - samsung,exynos4210-uart
+   116	              - samsung,exynos5433-uart
+   117	    then:
+   118	      properties:
+   119	        clocks:
+   120	          maxItems: 2
+   121	        clock-names:
+   122	          items:
+   123	            - const: uart
+   124	            - const: clk_uart_baud0
+   125	
+   126	  - if:
+   127	      properties:
+   128	        compatible:
+   129	          contains:
+   130	            enum:
+   131	              - google,gs101-uart
+   132	              - samsung,exynosautov9-uart
+   133	    then:
+   134	      properties:
+   135	        samsung,uart-fifosize:
+   136	          description: The fifo size supported by the UART channel.
+   137	          $ref: /schemas/types.yaml#/definitions/uint32
+   138	          enum: [16, 64, 256]
+   139	
+   140	      required:
+ > 141	       - samsung,uart-fifosize
+   142	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
