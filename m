@@ -1,279 +1,143 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G8HJ7lII"
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.100])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37940197;
-	Wed, 22 Nov 2023 03:39:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1700653178; x=1732189178;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=UDaQD3L3io4DrQxy2+jPfRXmkTm3EMCQZir6j3W5qHE=;
-  b=G8HJ7lIIZ97INMfKBAnuvSSz7+ScSqNT42CoKpE17MuWBfqriQRz4x3m
-   yjW6MmVB/bbuLAnGYanEWCzp+4zhezftzInwJEmwd/3IEryHqhKw2p0me
-   jtCRy58cYbACci/nKR2Bz0Ws9JtlDrBXI1j/e+TQZ8Ot+nD+2qOtBuun9
-   hj1ZpGloWHaFB0llF+NTOYX/H8aEKbGtn+7i/T3PY7R2TIPLfDSmKlo+i
-   ccNE2SUuYLOOM8BDFu+qg0kNljnM5Nqce73E5mU+CMFVi0q3Tdw+w4H/u
-   DVGgBbqejeY3XIMZWRA6r/ZmzSlufNLCMdSdU51zXDKP0yfrSPPrLRb8M
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10901"; a="458532916"
-X-IronPort-AV: E=Sophos;i="6.04,218,1695711600"; 
-   d="scan'208";a="458532916"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2023 03:39:37 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10901"; a="910763331"
-X-IronPort-AV: E=Sophos;i="6.04,218,1695711600"; 
-   d="scan'208";a="910763331"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2023 03:39:35 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1r5lZt-0000000G4qY-1DtY;
-	Wed, 22 Nov 2023 13:39:33 +0200
-Date: Wed, 22 Nov 2023 13:39:33 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Nikita Shubin <nikita.shubin@maquefel.me>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Subject: Re: [PATCH v5 03/39] clk: ep93xx: add DT support for Cirrus EP93xx
-Message-ID: <ZV3odTS-rheJX0bR@smile.fi.intel.com>
-References: <20231122-ep93xx-v5-0-d59a76d5df29@maquefel.me>
- <20231122-ep93xx-v5-3-d59a76d5df29@maquefel.me>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LJvl5TlC"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADCA118D;
+	Wed, 22 Nov 2023 04:51:24 -0800 (PST)
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AM5Vcqs013032;
+	Wed, 22 Nov 2023 12:51:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=27Z8pqIwCURhifVSG9XX//Qs1tVHrqv8hOikZ4CO4PY=;
+ b=LJvl5TlCGFNaosRuNZfVGSH7xk+GwH2XL37EmKbaC0SRjyKdgqN5BrdSq3xwgO04BGcU
+ xuLqW/Q/C1qwDXDh0fFlC6znlNvQDzn9C8/UngmwE20B1St8+mXt6Fz50Q77+pXbjXsh
+ 1R6enMYzurvTKGo9oqLOPy+Em8abG3SdqqAFjkZ5EkFC69Eifs5j2vXp8dCtq91f5tUg
+ EkbxDj6MEiPnVSY4W5mg1kj5MYJxQCNrErNK6Zk63yWdhweTb6r+uUvH6uwGOPIdbTKC
+ 5gxQn8wYM8fvdmHCPRDOLK4r+/w2wwf+yR7mG1/y3lrg1vlAFEnKmk8UFkLTyDuIS6dh UQ== 
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3uhbjvh6m3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 22 Nov 2023 12:51:10 +0000
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3AMCp9tq022472
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 22 Nov 2023 12:51:09 GMT
+Received: from [10.206.101.41] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Wed, 22 Nov
+ 2023 04:51:02 -0800
+Message-ID: <4f5d4019-ffae-1eed-be7f-14e68d933063@quicinc.com>
+Date: Wed, 22 Nov 2023 18:20:59 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231122-ep93xx-v5-3-d59a76d5df29@maquefel.me>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH RESEND v3 4/5] clk: qcom: Use HW_CTRL_TRIGGER flag to
+ switch video GDSC to HW mode
+To: Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Abel Vesa <abel.vesa@linaro.org>
+CC: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Kevin Hilman
+	<khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Pavel Machek
+	<pavel@ucw.cz>,
+        Len Brown <len.brown@intel.com>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Stanimir Varbanov
+	<stanimir.k.varbanov@gmail.com>,
+        Bryan O'Donoghue
+	<bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Taniya Das <tdas@qti.qualcomm.com>, <linux-pm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-media@vger.kernel.org>
+References: <20231101-gdsc-hwctrl-v3-0-0740ae6b2b04@linaro.org>
+ <20231101-gdsc-hwctrl-v3-4-0740ae6b2b04@linaro.org>
+ <v4dnsawo7s74spccrsvjwmal73tqfq4aptiny25tyyp6ungxha@jlbywvcssqtl>
+ <d716fbbe-b681-af41-bfe7-85448cc47c7c@quicinc.com>
+Content-Language: en-US
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <d716fbbe-b681-af41-bfe7-85448cc47c7c@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: JOFdN4YIviS_rQmdT3WYhksczd3WaO3o
+X-Proofpoint-ORIG-GUID: JOFdN4YIviS_rQmdT3WYhksczd3WaO3o
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-11-22_08,2023-11-22_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 malwarescore=0
+ spamscore=0 impostorscore=0 lowpriorityscore=0 mlxlogscore=999
+ suspectscore=0 adultscore=0 mlxscore=0 phishscore=0 bulkscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311060000 definitions=main-2311220090
 
-On Wed, Nov 22, 2023 at 11:59:41AM +0300, Nikita Shubin wrote:
-> Rewrite EP93xx clock driver located in arch/arm/mach-ep93xx/clock.c
-> trying to do everything the device tree way:
+On 11/10/2023 2:02 PM, Jagadeesh Kona wrote:
 > 
-> - provide clock acces via of
-> - drop clk_hw_register_clkdev
-> - drop init code and use module_auxiliary_driver
-
-...
-
-> +static int ep93xx_clk_enable(struct clk_hw *hw)
-> +{
-> +	struct ep93xx_clk *clk = ep93xx_clk_from(hw);
-> +	struct ep93xx_clk_priv *priv = ep93xx_priv_from(clk);
-> +	unsigned long flags;
-> +	u32 val;
-
-> +	spin_lock_irqsave(&priv->lock, flags);
-
-Have you considered to use cleanup.h and hence guard()() operator here
-(and elsewhere)? Why not?
-
-> +	regmap_read(priv->map, clk->reg, &val);
-> +	val |= BIT(clk->bit_idx);
-> +
-> +	ep93xx_clk_write(priv, clk->reg, val);
-> +
-> +	spin_unlock_irqrestore(&priv->lock, flags);
-> +
-> +	return 0;
-> +}
-
-...
-
-> +static int ep93xx_mux_set_parent_lock(struct clk_hw *hw, u8 index)
-> +{
-> +	struct ep93xx_clk *clk = ep93xx_clk_from(hw);
-> +	struct ep93xx_clk_priv *priv = ep93xx_priv_from(clk);
-> +	unsigned long flags;
-> +	u32 val;
-> +
-> +	if (index >= 3)
-> +		return -EINVAL;
-> +
-> +	spin_lock_irqsave(&priv->lock, flags);
-> +
-> +	regmap_read(priv->map, clk->reg, &val);
-> +	val &= ~(EP93XX_SYSCON_CLKDIV_MASK);
-
-> +	if (index) {
-> +		val |= EP93XX_SYSCON_CLKDIV_ESEL;
-> +		val |= (index - 1) ? EP93XX_SYSCON_CLKDIV_PSEL : 0;
-> +	}
-
-Maybe
-
-	val |= index > 0 ? EP93XX_SYSCON_CLKDIV_ESEL : 0;
-	val |= index > 1 ? EP93XX_SYSCON_CLKDIV_PSEL : 0;
-
-(at least to me it looks better to understand than the original code).
-
-> +	ep93xx_clk_write(priv, clk->reg, val);
-> +
-> +	spin_unlock_irqrestore(&priv->lock, flags);
-> +
-> +	return 0;
-> +}
-
-...
-
-> +	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
-> +		struct clk_hw *parent = clk_hw_get_parent_by_index(hw, i);
-> +
-> +		parent_rate = clk_hw_get_rate(parent);
-> +		mclk_rate = parent_rate * 2;
-> +
-> +		/* Try each predivider value */
-> +		for (pdiv = 4; pdiv <= 6; pdiv++) {
-> +			div = DIV_ROUND_CLOSEST(mclk_rate, rate * pdiv);
-
-> +			if (div < 1 || div > 127)
-
-in_range() ?
-
-> +				continue;
-> +
-> +			actual_rate = DIV_ROUND_CLOSEST(mclk_rate, pdiv * div);
-> +			if (is_best(rate, actual_rate, best_rate)) {
-> +				best_rate = actual_rate;
-> +				parent_rate_best = parent_rate;
-> +				parent_best = parent;
-> +			}
-> +		}
-> +	}
-
-...
-
-> +	regmap_read(priv->map, clk->reg, &val);
-> +	pdiv = ((val >> EP93XX_SYSCON_CLKDIV_PDIV_SHIFT) & 0x03);
-
-Too many parentheses. Why not GENMASK(1, 0) ?
-
-> +	div = val & GENMASK(6, 0);
-> +	if (!div)
-> +		return 0;
-
-...
-
-> +	for (pdiv = 4; pdiv <= 6; pdiv++) {
-> +		div = DIV_ROUND_CLOSEST(mclk_rate, rate * pdiv);
-> +		if (div < 1 || div > 127)
-
-in_range() ?
-
-> +			continue;
-> +
-> +		actual_rate = DIV_ROUND_CLOSEST(mclk_rate, pdiv * div);
-> +		if (abs(actual_rate - rate) < rate_err) {
-> +			npdiv = pdiv - 3;
-> +			ndiv = div;
-> +			rate_err = abs(actual_rate - rate);
-> +		}
-> +	}
-
-...
-
-> +	/* Clear old dividers */
-
-Not sure if additional comment is needed to explain what is magical about
-bit 7...
-
-> +	val &= ~(GENMASK(9, 0) & ~BIT(7));
-
-...
-
-> +	regmap_read(priv->map, clk->reg, &val);
-> +	val &= ~clk->mask;
-> +	for (i = 0; i < clk->num_div; i++)
-> +		if (rate == DIV_ROUND_CLOSEST(parent_rate, clk->div[i])) {
-
-> +			val |= i << clk->shift;
-
-This is an invariant to the loop...
-
-> +			break;
-> +		}
-> +
-> +	if (i == clk->num_div)
-> +		return -EINVAL;
-
-...can be moved here, right?
-
-> +	ep93xx_clk_write(priv, clk->reg, val);
-
-...
-
-> +	priv->fixed[EP93XX_CLK_UART] = clk_hw_register_fixed_factor(NULL, "uart", "xtali",
-> +								    0, 1, clk_uart_div);
-
-I would format like
-
-	priv->fixed[EP93XX_CLK_UART] =
-		clk_hw_register_fixed_factor(NULL, "uart", "xtali", 0, 1, clk_uart_div);
-
-...
-
-> +	struct clk_parent_data xtali = { .index = 0 };
-
-	struct clk_parent_data xtali = { };
-
-will suffice.
-
-...
-
-> +	struct clk_parent_data pdata = {};
-
-Please, keep the style consistent, either all with or without the inner space.
-
-...
-
-> +	hw = devm_clk_hw_register_fixed_factor_parent_hw(dev, "hclk", pll1,
-> +							 0, 1, clk_h_div);
-
-Seems you have already long lines, why not on one line here?
-
-> +	if (IS_ERR(hw))
-> +		return PTR_ERR(hw);
-> +
-> +	priv->fixed[EP93XX_CLK_HCLK] = hw;
-
-> +	hw = devm_clk_hw_register_fixed_factor_parent_hw(dev, "pclk", hw,
-> +							 0, 1, clk_p_div);
-
-And here?
-
-> +	if (IS_ERR(hw))
-> +		return PTR_ERR(hw);
-
-...
-
-> +	clk_usb_div = (((value >> 28) & GENMASK(3, 0)) + 1);
-
-Too many parentheses.
-
-...
-
-> +	 * So i set both dividers to minimum.
-
-s/i/we/ ?
-
-...
-
-> +	/* ENA - Enable CLK divider. */
-> +	/* PDIV - 00 - Disable clock */
-> +	/* VDIV - at least 2 */
-> +	/* Check and enable video clk registers */
-
-Hmm... Why it can't be unified under a single multi-line comment?
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+> 
+> On 11/4/2023 1:45 AM, Bjorn Andersson wrote:
+>> On Wed, Nov 01, 2023 at 11:04:10AM +0200, Abel Vesa wrote:
+>>> From: Jagadeesh Kona <quic_jkona@quicinc.com>
+>>>
+>>> The current HW_CTRL flag switches the video GDSC to HW control mode as
+>>> part of GDSC enable itself, instead of that use HW_CTRL_TRIGGER flag to
+>>> give consumer drivers more control and switch the GDSC mode as and when
+>>> required.
+>>>
+>>> HW_CTRL_TRIGGER flag allows consumer drivers to switch the video GDSC to
+>>> HW/SW control modes at runtime using dev_pm_genpd_set_hwmode API.
+>>>
+>>
+>> This states what the code currently does, and what the new code will do.
+>> But I don't find that it adequately describes _why_ this is done.
+>>
+>>
+>> In the current implementation, the hardware is might collapse the GDSC
+>> anytime between gdsc_enable() and gdsc_disable(). By giving "drivers
+>> more control" the time spent in this state is reduced to some fraction
+>> of that span, which to me implies higher power consumption.
+>>
+>> Under the assumption that we don't want to consume more power without
+>> reason, I'm forced to guess that there might be some scenarios that we
+>> want this feature to keep the GDSC non-collapsed against the indication
+>> of the hardware - to avoid some instability somewhere, perhaps?
+>>
+> 
+> Thanks Bjorn for your review. Sure, will update commit text with details in next
+> series.
+> 
+> Normally, consumers will enable the GDSC and then the required clocks. If GDSC
+> is moved to HW mode in gdsc_enable() itself, the subsequent clocks enablement
+> that are dependent on GDSC might fail since GDSC could be turned off by HW. The
+> consumers can still switch the GDSC to HW mode with new API right after the
+> clocks are enabled and the control will be taken back to SW mode just before
+> disabling the GDSC, so even with the newer implementation, HW can collapse the
+> GDSC anytime for most of the duration between gdsc_enable() and gdsc_disable().
+> This API adds more flexibility for consumer drivers to control the GDSC mode as
+> per their
+> requirements.
+There is one more scenario where the driver would like GDSC in driver
+controlled. Let say video hardware, which is under vcodec0_gdsc, have registers
+to be programmed by TZ. In such scenario, the GDSC should be non collapsed,
+while TZ programs those registers precisely while loading the firmware and
+bringing hardware out of reset.
+
+Regards,
+Vikash
 
