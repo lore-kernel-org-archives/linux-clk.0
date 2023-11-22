@@ -1,34 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WiKQT54I"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 479FCD1;
-	Tue, 21 Nov 2023 22:09:31 -0800 (PST)
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AM4hiJh032712;
-	Wed, 22 Nov 2023 06:09:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : references : cc : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=vThq1oi26KFnLqYRqimd+y9S4pnfD/7AHosfvgTDFnU=;
- b=WiKQT54IkcHxuzt8O+e45lADJ+QzaxWWe2xCtVfzuh+tYXDsdE5Maaj7HNmYGPfHYxmV
- FUinvccJq+zNV7Jak2GaIGIRKEs+uTD/iXaqgj+c/29J3d0GDyvfoP3km56GJVccihIG
- tzyFCiP7c9sPt33Iby7Y8rqdoRY7H3W4hQSN3QMihr3GgeM/s/rjcxhMdsxRWg/W4eKQ
- VPbZe3gEvZ6zALHIWiDzdj3RCqjaOK+3RsaJDBl55gD7fCrMlQcd4XZjyOYo45Mu5VJj
- DQDql7+j9/sZtPNsYmBYLjDBkbdA/U3klkvem9n3AEUzyEs75lKoZvpXr3UolzXIitUT kw== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3uh477gvc6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 Nov 2023 06:09:25 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3AM69BdE018763
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 Nov 2023 06:09:11 GMT
-Received: from [10.216.41.176] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Tue, 21 Nov
- 2023 22:09:08 -0800
-Message-ID: <eba3fc5a-d106-4420-8350-c4a783bc79f9@quicinc.com>
-Date: Wed, 22 Nov 2023 11:39:05 +0530
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d3X+8ThW"
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40AB6B2
+	for <linux-clk@vger.kernel.org>; Tue, 21 Nov 2023 23:49:50 -0800 (PST)
+Received: by mail-ej1-x62b.google.com with SMTP id a640c23a62f3a-9fa45e75ed9so558041766b.1
+        for <linux-clk@vger.kernel.org>; Tue, 21 Nov 2023 23:49:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1700639389; x=1701244189; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tA93eCFLSfnhMv8UdjAyC+zZ7+4dyfaA0Xw2zTteOig=;
+        b=d3X+8ThWFydM2AXS5hj/F+orhp0lU70Y5J+MNByVF53CfGZMmcNAUnwoa1Kx/yjNSS
+         bE5IG0mq+FAdd7PDkQayNyDo420urd9zlgyK68hSoxqkSH+XcEbfEgR5SwtmHCI5asRI
+         /sHNP2taQZxLUKlWN6Dw7iZ6ZNbefXwUamfG+IkNraW++8lV+tV8qgDJMLUY8/dxubI7
+         jYr02k2XBZFQFv297kaTl/OSkCChAqNsXJIOAMNkRMuKfUAshoBCyMDwas7WoAFtlejW
+         Qtu4rFfOff4aVDYsLjpKrH7bFPAaLtBVW43qdKFGfoff5SnvoS6oT4ITC8GRxVRF5OSK
+         /S4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700639389; x=1701244189;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tA93eCFLSfnhMv8UdjAyC+zZ7+4dyfaA0Xw2zTteOig=;
+        b=VSULST/wGWxNCTIuPtbt9LMUpg4qTf6ipj39Gio8p4pnUOONezrsVIi1sOd8wwOxU/
+         IDQYEJZGmbbdxa9S7bJzJLMIzogaHEKfCfOEwcslZqDdMS5s6h0an2Ogjqb1gzv0L3UL
+         Zp93ohrxSESjqfGjdYUfMryNRxWBmN3bGg0EBsymMJPweWPm/9GrVIrgcJy6J11GobdX
+         EsRlEkL2FaKcy7JwtWv87NOulKFzX8V1ogw2fg5zDyZTB9j0K3I0c2U3W5uxFM/ceoH7
+         WtgzLfY0cWDzhwJgGb9tsQm5kG2iM3jFNwjQF8b8vfL9wfDnowRWU6NvpXv9icoTcPEU
+         o3gg==
+X-Gm-Message-State: AOJu0YykFcrWa8aFzRn3ZmweNP+gQwpw3AUKFMDFISUyiMNGvSpvksMo
+	11IvPPaxjaSU5XcAdwkYNnZ/vg==
+X-Google-Smtp-Source: AGHT+IGLb9wZbJRJ1P2bvfJCf4gFjriONNwbkuU1fWwQ1XFrJzHgcrBULnkRPu2iTXoFZHalECh3dQ==
+X-Received: by 2002:a17:906:cc:b0:9fe:43a0:4ac0 with SMTP id 12-20020a17090600cc00b009fe43a04ac0mr836991eji.24.1700639388592;
+        Tue, 21 Nov 2023 23:49:48 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.218.100])
+        by smtp.gmail.com with ESMTPSA id i9-20020a170906250900b009ca522853ecsm6237228ejb.58.2023.11.21.23.49.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Nov 2023 23:49:48 -0800 (PST)
+Message-ID: <35990cd2-a4d3-473e-893e-aa16c1c63289@linaro.org>
+Date: Wed, 22 Nov 2023 08:49:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -36,100 +47,173 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: gcc-msm8953: fix stuck gcc_usb30_master_clk
-To: Konrad Dybcio <konrad.dybcio@linaro.org>, Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>
-References: <20231002170021.192740-1-trabarni@gmail.com>
- <0eebfc14-dbcd-4987-9e94-ea5630b6c268@linaro.org>
- <07937184481af74c65108bae26526605.sboyd@kernel.org>
- <64a9d171-377c-48df-bdcd-1ac6d13c2da6@linaro.org>
+Subject: Re: [PATCH v4 09/19] dt-bindings: serial: samsung: Make
+ samsung,uart-fifosize required property
 Content-Language: en-US
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Andy Gross <agross@kernel.org>,
-        Michael
- Turquette <mturquette@baylibre.com>
-From: Krishna Kurapati PSSNV <quic_kriskura@quicinc.com>
-In-Reply-To: <64a9d171-377c-48df-bdcd-1ac6d13c2da6@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: wlclgCYyPsjDEDJ5vK5hZevnlqFxs7Ax
-X-Proofpoint-GUID: wlclgCYyPsjDEDJ5vK5hZevnlqFxs7Ax
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-11-22_03,2023-11-21_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
- impostorscore=0 malwarescore=0 mlxlogscore=852 clxscore=1011
- suspectscore=0 spamscore=0 bulkscore=0 mlxscore=0 priorityscore=1501
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311060000 definitions=main-2311220043
+To: Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>
+Cc: krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+ conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com,
+ s.nawrocki@samsung.com, linus.walleij@linaro.org, wim@linux-watchdog.org,
+ linux@roeck-us.net, catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
+ olof@lixom.net, gregkh@linuxfoundation.org, jirislaby@kernel.org,
+ cw00.choi@samsung.com, alim.akhtar@samsung.com, tudor.ambarus@linaro.org,
+ andre.draszik@linaro.org, semen.protsenko@linaro.org, saravanak@google.com,
+ willmcvicker@google.com, soc@kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, kernel-team@android.com,
+ linux-serial@vger.kernel.org
+References: <20231120212037.911774-1-peter.griffin@linaro.org>
+ <20231120212037.911774-10-peter.griffin@linaro.org>
+ <20231121151630.GA1692178-robh@kernel.org>
+ <CADrjBPo4qw4eJLuGsv7aK4V7QjGR_n_MQ+W-Rrq92iATSLFHZQ@mail.gmail.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <CADrjBPo4qw4eJLuGsv7aK4V7QjGR_n_MQ+W-Rrq92iATSLFHZQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-
-On 11/18/2023 6:18 AM, Konrad Dybcio wrote:
-> On 24.10.2023 04:59, Stephen Boyd wrote:
->> Quoting Konrad Dybcio (2023-10-06 16:50:18)
->>> On 2.10.2023 19:00, Barnabás Czémán wrote:
->>>> According to downstream dwc3-msm source this clock has FSM dependency on
->>>> gcc_pcnoc_usb30_clk so enabling it would fail if latter isn't enabled.
->>>> This patch add works around this issue by changing parent of
->>>> gcc_usb30_master_clk to gcc_pcnoc_usb30_clk. This is acceptable because
->>>> both clocks have same parent and are branches/gates.
->>>>
->>>> Signed-off-by: Barnabás Czémán <trabarni@gmail.com>
->>>> ---
->>> "meh"
->>>
->>> There are multiple cases, especially with qcom, where there are some
->>> magic "dependencies" without parent-child relationship. The common
->>> clock framework doesn't currently have any good way to handle this,
->>> other than some mind gymnastics like you had to do here with matching
->>> them against a common parent/ancestor..
->>>
->>> Stephen, what do you say?
->>>
+On 21/11/2023 18:15, Peter Griffin wrote:
+> Hi Rob,
+> 
+> Thanks for your review.
+> 
+> On Tue, 21 Nov 2023 at 15:16, Rob Herring <robh@kernel.org> wrote:
 >>
->> You can't change the parent to be not the actual parent. The consumer of
->> the branch probably wants to call clk_set_rate() on the branch and have
->> it propagate up to the parent to set the actual rate. Can the axi clk
->> simply be left enabled all the time? That seems simpler. Otherwise we
->> probably need to leave the axi clk control to the interconnect driver
->> and make sure drivers enable interconnects before enabling this branch.
-> Yeah I'm almost inclined to think adding even more ifs to the icc driver
-> will consume more power than just leaving the AXI hanging..
+>> On Mon, Nov 20, 2023 at 09:20:27PM +0000, Peter Griffin wrote:
+>>> Specifying samsung,uart-fifosize in both DT and driver static data is error
+>>> prone and relies on driver probe order and dt aliases to be correct.
+>>>
+>>> Additionally on many Exynos platforms these are (USI) universal serial
+>>> interfaces which can be uart, spi or i2c, so it can change per board.
+>>>
+>>> For google,gs101-uart and exynosautov9-uart make samsung,uart-fifosize a
+>>> required property. For these platforms fifosize now *only* comes from DT.
+>>>
+>>> It is hoped other Exynos platforms will also switch over time.
+>>
+>> Then allow the property on them.
+> 
+> Not sure I fully understand your comment. Can you elaborate? Do you
+> mean leave the 'samsung,uart-fifosize' as an optional property like it
+> is currently even for the platforms that now require it to be present
+> to function correctly?
+> 
+> I deliberately restricted the yaml change to only require this
+> property for the SoCs that already set the 'samsung,uart-fifosize'  dt
+> property. As setting the property and having the driver use what is
+> specified in DT also requires a corresponding driver update (otherwise
+> fifosize gets overwritten by the driver static data, and then becomes
+> dependent on probe order, dt aliases etc). The rationale was drivers
+> 'opt in' and add themselves to the compatibles in this patch as they
+> migrate away from obtaining fifo size from driver static data to
+> obtaining it from DT.
+
+Your code diff looks like you are adding the property only to these models.
+
 > 
 >>
->> When things start to get this tangled I tend to think that we need to
->> remove control of the clk from the general drivers and put the logic to
->> control interconnects and clks into some SoC glue driver and expose a
->> single interface, like genpd power_on/power_off so that general drivers
->> can't get the sequence of steps wrong. Instead all they can do is "power
->> on" their device, and the SoC glue driver can do the proper sequence of
->> framework calls to power up the device.
-> That too, given the structure of qcom SoCs, it should almost look like:
+>>>
+>>> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+>>> ---
+>>>  .../bindings/serial/samsung_uart.yaml           | 17 +++++++++++++++++
+>>>  1 file changed, 17 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/serial/samsung_uart.yaml b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
+>>> index ccc3626779d9..22a1edadc4fe 100644
+>>> --- a/Documentation/devicetree/bindings/serial/samsung_uart.yaml
+>>> +++ b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
+>>> @@ -133,6 +133,23 @@ allOf:
+>>>              - const: uart
+>>>              - const: clk_uart_baud0
+>>>
+>>> +  - if:
+>>> +      properties:
+>>> +        compatible:
+>>> +          contains:
+>>> +            enum:
+>>> +              - google,gs101-uart
+>>> +              - samsung,exynosautov9-uart
+>>> +    then:
+>>> +      properties:
+>>> +        samsung,uart-fifosize:
+>>> +          description: The fifo size supported by the UART channel.
+>>> +          $ref: /schemas/types.yaml#/definitions/uint32
+>>> +          enum: [16, 64, 256]
+>>
+>> We already have 'fifo-size' in several drivers. Use that. Please move
+>> its type/description definitions to serial.yaml and make drivers just do
+>> 'fifo-size: true' if they use it.
 > 
-> xyznoc-bus {
-> 	compatible = "simple-pm-bus";
-> 	clocks = <&gcc xyznoc_ahb>,
-> 		 <&gcc xyznoc_axi>;
-> 	...
-> 
-> 	xyznoc-node@abcd {};
-> }
-> 
-> etc.
-> 
-> I've actually discussed this with Bjorn, but we came to a conclusion
-> that it's not trivial to determine which peripheral lives on which NoC
-> + many of them seem to sorta overlap more than one..
+> What do you suggest we do for the samsung,uart-fifosize property that
+> is being used upstream?
 
-Are we seeing the clk getting stuck during suspend/resume or during 
-clk_prepare_enable in probe ?
+Nothing, your diff is just wrong. Or at least nothing needed. Just drop
+all this properties: here and only make it required for Google GS101.
 
-Regards,
-Krishna,
+
+> 
+>>
+>>> +
+>>> +      required:
+>>> +       - samsung,uart-fifosize
+>>
+>> A new required property is an ABI break. Please explain why that is okay
+>> in the commit message.
+>>
+> 
+> I can update the commit message to make clear there is an ABI break.
+> As mentioned above the platforms where this is now required are either
+> already setting the property or are new in this series. Is that
+> sufficient justification?
+Yes, but only first case. You need to order your patches correctly -
+first is ABI break expecting ExynopsAutov9 to provide FIFO size in DTS
+with its explanation. Second commit is adding GS101 where there is no
+ABI break.
+
+Best regards,
+Krzysztof
+
