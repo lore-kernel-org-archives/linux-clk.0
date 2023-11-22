@@ -1,125 +1,144 @@
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.100])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDA231715;
-	Wed, 22 Nov 2023 02:27:01 -0800 (PST)
-X-IronPort-AV: E=McAfee;i="6600,9927,10901"; a="458522644"
-X-IronPort-AV: E=Sophos;i="6.04,218,1695711600"; 
-   d="scan'208";a="458522644"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2023 02:26:51 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10901"; a="1098347171"
-X-IronPort-AV: E=Sophos;i="6.04,218,1695711600"; 
-   d="scan'208";a="1098347171"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2023 02:26:36 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andy@kernel.org>)
-	id 1r5kRC-0000000G3tK-3znq;
-	Wed, 22 Nov 2023 12:26:30 +0200
-Date: Wed, 22 Nov 2023 12:26:30 +0200
-From: Andy Shevchenko <andy@kernel.org>
-To: nikita.shubin@maquefel.me
-Cc: Hartley Sweeten <hsweeten@visionengravers.com>,
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Lukasz Majewski <lukma@denx.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Sebastian Reichel <sre@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Mark Brown <broonie@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Sergey Shtylyov <s.shtylyov@omp.ru>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-	dmaengine@vger.kernel.org, linux-watchdog@vger.kernel.org,
-	linux-pwm@vger.kernel.org, linux-spi@vger.kernel.org,
-	netdev@vger.kernel.org, linux-mtd@lists.infradead.org,
-	linux-ide@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v5 00/39] ep93xx device tree conversion
-Message-ID: <ZV3XVirIOouLqv0a@smile.fi.intel.com>
-References: <20231122-ep93xx-v5-0-d59a76d5df29@maquefel.me>
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PgjivSZB"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7FFE19E;
+	Wed, 22 Nov 2023 02:45:53 -0800 (PST)
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AM4gbNh007210;
+	Wed, 22 Nov 2023 10:45:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=EivNr+/IA9QMsMf88VokRs4l9XqtSnUpw7bxIohGx9M=;
+ b=PgjivSZB9l6zIBUrduUJ64vn+jLJYKaoZYDTTQdapd69vdy4/MaMZYKIDW117G9C9AXQ
+ GBuBvTWU8oIKyPg07YoQhlVT2P3tnL8ojcgjhh1/8ZXIilLcYN3iwi/ifrQjgAX/k24j
+ dQeBRVO/vl6Ha5+ZGZ88zbeICfg7Afs4/NxBHEt3lRcPd40fm9v8/6Yj7yqijQm5DiQn
+ wWWANrUe1jBTpVbon2vRyHMaAKZmpcoOYDEZhJujqBrQS2md/51ek6qrUZRP9CLN/n8x
+ th8/r7wu6dHMP+NtmOsvhpgCvm0v9JpIlJ9bsygIdzdIpktQsptcwpPg1QgGNQbYMASk sg== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3uh8mw96bb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 22 Nov 2023 10:45:37 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3AMAjaBU015075
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 22 Nov 2023 10:45:36 GMT
+Received: from [10.216.2.74] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Wed, 22 Nov
+ 2023 02:45:28 -0800
+Message-ID: <2e86be1b-7923-431c-8220-a17af14a457a@quicinc.com>
+Date: Wed, 22 Nov 2023 16:15:24 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231122-ep93xx-v5-0-d59a76d5df29@maquefel.me>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-
-On Wed, Nov 22, 2023 at 11:59:38AM +0300, Nikita Shubin via B4 Relay wrote:
-> This series aims to convert ep93xx from platform to full device tree support.
-> 
-> The main goal is to receive ACK's to take it via Arnd's arm-soc branch.
-> 
-> Bit thanks to Krzysztof Kozlowski for his zero-day review.
-> 
-> Krzysztof, Sergey, i've changed some files that you have already provided tag:
-> - dt-bindings: spi: Add Cirrus EP93xx
-> - ata: pata_ep93xx: add device tree support
-> 
-> Added DMA and renamed clock header file.
-> 
-> Sergey, Damien, i've changed some files that you have already provided tag:
-> - ata: pata_ep93xx: add device tree support
-> 
-> Added OF DMA setup and dropped platform file.
-> 
-> Mark, i've changed some files that you have already provided tag:
-> - spi: ep93xx: add DT support for Cirrus EP93xx
-> 
-> Added OF DMA setup and dropped platform file.
-> 
-> Major updates:
-> 
-> - reboot, pinctrl, clk are now auxiliary and instantiated from SoC driver as
->   Stephen Boyd suggested
-> - i moved all clock code to clk-ep93xx.c, as it no longer has a separate dt node, 
->   so XTALI is externalk for this driver and passed as index 0, and pll1, pll2 are
->   internal and passed via pointer for parent_data
-> - reboot bindings dropped
-> - pinctrl and clk bindings moved to syscon YAML
-> - xlate added for DMA, so now all DMA users use it via device tree, otherwise probe 
->   order messed up and we might end up probing before DMA with no possibility to defer probing
-> - DMA port bindings dropped, they are described in YAML file
-> - DMA platform code dropped
-> - i2s, spi, pata now use OF DMA
-> - YAML and dtsi/dts changed to reflect auxiliary conversion and DMA changes
-
-> Patches should be now formated with '--patience'
-
-It seems we are a step behind on Torvalds' mind :-)
-A few weeks ago he suggested to use --histogram is the best option.
-But hey, --patience probably is good enough for this version, so
-thank you for using it!
-
--- 
-With Best Regards,
-Andy Shevchenko
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/9] dt-bindings: clock: ipq5332: drop the few nss
+ clocks definition
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Andy Gross
+	<agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Catalin
+ Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20231121-ipq5332-nsscc-v2-0-a7ff61beab72@quicinc.com>
+ <20231121-ipq5332-nsscc-v2-3-a7ff61beab72@quicinc.com>
+ <43376552-7e79-4f34-94ca-63767a95564b@linaro.org>
+ <8bb79735-3b5d-4229-b0f4-bc50d61fdba1@quicinc.com>
+ <d26eae8d-4968-4ab0-bd9b-696d7b3865ec@linaro.org>
+ <2e357fcf-5348-4fb2-b693-2d6bb4d58b21@quicinc.com>
+ <CAA8EJprH5zhSQoTAfQG3nq8Ud=7MVKKhWt0x7SGyFP9JnxWgBA@mail.gmail.com>
+From: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+In-Reply-To: <CAA8EJprH5zhSQoTAfQG3nq8Ud=7MVKKhWt0x7SGyFP9JnxWgBA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: DotD8CUEhKcshAbHAxghHCCAWRzGQN7-
+X-Proofpoint-ORIG-GUID: DotD8CUEhKcshAbHAxghHCCAWRzGQN7-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-11-22_06,2023-11-22_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
+ priorityscore=1501 lowpriorityscore=0 clxscore=1015 mlxlogscore=459
+ adultscore=0 impostorscore=0 spamscore=0 bulkscore=0 suspectscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311060000 definitions=main-2311220075
 
 
+
+On 11/22/2023 3:53 PM, Dmitry Baryshkov wrote:
+> On Wed, 22 Nov 2023 at 12:19, Kathiravan Thirumoorthy
+> <quic_kathirav@quicinc.com> wrote:
+>>
+>>
+>>
+>> On 11/22/2023 3:42 PM, Krzysztof Kozlowski wrote:
+>>> On 22/11/2023 11:08, Kathiravan Thirumoorthy wrote:
+>>>>
+>>>>
+>>>> On 11/21/2023 8:36 PM, Krzysztof Kozlowski wrote:
+>>>>> On 21/11/2023 15:30, Kathiravan Thirumoorthy wrote:
+>>>>>> In commit 0dd3f263c810 ("clk: qcom: ipq5332: enable few nssnoc clocks in
+>>>>>
+>>>>> Where is this commit coming from?
+>>>>>
+>>>>>> driver probe"), gcc_snoc_nssnoc_clk, gcc_snoc_nssnoc_1_clk,
+>>>>>> gcc_nssnoc_nsscc_clk are enabled in driver probe to keep it always-on.
+>>>>>
+>>>>> Implementation can change and for example bring back these clocks. Are
+>>>>> you going to change bindings? No, drop the patch.
+>>>>>
+>>>>> Bindings should be dropped only in a few rare cases like clocks not
+>>>>> available for OS or bugs.
+>>>>
+>>>> Thanks Krzysztof. Will drop this patch in V3.
+>>>>
+>>>> One more question to understand further. In IPQ SoCs there are bunch of
+>>>> coresight / QDSS clocks but coresight framework doesn't handle all
+>>>> clocks. Those clocks are enabled in bootloader stage itself. In such
+>>>> case, should I drop the clocks from both binding and driver or only from
+>>>> driver?
+>>>
+>>> That's not really the reason to drop them at all. Neither from driver,
+>>> nor from bindings. You should not rely on bootloader handling your clocks
+>>
+>>
+>> Thanks, lets say if those clocks are not needed at all by OS since QDSS
+>> is not used and needed only for the boot loaders to access the
+>> corresponding address space, in such case what can be done? I
+>> understand, at first those clocks should not have been added to the driver.
+> 
+> First, what is QDSS? Yet another acronym?
+
+Qualcomm Debug Sub System - which compromises of various debug infra 
+like coresight, DCC and so on.
+
+> 
+> Second, if they are not used now, they can get used later.
+> 
+
+Thanks. I will drop it from driver and leave the bindings as it is.
+
+Thanks,
+Kathiravan
