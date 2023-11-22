@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mOrWO93o"
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21E3C9A
-	for <linux-clk@vger.kernel.org>; Wed, 22 Nov 2023 07:55:28 -0800 (PST)
-Received: by mail-lf1-x134.google.com with SMTP id 2adb3069b0e04-50aaaf6e58fso5692009e87.2
-        for <linux-clk@vger.kernel.org>; Wed, 22 Nov 2023 07:55:28 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l+bUqMyM"
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B14CF18E
+	for <linux-clk@vger.kernel.org>; Wed, 22 Nov 2023 08:02:45 -0800 (PST)
+Received: by mail-lj1-x235.google.com with SMTP id 38308e7fff4ca-2c873cf9f74so62101401fa.0
+        for <linux-clk@vger.kernel.org>; Wed, 22 Nov 2023 08:02:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700668526; x=1701273326; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1700668964; x=1701273764; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=tuUSCKitbZ3SGvzXZg/oUjqEJ+iFFMtGQawxrjsdu7o=;
-        b=mOrWO93okSlWgGBufvDV4HfEG1Wmpyodus1zA0TSmWII4ehJUOLBhKxoC8wAaBCVZq
-         X+qwGkubMkM5SpmXEeRBk563nDfHuKWYxhG2haPDbGCyzB1mctQwxXn2qONNty7bM2xW
-         6nS7bQCFOxq21w7zup02YBt+bskBY1V2METz6fAHFJqaRLKlyYBVXBD1faEH5MPydOJx
-         9lhSUmlqXlqRcazrt+UYYF1Eg2GIhl+bnV0C06O1wjdM1NijRP/ShCzzcR8kKn36WYjw
-         Fvu9jQRbEL591BNF/fLb1vrOIMZQ4cpqogEwL2tfBVEJK6O9aHjNPfaCJ/61YgKqjqxB
-         uH7g==
+        bh=vr2sj29czR5v6hlCqTmdn2dM09cmk1PbJ4WRUrk7U7k=;
+        b=l+bUqMyMU3Yrl+xQHlrNAnWTnkOny9MU11O/GtSryeR4qakdjciGn1xyhhqfqZ55sU
+         qYEzrGLy0FC5lXd9sQ5YfnpXik/G+I4ntO7pmIAQE2i/lhTO2G/0NEueoJ2glM5mprvL
+         XgbSkipkcQIWWBwir0aJ2907Hnm1z2eXwygmgGhEWVnX2on+e0qIZzeANOLB8pOQ1LsD
+         LMC8bygv9P8+ZXvBCKAJleaMIBXDU+z5faHoDoOc7RLIExVkoqieQsYJcA4Yyn2MdMPP
+         XtAOfZW8+pnknub6pRdWtILFKBBXcAS7bmC2uWGnD6RGs9EUa/U+rDRdxtY+/+zF4MhU
+         qj2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700668526; x=1701273326;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1700668964; x=1701273764;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tuUSCKitbZ3SGvzXZg/oUjqEJ+iFFMtGQawxrjsdu7o=;
-        b=mDDicvNMMY6i0srtxlz1XuYLwVA+U4YFLJjGNK/xwfTWPKyxkuhol5oJnAQal9xqem
-         IL+tk35XO3feFHwUC6+C3RIkWLFKWAc2FTpcewaP37E7xtx3ZuWC3w6OY7CKibkf7dGx
-         SUPUU6G3/hMkIrA5V0ErsUhEQbvDGdn5cxjIDiucJTkAXApcVqdfgrZ7fpvvMcNhgTlT
-         2GTaM9v1yDw9z77+dloA6qqgd7DUwsB8vF2G10GTsE9NbtGlD0aCdtoArOFbMT3Bk0k4
-         jPATEMr2tPt9eSbf61TE1fh98nx6TmZ5ByA5YZwVZJXNuD0Je2l7viTkN+9oKB4ujgT7
-         KbcA==
-X-Gm-Message-State: AOJu0YybuAXOIuiRyda12oO6wAqhctDK/qoSuA1Jxh1uQkN8dKDWmsXz
-	g2O3xIEoznoB+PgdLv5xoUJ8gw==
-X-Google-Smtp-Source: AGHT+IFqAGojedce1elFd2BPwcWFUIy9NXz5jsXKRY6OKpwaxzJFqHBgoXDG5A2VKxkV81eYQDCVIA==
-X-Received: by 2002:a05:6512:3e02:b0:502:9bb6:3aba with SMTP id i2-20020a0565123e0200b005029bb63abamr742848lfv.14.1700668526169;
-        Wed, 22 Nov 2023 07:55:26 -0800 (PST)
+        bh=vr2sj29czR5v6hlCqTmdn2dM09cmk1PbJ4WRUrk7U7k=;
+        b=lRsFlSX17PghVYOsx2YuuvPnM6BoCjBvkdWPnAAwaNxCJcZNkpRLgyDLDMhvqpPhIf
+         gsNefSfVQMv5Fo+uaRB62gj1SSuP/CTuyF9xWIypZege1oLjhNHTS+kAbOiRI8R9Z+Bj
+         pQ0a3yXXD6oAuJgEhorC8BkrgyZ/EFT2F6Ss9DF7CwYOKPt/A0aih8T0eSuYETxSeQrN
+         zHxJVwf5fvZ34BE/Ue2k9Ii2x2fzXGRFJrixkEr3V1BkzX8aDdP+5ZszDwBi9bER/SeO
+         VfYjhpIx6eeH09BRp3uDvTiI1i4f4p0cN8yRWzzcNdaKk9ihIfJ0hPJEvUKRk57wIiWQ
+         emyA==
+X-Gm-Message-State: AOJu0YyalIX5zYVkye8h3IyFvAT4R+eevv3fNXD7/zk1slPNn2eBlFkv
+	v0UtDgYG79yWKf2mHZdK+AO1kw==
+X-Google-Smtp-Source: AGHT+IFBAFL84SqNmL1M5tuvjN7IgtJnctX+MYg6x+eGXmvT3bimGFiGLwQDQLi+kvh7pV8m+IGRpA==
+X-Received: by 2002:a2e:5c43:0:b0:2c8:71f9:4ae8 with SMTP id q64-20020a2e5c43000000b002c871f94ae8mr1984517ljb.5.1700668963701;
+        Wed, 22 Nov 2023 08:02:43 -0800 (PST)
 Received: from [172.30.204.227] (UNUSED.212-182-62-129.lubman.net.pl. [212.182.62.129])
-        by smtp.gmail.com with ESMTPSA id s7-20020a19ad47000000b0050aa9df16fbsm1323460lfd.179.2023.11.22.07.55.22
+        by smtp.gmail.com with ESMTPSA id w27-20020a05651c119b00b002c8787b3ac3sm1091916ljo.103.2023.11.22.08.02.42
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Nov 2023 07:55:25 -0800 (PST)
-Message-ID: <029d9924-0f02-40ac-856c-04547c2cb678@linaro.org>
-Date: Wed, 22 Nov 2023 16:55:21 +0100
+        Wed, 22 Nov 2023 08:02:43 -0800 (PST)
+Message-ID: <2b619607-1219-46db-a439-0f087b8b5d3b@linaro.org>
+Date: Wed, 22 Nov 2023 17:02:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,49 +47,28 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] clk: qcom: Add TCSR clock driver for x1e80100
-To: Abel Vesa <abel.vesa@linaro.org>, Andy Gross <agross@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Rajendra Nayak <quic_rjendra@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20231122-x1e80100-clk-tcsrcc-v1-0-43078c6d6452@linaro.org>
- <20231122-x1e80100-clk-tcsrcc-v1-2-43078c6d6452@linaro.org>
+Subject: Re: [PATCH] clk: qcom: gpucc-sm8150: Update the gpu_cc_pll1 config
 Content-Language: en-US
+To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ Andy Gross <agross@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20231122042814.4158076-1-quic_skakitap@quicinc.com>
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20231122-x1e80100-clk-tcsrcc-v1-2-43078c6d6452@linaro.org>
+In-Reply-To: <20231122042814.4158076-1-quic_skakitap@quicinc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Spam-Level: *
 
 
 
-On 11/22/23 14:42, Abel Vesa wrote:
-> The TCSR clock controller found on X1E80100 provides refclks
-> for PCIE, USB and UFS. Add clock driver for it.
-> 
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
-[...]
-
-
-> +static int tcsr_cc_x1e80100_probe(struct platform_device *pdev)
-> +{
-> +	struct regmap *regmap;
-> +
-> +	regmap = qcom_cc_map(pdev, &tcsr_cc_x1e80100_desc);
-> +	if (IS_ERR(regmap))
-> +		return PTR_ERR(regmap);
-> +
-> +	return qcom_cc_really_probe(pdev, &tcsr_cc_x1e80100_desc, regmap);
-> +}
-qcom_cc_probe
-
-other than that:
-
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+On 11/22/23 05:28, Satya Priya Kakitapalli wrote:
+> Update the test_ctl_hi_val and test_ctl_hi1_val of gpu_cc_pll1
+> as per latest HW recommendation.
+IIRC there is SM8150 v2.1 that's there on most devices and v2.2
+that was used on the Microsoft Duo (or v2.0 and v2.1 respectively,
+not sure, don't have any device on hand to read it back), do these
+settings apply to both? Are they different for mobile vs auto?
 
 Konrad
