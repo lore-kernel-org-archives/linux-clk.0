@@ -1,81 +1,112 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vmMPxghl"
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 331CE1BD
-	for <linux-clk@vger.kernel.org>; Wed, 22 Nov 2023 12:22:38 -0800 (PST)
-Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-50970c2115eso156241e87.1
-        for <linux-clk@vger.kernel.org>; Wed, 22 Nov 2023 12:22:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700684556; x=1701289356; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=r7MrYgOMdKVuK+GDXv9aJD8jhLhCPuIE63O1Ov1GqRc=;
-        b=vmMPxghlI18mS/HMiHX2JHnysNomTrXCWD0zL3LTi0eSq2b/lTUElj9ULvI00QbgVJ
-         vLm+tWwWATGL6kCqJeAF0vBZ6kITuaPGbr6qlPZIUiFuQJxiIS5iVsUrm3Prp5starms
-         I9T2bTWkLWi4ok/RGTZFCk4sLxZdEJJI98Rf/GTF9K+IA6MD84d04PuZyritLLOzm/9k
-         JSUJyrrw0wJTDbpKHLwcKAi+NlURaN3YuJXsQqWWJPk7iiCuV5O4vrb/fHCuu9VAlYUu
-         F+Hxa1QMOujHRByhH7SGjsn093x/Q7dSHcFsp0nYcsYKDiAw6gVDQr76KiaUIUWqFZum
-         RujA==
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE14CBC;
+	Wed, 22 Nov 2023 15:51:08 -0800 (PST)
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-1f0f94a08a0so231210fac.2;
+        Wed, 22 Nov 2023 15:51:08 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700684556; x=1701289356;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=r7MrYgOMdKVuK+GDXv9aJD8jhLhCPuIE63O1Ov1GqRc=;
-        b=idh9IiwOMI/JpKi6gJOvTxZTOYTKdLN0YohP5GEN5TN2PVX4UkbGauHDOL7HnE0iOr
-         xJ4u0uIg/gbSscxurs06ZzPpPbO91vtBS8IPmZt8XroMNl8Jb6Nx+2pAMmCEHtjxV51S
-         5tu9SUkauGgjGsymaO2du39HyQZE8XRX/6Ge3Sb8O/9kEEG5D3CE869Yiwpee8ztI6u7
-         tCTejea6/vT3FmYrJcXH6pJGTb4/9cU2Tdvus7vhH9bRNozRDGndSrgWXX/ZNUIumoP/
-         EEduYxyZIdObyzA6ItDtBcp5/1vuPf34b1g6ZOJi1yGZhjD7Tc9BR8mT6zxpZUdVqKD3
-         SRfA==
-X-Gm-Message-State: AOJu0YyrbbVXtaLRuvnZqnC8y7Grf8MIb+u18vLqVujyC+CkdJUgEDRU
-	DeipqzmyFCaHPoHOqChxDKxOfuG0XODJ561ASHByEc+v
-X-Google-Smtp-Source: AGHT+IEhleik4LWRMe/dmf9VTpFWeI3uN5MuNWVtzwF5hLzAKGpAJN5yXMeSzO52dXBTv06mOretFA==
-X-Received: by 2002:a05:6512:3c95:b0:50a:a5ab:e393 with SMTP id h21-20020a0565123c9500b0050aa5abe393mr3366084lfv.61.1700684556447;
-        Wed, 22 Nov 2023 12:22:36 -0800 (PST)
-Received: from [172.30.204.74] (UNUSED.212-182-62-129.lubman.net.pl. [212.182.62.129])
-        by smtp.gmail.com with ESMTPSA id d24-20020a056512369800b005091314185asm1952576lfs.285.2023.11.22.12.22.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Nov 2023 12:22:36 -0800 (PST)
-Message-ID: <81a8faea-b2d3-437d-8923-954569969bf6@linaro.org>
-Date: Wed, 22 Nov 2023 21:22:33 +0100
+        d=1e100.net; s=20230601; t=1700697068; x=1701301868;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=179e1B/Zb3hI4d1H9Ax8rZxN3KlOKuiYLE5iNc21E6U=;
+        b=J5unaip9C0BlM9q00fnx1e5GsLB5+nL4qG4nAXgX3A/GMSCAYMt8oTG2SNMgJtfs/i
+         7F4InRQGcyWS7esSx6TCVZorwETpn5fS/Q/FrWPT5fUMVJGNQ3a5oNrgNvYZbKq5tkuI
+         F/tZ8DfLrA9lcV4EcWxztKxGbEoiS1KTeh2rkvxa+LvUubefhpw08hSBezVo4g2h+abv
+         9cADseNuzDwZaSSNOgWGeg5IDuO9uSif5go045sghhzfb0cTw/s+NO4AmBk0GJvRRJBL
+         bJAPloSFz7V7gnitFWo29VUwVKj1yjR9XRdtc6owyh6vfG9d3IG7KGvDXFiEcumlM6hj
+         Bwew==
+X-Gm-Message-State: AOJu0YwhvX88Gmg40PB2BLZUV4saVC7do4hxWNKgCJVwsMlqr62H8Fxq
+	19UcquBgMTfNmcl4c1XaG1OexTB1qg==
+X-Google-Smtp-Source: AGHT+IEMv4Ssm2JKI9mmM/ybs57fN08UMMEEnxP6TfoJ9G6hApc198K+ymuzKhTb6QH2s+hPOEpdNQ==
+X-Received: by 2002:a05:6871:79a:b0:1f9:9128:9a94 with SMTP id o26-20020a056871079a00b001f991289a94mr3533802oap.2.1700697068210;
+        Wed, 22 Nov 2023 15:51:08 -0800 (PST)
+Received: from herring.priv ([64.188.179.252])
+        by smtp.gmail.com with ESMTPSA id dk39-20020a0566384be700b004645692438dsm1109jab.91.2023.11.22.15.51.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Nov 2023 15:51:07 -0800 (PST)
+Received: (nullmailer pid 2966730 invoked by uid 1000);
+	Wed, 22 Nov 2023 23:51:05 -0000
+From: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Wei Xu <xuwei5@hisilicon.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH] dt-bindings: hisilicon: Merge hi3620-clock into hisilicon,sysctrl binding
+Date: Wed, 22 Nov 2023 16:50:58 -0700
+Message-ID: <20231122235059.2966532-1-robh@kernel.org>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/9] clk: qcom: ipq5332: add gpll0_out_aux clock
-Content-Language: en-US
-To: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>,
- Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Richard Cochran <richardcochran@gmail.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20231121-ipq5332-nsscc-v2-0-a7ff61beab72@quicinc.com>
- <20231121-ipq5332-nsscc-v2-5-a7ff61beab72@quicinc.com>
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20231121-ipq5332-nsscc-v2-5-a7ff61beab72@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: *
+Content-Transfer-Encoding: 8bit
 
+The hi3620-clock binding is simple and always a child of the
+"hisilicon,sysctrl" node, so just add it into the hisilicon,sysctrl
+binding and drop the old txt binding.
 
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ .../arm/hisilicon/controller/sysctrl.yaml     | 17 ++++++++++++++++
+ .../bindings/clock/hi3620-clock.txt           | 20 -------------------
+ 2 files changed, 17 insertions(+), 20 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/hi3620-clock.txt
 
-On 11/21/23 15:30, Kathiravan Thirumoorthy wrote:
-> Add support for gpll0_out_aux clock which acts as the parent for
-> certain networking subsystem (NSS) clocks.
-> 
-> Signed-off-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-> ---
-Acked-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+diff --git a/Documentation/devicetree/bindings/arm/hisilicon/controller/sysctrl.yaml b/Documentation/devicetree/bindings/arm/hisilicon/controller/sysctrl.yaml
+index 5a53d433b6f0..7a221e1c09df 100644
+--- a/Documentation/devicetree/bindings/arm/hisilicon/controller/sysctrl.yaml
++++ b/Documentation/devicetree/bindings/arm/hisilicon/controller/sysctrl.yaml
+@@ -82,6 +82,23 @@ properties:
+ 
+   ranges: true
+ 
++patternProperties:
++  '^clock@':
++    type: object
++    additionalProperties: false
++
++    properties:
++      compatible:
++        enum:
++          - hisilicon,hi3620-clock
++          - hisilicon,hi3620-mmc-clock
++
++      reg:
++        maxItems: 1
++
++      '#clock-cells':
++        const: 1
++
+ required:
+   - compatible
+   - reg
+diff --git a/Documentation/devicetree/bindings/clock/hi3620-clock.txt b/Documentation/devicetree/bindings/clock/hi3620-clock.txt
+deleted file mode 100644
+index dad6269f52c5..000000000000
+--- a/Documentation/devicetree/bindings/clock/hi3620-clock.txt
++++ /dev/null
+@@ -1,20 +0,0 @@
+-* Hisilicon Hi3620 Clock Controller
+-
+-The Hi3620 clock controller generates and supplies clock to various
+-controllers within the Hi3620 SoC.
+-
+-Required Properties:
+-
+-- compatible: should be one of the following.
+-  - "hisilicon,hi3620-clock" - controller compatible with Hi3620 SoC.
+-  - "hisilicon,hi3620-mmc-clock" - controller specific for Hi3620 mmc.
+-
+-- reg: physical base address of the controller and length of memory mapped
+-  region.
+-
+-- #clock-cells: should be 1.
+-
+-Each clock is assigned an identifier and client nodes use this identifier
+-to specify the clock which they consume.
+-
+-All these identifier could be found in <dt-bindings/clock/hi3620-clock.h>.
+-- 
+2.42.0
 
-Konrad
