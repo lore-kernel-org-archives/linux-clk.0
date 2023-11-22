@@ -1,91 +1,135 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="g4Yj5GAa"
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WiKQT54I"
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD3E810C;
-	Tue, 21 Nov 2023 20:28:36 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 479FCD1;
+	Tue, 21 Nov 2023 22:09:31 -0800 (PST)
 Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AM3cps9004449;
-	Wed, 22 Nov 2023 04:28:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding :
- content-type; s=qcppdkim1;
- bh=9VQYkMcaLMIVV28dv2nGc5Put+Zl5GtxaKJ+blbPTLQ=;
- b=g4Yj5GAairI5jb5qKCszpjROOyvtKWB/BV66+HYZ0eP4hMIXKtbVPWTeeoH6yQoMCT8Q
- JuxivqCQ3JvAL0nNztqrPUi0+sqyxs8Ebz1vB+17qpp7hd1YLkdDye/gmcHAefddo+h1
- 6PVIKIJoDZ3YayuCs4UKkXvsLSGU+WdXXpAbQidFJnOCBaSanNe77IXdgdyPiZg+5/up
- G0d4oj+JiqD/6E8cRbyHXOWKAEzOK2XUmgT9j8J/itRwG8QjF1//UqU2KrQCjDg7q+3y
- TYltmrVFzs2+9j/NB1HtQ8HXuewDHhgz6YMToRBXU494H8J6pf6+STESHG11fbMUwwi/ KA== 
+	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AM4hiJh032712;
+	Wed, 22 Nov 2023 06:09:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : references : cc : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=vThq1oi26KFnLqYRqimd+y9S4pnfD/7AHosfvgTDFnU=;
+ b=WiKQT54IkcHxuzt8O+e45lADJ+QzaxWWe2xCtVfzuh+tYXDsdE5Maaj7HNmYGPfHYxmV
+ FUinvccJq+zNV7Jak2GaIGIRKEs+uTD/iXaqgj+c/29J3d0GDyvfoP3km56GJVccihIG
+ tzyFCiP7c9sPt33Iby7Y8rqdoRY7H3W4hQSN3QMihr3GgeM/s/rjcxhMdsxRWg/W4eKQ
+ VPbZe3gEvZ6zALHIWiDzdj3RCqjaOK+3RsaJDBl55gD7fCrMlQcd4XZjyOYo45Mu5VJj
+ DQDql7+j9/sZtPNsYmBYLjDBkbdA/U3klkvem9n3AEUzyEs75lKoZvpXr3UolzXIitUT kw== 
 Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3uh477gphb-1
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3uh477gvc6-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 Nov 2023 04:28:32 +0000
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3AM4SWLU027721
+	Wed, 22 Nov 2023 06:09:25 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3AM69BdE018763
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 Nov 2023 04:28:32 GMT
-Received: from hu-skakitap-hyd.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Tue, 21 Nov 2023 20:28:29 -0800
-From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-To: Andy Gross <agross@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC: Bjorn Andersson <andersson@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Satya Priya
- Kakitapalli" <quic_skakitap@quicinc.com>
-Subject: [PATCH] clk: qcom: gpucc-sm8150: Update the gpu_cc_pll1 config
-Date: Wed, 22 Nov 2023 09:58:14 +0530
-Message-ID: <20231122042814.4158076-1-quic_skakitap@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	Wed, 22 Nov 2023 06:09:11 GMT
+Received: from [10.216.41.176] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Tue, 21 Nov
+ 2023 22:09:08 -0800
+Message-ID: <eba3fc5a-d106-4420-8350-c4a783bc79f9@quicinc.com>
+Date: Wed, 22 Nov 2023 11:39:05 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: qcom: gcc-msm8953: fix stuck gcc_usb30_master_clk
+To: Konrad Dybcio <konrad.dybcio@linaro.org>, Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>
+References: <20231002170021.192740-1-trabarni@gmail.com>
+ <0eebfc14-dbcd-4987-9e94-ea5630b6c268@linaro.org>
+ <07937184481af74c65108bae26526605.sboyd@kernel.org>
+ <64a9d171-377c-48df-bdcd-1ac6d13c2da6@linaro.org>
+Content-Language: en-US
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Andy Gross <agross@kernel.org>,
+        Michael
+ Turquette <mturquette@baylibre.com>
+From: Krishna Kurapati PSSNV <quic_kriskura@quicinc.com>
+In-Reply-To: <64a9d171-377c-48df-bdcd-1ac6d13c2da6@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: if52tZBAd9uHOj5pC-qg4QhJ8BTTme_S
-X-Proofpoint-GUID: if52tZBAd9uHOj5pC-qg4QhJ8BTTme_S
+X-Proofpoint-ORIG-GUID: wlclgCYyPsjDEDJ5vK5hZevnlqFxs7Ax
+X-Proofpoint-GUID: wlclgCYyPsjDEDJ5vK5hZevnlqFxs7Ax
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-11-22_01,2023-11-21_01,2023-05-22_02
+ definitions=2023-11-22_03,2023-11-21_01,2023-05-22_02
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
- impostorscore=0 malwarescore=0 mlxlogscore=830 clxscore=1015
+ impostorscore=0 malwarescore=0 mlxlogscore=852 clxscore=1011
  suspectscore=0 spamscore=0 bulkscore=0 mlxscore=0 priorityscore=1501
  lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311060000 definitions=main-2311220031
+ engine=8.12.0-2311060000 definitions=main-2311220043
 
-Update the test_ctl_hi_val and test_ctl_hi1_val of gpu_cc_pll1
-as per latest HW recommendation.
 
-Fixes: 0cef71f2ccc8 ("clk: qcom: Add graphics clock controller driver for SM8150")
-Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
----
- drivers/clk/qcom/gpucc-sm8150.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/qcom/gpucc-sm8150.c b/drivers/clk/qcom/gpucc-sm8150.c
-index 8422fd047493..c89a5b59ddb7 100644
---- a/drivers/clk/qcom/gpucc-sm8150.c
-+++ b/drivers/clk/qcom/gpucc-sm8150.c
-@@ -37,8 +37,8 @@ static struct alpha_pll_config gpu_cc_pll1_config = {
- 	.config_ctl_hi_val = 0x00002267,
- 	.config_ctl_hi1_val = 0x00000024,
- 	.test_ctl_val = 0x00000000,
--	.test_ctl_hi_val = 0x00000002,
--	.test_ctl_hi1_val = 0x00000000,
-+	.test_ctl_hi_val = 0x00000000,
-+	.test_ctl_hi1_val = 0x00000020,
- 	.user_ctl_val = 0x00000000,
- 	.user_ctl_hi_val = 0x00000805,
- 	.user_ctl_hi1_val = 0x000000d0,
--- 
-2.25.1
+On 11/18/2023 6:18 AM, Konrad Dybcio wrote:
+> On 24.10.2023 04:59, Stephen Boyd wrote:
+>> Quoting Konrad Dybcio (2023-10-06 16:50:18)
+>>> On 2.10.2023 19:00, Barnabás Czémán wrote:
+>>>> According to downstream dwc3-msm source this clock has FSM dependency on
+>>>> gcc_pcnoc_usb30_clk so enabling it would fail if latter isn't enabled.
+>>>> This patch add works around this issue by changing parent of
+>>>> gcc_usb30_master_clk to gcc_pcnoc_usb30_clk. This is acceptable because
+>>>> both clocks have same parent and are branches/gates.
+>>>>
+>>>> Signed-off-by: Barnabás Czémán <trabarni@gmail.com>
+>>>> ---
+>>> "meh"
+>>>
+>>> There are multiple cases, especially with qcom, where there are some
+>>> magic "dependencies" without parent-child relationship. The common
+>>> clock framework doesn't currently have any good way to handle this,
+>>> other than some mind gymnastics like you had to do here with matching
+>>> them against a common parent/ancestor..
+>>>
+>>> Stephen, what do you say?
+>>>
+>>
+>> You can't change the parent to be not the actual parent. The consumer of
+>> the branch probably wants to call clk_set_rate() on the branch and have
+>> it propagate up to the parent to set the actual rate. Can the axi clk
+>> simply be left enabled all the time? That seems simpler. Otherwise we
+>> probably need to leave the axi clk control to the interconnect driver
+>> and make sure drivers enable interconnects before enabling this branch.
+> Yeah I'm almost inclined to think adding even more ifs to the icc driver
+> will consume more power than just leaving the AXI hanging..
+> 
+>>
+>> When things start to get this tangled I tend to think that we need to
+>> remove control of the clk from the general drivers and put the logic to
+>> control interconnects and clks into some SoC glue driver and expose a
+>> single interface, like genpd power_on/power_off so that general drivers
+>> can't get the sequence of steps wrong. Instead all they can do is "power
+>> on" their device, and the SoC glue driver can do the proper sequence of
+>> framework calls to power up the device.
+> That too, given the structure of qcom SoCs, it should almost look like:
+> 
+> xyznoc-bus {
+> 	compatible = "simple-pm-bus";
+> 	clocks = <&gcc xyznoc_ahb>,
+> 		 <&gcc xyznoc_axi>;
+> 	...
+> 
+> 	xyznoc-node@abcd {};
+> }
+> 
+> etc.
+> 
+> I've actually discussed this with Bjorn, but we came to a conclusion
+> that it's not trivial to determine which peripheral lives on which NoC
+> + many of them seem to sorta overlap more than one..
 
+Are we seeing the clk getting stuck during suspend/resume or during 
+clk_prepare_enable in probe ?
+
+Regards,
+Krishna,
