@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HsPNdAsy"
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B416510D5
-	for <linux-clk@vger.kernel.org>; Wed, 22 Nov 2023 23:34:35 -0800 (PST)
-Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-507bd19eac8so712670e87.0
-        for <linux-clk@vger.kernel.org>; Wed, 22 Nov 2023 23:34:35 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UaI3s6nC"
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 179D7110
+	for <linux-clk@vger.kernel.org>; Wed, 22 Nov 2023 23:46:04 -0800 (PST)
+Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-548ce39b101so741127a12.2
+        for <linux-clk@vger.kernel.org>; Wed, 22 Nov 2023 23:46:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700724874; x=1701329674; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1700725562; x=1701330362; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=3JH+03ERdFU24BU5LeW5MTH8ZXebolsQqtSjYJ5C4k0=;
-        b=HsPNdAsytDDxrHPSrQtzAjEoz0KDkOlkMUn9nAVEb4p6rWaVpztHigD1VsOQBH/CDh
-         ZeIP30w0Hm4ea4LSB5EjXgBV6Qr08lHzZOSJn+C0GqSRUH+ZpBgmrqDCKzQaivJ00VGr
-         DG1VK5wPoxH/4DmTUKxApfbVZpWQwxJTezgT5JEbS5cY0EFIMYJGQUtdmI1+6OxjZSSI
-         rGlzhLNlo7pd74BvhK0t9nu5b56syqupkrVhIOvr46QaS3KHe+3bGYPbpA0yTS0D3e4B
-         RL+sHIGKHMkZ40roc5wJdBDGBGv7J+p852a4pmtb86CPnpfkknCr3dNP7m+m0CjrYh6R
-         GjmQ==
+        bh=MPDmtK6S1zORaSjdr1XRX6hDDuSPjRoXGNzUDRQooDY=;
+        b=UaI3s6nCrImb0Ukto3x9L/oneZEV/lVVBFWlFA0BvRf42TwJqOm6LQ1iDBhQGcvwDg
+         fBPYiX6HeZAbouzAgadfBssMGNz9jqtGlKrhS1dfYfFAptTNvrxCAiQdRZWP//0/PrsA
+         81wT1kx8A5cbkQHwVd5k1IMJgw5oSHJcXI4HwbvZ0N7kEdm6QfUvJpsQfmCIFA4hX9DT
+         3mnOTusw5DnM2FHnVOqiQ16qSREUE261HwcNXOAyn4Fosv+gvOOlcpnCX4L+08QO1Osu
+         XaTVrHdK7eCZE/XokUGL+be59kvGLO8MK3dV1R+zjAhKOW0ip6/+tNbme19iaGugYz70
+         JAJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700724874; x=1701329674;
+        d=1e100.net; s=20230601; t=1700725562; x=1701330362;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3JH+03ERdFU24BU5LeW5MTH8ZXebolsQqtSjYJ5C4k0=;
-        b=hAFc5mVurxB1fE8pRRYEJ7bOq8qy21J6vUYuIKU/ftTUYmeLJ5ei5J+ihcaIL4QOuo
-         uH8647ajXB9Cz2hBvykFxula5PmdzJ5GNzLrD4sRdq6vsgr9ef85CaaHzvEJAjM4HYQX
-         goW6y0jzFsiLWdcwC9qUFDK1qzZGK2P4HbjM5SruZ+8g1VESUIe2+vr3hbzS6EypwPS3
-         LRKSLTQwy3Tbuh3TFaQXMZuf1qh0ybrZYuFjNcayO/yA+4V+UIfXaR2QO8yTz4OkSCb0
-         /1Q6bm+eAE/0S85SLmk1hnAt+sgUWEyVtBPBTMFOWeBTGlUjcd94ntp9RhEgrDHME2MB
-         27Dg==
-X-Gm-Message-State: AOJu0YyEpFMLAv15FFEXNNlyGHhh5rL+zKV4MY/yrSCszQjB9Qz6YpMJ
-	3f7rxrPoWyUwWo4P9hZ7BrCKwg==
-X-Google-Smtp-Source: AGHT+IEcO36CRri24VcZjqmy+YCmrML21Y3CcbZ/l7itgXf4c/TFNArwVyJYTntbioFKBIoYB4ba2A==
-X-Received: by 2002:ac2:5e84:0:b0:50a:73a8:ae4f with SMTP id b4-20020ac25e84000000b0050a73a8ae4fmr3277674lfq.29.1700724873996;
-        Wed, 22 Nov 2023 23:34:33 -0800 (PST)
+        bh=MPDmtK6S1zORaSjdr1XRX6hDDuSPjRoXGNzUDRQooDY=;
+        b=N962gHTHKTdNJNxH0kvhfaGuXLvBh7mOupHTI/4jRHRllSWzLIMswWNlBEhPsWnj5m
+         z2TsrgrK6dzBfzzkiws88nj/OAA8W8VfPdIF+h/dfFQpHKljBTcayjSeV/2MBbQNhJ1P
+         axb3LQEDJJawZVv1z+jnSSKbJQuoqJH6XX0HD2G9p7l4HDzIZYZInYQH3INX9/29dlw9
+         qdEvelslDkGLjdfPWqMmu2bpAhYa9ex6PwIUNTjHIxRmmR3a1u4KS5OtDkPspOtuas0T
+         r4pLjchGo5znecdcYU0vgF9p9b/PfL0ebWs0jY0lNSP1OZHGgatnPDEhpBusexD5kQ/b
+         63xg==
+X-Gm-Message-State: AOJu0YyiZvwiKo9h3dDpXCeasYCaTSOKObHs8abM2HZBLZoAUYZxmfb/
+	VIwTsIeYFPM1BZAKRqh+rnBe7w==
+X-Google-Smtp-Source: AGHT+IHi4dveGYoXJQ4mSc04/b7VUTzasiuAkV2QiB+Tm2Q4gZeuR3jwcWQccQlQDlJdgpj285r/hw==
+X-Received: by 2002:aa7:c0ce:0:b0:53e:81f6:8060 with SMTP id j14-20020aa7c0ce000000b0053e81f68060mr3549924edp.14.1700725562615;
+        Wed, 22 Nov 2023 23:46:02 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.218.100])
-        by smtp.gmail.com with ESMTPSA id d11-20020adfa40b000000b003142e438e8csm816828wra.26.2023.11.22.23.34.32
+        by smtp.gmail.com with ESMTPSA id l1-20020a056402230100b00548ab6c9f12sm354224eda.54.2023.11.22.23.46.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Nov 2023 23:34:33 -0800 (PST)
-Message-ID: <1f5357b6-5d14-4ed2-966e-b023c4b2afaf@linaro.org>
-Date: Thu, 23 Nov 2023 08:34:32 +0100
+        Wed, 22 Nov 2023 23:46:02 -0800 (PST)
+Message-ID: <cad5b418-0906-44fe-b345-a5b0342caf3e@linaro.org>
+Date: Thu, 23 Nov 2023 08:46:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,17 +47,14 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: hisilicon: Merge hi3620-clock into
- hisilicon,sysctrl binding
+Subject: Re: [PATCH] dt-bindings: clock: versal: Make alt_ref optional
 Content-Language: en-US
-To: Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Wei Xu <xuwei5@hisilicon.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20231122235059.2966532-1-robh@kernel.org>
+To: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Cc: git@amd.com, mturquette@baylibre.com, sboyd@kernel.org,
+ robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ michal.simek@amd.com
+References: <20231123053409.10192-1-shubhrajyoti.datta@amd.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -103,19 +100,18 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231122235059.2966532-1-robh@kernel.org>
+In-Reply-To: <20231123053409.10192-1-shubhrajyoti.datta@amd.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 23/11/2023 00:50, Rob Herring wrote:
-> The hi3620-clock binding is simple and always a child of the
-> "hisilicon,sysctrl" node, so just add it into the hisilicon,sysctrl
-> binding and drop the old txt binding.
-> 
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
+On 23/11/2023 06:34, Shubhrajyoti Datta wrote:
+> The alt_ref is present only in Versal-net devices.
+> Other versal devices do not have it so lets make alt_ref optional.
+> Changing the order of the clock items to have the optional ones at
+> the end.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+One device has clock, other not, so you re-order the clocks? No, that's
+not the reason to re-order clocks. Add proper constraints for your variant.
 
 Best regards,
 Krzysztof
