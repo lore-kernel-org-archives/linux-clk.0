@@ -1,141 +1,93 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="U3e/GsCZ"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C618110;
-	Wed, 22 Nov 2023 22:21:18 -0800 (PST)
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AN3OtEl031046;
-	Thu, 23 Nov 2023 06:21:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=dTy++ncCkASmzMy2lPTP9AkYMPYSGftpH1MuX9Vynvc=;
- b=U3e/GsCZ7x7ASxdMfY6xKnb1ghlazriKa/4ovcB8ZnclBcouSflZk+jdn9bqVkXuAb10
- WfuDg35u6cd/OJ97NOwtfnwfjSX6lp6x4xX1sAktlGBb/gY9iawGbl5A9HoS8Gblc6BS
- zoqwYIrbS/KXe81+jEAHZ41xEKIBR6BKhAQtpb62NnlYQqh7FdffLkebmeWPT30vjU9R
- vmw9cVw4NoCeBlyUgnt/7EVxe5s0xOrwOgcAp5TIPFxN7fgjqHzBjdPskMZH+87EVLEJ
- +vqnFa/wfjLORnKD7wS16oLQyuwNWCuFaxyVjVaGV7afOcvV+6QcXQVzpjg/sti6GKyD vw== 
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3uhguda4gd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 Nov 2023 06:21:14 +0000
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3AN6LDW2002723
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 Nov 2023 06:21:13 GMT
-Received: from [10.216.46.160] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Wed, 22 Nov
- 2023 22:21:07 -0800
-Message-ID: <6f7ee679-38be-abfd-a71c-d33e15c79c7d@quicinc.com>
-Date: Thu, 23 Nov 2023 11:50:59 +0530
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
+Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92B731BF;
+	Wed, 22 Nov 2023 22:35:55 -0800 (PST)
+Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-7a93b7fedc8so18568539f.1;
+        Wed, 22 Nov 2023 22:35:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700721355; x=1701326155;
+        h=date:subject:message-id:references:in-reply-to:cc:to:from
+         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ce+4H9bEhXLAwKbxsfxznX8YfGunmV/Ko5/YIxdFJas=;
+        b=VJ1QauMup4lwPYljkJMVH8t4MZWPuR6IgkK9H3uwC/sV1PpcpVpgRC/advaIMLtjVo
+         AE0ReyIBjKdz6ruKjuzL4V4pvaTeZcw5fSSDoKZWQLyIAPjH970rG5WsYO3bwCcbkDkj
+         2n4njtvTbUdqXnzut3aAMtJH8+w4kdDHMld6JWTnO5aVoQWvX+IUlQl70io80sWaAXCA
+         S8yb2MV7NEpO1Zk/v065R8METDG1EKGYj5tYQXSwm03RY1eM+HoCw1omFVfeWv7kocWI
+         IJhRG6qfpHCaUZV32z/WOmvudfIGj4YR4c8V/VYKp0VbcqvYbwYHIu4YtG93AZ9VIT19
+         WzSw==
+X-Gm-Message-State: AOJu0YxR9PTrr1rRs5zuAdfnQle2qo5cAoPosgePZPj74hU+KXb3M+wy
+	NdyIl3InuTlqkUcGQtAYDHuxyV98EA==
+X-Google-Smtp-Source: AGHT+IHzgJElnkJ4rs9KOZWg+0BZW2cboxJgMn3BXtrfzRcfT3GPo06/kIiHzOnQgJ97KtoD9Fonjg==
+X-Received: by 2002:a05:6602:3f0d:b0:7b3:7004:6665 with SMTP id em13-20020a0566023f0d00b007b370046665mr266758iob.20.1700721354800;
+        Wed, 22 Nov 2023 22:35:54 -0800 (PST)
+Received: from herring.priv ([64.188.179.252])
+        by smtp.gmail.com with ESMTPSA id dj1-20020a056602256100b007b369c7e2b6sm147268iob.52.2023.11.22.22.35.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Nov 2023 22:35:54 -0800 (PST)
+Received: (nullmailer pid 4064461 invoked by uid 1000);
+	Thu, 23 Nov 2023 06:35:52 -0000
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [PATCH V4 2/4] clk: qcom: branch: Add mem ops support for branch2
- clocks
-To: Konrad Dybcio <konrad.dybcio@linaro.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: Taniya Das <quic_tdas@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        Ajit Pandey
-	<quic_ajipan@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>
-References: <20231117095558.3313877-1-quic_imrashai@quicinc.com>
- <20231117095558.3313877-3-quic_imrashai@quicinc.com>
- <90885d90-2e25-404b-b3a3-13d134801146@linaro.org>
-Content-Language: en-US
-From: Imran Shaik <quic_imrashai@quicinc.com>
-In-Reply-To: <90885d90-2e25-404b-b3a3-13d134801146@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 7nV9iKCq3kAFyatrqrTlwW4dlkqjIfG_
-X-Proofpoint-ORIG-GUID: 7nV9iKCq3kAFyatrqrTlwW4dlkqjIfG_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-11-23_03,2023-11-22_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- spamscore=0 mlxlogscore=999 impostorscore=0 malwarescore=0
- priorityscore=1501 clxscore=1015 mlxscore=0 adultscore=0 bulkscore=0
- suspectscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2311060000 definitions=main-2311230043
+From: Rob Herring <robh@kernel.org>
+To: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+Cc: linux-clk@vger.kernel.org, michal.simek@amd.com, git@amd.com, robh+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, krzysztof.kozlowski+dt@linaro.org, devicetree@vger.kernel.org
+In-Reply-To: <20231123053409.10192-1-shubhrajyoti.datta@amd.com>
+References: <20231123053409.10192-1-shubhrajyoti.datta@amd.com>
+Message-Id: <170072135265.4064425.4703039505162229211.robh@kernel.org>
+Subject: Re: [PATCH] dt-bindings: clock: versal: Make alt_ref optional
+Date: Wed, 22 Nov 2023 23:35:52 -0700
 
 
-
-On 11/23/2023 1:39 AM, Konrad Dybcio wrote:
+On Thu, 23 Nov 2023 11:04:09 +0530, Shubhrajyoti Datta wrote:
+> The alt_ref is present only in Versal-net devices.
+> Other versal devices do not have it so lets make alt_ref optional.
+> Changing the order of the clock items to have the optional ones at
+> the end.
 > 
+> Fixes: 352546805a44 ("dt-bindings: clock: Add bindings for versal clock driver")
+> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+> ---
 > 
-> On 11/17/23 10:55, Imran Shaik wrote:
->> From: Taniya Das <quic_tdas@quicinc.com>
->>
->> Add the support for mem ops implementation to handle the sequence of
->> enable/disable of the memories in ethernet PHY, prior to enable/disable
->> of the respective clocks, which helps retain the respecive block's
->> register contents.
->>
->> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
->> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
->> ---
->>   drivers/clk/qcom/clk-branch.c | 39 +++++++++++++++++++++++++++++++++++
->>   drivers/clk/qcom/clk-branch.h | 21 +++++++++++++++++++
->>   2 files changed, 60 insertions(+)
->>
->> diff --git a/drivers/clk/qcom/clk-branch.c 
->> b/drivers/clk/qcom/clk-branch.c
->> index fc4735f74f0f..61bdd2147bed 100644
->> --- a/drivers/clk/qcom/clk-branch.c
->> +++ b/drivers/clk/qcom/clk-branch.c
->> @@ -1,6 +1,7 @@
->>   // SPDX-License-Identifier: GPL-2.0
->>   /*
->>    * Copyright (c) 2013, The Linux Foundation. All rights reserved.
->> + * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights 
->> reserved.
->>    */
->>   #include <linux/kernel.h>
->> @@ -134,6 +135,44 @@ static void clk_branch2_disable(struct clk_hw *hw)
->>       clk_branch_toggle(hw, false, clk_branch2_check_halt);
->>   }
->> +static int clk_branch2_mem_enable(struct clk_hw *hw)
->> +{
->> +    struct clk_mem_branch *mem_br = to_clk_mem_branch(hw);
->> +    struct clk_branch branch = mem_br->branch;
->> +    const char *name = clk_hw_get_name(&branch.clkr.hw);
-> Bit of a microoptimization, but adding this implicitly in the WARN
-> would only execute clk_hw_get_name when necessary
+>  .../devicetree/bindings/clock/xlnx,versal-clk.yaml | 14 ++++++++------
+>  1 file changed, 8 insertions(+), 6 deletions(-)
 > 
 
-Sure, will remove this line and use the clk_hw_get_name implicitly in WARN.
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
->> +    u32 val;
->> +    int ret;
->> +
->> +    regmap_update_bits(branch.clkr.regmap, mem_br->mem_enable_reg,
->> +            mem_br->mem_enable_ack_mask, mem_br->mem_enable_ack_mask);
-> It's quite a nit from me, but it would be nice to have the next line 
-> aligned
-> with the opening brace (with a tab size of 8)
-> 
-> Konrad
+yamllint warnings/errors:
 
-Sure, will align the lines and post another series.
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.example.dtb: versal-firmware: clock-controller:clock-names:1: 'pl_alt_ref' was expected
+	from schema $id: http://devicetree.org/schemas/firmware/xilinx/xlnx,zynqmp-firmware.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.example.dtb: versal-firmware: clock-controller:clock-names:2: 'alt_ref' was expected
+	from schema $id: http://devicetree.org/schemas/firmware/xilinx/xlnx,zynqmp-firmware.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.example.dtb: clock-controller: clock-names:1: 'pl_alt_ref' was expected
+	from schema $id: http://devicetree.org/schemas/clock/xlnx,versal-clk.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.example.dtb: clock-controller: clock-names:2: 'alt_ref' was expected
+	from schema $id: http://devicetree.org/schemas/clock/xlnx,versal-clk.yaml#
 
-Thanks,
-Imran
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20231123053409.10192-1-shubhrajyoti.datta@amd.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
