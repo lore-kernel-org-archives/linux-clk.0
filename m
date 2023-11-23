@@ -1,139 +1,493 @@
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E114E2E828;
+	Thu, 23 Nov 2023 14:41:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oaRC4AA9"
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D152D40
-	for <linux-clk@vger.kernel.org>; Thu, 23 Nov 2023 04:32:41 -0800 (PST)
-Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-54a95657df3so1277976a12.0
-        for <linux-clk@vger.kernel.org>; Thu, 23 Nov 2023 04:32:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700742759; x=1701347559; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=znStB18F/PgoeYO9U+7yASGfFyu0ouqQ1UM2PUF8jcI=;
-        b=oaRC4AA9dOgcHQMSCRpYYZyZ6VoGuctEW77TNEW3QmZB//pJXQKEEadXxuogPr8GMs
-         YIdc3ygyy6lXL7Ge5X5mUd83XH3Z+wzBy3PTsdygFJngeOncJjOZP5VEPOHpfW/FWc/x
-         ll3aUQYcU20J7DWphKhaNm5D8VfzYOhBbRUcpxn8HMm0GUBYzKj95qorYtASEbW8lx00
-         zFENixaP4MJRPKLidGZ0xNX+2ZAQaZRfV0t/O+vFI2GR4nvKfyqB/4xbTiJzUKA33lWb
-         LCWJlxwlDbpoAKD5qxYCaXaxWsjRce4hDkWg+WeRxJLgja1/8pBbfaMlOp4i0DZ4a3xE
-         QpKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700742759; x=1701347559;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=znStB18F/PgoeYO9U+7yASGfFyu0ouqQ1UM2PUF8jcI=;
-        b=NWdnDapM0SBUK+10zKm/l88EseUMoCatOXyTGzOQqIWQRsngafY12lBlPHq3p6zGt3
-         b/mLoytvqugY4SsPnW6Tcbi7ABkXWRVIOfEjF9ZfCcV6IWWAkUlAoDwYlQDAFfOqIwNC
-         aid3Lmb9rHDxc6co8qKPlkOs/sr4vQNM2UAq6CtJ/QC3chYSO86v0mljhMWvlD2yY48E
-         jDMy0AWIv5ZX4SmQA5JM6l2n1piVgA60PFLHpXjLxtt3izCh4Nm69k5NDz7bkshsMPXr
-         RcSz2fUR8Lg9bECgj1Wtw6D6vdqKufhX2qZtvrbXwYmYoueM+16ST1ydovkGHn1kj9Ui
-         ZUeA==
-X-Gm-Message-State: AOJu0YzEtc1NzrzxAhhl5yt6hSzoHegOZiMchmrOg2d0+4xqMBtm9Ql+
-	Fl2TJnrEx8N4lKDYZy5lChWdeg==
-X-Google-Smtp-Source: AGHT+IEL7J54SZjwm3WoVV73LL3x/hAEplFBihS61TS4/0sCODDwc0b6jdjTv2KLeYUNnhbIiDarIQ==
-X-Received: by 2002:a05:6402:14cf:b0:548:4b00:26c0 with SMTP id f15-20020a05640214cf00b005484b0026c0mr3547232edx.40.1700742759547;
-        Thu, 23 Nov 2023 04:32:39 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.218.100])
-        by smtp.gmail.com with ESMTPSA id d17-20020aa7d691000000b005434095b179sm599924edr.92.2023.11.23.04.32.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Nov 2023 04:32:39 -0800 (PST)
-Message-ID: <31940ab7-4b39-4859-b482-5c236a263862@linaro.org>
-Date: Thu, 23 Nov 2023 13:32:37 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dfaNka7e"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A606BC433C8;
+	Thu, 23 Nov 2023 14:41:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1700750492;
+	bh=dFa4MZgIMzEFfrchsukjlrQyO2o+DqF9rIyRyoe3Nrk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dfaNka7e6zfcTJ97lRF4OCwPDU72lO4RnC4ULyhPFLyA3xFF/6IJpNtEeI7zusKHB
+	 DuEdZhfQcoQbqp9QFk0A9zAoZk26teBs9p1xzSIpjwmdLWzsA+0u1Y5NdQMOjNTJq6
+	 0d/jyzXpCdGVLxDWSfECFJR7gCHqJrswfn7DdBErqb8Kmsh2+WTNEbsL+itCQTRJwI
+	 y4DLOBgDwbsjyqK7f5GUxYy7RshKMeAQKWb1lVwBvGKR5iIuR7Zmi9C7lEwZUYN+4E
+	 jkzp+masnmnVfKtkbSI4NcKqJ1Q6K5FsI/SdnNty6xUbFzehBcMdSgKqBg49O652Er
+	 m0dLXhFUaQXFw==
+Date: Thu, 23 Nov 2023 14:41:27 +0000
+From: Simon Horman <horms@kernel.org>
+To: Michal Michalik <michal.michalik@intel.com>
+Cc: netdev@vger.kernel.org, vadim.fedorenko@linux.dev,
+	arkadiusz.kubalewski@intel.com, jonathan.lemon@gmail.com,
+	pabeni@redhat.com, poros@redhat.com, milena.olech@intel.com,
+	mschmidt@redhat.com, linux-clk@vger.kernel.org, bvanassche@acm.org,
+	kuba@kernel.org, davem@davemloft.net, edumazet@google.com
+Subject: Re: [PATCH RFC net-next v4 1/2] netdevsim: implement DPLL for
+ subsystem selftests
+Message-ID: <20231123144127.GJ6339@kernel.org>
+References: <20231123105243.7992-1-michal.michalik@intel.com>
+ <20231123105243.7992-2-michal.michalik@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/5] dt-bindings: stm32: add clocks and reset binding
- for stm32mp25 platform
-To: Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20231122132156.158103-1-gabriel.fernandez@foss.st.com>
- <20231122132156.158103-4-gabriel.fernandez@foss.st.com>
- <90664758-9273-4ed7-b711-0abe45b4efed@linaro.org>
- <d8df1a06-1bd1-43a6-abc1-d4a7826e9746@foss.st.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
- m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
- HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
- XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
- mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
- v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
- cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
- rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
- qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
- aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
- gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
- dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
- NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
- hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
- oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
- H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
- yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
- 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
- 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
- +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
- FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
- 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
- DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
- oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
- 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
- Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
- qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
- /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
- qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
- EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
- KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
- fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <d8df1a06-1bd1-43a6-abc1-d4a7826e9746@foss.st.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231123105243.7992-2-michal.michalik@intel.com>
 
-On 23/11/2023 10:39, Gabriel FERNANDEZ wrote:
-
-> ok i will use '
->>> diff --git a/include/dt-bindings/clock/st,stm32mp25-rcc.h b/include/dt-bindings/clock/st,stm32mp25-rcc.h
->>> new file mode 100644
->>> index 000000000000..9876ee0dd1e4
->>> --- /dev/null
->>> +++ b/include/dt-bindings/clock/st,stm32mp25-rcc.h
->>> @@ -0,0 +1,492 @@
->>> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-3-Clause */
->> Any particular reason why do you need 3-clause BSD? Checkpatch asks for
->> different one, because that one clause is just annoying.
+On Thu, Nov 23, 2023 at 05:52:42AM -0500, Michal Michalik wrote:
+> DPLL subsystem integration tests require a module which mimics the
+> behavior of real driver which supports DPLL hardware. To fully test the
+> subsystem the netdevsim is amended with DPLL implementation.
 > 
-> Yes, the same file can also be used in other components, such as 
-> TF-A/OPTEE, and can therefore have a dual licence.
+> Signed-off-by: Michal Michalik <michal.michalik@intel.com>
 
-That's not what I asked. I asked: why do you choose different dual
-license then we ask for (as expressed in checkpatch).
+...
 
-Best regards,
-Krzysztof
+> diff --git a/drivers/net/netdevsim/dev.c b/drivers/net/netdevsim/dev.c
+> index b4d3b9cde8bd..76da4e8aa9af 100644
+> --- a/drivers/net/netdevsim/dev.c
+> +++ b/drivers/net/netdevsim/dev.c
+> @@ -342,6 +342,17 @@ static int nsim_dev_debugfs_init(struct nsim_dev *nsim_dev)
+>  	debugfs_create_file("max_vfs", 0600, nsim_dev->ddir,
+>  			    nsim_dev, &nsim_dev_max_vfs_fops);
+>  
+> +	debugfs_create_u64("dpll_clock_id", 0600,
+> +			   nsim_dev->ddir, &nsim_dev->dpll.dpll_e_pd.clock_id);
+> +	debugfs_create_u32("dpll_e_status", 0600, nsim_dev->ddir,
+> +			   &nsim_dev->dpll.dpll_e_pd.status);
+> +	debugfs_create_u32("dpll_p_status", 0600, nsim_dev->ddir,
+> +			   &nsim_dev->dpll.dpll_p_pd.status);
+> +	debugfs_create_u32("dpll_e_temp", 0600, nsim_dev->ddir,
+> +			   &nsim_dev->dpll.dpll_e_pd.temperature);
+> +	debugfs_create_u32("dpll_p_temp", 0600, nsim_dev->ddir,
+> +			   &nsim_dev->dpll.dpll_p_pd.temperature);
+> +
+>  	nsim_dev->nodes_ddir = debugfs_create_dir("rate_nodes", nsim_dev->ddir);
+>  	if (IS_ERR(nsim_dev->nodes_ddir)) {
+>  		err = PTR_ERR(nsim_dev->nodes_ddir);
+> @@ -1601,14 +1612,21 @@ int nsim_drv_probe(struct nsim_bus_dev *nsim_bus_dev)
+>  	if (err)
+>  		goto err_psample_exit;
+>  
+> -	err = nsim_dev_port_add_all(nsim_dev, nsim_bus_dev->port_count);
+> +	err = nsim_dpll_init_owner(&nsim_dev->dpll, nsim_bus_dev->port_count);
+>  	if (err)
+>  		goto err_hwstats_exit;
+>  
+> +	err = nsim_dev_port_add_all(nsim_dev, nsim_bus_dev->port_count);
+> +	if (err)
+> +		goto err_teardown_dpll;
+> +
+>  	nsim_dev->esw_mode = DEVLINK_ESWITCH_MODE_LEGACY;
+>  	devl_unlock(devlink);
+> +
+>  	return 0;
+>  
+> +err_teardown_dpll:
+> +	nsim_dpll_free_owner(&nsim_dev->dpll);
+>  err_hwstats_exit:
+>  	nsim_dev_hwstats_exit(nsim_dev);
+>  err_psample_exit:
+> @@ -1656,6 +1674,7 @@ static void nsim_dev_reload_destroy(struct nsim_dev *nsim_dev)
+>  	}
+>  
+>  	nsim_dev_port_del_all(nsim_dev);
+> +	nsim_dpll_free_owner(&nsim_dev->dpll);
+>  	nsim_dev_hwstats_exit(nsim_dev);
+>  	nsim_dev_psample_exit(nsim_dev);
+>  	nsim_dev_health_exit(nsim_dev);
+> diff --git a/drivers/net/netdevsim/dpll.c b/drivers/net/netdevsim/dpll.c
+> new file mode 100644
+> index 000000000000..26a8b0f3be16
+> --- /dev/null
+> +++ b/drivers/net/netdevsim/dpll.c
+> @@ -0,0 +1,489 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2023, Intel Corporation.
+> + * Author: Michal Michalik <michal.michalik@intel.com>
+> + */
+> +#include "netdevsim.h"
+> +
+> +#define EEC_DPLL_DEV 0
+> +#define EEC_DPLL_TEMPERATURE 20
+> +#define PPS_DPLL_DEV 1
+> +#define PPS_DPLL_TEMPERATURE 30
+> +
+> +#define PIN_GNSS 0
+> +#define PIN_GNSS_CAPABILITIES DPLL_PIN_CAPABILITIES_PRIORITY_CAN_CHANGE
+> +#define PIN_GNSS_PRIORITY 5
+> +
+> +#define PIN_PPS 1
+> +#define PIN_PPS_CAPABILITIES                          \
+> +	(DPLL_PIN_CAPABILITIES_DIRECTION_CAN_CHANGE | \
+> +	 DPLL_PIN_CAPABILITIES_PRIORITY_CAN_CHANGE |  \
+> +	 DPLL_PIN_CAPABILITIES_STATE_CAN_CHANGE)
+> +#define PIN_PPS_PRIORITY 6
+> +
+> +#define PIN_RCLK 2
+> +#define PIN_RCLK_CAPABILITIES                        \
+> +	(DPLL_PIN_CAPABILITIES_PRIORITY_CAN_CHANGE | \
+> +	 DPLL_PIN_CAPABILITIES_STATE_CAN_CHANGE)
+> +#define PIN_RCLK_PRIORITY 7
+> +
+> +#define EEC_PINS_NUMBER 3
+> +#define PPS_PINS_NUMBER 2
+> +
+> +static int nsim_fill_pin_properties(struct dpll_pin_properties *pp,
+> +				    const char *label, enum dpll_pin_type type,
+> +				    unsigned long caps, u32 freq_supp_num,
+> +				    u64 fmin, u64 fmax)
+> +{
+> +	struct dpll_pin_frequency *freq_supp;
+> +
+> +	freq_supp = kzalloc(sizeof(*freq_supp), GFP_KERNEL);
+> +	if (!freq_supp)
+> +		goto freq_supp;
+> +	freq_supp->min = fmin;
+> +	freq_supp->max = fmax;
+> +
+> +	pp->board_label = kasprintf(GFP_KERNEL, "%s_brd", label);
+> +	if (!pp->board_label)
+> +		goto board_label;
+> +	pp->panel_label = kasprintf(GFP_KERNEL, "%s_pnl", label);
+> +	if (!pp->panel_label)
+> +		goto panel_label;
+> +	pp->package_label = kasprintf(GFP_KERNEL, "%s_pcg", label);
+> +	if (!pp->package_label)
+> +		goto package_label;
+> +	pp->freq_supported_num = freq_supp_num;
+> +	pp->freq_supported = freq_supp;
+> +	pp->capabilities = caps;
+> +	pp->type = type;
+> +
+> +	return 0;
+> +
+> +package_label:
+> +	kfree(pp->panel_label);
+> +panel_label:
+> +	kfree(pp->board_label);
+> +board_label:
+> +	kfree(freq_supp);
+> +freq_supp:
+> +	return -ENOMEM;
+> +}
+> +
+> +static void nsim_fill_pin_pd(struct nsim_pin_priv_data *pd, u64 frequency,
+> +			     u32 prio, enum dpll_pin_direction direction)
+> +{
+> +	pd->state_dpll = DPLL_PIN_STATE_DISCONNECTED;
+> +	pd->state_pin = DPLL_PIN_STATE_DISCONNECTED;
+> +	pd->frequency = frequency;
+> +	pd->direction = direction;
+> +	pd->prio = prio;
+> +}
+> +
+> +static int nsim_dds_ops_mode_get(const struct dpll_device *dpll,
+> +				 void *dpll_priv, enum dpll_mode *mode,
+> +				 struct netlink_ext_ack *extack)
+> +{
+> +	struct nsim_dpll_priv_data *pd = dpll_priv;
+> +	*mode = pd->mode;
+> +	return 0;
+> +};
+> +
+> +static bool nsim_dds_ops_mode_supported(const struct dpll_device *dpll,
+> +					void *dpll_priv,
+> +					const enum dpll_mode mode,
+> +					struct netlink_ext_ack *extack)
+> +{
+> +	return true;
+> +};
+> +
+> +static int nsim_dds_ops_lock_status_get(const struct dpll_device *dpll,
+> +					void *dpll_priv,
+> +					enum dpll_lock_status *status,
+> +					struct netlink_ext_ack *extack)
+> +{
+> +	struct nsim_dpll_priv_data *pd = dpll_priv;
+> +
+> +	*status = pd->status;
+> +	return 0;
+> +};
+> +
+> +static int nsim_dds_ops_temp_get(const struct dpll_device *dpll,
+> +				 void *dpll_priv, s32 *temp,
+> +				 struct netlink_ext_ack *extack)
+> +{
+> +	struct nsim_dpll_priv_data *pd = dpll_priv;
+> +
+> +	*temp = pd->temperature;
+> +	return 0;
+> +};
+> +
+> +static int nsim_pin_frequency_set(const struct dpll_pin *pin, void *pin_priv,
+> +				  const struct dpll_device *dpll,
+> +				  void *dpll_priv, const u64 frequency,
+> +				  struct netlink_ext_ack *extack)
+> +{
+> +	struct nsim_pin_priv_data *pd = pin_priv;
+> +
+> +	pd->frequency = frequency;
+> +	return 0;
+> +};
+> +
+> +static int nsim_pin_frequency_get(const struct dpll_pin *pin, void *pin_priv,
+> +				  const struct dpll_device *dpll,
+> +				  void *dpll_priv, u64 *frequency,
+> +				  struct netlink_ext_ack *extack)
+> +{
+> +	struct nsim_pin_priv_data *pd = pin_priv;
+> +
+> +	*frequency = pd->frequency;
+> +	return 0;
+> +};
+> +
+> +static int nsim_pin_direction_set(const struct dpll_pin *pin, void *pin_priv,
+> +				  const struct dpll_device *dpll,
+> +				  void *dpll_priv,
+> +				  const enum dpll_pin_direction direction,
+> +				  struct netlink_ext_ack *extack)
+> +{
+> +	struct nsim_pin_priv_data *pd = pin_priv;
+> +
+> +	pd->direction = direction;
+> +	return 0;
+> +};
+> +
+> +static int nsim_pin_direction_get(const struct dpll_pin *pin, void *pin_priv,
+> +				  const struct dpll_device *dpll,
+> +				  void *dpll_priv,
+> +				  enum dpll_pin_direction *direction,
+> +				  struct netlink_ext_ack *extack)
+> +{
+> +	struct nsim_pin_priv_data *pd = pin_priv;
+> +
+> +	*direction = pd->direction;
+> +	return 0;
+> +};
+> +
+> +static int nsim_pin_state_on_pin_get(const struct dpll_pin *pin, void *pin_priv,
+> +				     const struct dpll_pin *parent_pin,
+> +				     void *parent_priv,
+> +				     enum dpll_pin_state *state,
+> +				     struct netlink_ext_ack *extack)
+> +{
+> +	struct nsim_pin_priv_data *pd = pin_priv;
+> +
+> +	*state = pd->state_pin;
+> +	return 0;
+> +};
+> +
+> +static int nsim_pin_state_on_dpll_get(const struct dpll_pin *pin,
+> +				      void *pin_priv,
+> +				      const struct dpll_device *dpll,
+> +				      void *dpll_priv,
+> +				      enum dpll_pin_state *state,
+> +				      struct netlink_ext_ack *extack)
+> +{
+> +	struct nsim_pin_priv_data *pd = pin_priv;
+> +
+> +	*state = pd->state_dpll;
+> +	return 0;
+> +};
+> +
+> +static int nsim_pin_state_on_pin_set(const struct dpll_pin *pin, void *pin_priv,
+> +				     const struct dpll_pin *parent_pin,
+> +				     void *parent_priv,
+> +				     const enum dpll_pin_state state,
+> +				     struct netlink_ext_ack *extack)
+> +{
+> +	struct nsim_pin_priv_data *pd = pin_priv;
+> +
+> +	pd->state_pin = state;
+> +	return 0;
+> +};
+> +
+> +static int nsim_pin_state_on_dpll_set(const struct dpll_pin *pin,
+> +				      void *pin_priv,
+> +				      const struct dpll_device *dpll,
+> +				      void *dpll_priv,
+> +				      const enum dpll_pin_state state,
+> +				      struct netlink_ext_ack *extack)
+> +{
+> +	struct nsim_pin_priv_data *pd = pin_priv;
+> +
+> +	pd->state_dpll = state;
+> +	return 0;
+> +};
+> +
+> +static int nsim_pin_prio_get(const struct dpll_pin *pin, void *pin_priv,
+> +			     const struct dpll_device *dpll, void *dpll_priv,
+> +			     u32 *prio, struct netlink_ext_ack *extack)
+> +{
+> +	struct nsim_pin_priv_data *pd = pin_priv;
+> +
+> +	*prio = pd->prio;
+> +	return 0;
+> +};
+> +
+> +static int nsim_pin_prio_set(const struct dpll_pin *pin, void *pin_priv,
+> +			     const struct dpll_device *dpll, void *dpll_priv,
+> +			     const u32 prio, struct netlink_ext_ack *extack)
+> +{
+> +	struct nsim_pin_priv_data *pd = pin_priv;
+> +
+> +	pd->prio = prio;
+> +	return 0;
+> +};
+> +
+> +static void nsim_free_pin_properties(struct dpll_pin_properties *pp)
+> +{
+> +	kfree(pp->board_label);
+> +	kfree(pp->panel_label);
+> +	kfree(pp->package_label);
+> +	kfree(pp->freq_supported);
+> +}
+> +
+> +static struct dpll_device_ops nsim_dds_ops = {
+> +	.mode_get = nsim_dds_ops_mode_get,
+> +	.mode_supported = nsim_dds_ops_mode_supported,
+> +	.lock_status_get = nsim_dds_ops_lock_status_get,
+> +	.temp_get = nsim_dds_ops_temp_get,
+> +};
+> +
+> +static struct dpll_pin_ops nsim_pin_ops = {
+> +	.frequency_set = nsim_pin_frequency_set,
+> +	.frequency_get = nsim_pin_frequency_get,
+> +	.direction_set = nsim_pin_direction_set,
+> +	.direction_get = nsim_pin_direction_get,
+> +	.state_on_pin_get = nsim_pin_state_on_pin_get,
+> +	.state_on_dpll_get = nsim_pin_state_on_dpll_get,
+> +	.state_on_pin_set = nsim_pin_state_on_pin_set,
+> +	.state_on_dpll_set = nsim_pin_state_on_dpll_set,
+> +	.prio_get = nsim_pin_prio_get,
+> +	.prio_set = nsim_pin_prio_set,
+> +};
+> +
+> +int nsim_dpll_init_owner(struct nsim_dpll *dpll, unsigned int ports_count)
+> +{
+> +	u64 clock_id;
+> +	int err;
+> +
+> +	get_random_bytes(&clock_id, sizeof(clock_id));
+> +
+> +	/* Create EEC DPLL */
+> +	dpll->dpll_e = dpll_device_get(clock_id, EEC_DPLL_DEV, THIS_MODULE);
+> +	if (IS_ERR(dpll->dpll_e))
+> +		return -EFAULT;
+> +
+> +	dpll->dpll_e_pd.temperature = EEC_DPLL_TEMPERATURE;
+> +	dpll->dpll_e_pd.mode = DPLL_MODE_AUTOMATIC;
+> +	dpll->dpll_e_pd.clock_id = clock_id;
+> +	dpll->dpll_e_pd.status = DPLL_LOCK_STATUS_UNLOCKED;
+> +
+> +	err = dpll_device_register(dpll->dpll_e, DPLL_TYPE_EEC, &nsim_dds_ops,
+> +				   &dpll->dpll_e_pd);
+> +	if (err)
+> +		goto e_reg;
+> +
+> +	/* Create PPS DPLL */
+> +	dpll->dpll_p = dpll_device_get(clock_id, PPS_DPLL_DEV, THIS_MODULE);
+> +	if (IS_ERR(dpll->dpll_p))
+> +		goto dpll_p;
+> +
+> +	dpll->dpll_p_pd.temperature = PPS_DPLL_TEMPERATURE;
+> +	dpll->dpll_p_pd.mode = DPLL_MODE_MANUAL;
+> +	dpll->dpll_p_pd.clock_id = clock_id;
+> +	dpll->dpll_p_pd.status = DPLL_LOCK_STATUS_UNLOCKED;
+> +
+> +	err = dpll_device_register(dpll->dpll_p, DPLL_TYPE_PPS, &nsim_dds_ops,
+> +				   &dpll->dpll_p_pd);
+> +	if (err)
+> +		goto p_reg;
+> +
+> +	/* Create first pin (GNSS) */
+> +	err = nsim_fill_pin_properties(&dpll->pp_gnss, "GNSS",
+> +				       DPLL_PIN_TYPE_GNSS,
+> +				       PIN_GNSS_CAPABILITIES, 1,
+> +				       DPLL_PIN_FREQUENCY_1_HZ,
+> +				       DPLL_PIN_FREQUENCY_1_HZ);
+> +	if (err)
+> +		goto pp_gnss;
+> +	dpll->p_gnss =
+> +		dpll_pin_get(clock_id, PIN_GNSS, THIS_MODULE, &dpll->pp_gnss);
+> +	if (IS_ERR(dpll->p_gnss))
+> +		goto p_gnss;
 
+Hi Michal,
+
+I think that err needs to be set to something inside the if condition
+above.
+
+> +	nsim_fill_pin_pd(&dpll->p_gnss_pd, DPLL_PIN_FREQUENCY_1_HZ,
+> +			 PIN_GNSS_PRIORITY, DPLL_PIN_DIRECTION_INPUT);
+> +	err = dpll_pin_register(dpll->dpll_e, dpll->p_gnss, &nsim_pin_ops,
+> +				&dpll->p_gnss_pd);
+> +	if (err)
+> +		goto e_gnss_reg;
+> +
+> +	/* Create second pin (PPS) */
+> +	err = nsim_fill_pin_properties(&dpll->pp_pps, "PPS", DPLL_PIN_TYPE_EXT,
+> +				       PIN_PPS_CAPABILITIES, 1,
+> +				       DPLL_PIN_FREQUENCY_1_HZ,
+> +				       DPLL_PIN_FREQUENCY_1_HZ);
+> +	if (err)
+> +		goto pp_pps;
+> +	dpll->p_pps =
+> +		dpll_pin_get(clock_id, PIN_PPS, THIS_MODULE, &dpll->pp_pps);
+> +	if (IS_ERR(dpll->p_pps)) {
+> +		err = -EFAULT;
+> +		goto p_pps;
+> +	}
+> +	nsim_fill_pin_pd(&dpll->p_pps_pd, DPLL_PIN_FREQUENCY_1_HZ,
+> +			 PIN_PPS_PRIORITY, DPLL_PIN_DIRECTION_INPUT);
+> +	err = dpll_pin_register(dpll->dpll_e, dpll->p_pps, &nsim_pin_ops,
+> +				&dpll->p_pps_pd);
+> +	if (err)
+> +		goto e_pps_reg;
+> +	err = dpll_pin_register(dpll->dpll_p, dpll->p_pps, &nsim_pin_ops,
+> +				&dpll->p_pps_pd);
+> +	if (err)
+> +		goto p_pps_reg;
+> +
+> +	dpll->pp_rclk =
+> +		kcalloc(ports_count, sizeof(*dpll->pp_rclk), GFP_KERNEL);
+> +	dpll->p_rclk = kcalloc(ports_count, sizeof(*dpll->p_rclk), GFP_KERNEL);
+> +	dpll->p_rclk_pd =
+> +		kcalloc(ports_count, sizeof(*dpll->p_rclk_pd), GFP_KERNEL);
+> +
+> +	return 0;
+> +
+> +p_pps_reg:
+> +	dpll_pin_unregister(dpll->dpll_e, dpll->p_pps, &nsim_pin_ops,
+> +			    &dpll->p_pps_pd);
+> +e_pps_reg:
+> +	dpll_pin_put(dpll->p_pps);
+> +p_pps:
+> +	nsim_free_pin_properties(&dpll->pp_pps);
+> +pp_pps:
+> +	dpll_pin_unregister(dpll->dpll_e, dpll->p_gnss, &nsim_pin_ops,
+> +			    &dpll->p_gnss_pd);
+> +e_gnss_reg:
+> +	dpll_pin_put(dpll->p_gnss);
+> +p_gnss:
+> +	nsim_free_pin_properties(&dpll->pp_gnss);
+> +pp_gnss:
+> +	dpll_device_unregister(dpll->dpll_p, &nsim_dds_ops, &dpll->dpll_p_pd);
+> +p_reg:
+> +	dpll_device_put(dpll->dpll_p);
+> +dpll_p:
+> +	dpll_device_unregister(dpll->dpll_e, &nsim_dds_ops, &dpll->dpll_e_pd);
+> +e_reg:
+> +	dpll_device_put(dpll->dpll_e);
+> +	return err;
+> +}
+
+...
