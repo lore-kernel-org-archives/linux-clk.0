@@ -1,455 +1,174 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pqrs.dk header.i=@pqrs.dk header.b="IURfE3tB"
-Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [IPv6:2001:41d0:1004:224b::b0])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5933D2103
-	for <linux-clk@vger.kernel.org>; Fri, 24 Nov 2023 05:27:32 -0800 (PST)
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pqrs.dk; s=key1;
-	t=1700831883;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6nDhDwEJ+SbtLELZdaixLvuwdVxH8C4K9uqe72ym1So=;
-	b=IURfE3tBKE2YXId7Z7ozWJ2gs5xfKNxfmUY5bcoVJ04DgKggzD+0FDO5sxdWxFO9jFYOm8
-	v5WWgnByUU8KALY+XNMXyiLeqSZwLF2q1P5ZBLx1urPIW1YJCHr1S+jtIgIq8r6DXFvrW4
-	5Tik5SOIPtOjofjm9JJi3OlGRn793ekNt5g7hok9i7ifxI1myzoTsHqqeiDzZbaKYYSQ95
-	SlC/n2DreadEhxatWYnfAkkinqO0g46lvkoN2T9OUQbNj4OEIISVS7KILGW+sFhmbwcMbO
-	HVSKpzdTwfQ57+qtHaRd1JLBlUI12SYbfPNDWMMXoiwRs1KMctXna9mc4TWDDg==
-From: =?utf-8?q?Alvin_=C5=A0ipraga?= <alvin@pqrs.dk>
-Date: Fri, 24 Nov 2023 14:17:42 +0100
-Subject: [PATCH v6 1/3] dt-bindings: clock: si5351: convert to yaml
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SXfobGd6"
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 477EAD71
+	for <linux-clk@vger.kernel.org>; Fri, 24 Nov 2023 05:51:07 -0800 (PST)
+Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-40b2afd049aso13394915e9.0
+        for <linux-clk@vger.kernel.org>; Fri, 24 Nov 2023 05:51:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1700833866; x=1701438666; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :references:cc:to:content-language:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VxCC2Aq/t8/Q52ovrlgjo6dDEhp//mxj0rpaMToUQEw=;
+        b=SXfobGd6xu1kNerihSTVM0fMjoMTJepJn9SsiYzapAkDo0XFBARSRvGY62PxolvLKj
+         JjSevhAYIvUwpQziHEuaAWdG32cn+I0ptzdvEd+M7ds3RPTyuhki4t53aNvmbHb26/ZS
+         z5Vocy8OJLrcQav69jovpTqmA7q/hAqmLKumgh6gI6FWstaA08ec9pnLP+WdXtEvb0y9
+         sldxK3q5W12sG1l9NugJLJaTunpbTFGjCsuAgpUE02YtA8m+iyeVgpAtiyLJ15n2iMtw
+         BXa0eAFUUTBpaDP8551hnjXS1FetYS68ahIr3vFudi9QY4JOWf24CUL+5OfWkAAUWLUX
+         6qew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700833866; x=1701438666;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :references:cc:to:content-language:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=VxCC2Aq/t8/Q52ovrlgjo6dDEhp//mxj0rpaMToUQEw=;
+        b=ICwkF0G1Fc7FZhT6nQ/Dnp01SiuJuNGsWpAnLH2CBldcSULCW435ZprgDwaFKHMdtj
+         hJaZ46svCKJF5Q8tlQtoLDCkceZzMr0ioH8AxeDu/V5LoTIfWSA12FpzZqz3XIA9evVY
+         wmLqpKTObs0bIXIRgDXw2Bu0aRHFDNEQmE/FFzxqzCG1kiN+SB+DAYWqWFT76KBh4jhq
+         p3D13XBXHCmMiUqmYs2VssMOKjoOfGX9EAV920SnOVWNx8HwqibeC8jHlV6imFHYVm7d
+         PUCUgJqBPwyMMXSOPeoLqdD2dXhSlrYtY2ipbFhebk+TFwr4ErSLT4PDj1pth99Hx7zk
+         3rig==
+X-Gm-Message-State: AOJu0Yy8MWpyiS6tC2X56NTH0xLYQevh9HracXmY82IpGY60Ok8v3RuI
+	7SnsCopPL24jckMEeB9f/tao5g==
+X-Google-Smtp-Source: AGHT+IEEAJHJwIQiERlLA4dW2jNyNyW36yyG+T8pNRKwyFVm+lg97DXezz9uNgCZRLAAjUfPmw5KOA==
+X-Received: by 2002:a05:600c:4f4b:b0:40b:36e9:bf4b with SMTP id m11-20020a05600c4f4b00b0040b36e9bf4bmr2821370wmq.41.1700833865591;
+        Fri, 24 Nov 2023 05:51:05 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:982:cbb0:4611:6dae:b5a3:b6a4? ([2a01:e0a:982:cbb0:4611:6dae:b5a3:b6a4])
+        by smtp.gmail.com with ESMTPSA id fj13-20020a05600c0c8d00b00407b93d8085sm5856582wmb.27.2023.11.24.05.50.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Nov 2023 05:51:05 -0800 (PST)
+Message-ID: <c3a07912-07da-4965-94b8-3c0d8889ddc4@linaro.org>
+Date: Fri, 24 Nov 2023 14:50:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20231124-alvin-clk-si5351-no-pll-reset-v6-1-69b82311cb90@bang-olufsen.dk>
-References: <20231124-alvin-clk-si5351-no-pll-reset-v6-0-69b82311cb90@bang-olufsen.dk>
-In-Reply-To: <20231124-alvin-clk-si5351-no-pll-reset-v6-0-69b82311cb90@bang-olufsen.dk>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- =?utf-8?q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
- Rabeeh Khoury <rabeeh@solid-run.com>, 
- Jacob Siverskog <jacob@teenage.engineering>, 
- Sergej Sawazki <sergej@taudac.com>, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Rob Herring <robh@kernel.org>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v9 04/12] dt-bindings: phy: amlogic,g12a-mipi-dphy-analog:
+ drop unneeded reg property and example
+Content-Language: en-US, fr
+To: Conor Dooley <conor@kernel.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Jagan Teki <jagan@amarulasolutions.com>, Nicolas Belin
+ <nbelin@baylibre.com>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Remi Pommarel
+ <repk@triplefau.lt>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
+ linux-phy@lists.infradead.org, Rob Herring <robh@kernel.org>
+References: <20231124-amlogic-v6-4-upstream-dsi-ccf-vim3-v9-0-95256ed139e6@linaro.org>
+ <20231124-amlogic-v6-4-upstream-dsi-ccf-vim3-v9-4-95256ed139e6@linaro.org>
+ <20231124-felt-tip-everybody-f2a6836e52af@spud>
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro Developer Services
+In-Reply-To: <20231124-felt-tip-everybody-f2a6836e52af@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Alvin Šipraga <alsi@bang-olufsen.dk>
+Hi Conor,
 
-The following additional properties are described:
+On 24/11/2023 13:36, Conor Dooley wrote:
+> On Fri, Nov 24, 2023 at 09:41:15AM +0100, Neil Armstrong wrote:
+>> The amlogic,g12a-mipi-dphy-analog is a feature of the simple-mfd
+>> amlogic,meson-axg-hhi-sysctrl system control register zone which is an
+>> intermixed registers zone, thus it's very hard to define clear ranges for
+>> each SoC controlled features even if possible.
+>>
+>> The amlogic,g12a-mipi-dphy-analog was wrongly documented as an independent
+>> register range, which is not the reality, thus fix the bindings by dropping
+>> the reg property now it's referred from amlogic,meson-gx-hhi-sysctrl.yaml
+>> and documented as a subnode of amlogic,meson-axg-hhi-sysctrl.
+>>
+>> Also drop the unnecessary example, the top level bindings example should
+>> be enough.
+>>
+>> Fixes: 76ab79f9726c ("dt-bindings: phy: add Amlogic G12A Analog MIPI D-PHY bindings")
+>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> 
+> I feel like I left a tag on this one before, but I can't remember.
+> Perhaps I missed the conclusion to the discussion to the discussion with
+> Rob about whether having "reg" was desirable that lead to a tag being
+> dropped?
 
-  - clock-names
-  - clock-frequency of the clkout child nodes
+I checked again and nope, not tag, but Rob's question was legitimate and I reworded
+and clarified the commit message following your reviews.
+On the other side you suggested a Fixes tag, which I added.
 
-In order to suppress warnings from the DT schema validator, the clkout
-child nodes are prescribed names clkout@[0-7] rather than clkout[0-7].
+The rewording is about why reg doesn't make sense on the nature of the memory
+region and it doesn't make sense here like other similar nodes.
 
-The example is refined as follows:
+Neil
 
-  - correct the usage of property pll-master -> silabs,pll-master
-  - give an example of how the silabs,pll-reset property can be used
-
-I made myself maintainer of the file as I cannot presume that anybody
-else wants the responsibility.
-
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Rabeeh Khoury <rabeeh@solid-run.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Alvin Šipraga <alsi@bang-olufsen.dk>
----
- .../devicetree/bindings/clock/silabs,si5351.txt    | 126 -----------
- .../devicetree/bindings/clock/silabs,si5351.yaml   | 241 +++++++++++++++++++++
- 2 files changed, 241 insertions(+), 126 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/clock/silabs,si5351.txt b/Documentation/devicetree/bindings/clock/silabs,si5351.txt
-deleted file mode 100644
-index bfda6af76bee..000000000000
---- a/Documentation/devicetree/bindings/clock/silabs,si5351.txt
-+++ /dev/null
-@@ -1,126 +0,0 @@
--Binding for Silicon Labs Si5351a/b/c programmable i2c clock generator.
--
--Reference
--[1] Si5351A/B/C Data Sheet
--    https://www.skyworksinc.com/-/media/Skyworks/SL/documents/public/data-sheets/Si5351-B.pdf
--
--The Si5351a/b/c are programmable i2c clock generators with up to 8 output
--clocks. Si5351a also has a reduced pin-count package (MSOP10) where only
--3 output clocks are accessible. The internal structure of the clock
--generators can be found in [1].
--
--==I2C device node==
--
--Required properties:
--- compatible: shall be one of the following:
--	"silabs,si5351a" - Si5351a, QFN20 package
--	"silabs,si5351a-msop" - Si5351a, MSOP10 package
--	"silabs,si5351b" - Si5351b, QFN20 package
--	"silabs,si5351c" - Si5351c, QFN20 package
--- reg: i2c device address, shall be 0x60 or 0x61.
--- #clock-cells: from common clock binding; shall be set to 1.
--- clocks: from common clock binding; list of parent clock
--  handles, shall be xtal reference clock or xtal and clkin for
--  si5351c only. Corresponding clock input names are "xtal" and
--  "clkin" respectively.
--- #address-cells: shall be set to 1.
--- #size-cells: shall be set to 0.
--
--Optional properties:
--- silabs,pll-source: pair of (number, source) for each pll. Allows
--  to overwrite clock source of pll A (number=0) or B (number=1).
--
--==Child nodes==
--
--Each of the clock outputs can be overwritten individually by
--using a child node to the I2C device node. If a child node for a clock
--output is not set, the eeprom configuration is not overwritten.
--
--Required child node properties:
--- reg: number of clock output.
--
--Optional child node properties:
--- silabs,clock-source: source clock of the output divider stage N, shall be
--  0 = multisynth N
--  1 = multisynth 0 for output clocks 0-3, else multisynth4
--  2 = xtal
--  3 = clkin (si5351c only)
--- silabs,drive-strength: output drive strength in mA, shall be one of {2,4,6,8}.
--- silabs,multisynth-source: source pll A(0) or B(1) of corresponding multisynth
--  divider.
--- silabs,pll-master: boolean, multisynth can change pll frequency.
--- silabs,pll-reset: boolean, clock output can reset its pll.
--- silabs,disable-state : clock output disable state, shall be
--  0 = clock output is driven LOW when disabled
--  1 = clock output is driven HIGH when disabled
--  2 = clock output is FLOATING (HIGH-Z) when disabled
--  3 = clock output is NEVER disabled
--
--==Example==
--
--/* 25MHz reference crystal */
--ref25: ref25M {
--	compatible = "fixed-clock";
--	#clock-cells = <0>;
--	clock-frequency = <25000000>;
--};
--
--i2c-master-node {
--
--	/* Si5351a msop10 i2c clock generator */
--	si5351a: clock-generator@60 {
--		compatible = "silabs,si5351a-msop";
--		reg = <0x60>;
--		#address-cells = <1>;
--		#size-cells = <0>;
--		#clock-cells = <1>;
--
--		/* connect xtal input to 25MHz reference */
--		clocks = <&ref25>;
--		clock-names = "xtal";
--
--		/* connect xtal input as source of pll0 and pll1 */
--		silabs,pll-source = <0 0>, <1 0>;
--
--		/*
--		 * overwrite clkout0 configuration with:
--		 * - 8mA output drive strength
--		 * - pll0 as clock source of multisynth0
--		 * - multisynth0 as clock source of output divider
--		 * - multisynth0 can change pll0
--		 * - set initial clock frequency of 74.25MHz
--		 */
--		clkout0 {
--			reg = <0>;
--			silabs,drive-strength = <8>;
--			silabs,multisynth-source = <0>;
--			silabs,clock-source = <0>;
--			silabs,pll-master;
--			clock-frequency = <74250000>;
--		};
--
--		/*
--		 * overwrite clkout1 configuration with:
--		 * - 4mA output drive strength
--		 * - pll1 as clock source of multisynth1
--		 * - multisynth1 as clock source of output divider
--		 * - multisynth1 can change pll1
--		 */
--		clkout1 {
--			reg = <1>;
--			silabs,drive-strength = <4>;
--			silabs,multisynth-source = <1>;
--			silabs,clock-source = <0>;
--			pll-master;
--		};
--
--		/*
--		 * overwrite clkout2 configuration with:
--		 * - xtal as clock source of output divider
--		 */
--		clkout2 {
--			reg = <2>;
--			silabs,clock-source = <2>;
--		};
--	};
--};
-diff --git a/Documentation/devicetree/bindings/clock/silabs,si5351.yaml b/Documentation/devicetree/bindings/clock/silabs,si5351.yaml
-new file mode 100644
-index 000000000000..494fa49a0c1b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/silabs,si5351.yaml
-@@ -0,0 +1,241 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/silabs,si5351.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Silicon Labs Si5351A/B/C programmable I2C clock generators
-+
-+description: |
-+  The Silicon Labs Si5351A/B/C are programmable I2C clock generators with up to
-+  8 outputs. Si5351A also has a reduced pin-count package (10-MSOP) where only 3
-+  output clocks are accessible. The internal structure of the clock generators
-+  can be found in [1].
-+
-+  [1] Si5351A/B/C Data Sheet
-+      https://www.skyworksinc.com/-/media/Skyworks/SL/documents/public/data-sheets/Si5351-B.pdf
-+
-+maintainers:
-+  - Alvin Šipraga <alsi@bang-olufsen.dk>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - silabs,si5351a      # Si5351A, 20-QFN package
-+      - silabs,si5351a-msop # Si5351A, 10-MSOP package
-+      - silabs,si5351b      # Si5351B, 20-QFN package
-+      - silabs,si5351c      # Si5351C, 20-QFN package
-+
-+  reg:
-+    enum:
-+      - 0x60
-+      - 0x61
-+
-+  "#address-cells":
-+    const: 1
-+
-+  "#size-cells":
-+    const: 0
-+
-+  "#clock-cells":
-+    const: 1
-+
-+  clocks:
-+    minItems: 1
-+    maxItems: 2
-+
-+  clock-names:
-+    minItems: 1
-+    items:
-+      - const: xtal
-+      - const: clkin
-+
-+  silabs,pll-source:
-+    $ref: /schemas/types.yaml#/definitions/uint32-matrix
-+    description: |
-+      A list of cell pairs containing a PLL index and its source. Allows to
-+      overwrite clock source of the internal PLLs.
-+    items:
-+      items:
-+        - description: PLL A (0) or PLL B (1)
-+          enum: [ 0, 1 ]
-+        - description: PLL source, XTAL (0) or CLKIN (1, Si5351C only).
-+          enum: [ 0, 1 ]
-+
-+patternProperties:
-+  "^clkout@[0-7]$":
-+    type: object
-+
-+    additionalProperties: false
-+
-+    properties:
-+      reg:
-+        description: Clock output number.
-+
-+      clock-frequency: true
-+
-+      silabs,clock-source:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        description: |
-+          Source clock of the this output's divider stage.
-+
-+          0 - use multisynth N for this output, where N is the output number
-+          1 - use either multisynth 0 (if output number is 0-3) or multisynth 4
-+              (otherwise) for this output
-+          2 - use XTAL for this output
-+          3 - use CLKIN for this output (Si5351C only)
-+
-+      silabs,drive-strength:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        enum: [ 2, 4, 6, 8 ]
-+        description: Output drive strength in mA.
-+
-+      silabs,multisynth-source:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        enum: [ 0, 1 ]
-+        description:
-+          Source PLL A (0) or B (1) for the corresponding multisynth divider.
-+
-+      silabs,pll-master:
-+        type: boolean
-+        description: |
-+          The frequency of the source PLL is allowed to be changed by the
-+          multisynth when setting the rate of this clock output.
-+
-+      silabs,pll-reset:
-+        type: boolean
-+        description: Reset the source PLL when enabling this clock output.
-+
-+      silabs,disable-state:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        enum: [ 0, 1, 2, 3 ]
-+        description: |
-+          Clock output disable state. The state can be one of:
-+
-+          0 - clock output is driven LOW when disabled
-+          1 - clock output is driven HIGH when disabled
-+          2 - clock output is FLOATING (HIGH-Z) when disabled
-+          3 - clock output is never disabled
-+
-+    allOf:
-+      - if:
-+          properties:
-+            compatible:
-+              contains:
-+                const: silabs,si5351a-msop
-+        then:
-+          properties:
-+            reg:
-+              maximum: 2
-+        else:
-+          properties:
-+            reg:
-+              maximum: 7
-+
-+      - if:
-+          properties:
-+            compatible:
-+              contains:
-+                const: silabs,si5351c
-+        then:
-+          properties:
-+            silabs,clock-source:
-+              enum: [ 0, 1, 2, 3 ]
-+        else:
-+          properties:
-+            silabs,clock-source:
-+              enum: [ 0, 1, 2 ]
-+
-+    required:
-+      - reg
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - silabs,si5351a
-+              - silabs,si5351a-msop
-+              - silabs,si5351b
-+    then:
-+      properties:
-+        clocks:
-+          maxItems: 1
-+        clock-names:
-+          maxItems: 1
-+
-+required:
-+  - reg
-+  - "#address-cells"
-+  - "#size-cells"
-+  - "#clock-cells"
-+  - clocks
-+  - clock-names
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    i2c {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      clock-generator@60 {
-+        compatible = "silabs,si5351a-msop";
-+        reg = <0x60>;
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+        #clock-cells = <1>;
-+
-+        /* Connect XTAL input to 25MHz reference */
-+        clocks = <&ref25>;
-+        clock-names = "xtal";
-+
-+        /* Use XTAL input as source of PLL0 and PLL1 */
-+        silabs,pll-source = <0 0>, <1 0>;
-+
-+        /*
-+         * Overwrite CLK0 configuration with:
-+         * - 8 mA output drive strength
-+         * - PLL0 as clock source of multisynth 0
-+         * - Multisynth 0 as clock source of output divider
-+         * - Multisynth 0 can change PLL0
-+         * - Set initial clock frequency of 74.25MHz
-+         */
-+        clkout@0 {
-+          reg = <0>;
-+          silabs,drive-strength = <8>;
-+          silabs,multisynth-source = <0>;
-+          silabs,clock-source = <0>;
-+          silabs,pll-master;
-+          clock-frequency = <74250000>;
-+        };
-+
-+        /*
-+         * Overwrite CLK1 configuration with:
-+         * - 4 mA output drive strength
-+         * - PLL1 as clock source of multisynth 1
-+         * - Multisynth 1 as clock source of output divider
-+         * - Multisynth 1 can change PLL1
-+         * - Reset PLL1 when enabling this clock output
-+         */
-+        clkout@1 {
-+          reg = <1>;
-+          silabs,drive-strength = <4>;
-+          silabs,multisynth-source = <1>;
-+          silabs,clock-source = <0>;
-+          silabs,pll-master;
-+          silabs,pll-reset;
-+        };
-+
-+        /*
-+         * Overwrite CLK2 configuration with:
-+         * - XTAL as clock source of output divider
-+         */
-+        clkout@2 {
-+          reg = <2>;
-+          silabs,clock-source = <2>;
-+        };
-+      };
-+    };
-
--- 
-2.42.1
+> 
+>> ---
+>>   .../bindings/phy/amlogic,g12a-mipi-dphy-analog.yaml          | 12 ------------
+>>   1 file changed, 12 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/phy/amlogic,g12a-mipi-dphy-analog.yaml b/Documentation/devicetree/bindings/phy/amlogic,g12a-mipi-dphy-analog.yaml
+>> index c8c83acfb871..81c2654b7e57 100644
+>> --- a/Documentation/devicetree/bindings/phy/amlogic,g12a-mipi-dphy-analog.yaml
+>> +++ b/Documentation/devicetree/bindings/phy/amlogic,g12a-mipi-dphy-analog.yaml
+>> @@ -16,20 +16,8 @@ properties:
+>>     "#phy-cells":
+>>       const: 0
+>>   
+>> -  reg:
+>> -    maxItems: 1
+>> -
+>>   required:
+>>     - compatible
+>> -  - reg
+>>     - "#phy-cells"
+>>   
+>>   additionalProperties: false
+>> -
+>> -examples:
+>> -  - |
+>> -    phy@0 {
+>> -          compatible = "amlogic,g12a-mipi-dphy-analog";
+>> -          reg = <0x0 0xc>;
+>> -          #phy-cells = <0>;
+>> -    };
+>>
+>> -- 
+>> 2.34.1
+>>
 
