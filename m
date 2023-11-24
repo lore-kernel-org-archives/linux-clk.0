@@ -1,127 +1,139 @@
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED69286A2;
+	Fri, 24 Nov 2023 12:36:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="p1mrNvAa"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B246CCE;
-	Fri, 24 Nov 2023 03:34:42 -0800 (PST)
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AOBOS1D026795;
-	Fri, 24 Nov 2023 11:34:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=vRVEH7FyUe2r0RGGbZQpVmk5oX6JLJC9ovHaN86FYHk=;
- b=p1mrNvAa1R6kCFdRla4m5dNzz1TAc3r0T4pfrsy3s3YJFXRCmwCsD3XGc8Ib7l184TAB
- rpwcefOD0JMNNTDoSpM3vLZC0lGoC/nmoaoYskacf+0kZ73jOS35GbgY95ZC+vFoq3Cf
- F8WdoUQzm4OsaDyqI/k3uuHnNk3HsfEW4bgYClTlCW306YRBUwtFRgJgLBbuw4+8oKNM
- MwOZn52VTiZRRPrFN8+d3jWqVvrBtz159aNWJ3Gkye245Lz+rlumL7DYJltcJpabKbv+
- ++7EaqE6eRTVi1t+xM2tWeGRy756MOLWHivp5WTaKS9vP+AhedUMwyWHxgwTbAKaU++o pQ== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3uj4hwjqqn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 24 Nov 2023 11:34:38 +0000
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3AOBYbPv016090
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 24 Nov 2023 11:34:37 GMT
-Received: from [10.218.19.46] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Fri, 24 Nov
- 2023 03:34:32 -0800
-Message-ID: <9c41d1ce-d4e7-efca-1be0-ddf296f59ac8@quicinc.com>
-Date: Fri, 24 Nov 2023 17:04:28 +0530
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e4tHQasD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62F25C433C9;
+	Fri, 24 Nov 2023 12:36:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1700829399;
+	bh=iBs/ElE00ZyViC4c51swbIBIFHOSqvLccbbeT1AqVhQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=e4tHQasD1uiBgjppYsnvSsVLtBZ9TQ/izusSKXRVoWvDcvG0eAgkyQIZHqHQF94uo
+	 2swUm2B5piBcScLzvcZCI+8HS2Bm42aYhatjDrfqVBjsJa+tqiElsoXd9kDJxd3WWe
+	 8fZNN2/LuPaXYBjsN84OBryouoLRKQaQGQVNh7YMzz+6Ljkp2lWvgzq6TC+NcQScdc
+	 1hZS1y1XM8RFpGnA+sRtd/5cN6Z8JkZ+b2veHsJ/ZRVYxJtRSZuWZTtyDzhmyEkZaM
+	 a9a7gnwnC4HAuYKLPIg6jWciEdAgvft2rybjDAy/9WHSMa2J+R9P++vV4u0zy2Ypj/
+	 u08VbCLPORCjg==
+Date: Fri, 24 Nov 2023 12:36:32 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Jagan Teki <jagan@amarulasolutions.com>,
+	Nicolas Belin <nbelin@baylibre.com>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Remi Pommarel <repk@triplefau.lt>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
+	Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v9 04/12] dt-bindings: phy:
+ amlogic,g12a-mipi-dphy-analog: drop unneeded reg property and example
+Message-ID: <20231124-felt-tip-everybody-f2a6836e52af@spud>
+References: <20231124-amlogic-v6-4-upstream-dsi-ccf-vim3-v9-0-95256ed139e6@linaro.org>
+ <20231124-amlogic-v6-4-upstream-dsi-ccf-vim3-v9-4-95256ed139e6@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH V2 4/4] clk: qcom: videocc-sm8150: Add runtime PM support
-Content-Language: en-US
-To: Konrad Dybcio <konrad.dybcio@linaro.org>, Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-References: <20231118123944.2202630-1-quic_skakitap@quicinc.com>
- <20231118123944.2202630-5-quic_skakitap@quicinc.com>
- <9710258c-3419-41f2-9b30-f818b031ae5f@linaro.org>
-From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
-In-Reply-To: <9710258c-3419-41f2-9b30-f818b031ae5f@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: vyB1itvbmqZJMeEQ4qxXnHo2KRgPhvTn
-X-Proofpoint-ORIG-GUID: vyB1itvbmqZJMeEQ4qxXnHo2KRgPhvTn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-11-23_15,2023-11-22_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 priorityscore=1501 bulkscore=0 mlxscore=0 mlxlogscore=999
- suspectscore=0 phishscore=0 spamscore=0 lowpriorityscore=0 clxscore=1015
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311060000 definitions=main-2311240089
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="rgdN8ghBXlvRBfQ2"
+Content-Disposition: inline
+In-Reply-To: <20231124-amlogic-v6-4-upstream-dsi-ccf-vim3-v9-4-95256ed139e6@linaro.org>
 
 
-On 11/23/2023 1:31 AM, Konrad Dybcio wrote:
->
->
-> On 11/18/23 13:39, Satya Priya Kakitapalli wrote:
->> Add runtime PM support to ensure the supply rails are enabled
->> when necessary.
->>
->> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
->> ---
->> Changes since v1:
->>   - None.
->>
->>   drivers/clk/qcom/videocc-sm8150.c | 20 ++++++++++++++++++--
->>   1 file changed, 18 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/clk/qcom/videocc-sm8150.c 
->> b/drivers/clk/qcom/videocc-sm8150.c
->> index 52a9a453a143..b57df5ff96c4 100644
->> --- a/drivers/clk/qcom/videocc-sm8150.c
->> +++ b/drivers/clk/qcom/videocc-sm8150.c
->> @@ -6,6 +6,7 @@
->>   #include <linux/clk-provider.h>
->>   #include <linux/module.h>
->>   #include <linux/platform_device.h>
->> +#include <linux/pm_runtime.h>
->>   #include <linux/regmap.h>
->>     #include <dt-bindings/clock/qcom,videocc-sm8150.h>
->> @@ -240,17 +241,32 @@ MODULE_DEVICE_TABLE(of, 
->> video_cc_sm8150_match_table);
->>   static int video_cc_sm8150_probe(struct platform_device *pdev)
->>   {
->>       struct regmap *regmap;
->> +    int ret;
->> +
->> +    ret = devm_pm_runtime_enable(&pdev->dev);
->> +    if (ret)
->> +        return ret;
->> +
->> +    ret = pm_runtime_resume_and_get(&pdev->dev);
->> +    if (ret)
->> +        return ret;
->>         regmap = qcom_cc_map(pdev, &video_cc_sm8150_desc);
->> -    if (IS_ERR(regmap))
->> +    if (IS_ERR(regmap)) {
->> +        pm_runtime_put(&pdev->dev);
-> Shouldn't this be _sync?
->
+--rgdN8ghBXlvRBfQ2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes, will update it on v2
+On Fri, Nov 24, 2023 at 09:41:15AM +0100, Neil Armstrong wrote:
+> The amlogic,g12a-mipi-dphy-analog is a feature of the simple-mfd
+> amlogic,meson-axg-hhi-sysctrl system control register zone which is an
+> intermixed registers zone, thus it's very hard to define clear ranges for
+> each SoC controlled features even if possible.
+>=20
+> The amlogic,g12a-mipi-dphy-analog was wrongly documented as an independent
+> register range, which is not the reality, thus fix the bindings by droppi=
+ng
+> the reg property now it's referred from amlogic,meson-gx-hhi-sysctrl.yaml
+> and documented as a subnode of amlogic,meson-axg-hhi-sysctrl.
+>=20
+> Also drop the unnecessary example, the top level bindings example should
+> be enough.
+>=20
+> Fixes: 76ab79f9726c ("dt-bindings: phy: add Amlogic G12A Analog MIPI D-PH=
+Y bindings")
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 
+I feel like I left a tag on this one before, but I can't remember.
+Perhaps I missed the conclusion to the discussion to the discussion with
+Rob about whether having "reg" was desirable that lead to a tag being
+dropped?
 
-> Konrad
+> ---
+>  .../bindings/phy/amlogic,g12a-mipi-dphy-analog.yaml          | 12 ------=
+------
+>  1 file changed, 12 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/phy/amlogic,g12a-mipi-dphy=
+-analog.yaml b/Documentation/devicetree/bindings/phy/amlogic,g12a-mipi-dphy=
+-analog.yaml
+> index c8c83acfb871..81c2654b7e57 100644
+> --- a/Documentation/devicetree/bindings/phy/amlogic,g12a-mipi-dphy-analog=
+=2Eyaml
+> +++ b/Documentation/devicetree/bindings/phy/amlogic,g12a-mipi-dphy-analog=
+=2Eyaml
+> @@ -16,20 +16,8 @@ properties:
+>    "#phy-cells":
+>      const: 0
+> =20
+> -  reg:
+> -    maxItems: 1
+> -
+>  required:
+>    - compatible
+> -  - reg
+>    - "#phy-cells"
+> =20
+>  additionalProperties: false
+> -
+> -examples:
+> -  - |
+> -    phy@0 {
+> -          compatible =3D "amlogic,g12a-mipi-dphy-analog";
+> -          reg =3D <0x0 0xc>;
+> -          #phy-cells =3D <0>;
+> -    };
+>=20
+> --=20
+> 2.34.1
+>=20
+
+--rgdN8ghBXlvRBfQ2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZWCYzwAKCRB4tDGHoIJi
+0kCXAP9TU7U/tv4849X5YXYCr5KDY41jG8O0rTLgEd5q1geeoQD9GC0EX/4K+IRA
+uJv3CY2TNiiph0000bxb3dqFwAVvRQM=
+=UdAc
+-----END PGP SIGNATURE-----
+
+--rgdN8ghBXlvRBfQ2--
