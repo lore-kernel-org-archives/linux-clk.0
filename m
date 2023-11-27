@@ -1,123 +1,270 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="QItrh3zy"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2048.outbound.protection.outlook.com [40.107.220.48])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57481182;
-	Sun, 26 Nov 2023 23:22:41 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Ni+ACBI7+R5UyRDc6i5LYrxisOKdv0tyQ0bVB15qN2ML9LottI/4PkaNCC0VceJFYnuA34P5P1oPpsFRaoQGNbCBV0a6RMsxZlpUHlhdWGu3M0GUe82X47YElfR1ZXnBLLaJNyD4dZuS7NqzrpvPkyYxo/yjEp1fYgkRYycU3ZlGRsacmJtnTBFhBXffI3FZiIO82NCjgzl6vvVrK7tyD6JZFLyuR6FFYCf2iGLXU8IJXKG4hGaLbZZ1p+Sq9pvaNK5KJ0SbjHQRtzLJsBJdEWwryJcFIEZ/npQCRXxDbwBSiQtr+E8rcGY3yjwTxjwD68ZI7cl+PXFjnE6Uug3agQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WVdNIuQVW1tHMJXdrMOdThM7xVOSXqpsseOyTeNqQFI=;
- b=lvajGyvukkK/ON7WUVyO3VjVCLmJBVU/siUVaImKqFFmMLDjCGW9tVbF/Jsxtq3eSVoPYFDLIrz8JdT/Rs7Di52bzKrAtvLUsdD6gOrYce0NPNPrmVhlNQkilxjyA54IVZpyEv7XloiIubw1TboqzRA4Qig66v06As/JqcQkvPQUbJ7Bd+7B48p1JSUHbRleL2pPNIVKdkFymqNJHxY9vb/tN3QxrcG+AICYbe6EW7FgfDUklVEy8sUwDyAwAIdv6e4HQTq/2FnKuaNXZYF6jm5hBehRn6MkyYGlaz2xPBTWOZEFCzGwKeDNFDLlM2HKgmRG1/dK40vMduRWgk02Xw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WVdNIuQVW1tHMJXdrMOdThM7xVOSXqpsseOyTeNqQFI=;
- b=QItrh3zyZQOpENGwNTs1o2rkWZpqUpQdU1xbXQOVOAQz9Y2l3pBKth65EgKTPouOgoSh+YdDzEsIKmqwS3PRJLfQ+EIy7nTd/lb0Ig9KCKqGCsi+FBrl8gSCBUEs9HMjMRsGQAf2m41TdBxSWk5zFLFRAXbcMK6CjOyFK4cVLXY=
-Received: from CY8PR10CA0042.namprd10.prod.outlook.com (2603:10b6:930:4b::15)
- by CH3PR12MB9100.namprd12.prod.outlook.com (2603:10b6:610:1a8::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7025.28; Mon, 27 Nov
- 2023 07:22:39 +0000
-Received: from CY4PEPF0000EDD0.namprd03.prod.outlook.com
- (2603:10b6:930:4b:cafe::fb) by CY8PR10CA0042.outlook.office365.com
- (2603:10b6:930:4b::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7025.27 via Frontend
- Transport; Mon, 27 Nov 2023 07:22:33 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- CY4PEPF0000EDD0.mail.protection.outlook.com (10.167.241.204) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7046.17 via Frontend Transport; Mon, 27 Nov 2023 07:22:33 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.34; Mon, 27 Nov
- 2023 01:22:30 -0600
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.34; Mon, 27 Nov
- 2023 01:22:31 -0600
-Received: from xhdshubhraj40.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.34 via Frontend
- Transport; Mon, 27 Nov 2023 01:22:11 -0600
-From: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
-To: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>
-CC: <git@amd.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-	<robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-	<conor+dt@kernel.org>, <michal.simek@amd.com>
-Subject: [PATCH v2 2/2] dt-bindings: firmware: Remove alt_ref from versal example
-Date: Mon, 27 Nov 2023 12:52:04 +0530
-Message-ID: <20231127072204.25879-3-shubhrajyoti.datta@amd.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20231127072204.25879-1-shubhrajyoti.datta@amd.com>
-References: <20231127072204.25879-1-shubhrajyoti.datta@amd.com>
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="DjeYRCld"
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60429138
+	for <linux-clk@vger.kernel.org>; Sun, 26 Nov 2023 23:37:36 -0800 (PST)
+Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-9e1021dbd28so522704166b.3
+        for <linux-clk@vger.kernel.org>; Sun, 26 Nov 2023 23:37:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1701070655; x=1701675455; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=scHiT0Xo/KLWsBCLyWjvRQ5uVQcQfMVVyC6A152Vb/c=;
+        b=DjeYRCldpxx4QjpEftRKp7OFMnhUrm1/De0s6kHU/Wjxa0YyhWcf6n0KB7ww0JnRfw
+         oxWK0BW2xc5PwWvapo7kRp6AvaysdsIEQJWXSltjVIKG0a5ogwsT/+eJuGLHWOl09Rr3
+         JphJKqhX0qyVTzfOKG69ZAzS8yGau/OQkStugZUmipy0LHOTcj7OG9y/qraWxYE/99kg
+         iWrRg8gjMvqROn+lCMK9oTDzu2thXZxbOPrboCCx/rGJ6FKGv0mosYPGHMSCZj+OHiYj
+         IbNFJf4XzMagnLOdp9yo/jUN/0q9LREJ1rX+c5u9S8LcrX0hKN81c23CD2eKqWJfpa3b
+         18RQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701070655; x=1701675455;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=scHiT0Xo/KLWsBCLyWjvRQ5uVQcQfMVVyC6A152Vb/c=;
+        b=CF194LJZ0ceaiH4HSPsX4988WzJ8fOXJQUm3NiHX2rDsMoUnowTV9KMPqNKXkj4aoq
+         emu42ZqTkIF67+G7kKaah/+TBIZ2XBOvuYUN/9p8MiLGmoV+2CmGIrU53a1cPScwLj1a
+         7IAFzRCrJ9Kv4wh1JVRRpt5gVJrfTAZsXtRqYU6ZG4FOX28FR/5Y3AQ9na1lnH3d3MAM
+         nBX/NKo2TeTAfqz4/bY23hJa9DIoB+shqfG83mo369RuINqck25moUHJU47WPzUebX0u
+         /0bXOs060cnLjC2og9iOQeY4gg2VVEH2tPRoYQzgeNYBzcuQ51GSM9wJvuugY5QQmjCG
+         67sg==
+X-Gm-Message-State: AOJu0YwMEcv5U0xomZBt+M7P6gyPuFvMmiWMw4ZI0m0daiHf6ReD1wTU
+	aRZKZh2zrE5jlQwwCMLr3qfkWg==
+X-Google-Smtp-Source: AGHT+IFUHRZrWVKXHlqz5bmA/5BdGKLgt9BLh5gYYMZivaNLtxnVAdSXgaVpZJ/zGe8IZJJLh7JXsQ==
+X-Received: by 2002:a17:906:10d7:b0:a0c:85f8:c1f4 with SMTP id v23-20020a17090610d700b00a0c85f8c1f4mr3850762ejv.56.1701070654693;
+        Sun, 26 Nov 2023 23:37:34 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.125])
+        by smtp.gmail.com with ESMTPSA id r22-20020a170906351600b00a0c01560bdfsm2579128eja.139.2023.11.26.23.37.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 26 Nov 2023 23:37:34 -0800 (PST)
+Message-ID: <55a0048a-7fa1-49cd-a70f-8f7d948adf27@tuxon.dev>
+Date: Mon, 27 Nov 2023 09:37:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EDD0:EE_|CH3PR12MB9100:EE_
-X-MS-Office365-Filtering-Correlation-Id: d0308070-1071-4f74-53d0-08dbef199fe1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	VHj8cgxmuty7YRPZnqFljIZXcqcTSQtdaocJe0xaUz4UyQ8U9odTm5w1Oaf/UgregfMlbce4iO/nOkd3uKLjqdhg/X4Gn74E8UVmbTcuqGuQN+8O1sNaoA8iPoFzoDCzGrnSZqxj6SxVtW8oxzu/ZUYl9Z7tfcYBkndDZPKCyg0nnKjvq16Yl9rWzPHBzRusg5ZYcUJP1Kc+3DK4y0besP2CMeJMK+YUqrjAA18es1ZFIQ506m9NiB1ZB1M5ktrWj+IR7khV+8JaGcB0VFn2oqr3hcoAWLWfxWQcjfI/16+0iW/jY/r9mtO/4jA5iW5mjN27irgOar0+s4nPm1T7qxGdClpLhxmU3/R4fEylxUXByjaHHUKHwqEWfqJtEfhN8aP1rl7reIgju4iZ7AFdiVBpLwqdK5ieYJzzFts6Kji1HjHZkS+0JZiLy6io9a2jIjbu89VRgLx8GHO788Lo4QDhmG7L+g+eNjZSugdj40d4lY2EQofNNDIkfTCy4GdM7ALzFEUYZEdYnRBP8YLwTbodu4mdcxGV+L2PtwR5URrpN6CQ1vF0e8nQ6LMEvY9YrZlT2d3QexbACxV2qY45h3wSHYJ63PWnoRH2vDRkTFy0bGenlwCHo3B21DsUW/Rb4s+Iv1P5n5WY/J+dnp5JBg2MClhWoML7K+rupTH2QiMl0oa7vOso2ir0Pvj1serwtKUnp3P7V0Ehj8fYcIct+k14lzJgGSeubZ9meyFcVEckmqrVIfLgAe6pEnFv52VzFRSJU/j67imYOk2p7UmOZw==
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(4636009)(396003)(376002)(346002)(136003)(39860400002)(230922051799003)(186009)(64100799003)(451199024)(82310400011)(1800799012)(40470700004)(46966006)(36840700001)(40460700003)(1076003)(2616005)(26005)(6666004)(336012)(426003)(82740400003)(4326008)(8936002)(8676002)(44832011)(5660300002)(86362001)(478600001)(70206006)(70586007)(110136005)(316002)(54906003)(36860700001)(83380400001)(356005)(47076005)(81166007)(41300700001)(2906002)(40480700001)(36756003)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Nov 2023 07:22:33.7528
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d0308070-1071-4f74-53d0-08dbef199fe1
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EDD0.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/14] clk: renesas: rzg2l-cpg: Add support for MSTOP
+Content-Language: en-US
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: s.shtylyov@omp.ru, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ linux@armlinux.org.uk, magnus.damm@gmail.com, mturquette@baylibre.com,
+ sboyd@kernel.org, linus.walleij@linaro.org, p.zabel@pengutronix.de,
+ arnd@arndb.de, m.szyprowski@samsung.com, alexandre.torgue@foss.st.com,
+ afd@ti.com, broonie@kernel.org, alexander.stein@ew.tq-group.com,
+ eugen.hristev@collabora.com, sergei.shtylyov@gmail.com,
+ prabhakar.mahadev-lad.rj@bp.renesas.com, biju.das.jz@bp.renesas.com,
+ linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-gpio@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20231120070024.4079344-1-claudiu.beznea.uj@bp.renesas.com>
+ <20231120070024.4079344-4-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdVMpKVY8WX7dbtHfgnwgePH+i9+2BAumb37sFmqccb44g@mail.gmail.com>
+ <CAMuHMdVWvVtFMUe+J9R2ZU8Hi5CGs0NQfwUxitganM85183KkA@mail.gmail.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <CAMuHMdVWvVtFMUe+J9R2ZU8Hi5CGs0NQfwUxitganM85183KkA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-In the previous commit (dt-bindings: clock: versal: Make alt_ref
-optional) the alt_ref is removed from the veral-clk. Update the example
-accordingly.
+Hi, Geert,
 
-Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
----
+On 24.11.2023 11:08, Geert Uytterhoeven wrote:
+> Hi Claudiu,
+> 
+> On Thu, Nov 23, 2023 at 5:35 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>> On Mon, Nov 20, 2023 at 8:01 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>
+>>> RZ/{G2L, V2L, G3S} based CPG versions have support for saving extra
+>>> power when clocks are disabled by activating module standby. This is done
+>>> though MSTOP specific registers that are part of CPG. Each individual
+>>> module have one or more bits associated in one MSTOP register (see table
+>>> "Registers for Module Standby Mode" from HW manuals). Hardware manual
+>>> associates modules' clocks to one or more MSTOP bits. There are 3 mappings
+>>> available (identified by researching RZ/G2L, RZ/G3S, RZ/V2L HW manuals):
+>>>
+>>> case 1: N clocks mapped to N MSTOP bits (with N={0, ..., X})
+>>> case 2: N clocks mapped to 1 MSTOP bit  (with N={0, ..., X})
+>>> case 3: N clocks mapped to M MSTOP bits (with N={0, ..., X}, M={0, ..., Y})
+>>>
+>>> Case 3 has been currently identified on RZ/V2L for VCPL4 module.
+>>>
+>>> To cover all 3 cases the individual platform drivers will provide to
+>>> clock driver MSTOP register offset and associated bits in this register
+>>> as a bitmask and the clock driver will apply this bitmask to proper
+>>> MSTOP register.
+>>>
+>>> As most of the modules have more than one clock and these clocks are
+>>> mapped to 1 MSTOP bitmap that need to be applied to MSTOP registers,
+>>> to avoid switching the module to/out of standby when the module has
+>>> enabled/disabled clocks a counter has been associated to each module
+>>> (though struct mstop::count) which is incremented/decremented every
+>>> time a module's clock is enabled/disabled and the settings to MSTOP
+>>> register are applied only when the counter reaches zero (counter zero
+>>> means either 1st clock of the module is going to be enabled or all clocks
+>>> of the module are going to be disabled).
+>>
+>> Thanks for your patch!
+>>
+>>> The MSTOP functionality has been instantiated at the moment for RZ/G3S.
+>>>
+>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+>>> --- a/drivers/clk/renesas/rzg2l-cpg.c
+>>> +++ b/drivers/clk/renesas/rzg2l-cpg.c
+>>> @@ -1177,6 +1177,17 @@ rzg2l_cpg_register_core_clk(const struct cpg_core_clk *core,
+>>>                 core->name, PTR_ERR(clk));
+>>>  }
+>>>
+>>> +/**
+>>> + * struct mstop - MSTOP specific data structure
+>>> + * @count: reference counter for MSTOP settings (when zero the settings
+>>> + *        are applied to register)
+>>> + * @conf: MSTOP configuration (register offset, setup bits)
+>>> + */
+>>> +struct mstop {
+>>> +       u32 count;
+>>> +       u32 conf;
+>>> +};
+>>> +
+>>>  /**
+>>>   * struct mstp_clock - MSTP gating clock
+>>>   *
+>>> @@ -1186,6 +1197,7 @@ rzg2l_cpg_register_core_clk(const struct cpg_core_clk *core,
+>>>   * @enabled: soft state of the clock, if it is coupled with another clock
+>>>   * @priv: CPG/MSTP private data
+>>>   * @sibling: pointer to the other coupled clock
+>>> + * @mstop: MSTOP configuration
+>>>   */
+>>>  struct mstp_clock {
+>>>         struct clk_hw hw;
+>>> @@ -1194,10 +1206,46 @@ struct mstp_clock {
+>>>         bool enabled;
+>>>         struct rzg2l_cpg_priv *priv;
+>>>         struct mstp_clock *sibling;
+>>> +       struct mstop *mstop;
+>>>  };
+>>>
+>>>  #define to_mod_clock(_hw) container_of(_hw, struct mstp_clock, hw)
+>>>
+>>> +/* Need to be called with a lock held to avoid concurent access to mstop->count. */
+>>
+>> concurrent
+>>
+>>> +static void rzg2l_mod_clock_module_set_standby(struct mstp_clock *clock,
+>>> +                                              bool standby)
+>>> +{
+>>> +       struct rzg2l_cpg_priv *priv = clock->priv;
+>>> +       struct mstop *mstop = clock->mstop;
+>>> +       bool update = false;
+>>> +       u32 value;
+>>> +
+>>> +       if (!mstop)
+>>> +               return;
+>>> +
+>>> +       value = MSTOP_MASK(mstop->conf) << 16;
+>>> +
+>>> +       if (standby) {
+>>> +               value |= MSTOP_MASK(mstop->conf);
+>>> +               /* Avoid overflow. */
+>>> +               if (mstop->count > 0)
+>>> +                       mstop->count--;
+>>
+>> Should we add a WARN() here, or is it sufficient to rely on the WARN()
+>> in drivers/clk/clk.c:clk_core_disable()?
+>>
+>>> +
+>>> +               if (!mstop->count)
+>>> +                       update = true;
+>>> +       } else {
+>>> +               if (!mstop->count)
+>>> +                       update = true;
+>>> +
+>>> +               /* Avoid overflow. */
+>>> +               if (mstop->count + 1 != 0)
+>>> +                       mstop->count++;
+>>
+>> Trying to avoid an overflow won't help much here.  The counter
+>> will be wrong afterwards anyway, and when decrementing again later, the
+>> module will be put in standby too soon...
+>>
+>>> +       }
+>>> +
+>>> +       if (update)
+>>> +               writel(value, priv->base + MSTOP_OFF(mstop->conf));
+>>> +}
+> 
+> After giving this some more thought, it feels odd to derive the standby
+> state of a module from the state of its module clocks, while the latter
+> are already controlled through Runtime PM and a Clock Domain.
 
-Changes in v2:
-new patch addition
+Thanks for sharing this.
 
- .../bindings/firmware/xilinx/xlnx,zynqmp-firmware.yaml        | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> A first alternative solution could be to drop the GENPD_FLAG_PM_CLK
+> flag from the RZ/G2L CPG clock domain, and provide your own
+> gpd_dev_ops.start() and .stop() callbacks that take care of both
+> module standby and clocks (through pm_clk_{resume,suspend}().
+> (See https://elixir.bootlin.com/linux/v6.7-rc2/source/drivers/base/power/domain.c#L2093
+> for the GENPD_FLAG_PM_CLK case).
+> That still leaves you with a need to associate an MSTOP register and
+> bitmask with a device through its module clocks.
+> 
+> A second alternative solution could be to increase #power-domain-cells
+> from zero to one, and register individual PM Domains for each module,
+> and control module standby from the generic_pm_domain.power_{on,off}()
+> callbacks.  Devices would specify the module using the power-domains =
+> <&cpg <id> > property in DT, with <id> one of the to-be-added list of
+> modules in include/dt-bindings/clock/r9a08g045-cpg.h.  The RZ/G2L CPG
+> driver can handle the mapping from <id> to MSTOP register and bitmask.
+> This solution requires updates to DT, but you can keep compatibility
+> with old DTBs by only registering the new PM Domains when
+> #power-domain-cells is one.
+> The extra power saving would only be applicable with new DTBs, though.
 
-diff --git a/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.yaml b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.yaml
-index 822864488dcb..8e584857ddd4 100644
---- a/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.yaml
-+++ b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.yaml
-@@ -95,8 +95,8 @@ examples:
-       versal_clk: clock-controller {
-         #clock-cells = <1>;
-         compatible = "xlnx,versal-clk";
--        clocks = <&ref>, <&alt_ref>, <&pl_alt_ref>;
--        clock-names = "ref", "alt_ref", "pl_alt_ref";
-+        clocks = <&ref>, <&pl_alt_ref>;
-+        clock-names = "ref", "pl_alt_ref";
-       };
-     };
- 
--- 
-2.17.1
+I prefer this alternative even though it cannot be applied for old DTBs, it
+looks to me that is more modular. What do you think?
 
+The only thing is that MSTOP is not really a power off/on switch (if it
+would be implemented with generic_pm_domain.power_{on, off}) but is more
+like a clock disable/enable functionality (it should not be an issue
+though, just saying)... According to manual (I'm referring to Figure 41.4
+Block Connection Overview for Module Standby Mode of HW manula of RZ/G3S),
+it disables/enables the module's bus clock.
+
+Thank you,
+Claudiu Beznea
+
+> 
+> Thoughts?
+> 
+>>> --- a/drivers/clk/renesas/rzg2l-cpg.h
+>>> +++ b/drivers/clk/renesas/rzg2l-cpg.h
+>>
+>>> @@ -68,6 +73,10 @@
+>>>  #define SEL_PLL6_2     SEL_PLL_PACK(CPG_PL6_ETH_SSEL, 0, 1)
+>>>  #define SEL_GPU2       SEL_PLL_PACK(CPG_PL6_SSEL, 12, 1)
+>>>
+>>> +#define MSTOP(name, bitmask)   ((CPG_##name##_MSTOP) << 16 | (bitmask))
+>>
+>> I believe the bitmask is always a single bit.
+>> So perhaps let MSTOP() take the bit number instead of the bitmaskl?
+>> You can still store BIT(bit) inside the macro.
+> 
+> I was wrong, the N->N or N->M cases need a bitmask.
+> 
+>>> +#define MSTOP_OFF(conf)                ((conf) >> 16)
+>>> +#define MSTOP_MASK(conf)       ((conf) & GENMASK(15, 0))
+>>> +
+>>>  #define EXTAL_FREQ_IN_MEGA_HZ  (24)
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
