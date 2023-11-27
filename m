@@ -1,43 +1,43 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KQPY4AOE"
-Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86D1610F;
-	Sun, 26 Nov 2023 16:58:24 -0800 (PST)
-Received: by mail-ot1-x32f.google.com with SMTP id 46e09a7af769-6d8162ca490so580129a34.0;
-        Sun, 26 Nov 2023 16:58:24 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FDPiC3hJ"
+Received: from mail-oi1-x230.google.com (mail-oi1-x230.google.com [IPv6:2607:f8b0:4864:20::230])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 099B99C;
+	Sun, 26 Nov 2023 16:59:05 -0800 (PST)
+Received: by mail-oi1-x230.google.com with SMTP id 5614622812f47-3b8382b8f5aso2393336b6e.0;
+        Sun, 26 Nov 2023 16:59:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701046704; x=1701651504; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1701046744; x=1701651544; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VbTOdSzmzRqpZMXBrk0eC4BBVNCbaC+V93TKtigWZJM=;
-        b=KQPY4AOEDNUKtfGJh33iTLDd59TamoVUjR0WZmLwc1+c9LqPnJxt0quWJtu1zAX5ml
-         npnWzFlyk9s6N6SdpcTDnu9HrwjhZ8Qgn28/xQWPde1V3eUUm38vVTZsuVu5QycqVLKp
-         lSFzl6/mhnxpjnw5lPJA9d59SfDEQw2Hwzx73e0rGzE0mIwKK2Q0l5z7hy4E5raIaJzY
-         gT5VN9WefSvDuGIaxI/GHFJgswkaLk8IhUgG4M4/uouS0gIcMfPkjmabventtXoDLx+o
-         JtN/ttpBUc+wBUpHGpe7t51WJ/lOfy1CXV3uN8S70aJEBLdx26Gx3LmZhola/f4CV8oH
-         7yaA==
+        bh=tlbXLStT9Yzi3MnsBsStbxN6rymsbOLs17hYyIxF/KU=;
+        b=FDPiC3hJdMnVxP7oRNN8ALW3SH9G6LHrsnqSeuV1lwWvMeFkrhyAws1/4c9yP7gWZl
+         l7Ej+cSbprDsAYQkYPG5AAJ9Od/nRQNh1jXOlEFAsuyjQX15I+gdEHvTDxrY9eQevGo2
+         3I1pqD0cFKrLFxHihlV3KfAi/uuUfZSmPCc0NJa6WfVkklS4lec7RTwbVFCNw1r53xxH
+         0J9WZm670Oxn5ZdVTdKY8+e6GeRYmD/gwwt+uVazqwSQ3uY4Oh7c5SLGVbY0rFgXlpq6
+         6JD5tcA2Kl0fOS8FnipnvIlsRjIF0HlbAey34Pg6t4aBpLveaWPuuRAT9qCvjnzwRvce
+         RgEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701046704; x=1701651504;
+        d=1e100.net; s=20230601; t=1701046744; x=1701651544;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VbTOdSzmzRqpZMXBrk0eC4BBVNCbaC+V93TKtigWZJM=;
-        b=LdxL321icjTx8r0pE1C626MMOkFrIY3jYP+7em96Pg90M3iqr8WAr/ZZl7Dptn9oJ/
-         nv9Ju4ft/seYw6sZ4HdFKXyLq7uzR7sZJSE8SZHIbGi94LgiFepmvXd+eVHvNTEVL+uX
-         Zxl/jI30l3+2lh8omGIZQ8UqNDl14a5+eWQPBc402eay5s/UXY9xM2FPrLpOvAWJCH6l
-         hhGtgBtgjraJNKM8XJEsiwlF4yiOrPHS+rwG9xeqE+1qvbPL8/NuNQuqWFmgSXplqKsl
-         uEKOL5nr4zkD5AEKbA4H4PsjhIR/ZKJHXlLqwT972TWlEZgY6kiJPIjzeJPi0P8eV8Jz
-         fM3Q==
-X-Gm-Message-State: AOJu0YzBflDrBXd94yMuJWqyD3Bi+jr1ZFsM+mI/j+lM05XUYTs9Oeny
-	kmexNooFoCrCl4Z86KUuzNc=
-X-Google-Smtp-Source: AGHT+IE6q8gpQ0nSQH1XEne2jjZEFFppdDddzreDkuA9apVcP7Is/rZGJ4huSYwnR46rcnvlPNp5hA==
-X-Received: by 2002:a9d:7c85:0:b0:6bd:7a0f:5c52 with SMTP id q5-20020a9d7c85000000b006bd7a0f5c52mr7240561otn.12.1701046703587;
-        Sun, 26 Nov 2023 16:58:23 -0800 (PST)
+        bh=tlbXLStT9Yzi3MnsBsStbxN6rymsbOLs17hYyIxF/KU=;
+        b=KJW7FuNAn3THrwkSt5sZuE8e1Up87fJydeXK+MSZtsXstbsMGWpOk0LyxvfKmTeWyF
+         u2SEeByDop8sbEHOSzYGa0txNguMNczAuHFmxxr5m3fiw+2Pv+nVWBBLWUcr4pmiImQJ
+         vxP0lwoEkHPIwWjyAcP/QkabAWxnAb0eFeIj62X+CJ3VSoYxPrTrsGrdVVUZeXk/5gFI
+         f89qEt6pH66riJynq/bz+CsLkS8vAoz416v58ZYFr8AybkQVubWKB1O3PUvHm0P9AnSx
+         WUYK5wIGvRmBTFQ+HjXbNjh5mWhHVy+/9mIMCxlefiec3Dbwvo99rTAtQ2nkT9lbrSOZ
+         FGmA==
+X-Gm-Message-State: AOJu0Yzq24+R7C4op2f7DuGwod7Kv2DdVr/45Z9pt22BwLyyAs5nHfA4
+	Pf2Pu6fzwaEDKRk+ml7b9Q4=
+X-Google-Smtp-Source: AGHT+IEOHGPYpq8xKiYClAuavGogKA68qGd2W4TI8bWaSZhQ+hgMr+x/Oldd6BLyBMVKqO5xGXN1Pw==
+X-Received: by 2002:a05:6808:3024:b0:3ae:251b:5552 with SMTP id ay36-20020a056808302400b003ae251b5552mr13085224oib.12.1701046744290;
+        Sun, 26 Nov 2023 16:59:04 -0800 (PST)
 Received: from localhost.localdomain ([122.8.183.87])
-        by smtp.gmail.com with ESMTPSA id s6-20020a4a5106000000b00581e090fd1fsm1408449ooa.8.2023.11.26.16.58.22
+        by smtp.gmail.com with ESMTPSA id 2-20020aca0f02000000b003b2e536a96dsm1307697oip.24.2023.11.26.16.59.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Nov 2023 16:58:23 -0800 (PST)
+        Sun, 26 Nov 2023 16:59:04 -0800 (PST)
 From: Chen Wang <unicornxw@gmail.com>
 To: aou@eecs.berkeley.edu,
 	chao.wei@sophgo.com,
@@ -60,9 +60,9 @@ To: aou@eecs.berkeley.edu,
 	inochiama@outlook.com,
 	samuel.holland@sifive.com
 Cc: Chen Wang <unicorn_wang@outlook.com>
-Subject: [PATCH v2 1/4] dt-bindings: clock: sophgo: Add SG2042 bindings
-Date: Mon, 27 Nov 2023 08:58:15 +0800
-Message-Id: <aea19fcddcb0aec54b2779fc99b5ac6c1e465fe0.1701044106.git.unicorn_wang@outlook.com>
+Subject: [PATCH v2 2/4] dt-bindings: soc: sophgo: Add Sophgo syscon module
+Date: Mon, 27 Nov 2023 08:58:56 +0800
+Message-Id: <6ff37629458cde4549067e0caddeb5cb640ca7f9.1701044106.git.unicorn_wang@outlook.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1701044106.git.unicorn_wang@outlook.com>
 References: <cover.1701044106.git.unicorn_wang@outlook.com>
@@ -76,239 +76,79 @@ Content-Transfer-Encoding: 8bit
 
 From: Chen Wang <unicorn_wang@outlook.com>
 
-Add bindings for the clock generator on the SG2042 RISC-V SoC.
+Add documentation to describe Sophgo System Controller Registers for
+SG2042.
 
 Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
 ---
- .../clock/sophgo/sophgo,sg2042-clkgen.yaml    |  42 +++++
- include/dt-bindings/clock/sophgo-sg2042-clk.h | 169 ++++++++++++++++++
- 2 files changed, 211 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/sophgo/sophgo,sg2042-clkgen.yaml
- create mode 100644 include/dt-bindings/clock/sophgo-sg2042-clk.h
+ .../soc/sophgo/sophgo,sg2042-syscon.yaml      | 58 +++++++++++++++++++
+ 1 file changed, 58 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/sophgo/sophgo,sg2042-syscon.yaml
 
-diff --git a/Documentation/devicetree/bindings/clock/sophgo/sophgo,sg2042-clkgen.yaml b/Documentation/devicetree/bindings/clock/sophgo/sophgo,sg2042-clkgen.yaml
+diff --git a/Documentation/devicetree/bindings/soc/sophgo/sophgo,sg2042-syscon.yaml b/Documentation/devicetree/bindings/soc/sophgo/sophgo,sg2042-syscon.yaml
 new file mode 100644
-index 000000000000..6c0d0461e489
+index 000000000000..329d645091b4
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/sophgo/sophgo,sg2042-clkgen.yaml
-@@ -0,0 +1,42 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++++ b/Documentation/devicetree/bindings/soc/sophgo/sophgo,sg2042-syscon.yaml
+@@ -0,0 +1,58 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/clock/sophgo/sophgo,sg2042-clkgen.yaml#
++$id: http://devicetree.org/schemas/soc/sophgo/sophgo,sg2042-syscon.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Sophgo SG2042 Clock Generator
++title: Sophgo SG2042 SoC system controller
 +
 +maintainers:
 +  - Chen Wang <unicorn_wang@outlook.com>
 +
++description:
++  The Sophgo SG2042 SoC system controller provides register information such
++  as offset, mask and shift to configure some modules, such as clocks, reset
++  signals and pinctrl.
++
 +properties:
 +  compatible:
-+    const: sophgo,sg2042-clkgen
-+
-+  clocks:
 +    items:
-+      - description: Clock Generation IC (25 MHz)
++      - enum:
++          - sophgo,sg2042-syscon
++      - const: syscon
 +
-+  '#clock-cells':
-+    const: 1
++  reg:
++    maxItems: 1
++
++  clock-controller:
++    # Child node
++    type: object
++    $ref: ../../clock/sophgo/sophgo,sg2042-clkgen.yaml
 +    description:
-+      See <dt-bindings/clock/sophgo-sg2042-clk.h> for valid indices.
-+
-+  assigned-clocks: true
-+
-+  assigned-clock-rates: true
++      Clock controller for the SoC clocks. This child node definition
++      should follow the bindings specified in
++      Documentation/devicetree/bindings/clock/sophgo/sophgo,sg2042-clkgen.yaml
 +
 +required:
 +  - compatible
-+  - clocks
-+  - '#clock-cells'
++  - reg
 +
 +additionalProperties: false
 +
 +examples:
 +  - |
-+    clock-controller {
-+            compatible = "sophgo,sg2042-clkgen";
-+            clocks = <&cgi>;
-+            #clock-cells = <1>;
++    syscon@30010000 {
++        compatible = "sophgo,sg2042-syscon", "syscon";
++        reg = <0x30010000 0x1000>;
 +    };
-diff --git a/include/dt-bindings/clock/sophgo-sg2042-clk.h b/include/dt-bindings/clock/sophgo-sg2042-clk.h
-new file mode 100644
-index 000000000000..a8e05c00c3bf
---- /dev/null
-+++ b/include/dt-bindings/clock/sophgo-sg2042-clk.h
-@@ -0,0 +1,169 @@
-+/* SPDX-License-Identifier: GPL-2.0 OR MIT */
-+/*
-+ * Copyright (C) 2023 Sophgo Technology Inc. All rights reserved.
-+ */
 +
-+#ifndef __DT_BINDINGS_CLOCK_SOPHGO_SG2042_H__
-+#define __DT_BINDINGS_CLOCK_SOPHGO_SG2042_H__
++    syscon@30020000 {
++        compatible = "sophgo,sg2042-syscon", "syscon";
++        reg = <0x30020000 0x1000>;
 +
-+/* Divider clocks */
-+#define DIV_CLK_MPLL_RP_CPU_NORMAL_0 0
-+#define DIV_CLK_MPLL_AXI_DDR_0 1
-+#define DIV_CLK_FPLL_DDR01_1 2
-+#define DIV_CLK_FPLL_DDR23_1 3
-+#define DIV_CLK_FPLL_RP_CPU_NORMAL_1 4
-+#define DIV_CLK_FPLL_50M_A53 5
-+#define DIV_CLK_FPLL_TOP_RP_CMN_DIV2 6
-+#define DIV_CLK_FPLL_UART_500M 7
-+#define DIV_CLK_FPLL_AHB_LPC 8
-+#define DIV_CLK_FPLL_EFUSE 9
-+#define DIV_CLK_FPLL_TX_ETH0 10
-+#define DIV_CLK_FPLL_PTP_REF_I_ETH0 11
-+#define DIV_CLK_FPLL_REF_ETH0 12
-+#define DIV_CLK_FPLL_EMMC 13
-+#define DIV_CLK_FPLL_SD 14
-+#define DIV_CLK_FPLL_TOP_AXI0 15
-+#define DIV_CLK_FPLL_TOP_AXI_HSPERI 16
-+#define DIV_CLK_FPLL_AXI_DDR_1 17
-+#define DIV_CLK_FPLL_DIV_TIMER1 18
-+#define DIV_CLK_FPLL_DIV_TIMER2 19
-+#define DIV_CLK_FPLL_DIV_TIMER3 20
-+#define DIV_CLK_FPLL_DIV_TIMER4 21
-+#define DIV_CLK_FPLL_DIV_TIMER5 22
-+#define DIV_CLK_FPLL_DIV_TIMER6 23
-+#define DIV_CLK_FPLL_DIV_TIMER7 24
-+#define DIV_CLK_FPLL_DIV_TIMER8 25
-+#define DIV_CLK_FPLL_100K_EMMC 26
-+#define DIV_CLK_FPLL_100K_SD 27
-+#define DIV_CLK_FPLL_GPIO_DB 28
-+#define DIV_CLK_DPLL0_DDR01_0 29
-+#define DIV_CLK_DPLL1_DDR23_0 30
-+
-+/* Gate clocks */
-+#define GATE_CLK_RP_CPU_NORMAL_DIV0 31
-+#define GATE_CLK_AXI_DDR_DIV0 32
-+
-+#define GATE_CLK_RP_CPU_NORMAL_DIV1 33
-+#define GATE_CLK_A53_50M 34
-+#define GATE_CLK_TOP_RP_CMN_DIV2 35
-+#define GATE_CLK_HSDMA 36
-+#define GATE_CLK_EMMC_100M 37
-+#define GATE_CLK_SD_100M 38
-+#define GATE_CLK_TX_ETH0 39
-+#define GATE_CLK_PTP_REF_I_ETH0 40
-+#define GATE_CLK_REF_ETH0 41
-+#define GATE_CLK_UART_500M 42
-+#define GATE_CLK_EFUSE 43
-+
-+#define GATE_CLK_AHB_LPC 44
-+#define GATE_CLK_AHB_ROM 45
-+#define GATE_CLK_AHB_SF 46
-+
-+#define GATE_CLK_APB_UART 47
-+#define GATE_CLK_APB_TIMER 48
-+#define GATE_CLK_APB_EFUSE 49
-+#define GATE_CLK_APB_GPIO 50
-+#define GATE_CLK_APB_GPIO_INTR 51
-+#define GATE_CLK_APB_SPI 52
-+#define GATE_CLK_APB_I2C 53
-+#define GATE_CLK_APB_WDT 54
-+#define GATE_CLK_APB_PWM 55
-+#define GATE_CLK_APB_RTC 56
-+
-+#define GATE_CLK_AXI_PCIE0 57
-+#define GATE_CLK_AXI_PCIE1 58
-+#define GATE_CLK_SYSDMA_AXI 59
-+#define GATE_CLK_AXI_DBG_I2C 60
-+#define GATE_CLK_AXI_SRAM 61
-+#define GATE_CLK_AXI_ETH0 62
-+#define GATE_CLK_AXI_EMMC 63
-+#define GATE_CLK_AXI_SD 64
-+#define GATE_CLK_TOP_AXI0 65
-+#define GATE_CLK_TOP_AXI_HSPERI 66
-+
-+#define GATE_CLK_TIMER1 67
-+#define GATE_CLK_TIMER2 68
-+#define GATE_CLK_TIMER3 69
-+#define GATE_CLK_TIMER4 70
-+#define GATE_CLK_TIMER5 71
-+#define GATE_CLK_TIMER6 72
-+#define GATE_CLK_TIMER7 73
-+#define GATE_CLK_TIMER8 74
-+#define GATE_CLK_100K_EMMC 75
-+#define GATE_CLK_100K_SD 76
-+#define GATE_CLK_GPIO_DB 77
-+
-+#define GATE_CLK_AXI_DDR_DIV1 78
-+#define GATE_CLK_DDR01_DIV1 79
-+#define GATE_CLK_DDR23_DIV1 80
-+/* DPLL0 */
-+#define GATE_CLK_DDR01_DIV0 81
-+/* DPLL1 */
-+#define GATE_CLK_DDR23_DIV0 82
-+
-+#define GATE_CLK_DDR01 83
-+#define GATE_CLK_DDR23 84
-+#define GATE_CLK_RP_CPU_NORMAL 85
-+#define GATE_CLK_AXI_DDR 86
-+#define GATE_CLK_RXU0 87
-+#define GATE_CLK_RXU1 88
-+#define GATE_CLK_RXU2 89
-+#define GATE_CLK_RXU3 90
-+#define GATE_CLK_RXU4 91
-+#define GATE_CLK_RXU5 92
-+#define GATE_CLK_RXU6 93
-+#define GATE_CLK_RXU7 94
-+#define GATE_CLK_RXU8 95
-+#define GATE_CLK_RXU9 96
-+#define GATE_CLK_RXU10 97
-+#define GATE_CLK_RXU11 98
-+#define GATE_CLK_RXU12 99
-+#define GATE_CLK_RXU13 100
-+#define GATE_CLK_RXU14 101
-+#define GATE_CLK_RXU15 102
-+#define GATE_CLK_RXU16 103
-+#define GATE_CLK_RXU17 104
-+#define GATE_CLK_RXU18 105
-+#define GATE_CLK_RXU19 106
-+#define GATE_CLK_RXU20 107
-+#define GATE_CLK_RXU21 108
-+#define GATE_CLK_RXU22 109
-+#define GATE_CLK_RXU23 110
-+#define GATE_CLK_RXU24 111
-+#define GATE_CLK_RXU25 112
-+#define GATE_CLK_RXU26 113
-+#define GATE_CLK_RXU27 114
-+#define GATE_CLK_RXU28 115
-+#define GATE_CLK_RXU29 116
-+#define GATE_CLK_RXU30 117
-+#define GATE_CLK_RXU31 118
-+#define GATE_CLK_MP0 119
-+#define GATE_CLK_MP1 120
-+#define GATE_CLK_MP2 121
-+#define GATE_CLK_MP3 122
-+#define GATE_CLK_MP4 123
-+#define GATE_CLK_MP5 124
-+#define GATE_CLK_MP6 125
-+#define GATE_CLK_MP7 126
-+#define GATE_CLK_MP8 127
-+#define GATE_CLK_MP9 128
-+#define GATE_CLK_MP10 129
-+#define GATE_CLK_MP11 130
-+#define GATE_CLK_MP12 131
-+#define GATE_CLK_MP13 132
-+#define GATE_CLK_MP14 133
-+#define GATE_CLK_MP15 134
-+
-+/* MUX clocks */
-+#define MUX_CLK_DDR01 135
-+#define MUX_CLK_DDR23 136
-+#define MUX_CLK_RP_CPU_NORMAL 137
-+#define MUX_CLK_AXI_DDR 138
-+
-+/* PLL clocks */
-+#define MPLL_CLK	139
-+#define FPLL_CLK	140
-+#define DPLL0_CLK	141
-+#define DPLL1_CLK	142
-+
-+#endif /* __DT_BINDINGS_CLOCK_SOPHGO_SG2042_H__ */
++        clock-controller {
++            compatible = "sophgo,sg2042-clkgen";
++            clocks = <&osc>;
++            #clock-cells = <1>;
++        };
++    };
 -- 
 2.25.1
 
