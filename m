@@ -1,102 +1,121 @@
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D9261A2;
-	Mon, 27 Nov 2023 13:20:57 -0800 (PST)
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-58d08497aa1so2894109eaf.0;
-        Mon, 27 Nov 2023 13:20:57 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701120056; x=1701724856;
-        h=date:subject:message-id:references:in-reply-to:cc:to:from
-         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=kTyGpuRf8monTMr39nvAvdHW73wZ89TRN3McibZVJu4=;
-        b=gCf8OkDfh4AoMs7z/Ds11fEhY24dYrxpZkR/Hfye5pxmxmNT7PGHkIPVwCsxfP2iDt
-         twf4mo+9F3+6UxL8cjH97k3imwGYyCHpKL9XUU2s/2OmRJ0lDtyRMu30WcLG/idoMbW7
-         X2Te7tltz760YipZhudQsVOwb3baXqI+9FdUP32r7IoKyTpqX9FfCKhxm8McHh7gjE4M
-         hhqfro3CwfGFk1C5GVcAme4QWi+KecchTvcaed1pIfZHNlPzh1P6hAuui8G5gQL26SnR
-         rcKbxVtK+vM5frHxcrGRH5fEVZS1a+dZp1/XACYaPNpEnp5wLwp53OLqzdnW09bA0vRh
-         cErQ==
-X-Gm-Message-State: AOJu0Yw3vmFX6sf10Pet/4nLsP8q7goy9KhBLkQqMcHaHgW5YPQVqSid
-	gqCKzRWdPXiCm1WNglNybpK98PLhFA==
-X-Google-Smtp-Source: AGHT+IH5aq88U86E8lbR0VHkxggDYwd+qSuHkEyr+yKdh90BxhPi9eA5RDHXDqrmDuuibUUiQu1kRg==
-X-Received: by 2002:a05:6820:809:b0:58d:a6ed:5601 with SMTP id bg9-20020a056820080900b0058da6ed5601mr1798385oob.1.1701120056561;
-        Mon, 27 Nov 2023 13:20:56 -0800 (PST)
-Received: from herring.priv (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id o15-20020a4a384f000000b0058d76e8ce0dsm610918oof.36.2023.11.27.13.20.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Nov 2023 13:20:55 -0800 (PST)
-Received: (nullmailer pid 3609049 invoked by uid 1000);
-	Mon, 27 Nov 2023 21:20:55 -0000
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3342A31580;
+	Mon, 27 Nov 2023 21:32:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LgGa0Jrc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C7FBC433C8;
+	Mon, 27 Nov 2023 21:32:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1701120748;
+	bh=oKVuzSwUsB23sGbqCUdMKzeZOFoBgjY8WDwms9OBRnc=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=LgGa0JrcD0Mjn91d/RumF0tZD9/oib+k4L290CqFgpd4gZ/96SKvsPaMyLK6OZcug
+	 xNz664QoqgXdNYqM0DHe929wTJPfBM5hsa3Xc/1ragtuWoLImhBNNX8iugp4iAOJyS
+	 4h/k+A2p++OxoxLV2tmRzMoDvWhxDEMZXLoUuu063Ae7tesDJuM33sS5ETOmzzq3q0
+	 J8E9ONxnyws2yXI/HwKuK3iB+1ZUnBMOMq3rquVc/jNLgkfUjuFn+g6P6upN2xow7i
+	 b/P+TdfnjF9TJd+FPvwM2SzGCqJxGQ5zz0KAjxiNbh99zGgi97NofVtKH7P4xipToR
+	 p5n2lUED4T+Iw==
+Message-ID: <31afd614c5eb5e82a860fecfc1c21c39.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Rob Herring <robh@kernel.org>
-To: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
-Cc: krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org, devicetree@vger.kernel.org, mturquette@baylibre.com, conor+dt@kernel.org, git@amd.com, linux-clk@vger.kernel.org, michal.simek@amd.com, sboyd@kernel.org
-In-Reply-To: <20231127072204.25879-2-shubhrajyoti.datta@amd.com>
-References: <20231127072204.25879-1-shubhrajyoti.datta@amd.com>
- <20231127072204.25879-2-shubhrajyoti.datta@amd.com>
-Message-Id: <170112005500.3608964.10409860517366826170.robh@kernel.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: clock: versal: Make alt_ref
- optional
-Date: Mon, 27 Nov 2023 15:20:55 -0600
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAMuHMdU0Hqem8Ooehoo64rrGn8q8+5A8_DjGZd9Tvh=Xej6mdA@mail.gmail.com>
+References: <8734x9tda9.wl-kuninori.morimoto.gx@renesas.com> <87wmulrynq.wl-kuninori.morimoto.gx@renesas.com> <20231116192324.GB2821275-robh@kernel.org> <CAMuHMdU0Hqem8Ooehoo64rrGn8q8+5A8_DjGZd9Tvh=Xej6mdA@mail.gmail.com>
+Subject: Re: [PATCH 4/4] drivers: clk: renesas: enable all clocks which is assinged to non Linux system
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Frank Rowand <frowand.list@gmail.com>, Michael Turquette <mturquette@baylibre.com>, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Aymeric Aillet <aymeric.aillet@iot.bzh>, Yusuke Goda <yusuke.goda.sx@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Rob Herring <robh@kernel.org>
+Date: Mon, 27 Nov 2023 13:32:26 -0800
+User-Agent: alot/0.10
 
+Quoting Geert Uytterhoeven (2023-11-16 13:08:46)
+> On Thu, Nov 16, 2023 at 8:23=E2=80=AFPM Rob Herring <robh@kernel.org> wro=
+te:
+> > On Tue, Nov 14, 2023 at 12:01:14AM +0000, Kuninori Morimoto wrote:
+> > > Some board might use Linux and another OS in the same time. In such
+> > > case, current Linux will stop necessary module clock when booting
+> > > which is not used on Linux side, but is used on another OS side.
+> > >
+> > > To avoid such situation, renesas-cpg-mssr try to find
+> > > status =3D "reserved" devices (A), and add CLK_IGNORE_UNUSED flag to =
+its
+> > > <&cgp CPG_MOD xxx> clock (B).
+> >
+> > See Stephen's presentation from Plumbers this week. The default behavior
+> > for unused clocks may be changing soon.
+>=20
+> Thank you!
+>=20
+> ou mean "Make sync_state()/handoff work for the common clk
+> framework"[1]? IIUIC, that presentation didn't cover the problem we are
+> facing, except for the big "Kconfig for clk_ignore_unused=3Dtrue" hammer.
 
-On Mon, 27 Nov 2023 12:52:03 +0530, Shubhrajyoti Datta wrote:
-> The alt_ref is present only in Versal-net devices.
-> Other versal devices do not have it. Update the binding
-> accordingly.
-> 
-> Fixes: 352546805a44 ("dt-bindings: clock: Add bindings for versal clock driver")
-> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
-> 
-> ---
-> 
-> Changes in v2:
-> - Have specific constraints for versal and versal net.
-> 
->  .../bindings/clock/xlnx,versal-clk.yaml       | 31 +++++++++++++++----
->  1 file changed, 25 insertions(+), 6 deletions(-)
-> 
+:)
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+>=20
+> > > Table 2.4: Values for status property
+> > > https://github.com/devicetree-org/devicetree-specification/releases/d=
+ownload/v0.4/devicetree-specification-v0.4.pdf
+> > >
+> > > "reserved"
+> > >       Indicates that the device is operational, but should not be
+> > >       used. Typically this is used for devices that are controlled
+> > >       by another software component, such as platform firmware.
+> > >
+> > > ex)
+> > >       scif5: serial@e6f30000 {
+> > >               ...
+> > > (B)           clocks =3D <&cpg CPG_MOD 202>,
+> > >                        <&cpg CPG_CORE R8A7795_CLK_S3D1>,
+> > >                        <&scif_clk>;
+> > >               ...
+> > > (A)           status =3D "reserved";
+> > >       };
+> >
+> > I have some reservations about whether a reserved node should be touched
+> > at all by Linux. I suppose since it is platform specific, it's okay. I
+> > don't think we could apply such behavior globally.
+>=20
+> That's an interesting comment, as the issue is that currently Linux
+> does touch (resources belonging to) reserved nodes, and this patch
+> would prevent doing that for module clock resources;-)
 
-yamllint warnings/errors:
+I think I get it.
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.example.dtb: versal-firmware: clock-controller:clocks: [[4294967295], [4294967295], [4294967295]] is too long
-	from schema $id: http://devicetree.org/schemas/firmware/xilinx/xlnx,zynqmp-firmware.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.example.dtb: versal-firmware: clock-controller:clock-names:1: 'pl_alt_ref' was expected
-	from schema $id: http://devicetree.org/schemas/firmware/xilinx/xlnx,zynqmp-firmware.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.example.dtb: versal-firmware: clock-controller:clock-names: ['ref', 'alt_ref', 'pl_alt_ref'] is too long
-	from schema $id: http://devicetree.org/schemas/firmware/xilinx/xlnx,zynqmp-firmware.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.example.dtb: clock-controller: clocks: [[4294967295], [4294967295], [4294967295]] is too long
-	from schema $id: http://devicetree.org/schemas/clock/xlnx,versal-clk.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.example.dtb: clock-controller: clock-names:1: 'pl_alt_ref' was expected
-	from schema $id: http://devicetree.org/schemas/clock/xlnx,versal-clk.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.example.dtb: clock-controller: clock-names: ['ref', 'alt_ref', 'pl_alt_ref'] is too long
-	from schema $id: http://devicetree.org/schemas/clock/xlnx,versal-clk.yaml#
+>=20
+> The core issue is that Linux distinguishes only between two cases:
+>   1. "device is used by Linux" (if a driver is available),
+>      as indicated by 'status =3D "okay"' in DT, or
+>   2. "device is unused by Linux".
+> On a heterogenous system, the latter actually comprises two cases:
+>   2a. "device is unused", or
+>   2b. "device is used by another OS running on another CPU core".
+>=20
+> Looking for 'status =3D "reserved"' allows us to distinguish between 2a
+> and 2b, and can prevent disabling clocks that are used by another OS.
+> Probably we need a similar solution for power domains.
+>=20
+> Do you have a better or alternative suggestion?
 
-doc reference errors (make refcheckdocs):
+Does the protected-clocks property work? That basically says "don't use
+these clks in the OS". The driver implementation would not register
+those clks and then the framework would be unaware of their existence,
+leading to them never being disabled during late init.
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20231127072204.25879-2-shubhrajyoti.datta@amd.com
+This approach also looks OK to me, basically programmatically creating
+the protected-clocks list by parsing DT for reserved consumer nodes and
+then figuring out that no consumer exists so we can skip registering the
+clk entirely, or add the flag. I'm not sure we want to implement that
+policy globally, because maybe someone really wants to disable the clk
+still to clean up bootloader state and then let a remoteproc use the clk
+later.
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Do you want to keep those clks registered with the framework? Is there
+any benefit to keeping clks around if linux can't do anything with them?
