@@ -1,23 +1,23 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3342A31580;
-	Mon, 27 Nov 2023 21:32:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17CBADF68;
+	Mon, 27 Nov 2023 23:41:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LgGa0Jrc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C7FBC433C8;
-	Mon, 27 Nov 2023 21:32:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a7rXnkcZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75224C433C8;
+	Mon, 27 Nov 2023 23:41:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701120748;
-	bh=oKVuzSwUsB23sGbqCUdMKzeZOFoBgjY8WDwms9OBRnc=;
+	s=k20201202; t=1701128486;
+	bh=weP+2DgJBx1dYZy08M9yhRAGupDOCwbQuosE0EUyWV8=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=LgGa0JrcD0Mjn91d/RumF0tZD9/oib+k4L290CqFgpd4gZ/96SKvsPaMyLK6OZcug
-	 xNz664QoqgXdNYqM0DHe929wTJPfBM5hsa3Xc/1ragtuWoLImhBNNX8iugp4iAOJyS
-	 4h/k+A2p++OxoxLV2tmRzMoDvWhxDEMZXLoUuu063Ae7tesDJuM33sS5ETOmzzq3q0
-	 J8E9ONxnyws2yXI/HwKuK3iB+1ZUnBMOMq3rquVc/jNLgkfUjuFn+g6P6upN2xow7i
-	 b/P+TdfnjF9TJd+FPvwM2SzGCqJxGQ5zz0KAjxiNbh99zGgi97NofVtKH7P4xipToR
-	 p5n2lUED4T+Iw==
-Message-ID: <31afd614c5eb5e82a860fecfc1c21c39.sboyd@kernel.org>
+	b=a7rXnkcZC0eEvflSMXIq1b0VcYoXkkWXq7OxnUI3DSeFDFGx+J/xGScO0HjQZfmMe
+	 LqYpPyoLGy2r+5CHC6aiamz5sN4VcghqVZvgYwctTYV2gTK3RlcyemaLO7XVfCZdsX
+	 e3faqKi6gg4r+yKlUMjZuo08wMW7AOwvfxjpa7z1LkXR1SHAXT9mMf6mgHJwCm6coh
+	 QTIrRv6awIasaqIatl+jqQiP9RYv+ySszOgyI6ZbeIO1Mnhlv2H7PLeR/tv9Duq0Eh
+	 h3P7/evhc5HEy5y1At1XjPkCfXOXXdN7Prv/qJh6g7aig9avY2WHIRtOKGnTZvfr4g
+	 HHOsRFJNAYLmw==
+Message-ID: <729bbf75faad7c3a4ed74fffc3d84007.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -26,96 +26,100 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAMuHMdU0Hqem8Ooehoo64rrGn8q8+5A8_DjGZd9Tvh=Xej6mdA@mail.gmail.com>
-References: <8734x9tda9.wl-kuninori.morimoto.gx@renesas.com> <87wmulrynq.wl-kuninori.morimoto.gx@renesas.com> <20231116192324.GB2821275-robh@kernel.org> <CAMuHMdU0Hqem8Ooehoo64rrGn8q8+5A8_DjGZd9Tvh=Xej6mdA@mail.gmail.com>
-Subject: Re: [PATCH 4/4] drivers: clk: renesas: enable all clocks which is assinged to non Linux system
+In-Reply-To: <20231122-x1e80100-clk-tcsrcc-v1-2-43078c6d6452@linaro.org>
+References: <20231122-x1e80100-clk-tcsrcc-v1-0-43078c6d6452@linaro.org> <20231122-x1e80100-clk-tcsrcc-v1-2-43078c6d6452@linaro.org>
+Subject: Re: [PATCH 2/2] clk: qcom: Add TCSR clock driver for x1e80100
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Frank Rowand <frowand.list@gmail.com>, Michael Turquette <mturquette@baylibre.com>, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Aymeric Aillet <aymeric.aillet@iot.bzh>, Yusuke Goda <yusuke.goda.sx@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>, Rob Herring <robh@kernel.org>
-Date: Mon, 27 Nov 2023 13:32:26 -0800
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
+To: Abel Vesa <abel.vesa@linaro.org>, Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Rajendra Nayak <quic_rjendra@quicinc.com>, Rob Herring <robh+dt@kernel.org>
+Date: Mon, 27 Nov 2023 15:41:24 -0800
 User-Agent: alot/0.10
 
-Quoting Geert Uytterhoeven (2023-11-16 13:08:46)
-> On Thu, Nov 16, 2023 at 8:23=E2=80=AFPM Rob Herring <robh@kernel.org> wro=
-te:
-> > On Tue, Nov 14, 2023 at 12:01:14AM +0000, Kuninori Morimoto wrote:
-> > > Some board might use Linux and another OS in the same time. In such
-> > > case, current Linux will stop necessary module clock when booting
-> > > which is not used on Linux side, but is used on another OS side.
-> > >
-> > > To avoid such situation, renesas-cpg-mssr try to find
-> > > status =3D "reserved" devices (A), and add CLK_IGNORE_UNUSED flag to =
-its
-> > > <&cgp CPG_MOD xxx> clock (B).
-> >
-> > See Stephen's presentation from Plumbers this week. The default behavior
-> > for unused clocks may be changing soon.
->=20
-> Thank you!
->=20
-> ou mean "Make sync_state()/handoff work for the common clk
-> framework"[1]? IIUIC, that presentation didn't cover the problem we are
-> facing, except for the big "Kconfig for clk_ignore_unused=3Dtrue" hammer.
+Quoting Abel Vesa (2023-11-22 05:42:13)
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index ad1acd9b7426..6ed9c89d9070 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -1116,4 +1116,12 @@ config SM_VIDEOCC_8450
+>           SM8450 devices.
+>           Say Y if you want to support video devices and functionality su=
+ch as
+>           video encode/decode.
+> +
+> +config X1E_TCSRCC_80100
 
-:)
+Is the config symbol intentionally namespaced for X1E prefix to group
+one SoC? Why not X1E80100_TCSRCC then?
 
->=20
-> > > Table 2.4: Values for status property
-> > > https://github.com/devicetree-org/devicetree-specification/releases/d=
-ownload/v0.4/devicetree-specification-v0.4.pdf
-> > >
-> > > "reserved"
-> > >       Indicates that the device is operational, but should not be
-> > >       used. Typically this is used for devices that are controlled
-> > >       by another software component, such as platform firmware.
-> > >
-> > > ex)
-> > >       scif5: serial@e6f30000 {
-> > >               ...
-> > > (B)           clocks =3D <&cpg CPG_MOD 202>,
-> > >                        <&cpg CPG_CORE R8A7795_CLK_S3D1>,
-> > >                        <&scif_clk>;
-> > >               ...
-> > > (A)           status =3D "reserved";
-> > >       };
-> >
-> > I have some reservations about whether a reserved node should be touched
-> > at all by Linux. I suppose since it is platform specific, it's okay. I
-> > don't think we could apply such behavior globally.
->=20
-> That's an interesting comment, as the issue is that currently Linux
-> does touch (resources belonging to) reserved nodes, and this patch
-> would prevent doing that for module clock resources;-)
+> +       tristate "X1E80100 TCSR Clock Controller"
+> +       depends on ARM64 || COMPILE_TEST
+> +       select QCOM_GDSC
+> +       help
+> +         Support for the TCSR clock controller on X1E80100 devices.
+> +         Say Y if you want to use peripheral devices such as SD/UFS.
+>  endif
+> diff --git a/drivers/clk/qcom/tcsrcc-x1e80100.c b/drivers/clk/qcom/tcsrcc=
+-x1e80100.c
+> new file mode 100644
+> index 000000000000..2ec142c3d1f9
+> --- /dev/null
+> +++ b/drivers/clk/qcom/tcsrcc-x1e80100.c
+> @@ -0,0 +1,295 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2022, Qualcomm Innovation Center, Inc. All rights reser=
+ved.
+> + * Copyright (c) 2023, Linaro Limited
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/module.h>
+> +#include <linux/of_device.h>
+> +#include <linux/regmap.h>
+> +
+> +#include <dt-bindings/clock/qcom,x1e80100-tcsr.h>
+> +
+> +#include "clk-alpha-pll.h"
+> +#include "clk-branch.h"
+> +#include "clk-pll.h"
+> +#include "clk-rcg.h"
+> +#include "clk-regmap.h"
+> +#include "clk-regmap-divider.h"
+> +#include "clk-regmap-mux.h"
+> +#include "common.h"
+> +#include "reset.h"
+> +
+> +enum {
+> +       DT_BI_TCXO_PAD,
+> +};
+> +
+> +static struct clk_branch tcsr_edp_clkref_en =3D {
+> +       .halt_reg =3D 0x15130,
+> +       .halt_check =3D BRANCH_HALT_DELAY,
+> +       .clkr =3D {
+> +               .enable_reg =3D 0x15130,
+> +               .enable_mask =3D BIT(0),
+> +               .hw.init =3D &(const struct clk_init_data) {
+> +                       .name =3D "tcsr_edp_clkref_en",
+> +                       .ops =3D &clk_branch2_ops,
+> +               },
+> +       },
+> +};
+> +
+> +static struct clk_branch tcsr_pcie_2l_4_clkref_en =3D {
+> +       .halt_reg =3D 0x15100,
+> +       .halt_check =3D BRANCH_HALT_DELAY,
 
-I think I get it.
+Why are these all branch halt delay but still have a halt_reg?
 
->=20
-> The core issue is that Linux distinguishes only between two cases:
->   1. "device is used by Linux" (if a driver is available),
->      as indicated by 'status =3D "okay"' in DT, or
->   2. "device is unused by Linux".
-> On a heterogenous system, the latter actually comprises two cases:
->   2a. "device is unused", or
->   2b. "device is used by another OS running on another CPU core".
->=20
-> Looking for 'status =3D "reserved"' allows us to distinguish between 2a
-> and 2b, and can prevent disabling clocks that are used by another OS.
-> Probably we need a similar solution for power domains.
->=20
-> Do you have a better or alternative suggestion?
+> +       .clkr =3D {
+> +               .enable_reg =3D 0x15100,
+> +               .enable_mask =3D BIT(0),
+> +               .hw.init =3D &(struct clk_init_data){
 
-Does the protected-clocks property work? That basically says "don't use
-these clks in the OS". The driver implementation would not register
-those clks and then the framework would be unaware of their existence,
-leading to them never being disabled during late init.
+const?
 
-This approach also looks OK to me, basically programmatically creating
-the protected-clocks list by parsing DT for reserved consumer nodes and
-then figuring out that no consumer exists so we can skip registering the
-clk entirely, or add the flag. I'm not sure we want to implement that
-policy globally, because maybe someone really wants to disable the clk
-still to clean up bootloader state and then let a remoteproc use the clk
-later.
-
-Do you want to keep those clks registered with the framework? Is there
-any benefit to keeping clks around if linux can't do anything with them?
+> +                       .name =3D "tcsr_pcie_2l_4_clkref_en",
+> +                       .parent_data =3D &(const struct clk_parent_data){
+> +                               .index =3D DT_BI_TCXO_PAD,
+> +                       },
