@@ -1,59 +1,33 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HxiD+wEm"
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 752161BB;
-	Mon, 27 Nov 2023 10:15:08 -0800 (PST)
-Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-a00b01955acso654826466b.1;
-        Mon, 27 Nov 2023 10:15:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701108907; x=1701713707; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x6EbGi5KYgfVG1CdJuzlcMAvljT6psfhah5arWG3Clc=;
-        b=HxiD+wEmUMJ3X8IEqrcg7JnnbnQ9GS17iOVFO2IGGHuF2qGjgzyGEULtyv7GGda6NC
-         wAPYXnscFPt8I0fFjACIVeX+Fr0aGJ8LTz/Y+2NtFudqkAuhcDThangxygJa+rYpDGuJ
-         TL+Yl1gDpbSrd+6ac5Md8GFADYrjjblPRo5rpzOw8o1uTKVb0I/J8+jvgm5sC8fdxgnl
-         asT4M8dlfKprmygbD7L9eEq4kh9p0NSN2THXCIRMmjlf2J79F+EAFksyxGvhqPTFoa8Y
-         TXPcq1P7bxk24qhjLcuVGR5w6RbtdTdYyiTRdVyvcMSQU8cAkcNXSNTjZ7LYjvbiJXkT
-         levg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701108907; x=1701713707;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x6EbGi5KYgfVG1CdJuzlcMAvljT6psfhah5arWG3Clc=;
-        b=fgv/XuGvFTWwPD4GotaKCYOn4LBSQB7nVjBc+l4PovzTYerB5y+SH5mpxtm1uS/KMS
-         oQtFWuyJ9S22zUcMKRx3KAdw5XMylt9Ddltkwqa10UIr11gEEF8s4qbE3amu1AyglsDv
-         MHlnbNabKYJsUISf8PVKguyUs2tsm7f6/m9p0fNuo8yqWH9dQ+2UThhcFLivDIZHkKbx
-         W2imFyy6yTE2n3m76l9QPfwjbikWC80ZO0ytEagw/D+hv8+eUTjGxMjZ0A0vgaWB61fb
-         FsQzV+UPMc3o6kUCGAUpCzkOXvRAMVrK1qacLUCdbq2n/L6gf5XO4RRO7rXcSaUhRVz6
-         oAtA==
-X-Gm-Message-State: AOJu0YxDpcHMaIV/MWj2zD/KrUoZeg480d395LB0gxUt1ejFeb4x2vPq
-	VjcYsRyCihR0PjkCVFz/PQ==
-X-Google-Smtp-Source: AGHT+IFDKpCYOvpyu5bhY+/rib0MinbIHsR2HWXwLD7BBCXHji0tHHN2u1zt2jvfC/UPg9cKtem6Bg==
-X-Received: by 2002:a17:906:d28e:b0:9e5:cef:6ff with SMTP id ay14-20020a170906d28e00b009e50cef06ffmr10355980ejb.33.1701108906794;
-        Mon, 27 Nov 2023 10:15:06 -0800 (PST)
-Received: from U4.lan ([2a02:810b:f40:4300:370c:d8f:2dce:7367])
-        by smtp.gmail.com with ESMTPSA id dv19-20020a170906b81300b009a9fbeb15f2sm5952271ejb.62.2023.11.27.10.15.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Nov 2023 10:15:06 -0800 (PST)
-From: Alex Bee <knaerzche@gmail.com>
-To: Heiko Stuebner <heiko@sntech.de>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Elaine Zhang <zhangqing@rock-chips.com>,
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
+X-Greylist: delayed 1363 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 27 Nov 2023 12:46:55 PST
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [IPv6:2a02:c205:3004:2154::1])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1714AD60
+	for <linux-clk@vger.kernel.org>; Mon, 27 Nov 2023 12:46:55 -0800 (PST)
+Received: from p200301077700a9001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:107:7700:a900:1a3d:a2ff:febf:d33a] helo=aktux)
+	by mail.andi.de1.cc with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <andreas@kemnade.info>)
+	id 1r7i9I-006mnO-M7; Mon, 27 Nov 2023 21:24:08 +0100
+Received: from andi by aktux with local (Exim 4.96)
+	(envelope-from <andreas@kemnade.info>)
+	id 1r7i9I-000bvU-1J;
+	Mon, 27 Nov 2023 21:24:08 +0100
+From: Andreas Kemnade <andreas@kemnade.info>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org,
+	andreas@kemnade.info,
+	kristo@kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Alex Bee <knaerzche@gmail.com>
-Subject: [PATCH v3 2/2] clk: rockchip: rk3128: Fix SCLK_SDMMC's clock name
-Date: Mon, 27 Nov 2023 19:14:18 +0100
-Message-ID: <20231127181415.11735-6-knaerzche@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20231127181415.11735-2-knaerzche@gmail.com>
-References: <20231127181415.11735-2-knaerzche@gmail.com>
+	linux-omap@vger.kernel.org
+Subject: [PATCH] dt-bindings: clock: ti: Convert interface.txt to json-schema
+Date: Mon, 27 Nov 2023 21:23:59 +0100
+Message-Id: <20231127202359.145778-1-andreas@kemnade.info>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,32 +36,178 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-SCLK_SDMMC is the parent for SCLK_SDMMC_DRV and SCLK_SDMMC_SAMPLE, but
-used with the (more) correct name sclk_sdmmc. SD card tuning does currently
-fail as the parent can't be found under that name.
-There is no need to suffix the name with '0' since RK312x SoCs do have a
-single sdmmc controller - so rename it to the name which is already used
-by it's children.
+Convert the OMAP interface clock device tree binding to json-schema
+and fix up reg property which is optional and taken from parent if
+not specified.
+Specify the creator of the original binding as a maintainer.
 
-Fixes: f6022e88faca ("clk: rockchip: add clock controller for rk3128")
-Signed-off-by: Alex Bee <knaerzche@gmail.com>
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
 ---
- drivers/clk/rockchip/clk-rk3128.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../bindings/clock/ti/interface.txt           | 57 ------------
+ .../bindings/clock/ti/ti,interface-clock.yaml | 90 +++++++++++++++++++
+ 2 files changed, 90 insertions(+), 57 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/ti/interface.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/ti/ti,interface-clock.yaml
 
-diff --git a/drivers/clk/rockchip/clk-rk3128.c b/drivers/clk/rockchip/clk-rk3128.c
-index fcacfe758829..22e752236030 100644
---- a/drivers/clk/rockchip/clk-rk3128.c
-+++ b/drivers/clk/rockchip/clk-rk3128.c
-@@ -310,7 +310,7 @@ static struct rockchip_clk_branch common_clk_branches[] __initdata = {
- 	GATE(SCLK_MIPI_24M, "clk_mipi_24m", "xin24m", CLK_IGNORE_UNUSED,
- 			RK2928_CLKGATE_CON(2), 15, GFLAGS),
- 
--	COMPOSITE(SCLK_SDMMC, "sclk_sdmmc0", mux_mmc_src_p, 0,
-+	COMPOSITE(SCLK_SDMMC, "sclk_sdmmc", mux_mmc_src_p, 0,
- 			RK2928_CLKSEL_CON(11), 6, 2, MFLAGS, 0, 6, DFLAGS,
- 			RK2928_CLKGATE_CON(2), 11, GFLAGS),
- 
+diff --git a/Documentation/devicetree/bindings/clock/ti/interface.txt b/Documentation/devicetree/bindings/clock/ti/interface.txt
+deleted file mode 100644
+index d3eb5ca92a7fe..0000000000000
+--- a/Documentation/devicetree/bindings/clock/ti/interface.txt
++++ /dev/null
+@@ -1,57 +0,0 @@
+-Binding for Texas Instruments interface clock.
+-
+-Binding status: Unstable - ABI compatibility may be broken in the future
+-
+-This binding uses the common clock binding[1]. This clock is
+-quite much similar to the basic gate-clock [2], however,
+-it supports a number of additional features, including
+-companion clock finding (match corresponding functional gate
+-clock) and hardware autoidle enable / disable.
+-
+-[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+-[2] Documentation/devicetree/bindings/clock/gpio-gate-clock.yaml
+-
+-Required properties:
+-- compatible : shall be one of:
+-  "ti,omap3-interface-clock" - basic OMAP3 interface clock
+-  "ti,omap3-no-wait-interface-clock" - interface clock which has no hardware
+-				       capability for waiting clock to be ready
+-  "ti,omap3-hsotgusb-interface-clock" - interface clock with USB specific HW
+-					handling
+-  "ti,omap3-dss-interface-clock" - interface clock with DSS specific HW handling
+-  "ti,omap3-ssi-interface-clock" - interface clock with SSI specific HW handling
+-  "ti,am35xx-interface-clock" - interface clock with AM35xx specific HW handling
+-  "ti,omap2430-interface-clock" - interface clock with OMAP2430 specific HW
+-				  handling
+-- #clock-cells : from common clock binding; shall be set to 0
+-- clocks : link to phandle of parent clock
+-- reg : base address for the control register
+-
+-Optional properties:
+-- clock-output-names : from common clock binding.
+-- ti,bit-shift : bit shift for the bit enabling/disabling the clock (default 0)
+-
+-Examples:
+-	aes1_ick: aes1_ick@48004a14 {
+-		#clock-cells = <0>;
+-		compatible = "ti,omap3-interface-clock";
+-		clocks = <&security_l4_ick2>;
+-		reg = <0x48004a14 0x4>;
+-		ti,bit-shift = <3>;
+-	};
+-
+-	cam_ick: cam_ick@48004f10 {
+-		#clock-cells = <0>;
+-		compatible = "ti,omap3-no-wait-interface-clock";
+-		clocks = <&l4_ick>;
+-		reg = <0x48004f10 0x4>;
+-		ti,bit-shift = <0>;
+-	};
+-
+-	ssi_ick_3430es2: ssi_ick_3430es2@48004a10 {
+-		#clock-cells = <0>;
+-		compatible = "ti,omap3-ssi-interface-clock";
+-		clocks = <&ssi_l4_ick>;
+-		reg = <0x48004a10 0x4>;
+-		ti,bit-shift = <0>;
+-	};
+diff --git a/Documentation/devicetree/bindings/clock/ti/ti,interface-clock.yaml b/Documentation/devicetree/bindings/clock/ti/ti,interface-clock.yaml
+new file mode 100644
+index 0000000000000..48a54caeb3857
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/ti/ti,interface-clock.yaml
+@@ -0,0 +1,90 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/ti/ti,interface-clock.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Texas Instruments interface clock.
++
++maintainers:
++  - Tero Kristo <kristo@kernel.org>
++
++description: |
++  This binding uses the common clock binding[1]. This clock is
++  quite much similar to the basic gate-clock[2], however,
++  it supports a number of additional features, including
++  companion clock finding (match corresponding functional gate
++  clock) and hardware autoidle enable / disable.
++
++  [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
++  [2] Documentation/devicetree/bindings/clock/gpio-gate-clock.yaml
++
++
++properties:
++  compatible:
++    enum:
++      - ti,omap3-interface-clock           # basic OMAP3 interface clock
++      - ti,omap3-no-wait-interface-clock   # interface clock which has no hardware
++                                           # capability for waiting clock to be ready
++      - ti,omap3-hsotgusb-interface-clock  # interface clock with USB specific HW handling
++      - ti,omap3-dss-interface-clock       # interface clock with DSS specific HW handling
++      - ti,omap3-ssi-interface-clock       # interface clock with SSI specific HW handling
++      - ti,am35xx-interface-clock          # interface clock with AM35xx specific HW handling
++      - ti,omap2430-interface-clock        # interface clock with OMAP2430 specific HW handling
++  "#clock-cells":
++    const: 0
++
++  clocks:
++    maxItems: 1
++
++  clock-output-names:
++    maxItems: 1
++
++  reg:
++    description:
++      if not specified, value from parent is used
++    maxItems: 1
++
++  ti,bit-shift:
++    description:
++      bit shift for the bit enabling/disabling the clock
++    $ref: /schemas/types.yaml#/definitions/uint32
++    default: 0
++
++required:
++  - compatible
++  - clocks
++  - '#clock-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    bus {
++      #address-cells = <1>;
++      #size-cells = <1>;
++
++      aes1_ick: aes1-ick@48004a14 {
++        #clock-cells = <0>;
++        compatible = "ti,omap3-interface-clock";
++        clocks = <&security_l4_ick2>;
++        reg = <0x48004a14 0x4>;
++        ti,bit-shift = <3>;
++      };
++
++      cam_ick: cam-ick@48004f10 {
++        #clock-cells = <0>;
++        compatible = "ti,omap3-no-wait-interface-clock";
++        clocks = <&l4_ick>;
++        reg = <0x48004f10 0x4>;
++        ti,bit-shift = <0>;
++      };
++
++      ssi_ick_3430es2: ssi-ick-3430es2@48004a10 {
++        #clock-cells = <0>;
++        compatible = "ti,omap3-ssi-interface-clock";
++        clocks = <&ssi_l4_ick>;
++        reg = <0x48004a10 0x4>;
++        ti,bit-shift = <0>;
++      };
++    };
 -- 
-2.43.0
+2.39.2
 
