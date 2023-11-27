@@ -1,270 +1,204 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="DjeYRCld"
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60429138
-	for <linux-clk@vger.kernel.org>; Sun, 26 Nov 2023 23:37:36 -0800 (PST)
-Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-9e1021dbd28so522704166b.3
-        for <linux-clk@vger.kernel.org>; Sun, 26 Nov 2023 23:37:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1701070655; x=1701675455; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=scHiT0Xo/KLWsBCLyWjvRQ5uVQcQfMVVyC6A152Vb/c=;
-        b=DjeYRCldpxx4QjpEftRKp7OFMnhUrm1/De0s6kHU/Wjxa0YyhWcf6n0KB7ww0JnRfw
-         oxWK0BW2xc5PwWvapo7kRp6AvaysdsIEQJWXSltjVIKG0a5ogwsT/+eJuGLHWOl09Rr3
-         JphJKqhX0qyVTzfOKG69ZAzS8yGau/OQkStugZUmipy0LHOTcj7OG9y/qraWxYE/99kg
-         iWrRg8gjMvqROn+lCMK9oTDzu2thXZxbOPrboCCx/rGJ6FKGv0mosYPGHMSCZj+OHiYj
-         IbNFJf4XzMagnLOdp9yo/jUN/0q9LREJ1rX+c5u9S8LcrX0hKN81c23CD2eKqWJfpa3b
-         18RQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701070655; x=1701675455;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=scHiT0Xo/KLWsBCLyWjvRQ5uVQcQfMVVyC6A152Vb/c=;
-        b=CF194LJZ0ceaiH4HSPsX4988WzJ8fOXJQUm3NiHX2rDsMoUnowTV9KMPqNKXkj4aoq
-         emu42ZqTkIF67+G7kKaah/+TBIZ2XBOvuYUN/9p8MiLGmoV+2CmGIrU53a1cPScwLj1a
-         7IAFzRCrJ9Kv4wh1JVRRpt5gVJrfTAZsXtRqYU6ZG4FOX28FR/5Y3AQ9na1lnH3d3MAM
-         nBX/NKo2TeTAfqz4/bY23hJa9DIoB+shqfG83mo369RuINqck25moUHJU47WPzUebX0u
-         /0bXOs060cnLjC2og9iOQeY4gg2VVEH2tPRoYQzgeNYBzcuQ51GSM9wJvuugY5QQmjCG
-         67sg==
-X-Gm-Message-State: AOJu0YwMEcv5U0xomZBt+M7P6gyPuFvMmiWMw4ZI0m0daiHf6ReD1wTU
-	aRZKZh2zrE5jlQwwCMLr3qfkWg==
-X-Google-Smtp-Source: AGHT+IFUHRZrWVKXHlqz5bmA/5BdGKLgt9BLh5gYYMZivaNLtxnVAdSXgaVpZJ/zGe8IZJJLh7JXsQ==
-X-Received: by 2002:a17:906:10d7:b0:a0c:85f8:c1f4 with SMTP id v23-20020a17090610d700b00a0c85f8c1f4mr3850762ejv.56.1701070654693;
-        Sun, 26 Nov 2023 23:37:34 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.125])
-        by smtp.gmail.com with ESMTPSA id r22-20020a170906351600b00a0c01560bdfsm2579128eja.139.2023.11.26.23.37.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 26 Nov 2023 23:37:34 -0800 (PST)
-Message-ID: <55a0048a-7fa1-49cd-a70f-8f7d948adf27@tuxon.dev>
-Date: Mon, 27 Nov 2023 09:37:31 +0200
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="XbLa0Mqx"
+Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2042.outbound.protection.outlook.com [40.92.103.42])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46FD4B5;
+	Mon, 27 Nov 2023 00:07:23 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Ur85VhFn9PxMJmrvw21d7doozFssbzDJn0bu3L9Gxby4lNWPY27ByDiLuhsozsPjc7azq4uX8zBLWO+RdRTXBavZOchAF+mH2J8fRIaPcs2XyHz1/qulSovnZHHwLDnlSELseZywVWEkXenkKfGpisxPoFHnssD3gIg+QLmFQkzjVQHr8BoT8cdLnFnDZVvwlWgGAFWm/JOwYpsxV9y5nbURTlnYGd/Vtmn0z4fllC4pCWiP+WGTULlp2oqtiVjVtsqDzptt/fNKmAPAJTn55pKNGqhPCzFFWA1IVlCqVr23XQ7AA9aSUx5nbKrQU3j+J5VsKsGRApK/uMgTY3wv7w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xR2yUk3o2sX4BBmQ7DHwlK2oQyPNgPORTOHQUgWUWuo=;
+ b=gL8O8rp4E4Y/surZPOEdx7eKLw/XJv6g7QOvyczNgq7Eb908nf5pYAdiR5bCyejhH1vqBStJIM9UV23iayjH1GkAYNefPKDvO1Oxba/kIIooNXyRO5zUw9heS9dYzL1f9NPfTrl/GhLh0sqq3GP9YfeMkURtJMGlv+fuX017jmdmksj2YZB6HanUI/Xe5saRH6o5iMro/t5a6lWnXd8iahhKnDMAwmJa6GFOL5KkVhKJvSdNJBftaw5WiL5mgGk3oov2aV+9sdoAMkiPK3opc9qOeUhXmNpRo7Q0rZ2cJvfQ02kY0sgW1+5qkqKM7SKlSnWfhQPRa6OY5U+/7m1U2w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xR2yUk3o2sX4BBmQ7DHwlK2oQyPNgPORTOHQUgWUWuo=;
+ b=XbLa0MqxsUpFV0iknJolQd/+9bh0IYk/jChRujggxIc1LR2uaRbdBteCr5kkBntITcawElqSC6tBLb7sWBS+Zao2v/FlYCVWJweMMHRw9NedZWmeQX6eTtQpjfs3wQbWAmtkpgRlnon1KNaNIu6pqcf4cberebywxguYXBlQYFZl4FO6g7GsKCtDAoBmWbGiXb9kU8oHOpqfhzucmBJFTXsmVysqfxYlrwbdKsa5hpnS6NAyBCSFf0rvu5Cg6n2nDFD9DEAz07E8M1a7WQkJiYuwosA++d92ba9rQEAn3van2ds+B6h+DCMakZD1DAmmNgOAvFGVF8I9Sx0LSFH6uQ==
+Received: from MA0P287MB0332.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:ab::5) by
+ PN0P287MB1048.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:143::13) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7025.28; Mon, 27 Nov 2023 08:07:14 +0000
+Received: from MA0P287MB0332.INDP287.PROD.OUTLOOK.COM
+ ([fe80::b1a7:eee7:e903:9ef3]) by MA0P287MB0332.INDP287.PROD.OUTLOOK.COM
+ ([fe80::b1a7:eee7:e903:9ef3%7]) with mapi id 15.20.7025.022; Mon, 27 Nov 2023
+ 08:07:14 +0000
+Message-ID:
+ <MA0P287MB03329CFBA3BB6A4E4F322F99FEBDA@MA0P287MB0332.INDP287.PROD.OUTLOOK.COM>
+Date: Mon, 27 Nov 2023 16:07:12 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/4] clk: sophgo: Add SG2042 clock generator driver
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Chen Wang <unicornxw@gmail.com>, aou@eecs.berkeley.edu, chao.wei@sophgo.com,
+ conor@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ mturquette@baylibre.com, palmer@dabbelt.com, paul.walmsley@sifive.com,
+ richardcochran@gmail.com, robh+dt@kernel.org, sboyd@kernel.org,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com, guoren@kernel.org,
+ jszhang@kernel.org, inochiama@outlook.com, samuel.holland@sifive.com
+References: <cover.1701044106.git.unicorn_wang@outlook.com>
+ <c06130afb4bdc1890b4e8d29388fa6feef1f1826.1701044106.git.unicorn_wang@outlook.com>
+ <81d421c8-bfd6-42b5-9da1-f067792f8f48@linaro.org>
+From: Chen Wang <unicorn_wang@outlook.com>
+In-Reply-To: <81d421c8-bfd6-42b5-9da1-f067792f8f48@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TMN: [fR3pS4hF/Iu54SRmBKeGOTf18NsVrMm+]
+X-ClientProxiedBy: SI1PR02CA0007.apcprd02.prod.outlook.com
+ (2603:1096:4:1f7::6) To MA0P287MB0332.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a01:ab::5)
+X-Microsoft-Original-Message-ID:
+ <8d100c7d-6439-4b41-abe6-5a690dda9cbc@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/14] clk: renesas: rzg2l-cpg: Add support for MSTOP
-Content-Language: en-US
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: s.shtylyov@omp.ru, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- linux@armlinux.org.uk, magnus.damm@gmail.com, mturquette@baylibre.com,
- sboyd@kernel.org, linus.walleij@linaro.org, p.zabel@pengutronix.de,
- arnd@arndb.de, m.szyprowski@samsung.com, alexandre.torgue@foss.st.com,
- afd@ti.com, broonie@kernel.org, alexander.stein@ew.tq-group.com,
- eugen.hristev@collabora.com, sergei.shtylyov@gmail.com,
- prabhakar.mahadev-lad.rj@bp.renesas.com, biju.das.jz@bp.renesas.com,
- linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-gpio@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20231120070024.4079344-1-claudiu.beznea.uj@bp.renesas.com>
- <20231120070024.4079344-4-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdVMpKVY8WX7dbtHfgnwgePH+i9+2BAumb37sFmqccb44g@mail.gmail.com>
- <CAMuHMdVWvVtFMUe+J9R2ZU8Hi5CGs0NQfwUxitganM85183KkA@mail.gmail.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <CAMuHMdVWvVtFMUe+J9R2ZU8Hi5CGs0NQfwUxitganM85183KkA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MA0P287MB0332:EE_|PN0P287MB1048:EE_
+X-MS-Office365-Filtering-Correlation-Id: b91567f4-dac3-4402-1cf5-08dbef1fdd54
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	B3M4aB/2t2ClB/Vk+G8rjqfGhWDgGt6BWcGKiH4qKvJoyLj9FzICpVmPUw1W+TtC6ZR9nUnsmyVPsrnlmztFHO9Y7mrpebkgWxnMy8LEAqUSgNWzwozzKRQZ4M5xX5bgx4T7MlnbjyiEKTMFgp8eEn/lovPm8Fc20LaTQKn5VEi/9pgJX748oJ1Bm4EiC6GEoAqxjT1VQt5ImEZL+7s2q/vPa/Etlx7aTaFvB075qwT6ZKhepmmIblk/RJeojqLVhlWzwPybZBAQH++G6rnIH8aijLJhiIduF+WFALCnT3BSULAePin6vqmODLtWz/1t9Mz6MX+9eehe9dq2XkRMI1llf3k+2bldaQQBfEybSxoly1MvkSKHaCSzHEKbZa8YBGqgkEhuonNVZCAEf8UzFXyR1qKJ6B/UflepPR4szvEMTCG6xXPhnuZILwpSGtn9SBFxXJkvbDVqun7m5K94MBYbH05n9kCTFF4FsVfXMm7dJ16Ei27piile6unpz2VWAs6eqjVA4ntbDVEltpVaQtey7x8oPrug6KnnH8kyRqlbYiSpJZkW6HaIdCIX9kk/
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?QnRYREdFOW5sUEhJVzVjYjlvNUliNW0vQlVEcE52YTZqWlN2cXlQM0xrUFpF?=
+ =?utf-8?B?WXBiU0pCY0oxdnZsWGZKWXVhUVIrOGtESzRtbURXdldzNXRkK2VETUpTUldM?=
+ =?utf-8?B?M0pENlczQU5JOGxWY2VmRWwrQmFsdGJGWjhyblJIN0h0NzBELzZyWjJIQUUv?=
+ =?utf-8?B?UXhxQTlKTk5NYUg5RW5saitmRzJRQ1ZvS2FmTDVxdGE2R20wdVBreWsvUUxj?=
+ =?utf-8?B?YjdNbnEyREtmWGR2bXkydTRMY1ZvenYvc0c1MlEzUnNMMUh5bTlZRGo0Sys3?=
+ =?utf-8?B?N1liOWxYVnZPMEFqcHc2MHhXWEU5NnNDRS9JZWRnNVdSZHltRzY4dnVOcTdK?=
+ =?utf-8?B?NXVRVm55K1NtVEQyTW9sMEJnUVp4cnJwVll1SkhUQjBZSTdIc1d3WHc5RUZx?=
+ =?utf-8?B?VTI4bVNqMUVPNVh2WlRnYkw3T01ib3RRNVRxMXNXZmJiOURIc2UwS0RKT0c1?=
+ =?utf-8?B?d1ZJVUM5KzdZSit0RmpnNWNjLy9VbVJhNko3L2tsenp5dm0rRnVIbW1lTGZr?=
+ =?utf-8?B?MFhka3R3RkllZlhzNC81VWgwUHZxNHVLdGpob05jVXE5Q2gvNHNJSTFCL1FB?=
+ =?utf-8?B?MEp0d3FTYU1SbnRnUHplUmVQZVVNL25nQTdQTnlJSnd3N0RCNUFzaGpYdEx1?=
+ =?utf-8?B?cWtHNldWdXJGeldNMjdDeG1CM0xpeWtkNDBrRktxbCtVd1kvOTV2Vk5kbGM2?=
+ =?utf-8?B?RmlDVjd4SVJVVWZmL1ZpVnpaYkdpWDBWSHQxRlpBWjZoaDcrNFZRTENXWFZT?=
+ =?utf-8?B?REFBTWNGbFB5MXFSaHI1cDNveUlWSWtTaEx2RkR5L2Y4Tk5YQklsS01YZmRu?=
+ =?utf-8?B?WjZkaEZ4U05ZdWthQUU3UVlRaGtFNklxRWdMMGdqVm9xdEhNQTF5MjZzQ0V3?=
+ =?utf-8?B?dWZHdTVHVUREY2o4dmJ6cWk1ZGhSbVJrZVMyeUttd2pSZm45RlFkRVo0UitJ?=
+ =?utf-8?B?Sk5iVHY3RWRyQ2RsQXEzMytKZTFMSllQMlMwUFFsV0swTmlodUx4blZ2Y1hU?=
+ =?utf-8?B?NFRYbmxlM0pxRHBKa0I5d1VmQXhrakw3eG4xaWYveDE5NS81LzJjd3pPS25q?=
+ =?utf-8?B?c0RIYmptUHZvWnlkNWF1QmVVNS9WRjJLcU9tUzVnb2FHSnZVTk1kSU10ZEFy?=
+ =?utf-8?B?dzBjM2Jmdk5ZUGtrTlYvTkR6eWhOL0FNa09xUFJ0aExVeTFnK0NObThXb1FZ?=
+ =?utf-8?B?UjVtYW03UFhnR2RmNksvWTNyV3pzakFmd1VHQS85VjR2d29ERy9UM3U5L3dp?=
+ =?utf-8?B?bjVtNVNnbHlFc1k0RTg1Q2tTdzFjNVlkMHBMck5CMXRvcms2T00xQUNOdUJO?=
+ =?utf-8?B?eWF1U0poOHRXNHEvK2Nhb1NKaDNhckNIUHpjQnRwdHlLMGV2MXF6NllhR1NS?=
+ =?utf-8?B?Sk1SL0sxRTZrTUpneEtrWUV1WncvaDVSMExEalNpbXBVdkRoYStYQzFuS3lO?=
+ =?utf-8?B?WVdBNHZ5T29DWUMza0xwbVBaQU5DSDFwdGhVWlU2cjBNVkh4VkI3aGdtZzV5?=
+ =?utf-8?B?N0Z2VnhrU3pxWkhiMlFKaFNORVJ3RzJXdUVuYTdBVTB1ZGhZcExkR2xYeVpZ?=
+ =?utf-8?B?K1B3RG9RY0FWTU5UQUR0aVlWcEMyZHdpdDZoUVhnNGxSME1yZDBobGNQUXFn?=
+ =?utf-8?Q?AiA419N0tpUsbCTM1sUcc7YAv1eCwOfzA3e2iB8Gphmw=3D?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b91567f4-dac3-4402-1cf5-08dbef1fdd54
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0332.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Nov 2023 08:07:14.4990
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0P287MB1048
 
-Hi, Geert,
 
-On 24.11.2023 11:08, Geert Uytterhoeven wrote:
-> Hi Claudiu,
-> 
-> On Thu, Nov 23, 2023 at 5:35 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->> On Mon, Nov 20, 2023 at 8:01 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
->>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>
->>> RZ/{G2L, V2L, G3S} based CPG versions have support for saving extra
->>> power when clocks are disabled by activating module standby. This is done
->>> though MSTOP specific registers that are part of CPG. Each individual
->>> module have one or more bits associated in one MSTOP register (see table
->>> "Registers for Module Standby Mode" from HW manuals). Hardware manual
->>> associates modules' clocks to one or more MSTOP bits. There are 3 mappings
->>> available (identified by researching RZ/G2L, RZ/G3S, RZ/V2L HW manuals):
->>>
->>> case 1: N clocks mapped to N MSTOP bits (with N={0, ..., X})
->>> case 2: N clocks mapped to 1 MSTOP bit  (with N={0, ..., X})
->>> case 3: N clocks mapped to M MSTOP bits (with N={0, ..., X}, M={0, ..., Y})
->>>
->>> Case 3 has been currently identified on RZ/V2L for VCPL4 module.
->>>
->>> To cover all 3 cases the individual platform drivers will provide to
->>> clock driver MSTOP register offset and associated bits in this register
->>> as a bitmask and the clock driver will apply this bitmask to proper
->>> MSTOP register.
->>>
->>> As most of the modules have more than one clock and these clocks are
->>> mapped to 1 MSTOP bitmap that need to be applied to MSTOP registers,
->>> to avoid switching the module to/out of standby when the module has
->>> enabled/disabled clocks a counter has been associated to each module
->>> (though struct mstop::count) which is incremented/decremented every
->>> time a module's clock is enabled/disabled and the settings to MSTOP
->>> register are applied only when the counter reaches zero (counter zero
->>> means either 1st clock of the module is going to be enabled or all clocks
->>> of the module are going to be disabled).
+On 2023/11/27 15:12, Krzysztof Kozlowski wrote:
+> On 27/11/2023 02:15, Chen Wang wrote:
+>> From: Chen Wang <unicorn_wang@outlook.com>
 >>
->> Thanks for your patch!
+>> Add a driver for the SOPHGO SG2042 clock generator.
 >>
->>> The MSTOP functionality has been instantiated at the moment for RZ/G3S.
->>>
->>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
->>> --- a/drivers/clk/renesas/rzg2l-cpg.c
->>> +++ b/drivers/clk/renesas/rzg2l-cpg.c
->>> @@ -1177,6 +1177,17 @@ rzg2l_cpg_register_core_clk(const struct cpg_core_clk *core,
->>>                 core->name, PTR_ERR(clk));
->>>  }
->>>
->>> +/**
->>> + * struct mstop - MSTOP specific data structure
->>> + * @count: reference counter for MSTOP settings (when zero the settings
->>> + *        are applied to register)
->>> + * @conf: MSTOP configuration (register offset, setup bits)
->>> + */
->>> +struct mstop {
->>> +       u32 count;
->>> +       u32 conf;
->>> +};
->>> +
->>>  /**
->>>   * struct mstp_clock - MSTP gating clock
->>>   *
->>> @@ -1186,6 +1197,7 @@ rzg2l_cpg_register_core_clk(const struct cpg_core_clk *core,
->>>   * @enabled: soft state of the clock, if it is coupled with another clock
->>>   * @priv: CPG/MSTP private data
->>>   * @sibling: pointer to the other coupled clock
->>> + * @mstop: MSTOP configuration
->>>   */
->>>  struct mstp_clock {
->>>         struct clk_hw hw;
->>> @@ -1194,10 +1206,46 @@ struct mstp_clock {
->>>         bool enabled;
->>>         struct rzg2l_cpg_priv *priv;
->>>         struct mstp_clock *sibling;
->>> +       struct mstop *mstop;
->>>  };
->>>
->>>  #define to_mod_clock(_hw) container_of(_hw, struct mstp_clock, hw)
->>>
->>> +/* Need to be called with a lock held to avoid concurent access to mstop->count. */
->>
->> concurrent
->>
->>> +static void rzg2l_mod_clock_module_set_standby(struct mstp_clock *clock,
->>> +                                              bool standby)
->>> +{
->>> +       struct rzg2l_cpg_priv *priv = clock->priv;
->>> +       struct mstop *mstop = clock->mstop;
->>> +       bool update = false;
->>> +       u32 value;
->>> +
->>> +       if (!mstop)
->>> +               return;
->>> +
->>> +       value = MSTOP_MASK(mstop->conf) << 16;
->>> +
->>> +       if (standby) {
->>> +               value |= MSTOP_MASK(mstop->conf);
->>> +               /* Avoid overflow. */
->>> +               if (mstop->count > 0)
->>> +                       mstop->count--;
->>
->> Should we add a WARN() here, or is it sufficient to rely on the WARN()
->> in drivers/clk/clk.c:clk_core_disable()?
->>
->>> +
->>> +               if (!mstop->count)
->>> +                       update = true;
->>> +       } else {
->>> +               if (!mstop->count)
->>> +                       update = true;
->>> +
->>> +               /* Avoid overflow. */
->>> +               if (mstop->count + 1 != 0)
->>> +                       mstop->count++;
->>
->> Trying to avoid an overflow won't help much here.  The counter
->> will be wrong afterwards anyway, and when decrementing again later, the
->> module will be put in standby too soon...
->>
->>> +       }
->>> +
->>> +       if (update)
->>> +               writel(value, priv->base + MSTOP_OFF(mstop->conf));
->>> +}
-> 
-> After giving this some more thought, it feels odd to derive the standby
-> state of a module from the state of its module clocks, while the latter
-> are already controlled through Runtime PM and a Clock Domain.
+>> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
+> ...
+>
+>> +static void __init sg2042_clk_init(struct device_node *node)
+>> +{
+>> +	struct sg2042_clk_data *clk_data = NULL;
+>> +	int i, ret = 0;
+>> +	int num_clks = 0;
+>> +
+>> +	num_clks = ARRAY_SIZE(sg2042_pll_clks) +
+>> +		   ARRAY_SIZE(sg2042_div_clks) +
+>> +		   ARRAY_SIZE(sg2042_gate_clks) +
+>> +		   ARRAY_SIZE(sg2042_mux_clks);
+>> +	if (num_clks == 0) {
+>> +		ret = -EINVAL;
+>> +		goto error_out;
+>> +	}
+>> +
+>> +	ret = sg2042_clk_init_clk_data(node, num_clks, &clk_data);
+>> +	if (ret < 0)
+>> +		goto error_out;
+>> +
+>> +	ret = sg2042_clk_register_plls(clk_data, sg2042_pll_clks,
+>> +				ARRAY_SIZE(sg2042_pll_clks));
+>> +	if (ret)
+>> +		goto cleanup;
+>> +
+>> +	ret = sg2042_clk_register_divs(clk_data, sg2042_div_clks,
+>> +				ARRAY_SIZE(sg2042_div_clks));
+>> +	if (ret)
+>> +		goto cleanup;
+>> +
+>> +	ret = sg2042_clk_register_gates(clk_data, sg2042_gate_clks,
+>> +				ARRAY_SIZE(sg2042_gate_clks));
+>> +	if (ret)
+>> +		goto cleanup;
+>> +
+>> +	ret = sg2042_clk_register_muxs(clk_data, sg2042_mux_clks,
+>> +				ARRAY_SIZE(sg2042_mux_clks));
+>> +	if (ret)
+>> +		goto cleanup;
+>> +
+>> +	for (i = 0; i < num_clks; i++)
+>> +		dbg_info("provider [%d]: %s\n", i, clk_hw_get_name(clk_data->onecell_data.hws[i]));
+>> +	ret = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, &clk_data->onecell_data);
+>> +	if (ret)
+>> +		goto cleanup;
+>> +
+>> +	return;
+>> +
+>> +cleanup:
+>> +	for (i = 0; i < num_clks; i++) {
+>> +		if (clk_data->onecell_data.hws[i] != NULL)
+>> +			clk_hw_unregister(clk_data->onecell_data.hws[i]);
+>> +	}
+>> +	kfree(clk_data);
+>> +
+>> +error_out:
+>> +	pr_err("%s failed error number %d\n", __func__, ret);
+>> +}
+>> +
+>> +CLK_OF_DECLARE(sg2042_clk, "sophgo,sg2042-clkgen", sg2042_clk_init);
+> No, this should be platform device. It's a child of another device, so
+> you cannot use other way of init ordering.
 
-Thanks for sharing this.
+hi, Krzysztof,
 
-> 
-> A first alternative solution could be to drop the GENPD_FLAG_PM_CLK
-> flag from the RZ/G2L CPG clock domain, and provide your own
-> gpd_dev_ops.start() and .stop() callbacks that take care of both
-> module standby and clocks (through pm_clk_{resume,suspend}().
-> (See https://elixir.bootlin.com/linux/v6.7-rc2/source/drivers/base/power/domain.c#L2093
-> for the GENPD_FLAG_PM_CLK case).
-> That still leaves you with a need to associate an MSTOP register and
-> bitmask with a device through its module clocks.
-> 
-> A second alternative solution could be to increase #power-domain-cells
-> from zero to one, and register individual PM Domains for each module,
-> and control module standby from the generic_pm_domain.power_{on,off}()
-> callbacks.  Devices would specify the module using the power-domains =
-> <&cpg <id> > property in DT, with <id> one of the to-be-added list of
-> modules in include/dt-bindings/clock/r9a08g045-cpg.h.  The RZ/G2L CPG
-> driver can handle the mapping from <id> to MSTOP register and bitmask.
-> This solution requires updates to DT, but you can keep compatibility
-> with old DTBs by only registering the new PM Domains when
-> #power-domain-cells is one.
-> The extra power saving would only be applicable with new DTBs, though.
+Thanks for your review.
 
-I prefer this alternative even though it cannot be applied for old DTBs, it
-looks to me that is more modular. What do you think?
+I don't quite understand your opinion. Do you mean CLK_OF_DECLARE is 
+only used for platform device so it can not be use here? But I think 
+this driver is still for platform device though I move the clock 
+controller node as a child of the system contoller node. System 
+controller node is just a block of registers which are used to control 
+some other platform devices ,such as clock controller, reset controller 
+and pin controller for this SoC.
 
-The only thing is that MSTOP is not really a power off/on switch (if it
-would be implemented with generic_pm_domain.power_{on, off}) but is more
-like a clock disable/enable functionality (it should not be an issue
-though, just saying)... According to manual (I'm referring to Figure 41.4
-Block Connection Overview for Module Standby Mode of HW manula of RZ/G3S),
-it disables/enables the module's bus clock.
+And I also see other similar code in kernel, for example: 
+drivers/clk/clk-k210.c.
 
-Thank you,
-Claudiu Beznea
+And I'm confused by your input "so you cannot use other way of init 
+ordering." Do you mean "so you CAN use other way of init ordering"? 
+What's the other way of init ordering do you mean?
 
-> 
-> Thoughts?
-> 
->>> --- a/drivers/clk/renesas/rzg2l-cpg.h
->>> +++ b/drivers/clk/renesas/rzg2l-cpg.h
->>
->>> @@ -68,6 +73,10 @@
->>>  #define SEL_PLL6_2     SEL_PLL_PACK(CPG_PL6_ETH_SSEL, 0, 1)
->>>  #define SEL_GPU2       SEL_PLL_PACK(CPG_PL6_SSEL, 12, 1)
->>>
->>> +#define MSTOP(name, bitmask)   ((CPG_##name##_MSTOP) << 16 | (bitmask))
->>
->> I believe the bitmask is always a single bit.
->> So perhaps let MSTOP() take the bit number instead of the bitmaskl?
->> You can still store BIT(bit) inside the macro.
-> 
-> I was wrong, the N->N or N->M cases need a bitmask.
-> 
->>> +#define MSTOP_OFF(conf)                ((conf) >> 16)
->>> +#define MSTOP_MASK(conf)       ((conf) & GENMASK(15, 0))
->>> +
->>>  #define EXTAL_FREQ_IN_MEGA_HZ  (24)
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+Thanks,
+
+Chen
+
