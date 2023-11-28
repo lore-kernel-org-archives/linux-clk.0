@@ -1,195 +1,98 @@
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6E26D1;
-	Tue, 28 Nov 2023 07:34:15 -0800 (PST)
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3b85c88710eso2018519b6e.3;
-        Tue, 28 Nov 2023 07:34:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701185655; x=1701790455;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7/s5nzJrgcDgHTEmuKvkZGzXXI/W4rPPv5fulVrFV4o=;
-        b=GlzHpU8x5PFHeIZ+tMcpcggtUcRwHrl7YX6oIbSv/KzhBXd6mc0yZ5a5V0oG5HwMw7
-         g2sDMlV7sc0cXSav4SrZVkml+DuaUVUGIEHxJTIojOmB5o0X+P6CpIDlGfNVi0CJezZi
-         X99j4PvPPqnj3Vq67Upb4Z3mZONCbTtxNDCLPdMVigjRwO/EzHJdbhFloqAkX7JOzQS6
-         oD0LlYH/Sk+K6boasoixAWn42PGbErVHbV6YzktSDjXFCMkpgzQ9iArUGI7Uqoe8B3j/
-         T0j5wJNh4Tcz67zgremGAKcHI3JDssj56ZjG2c3thnVBWXhNFi3FKnb2XrF2Bit+KD8A
-         1fSA==
-X-Gm-Message-State: AOJu0YxCG9Clpb1G6hkW5wyGiCG1A70Cmc8yIecnKlqlZYjaj9nvF1aU
-	+Nf8YRFUx4PTSFotqo4k0MNXc7uRRA==
-X-Google-Smtp-Source: AGHT+IF7fXNt26u5294GTSFxKFMQiYGKeu/ESpbRbCazTn2YRAqixDIUhPyeZLCN5iXYcID3T4WN4A==
-X-Received: by 2002:a05:6808:128a:b0:3b8:44cb:414d with SMTP id a10-20020a056808128a00b003b844cb414dmr25575185oiw.25.1701185655190;
-        Tue, 28 Nov 2023 07:34:15 -0800 (PST)
-Received: from herring.priv (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id w9-20020a056808140900b003b892a45d32sm8668oiv.4.2023.11.28.07.34.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Nov 2023 07:34:14 -0800 (PST)
-Received: (nullmailer pid 3312619 invoked by uid 1000);
-	Tue, 28 Nov 2023 15:34:13 -0000
-Date: Tue, 28 Nov 2023 09:34:13 -0600
-From: Rob Herring <robh@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Frank Rowand <frowand.list@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Aymeric Aillet <aymeric.aillet@iot.bzh>, Yusuke Goda <yusuke.goda.sx@renesas.com>
-Subject: Re: [PATCH v2 4/4] drivers: clk: renesas: enable all clocks which is
- assinged to non Linux system
-Message-ID: <20231128153413.GA3301324-robh@kernel.org>
-References: <87fs0zc14m.wl-kuninori.morimoto.gx@renesas.com>
- <87a5r7c13d.wl-kuninori.morimoto.gx@renesas.com>
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="H9Bn+40s"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B06C5DA;
+	Tue, 28 Nov 2023 08:11:20 -0800 (PST)
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3ASBliTK019059;
+	Tue, 28 Nov 2023 16:11:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=iqbAdlkzfpJ3QRXcSlzFEiRtZrwRPJqcPLYmnFK9te4=;
+ b=H9Bn+40scZaA7X7DxIujXYibiSOUDsAMQErDQ2lE7xZ9WQdn30fiajQGldjhRBHGJwN3
+ N216pFNn0Z7YBUfWmLk1a7tS1oWUYUdQZRwr9xSVu1fUH4SUNw/Ln+Oa7dDLpTH9Aktb
+ Fzp85jTQ3Nd9VFliUO/8oScKD5u2pIp0pH0FHtQ1E9KGGkavvvOtryun3AaFHUcVwmjX
+ 10Fg4bx4L/8VBCIzaVjhVGPo/86OVLC7zJXi1qf/JQ8vH1umzOZaQa3R8lxCr+O3XPPn
+ 9WGu+ql+IGJ9pmNxN/WIvpPCU5Iyd16hRC/skT4aBS0nyiG0zfKNSyhp5vJDlqu/mseJ Mw== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3unfn4rv2u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 Nov 2023 16:11:16 +0000
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3ASGBF1g003718
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 Nov 2023 16:11:15 GMT
+Received: from [10.216.35.46] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Tue, 28 Nov
+ 2023 08:11:10 -0800
+Message-ID: <26b69814-201b-8d07-d844-27e804aa3016@quicinc.com>
+Date: Tue, 28 Nov 2023 21:41:06 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87a5r7c13d.wl-kuninori.morimoto.gx@renesas.com>
-
-On Tue, Nov 21, 2023 at 02:05:42AM +0000, Kuninori Morimoto wrote:
-> Some board might use Linux and another OS in the same time. In such
-> case, current Linux will stop necessary module clock when booting
-> which is not used on Linux side, but is used on another OS side.
-> 
-> To avoid such situation, renesas-cpg-mssr try to find
-> status = "reserved" devices (A), and add CLK_IGNORE_UNUSED flag to its
-> <&cgp CPG_MOD xxx> clock (B).
-> 
-> Table 2.4: Values for status property
-> https://github.com/devicetree-org/devicetree-specification/releases/download/v0.4/devicetree-specification-v0.4.pdf
-> 
-> "reserved"
-> 	Indicates that the device is operational, but should not be
-> 	used. Typically this is used for devices that are controlled
-> 	by another software component, such as platform firmware.
-> 
-> ex)
-> 	scif5: serial@e6f30000 {
-> 		...
-> (B)		clocks = <&cpg CPG_MOD 202>,
-> 			 <&cpg CPG_CORE R8A7795_CLK_S3D1>,
-> 			 <&scif_clk>;
-> 		...
-> (A)		status = "reserved";
-> 	};
-> 
-> Cc: Aymeric Aillet <aymeric.aillet@iot.bzh>
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> Tested-by: Yusuke Goda <yusuke.goda.sx@renesas.com>
-> ---
->  drivers/clk/renesas/renesas-cpg-mssr.c | 118 +++++++++++++++++++++++--
->  1 file changed, 109 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-> index cb80d1bf6c7c..26098b7f4323 100644
-> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
-> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-> @@ -142,6 +142,8 @@ static const u16 srstclr_for_gen4[] = {
->   * @reset_clear_regs:  Pointer to reset clearing registers array
->   * @smstpcr_saved: [].mask: Mask of SMSTPCR[] bits under our control
->   *                 [].val: Saved values of SMSTPCR[]
-> + * @reserved_ids: Temporary used, reserved id list
-> + * @num_reserved_ids: Temporary used, number of reserved id list
->   * @clks: Array containing all Core and Module Clocks
->   */
->  struct cpg_mssr_priv {
-> @@ -168,6 +170,9 @@ struct cpg_mssr_priv {
->  		u32 val;
->  	} smstpcr_saved[ARRAY_SIZE(mstpsr_for_gen4)];
->  
-> +	unsigned int *reserved_ids;
-> +	unsigned int num_reserved_ids;
-> +
->  	struct clk *clks[];
->  };
->  
-> @@ -453,6 +458,19 @@ static void __init cpg_mssr_register_mod_clk(const struct mssr_mod_clk *mod,
->  			break;
->  		}
->  
-> +	/*
-> +	 * Ignore reserved device.
-> +	 * see
-> +	 *	cpg_mssr_reserved_init()
-> +	 */
-> +	for (i = 0; i < priv->num_reserved_ids; i++) {
-> +		if (id == priv->reserved_ids[i]) {
-> +			dev_info(dev, "Ignore Linux non-assigned mod (%s)\n", mod->name);
-> +			init.flags |= CLK_IGNORE_UNUSED;
-> +			break;
-> +		}
-> +	}
-> +
->  	clk = clk_register(NULL, &clock->hw);
->  	if (IS_ERR(clk))
->  		goto fail;
-> @@ -949,6 +967,75 @@ static const struct dev_pm_ops cpg_mssr_pm = {
->  #define DEV_PM_OPS	NULL
->  #endif /* CONFIG_PM_SLEEP && CONFIG_ARM_PSCI_FW */
->  
-> +static void __init cpg_mssr_reserved_exit(struct cpg_mssr_priv *priv)
-> +{
-> +	kfree(priv->reserved_ids);
-> +}
-> +
-> +static int __init cpg_mssr_reserved_init(struct cpg_mssr_priv *priv,
-> +					 const struct cpg_mssr_info *info)
-> +{
-> +	struct device_node *root = of_find_node_by_path("/soc");
-
-'root' is '/', so I find this slightly confusing.
-
-> +	struct device_node *node = NULL;
-> +	struct of_phandle_args clkspec;
-> +	unsigned int *ids = NULL;
-> +	unsigned int num = 0;
-> +
-> +	/*
-> +	 * Because cpg_mssr_info has .num_hw_mod_clks which indicates number of all Module Clocks,
-> +	 * and clk_disable_unused() will disable all unused clocks, the device which is assigned to
-> +	 * non-Linux system will be disabled when Linux was booted.
-> +	 *
-> +	 * To avoid such situation, renesas-cpg-mssr assumes the device which has
-> +	 * status = "reserved" is assigned to non-Linux system, and add CLK_IGNORE_UNUSED flag
-> +	 * to its clocks if it was CPG_MOD.
-> +	 * see also
-> +	 *	cpg_mssr_register_mod_clk()
-> +	 *
-> +	 *	scif5: serial@e6f30000 {
-> +	 *		...
-> +	 * =>		clocks = <&cpg CPG_MOD 202>,
-> +	 *			 <&cpg CPG_CORE R8A7795_CLK_S3D1>,
-> +	 *			 <&scif_clk>;
-> +	 *			 ...
-> +	 *		 status = "reserved";
-> +	 *	};
-> +	 */
-> +	for_each_reserved_child_of_node(root, node) {
-
-Don't you really want to find all reserved nodes in the DT rather than
-just child nodes of a single node?
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH V2 0/4] Add runtime PM support for videocc on SM8150
+Content-Language: en-US
+To: Konrad Dybcio <konradybcio@kernel.org>, Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+References: <20231118123944.2202630-1-quic_skakitap@quicinc.com>
+ <47925f9e-32aa-4762-a4ec-aa559e18ff12@kernel.org>
+From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
+In-Reply-To: <47925f9e-32aa-4762-a4ec-aa559e18ff12@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: st3HThTTRbxcV2U3hW0UrJWTCjJP1TlH
+X-Proofpoint-GUID: st3HThTTRbxcV2U3hW0UrJWTCjJP1TlH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-11-28_18,2023-11-27_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
+ impostorscore=0 adultscore=0 clxscore=1011 suspectscore=0
+ priorityscore=1501 mlxscore=0 bulkscore=0 mlxlogscore=983 phishscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311060000 definitions=main-2311280129
 
 
-> +		unsigned int i = 0;
-> +
-> +		while (!of_parse_phandle_with_args(node, "clocks", "#clock-cells", i++, &clkspec)) {
+On 11/20/2023 5:18 PM, Konrad Dybcio wrote:
+> On 18.11.2023 13:39, Satya Priya Kakitapalli wrote:
+>> Add runtime support for videocc on SM8150 and update the resets
+>> and video_pll0_config configuration.
+>>
+>> Satya Priya Kakitapalli (4):
+>>    dt-bindings: clock: Update the videocc resets for sm8150
+>>    clk: qcom: videocc-sm8150: Update the videocc resets
+>>    clk: qcom: videocc-sm8150: Add missing PLL config properties
+>>    clk: qcom: videocc-sm8150: Add runtime PM support
+> Hi, it's good practive to include a link to the previous revision
+> and a summary of changes.
+>
+> The b4 tool [1] does that for you, please consider using it.
 
-of_for_each_phandle()
 
-> +
-> +			of_node_put(clkspec.np);
-> +
-> +			if (clkspec.np == priv->dev->of_node &&
-> +			    clkspec.args[0] == CPG_MOD) {
-> +
-> +				ids = krealloc_array(ids, (num + 1), sizeof(*ids), GFP_KERNEL);
-> +				if (!ids)
-> +					return -ENOMEM;
-> +
-> +				ids[num] = info->num_total_core_clks +
-> +						MOD_CLK_PACK(clkspec.args[1]);
-> +
-> +				num++;
-> +			}
-> +		}
-> +	}
+Hi, I have installed b4 and followed all the steps, but it doesn't 
+populate my cover letter with change log and previous series link, do i 
+need to use some option for that?
+
+
+> Konrad
+>
+> [1] https://b4.docs.kernel.org/en/latest/index.html
