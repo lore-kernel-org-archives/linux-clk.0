@@ -1,189 +1,312 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="yAnNKCCh"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2059.outbound.protection.outlook.com [40.107.220.59])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4B341B6;
-	Tue, 28 Nov 2023 02:43:57 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RhLi8h+8KgO04pf04BdCVhDXJoMia6kbDzUNIKfsaF05F/P1Nv6XZMZqho/TXn6fDoNSl1M7XOuNy/uag6buq2b9Vp82huBRoI/xA/105v5Ae+kmVnP303Ih/Nnf+NvkF67isZSDhqGNNRI2NMtJ8dLynUrODZbEJnX5L6Fu3frgmnXrC+ZaLXe1IoFHkDPfeaUAPljpJ9j1IT7ZvONK5n+4iZ5mHvHdP2428k4BWIteKHB2CThaKs6+6Vs9I3aXX4jjNv2uYSBt5UttcgLh88Cc/zE9iYdMT04+vmTFSqhATL5YapsZM3Mcm76AdF4o6NTA8j7MXyyrWdS4bgO20A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xXld81WI7ECI/GYCbscrscETWtkoJwrEluUINEFTiIM=;
- b=hH+Whik+aMG3DPuH1nPf0C+BP8Uh8iMdu8APY2YeFTSMeeRViACF3MJJtdcwgljEx2M+3L5q1CT62XHQmESYxck+0VSK3xwOUVWd0xCFGVEmEKbsaoect5HRwnVEFV+IOlzCLBb6OSZCI3K8V9BwIhdlEHo0MgwLD9bQWo6l3fH8w3MWrsevIsAcSk4hMV4I+lH/J5bLb0gmjoiOytVwnO/BPNHEjKaeylUM+Yzq/PxTXTVqrM8i/FpCXm0pGerLfRXgjSq2k6qYo0f3lf06NUno5Pqh2G4p8W40U5fugw5ygDX4nNy7vCb78kZmwvOUKJ+aYqCUhiJuSeQzEFklYA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xXld81WI7ECI/GYCbscrscETWtkoJwrEluUINEFTiIM=;
- b=yAnNKCChDz5tSHJYMEfwtww4LrV81A4FQ7VydwEGMzTAxOphEaP0MkKFMFXvp6TkXlIv7x7NBZZanYhc+MYxQCWRiPlchCGNbb+472dluSWIUMItpHgvQVsC2GIZX5Z7d1eQ3hpdavrim+8vvRfXC5bPmAnxXDcO8bMeaTaqYfM=
-Received: from MW4PR04CA0219.namprd04.prod.outlook.com (2603:10b6:303:87::14)
- by IA1PR12MB6602.namprd12.prod.outlook.com (2603:10b6:208:3a2::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7025.29; Tue, 28 Nov
- 2023 10:43:53 +0000
-Received: from MWH0EPF000971E7.namprd02.prod.outlook.com
- (2603:10b6:303:87:cafe::b9) by MW4PR04CA0219.outlook.office365.com
- (2603:10b6:303:87::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7025.29 via Frontend
- Transport; Tue, 28 Nov 2023 10:43:52 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- MWH0EPF000971E7.mail.protection.outlook.com (10.167.243.75) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7046.17 via Frontend Transport; Tue, 28 Nov 2023 10:43:52 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.34; Tue, 28 Nov
- 2023 04:43:51 -0600
-Received: from xhdshubhraj40.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.34 via Frontend
- Transport; Tue, 28 Nov 2023 04:43:49 -0600
-From: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
-To: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>
-CC: <git@amd.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-	<robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-	<conor+dt@kernel.org>, <michal.simek@amd.com>
-Subject: [PATCH v3] dt-bindings: Remove alt_ref from versal
-Date: Tue, 28 Nov 2023 16:13:48 +0530
-Message-ID: <20231128104348.16372-1-shubhrajyoti.datta@amd.com>
-X-Mailer: git-send-email 2.17.1
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u/6jtH/X"
+Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9273FD6
+	for <linux-clk@vger.kernel.org>; Tue, 28 Nov 2023 03:13:21 -0800 (PST)
+Received: by mail-yb1-xb33.google.com with SMTP id 3f1490d57ef6-da41acaea52so4803837276.3
+        for <linux-clk@vger.kernel.org>; Tue, 28 Nov 2023 03:13:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1701170001; x=1701774801; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=5+7m1qZKqcCsz92JzY98CnLRq03LO4op042hU6Jlus8=;
+        b=u/6jtH/XIXWHS+OuJkBKBg1j+crIKxo3k+jmFB7w9VgICUusnKbmSWfNALJz2ddpcH
+         9YKpN2SJBgKWWUYqSH69S2nnp5hWt+hfKrQUnJUfh7F25qwaMm2+kI9Kz2ZsVCYNrRUZ
+         MDQD8SHZ6GWVlW6tSPkGCq3hlJycjP2C6s2xlorUibIMXbVUEns/mGcu/t5uFxGSQl62
+         pzVkktGXSp2ulMcMJTbMiG5+r9FhIdfA1S5ffFTUl4nCdOn4qM0pubt88l0TKlHZ0LXH
+         nED1HAXpwSnbiu5HuNP8kxPX4Y3spF7Ex2sSAi8kXPo1hMxlxhNRUyc6bGMsgsh0koCx
+         6EFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701170001; x=1701774801;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5+7m1qZKqcCsz92JzY98CnLRq03LO4op042hU6Jlus8=;
+        b=NSBnUwNvm/RVhNKSg+8TqLMHzsnVOnschm3aZ53Be8N8XgFYqyVArFf8m3GQDyJWDJ
+         H8lzKPe8J0402+sxENfOn5MuOe86janDNMfVCghsTfIUEwSPVBjwnk1s7iMI7xAJvx4G
+         oye7zMEJ1EQNm6Gx/1vOURBdGgIb9tXSn6HWpE15Y2NnHACM7YXFaUs4bYjZlUCy7WyR
+         4X1ebVqENRJP0akzD4Pizx+6dwmabml19UciwF+VIE68u/5W1VLl98wjghmPdPlVKepH
+         553H18ZuusCQfZjTBBDWw+PHTemhpKswu4vrwqQ5/q7szTyMtAOxYNAP9WBVY+njKk2U
+         oqAg==
+X-Gm-Message-State: AOJu0YyUenKVb/Xnu9kmljPTAQy/g34pJS3f7qKWEIHpBNOvqkI0PxCO
+	AvAVTkHs/Z5UexRnOu8hp/HmOqC62p5idBPmLXunfA==
+X-Google-Smtp-Source: AGHT+IEIlYIUgXUVgijUk5SHHCon10nYrdq9xIAy+EVj6X4AyLg1jrCQz1JjEvO+OvZ+6zebaSGf51Pr4C1gpwhT2mE=
+X-Received: by 2002:a25:ab2d:0:b0:daf:686c:4919 with SMTP id
+ u42-20020a25ab2d000000b00daf686c4919mr15140437ybi.18.1701170000650; Tue, 28
+ Nov 2023 03:13:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000971E7:EE_|IA1PR12MB6602:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6b48b819-d4b0-4a60-bc86-08dbeffee9c5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	iN6GTzN5tLz4yDl2ZL9fZhojeAHb8hNUF1Aie5hiQYzfo4i9FiMBTaIhzPJrizh9OAzFvObRjmhX9CFLanTd+URnJR6JXRxtpf4fPxcoCQCv1uduYeitwCdzA6SNVc7gqrb3r8PEYIDi46sIx0LghW3riN8Ysf/r0w5R/7jiXOrpcZCK7nEPgT12WLyMlODmybZ8mtcoloklaQipVUVR7nB95+RAPQesVSi7Du9I4EQ/IhT/Sj563R3uItu2GxaPs6XFyMZ3veW25l9eCumTMTWy51GlWJUbgAJqp4C9w3uvI6iQ+KNN0rwvocDPMsdwObYZcLx+1+24daq4cZKhmB1IrxqrfnP4mqAwSkoRx18mMPR7S+7b5lRwGrDm2B9t+S9NMmvvwn5G7FkKr2LfgiXrVWCSlLaWMvtJtsrkvWtGoqT8h95Vw02X5rkkphTfEfV2PzRfyQjAEGyBUv8aW+o7QhhY5RRKHsj7QT2Ty9Hh4fRcZlnlDc3PCvSCmW1xrVbdmz7AbD54ICxD7xk/c07err0uzGwM0SoowVIaGV9AIf+IXJzDbCd7l+k/FKOgdcOXoXvE0RR1UCp1qklXN7j/BjN3qHzmY5klDQKqX73Y42jPaHh94G7aGX9bedum9zxoo3/ZZ9ZYO3WGOMobdLSCvFSIkt3po8y5GGC1hRioePaVZBdI2Y0xDN4rXjYQkBtGcnVbZVUTbt+6vB98U/Cls3P7+AKOHT6/PAIPwVi8ymY4iLiNDAaR1ussNNgoLcwrKjQl3e0yXA/Wc44HumBYmNml7CQ6AnmLMa63n202AAPfDTEaiwshGOLV/UbC
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(4636009)(396003)(39860400002)(346002)(376002)(136003)(230273577357003)(230922051799003)(230173577357003)(186009)(82310400011)(1800799012)(64100799003)(451199024)(36840700001)(40470700004)(46966006)(2906002)(44832011)(110136005)(70586007)(41300700001)(8936002)(8676002)(54906003)(316002)(70206006)(478600001)(5660300002)(4326008)(1076003)(2616005)(336012)(426003)(26005)(83380400001)(47076005)(40480700001)(36860700001)(40460700003)(81166007)(86362001)(356005)(36756003)(82740400003)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Nov 2023 10:43:52.4277
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6b48b819-d4b0-4a60-bc86-08dbeffee9c5
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000971E7.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6602
+References: <20231124092121.16866-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20231124092121.16866-1-krzysztof.kozlowski@linaro.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 28 Nov 2023 12:12:44 +0100
+Message-ID: <CAPDyKFpiCOAobAKJ3o3udssKx4oHbQwOF3=hHgx3Uqtn1mxpaw@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: correct white-spaces in examples
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-iio@vger.kernel.org, 
+	linux-mmc@vger.kernel.org, netdev@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The alt_ref is present only in Versal-net devices.
-Other versal devices do not have it. So remove alt_ref
-for versal.
+On Fri, 24 Nov 2023 at 10:21, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> Use only one and exactly one space around '=' in DTS example.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Fixes: 352546805a44 ("dt-bindings: clock: Add bindings for versal clock driver")
-Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org> # For MMC
 
----
+Kind regards
+Uffe
 
-Changes in v3:
-squash the patch
-
-Changes in v2:
-- Have specific constraints for versal and versal net.
-
- .../bindings/clock/xlnx,versal-clk.yaml       | 31 +++++++++++++++----
- .../firmware/xilinx/xlnx,zynqmp-firmware.yaml |  4 +--
- 2 files changed, 27 insertions(+), 8 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml b/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml
-index 1ba687d433b1..bef109d163a8 100644
---- a/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml
-+++ b/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml
-@@ -31,11 +31,11 @@ properties:
-   clocks:
-     description: List of clock specifiers which are external input
-       clocks to the given clock controller.
--    minItems: 3
-+    minItems: 2
-     maxItems: 8
- 
-   clock-names:
--    minItems: 3
-+    minItems: 2
-     maxItems: 8
- 
- required:
-@@ -59,15 +59,34 @@ allOf:
-         clocks:
-           items:
-             - description: reference clock
--            - description: alternate reference clock
-             - description: alternate reference clock for programmable logic
- 
-         clock-names:
-           items:
-             - const: ref
--            - const: alt_ref
-             - const: pl_alt_ref
- 
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - xlnx,versal-net-clk
-+
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: reference clock
-+            - description: alternate reference clock for programmable logic
-+            - description: alternate reference clock
-+
-+        clock-names:
-+          items:
-+            - const: ref
-+            - const: pl_alt_ref
-+            - const: alt_ref
-+
-   - if:
-       properties:
-         compatible:
-@@ -110,8 +129,8 @@ examples:
-         versal_clk: clock-controller {
-           #clock-cells = <1>;
-           compatible = "xlnx,versal-clk";
--          clocks = <&ref>, <&alt_ref>, <&pl_alt_ref>;
--          clock-names = "ref", "alt_ref", "pl_alt_ref";
-+          clocks = <&ref>,  <&pl_alt_ref>;
-+          clock-names = "ref", "pl_alt_ref";
-         };
-       };
-     };
-diff --git a/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.yaml b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.yaml
-index 822864488dcb..8e584857ddd4 100644
---- a/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.yaml
-+++ b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.yaml
-@@ -95,8 +95,8 @@ examples:
-       versal_clk: clock-controller {
-         #clock-cells = <1>;
-         compatible = "xlnx,versal-clk";
--        clocks = <&ref>, <&alt_ref>, <&pl_alt_ref>;
--        clock-names = "ref", "alt_ref", "pl_alt_ref";
-+        clocks = <&ref>, <&pl_alt_ref>;
-+        clock-names = "ref", "pl_alt_ref";
-       };
-     };
- 
--- 
-2.17.1
-
+>
+> ---
+>
+> Merging idea: Rob's DT.
+> Should apply cleanly on Rob's for-next.
+> ---
+>  .../devicetree/bindings/auxdisplay/hit,hd44780.yaml       | 2 +-
+>  .../devicetree/bindings/clock/baikal,bt1-ccu-pll.yaml     | 2 +-
+>  Documentation/devicetree/bindings/iio/adc/adi,ad7780.yaml | 6 +++---
+>  .../devicetree/bindings/iio/adc/qcom,spmi-iadc.yaml       | 2 +-
+>  .../devicetree/bindings/iio/adc/qcom,spmi-rradc.yaml      | 2 +-
+>  .../interrupt-controller/st,stih407-irq-syscfg.yaml       | 4 ++--
+>  Documentation/devicetree/bindings/mmc/arm,pl18x.yaml      | 2 +-
+>  Documentation/devicetree/bindings/net/sff,sfp.yaml        | 2 +-
+>  .../devicetree/bindings/pci/toshiba,visconti-pcie.yaml    | 2 +-
+>  .../bindings/pinctrl/renesas,rzg2l-pinctrl.yaml           | 6 +++---
+>  .../devicetree/bindings/power/supply/richtek,rt9455.yaml  | 8 ++++----
+>  .../devicetree/bindings/regulator/mps,mp5416.yaml         | 4 ++--
+>  .../devicetree/bindings/regulator/mps,mpq7920.yaml        | 4 ++--
+>  .../devicetree/bindings/remoteproc/fsl,imx-rproc.yaml     | 8 ++++----
+>  14 files changed, 27 insertions(+), 27 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/auxdisplay/hit,hd44780.yaml b/Documentation/devicetree/bindings/auxdisplay/hit,hd44780.yaml
+> index fde07e4b119d..406a922a714e 100644
+> --- a/Documentation/devicetree/bindings/auxdisplay/hit,hd44780.yaml
+> +++ b/Documentation/devicetree/bindings/auxdisplay/hit,hd44780.yaml
+> @@ -113,7 +113,7 @@ examples:
+>      hd44780 {
+>              compatible = "hit,hd44780";
+>              display-height-chars = <2>;
+> -            display-width-chars  = <16>;
+> +            display-width-chars = <16>;
+>              data-gpios = <&pcf8574 4 0>,
+>                           <&pcf8574 5 0>,
+>                           <&pcf8574 6 0>,
+> diff --git a/Documentation/devicetree/bindings/clock/baikal,bt1-ccu-pll.yaml b/Documentation/devicetree/bindings/clock/baikal,bt1-ccu-pll.yaml
+> index 624984d51c10..7f8d98226437 100644
+> --- a/Documentation/devicetree/bindings/clock/baikal,bt1-ccu-pll.yaml
+> +++ b/Documentation/devicetree/bindings/clock/baikal,bt1-ccu-pll.yaml
+> @@ -125,7 +125,7 @@ examples:
+>      clk25m: clock-oscillator-25m {
+>        compatible = "fixed-clock";
+>        #clock-cells = <0>;
+> -      clock-frequency  = <25000000>;
+> +      clock-frequency = <25000000>;
+>        clock-output-names = "clk25m";
+>      };
+>  ...
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7780.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7780.yaml
+> index 5fcc8dd012f1..be2616ff9af6 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7780.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7780.yaml
+> @@ -80,9 +80,9 @@ examples:
+>              compatible = "adi,ad7780";
+>              reg = <0>;
+>
+> -            avdd-supply      = <&vdd_supply>;
+> -            powerdown-gpios  = <&gpio0 12 GPIO_ACTIVE_HIGH>;
+> -            adi,gain-gpios   = <&gpio1  5 GPIO_ACTIVE_LOW>;
+> +            avdd-supply = <&vdd_supply>;
+> +            powerdown-gpios = <&gpio0 12 GPIO_ACTIVE_HIGH>;
+> +            adi,gain-gpios = <&gpio1  5 GPIO_ACTIVE_LOW>;
+>              adi,filter-gpios = <&gpio2 15 GPIO_ACTIVE_LOW>;
+>          };
+>      };
+> diff --git a/Documentation/devicetree/bindings/iio/adc/qcom,spmi-iadc.yaml b/Documentation/devicetree/bindings/iio/adc/qcom,spmi-iadc.yaml
+> index 73def67fbe01..b6a233cd5f6b 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/qcom,spmi-iadc.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/qcom,spmi-iadc.yaml
+> @@ -58,7 +58,7 @@ examples:
+>              reg = <0x3600>;
+>              interrupts = <0x0 0x36 0x0 IRQ_TYPE_EDGE_RISING>;
+>              qcom,external-resistor-micro-ohms = <10000>;
+> -            #io-channel-cells  = <1>;
+> +            #io-channel-cells = <1>;
+>          };
+>      };
+>  ...
+> diff --git a/Documentation/devicetree/bindings/iio/adc/qcom,spmi-rradc.yaml b/Documentation/devicetree/bindings/iio/adc/qcom,spmi-rradc.yaml
+> index b3a626389870..64abe9a4cd9e 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/qcom,spmi-rradc.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/qcom,spmi-rradc.yaml
+> @@ -46,6 +46,6 @@ examples:
+>          pmic_rradc: adc@4500 {
+>              compatible = "qcom,pmi8998-rradc";
+>              reg = <0x4500>;
+> -            #io-channel-cells  = <1>;
+> +            #io-channel-cells = <1>;
+>          };
+>      };
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/st,stih407-irq-syscfg.yaml b/Documentation/devicetree/bindings/interrupt-controller/st,stih407-irq-syscfg.yaml
+> index 2b153d7c5421..e44e4e5708a7 100644
+> --- a/Documentation/devicetree/bindings/interrupt-controller/st,stih407-irq-syscfg.yaml
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/st,stih407-irq-syscfg.yaml
+> @@ -55,8 +55,8 @@ examples:
+>    - |
+>      #include <dt-bindings/interrupt-controller/irq-st.h>
+>      irq-syscfg {
+> -        compatible    = "st,stih407-irq-syscfg";
+> -        st,syscfg     = <&syscfg_cpu>;
+> +        compatible = "st,stih407-irq-syscfg";
+> +        st,syscfg = <&syscfg_cpu>;
+>          st,irq-device = <ST_IRQ_SYSCFG_PMU_0>,
+>                          <ST_IRQ_SYSCFG_PMU_1>;
+>          st,fiq-device = <ST_IRQ_SYSCFG_DISABLED>,
+> diff --git a/Documentation/devicetree/bindings/mmc/arm,pl18x.yaml b/Documentation/devicetree/bindings/mmc/arm,pl18x.yaml
+> index 2459a55ed540..940b12688167 100644
+> --- a/Documentation/devicetree/bindings/mmc/arm,pl18x.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/arm,pl18x.yaml
+> @@ -203,7 +203,7 @@ examples:
+>        bus-width = <4>;
+>        cap-sd-highspeed;
+>        cap-mmc-highspeed;
+> -      cd-gpios  = <&gpio2 31 0x4>;
+> +      cd-gpios = <&gpio2 31 0x4>;
+>        st,sig-dir-dat0;
+>        st,sig-dir-dat2;
+>        st,sig-dir-cmd;
+> diff --git a/Documentation/devicetree/bindings/net/sff,sfp.yaml b/Documentation/devicetree/bindings/net/sff,sfp.yaml
+> index 973e478a399d..bf6cbc7c2ba3 100644
+> --- a/Documentation/devicetree/bindings/net/sff,sfp.yaml
+> +++ b/Documentation/devicetree/bindings/net/sff,sfp.yaml
+> @@ -120,7 +120,7 @@ examples:
+>        pinctrl-names = "default";
+>        pinctrl-0 = <&cps_sfpp0_pins>;
+>        tx-disable-gpios = <&cps_gpio1 29 GPIO_ACTIVE_HIGH>;
+> -      tx-fault-gpios  = <&cps_gpio1 26 GPIO_ACTIVE_HIGH>;
+> +      tx-fault-gpios = <&cps_gpio1 26 GPIO_ACTIVE_HIGH>;
+>      };
+>
+>      mdio {
+> diff --git a/Documentation/devicetree/bindings/pci/toshiba,visconti-pcie.yaml b/Documentation/devicetree/bindings/pci/toshiba,visconti-pcie.yaml
+> index 53da2edd7c9a..120e3bb1e545 100644
+> --- a/Documentation/devicetree/bindings/pci/toshiba,visconti-pcie.yaml
+> +++ b/Documentation/devicetree/bindings/pci/toshiba,visconti-pcie.yaml
+> @@ -83,7 +83,7 @@ examples:
+>                    <0x0 0x28050000 0x0 0x00010000>,
+>                    <0x0 0x24200000 0x0 0x00002000>,
+>                    <0x0 0x24162000 0x0 0x00001000>;
+> -            reg-names  = "dbi", "config", "ulreg", "smu", "mpu";
+> +            reg-names = "dbi", "config", "ulreg", "smu", "mpu";
+>              device_type = "pci";
+>              bus-range = <0x00 0xff>;
+>              num-lanes = <2>;
+> diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
+> index b5ca40d0e251..d476de82e5c3 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
+> @@ -185,17 +185,17 @@ examples:
+>                      sd1_mux {
+>                              pinmux = <RZG2L_PORT_PINMUX(19, 0, 1)>, /* CD */
+>                                       <RZG2L_PORT_PINMUX(19, 1, 1)>; /* WP */
+> -                            power-source  = <3300>;
+> +                            power-source = <3300>;
+>                      };
+>
+>                      sd1_data {
+>                              pins = "SD1_DATA0", "SD1_DATA1", "SD1_DATA2", "SD1_DATA3";
+> -                            power-source  = <3300>;
+> +                            power-source = <3300>;
+>                      };
+>
+>                      sd1_ctrl {
+>                              pins = "SD1_CLK", "SD1_CMD";
+> -                            power-source  = <3300>;
+> +                            power-source = <3300>;
+>                      };
+>              };
+>      };
+> diff --git a/Documentation/devicetree/bindings/power/supply/richtek,rt9455.yaml b/Documentation/devicetree/bindings/power/supply/richtek,rt9455.yaml
+> index 07e38be39f1b..89f9603499b4 100644
+> --- a/Documentation/devicetree/bindings/power/supply/richtek,rt9455.yaml
+> +++ b/Documentation/devicetree/bindings/power/supply/richtek,rt9455.yaml
+> @@ -79,10 +79,10 @@ examples:
+>          interrupt-parent = <&gpio1>;
+>          interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
+>
+> -        richtek,output-charge-current      = <500000>;
+> -        richtek,end-of-charge-percentage    = <10>;
+> -        richtek,battery-regulation-voltage  = <4200000>;
+> -        richtek,boost-output-voltage       = <5050000>;
+> +        richtek,output-charge-current = <500000>;
+> +        richtek,end-of-charge-percentage = <10>;
+> +        richtek,battery-regulation-voltage = <4200000>;
+> +        richtek,boost-output-voltage = <5050000>;
+>
+>          richtek,min-input-voltage-regulation = <4500000>;
+>          richtek,avg-input-current-regulation = <500000>;
+> diff --git a/Documentation/devicetree/bindings/regulator/mps,mp5416.yaml b/Documentation/devicetree/bindings/regulator/mps,mp5416.yaml
+> index 0221397eb51e..f825ee9efd81 100644
+> --- a/Documentation/devicetree/bindings/regulator/mps,mp5416.yaml
+> +++ b/Documentation/devicetree/bindings/regulator/mps,mp5416.yaml
+> @@ -62,8 +62,8 @@ examples:
+>               regulator-name = "buck1";
+>               regulator-min-microvolt = <600000>;
+>               regulator-max-microvolt = <2187500>;
+> -             regulator-min-microamp  = <3800000>;
+> -             regulator-max-microamp  = <6800000>;
+> +             regulator-min-microamp = <3800000>;
+> +             regulator-max-microamp = <6800000>;
+>               regulator-boot-on;
+>              };
+>
+> diff --git a/Documentation/devicetree/bindings/regulator/mps,mpq7920.yaml b/Documentation/devicetree/bindings/regulator/mps,mpq7920.yaml
+> index 6de5b027f990..0d34af98403f 100644
+> --- a/Documentation/devicetree/bindings/regulator/mps,mpq7920.yaml
+> +++ b/Documentation/devicetree/bindings/regulator/mps,mpq7920.yaml
+> @@ -98,8 +98,8 @@ examples:
+>               regulator-name = "buck1";
+>               regulator-min-microvolt = <400000>;
+>               regulator-max-microvolt = <3587500>;
+> -             regulator-min-microamp  = <460000>;
+> -             regulator-max-microamp  = <7600000>;
+> +             regulator-min-microamp = <460000>;
+> +             regulator-max-microamp = <7600000>;
+>               regulator-boot-on;
+>               mps,buck-ovp-disable;
+>               mps,buck-phase-delay = /bits/ 8 <2>;
+> diff --git a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> index 30632efdad8b..df36e29d974c 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> @@ -113,10 +113,10 @@ examples:
+>      };
+>
+>      imx7d-cm4 {
+> -      compatible       = "fsl,imx7d-cm4";
+> -      memory-region    = <&m4_reserved_sysmem1>, <&m4_reserved_sysmem2>;
+> -      syscon           = <&src>;
+> -      clocks           = <&clks IMX7D_ARM_M4_ROOT_CLK>;
+> +      compatible = "fsl,imx7d-cm4";
+> +      memory-region = <&m4_reserved_sysmem1>, <&m4_reserved_sysmem2>;
+> +      syscon = <&src>;
+> +      clocks = <&clks IMX7D_ARM_M4_ROOT_CLK>;
+>      };
+>
+>    - |
+> --
+> 2.34.1
+>
+>
