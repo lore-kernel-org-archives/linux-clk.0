@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EjSgOha9"
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3589A7
-	for <linux-clk@vger.kernel.org>; Tue, 28 Nov 2023 00:41:26 -0800 (PST)
-Received: by mail-ed1-x532.google.com with SMTP id 4fb4d7f45d1cf-54af4f2838dso5226643a12.2
-        for <linux-clk@vger.kernel.org>; Tue, 28 Nov 2023 00:41:26 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V8CA9agm"
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFA1BE4
+	for <linux-clk@vger.kernel.org>; Tue, 28 Nov 2023 00:58:56 -0800 (PST)
+Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-544455a4b56so6757918a12.1
+        for <linux-clk@vger.kernel.org>; Tue, 28 Nov 2023 00:58:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701160885; x=1701765685; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1701161935; x=1701766735; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=hykHkDjRhk1WUMG2x6+o4v1sbHZ0XPC/vbAlzmJumls=;
-        b=EjSgOha9/reA8mQa9p9YMZQ97DQGz/rQL+eNH/N4DBrf+BCXOUqU3wVPrmWC2nufkF
-         ZLD3QhYu1/eBXjAwDOJA2XOY7OtwT4GVS5EsK81U31irkxK3T3E9enPLLLwmarlCx9/Z
-         zkqbGKw0PEBQW566Rw2oE2KxtBFfbdTacp/FI78DoA0xzkHyJyld08OJaMnBQ9iDtp1A
-         XGnrpQMG608UjG0PYx6E/QTiekONstacu/tOHN5jUpFlQoR77Nfq4t/Yh+nhS6a1TW2v
-         LFneXMvIUONiNiRFeMTmWRNN1z9OTWvaQx9RGIZObbzNAKrHEQD9Ne4PtSC/T8PmYSL9
-         scPA==
+        bh=UGpYHJ/5KU9x0FpSQk/2EgeAQ9Rghpf69obPvi4FEEU=;
+        b=V8CA9agmL0Hyu8jgbSQ0UJaPzKtQp7xDvWMt9/4l7csZuy/ullzTPVvFjZHIpOji0E
+         yeIha9MrjdLcQIxDr9vYRtyanQEXErGYCD03tQiet/WNonNaqe7c7E8ejaHjZ0omSw2k
+         Zp7QkKcRzKU+dZaRv5q2tBGVoxmyhejdwP/Az374HNGmwZRAKoBsirYak0d9af1NatVR
+         Y7PmM3YFvrXcTQTC8si37nUj6mSVEeBdt6QRREJB2ITJE3nCWjUxHVaSgFKHBjxAG20P
+         oRNHFV6QjV76bkLTEFgcCW1xGj3Ev7tq/xgKrR2r+HEv/QWBtZd4g5jefd0nbJNhpFYp
+         Hvag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701160885; x=1701765685;
+        d=1e100.net; s=20230601; t=1701161935; x=1701766735;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hykHkDjRhk1WUMG2x6+o4v1sbHZ0XPC/vbAlzmJumls=;
-        b=NTes3qxOi7wixb9RWCr1Dxl4yhahfpajomdBzcvHLbJ1h8DI/NttINxDeFUJdh74wJ
-         d+5LdFjb0ZbmiVDdfHeSObJdw76GQXuw5XhjvVt4SvOmY1N39xJUrrc/EACeW7NvmwuX
-         nWjR8fI/4ml0KDW7gI8lRY3cSSm5VtBq++M4BhSyewnAxbomw6tG+Be9CsNpH7aVC12W
-         rj5w4ivOzeBTGc34CWdT4hiWJkPifL9JIijLiVLVmSZA/JYv2Ws3NEbV9Bh7DuocvH8y
-         WMYveczyty0F7fLhhCb2C8c0tLFhBKPyUAGn/18LPXNnVM57SsqT7/zh8MtLYb1p6azK
-         bRIA==
-X-Gm-Message-State: AOJu0YyePPkbqaDB/482+VmkwjCYgFF6eLTpBE6Osszt76iwo5X5MEj8
-	E6PjvzLRKbPwviA6pJE/IdH0e9E2f8iaYDPq9s0=
-X-Google-Smtp-Source: AGHT+IEiOTImwiJU09ocHuI5yOd4q6uACBIb30e4NoWqHD1WuLAKRa0vIw2y3EneyPvwYSk5Ar/DRQ==
-X-Received: by 2002:a17:906:6d8e:b0:a0e:d3d:5b42 with SMTP id h14-20020a1709066d8e00b00a0e0d3d5b42mr3265071ejt.12.1701160884982;
-        Tue, 28 Nov 2023 00:41:24 -0800 (PST)
+        bh=UGpYHJ/5KU9x0FpSQk/2EgeAQ9Rghpf69obPvi4FEEU=;
+        b=YjE/l3RbGCvj/dNztQmA0xWhf/Zf+ta25W3a7zSfQVlHLbGzbFtRoBDbwFrS2UlALv
+         T8WDSYEj20FzrkhyACFYkSQeyCedX+F83IGDka/aI0TjQMDsvXL7JBIgLNy1HAAOez4p
+         wSnI5KLB78adU71MG9vTH8CV+DKCQxh0FCtmbPtpeqHkjrNHy2bThg/KN2fhVQ6Jhi1/
+         e+hpQU7Ujr1fr2I69dC2Ao0K+v2vUFWysQ44akHOMdhm4Co83Z6tPX2wwwahLuU2GzhA
+         Xb519nG/jvHrb+qK2qqmc2YdEYVsQP3s8RHrAD0pQe04utiY2S5YdtYcbtmo8SVItish
+         oUtg==
+X-Gm-Message-State: AOJu0YwCt7j+Uf/xHT5+oJOTR4nhBxKP5sroQ4oTg+U15QV0Mf84sdm7
+	bcjcqshWFgOM4osTqf0e+ur0IA==
+X-Google-Smtp-Source: AGHT+IEgIsNU+8Ga6PP5Ysj5x1L7yrm45es5mMmhnSW4AxcFkCQuqBZ1rC+ew3qIYRmtnJ4t+2BItw==
+X-Received: by 2002:a50:9312:0:b0:53e:3b8f:8a58 with SMTP id m18-20020a509312000000b0053e3b8f8a58mr11821123eda.11.1701161935368;
+        Tue, 28 Nov 2023 00:58:55 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.223.109])
-        by smtp.gmail.com with ESMTPSA id bx1-20020a170906a1c100b009ddf38056f8sm6480942ejb.118.2023.11.28.00.41.23
+        by smtp.gmail.com with ESMTPSA id bt16-20020a0564020a5000b00548e4c5220csm6113884edb.26.2023.11.28.00.58.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Nov 2023 00:41:24 -0800 (PST)
-Message-ID: <7361082a-f271-4ef4-9dad-06ee7445c749@linaro.org>
-Date: Tue, 28 Nov 2023 09:41:23 +0100
+        Tue, 28 Nov 2023 00:58:54 -0800 (PST)
+Message-ID: <f23ff6a1-0130-45a4-809c-efa82c1e3c6c@linaro.org>
+Date: Tue, 28 Nov 2023 09:58:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,17 +47,26 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: clock: ti: Convert interface.txt to
- json-schema
+Subject: Re: [PATCH v3 17/20] arm64: dts: google: Add initial Google gs101 SoC
+ support
 Content-Language: en-US
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, kristo@kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
-References: <20231127202359.145778-1-andreas@kemnade.info>
- <7a62ed8a-b0e3-4881-90d7-b8f5d38e482e@linaro.org>
- <20231128093241.707a4fa0@aktux>
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
+ tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org,
+ wim@linux-watchdog.org, linux@roeck-us.net, catalin.marinas@arm.com,
+ will@kernel.org, arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org,
+ cw00.choi@samsung.com, tudor.ambarus@linaro.org, andre.draszik@linaro.org,
+ semen.protsenko@linaro.org, saravanak@google.com, willmcvicker@google.com,
+ soc@kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, kernel-team@android.com,
+ linux-serial@vger.kernel.org
+References: <20231011184823.443959-1-peter.griffin@linaro.org>
+ <20231011184823.443959-18-peter.griffin@linaro.org>
+ <33fe3e2e-9d09-42ee-9472-25d3be09baf4@linaro.org>
+ <CADrjBPrh19YzB45hM4xaELn67uf3iBQo++T-8+2Uenq6-fDzKg@mail.gmail.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -103,65 +112,28 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231128093241.707a4fa0@aktux>
+In-Reply-To: <CADrjBPrh19YzB45hM4xaELn67uf3iBQo++T-8+2Uenq6-fDzKg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 28/11/2023 09:32, Andreas Kemnade wrote:
-> On Tue, 28 Nov 2023 09:00:16 +0100
-> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
-> 
->>> +required:
->>> +  - compatible
->>> +  - clocks
->>> +  - '#clock-cells'  
+On 25/11/2023 00:22, Peter Griffin wrote:
+>>> +
+>>> +     /* bootloader requires ect node */
+>>> +     ect {
 >>
->> reg is required. Device cannot take "reg" from parent, DTS does not work
->> like this.
+>> This needs bindings.
 > 
-> Well, apparently they do... and I am just dealing with status quo and not
-> how it should be.
-> Look at commit 31fc1c63c2ae4a542e3c7ac572a10a59ece45c24
-
-Who designed clock-controller binding with a device node per each clock?
-This is ridiculous (although of course not your fault here)! Looking at
-omap3xxx-clocks.dtsi - all its children should be just defined by the
-driver, not by DTSI.
-
-
-> for the reasoning of not having reg.
+> I experimented a bit more and the minimum I need is an empty dt node
+> called ect, otherwise the bootloader will boot loop and we can't boot
+> the kernel
+> [   2.977870] [E] [BOOT] fdt /ect path not found -1
 > 
-> 
-> well, look at drivers/clk/ti/clk.c
-> ti_clk_get_reg_addr();
+> Apart from a comment indicating that the bootloader requires this
+> empty ect dt node, what other bindings documentation would you like to
+> see? Something in google.yaml?
 
-That's a driver implementation, not bindings, thus confusion.
+Yes, it would be enough.
 
-> 
-> ...
-> 
->        if (of_property_read_u32_index(node, "reg", index, &val)) {
->                 if (of_property_read_u32_index(node->parent, "reg",
->                                                index, &val)) {
->                         pr_err("%pOFn or parent must have reg[%d]!\n",
->                                node, index);
->                         return -EINVAL;
->                 }
->         }
-> 
-> 
-> We have two usecases here (status quo in dts usage and code):
-> If these interface clocks are below a ti,clksel then we are describing 
-> multiple bits in the same register and therefore every child of ti,clksel
-> would have the same reg.
-
-Regs can have bits, so that could still work.
-
-> If the interface clock is not below a ti,clksel then we have reg.
-
-This should be expressed in the bindings. It's fine to make the reg
-optional (skip the description, it's confusing), but the ti,clksel
-should reference this schema and enforce it on the children.
 
 Best regards,
 Krzysztof
