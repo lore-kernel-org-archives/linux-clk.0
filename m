@@ -1,47 +1,61 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB7D46BAE;
-	Tue, 28 Nov 2023 20:24:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AI+3OrOW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBCE8C433C7;
-	Tue, 28 Nov 2023 20:24:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701203074;
-	bh=AxZmt6ng+cjEW/8ifHbtAk94LDFE5Mh7uTAVhNosjrA=;
-	h=In-Reply-To:References:Subject:From:To:Date:From;
-	b=AI+3OrOWNKfQ4WaArgVY2zE3iQgt2mmwbWLoqzyj6bk3hFwZwi7oVmN5iR8Q6vqgV
-	 AGplDW3Kj9cNGKv//2OTPuVXRAhvDF3RIorjKHVpGbEv4QFzY02cPHj3u7avWd9kM8
-	 h9MQFqIPSMBisM4Dwn7Bx1XEYY9b+QSUCLXKpXRqHUwXCZEY+isJn4mii2/tyJx3uy
-	 6bwXIx0HA7o3493ViblidvG1NQb3071cXrTGY4UaAIxCpGn5QRblfZB1PiRU0Zu/KB
-	 fq1brk+hB0ov3M0wWnXJ6nwLVSpGCJPiIriInlLL12KXG1s9Rd/H50ZuztbjxTNoHW
-	 JEbrHvo5/OA0Q==
-Message-ID: <21095bde37a8090686dfb372e5fffa58.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [IPv6:2a02:c205:3004:2154::1])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F0B9170B;
+	Tue, 28 Nov 2023 12:41:25 -0800 (PST)
+Received: from p200301077700a9001093e13752edbf74.dip0.t-ipconnect.de ([2003:107:7700:a900:1093:e137:52ed:bf74] helo=akair)
+	by mail.andi.de1.cc with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <andreas@kemnade.info>)
+	id 1r84tU-006otY-HU; Tue, 28 Nov 2023 21:41:20 +0100
+Date: Tue, 28 Nov 2023 21:41:16 +0100
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, kristo@kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: clock: ti: Convert interface.txt to
+ json-schema
+Message-ID: <20231128214116.22dfff1e@akair>
+In-Reply-To: <7361082a-f271-4ef4-9dad-06ee7445c749@linaro.org>
+References: <20231127202359.145778-1-andreas@kemnade.info>
+	<7a62ed8a-b0e3-4881-90d7-b8f5d38e482e@linaro.org>
+	<20231128093241.707a4fa0@aktux>
+	<7361082a-f271-4ef4-9dad-06ee7445c749@linaro.org>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.37; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <cb983f0d30f019120cf49f24efb655cf794084d3.1700498124.git.daniel@makrotopia.org>
-References: <b277c5f084ff35849efb8250510b2536053d1316.1700498124.git.daniel@makrotopia.org> <cb983f0d30f019120cf49f24efb655cf794084d3.1700498124.git.daniel@makrotopia.org>
-Subject: Re: [PATCH v2 3/4] clk: mediatek: Add pcw_chg_shift control
-From: Stephen Boyd <sboyd@kernel.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Chen-Yu Tsai <wenst@chromium.org>, Conor Dooley <conor+dt@kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>, Daniel Golle <daniel@makrotopia.org>, David S. Miller <davem@davemloft.net>, Edward-JW Yang <edward-jw.yang@mediatek.com>, Eric Dumazet <edumazet@google.com>, Frank Wunderlich <frank-w@public-files.de>, Garmin.Chang <Garmin.Chang@mediatek.com>, Jakub Kicinski <kuba@kernel.org>, James Liao <jamesjj.liao@mediatek.com>, Jianhui Zhao <zhaojh329@gmail.com>, Johnson Wang <johnson.wang@mediatek.com>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>, Sabrina Dubroca <sd@queasysnail.net>, Sam Shih <sam.shih@mediatek.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-m
- ediatek@lists.infradead.org, netdev@vger.kernel.org
-Date: Tue, 28 Nov 2023 12:24:31 -0800
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Quoting Daniel Golle (2023-11-20 09:19:05)
-> Introduce pcw_chg_shfit control to optionally use that instead of the
-> hardcoded PCW_CHG_MASK macro.
-> This will needed for clocks on the MT7988 SoC.
->=20
-> Signed-off-by: Sam Shih <sam.shih@mediatek.com>
+Am Tue, 28 Nov 2023 09:41:23 +0100
+schrieb Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>:
 
-Is Sam Shih the author? This has the wrong From: line then.
+[...] 
+> > We have two usecases here (status quo in dts usage and code):
+> > If these interface clocks are below a ti,clksel then we are
+> > describing multiple bits in the same register and therefore every
+> > child of ti,clksel would have the same reg.  
+> 
+> Regs can have bits, so that could still work.
+> 
+Yes, it could. Things could be designed in another way. But for now I
+want to get rid of dtbs_check warnings and finally have some fun with
+that and not always tempted to skip it and just copy over $bad_example.
+So I am not in the mood of redesigning everything.
 
-> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+> > If the interface clock is not below a ti,clksel then we have reg.  
+> 
+> This should be expressed in the bindings. It's fine to make the reg
+> optional (skip the description, it's confusing), but the ti,clksel
+> should reference this schema and enforce it on the children.
+> 
+Well there are other compatibles below ti,clksel, too, so should we
+rather add them when the other .txt files are converted?
+
+Regards,
+Andreas
