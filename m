@@ -1,147 +1,129 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="LM74q1ML"
-Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01on2127.outbound.protection.outlook.com [40.107.113.127])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32E0F183;
-	Tue, 28 Nov 2023 15:13:11 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=UcmYaVjEcKaFRcRfjnr0o5CJFRjvVzCVPq7/d/j5hHVekkwzdFXsIArRxNNPgCRtxkHdWZI3MtDD2JX1tJCeU9IWbggso3D0dIOdOc+duQBO7IYfzGx1yizZVZToDNwgcJq7KahdD85TNSNejqvYpQ9T0iILQGCqNWOAShRZcidX7agRL2rhcb+bL4RN8gQE2DYZRhTAobadc63vTzVMRn7jEeO3DeMGK5V6XS+679wTWkrQRqknzORWaNjP/17DS++dLik3jlDOLE7PLNhFOunbwUNdr6fYv5wOEE4BsCoAj0fmq+4BeylL1nJmuImNE2/PC+8YKutlOkrQJpUtDQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ja7s1yZwSo/hMyZGovnJj1pKQaKLW5KZ9d49Iw4B5/k=;
- b=mme6bpv/NN0Y6k8IPm1JS/tVDM1JujiG9uRRZV/SUE6ua4zjhOkoda2HdpkYGzMEi6+i5Ju+UbYo3remVnB1rw6XppOwnLD5b3oi4f2YvBHBjo2ODbpnOpWVuFWcsH8NQFS43TUqaKU42DCKXECJcQx680/vQd+Lzq+jBGpp3pDiMyAYEAo+gGuW/JDlI61gC3Wl6CVA1BwZCoARcFwMsMuBEQNr/obBSpyXkbNW5qDwc+QIflgICJkWAIbaV626eLC9PDnXafoEiGd0EbgV4UgqQFgUM9wSYLQrxuKZntiaMeryC+GVHT7k9x3k6v0JsiIDI9WF2d6D1fePPY6i2Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ja7s1yZwSo/hMyZGovnJj1pKQaKLW5KZ9d49Iw4B5/k=;
- b=LM74q1MLUC+mO3W3bB/mrfwSrGO3oupM37DoQNG3Oe3+YJeN4t2RBfOe2ZS5merl9t/ogETjkKUuOd0GsxMXodCdCUgdebV/GEy27cW0naGvpnYzmmKmTD0kI/ZV8T4gT/1vZlqsYaPOtkeVdDaGYHkJYmreW3PdP7ih/0OnJ+w=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
- (2603:1096:400:3a9::11) by OS7PR01MB11821.jpnprd01.prod.outlook.com
- (2603:1096:604:236::6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7025.29; Tue, 28 Nov
- 2023 23:13:08 +0000
-Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
- ([fe80::5732:673b:846c:ed92]) by TYCPR01MB10914.jpnprd01.prod.outlook.com
- ([fe80::5732:673b:846c:ed92%4]) with mapi id 15.20.7046.015; Tue, 28 Nov 2023
- 23:13:08 +0000
-Message-ID: <87v89l4gl8.wl-kuninori.morimoto.gx@renesas.com>
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Frank Rowand <frowand.list@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Aymeric Aillet <aymeric.aillet@iot.bzh>,
-	Yusuke Goda <yusuke.goda.sx@renesas.com>
-Subject: Re: [PATCH v2 4/4] drivers: clk: renesas: enable all clocks which is assinged to non Linux system
-In-Reply-To: <20231128153413.GA3301324-robh@kernel.org>
-References: <87fs0zc14m.wl-kuninori.morimoto.gx@renesas.com>
-	<87a5r7c13d.wl-kuninori.morimoto.gx@renesas.com>
-	<20231128153413.GA3301324-robh@kernel.org>
-User-Agent: Wanderlust/2.15.9 Emacs/27.1 Mule/6.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Tue, 28 Nov 2023 23:13:08 +0000
-X-ClientProxiedBy: TYCP286CA0130.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:2b6::12) To TYCPR01MB10914.jpnprd01.prod.outlook.com
- (2603:1096:400:3a9::11)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="my+Oq36B"
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53E5A19B9
+	for <linux-clk@vger.kernel.org>; Wed, 29 Nov 2023 00:16:00 -0800 (PST)
+Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-a00cbb83c82so913972666b.2
+        for <linux-clk@vger.kernel.org>; Wed, 29 Nov 2023 00:16:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1701245759; x=1701850559; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BPrttUGYCYCSK7SHMrNyeq1maIosOby02sd3JTquPsg=;
+        b=my+Oq36B9BKny/FtFG6JM9jY2VVe9Jf+ry0H9VQkjd6z/MurlGRrcGYswh0Zr0xPPX
+         y8bEv0DfsBZX1fkx792005xhD0+JlnhWPBuQqwfgDrKpst960PLMITuyPaWpn3TL+IPO
+         0l0KYo68MpNY0ewC9Q3avxqOsJpX8KvtsFE5YW2ecvcnO7LhmKKdzBtvVL2O/FPJ6Fn4
+         /vNRTXhgYFL10gAoLrfNWKVFyDZU5imZ2SEGKgU/gwdn6/bEJp5kTTPKwMs6Y/rl1RNr
+         fHyhLaGBIIXZjMQuzRuDi6FNa7nj6zCKNGb4XOckAm7wiBc0Jn1AFoKeTDighX+YRnFF
+         Q1zA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701245759; x=1701850559;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BPrttUGYCYCSK7SHMrNyeq1maIosOby02sd3JTquPsg=;
+        b=iZiUrcogX2sk3f+7s3sLzIsqSDb+QaWnTTeb0Ay6vqKIcNz3XyvJMAWO6KbH/3lnSn
+         mkvzfLHWhxNTigaA6FVZG/Hq4ce26ntDeQx2fWeU+B20MAaw+Cy9FnekJCknUM4+T2Qa
+         iW21t+rywQJXLrldtRfHgxhxPoIN8uJzy5VteOxWJO1Uz3cx/8l+GqVpKnah99y7iz4o
+         dfF8rFxs49mklTyKZiwoOLG+n0OKDQ+A5t/5LmbcWG2NnkCg4tYbBG1M14GPtjejH1yL
+         KyMz3lljYi+hCjPxJC15tsTfv/3JN/Tq5MwqUQ8o6ZlSC/9dGTMTnQztYj8mezzNzHBX
+         i7+A==
+X-Gm-Message-State: AOJu0YyDXJk2G+Gdx4bm38Cj3I/Pd8vzlfHpalOVAg4G+mvycjuZUT0Q
+	iLUXWJMjCoUHiuKILBNzW5BhZQ==
+X-Google-Smtp-Source: AGHT+IGJ4CrqnuKT4MZAHGKKsMN5yzKHOLNdkVjv8hKUgndCaJN1HZgAlobC7IMAothAuLQ5Upi9XA==
+X-Received: by 2002:a17:906:5307:b0:a09:589f:8853 with SMTP id h7-20020a170906530700b00a09589f8853mr11559452ejo.66.1701245758784;
+        Wed, 29 Nov 2023 00:15:58 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.223.109])
+        by smtp.gmail.com with ESMTPSA id x22-20020a1709060a5600b009c3827134e5sm7547416ejf.117.2023.11.29.00.15.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Nov 2023 00:15:58 -0800 (PST)
+Message-ID: <221ba6a3-c4c2-40cd-b1d8-8170af78c784@linaro.org>
+Date: Wed, 29 Nov 2023 09:15:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYCPR01MB10914:EE_|OS7PR01MB11821:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9140d5a8-4f26-4fd5-9089-08dbf0679560
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	6TOBMUqQXR7aOhu9CnSZlhWGRrKMGw9IZRb9ZssX7tIsf0/I+O7dTfZERQd4uDA9GH2BVacWk2Jh+TnJVze2H2dXnM2kJBmQsiXOhoua4ZxE6KDs8W9vi/TF48sxvIIUrvqr3Do6dbHPVs0ePrBYSKASmPDs2/E/I58alYEeyDpaSxm5Gb+Wnbdccvs3YU6pKcWnns8ntlgwy7/uJymGSkZmGVVm7+NY3/DZuqfaq34vqNRw8Oa+kLYY+i2VynFIFTAcALZnvYWELtP8s8JnDzMqQZo55DY8riUUNzcSd4+7LfIhHB4QLpIIfR7WH2FLstKog2+g/LCkcD6jrE1CF7wwrN/nBix1vRRZvV1bI6q5qGEUErqsunj+f3YW3v/udhOzS4UUf2qdHyu43S/SiyZWncRT6Kx8YRIk3gU9nNJmtn6x/uv8L7bKlXJ7L0wW3QYa52RKasXnV3N28AVhtKewbHUNHy7YW7QrtMOjV8UizmmtarEdhB+ARzo7DCT5V304w3S3ERh9DzakOisSVt5ml2UkPfYbf4Z7fBsK0pT4q1LfJ5PEA8uttBdIayVuIUIreWo8QtoRf+Cb07FQg/kxy2rC64prJ1J1NfS7rMePaXOTCMuNtEp6qqk8xCgH
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10914.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(396003)(346002)(376002)(136003)(366004)(230922051799003)(1800799012)(64100799003)(186009)(451199024)(38100700002)(36756003)(41300700001)(38350700005)(107886003)(2906002)(4744005)(83380400001)(5660300002)(26005)(86362001)(2616005)(52116002)(6506007)(8676002)(8936002)(4326008)(6512007)(6486002)(478600001)(66476007)(54906003)(66946007)(66556008)(316002)(6916009);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?sBYXbeymMh7Xswxdgf1xxZVjTEJh/0Yt51LGMnUA+orWZtE8alUfFfdEAEEU?=
- =?us-ascii?Q?3GNQrILBIW6sObXY+mhidjxFf/9Pq2G+ecv9HvPUOCm3oQhyGhvcM2Vu4QKq?=
- =?us-ascii?Q?MP+POPkcngAsKvZ08DPPDBH5vfxxYeJTlrqJ94K7BtTPmtvthTni7Uu6gP+5?=
- =?us-ascii?Q?pq/W4A6HnebwlGBZ317rmYELHZzFRn3xxHitxZVfa9y9CRqRJioGfW6+qwDY?=
- =?us-ascii?Q?RzrCEfyIgYbAjjTuNtfxEX31IzIJt4QU37tYGFw+l6Un0EulUhRNc6Y+5cQt?=
- =?us-ascii?Q?kfbYh79gII+6HodKEMK4YYg4mkj+aUhXuNqQHe4cubSMyHfLZdKahaUbJrR6?=
- =?us-ascii?Q?r8ehTEOTO0BfeDAPlygEdiSAsjeNMp5xCAsUl9JCYn7N6NVKwqJnfrja2PPq?=
- =?us-ascii?Q?FamdIdDDA14W4/45vO4T3D3Z7MdhJM3bQgxnKJQP9NK8DORbCV4sjUzeUQmR?=
- =?us-ascii?Q?LJCPtyRy7P/MHyHFMDxrJAVzvnzsCU7vL4RIJEpQvd9vMOcMGzDVn84I9Ggp?=
- =?us-ascii?Q?xIZvq+/TxcsoeiQJ2Lf7itw4/OcZQJTARnUOUvQEnPB97IWEoJY5ul++loW1?=
- =?us-ascii?Q?fQVv38kOLd+0Giy6fm0MVe3w5pVaEdSGJGCA9sAvs+lLzTkJbPT5UpyA0gTv?=
- =?us-ascii?Q?usauFANB10EKoe90mrdJpTHhJOjTjJZtUYaaURY9OxFYZCB07Ku2j9eQz928?=
- =?us-ascii?Q?Wu+RZhdjsykEUCKVqk9SMbGeWIkXMzeMpPgdeZ2fhKPvtxHBW1OI32SznTwm?=
- =?us-ascii?Q?KVXfzA3vSpdYsHvSZcNgkx0mfYNeGX/vdel6/M7ShGmIzyQqOH2X7Fafdn/w?=
- =?us-ascii?Q?jo6Z/68MdNnvmw6NMRlCywO5hlD7Qg6IpWGXx8Jy1EibrzIXOvKGIjTAmBTx?=
- =?us-ascii?Q?iCbmgyyJEZT33bOmWxhbdGfMa+0rNwubDKuZgRq2+VpTm2vIuSOuH9Clb7Ub?=
- =?us-ascii?Q?BAley/xydmERWZJ237Tnq+qFwWr38fbqLf6KQi3EHr28UX13ZUXdIUWFP9K1?=
- =?us-ascii?Q?L2PRPT0C+ag77ZYoDLtHTpaVb9zx/o/S2iq0fOtkFvrcXyhX8tHpptq7+Qoq?=
- =?us-ascii?Q?05i01cHBtWuoasEcUJcLNwR9QkOkDzpXzK1N7RYVDt2/agY0Ed5TQmrIkNAR?=
- =?us-ascii?Q?4ktq+wtNf1wChyfoF5+d6K01AEKOyP3+nt/gCy9/vMIWBOYoUo/MZi7wFBMn?=
- =?us-ascii?Q?wDWPzOxZ0XjHr5LUTiwTR0tZ6b4wMKAAf2icyKIPDxI7QkldcKlDT67Tbgl7?=
- =?us-ascii?Q?KKTUUj725XNMyyv5Q5LZfh9vwqzgw+cxhi0o/YbKmzvzN6UTiLYJcIKaZJWX?=
- =?us-ascii?Q?L1CAvx9JugaX+ahDVT2URDJzW6kWRfVM5HikoSiOtZun3JHPyXcLdmORKefu?=
- =?us-ascii?Q?LgZXJKnkUp8RI4rVLnZPpKkcSzfTIRhARmGIztXTZtyE+ZtjcS9YA8NiP13C?=
- =?us-ascii?Q?sVZjNcgRj38wVJKvVNrtDiwmgGf/6ViWISzRZodoTY37MdehaitJN8XqyAd3?=
- =?us-ascii?Q?WquLATt0R4UwwpdlxJyZlRsz937ZsxutBa7HieCjwXBevJdCyF750xpd26Dw?=
- =?us-ascii?Q?/VtBteBiz7m50w8IE4WP8o165qqewj1mepVizCO73Mr3CqnP60norl7k0YU/?=
- =?us-ascii?Q?PTuNCCa+IMZNManCQHvx848=3D?=
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9140d5a8-4f26-4fd5-9089-08dbf0679560
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB10914.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Nov 2023 23:13:08.2041
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0Z5ZOwnk1Va3/qc/gf/iwCbgn0V0CjmaGTkBwixUeaUtuefxnHWuaOVBmnQo9fLZoOcf1ZJ9H1pVHJthUmRbpYVhv7JVlFP7WIoT3l67c1Blh9FEA4aP2+8WAWQPM+B/
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS7PR01MB11821
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: clock: ti: Convert interface.txt to
+ json-schema
+Content-Language: en-US
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, kristo@kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+References: <20231127202359.145778-1-andreas@kemnade.info>
+ <7a62ed8a-b0e3-4881-90d7-b8f5d38e482e@linaro.org>
+ <20231128093241.707a4fa0@aktux>
+ <7361082a-f271-4ef4-9dad-06ee7445c749@linaro.org>
+ <20231128214116.22dfff1e@akair>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20231128214116.22dfff1e@akair>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 28/11/2023 21:41, Andreas Kemnade wrote:
+> Am Tue, 28 Nov 2023 09:41:23 +0100
+> schrieb Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>:
+>>> If the interface clock is not below a ti,clksel then we have reg.  
+>>
+>> This should be expressed in the bindings. It's fine to make the reg
+>> optional (skip the description, it's confusing), but the ti,clksel
+>> should reference this schema and enforce it on the children.
+>>
+> Well there are other compatibles below ti,clksel, too, so should we
+> rather add them when the other .txt files are converted?
 
-Hi Rob
+This binding should already be referenced by ti,clksel. When the other
+are ready, you will change additionalProperties from object to false.
 
-Thank you for reviewing the patch.
+Best regards,
+Krzysztof
 
-> > +static int __init cpg_mssr_reserved_init(struct cpg_mssr_priv *priv,
-> > +					 const struct cpg_mssr_info *info)
-> > +{
-> > +	struct device_node *root = of_find_node_by_path("/soc");
-> 
-> 'root' is '/', so I find this slightly confusing.
-(snip)
-> > +	 *	scif5: serial@e6f30000 {
-> > +	 *		...
-> > +	 * =>		clocks = <&cpg CPG_MOD 202>,
-> > +	 *			 <&cpg CPG_CORE R8A7795_CLK_S3D1>,
-> > +	 *			 <&scif_clk>;
-> > +	 *			 ...
-> > +	 *		 status = "reserved";
-> > +	 *	};
-> > +	 */
-> > +	for_each_reserved_child_of_node(root, node) {
-> 
-> Don't you really want to find all reserved nodes in the DT rather than
-> just child nodes of a single node?
-
-The all devices which we need to check (and ignore the clock) in this
-driver is defined under /soc for now.
-
-
-Thank you for your help !!
-
-Best regards
----
-Kuninori Morimoto
