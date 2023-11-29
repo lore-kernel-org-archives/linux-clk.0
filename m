@@ -1,46 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZAbQVSP9"
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10CD2D71
-	for <linux-clk@vger.kernel.org>; Wed, 29 Nov 2023 10:59:42 -0800 (PST)
-Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-a00f67f120aso12106366b.2
-        for <linux-clk@vger.kernel.org>; Wed, 29 Nov 2023 10:59:41 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ceEZuJGR"
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1701D1708
+	for <linux-clk@vger.kernel.org>; Wed, 29 Nov 2023 10:59:39 -0800 (PST)
+Received: by mail-lj1-x232.google.com with SMTP id 38308e7fff4ca-2c9bf8964c3so1817851fa.1
+        for <linux-clk@vger.kernel.org>; Wed, 29 Nov 2023 10:59:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701284380; x=1701889180; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1701284377; x=1701889177; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=/EYvH2o2FDAOc1jBHzE94w2pt5/T4uUYkpgbUck9NPc=;
-        b=ZAbQVSP94l6zdgg71Dj8Pdt8xPJOp9nkse7UIdx+wZgoKLH5cF5kdHGoIPn78DD9/+
-         smvZxjzc3rI6oB0mZb2ESaNAN40b6ndetm/jCzNqNco74Yj5fwBGWEahZz1FyJFtbpk+
-         UL0mQWcU4j6ZIKBogG8tmPtQuNPcZOJReMxfWpG0xa3dgGJdgP/OkoKDxdWpJ7u69N20
-         pxj0P2SGZbiBMZ3hWBwSUvLMBNwcsUBQiP3nBC+qPMSQjWIFH/IpaSNWGfbZEPiFGpwg
-         putAiPAx4Gs5q55BI3PneqFPBMGP0bXYVtm1fhVUHRavbiS4xcVbPnmjeEVbOeRsmjLx
-         g7JQ==
+        bh=RXMNH6TrR/7XnpjC35h5hcRSBIQq27ZTZGmPCePhaF4=;
+        b=ceEZuJGRHjSJEEn2XThBuYRMXJhfXO8ZHHnRI+lYhiuwr3N4vCFV02KyeoV5BDfj2/
+         IQYU6js95/NL321CKrIhIK+wCtVCoFI/IaZJVo7m2S5X0GK+xjUZh2sRWFHBhesZXwNy
+         D8GbUWBO89qBBpFwkYL5Do4SrtrQyI+x/MKxexj55zl2ej/gQ+vO2OtYyqJa1DYJmJY6
+         Dl3z8s179GyE6sANiRgQyFWYaILGhd4iCdgk8RoTwwLjxkbuil1c/uxrwyvO2WG0DRYd
+         /WgpsKcEL0hdOjhIEv5Xsx+QCMxuearTdipvkMPMFGp9axlvkXc9i9HlnMpIoGSbZ4O8
+         zg0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701284380; x=1701889180;
+        d=1e100.net; s=20230601; t=1701284377; x=1701889177;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/EYvH2o2FDAOc1jBHzE94w2pt5/T4uUYkpgbUck9NPc=;
-        b=luW+sdcI3n7e+zKqLvFYzoYBfDuKCL+CXAe/HsPakfJ38RUBZuKDNEZoJtS/3BOctW
-         n8orGwo+V4wC58p5W2xwvcR/IzhwiZPqL5Wj91qzZVjyTBxF+4aSdotT/0szrDpFBqvl
-         G6CxLBRmOs8MJUfwFQvvs004wiCvxkfCNNOmJ7paHnOPN66f5+4MQzFUwZSloBzJ/ClU
-         HIIbx5/oVydVa4S3V2X8ziUFGgd2TsG1XJOrCikc7P5QHizjRlkQJUL0cTYk60Tr4ChM
-         Vf6ZvU6EgUvfbpo/CXVuhFaak4AqYfDC2ZzZroOQuvv69pkk1x1YP1O8qmXVj2SwE6MX
-         94Kg==
-X-Gm-Message-State: AOJu0YyzjQQyedFKZjOzyhwHUf8EiXhYVTlpil2BBi7Aa5GzF+0Qgwrn
-	BK2BrwPb3LeN9cLzaRtWZF0ksw==
-X-Google-Smtp-Source: AGHT+IHnwydVDMEGbarq/ML2PKUrinCaUPdXE9gNOoO6r4th3lvOOKzKYtnqfiDvDEvz7p2OTc5iDQ==
-X-Received: by 2002:a17:906:2659:b0:9c6:9342:1459 with SMTP id i25-20020a170906265900b009c693421459mr14090995ejc.20.1701284380460;
-        Wed, 29 Nov 2023 10:59:40 -0800 (PST)
+        bh=RXMNH6TrR/7XnpjC35h5hcRSBIQq27ZTZGmPCePhaF4=;
+        b=UFbZtmOAuikpEL20wkWelvfXkh6y/GLGwbu8RhlHRww/52O+4wP67k+5MBZxQI2VfG
+         xIFG8i4Za4JGAd8EkCWMc2qpZob9wVV5EZ4asnI5NUzFO9t6J7EFeu7DoF0woj3a+M2M
+         uUSX3vhzTWWKCFp5ffJ0jSoNu9m4rs4yeG9XNU4hmZ4ob4Y+JUdJVTbi1WYsqaLKzeqN
+         QXjkaQ5e4pF8fV+9gCddyNEkpdPEtVf2EwZKGTz3hmSSYvqapaPCleUqh2XM53QCYDxi
+         R3Ex+X1xnSq3J9307V/y2S5CF6ZWUWFsSD3GuJNzbSZK0AB4w3us22hFlp3wdEZmGbtD
+         l1Ww==
+X-Gm-Message-State: AOJu0Yx3qZk7lUOkCzYqpq5uqxTJ7twlh/QpSbiIfpcBbgzHxdhQAuNs
+	9pbZFQzK0W3RAyMtt7vU6DwSpw==
+X-Google-Smtp-Source: AGHT+IFNL3CM1j+VFhLk7jRZhqJVTMlPCIKdqhUjhzr31aTHAPGZYyplS/2f5U9wFwtpF7JP++AWtQ==
+X-Received: by 2002:a2e:9b59:0:b0:2c6:ece6:5b65 with SMTP id o25-20020a2e9b59000000b002c6ece65b65mr12502580ljj.10.1701284377331;
+        Wed, 29 Nov 2023 10:59:37 -0800 (PST)
 Received: from [10.167.154.1] (178235187166.dynamic-4-waw-k-2-3-0.vectranet.pl. [178.235.187.166])
-        by smtp.gmail.com with ESMTPSA id o11-20020a1709061d4b00b009faca59cf38sm8160232ejh.182.2023.11.29.10.59.39
+        by smtp.gmail.com with ESMTPSA id o11-20020a1709061d4b00b009faca59cf38sm8160232ejh.182.2023.11.29.10.59.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Nov 2023 10:59:40 -0800 (PST)
+        Wed, 29 Nov 2023 10:59:36 -0800 (PST)
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Date: Wed, 29 Nov 2023 19:59:26 +0100
-Subject: [PATCH v2 07/15] clk: qcom: gpucc-sm6115: Add runtime PM
+Date: Wed, 29 Nov 2023 19:59:24 +0100
+Subject: [PATCH v2 05/15] clk: qcom: gpucc-sm6375: Unregister critical
+ clocks
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -49,7 +50,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230717-topic-branch_aon_cleanup-v2-7-2a583460ef26@linaro.org>
+Message-Id: <20230717-topic-branch_aon_cleanup-v2-5-2a583460ef26@linaro.org>
 References: <20230717-topic-branch_aon_cleanup-v2-0-2a583460ef26@linaro.org>
 In-Reply-To: <20230717-topic-branch_aon_cleanup-v2-0-2a583460ef26@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, Andy Gross <agross@kernel.org>, 
@@ -62,73 +63,99 @@ Cc: Marijn Suijten <marijn.suijten@somainline.org>,
  linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
  Konrad Dybcio <konrad.dybcio@linaro.org>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1701284367; l=2049;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1701284367; l=2968;
  i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=wo6RqwrpI+TvZGgUHlprTgAEXXwaEB8xXAWdfaiQ80I=;
- b=5sNZ4fs0hGm079Nd1/queDozn73YeqMcTog04Up3RSBebWyseWuWWiVed4cA+E+SBYqs2UAy+
- p/OOqMgizeyCZBR8nfDyP/yh5VefKtJAt7THnWS8+fzIp3TK3aOGdm1
+ bh=LUWIogmP6OeDvx1GjND0Am0UQ+6einhHWh1HpqaW4UI=;
+ b=yQzFMJrhML7Y5IYoegSAF6IeVpUCzfIPsfrVm05xdBsTdVnFLOOzF1l8znsi7qjH8Xpj6+xGI
+ YKvvl6fJ0RtAyEzXytX9eeGB375rfVMq5z4XGKhvIB6SxO6ELJcSaNB
 X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
  pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-The GPU_CC block on SM6115 is powered by the VDD_CX rail. We need to
-ensure that CX is enabled to prevent unwanted power collapse and that
-the reference is dropped when unused so that the system can enter a
-firmware-managed lower power state.
+Some clocks need to be always-on, but we don't really do anything
+with them, other than calling enable() once and telling Linux they're
+enabled.
 
-Enable runtime PM to keep the power flowing only when necessary.
+Unregister them to save a couple of bytes and, perhaps more
+importantly, allow for runtime suspend of the clock controller device,
+as CLK_IS_CRITICAL prevents the latter.
 
 Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- drivers/clk/qcom/gpucc-sm6115.c | 19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+ drivers/clk/qcom/gpucc-sm6375.c | 33 +++------------------------------
+ 1 file changed, 3 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/clk/qcom/gpucc-sm6115.c b/drivers/clk/qcom/gpucc-sm6115.c
-index 93a50431aef8..b50979ce1cbe 100644
---- a/drivers/clk/qcom/gpucc-sm6115.c
-+++ b/drivers/clk/qcom/gpucc-sm6115.c
-@@ -8,6 +8,7 @@
- #include <linux/mod_devicetable.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
- #include <linux/regmap.h>
+diff --git a/drivers/clk/qcom/gpucc-sm6375.c b/drivers/clk/qcom/gpucc-sm6375.c
+index da24276a018e..6d85936dd441 100644
+--- a/drivers/clk/qcom/gpucc-sm6375.c
++++ b/drivers/clk/qcom/gpucc-sm6375.c
+@@ -183,20 +183,6 @@ static struct clk_rcg2 gpucc_gx_gfx3d_clk_src = {
+ 	},
+ };
  
- #include <dt-bindings/clock/qcom,sm6115-gpucc.h>
-@@ -443,10 +444,21 @@ MODULE_DEVICE_TABLE(of, gpu_cc_sm6115_match_table);
- static int gpu_cc_sm6115_probe(struct platform_device *pdev)
- {
- 	struct regmap *regmap;
-+	int ret;
+-static struct clk_branch gpucc_ahb_clk = {
+-	.halt_reg = 0x1078,
+-	.halt_check = BRANCH_HALT_DELAY,
+-	.clkr = {
+-		.enable_reg = 0x1078,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "gpucc_ahb_clk",
+-			.flags = CLK_IS_CRITICAL,
+-			.ops = &clk_branch2_ops,
+-		},
+-	},
+-};
+-
+ static struct clk_branch gpucc_cx_gfx3d_clk = {
+ 	.halt_reg = 0x10a4,
+ 	.halt_check = BRANCH_HALT_DELAY,
+@@ -294,20 +280,6 @@ static struct clk_branch gpucc_cxo_clk = {
+ 	},
+ };
+ 
+-static struct clk_branch gpucc_gx_cxo_clk = {
+-	.halt_reg = 0x1060,
+-	.halt_check = BRANCH_HALT_DELAY,
+-	.clkr = {
+-		.enable_reg = 0x1060,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "gpucc_gx_cxo_clk",
+-			.flags = CLK_IS_CRITICAL,
+-			.ops = &clk_branch2_ops,
+-		},
+-	},
+-};
+-
+ static struct clk_branch gpucc_gx_gfx3d_clk = {
+ 	.halt_reg = 0x1054,
+ 	.halt_check = BRANCH_HALT_DELAY,
+@@ -381,7 +353,6 @@ static struct gdsc gpu_gx_gdsc = {
+ };
+ 
+ static struct clk_regmap *gpucc_sm6375_clocks[] = {
+-	[GPU_CC_AHB_CLK] = &gpucc_ahb_clk.clkr,
+ 	[GPU_CC_CX_GFX3D_CLK] = &gpucc_cx_gfx3d_clk.clkr,
+ 	[GPU_CC_CX_GFX3D_SLV_CLK] = &gpucc_cx_gfx3d_slv_clk.clkr,
+ 	[GPU_CC_CX_GMU_CLK] = &gpucc_cx_gmu_clk.clkr,
+@@ -389,7 +360,6 @@ static struct clk_regmap *gpucc_sm6375_clocks[] = {
+ 	[GPU_CC_CXO_AON_CLK] = &gpucc_cxo_aon_clk.clkr,
+ 	[GPU_CC_CXO_CLK] = &gpucc_cxo_clk.clkr,
+ 	[GPU_CC_GMU_CLK_SRC] = &gpucc_gmu_clk_src.clkr,
+-	[GPU_CC_GX_CXO_CLK] = &gpucc_gx_cxo_clk.clkr,
+ 	[GPU_CC_GX_GFX3D_CLK] = &gpucc_gx_gfx3d_clk.clkr,
+ 	[GPU_CC_GX_GFX3D_CLK_SRC] = &gpucc_gx_gfx3d_clk_src.clkr,
+ 	[GPU_CC_GX_GMU_CLK] = &gpucc_gx_gmu_clk.clkr,
+@@ -455,6 +425,9 @@ static int gpucc_sm6375_probe(struct platform_device *pdev)
+ 	clk_lucid_pll_configure(&gpucc_pll0, regmap, &gpucc_pll0_config);
+ 	clk_lucid_pll_configure(&gpucc_pll1, regmap, &gpucc_pll1_config);
+ 
++	qcom_branch_set_clk_en(regmap, 0x1078); /* GPUCC_AHB_CLK */
++	qcom_branch_set_clk_en(regmap, 0x1060); /* GPUCC_GX_CXO_CLK */
 +
-+	ret = devm_pm_runtime_enable(&pdev->dev);
-+	if (ret)
-+		return ret;
-+
-+	ret = pm_runtime_resume_and_get(&pdev->dev);
-+	if (ret)
-+		return ret;
+ 	ret = qcom_cc_really_probe(pdev, &gpucc_sm6375_desc, regmap);
+ 	pm_runtime_put(&pdev->dev);
  
- 	regmap = qcom_cc_map(pdev, &gpu_cc_sm6115_desc);
--	if (IS_ERR(regmap))
-+	if (IS_ERR(regmap)) {
-+		pm_runtime_put(&pdev->dev);
- 		return PTR_ERR(regmap);
-+	}
- 
- 	clk_alpha_pll_configure(&gpu_cc_pll0, regmap, &gpu_cc_pll0_config);
- 	clk_alpha_pll_configure(&gpu_cc_pll1, regmap, &gpu_cc_pll1_config);
-@@ -461,7 +473,10 @@ static int gpu_cc_sm6115_probe(struct platform_device *pdev)
- 	qcom_branch_set_clk_en(regmap, 0x1078); /* GPU_CC_AHB_CLK */
- 	qcom_branch_set_clk_en(regmap, 0x1060); /* GPU_CC_GX_CXO_CLK */
- 
--	return qcom_cc_really_probe(pdev, &gpu_cc_sm6115_desc, regmap);
-+	ret = qcom_cc_really_probe(pdev, &gpu_cc_sm6115_desc, regmap);
-+	pm_runtime_put(&pdev->dev);
-+
-+	return ret;
- }
- 
- static struct platform_driver gpu_cc_sm6115_driver = {
 
 -- 
 2.43.0
