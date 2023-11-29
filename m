@@ -1,86 +1,151 @@
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 578C2BC
-	for <linux-clk@vger.kernel.org>; Wed, 29 Nov 2023 00:46:09 -0800 (PST)
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4SgCbF4LN3z4f3n6c
-	for <linux-clk@vger.kernel.org>; Wed, 29 Nov 2023 16:46:01 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 19AC21A0199
-	for <linux-clk@vger.kernel.org>; Wed, 29 Nov 2023 16:46:06 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.103.91])
-	by APP1 (Coremail) with SMTP id cCh0CgDX2xFG+mZlpm4ACQ--.35156S4;
-	Wed, 29 Nov 2023 16:46:05 +0800 (CST)
-From: Yang Yingliang <yangyingliang@huaweicloud.com>
-To: linux-clk@vger.kernel.org
-Cc: abelvesa@kernel.org,
-	peng.fan@nxp.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	linux-imx@nxp.com,
-	shengjiu.wang@nxp.com,
-	yangyingliang@huawei.com
-Subject: [PATCH] clk: imx: imx8: fix return value check in clk_imx_acm_attach_pm_domains()
-Date: Wed, 29 Nov 2023 16:50:09 +0800
-Message-Id: <20231129085009.780096-1-yangyingliang@huaweicloud.com>
-X-Mailer: git-send-email 2.25.1
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MW6KFfWp"
+Received: from mail-yw1-x1132.google.com (mail-yw1-x1132.google.com [IPv6:2607:f8b0:4864:20::1132])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1190419B2;
+	Wed, 29 Nov 2023 01:47:25 -0800 (PST)
+Received: by mail-yw1-x1132.google.com with SMTP id 00721157ae682-5cd59f77d2dso61316997b3.3;
+        Wed, 29 Nov 2023 01:47:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1701251244; x=1701856044; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=8qPZDWdHAVcZMmK+WGuyolxgHPOaDer+ydi9AIrYvTQ=;
+        b=MW6KFfWpnvkPazes9uJ5z3lzR0/JXzHUa94TnVNHTczlOx2MK2qrjALRBSKjDvmoJ0
+         gFeL/XI0+W1iDNNOz9ssrQWDuAW4AmeN6Y/ReJ4+WhsIoF0re+LQvRxSR9HZyQ6R75ja
+         ePp88dkeJcmyx+FOH9N7SaQ8iWyp7YFxNI6cCRwhHqJSKTW/R9QMlboZraOA+cyEyQqp
+         lhH9sMA9M7prY2BWz2hfUe+dzLg+fEi1XfUf/6zP9q40A/t3V6d6tOgRKXX2x+Yta10Q
+         SaSUDNC/rQY76avhSbYu5c6fEu6Uy4nNV13dL1DCo8aIH0cciUgD2hs7g0WWWkNruVI3
+         OWVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701251244; x=1701856044;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8qPZDWdHAVcZMmK+WGuyolxgHPOaDer+ydi9AIrYvTQ=;
+        b=Di889yTrXmN8y+1Axyv4J3Bff1jqFk10jbCCpuUTZDhJN5S6U86Ao8ulZB04ToNepA
+         qqjBS950tp6NXl93MbBckYliMj1jNBWmGQPgzwvIdJ9S/3+m+wQroRTt23Mi+WcJEFbe
+         OUl8M2gow5Vwq84zmeRcd9IiMLxjmmwL3ww0JdRn52ibzEWm+B6HB1GmLo5MyZlZ3hbK
+         X3iNGdD3eL3MPj2dy4OoPVMRC2CEn2H3p0/nPK/C/XOgmfCcUcbHV8y8iccW9Co/go75
+         2K6AQxeeb4zxgY+eI1udMP9icJZV/S7r3i+zBmbp9QAASVgMFQ2y0nJtD2JYZyOTwVBb
+         I6hw==
+X-Gm-Message-State: AOJu0YwM5uNbiPAlGcp2qBxKlrvTBNhhMGFyHq4dWAAc48k0yDTAzpmq
+	4eRAkDVJjRUQPgut45sqPKrfpAtVlQohTL4HMu4=
+X-Google-Smtp-Source: AGHT+IHo3hOA6n+50usE2zETLAZfmRy84YOaqNPgxqWdzxdFZ6HxjtqIsiK8LuAqCaDWMDM32YJyquYVVs8cvI/HS8M=
+X-Received: by 2002:a0d:cf44:0:b0:5c7:47f:59e8 with SMTP id
+ r65-20020a0dcf44000000b005c7047f59e8mr22095699ywd.42.1701251244173; Wed, 29
+ Nov 2023 01:47:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgDX2xFG+mZlpm4ACQ--.35156S4
-X-Coremail-Antispam: 1UD129KBjvdXoW7XFW7Xry8Kr4rXF4DAF1fWFg_yoWDZrb_GF
-	18Cr4UX34rJF4ayr1j9F1fZrZ8Zrnruan7XayS934fJasxur1rJrZ0qF4fXr1xWrWUGFW7
-	W3Z3ursY9r9xCjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb2xYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IY
-	c2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s
-	026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF
-	0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0x
-	vE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E
-	87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUza9aDUUUU
-X-CM-SenderInfo: 51dqw5xlqjzxhdqjqx5xdzvxpfor3voofrz/
+References: <20230928224051.160851-1-tmaimon77@gmail.com> <7d529b2b9a16f238f533f1c03b4261b2.sboyd@kernel.org>
+In-Reply-To: <7d529b2b9a16f238f533f1c03b4261b2.sboyd@kernel.org>
+From: Tomer Maimon <tmaimon77@gmail.com>
+Date: Wed, 29 Nov 2023 11:47:12 +0200
+Message-ID: <CAP6Zq1ie_meX9Kuz3C8KBkYWxjLBDtimk3PS9=zYOhrGxFikBg@mail.gmail.com>
+Subject: Re: [PATCH v20] clk: npcm8xx: add clock controller
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: avifishman70@gmail.com, benjaminfair@google.com, joel@jms.id.au, 
+	mturquette@baylibre.com, tali.perry1@gmail.com, venture@google.com, 
+	yuenn@google.com, openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Yang Yingliang <yangyingliang@huawei.com>
+Hi Stephen,
 
-device_link_add() returns NULL pointer not PTR_ERR() when it fails,
-so replace the IS_ERR() check with NULL pointer check and set the
-error code to -EINVAL.
+Thanks for your comments and sorry for the late reply.
 
-Fixes: d3a0946d7ac9 ("clk: imx: imx8: add audio clock mux driver")
-Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
----
- drivers/clk/imx/clk-imx8-acm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Sat, 7 Oct 2023 at 02:50, Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Tomer Maimon (2023-09-28 15:40:51)
+> > diff --git a/drivers/clk/clk-npcm8xx.c b/drivers/clk/clk-npcm8xx.c
+> > new file mode 100644
+> > index 000000000000..e575a8676ca3
+> > --- /dev/null
+> > +++ b/drivers/clk/clk-npcm8xx.c
+> > @@ -0,0 +1,547 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> [...]
+> > +
+> > +/* configurable dividers: */
+> > +static const struct npcm8xx_clk_div_data npcm8xx_divs[] = {
+> > +       { NPCM8XX_CLKDIV1, 28, 3, NPCM8XX_CLK_S_ADC,
+> > +       { .name = NPCM8XX_CLK_S_PRE_ADC, .index = -1 },
+> > +       CLK_DIVIDER_READ_ONLY | CLK_DIVIDER_POWER_OF_TWO, 0, NPCM8XX_CLK_ADC },
+>
+> Please format this some other way. I assume one line means one clk, but
+> here it is actually three lines. Perhaps something like this?
+Ready in V21
+>
+> > +       {
+> > +             NPCM8XX_CLKDIV1, 28, 3, NPCM8XX_CLK_S_ADC,
+> > +             { .name = NPCM8XX_CLK_S_PRE_ADC, .index = -1 },
+> > +             CLK_DIVIDER_READ_ONLY | CLK_DIVIDER_POWER_OF_TWO, 0, NPCM8XX_CLK_ADC
+> > +       },
+>
+> Please stop using the .name member of struct clk_parent_data. That
+> member is only there to support drivers that are migrating from a
+> binding that didn't specify the parents of clks that are outside of the
+> clk controller with the clocks property in their DT node. I see that the
+> dts exists upstream, but luckily we don't have a driver merged, so we're
+> free to change the binding to specify clks external to the node. The
+> .fw_name member will match a 'clock-names' element for the registering
+> driver's node. The .index member will match the index in the 'clocks'
+> property. Neither of those properties exist in the nuvoton,npcm845-clk
+> DT binding, so neither of those members shall be present. This means
+> that either the binding needs to be updated, or the clk_parent_data
+> structure should be replaced with clk_hw pointers to describe parents.
+> I'm going to guess that there aren't any external clk parents, so to
+> keep things simple this driver should change to use direct clk_hw
+> pointers to describe topology.
+Ready in V21
+>
+> > +       { NPCM8XX_CLKDIV1, 26, 2, NPCM8XX_CLK_S_AHB, { .hw = &hw_pre_clk },
+> > +       CLK_DIVIDER_READ_ONLY, CLK_IS_CRITICAL, NPCM8XX_CLK_AHB },
+> > +       { NPCM8XX_CLKDIV1, 21, 5, NPCM8XX_CLK_S_PRE_ADC,
+> > +       { .hw = &npcm8xx_muxes[6].hw }, CLK_DIVIDER_READ_ONLY, 0, -1 },
+> > +       { NPCM8XX_CLKDIV1, 16, 5, NPCM8XX_CLK_S_UART,
+> > +       { .hw = &npcm8xx_muxes[3].hw }, 0, 0, NPCM8XX_CLK_UART },
+> > +       { NPCM8XX_CLKDIV1, 11, 5, NPCM8XX_CLK_S_MMC,
+> > +       { .hw = &npcm8xx_muxes[2].hw }, CLK_DIVIDER_READ_ONLY, 0,
+> > +       NPCM8XX_CLK_MMC },
+> > +       { NPCM8XX_CLKDIV1, 6, 5, NPCM8XX_CLK_S_SPI3,
+> > +       { .fw_name = NPCM8XX_CLK_S_AHB, .name = NPCM8XX_CLK_S_AHB }, 0, 0,
+> > +       NPCM8XX_CLK_SPI3 },
+> > +       { NPCM8XX_CLKDIV1, 2, 4, NPCM8XX_CLK_S_PCI,
+> > +       { .hw = &npcm8xx_muxes[7].hw }, CLK_DIVIDER_READ_ONLY, 0,
+> > +       NPCM8XX_CLK_PCI },
+>
+> BTW, I looked at the dts file upstream (nuvoton-common-npcm8xx.dtsi).
+> The reset and clock controller start at the same address, which can only
+> mean that they're actually the same device. The two nodes should be
+unfortunately, It is two services (reset and clock) that are handled
+in the same memory space.
+> combined into one node and one driver should match that compatible so
+> that one IO mapping is made for the entire clock and reset contoller
+> register space. If you want, that driver can make two auxiliary device
+> drivers for the reset and clk parts of the io space and then those two
+> drivers can reside in drivers/reset and drivers/clk. I don't know where
+> the driver goes that matches the compatible node though, probably in
+> drivers/soc. This allows us to properly model the logical components
+> that make up the device in hardware (clks and resets) while also
+> allowing any device specific things for that entire register space to
+> live in the soc driver. For example, if some power domain needs to be
+> enabled to access that register space it would be attached to the soc
+> driver.
+Sorry I didn't understand, do you mean to have one driver that handles
+the clock and the reset modules and will sis under driver/soc
+or one driver that handles the reset and clock IO space?
 
-diff --git a/drivers/clk/imx/clk-imx8-acm.c b/drivers/clk/imx/clk-imx8-acm.c
-index f68877eef873..5cae17843663 100644
---- a/drivers/clk/imx/clk-imx8-acm.c
-+++ b/drivers/clk/imx/clk-imx8-acm.c
-@@ -289,9 +289,9 @@ static int clk_imx_acm_attach_pm_domains(struct device *dev,
- 							 DL_FLAG_STATELESS |
- 							 DL_FLAG_PM_RUNTIME |
- 							 DL_FLAG_RPM_ACTIVE);
--		if (IS_ERR(dev_pm->pd_dev_link[i])) {
-+		if (!dev_pm->pd_dev_link[i]) {
- 			dev_pm_domain_detach(dev_pm->pd_dev[i], false);
--			ret = PTR_ERR(dev_pm->pd_dev_link[i]);
-+			ret = -EINVAL;
- 			goto detach_pm;
- 		}
- 	}
--- 
-2.25.1
+What about using regmap to handle the clock and the reset? for this,
+the NPCM clock driver will use a unique clock setting like it is done
+in Tegra clk.
+https://elixir.bootlin.com/linux/v6.7-rc2/source/drivers/clk/tegra/clk-divider.c
+instead of using clk_divide and clk_mux default services.
 
+Thanks,
+
+Tomer
