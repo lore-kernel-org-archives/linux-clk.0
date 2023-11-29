@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kV/3nZrt"
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E6731A8
-	for <linux-clk@vger.kernel.org>; Wed, 29 Nov 2023 13:14:53 -0800 (PST)
-Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-409299277bbso1587635e9.2
-        for <linux-clk@vger.kernel.org>; Wed, 29 Nov 2023 13:14:53 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KmipKZQa"
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0D3910C0;
+	Wed, 29 Nov 2023 13:20:45 -0800 (PST)
+Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-a132acb67b5so30308766b.3;
+        Wed, 29 Nov 2023 13:20:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701292491; x=1701897291; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=gmail.com; s=20230601; t=1701292844; x=1701897644; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=yrXYY2lU23zuZlfwWGvLQFyDFXfNY5T1gubM0hMOkP0=;
-        b=kV/3nZrtIXim7T8H+5rv62fUMv1rQTPhLBD/3Isc8acCcwl7tAN/IbGSfQpCRaeIG9
-         wMvhIYte02MMdFwstAlCzwAzKRIUtl7BqxUfJrhcBdQveNP2/JxEyBWhtAsZ/rM+ZlCi
-         bPfcO6nNYbTr1V+KhLgkj9UbUkThs/14Ei3TqPmcpzfAiBpW9RUahGujFpobOCX3+Rzb
-         JKbbJMA/Dmj1IGa5A797D9frd+gF0KRjEuqatl2pyHxjhExftdi+PfaSxVYFrHXVzlZi
-         A+IDuIMPTZXFLckSH9SLQ5v0HosJGspOsXoZKHtybLmxPPxX/7Qn5EU9WfrkASSecPo/
-         jw3A==
+        bh=e7uJ6/cKIhORoXu8TzZSGHhq752ZWeeIg37a8KHIARo=;
+        b=KmipKZQaD7eBdQGjrHhsDnIdiispL672PDDG3mL3WJMSUGRsgdIfnA4f0SDvU8/zUg
+         DwfSf1QmxWoNZvv4Njtvk4KcMq4hMNBYIaFQBkcClDVdnl798K0pz91VnZ8CkdFZC/Pa
+         VN4JM7Se4CIqpf5k1pZHbuNOjWGHg2Ae6q35Pc1eBYZEkD1SSFQivPMCazTFSiE5YEcv
+         nabHWacSSM0Jk0/mRzM82TCToaRRoyyA2kSLV22GILbspPzfYM07LQ5KXWi059/Ru08l
+         wEyBVILxXjZVZZMp2Sw27iyGsCx9gCDM2DYpD3iwaqXAaNJRtVNWqIDf2Pgljk3rh48w
+         9zSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701292491; x=1701897291;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1701292844; x=1701897644;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yrXYY2lU23zuZlfwWGvLQFyDFXfNY5T1gubM0hMOkP0=;
-        b=AigUQd3eAS9aUGmC/GttJjDdQZjeEE7eIXgVC9f9lVGne4QDx+rHWczvZBaiBt093v
-         a7WeN3o9I4Ubyywd8QHmOHdXkKvcXFOVtCaXesmmwBbHh9abuKUzaBgA9wI/AsRN7O5g
-         k/mFPbBhfc/BQ+kRzvGNxjkeuUkxOuP/LIeMMjKVuCdGyu1hbkSJ7veNzu9fIVTRhEdv
-         B12KdhOK7ZKcLBUXVlaiSeM2xS/PW9QSPow4GHJsrrSybcs0KXZNWZ05RI0bZrEPW0BH
-         wFlyQtaRYz36Wuo41iEfLQjlORH3JT/ltoFRCRwMuvz0ygGf00N0nCTq4F2GxznlfEfe
-         V6Tg==
-X-Gm-Message-State: AOJu0YyJn47wsiHqb+CRQg13F4nfitM8n9TjtRr2HOQqGnbc2L5zdoFf
-	ujcWoWnsqBUGg5qd6ooaBeGJag==
-X-Google-Smtp-Source: AGHT+IGRcnRu1N1xTnN+KnuhwyPQ2zbQ1cfBs1AkuMyRKBLa9fu/rxRRKx3hyrPecuiaTRdyzUKC0g==
-X-Received: by 2002:a05:600c:474d:b0:405:3885:490a with SMTP id w13-20020a05600c474d00b004053885490amr15194120wmo.0.1701292491583;
-        Wed, 29 Nov 2023 13:14:51 -0800 (PST)
-Received: from [192.168.100.102] ([37.228.218.3])
-        by smtp.gmail.com with ESMTPSA id t13-20020a05600c198d00b003feea62440bsm3374880wmq.43.2023.11.29.13.14.50
+        bh=e7uJ6/cKIhORoXu8TzZSGHhq752ZWeeIg37a8KHIARo=;
+        b=eJIdWYP5tWk0e8dnujJ6ASbDRZDngG9bO5gUMML/LpNthe6OlhEYg2mvhRRBjyCNfD
+         0rU6jzV1XhvG3BI26o72BwnqjBtZyfFTqA3ZJ+uwowrzSfHV5HCwV86sQX+exvrM5t16
+         Q4yJ+cyVjdAyTOrN+Kj7CsQU2fJTD0cDCYQmiVyFfyTIRhSWzh0b2Mx9WHB9KlP6ClvN
+         gtH4igoUB+x9e1+mMR/rzhADdaCUOJzxzEmz5T1w2HocCfZ5rkG50REJkvuDZOa80z9l
+         oVW6DmHwqf6lwvu40EKScm0+XvC33Di0vjJSe5iyUq27k/5pYuGwRLYOuWijF6h4hFam
+         8gRQ==
+X-Gm-Message-State: AOJu0Yzrfl8JrDEMn+YXwGM4e1F1Nrrm9bMbCHaT6NAERUPYz4uh/Sgj
+	YwJzUXEnaPoHKWX0+5f6vl4=
+X-Google-Smtp-Source: AGHT+IHW256ZYrusTlNvNtiLRMCdgMj6p64wZO364+KYmDxL9yXjM8VrqXHYyIuRwwYq8Ld2nVxSCA==
+X-Received: by 2002:a17:906:27d9:b0:a01:c04a:ca9b with SMTP id k25-20020a17090627d900b00a01c04aca9bmr14609716ejc.72.1701292843807;
+        Wed, 29 Nov 2023 13:20:43 -0800 (PST)
+Received: from [192.168.26.149] (031011218106.poznan.vectranet.pl. [31.11.218.106])
+        by smtp.googlemail.com with ESMTPSA id p18-20020a1709061b5200b009b9a1714524sm8409276ejg.12.2023.11.29.13.20.40
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Nov 2023 13:14:51 -0800 (PST)
-Message-ID: <8318363a-7122-45f4-a42f-3f01b33457eb@linaro.org>
-Date: Wed, 29 Nov 2023 21:14:50 +0000
+        Wed, 29 Nov 2023 13:20:41 -0800 (PST)
+Message-ID: <ec17c6c8-e697-4a5a-a705-bff24daae7b2@gmail.com>
+Date: Wed, 29 Nov 2023 22:20:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,110 +47,97 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 06/15] clk: qcom: gpucc-sm6115: Unregister critical
- clocks
+Subject: Re: ARM BCM53573 SoC hangs/lockups caused by locks/clock/random
+ changes
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Russell King <linux@armlinux.org.uk>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Florian Fainelli
+ <f.fainelli@gmail.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, openwrt-devel@lists.openwrt.org,
+ bcm-kernel-feedback-list@broadcom.com
+References: <a03a6e1d-e99c-40a3-bdac-0075b5339beb@gmail.com>
+ <CACRpkdahWm9aP+UasDx=s3th+vyjAfuWrKB5HS9BKEbz90ZmKw@mail.gmail.com>
 Content-Language: en-US
-To: Konrad Dybcio <konrad.dybcio@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>, Andy Gross <agross@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20230717-topic-branch_aon_cleanup-v2-0-2a583460ef26@linaro.org>
- <20230717-topic-branch_aon_cleanup-v2-6-2a583460ef26@linaro.org>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20230717-topic-branch_aon_cleanup-v2-6-2a583460ef26@linaro.org>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+In-Reply-To: <CACRpkdahWm9aP+UasDx=s3th+vyjAfuWrKB5HS9BKEbz90ZmKw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 29/11/2023 18:59, Konrad Dybcio wrote:
-> Some clocks need to be always-on, but we don't really do anything
-> with them, other than calling enable() once and telling Linux they're
-> enabled.
+Hi,
+
+it's a late reply but I didn't find enough determination earlier.
+
+On 8.09.2023 10:10, Linus Walleij wrote:
+> On Mon, Sep 4, 2023 at 10:34 AM Rafał Miłecki <zajec5@gmail.com> wrote:
 > 
-> Unregister them to save a couple of bytes and, perhaps more
-> importantly, allow for runtime suspend of the clock controller device,
-> as CLK_IS_CRITICAL prevents the latter.
+>> I'm clueless at this point.
+>> Maybe someone can come up with an idea of actual issue & ideally a
+>> solution.
 > 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> ---
->   drivers/clk/qcom/gpucc-sm6115.c | 33 +++------------------------------
->   1 file changed, 3 insertions(+), 30 deletions(-)
+> Damn this is frustrating.
 > 
-> diff --git a/drivers/clk/qcom/gpucc-sm6115.c b/drivers/clk/qcom/gpucc-sm6115.c
-> index fb71c21c9a89..93a50431aef8 100644
-> --- a/drivers/clk/qcom/gpucc-sm6115.c
-> +++ b/drivers/clk/qcom/gpucc-sm6115.c
-> @@ -234,20 +234,6 @@ static struct clk_rcg2 gpu_cc_gx_gfx3d_clk_src = {
->   	},
->   };
->   
-> -static struct clk_branch gpu_cc_ahb_clk = {
-> -	.halt_reg = 0x1078,
-> -	.halt_check = BRANCH_HALT_DELAY,
-> -	.clkr = {
-> -		.enable_reg = 0x1078,
-> -		.enable_mask = BIT(0),
-> -		.hw.init = &(struct clk_init_data){
-> -			.name = "gpu_cc_ahb_clk",
-> -			.flags = CLK_IS_CRITICAL,
-> -			.ops = &clk_branch2_ops,
-> -		},
-> -	},
-> -};
-> -
->   static struct clk_branch gpu_cc_crc_ahb_clk = {
->   	.halt_reg = 0x107c,
->   	.halt_check = BRANCH_HALT_DELAY,
-> @@ -336,20 +322,6 @@ static struct clk_branch gpu_cc_cxo_clk = {
->   	},
->   };
->   
-> -static struct clk_branch gpu_cc_gx_cxo_clk = {
-> -	.halt_reg = 0x1060,
-> -	.halt_check = BRANCH_HALT_DELAY,
-> -	.clkr = {
-> -		.enable_reg = 0x1060,
-> -		.enable_mask = BIT(0),
-> -		.hw.init = &(struct clk_init_data){
-> -			.name = "gpu_cc_gx_cxo_clk",
-> -			.flags = CLK_IS_CRITICAL,
-> -			.ops = &clk_branch2_ops,
-> -		},
-> -	},
-> -};
-> -
->   static struct clk_branch gpu_cc_gx_gfx3d_clk = {
->   	.halt_reg = 0x1054,
->   	.halt_check = BRANCH_HALT_SKIP,
-> @@ -418,7 +390,6 @@ static struct gdsc gpu_gx_gdsc = {
->   };
->   
->   static struct clk_regmap *gpu_cc_sm6115_clocks[] = {
-> -	[GPU_CC_AHB_CLK] = &gpu_cc_ahb_clk.clkr,
->   	[GPU_CC_CRC_AHB_CLK] = &gpu_cc_crc_ahb_clk.clkr,
->   	[GPU_CC_CX_GFX3D_CLK] = &gpu_cc_cx_gfx3d_clk.clkr,
->   	[GPU_CC_CX_GMU_CLK] = &gpu_cc_cx_gmu_clk.clkr,
-> @@ -426,7 +397,6 @@ static struct clk_regmap *gpu_cc_sm6115_clocks[] = {
->   	[GPU_CC_CXO_AON_CLK] = &gpu_cc_cxo_aon_clk.clkr,
->   	[GPU_CC_CXO_CLK] = &gpu_cc_cxo_clk.clkr,
->   	[GPU_CC_GMU_CLK_SRC] = &gpu_cc_gmu_clk_src.clkr,
-> -	[GPU_CC_GX_CXO_CLK] = &gpu_cc_gx_cxo_clk.clkr,
+>> 2. Clock (arm,armv7-timer)
+>>
+>> While comparing main clock in Broadcom's SDK with upstream one I noticed
+>> a tiny difference: mask value. I don't know it it makes any sense but
+>> switching from CLOCKSOURCE_MASK(56) to CLOCKSOURCE_MASK(64) in
+>> arm_arch_timer.c (to match SDK) increases average uptime (time before a
+>> hang/lockup happens) from 4 minutes to 36 minutes.
+> 
+> This could be related to how often the system goes to idle.
+> 
+>> +       if (cpu_idle_force_poll == 1234)
+>> +               arch_cpu_idle();
+>> +       if (cpu_idle_force_poll == 5678)
+>> +               arch_cpu_idle();
+>> +       if (cpu_idle_force_poll == 1234)
+>> +               arch_cpu_idle();
+>> +       if (cpu_idle_force_poll == 5678)
+>> +               arch_cpu_idle();
+>> +       if (cpu_idle_force_poll == 1234)
+>> +               arch_cpu_idle();
+>> +       if (cpu_idle_force_poll == 5678)
+>> +               arch_cpu_idle();
+>> +       if (cpu_idle_force_poll == 1234)
+>> +               arch_cpu_idle();
+> 
+> Idle again.
+> 
+> I would have tried to see what arch_cpu_idle() is doing.
+> 
+> arm_pm_idle() or cpu_do_idle()?
 
-OTOH.
+In my case arm_pm_idle is NULL.
 
-Seems a pity to remove these clocks - generally for the series I mean - 
-from the debug view in /sys/kernel/debug/clk_summary.
 
-In the ideal case we have pm runtime functional without dropping these 
-clocks from the view in /sys/kernel/debug/clk_summary.
+> What happens if you just put return in arch_cpu_idle()
+> so it does nothing?
 
-Certainly I've found that interface useful when launching a real 
-product. It might be confusing to _not_ see the always-on clocks 
-enumerated there.
+Doesn't help. I also tried putting:
+udelay(10);
+and
+udelay(1000);
+at the arch_cpu_idle() beginning. None helped.
 
----
-bod
+
+Here comes more interesting experiment though. Putting there:
+
+if (!(foo++ % 10000)) {
+	pr_info("[%s] arm_pm_idle:%ps\n", __func__, arm_pm_idle);
+}
+
+doesn't seem to help.
+
+
+Putting following however seems to make kernel/device stable:
+
+if (!(foo++ % 100)) {
+	pr_info("[%s] arm_pm_idle:%ps\n", __func__, arm_pm_idle);
+}
+
+
+I think I'm just going to assume those chipsets are simply hw broken.
