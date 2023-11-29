@@ -1,154 +1,112 @@
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6583B34CF7;
+	Wed, 29 Nov 2023 17:39:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FKcaGS6d"
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94DE010D1
-	for <linux-clk@vger.kernel.org>; Wed, 29 Nov 2023 06:01:03 -0800 (PST)
-Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-50bc743c7f7so614273e87.3
-        for <linux-clk@vger.kernel.org>; Wed, 29 Nov 2023 06:01:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701266462; x=1701871262; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HFdKEVTW61V1xHyYtbiBsO5/c4EsvUDRepVmlWcXtHE=;
-        b=FKcaGS6dI4FXUUTe1fF3/tSQTgJ9APHPqyA5hZJYGvufxyp8lzKeraM51NNkPXIY4S
-         4TVE+xuz/E+as705ZmTFyk7Z1qQgHBqO2GrA+mp/w+whGDRlHVFqYZ0yY5mS2L18bDkS
-         qy1V4Zlpk8x7vlG9vXakEEQ068OktUAFo2Uz2xBVLVsW+UDWzSm9YeyOaiXz6dI+Fw4G
-         CDgA/sfCscxF1JbSIPLglVLFEgOu2fOVCabyj93luvUf7JlZ8tu1Rsw/ZTTZr1AyVkTi
-         cGac6fx67S36jUFmuvfFNB67JB1uw6vhb5q5sETnWwcYO3GJgh3BVIxrXHLWFCXkbpwV
-         T5/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701266462; x=1701871262;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HFdKEVTW61V1xHyYtbiBsO5/c4EsvUDRepVmlWcXtHE=;
-        b=UGDZ248gagvKNzvHduPhDh1sQnOQn3mGIgcxAi/QopcNBsNkwKgGNRY7oAPPBKBtKa
-         vYT7jMJdzLtfR4YNg16Yl0Cop5rjEL+aFVt/BaTWpUvyFdtgD9ttPT+5mSzCdc5xCXmC
-         2ZKl0P+PpB+jTsNn3u9RaRnaSl2n69z6KdJSZgz13EmidK4xqerjTRIQ+RPDQWxQBZQl
-         w9Npz0AoLjTFk6hu7drgzx3E4IvsEKF52aj8pr85aaS3jwDNbMPPfJ3V9avHGgb8AI/Q
-         JEMkGhueu+xsAWudO8GaNnPFJqqCKJsUcAaEoHUDk4dGeAQd44NfY7rZi4EUPeIwD6+M
-         pSlQ==
-X-Gm-Message-State: AOJu0YyPFTr7W9vs8gZFUbiG4tf9AvUlBfdEmpsxImQIIXknXhfYHxw2
-	g38/49/e9KRT/0O7pzJrKLrilQ==
-X-Google-Smtp-Source: AGHT+IHviG4Z2hXt1LHxLsvc3bZ7a1BErojOSze3hz/kajM1AYS7CCxQR3Bhgrh58eTm6pB20cB+hQ==
-X-Received: by 2002:a05:6512:1d1:b0:50b:bd3f:9118 with SMTP id f17-20020a05651201d100b0050bbd3f9118mr2774050lfp.36.1701266461633;
-        Wed, 29 Nov 2023 06:01:01 -0800 (PST)
-Received: from [192.168.209.173] (178235187166.dynamic-4-waw-k-2-3-0.vectranet.pl. [178.235.187.166])
-        by smtp.gmail.com with ESMTPSA id ck7-20020a0564021c0700b0054b1360dd03sm5520697edb.58.2023.11.29.06.00.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Nov 2023 06:01:01 -0800 (PST)
-Message-ID: <2ca148cc-564c-499a-8fdf-487391c9024c@linaro.org>
-Date: Wed, 29 Nov 2023 15:00:57 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WAEgde2w"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43073C433C8;
+	Wed, 29 Nov 2023 17:39:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1701279592;
+	bh=3J4iQaKQJl07LgfKQzir6Zof3M/XrEMBbmsjffBPgYY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=WAEgde2wk9nC92RYQyrxsBe6hLqet/k4QjCU4bAKmrJX9KaZI2kLiGd6P+lb9eInl
+	 FOkeyU38MPheNp+l5PDn1w5L84iPSbyXo3rHUZal1levE+PmtFXBH32Xh5KchymOQU
+	 gAnz6PFUgYuHVcUetb7aj56mjnpE0hRAjB4CDroZKnPVTBZ9ji51mNbx+2Y54ZF0j7
+	 +zv51gQOFmteTeahubKKCY3ZVI+pJ7AZvPr3aSXFJsX94tBX0u91/OS1AWFgIgUCRo
+	 AIJwYf7JfR6Q424+3Rm8le5ETf7TF9OyjkeagRnjcgJkTwPT/f+aqv1R3DZ+AUmaxw
+	 fzhC/adMdSt6A==
+Date: Wed, 29 Nov 2023 09:39:51 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Michal Michalik <michal.michalik@intel.com>
+Cc: netdev@vger.kernel.org, vadim.fedorenko@linux.dev,
+ arkadiusz.kubalewski@intel.com, jonathan.lemon@gmail.com,
+ pabeni@redhat.com, poros@redhat.com, milena.olech@intel.com,
+ mschmidt@redhat.com, linux-clk@vger.kernel.org, bvanassche@acm.org,
+ davem@davemloft.net, edumazet@google.com
+Subject: Re: [PATCH RFC net-next v4 2/2] selftests/dpll: add DPLL system
+ integration selftests
+Message-ID: <20231129093951.3be1bd8b@kernel.org>
+In-Reply-To: <20231123105243.7992-3-michal.michalik@intel.com>
+References: <20231123105243.7992-1-michal.michalik@intel.com>
+	<20231123105243.7992-3-michal.michalik@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 0/4] Add runtime PM support for videocc on SM8150
-Content-Language: en-US
-To: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>,
- Konrad Dybcio <konradybcio@kernel.org>, Andy Gross <agross@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- Bjorn Andersson <andersson@kernel.org>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-References: <20231118123944.2202630-1-quic_skakitap@quicinc.com>
- <47925f9e-32aa-4762-a4ec-aa559e18ff12@kernel.org>
- <26b69814-201b-8d07-d844-27e804aa3016@quicinc.com>
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <26b69814-201b-8d07-d844-27e804aa3016@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 28.11.2023 17:11, Satya Priya Kakitapalli (Temp) wrote:
+On Thu, 23 Nov 2023 05:52:43 -0500 Michal Michalik wrote:
+> The tests are written in Python3 (3.7+) and pytest testing framework.
+> Framework is basing on the ynl library available in the kernel tree
+> at: tools/net/ynl
+
+LGTM!
+
+Somewhat tangential question, a nit, and a comment..
+ 
+> The DPLL system integration tests are meant to be part of selftests, so
+> they can be build and run using command:
+>   make -C tools/testing/selftests
 > 
-> On 11/20/2023 5:18 PM, Konrad Dybcio wrote:
->> On 18.11.2023 13:39, Satya Priya Kakitapalli wrote:
->>> Add runtime support for videocc on SM8150 and update the resets
->>> and video_pll0_config configuration.
->>>
->>> Satya Priya Kakitapalli (4):
->>>    dt-bindings: clock: Update the videocc resets for sm8150
->>>    clk: qcom: videocc-sm8150: Update the videocc resets
->>>    clk: qcom: videocc-sm8150: Add missing PLL config properties
->>>    clk: qcom: videocc-sm8150: Add runtime PM support
->> Hi, it's good practive to include a link to the previous revision
->> and a summary of changes.
->>
->> The b4 tool [1] does that for you, please consider using it.
+> Alternatively, they can be run using single command [1]:
+>   make kselftest
 > 
+> If we want to run only DPLL tests, we should set the TARGETS variable:
+>   make -C tools/testing/selftests TARGETS=drivers/net/netdevsim/dpll
 > 
-> Hi, I have installed b4 and followed all the steps, but it doesn't populate my cover letter with change log and previous series link, do i need to use some option for that?
-You probably did something like this:
+> They can also be run standalone using starter script:
+>   ./run_dpll_tests.sh
+> 
+> There is a possibliy to set optional PYTEST_PARAMS environment variable
+> to set the pytest options, like tests filtering ("-k <filter>") or
+> verbose output ("-v").
+> 
+> [1] https://www.kernel.org/doc/html/v5.0/dev-tools/kselftest.html
 
-b4 prep -n 8150vidcc --from-thread 26b69814-201b-8d07-d844-27e804aa3016@quicinc.com
+nit: s/v5.0/v6.6/ ? Or /v5.0/latest/
 
-Then if you do:
+Did you try to run it in vmtest or virtme-ng?
+https://www.youtube.com/watch?v=NT-325hgXjY
+https://lpc.events/event/17/contributions/1506/attachments/1143/2441/virtme-ng.pdf
 
-b4 prep --edit-cover
+I'm thinking of using those for continuous testing, curious all 
+the Python setup works okay with them.
 
-you'll see a note like
+> +@pytest.fixture(scope="class", params=((0,), (1, 0), (0, 1)))
 
-EDITME: Imported from f26b69814-201b-8d07-d844-27e804aa3016@quicinc.com
-        Please review before sending.
+We have both uses of pytest and unittest in the kernel:
 
-so you need to do it manually.
+$ git grep --files-with-matches '^import .*unittest'
+scripts/rust_is_available_test.py
+tools/crypto/ccp/test_dbc.py
+tools/perf/pmu-events/metric_test.py
+tools/testing/kunit/kunit_tool_test.py
+tools/testing/selftests/bpf/test_bpftool.py
+tools/testing/selftests/tpm2/tpm2.py
+tools/testing/selftests/tpm2/tpm2_tests.py
 
+$ git grep --files-with-matches '^import .*pytest'
+scripts/kconfig/tests/conftest.py
+tools/testing/selftests/drivers/sdsi/sdsi.sh
+tools/testing/selftests/drivers/sdsi/sdsi_test.py
+tools/testing/selftests/hid/tests/base.py
+tools/testing/selftests/hid/tests/conftest.py
+tools/testing/selftests/hid/tests/test_gamepad.py
+tools/testing/selftests/hid/tests/test_mouse.py
+tools/testing/selftests/hid/tests/test_multitouch.py
+tools/testing/selftests/hid/tests/test_sony.py
+tools/testing/selftests/hid/tests/test_tablet.py
+tools/testing/selftests/hid/tests/test_usb_crash.py
+tools/testing/selftests/hid/tests/test_wacom_generic.py
 
-Generally, when the series has been sent at least once with b4 already,
-you'll notice that `b4 send` appends something like this to the cover
-letter:
+unittest seems a bit more popular but pytest does seem like
+a better fit indeed.
 
-Changes in v2:
-- EDITME: describe what is new in this series revision.
-- EDITME: use bulletpoints and terse descriptions.
-- Link to v1: https://lore.kernel.org/r/20230830-topic-refgenphy-v1-0-892db196a1c0@linaro.org
-
-
-This should be only necessary to do by hand once, since as mentioned it's
-the first time b4 sees this series
-
-
-Konrad
+Did you see what the sdsi test does? It seems to assume everything 
+is installed locally, without the venv. I wonder if that may be simpler
+to get going with vmtest?
