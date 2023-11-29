@@ -1,201 +1,154 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="jgpDcQUe"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2068.outbound.protection.outlook.com [40.107.220.68])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E88C284;
-	Wed, 29 Nov 2023 03:29:39 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nTrCGRKBSHgk1+XJP2snEUQtsB00Xuc16Nmb3q8nW3yonyKhI8bbLseQhX8abzFW9KgL1jsg3RyP/LbsMtt/x3NDiZsaLbMNaTplped0bKohR6AGQSn0SyMvu4DzvtE+n+4IumZkaGbXKUuEmpFBCfD6q9V1hjuV7vN3SZxESXNBw5d4ToXp+0wBzlKWAH37qxZru0bB9YURY43DeuyFP5aOhzYtCk8FKMe/QFLmp+UseoIW3PY/ij4js9+QLoagajL9ZrDeSwbx72l8qKTwX4lw8hT34V2WLOCToBMJ72NnwOe1+pDD7eLDUI8it2BR9vMWknDd7bj+9gmWkfzrQw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zlRqJg2qMSFYAUx4SKubFDFhDCiP2ETTgr8I2+g+9bI=;
- b=LiMeIydAZWjMOYRQMnRLvB/I2FBIXY/V9PuhIY0IAKeMUnN+hFDCwKhMXxJ2/sghT+V8riofWykHz0scejf3SvOMcG14seQusPe4dfuAktJJr7RcsEu/jNA49C1NhcPCTvpdmmvB7bnUr2b2BD1YMvMjryC0Spaf4wJzz+g42FyQKNRn/p9850lDalpg/Il35OqC8hGuOrY2yRYgrTcKbBTYjMGjseCIcJcyJsXrHWnPP1c241AeTRDqZBcuYZR1rdUq7ptl5P50WpFxygZWdsVu519b6y/M+UBjJ6vymF4EWNGVT9jQ+Rk06unAkE4BxZG07lE48PiW5VUoMeTbog==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=baylibre.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zlRqJg2qMSFYAUx4SKubFDFhDCiP2ETTgr8I2+g+9bI=;
- b=jgpDcQUeq52oriP3W9SW2Zx1lh8CZZhgXoPmicA1b5ZKmvuuf9h9q5U+a46H6ldTL/z0q6nKsT3sYYl1s9MO3KbaHRQniIebaIYOzwvyc4h66Jgb8RBRNv0YeV2fS/464Z4noTJ06PfI7pRQ9M3nHs9i4DZFT4qnvxXkg5jnqQg=
-Received: from BLAPR05CA0021.namprd05.prod.outlook.com (2603:10b6:208:36e::17)
- by MN0PR12MB6127.namprd12.prod.outlook.com (2603:10b6:208:3c5::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7046.22; Wed, 29 Nov
- 2023 11:29:36 +0000
-Received: from BL02EPF0001A0FD.namprd03.prod.outlook.com
- (2603:10b6:208:36e:cafe::69) by BLAPR05CA0021.outlook.office365.com
- (2603:10b6:208:36e::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7068.8 via Frontend
- Transport; Wed, 29 Nov 2023 11:29:36 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BL02EPF0001A0FD.mail.protection.outlook.com (10.167.242.104) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7046.17 via Frontend Transport; Wed, 29 Nov 2023 11:29:35 +0000
-Received: from SATLEXMB08.amd.com (10.181.40.132) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.34; Wed, 29 Nov
- 2023 05:29:35 -0600
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB08.amd.com
- (10.181.40.132) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.32; Wed, 29 Nov
- 2023 03:29:35 -0800
-Received: from xsjarunbala50.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.34 via Frontend
- Transport; Wed, 29 Nov 2023 05:29:34 -0600
-From: Jay Buddhabhatti <jay.buddhabhatti@amd.com>
-To: <mturquette@baylibre.com>, <sboyd@kernel.org>, <michal.simek@amd.com>,
-	<shubhrajyoti.datta@xilinx.com>
-CC: <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, Jay Buddhabhatti <jay.buddhabhatti@amd.com>
-Subject: [PATCH RESEND v2 2/2] drivers: clk: zynqmp: update divider round rate logic
-Date: Wed, 29 Nov 2023 03:29:16 -0800
-Message-ID: <20231129112916.23125-3-jay.buddhabhatti@amd.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20231129112916.23125-1-jay.buddhabhatti@amd.com>
-References: <20231129112916.23125-1-jay.buddhabhatti@amd.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FKcaGS6d"
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94DE010D1
+	for <linux-clk@vger.kernel.org>; Wed, 29 Nov 2023 06:01:03 -0800 (PST)
+Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-50bc743c7f7so614273e87.3
+        for <linux-clk@vger.kernel.org>; Wed, 29 Nov 2023 06:01:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1701266462; x=1701871262; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HFdKEVTW61V1xHyYtbiBsO5/c4EsvUDRepVmlWcXtHE=;
+        b=FKcaGS6dI4FXUUTe1fF3/tSQTgJ9APHPqyA5hZJYGvufxyp8lzKeraM51NNkPXIY4S
+         4TVE+xuz/E+as705ZmTFyk7Z1qQgHBqO2GrA+mp/w+whGDRlHVFqYZ0yY5mS2L18bDkS
+         qy1V4Zlpk8x7vlG9vXakEEQ068OktUAFo2Uz2xBVLVsW+UDWzSm9YeyOaiXz6dI+Fw4G
+         CDgA/sfCscxF1JbSIPLglVLFEgOu2fOVCabyj93luvUf7JlZ8tu1Rsw/ZTTZr1AyVkTi
+         cGac6fx67S36jUFmuvfFNB67JB1uw6vhb5q5sETnWwcYO3GJgh3BVIxrXHLWFCXkbpwV
+         T5/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701266462; x=1701871262;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HFdKEVTW61V1xHyYtbiBsO5/c4EsvUDRepVmlWcXtHE=;
+        b=UGDZ248gagvKNzvHduPhDh1sQnOQn3mGIgcxAi/QopcNBsNkwKgGNRY7oAPPBKBtKa
+         vYT7jMJdzLtfR4YNg16Yl0Cop5rjEL+aFVt/BaTWpUvyFdtgD9ttPT+5mSzCdc5xCXmC
+         2ZKl0P+PpB+jTsNn3u9RaRnaSl2n69z6KdJSZgz13EmidK4xqerjTRIQ+RPDQWxQBZQl
+         w9Npz0AoLjTFk6hu7drgzx3E4IvsEKF52aj8pr85aaS3jwDNbMPPfJ3V9avHGgb8AI/Q
+         JEMkGhueu+xsAWudO8GaNnPFJqqCKJsUcAaEoHUDk4dGeAQd44NfY7rZi4EUPeIwD6+M
+         pSlQ==
+X-Gm-Message-State: AOJu0YyPFTr7W9vs8gZFUbiG4tf9AvUlBfdEmpsxImQIIXknXhfYHxw2
+	g38/49/e9KRT/0O7pzJrKLrilQ==
+X-Google-Smtp-Source: AGHT+IHviG4Z2hXt1LHxLsvc3bZ7a1BErojOSze3hz/kajM1AYS7CCxQR3Bhgrh58eTm6pB20cB+hQ==
+X-Received: by 2002:a05:6512:1d1:b0:50b:bd3f:9118 with SMTP id f17-20020a05651201d100b0050bbd3f9118mr2774050lfp.36.1701266461633;
+        Wed, 29 Nov 2023 06:01:01 -0800 (PST)
+Received: from [192.168.209.173] (178235187166.dynamic-4-waw-k-2-3-0.vectranet.pl. [178.235.187.166])
+        by smtp.gmail.com with ESMTPSA id ck7-20020a0564021c0700b0054b1360dd03sm5520697edb.58.2023.11.29.06.00.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Nov 2023 06:01:01 -0800 (PST)
+Message-ID: <2ca148cc-564c-499a-8fdf-487391c9024c@linaro.org>
+Date: Wed, 29 Nov 2023 15:00:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF0001A0FD:EE_|MN0PR12MB6127:EE_
-X-MS-Office365-Filtering-Correlation-Id: a921c8ee-9181-4c7f-70bf-08dbf0ce774d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	WdGbi4LrfsobwDAL0yOjjRnfnsZBMNVRbWv5BXI2Q7CnZ/8Ua6mky705RfWsgGAVZdzWuhZdNX0B4/oaeWsOTam8B9qLPzsjJQpovxqAm2aU6ckP0N+Z6oRl8+E89LA9Uc0C1rSqY6CsGWcP9tRnjVMwefeSxeLuGJAOcLAyOVKaSEMrANQZyN4UD/pBPlSiktChUir4YqN4PqfjW/0NFXv7GPhMuJFrrfHpFKbDENkoTTr/seSbHIdr0Oq83ZtDWZopEPuZoz3jyjg6AqHO0i/sCAWv6HlyjwcBbaMEpY/KiQfQWB0HI4wSe8SGpMivvIrAk6f0oj7/sEGudOAnQjnhCxUi+OjPYzWwj1jRAyIuXwiRI1ehvIuz5+c3J8WCgxwrLSLKCL6U2zR/Ukc+YZITkss25Pw6XBHEUqv7QL3OCCLo6JBox3xhR6Gl4rsQvr4sApv3/sqUe8aws3osEqWEW1oAsa/VSO6Z+RPYv0KIhfd3n9tf4SgOUOPNxbmmX5rOqXg3NhloRLuxlQJ17Yw5h6bFWkVxiqK/54wegIV7Sa8HmAFW0Q/BSXKgn9U7fAWlFiCJX6erguqyDvMAHn1Lf3Gmn1Ed0XFafqDj8+38X45WydUIVH5OjN46U45m0GmDvra6PaxIlphJ5eU2SroDHsSrHO1zVbiAUstJ5DWQJx+YFmzHAh78ho2d1WL8TUAgMGv3v1JrT9diKfrhjIZXV93dG/ausLKIDDRLSW5EUyHI9CgqgD5/p2TASCsvIkh34E2CIO8d/d2rJ8O5zA==
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(4636009)(376002)(346002)(136003)(396003)(39860400002)(230922051799003)(82310400011)(186009)(1800799012)(64100799003)(451199024)(46966006)(40470700004)(36840700001)(47076005)(356005)(41300700001)(44832011)(2616005)(86362001)(1076003)(8676002)(6666004)(8936002)(5660300002)(4326008)(40480700001)(2906002)(26005)(110136005)(81166007)(478600001)(316002)(70206006)(70586007)(40460700003)(426003)(54906003)(336012)(36860700001)(83380400001)(36756003)(82740400003)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Nov 2023 11:29:35.8237
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a921c8ee-9181-4c7f-70bf-08dbf0ce774d
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL02EPF0001A0FD.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6127
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 0/4] Add runtime PM support for videocc on SM8150
+Content-Language: en-US
+To: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>,
+ Konrad Dybcio <konradybcio@kernel.org>, Andy Gross <agross@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Bjorn Andersson <andersson@kernel.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+References: <20231118123944.2202630-1-quic_skakitap@quicinc.com>
+ <47925f9e-32aa-4762-a4ec-aa559e18ff12@kernel.org>
+ <26b69814-201b-8d07-d844-27e804aa3016@quicinc.com>
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <26b69814-201b-8d07-d844-27e804aa3016@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Currently zynqmp divider round rate is considering single parent and
-calculating rate and parent rate accordingly. But if divider clock flag
-is set to SET_RATE_PARENT then its not trying to traverse through all
-parent rate and not selecting best parent rate from that. So use common
-divider_round_rate() which is traversing through all clock parents and
-its rate and calculating proper parent rate.
+On 28.11.2023 17:11, Satya Priya Kakitapalli (Temp) wrote:
+> 
+> On 11/20/2023 5:18 PM, Konrad Dybcio wrote:
+>> On 18.11.2023 13:39, Satya Priya Kakitapalli wrote:
+>>> Add runtime support for videocc on SM8150 and update the resets
+>>> and video_pll0_config configuration.
+>>>
+>>> Satya Priya Kakitapalli (4):
+>>>    dt-bindings: clock: Update the videocc resets for sm8150
+>>>    clk: qcom: videocc-sm8150: Update the videocc resets
+>>>    clk: qcom: videocc-sm8150: Add missing PLL config properties
+>>>    clk: qcom: videocc-sm8150: Add runtime PM support
+>> Hi, it's good practive to include a link to the previous revision
+>> and a summary of changes.
+>>
+>> The b4 tool [1] does that for you, please consider using it.
+> 
+> 
+> Hi, I have installed b4 and followed all the steps, but it doesn't populate my cover letter with change log and previous series link, do i need to use some option for that?
+You probably did something like this:
 
-Fixes: 3fde0e16d016 ("drivers: clk: Add ZynqMP clock driver")
-Signed-off-by: Jay Buddhabhatti <jay.buddhabhatti@amd.com>
----
- drivers/clk/zynqmp/divider.c | 66 +++---------------------------------
- 1 file changed, 5 insertions(+), 61 deletions(-)
+b4 prep -n 8150vidcc --from-thread 26b69814-201b-8d07-d844-27e804aa3016@quicinc.com
 
-diff --git a/drivers/clk/zynqmp/divider.c b/drivers/clk/zynqmp/divider.c
-index 33a3b2a22659..5a00487ae408 100644
---- a/drivers/clk/zynqmp/divider.c
-+++ b/drivers/clk/zynqmp/divider.c
-@@ -110,52 +110,6 @@ static unsigned long zynqmp_clk_divider_recalc_rate(struct clk_hw *hw,
- 	return DIV_ROUND_UP_ULL(parent_rate, value);
- }
- 
--static void zynqmp_get_divider2_val(struct clk_hw *hw,
--				    unsigned long rate,
--				    struct zynqmp_clk_divider *divider,
--				    u32 *bestdiv)
--{
--	int div1;
--	int div2;
--	long error = LONG_MAX;
--	unsigned long div1_prate;
--	struct clk_hw *div1_parent_hw;
--	struct zynqmp_clk_divider *pdivider;
--	struct clk_hw *div2_parent_hw = clk_hw_get_parent(hw);
--
--	if (!div2_parent_hw)
--		return;
--
--	pdivider = to_zynqmp_clk_divider(div2_parent_hw);
--	if (!pdivider)
--		return;
--
--	div1_parent_hw = clk_hw_get_parent(div2_parent_hw);
--	if (!div1_parent_hw)
--		return;
--
--	div1_prate = clk_hw_get_rate(div1_parent_hw);
--	*bestdiv = 1;
--	for (div1 = 1; div1 <= pdivider->max_div;) {
--		for (div2 = 1; div2 <= divider->max_div;) {
--			long new_error = ((div1_prate / div1) / div2) - rate;
--
--			if (abs(new_error) < abs(error)) {
--				*bestdiv = div2;
--				error = new_error;
--			}
--			if (divider->flags & CLK_DIVIDER_POWER_OF_TWO)
--				div2 = div2 << 1;
--			else
--				div2++;
--		}
--		if (pdivider->flags & CLK_DIVIDER_POWER_OF_TWO)
--			div1 = div1 << 1;
--		else
--			div1++;
--	}
--}
--
- /**
-  * zynqmp_clk_divider_round_rate() - Round rate of divider clock
-  * @hw:			handle between common and hardware-specific interfaces
-@@ -174,6 +128,7 @@ static long zynqmp_clk_divider_round_rate(struct clk_hw *hw,
- 	u32 div_type = divider->div_type;
- 	u32 bestdiv;
- 	int ret;
-+	u8 width;
- 
- 	/* if read only, just return current value */
- 	if (divider->flags & CLK_DIVIDER_READ_ONLY) {
-@@ -193,23 +148,12 @@ static long zynqmp_clk_divider_round_rate(struct clk_hw *hw,
- 		return DIV_ROUND_UP_ULL((u64)*prate, bestdiv);
- 	}
- 
--	bestdiv = zynqmp_divider_get_val(*prate, rate, divider->flags);
--
--	/*
--	 * In case of two divisors, compute best divider values and return
--	 * divider2 value based on compute value. div1 will  be automatically
--	 * set to optimum based on required total divider value.
--	 */
--	if (div_type == TYPE_DIV2 &&
--	    (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT)) {
--		zynqmp_get_divider2_val(hw, rate, divider, &bestdiv);
--	}
-+	width = fls(divider->max_div);
- 
--	if ((clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) && divider->is_frac)
--		bestdiv = rate % *prate ? 1 : bestdiv;
-+	rate = divider_round_rate(hw, rate, prate, NULL, width, divider->flags);
- 
--	bestdiv = min_t(u32, bestdiv, divider->max_div);
--	*prate = rate * bestdiv;
-+	if (divider->is_frac && (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) && (rate % *prate))
-+		*prate = rate;
- 
- 	return rate;
- }
--- 
-2.17.1
+Then if you do:
 
+b4 prep --edit-cover
+
+you'll see a note like
+
+EDITME: Imported from f26b69814-201b-8d07-d844-27e804aa3016@quicinc.com
+        Please review before sending.
+
+so you need to do it manually.
+
+
+Generally, when the series has been sent at least once with b4 already,
+you'll notice that `b4 send` appends something like this to the cover
+letter:
+
+Changes in v2:
+- EDITME: describe what is new in this series revision.
+- EDITME: use bulletpoints and terse descriptions.
+- Link to v1: https://lore.kernel.org/r/20230830-topic-refgenphy-v1-0-892db196a1c0@linaro.org
+
+
+This should be only necessary to do by hand once, since as mentioned it's
+the first time b4 sees this series
+
+
+Konrad
