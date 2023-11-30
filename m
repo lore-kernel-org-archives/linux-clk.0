@@ -1,53 +1,81 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=atomide.com header.i=@atomide.com header.b="uWAXf+L0"
-Received: from mail5.25mail.st (mail5.25mail.st [74.50.62.9])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 181F8D40;
-	Thu, 30 Nov 2023 04:03:53 -0800 (PST)
-Received: from localhost (91-158-86-216.elisa-laajakaista.fi [91.158.86.216])
-	by mail5.25mail.st (Postfix) with ESMTPSA id 9265660513;
-	Thu, 30 Nov 2023 12:03:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=atomide.com;
-	s=25mailst; t=1701345832;
-	bh=ZB+5YYefmO6mtWWWUgT4TJQgoKAu1WOumvl/X7BvrBE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uWAXf+L0fZHwcUkdeXJ6TRA8x43D22SAkOSHBWlh89dXu1bUme9JHQl9PzlKynOSP
-	 jgi0KRketGm1OXD8U2e5Q/bkjBgQ4lYicWaJ+6an3FPbY/uXBaHKepdfxqTgbi48w8
-	 Gr6I2xBkyRDOKOvt4BbKDh8sGMioP0ApjlJLNQKXblGD+UNZtlSWJ4jQb62Jvk92bD
-	 9OLjFQA5oZUtjtbOmAXyJ1Ziqo+INeoFm+ET0w8I770+O+0GJ9rKUG8RrWKcq5Jm74
-	 sE4KmR1NA3PMrInIOuLEvx851tSthWF6VjG9C9wgkehqeOXHkTGUpDb2PoJvwcoAHM
-	 6cT5uwfm1gl7w==
-Date: Thu, 30 Nov 2023 14:03:22 +0200
-From: Tony Lindgren <tony@atomide.com>
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: dmitry.torokhov@gmail.com, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	lee@kernel.org, bcousson@baylibre.com, mturquette@baylibre.com,
-	sboyd@kernel.org, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 5/5] ARM: dts: omap4-embt2ws: enable 32K clock on WLAN
-Message-ID: <20231130120322.GC5169@atomide.com>
-References: <20230916100515.1650336-1-andreas@kemnade.info>
- <20230916100515.1650336-6-andreas@kemnade.info>
- <20231007065330.GP34982@atomide.com>
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3288C85;
+	Thu, 30 Nov 2023 06:37:07 -0800 (PST)
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-db538b07865so734321276.2;
+        Thu, 30 Nov 2023 06:37:07 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701355026; x=1701959826;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ubNrCHVyZzj2qPt/uf3pVQDDBxXzuXcyUHuCPh1smK8=;
+        b=mpHQlaCP3kORXX7PIU803IFZhg0NKW1ugb91YA5Az6vfOCq9xpdHOtHtnOrlzWLoSB
+         RS2IUF5vH6YIE+J3GZd5QJKAHWMUXBtyxhAetrEDSeGE2BAM+pZuW7TvGD0kEpo27L4/
+         63/29baMkcKRZClPYD9f42GrEtQUdQ4S+wqDyBmIM4l7sUYRKIhpX+bfUHphvzQCSKOj
+         F7spfe763BMCx28cz0r0dIx4B0vrUqZBTn0/03jvOvXXOs/r+fRiwjInzfIj9axUYrtE
+         ftQGSiP5Y512Udd4FELC4IB3Ez8dQMh4BENPe+7s0FnB8r9uUnzk7CEvVD6zv0PQfcii
+         NXRA==
+X-Gm-Message-State: AOJu0YytCjBBlSKRJGw9rMegJvKrwimVUefnewaKIt+W1T/124HjDTcw
+	tLWlQ7iaHX2syA/zpoSurZea6VDfc2af8A==
+X-Google-Smtp-Source: AGHT+IGTnFgt8fmV09WizIKjZvQSldeq9vwKFXMalfT8I0LjuChq3P1r1JDs4DvCZ0CwGv6AB7InIw==
+X-Received: by 2002:a25:ac90:0:b0:d9a:3bbb:8602 with SMTP id x16-20020a25ac90000000b00d9a3bbb8602mr22372652ybi.64.1701355026198;
+        Thu, 30 Nov 2023 06:37:06 -0800 (PST)
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com. [209.85.219.178])
+        by smtp.gmail.com with ESMTPSA id e127-20020a253785000000b00d9cd730e4d0sm265520yba.26.2023.11.30.06.37.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Nov 2023 06:37:05 -0800 (PST)
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-db49aa82c89so960196276.1;
+        Thu, 30 Nov 2023 06:37:04 -0800 (PST)
+X-Received: by 2002:a25:2e44:0:b0:db5:3f82:8d1f with SMTP id
+ b4-20020a252e44000000b00db53f828d1fmr1347891ybn.36.1701355024364; Thu, 30 Nov
+ 2023 06:37:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231007065330.GP34982@atomide.com>
+References: <87v89k0yyj.wl-kuninori.morimoto.gx@renesas.com> <87ttp40yxt.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <87ttp40yxt.wl-kuninori.morimoto.gx@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 30 Nov 2023 15:36:53 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUEGH6zThE7JhwVJwNC-HORyabrFf_JZzw2h6hLU_vj-g@mail.gmail.com>
+Message-ID: <CAMuHMdUEGH6zThE7JhwVJwNC-HORyabrFf_JZzw2h6hLU_vj-g@mail.gmail.com>
+Subject: Re: [PATCH v3 1/4] of: add __of_device_is_status() and makes more
+ generic status check
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Frank Rowand <frowand.list@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Aymeric Aillet <aymeric.aillet@iot.bzh>, Yusuke Goda <yusuke.goda.sx@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-* Tony Lindgren <tony@atomide.com> [231007 06:53]:
-> * Andreas Kemnade <andreas@kemnade.info> [230916 13:05]:
-> > WLAN did only work if clock was left enabled by the original system,
-> > so make it fully enable the needed resources itself.
-> 
-> Seems applying this dts change before the clock patch is applied
-> would break wlan so please let me know when this is safe to apply.
+On Thu, Nov 30, 2023 at 3:15=E2=80=AFAM Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+> Linux Kernel has __of_device_is_available() / __of_device_is_fail(),
+> these are checking if the status was "okay" / "ok" / "fail" / "fail-".
+>
+> Add more generic __of_device_is_status() function for these.
+>
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Tested-by: Yusuke Goda <yusuke.goda.sx@renesas.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-Applying into omap-for-v6.8/dt thanks.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Tony
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
