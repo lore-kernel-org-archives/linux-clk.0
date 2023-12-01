@@ -1,43 +1,43 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Tmzh80pH"
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AE9A173E
-	for <linux-clk@vger.kernel.org>; Fri,  1 Dec 2023 08:11:03 -0800 (PST)
-Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-40b5155e154so19892525e9.3
-        for <linux-clk@vger.kernel.org>; Fri, 01 Dec 2023 08:11:03 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TYWNqwaN"
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09CC7171B
+	for <linux-clk@vger.kernel.org>; Fri,  1 Dec 2023 08:11:05 -0800 (PST)
+Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-40838915cecso21927265e9.2
+        for <linux-clk@vger.kernel.org>; Fri, 01 Dec 2023 08:11:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701447062; x=1702051862; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1701447063; x=1702051863; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=C7gV2bTYZ/8fGxngk+WgJOxqZzJsxGLjpBfcpof/uy0=;
-        b=Tmzh80pHc5h7KLr3qYaAlZFPqj6FBx5o3sAsKD/RJsC0npc7eqOmTmSNlq5RV0iNQI
-         dppcFaTBCkS8azhyvfanyuvWTyUxzkh9i6ACtVwoWgAFrsI36OSpV4QdxFlmtVUFM2Ix
-         hSMNPUC499JrKZg128MZEcjwSsZg14u7rVALwVC3mWe94DSZKfCDlIv55CAUE4HIu9tr
-         ReRooktyjv+R3zHH8e8EwvZn8UTYuodCw8tZOBMcc2a1uDCvKf1sVGUYwcBz0zaY5vor
-         2fPy3uL2FC0PMHanhpxMxSlGAqvpPzaIgc3qDD1VWUvGs2m8uFPYh8sTVUYnAhHoB6tR
-         n5Kw==
+        bh=lvFQqh83XDxX334cnnEsbE/4STBhqnMnZDTYflOVgq4=;
+        b=TYWNqwaNUdnvcWT5r5g8CQgLskPSkgqlOR9yDkn9Qeb4rLOYc41dI7o+vlYrBYARM9
+         bk0IBwWiOVdwEO/V9TOBivUSCK5zj+qYCCeGAgZjHBiDpLGKq8g7e0TXi7On0LyYRxRS
+         YOWyf0HcI8JX0VVZMPfbMlg6/LmMYnxEXY2I3R8zexWPLK5z2sGh8vPA+RCw4mbWD4V0
+         79TLBR0gY7bjFZtw1z3GYUra8pcXOvYvK65y5HUPY7Q1X8IqFYoN75IxZjXXXkpvmBSc
+         99RYzCF0saxY1u7rAWEzlT9LwryrqezIM6WsoAWuNgn/J3wZVQOsrZORW5lDaIB8DSur
+         l5xQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701447062; x=1702051862;
+        d=1e100.net; s=20230601; t=1701447063; x=1702051863;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=C7gV2bTYZ/8fGxngk+WgJOxqZzJsxGLjpBfcpof/uy0=;
-        b=eImpOwPwPxjkXsEXzU2GWx+9+avaSgjYw7TiwM8W6Vs9ZYyBfb3FA1EAqCa1dF5yDT
-         tc0XdJSBy247j+FlewGXJ65Hrd+yz1xVFrAL3z9imrlppM1JpDsy4pBHIEg0cu9bAmf2
-         ryERoU0Iqq+NMcz8oGhcWPHoIj2826fUTBbNtdOnd6D4k7vUNefIUsnjt+b/Ve0gAs/+
-         ExeIsbhkdqjBmn5Pd1013iN7OKvbMN6MqpOoUTujfqfnG+vb66B4k6uWGe+qTORxYNBV
-         N8gaNW91FDNu3wFW6a+nnQiQA1MWxRUdCdRpNnvjzF7hNYpfmKiDmc3xu0SnrlvTf4rS
-         norg==
-X-Gm-Message-State: AOJu0YwT0mkHQT63pvDIkYhgae/Z8Hv9/mrK61b/XFJqXOFsdKOAAfXV
-	Rdhu6ull1/qSzTeVSNe1gMZAOA==
-X-Google-Smtp-Source: AGHT+IHifnPnjwfFbRUDi0Dq/CXTdTB+43Bv53XwrhOqE0a/iXWMk5yDdxyInhmCzVvC0YTegqDPjQ==
-X-Received: by 2002:a5d:63cb:0:b0:332:eaa7:56b0 with SMTP id c11-20020a5d63cb000000b00332eaa756b0mr1048507wrw.14.1701447062005;
-        Fri, 01 Dec 2023 08:11:02 -0800 (PST)
+        bh=lvFQqh83XDxX334cnnEsbE/4STBhqnMnZDTYflOVgq4=;
+        b=Uxr0QTJ3VKlff3WdVJAuTInf84RITiersVX3LzcZP+IE26zdAT++F/H41vsz4pHpww
+         pegP+Pwp0GvE4qf2Qd8cYiQFzsekuYi+NrEXWL4SFtrYpcSb1A9HXfWp/MYQ2cSeu0y0
+         YgQiObFtfn8pH0Djo5ZGXRZ9Txh7MfmyzR0MoYlR3xDKDbt0pxlJBUEPISCjrYARCBRW
+         DB0T+5YVdQnP3OFX/G8MeBZjaIe2W25PQCiDbMhfpCB2DIojx5gi5HmxVwGchE4q26qX
+         ENlng1+WIjGpCU5j9KrsSSXKQQkb4NNQFwMW/u7Soa1ws1Wxw2wzT1I/Iw62LKykI3NG
+         FKgA==
+X-Gm-Message-State: AOJu0YyDWqDQkTjTx8Xtv87E6nyC3Fwnz5k+mH/SsXvY4oeQUjSGCD8f
+	mzshGH9bjCpPvnwMQI5sAcjRfA==
+X-Google-Smtp-Source: AGHT+IGYzvD8BiSPCDF/ykP8FROhBDF7hWyIECBH3X3/miehAsBGVDoFGSiPYaol+fTU7lwN6mAFTg==
+X-Received: by 2002:a05:600c:20d:b0:40b:5e59:da89 with SMTP id 13-20020a05600c020d00b0040b5e59da89mr512152wmi.156.1701447063565;
+        Fri, 01 Dec 2023 08:11:03 -0800 (PST)
 Received: from gpeter-l.lan (host-92-29-24-243.as13285.net. [92.29.24.243])
-        by smtp.gmail.com with ESMTPSA id cg16-20020a5d5cd0000000b003332656cd73sm3907386wrb.105.2023.12.01.08.11.00
+        by smtp.gmail.com with ESMTPSA id cg16-20020a5d5cd0000000b003332656cd73sm3907386wrb.105.2023.12.01.08.11.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Dec 2023 08:11:01 -0800 (PST)
+        Fri, 01 Dec 2023 08:11:02 -0800 (PST)
 From: Peter Griffin <peter.griffin@linaro.org>
 To: robh+dt@kernel.org,
 	krzysztof.kozlowski+dt@linaro.org,
@@ -72,9 +72,9 @@ Cc: peter.griffin@linaro.org,
 	linux-watchdog@vger.kernel.org,
 	kernel-team@android.com,
 	linux-serial@vger.kernel.org
-Subject: [PATCH v5 09/20] dt-bindings: serial: samsung: Make samsung,uart-fifosize required property
-Date: Fri,  1 Dec 2023 16:09:14 +0000
-Message-ID: <20231201160925.3136868-10-peter.griffin@linaro.org>
+Subject: [PATCH v5 10/20] dt-bindings: soc: samsung: usi: add google,gs101-usi compatible
+Date: Fri,  1 Dec 2023 16:09:15 +0000
+Message-ID: <20231201160925.3136868-11-peter.griffin@linaro.org>
 X-Mailer: git-send-email 2.43.0.rc2.451.g8631bc7472-goog
 In-Reply-To: <20231201160925.3136868-1-peter.griffin@linaro.org>
 References: <20231201160925.3136868-1-peter.griffin@linaro.org>
@@ -86,43 +86,31 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Specifying samsung,uart-fifosize in both DT and driver static data is error
-prone and relies on driver probe order and dt aliases to be correct.
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
 
-Additionally on many Exynos platforms these are (USI) universal serial
-interfaces which can be uart, spi or i2c, so it can change per board.
+Add google,gs101-usi dedicated compatible for representing USI of Google
+GS101 SoC.
 
-For google,gs101-uart and exynosautov9-uart make samsung,uart-fifosize a
-required property. For these platforms fifosize now *only* comes from DT.
-
-It is hoped other Exynos platforms will also switch over time.
-
+Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- .../devicetree/bindings/serial/samsung_uart.yaml       | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/serial/samsung_uart.yaml b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-index ccc3626779d9..65d5d361e8f4 100644
---- a/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-+++ b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-@@ -133,6 +133,16 @@ allOf:
-             - const: uart
-             - const: clk_uart_baud0
+diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
+index 61be1f2ddbe7..a10a438d89f0 100644
+--- a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
++++ b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
+@@ -28,6 +28,9 @@ properties:
+               - samsung,exynosautov9-usi
+               - samsung,exynosautov920-usi
+           - const: samsung,exynos850-usi
++      - items:
++          - const: google,gs101-usi
++          - const: samsung,exynos850-usi
+       - enum:
+           - samsung,exynos850-usi
  
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - google,gs101-uart
-+    then:
-+      required:
-+        - samsung,uart-fifosize
-+
- unevaluatedProperties: false
- 
- examples:
 -- 
 2.43.0.rc2.451.g8631bc7472-goog
 
