@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="om5j4UTU"
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CBB6196
-	for <linux-clk@vger.kernel.org>; Fri,  1 Dec 2023 00:40:22 -0800 (PST)
-Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-a19067009d2so179882866b.3
-        for <linux-clk@vger.kernel.org>; Fri, 01 Dec 2023 00:40:22 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZRc5hUMe"
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D7171718
+	for <linux-clk@vger.kernel.org>; Fri,  1 Dec 2023 00:40:31 -0800 (PST)
+Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-54c5d041c23so352739a12.2
+        for <linux-clk@vger.kernel.org>; Fri, 01 Dec 2023 00:40:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701420020; x=1702024820; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1701420030; x=1702024830; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=LwaPHpx2wWsuOyVI07qURLSlvWI5FU/Wj3kBq4ULRv0=;
-        b=om5j4UTUgkP9Ru0VNfesiR5XdT4UaAUV8hXt8eiHi2FAEKnK3LMTVAStQMZ/Q9MvXT
-         ipx8xVi2YQhDgB1+3Xwy5CpkZwlmlv+OWEBmuHoC8FIy13bOza8MYf8mRWn6LvMi/01B
-         +K1v8fvUgUAiUoHcj0DQkTq2Ssxm0Onm2ogclrxWZcou3x7q7NPbMoX00hUUl5/0nva3
-         Gdf699bfJrcjoDDWo2YV5KYPZDizhEFsJJQuLCSXPZPNL0XVwn/xmzHd+6qGj8zGas0A
-         m9/KZnyKBXs5qMyVIx/uoitH7TmdovBHgiVMKFOPvZDaBRS7K7Ylp+dmJOdOO7enUwBP
-         ry8Q==
+        bh=TDM8sDhTiaHA63ASEGwhYXp+tCwWvrbT3ygP/u36qAU=;
+        b=ZRc5hUMe12AXZlZVd/UKLSkqOH53gDam1MEM417zv1p59lS7/U1J4htVtEI9efTvbK
+         Kc2RFV2rcDcuitl5oklVZMrvQQ+38q01qfh3opJnC77WZ1WPeUGvV69O3xTuLL4y8FAv
+         YtDPJQhpcO/CvDbgV9WE5oeBsm5GlF6wDfxVuBf0YyCDDR1xZuQNfZM3oSRNuB3nW2U7
+         CL7XCPlI0eR3oOyL4GHitA12AdoPpoOfKMDDWN5yyO7OrPVjS7I/Rqj2gA8k2mTwMuVH
+         2xzi7lLLFQVYEq7+6qq2MSxaMSXaekTc0UrrIYii2riVHmyFnDVDHAzEtDCiwxHH6cES
+         oXDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701420020; x=1702024820;
+        d=1e100.net; s=20230601; t=1701420030; x=1702024830;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LwaPHpx2wWsuOyVI07qURLSlvWI5FU/Wj3kBq4ULRv0=;
-        b=S2ayGprrDKwIGb6oxMM+VpwhM0peKGxVqCq5m5cmN0bj2D+T5VPo8HSyFoUPt87kZR
-         cmsZx6H94PO5BfODARnQ7wtBHlPSM3geEyxhETwRx0uwnxI8uiePwNZ/5QzZ6PXypV6P
-         psXHLs0CdwHGqOC4rYApPSdttjoh8tspV8R8HveFuYVfKy1vmOTxW4idoJUVtqVM0t82
-         EmdzfNARXhCAAs4McBfOjknk2s+nypcCZJhCkfXLF5MoHHcH8PKY5/kS+DH9Cz3ykrJF
-         W7lU/M6dwks5PF8OKguxDEEinsrJ7249PjLodZ2jvTMOX6Wm5KjSNnIw533SD3Wrs4av
-         cbNA==
-X-Gm-Message-State: AOJu0YwSLwXr931zEg/aRtH4unuDs+fIWvF/gA1mW6z+dpmffQCvxgKj
-	KWsJpKWX+3VeM03fpcNsl4HwEA==
-X-Google-Smtp-Source: AGHT+IF7iFz+LKE3JmsMvP41zSKP9g7iazn0xsToG2XKGvVAHD9TgKSe8LlYA0lG1ll5X1H53LpT7A==
-X-Received: by 2002:a17:906:bcdc:b0:a17:781f:20bb with SMTP id lw28-20020a170906bcdc00b00a17781f20bbmr579745ejb.1.1701420020742;
-        Fri, 01 Dec 2023 00:40:20 -0800 (PST)
+        bh=TDM8sDhTiaHA63ASEGwhYXp+tCwWvrbT3ygP/u36qAU=;
+        b=ukXmw4D3jv9oJEH4tdAjMldT7EMRS1Kdo/0PmbZQO1iIW/BQQzQIrqskc7R6pyYUxE
+         HCMDwM/zvnsmm9BXdu9II57Ep7Ft5/uMRfhOkY/U+RdYzSuPJToc+pD49E5LG+bW8Mwo
+         ZoiuUo7d8ZAnMObW2WArQuSpP+uaW7t3tc3Q+9UKvYje5/VhWLArFfPutWTAoTmh2Wd/
+         i8bGWeHZlkIqDtqD+132HApDQgBufFNK1xsgnu6KzNLw1Z70Zg7LB5nJWmG4T7xj4cyU
+         mAlN/Bv1eR8G8f6pLcNN/1Npm5UiyUIHFUHWF30s8ZaoIp1lBToho87TDDrXcimHs1rt
+         naYQ==
+X-Gm-Message-State: AOJu0Yx0ETT2nIh4Kxh6v9mM9Ve4h4Qx5LhmpOAB2WJfh9zbj5XIhntA
+	EUInB2nsCL2jF+oeckAvSk8zdQ==
+X-Google-Smtp-Source: AGHT+IFQTAQ4NMd2KNfn0D17oDHj3Qv8g5KLjZJFOmU2SZdfLRl+UsNiFLOjMfrmZt5UJ0Z4uG8Y9g==
+X-Received: by 2002:a50:d78c:0:b0:54c:4fec:e5 with SMTP id w12-20020a50d78c000000b0054c4fec00e5mr214191edi.116.1701420030062;
+        Fri, 01 Dec 2023 00:40:30 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.223.109])
-        by smtp.gmail.com with ESMTPSA id bt15-20020a0564020a4f00b0054c63ebfa15sm135663edb.83.2023.12.01.00.40.18
+        by smtp.gmail.com with ESMTPSA id bt15-20020a0564020a4f00b0054c63ebfa15sm135663edb.83.2023.12.01.00.40.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Dec 2023 00:40:20 -0800 (PST)
-Message-ID: <2a16422e-5b3a-49be-ba7d-de870a9d82ff@linaro.org>
-Date: Fri, 1 Dec 2023 09:40:18 +0100
+        Fri, 01 Dec 2023 00:40:29 -0800 (PST)
+Message-ID: <9558699d-93e4-4de3-b4d5-d38c9e52c0cf@linaro.org>
+Date: Fri, 1 Dec 2023 09:40:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,8 +47,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/9] dt-bindings: display: himax-hx8394: Add Powkiddy X55
- panel
+Subject: Re: [PATCH 8/9] dt-bindings: arm: rockchip: Add Powkiddy X55
 Content-Language: en-US
 To: Chris Morgan <macroalpha82@gmail.com>, linux-rockchip@lists.infradead.org
 Cc: dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
@@ -59,7 +58,7 @@ Cc: dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
  heiko@sntech.de, conor+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
  robh+dt@kernel.org, Chris Morgan <macromorgan@hotmail.com>
 References: <20231130155624.405575-1-macroalpha82@gmail.com>
- <20231130155624.405575-6-macroalpha82@gmail.com>
+ <20231130155624.405575-9-macroalpha82@gmail.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -105,15 +104,19 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231130155624.405575-6-macroalpha82@gmail.com>
+In-Reply-To: <20231130155624.405575-9-macroalpha82@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 30/11/2023 16:56, Chris Morgan wrote:
 > From: Chris Morgan <macromorgan@hotmail.com>
 > 
-> Add compatible string for the Powkiddy X55 panel.
+> The Powkiddy RK2023 is a handheld gaming device made by Powkiddy and
+> powered by the Rockchip RK3566 SoC. This device is somewhat similar
+> to the existing Powkiddy RK3566 devices, which have been grouped
+> together with a previous commit[1].
 > 
+
 
 Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
