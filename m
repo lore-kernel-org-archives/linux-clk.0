@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pb1C1hJS"
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 926FD10E4
-	for <linux-clk@vger.kernel.org>; Fri,  1 Dec 2023 13:45:30 -0800 (PST)
-Received: by mail-ej1-x629.google.com with SMTP id a640c23a62f3a-a1a2615e909so149166466b.3
-        for <linux-clk@vger.kernel.org>; Fri, 01 Dec 2023 13:45:30 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nBH1jcCi"
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7760D6C
+	for <linux-clk@vger.kernel.org>; Fri,  1 Dec 2023 13:45:52 -0800 (PST)
+Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-a1a0fedd3a1so155458566b.1
+        for <linux-clk@vger.kernel.org>; Fri, 01 Dec 2023 13:45:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701467129; x=1702071929; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1701467151; x=1702071951; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=yln3CV2ycfuQHetU75G2NmPx+NUrR3PyzdS1+LL06DU=;
-        b=pb1C1hJSyPA4oMvkoFACQt9ZWDK+lcmGh/xLfmekUQdd+VYOd69RLgNQ0kP0+qJCOS
-         zgxrxKPe87a4PJ02JFMSrL0/tz/MR77knLm3xgjZd+T2d+mlvFuJGSXfPOI0PB6E2a4B
-         wmHsQQVVYyzgSNly4YSygPYYdEnxnaZ15uHLsRcXksMPeS9yQ1PTfh3tYStkIZzJryE9
-         SnY3gjKxbOoB5vrIa4ZjlQn4XaXSeJ19ehcQqyM8l3TnlTu6d1ZtE95uuggydWle9x2X
-         46s95JVymTPuvtfv48CRiCigDSKEAFwEi+MOsogxiv6xbf5KIPBx7GY32oKgJv9qc1RP
-         jz5w==
+        bh=8sn6TIMQGfSCwqnbYuewhqgGKU0sPXKc6S7oOa0pf30=;
+        b=nBH1jcCiXs3HaRgxJJ0QMoKL7bPIQzjdXBjFmDeGC3KBEvs/zRf3TV0vsEKV6sW2Wg
+         8ZXVBx2LLBQtAaAL7fSGNzgHWOwMw4+rwJnt1xxhgcBx+EMdn8LG6yha5OBW6d+ncmlP
+         Dv7POHpFWOryrV2EUagw8Yj6BRLl8aBANIP4BcA8nmnuNUvK5FphZjNNGiLYyz/EbfLz
+         H4L+7MWrMi6mOkNL/qfVOfYKxPElwqFBYglrxv8Ysf9D7RBm8dTc6ZLHg/7sdBONSgLU
+         xLfMvyNJyr19CPreSYoSE+VsZvd4Fdn4/bYSMYZM8FCajMvNUwpg4bxaiQFj9J2jMxN1
+         E5Ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701467129; x=1702071929;
+        d=1e100.net; s=20230601; t=1701467151; x=1702071951;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yln3CV2ycfuQHetU75G2NmPx+NUrR3PyzdS1+LL06DU=;
-        b=HwQIqYClqG4fCLPdcCo0h/gjphkhSQsDmyfYsIxXUUbvaFl0+hETABsxRFmWhVxMY/
-         cqsJwNJwA+QwfKP7HHejleMiXn3c6+WdD1t3Kc6nMtNr9WBDWfb978MN4oSJ73yFI2dR
-         0JSqW7cGFSovO3V6x1yKrHk9sHLUOlfQ3fZefrWYhUDXLMd+hDhOLAZpzPNh9r7gQpFL
-         06+M+9eicu3kINg1i5q0NcQRZoTWooF5SRERycLpAXA24gjQHp1lV3LngrmXsJXqBmcM
-         nhGCLz2y+B0vpxMJbWXMWdXabmWGYeoaXduYwOUJG8zEBnxXDOTGRVbbzBQ80Y7Mwmdz
-         yxpw==
-X-Gm-Message-State: AOJu0YwjKmoEAl/CRerNrYFYnkDGSEG5zaeW1/xYoLQYsNnz/RRcB9LU
-	4DXABELy/E3wLwYlXHu/gRbC+g==
-X-Google-Smtp-Source: AGHT+IEDm1KetQPt0xWlENFZrj2+NfKtXAZRKZRssgkHJbwQXWiEJmDrHQfttG64Nhmy4ekTO5I50Q==
-X-Received: by 2002:a17:906:cb87:b0:a19:a19b:4229 with SMTP id mf7-20020a170906cb8700b00a19a19b4229mr836882ejb.148.1701467128690;
-        Fri, 01 Dec 2023 13:45:28 -0800 (PST)
+        bh=8sn6TIMQGfSCwqnbYuewhqgGKU0sPXKc6S7oOa0pf30=;
+        b=WUD+QUAqA7G1WAPxzjMbnzzDqbQuJ7r2WUnD046SCoy77fImdd/0n8MPh5QcHZtUMv
+         3xzFLlM86hjD6QPX8zUGIHlL+IaxIEP4bu+wzrEozH9WWGE7gfzRHZAXTuxVpSDNGqu4
+         FudxU29Hv6RBqZYNvAAFlYDSKa2XC5u3L6ECGRlUGnAYtSl/RR2FtM+KvhACXRvd+QPS
+         P4FE5epjvaEIhxhs5wF7FZbAKBCnjbh6rRkopwkKCPUn5K9FQSY6kpzZyejI7sgxGCfq
+         AyHmH623kwVQ9UA4F7QueJEva6JlrAYxh/u0GwaNtM5ymYung/rvWiPaZy7SFODKDfBH
+         Fy+A==
+X-Gm-Message-State: AOJu0YzbV6uAyPx5B/AmDzaoh8UZQrN8v/YlYEc/r6OZ4h6o6llcwtzn
+	7+KA5Lqm5EZeucEW51S7/o4dxg==
+X-Google-Smtp-Source: AGHT+IEwdQx3qk30hc3NuMNho+pYuDCvbHivi7c1Kv4hAHmi7L90T8BZhGRCFodD8UzyTeAHY8dopg==
+X-Received: by 2002:a17:906:109c:b0:a19:396e:99bc with SMTP id u28-20020a170906109c00b00a19396e99bcmr550273eju.39.1701467151471;
+        Fri, 01 Dec 2023 13:45:51 -0800 (PST)
 Received: from [192.168.209.83] (178235187166.dynamic-4-waw-k-2-3-0.vectranet.pl. [178.235.187.166])
-        by smtp.gmail.com with ESMTPSA id a7-20020a1709062b0700b009fc8f309183sm2339415ejg.51.2023.12.01.13.45.26
+        by smtp.gmail.com with ESMTPSA id a7-20020a1709062b0700b009fc8f309183sm2339415ejg.51.2023.12.01.13.45.49
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Dec 2023 13:45:28 -0800 (PST)
-Message-ID: <ea16bc85-f16a-4b0b-8574-9d356fd60bda@linaro.org>
-Date: Fri, 1 Dec 2023 22:45:26 +0100
+        Fri, 01 Dec 2023 13:45:51 -0800 (PST)
+Message-ID: <f1604d9c-663a-4778-87e6-53f8e4b8b25e@linaro.org>
+Date: Fri, 1 Dec 2023 22:45:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,8 +47,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] clk: qcom: videocc-sm8150: Add missing PLL config
- property
+Subject: Re: [PATCH v3 4/4] clk: qcom: videocc-sm8150: Add runtime PM support
 Content-Language: en-US
 To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
  Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
@@ -60,7 +59,7 @@ Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
  linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20231201-videocc-8150-v3-0-56bec3a5e443@quicinc.com>
- <20231201-videocc-8150-v3-3-56bec3a5e443@quicinc.com>
+ <20231201-videocc-8150-v3-4-56bec3a5e443@quicinc.com>
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
@@ -97,17 +96,31 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <20231201-videocc-8150-v3-3-56bec3a5e443@quicinc.com>
+In-Reply-To: <20231201-videocc-8150-v3-4-56bec3a5e443@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 1.12.2023 10:50, Satya Priya Kakitapalli wrote:
-> When the driver was ported upstream, PLL test_ctl_hi1 register value
-> was omitted. Add it to ensure the PLLs are fully configured.
+> Add runtime PM support to ensure the supply rails are enabled
+> when necessary.
 > 
-> Fixes: 5658e8cf1a8a ("clk: qcom: add video clock controller driver for SM8150")
 > Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
 > ---
 Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
 Konrad
+>  	clk_trion_pll_configure(&video_pll0, regmap, &video_pll0_config);
+>  
+>  	/* Keep VIDEO_CC_XO_CLK ALWAYS-ON */
+>  	regmap_update_bits(regmap, 0x984, 0x1, 0x1);
+>  
+> -	return qcom_cc_really_probe(pdev, &video_cc_sm8150_desc, regmap);
+> +	ret = qcom_cc_really_probe(pdev, &video_cc_sm8150_desc, regmap);
+> +
+> +	pm_runtime_put_sync(&pdev->dev);
+> +
+> +	return ret;
+>  }
+>  
+>  static struct platform_driver video_cc_sm8150_driver = {
+> 
