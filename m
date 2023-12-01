@@ -1,43 +1,43 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MO6/7qPS"
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 315751986
-	for <linux-clk@vger.kernel.org>; Fri,  1 Dec 2023 08:11:14 -0800 (PST)
-Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-40b4a8db314so22871165e9.3
-        for <linux-clk@vger.kernel.org>; Fri, 01 Dec 2023 08:11:14 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tNeMHw/D"
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 308291700
+	for <linux-clk@vger.kernel.org>; Fri,  1 Dec 2023 08:11:17 -0800 (PST)
+Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-40b27b498c3so24017605e9.0
+        for <linux-clk@vger.kernel.org>; Fri, 01 Dec 2023 08:11:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701447072; x=1702051872; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1701447075; x=1702051875; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MP+7NSmIit+FDTJhpsmHaxMZk0dYxTOxs6fgbwlRbSg=;
-        b=MO6/7qPSL3xX50TorGaId+CKppOqFlscLGLKU1yFqfX0xeVeys0ypBKMegp1gUwp25
-         SsLPLlBOpaV8V/FoxEejy/gwm5sTf4qBV2G1TwVkiNBIfKAih22jilXSsHrGQmiTkkS3
-         +wBZ8vrFTd3N4MEf/tlUENfusUhWjeoQubdR3Qz5p1cNCbOzm9ZYtnW6PEkD/t+Vug7l
-         rg8MAQPk9X9rJEVYYvsZQecOT5fLBAy5AolA/oBiRpBOKCGWuCxlAJw2q1i4plG91yW5
-         BNX3IIRruSzUvxao2/r7AuFmodmR8RvJGq9xjuJezV9m3hX3v9B++iNF3qCNmLD7nCbZ
-         rVRw==
+        bh=N6X5vVAlls/XtdCFtdQoEfrejT5TccvyQro4u4ajLPE=;
+        b=tNeMHw/D05NQXQJhExp4MAeWGYPE1eaArr7GuiiVIK5QnkQTzQtXbbxuO6FCoNn6Hr
+         xnHL4D4ybyV+gtadDtuBlhMD3rHiuTq7aWMxaMD6/H17PwmnBYwkPZQBJq4XqHn5Qt+J
+         C+p3Z++P74qo5NSohGD10X6SaY/ihUK4PUawxXoRgflq9ox+3bao3tg7aeVMbdkp1G6B
+         IMUenK2uCSxGsg+n2f4PAYYt20xQRLZ7Gn3QhH8skyG3F2FhO8vG+PUgoNqI3WM2D4ER
+         eyCDbRmfcXOdpDj5dh43S0U1WxHp6l1dkqV/mZxCpF5EPrgEWS+xgJ688aDj/GxtniB9
+         QdIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701447072; x=1702051872;
+        d=1e100.net; s=20230601; t=1701447075; x=1702051875;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MP+7NSmIit+FDTJhpsmHaxMZk0dYxTOxs6fgbwlRbSg=;
-        b=xOmrVLwnxtdvQMkvBz2L20HQD0DeclsPcWtMLJC9Ocv1QwZQcwShg6nnJsmbhPE44A
-         y7/IWlhQHLYMgmQ7CpDnek6a2WbikV/yulZ69kvqLlFWGl/YTGl7FXDE9ll+ljKKJGrJ
-         KwOy4Nn+H14cBoerWbDM7OoFUXrfEMj7tqFsAHhrGrSQlxFbSLlZXGT5kWDc4WHJFPiB
-         Q/t9wZAF3OZudeiVZlp+r67C9/LUIxE1Tn2DGV08dodITiBjEedJ8s0qHhomuIZuoF2c
-         Eh5iNVi6t+dwcD0ZyVf0OwPnP0MdLpDjWq08heT7biXO+syq382TKmbHsne2cmqMkdIp
-         XPTw==
-X-Gm-Message-State: AOJu0Yx79wVFA0IBQIdomxeKHJpgNAYqr5l131Tk+ruK77WohAzqfpJN
-	nUvCCaA30h/qRovmmzFR0PAOPQ==
-X-Google-Smtp-Source: AGHT+IELNlY0EW/eGA3BOVQakb2wAAFPoBHucoo2xc3+yPYY7kTv07vo0KUDg+AI5If0hWMCEXIE5Q==
-X-Received: by 2002:a05:600c:34c7:b0:40b:5f03:b3f3 with SMTP id d7-20020a05600c34c700b0040b5f03b3f3mr214973wmq.277.1701447072566;
-        Fri, 01 Dec 2023 08:11:12 -0800 (PST)
+        bh=N6X5vVAlls/XtdCFtdQoEfrejT5TccvyQro4u4ajLPE=;
+        b=A02rXxU/YDONTeh0Y5LqNe/+lfmq1bqORO8a7fwa1Ml1hRMZ7EpyW8QtpzrCSlbX9h
+         UCC3h5GLLk0k+9MvBBYSWrjaaPLQP8JQMSJaUa1GTcCV2jEEZ/em/kyHNUTz2wDlkHrC
+         +im7pejtqMVLovhUQUFabEFAG340S9KdYrpOQHZX1EiBNWBbwNUZ1suiiIlvHcjtCO9e
+         Yatsxa1Vd1pfuxfAeLE3fU2d4iKTxf2HcDCE8ObslHrrr1abZEAUflA8G/L+0EK17oPC
+         RSh2c8sk/HIlDK/DqSxaGTszdODsZI9NlSeTEQGMtKGB1wkfAYmcVT+O4aAA92mRFFKn
+         zFgA==
+X-Gm-Message-State: AOJu0Yw27ZFhKfh/AdkgN42O1QZU9obcD+Ipt4BraDxSOfCe0AJuo0l2
+	uFbqvOLr1yDtxYfGZSsB51wjbQ==
+X-Google-Smtp-Source: AGHT+IGDALCDuLFU1YQ+h+wr7UohRR0OcUFUK/djXShHghoJYpXFb8S89wEYypH79BAexl0QUCJeDw==
+X-Received: by 2002:adf:cf06:0:b0:333:2fd2:5d16 with SMTP id o6-20020adfcf06000000b003332fd25d16mr892081wrj.72.1701447075706;
+        Fri, 01 Dec 2023 08:11:15 -0800 (PST)
 Received: from gpeter-l.lan (host-92-29-24-243.as13285.net. [92.29.24.243])
-        by smtp.gmail.com with ESMTPSA id cg16-20020a5d5cd0000000b003332656cd73sm3907386wrb.105.2023.12.01.08.11.11
+        by smtp.gmail.com with ESMTPSA id cg16-20020a5d5cd0000000b003332656cd73sm3907386wrb.105.2023.12.01.08.11.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Dec 2023 08:11:11 -0800 (PST)
+        Fri, 01 Dec 2023 08:11:15 -0800 (PST)
 From: Peter Griffin <peter.griffin@linaro.org>
 To: robh+dt@kernel.org,
 	krzysztof.kozlowski+dt@linaro.org,
@@ -72,9 +72,9 @@ Cc: peter.griffin@linaro.org,
 	linux-watchdog@vger.kernel.org,
 	kernel-team@android.com,
 	linux-serial@vger.kernel.org
-Subject: [PATCH v5 15/20] watchdog: s3c2410_wdt: Add support for WTCON register DBGACK_MASK bit
-Date: Fri,  1 Dec 2023 16:09:20 +0000
-Message-ID: <20231201160925.3136868-16-peter.griffin@linaro.org>
+Subject: [PATCH v5 17/20] tty: serial: samsung: Add gs101 compatible and common fifoszdt_serial_drv_data
+Date: Fri,  1 Dec 2023 16:09:22 +0000
+Message-ID: <20231201160925.3136868-18-peter.griffin@linaro.org>
 X-Mailer: git-send-email 2.43.0.rc2.451.g8631bc7472-goog
 In-Reply-To: <20231201160925.3136868-1-peter.griffin@linaro.org>
 References: <20231201160925.3136868-1-peter.griffin@linaro.org>
@@ -86,84 +86,70 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The WDT uses the CPU core signal DBGACK to determine whether the SoC
-is running in debug mode or not. If the DBGACK signal is asserted and
-DBGACK_MASK bit is enabled, then WDT output and interrupt is masked
-(disabled).
+Add serial driver data for Google Tensor gs101 SoC and a common
+fifoszdt_serial_drv_data that can be used by platforms that specify the
+samsung,uart-fifosize DT property.
 
-Presence of the DBGACK_MASK bit is determined by adding a new
-QUIRK_HAS_DBGACK_BIT quirk.
+A corresponding dt-bindings patch updates the yaml to ensure
+samsung,uart-fifosize is a required property.
 
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- drivers/watchdog/s3c2410_wdt.c | 27 ++++++++++++++++++++++++---
- 1 file changed, 24 insertions(+), 3 deletions(-)
+ drivers/tty/serial/samsung_tty.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-index 0b4bd883ff28..39f3489e41d6 100644
---- a/drivers/watchdog/s3c2410_wdt.c
-+++ b/drivers/watchdog/s3c2410_wdt.c
-@@ -34,9 +34,10 @@
+diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+index 1b0c2b467a30..f8d98f1006de 100644
+--- a/drivers/tty/serial/samsung_tty.c
++++ b/drivers/tty/serial/samsung_tty.c
+@@ -2490,14 +2490,25 @@ static const struct s3c24xx_serial_drv_data exynos850_serial_drv_data = {
+ 	.fifosize = { 256, 64, 64, 64 },
+ };
  
- #define S3C2410_WTCNT_MAXCNT	0xffff
- 
--#define S3C2410_WTCON_RSTEN	(1 << 0)
--#define S3C2410_WTCON_INTEN	(1 << 2)
--#define S3C2410_WTCON_ENABLE	(1 << 5)
-+#define S3C2410_WTCON_RSTEN		(1 << 0)
-+#define S3C2410_WTCON_INTEN		(1 << 2)
-+#define S3C2410_WTCON_ENABLE		(1 << 5)
-+#define S3C2410_WTCON_DBGACK_MASK	(1 << 16)
- 
- #define S3C2410_WTCON_DIV16	(0 << 3)
- #define S3C2410_WTCON_DIV32	(1 << 3)
-@@ -100,12 +101,17 @@
-  * %QUIRK_HAS_PMU_CNT_EN: PMU block has some register (e.g. CLUSTERx_NONCPU_OUT)
-  * with "watchdog counter enable" bit. That bit should be set to make watchdog
-  * counter running.
-+ *
-+ * %QUIRK_HAS_DBGACK_BIT: WTCON register has DBGACK_MASK bit. Setting the
-+ * DBGACK_MASK bit disables the watchdog outputs when the SoC is in debug mode.
-+ * Debug mode is determined by the DBGACK CPU signal.
-  */
- #define QUIRK_HAS_WTCLRINT_REG			(1 << 0)
- #define QUIRK_HAS_PMU_MASK_RESET		(1 << 1)
- #define QUIRK_HAS_PMU_RST_STAT			(1 << 2)
- #define QUIRK_HAS_PMU_AUTO_DISABLE		(1 << 3)
- #define QUIRK_HAS_PMU_CNT_EN			(1 << 4)
-+#define QUIRK_HAS_DBGACK_BIT			(1 << 5)
- 
- /* These quirks require that we have a PMU register map */
- #define QUIRKS_HAVE_PMUREG \
-@@ -375,6 +381,19 @@ static int s3c2410wdt_enable(struct s3c2410_wdt *wdt, bool en)
- 	return 0;
- }
- 
-+static void s3c2410wdt_mask_dbgack(struct s3c2410_wdt *wdt)
-+{
-+	unsigned long wtcon;
++/*
++ * Common drv_data struct for platforms that specify uart,fifosize in
++ * device tree.
++ */
++static const struct s3c24xx_serial_drv_data exynos_fifoszdt_serial_drv_data = {
++	EXYNOS_COMMON_SERIAL_DRV_DATA(),
++	.fifosize = { 0 },
++};
 +
-+	if (!(wdt->drv_data->quirks & QUIRK_HAS_DBGACK_BIT))
-+		return;
-+
-+	/*  disable watchdog outputs if CPU is in debug mode */
-+	wtcon = readl(wdt->reg_base + S3C2410_WTCON);
-+	wtcon |= S3C2410_WTCON_DBGACK_MASK;
-+	writel(wtcon, wdt->reg_base + S3C2410_WTCON);
-+}
-+
- static int s3c2410wdt_keepalive(struct watchdog_device *wdd)
- {
- 	struct s3c2410_wdt *wdt = watchdog_get_drvdata(wdd);
-@@ -700,6 +719,8 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
- 	wdt->wdt_device.bootstatus = s3c2410wdt_get_bootstatus(wdt);
- 	wdt->wdt_device.parent = dev;
+ #define EXYNOS4210_SERIAL_DRV_DATA (&exynos4210_serial_drv_data)
+ #define EXYNOS5433_SERIAL_DRV_DATA (&exynos5433_serial_drv_data)
+ #define EXYNOS850_SERIAL_DRV_DATA (&exynos850_serial_drv_data)
++#define EXYNOS_FIFOSZDT_DRV_DATA (&exynos_fifoszdt_serial_drv_data)
  
-+	s3c2410wdt_mask_dbgack(wdt);
-+
- 	/*
- 	 * If "tmr_atboot" param is non-zero, start the watchdog right now. Also
- 	 * set WDOG_HW_RUNNING bit, so that watchdog core can kick the watchdog.
+ #else
+ #define EXYNOS4210_SERIAL_DRV_DATA NULL
+ #define EXYNOS5433_SERIAL_DRV_DATA NULL
+ #define EXYNOS850_SERIAL_DRV_DATA NULL
++#define EXYNOS_FIFOSZDT_DRV_DATA NULL
+ #endif
+ 
+ #ifdef CONFIG_ARCH_APPLE
+@@ -2581,6 +2592,9 @@ static const struct platform_device_id s3c24xx_serial_driver_ids[] = {
+ 	}, {
+ 		.name		= "artpec8-uart",
+ 		.driver_data	= (kernel_ulong_t)ARTPEC8_SERIAL_DRV_DATA,
++	}, {
++		.name		= "gs101-uart",
++		.driver_data	= (kernel_ulong_t)EXYNOS_FIFOSZDT_DRV_DATA,
+ 	},
+ 	{ },
+ };
+@@ -2602,6 +2616,8 @@ static const struct of_device_id s3c24xx_uart_dt_match[] = {
+ 		.data = EXYNOS850_SERIAL_DRV_DATA },
+ 	{ .compatible = "axis,artpec8-uart",
+ 		.data = ARTPEC8_SERIAL_DRV_DATA },
++	{ .compatible = "google,gs101-uart",
++		.data = EXYNOS_FIFOSZDT_DRV_DATA },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, s3c24xx_uart_dt_match);
 -- 
 2.43.0.rc2.451.g8631bc7472-goog
 
