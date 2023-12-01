@@ -1,133 +1,102 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aWkydWqr"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F15A10FA;
-	Fri,  1 Dec 2023 01:19:30 -0800 (PST)
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3B15cHvc022539;
-	Fri, 1 Dec 2023 09:19:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=Zka4KzIUcTY1DnFiW9G0zPvTAMcdwMCa69wvvZaIvwg=;
- b=aWkydWqruTEOIxl6gXrgbPzkAHePPA/4EVZc3PSFkeJ7KrXKvMtkwhd8kROB8o5Tx8FV
- F6Cixw1mBZZ3qWqohGmHSU5eYHxKCgCLSX5kVS+IVnm2WOJ7PrMZv0eHJeNq4GVif77M
- N+0Y/iyX5AtT+tnagNd7k6GEbgBw6n6gOYuIsZwLXrk4f7l1yyCcQbdGEnU2e8avgvpQ
- hiIbvKFgHhsN3qKOHe2Gz9ZZZnJr7iTxOcVNK/eEayBfdV2bsXoBxd1PowW6i7VSoniB
- f/mxSP0+4tx+BWyfCSoQVP1cfkWa/TxJh7C8ocHYYVsFAK1jxSkNNYx18uz0OGetmoxX DQ== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3upv482ek2-1
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZnsrJCtM"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA6A1E6;
+	Fri,  1 Dec 2023 01:50:40 -0800 (PST)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3B17o8de011090;
+	Fri, 1 Dec 2023 09:50:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : subject :
+ date : message-id : mime-version : content-type :
+ content-transfer-encoding : to : cc; s=qcppdkim1;
+ bh=DLhOZuvjXEZEm7fxO270vIwSRZ0d0rkb7FIWskSaEg8=;
+ b=ZnsrJCtMVJ2dNbkg/VxDhbrXf2NBgjZwlD7pGoJRMUHyVHbO7jTPnlWan1wiQ+KhwwXm
+ iL+afL2w573k2CyMYiZTg8n1F9Y8bON3SWqiBK0U1WMCKvOm/QYcdguGSzI2Xw++HkCS
+ YJ1MZrR737002YxZJCIaSG8jLfLHI5JZMP0sGP2t/lgxq3D1fSTPU6NNCdWy0+s2thoX
+ RHhp1lWB7uFfBion0vrVhW5zA3Ofd4yQL8zqLs/QNX65jqWW8K3Fm5slYie2ZaOEtL4b
+ DLgrPzDyYLvJ27c0mE/bzZCxL78FqWPjkl6jBVZ4WBEr5Nb8MmDkzqRHOU0YRYScZ3AF dQ== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3uq2kp99dx-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 01 Dec 2023 09:19:24 +0000
+	Fri, 01 Dec 2023 09:50:35 +0000
 Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3B19JNei024942
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3B19oYeF009110
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 1 Dec 2023 09:19:23 GMT
-Received: from [10.216.46.214] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Fri, 1 Dec
- 2023 01:19:17 -0800
-Message-ID: <f38fa45b-6b57-f941-7bf9-5b6c2d0ea1b8@quicinc.com>
-Date: Fri, 1 Dec 2023 14:49:12 +0530
+	Fri, 1 Dec 2023 09:50:34 GMT
+Received: from hu-skakitap-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Fri, 1 Dec 2023 01:50:29 -0800
+From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Subject: [PATCH v3 0/4] Add runtime PM support for videocc on SM8150
+Date: Fri, 1 Dec 2023 15:20:23 +0530
+Message-ID: <20231201-videocc-8150-v3-0-56bec3a5e443@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH V2 0/4] Add runtime PM support for videocc on SM8150
-Content-Language: en-US
-To: Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Andy Gross <agross@kernel.org>,
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAF+saWUC/0XMTQ6CMBBA4auQWVsy/UGRlfcwxjTDIBMCxRaJC
+ eHuVjcuv8V7GySOwgmaYoPIqyQJU4Y9FEC9nx6spM0Gg8Zqg1qt0nIgUrWuUCFV6Iw51dYh5GS
+ O3Mn7t7vesrsYRrX0kf1/onWtjT07V5rso0Wl1fMldE+DH2Tx8+UrmaikMMK+fwDAjpHwowAAA
+ A==
+To: Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Michael Turquette
 	<mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, Rob Herring
 	<robh+dt@kernel.org>,
         Krzysztof Kozlowski
 	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-References: <20231118123944.2202630-1-quic_skakitap@quicinc.com>
- <47925f9e-32aa-4762-a4ec-aa559e18ff12@kernel.org>
- <26b69814-201b-8d07-d844-27e804aa3016@quicinc.com>
- <2ca148cc-564c-499a-8fdf-487391c9024c@linaro.org>
-From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
-In-Reply-To: <2ca148cc-564c-499a-8fdf-487391c9024c@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+        Conor Dooley <conor+dt@kernel.org>, Jonathan Marek <jonathan@marek.ca>
+CC: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Satya Priya
+ Kakitapalli" <quic_skakitap@quicinc.com>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.12.4
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nalasex01c.na.qualcomm.com (10.47.97.35)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: NCiTyvsxjcNA6kaVhnTlc3f9a5qWfh18
-X-Proofpoint-ORIG-GUID: NCiTyvsxjcNA6kaVhnTlc3f9a5qWfh18
+X-Proofpoint-ORIG-GUID: oLNDiwRRV3ocNKRU6-uwcttZ3lybAbZM
+X-Proofpoint-GUID: oLNDiwRRV3ocNKRU6-uwcttZ3lybAbZM
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-12-01_06,2023-11-30_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 malwarescore=0
- spamscore=0 clxscore=1015 impostorscore=0 lowpriorityscore=0 mlxscore=0
- phishscore=0 suspectscore=0 bulkscore=0 priorityscore=1501 mlxlogscore=999
+ definitions=2023-12-01_07,2023-11-30_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
+ mlxscore=0 malwarescore=0 suspectscore=0 adultscore=0 lowpriorityscore=0
+ bulkscore=0 clxscore=1011 spamscore=0 mlxlogscore=747 priorityscore=1501
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2311060000
- definitions=main-2312010061
+ definitions=main-2312010065
 
+Add runtime support for videocc on SM8150 and update the resets
+and video_pll0_config configuration.
 
-On 11/29/2023 7:30 PM, Konrad Dybcio wrote:
-> On 28.11.2023 17:11, Satya Priya Kakitapalli (Temp) wrote:
->> On 11/20/2023 5:18 PM, Konrad Dybcio wrote:
->>> On 18.11.2023 13:39, Satya Priya Kakitapalli wrote:
->>>> Add runtime support for videocc on SM8150 and update the resets
->>>> and video_pll0_config configuration.
->>>>
->>>> Satya Priya Kakitapalli (4):
->>>>     dt-bindings: clock: Update the videocc resets for sm8150
->>>>     clk: qcom: videocc-sm8150: Update the videocc resets
->>>>     clk: qcom: videocc-sm8150: Add missing PLL config properties
->>>>     clk: qcom: videocc-sm8150: Add runtime PM support
->>> Hi, it's good practive to include a link to the previous revision
->>> and a summary of changes.
->>>
->>> The b4 tool [1] does that for you, please consider using it.
->>
->> Hi, I have installed b4 and followed all the steps, but it doesn't populate my cover letter with change log and previous series link, do i need to use some option for that?
-> You probably did something like this:
->
-> b4 prep -n 8150vidcc --from-thread 26b69814-201b-8d07-d844-27e804aa3016@quicinc.com
->
-> Then if you do:
->
-> b4 prep --edit-cover
->
-> you'll see a note like
->
-> EDITME: Imported from f26b69814-201b-8d07-d844-27e804aa3016@quicinc.com
->          Please review before sending.
->
-> so you need to do it manually.
->
->
-> Generally, when the series has been sent at least once with b4 already,
-> you'll notice that `b4 send` appends something like this to the cover
-> letter:
->
-> Changes in v2:
-> - EDITME: describe what is new in this series revision.
-> - EDITME: use bulletpoints and terse descriptions.
-> - Link to v1: https://lore.kernel.org/r/20230830-topic-refgenphy-v1-0-892db196a1c0@linaro.org
->
->
-> This should be only necessary to do by hand once, since as mentioned it's
-> the first time b4 sees this series
->
+Changes since v2:
+ - Update pm_runtime_put to pm_runtime_put_sync
+ - Link to v2: https://lore.kernel.org/all/20231118123944.2202630-5-quic_skakitap@quicinc.com/
 
-Thanks for the information, will add them manually.
+---
+Satya Priya Kakitapalli (4):
+      dt-bindings: clock: Update the videocc resets for sm8150
+      clk: qcom: videocc-sm8150: Update the videocc resets
+      clk: qcom: videocc-sm8150: Add missing PLL config property
+      clk: qcom: videocc-sm8150: Add runtime PM support
 
+ drivers/clk/qcom/videocc-sm8150.c               | 25 +++++++++++++++++++++++--
+ include/dt-bindings/clock/qcom,videocc-sm8150.h |  4 ++++
+ 2 files changed, 27 insertions(+), 2 deletions(-)
+---
+base-commit: 8c87404c76c1911a7ec5b61bf3b2c3858cb95de1
+change-id: 20231201-videocc-8150-0c5042278340
 
-> Konrad
+Best regards,
+-- 
+Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+
