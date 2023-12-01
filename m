@@ -1,132 +1,209 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OfX8D6Ol"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 892CA170D;
-	Fri,  1 Dec 2023 01:51:07 -0800 (PST)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3B19W1Q0015381;
-	Fri, 1 Dec 2023 09:50:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : date :
- subject : mime-version : content-type : content-transfer-encoding :
- message-id : references : in-reply-to : to : cc; s=qcppdkim1;
- bh=WFLYfX+LyYJ6QVe4Q1/+gTF/6c882WUnjs7t2bRQoBk=;
- b=OfX8D6OlKOpwmTpcchUNd82qxQ0eJ1oSfVluSj4xNKcwXuFuA1ogZYm5eTA6b9Y3Ojgc
- dDXxiQJqU5w+Hn8O6HGF9JDs9hjYv9NTSQQ4MJt53mSWE3VR3vPttlKop4nT3QYej9XJ
- ya9Iybh7VWIx5dcvgh3s8MV+Gb2nIMXeitgoufUkIJhN8bjajwFB4FWKwYAQaccjHkis
- +tljn8BWphOx9GelBTJDf4uaqKfsKlozhZ9WvxYfKAeluT17RhT2nV2PgPc0aVTeZflb
- O8yhGp3pzA0rYYzTHshqqEadxrPzKRgb9htIGQ/j+qIqGaGOuvVjIP/XlDxgkGfNknoc HQ== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3upw12tbvs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 01 Dec 2023 09:50:54 +0000
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3B19orfZ006804
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 1 Dec 2023 09:50:53 GMT
-Received: from hu-skakitap-hyd.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Fri, 1 Dec 2023 01:50:48 -0800
-From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-Date: Fri, 1 Dec 2023 15:20:27 +0530
-Subject: [PATCH v3 4/4] clk: qcom: videocc-sm8150: Add runtime PM support
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UibRQBdQ"
+Received: from mail-oo1-xc31.google.com (mail-oo1-xc31.google.com [IPv6:2607:f8b0:4864:20::c31])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84EFD1708
+	for <linux-clk@vger.kernel.org>; Fri,  1 Dec 2023 04:01:30 -0800 (PST)
+Received: by mail-oo1-xc31.google.com with SMTP id 006d021491bc7-58ceab7daddso980265eaf.3
+        for <linux-clk@vger.kernel.org>; Fri, 01 Dec 2023 04:01:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1701432090; x=1702036890; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nqr2nx7EOHUR5Y4hfhQw728v568+AKwyIx25pZkKlds=;
+        b=UibRQBdQNvd1oR1O5Us5sSBXMi7kXxb15mRL57gzg9qMcTn1h9hm2jHpZpkgM0szr9
+         TaKE9ee0XcnKjyMd2eCyx+s1TOP2WWZB4E61wNIih1AZ+/lz8eNxz7/hAgIYTzs0vYvZ
+         PhI48ibAmXVLqbV5r7nw3ttYL4G7FkFJBAUT843kc9xaxOg/8CzKm7TgMqE7AihTVtDX
+         C5VxCA5pzGGRwheTpkyTr2KlWy2YoyohVe0b6p8TofjEyAmzh925/Lknyj7JFsR77Vuk
+         UvC/wJKPb38+AjhMolwPUdLG53V1fs7z+oxSLZdk2MJzRdBUSG27ur5LTcCuspePatbn
+         Vrpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701432090; x=1702036890;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nqr2nx7EOHUR5Y4hfhQw728v568+AKwyIx25pZkKlds=;
+        b=d3gmbJXrJmzUQJp0p7CFHvE9S1JSu8jgwXrbVoGQhBYr4p5vvKf2EBR9OtZ89sOKHB
+         EaEH9deNj7cgJlB3X8v91awubYK0FXFDktNUZ5yj2iiuhZSbRPuDE3FRi66o3RUmMsXn
+         aBdpD7AHz4TSPYNSB6+dO47F69En4c19bXUPUh0tzaFopT5NUcnMbpFOrtgN065udb6u
+         Zsa36Uh+LuHrfJJa3gsK7GZ7c8HzFiTKGRVsE26H33mKg1K8F7kDg9lGt7i+d5JEfMyh
+         aGV2c27M/wwzkjad2KjkkEkSomu7LV783s3+sRADtVL8eHyLwJtPMkscuzHyc04Vv1Dj
+         tFcA==
+X-Gm-Message-State: AOJu0YwWOKNsTJT2yq6IlBUjyyNZ8PMaQTTjuCb+Jednq5U5qOyG09jY
+	tkngC59W0Z6UPk8L3R5Hy+zss5Dqfp4SfofGF8+8Xg==
+X-Google-Smtp-Source: AGHT+IEaVymyT4zngunznKYVd+LC7Ualf/L3X9ECNL23Q0+vmG0MBNBYVzrxhh9Wp1sn8PZeKLWznfrlwVe1KoQ8knI=
+X-Received: by 2002:a05:6358:e90:b0:16e:4162:2ae5 with SMTP id
+ 16-20020a0563580e9000b0016e41622ae5mr11320311rwg.8.1701432089401; Fri, 01 Dec
+ 2023 04:01:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20231201-videocc-8150-v3-4-56bec3a5e443@quicinc.com>
-References: <20231201-videocc-8150-v3-0-56bec3a5e443@quicinc.com>
-In-Reply-To: <20231201-videocc-8150-v3-0-56bec3a5e443@quicinc.com>
-To: Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>, Jonathan Marek <jonathan@marek.ca>
-CC: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Satya Priya
- Kakitapalli" <quic_skakitap@quicinc.com>
-X-Mailer: b4 0.12.4
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: syiUyzuHoWTiqdwhGtVfh99d6hDaAp-V
-X-Proofpoint-ORIG-GUID: syiUyzuHoWTiqdwhGtVfh99d6hDaAp-V
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-12-01_07,2023-11-30_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
- malwarescore=0 suspectscore=0 mlxlogscore=999 phishscore=0
- priorityscore=1501 spamscore=0 impostorscore=0 adultscore=0
- lowpriorityscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2311060000 definitions=main-2312010065
+References: <20231120212037.911774-1-peter.griffin@linaro.org>
+ <20231120212037.911774-19-peter.griffin@linaro.org> <CAPLW+4k=M1q1thr2RXG4fGkvD51H7NxS1A3Ck+Up7W1nTcUPcw@mail.gmail.com>
+In-Reply-To: <CAPLW+4k=M1q1thr2RXG4fGkvD51H7NxS1A3Ck+Up7W1nTcUPcw@mail.gmail.com>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Fri, 1 Dec 2023 12:01:16 +0000
+Message-ID: <CADrjBPoimnYhB3t5wSCKMTr8MbkDCVXvRmtsGzXrjZCW_7fF5A@mail.gmail.com>
+Subject: Re: [PATCH v4 18/19] arm64: dts: exynos: google: Add initial
+ Oriole/pixel 6 board support
+To: Sam Protsenko <semen.protsenko@linaro.org>
+Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
+	mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org, 
+	tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, 
+	wim@linux-watchdog.org, linux@roeck-us.net, catalin.marinas@arm.com, 
+	will@kernel.org, arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org, 
+	jirislaby@kernel.org, cw00.choi@samsung.com, alim.akhtar@samsung.com, 
+	tudor.ambarus@linaro.org, andre.draszik@linaro.org, saravanak@google.com, 
+	willmcvicker@google.com, soc@kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, kernel-team@android.com, 
+	linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add runtime PM support to ensure the supply rails are enabled
-when necessary.
+Hi Sam,
 
-Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
----
- drivers/clk/qcom/videocc-sm8150.c | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
+On Tue, 21 Nov 2023 at 18:39, Sam Protsenko <semen.protsenko@linaro.org> wr=
+ote:
+>
+> On Mon, Nov 20, 2023 at 3:21=E2=80=AFPM Peter Griffin <peter.griffin@lina=
+ro.org> wrote:
+> >
+> > Add initial board support for the Pixel 6 phone code named Oriole. This
+> > has been tested with a minimal busybox initramfs and boots to a shell.
 
-diff --git a/drivers/clk/qcom/videocc-sm8150.c b/drivers/clk/qcom/videocc-sm8150.c
-index 52a9a453a143..f1456eaa87c4 100644
---- a/drivers/clk/qcom/videocc-sm8150.c
-+++ b/drivers/clk/qcom/videocc-sm8150.c
-@@ -6,6 +6,7 @@
- #include <linux/clk-provider.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
- #include <linux/regmap.h>
- 
- #include <dt-bindings/clock/qcom,videocc-sm8150.h>
-@@ -240,17 +241,32 @@ MODULE_DEVICE_TABLE(of, video_cc_sm8150_match_table);
- static int video_cc_sm8150_probe(struct platform_device *pdev)
- {
- 	struct regmap *regmap;
-+	int ret;
-+
-+	ret = devm_pm_runtime_enable(&pdev->dev);
-+	if (ret)
-+		return ret;
-+
-+	ret = pm_runtime_resume_and_get(&pdev->dev);
-+	if (ret)
-+		return ret;
- 
- 	regmap = qcom_cc_map(pdev, &video_cc_sm8150_desc);
--	if (IS_ERR(regmap))
-+	if (IS_ERR(regmap)) {
-+		pm_runtime_put_sync(&pdev->dev);
- 		return PTR_ERR(regmap);
-+	}
- 
- 	clk_trion_pll_configure(&video_pll0, regmap, &video_pll0_config);
- 
- 	/* Keep VIDEO_CC_XO_CLK ALWAYS-ON */
- 	regmap_update_bits(regmap, 0x984, 0x1, 0x1);
- 
--	return qcom_cc_really_probe(pdev, &video_cc_sm8150_desc, regmap);
-+	ret = qcom_cc_really_probe(pdev, &video_cc_sm8150_desc, regmap);
-+
-+	pm_runtime_put_sync(&pdev->dev);
-+
-+	return ret;
- }
- 
- static struct platform_driver video_cc_sm8150_driver = {
+Will fix it in v5.
 
--- 
-2.25.1
-
+Peter
+> >
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > ---
+> >  arch/arm64/boot/dts/exynos/Makefile           |  2 +
+> >  arch/arm64/boot/dts/exynos/google/Makefile    |  4 +
+> >  .../boot/dts/exynos/google/gs101-oriole.dts   | 79 +++++++++++++++++++
+> >  3 files changed, 85 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/exynos/google/Makefile
+> >  create mode 100644 arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+> >
+> > diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/=
+exynos/Makefile
+> > index 6e4ba69268e5..44c24a8ad9e1 100644
+> > --- a/arch/arm64/boot/dts/exynos/Makefile
+> > +++ b/arch/arm64/boot/dts/exynos/Makefile
+> > @@ -1,4 +1,6 @@
+> >  # SPDX-License-Identifier: GPL-2.0
+> > +subdir-y +=3D google
+> > +
+> >  dtb-$(CONFIG_ARCH_EXYNOS) +=3D \
+> >         exynos5433-tm2.dtb              \
+> >         exynos5433-tm2e.dtb             \
+> > diff --git a/arch/arm64/boot/dts/exynos/google/Makefile b/arch/arm64/bo=
+ot/dts/exynos/google/Makefile
+> > new file mode 100644
+> > index 000000000000..0a6d5e1fe4ee
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/exynos/google/Makefile
+> > @@ -0,0 +1,4 @@
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +
+> > +dtb-$(CONFIG_ARCH_EXYNOS) +=3D \
+> > +       gs101-oriole.dtb \
+> > diff --git a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts b/arch/=
+arm64/boot/dts/exynos/google/gs101-oriole.dts
+> > new file mode 100644
+> > index 000000000000..111665490840
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+> > @@ -0,0 +1,79 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * Oriole Device Tree
+> > + *
+> > + * Copyright 2021-2023 Google,LLC
+> > + */
+> > +
+> > +/dts-v1/;
+> > +/plugin/;
+>
+> Now that the dts is being built as a dtb (not dtbo), I don' think this
+> /plugin/ bit is needed here?
+>
+> > +
+> > +#include <dt-bindings/gpio/gpio.h>
+> > +#include <dt-bindings/input/input.h>
+> > +#include "gs101-pinctrl.h"
+> > +#include "gs101.dtsi"
+> > +
+> > +/ {
+> > +       model =3D "Oriole";
+> > +       compatible =3D "google,gs101-oriole", "google,gs101";
+> > +
+> > +       chosen {
+> > +               bootargs =3D "earlycon=3Dexynos4210,mmio32,0x10A00000 c=
+onsole=3DttySAC0";
+> > +       };
+> > +
+> > +       gpio-keys {
+> > +               compatible =3D "gpio-keys";
+> > +               pinctrl-names =3D "default";
+> > +               pinctrl-0 =3D <&key_voldown>, <&key_volup>, <&key_power=
+>;
+> > +
+> > +               button-vol-down {
+> > +                       label =3D "KEY_VOLUMEDOWN";
+> > +                       linux,code =3D <KEY_VOLUMEDOWN>;
+> > +                       gpios =3D <&gpa7 3 GPIO_ACTIVE_LOW>;
+> > +                       wakeup-source;
+> > +               };
+> > +
+> > +               button-vol-up {
+> > +                       label =3D "KEY_VOLUMEUP";
+> > +                       linux,code =3D <KEY_VOLUMEUP>;
+> > +                       gpios =3D <&gpa8 1 GPIO_ACTIVE_LOW>;
+> > +                       wakeup-source;
+> > +               };
+> > +
+> > +               button-power {
+> > +                       label =3D "KEY_POWER";
+> > +                       linux,code =3D <KEY_POWER>;
+> > +                       gpios =3D <&gpa10 1 GPIO_ACTIVE_LOW>;
+> > +                       wakeup-source;
+> > +               };
+> > +       };
+> > +};
+> > +
+> > +&pinctrl_1 {
+> > +       key_voldown: key-voldown-pins {
+> > +               samsung,pins =3D "gpa7-3";
+> > +               samsung,pin-function =3D <0xf>;
+> > +               samsung,pin-pud =3D <0>;
+> > +               samsung,pin-drv =3D <GS101_PIN_DRV_2_5_MA>;
+> > +       };
+> > +
+> > +       key_volup: key-volup-pins {
+> > +               samsung,pins =3D "gpa8-1";
+> > +               samsung,pin-function =3D <0xf>;
+> > +               samsung,pin-pud =3D <0>;
+> > +               samsung,pin-drv =3D <GS101_PIN_DRV_2_5_MA>;
+> > +       };
+> > +};
+> > +
+> > +&pinctrl_0 {
+> > +       key_power: key-power-pins {
+> > +               samsung,pins =3D "gpa10-1";
+> > +               samsung,pin-function =3D <0xf>;
+> > +               samsung,pin-pud =3D <0>;
+> > +               samsung,pin-drv =3D <GS101_PIN_DRV_2_5_MA>;
+> > +       };
+> > +};
+> > +
+> > +&watchdog_cl0 {
+> > +       timeout-sec =3D <30>;
+> > +};
+> > --
+> > 2.43.0.rc1.413.gea7ed67945-goog
+> >
