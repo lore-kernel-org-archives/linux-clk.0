@@ -1,126 +1,98 @@
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52734210A;
+	Fri,  1 Dec 2023 22:39:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nBH1jcCi"
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7760D6C
-	for <linux-clk@vger.kernel.org>; Fri,  1 Dec 2023 13:45:52 -0800 (PST)
-Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-a1a0fedd3a1so155458566b.1
-        for <linux-clk@vger.kernel.org>; Fri, 01 Dec 2023 13:45:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701467151; x=1702071951; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8sn6TIMQGfSCwqnbYuewhqgGKU0sPXKc6S7oOa0pf30=;
-        b=nBH1jcCiXs3HaRgxJJ0QMoKL7bPIQzjdXBjFmDeGC3KBEvs/zRf3TV0vsEKV6sW2Wg
-         8ZXVBx2LLBQtAaAL7fSGNzgHWOwMw4+rwJnt1xxhgcBx+EMdn8LG6yha5OBW6d+ncmlP
-         Dv7POHpFWOryrV2EUagw8Yj6BRLl8aBANIP4BcA8nmnuNUvK5FphZjNNGiLYyz/EbfLz
-         H4L+7MWrMi6mOkNL/qfVOfYKxPElwqFBYglrxv8Ysf9D7RBm8dTc6ZLHg/7sdBONSgLU
-         xLfMvyNJyr19CPreSYoSE+VsZvd4Fdn4/bYSMYZM8FCajMvNUwpg4bxaiQFj9J2jMxN1
-         E5Ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701467151; x=1702071951;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8sn6TIMQGfSCwqnbYuewhqgGKU0sPXKc6S7oOa0pf30=;
-        b=WUD+QUAqA7G1WAPxzjMbnzzDqbQuJ7r2WUnD046SCoy77fImdd/0n8MPh5QcHZtUMv
-         3xzFLlM86hjD6QPX8zUGIHlL+IaxIEP4bu+wzrEozH9WWGE7gfzRHZAXTuxVpSDNGqu4
-         FudxU29Hv6RBqZYNvAAFlYDSKa2XC5u3L6ECGRlUGnAYtSl/RR2FtM+KvhACXRvd+QPS
-         P4FE5epjvaEIhxhs5wF7FZbAKBCnjbh6rRkopwkKCPUn5K9FQSY6kpzZyejI7sgxGCfq
-         AyHmH623kwVQ9UA4F7QueJEva6JlrAYxh/u0GwaNtM5ymYung/rvWiPaZy7SFODKDfBH
-         Fy+A==
-X-Gm-Message-State: AOJu0YzbV6uAyPx5B/AmDzaoh8UZQrN8v/YlYEc/r6OZ4h6o6llcwtzn
-	7+KA5Lqm5EZeucEW51S7/o4dxg==
-X-Google-Smtp-Source: AGHT+IEwdQx3qk30hc3NuMNho+pYuDCvbHivi7c1Kv4hAHmi7L90T8BZhGRCFodD8UzyTeAHY8dopg==
-X-Received: by 2002:a17:906:109c:b0:a19:396e:99bc with SMTP id u28-20020a170906109c00b00a19396e99bcmr550273eju.39.1701467151471;
-        Fri, 01 Dec 2023 13:45:51 -0800 (PST)
-Received: from [192.168.209.83] (178235187166.dynamic-4-waw-k-2-3-0.vectranet.pl. [178.235.187.166])
-        by smtp.gmail.com with ESMTPSA id a7-20020a1709062b0700b009fc8f309183sm2339415ejg.51.2023.12.01.13.45.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Dec 2023 13:45:51 -0800 (PST)
-Message-ID: <f1604d9c-663a-4778-87e6-53f8e4b8b25e@linaro.org>
-Date: Fri, 1 Dec 2023 22:45:49 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WQ5xW0PG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACC1BC433C9;
+	Fri,  1 Dec 2023 22:39:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1701470391;
+	bh=u6GaIbIyC8a69wwdRUdazP2geJ52q1bBtcXs0O51XL4=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=WQ5xW0PGeDnLuodMDPI8infn9jmtMouUNJra1NyhlZEI1ghM6i6cm6YZHHIifoWXj
+	 bj5ruP+LSLyBZQvhDHI5JKSY8gUrp7jkbmQ0XptFrTBHsaAEtIII/nHpXVXXSdCUnD
+	 ndYzlcxVKAWg2AM+6WrapF65cuA3ftDRUEYE5mywkrvBmp2eXpg/PHv3J9YDPqGEFv
+	 D2soCHorvdbDPTWdCoTTLzvt1GX0P0bPZilucDJve3tT7JpYczTkuDZtVP7C3djJSD
+	 p4HhJ8t5T57tz5um8uLZXf+1ykb5QGR9eYxHOeqMrK6ehamZHyCZ2XbfK4Aebn9Mo7
+	 kd+XRScnwMmrA==
+Message-ID: <d7cd97fb5dd2f320fbf52bf96b8fe79d.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/4] clk: qcom: videocc-sm8150: Add runtime PM support
-Content-Language: en-US
-To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Jonathan Marek <jonathan@marek.ca>
-Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20231201-videocc-8150-v3-0-56bec3a5e443@quicinc.com>
- <20231201-videocc-8150-v3-4-56bec3a5e443@quicinc.com>
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20231201-videocc-8150-v3-4-56bec3a5e443@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <871qca92s2.wl-kuninori.morimoto.gx@renesas.com>
+References: <8734x9tda9.wl-kuninori.morimoto.gx@renesas.com> <87wmulrynq.wl-kuninori.morimoto.gx@renesas.com> <20231116192324.GB2821275-robh@kernel.org> <CAMuHMdU0Hqem8Ooehoo64rrGn8q8+5A8_DjGZd9Tvh=Xej6mdA@mail.gmail.com> <31afd614c5eb5e82a860fecfc1c21c39.sboyd@kernel.org> <871qca92s2.wl-kuninori.morimoto.gx@renesas.com>
+Subject: Re: [PATCH 4/4] drivers: clk: renesas: enable all clocks which is assinged to non Linux system
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Rob Herring <robh@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Michael Turquette <mturquette@baylibre.com>, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Aymeric Aillet <aymeric.aillet@iot.bzh>, Yusuke Goda <yusuke.goda.sx@renesas.com>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Fri, 01 Dec 2023 22:39:49 +0000
+User-Agent: alot/0.10
 
-On 1.12.2023 10:50, Satya Priya Kakitapalli wrote:
-> Add runtime PM support to ensure the supply rails are enabled
-> when necessary.
-> 
-> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-> ---
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Quoting Kuninori Morimoto (2023-11-27 23:48:04)
+>=20
+> Hi Stephen
+>=20
+> Thank you for your feedback
+>=20
+> > Does the protected-clocks property work? That basically says "don't use
+> > these clks in the OS". The driver implementation would not register
+> > those clks and then the framework would be unaware of their existence,
+> > leading to them never being disabled during late init.
+> >=20
+> > This approach also looks OK to me, basically programmatically creating
+> > the protected-clocks list by parsing DT for reserved consumer nodes and
+> > then figuring out that no consumer exists so we can skip registering the
+> > clk entirely, or add the flag. I'm not sure we want to implement that
+> > policy globally, because maybe someone really wants to disable the clk
+> > still to clean up bootloader state and then let a remoteproc use the clk
+> > later.
+> >=20
+> > Do you want to keep those clks registered with the framework? Is there
+> > any benefit to keeping clks around if linux can't do anything with them?
+>=20
+> Actually, this idea (=3D using "protected-clocks" property style) was our=
+ 1st
+> idea, but I noticed that it is not enough. Because clock driver is possib=
+le
+> to know which module was not used on Linux, but other driver can't, in th=
+is
+> idea. For example, power-domain control driver might want to know about i=
+t.
+>=20
+> In case of using "protected-clocks" property, we need to have same/similar
+> settings on each driver, but in case of using "status =3D reserved", all
+> driver is possible to know it. It has consistent, and no contradict like
+> some module was listed as "protected-clocks" on clock / power driver,
+> but has "status =3D ok" on its driver, etc.
+>=20
+> It seems we have different opinions around here ?
 
-Konrad
->  	clk_trion_pll_configure(&video_pll0, regmap, &video_pll0_config);
->  
->  	/* Keep VIDEO_CC_XO_CLK ALWAYS-ON */
->  	regmap_update_bits(regmap, 0x984, 0x1, 0x1);
->  
-> -	return qcom_cc_really_probe(pdev, &video_cc_sm8150_desc, regmap);
-> +	ret = qcom_cc_really_probe(pdev, &video_cc_sm8150_desc, regmap);
-> +
-> +	pm_runtime_put_sync(&pdev->dev);
-> +
-> +	return ret;
->  }
->  
->  static struct platform_driver video_cc_sm8150_driver = {
-> 
+I don't really have any opinion here.
+
+>=20
+> Our other idea was having "unassigned" node instead of
+> "status =3D reserved", like below.
+> clock driver checks "unassigned" node's "devices" property, and
+> ignore/disable listed device's "clocks".
+>=20
+>         unassigned {
+>                 devices =3D <&scif1>, <&hsusb>;
+>         };
+
+This approach looks like the chosen node. I'd say what you have done in
+this patch series is better. The protected-clocks property is really
+about clks that shouldn't be used by the OS on some board. In your case
+it sounds like you want to still be able to read the clk hardware? Does
+anything go wrong if you let some consumer get the clk and change
+settings? Do you want to prevent that from happening? I'm mostly
+thinking it may be useful to have this logic be common in the clk
+framework by having the framework search through DT and figure out that
+the only consumers are reserved and thus we should treat those clks as
+read-only in the framework.
