@@ -1,184 +1,185 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oFtMD8CB"
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAA9A1713
-	for <linux-clk@vger.kernel.org>; Fri,  1 Dec 2023 06:45:10 -0800 (PST)
-Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-50bc8a9503fso3059872e87.3
-        for <linux-clk@vger.kernel.org>; Fri, 01 Dec 2023 06:45:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701441909; x=1702046709; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=scP7Kc4UKaObh0xtEvS6wmL9HVThK4eE79a/A4jC0hM=;
-        b=oFtMD8CB+QmsOLVCmDENuAEM/Auz/tRCS6ww8FNecUBX3lO2I3Fd3y2uYWhYvrKaNa
-         uJsj4hyrHAuQriav2RLG3qUSFhXcPQQLpZjHQLNFpKHEa464JiQ/8aIfwVFRgiKoQzFf
-         H9coFG4q3BATygX8BvxDM6L22AT8HHXJGaBicfY4/efJ2iZA+HNy/80iwdqX4UMOoeRW
-         Sd0mB890v2Fzd9KDq2jnbUllYPMsr08zzrlsIpAPJHzNiPe2Occf9UclA+gE0MJsAMo4
-         5sgBYT2XlmkJxuewmS5Q9U8GjGTs3C+V2jMX5SWRxW/Fh33ZJz4yWfZFGbruPVHS/kMt
-         M+fg==
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEBE51B2;
+	Fri,  1 Dec 2023 07:36:52 -0800 (PST)
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-5d3d5b10197so13329497b3.2;
+        Fri, 01 Dec 2023 07:36:52 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701441909; x=1702046709;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=scP7Kc4UKaObh0xtEvS6wmL9HVThK4eE79a/A4jC0hM=;
-        b=ie8y+3qqHVKDCCiCai3LnPAoPKbKKGYc5BQo/SJa3/rfHT/mx4M7+CyKUgt+6Lz/tp
-         pLO4jO2RPi8lUzhWh8lRdM9Qb0gnr4yBze7H8uuQi/IclLV+GrtzZ34HfPj0eMTYW2w2
-         rz+gNAdrPiCT9JAApP2wIlWKwpwltnRJ2TLSWB1riaqvo0ezDiVeMctafPqL/QLftsiA
-         LKxbUhLMIrtVziyJo3ad+qrvDrs7nB+gxQe+73V8IQQwFgOlCY96VDDZ7z1hm6d6g8jr
-         FqYUfXhlcpPBf90UqfUBy+1EzmnDWStrSWc68IuEt1wguuG6S0/Qh7kdSSli9zLG1iCl
-         y6Sg==
-X-Gm-Message-State: AOJu0YwqbDJvbdzfzv8glRq8Q2duDwXehvrd58xOC936F4gc91JIXq+i
-	wUDEe+gyMrAz5A2vdH13+nytxw==
-X-Google-Smtp-Source: AGHT+IFDmURw/1+0f/gPfkxoCzyZRCnMV6E3uGmE46G6VlApf1ssgiIC5tj7lB+C26laAk8i+mLtMw==
-X-Received: by 2002:a05:6512:21ac:b0:50b:cbb1:3c08 with SMTP id c12-20020a05651221ac00b0050bcbb13c08mr756768lft.36.1701441908913;
-        Fri, 01 Dec 2023 06:45:08 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.223.109])
-        by smtp.gmail.com with ESMTPSA id m9-20020a056000024900b0033334bc1338sm645717wrz.113.2023.12.01.06.45.07
+        d=1e100.net; s=20230601; t=1701445012; x=1702049812;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9UV5Mpe2cpSWdbqOG1++lkTk70fwQykmNN2hXvOVom0=;
+        b=YpNsaaEkTKiJqnC0KmEd8Jo2mC+Bu2i0qEQzNkvoXNWBQKWowhKE6gaeb991D0OtqV
+         SVlD7uMqw+So2IFAeStxmvO+24H4r1lNf0xB3nlsDKUIISky5JgEIeBvIkrbrXZYXgeL
+         ZfKc3U4+Lk8/NOzlIPtkXrFg0xc6wkXSfXtlB0qXjKZromJK1b0GFLUmIbks3XbzuCMG
+         d/+KquNI/LGfjOKgCDQENhxTkIaFwSSXZudNer2WNv69fOaNT5xwMXxs7jpOGxoIRS+L
+         E5iO6tlly9c1OMfmPhzocP3yUz9NCTfaz0XWwhrqU2hEJWyrdRGqp9TXyy907pX/A+Ty
+         pzoA==
+X-Gm-Message-State: AOJu0YzOBtlP+Yn4MysuDStUQ8KWqtU6Bj1qX1fqpoPZmziQ0fxxMNqu
+	v7MvT/vYBaRt0A0phu372Cb9IeMnQsh51A==
+X-Google-Smtp-Source: AGHT+IH90ZSpjcBFpWK8As4egkUF0GGiv6hK3MC47qVKASewNIIfK1QDpleOKB/Q85Az0GxxKXNpJw==
+X-Received: by 2002:a0d:ccc4:0:b0:5d4:244b:9e9a with SMTP id o187-20020a0dccc4000000b005d4244b9e9amr2259159ywd.17.1701445011611;
+        Fri, 01 Dec 2023 07:36:51 -0800 (PST)
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com. [209.85.128.181])
+        by smtp.gmail.com with ESMTPSA id i71-20020a0ddf4a000000b005d3758fda7dsm1022205ywe.31.2023.12.01.07.36.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Dec 2023 06:45:08 -0800 (PST)
-Message-ID: <48cf2111-46a0-4907-8d55-5ce80b585111@linaro.org>
-Date: Fri, 1 Dec 2023 15:45:06 +0100
+        Fri, 01 Dec 2023 07:36:50 -0800 (PST)
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-5d2c6c1ab66so24433777b3.1;
+        Fri, 01 Dec 2023 07:36:50 -0800 (PST)
+X-Received: by 2002:a0d:fc05:0:b0:5cb:332e:ab68 with SMTP id
+ m5-20020a0dfc05000000b005cb332eab68mr26596241ywf.5.1701445010237; Fri, 01 Dec
+ 2023 07:36:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: clock: ti: Convert interface.txt to
- json-schema
-Content-Language: en-US
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, kristo@kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
-References: <20231127202359.145778-1-andreas@kemnade.info>
- <7a62ed8a-b0e3-4881-90d7-b8f5d38e482e@linaro.org>
- <20231128093241.707a4fa0@aktux>
- <7361082a-f271-4ef4-9dad-06ee7445c749@linaro.org>
- <20231128214116.22dfff1e@akair>
- <221ba6a3-c4c2-40cd-b1d8-8170af78c784@linaro.org>
- <20231201150937.3631ee99@akair>
- <7aaea1e4-b7bd-47e4-a6e6-32b8195ea1bf@linaro.org>
- <20231201154112.2ecfdab2@aktux>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231201154112.2ecfdab2@aktux>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20231120070024.4079344-1-claudiu.beznea.uj@bp.renesas.com>
+ <20231120070024.4079344-4-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdVMpKVY8WX7dbtHfgnwgePH+i9+2BAumb37sFmqccb44g@mail.gmail.com>
+ <CAMuHMdVWvVtFMUe+J9R2ZU8Hi5CGs0NQfwUxitganM85183KkA@mail.gmail.com> <55a0048a-7fa1-49cd-a70f-8f7d948adf27@tuxon.dev>
+In-Reply-To: <55a0048a-7fa1-49cd-a70f-8f7d948adf27@tuxon.dev>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 1 Dec 2023 16:36:38 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUb79rt2YVQO66_+8YcmAyS-PwFVcx0XfZVN-to3EB2SQ@mail.gmail.com>
+Message-ID: <CAMuHMdUb79rt2YVQO66_+8YcmAyS-PwFVcx0XfZVN-to3EB2SQ@mail.gmail.com>
+Subject: Re: [PATCH 03/14] clk: renesas: rzg2l-cpg: Add support for MSTOP
+To: claudiu beznea <claudiu.beznea@tuxon.dev>
+Cc: s.shtylyov@omp.ru, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, robh+dt@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, linux@armlinux.org.uk, 
+	magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, 
+	linus.walleij@linaro.org, p.zabel@pengutronix.de, arnd@arndb.de, 
+	m.szyprowski@samsung.com, alexandre.torgue@foss.st.com, afd@ti.com, 
+	broonie@kernel.org, alexander.stein@ew.tq-group.com, 
+	eugen.hristev@collabora.com, sergei.shtylyov@gmail.com, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, biju.das.jz@bp.renesas.com, 
+	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 01/12/2023 15:41, Andreas Kemnade wrote:
-> On Fri, 1 Dec 2023 15:17:46 +0100
-> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
-> 
->> On 01/12/2023 15:09, Andreas Kemnade wrote:
->>> Am Wed, 29 Nov 2023 09:15:57 +0100
->>> schrieb Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>:
->>>   
->>>> On 28/11/2023 21:41, Andreas Kemnade wrote:  
->>>>> Am Tue, 28 Nov 2023 09:41:23 +0100
->>>>> schrieb Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>:    
->>>>>>> If the interface clock is not below a ti,clksel then we have reg.
->>>>>>>      
->>>>>>
->>>>>> This should be expressed in the bindings. It's fine to make the reg
->>>>>> optional (skip the description, it's confusing), but the ti,clksel
->>>>>> should reference this schema and enforce it on the children.
->>>>>>    
->>>>> Well there are other compatibles below ti,clksel, too, so should we
->>>>> rather add them when the other .txt files are converted?    
->>>>
->>>> This binding should already be referenced by ti,clksel. When the other
->>>> are ready, you will change additionalProperties from object to false.
->>>>  
->>> I played around with it:
->>>
->>> --- a/Documentation/devicetree/bindings/clock/ti/ti,clksel.yaml
->>> +++ b/Documentation/devicetree/bindings/clock/ti/ti,clksel.yaml
->>> @@ -33,6 +33,11 @@ properties:
->>>      const: 2
->>>      description: The CLKSEL register and bit offset
->>>  
->>> +patternProperties:
->>> +  "-ick$":
->>> +    $ref: /schemas/clock/ti/ti,interface-clock.yaml#
->>> +    type: object
->>> +
->>>  required:
->>>    - compatible
->>>    - reg
->>>
->>>  
->>> That generates warnings, which look more serious than just a
->>> non-converted compatible, so lowering the overall "signal-noise-ratio".
->>>
->>> e.g.
->>> from schema $id:
->>> http://devicetree.org/schemas/clock/ti/ti,clksel.yaml#
->>> /home/andi/linux-dtbs/arch/arm/boot/dts/ti/omap/omap3-overo-tobiduo.dtb:
->>> clock@c40: clock-rm-ick: 'ti,index-starts-at-one', 'ti,max-div' do not
->>> match any of the regexes: 'pinctrl-[0-9]+'
->>>
->>> I think we should rather postpone such referencing.  
->>
->> Are you sure in such case that your binding is correct? The warnings
->> suggest that not, therefore please do not postpone.
->>
-> well, there is not only stuff from clock/ti/ti,interface.yaml but also from
-> clock/ti/divider.txt below ti,clksel. So I have one warning about the missing
-> compatible there and also about the properties belonging to that compatible.
+Hi Claudiu,
 
-Ah, you have other bindings for the "-ick" nodes? Then you cannot match
-by pattern now, indeed. Maybe skipping ref but adding "compatible" into
-node, like we do for Qualcomm mdss bindings, would work. But in general
-all these should be converted at the same time.
+On Mon, Nov 27, 2023 at 8:37=E2=80=AFAM claudiu beznea <claudiu.beznea@tuxo=
+n.dev> wrote:
+> On 24.11.2023 11:08, Geert Uytterhoeven wrote:
+> > On Thu, Nov 23, 2023 at 5:35=E2=80=AFPM Geert Uytterhoeven <geert@linux=
+-m68k.org> wrote:
+> >> On Mon, Nov 20, 2023 at 8:01=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.=
+dev> wrote:
+> >>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> >>>
+> >>> RZ/{G2L, V2L, G3S} based CPG versions have support for saving extra
+> >>> power when clocks are disabled by activating module standby. This is =
+done
+> >>> though MSTOP specific registers that are part of CPG. Each individual
+> >>> module have one or more bits associated in one MSTOP register (see ta=
+ble
+> >>> "Registers for Module Standby Mode" from HW manuals). Hardware manual
+> >>> associates modules' clocks to one or more MSTOP bits. There are 3 map=
+pings
+> >>> available (identified by researching RZ/G2L, RZ/G3S, RZ/V2L HW manual=
+s):
+> >>>
+> >>> case 1: N clocks mapped to N MSTOP bits (with N=3D{0, ..., X})
+> >>> case 2: N clocks mapped to 1 MSTOP bit  (with N=3D{0, ..., X})
+> >>> case 3: N clocks mapped to M MSTOP bits (with N=3D{0, ..., X}, M=3D{0=
+, ..., Y})
+> >>>
+> >>> Case 3 has been currently identified on RZ/V2L for VCPL4 module.
+> >>>
+> >>> To cover all 3 cases the individual platform drivers will provide to
+> >>> clock driver MSTOP register offset and associated bits in this regist=
+er
+> >>> as a bitmask and the clock driver will apply this bitmask to proper
+> >>> MSTOP register.
+> >>>
+> >>> As most of the modules have more than one clock and these clocks are
+> >>> mapped to 1 MSTOP bitmap that need to be applied to MSTOP registers,
+> >>> to avoid switching the module to/out of standby when the module has
+> >>> enabled/disabled clocks a counter has been associated to each module
+> >>> (though struct mstop::count) which is incremented/decremented every
+> >>> time a module's clock is enabled/disabled and the settings to MSTOP
+> >>> register are applied only when the counter reaches zero (counter zero
+> >>> means either 1st clock of the module is going to be enabled or all cl=
+ocks
+> >>> of the module are going to be disabled).
 
-Best regards,
-Krzysztof
+> > After giving this some more thought, it feels odd to derive the standby
+> > state of a module from the state of its module clocks, while the latter
+> > are already controlled through Runtime PM and a Clock Domain.
+> >
+> > A first alternative solution could be to drop the GENPD_FLAG_PM_CLK
+> > flag from the RZ/G2L CPG clock domain, and provide your own
+> > gpd_dev_ops.start() and .stop() callbacks that take care of both
+> > module standby and clocks (through pm_clk_{resume,suspend}().
+> > (See https://elixir.bootlin.com/linux/v6.7-rc2/source/drivers/base/powe=
+r/domain.c#L2093
+> > for the GENPD_FLAG_PM_CLK case).
+> > That still leaves you with a need to associate an MSTOP register and
+> > bitmask with a device through its module clocks.
+> >
+> > A second alternative solution could be to increase #power-domain-cells
+> > from zero to one, and register individual PM Domains for each module,
+> > and control module standby from the generic_pm_domain.power_{on,off}()
+> > callbacks.  Devices would specify the module using the power-domains =
+=3D
+> > <&cpg <id> > property in DT, with <id> one of the to-be-added list of
+> > modules in include/dt-bindings/clock/r9a08g045-cpg.h.  The RZ/G2L CPG
+> > driver can handle the mapping from <id> to MSTOP register and bitmask.
+> > This solution requires updates to DT, but you can keep compatibility
+> > with old DTBs by only registering the new PM Domains when
+> > #power-domain-cells is one.
+> > The extra power saving would only be applicable with new DTBs, though.
+>
+> I prefer this alternative even though it cannot be applied for old DTBs, =
+it
+> looks to me that is more modular. What do you think?
 
+I prefer the second alternative, too.
+
+> The only thing is that MSTOP is not really a power off/on switch (if it
+> would be implemented with generic_pm_domain.power_{on, off}) but is more
+
+That's fine: Linux' PM Domains are fairly generic and abstract, and
+not limited to pure power domains/areas.
+
+> like a clock disable/enable functionality (it should not be an issue
+> though, just saying)... According to manual (I'm referring to Figure 41.4
+> Block Connection Overview for Module Standby Mode of HW manula of RZ/G3S)=
+,
+> it disables/enables the module's bus clock.
+
+Thanks for the pointer! That picture nicely shows the internal behavior.
+For comparison, on SH/R-Mobile and R-Car SoCs there is a similar
+internal structure, but it is less visible to the programmer:
+there are no individual controls for each clock or reset that is
+fed into a module.  These are all hidden behind a single Module
+Stop resp. Reset control bit.  In Linux, we modeled the module stop
+bit as a gate clock, controlled by Runtime PM through the Clock Domain's
+.start()/.stop() callbacks.
+
+Note that you also have to take into account Figure 41.2 ("Modules in
+Power Domain").  When adding support for power transitions later, you
+can register a PM Domain representing PD_ISOVCC, and use that as the
+parent PM Domain for the individual PM Domains for modules belonging
+to PD_ISOVCC.  All of that can be handled in the driver, and would
+not need any changes to DT.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
