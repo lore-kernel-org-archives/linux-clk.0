@@ -1,44 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0831D29A1;
-	Sun,  3 Dec 2023 04:52:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398F88F48;
+	Sun,  3 Dec 2023 04:52:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vn6SCojk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B36CAC433CA;
-	Sun,  3 Dec 2023 04:52:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m9Uuz6pb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 130FEC433AB;
+	Sun,  3 Dec 2023 04:52:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701579123;
-	bh=ZBfzcLulAOvvJhQEAYYfDB7Z+ayWI/kok1IjU4/gA0U=;
+	s=k20201202; t=1701579130;
+	bh=YeuRHBoPNkVCSPmwTY3GoodEH4nWjPlyCrxZ54RUWYc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Vn6SCojkEybCRbKi4FmI/T1TXpNxRPhCWP2wj7pMH3R2WZUCVCLVZysPXBuHCL0od
-	 ixonDRHAvOPLon2y+ZsBogn5n6AtmOIcpXGgLqVuuU0NRRXl96i9c9cU9/eehkySP+
-	 ptSnrXogUOe2SUN17WreTbIdENSgHynb1Y8Kg4laq50mwjSvtr7bG24Y8fmDlc11nc
-	 EzVqCnEEAH9FThnzg258TRAHLQfYVP6iSiIUM7Q3HAFNr+cEb2u3E5qFw6XyyyHv2/
-	 qlEDKWUgx7ikvdj7AiI83/yTiZ/1AuKYjsZWe6ib11T8PXr6DC9yjNjBXEp5p0mrJ5
-	 d6d8mcSQ3F4jQ==
+	b=m9Uuz6pbGx11AvtiMJ4etSscKGbgihUgEEV3+UHNl3bp/VgPl8B+NO1t2xzo3rgEZ
+	 U7hmQhb4QZREGGcc0vPGOlZ6Y6eLuSJxpJHu1mQm2lyq9kGaGRuyF5iQbURpAsNhO0
+	 I8nf38lV1BZotOFB1+s86bGNOJXpfQ9EP6PcTSC3QkG+x/h16Lu9DIMcLLFoUxqrVP
+	 PhlLDGKJw35bLbOnPciW7mLHTwHLcnI2J1XyHA5EGBtYSV+Wo6r/Dqg45cJ3ZGgXYq
+	 aFjVFwlFWI81d35Lvcht6Sd0NLVVXMUAHzCQAmiTut7oodWJEiW3X/XsvdXXnx/Vzn
+	 Mi3L4RUHJsLbw==
 From: Bjorn Andersson <andersson@kernel.org>
-To: dmitry.baryshkov@linaro.org,
-	agross@kernel.org,
+To: agross@kernel.org,
 	konrad.dybcio@linaro.org,
 	mturquette@baylibre.com,
 	sboyd@kernel.org,
 	robh+dt@kernel.org,
 	krzysztof.kozlowski+dt@linaro.org,
-	jassisinghbrar@gmail.com,
+	conor+dt@kernel.org,
 	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
-Cc: quic_varada@quicinc.com,
-	quic_srichara@quicinc.com
-Subject: Re: (subset) [PATCH V3 0/3] Add APSS clock driver support for IPQ5018
-Date: Sat,  2 Dec 2023 20:54:49 -0800
-Message-ID: <170157925793.1717511.11308464222863488586.b4-ty@kernel.org>
+	Robert Marko <robimarko@gmail.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: (subset) [PATCH v3 1/2] dt-bindings: clocks: qcom,gcc-ipq8074: allow QMP PCI PHY PIPE clocks
+Date: Sat,  2 Dec 2023 20:54:55 -0800
+Message-ID: <170157925810.1717511.14579487412126117705.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20230925102826.405446-1-quic_gokulsri@quicinc.com>
-References: <20230925102826.405446-1-quic_gokulsri@quicinc.com>
+In-Reply-To: <20231013164025.3541606-1-robimarko@gmail.com>
+References: <20231013164025.3541606-1-robimarko@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -49,21 +47,20 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Mon, 25 Sep 2023 15:58:23 +0530, Gokul Sriram Palanisamy wrote:
-> This series adds support for the APSS clock to bump the CPU frequency
-> above 800MHz. APSS PLL found in the IPQ5018 is of type Stromer.
+On Fri, 13 Oct 2023 18:39:33 +0200, Robert Marko wrote:
+> QMP PCI PHY PIPE clocks are inputs for the GCC clock controller.
+> In order to describe this in DTS, allow passing them as the inputs to GCC.
 > 
-> - The first patch in the series adds the required a53pll compatible.
+> This has a benefit that it avoids doing a global matching by name.
 > 
-> - The second patch reuses Stormer Plus PLL offsets, adds configuration values
->   for Stromer.
 > 
-> [...]
 
 Applied, thanks!
 
-[3/3] arm64: dts: qcom: ipq5018: enable the CPUFreq support
-      commit: 3e4b53e04281ed3d9c7a4329c027097265c04d54
+[1/2] dt-bindings: clocks: qcom,gcc-ipq8074: allow QMP PCI PHY PIPE clocks
+      commit: afc4f14be33c50f066392f1e9671473419ba7ded
+[2/2] arm64: dts: qcom: ipq8074: pass QMP PCI PHY PIPE clocks to GCC
+      commit: 591da388c344f934601548cb44f54eab012c6c94
 
 Best regards,
 -- 
