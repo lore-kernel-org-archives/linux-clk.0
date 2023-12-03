@@ -1,40 +1,39 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jpngEKT/"
-Received: from mail-qv1-xf2d.google.com (mail-qv1-xf2d.google.com [IPv6:2607:f8b0:4864:20::f2d])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 862DAAA
-	for <linux-clk@vger.kernel.org>; Sun,  3 Dec 2023 13:13:15 -0800 (PST)
-Received: by mail-qv1-xf2d.google.com with SMTP id 6a1803df08f44-67aa3b62c35so15975586d6.0
-        for <linux-clk@vger.kernel.org>; Sun, 03 Dec 2023 13:13:15 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QxdzWdj2"
+Received: from mail-oo1-xc29.google.com (mail-oo1-xc29.google.com [IPv6:2607:f8b0:4864:20::c29])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 187C1CF
+	for <linux-clk@vger.kernel.org>; Sun,  3 Dec 2023 13:21:26 -0800 (PST)
+Received: by mail-oo1-xc29.google.com with SMTP id 006d021491bc7-58d98188dc0so2414148eaf.3
+        for <linux-clk@vger.kernel.org>; Sun, 03 Dec 2023 13:21:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701637994; x=1702242794; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1zre7k0c+ogY7ZDcC33WmZ/JK0lLUk1oYQyRpKj1+vA=;
-        b=jpngEKT/p2wBNkDf6qi/wUTnA5K+mnXLLLbFdkhkZ0nyjU0/QS6dwIZPG4O+qocjFO
-         5ZYM3cGNhXv3F0fhR+wAN7RIDeudcEPXXx7hF+Z2KfWBfHhbfHCF4yEh4QbJsADO8KtM
-         ZxrW+mYm0kLgu1Z+d2dDGnIk85gtdizAL3nerYyRqbxbPI4LuZcePtmhdh0s3C6TE4Z5
-         BrcaEckMk2MMmHFviVpZahhz/bvogKlvJ8KEjAvJMAI9MhJoSTxyG285nEwzC87zyKvs
-         jTIILIJMy+RIBhasftBRAMzu69/VN19i6FkHtBpr+qBcOT722SGrwQruAGajnGVKxa8r
-         l4WA==
+        d=linaro.org; s=google; t=1701638485; x=1702243285; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=MBALP8YV0QZwaMwdd2KBWcj9Tq1p2Z16LRDLKvabBto=;
+        b=QxdzWdj2Adq+1FMGv2/fas25Mr2HqQdqka2/V56PA84tqjM8ns0LpH+We5MkNCIiFD
+         GEgtEtz4SdcDeBKq3EmCbft5zlmDS3ofH+iihci1Zzwlh3dCJ7RB4y2Vfk1iM+uiwra9
+         M6kIqZDgf3su24XfuYvAnEJ4BbCkWLoar/6US4luXNY+3Ke0vZYB5gqxbzqZi+pWr5L1
+         XVRaBYBiSro1MOUN/a04trw5OwjpXmp7GeZAXsXxaw9UqWciP7m9ZTgqb0CUwV29TrTO
+         Ni9nxijSfPpwhoC0z2wLerj8X7ZFAptUZNWRAF2gqCerfC/GMb1kn39PVdUDMNH1HR9I
+         f6Kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701637994; x=1702242794;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1zre7k0c+ogY7ZDcC33WmZ/JK0lLUk1oYQyRpKj1+vA=;
-        b=dxwPSVK8wYMVnUhOHl1z5jVtnnXzID/9h8e1aFwkDHvxC5QbI/3yUZLNyQio9J9Kyv
-         9MZFHH3G8kgOgyrTvI4dwiOA2+2Dvd9hZ7CaF7gXPGnkXfVuO3Pw8rAaPByaw2FLSzYN
-         1ijsWF6xV5ZEWp9CaK+23iQRQ0MR7/ccIIZ+ry+i4tj/OQFew1AFAtGTKP62ebf4X0cV
-         8AYMFkCDroEmbOfgrx/u3GzI4tBtMbmKNBV35oRNGrSzmQSGeL7/zJjbe2cGNLtkttzp
-         2AQQqj6z53CPVr9N/DSeqz0CLo2TOIi2n7Cxib5P9Yq136Mc/qdEqO2MjUa3GsCx5bTR
-         K2KA==
-X-Gm-Message-State: AOJu0YzPyegrHJFF/cl+nCkWt23x+cLN+GQqpdM/eIj+hJmHPY3iXV/M
-	jJYCrMh2DfAoyYt0vNDS2lfx+++V5U+yo+zoM/UuVA==
-X-Google-Smtp-Source: AGHT+IEjWYoskDsT6qQclByc2iZUX7v6m4JDySTfzZSHqy+bfmVegv8AsVt1GeFl3vTcQVGoNpPgv7MrMsxp6o0F0JE=
-X-Received: by 2002:a05:6214:1784:b0:67a:a721:e13a with SMTP id
- ct4-20020a056214178400b0067aa721e13amr3825700qvb.103.1701637994586; Sun, 03
- Dec 2023 13:13:14 -0800 (PST)
+        d=1e100.net; s=20230601; t=1701638485; x=1702243285;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MBALP8YV0QZwaMwdd2KBWcj9Tq1p2Z16LRDLKvabBto=;
+        b=jO6YnvEwmhbRne8QH27sop/mqhZJ16iuka1MJBWUl+sULjnfNgRGBqJp3nCHnT9jDm
+         hh5bDFssQ0gbpdveJGswx9/rL4YQ8ZErxwRCGyQjOKi3DSZeh1vri7NaDX3nErVnxlSH
+         XX1Ww7WL6jn3UGkgcccAQJ3+rgyXbH1mOuNG2KKB/SVTT6bKTxYRwA5bH7zryQdTcBKk
+         UPQDVPfkSak5XcKbiSlSIf/eApSB20Ddr0ASur54crC5rz4aku7rAsVfbDgG/PoAzwx8
+         WBp0jxhWov7ttMXL7M6b/3EjnK3PxMxIjG2175cuTVAIHZAlpPYLT95nlFCapi2ecb8n
+         d8wQ==
+X-Gm-Message-State: AOJu0Ywgz9yUP/ry68vev4f73Yovi6mAor8Y01tGVVOS95Z843T8aJtz
+	6FrfeedXkMkspkx4D7EIcl/wVZ61HhZ1+BEEYf51/A==
+X-Google-Smtp-Source: AGHT+IGtekMHkp852JA6RkiudAH5D96Q93RiRqk9YOj5heuqbhP+mmIk3wEQ0uwM4Ob7BzATccUT7+4SnMfM9Ymm5do=
+X-Received: by 2002:a05:6358:1206:b0:170:8f0:c6c2 with SMTP id
+ h6-20020a056358120600b0017008f0c6c2mr3905258rwi.21.1701638485268; Sun, 03 Dec
+ 2023 13:21:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -42,138 +41,66 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20231201160925.3136868-1-peter.griffin@linaro.org>
- <20231201160925.3136868-6-peter.griffin@linaro.org> <CAPLW+4mm8+U=wnXRfRG7QQHh02tiS3uo3Fw9ywYaCumV1qPB=g@mail.gmail.com>
-In-Reply-To: <CAPLW+4mm8+U=wnXRfRG7QQHh02tiS3uo3Fw9ywYaCumV1qPB=g@mail.gmail.com>
+ <20231201160925.3136868-8-peter.griffin@linaro.org> <fedd4ec8-b4e6-472a-9bfd-063ea8b9658e@linaro.org>
+In-Reply-To: <fedd4ec8-b4e6-472a-9bfd-063ea8b9658e@linaro.org>
 From: Peter Griffin <peter.griffin@linaro.org>
-Date: Sun, 3 Dec 2023 21:13:03 +0000
-Message-ID: <CADrjBPqgZsE1v5KTiqfqhraX2skx5b6=5zbsojup+M3r2G_f3w@mail.gmail.com>
-Subject: Re: [PATCH v5 05/20] dt-bindings: arm: google: Add bindings for
- Google ARM platforms
-To: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Sun, 3 Dec 2023 21:21:14 +0000
+Message-ID: <CADrjBPrqWKdhiL8TCcBC3ohLAwrAZiRwtA8Yg0q4gkrf9qrKqw@mail.gmail.com>
+Subject: Re: [PATCH v5 07/20] dt-bindings: pinctrl: samsung: add
+ gs101-wakeup-eint compatible
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
 	mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org, 
 	tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, 
 	wim@linux-watchdog.org, linux@roeck-us.net, catalin.marinas@arm.com, 
 	will@kernel.org, arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org, 
 	jirislaby@kernel.org, cw00.choi@samsung.com, alim.akhtar@samsung.com, 
-	tudor.ambarus@linaro.org, andre.draszik@linaro.org, saravanak@google.com, 
-	willmcvicker@google.com, soc@kernel.org, devicetree@vger.kernel.org, 
+	tudor.ambarus@linaro.org, andre.draszik@linaro.org, 
+	semen.protsenko@linaro.org, saravanak@google.com, willmcvicker@google.com, 
+	soc@kernel.org, devicetree@vger.kernel.org, 
 	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
 	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
 	linux-watchdog@vger.kernel.org, kernel-team@android.com, 
-	linux-serial@vger.kernel.org, Rob Herring <robh@kernel.org>
+	linux-serial@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Sam,
+Hi Krzysztof,
 
 Thanks for the review.
 
-On Fri, 1 Dec 2023 at 20:22, Sam Protsenko <semen.protsenko@linaro.org> wro=
-te:
+On Sun, 3 Dec 2023 at 15:11, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
 >
-> On Fri, Dec 1, 2023 at 10:10=E2=80=AFAM Peter Griffin <peter.griffin@lina=
-ro.org> wrote:
-> >
-> > This introduces bindings and dt-schema for the Google tensor SoCs.
-> > Currently just gs101 and pixel 6 are supported.
+> On 01/12/2023 17:09, Peter Griffin wrote:
+> > gs101 is similar to newer Exynos SoCs like Exynos850 and ExynosAutov9
+> > where more than one pin controller can do external wake-up interrupt.
+> > So add a dedicated compatible for it.
 > >
 > > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> > Reviewed-by: Rob Herring <robh@kernel.org>
 > > ---
->
-> Other than spelling comments below:
->
-> git st
->
-> >  .../devicetree/bindings/arm/google.yaml       | 53 +++++++++++++++++++
-> >  1 file changed, 53 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/arm/google.yaml
+> >  .../bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml      | 2 ++
+> >  1 file changed, 2 insertions(+)
 > >
-> > diff --git a/Documentation/devicetree/bindings/arm/google.yaml b/Docume=
-ntation/devicetree/bindings/arm/google.yaml
-> > new file mode 100644
-> > index 000000000000..be191e70192d
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/arm/google.yaml
-> > @@ -0,0 +1,53 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/arm/google.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Google Tensor platforms
-> > +
-> > +maintainers:
-> > +  - Peter Griffin <peter.griffin@linaro.org>
-> > +
-> > +description: |
-> > +  ARM platforms using SoCs designed by Google branded "Tensor" used in=
- Pixel
-> > +  devices.
-> > +
-> > +  Currently upstream this is devices using "gs101" SoC which is found =
-in Pixel
-> > +  6, Pixel 6 Pro and Pixel 6a.
-> > +
-> > +  Google have a few different names for the SoC.
+> > diff --git a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml
+> > index 2bafa867aea2..de2209f8ba00 100644
+> > --- a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml
+> > +++ b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml
+> > @@ -44,6 +44,7 @@ properties:
+> >            - const: samsung,exynos7-wakeup-eint
+> >        - items:
+> >            - enum:
+> > +              - google,gs101-wakeup-eint
+> >                - samsung,exynosautov9-wakeup-eint
+> >                - samsung,exynosautov920-wakeup-eint
+> >            - const: samsung,exynos850-wakeup-eint
+> > @@ -111,6 +112,7 @@ allOf:
+> >          compatible:
+> >            contains:
+> >              enum:
+> > +              - google,gs101-wakeup-eint
 >
-> Suggest removing period, or replacing it with colon.
+> Drop, not needed.
 
-will fix
->
-> > +  - Marketing name ("Tensor")
-> > +  - Codename ("Whitechapel")
-> > +  - SoC ID ("gs101")
-> > +  - Die ID ("S5P9845");
->
-> Semicolon seems off here.
+Will fix
 
-will fix
-
->
-> > +
-> > +  Likewise there are a couple of names for the actual device
-> > +  - Marketing name ("Pixel 6")
-> > +  - Codename ("Oriole")
-> > +
-> > +  Devicetrees should use the lowercased SoC ID and lowercased board co=
-dename.
->
-> period -> comma
->
-> > +  e.g. gs101 and gs101-oriole
->
-> Missing period character.
-
-will fix
-
-Peter
->
-> > +
-> > +properties:
-> > +  $nodename:
-> > +    const: '/'
-> > +  compatible:
-> > +    oneOf:
-> > +      - description: Google Pixel 6 / Oriole
-> > +        items:
-> > +          - enum:
-> > +              - google,gs101-oriole
-> > +          - const: google,gs101
-> > +
-> > +  # Bootloader requires empty ect node to be present
-> > +  ect:
-> > +    type: object
-> > +    additionalProperties: false
-> > +
-> > +required:
-> > +  - ect
-> > +
-> > +additionalProperties: true
-> > +
-> > +...
-> > --
-> > 2.43.0.rc2.451.g8631bc7472-goog
-> >
+Peter.
