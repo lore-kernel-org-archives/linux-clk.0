@@ -1,145 +1,108 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eWvMOGEu"
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4BBD116
-	for <linux-clk@vger.kernel.org>; Mon,  4 Dec 2023 09:51:47 -0800 (PST)
-Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-40c09f5a7cfso16494505e9.0
-        for <linux-clk@vger.kernel.org>; Mon, 04 Dec 2023 09:51:47 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qo2DVEbj"
+Received: from mail-oo1-xc33.google.com (mail-oo1-xc33.google.com [IPv6:2607:f8b0:4864:20::c33])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F09A21726;
+	Mon,  4 Dec 2023 10:57:25 -0800 (PST)
+Received: by mail-oo1-xc33.google.com with SMTP id 006d021491bc7-58cf894544cso3215481eaf.3;
+        Mon, 04 Dec 2023 10:57:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701712306; x=1702317106; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=0xgC+ecJ/aYtY2CvVGurydBuFpa6kzX9Y0C6MFp5IkI=;
-        b=eWvMOGEudiafOX/lUDK0Cp7kzPnaQUBQSUkzISJLBEFQEOITgBRJXCeShENLgqRcwX
-         iNELsPNVTx2I1F8/lvE7sAgifmAbzu2MOaPJV5eKCkF8OxDoWukCpfpchUK2f888X9QO
-         TLXJomtduvblUgRg6JW5wzKhL7s60epsYiXtIZFVk+Viea5iErOcvAgrsGEUB5f2f00T
-         kcdXr6WYIzyqjwJMkNrMdeFoYI2v22ylO4MtOqtNGD9IuIYJyuREkxlAAeC4Rk9x/XTC
-         QRf9lvrglZ8PYTO6TNzhZd6Af8n5a5cV7a6Uduck5xe+Pc3zG/fE00RF+2mkquBzjg35
-         gbfw==
+        d=gmail.com; s=20230601; t=1701716245; x=1702321045; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=m3EZHczOx7koya72sYXSi8rdiO9yIL2IVq+1IfTnxCg=;
+        b=Qo2DVEbj4sKxe0B5KHgI8eMEwg8X1xmz/ltQcsmzuZn2YW6OLOUKcd2kG+1SIDGfDG
+         aGpj+DOCTv3kZwKPQPPmeCtjJS8fC3v/65w9+rFtx07bzdU87sv6BWxk7Mb+hDOLWOLu
+         lFbGRbSakbdzDLVeguo8nENQIQKzsPScH6BoOQtN3eXOjpqaXO06tBNhpsSwe9hv0eP1
+         W1b9PajhXY/nlHMcrJxG1G4q9lo9xlDrrM9Kkd/r9ervi8Kpx29tLZi4pMMmHj9HoZmk
+         Md8D8+T3t6jFZdJtp6PaTcgDDPCgQzXNEJtdw11xtYtKhv+BSfyXDdtuWeVs9chG7Ytk
+         iEaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701712306; x=1702317106;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0xgC+ecJ/aYtY2CvVGurydBuFpa6kzX9Y0C6MFp5IkI=;
-        b=kn6ir6nTQ9/fBMxqeKdxRDzg6qt+YQcYFHmFYv+cGso8y/wiOop/DZJ+7UK3I/TODD
-         20NDeXDSAL5xjpiUgPnoOBnAVUyAWy5LraXF6UGwiD6ehVc7jJF/Giv5oZDQTRAOn3OW
-         IwJxeYHZ4XCcxEx8Q3Q7k0C42toTIYrJBMvUUWV1FHvltFHskCtJHVtjcbwVs/1kcaMQ
-         38lt7pbI1NvmCV/RlTwnE7+zMGBfNa1LbGZh41NBCAfJ4DeZF0GqFIj2JpqgsOItnq24
-         qkQ/lOvn9NsGZxbKyb1kEyNd1hGMAZa4xtZaHhHsxAnq3mAH5M/5pGtzjiz4JvnLMFDn
-         b35g==
-X-Gm-Message-State: AOJu0YzYXyTjXIb31kDqxFXfm67rnvKWEwvqyH+0z9K9bZCr2IiXT+cD
-	rxGfe7QXwmnaB0LqYjDBmbcZcQ==
-X-Google-Smtp-Source: AGHT+IHg/7kveHuWDixjU8ouQ7zKYnDBAtnudtwu6W88VoQ8XBhhZ2T41NB6zJGoDZ53CE5QrdWRqQ==
-X-Received: by 2002:a7b:cd07:0:b0:40b:5e59:ea0b with SMTP id f7-20020a7bcd07000000b0040b5e59ea0bmr2920644wmj.170.1701712306207;
-        Mon, 04 Dec 2023 09:51:46 -0800 (PST)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id f18-20020a05600c155200b004094d4292aesm15918570wmg.18.2023.12.04.09.51.44
+        d=1e100.net; s=20230601; t=1701716245; x=1702321045;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=m3EZHczOx7koya72sYXSi8rdiO9yIL2IVq+1IfTnxCg=;
+        b=dJky9vLpKICzYgfRroMt17zI9aQfRgc1Flh0LHImRaglYb7cZ5PdUcFWm3hVGughxX
+         aHShP1A3//ZWhP1subpV3SQohAwOZo83lkOP06hxd9cTDJuxDSgmPG9kr870mk4KQgLM
+         0USKkEO62Ee5e5uUOvFlccuU2IHymEjAh24PlGmzB7hbjCNqslN1ugp1QCzPn7vEuRQN
+         bXTsChJYfidaZ1BS+OezQEXyL2U5AkXImvovCVW7r+Od8t0NsGTqSSbLDXf8aAycNkSQ
+         7JrJQR3vn0hFu91qbAcZWrrqCLxhYsO22xGySpn8N3Ybdx4/v5fzenK7MNGDOJ/rCzp9
+         m0Vg==
+X-Gm-Message-State: AOJu0Yzx4Q8Fq2VXLx4Yd8YO2Hn6vieP4MpBALHtFwkOxqikhtoRBzLp
+	cBTr4zRrSEUNQ0t4WwYeO6s=
+X-Google-Smtp-Source: AGHT+IGsVHwRrAfqq4xLIPsN5oERcixtArTe5wxe1Vzbkpi/n7S980Z81B1TUUr2Z5wVehMBXeBH3Q==
+X-Received: by 2002:a05:6820:2c03:b0:58e:1c47:76c7 with SMTP id dw3-20020a0568202c0300b0058e1c4776c7mr3120244oob.19.1701716245016;
+        Mon, 04 Dec 2023 10:57:25 -0800 (PST)
+Received: from localhost.localdomain ([75.28.21.198])
+        by smtp.gmail.com with ESMTPSA id y25-20020a4a2d19000000b00581fc1af0a7sm2073303ooy.28.2023.12.04.10.57.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Dec 2023 09:51:45 -0800 (PST)
-Message-ID: <20bf05b9d9ccc5c11ef17500ac7a97c46dd46a9a.camel@linaro.org>
-Subject: Re: [PATCH v5 12/20] clk: samsung: clk-gs101: Add cmu_top, cmu_misc
- and cmu_apm support
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Peter Griffin <peter.griffin@linaro.org>, robh+dt@kernel.org, 
- krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
- conor+dt@kernel.org,  sboyd@kernel.org, tomasz.figa@gmail.com,
- s.nawrocki@samsung.com,  linus.walleij@linaro.org, wim@linux-watchdog.org,
- linux@roeck-us.net,  catalin.marinas@arm.com, will@kernel.org,
- arnd@arndb.de, olof@lixom.net,  gregkh@linuxfoundation.org,
- jirislaby@kernel.org, cw00.choi@samsung.com,  alim.akhtar@samsung.com
-Cc: tudor.ambarus@linaro.org, semen.protsenko@linaro.org,
- saravanak@google.com,  willmcvicker@google.com, soc@kernel.org,
- devicetree@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org,  linux-clk@vger.kernel.org,
- linux-gpio@vger.kernel.org,  linux-watchdog@vger.kernel.org,
- kernel-team@android.com,  linux-serial@vger.kernel.org
-Date: Mon, 04 Dec 2023 17:51:43 +0000
-In-Reply-To: <20231201160925.3136868-13-peter.griffin@linaro.org>
-References: <20231201160925.3136868-1-peter.griffin@linaro.org>
-	 <20231201160925.3136868-13-peter.griffin@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.49.2-3 
+        Mon, 04 Dec 2023 10:57:24 -0800 (PST)
+From: Chris Morgan <macroalpha82@gmail.com>
+To: linux-rockchip@lists.infradead.org
+Cc: dri-devel@lists.freedesktop.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	sboyd@kernel.org,
+	mturquette@baylibre.com,
+	tzimmermann@suse.de,
+	mripard@kernel.org,
+	maarten.lankhorst@linux.intel.com,
+	daniel@ffwll.ch,
+	airlied@gmail.com,
+	sam@ravnborg.org,
+	quic_jesszhan@quicinc.com,
+	neil.armstrong@linaro.org,
+	javierm@redhat.com,
+	heiko@sntech.de,
+	conor+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	robh+dt@kernel.org,
+	Chris Morgan <macromorgan@hotmail.com>
+Subject: [PATCH V2 00/10] rockchip: Add Powkiddy X55
+Date: Mon,  4 Dec 2023 12:57:09 -0600
+Message-Id: <20231204185719.569021-1-macroalpha82@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Fri, 2023-12-01 at 16:09 +0000, Peter Griffin wrote:
-> cmu_top is the top level clock management unit which contains PLLs, muxes=
-,
-> dividers and gates that feed the other clock management units.
->=20
-> cmu_misc clocks IPs such as Watchdog and cmu_apm clocks ips part of the
-> APM module.
->=20
-> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Tested-by: Will McVicker <willmcvicker@google.com>
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
-> =C2=A0drivers/clk/samsung/Makefile=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 =
-1 +
-> =C2=A0drivers/clk/samsung/clk-gs101.c | 2495 ++++++++++++++++++++++++++++=
-+++
-> =C2=A02 files changed, 2496 insertions(+)
-> =C2=A0create mode 100644 drivers/clk/samsung/clk-gs101.c
->=20
-> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
-> index ebbeacabe88f..3056944a5a54 100644
-> --- a/drivers/clk/samsung/Makefile
-> +++ b/drivers/clk/samsung/Makefile
-> @@ -21,6 +21,7 @@ obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+=3D clk-exynos7.=
-o
-> =C2=A0obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+=3D clk-exynos7885.o
-> =C2=A0obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+=3D clk-exynos850.o
-> =C2=A0obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+=3D clk-exynosautov9.o
-> +obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+=3D clk-gs101.o
-> =C2=A0obj-$(CONFIG_S3C64XX_COMMON_CLK)	+=3D clk-s3c64xx.o
-> =C2=A0obj-$(CONFIG_S5PV210_COMMON_CLK)	+=3D clk-s5pv210.o clk-s5pv210-aud=
-ss.o
-> =C2=A0obj-$(CONFIG_TESLA_FSD_COMMON_CLK)	+=3D clk-fsd.o
-> diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-gs=
-101.c
-> new file mode 100644
-> index 000000000000..6bd233a7ab63
-> --- /dev/null
-> +++ b/drivers/clk/samsung/clk-gs101.c
-> @@ -0,0 +1,2495 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2023 Linaro Ltd.
-> + * Author: Peter Griffin <peter.griffin@linaro.org>
-> + *
-> + * Common Clock Framework support for GS101.
-> + */
-> [...]
-> +
-> +/* List of parent clocks for Muxes in CMU_TOP: for CMU_HSI0 */
-> +PNAME(mout_cmu_hsi0_usb31drd_p)	=3D { "oscclk", "dout_shared2_div2" };
-> +
-> +PNAME(mout_cmu_hsi0_bus_p)	=3D { "dout_shared0_div4", "dout_shared1_div4=
-",
-> +				=C2=A0=C2=A0=C2=A0 "dout_shared2_div2", "dout_shared3_div2",
-> +				=C2=A0=C2=A0=C2=A0 "fout_spare_pll" };
+From: Chris Morgan <macromorgan@hotmail.com>
 
-This should also be updated....
-=20
-> [...]
-> +	MUX(CLK_MOUT_HSI0_BUS, "mout_cmu_hsi0_bus", mout_cmu_hsi0_bus_p,
-> +	=C2=A0=C2=A0=C2=A0 CLK_CON_MUX_MUX_CLKCMU_HSI0_BUS, 0, 3),
+Add support for the Rockchip RK3566 based Powkiddy X55 handheld gaming
+console.
 
-...because we have 8 possibilities now.
+Changes since V1:
+ - Corrected a bug with the DRM mode flags for the video driver.
+ - Adjusted panel front and back porch and pixel clock to fix
+   issues with display that occurred after correcting DRM mode
+   flag bug.
+ - Add a new clk frequency for PLL_VPLL to get panel to run at ~60hz.
 
-(I didn't check the other parents, but you mentioned you updated field widt=
-hs
-in other registers, too, so maybe need to double check the parent strings a=
-s well)
+Chris Morgan (10):
+  drm/panel: himax-hx8394: Drop prepare/unprepare tracking
+  drm/panel: himax-hx8394: Drop shutdown logic
+  dt-bindings: display: Document Himax HX8394 panel rotation
+  drm/panel: himax-hx8394: Add Panel Rotation Support
+  dt-bindings: display: himax-hx8394: Add Powkiddy X55 panel
+  drm/panel: himax-hx8394: Add Support for Powkiddy X55 panel
+  clk: rockchip: Mark pclk_usb as critical on rk3568
+  clk: rockchip: rk3568: Add PLL rate for 126.4MHz
+  dt-bindings: arm: rockchip: Add Powkiddy X55
+  arm64: dts: rockchip: Add Powkiddy X55
 
+ .../devicetree/bindings/arm/rockchip.yaml     |   1 +
+ .../bindings/display/panel/himax,hx8394.yaml  |   3 +
+ arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+ .../boot/dts/rockchip/rk3566-powkiddy-x55.dts | 926 ++++++++++++++++++
+ drivers/clk/rockchip/clk-rk3568.c             |   2 +
+ drivers/gpu/drm/panel/panel-himax-hx8394.c    | 180 +++-
+ 6 files changed, 1085 insertions(+), 28 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3566-powkiddy-x55.dts
 
-Cheers,
-Andre'
+-- 
+2.34.1
 
