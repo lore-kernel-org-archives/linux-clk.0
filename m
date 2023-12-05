@@ -1,70 +1,176 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B8189A;
-	Tue,  5 Dec 2023 01:52:38 -0800 (PST)
-Received: from i53875b61.versanet.de ([83.135.91.97] helo=phil.lan)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1rAS6K-0006aC-6u; Tue, 05 Dec 2023 10:52:24 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: linux-rockchip@lists.infradead.org,
-	Chris Morgan <macroalpha82@gmail.com>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	krzysztof.kozlowski+dt@linaro.org,
-	robh+dt@kernel.org,
-	daniel@ffwll.ch,
-	tzimmermann@suse.de,
-	linux-clk@vger.kernel.org,
-	conor+dt@kernel.org,
-	quic_jesszhan@quicinc.com,
-	maarten.lankhorst@linux.intel.com,
-	neil.armstrong@linaro.org,
+Received: from sakura.ysato.name (ik1-413-38519.vs.sakura.ne.jp [153.127.30.23])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4ECA49E;
+	Tue,  5 Dec 2023 01:55:32 -0800 (PST)
+Received: from SIOS1075.ysato.name (ZM005235.ppp.dion.ne.jp [222.8.5.235])
+	by sakura.ysato.name (Postfix) with ESMTPSA id 2A0FC1C06F4;
+	Tue,  5 Dec 2023 18:46:50 +0900 (JST)
+From: Yoshinori Sato <ysato@users.sourceforge.jp>
+To: linux-sh@vger.kernel.org
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Lee Jones <lee@kernel.org>,
+	Helge Deller <deller@gmx.de>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
 	Chris Morgan <macromorgan@hotmail.com>,
-	javierm@redhat.com,
-	sboyd@kernel.org,
-	sam@ravnborg.org,
-	mripard@kernel.org,
-	dri-devel@lists.freedesktop.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	David Rientjes <rientjes@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Baoquan He <bhe@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Guo Ren <guoren@kernel.org>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	Azeem Shaikh <azeemshaikh38@gmail.com>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	Bin Meng <bmeng@tinylab.org>,
+	Max Filippov <jcmvbkbc@gmail.com>,
+	Tom Rix <trix@redhat.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>,
+	Sergey Shtylyov <s.shtylyov@omp.ru>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	linux-ide@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	airlied@gmail.com,
-	mturquette@baylibre.com
-Subject: Re: (subset) [PATCH V2 00/10] rockchip: Add Powkiddy X55
-Date: Tue,  5 Dec 2023 10:52:22 +0100
-Message-Id: <170176993501.528247.5450175586364126094.b4-ty@sntech.de>
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-pci@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-fbdev@vger.kernel.org
+Subject: [DO NOT MERGE v5 24/37] dt-binding: sh: cpus: Add SH CPUs json-schema
+Date: Tue,  5 Dec 2023 18:45:43 +0900
+Message-Id: <c796ca5adc21c55f92968070e7f13201fe5b3f4a.1701768028.git.ysato@users.sourceforge.jp>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20231204185719.569021-1-macroalpha82@gmail.com>
-References: <20231204185719.569021-1-macroalpha82@gmail.com>
+In-Reply-To: <cover.1701768028.git.ysato@users.sourceforge.jp>
+References: <cover.1701768028.git.ysato@users.sourceforge.jp>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Mon, 4 Dec 2023 12:57:09 -0600, Chris Morgan wrote:
-> From: Chris Morgan <macromorgan@hotmail.com>
-> 
-> Add support for the Rockchip RK3566 based Powkiddy X55 handheld gaming
-> console.
-> 
-> Changes since V1:
->  - Corrected a bug with the DRM mode flags for the video driver.
->  - Adjusted panel front and back porch and pixel clock to fix
->    issues with display that occurred after correcting DRM mode
->    flag bug.
->  - Add a new clk frequency for PLL_VPLL to get panel to run at ~60hz.
-> 
-> [...]
+Renesas SH series and compatible ISA CPUs.
 
-Applied, thanks!
+Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
+---
+ .../devicetree/bindings/sh/cpus.yaml          | 73 +++++++++++++++++++
+ 1 file changed, 73 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sh/cpus.yaml
 
-[07/10] clk: rockchip: Mark pclk_usb as critical on rk3568
-        commit: 721bf080f249ab2adcc4337abe164230bfb8594f
-[08/10] clk: rockchip: rk3568: Add PLL rate for 126.4MHz
-        commit: 685da6972647b486980c0cc8fd6bb5d3863fd6b7
-
-Best regards,
+diff --git a/Documentation/devicetree/bindings/sh/cpus.yaml b/Documentation/devicetree/bindings/sh/cpus.yaml
+new file mode 100644
+index 000000000000..eb57e76e2aa2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sh/cpus.yaml
+@@ -0,0 +1,73 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/sh/cpus.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas SuperH CPUs
++
++maintainers:
++  - Yoshinori Sato <ysato@users.sourceforge.jp>
++
++description: |+
++  The device tree allows to describe the layout of CPUs in a system through
++  the "cpus" node, which in turn contains a number of subnodes (ie "cpu")
++  defining properties for every cpu.
++
++  Bindings for CPU nodes follow the Devicetree Specification, available from:
++
++  https://www.devicetree.org/specifications/
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - renesas,sh2a
++          - renesas,sh3
++          - renesas,sh4
++          - renesas,sh4a
++          - jcore,j2
++      - const: renesas,sh2
++
++  clock-frequency:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: |
++      CPU core clock freqency.
++
++  clocks: true
++
++  clock-names: true
++
++  reg:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    const: 0
++
++  device_type: true
++
++required:
++  - compatible
++  - reg
++  - device_type
++
++additionalProperties: true
++
++examples:
++  - |
++    #include <dt-bindings/clock/sh7750.h>
++    cpus {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        cpu: cpu@0 {
++            compatible = "renesas,sh4", "renesas,sh2";
++            device_type = "cpu";
++            reg = <0>;
++            clocks = <&cpg SH7750_CPG_ICK>;
++            clock-names = "ick";
++            icache-size = <16384>;
++            icache-line-size = <32>;
++            dcache-size = <32768>;
++            dcache-line-size = <32>;
++        };
++    };
++...
 -- 
-Heiko Stuebner <heiko@sntech.de>
+2.39.2
+
