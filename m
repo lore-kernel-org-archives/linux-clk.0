@@ -1,130 +1,108 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NovNhaNJ"
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2FBB124
-	for <linux-clk@vger.kernel.org>; Tue,  5 Dec 2023 00:09:31 -0800 (PST)
-Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-40c09b021daso24890035e9.0
-        for <linux-clk@vger.kernel.org>; Tue, 05 Dec 2023 00:09:31 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FJ8iiyw0"
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14CBEFA
+	for <linux-clk@vger.kernel.org>; Tue,  5 Dec 2023 00:26:55 -0800 (PST)
+Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-40bd5eaa66eso35057645e9.3
+        for <linux-clk@vger.kernel.org>; Tue, 05 Dec 2023 00:26:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701763770; x=1702368570; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=llS7f6J05UN7P4lvcEDyZPRcCQQD6OrCb5vmd5KnD6k=;
-        b=NovNhaNJA+SnPPI73/BoAabx2HN750hvhgCJnOAVlA+oUxyJ9H7qrS6xGtYEHlcxhd
-         SF7qGVO9MKRrXzy1W39Quo7RG4xmHAa/yb6ytvbMso8r44MW6dftf42ucGGo5a00TVBq
-         TTRG/Kt9I+Xg0vniAXutsgI0U6UlN9xhJ+EWrVGNvIk80CB9on2XyeyiLbiQejYa3FUD
-         y2L5DfmmTpRhJxetO1qiZ76d7NuLPGUE9tP7lpJMd9Fslv76/FJGFEUl/In98tNZP2tX
-         m1no03AoI7PRa5l3jVwau0oYrZXnDit2VtBAz10Fm2pDCaP7FXAom57nTf9VzyIz0eCg
-         cvQQ==
+        d=linaro.org; s=google; t=1701764813; x=1702369613; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2xo+/EwDShXw+0ErTm/Pk49sbvWBMtU3LMyMVMefHxA=;
+        b=FJ8iiyw0vD3N3LPvwAK07sWQO+FgnHAPSFzXjeYas1sJi8fW7acyzSl24KGFJZNEVx
+         dxYfmtmu9peGfyxpiPMGRIckdt6v5FQIbPnhYkeV9cS6Wfa4uphlaWPmy0XLnFRPLN09
+         ETdnGZ+vAtw/4nyilHPxNU0s001lQTWs90Gny5bRThe/pVQ6+zR9ewo+p7cML1w50wTt
+         glwXyLI+54EqXsux+dAzmhCuFifpNiYxvIQ4NgVQkFCBq4DVpxIRSgMfX/6QxcPprMzw
+         QYPmpcLge8MDApzJ39ZPL+ecdcc9W2iVcnxJ2H15Mqx+NST1B6UX20AsMKvGEk7TUe9a
+         7Fig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701763770; x=1702368570;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=llS7f6J05UN7P4lvcEDyZPRcCQQD6OrCb5vmd5KnD6k=;
-        b=r1FYVSiDk9CCJXgJCnynZZ4K+6Qzlj+c9/Jzrk2kiko60VaMfb9/thzkm4PEJguZdk
-         p+2e5TzV78EE8XK7oHRu1qTGILnP+u8rs2t9/Vry6Nae/jrbI7GvpMvyLqI4VdNiqNbg
-         U3vxQGsHGtoE4ICTdc5AzHnrNO7b2TBseTB+gJ+DA6MZVgJo3BN0c7Ow1xf0CVpTLy8p
-         QjKeGWtt8YECgl4m70Ng07i1YdzDOGcBrQWbhgA7FbMcg4dajOwPwTL6CT9vEUzTI5fo
-         NoFnorPAX2myc568VYt4sgQCFozB4HQln5ftYDGVtJ5SIs85m+UwpmYsEVoGEU20DIN5
-         UtIA==
-X-Gm-Message-State: AOJu0YxYEPLi8vcTm6Yfg00FASa71cvLgGfn85tZyVGRJ6SxophKqPd1
-	IFFsRyC12Rde4SmHqJQscvXFbw==
-X-Google-Smtp-Source: AGHT+IE+8qnIaRvP5U4oIVPqun3EKI7fA5pnVF2X2zE0apGVGOOPaI86NDaJpz7xHPp+qNxo2AQwbw==
-X-Received: by 2002:a05:600c:2146:b0:40b:63b0:e0b5 with SMTP id v6-20020a05600c214600b0040b63b0e0b5mr195357wml.224.1701763770352;
-        Tue, 05 Dec 2023 00:09:30 -0800 (PST)
-Received: from [10.1.1.118] ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id s8-20020a05600c45c800b00405c7591b09sm17883711wmo.35.2023.12.05.00.09.28
+        d=1e100.net; s=20230601; t=1701764813; x=1702369613;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2xo+/EwDShXw+0ErTm/Pk49sbvWBMtU3LMyMVMefHxA=;
+        b=chpy+AUvmrtqCcMSLKjPJER12Kr4QElIB3KTxd2eXrDiv6s5F0uF6PcH7wCsxqlLHf
+         nMHqqs5UHgGVY+/rFlhrWA2RAjFTb7WJ4if6ALJlyVxNnuFJXazWltTdVGhXW6SJpLqj
+         rxMd4vNwPaYbzgpGweRXlJp0wGMVLr42QwjLQ1shnitd28ZI5Z3g7aBhq4q+Y/HZuJIz
+         2fZL8Yo3Ra1bBj6sK2Zd2bzy6OURPl/8Ty0jlBU/jjQFkb18WGQj79kSdZRp2BQhN8oa
+         kCWB0/TVYaqSGdFM70DuaVisfuuun4BFe5pjXLUCsOALHAbVnwND15OBs6ijQz3R8hDV
+         lD5w==
+X-Gm-Message-State: AOJu0YwldMnt/OqnDxb+NUFtuHPSMiaaEFYz12mj0Y0QfIGdcUt9Odw5
+	G9Bjw9DqLiR5LGk/u1OFOOb0ZQ==
+X-Google-Smtp-Source: AGHT+IHm8d3BCfIGqE69y8jUoy6J3Kzb+QtEPPQ+oGlTFuH/rWCx6J2gokcJ9ngcoHN+c1BW732iPw==
+X-Received: by 2002:a05:600c:4655:b0:40b:5e1c:5c1f with SMTP id n21-20020a05600c465500b0040b5e1c5c1fmr234872wmo.52.1701764813586;
+        Tue, 05 Dec 2023 00:26:53 -0800 (PST)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id d4-20020a05600c3ac400b0040b538047b4sm21329282wms.3.2023.12.05.00.26.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Dec 2023 00:09:29 -0800 (PST)
-Message-ID: <860ca122a08bbce70b27d8880c621f0d12ddd2a5.camel@linaro.org>
-Subject: Re: [PATCH v5 12/20] clk: samsung: clk-gs101: Add cmu_top, cmu_misc
- and cmu_apm support
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Sam Protsenko <semen.protsenko@linaro.org>, Peter Griffin
-	 <peter.griffin@linaro.org>
-Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
- mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org, 
- tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, 
- wim@linux-watchdog.org, linux@roeck-us.net, catalin.marinas@arm.com, 
- will@kernel.org, arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org,
-  jirislaby@kernel.org, cw00.choi@samsung.com, alim.akhtar@samsung.com, 
- tudor.ambarus@linaro.org, saravanak@google.com, willmcvicker@google.com, 
- soc@kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,  linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org,  linux-gpio@vger.kernel.org,
- linux-watchdog@vger.kernel.org,  kernel-team@android.com,
- linux-serial@vger.kernel.org
-Date: Tue, 05 Dec 2023 08:09:28 +0000
-In-Reply-To: <CAPLW+4nAwWBHkAe2Wg2b+URsgN8ienPh14L=Fu8PUxf4gxq0ow@mail.gmail.com>
-References: <20231201160925.3136868-1-peter.griffin@linaro.org>
-	 <20231201160925.3136868-13-peter.griffin@linaro.org>
-	 <CAPLW+4nAwWBHkAe2Wg2b+URsgN8ienPh14L=Fu8PUxf4gxq0ow@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.49.2-3 
+        Tue, 05 Dec 2023 00:26:53 -0800 (PST)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+To: linux-rockchip@lists.infradead.org, 
+ Chris Morgan <macroalpha82@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, sboyd@kernel.org, mturquette@baylibre.com, 
+ tzimmermann@suse.de, mripard@kernel.org, maarten.lankhorst@linux.intel.com, 
+ daniel@ffwll.ch, airlied@gmail.com, sam@ravnborg.org, 
+ quic_jesszhan@quicinc.com, javierm@redhat.com, heiko@sntech.de, 
+ conor+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org, 
+ Chris Morgan <macromorgan@hotmail.com>
+In-Reply-To: <20231204185719.569021-1-macroalpha82@gmail.com>
+References: <20231204185719.569021-1-macroalpha82@gmail.com>
+Subject: Re: [PATCH V2 00/10] rockchip: Add Powkiddy X55
+Message-Id: <170176481258.4073725.14793788958228896320.b4-ty@linaro.org>
+Date: Tue, 05 Dec 2023 09:26:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.3
 
-Hi Sam,
+Hi,
 
-On Fri, 2023-12-01 at 16:40 -0600, Sam Protsenko wrote:
-> On Fri, Dec 1, 2023 at 10:11=E2=80=AFAM Peter Griffin <peter.griffin@lina=
-ro.org> wrote:
-> >=20
-> > [...]
-> > +#define CLK_CON_GAT_GOUT_BLK_APM_UID_SSMT_G_DBGCORE_IPCLKPORT_ACLK=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x20b8
-> > +#define CLK_CON_GAT_GOUT_BLK_APM_UID_SSMT_G_DBGCORE_IPCLKPORT_PCLK=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x20bc
-> > +#define CLK_CON_GAT_GOUT_BLK_APM_UID_SS_DBGCORE_IPCLKPORT_SS_DBGCORE_I=
-PCLKPORT_HCLK=C2=A0=C2=A0=C2=A0 0x20c0
->=20
-> As I understand, all those parts like IPCLKPORT, BLK, UID (RSTNSYNC
-> probably too) -- they don't really mean anything in the context of the
-> driver, just noise. And if you remove those -- there won't be any
-> conflicts with other names, because those bits are not the unique
-> parts. Following the TRM letter for letter in this case just makes
-> things extremely long without adding any value IMHO. For example, that
-> name above might be:
->=20
-> =C2=A0=C2=A0=C2=A0 CLK_CON_GAT_GOUT_APM_SS_DBGCORE_SS_DBGCORE_HCLK
->=20
-> or even
->=20
-> =C2=A0=C2=A0=C2=A0 CLK_CON_GAT_GOUT_APM_SS_DBGCORE_HCLK
->=20
-> would be fine.
->=20
-> In clk-exynos850 driver I removed all those parts, because they make
-> it pretty much impossible to read both the driver and dts. And yeah,
-> because those names consequenty lead to very long string names, dts
-> will be hard to read too, which is even worse. But again, that's only
-> my IMHO.
+On Mon, 04 Dec 2023 12:57:09 -0600, Chris Morgan wrote:
+> From: Chris Morgan <macromorgan@hotmail.com>
+> 
+> Add support for the Rockchip RK3566 based Powkiddy X55 handheld gaming
+> console.
+> 
+> Changes since V1:
+>  - Corrected a bug with the DRM mode flags for the video driver.
+>  - Adjusted panel front and back porch and pixel clock to fix
+>    issues with display that occurred after correcting DRM mode
+>    flag bug.
+>  - Add a new clk frequency for PLL_VPLL to get panel to run at ~60hz.
+> 
+> [...]
 
-The advantage of keeping the same name as in the data sheet is that then it=
-'s easy to
-correlate between driver and hardware and future / other hardware.
-By arbitrarily diverging from the TRM you make life much harder for yoursel=
-f when you
-have to look at this again in 12 months time after you've forgotten your na=
-me mangling
-approach; you also make it harder for everybody to review the driver or to =
-use the
-driver as a reference in the future for other hardware, as nobody except yo=
-u knows
-what kind of name-mangling was applied and which register (or clock in this=
- case) is
-really meant.
+Thanks, Applied to https://anongit.freedesktop.org/git/drm/drm-misc.git (drm-misc-next)
 
+[01/10] drm/panel: himax-hx8394: Drop prepare/unprepare tracking
+        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=8c2c5d1d33f0725b7995f44f87a81311d13a441d
+[02/10] drm/panel: himax-hx8394: Drop shutdown logic
+        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=e4f53a4d921eba6187a2599cf184a3beeb604fe2
+[03/10] dt-bindings: display: Document Himax HX8394 panel rotation
+        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=be478bc7ab08127473ce9ed893378cc2a8762611
+[04/10] drm/panel: himax-hx8394: Add Panel Rotation Support
+        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=a695a5009c8fd239a98d98209489997ff5397d2b
+[05/10] dt-bindings: display: himax-hx8394: Add Powkiddy X55 panel
+        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=00830a0d8f0d820335e7beb26e251069d90f2574
+[06/10] drm/panel: himax-hx8394: Add Support for Powkiddy X55 panel
+        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=38db985966d2f0f89f7e1891253489a16936fc5e
+[07/10] clk: rockchip: Mark pclk_usb as critical on rk3568
+        (no commit info)
+[08/10] clk: rockchip: rk3568: Add PLL rate for 126.4MHz
+        (no commit info)
+[09/10] dt-bindings: arm: rockchip: Add Powkiddy X55
+        (no commit info)
+[10/10] arm64: dts: rockchip: Add Powkiddy X55
+        (no commit info)
 
-Cheers,
-Andre'
+-- 
+Neil
 
