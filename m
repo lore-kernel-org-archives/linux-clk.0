@@ -1,94 +1,164 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="j41Z+6Ms"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51B78189
-	for <linux-clk@vger.kernel.org>; Tue,  5 Dec 2023 05:08:13 -0800 (PST)
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id B4DC53F18B
-	for <linux-clk@vger.kernel.org>; Tue,  5 Dec 2023 13:08:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1701781685;
-	bh=ipAJlSSYX/mAZm4xcMYzeaea4jWciG9PaIDcpgo9ae8=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=j41Z+6MsayA4SuWADLsm6SDFjxagvqVWmPvXhzwpd+Cx58ZFb/JFEInbWsna5OOF8
-	 mI/0NiYoCI0W5yAKdwLvDYJ0Ron/euvmdWnUzUdfaR4G8xtFq6/jE/l38nPjhckaZO
-	 hawZoRp/kMRZb0h73YJtWSFOozpTZ/KkvAKr8sNkL5rTcRvEBppqBkLOgmkermXDdH
-	 6PnuB1UZXV+YoBS1m8nCOmQu+MH81ni5b4VFE3I02ILtWbnuxLwP/QJdrkfoXygeic
-	 zZJg2cTAmyucgsxfM3NIBD1e86PaastxxJWC5ZJi70zP+EQwpUj5vcCORtZt4NP7eJ
-	 CgAOMpYGRoAFg==
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-423e480037cso75879691cf.3
-        for <linux-clk@vger.kernel.org>; Tue, 05 Dec 2023 05:08:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701781684; x=1702386484;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ipAJlSSYX/mAZm4xcMYzeaea4jWciG9PaIDcpgo9ae8=;
-        b=Zqfk9YuPYB4tNNCsrnQiKHN58lGgpqGnZkjARElnrIdE1wIGtEvf+08n5LOxziRtpU
-         X49JSCZPpPPHFwWh8GBICv/LpaIg6VXDIwtxrQohheFOJ+wArGbBlcXlpDCvhrhxfh6f
-         PrnuPqnu1ErNZZY3KyzUpE4Yd676y2EEjPWXzZrXgR/jx/+K9owqWm9FIFwNUD0+VtL3
-         Z7tzbJjbYmV+ErM5JO5hFoKyQ2DcdFhz+GXQTorte8tbsv6uWG8pBBGnoQv67dg42mW2
-         B5pIcTusKuprBP86pJrNaa0WwiqDIgJZQo70K/3+EjEWUxKlyGAN+gZe9m8sNmlJekB7
-         HrgA==
-X-Gm-Message-State: AOJu0Yx9CnJ4mf+AGpOAO9yygqSrz3vAjiRNN8sUTOn+3vnRdZK1E/Cc
-	Cz9BBE0EiWHTdnjNDNs6Q3plNSCWcUn3i/9kW6urc5/5Gk/nzCcrQX/Lkom2CfNycb+8gNom0F/
-	94uHtZWMJrXz6jJ3ox0q3pFK24sYDewOgnKcHYq57OKr0hIpP47yi/A==
-X-Received: by 2002:a05:622a:11d6:b0:425:4043:18ac with SMTP id n22-20020a05622a11d600b00425404318acmr1492011qtk.95.1701781684732;
-        Tue, 05 Dec 2023 05:08:04 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGlXRys+uhq05wTQp5gTIQeRVXtcocRfoOG2IGdr/XS7LnceeqhmOJyi1TFF74GFlFi520WeeSjrG5WeOdwcd4=
-X-Received: by 2002:a05:622a:11d6:b0:425:4043:18ac with SMTP id
- n22-20020a05622a11d600b00425404318acmr1491997qtk.95.1701781684479; Tue, 05
- Dec 2023 05:08:04 -0800 (PST)
-Received: from 348282803490 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 5 Dec 2023 05:08:03 -0800
-From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-In-Reply-To: <IA1PR20MB49532E1A3D8BA71FDBB444BCBB85A@IA1PR20MB4953.namprd20.prod.outlook.com>
-References: <IA1PR20MB49532E1A3D8BA71FDBB444BCBB85A@IA1PR20MB4953.namprd20.prod.outlook.com>
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="e82s3Tzu";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HwSdQyAW"
+Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C22F098;
+	Tue,  5 Dec 2023 05:14:58 -0800 (PST)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailout.nyi.internal (Postfix) with ESMTP id 395F35C013F;
+	Tue,  5 Dec 2023 08:14:58 -0500 (EST)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Tue, 05 Dec 2023 08:14:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:sender
+	:subject:subject:to:to; s=fm3; t=1701782098; x=1701868498; bh=ei
+	yfcAaW8S/0cnNR5qvKPP9FPzFqObUKOJebJtjaT4g=; b=e82s3TzuEm8iFGHKNS
+	Gcw1xRqRWMIt+B+zrl3U0DcuJVDFwt45xi8LiyrETrtYnQ1wwLupBHoIqQsyddf6
+	xLgfDKb1dMSQmJoElVvQt15tbGwy7+iNWi3jKg2rDxwVif5N6YS1cuKreesIgPUq
+	zD3DE4jkp+gB/bwz0CQTZYkghmZZNUTR5KlpTidQP9XU7RUUmL+hZipJ2tmXS7hA
+	bZyy5sT9uwijI6dPCHPag6D/oDN/VF3NFZp4mmCIvfl/cPq3WmTafwg/7a3AVA8u
+	IGUyrUlV/e8uCgKAnb/Cvf5cOBPJH88SX3/NTZXJ/FsHE0dClpcWsXkubmTc2Wfv
+	R1Ow==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:sender:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm1; t=1701782098; x=1701868498; bh=eiyfcAaW8S/0c
+	nNR5qvKPP9FPzFqObUKOJebJtjaT4g=; b=HwSdQyAWxW10UNefYT+kXCz5FDcjS
+	W3AhGVkVloQUOHSnpjTfkkghKOTbu44s5p8TcKhEl+SnyyLVMc3/Xjpvc2Ek8ySH
+	NuHNha8/kVEiyuotDB7hzu2/jYnZPzJEXWNrwtH4Yg8Fnt/K/VnXGEdS57TabMmN
+	ii8E3FocogroF9nuQ7oJOXEn26CU5wWcNFfzvz6cIAt4arVC5ovnC9okSdw0APMo
+	Nre8n6G9+BX/KZeaMvpa+Jv9S3TDwSLxOff1e/Y0/efyNaYBKuaDxSfhlXmiZrIl
+	CJ70bTRP9NN591XKuEzxPMzeRferbt7Xul1BBNaJWzOhfvLV1higsQPpQ==
+X-ME-Sender: <xms:USJvZd6q_qqg8y-myUW2OU3XdoUUet26-KY4YMbQhmxIpGJ1HIuw9w>
+    <xme:USJvZa5QkOzymByuv8k2ZrXFpUNnPL_taeqwsClWJF9URxNDSIWSOLSl5TQdCrKGt
+    YywaZXVFg3htsISz3o>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrudejkedghedtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:USJvZUcGt532mfRjlVgZJK4Y2XADcxhtuKw4tFKzfx02wWZqFEGX4Q>
+    <xmx:USJvZWLi6DblaUd28BK613vl7KpjoFKhlqm4ZCa235mWj_lrpjOxnw>
+    <xmx:USJvZRI0KIfF8nQeRic7wKBrMOS9L_IdS3EPwoUhNULSNpFw4EkeAw>
+    <xmx:UiJvZbz9T_gxgOYCBAmoSkOQ8q9e95L4fubtQWiXR8-oxiJcNAF_ZA>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 7F054B60089; Tue,  5 Dec 2023 08:14:57 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-1178-geeaf0069a7-fm-20231114.001-geeaf0069
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Tue, 5 Dec 2023 05:08:03 -0800
-Message-ID: <CAJM55Z9WO+0Yb-at6CAR6=UP9j60iQz=s7MK-3qiT=w-8N6+Zw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] riscv: sophgo: add clock support for Sophgo CV1800 SoCs
-To: Inochi Amaoto <inochiama@outlook.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Chao Wei <chao.wei@sophgo.com>, Chen Wang <unicorn_wang@outlook.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>
-Cc: Jisheng Zhang <jszhang@kernel.org>, qiujingbao.dlmu@gmail.com, dlan@gentoo.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Message-Id: <f2b58a5c-5457-485a-974f-cfda2e6dc2d2@app.fastmail.com>
+In-Reply-To: 
+ <76bbd45b22ef6cc1fa69369aff908c9c4e366860.1701768028.git.ysato@users.sourceforge.jp>
+References: <cover.1701768028.git.ysato@users.sourceforge.jp>
+ <76bbd45b22ef6cc1fa69369aff908c9c4e366860.1701768028.git.ysato@users.sourceforge.jp>
+Date: Tue, 05 Dec 2023 14:14:37 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Yoshinori Sato" <ysato@users.sourceforge.jp>, linux-sh@vger.kernel.org
+Cc: "Damien Le Moal" <dlemoal@kernel.org>,
+ "Rob Herring" <robh+dt@kernel.org>,
+ "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+ "Conor Dooley" <conor+dt@kernel.org>,
+ "Geert Uytterhoeven" <geert+renesas@glider.be>,
+ "Michael Turquette" <mturquette@baylibre.com>,
+ "Stephen Boyd" <sboyd@kernel.org>, "Dave Airlie" <airlied@gmail.com>,
+ "Daniel Vetter" <daniel@ffwll.ch>,
+ "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
+ "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>,
+ "Thomas Gleixner" <tglx@linutronix.de>,
+ "Lorenzo Pieralisi" <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ "Bjorn Helgaas" <bhelgaas@google.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Jiri Slaby" <jirislaby@kernel.org>,
+ "Magnus Damm" <magnus.damm@gmail.com>,
+ "Daniel Lezcano" <daniel.lezcano@linaro.org>,
+ "Rich Felker" <dalias@libc.org>,
+ "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
+ "Lee Jones" <lee@kernel.org>, "Helge Deller" <deller@gmx.de>,
+ =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ "Jernej Skrabec" <jernej.skrabec@gmail.com>,
+ "Chris Morgan" <macromorgan@hotmail.com>,
+ "Linus Walleij" <linus.walleij@linaro.org>,
+ "Randy Dunlap" <rdunlap@infradead.org>,
+ "Hyeonggon Yoo" <42.hyeyoo@gmail.com>,
+ "David Rientjes" <rientjes@google.com>,
+ "Vlastimil Babka" <vbabka@suse.cz>, "Baoquan He" <bhe@redhat.com>,
+ "Andrew Morton" <akpm@linux-foundation.org>,
+ "Guenter Roeck" <linux@roeck-us.net>,
+ "Stephen Rothwell" <sfr@canb.auug.org.au>, guoren <guoren@kernel.org>,
+ "Javier Martinez Canillas" <javierm@redhat.com>,
+ "Azeem Shaikh" <azeemshaikh38@gmail.com>,
+ "Palmer Dabbelt" <palmer@rivosinc.com>, "Bin Meng" <bmeng@tinylab.org>,
+ "Max Filippov" <jcmvbkbc@gmail.com>, "Tom Rix" <trix@redhat.com>,
+ "Herve Codina" <herve.codina@bootlin.com>,
+ "Jacky Huang" <ychuang3@nuvoton.com>,
+ "Lukas Bulwahn" <lukas.bulwahn@gmail.com>,
+ "Jonathan Corbet" <corbet@lwn.net>,
+ "Biju Das" <biju.das.jz@bp.renesas.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ "Sam Ravnborg" <sam@ravnborg.org>,
+ "Michael Karcher" <kernel@mkarcher.dialup.fu-berlin.de>,
+ "Sergey Shtylyov" <s.shtylyov@omp.ru>,
+ "Laurent Pinchart" <laurent.pinchart+renesas@ideasonboard.com>,
+ linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+ linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-pci@vger.kernel.org, linux-serial@vger.kernel.org,
+ linux-fbdev@vger.kernel.org
+Subject: Re: [DO NOT MERGE v5 06/37] sh: kernel/setup Update DT support.
+Content-Type: text/plain
 
-Inochi Amaoto wrote:
-> Add clock controller support for the Sophgo CV1800B and CV1812H.
+On Tue, Dec 5, 2023, at 10:45, Yoshinori Sato wrote:
+> Fix extrnal fdt initialize and bootargs.
 >
-> This patch follow this patch series:
-> https://lore.kernel.org/all/IA1PR20MB495399CAF2EEECC206ADA7ABBBD5A@IA1PR20MB4953.namprd20.prod.outlook.com/
+> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
+> ---
+>  arch/sh/kernel/setup.c | 51 ++++++++++++++++++++++++++++--------------
+>  1 file changed, 34 insertions(+), 17 deletions(-)
 >
-> Changed from v1:
-> 1. fix license issues.
->
-> Inochi Amaoto (4):
->   dt-bindings: clock: sophgo: Add clock controller of CV1800 series SoC
->   clk: sophgo: Add CV1800 series clock controller driver
->   riscv: dts: sophgo: add clock generator for Sophgo CV1800 series SoC
->   riscv: dts: sophgo: add uart clock for Sophgo CV1800 series SoC
+> diff --git a/arch/sh/kernel/setup.c b/arch/sh/kernel/setup.c
+> index 3d80515298d2..b299abff68e0 100644
+> --- a/arch/sh/kernel/setup.c
+> +++ b/arch/sh/kernel/setup.c
+> @@ -30,6 +30,7 @@
+>  #include <linux/memblock.h>
+>  #include <linux/of.h>
+>  #include <linux/of_fdt.h>
+> +#include <linux/libfdt.h>
+>  #include <linux/uaccess.h>
+>  #include <uapi/linux/mount.h>
+>  #include <asm/io.h>
+> @@ -74,7 +75,13 @@ extern int root_mountflags;
+>  #define RAMDISK_PROMPT_FLAG		0x8000
+>  #define RAMDISK_LOAD_FLAG		0x4000
+> 
+> +#if defined(CONFIG_OF) && !defined(CONFIG_USE_BUILTIN_DTB)
+> +#define CHOSEN_BOOTARGS
+> +#endif
+> +
+> +#ifndef CHOSEN_BOOTARGS
+>  static char __initdata command_line[COMMAND_LINE_SIZE] = { 0, };
+> +#endif
 
-Hi Inochi,
+I think an appended DTB is generally better than a built-in
+one, as that allows you to still have a single kernel
+image across machines and just pick the dtb when installing it.
 
-This series seems to be missing patch 1 and 2. If you did send them, but just
-omitted linux-riscv from those patches, please don't do that. Having the whole
-series makes it a lot easier to review without having to hunt down all the
-missing parts on lore.kernel.org.
+With everything else being equal, I would suggest not
+actually making this an option for new platforms.
 
-scripts/get_maintainer.pl does support muliple patches as input
-
-/Emil
+    Arnd
