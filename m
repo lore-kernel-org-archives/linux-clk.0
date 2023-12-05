@@ -1,70 +1,120 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 258A79E;
-	Tue,  5 Dec 2023 01:59:40 -0800 (PST)
-Received: from i53875b61.versanet.de ([83.135.91.97] helo=phil.lan)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1rASD8-0006dW-Kj; Tue, 05 Dec 2023 10:59:26 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: Chris Morgan <macroalpha82@gmail.com>,
-	linux-rockchip@lists.infradead.org
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	sam@ravnborg.org,
-	robh+dt@kernel.org,
-	javierm@redhat.com,
-	quic_jesszhan@quicinc.com,
-	krzysztof.kozlowski+dt@linaro.org,
-	daniel@ffwll.ch,
-	devicetree@vger.kernel.org,
-	mripard@kernel.org,
-	sboyd@kernel.org,
-	maarten.lankhorst@linux.intel.com,
-	dri-devel@lists.freedesktop.org,
-	Chris Morgan <macromorgan@hotmail.com>,
-	tzimmermann@suse.de,
-	neil.armstrong@linaro.org,
-	linux-clk@vger.kernel.org,
-	mturquette@baylibre.com,
-	conor+dt@kernel.org,
-	airlied@gmail.com
-Subject: Re: (subset) [PATCH V2 00/10] rockchip: Add Powkiddy X55
-Date: Tue,  5 Dec 2023 10:59:24 +0100
-Message-Id: <170177035808.530583.4519890630832587143.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20231204185719.569021-1-macroalpha82@gmail.com>
-References: <20231204185719.569021-1-macroalpha82@gmail.com>
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YDRJRetf"
+Received: from mail-yw1-x1136.google.com (mail-yw1-x1136.google.com [IPv6:2607:f8b0:4864:20::1136])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64111D3
+	for <linux-clk@vger.kernel.org>; Tue,  5 Dec 2023 02:00:08 -0800 (PST)
+Received: by mail-yw1-x1136.google.com with SMTP id 00721157ae682-5d34f8f211fso56213127b3.0
+        for <linux-clk@vger.kernel.org>; Tue, 05 Dec 2023 02:00:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1701770407; x=1702375207; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=i93Z/CqJ+EBecddDOnAmVzRbIcIUtO0ehOz5S54CfrQ=;
+        b=YDRJRetfQA80jrjZYAlfT90vA6kpOsfF70/ktTGJ25Lk4nxospYByarCuZVETKVEX+
+         T04DRfvWpjz7YsT/JikHiUPmjRMxckzN8B9eEohxgMhuq7QUvCZndWlRA1q+zTiXqVk8
+         raIS3RFBgbsMdp/iYKWaZ6ehoAazJ2aYoUu+BtQviPhvZxEdC8ELMogHqNsWrplpuegX
+         K/cI+VioTMwDX2wVOK7t+zmNadxVEtG6WgHcaC2menF1zD2agwrSdmG6LpvYGQH7xrhb
+         l6V0g+FLpDsl8+R0qUAVUTFj57n7Ilf6hVnNXQfX7hiOzM/b6Ti9kN1yK9VZvctCVCrZ
+         KiUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701770407; x=1702375207;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=i93Z/CqJ+EBecddDOnAmVzRbIcIUtO0ehOz5S54CfrQ=;
+        b=ugC4eIxGIX12HhihyQWx1mexcRkIURUhv1yA6g1sejV/H9YgWh3FI5jtqAVDwfLlUC
+         nYm/WCy2kIfTf5GNLRDEzp6LZaKwKgmEFOasuaLvj/nPWwqz1JMABxbc4FXB2Le4oxBb
+         VTVrga+zrG+jbyVrbxIGhozam5f72i5kxDdkhwZSOHLZyNMxnRl1Tv1pZxZi/u1ZmjUK
+         e5d6APkGcjsaJPLMqvLVn+cd+u026ypR6VdzOnUcFzn4EAIfsrd+Q4MI1VCvMl3OOvsX
+         CVCrfffO2Sd8kO83tYcE40T/GPgfCg+M03xDK+AVx7TIUBN7FL8l4tSk53FNC5ELBFaS
+         2OQg==
+X-Gm-Message-State: AOJu0YxqgLduulAAgj1+bg4/BVw3eeMofXWEsP9z/YTgDk8ts5kucGct
+	UVk5WgYjnPq+RxxNZRhH3EvYSudibCYC52mxWNoShA==
+X-Google-Smtp-Source: AGHT+IH5eTb2gwdS22rkWHvbJD/nbpWagDnymfw80erU7E8T3kEYsszdXZXrJ4vDy/yEfDwBBs/YnsUIOf3GGpmbFhk=
+X-Received: by 2002:a0d:ccd6:0:b0:5d7:1940:53d6 with SMTP id
+ o205-20020a0dccd6000000b005d7194053d6mr4529462ywd.78.1701770407103; Tue, 05
+ Dec 2023 02:00:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <cover.1701768028.git.ysato@users.sourceforge.jp> <1fafcf1c70ee4e38847bac1379bcb4555a237505.1701768028.git.ysato@users.sourceforge.jp>
+In-Reply-To: <1fafcf1c70ee4e38847bac1379bcb4555a237505.1701768028.git.ysato@users.sourceforge.jp>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 5 Dec 2023 10:59:54 +0100
+Message-ID: <CACRpkdbFNyEn_ub3moh9f6zbBKzTBt-CPRykUfexd5fXjpKE3Q@mail.gmail.com>
+Subject: Re: [DO NOT MERGE v5 17/37] dt-bindings: interrupt-controller:
+ renesas,sh7751-intc: Add json-schema
+To: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: linux-sh@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>, 
+	Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Thomas Gleixner <tglx@linutronix.de>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Rich Felker <dalias@libc.org>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Lee Jones <lee@kernel.org>, 
+	Helge Deller <deller@gmx.de>, Heiko Stuebner <heiko@sntech.de>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Chris Morgan <macromorgan@hotmail.com>, 
+	Randy Dunlap <rdunlap@infradead.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, David Rientjes <rientjes@google.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Baoquan He <bhe@redhat.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, Guo Ren <guoren@kernel.org>, 
+	Javier Martinez Canillas <javierm@redhat.com>, Azeem Shaikh <azeemshaikh38@gmail.com>, 
+	Palmer Dabbelt <palmer@rivosinc.com>, Bin Meng <bmeng@tinylab.org>, 
+	Max Filippov <jcmvbkbc@gmail.com>, Tom Rix <trix@redhat.com>, 
+	Herve Codina <herve.codina@bootlin.com>, Jacky Huang <ychuang3@nuvoton.com>, 
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
+	Sam Ravnborg <sam@ravnborg.org>, Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>, 
+	Sergey Shtylyov <s.shtylyov@omp.ru>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-ide@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-pci@vger.kernel.org, 
+	linux-serial@vger.kernel.org, linux-fbdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 4 Dec 2023 12:57:09 -0600, Chris Morgan wrote:
-> From: Chris Morgan <macromorgan@hotmail.com>
-> 
-> Add support for the Rockchip RK3566 based Powkiddy X55 handheld gaming
-> console.
-> 
-> Changes since V1:
->  - Corrected a bug with the DRM mode flags for the video driver.
->  - Adjusted panel front and back porch and pixel clock to fix
->    issues with display that occurred after correcting DRM mode
->    flag bug.
->  - Add a new clk frequency for PLL_VPLL to get panel to run at ~60hz.
-> 
-> [...]
+Hi Yoshinori,
 
-Applied, thanks!
+thanks for your patch!
 
-[09/10] dt-bindings: arm: rockchip: Add Powkiddy X55
-        commit: b7d755653790b5f5497df8bfb146c38beeb33b74
-[10/10] arm64: dts: rockchip: Add Powkiddy X55
-        commit: 009e2d0c224913eb4f44e9c2efe7a15789fc0c18
+On Tue, Dec 5, 2023 at 10:46=E2=80=AFAM Yoshinori Sato
+<ysato@users.sourceforge.jp> wrote:
 
-Best regards,
--- 
-Heiko Stuebner <heiko@sntech.de>
+> +  renesas,icr-irlm:
+> +    type: boolean
+> +    description: If true ICR.IRLM=3D1
+
+That's a bit hard to understand. I suppose it's something that need to some=
+times
+be changed for a system so would be good to document it properly.
+
+> +  renesas,ipr-map:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    description: |
+> +      IRQ to IPR mapping definition.
+> +      1st - INTEVT
+> +      2nd - Register
+> +      3rd - bit index
+
+Isn't this table always the same for a certain SoC, e.g. compatible
+"renesas,sh7751-intc"?
+
+Then don't keep it in the device tree, just look it up per-soc from a
+table in the driver.
+
+Other than that it looks good to me.
+
+Yours,
+Linus Walleij
