@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v+svZS7V"
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88A511AB
-	for <linux-clk@vger.kernel.org>; Tue,  5 Dec 2023 07:53:04 -0800 (PST)
-Received: by mail-lj1-x233.google.com with SMTP id 38308e7fff4ca-2c9f4bb2e5eso43479911fa.1
-        for <linux-clk@vger.kernel.org>; Tue, 05 Dec 2023 07:53:04 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MH6J1PFz"
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BD63196
+	for <linux-clk@vger.kernel.org>; Tue,  5 Dec 2023 07:56:42 -0800 (PST)
+Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-40c0f3a7717so17563195e9.1
+        for <linux-clk@vger.kernel.org>; Tue, 05 Dec 2023 07:56:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701791582; x=1702396382; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1701791800; x=1702396600; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=cDxJvDUfGGoAE4V0Rw0wbOjptS0R1clPyfID4dJYLn0=;
-        b=v+svZS7VqHlIi7kicqdR+J7LAdbRnqqCZ9I2KO4+SNhhrD6toOoz7sxIQlXOZlJVU/
-         YCZs90MI5KpgWLSo+ricX/kaRdTbvKr1MS9zYisWjJ0SPP4Xl9FSoNgZrSIhKf1Wwj/t
-         NajyzGDopuYkaprM0lDEjHiBFY3JdMJ+qs8l9qadMoSfw8GScNZAiytfFiadvwnWy0hB
-         X1vcGy7BL5vP0rnpYzjyOIf1Mc3OdjxTElp0r3RkZveOQ5nEr4wm/77UlCE9Ii0oV43V
-         gOZ1vx2JqQHVz7cp3G6l6w+FRpZ31nCgOtlkIVsTI6Q8T2MFpP6bte81hNJWL3wslpVW
-         Voiw==
+        bh=CFwmTmTH8S3Krb2dT6x0xVQdw0/3EUfnKzGAYpnyti4=;
+        b=MH6J1PFzpjQuAW1ZiYnjIIquaE9yxjNw7CqC88sevQXEWSMf4dDrN/QKgB6yGax+BQ
+         tyAPoS44fVZ+O2CbJMoJnfGZJwuEzm+itxSXBEKk3wCztZKOIOR2fopgzgTF9QUImKN6
+         CKcOBC+izhrIzIFENaajyUsNk7yyRoNfT7A9WvOQuMIr7HqySpkPFHYJFU6XCTMkso61
+         ukiiwB0y1Gci0jqY6rE6Gx/N9xvmx9DJ7DEqXGtbz0spj1etEAiMMEOobsjMJZC056Wr
+         C0XNTB4+nXd1x78X06NNN11afzvaEv36szpMYQvolM/lYQwkl0LlbBRsLjEAh4LVf7fV
+         Oskw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701791582; x=1702396382;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1701791800; x=1702396600;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cDxJvDUfGGoAE4V0Rw0wbOjptS0R1clPyfID4dJYLn0=;
-        b=SquFl1C59cS3zkYaAS2Y2H3hzYFiaqZOBb/Qbp8JWG3ZA/BBwzSn/OnRuO28gn1NqR
-         mC1c5ueV+JvUknubGCmBypRqssM5ewfzqRkK5nB212003VkKttDNmTH44aZsiM062RFA
-         PryUKOMT/Bx2jaPundAuHDtTlfQZAebdErIdAMfg5tZtP64fpyDfaipYmi1+nnM4CAmC
-         jqqrFFbt7RwDZtzJLhD8YePgE5f+QajUy/2EebiNZDfGWaPJ/4wSZwvtGA7iHwZ/MEdJ
-         +lMECjix2flUyCxJ65rzkprdZbpCX1OBbkdsZjBBo0hONHDYAzSxREiSXI2tleFNqcmQ
-         8byQ==
-X-Gm-Message-State: AOJu0Yzv0gzPEebk6yIjBkC53sTl1yUTn2pSZj0cumyyqF2895af7EO/
-	aQeui1lEa68AMCtksoezdD1j9g==
-X-Google-Smtp-Source: AGHT+IG6O/aYWKjAUNCb7d4ebr/jCVbDyDaG4mDg0mrvAYqCEVBl4MCruC9gNCa5Xg9gnikHWEj59A==
-X-Received: by 2002:a2e:93d5:0:b0:2ca:cc:a6e7 with SMTP id p21-20020a2e93d5000000b002ca00cca6e7mr1921239ljh.32.1701791582677;
-        Tue, 05 Dec 2023 07:53:02 -0800 (PST)
+        bh=CFwmTmTH8S3Krb2dT6x0xVQdw0/3EUfnKzGAYpnyti4=;
+        b=uV3yvCXfwQGA7HTrW0vAoUJw2zbrdggpnyODOlCkD6KvnvreoHQovT3gRCzb5ANcYd
+         ouSji+HXBjuqVE9DcGzgw2yCXffPdNF6j44IQvSL7Fcn4YVz4hKuXflzObtr1XxjvlJY
+         5hUJenQK3bdh70gdAOXkTkv9act7kyBWcCrDY7tZAF/0FRElfkvlBJNZSdZQaxUw3tFM
+         NKqpMvmTsBDcVewquHOeeKDqid6Cy/khub93Rbncz2jF2425OnPMYKG9pqJMzl4PF+Z3
+         k41rfey/QmKFK6n/cbO+jaPFKpEqwa6BZtYHasrfJt9C91Soptz9NHl9GyZYliA6jQKN
+         aXaA==
+X-Gm-Message-State: AOJu0YzbQmwa123UNF5d6eCxpbqII25gCbtECa7etgUwWD748Zob1T6n
+	SHp3YpAuE+ASovQ8PPAwLWsqqg==
+X-Google-Smtp-Source: AGHT+IGSuke5ouaZMSsbPV7HneHxjT56xIRiCskInLE+L5gFFjfA3c0ZUMGMrjlUzozfoRemKDn52w==
+X-Received: by 2002:a05:600c:1f92:b0:40b:5f03:b3d2 with SMTP id je18-20020a05600c1f9200b0040b5f03b3d2mr1668273wmb.244.1701791800640;
+        Tue, 05 Dec 2023 07:56:40 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id u23-20020a056402111700b0054c7a5a76b8sm1278876edv.0.2023.12.05.07.53.00
+        by smtp.gmail.com with ESMTPSA id bg24-20020a05600c3c9800b0040b3d33ab55sm23007490wmb.47.2023.12.05.07.56.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Dec 2023 07:53:02 -0800 (PST)
-Message-ID: <a8f02782-375c-4b2c-9d09-fb5898c4f62d@linaro.org>
-Date: Tue, 5 Dec 2023 16:52:59 +0100
+        Tue, 05 Dec 2023 07:56:40 -0800 (PST)
+Message-ID: <cd405624-6871-4d79-a28c-aa0a31ab7207@linaro.org>
+Date: Tue, 5 Dec 2023 16:56:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,21 +47,58 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/4] dt-bindings: clock: sophgo: Add SG2042 bindings
+Subject: Re: [DO NOT MERGE v5 22/37] dt-bindings: display: smi,sm501: SMI
+ SM501 binding json-schema
 Content-Language: en-US
-To: Chen Wang <unicorn_wang@outlook.com>, Chen Wang <unicornxw@gmail.com>,
- aou@eecs.berkeley.edu, chao.wei@sophgo.com, conor@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
- palmer@dabbelt.com, paul.walmsley@sifive.com, richardcochran@gmail.com,
- robh+dt@kernel.org, sboyd@kernel.org, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, haijiao.liu@sophgo.com,
- xiaoguang.xing@sophgo.com, guoren@kernel.org, jszhang@kernel.org,
- inochiama@outlook.com, samuel.holland@sifive.com
-References: <cover.1701734442.git.unicorn_wang@outlook.com>
- <188cd5e99394f358c0d103b8b95377f32c010161.1701734442.git.unicorn_wang@outlook.com>
- <5412a9a2-38cd-4321-9ee6-b50dd060a08f@linaro.org>
- <MA0P287MB0332E148B9F8922E01758A5CFE85A@MA0P287MB0332.INDP287.PROD.OUTLOOK.COM>
+To: Arnd Bergmann <arnd@arndb.de>, Yoshinori Sato
+ <ysato@users.sourceforge.jp>, linux-sh@vger.kernel.org
+Cc: Damien Le Moal <dlemoal@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Dave Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Rich Felker <dalias@libc.org>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ Lee Jones <lee@kernel.org>, Helge Deller <deller@gmx.de>,
+ =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Chris Morgan <macromorgan@hotmail.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Randy Dunlap <rdunlap@infradead.org>, Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+ David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>,
+ Baoquan He <bhe@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Guenter Roeck <linux@roeck-us.net>, Stephen Rothwell <sfr@canb.auug.org.au>,
+ guoren <guoren@kernel.org>, Javier Martinez Canillas <javierm@redhat.com>,
+ Azeem Shaikh <azeemshaikh38@gmail.com>, Palmer Dabbelt
+ <palmer@rivosinc.com>, Bin Meng <bmeng@tinylab.org>,
+ Max Filippov <jcmvbkbc@gmail.com>, Tom Rix <trix@redhat.com>,
+ Herve Codina <herve.codina@bootlin.com>, Jacky Huang <ychuang3@nuvoton.com>,
+ Lukas Bulwahn <lukas.bulwahn@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+ Biju Das <biju.das.jz@bp.renesas.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Sam Ravnborg <sam@ravnborg.org>,
+ Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>,
+ Sergey Shtylyov <s.shtylyov@omp.ru>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+ linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-pci@vger.kernel.org, linux-serial@vger.kernel.org,
+ linux-fbdev@vger.kernel.org
+References: <cover.1701768028.git.ysato@users.sourceforge.jp>
+ <f671beae8a8ebfd361f4c903bccce713135a169f.1701768028.git.ysato@users.sourceforge.jp>
+ <2a5ce0d0-ad0a-49d7-84a6-055c4b729eec@app.fastmail.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -107,33 +144,24 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <MA0P287MB0332E148B9F8922E01758A5CFE85A@MA0P287MB0332.INDP287.PROD.OUTLOOK.COM>
+In-Reply-To: <2a5ce0d0-ad0a-49d7-84a6-055c4b729eec@app.fastmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 05/12/2023 15:15, Chen Wang wrote:
+On 05/12/2023 14:36, Arnd Bergmann wrote:
+> On Tue, Dec 5, 2023, at 10:45, Yoshinori Sato wrote:
+>> Define SM501 functions and modes.
+>>
+>> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
+>> ---
+>>  .../bindings/display/smi,sm501.yaml           | 134 ++++++++++++++++++
+>>  include/dt-bindings/display/sm501.h           |  25 ++++
 > 
-> On 2023/12/5 16:08, Krzysztof Kozlowski wrote:
->> On 05/12/2023 01:23, Chen Wang wrote:
->>> From: Chen Wang <unicorn_wang@outlook.com>
->>>
->>> Add bindings for the clock generator on the SG2042 RISC-V SoC.
->> ......
->>> +      - const: sophgo,sg2042-clkgen
->>> +
->>> +  reg:
->>> +    maxItems: 1
->>> +
->>> +  system-ctrl:
->> Missing vendor prefix.
-> 
-> hi, Krzysztof,
-> 
-> One question: under what circumstances is it necessary to add the vendor 
-> prefix when defining a property?
+> It looks like we already have a binding at
+> Documentation/devicetree/bindings/display/sm501fb.txt
 
-Custom property, with exceptions of supplies, sometimes GPIOs. Please
-see my talks. Twice...
+Which I asked to do three months ago. Several comments were simply
+ignored and never responded to.
 
 Best regards,
 Krzysztof
