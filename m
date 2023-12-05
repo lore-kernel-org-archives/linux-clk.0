@@ -1,157 +1,140 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="nF4nEzBj"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10olkn2076.outbound.protection.outlook.com [40.92.41.76])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2FD810F;
-	Tue,  5 Dec 2023 03:02:33 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NVSq+Z3KdiVhbS7YddLG5kvDbx3EkK+ihGV176BYN8p8Dlau1zio74iPanGOGfJPl7e+NreBAFieWr7nlmwV54C9GtOLuLrSKEtBiDfqbjf5RR7FDUiXxbqIkrMQ6QktRPCtyOkbsk7qPqJ4WUpolJ9MJTU5pilRzdssuuGnqTvsr/887ala7YDtGmTmtf2r0UioexjRRJDlwUmAxeypWqgPWrZvVhKDh+O03uLpFN6x3Sq7UfSgAGONL+TLkgfPimZTJI1LHquzz5zxBz8chXr0kHioPPtUcq4NBGSk8MXwAv+0nceBzIGj0eu8JZ9pNJ3WFSzMuEuQZ6x3JzvIKQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dWTBreLWmrV4RdzBxhHiuBz+w0l7oGr5dRypcKGvWbE=;
- b=VQzmS6wpoX/UQcjmqxTEBdvnVUq/IA4Kkb5RJKpUxhkjy2N0NTRBeUBEnpubkOjRuhv3bRTZQPaECBLanpcLlPwMEDP17kDLn8r9UvNUYUki1Ss90htjx/4jnsEvkP7LuOr6aJTxAZL0g/vqMMvMyFtMKNqumCSf1LQwljaW0jfUCOmMejfPUBJbR0pp/FHDZMV9u/0McGz2RYX1L4IUSDGFgagsa4mD80y7dlcr+TkEaJuHC1hXakwgs030YGzM2ZNHI3J6f+qkjCFOs0vbOrWUgPSHmK5aXY19aALXkR2wqN77kvl/uv8eGGQ/BaTUjzlzvnnV4GmzVV3uDUXRtQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dWTBreLWmrV4RdzBxhHiuBz+w0l7oGr5dRypcKGvWbE=;
- b=nF4nEzBjQeOARUVKctxkCEbZwiF8Zpu/e9crt/hXdmwqKQMN9pYYAD34NN3md5rQhQijbA+YUGNGqYgTDZJ3T3cxg+PRQNQDh8txyJ1NcJbOHc18wJ6QQTgIaDO3C+aFMqhLSVeXc5N0e7+ri1shbD6mLDkfAqPpISgoFXZs29AppP7V7SnlxgMRAmrxQLc7Xgg99CLcZHnODozuECtcRYj0eBYDAAi9qgPwe3Wv6S5VfBmXKql3/Eqbci1ETZH/rkR9XqTfYo1YZoCmh5NuY4Q2iz1e3f91Sq2ackKg0q8dPt4hoAZfmC+iIxoOH+qLSax0gskZ+TPg6I5QsZN4+w==
-Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
- by PH7PR20MB5141.namprd20.prod.outlook.com (2603:10b6:510:1b0::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7046.34; Tue, 5 Dec
- 2023 11:02:31 +0000
-Received: from IA1PR20MB4953.namprd20.prod.outlook.com
- ([fe80::55b:c350:980:ad8]) by IA1PR20MB4953.namprd20.prod.outlook.com
- ([fe80::55b:c350:980:ad8%6]) with mapi id 15.20.7046.024; Tue, 5 Dec 2023
- 11:02:31 +0000
-From: Inochi Amaoto <inochiama@outlook.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chao Wei <chao.wei@sophgo.com>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Inochi Amaoto <inochiama@outlook.com>
-Cc: Jisheng Zhang <jszhang@kernel.org>,
-	qiujingbao.dlmu@gmail.com,
-	dlan@gentoo.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH 0/4] riscv: sophgo: add clock support for Sophgo CV1800 SoCs
-Date: Tue,  5 Dec 2023 19:02:34 +0800
-Message-ID:
- <IA1PR20MB4953948963D792F889396B37BB85A@IA1PR20MB4953.namprd20.prod.outlook.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <IA1PR20MB495382B725AFF6FC2C336BA6BB85A@IA1PR20MB4953.namprd20.prod.outlook.com>
-References: <IA1PR20MB495382B725AFF6FC2C336BA6BB85A@IA1PR20MB4953.namprd20.prod.outlook.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN: [uVoNrPE5tZ0jk6ozmFW057+LfJlJM0kktZAx7ChtA7E=]
-X-ClientProxiedBy: TY2PR06CA0041.apcprd06.prod.outlook.com
- (2603:1096:404:2e::29) To IA1PR20MB4953.namprd20.prod.outlook.com
- (2603:10b6:208:3af::19)
-X-Microsoft-Original-Message-ID:
- <20231205110234.979342-1-inochiama@outlook.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o/+uWSiy"
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA21012C
+	for <linux-clk@vger.kernel.org>; Tue,  5 Dec 2023 03:17:31 -0800 (PST)
+Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-54917ef6c05so6879401a12.1
+        for <linux-clk@vger.kernel.org>; Tue, 05 Dec 2023 03:17:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1701775050; x=1702379850; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=TxWwh/cbqNhCC+UC9PMJxi7T4T/jicRvZUPOApBBJNE=;
+        b=o/+uWSiy8SE/gzRSrvSl5sk9ymrRTq4ExDd4yKOwUJYq6mvXoNxtlZIG/Sy1jNwn9M
+         Tfq3191Q1yRKHSysqKUP2hl5qWmGJ2Ia4RPRGEgH6SjY16aF6hHgPBNQM222Ou5Rn1QA
+         YLKKN3IjRA6fykTwc1jut5rEc/74i0zMvv86b7GFp6sqxTDcCj282Cy9hQOqwG6MEtp5
+         nMxQacQZHBtjGlAJGZkvVlY0r9PPlmykBoaQeAGpSM0mW8cNHc38hvEnsFnMJ0l0y6Ua
+         leQXFGjfLJ+aYu2taz+UFW+YmNY+Sb9MEVK8+mDm3uCcEiwSiQOxCDOnpBfRJa8Jz4o8
+         RUtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701775050; x=1702379850;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TxWwh/cbqNhCC+UC9PMJxi7T4T/jicRvZUPOApBBJNE=;
+        b=mULEjrIuT9sxn2gh8ZwWTm0vrE6bEVrqxqJ4y4uwv6UIlR+4tchqpVl+UmfDxuRYFv
+         odp5kRIeSvPcWoxiB8kkN4T9rZ9z8+WnNJO5Ui1t+LEfkAxcS3/Uk352Uo2Hw5tYR5aC
+         UY/dNNl5zZAOqOzmh/miftwgUkLkYhA+CbhrHEtwapiItxLSeyZomHcNp3cQ5gm5dKyh
+         mT2oHrKXtXW0QW/SAqIKPZDUgWsmY008suwsB0DM/SeIeH9QSJh1J+nse+kJsq4eE7Qs
+         dHReoC57mSeQpMnT8c854GgnnMIc7JlgSqEjg51FbARPnCzbt6HOFWqpuOx8JwAFkuyi
+         MaAA==
+X-Gm-Message-State: AOJu0YxSlSumNlTdxE5izmPh54p/hXlYoeSgwDVGTLBo1ajZRYUQKJR7
+	jOZ937vCqKlF5Qb/TjHnHp7nPg==
+X-Google-Smtp-Source: AGHT+IEO13u6B4F2s7GvJIK9g+gVt1devyFH7NbMk9UeuUQ87Dt1jSum1qLhYYRPHNEobmP3FiYadA==
+X-Received: by 2002:a50:cccc:0:b0:54c:47cc:caf9 with SMTP id b12-20020a50cccc000000b0054c47cccaf9mr2528866edj.63.1701775050364;
+        Tue, 05 Dec 2023 03:17:30 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.218.27])
+        by smtp.gmail.com with ESMTPSA id w3-20020a50fa83000000b0054cb826a7e7sm941333edr.19.2023.12.05.03.17.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Dec 2023 03:17:30 -0800 (PST)
+Message-ID: <05d17d6d-490e-4524-ab1c-4ccc27b0d7bc@linaro.org>
+Date: Tue, 5 Dec 2023 12:17:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|PH7PR20MB5141:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5fe25801-f749-4eb7-4c6a-08dbf581ad12
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	olpotJh3jDkMYaAxsPX4UnKjpxrRq8NWr2cWeGscBkJOI/1cgHlqLgZYb8dsZclfDnejwE5tjnBztHei1zHDqFFoXwOoFGHNKBEzBfsY932QgT2rlc76OC/G8zrOBOZuQhTlLuVx49uJieb4RMLKtmTObTCni4b6Nb8qTZnJcDE+4ekNMsbwOuSlhLrJ3HgZ+hOP+zULZHRtC3QbTNKG94S8UZaLxEeAqYNE9i5QmLEnr9l/TAfGVW8ySiuD1ZpdketCWZYsMEa9g7RwLuvLSIz5Omi2752URWVWY5GCIzLjhJ3mEf4XISw1dklEY23v2NNO9kAD9dq4gdP+ePO3DY4Oh8lk6E7BmbgxciXyiOMiVBKOD72hO7lSsjCK3sED5B5/iCTsQDBZ+mIYrpcIE4ziCsnwj4MRgRr6xKUfu34h8MVv6f8OvDhYZiXIKzUMd/Pg+A1zw2HzRqIwaKtQycaoQwAsX0Vqs9JiyOhublOqYJQ79PgjUmi7497MaQgrlSisSBXt1B8DqbPCqxgismY0QvJXkYIg9ggt5fHJFIvrwVYXneMP8NVj2K/It/jn/ZfpBnlPeokXR5ZhWvGhIkjZNv3WDoRh4uCnNuvhE2JLBm+NBoPTcMfBfiY4Ki6n
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?d8cc0buXfkcWWyoRGODh6jRvLxEm8OBpSCA3bFaRMV07P9qwsbSoNmyl0uzY?=
- =?us-ascii?Q?H7rmxW1tWxVQib2TlJZ2apSq3CA/PLihbX0irNvt4NorRpsYmIifFr+siSae?=
- =?us-ascii?Q?N4UB1ANthtTdi1axooCi+7UMiyq5r24uIc/cKOhFnyinWH6ZoscWzl2Cmj2e?=
- =?us-ascii?Q?Wp9ywVF/LSz4M3R6Ok+w5h3Mr1BaO+9O6bRSMPfcI6qyr19quytOD6u9aAsO?=
- =?us-ascii?Q?zE6COWoDwPhRY2s+5R0VJ6fnU2K7+ZqCAn0HKALw7YCQyUYF1MYa+EerTb9A?=
- =?us-ascii?Q?N5oI7nxsvRXDMi7mwWA4AV/WC6xXeigcIDh4oxWBiFHfDDY6bf5VjwHQfWEc?=
- =?us-ascii?Q?7iitKWX8QjTOyUn8FmH/15CjBbJx9kg0n01cSlwhJqf7OrV2hv01SkZLmorP?=
- =?us-ascii?Q?SvjDLdo6XQqHCJdpm7yHf7yhPnqCTwitju1ny71CnZ5kxsUIUfXwUjhcV3FR?=
- =?us-ascii?Q?3MqM1oZ/9KOsKhw6zrS2SB219T1STK6k/Ig7dSvuqg5OT8NLXhbaef+1wsXw?=
- =?us-ascii?Q?r9kyigYR6MnTh6kZvEmlyeZ4r9aTdSgh+swgqUzeWEdUg1AsTWzNWZ7/hg8I?=
- =?us-ascii?Q?AZ+U1iiRUguPDZwn5KxHiICE251rw80zW3jX3E5JReM/+blxPOAVpQis4Lle?=
- =?us-ascii?Q?jDoZuQ48BG1F7zjZZ+dX9nHvvZO1p6MlBcQ/l11cu7o91WH8eK+46qYpax6A?=
- =?us-ascii?Q?Q6Vyorb0yepPlwOep84pl/jeF+jfW0Ue+qhzhdAAN3t9hiXvm4ViXD3Bw6Dn?=
- =?us-ascii?Q?IkSWlakaXVs4oE0U2iBcbfI9Qn6qa8cynYZvdh9mqPg5umPzKq0fjmEe7hMi?=
- =?us-ascii?Q?IpG9KH36zZze80zUdB0x155yd4/+aLx3sNIZWIAqwOM8+1nmz9S0xoeBF7pE?=
- =?us-ascii?Q?ZbhnkXZrAmkdrMjuhJRsG6ISDfe9kYhzSU3jMMQNZEL0X9F1NngaStosf+Rx?=
- =?us-ascii?Q?SQ9nNm1YWqXE/6F3XebBrMb/P2uQXm0IhyyNv0tt5JabQNOVm97Dl/2YlHlW?=
- =?us-ascii?Q?bLmM6bmhdj/XxSF0ZJ35T5stSATDkvZ25Yg3v3FttL743CDrwl7/biYULSwp?=
- =?us-ascii?Q?AvugKlBNBClT7qD0+tzjtcOg1xu0ootN7RdbOHkANNLWDZzLIODWJl0Zos7M?=
- =?us-ascii?Q?GEldcrq0VgzkHRIURF4lRtQ7HD3p2DKmMlFkaYHmi7olS64TGcmlMSJ4YKv5?=
- =?us-ascii?Q?hbycvdqF6JiBZN4Dq/uetcuw3v1HA77wjRV4gnx7xyOHqy70MDhiq/P58Fk?=
- =?us-ascii?Q?=3D?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5fe25801-f749-4eb7-4c6a-08dbf581ad12
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2023 11:02:30.9872
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR20MB5141
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] dt-bindings: clock: sophgo: Add CV1800 bindings
+To: Inochi Amaoto <inochiama@outlook.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Chen Wang <unicorn_wang@outlook.com>, Jisheng Zhang <jszhang@kernel.org>,
+ qiujingbao.dlmu@gmail.com, dlan@gentoo.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <IA1PR20MB495382B725AFF6FC2C336BA6BB85A@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <IA1PR20MB4953339100B4873AA96E2033BB85A@IA1PR20MB4953.namprd20.prod.outlook.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
+ m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
+ HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
+ XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
+ mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
+ v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
+ cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
+ rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
+ qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
+ aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
+ gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
+ dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
+ NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
+ hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
+ oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
+ H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
+ yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
+ 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
+ 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
+ +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
+ FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
+ 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
+ DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
+ oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
+ 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
+ Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
+ qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
+ /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
+ qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
+ EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
+ KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
+ fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <IA1PR20MB4953339100B4873AA96E2033BB85A@IA1PR20MB4953.namprd20.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
->
->Add clock controller support for the Sophgo CV1800B and CV1812H.
->
->Inochi Amaoto (4):
->  dt-bindings: clock: sophgo: Add CV1800 bindings
->  clk: sophgo: Add CV1800 series clock controller driver
->  riscv: dts: sophgo: add clock generator for Sophgo CV1800 series SoC
->  riscv: dts: sophgo: add uart clock for Sophgo CV1800 series SoC
->
-> .../bindings/clock/sophgo,cv1800-clk.yaml     |   53 +
-> arch/riscv/boot/dts/sophgo/cv1800b.dtsi       |    4 +
-> arch/riscv/boot/dts/sophgo/cv1812h.dtsi       |    4 +
-> arch/riscv/boot/dts/sophgo/cv18xx.dtsi        |   28 +-
-> drivers/clk/Kconfig                           |    1 +
-> drivers/clk/Makefile                          |    1 +
-> drivers/clk/sophgo/Kconfig                    |    7 +
-> drivers/clk/sophgo/Makefile                   |    7 +
-> drivers/clk/sophgo/clk-cv1800.c               | 1548 +++++++++++++++++
-> drivers/clk/sophgo/clk-cv1800.h               |  123 ++
-> drivers/clk/sophgo/clk-cv18xx-common.c        |   76 +
-> drivers/clk/sophgo/clk-cv18xx-common.h        |   85 +
-> drivers/clk/sophgo/clk-cv18xx-ip.c            |  898 ++++++++++
-> drivers/clk/sophgo/clk-cv18xx-ip.h            |  266 +++
-> drivers/clk/sophgo/clk-cv18xx-pll.c           |  465 +++++
-> drivers/clk/sophgo/clk-cv18xx-pll.h           |   79 +
-> include/dt-bindings/clock/sophgo,cv1800.h     |  174 ++
-> 17 files changed, 3814 insertions(+), 5 deletions(-)
-> create mode 100644 Documentation/devicetree/bindings/clock/sophgo,cv1800-clk.yaml
-> create mode 100644 drivers/clk/sophgo/Kconfig
-> create mode 100644 drivers/clk/sophgo/Makefile
-> create mode 100644 drivers/clk/sophgo/clk-cv1800.c
-> create mode 100644 drivers/clk/sophgo/clk-cv1800.h
-> create mode 100644 drivers/clk/sophgo/clk-cv18xx-common.c
-> create mode 100644 drivers/clk/sophgo/clk-cv18xx-common.h
-> create mode 100644 drivers/clk/sophgo/clk-cv18xx-ip.c
-> create mode 100644 drivers/clk/sophgo/clk-cv18xx-ip.h
-> create mode 100644 drivers/clk/sophgo/clk-cv18xx-pll.c
-> create mode 100644 drivers/clk/sophgo/clk-cv18xx-pll.h
-> create mode 100644 include/dt-bindings/clock/sophgo,cv1800.h
->
->--
->2.43.0
->
+On 05/12/2023 10:43, Inochi Amaoto wrote:
+> Add definition for the clock controller of the CV1800 series SoC.
+> 
 
-This patch follow this patch series:
-https://lore.kernel.org/all/IA1PR20MB495399CAF2EEECC206ADA7ABBBD5A@IA1PR20MB4953.namprd20.prod.outlook.com/
+If there is going to be resend:
+
+A nit, subject: drop second/last, redundant "bindings". The
+"dt-bindings" prefix is already stating that these are bindings.
+
+> Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
+> Link: https://github.com/milkv-duo/duo-files/blob/main/hardware/CV1800B/CV1800B-CV1801B-Preliminary-Datasheet-full-en.pdf
+> ---
+
+
+> diff --git a/include/dt-bindings/clock/sophgo,cv1800.h b/include/dt-bindings/clock/sophgo,cv1800.h
+> new file mode 100644
+> index 000000000000..6a9897b34978
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/sophgo,cv1800.h
+> @@ -0,0 +1,174 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+
+Why not dual-license? Checkpatch complains about this, so are you sure
+you run it?
+
+
+Best regards,
+Krzysztof
+
