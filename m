@@ -1,17 +1,17 @@
-Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41D381A5;
-	Wed,  6 Dec 2023 03:50:31 -0800 (PST)
-Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
+Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74D6F10CC;
+	Wed,  6 Dec 2023 03:50:39 -0800 (PST)
+Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
 	(using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-	(Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-	by fd01.gateway.ufhost.com (Postfix) with ESMTP id BE33C7FFE;
-	Wed,  6 Dec 2023 19:50:29 +0800 (CST)
-Received: from EXMBX066.cuchost.com (172.16.7.66) by EXMBX165.cuchost.com
- (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Wed, 6 Dec
- 2023 19:50:29 +0800
+	(Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
+	by ex01.ufhost.com (Postfix) with ESMTP id 1728D24E2DC;
+	Wed,  6 Dec 2023 19:50:38 +0800 (CST)
+Received: from EXMBX066.cuchost.com (172.16.7.66) by EXMBX166.cuchost.com
+ (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Wed, 6 Dec
+ 2023 19:50:38 +0800
 Received: from jsia-virtual-machine.localdomain (175.136.135.142) by
  EXMBX066.cuchost.com (172.16.6.66) with Microsoft SMTP Server (TLS) id
- 15.0.1497.42; Wed, 6 Dec 2023 19:50:22 +0800
+ 15.0.1497.42; Wed, 6 Dec 2023 19:50:30 +0800
 From: Sia Jee Heng <jeeheng.sia@starfivetech.com>
 To: <kernel@esmil.dk>, <conor@kernel.org>, <robh+dt@kernel.org>,
 	<krzysztof.kozlowski+dt@linaro.org>, <paul.walmsley@sifive.com>,
@@ -22,9 +22,9 @@ To: <kernel@esmil.dk>, <conor@kernel.org>, <robh+dt@kernel.org>,
 CC: <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
 	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
 	<jeeheng.sia@starfivetech.com>, <leyfoon.tan@starfivetech.com>
-Subject: [PATCH v1 02/16] reset: starfive: Convert the word "jh71x0" to "starfive"
-Date: Wed, 6 Dec 2023 19:49:46 +0800
-Message-ID: <20231206115000.295825-3-jeeheng.sia@starfivetech.com>
+Subject: [PATCH v1 03/16] clk: starfive: Rename file name "jh71x0" to "common"
+Date: Wed, 6 Dec 2023 19:49:47 +0800
+Message-ID: <20231206115000.295825-4-jeeheng.sia@starfivetech.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231206115000.295825-1-jeeheng.sia@starfivetech.com>
 References: <20231206115000.295825-1-jeeheng.sia@starfivetech.com>
@@ -40,258 +40,160 @@ X-ClientProxiedBy: EXCAS062.cuchost.com (172.16.6.22) To EXMBX066.cuchost.com
 X-YovoleRuleAgent: yovoleflag
 Content-Transfer-Encoding: quoted-printable
 
-Function names that consist of the 'jh71x0' naming convention are
-renamed to use the 'starfive' wording.
+StarFive JH8100 shares a similar clock and reset design with JH7110.
+To facilitate the reuse of the file and its functionalities, files
+containing the "jh71x0" naming convention are renamed to use the
+"common" wording.
 
 Signed-off-by: Sia Jee Heng <jeeheng.sia@starfivetech.com>
 Reviewed-by: Ley Foon Tan <leyfoon.tan@starfivetech.com>
 ---
- .../clk/starfive/clk-starfive-jh7110-sys.c    |  4 +-
- .../reset/starfive/reset-starfive-common.c    | 64 +++++++++----------
- .../reset/starfive/reset-starfive-common.h    |  8 +--
- .../reset/starfive/reset-starfive-jh7100.c    |  2 +-
- .../reset/starfive/reset-starfive-jh7110.c    |  4 +-
- include/soc/starfive/reset-starfive-common.h  |  6 +-
- 6 files changed, 44 insertions(+), 44 deletions(-)
+ drivers/clk/starfive/Kconfig                              | 8 ++++----
+ drivers/clk/starfive/Makefile                             | 2 +-
+ .../{clk-starfive-jh71x0.c =3D> clk-starfive-common.c}      | 4 ++--
+ .../{clk-starfive-jh71x0.h =3D> clk-starfive-common.h}      | 4 ++--
+ drivers/clk/starfive/clk-starfive-jh7100-audio.c          | 2 +-
+ drivers/clk/starfive/clk-starfive-jh7100.c                | 2 +-
+ drivers/clk/starfive/clk-starfive-jh7110.h                | 2 +-
+ 7 files changed, 12 insertions(+), 12 deletions(-)
+ rename drivers/clk/starfive/{clk-starfive-jh71x0.c =3D> clk-starfive-com=
+mon.c} (99%)
+ rename drivers/clk/starfive/{clk-starfive-jh71x0.h =3D> clk-starfive-com=
+mon.h} (97%)
 
-diff --git a/drivers/clk/starfive/clk-starfive-jh7110-sys.c b/drivers/clk=
-/starfive/clk-starfive-jh7110-sys.c
-index 6e45c580c9ba..e63353c70209 100644
---- a/drivers/clk/starfive/clk-starfive-jh7110-sys.c
-+++ b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
-@@ -345,7 +345,7 @@ static void jh7110_reset_unregister_adev(void *_adev)
- static void jh7110_reset_adev_release(struct device *dev)
+diff --git a/drivers/clk/starfive/Kconfig b/drivers/clk/starfive/Kconfig
+index bd29358ffeec..ff8eace36e64 100644
+--- a/drivers/clk/starfive/Kconfig
++++ b/drivers/clk/starfive/Kconfig
+@@ -1,12 +1,12 @@
+ # SPDX-License-Identifier: GPL-2.0
+=20
+-config CLK_STARFIVE_JH71X0
++config CLK_STARFIVE_COMMON
+ 	bool
+=20
+ config CLK_STARFIVE_JH7100
+ 	bool "StarFive JH7100 clock support"
+ 	depends on ARCH_STARFIVE || COMPILE_TEST
+-	select CLK_STARFIVE_JH71X0
++	select CLK_STARFIVE_COMMON
+ 	default ARCH_STARFIVE
+ 	help
+ 	  Say yes here to support the clock controller on the StarFive JH7100
+@@ -15,7 +15,7 @@ config CLK_STARFIVE_JH7100
+ config CLK_STARFIVE_JH7100_AUDIO
+ 	tristate "StarFive JH7100 audio clock support"
+ 	depends on CLK_STARFIVE_JH7100
+-	select CLK_STARFIVE_JH71X0
++	select CLK_STARFIVE_COMMON
+ 	default m if ARCH_STARFIVE
+ 	help
+ 	  Say Y or M here to support the audio clocks on the StarFive JH7100
+@@ -33,7 +33,7 @@ config CLK_STARFIVE_JH7110_SYS
+ 	bool "StarFive JH7110 system clock support"
+ 	depends on ARCH_STARFIVE || COMPILE_TEST
+ 	select AUXILIARY_BUS
+-	select CLK_STARFIVE_JH71X0
++	select CLK_STARFIVE_COMMON
+ 	select RESET_STARFIVE_JH7110 if RESET_CONTROLLER
+ 	select CLK_STARFIVE_JH7110_PLL
+ 	default ARCH_STARFIVE
+diff --git a/drivers/clk/starfive/Makefile b/drivers/clk/starfive/Makefil=
+e
+index 199ac0f37a2f..012f7ee83f8e 100644
+--- a/drivers/clk/starfive/Makefile
++++ b/drivers/clk/starfive/Makefile
+@@ -1,5 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0
+-obj-$(CONFIG_CLK_STARFIVE_JH71X0)	+=3D clk-starfive-jh71x0.o
++obj-$(CONFIG_CLK_STARFIVE_COMMON)	+=3D clk-starfive-common.o
+=20
+ obj-$(CONFIG_CLK_STARFIVE_JH7100)	+=3D clk-starfive-jh7100.o
+ obj-$(CONFIG_CLK_STARFIVE_JH7100_AUDIO)	+=3D clk-starfive-jh7100-audio.o
+diff --git a/drivers/clk/starfive/clk-starfive-jh71x0.c b/drivers/clk/sta=
+rfive/clk-starfive-common.c
+similarity index 99%
+rename from drivers/clk/starfive/clk-starfive-jh71x0.c
+rename to drivers/clk/starfive/clk-starfive-common.c
+index aebc99264a0b..a12490c97957 100644
+--- a/drivers/clk/starfive/clk-starfive-jh71x0.c
++++ b/drivers/clk/starfive/clk-starfive-common.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * StarFive JH71X0 Clock Generator Driver
++ * StarFive Clock Generator Driver
+  *
+  * Copyright (C) 2021-2022 Emil Renner Berthing <kernel@esmil.dk>
+  */
+@@ -10,7 +10,7 @@
+ #include <linux/device.h>
+ #include <linux/io.h>
+=20
+-#include "clk-starfive-jh71x0.h"
++#include "clk-starfive-common.h"
+=20
+ static struct jh71x0_clk *jh71x0_clk_from(struct clk_hw *hw)
  {
- 	struct auxiliary_device *adev =3D to_auxiliary_dev(dev);
--	struct jh71x0_reset_adev *rdev =3D to_jh71x0_reset_adev(adev);
-+	struct starfive_reset_adev *rdev =3D to_starfive_reset_adev(adev);
+diff --git a/drivers/clk/starfive/clk-starfive-jh71x0.h b/drivers/clk/sta=
+rfive/clk-starfive-common.h
+similarity index 97%
+rename from drivers/clk/starfive/clk-starfive-jh71x0.h
+rename to drivers/clk/starfive/clk-starfive-common.h
+index 34bb11c72eb7..1f32f7024e9f 100644
+--- a/drivers/clk/starfive/clk-starfive-jh71x0.h
++++ b/drivers/clk/starfive/clk-starfive-common.h
+@@ -1,6 +1,6 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+-#ifndef __CLK_STARFIVE_JH71X0_H
+-#define __CLK_STARFIVE_JH71X0_H
++#ifndef __CLK_STARFIVE_COMMON_H
++#define __CLK_STARFIVE_COMMON_H
 =20
- 	kfree(rdev);
- }
-@@ -354,7 +354,7 @@ int jh7110_reset_controller_register(struct jh71x0_cl=
-k_priv *priv,
- 				     const char *adev_name,
- 				     u32 adev_id)
- {
--	struct jh71x0_reset_adev *rdev;
-+	struct starfive_reset_adev *rdev;
- 	struct auxiliary_device *adev;
- 	int ret;
+ #include <linux/bits.h>
+ #include <linux/clk-provider.h>
+diff --git a/drivers/clk/starfive/clk-starfive-jh7100-audio.c b/drivers/c=
+lk/starfive/clk-starfive-jh7100-audio.c
+index ee4bda14a40e..dc4c278606d7 100644
+--- a/drivers/clk/starfive/clk-starfive-jh7100-audio.c
++++ b/drivers/clk/starfive/clk-starfive-jh7100-audio.c
+@@ -15,7 +15,7 @@
 =20
-diff --git a/drivers/reset/starfive/reset-starfive-common.c b/drivers/res=
-et/starfive/reset-starfive-common.c
-index dab454e46bbf..8d8dec9e5d7a 100644
---- a/drivers/reset/starfive/reset-starfive-common.c
-+++ b/drivers/reset/starfive/reset-starfive-common.c
-@@ -14,7 +14,7 @@
+ #include <dt-bindings/clock/starfive-jh7100-audio.h>
 =20
- #include "reset-starfive-common.h"
+-#include "clk-starfive-jh71x0.h"
++#include "clk-starfive-common.h"
 =20
--struct jh71x0_reset {
-+struct starfive_reset {
- 	struct reset_controller_dev rcdev;
- 	/* protect registers against concurrent read-modify-write */
- 	spinlock_t lock;
-@@ -23,16 +23,16 @@ struct jh71x0_reset {
- 	const u32 *asserted;
- };
+ /* external clocks */
+ #define JH7100_AUDCLK_AUDIO_SRC			(JH7100_AUDCLK_END + 0)
+diff --git a/drivers/clk/starfive/clk-starfive-jh7100.c b/drivers/clk/sta=
+rfive/clk-starfive-jh7100.c
+index 69cc11ea7e33..6bb6a6af9f28 100644
+--- a/drivers/clk/starfive/clk-starfive-jh7100.c
++++ b/drivers/clk/starfive/clk-starfive-jh7100.c
+@@ -15,7 +15,7 @@
 =20
--static inline struct jh71x0_reset *
--jh71x0_reset_from(struct reset_controller_dev *rcdev)
-+static inline struct starfive_reset *
-+starfive_reset_from(struct reset_controller_dev *rcdev)
- {
--	return container_of(rcdev, struct jh71x0_reset, rcdev);
-+	return container_of(rcdev, struct starfive_reset, rcdev);
- }
+ #include <dt-bindings/clock/starfive-jh7100.h>
 =20
--static int jh71x0_reset_update(struct reset_controller_dev *rcdev,
--			       unsigned long id, bool assert)
-+static int starfive_reset_update(struct reset_controller_dev *rcdev,
-+				 unsigned long id, bool assert)
- {
--	struct jh71x0_reset *data =3D jh71x0_reset_from(rcdev);
-+	struct starfive_reset *data =3D starfive_reset_from(rcdev);
- 	unsigned long offset =3D id / 32;
- 	u32 mask =3D BIT(id % 32);
- 	void __iomem *reg_assert =3D data->assert + offset * sizeof(u32);
-@@ -61,34 +61,34 @@ static int jh71x0_reset_update(struct reset_controlle=
-r_dev *rcdev,
- 	return ret;
- }
+-#include "clk-starfive-jh71x0.h"
++#include "clk-starfive-common.h"
 =20
--static int jh71x0_reset_assert(struct reset_controller_dev *rcdev,
--			       unsigned long id)
-+static int starfive_reset_assert(struct reset_controller_dev *rcdev,
-+				 unsigned long id)
- {
--	return jh71x0_reset_update(rcdev, id, true);
-+	return starfive_reset_update(rcdev, id, true);
- }
+ /* external clocks */
+ #define JH7100_CLK_OSC_SYS		(JH7100_CLK_END + 0)
+diff --git a/drivers/clk/starfive/clk-starfive-jh7110.h b/drivers/clk/sta=
+rfive/clk-starfive-jh7110.h
+index 0659adae4d76..6b1bdf860f00 100644
+--- a/drivers/clk/starfive/clk-starfive-jh7110.h
++++ b/drivers/clk/starfive/clk-starfive-jh7110.h
+@@ -2,7 +2,7 @@
+ #ifndef __CLK_STARFIVE_JH7110_H
+ #define __CLK_STARFIVE_JH7110_H
 =20
--static int jh71x0_reset_deassert(struct reset_controller_dev *rcdev,
--				 unsigned long id)
-+static int starfive_reset_deassert(struct reset_controller_dev *rcdev,
-+				   unsigned long id)
- {
--	return jh71x0_reset_update(rcdev, id, false);
-+	return starfive_reset_update(rcdev, id, false);
- }
+-#include "clk-starfive-jh71x0.h"
++#include "clk-starfive-common.h"
 =20
--static int jh71x0_reset_reset(struct reset_controller_dev *rcdev,
--			      unsigned long id)
-+static int starfive_reset_reset(struct reset_controller_dev *rcdev,
-+				unsigned long id)
- {
- 	int ret;
-=20
--	ret =3D jh71x0_reset_assert(rcdev, id);
-+	ret =3D starfive_reset_assert(rcdev, id);
- 	if (ret)
- 		return ret;
-=20
--	return jh71x0_reset_deassert(rcdev, id);
-+	return starfive_reset_deassert(rcdev, id);
- }
-=20
--static int jh71x0_reset_status(struct reset_controller_dev *rcdev,
--			       unsigned long id)
-+static int starfive_reset_status(struct reset_controller_dev *rcdev,
-+				 unsigned long id)
- {
--	struct jh71x0_reset *data =3D jh71x0_reset_from(rcdev);
-+	struct starfive_reset *data =3D starfive_reset_from(rcdev);
- 	unsigned long offset =3D id / 32;
- 	u32 mask =3D BIT(id % 32);
- 	void __iomem *reg_status =3D data->status + offset * sizeof(u32);
-@@ -97,25 +97,25 @@ static int jh71x0_reset_status(struct reset_controlle=
-r_dev *rcdev,
- 	return !((value ^ data->asserted[offset]) & mask);
- }
-=20
--static const struct reset_control_ops jh71x0_reset_ops =3D {
--	.assert		=3D jh71x0_reset_assert,
--	.deassert	=3D jh71x0_reset_deassert,
--	.reset		=3D jh71x0_reset_reset,
--	.status		=3D jh71x0_reset_status,
-+static const struct reset_control_ops starfive_reset_ops =3D {
-+	.assert		=3D starfive_reset_assert,
-+	.deassert	=3D starfive_reset_deassert,
-+	.reset		=3D starfive_reset_reset,
-+	.status		=3D starfive_reset_status,
- };
-=20
--int reset_starfive_jh71x0_register(struct device *dev, struct device_nod=
-e *of_node,
--				   void __iomem *assert, void __iomem *status,
--				   const u32 *asserted, unsigned int nr_resets,
--				   struct module *owner)
-+int reset_starfive_register(struct device *dev, struct device_node *of_n=
-ode,
-+			    void __iomem *assert, void __iomem *status,
-+			    const u32 *asserted, unsigned int nr_resets,
-+			    struct module *owner)
- {
--	struct jh71x0_reset *data;
-+	struct starfive_reset *data;
-=20
- 	data =3D devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
- 	if (!data)
- 		return -ENOMEM;
-=20
--	data->rcdev.ops =3D &jh71x0_reset_ops;
-+	data->rcdev.ops =3D &starfive_reset_ops;
- 	data->rcdev.owner =3D owner;
- 	data->rcdev.nr_resets =3D nr_resets;
- 	data->rcdev.dev =3D dev;
-@@ -128,4 +128,4 @@ int reset_starfive_jh71x0_register(struct device *dev=
-, struct device_node *of_no
-=20
- 	return devm_reset_controller_register(dev, &data->rcdev);
- }
--EXPORT_SYMBOL_GPL(reset_starfive_jh71x0_register);
-+EXPORT_SYMBOL_GPL(reset_starfive_register);
-diff --git a/drivers/reset/starfive/reset-starfive-common.h b/drivers/res=
-et/starfive/reset-starfive-common.h
-index 266acc4b2caf..83461b22ee55 100644
---- a/drivers/reset/starfive/reset-starfive-common.h
-+++ b/drivers/reset/starfive/reset-starfive-common.h
-@@ -6,9 +6,9 @@
- #ifndef __RESET_STARFIVE_COMMON_H
- #define __RESET_STARFIVE_COMMON_H
-=20
--int reset_starfive_jh71x0_register(struct device *dev, struct device_nod=
-e *of_node,
--				   void __iomem *assert, void __iomem *status,
--				   const u32 *asserted, unsigned int nr_resets,
--				   struct module *owner);
-+int reset_starfive_register(struct device *dev, struct device_node *of_n=
-ode,
-+			    void __iomem *assert, void __iomem *status,
-+			    const u32 *asserted, unsigned int nr_resets,
-+			    struct module *owner);
-=20
- #endif /* __RESET_STARFIVE_COMMON_H */
-diff --git a/drivers/reset/starfive/reset-starfive-jh7100.c b/drivers/res=
-et/starfive/reset-starfive-jh7100.c
-index 546dea2e5811..122ac6c3893b 100644
---- a/drivers/reset/starfive/reset-starfive-jh7100.c
-+++ b/drivers/reset/starfive/reset-starfive-jh7100.c
-@@ -51,7 +51,7 @@ static int __init jh7100_reset_probe(struct platform_de=
-vice *pdev)
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
-=20
--	return reset_starfive_jh71x0_register(&pdev->dev, pdev->dev.of_node,
-+	return reset_starfive_register(&pdev->dev, pdev->dev.of_node,
- 					      base + JH7100_RESET_ASSERT0,
- 					      base + JH7100_RESET_STATUS0,
- 					      jh7100_reset_asserted,
-diff --git a/drivers/reset/starfive/reset-starfive-jh7110.c b/drivers/res=
-et/starfive/reset-starfive-jh7110.c
-index 87dba01491ae..c4dd21761e53 100644
---- a/drivers/reset/starfive/reset-starfive-jh7110.c
-+++ b/drivers/reset/starfive/reset-starfive-jh7110.c
-@@ -53,13 +53,13 @@ static int jh7110_reset_probe(struct auxiliary_device=
- *adev,
- 			      const struct auxiliary_device_id *id)
- {
- 	struct jh7110_reset_info *info =3D (struct jh7110_reset_info *)(id->dri=
-ver_data);
--	struct jh71x0_reset_adev *rdev =3D to_jh71x0_reset_adev(adev);
-+	struct starfive_reset_adev *rdev =3D to_starfive_reset_adev(adev);
- 	void __iomem *base =3D rdev->base;
-=20
- 	if (!info || !base)
- 		return -ENODEV;
-=20
--	return reset_starfive_jh71x0_register(&adev->dev, adev->dev.parent->of_=
-node,
-+	return reset_starfive_register(&adev->dev, adev->dev.parent->of_node,
- 					      base + info->assert_offset,
- 					      base + info->status_offset,
- 					      NULL,
-diff --git a/include/soc/starfive/reset-starfive-common.h b/include/soc/s=
-tarfive/reset-starfive-common.h
-index 56d8f413cf18..16df46a074bc 100644
---- a/include/soc/starfive/reset-starfive-common.h
-+++ b/include/soc/starfive/reset-starfive-common.h
-@@ -6,12 +6,12 @@
- #include <linux/compiler_types.h>
- #include <linux/container_of.h>
-=20
--struct jh71x0_reset_adev {
-+struct starfive_reset_adev {
- 	void __iomem *base;
- 	struct auxiliary_device adev;
- };
-=20
--#define to_jh71x0_reset_adev(_adev) \
--	container_of((_adev), struct jh71x0_reset_adev, adev)
-+#define to_starfive_reset_adev(_adev) \
-+	container_of((_adev), struct starfive_reset_adev, adev)
-=20
- #endif
+ /* top clocks of ISP/VOUT domain from JH7110 SYSCRG */
+ struct jh7110_top_sysclk {
 --=20
 2.34.1
 
