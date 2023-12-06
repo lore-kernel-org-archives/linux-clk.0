@@ -1,169 +1,179 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="TMI0sLZt"
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EA2FD6E
-	for <linux-clk@vger.kernel.org>; Wed,  6 Dec 2023 03:48:32 -0800 (PST)
-Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-a1915034144so93220866b.0
-        for <linux-clk@vger.kernel.org>; Wed, 06 Dec 2023 03:48:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1701863311; x=1702468111; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2atOuZ4m5Gd0/h1m8gOvMaL9Rsri8ziYxXRDoMiJ3Z4=;
-        b=TMI0sLZt4OmnHOdX/rHF7lP7iEiiu9tDICwH446miWRtN5dLMIe3IJohkVCogVU1Vy
-         Ow88vkSgWRAbCVEF5FMImYQGlDfchIVKT4g9XcItpG8Sy+83m4M1Q16LUblA+dTzoyk8
-         AnZfP5hivKxbm86yvrQvzUjrWsy7yS3N/ncZr1oZG5mJIFyM2uTKHIsC25TyGeWNC29K
-         hRNtfDXiT+77zvbU46YoEb3o9fdEJkW/5QchtqkwKNoDBclO2jbFG0/UE8SIKlt7SAge
-         6cMiEWft9lP+8x8se8mwSC2kcajRWNWaSiaV+o1ciQFE6YKFKACdd/F3r8NVa1waKunl
-         YEJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701863311; x=1702468111;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2atOuZ4m5Gd0/h1m8gOvMaL9Rsri8ziYxXRDoMiJ3Z4=;
-        b=VHVCT5hh1pdKL9UZteBXxqZWjZQdQTq82jQ6OBCBpVn08cLMmXyRuWJOmOA3ahbmNw
-         Z8W5ukXovTPt5xO7Ssv6o9vxnNJhj0f9dQzoypmLEytOPX5/+uWUst8M4Uya45U1zBZf
-         LsfkeAr1EbYfCY61p2jejT2rtwiTd/QT6R7YTkktS2IQPT+1xSNtbBEhIskN055rCCBJ
-         Biiw8bi7U5vFxe6SWU9BPpMPrHn9BKRtPe95Z6iLIYA3rDRyJpG61K8aBqhboONKqNzY
-         cFuoKbm3nolZGxoziys51Xbgz7M0VY90qsZaEjtJqlt+O5L+wY8lljGewi9QiFEx5f6R
-         bmEA==
-X-Gm-Message-State: AOJu0YwXmjn9F5ZxKxoNa1IS2LTUyIrIfz/yq+R8KVxSYHP3fxAnoC7w
-	1AKICXoxZv8Grmg20oDoXzmlhQ==
-X-Google-Smtp-Source: AGHT+IEdO1d6acuKq7fI7Zu+YUD1aCrLTPztZ/SxxNtASmnGXOvg9HfwOsUOMZBpcuZN8TYrQYwLYw==
-X-Received: by 2002:a17:906:3408:b0:a19:a19b:c741 with SMTP id c8-20020a170906340800b00a19a19bc741mr430304ejb.145.1701863310872;
-        Wed, 06 Dec 2023 03:48:30 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.22])
-        by smtp.gmail.com with ESMTPSA id fx20-20020a170906b75400b00a1d38589c67sm1370637ejb.98.2023.12.06.03.48.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Dec 2023 03:48:30 -0800 (PST)
-Message-ID: <89b68781-b552-499d-a8f2-df4dccbb02e0@tuxon.dev>
-Date: Wed, 6 Dec 2023 13:48:26 +0200
+Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2ABAA1BD;
+	Wed,  6 Dec 2023 03:50:15 -0800 (PST)
+Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
+	(using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	(Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
+	by ex01.ufhost.com (Postfix) with ESMTP id AAD0924E2F7;
+	Wed,  6 Dec 2023 19:50:12 +0800 (CST)
+Received: from EXMBX066.cuchost.com (172.16.7.66) by EXMBX165.cuchost.com
+ (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Wed, 6 Dec
+ 2023 19:50:12 +0800
+Received: from jsia-virtual-machine.localdomain (175.136.135.142) by
+ EXMBX066.cuchost.com (172.16.6.66) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.42; Wed, 6 Dec 2023 19:50:05 +0800
+From: Sia Jee Heng <jeeheng.sia@starfivetech.com>
+To: <kernel@esmil.dk>, <conor@kernel.org>, <robh+dt@kernel.org>,
+	<krzysztof.kozlowski+dt@linaro.org>, <paul.walmsley@sifive.com>,
+	<palmer@dabbelt.com>, <aou@eecs.berkeley.edu>, <mturquette@baylibre.com>,
+	<sboyd@kernel.org>, <p.zabel@pengutronix.de>,
+	<emil.renner.berthing@canonical.com>, <hal.feng@starfivetech.com>,
+	<xingyu.wu@starfivetech.com>
+CC: <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<jeeheng.sia@starfivetech.com>, <leyfoon.tan@starfivetech.com>
+Subject: [PATCH v1 00/16] Basic clock and reset support for StarFive JH8100 RISC-V SoC
+Date: Wed, 6 Dec 2023 19:49:44 +0800
+Message-ID: <20231206115000.295825-1-jeeheng.sia@starfivetech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 13/14] arm64: dts: renesas: rzg3s-smarc-som: Enable
- Ethernet interfaces
-Content-Language: en-US
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: s.shtylyov@omp.ru, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- linux@armlinux.org.uk, magnus.damm@gmail.com, mturquette@baylibre.com,
- sboyd@kernel.org, linus.walleij@linaro.org, p.zabel@pengutronix.de,
- arnd@arndb.de, m.szyprowski@samsung.com, alexandre.torgue@foss.st.com,
- afd@ti.com, broonie@kernel.org, alexander.stein@ew.tq-group.com,
- eugen.hristev@collabora.com, sergei.shtylyov@gmail.com,
- prabhakar.mahadev-lad.rj@bp.renesas.com, biju.das.jz@bp.renesas.com,
- linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-gpio@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20231120070024.4079344-1-claudiu.beznea.uj@bp.renesas.com>
- <20231120070024.4079344-14-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdXs9tKo9W31f5OybNR51a_i99Lyx=wHe0GLrADN_8KZTg@mail.gmail.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <CAMuHMdXs9tKo9W31f5OybNR51a_i99Lyx=wHe0GLrADN_8KZTg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EXCAS062.cuchost.com (172.16.6.22) To EXMBX066.cuchost.com
+ (172.16.6.66)
+X-YovoleRuleAgent: yovoleflag
+Content-Transfer-Encoding: quoted-printable
 
-Hi, Geert,
+This patch series enabled basic clock & reset support for StarFive
+JH8100 SoC.
 
-On 06.12.2023 13:22, Geert Uytterhoeven wrote:
-> Hi Claudiu,
-> 
-> Thanks for your patch!
-> 
-> On Mon, Nov 20, 2023 at 8:03 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> RZ/G3S Smarc Module has Ethernet PHYs (KSZ9131) connected to each Ethernet
->> IP. For this add proper DT bindings to enable the Ethernet communication
->> though these PHYs.
->>
->> The interface b/w PHYs and MACs is RGMII. The skew settings were set to
->> zero as based on phy-mode (rgmii-id) the KSZ9131 driver enables internal
->> DLL which adds 2ns delay b/w clocks (TX/RX) and data signals.
-> 
-> So shouldn't you just use phy-mode "rgmii" instead?
+This patch series depends on the Initial device tree support for
+StarFive JH8100 SoC patch series which can be found at below link:
+https://lore.kernel.org/lkml/20231201121410.95298-1-jeeheng.sia@starfivet=
+ech.com/
 
-I chose it like this for simpler configuration of the skew settings. The
-PHY supports fixed 2ns delays which is enough for RGMII. And this is
-configured based on phy-mode="rgmii-id". As this delay depends also on
-soldering length I consider it better this way.
+StarFive JH8100 shares a similar clock and reset design with JH7110.
+To facilitate the reuse of the file and its functionalities, files
+containing the 'jh71x0' naming convention are renamed to use the
+'common' wording. Internal functions that contain the 'jh71x0'
+naming convention are renamed to use 'starfive.' This is accomplished
+through patches 1, 2, 3, and 4.
 
-The other variant would have been using phy-mode="rgmii" + skew settings.
 
-Also, same phy-mode is used by rzg2ul-smarc-som.dtsi which is using the
-same PHY.
+Patch 5 adds documentation to describe System (SYSCRG) Clock & Reset
+binding.
+Patch 6 adds SYSCRG clock driver.
 
->> Different pin settings were applied to TXC, TX_CTL compared with the rest
->> of the RGMII pins to comply with requirements for these pins imposed by
->> HW manual of RZ/G3S (see chapters "Ether Ch0 Voltage Mode Control
->> Register (ETH0_POC)", "Ether Ch1 Voltage Mode Control Register (ETH1_POC)",
->> for power source selection, "Ether MII/RGMII Mode Control Register
->> (ETH_MODE)" for output-enable and "Input Enable Control Register (IEN_m)"
->> for input-enable configurations).
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
->> --- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
->> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
->> @@ -25,7 +25,10 @@ / {
->>
->>         aliases {
->>                 mmc0 = &sdhi0;
->> -#if !SW_SD2_EN
->> +#if SW_SD2_EN
-> 
-> Cfr. my comment on [PATCH 11/14], this looks odd...
-> 
->> +               eth0 = &eth0;
->> +               eth1 = &eth1;
->> +#else
->>                 mmc2 = &sdhi2;
->>  #endif
->>         };
->> @@ -81,6 +84,64 @@ vcc_sdhi2: regulator2 {
->>         };
->>  };
->>
->> +#if SW_SD2_EN
-> 
-> Likewise.
-> 
->> +&eth0 {
->> +       pinctrl-0 = <&eth0_pins>;
->> +       pinctrl-names = "default";
->> +       phy-handle = <&phy0>;
->> +       phy-mode = "rgmii-id";
->> +       #address-cells = <1>;
->> +       #size-cells = <0>;
-> 
-> #{address,size}-cells should be in the SoC-specific .dtsi.
-> Same for eth1.
-> 
->> +       status = "okay";
-> 
-> The rest LGTM.
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+patch 7 adds documentation to describe System-North-West (SYSCRG-NW)
+Clock & Reset binding.
+Patch 8 adds SYSCRG-NW clock driver.
+
+patch 9 adds documentation to describe System-North-East (SYSCRG-NE)
+Clock & Reset binding.
+Patch 10 adds SYSCRG-NE clock driver.
+
+patch 11 adds documentation to describe System-South-West (SYSCRG-SW)
+Clock & Reset binding.
+Patch 12 adds SYSCRG-SW clock driver.
+
+patch 13 adds documentation to describe Always-On (AON)
+Clock & Reset binding.
+Patch 14 adds AON clock driver.
+
+Patch 15 adds support for the auxiliary reset driver.
+
+Patch 16 adds clocks and reset nodes to the JH8100 device tree.
+
+Sia Jee Heng (16):
+  reset: starfive: Rename file name "jh71x0" to "common"
+  reset: starfive: Convert the word "jh71x0" to "starfive"
+  clk: starfive: Rename file name "jh71x0" to "common"
+  clk: starfive: Convert the word "jh71x0" to "starfive"
+  dt-bindings: clock: Add StarFive JH8100 System clock and reset
+    generator
+  clk: starfive: Add JH8100 System clock generator driver
+  dt-bindings: clock: Add StarFive JH8100 System-North-West clock and
+    reset generator
+  clk: starfive: Add JH8100 System-North-West clock generator driver
+  dt-bindings: clock: Add StarFive JH8100 System-North-East clock and
+    reset generator
+  clk: starfive: Add JH8100 System-North-East clock generator driver
+  dt-bindings: clock: Add StarFive JH8100 System-South-West clock and
+    reset generator
+  clk: starfive: Add JH8100 System-South-West clock generator driver
+  dt-bindings: clock: Add StarFive JH8100 Always-On clock and reset
+    generator
+  clk: starfive: Add JH8100 Always-On clock generator driver
+  reset: starfive: Add StarFive JH8100 reset driver
+  riscv: dts: starfive: jh8100: Add clocks and resets nodes
+
+ .../clock/starfive,jh8100-aoncrg.yaml         |  77 +++
+ .../clock/starfive,jh8100-syscrg-ne.yaml      | 158 +++++
+ .../clock/starfive,jh8100-syscrg-nw.yaml      | 119 ++++
+ .../clock/starfive,jh8100-syscrg-sw.yaml      |  66 ++
+ .../clock/starfive,jh8100-syscrg.yaml         |  66 ++
+ MAINTAINERS                                   |  15 +
+ arch/riscv/boot/dts/starfive/jh8100-clk.dtsi  | 180 ++++++
+ arch/riscv/boot/dts/starfive/jh8100.dtsi      | 115 ++++
+ drivers/clk/starfive/Kconfig                  |  49 +-
+ drivers/clk/starfive/Makefile                 |   3 +-
+ drivers/clk/starfive/clk-starfive-common.c    | 327 ++++++++++
+ drivers/clk/starfive/clk-starfive-common.h    | 130 ++++
+ .../clk/starfive/clk-starfive-jh7100-audio.c  | 127 ++--
+ drivers/clk/starfive/clk-starfive-jh7100.c    | 503 ++++++++--------
+ .../clk/starfive/clk-starfive-jh7110-aon.c    |  62 +-
+ .../clk/starfive/clk-starfive-jh7110-isp.c    |  72 +--
+ .../clk/starfive/clk-starfive-jh7110-stg.c    |  94 +--
+ .../clk/starfive/clk-starfive-jh7110-sys.c    | 523 ++++++++--------
+ .../clk/starfive/clk-starfive-jh7110-vout.c   |  74 +--
+ drivers/clk/starfive/clk-starfive-jh7110.h    |   4 +-
+ drivers/clk/starfive/clk-starfive-jh71x0.c    | 327 ----------
+ drivers/clk/starfive/clk-starfive-jh71x0.h    | 123 ----
+ drivers/clk/starfive/jh8100/Makefile          |   7 +
+ drivers/clk/starfive/jh8100/clk-aon.c         | 275 +++++++++
+ .../clk/starfive/jh8100/clk-starfive-jh8100.h |  11 +
+ drivers/clk/starfive/jh8100/clk-sys-ne.c      | 566 ++++++++++++++++++
+ drivers/clk/starfive/jh8100/clk-sys-nw.c      | 268 +++++++++
+ drivers/clk/starfive/jh8100/clk-sys-sw.c      | 136 +++++
+ drivers/clk/starfive/jh8100/clk-sys.c         | 455 ++++++++++++++
+ drivers/reset/starfive/Kconfig                |  14 +-
+ drivers/reset/starfive/Makefile               |   4 +-
+ ...rfive-jh71x0.c =3D> reset-starfive-common.c} |  68 +--
+ .../reset/starfive/reset-starfive-common.h    |  14 +
+ .../reset/starfive/reset-starfive-jh7100.c    |   4 +-
+ .../reset/starfive/reset-starfive-jh7110.c    |   8 +-
+ .../reset/starfive/reset-starfive-jh71x0.h    |  14 -
+ .../reset/starfive/reset-starfive-jh8100.c    | 102 ++++
+ .../dt-bindings/clock/starfive,jh8100-crg.h   | 430 +++++++++++++
+ .../dt-bindings/reset/starfive,jh8100-crg.h   | 127 ++++
+ ...rfive-jh71x0.h =3D> reset-starfive-common.h} |  10 +-
+ 40 files changed, 4485 insertions(+), 1242 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh81=
+00-aoncrg.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh81=
+00-syscrg-ne.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh81=
+00-syscrg-nw.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh81=
+00-syscrg-sw.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh81=
+00-syscrg.yaml
+ create mode 100644 arch/riscv/boot/dts/starfive/jh8100-clk.dtsi
+ create mode 100644 drivers/clk/starfive/clk-starfive-common.c
+ create mode 100644 drivers/clk/starfive/clk-starfive-common.h
+ delete mode 100644 drivers/clk/starfive/clk-starfive-jh71x0.c
+ delete mode 100644 drivers/clk/starfive/clk-starfive-jh71x0.h
+ create mode 100644 drivers/clk/starfive/jh8100/Makefile
+ create mode 100644 drivers/clk/starfive/jh8100/clk-aon.c
+ create mode 100644 drivers/clk/starfive/jh8100/clk-starfive-jh8100.h
+ create mode 100644 drivers/clk/starfive/jh8100/clk-sys-ne.c
+ create mode 100644 drivers/clk/starfive/jh8100/clk-sys-nw.c
+ create mode 100644 drivers/clk/starfive/jh8100/clk-sys-sw.c
+ create mode 100644 drivers/clk/starfive/jh8100/clk-sys.c
+ rename drivers/reset/starfive/{reset-starfive-jh71x0.c =3D> reset-starfi=
+ve-common.c} (55%)
+ create mode 100644 drivers/reset/starfive/reset-starfive-common.h
+ delete mode 100644 drivers/reset/starfive/reset-starfive-jh71x0.h
+ create mode 100644 drivers/reset/starfive/reset-starfive-jh8100.c
+ create mode 100644 include/dt-bindings/clock/starfive,jh8100-crg.h
+ create mode 100644 include/dt-bindings/reset/starfive,jh8100-crg.h
+ rename include/soc/starfive/{reset-starfive-jh71x0.h =3D> reset-starfive=
+-common.h} (50%)
+
+--=20
+2.34.1
+
