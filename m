@@ -1,126 +1,99 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="R/jsCb+c"
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C87E41730;
-	Wed,  6 Dec 2023 02:38:42 -0800 (PST)
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madras.collabora.co.uk (Postfix) with ESMTPSA id CB93B660732A;
-	Wed,  6 Dec 2023 10:38:39 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1701859121;
-	bh=j6FSYq/wllVqa38fLBlpKeDl1PwQcbOvVLOoOX0UBbM=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=R/jsCb+crLicefguBjhSXx1mhP2GI7hlj0zO2u/FMxuvkISVnxmBdvV1vanKSwmhm
-	 59aoYyl27HkFPeGTNKgXHf7LrPDGcLh6Y8KacgOAylkVSoqc2GqLGpeIQKl539mum2
-	 GZZ1RxkZAiCZmKJne1SwuC26ccLZur4h1PkA+4uLCCaeq6TmfEj8bBD3ht77kvm/Px
-	 RlPKBrKQX0eQLbulorYkQXgRter30Y4vHZ7qVJzP9852TVcal0cIP2Q3kPsmoQ/J3I
-	 tizI9NHjpxn5J4TW3+4ccUfYPZBTMiCJYGAmh/Raj9bAqD071KohK8GHAh+wCNIlHY
-	 JxSbyd157tTyQ==
-Message-ID: <0ebce75d-0074-4128-b35e-e86ee3ee546b@collabora.com>
-Date: Wed, 6 Dec 2023 11:38:36 +0100
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="klvo3B9Q"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C56D18F;
+	Wed,  6 Dec 2023 02:43:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1701859415; x=1733395415;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3uXxhAR1Qiqm9bUuA39C2LKMCytRXXgtpDoxTsBQBYk=;
+  b=klvo3B9QrweMtMEA5VnqXrs9BtT8A2ScXVCVIVGa0wlFhJbMSnElBM2s
+   ogr387wxpRLWAnl4cw6TS4MNLVwWpdB2+d0AW6ExUqQzTlUf9GeYuwGJE
+   Jgfq0fRzoBwBWtRpqwc5iFYKlRZywmUu44/wYw1wphiKrGpjGlCqSN1PJ
+   TajrLT3h6soEG8vl+8KMCfQB73MkJdDjO+iO1BqEtxyoTS9hdbgnrwHF9
+   cihcURZe2SP7hUCZJuTcQLnNfPij7iWI3IXkbOrB6k8Xb0HRaUnyjJoHq
+   wCqu90NXUO23KasOebG8wb2y87VPpDE987hl65jXEm+yfBgPb8T3Sw/KX
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10915"; a="880138"
+X-IronPort-AV: E=Sophos;i="6.04,254,1695711600"; 
+   d="scan'208";a="880138"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2023 02:43:35 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.04,254,1695711600"; 
+   d="scan'208";a="12657196"
+Received: from lkp-server02.sh.intel.com (HELO b07ab15da5fe) ([10.239.97.151])
+  by orviesa002.jf.intel.com with ESMTP; 06 Dec 2023 02:43:31 -0800
+Received: from kbuild by b07ab15da5fe with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1rApNI-000AeE-16;
+	Wed, 06 Dec 2023 10:43:28 +0000
+Date: Wed, 6 Dec 2023 18:42:38 +0800
+From: kernel test robot <lkp@intel.com>
+To: gabriel.fernandez@foss.st.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: oe-kbuild-all@lists.linux.dev, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/5] clk: stm32mp1: use stm32mp13 reset driver
+Message-ID: <202312061848.1bvWrret-lkp@intel.com>
+References: <20231128164851.588315-3-gabriel.fernandez@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] clk: mediatek: Add pcw_chg_shift control
-Content-Language: en-US
-To: Daniel Golle <daniel@makrotopia.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Sabrina Dubroca <sd@queasysnail.net>, Jianhui Zhao <zhaojh329@gmail.com>,
- Chen-Yu Tsai <wenst@chromium.org>, "Garmin.Chang"
- <Garmin.Chang@mediatek.com>, Sam Shih <sam.shih@mediatek.com>,
- Frank Wunderlich <frank-w@public-files.de>,
- Dan Carpenter <dan.carpenter@linaro.org>,
- James Liao <jamesjj.liao@mediatek.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- netdev@vger.kernel.org
-References: <23bc89d407e7797e97b703fa939b43bfe79296ce.1701823757.git.daniel@makrotopia.org>
- <40981d0bb722eb509628bcf82c31f632e4cf747a.1701823757.git.daniel@makrotopia.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <40981d0bb722eb509628bcf82c31f632e4cf747a.1701823757.git.daniel@makrotopia.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231128164851.588315-3-gabriel.fernandez@foss.st.com>
 
-Il 06/12/23 01:57, Daniel Golle ha scritto:
-> From: Sam Shih <sam.shih@mediatek.com>
-> 
-> Introduce pcw_chg_shfit control to optionally use that instead of the
-> hardcoded PCW_CHG_MASK macro.
-> This will needed for clocks on the MT7988 SoC.
-> 
-> Signed-off-by: Sam Shih <sam.shih@mediatek.com>
-> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> ---
-> v3: use git --from ...
-> v2: no changes
-> 
->   drivers/clk/mediatek/clk-pll.c | 5 ++++-
->   drivers/clk/mediatek/clk-pll.h | 1 +
->   2 files changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
-> index 513ab6b1b3229..9f08bc5d2a8a2 100644
-> --- a/drivers/clk/mediatek/clk-pll.c
-> +++ b/drivers/clk/mediatek/clk-pll.c
-> @@ -114,7 +114,10 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
->   			pll->data->pcw_shift);
->   	val |= pcw << pll->data->pcw_shift;
->   	writel(val, pll->pcw_addr);
-> -	chg = readl(pll->pcw_chg_addr) | PCW_CHG_MASK;
-> +	if (pll->data->pcw_chg_shift)
-> +		chg = readl(pll->pcw_chg_addr) | BIT(pll->data->pcw_chg_shift);
-> +	else
-> +		chg = readl(pll->pcw_chg_addr) | PCW_CHG_MASK;
->   	writel(chg, pll->pcw_chg_addr);
->   	if (pll->tuner_addr)
->   		writel(val + 1, pll->tuner_addr);
-> diff --git a/drivers/clk/mediatek/clk-pll.h b/drivers/clk/mediatek/clk-pll.h
-> index f17278ff15d78..d28d317e84377 100644
-> --- a/drivers/clk/mediatek/clk-pll.h
-> +++ b/drivers/clk/mediatek/clk-pll.h
-> @@ -44,6 +44,7 @@ struct mtk_pll_data {
->   	u32 pcw_reg;
->   	int pcw_shift;
->   	u32 pcw_chg_reg;
-> +	int pcw_chg_shift;
->   	const struct mtk_pll_div_table *div_table;
->   	const char *parent_name;
->   	u32 en_reg;
+Hi,
 
-Hmm... no, this is not the best at all and can be improved.
+kernel test robot noticed the following build warnings:
 
-Okay, so, the situation here is that one or some PLL(s) on MT7988 have a different
-PCW_CHG_MASK as far as I understand.
+[auto build test WARNING on atorgue-stm32/stm32-next]
+[also build test WARNING on clk/clk-next robh/for-next linus/master v6.7-rc4 next-20231206]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Situation here is:
-  - Each PLL must be registered to clk-pll
-  - Each driver declaring a PLL does exactly so
-    - There's a function to register the PLL
+url:    https://github.com/intel-lab-lkp/linux/commits/gabriel-fernandez-foss-st-com/clk-stm32mp1-move-stm32mp1-clock-driver-into-stm32-directory/20231129-005157
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/atorgue/stm32.git stm32-next
+patch link:    https://lore.kernel.org/r/20231128164851.588315-3-gabriel.fernandez%40foss.st.com
+patch subject: [PATCH v4 2/5] clk: stm32mp1: use stm32mp13 reset driver
+config: arm-randconfig-r132-20231201 (https://download.01.org/0day-ci/archive/20231206/202312061848.1bvWrret-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 13.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20231206/202312061848.1bvWrret-lkp@intel.com/reproduce)
 
-You definitely don't want to add a conditional in pll_set_rate(): even though
-this is technically not a performance path on the current SoCs (and will probably
-never be), it's simply useless to have this (very small) overhead there.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202312061848.1bvWrret-lkp@intel.com/
 
-The solution is to:
-  - Change that pcw_chg_shift to an unsigned short int type (or u8, your call):
-    you don't need 32 bits for this number, as the expected range of this member
-    is [0-31], and this can be expressed in just 4 bits (u8 is the smallest though)
-  - Add that to function mtk_clk_register_pll_ops()
-  - Change mtk_pll_set_rate_regs() to always do
-    chg = readl(pll->pcw_chg_addr) | BIT(pll->data->pcw_chg_shift);
+sparse warnings: (new ones prefixed by >>)
+>> drivers/clk/stm32/clk-stm32mp13.c:1516:29: sparse: sparse: symbol 'stm32mp13_reset_data' was not declared. Should it be static?
+--
+>> drivers/clk/stm32/clk-stm32mp1.c:2148:29: sparse: sparse: symbol 'stm32mp1_reset_data' was not declared. Should it be static?
 
-Cheers,
-Angelo
+vim +/stm32mp13_reset_data +1516 drivers/clk/stm32/clk-stm32mp13.c
+
+  1515	
+> 1516	struct clk_stm32_reset_data stm32mp13_reset_data = {
+  1517		.nr_lines	= STM32MP1_RESET_ID_MASK,
+  1518		.clear_offset	= RCC_CLR_OFFSET,
+  1519	};
+  1520	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
