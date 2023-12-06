@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YuKaTjKF"
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38CA31A5
-	for <linux-clk@vger.kernel.org>; Wed,  6 Dec 2023 03:38:19 -0800 (PST)
-Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-332c0c32d19so743226f8f.3
-        for <linux-clk@vger.kernel.org>; Wed, 06 Dec 2023 03:38:19 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="TMI0sLZt"
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EA2FD6E
+	for <linux-clk@vger.kernel.org>; Wed,  6 Dec 2023 03:48:32 -0800 (PST)
+Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-a1915034144so93220866b.0
+        for <linux-clk@vger.kernel.org>; Wed, 06 Dec 2023 03:48:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701862697; x=1702467497; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
+        d=tuxon.dev; s=google; t=1701863311; x=1702468111; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Qm7pCcZmaWCMHPggwY7CXlYkirEJ9BDVaMQ6Qupg/xA=;
-        b=YuKaTjKFzlYvUVmPIlI/jO6J4yUO7idRnUbGMFM133GtOcjFF7QUVxfjDMoJjyTdsR
-         s6c+q+rOATGuPSrM7pgP8qu7m/P8T+BVMjEscgBRzdZJkmCxflHa1AybKVZtmXcTen+u
-         6xmBmi+8aLdA5qtGc2rdoeGzYQXWivBSN5fRV5nXv41tCKDBOZ4ydUznGpF3mpbWgNGy
-         yw8cr8eoc3qI9ReEzh6MMpxmHlbJXu44BS/+n7osFfuLVZX5SfEEYicfZqzu9sJ3Yf38
-         ZGAkvM8ZW41HVwePSHR7ZdaFkrBfAWIqGhS7T6kh6lxI6rP8qxkAAFBfIDHh6rV7Qdkj
-         PxkA==
+        bh=2atOuZ4m5Gd0/h1m8gOvMaL9Rsri8ziYxXRDoMiJ3Z4=;
+        b=TMI0sLZt4OmnHOdX/rHF7lP7iEiiu9tDICwH446miWRtN5dLMIe3IJohkVCogVU1Vy
+         Ow88vkSgWRAbCVEF5FMImYQGlDfchIVKT4g9XcItpG8Sy+83m4M1Q16LUblA+dTzoyk8
+         AnZfP5hivKxbm86yvrQvzUjrWsy7yS3N/ncZr1oZG5mJIFyM2uTKHIsC25TyGeWNC29K
+         hRNtfDXiT+77zvbU46YoEb3o9fdEJkW/5QchtqkwKNoDBclO2jbFG0/UE8SIKlt7SAge
+         6cMiEWft9lP+8x8se8mwSC2kcajRWNWaSiaV+o1ciQFE6YKFKACdd/F3r8NVa1waKunl
+         YEJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701862697; x=1702467497;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1701863311; x=1702468111;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qm7pCcZmaWCMHPggwY7CXlYkirEJ9BDVaMQ6Qupg/xA=;
-        b=P1gxF6sg9moGp1WAVZE1BdZuP8IaGr8qDCSttpakLwM5nasgDINpo62DdK/+K/C5hy
-         9pQrFoXJac7JZr+vyhXaHZg5Sg3gwGexiMPkqTNkBksiBQk/+gmaFFCR9URU/sLZOg9n
-         uOooZXGWTQAaCUTWb6bzb82vhDBlWnPZC3R5pYRr0ybJXXs9Q6vYljm9Jm9FFbJ18678
-         JpWQb7JjnVtOnjjf7VxvGVYJMKeTQkANhOP2OkoFKqKm+do3jT6VD3Vr1Q3nE4TsdapI
-         GVlheJhfbQGRumODq8xSV/9JFNJVpC63iPxnYGH9ZPdWeuyOejo+pNnBaMju0nZidrPs
-         sa5A==
-X-Gm-Message-State: AOJu0YyN33pF/auLA0EJIBJbNiWuF09wXsLfsRsX5y74RAigh2t6JL+6
-	invAo/dFGVWEENPgXt+GX7BKAg==
-X-Google-Smtp-Source: AGHT+IHDl6UGXjkhX+Sh5mNIn+o9ppG/aW6SJEMyI6QLyUYRYrTFnfXaaCrq1qDg++lrAfzAdnteqw==
-X-Received: by 2002:a5d:4fca:0:b0:333:387b:687b with SMTP id h10-20020a5d4fca000000b00333387b687bmr387774wrw.34.1701862697689;
-        Wed, 06 Dec 2023 03:38:17 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id f13-20020a5d64cd000000b003334898aafasm8392073wri.11.2023.12.06.03.38.15
+        bh=2atOuZ4m5Gd0/h1m8gOvMaL9Rsri8ziYxXRDoMiJ3Z4=;
+        b=VHVCT5hh1pdKL9UZteBXxqZWjZQdQTq82jQ6OBCBpVn08cLMmXyRuWJOmOA3ahbmNw
+         Z8W5ukXovTPt5xO7Ssv6o9vxnNJhj0f9dQzoypmLEytOPX5/+uWUst8M4Uya45U1zBZf
+         LsfkeAr1EbYfCY61p2jejT2rtwiTd/QT6R7YTkktS2IQPT+1xSNtbBEhIskN055rCCBJ
+         Biiw8bi7U5vFxe6SWU9BPpMPrHn9BKRtPe95Z6iLIYA3rDRyJpG61K8aBqhboONKqNzY
+         cFuoKbm3nolZGxoziys51Xbgz7M0VY90qsZaEjtJqlt+O5L+wY8lljGewi9QiFEx5f6R
+         bmEA==
+X-Gm-Message-State: AOJu0YwXmjn9F5ZxKxoNa1IS2LTUyIrIfz/yq+R8KVxSYHP3fxAnoC7w
+	1AKICXoxZv8Grmg20oDoXzmlhQ==
+X-Google-Smtp-Source: AGHT+IEdO1d6acuKq7fI7Zu+YUD1aCrLTPztZ/SxxNtASmnGXOvg9HfwOsUOMZBpcuZN8TYrQYwLYw==
+X-Received: by 2002:a17:906:3408:b0:a19:a19b:c741 with SMTP id c8-20020a170906340800b00a19a19bc741mr430304ejb.145.1701863310872;
+        Wed, 06 Dec 2023 03:48:30 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.22])
+        by smtp.gmail.com with ESMTPSA id fx20-20020a170906b75400b00a1d38589c67sm1370637ejb.98.2023.12.06.03.48.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Dec 2023 03:38:16 -0800 (PST)
-Message-ID: <71972f4f-b5ac-484a-8a09-0b74bd7c623b@linaro.org>
-Date: Wed, 6 Dec 2023 12:38:14 +0100
+        Wed, 06 Dec 2023 03:48:30 -0800 (PST)
+Message-ID: <89b68781-b552-499d-a8f2-df4dccbb02e0@tuxon.dev>
+Date: Wed, 6 Dec 2023 13:48:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,156 +47,123 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 14/20] pinctrl: samsung: Add gs101 SoC pinctrl
- configuration
+Subject: Re: [PATCH 13/14] arm64: dts: renesas: rzg3s-smarc-som: Enable
+ Ethernet interfaces
 Content-Language: en-US
-To: Alim Akhtar <alim.akhtar@samsung.com>,
- 'Sam Protsenko' <semen.protsenko@linaro.org>,
- 'Peter Griffin' <peter.griffin@linaro.org>
-Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
- mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
- tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org,
- wim@linux-watchdog.org, linux@roeck-us.net, catalin.marinas@arm.com,
- will@kernel.org, arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org,
- jirislaby@kernel.org, cw00.choi@samsung.com, tudor.ambarus@linaro.org,
- andre.draszik@linaro.org, saravanak@google.com, willmcvicker@google.com,
- soc@kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-watchdog@vger.kernel.org, kernel-team@android.com,
- linux-serial@vger.kernel.org
-References: <20231201160925.3136868-1-peter.griffin@linaro.org>
- <20231201160925.3136868-15-peter.griffin@linaro.org>
- <CGME20231202004026epcas5p4d3947d7bb99e54f70ca37272cfdc5e55@epcas5p4.samsung.com>
- <CAPLW+4kBOWFPx3Hr-=UoLWvRxCorzBY9RCOiBhfkKcU0LAa21Q@mail.gmail.com>
- <000001da24c0$0b83aab0$228b0010$@samsung.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <000001da24c0$0b83aab0$228b0010$@samsung.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: s.shtylyov@omp.ru, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ linux@armlinux.org.uk, magnus.damm@gmail.com, mturquette@baylibre.com,
+ sboyd@kernel.org, linus.walleij@linaro.org, p.zabel@pengutronix.de,
+ arnd@arndb.de, m.szyprowski@samsung.com, alexandre.torgue@foss.st.com,
+ afd@ti.com, broonie@kernel.org, alexander.stein@ew.tq-group.com,
+ eugen.hristev@collabora.com, sergei.shtylyov@gmail.com,
+ prabhakar.mahadev-lad.rj@bp.renesas.com, biju.das.jz@bp.renesas.com,
+ linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-gpio@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20231120070024.4079344-1-claudiu.beznea.uj@bp.renesas.com>
+ <20231120070024.4079344-14-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdXs9tKo9W31f5OybNR51a_i99Lyx=wHe0GLrADN_8KZTg@mail.gmail.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <CAMuHMdXs9tKo9W31f5OybNR51a_i99Lyx=wHe0GLrADN_8KZTg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 02/12/2023 02:36, Alim Akhtar wrote:
+Hi, Geert,
+
+On 06.12.2023 13:22, Geert Uytterhoeven wrote:
+> Hi Claudiu,
 > 
+> Thanks for your patch!
 > 
->> -----Original Message-----
->> From: Sam Protsenko <semen.protsenko@linaro.org>
->> Sent: Saturday, December 2, 2023 6:10 AM
->> To: Peter Griffin <peter.griffin@linaro.org>
->> Cc: robh+dt@kernel.org; krzysztof.kozlowski+dt@linaro.org;
->> mturquette@baylibre.com; conor+dt@kernel.org; sboyd@kernel.org;
->> tomasz.figa@gmail.com; s.nawrocki@samsung.com; linus.walleij@linaro.org;
->> wim@linux-watchdog.org; linux@roeck-us.net; catalin.marinas@arm.com;
->> will@kernel.org; arnd@arndb.de; olof@lixom.net;
->> gregkh@linuxfoundation.org; jirislaby@kernel.org;
->> cw00.choi@samsung.com; alim.akhtar@samsung.com;
->> tudor.ambarus@linaro.org; andre.draszik@linaro.org;
->> saravanak@google.com; willmcvicker@google.com; soc@kernel.org;
->> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
->> samsung-soc@vger.kernel.org; linux-clk@vger.kernel.org; linux-
->> gpio@vger.kernel.org; linux-watchdog@vger.kernel.org; kernel-
->> team@android.com; linux-serial@vger.kernel.org
->> Subject: Re: [PATCH v5 14/20] pinctrl: samsung: Add gs101 SoC pinctrl
->> configuration
+> On Mon, Nov 20, 2023 at 8:03 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >>
->> On Fri, Dec 1, 2023 at 10:11 AM Peter Griffin <peter.griffin@linaro.org>
->> wrote:
->>>
->>> Add support for the pin-controller found on the gs101 SoC used in
->>> Pixel 6 phones.
->>>
->>> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
->>> ---
->>>  .../pinctrl/samsung/pinctrl-exynos-arm64.c    | 159 ++++++++++++++++++
->>>  drivers/pinctrl/samsung/pinctrl-exynos.c      |   2 +
->>>  drivers/pinctrl/samsung/pinctrl-exynos.h      |  34 ++++
->>>  drivers/pinctrl/samsung/pinctrl-samsung.c     |   2 +
->>>  drivers/pinctrl/samsung/pinctrl-samsung.h     |   1 +
->>>  5 files changed, 198 insertions(+)
->>>
->>> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
->>> b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
->>> index cb965cf93705..e1a0668ecb16 100644
->>> --- a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
->>> +++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
->>> @@ -796,3 +796,162 @@ const struct samsung_pinctrl_of_match_data
->> fsd_of_data __initconst = {
->>>         .ctrl           = fsd_pin_ctrl,
->>>         .num_ctrl       = ARRAY_SIZE(fsd_pin_ctrl),
->>>  };
->>> +
->>> +/*
->>> + * bank type for non-alive type
->>> + * (CON bit field: 4, DAT bit field: 1, PUD bit field: 4, DRV bit
->>> +field: 4)
->>> + * (CONPDN bit field: 2, PUDPDN bit field: 4)  */ static struct
->>> +samsung_pin_bank_type gs101_bank_type_off  = {
->>> +       .fld_width = { 4, 1, 4, 4, 2, 4, },
->>> +       .reg_offset = { 0x00, 0x04, 0x08, 0x0c, 0x10, 0x14, }, };
+>> RZ/G3S Smarc Module has Ethernet PHYs (KSZ9131) connected to each Ethernet
+>> IP. For this add proper DT bindings to enable the Ethernet communication
+>> though these PHYs.
 >>
->> This is just the same as exynos850_bank_type_off (100% duplication).
->> Here is what I suggest. Now that it's obvious there is some common platform
->> for moder Exynos SoCs, and it's probably Exynos9, I'd suggest next course of
->> action (if maintainers agree):
->>   1. Remove this one
->>   2. Rename exynos850_bank_type_off to exynos9_bank_type_off
->>   3. Use it for both gs101 and exynos850
->>
->> Does it make sense?
->>
-> My opinion is to reuse exynos850 for gs101 (wherever applicable), same philosophy was historically followed in this file.
-> That way (using exynos850 for gs101) things will be simple. 
-> Adding exynos9_* is not adding any benefit, rather it create confusion.
+>> The interface b/w PHYs and MACs is RGMII. The skew settings were set to
+>> zero as based on phy-mode (rgmii-id) the KSZ9131 driver enables internal
+>> DLL which adds 2ns delay b/w clocks (TX/RX) and data signals.
+> 
+> So shouldn't you just use phy-mode "rgmii" instead?
 
-I don't see much value in renaming exynos850 bank type to exynos9
-considering:
-1. We don't really know the bank types for all of Exynos9xxx SoCs,
-2. Exynos7885 also uses Exynos850 bank types. Exynos7885 was much
-earlier than Exynos9xxx family.
+I chose it like this for simpler configuration of the skew settings. The
+PHY supports fixed 2ns delays which is enough for RGMII. And this is
+configured based on phy-mode="rgmii-id". As this delay depends also on
+soldering length I consider it better this way.
 
-Best regards,
-Krzysztof
+The other variant would have been using phy-mode="rgmii" + skew settings.
 
+Also, same phy-mode is used by rzg2ul-smarc-som.dtsi which is using the
+same PHY.
+
+>> Different pin settings were applied to TXC, TX_CTL compared with the rest
+>> of the RGMII pins to comply with requirements for these pins imposed by
+>> HW manual of RZ/G3S (see chapters "Ether Ch0 Voltage Mode Control
+>> Register (ETH0_POC)", "Ether Ch1 Voltage Mode Control Register (ETH1_POC)",
+>> for power source selection, "Ether MII/RGMII Mode Control Register
+>> (ETH_MODE)" for output-enable and "Input Enable Control Register (IEN_m)"
+>> for input-enable configurations).
+>>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+>> --- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+>> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+>> @@ -25,7 +25,10 @@ / {
+>>
+>>         aliases {
+>>                 mmc0 = &sdhi0;
+>> -#if !SW_SD2_EN
+>> +#if SW_SD2_EN
+> 
+> Cfr. my comment on [PATCH 11/14], this looks odd...
+> 
+>> +               eth0 = &eth0;
+>> +               eth1 = &eth1;
+>> +#else
+>>                 mmc2 = &sdhi2;
+>>  #endif
+>>         };
+>> @@ -81,6 +84,64 @@ vcc_sdhi2: regulator2 {
+>>         };
+>>  };
+>>
+>> +#if SW_SD2_EN
+> 
+> Likewise.
+> 
+>> +&eth0 {
+>> +       pinctrl-0 = <&eth0_pins>;
+>> +       pinctrl-names = "default";
+>> +       phy-handle = <&phy0>;
+>> +       phy-mode = "rgmii-id";
+>> +       #address-cells = <1>;
+>> +       #size-cells = <0>;
+> 
+> #{address,size}-cells should be in the SoC-specific .dtsi.
+> Same for eth1.
+> 
+>> +       status = "okay";
+> 
+> The rest LGTM.
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
