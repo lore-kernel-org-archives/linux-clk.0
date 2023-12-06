@@ -1,190 +1,104 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Aud7xUpj"
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E79B1FF1;
-	Wed,  6 Dec 2023 02:59:58 -0800 (PST)
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madras.collabora.co.uk (Postfix) with ESMTPSA id D896C660576A;
-	Wed,  6 Dec 2023 10:59:54 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1701860396;
-	bh=HoPHOhlV5xjupYlTbEAUED1Io4kwS+bA2h3iDVkbUWc=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=Aud7xUpjM8bRjM7zomse72JYlZAIPri/6RIp9o0ijL/8LGxHF+BIayERr9Sakoevn
-	 b4uXHgp5w5WVDSltP2n2DpVpy83vXk46pKB3JVTAYXIApp+W9sAYmM8wUWdmrpPvUd
-	 nXRN7BdRwYPFnjWK3Ug4RlUI8biuHmBbHPrW67zo4RRGKjfDzcDCY1bEBLxkyTk15V
-	 7E2USSxoKh6efRjxybRqYk0NfNF1U0zLXhvglR6loxxeFi4wEHMrsrl0xqoQkyylHG
-	 TwxA3q/FkZQs3xeBGESjLQEfJdpiHjHiEqa9G+m7jtYK2DIYINdVMeIP3nfJ8F5AuB
-	 /kd33Us9uCKfQ==
-Message-ID: <3e72bff6-9f4d-4cd4-845e-b065f1233ec6@collabora.com>
-Date: Wed, 6 Dec 2023 11:59:54 +0100
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A53F2D64;
+	Wed,  6 Dec 2023 03:03:38 -0800 (PST)
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-5d3efc071e2so61083137b3.0;
+        Wed, 06 Dec 2023 03:03:38 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701860606; x=1702465406;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dVVREpeNBksiVzen2ZqgrQY7HZ3YW+vcOqMYYYjnJRc=;
+        b=HpzMhqvRtcgKQV1bMsK9/EK1usIc1FOxaaNKDW4BSgMWweGdat+oCxQEwlCN1lW36g
+         Ie9b7GP0zYgQ/AghSQ06exNW3b1Ty2Ns95sNEARrveXkCI+O1jE+/VRyK7y37RtWHHkI
+         4AGDukpD5oqM12gMyD9+f75SlcoLtRopY/YhmpKuc8fYG85kDez8XFU6qfYfXnu26DDS
+         TBUtwEudfCu2qyDKT3NtTie3CIB/DuZaywC2Zk13Qd9xLJ13ooucyyE+TkAAOHepClmx
+         hL3JGMND5pIoJsw/lXoAGqzYDi6NjIZHBIp2MbkAMzV7bEFlu7qMIuwQFE8jG7Ol5D0J
+         rt3w==
+X-Gm-Message-State: AOJu0YyIrVYV/XTqJhiD4rdCBUNpDAE8JYSOAuTUhNCtJm9sBYINiwFP
+	FeWMfjKJS2uQZn9ma/osR99MPCK807gNUQ==
+X-Google-Smtp-Source: AGHT+IGG2chzZi55SmELOQzXjX9bd1TZrzeA0mEjt+D6WXX+5jYSxL9Dvx0HlQ5Rz4ISa7+d4inDwg==
+X-Received: by 2002:a81:49d4:0:b0:5d3:e2a2:8bcd with SMTP id w203-20020a8149d4000000b005d3e2a28bcdmr539979ywa.5.1701860606103;
+        Wed, 06 Dec 2023 03:03:26 -0800 (PST)
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com. [209.85.219.175])
+        by smtp.gmail.com with ESMTPSA id l6-20020a0dc906000000b005add997ae53sm3940442ywd.81.2023.12.06.03.03.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Dec 2023 03:03:25 -0800 (PST)
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-db3a09e96daso5427460276.3;
+        Wed, 06 Dec 2023 03:03:25 -0800 (PST)
+X-Received: by 2002:a81:ae5a:0:b0:5d7:1941:2c23 with SMTP id
+ g26-20020a81ae5a000000b005d719412c23mr477831ywk.80.1701860605566; Wed, 06 Dec
+ 2023 03:03:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/4] dt-bindings: clock: mediatek: add clock
- controllers of MT7988
-Content-Language: en-US
-To: Daniel Golle <daniel@makrotopia.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Sabrina Dubroca <sd@queasysnail.net>, Jianhui Zhao <zhaojh329@gmail.com>,
- Chen-Yu Tsai <wenst@chromium.org>, "Garmin.Chang"
- <Garmin.Chang@mediatek.com>, Sam Shih <sam.shih@mediatek.com>,
- Frank Wunderlich <frank-w@public-files.de>,
- Dan Carpenter <dan.carpenter@linaro.org>,
- James Liao <jamesjj.liao@mediatek.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- netdev@vger.kernel.org
-References: <23bc89d407e7797e97b703fa939b43bfe79296ce.1701823757.git.daniel@makrotopia.org>
- <def05aac79ddff872d3e56698b736cb445f14116.1701823757.git.daniel@makrotopia.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <def05aac79ddff872d3e56698b736cb445f14116.1701823757.git.daniel@makrotopia.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20231120070024.4079344-1-claudiu.beznea.uj@bp.renesas.com> <20231120070024.4079344-13-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20231120070024.4079344-13-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 6 Dec 2023 12:03:14 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWa9wSDfwrz=WSpa9S16BnMCJHdEiJSNFB2m8gr_p8z9g@mail.gmail.com>
+Message-ID: <CAMuHMdWa9wSDfwrz=WSpa9S16BnMCJHdEiJSNFB2m8gr_p8z9g@mail.gmail.com>
+Subject: Re: [PATCH 12/14] arm64: dts: renesas: Improve documentation for SW_SD0_DEV_SEL
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: s.shtylyov@omp.ru, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, robh+dt@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, linux@armlinux.org.uk, 
+	magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, 
+	linus.walleij@linaro.org, p.zabel@pengutronix.de, arnd@arndb.de, 
+	m.szyprowski@samsung.com, alexandre.torgue@foss.st.com, afd@ti.com, 
+	broonie@kernel.org, alexander.stein@ew.tq-group.com, 
+	eugen.hristev@collabora.com, sergei.shtylyov@gmail.com, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, biju.das.jz@bp.renesas.com, 
+	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Il 06/12/23 01:57, Daniel Golle ha scritto:
-> Add various clock controllers found in the MT7988 SoC to existing
-> bindings (if applicable) and add files for the new ethwarp, mcusys
-> and xfi-pll clock controllers not previously present in any SoC.
-> 
-> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> ---
-> v3:
->   * move clock bindings to clock folder
->   * drop ti,syscon-reset from bindings and example
->   * merge mcusys with topckgen bindings
-> 
-> v2:
->   * dropped unused labels
->   * add 'type: object' declaration for reset-controller found in new
->     ethwarp controller and represented as ti,syscon-reset
->   * rebase on top of
->     "dt-bindings: arm: mediatek: move ethsys controller & convert to DT schema"
-> 
->   .../arm/mediatek/mediatek,infracfg.yaml       |  1 +
->   .../bindings/clock/mediatek,apmixedsys.yaml   |  1 +
->   .../bindings/clock/mediatek,ethsys.yaml       |  1 +
->   .../clock/mediatek,mt7988-ethwarp.yaml        | 49 +++++++++++++++++++
->   .../clock/mediatek,mt7988-xfi-pll.yaml        | 48 ++++++++++++++++++
->   .../bindings/clock/mediatek,topckgen.yaml     |  2 +
->   .../bindings/net/pcs/mediatek,sgmiisys.yaml   | 13 +++--
->   7 files changed, 112 insertions(+), 3 deletions(-)
->   create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt7988-ethwarp.yaml
->   create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt7988-xfi-pll.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.yaml
-> index ea98043c6ba3d..230b5188a88db 100644
-> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.yaml
-> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.yaml
-> @@ -30,6 +30,7 @@ properties:
->                 - mediatek,mt7629-infracfg
->                 - mediatek,mt7981-infracfg
->                 - mediatek,mt7986-infracfg
-> +              - mediatek,mt7988-infracfg
->                 - mediatek,mt8135-infracfg
->                 - mediatek,mt8167-infracfg
->                 - mediatek,mt8173-infracfg
-> diff --git a/Documentation/devicetree/bindings/clock/mediatek,apmixedsys.yaml b/Documentation/devicetree/bindings/clock/mediatek,apmixedsys.yaml
-> index 372c1d744bc27..685535846cbb7 100644
-> --- a/Documentation/devicetree/bindings/clock/mediatek,apmixedsys.yaml
-> +++ b/Documentation/devicetree/bindings/clock/mediatek,apmixedsys.yaml
-> @@ -22,6 +22,7 @@ properties:
->             - mediatek,mt7622-apmixedsys
->             - mediatek,mt7981-apmixedsys
->             - mediatek,mt7986-apmixedsys
-> +          - mediatek,mt7988-apmixedsys
->             - mediatek,mt8135-apmixedsys
->             - mediatek,mt8173-apmixedsys
->             - mediatek,mt8516-apmixedsys
-> diff --git a/Documentation/devicetree/bindings/clock/mediatek,ethsys.yaml b/Documentation/devicetree/bindings/clock/mediatek,ethsys.yaml
-> index 94d42c8647777..f9cddacc2eae1 100644
-> --- a/Documentation/devicetree/bindings/clock/mediatek,ethsys.yaml
-> +++ b/Documentation/devicetree/bindings/clock/mediatek,ethsys.yaml
-> @@ -22,6 +22,7 @@ properties:
->                 - mediatek,mt7629-ethsys
->                 - mediatek,mt7981-ethsys
->                 - mediatek,mt7986-ethsys
-> +              - mediatek,mt7988-ethsys
->             - const: syscon
->         - items:
->             - const: mediatek,mt7623-ethsys
-> diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt7988-ethwarp.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt7988-ethwarp.yaml
-> new file mode 100644
-> index 0000000000000..9b919a155eb13
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/mediatek,mt7988-ethwarp.yaml
-> @@ -0,0 +1,49 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/arm/mediatek/mediatek,mt7988-ethwarp.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: MediaTek MT7988 ethwarp Controller
-> +
-> +maintainers:
-> +  - Daniel Golle <daniel@makrotopia.org>
-> +
-> +description:
-> +  The Mediatek MT7988 ethwarp controller provides clocks and resets for the
-> +  Ethernet related subsystems found the MT7988 SoC.
-> +  The clock values can be found in <dt-bindings/clock/mt*-clk.h>.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - const: mediatek,mt7988-ethwarp
-> +      - const: syscon
-> +      - const: simple-mfd
+Hi Claudiu,
 
-No, this is not a mfd, I say.
+On Mon, Nov 20, 2023 at 8:03=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Add switch OFF/OFF description to values of SW_SD0_DEV_SEL for
+> better understanding.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Prove me wrong! :-)
+Thanks for your patch!
 
-..snip..
+> --- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+> @@ -11,8 +11,8 @@
+>  /*
+>   * Signals of SW_CONFIG switches:
+>   * @SW_SD0_DEV_SEL:
+> - *     0 - SD0 is connected to eMMC
+> - *     1 - SD0 is connected to uSD0 card
+> + *     0 - (switch OFF) SD0 is connected to eMMC
+> + *     1 - (switch ON)  SD0 is connected to uSD0 card
+>   * @SW_SD2_EN:
+>   *     0 - (switch OFF) SD2 is connected to SoC
+>   *     1 - (switch ON)  SCIF1, SSI0, IRQ0, IRQ1 connected to SoC
 
-> diff --git a/Documentation/devicetree/bindings/net/pcs/mediatek,sgmiisys.yaml b/Documentation/devicetree/bindings/net/pcs/mediatek,sgmiisys.yaml
-> index 66a95191bd776..68632cda334bd 100644
-> --- a/Documentation/devicetree/bindings/net/pcs/mediatek,sgmiisys.yaml
-> +++ b/Documentation/devicetree/bindings/net/pcs/mediatek,sgmiisys.yaml
-> @@ -15,15 +15,22 @@ description:
->   
->   properties:
->     compatible:
-> -    items:
-> -      - enum:
-> +    oneOf:
-> +      - items:
-> +        - enum:
->             - mediatek,mt7622-sgmiisys
->             - mediatek,mt7629-sgmiisys
->             - mediatek,mt7981-sgmiisys_0
->             - mediatek,mt7981-sgmiisys_1
->             - mediatek,mt7986-sgmiisys_0
->             - mediatek,mt7986-sgmiisys_1
-> -      - const: syscon
-> +        - const: syscon
-> +      - items:
-> +        - enum:
-> +          - mediatek,mt7988-sgmiisys_0
-> +          - mediatek,mt7988-sgmiisys_1
-> +        - const: syscon
-> +        - const: simple-mfd
+I guess this makes sense
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Same.
+Gr{oetje,eeting}s,
 
-Cheers,
-Angelo
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
