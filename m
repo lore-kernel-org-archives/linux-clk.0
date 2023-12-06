@@ -1,64 +1,66 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="rMAwFH01"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11olkn20800.outbound.protection.outlook.com [IPv6:2a01:111:f400:7eae::800])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0049C35B5;
-	Wed,  6 Dec 2023 03:02:57 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="mEtc+gxf"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11olkn2076.outbound.protection.outlook.com [40.92.18.76])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E66CED45;
+	Wed,  6 Dec 2023 03:08:01 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YtCedAzyJNA5JPSAeD09Nc6EUlkfF/yevQ21SnoCikFMZnLq6nLvDI4qIet+tfZoL5b1Hhuk8ZKs6r0+A/BHAmYnC5Mf1h5W86KBy1EiONaHYBLz3aRBP8Q/d6ozU7IX2uhtbShhyN4aaHsBQB6420GSVOTYAUoCrQWSzlGBKALWh6ypIJF3SysE9pwoWkN4t1phtYNSMcndPtl9Ma5xNnpAglbZyTWUfrL+kLex4v/EOKNXeHP0DTR9ZoHXGi1F2Ovt4EaBnQjLRCsS5mM1wdx/DBZKv53lU35aPpvDeYi8rB39YGvWsvfbde+73zphJ5PDAmjz93D9AN48zc4lPg==
+ b=L0q9QhAiTpiWhZTd2duCRCCh0oUArI06pA6E/f8j70My5A5aHfIrjEKPOF94KKBue65Vew4rrkrhjV+s26tXsA4bS6v4KagWzOQNkun2fDc9mWPHJUFVu3mpKq797DSoA3ah+qwkHTw6BlKfjjyunyAIXaSZ0u0vMMHW/cQ1X3kAH0bQhFyiuVsOziOrbO75bUnGemdPCLagsSlIBYWv3iMQTvkRlsHmgk3FqkBcOnIdCdrk3pBvrvyClJ+5gYoU76rL0QtWEUqs83OZhhW6n1qYy0v6xJHEr3LTSkM2SHmEHsLRJUlF0H5DD8apwMyRgnoDuRejryU4nj6FI0EwKQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=O7apL2HYT1nWApNnv/9FspLSiSQS9ch8iOfTconmBBw=;
- b=ArbdgwJx9g6Kym2FXa9EurK9jbzRRKZfTNTNRVvDVtfZMSpwUDtNjZoPgCq7CzvRN/WeY5ynfy2ZbvkUUZPixPbAGY4EsYkcG32dYRAcMQNVguOAys/aDV0jszHIZzZ9SFX3idD47pGGyuqwTVCiKGseN1bJQV+E9EBoZp5J3sEjhocSFgGPowUc/jiA2TvTdRcNxXoCbLJN48sdiKGs4ZGnyA2LsfCa5d3kvNylfdSpwGUtHnji0umOnkvCarvTqGL2uHC3keJt5IGdxjtbgO/PnVdNzny+YqwuVvcxkDsXjPmKjmSIpt6eBvxTpypgfEwwB3vs5RJ3fLAfr88zsA==
+ bh=5icMAGXlHZ5PIwD6QwaHUCnOn/Y5mVkeir7r1ajCQCo=;
+ b=B8Pt5jbXx1LlbAIhoNa2I7SrGZjHCqwZmY1c7acRsQyyxec/6DOyYnrf9iLS0FV3MG2wysdb6LGPtwhVGNZwi/ivzseC8o715XM7/5en03fHiGPUfMaTPX17D3YOL5T2SY5DFi023QYUlFPdu+cxhlnzEn8odfCbP21aGe/nFv43ss+bws4elGkILBkj0YaOJFeFXkj7qbtAuZ3kM6DQFylqS6cBnLZyZBvAfoDQXUyV6seXe4GgpyDkg/PYOskMbtCX6QV6cFHMfeNBnNpCuUew+iig0ICcTbejifHIduxdZbi/MbXKH1pO2fCbvILmAZrnySHM7qfxw2pYYgPRqA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
  dkim=none; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=O7apL2HYT1nWApNnv/9FspLSiSQS9ch8iOfTconmBBw=;
- b=rMAwFH01i0EvEwhsfSZGiiuhSw/L7ITCybPaqu491RBo3sUjndCqYFbjuFQm47qzbQgllHxeEzMIcN5jrBFzZmrJ+Q/uvM89qphbnkJD4cEzaVlF+tUZ3GGSDckjb0JvoPtrhpx4Gk489k7QAbr0XA+JRklK5uK17w6ZozxfNsL8sN41nmDg4mg5/2WhTZRgrAkQAv7rnyefBjk4FDbIoHK6os2GfqsUIDHxLDX2Ud4OkGmlCf65OfEeATFl/wQwNGgtYN6LYQJSAnK3zBQ3qfnXQy1qxixiIEe1prW9aV7TEBhOmfQbGoYuCeJCn0GOtPcNOoRTSMEe0ONTRmDiFw==
+ bh=5icMAGXlHZ5PIwD6QwaHUCnOn/Y5mVkeir7r1ajCQCo=;
+ b=mEtc+gxf9Or7iTPzKaNZT6/3rA7lC1f7uNSV/QPmRJ/jicOIRZENOGZG2h+yfKMPi317Y4XGQ3QLc9wI4gUghW97xjlL1p/rve8BXnWnfp9UmatuNmB5mWg5XoGGZCsjb63VcbSO9QABrKxBXr9VsITZXs3WSM81cjRXXSNuJX8j69KUCNTdNllasTf+jVdztCvmW+NIVR1EKkQypJKBBJ3F22lVFjNF+C1B7zm+X/fT6zuftlB6gacx4fhLWEVFY6/jvf5zUbTlxq+glAYRt/jzmdd9fGbO10KeTMGvZFN0wn0l8iHZ9vdV10rk1GS1L9Pj4I2453TuV6Nyluo2Lw==
 Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
- by SN7PR20MB5238.namprd20.prod.outlook.com (2603:10b6:806:266::11) with
+ by CH0PR20MB3868.namprd20.prod.outlook.com (2603:10b6:610:c5::11) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7046.34; Wed, 6 Dec
- 2023 11:01:53 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7068.25; Wed, 6 Dec
+ 2023 11:07:59 +0000
 Received: from IA1PR20MB4953.namprd20.prod.outlook.com
  ([fe80::55b:c350:980:ad8]) by IA1PR20MB4953.namprd20.prod.outlook.com
  ([fe80::55b:c350:980:ad8%6]) with mapi id 15.20.7046.024; Wed, 6 Dec 2023
- 11:01:53 +0000
+ 11:07:59 +0000
 From: Inochi Amaoto <inochiama@outlook.com>
 To: Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@outlook.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
 	Rob Herring <robh+dt@kernel.org>,
 	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
 	Conor Dooley <conor+dt@kernel.org>,
 	Chao Wei <chao.wei@sophgo.com>,
+	Chen Wang <unicorn_wang@outlook.com>,
 	Paul Walmsley <paul.walmsley@sifive.com>,
 	Palmer Dabbelt <palmer@dabbelt.com>,
 	Albert Ou <aou@eecs.berkeley.edu>
-Cc: Inochi Amaoto <inochiama@outlook.com>,
-	Jisheng Zhang <jszhang@kernel.org>,
+Cc: Jisheng Zhang <jszhang@kernel.org>,
 	qiujingbao.dlmu@gmail.com,
 	dlan@gentoo.org,
 	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 2/4] clk: sophgo: Add CV1800 series clock controller driver
-Date: Wed,  6 Dec 2023 19:01:34 +0800
+Subject: Re: [PATCH v2 0/4] riscv: sophgo: add clock support for Sophgo CV1800 SoCs
+Date: Wed,  6 Dec 2023 19:07:55 +0800
 Message-ID:
- <IA1PR20MB4953D20414ECD451EC2F388CBB84A@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <IA1PR20MB4953EAE3F3B7F8B3CB659716BB84A@IA1PR20MB4953.namprd20.prod.outlook.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <CAJM55Z9CCH3n5g4_cRid-inr0SU_Kk39AhbrCavGJKhOoz=asw@mail.gmail.com>
-References: <CAJM55Z9CCH3n5g4_cRid-inr0SU_Kk39AhbrCavGJKhOoz=asw@mail.gmail.com>
+In-Reply-To: <CAJM55Z-hCzuw+eQ-ABXoBYX7oSScXTKHwUzEe_2k6eSyy5HqKQ@mail.gmail.com>
+References: <CAJM55Z-hCzuw+eQ-ABXoBYX7oSScXTKHwUzEe_2k6eSyy5HqKQ@mail.gmail.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-TMN: [v4RNplijF9hWM15A0rIG3bMPBMyGDwA4F8KBs3KasMc=]
-X-ClientProxiedBy: TY1PR01CA0184.jpnprd01.prod.outlook.com (2603:1096:403::14)
- To IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
+X-TMN: [efj7rrDA26Avtp4DQcpmS5Z658Gc/7txVEtGDoKMs6M=]
+X-ClientProxiedBy: BY3PR04CA0011.namprd04.prod.outlook.com
+ (2603:10b6:a03:217::16) To IA1PR20MB4953.namprd20.prod.outlook.com
+ (2603:10b6:208:3af::19)
 X-Microsoft-Original-Message-ID:
- <20231206110135.786328-1-inochiama@outlook.com>
+ <20231206110755.790348-1-inochiama@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -67,111 +69,92 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|SN7PR20MB5238:EE_
-X-MS-Office365-Filtering-Correlation-Id: e7d4004d-53ea-43de-48be-08dbf64ac10f
+X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|CH0PR20MB3868:EE_
+X-MS-Office365-Filtering-Correlation-Id: 294d2484-58f6-4deb-5b9e-08dbf64b9b3c
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info:
-	6GvgOC+UMjxsjv4MICbOc+tvXZG2ii3JhDDglkFaV7N5BxlfA9viiUZ99+5Gs8FRz/EKUT9rNsp5/AXH5PDvKc+59IpvnR2OrPWvP20/EaYRRp4F+R9wFcdyLnOqQdofud/IcTsx/GwDsZvR01CBqcIqgGafJR1B6gsA9LrApm7nQsAry+t/blA2fXfc4RMkdYUIaFLznifCOWrtgcay/Ai3sa/VhTFVqY3Tntao9H8tlCsxhZ3ZwtXYu5T92oucoXe5GqMj5GwybNf8x5tEyoBiiVdLg5lMmRGMMpm4tHrgAIar90TP8TG4fi/+QRnrbUGWGOoM3F4h+5K1oH5LZcL0hLyDLmQSgZ9JjiT3Bot8WlHr9SOMmx+XS2Eazx3s0N0uNtAfseXcJP3p33WbWY1RBoWDEfciEhkyYMs69x1PwM4N3bDdkJWJhaxF+Mw9GZq50uGaIfG7zipV1VYQKdf0oqS12Ec/3ixBnFgujT7HxvX4y4L22F5zMj23WFsBWF9DfMrhjPP4by3VEjoSnHDEP0B97IG2DUAf6BTMu+fv+UKMbPAskYKkQzfYnxk++eFcvRI08reHMTTOPgpgFJONQxaTuUvzu2d6YS+gqAwc/skeMjzTsJ8fJ3moImKoOswrtrq7gBbcUL6jipYHGbdQUOHkEdAh5MrtAYtzoG8=
+	ujnu5nbv3oyjCornR/y5abOmjFdaJ1hPYm9IHG6Pc+T4RiapE4uW50vaNhM16VpGg6X2gv9ffBpSdvN2qEwPDrapJNeKJk3YmCo7R/jrpMyydXTlQhwcSsLtQnmx6ULsShMHpIP3aVoAI1tH6icse3GM5PXj70LOEgs4ewwQqaoneG8zecnu1Ya0P93r5DTFKkLr6IAyb0RMlKHEqYx6XPjqufaxUXOumxgJiXu9zfe+9qPD7Th9QQbkPRJuWDyw7Vojtm4UmEVUqXARt7Pqtm97KV/88h6ng0zX5yrYqN+IoecKL7IWKxyNnQTOhKJSmzK7CeVDdWB+HsO7Y4wg1qEpB4kue57F2Dt8RAUEIDztcWVkpxejufyzgvmw15GsuxuHlmdAb+G3TzRQ2TjqUArjcPomPjHBvb/qEyVXEjakYGBqaySuXkjmUH1KrwCi+/ihW+nJdadcuMiObh5GWetf/GGjhMwbGVfk997z7AhvqQ4yogIx8JhVuiG6uwQ6awLCmMnUQciQyEKOM5WDIS6kSMABW2dBEjYRKsPj18Bvhj0fyIemXSj6Ew2ShyiXpw/8BCNBnRT1et5ENquCB/gj9TUQ2C7DD1pOuRcr0qAHyzY4WI2GTGH3K4KNvVLE
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?5ZT+eenRFomfa9ROvzl+wTuFymQAAuDUXB0ickYrbkjN16Eb5uZwsvUO3aI0?=
- =?us-ascii?Q?aAY6ToStog4pzqfzbroyS+5/oBk588KQ9S7WoMgBefDxtFuyips2UzQMDDnT?=
- =?us-ascii?Q?6NlEln32tGa/8HKtCVKRBqV/E3O6HOcsgcQbhvaLNxYeOQNnNTKM2w7ytfqT?=
- =?us-ascii?Q?oOE9Pi+Cmt3pQO4/EgDvQT0vrhZhMyyTGgfhjmd9RZzxfm8k8kgei+uWGmBg?=
- =?us-ascii?Q?JmHPndYmjZfQEXyHvJO/pLg5I6ma6MWVGNsUG6/F5WOTaBKykiBnEAqX1Zw+?=
- =?us-ascii?Q?D6RauWqtzbrhr9HErbKyRLFKpOz/Uob8pUyvZbjsdRQgNV8M7BIbcW8Yxb4o?=
- =?us-ascii?Q?9K4nXy2MSf/MEXvC3zAzirol6MEmHxKw2b+r87oL1z04vSZMT4fS2g6Wr/4u?=
- =?us-ascii?Q?JIrv4oFm75JI/lex/fuXKvBkoNP6gBNXIGjw+xzHzntzEqStSMkisLAZc0tj?=
- =?us-ascii?Q?CgYu8R9fFyd1avtW5fw33AREOO8nreOohAwL2zZgI9hRtZA3HgLBmXJ7Mc6/?=
- =?us-ascii?Q?dF8mF3wjFlE61VaaSfdeX1V749M28D336FbB0J5tEGcDHXmwUrGg6dncdpgl?=
- =?us-ascii?Q?Mq9qsYDlX0kT/LRAWof+/2UVkAiQx3f0CBjlTF1//KGvByaLyRPHqirOgbdi?=
- =?us-ascii?Q?cU59f4QLQnKoYaSGMHmxVyLjCSwnnn+4cUL1I0lOnuwdkK6vcNEPUfk18a/B?=
- =?us-ascii?Q?vckY0Koazz5ow6O5ENLR1YAK81Bpd2YUBnDjE3fgqsoLVYlIZBCJbIYd3bAS?=
- =?us-ascii?Q?AVv3E1cIOegSsaKKfo9RQqTqUGmgyA4cgPa1p90I59fVOxvop4t0Ydwi3a9q?=
- =?us-ascii?Q?VWBZmO9TxUnNid6SBcKQ7jUrl0DC0wMj5xN7NT+LrF8Chvxh0bOCyIGl3r7m?=
- =?us-ascii?Q?eTPzmnYKe/3IBEgGjxmm6/Tdrf9uFWmGcKXOabspD+L71Gj+hahhS7x90YKq?=
- =?us-ascii?Q?2LBcIG6R573m+yWw9a0xunQBbAbnojeBKWBN34xf7azITBVq1UBWZLq3UFTI?=
- =?us-ascii?Q?djEnUXwbS6qvJK8xYgWBOA98Jo7rUjom4LdTp/0Ki40vbfdkEe7JRRgsUNz6?=
- =?us-ascii?Q?VAWf/kpRpJTfoml27dMzxclpjSUY2O6l+TNixbDJ/tiyeYvdH60t49gIDRNF?=
- =?us-ascii?Q?OXRhLnpE1KQSvN/6tEFhQEa4vI/OUZNDNfT8TNcpsqEi+rcAAM9c5HPtFdzX?=
- =?us-ascii?Q?pRUZYTuUDiDI+cyndIdnO6F1PhkMdJWwQ2mOdAQAYdWn2jLTsYl3KkvWDVg?=
+	=?us-ascii?Q?+5NvDBL4Jl4UUl7cwMGbQWFS9SdTeihqWRL58TUedCU9rN7hj4MfU4oTdPqS?=
+ =?us-ascii?Q?+acKSO/45J7BFwRsXlQXFBZgpomdOzV5UyRMc7497ILfLQKRPbtYsPzIF9T5?=
+ =?us-ascii?Q?v/ZVl1XrbTLV29pJO/fcqJLZK7ckzRRkLNg7uub1BmQde96GdX9F2N2emmaM?=
+ =?us-ascii?Q?TLuxU95abvcriYu2QTyJJMKXETGMvQEGVFrdr+aEXr1ketCURCIW8YntbXCH?=
+ =?us-ascii?Q?zrEpP2mAc8ZScTxNWp85X5YQ9gytFsh5JyQcBIEplvRPYduemt69oKdwtLgE?=
+ =?us-ascii?Q?bOhPJSL7Vi+DkHJrJH4yct/02WzOB14yh8vrna0YtS7d0MC6S9S9W7laukgz?=
+ =?us-ascii?Q?R1bMFdW6xJgX9iZsSR20pzfzwlVuqHviSkHefIyiWd/s9iMWi5VPbWg/dQJi?=
+ =?us-ascii?Q?e18x+J3gEhBjZaY6A4qVgrbCgKHWOJnFQBGaa0oGdgdnINF/yM5TYtLf6kmq?=
+ =?us-ascii?Q?Mk0RzjNh+EhXV7Ujw6CI4PIgM+vJ/x1CE7kA4HfN1LaZ/QfA0vvW34G20LSz?=
+ =?us-ascii?Q?VLAO4a315ass1tlPaMJfosrgu/gSWMFMfK0KoFoDMZ0hyuYtr9QxUy1S5Szc?=
+ =?us-ascii?Q?nZyHZyEnbbkxkI/A59xbjKxwSdPpZR4E352jqYcYgtb8S8ToIWi1IoOL2aIO?=
+ =?us-ascii?Q?eWAPD3YTe5y+bVDaAzrvGyFQUKToyqGqBj+ZtH0myPUT+/I7VS/Tcr9Rp8+2?=
+ =?us-ascii?Q?3Y4jqIiwp2bJ80xtr2hDy9OMSywNuCNW/hUGjMCmDTagVo+W2nTSnSJOhMjM?=
+ =?us-ascii?Q?60xLv1jBNr8wfZyZQSUIUpqrSi7z/opscc9xTm4wBrqHTkov8Wh15OLbtJeR?=
+ =?us-ascii?Q?3rTfOTy1pIt+ocl2EVQ3mx4YbHqARqY7d3WKdHKyWw3EyzvS8gF6ELlzaIgj?=
+ =?us-ascii?Q?T3s+EMaSN0XCZWaG3PljYKEL3qG7sJZqGwIBooAGqf3MjSEFZ/SnelymNxuI?=
+ =?us-ascii?Q?6vo+kctzIybANOx0HXvp93J8hbN5GJOpxzmDuLj9zXPxUMlwFIqoEGHFhZX8?=
+ =?us-ascii?Q?5oliCQMqgsy+hIS9dZImRZ0JwLnksFXxV5Px64lgFhBNq4QFJP1KvnSiG2zx?=
+ =?us-ascii?Q?ma4rO6MWr/tje15mh8mg0dlZU0GLYx6Z2r5pC9KHYwm1wc1aos1olKKUH2Xx?=
+ =?us-ascii?Q?xO9S599rwSO9yKmQ91GOJEdqJ86A/rGe6I6mbz4XEFCnOpAt6z3kK6TKUUC9?=
+ =?us-ascii?Q?BnpkLhlB3vVom6w7MgoEoIqD5N7yJ2YUnovKMRcdQhEiSCkQyTVLlgBeTLA?=
  =?us-ascii?Q?=3D?=
 X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e7d4004d-53ea-43de-48be-08dbf64ac10f
+X-MS-Exchange-CrossTenant-Network-Message-Id: 294d2484-58f6-4deb-5b9e-08dbf64b9b3c
 X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Dec 2023 11:01:53.2691
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Dec 2023 11:07:59.4733
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
 X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
 	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR20MB5238
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR20MB3868
 
->
->
 >Inochi Amaoto wrote:
->>>
->>> On 2023/12/5 19:55, Inochi Amaoto wrote:
->>>> Add driver for CV1800 series clock controller.
->>> Add more clarification on your changes. Seems you add several files with different names for different products, what's your design idea, please add some brief introduction.
->>
->> In fact, it just adds the driver for the whole CV18XX series. I do not
->> think its clock controller has something different for different product.
->> The CV181X does have more clock, but it shares the same driver code of
->> CV180X. All the things just follow the manual and are for the hardware
->> design. Anyway, I will have a try.
->>
+>>> Inochi Amaoto wrote:
+>>>> Add clock controller support for the Sophgo CV1800B and CV1812H.
 >>>>
->>>> Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
->>>> Link: https://github.com/milkv-duo/duo-files/blob/main/hardware/CV1800B/CV180X-Clock-v1.xlsx
->>>> Link: https://github.com/milkv-duo/duo-files/blob/main/hardware/CV1800B/CV1800B-CV1801B-Preliminary-Datasheet-full-en.pdf
->>>> ---
->>>> ......
->>>> diff --git a/drivers/clk/sophgo/Kconfig b/drivers/clk/sophgo/Kconfig
->>>> new file mode 100644
->>>> index 000000000000..243d58a30117
->>>> --- /dev/null
->>>> +++ b/drivers/clk/sophgo/Kconfig
->>>> @@ -0,0 +1,7 @@
->>>> +# SPDX-License-Identifier: GPL-2.0
->>>> +# common clock support for SOPHGO SoC family.
->>> Drop this comment line, moving forward, this Kconfig file will be re-used for more different sophgo products.
->>
->> Why? I do not think this have some impact on reuse.
->>
->>>> +
->>>> +config CLK_SOPHGO_CV1800
->>>> +    tristate "Support for the Sophgo CV1800 series SoCs clock controller"
->>>> +    default y
->>>> +    depends on ARCH_SOPHGO || COMPILE_TEST
->>> Suggest to add some help words for this config item.
+>>>> This patch follow this patch series:
+>>>> https://lore.kernel.org/all/IA1PR20MB495399CAF2EEECC206ADA7ABBBD5A@IA1PR20MB4953.namprd20.prod.outlook.com/
+>>>>
+>>>> Changed from v1:
+>>>> 1. fix license issues.
+>>>>
+>>>> Inochi Amaoto (4):
+>>>>   dt-bindings: clock: sophgo: Add clock controller of CV1800 series SoC
+>>>>   clk: sophgo: Add CV1800 series clock controller driver
+>>>>   riscv: dts: sophgo: add clock generator for Sophgo CV1800 series SoC
+>>>>   riscv: dts: sophgo: add uart clock for Sophgo CV1800 series SoC
+>>>
+>>> Hi Inochi,
+>>>
+>>> This series seems to be missing patch 1 and 2. If you did send them, but just
+>>> omitted linux-riscv from those patches, please don't do that. Having the whole
+>>> series makes it a lot easier to review without having to hunt down all the
+>>> missing parts on lore.kernel.org.
+>>>
+>>> scripts/get_maintainer.pl does support muliple patches as input
+>>>
+>>> /Emil
 >>>
 >>
->> There is no extra information other than this title.
->> In fact, I think the description title is enough to describe this. Add
->> a duplicate help is useless.
+>> Hi Emil,
+>>
+>> The get_maintainer.pl does not give me linux-riscv mail list for the first
+>> and second patch. I have added this to the second one, but the patch is
+>> held by the mail list since is too big. Anyway, I will add this mail list
+>> manually if you need. Sorry for this inconvenience.
 >
->I'd also like to see some more information here. Eg. what are examples of SoC's
->in the CV1800 series. checkpatch also complains:
+>No worries. Yeah, that's what I meant by get_maintainer.pl supporting multiple
+>patches.  You can do something like
 >
->WARNING: please write a help paragraph that fully describes the config symbol
->#337: FILE: drivers/clk/sophgo/Kconfig:4:
->+config CLK_SOPHGO_CV1800
->+	tristate "Support for the Sophgo CV1800 series SoCs clock controller"
->+	default y
->+	depends on ARCH_SOPHGO || COMPILE_TEST
+>  git format-patch <starting point>..
+>  ./scripts/get_maintainer.pl *.patch
 >
-
-OK, thanks for your advice, I will add this help.
-
->
->Also the driver says "tristate" here, but defaults to built-in. If it works as
->a module it should be default m to not waste memory on systems not needing this.
->If it can't work properly as a module then tristate should be bool and the
->driver should be updated for that.
+>..to get a list of recipients for the whole series.
 >
 >/Emil
 >
 
-I will have a try and determine the right value. Thanks.
+I have known this. But I only do this for cover.
+Anyway, I will send this patch in the way your mentioned.
