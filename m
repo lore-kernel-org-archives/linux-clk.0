@@ -1,160 +1,200 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="mEtc+gxf"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11olkn2076.outbound.protection.outlook.com [40.92.18.76])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E66CED45;
-	Wed,  6 Dec 2023 03:08:01 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=L0q9QhAiTpiWhZTd2duCRCCh0oUArI06pA6E/f8j70My5A5aHfIrjEKPOF94KKBue65Vew4rrkrhjV+s26tXsA4bS6v4KagWzOQNkun2fDc9mWPHJUFVu3mpKq797DSoA3ah+qwkHTw6BlKfjjyunyAIXaSZ0u0vMMHW/cQ1X3kAH0bQhFyiuVsOziOrbO75bUnGemdPCLagsSlIBYWv3iMQTvkRlsHmgk3FqkBcOnIdCdrk3pBvrvyClJ+5gYoU76rL0QtWEUqs83OZhhW6n1qYy0v6xJHEr3LTSkM2SHmEHsLRJUlF0H5DD8apwMyRgnoDuRejryU4nj6FI0EwKQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5icMAGXlHZ5PIwD6QwaHUCnOn/Y5mVkeir7r1ajCQCo=;
- b=B8Pt5jbXx1LlbAIhoNa2I7SrGZjHCqwZmY1c7acRsQyyxec/6DOyYnrf9iLS0FV3MG2wysdb6LGPtwhVGNZwi/ivzseC8o715XM7/5en03fHiGPUfMaTPX17D3YOL5T2SY5DFi023QYUlFPdu+cxhlnzEn8odfCbP21aGe/nFv43ss+bws4elGkILBkj0YaOJFeFXkj7qbtAuZ3kM6DQFylqS6cBnLZyZBvAfoDQXUyV6seXe4GgpyDkg/PYOskMbtCX6QV6cFHMfeNBnNpCuUew+iig0ICcTbejifHIduxdZbi/MbXKH1pO2fCbvILmAZrnySHM7qfxw2pYYgPRqA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5icMAGXlHZ5PIwD6QwaHUCnOn/Y5mVkeir7r1ajCQCo=;
- b=mEtc+gxf9Or7iTPzKaNZT6/3rA7lC1f7uNSV/QPmRJ/jicOIRZENOGZG2h+yfKMPi317Y4XGQ3QLc9wI4gUghW97xjlL1p/rve8BXnWnfp9UmatuNmB5mWg5XoGGZCsjb63VcbSO9QABrKxBXr9VsITZXs3WSM81cjRXXSNuJX8j69KUCNTdNllasTf+jVdztCvmW+NIVR1EKkQypJKBBJ3F22lVFjNF+C1B7zm+X/fT6zuftlB6gacx4fhLWEVFY6/jvf5zUbTlxq+glAYRt/jzmdd9fGbO10KeTMGvZFN0wn0l8iHZ9vdV10rk1GS1L9Pj4I2453TuV6Nyluo2Lw==
-Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
- by CH0PR20MB3868.namprd20.prod.outlook.com (2603:10b6:610:c5::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7068.25; Wed, 6 Dec
- 2023 11:07:59 +0000
-Received: from IA1PR20MB4953.namprd20.prod.outlook.com
- ([fe80::55b:c350:980:ad8]) by IA1PR20MB4953.namprd20.prod.outlook.com
- ([fe80::55b:c350:980:ad8%6]) with mapi id 15.20.7046.024; Wed, 6 Dec 2023
- 11:07:59 +0000
-From: Inochi Amaoto <inochiama@outlook.com>
-To: Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chao Wei <chao.wei@sophgo.com>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>
-Cc: Jisheng Zhang <jszhang@kernel.org>,
-	qiujingbao.dlmu@gmail.com,
-	dlan@gentoo.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 0/4] riscv: sophgo: add clock support for Sophgo CV1800 SoCs
-Date: Wed,  6 Dec 2023 19:07:55 +0800
-Message-ID:
- <IA1PR20MB4953EAE3F3B7F8B3CB659716BB84A@IA1PR20MB4953.namprd20.prod.outlook.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <CAJM55Z-hCzuw+eQ-ABXoBYX7oSScXTKHwUzEe_2k6eSyy5HqKQ@mail.gmail.com>
-References: <CAJM55Z-hCzuw+eQ-ABXoBYX7oSScXTKHwUzEe_2k6eSyy5HqKQ@mail.gmail.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN: [efj7rrDA26Avtp4DQcpmS5Z658Gc/7txVEtGDoKMs6M=]
-X-ClientProxiedBy: BY3PR04CA0011.namprd04.prod.outlook.com
- (2603:10b6:a03:217::16) To IA1PR20MB4953.namprd20.prod.outlook.com
- (2603:10b6:208:3af::19)
-X-Microsoft-Original-Message-ID:
- <20231206110755.790348-1-inochiama@outlook.com>
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="DlncmySJ"
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70377D3
+	for <linux-clk@vger.kernel.org>; Wed,  6 Dec 2023 03:12:00 -0800 (PST)
+Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-a196f84d217so80701066b.3
+        for <linux-clk@vger.kernel.org>; Wed, 06 Dec 2023 03:12:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1701861119; x=1702465919; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dcUwLRWzoKCiLujNLbeBgYDSgnjO4m7YhLdFf0vhr4A=;
+        b=DlncmySJI0BK09GpYxHKtmX5lq6kWZTu+SiBkeOU6alFzv21K4opxJnQMZQ35bi2aw
+         KaeRLP0JT+qSl/jIXwIxniERDGPVmyxzwxrO1jEechOUwuVIIgmuZ5e+JbFfyZxcKHd0
+         4JzXLkXx1Un11ugPboa5KhsJesspWH1ag2BjvEVBIih+Fp7H2sBKZf5f1NPEC5U940FQ
+         JersVQ1FyvU4Jnr47TZVmGeug+OVT4yC2A2jbHbRhnMszJtAzU6aY4IleFCvoQEfmpMD
+         nQ9m5Ynq+mL+LV50A1RBK1DwMfuAxtoz29tIhi6nvZNqAXhmDVOmdy+3wlbcRO+8srRp
+         2K2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701861119; x=1702465919;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dcUwLRWzoKCiLujNLbeBgYDSgnjO4m7YhLdFf0vhr4A=;
+        b=tBx5ioDtfUmBghJZqNAX2a+Xr9jr1GNbuC7tbBJv+ivuGth3wUhzbic8HiLQgHjm9/
+         Qhd93pFuYV64cAQp45WyeLf+zT40M+YIQh44lfbgmabYOZTM7tZlBcIl+MLTmbQt7sRk
+         YnnwzUPQ9L7cFd4Obr6TSqBNLsLo/N2G3c+w7FoOtEuYVQGWw7HsPi903feqRS3jYHEi
+         uRAC0Hk2rT5CCmLjDBPlhmQfAQT4om2nPg27GdugrjYrrhEJmHQ/H/u5hSLBAXakTea1
+         CFsTI5cEKIAi1YtbL0GGvs0FB9rpbOlJApQSwomVwcnXSl5ASlozi+5VG2f06unmNtLe
+         Nprg==
+X-Gm-Message-State: AOJu0Yw0mSl4LJPRLplXcJSmIeglZs/n0kruGqrLeAhjGs7/vzsGIdMJ
+	vBWsbqpdQDjxtEzwGpVmH98spA==
+X-Google-Smtp-Source: AGHT+IG3qcWvsI2ibZlg8aF3jqdwhI35Pva3o+lOtVXoK2FasThHPg+BRgLUAXOVFiJ2Rh0QB4rE+A==
+X-Received: by 2002:a17:906:3f5b:b0:9ff:53b6:f951 with SMTP id f27-20020a1709063f5b00b009ff53b6f951mr451808ejj.23.1701861118706;
+        Wed, 06 Dec 2023 03:11:58 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.22])
+        by smtp.gmail.com with ESMTPSA id o26-20020a170906289a00b009e5ce1acb01sm8100203ejd.103.2023.12.06.03.11.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Dec 2023 03:11:58 -0800 (PST)
+Message-ID: <248d24a9-589e-4b92-94b6-98504f78d7b9@tuxon.dev>
+Date: Wed, 6 Dec 2023 13:11:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|CH0PR20MB3868:EE_
-X-MS-Office365-Filtering-Correlation-Id: 294d2484-58f6-4deb-5b9e-08dbf64b9b3c
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	ujnu5nbv3oyjCornR/y5abOmjFdaJ1hPYm9IHG6Pc+T4RiapE4uW50vaNhM16VpGg6X2gv9ffBpSdvN2qEwPDrapJNeKJk3YmCo7R/jrpMyydXTlQhwcSsLtQnmx6ULsShMHpIP3aVoAI1tH6icse3GM5PXj70LOEgs4ewwQqaoneG8zecnu1Ya0P93r5DTFKkLr6IAyb0RMlKHEqYx6XPjqufaxUXOumxgJiXu9zfe+9qPD7Th9QQbkPRJuWDyw7Vojtm4UmEVUqXARt7Pqtm97KV/88h6ng0zX5yrYqN+IoecKL7IWKxyNnQTOhKJSmzK7CeVDdWB+HsO7Y4wg1qEpB4kue57F2Dt8RAUEIDztcWVkpxejufyzgvmw15GsuxuHlmdAb+G3TzRQ2TjqUArjcPomPjHBvb/qEyVXEjakYGBqaySuXkjmUH1KrwCi+/ihW+nJdadcuMiObh5GWetf/GGjhMwbGVfk997z7AhvqQ4yogIx8JhVuiG6uwQ6awLCmMnUQciQyEKOM5WDIS6kSMABW2dBEjYRKsPj18Bvhj0fyIemXSj6Ew2ShyiXpw/8BCNBnRT1et5ENquCB/gj9TUQ2C7DD1pOuRcr0qAHyzY4WI2GTGH3K4KNvVLE
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?+5NvDBL4Jl4UUl7cwMGbQWFS9SdTeihqWRL58TUedCU9rN7hj4MfU4oTdPqS?=
- =?us-ascii?Q?+acKSO/45J7BFwRsXlQXFBZgpomdOzV5UyRMc7497ILfLQKRPbtYsPzIF9T5?=
- =?us-ascii?Q?v/ZVl1XrbTLV29pJO/fcqJLZK7ckzRRkLNg7uub1BmQde96GdX9F2N2emmaM?=
- =?us-ascii?Q?TLuxU95abvcriYu2QTyJJMKXETGMvQEGVFrdr+aEXr1ketCURCIW8YntbXCH?=
- =?us-ascii?Q?zrEpP2mAc8ZScTxNWp85X5YQ9gytFsh5JyQcBIEplvRPYduemt69oKdwtLgE?=
- =?us-ascii?Q?bOhPJSL7Vi+DkHJrJH4yct/02WzOB14yh8vrna0YtS7d0MC6S9S9W7laukgz?=
- =?us-ascii?Q?R1bMFdW6xJgX9iZsSR20pzfzwlVuqHviSkHefIyiWd/s9iMWi5VPbWg/dQJi?=
- =?us-ascii?Q?e18x+J3gEhBjZaY6A4qVgrbCgKHWOJnFQBGaa0oGdgdnINF/yM5TYtLf6kmq?=
- =?us-ascii?Q?Mk0RzjNh+EhXV7Ujw6CI4PIgM+vJ/x1CE7kA4HfN1LaZ/QfA0vvW34G20LSz?=
- =?us-ascii?Q?VLAO4a315ass1tlPaMJfosrgu/gSWMFMfK0KoFoDMZ0hyuYtr9QxUy1S5Szc?=
- =?us-ascii?Q?nZyHZyEnbbkxkI/A59xbjKxwSdPpZR4E352jqYcYgtb8S8ToIWi1IoOL2aIO?=
- =?us-ascii?Q?eWAPD3YTe5y+bVDaAzrvGyFQUKToyqGqBj+ZtH0myPUT+/I7VS/Tcr9Rp8+2?=
- =?us-ascii?Q?3Y4jqIiwp2bJ80xtr2hDy9OMSywNuCNW/hUGjMCmDTagVo+W2nTSnSJOhMjM?=
- =?us-ascii?Q?60xLv1jBNr8wfZyZQSUIUpqrSi7z/opscc9xTm4wBrqHTkov8Wh15OLbtJeR?=
- =?us-ascii?Q?3rTfOTy1pIt+ocl2EVQ3mx4YbHqARqY7d3WKdHKyWw3EyzvS8gF6ELlzaIgj?=
- =?us-ascii?Q?T3s+EMaSN0XCZWaG3PljYKEL3qG7sJZqGwIBooAGqf3MjSEFZ/SnelymNxuI?=
- =?us-ascii?Q?6vo+kctzIybANOx0HXvp93J8hbN5GJOpxzmDuLj9zXPxUMlwFIqoEGHFhZX8?=
- =?us-ascii?Q?5oliCQMqgsy+hIS9dZImRZ0JwLnksFXxV5Px64lgFhBNq4QFJP1KvnSiG2zx?=
- =?us-ascii?Q?ma4rO6MWr/tje15mh8mg0dlZU0GLYx6Z2r5pC9KHYwm1wc1aos1olKKUH2Xx?=
- =?us-ascii?Q?xO9S599rwSO9yKmQ91GOJEdqJ86A/rGe6I6mbz4XEFCnOpAt6z3kK6TKUUC9?=
- =?us-ascii?Q?BnpkLhlB3vVom6w7MgoEoIqD5N7yJ2YUnovKMRcdQhEiSCkQyTVLlgBeTLA?=
- =?us-ascii?Q?=3D?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 294d2484-58f6-4deb-5b9e-08dbf64b9b3c
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Dec 2023 11:07:59.4733
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR20MB3868
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 11/14] arm64: renesas: rzg3s-smarc-som: Invert the logic
+ for SW_SD2_EN macro
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: s.shtylyov@omp.ru, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ linux@armlinux.org.uk, geert+renesas@glider.be, magnus.damm@gmail.com,
+ mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org,
+ p.zabel@pengutronix.de, arnd@arndb.de, m.szyprowski@samsung.com,
+ alexandre.torgue@foss.st.com, afd@ti.com, broonie@kernel.org,
+ alexander.stein@ew.tq-group.com, eugen.hristev@collabora.com,
+ sergei.shtylyov@gmail.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
+ biju.das.jz@bp.renesas.com, linux-renesas-soc@vger.kernel.org,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20231120070024.4079344-1-claudiu.beznea.uj@bp.renesas.com>
+ <20231120070024.4079344-12-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdUbKe=yiXWNmk5BJFLtF2psx9khiDRGasT9WsnHz4RWsg@mail.gmail.com>
+ <CAMuHMdXwSo1L9UuFg9RL0TLL_xzVt2r6QEFc0gtPoydpr4FmSQ@mail.gmail.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <CAMuHMdXwSo1L9UuFg9RL0TLL_xzVt2r6QEFc0gtPoydpr4FmSQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
->Inochi Amaoto wrote:
->>> Inochi Amaoto wrote:
->>>> Add clock controller support for the Sophgo CV1800B and CV1812H.
->>>>
->>>> This patch follow this patch series:
->>>> https://lore.kernel.org/all/IA1PR20MB495399CAF2EEECC206ADA7ABBBD5A@IA1PR20MB4953.namprd20.prod.outlook.com/
->>>>
->>>> Changed from v1:
->>>> 1. fix license issues.
->>>>
->>>> Inochi Amaoto (4):
->>>>   dt-bindings: clock: sophgo: Add clock controller of CV1800 series SoC
->>>>   clk: sophgo: Add CV1800 series clock controller driver
->>>>   riscv: dts: sophgo: add clock generator for Sophgo CV1800 series SoC
->>>>   riscv: dts: sophgo: add uart clock for Sophgo CV1800 series SoC
->>>
->>> Hi Inochi,
->>>
->>> This series seems to be missing patch 1 and 2. If you did send them, but just
->>> omitted linux-riscv from those patches, please don't do that. Having the whole
->>> series makes it a lot easier to review without having to hunt down all the
->>> missing parts on lore.kernel.org.
->>>
->>> scripts/get_maintainer.pl does support muliple patches as input
->>>
->>> /Emil
->>>
->>
->> Hi Emil,
->>
->> The get_maintainer.pl does not give me linux-riscv mail list for the first
->> and second patch. I have added this to the second one, but the patch is
->> held by the mail list since is too big. Anyway, I will add this mail list
->> manually if you need. Sorry for this inconvenience.
->
->No worries. Yeah, that's what I meant by get_maintainer.pl supporting multiple
->patches.  You can do something like
->
->  git format-patch <starting point>..
->  ./scripts/get_maintainer.pl *.patch
->
->..to get a list of recipients for the whole series.
->
->/Emil
->
+Hi, Geert,
 
-I have known this. But I only do this for cover.
-Anyway, I will send this patch in the way your mentioned.
+On 06.12.2023 12:56, Geert Uytterhoeven wrote:
+> On Wed, Dec 6, 2023 at 11:33 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>> On Mon, Nov 20, 2023 at 8:03 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>
+>>> The intention of SW_SD2_EN macro was to reflect the state of SW_CONFIG3
+>>> switch available on RZ/G3S Smarc Module. According to documentation SD2
+>>> is enabled when switch is in OFF state. For this, changed the logic of
+>>> marco to map value 0 to switch's OFF state and value 1 to switch's ON
+>>> state. Along with this update the description for each state for better
+>>> understanding.
+>>>
+>>> The value of SW_SD2_EN macro was not changed in file because, according to
+>>> documentation, the default state for this switch is ON.
+>>>
+>>> Fixes: adb4f0c5699c ("arm64: dts: renesas: Add initial support for RZ/G3S SMARC SoM")
+>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> Thanks for your patch!
+>>
+>>> --- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+>>> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+>>> @@ -14,8 +14,8 @@
+>>>   *     0 - SD0 is connected to eMMC
+>>>   *     1 - SD0 is connected to uSD0 card
+>>>   * @SW_SD2_EN:
+>>> - *     0 - SCIF1, SSI0, IRQ0, IRQ1 connected to SoC
+>>> - *     1 - SD2 is connected to SoC
+>>> + *     0 - (switch OFF) SD2 is connected to SoC
+>>> + *     1 - (switch ON)  SCIF1, SSI0, IRQ0, IRQ1 connected to SoC
+>>
+>> I think this is still confusing: SW_SD2_EN refers to an active-low signal
+>> (SW_SD2_EN#) in the schematics.
+> 
+> OMG, while the signal is called "SW_SD2_EN#" in the schematics, it is
+> _not_ active-low!
+> SW_D2_EN# drives a STG3692 quad SPDT switch, and SD2 is enabled
+> if SW_D2_EN# is high...
+> 
+> The RZ/G3S SMARC Module User Manual says:
+> 
+> Signal SW_SD2_EN ON: SD2 is disabled.
+> Signal SW_SD2_EN OFF: SD2 is enabled.
+
+I followed the description in this manual, chapter 2.1.1 SW_CONFIG. The
+idea was that these macros to correspond to individual switches, to match
+that table (describing switches position) with this code as the user in the
+end sets those switches described in table at 2.1.1 w/o necessary going
+deep into schematic (at least in the beginning when trying different
+functionalities).
+
+Do you think it would be better if we will have these macros named
+SWCONFIGX, X in {1, 2, 3, 4, 5, 6} ?
+
+> 
+> So whatever we do, something will look odd :-(
+> 
+>> Before, SW_SD2_EN used assertion-logic (1 is enabled), and didn't
+>> match the physical signal level.
+>> After your patch, SW_SD2_EN matches the active-low physical level, but
+>> this is not reflected in the name...
+>>
+>>>   */
+>>>  #define SW_SD0_DEV_SEL 1
+>>>  #define SW_SD2_EN      1
+>>> @@ -25,7 +25,7 @@ / {
+>>>
+>>>         aliases {
+>>>                 mmc0 = &sdhi0;
+>>> -#if SW_SD2_EN
+>>> +#if !SW_SD2_EN
+>>
+>> ... so this condition looks really weird.
+> 
+> Still, I think the original looks nicer here.
+> 
+> So I suggest to keep the original logic, but clarify the position of
+> the switch.
+> Does that make sense?
+
+It will still be odd, AFAICT, as this way as we will map 0 to ON and 1 to
+OFF... A bit counterintuitive.
+
+> 
+> 
+>>
+>>>                 mmc2 = &sdhi2;
+>>>  #endif
+>>>         };
+>>> @@ -116,7 +116,7 @@ &sdhi0 {
+>>>  };
+>>>  #endif
+>>>
+>>> -#if SW_SD2_EN
+>>> +#if !SW_SD2_EN
+>>>  &sdhi2 {
+>>>         pinctrl-0 = <&sdhi2_pins>;
+>>>         pinctrl-names = "default";
+>>
+>> So I think SW_SD2_EN should be renamed to SW_SD2_EN_N.
+>>
+>> Cfr. SW_ET0_EN_N on RZ/G2UL:
+>>
+>> arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts- * DIP-Switch SW1 setting
+>> arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts- * 1 : High; 0: Low
+>> arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts- * SW1-2 :
+>> SW_SD0_DEV_SEL    (0: uSD; 1: eMMC)
+>> arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts- * SW1-3 :
+>> SW_ET0_EN_N               (0: ETHER0; 1: CAN0, CAN1, SSI1, RSPI1)
+>> arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts- * Please change
+>> below macros according to SW1 setting on the SoM
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
