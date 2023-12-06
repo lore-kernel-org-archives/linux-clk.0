@@ -1,17 +1,17 @@
 Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E98D119AD;
-	Wed,  6 Dec 2023 03:52:14 -0800 (PST)
-Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC83826AF;
+	Wed,  6 Dec 2023 03:52:22 -0800 (PST)
+Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
 	(using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-	(Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
-	by ex01.ufhost.com (Postfix) with ESMTP id 6CC2B24E308;
-	Wed,  6 Dec 2023 19:52:13 +0800 (CST)
-Received: from EXMBX066.cuchost.com (172.16.7.66) by EXMBX166.cuchost.com
- (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Wed, 6 Dec
- 2023 19:52:13 +0800
+	(Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
+	by ex01.ufhost.com (Postfix) with ESMTP id 3F79C24E311;
+	Wed,  6 Dec 2023 19:52:21 +0800 (CST)
+Received: from EXMBX066.cuchost.com (172.16.7.66) by EXMBX165.cuchost.com
+ (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Wed, 6 Dec
+ 2023 19:52:21 +0800
 Received: from jsia-virtual-machine.localdomain (175.136.135.142) by
  EXMBX066.cuchost.com (172.16.6.66) with Microsoft SMTP Server (TLS) id
- 15.0.1497.42; Wed, 6 Dec 2023 19:52:06 +0800
+ 15.0.1497.42; Wed, 6 Dec 2023 19:52:14 +0800
 From: Sia Jee Heng <jeeheng.sia@starfivetech.com>
 To: <kernel@esmil.dk>, <conor@kernel.org>, <robh+dt@kernel.org>,
 	<krzysztof.kozlowski+dt@linaro.org>, <paul.walmsley@sifive.com>,
@@ -21,11 +21,10 @@ To: <kernel@esmil.dk>, <conor@kernel.org>, <robh+dt@kernel.org>,
 	<xingyu.wu@starfivetech.com>
 CC: <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
 	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<jeeheng.sia@starfivetech.com>, <leyfoon.tan@starfivetech.com>, Joshua Yeong
-	<joshua.yeong@starfivetech.com>
-Subject: [PATCH v1 15/16] reset: starfive: Add StarFive JH8100 reset driver
-Date: Wed, 6 Dec 2023 19:49:59 +0800
-Message-ID: <20231206115000.295825-16-jeeheng.sia@starfivetech.com>
+	<jeeheng.sia@starfivetech.com>, <leyfoon.tan@starfivetech.com>
+Subject: [PATCH v1 16/16] riscv: dts: starfive: jh8100: Add clocks and resets nodes
+Date: Wed, 6 Dec 2023 19:50:00 +0800
+Message-ID: <20231206115000.295825-17-jeeheng.sia@starfivetech.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231206115000.295825-1-jeeheng.sia@starfivetech.com>
 References: <20231206115000.295825-1-jeeheng.sia@starfivetech.com>
@@ -41,177 +40,345 @@ X-ClientProxiedBy: EXCAS062.cuchost.com (172.16.6.22) To EXMBX066.cuchost.com
 X-YovoleRuleAgent: yovoleflag
 Content-Transfer-Encoding: quoted-printable
 
-Add auxiliary reset driver to support StarFive JH8100 SoC.
+Add SYSCRG/SYSCRG-NE/SYSCRG-NW/SYSCRG-SW/AONCRG clock and reset
+nodes for JH8100 RISC-V SoC.
 
-Co-developed-by: Joshua Yeong <joshua.yeong@starfivetech.com>
-Signed-off-by: Joshua Yeong <joshua.yeong@starfivetech.com>
 Signed-off-by: Sia Jee Heng <jeeheng.sia@starfivetech.com>
 Reviewed-by: Ley Foon Tan <leyfoon.tan@starfivetech.com>
 ---
- MAINTAINERS                                   |   7 ++
- drivers/reset/starfive/Kconfig                |   8 ++
- drivers/reset/starfive/Makefile               |   2 +
- .../reset/starfive/reset-starfive-jh8100.c    | 102 ++++++++++++++++++
- 4 files changed, 119 insertions(+)
- create mode 100644 drivers/reset/starfive/reset-starfive-jh8100.c
+ arch/riscv/boot/dts/starfive/jh8100-clk.dtsi | 180 +++++++++++++++++++
+ arch/riscv/boot/dts/starfive/jh8100.dtsi     | 115 ++++++++++++
+ 2 files changed, 295 insertions(+)
+ create mode 100644 arch/riscv/boot/dts/starfive/jh8100-clk.dtsi
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 87bcb25becc1..ed728f013d32 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20771,6 +20771,13 @@ F:	Documentation/devicetree/bindings/clock/starf=
-ive,jh81*.yaml
- F:	drivers/clk/starfive/jh8100
- F:	include/dt-bindings/clock/starfive?jh81*.h
-=20
-+STARFIVE JH8100 RESET CONTROLLER DRIVERS
-+M:	Sia Jee Heng <jeeheng.sia@starfivetech.com>
-+M:	Ley Foon Tan <leyfoon.tan@starfivetech.com>
-+S:	Maintained
-+F:	drivers/reset/starfive/reset-starfive-jh81*
-+F:	include/dt-bindings/reset/starfive?jh81*.h
-+
- STATIC BRANCH/CALL
- M:	Peter Zijlstra <peterz@infradead.org>
- M:	Josh Poimboeuf <jpoimboe@kernel.org>
-diff --git a/drivers/reset/starfive/Kconfig b/drivers/reset/starfive/Kcon=
-fig
-index 29fbcf1a7d83..88d050044d52 100644
---- a/drivers/reset/starfive/Kconfig
-+++ b/drivers/reset/starfive/Kconfig
-@@ -19,3 +19,11 @@ config RESET_STARFIVE_JH7110
- 	default ARCH_STARFIVE
- 	help
- 	  This enables the reset controller driver for the StarFive JH7110 SoC.
-+
-+config RESET_STARFIVE_JH8100
-+	bool "StarFive JH8100 Reset Driver"
-+	depends on AUXILIARY_BUS && CLK_STARFIVE_JH8100_SYS
-+	select RESET_STARFIVE_COMMON
-+	default ARCH_STARFIVE
-+	help
-+	  This enables the reset controller driver for the StarFive JH8100 SoC.
-diff --git a/drivers/reset/starfive/Makefile b/drivers/reset/starfive/Mak=
-efile
-index 582e4c160bd4..ede1fc1c9601 100644
---- a/drivers/reset/starfive/Makefile
-+++ b/drivers/reset/starfive/Makefile
-@@ -3,3 +3,5 @@ obj-$(CONFIG_RESET_STARFIVE_COMMON)		+=3D reset-starfive-=
-common.o
-=20
- obj-$(CONFIG_RESET_STARFIVE_JH7100)		+=3D reset-starfive-jh7100.o
- obj-$(CONFIG_RESET_STARFIVE_JH7110)		+=3D reset-starfive-jh7110.o
-+
-+obj-$(CONFIG_RESET_STARFIVE_JH8100)		+=3D reset-starfive-jh8100.o
-diff --git a/drivers/reset/starfive/reset-starfive-jh8100.c b/drivers/res=
-et/starfive/reset-starfive-jh8100.c
+diff --git a/arch/riscv/boot/dts/starfive/jh8100-clk.dtsi b/arch/riscv/bo=
+ot/dts/starfive/jh8100-clk.dtsi
 new file mode 100644
-index 000000000000..84f3781a22a5
+index 000000000000..27ba249f523e
 --- /dev/null
-+++ b/drivers/reset/starfive/reset-starfive-jh8100.c
-@@ -0,0 +1,102 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
++++ b/arch/riscv/boot/dts/starfive/jh8100-clk.dtsi
+@@ -0,0 +1,180 @@
++// SPDX-License-Identifier: GPL-2.0 OR MIT
 +/*
-+ * Reset driver for the StarFive JH8100 SoC
-+ *
 + * Copyright (C) 2023 StarFive Technology Co., Ltd.
 + */
 +
++/ {
++	clk_osc: clk_osc {
++		compatible =3D "fixed-clock";
++		#clock-cells =3D <0>;
++		clock-frequency =3D <24000000>;
++	};
++
++	clk_i2srx_bclk_ext: clk_i2srx_bclk_ext {
++		compatible =3D "fixed-clock";
++		#clock-cells =3D <0>;
++		clock-frequency =3D <12288000>;
++	};
++
++	clk_i2srx_lrck_ext: clk_i2srx_lrck_ext {
++		compatible =3D "fixed-clock";
++		#clock-cells =3D <0>;
++		clock-frequency =3D <192000>;
++	};
++
++	clk_mclk_ext: clk_mclk_ext {
++		compatible =3D "fixed-clock";
++		#clock-cells =3D <0>;
++		clock-frequency =3D <49152000>;
++	};
++	/* sys-ne */
++	clk_usb3_tap_tck_ext: clk_usb3_tap_tck_ext {
++		compatible =3D "fixed-clock";
++		#clock-cells =3D <0>;
++		clock-frequency =3D <100000000>;
++	};
++
++	clk_glb_ext_clk: clk_glb_ext_clk {
++		compatible =3D "fixed-clock";
++		#clock-cells =3D <0>;
++		clock-frequency =3D <30000000>;
++	};
++
++	clk_usb1_tap_tck_ext: clk_usb1_tap_tck_ext {
++		compatible =3D "fixed-clock";
++		#clock-cells =3D <0>;
++		clock-frequency =3D <100000000>;
++	};
++
++	clk_usb2_tap_tck_ext: clk_usb2_tap_tck_ext {
++		compatible =3D "fixed-clock";
++		#clock-cells =3D <0>;
++		clock-frequency =3D <100000000>;
++	};
++
++	clk_i2s_tscko: clk_i2s_tscko {
++		compatible =3D "fixed-clock";
++		#clock-cells =3D <0>;
++		clock-frequency =3D <12800000>;
++	};
++
++	clk_typec_tap_tck_ext: clk_typec_tap_tck_ext {
++		compatible =3D "fixed-clock";
++		#clock-cells =3D <0>;
++		clock-frequency =3D <100000000>;
++	};
++
++	clk_spi_in0_ext: clk_spi_in0_ext {
++		compatible =3D "fixed-clock";
++		#clock-cells =3D <0>;
++		clock-frequency =3D <100000000>;
++	};
++
++	clk_spi_in1_ext: clk_spi_in1_ext {
++		compatible =3D "fixed-clock";
++		#clock-cells =3D <0>;
++		clock-frequency =3D <100000000>;
++	};
++
++	clk_spi_in2_ext: clk_spi_in2_ext {
++		compatible =3D "fixed-clock";
++		#clock-cells =3D <0>;
++		clock-frequency =3D <100000000>;
++	};
++
++	clk_i2stx_bclk_ext: clk_i2stx_bclk_ext {
++		compatible =3D "fixed-clock";
++		#clock-cells =3D <0>;
++		clock-frequency =3D <12288000>;
++	};
++
++	clk_i2stx_lrck_ext: clk_i2stx_lrck_ext {
++		compatible =3D "fixed-clock";
++		#clock-cells =3D <0>;
++		clock-frequency =3D <192000>;
++	};
++	/* sys-nw */
++	clk_dvp_ext: clk_dvp_ext {
++		compatible =3D "fixed-clock";
++		#clock-cells =3D <0>;
++		clock-frequency =3D <150000000>;
++	};
++
++	clk_isp_dphy_tap_tck_ext: clk_isp_dphy_tap_tck_ext {
++		compatible =3D "fixed-clock";
++		#clock-cells =3D <0>;
++		clock-frequency =3D <100000000>;
++	};
++
++	clk_vout_mipi_dphy_tap_tck_ext: clk_vout_mipi_dphy_tap_tck_ext {
++		compatible =3D "fixed-clock";
++		#clock-cells =3D <0>;
++		clock-frequency =3D <100000000>;
++	};
++
++	clk_vout_edp_tap_tck_ext: clk_vout_edp_tap_tck_ext {
++		compatible =3D "fixed-clock";
++		#clock-cells =3D <0>;
++		clock-frequency =3D <100000000>;
++	};
++
++	clk_rtc: clk_rtc {
++		compatible =3D "fixed-clock";
++		#clock-cells =3D <0>;
++		clock-frequency =3D <32768>;
++	};
++	/* aon */
++	clk_gmac0_rmii_func: clk_gmac0_rmii_func {
++		compatible =3D "fixed-clock";
++		#clock-cells =3D <0>;
++		clock-frequency =3D <50000000>;
++	};
++
++	clk_gmac0_rgmii_func: clk_gmac0_rgmii_func {
++		compatible =3D "fixed-clock";
++		#clock-cells =3D <0>;
++		clock-frequency =3D <125000000>;
++	};
++
++	clk_aon50: clk_aon50 {
++		compatible =3D "fixed-clock";
++		#clock-cells =3D <0>;
++		clock-frequency =3D <50000000>;
++	};
++
++	clk_aon125: clk_aon125 {
++		compatible =3D "fixed-clock";
++		#clock-cells =3D <0>;
++		clock-frequency =3D <125000000>;
++	};
++
++	clk_aon2000: clk_aon2000 {
++		compatible =3D "fixed-clock";
++		#clock-cells =3D <0>;
++		clock-frequency =3D <2000000000>;
++	};
++
++	clk_aon200: clk_aon200 {
++		compatible =3D "fixed-clock";
++		#clock-cells =3D <0>;
++		clock-frequency =3D <200000000>;
++	};
++
++	clk_aon667: clk_isp_aon667 {
++		compatible =3D "fixed-clock";
++		#clock-cells =3D <0>;
++		clock-frequency =3D <667000000>;
++	};
++
++	clk_i3c_ext: clk_i3c_ext {
++		compatible =3D "fixed-clock";
++		#clock-cells =3D <0>;
++		clock-frequency =3D <12500000>;
++	};
++
++	clk_espi_ext: clk_espi_ext {
++		compatible =3D "fixed-clock";
++		#clock-cells =3D <0>;
++		clock-frequency =3D <60000000>;
++	};
++};
+diff --git a/arch/riscv/boot/dts/starfive/jh8100.dtsi b/arch/riscv/boot/d=
+ts/starfive/jh8100.dtsi
+index f26aff5c1ddf..9863c61324a0 100644
+--- a/arch/riscv/boot/dts/starfive/jh8100.dtsi
++++ b/arch/riscv/boot/dts/starfive/jh8100.dtsi
+@@ -4,6 +4,9 @@
+  */
+=20
+ /dts-v1/;
++#include <dt-bindings/clock/starfive,jh8100-crg.h>
 +#include <dt-bindings/reset/starfive,jh8100-crg.h>
-+#include <linux/auxiliary_bus.h>
-+#include <soc/starfive/reset-starfive-common.h>
++#include "jh8100-clk.dtsi"
+=20
+ / {
+ 	compatible =3D "starfive,jh8100";
+@@ -357,6 +360,104 @@ uart4: serial@121a0000  {
+ 			status =3D "disabled";
+ 		};
+=20
++		syscrg_ne: syscrg_ne@12320000 {
++			compatible =3D "starfive,jh8100-syscrg-ne";
++			reg =3D <0x0 0x12320000 0x0 0x10000>;
++			clocks =3D <&clk_osc>, <&syscrg SYSCRG_CLK_AXI_400>,
++				 <&syscrg SYSCRG_CLK_VOUT_ROOT0>,
++				 <&syscrg SYSCRG_CLK_VOUT_ROOT1>,
++				 <&syscrg SYSCRG_CLK_USB_WRAP_480>,
++				 <&syscrg SYSCRG_CLK_USB_WRAP_625>,
++				 <&syscrg SYSCRG_CLK_USB_WRAP_240>,
++				 <&syscrg SYSCRG_CLK_USB_WRAP_60>,
++				 <&syscrg SYSCRG_CLK_USB_WRAP_156P25>,
++				 <&syscrg SYSCRG_CLK_USB_WRAP_312P5>,
++				 <&syscrg SYSCRG_CLK_USB_125M>,
++				 <&syscrg_nw SYSCRG_NW_CLK_GPIO_100>,
++				 <&syscrg SYSCRG_CLK_PERH_ROOT>, <&syscrg SYSCRG_CLK_MCLK>,
++				 <&syscrg SYSCRG_CLK_PERH_ROOT_PREOSC>,
++				 <&syscrg SYSCRG_CLK_AHB0>,
++				 <&syscrg SYSCRG_CLK_APB_BUS_PER1>,
++				 <&syscrg SYSCRG_CLK_APB_BUS_PER2>,
++				 <&syscrg SYSCRG_CLK_APB_BUS_PER3>,
++				 <&syscrg SYSCRG_CLK_APB_BUS_PER5>,
++				 <&syscrg SYSCRG_CLK_VENC_ROOT>,
++				 <&syscrg SYSCRG_CLK_SPI_CORE_100>,
++				 <&clk_glb_ext_clk>, <&clk_usb3_tap_tck_ext>,
++				 <&clk_usb1_tap_tck_ext>, <&clk_usb2_tap_tck_ext>,
++				 <&clk_typec_tap_tck_ext>, <&clk_spi_in0_ext>,
++				 <&clk_spi_in1_ext>, <&clk_i2stx_bclk_ext>, <&clk_i2stx_lrck_ext>;
++			clock-names =3D "clk_osc", "sys_clk_axi_400",
++				      "sys_clk_vout_root0", "sys_clk_vout_root1",
++				      "sys_clk_usb_wrap_480", "sys_clk_usb_wrap_625",
++				      "sys_clk_usb_wrap_240", "sys_clk_usb_wrap_60",
++				      "sys_clk_usb_wrap_156p25", "sys_clk_usb_wrap_312p5",
++				      "sys_clk_usb_125m", "sys_nw_clk_gpio_100",
++				      "sys_clk_perh_root", "sys_clk_mclk",
++				      "sys_clk_perh_root_preosc", "sys_clk_ahb0",
++				      "sys_clk_apb_bus_per1", "sys_clk_apb_bus_per2",
++				      "sys_clk_apb_bus_per3", "sys_clk_apb_bus_per5",
++				      "sys_clk_venc_root", "sys_clk_spi_core_100",
++				      "clk_glb_ext_clk", "clk_usb3_tap_tck_ext",
++				      "clk_usb1_tap_tck_ext", "clk_usb2_tap_tck_ext",
++				      "clk_typec_tap_tck_ext", "clk_spi_in0_ext",
++				      "clk_spi_in1_ext", "clk_i2stx_bclk_ext",
++				      "clk_i2stx_lrck_ext";
++			#clock-cells =3D <1>;
++			#reset-cells =3D <1>;
++		};
 +
-+#include "reset-starfive-common.h"
++		syscrg_nw: syscrg_nw@123c0000 {
++			compatible =3D "starfive,jh8100-syscrg-nw";
++			reg =3D <0x0 0x123c0000 0x0 0x10000>;
++			clocks =3D <&clk_osc>, <&syscrg SYSCRG_CLK_APB_BUS>,
++				 <&syscrg SYSCRG_CLK_ISP_2X>, <&syscrg SYSCRG_CLK_ISP_AXI>,
++				 <&syscrg SYSCRG_CLK_VOUT_ROOT0>, <&syscrg SYSCRG_CLK_VOUT_ROOT1>,
++				 <&syscrg SYSCRG_CLK_VOUT_SCAN_ATS>,
++				 <&syscrg SYSCRG_CLK_VOUT_DC_CORE>, <&syscrg SYSCRG_CLK_VOUT_AXI>,
++				 <&syscrg SYSCRG_CLK_AXI_400>, <&syscrg SYSCRG_CLK_AXI_200>,
++				 <&syscrg SYSCRG_CLK_PERH_ROOT_PREOSC>,
++				 <&clk_dvp_ext>, <&clk_isp_dphy_tap_tck_ext>,
++				 <&clk_glb_ext_clk>, <&clk_i2s_tscko>,
++				 <&clk_vout_mipi_dphy_tap_tck_ext>, <&clk_vout_edp_tap_tck_ext>,
++				 <&clk_spi_in2_ext>;
++			clock-names =3D "clk_osc", "sys_clk_apb_bus",
++				      "sys_clk_isp_2x", "sys_clk_isp_axi",
++				      "sys_clk_vout_root0", "sys_clk_vout_root1",
++				      "sys_clk_vout_scan_ats", "sys_clk_vout_dc_core",
++				      "sys_clk_vout_axi", "sys_clk_axi_400",
++				      "sys_clk_axi_200", "sys_clk_perh_root_preosc", "clk_dvp_ext",
++				      "clk_isp_dphy_tap_tck_ext", "clk_glb_ext_clk",
++				      "clk_i2s_tscko", "clk_vout_mipi_dphy_tap_tck_ext",
++				      "clk_vout_edp_tap_tck_ext", "clk_spi_in2_ext";
++			#clock-cells =3D <1>;
++			#reset-cells =3D <1>;
++		};
 +
-+struct jh8100_reset_info {
-+	unsigned int nr_resets;
-+	unsigned int assert_offset;
-+	unsigned int status_offset;
-+};
++		syscrg: syscrg@126d0000 {
++			compatible =3D "starfive,jh8100-syscrg";
++			reg =3D <0x0 0x126d0000 0x0 0x10000>;
++			clocks =3D <&clk_osc>, <&clk_i2srx_bclk_ext>,
++				 <&clk_i2srx_lrck_ext>, <&clk_mclk_ext>;
++			clock-names =3D "clk_osc", "clk_i2srx_bclk_ext",
++				      "clk_i2srx_lrck_ext", "clk_mclk_ext";
++			#clock-cells =3D <1>;
++			#reset-cells =3D <1>;
++		};
 +
-+static const struct jh8100_reset_info jh8100_sys_info =3D {
-+	.nr_resets =3D SYSCRG_RESET_NR_RESETS,
-+	.assert_offset =3D 0x1B4,
-+	.status_offset =3D 0x1B8,
-+};
++		syscrg_sw: syscrg_sw@12720000 {
++			compatible =3D "starfive,jh8100-syscrg-sw";
++			reg =3D <0x0 0x12720000 0x0 0x10000>;
++			clocks =3D <&syscrg SYSCRG_CLK_APB_BUS>,
++				 <&syscrg SYSCRG_CLK_VDEC_ROOT>,
++				 <&syscrg SYSCRG_CLK_FLEXNOC1>;
++			clock-names =3D "sys_clk_apb_bus",
++				      "sys_clk_vdec_root",
++				      "sys_clk_flexnoc1";
++			#clock-cells =3D <1>;
++			#reset-cells =3D <1>;
++		};
 +
-+static const struct jh8100_reset_info jh8100_sys_nw_info =3D {
-+	.nr_resets =3D SYSCRG_NW_RESET_NR_RESETS,
-+	.assert_offset =3D 0xA4,
-+	.status_offset =3D 0xA8,
-+};
+ 		uart5: serial@127d0000  {
+ 			compatible =3D "starfive,jh8100-uart", "cdns,uart-r1p8";
+ 			reg =3D <0x0 0x127d0000 0x0 0x10000>;
+@@ -374,5 +475,19 @@ uart6: serial@127e0000  {
+ 			interrupts =3D <73>;
+ 			status =3D "disabled";
+ 		};
 +
-+static const struct jh8100_reset_info jh8100_sys_ne_info =3D {
-+	.nr_resets =3D SYSCRG_NE_RESET_NR_RESETS,
-+	.assert_offset =3D 0x2BC,
-+	.status_offset =3D 0x2C4,
-+};
-+
-+static const struct jh8100_reset_info jh8100_sys_sw_info =3D {
-+	.nr_resets =3D SYSCRG_SW_RESET_NR_RESETS,
-+	.assert_offset =3D 0x28,
-+	.status_offset =3D 0x2C,
-+};
-+
-+static const struct jh8100_reset_info jh8100_aon_info =3D {
-+	.nr_resets =3D AONCRG_RESET_NR_RESETS,
-+	.assert_offset =3D 0x104,
-+	.status_offset =3D 0x108,
-+};
-+
-+static int jh8100_reset_probe(struct auxiliary_device *adev,
-+			      const struct auxiliary_device_id *id)
-+{
-+	struct jh8100_reset_info *info =3D (struct jh8100_reset_info *)
-+					 (id->driver_data);
-+	struct starfive_reset_adev *rdev =3D to_starfive_reset_adev(adev);
-+	void __iomem *base =3D rdev->base;
-+
-+	if (!info || !base)
-+		return -ENODEV;
-+
-+	return reset_starfive_register(&adev->dev,
-+					      adev->dev.parent->of_node,
-+					      base + info->assert_offset,
-+					      base + info->status_offset, NULL,
-+					      info->nr_resets, NULL);
-+}
-+
-+static const struct auxiliary_device_id jh8100_reset_ids[] =3D {
-+	{
-+		.name =3D "clk_sys.rst-sys",
-+		.driver_data =3D (kernel_ulong_t)&jh8100_sys_info,
-+	},
-+	{
-+		.name =3D "clk_sys.rst-sys-nw",
-+		.driver_data =3D (kernel_ulong_t)&jh8100_sys_nw_info,
-+	},
-+	{
-+		.name =3D "clk_sys.rst-sys-ne",
-+		.driver_data =3D (kernel_ulong_t)&jh8100_sys_ne_info,
-+	},
-+	{
-+		.name =3D "clk_sys.rst-sys-sw",
-+		.driver_data =3D (kernel_ulong_t)&jh8100_sys_sw_info,
-+	},
-+	{
-+		.name =3D "clk_sys.rst-aon",
-+		.driver_data =3D (kernel_ulong_t)&jh8100_aon_info,
-+	},
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(auxiliary, jh8100_reset_ids);
-+
-+static struct auxiliary_driver jh8100_reset_driver =3D {
-+	.probe		=3D jh8100_reset_probe,
-+	.id_table	=3D jh8100_reset_ids,
-+};
-+module_auxiliary_driver(jh8100_reset_driver);
-+
-+MODULE_AUTHOR("Joshua Yeong <joshua.yeong@starfivetech.com>");
-+MODULE_AUTHOR("Sia Jee Heng <jeeheng.sia@starfivetech.com>");
-+MODULE_DESCRIPTION("StarFive JH8100 reset driver");
-+MODULE_LICENSE("GPL");
++		aoncrg: aoncrg@1f310000 {
++			compatible =3D "starfive,jh8100-aoncrg";
++			reg =3D <0x0 0x1f310000 0x0 0x10000>;
++			clocks =3D <&clk_osc>, <&clk_gmac0_rmii_func>,
++				 <&clk_gmac0_rgmii_func>, <&clk_aon125>,
++				 <&clk_aon2000>, <&clk_aon200>,
++				 <&clk_aon667>, <&clk_rtc>;
++			clock-names =3D "clk_osc", "clk_gmac0_rmii_func", "clk_gmac0_rgmii_fu=
+nc",
++				      "clk_aon125", "clk_aon2000", "clk_aon200",
++				      "clk_aon667", "clk_rtc";
++			#clock-cells =3D <1>;
++			#reset-cells =3D <1>;
++		};
+ 	};
+ };
 --=20
 2.34.1
 
