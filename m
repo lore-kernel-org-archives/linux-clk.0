@@ -1,123 +1,113 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="HcJU5hsB"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D03A4D4B;
-	Wed,  6 Dec 2023 06:50:25 -0800 (PST)
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.17.1.22/8.17.1.22) with ESMTP id 3B6D9YF5029854;
-	Wed, 6 Dec 2023 15:50:07 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	selector1; bh=PCez8zo5/G+mlbJxk86sZFdZWbd334WWlRXxYxZXHeI=; b=Hc
-	JU5hsBpjx31tZsvFIzlwKkuqy4dGkNB/QWcVR5s5eywJ3ZcKTup720Gmjstj5XPn
-	ZbJbKZWaWAYmQxT0oCGAp5CqeJ3b01rpUYWHTh7CvHmcYFtaeeQ7L0nixpEcLUSd
-	vRV3XWetyAW55GQx6z3Eky+njGgceDrF1H9fZlhC9qKk+X1dKywvASxnGKn8vc89
-	g713ye3zoFzaj/WsQMacvU+cQNbx30xpMki4Vfvl4lye0Sb+g924RO9CqQc1mBGz
-	Q8nuO57cFQPq2yrdPChLoL+CsKAjb4ZNkutPS9sb5cgHqamj93uMl2mGB8v2CD7v
-	owLPfHPcT0KCVAYhyLEA==
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3utd2jkh9c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Dec 2023 15:50:07 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 11DC3100053;
-	Wed,  6 Dec 2023 15:50:07 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 09DBA23C6A4;
-	Wed,  6 Dec 2023 15:50:07 +0100 (CET)
-Received: from [10.201.21.240] (10.201.21.240) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Wed, 6 Dec
- 2023 15:50:06 +0100
-Message-ID: <fe5cf8bf-fa80-400c-b2e0-969b5ed68c8b@foss.st.com>
-Date: Wed, 6 Dec 2023 15:50:05 +0100
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WkE1R4hd"
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55BD9E9;
+	Wed,  6 Dec 2023 07:42:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1701877328; x=1733413328;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=cO0A3WdbHX7R83cIqfmPmfW4uzDk1PAzvzBbmxZCtlE=;
+  b=WkE1R4hdJiE5S9aijjeebUWNKa+Zq7qRHCDBH6tRAI6CsYk7K6iZaIIV
+   EH7x6zOw5OlvVgoJ9Aa6JeJPqOUXhpkksAHCWB2S4ro8wk2diffqWe6Qg
+   FZ8Cy4CBBetl16X+xS8XhxweeT9YcYF2xMoPBxZwPg6wXcCKjs9j0kwyR
+   0d2/mhm9VaAjyYHCWwbKSPaQgdDO9yL7PUrp276te4CXZ5ceJUPFEttJg
+   7aLaRMagklsa13gZKAHQuE+CeogsaGIT+638AgtKmGsIPzEfRGkU1am60
+   9Z64/lesBxVRN1G5b6cLVtk61yLYbh38Stuyd+SUAPhR2SlK/BXcWvR9O
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10916"; a="458401215"
+X-IronPort-AV: E=Sophos;i="6.04,255,1695711600"; 
+   d="scan'208";a="458401215"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2023 07:42:07 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10916"; a="894770140"
+X-IronPort-AV: E=Sophos;i="6.04,255,1695711600"; 
+   d="scan'208";a="894770140"
+Received: from lkp-server02.sh.intel.com (HELO b07ab15da5fe) ([10.239.97.151])
+  by orsmga004.jf.intel.com with ESMTP; 06 Dec 2023 07:42:03 -0800
+Received: from kbuild by b07ab15da5fe with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1rAu2C-000B1L-0T;
+	Wed, 06 Dec 2023 15:42:00 +0000
+Date: Wed, 6 Dec 2023 23:39:11 +0800
+From: kernel test robot <lkp@intel.com>
+To: Inochi Amaoto <inochiama@outlook.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Chao Wei <chao.wei@sophgo.com>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Jisheng Zhang <jszhang@kernel.org>, qiujingbao.dlmu@gmail.com,
+	dlan@gentoo.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 2/4] clk: sophgo: Add CV1800 series clock controller
+ driver
+Message-ID: <202312062352.3dWKz9Hm-lkp@intel.com>
+References: <IA1PR20MB4953946E2F8D8795DC261DBFBB85A@IA1PR20MB4953.namprd20.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/5] clk: stm32: introduce clocks for STM32MP257
- platform
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>
-CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20231206140029.492906-1-gabriel.fernandez@foss.st.com>
- <20231206140029.492906-5-gabriel.fernandez@foss.st.com>
- <ec1912eab8bead59f520c48b6d73a084fd07732d.camel@pengutronix.de>
-Content-Language: en-US
-From: Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>
-In-Reply-To: <ec1912eab8bead59f520c48b6d73a084fd07732d.camel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-12-06_12,2023-12-06_01,2023-05-22_02
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <IA1PR20MB4953946E2F8D8795DC261DBFBB85A@IA1PR20MB4953.namprd20.prod.outlook.com>
 
-Hi Philipp, thank's for reviewing.
+Hi Inochi,
 
-On 12/6/23 15:20, Philipp Zabel wrote:
-> Hi Gabriel,
->
-> On Mi, 2023-12-06 at 15:00 +0100, gabriel.fernandez@foss.st.com wrote:
->> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
->>
->> This driver is intended for the STM32MP25 clock family and utilizes
->> the stm32-core API, similar to the stm32mp13 clock driver.
->>
->> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
->> ---
-> [...]
->> diff --git a/drivers/clk/stm32/stm32mp25_rcc.h b/drivers/clk/stm32/stm32mp25_rcc.h
->> new file mode 100644
->> index 000000000000..b1aca78a0b22
->> --- /dev/null
->> +++ b/drivers/clk/stm32/stm32mp25_rcc.h
->> @@ -0,0 +1,4977 @@
->> +/* SPDX-License-Identifier: GPL-2.0-only */
->> +/*
->> + * Copyright (C) STMicroelectronics 2023 - All Rights Reserved
->> + * Author: Gabriel Fernandez <gabriel.fernandez@foss.st.com> for STMicroelectronics.
->> + */
->> +
->> +#ifndef STM32MP25_RCC_H
->> +#define STM32MP25_RCC_H
->> +
->> +#define RCC_SECCFGR0				0x0
-> [...]
->
-> What is the purpose of all the unused #defines?
->
-> I initially wanted to point out that the _SHIFT #defines are redundant
-> because the same information is already contained in the corresponding
-> _MASK #defines, but it seems like neither of the register field
-> definitions are used anywhere. It appears only some of the *CFGR
-> register offset #defines are actually used.
+kernel test robot noticed the following build warnings:
 
-It's a generated file that is also used for other components,
+[auto build test WARNING on next-20231205]
+[also build test WARNING on linus/master v6.7-rc4]
+[cannot apply to clk/clk-next robh/for-next v6.7-rc4 v6.7-rc3 v6.7-rc2]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-but it's not a big deal to remove the unused defines in the Kernel.
+url:    https://github.com/intel-lab-lkp/linux/commits/Inochi-Amaoto/dt-bindings-clock-sophgo-Add-CV1800-bindings/20231205-174631
+base:   next-20231205
+patch link:    https://lore.kernel.org/r/IA1PR20MB4953946E2F8D8795DC261DBFBB85A%40IA1PR20MB4953.namprd20.prod.outlook.com
+patch subject: [PATCH 2/4] clk: sophgo: Add CV1800 series clock controller driver
+config: i386-buildonly-randconfig-003-20231206 (https://download.01.org/0day-ci/archive/20231206/202312062352.3dWKz9Hm-lkp@intel.com/config)
+compiler: clang version 16.0.4 (https://github.com/llvm/llvm-project.git ae42196bc493ffe877a7e3dff8be32035dea4d07)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231206/202312062352.3dWKz9Hm-lkp@intel.com/reproduce)
 
-I'm waiting for other remarks before sending a V6
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202312062352.3dWKz9Hm-lkp@intel.com/
 
-Best regards
+All warnings (new ones prefixed by >>):
 
-Gabriel
+>> drivers/clk/sophgo/clk-cv18xx-ip.c:347: warning: Function parameter or member 'hw' not described in 'bypass_div_get_parent'
+>> drivers/clk/sophgo/clk-cv18xx-ip.c:347: warning: expecting prototype for clokc parent list(). Prototype was for bypass_div_get_parent() instead
 
-> regards
-> Philipp
+
+vim +347 drivers/clk/sophgo/clk-cv18xx-ip.c
+
+   341	
+   342	/**
+   343	 * clokc parent list:
+   344	 * | osc | div0 | div1 | div2 | div3 |
+   345	 */
+   346	static u8 bypass_div_get_parent(struct clk_hw *hw)
+ > 347	{
+   348		struct cv1800_clk_bypass_div *div = hw_to_cv1800_clk_bypass_div(hw);
+   349	
+   350		if (cv1800_clk_checkbit(&div->div.common, &div->bypass))
+   351			return 0;
+   352	
+   353		return 1;
+   354	}
+   355	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
