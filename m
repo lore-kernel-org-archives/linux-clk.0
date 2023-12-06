@@ -1,189 +1,174 @@
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 937DA181;
-	Wed,  6 Dec 2023 04:46:05 -0800 (PST)
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.96.2)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1rArHf-0005kg-2z;
-	Wed, 06 Dec 2023 12:45:49 +0000
-Date: Wed, 6 Dec 2023 12:45:40 +0000
-From: Daniel Golle <daniel@makrotopia.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Sabrina Dubroca <sd@queasysnail.net>,
-	Jianhui Zhao <zhaojh329@gmail.com>,
-	Chen-Yu Tsai <wenst@chromium.org>,
-	"Garmin.Chang" <Garmin.Chang@mediatek.com>,
-	Sam Shih <sam.shih@mediatek.com>,
-	Frank Wunderlich <frank-w@public-files.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	James Liao <jamesjj.liao@mediatek.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v3 2/4] dt-bindings: clock: mediatek: add clock
- controllers of MT7988
-Message-ID: <ZXBs9GOOOlZrMuSW@makrotopia.org>
-References: <23bc89d407e7797e97b703fa939b43bfe79296ce.1701823757.git.daniel@makrotopia.org>
- <def05aac79ddff872d3e56698b736cb445f14116.1701823757.git.daniel@makrotopia.org>
- <3e72bff6-9f4d-4cd4-845e-b065f1233ec6@collabora.com>
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WDDojk5n"
+Received: from mail-qv1-xf34.google.com (mail-qv1-xf34.google.com [IPv6:2607:f8b0:4864:20::f34])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6CF31A2
+	for <linux-clk@vger.kernel.org>; Wed,  6 Dec 2023 04:47:26 -0800 (PST)
+Received: by mail-qv1-xf34.google.com with SMTP id 6a1803df08f44-67abd1879c0so21526156d6.2
+        for <linux-clk@vger.kernel.org>; Wed, 06 Dec 2023 04:47:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1701866846; x=1702471646; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=n4HaoseseFRfpAOsa7GPwOZAfsJ+SNvW7lTiyiT6xZA=;
+        b=WDDojk5nnfqvjKfIagrNhoMnc0xRQ3ADDpucyZmznWEFnKzT6E4mtkS6ZoUNOPv5YK
+         z5W4QtybCsVXG/FEwgWHHgNaoP7SxP6sD7uG2oeEVLnqBn3ilIV7NT/MHSCjBvCzqb6k
+         wHDc6/iRGPujeEpNTH0EHxdeyAOMHU51Dfe2MG6HiWLUpBSR7huvfYoRTsMvyj/HNdV4
+         CvK3qvVmotCQ8Pn3BG9BD0OwwDd7QLPjr63Lb4GLCtvRDttEnVL6zFBAtsuZr3ZhjqBt
+         XylJugLZyzNerRrtq/RoXex2tRYsU6oC9gMclM9uBqQIXs2vg39OTokhIkUn3amUARED
+         awhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701866846; x=1702471646;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=n4HaoseseFRfpAOsa7GPwOZAfsJ+SNvW7lTiyiT6xZA=;
+        b=fyzcy/WjJIkC1QiVdr7oSqcyQ2H055WNJDFkcf9MgTbW8HL2iDzvTH99RUZhBX2Al9
+         TSwMK4+LW3HvF8Kq2amc+5UqseHUFsLincnn49BgQB78/wjpaqEE6MPGQOlVBZqKHCRz
+         CeLMB7Maeh/GgBjrkLpgfh4KQEnnRnK3K8I5drMJWfdYzTXocHr2SfzLQCzLSxa3wtyl
+         iba5CW6V2sj+6bGsnr5be4Ljb09qiaTGn+BDrTxWUDP0/k3VTXAkYaAnXIemvmL1cgYs
+         BhkvCh4Ye5GUAf9k9nU9p3xJjm4W5+HJqvCcgU+0U5uFtBm+4NvfPUyBs4gLkjeHfRQK
+         SLDQ==
+X-Gm-Message-State: AOJu0YxSV9cH0QwmGhGX643J2XXebrCIquf2jH+X8jOtFe1Xa9rHUjk5
+	tp/4eJA/a44Wq7B8hwQZMxkhiQkg3+5zNS29s0KsRg==
+X-Google-Smtp-Source: AGHT+IHOfpL6BkZMMtxBr2eS7p+xlelrNL7BgzbEdDInmIpBIHdd4PBiyT6fKU1Lhyo6KKA5y6PSRh/1nAPz2rJNaUc=
+X-Received: by 2002:ad4:551d:0:b0:67a:3967:4b09 with SMTP id
+ pz29-20020ad4551d000000b0067a39674b09mr650650qvb.8.1701866845831; Wed, 06 Dec
+ 2023 04:47:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3e72bff6-9f4d-4cd4-845e-b065f1233ec6@collabora.com>
+References: <20231201160925.3136868-1-peter.griffin@linaro.org>
+ <20231201160925.3136868-15-peter.griffin@linaro.org> <CGME20231202004026epcas5p4d3947d7bb99e54f70ca37272cfdc5e55@epcas5p4.samsung.com>
+ <CAPLW+4kBOWFPx3Hr-=UoLWvRxCorzBY9RCOiBhfkKcU0LAa21Q@mail.gmail.com>
+ <000001da24c0$0b83aab0$228b0010$@samsung.com> <71972f4f-b5ac-484a-8a09-0b74bd7c623b@linaro.org>
+In-Reply-To: <71972f4f-b5ac-484a-8a09-0b74bd7c623b@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Wed, 6 Dec 2023 12:47:14 +0000
+Message-ID: <CADrjBPqTdmEqD_4fcPqz0wBYqgPG8nPr2reXp5=s=bRRtLKXsg@mail.gmail.com>
+Subject: Re: [PATCH v5 14/20] pinctrl: samsung: Add gs101 SoC pinctrl configuration
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, Sam Protsenko <semen.protsenko@linaro.org>, 
+	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
+	mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org, 
+	tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, 
+	wim@linux-watchdog.org, linux@roeck-us.net, catalin.marinas@arm.com, 
+	will@kernel.org, arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org, 
+	jirislaby@kernel.org, cw00.choi@samsung.com, tudor.ambarus@linaro.org, 
+	andre.draszik@linaro.org, saravanak@google.com, willmcvicker@google.com, 
+	soc@kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, kernel-team@android.com, 
+	linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 06, 2023 at 11:59:54AM +0100, AngeloGioacchino Del Regno wrote:
-> Il 06/12/23 01:57, Daniel Golle ha scritto:
-> > Add various clock controllers found in the MT7988 SoC to existing
-> > bindings (if applicable) and add files for the new ethwarp, mcusys
-> > and xfi-pll clock controllers not previously present in any SoC.
-> > 
-> > Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> > ---
-> > v3:
-> >   * move clock bindings to clock folder
-> >   * drop ti,syscon-reset from bindings and example
-> >   * merge mcusys with topckgen bindings
-> > 
-> > v2:
-> >   * dropped unused labels
-> >   * add 'type: object' declaration for reset-controller found in new
-> >     ethwarp controller and represented as ti,syscon-reset
-> >   * rebase on top of
-> >     "dt-bindings: arm: mediatek: move ethsys controller & convert to DT schema"
-> > 
-> >   .../arm/mediatek/mediatek,infracfg.yaml       |  1 +
-> >   .../bindings/clock/mediatek,apmixedsys.yaml   |  1 +
-> >   .../bindings/clock/mediatek,ethsys.yaml       |  1 +
-> >   .../clock/mediatek,mt7988-ethwarp.yaml        | 49 +++++++++++++++++++
-> >   .../clock/mediatek,mt7988-xfi-pll.yaml        | 48 ++++++++++++++++++
-> >   .../bindings/clock/mediatek,topckgen.yaml     |  2 +
-> >   .../bindings/net/pcs/mediatek,sgmiisys.yaml   | 13 +++--
-> >   7 files changed, 112 insertions(+), 3 deletions(-)
-> >   create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt7988-ethwarp.yaml
-> >   create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt7988-xfi-pll.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.yaml
-> > index ea98043c6ba3d..230b5188a88db 100644
-> > --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.yaml
-> > +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.yaml
-> > @@ -30,6 +30,7 @@ properties:
-> >                 - mediatek,mt7629-infracfg
-> >                 - mediatek,mt7981-infracfg
-> >                 - mediatek,mt7986-infracfg
-> > +              - mediatek,mt7988-infracfg
-> >                 - mediatek,mt8135-infracfg
-> >                 - mediatek,mt8167-infracfg
-> >                 - mediatek,mt8173-infracfg
-> > diff --git a/Documentation/devicetree/bindings/clock/mediatek,apmixedsys.yaml b/Documentation/devicetree/bindings/clock/mediatek,apmixedsys.yaml
-> > index 372c1d744bc27..685535846cbb7 100644
-> > --- a/Documentation/devicetree/bindings/clock/mediatek,apmixedsys.yaml
-> > +++ b/Documentation/devicetree/bindings/clock/mediatek,apmixedsys.yaml
-> > @@ -22,6 +22,7 @@ properties:
-> >             - mediatek,mt7622-apmixedsys
-> >             - mediatek,mt7981-apmixedsys
-> >             - mediatek,mt7986-apmixedsys
-> > +          - mediatek,mt7988-apmixedsys
-> >             - mediatek,mt8135-apmixedsys
-> >             - mediatek,mt8173-apmixedsys
-> >             - mediatek,mt8516-apmixedsys
-> > diff --git a/Documentation/devicetree/bindings/clock/mediatek,ethsys.yaml b/Documentation/devicetree/bindings/clock/mediatek,ethsys.yaml
-> > index 94d42c8647777..f9cddacc2eae1 100644
-> > --- a/Documentation/devicetree/bindings/clock/mediatek,ethsys.yaml
-> > +++ b/Documentation/devicetree/bindings/clock/mediatek,ethsys.yaml
-> > @@ -22,6 +22,7 @@ properties:
-> >                 - mediatek,mt7629-ethsys
-> >                 - mediatek,mt7981-ethsys
-> >                 - mediatek,mt7986-ethsys
-> > +              - mediatek,mt7988-ethsys
-> >             - const: syscon
-> >         - items:
-> >             - const: mediatek,mt7623-ethsys
-> > diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt7988-ethwarp.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt7988-ethwarp.yaml
-> > new file mode 100644
-> > index 0000000000000..9b919a155eb13
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/mediatek,mt7988-ethwarp.yaml
-> > @@ -0,0 +1,49 @@
-> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/arm/mediatek/mediatek,mt7988-ethwarp.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: MediaTek MT7988 ethwarp Controller
-> > +
-> > +maintainers:
-> > +  - Daniel Golle <daniel@makrotopia.org>
-> > +
-> > +description:
-> > +  The Mediatek MT7988 ethwarp controller provides clocks and resets for the
-> > +  Ethernet related subsystems found the MT7988 SoC.
-> > +  The clock values can be found in <dt-bindings/clock/mt*-clk.h>.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    items:
-> > +      - const: mediatek,mt7988-ethwarp
-> > +      - const: syscon
-> > +      - const: simple-mfd
-> 
-> No, this is not a mfd, I say.
-> 
-> Prove me wrong! :-)
+Hi Krzysztof / Sam,
 
-https://github.com/dangowrt/linux/blob/mt7988-for-next/arch/arm64/boot/dts/mediatek/mt7988a.dtsi#L564
+On Wed, 6 Dec 2023 at 11:38, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 02/12/2023 02:36, Alim Akhtar wrote:
+> >
+> >>
+> >> On Fri, Dec 1, 2023 at 10:11=E2=80=AFAM Peter Griffin <peter.griffin@l=
+inaro.org>
+> >> wrote:
+> >>>
+> >>> Add support for the pin-controller found on the gs101 SoC used in
+> >>> Pixel 6 phones.
+> >>>
+> >>> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> >>> ---
+> >>>  .../pinctrl/samsung/pinctrl-exynos-arm64.c    | 159 ++++++++++++++++=
+++
+> >>>  drivers/pinctrl/samsung/pinctrl-exynos.c      |   2 +
+> >>>  drivers/pinctrl/samsung/pinctrl-exynos.h      |  34 ++++
+> >>>  drivers/pinctrl/samsung/pinctrl-samsung.c     |   2 +
+> >>>  drivers/pinctrl/samsung/pinctrl-samsung.h     |   1 +
+> >>>  5 files changed, 198 insertions(+)
+> >>>
+> >>> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
+> >>> b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
+> >>> index cb965cf93705..e1a0668ecb16 100644
+> >>> --- a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
+> >>> +++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
+> >>> @@ -796,3 +796,162 @@ const struct samsung_pinctrl_of_match_data
+> >> fsd_of_data __initconst =3D {
+> >>>         .ctrl           =3D fsd_pin_ctrl,
+> >>>         .num_ctrl       =3D ARRAY_SIZE(fsd_pin_ctrl),
+> >>>  };
+> >>> +
+> >>> +/*
+> >>> + * bank type for non-alive type
+> >>> + * (CON bit field: 4, DAT bit field: 1, PUD bit field: 4, DRV bit
+> >>> +field: 4)
+> >>> + * (CONPDN bit field: 2, PUDPDN bit field: 4)  */ static struct
+> >>> +samsung_pin_bank_type gs101_bank_type_off  =3D {
+> >>> +       .fld_width =3D { 4, 1, 4, 4, 2, 4, },
+> >>> +       .reg_offset =3D { 0x00, 0x04, 0x08, 0x0c, 0x10, 0x14, }, };
+> >>
+> >> This is just the same as exynos850_bank_type_off (100% duplication).
+> >> Here is what I suggest. Now that it's obvious there is some common pla=
+tform
+> >> for moder Exynos SoCs, and it's probably Exynos9, I'd suggest next cou=
+rse of
+> >> action (if maintainers agree):
+> >>   1. Remove this one
+> >>   2. Rename exynos850_bank_type_off to exynos9_bank_type_off
+> >>   3. Use it for both gs101 and exynos850
+> >>
+> >> Does it make sense?
+> >>
+> > My opinion is to reuse exynos850 for gs101 (wherever applicable), same =
+philosophy was historically followed in this file.
+> > That way (using exynos850 for gs101) things will be simple.
+> > Adding exynos9_* is not adding any benefit, rather it create confusion.
+>
+> I don't see much value in renaming exynos850 bank type to exynos9
+> considering:
+> 1. We don't really know the bank types for all of Exynos9xxx SoCs,
+> 2. Exynos7885 also uses Exynos850 bank types. Exynos7885 was much
+> earlier than Exynos9xxx family.
 
-The 'simple-mfd' compatible is required to have the Linux
-kernel probe drivers for sub-nodes -- several drivers will act on
-the different aspects of the circuit exposed at this memory range.
-From what I understand, this is the definition of a MFD.
+Thanks Alim and Krzysztof for your input.
 
-> 
-> ..snip..
-> 
-> > diff --git a/Documentation/devicetree/bindings/net/pcs/mediatek,sgmiisys.yaml b/Documentation/devicetree/bindings/net/pcs/mediatek,sgmiisys.yaml
-> > index 66a95191bd776..68632cda334bd 100644
-> > --- a/Documentation/devicetree/bindings/net/pcs/mediatek,sgmiisys.yaml
-> > +++ b/Documentation/devicetree/bindings/net/pcs/mediatek,sgmiisys.yaml
-> > @@ -15,15 +15,22 @@ description:
-> >   properties:
-> >     compatible:
-> > -    items:
-> > -      - enum:
-> > +    oneOf:
-> > +      - items:
-> > +        - enum:
-> >             - mediatek,mt7622-sgmiisys
-> >             - mediatek,mt7629-sgmiisys
-> >             - mediatek,mt7981-sgmiisys_0
-> >             - mediatek,mt7981-sgmiisys_1
-> >             - mediatek,mt7986-sgmiisys_0
-> >             - mediatek,mt7986-sgmiisys_1
-> > -      - const: syscon
-> > +        - const: syscon
-> > +      - items:
-> > +        - enum:
-> > +          - mediatek,mt7988-sgmiisys_0
-> > +          - mediatek,mt7988-sgmiisys_1
-> > +        - const: syscon
-> > +        - const: simple-mfd
-> 
-> Same.
-> 
-> Cheers,
-> Angelo
+Exynos7885 (Exynos 8 family) using Exynos850 bank types looks like a
+mistake to me. I found some downstream code for 7885, and it doesn't
+look like selecting a filter was supported downstream [1] [2]. As Sam
+confirmed this hardware is present on e850 downstream, so 7885 and
+e850 have different hardware at least for these banks.
+
+As the EXYNOS850_PIN_BANK_EINTW macro is being used by Exynos850,
+exynosautov9 and exynos7885 using a generic macro with gs101 doesn't
+look possible (I have no way to find out these filter register
+offsets, or if those platforms actually have these registers).
+
+Therefore I propose:
+1. For bank types that match exactly use exynos850 versions
+2. For bank types which have fltcon_offset we add a new macro
+EXYNOS9_PIN_BANK_EINTW like it exists in this series or
+GS101_PIN_BANK_EINTW if people prefer that
+
+That still leaves us in the rather unfortunate position that if
+Exynos850 wants selectable filter support then it wouldn't be using
+the EXYNOS850_PIN_BANK_EINTW macro. But I suggest we cross that bridge
+if/when Sam decides to support selectable filters on e850. We could do
+some sort of macro renaming, but what we rename it to though I have no
+idea EXYNOS7885_blah or EXYNOSAUTOV9_blah.
+
+@Chanho do you know if ExynosAutov9 supports selectable filters on alive ba=
+nks?
+
+regards,
+
+Peter
+
+[1] https://github.com/samsungexynos7885/android_kernel_samsung_universal78=
+85/blob/android-9.0/drivers/pinctrl/samsung/pinctrl-exynos.c#L1696
+[2] https://github.com/samsungexynos7885/android_kernel_samsung_universal78=
+85/blob/android-9.0/drivers/pinctrl/samsung/pinctrl-exynos.h#L108
