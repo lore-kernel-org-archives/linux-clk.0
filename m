@@ -1,186 +1,373 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="gU6hcHtR"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12olkn2022.outbound.protection.outlook.com [40.92.23.22])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B321AC;
-	Thu,  7 Dec 2023 01:42:50 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=AiumRbEqC1SzoAC+D+6+i9oiJWPRraJUNBxvfe9ASOh4mFrQTZBSueJUHzea7eaW9n4SJO2SUM8ZuUotxlPVVOVycyUx1NML9kr7xFzZV3oW/ws5xaYNs3K8xt4NIIdgIzNlKrkBdfytE6RW5bCbpBRt1BnB0hArGNsF1QcB5hNe0gRwDGpzgcr58cAOJZEY9LQOdsRqyqgbSxM3nN3aTyxVxlkkpSRZxvDg5ZPJwk/CCRkz1UONE5cypdgh7mlUS1sk0QAXuiPJY6nUW5cD3CyDrBm1Yzh2HBKG12GT6Wf/mWzH7Bn0TjFHYM1Di/Q5Y+zK+UXLfacCuiSta+wnLw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jX3XkRp3/VRyxwdQXJkyluoK+kiDhhrf88QaGWutMHY=;
- b=NdnhloAsdAYlGZQV8GgDMvmnmDIkSZjp1hj5+s+O6YFfi94RKzSIyNVo+8+iO5zbFgvXbm8qxCk0ZOgetJROZXkap2yzYTmM4BdYIjIxLjS86GIp/5411BNX3KrOK3OVfcUTm6Q7ufZUoFHPFblgjXXZtlkejXElGcgJBl8hLNtsOqmgaSNVKOHbLFPDCaANO75HYEBeypVwW7zj07iVMAkS/08wtI+zrIft8bfPXaJ8AGOv5HtKnEewsW7Kn503v6+4zSroR2p6B2iqP1OG358+g8O4mGGBmQmxYbiXPVPJtYy5Rac2CgzgU0QXUKgpmyDubc31EI1Q5+k/NpKG9g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jX3XkRp3/VRyxwdQXJkyluoK+kiDhhrf88QaGWutMHY=;
- b=gU6hcHtRUtAPuEIAvvbfo10ccSr+KJoL5CWMUx5F962hVL5u3FwH7aW9TpU8qMJNkgS823o8N3egSMDk/X3B2FnT3vb5ardi/H8Fqy0mjbtXkPanaNB7ByyuSRlkyBqhXkecpHDZVLU8h8GKAl8QTA2tkW6/dB//AW11dHc053cLm8Hgea9t39mXWiTZFU3je7uSXfcUqewotS+5AxhRtRbEsx48qV7DURaLv8runfEhplOp47SrumnMdYAgNNcT0I56BXIwogCwX3xnUHzeDQY7SOydPQJ1V+0mzCK0g/oCidCziWf4mFwgYJU+TYOvnrd+qGVDv3zK1oDsaPfA6A==
-Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
- by SN7PR20MB5436.namprd20.prod.outlook.com (2603:10b6:806:2a8::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7068.27; Thu, 7 Dec
- 2023 09:42:46 +0000
-Received: from IA1PR20MB4953.namprd20.prod.outlook.com
- ([fe80::55b:c350:980:ad8]) by IA1PR20MB4953.namprd20.prod.outlook.com
- ([fe80::55b:c350:980:ad8%6]) with mapi id 15.20.7046.024; Thu, 7 Dec 2023
- 09:42:46 +0000
-From: Inochi Amaoto <inochiama@outlook.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chao Wei <chao.wei@sophgo.com>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>
-Cc: Inochi Amaoto <inochiama@outlook.com>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Liu Gui <kenneth.liu@sophgo.com>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	qiujingbao.dlmu@gmail.com,
-	dlan@gentoo.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v3 3/4] riscv: dts: sophgo: add clock generator for Sophgo CV1800 series SoC
-Date: Thu,  7 Dec 2023 17:42:40 +0800
-Message-ID:
- <IA1PR20MB49531D4EFD4626834B5C604ABB8BA@IA1PR20MB4953.namprd20.prod.outlook.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <f9db367c-a96b-4789-9884-f2062499765a@linaro.org>
-References: <f9db367c-a96b-4789-9884-f2062499765a@linaro.org>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN: [ypxpWER17HkRn39YM82V1ZRSccTMiSKur+j2azGot0M=]
-X-ClientProxiedBy: TYCP286CA0018.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:263::9) To IA1PR20MB4953.namprd20.prod.outlook.com
- (2603:10b6:208:3af::19)
-X-Microsoft-Original-Message-ID:
- <20231207094241.901455-1-inochiama@outlook.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nZQr4mo+"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D2E7A9;
+	Thu,  7 Dec 2023 03:58:33 -0800 (PST)
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3B7BE6Qb007485;
+	Thu, 7 Dec 2023 11:58:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=5AIGLhmKwS2D8pIipwyxJCz4XNAIG6lVdFBauuPajhE=;
+ b=nZQr4mo+8vyh5A2mGHItQcDvf/t4DCsMIUDas0ni+bMdPsQocIRz3fiSNWdL0qrlWKQD
+ kMRkXjNSAxeVyXzbbiVWDpokKIK2T8pVRAT2g7QTPYQLy8sUSA9w+gNtNmo7g3htP5E2
+ Js2XctVEstxtWrxo5pE2MGBmesu1WN2CMETI6/5qtfCpcJFDiZ7qm8E7jwW8EQqm7eva
+ 1+OIBwArXAQ5d5awyV6wtcoXol2gt3reTM23XG9R1ccBC1n5L6PJ4ANRT8itD5pDMnK6
+ gnxqvHL70RU03+G8/u8EEaopEGbYDohCcAuc1t9bxdX1IT2nZpeISGt2+XCl0bRGq6Nk RQ== 
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3uu1069hvp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Dec 2023 11:58:23 +0000
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3B7BwMnH001236
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 7 Dec 2023 11:58:22 GMT
+Received: from [10.253.69.179] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Thu, 7 Dec
+ 2023 03:58:19 -0800
+Message-ID: <a9b3889a-04aa-4352-914e-7889f8d8afef@quicinc.com>
+Date: Thu, 7 Dec 2023 19:58:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|SN7PR20MB5436:EE_
-X-MS-Office365-Filtering-Correlation-Id: e78b8317-c46a-4cd2-11cf-08dbf708de06
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	XP/iClkC7YWSExQals7psXtyAh/0eRW/BYWg6ZFtcfya7dFJBzgizh938oHmhH+H0+eDNGzjuF0baJzrjI40n/AXa4Jy/OkbuBWUy84xTc77d/3n+EDDRcNqxRaJiIKsiwaaIkQ2Ufrq1P1yE1QV90Wp5C4K895IDPF++3XX8xR+g/lYAoIIrRvsQAJ6DvtAXMjNVDb9DOBq6gqoOymhYqqiEOmRUpsfoq8grLP/7N4rU1lD+BEgr6OX259IljobYxlpm4hEAbCREMwqfqMCtT4Tr7O2imf4nIQHrE/D5udLg6gEJ5iZwH1CumeJfbIOHB3VBmpTiBYNuOckVmrsH/QOeNNAoeb9NOE3FhdGC7Pfsiz8BtuZMO49/j61BkylwHr83474cti1l8VbCjPRb3hMZy2Qw6MI8RuhUrZ+kHVBefX6JdjyeVj8pNQSKiINwnipeMDKzVGWSanS7YvawytQgjKe/Y1XuSp53YpVMAJtxzKAfOoc9m3+vldQgYHu7y/c/qBaPydBtHJe71UTSOxFujpwGIOefSpdehGerWMAbBlBPBkj9uSV+UXUAgSrZazH6qusg9BQAN87Qhp3Z/cvMccZMzKyU89RlfLvqhwIWom4WLo9dkvlEql2P4Pd
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?SizSLvF+3l50RpYEMP/hdu/Tf8O7SXO2VUwbUxE+n7TdC7cvjllb0thhotxg?=
- =?us-ascii?Q?B1HgaBOSNMKCPw/+w+3jaOJIeEu3lOAFAGkxEIVUcoRvfd2QoJUSQyKXdRkf?=
- =?us-ascii?Q?ICnXz+lLqlWcHhImCG3BL3o3uWYMBEi9LWOxug40TVB0t7Tkzvkg2p54ZgJe?=
- =?us-ascii?Q?aKrbCQAguvX0El3Uo6nZ44a33b/H2XgRHDD2U1ugUHczIM0fmTM56hn/iGwu?=
- =?us-ascii?Q?DvEHfXlJUAELsfhmv21nrAbn+kjxif6fuMR/Op3pKUGNU1MhZvobI2rUJmyz?=
- =?us-ascii?Q?6SPYXZUAQ6qo/ljcSWyUE3NKvgcKp4mfaeKgX3zTGYvUVgIKBdmRNE90wV4c?=
- =?us-ascii?Q?ZhnAHDlIr2X/LzLbSO2hAPNYmBLjzxi/Fj+h1/1kZrhQY+9tzObeWV9dS/MM?=
- =?us-ascii?Q?1z4a+vA9YWrh19MgdwIhqY5VqPfgN5em/bemvWUgRjuLflh7490y8TfY7vOp?=
- =?us-ascii?Q?fesnzh3IMla98pDH7j+UCAinCcENz3EjObP1kJyIrzDvSwfNieAZQV3ISDOX?=
- =?us-ascii?Q?CuM7WJv2VcYjmVDBPbL3VoDMNjN1CEl4kXPueUab981Nglr6fNmhPFJOvKKF?=
- =?us-ascii?Q?7QgjMiIbD7w4TRFpPGjIZwGgrwvTPk4MPGfUzVT0agh80Ov7Vx5t4uLPe8IS?=
- =?us-ascii?Q?SLaExPf5XcBfuJJRFWmwEV4l5K2jnAT7nvNl4sSEwtq7/aFZ4dkE0rWQDKov?=
- =?us-ascii?Q?IBtRrng9fE7YivXv5+UWCHyACqrLBba42CRbLZhIE5ug2UVxF7wLnUNH4ga6?=
- =?us-ascii?Q?rri4urn7O4nMGFJlN7wt1DN54aQO7gwzmuoU/A34wvtzftyKKvgaw0l1WK6+?=
- =?us-ascii?Q?Ir5x5UxS7peY+D1DYIozHEEfI4Io+cm8EaUhfXRDQDiUCrnS0SxzWeQyGuFx?=
- =?us-ascii?Q?IgCYHms9sVvnGWZwv8dExg8bmRV6H24slecra5XtD2k8Ml865YrHXFUBzjmu?=
- =?us-ascii?Q?8F6FZrcraq56wgmAic3SAXdewcpGOyka55ryEwf7f4XMk8iwhEsqmMd9zfVl?=
- =?us-ascii?Q?JlpVFfXxXy8ipYBkyddCzs7c71ywFlPhgsU+H088Bvc2FmTRvUAKfR2L4IZm?=
- =?us-ascii?Q?0w6CuzmKyrPJDb0qQuzLKrnhhAidHmiVtkRf8HcSbXL4EmhtcLOxFV+vOtTT?=
- =?us-ascii?Q?2FYVpds4eDc4N6lthxH9LodEPSkt02vFVXS6UOUE8yBYP4/ymWpeNXlnLUYy?=
- =?us-ascii?Q?a4tVU2bjfF0MVo/Timg5BkxhATs72WVpjp2X2c/yEydCbnvOwudXCDmpYUc?=
- =?us-ascii?Q?=3D?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e78b8317-c46a-4cd2-11cf-08dbf708de06
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Dec 2023 09:42:46.2432
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR20MB5436
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 2/3] clk: qcom: clk-rcg2: add support for rcg2 freq
+ multi ops
+Content-Language: en-US
+To: Christian Marangi <ansuelsmth@gmail.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20231124151847.1915-1-ansuelsmth@gmail.com>
+ <20231124151847.1915-3-ansuelsmth@gmail.com>
+From: Lei Wei <quic_leiwei@quicinc.com>
+In-Reply-To: <20231124151847.1915-3-ansuelsmth@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: nczeAWJl9aRmRU2SnCmd9sWIDO0QXZ6p
+X-Proofpoint-ORIG-GUID: nczeAWJl9aRmRU2SnCmd9sWIDO0QXZ6p
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-12-07_09,2023-12-07_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ priorityscore=1501 malwarescore=0 spamscore=0 lowpriorityscore=0
+ clxscore=1011 bulkscore=0 impostorscore=0 mlxscore=0 phishscore=0
+ mlxlogscore=999 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2311290000 definitions=main-2312070097
 
->
->On 07/12/2023 09:37, Inochi Amaoto wrote:
->> Add clock generator node for CV1800B and CV1812H.
->>
->> Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
->> Link: https://github.com/milkv-duo/duo-files/blob/main/hardware/CV1800B/CV1800B-CV1801B-Preliminary-Datasheet-full-en.pdf
->> ---
->>  arch/riscv/boot/dts/sophgo/cv1800b.dtsi | 4 ++++
->>  arch/riscv/boot/dts/sophgo/cv1812h.dtsi | 4 ++++
->>  arch/riscv/boot/dts/sophgo/cv18xx.dtsi  | 6 ++++++
->>  3 files changed, 14 insertions(+)
->>
->> diff --git a/arch/riscv/boot/dts/sophgo/cv1800b.dtsi b/arch/riscv/boot/dts/sophgo/cv1800b.dtsi
->> index 165e9e320a8c..baf641829e72 100644
->> --- a/arch/riscv/boot/dts/sophgo/cv1800b.dtsi
->> +++ b/arch/riscv/boot/dts/sophgo/cv1800b.dtsi
->> @@ -16,3 +16,7 @@ &plic {
->>  &clint {
->>  	compatible = "sophgo,cv1800b-clint", "thead,c900-clint";
->>  };
->> +
->> +&clk {
->> +	compatible = "sophgo,cv1800-clk";
->> +};
->> diff --git a/arch/riscv/boot/dts/sophgo/cv1812h.dtsi b/arch/riscv/boot/dts/sophgo/cv1812h.dtsi
->> index 9a375935b00c..83243c918204 100644
->> --- a/arch/riscv/boot/dts/sophgo/cv1812h.dtsi
->> +++ b/arch/riscv/boot/dts/sophgo/cv1812h.dtsi
->> @@ -21,3 +21,7 @@ &plic {
->>  &clint {
->>  	compatible = "sophgo,cv1812h-clint", "thead,c900-clint";
->>  };
->> +
->> +&clk {
->> +	compatible = "sophgo,cv1810-clk";
->> +};
->> diff --git a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi b/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
->> index 2d6f4a4b1e58..6ea1b2784db9 100644
->> --- a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
->> +++ b/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
->> @@ -53,6 +53,12 @@ soc {
->>  		dma-noncoherent;
->>  		ranges;
->>
->> +		clk: clock-controller@3002000 {
->> +			reg = <0x03002000 0x1000>;
->> +			clocks = <&osc>;
->> +			#clock-cells = <1>;
->
->I don't find such layout readable and maintainable. I did some parts
->like this long, long time ago for one of my SoCs (Exynos54xx), but I
->find it over time unmaintainable approach. I strongly suggest to have
->compatible and other properties in one place, so cv1800 and cv1812, even
->if it duplicates the code.
->
 
-Hi Krzysztof:
 
-Thanks for your advice, but I have a question about this: when I should
-use the DT override? The memory mapping of the CV1800 and CV1810 are
-almost the same (the CV1810 have more peripheral and the future SG200X
-have the same layout). IIRC, this is why conor suggested using DT override
-to make modification easier. But duplicating node seems to break thiS, so
-I's pretty confused.
+On 11/24/2023 11:18 PM, Christian Marangi wrote:
+> Some RCG frequency can be reached by multiple configuration.
+> 
+> Add clk_rcg2_fm_ops ops to support these special RCG configurations.
+> 
+> These alternative ops will select the frequency using a CEIL policy.
+> 
+> When the correct frequency is found, the correct config is selected by
+> calculating the final rate (by checking the defined parent and values
+> in the config that is being checked) and deciding based on the one that
+> is less different than the requested one.
+> 
+> These check are skipped if there is just on config for the requested
+> freq.
+> 
+> qcom_find_freq_multi is added to search the freq with the new struct
+> freq_multi_tbl.
+> __clk_rcg2_select_conf is used to select the correct conf by simulating
+> the final clock.
+> If a conf can't be found due to parent not reachable, a WARN is printed
+> and -EINVAL is returned.
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+Tested-by: Wei Lei <quic_leiwei@quicinc.com>
 
-Thanks,
-Inochi
-
->Best regards,
->Krzysztof
->
->
+Regards
+Lei
+> ---
+>   drivers/clk/qcom/clk-rcg.h  |   1 +
+>   drivers/clk/qcom/clk-rcg2.c | 166 ++++++++++++++++++++++++++++++++++++
+>   drivers/clk/qcom/common.c   |  18 ++++
+>   drivers/clk/qcom/common.h   |   2 +
+>   4 files changed, 187 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+> index c81458db6ce4..dc9a77965e68 100644
+> --- a/drivers/clk/qcom/clk-rcg.h
+> +++ b/drivers/clk/qcom/clk-rcg.h
+> @@ -190,6 +190,7 @@ struct clk_rcg2_gfx3d {
+>   
+>   extern const struct clk_ops clk_rcg2_ops;
+>   extern const struct clk_ops clk_rcg2_floor_ops;
+> +extern const struct clk_ops clk_rcg2_fm_ops;
+>   extern const struct clk_ops clk_rcg2_mux_closest_ops;
+>   extern const struct clk_ops clk_edp_pixel_ops;
+>   extern const struct clk_ops clk_byte_ops;
+> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+> index e22baf3a7112..2393c7df0402 100644
+> --- a/drivers/clk/qcom/clk-rcg2.c
+> +++ b/drivers/clk/qcom/clk-rcg2.c
+> @@ -266,6 +266,115 @@ static int _freq_tbl_determine_rate(struct clk_hw *hw, const struct freq_tbl *f,
+>   	return 0;
+>   }
+>   
+> +static const struct freq_conf *
+> +__clk_rcg2_select_conf(struct clk_hw *hw, const struct freq_multi_tbl *f,
+> +		       unsigned long req_rate)
+> +{
+> +	unsigned long rate_diff, best_rate_diff = ULONG_MAX;
+> +	const struct freq_conf *conf, *best_conf = NULL;
+> +	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+> +	const char *name = clk_hw_get_name(hw);
+> +	unsigned long parent_rate, rate;
+> +	struct clk_hw *p;
+> +	int index, i;
+> +
+> +	/* Exit early if only one config is defined */
+> +	if (f->num_confs == 1) {
+> +		best_conf = f->confs;
+> +		goto exit;
+> +	}
+> +
+> +	/* Search in each provided config the one that is near the wanted rate */
+> +	for (i = 0, conf = f->confs; i < f->num_confs; i++, conf++) {
+> +		index = qcom_find_src_index(hw, rcg->parent_map, conf->src);
+> +		if (index < 0)
+> +			continue;
+> +
+> +		p = clk_hw_get_parent_by_index(hw, index);
+> +		if (!p)
+> +			continue;
+> +
+> +		parent_rate =  clk_hw_get_rate(p);
+> +		rate = calc_rate(parent_rate, conf->n, conf->m, conf->n, conf->pre_div);
+> +
+> +		if (rate == req_rate) {
+> +			best_conf = conf;
+> +			goto exit;
+> +		}
+> +
+> +		rate_diff = abs(req_rate - rate);
+> +		if (rate_diff < best_rate_diff) {
+> +			best_rate_diff = rate_diff;
+> +			best_conf = conf;
+> +		}
+> +	}
+> +
+> +	/*
+> +	 * Very unlikely. Warn if we couldn't find a correct config
+> +	 * due to parent not found in every config.
+> +	 */
+> +	if (unlikely(!best_conf)) {
+> +		WARN(1, "%s: can't find a configuration for rate %lu.",
+> +		     name, req_rate);
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +
+> +exit:
+> +	return best_conf;
+> +}
+> +
+> +static int _freq_tbl_fm_determine_rate(struct clk_hw *hw, const struct freq_multi_tbl *f,
+> +				       struct clk_rate_request *req)
+> +{
+> +	unsigned long clk_flags, rate = req->rate;
+> +	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+> +	const struct freq_conf *conf;
+> +	struct clk_hw *p;
+> +	int index;
+> +
+> +	f = qcom_find_freq_multi(f, rate);
+> +	if (!f || !f->confs)
+> +		return -EINVAL;
+> +
+> +	conf = __clk_rcg2_select_conf(hw, f, rate);
+> +	if (IS_ERR(conf))
+> +		return PTR_ERR(conf);
+> +	index = qcom_find_src_index(hw, rcg->parent_map, conf->src);
+> +	if (index < 0)
+> +		return index;
+> +
+> +	clk_flags = clk_hw_get_flags(hw);
+> +	p = clk_hw_get_parent_by_index(hw, index);
+> +	if (!p)
+> +		return -EINVAL;
+> +
+> +	if (clk_flags & CLK_SET_RATE_PARENT) {
+> +		rate = f->freq;
+> +		if (conf->pre_div) {
+> +			if (!rate)
+> +				rate = req->rate;
+> +			rate /= 2;
+> +			rate *= conf->pre_div + 1;
+> +		}
+> +
+> +		if (conf->n) {
+> +			u64 tmp = rate;
+> +
+> +			tmp = tmp * conf->n;
+> +			do_div(tmp, conf->m);
+> +			rate = tmp;
+> +		}
+> +	} else {
+> +		rate =  clk_hw_get_rate(p);
+> +	}
+> +
+> +	req->best_parent_hw = p;
+> +	req->best_parent_rate = rate;
+> +	req->rate = f->freq;
+> +
+> +	return 0;
+> +}
+> +
+>   static int clk_rcg2_determine_rate(struct clk_hw *hw,
+>   				   struct clk_rate_request *req)
+>   {
+> @@ -282,6 +391,14 @@ static int clk_rcg2_determine_floor_rate(struct clk_hw *hw,
+>   	return _freq_tbl_determine_rate(hw, rcg->freq_tbl, req, FLOOR);
+>   }
+>   
+> +static int clk_rcg2_fm_determine_rate(struct clk_hw *hw,
+> +				      struct clk_rate_request *req)
+> +{
+> +	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+> +
+> +	return _freq_tbl_fm_determine_rate(hw, rcg->freq_multi_tbl, req);
+> +}
+> +
+>   static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f,
+>   				u32 *_cfg)
+>   {
+> @@ -377,6 +494,30 @@ static int __clk_rcg2_set_rate(struct clk_hw *hw, unsigned long rate,
+>   	return clk_rcg2_configure(rcg, f);
+>   }
+>   
+> +static int __clk_rcg2_fm_set_rate(struct clk_hw *hw, unsigned long rate)
+> +{
+> +	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+> +	const struct freq_multi_tbl *f;
+> +	const struct freq_conf *conf;
+> +	struct freq_tbl f_tbl;
+> +
+> +	f = qcom_find_freq_multi(rcg->freq_multi_tbl, rate);
+> +	if (!f || !f->confs)
+> +		return -EINVAL;
+> +
+> +	conf = __clk_rcg2_select_conf(hw, f, rate);
+> +	if (IS_ERR(conf))
+> +		return PTR_ERR(conf);
+> +
+> +	f_tbl.freq = f->freq;
+> +	f_tbl.src = conf->src;
+> +	f_tbl.pre_div = conf->pre_div;
+> +	f_tbl.m = conf->m;
+> +	f_tbl.n = conf->n;
+> +
+> +	return clk_rcg2_configure(rcg, &f_tbl);
+> +}
+> +
+>   static int clk_rcg2_set_rate(struct clk_hw *hw, unsigned long rate,
+>   			    unsigned long parent_rate)
+>   {
+> @@ -389,6 +530,12 @@ static int clk_rcg2_set_floor_rate(struct clk_hw *hw, unsigned long rate,
+>   	return __clk_rcg2_set_rate(hw, rate, FLOOR);
+>   }
+>   
+> +static int clk_rcg2_fm_set_rate(struct clk_hw *hw, unsigned long rate,
+> +				unsigned long parent_rate)
+> +{
+> +	return __clk_rcg2_fm_set_rate(hw, rate);
+> +}
+> +
+>   static int clk_rcg2_set_rate_and_parent(struct clk_hw *hw,
+>   		unsigned long rate, unsigned long parent_rate, u8 index)
+>   {
+> @@ -401,6 +548,12 @@ static int clk_rcg2_set_floor_rate_and_parent(struct clk_hw *hw,
+>   	return __clk_rcg2_set_rate(hw, rate, FLOOR);
+>   }
+>   
+> +static int clk_rcg2_fm_set_rate_and_parent(struct clk_hw *hw,
+> +		unsigned long rate, unsigned long parent_rate, u8 index)
+> +{
+> +	return __clk_rcg2_fm_set_rate(hw, rate);
+> +}
+> +
+>   static int clk_rcg2_get_duty_cycle(struct clk_hw *hw, struct clk_duty *duty)
+>   {
+>   	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+> @@ -511,6 +664,19 @@ const struct clk_ops clk_rcg2_floor_ops = {
+>   };
+>   EXPORT_SYMBOL_GPL(clk_rcg2_floor_ops);
+>   
+> +const struct clk_ops clk_rcg2_fm_ops = {
+> +	.is_enabled = clk_rcg2_is_enabled,
+> +	.get_parent = clk_rcg2_get_parent,
+> +	.set_parent = clk_rcg2_set_parent,
+> +	.recalc_rate = clk_rcg2_recalc_rate,
+> +	.determine_rate = clk_rcg2_fm_determine_rate,
+> +	.set_rate = clk_rcg2_fm_set_rate,
+> +	.set_rate_and_parent = clk_rcg2_fm_set_rate_and_parent,
+> +	.get_duty_cycle = clk_rcg2_get_duty_cycle,
+> +	.set_duty_cycle = clk_rcg2_set_duty_cycle,
+> +};
+> +EXPORT_SYMBOL_GPL(clk_rcg2_fm_ops);
+> +
+>   const struct clk_ops clk_rcg2_mux_closest_ops = {
+>   	.determine_rate = __clk_mux_determine_rate_closest,
+>   	.get_parent = clk_rcg2_get_parent,
+> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+> index 75f09e6e057e..48f81e3a5e80 100644
+> --- a/drivers/clk/qcom/common.c
+> +++ b/drivers/clk/qcom/common.c
+> @@ -41,6 +41,24 @@ struct freq_tbl *qcom_find_freq(const struct freq_tbl *f, unsigned long rate)
+>   }
+>   EXPORT_SYMBOL_GPL(qcom_find_freq);
+>   
+> +const struct freq_multi_tbl *qcom_find_freq_multi(const struct freq_multi_tbl *f,
+> +						  unsigned long rate)
+> +{
+> +	if (!f)
+> +		return NULL;
+> +
+> +	if (!f->freq)
+> +		return f;
+> +
+> +	for (; f->freq; f++)
+> +		if (rate <= f->freq)
+> +			return f;
+> +
+> +	/* Default to our fastest rate */
+> +	return f - 1;
+> +}
+> +EXPORT_SYMBOL_GPL(qcom_find_freq_multi);
+> +
+>   const struct freq_tbl *qcom_find_freq_floor(const struct freq_tbl *f,
+>   					    unsigned long rate)
+>   {
+> diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
+> index 9c8f7b798d9f..2d4a8a837e6c 100644
+> --- a/drivers/clk/qcom/common.h
+> +++ b/drivers/clk/qcom/common.h
+> @@ -45,6 +45,8 @@ extern const struct freq_tbl *qcom_find_freq(const struct freq_tbl *f,
+>   					     unsigned long rate);
+>   extern const struct freq_tbl *qcom_find_freq_floor(const struct freq_tbl *f,
+>   						   unsigned long rate);
+> +extern const struct freq_multi_tbl *qcom_find_freq_multi(const struct freq_multi_tbl *f,
+> +							 unsigned long rate);
+>   extern void
+>   qcom_pll_set_fsm_mode(struct regmap *m, u32 reg, u8 bias_count, u8 lock_count);
+>   extern int qcom_find_src_index(struct clk_hw *hw, const struct parent_map *map,
