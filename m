@@ -1,160 +1,370 @@
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08BE3433B9;
+	Thu,  7 Dec 2023 16:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YjprtQhl"
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1724910C4
-	for <linux-clk@vger.kernel.org>; Thu,  7 Dec 2023 04:52:20 -0800 (PST)
-Received: by mail-ed1-x52e.google.com with SMTP id 4fb4d7f45d1cf-54c7744a93fso1244328a12.2
-        for <linux-clk@vger.kernel.org>; Thu, 07 Dec 2023 04:52:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701953538; x=1702558338; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=E2V1Nu5Y3M7B3c5KtqzFbEZA29nzyhwL2JmdTIY4szc=;
-        b=YjprtQhldkfGAJQNy+UfThmCa4zhfZy8zfBGmy0amyLBlUpOVW31nzw0iUEt0Mrxlm
-         bvBt6l/NCZUXbhLM85TvTPashgXcx64ml1oPYFaLSctGBatzTlB0Tcz5v+ZiWmDIZimu
-         EZNq2vlj/oegIa+9DSvGzHOSzcy0+snm8QxlETItcbNqkEjnKYUNWTsn1HVfX1zjPXbx
-         m/Eq9iB7LbuMVN5UXAuKiRE32lXzmKeXKk6TG491opKuHzUQHvISHkc5u/BXmpsRL+N6
-         jkXKEElcDh4+2hq5n5lTKv1LhE3rwjm8CsZWiH2ZNQMcOSQtWh0OQAEkXQ18a88ax9zx
-         kC8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701953538; x=1702558338;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=E2V1Nu5Y3M7B3c5KtqzFbEZA29nzyhwL2JmdTIY4szc=;
-        b=da68oQNgNbjru88ESRKyw+liPVxqfMkT44uyJFKZUlDu4v0f+n6wF7hF+iqYwMq3SG
-         26r3/UkUFiVK9j8BTcUGiS7WIwDoszH7sFjDufbLfAuLObGwhI+QsSezxJVA42v4WtKw
-         91xh679K4GEsD95EVkBmUu+bHj5n4gix4bl92z/m3ndPqoCzDkiN5aJh0L4U/y9Nybew
-         VcEJH5hyeLjjnJ6W6A5vINfI9q+8sjY8lhcDjE8Wd1HidmNDFaaIGQLQi184TbBxGhmi
-         HesnRZeQHWVs/1beP2i8ov+XRro9Frub+SB+y4AppZxiqqLmoV/HT6NgrhHg3H9ueJJi
-         9wDQ==
-X-Gm-Message-State: AOJu0Yy5p9fZqNZzrdN8g6UTnOTsgziAGDBp4RDT6mNkO/muqcfcPy8I
-	IjQRCNHxYgujeHB1zl1BeU4BCw==
-X-Google-Smtp-Source: AGHT+IFht54XAvdFOQ/lNFTSE16Z0z3a5hJ4XsdAOJVB02lM8AR5iw4enjeAPcl2cN19a5tGdwNr6Q==
-X-Received: by 2002:a50:8d53:0:b0:54c:a676:d1de with SMTP id t19-20020a508d53000000b0054ca676d1demr1377196edt.60.1701953538552;
-        Thu, 07 Dec 2023 04:52:18 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id er9-20020a056402448900b0054c6a70a435sm736766edb.44.2023.12.07.04.52.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Dec 2023 04:52:18 -0800 (PST)
-Message-ID: <375bb6e4-18dc-4f54-9a06-6f9f2ba0a0ec@linaro.org>
-Date: Thu, 7 Dec 2023 13:52:16 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jsyj37ME"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E549AC433C8;
+	Thu,  7 Dec 2023 16:36:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1701967020;
+	bh=uEkhnjutevPAm25NTL1T2cWhqwdWKvVdlSIRkmlGW/Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Jsyj37MEnASgngEkCP3344dgv2GrsxWSHtLxGIEQ/9s34NVdpLZRLsrsE4SDgS/JA
+	 mc0317PwgDtwwTkAmP1RRbW2adquZpiIjXkasmLtRvPXC2aWNm84ZPwzHvAr7rlaf5
+	 saUt9oxzpmL7T4dlWIyTkKHTxYRWbFlr1aSBc5WFZCIAjAa1hzlERxP/WU+nfjM2pi
+	 Kz3xB8FnCtmKl54BEDbYAPychlzI+6X5VexA7iyRJr6swM1JcI5YU8YYqygaIuDWOk
+	 fBMNDfDiXd0CNir523/P9MwQWIjetgdg7JUg78tjgXgg4nopVpVj5qfFMvMV7fX/al
+	 S6KkDeyCeQ88A==
+Date: Thu, 7 Dec 2023 16:36:44 +0000
+From: Lee Jones <lee@kernel.org>
+To: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: linux-sh@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Helge Deller <deller@gmx.de>, Heiko Stuebner <heiko@sntech.de>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Chris Morgan <macromorgan@hotmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Randy Dunlap <rdunlap@infradead.org>, Arnd Bergmann <arnd@arndb.de>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	David Rientjes <rientjes@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Baoquan He <bhe@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Guo Ren <guoren@kernel.org>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	Azeem Shaikh <azeemshaikh38@gmail.com>,
+	Palmer Dabbelt <palmer@rivosinc.com>, Bin Meng <bmeng@tinylab.org>,
+	Max Filippov <jcmvbkbc@gmail.com>, Tom Rix <trix@redhat.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>,
+	Sergey Shtylyov <s.shtylyov@omp.ru>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-pci@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-fbdev@vger.kernel.org
+Subject: Re: [DO NOT MERGE v5 23/37] mfd: sm501: Convert platform_data to OF
+ property
+Message-ID: <20231207163644.GB111411@google.com>
+References: <cover.1701768028.git.ysato@users.sourceforge.jp>
+ <68532082074b0c8fe9945b481678aab77520f517.1701768028.git.ysato@users.sourceforge.jp>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] riscv: dts: sophgo: add clock generator for Sophgo
- CV1800 series SoC
-Content-Language: en-US
-To: Inochi Amaoto <inochiama@outlook.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Chao Wei <chao.wei@sophgo.com>,
- Chen Wang <unicorn_wang@outlook.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-Cc: Jisheng Zhang <jszhang@kernel.org>, Liu Gui <kenneth.liu@sophgo.com>,
- Emil Renner Berthing <emil.renner.berthing@canonical.com>,
- qiujingbao.dlmu@gmail.com, dlan@gentoo.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org
-References: <f9db367c-a96b-4789-9884-f2062499765a@linaro.org>
- <IA1PR20MB49531D4EFD4626834B5C604ABB8BA@IA1PR20MB4953.namprd20.prod.outlook.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
- m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
- HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
- XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
- mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
- v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
- cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
- rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
- qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
- aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
- gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
- dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
- NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
- hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
- oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
- H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
- yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
- 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
- 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
- +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
- FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
- 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
- DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
- oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
- 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
- Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
- qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
- /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
- qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
- EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
- KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
- fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <IA1PR20MB49531D4EFD4626834B5C604ABB8BA@IA1PR20MB4953.namprd20.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <68532082074b0c8fe9945b481678aab77520f517.1701768028.git.ysato@users.sourceforge.jp>
 
-On 07/12/2023 10:42, Inochi Amaoto wrote:
->>> +&clk {
->>> +	compatible = "sophgo,cv1810-clk";
->>> +};
->>> diff --git a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi b/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
->>> index 2d6f4a4b1e58..6ea1b2784db9 100644
->>> --- a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
->>> +++ b/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
->>> @@ -53,6 +53,12 @@ soc {
->>>  		dma-noncoherent;
->>>  		ranges;
->>>
->>> +		clk: clock-controller@3002000 {
->>> +			reg = <0x03002000 0x1000>;
->>> +			clocks = <&osc>;
->>> +			#clock-cells = <1>;
->>
->> I don't find such layout readable and maintainable. I did some parts
->> like this long, long time ago for one of my SoCs (Exynos54xx), but I
->> find it over time unmaintainable approach. I strongly suggest to have
->> compatible and other properties in one place, so cv1800 and cv1812, even
->> if it duplicates the code.
->>
+On Tue, 05 Dec 2023, Yoshinori Sato wrote:
+
+> Various parameters of SM501 can be set using platform_data,
+> so parameters cannot be passed in the DeviceTree target.
+> Expands the parameters set in platform_data so that they can be
+> specified using DeviceTree properties.
 > 
-> Hi Krzysztof:
+> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
+> ---
+>  drivers/mfd/sm501.c           | 99 +++++++++++++++++++++++++++++++++++
+>  drivers/video/fbdev/sm501fb.c | 82 +++++++++++++++++++++++++++++
+>  2 files changed, 181 insertions(+)
 > 
-> Thanks for your advice, but I have a question about this: when I should
-> use the DT override? The memory mapping of the CV1800 and CV1810 are
-> almost the same (the CV1810 have more peripheral and the future SG200X
-> have the same layout). IIRC, this is why conor suggested using DT override
-> to make modification easier. But duplicating node seems to break thiS, so
-> I's pretty confused.
+> diff --git a/drivers/mfd/sm501.c b/drivers/mfd/sm501.c
+> index 28027982cf69..f0104fdf0f34 100644
+> --- a/drivers/mfd/sm501.c
+> +++ b/drivers/mfd/sm501.c
+> @@ -1370,6 +1370,99 @@ static int sm501_init_dev(struct sm501_devdata *sm)
+>  	return 0;
+>  }
+>  
+> +static void sm501_of_read_reg_init(struct device_node *np,
+> +				   const char *propname, struct sm501_reg_init *val)
+> +{
+> +	u32 u32_val[2];
 
-Go with whatever your subarchitecture and architecture maintainers
-prefer, I just shared my opinion that I find such code difficult to read
-and maintain.
+Encoding the size of the variable in the variable name is odd.
 
-Extending node with supplies, pinctrl or even clocks would be readable.
-But the compatible: no. The same applies when you need to delete
-property or subnode: not readable/maintainable IMHO.
+> +
+> +	if (!of_property_read_u32_array(np, propname, u32_val, sizeof(u32_val))) {
+> +		val->set = u32_val[0];
+> +		val->mask = u32_val[1];
 
-Best regards,
-Krzysztof
+Masks and register values stored as DT properties?  This is generally
+not permitted.  Please seek counsel from the DT maintainers.
 
+> +	}
+> +}
+> +
+> +/* Read GPIO I2C configuration */
+> +static int sm501_parse_dt_gpio_i2c(struct device *dev, struct sm501_platdata *plat,
+> +				   struct device_node *np)
+> +{
+> +	struct sm501_platdata_gpio_i2c *gpio_i2c_p;
+> +	struct property *prop;
+> +	u32 gpio_i2c[5];
+
+Why 5?  Please define all magic numbers.
+
+> +	const __be32 *p;
+> +	unsigned int i;
+> +	u32 i2c_nr;
+> +
+> +	prop = of_find_property(np, "smi,gpio-i2c", NULL);
+> +	if (!prop)
+> +		return 0;
+> +
+> +	i2c_nr = of_property_count_u32_elems(np, "smi,gpio-i2c");
+
+Why do you need both of these probing functions?  What does
+of_property_count_u32_elems() return if smi,gpio-i2c doesn't exist?
+
+> +	/* GPIO I2C define 5 words per channel. */
+> +	if (i2c_nr % 5)
+> +		return -EINVAL;
+> +	i2c_nr /= 5;
+
+'\n'
+
+> +	plat->gpio_i2c = devm_kzalloc(dev, sizeof(*plat->gpio_i2c) * i2c_nr,
+> +				      GFP_KERNEL);
+> +	if (!plat->gpio_i2c)
+> +		return -ENOMEM;
+> +
+> +	plat->gpio_i2c_nr = i2c_nr;
+> +	gpio_i2c_p = plat->gpio_i2c;
+
+What's the purpose of this intermediary variable?
+
+> +
+> +	for (; i2c_nr > 0; i2c_nr--) {
+
+You can define 'p' in here, right?
+
+> +		for (i = 0; i < ARRAY_SIZE(gpio_i2c); i++) {
+> +			p = of_prop_next_u32(prop, p, &gpio_i2c[i]);
+> +			if (!p)
+> +				return -EINVAL;
+> +		}
+> +		gpio_i2c_p->bus_num = gpio_i2c[0];
+> +		gpio_i2c_p->pin_sda = gpio_i2c[1];
+> +		gpio_i2c_p->pin_scl = gpio_i2c[2];
+> +		gpio_i2c_p->udelay  = gpio_i2c[3];
+> +		gpio_i2c_p->timeout = gpio_i2c[4];
+
+I'm not even going to ask.  I'll leave this to the DT maintainers.
+
+> +		gpio_i2c_p++;
+> +	}
+> +	return 0;
+> +}
+> +
+> +/* Build platform_data from OF property */
+> +static int sm501_parse_dt(struct sm501_devdata *sm, struct device_node *np)
+> +{
+> +	struct sm501_platdata *plat;
+> +	u32 u32_val;
+> +	int ret;
+> +
+> +	plat = devm_kzalloc(sm->dev, sizeof(*plat), GFP_KERNEL);
+> +	if (!plat)
+> +		return -ENOMEM;
+> +
+> +	plat->init = devm_kzalloc(sm->dev, sizeof(*plat->init), GFP_KERNEL);
+
+Why not grab all of the memory at once?
+
+Maybe make this 'init' thing a non-pointer.
+
+> +	if (!plat->init)
+> +		return -ENOMEM;
+> +
+> +	if (!of_property_read_u32(np, "smi,devices", &u32_val))
+> +		plat->init->devices = u32_val;
+
+What happens if you do:
+
+	of_property_read_u32(np, "smi,devices", &plat->init->devices);
+
+> +	if (!of_property_read_u32(np, "smi,mclk", &u32_val))
+> +		plat->init->mclk = u32_val;
+> +	if (!of_property_read_u32(np, "smi,m1xclk", &u32_val))
+> +		plat->init->m1xclk = u32_val;
+> +
+> +	sm501_of_read_reg_init(np, "smi,misc-timing", &plat->init->misc_timing);
+> +	sm501_of_read_reg_init(np, "smi,misc-control", &plat->init->misc_control);
+> +	sm501_of_read_reg_init(np, "smi,gpio-low", &plat->init->gpio_low);
+> +	sm501_of_read_reg_init(np, "smi,gpio-high", &plat->init->gpio_high);
+> +
+> +	if (IS_ENABLED(CONFIG_MFD_SM501_GPIO) &&
+> +	    (plat->init->devices & SM501_USE_GPIO)) {
+
+That's over-bracketed, right?
+
+plat->init->devices is a bit mask of enable devices stored in DT?
+
+Okay, I think this is going to need a lot of work on the DT side.
+
+Leaving the review here for now.
+
+> +		ret = sm501_parse_dt_gpio_i2c(sm->dev, plat, np);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +	sm->platdata = plat;
+> +	return 0;
+> +}
+> +
+>  static int sm501_plat_probe(struct platform_device *dev)
+>  {
+>  	struct sm501_devdata *sm;
+> @@ -1406,6 +1499,12 @@ static int sm501_plat_probe(struct platform_device *dev)
+>  		goto err_res;
+>  	}
+>  
+> +	if (IS_ENABLED(CONFIG_OF) && dev->dev.of_node) {
+> +		ret = sm501_parse_dt(sm, dev->dev.of_node);
+> +		if (ret)
+> +			goto err_res;
+> +	}
+> +
+>  	platform_set_drvdata(dev, sm);
+>  
+>  	sm->regs = ioremap(sm->io_res->start, resource_size(sm->io_res));
+> diff --git a/drivers/video/fbdev/sm501fb.c b/drivers/video/fbdev/sm501fb.c
+> index d6fdc1737cd2..d35285819d28 100644
+> --- a/drivers/video/fbdev/sm501fb.c
+> +++ b/drivers/video/fbdev/sm501fb.c
+> @@ -1932,6 +1932,82 @@ static int sm501fb_start_one(struct sm501fb_info *info,
+>  	return 0;
+>  }
+>  
+> +#if defined(CONFIG_OF)
+> +/* parse CRT / panel configuration */
+> +static struct sm501_platdata_fbsub *dt_fbsub(struct device *dev,
+> +					     struct device_node *np,
+> +					     const char *name)
+> +{
+> +	struct sm501_platdata_fbsub *fbsub = NULL;
+> +	struct fb_videomode *def_mode = NULL;
+> +	struct device_node *child;
+> +	const void *p_edid;
+> +	u32 flags = 0;
+> +	u32 bpp = 0;
+> +	int len;
+> +
+> +	child = of_get_child_by_name(np, name);
+> +	if (child == NULL)
+> +		return NULL;
+> +
+> +	p_edid = of_get_property(child, "edid", &len);
+> +	if (p_edid && len == EDID_LENGTH) {
+> +		struct fb_monspecs *specs;
+> +		u8 *edid;
+> +
+> +		edid = kmemdup(p_edid, EDID_LENGTH, GFP_KERNEL);
+> +		if (edid) {
+> +			specs = kzalloc(sizeof(*specs), GFP_KERNEL);
+> +			if (specs) {
+> +				fb_edid_to_monspecs(edid, specs);
+> +				def_mode = specs->modedb;
+> +			}
+> +		}
+> +		kfree(edid);
+> +	}
+> +
+> +	of_property_read_u32(child, "bpp", &bpp);
+> +
+> +	/* If flags property is obtained, fbsub is returned. */
+> +	if (!of_property_read_u32(child, "smi,flags", &flags)) {
+> +		fbsub = devm_kzalloc(dev, sizeof(*fbsub), GFP_KERNEL);
+> +		if (fbsub) {
+> +			fbsub->def_mode = def_mode;
+> +			fbsub->def_bpp = bpp;
+> +			fbsub->flags = flags;
+> +		}
+> +	}
+> +	return fbsub;
+> +}
+> +
+> +/* Build platform_data from OF property */
+> +static struct sm501_platdata_fb *pdata_from_dt(struct device *dev, struct device_node *np)
+> +{
+> +	enum sm501_fb_routing fb_route = SM501_FB_OWN;
+> +	struct sm501_platdata_fb *pdata = NULL;
+> +	struct sm501_platdata_fbsub *fb_crt;
+> +	struct sm501_platdata_fbsub *fb_pnl;
+> +	unsigned int flags = 0;
+> +
+> +	if (of_property_read_bool(np, "route-crt-panel"))
+> +		fb_route = SM501_FB_CRT_PANEL;
+> +	if (of_property_read_bool(np, "swap-fb-endian"))
+> +		flags = SM501_FBPD_SWAP_FB_ENDIAN;
+> +	fb_crt = dt_fbsub(dev, np, "crt");
+> +	fb_pnl = dt_fbsub(dev, np, "panel");
+> +	if (fb_crt || fb_pnl) {
+> +		pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
+> +		if (pdata) {
+> +			pdata->fb_route = fb_route;
+> +			pdata->flags = flags;
+> +			pdata->fb_crt = fb_crt;
+> +			pdata->fb_pnl = fb_pnl;
+> +		}
+> +	}
+> +	return pdata;
+> +}
+> +#endif
+> +
+>  static int sm501fb_probe(struct platform_device *pdev)
+>  {
+>  	struct sm501fb_info *info;
+> @@ -1974,6 +2050,12 @@ static int sm501fb_probe(struct platform_device *pdev)
+>  				if (info->edid_data)
+>  					found = 1;
+>  			}
+> +			/* Get platform data compatible configuration */
+> +			if (!found) {
+> +				info->pdata = pdata_from_dt(dev, np);
+> +				if (info->pdata)
+> +					found = 1;
+> +			}
+>  		}
+>  #endif
+>  		if (!found) {
+> -- 
+> 2.39.2
+> 
+
+-- 
+Lee Jones [李琼斯]
