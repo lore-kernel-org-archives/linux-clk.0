@@ -1,113 +1,135 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WkE1R4hd"
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55BD9E9;
-	Wed,  6 Dec 2023 07:42:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1701877328; x=1733413328;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=cO0A3WdbHX7R83cIqfmPmfW4uzDk1PAzvzBbmxZCtlE=;
-  b=WkE1R4hdJiE5S9aijjeebUWNKa+Zq7qRHCDBH6tRAI6CsYk7K6iZaIIV
-   EH7x6zOw5OlvVgoJ9Aa6JeJPqOUXhpkksAHCWB2S4ro8wk2diffqWe6Qg
-   FZ8Cy4CBBetl16X+xS8XhxweeT9YcYF2xMoPBxZwPg6wXcCKjs9j0kwyR
-   0d2/mhm9VaAjyYHCWwbKSPaQgdDO9yL7PUrp276te4CXZ5ceJUPFEttJg
-   7aLaRMagklsa13gZKAHQuE+CeogsaGIT+638AgtKmGsIPzEfRGkU1am60
-   9Z64/lesBxVRN1G5b6cLVtk61yLYbh38Stuyd+SUAPhR2SlK/BXcWvR9O
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10916"; a="458401215"
-X-IronPort-AV: E=Sophos;i="6.04,255,1695711600"; 
-   d="scan'208";a="458401215"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2023 07:42:07 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10916"; a="894770140"
-X-IronPort-AV: E=Sophos;i="6.04,255,1695711600"; 
-   d="scan'208";a="894770140"
-Received: from lkp-server02.sh.intel.com (HELO b07ab15da5fe) ([10.239.97.151])
-  by orsmga004.jf.intel.com with ESMTP; 06 Dec 2023 07:42:03 -0800
-Received: from kbuild by b07ab15da5fe with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1rAu2C-000B1L-0T;
-	Wed, 06 Dec 2023 15:42:00 +0000
-Date: Wed, 6 Dec 2023 23:39:11 +0800
-From: kernel test robot <lkp@intel.com>
-To: Inochi Amaoto <inochiama@outlook.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Chao Wei <chao.wei@sophgo.com>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Jisheng Zhang <jszhang@kernel.org>, qiujingbao.dlmu@gmail.com,
-	dlan@gentoo.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH 2/4] clk: sophgo: Add CV1800 series clock controller
- driver
-Message-ID: <202312062352.3dWKz9Hm-lkp@intel.com>
-References: <IA1PR20MB4953946E2F8D8795DC261DBFBB85A@IA1PR20MB4953.namprd20.prod.outlook.com>
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="YQkAT+Nx"
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA74FD7E
+	for <linux-clk@vger.kernel.org>; Wed,  6 Dec 2023 23:08:01 -0800 (PST)
+Received: by mail-ed1-x52c.google.com with SMTP id 4fb4d7f45d1cf-54c5d041c23so723443a12.2
+        for <linux-clk@vger.kernel.org>; Wed, 06 Dec 2023 23:08:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1701932880; x=1702537680; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TVyclZazJvX0BLnaExZFu9C3yH6+5Ao3su3cId334Q4=;
+        b=YQkAT+Nxdj3his7EyWpn1VUSiZ7ie8RiRYyZQ4gQKDDZ8OfTB3L/IeHEp/Lbd0LxDu
+         Be2zYwp/3MbEjlgeuwDsALXmMr5MebJkB7r80DPjB58ulbuFAvhzToO1KUqhnkvfLjRb
+         s1FuZVZp4HKAHR5QMicQlX483eg/y+yApoHpiyIfnZRWcq8cIvak/jeEO3ZCSC/tzEln
+         gmSp/ScUAbavTL9nVCZZwJKpDHBTkQFUlK6OZCo6cIzHg5uWgHXJ16N2ePjN6QiTLlHS
+         kgrRNRmX9ozJTwmNRRm+GUDtJufuJNIKV1Ns154h1ecEJLdmvPwio7F2OaSangP1Z96D
+         6hfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701932880; x=1702537680;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TVyclZazJvX0BLnaExZFu9C3yH6+5Ao3su3cId334Q4=;
+        b=wWYf7T9Yxr3/ikCpiHfCKGMxcukrluhV1jesiPS+7oRb/Y4TYVWy7gGTO96BkL3W2G
+         cF8FDf/odStzzG+GRzOIfR0HX26fol6P3ofGVEh/1ANlnM9LJ0ETOeZcW/F6I3Pfn3mb
+         CmDTR6d/NeD0lEl++f3xxGIv1ZjWrdmWHgaePyFO6/JZdEcLUvNAsAcXaeVDMYEIn+Fv
+         qCr07CGNNCje7bvguvmKKoeljcZxdOscGvu9bb0Kr0Ss0VuwgnEjJGJ5F9M7TgDBC3FJ
+         j0lljrq0Vgi2HJTM3e12CPxLDDEAZPLSdaZmUX9ji4sghcxwIkoBXksQ+nqBPyJ+MyFk
+         FO1Q==
+X-Gm-Message-State: AOJu0YzmoYElYjwVGVB0f6hfOoJkykrzTym7v7NuJ0S2DTCsuC9Kz/CC
+	9RLrP4RsOBuJMeJiK3s8w+5nwA==
+X-Google-Smtp-Source: AGHT+IEC0FkV7t0JGk/8vCkIjlrSN99fzjy/K71uEAV88dEq3aC+gkR+brEZ3swbNQIpMT1WiCCaHw==
+X-Received: by 2002:a05:6402:176b:b0:54c:4837:9fd8 with SMTP id da11-20020a056402176b00b0054c48379fd8mr565439edb.47.1701932880051;
+        Wed, 06 Dec 2023 23:08:00 -0800 (PST)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.22])
+        by smtp.gmail.com with ESMTPSA id b41-20020a509f2c000000b0054cb88a353dsm420818edf.14.2023.12.06.23.07.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Dec 2023 23:07:59 -0800 (PST)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: s.shtylyov@omp.ru,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org,
+	geert+renesas@glider.be,
+	magnus.damm@gmail.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	linus.walleij@linaro.org,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	biju.das.jz@bp.renesas.com
+Cc: linux-renesas-soc@vger.kernel.org,
+	netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v2 00/11] renesas: rzg3s: Add support for Ethernet
+Date: Thu,  7 Dec 2023 09:06:49 +0200
+Message-Id: <20231207070700.4156557-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <IA1PR20MB4953946E2F8D8795DC261DBFBB85A@IA1PR20MB4953.namprd20.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Inochi,
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-kernel test robot noticed the following build warnings:
+Hi,
 
-[auto build test WARNING on next-20231205]
-[also build test WARNING on linus/master v6.7-rc4]
-[cannot apply to clk/clk-next robh/for-next v6.7-rc4 v6.7-rc3 v6.7-rc2]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Series adds Ethernet support for Renesas RZ/G3S.
+Along with it preparatory cleanups and fixes were included.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Inochi-Amaoto/dt-bindings-clock-sophgo-Add-CV1800-bindings/20231205-174631
-base:   next-20231205
-patch link:    https://lore.kernel.org/r/IA1PR20MB4953946E2F8D8795DC261DBFBB85A%40IA1PR20MB4953.namprd20.prod.outlook.com
-patch subject: [PATCH 2/4] clk: sophgo: Add CV1800 series clock controller driver
-config: i386-buildonly-randconfig-003-20231206 (https://download.01.org/0day-ci/archive/20231206/202312062352.3dWKz9Hm-lkp@intel.com/config)
-compiler: clang version 16.0.4 (https://github.com/llvm/llvm-project.git ae42196bc493ffe877a7e3dff8be32035dea4d07)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231206/202312062352.3dWKz9Hm-lkp@intel.com/reproduce)
+Patches 1-2 are clock specific.
+Patches 3-7 are pinctrl specific.
+Patches 8-11 are device tree specific.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202312062352.3dWKz9Hm-lkp@intel.com/
+It is expected that patches will be integrated though Geert's tree.
 
-All warnings (new ones prefixed by >>):
+Thank you,
+Claudiu Beznea
 
->> drivers/clk/sophgo/clk-cv18xx-ip.c:347: warning: Function parameter or member 'hw' not described in 'bypass_div_get_parent'
->> drivers/clk/sophgo/clk-cv18xx-ip.c:347: warning: expecting prototype for clokc parent list(). Prototype was for bypass_div_get_parent() instead
+Changes in v2:
+- patches 1/14 and 14/14 from v1 were integrated thus, didn't include
+  them in this version
+- dropped patch 3/14 "clk: renesas: rzg2l-cpg: Add support for MSTOP"
+  from v1 and associated changes; a follow up will be done on it after
+  the current series will be accepted
+- addressed review comments
+- fixed typos in commit title and description
+- collected tags
+- removed IEN functinality form patch 6/12 and added it in a separate patch
+  (patch 7/12)
+- patch 11/14] "arm64: renesas: rzg3s-smarc-som: Invert the logic for
+  SW_SD2_EN macro from" from v1 was replaced by patch 10/11 in this
+  version "arm64: renesas: rzg3s-smarc-som: Use switches' names
+  to select on-board functionalities"
 
+Claudiu Beznea (11):
+  clk: renesas: rzg2l-cpg: Check reset monitor registers
+  clk: renesas: r9a08g045-cpg: Add clock and reset support for ETH0 and
+    ETH1
+  pinctrl: renesas: rzg2l: Move arg and index in the main function block
+  pinctrl: renesas: rzg2l: Add pin configuration support for pinmux
+    groups
+  pinctrl: renesas: rzg2l: Add support to select power source for
+    Ethernet pins
+  pinctrl: renesas: rzg2l: Add output enable support
+  pinctrl: renesas: rzg2l: Add input enable to the Ethernet pins
+  dt-bindings: net: renesas,etheravb: Document RZ/G3S support
+  arm64: renesas: r9a08g045: Add the Ethernet nodes
+  arm64: renesas: rzg3s-smarc-som: Use switches' names to select
+    on-board functionalities
+  arm64: dts: renesas: rzg3s-smarc-som: Enable the Ethernet interfaces
 
-vim +347 drivers/clk/sophgo/clk-cv18xx-ip.c
-
-   341	
-   342	/**
-   343	 * clokc parent list:
-   344	 * | osc | div0 | div1 | div2 | div3 |
-   345	 */
-   346	static u8 bypass_div_get_parent(struct clk_hw *hw)
- > 347	{
-   348		struct cv1800_clk_bypass_div *div = hw_to_cv1800_clk_bypass_div(hw);
-   349	
-   350		if (cv1800_clk_checkbit(&div->div.common, &div->bypass))
-   351			return 0;
-   352	
-   353		return 1;
-   354	}
-   355	
+ .../bindings/net/renesas,etheravb.yaml        |   1 +
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |  38 ++++
+ .../boot/dts/renesas/rzg3s-smarc-som.dtsi     | 173 ++++++++++++++++--
+ drivers/clk/renesas/r9a08g045-cpg.c           |  10 +
+ drivers/clk/renesas/rzg2l-cpg.c               |  59 ++++--
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c       | 164 +++++++++++++++--
+ 6 files changed, 398 insertions(+), 47 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.39.2
+
