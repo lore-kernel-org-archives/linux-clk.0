@@ -1,285 +1,164 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="O/9Uni0v"
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B9BA170B
-	for <linux-clk@vger.kernel.org>; Wed,  6 Dec 2023 23:08:31 -0800 (PST)
-Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-50bf7bc38c0so357466e87.2
-        for <linux-clk@vger.kernel.org>; Wed, 06 Dec 2023 23:08:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1701932910; x=1702537710; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yeSFEu7OukF0Tuu74YIE2VRnBvTHvA9bdAjWp6LMSbU=;
-        b=O/9Uni0vZdw0ycdIqGqxwvSsUpKFUqMMwQgStYOhDs6i73kT3RP8IFCoyzxYEHTwVV
-         ij9//XnQ6xftxkQT6E9DV15UjgMP4sOGKalo+/F5IkcLZ9aTh+uWECCqCtbjUQYRZK7+
-         ZWc9/85NOObX/HMgs6iok3hLeAu/nVXf1s39OKoM2QvgKG5LmiEolghPG3SYx9ojlt/h
-         xA6Z31j0p3QB/ABzYfx/vXY5Q0iKLi7alSDwLORBeyErbANR0vBEqUebJ/Kt5SSdbBgV
-         Yatqrqn5OAqtGd4bwcXdrFBiSmK9udz+UnorAtb4BNeM1qjox6Fm4DhXQ8NjADo7a6r1
-         vdzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701932910; x=1702537710;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yeSFEu7OukF0Tuu74YIE2VRnBvTHvA9bdAjWp6LMSbU=;
-        b=PH2H4wfJjlQA1njgrg+IngPEL3DA+ly8T/1T5u8hZHcCKkwtIJHSeZnLr2gEQnhXDT
-         PVun5Z4OQ6cQmQRPaJCb5n2z6OVRFnCqsNoyKxBYQcjZXzHISYebQSiB6rKMwHVSEnu2
-         S4JQ3YCFT0ZFASHJ0Fqk+rRtAHdEoIO2FD6Cb59s0HF7y8Enk1FmjDMuTAU3gUIWcbbZ
-         6PKv3UhzAyJufBmatdeLn37qNbQ432wD6Nx/NwGuAd+yxbHaSZVo0CyFBN5MEJqRh6Zp
-         iyivDQZeKRtakyIkk/mDAaxs/uafQkqtlhF0ZfQDm1m91U9lBxe4cQMyAXU3Xw46G2D+
-         TUSA==
-X-Gm-Message-State: AOJu0YzcuxqgZPoaDAjdOIEGpMJeziNKickBvLPUnpLKoRcLoF1zUofJ
-	y/gJCo6bzb0PgW2rKU1BNOuouQ==
-X-Google-Smtp-Source: AGHT+IHwFM1deCGaB8hL4AjkVZKdcxII4qcU+r4kO/s02JIjcDLdN1i2kMafFqDp+LcjJNvru3CAlQ==
-X-Received: by 2002:a05:6512:3b97:b0:50b:effb:c63f with SMTP id g23-20020a0565123b9700b0050beffbc63fmr1725491lfv.6.1701932909933;
-        Wed, 06 Dec 2023 23:08:29 -0800 (PST)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.22])
-        by smtp.gmail.com with ESMTPSA id b41-20020a509f2c000000b0054cb88a353dsm420818edf.14.2023.12.06.23.08.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Dec 2023 23:08:29 -0800 (PST)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: s.shtylyov@omp.ru,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org,
-	geert+renesas@glider.be,
-	magnus.damm@gmail.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	linus.walleij@linaro.org,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	biju.das.jz@bp.renesas.com
-Cc: linux-renesas-soc@vger.kernel.org,
-	netdev@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="oyqGfObQ"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11olkn2010.outbound.protection.outlook.com [40.92.20.10])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AC6FD57;
+	Thu,  7 Dec 2023 00:36:21 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Q7MrzwtLVn4on7FcI6iGSkEjBl2JZQMd5+4sCaW9+ZSXIxRW2xMLkR/CK5T65/z4PVOG7/QO8IFgtIYLXs41ZBt3DwcSdz7GtUt2TlfWTJW7MdsKem1cl1UfLTUE0Gl9eV5uWEHVDcwlBa35jkt9LPEHX8fGLis8y8Ge8Xy63ucvOYM7T97GxeKKrrg2cn2WBaMfQjNENXEkm/gXst/hoE5Vhf61j0pkAp73CdT8hENaom0QD93Jtv0m7220yTYKtg8cGmp9BbmDSQSBnaAVYMFafg8viQ88f6UkxsYqtSMUcBn5nOon/thy81TnFdjdVxNdIkPPVCkqt5uIsST3Sg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4x0ZDtxEuyn90rNaHPhcEJIBSFAs/YdcfGt2+0IbFFs=;
+ b=jfiqMYasSsyaE4YwnarR7aE7CYR8ymSVtNkMKOlg2ppNE79BGBOV/nrIhIqkZh7JsIMIs5zyVVVPfk1Lgs2vxrSg2rtse/XvPKcQO4Tob3iz7wL2Ddu7W+5pvd54AtYV2mTEGTV9pSK7SfGvpB5+Dm8+UJEKK6q3zH067IjQgews0AP/U6Disuip+OlGZ0krFdgMaEQ25w9KK+USeLHbFz6qtDN4hZBXNeQT1AO3DWxIjnEjdl6qfuTodqrJTmSJbvvWkzmw0VRyAAeJe2C6nkgTfej2F8PdDsf64PzBUkP+blredR23izaZOnv4U8N2Yxh0XBpbr41dpF4JdVwTqQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4x0ZDtxEuyn90rNaHPhcEJIBSFAs/YdcfGt2+0IbFFs=;
+ b=oyqGfObQ0C5jrHpPYLl9BihBvS9jvzO662CqHyHWrAGDx4AylSXOhGWkSZc4q0v03stN4qeMoRSXxrtLjH0fPDaKI6jD3D1vcz65WjzpxpzdJimoS7ac/QCJtHIqJHsFbbPQCfKuqMSTdCCtMYzTvuH53ui4QHBQeqKJ3uc2pB8DKR0OiyM2UO15j2x7rq1jeV/JVlWvBRtSEqxmGcs6nk61YaKoWcgmzh/yiz+UWogs9S3NCKXwVEwWXOmu5ltVTK7hz5yIqYC1VYHNruM9nIhbjJC6L2KC3KDZVABEjGalk70d98b1MrHDX06JJiJGQSGlGtUoXd616xzry4WpAQ==
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
+ by LV2PR20MB4582.namprd20.prod.outlook.com (2603:10b6:408:17e::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7068.27; Thu, 7 Dec
+ 2023 08:36:18 +0000
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::55b:c350:980:ad8]) by IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::55b:c350:980:ad8%6]) with mapi id 15.20.7046.024; Thu, 7 Dec 2023
+ 08:36:18 +0000
+From: Inochi Amaoto <inochiama@outlook.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chao Wei <chao.wei@sophgo.com>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Inochi Amaoto <inochiama@outlook.com>
+Cc: Jisheng Zhang <jszhang@kernel.org>,
+	Liu Gui <kenneth.liu@sophgo.com>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	qiujingbao.dlmu@gmail.com,
+	dlan@gentoo.org,
+	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v2 11/11] arm64: dts: renesas: rzg3s-smarc-som: Enable the Ethernet interfaces
-Date: Thu,  7 Dec 2023 09:07:00 +0200
-Message-Id: <20231207070700.4156557-12-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20231207070700.4156557-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20231207070700.4156557-1-claudiu.beznea.uj@bp.renesas.com>
+	linux-riscv@lists.infradead.org
+Subject: [PATCH v3 0/4] riscv: sophgo: add clock support for Sophgo CV1800 SoCs
+Date: Thu,  7 Dec 2023 16:36:17 +0800
+Message-ID:
+ <IA1PR20MB495376DBED8EE897FE11A2B7BB8BA@IA1PR20MB4953.namprd20.prod.outlook.com>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [G/eCHKOyduTaY5FL1jADlOLE/LlZEEuEsS93U/nOd58=]
+X-ClientProxiedBy: TYCP286CA0341.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:38e::9) To IA1PR20MB4953.namprd20.prod.outlook.com
+ (2603:10b6:208:3af::19)
+X-Microsoft-Original-Message-ID:
+ <20231207083618.872121-1-inochiama@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|LV2PR20MB4582:EE_
+X-MS-Office365-Filtering-Correlation-Id: 21e5ed8d-2ec1-4eef-d726-08dbf6ff9529
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	XvZfTEMmR8D94aJQvC7qjK1NDLzw9ldqj4rDQitxTKbk525HzCfp6+ymNZCkE/wqe9+JuhiV7RzLUuYpRDdXujDpZnEOYlbGJMqofGolB121kgvKEhDx24tF/s05phy5rcQ2FGyIun3yDgVEyK8r8UlQ5nSNDkjUC+oqldzmsCDvdLZIq5+W2ZU7yhKBfA2oSBkcIRSDjTOYtSd2+Pp8PwpoKxv66yceepJnBGrih544isZsZu7F8ZqgXNfL1sK5+sgiJSL6uV+HIjM0ZaQEMRgPt7PG0+BNJOcWOJmCF+PTfAqGcBukzbOmzFeIunt1yf3Jmk3TRJCLXPgo8/MLsHLU6Rp6dN0ycF/5YyWO5kQ2epq3k9JSU5XRepelQ7XRhV28Aw6HaPhjgy9nsrJ7unDAX6oIsaGsnwKqZUG3EJU1mllLZ0A2IkZSG5uDdeTPbY+YOTq3bJj5iq7HYN3nTxWPZAwk7SPlmgjO1EAtAbxzi5PawMemrjjvudX1NkpeZRp9xw7cWm66KlnR+Z1aLtyKZ/SAa9O3GQ1M3vWbUtDma7ak4BiSKhT44atQL0hN0ZD3zhcf5GqaQnzBfNYl4eV+C5fJWb7asYuu0Dh7sodwqHFq8I1+cSCfe4ugWLoe
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?4LnJ5pJhr47HX5DPKwjejxSvIhvHetMvf6vppd13zR5c0E676tmlmdHX3PUu?=
+ =?us-ascii?Q?oTkqW09C/ZVdWF/oNfABUn/QjYMB+My9rdRMUIcrLibmPbNZXhY/H3f2qnqi?=
+ =?us-ascii?Q?HWieA1y6dbtm87RH7Ll0DpUzzy+4O5DxBfZv4VKRa6FNlzAB6bgTTAVE4D08?=
+ =?us-ascii?Q?AlCkdLHx3UWlDhTty1mLHzFu+whshXarZA7aDBd9S22FNh2Sd9vCEGnhyOA8?=
+ =?us-ascii?Q?trT7GnVocR51IOLv5vnKtiWMJpu0TN6MCoCUtA168wPUx2HbY/0V20zMdBBx?=
+ =?us-ascii?Q?+E7f21FjLgNfCIWKC1YC8c4yjiRCV6Ce5KAZIJyvkeMZD3kJxNaxmTal8qs5?=
+ =?us-ascii?Q?85lceUtcnKESR6thxT1BqdLx1IfEfdzvkCaNmOvOd5oXXJC2BhnBPsRZUqW4?=
+ =?us-ascii?Q?SvYzQalMLiLUJkHgA/K5arS3AWTgyFoa2KwG+eKl7KrcsPBCSx+ihomCiy/t?=
+ =?us-ascii?Q?CYLH1ngOrmia+/tgTFdJD+w7QwRy5YQepcvPo0szk/0QVY01fakPHDpDosnE?=
+ =?us-ascii?Q?7e3fCOqBDItW3WMeHjixnyQK0sXYHr/AqpOeUd2k6BiJYXh8awXHby5VJ+Uh?=
+ =?us-ascii?Q?5lG5n5hmaDv0ELAlrXXiRtJb9gWhWZgtRL3qnfiZK97+U89PKBzsXoFdHye9?=
+ =?us-ascii?Q?9RzDqvQcc2ielvctDLtfdrr6c/B6LLt8Av8Dwj9oplu56bTDFYw2iUikiAxT?=
+ =?us-ascii?Q?To+FMLZ/GzxDCONXLmF0d1uVJ+7ZU5R3mHNoOSsXENyYBBzysSVJA2hMpcbj?=
+ =?us-ascii?Q?CRE6UhIy2HDA945C94GufdFoFhNjcTHOdvJ77tnMWtcjmb600x/3tnPwyFit?=
+ =?us-ascii?Q?OFmZtvLD2R1BQ1O3OSyyFb48CPujc/37dt3P8+GvfU+wjqZ+O6IYwvW7FpeN?=
+ =?us-ascii?Q?BJ8p1bokEgMtvIThbVhrfW/sC+0Z+59sg8AjkJrXB5Dd7wVLIY1dY/66sft/?=
+ =?us-ascii?Q?WFpQlIMeTOt2bNc5+If1BHQ8OBO+GdmWMvHusFPmfcz9pjZ0RVapkz2hA3xv?=
+ =?us-ascii?Q?qpFW94gKWjApW/JRMVhU2/9YE+rm/KCdnS8XVSTmU0BLd7XIkGDd6VO4LIK4?=
+ =?us-ascii?Q?vTMa8K2xxTnDk8+bX9LNfqUKFwHjLZobNVYZEe+gKS9gAvVH80WH3pGDJPEp?=
+ =?us-ascii?Q?YNxNJ6CrOD1DKUXC8S0TqH1XBthdWUg44VhHFwHQXrnR4l0eHaBseETvWpFN?=
+ =?us-ascii?Q?32RxHvEGN7UUuNgI+9PelDhFuHrtikNkB7nfCUHcHOwDpcouLSNbuRk6kw4?=
+ =?us-ascii?Q?=3D?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 21e5ed8d-2ec1-4eef-d726-08dbf6ff9529
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Dec 2023 08:36:18.6594
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR20MB4582
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Add clock controller support for the Sophgo CV1800B and CV1812H.
 
-The RZ/G3S Smarc Module has Ethernet PHYs (KSZ9131) connected to each
-Ethernet IP. For this, add proper DT bindings to enable the Ethernet
-communication through these PHYs.
+This patch follow this patch series:
+https://lore.kernel.org/all/IA1PR20MB495399CAF2EEECC206ADA7ABBBD5A@IA1PR20MB4953.namprd20.prod.outlook.com/
 
-The interface b/w PHYs and MACs is RGMII. The skew settings were set to
-zero as based on phy-mode (rgmii-id) the KSZ9131 driver enables internal
-DLL, which adds a 2ns delay b/w clocks (TX/RX) and data signals.
+Changed from v2:
+1. remove clock-names from bindings.
+2. remove clock-frequency node of DT from previous patch.
+3. change some unused clock to bypass mode to avoid unlockable PLL.
 
-Different pin settings were applied to TXC and TX_CTL compared with the
-rest of the RGMII pins to comply with requirements for these pins imposed
-by HW manual of RZ/G3S (see chapters "Ether Ch0 Voltage Mode Control
-Register (ETH0_POC)", "Ether Ch1 Voltage Mode Control Register (ETH1_POC)",
-for power source selection, "Ether MII/RGMII Mode Control Register
-(ETH_MODE)" for output-enable and "Input Enable Control Register (IEN_m)"
-for input-enable configurations).
+Changed from v1:
+1. fix license issues.
 
-Commit also enables the Ethernet interfaces by selecting
-SW_CONFIG3 = SW_ON.
+Inochi Amaoto (4):
+  dt-bindings: clock: sophgo: Add clock controller of CV1800 series SoC
+  clk: sophgo: Add CV1800 series clock controller driver
+  riscv: dts: sophgo: add clock generator for Sophgo CV1800 series SoC
+  riscv: dts: sophgo: add uart clock for Sophgo CV1800 series SoC
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
+ .../bindings/clock/sophgo,cv1800-clk.yaml     |   46 +
+ arch/riscv/boot/dts/sophgo/cv1800b.dtsi       |    4 +
+ arch/riscv/boot/dts/sophgo/cv1812h.dtsi       |    4 +
+ arch/riscv/boot/dts/sophgo/cv18xx.dtsi        |   22 +-
+ drivers/clk/Kconfig                           |    1 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/sophgo/Kconfig                    |   12 +
+ drivers/clk/sophgo/Makefile                   |    7 +
+ drivers/clk/sophgo/clk-cv1800.c               | 1574 +++++++++++++++++
+ drivers/clk/sophgo/clk-cv1800.h               |  123 ++
+ drivers/clk/sophgo/clk-cv18xx-common.c        |   76 +
+ drivers/clk/sophgo/clk-cv18xx-common.h        |   85 +
+ drivers/clk/sophgo/clk-cv18xx-ip.c            |  894 ++++++++++
+ drivers/clk/sophgo/clk-cv18xx-ip.h            |  266 +++
+ drivers/clk/sophgo/clk-cv18xx-pll.c           |  465 +++++
+ drivers/clk/sophgo/clk-cv18xx-pll.h           |   79 +
+ include/dt-bindings/clock/sophgo,cv1800.h     |  176 ++
+ 17 files changed, 3830 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/sophgo,cv1800-clk.yaml
+ create mode 100644 drivers/clk/sophgo/Kconfig
+ create mode 100644 drivers/clk/sophgo/Makefile
+ create mode 100644 drivers/clk/sophgo/clk-cv1800.c
+ create mode 100644 drivers/clk/sophgo/clk-cv1800.h
+ create mode 100644 drivers/clk/sophgo/clk-cv18xx-common.c
+ create mode 100644 drivers/clk/sophgo/clk-cv18xx-common.h
+ create mode 100644 drivers/clk/sophgo/clk-cv18xx-ip.c
+ create mode 100644 drivers/clk/sophgo/clk-cv18xx-ip.h
+ create mode 100644 drivers/clk/sophgo/clk-cv18xx-pll.c
+ create mode 100644 drivers/clk/sophgo/clk-cv18xx-pll.h
+ create mode 100644 include/dt-bindings/clock/sophgo,cv1800.h
 
-Changes in v2:
-- removed #address-cells, #size-cells
-- adapted patch description to reflect the usage of SW_CONFIG
-
- .../boot/dts/renesas/rzg3s-smarc-som.dtsi     | 141 +++++++++++++++++-
- 1 file changed, 140 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-index f59094701a4a..f062d4ad78b7 100644
---- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-@@ -26,7 +26,7 @@
-  *	SW_ON  - SCIF1, SSI0, IRQ0, IRQ1 connected to SoC
-  */
- #define SW_CONFIG2	SW_ON
--#define SW_CONFIG3	SW_OFF
-+#define SW_CONFIG3	SW_ON
- 
- / {
- 	compatible = "renesas,rzg3s-smarcm", "renesas,r9a08g045s33", "renesas,r9a08g045";
-@@ -35,6 +35,9 @@ aliases {
- 		mmc0 = &sdhi0;
- #if SW_CONFIG3 == SW_OFF
- 		mmc2 = &sdhi2;
-+#else
-+		eth0 = &eth0;
-+		eth1 = &eth1;
- #endif
- 	};
- 
-@@ -89,6 +92,60 @@ vcc_sdhi2: regulator2 {
- 	};
- };
- 
-+#if SW_CONFIG3 == SW_ON
-+&eth0 {
-+	pinctrl-0 = <&eth0_pins>;
-+	pinctrl-names = "default";
-+	phy-handle = <&phy0>;
-+	phy-mode = "rgmii-id";
-+	status = "okay";
-+
-+	phy0: ethernet-phy@7 {
-+		reg = <7>;
-+		interrupt-parent = <&pinctrl>;
-+		interrupts = <RZG2L_GPIO(12, 0) IRQ_TYPE_EDGE_FALLING>;
-+		rxc-skew-psec = <0>;
-+		txc-skew-psec = <0>;
-+		rxdv-skew-psec = <0>;
-+		txen-skew-psec = <0>;
-+		rxd0-skew-psec = <0>;
-+		rxd1-skew-psec = <0>;
-+		rxd2-skew-psec = <0>;
-+		rxd3-skew-psec = <0>;
-+		txd0-skew-psec = <0>;
-+		txd1-skew-psec = <0>;
-+		txd2-skew-psec = <0>;
-+		txd3-skew-psec = <0>;
-+	};
-+};
-+
-+&eth1 {
-+	pinctrl-0 = <&eth1_pins>;
-+	pinctrl-names = "default";
-+	phy-handle = <&phy1>;
-+	phy-mode = "rgmii-id";
-+	status = "okay";
-+
-+	phy1: ethernet-phy@7 {
-+		reg = <7>;
-+		interrupt-parent = <&pinctrl>;
-+		interrupts = <RZG2L_GPIO(12, 1) IRQ_TYPE_EDGE_FALLING>;
-+		rxc-skew-psec = <0>;
-+		txc-skew-psec = <0>;
-+		rxdv-skew-psec = <0>;
-+		txen-skew-psec = <0>;
-+		rxd0-skew-psec = <0>;
-+		rxd1-skew-psec = <0>;
-+		rxd2-skew-psec = <0>;
-+		rxd3-skew-psec = <0>;
-+		txd0-skew-psec = <0>;
-+		txd1-skew-psec = <0>;
-+		txd2-skew-psec = <0>;
-+		txd3-skew-psec = <0>;
-+	};
-+};
-+#endif
-+
- &extal_clk {
- 	clock-frequency = <24000000>;
- };
-@@ -136,6 +193,88 @@ &sdhi2 {
- #endif
- 
- &pinctrl {
-+	eth0-phy-irq-hog {
-+		gpio-hog;
-+		gpios = <RZG2L_GPIO(12, 0) GPIO_ACTIVE_LOW>;
-+		input;
-+		line-name = "eth0-phy-irq";
-+	};
-+
-+	eth0_pins: eth0 {
-+		txc {
-+			pinmux = <RZG2L_PORT_PINMUX(1, 0, 1)>;  /* ET0_TXC */
-+			power-source = <1800>;
-+			output-enable;
-+			input-enable;
-+			drive-strength-microamp = <5200>;
-+		};
-+
-+		tx_ctl {
-+			pinmux = <RZG2L_PORT_PINMUX(1, 1, 1)>;  /* ET0_TX_CTL */
-+			power-source = <1800>;
-+			output-enable;
-+			drive-strength-microamp = <5200>;
-+		};
-+
-+		mux {
-+			pinmux = <RZG2L_PORT_PINMUX(1, 2, 1)>,	/* ET0_TXD0 */
-+				 <RZG2L_PORT_PINMUX(1, 3, 1)>,	/* ET0_TXD1 */
-+				 <RZG2L_PORT_PINMUX(1, 4, 1)>,	/* ET0_TXD2 */
-+				 <RZG2L_PORT_PINMUX(2, 0, 1)>,	/* ET0_TXD3 */
-+				 <RZG2L_PORT_PINMUX(3, 0, 1)>,	/* ET0_RXC */
-+				 <RZG2L_PORT_PINMUX(3, 1, 1)>,	/* ET0_RX_CTL */
-+				 <RZG2L_PORT_PINMUX(3, 2, 1)>,	/* ET0_RXD0 */
-+				 <RZG2L_PORT_PINMUX(3, 3, 1)>,	/* ET0_RXD1 */
-+				 <RZG2L_PORT_PINMUX(4, 0, 1)>,	/* ET0_RXD2 */
-+				 <RZG2L_PORT_PINMUX(4, 1, 1)>,	/* ET0_RXD3 */
-+				 <RZG2L_PORT_PINMUX(4, 3, 1)>,	/* ET0_MDC */
-+				 <RZG2L_PORT_PINMUX(4, 4, 1)>,	/* ET0_MDIO */
-+				 <RZG2L_PORT_PINMUX(4, 5, 1)>;	/* ET0_LINKSTA */
-+			power-source = <1800>;
-+		};
-+	};
-+
-+	eth1-phy-irq-hog {
-+		gpio-hog;
-+		gpios = <RZG2L_GPIO(12, 1) GPIO_ACTIVE_LOW>;
-+		input;
-+		line-name = "eth1-phy-irq";
-+	};
-+
-+	eth1_pins: eth1 {
-+		txc {
-+			pinmux = <RZG2L_PORT_PINMUX(7, 0, 1)>;	/* ET1_TXC */
-+			power-source = <1800>;
-+			output-enable;
-+			input-enable;
-+			drive-strength-microamp = <5200>;
-+		};
-+
-+		tx_ctl {
-+			pinmux = <RZG2L_PORT_PINMUX(7, 1, 1)>;	/* ET1_TX_CTL */
-+			power-source = <1800>;
-+			output-enable;
-+			drive-strength-microamp = <5200>;
-+		};
-+
-+		mux {
-+			pinmux = <RZG2L_PORT_PINMUX(7, 2, 1)>,	/* ET1_TXD0 */
-+				 <RZG2L_PORT_PINMUX(7, 3, 1)>,	/* ET1_TXD1 */
-+				 <RZG2L_PORT_PINMUX(7, 4, 1)>,	/* ET1_TXD2 */
-+				 <RZG2L_PORT_PINMUX(8, 0, 1)>,	/* ET1_TXD3 */
-+				 <RZG2L_PORT_PINMUX(8, 4, 1)>,	/* ET1_RXC */
-+				 <RZG2L_PORT_PINMUX(9, 0, 1)>,	/* ET1_RX_CTL */
-+				 <RZG2L_PORT_PINMUX(9, 1, 1)>,	/* ET1_RXD0 */
-+				 <RZG2L_PORT_PINMUX(9, 2, 1)>,	/* ET1_RXD1 */
-+				 <RZG2L_PORT_PINMUX(9, 3, 1)>,	/* ET1_RXD2 */
-+				 <RZG2L_PORT_PINMUX(10, 0, 1)>,	/* ET1_RXD3 */
-+				 <RZG2L_PORT_PINMUX(10, 2, 1)>,	/* ET1_MDC */
-+				 <RZG2L_PORT_PINMUX(10, 3, 1)>,	/* ET1_MDIO */
-+				 <RZG2L_PORT_PINMUX(10, 4, 1)>;	/* ET1_LINKSTA */
-+			power-source = <1800>;
-+		};
-+	};
-+
- 	sdhi0_pins: sd0 {
- 		data {
- 			pins = "SD0_DATA0", "SD0_DATA1", "SD0_DATA2", "SD0_DATA3";
--- 
-2.39.2
+--
+2.43.0
 
