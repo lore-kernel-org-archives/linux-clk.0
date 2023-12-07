@@ -1,123 +1,149 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA8246555;
-	Thu,  7 Dec 2023 17:31:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h7ia9+f7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CA79C433C8;
-	Thu,  7 Dec 2023 17:31:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701970299;
-	bh=y5KQaG6xsO92nyU8jMBjwng72ljhMerO17hvLBT/01s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h7ia9+f7X6k9/jV0mXmpBMYhlZE37AFCCRWGXDRntRLrVF+xVRoIuRw7reZjML+2w
-	 twc0HzmZg+PNMQTU8QG893Z0VAq/ltDXDMYDwkRcqBvSZhuS5g7ePrOMuijKvrBkIJ
-	 drbrnpbsWsIBYrt2VhHIo/Wpp3b/U4gprRE4EL0jzyW662+Rb4k+Gxdw26IogPqhSB
-	 OkJN0K4b1FQjFITQCU+5CsxCWT00mHkDGPgC+LWYJ16k2H0ZFHDmT6B6vwdhMDKHC2
-	 0E5E4wQxu3LzxP2MVLB4uWuUyGfmPRArMIB5TYoQFkujhqEO9Y4uC55W4A/xVpBRsy
-	 VprPzntPwnHMw==
-Date: Thu, 7 Dec 2023 17:31:33 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Inochi Amaoto <inochiama@outlook.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, Chao Wei <chao.wei@sophgo.com>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Liu Gui <kenneth.liu@sophgo.com>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	qiujingbao.dlmu@gmail.com, dlan@gentoo.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v3 3/4] riscv: dts: sophgo: add clock generator for
- Sophgo CV1800 series SoC
-Message-ID: <20231207-doze-spinster-0bfad3b1441a@spud>
-References: <f9db367c-a96b-4789-9884-f2062499765a@linaro.org>
- <IA1PR20MB49531D4EFD4626834B5C604ABB8BA@IA1PR20MB4953.namprd20.prod.outlook.com>
- <375bb6e4-18dc-4f54-9a06-6f9f2ba0a0ec@linaro.org>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Stw1Yw4T"
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32A4A10E3;
+	Thu,  7 Dec 2023 10:22:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1701973369; x=1733509369;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=iCLUUaatBfqlkyFZ3lf+30TefpNxCMzpAtCl5N7SoO4=;
+  b=Stw1Yw4TkjgCTLJDqe2i5JsTqevnEexP1rhYHCL68CIJvCMfhQnwy2vF
+   b0LSn2xFSl6mAE47fz3oSRvpj9zSTPzo9slAeKuAqXOq5q/Pay3fF5QgF
+   wnkSGOS/oIXC+ezkUFWrSvVCbP2Wj9DvmEd/3MmyFwM6kdiB7W4UkER3i
+   uTevKBENTAutR4pbM1ADPLfLwlxGPLBLdgwkYH3S8TsNkRrXw86YmuKXs
+   YfEDTU6qRYkKgmOsbtm5qHuPvNpt3zoBwrY0lV7x5yJP/RzoW4dSiNh3T
+   d4rAHuaSFq0+6w8Hspwe+ZSnItTAjs5AiAL4jiDArTeVwx/iZaQuSUrd8
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10917"; a="458597352"
+X-IronPort-AV: E=Sophos;i="6.04,258,1695711600"; 
+   d="scan'208";a="458597352"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Dec 2023 10:22:48 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10917"; a="895233228"
+X-IronPort-AV: E=Sophos;i="6.04,258,1695711600"; 
+   d="scan'208";a="895233228"
+Received: from lkp-server02.sh.intel.com (HELO b07ab15da5fe) ([10.239.97.151])
+  by orsmga004.jf.intel.com with ESMTP; 07 Dec 2023 10:22:42 -0800
+Received: from kbuild by b07ab15da5fe with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1rBJ1E-000CfP-0N;
+	Thu, 07 Dec 2023 18:22:40 +0000
+Date: Fri, 8 Dec 2023 02:22:00 +0800
+From: kernel test robot <lkp@intel.com>
+To: Chen Wang <unicornxw@gmail.com>, aou@eecs.berkeley.edu,
+	chao.wei@sophgo.com, conor@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+	palmer@dabbelt.com, paul.walmsley@sifive.com,
+	richardcochran@gmail.com, robh+dt@kernel.org, sboyd@kernel.org,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com,
+	guoren@kernel.org, jszhang@kernel.org, inochiama@outlook.com,
+	samuel.holland@sifive.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Chen Wang <unicorn_wang@outlook.com>
+Subject: Re: [PATCH v5 3/4] clk: sophgo: Add SG2042 clock generator driver
+Message-ID: <202312080254.Vka7cUVe-lkp@intel.com>
+References: <975f9995584dfa8af751e96a1f4d2c7991551a35.1701938395.git.unicorn_wang@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="lhuauHl59hGZdGju"
-Content-Disposition: inline
-In-Reply-To: <375bb6e4-18dc-4f54-9a06-6f9f2ba0a0ec@linaro.org>
-
-
---lhuauHl59hGZdGju
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <975f9995584dfa8af751e96a1f4d2c7991551a35.1701938395.git.unicorn_wang@outlook.com>
 
-On Thu, Dec 07, 2023 at 01:52:16PM +0100, Krzysztof Kozlowski wrote:
-> On 07/12/2023 10:42, Inochi Amaoto wrote:
-> >>> +&clk {
-> >>> +	compatible =3D "sophgo,cv1810-clk";
-> >>> +};
-> >>> diff --git a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi b/arch/riscv/boot=
-/dts/sophgo/cv18xx.dtsi
-> >>> index 2d6f4a4b1e58..6ea1b2784db9 100644
-> >>> --- a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
-> >>> +++ b/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
-> >>> @@ -53,6 +53,12 @@ soc {
-> >>>  		dma-noncoherent;
-> >>>  		ranges;
-> >>>
-> >>> +		clk: clock-controller@3002000 {
-> >>> +			reg =3D <0x03002000 0x1000>;
-> >>> +			clocks =3D <&osc>;
-> >>> +			#clock-cells =3D <1>;
-> >>
-> >> I don't find such layout readable and maintainable. I did some parts
-> >> like this long, long time ago for one of my SoCs (Exynos54xx), but I
-> >> find it over time unmaintainable approach. I strongly suggest to have
-> >> compatible and other properties in one place, so cv1800 and cv1812, ev=
-en
-> >> if it duplicates the code.
-> >>
-> >=20
-> > Hi Krzysztof:
-> >=20
-> > Thanks for your advice, but I have a question about this: when I should
-> > use the DT override? The memory mapping of the CV1800 and CV1810 are
-> > almost the same (the CV1810 have more peripheral and the future SG200X
-> > have the same layout). IIRC, this is why conor suggested using DT overr=
-ide
-> > to make modification easier. But duplicating node seems to break thiS, =
-so
-> > I's pretty confused.
->=20
-> Go with whatever your subarchitecture and architecture maintainers
-> prefer, I just shared my opinion that I find such code difficult to read
-> and maintain.
->=20
-> Extending node with supplies, pinctrl or even clocks would be readable.
-> But the compatible: no. The same applies when you need to delete
-> property or subnode: not readable/maintainable IMHO.
+Hi Chen,
 
-There are apparently 3 or 4 of these SoCs that are basically identical,
-which is why the approach was taken. I do agree that it looks somewhat
-messy because I was looking for device-specific compatibles for these
-SoCs.
+kernel test robot noticed the following build errors:
 
---lhuauHl59hGZdGju
-Content-Type: application/pgp-signature; name="signature.asc"
+[auto build test ERROR on b85ea95d086471afb4ad062012a4d73cd328fa86]
 
------BEGIN PGP SIGNATURE-----
+url:    https://github.com/intel-lab-lkp/linux/commits/Chen-Wang/dt-bindings-soc-sophgo-Add-Sophgo-system-control-module/20231207-165948
+base:   b85ea95d086471afb4ad062012a4d73cd328fa86
+patch link:    https://lore.kernel.org/r/975f9995584dfa8af751e96a1f4d2c7991551a35.1701938395.git.unicorn_wang%40outlook.com
+patch subject: [PATCH v5 3/4] clk: sophgo: Add SG2042 clock generator driver
+config: i386-buildonly-randconfig-002-20231208 (https://download.01.org/0day-ci/archive/20231208/202312080254.Vka7cUVe-lkp@intel.com/config)
+compiler: clang version 16.0.4 (https://github.com/llvm/llvm-project.git ae42196bc493ffe877a7e3dff8be32035dea4d07)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231208/202312080254.Vka7cUVe-lkp@intel.com/reproduce)
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZXIBdQAKCRB4tDGHoIJi
-0gvbAP0aZRnwZeW/uj2D5AKml7K6VntejuP/ZKF3cb023p/PeQD+K7QPGKIR7elG
-P9fe8O+9MjABjpbXTovEnCRCL6XdLwM=
-=5VP/
------END PGP SIGNATURE-----
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202312080254.Vka7cUVe-lkp@intel.com/
 
---lhuauHl59hGZdGju--
+All errors (new ones prefixed by >>):
+
+>> drivers/clk/sophgo/clk-sophgo-sg2042.c:1273:13: error: call to undeclared function 'kzalloc'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+           clk_data = kzalloc(struct_size(clk_data, onecell_data.hws, num_clks), GFP_KERNEL);
+                      ^
+   drivers/clk/sophgo/clk-sophgo-sg2042.c:1273:13: note: did you mean 'vzalloc'?
+   include/linux/vmalloc.h:141:14: note: 'vzalloc' declared here
+   extern void *vzalloc(unsigned long size) __alloc_size(1);
+                ^
+>> drivers/clk/sophgo/clk-sophgo-sg2042.c:1273:11: error: incompatible integer to pointer conversion assigning to 'struct sg2042_clk_data *' from 'int' [-Wint-conversion]
+           clk_data = kzalloc(struct_size(clk_data, onecell_data.hws, num_clks), GFP_KERNEL);
+                    ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/clk/sophgo/clk-sophgo-sg2042.c:1293:2: error: call to undeclared function 'kfree'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+           kfree(clk_data);
+           ^
+   drivers/clk/sophgo/clk-sophgo-sg2042.c:1349:2: error: call to undeclared function 'kfree'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+           kfree(clk_data);
+           ^
+   4 errors generated.
+
+
+vim +/kzalloc +1273 drivers/clk/sophgo/clk-sophgo-sg2042.c
+
+  1256	
+  1257	static int __init sg2042_clk_init_clk_data(
+  1258		struct device_node *node,
+  1259		int num_clks,
+  1260		struct sg2042_clk_data **pp_clk_data)
+  1261	{
+  1262		int ret = 0;
+  1263		struct sg2042_clk_data *clk_data = NULL;
+  1264		struct device_node *np_syscon;
+  1265	
+  1266		np_syscon = of_parse_phandle(node, "sophgo,system-ctrl", 0);
+  1267		if (!np_syscon) {
+  1268			pr_err("failed to get system-ctrl node\n");
+  1269			ret = -EINVAL;
+  1270			goto error_out;
+  1271		}
+  1272	
+> 1273		clk_data = kzalloc(struct_size(clk_data, onecell_data.hws, num_clks), GFP_KERNEL);
+  1274		if (!clk_data) {
+  1275			ret = -ENOMEM;
+  1276			goto error_out;
+  1277		}
+  1278	
+  1279		clk_data->regmap_syscon = device_node_to_regmap(np_syscon);
+  1280		if (IS_ERR_OR_NULL(clk_data->regmap_syscon)) {
+  1281			pr_err("cannot get regmap_syscon %ld\n", PTR_ERR(clk_data->regmap_syscon));
+  1282			ret = -ENODEV;
+  1283			goto cleanup;
+  1284		}
+  1285		clk_data->iobase_syscon = of_iomap(np_syscon, 0);
+  1286		clk_data->iobase = of_iomap(node, 0);
+  1287		clk_data->onecell_data.num = num_clks;
+  1288	
+  1289		*pp_clk_data = clk_data;
+  1290		return ret;
+  1291	
+  1292	cleanup:
+> 1293		kfree(clk_data);
+  1294	
+  1295	error_out:
+  1296		return ret;
+  1297	}
+  1298	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
