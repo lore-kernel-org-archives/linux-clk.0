@@ -1,58 +1,68 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="lAxoKmZ3"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2084.outbound.protection.outlook.com [40.107.21.84])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D503710FE;
-	Thu,  7 Dec 2023 01:29:35 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="gU6hcHtR"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12olkn2022.outbound.protection.outlook.com [40.92.23.22])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B321AC;
+	Thu,  7 Dec 2023 01:42:50 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Q5qr6HBBp9rwJvItyI4xddNCmf771rqQQbxprqBIovFSjcio1oUI0mWdcxYjpV3Rao7bD+foaRtIyqxp/OOgZUX8GAaxY8+MmS5n/CBgRnvcRfP/JOrmCMmb8DW2K8ZZLUVr19oJ9iEiNAtp7rznSTku0AM+a0Z0IUVBvEMESczd4ATjWLLJzOe9bcGfFUjmiB4I5ri+KR4GnXuoq/feMUzIfQr0RHXcFqOW/DGLXdBpSbwOIcuzAYae1XztP9xl3NegC55TcsbnmNahGHtlHXstNwjQ1TS6RRHjePgQMYWqqAk8Fgra33D230HB0zokFlNEhaqK2Ibsgd+4HrGHNg==
+ b=AiumRbEqC1SzoAC+D+6+i9oiJWPRraJUNBxvfe9ASOh4mFrQTZBSueJUHzea7eaW9n4SJO2SUM8ZuUotxlPVVOVycyUx1NML9kr7xFzZV3oW/ws5xaYNs3K8xt4NIIdgIzNlKrkBdfytE6RW5bCbpBRt1BnB0hArGNsF1QcB5hNe0gRwDGpzgcr58cAOJZEY9LQOdsRqyqgbSxM3nN3aTyxVxlkkpSRZxvDg5ZPJwk/CCRkz1UONE5cypdgh7mlUS1sk0QAXuiPJY6nUW5cD3CyDrBm1Yzh2HBKG12GT6Wf/mWzH7Bn0TjFHYM1Di/Q5Y+zK+UXLfacCuiSta+wnLw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gKFyWYwRsPDybajJJJMPHDw8F5fI/OSd+WrPnE1fbGE=;
- b=VDo6I73QNldfcn5ACFOeG+uP2RLz4WbP10zv07dyXWFzSnaKZI+hFW6oouHrrzRd64vLJgLCEvDDBTSGQiQ1DK1K/3A+YfCP804Wao/oIF1N1Ciiu4ng7L34bEBhjsT4eonETFe5zmhGl+Exh1PDQt8BSnXrISBrYWQZ5yhSmGotIUiOhyGIIv1zdoRsPVCONajU8wm1c5XYR9PH9zn0SmBI4ETGl8/pYW02aJcX9oDp5+sgTSeihRcmXo7SGvXcpaE9pNadGZC4DQzBOQyCCf9DryDUwya1XwVRkpk5wtajymDJ0eTlWzielPyuUkAYXRF6GvAudzDMW1Ex5tIJzQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector2-NXP1-onmicrosoft-com;
+ bh=jX3XkRp3/VRyxwdQXJkyluoK+kiDhhrf88QaGWutMHY=;
+ b=NdnhloAsdAYlGZQV8GgDMvmnmDIkSZjp1hj5+s+O6YFfi94RKzSIyNVo+8+iO5zbFgvXbm8qxCk0ZOgetJROZXkap2yzYTmM4BdYIjIxLjS86GIp/5411BNX3KrOK3OVfcUTm6Q7ufZUoFHPFblgjXXZtlkejXElGcgJBl8hLNtsOqmgaSNVKOHbLFPDCaANO75HYEBeypVwW7zj07iVMAkS/08wtI+zrIft8bfPXaJ8AGOv5HtKnEewsW7Kn503v6+4zSroR2p6B2iqP1OG358+g8O4mGGBmQmxYbiXPVPJtYy5Rac2CgzgU0QXUKgpmyDubc31EI1Q5+k/NpKG9g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gKFyWYwRsPDybajJJJMPHDw8F5fI/OSd+WrPnE1fbGE=;
- b=lAxoKmZ3ZYplzUunjtcUdWNElcnZlYYX4pilaSjktM571swPSgFLiKeJCUMRTrets42sZsC010qQYjDHJPzTz+2KEjNa++t13GQMd1lRmlTeO4zDLYhTK/bore4rME9sfybbDz4UhSsM1ItfsVAk32Vow37fJNZR2HxP8ksC86w=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
- by DBAPR04MB7286.eurprd04.prod.outlook.com (2603:10a6:10:1aa::6) with
+ bh=jX3XkRp3/VRyxwdQXJkyluoK+kiDhhrf88QaGWutMHY=;
+ b=gU6hcHtRUtAPuEIAvvbfo10ccSr+KJoL5CWMUx5F962hVL5u3FwH7aW9TpU8qMJNkgS823o8N3egSMDk/X3B2FnT3vb5ardi/H8Fqy0mjbtXkPanaNB7ByyuSRlkyBqhXkecpHDZVLU8h8GKAl8QTA2tkW6/dB//AW11dHc053cLm8Hgea9t39mXWiTZFU3je7uSXfcUqewotS+5AxhRtRbEsx48qV7DURaLv8runfEhplOp47SrumnMdYAgNNcT0I56BXIwogCwX3xnUHzeDQY7SOydPQJ1V+0mzCK0g/oCidCziWf4mFwgYJU+TYOvnrd+qGVDv3zK1oDsaPfA6A==
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
+ by SN7PR20MB5436.namprd20.prod.outlook.com (2603:10b6:806:2a8::11) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7068.26; Thu, 7 Dec
- 2023 09:29:31 +0000
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::ff06:bbb2:c068:5fb3]) by DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::ff06:bbb2:c068:5fb3%7]) with mapi id 15.20.7046.015; Thu, 7 Dec 2023
- 09:29:31 +0000
-From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-To: sudeep.holla@arm.com,
-	cristian.marussi@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7068.27; Thu, 7 Dec
+ 2023 09:42:46 +0000
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::55b:c350:980:ad8]) by IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::55b:c350:980:ad8%6]) with mapi id 15.20.7046.024; Thu, 7 Dec 2023
+ 09:42:46 +0000
+From: Inochi Amaoto <inochiama@outlook.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chao Wei <chao.wei@sophgo.com>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>
+Cc: Inochi Amaoto <inochiama@outlook.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Liu Gui <kenneth.liu@sophgo.com>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	qiujingbao.dlmu@gmail.com,
+	dlan@gentoo.org,
 	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	ranjani.vaidyanathan@nxp.com,
-	glen.wienecke@nxp.com,
-	nitin.garg_3@nxp.com,
-	chuck.cannon@nxp.com,
-	Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH V2 2/2] clk: scmi: support state_ctrl_forbidden
-Date: Thu,  7 Dec 2023 17:33:45 +0800
-Message-Id: <20231207093345.581048-2-peng.fan@oss.nxp.com>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20231207093345.581048-1-peng.fan@oss.nxp.com>
-References: <20231207093345.581048-1-peng.fan@oss.nxp.com>
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v3 3/4] riscv: dts: sophgo: add clock generator for Sophgo CV1800 series SoC
+Date: Thu,  7 Dec 2023 17:42:40 +0800
+Message-ID:
+ <IA1PR20MB49531D4EFD4626834B5C604ABB8BA@IA1PR20MB4953.namprd20.prod.outlook.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <f9db367c-a96b-4789-9884-f2062499765a@linaro.org>
+References: <f9db367c-a96b-4789-9884-f2062499765a@linaro.org>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: SG2PR04CA0191.apcprd04.prod.outlook.com
- (2603:1096:4:14::29) To DU0PR04MB9417.eurprd04.prod.outlook.com
- (2603:10a6:10:358::11)
+X-TMN: [ypxpWER17HkRn39YM82V1ZRSccTMiSKur+j2azGot0M=]
+X-ClientProxiedBy: TYCP286CA0018.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:263::9) To IA1PR20MB4953.namprd20.prod.outlook.com
+ (2603:10b6:208:3af::19)
+X-Microsoft-Original-Message-ID:
+ <20231207094241.901455-1-inochiama@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,102 +71,116 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU0PR04MB9417:EE_|DBAPR04MB7286:EE_
-X-MS-Office365-Filtering-Correlation-Id: 46838e3a-0833-465a-fb42-08dbf70703a2
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
+X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|SN7PR20MB5436:EE_
+X-MS-Office365-Filtering-Correlation-Id: e78b8317-c46a-4cd2-11cf-08dbf708de06
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info:
-	1K428Dn3ZX/7nRmLr5gkrliKKdmzsSWMiLaxxh0qHP+m9T11rdKsGcIdlqNTfOd3h540z4wVSRELRisMu/WYom73WxhpBL3d9tri+/bf2IGLkqj9mOrtS72AQBdmgp09NWMmYAoMZxxeTL6SPnVeyF9Jxs5hPJ3PoLwMDP/VzMqG7bWISxjfR1VeN8dJbRuDe+HJMcCtFyjI3UemNK8VDYQMeP991d7SowGvBw+rb5GjFaYpbtGeQYJbnliBLyxC5019deTsdov9rAmTGrYyxlgci9Y//ElUags7GAE6CtrWHFaHwEV7/CgXLN9H545cgUFKxVeMqSHWPCmP9i0g9NQjTuD/8d5fWQLOpB78NZ+0iS6XOVKh6LAxzaVpSpAi0J9/DWADITVNywU477wj3p9clT/m/pPNIUAQfB3XDSGEjCbJ+c8Plz1u+xPei1i5L0I7vBZPyByYJuyUD+aMvy3hKCUqCboOHyCzBRLQLGIycMV4/fhP0lM/yAI+0qXJNxpOqbULgiCMV8SAtQI/Q5ppb5PGVsauatqKrUbD0+To5FJf4sKjU1CRZxd7yL9VvXLogeMIUYtGiiIRQxMs00OdBbnux8bKK1WSs4Ngv59XWmjb29Go4nL2JtVM9TWaFmqDNZRfjW42n9ycRNOaCQ==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(346002)(376002)(396003)(366004)(136003)(39860400002)(230922051799003)(451199024)(186009)(1800799012)(64100799003)(6512007)(1076003)(2616005)(38350700005)(316002)(26005)(83380400001)(66946007)(66556008)(66476007)(6486002)(478600001)(6506007)(52116002)(6666004)(5660300002)(38100700002)(2906002)(41300700001)(86362001)(8936002)(4326008)(8676002)(21443003);DIR:OUT;SFP:1101;
+	XP/iClkC7YWSExQals7psXtyAh/0eRW/BYWg6ZFtcfya7dFJBzgizh938oHmhH+H0+eDNGzjuF0baJzrjI40n/AXa4Jy/OkbuBWUy84xTc77d/3n+EDDRcNqxRaJiIKsiwaaIkQ2Ufrq1P1yE1QV90Wp5C4K895IDPF++3XX8xR+g/lYAoIIrRvsQAJ6DvtAXMjNVDb9DOBq6gqoOymhYqqiEOmRUpsfoq8grLP/7N4rU1lD+BEgr6OX259IljobYxlpm4hEAbCREMwqfqMCtT4Tr7O2imf4nIQHrE/D5udLg6gEJ5iZwH1CumeJfbIOHB3VBmpTiBYNuOckVmrsH/QOeNNAoeb9NOE3FhdGC7Pfsiz8BtuZMO49/j61BkylwHr83474cti1l8VbCjPRb3hMZy2Qw6MI8RuhUrZ+kHVBefX6JdjyeVj8pNQSKiINwnipeMDKzVGWSanS7YvawytQgjKe/Y1XuSp53YpVMAJtxzKAfOoc9m3+vldQgYHu7y/c/qBaPydBtHJe71UTSOxFujpwGIOefSpdehGerWMAbBlBPBkj9uSV+UXUAgSrZazH6qusg9BQAN87Qhp3Z/cvMccZMzKyU89RlfLvqhwIWom4WLo9dkvlEql2P4Pd
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?oP94Zwglqi7DNHenhzEVOfyE+e3cWkBMdZOpqHAy329uv9n32HX55VK7p33m?=
- =?us-ascii?Q?Uka9zDUhl0kIcOFq/WFdd84Q6XNWJPIDdOXPeN3pvWu8Np3rzMukSzHGxnj5?=
- =?us-ascii?Q?QiGb/maBcNSQBUzMa8iEYRQVwokCj5AaKgClbMM7RPrZ34rw3Zy1UVQ9JKpO?=
- =?us-ascii?Q?4BEjjWnfEYKcQlDtsjti8ZI1uXMbc2XMMmOsCsvJxLl+//GzUSoWzVvRnY9L?=
- =?us-ascii?Q?OW9LCMMwCKFcEglBnsExpnymZHDM3xLBZfAlW2zh3XiFy97wUL/cLihwgRyq?=
- =?us-ascii?Q?0Pg/50/CU0BQMbKBhwhYEel6OiaabJzhnQVqw9b0fzOPSAMWz4OCTuYCBaM0?=
- =?us-ascii?Q?DNZMspWB29WrUUVEHBij21iyuIhXYhNlvLcacBz7UtIWyjruaDhPLEaFxMfS?=
- =?us-ascii?Q?eZY4xGfUufy9kqVrFnvjwxLMVTRwdexA5Dsj5tplIlclJQhOcYyOu+eiRGAz?=
- =?us-ascii?Q?a0/RjytdTpdp14uOE/FDEDGlHYX2vPtQRuJal68XnxT5sLBVFRXdjaPuS/Sk?=
- =?us-ascii?Q?Td081osYDkT7C8UBhc2en73KVknT5aDbFCjecFrIsj6CAAKUA67FGgxJkHtk?=
- =?us-ascii?Q?6LojrzsiSlKf6dePEz/vaGq4Tk/lw9lpapO68x6bCkcCml+I6XXLioasGRd1?=
- =?us-ascii?Q?THJMyfO49KKH6ZpshgVZI/f/hORnxkaDSwPOBARV5xb1ETI8I9nnhQhpe2nK?=
- =?us-ascii?Q?alPJRQ4NqhL2nGWyb1f65fa9KVBi92H+OD8A4Ud03/ORBf5yvy/zdtMRXJF3?=
- =?us-ascii?Q?rpJbI3aLFFPEgA5NPQiM6xWEDj9+ULr2FShFwxGrSgHvlqdxM4xUXnCDpOWn?=
- =?us-ascii?Q?gC/LHZg4sOkIV8uJx6o71AXc4a9QiPCS2s5tM824oSPkjUntc7FwUyTdg+Zz?=
- =?us-ascii?Q?XTRN5c5fD08CL2Gxu85SzdffX3FGgqgIUf7vpEPsacLy0eqqBkH+4ToiaBXt?=
- =?us-ascii?Q?jougOBNWXZigkib1fLYsRY0ghvAibcTwfnEDFLon+XQzeIgZb7db5xjjCj49?=
- =?us-ascii?Q?rCeT0np06eHdi7rUa230NJIrQJmv8BbZLrjGLWMfNontBUL4aQxPbiwbRiXZ?=
- =?us-ascii?Q?EHnXf5xkHegHguV878+2aA1zvzFZ7Mqlwa7dr2ycXq1YXkmgdITBb1ONlGfO?=
- =?us-ascii?Q?AtfKU0fxBqRavHEliX4Npw+MJn+tsozSvEKZvhPWlCldsuI2XXvSJrzCFZIB?=
- =?us-ascii?Q?fBJM6Z1DA1EMzcSPk6JkEktnESBVFRBg6WvKVZy3VqgBekAYsMSQcvT8H/sw?=
- =?us-ascii?Q?cfd2kHa4IufdPXilIAFdSMPyKvBrB/fCdpaudYS3Tp3TDtoV3hrxg9CwAupO?=
- =?us-ascii?Q?k22kSiCjJXy+1jlXlHHbxtk28cjVNEQPraHnd5G0mJuVAbHhZMh5etSMjj5u?=
- =?us-ascii?Q?7NTNdRt0UpHKI34j0quM5nxlHJwYUaE08tMmDi7rQwyc6dtcRxba63ueFmTI?=
- =?us-ascii?Q?jY8GesLJbqiDZ0z3H0WTpWqHgCTKUoOeCbGP+597Kf3J7kSzuEVS2Hz7k321?=
- =?us-ascii?Q?2/RZMf6YsB0S5+ivR8BU2s/hwWayfD32zPbFIgogFKWBOuUZb5jEYP8wvLwO?=
- =?us-ascii?Q?0V9GmWV/cGJkK3b2uLZGlcsZ0VG8ZGWCRJ6cExdX?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 46838e3a-0833-465a-fb42-08dbf70703a2
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
+	=?us-ascii?Q?SizSLvF+3l50RpYEMP/hdu/Tf8O7SXO2VUwbUxE+n7TdC7cvjllb0thhotxg?=
+ =?us-ascii?Q?B1HgaBOSNMKCPw/+w+3jaOJIeEu3lOAFAGkxEIVUcoRvfd2QoJUSQyKXdRkf?=
+ =?us-ascii?Q?ICnXz+lLqlWcHhImCG3BL3o3uWYMBEi9LWOxug40TVB0t7Tkzvkg2p54ZgJe?=
+ =?us-ascii?Q?aKrbCQAguvX0El3Uo6nZ44a33b/H2XgRHDD2U1ugUHczIM0fmTM56hn/iGwu?=
+ =?us-ascii?Q?DvEHfXlJUAELsfhmv21nrAbn+kjxif6fuMR/Op3pKUGNU1MhZvobI2rUJmyz?=
+ =?us-ascii?Q?6SPYXZUAQ6qo/ljcSWyUE3NKvgcKp4mfaeKgX3zTGYvUVgIKBdmRNE90wV4c?=
+ =?us-ascii?Q?ZhnAHDlIr2X/LzLbSO2hAPNYmBLjzxi/Fj+h1/1kZrhQY+9tzObeWV9dS/MM?=
+ =?us-ascii?Q?1z4a+vA9YWrh19MgdwIhqY5VqPfgN5em/bemvWUgRjuLflh7490y8TfY7vOp?=
+ =?us-ascii?Q?fesnzh3IMla98pDH7j+UCAinCcENz3EjObP1kJyIrzDvSwfNieAZQV3ISDOX?=
+ =?us-ascii?Q?CuM7WJv2VcYjmVDBPbL3VoDMNjN1CEl4kXPueUab981Nglr6fNmhPFJOvKKF?=
+ =?us-ascii?Q?7QgjMiIbD7w4TRFpPGjIZwGgrwvTPk4MPGfUzVT0agh80Ov7Vx5t4uLPe8IS?=
+ =?us-ascii?Q?SLaExPf5XcBfuJJRFWmwEV4l5K2jnAT7nvNl4sSEwtq7/aFZ4dkE0rWQDKov?=
+ =?us-ascii?Q?IBtRrng9fE7YivXv5+UWCHyACqrLBba42CRbLZhIE5ug2UVxF7wLnUNH4ga6?=
+ =?us-ascii?Q?rri4urn7O4nMGFJlN7wt1DN54aQO7gwzmuoU/A34wvtzftyKKvgaw0l1WK6+?=
+ =?us-ascii?Q?Ir5x5UxS7peY+D1DYIozHEEfI4Io+cm8EaUhfXRDQDiUCrnS0SxzWeQyGuFx?=
+ =?us-ascii?Q?IgCYHms9sVvnGWZwv8dExg8bmRV6H24slecra5XtD2k8Ml865YrHXFUBzjmu?=
+ =?us-ascii?Q?8F6FZrcraq56wgmAic3SAXdewcpGOyka55ryEwf7f4XMk8iwhEsqmMd9zfVl?=
+ =?us-ascii?Q?JlpVFfXxXy8ipYBkyddCzs7c71ywFlPhgsU+H088Bvc2FmTRvUAKfR2L4IZm?=
+ =?us-ascii?Q?0w6CuzmKyrPJDb0qQuzLKrnhhAidHmiVtkRf8HcSbXL4EmhtcLOxFV+vOtTT?=
+ =?us-ascii?Q?2FYVpds4eDc4N6lthxH9LodEPSkt02vFVXS6UOUE8yBYP4/ymWpeNXlnLUYy?=
+ =?us-ascii?Q?a4tVU2bjfF0MVo/Timg5BkxhATs72WVpjp2X2c/yEydCbnvOwudXCDmpYUc?=
+ =?us-ascii?Q?=3D?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e78b8317-c46a-4cd2-11cf-08dbf708de06
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Dec 2023 09:29:30.9498
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Dec 2023 09:42:46.2432
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: X428y4+gSGFPSFHtgF985RESeM7s5ch1I9Alfg/a07oe3BRmPJqUYT5vgsa8grE/Dr5GK84AZ/CIx68FpHw3Ng==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR04MB7286
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR20MB5436
 
-From: Peng Fan <peng.fan@nxp.com>
+>
+>On 07/12/2023 09:37, Inochi Amaoto wrote:
+>> Add clock generator node for CV1800B and CV1812H.
+>>
+>> Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
+>> Link: https://github.com/milkv-duo/duo-files/blob/main/hardware/CV1800B/CV1800B-CV1801B-Preliminary-Datasheet-full-en.pdf
+>> ---
+>>  arch/riscv/boot/dts/sophgo/cv1800b.dtsi | 4 ++++
+>>  arch/riscv/boot/dts/sophgo/cv1812h.dtsi | 4 ++++
+>>  arch/riscv/boot/dts/sophgo/cv18xx.dtsi  | 6 ++++++
+>>  3 files changed, 14 insertions(+)
+>>
+>> diff --git a/arch/riscv/boot/dts/sophgo/cv1800b.dtsi b/arch/riscv/boot/dts/sophgo/cv1800b.dtsi
+>> index 165e9e320a8c..baf641829e72 100644
+>> --- a/arch/riscv/boot/dts/sophgo/cv1800b.dtsi
+>> +++ b/arch/riscv/boot/dts/sophgo/cv1800b.dtsi
+>> @@ -16,3 +16,7 @@ &plic {
+>>  &clint {
+>>  	compatible = "sophgo,cv1800b-clint", "thead,c900-clint";
+>>  };
+>> +
+>> +&clk {
+>> +	compatible = "sophgo,cv1800-clk";
+>> +};
+>> diff --git a/arch/riscv/boot/dts/sophgo/cv1812h.dtsi b/arch/riscv/boot/dts/sophgo/cv1812h.dtsi
+>> index 9a375935b00c..83243c918204 100644
+>> --- a/arch/riscv/boot/dts/sophgo/cv1812h.dtsi
+>> +++ b/arch/riscv/boot/dts/sophgo/cv1812h.dtsi
+>> @@ -21,3 +21,7 @@ &plic {
+>>  &clint {
+>>  	compatible = "sophgo,cv1812h-clint", "thead,c900-clint";
+>>  };
+>> +
+>> +&clk {
+>> +	compatible = "sophgo,cv1810-clk";
+>> +};
+>> diff --git a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi b/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
+>> index 2d6f4a4b1e58..6ea1b2784db9 100644
+>> --- a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
+>> +++ b/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
+>> @@ -53,6 +53,12 @@ soc {
+>>  		dma-noncoherent;
+>>  		ranges;
+>>
+>> +		clk: clock-controller@3002000 {
+>> +			reg = <0x03002000 0x1000>;
+>> +			clocks = <&osc>;
+>> +			#clock-cells = <1>;
+>
+>I don't find such layout readable and maintainable. I did some parts
+>like this long, long time ago for one of my SoCs (Exynos54xx), but I
+>find it over time unmaintainable approach. I strongly suggest to have
+>compatible and other properties in one place, so cv1800 and cv1812, even
+>if it duplicates the code.
+>
 
-Some clocks may exported to linux, while those clocks are not allowed
-to configure by Linux. For example:
+Hi Krzysztof:
 
-SYS_CLK1-----
-             \
-	     --MUX--->MMC1_CLK
-             /
-SYS_CLK2-----
+Thanks for your advice, but I have a question about this: when I should
+use the DT override? The memory mapping of the CV1800 and CV1810 are
+almost the same (the CV1810 have more peripheral and the future SG200X
+have the same layout). IIRC, this is why conor suggested using DT override
+to make modification easier. But duplicating node seems to break thiS, so
+I's pretty confused.
 
-MMC1 needs set parent, so SYS_CLK1 and SYS_CLK2 are exported to Linux,
-then the clk propagation will touch SYS_CLK1 or SYS_CLK2.
-So we need bypass the failure for SYS_CLK1 or SYS_CLK2 when enable
-the clock of MMC1.
+Thanks,
+Inochi
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
-
-V2:
- New. Take Cristian's suggestion
-
- drivers/clk/clk-scmi.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-index 8cbe24789c24..1d809813eabd 100644
---- a/drivers/clk/clk-scmi.c
-+++ b/drivers/clk/clk-scmi.c
-@@ -119,8 +119,14 @@ static int scmi_clk_determine_rate(struct clk_hw *hw, struct clk_rate_request *r
- static int scmi_clk_enable(struct clk_hw *hw)
- {
- 	struct scmi_clk *clk = to_scmi_clk(hw);
-+	int ret;
-+
-+	ret = scmi_proto_clk_ops->enable(clk->ph, clk->id, NOT_ATOMIC);
- 
--	return scmi_proto_clk_ops->enable(clk->ph, clk->id, NOT_ATOMIC);
-+	if (ret == -EACCES && clk->info->state_ctrl_forbidden)
-+		return 0;
-+
-+	return ret;
- }
- 
- static void scmi_clk_disable(struct clk_hw *hw)
--- 
-2.37.1
-
+>Best regards,
+>Krzysztof
+>
+>
