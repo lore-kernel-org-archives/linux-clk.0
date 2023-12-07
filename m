@@ -1,173 +1,278 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GjVZ1Nez"
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF38A10C9
-	for <linux-clk@vger.kernel.org>; Thu,  7 Dec 2023 01:19:36 -0800 (PST)
-Received: by mail-wr1-x42e.google.com with SMTP id ffacd0b85a97d-33349b3f99aso689164f8f.0
-        for <linux-clk@vger.kernel.org>; Thu, 07 Dec 2023 01:19:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701940775; x=1702545575; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5HbswpXQEP/8n6n7jLHJeLCNuluUVepzaRbqJwb/Uos=;
-        b=GjVZ1NezRKi/oAkv/u3lBVpbdGaKmAB1Ecuyu9W1hQVg9RyMD861zSJfK/uQtNHNny
-         LK2oJi7PcoUCmFW27q0kVOK3MzYa7MvejtgAzjJ/u7tr/+oGlZPtTM6kA9+w3JERjQQn
-         VoPaMTujv7i8felZCwYX7qKUwPfGkObsnxDAhS3B295DYbaMg1vGxFpvmQc78XJ/fnpS
-         kIa36qsX518G5Af8d/E+wVd3l4drFjvs1J/0CpmbUwlyCTqbq3V4cv5RT9+pD0FOknmm
-         QEp6uO3GxEblPiKXEMHLQqcy7SA//c0BWz5w1iri1Fnz3LP7m985QGkVxfZApRbFLfAW
-         OwcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701940775; x=1702545575;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5HbswpXQEP/8n6n7jLHJeLCNuluUVepzaRbqJwb/Uos=;
-        b=RDwYHgtunzj1irQJ2EjDugGneTqJGDyWhDF0ivmRCB7zdWJ05nh1r6ccAvMs/PI89U
-         h15g8fTuY469TdO2YwM2OuIBU7hts2QDHy2qvMJeJ2oed2PZcxeyMQOl6zKSrvf8oBzD
-         lSgG4nKaeiBvBjzqrROLIbxd6qKK6lM78W0Skl5U8EMLOQSkkCD590oGpfBIenXz+z9x
-         QW1Bi6MPUHHpd7BzXtPGgdxgoEvU7xKnHDONRuKuGEroLzXJqJjhJ92WqhkuqOg+VGwX
-         knrJtxePxA5GevckCyXu431NvbWJAjIMlyMt63XltL4aaPxtEvBOWamfRpebTe0wFdJa
-         ZyFw==
-X-Gm-Message-State: AOJu0Yy5xu2yDuV52p2AayHJVN5qSDVPfHnCMbzBHM/RC1x3A1HogSWN
-	zcD3Gj22Q+RXSLqEu+IfYdmf5g==
-X-Google-Smtp-Source: AGHT+IHYrRQTyeFedSQMtZ/uum6P2j0It3axj30FAfmcehgOARITxQj+12XLfNOEVIYE1XY1RfDzyg==
-X-Received: by 2002:a5d:4f8a:0:b0:332:e2bc:e809 with SMTP id d10-20020a5d4f8a000000b00332e2bce809mr1310030wru.67.1701940775169;
-        Thu, 07 Dec 2023 01:19:35 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id d14-20020adff2ce000000b0033349de2622sm903603wrp.94.2023.12.07.01.19.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Dec 2023 01:19:34 -0800 (PST)
-Message-ID: <f9db367c-a96b-4789-9884-f2062499765a@linaro.org>
-Date: Thu, 7 Dec 2023 10:19:33 +0100
+	dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="Jsr/xv8R"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2048.outbound.protection.outlook.com [40.107.21.48])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 659FE198E;
+	Thu,  7 Dec 2023 01:29:29 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=eqanisSfJBShAo6ndOh0Oflmd9bQOGjZdmnJ6oIV/fFRvroNqAlcNt1VflKJ61UucU+QM7Qfn58oisyv9v9GCv2TRwTYDlDxXU5iuB6EEwuq4+FXSdi/yCcrz5YpY18LHJPhsthtHeGwYpN/3w6Hcdpq5z9C9tawEA9EZ7JBcOhIY5ot/R2gjRjsBDuTa16h65ZXXqmbO4/qI8aiB6UKYtQcMd/sgUf6f+5POaGp13IYVV7n+wY0znk9CSRLPQWx2aqyvysH4CPFDzMn1RiMX55wmW3wnkhrMnzbB5JrYyIbuDsw/4LDnRSHXYF2CrGMw+qGXErla8P7z9PJ8Ukf6w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pK/+dcPjoh8l5MHlNwTMn5bW8NhswThJJBqDiUKZPUM=;
+ b=Wd3egoUIL329Z5YZgT5SZNBFdLOfOeSJd9OSFKXQ9OgrxhqRKBeEBrW+16hS6JimXis7hJ72A1jpPzACe7dqE8pKH4CSjT+gR+he43dqlD9C82WG3zuwVioFrzZOoUO0eW8mx6X3kveVa3Gs5z/FR48aeJnmt1AmRf78sddHnWJrjPl4Ni+n2v/fSZaoK3adT2toZlBcqOPaffmBvMX8lJ74gejwYEESRQPltxqQAbG9DjkIYnjS/Hm8r/Fvof25/oN99+VwJiy1fkyKt0FZvTAbHdy1yEZBI5ThNNjmRIAgs5mUDXAIisj3lHgWw9XFoov99HJfPC4UxmTmqqa2oA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pK/+dcPjoh8l5MHlNwTMn5bW8NhswThJJBqDiUKZPUM=;
+ b=Jsr/xv8Rpmzq8k06gKrcVYZLCEm4ZYKLIpxiSEtGNe/jCnEfy3MFjT11zV6YdyEvLfpjXfOvqowWEkRIxW+FlQWJROi396tS0sA5xHTwYMuoHU1x+JMoDn7nzjNeoyAf1vEGTaXrsDX86iTcsCDN2o7G9A0to0kE81NCoEPNZBs=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
+ by AM9PR04MB8438.eurprd04.prod.outlook.com (2603:10a6:20b:411::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7068.27; Thu, 7 Dec
+ 2023 09:29:25 +0000
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::ff06:bbb2:c068:5fb3]) by DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::ff06:bbb2:c068:5fb3%7]) with mapi id 15.20.7046.015; Thu, 7 Dec 2023
+ 09:29:25 +0000
+From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+To: sudeep.holla@arm.com,
+	cristian.marussi@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	ranjani.vaidyanathan@nxp.com,
+	glen.wienecke@nxp.com,
+	nitin.garg_3@nxp.com,
+	chuck.cannon@nxp.com,
+	Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH V2 1/2] firmware: arm_scmi: clock: implement get permissions
+Date: Thu,  7 Dec 2023 17:33:44 +0800
+Message-Id: <20231207093345.581048-1-peng.fan@oss.nxp.com>
+X-Mailer: git-send-email 2.37.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR04CA0191.apcprd04.prod.outlook.com
+ (2603:1096:4:14::29) To DU0PR04MB9417.eurprd04.prod.outlook.com
+ (2603:10a6:10:358::11)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] riscv: dts: sophgo: add clock generator for Sophgo
- CV1800 series SoC
-Content-Language: en-US
-To: Inochi Amaoto <inochiama@outlook.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Chao Wei <chao.wei@sophgo.com>,
- Chen Wang <unicorn_wang@outlook.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-Cc: Jisheng Zhang <jszhang@kernel.org>, Liu Gui <kenneth.liu@sophgo.com>,
- Emil Renner Berthing <emil.renner.berthing@canonical.com>,
- qiujingbao.dlmu@gmail.com, dlan@gentoo.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org
-References: <IA1PR20MB495376DBED8EE897FE11A2B7BB8BA@IA1PR20MB4953.namprd20.prod.outlook.com>
- <IA1PR20MB495373158F3B690EF3BF2901BB8BA@IA1PR20MB4953.namprd20.prod.outlook.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <IA1PR20MB495373158F3B690EF3BF2901BB8BA@IA1PR20MB4953.namprd20.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU0PR04MB9417:EE_|AM9PR04MB8438:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7b79da48-4b53-4ca2-1c80-08dbf707007d
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	1Yk3+oy8JY3i6B46Cy4VNsZDiMmEP+2CM45FjwdPdYFvO6er0YZq/qb0n2dSYW2b4wwRqL8wKXBD2pBWw26XWEReZhiVa4mSBJa2GOLiE7tsDaoNx5yteyGkbPDHJEXkKNzL7370oPt9+uI+lGAaYRYDbb5fhgR7XAi5/razcNn1zQBZxXBGuu/oOUJadv2j3KH5mixBdRz6GgIL13tIaea3qkQznwXGpHm5UjXest1iy+J19aMXbvK6iDHxh8vAHFl6gHb+D5P9DrLsnqNOsT8JILncEQ3+07a74UE6H1Xp0/k+VdhUDDwWTUhHwVTzUzDCsqDMRTnfue5MCOhbmCO3chQjtJEhLj/Aazhnxq+R/9ygpAV4mAJl+cGdegIgtSL5BSFX4YkAyx9smI+bwBp5Jat9WmwcXQvKiU3dCrtVbg8a9EGOgaqp/eIiw2JKVsAGu3LXPD7CcThkMai3UWrtpEFRNdPbJmQ3m0hdZGmu1sazQ4E9qBKTWLTBIiMab8mGw64CM8ODw8FmztnZqTSGzVC83fwDmsBs/wcB6aPC/bKcMfkuyFHtAgWO+LBocj6Le7+gzksEUQbzOR+0Ne0Vqey0g2TJbdWI0sKWJg0=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(136003)(396003)(39860400002)(346002)(366004)(376002)(230922051799003)(186009)(1800799012)(64100799003)(451199024)(5660300002)(4326008)(8676002)(8936002)(2906002)(66556008)(316002)(66946007)(66476007)(6512007)(6486002)(966005)(1076003)(478600001)(38350700005)(2616005)(6506007)(52116002)(41300700001)(6666004)(83380400001)(26005)(38100700002)(86362001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Zn+wHjycWwYuCx+wOLKEwLnwh3n2LQpvILNgjLyti20HMuLxxLIKKZ9On9me?=
+ =?us-ascii?Q?GaLmx1xkUKYdeB7sYGImXLRodOa5aCHkX13atj9j/9HNv2MJaUQTKbvD6thn?=
+ =?us-ascii?Q?frwMx79n7fLOBymQmA6q3RV+1akxGK68sbk2e9S6kuHEyTQpffOrO0kaBgry?=
+ =?us-ascii?Q?n+eSizAXaoy17rf02vXWc28EmxgmzeNl1qLl5aCD78Xt5ti+xfP0ttCvFR9H?=
+ =?us-ascii?Q?kMB5XLWJgk4CRZ25cGAzXYDLcgWt7AP5j5rk1oYgEgEP5+ZOauJWG6THxq8X?=
+ =?us-ascii?Q?PjjLTVCvsok4+VbckR2ooi/YtkfbsIaUTnbaJ+9Sj/w1+GVesMUuiUnsHEp3?=
+ =?us-ascii?Q?o6+QE3+7UxN2Tl388Exa2pr/ImAohVlZGQIu+KClle4eA27vW5ieAJc4ZdvY?=
+ =?us-ascii?Q?d8CveLOFvz0MWgJN3hV0egABkzR1OyTaZp4ueOw9nXDm/g2fnmoA49pD4dnA?=
+ =?us-ascii?Q?zSUEnHHV87g00Tp1cV7f6qCWwQCf5EfP4K5xuUE55olZnc1afwXBB1O1qe5a?=
+ =?us-ascii?Q?ikwLPhufLHDyajiPXXy170w3gwEGhPqw11+cLeQTgkiZoSi7ItJ5kdTXW6Xi?=
+ =?us-ascii?Q?AmVn9PTdNNAtaoAMSErM6Zz+AVYzWu9hT2V0xRak9ybVQUq+o0FRvPaVKuyf?=
+ =?us-ascii?Q?5e7UTvbXHeXuV2npPPZxPbYlWPU1EUsJ2x0xfVLvv0py8buDFN8S0a4l8pW2?=
+ =?us-ascii?Q?geyrdD0yyPVNr5htFkss4PRDnCsTKvE1pHCy3C8Io3qIo3gu1NMAit0HjcM5?=
+ =?us-ascii?Q?cUvwgfACCvOXQzrVFQlHuL8shlUcSh/46bZFFgWQJn6kVYYRFhhtqEiIPr7D?=
+ =?us-ascii?Q?D8lSGu5u96cuMOHonVntlY13HZm0r8HZtybcqAOGSbriVmVlWhx7atrmEH62?=
+ =?us-ascii?Q?J8LM+/t8V3/vyQ07jAcRC1TDvET5h5U1jael0aI8E10etJardY8Dt6FbflO/?=
+ =?us-ascii?Q?2cSEGAMX6BjN8r75newmN9sLEvk3SQJy/QCqdqocMMfWGcAA18Ejh2zAoPMq?=
+ =?us-ascii?Q?yMItJT3AOGihZ/94OoCpDxHqLDMaESMHqK9Cs5bnOs4I6tR6JGn335v2Yllc?=
+ =?us-ascii?Q?6izVbt6uMdGSZGWDWRl6/7Td6gU2FZ489ELuYTBmIBgIIHOr13a8V5AaYwSN?=
+ =?us-ascii?Q?ZD3DLFsvB3+wHSdZmX5JV4VtjRnYGBMOYc+A8u+lwe6iAjshEzf/R9gYUxyr?=
+ =?us-ascii?Q?bsKfipPjyjWjMHzc3jCK6fpO8cws1PxdQGRL5FffpMtq+gobcHPn/ym6jh5Z?=
+ =?us-ascii?Q?BLvUjP5+J8M3H82OEV1qgGN3+nwywjxGur8xNieMtUjSW8u0QB6LCPpUBmV7?=
+ =?us-ascii?Q?hdS7I2fojx2qeJ/4YmU2cyaAb5Il7i9pH2E2gtAd8VylioBeOgA/5mEuGl02?=
+ =?us-ascii?Q?FRlmWoYeonOLCBrb6unuA1l/It0xNHYHAUeULkZXSLrL8OvZmQsTn1qD2Pis?=
+ =?us-ascii?Q?1To64qXKrneScIoMv4tHE+dvhO5NE8Xl2/7dPZTU6sIqFR9M4HovdLu2jqha?=
+ =?us-ascii?Q?xQvTNLMOnulcNqWSehBrtjEWJxXnnj+Ir6RYJzmuzA5UVvTpMMw3XW+VeKEv?=
+ =?us-ascii?Q?J7fJn8RjHoP6brE7mSheFamql4Au2FfB5DsChHRX?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7b79da48-4b53-4ca2-1c80-08dbf707007d
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Dec 2023 09:29:25.3302
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: G9GTTXNqV5w7BsW7EZTWDo70mtFYzGYGgKVRolxvj9lbJ47+q2gqKmedXnBtshTfxKWEkDT7m2OkNEQ2fXgdVQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8438
 
-On 07/12/2023 09:37, Inochi Amaoto wrote:
-> Add clock generator node for CV1800B and CV1812H.
-> 
-> Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
-> Link: https://github.com/milkv-duo/duo-files/blob/main/hardware/CV1800B/CV1800B-CV1801B-Preliminary-Datasheet-full-en.pdf
-> ---
->  arch/riscv/boot/dts/sophgo/cv1800b.dtsi | 4 ++++
->  arch/riscv/boot/dts/sophgo/cv1812h.dtsi | 4 ++++
->  arch/riscv/boot/dts/sophgo/cv18xx.dtsi  | 6 ++++++
->  3 files changed, 14 insertions(+)
-> 
-> diff --git a/arch/riscv/boot/dts/sophgo/cv1800b.dtsi b/arch/riscv/boot/dts/sophgo/cv1800b.dtsi
-> index 165e9e320a8c..baf641829e72 100644
-> --- a/arch/riscv/boot/dts/sophgo/cv1800b.dtsi
-> +++ b/arch/riscv/boot/dts/sophgo/cv1800b.dtsi
-> @@ -16,3 +16,7 @@ &plic {
->  &clint {
->  	compatible = "sophgo,cv1800b-clint", "thead,c900-clint";
->  };
-> +
-> +&clk {
-> +	compatible = "sophgo,cv1800-clk";
-> +};
-> diff --git a/arch/riscv/boot/dts/sophgo/cv1812h.dtsi b/arch/riscv/boot/dts/sophgo/cv1812h.dtsi
-> index 9a375935b00c..83243c918204 100644
-> --- a/arch/riscv/boot/dts/sophgo/cv1812h.dtsi
-> +++ b/arch/riscv/boot/dts/sophgo/cv1812h.dtsi
-> @@ -21,3 +21,7 @@ &plic {
->  &clint {
->  	compatible = "sophgo,cv1812h-clint", "thead,c900-clint";
->  };
-> +
-> +&clk {
-> +	compatible = "sophgo,cv1810-clk";
-> +};
-> diff --git a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi b/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
-> index 2d6f4a4b1e58..6ea1b2784db9 100644
-> --- a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
-> +++ b/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
-> @@ -53,6 +53,12 @@ soc {
->  		dma-noncoherent;
->  		ranges;
-> 
-> +		clk: clock-controller@3002000 {
-> +			reg = <0x03002000 0x1000>;
-> +			clocks = <&osc>;
-> +			#clock-cells = <1>;
+From: Peng Fan <peng.fan@nxp.com>
 
-I don't find such layout readable and maintainable. I did some parts
-like this long, long time ago for one of my SoCs (Exynos54xx), but I
-find it over time unmaintainable approach. I strongly suggest to have
-compatible and other properties in one place, so cv1800 and cv1812, even
-if it duplicates the code.
+ARM SCMI Spec 3.2 introduces Clock Get Permission command. This patch
+is to add the support. Add three bool entries to scmi_clock_info to
+indicate the operation is forbidden or not. If the CLOCK_GET_PERMISSIONS
+command is not supported, the three bool variables will default
+set to false, otherwise they will be set according to the return result
+of CLOCK_GET_PERMISSIONS.
 
-Best regards,
-Krzysztof
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+
+V2:
+ Take Cristian's suggestion, https://lore.kernel.org/all/ZWiqqfQ73tezFmSk@pluto/
+
+ drivers/firmware/arm_scmi/clock.c | 53 +++++++++++++++++++++++++++++++
+ include/linux/scmi_protocol.h     |  4 +++
+ 2 files changed, 57 insertions(+)
+
+diff --git a/drivers/firmware/arm_scmi/clock.c b/drivers/firmware/arm_scmi/clock.c
+index 98511a3aa367..0e048530bea2 100644
+--- a/drivers/firmware/arm_scmi/clock.c
++++ b/drivers/firmware/arm_scmi/clock.c
+@@ -25,8 +25,13 @@ enum scmi_clock_protocol_cmd {
+ 	CLOCK_POSSIBLE_PARENTS_GET = 0xC,
+ 	CLOCK_PARENT_SET = 0xD,
+ 	CLOCK_PARENT_GET = 0xE,
++	CLOCK_GET_PERMISSIONS = 0xF,
+ };
+ 
++#define CLOCK_STATE_CONTROL_ALLOWED	BIT(31)
++#define CLOCK_PARENT_CONTROL_ALLOWED	BIT(30)
++#define CLOCK_RATE_CONTROL_ALLOWED	BIT(29)
++
+ enum clk_state {
+ 	CLK_STATE_DISABLE,
+ 	CLK_STATE_ENABLE,
+@@ -46,6 +51,7 @@ struct scmi_msg_resp_clock_attributes {
+ #define SUPPORTS_RATE_CHANGE_REQUESTED_NOTIF(x)	((x) & BIT(30))
+ #define SUPPORTS_EXTENDED_NAMES(x)		((x) & BIT(29))
+ #define SUPPORTS_PARENT_CLOCK(x)		((x) & BIT(28))
++#define SUPPORTS_GET_PERMISSIONS(x)		((x) & BIT(1))
+ 	u8 name[SCMI_SHORT_NAME_MAX_SIZE];
+ 	__le32 clock_enable_latency;
+ };
+@@ -281,6 +287,35 @@ static int scmi_clock_possible_parents(const struct scmi_protocol_handle *ph, u3
+ 	return ret;
+ }
+ 
++static int
++scmi_clock_get_permissions(const struct scmi_protocol_handle *ph, u32 clk_id,
++			   struct scmi_clock_info *clk)
++{
++	struct scmi_xfer *t;
++	u32 perm;
++	int ret;
++
++	ret = ph->xops->xfer_get_init(ph, CLOCK_GET_PERMISSIONS,
++				      sizeof(clk_id), sizeof(perm), &t);
++	if (ret)
++		return ret;
++
++	put_unaligned_le32(clk_id, t->tx.buf);
++
++	ret = ph->xops->do_xfer(ph, t);
++	if (!ret) {
++		perm = get_unaligned_le32(t->rx.buf);
++
++		clk->state_ctrl_forbidden = !(perm & CLOCK_STATE_CONTROL_ALLOWED);
++		clk->rate_ctrl_forbidden = !(perm & CLOCK_RATE_CONTROL_ALLOWED);
++		clk->parent_ctrl_forbidden = !(perm & CLOCK_PARENT_CONTROL_ALLOWED);
++	}
++
++	ph->xops->xfer_put(ph, t);
++
++	return ret;
++}
++
+ static int scmi_clock_attributes_get(const struct scmi_protocol_handle *ph,
+ 				     u32 clk_id, struct scmi_clock_info *clk,
+ 				     u32 version)
+@@ -307,6 +342,7 @@ static int scmi_clock_attributes_get(const struct scmi_protocol_handle *ph,
+ 		if (PROTOCOL_REV_MAJOR(version) >= 0x2)
+ 			latency = le32_to_cpu(attr->clock_enable_latency);
+ 		clk->enable_latency = latency ? : U32_MAX;
++		clk->attributes = attributes;
+ 	}
+ 
+ 	ph->xops->xfer_put(ph, t);
+@@ -327,6 +363,8 @@ static int scmi_clock_attributes_get(const struct scmi_protocol_handle *ph,
+ 			clk->rate_change_requested_notifications = true;
+ 		if (SUPPORTS_PARENT_CLOCK(attributes))
+ 			scmi_clock_possible_parents(ph, clk_id, clk);
++		if (SUPPORTS_GET_PERMISSIONS(attributes))
++			scmi_clock_get_permissions(ph, clk_id, clk);
+ 	}
+ 
+ 	return ret;
+@@ -499,6 +537,10 @@ static int scmi_clock_rate_set(const struct scmi_protocol_handle *ph,
+ 	struct scmi_xfer *t;
+ 	struct scmi_clock_set_rate *cfg;
+ 	struct clock_info *ci = ph->get_priv(ph);
++	struct scmi_clock_info *clk = ci->clk + clk_id;
++
++	if (clk->rate_ctrl_forbidden)
++		return -EACCES;
+ 
+ 	ret = ph->xops->xfer_get_init(ph, CLOCK_RATE_SET, sizeof(*cfg), 0, &t);
+ 	if (ret)
+@@ -585,6 +627,9 @@ scmi_clock_set_parent(const struct scmi_protocol_handle *ph, u32 clk_id,
+ 	if (parent_id >= clk->num_parents)
+ 		return -EINVAL;
+ 
++	if (clk->parent_ctrl_forbidden)
++		return -EACCES;
++
+ 	ret = ph->xops->xfer_get_init(ph, CLOCK_PARENT_SET,
+ 				      sizeof(*cfg), 0, &t);
+ 	if (ret)
+@@ -668,6 +713,10 @@ static int scmi_clock_enable(const struct scmi_protocol_handle *ph, u32 clk_id,
+ 			     bool atomic)
+ {
+ 	struct clock_info *ci = ph->get_priv(ph);
++	struct scmi_clock_info *clk = ci->clk + clk_id;
++
++	if (clk->state_ctrl_forbidden)
++		return -EACCES;
+ 
+ 	return ci->clock_config_set(ph, clk_id, CLK_STATE_ENABLE,
+ 				    NULL_OEM_TYPE, 0, atomic);
+@@ -677,6 +726,10 @@ static int scmi_clock_disable(const struct scmi_protocol_handle *ph, u32 clk_id,
+ 			      bool atomic)
+ {
+ 	struct clock_info *ci = ph->get_priv(ph);
++	struct scmi_clock_info *clk = ci->clk + clk_id;
++
++	if (clk->state_ctrl_forbidden)
++		return -EACCES;
+ 
+ 	return ci->clock_config_set(ph, clk_id, CLK_STATE_DISABLE,
+ 				    NULL_OEM_TYPE, 0, atomic);
+diff --git a/include/linux/scmi_protocol.h b/include/linux/scmi_protocol.h
+index f2f05fb42d28..ad75784b567b 100644
+--- a/include/linux/scmi_protocol.h
++++ b/include/linux/scmi_protocol.h
+@@ -47,6 +47,9 @@ struct scmi_clock_info {
+ 	bool rate_discrete;
+ 	bool rate_changed_notifications;
+ 	bool rate_change_requested_notifications;
++	bool state_ctrl_forbidden;
++	bool rate_ctrl_forbidden;
++	bool parent_ctrl_forbidden;
+ 	union {
+ 		struct {
+ 			int num_rates;
+@@ -60,6 +63,7 @@ struct scmi_clock_info {
+ 	};
+ 	int num_parents;
+ 	u32 *parents;
++	u32 attributes;
+ };
+ 
+ enum scmi_power_scale {
+-- 
+2.37.1
 
