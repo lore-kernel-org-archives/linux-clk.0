@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iJM1qsFm"
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91A541BEB
-	for <linux-clk@vger.kernel.org>; Fri,  8 Dec 2023 09:55:28 -0800 (PST)
-Received: by mail-ed1-x534.google.com with SMTP id 4fb4d7f45d1cf-54dcfca54e0so2805170a12.1
-        for <linux-clk@vger.kernel.org>; Fri, 08 Dec 2023 09:55:28 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BGHZ2/Jw"
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C1FFD54
+	for <linux-clk@vger.kernel.org>; Fri,  8 Dec 2023 09:57:08 -0800 (PST)
+Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-9fa45e75ed9so267853666b.1
+        for <linux-clk@vger.kernel.org>; Fri, 08 Dec 2023 09:57:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702058127; x=1702662927; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1702058226; x=1702663026; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=HW5b87yZ72MfyQ4qoaWmEMuVJS0cmg8c8QiDBsRTEpA=;
-        b=iJM1qsFmXdhQx528lSnf9TZUgSeshDQhLbOc32e6XaABbWIky6nj0DDJ/+LyQZDVpq
-         z4T5pNuoDIolItS5H+sk8HiBbT8nQE2vBDKXJRbdWojxzyp3DH75zl2+r0G/x5Ij50db
-         w/nE4J9RoyvRpi1fDeOcZLz1QKv+hkNs5x/n90vWL+q2u6EsIT2eB7eZnvuG7iJlNxB4
-         uGVyhsJ0dR2jhuKGTst7BZ2QSwFEf1iqr/l4Oy33UaJMvrEhgEglYDebqrCJ0F/1lbNH
-         RSq+kboxeAdqUWBPdsyERt6QzxVjNbcrimThcpxPgWRuZQrH0Z/HQ3CRydTHkRYca//p
-         LpTQ==
+        bh=O6F5v5RgNvRyDW6CnJK6XuScfujIXCInty80clAO1WQ=;
+        b=BGHZ2/JwXhZEqvJbC5BnDAu387/ufYqpXziWnHHZIb3FLUlCrVJ6yY/r0SHDOflRYu
+         23Gzdr9NcJAEXQCaXGfTVy5+c130gtimj1qazsFbMt24cCAEU7mSz7PXQCJ5mR8Gpp0z
+         BGbLNUuPD5VkwWn4cHpmfiwLf99rN1FQOBKHIT1PydVgnqu/XZc5csgewr6HoPeCDNEU
+         SqCnbeZuCNUHyRiko+igEVEJj3/xE386DzFCyJ8QKThro7FYJ8ns3C8nGnHmJfeh+TM1
+         3mCS3Pjduu5kTcIc7M6dVBHcnubVqMoH04+yiKpPUqaekVeJl/I4fUblc2kfyqMgOEHj
+         pfwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702058127; x=1702662927;
+        d=1e100.net; s=20230601; t=1702058226; x=1702663026;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HW5b87yZ72MfyQ4qoaWmEMuVJS0cmg8c8QiDBsRTEpA=;
-        b=CfadwxSXPg3NypnqWDobEQ0yqbaGfCp7lLHBr5gYP1GD/QJVrPVfjF2LGuyUA2BVz5
-         VJL21+jlGjDXNYYMnz0oZ6uJs3p38NoGzZ7wNBBXhBkq+wC1dQJmqYwg4YuXJ6EqG8NW
-         aI+s2Su+VwGZUAZ/yKuEN/xrIFcsqgG7T/XLb2JQKFgHIl5+rc7mjZZ76OO4cKE4k5oU
-         9u8RBt6NHxjbPSM7b4qjyXC/Erx3IOGdBl/hJgWWKX1o/BRH57JbZtPwqkgroYgAMy1V
-         LG6VyEwQbSRMenm7+xkUFodddtLFPD2shZZk59vDRo6oS4pbZLRdhcYhxZOzh2jDFedT
-         TGlQ==
-X-Gm-Message-State: AOJu0YyfxsL7tfoHPkrPqAVkOlHzmX6eMiJMP3IByvurSB9vayKZaxFG
-	avhL4WRQquN6+bk/lvYpHL7dzg==
-X-Google-Smtp-Source: AGHT+IFWhdplUjLOxQjtGZCrUtOxKHJRw8O3M32jaQ/MOkK7Svni0Fq43dPTnTWpwg/L+FYM19aQag==
-X-Received: by 2002:a17:906:188:b0:a19:a1ba:da45 with SMTP id 8-20020a170906018800b00a19a1bada45mr175670ejb.108.1702058126966;
-        Fri, 08 Dec 2023 09:55:26 -0800 (PST)
+        bh=O6F5v5RgNvRyDW6CnJK6XuScfujIXCInty80clAO1WQ=;
+        b=ChymvMZl9wprmAN+mVJgbs34TLwmY4+/tR7VuTHkmZY9hKDfXzzEXytOOux+ETeqWP
+         KXBEkxPe/Mbol/2Vm/OkkDkbXbeuUQrPj3xF0AOcKkw+9V5LDlDgg3iWPCDvEexDZzhq
+         KKliinhticLebag/upKgsPXC+OfSzZF8OjY/V1Ai4qR6/jostmI50QxU4pjnziroezYm
+         bBv49aj2PnXj24jcFrFdDNnWWMNiQlg1Fzyi3yroYiBxuJmiEhceOwg6mRnKmGiJgp9w
+         MOb5MkSJmdxU1QKAEKZxfK7MWzMciRGA41BfMRh5M9xvV9BLaTvD5Mm3/ovF5NT5LI7/
+         CSYw==
+X-Gm-Message-State: AOJu0YzTbDhpyMcHLz95bdCzPRL0xNDZpzdWlL3h3VFOOfJjJcGqtr7u
+	etOlKHcAMaGYomOhKvPd11Eucg==
+X-Google-Smtp-Source: AGHT+IGqXFkFxaU24iH/RyVwWrl3RGpdhefkjbY0nDPj8sXZMr38JFNbZDFZzc5xDwZN23CaNfE0yw==
+X-Received: by 2002:a17:906:260b:b0:a19:a19a:eade with SMTP id h11-20020a170906260b00b00a19a19aeademr150364ejc.151.1702058226550;
+        Fri, 08 Dec 2023 09:57:06 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id rf19-20020a1709076a1300b00a1f75d21bf3sm498896ejc.6.2023.12.08.09.55.25
+        by smtp.gmail.com with ESMTPSA id rf19-20020a1709076a1300b00a1f75d21bf3sm498896ejc.6.2023.12.08.09.57.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Dec 2023 09:55:26 -0800 (PST)
-Message-ID: <b3004665-bc22-4619-a8cb-ec69ead7e08f@linaro.org>
-Date: Fri, 8 Dec 2023 18:55:25 +0100
+        Fri, 08 Dec 2023 09:57:06 -0800 (PST)
+Message-ID: <4dd53599-5e80-4a00-a708-507c9c2e7b6b@linaro.org>
+Date: Fri, 8 Dec 2023 18:57:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,8 +47,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 13/16] dt-bindings: clock: Add StarFive JH8100
- Always-On clock and reset generator
+Subject: Re: [PATCH v1 16/16] riscv: dts: starfive: jh8100: Add clocks and
+ resets nodes
 Content-Language: en-US
 To: Sia Jee Heng <jeeheng.sia@starfivetech.com>, kernel@esmil.dk,
  conor@kernel.org, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
@@ -60,7 +60,7 @@ Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
  leyfoon.tan@starfivetech.com
 References: <20231206115000.295825-1-jeeheng.sia@starfivetech.com>
- <20231206115000.295825-14-jeeheng.sia@starfivetech.com>
+ <20231206115000.295825-17-jeeheng.sia@starfivetech.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -106,18 +106,75 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231206115000.295825-14-jeeheng.sia@starfivetech.com>
+In-Reply-To: <20231206115000.295825-17-jeeheng.sia@starfivetech.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 06/12/2023 12:49, Sia Jee Heng wrote:
-> Add bindings for the Always-On clock and reset generator
-> (AONCRG) on JH8100 SoC.
+On 06/12/2023 12:50, Sia Jee Heng wrote:
+> Add SYSCRG/SYSCRG-NE/SYSCRG-NW/SYSCRG-SW/AONCRG clock and reset
+> nodes for JH8100 RISC-V SoC.
 > 
 > Signed-off-by: Sia Jee Heng <jeeheng.sia@starfivetech.com>
 > Reviewed-by: Ley Foon Tan <leyfoon.tan@starfivetech.com>
 
-All my previous comments are applicable.
+Really? Looks automated... Care to provide any links to effects of
+internal review?
+
+> ---
+>  arch/riscv/boot/dts/starfive/jh8100-clk.dtsi | 180 +++++++++++++++++++
+>  arch/riscv/boot/dts/starfive/jh8100.dtsi     | 115 ++++++++++++
+>  2 files changed, 295 insertions(+)
+>  create mode 100644 arch/riscv/boot/dts/starfive/jh8100-clk.dtsi
+> 
+> diff --git a/arch/riscv/boot/dts/starfive/jh8100-clk.dtsi b/arch/riscv/boot/dts/starfive/jh8100-clk.dtsi
+> new file mode 100644
+> index 000000000000..27ba249f523e
+> --- /dev/null
+> +++ b/arch/riscv/boot/dts/starfive/jh8100-clk.dtsi
+> @@ -0,0 +1,180 @@
+> +// SPDX-License-Identifier: GPL-2.0 OR MIT
+> +/*
+> + * Copyright (C) 2023 StarFive Technology Co., Ltd.
+> + */
+> +
+> +/ {
+> +	clk_osc: clk_osc {
+
+No underscores in node names.
+
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0>;
+> +		clock-frequency = <24000000>;
+> +	};
+> +
+
+...
+
+> diff --git a/arch/riscv/boot/dts/starfive/jh8100.dtsi b/arch/riscv/boot/dts/starfive/jh8100.dtsi
+> index f26aff5c1ddf..9863c61324a0 100644
+> --- a/arch/riscv/boot/dts/starfive/jh8100.dtsi
+> +++ b/arch/riscv/boot/dts/starfive/jh8100.dtsi
+> @@ -4,6 +4,9 @@
+>   */
+>  
+>  /dts-v1/;
+> +#include <dt-bindings/clock/starfive,jh8100-crg.h>
+> +#include <dt-bindings/reset/starfive,jh8100-crg.h>
+> +#include "jh8100-clk.dtsi"
+>  
+>  / {
+>  	compatible = "starfive,jh8100";
+> @@ -357,6 +360,104 @@ uart4: serial@121a0000  {
+>  			status = "disabled";
+>  		};
+>  
+> +		syscrg_ne: syscrg_ne@12320000 {
+
+clock-controller@
+
+Just open your bindings and take a look how it is done there...
+
+This applies everywhere
 
 Best regards,
 Krzysztof
