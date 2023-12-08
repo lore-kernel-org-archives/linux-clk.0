@@ -1,104 +1,154 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2000B125B8;
-	Fri,  8 Dec 2023 19:26:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q0jHp+lr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 761F0C433C8;
-	Fri,  8 Dec 2023 19:26:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702063576;
-	bh=HmU9LMehAw9DeUV8uCa+TBiQ2MWNpmsc6U26C4PITlc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=q0jHp+lrFGrxQQ5fEQ0yYQ4fe+W9y4ZBbiIbF5Fm6XNgANu/LLyFCi7GKBQlImOK1
-	 zQ5FX411R3rVVBA++4kibVU+Ry2zU52I2LBtZFygSsz/2u+K0JWWcT+JXE2mM3eQa5
-	 aMaNS4Jl0owLVOpVhyAh5+5NDmpWsy7qBKYlhrzdxgnBQPmrOGOcSpTvp+Y7TY454O
-	 WxcxrL2t/YvNsOiGxmkthRidpOyy3nyHyi8BYNeIuulbHZ7ApFNEULZz6fP97KusN/
-	 TGdMkp+mrZygRRBt5EpnO283TOKGmC2DO1viuGwbfey/SpXfK9+mVbEe3SEJjdhIMr
-	 WKX33bNQlujUg==
-Date: Fri, 8 Dec 2023 19:26:10 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Cc: linux-riscv@lists.infradead.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Wolfgang Grandegger <wg@grandegger.com>,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-can@vger.kernel.org,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH RESEND v1 1/7] dt-bindings: clock: mpfs: add more MSSPLL
- output definitions
-Message-ID: <20231208-cauterize-hacker-f63dddf39af0@spud>
-References: <20231208-reenter-ajar-b6223e5134b3@spud>
- <20231208-unripe-maximum-fc77f4967561@spud>
- <CAJM55Z_ozf=MwOJCSM154L__TE1Gv7Ec=gM8LFJ31-_eX66OKA@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BRTtM8Hy"
+Received: from mail-qv1-xf2f.google.com (mail-qv1-xf2f.google.com [IPv6:2607:f8b0:4864:20::f2f])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 746F2193
+	for <linux-clk@vger.kernel.org>; Fri,  8 Dec 2023 13:14:33 -0800 (PST)
+Received: by mail-qv1-xf2f.google.com with SMTP id 6a1803df08f44-67a338dfca7so14305336d6.2
+        for <linux-clk@vger.kernel.org>; Fri, 08 Dec 2023 13:14:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1702070072; x=1702674872; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eMdZYz3DPUe4bdT/CXZ3OjIbw+BdLseGOOZQ+mLDsoY=;
+        b=BRTtM8HyZ5oo26RBVqVnaW3H4dNEwvwuMf+/k9lwAuSiUTnsWtOgwS+NZ74gHzFQPl
+         c3JxqVdVi+6KZAJq2mgSsWdF1+Nk4GyjYyL/YQHeup3LwJc/5Hw7tLRKHM7JbdrHNwEp
+         pzjjtKICWNTqRya+iSwgtad2E0CcLE0lgZ79M0A/g2E/ZY9zui9IocEztLq38IIOZW5x
+         J4f9K0ZeEIr3P/5zMaEtaDx+MbfW5lPwWoBcvsjoJuSrYk95tsfUw662AhPq3c5vBAXw
+         VE0KOtTXNrKmqT1Mi1cKea8OORceEUpi/tlYsHVRd0N8/Lro1X/snnfWoTHp+HMBCDk/
+         Xs8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702070072; x=1702674872;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eMdZYz3DPUe4bdT/CXZ3OjIbw+BdLseGOOZQ+mLDsoY=;
+        b=RWh7fyBRdlKGGcDNRFoR/i+z5eakrLRloxxSdYLBU45Zdb8yFvwQwzfAuHeY0AIbEo
+         LVCsfqqTyDEX6KbFspIKmJyXuq5r+2KmNcgTCf2pCF5rRrX4MZedxOGHpwCo0bGX50CG
+         sWBK2SEQVc16jojCZPn3C3PbVbL/seytO6T6abQz/4tFlOJvTLu/ToVFArZdGYAdW4Sr
+         VaCRkELZ28VGsyQEUOWuD17nH5WVoode8sDB+o+vwlKJ4OEdwA0bgQq7xA9whwYLpu2w
+         NUCnWJryVCDTp44Ry4sMfmaErmC3SVDTm8UPZ9v2qRYwCPZZNb4DsNa6Ow/li/Km5O+o
+         V6YQ==
+X-Gm-Message-State: AOJu0YyZroGzaYAVH6msswkij+WEnun1OIySTyYPEIrUwZUDXGWgGPcj
+	59ffYjg4ULpVv2+RNn5VbcIUre5nQ13r/Sa/ySZVgA==
+X-Google-Smtp-Source: AGHT+IGpulKyZ3OIbS0DyP2qkU03il9CmjBCOxhzoGEpedDhT+htnC+NzAmQyXg4CgZlNXYQiSL6lZrAvMlkclzO+XA=
+X-Received: by 2002:a05:6214:a91:b0:67a:a721:f304 with SMTP id
+ ev17-20020a0562140a9100b0067aa721f304mr526927qvb.68.1702070072556; Fri, 08
+ Dec 2023 13:14:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="keUDLXTW9SCPY39T"
-Content-Disposition: inline
-In-Reply-To: <CAJM55Z_ozf=MwOJCSM154L__TE1Gv7Ec=gM8LFJ31-_eX66OKA@mail.gmail.com>
-
-
---keUDLXTW9SCPY39T
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20231201160925.3136868-1-peter.griffin@linaro.org>
+ <20231201160925.3136868-13-peter.griffin@linaro.org> <5e9c0b1c5885775a7bc32ef59cb09a2a93d4cbe1.camel@linaro.org>
+In-Reply-To: <5e9c0b1c5885775a7bc32ef59cb09a2a93d4cbe1.camel@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Fri, 8 Dec 2023 21:14:21 +0000
+Message-ID: <CADrjBPqAjqW27TvvT3BpEovOsouRedsnB49qdkkgSto=z0jM3Q@mail.gmail.com>
+Subject: Re: [PATCH v5 12/20] clk: samsung: clk-gs101: Add cmu_top, cmu_misc
+ and cmu_apm support
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
+	mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org, 
+	tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, 
+	wim@linux-watchdog.org, linux@roeck-us.net, catalin.marinas@arm.com, 
+	will@kernel.org, arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org, 
+	jirislaby@kernel.org, cw00.choi@samsung.com, alim.akhtar@samsung.com, 
+	tudor.ambarus@linaro.org, semen.protsenko@linaro.org, saravanak@google.com, 
+	willmcvicker@google.com, soc@kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, kernel-team@android.com, 
+	linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 08, 2023 at 09:40:00AM -0800, Emil Renner Berthing wrote:
-> Conor Dooley wrote:
-> > From: Conor Dooley <conor.dooley@microchip.com>
+Hi Andr=C3=A9
+
+On Tue, 5 Dec 2023 at 07:52, Andr=C3=A9 Draszik <andre.draszik@linaro.org> =
+wrote:
+>
+> Hi Pete,
+>
+> On Fri, 2023-12-01 at 16:09 +0000, Peter Griffin wrote:
+> > cmu_top is the top level clock management unit which contains PLLs, mux=
+es,
+> > dividers and gates that feed the other clock management units.
 > >
-> > There are 3 undocumented outputs of the MSSPLL that are used for the CAN
-> > bus, "user crypto" module and eMMC. Add their clock IDs so that they can
-> > be hooked up in DT.
+> > cmu_misc clocks IPs such as Watchdog and cmu_apm clocks ips part of the
+> > APM module.
 > >
-> > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> > Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+> > Tested-by: Will McVicker <willmcvicker@google.com>
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 > > ---
-> >  include/dt-bindings/clock/microchip,mpfs-clock.h | 5 +++++
-> >  1 file changed, 5 insertions(+)
+> >  drivers/clk/samsung/Makefile    |    1 +
+> >  drivers/clk/samsung/clk-gs101.c | 2495 +++++++++++++++++++++++++++++++
+> >  2 files changed, 2496 insertions(+)
+> >  create mode 100644 drivers/clk/samsung/clk-gs101.c
 > >
-> > diff --git a/include/dt-bindings/clock/microchip,mpfs-clock.h b/include=
-/dt-bindings/clock/microchip,mpfs-clock.h
-> > index 79775a5134ca..b52f19a2b480 100644
-> > --- a/include/dt-bindings/clock/microchip,mpfs-clock.h
-> > +++ b/include/dt-bindings/clock/microchip,mpfs-clock.h
-> > @@ -44,6 +44,11 @@
-> >
-> >  #define CLK_RTCREF	33
-> >  #define CLK_MSSPLL	34
-> > +#define CLK_MSSPLL0	34
->=20
-> You add this new CLK_MSSPLL0 macro with the same value as CLK_MSSPLL, but
-> never seem to use it in this series. Did you mean to rename the CLK_MSSPLL
-> instances CLK_MSSPLL0?
+> > diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefil=
+e
+> > index ebbeacabe88f..3056944a5a54 100644
+> > --- a/drivers/clk/samsung/Makefile
+> > +++ b/drivers/clk/samsung/Makefile
+> > @@ -21,6 +21,7 @@ obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)       +=3D clk-=
+exynos7.o
+> >  obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)        +=3D clk-exynos7885.o
+> >  obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)        +=3D clk-exynos850.o
+> >  obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)        +=3D clk-exynosautov9.o
+> > +obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)        +=3D clk-gs101.o
+> >  obj-$(CONFIG_S3C64XX_COMMON_CLK)     +=3D clk-s3c64xx.o
+> >  obj-$(CONFIG_S5PV210_COMMON_CLK)     +=3D clk-s5pv210.o clk-s5pv210-au=
+dss.o
+> >  obj-$(CONFIG_TESLA_FSD_COMMON_CLK)   +=3D clk-fsd.o
+> > diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-=
+gs101.c
+> > new file mode 100644
+> > index 000000000000..6bd233a7ab63
+> > --- /dev/null
+> > +++ b/drivers/clk/samsung/clk-gs101.c
+> > @@ -0,0 +1,2495 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * Copyright (C) 2023 Linaro Ltd.
+> > + * Author: Peter Griffin <peter.griffin@linaro.org>
+> > + *
+> > + * Common Clock Framework support for GS101.
+> > + */
+> > +
+> > +#include <linux/clk.h>
+> > +#include <linux/clk-provider.h>
+> > +#include <linux/of.h>
+> > +#include <linux/of_device.h>
+> > +#include <linux/platform_device.h>
+> > +
+> > +#include <dt-bindings/clock/google,gs101.h>
+> > +
+> > +#include "clk.h"
+> > +#include "clk-exynos-arm64.h"
+> > +
+> > +/* NOTE: Must be equal to the last clock ID increased by one */
+> > +#define TOP_NR_CLK   (CLK_GOUT_TPU_UART + 1)
+> > +#define APM_NR_CLK   (CLK_APM_PLL_DIV16_APM + 1)
+> > +#define MISC_NR_CLK  (CLK_GOUT_MISC_XIU_D_MISC_IPCLKPORT_ACLK + 1)
+> > +
+> > +/* ---- CMU_TOP ------------------------------------------------------=
+------- */
+> > +
+> > [...]
+> > +
+> > +/* ---- CMU_APM ------------------------------------------------------=
+------- */
+> > [..]
+> > +
+> > +/* ---- CMU_MISC -----------------------------------------------------=
+-------- */
+>
+> nit - the CMU_MISC comment here is an outlier.
 
-Yes, that was my intention.
+Will fix.
 
---keUDLXTW9SCPY39T
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZXNt0gAKCRB4tDGHoIJi
-0mr/AQDAPWA0oJFGAgd3kwzO+18/rBTPVxEGkrO5J9+fukpyOAEAyrgQk4472IpW
-41zAPoXiQ9UbdlNLIljJi2H7VMzCYAw=
-=YxhE
------END PGP SIGNATURE-----
-
---keUDLXTW9SCPY39T--
+Peter.
