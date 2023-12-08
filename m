@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BGHZ2/Jw"
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C1FFD54
-	for <linux-clk@vger.kernel.org>; Fri,  8 Dec 2023 09:57:08 -0800 (PST)
-Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-9fa45e75ed9so267853666b.1
-        for <linux-clk@vger.kernel.org>; Fri, 08 Dec 2023 09:57:07 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p0AaqR6C"
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A2D3172A
+	for <linux-clk@vger.kernel.org>; Fri,  8 Dec 2023 09:57:54 -0800 (PST)
+Received: by mail-lj1-x236.google.com with SMTP id 38308e7fff4ca-2c9f166581dso29983111fa.2
+        for <linux-clk@vger.kernel.org>; Fri, 08 Dec 2023 09:57:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702058226; x=1702663026; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1702058272; x=1702663072; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=O6F5v5RgNvRyDW6CnJK6XuScfujIXCInty80clAO1WQ=;
-        b=BGHZ2/JwXhZEqvJbC5BnDAu387/ufYqpXziWnHHZIb3FLUlCrVJ6yY/r0SHDOflRYu
-         23Gzdr9NcJAEXQCaXGfTVy5+c130gtimj1qazsFbMt24cCAEU7mSz7PXQCJ5mR8Gpp0z
-         BGbLNUuPD5VkwWn4cHpmfiwLf99rN1FQOBKHIT1PydVgnqu/XZc5csgewr6HoPeCDNEU
-         SqCnbeZuCNUHyRiko+igEVEJj3/xE386DzFCyJ8QKThro7FYJ8ns3C8nGnHmJfeh+TM1
-         3mCS3Pjduu5kTcIc7M6dVBHcnubVqMoH04+yiKpPUqaekVeJl/I4fUblc2kfyqMgOEHj
-         pfwg==
+        bh=Wj704fWHOpU1SWgHtGl87HPV6WWiN6W5xSeHig4mm5A=;
+        b=p0AaqR6CatJS1hBWcTHNIAh3TO0HJ6LCDSgZ3cbzlmN3KiUCm2HQa86L7gNBNg49iE
+         juf6lGAkmW+/lOp0DoaQzYyUiGHlCvqR+ukBNztstVoosHIZnyN85qH1I290aWnzq7tN
+         4Gy01Ie/xFTVXEjaQ1NsrjXX5ULw+sqighs6uD6BID/6yQNrpk/oKPvnqu5yXDbCcKTg
+         lWWMakIcN8iYGvEAuqfUO9H+u8Rm/UwgC/nwndo7zHo9khrsmMXn5lQoXKb+aU6z131g
+         N++8EHERNy8nZwdWpLK/oFYztYb6QoOzO5Kmpc5WIZfXOXjre8KukGvsEp4EOPrSCvwM
+         zhPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702058226; x=1702663026;
+        d=1e100.net; s=20230601; t=1702058272; x=1702663072;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=O6F5v5RgNvRyDW6CnJK6XuScfujIXCInty80clAO1WQ=;
-        b=ChymvMZl9wprmAN+mVJgbs34TLwmY4+/tR7VuTHkmZY9hKDfXzzEXytOOux+ETeqWP
-         KXBEkxPe/Mbol/2Vm/OkkDkbXbeuUQrPj3xF0AOcKkw+9V5LDlDgg3iWPCDvEexDZzhq
-         KKliinhticLebag/upKgsPXC+OfSzZF8OjY/V1Ai4qR6/jostmI50QxU4pjnziroezYm
-         bBv49aj2PnXj24jcFrFdDNnWWMNiQlg1Fzyi3yroYiBxuJmiEhceOwg6mRnKmGiJgp9w
-         MOb5MkSJmdxU1QKAEKZxfK7MWzMciRGA41BfMRh5M9xvV9BLaTvD5Mm3/ovF5NT5LI7/
-         CSYw==
-X-Gm-Message-State: AOJu0YzTbDhpyMcHLz95bdCzPRL0xNDZpzdWlL3h3VFOOfJjJcGqtr7u
-	etOlKHcAMaGYomOhKvPd11Eucg==
-X-Google-Smtp-Source: AGHT+IGqXFkFxaU24iH/RyVwWrl3RGpdhefkjbY0nDPj8sXZMr38JFNbZDFZzc5xDwZN23CaNfE0yw==
-X-Received: by 2002:a17:906:260b:b0:a19:a19a:eade with SMTP id h11-20020a170906260b00b00a19a19aeademr150364ejc.151.1702058226550;
-        Fri, 08 Dec 2023 09:57:06 -0800 (PST)
+        bh=Wj704fWHOpU1SWgHtGl87HPV6WWiN6W5xSeHig4mm5A=;
+        b=cVR/CxhOSYHsjo3XPaGO3bBCyp04sUSCYf8zPiqmFo8AzkPu0UYkm4jePpW9BZiLnW
+         ukxepSAPxN9r0cadMkpCsU9GITqaUhGmX/ua67ojgnBcbToxxhwdagegtctiptB8ONlH
+         hpQa0KpCipwJwYoDmnXWX2Q0IEdjWfRB1JagglkoGTG3pWFaAzOxbbRfQTeGQ7eDEq70
+         UOJPs+kvzcPvzOBLegfeMfUuqDnuN3NRiL4OLAja+o5ZxZfQUTK6FqbVA38+/eTv6lxf
+         6rAflWFDySa/YJzmbyJiYy+vM9zt/vMctrBEv61s5cKiPWP8Re8wa2DtMpSFFjl5Vte+
+         H80w==
+X-Gm-Message-State: AOJu0YwWhnyDOOXIyWOhnm/9kQra352SAwkcO25Y9LEKqee9l2JmzHsc
+	02OBKhTfhFY3VUI7Lwxhib/4dQ==
+X-Google-Smtp-Source: AGHT+IF0kcGp8sfN+cnHJyhS9JDPrARVESTa+vmcxCbIe0cH4FwJJjOYAwlkc/TgzigUFSKs3erSYw==
+X-Received: by 2002:a2e:b358:0:b0:2ca:2d96:d99c with SMTP id q24-20020a2eb358000000b002ca2d96d99cmr145214lja.92.1702058272286;
+        Fri, 08 Dec 2023 09:57:52 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id rf19-20020a1709076a1300b00a1f75d21bf3sm498896ejc.6.2023.12.08.09.57.04
+        by smtp.gmail.com with ESMTPSA id rf19-20020a1709076a1300b00a1f75d21bf3sm498896ejc.6.2023.12.08.09.57.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Dec 2023 09:57:06 -0800 (PST)
-Message-ID: <4dd53599-5e80-4a00-a708-507c9c2e7b6b@linaro.org>
-Date: Fri, 8 Dec 2023 18:57:04 +0100
+        Fri, 08 Dec 2023 09:57:51 -0800 (PST)
+Message-ID: <9880fbbf-c311-4b6b-a570-aafd61729446@linaro.org>
+Date: Fri, 8 Dec 2023 18:57:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,17 +50,18 @@ User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v1 16/16] riscv: dts: starfive: jh8100: Add clocks and
  resets nodes
 Content-Language: en-US
-To: Sia Jee Heng <jeeheng.sia@starfivetech.com>, kernel@esmil.dk,
+To: Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+ Sia Jee Heng <jeeheng.sia@starfivetech.com>, kernel@esmil.dk,
  conor@kernel.org, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
  paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
  mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
- emil.renner.berthing@canonical.com, hal.feng@starfivetech.com,
- xingyu.wu@starfivetech.com
+ hal.feng@starfivetech.com, xingyu.wu@starfivetech.com
 Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
  leyfoon.tan@starfivetech.com
 References: <20231206115000.295825-1-jeeheng.sia@starfivetech.com>
  <20231206115000.295825-17-jeeheng.sia@starfivetech.com>
+ <CAJM55Z9bik1QttBeFUCfM3N98HWURge7mgV7ohFBq+AsuvtROg@mail.gmail.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -106,75 +107,25 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231206115000.295825-17-jeeheng.sia@starfivetech.com>
+In-Reply-To: <CAJM55Z9bik1QttBeFUCfM3N98HWURge7mgV7ohFBq+AsuvtROg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 06/12/2023 12:50, Sia Jee Heng wrote:
-> Add SYSCRG/SYSCRG-NE/SYSCRG-NW/SYSCRG-SW/AONCRG clock and reset
-> nodes for JH8100 RISC-V SoC.
+On 08/12/2023 17:39, Emil Renner Berthing wrote:
+> Sia Jee Heng wrote:
+>> Add SYSCRG/SYSCRG-NE/SYSCRG-NW/SYSCRG-SW/AONCRG clock and reset
+>> nodes for JH8100 RISC-V SoC.
+>>
+>> Signed-off-by: Sia Jee Heng <jeeheng.sia@starfivetech.com>
+>> Reviewed-by: Ley Foon Tan <leyfoon.tan@starfivetech.com>
+>> ---
+>>  arch/riscv/boot/dts/starfive/jh8100-clk.dtsi | 180 +++++++++++++++++++
+>>  arch/riscv/boot/dts/starfive/jh8100.dtsi     | 115 ++++++++++++
 > 
-> Signed-off-by: Sia Jee Heng <jeeheng.sia@starfivetech.com>
-> Reviewed-by: Ley Foon Tan <leyfoon.tan@starfivetech.com>
+> Why the split here? I mean why can't the clocks just be in the jh8100.dtsi?
 
-Really? Looks automated... Care to provide any links to effects of
-internal review?
-
-> ---
->  arch/riscv/boot/dts/starfive/jh8100-clk.dtsi | 180 +++++++++++++++++++
->  arch/riscv/boot/dts/starfive/jh8100.dtsi     | 115 ++++++++++++
->  2 files changed, 295 insertions(+)
->  create mode 100644 arch/riscv/boot/dts/starfive/jh8100-clk.dtsi
-> 
-> diff --git a/arch/riscv/boot/dts/starfive/jh8100-clk.dtsi b/arch/riscv/boot/dts/starfive/jh8100-clk.dtsi
-> new file mode 100644
-> index 000000000000..27ba249f523e
-> --- /dev/null
-> +++ b/arch/riscv/boot/dts/starfive/jh8100-clk.dtsi
-> @@ -0,0 +1,180 @@
-> +// SPDX-License-Identifier: GPL-2.0 OR MIT
-> +/*
-> + * Copyright (C) 2023 StarFive Technology Co., Ltd.
-> + */
-> +
-> +/ {
-> +	clk_osc: clk_osc {
-
-No underscores in node names.
-
-> +		compatible = "fixed-clock";
-> +		#clock-cells = <0>;
-> +		clock-frequency = <24000000>;
-> +	};
-> +
-
-...
-
-> diff --git a/arch/riscv/boot/dts/starfive/jh8100.dtsi b/arch/riscv/boot/dts/starfive/jh8100.dtsi
-> index f26aff5c1ddf..9863c61324a0 100644
-> --- a/arch/riscv/boot/dts/starfive/jh8100.dtsi
-> +++ b/arch/riscv/boot/dts/starfive/jh8100.dtsi
-> @@ -4,6 +4,9 @@
->   */
->  
->  /dts-v1/;
-> +#include <dt-bindings/clock/starfive,jh8100-crg.h>
-> +#include <dt-bindings/reset/starfive,jh8100-crg.h>
-> +#include "jh8100-clk.dtsi"
->  
->  / {
->  	compatible = "starfive,jh8100";
-> @@ -357,6 +360,104 @@ uart4: serial@121a0000  {
->  			status = "disabled";
->  		};
->  
-> +		syscrg_ne: syscrg_ne@12320000 {
-
-clock-controller@
-
-Just open your bindings and take a look how it is done there...
-
-This applies everywhere
+There should be. What's the point? Clocks are internal part of SoC and
+not really re-usable piece of hardware.
 
 Best regards,
 Krzysztof
