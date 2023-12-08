@@ -1,154 +1,83 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BRTtM8Hy"
-Received: from mail-qv1-xf2f.google.com (mail-qv1-xf2f.google.com [IPv6:2607:f8b0:4864:20::f2f])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 746F2193
-	for <linux-clk@vger.kernel.org>; Fri,  8 Dec 2023 13:14:33 -0800 (PST)
-Received: by mail-qv1-xf2f.google.com with SMTP id 6a1803df08f44-67a338dfca7so14305336d6.2
-        for <linux-clk@vger.kernel.org>; Fri, 08 Dec 2023 13:14:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702070072; x=1702674872; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eMdZYz3DPUe4bdT/CXZ3OjIbw+BdLseGOOZQ+mLDsoY=;
-        b=BRTtM8HyZ5oo26RBVqVnaW3H4dNEwvwuMf+/k9lwAuSiUTnsWtOgwS+NZ74gHzFQPl
-         c3JxqVdVi+6KZAJq2mgSsWdF1+Nk4GyjYyL/YQHeup3LwJc/5Hw7tLRKHM7JbdrHNwEp
-         pzjjtKICWNTqRya+iSwgtad2E0CcLE0lgZ79M0A/g2E/ZY9zui9IocEztLq38IIOZW5x
-         J4f9K0ZeEIr3P/5zMaEtaDx+MbfW5lPwWoBcvsjoJuSrYk95tsfUw662AhPq3c5vBAXw
-         VE0KOtTXNrKmqT1Mi1cKea8OORceEUpi/tlYsHVRd0N8/Lro1X/snnfWoTHp+HMBCDk/
-         Xs8A==
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91E13198A;
+	Fri,  8 Dec 2023 13:42:33 -0800 (PST)
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-6d9dc789f23so1284253a34.3;
+        Fri, 08 Dec 2023 13:42:33 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702070072; x=1702674872;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eMdZYz3DPUe4bdT/CXZ3OjIbw+BdLseGOOZQ+mLDsoY=;
-        b=RWh7fyBRdlKGGcDNRFoR/i+z5eakrLRloxxSdYLBU45Zdb8yFvwQwzfAuHeY0AIbEo
-         LVCsfqqTyDEX6KbFspIKmJyXuq5r+2KmNcgTCf2pCF5rRrX4MZedxOGHpwCo0bGX50CG
-         sWBK2SEQVc16jojCZPn3C3PbVbL/seytO6T6abQz/4tFlOJvTLu/ToVFArZdGYAdW4Sr
-         VaCRkELZ28VGsyQEUOWuD17nH5WVoode8sDB+o+vwlKJ4OEdwA0bgQq7xA9whwYLpu2w
-         NUCnWJryVCDTp44Ry4sMfmaErmC3SVDTm8UPZ9v2qRYwCPZZNb4DsNa6Ow/li/Km5O+o
-         V6YQ==
-X-Gm-Message-State: AOJu0YyZroGzaYAVH6msswkij+WEnun1OIySTyYPEIrUwZUDXGWgGPcj
-	59ffYjg4ULpVv2+RNn5VbcIUre5nQ13r/Sa/ySZVgA==
-X-Google-Smtp-Source: AGHT+IGpulKyZ3OIbS0DyP2qkU03il9CmjBCOxhzoGEpedDhT+htnC+NzAmQyXg4CgZlNXYQiSL6lZrAvMlkclzO+XA=
-X-Received: by 2002:a05:6214:a91:b0:67a:a721:f304 with SMTP id
- ev17-20020a0562140a9100b0067aa721f304mr526927qvb.68.1702070072556; Fri, 08
- Dec 2023 13:14:32 -0800 (PST)
+        d=1e100.net; s=20230601; t=1702071753; x=1702676553;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CAfN68Sm3Ma2VnLB4uj+2M8nBwQbTqyO/LCdJPBLHVk=;
+        b=a4w4GlhL/az785aU+qrXETD6+OL6D6GbWeWjCj7v9QN5fAj60HBfgzgrlk9BZ1pVnx
+         5HFPqXsa5tUnpeTzyILT8WnfA5dQR5PnI60DVH5ovcUDok6LmvO8013aM/9vfSqdx30T
+         upql/dIxXs4gAxJbRZrT9BioimMOt4DFAYtHqFvR32nvH61folMpxxH6PWp0igUsFcrh
+         iXj2CR/UeOhVOnmPxRRCrsc1MDXqXPs0biM3IYNHYw1OScBFV/OdLeuSo0+FZVBqp63e
+         sp+NyXNmjbgh7GdxQTqTGILnhF4eIC7spEE5gUj4XuWCQCh6KfyWC7VgxSHRw+zHbDu0
+         V9fw==
+X-Gm-Message-State: AOJu0Yz0vlOdLJFUGFrmD3ecGgowEbI2fe6r1PaDms9tM/kuwnsszcVf
+	krmv6d3sIaixsozScG7Lcg==
+X-Google-Smtp-Source: AGHT+IEmwxuggTo2ju30Ucv6bYuJd0p/9ogjLzvbfH0HbqDKNhshngTzZpOVDv288xxzAQmTakEB7Q==
+X-Received: by 2002:a05:6870:1b0f:b0:1fb:75a:c415 with SMTP id hl15-20020a0568701b0f00b001fb075ac415mr846554oab.62.1702071752839;
+        Fri, 08 Dec 2023 13:42:32 -0800 (PST)
+Received: from herring.priv (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id gb8-20020a056870670800b001fb4aaf261csm607175oab.32.2023.12.08.13.42.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Dec 2023 13:42:32 -0800 (PST)
+Received: (nullmailer pid 2852367 invoked by uid 1000);
+	Fri, 08 Dec 2023 21:42:30 -0000
+Date: Fri, 8 Dec 2023 15:42:30 -0600
+From: Rob Herring <robh@kernel.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Jakub Kicinski <kuba@kernel.org>, linux-can@vger.kernel.org, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Paul Walmsley <paul.walmsley@sifive.com>, Albert Ou <aou@eecs.berkeley.edu>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, Daire McNamara <daire.mcnamara@microchip.com>, Wolfgang Grandegger <wg@grandegger.com>, Conor Dooley <conor.dooley@microchip.com>, linux-riscv@lists.infradead.org, Eric Dumazet <edumazet@google.com>, Marc Kleine-Budde <mkl@pengutronix.de>, Palmer Dabbelt <palmer@dabbelt.com>, Paolo Abeni <pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>
+Subject: Re: [PATCH RESEND v1 2/7] dt-bindings: can: mpfs: add missing
+ required clock
+Message-ID: <20231208214230.GA2850699-robh@kernel.org>
+References: <20231208-reenter-ajar-b6223e5134b3@spud>
+ <20231208-palpitate-passable-c79bacf2036c@spud>
+ <170206026051.2485962.13304186324857333888.robh@kernel.org>
+ <20231208-contusion-professed-3b2235f7d3df@spud>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231201160925.3136868-1-peter.griffin@linaro.org>
- <20231201160925.3136868-13-peter.griffin@linaro.org> <5e9c0b1c5885775a7bc32ef59cb09a2a93d4cbe1.camel@linaro.org>
-In-Reply-To: <5e9c0b1c5885775a7bc32ef59cb09a2a93d4cbe1.camel@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Fri, 8 Dec 2023 21:14:21 +0000
-Message-ID: <CADrjBPqAjqW27TvvT3BpEovOsouRedsnB49qdkkgSto=z0jM3Q@mail.gmail.com>
-Subject: Re: [PATCH v5 12/20] clk: samsung: clk-gs101: Add cmu_top, cmu_misc
- and cmu_apm support
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
-	mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org, 
-	tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, 
-	wim@linux-watchdog.org, linux@roeck-us.net, catalin.marinas@arm.com, 
-	will@kernel.org, arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org, 
-	jirislaby@kernel.org, cw00.choi@samsung.com, alim.akhtar@samsung.com, 
-	tudor.ambarus@linaro.org, semen.protsenko@linaro.org, saravanak@google.com, 
-	willmcvicker@google.com, soc@kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, kernel-team@android.com, 
-	linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231208-contusion-professed-3b2235f7d3df@spud>
 
-Hi Andr=C3=A9
+On Fri, Dec 08, 2023 at 07:25:39PM +0000, Conor Dooley wrote:
+> On Fri, Dec 08, 2023 at 12:31:00PM -0600, Rob Herring wrote:
+> > 
+> > On Fri, 08 Dec 2023 17:12:24 +0000, Conor Dooley wrote:
+> > > From: Conor Dooley <conor.dooley@microchip.com>
+> > > 
+> > > The CAN controller on PolarFire SoC has an AHB peripheral clock _and_ a
+> > > CAN bus clock. The bus clock was omitted when the binding was written,
+> > > but is required for operation. Make up for lost time and add it.
+> > > 
+> > > Cautionary tale in adding bindings without having implemented a real
+> > > user for them perhaps.
+> > > 
+> > > Fixes: c878d518d7b6 ("dt-bindings: can: mpfs: document the mpfs CAN controller")
+> > > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> > > ---
+> > >  .../devicetree/bindings/net/can/microchip,mpfs-can.yaml    | 7 +++++--
+> > >  1 file changed, 5 insertions(+), 2 deletions(-)
+> > > 
+> > 
+> > My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+> > on your patch (DT_CHECKER_FLAGS is new in v5.13):
+> > 
+> > yamllint warnings/errors:
+> > 
+> > dtschema/dtc warnings/errors:
+> > /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/can/microchip,mpfs-can.yaml: properties:clocks: {'maxItems': 2, 'items': [{'description': 'AHB peripheral clock'}, {'description': 'CAN bus clock'}]} should not be valid under {'required': ['maxItems']}
+> > 	hint: "maxItems" is not needed with an "items" list
+> > 	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
+> 
+> 
+> Oh dear, me of all people.
 
-On Tue, 5 Dec 2023 at 07:52, Andr=C3=A9 Draszik <andre.draszik@linaro.org> =
-wrote:
->
-> Hi Pete,
->
-> On Fri, 2023-12-01 at 16:09 +0000, Peter Griffin wrote:
-> > cmu_top is the top level clock management unit which contains PLLs, mux=
-es,
-> > dividers and gates that feed the other clock management units.
-> >
-> > cmu_misc clocks IPs such as Watchdog and cmu_apm clocks ips part of the
-> > APM module.
-> >
-> > Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-> > Tested-by: Will McVicker <willmcvicker@google.com>
-> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> > ---
-> >  drivers/clk/samsung/Makefile    |    1 +
-> >  drivers/clk/samsung/clk-gs101.c | 2495 +++++++++++++++++++++++++++++++
-> >  2 files changed, 2496 insertions(+)
-> >  create mode 100644 drivers/clk/samsung/clk-gs101.c
-> >
-> > diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefil=
-e
-> > index ebbeacabe88f..3056944a5a54 100644
-> > --- a/drivers/clk/samsung/Makefile
-> > +++ b/drivers/clk/samsung/Makefile
-> > @@ -21,6 +21,7 @@ obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)       +=3D clk-=
-exynos7.o
-> >  obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)        +=3D clk-exynos7885.o
-> >  obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)        +=3D clk-exynos850.o
-> >  obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)        +=3D clk-exynosautov9.o
-> > +obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)        +=3D clk-gs101.o
-> >  obj-$(CONFIG_S3C64XX_COMMON_CLK)     +=3D clk-s3c64xx.o
-> >  obj-$(CONFIG_S5PV210_COMMON_CLK)     +=3D clk-s5pv210.o clk-s5pv210-au=
-dss.o
-> >  obj-$(CONFIG_TESLA_FSD_COMMON_CLK)   +=3D clk-fsd.o
-> > diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-=
-gs101.c
-> > new file mode 100644
-> > index 000000000000..6bd233a7ab63
-> > --- /dev/null
-> > +++ b/drivers/clk/samsung/clk-gs101.c
-> > @@ -0,0 +1,2495 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * Copyright (C) 2023 Linaro Ltd.
-> > + * Author: Peter Griffin <peter.griffin@linaro.org>
-> > + *
-> > + * Common Clock Framework support for GS101.
-> > + */
-> > +
-> > +#include <linux/clk.h>
-> > +#include <linux/clk-provider.h>
-> > +#include <linux/of.h>
-> > +#include <linux/of_device.h>
-> > +#include <linux/platform_device.h>
-> > +
-> > +#include <dt-bindings/clock/google,gs101.h>
-> > +
-> > +#include "clk.h"
-> > +#include "clk-exynos-arm64.h"
-> > +
-> > +/* NOTE: Must be equal to the last clock ID increased by one */
-> > +#define TOP_NR_CLK   (CLK_GOUT_TPU_UART + 1)
-> > +#define APM_NR_CLK   (CLK_APM_PLL_DIV16_APM + 1)
-> > +#define MISC_NR_CLK  (CLK_GOUT_MISC_XIU_D_MISC_IPCLKPORT_ACLK + 1)
-> > +
-> > +/* ---- CMU_TOP ------------------------------------------------------=
-------- */
-> > +
-> > [...]
-> > +
-> > +/* ---- CMU_APM ------------------------------------------------------=
-------- */
-> > [..]
-> > +
-> > +/* ---- CMU_MISC -----------------------------------------------------=
--------- */
->
-> nit - the CMU_MISC comment here is an outlier.
-
-Will fix.
-
-Peter.
+Happens to the best of us. :)
