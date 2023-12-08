@@ -1,141 +1,208 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB6ED20311;
-	Fri,  8 Dec 2023 15:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rIly/t4z"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87D5DC433CB;
-	Fri,  8 Dec 2023 15:02:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702047742;
-	bh=FYyAmF1FLZB0d+sYHpsbh3ZPGKkX6ZCON1fKf13O41A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rIly/t4zsSSGjYhjmShXbOMup1HhkUBNtqsqpe1+vgxOzgoeU9shtrxIFhJ3/+jO6
-	 zQKoX/0M/9cE5F8hhjQqXQbmhPlJQB8fEZ4Tblw5GT6spaL8rqXn+x5h7ro4WFm6NB
-	 3wEimo7eIbT5uVSmnU0N1u8qO1bb7mgc9Ets+SMYWyjC8g1FRTbPodFH0kmWoHgrus
-	 6C2ocJnqaAcmRvUvEWMS4JkVTMHv8z3R5yQgtZcALDt8UoTHnxvRxXq0l2ULMLJ/DA
-	 nZgZWfeM7KBA10I3cs8fl6v2fV4dyMwjmSSAZ3QDGNQEoCeCwOzvAgmXDinyIXcdz/
-	 EAr6k5k9TozDQ==
-Date: Fri, 8 Dec 2023 15:02:16 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Inochi Amaoto <inochiama@outlook.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, Chao Wei <chao.wei@sophgo.com>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Liu Gui <kenneth.liu@sophgo.com>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	qiujingbao.dlmu@gmail.com, dlan@gentoo.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v3 3/4] riscv: dts: sophgo: add clock generator for
- Sophgo CV1800 series SoC
-Message-ID: <20231208-overdue-reapprove-4b507f5f4262@spud>
-References: <20231207-doze-spinster-0bfad3b1441a@spud>
- <IA1PR20MB4953889EA91BCA3514965E2ABB8AA@IA1PR20MB4953.namprd20.prod.outlook.com>
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Y3Pb+AHg";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Eu6uS/85"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D9181723;
+	Fri,  8 Dec 2023 07:49:31 -0800 (PST)
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1702050569;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=juCIKsOlSX2wDTW1S1v9bUaTdgo42s0VBtiTPZnusxI=;
+	b=Y3Pb+AHg+e/B+KFo6RhPjnjAT9uufkJH/wmuUin/ii/RkL12Xb2LhbwMU/slOoW1zVWfvy
+	3rtjqclt32IQoZln60DXTVkf9ZEeHYlHN5+ZUMlKpfQOQclzKYWoIgmA7FH2YMR91J15CS
+	MezsCBKRTiV4bTMqtHaAXu3JDO5QIvXFpREpHh0M9nU4cTTuAeug6upCWZxzg+fUpva7ZA
+	GI3z++jXDeIzjQs22W+ERv+BVjRBAktw0cI3t7dVIlV/8oEdeO5vL/723dD9gCzHGBpEJO
+	KGVc128do0lHRtNowz5Gn5UYy5Fv1/xN5obeFLZ97lUUpgDAZNdow5LwZDKSOw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1702050569;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=juCIKsOlSX2wDTW1S1v9bUaTdgo42s0VBtiTPZnusxI=;
+	b=Eu6uS/85eE+nCL+E90qXegkkjbKO7V0Thb4Yh5ee/9SQH4n9uJOPkkfQPemqOnndB/6QWH
+	b2rAtS9HnxV/kkDQ==
+To: Yoshinori Sato <ysato@users.sourceforge.jp>, linux-sh@vger.kernel.org
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>, Damien Le Moal
+ <dlemoal@kernel.org>, Rob Herring <robh+dt@kernel.org>, Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
+ <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, David Airlie <airlied@gmail.com>, Daniel Vetter
+ <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann
+ <tzimmermann@suse.de>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Bjorn Helgaas
+ <bhelgaas@google.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
+ <jirislaby@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, Daniel
+ Lezcano <daniel.lezcano@linaro.org>, Rich Felker <dalias@libc.org>, John
+ Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Lee Jones
+ <lee@kernel.org>, Helge Deller <deller@gmx.de>, Heiko Stuebner
+ <heiko@sntech.de>, Jernej Skrabec <jernej.skrabec@gmail.com>, Chris Morgan
+ <macromorgan@hotmail.com>, Linus Walleij <linus.walleij@linaro.org>, Randy
+ Dunlap <rdunlap@infradead.org>, Arnd Bergmann <arnd@arndb.de>, Hyeonggon
+ Yoo <42.hyeyoo@gmail.com>, David Rientjes <rientjes@google.com>, Vlastimil
+ Babka <vbabka@suse.cz>, Baoquan He <bhe@redhat.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>, Stephen
+ Rothwell <sfr@canb.auug.org.au>, Guo Ren <guoren@kernel.org>, Javier
+ Martinez Canillas <javierm@redhat.com>, Azeem Shaikh
+ <azeemshaikh38@gmail.com>, Palmer Dabbelt <palmer@rivosinc.com>, Bin Meng
+ <bmeng@tinylab.org>, Max Filippov <jcmvbkbc@gmail.com>, Tom Rix
+ <trix@redhat.com>, Herve Codina <herve.codina@bootlin.com>, Jacky Huang
+ <ychuang3@nuvoton.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, Jonathan
+ Corbet <corbet@lwn.net>, Biju Das <biju.das.jz@bp.renesas.com>, Uwe
+ =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Sam
+ Ravnborg
+ <sam@ravnborg.org>, Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>,
+ Sergey Shtylyov <s.shtylyov@omp.ru>, Laurent Pinchart
+ <laurent.pinchart+renesas@ideasonboard.com>, linux-ide@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-pci@vger.kernel.org,
+ linux-serial@vger.kernel.org, linux-fbdev@vger.kernel.org
+Subject: Re: [DO NOT MERGE v5 16/37] irqchip: Add SH7751 INTC driver
+In-Reply-To: <bdf5a5e2fb6de07e739a390665e5109e4165dc3d.1701768028.git.ysato@users.sourceforge.jp>
+References: <cover.1701768028.git.ysato@users.sourceforge.jp>
+ <bdf5a5e2fb6de07e739a390665e5109e4165dc3d.1701768028.git.ysato@users.sourceforge.jp>
+Date: Fri, 08 Dec 2023 16:49:28 +0100
+Message-ID: <874jgssnhz.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="H6wgxik8XqEwV3+C"
-Content-Disposition: inline
-In-Reply-To: <IA1PR20MB4953889EA91BCA3514965E2ABB8AA@IA1PR20MB4953.namprd20.prod.outlook.com>
+Content-Type: text/plain
 
+On Tue, Dec 05 2023 at 18:45, Yoshinori Sato wrote:
+> +static void endisable_irq(struct irq_data *data, int enable)
 
---H6wgxik8XqEwV3+C
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+bool enable?
 
-On Fri, Dec 08, 2023 at 09:13:34AM +0800, Inochi Amaoto wrote:
-> >On Thu, Dec 07, 2023 at 01:52:16PM +0100, Krzysztof Kozlowski wrote:
-> >> On 07/12/2023 10:42, Inochi Amaoto wrote:
-> >>>>> +&clk {
-> >>>>> +	compatible =3D "sophgo,cv1810-clk";
-> >>>>> +};
-> >>>>> diff --git a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi b/arch/riscv/bo=
-ot/dts/sophgo/cv18xx.dtsi
-> >>>>> index 2d6f4a4b1e58..6ea1b2784db9 100644
-> >>>>> --- a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
-> >>>>> +++ b/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
-> >>>>> @@ -53,6 +53,12 @@ soc {
-> >>>>>  		dma-noncoherent;
-> >>>>>  		ranges;
-> >>>>>
-> >>>>> +		clk: clock-controller@3002000 {
-> >>>>> +			reg =3D <0x03002000 0x1000>;
-> >>>>> +			clocks =3D <&osc>;
-> >>>>> +			#clock-cells =3D <1>;
-> >>>>
-> >>>> I don't find such layout readable and maintainable. I did some parts
-> >>>> like this long, long time ago for one of my SoCs (Exynos54xx), but I
-> >>>> find it over time unmaintainable approach. I strongly suggest to have
-> >>>> compatible and other properties in one place, so cv1800 and cv1812, =
-even
-> >>>> if it duplicates the code.
-> >>>>
-> >>>
-> >>> Hi Krzysztof:
-> >>>
-> >>> Thanks for your advice, but I have a question about this: when I shou=
-ld
-> >>> use the DT override? The memory mapping of the CV1800 and CV1810 are
-> >>> almost the same (the CV1810 have more peripheral and the future SG200X
-> >>> have the same layout). IIRC, this is why conor suggested using DT ove=
-rride
-> >>> to make modification easier. But duplicating node seems to break thiS=
-, so
-> >>> I's pretty confused.
-> >>
-> >> Go with whatever your subarchitecture and architecture maintainers
-> >> prefer, I just shared my opinion that I find such code difficult to re=
-ad
-> >> and maintain.
-> >>
-> >> Extending node with supplies, pinctrl or even clocks would be readable.
-> >> But the compatible: no. The same applies when you need to delete
-> >> property or subnode: not readable/maintainable IMHO.
-> >
-> >There are apparently 3 or 4 of these SoCs that are basically identical,
-> >which is why the approach was taken. I do agree that it looks somewhat
-> >messy because I was looking for device-specific compatibles for these
-> >SoCs.
-> >
->=20
-> I agree that this may be messy. But it might still be acceptable if we
-> limit the number of devices in this format.
->=20
-> IIRC, only clint, plic, clk, maybe pinmux only needs different compatible.
-> For more complex device, such as tpu and codec, I agree with duplicating
-> nodes and make them SoC specific.
+> +{
+> +	struct sh7751_intc_priv *priv;
+> +	unsigned int irq;
+> +
+> +	priv = irq_data_to_priv(data);
+> +
+> +	irq = irqd_to_hwirq(data);
+> +	if (!is_valid_irq(irq)) {
+> +		/* IRQ out of range */
+> +		pr_warn_once("%s: IRQ %u is out of range\n", __FILE__, irq);
+> +		return;
+> +	}
+> +
+> +	if (irq <= MAX_IRL && !priv->irlm)
+> +		/* IRL encoded external interrupt */
+> +		/* disable for SR.IMASK */
+> +		update_sr_imask(irq - IRQ_START, enable);
+> +	else
+> +		/* Internal peripheral interrupt */
+> +		/* mask for IPR priority 0 */
+> +		update_ipr(priv, irq, enable);
 
-Okay. We will see how it goes. We are not stuck doing it one way, we can
-revisit the decision later if things start to be confusing.
+Lacks curly brackets on the if/else
 
->=20
-> As for this patch, I have already adjusted the order of clock to ensure
-> the compatible among different SoCs. This will make the clock assignment
-> easier.
+> +static int irq_sh7751_map(struct irq_domain *h, unsigned int virq,
+> +			  irq_hw_number_t hw_irq_num)
+> +{
+> +	irq_set_chip_and_handler(virq, &sh7751_irq_chip, handle_level_irq);
+> +	irq_get_irq_data(virq)->chip_data = h->host_data;
+> +	irq_modify_status(virq, IRQ_NOREQUEST, IRQ_NOPROBE);
+> +	return 0;
+> +}
+> +static const struct irq_domain_ops irq_ops = {
 
---H6wgxik8XqEwV3+C
-Content-Type: application/pgp-signature; name="signature.asc"
+Newline before 'static ...'
 
------BEGIN PGP SIGNATURE-----
+> +	.map    = irq_sh7751_map,
+> +	.xlate  = irq_domain_xlate_onecell,
+> +};
+> +
+> +static int __init load_ipr_map(struct device_node *intc,
+> +			       struct sh7751_intc_priv *priv)
+> +{
+> +	struct property *ipr_map;
+> +	unsigned int num_ipr, i;
+> +	struct ipr *ipr;
+> +	const __be32 *p;
+> +	u32 irq;
+> +
+> +	ipr_map = of_find_property(intc, "renesas,ipr-map", &num_ipr);
+> +	if (IS_ERR(ipr_map))
+> +		return PTR_ERR(ipr_map);
+> +	num_ipr /= sizeof(u32);
+> +	/* 3words per entry. */
+> +	if (num_ipr % 3)
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZXMv+AAKCRB4tDGHoIJi
-0rHNAP40ibEG9PFiYJyQVknOajvwqEylPpHx444D6tFiSzWEzwD/a6cLF6ldVr95
-5gVOtpUeO9FMgr+lYcECNfos9DTBBgQ=
-=uY0H
------END PGP SIGNATURE-----
+Three words per ... But you can spare the comment by doing:
 
---H6wgxik8XqEwV3+C--
+        if (num_ipr % WORDS_PER_ENTRY)
+
+> +		goto error1;
+> +	num_ipr /= 3;
+> +static int __init sh7751_intc_of_init(struct device_node *intc,
+> +				      struct device_node *parent)
+> +{
+> +	struct sh7751_intc_priv *priv;
+> +	void __iomem *base, *base2;
+> +	struct irq_domain *domain;
+> +	u16 icr;
+> +	int ret;
+> +
+> +	base = of_iomap(intc, 0);
+> +	base2 = of_iomap(intc, 1);
+> +	if (!base || !base2) {
+> +		pr_err("%pOFP: Invalid register definition\n", intc);
+
+What unmaps 'base' if 'base' is valid and base2 == NULL?
+
+> +		return -EINVAL;
+> +	}
+> +
+> +	priv = kzalloc(sizeof(struct sh7751_intc_priv), GFP_KERNEL);
+> +	if (priv == NULL)
+> +		return -ENOMEM;
+
+Leaks base[2] maps, no?
+
+> +	ret = load_ipr_map(intc, priv);
+> +	if (ret < 0) {
+> +		kfree(priv);
+> +		return ret;
+> +	}
+> +
+> +	priv->base = base;
+> +	priv->intpri00 = base2;
+> +
+> +	if (of_property_read_bool(intc, "renesas,irlm")) {
+> +		priv->irlm = true;
+> +		icr = __raw_readw(priv->base + R_ICR);
+> +		icr |= ICR_IRLM;
+> +		__raw_writew(icr, priv->base + R_ICR);
+> +	}
+> +
+> +	domain = irq_domain_add_linear(intc, NR_IRQS, &irq_ops, priv);
+> +	if (domain == NULL) {
+> +		pr_err("%pOFP: cannot initialize irq domain\n", intc);
+> +		kfree(priv);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	irq_set_default_host(domain);
+> +	pr_info("%pOFP: SH7751 Interrupt controller (%s external IRQ)",
+> +		intc, priv->irlm ? "4 lines" : "15 level");
+> +	return 0;
+> +}
+> +
+> +IRQCHIP_DECLARE(sh_7751_intc,
+> +		"renesas,sh7751-intc", sh7751_intc_of_init);
+
+One line please.
+
+Thanks,
+
+        tglx
