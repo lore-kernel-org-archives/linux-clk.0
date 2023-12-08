@@ -1,159 +1,131 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AcKxEqDW"
-Received: from mail-qt1-x831.google.com (mail-qt1-x831.google.com [IPv6:2607:f8b0:4864:20::831])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87C9D1994
-	for <linux-clk@vger.kernel.org>; Fri,  8 Dec 2023 06:27:56 -0800 (PST)
-Received: by mail-qt1-x831.google.com with SMTP id d75a77b69052e-4254cde7506so13175121cf.0
-        for <linux-clk@vger.kernel.org>; Fri, 08 Dec 2023 06:27:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702045675; x=1702650475; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y6tktGOmflBDjrD9owZW8jUp+CHgDfz/rbbtd4HS0Vg=;
-        b=AcKxEqDWB30LUoTaGIxcjeHFnrqK0ABDkGOsbov3A8vTm7Yu0yQN4qekM/aJ3VZCTE
-         nLWAGgtMYfDRmp7PU6nIwXuMxNejq7Hfg7LcbWjUXy9v3SnN4oeh6MsrFkxMTFiEQOup
-         AL5QxcW08YlnSsJo9Px8vfcIcnigzDTGsCNdxrw5PzVjlcO4IC+LdDs63y+Wnb59j7jP
-         FrEGejWh+Ywqw9qu/8UU5G62cN6+Sm+jDrU+LIEBik8tIDucfg7YXChDmYlaJKN1fYsZ
-         D1E0HKOOQfN+giKLigY/J6X7KozqnbF7hwSR1JgDKI+RjdRr6OnGCJezZ5X6xFIlxUeb
-         Wjfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702045675; x=1702650475;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y6tktGOmflBDjrD9owZW8jUp+CHgDfz/rbbtd4HS0Vg=;
-        b=SKiHK2eCbe7iB59CTsLVHQOE7LtSu07BpqAP0nhod9kxsEG6EzESs6c2uH9/yFb9HZ
-         8NbDK8oJjQrbvT+gsWtEzi5Ton7s0TNTz7PrR2Fc1Jqk95VwySVUosVGBDmRO2YCUmL/
-         6KcMVRNCkgLpKJK9t1koS2/ZNRtQu0jOBGVVtxylGxfwuI/HlpDpGrTe6bG/Kv16ZK56
-         or6WUg6pZgxgKQB4YycsA11ly86RMh9TocR2cseqsUXbBPHVbyW9sAO+2GC5qyla+QPu
-         j4fw6So6c9k1drusmu6nn5XIKOmUOaSk/+kUd4/5hiVqLg4RRJzSwhwPXszILjREzYFP
-         OshA==
-X-Gm-Message-State: AOJu0YwMSpeIb3ALYo3elQpw2/N9KwNEB7NQnhR+FybBpF8wW9PhZ15i
-	pPf8EzK1zHc2le1i1GXGXiMtlkgPJypEX7+MvL8w0Q==
-X-Google-Smtp-Source: AGHT+IGbiA6FsS80GfwV+c82tNjaevxVqMuJe5EJncnQTyRiVvDHSd4AgX2BqsQb6YkJ2YjyEjuCQy/avC/S0mz+amg=
-X-Received: by 2002:ad4:5695:0:b0:67a:a721:e150 with SMTP id
- bd21-20020ad45695000000b0067aa721e150mr16777qvb.125.1702045675625; Fri, 08
- Dec 2023 06:27:55 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="VbBdjvy0"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FE811997;
+	Fri,  8 Dec 2023 06:37:30 -0800 (PST)
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.17.1.22/8.17.1.22) with ESMTP id 3B88CjL1008014;
+	Fri, 8 Dec 2023 15:37:05 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	from:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding:content-type; s=selector1; bh=EM8HIGP
+	sa8ExObelNhP+wEvuVcdx1VFlcYQ6bK/movw=; b=VbBdjvy0Q4iRoR1RTwdM0jZ
+	6LX/+Erts/QNVQ/Ri3TBQhm5fuXlB4mWaMTeIcQM+25F6IB/nsfg9BCmiVlASh9H
+	XTtAGT4DI6rELbxxnvmQD7houqQhn/YMQZ1SiwjToQ1FYAUM2KXj6bkU+V+F1FGU
+	d5+YM4P0PLOkIOXmFNc1jD1B6RgsCtAw6Hnw0VArAHvTIWNGN1nQNJLozFRmtpOM
+	rT2ZxiKevENci5KGMnN5vDCF0l1W9sK+Drp3ZFNMcRPsiZTpfs9kXiUwz5y4AuP4
+	PdKdotJZNbcW8V5dLnksC1oaAPLV+yKoLdv9ngTCZmxfcsgNaoQHUvnngyS5ChQ=
+	=
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3utd2pn2hw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 08 Dec 2023 15:37:05 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 050C2100056;
+	Fri,  8 Dec 2023 15:37:02 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id AECB5229A75;
+	Fri,  8 Dec 2023 15:37:02 +0100 (CET)
+Received: from localhost (10.252.31.8) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Fri, 8 Dec
+ 2023 15:37:02 +0100
+From: <gabriel.fernandez@foss.st.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v6 0/5] Introduce STM32MP257 clock driver
+Date: Fri, 8 Dec 2023 15:36:55 +0100
+Message-ID: <20231208143700.354785-1-gabriel.fernandez@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231201160925.3136868-1-peter.griffin@linaro.org>
- <20231201160925.3136868-13-peter.griffin@linaro.org> <20bf05b9d9ccc5c11ef17500ac7a97c46dd46a9a.camel@linaro.org>
-In-Reply-To: <20bf05b9d9ccc5c11ef17500ac7a97c46dd46a9a.camel@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Fri, 8 Dec 2023 14:27:44 +0000
-Message-ID: <CADrjBPr_sv29Dc3F-4wVvH_N+qU6509kvHqkyZG==Q1RRpi5gA@mail.gmail.com>
-Subject: Re: [PATCH v5 12/20] clk: samsung: clk-gs101: Add cmu_top, cmu_misc
- and cmu_apm support
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
-	mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org, 
-	tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, 
-	wim@linux-watchdog.org, linux@roeck-us.net, catalin.marinas@arm.com, 
-	will@kernel.org, arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org, 
-	jirislaby@kernel.org, cw00.choi@samsung.com, alim.akhtar@samsung.com, 
-	tudor.ambarus@linaro.org, semen.protsenko@linaro.org, saravanak@google.com, 
-	willmcvicker@google.com, soc@kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, kernel-team@android.com, 
-	linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-12-08_09,2023-12-07_01,2023-05-22_02
 
-Hi Andr=C3=A9,
+From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 
-Thanks for the review
+This patch-set introduces clock driver for STM32MP257 based on Arm Cortex-35.
+It creates also a menuconfig for all STM32MP clock drivers.
+The STM32MP1 and STM32MP13 are now in same stm32 directory
 
-On Mon, 4 Dec 2023 at 17:51, Andr=C3=A9 Draszik <andre.draszik@linaro.org> =
-wrote:
->
-> On Fri, 2023-12-01 at 16:09 +0000, Peter Griffin wrote:
-> > cmu_top is the top level clock management unit which contains PLLs, mux=
-es,
-> > dividers and gates that feed the other clock management units.
-> >
-> > cmu_misc clocks IPs such as Watchdog and cmu_apm clocks ips part of the
-> > APM module.
-> >
-> > Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-> > Tested-by: Will McVicker <willmcvicker@google.com>
-> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> > ---
-> >  drivers/clk/samsung/Makefile    |    1 +
-> >  drivers/clk/samsung/clk-gs101.c | 2495 +++++++++++++++++++++++++++++++
-> >  2 files changed, 2496 insertions(+)
-> >  create mode 100644 drivers/clk/samsung/clk-gs101.c
-> >
-> > diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefil=
-e
-> > index ebbeacabe88f..3056944a5a54 100644
-> > --- a/drivers/clk/samsung/Makefile
-> > +++ b/drivers/clk/samsung/Makefile
-> > @@ -21,6 +21,7 @@ obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)       +=3D clk-=
-exynos7.o
-> >  obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)        +=3D clk-exynos7885.o
-> >  obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)        +=3D clk-exynos850.o
-> >  obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)        +=3D clk-exynosautov9.o
-> > +obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)        +=3D clk-gs101.o
-> >  obj-$(CONFIG_S3C64XX_COMMON_CLK)     +=3D clk-s3c64xx.o
-> >  obj-$(CONFIG_S5PV210_COMMON_CLK)     +=3D clk-s5pv210.o clk-s5pv210-au=
-dss.o
-> >  obj-$(CONFIG_TESLA_FSD_COMMON_CLK)   +=3D clk-fsd.o
-> > diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-=
-gs101.c
-> > new file mode 100644
-> > index 000000000000..6bd233a7ab63
-> > --- /dev/null
-> > +++ b/drivers/clk/samsung/clk-gs101.c
-> > @@ -0,0 +1,2495 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * Copyright (C) 2023 Linaro Ltd.
-> > + * Author: Peter Griffin <peter.griffin@linaro.org>
-> > + *
-> > + * Common Clock Framework support for GS101.
-> > + */
-> > [...]
-> > +
-> > +/* List of parent clocks for Muxes in CMU_TOP: for CMU_HSI0 */
-> > +PNAME(mout_cmu_hsi0_usb31drd_p)      =3D { "oscclk", "dout_shared2_div=
-2" };
-> > +
-> > +PNAME(mout_cmu_hsi0_bus_p)   =3D { "dout_shared0_div4", "dout_shared1_=
-div4",
-> > +                                 "dout_shared2_div2", "dout_shared3_di=
-v2",
-> > +                                 "fout_spare_pll" };
->
-> This should also be updated....
->
-> > [...]
-> > +     MUX(CLK_MOUT_HSI0_BUS, "mout_cmu_hsi0_bus", mout_cmu_hsi0_bus_p,
-> > +         CLK_CON_MUX_MUX_CLKCMU_HSI0_BUS, 0, 3),
->
-> ...because we have 8 possibilities now.
+v6:
+  - remove useless defines in drivers/clk/stm32/stm32mp25_rcc.h
 
-Interesting, unfortunately there is some discrepancy between the
-documentation again :( All the cmu_top clock parents were authored
-using the cmu_diagrams which only shows the 5 parents listed above.
-Checking the mux register definition it lists 5-7 as being oscclk
-5=3Dosclk
-6=3Dosclk
-7=3Doscclk
+v5:
+  - Fix sparse warnings: was not declared. Should it be static?
+    drivers/clk/stm32/clk-stm32mp13.c:1516:29: symbol 'stm32mp13_reset_data'
+    drivers/clk/stm32/clk-stm32mp1.c:2148:29: symbol 'stm32mp1_reset_data'
+    drivers/clk/stm32/clk-stm32mp25.c:1003:5: symbol 'stm32mp25_cpt_gate'
+    drivers/clk/stm32/clk-stm32mp25.c:1005:29: symbol 'stm32mp25_clock_data'
+    drivers/clk/stm32/clk-stm32mp25.c:1011:29: symbol 'stm32mp25_reset_data'
 
-Downstream clock implementation lists these oscclk 5-7 as well, so I
-guess we should add them...sigh
+v4:
+  - use GPL-2.0-only OR BSD-2-Clause for clock and reset binding files
+  - use quotes ' for #clock-cells and #reset-cells in YAML documentation
+  - reset binding start now to 0 instead 1
+  - improve management of reset lines that are not managed
 
-> (I didn't check the other parents, but you mentioned you updated field wi=
-dths
-> in other registers, too, so maybe need to double check the parent strings=
- as well)
+v3:
+  - from Rob Herring change clock item description in YAML documentation
+v2:
+  - rework reset binding (use ID witch start from 0)
+  - rework reset driver to manage STM32MP13 / STM32MP15 / STM32MP25
+  - rework YAML documentation
 
-Yes I will go through and re-check these parent names again.
+Gabriel Fernandez (5):
+  clk: stm32mp1: move stm32mp1 clock driver into stm32 directory
+  clk: stm32mp1: use stm32mp13 reset driver
+  dt-bindings: stm32: add clocks and reset binding for stm32mp25
+    platform
+  clk: stm32: introduce clocks for STM32MP257 platform
+  arm64: dts: st: add rcc support in stm32mp251
 
-Peter
+ .../bindings/clock/st,stm32mp25-rcc.yaml      |   76 ++
+ arch/arm64/boot/dts/st/stm32mp251.dtsi        |   59 +-
+ drivers/clk/Kconfig                           |   11 +-
+ drivers/clk/Makefile                          |    1 -
+ drivers/clk/stm32/Kconfig                     |   36 +
+ drivers/clk/stm32/Makefile                    |    2 +
+ drivers/clk/stm32/clk-stm32-core.c            |    5 +-
+ drivers/clk/stm32/clk-stm32-core.h            |    5 +-
+ drivers/clk/{ => stm32}/clk-stm32mp1.c        |  127 +-
+ drivers/clk/stm32/clk-stm32mp13.c             |    9 +-
+ drivers/clk/stm32/clk-stm32mp25.c             | 1125 +++++++++++++++++
+ drivers/clk/stm32/reset-stm32.c               |   73 +-
+ drivers/clk/stm32/reset-stm32.h               |   15 +-
+ drivers/clk/stm32/stm32mp25_rcc.h             |  712 +++++++++++
+ include/dt-bindings/clock/st,stm32mp25-rcc.h  |  492 +++++++
+ include/dt-bindings/reset/st,stm32mp25-rcc.h  |  167 +++
+ 16 files changed, 2734 insertions(+), 181 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
+ create mode 100644 drivers/clk/stm32/Kconfig
+ rename drivers/clk/{ => stm32}/clk-stm32mp1.c (95%)
+ create mode 100644 drivers/clk/stm32/clk-stm32mp25.c
+ create mode 100644 drivers/clk/stm32/stm32mp25_rcc.h
+ create mode 100644 include/dt-bindings/clock/st,stm32mp25-rcc.h
+ create mode 100644 include/dt-bindings/reset/st,stm32mp25-rcc.h
+
+-- 
+2.25.1
+
