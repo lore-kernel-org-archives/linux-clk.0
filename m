@@ -1,42 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8797D1E538;
-	Fri,  8 Dec 2023 14:51:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D57631F94C;
+	Fri,  8 Dec 2023 14:51:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dktVDCMf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28037C433CB;
-	Fri,  8 Dec 2023 14:51:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oMtssf5E"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50CD1C43391;
+	Fri,  8 Dec 2023 14:51:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702047092;
-	bh=WSC2VtdO9KzSokLGWLoAzT6Jt1aCubjY6IGmC9Hagic=;
-	h=From:To:Subject:Date:In-Reply-To:References:From;
-	b=dktVDCMfWE3iKPQHYCSVxVCYIGOjLmFb5WbLuaS30+Rimsm0U1A0jFaS91eSgYodZ
-	 SU6Y2oe1DfzD4X0w+eHuvqsiZ/5AfV3vy2kMHiX2H+tBiVHxcbVst+cSRx7Gozyi11
-	 WmJFVQIknjgxufhVqqCV6wyAWn5Zwa72KGiuC8hEk82QFWL87dXJNjzgmRXFoesTPG
-	 kT2bzjf5/enBxgRYky25aIoswOWTSV7U5bvEheSAvw+UwbMFtXwIeilyFEi4gyAEjq
-	 TgZn4hLHgEwEr4lPFiZ/cgvKpcK1ZtuUwfBUykV7mpbYhktOLWawWNfzYINoDKcL8Z
-	 x58tP7JQ0+W/Q==
+	s=k20201202; t=1702047093;
+	bh=ilm8bRNtzJLA54Zj2yn6UjdZz9VCFVwyXwI43qcyg7U=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=oMtssf5Eex2g+o6RdbZl97u/QLg9hYcZQQn7Fpp5/7E4B+k98xgJdgoEYeQ9iWWLD
+	 mycw+sHrqlFvwlGekAzcSfB/DP+tzLA3ZUeN+wRK04aVb4JzebQnuBmQolitptxdQp
+	 CDZHMKojROPLJ1G/Wo3qddS/1zhF6B5sOeA9pRNfNmxRC4kCMe7ZZRguCjE3M5Wzuw
+	 1ShEMet4EVft82/n01sm3UKIvMaE4m8TWcEMi1VrX7ERsvk5+gSh7aZi2Op6Mcx4no
+	 RElfFkZxCBhcGJYKzw5t80302JdRsOiCQAX3I5oTFPznaSNMM49fF5lBBfjQsa/JVu
+	 H3FA0L1Puazmg==
 From: Bjorn Andersson <andersson@kernel.org>
-To: agross@kernel.org,
-	konrad.dybcio@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org,
-	quic_tdas@quicinc.com,
+To: Andy Gross <agross@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Stephan Gerhold <stephan@gerhold.net>,
 	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Robert Marko <robimarko@gmail.com>
-Subject: Re: [PATCH] dt-bindings: clock: qcom,gcc-ipq6018: split to separate schema
-Date: Fri,  8 Dec 2023 06:55:38 -0800
-Message-ID: <170204733612.342318.7630099958511658964.b4-ty@kernel.org>
+	devicetree@vger.kernel.org,
+	Vincent Knecht <vincent.knecht@mailoo.org>
+Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: Re: (subset) [PATCH v2 1/2] dt-bindings: clock: qcom,gcc-msm8939: Add CSI2 related clocks
+Date: Fri,  8 Dec 2023 06:55:39 -0800
+Message-ID: <170204733614.342318.15697921791345644925.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20231026101931.695497-1-robimarko@gmail.com>
-References: <20231026101931.695497-1-robimarko@gmail.com>
+In-Reply-To: <20231029061948.505883-1-vincent.knecht@mailoo.org>
+References: <20231029061948.505883-1-vincent.knecht@mailoo.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,20 +48,22 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Thu, 26 Oct 2023 12:18:37 +0200, Robert Marko wrote:
-> The Qualcomm IPQ6018 GCC clock controller has clock inputs, thus existing
-> gcc-other.yaml was not describing it fully so move it to a separate schema.
+On Sun, 29 Oct 2023 07:19:47 +0100, Vincent Knecht wrote:
+> When adding in the indexes for this clock-controller we missed
+> GCC_CAMSS_CSI2_AHB_CLK, GCC_CAMSS_CSI2_CLK, GCC_CAMSS_CSI2PHY_CLK,
+> GCC_CAMSS_CSI2PIX_CLK and GCC_CAMSS_CSI2RDI_CLK.
 > 
-> Fully document the allowed and required XO and sleep clock inputs, as well
-> as update the provided example.
+> Add them in now.
 > 
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] dt-bindings: clock: qcom,gcc-ipq6018: split to separate schema
-      commit: cec1f2ffcc065568fea9718921698576c6d1c62d
+[1/2] dt-bindings: clock: qcom,gcc-msm8939: Add CSI2 related clocks
+      commit: 3f373de6da2c960f0630a63890dded7d53358e2a
+[2/2] clk: qcom: gcc-msm8939: Add missing CSI2 related clocks
+      commit: 8f799d304c313f6628c4b21cd0227ac56b581944
 
 Best regards,
 -- 
