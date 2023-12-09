@@ -1,124 +1,283 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="ibc7knps"
-Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2094.outbound.protection.outlook.com [40.92.102.94])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE8041703;
-	Fri,  8 Dec 2023 16:45:54 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=G4jd7L+OzbasBI2hJODhy2aiY/wta8e3l3o4h3szXXQ/TJmnHLJOVraFE7kLoE/qirRjUp6icbJBKoL6FuHhiQ49fo/fpE+HZHQRsEatJh0sLkJXjA7/Iuu9VFy1wbwsYt4Ny1xJ2UfqRJgbM7sW+nwkmN01t5nyl9StW0vig9tFE4iPW/LFQFx8eiNXutOTUuqbZSYxfLEdaL4Mmrq1SNjBn3b1CktAHJyZSmt9Agf8lxTstwK+TfJHizDXOa4KRAzDQNv9i3TdGjIuNYW8OPueG4Bxsr+qIt+veEDEdBY+4tsQGM8WtsJ8tGUOhuQEAMKcVAj7XN/bgcZBQyR4/w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RmgnLS4VCRGBuq3sXj+wQhh4bgITo5oy1SjAc5yNCGE=;
- b=SfS6NJnsqmMwAoHosHlqeZSIHtx+afepANq1ae72z7eVoxQdWxaY08LOSB6jZ0XB1d+3VSbYrtQrj5RPos25QhBafYs7SvOzWahuHWfuBweyi69IxyNp0AR3IM+z19lEPthAMYr+pgBO3G2Pds9mBWSGWDVWHvR3DlX8eCCAe3HqQg1j+CzluqbBrmZtLeNsSggjuev6wkmaKMchHsTxXLoXWju1TeI8leeW6lDqXoS5ZTVi0hXA+vvo11H77iotfEtfeXuik/Tnof+b9cw85W4MiZ6gq1LLIYUIK9t/QHAGKMP4SBuS3go8A4oTW79omBxBRicoL5xL+9SSuEcLZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RmgnLS4VCRGBuq3sXj+wQhh4bgITo5oy1SjAc5yNCGE=;
- b=ibc7knpsosgN74kW67LIBA/98SAZFQvJ3vTY7KAt/ehYvJXgxZY/IdzO/Snmtaxppxj/DwC4h8sAywmxrTYyt+D+6Qit9EA2KQHtwhOEPUolCUrdF4TKuKoa5+UV+PRtjnCXjjBzwAWjYi2vSAMwGowUa83sVZDSy4L9PVVqlz4UnDKFMmeUBevPdcJK/056KdDHvxBIynB8EGtJFLfrwgKT0gf3KKMwTZv7DYdfkE7xl49ftqC93dTZ5OkZtJw2em20P37dijCxiwQUfO7PChkSDS33qXELCUVzAQC2x3Q4dA2MBPI5DcmA+WQ5j8Q2l13HrwuO5J9BxAzfEgmuIQ==
-Received: from MA0P287MB0332.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:ab::5) by
- PN2P287MB1962.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:1c9::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7068.29; Sat, 9 Dec 2023 00:45:46 +0000
-Received: from MA0P287MB0332.INDP287.PROD.OUTLOOK.COM
- ([fe80::b1a7:eee7:e903:9ef3]) by MA0P287MB0332.INDP287.PROD.OUTLOOK.COM
- ([fe80::b1a7:eee7:e903:9ef3%7]) with mapi id 15.20.7068.029; Sat, 9 Dec 2023
- 00:45:46 +0000
-Message-ID:
- <MA0P287MB0332B80557FB1BEF45C08D8BFE89A@MA0P287MB0332.INDP287.PROD.OUTLOOK.COM>
-Date: Sat, 9 Dec 2023 08:45:37 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/4] clk: sophgo: Add SG2042 clock generator driver
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Chen Wang <unicornxw@gmail.com>, aou@eecs.berkeley.edu, chao.wei@sophgo.com,
- conor@kernel.org, krzysztof.kozlowski+dt@linaro.org,
- mturquette@baylibre.com, palmer@dabbelt.com, paul.walmsley@sifive.com,
- richardcochran@gmail.com, robh+dt@kernel.org, sboyd@kernel.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com, guoren@kernel.org,
- jszhang@kernel.org, inochiama@outlook.com, samuel.holland@sifive.com
-References: <cover.1701938395.git.unicorn_wang@outlook.com>
- <975f9995584dfa8af751e96a1f4d2c7991551a35.1701938395.git.unicorn_wang@outlook.com>
- <c98c123f-1c07-4cfd-aeaf-ced7fe08cf42@linaro.org>
-From: Chen Wang <unicorn_wang@outlook.com>
-In-Reply-To: <c98c123f-1c07-4cfd-aeaf-ced7fe08cf42@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TMN: [D8PTCm3vgJrUBVCDrDqPw64CWxBTLpwT]
-X-ClientProxiedBy: SI2PR04CA0011.apcprd04.prod.outlook.com
- (2603:1096:4:197::10) To MA0P287MB0332.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a01:ab::5)
-X-Microsoft-Original-Message-ID:
- <77199b86-012c-4265-8c5d-1666c9b5d26c@outlook.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HVuErclE"
+Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B73F7171F
+	for <linux-clk@vger.kernel.org>; Fri,  8 Dec 2023 17:01:05 -0800 (PST)
+Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-5d34f8f211fso26065347b3.0
+        for <linux-clk@vger.kernel.org>; Fri, 08 Dec 2023 17:01:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1702083665; x=1702688465; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ElaXcfV6dmgzWzzP1M0WxFihXPQM8C12PJOBL/Tp0sE=;
+        b=HVuErclElmHD/KgnB6aCiA2Y9l9gvaSgPN1y7qasGlO+vUaGqUXjVKVNwHC+CdLAuR
+         RjJGtpjNQDUeIeL4HLL9CSDQ0pLgjE/c2vBtH2sZfFL/2NCQaxM+IAmkMWQcedrzFdbJ
+         udeffoMiSLBPuCMQIpbmayzM0el+7Qu+9zRwvgBQMDgx+Jtq/kjSEyCfT1eWlfPTHNUt
+         mTcyQqkGiVTIbrN/NQvnRpyqfN8QTcaBk9SrhhTXE/tBe8kEKHXSBqfFJN5xuDBi7m9g
+         p/04gPTodWNdBRhhk9re3Y+PfgM+PIrCMITdT6LCYt9B0kqdjsrxJVvUzuA05BGNxnKV
+         JRrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702083665; x=1702688465;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ElaXcfV6dmgzWzzP1M0WxFihXPQM8C12PJOBL/Tp0sE=;
+        b=BrP2aGd6EJ2tWY+dLt375gMeC3vNOox0WsjaqzLVfzo9bREl9odeQBKewhIZ4xwB2y
+         pNOxSyRPEleZlbpfNpCqbhuA2gyMud7mAyWI0V56sE7hsDEz6TyJAGiQzhCV5QzKtMTm
+         cCsSLtQIgT5+GxuIQQ755fJwVyqdSCQW3C67OT49QgZwR7jRIJc2KjSafLYVhgI2+1Ft
+         A8EqsktXGqQZeRQbnRYTfy27v56Ivu/Ete942gQF8Ky5uk8RUobFuMLnwxRpnimJ2JwO
+         QHoloBGgZf8ySDX6NVH2tCLqpodPh6/7K0WoV5b9AqyVqs9Vi6rwXhERLYPfb1dlhWs+
+         fSuA==
+X-Gm-Message-State: AOJu0YxYkxLBY5tng8loDuT1l2IuZsV8qRVK0aixdH6fvISYo8jkXFoE
+	/r8qlHEnX2KY9lGzOO9vjhRe/UQdfjRSF/ayy19SGQ==
+X-Google-Smtp-Source: AGHT+IH5c7drT+7MHmk+IZXb9MS8muJJAtPfMa/43napxTl9DXzmHgSvTulnvFbF7nfeWXmR3prdtkp8JfQyLi6/3nE=
+X-Received: by 2002:a0d:eb02:0:b0:5d4:1a53:861f with SMTP id
+ u2-20020a0deb02000000b005d41a53861fmr925367ywe.1.1702083664866; Fri, 08 Dec
+ 2023 17:01:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MA0P287MB0332:EE_|PN2P287MB1962:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5ab5f43e-9da0-45f6-47e0-08dbf8502ba1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	2cxeT9iY6sv2hvNcmcwU+1OLw+9ofzVzZcJE14T8Hvymu8/jI6tm0Q6ieUI5b80TNz7HdT8a44EXtN/idRpRr4J8OlK0VDb15SSDkPBER/9iXsWdSl2XFSCpdBlAQb1Amuyh9CeRcTS5ybgUzcebJW2GUGd+rRmgLqajADiTkNvptUvI5/dxw8zdnZzW5L+eod9Miux8QL06De2UQYx9CYZB6KYbg1y9pJP2lNIKW57flo4A3ZpkkjLpDlhlCcHAjE42ysgTq3zm5QC8miZymJbSB0YYtlQikXQE/fbus7cFBZ33DHOvEE/I8k5cbHnLhTNldn9e0jF+N8ljjmtWMJIQh+1Xh5t6P/XX4MwPXN3Od+uN7nf5NZF36VUQIZ3SPjwvonKr9XyEJkXLf/QJA91xsmm04Mqa01OWIYFLl2FWRnlJvzGPJTGaV0alsdf0s52fIF6SJwHOGltC9z8NXkQYTDyfLOnsrDierv+5bRwcHBHnOL36IeHcuN2aikMWgEKBrUh/QZkGeQV7wyfe4oxEcmf7TQyHsh9AP4jHXuQLFR03JlDleXRNfKvWQJHm
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Y01rak1UWkJNdS9Mb3Zyak9MbjJOcXJtZ09Pczl1VTlHT3Y3QUVKTm9RVnd4?=
- =?utf-8?B?K0NtdjRGUVhXbE8xMWxBNHVaSW5Pbmd3czNoV3BwZlAzdDNLVHczSUpCc2tP?=
- =?utf-8?B?UjJNc1dZVHhzaVZWdzZIRXUzd3N1WWlHS29ydXVMcE02T2lza2JBbnpvbldu?=
- =?utf-8?B?OW1GdktVcGQvRTVVUDZid1ZrZ21aMGhha1Btenk1QSswSVVRQ2E3ZHVFbGVO?=
- =?utf-8?B?aGxQMDhoaW45eGkvS1JzR01uMWZCZmE1cVY5ejNVUlU3ZG5GdGdhc2Uwb1Zo?=
- =?utf-8?B?ay9yZW9CR1dTWFZrWHVDVElxTmNWWERUTG5zR1ZmNG1rbTVSTmZ6QWhWeW03?=
- =?utf-8?B?VzJSelE5enJERG9LR0N6Ry92eGp6RldJWk1Rb1BWN0FwaFl2YkdVdkw4b2tW?=
- =?utf-8?B?NU1SL01teUx3WVh1Rjc1d21oS1FScGc0dk5xa2x6NFJkT1NKbU1nRHlrQWNP?=
- =?utf-8?B?VldmN1IzcWJ3d0JOdDZtSHdWdmFiU1V5ZXhGc3VJSjRNVkZaWFlqek5FNUFr?=
- =?utf-8?B?NmJqZmRIakRua2F1cWxGSkprTy9YdWlKZVNTTEJnYUxiRW8zaGRNVThOVTBI?=
- =?utf-8?B?Qm1jTkxxakRpS1lDS1MvTGZoOXl5akhDWFpWYTJxZXNhMElnRmJLbXE1YkFk?=
- =?utf-8?B?OXA3Wk5RM2NvVkkwemFQNXJ2enlTbnRaQlg4Mm14bnA5ZXhlZlJSa2tFRnBk?=
- =?utf-8?B?Q291eDFWdW9GeUtVcXBGVDhBZGYxaEU3ZEhsUlo1TVFoa3BLQjMrU3BrbFZW?=
- =?utf-8?B?akpFanF5clV6OVE2ZUdUYWo0aXJjc3lkWFc1eWlKKzJZWkw4WlVyK0lrSlVP?=
- =?utf-8?B?enRpYVNPNE1KcG9pWWRvTmFzb3ZRWHJSN2JWMzJQcHVTSlBiRmRIMG91aGpY?=
- =?utf-8?B?dGs0TnN3ejY5cVVTWkt5Y3JlTzZyTGJKOVBtcjJjMk9keDRnVyswY210MlVN?=
- =?utf-8?B?M2lObnh0R3ZGR3daaDFEbkpTeUE5c1dFb2pWdm0vTDRHQVdIODQ1cHl1ekpt?=
- =?utf-8?B?NkRrT21nd1QxTHIyblQzNHlTSlM1Z2xoT2ZHVzhndnVpaUlwaWFlQXd4RWVu?=
- =?utf-8?B?N3VlUHRxVVpzOGNCTXJmTEdmWDJ6RG9FZUsrbVdYRDh6c2x1ZHRhaGRzS1Qx?=
- =?utf-8?B?YnZkdXZBT2EzcmIxWmlpaU5GQkVBclAvOU1HTWUxZlJhMjdSQzBQYUpLKzBS?=
- =?utf-8?B?Q3hEUDZPTTNpZWhZNnUxL2l4RGFpZ1RXV3J3UnJ4NWE0YkV5TUdhczVMVFli?=
- =?utf-8?B?dGRwNzFSWDY3cDRBc051TVFzL2lkTzBleVc3MVV5R0U3RUVEejdVejQ3OXBr?=
- =?utf-8?B?eGZ6U1IvK3pEbjNXOEEzN1d0RE15L1VxTmhPd0I3dUMrM3hIME1zSGhzRVJh?=
- =?utf-8?B?Mk9ZdHZVL0Mza1lIeXoxY3Q0M2pPdzFQQVAzcUdoemNzeVpFZ0ZKSnBRNjdp?=
- =?utf-8?B?dlp4ZG5VaHFURUwxWGRoL1NjYVdPNk1HY0Npd002Wk84dnc1dVJYNFNjcVlp?=
- =?utf-8?B?VlF0NCtLYy9xZHJ6YVFhR3BSUEdtU3ZBVUJwMjRFZ1B3VUhkUnZZQVZxT1Ns?=
- =?utf-8?B?OUZWUkJoQzdFZ3pJbWFGSi95RHZ2LytvRHRXamRvdFpraWRZSUozeTM2aEV6?=
- =?utf-8?Q?N7X/1YPo5W2Pd0gok/2yG21avXmTexjvF3QUhgF/oCaY=3D?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5ab5f43e-9da0-45f6-47e0-08dbf8502ba1
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0332.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Dec 2023 00:45:45.0773
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2P287MB1962
+References: <20231201160925.3136868-1-peter.griffin@linaro.org>
+ <20231201160925.3136868-19-peter.griffin@linaro.org> <CAPLW+4ki_GUAnor4sTanXFLzKrAB9JpxK98PED1fUY-MLCzUdA@mail.gmail.com>
+In-Reply-To: <CAPLW+4ki_GUAnor4sTanXFLzKrAB9JpxK98PED1fUY-MLCzUdA@mail.gmail.com>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Sat, 9 Dec 2023 01:00:53 +0000
+Message-ID: <CADrjBPq-MLBVrW0ju64JdXia+QnDSsKR9+DSi==rkZXokMzt+g@mail.gmail.com>
+Subject: Re: [PATCH v5 18/20] arm64: dts: exynos: google: Add initial Google
+ gs101 SoC support
+To: Sam Protsenko <semen.protsenko@linaro.org>
+Cc: krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org, 
+	mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org, 
+	tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, 
+	wim@linux-watchdog.org, linux@roeck-us.net, catalin.marinas@arm.com, 
+	will@kernel.org, arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org, 
+	jirislaby@kernel.org, cw00.choi@samsung.com, alim.akhtar@samsung.com, 
+	tudor.ambarus@linaro.org, andre.draszik@linaro.org, saravanak@google.com, 
+	willmcvicker@google.com, soc@kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, kernel-team@android.com, 
+	linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Sam,
 
-On 2023/12/9 1:36, Krzysztof Kozlowski wrote:
-> On 07/12/2023 09:58, Chen Wang wrote:
->> From: Chen Wang <unicorn_wang@outlook.com>
->>
->> Add a driver for the SOPHGO SG2042 clock generator.
->>
->> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
-> Your driver still at v5 has so many build issues... please be sure there
-> are no new warnings reported.
-Yes, I also noticed these build issues and had a quick fix with v6, 
-please review v6. Sorry for the confusion.
-> Best regards,
-> Krzysztof
+On Sat, 2 Dec 2023 at 01:54, Sam Protsenko <semen.protsenko@linaro.org> wro=
+te:
 >
+> On Fri, Dec 1, 2023 at 10:11=E2=80=AFAM Peter Griffin <peter.griffin@lina=
+ro.org> wrote:
+> >
+> > Google gs101 SoC is ARMv8 mobile SoC found in the Pixel 6,
+> > (oriole) Pixel 6a (bluejay) and Pixel 6 pro (raven) mobile
+> > phones. It features:
+> > * 4xA55 little cluster
+> > * 2xA76 Mid cluster
+> > * 2xX1 Big cluster
+> >
+> > This commit adds the basic device tree for gs101 (SoC).
+> > Further platform support will be added over time.
+
+[cut]
+
+> > +       spi0_cs_func: spi0-cs-func-pins {
+> > +               samsung,pins =3D "gpp20-3";
+> > +               samsung,pin-function =3D <GS101_PIN_FUNC_3>;
+> > +               samsung,pin-pud =3D <GS101_PIN_PULL_NONE>;
+> > +               samsung,pin-drv =3D <GS101_PIN_DRV_2_5_MA>;
+> > +       };
+> > +};
+> > +
+>
+> Nitpick: this empty line is not needed.
+
+Ok will fix
+
+[cut]
+
+> > +
+> > +       aliases {
+> > +               pinctrl0 =3D &pinctrl_gpio_alive;
+> > +               pinctrl1 =3D &pinctrl_far_alive;
+> > +               pinctrl2 =3D &pinctrl_gsacore;
+> > +               pinctrl3 =3D &pinctrl_gsactrl;
+> > +               pinctrl4 =3D &pinctrl_peric0;
+> > +               pinctrl5 =3D &pinctrl_peric1;
+> > +               pinctrl6 =3D &pinctrl_hsi1;
+> > +               pinctrl7 =3D &pinctrl_hsi2;
+> > +               serial0 =3D &serial_0;
+>
+> Please check commit f4324583cd4d ("arm64: dts: exynos: move aliases to
+> board in Exynos850"). At least for Exynos850 the serial alias was
+> moved to the board dts by Krzysztof.
+
+Ok will fix
+
+>
+> > +       };
+> > +
+> > +       pmu-0 {
+> > +               compatible =3D "arm,cortex-a55-pmu";
+> > +               interrupts =3D <GIC_PPI 7 IRQ_TYPE_LEVEL_HIGH &ppi_clus=
+ter0>;
+> > +       };
+> > +
+> > +       pmu-1 {
+> > +               compatible =3D "arm,cortex-a76-pmu";
+> > +               interrupts =3D <GIC_PPI 7 IRQ_TYPE_LEVEL_HIGH &ppi_clus=
+ter1>;
+> > +       };
+> > +
+> > +       pmu-2 {
+> > +               compatible =3D "arm,cortex-x1-pmu";
+> > +               interrupts =3D <GIC_PPI 7 IRQ_TYPE_LEVEL_HIGH &ppi_clus=
+ter2>;
+> > +       };
+> > +
+> > +       pmu-3 {
+> > +               compatible =3D "arm,dsu-pmu";
+> > +               interrupts =3D <GIC_SPI 257 IRQ_TYPE_LEVEL_HIGH 0>;
+> > +               cpus =3D <&cpu0>, <&cpu1>, <&cpu2>, <&cpu3>,
+> > +                      <&cpu4>, <&cpu5>, <&cpu6>, <&cpu7>;
+> > +       };
+> > +
+> > +       /* TODO replace with CCF clock */
+> > +       dummy_clk: oscillator {
+> > +               compatible =3D "fixed-clock";
+> > +               #clock-cells =3D <0>;
+> > +               clock-frequency =3D <12345>;
+> > +               clock-output-names =3D "pclk";
+> > +       };
+>
+> Don't you already have real USI/UART clocks implemented in your clock dri=
+ver?
+
+No, not yet, hence the dummy clock.
+
+[cut]
+
+> > +
+> > +               usi_uart: usi@10a000c0 {
+> > +                       compatible =3D "google,gs101-usi",
+>
+> I can't see this compatible in USI driver. Does it make sense to add it t=
+here?
+
+It is not required at the moment, as it is compatible with
+samsung,exynos850-usi. I don't want to keep adding more patches to
+this series, and then having an endless cycle of nits.
+
+>
+> > +                                    "samsung,exynos850-usi";
+> > +                       reg =3D <0x10a000c0 0x20>;
+> > +                       samsung,sysreg =3D <&sysreg_peric0 0x1020>;
+> > +                       samsung,mode =3D <USI_V2_UART>;
+> > +                       #address-cells =3D <1>;
+> > +                       #size-cells =3D <1>;
+> > +                       ranges;
+> > +                       clocks =3D <&dummy_clk>, <&dummy_clk>;
+>
+> The same concern as above. I think I saw those clocks already
+> implemented in gs101 clock driver.
+
+No, these clocks have not been implemented yet, hence the dummy clock.
+There is no support for cmu_peric0 bank yet in the clock driver.
+
+>
+> > +                       clock-names =3D "pclk", "ipclk";
+> > +                       status =3D "disabled";
+> > +
+> > +                       serial_0: serial@10a00000 {
+> > +                               compatible =3D "google,gs101-uart";
+> > +                               reg =3D <0x10a00000 0xc0>;
+> > +                               reg-io-width =3D <4>;
+> > +                               samsung,uart-fifosize =3D <256>;
+> > +                               interrupts =3D <GIC_SPI 634
+> > +                                             IRQ_TYPE_LEVEL_HIGH 0>;
+> > +                               clocks =3D <&dummy_clk 0>, <&dummy_clk =
+0>;
+>
+> Ditto.
+
+See above
+
+>
+> > +                               clock-names =3D "uart", "clk_uart_baud0=
+";
+> > +                               status =3D "disabled";
+> > +                       };
+> > +               };
+> > +
+> > +               pinctrl_peric1: pinctrl@10c40000 {
+> > +                       compatible =3D "google,gs101-pinctrl";
+> > +                       reg =3D <0x10C40000 0x00001000>;
+> > +                       interrupts =3D <GIC_SPI 644 IRQ_TYPE_LEVEL_HIGH=
+ 0>;
+> > +               };
+> > +
+> > +               sysreg_peric1: syscon@10c20000 {
+> > +                       compatible =3D "google,gs101-peric1-sysreg", "s=
+yscon";
+> > +                       reg =3D <0x10C20000 0x10000>;
+> > +               };
+> > +
+> > +               pinctrl_hsi1: pinctrl@11840000 {
+> > +                       compatible =3D "google,gs101-pinctrl";
+> > +                       reg =3D <0x11840000 0x00001000>;
+> > +                       interrupts =3D <GIC_SPI 471 IRQ_TYPE_LEVEL_HIGH=
+ 0>;
+> > +               };
+> > +
+> > +               pinctrl_hsi2: pinctrl@14440000 {
+> > +                       compatible =3D "google,gs101-pinctrl";
+> > +                       reg =3D <0x14440000 0x00001000>;
+> > +                       interrupts =3D <GIC_SPI 503 IRQ_TYPE_LEVEL_HIGH=
+ 0>;
+> > +               };
+> > +
+> > +               cmu_apm: clock-controller@17400000 {
+> > +                       compatible =3D "google,gs101-cmu-apm";
+> > +                       reg =3D <0x17400000 0x8000>;
+> > +                       #clock-cells =3D <1>;
+> > +
+> > +                       clocks =3D <&ext_24_5m>;
+> > +                       clock-names =3D "oscclk";
+>
+> Doesn't CMU_APM take any clocks from CMU_TOP?
+
+No it doesn't.
+
+>
+> > +               };
+> > +
+> > +               sysreg_apm: syscon@174204e0 {
+> > +                       compatible =3D "google,gs101-apm-sysreg", "sysc=
+on";
+> > +                       reg =3D <0x174204e0 0x1000>;
+> > +               };
+> > +
+> > +               pmu_system_controller: system-controller@17460000 {
+> > +                       compatible =3D "google,gs101-pmu", "syscon";
+> > +                       reg =3D <0x17460000 0x10000>;
+> > +               };
+>
+> Just a suggestion: it might be relatively simple to add syscon-reboot
+> node in pmu_system_controller, and it might just work. One more
+> feature for free! :)
+
+Thanks for the suggestion. I tried that previously and it is not
+included here deliberately because it relies on more than that to be
+functional. Although the register offsets are the same, the PMU
+registers are protected from the kernel and are only write accessible
+via SMC call on this platform. I have patches ready to send out as a
+RFC for that once this initial series is merged and we can discuss
+that then.
+
+regards,
+
+Peter.
