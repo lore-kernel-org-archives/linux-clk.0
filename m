@@ -1,248 +1,141 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="nRBiFT/K"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10olkn2019.outbound.protection.outlook.com [40.92.41.19])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA91A10C7;
-	Fri,  8 Dec 2023 18:40:12 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fPQ2kNN6KsrnygJZ1/P6FP62hNfrMUX6fZGCcj4mM6CabLkB4uA1/vVhq2kjJC24wKYKCGijBmaxnfO/2ovI2f2CCXogOHUgueepmIVRAHIj3kytOU2rgzEbKMRp2LeVVfOhtR7v5wSOBBbM3p2S5QBXfsShlHKRvTJzfvLNi2kdpOgOAiXWQ0tmRJ3XZetMLosZkn/MzhfiRgdX4nnDfkkxm172hGS/ez0pPfROMXbLrGGLZbf93e4ryC1CC+TncOm/MU1YLaBFtZ+Cfv0MJhgcJ8zEF3/wIiubp2zOytTa2YtZgd1TttHqsANROsx54RCEnGN6TVLA7PpO/sLs6Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dmfhCQl0t3MqMem9Iod9wuRlkbu29Ec9PLNzLBwwq0I=;
- b=I2GFUlcsKBD16xrcgJ9PxE5zLknaTKezF8Eq5qmp9otu4uCtHGsm1/YFFmzgq+597xvYKZEPcrCTAYKZHpeKpIy0S12ZxFL13KiEFbGy5S4Sde5bFb1P6awEtnMMsC5kvdPTuN2UC561h0o+2ZnRh5SdGSeso/dEfhbeVQrlxDnijWD69TdyfkOoS+grJRxNyU1IPulq7IUDKYNVxRws2gd+5LcW+bonhkwftH8O9W+rwub/tU8ZSHCerX/a6nid+oBIx06jK2zN9VXXYTp5sjZFgIJ+JGcZ5JEelSLfc8/Rbfr3RADgVeNdAN/8kGwjV9Ml/KLbHr1WBBcAkOIYkA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dmfhCQl0t3MqMem9Iod9wuRlkbu29Ec9PLNzLBwwq0I=;
- b=nRBiFT/KWU1xZfWd2hZHUTf1buu6ya/+y2osvY9AJSKGg2dVJGk/RIxYdILvidsTFBYqifxUfwptXCdYEzqxgzr1W4xFaLLwDjbOsTD6CG1CvsyCEw8O1BTLT2LdxrBF6gJ5hFC1U7kaNS8fMApTg1XB09WeQHfoZfwOTtuA6e0fAvYQyfG4h7fkAyKXR35IWD1C5apms10FQcqmLPUP8X4SHG5AW9suIHeI1yJXFG2t+LqGrkgalmHTsLuwz3ZoGShXSQXal5hoQrKxxDEuxKJ2z5As0m28Npa2xfldU9jRzFBSO7Zk9j9NweQ5rKW5JIRZrI+9rAdnzWH3xbdb6A==
-Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
- by SA1PR20MB4538.namprd20.prod.outlook.com (2603:10b6:806:23e::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7068.28; Sat, 9 Dec
- 2023 02:40:10 +0000
-Received: from IA1PR20MB4953.namprd20.prod.outlook.com
- ([fe80::55b:c350:980:ad8]) by IA1PR20MB4953.namprd20.prod.outlook.com
- ([fe80::55b:c350:980:ad8%6]) with mapi id 15.20.7068.027; Sat, 9 Dec 2023
- 02:40:10 +0000
-From: Inochi Amaoto <inochiama@outlook.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Inochi Amaoto <inochiama@outlook.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chao Wei <chao.wei@sophgo.com>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Liu Gui <kenneth.liu@sophgo.com>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	qiujingbao.dlmu@gmail.com,
-	dlan@gentoo.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v3 3/4] riscv: dts: sophgo: add clock generator for Sophgo CV1800 series SoC
-Date: Sat,  9 Dec 2023 10:40:11 +0800
-Message-ID:
- <IA1PR20MB4953AFF3A49DCEB60A624488BB89A@IA1PR20MB4953.namprd20.prod.outlook.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20231208-overdue-reapprove-4b507f5f4262@spud>
-References: <20231208-overdue-reapprove-4b507f5f4262@spud>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN: [QDO7VcOQqjDAcrpNnn8W3lmul3Sz0taK2ziP/3WGd0Q=]
-X-ClientProxiedBy: TYCPR01CA0209.jpnprd01.prod.outlook.com
- (2603:1096:405:7a::14) To IA1PR20MB4953.namprd20.prod.outlook.com
- (2603:10b6:208:3af::19)
-X-Microsoft-Original-Message-ID:
- <20231209024012.289516-1-inochiama@outlook.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r1XnpDZv"
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C050B5
+	for <linux-clk@vger.kernel.org>; Fri,  8 Dec 2023 22:22:16 -0800 (PST)
+Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-40c339d2b88so13658385e9.3
+        for <linux-clk@vger.kernel.org>; Fri, 08 Dec 2023 22:22:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1702102935; x=1702707735; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qUfLyjWdTxwgSWGMLeNKXLU9SpqRs5Ux+VZkSWWMlxc=;
+        b=r1XnpDZvR5BbJSkXog1a6oa+ELl0zmkSX+fqAPsGYyX3yOSTTrL0/ZW0QT64k3uaGR
+         8yw2Xdfyk18Jlxt7wPTDefIbFvnfW0Id3pSyLRTno5aK1F4s3dXV9wb6Xt4bgjRUG9Fs
+         ESjI5dHX0XFb6gqndmFKyz97tg97Biu851IVNb7Gbxj8WPXkC0HDW1BvvcvTuSfSSzC9
+         VtGh/Yi1RXoJpdqqLjrsBh3D+sqZ+8bf1Dupei92CnUnmrjOBY0DYCCaD4lBQt1EPoI9
+         3JphgjXQRlDMfOCbqrfM0pgtf/NP3vDgf1ARNePBQi6IaahFdjNq5c3K0EQFBGlfdgoD
+         LJyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702102935; x=1702707735;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qUfLyjWdTxwgSWGMLeNKXLU9SpqRs5Ux+VZkSWWMlxc=;
+        b=pW55nOpRx8dmuHzcmQTWfa6kiyZJV6FfsgRSaBjY9QzcRssZlDCfCQsj1MIfk8tv9j
+         BttLdC7rhz9+O2Y50XTdslx6dpimTulQuHblbTfWT4I8ym3GEaPSjIeeRPORMxeLZ0W1
+         3l9ONI994Smfl9UF1joNgYsH77GgRjqTbQ3emLwZZfN4TQN4WdlopohjwSpgd8ZBEi4I
+         rnsty/Rcj5teXA9uwEncMOzJK7ZsNTxI1seB3NMqtuOVTSO3WuWWtk6Z2pwK2D3HR+8V
+         fii3YDPmk/Xs5rb+VlX3nUy8qzO/laNz/Pjt42roWvxqXGN3zB+G90nHi65zNR4nJfso
+         5VVQ==
+X-Gm-Message-State: AOJu0Yw521RHBUfyyrHjui5FDHYJuKpCWjKafUnCIqbHiSupEuMoIx9v
+	25jLTsXPfZ5JdS1YoTxs5QwRBw==
+X-Google-Smtp-Source: AGHT+IFFrBy7iaKn0lxful6M0lWyJC8FTunVIKaO+dmv+Xj2upv4u13p3SvmzsaKkvkRJSjMMShrZA==
+X-Received: by 2002:a05:600c:2154:b0:40c:3314:5be6 with SMTP id v20-20020a05600c215400b0040c33145be6mr655398wml.106.1702102934172;
+        Fri, 08 Dec 2023 22:22:14 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id l15-20020a05600c1d0f00b003feae747ff2sm7394329wms.35.2023.12.08.22.22.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Dec 2023 22:22:13 -0800 (PST)
+Date: Sat, 9 Dec 2023 09:22:11 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Chen Wang <unicornxw@gmail.com>,
+	aou@eecs.berkeley.edu, chao.wei@sophgo.com, conor@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+	palmer@dabbelt.com, paul.walmsley@sifive.com,
+	richardcochran@gmail.com, robh+dt@kernel.org, sboyd@kernel.org,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com,
+	guoren@kernel.org, jszhang@kernel.org, inochiama@outlook.com,
+	samuel.holland@sifive.com
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	Chen Wang <unicorn_wang@outlook.com>
+Subject: Re: [PATCH v6 3/4] clk: sophgo: Add SG2042 clock generator driver
+Message-ID: <1a6e3fad-cbe2-461d-940c-601ab5197213@suswa.mountain>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|SA1PR20MB4538:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9caa7708-7aa4-4ff1-1409-08dbf8602986
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	l5mq3FNnvFjA7s/s9W9TGKnMfeDHd6S7p/wVMyCAobrvEm7wILc9sKakWocNn2ZgcurlJ79P7xlmG1HisCsvNwmXcSV5synlwhH0pWi8P3CX3r9KtK2Nj/DPxFoakAPVBecH9w08RxFbTU5mnCSU8B5YH9GoB6x+fuBnQmwkN68CTkcwrqOf9q6duVnkQ09kkqfj4bl4pV/lTDXt45wY0Mqf6ualSa63mLQdsZrxso5dBcNu73/jivQ8AViqSIyHKimLaST6nLdVxZVj+L46jUuzDy9J2uUY3J7Uq1DO0jmq1jHiskeTr0l87RaXDc9JeKn5w/oKC1u37+I1H0AukCCWtCbgrmUQXmQIsmJzTfZgHGp8f8RSgGo4ipS/dS3OJ02MwqCgBLsugEJGWQV+DaYS2XQJEx1X3sX1yttFeTXDt7M3PTQuURaElTROoiJ+1mUGqVSO3y3qPLY1Ry5JUDijt9WSXq1bBGEI38Xtf/0dqPEYSmlYHGKsOGwsijKODDariXqHjHuQDnh/ZQbWSU5dc8XVAulF9yMhCgfsQjMR+4x8sFS602g5NE/KV0pBzsgNf+xCyWkF6uplI3ajbmcVIHtMWP8LeCMU26BEUXdtwVTWVWGhvO6aGeksBXPF
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Dq0leT+lrdBubbRtYr0TqDChUC92ANdM10oOWMK+PdqX3Yc4HTfHkPe9vEk5?=
- =?us-ascii?Q?CVNICeY8/nh83uE3wHB/Tl4fOq7trtcs09C4bier4mtdvlZOqmne0Om9dGzO?=
- =?us-ascii?Q?8fvz/l1/PQLMDEqzCE7bwo1rS3j+X7y3utwbluOQc8jRoUVK02Kz1jqH1ECw?=
- =?us-ascii?Q?pUetk8kmyO5lPMqqlMbTxXzNBDbri9Xyn0BDk6zc5Ri5K1f2l1pAXVulekyZ?=
- =?us-ascii?Q?Tjm/ur3jpb8mrgRdIaw2EtbgBtAtyRkDjb6lnZc/gPYcvlO1kqIbozuqhvao?=
- =?us-ascii?Q?FudGTKIkBnb5HPG8uCC1LfeZ6sDaSo8AnfupSr8W6SMKwsdbGmqOJpNkSPvH?=
- =?us-ascii?Q?UJ5r/y5GNLGEUs7twuttLFJWGVJPAlVkJndJtMkzf6ZpJq/rtxSyS0MqD8AE?=
- =?us-ascii?Q?ebENo2sJvg35jbP9b58dC4lE0GOuzEeSSVMyyj5MNJFAv6+7ifaaJDs/I9CF?=
- =?us-ascii?Q?JDRM4ECGciyaQeNBGOiM9xviGx+D4RgdQn8TOSKpwBSSMg2IZaLmrU8NQYiB?=
- =?us-ascii?Q?NJQuKn/2KzxkWpaK1JiQzcYKBpZxXoQz8gvbRRxrMkPMb/mwkvBH4Tg9DzRH?=
- =?us-ascii?Q?/uiJKzvpbCW2Kk4wpzBLsJBfxrtc1h9R00lQZaCQRK6VdSkMvW7/hXYpLtt/?=
- =?us-ascii?Q?I8yDAM+UoFCw8QgO5tgTCSzDTmWOegfaZG2t6g3EdfkhoY3A/bC+i0aNOHql?=
- =?us-ascii?Q?Qg+pfa4uo3lG+/oeyDZiuE4uqWdzKZYN9BsjOSRvTCc8K8ORZt0qH9+8FoY+?=
- =?us-ascii?Q?pkdxsfUeLNU/asDCqNWoiEW2tUUjNQB2X79cjEHHxHW4PqUwf6WMMFr5EBBV?=
- =?us-ascii?Q?zJxetxpVnOhMbJ8Lbk67vbVshGGQzdOEdrci2w0G8FarNq3TyJzhdeq0s8or?=
- =?us-ascii?Q?/eqPnbLZzM3Ea4jNv6HoL3pxUmVg6K/qrUic+uLQG9GLVK5cWGUA+vYv82Ks?=
- =?us-ascii?Q?Oj4/DoBwvTlR7jrOuFiJZZKBH2vNDdtsHm2DvtS/GTn05G78/RJ1TKp6dgWs?=
- =?us-ascii?Q?CtSjmnuWxCqt2wIgasD7aw8TBHcro9tShZ8nxZmbwSmWJ3Gkx3yogxtCZepV?=
- =?us-ascii?Q?y6tTm8CC1a8YhiPgheLrRapo2BaJmmStrrinqlBdnc33j1vJWdOy84wSx4CR?=
- =?us-ascii?Q?YHPBML76vm7BXpBbWaJxM51G7IFu2v074aE7FvGR63zZsvTPlE6kLje/TWLa?=
- =?us-ascii?Q?Bwpt+4i55MuKSwxi7k796sMYY+wWFs5WAie/gIvZDd1oztt+EYgEh3ONbQA?=
- =?us-ascii?Q?=3D?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9caa7708-7aa4-4ff1-1409-08dbf8602986
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Dec 2023 02:40:10.3501
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR20MB4538
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d1aa4f76f360ebd7b790a4786641f1b0188dbba8.1701997033.git.unicorn_wang@outlook.com>
 
->
->On Fri, Dec 08, 2023 at 09:13:34AM +0800, Inochi Amaoto wrote:
->>> On Thu, Dec 07, 2023 at 01:52:16PM +0100, Krzysztof Kozlowski wrote:
->>>> On 07/12/2023 10:42, Inochi Amaoto wrote:
->>>>>>> +&clk {
->>>>>>> +	compatible = "sophgo,cv1810-clk";
->>>>>>> +};
->>>>>>> diff --git a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi b/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
->>>>>>> index 2d6f4a4b1e58..6ea1b2784db9 100644
->>>>>>> --- a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
->>>>>>> +++ b/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
->>>>>>> @@ -53,6 +53,12 @@ soc {
->>>>>>>  		dma-noncoherent;
->>>>>>>  		ranges;
->>>>>>>
->>>>>>> +		clk: clock-controller@3002000 {
->>>>>>> +			reg = <0x03002000 0x1000>;
->>>>>>> +			clocks = <&osc>;
->>>>>>> +			#clock-cells = <1>;
->>>>>>
->>>>>> I don't find such layout readable and maintainable. I did some parts
->>>>>> like this long, long time ago for one of my SoCs (Exynos54xx), but I
->>>>>> find it over time unmaintainable approach. I strongly suggest to have
->>>>>> compatible and other properties in one place, so cv1800 and cv1812, even
->>>>>> if it duplicates the code.
->>>>>>
->>>>>
->>>>> Hi Krzysztof:
->>>>>
->>>>> Thanks for your advice, but I have a question about this: when I should
->>>>> use the DT override? The memory mapping of the CV1800 and CV1810 are
->>>>> almost the same (the CV1810 have more peripheral and the future SG200X
->>>>> have the same layout). IIRC, this is why conor suggested using DT override
->>>>> to make modification easier. But duplicating node seems to break thiS, so
->>>>> I's pretty confused.
->>>>
->>>> Go with whatever your subarchitecture and architecture maintainers
->>>> prefer, I just shared my opinion that I find such code difficult to read
->>>> and maintain.
->>>>
->>>> Extending node with supplies, pinctrl or even clocks would be readable.
->>>> But the compatible: no. The same applies when you need to delete
->>>> property or subnode: not readable/maintainable IMHO.
->>>
->>> There are apparently 3 or 4 of these SoCs that are basically identical,
->>> which is why the approach was taken. I do agree that it looks somewhat
->>> messy because I was looking for device-specific compatibles for these
->>> SoCs.
->>>
->>
->> I agree that this may be messy. But it might still be acceptable if we
->> limit the number of devices in this format.
->>
->> IIRC, only clint, plic, clk, maybe pinmux only needs different compatible.
->> For more complex device, such as tpu and codec, I agree with duplicating
->> nodes and make them SoC specific.
->
->Okay. We will see how it goes. We are not stuck doing it one way, we can
->revisit the decision later if things start to be confusing.
->
->>
->> As for this patch, I have already adjusted the order of clock to ensure
->> the compatible among different SoCs. This will make the clock assignment
->> easier.
->
->
->On Fri, Dec 08, 2023 at 09:13:34AM +0800, Inochi Amaoto wrote:
->>> On Thu, Dec 07, 2023 at 01:52:16PM +0100, Krzysztof Kozlowski wrote:
->>>> On 07/12/2023 10:42, Inochi Amaoto wrote:
->>>>>>> +&clk {
->>>>>>> +	compatible = "sophgo,cv1810-clk";
->>>>>>> +};
->>>>>>> diff --git a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi b/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
->>>>>>> index 2d6f4a4b1e58..6ea1b2784db9 100644
->>>>>>> --- a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
->>>>>>> +++ b/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
->>>>>>> @@ -53,6 +53,12 @@ soc {
->>>>>>>  		dma-noncoherent;
->>>>>>>  		ranges;
->>>>>>>
->>>>>>> +		clk: clock-controller@3002000 {
->>>>>>> +			reg = <0x03002000 0x1000>;
->>>>>>> +			clocks = <&osc>;
->>>>>>> +			#clock-cells = <1>;
->>>>>>
->>>>>> I don't find such layout readable and maintainable. I did some parts
->>>>>> like this long, long time ago for one of my SoCs (Exynos54xx), but I
->>>>>> find it over time unmaintainable approach. I strongly suggest to have
->>>>>> compatible and other properties in one place, so cv1800 and cv1812, even
->>>>>> if it duplicates the code.
->>>>>>
->>>>>
->>>>> Hi Krzysztof:
->>>>>
->>>>> Thanks for your advice, but I have a question about this: when I should
->>>>> use the DT override? The memory mapping of the CV1800 and CV1810 are
->>>>> almost the same (the CV1810 have more peripheral and the future SG200X
->>>>> have the same layout). IIRC, this is why conor suggested using DT override
->>>>> to make modification easier. But duplicating node seems to break thiS, so
->>>>> I's pretty confused.
->>>>
->>>> Go with whatever your subarchitecture and architecture maintainers
->>>> prefer, I just shared my opinion that I find such code difficult to read
->>>> and maintain.
->>>>
->>>> Extending node with supplies, pinctrl or even clocks would be readable.
->>>> But the compatible: no. The same applies when you need to delete
->>>> property or subnode: not readable/maintainable IMHO.
->>>
->>> There are apparently 3 or 4 of these SoCs that are basically identical,
->>> which is why the approach was taken. I do agree that it looks somewhat
->>> messy because I was looking for device-specific compatibles for these
->>> SoCs.
->>>
->>
->> I agree that this may be messy. But it might still be acceptable if we
->> limit the number of devices in this format.
->>
->> IIRC, only clint, plic, clk, maybe pinmux only needs different compatible.
->> For more complex device, such as tpu and codec, I agree with duplicating
->> nodes and make them SoC specific.
->
->Okay. We will see how it goes. We are not stuck doing it one way, we can
->revisit the decision later if things start to be confusing.
->
+Hi Chen,
 
-Yes, now let's see what will happen and then improve it.
+kernel test robot noticed the following build warnings:
 
->>
->> As for this patch, I have already adjusted the order of clock to ensure
->> the compatible among different SoCs. This will make the clock assignment
->> easier.
->
+url:    https://github.com/intel-lab-lkp/linux/commits/Chen-Wang/dt-bindings-soc-sophgo-Add-Sophgo-system-control-module/20231208-091702
+base:   b85ea95d086471afb4ad062012a4d73cd328fa86
+patch link:    https://lore.kernel.org/r/d1aa4f76f360ebd7b790a4786641f1b0188dbba8.1701997033.git.unicorn_wang%40outlook.com
+patch subject: [PATCH v6 3/4] clk: sophgo: Add SG2042 clock generator driver
+config: xtensa-randconfig-r071-20231208 (https://download.01.org/0day-ci/archive/20231208/202312081933.MUdHNASt-lkp@intel.com/config)
+compiler: xtensa-linux-gcc (GCC) 13.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20231208/202312081933.MUdHNASt-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202312081933.MUdHNASt-lkp@intel.com/
+
+smatch warnings:
+drivers/clk/sophgo/clk-sophgo-sg2042.c:1282 sg2042_clk_init_clk_data() warn: passing zero to 'PTR_ERR'
+
+vim +/PTR_ERR +1282 drivers/clk/sophgo/clk-sophgo-sg2042.c
+
+7c68ebea1041f9 Chen Wang 2023-12-08  1258  static int __init sg2042_clk_init_clk_data(
+7c68ebea1041f9 Chen Wang 2023-12-08  1259  	struct device_node *node,
+7c68ebea1041f9 Chen Wang 2023-12-08  1260  	int num_clks,
+7c68ebea1041f9 Chen Wang 2023-12-08  1261  	struct sg2042_clk_data **pp_clk_data)
+7c68ebea1041f9 Chen Wang 2023-12-08  1262  {
+7c68ebea1041f9 Chen Wang 2023-12-08  1263  	int ret = 0;
+7c68ebea1041f9 Chen Wang 2023-12-08  1264  	struct sg2042_clk_data *clk_data = NULL;
+7c68ebea1041f9 Chen Wang 2023-12-08  1265  	struct device_node *np_syscon;
+7c68ebea1041f9 Chen Wang 2023-12-08  1266  
+7c68ebea1041f9 Chen Wang 2023-12-08  1267  	np_syscon = of_parse_phandle(node, "sophgo,system-ctrl", 0);
+7c68ebea1041f9 Chen Wang 2023-12-08  1268  	if (!np_syscon) {
+7c68ebea1041f9 Chen Wang 2023-12-08  1269  		pr_err("failed to get system-ctrl node\n");
+7c68ebea1041f9 Chen Wang 2023-12-08  1270  		ret = -EINVAL;
+7c68ebea1041f9 Chen Wang 2023-12-08  1271  		goto error_out;
+7c68ebea1041f9 Chen Wang 2023-12-08  1272  	}
+7c68ebea1041f9 Chen Wang 2023-12-08  1273  
+7c68ebea1041f9 Chen Wang 2023-12-08  1274  	clk_data = kzalloc(struct_size(clk_data, onecell_data.hws, num_clks), GFP_KERNEL);
+7c68ebea1041f9 Chen Wang 2023-12-08  1275  	if (!clk_data) {
+7c68ebea1041f9 Chen Wang 2023-12-08  1276  		ret = -ENOMEM;
+7c68ebea1041f9 Chen Wang 2023-12-08  1277  		goto error_out;
+7c68ebea1041f9 Chen Wang 2023-12-08  1278  	}
+7c68ebea1041f9 Chen Wang 2023-12-08  1279  
+7c68ebea1041f9 Chen Wang 2023-12-08  1280  	clk_data->regmap_syscon = device_node_to_regmap(np_syscon);
+7c68ebea1041f9 Chen Wang 2023-12-08  1281  	if (IS_ERR_OR_NULL(clk_data->regmap_syscon)) {
+7c68ebea1041f9 Chen Wang 2023-12-08 @1282  		pr_err("cannot get regmap_syscon %ld\n", PTR_ERR(clk_data->regmap_syscon));
+
+I don't think device_node_to_regmap() can return NULL, but if it could
+then it shouldn't be handled like this:
+
+https://staticthinking.wordpress.com/2022/08/01/mixing-error-pointers-and-null/
+
+
+7c68ebea1041f9 Chen Wang 2023-12-08  1283  		ret = -ENODEV;
+7c68ebea1041f9 Chen Wang 2023-12-08  1284  		goto cleanup;
+7c68ebea1041f9 Chen Wang 2023-12-08  1285  	}
+7c68ebea1041f9 Chen Wang 2023-12-08  1286  	clk_data->iobase_syscon = of_iomap(np_syscon, 0);
+7c68ebea1041f9 Chen Wang 2023-12-08  1287  	clk_data->iobase = of_iomap(node, 0);
+7c68ebea1041f9 Chen Wang 2023-12-08  1288  	clk_data->onecell_data.num = num_clks;
+7c68ebea1041f9 Chen Wang 2023-12-08  1289  
+7c68ebea1041f9 Chen Wang 2023-12-08  1290  	*pp_clk_data = clk_data;
+7c68ebea1041f9 Chen Wang 2023-12-08  1291  	return ret;
+7c68ebea1041f9 Chen Wang 2023-12-08  1292  
+7c68ebea1041f9 Chen Wang 2023-12-08  1293  cleanup:
+7c68ebea1041f9 Chen Wang 2023-12-08  1294  	kfree(clk_data);
+7c68ebea1041f9 Chen Wang 2023-12-08  1295  
+7c68ebea1041f9 Chen Wang 2023-12-08  1296  error_out:
+7c68ebea1041f9 Chen Wang 2023-12-08  1297  	return ret;
+7c68ebea1041f9 Chen Wang 2023-12-08  1298  }
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
