@@ -1,43 +1,43 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Glt93t2i"
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D583F1
-	for <linux-clk@vger.kernel.org>; Sun, 10 Dec 2023 06:01:46 -0800 (PST)
-Received: by mail-lj1-x22d.google.com with SMTP id 38308e7fff4ca-2c9f62fca3bso45365431fa.0
-        for <linux-clk@vger.kernel.org>; Sun, 10 Dec 2023 06:01:46 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N/qWSjbv"
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDDCE10D
+	for <linux-clk@vger.kernel.org>; Sun, 10 Dec 2023 06:01:49 -0800 (PST)
+Received: by mail-ed1-x530.google.com with SMTP id 4fb4d7f45d1cf-54f4b31494fso4647975a12.1
+        for <linux-clk@vger.kernel.org>; Sun, 10 Dec 2023 06:01:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702216905; x=1702821705; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1702216908; x=1702821708; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=509ouQXj36I5/HmX907dzCDtwty3xLRM03HHWK4ixvQ=;
-        b=Glt93t2iUOJW1gB7zGNRZwZbsx6UlKNwW9zM/VbtaJxPqKQUElAMx1dn8ZwlizR1ed
-         tBpxGCtHWk9CM2EQU2HX9EXuwtea9ASyK0gtgBYgpTDiR6TLSPmYTuxzUZEdgHd5sTXr
-         kzJjOSHhrlb2JCAKQiSHp6LjdznYhCoS5+VlizqXhHWyUVP23LAwiLwz93cRCiZpZpg5
-         AyPBkdkbvfEwA2magQtBdGgMF2tlqvoGqWhqKwLngWYFb4L4N6+Jvjh++PceTP7V+q/X
-         QYbo0/FdT0m9rXYJmazkSQZLsq/TyU2sYQ3OcYBE8l/ADi+7i5kN7res7/u3s2YncoC6
-         7DRg==
+        bh=SrhZNFmRkf5QkANQC+uz36bgjgb8UZO2KJuZBL7fznE=;
+        b=N/qWSjbvFFjOENa3partdG9d5jVQF7dvvhnZDzjL67UimfXQJ/2i8ScxfNyKpZ40ZZ
+         JKmzhCKpYn4h2ZvquOeqTb0ayH1CDRFlEkIPt9CjaxamnZ44zO6/gBPx8mNA9aAf15AX
+         AShkYJTYoNGr0yQuMSv8yLVKH7OLfY2I+kOCq1lihpB82Sb32lUYT1yWcWO210HZ/Tc8
+         w3bgJbXZMXbPyM2+O+Q1u47OVrpqRehc7KGNmcQTHNbPTG9Vi3aq2hVAOz/gWT9OhVvp
+         ljGmAJYqT1UQrBWyPWGRTd7/P5KOvD6AGEtUs0R5T/BJ3ER7xFBpqw03lNMX3HdAp7Zt
+         oqUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702216905; x=1702821705;
+        d=1e100.net; s=20230601; t=1702216908; x=1702821708;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=509ouQXj36I5/HmX907dzCDtwty3xLRM03HHWK4ixvQ=;
-        b=nJDzWU0GjMiTBTxNE4FmHmCsoiOy0HVU3a5lH8Pur3kZKHfXh9y8EKxl02GjfZjRMm
-         CHgxX+dCsndvuvjU4bYmEIoq9/Emj7IJamT3FBE/PlJivazoAgcnDiIMvdHuMP32hdZt
-         vEezUea91VMEXHA9b+bkXsiv5vIcy6l97Qn4hgKilWeQCBSIo5gq+kLjLLHXYXBNdfwJ
-         xR+HC4QQNKLwYpOD5Tro+w7lYiCPV/hrdAiaHIV8WsGKFHewS/S74zWjMmDGP8qHHiKX
-         6AergkNYfEwB1KYp9nGvvTBjAJj8PSwGwgLk4x2nRx2VQ0DweCQawok+3RQ/I5/UEtrr
-         Vk6Q==
-X-Gm-Message-State: AOJu0YxwUI5lTDGnF0lGp186FT4wUKLCwPrd8VvW67XgBt9CrDP6A/dE
-	d0Fy2fr4aaOjykpWWaTKcVsUXSB6PWanP6+zJvg=
-X-Google-Smtp-Source: AGHT+IEZmhO9bfzbn9JehG5hOmeoOZbTHQz/rhyB/WkPhsdghbEEi7AQ8p1xd7LZWL25BdUtRojVkA==
-X-Received: by 2002:a05:651c:10b6:b0:2cc:2189:7f5a with SMTP id k22-20020a05651c10b600b002cc21897f5amr36215ljn.93.1702216905124;
-        Sun, 10 Dec 2023 06:01:45 -0800 (PST)
+        bh=SrhZNFmRkf5QkANQC+uz36bgjgb8UZO2KJuZBL7fznE=;
+        b=wlURmC+xdWCBYJ/E6B+UcHQlKidl9iHkxcniio6lLNFKgyYnw4ujeRgQicsJIXk8+Y
+         pZnx+l3IWHLCNK3CHHEcJSzJEi++J06jq3jwToMiul+7GukGjN4xKbc20YtCm16mW0PQ
+         AYWgX/XrhLlIyFYprx2e4+X8kKYBsvuwDWX1CaivtJZV01T7xtLntyi2ei+exSkLtdoa
+         z+eajYm3oAYCtuxC9WkOKjfgEOtvPjfmU2SBM19yx/eMM96MCa8B0UekqLJPd/5LaFRy
+         wV0dRKY8dueP3gn8RZeryokH/9EDS9pxVH2CZEZCrY/rFE7RyqFLSVpRErCbQAhGGA8E
+         Nm+Q==
+X-Gm-Message-State: AOJu0YxudmEu7EPWpH2mRrqh3fASK1mF82/XDI6hoMYJtHadc3lUr8EE
+	oUr3zUy3N04607Hk6goe5lXZOg==
+X-Google-Smtp-Source: AGHT+IGD245LrSk0xYctz3uy/kk2KvcUmnSUKmb1u8fAYEK0Zu2DWqkA0Pi8IyNUK3s5IFZQRvE6Bw==
+X-Received: by 2002:a17:907:280f:b0:a1f:4d21:301a with SMTP id eb15-20020a170907280f00b00a1f4d21301amr3987023ejc.13.1702216908355;
+        Sun, 10 Dec 2023 06:01:48 -0800 (PST)
 Received: from [127.0.1.1] ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id tg10-20020a1709078dca00b00a178b965899sm3458691ejc.100.2023.12.10.06.01.42
+        by smtp.gmail.com with ESMTPSA id tg10-20020a1709078dca00b00a178b965899sm3458691ejc.100.2023.12.10.06.01.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Dec 2023 06:01:44 -0800 (PST)
+        Sun, 10 Dec 2023 06:01:48 -0800 (PST)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
  mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org, 
@@ -53,13 +53,13 @@ Cc: tudor.ambarus@linaro.org, andre.draszik@linaro.org,
  linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
  linux-watchdog@vger.kernel.org, kernel-team@android.com, 
  linux-serial@vger.kernel.org
-In-Reply-To: <20231209233106.147416-2-peter.griffin@linaro.org>
+In-Reply-To: <20231209233106.147416-3-peter.griffin@linaro.org>
 References: <20231209233106.147416-1-peter.griffin@linaro.org>
- <20231209233106.147416-2-peter.griffin@linaro.org>
-Subject: Re: (subset) [PATCH v6 01/20] dt-bindings: soc: samsung:
- exynos-pmu: Add gs101 compatible
-Message-Id: <170221690211.46013.5711996168125251211.b4-ty@linaro.org>
-Date: Sun, 10 Dec 2023 15:01:42 +0100
+ <20231209233106.147416-3-peter.griffin@linaro.org>
+Subject: Re: (subset) [PATCH v6 02/20] dt-bindings: clock: Add Google gs101
+ clock management unit bindings
+Message-Id: <170221690550.46013.13677086533521441233.b4-ty@linaro.org>
+Date: Sun, 10 Dec 2023 15:01:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -71,15 +71,16 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.12.3
 
 
-On Sat, 09 Dec 2023 23:30:47 +0000, Peter Griffin wrote:
-> Add gs101-pmu compatible to the bindings documentation.
+On Sat, 09 Dec 2023 23:30:48 +0000, Peter Griffin wrote:
+> Provide dt-schema documentation for Google gs101 SoC clock controller.
+> Currently this adds support for cmu_top, cmu_misc and cmu_apm.
 > 
 > 
 
 Applied, thanks!
 
-[01/20] dt-bindings: soc: samsung: exynos-pmu: Add gs101 compatible
-        https://git.kernel.org/krzk/linux/c/fdd78ff04ccc96f628c2f93e0d48ab0a74bf34ef
+[02/20] dt-bindings: clock: Add Google gs101 clock management unit bindings
+        https://git.kernel.org/krzk/linux/c/0a910f1606384a5886a045e36b1fc80a7fa6706b
 
 Best regards,
 -- 
