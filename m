@@ -1,54 +1,59 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bpgfOHtV"
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9738CFA;
-	Sun, 10 Dec 2023 08:50:46 -0800 (PST)
-Received: by mail-pj1-x102e.google.com with SMTP id 98e67ed59e1d1-2886d445d8dso1009275a91.1;
-        Sun, 10 Dec 2023 08:50:46 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TUUpOrdg"
+Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 498A0BD;
+	Sun, 10 Dec 2023 09:19:17 -0800 (PST)
+Received: by mail-pg1-x52c.google.com with SMTP id 41be03b00d2f7-55b5a37acb6so640128a12.0;
+        Sun, 10 Dec 2023 09:19:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702227046; x=1702831846; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1702228756; x=1702833556; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cx83+ClTbz5lUz2UC/9mxXOF3CM87EbKd6ZcjX3rjAI=;
-        b=bpgfOHtVXinUsbpKkASsksV0uyjqgpJFty9QpCwftGrsPe3OlLghtvzF5nvz7vI0yA
-         8/HFg0n3x/gKvdD4BLVZm1QJL7n2S572Dx/+xgwVH/UynACUtodZ5SHyJtbbJToxav12
-         X7xwoW6U2QvRcr/243HmGaufgeOf7KLYbWTlX6YeeOXiymu5ok1x36lICYUDVdUeVGso
-         fXQqzgWruPxRwlX+jcHrBkns4HpkfgIMEoO2Gms9a3odxBgyFyPz7I5BKmu4vSWsByS4
-         jejJ/rLChTg/5brPbntGvMO79VeeXcsqk2kG7Xy57fTCjzE+CWOJDG57h8YJZtPDAFIz
-         a4Jg==
+        bh=IJ/wf0TFY3jIklXy55GzkHPDNA98SpFq1MQxY2HzAuY=;
+        b=TUUpOrdguyBa9IdyXb6l2rYyGQKtb2Rlvx9P7R7h7pyTTxFEKuHpP5nqQ7Y5p3mgs2
+         BLG30TblO/UjCt/Nvj9giWCyMps0Ff91vgSkvfJKqSIWDmXfEB8Jq861/IGigwTZijtv
+         Gx2TgJf0YmHqZLdev2ueNapy7qlRF616wuCb1ScA640C0MRdgOJ9VoD1U9e5Eu3U5by/
+         cF7elkJ8SPX2pFgdxsbXLY9/MuwHk3GT7iQJGp5/r9KfZ9IBlsErv00TPSUlm0WjBQrN
+         zjwqNEVOpvqezKfIGd4qiQzvC3iFN7/MUbfpLvmcdAx9C3C7r1WAfT17krdilRCqSfZY
+         R6ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702227046; x=1702831846;
+        d=1e100.net; s=20230601; t=1702228756; x=1702833556;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=cx83+ClTbz5lUz2UC/9mxXOF3CM87EbKd6ZcjX3rjAI=;
-        b=PQQxbgrd9IlSbjNTPxbFf7TRe+wVFlc6Z9H9U0K0ebPcfF/VMFUdzg/xRejfK9iZQc
-         /AhsYjQvAxVY6cZWFnNnddU4wLCAqM1NYyCRqCFu/k8FDK57GhUS0zOeWWdMh1QMRyLy
-         +7FKPaBrtGLgZn1mqgb48R3Hq6A3ZvZz78iqrPV+H0soNlK93z67fo3ATlac8V8VqX6f
-         60SRwTJXvYLRD8mJ1+OHcjCRAyiKjeK0VLX7NYhZsnu6TJ31kj1U3+bjlRpBS8M6ScL+
-         YPe5OAiQyLFGq2GO3fKm/q/3Ll3BkKZHnYIGN0xU9VAeb8HzVwk738lCBztcH10Bn2mu
-         B8mg==
-X-Gm-Message-State: AOJu0Yz0IFksKccnK1tUoVHVpNyIaZv91VZ09WrieQjty3MgWl9k6q/Z
-	xY/Ll9KO2K532Z2OLiydds0=
-X-Google-Smtp-Source: AGHT+IEfbTLarMP63qUNtsd6a3QqVptoby0FIdULnNzGnoM7p8yeSo8LcHvXt+o76mrdpYycJjKDmA==
-X-Received: by 2002:a05:6a20:3d29:b0:18b:c9cf:4521 with SMTP id y41-20020a056a203d2900b0018bc9cf4521mr7940567pzi.2.1702227045917;
-        Sun, 10 Dec 2023 08:50:45 -0800 (PST)
+        bh=IJ/wf0TFY3jIklXy55GzkHPDNA98SpFq1MQxY2HzAuY=;
+        b=RKDDfHpv9ogjnr3Ql6fEMHTFKxAc0in/OzhFA/Q+Z2Pj6r9wR5bM4t+PhugtzuQDCZ
+         k1HBZTQKlZ3oxCZOffS1ZUYFtUwjbXJIQP5K1PWmXWXaCBOGfJrvTrAHAkUtzakSZFSi
+         wfyaJUReiOaA3U1/1sIhqz3/KugKsAaA30cLyrLvQ7fP5oFms85/lMCJf6ZG6GhXMngU
+         lMLAVSyWCqfc9UFUA7hvkkrx5JSMDNXi4Xzl30KV+RosVrQ5wp/ODUSgCF5Z/348DXL0
+         GYUkGPF5/DIV/tWin7and4jelPs8OpcbHzMlPMcePb7bjVKUxNSPtX6ZIY8bDHY/uj8h
+         NpQw==
+X-Gm-Message-State: AOJu0YzUqPtqZE4ifCwed3CCrYmFceltHZchO6bM9S8KVhgdxS1oH1UW
+	bp8AQ1SfpoBHgS3bXrDmq8Y=
+X-Google-Smtp-Source: AGHT+IHQb332XOYEfPhZRtEl4QLywKUOti5zdZlXfbGfGxO0RUFtNeJgzLpREEUN2NkCaiuK6oK9Cg==
+X-Received: by 2002:a17:902:ee81:b0:1d0:5efd:35cf with SMTP id a1-20020a170902ee8100b001d05efd35cfmr5966163pld.4.1702228756529;
+        Sun, 10 Dec 2023 09:19:16 -0800 (PST)
 Received: from localhost.localdomain ([140.116.154.65])
-        by smtp.gmail.com with ESMTPSA id hi16-20020a17090b30d000b00286bd821426sm6758938pjb.26.2023.12.10.08.50.43
+        by smtp.gmail.com with ESMTPSA id m2-20020a170902bb8200b001c62b9a51a4sm4976264pls.239.2023.12.10.09.19.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Dec 2023 08:50:45 -0800 (PST)
+        Sun, 10 Dec 2023 09:19:15 -0800 (PST)
 From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: robh@kernel.org,
-	abel.vesa@linaro.org,
-	dinguyen@kernel.org,
+To: abelvesa@kernel.org
+Cc: peng.fan@nxp.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	linux-imx@nxp.com,
 	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Kuan-Wei Chiu <visitorckw@gmail.com>
-Subject: [PATCH] clk: hi3620: Fix memory leak in hi3620_mmc_clk_init()
-Date: Mon, 11 Dec 2023 00:50:40 +0800
-Message-Id: <20231210165040.3407545-1-visitorckw@gmail.com>
+Subject: [PATCH] clk: imx: scu: Fix memory leak in __imx_clk_gpr_scu()
+Date: Mon, 11 Dec 2023 01:19:07 +0800
+Message-Id: <20231210171907.3410922-1-visitorckw@gmail.com>
 X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -58,32 +63,32 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In cases where kcalloc() fails for the 'clk_data->clks' allocation, the
-code path does not handle the failure gracefully, potentially leading
-to a memory leak. This fix ensures proper cleanup by freeing the
-allocated memory for 'clk_data' before returning.
+In cases where imx_clk_is_resource_owned() returns false, the code path
+does not handle the failure gracefully, potentially leading to a memory
+leak. This fix ensures proper cleanup by freeing the allocated memory
+for 'clk_node' before returning.
 
 Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
 ---
- drivers/clk/hisilicon/clk-hi3620.c | 4 +++-
+ drivers/clk/imx/clk-scu.c | 4 +++-
  1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/hisilicon/clk-hi3620.c b/drivers/clk/hisilicon/clk-hi3620.c
-index 2d7186905abd..5d0226530fdb 100644
---- a/drivers/clk/hisilicon/clk-hi3620.c
-+++ b/drivers/clk/hisilicon/clk-hi3620.c
-@@ -466,8 +466,10 @@ static void __init hi3620_mmc_clk_init(struct device_node *node)
- 		return;
+diff --git a/drivers/clk/imx/clk-scu.c b/drivers/clk/imx/clk-scu.c
+index be89180dd19c..e48a904c0013 100644
+--- a/drivers/clk/imx/clk-scu.c
++++ b/drivers/clk/imx/clk-scu.c
+@@ -886,8 +886,10 @@ struct clk_hw *__imx_clk_gpr_scu(const char *name, const char * const *parent_na
+ 		return ERR_PTR(-EINVAL);
+ 	}
  
- 	clk_data->clks = kcalloc(num, sizeof(*clk_data->clks), GFP_KERNEL);
--	if (!clk_data->clks)
-+	if (!clk_data->clks) {
-+		kfree(clk_data);
- 		return;
+-	if (!imx_clk_is_resource_owned(rsrc_id))
++	if (!imx_clk_is_resource_owned(rsrc_id)) {
++		kfree(clk_node);
+ 		return NULL;
 +	}
  
- 	for (i = 0; i < num; i++) {
- 		struct hisi_mmc_clock *mmc_clk = &hi3620_mmc_clks[i];
+ 	clk = kzalloc(sizeof(*clk), GFP_KERNEL);
+ 	if (!clk) {
 -- 
 2.25.1
 
