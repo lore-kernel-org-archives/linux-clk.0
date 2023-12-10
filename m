@@ -1,59 +1,53 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TUUpOrdg"
-Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 498A0BD;
-	Sun, 10 Dec 2023 09:19:17 -0800 (PST)
-Received: by mail-pg1-x52c.google.com with SMTP id 41be03b00d2f7-55b5a37acb6so640128a12.0;
-        Sun, 10 Dec 2023 09:19:17 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m3soUrjp"
+Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1CE5FA;
+	Sun, 10 Dec 2023 09:52:47 -0800 (PST)
+Received: by mail-pg1-x536.google.com with SMTP id 41be03b00d2f7-55b5a37acb6so644644a12.0;
+        Sun, 10 Dec 2023 09:52:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702228756; x=1702833556; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1702230767; x=1702835567; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IJ/wf0TFY3jIklXy55GzkHPDNA98SpFq1MQxY2HzAuY=;
-        b=TUUpOrdguyBa9IdyXb6l2rYyGQKtb2Rlvx9P7R7h7pyTTxFEKuHpP5nqQ7Y5p3mgs2
-         BLG30TblO/UjCt/Nvj9giWCyMps0Ff91vgSkvfJKqSIWDmXfEB8Jq861/IGigwTZijtv
-         Gx2TgJf0YmHqZLdev2ueNapy7qlRF616wuCb1ScA640C0MRdgOJ9VoD1U9e5Eu3U5by/
-         cF7elkJ8SPX2pFgdxsbXLY9/MuwHk3GT7iQJGp5/r9KfZ9IBlsErv00TPSUlm0WjBQrN
-         zjwqNEVOpvqezKfIGd4qiQzvC3iFN7/MUbfpLvmcdAx9C3C7r1WAfT17krdilRCqSfZY
-         R6ww==
+        bh=8/xSfRIfAoE+xV2upe+TlMguoR16jHyW0kjGiJ1WVl4=;
+        b=m3soUrjppBpEEXIPpzqk+qbycV5PtleaxwSZ75/N+SMVeZsU2KftZSonDqjqC9u1SD
+         hV+c+ohS6u7bbnQAqfXqJbjfarAto5yk44vLXdbBJUKTvM1XaYIDeBB6oOCjJS/BV7M3
+         ydkBs0+f/TKNSUgIwcFK8LW5f2YbjKUNv6Mqd9aULdqhWTltVIpqUwfFBx0Amw8SDTYB
+         hEjjqsdsALwaY8v6NZmeeTgOt6bUZmfkmm0oFV/cQAKxwCkS46jdZ2GgaLB4TJWc3z0p
+         e2s7MdWR4rlCcsT/XQUCnPdcWOmNh9V8d/PagqHlzgBKtcWZSWL3/aqmDF9aQIAMgJgT
+         K/Iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702228756; x=1702833556;
+        d=1e100.net; s=20230601; t=1702230767; x=1702835567;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=IJ/wf0TFY3jIklXy55GzkHPDNA98SpFq1MQxY2HzAuY=;
-        b=RKDDfHpv9ogjnr3Ql6fEMHTFKxAc0in/OzhFA/Q+Z2Pj6r9wR5bM4t+PhugtzuQDCZ
-         k1HBZTQKlZ3oxCZOffS1ZUYFtUwjbXJIQP5K1PWmXWXaCBOGfJrvTrAHAkUtzakSZFSi
-         wfyaJUReiOaA3U1/1sIhqz3/KugKsAaA30cLyrLvQ7fP5oFms85/lMCJf6ZG6GhXMngU
-         lMLAVSyWCqfc9UFUA7hvkkrx5JSMDNXi4Xzl30KV+RosVrQ5wp/ODUSgCF5Z/348DXL0
-         GYUkGPF5/DIV/tWin7and4jelPs8OpcbHzMlPMcePb7bjVKUxNSPtX6ZIY8bDHY/uj8h
-         NpQw==
-X-Gm-Message-State: AOJu0YzUqPtqZE4ifCwed3CCrYmFceltHZchO6bM9S8KVhgdxS1oH1UW
-	bp8AQ1SfpoBHgS3bXrDmq8Y=
-X-Google-Smtp-Source: AGHT+IHQb332XOYEfPhZRtEl4QLywKUOti5zdZlXfbGfGxO0RUFtNeJgzLpREEUN2NkCaiuK6oK9Cg==
-X-Received: by 2002:a17:902:ee81:b0:1d0:5efd:35cf with SMTP id a1-20020a170902ee8100b001d05efd35cfmr5966163pld.4.1702228756529;
-        Sun, 10 Dec 2023 09:19:16 -0800 (PST)
+        bh=8/xSfRIfAoE+xV2upe+TlMguoR16jHyW0kjGiJ1WVl4=;
+        b=U5LX2Dt/fECiEHsg2IF/cmy0FVhcbrMybWvepTJACNVU5B/HUSTkeSsRCIGw403Kjn
+         1nG9X5SKnBLTpr9ppOAEW7DW5C5vEwlGW7gylcKf4FbLQmkhKCBp0LZ5Pjw0PhwxZes7
+         5UMQvFSZuD8aqekBfKWOI5lmaFhGIz7BzE1e3nYB8aQDVNmIHCwsel+qpgmFcz+L5d/h
+         6lk/naWth/BTl5zqNzsBprqL/Pxly3IKz6/wQH1CnqbHnQSgap+WfDlRiJJt0eH8znH1
+         j8OO7kc5yy4jJaPjsNjBiXBpIIzskapYl/M2soCP6Kd5ezHIbpl/7TeA3nQYpJ+e7Hol
+         ly/w==
+X-Gm-Message-State: AOJu0YyEFeQ+4JnqGtQdgDWAad+Qj0jqgditiUDyqvUK1m5EvaNMsfBK
+	s9SwkdX9x7kJ9u5R45x9fUE=
+X-Google-Smtp-Source: AGHT+IFu/zEyV8OL2/e2fr9uzatf6VKha/XZzrpfYgYGNJ/ZcPZ9ZlW39Cr4g0PQmSyj9ibLvOIkAQ==
+X-Received: by 2002:a17:902:db10:b0:1d0:bb65:6860 with SMTP id m16-20020a170902db1000b001d0bb656860mr6145197plx.6.1702230767346;
+        Sun, 10 Dec 2023 09:52:47 -0800 (PST)
 Received: from localhost.localdomain ([140.116.154.65])
-        by smtp.gmail.com with ESMTPSA id m2-20020a170902bb8200b001c62b9a51a4sm4976264pls.239.2023.12.10.09.19.12
+        by smtp.gmail.com with ESMTPSA id f12-20020a170902684c00b001cfcf0fcc56sm5157868pln.84.2023.12.10.09.52.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Dec 2023 09:19:15 -0800 (PST)
+        Sun, 10 Dec 2023 09:52:46 -0800 (PST)
 From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: abelvesa@kernel.org
-Cc: peng.fan@nxp.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	linux-imx@nxp.com,
+To: mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: duje.mihanovic@skole.hr,
+	conor.dooley@microchip.com,
 	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Kuan-Wei Chiu <visitorckw@gmail.com>
-Subject: [PATCH] clk: imx: scu: Fix memory leak in __imx_clk_gpr_scu()
-Date: Mon, 11 Dec 2023 01:19:07 +0800
-Message-Id: <20231210171907.3410922-1-visitorckw@gmail.com>
+Subject: [PATCH] clk: mmp: pxa168: Fix memory leak in pxa168_clk_init()
+Date: Mon, 11 Dec 2023 01:52:32 +0800
+Message-Id: <20231210175232.3414584-1-visitorckw@gmail.com>
 X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -63,32 +57,42 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In cases where imx_clk_is_resource_owned() returns false, the code path
+In cases where mapping of mpmu/apmu/apbc registers fails, the code path
 does not handle the failure gracefully, potentially leading to a memory
 leak. This fix ensures proper cleanup by freeing the allocated memory
-for 'clk_node' before returning.
+for 'pxa_unit' before returning.
 
 Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
 ---
- drivers/clk/imx/clk-scu.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/clk/mmp/clk-of-pxa168.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/clk/imx/clk-scu.c b/drivers/clk/imx/clk-scu.c
-index be89180dd19c..e48a904c0013 100644
---- a/drivers/clk/imx/clk-scu.c
-+++ b/drivers/clk/imx/clk-scu.c
-@@ -886,8 +886,10 @@ struct clk_hw *__imx_clk_gpr_scu(const char *name, const char * const *parent_na
- 		return ERR_PTR(-EINVAL);
+diff --git a/drivers/clk/mmp/clk-of-pxa168.c b/drivers/clk/mmp/clk-of-pxa168.c
+index fb0df64cf053..c5a7ba1deaa3 100644
+--- a/drivers/clk/mmp/clk-of-pxa168.c
++++ b/drivers/clk/mmp/clk-of-pxa168.c
+@@ -308,18 +308,21 @@ static void __init pxa168_clk_init(struct device_node *np)
+ 	pxa_unit->mpmu_base = of_iomap(np, 0);
+ 	if (!pxa_unit->mpmu_base) {
+ 		pr_err("failed to map mpmu registers\n");
++		kfree(pxa_unit);
+ 		return;
  	}
  
--	if (!imx_clk_is_resource_owned(rsrc_id))
-+	if (!imx_clk_is_resource_owned(rsrc_id)) {
-+		kfree(clk_node);
- 		return NULL;
-+	}
+ 	pxa_unit->apmu_base = of_iomap(np, 1);
+ 	if (!pxa_unit->apmu_base) {
+ 		pr_err("failed to map apmu registers\n");
++		kfree(pxa_unit);
+ 		return;
+ 	}
  
- 	clk = kzalloc(sizeof(*clk), GFP_KERNEL);
- 	if (!clk) {
+ 	pxa_unit->apbc_base = of_iomap(np, 2);
+ 	if (!pxa_unit->apbc_base) {
+ 		pr_err("failed to map apbc registers\n");
++		kfree(pxa_unit);
+ 		return;
+ 	}
+ 
 -- 
 2.25.1
 
