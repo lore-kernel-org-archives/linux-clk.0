@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y1yDpqFS"
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DB05F5
-	for <linux-clk@vger.kernel.org>; Sun, 10 Dec 2023 06:23:56 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-40c32df9174so27927705e9.3
-        for <linux-clk@vger.kernel.org>; Sun, 10 Dec 2023 06:23:56 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ux5KRqPl"
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B2D6C5
+	for <linux-clk@vger.kernel.org>; Sun, 10 Dec 2023 06:24:47 -0800 (PST)
+Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-40c3f68b79aso12543495e9.0
+        for <linux-clk@vger.kernel.org>; Sun, 10 Dec 2023 06:24:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702218235; x=1702823035; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1702218286; x=1702823086; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=6TH7HOHmtk2UQwnvLajjv0TPG0/RJ9hIib3oVUU6SCs=;
-        b=Y1yDpqFSSyqUlhMT6jRKdIGDY3IYF7p1h7h4HOIBIBBHzzn/2v6r8evhojACyTHud+
-         EuQUQfxCtJYe2+7UAKgT2mzOrbwNh8gd2yHz9DWYkZ/X1njSxlfM6Dmlanj6UYDlfs/w
-         Ah9Fs8Odcbct4xbrhkirlfzJtmV9YpT0HSAPxtAhodaGXYpQI2yac2aMmMtdAArmvOE+
-         RAUAfojUfslqHA83OxpcpzqDlQF1srKmHNCmtJ4Bpej+1ZeOjM4zYNc3MjOhcFVnFdcR
-         NC599qw0fqMcBtcfDk/o7EA99UzIO+BtKejcnUU1Ur9VSij8OogB+5lDrbscuZmdXXvs
-         fOvw==
+        bh=QJVTjxLJRTHGX2+DLUDaqD3hDkGkgUqbRVWTjFURRas=;
+        b=Ux5KRqPl4C8U8cofFCc7KP2Kd3sQBHFOB9O10WEJELi5kP0Q2qCbxbaYaPxyV1oZip
+         sbpRN8/3yumJ1hEiAjPTcczGw9ys5r/Y3v8K5SUSI77koJDL7ByAaEQ5h0M+3V7L/XRR
+         L87DQ4erczhdWbkFPx45onCNDhYHK5yStmCOs6nCnLMraKxjyKoYb0ILwMm4evVFtpfz
+         KBRt4fOrCygKBE07eiUtFP/2C0qDzqC1yHnS/bPuku1IQikQruYzHcaHZBX5LDpWCT7q
+         /5iKd9wAc/98/Xf/m2Fuq8Yot8nD0CcBa4V3I9giDGolrbsHh5krfnrZ8k8tBKfcVxRZ
+         kg7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702218235; x=1702823035;
+        d=1e100.net; s=20230601; t=1702218286; x=1702823086;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6TH7HOHmtk2UQwnvLajjv0TPG0/RJ9hIib3oVUU6SCs=;
-        b=HkH7iAd0jJzEkCDkTxWrmiV3veVCBIYCue2USJ9BlHsqvvk/xIKfQc3fEc+FULJOo7
-         QJXpZ6btPg0LIkPnhY8jkNNEaGUsWhe79TLc9Qrjc29jf4cNEVOwjXRGi7zwK6LGu1it
-         ocSuS7nRP3U6+kZioSofYxEetTbPOmOinCBGBMCE2slVPlDS23B59JTteaevFC14umNR
-         HpaCMm66KSgvbgCVHUsd4LB/UHoRKpVbdX1OohmrgwFOplvKy1lxn/coE1seVn1Fwtb5
-         EyGdNZjpC2E+Cf4EfWi0WYZUPdCoJhCe0akPPNk1yOuFtJKaF0bEfOc1inoRknqh7b/g
-         ytXg==
-X-Gm-Message-State: AOJu0Yyuek4wfexGPF1vThtVXDWfYWzBQvKzxPCs+Ll2lIHsM1wjiAQV
-	GnGsO1oT1g7/gZxbNvCqW73A+g==
-X-Google-Smtp-Source: AGHT+IH5Xv9GWf1EwsSUIcNtOZYX2gPnAyp2J8vjgCwCpG6QJaCV3qD47ejfFVCLZ/2KgqfCRbw5aQ==
-X-Received: by 2002:a05:600c:1d12:b0:40c:295f:119c with SMTP id l18-20020a05600c1d1200b0040c295f119cmr1205648wms.31.1702218234787;
-        Sun, 10 Dec 2023 06:23:54 -0800 (PST)
+        bh=QJVTjxLJRTHGX2+DLUDaqD3hDkGkgUqbRVWTjFURRas=;
+        b=GDTEVUgDeMXKSsaTxTRZsjfHFgdXVskKKT+utIRFS1ZeNq7CYShZmPi8oLvX8ZG9dt
+         Um6MG1Z5mSt99wJPDvS4ZcFZ3T0WyTpbwobOfIuwZYohEqGYJPsLqegexUeGNpgY5tWk
+         LADfeti0i0kY373KGjJkG4WuqfPhtfbh8B3mplM5QiRkqaJxhEm8x1oBOg5G6bdARsjM
+         OXnJtAJBl/5mjjXSBUUcKfdFL/nL7doLoaiUGuPoWA6XdF8FjURY6aSBUCnnMKn5DPkZ
+         5kokiGxbvTCugbtarY4ynimtY4HwLJZhWDB+cX6cCh+xg7dTEMPCgc2ED7LSj1H2QJAk
+         ZxIw==
+X-Gm-Message-State: AOJu0YzjHm0zglPO0A2YU++isYZyZNyTWxCpGn+CLPiONBk2eNUNVh31
+	1p9SIxTE3XEKXpcAHDe8QRx+yA==
+X-Google-Smtp-Source: AGHT+IEIJD7c2A1oFfK2yjpbev+frtkLypGf/Wf2fdfohAclzP0T7gr5vPAXxmRX+QxNeKbHYNUVbw==
+X-Received: by 2002:a05:600c:4f81:b0:40c:3f09:57b7 with SMTP id n1-20020a05600c4f8100b0040c3f0957b7mr1050757wmq.145.1702218285846;
+        Sun, 10 Dec 2023 06:24:45 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id o5-20020a05600c510500b0040c1d2c6331sm9810914wms.32.2023.12.10.06.23.52
+        by smtp.gmail.com with ESMTPSA id o5-20020a05600c510500b0040c1d2c6331sm9810914wms.32.2023.12.10.06.24.43
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 10 Dec 2023 06:23:54 -0800 (PST)
-Message-ID: <e70d516d-db24-4d79-bbd8-bb5b497a4391@linaro.org>
-Date: Sun, 10 Dec 2023 15:23:51 +0100
+        Sun, 10 Dec 2023 06:24:45 -0800 (PST)
+Message-ID: <9ffd229e-cf1b-4508-ba74-d5a000c54582@linaro.org>
+Date: Sun, 10 Dec 2023 15:24:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,8 +47,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 04/20] dt-bindings: watchdog: Document Google gs101
- watchdog bindings
+Subject: Re: [PATCH v6 14/20] watchdog: s3c2410_wdt: Add support for WTCON
+ register DBGACK_MASK bit
 Content-Language: en-US
 To: Peter Griffin <peter.griffin@linaro.org>, robh+dt@kernel.org,
  krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
@@ -65,7 +65,7 @@ Cc: tudor.ambarus@linaro.org, andre.draszik@linaro.org,
  linux-watchdog@vger.kernel.org, kernel-team@android.com,
  linux-serial@vger.kernel.org
 References: <20231209233106.147416-1-peter.griffin@linaro.org>
- <20231209233106.147416-5-peter.griffin@linaro.org>
+ <20231209233106.147416-15-peter.griffin@linaro.org>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -111,36 +111,30 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231209233106.147416-5-peter.griffin@linaro.org>
+In-Reply-To: <20231209233106.147416-15-peter.griffin@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10/12/2023 00:30, Peter Griffin wrote:
-> Add the "google,gs101-wdt" compatible to the dt-schema documentation.
+On 10/12/2023 00:31, Peter Griffin wrote:
+> The WDT uses the CPU core signal DBGACK to determine whether the SoC
+> is running in debug mode or not. If the DBGACK signal is asserted and
+> DBGACK_MASK bit is enabled, then WDT output and interrupt is masked
+> (disabled).
 > 
-> gs101 SoC has two CPU clusters and each cluster has its own dedicated
-> watchdog timer (similar to exynos850 and exynosautov9 SoCs).
+> Presence of the DBGACK_MASK bit is determined by adding a new
+> QUIRK_HAS_DBGACK_BIT quirk. Also update to use BIT macro to avoid
+> checkpatch --strict warnings.
 > 
-> These WDT instances are controlled using different bits in PMU
-> registers.
-> 
+> Tested-by: Will McVicker <willmcvicker@google.com>
 > Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
->  .../devicetree/bindings/watchdog/samsung-wdt.yaml         | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml b/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
-> index 8fb6656ba0c2..57468c2c5ece 100644
-> --- a/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
-> +++ b/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
-> @@ -17,6 +17,7 @@ description: |+
->  properties:
->    compatible:
->      enum:
-> +      - google,gs101-wdt                      # for Google gs101
 
-I think you did not rebase on linux-next. The hunk differs.
+Guenter, Wim,
+
+The watchdog patches are kind of independent, except that bindings has
+conflicting re-organization which I took via my Samsung SoC tree. If it
+is fine with you, please provide acks or review and I will take the
+watchdog changes.
 
 Best regards,
 Krzysztof
