@@ -1,152 +1,119 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DTLXPpOs"
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE364CF
-	for <linux-clk@vger.kernel.org>; Mon, 11 Dec 2023 02:32:55 -0800 (PST)
-Received: by mail-lj1-x233.google.com with SMTP id 38308e7fff4ca-2cc2238f597so8140611fa.3
-        for <linux-clk@vger.kernel.org>; Mon, 11 Dec 2023 02:32:55 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WGGJk1c7"
+Received: from mail-ot1-x336.google.com (mail-ot1-x336.google.com [IPv6:2607:f8b0:4864:20::336])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67357CD
+	for <linux-clk@vger.kernel.org>; Mon, 11 Dec 2023 03:35:51 -0800 (PST)
+Received: by mail-ot1-x336.google.com with SMTP id 46e09a7af769-6d9d209c9bbso3430951a34.0
+        for <linux-clk@vger.kernel.org>; Mon, 11 Dec 2023 03:35:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702290774; x=1702895574; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IX4EBG7ZLRr0xax2kNxxMZaNw4rlwpci34ZpsXq5PRo=;
-        b=DTLXPpOsLbOgpyKr3hqBnUcmKPTxA4X7I0FW7z5xlqwgevw29Z5rV0ViVkhiQIpObn
-         FQNIqOZ2+aw6cti3e0v1ZmECvtyBiu+cWgmnRgmTKp/lv5985Jn4FXs1Gd67hEM9GVSx
-         ZCcOSKIG55VvsoTW7JMpmFaTNHbxEAypPbeNZerhd4zUexUojqLm8H06UyWI/wqoFByp
-         FRZMdSEuXq0axayaxpih1O1FpsVnlt6mYWfy9M41Ywnu+VI+/VvtgFzywgpcPfmO7s0D
-         o15mnEaD1eKK28JMrn3VKDznCGGll6YXzZA3/qOxBe7iOTXX9zyYzaXV/bfJonqOwaJR
-         KpbQ==
+        d=linaro.org; s=google; t=1702294550; x=1702899350; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=3+ol3M0pI923ab1AudTOkH9Yk0elXff3QjFR/FfpQ+Q=;
+        b=WGGJk1c7M18qvL4n2xbBWmEYa7iFKyV9K3sIYodQ6a71isMqFLgpYdBFi4x01RZoSu
+         2l7lulbF2wqazudhwWOAnV/mf5haM1MRXX3BW3I9sA+71I8d0WPUqfMYFqa5AlIyGCEe
+         2Mh1o9Lc/A4i2l77Yj8kC+sPWbOIhH+aK/u/URcGRAlgP6XLD4cemBb6mvJeDmA0CMqO
+         bGBOzmBKJLdDQK6Utnm2wFNe+DpQeoPnYubq7g1PgOn860D7wNd1JBsQMUlCjyBG8JNN
+         EOqjvimOKNUb2l56uTonbxNDjxn+1dCqyBxbNi57W9i+OgMuRUaBjAUVmBTinb6MjeGp
+         pUdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702290774; x=1702895574;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IX4EBG7ZLRr0xax2kNxxMZaNw4rlwpci34ZpsXq5PRo=;
-        b=DnbQ9fQhpH3/ePtNuhlz4BSyDzWlD8E6es2CZmguCnv6w9QqrWL6LdVnC6vg6Jcq42
-         drag14iy1h4Je0newGO5ChyTjR2MurQhD0Gqx2wx6drqb/l502OP65kB+7tsqbgKiZ+W
-         CKKIBzse1gtj8nI2NqnifptaaDcPxzWN9GPhoQZzBlzsuLS4gcbaq0vaxSnIQ28CI8nu
-         tocFXMcs8XBZIAZdd8e2K49vdVb0BOEhcHVpORCSS4zhZoAdGx9LR7Yl7Cib3fW/7i47
-         Jo40PWf40mFor8ARPUph1vGUm0yRvO9g1VERLkCKksqJd+0nZGamGtlXM24jCSPixbMO
-         pDoA==
-X-Gm-Message-State: AOJu0YzuoS1/lvlJEjEKi5r+jpaLr5KZn4W7iS3+CfZVzj1yHoRa9RAG
-	9Wk6LbmC/Srqp0l8aO2ItrEHUw==
-X-Google-Smtp-Source: AGHT+IHA/4kK3INnvWGdbA8CvWR3TbWCc2CjO5m5NbgYfybB3Xl9mM1Ipur8XmkXTMiUyXIf6qESqA==
-X-Received: by 2002:a2e:bd04:0:b0:2cc:21cb:66bc with SMTP id n4-20020a2ebd04000000b002cc21cb66bcmr465600ljq.210.1702290774013;
-        Mon, 11 Dec 2023 02:32:54 -0800 (PST)
-Received: from [192.168.36.128] (178235179179.dynamic-4-waw-k-1-3-0.vectranet.pl. [178.235.179.179])
-        by smtp.gmail.com with ESMTPSA id fj15-20020a1709069c8f00b00a1f6c2c3928sm4352596ejc.175.2023.12.11.02.32.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Dec 2023 02:32:53 -0800 (PST)
-Message-ID: <c4034715-53a5-468e-914a-3f19d0618c42@linaro.org>
-Date: Mon, 11 Dec 2023 11:32:51 +0100
+        d=1e100.net; s=20230601; t=1702294550; x=1702899350;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3+ol3M0pI923ab1AudTOkH9Yk0elXff3QjFR/FfpQ+Q=;
+        b=u9GdsbCt8LfFK/FtpuLHgixn0stZO3qWsM7AhHrdiHRGsPqnXCTjlKOcg7gvYYPOzB
+         K4hDz4i/wwPMfAoS18LMMkXYer/c1MBXk/xJQQWhg0Pn4cZHDgvThPYyHa18XahLsy5U
+         q9k3aqu1b70ezvbjnAigKa9bfCnoCAYZO4qFj7qnw6BWg4U+WXc3HuCb+3PECdN0eDYm
+         6pR543sqi6xLPAu8PNmLthuT2CkCyNHG7cM2m6VHJbLZGT33Hwamk7Ijrx7BaLNRwWQL
+         6O52NvfF8EgvWXbxLH/BC+LaYhDJj/XP/Wa3idW/Jj19kEZn5rtJcY2Y4aD4aVYNkzEK
+         WHqA==
+X-Gm-Message-State: AOJu0YyUXr04X/E34S2e0CYadWPS5tGvmoO9h2dsHEdhulkvqX2e6fSr
+	YYL8M4Woo+yARdzTo//eA7pEURdn+fGa8+IdOy0a2A==
+X-Google-Smtp-Source: AGHT+IHTYmAfw9EOKQEvoYukSWVGhGDG8tJXoV6ZROee3fmhULu+p3ewmCTzn6+wQmwMRXs/CvGuxxavXhD0mKv36pQ=
+X-Received: by 2002:a05:6830:c7:b0:6d8:74e2:7ccc with SMTP id
+ x7-20020a05683000c700b006d874e27cccmr4344434oto.39.1702294550628; Mon, 11 Dec
+ 2023 03:35:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 7/8] arm64: dts: qcom: ipq5332: add support for the
- NSSCC
-Content-Language: en-US
-To: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>,
- Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Richard Cochran <richardcochran@gmail.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20231211-ipq5332-nsscc-v3-0-ad13bef9b137@quicinc.com>
- <20231211-ipq5332-nsscc-v3-7-ad13bef9b137@quicinc.com>
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20231211-ipq5332-nsscc-v3-7-ad13bef9b137@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20231209233106.147416-1-peter.griffin@linaro.org>
+ <20231209233106.147416-14-peter.griffin@linaro.org> <46c9c8b4-942d-4f6f-a6cc-00158314d5e5@linaro.org>
+In-Reply-To: <46c9c8b4-942d-4f6f-a6cc-00158314d5e5@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Mon, 11 Dec 2023 11:35:39 +0000
+Message-ID: <CADrjBPr6k-j=swq8zJfOjaYQW7hvWCTXj2ZZQT6V+QUtjEYOcg@mail.gmail.com>
+Subject: Re: [PATCH v6 13/20] pinctrl: samsung: Add gs101 SoC pinctrl configuration
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
+	mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org, 
+	tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, 
+	wim@linux-watchdog.org, linux@roeck-us.net, catalin.marinas@arm.com, 
+	will@kernel.org, arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org, 
+	jirislaby@kernel.org, cw00.choi@samsung.com, alim.akhtar@samsung.com, 
+	tudor.ambarus@linaro.org, andre.draszik@linaro.org, 
+	semen.protsenko@linaro.org, saravanak@google.com, willmcvicker@google.com, 
+	soc@kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, kernel-team@android.com, 
+	linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 11.12.2023 04:37, Kathiravan Thirumoorthy wrote:
-> Describe the NSS clock controller node and it's relevant external
-> clocks.
-> 
-> Signed-off-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/ipq5332.dtsi | 28 ++++++++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/ipq5332.dtsi b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
-> index 42e2e48b2bc3..a1504f6c40c1 100644
-> --- a/arch/arm64/boot/dts/qcom/ipq5332.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
-> @@ -15,6 +15,18 @@ / {
->  	#size-cells = <2>;
->  
->  	clocks {
-> +		cmn_pll_nss_200m_clk: cmn-pll-nss-200m-clk {
-> +			compatible = "fixed-clock";
-> +			clock-frequency = <200000000>;
-> +			#clock-cells = <0>;
-> +		};
-> +
-> +		cmn_pll_nss_300m_clk: cmn-pll-nss-300m-clk {
-> +			compatible = "fixed-clock";
-> +			clock-frequency = <300000000>;
-> +			#clock-cells = <0>;
-> +		};
-> +
->  		sleep_clk: sleep-clk {
->  			compatible = "fixed-clock";
->  			#clock-cells = <0>;
-> @@ -473,6 +485,22 @@ frame@b128000 {
->  				status = "disabled";
->  			};
->  		};
-> +
-> +		nsscc: clock-controller@39b00000{
-Missing space between the opening curly brace
+Hi Krzysztof,
 
-> +			compatible = "qcom,ipq5332-nsscc";
-> +			reg = <0x39b00000 0x80000>;
-the regmap_config in the clk driver has .max_register = 0x800, is this
-correct?
+Thanks for the review.
 
+On Sun, 10 Dec 2023 at 13:56, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 10/12/2023 00:30, Peter Griffin wrote:
+> > Add support for the pin-controller found on the gs101 SoC used in
+> > Pixel 6 phones.
+> >
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > ---
+>
+>
+> > diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+> > index 6b58ec84e34b..3834bf953178 100644
+> > --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
+> > +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+> > @@ -468,6 +468,8 @@ static const struct of_device_id exynos_wkup_irq_ids[] = {
+> >                       .data = &exynos7_wkup_irq_chip },
+> >       { .compatible = "samsung,exynosautov9-wakeup-eint",
+> >                       .data = &exynos7_wkup_irq_chip },
+> > +     { .compatible = "google,gs101-wakeup-eint",
+> > +                     .data = &exynos7_wkup_irq_chip },
+>
+> You don't need it.
 
-Konrad
+OK will drop
+
+>
+> >       { }
+> >  };
+> >
+> > diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> > index 79babbb39ced..b8d549fe38cb 100644
+> > --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
+> > +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> > @@ -1321,6 +1321,8 @@ static const struct of_device_id samsung_pinctrl_dt_match[] = {
+> >               .data = &exynosautov9_of_data },
+> >       { .compatible = "tesla,fsd-pinctrl",
+> >               .data = &fsd_of_data },
+> > +     { .compatible = "google,gs101-pinctrl",
+> > +             .data = &gs101_of_data },
+>
+> Place it somewhere alphabetically. Probably before tesla.
+
+Will fix. FYI I was intending to put it at the top ('g' before 's')
+that also matches the ordering everywhere else e.g. in the YAML docs
+etc.
+
+regards,
+
+Peter
