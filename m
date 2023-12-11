@@ -1,39 +1,39 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VObXoy5G"
-Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F331188
-	for <linux-clk@vger.kernel.org>; Mon, 11 Dec 2023 02:23:03 -0800 (PST)
-Received: by mail-qk1-x735.google.com with SMTP id af79cd13be357-77f380d8f6aso258591085a.2
-        for <linux-clk@vger.kernel.org>; Mon, 11 Dec 2023 02:23:03 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U2ScmQsl"
+Received: from mail-qv1-xf32.google.com (mail-qv1-xf32.google.com [IPv6:2607:f8b0:4864:20::f32])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C717CDB
+	for <linux-clk@vger.kernel.org>; Mon, 11 Dec 2023 02:26:51 -0800 (PST)
+Received: by mail-qv1-xf32.google.com with SMTP id 6a1803df08f44-67a8a745c43so34462706d6.0
+        for <linux-clk@vger.kernel.org>; Mon, 11 Dec 2023 02:26:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702290182; x=1702894982; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1702290411; x=1702895211; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=8uwL1lLxX1dFaUiWFiQrXZhQs3hhD/dlzqmlkyytJpw=;
-        b=VObXoy5GmaHZsOWqlwAdp9QVI/50PLwml3dlWF+7GalOLOwh9KU+k6Hl8eaxLfgBoF
-         FeE+vA9sLhMdiyYHOAWWfVb0hJBb2aM34vWORFdS7ipsCJ9YNUB50+wrr8kslc/l6I2N
-         ba3PcDB+88xAo7huLJGtog5B4Fw5GR99HKozERZUyQRlzhX8XCW5go9PEEqi+iMqVIyQ
-         Ck0XnOAOWd4INk37P5gYjHMmZlkV2N9IkJdONdet3CulSGhz8fWTiKcS4hi3NnmR/W+y
-         oWpCzUKhouK//48q0+Hrot3p2mC3ALGi2psuBBgiz0CaLyXeNlDgYsChM2791+JuQxoI
-         Y+wg==
+        bh=zBClK4lqtI01tZ9y+a3IQvx46bQqW6gXipVJViDNMLE=;
+        b=U2ScmQslrt1u3g+i6gniMNpfQY+5Qts1WcyJ7QriK32oNHKU3zmG5WSXyvNxZDvQL1
+         PkubSQ+9gocHlgBCwLeKBXK/qDVgf5p5I/eGmbjfiGKiy7TmqsAfmQTsGYXw5nmmtQFl
+         klm1xv5gcLHsCKUp/YtIagxl2mS4kbquUXCd5sT72Fnh5bUb6WFeFihE/gk5rzHY6F67
+         kYQYWjMoaYUxqIctsbvN1Jo7yes3f923UIQiieQ+ulQl4rk1O4gsTCbmFrKZg3xO6xIp
+         qjBxOZGlEy1X7LQ6y3l6ZGA0RXQoE1EQU6Fb8fVmZmbG5+kp0zutoUCZSL9FxWJzrKMb
+         aeug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702290182; x=1702894982;
+        d=1e100.net; s=20230601; t=1702290411; x=1702895211;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=8uwL1lLxX1dFaUiWFiQrXZhQs3hhD/dlzqmlkyytJpw=;
-        b=koeZ95dJlez7uClNu6YZDotlbFb6bsfPP6SNlSmYRuRyRcARl1rq5JrUGxzyTLQ7XZ
-         WEEwcj2Dv0Bf9PTerepb5p1oTCVUjdyB85eI/MlPz66C5SgfOQ4J7JXHz0dWd868sBs9
-         kq0iPNPL7Ire1dqc2FWROsJQNuifCV0ZW/2b3xQ4q1xUG5dTzfEAPSkpDbwSy1/VuGCs
-         FjooT/SXhVu7t+7BXTuJR6zcbwcfTbjvDduSfxyUJNRgnWFzE0ZmPn8C+U/m35N9t7Qg
-         EQoF1CABVq30n9H70IqVIU9NvXoSmZnzKHV43NOOyCj27hvLI7wx6iWgo4FUxXtWozW2
-         Z86Q==
-X-Gm-Message-State: AOJu0YxZ+H6EMnDJe8IoBagke05LbZxapEzd5aUwrSnY3tcVN6ey4ZgA
-	JZmC+s4U8duLcAxlLAxt3wCHE7Q6eRKwBrDqZVJ7MQ==
-X-Google-Smtp-Source: AGHT+IHqP/co+Erp1KyVxk9Vrb7BjW2fZ076cQiX9m6z1AAqfzfzOVELbNhXJDqCOlCh75GXJdg46xQJtROICe7jQ3I=
-X-Received: by 2002:ad4:50c3:0:b0:67a:c8e4:e692 with SMTP id
- e3-20020ad450c3000000b0067ac8e4e692mr5048288qvq.100.1702290182193; Mon, 11
- Dec 2023 02:23:02 -0800 (PST)
+        bh=zBClK4lqtI01tZ9y+a3IQvx46bQqW6gXipVJViDNMLE=;
+        b=M2pn4bQZL1lKDywQ7LXcPoKF+4QZMq9ODlHQZ98jnSeCiSsO0BmBcyBov3k1lVa1Pk
+         4Q10epP51noedWZegas20I2/alLDUUyuRPwL5OfRYPmg+OT4tfH3qmM9B3l2IvL8RZHU
+         +E8YTxgbwK6hxUXidtbF65gYZA5+U3iHR5T2dVOyNeae5dRyX2TVcZEm3GEplrWeYrv7
+         27r9pbwQ55g4X5OajYjkp4qJCYZIihD1mP2BHxoOsB5LaJSk9POahjtAoYicjoA2FkM7
+         seQaQyUljDodSl7hgfiBJk3Vywrunhx7KwON0A5ROWQvcNVkm/wbXg0MfM8ozNLrypFd
+         pTJQ==
+X-Gm-Message-State: AOJu0Yx4gh5zjwfQOe3/OVO4xvg4hPkN8DHoH8un9AMbi8RxoHxRGCpm
+	40gIxwED9G1Z0sFbOtRbm9d3yAUVZ0vbLPdtfFN0wA==
+X-Google-Smtp-Source: AGHT+IGXuSEmjxGIf3QPro+i3LI5BnTbhCqPp7O7UIiBh/LqSwNTV/bm9Ks6TLe0NeBnUASLNjJvb+hNli7R0WXRvsA=
+X-Received: by 2002:a0c:fb04:0:b0:67a:ad44:2126 with SMTP id
+ c4-20020a0cfb04000000b0067aad442126mr5413328qvp.60.1702290410972; Mon, 11 Dec
+ 2023 02:26:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -41,13 +41,13 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20231209233106.147416-1-peter.griffin@linaro.org>
- <20231209233106.147416-15-peter.griffin@linaro.org> <9ffd229e-cf1b-4508-ba74-d5a000c54582@linaro.org>
-In-Reply-To: <9ffd229e-cf1b-4508-ba74-d5a000c54582@linaro.org>
+ <20231209233106.147416-17-peter.griffin@linaro.org> <25533a7f-326f-48d1-a8a6-e5798bdca4b4@linaro.org>
+In-Reply-To: <25533a7f-326f-48d1-a8a6-e5798bdca4b4@linaro.org>
 From: Peter Griffin <peter.griffin@linaro.org>
-Date: Mon, 11 Dec 2023 10:22:51 +0000
-Message-ID: <CADrjBPrWQ9EUDDqZ6Nxr-z93rzZf0sJVVFVZk58s1ErmkUJpMw@mail.gmail.com>
-Subject: Re: [PATCH v6 14/20] watchdog: s3c2410_wdt: Add support for WTCON
- register DBGACK_MASK bit
+Date: Mon, 11 Dec 2023 10:26:39 +0000
+Message-ID: <CADrjBPrg51Fkkme71yLeFc06ROgAjcchXGoX7Uxrmin-+yBayQ@mail.gmail.com>
+Subject: Re: [PATCH v6 16/20] watchdog: s3c2410_wdt: Add support for Google
+ gs101 SoC
 To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
 	mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org, 
@@ -64,37 +64,40 @@ Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
 	linux-serial@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hi folks,
+Hi Krzysztof,
 
-On Sun, 10 Dec 2023 at 14:24, Krzysztof Kozlowski
+Thanks for the review.
+
+On Sun, 10 Dec 2023 at 14:26, Krzysztof Kozlowski
 <krzysztof.kozlowski@linaro.org> wrote:
 >
 > On 10/12/2023 00:31, Peter Griffin wrote:
-> > The WDT uses the CPU core signal DBGACK to determine whether the SoC
-> > is running in debug mode or not. If the DBGACK signal is asserted and
-> > DBGACK_MASK bit is enabled, then WDT output and interrupt is masked
-> > (disabled).
+> > This patch adds the compatibles and drvdata for the Google
+> > gs101 SoC found in Pixel 6, Pixel 6a & Pixel 6 pro phones.
 > >
-> > Presence of the DBGACK_MASK bit is determined by adding a new
-> > QUIRK_HAS_DBGACK_BIT quirk. Also update to use BIT macro to avoid
-> > checkpatch --strict warnings.
+> > Similar to Exynos850 it has two watchdog instances, one for
+> > each cluster and has some control bits in PMU registers.
 > >
-> > Tested-by: Will McVicker <willmcvicker@google.com>
-> > Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 >
-> Guenter, Wim,
 >
-> The watchdog patches are kind of independent, except that bindings has
-> conflicting re-organization which I took via my Samsung SoC tree. If it
-> is fine with you, please provide acks or review and I will take the
-> watchdog changes.
+> > +
+> >  static const struct of_device_id s3c2410_wdt_match[] = {
+> >       { .compatible = "samsung,s3c2410-wdt",
+> >         .data = &drv_data_s3c2410 },
+> > @@ -285,6 +318,8 @@ static const struct of_device_id s3c2410_wdt_match[] = {
+> >         .data = &drv_data_exynos850_cl0 },
+> >       { .compatible = "samsung,exynosautov9-wdt",
+> >         .data = &drv_data_exynosautov9_cl0 },
+> > +     { .compatible = "google,gs101-wdt",
+> > +       .data = &drv_data_gs101_cl0 },
 >
+> Keep some alphabetical order by compatible, so this should be probably
+> the first entry in the table.
+>
+> Same for s3c2410_wdt_variant structures.
 
-Just to add, without the Watchdog gs101 changes the system will reset
-after ~60 seconds, as the bootloader is left running by the
-bootloader. So it would be nice to get patches in as well if possible.
+Will fix in v7.
 
-regards,
+Thanks,
 
-Peter.
+Peter
