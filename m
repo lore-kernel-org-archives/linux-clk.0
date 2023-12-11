@@ -1,165 +1,174 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63A804E1AD;
-	Mon, 11 Dec 2023 17:36:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777764E633;
+	Mon, 11 Dec 2023 17:48:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="loMjJRWM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B601C43397;
-	Mon, 11 Dec 2023 17:36:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GKH4TrH6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF2B6C433CD;
+	Mon, 11 Dec 2023 17:48:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702316215;
-	bh=jnf9dg13SzBYTXr+GBpBiKbCKE+W4egIWCJCCgVUAwg=;
+	s=k20201202; t=1702316935;
+	bh=9m905vifP5HBvlgj99tWmhjIICwDtm6qjhVzOXp83xE=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=loMjJRWMoMUGhMgm+YrnxZIpLCV3bDvtka0s23uKcX4z16ASC0s+UuYVJHGeBIYIB
-	 N27ZdO+4F8Lawqz9kb2Luwv9DyGq9QaTgPhpxI9eRVt5CsaJ/8hXk/1FrinkdTkG2l
-	 6DkZXddgjOC/nFXYY5q29djDfkZBGH+J+BAfsiySfpReSSCj43HJsZ98xx7K7bowh9
-	 XTlgW15lmK6opKpi3nU9cVIARat90LwpmncgYWKqsZuE8dv7mkglGhaEryRg2Soeal
-	 I1BlECQqH9HuKD3JA8HOwUOv2Bv48o7Cu4IgQR9V5VwfHj28+3s95m0s9ceGCoV8ju
-	 oWcQ6PJw8bn4w==
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-50be3611794so5575609e87.0;
-        Mon, 11 Dec 2023 09:36:55 -0800 (PST)
-X-Gm-Message-State: AOJu0YzzOzvob9fUgTBTHuY2N5lt+aYjf8lB+d3p76MnrLK6nXxdsepD
-	k8DQhRcTK/6iwXYaGWMtYBpHGjs4GZ/6J5WSPA==
-X-Google-Smtp-Source: AGHT+IHTBVeYuUBoGJIP6ycY2EOkZoObSSDfVZqLhoI3Lxe7oVt2ihkbRec/l/L5HGnrywwvadEcHP4hGnXcj/srfPU=
-X-Received: by 2002:a05:6512:68a:b0:50d:15be:f07e with SMTP id
- t10-20020a056512068a00b0050d15bef07emr2866329lfe.74.1702316213414; Mon, 11
- Dec 2023 09:36:53 -0800 (PST)
+	b=GKH4TrH6FHRI5gusQzMsH77d3V0M3/itnmYsCdzAx+dn1nw/4WbOlHYi0LzDb9tKY
+	 sLsi/JApn1pyOIg9VcT/J/Pq4ky/wPwCgwkEaQ0vBnEOdD5MqebGzG3KTvHRH1XF7n
+	 v8aetIeM0ToBiMywzmbi+WFfbF7m5Qcu+25d3qs7ur8NpKH1NGW9+MncmDckM9BKrX
+	 Xa7Js63x95/+ofEgKB7x0ALARN1UYr4Qrqz9I5PiRgWXzvN44V3H27OBdO0+CFUDdi
+	 /f/3QMgXRcX58PvXgEgowUSgZ8CBQi2XwRhRgLblHMamY6je8noBxUmywf7Xdda49M
+	 2Va6TC7iFE5nQ==
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-50bffb64178so5618942e87.2;
+        Mon, 11 Dec 2023 09:48:55 -0800 (PST)
+X-Gm-Message-State: AOJu0YxSgS73nZNTjhr6q3Sg19bQkBEvYoC3SPJ6zv1ppVrDE4sY9AYN
+	K23j5WllYpw/dpAX0rdafn962d3/RO+qodsBEg==
+X-Google-Smtp-Source: AGHT+IGn2Rj6s+Pbjh0z7FeFihgdozANftzWs+gyFN8lbLgY/Y4lXq/BTUcWCIB7vqtgGxnTT8kVxLnjDCJS1W5wJa8=
+X-Received: by 2002:a05:6512:3156:b0:50b:f279:c9b with SMTP id
+ s22-20020a056512315600b0050bf2790c9bmr1990684lfi.61.1702316934101; Mon, 11
+ Dec 2023 09:48:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <097e82b0d66570763d64be1715517d8b032fcf95.1702158423.git.daniel@makrotopia.org>
- <879b5bbcb165aa3f059a41218142b27e5f64597f.1702158423.git.daniel@makrotopia.org>
-In-Reply-To: <879b5bbcb165aa3f059a41218142b27e5f64597f.1702158423.git.daniel@makrotopia.org>
+References: <IA1PR20MB495376DBED8EE897FE11A2B7BB8BA@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <IA1PR20MB4953C7AC3FEEDE191FA0845ABB8BA@IA1PR20MB4953.namprd20.prod.outlook.com>
+In-Reply-To: <IA1PR20MB4953C7AC3FEEDE191FA0845ABB8BA@IA1PR20MB4953.namprd20.prod.outlook.com>
 From: Rob Herring <robh+dt@kernel.org>
-Date: Mon, 11 Dec 2023 11:36:41 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJVY3-UneaoUNt6aGa2kU_3EVAwxJfY_mYZPyp=L=Bjtw@mail.gmail.com>
-Message-ID: <CAL_JsqJVY3-UneaoUNt6aGa2kU_3EVAwxJfY_mYZPyp=L=Bjtw@mail.gmail.com>
-Subject: Re: [PATCH v4 4/4] clk: mediatek: add drivers for MT7988 SoC
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Sabrina Dubroca <sd@queasysnail.net>, Jianhui Zhao <zhaojh329@gmail.com>, 
-	Chen-Yu Tsai <wenst@chromium.org>, "Garmin.Chang" <Garmin.Chang@mediatek.com>, 
-	Sam Shih <sam.shih@mediatek.com>, Markus Schneider-Pargmann <msp@baylibre.com>, 
-	Alexandre Mergnat <amergnat@baylibre.com>, Jiasheng Jiang <jiasheng@iscas.ac.cn>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
-	Frank Wunderlich <frank-w@public-files.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	James Liao <jamesjj.liao@mediatek.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	netdev@vger.kernel.org
+Date: Mon, 11 Dec 2023 11:48:42 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+1y3mdfzLwr3sdeOGkRHaEPJo0Gr=g4Y6dAX=5AfTdfA@mail.gmail.com>
+Message-ID: <CAL_Jsq+1y3mdfzLwr3sdeOGkRHaEPJo0Gr=g4Y6dAX=5AfTdfA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/4] clk: sophgo: Add CV1800 series clock controller driver
+To: Inochi Amaoto <inochiama@outlook.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Chao Wei <chao.wei@sophgo.com>, Chen Wang <unicorn_wang@outlook.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Jisheng Zhang <jszhang@kernel.org>, 
+	Liu Gui <kenneth.liu@sophgo.com>, 
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>, qiujingbao.dlmu@gmail.com, 
+	dlan@gentoo.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Dec 9, 2023 at 3:56=E2=80=AFPM Daniel Golle <daniel@makrotopia.org>=
- wrote:
+On Thu, Dec 7, 2023 at 2:37=E2=80=AFAM Inochi Amaoto <inochiama@outlook.com=
+> wrote:
 >
-> From: Sam Shih <sam.shih@mediatek.com>
+> Add driver for CV1800 series clock controller.
 >
-> Add APMIXED, ETH, INFRACFG and TOPCKGEN clock drivers which are
-> typical MediaTek designs.
->
-> Also add driver for XFIPLL clock generating the 156.25MHz clock for
-> the XFI SerDes. It needs an undocumented software workaround and has
-> an unknown internal design.
->
-> Signed-off-by: Sam Shih <sam.shih@mediatek.com>
-> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+> Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
+> Link: https://github.com/milkv-duo/duo-files/blob/main/hardware/CV1800B/C=
+V180X-Clock-v1.xlsx
+> Link: https://github.com/milkv-duo/duo-files/blob/main/hardware/CV1800B/C=
+V1800B-CV1801B-Preliminary-Datasheet-full-en.pdf
 > ---
-> v4:
->  * make use of existing GATE_MTK_FLAGS macro
->  * reformat to max. 100 columns
->  * cosmetics
+>  drivers/clk/Kconfig                    |    1 +
+>  drivers/clk/Makefile                   |    1 +
+>  drivers/clk/sophgo/Kconfig             |   12 +
+>  drivers/clk/sophgo/Makefile            |    7 +
+>  drivers/clk/sophgo/clk-cv1800.c        | 1574 ++++++++++++++++++++++++
+>  drivers/clk/sophgo/clk-cv1800.h        |  123 ++
+>  drivers/clk/sophgo/clk-cv18xx-common.c |   76 ++
+>  drivers/clk/sophgo/clk-cv18xx-common.h |   85 ++
+>  drivers/clk/sophgo/clk-cv18xx-ip.c     |  894 ++++++++++++++
+>  drivers/clk/sophgo/clk-cv18xx-ip.h     |  266 ++++
+>  drivers/clk/sophgo/clk-cv18xx-pll.c    |  465 +++++++
+>  drivers/clk/sophgo/clk-cv18xx-pll.h    |   79 ++
+>  12 files changed, 3583 insertions(+)
+>  create mode 100644 drivers/clk/sophgo/Kconfig
+>  create mode 100644 drivers/clk/sophgo/Makefile
+>  create mode 100644 drivers/clk/sophgo/clk-cv1800.c
+>  create mode 100644 drivers/clk/sophgo/clk-cv1800.h
+>  create mode 100644 drivers/clk/sophgo/clk-cv18xx-common.c
+>  create mode 100644 drivers/clk/sophgo/clk-cv18xx-common.h
+>  create mode 100644 drivers/clk/sophgo/clk-cv18xx-ip.c
+>  create mode 100644 drivers/clk/sophgo/clk-cv18xx-ip.h
+>  create mode 100644 drivers/clk/sophgo/clk-cv18xx-pll.c
+>  create mode 100644 drivers/clk/sophgo/clk-cv18xx-pll.h
 >
-> v3: use git --from ...
-> v2: no changes
->
->
->  drivers/clk/mediatek/Kconfig               |   9 +
->  drivers/clk/mediatek/Makefile              |   5 +
->  drivers/clk/mediatek/clk-mt7988-apmixed.c  | 102 +++++++
->  drivers/clk/mediatek/clk-mt7988-eth.c      | 133 +++++++++
->  drivers/clk/mediatek/clk-mt7988-infracfg.c | 274 +++++++++++++++++
->  drivers/clk/mediatek/clk-mt7988-topckgen.c | 325 +++++++++++++++++++++
->  drivers/clk/mediatek/clk-mt7988-xfipll.c   |  78 +++++
->  7 files changed, 926 insertions(+)
->  create mode 100644 drivers/clk/mediatek/clk-mt7988-apmixed.c
->  create mode 100644 drivers/clk/mediatek/clk-mt7988-eth.c
->  create mode 100644 drivers/clk/mediatek/clk-mt7988-infracfg.c
->  create mode 100644 drivers/clk/mediatek/clk-mt7988-topckgen.c
->  create mode 100644 drivers/clk/mediatek/clk-mt7988-xfipll.c
->
-> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-> index 48b42d11111cd..70a005e7e1b18 100644
-> --- a/drivers/clk/mediatek/Kconfig
-> +++ b/drivers/clk/mediatek/Kconfig
-> @@ -423,6 +423,15 @@ config COMMON_CLK_MT7986_ETHSYS
->           This driver adds support for clocks for Ethernet and SGMII
->           required on MediaTek MT7986 SoC.
->
-> +config COMMON_CLK_MT7988
-> +       tristate "Clock driver for MediaTek MT7988"
-> +       depends on ARCH_MEDIATEK || COMPILE_TEST
-> +       select COMMON_CLK_MEDIATEK
-> +       default ARCH_MEDIATEK
-> +       help
-> +         This driver supports MediaTek MT7988 basic clocks and clocks
-> +         required for various periperals found on this SoC.
-> +
->  config COMMON_CLK_MT8135
->         tristate "Clock driver for MediaTek MT8135"
->         depends on (ARCH_MEDIATEK && ARM) || COMPILE_TEST
-> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefil=
-e
-> index dbeaa5b41177d..eeccfa039896f 100644
-> --- a/drivers/clk/mediatek/Makefile
-> +++ b/drivers/clk/mediatek/Makefile
-> @@ -62,6 +62,11 @@ obj-$(CONFIG_COMMON_CLK_MT7986) +=3D clk-mt7986-apmixe=
-d.o
->  obj-$(CONFIG_COMMON_CLK_MT7986) +=3D clk-mt7986-topckgen.o
->  obj-$(CONFIG_COMMON_CLK_MT7986) +=3D clk-mt7986-infracfg.o
->  obj-$(CONFIG_COMMON_CLK_MT7986_ETHSYS) +=3D clk-mt7986-eth.o
-> +obj-$(CONFIG_COMMON_CLK_MT7988) +=3D clk-mt7988-apmixed.o
-> +obj-$(CONFIG_COMMON_CLK_MT7988) +=3D clk-mt7988-topckgen.o
-> +obj-$(CONFIG_COMMON_CLK_MT7988) +=3D clk-mt7988-infracfg.o
-> +obj-$(CONFIG_COMMON_CLK_MT7988) +=3D clk-mt7988-eth.o
-> +obj-$(CONFIG_COMMON_CLK_MT7988) +=3D clk-mt7988-xfipll.o
->  obj-$(CONFIG_COMMON_CLK_MT8135) +=3D clk-mt8135-apmixedsys.o clk-mt8135.=
-o
->  obj-$(CONFIG_COMMON_CLK_MT8167) +=3D clk-mt8167-apmixedsys.o clk-mt8167.=
-o
->  obj-$(CONFIG_COMMON_CLK_MT8167_AUDSYS) +=3D clk-mt8167-aud.o
-> diff --git a/drivers/clk/mediatek/clk-mt7988-apmixed.c b/drivers/clk/medi=
-atek/clk-mt7988-apmixed.c
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index c30d0d396f7a..514343934fda 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -499,6 +499,7 @@ source "drivers/clk/rockchip/Kconfig"
+>  source "drivers/clk/samsung/Kconfig"
+>  source "drivers/clk/sifive/Kconfig"
+>  source "drivers/clk/socfpga/Kconfig"
+> +source "drivers/clk/sophgo/Kconfig"
+>  source "drivers/clk/sprd/Kconfig"
+>  source "drivers/clk/starfive/Kconfig"
+>  source "drivers/clk/sunxi/Kconfig"
+> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> index ed71f2e0ee36..eeae7ae93f89 100644
+> --- a/drivers/clk/Makefile
+> +++ b/drivers/clk/Makefile
+> @@ -119,6 +119,7 @@ obj-$(CONFIG_ARCH_ROCKCHIP)         +=3D rockchip/
+>  obj-$(CONFIG_COMMON_CLK_SAMSUNG)       +=3D samsung/
+>  obj-$(CONFIG_CLK_SIFIVE)               +=3D sifive/
+>  obj-y                                  +=3D socfpga/
+> +obj-y                                  +=3D sophgo/
+>  obj-$(CONFIG_PLAT_SPEAR)               +=3D spear/
+>  obj-y                                  +=3D sprd/
+>  obj-$(CONFIG_ARCH_STI)                 +=3D st/
+> diff --git a/drivers/clk/sophgo/Kconfig b/drivers/clk/sophgo/Kconfig
 > new file mode 100644
-> index 0000000000000..02eb6354b01a8
+> index 000000000000..d67009fa749f
 > --- /dev/null
-> +++ b/drivers/clk/mediatek/clk-mt7988-apmixed.c
-> @@ -0,0 +1,102 @@
+> +++ b/drivers/clk/sophgo/Kconfig
+> @@ -0,0 +1,12 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +# common clock support for SOPHGO SoC family.
+> +
+> +config CLK_SOPHGO_CV1800
+> +       tristate "Support for the Sophgo CV1800 series SoCs clock control=
+ler"
+> +       default m
+> +       depends on ARCH_SOPHGO || COMPILE_TEST
+> +       help
+> +         This driver supports clock controller of Sophgo CV18XX series S=
+oC.
+> +         The driver require a 25MHz Oscillator to function generate cloc=
+k.
+> +         It includes PLLs, common clock function and some vendor clock f=
+or
+> +         IPs of CV18XX series SoC
+> diff --git a/drivers/clk/sophgo/Makefile b/drivers/clk/sophgo/Makefile
+> new file mode 100644
+> index 000000000000..a50320764200
+> --- /dev/null
+> +++ b/drivers/clk/sophgo/Makefile
+> @@ -0,0 +1,7 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +obj-$(CONFIG_CLK_SOPHGO_CV1800)        +=3D clk-sophgo-cv1800.o
+> +
+> +clk-sophgo-cv1800-y            +=3D clk-cv1800.o
+> +clk-sophgo-cv1800-y            +=3D clk-cv18xx-common.o
+> +clk-sophgo-cv1800-y            +=3D clk-cv18xx-ip.o
+> +clk-sophgo-cv1800-y            +=3D clk-cv18xx-pll.o
+> diff --git a/drivers/clk/sophgo/clk-cv1800.c b/drivers/clk/sophgo/clk-cv1=
+800.c
+> new file mode 100644
+> index 000000000000..8176ee672190
+> --- /dev/null
+> +++ b/drivers/clk/sophgo/clk-cv1800.c
+> @@ -0,0 +1,1574 @@
 > +// SPDX-License-Identifier: GPL-2.0
 > +/*
-> + * Copyright (c) 2023 MediaTek Inc.
-> + * Author: Sam Shih <sam.shih@mediatek.com>
-> + * Author: Xiufeng Li <Xiufeng.Li@mediatek.com>
+> + * Copyright (C) 2023 Inochi Amaoto <inochiama@outlook.com>
 > + */
 > +
 > +#include <linux/clk-provider.h>
-> +#include <linux/of.h>
+> +#include <linux/clk.h>
+> +#include <linux/clkdev.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
 
 > +#include <linux/of_address.h>
 > +#include <linux/of_device.h>
 
-You probably don't need these 2 headers and the implicit includes
-of_device.h makes are dropped now in linux-next. Please check what you
-actually need and make them explicit.
+You probably don't need these 2 headers and the implicit includes it
+makes are dropped now in linux-next. Please check what you actually
+need and make them explicit.
 
 Rob
