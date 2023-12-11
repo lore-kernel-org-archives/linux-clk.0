@@ -1,28 +1,27 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="gucwGgz7"
-X-Greylist: delayed 173 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 11 Dec 2023 01:59:57 PST
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="3oYITDvQ"
 Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [IPv6:2a00:1098:ed:100::25])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC952B8;
-	Mon, 11 Dec 2023 01:59:57 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5804E3;
+	Mon, 11 Dec 2023 02:03:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1702288796;
-	bh=UGHfDCSkfnLHonKPO4l5G0OCvPlVDDc5beUYsxuWpdw=;
+	s=mail; t=1702288623;
+	bh=6CjA6ctA+aoJ56ri2JQzkYVkT8sdbfqFhgd6RJqEU/E=;
 	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=gucwGgz7TgqspKXw8/jw6fsDjuyW7bOQ2FbacFsTr24NEuGIhLC2oyg1+u/oVYdWA
-	 L+2ddLjGETBvw7qJvkiCdEaa5Ciml6W+oRx7aA8Kx7ffI5VHdk+/NO6fOfGYykZ5/m
-	 m+7/qv4X8rnLnK2/H2TUHmJbyfj0wrwM5yeOlLiiFNAS1im8eM/xk6yGpqQI82inRH
-	 5RkenM45KKpl/q+dVmrQ8dUIjw1vCR4J8WTY851adHRHZ9Jq/0N6RlAAnUfRBt4OD1
-	 LkrnPSrpyRUNpU34mru/XQwfcAWK/KoqIsB+kkZbbyxP2op1fDDr2X1WTo4YkzjPmI
-	 aR6ZWFl96AAhw==
+	b=3oYITDvQJx1zk9TEUDxJKSR7CtnfJS8tOHjRIqY+CVN5nPLVi3axYYancoJclYNg6
+	 af1PASxwqNDLIXKoe8aaTmNcSgjxGm2gsT88etR5bn9HeRhezw7hNBYYN7kkiY7Xxe
+	 KK5VCCNJCtLV/9P0LOxNP6wnWD1yEAhsgJQfE+L1H5F2JvlgdmEcmXIAQv1EtfYUgB
+	 N50An+R4NgSH/EocAuTVa3Rm/ooQRqZnHOIkeM3w8d09bxkbgnjeaDzaA2JhiLT0XF
+	 zWsKtS8jmd3caZJ96JPdAE29+X5yA6hjayookgBLZjU6vEi+nGOlFxWupvdExVzb9h
+	 e4mwvDLSh3L/A==
 Received: from [IPV6:fd00::2a:39ce] (cola.collaboradmins.com [IPv6:2a01:4f8:1c1c:5717::1])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id B076C378140E;
-	Mon, 11 Dec 2023 09:59:54 +0000 (UTC)
-Message-ID: <874b8a8b-7fe1-4547-828e-948ed25b7be3@collabora.com>
-Date: Mon, 11 Dec 2023 10:59:54 +0100
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 5C303378140F;
+	Mon, 11 Dec 2023 09:57:01 +0000 (UTC)
+Message-ID: <060c8068-0f9b-40b4-89ed-3b968e4b0071@collabora.com>
+Date: Mon, 11 Dec 2023 10:57:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -30,8 +29,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/4] dt-bindings: clock: mediatek: add clock
- controllers of MT7988
+Subject: Re: [PATCH v4 4/4] clk: mediatek: add drivers for MT7988 SoC
 Content-Language: en-US
 To: Daniel Golle <daniel@makrotopia.org>, Rob Herring <robh+dt@kernel.org>,
  Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -56,122 +54,144 @@ To: Daniel Golle <daniel@makrotopia.org>, Rob Herring <robh+dt@kernel.org>,
  linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
  netdev@vger.kernel.org
 References: <097e82b0d66570763d64be1715517d8b032fcf95.1702158423.git.daniel@makrotopia.org>
- <93025cdb7c31bf413fb2be5a071340073a0679d1.1702158423.git.daniel@makrotopia.org>
+ <879b5bbcb165aa3f059a41218142b27e5f64597f.1702158423.git.daniel@makrotopia.org>
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <93025cdb7c31bf413fb2be5a071340073a0679d1.1702158423.git.daniel@makrotopia.org>
+In-Reply-To: <879b5bbcb165aa3f059a41218142b27e5f64597f.1702158423.git.daniel@makrotopia.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Il 09/12/23 22:55, Daniel Golle ha scritto:
-> Add various clock controllers found in the MT7988 SoC to existing
-> bindings (if applicable) and add files for the new ethwarp, mcusys
-> and xfi-pll clock controllers not previously present in any SoC.
+Il 09/12/23 22:56, Daniel Golle ha scritto:
+> From: Sam Shih <sam.shih@mediatek.com>
 > 
+> Add APMIXED, ETH, INFRACFG and TOPCKGEN clock drivers which are
+> typical MediaTek designs.
+> 
+> Also add driver for XFIPLL clock generating the 156.25MHz clock for
+> the XFI SerDes. It needs an undocumented software workaround and has
+> an unknown internal design.
+> 
+> Signed-off-by: Sam Shih <sam.shih@mediatek.com>
 > Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 > ---
 > v4:
->   * add subnodes for controllers acting as MFD
+>   * make use of existing GATE_MTK_FLAGS macro
+>   * reformat to max. 100 columns
+>   * cosmetics
 > 
-> v3:
->   * move clock bindings to clock folder
->   * drop ti,syscon-reset from bindings and example
->   * merge mcusys with topckgen bindings
+> v3: use git --from ...
+> v2: no changes
 > 
-> v2:
->   * dropped unused labels
->   * add 'type: object' declaration for reset-controller found in new
->     ethwarp controller and represented as ti,syscon-reset
->   * rebase on top of
->     "dt-bindings: arm: mediatek: move ethsys controller & convert to DT schema"
 > 
->   .../arm/mediatek/mediatek,infracfg.yaml       |  1 +
->   .../bindings/clock/mediatek,apmixedsys.yaml   |  1 +
->   .../bindings/clock/mediatek,ethsys.yaml       |  1 +
->   .../clock/mediatek,mt7988-ethwarp.yaml        | 66 +++++++++++++++++++
->   .../clock/mediatek,mt7988-xfi-pll.yaml        | 48 ++++++++++++++
->   .../bindings/clock/mediatek,topckgen.yaml     |  2 +
->   .../bindings/net/pcs/mediatek,sgmiisys.yaml   | 61 ++++++++++++++---
->   7 files changed, 171 insertions(+), 9 deletions(-)
->   create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt7988-ethwarp.yaml
->   create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt7988-xfi-pll.yaml
+>   drivers/clk/mediatek/Kconfig               |   9 +
+>   drivers/clk/mediatek/Makefile              |   5 +
+>   drivers/clk/mediatek/clk-mt7988-apmixed.c  | 102 +++++++
+>   drivers/clk/mediatek/clk-mt7988-eth.c      | 133 +++++++++
+>   drivers/clk/mediatek/clk-mt7988-infracfg.c | 274 +++++++++++++++++
+>   drivers/clk/mediatek/clk-mt7988-topckgen.c | 325 +++++++++++++++++++++
+>   drivers/clk/mediatek/clk-mt7988-xfipll.c   |  78 +++++
+>   7 files changed, 926 insertions(+)
+>   create mode 100644 drivers/clk/mediatek/clk-mt7988-apmixed.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt7988-eth.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt7988-infracfg.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt7988-topckgen.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt7988-xfipll.c
 > 
-
-..snip..
-
-> diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt7988-ethwarp.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt7988-ethwarp.yaml
+> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+> index 48b42d11111cd..70a005e7e1b18 100644
+> --- a/drivers/clk/mediatek/Kconfig
+> +++ b/drivers/clk/mediatek/Kconfig
+> @@ -423,6 +423,15 @@ config COMMON_CLK_MT7986_ETHSYS
+>   	  This driver adds support for clocks for Ethernet and SGMII
+>   	  required on MediaTek MT7986 SoC.
+>   
+> +config COMMON_CLK_MT7988
+> +	tristate "Clock driver for MediaTek MT7988"
+> +	depends on ARCH_MEDIATEK || COMPILE_TEST
+> +	select COMMON_CLK_MEDIATEK
+> +	default ARCH_MEDIATEK
+> +	help
+> +	  This driver supports MediaTek MT7988 basic clocks and clocks
+> +	  required for various periperals found on this SoC.
+> +
+>   config COMMON_CLK_MT8135
+>   	tristate "Clock driver for MediaTek MT8135"
+>   	depends on (ARCH_MEDIATEK && ARM) || COMPILE_TEST
+> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
+> index dbeaa5b41177d..eeccfa039896f 100644
+> --- a/drivers/clk/mediatek/Makefile
+> +++ b/drivers/clk/mediatek/Makefile
+> @@ -62,6 +62,11 @@ obj-$(CONFIG_COMMON_CLK_MT7986) += clk-mt7986-apmixed.o
+>   obj-$(CONFIG_COMMON_CLK_MT7986) += clk-mt7986-topckgen.o
+>   obj-$(CONFIG_COMMON_CLK_MT7986) += clk-mt7986-infracfg.o
+>   obj-$(CONFIG_COMMON_CLK_MT7986_ETHSYS) += clk-mt7986-eth.o
+> +obj-$(CONFIG_COMMON_CLK_MT7988) += clk-mt7988-apmixed.o
+> +obj-$(CONFIG_COMMON_CLK_MT7988) += clk-mt7988-topckgen.o
+> +obj-$(CONFIG_COMMON_CLK_MT7988) += clk-mt7988-infracfg.o
+> +obj-$(CONFIG_COMMON_CLK_MT7988) += clk-mt7988-eth.o
+> +obj-$(CONFIG_COMMON_CLK_MT7988) += clk-mt7988-xfipll.o
+>   obj-$(CONFIG_COMMON_CLK_MT8135) += clk-mt8135-apmixedsys.o clk-mt8135.o
+>   obj-$(CONFIG_COMMON_CLK_MT8167) += clk-mt8167-apmixedsys.o clk-mt8167.o
+>   obj-$(CONFIG_COMMON_CLK_MT8167_AUDSYS) += clk-mt8167-aud.o
+> diff --git a/drivers/clk/mediatek/clk-mt7988-apmixed.c b/drivers/clk/mediatek/clk-mt7988-apmixed.c
 > new file mode 100644
-> index 0000000000000..e126f3fe0856c
+> index 0000000000000..02eb6354b01a8
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/mediatek,mt7988-ethwarp.yaml
-> @@ -0,0 +1,66 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/mediatek,mt7988-ethwarp.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +++ b/drivers/clk/mediatek/clk-mt7988-apmixed.c
+> @@ -0,0 +1,102 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2023 MediaTek Inc.
+> + * Author: Sam Shih <sam.shih@mediatek.com>
+> + * Author: Xiufeng Li <Xiufeng.Li@mediatek.com>
+> + */
 > +
-> +title: MediaTek MT7988 ethwarp Controller
+> +#include <linux/clk-provider.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include "clk-mtk.h"
+> +#include "clk-gate.h"
+> +#include "clk-mux.h"
+> +#include "clk-pll.h"
+> +#include <dt-bindings/clock/mediatek,mt7988-clk.h>
 > +
-> +maintainers:
-> +  - Daniel Golle <daniel@makrotopia.org>
+> +#define MT7988_PLL_FMAX (2500UL * MHZ)
+> +#define MT7988_PCW_CHG_SHIFT 2
 > +
-> +description:
-> +  The Mediatek MT7988 ethwarp controller provides clocks and resets for the
-> +  Ethernet related subsystems found the MT7988 SoC.
-> +  The clock values can be found in <dt-bindings/clock/mt*-clk.h>.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - const: mediatek,mt7988-ethwarp
-> +      - const: syscon
-> +      - const: simple-mfd
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +  reset-controller:
-> +    type: object
-> +    properties:
-> +      compatible:
-> +        const: ti,syscon-reset
-> +
-> +    # TODO: Convert to DT schema
-> +    additionalProperties: true
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - '#clock-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/reset/ti-syscon.h>
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        clock-controller@15031000 {
-> +            compatible = "mediatek,mt7988-ethwarp", "syscon", "simple-mfd";
-> +            reg = <0 0x15031000 0 0x1000>;
-> +            #clock-cells = <1>;
-> +
-> +            reset-controller {
-> +                compatible = "ti,syscon-reset";
+> +#define PLL(_id, _name, _reg, _pwr_reg, _en_mask, _flags, _rst_bar_mask, _pcwbits, _pd_reg,      \
+> +	    _pd_shift, _tuner_reg, _tuner_en_reg, _tuner_en_bit, _pcw_reg, _pcw_shift,           \
+> +	    _pcw_chg_reg)                                                                        \
+> +	{                                                                                        \
+> +		.id = _id, .name = _name, .reg = _reg, .pwr_reg = _pwr_reg, .en_mask = _en_mask, \
+> +		.flags = _flags, .rst_bar_mask = BIT(_rst_bar_mask), .fmax = MT7988_PLL_FMAX,    \
+> +		.pcwbits = _pcwbits, .pd_reg = _pd_reg, .pd_shift = _pd_shift,                   \
+> +		.tuner_reg = _tuner_reg, .tuner_en_reg = _tuner_en_reg,                          \
+> +		.tuner_en_bit = _tuner_en_bit, .pcw_reg = _pcw_reg, .pcw_shift = _pcw_shift,     \
+> +		.pcw_chg_reg = _pcw_chg_reg, .pcw_chg_shift = MT7988_PCW_CHG_SHIFT,              \
+> +		.parent_name = "clkxtal",                                                        \
+> +	}
 
-NACK! This is not the right way to do it. Please do *not* use ti,syscon-reset.
+I think that there was a bit of misunderstanding here: I said 100cols, and that's
+fine, but I wanted you to do that with everything but the macros, following what
+was done in all the other MediaTek clock drivers.
 
-Declare your resets in the relevant clock controller driver, like was done with
-all (or the vast majority of) the other MediaTek clock drivers.
+Can you please change the macros again?
 
-This means that you don't need simple-mfd here (and probably syscon as well).
+Also, there's some discrepancy in the usage of tabulations vs spaces, please fix.
 
-Regards,
+#define PLL(....)*TAB*\
+
+....
+
+	{										\
+		.id = _id,							\
+		.name = _name,							\
+		.reg = _reg,							\
+		.pwr_reg = _pwr_reg,						\
+		.en_mask = _en_mask,						\
+		...etc etc etc...						\
+}
+
+Thanks,
 Angelo
-
-
