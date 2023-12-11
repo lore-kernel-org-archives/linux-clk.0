@@ -1,39 +1,39 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GLWdKz+4"
-Received: from mail-qv1-xf32.google.com (mail-qv1-xf32.google.com [IPv6:2607:f8b0:4864:20::f32])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3669F5
-	for <linux-clk@vger.kernel.org>; Mon, 11 Dec 2023 01:18:04 -0800 (PST)
-Received: by mail-qv1-xf32.google.com with SMTP id 6a1803df08f44-67a8a745c43so34099356d6.0
-        for <linux-clk@vger.kernel.org>; Mon, 11 Dec 2023 01:18:04 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W/CiEJ6Z"
+Received: from mail-vs1-xe33.google.com (mail-vs1-xe33.google.com [IPv6:2607:f8b0:4864:20::e33])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43AEB116
+	for <linux-clk@vger.kernel.org>; Mon, 11 Dec 2023 01:24:35 -0800 (PST)
+Received: by mail-vs1-xe33.google.com with SMTP id ada2fe7eead31-462e70f1c20so1196774137.0
+        for <linux-clk@vger.kernel.org>; Mon, 11 Dec 2023 01:24:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702286284; x=1702891084; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1702286674; x=1702891474; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/z0fIrgey0ax47ogB/tuo0R84muzHuQ+ydDig5s54Lc=;
-        b=GLWdKz+4fg8mPDx1ELnuojeEe2T/1XyB36ZvIENuMsR3fCl7ln+rr+pUXcPb2VFVbW
-         sPIw76ndiczt/NSqQ6/l81FNJwxsmSQbIzbgsnGG8kdAZndJRpYXnKH/S1Ej99Yu6koY
-         gPYg/BB8EdJL/2JP1yMVLRaRulrNnBlK95L1XMF8SDIdVaQgYQ4I6TScanJ3XCzTsD6M
-         Jgh39J/dsNCzJ7FmG8n7AwVvvQmP1igOzbuEvsKCkXtXO9ydm1bsBxyJ6SaD+Re4u7ac
-         wnwNX6eyjiVT55sw6buh6HQWTPf5k1QiXf4vxFLAXcSkDHdpnzyCoNVYfX6xlPptDYMB
-         SuHQ==
+        bh=ioYDubYP3iKfHKMHSy5gra3AJi2J9HK+LXY7uK+G2MA=;
+        b=W/CiEJ6Zrane0oOjE//4FGj+YzLPdrKB2GGEh0/4qccXwnJPHTc2FRUqAZ9euJ8Vzz
+         PsymlVpHxUW0Jg+3GeXkEYPaIO9cN5k7ebupTeRd67qS8LRJ0ayHcYNUqncJqkP9NRgU
+         c4RMyWxrbOBFiJV+e2Zo2IJZocsJgFB/ioo4DQhqoEEmEPmDU/twikraVG553CPIeQQa
+         ZhWIvzOfZPEXnxbfRNfAKhvn8N5sJxwrCXDrZjtVenGE0DYFMj7gz2PmfcbCzcuz7uoZ
+         zTNp/zaZgfl2ZrxAya4f1llynoJgQ7yAzDqiKaRRoBjJT4QxeaEi/Vguc+rHSYYbwHIA
+         0JYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702286284; x=1702891084;
+        d=1e100.net; s=20230601; t=1702286674; x=1702891474;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=/z0fIrgey0ax47ogB/tuo0R84muzHuQ+ydDig5s54Lc=;
-        b=CprbHJyzsStvbqeS8qb8qleSByt22+Ezz8MKspvnDVDKumBXZRSqrCSoMbh9IN8rxK
-         c65mewehe5YIJqJHYZ+rNK9DpEbMWetpUeUQxI1mAmbmkZE2qIxEVEeQ8t0zm90uaSCo
-         CHPOnjAtCkwV0AGoyo5IeiO1puh8GnwM+O41CpnWbCTx7Xnc38hWqV9nezPsM63cF1cm
-         6IEQo+kPvks9/mS4jhdFW5vR+tBVXTl3Ze1AtX9gtcyKFQR5qDvZg21F8vz1uPz1Lov4
-         4RJTZG7mc0ckjEEUNS05UPXIgF7OuiAuVu/s6lAVorQCZmxI+AtIbR0X5O/DLzXCqy1m
-         RleA==
-X-Gm-Message-State: AOJu0YydzUAO3JOfddi0kzjNmXAji7KDGvibrd5FTpxbKhYTWMpQHjGK
-	xHUsjnSUfF0ylz5hYpEySNzaV80NdjLbo6h5ZGSs5g==
-X-Google-Smtp-Source: AGHT+IF2FD/yZWTaJspuz2ZkGnHtLmu9yc29fMOCKmFWdGSQxO5eLtwgHWeyaAYDFzw+Ks+VHIEsnPYl7wNEw90Fzik=
-X-Received: by 2002:ad4:5dec:0:b0:67a:568e:5b10 with SMTP id
- jn12-20020ad45dec000000b0067a568e5b10mr7473425qvb.20.1702286284034; Mon, 11
- Dec 2023 01:18:04 -0800 (PST)
+        bh=ioYDubYP3iKfHKMHSy5gra3AJi2J9HK+LXY7uK+G2MA=;
+        b=FP9kJXnd4SvqYJfcMkAWchJE8zshNL3v1IOK3LeUc+OUhH0/KWmKxnqA8dUvXI7jTK
+         A7flQfFGlDCAm+jgqyuv4fnKy7E+oqSBlX5tq8XJ5NWcSB5mYHGuI5YN67QkzWCUniHn
+         plXL9NLleqIjQFTnIfKCXL/X+xKYyVaQpNX9gvEuubBlff/vgljioVx4REYA0N+uDAO/
+         wtYacaXplFhFL9CA+Y9MZ3IQ+azi6qgD6t35P1Oemrp4EnrTDff0RNxXfqxmm0F8QklW
+         HhX/Sr5+SupX3MU9YfpKlXv2Hu4ZcDcfETMxUj2jRYKLPSHymU9guiaKJ9zPnHQLDLtb
+         c6Hg==
+X-Gm-Message-State: AOJu0YwnLrqFF2/4CfWagd178/+xodI9EuPvGpF+61KqxeWSIM3FAOyf
+	fgaeHM+EbJm+3nCULxfDe/o2zDp+bSdzf5qjGxN6bw==
+X-Google-Smtp-Source: AGHT+IFmqVBB1S6PPILmZng6sUl4gnE7B/ENtukMPc8F2U+pjJRlhmvt8Xvk382O4/Rc8AUY2sPYgeEL53IrvFfBTZs=
+X-Received: by 2002:a05:6102:3e90:b0:464:82c0:7ed9 with SMTP id
+ m16-20020a0561023e9000b0046482c07ed9mr2131634vsv.20.1702286674338; Mon, 11
+ Dec 2023 01:24:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -41,13 +41,13 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20231209233106.147416-1-peter.griffin@linaro.org>
- <20231209233106.147416-4-peter.griffin@linaro.org> <c2244932-cb2f-423a-bbe6-9ab2b08b9d63@linaro.org>
-In-Reply-To: <c2244932-cb2f-423a-bbe6-9ab2b08b9d63@linaro.org>
+ <20231209233106.147416-5-peter.griffin@linaro.org> <e70d516d-db24-4d79-bbd8-bb5b497a4391@linaro.org>
+In-Reply-To: <e70d516d-db24-4d79-bbd8-bb5b497a4391@linaro.org>
 From: Peter Griffin <peter.griffin@linaro.org>
-Date: Mon, 11 Dec 2023 09:17:53 +0000
-Message-ID: <CADrjBPpd5mT6SZyPEgxFGy18pr5Gypcwv7aoG4R978d__Pk3LA@mail.gmail.com>
-Subject: Re: [PATCH v6 03/20] dt-bindings: soc: google: exynos-sysreg: add
- dedicated SYSREG compatibles to GS101
+Date: Mon, 11 Dec 2023 09:24:22 +0000
+Message-ID: <CADrjBPrhO42-7TY0iNuRcyWj_YUwpNMWROY_6waLoVtmp7uwrg@mail.gmail.com>
+Subject: Re: [PATCH v6 04/20] dt-bindings: watchdog: Document Google gs101
+ watchdog bindings
 To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
 	mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org, 
@@ -66,36 +66,39 @@ Content-Type: text/plain; charset="UTF-8"
 
 Hi Krzysztof,
 
-On Sun, 10 Dec 2023 at 13:49, Krzysztof Kozlowski
+On Sun, 10 Dec 2023 at 14:23, Krzysztof Kozlowski
 <krzysztof.kozlowski@linaro.org> wrote:
 >
 > On 10/12/2023 00:30, Peter Griffin wrote:
-> > GS101 has three different SYSREG controllers, add dedicated
-> > compatibles for them to the documentation.
+> > Add the "google,gs101-wdt" compatible to the dt-schema documentation.
+> >
+> > gs101 SoC has two CPU clusters and each cluster has its own dedicated
+> > watchdog timer (similar to exynos850 and exynosautov9 SoCs).
+> >
+> > These WDT instances are controlled using different bits in PMU
+> > registers.
 > >
 > > Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 > > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 > > ---
-> >  .../bindings/soc/samsung/samsung,exynos-sysreg.yaml         | 6 ++++++
-> >  1 file changed, 6 insertions(+)
+> >  .../devicetree/bindings/watchdog/samsung-wdt.yaml         | 8 ++++++--
+> >  1 file changed, 6 insertions(+), 2 deletions(-)
 > >
-> > diff --git a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-> > index 2de4301a467d..127f4ffde76a 100644
-> > --- a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-> > +++ b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-> > @@ -22,6 +22,12 @@ properties:
-> >                - tesla,fsd-fsys1-sysreg
-> >                - tesla,fsd-peric-sysreg
-> >            - const: syscon
-> > +      - items:
-> > +          - enum:
-> > +              - google,gs101-apm-sysreg
-> > +              - google,gs101-peric0-sysreg
-> > +              - google,gs101-peric1-sysreg
+> > diff --git a/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml b/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
+> > index 8fb6656ba0c2..57468c2c5ece 100644
+> > --- a/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
+> > +++ b/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
+> > @@ -17,6 +17,7 @@ description: |+
+> >  properties:
+> >    compatible:
+> >      enum:
+> > +      - google,gs101-wdt                      # for Google gs101
 >
-> This should be part of the first enum. No need for new list for every
-> new SoC. I'll fix it while applying.
+> I think you did not rebase on linux-next. The hunk differs.
 
-Noted, thanks!
+It was re-based off 'next-20231130'. I will re-base off the current
+day's linux-next for v7.
 
-Peter
+Thanks,
+
+Peter.
