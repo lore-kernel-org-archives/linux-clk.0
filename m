@@ -1,475 +1,153 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V+5Xqu3M"
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F167F3
-	for <linux-clk@vger.kernel.org>; Sun, 10 Dec 2023 15:48:01 -0800 (PST)
-Received: by mail-pj1-x1029.google.com with SMTP id 98e67ed59e1d1-286e05d9408so2880966a91.1
-        for <linux-clk@vger.kernel.org>; Sun, 10 Dec 2023 15:48:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702252081; x=1702856881; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Gq4gs9H1LdhHAHkv2rBgKSqg7vsFCOtAe9enDaStH0A=;
-        b=V+5Xqu3MQZ3lc7pqC4j1PItZf+11XYeKxrEJ6qrqxyh84eyT15q24ZeFm4ewKFdyRv
-         ymIkRBmwqdMpBoV/hKBlwuMNzDpxu8NXYMKc2/hNjs8eIb+nnzT8Gg1osrqWlRj3AwoY
-         MJz0CvOoEOGHLvNk2R3ngBT0car7/jygJrkms6qd4gYSXaJzUweMwbDsGo5b8WlwUN+5
-         BLq8TTmFUq7OQ0CIs6jagMqtI+XTYpsEtcDCbWa8c6i2UVKm9ao+FYsm6uS0Ab9Zhyuc
-         0zgRPk5qhFF1J1xGSwYsUAgDGr5KZnEDcTwMDPA5X+WxH3DHmM55d4Yh7w3YhYB2ulZA
-         Z0Rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702252081; x=1702856881;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Gq4gs9H1LdhHAHkv2rBgKSqg7vsFCOtAe9enDaStH0A=;
-        b=kspM/b2oRIK4Dkmvtaa0Qb9w1Mh0cSrRDFG9Vl/rpElp/YcbPqocZYVTAaflHleqdn
-         ByqOzmKQSLgmBxGXD4B/M7QZAcE9p7RA930nP4UoH+p+CP3TF0HdOiMz7SzbLimA8pQF
-         7oCC9RK6iOI/sgb7kdFx7HccY895RWNkhMD3MLNWkuOyaLTi/0BlqP2PSfGLIxbjWBvK
-         JnCUan1/40suT4zn/FGq5XkP1I3kNB6qIXKRwUSlChqsbfTNdbq/MLhW1orzQ0H0G42g
-         UEuxzS6KVci5yWsv1cEG6cFop2Gg4fs86WjlwNmFIniXkJMJn+Icvxl2QDfkzWBlGONZ
-         70TA==
-X-Gm-Message-State: AOJu0YzT2ybikvfrRh3kJ1OnQPe10Yk7nmsNwYLcDsmi70/HBjmFMOrM
-	hZdGiIgVVCoRS1wz9h9uTysL0sz3oX8r+72t0rbj2Q==
-X-Google-Smtp-Source: AGHT+IGGKo8fcqF3rvcRAWo3OU9m8oKBxw8kZ1vTDX+zYJgiMNj03zdN5wnxKLykKpsIkEm9F18IOfxXGw/aHQUgIx4=
-X-Received: by 2002:a17:90a:ec83:b0:286:6cd8:ef17 with SMTP id
- f3-20020a17090aec8300b002866cd8ef17mr5259705pjy.47.1702252080838; Sun, 10 Dec
- 2023 15:48:00 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="nZgvu2oP"
+Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01on2122.outbound.protection.outlook.com [40.107.113.122])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 114DACE;
+	Sun, 10 Dec 2023 19:02:51 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=J7Wv1LAjuhSdQrpv052VV5BZpIIcZUyXMUlLWbGmpNHkNawhe3Uw2sO0gar4UUMnuPHVRXX6RmeXwVvu2L9axWD8PtUWJrCN6G3fXhQ6e5XEhSnXyPpMaTubpVmk9G2xuGrRvj0Hja7SItQA0SeOt5Yg6behZYRvt5cD8RJXCsluL6i1KOBSRJfWt86axnrHMBTa07zR3zhwkbNUB0AeMgykSIlfJBAK+Wt7j0DQJbJguhNoavBXONIRCLmkfKh+oCyBg+aQeku6DjW07YIYauv1ZrK9AVCBc6lMJoHcrPxY/Pog5AoptXDgK0w8hUpmIfxtpx40ALfVVE/JJV1abg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ElOt9JZwPn62x5J9wrQyx9JMp6wCY/qTOMCqHm2VvvE=;
+ b=C6q+NZ6T+12uZYE5Ma5opdwygqrchODFjYaGBqWhHI5SL5akSKnrw9I4KUVAy3wBg6s8QEPjgxhZSoWJI123l2KyrFRZVJ9VmQeXNUfToC/DXlYk3tVj5J37ObCx7U8IoiabMYr8iyUSRZIj8zEL+8vft5P8xKwX0uOsJSRf5qw0DKERZNGJlVJ5iTWEmVPDqYgB0FKvSDL4fZuGAVhP9k5duO75y1nRddvgOd9xaRjI9TE7ZKkSd8SEAiwPCZ8O1wgahgz+8TQAomTg4y7UrvnS6JhnUpxdkxnWgG7iq6B16PuxS2fPWUc56esvWOR3L+Icd0BWU48An8mThIT6xA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ElOt9JZwPn62x5J9wrQyx9JMp6wCY/qTOMCqHm2VvvE=;
+ b=nZgvu2oPh0CmF/KUJMgit+dGu8rCO7akwesCruV8hoKf2JoYc2m2Qs6tl00WwTck8BSS9cVUtal0o0UsJgRcMPPJbIk82haenAIJp4MRzQ/F4obrk9QXH/KeG0PpEAIjdaed6o969mnEhvYZvXB93PYxWt3+CwRub9rjzmQA+MY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
+ (2603:1096:400:3a9::11) by TYCPR01MB11269.jpnprd01.prod.outlook.com
+ (2603:1096:400:3c0::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7091.21; Mon, 11 Dec
+ 2023 03:02:48 +0000
+Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
+ ([fe80::5732:673b:846c:ed92]) by TYCPR01MB10914.jpnprd01.prod.outlook.com
+ ([fe80::5732:673b:846c:ed92%4]) with mapi id 15.20.7091.020; Mon, 11 Dec 2023
+ 03:02:48 +0000
+Message-ID: <87wmtlo2zs.wl-kuninori.morimoto.gx@renesas.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Subject: [PATCH v4 0/4] drivers: clk: renesas: ignore all clocks which are assinged to non-Linux system
+User-Agent: Wanderlust/2.15.9 Emacs/27.1 Mule/6.0
+To: Frank Rowand <frowand.list@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Aymeric Aillet <aymeric.aillet@iot.bzh>, Yusuke Goda <yusuke.goda.sx@renesas.com> 
+Content-Type: text/plain; charset=US-ASCII
+Date: Mon, 11 Dec 2023 03:02:47 +0000
+X-ClientProxiedBy: TYCP286CA0369.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:405:79::13) To TYCPR01MB10914.jpnprd01.prod.outlook.com
+ (2603:1096:400:3a9::11)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231209233106.147416-1-peter.griffin@linaro.org>
- <20231209233106.147416-19-peter.griffin@linaro.org> <8400d76b-2a04-4d60-ad6c-954dca07562f@linaro.org>
-In-Reply-To: <8400d76b-2a04-4d60-ad6c-954dca07562f@linaro.org>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Sun, 10 Dec 2023 17:47:49 -0600
-Message-ID: <CAPLW+4=b5SoX8ngPhzjtf9bE+7bJcV+gS_0ocD=mKAX6Z8B1Qg@mail.gmail.com>
-Subject: Re: [PATCH v6 18/20] arm64: dts: exynos: google: Add initial Google
- gs101 SoC support
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
-	mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org, 
-	tomasz.figa@gmail.com, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	s.nawrocki@samsung.com, linus.walleij@linaro.org, wim@linux-watchdog.org, 
-	linux@roeck-us.net, catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, 
-	olof@lixom.net, gregkh@linuxfoundation.org, jirislaby@kernel.org, 
-	cw00.choi@samsung.com, alim.akhtar@samsung.com, tudor.ambarus@linaro.org, 
-	andre.draszik@linaro.org, saravanak@google.com, willmcvicker@google.com, 
-	soc@kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, kernel-team@android.com, 
-	linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYCPR01MB10914:EE_|TYCPR01MB11269:EE_
+X-MS-Office365-Filtering-Correlation-Id: d3b61975-ca87-4078-db27-08dbf9f5a7b5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	toi9CPfu2cHNTUVd1bCzUp8EpN8sow9jJBfDnQ2hA3h4pv2wYHwta2iBH0i7Fonk51pFIWrxmuJupAieldZc3Ai0zqFDfVXUtP3hoM8tz7vhjpP85x89/w5xqwkYg4uJx4IF5kMV0UmiPJ4J8nVFIySGTOJZO9xOgevz6xLEcRLBmEissXSYOtVDRyo/Jk0dIj7AI8TW6Eqj5iT/IUsM9Fnxyn6iuu2NaDTNGjjGOzJe80TUHn+S6tVVx/XK1pvfXlcHWPq2L28BHjhn4bfCgCepZcljeKWjhRTXUtCnN2OGCI65RjDBxGKvqON1XQTZm5vH3nI1T/aSKWNNcnBchGB8ud1IpfVeGcRMlwBSDeqVuEKynoLvKAo9hzt1kmTElV469QYOX6uHW/s60SzDFkTJb3Q5jhcmJVsXsVL9WH4kZKuulAnkZkAuXq1+/3OWIj0i4RyxUCW8ZMaHCvCokDIyw4Q3OjGW2mfpyqsBntXA301yX1RIYP/K6vBvyCaULqdhHGn9Fsc7m+COsR7DRN0a7neeQaye9cOGSQA/RZXb0q37JICTyFNhiMKP9WQLSYkgkRWLT0BU/UiFA2TMK4NxiCAlgUXcHdbps5M4qOM=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10914.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(366004)(396003)(136003)(376002)(346002)(230922051799003)(451199024)(64100799003)(1800799012)(186009)(6512007)(6506007)(5660300002)(26005)(2616005)(107886003)(36756003)(7416002)(54906003)(66476007)(66556008)(66946007)(6486002)(966005)(2906002)(83380400001)(41300700001)(38350700005)(478600001)(86362001)(8676002)(8936002)(4326008)(52116002)(110136005)(316002)(38100700002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?FMBBTvjftykMxQv4B/9FPoH26RKtB4OJ+c7i2UVV5biYTDOY+h/YTkZ8sUFW?=
+ =?us-ascii?Q?kVkdEG2zdOpwRme7gmptf7DQBlvJ22DhEvQucu609ztGHbXRbSKWebgSj7CS?=
+ =?us-ascii?Q?QpqSa3UbDIJv+sx7KJ8b0sM8bmPBkCnad7rCf4MVM0cAOYHA5KOimsyK5GwA?=
+ =?us-ascii?Q?0lpZsVYSIektQIzli29qPSfpvk5tt9LU51DDq79I/aQcUdCv6jYiyNWDAwJu?=
+ =?us-ascii?Q?LkdEOlbrf8aM2v8JL/s6OciO2x6PbwnsOoMXL7BA93h7KLFS37tQwvpGNqPs?=
+ =?us-ascii?Q?MpxFKqCljVA1RJd9+UDlJ+WF/iDh9XSjqmHgPuHwPzIpDt/b66Wou7gWLOxX?=
+ =?us-ascii?Q?enxVxm7ChafA9/xesHw2iGdp85AdTau4EZF98gtNPzVRf3TF3iBOQlSgkhQ0?=
+ =?us-ascii?Q?gc1ne4Br5z8g1BdlwrtbGmHs+21RjZc2ttd1pF2Yc16iApXDVHRJsO83eOlg?=
+ =?us-ascii?Q?Vcd6sV+a9nr+MKpTpGdp3FY3VfP/7MajExMhxKXgHoVSO9ZyFtFoiC6WnBzZ?=
+ =?us-ascii?Q?KbAqO2ycwGLURV/fO4pa8VDhm4fn+fG3KcNUXns1ol7C6eGFblx8Qhcs9YgJ?=
+ =?us-ascii?Q?j/VuhTeGmkXVp75Y20J66OJNMvybMuY4Zs3z4aJXtfPtzSeP+jJHoGQ9/5fJ?=
+ =?us-ascii?Q?Lt8REbiSt6gdoeQW2PWP/IY1ViV2UX7A02C+uBevY6CStDYzob8impB5XCUZ?=
+ =?us-ascii?Q?ohuVfE9YDerJt+shWj9WENEDD9HeEMU3JlBPpIQ9Z6AH66906CflrBGI0Y5F?=
+ =?us-ascii?Q?Wbmql1bat+AoLRUf3Yg5kzKdDbXM5jLOsK0P/zZjNPy/jnm7wEz7jsqSB2pw?=
+ =?us-ascii?Q?TBm6iHv1q43rdIyf4kFjP0SX/208sIx50T/VBdqsJKoznlOsCRLjF1lXyAqd?=
+ =?us-ascii?Q?09+mddMwvrwz/neWiRgeLSETPgd++aYtEq+QT0l5mhi8cdar84r3qTqyEhBO?=
+ =?us-ascii?Q?Wd4SVw3iCObEsMXzlM8vebgr4SJhzDs4ppbTTdTODyjDdjzBtbGV2kjVNpU0?=
+ =?us-ascii?Q?50nKIsKs4cUPoJs9deAiDbMgYczx2qKBHvk8XRHI43F/qsemWUSPcjtI+unC?=
+ =?us-ascii?Q?pTVAmmHHFv6M9BuUqH+GZyuAVrv7X6ewLrTAAM8CD5etxuT2po+Gt9iaCu3M?=
+ =?us-ascii?Q?2r0ACMraMDI9wqSEIHPBKMD2y8om3bXLx1YXc2d2UmKGFY9VcbhHYLYvGzcg?=
+ =?us-ascii?Q?tB5yapPnnHNNfkoc+GA0aeosjnr909PYmBSJ8Z1E47n9j9DP+Alq4bq4+aF0?=
+ =?us-ascii?Q?YVGDj1c+qBRo5AHeQKgc2bT/vjCaskHpteI+dCfjiuMkUQOU4pZ1rYm4UqTd?=
+ =?us-ascii?Q?PMdu4ttqDAhjVPBZA1J61vOCIiWogE21GH+IxiW5jCwaRq8dTsZac1/WiK11?=
+ =?us-ascii?Q?3gUeGQIY+X5W2LlQKLyNVf6+C2GjcwSBGRqurDYsZSwdvdPAHTm9ISq1+VRa?=
+ =?us-ascii?Q?T0CkzJnhh0U6WFx5i49GsU4S59rJhreM1+NDhdQizqiMdrNxs70ukvUW8BL6?=
+ =?us-ascii?Q?UttoZPcrYR4E/5o4LK/3dDzwacQXPzjB58anl92K9XK/Rw46/6P1Me/kprE7?=
+ =?us-ascii?Q?55hSXkPNeZiF9rOPNLcutO8Cl/1mzu1MVVN1df612IoU3B0k2rN2AfDNzSmD?=
+ =?us-ascii?Q?cd8MumfgGoZtJxpTZYtqhVI=3D?=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d3b61975-ca87-4078-db27-08dbf9f5a7b5
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB10914.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2023 03:02:48.0611
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: q9vT2s3OCd1r9mqIbIBOukHtRVbRGUuqcJZ5kjgceA7Ns22nzaW08XLAfG9nFtK0HqZz8XN9K8KyrTubTpQUQ73euyc+8FMBV76DzjXNfpX0AUEVYTf2ZEzsiXG6U7yl
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB11269
 
-On Sun, Dec 10, 2023 at 8:38=E2=80=AFAM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 10/12/2023 00:31, Peter Griffin wrote:
-> > Google gs101 SoC is a ARMv8 mobile SoC found in the Pixel 6
-> > (oriole), Pixel 6a (bluejay) and Pixel 6 pro (raven) mobile
-> > phones.
-> >
-> > It features:
-> > * 4xA55 Little cluster
-> > * 2xA76 Mid cluster
-> > * 2xX1 Big cluster
-> >
->
-> ...
->
-> > diff --git a/arch/arm64/boot/dts/exynos/google/gs101-pinctrl.h b/arch/a=
-rm64/boot/dts/exynos/google/gs101-pinctrl.h
-> > new file mode 100644
-> > index 000000000000..68b7bc47c91b
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/exynos/google/gs101-pinctrl.h
-> > @@ -0,0 +1,33 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +/*
-> > + * Pinctrl binding constants for GS101
-> > + *
-> > + * Copyright 2020-2023 Google LLC
-> > + */
-> > +
-> > +#ifndef __DT_BINDINGS_PINCTRL_GS101_H__
-> > +#define __DT_BINDINGS_PINCTRL_GS101_H__
->
-> Header guards don't really match location.
->
-> > +
-> > +#define GS101_PIN_PULL_NONE          0
-> > +#define GS101_PIN_PULL_DOWN          1
-> > +#define GS101_PIN_PULL_UP            3
-> > +
-> > +/* Pin function in power down mode */
-> > +#define GS101_PIN_PDN_OUT0           0
-> > +#define GS101_PIN_PDN_OUT1           1
-> > +#define GS101_PIN_PDN_INPUT          2
-> > +#define GS101_PIN_PDN_PREV           3
-> > +
-> > +/* GS101 drive strengths */
-> > +#define GS101_PIN_DRV_2_5_MA         0
-> > +#define GS101_PIN_DRV_5_MA           1
-> > +#define GS101_PIN_DRV_7_5_MA         2
-> > +#define GS101_PIN_DRV_10_MA          3
-> > +
-> > +#define GS101_PIN_FUNC_INPUT         0
-> > +#define GS101_PIN_FUNC_OUTPUT                1
-> > +#define GS101_PIN_FUNC_2             2
-> > +#define GS101_PIN_FUNC_3             3
-> > +#define GS101_PIN_FUNC_EINT          0xf
-> > +
-> > +#endif /* __DT_BINDINGS_PINCTRL_GS101_H__ */
-> > diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/=
-boot/dts/exynos/google/gs101.dtsi
-> > new file mode 100644
-> > index 000000000000..60e112d25246
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> > @@ -0,0 +1,476 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * GS101 SoC
-> > + *
-> > + * Copyright 2019-2023 Google LLC
-> > + * Copyright 2023 Linaro Ltd - <peter.griffin@linaro.org>
-> > + */
-> > +
-> > +#include <dt-bindings/clock/google,gs101.h>
-> > +#include <dt-bindings/gpio/gpio.h>
-> > +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> > +#include <dt-bindings/soc/samsung,exynos-usi.h>
-> > +
-> > +/ {
-> > +     compatible =3D "google,gs101";
-> > +     #address-cells =3D <2>;
-> > +     #size-cells =3D <1>;
-> > +
-> > +     interrupt-parent =3D <&gic>;
-> > +
-> > +     aliases {
-> > +             pinctrl0 =3D &pinctrl_gpio_alive;
-> > +             pinctrl1 =3D &pinctrl_far_alive;
-> > +             pinctrl2 =3D &pinctrl_gsacore;
-> > +             pinctrl3 =3D &pinctrl_gsactrl;
-> > +             pinctrl4 =3D &pinctrl_peric0;
-> > +             pinctrl5 =3D &pinctrl_peric1;
-> > +             pinctrl6 =3D &pinctrl_hsi1;
-> > +             pinctrl7 =3D &pinctrl_hsi2;
-> > +     };
-> > +
-> > +     pmu-0 {
-> > +             compatible =3D "arm,cortex-a55-pmu";
-> > +             interrupts =3D <GIC_PPI 7 IRQ_TYPE_LEVEL_HIGH &ppi_cluste=
-r0>;
-> > +     };
-> > +
-> > +     pmu-1 {
-> > +             compatible =3D "arm,cortex-a76-pmu";
-> > +             interrupts =3D <GIC_PPI 7 IRQ_TYPE_LEVEL_HIGH &ppi_cluste=
-r1>;
-> > +     };
-> > +
-> > +     pmu-2 {
-> > +             compatible =3D "arm,cortex-x1-pmu";
-> > +             interrupts =3D <GIC_PPI 7 IRQ_TYPE_LEVEL_HIGH &ppi_cluste=
-r2>;
-> > +     };
-> > +
-> > +     pmu-3 {
-> > +             compatible =3D "arm,dsu-pmu";
-> > +             interrupts =3D <GIC_SPI 257 IRQ_TYPE_LEVEL_HIGH 0>;
-> > +             cpus =3D <&cpu0>, <&cpu1>, <&cpu2>, <&cpu3>,
-> > +                    <&cpu4>, <&cpu5>, <&cpu6>, <&cpu7>;
-> > +     };
->
-> Keep alphabetical order of top-level nodes. pmu should be before psci
->
-> > +
-> > +     /* TODO replace with CCF clock */
-> > +     dummy_clk: oscillator {
->
-> clock-3
->
-> > +             compatible =3D "fixed-clock";
-> > +             #clock-cells =3D <0>;
-> > +             clock-frequency =3D <12345>;
-> > +             clock-output-names =3D "pclk";
-> > +     };
-> > +
-> > +     cpus {
-> > +             #address-cells =3D <1>;
-> > +             #size-cells =3D <0>;
-> > +
-> > +             cpu-map {
-> > +                     cluster0 {
-> > +                             core0 {
-> > +                                     cpu =3D <&cpu0>;
-> > +                             };
-> > +                             core1 {
-> > +                                     cpu =3D <&cpu1>;
-> > +                             };
-> > +                             core2 {
-> > +                                     cpu =3D <&cpu2>;
-> > +                             };
-> > +                             core3 {
-> > +                                     cpu =3D <&cpu3>;
-> > +                             };
-> > +                     };
-> > +
-> > +                     cluster1 {
-> > +                             core0 {
-> > +                                     cpu =3D <&cpu4>;
-> > +                             };
-> > +                             core1 {
-> > +                                     cpu =3D <&cpu5>;
-> > +                             };
-> > +                     };
-> > +
-> > +                     cluster2 {
-> > +                             core0 {
-> > +                                     cpu =3D <&cpu6>;
-> > +                             };
-> > +                             core1 {
-> > +                                     cpu =3D <&cpu7>;
-> > +                             };
-> > +                     };
-> > +             };
->
-> ...
->
-> > +
-> > +     /* ect node is required to be present by bootloader */
-> > +     ect {
-> > +     };
->
-> alphabetical order
->
-> > +
-> > +     ext_24_5m: clock-1 {
-> > +             compatible =3D "fixed-clock";
-> > +             #clock-cells =3D <0>;
-> > +             clock-output-names =3D "oscclk";
-> > +     };
-> > +
-> > +     ext_200m: clock-2 {
-> > +             compatible =3D "fixed-clock";
-> > +             #clock-cells =3D <0>;
-> > +             clock-output-names =3D "ext-200m";
-> > +     };
-> > +
-> > +     psci {
-> > +             compatible =3D "arm,psci-1.0";
-> > +             method =3D "smc";
-> > +     };
-> > +
-> > +     reserved_memory: reserved-memory {
-> > +             #address-cells =3D <2>;
-> > +             #size-cells =3D <1>;
-> > +             ranges;
-> > +
-> > +             gsa_reserved_protected: gsa@90200000 {
-> > +                     reg =3D <0x0 0x90200000 0x400000>;
-> > +                     no-map;
-> > +             };
-> > +
-> > +             tpu_fw_reserved: tpu-fw@93000000 {
-> > +                     reg =3D <0x0 0x93000000 0x1000000>;
-> > +                     no-map;
-> > +             };
-> > +
-> > +             aoc_reserve: aoc@94000000 {
-> > +                     reg =3D <0x0 0x94000000 0x03000000>;
-> > +                     no-map;
-> > +             };
-> > +
-> > +             abl_reserved: abl@f8800000 {
-> > +                     reg =3D <0x0 0xf8800000 0x02000000>;
-> > +                     no-map;
-> > +             };
-> > +
-> > +             dss_log_reserved: dss-log-reserved@fd3f0000 {
-> > +                     reg =3D <0x0 0xfd3f0000 0x0000e000>;
-> > +                     no-map;
-> > +             };
-> > +
-> > +             debug_kinfo_reserved: debug-kinfo-reserved@fd3fe000 {
-> > +                     reg =3D <0x0 0xfd3fe000 0x00001000>;
-> > +                     no-map;
-> > +             };
-> > +
-> > +             bldr_log_reserved: bldr-log-reserved@fd800000 {
-> > +                     reg =3D <0x0 0xfd800000 0x00100000>;
-> > +                     no-map;
-> > +             };
-> > +
-> > +             bldr_log_hist_reserved: bldr-log-hist-reserved@fd900000 {
-> > +                     reg =3D <0x0 0xfd900000 0x00002000>;
-> > +                     no-map;
-> > +             };
-> > +     };
-> > +
-> > +     timer {
->
-> alphabetical order, so this goes to the end
->
-> > +             compatible =3D "arm,armv8-timer";
-> > +             interrupts =3D
-> > +                <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_L=
-OW) 0>,
-> > +                <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_L=
-OW) 0>,
-> > +                <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_L=
-OW) 0>,
-> > +                <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_L=
-OW) 0>;
-> > +             clock-frequency =3D <24576000>;
->
-> I don't remember if you already got Marc's wrath, so just in case: are
-> you sure it is needed?
->
-> Anyway, this is board specific, not SoC.
->
-> > +     };
-> > +
-> > +     soc: soc@0 {
-> > +             compatible =3D "simple-bus";
-> > +             #address-cells =3D <1>;
-> > +             #size-cells =3D <1>;
-> > +             ranges =3D <0x0 0x0 0x0 0x40000000>;
-> > +
-> > +             cmu_misc: clock-controller@10010000 {
-> > +                     compatible =3D "google,gs101-cmu-misc";
-> > +                     reg =3D <0x10010000 0x8000>;
-> > +                     #clock-cells =3D <1>;
-> > +                     clocks =3D  <&cmu_top CLK_DOUT_CMU_MISC_BUS>,
->
-> One space after =3D
->
-> > +                               <&cmu_top CLK_DOUT_CMU_MISC_SSS>;
-> > +                     clock-names =3D "dout_cmu_misc_bus", "dout_cmu_mi=
-sc_sss";
-> > +             };
-> > +
-> > +             watchdog_cl0: watchdog@10060000 {
-> > +                     compatible =3D "google,gs101-wdt";
-> > +                     reg =3D <0x10060000 0x100>;
-> > +                     interrupts =3D <GIC_SPI 765 IRQ_TYPE_LEVEL_HIGH 0=
->;
-> > +                     clocks =3D
-> > +                       <&cmu_misc CLK_GOUT_MISC_WDT_CLUSTER0_PCLK>,
->
-> Join lines (clocks =3D <foo bar>). Same in other places.
->
-> > +                       <&ext_24_5m>;
-> > +                     clock-names =3D "watchdog", "watchdog_src";
-> > +                     samsung,syscon-phandle =3D <&pmu_system_controlle=
-r>;
-> > +                     samsung,cluster-index =3D <0>;
-> > +                     status =3D "disabled";
-> > +             };
-> > +
-> > +             watchdog_cl1: watchdog@10070000 {
-> > +                     compatible =3D "google,gs101-wdt";
-> > +                     reg =3D <0x10070000 0x100>;
-> > +                     interrupts =3D <GIC_SPI 766 IRQ_TYPE_LEVEL_HIGH 0=
->;
-> > +                     clocks =3D
-> > +                       <&cmu_misc CLK_GOUT_MISC_WDT_CLUSTER1_PCLK>,
-> > +                       <&ext_24_5m>;
-> > +                     clock-names =3D "watchdog", "watchdog_src";
-> > +                     samsung,syscon-phandle =3D <&pmu_system_controlle=
-r>;
-> > +                     samsung,cluster-index =3D <1>;
-> > +                     status =3D "disabled";
-> > +             };
-> > +
-> > +             gic: interrupt-controller@10400000 {
-> > +                     compatible =3D "arm,gic-v3";
-> > +                     #interrupt-cells =3D <4>;
-> > +                     interrupt-controller;
-> > +                     reg =3D <0x10400000 0x10000>, /* GICD */
-> > +                           <0x10440000 0x100000>;/* GICR * 8 */
-> > +                     interrupts =3D <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH 0>;
-> > +
-> > +                     ppi-partitions {
-> > +                             ppi_cluster0: interrupt-partition-0 {
-> > +                                     affinity =3D <&cpu0 &cpu1 &cpu2 &=
-cpu3>;
-> > +                             };
-> > +
-> > +                             ppi_cluster1: interrupt-partition-1 {
-> > +                                     affinity =3D <&cpu4 &cpu5>;
-> > +                             };
-> > +
-> > +                             ppi_cluster2: interrupt-partition-2 {
-> > +                                     affinity =3D <&cpu6 &cpu7>;
-> > +                             };
-> > +                     };
-> > +             };
-> > +
-> > +             sysreg_peric0: syscon@10820000 {
-> > +                     compatible =3D "google,gs101-peric0-sysreg", "sys=
-con";
-> > +                     reg =3D <0x10820000 0x10000>;
-> > +             };
-> > +
-> > +             pinctrl_peric0: pinctrl@10840000 {
-> > +                     compatible =3D "google,gs101-pinctrl";
-> > +                     reg =3D <0x10840000 0x00001000>;
-> > +                     interrupts =3D <GIC_SPI 625 IRQ_TYPE_LEVEL_HIGH 0=
->;
-> > +             };
-> > +
-> > +             usi_uart: usi@10a000c0 {
-> > +                     compatible =3D "google,gs101-usi",
-> > +                                  "samsung,exynos850-usi";
-> > +                     reg =3D <0x10a000c0 0x20>;
-> > +                     samsung,sysreg =3D <&sysreg_peric0 0x1020>;
-> > +                     samsung,mode =3D <USI_V2_UART>;
->
-> vendor properties go to the end, after standard properties, before status=
-.
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git/tree/Docum=
-entation/devicetree/bindings/dts-coding-style.rst?h=3Ddt/next&id=3D0d3a7716=
-10d0e155c9aa305f142f84dda5030fae#n122
->
-> > +                     #address-cells =3D <1>;
-> > +                     #size-cells =3D <1>;
-> > +                     ranges;
-> > +                     clocks =3D <&dummy_clk>, <&dummy_clk>;
-> > +                     clock-names =3D "pclk", "ipclk";
-> > +                     status =3D "disabled";
-> > +
-> > +                     serial_0: serial@10a00000 {
-> > +                             compatible =3D "google,gs101-uart";
-> > +                             reg =3D <0x10a00000 0xc0>;
-> > +                             reg-io-width =3D <4>;
-> > +                             samsung,uart-fifosize =3D <256>;
->
-> Ditto
->
 
-Assuming Krzysztof's comments are fixed, feel free to add:
+Hi Rob, Geert
+Cc Aymeric, Goda-san
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+This is v4 of ignoring non Linux system assinged device.
 
-> > +                             interrupts =3D <GIC_SPI 634
-> > +                                           IRQ_TYPE_LEVEL_HIGH 0>;
-> > +                             clocks =3D <&dummy_clk 0>, <&dummy_clk 0>=
-;
-> > +                             clock-names =3D "uart", "clk_uart_baud0";
-> > +                             status =3D "disabled";
-> > +                     };
-> > +             };
->
->
-> Best regards,
-> Krzysztof
->
+Some board might use Linux and another OS in the same time. In such
+case, current Linux will stop necessary module clock when booting
+which is not used on Linux side, but is used on another OS side.
+
+To avoid such situation, this patch-set try to find status = "reserved"
+devices, and add CLK_IGNORE_UNUSED flag to its clock.
+
+Table 2.4: Values for status property
+https://github.com/devicetree-org/devicetree-specification/releases/download/v0.4/devicetree-specification-v0.4.pdf
+
+"reserved"
+	Indicates that the device is operational, but should not be
+	used. Typically this is used for devices that are controlled
+	by another software component, such as platform firmware.
+
+[1/4] - [3/4] : expand existing function for "reserved"
+[4/4]         : adjust to "reserved" device on Renesas CPG
+
+v3 -> v4
+	- add Reviewed-by from Geert
+	- Tidyup many English
+	- use of_for_each_phandle() instead of while(!of_parse_phandle_with_args())
+	- move cpg_mssr_reserved_init() into cpg_mssr_common_init()
+
+v2 -> v3
+	- "__of_get_next_status_child()" -> "of_get_next_status_child()"
+	- add Reviewed-by from Rob
+
+v1 -> v2
+	- remove "default_ret" from __of_device_is_status()
+	- add new parameter explanation on cpg_mssr_priv
+
+
+Kuninori Morimoto (4):
+  of: add __of_device_is_status() and makes more generic status check
+  of: add of_get_next_status_child() and makes more generic of_get_next
+  of: add for_each_reserved_child_of_node()
+  drivers: clk: renesas: ignore all clocks which are assinged to non-Linux system
+
+ drivers/clk/renesas/renesas-cpg-mssr.c | 101 ++++++++++++++++++++--
+ drivers/of/base.c                      | 111 ++++++++++++++++++-------
+ include/linux/of.h                     |  11 +++
+ 3 files changed, 187 insertions(+), 36 deletions(-)
+
+-- 
+2.25.1
+
