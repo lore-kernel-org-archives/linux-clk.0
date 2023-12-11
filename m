@@ -1,88 +1,138 @@
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC621321A3;
+	Mon, 11 Dec 2023 16:41:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oqnSl9xk"
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 724699E
-	for <linux-clk@vger.kernel.org>; Mon, 11 Dec 2023 08:36:19 -0800 (PST)
-Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-40b27726369so49503035e9.0
-        for <linux-clk@vger.kernel.org>; Mon, 11 Dec 2023 08:36:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702312578; x=1702917378; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=bK1lX1hwHqRE0qWwNG1aUzZucX1tBAoUd44IP9gaN34=;
-        b=oqnSl9xk2RTxEzD6yma+xPajtnZb4XBh3BBnBDKAKEPUAM2omQ7B1U9RCKM5K+duWl
-         UM7GY0xkGuUFhfqq6TDZF9Wd/vPPLm7fJyGi6DMulMyxoYe4ewT9toCLqRirkW8/CpJD
-         0rWsm57VT/Q7jYcVEnuGfA/8w+bUf9NHJ3mfAwp/I9BP4yIbFx1wKbqgc1WbIPiP4IRz
-         2cnJB+gi8rP6rDaxZFeXnwYfgSJT6Bqh/hDig0vjxnoFJxvo03142EP4R+NSCoWWpc3X
-         9u+WICBhxruqK/9ZGVCkw0qGkSxQ0hH7rZTpkYQX+ZKgk8n07ftc6Y3aZ4yG6qF2Qmcd
-         FG0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702312578; x=1702917378;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bK1lX1hwHqRE0qWwNG1aUzZucX1tBAoUd44IP9gaN34=;
-        b=SJvxWoXHdwe1Zmy99gUc/CxYTsMBlVAzB5UXa1QzOR95EDeuqW1psDyZ2oM5EsYIZe
-         zVwh1sx6pt5R6BJPe3TXBr8Sb7ozEFxqsXDbJ67e+kqObhr6Atu3ZcnwdAtyfFZWaJ3p
-         xeU7z9x6KMdHJv/IxJ6IQ7GF8ntq1faGiIH3JtFzV8F+c8Nvsgz8sKl38FWW6+Ks+Ac1
-         gpj4qKEQn7MVflKNNCeYLBBTYYlxFxhigwYEX3QH1eSLDwj28hfmXI6a7Ro0+Ep4Y/1e
-         hNXQGb1acrcrnGunZyNMzBEVAIBEIA5BhOQE+KUL3etEBNcwuXyF7q2ErEE2p50DaE04
-         I53w==
-X-Gm-Message-State: AOJu0YzOTbjBbzYBofwz23BandVqNe19IasgstJhrK9/0nHHWoQoqdVV
-	EUZop8ITjpvvLWMw7hzw4R+m3A==
-X-Google-Smtp-Source: AGHT+IHqlghak/z1rUpsIZnKDYLf/Lji2enrhgj53Kac2omQn554ooTGIUHbzfez0RtduglMO9UMiw==
-X-Received: by 2002:a05:600c:510e:b0:40c:67a:b3bc with SMTP id o14-20020a05600c510e00b0040c067ab3bcmr2342567wms.71.1702312577700;
-        Mon, 11 Dec 2023 08:36:17 -0800 (PST)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id w7-20020a05600c474700b0040c41846919sm7404061wmo.41.2023.12.11.08.36.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Dec 2023 08:36:17 -0800 (PST)
-Message-ID: <f3299aaf9392aaedf8cca1c4756605b11c59b98f.camel@linaro.org>
-Subject: Re: [PATCH v7 06/16] dt-bindings: clock: google,gs101: fix
- incorrect numbering and DGB suffix
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Peter Griffin <peter.griffin@linaro.org>, robh+dt@kernel.org, 
- krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
- conor+dt@kernel.org,  sboyd@kernel.org, tomasz.figa@gmail.com,
- s.nawrocki@samsung.com,  linus.walleij@linaro.org, wim@linux-watchdog.org,
- linux@roeck-us.net,  catalin.marinas@arm.com, will@kernel.org,
- arnd@arndb.de, olof@lixom.net,  gregkh@linuxfoundation.org,
- jirislaby@kernel.org, cw00.choi@samsung.com,  alim.akhtar@samsung.com
-Cc: tudor.ambarus@linaro.org, semen.protsenko@linaro.org,
- saravanak@google.com,  willmcvicker@google.com, soc@kernel.org,
- devicetree@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org,  linux-clk@vger.kernel.org,
- linux-gpio@vger.kernel.org,  linux-watchdog@vger.kernel.org,
- kernel-team@android.com,  linux-serial@vger.kernel.org
-Date: Mon, 11 Dec 2023 16:36:15 +0000
-In-Reply-To: <20231211162331.435900-7-peter.griffin@linaro.org>
-References: <20231211162331.435900-1-peter.griffin@linaro.org>
-	 <20231211162331.435900-7-peter.griffin@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.49.2-3 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e+O2+cyr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 496FEC433D9;
+	Mon, 11 Dec 2023 16:41:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1702312869;
+	bh=bKmMULTYsuSllJVEHqdoJyJKTDlPdL6U+d4em8AhrDw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=e+O2+cyr0Ow0bTjD7aQgSyUuwcPnz+W58M1X/hMZMH6mTPP0KtWQL2Rd0JsTU8DED
+	 GbQJJUOAkOzHkaEweslmal86k3XFyRlxvZThN01IvBUF796P1U4UiR+voBWdt0udY2
+	 /cJsxVWcjz69xBji+/Djrbtxpk6yRQB8HrTqQtYHZI5IXlYvMXL7LuKjTY9rT6LsGy
+	 mT7ofxhtXDDcohS2bLM1d7Hrhj/Vu169eAFUYl1XlEfd35m7F6ZHkeFpEG4nBCg6Fn
+	 HuPj1JuZ9PhscMgjdD+j0PLqMuSQhLko2mjES3HtHaI46esb7OeUcSTyETlP13Itk2
+	 8bFyWWb1AwvGw==
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-50bfa5a6cffso5309544e87.0;
+        Mon, 11 Dec 2023 08:41:09 -0800 (PST)
+X-Gm-Message-State: AOJu0Yxb0jBWxyrAjPn70I6YvEUmzaSvehSFqxFG1sU7vySQZpUM0+BO
+	0D6In5W05A+DXYyz9MJ3F0HwQORg8Gk/9BuzHw==
+X-Google-Smtp-Source: AGHT+IGHwgxj0Odwen0XypIV0RWrJWS+u+chOgGSSFM27JLjV+387RdpxEQeeD/BVoSoFRX9TErbSIxjTxRsenSuHzE=
+X-Received: by 2002:a05:6512:4804:b0:50b:f80d:a330 with SMTP id
+ eo4-20020a056512480400b0050bf80da330mr1621928lfb.135.1702312867373; Mon, 11
+ Dec 2023 08:41:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20231205061002.30759-1-quic_sibis@quicinc.com> <20231205061002.30759-3-quic_sibis@quicinc.com>
+In-Reply-To: <20231205061002.30759-3-quic_sibis@quicinc.com>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Mon, 11 Dec 2023 10:40:55 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+UhWuFdd=o=W_5iaHpLqQxQ13YOGBjnPAm46LO90hGqA@mail.gmail.com>
+Message-ID: <CAL_Jsq+UhWuFdd=o=W_5iaHpLqQxQ13YOGBjnPAm46LO90hGqA@mail.gmail.com>
+Subject: Re: [PATCH V3 2/4] clk: qcom: Add Global Clock controller (GCC)
+ driver for X1E80100
+To: Sibi Sankar <quic_sibis@quicinc.com>
+Cc: andersson@kernel.org, konrad.dybcio@linaro.org, mturquette@baylibre.com, 
+	sboyd@kernel.org, krzysztof.kozlowski+dt@linaro.org, agross@kernel.org, 
+	conor+dt@kernel.org, quic_tdas@quicinc.com, quic_rjendra@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	neil.armstrong@linaro.org, abel.vesa@linaro.org, quic_tsoni@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2023-12-11 at 16:23 +0000, Peter Griffin wrote:
-> 166 was skipped by mistake and two clocks:
-> * CLK_MOUT_CMU_HSI0_USBDPDGB
-> * CLK_GOUT_HSI0_USBDPDGB
->=20
-> Have an incorrect DGB ending instead of DBG.
->=20
-> This is an ABI break, but as the patch was only applied yesterday this
-> header has never been in an actual release so it seems better to fix
-> this early than ignore it.
->=20
-> Fixes: 0a910f160638 ("dt-bindings: clock: Add Google gs101 clock manageme=
-nt unit bindings")
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+On Tue, Dec 5, 2023 at 12:11=E2=80=AFAM Sibi Sankar <quic_sibis@quicinc.com=
+> wrote:
+>
+> From: Rajendra Nayak <quic_rjendra@quicinc.com>
+>
+> Add support for the global clock controller found on X1E80100
+> based devices.
+>
+> Co-developed-by: Abel Vesa <abel.vesa@linaro.org>
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
+> Co-developed-by: Sibi Sankar <quic_sibis@quicinc.com>
+> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> ---
+>
+> v3:
+> * Rename gcc config to CLK_X1E80100_GCC [Krzysztof/Abel/Bryan]
+> * Pickup Rbs.
+>
+>  drivers/clk/qcom/Kconfig        |   10 +
+>  drivers/clk/qcom/Makefile       |    1 +
+>  drivers/clk/qcom/gcc-x1e80100.c | 6807 +++++++++++++++++++++++++++++++
+>  3 files changed, 6818 insertions(+)
+>  create mode 100644 drivers/clk/qcom/gcc-x1e80100.c
+>
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index ad1acd9b7426..a9bb50da4de5 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -20,6 +20,16 @@ menuconfig COMMON_CLK_QCOM
+>
+>  if COMMON_CLK_QCOM
+>
+> +config CLK_X1E80100_GCC
+> +       tristate "X1E80100 Global Clock Controller"
+> +       depends on ARM64 || COMPILE_TEST
+> +       select QCOM_GDSC
+> +       help
+> +         Support for the global clock controller on Qualcomm Technologie=
+s, Inc
+> +         X1E80100 devices.
+> +         Say Y if you want to use peripheral devices such as UART, SPI, =
+I2C,
+> +         USB, UFS, SD/eMMC, PCIe, etc.
+> +
+>  config QCOM_A53PLL
+>         tristate "MSM8916 A53 PLL"
+>         help
+> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+> index 17edd73f9839..a8498ee3595e 100644
+> --- a/drivers/clk/qcom/Makefile
+> +++ b/drivers/clk/qcom/Makefile
+> @@ -21,6 +21,7 @@ clk-qcom-$(CONFIG_QCOM_GDSC) +=3D gdsc.o
+>  obj-$(CONFIG_APQ_GCC_8084) +=3D gcc-apq8084.o
+>  obj-$(CONFIG_APQ_MMCC_8084) +=3D mmcc-apq8084.o
+>  obj-$(CONFIG_CLK_GFM_LPASS_SM8250) +=3D lpass-gfm-sm8250.o
+> +obj-$(CONFIG_CLK_X1E80100_GCC) +=3D gcc-x1e80100.o
+>  obj-$(CONFIG_IPQ_APSS_PLL) +=3D apss-ipq-pll.o
+>  obj-$(CONFIG_IPQ_APSS_6018) +=3D apss-ipq6018.o
+>  obj-$(CONFIG_IPQ_GCC_4019) +=3D gcc-ipq4019.o
+> diff --git a/drivers/clk/qcom/gcc-x1e80100.c b/drivers/clk/qcom/gcc-x1e80=
+100.c
+> new file mode 100644
+> index 000000000000..74db7fef237b
+> --- /dev/null
+> +++ b/drivers/clk/qcom/gcc-x1e80100.c
+> @@ -0,0 +1,6807 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reser=
+ved.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/module.h>
+> +#include <linux/of_device.h>
 
-Reviewed-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+Probably not a header you need as reported for linux-next. You need
+platform_device.h and either of.h or mod_devicetable.h.
 
+Rob
+
+> --
+> 2.17.1
+>
