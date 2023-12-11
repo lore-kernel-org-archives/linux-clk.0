@@ -1,115 +1,165 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D692A6128;
-	Mon, 11 Dec 2023 16:43:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63A804E1AD;
+	Mon, 11 Dec 2023 17:36:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YDgwPGeu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DB72C43395;
-	Mon, 11 Dec 2023 16:43:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="loMjJRWM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B601C43397;
+	Mon, 11 Dec 2023 17:36:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702312983;
-	bh=O42VfB6B/NKT45YG7/w+tzHV+vFk/9ubv9SFczzG5L0=;
-	h=References:In-Reply-To:From:Date:Subject:To:List-Id:Cc:From;
-	b=YDgwPGeue5DBU6BcGt8oAMWNp2wU0ujmkYoY5HoVVqcv0hphcrNSDbI1E48AbdsdX
-	 FJchg2BAjmX8HT/GBLQOKBNLWUCChP0fxRtsmLNoqGpy4hKuo5beQ1TEBlr65CmiMX
-	 R2HK47cTKoJEVFw6DSRm6en8DzIOqLJFrrPMsyejWaEqrOnkHxljf4/WBrrQPjpSu5
-	 iz+Zp1LFVIS5X4AQliUoSx/0P8UIXSKDLdU1caNc8vlDAzllZ19so7ob4lTOIa5U+K
-	 TOU/av5PLIxQsFcB23MnJefK1GdwqKeB1jkrJe+jKnSsOt7IJ3mvGV/0nKfkKkaxSx
-	 PJjYPLIyTAZkA==
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-50be03cc8a3so6129224e87.1;
-        Mon, 11 Dec 2023 08:43:03 -0800 (PST)
-X-Gm-Message-State: AOJu0Yyqj2jN4i60rkh+PLbJIyJveIfeF5x3tparC614v0ft25uqZ4Cg
-	f8aNlG+8bpO+iWQXvB2o/9xrZlDN8B8tEqr9rQ==
-X-Google-Smtp-Source: AGHT+IE+BuXwI7UD9Kku6Z+7AFIfpY5y8FXvZ7fPoyMcKoLOwdUc9Eno1NvK829t1ShWBDdZ9wMmEuPLOErAklj5W88=
-X-Received: by 2002:a05:6512:ad5:b0:50d:1eb3:7bfd with SMTP id
- n21-20020a0565120ad500b0050d1eb37bfdmr1914116lfu.13.1702312981546; Mon, 11
- Dec 2023 08:43:01 -0800 (PST)
+	s=k20201202; t=1702316215;
+	bh=jnf9dg13SzBYTXr+GBpBiKbCKE+W4egIWCJCCgVUAwg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=loMjJRWMoMUGhMgm+YrnxZIpLCV3bDvtka0s23uKcX4z16ASC0s+UuYVJHGeBIYIB
+	 N27ZdO+4F8Lawqz9kb2Luwv9DyGq9QaTgPhpxI9eRVt5CsaJ/8hXk/1FrinkdTkG2l
+	 6DkZXddgjOC/nFXYY5q29djDfkZBGH+J+BAfsiySfpReSSCj43HJsZ98xx7K7bowh9
+	 XTlgW15lmK6opKpi3nU9cVIARat90LwpmncgYWKqsZuE8dv7mkglGhaEryRg2Soeal
+	 I1BlECQqH9HuKD3JA8HOwUOv2Bv48o7Cu4IgQR9V5VwfHj28+3s95m0s9ceGCoV8ju
+	 oWcQ6PJw8bn4w==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-50be3611794so5575609e87.0;
+        Mon, 11 Dec 2023 09:36:55 -0800 (PST)
+X-Gm-Message-State: AOJu0YzzOzvob9fUgTBTHuY2N5lt+aYjf8lB+d3p76MnrLK6nXxdsepD
+	k8DQhRcTK/6iwXYaGWMtYBpHGjs4GZ/6J5WSPA==
+X-Google-Smtp-Source: AGHT+IHTBVeYuUBoGJIP6ycY2EOkZoObSSDfVZqLhoI3Lxe7oVt2ihkbRec/l/L5HGnrywwvadEcHP4hGnXcj/srfPU=
+X-Received: by 2002:a05:6512:68a:b0:50d:15be:f07e with SMTP id
+ t10-20020a056512068a00b0050d15bef07emr2866329lfe.74.1702316213414; Mon, 11
+ Dec 2023 09:36:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231211162331.435900-1-peter.griffin@linaro.org> <20231211162331.435900-9-peter.griffin@linaro.org>
-In-Reply-To: <20231211162331.435900-9-peter.griffin@linaro.org>
+References: <097e82b0d66570763d64be1715517d8b032fcf95.1702158423.git.daniel@makrotopia.org>
+ <879b5bbcb165aa3f059a41218142b27e5f64597f.1702158423.git.daniel@makrotopia.org>
+In-Reply-To: <879b5bbcb165aa3f059a41218142b27e5f64597f.1702158423.git.daniel@makrotopia.org>
 From: Rob Herring <robh+dt@kernel.org>
-Date: Mon, 11 Dec 2023 10:42:49 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJ_NUajmQs8ZYiE2GpvNxBwtkLRE2jvWDU3hKtztt92Ug@mail.gmail.com>
-Message-ID: <CAL_JsqJ_NUajmQs8ZYiE2GpvNxBwtkLRE2jvWDU3hKtztt92Ug@mail.gmail.com>
-Subject: Re: [PATCH v7 08/16] clk: samsung: clk-gs101: Add cmu_top, cmu_misc
- and cmu_apm support
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com, 
-	conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com, 
-	s.nawrocki@samsung.com, linus.walleij@linaro.org, wim@linux-watchdog.org, 
-	linux@roeck-us.net, catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, 
-	olof@lixom.net, gregkh@linuxfoundation.org, jirislaby@kernel.org, 
-	cw00.choi@samsung.com, alim.akhtar@samsung.com, tudor.ambarus@linaro.org, 
-	andre.draszik@linaro.org, semen.protsenko@linaro.org, saravanak@google.com, 
-	willmcvicker@google.com, soc@kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, kernel-team@android.com, 
-	linux-serial@vger.kernel.org
+Date: Mon, 11 Dec 2023 11:36:41 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJVY3-UneaoUNt6aGa2kU_3EVAwxJfY_mYZPyp=L=Bjtw@mail.gmail.com>
+Message-ID: <CAL_JsqJVY3-UneaoUNt6aGa2kU_3EVAwxJfY_mYZPyp=L=Bjtw@mail.gmail.com>
+Subject: Re: [PATCH v4 4/4] clk: mediatek: add drivers for MT7988 SoC
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Sabrina Dubroca <sd@queasysnail.net>, Jianhui Zhao <zhaojh329@gmail.com>, 
+	Chen-Yu Tsai <wenst@chromium.org>, "Garmin.Chang" <Garmin.Chang@mediatek.com>, 
+	Sam Shih <sam.shih@mediatek.com>, Markus Schneider-Pargmann <msp@baylibre.com>, 
+	Alexandre Mergnat <amergnat@baylibre.com>, Jiasheng Jiang <jiasheng@iscas.ac.cn>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
+	Frank Wunderlich <frank-w@public-files.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	James Liao <jamesjj.liao@mediatek.com>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	netdev@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 11, 2023 at 10:24=E2=80=AFAM Peter Griffin <peter.griffin@linar=
-o.org> wrote:
+On Sat, Dec 9, 2023 at 3:56=E2=80=AFPM Daniel Golle <daniel@makrotopia.org>=
+ wrote:
 >
-> cmu_top is the top level clock management unit which contains PLLs, muxes=
-,
-> dividers and gates that feed the other clock management units.
+> From: Sam Shih <sam.shih@mediatek.com>
 >
-> cmu_misc clocks IPs such as Watchdog and cmu_apm clocks ips part of the
-> APM module.
+> Add APMIXED, ETH, INFRACFG and TOPCKGEN clock drivers which are
+> typical MediaTek designs.
 >
-> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-> Reviewed-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Tested-by: Will McVicker <willmcvicker@google.com>
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> Also add driver for XFIPLL clock generating the 156.25MHz clock for
+> the XFI SerDes. It needs an undocumented software workaround and has
+> an unknown internal design.
+>
+> Signed-off-by: Sam Shih <sam.shih@mediatek.com>
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 > ---
->  drivers/clk/samsung/Makefile    |    1 +
->  drivers/clk/samsung/clk-gs101.c | 2512 +++++++++++++++++++++++++++++++
->  2 files changed, 2513 insertions(+)
->  create mode 100644 drivers/clk/samsung/clk-gs101.c
+> v4:
+>  * make use of existing GATE_MTK_FLAGS macro
+>  * reformat to max. 100 columns
+>  * cosmetics
 >
-> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
-> index ebbeacabe88f..3056944a5a54 100644
-> --- a/drivers/clk/samsung/Makefile
-> +++ b/drivers/clk/samsung/Makefile
-> @@ -21,6 +21,7 @@ obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK) +=3D clk-exynos7.=
+> v3: use git --from ...
+> v2: no changes
+>
+>
+>  drivers/clk/mediatek/Kconfig               |   9 +
+>  drivers/clk/mediatek/Makefile              |   5 +
+>  drivers/clk/mediatek/clk-mt7988-apmixed.c  | 102 +++++++
+>  drivers/clk/mediatek/clk-mt7988-eth.c      | 133 +++++++++
+>  drivers/clk/mediatek/clk-mt7988-infracfg.c | 274 +++++++++++++++++
+>  drivers/clk/mediatek/clk-mt7988-topckgen.c | 325 +++++++++++++++++++++
+>  drivers/clk/mediatek/clk-mt7988-xfipll.c   |  78 +++++
+>  7 files changed, 926 insertions(+)
+>  create mode 100644 drivers/clk/mediatek/clk-mt7988-apmixed.c
+>  create mode 100644 drivers/clk/mediatek/clk-mt7988-eth.c
+>  create mode 100644 drivers/clk/mediatek/clk-mt7988-infracfg.c
+>  create mode 100644 drivers/clk/mediatek/clk-mt7988-topckgen.c
+>  create mode 100644 drivers/clk/mediatek/clk-mt7988-xfipll.c
+>
+> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+> index 48b42d11111cd..70a005e7e1b18 100644
+> --- a/drivers/clk/mediatek/Kconfig
+> +++ b/drivers/clk/mediatek/Kconfig
+> @@ -423,6 +423,15 @@ config COMMON_CLK_MT7986_ETHSYS
+>           This driver adds support for clocks for Ethernet and SGMII
+>           required on MediaTek MT7986 SoC.
+>
+> +config COMMON_CLK_MT7988
+> +       tristate "Clock driver for MediaTek MT7988"
+> +       depends on ARCH_MEDIATEK || COMPILE_TEST
+> +       select COMMON_CLK_MEDIATEK
+> +       default ARCH_MEDIATEK
+> +       help
+> +         This driver supports MediaTek MT7988 basic clocks and clocks
+> +         required for various periperals found on this SoC.
+> +
+>  config COMMON_CLK_MT8135
+>         tristate "Clock driver for MediaTek MT8135"
+>         depends on (ARCH_MEDIATEK && ARM) || COMPILE_TEST
+> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefil=
+e
+> index dbeaa5b41177d..eeccfa039896f 100644
+> --- a/drivers/clk/mediatek/Makefile
+> +++ b/drivers/clk/mediatek/Makefile
+> @@ -62,6 +62,11 @@ obj-$(CONFIG_COMMON_CLK_MT7986) +=3D clk-mt7986-apmixe=
+d.o
+>  obj-$(CONFIG_COMMON_CLK_MT7986) +=3D clk-mt7986-topckgen.o
+>  obj-$(CONFIG_COMMON_CLK_MT7986) +=3D clk-mt7986-infracfg.o
+>  obj-$(CONFIG_COMMON_CLK_MT7986_ETHSYS) +=3D clk-mt7986-eth.o
+> +obj-$(CONFIG_COMMON_CLK_MT7988) +=3D clk-mt7988-apmixed.o
+> +obj-$(CONFIG_COMMON_CLK_MT7988) +=3D clk-mt7988-topckgen.o
+> +obj-$(CONFIG_COMMON_CLK_MT7988) +=3D clk-mt7988-infracfg.o
+> +obj-$(CONFIG_COMMON_CLK_MT7988) +=3D clk-mt7988-eth.o
+> +obj-$(CONFIG_COMMON_CLK_MT7988) +=3D clk-mt7988-xfipll.o
+>  obj-$(CONFIG_COMMON_CLK_MT8135) +=3D clk-mt8135-apmixedsys.o clk-mt8135.=
 o
->  obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)  +=3D clk-exynos7885.o
->  obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)  +=3D clk-exynos850.o
->  obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)  +=3D clk-exynosautov9.o
-> +obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)  +=3D clk-gs101.o
->  obj-$(CONFIG_S3C64XX_COMMON_CLK)       +=3D clk-s3c64xx.o
->  obj-$(CONFIG_S5PV210_COMMON_CLK)       +=3D clk-s5pv210.o clk-s5pv210-au=
-dss.o
->  obj-$(CONFIG_TESLA_FSD_COMMON_CLK)     +=3D clk-fsd.o
-> diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-gs=
-101.c
+>  obj-$(CONFIG_COMMON_CLK_MT8167) +=3D clk-mt8167-apmixedsys.o clk-mt8167.=
+o
+>  obj-$(CONFIG_COMMON_CLK_MT8167_AUDSYS) +=3D clk-mt8167-aud.o
+> diff --git a/drivers/clk/mediatek/clk-mt7988-apmixed.c b/drivers/clk/medi=
+atek/clk-mt7988-apmixed.c
 > new file mode 100644
-> index 000000000000..05361fce3c6f
+> index 0000000000000..02eb6354b01a8
 > --- /dev/null
-> +++ b/drivers/clk/samsung/clk-gs101.c
-> @@ -0,0 +1,2512 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
+> +++ b/drivers/clk/mediatek/clk-mt7988-apmixed.c
+> @@ -0,0 +1,102 @@
+> +// SPDX-License-Identifier: GPL-2.0
 > +/*
-> + * Copyright (C) 2023 Linaro Ltd.
-> + * Author: Peter Griffin <peter.griffin@linaro.org>
-> + *
-> + * Common Clock Framework support for GS101.
+> + * Copyright (c) 2023 MediaTek Inc.
+> + * Author: Sam Shih <sam.shih@mediatek.com>
+> + * Author: Xiufeng Li <Xiufeng.Li@mediatek.com>
 > + */
 > +
-> +#include <linux/clk.h>
 > +#include <linux/clk-provider.h>
 > +#include <linux/of.h>
+
+> +#include <linux/of_address.h>
 > +#include <linux/of_device.h>
 
-You probably don't need this header. Please check.
+You probably don't need these 2 headers and the implicit includes
+of_device.h makes are dropped now in linux-next. Please check what you
+actually need and make them explicit.
 
-> +#include <linux/platform_device.h>
+Rob
