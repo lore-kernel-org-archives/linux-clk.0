@@ -1,138 +1,115 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC621321A3;
-	Mon, 11 Dec 2023 16:41:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D692A6128;
+	Mon, 11 Dec 2023 16:43:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e+O2+cyr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 496FEC433D9;
-	Mon, 11 Dec 2023 16:41:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YDgwPGeu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DB72C43395;
+	Mon, 11 Dec 2023 16:43:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702312869;
-	bh=bKmMULTYsuSllJVEHqdoJyJKTDlPdL6U+d4em8AhrDw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=e+O2+cyr0Ow0bTjD7aQgSyUuwcPnz+W58M1X/hMZMH6mTPP0KtWQL2Rd0JsTU8DED
-	 GbQJJUOAkOzHkaEweslmal86k3XFyRlxvZThN01IvBUF796P1U4UiR+voBWdt0udY2
-	 /cJsxVWcjz69xBji+/Djrbtxpk6yRQB8HrTqQtYHZI5IXlYvMXL7LuKjTY9rT6LsGy
-	 mT7ofxhtXDDcohS2bLM1d7Hrhj/Vu169eAFUYl1XlEfd35m7F6ZHkeFpEG4nBCg6Fn
-	 HuPj1JuZ9PhscMgjdD+j0PLqMuSQhLko2mjES3HtHaI46esb7OeUcSTyETlP13Itk2
-	 8bFyWWb1AwvGw==
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-50bfa5a6cffso5309544e87.0;
-        Mon, 11 Dec 2023 08:41:09 -0800 (PST)
-X-Gm-Message-State: AOJu0Yxb0jBWxyrAjPn70I6YvEUmzaSvehSFqxFG1sU7vySQZpUM0+BO
-	0D6In5W05A+DXYyz9MJ3F0HwQORg8Gk/9BuzHw==
-X-Google-Smtp-Source: AGHT+IGHwgxj0Odwen0XypIV0RWrJWS+u+chOgGSSFM27JLjV+387RdpxEQeeD/BVoSoFRX9TErbSIxjTxRsenSuHzE=
-X-Received: by 2002:a05:6512:4804:b0:50b:f80d:a330 with SMTP id
- eo4-20020a056512480400b0050bf80da330mr1621928lfb.135.1702312867373; Mon, 11
- Dec 2023 08:41:07 -0800 (PST)
+	s=k20201202; t=1702312983;
+	bh=O42VfB6B/NKT45YG7/w+tzHV+vFk/9ubv9SFczzG5L0=;
+	h=References:In-Reply-To:From:Date:Subject:To:List-Id:Cc:From;
+	b=YDgwPGeue5DBU6BcGt8oAMWNp2wU0ujmkYoY5HoVVqcv0hphcrNSDbI1E48AbdsdX
+	 FJchg2BAjmX8HT/GBLQOKBNLWUCChP0fxRtsmLNoqGpy4hKuo5beQ1TEBlr65CmiMX
+	 R2HK47cTKoJEVFw6DSRm6en8DzIOqLJFrrPMsyejWaEqrOnkHxljf4/WBrrQPjpSu5
+	 iz+Zp1LFVIS5X4AQliUoSx/0P8UIXSKDLdU1caNc8vlDAzllZ19so7ob4lTOIa5U+K
+	 TOU/av5PLIxQsFcB23MnJefK1GdwqKeB1jkrJe+jKnSsOt7IJ3mvGV/0nKfkKkaxSx
+	 PJjYPLIyTAZkA==
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-50be03cc8a3so6129224e87.1;
+        Mon, 11 Dec 2023 08:43:03 -0800 (PST)
+X-Gm-Message-State: AOJu0Yyqj2jN4i60rkh+PLbJIyJveIfeF5x3tparC614v0ft25uqZ4Cg
+	f8aNlG+8bpO+iWQXvB2o/9xrZlDN8B8tEqr9rQ==
+X-Google-Smtp-Source: AGHT+IE+BuXwI7UD9Kku6Z+7AFIfpY5y8FXvZ7fPoyMcKoLOwdUc9Eno1NvK829t1ShWBDdZ9wMmEuPLOErAklj5W88=
+X-Received: by 2002:a05:6512:ad5:b0:50d:1eb3:7bfd with SMTP id
+ n21-20020a0565120ad500b0050d1eb37bfdmr1914116lfu.13.1702312981546; Mon, 11
+ Dec 2023 08:43:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231205061002.30759-1-quic_sibis@quicinc.com> <20231205061002.30759-3-quic_sibis@quicinc.com>
-In-Reply-To: <20231205061002.30759-3-quic_sibis@quicinc.com>
+References: <20231211162331.435900-1-peter.griffin@linaro.org> <20231211162331.435900-9-peter.griffin@linaro.org>
+In-Reply-To: <20231211162331.435900-9-peter.griffin@linaro.org>
 From: Rob Herring <robh+dt@kernel.org>
-Date: Mon, 11 Dec 2023 10:40:55 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+UhWuFdd=o=W_5iaHpLqQxQ13YOGBjnPAm46LO90hGqA@mail.gmail.com>
-Message-ID: <CAL_Jsq+UhWuFdd=o=W_5iaHpLqQxQ13YOGBjnPAm46LO90hGqA@mail.gmail.com>
-Subject: Re: [PATCH V3 2/4] clk: qcom: Add Global Clock controller (GCC)
- driver for X1E80100
-To: Sibi Sankar <quic_sibis@quicinc.com>
-Cc: andersson@kernel.org, konrad.dybcio@linaro.org, mturquette@baylibre.com, 
-	sboyd@kernel.org, krzysztof.kozlowski+dt@linaro.org, agross@kernel.org, 
-	conor+dt@kernel.org, quic_tdas@quicinc.com, quic_rjendra@quicinc.com, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	neil.armstrong@linaro.org, abel.vesa@linaro.org, quic_tsoni@quicinc.com
+Date: Mon, 11 Dec 2023 10:42:49 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJ_NUajmQs8ZYiE2GpvNxBwtkLRE2jvWDU3hKtztt92Ug@mail.gmail.com>
+Message-ID: <CAL_JsqJ_NUajmQs8ZYiE2GpvNxBwtkLRE2jvWDU3hKtztt92Ug@mail.gmail.com>
+Subject: Re: [PATCH v7 08/16] clk: samsung: clk-gs101: Add cmu_top, cmu_misc
+ and cmu_apm support
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com, 
+	conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com, 
+	s.nawrocki@samsung.com, linus.walleij@linaro.org, wim@linux-watchdog.org, 
+	linux@roeck-us.net, catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, 
+	olof@lixom.net, gregkh@linuxfoundation.org, jirislaby@kernel.org, 
+	cw00.choi@samsung.com, alim.akhtar@samsung.com, tudor.ambarus@linaro.org, 
+	andre.draszik@linaro.org, semen.protsenko@linaro.org, saravanak@google.com, 
+	willmcvicker@google.com, soc@kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, kernel-team@android.com, 
+	linux-serial@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 5, 2023 at 12:11=E2=80=AFAM Sibi Sankar <quic_sibis@quicinc.com=
-> wrote:
+On Mon, Dec 11, 2023 at 10:24=E2=80=AFAM Peter Griffin <peter.griffin@linar=
+o.org> wrote:
 >
-> From: Rajendra Nayak <quic_rjendra@quicinc.com>
+> cmu_top is the top level clock management unit which contains PLLs, muxes=
+,
+> dividers and gates that feed the other clock management units.
 >
-> Add support for the global clock controller found on X1E80100
-> based devices.
+> cmu_misc clocks IPs such as Watchdog and cmu_apm clocks ips part of the
+> APM module.
 >
-> Co-developed-by: Abel Vesa <abel.vesa@linaro.org>
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
-> Co-developed-by: Sibi Sankar <quic_sibis@quicinc.com>
-> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+> Reviewed-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Tested-by: Will McVicker <willmcvicker@google.com>
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 > ---
+>  drivers/clk/samsung/Makefile    |    1 +
+>  drivers/clk/samsung/clk-gs101.c | 2512 +++++++++++++++++++++++++++++++
+>  2 files changed, 2513 insertions(+)
+>  create mode 100644 drivers/clk/samsung/clk-gs101.c
 >
-> v3:
-> * Rename gcc config to CLK_X1E80100_GCC [Krzysztof/Abel/Bryan]
-> * Pickup Rbs.
->
->  drivers/clk/qcom/Kconfig        |   10 +
->  drivers/clk/qcom/Makefile       |    1 +
->  drivers/clk/qcom/gcc-x1e80100.c | 6807 +++++++++++++++++++++++++++++++
->  3 files changed, 6818 insertions(+)
->  create mode 100644 drivers/clk/qcom/gcc-x1e80100.c
->
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index ad1acd9b7426..a9bb50da4de5 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -20,6 +20,16 @@ menuconfig COMMON_CLK_QCOM
->
->  if COMMON_CLK_QCOM
->
-> +config CLK_X1E80100_GCC
-> +       tristate "X1E80100 Global Clock Controller"
-> +       depends on ARM64 || COMPILE_TEST
-> +       select QCOM_GDSC
-> +       help
-> +         Support for the global clock controller on Qualcomm Technologie=
-s, Inc
-> +         X1E80100 devices.
-> +         Say Y if you want to use peripheral devices such as UART, SPI, =
-I2C,
-> +         USB, UFS, SD/eMMC, PCIe, etc.
-> +
->  config QCOM_A53PLL
->         tristate "MSM8916 A53 PLL"
->         help
-> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-> index 17edd73f9839..a8498ee3595e 100644
-> --- a/drivers/clk/qcom/Makefile
-> +++ b/drivers/clk/qcom/Makefile
-> @@ -21,6 +21,7 @@ clk-qcom-$(CONFIG_QCOM_GDSC) +=3D gdsc.o
->  obj-$(CONFIG_APQ_GCC_8084) +=3D gcc-apq8084.o
->  obj-$(CONFIG_APQ_MMCC_8084) +=3D mmcc-apq8084.o
->  obj-$(CONFIG_CLK_GFM_LPASS_SM8250) +=3D lpass-gfm-sm8250.o
-> +obj-$(CONFIG_CLK_X1E80100_GCC) +=3D gcc-x1e80100.o
->  obj-$(CONFIG_IPQ_APSS_PLL) +=3D apss-ipq-pll.o
->  obj-$(CONFIG_IPQ_APSS_6018) +=3D apss-ipq6018.o
->  obj-$(CONFIG_IPQ_GCC_4019) +=3D gcc-ipq4019.o
-> diff --git a/drivers/clk/qcom/gcc-x1e80100.c b/drivers/clk/qcom/gcc-x1e80=
-100.c
+> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
+> index ebbeacabe88f..3056944a5a54 100644
+> --- a/drivers/clk/samsung/Makefile
+> +++ b/drivers/clk/samsung/Makefile
+> @@ -21,6 +21,7 @@ obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK) +=3D clk-exynos7.=
+o
+>  obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)  +=3D clk-exynos7885.o
+>  obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)  +=3D clk-exynos850.o
+>  obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)  +=3D clk-exynosautov9.o
+> +obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)  +=3D clk-gs101.o
+>  obj-$(CONFIG_S3C64XX_COMMON_CLK)       +=3D clk-s3c64xx.o
+>  obj-$(CONFIG_S5PV210_COMMON_CLK)       +=3D clk-s5pv210.o clk-s5pv210-au=
+dss.o
+>  obj-$(CONFIG_TESLA_FSD_COMMON_CLK)     +=3D clk-fsd.o
+> diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-gs=
+101.c
 > new file mode 100644
-> index 000000000000..74db7fef237b
+> index 000000000000..05361fce3c6f
 > --- /dev/null
-> +++ b/drivers/clk/qcom/gcc-x1e80100.c
-> @@ -0,0 +1,6807 @@
+> +++ b/drivers/clk/samsung/clk-gs101.c
+> @@ -0,0 +1,2512 @@
 > +// SPDX-License-Identifier: GPL-2.0-only
 > +/*
-> + * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reser=
-ved.
+> + * Copyright (C) 2023 Linaro Ltd.
+> + * Author: Peter Griffin <peter.griffin@linaro.org>
+> + *
+> + * Common Clock Framework support for GS101.
 > + */
 > +
+> +#include <linux/clk.h>
 > +#include <linux/clk-provider.h>
-> +#include <linux/module.h>
+> +#include <linux/of.h>
 > +#include <linux/of_device.h>
 
-Probably not a header you need as reported for linux-next. You need
-platform_device.h and either of.h or mod_devicetable.h.
+You probably don't need this header. Please check.
 
-Rob
-
-> --
-> 2.17.1
->
+> +#include <linux/platform_device.h>
