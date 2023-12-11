@@ -1,105 +1,121 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MD71feyT"
-Received: from mail-qk1-x72b.google.com (mail-qk1-x72b.google.com [IPv6:2607:f8b0:4864:20::72b])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3290FB8
-	for <linux-clk@vger.kernel.org>; Mon, 11 Dec 2023 04:45:29 -0800 (PST)
-Received: by mail-qk1-x72b.google.com with SMTP id af79cd13be357-77bcbc14899so274633485a.1
-        for <linux-clk@vger.kernel.org>; Mon, 11 Dec 2023 04:45:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702298728; x=1702903528; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ciTb8X7sSYaGOT4UWkd550gPDBthZN4x3zDDJKswrc0=;
-        b=MD71feyTXsRUpjaEAMVx1rbSYeC3aWOn2xg9RS0SC1o3UJKEIZjSiqE07xBHybts2C
-         T8IHB0QodWLqaf5ZYUOaVsX9+Mc/zKX3RgMGy7jAAqaOhN67Zw2z+wYGaojTRgMqDNZY
-         4IlM6WUV3Rr1GrZAexc1y8ayyPBlCOFAPkK5VZHdsOo9jIGQItb7yp8aWUtuk27j796L
-         5gQatQsuUrbAlsLSzN4C9WyaH13R1yRoQnqXpd+BtVaRl+bcj/eRD/gj6l7RHqO7S83y
-         kqRBTGP6YOuyr391oXgzA0uE1TubKEmxOR8xByBjzq9KMXHy59WFG7a4GD2eoq1TW9vM
-         kwug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702298728; x=1702903528;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ciTb8X7sSYaGOT4UWkd550gPDBthZN4x3zDDJKswrc0=;
-        b=j+RDh/WpHJBSE+9lojSjG1BAxD8cRr0Y9HtvtqbZi2exEsiHQH4wLGyfAch4yO/g6X
-         qRw7n0kln7etbhgeFJd4Y7rGKoyxnCQUdind0NyKQ7TrJD/F67dgFFEf1DKn0piUcuLm
-         W1P5mBQiZoABFm7nLd0phfYqo4K0xrnVmjKkEln7QdVbOA3uE2h54Gx4bl+9G7C7U/rP
-         Ka6C9RgRNH2i1laR3Eu7aAPa/JgoQO5u2+Y49eNNGUsgAWX3WoAhZUF8nwt2BRTqbMF6
-         qzZr35Cjdc7GhAeE+yU+AAuoOdpw15Mkmy7pSTwGL3Y+EZ1HamVuuWNuLsPO+tssLeEj
-         BWkg==
-X-Gm-Message-State: AOJu0Yy3oBDNoTxAicPoD+/+mD5x0tJ0FhcCNfxdSMvL/1fTSoPKZtHG
-	/ibLekayYPZ35u3akl/o3EgvzQ7u2g4dcl3kmDTrTQ==
-X-Google-Smtp-Source: AGHT+IEpuGvMmwJK7KEtP0GssM6BhrUf01e5r6sZWErKY3vlOr/IGzS7HSTqH7gTZbrJhzfyaEJCH937yl3bmQukKsg=
-X-Received: by 2002:a0c:ef8a:0:b0:67a:8cf8:3fb with SMTP id
- w10-20020a0cef8a000000b0067a8cf803fbmr5908480qvr.61.1702298728335; Mon, 11
- Dec 2023 04:45:28 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="niDr1jyM"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A7939F;
+	Mon, 11 Dec 2023 05:20:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1702300810; x=1733836810;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=aWWmxlxn0pM8okQkL2E4L7uqb6CIH81faOxCrpqcrJA=;
+  b=niDr1jyMnM8fxPIExSw0MLoYWMgZ1bP5Z1DdDrwGsvKwsrQoUY6kwt/h
+   Dzvv7QAS2sYbU5gwtmtApf5MwXFGUwSMB1aQ1qsI3BG4fV55pIJAQpiHz
+   /lMRNTVH9/zA3N6N4CNmf8Pl57zmeMbn7bFRvEaJr+pdAhUnrhzmF3uC8
+   NudGdn6lbMBcwmQlWEZfSarIClLCcWS5KaRc2/9t3Hm/ob0LS5ejpMPlG
+   y5WbJ7hKyl0p0YnJNojWisD413RQfAi8llM/9vlKEdtJ3f1QM3Y/FpgAi
+   C+9uxf5P+2roclkO5toj7IG6cNSIZa4YXNSq766DFJb0Yg6nk+e/W+EsY
+   A==;
+X-CSE-ConnectionGUID: gPfR+rluR3a0j2IyXO7vGQ==
+X-CSE-MsgGUID: YZcXyw1DSgOOmSXR8rHP3w==
+X-ThreatScanner-Verdict: Negative
+X-IronPort-AV: E=Sophos;i="6.04,267,1695711600"; 
+   d="asc'?scan'208";a="180278630"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 11 Dec 2023 06:20:09 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 11 Dec 2023 06:19:48 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex02.mchp-main.com (10.10.85.144)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Mon, 11 Dec 2023 06:19:47 -0700
+Date: Mon, 11 Dec 2023 13:19:17 +0000
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Kuan-Wei Chiu <visitorckw@gmail.com>
+CC: <mturquette@baylibre.com>, <sboyd@kernel.org>, <duje.mihanovic@skole.hr>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: mmp: pxa168: Fix memory leak in pxa168_clk_init()
+Message-ID: <20231211-urgent-carol-45ca352a9d2a@wendy>
+References: <20231210175232.3414584-1-visitorckw@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231209233106.147416-1-peter.griffin@linaro.org>
- <20231209233106.147416-20-peter.griffin@linaro.org> <03603f37-ec3d-456c-95a4-e543d1df4801@linaro.org>
-In-Reply-To: <03603f37-ec3d-456c-95a4-e543d1df4801@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Mon, 11 Dec 2023 12:45:16 +0000
-Message-ID: <CADrjBPr7tqdec6z_NL0EEm+G3WTUkjj_dE2Lpm+f=4hdg5BA5Q@mail.gmail.com>
-Subject: Re: [PATCH v6 19/20] arm64: dts: exynos: google: Add initial
- Oriole/pixel 6 board support
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
-	mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org, 
-	tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, 
-	wim@linux-watchdog.org, linux@roeck-us.net, catalin.marinas@arm.com, 
-	will@kernel.org, arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org, 
-	jirislaby@kernel.org, cw00.choi@samsung.com, alim.akhtar@samsung.com, 
-	tudor.ambarus@linaro.org, andre.draszik@linaro.org, 
-	semen.protsenko@linaro.org, saravanak@google.com, willmcvicker@google.com, 
-	soc@kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, kernel-team@android.com, 
-	linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="vwICD4jSZexuFxQq"
+Content-Disposition: inline
+In-Reply-To: <20231210175232.3414584-1-visitorckw@gmail.com>
 
-Hi Krzysztof,
+--vwICD4jSZexuFxQq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 10 Dec 2023 at 14:39, Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 10/12/2023 00:31, Peter Griffin wrote:
-> > Add initial board support for the Pixel 6 phone code named Oriole. This
-> > has been tested with a minimal busybox initramfs and boots to a shell.
-> >
-> > Tested-by: Will McVicker <willmcvicker@google.com>
-> > Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> > ---
-> >  arch/arm64/boot/dts/exynos/Makefile           |   2 +
->
-> ...
->
-> > +&serial_0 {
-> > +     status = "okay";
->
-> Keep status the last
+On Mon, Dec 11, 2023 at 01:52:32AM +0800, Kuan-Wei Chiu wrote:
+> In cases where mapping of mpmu/apmu/apbc registers fails, the code path
+> does not handle the failure gracefully, potentially leading to a memory
+> leak. This fix ensures proper cleanup by freeing the allocated memory
+> for 'pxa_unit' before returning.
+>=20
+> Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
 
-Will fix
+I dunno why you have CCed me on this tbh, I guess I must have acked a
+patch related to this driver's bindings somehow.
 
->
-> > +     pinctrl-names = "default";
-> > +     pinctrl-0 = <&uart0_bus>;
-> > +};
-> > +
-> > +&usi_uart {
-> > +     status = "okay";
->
-> Keep status the last
+I wonder, is there actually any point in freeing these, isn't the system
+going to fail to actually boot if these allocations fail?
 
-Will fix
+> ---
+>  drivers/clk/mmp/clk-of-pxa168.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>=20
+> diff --git a/drivers/clk/mmp/clk-of-pxa168.c b/drivers/clk/mmp/clk-of-pxa=
+168.c
+> index fb0df64cf053..c5a7ba1deaa3 100644
+> --- a/drivers/clk/mmp/clk-of-pxa168.c
+> +++ b/drivers/clk/mmp/clk-of-pxa168.c
+> @@ -308,18 +308,21 @@ static void __init pxa168_clk_init(struct device_no=
+de *np)
+>  	pxa_unit->mpmu_base =3D of_iomap(np, 0);
+>  	if (!pxa_unit->mpmu_base) {
+>  		pr_err("failed to map mpmu registers\n");
+> +		kfree(pxa_unit);
+>  		return;
+>  	}
+> =20
+>  	pxa_unit->apmu_base =3D of_iomap(np, 1);
+>  	if (!pxa_unit->apmu_base) {
+>  		pr_err("failed to map apmu registers\n");
+> +		kfree(pxa_unit);
+>  		return;
+>  	}
+> =20
+>  	pxa_unit->apbc_base =3D of_iomap(np, 2);
+>  	if (!pxa_unit->apbc_base) {
+>  		pr_err("failed to map apbc registers\n");
+> +		kfree(pxa_unit);
+>  		return;
+>  	}
+> =20
+> --=20
+> 2.25.1
+>=20
 
-regards,
+--vwICD4jSZexuFxQq
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Peter
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZXcMVAAKCRB4tDGHoIJi
+0npnAQDhMi0sOhFCb2XK8e4LHbB01fNeeAnX29yOGRmSBgkI6QD/RL448S6rMuJr
+psmgLu7PXSxRaa4u79WAnL996jASxQY=
+=0YJF
+-----END PGP SIGNATURE-----
+
+--vwICD4jSZexuFxQq--
