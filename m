@@ -1,197 +1,88 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="3oYITDvQ"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [IPv6:2a00:1098:ed:100::25])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5804E3;
-	Mon, 11 Dec 2023 02:03:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1702288623;
-	bh=6CjA6ctA+aoJ56ri2JQzkYVkT8sdbfqFhgd6RJqEU/E=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=3oYITDvQJx1zk9TEUDxJKSR7CtnfJS8tOHjRIqY+CVN5nPLVi3axYYancoJclYNg6
-	 af1PASxwqNDLIXKoe8aaTmNcSgjxGm2gsT88etR5bn9HeRhezw7hNBYYN7kkiY7Xxe
-	 KK5VCCNJCtLV/9P0LOxNP6wnWD1yEAhsgJQfE+L1H5F2JvlgdmEcmXIAQv1EtfYUgB
-	 N50An+R4NgSH/EocAuTVa3Rm/ooQRqZnHOIkeM3w8d09bxkbgnjeaDzaA2JhiLT0XF
-	 zWsKtS8jmd3caZJ96JPdAE29+X5yA6hjayookgBLZjU6vEi+nGOlFxWupvdExVzb9h
-	 e4mwvDLSh3L/A==
-Received: from [IPV6:fd00::2a:39ce] (cola.collaboradmins.com [IPv6:2a01:4f8:1c1c:5717::1])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 5C303378140F;
-	Mon, 11 Dec 2023 09:57:01 +0000 (UTC)
-Message-ID: <060c8068-0f9b-40b4-89ed-3b968e4b0071@collabora.com>
-Date: Mon, 11 Dec 2023 10:57:00 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ofjlzc+I"
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7F28C2
+	for <linux-clk@vger.kernel.org>; Mon, 11 Dec 2023 02:04:32 -0800 (PST)
+Received: by mail-lf1-x135.google.com with SMTP id 2adb3069b0e04-50c0478f970so4319574e87.3
+        for <linux-clk@vger.kernel.org>; Mon, 11 Dec 2023 02:04:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1702289071; x=1702893871; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=dlDvMrT1asX8DIwxy4hQXmmKRl2/sfivmPuoV3hSf5Y=;
+        b=Ofjlzc+IYU3NHmDDtIL2zWKs67vl0PQVAs6jeVULRuQRbcwliyan9JKwqUVdgNTMGg
+         D2M2hI/NRKkowtsBCAsTQ1LRSVR5CUhdsZdkAqjWyZwML/DAJjNuwJzccWzOihCxWFZe
+         3cz/SrQ2YHCustJKFKLl2Yf+HkOGr5se7nuCnsXmGjBccgyWwxoZPVdUG9t2OyPVpU4d
+         kOmdWbuzd4Bi+0ZZJNEPId81uDF0Yetxz4FjVWbMBzowgE7SsQSGPl7q244Oy5Hm7FCy
+         YriGIk4uICEzqV7MYKIKc8BXFc/9KMFy7BJEy0oXuXZrJxL6UybDlv9oxsDpmt+0VjNG
+         ynFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702289071; x=1702893871;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dlDvMrT1asX8DIwxy4hQXmmKRl2/sfivmPuoV3hSf5Y=;
+        b=T0fc80BTxNdlTeTzGgPhR7XzEp0Sm8iNobsMScr81Phr0o1Q0LED0FamdFnVRegsA/
+         uYPmx/KR0yiP12hPtmIQPSG43gEk0Dt9iUIpu8j2u3kKA0rGuYz2AlyWhhPzvPuVQk8X
+         BaBX1QdmHtnjdFYO3EdnIDjX2IJGmDzrOj6Otnxe680k2VNlWR9igVN9Miai45i0Dl3c
+         cE8HD9vlE0odMzF4J1SSLuv4frR8v4EBKonDWCxvd/cTD34fB8II76LRudS9nzKFd+6K
+         bDfG//U8eoi0oz4S/Dwqa32sp5wZGSIBNi5MuSlBZE+iQHaFIbGrl/HGYg57LuvFo0SK
+         xsoQ==
+X-Gm-Message-State: AOJu0YzNktYY5oUCwizz7qgpKNyNfR7Ogak4wVSJwHUqaVsab0wLKd16
+	2XTIzOPTRfRM/f70qiyTgfpDCg==
+X-Google-Smtp-Source: AGHT+IGE0CAwP4QDiJnNgqtN7eWwZHyt1mgacPdvwANjL6HNlCW8mOl+VpfcTEOzlnLHL9+YpJ2Ucw==
+X-Received: by 2002:ac2:58d8:0:b0:50b:f05b:7c22 with SMTP id u24-20020ac258d8000000b0050bf05b7c22mr1538255lfo.53.1702289070940;
+        Mon, 11 Dec 2023 02:04:30 -0800 (PST)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id fs27-20020a05600c3f9b00b0040b36050f1bsm12147315wmb.44.2023.12.11.02.04.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Dec 2023 02:04:30 -0800 (PST)
+Message-ID: <0c8532d2bcb6ad5a583e8f716cc88cd5cbae1356.camel@linaro.org>
+Subject: Re: [PATCH v6 12/20] clk: samsung: clk-gs101: Add cmu_top, cmu_misc
+ and cmu_apm support
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Peter Griffin <peter.griffin@linaro.org>, robh+dt@kernel.org, 
+ krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+ conor+dt@kernel.org,  sboyd@kernel.org, tomasz.figa@gmail.com,
+ s.nawrocki@samsung.com,  linus.walleij@linaro.org, wim@linux-watchdog.org,
+ linux@roeck-us.net,  catalin.marinas@arm.com, will@kernel.org,
+ arnd@arndb.de, olof@lixom.net,  gregkh@linuxfoundation.org,
+ jirislaby@kernel.org, cw00.choi@samsung.com,  alim.akhtar@samsung.com
+Cc: tudor.ambarus@linaro.org, semen.protsenko@linaro.org,
+ saravanak@google.com,  willmcvicker@google.com, soc@kernel.org,
+ devicetree@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org,  linux-clk@vger.kernel.org,
+ linux-gpio@vger.kernel.org,  linux-watchdog@vger.kernel.org,
+ kernel-team@android.com,  linux-serial@vger.kernel.org
+Date: Mon, 11 Dec 2023 10:04:29 +0000
+In-Reply-To: <20231209233106.147416-13-peter.griffin@linaro.org>
+References: <20231209233106.147416-1-peter.griffin@linaro.org>
+	 <20231209233106.147416-13-peter.griffin@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.49.2-3 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/4] clk: mediatek: add drivers for MT7988 SoC
-Content-Language: en-US
-To: Daniel Golle <daniel@makrotopia.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Sabrina Dubroca <sd@queasysnail.net>, Jianhui Zhao <zhaojh329@gmail.com>,
- Chen-Yu Tsai <wenst@chromium.org>, "Garmin.Chang"
- <Garmin.Chang@mediatek.com>, Sam Shih <sam.shih@mediatek.com>,
- Markus Schneider-Pargmann <msp@baylibre.com>,
- Alexandre Mergnat <amergnat@baylibre.com>,
- Jiasheng Jiang <jiasheng@iscas.ac.cn>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Frank Wunderlich <frank-w@public-files.de>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Dan Carpenter <dan.carpenter@linaro.org>,
- James Liao <jamesjj.liao@mediatek.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- netdev@vger.kernel.org
-References: <097e82b0d66570763d64be1715517d8b032fcf95.1702158423.git.daniel@makrotopia.org>
- <879b5bbcb165aa3f059a41218142b27e5f64597f.1702158423.git.daniel@makrotopia.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <879b5bbcb165aa3f059a41218142b27e5f64597f.1702158423.git.daniel@makrotopia.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-Il 09/12/23 22:56, Daniel Golle ha scritto:
-> From: Sam Shih <sam.shih@mediatek.com>
-> 
-> Add APMIXED, ETH, INFRACFG and TOPCKGEN clock drivers which are
-> typical MediaTek designs.
-> 
-> Also add driver for XFIPLL clock generating the 156.25MHz clock for
-> the XFI SerDes. It needs an undocumented software workaround and has
-> an unknown internal design.
-> 
-> Signed-off-by: Sam Shih <sam.shih@mediatek.com>
-> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> ---
-> v4:
->   * make use of existing GATE_MTK_FLAGS macro
->   * reformat to max. 100 columns
->   * cosmetics
-> 
-> v3: use git --from ...
-> v2: no changes
-> 
-> 
->   drivers/clk/mediatek/Kconfig               |   9 +
->   drivers/clk/mediatek/Makefile              |   5 +
->   drivers/clk/mediatek/clk-mt7988-apmixed.c  | 102 +++++++
->   drivers/clk/mediatek/clk-mt7988-eth.c      | 133 +++++++++
->   drivers/clk/mediatek/clk-mt7988-infracfg.c | 274 +++++++++++++++++
->   drivers/clk/mediatek/clk-mt7988-topckgen.c | 325 +++++++++++++++++++++
->   drivers/clk/mediatek/clk-mt7988-xfipll.c   |  78 +++++
->   7 files changed, 926 insertions(+)
->   create mode 100644 drivers/clk/mediatek/clk-mt7988-apmixed.c
->   create mode 100644 drivers/clk/mediatek/clk-mt7988-eth.c
->   create mode 100644 drivers/clk/mediatek/clk-mt7988-infracfg.c
->   create mode 100644 drivers/clk/mediatek/clk-mt7988-topckgen.c
->   create mode 100644 drivers/clk/mediatek/clk-mt7988-xfipll.c
-> 
-> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-> index 48b42d11111cd..70a005e7e1b18 100644
-> --- a/drivers/clk/mediatek/Kconfig
-> +++ b/drivers/clk/mediatek/Kconfig
-> @@ -423,6 +423,15 @@ config COMMON_CLK_MT7986_ETHSYS
->   	  This driver adds support for clocks for Ethernet and SGMII
->   	  required on MediaTek MT7986 SoC.
->   
-> +config COMMON_CLK_MT7988
-> +	tristate "Clock driver for MediaTek MT7988"
-> +	depends on ARCH_MEDIATEK || COMPILE_TEST
-> +	select COMMON_CLK_MEDIATEK
-> +	default ARCH_MEDIATEK
-> +	help
-> +	  This driver supports MediaTek MT7988 basic clocks and clocks
-> +	  required for various periperals found on this SoC.
-> +
->   config COMMON_CLK_MT8135
->   	tristate "Clock driver for MediaTek MT8135"
->   	depends on (ARCH_MEDIATEK && ARM) || COMPILE_TEST
-> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-> index dbeaa5b41177d..eeccfa039896f 100644
-> --- a/drivers/clk/mediatek/Makefile
-> +++ b/drivers/clk/mediatek/Makefile
-> @@ -62,6 +62,11 @@ obj-$(CONFIG_COMMON_CLK_MT7986) += clk-mt7986-apmixed.o
->   obj-$(CONFIG_COMMON_CLK_MT7986) += clk-mt7986-topckgen.o
->   obj-$(CONFIG_COMMON_CLK_MT7986) += clk-mt7986-infracfg.o
->   obj-$(CONFIG_COMMON_CLK_MT7986_ETHSYS) += clk-mt7986-eth.o
-> +obj-$(CONFIG_COMMON_CLK_MT7988) += clk-mt7988-apmixed.o
-> +obj-$(CONFIG_COMMON_CLK_MT7988) += clk-mt7988-topckgen.o
-> +obj-$(CONFIG_COMMON_CLK_MT7988) += clk-mt7988-infracfg.o
-> +obj-$(CONFIG_COMMON_CLK_MT7988) += clk-mt7988-eth.o
-> +obj-$(CONFIG_COMMON_CLK_MT7988) += clk-mt7988-xfipll.o
->   obj-$(CONFIG_COMMON_CLK_MT8135) += clk-mt8135-apmixedsys.o clk-mt8135.o
->   obj-$(CONFIG_COMMON_CLK_MT8167) += clk-mt8167-apmixedsys.o clk-mt8167.o
->   obj-$(CONFIG_COMMON_CLK_MT8167_AUDSYS) += clk-mt8167-aud.o
-> diff --git a/drivers/clk/mediatek/clk-mt7988-apmixed.c b/drivers/clk/mediatek/clk-mt7988-apmixed.c
-> new file mode 100644
-> index 0000000000000..02eb6354b01a8
-> --- /dev/null
-> +++ b/drivers/clk/mediatek/clk-mt7988-apmixed.c
-> @@ -0,0 +1,102 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2023 MediaTek Inc.
-> + * Author: Sam Shih <sam.shih@mediatek.com>
-> + * Author: Xiufeng Li <Xiufeng.Li@mediatek.com>
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include "clk-mtk.h"
-> +#include "clk-gate.h"
-> +#include "clk-mux.h"
-> +#include "clk-pll.h"
-> +#include <dt-bindings/clock/mediatek,mt7988-clk.h>
-> +
-> +#define MT7988_PLL_FMAX (2500UL * MHZ)
-> +#define MT7988_PCW_CHG_SHIFT 2
-> +
-> +#define PLL(_id, _name, _reg, _pwr_reg, _en_mask, _flags, _rst_bar_mask, _pcwbits, _pd_reg,      \
-> +	    _pd_shift, _tuner_reg, _tuner_en_reg, _tuner_en_bit, _pcw_reg, _pcw_shift,           \
-> +	    _pcw_chg_reg)                                                                        \
-> +	{                                                                                        \
-> +		.id = _id, .name = _name, .reg = _reg, .pwr_reg = _pwr_reg, .en_mask = _en_mask, \
-> +		.flags = _flags, .rst_bar_mask = BIT(_rst_bar_mask), .fmax = MT7988_PLL_FMAX,    \
-> +		.pcwbits = _pcwbits, .pd_reg = _pd_reg, .pd_shift = _pd_shift,                   \
-> +		.tuner_reg = _tuner_reg, .tuner_en_reg = _tuner_en_reg,                          \
-> +		.tuner_en_bit = _tuner_en_bit, .pcw_reg = _pcw_reg, .pcw_shift = _pcw_shift,     \
-> +		.pcw_chg_reg = _pcw_chg_reg, .pcw_chg_shift = MT7988_PCW_CHG_SHIFT,              \
-> +		.parent_name = "clkxtal",                                                        \
-> +	}
+On Sat, 2023-12-09 at 23:30 +0000, Peter Griffin wrote:
+> cmu_top is the top level clock management unit which contains PLLs, muxes=
+,
+> dividers and gates that feed the other clock management units.
+>=20
+> cmu_misc clocks IPs such as Watchdog and cmu_apm clocks ips part of the
+> APM module.
+>=20
+> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Tested-by: Will McVicker <willmcvicker@google.com>
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 
-I think that there was a bit of misunderstanding here: I said 100cols, and that's
-fine, but I wanted you to do that with everything but the macros, following what
-was done in all the other MediaTek clock drivers.
+Reviewed-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
 
-Can you please change the macros again?
+Cheers,
+Andr=C3=A9
 
-Also, there's some discrepancy in the usage of tabulations vs spaces, please fix.
-
-#define PLL(....)*TAB*\
-
-....
-
-	{										\
-		.id = _id,							\
-		.name = _name,							\
-		.reg = _reg,							\
-		.pwr_reg = _pwr_reg,						\
-		.en_mask = _en_mask,						\
-		...etc etc etc...						\
-}
-
-Thanks,
-Angelo
