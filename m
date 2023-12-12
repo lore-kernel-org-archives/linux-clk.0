@@ -1,269 +1,194 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E1319448;
-	Tue, 12 Dec 2023 08:22:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RMhizo3u"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id EA240C433BB;
-	Tue, 12 Dec 2023 08:22:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702369325;
-	bh=Z4tt639XdL6asvWi7dDnieCdwJ5E4axJMvvm2VIbM3s=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=RMhizo3u7A6iuqb9l93BXDRxWYfu1PLbqPURx9UPBdfIhh+5hCEpVv+bibXL0GVY3
-	 pdOLi3GTMmEQvdYH7At66hu19Xjtgf+G5FE65o9KHqGcdi3lNHTA4Tb+qxuAxB+fGk
-	 idBL7kozfMtFPpfkYeb6qA/L5/ZZDXrnnzf4vRvMOTsox04O8Uw55rLOV5RVXelHXw
-	 sxuOE+caUyobirXbFYMYSVIIWBwxod8NwbrVNCV+fxhaVxQJyNbLCTQkO/cAlOXMDJ
-	 AFJPPIub4UZUgkCq+1jwaSTa6LNDdl2yfjqVM56VaBqfOrvhQsuhc4Q8C783KCKSj2
-	 +epH1yQcuajPg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA54CC4332F;
-	Tue, 12 Dec 2023 08:22:04 +0000 (UTC)
-From:
- Nikita Shubin via B4 Relay <devnull+nikita.shubin.maquefel.me@kernel.org>
-Date: Tue, 12 Dec 2023 11:20:24 +0300
-Subject: [PATCH v6 07/40] dt-bindings: soc: Add Cirrus EP93xx
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Hgc/9Et8"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5030ADB;
+	Tue, 12 Dec 2023 00:38:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1702370320; x=1733906320;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=OlQSdutGnnJ/XqxX1PeaHL7qn3fxyzFw6HN2ZKxiL8Q=;
+  b=Hgc/9Et8Trg1izaDThwh10GX2op8r7jhPMZNIhxLgw77tCYXmV3o/ZgA
+   TItgjLQkBNWs5iyHuUabO58p+Q6GWqg8vGVBoQZt9bOP8DDyIeknWl/9m
+   GomSZrFzzuALQGI25XZHLw8RINMKx1KGwD9j+xZycf7wwU+/2Ckglegyn
+   8nla2vhNCcAi+PPY5Mutb9EzyR+LgEx++dprTLQ3dT2ggL25Cvt1YGqww
+   5R5pZlqPplqFWFk8iGUui4wFMB4ZxTT5vM3BoVibvHLyPJPr8qjHyjNes
+   KGoX0U7Oa6DSgZr9Mzy68pDFa6mWp/RedWg4JHM/lCdxUeJxDms4h76os
+   A==;
+X-CSE-ConnectionGUID: wGJ38t4bSIaNu9ouYmhVbA==
+X-CSE-MsgGUID: Qgbb/YblTWedaUAGm9uKwA==
+X-ThreatScanner-Verdict: Negative
+X-IronPort-AV: E=Sophos;i="6.04,269,1695711600"; 
+   d="asc'?scan'208";a="13518116"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 12 Dec 2023 01:38:39 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 12 Dec 2023 01:38:14 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex03.mchp-main.com (10.10.85.151)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Tue, 12 Dec 2023 01:38:10 -0700
+Date: Tue, 12 Dec 2023 08:37:39 +0000
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Chen Wang <unicorn_wang@outlook.com>
+CC: Conor Dooley <conor@kernel.org>, Chen Wang <unicornxw@gmail.com>,
+	<aou@eecs.berkeley.edu>, <chao.wei@sophgo.com>,
+	<krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
+	<palmer@dabbelt.com>, <paul.walmsley@sifive.com>, <richardcochran@gmail.com>,
+	<robh+dt@kernel.org>, <sboyd@kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-riscv@lists.infradead.org>, <haijiao.liu@sophgo.com>,
+	<xiaoguang.xing@sophgo.com>, <guoren@kernel.org>, <jszhang@kernel.org>,
+	<inochiama@outlook.com>, <samuel.holland@sifive.com>
+Subject: Re: [PATCH v6 3/4] clk: sophgo: Add SG2042 clock generator driver
+Message-ID: <20231212-unnerving-rule-1052a5b7253e@wendy>
+References: <cover.1701997033.git.unicorn_wang@outlook.com>
+ <d1aa4f76f360ebd7b790a4786641f1b0188dbba8.1701997033.git.unicorn_wang@outlook.com>
+ <20231208-opposite-stand-fc92fbaaed9c@spud>
+ <MA0P287MB0332A937E4DF0044594B19CCFE8EA@MA0P287MB0332.INDP287.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20231212-ep93xx-v6-7-c307b8ac9aa8@maquefel.me>
-References: <20231212-ep93xx-v6-0-c307b8ac9aa8@maquefel.me>
-In-Reply-To: <20231212-ep93xx-v6-0-c307b8ac9aa8@maquefel.me>
-To: Rob Herring <robh+dt@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Nikita Shubin <nikita.shubin@maquefel.me>, 
- Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-X-Mailer: b4 0.13-dev-e3e53
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1702369322; l=6021;
- i=nikita.shubin@maquefel.me; s=20230718; h=from:subject:message-id;
- bh=MefvB3Int8nvp/lbfuIcYab5bRur5FE4KLgksenTtyA=; =?utf-8?q?b=3DlCxjFWTuhAzV?=
- =?utf-8?q?pwN3y6Sj+pjfOmxs+1yhJmihY+Da/FwGD5OTRwiJRKchcXo0n1JstAQgDYqWalGX?=
- FLX6L0X4DSwe1ggm23IDzIYW8aSrIi+tZRRw9oHzhHKBRylCtreG
-X-Developer-Key: i=nikita.shubin@maquefel.me; a=ed25519;
- pk=vqf5YIUJ7BJv3EJFaNNxWZgGuMgDH6rwufTLflwU9ac=
-X-Endpoint-Received:
- by B4 Relay for nikita.shubin@maquefel.me/20230718 with auth_id=65
-X-Original-From: Nikita Shubin <nikita.shubin@maquefel.me>
-Reply-To: <nikita.shubin@maquefel.me>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="wQrnDV9zD8q41CAE"
+Content-Disposition: inline
+In-Reply-To: <MA0P287MB0332A937E4DF0044594B19CCFE8EA@MA0P287MB0332.INDP287.PROD.OUTLOOK.COM>
 
-From: Nikita Shubin <nikita.shubin@maquefel.me>
+--wQrnDV9zD8q41CAE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Add device tree bindings for the Cirrus Logic EP93xx SoC.
+On Tue, Dec 12, 2023 at 10:22:28AM +0800, Chen Wang wrote:
 
-Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
----
- .../bindings/arm/cirrus/cirrus,ep9301.yaml         | 38 +++++++++
- .../bindings/soc/cirrus/cirrus,ep9301-syscon.yaml  | 94 ++++++++++++++++++++++
- include/dt-bindings/clock/cirrus,ep9301-syscon.h   | 46 +++++++++++
- 3 files changed, 178 insertions(+)
+> On 2023/12/9 0:47, Conor Dooley wrote:
+> > On Fri, Dec 08, 2023 at 09:14:32AM +0800, Chen Wang wrote:
 
-diff --git a/Documentation/devicetree/bindings/arm/cirrus/cirrus,ep9301.yaml b/Documentation/devicetree/bindings/arm/cirrus/cirrus,ep9301.yaml
-new file mode 100644
-index 000000000000..170aad5dd7ed
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/cirrus/cirrus,ep9301.yaml
-@@ -0,0 +1,38 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/arm/cirrus/cirrus,ep9301.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Cirrus Logic EP93xx platforms
-+
-+description:
-+  The EP93xx SoC is a ARMv4T-based with 200 MHz ARM9 CPU.
-+
-+maintainers:
-+  - Alexander Sverdlin <alexander.sverdlin@gmail.com>
-+  - Nikita Shubin <nikita.shubin@maquefel.me>
-+
-+properties:
-+  $nodename:
-+    const: '/'
-+  compatible:
-+    oneOf:
-+      - description: The TS-7250 is a compact, full-featured Single Board
-+          Computer (SBC) based upon the Cirrus EP9302 ARM9 CPU
-+        items:
-+          - const: technologic,ts7250
-+          - const: cirrus,ep9301
-+
-+      - description: The Liebherr BK3 is a derivate from ts7250 board
-+        items:
-+          - const: liebherr,bk3
-+          - const: cirrus,ep9301
-+
-+      - description: EDB302 is an evaluation board by Cirrus Logic,
-+          based on a Cirrus Logic EP9302 CPU
-+        items:
-+          - const: cirrus,edb9302
-+          - const: cirrus,ep9301
-+
-+additionalProperties: true
-diff --git a/Documentation/devicetree/bindings/soc/cirrus/cirrus,ep9301-syscon.yaml b/Documentation/devicetree/bindings/soc/cirrus/cirrus,ep9301-syscon.yaml
-new file mode 100644
-index 000000000000..7cb1b4114985
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/cirrus/cirrus,ep9301-syscon.yaml
-@@ -0,0 +1,94 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/soc/cirrus/cirrus,ep9301-syscon.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Cirrus Logic EP93xx Platforms System Controller
-+
-+maintainers:
-+  - Alexander Sverdlin <alexander.sverdlin@gmail.com>
-+  - Nikita Shubin <nikita.shubin@maquefel.me>
-+
-+description: |
-+  Central resources are controlled by a set of software-locked registers,
-+  which can be used to prevent accidental accesses. Syscon generates
-+  the various bus and peripheral clocks and controls the system startup
-+  configuration.
-+
-+  The System Controller (Syscon) provides:
-+  - Clock control
-+  - Power management
-+  - System configuration management
-+
-+  Syscon registers are common for all EP93xx SoC's, through some actual peripheral
-+  may be missing depending on actual SoC model.
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - items:
-+          - enum:
-+              - cirrus,ep9302-syscon
-+              - cirrus,ep9307-syscon
-+              - cirrus,ep9312-syscon
-+              - cirrus,ep9315-syscon
-+          - const: cirrus,ep9301-syscon
-+          - const: syscon
-+      - items:
-+          - const: cirrus,ep9301-syscon
-+          - const: syscon
-+
-+  reg:
-+    maxItems: 1
-+
-+  "#clock-cells":
-+    const: 1
-+
-+  clocks:
-+    items:
-+      - description: reference clock
-+
-+patternProperties:
-+  '^pins-':
-+    type: object
-+    description: pin node
-+    $ref: /schemas/pinctrl/pinmux-node.yaml
-+
-+    properties:
-+      function:
-+        enum: [ spi, ac97, i2s, pwm, keypad, pata, lcd, gpio ]
-+
-+      groups:
-+        enum: [ ssp, ac97, i2s_on_ssp, i2s_on_ac97, pwm1, gpio1agrp,
-+                gpio2agrp, gpio3agrp, gpio4agrp, gpio6agrp, gpio7agrp,
-+                rasteronsdram0grp, rasteronsdram3grp, keypadgrp, idegrp ]
-+
-+    required:
-+      - function
-+      - groups
-+
-+    unevaluatedProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - "#clock-cells"
-+  - clocks
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    syscon@80930000 {
-+      compatible = "cirrus,ep9301-syscon", "syscon";
-+      reg = <0x80930000 0x1000>;
-+
-+      #clock-cells = <1>;
-+      clocks = <&xtali>;
-+
-+      spi_default_pins: pins-spi {
-+        function = "spi";
-+        groups = "ssp";
-+      };
-+    };
-diff --git a/include/dt-bindings/clock/cirrus,ep9301-syscon.h b/include/dt-bindings/clock/cirrus,ep9301-syscon.h
-new file mode 100644
-index 000000000000..6bb8f532e7d0
---- /dev/null
-+++ b/include/dt-bindings/clock/cirrus,ep9301-syscon.h
-@@ -0,0 +1,46 @@
-+/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
-+#ifndef DT_BINDINGS_CIRRUS_EP93XX_CLOCK_H
-+#define DT_BINDINGS_CIRRUS_EP93XX_CLOCK_H
-+
-+#define EP93XX_CLK_PLL1		0
-+#define EP93XX_CLK_PLL2		1
-+
-+#define EP93XX_CLK_FCLK		2
-+#define EP93XX_CLK_HCLK		3
-+#define EP93XX_CLK_PCLK		4
-+
-+#define EP93XX_CLK_UART		5
-+#define EP93XX_CLK_SPI		6
-+#define EP93XX_CLK_PWM		7
-+#define EP93XX_CLK_USB		8
-+
-+#define EP93XX_CLK_M2M0		9
-+#define EP93XX_CLK_M2M1		10
-+
-+#define EP93XX_CLK_M2P0		11
-+#define EP93XX_CLK_M2P1		12
-+#define EP93XX_CLK_M2P2		13
-+#define EP93XX_CLK_M2P3		14
-+#define EP93XX_CLK_M2P4		15
-+#define EP93XX_CLK_M2P5		16
-+#define EP93XX_CLK_M2P6		17
-+#define EP93XX_CLK_M2P7		18
-+#define EP93XX_CLK_M2P8		19
-+#define EP93XX_CLK_M2P9		20
-+
-+#define EP93XX_CLK_UART1	21
-+#define EP93XX_CLK_UART2	22
-+#define EP93XX_CLK_UART3	23
-+
-+#define EP93XX_CLK_ADC		24
-+#define EP93XX_CLK_ADC_EN	25
-+
-+#define EP93XX_CLK_KEYPAD	26
-+
-+#define EP93XX_CLK_VIDEO	27
-+
-+#define EP93XX_CLK_I2S_MCLK	28
-+#define EP93XX_CLK_I2S_SCLK	29
-+#define EP93XX_CLK_I2S_LRCLK	30
-+
-+#endif /* DT_BINDINGS_CIRRUS_EP93XX_CLOCK_H */
+> > > +#define ENCODE_PLL_CTRL(fbdiv, p1, p2, refdiv) \
+> > > +	(((fbdiv & 0xfff) << 16) | ((p2 & 0x7) << 12) | ((p1 & 0x7) << 8) |=
+ (refdiv & 0x3f))
+> > IMO this should be a function not a macro.
 
--- 
-2.41.0
+> Would like to listen why it should be a function instead of a macro? Any
+> experiences you can share with me?
 
+Readability. A function, which could be inlined allows you to break this
+up and make it easier to read.
+
+> > > +/*
+> > > + * Based on input rate/prate/fbdiv/refdiv, look up the postdiv1_2 ta=
+ble
+> > > + * to get the closest postdiiv combination.
+> > > + * @rate: FOUTPOSTDIV
+> > > + * @prate: parent rate, i.e. FREF
+> > > + * @fbdiv: FBDIV
+> > > + * @refdiv: REFDIV
+> > > + * @postdiv1: POSTDIV1, output
+> > > + * @postdiv2: POSTDIV2, output
+> > > + * See TRM:
+> > > + * FOUTPOSTDIV =3D FREF * FBDIV / REFDIV / (POSTDIV1 * POSTDIV2)
+> > > + * So we get following formula to get POSTDIV1 and POSTDIV2:
+> > > + * POSTDIV =3D (prate/REFDIV) x FBDIV/rate
+> > > + * above POSTDIV =3D POSTDIV1*POSTDIV2
+> > > + */
+> > > +static int __sg2042_pll_get_postdiv_1_2(
+> > > +	unsigned long rate,
+> > > +	unsigned long prate,
+> > > +	unsigned int fbdiv,
+> > > +	unsigned int refdiv,
+> > > +	unsigned int *postdiv1,
+> > > +	unsigned int *postdiv2)
+> > This is not the coding style btw.
+> Agree, will fix this.
+> > > +{
+> > > +	int index =3D 0;
+> > > +	int ret =3D 0;
+> > > +	u64 tmp0;
+> > > +
+> > > +	/* prate/REFDIV and result save to tmp0 */
+> > > +	tmp0 =3D prate;
+> > > +	do_div(tmp0, refdiv);
+> > > +
+> > > +	/* ((prate/REFDIV) x FBDIV) and result save to tmp0 */
+> > > +	tmp0 *=3D fbdiv;
+> > > +
+> > > +	/* ((prate/REFDIV) x FBDIV)/rate and result save to tmp0 */
+> > > +	do_div(tmp0, rate);
+> > > +
+> > > +	/* tmp0 is POSTDIV1*POSTDIV2, now we calculate div1 and div2 value =
+*/
+> > > +	if (tmp0 <=3D 7) {
+> > > +		/* (div1 * div2) <=3D 7, no need to use array search */
+> > > +		*postdiv1 =3D tmp0;
+> > > +		*postdiv2 =3D 1;
+> > > +	} else {
+> > > +		/* (div1 * div2) > 7, use array search */
+> > > +		for (index =3D 0; index < ARRAY_SIZE(postdiv1_2); index++) {
+> > > +			if (tmp0 > postdiv1_2[index][POSTDIV_RESULT_INDEX]) {
+> > > +				continue;
+> > > +			} else {
+> > > +				/* found it */
+> > > +				break;
+> > > +			}
+> > > +		}
+> > > +		if (index < ARRAY_SIZE(postdiv1_2)) {
+> > > +			*postdiv1 =3D postdiv1_2[index][1];
+> > > +			*postdiv2 =3D postdiv1_2[index][0];
+> > > +		} else {
+> > > +			pr_debug("%s can not find in postdiv array!\n", __func__);
+> > > +			ret =3D -EINVAL;
+> > > +		}
+> > > +	}
+> > > +
+> > > +	return ret;
+> > > +}
+> > Reading this function it makes me wonder if (and I am far from the best
+> > person to comment, someone like Stephen is vastly more qualified) you
+> > should model this as several "stages", each implemented by the
+> > "standard" clocks - like clk_divider etc. The code here is quite
+> > complicated IMO as it seems to be trying to implement several stages of
+> > division in one go.
+>=20
+> The objective of __sg2042_pll_get_postdiv_1_2() is straightforward: based=
+ on
+> the formula defined by the TRM, with input rate/prate/fbdiv/refdiv, we can
+> get the possiblle combination of POSTDIV1 and POSTDIV2 by looking up the
+> table of postdiv1_2. We will later use it to setup the clock register.
+>=20
+> Though the codes looks a bit complicated, but accually it is calculate wi=
+th
+> the formula : POSTDIV =3D (prate/REFDIV) x FBDIV/rate, I just separate it=
+ into
+> several steps to make it easy to understand, I have listed the formula in
+> the comment on top of the function.
+
+I understand what you are doing, I did something similar myself
+previously. My suggestion/question was about using the "standard" types
+of clock that the core provides to represent as many of the clocks in
+this driver as is feasible.
+
+> > There's quite a lot in the driver and I will admit that I have not read
+> > it all my any means (I skimmed from here onwards), but in general my
+> > advice would be to try and reuse the generic code as much as possible.
+> Agree, I will double check and try to optimize the code in next revision.
+
+--wQrnDV9zD8q41CAE
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZXgbxQAKCRB4tDGHoIJi
+0nOCAQD2K8NI7O2nSzjOsquexbQTw8D7tl5+jg2IZJ/dyjMnmQEAi/IZQy64yp5f
+zo77ZimRDysmDn+1uyqEqxszNT5r/g4=
+=9lTh
+-----END PGP SIGNATURE-----
+
+--wQrnDV9zD8q41CAE--
