@@ -1,103 +1,136 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LjmcssMc"
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F88B2136
-	for <linux-clk@vger.kernel.org>; Tue, 12 Dec 2023 03:10:27 -0800 (PST)
-Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-a22ed5f0440so47688766b.1
-        for <linux-clk@vger.kernel.org>; Tue, 12 Dec 2023 03:10:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702379425; x=1702984225; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jbPV2wMixDIFUWUnk7/umRGjINWl9pny43jKnRcVaGI=;
-        b=LjmcssMchsp2xW225BHUxqcynfxPOIgXUBeCfCoFlzAcSbHU99DEyldIt6LYihf91q
-         9i9WQBeJxIAqkC/mck94MeMz7dcZ0XTFXl/jmRI7HULbXDSykhkFbNblirvA/DI38eFQ
-         XD6Ecrg52NPFYPccxxJB36P8gX1DRUlXcjnoP4u4qT38dFjMFW3j0wv/3hJxb4WDRt8u
-         lINOmPTugT/F4YSpU73GlsQ/3J5hKddhd33q+cxajIszr0BZttHC4XLuOlkX7wpHeCOi
-         CHv7S+RW5ve5G0Dmgx57mnIWggiMCIFoxWe7seoLcXmUHSvW8EU1j/ck2ou2hO9IGKJ4
-         DIVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702379425; x=1702984225;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jbPV2wMixDIFUWUnk7/umRGjINWl9pny43jKnRcVaGI=;
-        b=d47dEyPTi8QbT+DruS/oBW+Y3z6I8+3jyY0SbwGWAzbrxdWUpPGECSFgEUzEbzpMcj
-         uGB60WQ+fCBd0TrbhzScMwVmt4ItebZ1J55OLOpmLWMry+upSA38eiF0O7KWnQaUR/Wj
-         LQaqrCBxOKcpF20HJtG+6Hbghc2IhxtArWMPK43AwPeMgx+4ANfKXItL0t8AyN7rRp3h
-         VYnYSuFzMjZiY6ht4TWBghIEDjclfY69qWcmVOrETeYcARE0LBhSxZ1NukAqr0dgGzoD
-         Q3KD9t8IpfKbPPefXd9arL3sz6vMpplUNvUYfER0FpYwC10rNZeSQpBhKFdKgEZ7dObY
-         7xCw==
-X-Gm-Message-State: AOJu0Yx0x6hPbFevKhh9EfF67MphWOZi8eI97sck34ebxdo1K2+tcwH3
-	8LRSpB61jn+tZWjyDI9q8GgIkVsOtclqQy+AUW8=
-X-Google-Smtp-Source: AGHT+IHF8nf+cDdU2fDdNt+SuMUnOxzNy6eShdVfUfP2lwoyvnkGqx2AO/yon+kGtVkHAOxAZyhRcQ==
-X-Received: by 2002:a17:906:1cc2:b0:a1f:69b1:a493 with SMTP id i2-20020a1709061cc200b00a1f69b1a493mr1923458ejh.187.1702379425654;
-        Tue, 12 Dec 2023 03:10:25 -0800 (PST)
-Received: from linaro.org ([79.115.23.25])
-        by smtp.gmail.com with ESMTPSA id vu3-20020a170907a64300b00a1cd9627474sm6032983ejc.44.2023.12.12.03.10.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Dec 2023 03:10:25 -0800 (PST)
-Date: Tue, 12 Dec 2023 13:10:23 +0200
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Andy Gross <agross@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EE13DB
+	for <linux-clk@vger.kernel.org>; Tue, 12 Dec 2023 03:55:05 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rD1KL-0007kg-9r; Tue, 12 Dec 2023 12:53:29 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rD1KH-00FKLk-Ov; Tue, 12 Dec 2023 12:53:25 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rD1KH-001bPz-E7; Tue, 12 Dec 2023 12:53:25 +0100
+Date: Tue, 12 Dec 2023 12:53:25 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: nikita.shubin@maquefel.me
+Cc: Hartley Sweeten <hsweeten@visionengravers.com>,
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Lukasz Majewski <lukma@denx.de>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andy Shevchenko <andy@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: camcc-sc8280xp: Prevent error pointer
- dereference
-Message-ID: <ZXg/n0R7joAd1lf/@linaro.org>
-References: <210d48ce-6ebc-4a6b-b30f-866d10d41a16@moroto.mountain>
+	Stephen Boyd <sboyd@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Sergey Shtylyov <s.shtylyov@omp.ru>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+	dmaengine@vger.kernel.org, linux-watchdog@vger.kernel.org,
+	linux-pwm@vger.kernel.org, linux-spi@vger.kernel.org,
+	netdev@vger.kernel.org, linux-mtd@lists.infradead.org,
+	linux-ide@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-sound@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v6 00/40] ep93xx device tree conversion
+Message-ID: <20231212115325.m4w6cg4ttdispkvm@pengutronix.de>
+References: <20231212-ep93xx-v6-0-c307b8ac9aa8@maquefel.me>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="aamqyrxtxz2kjjms"
 Content-Disposition: inline
-In-Reply-To: <210d48ce-6ebc-4a6b-b30f-866d10d41a16@moroto.mountain>
+In-Reply-To: <20231212-ep93xx-v6-0-c307b8ac9aa8@maquefel.me>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-On 23-12-12 12:21:51, Dan Carpenter wrote:
-> If "regmap" is an error pointer then calling regmap_update_bits() will
-> crash.  We only need to call regmap_update_bits() if we had written to
-> it earlier.
-> 
-> Fixes: ff93872a9c61 ("clk: qcom: camcc-sc8280xp: Add sc8280xp CAMCC")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+--aamqyrxtxz2kjjms
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> ---
->  drivers/clk/qcom/camcc-sc8280xp.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/camcc-sc8280xp.c b/drivers/clk/qcom/camcc-sc8280xp.c
-> index 877341e7327e..3dcd79b01515 100644
-> --- a/drivers/clk/qcom/camcc-sc8280xp.c
-> +++ b/drivers/clk/qcom/camcc-sc8280xp.c
-> @@ -3017,14 +3017,15 @@ static int camcc_sc8280xp_probe(struct platform_device *pdev)
->  
->  	ret = qcom_cc_really_probe(pdev, &camcc_sc8280xp_desc, regmap);
->  	if (ret)
-> -		goto err_put_rpm;
-> +		goto err_disable;
->  
->  	pm_runtime_put(&pdev->dev);
->  
->  	return 0;
->  
-> -err_put_rpm:
-> +err_disable:
->  	regmap_update_bits(regmap, 0xc1e4, BIT(0), 0);
-> +err_put_rpm:
->  	pm_runtime_put_sync(&pdev->dev);
->  
->  	return ret;
-> -- 
-> 2.42.0
-> 
-> 
+Hello,
+
+On Tue, Dec 12, 2023 at 11:20:17AM +0300, Nikita Shubin via B4 Relay wrote:
+> No major changes since last version all changes are cometic.
+>=20
+> Following patches require attention from Stephen Boyd, as they were conve=
+rted to aux_dev as suggested:
+>=20
+> - ARM: ep93xx: add regmap aux_dev
+> - clk: ep93xx: add DT support for Cirrus EP93xx
+>=20
+> DMA related patches still require Acked or Reviewed tags.
+>=20
+> got approval LGTM from Miquel:
+> - mtd: rawnand: add support for ts72xx
+> Link: https://lore.kernel.org/lkml/20231004103911.2aa65354@xps-13/
+>=20
+> new patches:
+>=20
+> ARM: ep93xx:  Add terminator to gpiod_lookup_table
+>   - fixed terminator in gpiod_lockup_table
+>=20
+> So mostly all patches got approval.
+>=20
+> Patches should be now formated with '--histogram'
+
+You didn't mention how this should be merged. IIRC for the earlier
+rounds the idea was to merge it all together via arm-soc when all
+necessary agreement is reached. I assume that's still the case here?
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--aamqyrxtxz2kjjms
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmV4SbQACgkQj4D7WH0S
+/k4PhAf9FUkX+fzsz5zB6lrl7lgCvYm5ZVb3B7jDw5VKDO3L/jcpIQBnKW28hqdN
+fjyiqoG4kcqJrqfSN7RxYVHnxPmPMREuU5dkbLnXs4nakNuG6kYOLoWYRW6g7LHA
+2aJAqNPA3r1vRHwgyLaSlwVy4TxsWEJoU/Wa7pnN5VGjjyA22i9iruZRGzbsfSbG
+b4TPtncg2+HG5Z2NtBTY2w2wy/0XOTgO40vcUbW+gfh+ktRpJl5quupeZdYByknj
+l9QU3yt6tCJoKvAXYc2/jykymWajShXD0UJhcLTTYcWnQYEgfLWypFNR4YXJmJGC
+SbVz5vPzsa56pT4BPvsUI7alw9v79g==
+=T2K5
+-----END PGP SIGNATURE-----
+
+--aamqyrxtxz2kjjms--
