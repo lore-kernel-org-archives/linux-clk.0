@@ -1,341 +1,134 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="F13V4JiF"
-Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2055.outbound.protection.outlook.com [40.92.102.55])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89D82B8;
-	Mon, 11 Dec 2023 18:22:42 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=GuILh3tRQzNktIumG4eeRvz3yEo/cDWeheUD2+06lbfpG0UgK+8n7HEZR57lFTpwJE0lG9f8mIY+AiRofwZyrZ53ZUaK1J7RHiciau66mZie4OIcglDTuKd1Vej6bnBhyRbPaa//HAHdUNdnuQIla89VLVJmeV/Ac+MnH3Uj16JXFULqOkOchvJJD4DkmKzpN6gMVA2c2LngQgakvVqKBzn08aZoPTnPpAjnOs/VcCYPFer+AdhPolW0Ie3Qivao19I0NP8oDN3vHx4rY7hyoMeUMYi9TusqIE2RGytgCaaUVRk7uD9vShfRFTSRyl5Z2vnx/gRXfZZxsLGTxo0/Iw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cPKeCWKaj5tmjJt6v4upASNpNHZbRxdrlrygQWDO5mg=;
- b=c1w22ilSQYZwNRBuW9c7x7pNyP0FA0vCnumBKDmJQaoAH4QF+nm4yFuABC6Xkwi1fMgGyiX4X1WWR9TnQ2J1E8bpI6dhhRDk7widzGKAFrK/ZaeJJsHTA+zO6u7KLfVVr/Vy4fV3RbNbxovkpjlzkA1HPohY7MZmv3P5KSqd0JelKEFbobpJcOvy05igxRF2VjBF2YQoNCutSaXzjn6zVRRBwjhUxWgsqB68Xt9kC7Dj9Xdgw7+quWuoOf+f0SJNmZsOIP+ek0b1LB3D9bWxJOroUZwitZ4rEQC8JV+ufefUGVR2+ThKygUrai7VW7fNkoCq5m29ihFK0Dv2PlibDg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cPKeCWKaj5tmjJt6v4upASNpNHZbRxdrlrygQWDO5mg=;
- b=F13V4JiF3DzpaO4ZjqLTTvgOce7EcsQdJaiL20y5aukl2GEQQyacLUwht/sEixpKgeOayqNO7ubsEcwMK6EB9FPAtpZxAB/zz9wqoXQL/FMnZmefSsZEjOFdTmJjiEh2bO+65XT18ZfsVXVQXSM+ogKlcI2I4M0LCC3oEU3DPNlrmvGvkmHYqTTmwzbedZIavSPv42XY+kwhYz8ravt9oycY3ER2FkZBPkQcwwgzmJ/H559piAqzT2Gme5CdruvHDKXFzh+a2VYidOEP8pP1nl+uhaqL3SXWj5YZOWCGmi8u23CL1HzXfc+Z5nyJFVr1WjcpMGkGijN4GgR1jOqEYA==
-Received: from MA0P287MB0332.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:ab::5) by
- MA0P287MB0019.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:5c::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7068.33; Tue, 12 Dec 2023 02:22:33 +0000
-Received: from MA0P287MB0332.INDP287.PROD.OUTLOOK.COM
- ([fe80::b1a7:eee7:e903:9ef3]) by MA0P287MB0332.INDP287.PROD.OUTLOOK.COM
- ([fe80::b1a7:eee7:e903:9ef3%7]) with mapi id 15.20.7068.033; Tue, 12 Dec 2023
- 02:22:33 +0000
-Message-ID:
- <MA0P287MB0332A937E4DF0044594B19CCFE8EA@MA0P287MB0332.INDP287.PROD.OUTLOOK.COM>
-Date: Tue, 12 Dec 2023 10:22:28 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/4] clk: sophgo: Add SG2042 clock generator driver
-To: Conor Dooley <conor@kernel.org>, Chen Wang <unicornxw@gmail.com>
-Cc: aou@eecs.berkeley.edu, chao.wei@sophgo.com,
- krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
- palmer@dabbelt.com, paul.walmsley@sifive.com, richardcochran@gmail.com,
- robh+dt@kernel.org, sboyd@kernel.org, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, haijiao.liu@sophgo.com,
- xiaoguang.xing@sophgo.com, guoren@kernel.org, jszhang@kernel.org,
- inochiama@outlook.com, samuel.holland@sifive.com
-References: <cover.1701997033.git.unicorn_wang@outlook.com>
- <d1aa4f76f360ebd7b790a4786641f1b0188dbba8.1701997033.git.unicorn_wang@outlook.com>
- <20231208-opposite-stand-fc92fbaaed9c@spud>
-From: Chen Wang <unicorn_wang@outlook.com>
-In-Reply-To: <20231208-opposite-stand-fc92fbaaed9c@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TMN: [aTkwQRM4CyC17V6ryJRnCZ5mOkLvd7kA]
-X-ClientProxiedBy: SG2PR01CA0180.apcprd01.prod.exchangelabs.com
- (2603:1096:4:28::36) To MA0P287MB0332.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a01:ab::5)
-X-Microsoft-Original-Message-ID:
- <dab00686-bee1-49c3-a35a-75b23a824722@outlook.com>
+Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7A93123;
+	Mon, 11 Dec 2023 18:47:26 -0800 (PST)
+Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
+	(using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	(Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
+	by ex01.ufhost.com (Postfix) with ESMTP id 00D1424E29B;
+	Tue, 12 Dec 2023 10:47:25 +0800 (CST)
+Received: from EXMBX168.cuchost.com (172.16.6.78) by EXMBX166.cuchost.com
+ (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 12 Dec
+ 2023 10:47:24 +0800
+Received: from EXMBX066.cuchost.com (172.16.7.66) by EXMBX168.cuchost.com
+ (172.16.6.78) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 12 Dec
+ 2023 10:47:24 +0800
+Received: from EXMBX066.cuchost.com ([fe80::5947:9245:907e:339f]) by
+ EXMBX066.cuchost.com ([fe80::5947:9245:907e:339f%17]) with mapi id
+ 15.00.1497.044; Tue, 12 Dec 2023 10:47:24 +0800
+From: JeeHeng Sia <jeeheng.sia@starfivetech.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, "kernel@esmil.dk"
+	<kernel@esmil.dk>, "conor@kernel.org" <conor@kernel.org>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
+	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, "palmer@dabbelt.com"
+	<palmer@dabbelt.com>, "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@kernel.org"
+	<sboyd@kernel.org>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+	"emil.renner.berthing@canonical.com" <emil.renner.berthing@canonical.com>,
+	Hal Feng <hal.feng@starfivetech.com>, Xingyu Wu <xingyu.wu@starfivetech.com>
+CC: "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Leyfoon Tan
+	<leyfoon.tan@starfivetech.com>
+Subject: RE: [PATCH v1 05/16] dt-bindings: clock: Add StarFive JH8100 System
+ clock and reset generator
+Thread-Topic: [PATCH v1 05/16] dt-bindings: clock: Add StarFive JH8100 System
+ clock and reset generator
+Thread-Index: AQHaKDp4JclXcVkKt02w6zhm85IHbbCfKBKAgAW3QzA=
+Date: Tue, 12 Dec 2023 02:47:23 +0000
+Message-ID: <090f2d44fc8b4113b5b5e002d15b0675@EXMBX066.cuchost.com>
+References: <20231206115000.295825-1-jeeheng.sia@starfivetech.com>
+ <20231206115000.295825-6-jeeheng.sia@starfivetech.com>
+ <1ebb4733-0f1d-46ea-b399-34af7df088ac@linaro.org>
+In-Reply-To: <1ebb4733-0f1d-46ea-b399-34af7df088ac@linaro.org>
+Accept-Language: en-US, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-transport-fromentityheader: Hosted
+x-yovoleruleagent: yovoleflag
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MA0P287MB0332:EE_|MA0P287MB0019:EE_
-X-MS-Office365-Filtering-Correlation-Id: 763bf2b3-6590-4ed8-baec-08dbfab932a8
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	XhFr9rwa+cs/N9Zp/X1cvGVf7rVfKwNQBj7NZ2ObVci45jQun5qBoFW5LMc1L3GpK+XucUbwE2a8V+ljYv/mDxfgoHytLWJ69FxfxLnXSPuEuRJ0r2yxQkacQIZcIC3NI0eWr/xidlGzExk/2CBsHws677uUuuBA28MJgkeMH1x9O3qHaIVlEqkUd/DHs5032nGdbVxYE7t235hzBpN7E+32I1Kw+oBiF6IGwOJqsGTfssNIqBOZZ5eD0npcoVTaphIGDtvzu5evBfSLBncc/e3rhEs7nTMCeH/Y6wuTqu4jP8EUikVjN4/z0tCfKo3+dsos9QaJGRRUvNMWj1nBv2jDuwyNlJku4552h7evQBQPJTceBI1sGRjJDYR83cVEW3CFkI3R2f4DzVj5u26lBQN3AEgdpeAVeZur1ii49jSFR4Z3l4h/Z1mmDDOUcSIWE1YoYkrZM4ky2tCJK8cpnA3T53t1gEPXIIvAYB1CdfKrbv6+4fWRfHSxM2E26Yu8Mn7d35BLBS3+k4tZT6wMoEFQlxvlRz6SBOmQ6d49CNFxGgRBN3nucMX1Xp/qLyos8FsbXP1VpThcFmJf3Gj+emkKJd2jhfWOXQ+oU2ztEg4=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bVdPamV1bk5YRzNncnJlRWd6czA0alAyc3pFWWZtU0dIMm5NVzFwazI1ZHBK?=
- =?utf-8?B?YWs1eC81WHhVbERSWnZSSEJyYmhRRm1rditoY3BIa1dpdDZwMkFQbGtiZWN6?=
- =?utf-8?B?TkN3TU1IN0p6U20yMlNhbU1HMGFIazRuZ2Y3djhpeWY4di94cGlZQmtHaEJa?=
- =?utf-8?B?bTdvdlhCb20vdkcxRDlpMjlmT1hSTFpuajJLT3pXaG51TlNvOGJhMlQ4OFZJ?=
- =?utf-8?B?d2xFbUR5bGZXZ1dNNlMxMnVFZy9qbVg0ZkRBb0RLN2JHVURhNTk0L0htbm01?=
- =?utf-8?B?TU9Qa1JwNVpwaHBGaEZaTGNXbzFpSmRoNEtJcTVib0NFQTN3QnRQMS8yazZa?=
- =?utf-8?B?OWt6Umg2OHVqV0ordGZWYW9NaGM4eUx3bEN4a3BqV2dLclBIT3NML3J0Sm5J?=
- =?utf-8?B?RUxicEJ3SG1ZOTRIZHRPRUUyd0lCSG04dnh1NjdYOWxRcFBnL0ViZC8wRzRM?=
- =?utf-8?B?Y21sK0x4aS9MWlFtaEVMckN0YkNkd2lNOG1idGx4V2tnTnZPaStQdy9mNDF4?=
- =?utf-8?B?Z0xsZ2NwL1hURzJGSmROUzZvbmxiVHZSK1NqT1NZSkVWS3c3ZXlSSkxRM1lX?=
- =?utf-8?B?MFo0aGFrbDY3UnR1bG9ZWVN2dVRjbzVvVHVubjk5ejRQUm5hWEdVYXNreXgy?=
- =?utf-8?B?RDR2Qk5jUnIweGx0d1ZyN01SbEVZVVZyTUJ0cHhuV2pqTnlUNWtDSU1jWEVV?=
- =?utf-8?B?TVR2Ti9abCs4Uys3Q2FsNWIyTEhsS0VPUG5PL2sybmdPT1FJL0RtYVU2OWx5?=
- =?utf-8?B?bWI4UjB4bmJ0dldRQnN6djFSbEFBZlBnQVM0MEJIQSt0TTJCVmJoZzR2dXFL?=
- =?utf-8?B?WExjZFFZaVFReU56RjRVUjR6QlRudUxxaC9YSFNzWUdSNk9vWEFGdHdUVEtR?=
- =?utf-8?B?MERZN1IwOWwyQ3JGQUQxelBjeHJtaXB4eXJKYzI2cjM3ODJESEdIWXozaURY?=
- =?utf-8?B?cDlESHZqYzkyS0YxUG41T2hLV0pBWUE3L2FOKzBUZ3l0Zis3QlpJWnpuaDhE?=
- =?utf-8?B?TEFHMDFETnVIeXlaQlAxQVcySmNYbWF6WDdtZC9lZWRWaHgxOHhsSXQwSVZ2?=
- =?utf-8?B?R2QybkxZUEJnTk5vYlpSaUxSSzgrd0ptMFNlS0R2Vjk0Y29pQy9DdnA3K2dY?=
- =?utf-8?B?YzFZeXcySThQT0tzbmI1KzdMYXU2SDRleEh0Z2phNXBNbklPVVVjVWZQYWFa?=
- =?utf-8?B?aVM1RGh4eERPaHBJRjg3eVBDeTJLT1RFcSttZFJXMWoyazZkVFJaWGhWWXlG?=
- =?utf-8?B?aGFQZmc5eFQwRTNhdEQzZXdPUk1uUVNPWWhzYjNUNjFWd2pROGxrZXJwYTF3?=
- =?utf-8?B?KytTSlQxS0J0dDBVSjBrYU5EOURkZGdMR01tdThKdDkvaUgwQmh3K25XR3dh?=
- =?utf-8?B?Zk1WTWdyTGNmUjRkVnFUUWN0YTQ4MTdPODlGOGNPZlF3Tkl3dHVyQzNuK3RR?=
- =?utf-8?B?cU44N1JRbTBlN2tSbktWQjhrc1Y1d255S0RqbUF6aXR2WCt6ZUNtdXI0QWt2?=
- =?utf-8?B?WWJBYllrVFJyaVpsWUdDYjYzeUNKZklnMWs5UFlrZWY1SithOGNQQTg2VS9F?=
- =?utf-8?B?bDUwd3NEVC9wQzNmT2QxMEV4c1phRGI3SEIwQ0pXTW9xMlUrQkFhOVVrNFl4?=
- =?utf-8?Q?t0Az9+w2i5h8ehkHE80vbuvG242aNFFWOeSvaPwRAB0E=3D?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 763bf2b3-6590-4ed8-baec-08dbfab932a8
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0332.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Dec 2023 02:22:33.3611
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0P287MB0019
 
-hi,
-
-Thank you Conor for your carefully review, I need some time to digest 
-your comments. While I have some quick questions embeded.
-
-On 2023/12/9 0:47, Conor Dooley wrote:
-> On Fri, Dec 08, 2023 at 09:14:32AM +0800, Chen Wang wrote:
->
->> +#define div_mask(width) ((1 << (width)) - 1)
-> Looks like this should be genmask.
-Yes, I will improve this.
->
->> +#define ENCODE_PLL_CTRL(fbdiv, p1, p2, refdiv) \
->> +	(((fbdiv & 0xfff) << 16) | ((p2 & 0x7) << 12) | ((p1 & 0x7) << 8) | (refdiv & 0x3f))
-> IMO this should be a function not a macro.
-Would like to listen why it should be a function instead of a macro? Any 
-experiences you can share with me?
->
->> +
->> +static inline int __sg2042_pll_enable(struct sg2042_pll_clock *pll, bool en)
-> Why the __ prefixing of function names btw?
-
-:) I just want to differ/highlight these functions agaist those clk 
-operators. Anyway, this is indeed confusing, I will remove this ugly "__".
-
->> +{
->> +	unsigned int value = 0;
->> +	unsigned long enter;
->> +	struct regmap *map = pll->map;
->> +
->> +	if (en) {
->> +		/* wait pll lock */
->> +		enter = jiffies;
->> +		regmap_read(map, pll->offset_status, &value);
->> +		while (!((value >> pll->shift_status_lock) & 0x1)) {
->> +			regmap_read(map, pll->shift_status_lock, &value);
->> +			if (time_after(jiffies, enter + HZ / 10))
->> +				pr_warn("%s not locked\n", pll->name);
->> +		}
-> Can't you just use read_poll_timeout()?
-> https://elixir.bootlin.com/linux/latest/source/include/linux/iopoll.h#L16
-It looks like this, will check more.
->> +		/* wait pll updating */
->> +		enter = jiffies;
->> +		regmap_read(map, pll->shift_status_updating, &value);
->> +		while (((value >> pll->shift_status_updating) & 0x1)) {
->> +			regmap_read(map, pll->shift_status_updating, &value);
->> +			if (time_after(jiffies, enter + HZ / 10))
->> +				pr_warn("%s still updating\n", pll->name);
->> +		}
->> +		/* enable pll */
->> +		regmap_read(map, pll->offset_enable, &value);
->> +		regmap_write(map, pll->offset_enable, value | (1 << pll->shift_enable));
->> +	} else {
->> +		/* disable pll */
->> +		regmap_read(map, pll->offset_enable, &value);
->> +		regmap_write(map, pll->offset_enable, value & (~(1 << pll->shift_enable)));
->> +	}
->> +
->> +	return 0;
->> +}
->> + +static unsigned int __sg2042_get_table_div(
->> +	const struct clk_div_table *table,
->> +	unsigned int val)
->> +{
->> +	const struct clk_div_table *clkt;
->> +
->> +	for (clkt = table; clkt->div; clkt++)
->> +		if (clkt->val == val)
->> +			return clkt->div;
->> +	return 0;
->> +}
->> +
->> +static unsigned int __sg2042_get_div(
->> +	const struct clk_div_table *table,
->> +	unsigned int val,
->> +	unsigned long flags, u8 width)
->> +{
->> +	if (flags & CLK_DIVIDER_ONE_BASED)
->> +		return val;
->> +	if (flags & CLK_DIVIDER_POWER_OF_TWO)
->> +		return 1 << val;
->> +	if (flags & CLK_DIVIDER_MAX_AT_ZERO)
->> +		return val ? val : div_mask(width) + 1;
->> +	if (table)
->> +		return __sg2042_get_table_div(table, val);
->> +	return val + 1;
->> +}
-> Are these not effectively the same as clk_divider's ops?
-Will double check.
->
->> +
->> +/*
->> + * @reg_value: current register value
->> + * @parent_rate: parent frequency
->> + *
->> + * This function is used to calculate below "rate" in equation
->> + * rate = (parent_rate/REFDIV) x FBDIV/POSTDIV1/POSTDIV2
->> + *      = (parent_rate x FBDIV) / (REFDIV x POSTDIV1 x POSTDIV2)
->> + */
->> +static unsigned long __sg2042_pll_recalc_rate(
->> +	unsigned int reg_value,
->> +	unsigned long parent_rate)
->> +{
->> +	unsigned int fbdiv, refdiv;
->> +	unsigned int postdiv1, postdiv2;
->> +	u64 rate, numerator, denominator;
->> +
->> +	fbdiv = (reg_value >> 16) & 0xfff;
->> +	refdiv = reg_value & 0x3f;
->> +	postdiv1 = (reg_value >> 8) & 0x7;
->> +	postdiv2 = (reg_value >> 12) & 0x7;
-> IMO all of these are opportunities for GENMASK and defines.
-Looks like this, will double check.
->> +
->> +	numerator = parent_rate * fbdiv;
->> +	denominator = refdiv * postdiv1 * postdiv2;
->> +	do_div(numerator, denominator);
->> +	rate = numerator;
->> +
->> +	return rate;
->> +}
->> +
->> +/*
->> + * Below array is the total combination lists of POSTDIV1 and POSTDIV2
->> + * for example:
->> + * postdiv1_2[0] = {2, 4, 8}
->> + *           ==> div1 = 2, div2 = 4 , div1 * div2 = 8
->> + * And POSTDIV_RESULT_INDEX point to 3rd element in the array
->> + */
->> +#define	POSTDIV_RESULT_INDEX	2
->> +static int postdiv1_2[][3] = {
->> +	{2, 4,  8}, {3, 3,  9}, {2, 5, 10}, {2, 6, 12},
->> +	{2, 7, 14}, {3, 5, 15}, {4, 4, 16}, {3, 6, 18},
->> +	{4, 5, 20}, {3, 7, 21}, {4, 6, 24}, {5, 5, 25},
->> +	{4, 7, 28}, {5, 6, 30}, {5, 7, 35}, {6, 6, 36},
->> +	{6, 7, 42}, {7, 7, 49}
->> +};
->> +
->> +/*
->> + * Based on input rate/prate/fbdiv/refdiv, look up the postdiv1_2 table
->> + * to get the closest postdiiv combination.
->> + * @rate: FOUTPOSTDIV
->> + * @prate: parent rate, i.e. FREF
->> + * @fbdiv: FBDIV
->> + * @refdiv: REFDIV
->> + * @postdiv1: POSTDIV1, output
->> + * @postdiv2: POSTDIV2, output
->> + * See TRM:
->> + * FOUTPOSTDIV = FREF * FBDIV / REFDIV / (POSTDIV1 * POSTDIV2)
->> + * So we get following formula to get POSTDIV1 and POSTDIV2:
->> + * POSTDIV = (prate/REFDIV) x FBDIV/rate
->> + * above POSTDIV = POSTDIV1*POSTDIV2
->> + */
->> +static int __sg2042_pll_get_postdiv_1_2(
->> +	unsigned long rate,
->> +	unsigned long prate,
->> +	unsigned int fbdiv,
->> +	unsigned int refdiv,
->> +	unsigned int *postdiv1,
->> +	unsigned int *postdiv2)
-> This is not the coding style btw.
-Agree, will fix this.
->> +{
->> +	int index = 0;
->> +	int ret = 0;
->> +	u64 tmp0;
->> +
->> +	/* prate/REFDIV and result save to tmp0 */
->> +	tmp0 = prate;
->> +	do_div(tmp0, refdiv);
->> +
->> +	/* ((prate/REFDIV) x FBDIV) and result save to tmp0 */
->> +	tmp0 *= fbdiv;
->> +
->> +	/* ((prate/REFDIV) x FBDIV)/rate and result save to tmp0 */
->> +	do_div(tmp0, rate);
->> +
->> +	/* tmp0 is POSTDIV1*POSTDIV2, now we calculate div1 and div2 value */
->> +	if (tmp0 <= 7) {
->> +		/* (div1 * div2) <= 7, no need to use array search */
->> +		*postdiv1 = tmp0;
->> +		*postdiv2 = 1;
->> +	} else {
->> +		/* (div1 * div2) > 7, use array search */
->> +		for (index = 0; index < ARRAY_SIZE(postdiv1_2); index++) {
->> +			if (tmp0 > postdiv1_2[index][POSTDIV_RESULT_INDEX]) {
->> +				continue;
->> +			} else {
->> +				/* found it */
->> +				break;
->> +			}
->> +		}
->> +		if (index < ARRAY_SIZE(postdiv1_2)) {
->> +			*postdiv1 = postdiv1_2[index][1];
->> +			*postdiv2 = postdiv1_2[index][0];
->> +		} else {
->> +			pr_debug("%s can not find in postdiv array!\n", __func__);
->> +			ret = -EINVAL;
->> +		}
->> +	}
->> +
->> +	return ret;
->> +}
-> Reading this function it makes me wonder if (and I am far from the best
-> person to comment, someone like Stephen is vastly more qualified) you
-> should model this as several "stages", each implemented by the
-> "standard" clocks - like clk_divider etc. The code here is quite
-> complicated IMO as it seems to be trying to implement several stages of
-> division in one go.
-
-The objective of __sg2042_pll_get_postdiv_1_2() is straightforward: 
-based on the formula defined by the TRM, with input 
-rate/prate/fbdiv/refdiv, we can get the possiblle combination of 
-POSTDIV1 and POSTDIV2 by looking up the table of postdiv1_2. We will 
-later use it to setup the clock register.
-
-Though the codes looks a bit complicated, but accually it is calculate 
-with the formula : POSTDIV = (prate/REFDIV) x FBDIV/rate, I just 
-separate it into several steps to make it easy to understand, I have 
-listed the formula in the comment on top of the function.
-
->
-> There's quite a lot in the driver and I will admit that I have not read
-> it all my any means (I skimmed from here onwards), but in general my
-> advice would be to try and reuse the generic code as much as possible.
-Agree, I will double check and try to optimize the code in next revision.
->
-> Thanks,
-> Conor.
->
-......
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogS3J6eXN6dG9mIEtvemxv
+d3NraSA8a3J6eXN6dG9mLmtvemxvd3NraUBsaW5hcm8ub3JnPg0KPiBTZW50OiBTYXR1cmRheSwg
+RGVjZW1iZXIgOSwgMjAyMyAxOjUzIEFNDQo+IFRvOiBKZWVIZW5nIFNpYSA8amVlaGVuZy5zaWFA
+c3RhcmZpdmV0ZWNoLmNvbT47IGtlcm5lbEBlc21pbC5kazsgY29ub3JAa2VybmVsLm9yZzsgcm9i
+aCtkdEBrZXJuZWwub3JnOw0KPiBrcnp5c3p0b2Yua296bG93c2tpK2R0QGxpbmFyby5vcmc7IHBh
+dWwud2FsbXNsZXlAc2lmaXZlLmNvbTsgcGFsbWVyQGRhYmJlbHQuY29tOyBhb3VAZWVjcy5iZXJr
+ZWxleS5lZHU7DQo+IG10dXJxdWV0dGVAYmF5bGlicmUuY29tOyBzYm95ZEBrZXJuZWwub3JnOyBw
+LnphYmVsQHBlbmd1dHJvbml4LmRlOyBlbWlsLnJlbm5lci5iZXJ0aGluZ0BjYW5vbmljYWwuY29t
+OyBIYWwgRmVuZw0KPiA8aGFsLmZlbmdAc3RhcmZpdmV0ZWNoLmNvbT47IFhpbmd5dSBXdSA8eGlu
+Z3l1Lnd1QHN0YXJmaXZldGVjaC5jb20+DQo+IENjOiBsaW51eC1yaXNjdkBsaXN0cy5pbmZyYWRl
+YWQub3JnOyBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2Vy
+bmVsLm9yZzsgbGludXgtY2xrQHZnZXIua2VybmVsLm9yZzsgTGV5Zm9vbiBUYW4NCj4gPGxleWZv
+b24udGFuQHN0YXJmaXZldGVjaC5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjEgMDUvMTZd
+IGR0LWJpbmRpbmdzOiBjbG9jazogQWRkIFN0YXJGaXZlIEpIODEwMCBTeXN0ZW0gY2xvY2sgYW5k
+IHJlc2V0IGdlbmVyYXRvcg0KPiANCj4gT24gMDYvMTIvMjAyMyAxMjo0OSwgU2lhIEplZSBIZW5n
+IHdyb3RlOg0KPiA+IEFkZCBiaW5kaW5ncyBmb3IgdGhlIFN5c3RlbSBjbG9ja3MgYW5kIHJlc2V0
+IGdlbmVyYXRvcg0KPiA+IChTWVNDUkcpIG9uIEpIODEwMCBTb0MuDQo+ID4NCj4gPiBTaWduZWQt
+b2ZmLWJ5OiBTaWEgSmVlIEhlbmcgPGplZWhlbmcuc2lhQHN0YXJmaXZldGVjaC5jb20+DQo+ID4g
+UmV2aWV3ZWQtYnk6IExleSBGb29uIFRhbiA8bGV5Zm9vbi50YW5Ac3RhcmZpdmV0ZWNoLmNvbT4N
+Cj4gPiAtLS0NCj4gDQo+IC4uLg0KPiANCj4gPiArICBjbG9ja3M6DQo+ID4gKyAgICBpdGVtczoN
+Cj4gPiArICAgICAgLSBkZXNjcmlwdGlvbjogTWFpbiBPc2NpbGxhdG9yICgyNCBNSHopDQo+ID4g
+KyAgICAgIC0gZGVzY3JpcHRpb246IEV4dGVybmFsIEkyUyBSeCBCQ0xLIGNsb2NrDQo+ID4gKyAg
+ICAgIC0gZGVzY3JpcHRpb246IEV4dGVybmFsIEkyUyBSeCBMUkNLIGNsb2NrDQo+ID4gKyAgICAg
+IC0gZGVzY3JpcHRpb246IEV4dGVybmFsIE1DTEsgY2xvY2sNCj4gPiArDQo+ID4gKyAgY2xvY2st
+bmFtZXM6DQo+ID4gKyAgICBpdGVtczoNCj4gPiArICAgICAgLSBjb25zdDogY2xrX29zYw0KPiA+
+ICsgICAgICAtIGNvbnN0OiBjbGtfaTJzcnhfYmNsa19leHQNCj4gPiArICAgICAgLSBjb25zdDog
+Y2xrX2kyc3J4X2xyY2tfZXh0DQo+ID4gKyAgICAgIC0gY29uc3Q6IGNsa19tY2xrX2V4dA0KPiAN
+Cj4gRHJvcCBjbGtfIHByZWZpeGVzIGV2ZXJ5d2hlcmUuDQpOb3RlZC4NCj4gDQo+ID4gKw0KPiA+
+ICsgICcjY2xvY2stY2VsbHMnOg0KPiA+ICsgICAgY29uc3Q6IDENCj4gPiArICAgIGRlc2NyaXB0
+aW9uOg0KPiA+ICsgICAgICBTZWUgPGR0LWJpbmRpbmdzL2Nsb2NrL3N0YXJmaXZlLGpoODEwMC1j
+cmcuaD4gZm9yIHZhbGlkIGluZGljZXMuDQo+ID4gKw0KPiA+ICsgICcjcmVzZXQtY2VsbHMnOg0K
+PiA+ICsgICAgY29uc3Q6IDENCj4gPiArICAgIGRlc2NyaXB0aW9uOg0KPiA+ICsgICAgICBTZWUg
+PGR0LWJpbmRpbmdzL3Jlc2V0L3N0YXJmaXZlLWpoODEwMC1jcmcuaD4gZm9yIHZhbGlkIGluZGlj
+ZXMuDQo+ID4gKw0KPiA+ICtyZXF1aXJlZDoNCj4gPiArICAtIGNvbXBhdGlibGUNCj4gPiArICAt
+IHJlZw0KPiA+ICsgIC0gY2xvY2tzDQo+ID4gKyAgLSBjbG9jay1uYW1lcw0KPiA+ICsgIC0gJyNj
+bG9jay1jZWxscycNCj4gPiArICAtICcjcmVzZXQtY2VsbHMnDQo+ID4gKw0KPiA+ICthZGRpdGlv
+bmFsUHJvcGVydGllczogZmFsc2UNCj4gPiArDQo+ID4gK2V4YW1wbGVzOg0KPiA+ICsgIC0gfA0K
+PiA+ICsgICAgI2luY2x1ZGUgPGR0LWJpbmRpbmdzL2Nsb2NrL3N0YXJmaXZlLGpoODEwMC1jcmcu
+aD4NCj4gPiArDQo+ID4gKyAgICBjbG9jay1jb250cm9sbGVyQDEyNmQwMDAwIHsNCj4gPiArICAg
+ICAgICAgICAgY29tcGF0aWJsZSA9ICJzdGFyZml2ZSxqaDgxMDAtc3lzY3JnIjsNCj4gDQo+IFVz
+ZSA0IHNwYWNlcyBmb3IgZXhhbXBsZSBpbmRlbnRhdGlvbi4NCk5vdGVkDQo+IA0KPiA+ICsgICAg
+ICAgICAgICByZWcgPSA8MHgxMjZkMDAwMCAweDEwMDAwPjsNCj4gPiArICAgICAgICAgICAgY2xv
+Y2tzID0gPCZjbGtfb3NjPiwgPCZjbGtfaTJzcnhfYmNsa19leHQ+LA0KPiA+ICsgICAgICAgICAg
+ICAgICAgICAgICA8JmNsa19pMnNyeF9scmNrX2V4dD4sIDwmY2xrX21jbGtfZXh0PjsNCj4gPiAr
+ICAgICAgICAgICAgY2xvY2stbmFtZXMgPSAiY2xrX29zYyIsICJjbGtfaTJzcnhfYmNsa19leHQi
+LA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICJjbGtfaTJzcnhfbHJja19leHQiLCAi
+Y2xrX21jbGtfZXh0IjsNCj4gPiArICAgICAgICAgICAgI2Nsb2NrLWNlbGxzID0gPDE+Ow0KPiA+
+ICsgICAgICAgICAgICAjcmVzZXQtY2VsbHMgPSA8MT47DQo+ID4gKyAgICB9Ow0KPiA+IGRpZmYg
+LS1naXQgYS9pbmNsdWRlL2R0LWJpbmRpbmdzL2Nsb2NrL3N0YXJmaXZlLGpoODEwMC1jcmcuaCBi
+L2luY2x1ZGUvZHQtYmluZGluZ3MvY2xvY2svc3RhcmZpdmUsamg4MTAwLWNyZy5oDQo+ID4gbmV3
+IGZpbGUgbW9kZSAxMDA2NDQNCj4gPiBpbmRleCAwMDAwMDAwMDAwMDAuLmU1YmI1ODhjZTc5OA0K
+PiA+IC0tLSAvZGV2L251bGwNCj4gPiArKysgYi9pbmNsdWRlL2R0LWJpbmRpbmdzL2Nsb2NrL3N0
+YXJmaXZlLGpoODEwMC1jcmcuaA0KPiA+IEBAIC0wLDAgKzEsMTIzIEBADQo+ID4gKy8qIFNQRFgt
+TGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4wIE9SIE1JVCAqLw0KPiANCj4gSG93IGFib3V0IGtl
+ZXBpbmcgdGhlIHNhbWUgbGljZW5zZSBhcyBiaW5kaW5nPw0KU2hvdWxkbid0IGIgYSBwcm9ibGVt
+Lg0KPiANCj4gPiArLyoNCj4gPiArICogQ29weXJpZ2h0IChDKSAyMDIzIFN0YXJGaXZlIFRlY2hu
+b2xvZ3kgQ28uLCBMdGQuDQo+ID4gKyAqIFNpYSBKZWUgSGVuZyA8amVlaGVuZy5zaWFAc3RhcmZp
+dmV0ZWNoLmNvbT4NCj4gPiArICoNCj4gPiArICovDQo+ID4gKw0KPiANCj4gLi4uDQo+IA0KPiA+
+ICsjZGVmaW5lIFNZU0NSR19DTEtfTk5FX0lDR19FTgkJCQkJCTEwOA0KPiA+ICsNCj4gPiArI2Rl
+ZmluZSBTWVNDUkdfQ0xLX0VORAkJCQkJCQkxMDkNCj4gDQo+IERyb3AgZnJvbSBiaW5kaW5nIGhl
+YWRlci4NCkRvIHlvdSBtZWFuIGRvbuKAmXQgZGVmaW5lIHRoZSBudW1iZXIgb2YgY2xrIGluIHRo
+ZSBoZWFkZXI/IEknbGwgaGF2ZSB0byBkZWZpbmUNCkl0IGluIHRoZSBkcml2ZXIgdGhlbi4uDQo+
+IA0KPiA+ICsjZW5kaWYgLyogX19EVF9CSU5ESU5HU19DTE9DS19TVEFSRklWRV9KSDgxMDBfSF9f
+ICovDQo+IA0KPiAuLi4NCj4gDQo+ID4gKyAqLw0KPiA+ICsjZGVmaW5lIFNZU0NSR19SU1ROX1NZ
+U19TWVNDT04JCQkJCTANCj4gPiArI2RlZmluZSBTWVNDUkdfUlNUTl9DTEtfTU9ECQkJCQkxDQo+
+ID4gKyNkZWZpbmUgU1lTQ1JHX1JTVE5fR1BVCQkJCQkJMg0KPiA+ICsjZGVmaW5lIFNZU0NSR19S
+U1ROX0dQVV9TUFUJCQkJCTMNCj4gPiArI2RlZmluZSBTWVNDUkdfUlNUTl9HUFVfVFZTRU5TT1IJ
+CQkJNA0KPiA+ICsjZGVmaW5lIFNZU0NSR19SU1ROX1BQVV9PUF9OT1JFVF9HUFVfUkVTRVQJCQk1
+DQo+ID4gKyNkZWZpbmUgU1lTQ1JHX1JTVE5fTk5FCQkJCQkJNg0KPiA+ICsjZGVmaW5lIFNZU0NS
+R19SU1ROX0hEX0FVRElPCQkJCQk3DQo+ID4gKw0KPiA+ICsjZGVmaW5lIFNZU0NSR19SRVNFVF9O
+Ul9SRVNFVFMJCQkJCTgNCj4gDQo+IERyb3AgZnJvbSBiaW5kaW5nIGhlYWRlci4NCkRvIHlvdSBt
+ZWFuIGRvbuKAmXQgZGVmaW5lIHRoZSBudW1iZXIgb2YgcmVzZXQgaW4gdGhlIGhlYWRlcj8gSSds
+bCBoYXZlIHRvIGRlZmluZQ0KSXQgaW4gdGhlIGRyaXZlciB0aGVuLi4NCj4gDQo+ID4gKw0KPiA+
+ICsjZW5kaWYgLyogX19EVF9CSU5ESU5HU19SRVNFVF9TVEFSRklWRV9KSDgxMDBfSF9fICovDQo+
+IA0KPiBCZXN0IHJlZ2FyZHMsDQo+IEtyenlzenRvZg0KDQo=
