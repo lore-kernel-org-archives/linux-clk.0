@@ -1,177 +1,208 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="PUT/0HrM"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF8439B;
-	Mon, 11 Dec 2023 15:57:17 -0800 (PST)
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20231211235712epoutp02fc6492c306a0c87b00f73d2b96eaddb1~f7FS22I-N1560215602epoutp02X;
-	Mon, 11 Dec 2023 23:57:12 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20231211235712epoutp02fc6492c306a0c87b00f73d2b96eaddb1~f7FS22I-N1560215602epoutp02X
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1702339032;
-	bh=bBw6NK33ONaSuHSNqwie2fG1DfnIrR8z9bBcfqRccco=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=PUT/0HrMIoBxCMk8iXdgFD0X2Sg28os0ByEf6vCuabil4sWM0oFEYVseZv4lSYqGa
-	 LsccOknD0Dn8ODSwTq9QpwtT39Vp0wonnBzyqeETRPkUJk0S10LW+thNOiM5+ibXmp
-	 AU+1O/H/t6/tRSNZdApzyfnLCAzYAFg6AXeuaPOU=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-	20231211235712epcas1p39dede76e04ae14189f0260fca7d7d07a~f7FSfcmRd2517825178epcas1p3Y;
-	Mon, 11 Dec 2023 23:57:12 +0000 (GMT)
-Received: from epsmgec1p1-new.samsung.com (unknown [182.195.36.144]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4SpzF30zJRz4x9Q1; Mon, 11 Dec
-	2023 23:57:11 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-	epsmgec1p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	40.C5.19104.6D1A7756; Tue, 12 Dec 2023 08:57:11 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-	20231211235710epcas1p314c62a7abccf937bd63907c3c8166efc~f7FQ4CCEp2515825158epcas1p3o;
-	Mon, 11 Dec 2023 23:57:10 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20231211235710epsmtrp27050d1763a3b4c4daa8ddc76689a55d1~f7FQ2wCih2834428344epsmtrp2m;
-	Mon, 11 Dec 2023 23:57:10 +0000 (GMT)
-X-AuditID: b6c32a4c-80dff70000004aa0-47-6577a1d65ccb
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	5D.68.07368.6D1A7756; Tue, 12 Dec 2023 08:57:10 +0900 (KST)
-Received: from cw00choi03 (unknown [10.113.111.106]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20231211235710epsmtip18f3770cc7713786a97d3d0f4185e114d~f7FQUXaxH1746317463epsmtip1G;
-	Mon, 11 Dec 2023 23:57:10 +0000 (GMT)
-From: "Chanwoo Choi" <cw00.choi@samsung.com>
-To: "'Peter Griffin'" <peter.griffin@linaro.org>, <robh+dt@kernel.org>,
-	<krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
-	<conor+dt@kernel.org>, <sboyd@kernel.org>, <tomasz.figa@gmail.com>,
-	<s.nawrocki@samsung.com>, <linus.walleij@linaro.org>,
-	<wim@linux-watchdog.org>, <linux@roeck-us.net>, <catalin.marinas@arm.com>,
-	<will@kernel.org>, <arnd@arndb.de>, <olof@lixom.net>,
-	<gregkh@linuxfoundation.org>, <jirislaby@kernel.org>,
-	<alim.akhtar@samsung.com>
-Cc: <tudor.ambarus@linaro.org>, <andre.draszik@linaro.org>,
-	<semen.protsenko@linaro.org>, <saravanak@google.com>,
-	<willmcvicker@google.com>, <soc@kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-	<linux-watchdog@vger.kernel.org>, <kernel-team@android.com>,
-	<linux-serial@vger.kernel.org>
-In-Reply-To: <20231211162331.435900-7-peter.griffin@linaro.org>
-Subject: RE: [PATCH v7 06/16] dt-bindings: clock: google,gs101: fix
- incorrect numbering and DGB suffix
-Date: Tue, 12 Dec 2023 08:57:09 +0900
-Message-ID: <0ecc01da2c8d$c129e490$437dadb0$@samsung.com>
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="axDryxlZ"
+Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2089.outbound.protection.outlook.com [40.92.102.89])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0505DB4;
+	Mon, 11 Dec 2023 16:05:52 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=XgLtPsIeTjGTdyKVpP8umzLWwLXi0c1AH1hWVaeiQJiPDTbveGD3iiGu6y1CS0A+G29jEDxGPBpLjwZCW06oJSd7fmKSS1p5kVUPvgV/5rJ3cf4oCp0MA6WoHbqG9dJ7NVNjBsZWr05zQBplkEBQlyarKhg1RfMKwZwfBmootow2PUX6HZ3vbYPWQ1UwbhHeJA/inVB1cCTbbCXH5hYSECpN5blnlN+Itwip3sURa9NbFfaupi7SMpyZ52FXwQKcoGAAr9VrBBlINTsevfONvlwY9iR4LUIZ3+Z2v6Z7UarkLM3Q4pzSNKkLBBO/bPf5Uy0D3xBFbHmUNNy7fqPTmg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qwfZoU4rKG+O2DDRH0pULZuKZ9xSueVisdie4Qy9ztw=;
+ b=DpK8sud9zCyQaA5Za/SV5l/RAfRrRkVCfmH/G5IdRDdhObgVS2qciQJPP/oUfvVAac6lXaajL/FG0RViPfItP9Lo4SSHHnqvjP4vnRjBwgKM6W4ejKUXFieTljEJfXkuY7M283Vrat3Ue2is0CzGHsdfOFLRPRdT6zU72K050ThaqQlvO+UvvwDH5WMsqftoZ1oJlB+PVMnPWQNq5+w/QfXYSbwtC8B4/6EVVq5RUArvqqMAvP9bd7XGrSXreqUy+Vj7okB76z1YDcgMTFTXmksbQf/IwUHc+6BKzg+ofRYFNpPHBT4/neXg2ZUvojUtunm0gOmoYB7P4nsX44PqMQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qwfZoU4rKG+O2DDRH0pULZuKZ9xSueVisdie4Qy9ztw=;
+ b=axDryxlZ7/mqQgBSYkdoEMUvagploqaNaQI6tbUBCH/a5BZf8OvFKC7qcCOS9NiPdLBz8OjXnWuhOxsWxf6tRhjrkBT+HiOqzHnGwXa85LsnJvxFBqT+lu4GhRtknjQacA6SOd166yaJj1kjfIQ8DDe5/l4f2Z3qbiE3Ec9Imd1iq8nYBVrmkF9MrLPBOSXdR8PLr4A1AdFw/bsF1yiCI2mymG87+jjY9prTrx/JS1hMUo6J0smvpYVUhq5pEDlAkwmU0te81xFoqiNt4V3EZFhJ9q+cru017K6VASmjCWBmbG3tuRxOedHKKs6bqwulI8rCqCc71ydB8gRXm33ijQ==
+Received: from MA0P287MB0332.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:ab::5) by
+ PN2P287MB0908.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:134::12) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7068.33; Tue, 12 Dec 2023 00:05:42 +0000
+Received: from MA0P287MB0332.INDP287.PROD.OUTLOOK.COM
+ ([fe80::b1a7:eee7:e903:9ef3]) by MA0P287MB0332.INDP287.PROD.OUTLOOK.COM
+ ([fe80::b1a7:eee7:e903:9ef3%7]) with mapi id 15.20.7068.033; Tue, 12 Dec 2023
+ 00:05:42 +0000
+Message-ID:
+ <MA0P287MB03321C6BF0556663B129A0E1FE8EA@MA0P287MB0332.INDP287.PROD.OUTLOOK.COM>
+Date: Tue, 12 Dec 2023 08:05:32 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 3/4] clk: sophgo: Add SG2042 clock generator driver
+To: Dan Carpenter <dan.carpenter@linaro.org>, oe-kbuild@lists.linux.dev,
+ Chen Wang <unicornxw@gmail.com>, aou@eecs.berkeley.edu, chao.wei@sophgo.com,
+ conor@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ mturquette@baylibre.com, palmer@dabbelt.com, paul.walmsley@sifive.com,
+ richardcochran@gmail.com, robh+dt@kernel.org, sboyd@kernel.org,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com, guoren@kernel.org,
+ jszhang@kernel.org, inochiama@outlook.com, samuel.holland@sifive.com
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev
+References: <1a6e3fad-cbe2-461d-940c-601ab5197213@suswa.mountain>
+From: Chen Wang <unicorn_wang@outlook.com>
+In-Reply-To: <1a6e3fad-cbe2-461d-940c-601ab5197213@suswa.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TMN: [RNVkoVAqVWEupqnPK/J/FeKjzEJw05EU]
+X-ClientProxiedBy: SI1PR02CA0060.apcprd02.prod.outlook.com
+ (2603:1096:4:1f5::17) To MA0P287MB0332.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a01:ab::5)
+X-Microsoft-Original-Message-ID:
+ <434edec6-4766-4944-9d0f-7067a5548d16@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: ko
-Thread-Index: AQEeDlMUs+qnFg95EVUf+Z9FZqMuEwIO8XO4Aj/o0Sqx+ofWIA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Te0xbVRz29La3hQ28KzWcIWFdjS5DCxQoHshw6hi5GZiQoeCMDhq4UkJp
-	mz4ANWbEPRgPCRsQoZPBwkTA8n6/xiiMDUTcskFR2AYWB4xZBIIbg4Itlyn/fb/vfN/vdfLj
-	YNwbbBdOvFxDqeQSmQC3Zzb3HvQUGq8kU163lxlo8nIzjhofNzCR5WI/Gy2UZQGk7xpmoOK+
-	YRY6XVqDI3ORK2pt4aHs2SkM5a3/yED1plEWWsx6wEINxesAFfx6jYGGSr9lo7Hqa2w0fWWI
-	ge4MHkWDxmUc1RZsMNHZrj426n2SxkIZBguONkbrmGgm2+oyGddxVNluTbL0+0l0ZkKMKpc2
-	ATLNbWDv8snmjmYWqb+sB+Ta84uAXBg7yybbdPfZZEm9lqyvTMfJidFOnKzQ61lkd5GeTTZc
-	PUXeu/UNi2x7msomsxsrAblc7xb28icJh6SUJJZS8Sl5jCI2Xh4XKAgJjzoSJfbzEglF/uht
-	AV8uSaQCBUGhYcLgeJl1XQJ+kkSmtVJhErVa4PnOIZVCq6H4UoVaEyiglLEypVjpoZYkqrXy
-	OA85pQkQeXl5i63C6ARpz4MLbGWjY4pxKikVtOzOAHYcSPjCkqYWdgaw53CJTgCLxywYHSwB
-	2HKpA6eDfwCs7s/DXliKh0oB/dAF4FrrPJMO5gBMvTppVXE4OPEWLHn2kc3AIyYx2JVnZ9Ng
-	hB6Dq5sTW5nsiMNwrCuVacNOhBROmsu3eCbxOlzMKcJt2IHwh+3V/Swa74EDhdNbeozYB1v+
-	+n67Iz5c/bOMRfM8eCn9HEYXfh8+HC1g2ApDIt8ejlWtsGlDELQsDbNo7AQf32zc5l3gsrkL
-	pw25AN6Zn8fooAbAuooz2+V8YPcPuQzbmBhxENa0e9L0fti2VgToLhyheSWLZZNAwgGeP8el
-	Ja/Bu5P3GTTeC0vT0vEcINDtmE23Yzbdjnl0/xcrAcxK4EIp1YlxVIxIKRLKqeT/vjxGkVgP
-	tu7JPbQVPK2xeBgAgwMMAHIwAc/BtU9NcR1iJV98SakUUSqtjFIbgNi68QuYyysxCutByjVR
-	Il9/L18/bx9fJPITCZwdhu4lUVwiTqKhEihKSale+BgcO5dURuG4wJkbohAmGTLtlPExCTdK
-	onXy/bzdAcnhP9UYuj/46jtqc5yXfCsenxl42EQWvKk9/+y97LvtsRXD3ZbstM58t2nxqONh
-	QwrgJ7XxnGqdgqOTmv7+xXRkSusXODcyN1Pce6D1WM5vhaFCc6QUKBJz43qYox+fqLPfNC3l
-	D2QOwD1uE4O1DQufPRefTnX8XK3K7vMZ3+e0Ykkxyma/No9M1UasRxuH+t0OSL0fhWTCXe03
-	J6TOp9449vPxhiBRd3mhMau36mREMOuEynfcHPfk9qOEYPdF18Jd4WXXj2dwZ6tGcvcarq+W
-	j3/4amT9HwUdJpfIgD5PYYRF1hP2KfMlAVMtlYjcMZVa8i8FxU6q2AQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sb0xTVxyGc+6/XpqBl9K5U8YY62JG3FYpzu3MGCUsS26yxJHhPogZ2MC1
-	GKCQVtAuY1QcVYsQhhspZVgMiuFSRUoH0lL+tEwRkdmGFMKUaQpBHOgEE8RBGaVZxrf3PL/f
-	+5zz4dC4qJmMpo+qjnFqlSJXSgmJDrc09kPfxeNcwuy4BD280EEh25N2Aq1W3xSgZ03nALI4
-	RzBkHhgh0anGVgo9rY9BNzrFqPLxIxz9tHIFQ1a/j0TPz02SqN28ApDx9x4MDTdWCND4tR4B
-	mro4jCHP0OdoaGyRQteNAQKVOQcEyD13mkQG1yqFAr42As1Urrf8YysU4u3rkoWJdPTD/V2I
-	X1gDyD8bwJPi2A5HB8laLlgA+8+rasA+Gy8TsF2mBwK2wVrIWvmzFHvf102xzRYLyfbWWwRs
-	+6USdnSwlGS7lnQCttLGA3bRGpuyJU24J4vLPVrEqXfsPSzM7p/8UVBgizgx9qhIBzpfM4Aw
-	GjIfQfNwIzAAIS1iHAB6WhxkaCCBNZ7fcAOg13MUdLs1oZ0ZAO/8VY4FOcV8ABtefh3kYuYF
-	Dvkzy1jwgDN2HI7o9GSo4QbQ52+hgtYwZh8cd+qIYI5ijkBvTQ0WzASzDT6vqt/YCWc+hfZr
-	N8lQjoS3a6eI4G04I4P6NhDEOPM27Jz/BQ89NA4uTzeRIS6GdWf1G1zMJMM/fUasCkSZNplM
-	/5tMm0ymTe0GQPBAwhVo8pR5mfICuYo7LtMo8jSFKqUsMz/PCjZ+0/b4G2DSHJC5AEYDF4A0
-	LhWHxwxoOFF4lkL7LafOz1AX5nIaF3iTJqRvhMuNdVkiRqk4xuVwXAGn/m+K0WHROux7+9Wr
-	ezOe1qWW7dvzyiZL8bRsPZDaVjrnuuXw9CrfT5p8oD15K/HQnb4rVF1i9VfqmlHzZ+9VvEVL
-	17zf/IFNxyfm/GxIbb1X+mVgd0l/SqSxb3m6L3lL8b14yimUL+3cKuku1zmaGXPsdxMv/Ky+
-	9YTXe+A6//iTXQ8zLqkjlxUV8w5YX2zvGZpaLUy//W5CX/7r/KxWX5Sf0G7PTIpbTFOF7b+c
-	TPe+FGqravX8RO1aSWzE0oDmi3Rbv69p4e6TrkGt/dcdimhMdNiLV6gaD/49f3Iu+4zNtDvt
-	/PlyOklSlHMk+uPLztMGZluxcnSn/FTbIB+xMH/3nZmY7pJqKaHJVsi342qN4l/cq8GFvAMA
-	AA==
-X-CMS-MailID: 20231211235710epcas1p314c62a7abccf937bd63907c3c8166efc
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20231211162506epcas1p290e6adbb82f27ebade65376f298f7fd3
-References: <20231211162331.435900-1-peter.griffin@linaro.org>
-	<CGME20231211162506epcas1p290e6adbb82f27ebade65376f298f7fd3@epcas1p2.samsung.com>
-	<20231211162331.435900-7-peter.griffin@linaro.org>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MA0P287MB0332:EE_|PN2P287MB0908:EE_
+X-MS-Office365-Filtering-Correlation-Id: d4c86a93-261d-4349-7e89-08dbfaa61306
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VU4zL0Z3Z09zN3FMM29rYlcyYnppRk9YR3dFV3Iya3o0dGZYY3owTE1DV3F3?=
+ =?utf-8?B?blo1Nkxlc0pzZmxIVXRnOTdRWDIxMC82ajlxd09FYXNLYk9OSytMejBRc2pX?=
+ =?utf-8?B?b1lMRERKT3BIWFQ2NDdKSGEvL3FEUU1lb0JEaHBnMFV0MVFJQnFFTWtKOGht?=
+ =?utf-8?B?SzV2V1FaVnh1d3hHQUNrUG5zYXdwK09oMFk3dUsvaVVYOWlWU0ROZU5oNFNC?=
+ =?utf-8?B?bEk4bXFyS2diUUNTdzEyNmpNYTZ6cHhtbVVpYTFEcFV6ZlhBbjA5TlBNdXd5?=
+ =?utf-8?B?RnowdXhmOFdnOTN4Qm9pU0dQSmVZbnFGZm9iZzJrQW91bGxGVVQrWTNwZWV2?=
+ =?utf-8?B?dGdZSXBuZllPczE5bUVMRzZ0eVB0R3V3cTVhbDFvVWxPUCt3YkpRS01YMWU3?=
+ =?utf-8?B?a1haaTNCd3ltZ255Zi82azBtUENvMXN3bGVpWktpeWdvQ1VJRGYyL3czNiti?=
+ =?utf-8?B?czluSWYzL01UdEtqVkUzUkdpVXQzNEVRQ2dlNkg5b0wxWEtFamhtRzNMbms0?=
+ =?utf-8?B?ZkZuK1dQYm1YY3lmZTRtR2NWRmlqN0IzS0FlUjVlNUNBLzB1Y1FoYlk3T2sz?=
+ =?utf-8?B?dEdFTmZnaEVoQUU3akwvTHVMbWFFN1hQVmRVUzUzRUZpTGd6TFFFU2tjZkNU?=
+ =?utf-8?B?QTQ4QUoreXErK0JxVWN0Q2x4TDdKYjJ6dVN1L2ZYL3RyZE5pMXRualJXZVdn?=
+ =?utf-8?B?TWgxd1ZRQkJENEU5RzZDZE1qRU5aeXJTSTFyeWJVa01pY0Q0eG9VZzFzNFc5?=
+ =?utf-8?B?WHRVbEhLejdvM3Y3SlRQYVhNa2F1dHBkbmJFQzJPKzh5cmVMYjh3Ym9xQzE4?=
+ =?utf-8?B?TkcxZTV5Wm1IV0Y3ajFTaldmWHFRUUpSU2FwdVlBc0pTamtUVXlyWWFrUnpI?=
+ =?utf-8?B?Z2JkWDRCTkJoNGRQaGhxejAyajQ0emZiUExKN095dHZ2UllaVHBIcTNhbjRs?=
+ =?utf-8?B?RnhpQUxwaS8zN1l5WGRpaFlKWmFwcWhiQ3oycUgwRUo3NkthczZxWUpHRXZ5?=
+ =?utf-8?B?SDVHNitMWE42ZjhwQzFremRMSjVmZm5tanZzTnAzUFh5Mnp5Mm9HYzRmM2Q5?=
+ =?utf-8?B?dmJCSmNXelBCUFJ3MTJRVnNDMG5tYzM4dmNVWkt0eHdRZjBGcFF0UW9HNWYv?=
+ =?utf-8?B?ZEg5allWTFpCcE8rY0VQTDhZTmxWbS9KRE5mSGZzTUFQZFBwRHVSVjVxSjd3?=
+ =?utf-8?B?OWwwYzlPa1NVVnNlTExqbVNJaWhIUndBVzZsZ3FWek45U0ladDZHTnRlNnIv?=
+ =?utf-8?B?eHg1UzR4RHgrSmFPNWpUc0ZIcXFxSElDaVo1SENMVHREVStsSVkxUWVPUnVF?=
+ =?utf-8?B?VmdicW1LQmJKQUVncEVFNzRFV2Y4TkcxVzlERmpTL3RpcTUvcURaS3lCL0hu?=
+ =?utf-8?B?K3JlU0tmdTBRWmplNmhNL0N4TnJ4ZDFQRGpPMFVZRkNsVEtNT3VMRDFJWm9n?=
+ =?utf-8?B?YUxkSXFCeW9sN0FtdGVuNW40Tnl6dkZ2cHJOYjBDeU9xNndTNnF6aDBNMVRS?=
+ =?utf-8?Q?ztT7AQ=3D?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ZmtkeGg5V1ViQmJ4azEwR2pHUm1yNWY0a3VEWU05UVVWWUdmK21OL1NlTXpD?=
+ =?utf-8?B?R2srWTN1VFhwUFdBZlFyTklsVTdnWXNOUnQyN2tUMktidk9mU2VYRS82VDdt?=
+ =?utf-8?B?K044MHViWVFxV0pjN1VPdnFWajNZRHNmdXFiY0xvcWJ6NTkxSDQwVkk0M2Fu?=
+ =?utf-8?B?ODcrMzIwcU13ZGRjbWNYUllhU1lBanVKMUpFcjJDVEJLZzMzOVBDV25JeFpI?=
+ =?utf-8?B?TzFxcHhKQ0N6Y21KZ255d09oQ0J0dE9USEcyM2tGb3J3UGlhU3A1anY4dElV?=
+ =?utf-8?B?bWQzZFV1ZVg0MEJUeTZtcCt6c09oaThuM2hHN3FQeVlycTl0T08xYW5vbFNy?=
+ =?utf-8?B?ZnlEenlTcUYyQStONDRneTNqeHUxNWNyam81eDB4T203b2R2QXBRNmxmNlBK?=
+ =?utf-8?B?WkNDcEx0VEtMT1V5Ti9sK2FKTU84bkdsbHNsKzdvZzlkTjlHT2g2V1AzbnBJ?=
+ =?utf-8?B?Nkg4cnRFY1lsRnNqU3ZTQ005Uzk1eUhHWVlPTzV0UnhhNTRuQy94Tll3b1Np?=
+ =?utf-8?B?VmhLVVdZTW02Tmp0T05CUHJWeGdnUWw1S2RzOUcyN25xQ2V3dGJMbWdXRzQ1?=
+ =?utf-8?B?dVF2cmxNS3ArRmZIMnp0SktMRElsOW9hVE5iL1YzVGRTWGdQb0ZpbUZJTWxP?=
+ =?utf-8?B?YlQyZytNZWpKbWNjSG9Jdjg1aG9Pd2Q0VWI2eU9JSnI4a25xQ0NZRVFhVW5T?=
+ =?utf-8?B?NUU4M1JLRU9zOXJEVW9SRDBpakd5NVp2enlaTnNOdTNySE1Zbk1TWkRlR0dL?=
+ =?utf-8?B?RHZMMFdIUHI2dGRiSXFKdCtoNS9tQW5sd01Td3JyMmZwUXFFLzU1NVVya1RO?=
+ =?utf-8?B?U1JUcHVLVTY2amRkSDhTR0o5T3B1MXRFUE1VNHZGRW5sTDkyZnc0ajR4eTFZ?=
+ =?utf-8?B?UUMyamlBSjd4TDBTMnp6N2RWeFFYV2xMVjluVlhuYkRrdkQwajVDL2hmVmlP?=
+ =?utf-8?B?OWR2SUpobjVDRGtkUHc4Q1ZzeDVSbHBUYWI5M0FDd2lrakZ4RzY1S0c0Z3h2?=
+ =?utf-8?B?RE5HR01iWHB2SnVWV0gyNDhCZnVrUzM5UU5CMWtoRWF4L3Y2cnVaV3g4bzhH?=
+ =?utf-8?B?a0N5K0lFbktFTUFYL0ZSWlFzVE80emxxWmwxNnR6dGdvTGczYlZDWTRqTDds?=
+ =?utf-8?B?TGE4ejlyUjgyNTV6c0tKVEk1c0tvYlNOWWxwZWs5c0NNbFlVQzA1bTJ3MEpi?=
+ =?utf-8?B?QkpxNVY1cUJCVlpKb0c0eFh3VzlHTnBLRTkyNmZGVG81V0NEbXAvNkJwTmFy?=
+ =?utf-8?B?bnQra2x0VHErT1dndjhuT042b2VGSk5MaFdVcE5RUlZoTko0c3o5U3dYLzNw?=
+ =?utf-8?B?Q245VG5RVU83c05HdFJQT2FKeFhQZDRNQTRQV2lsekZxMXlIWDRDUzdaSmln?=
+ =?utf-8?B?REhJMytFcm1Yd2JKQVpvUEJ4N3poWXhPWnpoQzZmdGFjcUlOODZtV2NsREZi?=
+ =?utf-8?B?YmdLWFdwczFnZHhTOGxsa1J2UjRRQzdqTDgvb2tzL2xDUUVsTDBOWWppOElO?=
+ =?utf-8?B?SVp6M09UVGVKTE0yeDZuK1BMTVFmcnQzYVFxK2R6RXFYTHlCRytuWC92WjBu?=
+ =?utf-8?B?b1ZrRVJycitoTEozTTlFTkxnWkNLa2NCWk1LM1VTMjdNS1MwTTVoNnRmcWZz?=
+ =?utf-8?Q?EhGOfM+FkI38RlKDf4ouhc8WiP0JLJYl6Dd13P5j99Tw=3D?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d4c86a93-261d-4349-7e89-08dbfaa61306
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0332.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Dec 2023 00:05:41.1112
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2P287MB0908
 
 
-
-> -----Original Message-----
-> From: Peter Griffin <peter.griffin@linaro.org>
-> Sent: Tuesday, December 12, 2023 1:23 AM
-> To: robh+dt@kernel.org; krzysztof.kozlowski+dt@linaro.org;
-> mturquette@baylibre.com; conor+dt@kernel.org; sboyd@kernel.org;
-> tomasz.figa@gmail.com; s.nawrocki@samsung.com; linus.walleij@linaro.org;
-> wim@linux-watchdog.org; linux@roeck-us.net; catalin.marinas@arm.com;
-> will@kernel.org; arnd@arndb.de; olof@lixom.net;
-gregkh@linuxfoundation.org;
-> jirislaby@kernel.org; cw00.choi@samsung.com; alim.akhtar@samsung.com
-> Cc: peter.griffin@linaro.org; tudor.ambarus@linaro.org;
-> andre.draszik@linaro.org; semen.protsenko@linaro.org;
-saravanak@google.com;
-> willmcvicker@google.com; soc@kernel.org; devicetree@vger.kernel.org;
-linux-
-> arm-kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org; linux-
-> clk@vger.kernel.org; linux-gpio@vger.kernel.org; linux-
-> watchdog@vger.kernel.org; kernel-team@android.com; linux-
-> serial@vger.kernel.org
-> Subject: [PATCH v7 06/16] dt-bindings: clock: google,gs101: fix incorrect
-> numbering and DGB suffix
-> 
-> 166 was skipped by mistake and two clocks:
-> * CLK_MOUT_CMU_HSI0_USBDPDGB
-> * CLK_GOUT_HSI0_USBDPDGB
-> 
-> Have an incorrect DGB ending instead of DBG.
-> 
-> This is an ABI break, but as the patch was only applied yesterday this
-header
-> has never been in an actual release so it seems better to fix this early
-than
-> ignore it.
-> 
-> Fixes: 0a910f160638 ("dt-bindings: clock: Add Google gs101 clock
-management
-> unit bindings")
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
->  include/dt-bindings/clock/google,gs101.h | 118 +++++++++++------------
->  1 file changed, 59 insertions(+), 59 deletions(-)
-> 
-
-(snip)
-
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-
-Best Regards,
-Chanwoo Choi
-
-
+On 2023/12/9 14:22, Dan Carpenter wrote:
+> Hi Chen,
+>
+> kernel test robot noticed the following build warnings:
+>
+> url:    https://github.com/intel-lab-lkp/linux/commits/Chen-Wang/dt-bindings-soc-sophgo-Add-Sophgo-system-control-module/20231208-091702
+> base:   b85ea95d086471afb4ad062012a4d73cd328fa86
+> patch link:    https://lore.kernel.org/r/d1aa4f76f360ebd7b790a4786641f1b0188dbba8.1701997033.git.unicorn_wang%40outlook.com
+> patch subject: [PATCH v6 3/4] clk: sophgo: Add SG2042 clock generator driver
+> config: xtensa-randconfig-r071-20231208 (https://download.01.org/0day-ci/archive/20231208/202312081933.MUdHNASt-lkp@intel.com/config)
+> compiler: xtensa-linux-gcc (GCC) 13.2.0
+> reproduce: (https://download.01.org/0day-ci/archive/20231208/202312081933.MUdHNASt-lkp@intel.com/reproduce)
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> | Closes: https://lore.kernel.org/r/202312081933.MUdHNASt-lkp@intel.com/
+>
+> smatch warnings:
+> drivers/clk/sophgo/clk-sophgo-sg2042.c:1282 sg2042_clk_init_clk_data() warn: passing zero to 'PTR_ERR'
+Thank you, Dan. I will try to remove this warning in next revision.
+>
+> vim +/PTR_ERR +1282 drivers/clk/sophgo/clk-sophgo-sg2042.c
+>
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1258  static int __init sg2042_clk_init_clk_data(
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1259  	struct device_node *node,
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1260  	int num_clks,
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1261  	struct sg2042_clk_data **pp_clk_data)
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1262  {
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1263  	int ret = 0;
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1264  	struct sg2042_clk_data *clk_data = NULL;
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1265  	struct device_node *np_syscon;
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1266
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1267  	np_syscon = of_parse_phandle(node, "sophgo,system-ctrl", 0);
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1268  	if (!np_syscon) {
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1269  		pr_err("failed to get system-ctrl node\n");
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1270  		ret = -EINVAL;
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1271  		goto error_out;
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1272  	}
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1273
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1274  	clk_data = kzalloc(struct_size(clk_data, onecell_data.hws, num_clks), GFP_KERNEL);
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1275  	if (!clk_data) {
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1276  		ret = -ENOMEM;
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1277  		goto error_out;
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1278  	}
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1279
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1280  	clk_data->regmap_syscon = device_node_to_regmap(np_syscon);
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1281  	if (IS_ERR_OR_NULL(clk_data->regmap_syscon)) {
+> 7c68ebea1041f9 Chen Wang 2023-12-08 @1282  		pr_err("cannot get regmap_syscon %ld\n", PTR_ERR(clk_data->regmap_syscon));
+>
+> I don't think device_node_to_regmap() can return NULL, but if it could
+> then it shouldn't be handled like this:
+>
+> https://staticthinking.wordpress.com/2022/08/01/mixing-error-pointers-and-null/
+>
+>
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1283  		ret = -ENODEV;
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1284  		goto cleanup;
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1285  	}
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1286  	clk_data->iobase_syscon = of_iomap(np_syscon, 0);
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1287  	clk_data->iobase = of_iomap(node, 0);
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1288  	clk_data->onecell_data.num = num_clks;
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1289
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1290  	*pp_clk_data = clk_data;
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1291  	return ret;
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1292
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1293  cleanup:
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1294  	kfree(clk_data);
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1295
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1296  error_out:
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1297  	return ret;
+> 7c68ebea1041f9 Chen Wang 2023-12-08  1298  }
+>
