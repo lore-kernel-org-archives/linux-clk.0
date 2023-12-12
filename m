@@ -1,68 +1,131 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="VD8+7Gsm"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48CD7E3;
-	Tue, 12 Dec 2023 01:33:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1702373598;
-	bh=DngQeOO2YELX/6w8IEVqEz75HCOEMeCfiy2nH1Lvr9A=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=VD8+7GsmaUgBrt67C533y61acmy2sX48b+8+Cw16eKK/vujiDNKieaTiIjnpWUMj/
-	 0/qcOYaznzHmUnSvAiH7kAhjD/52/nTZHP6OiJF9livV+wGcpmDo3SdNb2UK7ziYWw
-	 xp92JreRroH7Ta5xchcWgJG2i+SKMJ4G8236IKX6BkWOXqGg779n803dd5fL4delAk
-	 EqOPEelcZFkDhl5Tm4a9yF9EEDyJfa7VMOpucu7hV4jLqSXtlcTDvNsNcuaeq6FkpA
-	 41gW223RmcuNeDTOZXd8zIttUNoDrSUeUGr8/cOp3FbN0O78R31lSDZ7PTNITNuWMb
-	 hMZi1CMbMw4nQ==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id B4DEA3781423;
-	Tue, 12 Dec 2023 09:33:16 +0000 (UTC)
-Message-ID: <8585cdce-648e-4c27-a769-6441dac77707@collabora.com>
-Date: Tue, 12 Dec 2023 10:33:16 +0100
+Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5EA395;
+	Tue, 12 Dec 2023 02:03:54 -0800 (PST)
+Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
+	(using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	(Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
+	by fd01.gateway.ufhost.com (Postfix) with ESMTP id 9052324DC33;
+	Tue, 12 Dec 2023 18:03:46 +0800 (CST)
+Received: from EXMBX066.cuchost.com (172.16.7.66) by EXMBX166.cuchost.com
+ (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 12 Dec
+ 2023 18:03:46 +0800
+Received: from EXMBX066.cuchost.com ([fe80::5947:9245:907e:339f]) by
+ EXMBX066.cuchost.com ([fe80::5947:9245:907e:339f%17]) with mapi id
+ 15.00.1497.044; Tue, 12 Dec 2023 18:03:46 +0800
+From: JeeHeng Sia <jeeheng.sia@starfivetech.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, "kernel@esmil.dk"
+	<kernel@esmil.dk>, "conor@kernel.org" <conor@kernel.org>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
+	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, "palmer@dabbelt.com"
+	<palmer@dabbelt.com>, "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@kernel.org"
+	<sboyd@kernel.org>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+	"emil.renner.berthing@canonical.com" <emil.renner.berthing@canonical.com>,
+	Hal Feng <hal.feng@starfivetech.com>, Xingyu Wu <xingyu.wu@starfivetech.com>
+CC: "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Leyfoon Tan
+	<leyfoon.tan@starfivetech.com>
+Subject: RE: [PATCH v1 16/16] riscv: dts: starfive: jh8100: Add clocks and
+ resets nodes
+Thread-Topic: [PATCH v1 16/16] riscv: dts: starfive: jh8100: Add clocks and
+ resets nodes
+Thread-Index: AQHaKDqra6wATad1nUKrJTE2u0DzTrCfKVUAgAXSX4D//9xUAIAAnDaw
+Date: Tue, 12 Dec 2023 10:03:46 +0000
+Message-ID: <6628627a60a4490ba887d9a89add3330@EXMBX066.cuchost.com>
+References: <20231206115000.295825-1-jeeheng.sia@starfivetech.com>
+ <20231206115000.295825-17-jeeheng.sia@starfivetech.com>
+ <4dd53599-5e80-4a00-a708-507c9c2e7b6b@linaro.org>
+ <62705afb652e416695aa26e3bdb2500e@EXMBX066.cuchost.com>
+ <e8c60424-21c7-4f64-9e47-8c4183510162@linaro.org>
+In-Reply-To: <e8c60424-21c7-4f64-9e47-8c4183510162@linaro.org>
+Accept-Language: en-US, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-transport-fromentityheader: Hosted
+x-yovoleruleagent: yovoleflag
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/5] dt-bindings: clock: mediatek: add MT7988 clock IDs
-Content-Language: en-US
-To: Daniel Golle <daniel@makrotopia.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Sabrina Dubroca
- <sd@queasysnail.net>, Chen-Yu Tsai <wenst@chromium.org>,
- "Garmin.Chang" <Garmin.Chang@mediatek.com>, Sam Shih
- <sam.shih@mediatek.com>, Frank Wunderlich <frank-w@public-files.de>,
- Dan Carpenter <dan.carpenter@linaro.org>,
- James Liao <jamesjj.liao@mediatek.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- netdev@vger.kernel.org
-References: <152b256d253508cdc7514c0f1c5a9324bde83d46.1702350213.git.daniel@makrotopia.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <152b256d253508cdc7514c0f1c5a9324bde83d46.1702350213.git.daniel@makrotopia.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-Il 12/12/23 04:18, Daniel Golle ha scritto:
-> From: Sam Shih <sam.shih@mediatek.com>
-> 
-> Add MT7988 clock dt-bindings for topckgen, apmixedsys, infracfg,
-> ethernet and xfipll subsystem clocks.
-> 
-> Signed-off-by: Sam Shih <sam.shih@mediatek.com>
-> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogS3J6eXN6dG9mIEtvemxv
+d3NraSA8a3J6eXN6dG9mLmtvemxvd3NraUBsaW5hcm8ub3JnPg0KPiBTZW50OiBUdWVzZGF5LCBE
+ZWNlbWJlciAxMiwgMjAyMyA0OjQ0IFBNDQo+IFRvOiBKZWVIZW5nIFNpYSA8amVlaGVuZy5zaWFA
+c3RhcmZpdmV0ZWNoLmNvbT47IGtlcm5lbEBlc21pbC5kazsgY29ub3JAa2VybmVsLm9yZzsgcm9i
+aCtkdEBrZXJuZWwub3JnOw0KPiBrcnp5c3p0b2Yua296bG93c2tpK2R0QGxpbmFyby5vcmc7IHBh
+dWwud2FsbXNsZXlAc2lmaXZlLmNvbTsgcGFsbWVyQGRhYmJlbHQuY29tOyBhb3VAZWVjcy5iZXJr
+ZWxleS5lZHU7DQo+IG10dXJxdWV0dGVAYmF5bGlicmUuY29tOyBzYm95ZEBrZXJuZWwub3JnOyBw
+LnphYmVsQHBlbmd1dHJvbml4LmRlOyBlbWlsLnJlbm5lci5iZXJ0aGluZ0BjYW5vbmljYWwuY29t
+OyBIYWwgRmVuZw0KPiA8aGFsLmZlbmdAc3RhcmZpdmV0ZWNoLmNvbT47IFhpbmd5dSBXdSA8eGlu
+Z3l1Lnd1QHN0YXJmaXZldGVjaC5jb20+DQo+IENjOiBsaW51eC1yaXNjdkBsaXN0cy5pbmZyYWRl
+YWQub3JnOyBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2Vy
+bmVsLm9yZzsgbGludXgtY2xrQHZnZXIua2VybmVsLm9yZzsgTGV5Zm9vbiBUYW4NCj4gPGxleWZv
+b24udGFuQHN0YXJmaXZldGVjaC5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjEgMTYvMTZd
+IHJpc2N2OiBkdHM6IHN0YXJmaXZlOiBqaDgxMDA6IEFkZCBjbG9ja3MgYW5kIHJlc2V0cyBub2Rl
+cw0KPiANCj4gT24gMTIvMTIvMjAyMyAwMzo1OCwgSmVlSGVuZyBTaWEgd3JvdGU6DQo+ID4NCj4g
+Pg0KPiA+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiA+PiBGcm9tOiBLcnp5c3p0b2Yg
+S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+DQo+ID4+IFNlbnQ6IFNh
+dHVyZGF5LCBEZWNlbWJlciA5LCAyMDIzIDE6NTcgQU0NCj4gPj4gVG86IEplZUhlbmcgU2lhIDxq
+ZWVoZW5nLnNpYUBzdGFyZml2ZXRlY2guY29tPjsga2VybmVsQGVzbWlsLmRrOyBjb25vckBrZXJu
+ZWwub3JnOyByb2JoK2R0QGtlcm5lbC5vcmc7DQo+ID4+IGtyenlzenRvZi5rb3psb3dza2krZHRA
+bGluYXJvLm9yZzsgcGF1bC53YWxtc2xleUBzaWZpdmUuY29tOyBwYWxtZXJAZGFiYmVsdC5jb207
+IGFvdUBlZWNzLmJlcmtlbGV5LmVkdTsNCj4gPj4gbXR1cnF1ZXR0ZUBiYXlsaWJyZS5jb207IHNi
+b3lkQGtlcm5lbC5vcmc7IHAuemFiZWxAcGVuZ3V0cm9uaXguZGU7IGVtaWwucmVubmVyLmJlcnRo
+aW5nQGNhbm9uaWNhbC5jb207IEhhbCBGZW5nDQo+ID4+IDxoYWwuZmVuZ0BzdGFyZml2ZXRlY2gu
+Y29tPjsgWGluZ3l1IFd1IDx4aW5neXUud3VAc3RhcmZpdmV0ZWNoLmNvbT4NCj4gPj4gQ2M6IGxp
+bnV4LXJpc2N2QGxpc3RzLmluZnJhZGVhZC5vcmc7IGRldmljZXRyZWVAdmdlci5rZXJuZWwub3Jn
+OyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBsaW51eC1jbGtAdmdlci5rZXJuZWwub3Jn
+OyBMZXlmb29uDQo+IFRhbg0KPiA+PiA8bGV5Zm9vbi50YW5Ac3RhcmZpdmV0ZWNoLmNvbT4NCj4g
+Pj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MSAxNi8xNl0gcmlzY3Y6IGR0czogc3RhcmZpdmU6IGpo
+ODEwMDogQWRkIGNsb2NrcyBhbmQgcmVzZXRzIG5vZGVzDQo+ID4+DQo+ID4+IE9uIDA2LzEyLzIw
+MjMgMTI6NTAsIFNpYSBKZWUgSGVuZyB3cm90ZToNCj4gPj4+IEFkZCBTWVNDUkcvU1lTQ1JHLU5F
+L1NZU0NSRy1OVy9TWVNDUkctU1cvQU9OQ1JHIGNsb2NrIGFuZCByZXNldA0KPiA+Pj4gbm9kZXMg
+Zm9yIEpIODEwMCBSSVNDLVYgU29DLg0KPiA+Pj4NCj4gPj4+IFNpZ25lZC1vZmYtYnk6IFNpYSBK
+ZWUgSGVuZyA8amVlaGVuZy5zaWFAc3RhcmZpdmV0ZWNoLmNvbT4NCj4gPj4+IFJldmlld2VkLWJ5
+OiBMZXkgRm9vbiBUYW4gPGxleWZvb24udGFuQHN0YXJmaXZldGVjaC5jb20+DQo+ID4+DQo+ID4+
+IFJlYWxseT8gTG9va3MgYXV0b21hdGVkLi4uIENhcmUgdG8gcHJvdmlkZSBhbnkgbGlua3MgdG8g
+ZWZmZWN0cyBvZg0KPiA+PiBpbnRlcm5hbCByZXZpZXc/DQo+ID4gaHR0cHM6Ly9naXRsYWIuc3Rh
+cmZpdmV0ZWNoLmNvbS9qZWVoZW5nLnNpYS9saW51eC8tL2NvbW1pdHMvSkg4MTAwX1Vwc3RyZWFt
+Lw0KPiA+Pg0KPiA+Pj4gLS0tDQo+ID4+PiAgYXJjaC9yaXNjdi9ib290L2R0cy9zdGFyZml2ZS9q
+aDgxMDAtY2xrLmR0c2kgfCAxODAgKysrKysrKysrKysrKysrKysrKw0KPiA+Pj4gIGFyY2gvcmlz
+Y3YvYm9vdC9kdHMvc3RhcmZpdmUvamg4MTAwLmR0c2kgICAgIHwgMTE1ICsrKysrKysrKysrKw0K
+PiA+Pj4gIDIgZmlsZXMgY2hhbmdlZCwgMjk1IGluc2VydGlvbnMoKykNCj4gPj4+ICBjcmVhdGUg
+bW9kZSAxMDA2NDQgYXJjaC9yaXNjdi9ib290L2R0cy9zdGFyZml2ZS9qaDgxMDAtY2xrLmR0c2kN
+Cj4gPj4+DQo+ID4+PiBkaWZmIC0tZ2l0IGEvYXJjaC9yaXNjdi9ib290L2R0cy9zdGFyZml2ZS9q
+aDgxMDAtY2xrLmR0c2kgYi9hcmNoL3Jpc2N2L2Jvb3QvZHRzL3N0YXJmaXZlL2poODEwMC1jbGsu
+ZHRzaQ0KPiA+Pj4gbmV3IGZpbGUgbW9kZSAxMDA2NDQNCj4gPj4+IGluZGV4IDAwMDAwMDAwMDAw
+MC4uMjdiYTI0OWY1MjNlDQo+ID4+PiAtLS0gL2Rldi9udWxsDQo+ID4+PiArKysgYi9hcmNoL3Jp
+c2N2L2Jvb3QvZHRzL3N0YXJmaXZlL2poODEwMC1jbGsuZHRzaQ0KPiA+Pj4gQEAgLTAsMCArMSwx
+ODAgQEANCj4gPj4+ICsvLyBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMCBPUiBNSVQN
+Cj4gPj4+ICsvKg0KPiA+Pj4gKyAqIENvcHlyaWdodCAoQykgMjAyMyBTdGFyRml2ZSBUZWNobm9s
+b2d5IENvLiwgTHRkLg0KPiA+Pj4gKyAqLw0KPiA+Pj4gKw0KPiA+Pj4gKy8gew0KPiA+Pj4gKwlj
+bGtfb3NjOiBjbGtfb3NjIHsNCj4gPj4NCj4gPj4gTm8gdW5kZXJzY29yZXMgaW4gbm9kZSBuYW1l
+cy4NCj4gPiBOb3RlZC4NCj4gPj4NCj4gPj4+ICsJCWNvbXBhdGlibGUgPSAiZml4ZWQtY2xvY2si
+Ow0KPiA+Pj4gKwkJI2Nsb2NrLWNlbGxzID0gPDA+Ow0KPiA+Pj4gKwkJY2xvY2stZnJlcXVlbmN5
+ID0gPDI0MDAwMDAwPjsNCj4gPj4+ICsJfTsNCj4gPj4+ICsNCj4gPj4NCj4gPj4gLi4uDQo+ID4+
+DQo+ID4+PiBkaWZmIC0tZ2l0IGEvYXJjaC9yaXNjdi9ib290L2R0cy9zdGFyZml2ZS9qaDgxMDAu
+ZHRzaSBiL2FyY2gvcmlzY3YvYm9vdC9kdHMvc3RhcmZpdmUvamg4MTAwLmR0c2kNCj4gPj4+IGlu
+ZGV4IGYyNmFmZjVjMWRkZi4uOTg2M2M2MTMyNGEwIDEwMDY0NA0KPiA+Pj4gLS0tIGEvYXJjaC9y
+aXNjdi9ib290L2R0cy9zdGFyZml2ZS9qaDgxMDAuZHRzaQ0KPiA+Pj4gKysrIGIvYXJjaC9yaXNj
+di9ib290L2R0cy9zdGFyZml2ZS9qaDgxMDAuZHRzaQ0KPiA+Pj4gQEAgLTQsNiArNCw5IEBADQo+
+ID4+PiAgICovDQo+ID4+Pg0KPiA+Pj4gIC9kdHMtdjEvOw0KPiA+Pj4gKyNpbmNsdWRlIDxkdC1i
+aW5kaW5ncy9jbG9jay9zdGFyZml2ZSxqaDgxMDAtY3JnLmg+DQo+ID4+PiArI2luY2x1ZGUgPGR0
+LWJpbmRpbmdzL3Jlc2V0L3N0YXJmaXZlLGpoODEwMC1jcmcuaD4NCj4gPj4+ICsjaW5jbHVkZSAi
+amg4MTAwLWNsay5kdHNpIg0KPiA+Pj4NCj4gPj4+ICAvIHsNCj4gPj4+ICAJY29tcGF0aWJsZSA9
+ICJzdGFyZml2ZSxqaDgxMDAiOw0KPiA+Pj4gQEAgLTM1Nyw2ICszNjAsMTA0IEBAIHVhcnQ0OiBz
+ZXJpYWxAMTIxYTAwMDAgIHsNCj4gPj4+ICAJCQlzdGF0dXMgPSAiZGlzYWJsZWQiOw0KPiA+Pj4g
+IAkJfTsNCj4gPj4+DQo+ID4+PiArCQlzeXNjcmdfbmU6IHN5c2NyZ19uZUAxMjMyMDAwMCB7DQo+
+ID4+DQo+ID4+IGNsb2NrLWNvbnRyb2xsZXJADQo+ID4+DQo+ID4+IEp1c3Qgb3BlbiB5b3VyIGJp
+bmRpbmdzIGFuZCB0YWtlIGEgbG9vayBob3cgaXQgaXMgZG9uZSB0aGVyZS4uLg0KPiA+Pg0KPiA+
+PiBUaGlzIGFwcGxpZXMgZXZlcnl3aGVyZQ0KPiANCj4gSSBhc3N1bWUgeW91IGRpZCBub3QgaWdu
+b3JlIGFsbCB0aGUgb3RoZXIgY29tbWVudHMgeW91IGRpZCBub3QgcmVzcG9uZCB0by4NCkFyciwg
+bXkgYmFkLiBXaWxsIGZpeCBpdC4NCj4gDQo+IEJlc3QgcmVnYXJkcywNCj4gS3J6eXN6dG9mDQoN
+Cg==
