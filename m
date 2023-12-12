@@ -1,47 +1,48 @@
-Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F88EBC;
-	Mon, 11 Dec 2023 18:49:34 -0800 (PST)
-Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
+Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43FB9C7;
+	Mon, 11 Dec 2023 18:51:24 -0800 (PST)
+Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
 	(using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-	(Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
-	by ex01.ufhost.com (Postfix) with ESMTP id 7496424E296;
-	Tue, 12 Dec 2023 10:49:32 +0800 (CST)
-Received: from EXMBX072.cuchost.com (172.16.6.82) by EXMBX166.cuchost.com
- (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 12 Dec
- 2023 10:49:32 +0800
-Received: from EXMBX066.cuchost.com (172.16.7.66) by EXMBX072.cuchost.com
- (172.16.6.82) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 12 Dec
- 2023 10:49:31 +0800
+	(Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
+	by fd01.gateway.ufhost.com (Postfix) with ESMTP id 3B9C78080;
+	Tue, 12 Dec 2023 10:51:16 +0800 (CST)
+Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX165.cuchost.com
+ (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 12 Dec
+ 2023 10:51:16 +0800
+Received: from EXMBX066.cuchost.com (172.16.7.66) by EXMBX061.cuchost.com
+ (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 12 Dec
+ 2023 10:51:15 +0800
 Received: from EXMBX066.cuchost.com ([fe80::5947:9245:907e:339f]) by
  EXMBX066.cuchost.com ([fe80::5947:9245:907e:339f%17]) with mapi id
- 15.00.1497.044; Tue, 12 Dec 2023 10:49:31 +0800
+ 15.00.1497.044; Tue, 12 Dec 2023 10:51:15 +0800
 From: JeeHeng Sia <jeeheng.sia@starfivetech.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, "kernel@esmil.dk"
-	<kernel@esmil.dk>, "conor@kernel.org" <conor@kernel.org>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
-	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, "palmer@dabbelt.com"
-	<palmer@dabbelt.com>, "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@kernel.org"
-	<sboyd@kernel.org>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-	"emil.renner.berthing@canonical.com" <emil.renner.berthing@canonical.com>,
-	Hal Feng <hal.feng@starfivetech.com>, Xingyu Wu <xingyu.wu@starfivetech.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Emil Renner Berthing
+	<emil.renner.berthing@canonical.com>, "kernel@esmil.dk" <kernel@esmil.dk>,
+	"conor@kernel.org" <conor@kernel.org>, "robh+dt@kernel.org"
+	<robh+dt@kernel.org>, "krzysztof.kozlowski+dt@linaro.org"
+	<krzysztof.kozlowski+dt@linaro.org>, "paul.walmsley@sifive.com"
+	<paul.walmsley@sifive.com>, "palmer@dabbelt.com" <palmer@dabbelt.com>,
+	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>,
+	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, Hal Feng
+	<hal.feng@starfivetech.com>, Xingyu Wu <xingyu.wu@starfivetech.com>
 CC: "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
 	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
 	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
 	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Leyfoon Tan
 	<leyfoon.tan@starfivetech.com>
-Subject: RE: [PATCH v1 13/16] dt-bindings: clock: Add StarFive JH8100
- Always-On clock and reset generator
-Thread-Topic: [PATCH v1 13/16] dt-bindings: clock: Add StarFive JH8100
- Always-On clock and reset generator
-Thread-Index: AQHaKDqdVOSviGovnEqA3a01E14R87CfKN+AgAXSTAA=
-Date: Tue, 12 Dec 2023 02:49:31 +0000
-Message-ID: <5fb9c92072314b5c8f9f641bdae35a34@EXMBX066.cuchost.com>
+Subject: RE: [PATCH v1 16/16] riscv: dts: starfive: jh8100: Add clocks and
+ resets nodes
+Thread-Topic: [PATCH v1 16/16] riscv: dts: starfive: jh8100: Add clocks and
+ resets nodes
+Thread-Index: AQHaKDqra6wATad1nUKrJTE2u0DzTrCfE7aAgAAV1gCABdHvcA==
+Date: Tue, 12 Dec 2023 02:51:15 +0000
+Message-ID: <d852894e10cb49e0ba4f991bf3378191@EXMBX066.cuchost.com>
 References: <20231206115000.295825-1-jeeheng.sia@starfivetech.com>
- <20231206115000.295825-14-jeeheng.sia@starfivetech.com>
- <b3004665-bc22-4619-a8cb-ec69ead7e08f@linaro.org>
-In-Reply-To: <b3004665-bc22-4619-a8cb-ec69ead7e08f@linaro.org>
+ <20231206115000.295825-17-jeeheng.sia@starfivetech.com>
+ <CAJM55Z9bik1QttBeFUCfM3N98HWURge7mgV7ohFBq+AsuvtROg@mail.gmail.com>
+ <9880fbbf-c311-4b6b-a570-aafd61729446@linaro.org>
+In-Reply-To: <9880fbbf-c311-4b6b-a570-aafd61729446@linaro.org>
 Accept-Language: en-US, zh-CN
 Content-Language: en-US
 X-MS-Has-Attach:
@@ -59,22 +60,29 @@ MIME-Version: 1.0
 
 DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogS3J6eXN6dG9mIEtvemxv
 d3NraSA8a3J6eXN6dG9mLmtvemxvd3NraUBsaW5hcm8ub3JnPg0KPiBTZW50OiBTYXR1cmRheSwg
-RGVjZW1iZXIgOSwgMjAyMyAxOjU1IEFNDQo+IFRvOiBKZWVIZW5nIFNpYSA8amVlaGVuZy5zaWFA
-c3RhcmZpdmV0ZWNoLmNvbT47IGtlcm5lbEBlc21pbC5kazsgY29ub3JAa2VybmVsLm9yZzsgcm9i
-aCtkdEBrZXJuZWwub3JnOw0KPiBrcnp5c3p0b2Yua296bG93c2tpK2R0QGxpbmFyby5vcmc7IHBh
-dWwud2FsbXNsZXlAc2lmaXZlLmNvbTsgcGFsbWVyQGRhYmJlbHQuY29tOyBhb3VAZWVjcy5iZXJr
-ZWxleS5lZHU7DQo+IG10dXJxdWV0dGVAYmF5bGlicmUuY29tOyBzYm95ZEBrZXJuZWwub3JnOyBw
-LnphYmVsQHBlbmd1dHJvbml4LmRlOyBlbWlsLnJlbm5lci5iZXJ0aGluZ0BjYW5vbmljYWwuY29t
-OyBIYWwgRmVuZw0KPiA8aGFsLmZlbmdAc3RhcmZpdmV0ZWNoLmNvbT47IFhpbmd5dSBXdSA8eGlu
-Z3l1Lnd1QHN0YXJmaXZldGVjaC5jb20+DQo+IENjOiBsaW51eC1yaXNjdkBsaXN0cy5pbmZyYWRl
-YWQub3JnOyBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2Vy
-bmVsLm9yZzsgbGludXgtY2xrQHZnZXIua2VybmVsLm9yZzsgTGV5Zm9vbiBUYW4NCj4gPGxleWZv
-b24udGFuQHN0YXJmaXZldGVjaC5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjEgMTMvMTZd
-IGR0LWJpbmRpbmdzOiBjbG9jazogQWRkIFN0YXJGaXZlIEpIODEwMCBBbHdheXMtT24gY2xvY2sg
-YW5kIHJlc2V0IGdlbmVyYXRvcg0KPiANCj4gT24gMDYvMTIvMjAyMyAxMjo0OSwgU2lhIEplZSBI
-ZW5nIHdyb3RlOg0KPiA+IEFkZCBiaW5kaW5ncyBmb3IgdGhlIEFsd2F5cy1PbiBjbG9jayBhbmQg
-cmVzZXQgZ2VuZXJhdG9yDQo+ID4gKEFPTkNSRykgb24gSkg4MTAwIFNvQy4NCj4gPg0KPiA+IFNp
-Z25lZC1vZmYtYnk6IFNpYSBKZWUgSGVuZyA8amVlaGVuZy5zaWFAc3RhcmZpdmV0ZWNoLmNvbT4N
-Cj4gPiBSZXZpZXdlZC1ieTogTGV5IEZvb24gVGFuIDxsZXlmb29uLnRhbkBzdGFyZml2ZXRlY2gu
-Y29tPg0KPiANCj4gQWxsIG15IHByZXZpb3VzIGNvbW1lbnRzIGFyZSBhcHBsaWNhYmxlLg0KTm90
-ZWQuDQo+IA0KPiBCZXN0IHJlZ2FyZHMsDQo+IEtyenlzenRvZg0KDQo=
+RGVjZW1iZXIgOSwgMjAyMyAxOjU4IEFNDQo+IFRvOiBFbWlsIFJlbm5lciBCZXJ0aGluZyA8ZW1p
+bC5yZW5uZXIuYmVydGhpbmdAY2Fub25pY2FsLmNvbT47IEplZUhlbmcgU2lhIDxqZWVoZW5nLnNp
+YUBzdGFyZml2ZXRlY2guY29tPjsga2VybmVsQGVzbWlsLmRrOw0KPiBjb25vckBrZXJuZWwub3Jn
+OyByb2JoK2R0QGtlcm5lbC5vcmc7IGtyenlzenRvZi5rb3psb3dza2krZHRAbGluYXJvLm9yZzsg
+cGF1bC53YWxtc2xleUBzaWZpdmUuY29tOyBwYWxtZXJAZGFiYmVsdC5jb207DQo+IGFvdUBlZWNz
+LmJlcmtlbGV5LmVkdTsgbXR1cnF1ZXR0ZUBiYXlsaWJyZS5jb207IHNib3lkQGtlcm5lbC5vcmc7
+IHAuemFiZWxAcGVuZ3V0cm9uaXguZGU7IEhhbCBGZW5nDQo+IDxoYWwuZmVuZ0BzdGFyZml2ZXRl
+Y2guY29tPjsgWGluZ3l1IFd1IDx4aW5neXUud3VAc3RhcmZpdmV0ZWNoLmNvbT4NCj4gQ2M6IGxp
+bnV4LXJpc2N2QGxpc3RzLmluZnJhZGVhZC5vcmc7IGRldmljZXRyZWVAdmdlci5rZXJuZWwub3Jn
+OyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBsaW51eC1jbGtAdmdlci5rZXJuZWwub3Jn
+OyBMZXlmb29uIFRhbg0KPiA8bGV5Zm9vbi50YW5Ac3RhcmZpdmV0ZWNoLmNvbT4NCj4gU3ViamVj
+dDogUmU6IFtQQVRDSCB2MSAxNi8xNl0gcmlzY3Y6IGR0czogc3RhcmZpdmU6IGpoODEwMDogQWRk
+IGNsb2NrcyBhbmQgcmVzZXRzIG5vZGVzDQo+IA0KPiBPbiAwOC8xMi8yMDIzIDE3OjM5LCBFbWls
+IFJlbm5lciBCZXJ0aGluZyB3cm90ZToNCj4gPiBTaWEgSmVlIEhlbmcgd3JvdGU6DQo+ID4+IEFk
+ZCBTWVNDUkcvU1lTQ1JHLU5FL1NZU0NSRy1OVy9TWVNDUkctU1cvQU9OQ1JHIGNsb2NrIGFuZCBy
+ZXNldA0KPiA+PiBub2RlcyBmb3IgSkg4MTAwIFJJU0MtViBTb0MuDQo+ID4+DQo+ID4+IFNpZ25l
+ZC1vZmYtYnk6IFNpYSBKZWUgSGVuZyA8amVlaGVuZy5zaWFAc3RhcmZpdmV0ZWNoLmNvbT4NCj4g
+Pj4gUmV2aWV3ZWQtYnk6IExleSBGb29uIFRhbiA8bGV5Zm9vbi50YW5Ac3RhcmZpdmV0ZWNoLmNv
+bT4NCj4gPj4gLS0tDQo+ID4+ICBhcmNoL3Jpc2N2L2Jvb3QvZHRzL3N0YXJmaXZlL2poODEwMC1j
+bGsuZHRzaSB8IDE4MCArKysrKysrKysrKysrKysrKysrDQo+ID4+ICBhcmNoL3Jpc2N2L2Jvb3Qv
+ZHRzL3N0YXJmaXZlL2poODEwMC5kdHNpICAgICB8IDExNSArKysrKysrKysrKysNCj4gPg0KPiA+
+IFdoeSB0aGUgc3BsaXQgaGVyZT8gSSBtZWFuIHdoeSBjYW4ndCB0aGUgY2xvY2tzIGp1c3QgYmUg
+aW4gdGhlIGpoODEwMC5kdHNpPw0KPiANCj4gVGhlcmUgc2hvdWxkIGJlLiBXaGF0J3MgdGhlIHBv
+aW50PyBDbG9ja3MgYXJlIGludGVybmFsIHBhcnQgb2YgU29DIGFuZA0KPiBub3QgcmVhbGx5IHJl
+LXVzYWJsZSBwaWVjZSBvZiBoYXJkd2FyZS4NCkNhbiBtb3ZlIGl0IGJhY2sgdG8gdGhlIFNvQy5k
+dHNpDQo+IA0KPiBCZXN0IHJlZ2FyZHMsDQo+IEtyenlzenRvZg0KDQo=
