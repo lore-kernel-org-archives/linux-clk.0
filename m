@@ -1,207 +1,341 @@
-Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14B61BE;
-	Mon, 11 Dec 2023 17:09:41 -0800 (PST)
-Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
-	(using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-	(Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-	by ex01.ufhost.com (Postfix) with ESMTP id A83FC24E25E;
-	Tue, 12 Dec 2023 09:09:39 +0800 (CST)
-Received: from EXMBX171.cuchost.com (172.16.6.91) by EXMBX165.cuchost.com
- (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 12 Dec
- 2023 09:09:39 +0800
-Received: from EXMBX066.cuchost.com (172.16.7.66) by EXMBX171.cuchost.com
- (172.16.6.91) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 12 Dec
- 2023 09:09:39 +0800
-Received: from EXMBX066.cuchost.com ([fe80::5947:9245:907e:339f]) by
- EXMBX066.cuchost.com ([fe80::5947:9245:907e:339f%17]) with mapi id
- 15.00.1497.044; Tue, 12 Dec 2023 09:09:39 +0800
-From: JeeHeng Sia <jeeheng.sia@starfivetech.com>
-To: Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	"kernel@esmil.dk" <kernel@esmil.dk>, "conor@kernel.org" <conor@kernel.org>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
-	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, "palmer@dabbelt.com"
-	<palmer@dabbelt.com>, "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@kernel.org"
-	<sboyd@kernel.org>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, "Hal
- Feng" <hal.feng@starfivetech.com>, Xingyu Wu <xingyu.wu@starfivetech.com>
-CC: "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Leyfoon Tan
-	<leyfoon.tan@starfivetech.com>
-Subject: RE: [PATCH v1 00/16] Basic clock and reset support for StarFive
- JH8100 RISC-V SoC
-Thread-Topic: [PATCH v1 00/16] Basic clock and reset support for StarFive
- JH8100 RISC-V SoC
-Thread-Index: AQHaKDpenJ7xM02baU+qIG80sqYy3rCfF1UAgAXHjcA=
-Date: Tue, 12 Dec 2023 01:09:38 +0000
-Message-ID: <f1e151e14e0b4bcca1c9119f5d7e7559@EXMBX066.cuchost.com>
-References: <20231206115000.295825-1-jeeheng.sia@starfivetech.com>
- <CAJM55Z_nnrFcU6N8ZELUoGLe6Dp358aXH7VGf1i+USbZOsbpnQ@mail.gmail.com>
-In-Reply-To: <CAJM55Z_nnrFcU6N8ZELUoGLe6Dp358aXH7VGf1i+USbZOsbpnQ@mail.gmail.com>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-transport-fromentityheader: Hosted
-x-yovoleruleagent: yovoleflag
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="F13V4JiF"
+Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2055.outbound.protection.outlook.com [40.92.102.55])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89D82B8;
+	Mon, 11 Dec 2023 18:22:42 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=GuILh3tRQzNktIumG4eeRvz3yEo/cDWeheUD2+06lbfpG0UgK+8n7HEZR57lFTpwJE0lG9f8mIY+AiRofwZyrZ53ZUaK1J7RHiciau66mZie4OIcglDTuKd1Vej6bnBhyRbPaa//HAHdUNdnuQIla89VLVJmeV/Ac+MnH3Uj16JXFULqOkOchvJJD4DkmKzpN6gMVA2c2LngQgakvVqKBzn08aZoPTnPpAjnOs/VcCYPFer+AdhPolW0Ie3Qivao19I0NP8oDN3vHx4rY7hyoMeUMYi9TusqIE2RGytgCaaUVRk7uD9vShfRFTSRyl5Z2vnx/gRXfZZxsLGTxo0/Iw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cPKeCWKaj5tmjJt6v4upASNpNHZbRxdrlrygQWDO5mg=;
+ b=c1w22ilSQYZwNRBuW9c7x7pNyP0FA0vCnumBKDmJQaoAH4QF+nm4yFuABC6Xkwi1fMgGyiX4X1WWR9TnQ2J1E8bpI6dhhRDk7widzGKAFrK/ZaeJJsHTA+zO6u7KLfVVr/Vy4fV3RbNbxovkpjlzkA1HPohY7MZmv3P5KSqd0JelKEFbobpJcOvy05igxRF2VjBF2YQoNCutSaXzjn6zVRRBwjhUxWgsqB68Xt9kC7Dj9Xdgw7+quWuoOf+f0SJNmZsOIP+ek0b1LB3D9bWxJOroUZwitZ4rEQC8JV+ufefUGVR2+ThKygUrai7VW7fNkoCq5m29ihFK0Dv2PlibDg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cPKeCWKaj5tmjJt6v4upASNpNHZbRxdrlrygQWDO5mg=;
+ b=F13V4JiF3DzpaO4ZjqLTTvgOce7EcsQdJaiL20y5aukl2GEQQyacLUwht/sEixpKgeOayqNO7ubsEcwMK6EB9FPAtpZxAB/zz9wqoXQL/FMnZmefSsZEjOFdTmJjiEh2bO+65XT18ZfsVXVQXSM+ogKlcI2I4M0LCC3oEU3DPNlrmvGvkmHYqTTmwzbedZIavSPv42XY+kwhYz8ravt9oycY3ER2FkZBPkQcwwgzmJ/H559piAqzT2Gme5CdruvHDKXFzh+a2VYidOEP8pP1nl+uhaqL3SXWj5YZOWCGmi8u23CL1HzXfc+Z5nyJFVr1WjcpMGkGijN4GgR1jOqEYA==
+Received: from MA0P287MB0332.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:ab::5) by
+ MA0P287MB0019.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:5c::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7068.33; Tue, 12 Dec 2023 02:22:33 +0000
+Received: from MA0P287MB0332.INDP287.PROD.OUTLOOK.COM
+ ([fe80::b1a7:eee7:e903:9ef3]) by MA0P287MB0332.INDP287.PROD.OUTLOOK.COM
+ ([fe80::b1a7:eee7:e903:9ef3%7]) with mapi id 15.20.7068.033; Tue, 12 Dec 2023
+ 02:22:33 +0000
+Message-ID:
+ <MA0P287MB0332A937E4DF0044594B19CCFE8EA@MA0P287MB0332.INDP287.PROD.OUTLOOK.COM>
+Date: Tue, 12 Dec 2023 10:22:28 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 3/4] clk: sophgo: Add SG2042 clock generator driver
+To: Conor Dooley <conor@kernel.org>, Chen Wang <unicornxw@gmail.com>
+Cc: aou@eecs.berkeley.edu, chao.wei@sophgo.com,
+ krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+ palmer@dabbelt.com, paul.walmsley@sifive.com, richardcochran@gmail.com,
+ robh+dt@kernel.org, sboyd@kernel.org, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, haijiao.liu@sophgo.com,
+ xiaoguang.xing@sophgo.com, guoren@kernel.org, jszhang@kernel.org,
+ inochiama@outlook.com, samuel.holland@sifive.com
+References: <cover.1701997033.git.unicorn_wang@outlook.com>
+ <d1aa4f76f360ebd7b790a4786641f1b0188dbba8.1701997033.git.unicorn_wang@outlook.com>
+ <20231208-opposite-stand-fc92fbaaed9c@spud>
+From: Chen Wang <unicorn_wang@outlook.com>
+In-Reply-To: <20231208-opposite-stand-fc92fbaaed9c@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TMN: [aTkwQRM4CyC17V6ryJRnCZ5mOkLvd7kA]
+X-ClientProxiedBy: SG2PR01CA0180.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:28::36) To MA0P287MB0332.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a01:ab::5)
+X-Microsoft-Original-Message-ID:
+ <dab00686-bee1-49c3-a35a-75b23a824722@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MA0P287MB0332:EE_|MA0P287MB0019:EE_
+X-MS-Office365-Filtering-Correlation-Id: 763bf2b3-6590-4ed8-baec-08dbfab932a8
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	XhFr9rwa+cs/N9Zp/X1cvGVf7rVfKwNQBj7NZ2ObVci45jQun5qBoFW5LMc1L3GpK+XucUbwE2a8V+ljYv/mDxfgoHytLWJ69FxfxLnXSPuEuRJ0r2yxQkacQIZcIC3NI0eWr/xidlGzExk/2CBsHws677uUuuBA28MJgkeMH1x9O3qHaIVlEqkUd/DHs5032nGdbVxYE7t235hzBpN7E+32I1Kw+oBiF6IGwOJqsGTfssNIqBOZZ5eD0npcoVTaphIGDtvzu5evBfSLBncc/e3rhEs7nTMCeH/Y6wuTqu4jP8EUikVjN4/z0tCfKo3+dsos9QaJGRRUvNMWj1nBv2jDuwyNlJku4552h7evQBQPJTceBI1sGRjJDYR83cVEW3CFkI3R2f4DzVj5u26lBQN3AEgdpeAVeZur1ii49jSFR4Z3l4h/Z1mmDDOUcSIWE1YoYkrZM4ky2tCJK8cpnA3T53t1gEPXIIvAYB1CdfKrbv6+4fWRfHSxM2E26Yu8Mn7d35BLBS3+k4tZT6wMoEFQlxvlRz6SBOmQ6d49CNFxGgRBN3nucMX1Xp/qLyos8FsbXP1VpThcFmJf3Gj+emkKJd2jhfWOXQ+oU2ztEg4=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bVdPamV1bk5YRzNncnJlRWd6czA0alAyc3pFWWZtU0dIMm5NVzFwazI1ZHBK?=
+ =?utf-8?B?YWs1eC81WHhVbERSWnZSSEJyYmhRRm1rditoY3BIa1dpdDZwMkFQbGtiZWN6?=
+ =?utf-8?B?TkN3TU1IN0p6U20yMlNhbU1HMGFIazRuZ2Y3djhpeWY4di94cGlZQmtHaEJa?=
+ =?utf-8?B?bTdvdlhCb20vdkcxRDlpMjlmT1hSTFpuajJLT3pXaG51TlNvOGJhMlQ4OFZJ?=
+ =?utf-8?B?d2xFbUR5bGZXZ1dNNlMxMnVFZy9qbVg0ZkRBb0RLN2JHVURhNTk0L0htbm01?=
+ =?utf-8?B?TU9Qa1JwNVpwaHBGaEZaTGNXbzFpSmRoNEtJcTVib0NFQTN3QnRQMS8yazZa?=
+ =?utf-8?B?OWt6Umg2OHVqV0ordGZWYW9NaGM4eUx3bEN4a3BqV2dLclBIT3NML3J0Sm5J?=
+ =?utf-8?B?RUxicEJ3SG1ZOTRIZHRPRUUyd0lCSG04dnh1NjdYOWxRcFBnL0ViZC8wRzRM?=
+ =?utf-8?B?Y21sK0x4aS9MWlFtaEVMckN0YkNkd2lNOG1idGx4V2tnTnZPaStQdy9mNDF4?=
+ =?utf-8?B?Z0xsZ2NwL1hURzJGSmROUzZvbmxiVHZSK1NqT1NZSkVWS3c3ZXlSSkxRM1lX?=
+ =?utf-8?B?MFo0aGFrbDY3UnR1bG9ZWVN2dVRjbzVvVHVubjk5ejRQUm5hWEdVYXNreXgy?=
+ =?utf-8?B?RDR2Qk5jUnIweGx0d1ZyN01SbEVZVVZyTUJ0cHhuV2pqTnlUNWtDSU1jWEVV?=
+ =?utf-8?B?TVR2Ti9abCs4Uys3Q2FsNWIyTEhsS0VPUG5PL2sybmdPT1FJL0RtYVU2OWx5?=
+ =?utf-8?B?bWI4UjB4bmJ0dldRQnN6djFSbEFBZlBnQVM0MEJIQSt0TTJCVmJoZzR2dXFL?=
+ =?utf-8?B?WExjZFFZaVFReU56RjRVUjR6QlRudUxxaC9YSFNzWUdSNk9vWEFGdHdUVEtR?=
+ =?utf-8?B?MERZN1IwOWwyQ3JGQUQxelBjeHJtaXB4eXJKYzI2cjM3ODJESEdIWXozaURY?=
+ =?utf-8?B?cDlESHZqYzkyS0YxUG41T2hLV0pBWUE3L2FOKzBUZ3l0Zis3QlpJWnpuaDhE?=
+ =?utf-8?B?TEFHMDFETnVIeXlaQlAxQVcySmNYbWF6WDdtZC9lZWRWaHgxOHhsSXQwSVZ2?=
+ =?utf-8?B?R2QybkxZUEJnTk5vYlpSaUxSSzgrd0ptMFNlS0R2Vjk0Y29pQy9DdnA3K2dY?=
+ =?utf-8?B?YzFZeXcySThQT0tzbmI1KzdMYXU2SDRleEh0Z2phNXBNbklPVVVjVWZQYWFa?=
+ =?utf-8?B?aVM1RGh4eERPaHBJRjg3eVBDeTJLT1RFcSttZFJXMWoyazZkVFJaWGhWWXlG?=
+ =?utf-8?B?aGFQZmc5eFQwRTNhdEQzZXdPUk1uUVNPWWhzYjNUNjFWd2pROGxrZXJwYTF3?=
+ =?utf-8?B?KytTSlQxS0J0dDBVSjBrYU5EOURkZGdMR01tdThKdDkvaUgwQmh3K25XR3dh?=
+ =?utf-8?B?Zk1WTWdyTGNmUjRkVnFUUWN0YTQ4MTdPODlGOGNPZlF3Tkl3dHVyQzNuK3RR?=
+ =?utf-8?B?cU44N1JRbTBlN2tSbktWQjhrc1Y1d255S0RqbUF6aXR2WCt6ZUNtdXI0QWt2?=
+ =?utf-8?B?WWJBYllrVFJyaVpsWUdDYjYzeUNKZklnMWs5UFlrZWY1SithOGNQQTg2VS9F?=
+ =?utf-8?B?bDUwd3NEVC9wQzNmT2QxMEV4c1phRGI3SEIwQ0pXTW9xMlUrQkFhOVVrNFl4?=
+ =?utf-8?Q?t0Az9+w2i5h8ehkHE80vbuvG242aNFFWOeSvaPwRAB0E=3D?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 763bf2b3-6590-4ed8-baec-08dbfab932a8
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0332.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Dec 2023 02:22:33.3611
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0P287MB0019
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogRW1pbCBSZW5uZXIgQmVy
-dGhpbmcgPGVtaWwucmVubmVyLmJlcnRoaW5nQGNhbm9uaWNhbC5jb20+DQo+IFNlbnQ6IFNhdHVy
-ZGF5LCBEZWNlbWJlciA5LCAyMDIzIDEyOjUzIEFNDQo+IFRvOiBKZWVIZW5nIFNpYSA8amVlaGVu
-Zy5zaWFAc3RhcmZpdmV0ZWNoLmNvbT47IGtlcm5lbEBlc21pbC5kazsgY29ub3JAa2VybmVsLm9y
-Zzsgcm9iaCtkdEBrZXJuZWwub3JnOw0KPiBrcnp5c3p0b2Yua296bG93c2tpK2R0QGxpbmFyby5v
-cmc7IHBhdWwud2FsbXNsZXlAc2lmaXZlLmNvbTsgcGFsbWVyQGRhYmJlbHQuY29tOyBhb3VAZWVj
-cy5iZXJrZWxleS5lZHU7DQo+IG10dXJxdWV0dGVAYmF5bGlicmUuY29tOyBzYm95ZEBrZXJuZWwu
-b3JnOyBwLnphYmVsQHBlbmd1dHJvbml4LmRlOyBlbWlsLnJlbm5lci5iZXJ0aGluZ0BjYW5vbmlj
-YWwuY29tOyBIYWwgRmVuZw0KPiA8aGFsLmZlbmdAc3RhcmZpdmV0ZWNoLmNvbT47IFhpbmd5dSBX
-dSA8eGluZ3l1Lnd1QHN0YXJmaXZldGVjaC5jb20+DQo+IENjOiBsaW51eC1yaXNjdkBsaXN0cy5p
-bmZyYWRlYWQub3JnOyBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZn
-ZXIua2VybmVsLm9yZzsgbGludXgtY2xrQHZnZXIua2VybmVsLm9yZzsgTGV5Zm9vbiBUYW4NCj4g
-PGxleWZvb24udGFuQHN0YXJmaXZldGVjaC5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjEg
-MDAvMTZdIEJhc2ljIGNsb2NrIGFuZCByZXNldCBzdXBwb3J0IGZvciBTdGFyRml2ZSBKSDgxMDAg
-UklTQy1WIFNvQw0KPiANCj4gU2lhIEplZSBIZW5nIHdyb3RlOg0KPiA+IFRoaXMgcGF0Y2ggc2Vy
-aWVzIGVuYWJsZWQgYmFzaWMgY2xvY2sgJiByZXNldCBzdXBwb3J0IGZvciBTdGFyRml2ZQ0KPiA+
-IEpIODEwMCBTb0MuDQo+ID4NCj4gPiBUaGlzIHBhdGNoIHNlcmllcyBkZXBlbmRzIG9uIHRoZSBJ
-bml0aWFsIGRldmljZSB0cmVlIHN1cHBvcnQgZm9yDQo+ID4gU3RhckZpdmUgSkg4MTAwIFNvQyBw
-YXRjaCBzZXJpZXMgd2hpY2ggY2FuIGJlIGZvdW5kIGF0IGJlbG93IGxpbms6DQo+ID4gaHR0cHM6
-Ly9sb3JlLmtlcm5lbC5vcmcvbGttbC8yMDIzMTIwMTEyMTQxMC45NTI5OC0xLWplZWhlbmcuc2lh
-QHN0YXJmaXZldGVjaC5jb20vDQo+ID4NCj4gPiBTdGFyRml2ZSBKSDgxMDAgc2hhcmVzIGEgc2lt
-aWxhciBjbG9jayBhbmQgcmVzZXQgZGVzaWduIHdpdGggSkg3MTEwLg0KPiA+IFRvIGZhY2lsaXRh
-dGUgdGhlIHJldXNlIG9mIHRoZSBmaWxlIGFuZCBpdHMgZnVuY3Rpb25hbGl0aWVzLCBmaWxlcw0K
-PiA+IGNvbnRhaW5pbmcgdGhlICdqaDcxeDAnIG5hbWluZyBjb252ZW50aW9uIGFyZSByZW5hbWVk
-IHRvIHVzZSB0aGUNCj4gPiAnY29tbW9uJyB3b3JkaW5nLiBJbnRlcm5hbCBmdW5jdGlvbnMgdGhh
-dCBjb250YWluIHRoZSAnamg3MXgwJw0KPiA+IG5hbWluZyBjb252ZW50aW9uIGFyZSByZW5hbWVk
-IHRvIHVzZSAnc3RhcmZpdmUuJyBUaGlzIGlzIGFjY29tcGxpc2hlZA0KPiA+IHRocm91Z2ggcGF0
-Y2hlcyAxLCAyLCAzLCBhbmQgNC4NCj4gDQo+IEknbSBhIGxpdHRsZSBzY2VwdGljYWwgYWxsIHRo
-aXMgcmVuYW1pbmcgaXMgd29ydGggaXQsIGJ1dCBpZiB0aGluayBpdCdzIGxpa2VseQ0KPiB0aGF0
-IGZ1dHVyZSBzdGFyZml2ZSBTb0NzIGNhbiB1c2UgdGhlIHNhbWUgY2xvY2sgZHJpdmVycyBJJ20g
-b2sgd2l0aCBpdC4gSnVzdA0KPiBrbm93IHRoYXQgeW91J2xsIGxvb2sgYSBiaXQgc2lsbHkgaWYg
-eW91ciAiSkg5MTAwIiBjYW4ndCB1c2UgdGhlc2UgZHJpdmVycyBhbmQNCj4geW91J2xsIGFscmVh
-ZHkgbmVlZCBkaWZmZXJlbnQgc3RhcmZpdmUgYW5kIHN0YXJmaXZlLWdlbjIgZHJpdmVycy4NClRo
-YW5rIHlvdSBmb3IgeW91ciB1bmRlcnN0YW5kaW5nLg0KPiANCj4gL0VtaWwNCj4gPg0KPiA+DQo+
-ID4gUGF0Y2ggNSBhZGRzIGRvY3VtZW50YXRpb24gdG8gZGVzY3JpYmUgU3lzdGVtIChTWVNDUkcp
-IENsb2NrICYgUmVzZXQNCj4gPiBiaW5kaW5nLg0KPiA+IFBhdGNoIDYgYWRkcyBTWVNDUkcgY2xv
-Y2sgZHJpdmVyLg0KPiA+DQo+ID4gcGF0Y2ggNyBhZGRzIGRvY3VtZW50YXRpb24gdG8gZGVzY3Jp
-YmUgU3lzdGVtLU5vcnRoLVdlc3QgKFNZU0NSRy1OVykNCj4gPiBDbG9jayAmIFJlc2V0IGJpbmRp
-bmcuDQo+ID4gUGF0Y2ggOCBhZGRzIFNZU0NSRy1OVyBjbG9jayBkcml2ZXIuDQo+ID4NCj4gPiBw
-YXRjaCA5IGFkZHMgZG9jdW1lbnRhdGlvbiB0byBkZXNjcmliZSBTeXN0ZW0tTm9ydGgtRWFzdCAo
-U1lTQ1JHLU5FKQ0KPiA+IENsb2NrICYgUmVzZXQgYmluZGluZy4NCj4gPiBQYXRjaCAxMCBhZGRz
-IFNZU0NSRy1ORSBjbG9jayBkcml2ZXIuDQo+ID4NCj4gPiBwYXRjaCAxMSBhZGRzIGRvY3VtZW50
-YXRpb24gdG8gZGVzY3JpYmUgU3lzdGVtLVNvdXRoLVdlc3QgKFNZU0NSRy1TVykNCj4gPiBDbG9j
-ayAmIFJlc2V0IGJpbmRpbmcuDQo+ID4gUGF0Y2ggMTIgYWRkcyBTWVNDUkctU1cgY2xvY2sgZHJp
-dmVyLg0KPiA+DQo+ID4gcGF0Y2ggMTMgYWRkcyBkb2N1bWVudGF0aW9uIHRvIGRlc2NyaWJlIEFs
-d2F5cy1PbiAoQU9OKQ0KPiA+IENsb2NrICYgUmVzZXQgYmluZGluZy4NCj4gPiBQYXRjaCAxNCBh
-ZGRzIEFPTiBjbG9jayBkcml2ZXIuDQo+ID4NCj4gPiBQYXRjaCAxNSBhZGRzIHN1cHBvcnQgZm9y
-IHRoZSBhdXhpbGlhcnkgcmVzZXQgZHJpdmVyLg0KPiA+DQo+ID4gUGF0Y2ggMTYgYWRkcyBjbG9j
-a3MgYW5kIHJlc2V0IG5vZGVzIHRvIHRoZSBKSDgxMDAgZGV2aWNlIHRyZWUuDQo+ID4NCj4gPiBT
-aWEgSmVlIEhlbmcgKDE2KToNCj4gPiAgIHJlc2V0OiBzdGFyZml2ZTogUmVuYW1lIGZpbGUgbmFt
-ZSAiamg3MXgwIiB0byAiY29tbW9uIg0KPiA+ICAgcmVzZXQ6IHN0YXJmaXZlOiBDb252ZXJ0IHRo
-ZSB3b3JkICJqaDcxeDAiIHRvICJzdGFyZml2ZSINCj4gPiAgIGNsazogc3RhcmZpdmU6IFJlbmFt
-ZSBmaWxlIG5hbWUgImpoNzF4MCIgdG8gImNvbW1vbiINCj4gPiAgIGNsazogc3RhcmZpdmU6IENv
-bnZlcnQgdGhlIHdvcmQgImpoNzF4MCIgdG8gInN0YXJmaXZlIg0KPiA+ICAgZHQtYmluZGluZ3M6
-IGNsb2NrOiBBZGQgU3RhckZpdmUgSkg4MTAwIFN5c3RlbSBjbG9jayBhbmQgcmVzZXQNCj4gPiAg
-ICAgZ2VuZXJhdG9yDQo+ID4gICBjbGs6IHN0YXJmaXZlOiBBZGQgSkg4MTAwIFN5c3RlbSBjbG9j
-ayBnZW5lcmF0b3IgZHJpdmVyDQo+ID4gICBkdC1iaW5kaW5nczogY2xvY2s6IEFkZCBTdGFyRml2
-ZSBKSDgxMDAgU3lzdGVtLU5vcnRoLVdlc3QgY2xvY2sgYW5kDQo+ID4gICAgIHJlc2V0IGdlbmVy
-YXRvcg0KPiA+ICAgY2xrOiBzdGFyZml2ZTogQWRkIEpIODEwMCBTeXN0ZW0tTm9ydGgtV2VzdCBj
-bG9jayBnZW5lcmF0b3IgZHJpdmVyDQo+ID4gICBkdC1iaW5kaW5nczogY2xvY2s6IEFkZCBTdGFy
-Rml2ZSBKSDgxMDAgU3lzdGVtLU5vcnRoLUVhc3QgY2xvY2sgYW5kDQo+ID4gICAgIHJlc2V0IGdl
-bmVyYXRvcg0KPiA+ICAgY2xrOiBzdGFyZml2ZTogQWRkIEpIODEwMCBTeXN0ZW0tTm9ydGgtRWFz
-dCBjbG9jayBnZW5lcmF0b3IgZHJpdmVyDQo+ID4gICBkdC1iaW5kaW5nczogY2xvY2s6IEFkZCBT
-dGFyRml2ZSBKSDgxMDAgU3lzdGVtLVNvdXRoLVdlc3QgY2xvY2sgYW5kDQo+ID4gICAgIHJlc2V0
-IGdlbmVyYXRvcg0KPiA+ICAgY2xrOiBzdGFyZml2ZTogQWRkIEpIODEwMCBTeXN0ZW0tU291dGgt
-V2VzdCBjbG9jayBnZW5lcmF0b3IgZHJpdmVyDQo+ID4gICBkdC1iaW5kaW5nczogY2xvY2s6IEFk
-ZCBTdGFyRml2ZSBKSDgxMDAgQWx3YXlzLU9uIGNsb2NrIGFuZCByZXNldA0KPiA+ICAgICBnZW5l
-cmF0b3INCj4gPiAgIGNsazogc3RhcmZpdmU6IEFkZCBKSDgxMDAgQWx3YXlzLU9uIGNsb2NrIGdl
-bmVyYXRvciBkcml2ZXINCj4gPiAgIHJlc2V0OiBzdGFyZml2ZTogQWRkIFN0YXJGaXZlIEpIODEw
-MCByZXNldCBkcml2ZXINCj4gPiAgIHJpc2N2OiBkdHM6IHN0YXJmaXZlOiBqaDgxMDA6IEFkZCBj
-bG9ja3MgYW5kIHJlc2V0cyBub2Rlcw0KPiA+DQo+ID4gIC4uLi9jbG9jay9zdGFyZml2ZSxqaDgx
-MDAtYW9uY3JnLnlhbWwgICAgICAgICB8ICA3NyArKysNCj4gPiAgLi4uL2Nsb2NrL3N0YXJmaXZl
-LGpoODEwMC1zeXNjcmctbmUueWFtbCAgICAgIHwgMTU4ICsrKysrDQo+ID4gIC4uLi9jbG9jay9z
-dGFyZml2ZSxqaDgxMDAtc3lzY3JnLW53LnlhbWwgICAgICB8IDExOSArKysrDQo+ID4gIC4uLi9j
-bG9jay9zdGFyZml2ZSxqaDgxMDAtc3lzY3JnLXN3LnlhbWwgICAgICB8ICA2NiArKw0KPiA+ICAu
-Li4vY2xvY2svc3RhcmZpdmUsamg4MTAwLXN5c2NyZy55YW1sICAgICAgICAgfCAgNjYgKysNCj4g
-PiAgTUFJTlRBSU5FUlMgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgIDE1ICsN
-Cj4gPiAgYXJjaC9yaXNjdi9ib290L2R0cy9zdGFyZml2ZS9qaDgxMDAtY2xrLmR0c2kgIHwgMTgw
-ICsrKysrKw0KPiA+ICBhcmNoL3Jpc2N2L2Jvb3QvZHRzL3N0YXJmaXZlL2poODEwMC5kdHNpICAg
-ICAgfCAxMTUgKysrKw0KPiA+ICBkcml2ZXJzL2Nsay9zdGFyZml2ZS9LY29uZmlnICAgICAgICAg
-ICAgICAgICAgfCAgNDkgKy0NCj4gPiAgZHJpdmVycy9jbGsvc3RhcmZpdmUvTWFrZWZpbGUgICAg
-ICAgICAgICAgICAgIHwgICAzICstDQo+ID4gIGRyaXZlcnMvY2xrL3N0YXJmaXZlL2Nsay1zdGFy
-Zml2ZS1jb21tb24uYyAgICB8IDMyNyArKysrKysrKysrDQo+ID4gIGRyaXZlcnMvY2xrL3N0YXJm
-aXZlL2Nsay1zdGFyZml2ZS1jb21tb24uaCAgICB8IDEzMCArKysrDQo+ID4gIC4uLi9jbGsvc3Rh
-cmZpdmUvY2xrLXN0YXJmaXZlLWpoNzEwMC1hdWRpby5jICB8IDEyNyArKy0tDQo+ID4gIGRyaXZl
-cnMvY2xrL3N0YXJmaXZlL2Nsay1zdGFyZml2ZS1qaDcxMDAuYyAgICB8IDUwMyArKysrKysrKy0t
-LS0tLS0tDQo+ID4gIC4uLi9jbGsvc3RhcmZpdmUvY2xrLXN0YXJmaXZlLWpoNzExMC1hb24uYyAg
-ICB8ICA2MiArLQ0KPiA+ICAuLi4vY2xrL3N0YXJmaXZlL2Nsay1zdGFyZml2ZS1qaDcxMTAtaXNw
-LmMgICAgfCAgNzIgKy0tDQo+ID4gIC4uLi9jbGsvc3RhcmZpdmUvY2xrLXN0YXJmaXZlLWpoNzEx
-MC1zdGcuYyAgICB8ICA5NCArLS0NCj4gPiAgLi4uL2Nsay9zdGFyZml2ZS9jbGstc3RhcmZpdmUt
-amg3MTEwLXN5cy5jICAgIHwgNTIzICsrKysrKysrLS0tLS0tLS0NCj4gPiAgLi4uL2Nsay9zdGFy
-Zml2ZS9jbGstc3RhcmZpdmUtamg3MTEwLXZvdXQuYyAgIHwgIDc0ICstLQ0KPiA+ICBkcml2ZXJz
-L2Nsay9zdGFyZml2ZS9jbGstc3RhcmZpdmUtamg3MTEwLmggICAgfCAgIDQgKy0NCj4gPiAgZHJp
-dmVycy9jbGsvc3RhcmZpdmUvY2xrLXN0YXJmaXZlLWpoNzF4MC5jICAgIHwgMzI3IC0tLS0tLS0t
-LS0NCj4gPiAgZHJpdmVycy9jbGsvc3RhcmZpdmUvY2xrLXN0YXJmaXZlLWpoNzF4MC5oICAgIHwg
-MTIzIC0tLS0NCj4gPiAgZHJpdmVycy9jbGsvc3RhcmZpdmUvamg4MTAwL01ha2VmaWxlICAgICAg
-ICAgIHwgICA3ICsNCj4gPiAgZHJpdmVycy9jbGsvc3RhcmZpdmUvamg4MTAwL2Nsay1hb24uYyAg
-ICAgICAgIHwgMjc1ICsrKysrKysrKw0KPiA+ICAuLi4vY2xrL3N0YXJmaXZlL2poODEwMC9jbGst
-c3RhcmZpdmUtamg4MTAwLmggfCAgMTEgKw0KPiA+ICBkcml2ZXJzL2Nsay9zdGFyZml2ZS9qaDgx
-MDAvY2xrLXN5cy1uZS5jICAgICAgfCA1NjYgKysrKysrKysrKysrKysrKysrDQo+ID4gIGRyaXZl
-cnMvY2xrL3N0YXJmaXZlL2poODEwMC9jbGstc3lzLW53LmMgICAgICB8IDI2OCArKysrKysrKysN
-Cj4gPiAgZHJpdmVycy9jbGsvc3RhcmZpdmUvamg4MTAwL2Nsay1zeXMtc3cuYyAgICAgIHwgMTM2
-ICsrKysrDQo+ID4gIGRyaXZlcnMvY2xrL3N0YXJmaXZlL2poODEwMC9jbGstc3lzLmMgICAgICAg
-ICB8IDQ1NSArKysrKysrKysrKysrKw0KPiA+ICBkcml2ZXJzL3Jlc2V0L3N0YXJmaXZlL0tjb25m
-aWcgICAgICAgICAgICAgICAgfCAgMTQgKy0NCj4gPiAgZHJpdmVycy9yZXNldC9zdGFyZml2ZS9N
-YWtlZmlsZSAgICAgICAgICAgICAgIHwgICA0ICstDQo+ID4gIC4uLnJmaXZlLWpoNzF4MC5jID0+
-IHJlc2V0LXN0YXJmaXZlLWNvbW1vbi5jfSB8ICA2OCArLS0NCj4gPiAgLi4uL3Jlc2V0L3N0YXJm
-aXZlL3Jlc2V0LXN0YXJmaXZlLWNvbW1vbi5oICAgIHwgIDE0ICsNCj4gPiAgLi4uL3Jlc2V0L3N0
-YXJmaXZlL3Jlc2V0LXN0YXJmaXZlLWpoNzEwMC5jICAgIHwgICA0ICstDQo+ID4gIC4uLi9yZXNl
-dC9zdGFyZml2ZS9yZXNldC1zdGFyZml2ZS1qaDcxMTAuYyAgICB8ICAgOCArLQ0KPiA+ICAuLi4v
-cmVzZXQvc3RhcmZpdmUvcmVzZXQtc3RhcmZpdmUtamg3MXgwLmggICAgfCAgMTQgLQ0KPiA+ICAu
-Li4vcmVzZXQvc3RhcmZpdmUvcmVzZXQtc3RhcmZpdmUtamg4MTAwLmMgICAgfCAxMDIgKysrKw0K
-PiA+ICAuLi4vZHQtYmluZGluZ3MvY2xvY2svc3RhcmZpdmUsamg4MTAwLWNyZy5oICAgfCA0MzAg
-KysrKysrKysrKysrKw0KPiA+ICAuLi4vZHQtYmluZGluZ3MvcmVzZXQvc3RhcmZpdmUsamg4MTAw
-LWNyZy5oICAgfCAxMjcgKysrKw0KPiA+ICAuLi5yZml2ZS1qaDcxeDAuaCA9PiByZXNldC1zdGFy
-Zml2ZS1jb21tb24uaH0gfCAgMTAgKy0NCj4gPiAgNDAgZmlsZXMgY2hhbmdlZCwgNDQ4NSBpbnNl
-cnRpb25zKCspLCAxMjQyIGRlbGV0aW9ucygtKQ0KPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgRG9j
-dW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2NrL3N0YXJmaXZlLGpoODEwMC1hb25j
-cmcueWFtbA0KPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVl
-L2JpbmRpbmdzL2Nsb2NrL3N0YXJmaXZlLGpoODEwMC1zeXNjcmctbmUueWFtbA0KPiA+ICBjcmVh
-dGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2NrL3N0
-YXJmaXZlLGpoODEwMC1zeXNjcmctbncueWFtbA0KPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgRG9j
-dW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2NrL3N0YXJmaXZlLGpoODEwMC1zeXNj
-cmctc3cueWFtbA0KPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0
-cmVlL2JpbmRpbmdzL2Nsb2NrL3N0YXJmaXZlLGpoODEwMC1zeXNjcmcueWFtbA0KPiA+ICBjcmVh
-dGUgbW9kZSAxMDA2NDQgYXJjaC9yaXNjdi9ib290L2R0cy9zdGFyZml2ZS9qaDgxMDAtY2xrLmR0
-c2kNCj4gPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvY2xrL3N0YXJmaXZlL2Nsay1zdGFy
-Zml2ZS1jb21tb24uYw0KPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9jbGsvc3RhcmZp
-dmUvY2xrLXN0YXJmaXZlLWNvbW1vbi5oDQo+ID4gIGRlbGV0ZSBtb2RlIDEwMDY0NCBkcml2ZXJz
-L2Nsay9zdGFyZml2ZS9jbGstc3RhcmZpdmUtamg3MXgwLmMNCj4gPiAgZGVsZXRlIG1vZGUgMTAw
-NjQ0IGRyaXZlcnMvY2xrL3N0YXJmaXZlL2Nsay1zdGFyZml2ZS1qaDcxeDAuaA0KPiA+ICBjcmVh
-dGUgbW9kZSAxMDA2NDQgZHJpdmVycy9jbGsvc3RhcmZpdmUvamg4MTAwL01ha2VmaWxlDQo+ID4g
-IGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2Nsay9zdGFyZml2ZS9qaDgxMDAvY2xrLWFvbi5j
-DQo+ID4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2Nsay9zdGFyZml2ZS9qaDgxMDAvY2xr
-LXN0YXJmaXZlLWpoODEwMC5oDQo+ID4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2Nsay9z
-dGFyZml2ZS9qaDgxMDAvY2xrLXN5cy1uZS5jDQo+ID4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2
-ZXJzL2Nsay9zdGFyZml2ZS9qaDgxMDAvY2xrLXN5cy1udy5jDQo+ID4gIGNyZWF0ZSBtb2RlIDEw
-MDY0NCBkcml2ZXJzL2Nsay9zdGFyZml2ZS9qaDgxMDAvY2xrLXN5cy1zdy5jDQo+ID4gIGNyZWF0
-ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2Nsay9zdGFyZml2ZS9qaDgxMDAvY2xrLXN5cy5jDQo+ID4g
-IHJlbmFtZSBkcml2ZXJzL3Jlc2V0L3N0YXJmaXZlL3tyZXNldC1zdGFyZml2ZS1qaDcxeDAuYyA9
-PiByZXNldC1zdGFyZml2ZS1jb21tb24uY30gKDU1JSkNCj4gPiAgY3JlYXRlIG1vZGUgMTAwNjQ0
-IGRyaXZlcnMvcmVzZXQvc3RhcmZpdmUvcmVzZXQtc3RhcmZpdmUtY29tbW9uLmgNCj4gPiAgZGVs
-ZXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvcmVzZXQvc3RhcmZpdmUvcmVzZXQtc3RhcmZpdmUtamg3
-MXgwLmgNCj4gPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvcmVzZXQvc3RhcmZpdmUvcmVz
-ZXQtc3RhcmZpdmUtamg4MTAwLmMNCj4gPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGluY2x1ZGUvZHQt
-YmluZGluZ3MvY2xvY2svc3RhcmZpdmUsamg4MTAwLWNyZy5oDQo+ID4gIGNyZWF0ZSBtb2RlIDEw
-MDY0NCBpbmNsdWRlL2R0LWJpbmRpbmdzL3Jlc2V0L3N0YXJmaXZlLGpoODEwMC1jcmcuaA0KPiA+
-ICByZW5hbWUgaW5jbHVkZS9zb2Mvc3RhcmZpdmUve3Jlc2V0LXN0YXJmaXZlLWpoNzF4MC5oID0+
-IHJlc2V0LXN0YXJmaXZlLWNvbW1vbi5ofSAoNTAlKQ0KPiA+DQo+ID4gLS0NCj4gPiAyLjM0LjEN
-Cj4gPg0K
+hi,
+
+Thank you Conor for your carefully review, I need some time to digest 
+your comments. While I have some quick questions embeded.
+
+On 2023/12/9 0:47, Conor Dooley wrote:
+> On Fri, Dec 08, 2023 at 09:14:32AM +0800, Chen Wang wrote:
+>
+>> +#define div_mask(width) ((1 << (width)) - 1)
+> Looks like this should be genmask.
+Yes, I will improve this.
+>
+>> +#define ENCODE_PLL_CTRL(fbdiv, p1, p2, refdiv) \
+>> +	(((fbdiv & 0xfff) << 16) | ((p2 & 0x7) << 12) | ((p1 & 0x7) << 8) | (refdiv & 0x3f))
+> IMO this should be a function not a macro.
+Would like to listen why it should be a function instead of a macro? Any 
+experiences you can share with me?
+>
+>> +
+>> +static inline int __sg2042_pll_enable(struct sg2042_pll_clock *pll, bool en)
+> Why the __ prefixing of function names btw?
+
+:) I just want to differ/highlight these functions agaist those clk 
+operators. Anyway, this is indeed confusing, I will remove this ugly "__".
+
+>> +{
+>> +	unsigned int value = 0;
+>> +	unsigned long enter;
+>> +	struct regmap *map = pll->map;
+>> +
+>> +	if (en) {
+>> +		/* wait pll lock */
+>> +		enter = jiffies;
+>> +		regmap_read(map, pll->offset_status, &value);
+>> +		while (!((value >> pll->shift_status_lock) & 0x1)) {
+>> +			regmap_read(map, pll->shift_status_lock, &value);
+>> +			if (time_after(jiffies, enter + HZ / 10))
+>> +				pr_warn("%s not locked\n", pll->name);
+>> +		}
+> Can't you just use read_poll_timeout()?
+> https://elixir.bootlin.com/linux/latest/source/include/linux/iopoll.h#L16
+It looks like this, will check more.
+>> +		/* wait pll updating */
+>> +		enter = jiffies;
+>> +		regmap_read(map, pll->shift_status_updating, &value);
+>> +		while (((value >> pll->shift_status_updating) & 0x1)) {
+>> +			regmap_read(map, pll->shift_status_updating, &value);
+>> +			if (time_after(jiffies, enter + HZ / 10))
+>> +				pr_warn("%s still updating\n", pll->name);
+>> +		}
+>> +		/* enable pll */
+>> +		regmap_read(map, pll->offset_enable, &value);
+>> +		regmap_write(map, pll->offset_enable, value | (1 << pll->shift_enable));
+>> +	} else {
+>> +		/* disable pll */
+>> +		regmap_read(map, pll->offset_enable, &value);
+>> +		regmap_write(map, pll->offset_enable, value & (~(1 << pll->shift_enable)));
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> + +static unsigned int __sg2042_get_table_div(
+>> +	const struct clk_div_table *table,
+>> +	unsigned int val)
+>> +{
+>> +	const struct clk_div_table *clkt;
+>> +
+>> +	for (clkt = table; clkt->div; clkt++)
+>> +		if (clkt->val == val)
+>> +			return clkt->div;
+>> +	return 0;
+>> +}
+>> +
+>> +static unsigned int __sg2042_get_div(
+>> +	const struct clk_div_table *table,
+>> +	unsigned int val,
+>> +	unsigned long flags, u8 width)
+>> +{
+>> +	if (flags & CLK_DIVIDER_ONE_BASED)
+>> +		return val;
+>> +	if (flags & CLK_DIVIDER_POWER_OF_TWO)
+>> +		return 1 << val;
+>> +	if (flags & CLK_DIVIDER_MAX_AT_ZERO)
+>> +		return val ? val : div_mask(width) + 1;
+>> +	if (table)
+>> +		return __sg2042_get_table_div(table, val);
+>> +	return val + 1;
+>> +}
+> Are these not effectively the same as clk_divider's ops?
+Will double check.
+>
+>> +
+>> +/*
+>> + * @reg_value: current register value
+>> + * @parent_rate: parent frequency
+>> + *
+>> + * This function is used to calculate below "rate" in equation
+>> + * rate = (parent_rate/REFDIV) x FBDIV/POSTDIV1/POSTDIV2
+>> + *      = (parent_rate x FBDIV) / (REFDIV x POSTDIV1 x POSTDIV2)
+>> + */
+>> +static unsigned long __sg2042_pll_recalc_rate(
+>> +	unsigned int reg_value,
+>> +	unsigned long parent_rate)
+>> +{
+>> +	unsigned int fbdiv, refdiv;
+>> +	unsigned int postdiv1, postdiv2;
+>> +	u64 rate, numerator, denominator;
+>> +
+>> +	fbdiv = (reg_value >> 16) & 0xfff;
+>> +	refdiv = reg_value & 0x3f;
+>> +	postdiv1 = (reg_value >> 8) & 0x7;
+>> +	postdiv2 = (reg_value >> 12) & 0x7;
+> IMO all of these are opportunities for GENMASK and defines.
+Looks like this, will double check.
+>> +
+>> +	numerator = parent_rate * fbdiv;
+>> +	denominator = refdiv * postdiv1 * postdiv2;
+>> +	do_div(numerator, denominator);
+>> +	rate = numerator;
+>> +
+>> +	return rate;
+>> +}
+>> +
+>> +/*
+>> + * Below array is the total combination lists of POSTDIV1 and POSTDIV2
+>> + * for example:
+>> + * postdiv1_2[0] = {2, 4, 8}
+>> + *           ==> div1 = 2, div2 = 4 , div1 * div2 = 8
+>> + * And POSTDIV_RESULT_INDEX point to 3rd element in the array
+>> + */
+>> +#define	POSTDIV_RESULT_INDEX	2
+>> +static int postdiv1_2[][3] = {
+>> +	{2, 4,  8}, {3, 3,  9}, {2, 5, 10}, {2, 6, 12},
+>> +	{2, 7, 14}, {3, 5, 15}, {4, 4, 16}, {3, 6, 18},
+>> +	{4, 5, 20}, {3, 7, 21}, {4, 6, 24}, {5, 5, 25},
+>> +	{4, 7, 28}, {5, 6, 30}, {5, 7, 35}, {6, 6, 36},
+>> +	{6, 7, 42}, {7, 7, 49}
+>> +};
+>> +
+>> +/*
+>> + * Based on input rate/prate/fbdiv/refdiv, look up the postdiv1_2 table
+>> + * to get the closest postdiiv combination.
+>> + * @rate: FOUTPOSTDIV
+>> + * @prate: parent rate, i.e. FREF
+>> + * @fbdiv: FBDIV
+>> + * @refdiv: REFDIV
+>> + * @postdiv1: POSTDIV1, output
+>> + * @postdiv2: POSTDIV2, output
+>> + * See TRM:
+>> + * FOUTPOSTDIV = FREF * FBDIV / REFDIV / (POSTDIV1 * POSTDIV2)
+>> + * So we get following formula to get POSTDIV1 and POSTDIV2:
+>> + * POSTDIV = (prate/REFDIV) x FBDIV/rate
+>> + * above POSTDIV = POSTDIV1*POSTDIV2
+>> + */
+>> +static int __sg2042_pll_get_postdiv_1_2(
+>> +	unsigned long rate,
+>> +	unsigned long prate,
+>> +	unsigned int fbdiv,
+>> +	unsigned int refdiv,
+>> +	unsigned int *postdiv1,
+>> +	unsigned int *postdiv2)
+> This is not the coding style btw.
+Agree, will fix this.
+>> +{
+>> +	int index = 0;
+>> +	int ret = 0;
+>> +	u64 tmp0;
+>> +
+>> +	/* prate/REFDIV and result save to tmp0 */
+>> +	tmp0 = prate;
+>> +	do_div(tmp0, refdiv);
+>> +
+>> +	/* ((prate/REFDIV) x FBDIV) and result save to tmp0 */
+>> +	tmp0 *= fbdiv;
+>> +
+>> +	/* ((prate/REFDIV) x FBDIV)/rate and result save to tmp0 */
+>> +	do_div(tmp0, rate);
+>> +
+>> +	/* tmp0 is POSTDIV1*POSTDIV2, now we calculate div1 and div2 value */
+>> +	if (tmp0 <= 7) {
+>> +		/* (div1 * div2) <= 7, no need to use array search */
+>> +		*postdiv1 = tmp0;
+>> +		*postdiv2 = 1;
+>> +	} else {
+>> +		/* (div1 * div2) > 7, use array search */
+>> +		for (index = 0; index < ARRAY_SIZE(postdiv1_2); index++) {
+>> +			if (tmp0 > postdiv1_2[index][POSTDIV_RESULT_INDEX]) {
+>> +				continue;
+>> +			} else {
+>> +				/* found it */
+>> +				break;
+>> +			}
+>> +		}
+>> +		if (index < ARRAY_SIZE(postdiv1_2)) {
+>> +			*postdiv1 = postdiv1_2[index][1];
+>> +			*postdiv2 = postdiv1_2[index][0];
+>> +		} else {
+>> +			pr_debug("%s can not find in postdiv array!\n", __func__);
+>> +			ret = -EINVAL;
+>> +		}
+>> +	}
+>> +
+>> +	return ret;
+>> +}
+> Reading this function it makes me wonder if (and I am far from the best
+> person to comment, someone like Stephen is vastly more qualified) you
+> should model this as several "stages", each implemented by the
+> "standard" clocks - like clk_divider etc. The code here is quite
+> complicated IMO as it seems to be trying to implement several stages of
+> division in one go.
+
+The objective of __sg2042_pll_get_postdiv_1_2() is straightforward: 
+based on the formula defined by the TRM, with input 
+rate/prate/fbdiv/refdiv, we can get the possiblle combination of 
+POSTDIV1 and POSTDIV2 by looking up the table of postdiv1_2. We will 
+later use it to setup the clock register.
+
+Though the codes looks a bit complicated, but accually it is calculate 
+with the formula : POSTDIV = (prate/REFDIV) x FBDIV/rate, I just 
+separate it into several steps to make it easy to understand, I have 
+listed the formula in the comment on top of the function.
+
+>
+> There's quite a lot in the driver and I will admit that I have not read
+> it all my any means (I skimmed from here onwards), but in general my
+> advice would be to try and reuse the generic code as much as possible.
+Agree, I will double check and try to optimize the code in next revision.
+>
+> Thanks,
+> Conor.
+>
+......
