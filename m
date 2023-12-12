@@ -1,109 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HQlyHxYf"
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53D3BA7
-	for <linux-clk@vger.kernel.org>; Tue, 12 Dec 2023 11:39:44 -0800 (PST)
-Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-40c38e292c8so22843395e9.0
-        for <linux-clk@vger.kernel.org>; Tue, 12 Dec 2023 11:39:44 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NNmGExVO"
+Received: from mail-oa1-x34.google.com (mail-oa1-x34.google.com [IPv6:2001:4860:4864:20::34])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 344C4A7
+	for <linux-clk@vger.kernel.org>; Tue, 12 Dec 2023 11:44:04 -0800 (PST)
+Received: by mail-oa1-x34.google.com with SMTP id 586e51a60fabf-2030f89a722so315650fac.3
+        for <linux-clk@vger.kernel.org>; Tue, 12 Dec 2023 11:44:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702409983; x=1703014783; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HU5RbQo6yU19wzCnPIdhHQhCfrzZV9IA9nmUM54hRn4=;
-        b=HQlyHxYfqYCBAdv2zlps6HS1rwDkrDp8jJZh/rC7aetTGk5pS3PG7m2GK0AU2VE1UY
-         LWsJLMm4Do8IM/3cd1nyIUn6s49TBjFxaj1dDDHdpjH10LxiBKinH1ahcCSCYAlR3yi1
-         9Ig5TBEFIEtWmDdz+iVyiJ7HSYWZAcEK/HeKzzAtuvrPVLWYN9QO+gd3dLMUHug8Cfsr
-         kR5p71O/mtKGSJCu5b2L43PVUoOVKeg6TKhEv0E5+11sSS7Mn5/aa7N8c+2ZRHDhTpnN
-         y2Dp08ZI27f9LSHpav0hNMVw6v4U4CMuuF27DawQ9d05IFhxARhPzWv18EE08iRm1zzn
-         VMiA==
+        d=linaro.org; s=google; t=1702410243; x=1703015043; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=5BQMFtAFEVshsml7NDivd/paYwikSCal1XjNLmVRnaY=;
+        b=NNmGExVOdims0tb2N191Wefeh6WM4JRumc+DNPptKdUk6+4kc2hl0rY16wKqn32kIo
+         tZuYzJ/qDiBq0OqE8/gCl2a0gloVYNxI0drImQPzpziPqA0miCLzuOO0S5P8MhvN15iO
+         oQ48AtiEi7yOoECja7eeJ7fhfOmvhy4vwGT+Oz7TEgnz6i8EK9i451W/TNodza/FsXr1
+         UrF0ET/wLPVPCmcyGiSFJoxjnUYsf8NkjBsHXVDbbJ5eJ7kk6WKRxkz/UtHesfWpvzjU
+         lsay4KTc7uYVwb59TyeR4vmgNAG+CgWEJQheQAZX1DxRI9jmPpm3FzXy0vEfYw5nBJZ4
+         rg6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702409983; x=1703014783;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HU5RbQo6yU19wzCnPIdhHQhCfrzZV9IA9nmUM54hRn4=;
-        b=pSwPzv8D7Ek3H/EjY4SWJ/uHuTregTL/gu3qYuY9Vilf+yqdbYMCPoCTv0E7sKhkLv
-         M6cK6CMEtgtmJaQFw3LS27bCi8WoEuP7IxcWkREsybbwPqo1QF/YOAIDlKONGdIni1sg
-         XzYPwGDqQe0CfGJZrPCdmqc6I0H5kpoKc6K3e9624BKM+iY4rkhf9ZGPhSHbrzP/q/Ja
-         dXSiyqyvQSX/Y5gntT6ZPlSuru17lqOJKKGF0t7S9/mbY/054Xobym6yqK8E5FYHwQUu
-         KV8vo8yGqOP5QlkkMqb6uWzBwjKh82zMkKcf4tDNGT8jNKuwrLWeForlSt+Y13zFYOue
-         0yuw==
-X-Gm-Message-State: AOJu0YwinmGS/1rWn/d984mWQFdNijFCjsjxiHYzUyk7Y5vGTxRdo+bS
-	ajLQ/JmNCRdb5lmZBuV4nUuDCg==
-X-Google-Smtp-Source: AGHT+IGPurVjTAMMlyJVVpPYaeBs9uu+XLoCG94/B3i6Isrtg80koLVV4yN6mfxoVxf49RaSEPKFpQ==
-X-Received: by 2002:a05:600c:4f41:b0:40c:2d74:b9b with SMTP id m1-20020a05600c4f4100b0040c2d740b9bmr3324675wmq.24.1702409982887;
-        Tue, 12 Dec 2023 11:39:42 -0800 (PST)
-Received: from krzk-bin.. ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id i9-20020a05600c354900b003fee6e170f9sm17345530wmq.45.2023.12.12.11.39.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Dec 2023 11:39:42 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	mturquette@baylibre.com,
-	conor+dt@kernel.org,
-	sboyd@kernel.org,
-	tomasz.figa@gmail.com,
-	s.nawrocki@samsung.com,
-	linus.walleij@linaro.org,
-	wim@linux-watchdog.org,
-	linux@roeck-us.net,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	arnd@arndb.de,
-	olof@lixom.net,
-	gregkh@linuxfoundation.org,
-	jirislaby@kernel.org,
-	cw00.choi@samsung.com,
-	alim.akhtar@samsung.com,
-	Peter Griffin <peter.griffin@linaro.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	tudor.ambarus@linaro.org,
-	andre.draszik@linaro.org,
-	semen.protsenko@linaro.org,
-	saravanak@google.com,
-	willmcvicker@google.com,
-	soc@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	kernel-team@android.com,
-	linux-serial@vger.kernel.org
-Subject: Re: (subset) [PATCH v7 13/16] tty: serial: samsung: Add gs101 compatible and common fifoszdt_serial_drv_data
-Date: Tue, 12 Dec 2023 20:39:18 +0100
-Message-Id: <170240988144.242356.2200926663420450424.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20231211162331.435900-14-peter.griffin@linaro.org>
-References: <20231211162331.435900-1-peter.griffin@linaro.org> <20231211162331.435900-14-peter.griffin@linaro.org>
+        d=1e100.net; s=20230601; t=1702410243; x=1703015043;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5BQMFtAFEVshsml7NDivd/paYwikSCal1XjNLmVRnaY=;
+        b=W98BIoyhV6wwo9OWw1IcH3FvenwSlvDZe7jVAO7GHW+oL+meJAiWYimS9ql4Utd4F9
+         ktnOnHTjGDmhuOJXJMl028+KeEJJKRI8poPGTwiZZGmrAB4z8OuYEMf01gzuVYa+Wp4w
+         VwE8NDXD7UNR84IJj35RYkM0phejL+DSG2y3cnUSAMbe3Uu9v1VmptG0KesnZ6dgqqPr
+         GJlWJw1Q4Ab3w7JncPgLdwPI7ROIplO7HJjvhQ07Ldms5p7ONpeOcrWg0af/YfyaClMX
+         p0PZPfnNG4lwO8FxZsX9Ku1k5DINWDxhAhZZjtUOQ3gowCxoxdyFqgGInn4TZPQY57ew
+         ykww==
+X-Gm-Message-State: AOJu0YzJ7TU74RGhiF3MgRBAEevJOeuPXUasrHobvgxFbOZEopTbJIG2
+	5aaMB3eZkNmavZ7zlQMHGIfS3l8et0X/3vQzGzhQ6Q==
+X-Google-Smtp-Source: AGHT+IEpRUag5rB1tDDpj1KnSRL4BnsZpmVdNbHOzdHEtq0m5gt0oCTzHiRTdbC5zgVahAhKY6c+9bAJrFEY8lC9oNc=
+X-Received: by 2002:a05:6870:7817:b0:1fb:75a:6d15 with SMTP id
+ hb23-20020a056870781700b001fb075a6d15mr8510488oab.60.1702410243522; Tue, 12
+ Dec 2023 11:44:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20231211162331.435900-1-peter.griffin@linaro.org>
+ <20231211162331.435900-9-peter.griffin@linaro.org> <CAL_JsqJ_NUajmQs8ZYiE2GpvNxBwtkLRE2jvWDU3hKtztt92Ug@mail.gmail.com>
+ <CADrjBPrkso2cM8zKq-WU8WC3P3A9YoS6nqX-f6XvSNS-EofK9g@mail.gmail.com> <d23cc32c-8a5b-48aa-be4d-608fbbb9ac3a@linaro.org>
+In-Reply-To: <d23cc32c-8a5b-48aa-be4d-608fbbb9ac3a@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Tue, 12 Dec 2023 19:43:51 +0000
+Message-ID: <CADrjBPoireQMauac4D4d0Ry+PBBUUF=s0Lozp50KLz2y6ZLHKw@mail.gmail.com>
+Subject: Re: [PATCH v7 08/16] clk: samsung: clk-gs101: Add cmu_top, cmu_misc
+ and cmu_apm support
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, krzysztof.kozlowski+dt@linaro.org, 
+	mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org, 
+	tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, 
+	wim@linux-watchdog.org, linux@roeck-us.net, catalin.marinas@arm.com, 
+	will@kernel.org, arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org, 
+	jirislaby@kernel.org, cw00.choi@samsung.com, alim.akhtar@samsung.com, 
+	tudor.ambarus@linaro.org, andre.draszik@linaro.org, 
+	semen.protsenko@linaro.org, saravanak@google.com, willmcvicker@google.com, 
+	soc@kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, kernel-team@android.com, 
+	linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Tue, 12 Dec 2023 at 19:38, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 11/12/2023 20:46, Peter Griffin wrote:
+> >>> +#include <linux/platform_device.h>
+> >
+> > You are correct, this header isn't required. If a new series is
+> > required I will remove it.
+>
+> I dropped it while applying.
 
-On Mon, 11 Dec 2023 16:23:28 +0000, Peter Griffin wrote:
-> Add serial driver data for Google Tensor gs101 SoC and a common
-> fifoszdt_serial_drv_data that can be used by platforms that specify the
-> samsung,uart-fifosize DT property.
-> 
-> A corresponding dt-bindings patch updates the yaml to ensure
-> samsung,uart-fifosize is a required property.
-> 
-> [...]
-
-Applied, thanks!
-
-[13/16] tty: serial: samsung: Add gs101 compatible and common fifoszdt_serial_drv_data
-        https://git.kernel.org/krzk/linux/c/c95f5b21a0eaa4a2701c28e2b209f9a7e09cd4f0
-
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Thanks Krzysztof :)
