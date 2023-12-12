@@ -1,36 +1,31 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EC0AA1
-	for <linux-clk@vger.kernel.org>; Tue, 12 Dec 2023 10:09:58 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rD7CY-00018d-98; Tue, 12 Dec 2023 19:09:50 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rD7CX-00FOY6-SD; Tue, 12 Dec 2023 19:09:49 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rD7CX-001opO-Ij; Tue, 12 Dec 2023 19:09:49 +0100
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Russell King <linux@armlinux.org.uk>
-Cc: linux-clk@vger.kernel.org,
-	kernel@pengutronix.de,
-	Sean Anderson <sean.anderson@seco.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Michal Simek <michal.simek@amd.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-pwm@vger.kernel.org
-Subject: [PATCH 2/2] pwm: xilinx: Simplify using devm functions
-Date: Tue, 12 Dec 2023 19:09:43 +0100
-Message-ID:  <e51f9d16f7a0f29ce5c2385e11a14b1ebdac7530.1702403904.git.u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <cover.1702403904.git.u.kleine-koenig@pengutronix.de>
-References: <cover.1702403904.git.u.kleine-koenig@pengutronix.de>
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 44210A1;
+	Tue, 12 Dec 2023 10:17:00 -0800 (PST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 538B0FEC;
+	Tue, 12 Dec 2023 10:17:46 -0800 (PST)
+Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 36D963F762;
+	Tue, 12 Dec 2023 10:16:58 -0800 (PST)
+Date: Tue, 12 Dec 2023 18:16:55 +0000
+From: Andre Przywara <andre.przywara@arm.com>
+To: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ linux-clk@vger.kernel.org, MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi
+ <cw00.choi@samsung.com>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
+ <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>,
+ linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, kernel@pengutronix.de
+Subject: Re: [PATCH 1/5] PM / devfreq: sun8i-a33-mbus: Simplify usage of
+ clk_rate_exclusive_get()
+Message-ID: <20231212181655.1a0d5971@donnerap.manchester.arm.com>
+In-Reply-To: <5ef585a3d7bee42bac5be0e40efcfbc6e75adfff.1702400947.git.u.kleine-koenig@pengutronix.de>
+References: <cover.1702400947.git.u.kleine-koenig@pengutronix.de>
+	<5ef585a3d7bee42bac5be0e40efcfbc6e75adfff.1702400947.git.u.kleine-koenig@pengutronix.de>
+Organization: ARM
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -38,83 +33,62 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2370; i=u.kleine-koenig@pengutronix.de; h=from:subject:message-id; bh=pqqh+IxlHfU7VOKYnsJWW4bjYCEXlBsPm5O8mdl1h00=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBleKHnd6rwMdHhx7Qz6/qVwKIw53lQwrBfRNIBv MchT3GehdmJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZXih5wAKCRCPgPtYfRL+ TkkRCACRQCyqmefNKOdbC+jweaQ6JDJwVkg7xeOd3uBiFZb0RlFZ4mCrVEcT/f+qYQLErKoJBOL BdUwcucQG3T/IqWQ/9eXmSDRObMSpxfziWyLCZSISx9gXFlrWMjtY5cLN23l81NHIpleyEQw+x2 pJCn6jCaHMAekeRCy73A1qY57JUFpWk2g1cIzJY0NL/H+06tcRZyaDYPdSlCiBW0cFcSba7LgSR 09t2ZGhV/qWQWvv7JsrbPh/sg45qr8xV1H8siGLWmwDU8huxSoHTur0sTjAfUGfjVB908lwPXJE AQH4WO1ICZMrVTtvOh9PxyMR2U1WydRKKVTt/MU+mZ/sraXX
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-devm_clk_get() + clk_prepare_enable() can be simplified to
-devm_clk_get_enabled(). Both clk_rate_exclusive_get() and pwmchip_add()
-have devm variants.
+On Tue, 12 Dec 2023 18:26:38 +0100
+Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de> wrote:
 
-This allows to completely drop the remove callback and the error path in
-the probe function.
+> clk_rate_exclusive_get() returns 0 unconditionally. So remove error
+> handling. This prepares making clk_rate_exclusive_get() return void.
+>=20
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
- drivers/pwm/pwm-xilinx.c | 25 ++++++-------------------
- 1 file changed, 6 insertions(+), 19 deletions(-)
+Looks alright to me:
+Reviewed-by: Andre Przywara <andre.przywara@arm.com>
 
-diff --git a/drivers/pwm/pwm-xilinx.c b/drivers/pwm/pwm-xilinx.c
-index 5f3c2a6fed11..19a2a496d555 100644
---- a/drivers/pwm/pwm-xilinx.c
-+++ b/drivers/pwm/pwm-xilinx.c
-@@ -268,38 +268,26 @@ static int xilinx_pwm_probe(struct platform_device *pdev)
- 	 * alas, such properties are not allowed to be used.
- 	 */
- 
--	priv->clk = devm_clk_get(dev, "s_axi_aclk");
-+	priv->clk = devm_clk_get_enabled(dev, "s_axi_aclk");
- 	if (IS_ERR(priv->clk))
- 		return dev_err_probe(dev, PTR_ERR(priv->clk),
- 				     "Could not get clock\n");
- 
--	ret = clk_prepare_enable(priv->clk);
-+	ret = devm_clk_rate_exclusive_get(dev, priv->clk);
- 	if (ret)
--		return dev_err_probe(dev, ret, "Clock enable failed\n");
--	clk_rate_exclusive_get(priv->clk);
-+		return dev_err_probe(dev, ret,
-+				     "Could not get exclusive control over clock\n");
- 
- 	xilinx_pwm->chip.dev = dev;
- 	xilinx_pwm->chip.ops = &xilinx_pwm_ops;
- 	xilinx_pwm->chip.npwm = 1;
--	ret = pwmchip_add(&xilinx_pwm->chip);
--	if (ret) {
--		clk_rate_exclusive_put(priv->clk);
--		clk_disable_unprepare(priv->clk);
-+	ret = devm_pwmchip_add(dev, &xilinx_pwm->chip);
-+	if (ret)
- 		return dev_err_probe(dev, ret, "Could not register PWM chip\n");
--	}
- 
- 	return 0;
- }
- 
--static void xilinx_pwm_remove(struct platform_device *pdev)
--{
--	struct xilinx_pwm_device *xilinx_pwm = platform_get_drvdata(pdev);
--
--	pwmchip_remove(&xilinx_pwm->chip);
--	clk_rate_exclusive_put(xilinx_pwm->priv.clk);
--	clk_disable_unprepare(xilinx_pwm->priv.clk);
--}
--
- static const struct of_device_id xilinx_pwm_of_match[] = {
- 	{ .compatible = "xlnx,xps-timer-1.00.a", },
- 	{},
-@@ -308,7 +296,6 @@ MODULE_DEVICE_TABLE(of, xilinx_pwm_of_match);
- 
- static struct platform_driver xilinx_pwm_driver = {
- 	.probe = xilinx_pwm_probe,
--	.remove_new = xilinx_pwm_remove,
- 	.driver = {
- 		.name = "xilinx-pwm",
- 		.of_match_table = of_match_ptr(xilinx_pwm_of_match),
--- 
-2.42.0
+Cheers,
+Andre
+
+> ---
+>  drivers/devfreq/sun8i-a33-mbus.c | 14 ++------------
+>  1 file changed, 2 insertions(+), 12 deletions(-)
+>=20
+> diff --git a/drivers/devfreq/sun8i-a33-mbus.c b/drivers/devfreq/sun8i-a33=
+-mbus.c
+> index 13d32213139f..bbc577556944 100644
+> --- a/drivers/devfreq/sun8i-a33-mbus.c
+> +++ b/drivers/devfreq/sun8i-a33-mbus.c
+> @@ -381,18 +381,10 @@ static int sun8i_a33_mbus_probe(struct platform_dev=
+ice *pdev)
+>  				     "failed to enable bus clock\n");
+> =20
+>  	/* Lock the DRAM clock rate to keep priv->nominal_bw in sync. */
+> -	ret =3D clk_rate_exclusive_get(priv->clk_dram);
+> -	if (ret) {
+> -		err =3D "failed to lock dram clock rate\n";
+> -		goto err_disable_bus;
+> -	}
+> +	clk_rate_exclusive_get(priv->clk_dram);
+> =20
+>  	/* Lock the MBUS clock rate to keep MBUS_TMR_PERIOD in sync. */
+> -	ret =3D clk_rate_exclusive_get(priv->clk_mbus);
+> -	if (ret) {
+> -		err =3D "failed to lock mbus clock rate\n";
+> -		goto err_unlock_dram;
+> -	}
+> +	clk_rate_exclusive_get(priv->clk_mbus);
+> =20
+>  	priv->gov_data.upthreshold	=3D 10;
+>  	priv->gov_data.downdifferential	=3D  5;
+> @@ -450,9 +442,7 @@ static int sun8i_a33_mbus_probe(struct platform_devic=
+e *pdev)
+>  	dev_pm_opp_remove_all_dynamic(dev);
+>  err_unlock_mbus:
+>  	clk_rate_exclusive_put(priv->clk_mbus);
+> -err_unlock_dram:
+>  	clk_rate_exclusive_put(priv->clk_dram);
+> -err_disable_bus:
+>  	clk_disable_unprepare(priv->clk_bus);
+> =20
+>  	return dev_err_probe(dev, ret, err);
 
