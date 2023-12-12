@@ -1,94 +1,105 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 44210A1;
-	Tue, 12 Dec 2023 10:17:00 -0800 (PST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 538B0FEC;
-	Tue, 12 Dec 2023 10:17:46 -0800 (PST)
-Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 36D963F762;
-	Tue, 12 Dec 2023 10:16:58 -0800 (PST)
-Date: Tue, 12 Dec 2023 18:16:55 +0000
-From: Andre Przywara <andre.przywara@arm.com>
-To: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>,
- linux-clk@vger.kernel.org, MyungJoo Ham <myungjoo.ham@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi
- <cw00.choi@samsung.com>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
- <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>,
- linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, kernel@pengutronix.de
-Subject: Re: [PATCH 1/5] PM / devfreq: sun8i-a33-mbus: Simplify usage of
- clk_rate_exclusive_get()
-Message-ID: <20231212181655.1a0d5971@donnerap.manchester.arm.com>
-In-Reply-To: <5ef585a3d7bee42bac5be0e40efcfbc6e75adfff.1702400947.git.u.kleine-koenig@pengutronix.de>
-References: <cover.1702400947.git.u.kleine-koenig@pengutronix.de>
-	<5ef585a3d7bee42bac5be0e40efcfbc6e75adfff.1702400947.git.u.kleine-koenig@pengutronix.de>
-Organization: ARM
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OmE+tv7o"
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BF7FEA
+	for <linux-clk@vger.kernel.org>; Tue, 12 Dec 2023 11:17:22 -0800 (PST)
+Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-a1f0616a15bso683355166b.2
+        for <linux-clk@vger.kernel.org>; Tue, 12 Dec 2023 11:17:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1702408641; x=1703013441; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q81f6tvuC/62M26cD5+zhpnHZ0bvi1DcQhgd2N8HT8g=;
+        b=OmE+tv7olRThtF0Ebt9AUAvFUI6P5OoTQuykjvT9AZS1xN4p7w2nco7R+6zGI4Z1Qy
+         UtN94WNEIhYppATJrZohER5xZUTgtYJX138MNHCVO+nvPitoF4opAG6R5s699enphIxj
+         4p46qbc0CfigrTyEn9UoD4yJUlXk1UPtbMpzkyOt7leozD+gRJZp0sk5HMc9AoZyXo09
+         i0MasLaO1Ls+8O1juy3OZKU10VSyCd+zmTvXZxOTF2BseBI/Qc0xLrlXUD9MF9bMoEAL
+         YsD+fp3zqYa5dPd+Jl0F47QKvXpAVqRVG5cuXGtoxaaXcmISZRNotmBSswjJcw2RL3zb
+         1kfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702408641; x=1703013441;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=q81f6tvuC/62M26cD5+zhpnHZ0bvi1DcQhgd2N8HT8g=;
+        b=k98HqnZ1UZtKw84mJTze2lyQCw4s6pThfNmrE4gb0P0cY0RGTDyyiM3h+3NzgT5OZv
+         23OPfrqqR/3vcjW+8JF4ns1a1ZXFujaBEs67OFbGr0r6DPe056Y+LHIR2/NSQ8wJnP49
+         z+NrlSL//wyznAc/tEqCHGOrg3D9O1DpmhC2Bd4+bW6c3YBB6n3Rchtw22NkES9sqK91
+         KE252Neo0I6iW3VCd9H2AcnPlBmTSb0OwNI7PeknQmnf3MuENj8JrJ4TdqboEm7vuShn
+         56rPIXg4LefNKCWu4TDhORwiTXEDJVXb9phrhKWUlIIVZeuG/MI4dQpcTNIUQPcVKWUL
+         HnaA==
+X-Gm-Message-State: AOJu0YyLt9dh4TI+eF1S5yDBNmFL6aWtaKG7CQi55yyAduhvqnYEYdNp
+	oS6OO3aFwlYtmnUPVmpkoeS99Q==
+X-Google-Smtp-Source: AGHT+IErxwGD3BlZkSUookdNqWVQz7uPq0j3jdF2YUIwZl8jPuzuYHu/C9CZmUM1+hb143ssA3PhaA==
+X-Received: by 2002:a17:906:6a19:b0:9d8:78f2:7ea2 with SMTP id qw25-20020a1709066a1900b009d878f27ea2mr4682806ejc.54.1702408640691;
+        Tue, 12 Dec 2023 11:17:20 -0800 (PST)
+Received: from krzk-bin.. ([178.197.218.27])
+        by smtp.gmail.com with ESMTPSA id sf22-20020a1709078a9600b00982a92a849asm6739126ejc.91.2023.12.12.11.17.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Dec 2023 11:17:20 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	mturquette@baylibre.com,
+	conor+dt@kernel.org,
+	sboyd@kernel.org,
+	tomasz.figa@gmail.com,
+	s.nawrocki@samsung.com,
+	linus.walleij@linaro.org,
+	wim@linux-watchdog.org,
+	linux@roeck-us.net,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	arnd@arndb.de,
+	olof@lixom.net,
+	gregkh@linuxfoundation.org,
+	jirislaby@kernel.org,
+	cw00.choi@samsung.com,
+	alim.akhtar@samsung.com,
+	Peter Griffin <peter.griffin@linaro.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	tudor.ambarus@linaro.org,
+	andre.draszik@linaro.org,
+	semen.protsenko@linaro.org,
+	saravanak@google.com,
+	willmcvicker@google.com,
+	soc@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	kernel-team@android.com,
+	linux-serial@vger.kernel.org
+Subject: Re: (subset) [PATCH v7 09/16] pinctrl: samsung: Add gs101 SoC pinctrl configuration
+Date: Tue, 12 Dec 2023 20:17:15 +0100
+Message-Id: <170240862865.229534.3131999037082419524.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20231211162331.435900-10-peter.griffin@linaro.org>
+References: <20231211162331.435900-1-peter.griffin@linaro.org> <20231211162331.435900-10-peter.griffin@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, 12 Dec 2023 18:26:38 +0100
-Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de> wrote:
 
-> clk_rate_exclusive_get() returns 0 unconditionally. So remove error
-> handling. This prepares making clk_rate_exclusive_get() return void.
->=20
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+On Mon, 11 Dec 2023 16:23:24 +0000, Peter Griffin wrote:
+> Add support for the pin-controller found on the gs101 SoC used in
+> Pixel 6 phones.
+> 
+> 
 
-Looks alright to me:
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+Applied, thanks!
 
-Cheers,
-Andre
+[09/16] pinctrl: samsung: Add gs101 SoC pinctrl configuration
+        https://git.kernel.org/pinctrl/samsung/c/4a8be01a1a7a030ae7b6138602d2e060cf7a0946
 
-> ---
->  drivers/devfreq/sun8i-a33-mbus.c | 14 ++------------
->  1 file changed, 2 insertions(+), 12 deletions(-)
->=20
-> diff --git a/drivers/devfreq/sun8i-a33-mbus.c b/drivers/devfreq/sun8i-a33=
--mbus.c
-> index 13d32213139f..bbc577556944 100644
-> --- a/drivers/devfreq/sun8i-a33-mbus.c
-> +++ b/drivers/devfreq/sun8i-a33-mbus.c
-> @@ -381,18 +381,10 @@ static int sun8i_a33_mbus_probe(struct platform_dev=
-ice *pdev)
->  				     "failed to enable bus clock\n");
-> =20
->  	/* Lock the DRAM clock rate to keep priv->nominal_bw in sync. */
-> -	ret =3D clk_rate_exclusive_get(priv->clk_dram);
-> -	if (ret) {
-> -		err =3D "failed to lock dram clock rate\n";
-> -		goto err_disable_bus;
-> -	}
-> +	clk_rate_exclusive_get(priv->clk_dram);
-> =20
->  	/* Lock the MBUS clock rate to keep MBUS_TMR_PERIOD in sync. */
-> -	ret =3D clk_rate_exclusive_get(priv->clk_mbus);
-> -	if (ret) {
-> -		err =3D "failed to lock mbus clock rate\n";
-> -		goto err_unlock_dram;
-> -	}
-> +	clk_rate_exclusive_get(priv->clk_mbus);
-> =20
->  	priv->gov_data.upthreshold	=3D 10;
->  	priv->gov_data.downdifferential	=3D  5;
-> @@ -450,9 +442,7 @@ static int sun8i_a33_mbus_probe(struct platform_devic=
-e *pdev)
->  	dev_pm_opp_remove_all_dynamic(dev);
->  err_unlock_mbus:
->  	clk_rate_exclusive_put(priv->clk_mbus);
-> -err_unlock_dram:
->  	clk_rate_exclusive_put(priv->clk_dram);
-> -err_disable_bus:
->  	clk_disable_unprepare(priv->clk_bus);
-> =20
->  	return dev_err_probe(dev, ret, err);
-
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
