@@ -1,226 +1,164 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BE72AC
-	for <linux-clk@vger.kernel.org>; Wed, 13 Dec 2023 07:53:43 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rDRXd-0000t5-N4; Wed, 13 Dec 2023 16:52:57 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rDRXZ-00FbSV-8h; Wed, 13 Dec 2023 16:52:53 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rDRXY-002Mb8-UB; Wed, 13 Dec 2023 16:52:52 +0100
-Date: Wed, 13 Dec 2023 16:52:52 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	dri-devel@lists.freedesktop.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	David Airlie <airlied@gmail.com>, linux-clk@vger.kernel.org,
-	Jerome Brunet <jbrunet@baylibre.com>, Rob Herring <robh@kernel.org>,
-	Samuel Holland <samuel@sholland.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>, Chen-Yu Tsai <wens@csie.org>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Johan Hovold <johan+linaro@kernel.org>, linux-sunxi@lists.linux.dev,
-	Daniel Vetter <daniel@ffwll.ch>, linux-pm@vger.kernel.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Kyungmin Park <kyungmin.park@samsung.com>, kernel@pengutronix.de,
-	Georgi Djakov <djakov@kernel.org>
-Subject: Re: [PATCH 0/5] clk: Make clk_rate_exclusive_get() return void
-Message-ID: <20231213155252.eq6cdzk2vuwllzdu@pengutronix.de>
-References: <cover.1702400947.git.u.kleine-koenig@pengutronix.de>
- <ki5n3rz5n4oxj2hhc3rj6xpn3e2tdi7fcp2q7exjbzilrlqflp@przautvhuy4g>
- <20231213074300.4bq7wkfqd4jhhcr4@pengutronix.de>
- <2nvbag657mlniqwq7fbilapc6vfw5qumab3yd6bqul25ot6wcn@wdlkh5az2fgs>
- <20231213110829.bjaxjjiyy4ug7o67@pengutronix.de>
- <6wnsxbi27xdxjtaqaaaq5wtwwilp4jfw4mg5y2ctdl7xrs44ry@ns6y36pf7hge>
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="nUpbupoi"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01BC083;
+	Wed, 13 Dec 2023 08:24:11 -0800 (PST)
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20231213162409epoutp0356c11593163893954a6089beaa221e12~gcMTWPHbQ2305723057epoutp03G;
+	Wed, 13 Dec 2023 16:24:09 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20231213162409epoutp0356c11593163893954a6089beaa221e12~gcMTWPHbQ2305723057epoutp03G
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1702484649;
+	bh=K2Z9vFnf7mpL13jEaXOuxYQ/7/4WeeOVu5AXF86OdSU=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=nUpbupoioP10Qg+itCEifcBULZaxFWC9ZO42OP95qAOX74CQQRPHvDjcCy9MFZMVu
+	 Ckruc40euMqQfHxvJxMN4mF4pe7I9btveofCTj/sxfOsFx1/K1NVRUcP+a37IfmaxL
+	 HzLMWtlg2Z9ZiYRKQvQJWp1T4uOTGswmKUa/Ylq8=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20231213162409epcas5p298fcec4ae90c5461cbae6460fe7466f7~gcMS_tat62242322423epcas5p2C;
+	Wed, 13 Dec 2023 16:24:09 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.183]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4Sr15M58NQz4x9Pr; Wed, 13 Dec
+	2023 16:24:07 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	9C.33.08567.7AAD9756; Thu, 14 Dec 2023 01:24:07 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20231213162406epcas5p1ba19db7d5abf61b7d2eb2dc84e15f150~gcMQoYm0A2627126271epcas5p1M;
+	Wed, 13 Dec 2023 16:24:06 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20231213162406epsmtrp26ac0a902b1ea2f70c561c1dbaee77aa6~gcMQl5rf30608006080epsmtrp2C;
+	Wed, 13 Dec 2023 16:24:06 +0000 (GMT)
+X-AuditID: b6c32a44-617fd70000002177-e8-6579daa74d5b
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	E7.D5.07368.6AAD9756; Thu, 14 Dec 2023 01:24:06 +0900 (KST)
+Received: from INBRO000447 (unknown [107.122.12.5]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20231213162402epsmtip19f81ac507419a595d0fd94445304eb49~gcMMb-R0x0862108621epsmtip1p;
+	Wed, 13 Dec 2023 16:24:02 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Peter Griffin'" <peter.griffin@linaro.org>, <robh+dt@kernel.org>,
+	<krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
+	<conor+dt@kernel.org>, <sboyd@kernel.org>, <tomasz.figa@gmail.com>,
+	<s.nawrocki@samsung.com>, <linus.walleij@linaro.org>,
+	<wim@linux-watchdog.org>, <linux@roeck-us.net>, <catalin.marinas@arm.com>,
+	<will@kernel.org>, <arnd@arndb.de>, <olof@lixom.net>,
+	<gregkh@linuxfoundation.org>, <jirislaby@kernel.org>,
+	<cw00.choi@samsung.com>
+Cc: <tudor.ambarus@linaro.org>, <andre.draszik@linaro.org>,
+	<semen.protsenko@linaro.org>, <saravanak@google.com>,
+	<willmcvicker@google.com>, <soc@kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+	<linux-watchdog@vger.kernel.org>, <kernel-team@android.com>,
+	<linux-serial@vger.kernel.org>
+In-Reply-To: <20231211162331.435900-10-peter.griffin@linaro.org>
+Subject: RE: [PATCH v7 09/16] pinctrl: samsung: Add gs101 SoC pinctrl
+ configuration
+Date: Wed, 13 Dec 2023 21:54:01 +0530
+Message-ID: <017201da2de0$cb2ed820$618c8860$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4rnwsmpqrmgwol6u"
-Content-Disposition: inline
-In-Reply-To: <6wnsxbi27xdxjtaqaaaq5wtwwilp4jfw4mg5y2ctdl7xrs44ry@ns6y36pf7hge>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: en-us
+Thread-Index: AQEeDlMUs+qnFg95EVUf+Z9FZqMuEwIDfwFVAR9h5iGyBo1g8A==
+X-Brightmail-Tracker: H4sIAAAAAAAAA01TfVSTZRTved99Ac5ePorHaTl2IoTTgCXQA0eKDPQNkjhx7Jw6R2hub0DA
+	NjcI8RyTRBAn7KCHOrhASApyrMaXgNDIxkchQpIERFNTWCjyIWCYfIw2Xiz/+917f7/nd+99
+	zuXgLj+yeZwkWRqllIlTBCxHRmO7t4+waiST8q/r80ANE/UMtHK6i41mKvMB0hv7MDT0YJyJ
+	yjr6mCi7wsBC06VbUHOTG9LcuYWjouUqDNWNDjLRbP4NJqovWwao+Jc2DF2pKGCj4e/a2Gjs
+	yysY6r8cgS4PzbNQTbGVgXKMHWzUPnmcidSmFRayDtYy0LjGphodWmYhXYvtkbmROHTMHIh0
+	c6sAjd614mF8srG1kUnqz+oBubR4GpAzwzls8qL2Opssr0sn63QnWKR58HsWeV6vZ5I/lOrZ
+	ZP1XR8iBn48yyYsPs9ikpkEHyPm652Oefj95RyIlllJKPiWTyKVJsoRQQVRs/BvxgUH+IqEo
+	GL0i4MvEqVSoIPytGOGupBTbugT8j8Up6bZUjFilEvi9ukMpT0+j+IlyVVqogFJIUxQBCl+V
+	OFWVLkvwlVFpISJ//5cDbcQPkhPN175mKx5uONh/+3AWKHNSAwcOJAJgSUk3pgaOHBeiFcC8
+	DjWDDuYA7DIYWXSwAGBtTTbjscSY07teMAJYbTGvS+4AWFbQCewsFiGEzRW5LDt2I27gcKjv
+	dTsJJ/Q4fLRqxu0FByIM6o62rJFcib1QO16zZsEgPOFUe+8ah0sEwyFTEYPGzrD7zNgaxomt
+	sGmqBKdb4sNHlkomnXeHdzs72GrAsRnvhOW3jth9IaFxhJZJPZPmh8MsyxmMxq5w4qcGNo15
+	cH7aPjPHhkl4bplHpxPhVJUB0Pg1eGmghGGn4IQ3NLT40a4bYcHSGEYruTAv14Vme8Ls6d/W
+	97YZnjp5cr0BEt68Xs4sBB7aJ+bSPjGX9olZtP+blQOGDmyiFKrUBEoSqBDJqIz/vlsiT60D
+	a7fkE94MhsusviaAcYAJQA4ucON2N2dQLlypOPMQpZTHK9NTKJUJBNqWfQrnPSOR245RlhYv
+	Cgj2DwgKCgoI3h4kErhz7+WUSl2IBHEalUxRCkr5WIdxHHhZmJeh0GdjT59l9zvn5R6bCsK+
+	ec86e3A4XoNiy5eei/rUfOAzXx7WNvJhZLR5oSG2yfhRXIio8N5S4+Gi2d6/zBO/+jZtM1W4
+	CRXz1/aP7vt8sjWqfqW27+1dA7svyJ2tZ90UWvKQk0CasUGd7rww4z0b8ocwIqCsS7F6qYZx
+	AJ7gHrsPLNUaL5M2+hMjxvdsFpWUNIxHKx/EiUZv/1nbmYHkxw1ZuX+bnbY4qLO3SfZcfSli
+	2st1Yeve4v5Ii+oLhxerpNXeydGxQYs69/33qd+fzc0r5fg5JOKd+ZV7eGNzsfU9YzcXt1+Q
+	fLsYmdTTs69ocinrzX9eSHnqXX32uc1XMysFDFWiWOSDK1XifwH6mvUX1AQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sb0xTVxiHd3r/Uu28tETPYHGsuswRRDrRnC1m0YnmLtvcMuIynBk2cFMR
+	qE0rY7gZqgjOpmsaxACdtDAYQmkclA4LCGRtZ4AgG8FQ1hUjFMa6UBl0gSBYRmmW8e133t/7
+	PHk/HBoTmolYOlt+gVPKpbliko+3O8U79zZ4CrnklTuJyPZXG46eld2n0FyDFiBL9xAPuf+Z
+	IZDJNUSg4rofSPSk+kVkvxuDdH9OYKh89TYPWX2jBJrXPiJQm2kVoMpfenhosO4bCo3d6aHQ
+	VO0gDw0PHEMD7iCJWipDOCrpdlHIOXuNQBrHMxKFRltxNKNbp3zuVRKZO9clC57P0FXvAWRe
+	WAPI5w9hh+PZ9q52grUYLYBdeVoG2LmxEortMIxTbI01n7War5Osd/QeyTZZLATbW22h2Lb6
+	IvZh3xWC7VhSU6zOZgZs0Lrzw22n+IeyuNzszznlvrfO8M96R76nFEtbvxievKQGpi0aEEVD
+	JgV2lzwgNYBPC5kuACu0zbxIEQfdrXoqkkWwKTRDRZb+AHC+ZYoIFySzF9rrSjfoGGYBg81r
+	YxsPjOnE4JC6lIggLgBvTd7Ew0gUcxiar3SS4Sxi0qBpTrOhwplXYMD5AAtnAfMGdDvK8UiO
+	hv1VU+uZXrcmwdJWEB5jzEvwbuAWFjkvHi5PNxCR+Q7o/9lFhddjmLdhzUSRHogMm0SG/0WG
+	TSLDJrgG4GbwAqdQ5cnyMiUKiZwrSFJJ81T5cllS5vk8K9j4Tgl77OCRKZTkADwaOACkMXGM
+	oN9ewAkFWdLCi5zyfIYyP5dTOUAcjYt3CCSV32YJGZn0ApfDcQpO+V/Lo6Ni1bzn6+4ZCyrG
+	d6dvl5yb5JS2hMZeL/vjB550T4ZymjrYGd04c9mybPzutf7721ZeXRp6M8eYyfKvPjefbCs/
+	nb51cZfwyXjR0jtaj6ix8rg69XpOypmQ9uH26EHn6G+Jlx/D218e2p080X8xbbKlOVXj9gZO
+	DvXZ5LP6QNVXxvphmfiGfi012RF8XxjoiEtRnND1MPrGd9GnpvRTP3VpZS/XCnQHqvx7XIna
+	2l0fDZRVFJ8THblWdNT9iaX7mH/k5JZfJU3tx3W+/fvekxU7V4+8PnswWPh32nhsH/r4BK3I
+	6B1Z/HqkADl+rw4+ro+/6fedTs2mFhYLl6f3824cZe1BvRhXnZVKEjClSvovulMx070DAAA=
+X-CMS-MailID: 20231213162406epcas5p1ba19db7d5abf61b7d2eb2dc84e15f150
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20231211162431epcas5p2e2ec25eea1849559515c4e2855a8d58c
+References: <20231211162331.435900-1-peter.griffin@linaro.org>
+	<CGME20231211162431epcas5p2e2ec25eea1849559515c4e2855a8d58c@epcas5p2.samsung.com>
+	<20231211162331.435900-10-peter.griffin@linaro.org>
+
+Hi Peter
+
+> -----Original Message-----
+> From: Peter Griffin <peter.griffin@linaro.org>
+> Sent: Monday, December 11, 2023 9:53 PM
+> To: robh+dt@kernel.org; krzysztof.kozlowski+dt@linaro.org;
+> mturquette@baylibre.com; conor+dt@kernel.org; sboyd@kernel.org;
+> tomasz.figa@gmail.com; s.nawrocki@samsung.com; linus.walleij@linaro.org;
+> wim@linux-watchdog.org; linux@roeck-us.net; catalin.marinas@arm.com;
+> will@kernel.org; arnd@arndb.de; olof@lixom.net;
+> gregkh@linuxfoundation.org; jirislaby@kernel.org;
+> cw00.choi@samsung.com; alim.akhtar@samsung.com
+> Cc: peter.griffin@linaro.org; tudor.ambarus@linaro.org;
+> andre.draszik@linaro.org; semen.protsenko@linaro.org;
+> saravanak@google.com; willmcvicker@google.com; soc@kernel.org;
+> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+> samsung-soc@vger.kernel.org; linux-clk@vger.kernel.org; linux-
+> gpio@vger.kernel.org; linux-watchdog@vger.kernel.org; kernel-
+> team@android.com; linux-serial@vger.kernel.org
+> Subject: [PATCH v7 09/16] pinctrl: samsung: Add gs101 SoC pinctrl
+> configuration
+> 
+> Add support for the pin-controller found on the gs101 SoC used in Pixel 6
+> phones.
+> 
+> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+
+> ---
+>  .../pinctrl/samsung/pinctrl-exynos-arm64.c    | 140 ++++++++++++++++++
+>  drivers/pinctrl/samsung/pinctrl-samsung.c     |   2 +
+>  drivers/pinctrl/samsung/pinctrl-samsung.h     |   1 +
+>  3 files changed, 143 insertions(+)
+> 
+[snip]
+> 
+> --
+> 2.43.0.472.g3155946c3a-goog
 
 
---4rnwsmpqrmgwol6u
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Dec 13, 2023 at 12:54:14PM +0100, Maxime Ripard wrote:
-> On Wed, Dec 13, 2023 at 12:08:29PM +0100, Uwe Kleine-K=F6nig wrote:
-> > On Wed, Dec 13, 2023 at 09:36:49AM +0100, Maxime Ripard wrote:
-> > > On Wed, Dec 13, 2023 at 08:43:00AM +0100, Uwe Kleine-K=F6nig wrote:
-> > > > On Wed, Dec 13, 2023 at 08:16:04AM +0100, Maxime Ripard wrote:
-> > > > > On Tue, Dec 12, 2023 at 06:26:37PM +0100, Uwe Kleine-K=F6nig wrot=
-e:
-> > > > > > clk_rate_exclusive_get() returns zero unconditionally. Most use=
-rs "know"
-> > > > > > that and don't check the return value. This series fixes the fo=
-ur users
-> > > > > > that do error checking on the returned value and then makes fun=
-ction
-> > > > > > return void.
-> > > > > >=20
-> > > > > > Given that the changes to the drivers are simple and so merge c=
-onflicts
-> > > > > > (if any) should be easy to handle, I suggest to merge this comp=
-lete
-> > > > > > series via the clk tree.
-> > > > >=20
-> > > > > I don't think it's the right way to go about it.
-> > > > >=20
-> > > > > clk_rate_exclusive_get() should be expected to fail. For example =
-if
-> > > > > there's another user getting an exclusive rate on the same clock.
-> > > > >=20
-> > > > > If we're not checking for it right now, then it should probably be
-> > > > > fixed, but the callers checking for the error are right to do so =
-if they
-> > > > > rely on an exclusive rate. It's the ones that don't that should be
-> > > > > modified.
-> > > >=20
-> > > > If some other consumer has already "locked" a clock that I call
-> > > > clk_rate_exclusive_get() for, this isn't an error. In my bubble I c=
-all
-> > > > this function because I don't want the rate to change e.g. because I
-> > > > setup some registers in the consuming device to provide a fixed UART
-> > > > baud rate or i2c bus frequency (and that works as expected).
-> > >=20
-> > > [a long text of mostly right things (Uwe's interpretation) that are
-> > > however totally unrelated to the patches under discussion.]
->=20
-> I'm glad you consider it "mostly" right.
-
-there was no offense intended. I didn't agree to all points, but didn't
-think it was helpful to discuss that given that I considered them
-orthogonal to my suggested modifications.
-=20
-> > The clk API works with and without my patches in exactly the same way.
-> > It just makes more explicit that clk_rate_exclusive_get() cannot fail
-> > today and removes the error handling from consumers that is never used.
->=20
-> Not really, no.
-
-What exactly do you oppose here? Both of my sentences are correct?!
-=20
-> An API is an interface, meant to provide an abstraction. The only
-> relevant thing is whether or not that function, from an abstract point
-> of view, can fail.
-
-What is the ideal API that you imagine? For me the ideal API is:
-
-A consumer might call clk_rate_exclusive_get() and after that returns
-all other consumers are prohibited to change the rate of the clock
-(directly and indirectly) until clk_rate_exclusive_put() is called. If
-this ends in a double lock (i.e. two different consumers locked the
-clock), then I cannot change the rate (and neither can anybody else).
-
-That is fine iff I don't need to change the rate and just want to rely
-on it to keep its current value (which is a valid use case). And if I
-want to change the rate but another consumer prevents that, I handle
-that in the same away as I handle all other failures to set the rate to
-the value I need. I have to prepare for that anyhow even if I have
-ensured that I'm the only one having exclusivity on that clock.
-
-Letting clk_rate_exclusive_get() fail in the assumption that the
-consumer also wants to modify the rate is wrong. The obvious point where
-to stop such consumers is when they call clk_rate_set(). And those who
-don't modify the rate then continue without interruption even if there
-are two lockers.
-
-This can easily be implemented without clk_rate_exclusive_get() ever
-failing.
-
-> Can you fail to get the exclusivity? Yes. On a theoretical basis, you
-> can, and the function was explicitly documented as such.
-
-Sure, you could modify the clk internals such that
-clk_rate_exclusive_get() needs to allocate memory. Or that it fails if
-another consumer already has called it. At least the latter is a change
-in semantics that requires to review (and maybe fix) all users. Also
-note that calling clk_rate_exclusive_get() essentially locks all parent
-clocks up to the root clock. So if clk_rate_exclusive_get() fails in the
-presence of another locker, you can only have one locker per clock
-hierarchy because it's impossible that both grab the lock on the root
-clock.
-
-> > Is there anyone working on improving the clk framework regarding how clk
-> > rate exclusivity works? I'd probably not notice, but I guess there is
-> > noone that I need to consider for.
->=20
-> I started working on it.
-
-That is indeed a reason to postpone my patches. Feel free to Cc: me when
-you're done. And please mention if you need longer than (say) 6 months,
-then I'd argue that applying my patches now without caring for
-out-of-tree users is the way to go.
-
-My demand for such a rework would be that there is a function for=20
-consumers to call that don't have the requirement for a certain rate but
-only any fixed rate that results in locking the clock's rate to whatever
-it currently is. Today that function exists and is called
-clk_rate_exclusive_get(); this might not be the best name, so maybe
-rename it to something that you consider more sensible at the start of
-your rework?!
-
-Semantically that is similar to read_lock() (which never fails and
-still prevents any writers). And clk_set_rate() is like=20
-
-	try_upgrade_read_lock_to_write_lock();
-	actually_change_the_rate()
-	downgrade_write_lock_to_read_lock();
-
-where try_upgrade_read_lock_to_write_lock() fails if there are other
-readers. So maybe a sensible name for today's clk_rate_exclusive_get()
-is clk_rate_read_lock()?
-
-If your variant of clk_rate_exclusive_get() might fail, you can already
-prepare for me questioning why this is sensible and needed.
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---4rnwsmpqrmgwol6u
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmV501MACgkQj4D7WH0S
-/k51hQf8CRNymicQ4BgKO3Qz+szmXEUKIg8qmLZG6f+sJ77H3mvg7zlbvpI/W/hI
-rscYS06UjEHJM9ec8XTYACyQ1nJy98D8BxhawVTn+wrJa2z0tBDSg01HHBXZkVLe
-xG6BYa5Dx94GTfhTXr9H4zwiLgchRz6/FFp4H49wHQ8rHLX6YYwLBUMq258vYNN8
-Df1WULIGmruvRCkwWFyfhVC2OPyUy0FagJ5xsjJyRIavDaiFmuLEGg0avrbfEjN3
-CMcsnDtQD1pALNhIWwvovcLint4Iap8vDz6O3+MyEDj65AZf8DzO8TJZjTYwGnoI
-zj1/dV/j2h1+TK5lvLFOTKPzSD3u1Q==
-=Nnb7
------END PGP SIGNATURE-----
-
---4rnwsmpqrmgwol6u--
