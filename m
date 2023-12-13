@@ -1,169 +1,189 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gwDj7eus"
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6ACE99
-	for <linux-clk@vger.kernel.org>; Wed, 13 Dec 2023 11:19:13 -0800 (PST)
-Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-a1e35c2807fso970141266b.3
-        for <linux-clk@vger.kernel.org>; Wed, 13 Dec 2023 11:19:13 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MmFJ+UNp"
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66014C9;
+	Wed, 13 Dec 2023 12:07:24 -0800 (PST)
+Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-40c317723a8so63978685e9.3;
+        Wed, 13 Dec 2023 12:07:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702495152; x=1703099952; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IyLZK0Q4UUy3edVFbbE5taYf3vBAb4m9JmdYBi1zuXg=;
-        b=gwDj7eusDHBJPbfwk3JFlV8KgGUME4eAaY20GJuvK1aBurBEKc7nBbuSjoxxiNBViP
-         3IiVJZtnhktIJrgCExj26JiGBoD3bq63hZF9nvkmz7n9QeD1HI/01Jn5EZ70KAo3e+zU
-         QV7XRGyZcMlJ3Ztmw9QJomrbeBBiQNu23a/C647Jj/NYL0w4oaY1i4G2/J5dPk66E6Mi
-         idkCmr1Af+8zgMkwEpzqzedT4+r8UR4FtNg6CKUBtXbpo+XtN6jIBSFYPBCozOFFvp1M
-         wrxatzZ7MklWAeH6D++Y4xVROl4aG0EntEZPTtOVnf3nFjPy1okUMN3pQkgm26Q1bOga
-         OU1Q==
+        d=gmail.com; s=20230601; t=1702498043; x=1703102843; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Gsu3q13MvDpE/CGXMPYCWwJtd9OUgwH5TkWvsm2e2cA=;
+        b=MmFJ+UNppUWxNTHj/tS7v/ct3AjdddJkI7rwYJjgACVwpImj3ljY4OypC6k6pZwfdN
+         E+DsM80nkSKC+MOGnziALObRa64yhHE9wHjAdLu1WAAAuFx2JQ53XCsqNw7x6PhqDdXU
+         28eSeMYvGzA04xJ58OBdu1GH+mvAJDlx7O4/6Yxpm2LzyTDgjS+xde+Y8HiawKPGqG12
+         j/Qhe2+8bMOTXZAB4BLcgIf842zUT4DiAGa/BTJhH72sEmqFN9AAg+RIuYiRnEumVB/k
+         qwyDAbAjXcfpEnvO+BhfLLkmgTTcaWG/oaIivs9BywsWoy6S9MgvYvg6nYs2mh69rNKJ
+         T7lA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702495152; x=1703099952;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IyLZK0Q4UUy3edVFbbE5taYf3vBAb4m9JmdYBi1zuXg=;
-        b=YapTD3fCXLbTB3yxjvuThlqF5Zyc8TFk03T43B5/X9BwUVllo/xhHXOSKD76uF+goH
-         c73rnhwhfaj6D2QA0QGph/WT5w3nAtIlg1FP8QQuOIb+0YzyriXsjuRGL32cjwtdkD+O
-         aOc6x8wc7M/t52F7Hqpox2Aj3hB+Z9PP03F6Dxd0CbCGTJk2kA9Qia8FqmUwdhJhzatv
-         agpNMPMMy9dUWkDA219s8GFviiwJYbibklmOm2pCgJ+GB2MMsCWrXS8SrorkJWw5iCaS
-         L1sgvXDVg02POVUzK6m6U+ywh3li9CVj+5CwOWlF0DRsuajgLebUl89T8ZGm6aGrv5xs
-         7hMQ==
-X-Gm-Message-State: AOJu0YyLkXTb09fz4H2/ddo9g33a+ERYxYBjgzL+CTHmGX3VurO96Btn
-	ul1La8jVM3KZ/QXa/Cc3yXSfpg==
-X-Google-Smtp-Source: AGHT+IHe2oCpE5hoLsQtZOhOSa1CS6LxlkW89vAba1gSe/+elhIewojVPC1i7xpMFADBhxh+BtIu6w==
-X-Received: by 2002:a17:906:5346:b0:a02:a2cc:66b8 with SMTP id j6-20020a170906534600b00a02a2cc66b8mr4165386ejo.14.1702495152178;
-        Wed, 13 Dec 2023 11:19:12 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id vq6-20020a170907a4c600b00a19b7362dcfsm8330910ejc.139.2023.12.13.11.19.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Dec 2023 11:19:11 -0800 (PST)
-Message-ID: <8099aabc-a98e-444b-862f-72845e03476d@linaro.org>
-Date: Wed, 13 Dec 2023 20:19:08 +0100
+        d=1e100.net; s=20230601; t=1702498043; x=1703102843;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Gsu3q13MvDpE/CGXMPYCWwJtd9OUgwH5TkWvsm2e2cA=;
+        b=LysvFYfyvxJvL1s+WYzBvcJZpeZ3Zxm7oyw/V/AO6lyrn21TCpl9gsDr/lsjxa/kPf
+         V1Bdwst1TbzQIQyAXvBRCTkntZyRjlOuAVSkjPZWNgsewDabbxL7r9gAH9oEGfoY8bHq
+         FYyqSq8gmYb2sDsy23HcehuV9LCN54hDqbcuk6CxJn1JeUZZOmPlWJM9/EtLe5dqH6Kq
+         7chtXo066XbKQv2+mHYDSmaAIvJ5Ku5j4+ewiT7mrE+xyiBrtfPi3s2UWQEICsXG1mUJ
+         EHhaykxAgXof2xf44DUhFZWaKi+3wEKSWUM8vBdXpkhyHxXmVo7SwKDnWZs9bqejXIpI
+         /lDQ==
+X-Gm-Message-State: AOJu0YxXSFTya2ee17bh2V8+JvngkG/QCz9+X0m8p8R/B5A7a2gladEg
+	IxWiVQC3vmg4dddS4NhXKtBkGMWs2yU=
+X-Google-Smtp-Source: AGHT+IHXFAhPhkQlTGwETgEwQJ0+N7+UNA2cm4OrTmck51BAJtoT4bV4BK2nZBlfQ3MZpCxFuPiTkg==
+X-Received: by 2002:a05:600c:81b:b0:40b:5e59:c590 with SMTP id k27-20020a05600c081b00b0040b5e59c590mr4312661wmp.186.1702498042479;
+        Wed, 13 Dec 2023 12:07:22 -0800 (PST)
+Received: from archlinux.localnet (82-149-12-148.dynamic.telemach.net. [82.149.12.148])
+        by smtp.gmail.com with ESMTPSA id p7-20020a05600c468700b0040c420eda48sm15195843wmo.22.2023.12.13.12.07.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Dec 2023 12:07:21 -0800 (PST)
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ Samuel Holland <samuel@sholland.org>, Maxime Ripard <mripard@kernel.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Subject:
+ Re: [PATCH v7 3/7] ARM: dts: sun8i: v3s: Add nodes for MIPI CSI-2 support
+Date: Wed, 13 Dec 2023 21:07:20 +0100
+Message-ID: <2169265.irdbgypaU6@archlinux>
+In-Reply-To: <20231122141426.329694-4-paul.kocialkowski@bootlin.com>
+References:
+ <20231122141426.329694-1-paul.kocialkowski@bootlin.com>
+ <20231122141426.329694-4-paul.kocialkowski@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 11/16] watchdog: s3c2410_wdt: Update QUIRK macros to
- use BIT macro
-Content-Language: en-US
-To: Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
- mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
- tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org,
- wim@linux-watchdog.org, linux@roeck-us.net, catalin.marinas@arm.com,
- will@kernel.org, arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org,
- jirislaby@kernel.org, cw00.choi@samsung.com, tudor.ambarus@linaro.org,
- andre.draszik@linaro.org, semen.protsenko@linaro.org, saravanak@google.com,
- willmcvicker@google.com, soc@kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-watchdog@vger.kernel.org, kernel-team@android.com,
- linux-serial@vger.kernel.org
-References: <20231211162331.435900-1-peter.griffin@linaro.org>
- <CGME20231211162434epcas5p485e7b2edbb02a1b6ea04ff5cc758f5db@epcas5p4.samsung.com>
- <20231211162331.435900-12-peter.griffin@linaro.org>
- <017401da2de2$400ec6e0$c02c54a0$@samsung.com>
- <CADrjBPoFu8azjZ65RGqae6HSCCoHQuhcBHNO_Fo0nVsE9pYGaA@mail.gmail.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <CADrjBPoFu8azjZ65RGqae6HSCCoHQuhcBHNO_Fo0nVsE9pYGaA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On 13/12/2023 20:13, Peter Griffin wrote:
-> Hi Alim,
-> 
-> Thanks for your reviews.
-> 
-> On Wed, 13 Dec 2023 at 16:34, Alim Akhtar <alim.akhtar@samsung.com> wrote:
->>
->>
->>
->>> -----Original Message-----
->>> From: Peter Griffin <peter.griffin@linaro.org>
->>> Sent: Monday, December 11, 2023 9:53 PM
->>> To: robh+dt@kernel.org; krzysztof.kozlowski+dt@linaro.org;
->>> mturquette@baylibre.com; conor+dt@kernel.org; sboyd@kernel.org;
->>> tomasz.figa@gmail.com; s.nawrocki@samsung.com; linus.walleij@linaro.org;
->>> wim@linux-watchdog.org; linux@roeck-us.net; catalin.marinas@arm.com;
->>> will@kernel.org; arnd@arndb.de; olof@lixom.net;
->>> gregkh@linuxfoundation.org; jirislaby@kernel.org;
->>> cw00.choi@samsung.com; alim.akhtar@samsung.com
->>> Cc: peter.griffin@linaro.org; tudor.ambarus@linaro.org;
->>> andre.draszik@linaro.org; semen.protsenko@linaro.org;
->>> saravanak@google.com; willmcvicker@google.com; soc@kernel.org;
->>> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
->>> samsung-soc@vger.kernel.org; linux-clk@vger.kernel.org; linux-
->>> gpio@vger.kernel.org; linux-watchdog@vger.kernel.org; kernel-
->>> team@android.com; linux-serial@vger.kernel.org
->>> Subject: [PATCH v7 11/16] watchdog: s3c2410_wdt: Update QUIRK macros to
->>> use BIT macro
->>>
->>> Update the remaining QUIRK macros to use the BIT macro.
->>>
->> Ah! I see you have change use BIT here, so you can squash this patch to
->> patch 10/16 or
->> Move BIT change from patch 10/16 to this patch. Either way is fine.
-> 
-> I actually kept them separate deliberately to avoid conflating adding
-> of the DBGACK quirk with cleanup of the driver to use BIT macro.
-> 
-> As such one patch adds the QUIRK and only updates the macros that were
-> touched by that patch (to avoid the --strict warnings), and the second
-> patch cleans up the rest of the macros to use BIT macro for
-> consistency.
+Hi Paul!
 
-Yeah, the defines are from existing code, so not really related to GS101
-patch. Keeping it as separate cleanup is fine.
+Sorry for late reply.
+
+On Wednesday, November 22, 2023 3:14:21 PM CET Paul Kocialkowski wrote:
+> MIPI CSI-2 is supported on the V3s with an A31-based MIPI CSI-2 bridge
+> controller. The controller uses a separate D-PHY, which is the same
+> that is otherwise used for MIPI DSI, but used in Rx mode.
+> 
+> On the V3s, the CSI0 controller is dedicated to MIPI CSI-2 as it does
+> not have access to any parallel interface pins.
+> 
+> Add all the necessary nodes (CSI0, MIPI CSI-2 bridge and D-PHY) to
+> support the MIPI CSI-2 interface.
+> 
+> Note that a fwnode graph link is created between CSI0 and MIPI CSI-2
+> even when no sensor is connected. This will result in a probe failure
+> for the controller as long as no sensor is connected but this is fine
+> since no other interface is available.
+> 
+> The interconnects property is used to inherit the proper DMA offset.
+> 
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> ---
+>  arch/arm/boot/dts/allwinner/sun8i-v3s.dtsi | 71 ++++++++++++++++++++++
+>  1 file changed, 71 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/allwinner/sun8i-v3s.dtsi b/arch/arm/boot/dts/allwinner/sun8i-v3s.dtsi
+> index 506e98f4f69d..d57612023aa4 100644
+> --- a/arch/arm/boot/dts/allwinner/sun8i-v3s.dtsi
+> +++ b/arch/arm/boot/dts/allwinner/sun8i-v3s.dtsi
+> @@ -621,6 +621,77 @@ gic: interrupt-controller@1c81000 {
+>  			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
+>  		};
+>  
+> +		csi0: camera@1cb0000 {
+> +			compatible = "allwinner,sun8i-v3s-csi";
+> +			reg = <0x01cb0000 0x1000>;
+> +			interrupts = <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&ccu CLK_BUS_CSI>,
+> +				 <&ccu CLK_CSI1_SCLK>,
+> +				 <&ccu CLK_DRAM_CSI>;
+> +			clock-names = "bus", "mod", "ram";
+> +			resets = <&ccu RST_BUS_CSI>;
+> +			interconnects = <&mbus 5>;
+> +			interconnect-names = "dma-mem";
+
+As far as I can see, interconnects are not documented in
+allwinner,sun6i-a31-csi.yaml. Please run make dtbs_check on this.
 
 Best regards,
-Krzysztof
+Jernej
+
+> +			status = "disabled";
+> +
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				port@1 {
+> +					reg = <1>;
+> +
+> +					csi0_in_mipi_csi2: endpoint {
+> +						remote-endpoint = <&mipi_csi2_out_csi0>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+> +		mipi_csi2: csi@1cb1000 {
+> +			compatible = "allwinner,sun8i-v3s-mipi-csi2",
+> +				     "allwinner,sun6i-a31-mipi-csi2";
+> +			reg = <0x01cb1000 0x1000>;
+> +			interrupts = <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&ccu CLK_BUS_CSI>,
+> +				 <&ccu CLK_CSI1_SCLK>;
+> +			clock-names = "bus", "mod";
+> +			resets = <&ccu RST_BUS_CSI>;
+> +			status = "disabled";
+> +
+> +			phys = <&dphy>;
+> +			phy-names = "dphy";
+> +
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				mipi_csi2_in: port@0 {
+> +					reg = <0>;
+> +				};
+> +
+> +				mipi_csi2_out: port@1 {
+> +					reg = <1>;
+> +
+> +					mipi_csi2_out_csi0: endpoint {
+> +						remote-endpoint = <&csi0_in_mipi_csi2>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+> +		dphy: d-phy@1cb2000 {
+> +			compatible = "allwinner,sun6i-a31-mipi-dphy";
+> +			reg = <0x01cb2000 0x1000>;
+> +			clocks = <&ccu CLK_BUS_CSI>,
+> +				 <&ccu CLK_MIPI_CSI>;
+> +			clock-names = "bus", "mod";
+> +			resets = <&ccu RST_BUS_CSI>;
+> +			allwinner,direction = "rx";
+> +			status = "disabled";
+> +			#phy-cells = <0>;
+> +		};
+> +
+>  		csi1: camera@1cb4000 {
+>  			compatible = "allwinner,sun8i-v3s-csi";
+>  			reg = <0x01cb4000 0x3000>;
+> 
+
+
+
 
