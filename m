@@ -1,43 +1,43 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yGBKuJG/"
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97A57F2
-	for <linux-clk@vger.kernel.org>; Wed, 13 Dec 2023 11:16:26 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-40c3984f0cdso59307235e9.1
-        for <linux-clk@vger.kernel.org>; Wed, 13 Dec 2023 11:16:26 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OF7jP/Fh"
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D25BACF
+	for <linux-clk@vger.kernel.org>; Wed, 13 Dec 2023 11:16:28 -0800 (PST)
+Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-40c1e3ea2f2so71933465e9.2
+        for <linux-clk@vger.kernel.org>; Wed, 13 Dec 2023 11:16:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702494985; x=1703099785; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1702494987; x=1703099787; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bCozS9Tm/Y8mGnGnquLyOf4tn+xIeETpzkS1V8OEWrI=;
-        b=yGBKuJG/Eps5Wy73qoqmQf6kfFM3qtn1126xeleyAjySALuQKQhoJTcB/PmOPo5Mn/
-         Nw/kZqdfVYKrVP0cVHbkqP65Gyw8ru7Uc2NlCWvtg4q7Eu6k5yQxUQ2BFxwkfTJwEt1Q
-         NlmT7yIR+cNV39Yn3Kv5F5HvdhLMW8T8tHp/SlIq0UWROgGB15SjC72/RbCj1uzniYSr
-         vF4wZ4cXfSjURqPURP2q9zfEj60ZcYstQGh81Sihe34TAZWKtvqZouHI4B5DoII5P+VP
-         6QfWXPqgtLnYH7DecPIL756pwd+SAu12PsQJlkve9JnNmPbTLFCSa7PyXtSf5i/uupFM
-         YaUg==
+        bh=IlTpAm/op63WnQxBaylZlpeqHoqAOxaydKFKKqlx8Ys=;
+        b=OF7jP/Fhi62HDUkpJYjCk2BE5ZSbVRbFQM4nDSlFLIapAyMYNBaW1DULTbuyUEOS0X
+         nG7LKkGF+L11nTwWrL1n28ba7dn8iCnrHHdG8IzNAjWArZNYG7zkqob5kYFGJ4NVWSpn
+         wZV1wDHjQw0H4pBCdLslYbRFzctVL1t4tqFtbNC/tbjod3QnYcWXXjJXKF4P8W6WdkRK
+         u975+XQjfcZRxGbrtXV9VFjVx91VHFWWa5iukGplH3mFyL6PPGcHtXwaeGCGS/de5aKg
+         4x9eEhuPQZBc0UHdnYBnFnb25lI6XuSCGevEwiqiRODsZW19jYncyltu7ZQNROf5Gy4a
+         3tuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702494985; x=1703099785;
+        d=1e100.net; s=20230601; t=1702494987; x=1703099787;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bCozS9Tm/Y8mGnGnquLyOf4tn+xIeETpzkS1V8OEWrI=;
-        b=b0d7qNae4ZCspECJfrKwz049ix4TXabndv7PGlnSXcL5/9KgXudOMrnUT7kpl29COX
-         QGehV97c6tVZqdwL2LU2n6+4CLVh7Ra6sCMKHJI4ekHukNyLpER4hZvzXG/N3dFlciKj
-         G/YcwXJfd+hEppA6e9IbKrGmyii9osm6t0TTGmO3K4aYPOCvPkbobginCfsHgl1sUVTl
-         rkxfJeSlasGt3kJJz3knTEN7B6GyhZGKWI4GYKIULT2kr7iHyvZTkGGU+Osj4LndsTDj
-         ueXltvfZmNEN7AReL6avazxECsUpPKd0hBp3/aAAUWR2uJBHkszFbfOW1T0EMTph7sEq
-         iJlA==
-X-Gm-Message-State: AOJu0Ywx5npFrXgDfjRtpBBsb4hmhkN0X+h8uZNAIIFFlrimFqs/FCUR
-	p0ph3pZC6ZfoKzGkTMFU4s4Vqw==
-X-Google-Smtp-Source: AGHT+IG74hq6EJrwdxeiFaPlj9yTpc587I2CsuoYOiT+2xrmbHNoJdVw30J42Tdk7L0P36ombllYEg==
-X-Received: by 2002:a05:600c:474c:b0:40c:4575:2050 with SMTP id w12-20020a05600c474c00b0040c45752050mr3504020wmo.96.1702494985203;
-        Wed, 13 Dec 2023 11:16:25 -0800 (PST)
+        bh=IlTpAm/op63WnQxBaylZlpeqHoqAOxaydKFKKqlx8Ys=;
+        b=USl4GB3HFTYcjFj8kePXTsLT11LKNq9ZnyCbT0HXbNF8wJdCd0/DEjwP29+ZsAfhg8
+         xfd3gClFF/0W39+CFmFAgLTdY9+tOkN2XQGJf/LK27CLyPG1G6ieYCwHgBangS5dZMCS
+         vquNYNhU8sh+jcKZkR3l/Kdhjmr2R4/hVoGTQTRcvl8dxfovuPNHuXS/auFEsFSAA8hy
+         oBeWsiHwOsOV7w5Tff3GQkbL6c4FEuUR/Eva0pK3NNgFgv2blEB/w3NKUg3lGAH6CafW
+         GzcHfFmu6k4mQSnMH6dQbCkFD4YOAdgF6VKEQmALiMwn04bItDZ61m+S/F823ZRfLM9i
+         KImQ==
+X-Gm-Message-State: AOJu0YyzLn7JvBNNc5zYS9AzLb7KqNHN9BEPBbnlMn8GK7VUaR0mFOQc
+	0ct5XGKiY8LndWVs8jHoPGlczeP5NuL/lrJfRvM=
+X-Google-Smtp-Source: AGHT+IH1ybS2vp4ps4bx5XfivcvSrtfbsmpPh+9TZiuzBpYyh8K77ozNJBAjVyJ9cyE16seU6Xnbog==
+X-Received: by 2002:a7b:c457:0:b0:40c:267f:6e79 with SMTP id l23-20020a7bc457000000b0040c267f6e79mr4619281wmi.4.1702494987371;
+        Wed, 13 Dec 2023 11:16:27 -0800 (PST)
 Received: from [127.0.1.1] ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id v12-20020a05600c470c00b0040b37f107c4sm20190085wmo.16.2023.12.13.11.16.23
+        by smtp.gmail.com with ESMTPSA id v12-20020a05600c470c00b0040b37f107c4sm20190085wmo.16.2023.12.13.11.16.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Dec 2023 11:16:24 -0800 (PST)
+        Wed, 13 Dec 2023 11:16:27 -0800 (PST)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
  mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org, 
@@ -53,13 +53,13 @@ Cc: tudor.ambarus@linaro.org, andre.draszik@linaro.org,
  linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
  linux-watchdog@vger.kernel.org, kernel-team@android.com, 
  linux-serial@vger.kernel.org
-In-Reply-To: <20231211162331.435900-13-peter.griffin@linaro.org>
+In-Reply-To: <20231211162331.435900-15-peter.griffin@linaro.org>
 References: <20231211162331.435900-1-peter.griffin@linaro.org>
- <20231211162331.435900-13-peter.griffin@linaro.org>
-Subject: Re: (subset) [PATCH v7 12/16] watchdog: s3c2410_wdt: Add support
- for Google gs101 SoC
-Message-Id: <170249498306.308886.7093117515363733145.b4-ty@linaro.org>
-Date: Wed, 13 Dec 2023 20:16:23 +0100
+ <20231211162331.435900-15-peter.griffin@linaro.org>
+Subject: Re: (subset) [PATCH v7 14/16] arm64: dts: exynos: google: Add
+ initial Google gs101 SoC support
+Message-Id: <170249498523.308886.9560205658028235022.b4-ty@linaro.org>
+Date: Wed, 13 Dec 2023 20:16:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -71,22 +71,22 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.12.4
 
 
-On Mon, 11 Dec 2023 16:23:27 +0000, Peter Griffin wrote:
-> This patch adds the compatibles and drvdata for the Google
-> gs101 SoC found in Pixel 6, Pixel 6a & Pixel 6 pro phones.
+On Mon, 11 Dec 2023 16:23:29 +0000, Peter Griffin wrote:
+> Google gs101 SoC is a ARMv8 mobile SoC found in the Pixel 6
+> (oriole), Pixel 6a (bluejay) and Pixel 6 pro (raven) mobile
+> phones.
 > 
-> Similar to Exynos850 it has two watchdog instances, one for
-> each cluster and has some control bits in PMU registers.
-> 
-> gs101 also has the dbgack_mask bit in wtcon register, so
-> we also enable QUIRK_HAS_DBGACK_BIT.
+> It features:
+> * 4xA55 Little cluster
+> * 2xA76 Mid cluster
+> * 2xX1 Big cluster
 > 
 > [...]
 
 Applied, thanks!
 
-[12/16] watchdog: s3c2410_wdt: Add support for Google gs101 SoC
-        https://git.kernel.org/krzk/linux/c/796bb2d3a16c1e786ed51183162783405b5c8f85
+[14/16] arm64: dts: exynos: google: Add initial Google gs101 SoC support
+        https://git.kernel.org/krzk/linux/c/ea89fdf24fd94cd37a7e2c51e09c39423ced7ccb
 
 Best regards,
 -- 
