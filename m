@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Wf9uFiEr"
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CB81AC
-	for <linux-clk@vger.kernel.org>; Tue, 12 Dec 2023 23:01:04 -0800 (PST)
-Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-548ce39b101so9067168a12.2
-        for <linux-clk@vger.kernel.org>; Tue, 12 Dec 2023 23:01:04 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rEAzQJNw"
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40448D0
+	for <linux-clk@vger.kernel.org>; Tue, 12 Dec 2023 23:04:30 -0800 (PST)
+Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-50bfa7f7093so8465448e87.0
+        for <linux-clk@vger.kernel.org>; Tue, 12 Dec 2023 23:04:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702450863; x=1703055663; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1702451068; x=1703055868; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=zHMdNcfC1HmxRzd3QioUxmMyBVeOrfAuTs7vHTPPGFU=;
-        b=Wf9uFiEriyUw0csbUvkwa+JFSUgC8CEBf04kvmkEUuYbEYTom8IidSWdVYdUdpRrEt
-         jtRX+3DsWKTecHCija1gJc9cF/uK0GGYkYW78RCWpF0kMyrSQVa4WQvM5Pdvtx9WvKrd
-         POzAbkSxC0npLbNKMTr31ief0XF9KgYh1SgNm3GFVdnytIEvD+j5CdhHwY133VMPMMfB
-         0sQLx+JOioSdVJPd7ZrMKvYhfUNufHha4uyxuQOg/ysq1kYeEJf8xR0VGZu4NVxaI5ZI
-         JjvpWD9TWwEVrYEQEjy6FMopSREbQBXHRZaAhkICnGbbPVwnccn5WgxGnn/xw43hrBiG
-         6hYA==
+        bh=deWpEeAoza1LIualsVZbdy0EHlWRefem1NxcUaee0Zg=;
+        b=rEAzQJNwAXc7rSVbxi4fHFkg5IIwWAfXD1M99bSKAQktmunuM3q8pzVv2dRFAUALoK
+         UIsXgIugtz9E7zdamU7yp+LTNhtB3vZkJ9zRbazIrqfLWfv8+xeVXfBCYfj9subfnnF0
+         /7TOtWjjWs1rNVM8bPDek6KVtuthaWm0LTzdvZNTa6QaWWcl4yAn9SqgCImP4goRr5jQ
+         wx2Ojzix3CLIRVt1Q0BsuqCgxFel73xD82xzY+0+mWnha/rWLTgeofAKvXCbWY6FKVV7
+         wUvotjH0n5H21D4jUVsEwCttdcBGpZ/R6H1I67SZkMCpCbE/tmjCkDCyHxSnatB8EB+t
+         h/1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702450863; x=1703055663;
+        d=1e100.net; s=20230601; t=1702451068; x=1703055868;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zHMdNcfC1HmxRzd3QioUxmMyBVeOrfAuTs7vHTPPGFU=;
-        b=liwuaWSB6np0MsDD7q3Fc5B9lvUECQJE46eTfMoDTZ33X+CwHStwlMuvGq9gKeZDOm
-         NUZGo+X1k13fQ2D77e/pccWtXRTjk1r8spxWGoNJz/68N+AZtFZtXubVitXeV/LSVOxN
-         iwdks1Pv7SAt6u51GbCHJB2HwcDXXmHvmrrxVpD4hLdV2pdjoGR+KQZxt2WSAd+BUZRH
-         y+WvncSh0vdZfogkagKdmM3UBvfi8Yt1P4FxyoIV3qqUT+b9cirzopGzWnPQ+wntttBz
-         A2o8M7+QuPaYUeu122DlTHP9wfBCauc8A4aj64Mcp+T3xqEWVEpswa+/nKu1JB4QGh1S
-         LahQ==
-X-Gm-Message-State: AOJu0YwwQVzHTk021zk0RyI/Cza4XT9VA9OLwBfuor2iKcXbTRto9K3G
-	03EJmFoj8gwTGsZbZKmwxQJa4Q==
-X-Google-Smtp-Source: AGHT+IG0IDwJ0NjUVvd88Yz/97KsRl3iFvtGqseZX3SMT6oJnKTJJRz39OlUMn9Lpp8MB0DlALWxBA==
-X-Received: by 2002:a17:906:2319:b0:a19:a19b:4220 with SMTP id l25-20020a170906231900b00a19a19b4220mr2422570eja.139.1702450862814;
-        Tue, 12 Dec 2023 23:01:02 -0800 (PST)
+        bh=deWpEeAoza1LIualsVZbdy0EHlWRefem1NxcUaee0Zg=;
+        b=GpakpQDdYUym/2qte59L+8H9KNun5/y6HElRlAtbhofw7w9T0v5HhZotgm3HiqiFxk
+         RQI4JHpmjyS7WlCND2Dd18XPXM58eZm/V04gROG8G70pf1mG2mJrapmzOf/izS1r1Zx6
+         EhdZPdUhnSDocwjESLP5qhSEKGBcFQQK0Xql4hnmthaswrCzgJQivg5Y6xYqHyaPjIza
+         i7IQDucO+fB1Rk0/0IBJsp4jLGhh23x+NVejwbOUSj+jJ2xCfB/WyfYR1a/i0y9Q8QTa
+         lSiZHW/QD3UyH0i/vHBQLsDNn92fbJbl/BYwpuqoACjdqHiu2+Rbl6Gwl3IrWDt0x/YG
+         MglQ==
+X-Gm-Message-State: AOJu0YwzS+Q9EWaKBZeI7UUUdUGUeOJugTIfkm0HOTyB7PmOiCItoYGW
+	OU+IkT+OJk8u+KDeEXBXYEwSZA==
+X-Google-Smtp-Source: AGHT+IGiKF2oMLU28+2oME+tA62AXHIXuo2gREvYYSDjnfH4ylJlVQQHKbnuWwDLWMIVd4Qro9wzqA==
+X-Received: by 2002:a19:ad4b:0:b0:50b:f71f:2cc1 with SMTP id s11-20020a19ad4b000000b0050bf71f2cc1mr3014522lfd.62.1702451068447;
+        Tue, 12 Dec 2023 23:04:28 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id st6-20020a170907c08600b00a1ddf143020sm7245727ejc.54.2023.12.12.23.01.00
+        by smtp.gmail.com with ESMTPSA id cr7-20020a056402222700b0054ce9ef93fbsm5349829edb.4.2023.12.12.23.04.25
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Dec 2023 23:01:02 -0800 (PST)
-Message-ID: <1ca36158-c57d-4130-94f5-c3650594498c@linaro.org>
-Date: Wed, 13 Dec 2023 08:00:59 +0100
+        Tue, 12 Dec 2023 23:04:28 -0800 (PST)
+Message-ID: <7c878a4e-da9b-4e8e-a965-9eeefe073d13@linaro.org>
+Date: Wed, 13 Dec 2023 08:04:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,8 +47,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/5] dt-bindings: reset: mediatek: add MT7988 ethwarp
- reset IDs
+Subject: Re: [PATCH v5 3/5] dt-bindings: clock: mediatek: add clock
+ controllers of MT7988
 Content-Language: en-US
 To: Daniel Golle <daniel@makrotopia.org>, Rob Herring <robh+dt@kernel.org>,
  Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -68,7 +68,7 @@ To: Daniel Golle <daniel@makrotopia.org>, Rob Herring <robh+dt@kernel.org>,
  linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
  netdev@vger.kernel.org
 References: <152b256d253508cdc7514c0f1c5a9324bde83d46.1702350213.git.daniel@makrotopia.org>
- <a60f5b5ed58626f3dbac1eab8a5845c3ce9bd17c.1702350213.git.daniel@makrotopia.org>
+ <ce9b1e777090724794cf9f0c52bcd8618385fd06.1702350213.git.daniel@makrotopia.org>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -114,22 +114,98 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <a60f5b5ed58626f3dbac1eab8a5845c3ce9bd17c.1702350213.git.daniel@makrotopia.org>
+In-Reply-To: <ce9b1e777090724794cf9f0c52bcd8618385fd06.1702350213.git.daniel@makrotopia.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 12/12/2023 04:18, Daniel Golle wrote:
-> Add reset ID for ethwarp subsystem allowing to reset the built-in
-> Ethernet switch of the MediaTek MT7988 SoC.
+> Add various clock controllers found in the MT7988 SoC to existing
+> bindings (if applicable) and add files for the new ethwarp, mcusys
+> and xfi-pll clock controllers not previously present in any SoC.
 > 
 > Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 > ---
 
-No need for one patch per one header. Headers are parts of new binding
-patch. If you decide to keep headers separate for easier review, then
-they could be in one header-only-patch.
+...
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> -      - const: syscon
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - mediatek,mt7622-sgmiisys
+> +              - mediatek,mt7629-sgmiisys
+> +              - mediatek,mt7981-sgmiisys_0
+> +              - mediatek,mt7981-sgmiisys_1
+> +              - mediatek,mt7986-sgmiisys_0
+> +              - mediatek,mt7986-sgmiisys_1
+> +          - const: syscon
+> +      - items:
+> +          - enum:
+> +              - mediatek,mt7988-sgmiisys_0
+> +              - mediatek,mt7988-sgmiisys_1
+
+No underscores in compatibles. At least for new ones, because you cannot
+touch the old.
+
+> +          - const: simple-mfd
+> +          - const: syscon
+>  
+>    reg:
+>      maxItems: 1
+> @@ -35,11 +42,47 @@ properties:
+>      description: Invert polarity of the SGMII data lanes
+>      type: boolean
+>  
+> +  pcs:
+> +    type: object
+> +    description: HSGMII PCS logic
+> +    properties:
+> +      compatible:
+> +        const: mediatek,mt7988-sgmii
+> +
+> +      clocks:
+> +        maxItems: 3
+> +        minItems: 3
+
+drop minItems
+
+> +
+> +      clock-names:
+> +        items:
+> +          - const: sgmii_sel
+> +          - const: sgmii_tx
+> +          - const: sgmii_rx
+> +
+> +    required:
+> +      - compatible
+> +      - clocks
+> +      - clock-names
+> +
+> +    additionalProperties: false
+> +
+>  required:
+>    - compatible
+>    - reg
+>    - '#clock-cells'
+>  
+
+add allOf: here
+
+> +if:
+> +  properties:
+> +    compatible:
+> +      contains:
+> +        enum:
+> +          - mediatek,mt7988-sgmiisys_0
+> +          - mediatek,mt7988-sgmiisys_1
+> +
+> +then:
+> +  required:
+> +    - pcs
+
+else: also valid?
+
+Maybe there is no point to have it in this binding?
 
 Best regards,
 Krzysztof
