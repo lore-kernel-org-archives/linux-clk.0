@@ -1,46 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dfzY5A3U"
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E65DE3
-	for <linux-clk@vger.kernel.org>; Tue, 12 Dec 2023 22:11:12 -0800 (PST)
-Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-a1c7d8f89a5so861334466b.2
-        for <linux-clk@vger.kernel.org>; Tue, 12 Dec 2023 22:11:12 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tKe14S6g"
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCEED9A
+	for <linux-clk@vger.kernel.org>; Tue, 12 Dec 2023 22:11:16 -0800 (PST)
+Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-54cde11d0f4so8973236a12.2
+        for <linux-clk@vger.kernel.org>; Tue, 12 Dec 2023 22:11:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702447871; x=1703052671; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        d=linaro.org; s=google; t=1702447875; x=1703052675; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
         bh=UKaJDiwuDbsd6kNZ9ePma+Ku5Gx+q4uCKVVLHKt2Prs=;
-        b=dfzY5A3Ua944rwejuyCoYrnjxwGX+4lhSdwH4yhDkWoG6lN1HPHElvTlHCcEC4a1mT
-         eWE4/6dYC/VaAX9S+MkbBC0aF5GEGqvY6E7xiQu6FrbWc6ilvg3vDnvGNJp1RsvHM2Px
-         XdUDrhscSJg3zl71hkjMKBQFj690HI29txNrPutiDPEVjXpu7+puTdSzNFtySmRc7YXM
-         x6bWcO1BbYTDcM5nnrdgmuLnTLig0N+zywSTX0MlNMf9ZAwppJHRx5QQCXs7SGhWIQ4T
-         eeXB56Ex2mtYI0rAZkXd2sE5GSELBNpO44Mty0ITepb4z8HSBJ0YnZexqjnyd1h9B1EY
-         gbbA==
+        b=tKe14S6gLpUAay6Sfa1RI14AY9ResyzQaUAYXzQ8sBbA3PLABFHA17knn4W+FXf39C
+         nCNX4/2Do1D2r6MKT+eAN8BAXs6P/NW/kWxDeB6/dyNBr/W0GTx66lYoJGDdPZ5rBFjp
+         6Gs89onEncBO4c3NR5/+D6RaGHRlcup9EKwYfrcKcG/rM4YY97iH5ltMo3q9mx0+ODeM
+         GMouSG+yCfHB+SWbMlOyumqG/8mhwUEdY/0PKj39CND71FNPfUvC35aflWlrVj4Luu6x
+         FhxtYn5/G8jMI/q3/SbpaxJcMGjPHAapOWnONRkDN47xQATwXEhYmSsTJ5vjz2n+OQFl
+         urfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702447871; x=1703052671;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
+        d=1e100.net; s=20230601; t=1702447875; x=1703052675;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
         bh=UKaJDiwuDbsd6kNZ9ePma+Ku5Gx+q4uCKVVLHKt2Prs=;
-        b=xLZCUqiL+ULISElrbew3Ll9cSpxTp2egvjNI4B2VlpiX6qP2FNPlUwqQIHoNIkNUpW
-         t1zCksbyHzGyXpXicZvcBIMmXEo96O9UEeCl5ndC2fuhmHxny9xKmLv4XKZpRzECee6I
-         H3gVhE+Lk5Z++QtDtBJpHkFoR0UqSp6CmIVAvBk6i5Y1n5N5VXts2KdO8QXNdj/NBIWy
-         Wu1UwqY+kDKcGgelia1/KnIa58M4oB/tp+JzFLXYyw3gvKV/FbfKZVO7x6EhWVYcbR7O
-         Pm4yVgkikUjIBtd/8AWT+JiWbLtLM0585GJBqFlEpFFFoZTPfRh3PCnrs7N4sj+JhThN
-         RVkw==
-X-Gm-Message-State: AOJu0YyAfZUbeFnaD0X6o7dZyqWlZgE1DP2UCoKeV3PQwSYjiETP8amZ
-	bDq8Dx3pOZKNeW4AvnUtGoLYctl29BLTrQDHfkA=
-X-Google-Smtp-Source: AGHT+IGmTSVLCpAYuRQKnzeV9SpdfRU8On/oN98vV4jfgtSbRS1CyCeP5iUGPcJXET4RIRTb+p9UOA==
-X-Received: by 2002:a17:907:86a4:b0:a19:a1ba:da56 with SMTP id qa36-20020a17090786a400b00a19a1bada56mr4628454ejc.125.1702447870794;
-        Tue, 12 Dec 2023 22:11:10 -0800 (PST)
+        b=VoFRIKEXffSXZKymZMjCJOH76J9UZEijT8RA6RpkwVHTlAcFUNzxA/U4LvCfKpdAuu
+         XrVjAd7gvKQwCD2uCuDeka5klkddb8/eBuE6H7qQ4X1mQXEJoca+kI13YjCe/9JGJz2i
+         r0nSO+vA59tUqXRNYYJVykEC/iMFFeoHAEC0Qdq/PPvZyFISgOkipetZ0OfJiWj1wXhH
+         d4nPN63/UuV2ucyzd7SDzpTF5SKCwr9TL/tsk7aqDGg9wVijEQ0eC0LS93dU2gLo4rjG
+         bPC6ohCA12ZtdJAHH1VDoqlC+G67BSEd6BqmGBkHhj9vGkZx1rEEChmkTkJZFY/IxOI6
+         ZCYA==
+X-Gm-Message-State: AOJu0YwBcTPrcYx+jGrlI0E4ej+7IgyAPssVJbT0N3KnUgQSHKwtC4Eo
+	KVkUNmrosEEvIYz2+X35NXV2OQ==
+X-Google-Smtp-Source: AGHT+IEQHdonQ9JB+5LmOUpH6hPJ51clHFrNSN5Udtue8Yg3IchJziB4TukLQOvbsO7uKA0jCEDFhw==
+X-Received: by 2002:a17:906:104e:b0:a22:f129:e45e with SMTP id j14-20020a170906104e00b00a22f129e45emr592409ejj.155.1702447875494;
+        Tue, 12 Dec 2023 22:11:15 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id so7-20020a170907390700b00a1f747f762asm6525129ejc.112.2023.12.12.22.11.09
+        by smtp.gmail.com with ESMTPSA id so7-20020a170907390700b00a1f747f762asm6525129ejc.112.2023.12.12.22.11.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Dec 2023 22:11:10 -0800 (PST)
-Message-ID: <56f012ec-4746-491d-b9c6-0ef6f914bc3c@linaro.org>
-Date: Wed, 13 Dec 2023 07:11:08 +0100
+        Tue, 12 Dec 2023 22:11:15 -0800 (PST)
+Message-ID: <4a17b0c4-2e5e-421f-8a72-662cdd75138f@linaro.org>
+Date: Wed, 13 Dec 2023 07:11:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -48,17 +47,19 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] memory: tegra210-emc: Simplify usage of
+Subject: Re: [PATCH 4/5] memory: tegra30-emc: Simplify usage of
  clk_rate_exclusive_get()
+Content-Language: en-US
 To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>
 Cc: linux-clk@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh@kernel.org>,
- linux-tegra@vger.kernel.org, kernel@pengutronix.de
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Johan Hovold <johan+linaro@kernel.org>, Georgi Djakov <djakov@kernel.org>,
+ Rob Herring <robh@kernel.org>, linux-tegra@vger.kernel.org,
+ kernel@pengutronix.de
 References: <cover.1702400947.git.u.kleine-koenig@pengutronix.de>
- <1b4321a975ac1a903a0c816ef2cce80e7d75eae3.1702400947.git.u.kleine-koenig@pengutronix.de>
-Content-Language: en-US
+ <9cf2553c9da167ebf6654bbdeab6ce2a93232ca6.1702400947.git.u.kleine-koenig@pengutronix.de>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -104,7 +105,7 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <1b4321a975ac1a903a0c816ef2cce80e7d75eae3.1702400947.git.u.kleine-koenig@pengutronix.de>
+In-Reply-To: <9cf2553c9da167ebf6654bbdeab6ce2a93232ca6.1702400947.git.u.kleine-koenig@pengutronix.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
