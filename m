@@ -1,179 +1,286 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="vLuaFn2t"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FE34D5;
-	Wed, 13 Dec 2023 09:00:26 -0800 (PST)
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20231213170024epoutp01a43e564b72d0c450c1a467733ec97763~gcr8wMsft2662626626epoutp01z;
-	Wed, 13 Dec 2023 17:00:24 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20231213170024epoutp01a43e564b72d0c450c1a467733ec97763~gcr8wMsft2662626626epoutp01z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1702486824;
-	bh=862TZdAgd6+AsuSl92ow11fR2h1cMu4TUKSVhr/77g0=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=vLuaFn2tdxtkfoJ0uzpzbXNVpmpQYDGHmtsYSxcUdGouQQXlz5fsK7b0452vNYQIy
-	 RTnZT8N0LGlLaGhPWUjWnavxYCkP0INxLadG5mDOjiIXgMLKEtVYWQk7lEzEDwwUdI
-	 Q9T18o5BdZE+uQjD9rrcdfnlFKnqswiQATfQrvx8=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-	20231213170024epcas5p297b937d7beb5d4f06808249f367d05c3~gcr8bQ2sm0341203412epcas5p2n;
-	Wed, 13 Dec 2023 17:00:24 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.177]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4Sr1vB4kKwz4x9Pp; Wed, 13 Dec
-	2023 17:00:22 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	A9.30.10009.623E9756; Thu, 14 Dec 2023 02:00:22 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20231213170022epcas5p166f8e3d92554ad33db3e1074423cd386~gcr6gfZQy2678926789epcas5p1T;
-	Wed, 13 Dec 2023 17:00:22 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20231213170022epsmtrp270efdf5cbb7272c8b4c6b38e3d98af58~gcr6ZNTEh3029930299epsmtrp2P;
-	Wed, 13 Dec 2023 17:00:22 +0000 (GMT)
-X-AuditID: b6c32a4a-261fd70000002719-68-6579e326df8e
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	65.66.07368.523E9756; Thu, 14 Dec 2023 02:00:21 +0900 (KST)
-Received: from INBRO000447 (unknown [107.122.12.5]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20231213170017epsmtip1fec7a5169d19e15afc32bf3705a5b6f9~gcr2Q5d0z3081730817epsmtip1g;
-	Wed, 13 Dec 2023 17:00:17 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Peter Griffin'" <peter.griffin@linaro.org>, <robh+dt@kernel.org>,
-	<krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
-	<conor+dt@kernel.org>, <sboyd@kernel.org>, <tomasz.figa@gmail.com>,
-	<s.nawrocki@samsung.com>, <linus.walleij@linaro.org>,
-	<wim@linux-watchdog.org>, <linux@roeck-us.net>, <catalin.marinas@arm.com>,
-	<will@kernel.org>, <arnd@arndb.de>, <olof@lixom.net>,
-	<gregkh@linuxfoundation.org>, <jirislaby@kernel.org>,
-	<cw00.choi@samsung.com>
-Cc: <tudor.ambarus@linaro.org>, <andre.draszik@linaro.org>,
-	<semen.protsenko@linaro.org>, <saravanak@google.com>,
-	<willmcvicker@google.com>, <soc@kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-	<linux-watchdog@vger.kernel.org>, <kernel-team@android.com>,
-	<linux-serial@vger.kernel.org>
-In-Reply-To: <20231211162331.435900-17-peter.griffin@linaro.org>
-Subject: RE: [PATCH v7 16/16] MAINTAINERS: add entry for Google Tensor SoC
-Date: Wed, 13 Dec 2023 22:30:16 +0530
-Message-ID: <018e01da2de5$dbb40620$931c1260$@samsung.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gcgBs36E"
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B2F899;
+	Wed, 13 Dec 2023 09:42:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1702489340; x=1734025340;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=jBtGP8WM+RYBuZNY+rEd0+l1PJWe6enNGl91hLRWMnw=;
+  b=gcgBs36E88/YKFlh1UAXDRAVSMX/JLaNisK4hiMw9e4Vxh0Xc9njYKnx
+   x4SOkyBpiQ1h3Vjpo5eoJElSDrCDVKH+7kNfgQx7bqTj5f/iGqXRxKo6F
+   lQ7ktjRaZW0hCQNkmVHo0OctItNq+bc76cT3XpM6tv2K3fTI2JpYWihfB
+   /QMBLJEQeOQxrrzZXwV1Vt+YZLX3LoIsZjia9HMAjjs4I0DN02e4Xmh45
+   Xh5SQIc2wDKYMVvmP94iq6ZmZ8T5RmwT7TVlTRRi9JFz73GMkX4xOkcTk
+   RtWWSJhUY+0FLhT7brXksHFTmT5zi5+5xA631dP5UtC5wMrmiejQrQSgL
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10923"; a="459317604"
+X-IronPort-AV: E=Sophos;i="6.04,273,1695711600"; 
+   d="scan'208";a="459317604"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2023 09:42:19 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10923"; a="844398862"
+X-IronPort-AV: E=Sophos;i="6.04,273,1695711600"; 
+   d="scan'208";a="844398862"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmsmga004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2023 09:42:17 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1rDTFP-00000005b77-08xn;
+	Wed, 13 Dec 2023 19:42:15 +0200
+Date: Wed, 13 Dec 2023 19:42:14 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Nikita Shubin <nikita.shubin@maquefel.me>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v6 04/40] clk: ep93xx: add DT support for Cirrus EP93xx
+Message-ID: <ZXns9klLAhuK-Alz@smile.fi.intel.com>
+References: <20231212-ep93xx-v6-0-c307b8ac9aa8@maquefel.me>
+ <20231212-ep93xx-v6-4-c307b8ac9aa8@maquefel.me>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: en-us
-Thread-Index: AQEeDlMUs+qnFg95EVUf+Z9FZqMuEwFbwR+LAmZgagyyAZ3uIA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Tf0xTVxjd7evrK0zmo+K8Mh3lJahICkUpu53iD9DlDdkkM9ONLbKGvrSG
-	/rKlU5ybbAxUxApMDBDwx3A1dp1ISxS0VSigoE7iRIoGjAyMyhAmAk4tspaHG/+de+4593zf
-	d/PxMUE9Eczfoslg9BqZiuL5c880hi8ULejNZMT28lBU02/novGiSwQaMucDZHVe5yD3yAMc
-	HWm6jqPsyioeGqyYh2rPBiHTwx4MHfSc4CBbbweOnuTfxZH9iAegkrYLHHStcj+BOk9dIFDf
-	sWscdOPKWnTF/ZSHTpe84qIcZxOBGgd24yjPNc5DrzqqueiByevqdXt4yHLO+8jwnc3oxy4J
-	sgxPANT76BW2SkifOX8Gp62HrYB++aII0EOdOQRdV9ZN0EdtRtpm2cujuzocPPqk1YrTFyus
-	BG0/votub/kBp+ueZRG0qcYC6Ke2d5NnpqQvVzIyOaMXMpo0rXyLRhFHrduQmpAqiRVHi6Kl
-	6D1KqJGpmThqTVKy6IMtKu+4KOHXMpXRSyXLDAYqasVyvdaYwQiVWkNGHMXo5CpdjC7SIFMb
-	jBpFpIbJeD9aLF4i8Qq/Slc6Rvq5us7A7fmlp/As0DAzD/jxIRkDf7+8h+PDAvI8gPl5G/KA
-	vxcPA+hoaMbZwxiAPW03wWtH5/d7MdbhBLB6PIIVPQTwXOvdyQseKYK1lbk8Hw4i72LQfX21
-	T4SRVgw+n+iaFPmRq+At+4Q3m8+fRSbCgp4kH80lw2D9b4NcHw4gpbAr6xLO4kDYWto3yWNk
-	CDz7uBxjCxLC5/fNOMvPgY+amwg2Nx4+HzqF+XIhafKHI+UmnDWsgYfGsggWz4L9l2umcDB8
-	Oujk+eqBJA1/9gSztBI+PlE11fxKWN9ezvVJMDIcVp2LYmPfgvtf9nFYZwDckytg1WEwe/AW
-	l8XvwMJ9+6YKoKG1+zanAISWTWusbFpjZdOaKfs/7CjgWsBcRmdQKxiDRLdEw2z777fTtGob
-	mFylxYm1oOfe35EuwOEDF4B8jAoKaK3dxggC5LLMHYxem6o3qhiDC0i80y7Egmenab27qMlI
-	jY6RimNiY2NjpEtjo6k5AX/lVMgFpEKWwaQzjI7Rv/Zx+H7BWRxNW9Qi6fANo5UeqFdkDwRK
-	hSU9Oww56oaa71q2/+LZHcr7bGR+Ysk852jmly7HdstF/0PFM8Y/bH+54Fu1UyRAJ/2etbYU
-	hLaQZMG1P5K6Z5SvNJsOEOsD2xXjQ7c+TvE8sRUuWlsuXlQNPin6KPng1ai0ECN/cfzIQLpa
-	+4azTnRcFdlot99ffXrXWOkKfXHu0jH51eRl5uZl8Vvl1EIFVfbrJkXl6M7Nz77ZVOwSfDpq
-	6nDPdbx9J7wqat1Gh1LwaMbOhI05uw//SUVgEe75P01sbDh5NCQID+O++MLVWn3zzRSB5N7M
-	f3h1weEDE8eAOT9htri3+/bWxkq++fOb61MJimtQyqIXY3qD7F9iMTOI0wQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0xTVxzHd+6bJg2XUuIBTTVdUEMGrolbDjqFuJHciTM+YnSwqBVukNAC
-	ueUxTYyVlymptYJhWEXkYTdrhbV1UB7qhuhW4+rwURoEo6lbhShkhUzYsB2lWcZ/n/P9ne/n
-	/P44DC6xkAlMfmEJLxQqVXJKRHTdlsuSE31H+A+fV6Si6xMOAr2ru0ujKbMeIOsNN4aGZ/wk
-	ah50k6iyrZNCk00rkLNbigyvXuDo7Py3GLL7PCT6U/+MRI7meYAaH9zE0P22UzTydtyk0cuW
-	+xgaupeB7g1PU+j7xiCBqm8M0uj265Mkqh14R6Ggx0Ygv2Gh5Ruep5Cld0ESGNmPqkY/QpZA
-	CCDfeBBPX8V19XWRnPWiFXD//F0HuClvNc31mMZo7pK9lLNbdBQ36umnuCtWK8ndarLSnKP9
-	OPf4lwqS63mrpTnDdQvgpu2yHdFZok9yeVV+GS+s23xQdLh/ZoIo9sZ8rT/XQWrBT9G1IIqB
-	7HroPaHDa4GIkbB9ANY2n8Qig+Vw2GakIxwLrwT9iyxh/wCw4oEizBSbDJ1tNVS4LGUDOLwa
-	8i4ecLYXh25tDRnRDgJ4tr4TD1ei2HT4xBFaeIJhYtmt0PhiWzgm2ET447VJIsxiNhWOau+S
-	EY6BrnMvifB1nE2BNTYQjnF2Jex+cwGPLLcKzv1uJiP5Mjh+Z3BxUSm7Bc5NdeBGEGtaYjL9
-	bzItMZmWtC8BwgLi+WKNOk+doyhWFPLlKRqlWlNamJeSU6S2g8XvlLTWCZ41B1MGAMaAAQAZ
-	XC4Vu5zlvEScqzxylBeKDgilKl4zAJYzhHyZWNF4PlfC5ilL+AKeL+aF/6YYE5WgxdZ8udq5
-	Ie0vg2pWUlm269H7V3c+5ZFLGm9OjusIrO+VGeuNnr47z4cOiRoefrC2SKy3DL3SGfrdOm9T
-	5lHfmNQ1M8vknynYnxPy74lT+XHzU82xNM/pdRs369+b7S4I/fp4xD4my0zYkRXVuunyypip
-	bZ3brZejK0t09fmt3+kPqVK3qyVV8fjpn8W2LMP5zN+UXae2fnospuWLTiOJzXTL/J+VheoM
-	5ha3J0nYnW3P1men38qoaqXipyXVGVsaqgKrD4wK2rm4j9M8P+z7qmZcHRxJc+08mNhwhsp2
-	TBw/ccH2OR79UPVWO9nuNu39pv0a6rloSn60x5VXvgEIPXJCc1ipSMIFjfJfpq0gw70DAAA=
-X-CMS-MailID: 20231213170022epcas5p166f8e3d92554ad33db3e1074423cd386
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20231211162440epcas5p2a6f884784e8d9b03fcd9e6024ca9d3cf
-References: <20231211162331.435900-1-peter.griffin@linaro.org>
-	<CGME20231211162440epcas5p2a6f884784e8d9b03fcd9e6024ca9d3cf@epcas5p2.samsung.com>
-	<20231211162331.435900-17-peter.griffin@linaro.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231212-ep93xx-v6-4-c307b8ac9aa8@maquefel.me>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
+On Tue, Dec 12, 2023 at 11:20:21AM +0300, Nikita Shubin wrote:
+> Rewrite EP93xx clock driver located in arch/arm/mach-ep93xx/clock.c
+> trying to do everything the device tree way:
+> 
+> - provide clock acces via of
+> - drop clk_hw_register_clkdev
+> - drop init code and use module_auxiliary_driver
 
+...
 
-> -----Original Message-----
-> From: Peter Griffin <peter.griffin@linaro.org>
-> Sent: Monday, December 11, 2023 9:54 PM
-> To: robh+dt@kernel.org; krzysztof.kozlowski+dt@linaro.org;
-> mturquette@baylibre.com; conor+dt@kernel.org; sboyd@kernel.org;
-> tomasz.figa@gmail.com; s.nawrocki@samsung.com; linus.walleij@linaro.org;
-> wim@linux-watchdog.org; linux@roeck-us.net; catalin.marinas@arm.com;
-> will@kernel.org; arnd@arndb.de; olof@lixom.net;
-> gregkh@linuxfoundation.org; jirislaby@kernel.org;
-> cw00.choi@samsung.com; alim.akhtar@samsung.com
-> Cc: peter.griffin@linaro.org; tudor.ambarus@linaro.org;
-> andre.draszik@linaro.org; semen.protsenko@linaro.org;
-> saravanak@google.com; willmcvicker@google.com; soc@kernel.org;
-> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
-> samsung-soc@vger.kernel.org; linux-clk@vger.kernel.org; linux-
-> gpio@vger.kernel.org; linux-watchdog@vger.kernel.org; kernel-
-> team@android.com; linux-serial@vger.kernel.org
-> Subject: [PATCH v7 16/16] MAINTAINERS: add entry for Google Tensor SoC
-> 
-> Add maintainers entry for the Google tensor SoC based platforms.
-> 
-> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+> +#define EP93XX_I2SCLKDIV_SDIV		(1 << 16)
 
->  MAINTAINERS | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 98f7dd0499f1..b731d6b9876a 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -8990,6 +8990,16 @@ S:	Maintained
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/chrome-
-> platform/linux.git
->  F:	drivers/firmware/google/
-> 
-> +GOOGLE TENSOR SoC SUPPORT
-> +M:	Peter Griffin <peter.griffin@linaro.org>
-> +L:	linux-arm-kernel@lists.infradead.org (moderated for non-
-> subscribers)
-> +L:	linux-samsung-soc@vger.kernel.org
-> +S:	Maintained
-> +F:	Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
-> +F:	arch/arm64/boot/dts/exynos/google/
-> +F:	drivers/clk/samsung/clk-gs101.c
-> +F:	include/dt-bindings/clock/google,clk-gs101.h
+BIT() ?
+
+...
+
+> +static u8 ep93xx_mux_get_parent(struct clk_hw *hw)
+> +{
+> +	struct ep93xx_clk *clk = ep93xx_clk_from(hw);
+> +	struct ep93xx_clk_priv *priv = ep93xx_priv_from(clk);
+> +	u32 val;
 > +
->  GPD POCKET FAN DRIVER
->  M:	Hans de Goede <hdegoede@redhat.com>
->  L:	platform-driver-x86@vger.kernel.org
-> --
-> 2.43.0.472.g3155946c3a-goog
+> +	regmap_read(priv->map, clk->reg, &val);
+> +
+> +	val &= EP93XX_SYSCON_CLKDIV_MASK;
+> +
+> +	switch (val) {
+> +	case EP93XX_SYSCON_CLKDIV_ESEL:
+> +		return 1; /* PLL1 */
+> +	case EP93XX_SYSCON_CLKDIV_MASK:
+> +		return 2; /* PLL2 */
+
+> +	default:
+> +		break;
+> +	};
+> +
+> +	return 0; /* XTALI */
+
+You may return directly from default.
+
+> +}
+
+...
+
+> +static int ep93xx_mux_set_parent_lock(struct clk_hw *hw, u8 index)
+> +{
+> +	struct ep93xx_clk *clk = ep93xx_clk_from(hw);
+> +	struct ep93xx_clk_priv *priv = ep93xx_priv_from(clk);
+> +	unsigned long flags;
+> +	u32 val;
+> +
+> +	if (index >= 3)
+> +		return -EINVAL;
+
+> +	spin_lock_irqsave(&priv->lock, flags);
+
+Why not guard() ?
+
+> +	regmap_read(priv->map, clk->reg, &val);
+> +	val &= ~(EP93XX_SYSCON_CLKDIV_MASK);
+> +	val |= index > 0 ? EP93XX_SYSCON_CLKDIV_ESEL : 0;
+> +	val |= index > 1 ? EP93XX_SYSCON_CLKDIV_PSEL : 0;
+> +
+> +	ep93xx_clk_write(priv, clk->reg, val);
+> +
+> +	spin_unlock_irqrestore(&priv->lock, flags);
+> +
+> +	return 0;
+> +}
+
+...
+
+> +static bool is_best(unsigned long rate, unsigned long now,
+> +		     unsigned long best)
+> +{
+> +	return abs_diff(rate, now) < abs_diff(rate, best);
+
+Have you included necessary header for this?
+
+> +}
+
+...
+
+> +static int ep93xx_mux_determine_rate(struct clk_hw *hw,
+> +				struct clk_rate_request *req)
+> +{
+> +	unsigned long best_rate = 0, actual_rate, mclk_rate;
+> +	unsigned long rate = req->rate;
+
+> +	struct clk_hw *parent_best = NULL;
+
+Strictly speaking you don't need an assignment here as you can compare the loop
+variable value against the maximum. But I don't know how heave the respective
+CLk call is and if it has no side-effects due to operations inside the loop body.
+
+> +	unsigned long parent_rate_best;
+> +	unsigned long parent_rate;
+> +	int div, pdiv;
+> +	unsigned int i;
+> +
+> +	/*
+> +	 * Try the two pll's and the external clock
+
+Either comma + 'b' or missing period.
+
+> +	 * Because the valid predividers are 2, 2.5 and 3, we multiply
+> +	 * all the clocks by 2 to avoid floating point math.
+> +	 *
+> +	 * This is based on the algorithm in the ep93xx raster guide:
+> +	 * http://be-a-maverick.com/en/pubs/appNote/AN269REV1.pdf
+> +	 *
+> +	 */
+> +	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
+> +		struct clk_hw *parent = clk_hw_get_parent_by_index(hw, i);
+> +
+> +		parent_rate = clk_hw_get_rate(parent);
+> +		mclk_rate = parent_rate * 2;
+> +
+> +		/* Try each predivider value */
+> +		for (pdiv = 4; pdiv <= 6; pdiv++) {
+> +			div = DIV_ROUND_CLOSEST(mclk_rate, rate * pdiv);
+
+> +			if (!in_range(div, 1, 127))
+
+Same header as for abs_diff()?
+
+> +				continue;
+> +
+> +			actual_rate = DIV_ROUND_CLOSEST(mclk_rate, pdiv * div);
+> +			if (is_best(rate, actual_rate, best_rate)) {
+> +				best_rate = actual_rate;
+> +				parent_rate_best = parent_rate;
+> +				parent_best = parent;
+> +			}
+> +		}
+
+(1)
+
+> +	}
+> +
+> +	if (!parent_best)
+> +		return -EINVAL;
+> +
+> +	req->best_parent_rate = parent_rate_best;
+> +	req->best_parent_hw = parent_best;
+> +	req->rate = best_rate;
+> +
+> +	return 0;
+> +}
+
+...
+
+> +	mclk_rate = parent_rate * 2;
+> +
+> +	for (pdiv = 4; pdiv <= 6; pdiv++) {
+> +		div = DIV_ROUND_CLOSEST(mclk_rate, rate * pdiv);
+> +		if (!in_range(div, 1, 127))
+> +			continue;
+> +
+> +		actual_rate = DIV_ROUND_CLOSEST(mclk_rate, pdiv * div);
+> +		if (abs(actual_rate - rate) < rate_err) {
+> +			npdiv = pdiv - 3;
+> +			ndiv = div;
+> +			rate_err = abs(actual_rate - rate);
+> +		}
+> +	}
+
+Looks very similar to (1). Can be deduplicated?
+
+...
+
+> +	/*
+> +	 * Clear old dividers
+> +	 * Bit 7 is reserved bit in all ClkDiv registers
+
+Missing periods.
+
+> +	 */
+
+...
+
+> +static unsigned long calc_pll_rate(u64 rate, u32 config_word)
+> +{
+> +	rate *= ((config_word >> 11) & GENMASK(4, 0)) + 1;	/* X1FBD */
+> +	rate *= ((config_word >> 5) & GENMASK(5, 0)) + 1;	/* X2FBD */
+> +	do_div(rate, (config_word & GENMASK(4, 0)) + 1);	/* X2IPD */
+
+> +	rate >>= ((config_word >> 16) & GENMASK(1, 0));		/* PS */
+
+Outer parentheses are redundant.
+
+> +	return rate;
+> +}
+
+...
+
+> +	/*
+> +	 * EP93xx SSP clock rate was doubled in version E2. For more information
+> +	 * see:
+> +	 *     http://www.cirrus.com/en/pubs/appNote/AN273REV4.pdf
+
+Can you point to the specific section? Like
+
+	 * see section 1.2.3 "Foo bar":
+
+> +	 */
+
+...
+
+> +	/* touchscreen/adc clock */
+
+ADC
+
+...
+
+> +	/*
+> +	 * On reset PDIV and VDIV is set to zero, while PDIV zero
+> +	 * means clock disable, VDIV shouldn't be zero.
+> +	 * So we set both video and is2 dividers to minimum.
+
+i2s?
+
+> +	 * ENA - Enable CLK divider.
+> +	 * PDIV - 00 - Disable clock
+> +	 * VDIV - at least 2
+> +	 */
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
