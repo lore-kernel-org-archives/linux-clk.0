@@ -1,115 +1,133 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3244E2C842;
-	Wed, 13 Dec 2023 13:02:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pOAZ793f"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B73FFC433C8;
-	Wed, 13 Dec 2023 13:02:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702472575;
-	bh=SYhlR91tO42bA8AfGZXjJpENUJXvfJwI9ZrVd2yDl7o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pOAZ793fHzKh/HYPbFWxrP57xdIvDGz7zJAPafMIdiXo/gdClWfHHvXyABgyiaI3d
-	 IzjD7flCvOmUtRPQK/nwxFG4P+/wjewBRhds66wynKr/e/B9HcmsYwbGWOiDfrcGgF
-	 Mad+vti/3CHqhV9Mc8DmDCiHi5Llrhj8bBvRK8yG2/BfMYB5kldfx6AoNVi3LS5Yed
-	 voYZzMviyN03AtFIwzndO9A1hh6wyeIOadgNlhvE3YVLQFoRmcz/zTpvLmVk2qGecJ
-	 c2p65kbrZ/i6niLm0i+F8ERk9GXSfIiwFL6+xEZru50pieVHqYJCoculVkT2y+ID+D
-	 uMM7/fLCxbELQ==
-Date: Wed, 13 Dec 2023 13:02:49 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: linux-riscv@lists.infradead.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Wolfgang Grandegger <wg@grandegger.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-can@vger.kernel.org,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH RESEND v1 2/7] dt-bindings: can: mpfs: add missing
- required clock
-Message-ID: <20231213-waffle-grueling-3a5c3879395b@spud>
-References: <20231208-reenter-ajar-b6223e5134b3@spud>
- <20231208-palpitate-passable-c79bacf2036c@spud>
- <20231212-unreeling-depose-8b6b2e032555-mkl@pengutronix.de>
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6848391;
+	Wed, 13 Dec 2023 05:26:29 -0800 (PST)
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-5e263e43ff2so12275317b3.0;
+        Wed, 13 Dec 2023 05:26:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702473988; x=1703078788;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=z/dW7y/88rRyjaO7r00R6o21E2y2IyUgTVUEboam7dg=;
+        b=Oz+yXYJpq+Oct7FrkI1dqm8rpVBHqo2R5SHLaG6h5EcjNQHCdNMHay8Q8EKkw6wB7c
+         tTq46YkMbHxT8AJiBIFuriCIysg403prfas+oCNFJQiYgOpZTj3tpOlfm7cjko2pPebU
+         +b9+kC4xJu2thZPy8lQGb37eVcS1h9DcKHDj7tq0DldInrUzBH1vxgLvrrmDMB6ZStBq
+         7wjcEB09iiIBATMaoOPCnBL7of9PVe3ieHGxSDsxlzRGq0xQ7dy9vowALELBukDivO2V
+         B8PQWroNhq6H8Un+pPhkHol8XrcnRf+zJEKtZaNfuM3q4V3UjQtvtrazJirzkEWkyYzc
+         shGQ==
+X-Gm-Message-State: AOJu0YyksD0PKXPM92NAJatNFvU6YrKtsSLFDqVdmAtEPZgIA8Wzv5bG
+	je4K5S2JU2pyD7o2xJt0qYVuexnX64qApg==
+X-Google-Smtp-Source: AGHT+IGxXAV5YJNHjGtnfjrTF6PsWA95v4gJZvwnyes1B2rIui/NwQOTqCwPeq3xFEYM+5W4Z7whrw==
+X-Received: by 2002:a81:df06:0:b0:5d7:1940:53c2 with SMTP id c6-20020a81df06000000b005d7194053c2mr6746365ywn.58.1702473988427;
+        Wed, 13 Dec 2023 05:26:28 -0800 (PST)
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com. [209.85.219.178])
+        by smtp.gmail.com with ESMTPSA id u11-20020a0deb0b000000b005af5bb5e840sm4666932ywe.34.2023.12.13.05.26.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Dec 2023 05:26:28 -0800 (PST)
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-da819902678so6335862276.1;
+        Wed, 13 Dec 2023 05:26:28 -0800 (PST)
+X-Received: by 2002:a25:e655:0:b0:dbc:bbff:68fe with SMTP id
+ d82-20020a25e655000000b00dbcbbff68femr1786964ybh.76.1702473988098; Wed, 13
+ Dec 2023 05:26:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="AuzXFLC6CIKr68l9"
-Content-Disposition: inline
-In-Reply-To: <20231212-unreeling-depose-8b6b2e032555-mkl@pengutronix.de>
-
-
---AuzXFLC6CIKr68l9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20231207070700.4156557-1-claudiu.beznea.uj@bp.renesas.com> <20231207070700.4156557-2-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20231207070700.4156557-2-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 13 Dec 2023 14:26:16 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWfh7U6WqAgO85bLwZDKWpMgmviNdNfKRYtcxs4VEXsgQ@mail.gmail.com>
+Message-ID: <CAMuHMdWfh7U6WqAgO85bLwZDKWpMgmviNdNfKRYtcxs4VEXsgQ@mail.gmail.com>
+Subject: Re: [PATCH v2 01/11] clk: renesas: rzg2l-cpg: Check reset monitor registers
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: s.shtylyov@omp.ru, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, robh+dt@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
+	geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com, 
+	sboyd@kernel.org, linus.walleij@linaro.org, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, biju.das.jz@bp.renesas.com, 
+	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 12, 2023 at 09:49:41PM +0100, Marc Kleine-Budde wrote:
-> On 08.12.2023 17:12:24, Conor Dooley wrote:
-> > From: Conor Dooley <conor.dooley@microchip.com>
-> >=20
-> > The CAN controller on PolarFire SoC has an AHB peripheral clock _and_ a
-> > CAN bus clock. The bus clock was omitted when the binding was written,
-> > but is required for operation. Make up for lost time and add it.
-> >=20
-> > Cautionary tale in adding bindings without having implemented a real
-> > user for them perhaps.
-> >=20
-> > Fixes: c878d518d7b6 ("dt-bindings: can: mpfs: document the mpfs CAN con=
-troller")
-> > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-> > ---
-> >  .../devicetree/bindings/net/can/microchip,mpfs-can.yaml    | 7 +++++--
-> >  1 file changed, 5 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/net/can/microchip,mpfs-c=
-an.yaml b/Documentation/devicetree/bindings/net/can/microchip,mpfs-can.yaml
-> > index 45aa3de7cf01..05f680f15b17 100644
-> > --- a/Documentation/devicetree/bindings/net/can/microchip,mpfs-can.yaml
-> > +++ b/Documentation/devicetree/bindings/net/can/microchip,mpfs-can.yaml
-> > @@ -24,7 +24,10 @@ properties:
-> >      maxItems: 1
-> > =20
-> >    clocks:
-> > -    maxItems: 1
-> > +    maxItems: 2
-> > +    items:
-> > +      - description: AHB peripheral clock
-> > +      - description: CAN bus clock
->=20
-> Do we we want to have a "clock-names" property, as we need the clock
-> rate of the CAN bus clock.
+Hi Claudiu,
 
-We should not need the clock-names property to be able to get both of
-the clocks. clk_bulk_get_all() for example should be usable here.
+On Thu, Dec 7, 2023 at 8:08=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.dev> w=
+rote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> The hardware manual of both RZ/G2L and RZ/G3S specifies that the reset
+> monitor registers need to be interrogated when the reset signals are
+> toggled (chapters "Procedures for Supplying and Stopping Reset Signals"
+> and "Procedure for Activating Modules"). Without this, there is a chance
+> that different modules (e.g., Ethernet) to not be ready after their reset
+> signal is toggled, leading to failures (on probe or resume from deep slee=
+p
+> states).
+>
+> The same indications are available for RZ/V2M for TYPE-B reset controls.
+>
+> Fixes: ef3c613ccd68 ("clk: renesas: Add CPG core wrapper for RZ/G2L SoC")
+> Fixes: 8090bea32484 ("clk: renesas: rzg2l: Add support for RZ/V2M reset m=
+onitor reg")
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+>
+> Changes in v2:
+> - adapted for CPG versions with monbit (e.g., RZ/V2M)
+> - added a fixes tag for RZ/V2M
+> - fixed typos in commit description
 
-Cheers,
-Conor.
+Thanks for the update!
 
---AuzXFLC6CIKr68l9
-Content-Type: application/pgp-signature; name="signature.asc"
+> --- a/drivers/clk/renesas/rzg2l-cpg.c
+> +++ b/drivers/clk/renesas/rzg2l-cpg.c
+> @@ -1416,12 +1416,27 @@ static int rzg2l_cpg_assert(struct reset_controll=
+er_dev *rcdev,
+>         struct rzg2l_cpg_priv *priv =3D rcdev_to_priv(rcdev);
+>         const struct rzg2l_cpg_info *info =3D priv->info;
+>         unsigned int reg =3D info->resets[id].off;
+> -       u32 value =3D BIT(info->resets[id].bit) << 16;
+> +       u32 mask =3D BIT(info->resets[id].bit);
+> +       s8 monbit =3D info->resets[id].monbit;
+> +       u32 value =3D mask << 16;
+>
+>         dev_dbg(rcdev->dev, "assert id:%ld offset:0x%x\n", id, CLK_RST_R(=
+reg));
+>
+>         writel(value, priv->base + CLK_RST_R(reg));
+> -       return 0;
+> +
+> +       if (info->has_clk_mon_regs) {
+> +               reg =3D CLK_MRST_R(reg);
+> +       } else if (monbit >=3D 0) {
+> +               reg =3D CPG_RST_MON;
+> +               mask =3D BIT(monbit);
+> +       } else {
+> +               /* Wait for at least one cyc le of the RCLK clock (@ ca. =
+32 kHz) */
 
------BEGIN PGP SIGNATURE-----
+cycle
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZXmreQAKCRB4tDGHoIJi
-0pybAQCaXK2xUCp5W6797bY/KOydLDfzz6/zpgo3/ym1K/7tCgEAs+ZQmqrTvSuQ
-t2sr42Cf8RWYaRCGrwl6zg97g0jV0As=
-=jW/W
------END PGP SIGNATURE-----
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk-for-v6.8 with the above fixed.
 
---AuzXFLC6CIKr68l9--
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
