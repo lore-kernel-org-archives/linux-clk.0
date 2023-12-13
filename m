@@ -1,110 +1,78 @@
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.20])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50D2783;
-	Wed, 13 Dec 2023 09:59:52 -0800 (PST)
-X-IronPort-AV: E=McAfee;i="6600,9927,10923"; a="385419697"
-X-IronPort-AV: E=Sophos;i="6.04,273,1695711600"; 
-   d="scan'208";a="385419697"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2023 09:59:51 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10923"; a="864707289"
-X-IronPort-AV: E=Sophos;i="6.04,273,1695711600"; 
-   d="scan'208";a="864707289"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by FMSMGA003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2023 09:59:40 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andy@kernel.org>)
-	id 1rDTWB-00000005bJa-0XiK;
-	Wed, 13 Dec 2023 19:59:35 +0200
-Date: Wed, 13 Dec 2023 19:59:34 +0200
-From: Andy Shevchenko <andy@kernel.org>
-To: Nikita Shubin <nikita.shubin@maquefel.me>
-Cc: Hartley Sweeten <hsweeten@visionengravers.com>,
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Lukasz Majewski <lukma@denx.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="MWLfB7DN"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [IPv6:2a00:1098:ed:100::25])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 837F0D5;
+	Wed, 13 Dec 2023 10:51:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1702493476;
+	bh=UCS+KPsxvcp4BORj2nXaNk+rHiVu0HA6p/TRoZ/FmIA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=MWLfB7DNmAEZk5yiIGOD6VtQ4pER8tPRkgFLOrOA4h4Pjw28IbewKE/a+2gM/c2Yq
+	 FrnzYLdsYMe9Ak7NSvh2zMzH4o9elDzhR7pwIeVpLYGMUu3RAiyZqCYG5kEA2H5vVw
+	 zMeGdzlUbrUIhjbPCCSWfnqdurEbGBfYQEj/4u7MLSn4fapnnKuTCUeRDg7BO4sUZ8
+	 ntm1DKz0/iBlKwWRig1G2x6qVCYQdvBwQQqTb8mqON0SMHT6TQgjdpmUks34RS4asl
+	 v1V5BsWnVsRw40+2e3P6zxzXOFZ/Qit/kiSR2E0fRfZgAIOZ4GoOluWdXqF21oywNu
+	 jspGazUgVi3cQ==
+Received: from jupiter.universe (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sre)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id ABFDF378149C;
+	Wed, 13 Dec 2023 18:51:16 +0000 (UTC)
+Received: by jupiter.universe (Postfix, from userid 1000)
+	id 36A64480104; Wed, 13 Dec 2023 19:51:16 +0100 (CET)
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Elaine Zhang <zhangqing@rock-chips.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org
+Cc: Kever Yang <kever.yang@rock-chips.com>,
+	Heiko Stuebner <heiko@sntech.de>,
 	Rob Herring <robh+dt@kernel.org>,
 	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Mark Brown <broonie@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Sergey Shtylyov <s.shtylyov@omp.ru>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-	dmaengine@vger.kernel.org, linux-watchdog@vger.kernel.org,
-	linux-pwm@vger.kernel.org, linux-spi@vger.kernel.org,
-	netdev@vger.kernel.org, linux-mtd@lists.infradead.org,
-	linux-ide@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-sound@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v6 00/40] ep93xx device tree conversion
-Message-ID: <ZXnxBtqbneUMbvwq@smile.fi.intel.com>
-References: <20231212-ep93xx-v6-0-c307b8ac9aa8@maquefel.me>
+	Conor Dooley <conor+dt@kernel.org>,
+	huangtao@rock-chips.com,
+	andy.yan@rock-chips.com,
+	devicetree@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	kernel@collabora.com
+Subject: [PATCH v7 2/7] dt-bindings: clock: rk3588: drop CLK_NR_CLKS
+Date: Wed, 13 Dec 2023 19:46:47 +0100
+Message-ID: <20231213185114.47565-3-sebastian.reichel@collabora.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20231213185114.47565-1-sebastian.reichel@collabora.com>
+References: <20231213185114.47565-1-sebastian.reichel@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231212-ep93xx-v6-0-c307b8ac9aa8@maquefel.me>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Tue, Dec 12, 2023 at 11:20:17AM +0300, Nikita Shubin wrote:
-> No major changes since last version all changes are cometic.
-> 
-> Following patches require attention from Stephen Boyd, as they were converted to aux_dev as suggested:
-> 
-> - ARM: ep93xx: add regmap aux_dev
-> - clk: ep93xx: add DT support for Cirrus EP93xx
-> 
-> DMA related patches still require Acked or Reviewed tags.
-> 
-> got approval LGTM from Miquel:
-> - mtd: rawnand: add support for ts72xx
-> Link: https://lore.kernel.org/lkml/20231004103911.2aa65354@xps-13/
-> 
-> new patches:
-> 
-> ARM: ep93xx:  Add terminator to gpiod_lookup_table
->   - fixed terminator in gpiod_lockup_table
-> 
-> So mostly all patches got approval.
-> 
-> Patches should be now formated with '--histogram'
+CLK_NR_CLKS should not be part of the binding. Let's drop it, since
+the kernel code no longer uses it either.
 
-It _feels_ like some tags might be missing.
-In any case I suggest to use `b4` tool to retrieve tags when preparing
-the next version:
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+---
+ include/dt-bindings/clock/rockchip,rk3588-cru.h | 2 --
+ 1 file changed, 2 deletions(-)
 
-	git checkout -b vXX v6.7-rcX
-	b4 am -slt $MSG_ID_OF_v(XX-1)
-	git am ...
-	git rebase --interactive ... # to address comments
-
+diff --git a/include/dt-bindings/clock/rockchip,rk3588-cru.h b/include/dt-bindings/clock/rockchip,rk3588-cru.h
+index 5790b1391201..7c6f0ec7c979 100644
+--- a/include/dt-bindings/clock/rockchip,rk3588-cru.h
++++ b/include/dt-bindings/clock/rockchip,rk3588-cru.h
+@@ -734,8 +734,6 @@
+ #define PCLK_AV1_PRE			719
+ #define HCLK_SDIO_PRE			720
+ 
+-#define CLK_NR_CLKS			(HCLK_SDIO_PRE + 1)
+-
+ /* scmi-clocks indices */
+ 
+ #define SCMI_CLK_CPUL			0
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.43.0
 
