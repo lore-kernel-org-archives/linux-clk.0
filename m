@@ -1,200 +1,228 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YcI+3vfJ"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3B6498;
-	Wed, 13 Dec 2023 08:42:12 -0800 (PST)
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20231213164210epoutp027458a90750e48990fa3534dcf00073fe~gccCI7Gnm0948109481epoutp02R;
-	Wed, 13 Dec 2023 16:42:10 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20231213164210epoutp027458a90750e48990fa3534dcf00073fe~gccCI7Gnm0948109481epoutp02R
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1702485730;
-	bh=+0oW3jgYcC0AXU5SXvWMpmtVZTXc58/iVuCs2NO6N5Q=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=YcI+3vfJR8eNGO2fhzmlGmEKg9nYb9hSiEJ+9IGR027hi4jbNUpeczDpcBYhsibo5
-	 sJcV5eiNQQioiipYAddn32QA+MDoXRMCru7UOqyxBKI1Be3Stt2jKX5Rx9fuKTwmyr
-	 DoTTby1s4AePJ1wnwU2R/LlgmTfK0qoO+oJnzD3g=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-	20231213164210epcas5p2bcf8ece486681731842a9e2122a00a35~gccBpbH0u0921009210epcas5p2U;
-	Wed, 13 Dec 2023 16:42:10 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.181]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4Sr1V858BCz4x9Pp; Wed, 13 Dec
-	2023 16:42:08 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	7A.F2.09672.0EED9756; Thu, 14 Dec 2023 01:42:08 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20231213164208epcas5p3ad056fa6ad7cc9dc00ac5c8ad5a84014~gcb-lim583108931089epcas5p3f;
-	Wed, 13 Dec 2023 16:42:08 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20231213164208epsmtrp2c8ba0d9149b52bd98f4342616b76c634~gcb-kTrIC1984019840epsmtrp2I;
-	Wed, 13 Dec 2023 16:42:08 +0000 (GMT)
-X-AuditID: b6c32a4b-60bfd700000025c8-98-6579dee04dfa
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	F5.6C.08755.FDED9756; Thu, 14 Dec 2023 01:42:07 +0900 (KST)
-Received: from INBRO000447 (unknown [107.122.12.5]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20231213164203epsmtip1f03ac3699482279568fca70400c8e7e1~gcb7Zyj-60728607286epsmtip1L;
-	Wed, 13 Dec 2023 16:42:03 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Peter Griffin'" <peter.griffin@linaro.org>, <robh+dt@kernel.org>,
-	<krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
-	<conor+dt@kernel.org>, <sboyd@kernel.org>, <tomasz.figa@gmail.com>,
-	<s.nawrocki@samsung.com>, <linus.walleij@linaro.org>,
-	<wim@linux-watchdog.org>, <linux@roeck-us.net>, <catalin.marinas@arm.com>,
-	<will@kernel.org>, <arnd@arndb.de>, <olof@lixom.net>,
-	<gregkh@linuxfoundation.org>, <jirislaby@kernel.org>,
-	<cw00.choi@samsung.com>
-Cc: <tudor.ambarus@linaro.org>, <andre.draszik@linaro.org>,
-	<semen.protsenko@linaro.org>, <saravanak@google.com>,
-	<willmcvicker@google.com>, <soc@kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-	<linux-watchdog@vger.kernel.org>, <kernel-team@android.com>,
-	<linux-serial@vger.kernel.org>
-In-Reply-To: <20231211162331.435900-13-peter.griffin@linaro.org>
-Subject: RE: [PATCH v7 12/16] watchdog: s3c2410_wdt: Add support for Google
- gs101 SoC
-Date: Wed, 13 Dec 2023 22:12:02 +0530
-Message-ID: <017501da2de3$4fad8950$ef089bf0$@samsung.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="te6aMkCG"
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 015D61A1
+	for <linux-clk@vger.kernel.org>; Wed, 13 Dec 2023 08:44:32 -0800 (PST)
+Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-40c2d50bfbfso36162045e9.0
+        for <linux-clk@vger.kernel.org>; Wed, 13 Dec 2023 08:44:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1702485871; x=1703090671; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xr6toAXCsIC/bmSJ5B/sgzDjMz3Z0Uajw+zCN70ZLA8=;
+        b=te6aMkCGNKekPIOONKwcqy+m4Q/3GWoRKKb7EGXkY8WQMlJvIPLXJJ7TrzasovU384
+         8OOXRaL4jJUkGLibwOB3xu2sgFaQPrcumTA43j3GD+l11OfBJ08c1g2Yu7LVw1AX4qgI
+         naV8vU4VyrLVXyTVi99B+nd+XBH7wtrXDcSa558pgIrinjn7QCm9K8oNjDixzdnEFaBE
+         IunS8m7NRbTfBD88cEBl9Eysbp7FhlKylra+M0WWl3BVx0BVG+Ij8gtCwmqbBptqrwHH
+         BWWKnWV43z17nkUJpYKK7AeqA4hxW0LejiyeKt4F40A2zLX38qaZb18vlELGZSNeul/i
+         AIqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702485871; x=1703090671;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xr6toAXCsIC/bmSJ5B/sgzDjMz3Z0Uajw+zCN70ZLA8=;
+        b=Odpi2Z9oagyGTBOqkSiI+4SrgQkE2fkbgojlwpsBHvjasuqSJgSguTKsOR1U8mgiIY
+         cGRVmW+S3+PJaPf9p9QMEUq573Lpx/O5u50aiqhfUWb27EEsPDDnG8vPykwSsDQfGfKU
+         T5whLhN8D3WMrO17DHikRJwZSevF7+7GL2lFtfDi2EsR/3xERsUyMP1OL7+bDeraAfWG
+         N8CKJepAupJ8nxBj2p7Ie+bHplJXCNJ2adCRqDrXcldH7eFD3Eojq+LY3B0Wg6Z5pQ6/
+         i+kyMgzIvoBCHE8lTk2y/m1zAsFR7Vno22gVg8EZaK8EtjzeeemZkdgGC69z0fSpZKGS
+         Ld+A==
+X-Gm-Message-State: AOJu0YxF57V7ASbdG9ibMn6+qXA47gCYA+uXKSH2GeS41TAeGrI7gej5
+	Vphn67GVUtUBpqJqi4WR2LEpnA==
+X-Google-Smtp-Source: AGHT+IHmb8ewYnbRlq6v/5rMQRoMcMWRfLl01skabFTAXrcQx6eTujOz4Paqf/1jHchf7eivqMmEQQ==
+X-Received: by 2002:a05:600c:2246:b0:40b:2a46:6f1 with SMTP id a6-20020a05600c224600b0040b2a4606f1mr4313509wmm.2.1702485870981;
+        Wed, 13 Dec 2023 08:44:30 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:982:cbb0:ac4e:a5fe:7f71:8d59? ([2a01:e0a:982:cbb0:ac4e:a5fe:7f71:8d59])
+        by smtp.gmail.com with ESMTPSA id o4-20020a5d58c4000000b0033333bee379sm13767115wrf.107.2023.12.13.08.44.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Dec 2023 08:44:30 -0800 (PST)
+Message-ID: <212239ae-60ab-46f3-a838-39a4d61091fe@linaro.org>
+Date: Wed, 13 Dec 2023 17:44:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: en-us
-Thread-Index: AQEeDlMUs+qnFg95EVUf+Z9FZqMuEwGYygq+AkfiRXGyAKPW4A==
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Te0xTVxz29Lb3FhLkrnZyZDy6LiSDjEehdAcHUzdwN3HJiGbqHhlUuKEM
-	KF1vmcPMDYc8BGkmqGDlNRFQrDIKgSKivJwDEafycIIMCqaAAxXMEIG6lqsb/33f73zf+X6/
-	38nhY4JWwpkfq9TQaqU8Xozbc+vbPT29R4aTab9UgwjVTdVy0XLubwR6VHEYIH1zDwcNPDXz
-	UElHDw+lllXjaKbIBRkbhEg7MYqho0uVHGQY6+ehJ4eHeai2ZAmggpuXOai7LIdAdy9cJtD4
-	L90cdKsrDHUNzOHo1wILF6U1dxCo/e8MHspqW8aRpb+Gi8xaq2tsYAlHVRetl8ze+wodHApE
-	VbMvABqbtGCbRVR9Uz2P0hfrAbX4PBdQj+6mEVSj7j5BlRqSKEPVIZwa6r+EU2f1eh51pUhP
-	ULWnf6R6f/+JRzXOpxCUtq4KUHMGt3DHz+OCFbQ8mlaLaGVUYnSsMiZEvG1HxIcRgTI/ibck
-	CL0rFinlCXSIOPTjcO+tsfHWdYlF38rjk6ylcDnDiH3fD1YnJmlokSKR0YSIaVV0vEqq8mHk
-	CUySMsZHSWs2Svz8/AOtwsg4xegxV9WA03cPjl/CU0CaMAvY8SEphWZzJScL2PMFZBOA460N
-	BEtmAZyusxE7K/kHwKJJ2StHbsd1LitqBrD8fBpgyQSAOZYDXJsKJ72hsSwdt2EhOYzBgZ4t
-	NhFG6jG48GIIsx3YkZthe+/gCl5H7oI3nmQDG+aSHtCkM6/UHcggeMXUjLP4Ndh5YnwlACPd
-	YcN0Ica2JIILDyp4bN0JTl7tINjgD6CpunClO0hq7WHfdDFgDaHwYGvDS/M6OHWtjmCxM5yb
-	sYXxrZiCp5ac2bICTldWv7Rugi29hVybBCM9YfVFXzZ2LcxZHOewTgeYmS5g1R4wdaaPy+I3
-	4JHsbB6LKbh4zAJ+Bm/qVg2mWzWYbtUwuv/DSgG3CmygVUxCDM0EqgKU9N7/njsqMcEAVv6S
-	1zYjMI089mkDHD5oA5CPiYUOnca9tMAhWp68j1YnRqiT4mmmDQRat30Ec349KtH6GZWaCIk0
-	yE8qk8mkQQEyidjJ4WFaUbSAjJFr6DiaVtHqVz4O3845hbMPD10aOU2Y8/3D5GvOFrvg710w
-	lyy36m5eP3Wt5kvVuLG7/KR6sWBONG1yND2PnP86y7Olpdyn76jlm0ym+vugnZ6KxvyGuk0u
-	ggVdLpNSPif1VTRL043zjnv8Pr1FycZODgc/nXB3W5u3PsfdbTkwSLXb/k6yV+H+HX1NHsUx
-	edKuhrcEH6E/p3wzjz/bGDF8O/ye+pxw9My5XRVc1z+yM+73LaTIGv8qMvWYdh8Q3mkO25Bb
-	OH9+61BIzdtM3sCN9YOfnFBnq/wf7t++syQtuDFu4lBdzJ581y/SGx9vPxNwNXgL7rvm2W3J
-	Z9nJloRObWSB1i7jHdEPBUbDYGZpfnpXrpjLKOQSL0zNyP8FeszHFdQEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUyTZxSGffp+gmt4bZv1QUVdN+dHpILZkseNGPdhfKdhURZ/iEHWyDsg
-	0Ja1ILJssd0EWYWOoRCtoCgEadfB2jqoSGEplQ3GMHOMdgM6BFyRVBnFhChYRtss4999zn3u
-	K/ePQ2MCI7GWzlbkcyqFLFdCRuOt3ZIN8WPeIi7BfhTdnLbh6HllD4VmGssAMjsGeMj9xEeg
-	q64BAn1R30Kix7Xrkb1NhPRT9zF0YfEGD1knhgg0W+YlkO3qIkAX73byUH99OYU8zZ0UmrzW
-	z0O/9u1Dfe45En13MYijYoeLQt3+swTSOZ+TKDhkwZFPv5yacC+SyNS+DAn8eRydGXkdmQJL
-	AE08DGJ7N7Gtt1sJ1nzFDNiFZ5WAnfEUU+wtwyjF1lkLWKvpS5IdGeogWaPZTLBdtWaKtTWc
-	Zgd/+pxgb81rKFZ/0wTYOeuGQzGp0UkZXG72SU61c8+H0Vn3q+Ly3OJTD6o7SA0oFulAFA2Z
-	12Cl62dcB6JpAXMbwH5nE4gY66DbUkFFtBAagz4qcvQ3gGf/qMVCBsnEQ3t9CRkyREwAg98s
-	ecIDxrRjcEBTQoSuBIwLwGltVkhHMXth9+BwOC1kjsDgwjAZ0jizGY4bfOE9n9kNu8YdZESv
-	gb2XJpf70ctQKSyxhNthzEbY9qgGi7TbBJ8+aCQiezF8eMcVbi1i3objLTWgAggNK0iG/0mG
-	FSTDinQdwE0glstTyzPl6sS8RAVXKFXL5OoCRab0hFJuBeFv2r7NDtpM/0idgEcDJ4A0JhHx
-	e+2FnICfISv6hFMp01UFuZzaCdbRuETMF0+VZwiYTFk+l8NxeZzqP5dHR63V8JjGN6ocI7zz
-	UP/j7OFkScsTwLb37KRmLOn5P8Scsc3uahb/3jCaVPouoyLTdSev5XdUpyri9mzcpvd/Onai
-	OdhQ5j93bF/UlK/Gp0ybNnztAV1/vbq1VHv6hcM7Jvu6PZsTvBVKu1Qbg+0/0pRic4/MrbZo
-	3OfvLJVu/d77UecvTY+M+lnDyzPr9xfcq1bvut4zqLjun1+tDdTx8bSj/pRYeuzu8QMvwRvu
-	5LfOlcXqPKPlgVOP54Ut73N4IVoY/I1Nk7+323FvNDnm6Wf8LXE52jUfGC9L3nnl43rlwaLh
-	rtIXTfEJwJXt/WrVIfHBTt63VSmZOc9WpfZ6kyxvMsIdElydJUvcjqnUsn8BxvhPf7wDAAA=
-X-CMS-MailID: 20231213164208epcas5p3ad056fa6ad7cc9dc00ac5c8ad5a84014
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20231211162436epcas5p4161dfb5a2b849edc6856662e5b42693d
-References: <20231211162331.435900-1-peter.griffin@linaro.org>
-	<CGME20231211162436epcas5p4161dfb5a2b849edc6856662e5b42693d@epcas5p4.samsung.com>
-	<20231211162331.435900-13-peter.griffin@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/5] clk: Make clk_rate_exclusive_get() return void
+Content-Language: en-GB
+To: Maxime Ripard <mripard@kernel.org>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ dri-devel@lists.freedesktop.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@gmail.com>,
+ linux-clk@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>,
+ Rob Herring <robh@kernel.org>, Samuel Holland <samuel@sholland.org>,
+ Kevin Hilman <khilman@baylibre.com>, Russell King <linux@armlinux.org.uk>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Chanwoo Choi
+ <cw00.choi@samsung.com>, Chen-Yu Tsai <wens@csie.org>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Johan Hovold <johan+linaro@kernel.org>, linux-sunxi@lists.linux.dev,
+ Thomas Zimmermann <tzimmermann@suse.de>, linux-pm@vger.kernel.org,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org,
+ kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org,
+ Stephen Boyd <sboyd@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>,
+ Daniel Vetter <daniel@ffwll.ch>, Georgi Djakov <djakov@kernel.org>
+References: <cover.1702400947.git.u.kleine-koenig@pengutronix.de>
+ <ki5n3rz5n4oxj2hhc3rj6xpn3e2tdi7fcp2q7exjbzilrlqflp@przautvhuy4g>
+ <20231213074300.4bq7wkfqd4jhhcr4@pengutronix.de>
+ <2nvbag657mlniqwq7fbilapc6vfw5qumab3yd6bqul25ot6wcn@wdlkh5az2fgs>
+From: Neil Armstrong <neil.armstrong@linaro.org>
+In-Reply-To: <2nvbag657mlniqwq7fbilapc6vfw5qumab3yd6bqul25ot6wcn@wdlkh5az2fgs>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+Hi Maxime,
 
+Le 13/12/2023 à 09:36, Maxime Ripard a écrit :
+> Hi,
+> 
+> On Wed, Dec 13, 2023 at 08:43:00AM +0100, Uwe Kleine-König wrote:
+>> On Wed, Dec 13, 2023 at 08:16:04AM +0100, Maxime Ripard wrote:
+>>> On Tue, Dec 12, 2023 at 06:26:37PM +0100, Uwe Kleine-König wrote:
+>>>> clk_rate_exclusive_get() returns zero unconditionally. Most users "know"
+>>>> that and don't check the return value. This series fixes the four users
+>>>> that do error checking on the returned value and then makes function
+>>>> return void.
+>>>>
+>>>> Given that the changes to the drivers are simple and so merge conflicts
+>>>> (if any) should be easy to handle, I suggest to merge this complete
+>>>> series via the clk tree.
+>>>
+>>> I don't think it's the right way to go about it.
+>>>
+>>> clk_rate_exclusive_get() should be expected to fail. For example if
+>>> there's another user getting an exclusive rate on the same clock.
+>>>
+>>> If we're not checking for it right now, then it should probably be
+>>> fixed, but the callers checking for the error are right to do so if they
+>>> rely on an exclusive rate. It's the ones that don't that should be
+>>> modified.
+>>
+>> If some other consumer has already "locked" a clock that I call
+>> clk_rate_exclusive_get() for, this isn't an error. In my bubble I call
+>> this function because I don't want the rate to change e.g. because I
+>> setup some registers in the consuming device to provide a fixed UART
+>> baud rate or i2c bus frequency (and that works as expected).
+> 
+> I guess it's a larger conversation, but I don't see how that can
+> possibly work.
+> 
+> The way the API is designed, you have no guarantee (outside of
+> clk_rate_exclusive_*) that the rate is going to change.
+> 
+> And clk_rate_exclusive_get() doesn't allow the rate to change while in
+> the "critical section".
+> 
+> So the only possible thing to do is clk_set_rate() +
+> clk_rate_exclusive_get().
 
-> -----Original Message-----
-> From: Peter Griffin <peter.griffin@linaro.org>
-> Sent: Monday, December 11, 2023 9:53 PM
-> To: robh+dt@kernel.org; krzysztof.kozlowski+dt@linaro.org;
-> mturquette@baylibre.com; conor+dt@kernel.org; sboyd@kernel.org;
-> tomasz.figa@gmail.com; s.nawrocki@samsung.com; linus.walleij@linaro.org;
-> wim@linux-watchdog.org; linux@roeck-us.net; catalin.marinas@arm.com;
-> will@kernel.org; arnd@arndb.de; olof@lixom.net;
-> gregkh@linuxfoundation.org; jirislaby@kernel.org;
-> cw00.choi@samsung.com; alim.akhtar@samsung.com
-> Cc: peter.griffin@linaro.org; tudor.ambarus@linaro.org;
-> andre.draszik@linaro.org; semen.protsenko@linaro.org;
-> saravanak@google.com; willmcvicker@google.com; soc@kernel.org;
-> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
-> samsung-soc@vger.kernel.org; linux-clk@vger.kernel.org; linux-
-> gpio@vger.kernel.org; linux-watchdog@vger.kernel.org; kernel-
-> team@android.com; linux-serial@vger.kernel.org
-> Subject: [PATCH v7 12/16] watchdog: s3c2410_wdt: Add support for Google
-> gs101 SoC
-> 
-> This patch adds the compatibles and drvdata for the Google
-> gs101 SoC found in Pixel 6, Pixel 6a & Pixel 6 pro phones.
-> 
-> Similar to Exynos850 it has two watchdog instances, one for each cluster
-and
-> has some control bits in PMU registers.
-> 
-> gs101 also has the dbgack_mask bit in wtcon register, so we also enable
-> QUIRK_HAS_DBGACK_BIT.
-> 
-> Tested-by: Will McVicker <willmcvicker@google.com>
-> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
->  drivers/watchdog/s3c2410_wdt.c | 49
-> ++++++++++++++++++++++++++++++----
->  1 file changed, 44 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/watchdog/s3c2410_wdt.c
-> b/drivers/watchdog/s3c2410_wdt.c index b7a03668f743..c3046610ab5d
-> 100644
-> --- a/drivers/watchdog/s3c2410_wdt.c
-> +++ b/drivers/watchdog/s3c2410_wdt.c
-> @@ -69,6 +69,13 @@
->  #define EXYNOSAUTOV9_CLUSTER0_WDTRESET_BIT	25
->  #define EXYNOSAUTOV9_CLUSTER1_WDTRESET_BIT	24
-> 
-> 
-[snip]
->  static const struct of_device_id s3c2410_wdt_match[] = {
-> +	{ .compatible = "google,gs101-wdt",
-> +	  .data = &drv_data_gs101_cl0 },
->  	{ .compatible = "samsung,s3c2410-wdt",
->  	  .data = &drv_data_s3c2410 },
->  	{ .compatible = "samsung,s3c6410-wdt", @@ -605,9 +640,10 @@
-> s3c2410_get_wdt_drv_data(struct platform_device *pdev, struct
-> s3c2410_wdt *wdt)
->  	}
-> 
->  #ifdef CONFIG_OF
-> -	/* Choose Exynos850/ExynosAutov9 driver data w.r.t. cluster index
-> */
-> +	/* Choose Exynos9 SoC family driver data w.r.t. cluster index */
-Exynos9 introduction is out of context here, so you can leave it as original
-comment, it is not adding anything here.
+There's clk_set_rate_exclusive() for this purpose.
 
->  	if (variant == &drv_data_exynos850_cl0 ||
-> -	    variant == &drv_data_exynosautov9_cl0) {
-> +	    variant == &drv_data_exynosautov9_cl0 ||
-> +	    variant == &drv_data_gs101_cl0) {
->  		u32 index;
-[snip]
-> --
-> 2.43.0.472.g3155946c3a-goog
+> 
+> So there's a window where the clock can indeed be changed, and the
+> consumer that is about to lock its rate wouldn't be aware of it.
+> 
+> I guess it would work if you don't care about the rate at all, you just
+> want to make sure it doesn't change.
+> 
+> Out of the 7 users of that function, 3 are in that situation, so I guess
+> it's fair.
+> 
+> 3 are open to that race condition I mentioned above.
+> 
+> 1 is calling clk_set_rate while in the critical section, which works if
+> there's a single user but not if there's multiple, so it should be
+> discouraged.
+> 
+>> In this case I won't be able to change the rate of the clock, but that
+>> is signalled by clk_set_rate() failing (iff and when I need awother
+>> rate) which also seems the right place to fail to me.
+> 
+> Which is ignored by like half the callers, including the one odd case I
+> mentioned above.
+> 
+> And that's super confusing still: you can *always* get exclusivity, but
+> not always do whatever you want with the rate when you have it? How are
+> drivers supposed to recover from that? You can handle failing to get
+> exclusivity, but certainly not working around variable guarantees.
+> 
+>> It's like that since clk_rate_exclusive_get() was introduced in 2017
+>> (commit 55e9b8b7b806ec3f9a8817e13596682a5981c19c).
+> 
+> Right, but "it's always been that way" surely can't be an argument,
+> otherwise you wouldn't have done that series in the first place.
+> 
+>> BTW, I just noticed that my assertion "Most users \"know\" that
+>> [clk_rate_exclusive_get() returns zero unconditionally]" is wrong. As of
+>> next-20231213 there are 3 callers ignoring the return value of
+>> clk_rate_exclusive_get() and 4 that handle (imaginary) returned errors.
+>> I expected this function to be used more extensively. (In fact I think
+>> it should be used more as several drivers rely on the clk rate not
+>> changing.)
+> 
+> Yes, but also it's super difficult to use in practice, and most devices
+> don't care.
+> 
+> The current situation is something like this:
+> 
+>    * Only a handful of devices really care about their clock rate, and
+>      often only for one of their clock if they have several. You would
+>      probably get all the devices that create an analog signal somehow
+>      there, so audio, display, i2c, spi, uarts, etc. Plus the ones doing
+>      frequency scaling so CPU and GPUs.
+> 
+>    * CPUs and GPUs are very likely to have a dedicated clock, so we can
+>      rule the "another user is going to mess with my clock" case.
+> 
+>    * UARTs/i2c/etc. are usually taking their clock from the bus interface
+>      directly which is pretty much never going to change (for good
+>      reason). And the rate of the bus is not really likely to change.
+> 
+>    * SPI/NAND/MMC usually have their dedicated clock too, and the bus
+>      rate is not likely to change after the initial setup either.
+> 
+> So, the only affected devices are the ones generating external signals,
+> with the rate changing during the life of the system. Even for audio or
+> video devices, that's fairly unlikely to happen. And you need to have
+> multiple devices sharing the same clock tree for that issue to occur,
+> which is further reducing the chances it happens.
 
+Well, thanks for HW designers, this exists and some SoCs has less PLLs than
+needed, and they can't be dedicated for some hw blocks.
 
+> 
+> Realistically speaking, this only occurs with multi-head display outputs
+> where it's somewhat likely to have all the display controllers feeding
+> from the same clock, and the power up of the various output is done in
+> sequence which creates that situation.
+> 
+> And even then, the clk_rate_exclusive_* interface effectively locks the
+> entire clock subtree to its current rate, so the effect on the rest of
+> the devices can be significant.
+> 
+> So... yeah. Even though you're right, it's trying to address a problem
+> that is super unlikely to happen with a pretty big hammer that might be
+> too much for most. So it's not really surprising it's not used more.
+
+Honestly I tried my best to find a smart way to set the DSI clock tree
+with only 2 endpoints of the tree, but CCF will explore all possibilities
+and since you cannot set constraints, locking a sub-tree is the smartest
+way I found.
+In this case, the PLL is common between the DSI controller and video generator,
+so to keep the expected clock ratio, the smart way is to set the freq on
+one side, lock the subtree and set the rate on the other side.
+An API permitting to set multiple rates to multiple clocks in a single call
+would be the solution, but not sure if we could possibly write such algorithm.
+
+> 
+> Maxime
+
+Neil
