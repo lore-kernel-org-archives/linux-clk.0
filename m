@@ -1,27 +1,27 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ifXDnd4V"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="GZi1WSye"
 Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [IPv6:2a00:1098:ed:100::25])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80C89EB;
-	Wed, 13 Dec 2023 10:51:20 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB1F2E8;
+	Wed, 13 Dec 2023 10:51:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
 	s=mail; t=1702493477;
-	bh=5rhOg385ALxMZC2NP0YG1CGe+OyMaqjG1bdXKQfeSHk=;
+	bh=N0mIgq8eEj9Yqh5g1KsiM6Na4KJDpVX1RztufTMFpis=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ifXDnd4V8vmvYonESSOBvL0+iP/UdhuF2m1wTzv24d5htZ6Gl6JzHCQixWDXLX16z
-	 vscNm0IsIPFBql21BU1/KFEWNXd5EgWp+SLSLjsnscQgjh6NM2LqzG4c4Z6GhoSQvZ
-	 h6+a9SHKYRdn5HTetpjrywy/Tkl5B9S97HKoVH1/imLq9TS++yj5LtTFaYfEekr9tq
-	 0T6GC6/Q5iE0ce4LjzOw62lbg7Qzit7t2k6mOWbkklhTkJR8KxXRjNbgJuaoP/zEVO
-	 o/brZDIDPrJnNlbNRFjT+1NnRIKEts7jsrTmCuH6Vh3gcbODwgMpJ7l3YvJpIomAj3
-	 uEl9NBjJpkOvw==
+	b=GZi1WSyeHXB2ydEQsUbMcKWzsbnMCt4y9afAbUchHFz+FCjKgb4061f/PhPMQgcBn
+	 m6qDka2bvKVRe7jx0Rr/ww+X3Pdw8mjgNgcaFOqfhy8FYCe15MrEOKfe/qlntuojqF
+	 //TMcGHbV1qplJ7oxbjX8viDqPC/IQD3bkQqIP74G9vA1pxpQaq2xhSDsMYxDA/4OB
+	 5gs9HIjde6GNZN7cp1Kt6GgMkxdj6rgI3XrGqzAs6aBcgTEUuAwYTAE6NATc2egzwD
+	 EOaIxpUW+PAV/kPh4oUCDGeBpgpUrmFMR6eTvYIQe2pVZn9cUAnzxlozLdnMaMfbBz
+	 +P5YJSi62m2jg==
 Received: from jupiter.universe (cola.collaboradmins.com [195.201.22.229])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: sre)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 318C637814A0;
-	Wed, 13 Dec 2023 18:51:17 +0000 (UTC)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id B4555378149D;
+	Wed, 13 Dec 2023 18:51:16 +0000 (UTC)
 Received: by jupiter.universe (Postfix, from userid 1000)
-	id 3C265480107; Wed, 13 Dec 2023 19:51:16 +0100 (CET)
+	id 38827480105; Wed, 13 Dec 2023 19:51:16 +0100 (CET)
 From: Sebastian Reichel <sebastian.reichel@collabora.com>
 To: Elaine Zhang <zhangqing@rock-chips.com>,
 	Michael Turquette <mturquette@baylibre.com>,
@@ -38,9 +38,9 @@ Cc: Kever Yang <kever.yang@rock-chips.com>,
 	linux-rockchip@lists.infradead.org,
 	Sebastian Reichel <sebastian.reichel@collabora.com>,
 	kernel@collabora.com
-Subject: [PATCH v7 5/7] clk: rockchip: rk3588: fix indent
-Date: Wed, 13 Dec 2023 19:46:50 +0100
-Message-ID: <20231213185114.47565-6-sebastian.reichel@collabora.com>
+Subject: [PATCH v7 3/7] dt-bindings: clock: rk3588: add missing PCLK_VO1GRF
+Date: Wed, 13 Dec 2023 19:46:48 +0100
+Message-ID: <20231213185114.47565-4-sebastian.reichel@collabora.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20231213185114.47565-1-sebastian.reichel@collabora.com>
 References: <20231213185114.47565-1-sebastian.reichel@collabora.com>
@@ -52,27 +52,26 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-pclk_mailbox2 is the only RK3588 clock indented with one tab instead of
-two tabs. Let's fix this.
+Add PCLK_VO1GRF to complement PCLK_VO0GRF. This will be needed
+for HDMI support.
 
 Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 ---
- drivers/clk/rockchip/clk-rk3588.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/dt-bindings/clock/rockchip,rk3588-cru.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/rockchip/clk-rk3588.c b/drivers/clk/rockchip/clk-rk3588.c
-index 26330d655159..2e8bdd93c625 100644
---- a/drivers/clk/rockchip/clk-rk3588.c
-+++ b/drivers/clk/rockchip/clk-rk3588.c
-@@ -1004,7 +1004,7 @@ static struct rockchip_clk_branch rk3588_clk_branches[] __initdata = {
- 	GATE(PCLK_MAILBOX1, "pclk_mailbox1", "pclk_top_root", 0,
- 			RK3588_CLKGATE_CON(16), 12, GFLAGS),
- 	GATE(PCLK_MAILBOX2, "pclk_mailbox2", "pclk_top_root", 0,
--		RK3588_CLKGATE_CON(16), 13, GFLAGS),
-+			RK3588_CLKGATE_CON(16), 13, GFLAGS),
- 	GATE(PCLK_PMU2, "pclk_pmu2", "pclk_top_root", CLK_IS_CRITICAL,
- 			RK3588_CLKGATE_CON(19), 3, GFLAGS),
- 	GATE(PCLK_PMUCM0_INTMUX, "pclk_pmucm0_intmux", "pclk_top_root", CLK_IS_CRITICAL,
+diff --git a/include/dt-bindings/clock/rockchip,rk3588-cru.h b/include/dt-bindings/clock/rockchip,rk3588-cru.h
+index 7c6f0ec7c979..0c7d3ca2d5bc 100644
+--- a/include/dt-bindings/clock/rockchip,rk3588-cru.h
++++ b/include/dt-bindings/clock/rockchip,rk3588-cru.h
+@@ -733,6 +733,7 @@
+ #define ACLK_AV1_PRE			718
+ #define PCLK_AV1_PRE			719
+ #define HCLK_SDIO_PRE			720
++#define PCLK_VO1GRF			721
+ 
+ /* scmi-clocks indices */
+ 
 -- 
 2.43.0
 
