@@ -1,43 +1,43 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VYUv45Ld"
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 442F2D0;
-	Wed, 13 Dec 2023 12:09:36 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-40c32df9174so65428445e9.3;
-        Wed, 13 Dec 2023 12:09:36 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZgsigAG8"
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE359D0;
+	Wed, 13 Dec 2023 12:11:55 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-3331752d2b9so4845617f8f.3;
+        Wed, 13 Dec 2023 12:11:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702498175; x=1703102975; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1702498314; x=1703103114; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=E1E00I7csYet+h6d3hCBs5SooYMP4Ja6qAuEnzWpbHw=;
-        b=VYUv45Ldy9gfsQrnarg2tdD2zgLdFl/NH/GkrwAo8VsPOziIIrYMlPiIN5BqMKmyUR
-         17PFPJId2W313bDp4ttHgymIhV9gyJ6lBY19XhqrF8J+cA6z4FzKSyYZk+TxrTb0gDO7
-         JtpMLCjuId9D8EwVuL64VA7Aapk3AX0e7X2bx6UCiBWPG/7o85UNYTzvZGXAObzaxGff
-         prmHNm/0GDaRGg39RQS0iixfWY3SgOTHSoGRydkyitUiGnZsKOtJ0b3V+RzzaOdTVBmm
-         R215jnxcnmlsLWkcjarUYrYALc2OJPuvmG8Y8jGNsmeCmKv5EJNkClyzDKJp9KvvkehJ
-         0qwA==
+        bh=SHZJxjE/63ZPQdMM7w++i0H3AQcrKC5RCaCrTHY5Njs=;
+        b=ZgsigAG8jfJ+kBydniVf67BWA9G+Bz+wa0c39/hKxY3cBjYEhYK61Fm3aDmXcGjziv
+         W29YYxIl1iJBqGdCgnRwOuwKFLvn52Lyw6tSDqOLjsQPtGaPhhl/up0GzAkZHCYTZzns
+         OGwUw8CWq/xL0hvxKWY1yInqPZvm5tg1vSPewcJjhlzVYmujiUPWMyoF+jTaHsR83Jd6
+         ADCtDa381Td0TdXurJZD3GGOfabXJluYgX2UzWcYzAK5H0yDyIidZ0NPQOawZwSpCtsy
+         fbqz0AXlcq3dO9veM1ie8EgVUGN+ypYLGh89dLavTQCqcACh0sGoRHTEPxjeqXZw9Tvo
+         zQfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702498175; x=1703102975;
+        d=1e100.net; s=20230601; t=1702498314; x=1703103114;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=E1E00I7csYet+h6d3hCBs5SooYMP4Ja6qAuEnzWpbHw=;
-        b=tYLoIr9DfmaYByYs8sXEEI45q/C2bACQwHzMqfRf0Wr3cT2WIRA5oX7UE4x3q3MrJa
-         YcS9yj1ttr5IWVWKZ9a04orXkh9ta07N5aiCn+GlNYLSMWW4SFEIasLiRDw4tuqQp+RN
-         JU+z/F1LZp8j1e+zg0XMQZDovvsbkQgxqF9ZpZSiVYz7Fkr5XR3bdkDKrRIuaKo18GkX
-         xs8ndP0jPoq51aVuYZ//DYFKvP16cwSxP1LpGllEzYL+er34kl9o9/yUabE6etbW7iMM
-         M8kaO7hWElp5WBKkFwEtWPUcaq4MVCxMzoog5STBWqGCdVHj5E/PMSaWXvK7cAgBXlko
-         Bkxw==
-X-Gm-Message-State: AOJu0Yw6xsIUg3w08Scuem+ZwXvvo1XWSm0cDfkqaZIAgFRDdQ2OlpUY
-	/ZoGqZSUT4mX1iIK1iI9MGPAjtfyzuA=
-X-Google-Smtp-Source: AGHT+IGgnj9gSAhJ/otmBIdrNYjW6wgF/y7XkF5VoE4tuaeCabEiVYTrQgIZsnFDgtnuMk+zMFilUw==
-X-Received: by 2002:a7b:c419:0:b0:40b:2a3e:4c9b with SMTP id k25-20020a7bc419000000b0040b2a3e4c9bmr3183581wmi.29.1702498174346;
-        Wed, 13 Dec 2023 12:09:34 -0800 (PST)
+        bh=SHZJxjE/63ZPQdMM7w++i0H3AQcrKC5RCaCrTHY5Njs=;
+        b=VQiNahbCl2+9hUekMWVVIpSl6zRkKBFEhMWbls9p4wbXgB+56BYkum3BMN97OfL8ps
+         X6ltJ4irwRlC5Sg94ZD3JoLRHB06BPnrLWZK9EeKXt5ncUHy7WuIVT60iiOb8NHxolfB
+         gJ/lERWR0OzFpzUT56zFswqX1k62YJCfpAMTYXNn+H/2ZR8Vw/E7VkmYii+OJWomT/cT
+         0W8rZSUc2DzVaynvC85IdZl+RfkTBaO+QQ7yzICtR5gY7/I6LuQ/Z9JIVqPDlrv3hm0U
+         /drkfUHxfVH0s+nm2ViBGbCzxQy899d4fxw097YsnNg/P8tzCkgJxO6E27LF1U+xarjl
+         32JA==
+X-Gm-Message-State: AOJu0YyRAIjlyld+36OBPjhaCoGBA0WVLlHpp2qfZvNz8uVr8pvisWe4
+	1EEMZrCTHC0aq4E1BmHq7r0KUiL/9jM=
+X-Google-Smtp-Source: AGHT+IHg04Gu69P+Oe4HgRL6vL95x2eltXYD3MsDq45X2kjtZUnpZ+853MUpjE5htvbO4NJbgu55tw==
+X-Received: by 2002:a5d:4c4e:0:b0:336:30d8:a75f with SMTP id n14-20020a5d4c4e000000b0033630d8a75fmr1969785wrt.136.1702498314064;
+        Wed, 13 Dec 2023 12:11:54 -0800 (PST)
 Received: from archlinux.localnet (82-149-12-148.dynamic.telemach.net. [82.149.12.148])
-        by smtp.gmail.com with ESMTPSA id p8-20020a05600c468800b0040c488e4fb5sm11794611wmo.40.2023.12.13.12.09.33
+        by smtp.gmail.com with ESMTPSA id p10-20020a5d458a000000b00336463625c0sm100880wrq.51.2023.12.13.12.11.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Dec 2023 12:09:34 -0800 (PST)
+        Wed, 13 Dec 2023 12:11:53 -0800 (PST)
 From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
 To: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
@@ -49,13 +49,14 @@ Cc: Rob Herring <robh+dt@kernel.org>,
  Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
  Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: Re: [PATCH v7 4/7] ARM: dts: sun8i: v3s: Add support for the ISP
-Date: Wed, 13 Dec 2023 21:09:32 +0100
-Message-ID: <3267480.aeNJFYEL58@archlinux>
-In-Reply-To: <20231122141426.329694-5-paul.kocialkowski@bootlin.com>
+Subject:
+ Re: [PATCH v7 5/7] ARM: dts: sun8i: a83t: Add MIPI CSI-2 controller node
+Date: Wed, 13 Dec 2023 21:11:52 +0100
+Message-ID: <8310859.T7Z3S40VBb@archlinux>
+In-Reply-To: <20231122141426.329694-6-paul.kocialkowski@bootlin.com>
 References:
  <20231122141426.329694-1-paul.kocialkowski@bootlin.com>
- <20231122141426.329694-5-paul.kocialkowski@bootlin.com>
+ <20231122141426.329694-6-paul.kocialkowski@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -65,86 +66,80 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
 
-On Wednesday, November 22, 2023 3:14:22 PM CET Paul Kocialkowski wrote:
-> The V3s (and related platforms) come with an instance of the A31 ISP.
-> Even though it is very close to the A31 ISP, it is not exactly
-> register-compatible and a dedicated compatible only is used as a
-> result.
+On Wednesday, November 22, 2023 3:14:23 PM CET Paul Kocialkowski wrote:
+> MIPI CSI-2 is supported on the A83T with a dedicated controller that
+> covers both the protocol and D-PHY. It is connected to the only CSI
+> receiver with a fwnode graph link. Note that the CSI receiver supports
+> both this MIPI CSI-2 source and a parallel source.
 > 
-> Just like most other blocks of the camera pipeline, the ISP uses
-> the common CSI bus, module and ram clock as well as reset.
-> 
-> A port connection to the ISP is added to CSI0 for convenience since
-> CSI0 serves for MIPI CSI-2 interface support, which is likely to
-> receive raw data that will need to be processed by the ISP to produce
-> a final image.
-> 
-> The interconnects property is used to inherit the proper DMA offset.
+> An empty port with a label for the MIPI CSI-2 sensor input is also
+> defined for convenience.
 > 
 > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> ---
->  arch/arm/boot/dts/allwinner/sun8i-v3s.dtsi | 35 ++++++++++++++++++++++
->  1 file changed, 35 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/allwinner/sun8i-v3s.dtsi b/arch/arm/boot/dts/allwinner/sun8i-v3s.dtsi
-> index d57612023aa4..1a1dcd36cba4 100644
-> --- a/arch/arm/boot/dts/allwinner/sun8i-v3s.dtsi
-> +++ b/arch/arm/boot/dts/allwinner/sun8i-v3s.dtsi
-> @@ -645,6 +645,14 @@ csi0_in_mipi_csi2: endpoint {
->  						remote-endpoint = <&mipi_csi2_out_csi0>;
->  					};
->  				};
-> +
-> +				port@2 {
-> +					reg = <2>;
-> +
-> +					csi0_out_isp: endpoint {
-> +						remote-endpoint = <&isp_in_csi0>;
-> +					};
-> +				};
->  			};
->  		};
->  
-> @@ -703,5 +711,32 @@ csi1: camera@1cb4000 {
->  			resets = <&ccu RST_BUS_CSI>;
->  			status = "disabled";
->  		};
-> +
-> +		isp: isp@1cb8000 {
-> +			compatible = "allwinner,sun8i-v3s-isp";
-> +			reg = <0x01cb8000 0x1000>;
-> +			interrupts = <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&ccu CLK_BUS_CSI>,
-> +				 <&ccu CLK_CSI1_SCLK>,
-> +				 <&ccu CLK_DRAM_CSI>;
-> +			clock-names = "bus", "mod", "ram";
-> +			resets = <&ccu RST_BUS_CSI>;
-> +			interconnects = <&mbus 5>;
-> +			interconnect-names = "dma-mem";
 
-Same as in previous patch, interconnects properties are not described in
-bindings, please update.
+Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 
 Best regards,
 Jernej
 
+> ---
+>  arch/arm/boot/dts/allwinner/sun8i-a83t.dtsi | 43 +++++++++++++++++++++
+>  1 file changed, 43 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/allwinner/sun8i-a83t.dtsi b/arch/arm/boot/dts/allwinner/sun8i-a83t.dtsi
+> index 94eb3bfc989e..b74c3f9e6598 100644
+> --- a/arch/arm/boot/dts/allwinner/sun8i-a83t.dtsi
+> +++ b/arch/arm/boot/dts/allwinner/sun8i-a83t.dtsi
+> @@ -1062,6 +1062,49 @@ csi: camera@1cb0000 {
+>  			clock-names = "bus", "mod", "ram";
+>  			resets = <&ccu RST_BUS_CSI>;
+>  			status = "disabled";
+> +
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				port@1 {
+> +					reg = <1>;
+> +
+> +					csi_in_mipi_csi2: endpoint {
+> +						remote-endpoint = <&mipi_csi2_out_csi>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+> +		mipi_csi2: csi@1cb1000 {
+> +			compatible = "allwinner,sun8i-a83t-mipi-csi2";
+> +			reg = <0x01cb1000 0x1000>;
+> +			interrupts = <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&ccu CLK_BUS_CSI>,
+> +				 <&ccu CLK_CSI_SCLK>,
+> +				 <&ccu CLK_MIPI_CSI>,
+> +				 <&ccu CLK_CSI_MISC>;
+> +			clock-names = "bus", "mod", "mipi", "misc";
+> +			resets = <&ccu RST_BUS_CSI>;
 > +			status = "disabled";
 > +
 > +			ports {
 > +				#address-cells = <1>;
 > +				#size-cells = <0>;
 > +
-> +				port@0 {
+> +				mipi_csi2_in: port@0 {
 > +					reg = <0>;
+> +				};
 > +
-> +					isp_in_csi0: endpoint {
-> +						remote-endpoint = <&csi0_out_isp>;
+> +				mipi_csi2_out: port@1 {
+> +					reg = <1>;
+> +
+> +					mipi_csi2_out_csi: endpoint {
+> +						remote-endpoint = <&csi_in_mipi_csi2>;
 > +					};
 > +				};
 > +			};
-> +		};
->  	};
->  };
+>  		};
+>  
+>  		hdmi: hdmi@1ee0000 {
 > 
 
 
