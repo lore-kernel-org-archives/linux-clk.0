@@ -1,80 +1,68 @@
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80233DD;
-	Wed, 13 Dec 2023 06:18:41 -0800 (PST)
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-5e32af77f15so1754017b3.2;
-        Wed, 13 Dec 2023 06:18:41 -0800 (PST)
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33293CF;
+	Wed, 13 Dec 2023 06:32:46 -0800 (PST)
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-6d9fdbcec6eso3521982a34.1;
+        Wed, 13 Dec 2023 06:32:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702477120; x=1703081920;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nQIUc37L857Xy2IutTbpm0mG6sIjdIjLVU0WeFZORnk=;
-        b=Gs2o2bo+cyarBUBLPPCKojhwJGamx4PHbYNeS+Z/dCtcxf5GiZoTkXEI7egmfAx31e
-         bIjuegghly5LB5AYhae+/Xkqdwacv2oqmWJ2uMIuArtJQWuQpOkKLJQ14YrZ8p7Krhjt
-         tl9TW/0tS1mkGwgZY7VUoV0DMr0UJ4NPBQDpZV7nbgacc9AWE/LTubaT2SxeAE5Ljbvj
-         0X78P++1rFacZfiyO+cLw1qV2CpNIuJGejt4+AaeAZEzngUqnY/w9Pi46ZpzsAJEnFg6
-         GWEM+tA++j0nnWLkN4spvehdOj2kHX4HhaiZAZAT4mgaDH+9cHwY1GK78dBADaellkuu
-         /PKg==
-X-Gm-Message-State: AOJu0YxtoDaKVAx5uZQelqNx/x+GezNJcAWJSXfudCcN1DjD03QEQivo
-	0x1lGqgH+iMWsII7NoSoHuyd3Mc1PpH5iw==
-X-Google-Smtp-Source: AGHT+IFoQSG35p2VxhzCnsVF4RrrrIm2UQYlRVknpgd9Z0yTw+yA18LRMMRv01W7mHC77nGGemnnBQ==
-X-Received: by 2002:a0d:f3c5:0:b0:5d8:165c:17a5 with SMTP id c188-20020a0df3c5000000b005d8165c17a5mr6258032ywf.91.1702477120573;
-        Wed, 13 Dec 2023 06:18:40 -0800 (PST)
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com. [209.85.128.177])
-        by smtp.gmail.com with ESMTPSA id t21-20020a0dea15000000b005e295c30e4asm730248ywe.80.2023.12.13.06.18.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Dec 2023 06:18:39 -0800 (PST)
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-5e32af77f15so1753517b3.2;
-        Wed, 13 Dec 2023 06:18:39 -0800 (PST)
-X-Received: by 2002:a0d:c704:0:b0:5d7:1940:53c4 with SMTP id
- j4-20020a0dc704000000b005d7194053c4mr6755236ywd.60.1702477118892; Wed, 13 Dec
- 2023 06:18:38 -0800 (PST)
+        d=1e100.net; s=20230601; t=1702477965; x=1703082765;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Z0kWneZU0gge6lamU79WOa8q8MUgTJ3s6CXlsPKbl1w=;
+        b=FyNim23zynxG3N6xA4bc/o/jLotwbc7Hb+nLUZEEgJt+IbkMPm9pQWPzqlafCkPVn9
+         Pm+S8li22NhyDP06n6OUVS+eS+25+GI3gN1BYx63X+B9Kgdgmuab/LxU+fqdNOJ8XHMa
+         wqaf+XhiRMBis7F+Mh267RDXRzAFw+IFQPsSwfiKQFul2BmzwE7uAewTos4jlYQAzrn5
+         YE/AyhY2ov162yMnaWzEnjA5YECMWrdwfx4smiGXw6nu5fdq8HuGSMmUhDOiObJhDZlO
+         9sq8HTZ4ul9TVdm9gcdMIZEgTc6IbjbN+jKgYNvLsR2xnMMTshKmH6LzH8Z5diJgEZxm
+         OJpg==
+X-Gm-Message-State: AOJu0YzmpK+Q8wjv6QTmTUrUPt/AfCQkPuY/zNlYoVWYyljn09/s6hUI
+	hF52q0Uu1p3mo2F6yP3HN/nhDAn4MA==
+X-Google-Smtp-Source: AGHT+IFWkvHfseSXYTYT3uKdOPAB8K0URkVWZMX3xZ7xanO9ooySMDAjcPKjyJvnnmKaV3WR/fUj1g==
+X-Received: by 2002:a05:6830:1b64:b0:6d9:da9f:ab2f with SMTP id d4-20020a0568301b6400b006d9da9fab2fmr7327230ote.27.1702477965392;
+        Wed, 13 Dec 2023 06:32:45 -0800 (PST)
+Received: from herring.priv (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id p26-20020a9d695a000000b006d85518ae62sm2776323oto.76.2023.12.13.06.32.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Dec 2023 06:32:44 -0800 (PST)
+Received: (nullmailer pid 1093516 invoked by uid 1000);
+	Wed, 13 Dec 2023 14:32:43 -0000
+Date: Wed, 13 Dec 2023 08:32:42 -0600
+From: Rob Herring <robh@kernel.org>
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, arnd@arndb.de, catalin.marinas@arm.com, s.nawrocki@samsung.com, willmcvicker@google.com, gregkh@linuxfoundation.org, linux@roeck-us.net, linux-arm-kernel@lists.infradead.org, kernel-team@android.com, olof@lixom.net, linux-watchdog@vger.kernel.org, linux-clk@vger.kernel.org, alim.akhtar@samsung.com, saravanak@google.com, will@kernel.org, cw00.choi@samsung.com, tudor.ambarus@linaro.org, linus.walleij@linaro.org, mturquette@baylibre.com, soc@kernel.org, conor+dt@kernel.org, wim@linux-watchdog.org, sboyd@kernel.org, robh+dt@kernel.org, devicetree@vger.kernel.org, linux-serial@vger.kernel.org, tomasz.figa@gmail.com, linux-gpio@vger.kernel.org, jirislaby@kernel.org, semen.protsenko@linaro.org, krzysztof.kozlowski+dt@linaro.org, andre.draszik@linaro.org
+Subject: Re: [PATCH v7 02/16] dt-bindings: arm: google: Add bindings for
+ Google ARM platforms
+Message-ID: <170247795662.1093374.11352509671907840697.robh@kernel.org>
+References: <20231211162331.435900-1-peter.griffin@linaro.org>
+ <20231211162331.435900-3-peter.griffin@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231120111820.87398-1-claudiu.beznea.uj@bp.renesas.com> <20231120111820.87398-10-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20231120111820.87398-10-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 13 Dec 2023 15:18:27 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdX04XKYcoXQ60DsKt-1LuEKm_kSiuYDLjiqfM2Ej0OAXQ@mail.gmail.com>
-Message-ID: <CAMuHMdX04XKYcoXQ60DsKt-1LuEKm_kSiuYDLjiqfM2Ej0OAXQ@mail.gmail.com>
-Subject: Re: [PATCH v3 9/9] arm64: dts: renesas: r9108g045: Add IA55 interrupt
- controller node
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: tglx@linutronix.de, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
-	conor+dt@kernel.org, magnus.damm@gmail.com, mturquette@baylibre.com, 
-	sboyd@kernel.org, prabhakar.mahadev-lad.rj@bp.renesas.com, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231211162331.435900-3-peter.griffin@linaro.org>
 
-On Wed, Nov 22, 2023 at 7:16=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.dev> =
-wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Add IA55 interrupt controller node and set it as interrupt parent for pin
-> controller.
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.8.
+On Mon, 11 Dec 2023 16:23:17 +0000, Peter Griffin wrote:
+> This introduces bindings and dt-schema for the Google Tensor SoCs.
+> Currently just gs101 and pixel 6 are supported.
+> 
+> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+> @RobH I removed your 'Reviewed-by: Rob Herring <robh@kernel.org>' tag
+> as since you reviewed this I added the empty ect node. Can you please
+> do the review again?
+> 
+> x# Please enter the commit message for your changes. Lines starting
+> ---
+>  .../devicetree/bindings/arm/google.yaml       | 53 +++++++++++++++++++
+>  1 file changed, 53 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/google.yaml
+> 
 
-Gr{oetje,eeting}s,
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
