@@ -1,226 +1,105 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mt8vc5kU"
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDBBADC;
-	Wed, 13 Dec 2023 12:26:35 -0800 (PST)
-Received: by mail-wr1-x42a.google.com with SMTP id ffacd0b85a97d-3333fbbeab9so6246411f8f.2;
-        Wed, 13 Dec 2023 12:26:35 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UV6F+HMy"
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80265A3;
+	Wed, 13 Dec 2023 12:29:49 -0800 (PST)
+Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-40c48d7a7a7so32307725e9.3;
+        Wed, 13 Dec 2023 12:29:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702499194; x=1703103994; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JGV9ovWt1T0TxLyTUNl8lJVAhcl8IWinEHZFMqlV8R0=;
-        b=mt8vc5kUaYve7mnwB4XE85KSX317GUxCnZiqCWNFf+RS7V7twcBVCTE7n9tt4NrJls
-         6JO++SdyI+Q20x9jkIo9WnaoPWIDKFXx8TF8DT72nQdspDSAAUH6FHMWkABlLgThhr9H
-         xP5NuT7hPkGzc6wODuL5wY50Lj2L4IF+EoYeoLt6Tk+uZloUdxa2qIGtyyGDrt0jVGZ+
-         qF8hzfsN/JxkmFN5wEPOTiCIe4uGwm8XeHalmIBXJguTnhBNj9FGmT6c/YoGi+ptl5LM
-         hsZGx2cSMq7xc/iTcxHZFvmQfaY3ERIlxF1TLh41hA5n3aVoLKgybXr3Gpt/+8svXb3q
-         +Zhg==
+        d=gmail.com; s=20230601; t=1702499388; x=1703104188; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Zw2AbkoN/4FIKkUWexE+EWqV2AcpdmgqKqjwrsLePhs=;
+        b=UV6F+HMyC1uQmn384lL0Xk2D69cNif6FlMm6AJI3HGQ1xn9GTIbdsnft9BAR4uYAL+
+         P663ol+Efe/pFz7wV8VLgllpcllpj7YjykMIBpPoJKdaBZap5vgRhik+tTL46l7rgRre
+         MBxQIoxsYOLWvTs8CPaClR+h0FsppmxvegbC135DRm5aV0r/Mh7snnkZ24EcQMcVrUxZ
+         N54JQ2DIYBFSJJtGuOqAATxWiCDwVwBRF9rn8eJ5ybcY32QQCnZuPVmz5ivtWEpTWIvQ
+         3WEuyEIiJah/FhTWolicgWkb0z9ilGvBvRmB0VgPhim67uYaJo0umphu7P1HWRCDoFVI
+         3lPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702499194; x=1703103994;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JGV9ovWt1T0TxLyTUNl8lJVAhcl8IWinEHZFMqlV8R0=;
-        b=gx28ZH4pxRt0jfu2wgrUOSsn19o4KukUqCT4M5JMJj7M3oFHbRyfYJyCkof7uq8P0T
-         Ztc9ZnavUmPMxYcmeytZTQgnmHUX6G/hfix3jeMJ0djICImLfRySFIQoG66coctDr4EC
-         hj5HHQFxAIDyBxP3NwXRAfTzxs2VtDXaPzlkh8wZAAH7Wt2wzuvbUNlEqzqtCVXYel7X
-         w5C9lquZIjLRm5hPsb0Mo6OdcNNbqXzBgGqfwQO3HRJmSBMKPKt/ld15H4jsuphX1veN
-         jPw06+P5scpnFmDEH4kzkSH/sAzCa8n9FgLbLbzVDnxbwBG7nqV87gLuqIc4X+5UlrC+
-         jhvA==
-X-Gm-Message-State: AOJu0YzifCWjYfTaSfUDCsQ0obIHE+iWQQkryeUlFkWrR5xIxg0C7sX6
-	51rfeF9YuHJGatqtJLpldWASJZLBAVc=
-X-Google-Smtp-Source: AGHT+IGCl2qoP1T/NnW43knX1fCbT4M6OGvmsXKs/O9+AOQvHcSiKP9r2rbiyLldtzfSqmLZwS+qiA==
-X-Received: by 2002:a05:6000:194f:b0:332:ce52:6388 with SMTP id e15-20020a056000194f00b00332ce526388mr4258017wry.14.1702499194241;
-        Wed, 13 Dec 2023 12:26:34 -0800 (PST)
-Received: from archlinux.localnet (82-149-12-148.dynamic.telemach.net. [82.149.12.148])
-        by smtp.gmail.com with ESMTPSA id m11-20020a056000008b00b0033332524235sm14110534wrx.82.2023.12.13.12.26.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Dec 2023 12:26:33 -0800 (PST)
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Samuel Holland <samuel@sholland.org>, Maxime Ripard <mripard@kernel.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject:
- Re: [PATCH v7 7/7] ARM: dts: sun8i-a83t: Add BananaPi M3 OV8865 camera
- overlay
-Date: Wed, 13 Dec 2023 21:26:32 +0100
-Message-ID: <3780932.kQq0lBPeGt@archlinux>
-In-Reply-To: <20231122141426.329694-8-paul.kocialkowski@bootlin.com>
-References:
- <20231122141426.329694-1-paul.kocialkowski@bootlin.com>
- <20231122141426.329694-8-paul.kocialkowski@bootlin.com>
+        d=1e100.net; s=20230601; t=1702499388; x=1703104188;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zw2AbkoN/4FIKkUWexE+EWqV2AcpdmgqKqjwrsLePhs=;
+        b=hee5yTVBBSUdJFOysReZnHpRdAZuuqQ/YFA6ggHPEkBvRowDSzFt3+PGY/wut2xQ77
+         6m2/kWHMdCdmWnzEIT/p6kewovMS1LFdiZRIMluSsw9TeEeSoLRVtTefGHREsm3loAqh
+         lTNafE8URxofKN24JaOKfKg1LQxS6DlAmwnQy660iQJnxOorejTz6q8+2eubhV4A35j0
+         bTV9WxlRvTTB+LED4xAIghwMzeuWbDqMGhoSHBkNlx9221ckurfyaWYbsks5nDk0H8TS
+         CGR4oXqeYr6w5Dg2zLWbr/5Q9SVfCBk7mEQdEw/Js7DH+7j1a1uan8ZLlGeHDd9Rw+iW
+         u0uA==
+X-Gm-Message-State: AOJu0Yw/XX8TFn7fVb7qeSo6PiTKJOA9bCG/GURfGlS/lF/JUSWPggBM
+	qNLZ9hseR5TSUNcgxu+APd5cI7Kmww==
+X-Google-Smtp-Source: AGHT+IG20yw7g9GqI9IbadFk19Exl/zGderaqPqj/VFPT7HLhLixQNc2+B3uD+potrr7JRkM+oOFEA==
+X-Received: by 2002:a05:600c:3648:b0:40b:4812:22e2 with SMTP id y8-20020a05600c364800b0040b481222e2mr5226786wmq.11.1702499387771;
+        Wed, 13 Dec 2023 12:29:47 -0800 (PST)
+Received: from ?IPV6:2a02:810b:f40:4300:3bf6:bcc0:fe50:883f? ([2a02:810b:f40:4300:3bf6:bcc0:fe50:883f])
+        by smtp.gmail.com with ESMTPSA id n21-20020a05600c4f9500b0040b36ad5413sm21179364wmq.46.2023.12.13.12.29.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Dec 2023 12:29:47 -0800 (PST)
+Message-ID: <a5889aba-75b6-4671-918b-26a4b9ec12c5@gmail.com>
+Date: Wed, 13 Dec 2023 21:29:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/31] Fix and improve Rockchip RK3128 support
+Content-Language: en-US, de-DE
+To: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, Lee Jones <lee@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>
+Cc: Elaine Zhang <zhangqing@rock-chips.com>, Johan Jonker
+ <jbx6244@gmail.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ alsa-devel@alsa-project.org, linux-clk@vger.kernel.org,
+ linux-phy@lists.infradead.org
+References: <20230829171647.187787-1-knaerzche@gmail.com>
+ <2167016.irdbgypaU6@phil>
+From: Alex Bee <knaerzche@gmail.com>
+In-Reply-To: <2167016.irdbgypaU6@phil>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Paul,
+Hi Heiko
 
-same comments as for patch 6.
+Am 12.12.23 um 21:03 schrieb Heiko Stuebner:
+> Hi Alex,
+>
+> Am Dienstag, 29. August 2023, 19:16:16 CET schrieb Alex Bee:
+>> this series fixes some issues I found when testing my "new" RK3128 board
+>> with the mainline kernel and adds some core functionality like SMP bringup,
+>> usb and networking.
+> before I discard this thread, is everything from here migrated to
+> separate serieses or are there patches in this big pile that are still
+> relevant on their own, that haven't been applied?
+> [I lost track of what did go where ;-) ]
 
-Best regards,
-Jernej
+No worries - I kept track :)
 
-On Wednesday, November 22, 2023 3:14:25 PM CET Paul Kocialkowski wrote:
-> Add an overlay supporting the OV8865 from the BananaPi Camera v3
-> peripheral board. The board has two sensors (OV5640 and OV8865)
-> which cannot be supported in parallel as they share the same reset
-> pin and the kernel currently has no support for this case.
->=20
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> ---
->  arch/arm/boot/dts/allwinner/Makefile          |   1 +
->  .../sun8i-a83t-bananapi-m3-camera-ov8865.dtso | 109 ++++++++++++++++++
->  2 files changed, 110 insertions(+)
->  create mode 100644 arch/arm/boot/dts/allwinner/sun8i-a83t-bananapi-m3-ca=
-mera-ov8865.dtso
->=20
-> diff --git a/arch/arm/boot/dts/allwinner/Makefile b/arch/arm/boot/dts/all=
-winner/Makefile
-> index a0a9aa6595e4..980ac88634e3 100644
-> --- a/arch/arm/boot/dts/allwinner/Makefile
-> +++ b/arch/arm/boot/dts/allwinner/Makefile
-> @@ -278,6 +278,7 @@ dtb-$(CONFIG_MACH_SUN8I) +=3D \
->  	sun8i-a83t-allwinner-h8homlet-v2.dtb \
->  	sun8i-a83t-bananapi-m3.dtb \
->  	sun8i-a83t-bananapi-m3-camera-ov5640.dtbo \
-> +	sun8i-a83t-bananapi-m3-camera-ov8865.dtbo \
->  	sun8i-a83t-cubietruck-plus.dtb \
->  	sun8i-a83t-tbs-a711.dtb \
->  	sun8i-h2-plus-bananapi-m2-zero.dtb \
-> diff --git a/arch/arm/boot/dts/allwinner/sun8i-a83t-bananapi-m3-camera-ov=
-8865.dtso b/arch/arm/boot/dts/allwinner/sun8i-a83t-bananapi-m3-camera-ov886=
-5.dtso
-> new file mode 100644
-> index 000000000000..0656ee8d4bfe
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/allwinner/sun8i-a83t-bananapi-m3-camera-ov8865.dt=
-so
-> @@ -0,0 +1,109 @@
-> +// SPDX-License-Identifier: GPL-2.0 OR X11
-> +/*
-> + * Copyright 2022 Bootlin
-> + * Author: K=E9vin L'h=F4pital <kevin.lhopital@bootlin.com>
-> + * Author: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> + */
-> +
-> +/dts-v1/;
-> +/plugin/;
-> +
-> +#include <dt-bindings/clock/sun8i-a83t-ccu.h>
-> +#include <dt-bindings/gpio/gpio.h>
-> +
-> +&{/} {
-> +	/*
-> +	 * These regulators actually have DLDO4 tied to their EN pin, which is
-> +	 * described as input supply here for lack of a better representation.
-> +	 * Their actual supply is PS, which is always-on.
-> +	 */
-> +
-> +	ov8865_avdd: ov8865-avdd {
-> +		compatible =3D "regulator-fixed";
-> +		regulator-name =3D "ov8865-avdd";
-> +		regulator-min-microvolt =3D <2800000>;
-> +		regulator-max-microvolt =3D <2800000>;
-> +		vin-supply =3D <&reg_dldo4>;
-> +	};
-> +
-> +	ov8865_dovdd: ov8865-dovdd {
-> +		compatible =3D "regulator-fixed";
-> +		regulator-name =3D "ov8865-dovdd";
-> +		regulator-min-microvolt =3D <2800000>;
-> +		regulator-max-microvolt =3D <2800000>;
-> +		vin-supply =3D <&reg_dldo4>;
-> +	};
-> +
-> +	ov8865_dvdd: ov8865-dvdd {
-> +		compatible =3D "regulator-fixed";
-> +		regulator-name =3D "ov8865-dvdd";
-> +		regulator-min-microvolt =3D <1200000>;
-> +		regulator-max-microvolt =3D <1200000>;
-> +		vin-supply =3D <&reg_dldo4>;
-> +	};
-> +};
-> +
-> +&ccu {
-> +	assigned-clocks =3D <&ccu CLK_CSI_MCLK>;
-> +	assigned-clock-parents =3D <&osc24M>;
-> +	assigned-clock-rates =3D <24000000>;
-> +};
-> +
-> +&csi {
-> +	status =3D "okay";
-> +};
-> +
-> +&i2c2 {
-> +	pinctrl-names =3D "default";
-> +	pinctrl-0 =3D <&i2c2_pe_pins>;
-> +	status =3D "okay";
-> +
-> +	#address-cells =3D <1>;
-> +	#size-cells =3D <0>;
-> +
-> +	ov8865: camera@36 {
-> +		compatible =3D "ovti,ov8865";
-> +		reg =3D <0x36>;
-> +
-> +		clocks =3D <&ccu CLK_CSI_MCLK>;
-> +		assigned-clocks =3D <&ccu CLK_CSI_MCLK>;
-> +		assigned-clock-parents =3D <&osc24M>;
-> +		assigned-clock-rates =3D <24000000>;
-> +
-> +		avdd-supply =3D <&ov8865_avdd>;
-> +		dovdd-supply =3D <&ov8865_dovdd>;
-> +		dvdd-supply =3D <&ov8865_dvdd>;
-> +
-> +		powerdown-gpios =3D <&pio 4 17 GPIO_ACTIVE_LOW>; /* PE17 */
-> +		reset-gpios =3D <&pio 4 16 GPIO_ACTIVE_LOW>; /* PE16 */
-> +
-> +		port {
-> +			ov8865_out_mipi_csi2: endpoint {
-> +				remote-endpoint =3D <&mipi_csi2_in_ov8865>;
-> +				link-frequencies =3D /bits/ 64 <360000000>;
-> +				data-lanes =3D <1 2 3 4>;
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&mipi_csi2 {
-> +	status =3D "okay";
-> +};
-> +
-> +&mipi_csi2_in {
-> +	mipi_csi2_in_ov8865: endpoint {
-> +		remote-endpoint =3D <&ov8865_out_mipi_csi2>;
-> +		data-lanes =3D <1 2 3 4>;
-> +	};
-> +};
-> +
-> +&pio {
-> +	pinctrl-names =3D "default";
-> +	pinctrl-0 =3D <&csi_mclk_pin>;
-> +};
-> +
-> +&reg_dldo4 {
-> +	regulator-min-microvolt =3D <2800000>;
-> +	regulator-max-microvolt =3D <2800000>;
-> +};
->=20
+Not everything is re-sent yet (sound nodes, RK3126/RK3128 split-up) but 
+you can discard this and will re-send everything left in separate series 
+(as I said [0])
 
+[0] 
+https://lore.kernel.org/linux-arm-kernel/170109134007.42627.12929766893521974712.b4-ty@kernel.org/T/#m63efa1c1379353b5cf764d2f9a260cf0329c864c
 
+Regards,
 
+Alex
 
+>
+>
+> Thanks
+> Heiko
+>
+>
