@@ -1,143 +1,115 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="smIesrYJ"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDCE7CF
-	for <linux-clk@vger.kernel.org>; Wed, 13 Dec 2023 04:05:20 -0800 (PST)
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 9C6E03F18B
-	for <linux-clk@vger.kernel.org>; Wed, 13 Dec 2023 12:05:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1702469119;
-	bh=ed/4z9K37WF1+ypqnAItmB7J3yVCg6lzXveMVJNIB+I=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=smIesrYJpscZxloUefgTPLm9pjHmYAbyliUxqFWNWExa7S/6j5I28PBlgJJ8x7USl
-	 3O4ncWgyzy3F22gInJTSF4tV8xphNY2F/CC8E6Gxa9yEAwDdowosPnVylryN8B3jTP
-	 qdcvA8a/x9R93amX0mO3JnkMHXl5RI6iPn8LPfQrrNM9zlcaE6e88i81iOAkL9GIFp
-	 J21Ui9f+PJZyEL+HJJ4Lp4P+GyK+WXGaq2O+Xe+FdUeDOnBajvEbnUrBLNjkMX6eN/
-	 jZuuwKw2lhhotMenNnjph5wJkeJAyVstLE+DPhA/IQ3E/T5GmKggVOygQP0UxkSyp1
-	 ROZxhDtUUnenA==
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-421b20c9893so89747381cf.0
-        for <linux-clk@vger.kernel.org>; Wed, 13 Dec 2023 04:05:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702469118; x=1703073918;
-        h=content-transfer-encoding:cc:to:subject:message-id:date
-         :mime-version:references:in-reply-to:from:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ed/4z9K37WF1+ypqnAItmB7J3yVCg6lzXveMVJNIB+I=;
-        b=uOB0FqOan80ppg7N5SqQfQqFLx+JV+GgpWr9bS8oJhu+lx6f6Y1/m8z5p2swlDUZiy
-         O0r9ecJIu/L1xczOSnqjkkfjMuhec0YS8w7NiRTNwfjrUnNz1NcT3zzUpzuivY/iGKFy
-         npz67FCrZ+lMEnx7yhD0wNcFEkDQ5bC8NsE69/wBZPT7KGiyZcox+/9OMf1zcyiq7HrK
-         fxRPbKpenBmYRU2z/kntIHsWZLvOBcae+Lm6osQIImfq1Fg2SPT8TtCZraGxehpX2IZd
-         Ldk/8T7O9uKbOXti5Al0cvlf14OKWzkaE43gq+WgSn/2GUWjpL2HzgPo9kja65hs/ZZS
-         74fg==
-X-Gm-Message-State: AOJu0Yxgg6Ecosca/Z9ASzL1X+NaYg5BdevzQJezykFbOGs+6M5RvT7z
-	uzbDHjSbD/XMsGp8JJAv3jqMXeKcNs6tZ38N/CISqjFVMXM3n302eTKNYdGX6iG3LObuixzc1En
-	ol2M8wqsJySXf3KaCT4/PGyIlvoA6UU3y/zkwYRchRBHFjhKK2jNXHA==
-X-Received: by 2002:ac8:5cc8:0:b0:425:4043:763d with SMTP id s8-20020ac85cc8000000b004254043763dmr11389699qta.101.1702469118714;
-        Wed, 13 Dec 2023 04:05:18 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE9QHKlpfiHiwknItMSza3ZGQwZtx+b52QZTd9pTWAuKsITQLCClWyurTTqXFX6DTkIy2rCL/jyIwRxWdAltnE=
-X-Received: by 2002:ac8:5cc8:0:b0:425:4043:763d with SMTP id
- s8-20020ac85cc8000000b004254043763dmr11389680qta.101.1702469118472; Wed, 13
- Dec 2023 04:05:18 -0800 (PST)
-Received: from 348282803490 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 13 Dec 2023 04:05:18 -0800
-From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-In-Reply-To: <a554a163793e4513b25766c21ddc3f02@EXMBX066.cuchost.com>
-References: <20231206115000.295825-1-jeeheng.sia@starfivetech.com>
- <20231206115000.295825-7-jeeheng.sia@starfivetech.com> <CAJM55Z_VgBGvCPuvwmQahMcMfuWKnOKpZ9bBbbhei_Teu5Apeg@mail.gmail.com>
- <a554a163793e4513b25766c21ddc3f02@EXMBX066.cuchost.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3244E2C842;
+	Wed, 13 Dec 2023 13:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pOAZ793f"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B73FFC433C8;
+	Wed, 13 Dec 2023 13:02:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1702472575;
+	bh=SYhlR91tO42bA8AfGZXjJpENUJXvfJwI9ZrVd2yDl7o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pOAZ793fHzKh/HYPbFWxrP57xdIvDGz7zJAPafMIdiXo/gdClWfHHvXyABgyiaI3d
+	 IzjD7flCvOmUtRPQK/nwxFG4P+/wjewBRhds66wynKr/e/B9HcmsYwbGWOiDfrcGgF
+	 Mad+vti/3CHqhV9Mc8DmDCiHi5Llrhj8bBvRK8yG2/BfMYB5kldfx6AoNVi3LS5Yed
+	 voYZzMviyN03AtFIwzndO9A1hh6wyeIOadgNlhvE3YVLQFoRmcz/zTpvLmVk2qGecJ
+	 c2p65kbrZ/i6niLm0i+F8ERk9GXSfIiwFL6+xEZru50pieVHqYJCoculVkT2y+ID+D
+	 uMM7/fLCxbELQ==
+Date: Wed, 13 Dec 2023 13:02:49 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: linux-riscv@lists.infradead.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Wolfgang Grandegger <wg@grandegger.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-can@vger.kernel.org,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH RESEND v1 2/7] dt-bindings: can: mpfs: add missing
+ required clock
+Message-ID: <20231213-waffle-grueling-3a5c3879395b@spud>
+References: <20231208-reenter-ajar-b6223e5134b3@spud>
+ <20231208-palpitate-passable-c79bacf2036c@spud>
+ <20231212-unreeling-depose-8b6b2e032555-mkl@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Wed, 13 Dec 2023 04:05:18 -0800
-Message-ID: <CAJM55Z_3Mty2LftPVkQC1wbwtGeznMMAk9mAjH_GoNuL7CKtaQ@mail.gmail.com>
-Subject: RE: [PATCH v1 06/16] clk: starfive: Add JH8100 System clock generator driver
-To: JeeHeng Sia <jeeheng.sia@starfivetech.com>, 
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>, "kernel@esmil.dk" <kernel@esmil.dk>, 
-	"conor@kernel.org" <conor@kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, 
-	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>, 
-	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, "palmer@dabbelt.com" <palmer@dabbelt.com>, 
-	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, "mturquette@baylibre.com" <mturquette@baylibre.com>, 
-	"sboyd@kernel.org" <sboyd@kernel.org>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, 
-	Hal Feng <hal.feng@starfivetech.com>, Xingyu Wu <xingyu.wu@starfivetech.com>
-Cc: "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Leyfoon Tan <leyfoon.tan@starfivetech.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="AuzXFLC6CIKr68l9"
+Content-Disposition: inline
+In-Reply-To: <20231212-unreeling-depose-8b6b2e032555-mkl@pengutronix.de>
+
+
+--AuzXFLC6CIKr68l9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-JeeHeng Sia wrote:
->
->
-> > -----Original Message-----
-> > From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-> > Sent: Saturday, December 9, 2023 12:25 AM
-> > To: JeeHeng Sia <jeeheng.sia@starfivetech.com>; kernel@esmil.dk; conor@=
-kernel.org; robh+dt@kernel.org;
-> > krzysztof.kozlowski+dt@linaro.org; paul.walmsley@sifive.com; palmer@dab=
-belt.com; aou@eecs.berkeley.edu;
-> > mturquette@baylibre.com; sboyd@kernel.org; p.zabel@pengutronix.de; emil=
-.renner.berthing@canonical.com; Hal Feng
-> > <hal.feng@starfivetech.com>; Xingyu Wu <xingyu.wu@starfivetech.com>
-> > Cc: linux-riscv@lists.infradead.org; devicetree@vger.kernel.org; linux-=
-kernel@vger.kernel.org; linux-clk@vger.kernel.org; Leyfoon Tan
-> > <leyfoon.tan@starfivetech.com>
-> > Subject: Re: [PATCH v1 06/16] clk: starfive: Add JH8100 System clock ge=
-nerator driver
-> >
-> > Sia Jee Heng wrote:
-> > > Add support for JH8100 System clock generator.
-> > >
-> > > Signed-off-by: Sia Jee Heng <jeeheng.sia@starfivetech.com>
-> > > Reviewed-by: Ley Foon Tan <leyfoon.tan@starfivetech.com>
-> > > ---
-> > >  MAINTAINERS                                   |   8 +
-> > >  drivers/clk/starfive/Kconfig                  |   9 +
-> > >  drivers/clk/starfive/Makefile                 |   1 +
-> > >  drivers/clk/starfive/clk-starfive-common.h    |   9 +-
-> > >  drivers/clk/starfive/jh8100/Makefile          |   3 +
-> > >  .../clk/starfive/jh8100/clk-starfive-jh8100.h |  11 +
-> > >  drivers/clk/starfive/jh8100/clk-sys.c         | 455 ++++++++++++++++=
-++
-> > >  7 files changed, 495 insertions(+), 1 deletion(-)
-> > >  create mode 100644 drivers/clk/starfive/jh8100/Makefile
-> > >  create mode 100644 drivers/clk/starfive/jh8100/clk-starfive-jh8100.h
-> > >  create mode 100644 drivers/clk/starfive/jh8100/clk-sys.c
-> > >
-[...]
-> > > diff --git a/drivers/clk/starfive/jh8100/Makefile b/drivers/clk/starf=
-ive/jh8100/Makefile
-> > > new file mode 100644
-> > > index 000000000000..af6a09e220d3
-> > > --- /dev/null
-> > > +++ b/drivers/clk/starfive/jh8100/Makefile
-> > > @@ -0,0 +1,3 @@
-> > > +# SPDX-License-Identifier: GPL-2.0
-> > > +# StarFive JH8100 Clock
-> > > +obj-$(CONFIG_CLK_STARFIVE_JH8100_SYS)		+=3D clk-sys.o
-> >
-> > This will name the module clk-sys, which is way too generic. Please nam=
-e this
-> > clk-starfive-jh8100-sys similar to the JH7110 drivers.
-> Just realized that I haven't reply to this comment.
-> I can't give it a longer name otherwise compiler will throw warning.
-> That=E2=80=99s why ends up to use a shorter name and keep it under jh8100=
- folder.
+On Tue, Dec 12, 2023 at 09:49:41PM +0100, Marc Kleine-Budde wrote:
+> On 08.12.2023 17:12:24, Conor Dooley wrote:
+> > From: Conor Dooley <conor.dooley@microchip.com>
+> >=20
+> > The CAN controller on PolarFire SoC has an AHB peripheral clock _and_ a
+> > CAN bus clock. The bus clock was omitted when the binding was written,
+> > but is required for operation. Make up for lost time and add it.
+> >=20
+> > Cautionary tale in adding bindings without having implemented a real
+> > user for them perhaps.
+> >=20
+> > Fixes: c878d518d7b6 ("dt-bindings: can: mpfs: document the mpfs CAN con=
+troller")
+> > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> > ---
+> >  .../devicetree/bindings/net/can/microchip,mpfs-can.yaml    | 7 +++++--
+> >  1 file changed, 5 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/net/can/microchip,mpfs-c=
+an.yaml b/Documentation/devicetree/bindings/net/can/microchip,mpfs-can.yaml
+> > index 45aa3de7cf01..05f680f15b17 100644
+> > --- a/Documentation/devicetree/bindings/net/can/microchip,mpfs-can.yaml
+> > +++ b/Documentation/devicetree/bindings/net/can/microchip,mpfs-can.yaml
+> > @@ -24,7 +24,10 @@ properties:
+> >      maxItems: 1
+> > =20
+> >    clocks:
+> > -    maxItems: 1
+> > +    maxItems: 2
+> > +    items:
+> > +      - description: AHB peripheral clock
+> > +      - description: CAN bus clock
+>=20
+> Do we we want to have a "clock-names" property, as we need the clock
+> rate of the CAN bus clock.
 
-I'm sorry, how does that make any sense? If the compiler can compile
+We should not need the clock-names property to be able to get both of
+the clocks. clk_bulk_get_all() for example should be usable here.
 
-  drivers/clk/starfive/clk-starfive-jh7110-sys.c
+Cheers,
+Conor.
 
-just fine, then why would it have trouble with
+--AuzXFLC6CIKr68l9
+Content-Type: application/pgp-signature; name="signature.asc"
 
-  drivers/clk/starfive/clk-starfive-jh8100-sys.c
+-----BEGIN PGP SIGNATURE-----
 
-/Emil
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZXmreQAKCRB4tDGHoIJi
+0pybAQCaXK2xUCp5W6797bY/KOydLDfzz6/zpgo3/ym1K/7tCgEAs+ZQmqrTvSuQ
+t2sr42Cf8RWYaRCGrwl6zg97g0jV0As=
+=jW/W
+-----END PGP SIGNATURE-----
+
+--AuzXFLC6CIKr68l9--
