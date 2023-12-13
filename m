@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZVp3eqD0"
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33834AD
-	for <linux-clk@vger.kernel.org>; Tue, 12 Dec 2023 22:53:56 -0800 (PST)
-Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-40c2c65e6aaso67566055e9.2
-        for <linux-clk@vger.kernel.org>; Tue, 12 Dec 2023 22:53:56 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Wf9uFiEr"
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CB81AC
+	for <linux-clk@vger.kernel.org>; Tue, 12 Dec 2023 23:01:04 -0800 (PST)
+Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-548ce39b101so9067168a12.2
+        for <linux-clk@vger.kernel.org>; Tue, 12 Dec 2023 23:01:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702450434; x=1703055234; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1702450863; x=1703055663; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=YNk8IpJruantn27AJNLcT3vqic3Xe88t7oAmktcTh2o=;
-        b=ZVp3eqD0LGlOlALuflO8IFzQoeRY1gFFTeM78As0VHbBSYHhkvs3oTLUXILJgh6ZHE
-         4VgXHon4gWgIqZJJQR5j+Z9tBy+CIYV3EO011QBQSRVfj7LcEzIKg+N+jXR8tdWH1XYo
-         blKgxuuizbvp+5Sh4oZTLwPTe3VWfzxlVz8CigjVJ2DzpXV8hR7fkVNiy50JogWyY+mq
-         +b7B6sUuIZgEoJTA/wj5uow638ovUTntt/G89ysMNIbvr2svJCCU0a23WLqqWkAwxUN6
-         n0QBx0Y9IpB69coljvEpnpK/C2vtFsR1TqamUees5uvdjYc9K7qzTd5T4blNnUjk3Jp+
-         o7uA==
+        bh=zHMdNcfC1HmxRzd3QioUxmMyBVeOrfAuTs7vHTPPGFU=;
+        b=Wf9uFiEriyUw0csbUvkwa+JFSUgC8CEBf04kvmkEUuYbEYTom8IidSWdVYdUdpRrEt
+         jtRX+3DsWKTecHCija1gJc9cF/uK0GGYkYW78RCWpF0kMyrSQVa4WQvM5Pdvtx9WvKrd
+         POzAbkSxC0npLbNKMTr31ief0XF9KgYh1SgNm3GFVdnytIEvD+j5CdhHwY133VMPMMfB
+         0sQLx+JOioSdVJPd7ZrMKvYhfUNufHha4uyxuQOg/ysq1kYeEJf8xR0VGZu4NVxaI5ZI
+         JjvpWD9TWwEVrYEQEjy6FMopSREbQBXHRZaAhkICnGbbPVwnccn5WgxGnn/xw43hrBiG
+         6hYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702450434; x=1703055234;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1702450863; x=1703055663;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YNk8IpJruantn27AJNLcT3vqic3Xe88t7oAmktcTh2o=;
-        b=IImTVBHsJx8GpPAzpDEbmIjGydfmFbmc5yTA7zzN041WqVZ/5QKymi3zeiv+AOTYFk
-         ETDgpwlq0nWRiD17SE4uCBZYRdNF+xljqdW8gZtRLs8gVlej4xUUeN64qd0Z+ggESa7a
-         jUiC4Hr9G2ugdkHQZgK2BUa1rtaj4IOSQlVzTIFDxQZMHUTyNAAbhRg/c34U+Sb6bnFM
-         ChCVkZ60Z6vxtoOBjfcBcgjEh3m7tqnX17F+fW1XotJ2oA/mYFOluhRFSwQwhPoF0mBR
-         jcgyjsuFMSLqD+ajNe6l+8TRZTOgQtEJqlIF54oWO7RxHiBkMCSZFogstDx+dnbHONE2
-         pxbg==
-X-Gm-Message-State: AOJu0Yw4mMAVnLbYGFPjt6VUOGHH7EfbXQOg5/089Cm1CipQu4JTANv4
-	61wuh6LaJfdhlxcP7h883CQzVQ==
-X-Google-Smtp-Source: AGHT+IGQAP9b56AAOBhC6pNM5TdZ45mXP/JfiLNWZr3XGsIeXQVOeEVioaPz8u18G6BZRLo5jdNc4g==
-X-Received: by 2002:a05:600c:22cd:b0:40b:5e21:bdd0 with SMTP id 13-20020a05600c22cd00b0040b5e21bdd0mr3538261wmg.95.1702450434696;
-        Tue, 12 Dec 2023 22:53:54 -0800 (PST)
+        bh=zHMdNcfC1HmxRzd3QioUxmMyBVeOrfAuTs7vHTPPGFU=;
+        b=liwuaWSB6np0MsDD7q3Fc5B9lvUECQJE46eTfMoDTZ33X+CwHStwlMuvGq9gKeZDOm
+         NUZGo+X1k13fQ2D77e/pccWtXRTjk1r8spxWGoNJz/68N+AZtFZtXubVitXeV/LSVOxN
+         iwdks1Pv7SAt6u51GbCHJB2HwcDXXmHvmrrxVpD4hLdV2pdjoGR+KQZxt2WSAd+BUZRH
+         y+WvncSh0vdZfogkagKdmM3UBvfi8Yt1P4FxyoIV3qqUT+b9cirzopGzWnPQ+wntttBz
+         A2o8M7+QuPaYUeu122DlTHP9wfBCauc8A4aj64Mcp+T3xqEWVEpswa+/nKu1JB4QGh1S
+         LahQ==
+X-Gm-Message-State: AOJu0YwwQVzHTk021zk0RyI/Cza4XT9VA9OLwBfuor2iKcXbTRto9K3G
+	03EJmFoj8gwTGsZbZKmwxQJa4Q==
+X-Google-Smtp-Source: AGHT+IG0IDwJ0NjUVvd88Yz/97KsRl3iFvtGqseZX3SMT6oJnKTJJRz39OlUMn9Lpp8MB0DlALWxBA==
+X-Received: by 2002:a17:906:2319:b0:a19:a19b:4220 with SMTP id l25-20020a170906231900b00a19a19b4220mr2422570eja.139.1702450862814;
+        Tue, 12 Dec 2023 23:01:02 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id t13-20020a05600c450d00b00405c7591b09sm19136852wmo.35.2023.12.12.22.53.53
+        by smtp.gmail.com with ESMTPSA id st6-20020a170907c08600b00a1ddf143020sm7245727ejc.54.2023.12.12.23.01.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Dec 2023 22:53:54 -0800 (PST)
-Message-ID: <7c1d1a2e-3a6a-43f5-97f3-78382978cee8@linaro.org>
-Date: Wed, 13 Dec 2023 07:53:52 +0100
+        Tue, 12 Dec 2023 23:01:02 -0800 (PST)
+Message-ID: <1ca36158-c57d-4130-94f5-c3650594498c@linaro.org>
+Date: Wed, 13 Dec 2023 08:00:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,17 +47,28 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 07/40] dt-bindings: soc: Add Cirrus EP93xx
+Subject: Re: [PATCH v5 2/5] dt-bindings: reset: mediatek: add MT7988 ethwarp
+ reset IDs
 Content-Language: en-US
-To: nikita.shubin@maquefel.me, Rob Herring <robh+dt@kernel.org>,
+To: Daniel Golle <daniel@makrotopia.org>, Rob Herring <robh+dt@kernel.org>,
  Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
  Conor Dooley <conor+dt@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-References: <20231212-ep93xx-v6-0-c307b8ac9aa8@maquefel.me>
- <20231212-ep93xx-v6-7-c307b8ac9aa8@maquefel.me>
+ <sboyd@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Sabrina Dubroca
+ <sd@queasysnail.net>, Chen-Yu Tsai <wenst@chromium.org>,
+ "Garmin.Chang" <Garmin.Chang@mediatek.com>, Sam Shih
+ <sam.shih@mediatek.com>, Frank Wunderlich <frank-w@public-files.de>,
+ Dan Carpenter <dan.carpenter@linaro.org>,
+ James Liao <jamesjj.liao@mediatek.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ netdev@vger.kernel.org
+References: <152b256d253508cdc7514c0f1c5a9324bde83d46.1702350213.git.daniel@makrotopia.org>
+ <a60f5b5ed58626f3dbac1eab8a5845c3ce9bd17c.1702350213.git.daniel@makrotopia.org>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -103,19 +114,22 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231212-ep93xx-v6-7-c307b8ac9aa8@maquefel.me>
+In-Reply-To: <a60f5b5ed58626f3dbac1eab8a5845c3ce9bd17c.1702350213.git.daniel@makrotopia.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 12/12/2023 09:20, Nikita Shubin via B4 Relay wrote:
-> From: Nikita Shubin <nikita.shubin@maquefel.me>
+On 12/12/2023 04:18, Daniel Golle wrote:
+> Add reset ID for ethwarp subsystem allowing to reset the built-in
+> Ethernet switch of the MediaTek MT7988 SoC.
 > 
-> Add device tree bindings for the Cirrus Logic EP93xx SoC.
-> 
-> Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 > ---
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+No need for one patch per one header. Headers are parts of new binding
+patch. If you decide to keep headers separate for easier review, then
+they could be in one header-only-patch.
+
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
