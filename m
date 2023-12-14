@@ -1,133 +1,268 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="H+Tih2AC"
-X-Greylist: delayed 329 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 14 Dec 2023 00:49:05 PST
-Received: from mail-m12780.qiye.163.com (mail-m12780.qiye.163.com [115.236.127.80])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0C6910C;
-	Thu, 14 Dec 2023 00:49:05 -0800 (PST)
-DKIM-Signature: a=rsa-sha256;
-	b=H+Tih2AC1swsa5LpolLueaHwjGrZcQgYvOihmSPLeeLcpCcwbsfl7MzZ+JSwRBd74tlMZ7Fpt9bioIds7vQaYmqF5oGzOxy94LNRn4LQ5dnuTLiF8MxZf8s/VdbY8o7UZ/2PD2I+OBdlnugqv89YfjOOTW9XmUoBtzSDWg3BL3I=;
-	c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=WikvbsWmSBI7ys5pJkbGwLqwVnrtiIg2JwpTBdw98p0=;
-	h=date:mime-version:subject:message-id:from;
-Received: from [172.16.12.87] (unknown [58.22.7.114])
-	by mail-m12744.qiye.163.com (Hmail) with ESMTPA id CEE8B10052F;
-	Thu, 14 Dec 2023 16:42:35 +0800 (CST)
-Message-ID: <090a7670-6997-4be3-99d7-24f67430a16c@rock-chips.com>
-Date: Thu, 14 Dec 2023 16:42:32 +0800
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9549710A;
+	Thu, 14 Dec 2023 01:07:07 -0800 (PST)
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-5c85e8fdd2dso76703387b3.2;
+        Thu, 14 Dec 2023 01:07:07 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702544826; x=1703149626;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=K62UqS9GxhpYYA4mLJeDhLsQ+jlCTyGKCF6JM+FXF3A=;
+        b=HVPnM6AmuQuwlArAaADTvLr6eXfws9WDYnVqd0sBuVPAscKvNZlcYauW9lA4yaXtZz
+         MeOvGesji6lQrhxMN3/M1UZLhVhFl992cxWc9H3DEyCFW6Tpodoe2ZAmG/7KAWdmteAn
+         GNd3KUSyZGmUU5gf/Qk4/hLmbTkZGMQ0afyfU9efV4YUImkaTkYdPfh3j6QyJRMXh6Gy
+         /5elsiFpbuBOKh6SnfDJpr618Cwp6UFvwjI641aVg2lTRTcTtmcF6euY2HKaSu+6WsOw
+         EZiJL+4XGDBmdbl4XWc8CuBgEMszOJWU6aBY1Xai0z1NB09AGc3F3waPwDJZu4NTld2T
+         vU/A==
+X-Gm-Message-State: AOJu0YzEXByAFreqnl6fuGiwtqXjqA/DUQ2YJMNIUaZSikH6/EqhkCnj
+	8atShnE9Bk7yJdp0+CGH7bVg0cRZmLTAVw==
+X-Google-Smtp-Source: AGHT+IGmbZxoI9gOukxHwcTIG1wP06TzisZ2xtDzGluz9SQNH1lESYPBvdNwam2d5POI+YKw76c27g==
+X-Received: by 2002:a0d:eb51:0:b0:5e2:a7a7:b0cb with SMTP id u78-20020a0deb51000000b005e2a7a7b0cbmr2435002ywe.101.1702544826562;
+        Thu, 14 Dec 2023 01:07:06 -0800 (PST)
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com. [209.85.219.171])
+        by smtp.gmail.com with ESMTPSA id v7-20020a81a547000000b005869ca8da8esm5237677ywg.146.2023.12.14.01.07.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Dec 2023 01:07:06 -0800 (PST)
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-dbcdec51ed9so825784276.0;
+        Thu, 14 Dec 2023 01:07:06 -0800 (PST)
+X-Received: by 2002:a25:9cc3:0:b0:dbc:ddc8:e751 with SMTP id
+ z3-20020a259cc3000000b00dbcddc8e751mr1067385ybo.117.1702544826078; Thu, 14
+ Dec 2023 01:07:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/7] clk: rockchip: rk3588: fix CLK_NR_CLKS usage
-Content-Language: en-US
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Kever Yang <kever.yang@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>,
- Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, andy.yan@rock-chips.com,
- devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org,
- kernel@collabora.com, Elaine Zhang <zhangqing@rock-chips.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, linux-clk@vger.kernel.org
-References: <20231213185114.47565-1-sebastian.reichel@collabora.com>
- <20231213185114.47565-2-sebastian.reichel@collabora.com>
-From: Tao Huang <huangtao@rock-chips.com>
-In-Reply-To: <20231213185114.47565-2-sebastian.reichel@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUNJSFZMTx8aShlIQkkfGBpVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlOQ1VJSVVMVUpKT1lXWRYaDxIVHRRZQVlPS0hVSk1PSU5JVUpLS1VKQl
-	kG
-X-HM-Tid: 0a8c677df184b217kuuucee8b10052f
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NSo6ITo*UTwzPzICCipNKRgC
-	DyhPCjVVSlVKTEtJTk9ISE5NQk5LVTMWGhIXVRMOGhUcDxoUOwkUGBBWGBMSCwhVGBQWRVlXWRIL
-	WUFZTkNVSUlVTFVKSk9ZV1kIAVlBTkhOSTcG
+References: <87wmtlo2zs.wl-kuninori.morimoto.gx@renesas.com> <87r0jto2yq.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <87r0jto2yq.wl-kuninori.morimoto.gx@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 14 Dec 2023 10:06:53 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUx-nm6k9LXbUJAJ78ChFYHVcmGcoz0YhWyos7h99R4wg@mail.gmail.com>
+Message-ID: <CAMuHMdUx-nm6k9LXbUJAJ78ChFYHVcmGcoz0YhWyos7h99R4wg@mail.gmail.com>
+Subject: Re: [PATCH v4 4/4] drivers: clk: renesas: ignore all clocks which are
+ assinged to non-Linux system
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Frank Rowand <frowand.list@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Aymeric Aillet <aymeric.aillet@iot.bzh>, 
+	Yusuke Goda <yusuke.goda.sx@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2023/12/14 上午2:46, Sebastian Reichel wrote:
-> CLK_NR_CLKS is not part of the DT bindings and needs to be removed
-> from it, just like it recently happened for other platforms. This
-> takes care of it by introducing a new function identifying the
-> maximum used clock ID at runtime.
+Hi Morimoto-san,
+
+Thanks for the update!
+
+s/assinged/assigned/
+
+On Mon, Dec 11, 2023 at 4:03=E2=80=AFAM Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+> Some boards might use Linux and another OS at the same time. In such
+> case, currently, during booting, Linux will stop necessary module clocks
+> which are not used on the Linux side, but are used by another OS.
 >
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> ---
->  drivers/clk/rockchip/clk-rk3588.c |  5 ++++-
->  drivers/clk/rockchip/clk.c        | 17 +++++++++++++++++
->  drivers/clk/rockchip/clk.h        |  2 ++
->  3 files changed, 23 insertions(+), 1 deletion(-)
+> To avoid such situation, renesas-cpg-mssr tries to find
+> status =3D "reserved" devices (A), and adds CLK_IGNORE_UNUSED flag to its
+> <&cgp CPG_MOD xxx> clock (B).
 >
-> diff --git a/drivers/clk/rockchip/clk-rk3588.c b/drivers/clk/rockchip/clk-rk3588.c
-> index 6994165e0395..0b60ae78f9d8 100644
-> --- a/drivers/clk/rockchip/clk-rk3588.c
-> +++ b/drivers/clk/rockchip/clk-rk3588.c
-> @@ -2458,15 +2458,18 @@ static struct rockchip_clk_branch rk3588_clk_branches[] __initdata = {
->  static void __init rk3588_clk_init(struct device_node *np)
->  {
->  	struct rockchip_clk_provider *ctx;
-> +	unsigned long clk_nr_clks;
->  	void __iomem *reg_base;
->  
-> +	clk_nr_clks = rockchip_clk_find_max_clk_id(rk3588_clk_branches,
-> +					ARRAY_SIZE(rk3588_clk_branches)) + 1;
->  	reg_base = of_iomap(np, 0);
->  	if (!reg_base) {
->  		pr_err("%s: could not map cru region\n", __func__);
->  		return;
->  	}
->  
-> -	ctx = rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
-> +	ctx = rockchip_clk_init(np, reg_base, clk_nr_clks);
->  	if (IS_ERR(ctx)) {
->  		pr_err("%s: rockchip clk init failed\n", __func__);
->  		iounmap(reg_base);
-> diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-> index 4059d9365ae6..043458b7c579 100644
-> --- a/drivers/clk/rockchip/clk.c
-> +++ b/drivers/clk/rockchip/clk.c
-> @@ -429,6 +429,23 @@ void rockchip_clk_register_plls(struct rockchip_clk_provider *ctx,
->  }
->  EXPORT_SYMBOL_GPL(rockchip_clk_register_plls);
->  
-> +unsigned long rockchip_clk_find_max_clk_id(struct rockchip_clk_branch *list,
-> +					   unsigned int nr_clk)
+> Table 2.4: Values for status property
+> https://github.com/devicetree-org/devicetree-specification/releases/downl=
+oad/v0.4/devicetree-specification-v0.4.pdf
+>
+> "reserved"
+>         Indicates that the device is operational, but should not be
+>         used. Typically this is used for devices that are controlled
+>         by another software component, such as platform firmware.
+>
+> ex)
+>         scif5: serial@e6f30000 {
+>                 ...
+> (B)             clocks =3D <&cpg CPG_MOD 202>,
+>                          <&cpg CPG_CORE R8A7795_CLK_S3D1>,
+>                          <&scif_clk>;
+>                 ...
+> (A)             status =3D "reserved";
+>         };
+>
+> Cc: Aymeric Aillet <aymeric.aillet@iot.bzh>
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Tested-by: Yusuke Goda <yusuke.goda.sx@renesas.com>
+
+> @@ -949,6 +967,72 @@ static const struct dev_pm_ops cpg_mssr_pm =3D {
+>  #define DEV_PM_OPS     NULL
+>  #endif /* CONFIG_PM_SLEEP && CONFIG_ARM_PSCI_FW */
+>
+> +static void __init cpg_mssr_reserved_exit(struct cpg_mssr_priv *priv)
 > +{
-> +	unsigned int idx;
-> +	unsigned long max;
-
-smatch report warning: uninitialized symbol 'max'.
-And make sure this function return correct number, for example, when nr_clk == 0.
-
-> +
-> +	for (idx = 0; idx < nr_clk; idx++, list++) {
-> +		if (list->id > max)
-> +			max = list->id;
-> +		if (list->child && list->child->id > max)
-> +			max = list->id;
-> +	}
-> +
-> +	return max;
+> +       kfree(priv->reserved_ids);
 > +}
-> +EXPORT_SYMBOL_GPL(rockchip_clk_find_max_clk_id);
-> +
->  void rockchip_clk_register_branches(struct rockchip_clk_provider *ctx,
->  				    struct rockchip_clk_branch *list,
->  				    unsigned int nr_clk)
-> diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-> index 758ebaf2236b..fd3b476dedda 100644
-> --- a/drivers/clk/rockchip/clk.h
-> +++ b/drivers/clk/rockchip/clk.h
-> @@ -973,6 +973,8 @@ struct rockchip_clk_provider *rockchip_clk_init(struct device_node *np,
->  			void __iomem *base, unsigned long nr_clks);
->  void rockchip_clk_of_add_provider(struct device_node *np,
->  				struct rockchip_clk_provider *ctx);
-> +unsigned long rockchip_clk_find_max_clk_id(struct rockchip_clk_branch *list,
-> +					   unsigned int nr_clk);
->  void rockchip_clk_register_branches(struct rockchip_clk_provider *ctx,
->  				    struct rockchip_clk_branch *list,
->  				    unsigned int nr_clk);
 
+This function is called only once, so you might want to inline it manually.
+
+> +
+> +static int __init cpg_mssr_reserved_init(struct cpg_mssr_priv *priv,
+> +                                        const struct cpg_mssr_info *info=
+)
+> +{
+> +       struct device_node *soc =3D of_find_node_by_path("/soc");
+> +       struct device_node *node;
+> +       uint32_t args[MAX_PHANDLE_ARGS];
+> +       unsigned int *ids =3D NULL;
+> +       unsigned int num =3D 0;
+> +
+> +       /*
+> +        * Because clk_disable_unused() will disable all unused clocks, t=
+he device which is assigned
+> +        * to a non-Linux system will be disabled when Linux is booted.
+> +        *
+> +        * To avoid such situation, renesas-cpg-mssr assumes the device w=
+hich has
+> +        * status =3D "reserved" is assigned to a non-Linux system, and a=
+dds CLK_IGNORE_UNUSED flag
+> +        * to its CPG_MOD clocks.
+> +        * see also
+> +        *      cpg_mssr_register_mod_clk()
+> +        *
+> +        *      scif5: serial@e6f30000 {
+> +        *              ...
+> +        * =3D>           clocks =3D <&cpg CPG_MOD 202>,
+> +        *                       <&cpg CPG_CORE R8A7795_CLK_S3D1>,
+> +        *                       <&scif_clk>;
+> +        *                       ...
+> +        *               status =3D "reserved";
+> +        *      };
+> +        */
+> +       for_each_reserved_child_of_node(soc, node) {
+> +               struct of_phandle_iterator it;
+> +               int rc;
+> +
+> +               of_for_each_phandle(&it, rc, node, "clocks", "#clock-cell=
+s", -1) {
+> +                       int idx;
+> +
+> +                       of_phandle_iterator_args(&it, args, MAX_PHANDLE_A=
+RGS);
+> +
+> +                       if (!(it.node =3D=3D priv->np && args[0] =3D=3D C=
+PG_MOD))
+
+I think "(it.node !=3D priv->np || args[0] !=3D CPG_MOD)" is easier to read=
+ ;-)
+
+However, I think it would make sense to split this in two separate
+checks, to avoid calling of_phandle_iterator_args() when it.node !=3D
+priv->np, and to validate the number of arguments:
+
+    if (it.node !=3D priv->np)
+            continue;
+
+    if (of_phandle_iterator_args(&it, args, MAX_PHANDLE_ARGS) !=3D 2)
+            continue;
+
+    if (args[0] !=3D CPG_MOD)
+            continue;
+
+> +                               continue;
+> +
+> +                       ids =3D krealloc_array(ids, (num + 1), sizeof(*id=
+s), GFP_KERNEL);
+> +                       if (!ids)
+> +                               return -ENOMEM;
+
+Missing of_node_put(it.node) in the error path.
+
+> +
+> +                       if (priv->reg_layout =3D=3D CLK_REG_LAYOUT_RZ_A)
+> +                               idx =3D MOD_CLK_PACK_10(args[1]); /* for =
+DEF_MOD_STB() */
+> +                       else
+> +                               idx =3D MOD_CLK_PACK(args[1]);    /* for =
+DEF_MOD() */
+> +
+> +                       ids[num] =3D info->num_total_core_clks + idx;
+> +
+> +                       num++;
+> +               }
+> +       }
+> +
+> +       priv->num_reserved_ids  =3D num;
+> +       priv->reserved_ids      =3D ids;
+> +
+> +       return 0;
+> +}
+> +
+>  static int __init cpg_mssr_common_init(struct device *dev,
+>                                        struct device_node *np,
+>                                        const struct cpg_mssr_info *info)
+> @@ -1007,6 +1091,10 @@ static int __init cpg_mssr_common_init(struct devi=
+ce *dev,
+>         if (error)
+>                 goto out_err;
+>
+> +       error =3D cpg_mssr_reserved_init(priv, info);
+> +       if (error)
+> +               goto out_err;
+
+Missing of_clk_del_provider() in the error path.
+
+You may want to move the call to cpg_mssr_reserved_init() up, as
+reverting that just needs an unconditional call to kfree() (kfree
+works fine on NULL), while calling of_clk_del_provider() requires a
+new label to jump to.
+
+> +
+>         cpg_mssr_priv =3D priv;
+>
+>         return 0;
+> @@ -1070,22 +1158,23 @@ static int __init cpg_mssr_probe(struct platform_=
+device *pdev)
+>                                          cpg_mssr_del_clk_provider,
+>                                          np);
+>         if (error)
+> -               return error;
+> +               goto reserve_err;
+>
+>         error =3D cpg_mssr_add_clk_domain(dev, info->core_pm_clks,
+>                                         info->num_core_pm_clks);
+>         if (error)
+> -               return error;
+> +               goto reserve_err;
+>
+>         /* Reset Controller not supported for Standby Control SoCs */
+>         if (priv->reg_layout =3D=3D CLK_REG_LAYOUT_RZ_A)
+> -               return 0;
+> +               goto reserve_err;
+>
+>         error =3D cpg_mssr_reset_controller_register(priv);
+> -       if (error)
+> -               return error;
+>
+> -       return 0;
+> +reserve_err:
+
+Perhaps rename the label to "reserve_exit", as this is called on
+success, too?
+
+> +       cpg_mssr_reserved_exit(priv);
+> +
+> +       return error;
+>  }
+>
+>  static struct platform_driver cpg_mssr_driver =3D {
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
