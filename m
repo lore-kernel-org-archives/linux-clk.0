@@ -1,140 +1,137 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD962BD
-	for <linux-clk@vger.kernel.org>; Thu, 14 Dec 2023 03:31:38 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1rDjvo-0007MZ-Dp; Thu, 14 Dec 2023 12:31:08 +0100
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1rDjvm-00Fn0N-Dm; Thu, 14 Dec 2023 12:31:06 +0100
-Received: from pengutronix.de (unknown [172.20.34.65])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 5826D262EFD;
-	Thu, 14 Dec 2023 11:31:05 +0000 (UTC)
-Date: Thu, 14 Dec 2023 12:31:04 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Conor Dooley <conor@kernel.org>
-Cc: linux-riscv@lists.infradead.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Wolfgang Grandegger <wg@grandegger.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-can@vger.kernel.org,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH RESEND v1 2/7] dt-bindings: can: mpfs: add missing
- required clock
-Message-ID: <20231214-tinderbox-glitzy-60d1936ab85f-mkl@pengutronix.de>
-References: <20231208-reenter-ajar-b6223e5134b3@spud>
- <20231208-palpitate-passable-c79bacf2036c@spud>
- <20231212-unreeling-depose-8b6b2e032555-mkl@pengutronix.de>
- <20231213-waffle-grueling-3a5c3879395b@spud>
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0574B3FE25;
+	Thu, 14 Dec 2023 11:50:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uVct52cU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18BF7C433C7;
+	Thu, 14 Dec 2023 11:50:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1702554615;
+	bh=gBxMWK/BJQIfktDOXVActk5N+GeQbJZMHW0htfkV+oc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uVct52cUOIceKATlABivrxGspm4zxEeI7nJUoPLdOQZrR2QVcd0QbZRuQbc+4/NoO
+	 mmlP9blb5sOixsg+eUYJQjaTb9kGqxE5/2q6nw4QaEyTcJvbXPsr1QdJNkMQXFldoW
+	 o1hc+4HwmRMMMLCbE8vxfX3Mv2fD6FvdaP6nWmMp6p+n7I4UMcbv/TYOtW4xBrLS7N
+	 B/7MCCGYwOQ6coCLo7L5ub/dgdSQIkSGBpuyPTpRnVBaTmrnFxXyo4G53qzLlpGr9i
+	 YsQs90tkpRJbXQ3+15OR/d6CdZoeBmpKwrXxNd4f6p5qHTgz/UR9zsbF2Go9UHIIMc
+	 PJ1YM/zUZBkDg==
+Date: Thu, 14 Dec 2023 17:19:59 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	andersson@kernel.org, konrad.dybcio@linaro.org, vkoul@kernel.org,
+	sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Shazad Hussain <quic_shazhuss@quicinc.com>, quic_cang@quicinc.com
+Subject: Re: [PATCH 00/16] Fix Qcom UFS PHY clocks
+Message-ID: <20231214114959.GC48078@thinkpad>
+References: <20231214091101.45713-1-manivannan.sadhasivam@linaro.org>
+ <ZXrVxmxY6wZprbBa@hovoldconsulting.com>
+ <20231214103907.GL2938@thinkpad>
+ <ZXrgWK5wZz6dAkKP@hovoldconsulting.com>
+ <20231214111409.GB48078@thinkpad>
+ <ZXrnZeDYOsteY5zT@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="td3sd7zfsqtxdr4k"
-Content-Disposition: inline
-In-Reply-To: <20231213-waffle-grueling-3a5c3879395b@spud>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
-
-
---td3sd7zfsqtxdr4k
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZXrnZeDYOsteY5zT@hovoldconsulting.com>
 
-On 13.12.2023 13:02:49, Conor Dooley wrote:
-> On Tue, Dec 12, 2023 at 09:49:41PM +0100, Marc Kleine-Budde wrote:
-> > On 08.12.2023 17:12:24, Conor Dooley wrote:
-> > > From: Conor Dooley <conor.dooley@microchip.com>
-> > >=20
-> > > The CAN controller on PolarFire SoC has an AHB peripheral clock _and_=
- a
-> > > CAN bus clock. The bus clock was omitted when the binding was written,
-> > > but is required for operation. Make up for lost time and add it.
-> > >=20
-> > > Cautionary tale in adding bindings without having implemented a real
-> > > user for them perhaps.
-> > >=20
-> > > Fixes: c878d518d7b6 ("dt-bindings: can: mpfs: document the mpfs CAN c=
-ontroller")
-> > > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-> > > ---
-> > >  .../devicetree/bindings/net/can/microchip,mpfs-can.yaml    | 7 +++++=
---
-> > >  1 file changed, 5 insertions(+), 2 deletions(-)
-> > >=20
-> > > diff --git a/Documentation/devicetree/bindings/net/can/microchip,mpfs=
--can.yaml b/Documentation/devicetree/bindings/net/can/microchip,mpfs-can.ya=
-ml
-> > > index 45aa3de7cf01..05f680f15b17 100644
-> > > --- a/Documentation/devicetree/bindings/net/can/microchip,mpfs-can.ya=
-ml
-> > > +++ b/Documentation/devicetree/bindings/net/can/microchip,mpfs-can.ya=
-ml
-> > > @@ -24,7 +24,10 @@ properties:
-> > >      maxItems: 1
-> > > =20
-> > >    clocks:
-> > > -    maxItems: 1
-> > > +    maxItems: 2
-> > > +    items:
-> > > +      - description: AHB peripheral clock
-> > > +      - description: CAN bus clock
-> >=20
-> > Do we we want to have a "clock-names" property, as we need the clock
-> > rate of the CAN bus clock.
->=20
-> We should not need the clock-names property to be able to get both of
-> the clocks. clk_bulk_get_all() for example should be usable here.
+On Thu, Dec 14, 2023 at 12:30:45PM +0100, Johan Hovold wrote:
+> On Thu, Dec 14, 2023 at 04:44:09PM +0530, Manivannan Sadhasivam wrote:
+> > + Can
+> > 
+> > On Thu, Dec 14, 2023 at 12:00:40PM +0100, Johan Hovold wrote:
+> > > [ +CC: Shazad ]
+> > > 
+> > > On Thu, Dec 14, 2023 at 04:09:07PM +0530, Manivannan Sadhasivam wrote:
+> > > > On Thu, Dec 14, 2023 at 11:15:34AM +0100, Johan Hovold wrote:
+> > > > > On Thu, Dec 14, 2023 at 02:40:45PM +0530, Manivannan Sadhasivam wrote:
+> 
+> > > Unless the PHY consumes CXO directly, it should not be included in the
+> > > binding as you are suggesting here.
+> > 
+> > PHY is indeed directly consuming CXO. That's why I included it in the binding.
+> 
+> Ok, good. It's a bit frustrating that people can even seem to agree on
+> answers to direct questions about that.
+>  
 
-ACK, but we need the clock rate of CAN clock. Does this binding check
-that the CAN clock rate is the 2nd one?
+I can understand that.
 
-regards,
-Marc
+> > > We discussed this at some length at the time with Bjorn and Shazad who
+> > > had access to the documentation and the conclusion was that, at least on
+> > > sc8280xp, the PHY does not use CXO directly and instead it should be
+> > > described as a parent to the UFS refclocks in the clock driver:
+> > > 
+> > > 	https://lore.kernel.org/lkml/Y2OEjNAPXg5BfOxH@hovoldconsulting.com/
+> > > 
+> > > The downstream devicetrees have a bad habit of including parent clocks
+> > > directly in the consumer node instead of modelling this in clock driver
+> > > also for other peripherals.
+> > >  
+> > 
+> > No, I can assure that you got the wrong info. UFS PHY consumes the clock
+> > directly from RPMh. It took me several days to dig through the UFS and PHY docs
+> > and special thanks to Can Guo from UFS team, who provided much valuable
+> > information about these clocks.
+> 
+> Sounds like you've done your research.
+> 
+> > > What exactly is wrong with those commits? We know that the controller
+> > > does not consume GCC_UFS_REF_CLKREF_CLK directly, but describing that as
+> > > such for now was a deliberate choice:
+> > > 
+> > > 	GCC_UFS_REF_CLKREF_CLK is the clock to the devices, but as we
+> > > 	don't represent the memory device explicitly it seems suitable
+> > > 	to use as "ref_clk" in the ufshc nodes - which would then match
+> > > 	the special handling of the "link clock" in the UFS driver.
+> > >  
+> > 
+> > No, GCC_UFS_REF_CLKREF_CLK is _not_ the clock to UFS devices. I haven't found
+> > information about this specific register in GCC. Initially I thought this is for
+> > enabling QREF clocks for the UFS MEM phy, but I haven't found the answer yet.
+> 
+> Just quoting Bjorn.
+> 
+> > But as I said earlier, reference clock to UFS devices comes directly from the
+> > controller and there is a specfic register for controlling that. Starting from
+> > SM8550, reference clock comes from RPMh.
+> 
+> Sure, but that was only part of what those commits did or claimed. Bjorn
+> also explicitly stated that those refclocks were sourced from CXO, even
+> though I now see a claim from Shazad in that thread claiming the
+> opposite:
+> 
+> 	https://lore.kernel.org/all/Y2Imnf1+v5j5CH9r@hovoldconsulting.com/
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+To clarify further, what Shazad said about GCC_UFS_REF_CLKREF_CLK is correct.
+This clock is not directly sourced by CXO, so it should be voted by the
+_PHY_ driver separately along with CXO (which still feeds PHY). That's what I
+represented in the binding.
 
---td3sd7zfsqtxdr4k
-Content-Type: application/pgp-signature; name="signature.asc"
+> 
+> Without access to docs I can only ask questions and try to do tedious
+> inferences from incomplete open sources (e.g. downstream devicetrees).
+> 
 
------BEGIN PGP SIGNATURE-----
+That's the life for most of us :) Even with access to internal docs, it is
+difficult to find the information we are looking for. Because, a very few people
+know where the information is buried.
 
-iQEzBAABCgAdFiEEDs2BvajyNKlf9TJQvlAcSiqKBOgFAmV653YACgkQvlAcSiqK
-BOhMmggApdGofXs7BcJbjT8hpDnLCGwmugpp0y3veU4Okm1P5NHwewyOaznIC4l7
-VKu8jX23jiHIWYz2czWfTtoPskoi2RCs5Hj4t1eoFYywF9BAAwHITK7KtsR9fuZ7
-XwdRZzjWHEh+I0BFmKv6GEpldjTZz269Nn47wy96FKErGKF2taHACZ97p5nqIwMz
-uB7dZtekAf4scC6jKLZYwUUl68YwktTMZWu9PkjfH3oLS+H2oXHxxzUg6mME5R/o
-2Nj92O17r0Md7j3QioEGIKNrr7dKubY0QPgZ+lP/ImoLgFDmAPC6tYlWR00kDf9b
-ho3kmb28TrV4g0HQA1ZMBrJX78JxlA==
-=M/Nz
------END PGP SIGNATURE-----
+- Mani
 
---td3sd7zfsqtxdr4k--
+> Johan
+
+-- 
+மணிவண்ணன் சதாசிவம்
