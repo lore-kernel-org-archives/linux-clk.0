@@ -1,43 +1,43 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lsDi/Y2x"
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07B8C134
-	for <linux-clk@vger.kernel.org>; Thu, 14 Dec 2023 02:53:02 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-40c2a444311so76940795e9.2
-        for <linux-clk@vger.kernel.org>; Thu, 14 Dec 2023 02:53:02 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FV+DjVE8"
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 017EED4E
+	for <linux-clk@vger.kernel.org>; Thu, 14 Dec 2023 02:53:04 -0800 (PST)
+Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-40c317723a8so70435085e9.3
+        for <linux-clk@vger.kernel.org>; Thu, 14 Dec 2023 02:53:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702551181; x=1703155981; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1702551183; x=1703155983; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=n04YHHXnObXth/lRrr+Q3z77edsJBvJwDkmKe5TSvMY=;
-        b=lsDi/Y2xp3PQ5DxPJ0ayoDq8cKv/wCs68rJTtac16MrfegvIKgacdCrJOcVUhUDuvb
-         IJQXBVdlZ06YDaGDwOxm2VsRIGlr+m7IQExpUAss+LLnu31aUClbj0eQPxW4fI7hB5ZJ
-         t7suzTq8tsbGKzX3GovPGU6+0whyCnVC/PpyJpNGGzBqMsAeAH8vxSWHkjToUj9aHGYh
-         KXAIsViJd3MZxWiskp0kC54cObgN1WbK8WA7bo4oJKFEOY1XjOr2VMgzkZnZrPwUcrtr
-         Il5cYeqczAltfeapc6e4pyAa977wI9NS0SqRKqNxGhtxgI5OHQd1VGcrLaOOaMIPO40k
-         x2UA==
+        bh=4iA5vpao/nlkM+BgS1JES9JQXKEWnmeNI0auTBLc7cY=;
+        b=FV+DjVE8H70sTQH6kRDVqJ3wExPAVdqrMa24gJvMtraeUJisUsqEL1EDAs6Mp2JBDH
+         wokxdMyYpkFz5aI0NdfEdywYYHonlNu5elwoHncMnf7w6VxUXoVfSYUji70EyjLIIC9X
+         5s4ejiA4GXYwzSIlaoNWQxqldQdyL3gZMvq3J/2G9V1BVl0nupXxbO5O6We3VB8zVuTM
+         mp436UXfkCZYP3ZzoHkwwtju0tPsM615UA2EJQLiTWgxvfBbxPjhXVg//UIu49VIdCi0
+         EHNTL2oqGrGKHILl5FrCUHRbHP3NyyGck1KdsJrQ5EAPdv4Suxy+8cvISAKrzyu5Z0H9
+         8wjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702551181; x=1703155981;
+        d=1e100.net; s=20230601; t=1702551183; x=1703155983;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=n04YHHXnObXth/lRrr+Q3z77edsJBvJwDkmKe5TSvMY=;
-        b=qTIq4uvKAIHJr1CiKqc8zb8xcppXum/ADZrKuVIjpKELSvMyO2Q0gw6VBv0TJ60Rkl
-         uOp1pURSMt868RSguBj1l98eRvi/ozTEBiIaxiDGUF4MmGqnyde85BzTdzqNpONWOGL5
-         dohcLgTScSx3XicrzRvvZwURMeQ9QPvXJ2we7jKyGg2RCRQc73RKkac+ScSjOutjw+UK
-         UeN5WlfsHyP+c4K0noeWeRK0xh7bbnSBKIFUkX7p00StLbASsxNl4jfZ9LezrXZPjwMq
-         vqOOzj2ypDGm2KB+ENRYqqcMhO0ah1PY49g9vrg5C0rlPioCdt/OS81b5G8CuVvGtpz5
-         GQAg==
-X-Gm-Message-State: AOJu0YzyxsV3IwZMMWbm1IG/trKZNokVunrUdch5IVeMeInq/twktXOP
-	jtltJ9IntufKKvXSO+HhwyQ7Hw==
-X-Google-Smtp-Source: AGHT+IFPYRnFgVJ8F0lvC2CYA+Pq15xboTIuQDttBmZqX6u/hWOKR6HBqPMGZXYdzie/T4oEpP0Nrw==
-X-Received: by 2002:a05:600c:2d84:b0:40c:31f6:1dae with SMTP id i4-20020a05600c2d8400b0040c31f61daemr2299352wmg.69.1702551181240;
-        Thu, 14 Dec 2023 02:53:01 -0800 (PST)
+        bh=4iA5vpao/nlkM+BgS1JES9JQXKEWnmeNI0auTBLc7cY=;
+        b=qxCpimB7i2pRFzUt9xFHgV13zlqvU3VrPl9NJI4GKPEHOi/dgN+ywSTsanm3hBf9yO
+         KrlpwElMlkviwE6NiT6e6IBIl+Y9DBHVAw3+N0/+Kpn0FGPbKaahHkSCBqjg4o0aSRVx
+         2gMMJNXzGshjJ51G0KwTBzRMc9M/FpD1RhEoRMQ6Jk8GV8VwUhFwITbZ6woaQ0Q09s88
+         8ikq5AwixWTbdzXIjzRPz9+CazStal2qPWvnakwphB1u45lAkDjTmSMegv10MKmTtarJ
+         1ofYG7nMrwoJFIjaPUK+1okJ1CQhlGCMMSFFcdbOwrXH8Us9QrorBEZk0+9oh7BaUuha
+         WfTw==
+X-Gm-Message-State: AOJu0YwNIoEFUlC7HnDIYvmQVlN9o5sGK7+RYeZj8o/Ye3uj1Gf6pob7
+	ZVczarckUYxpbPvwFjBECwVljg==
+X-Google-Smtp-Source: AGHT+IFhXWtaTCFsSRB/rCN50lEOB2f4DScvINgysd4f+wNUqjxRfR1ruqRktKeZe3CB7TSMb14q8Q==
+X-Received: by 2002:a05:600c:4d0e:b0:40b:5e1e:cf1 with SMTP id u14-20020a05600c4d0e00b0040b5e1e0cf1mr4741397wmp.44.1702551183507;
+        Thu, 14 Dec 2023 02:53:03 -0800 (PST)
 Received: from ta2.c.googlers.com.com (216.131.76.34.bc.googleusercontent.com. [34.76.131.216])
-        by smtp.gmail.com with ESMTPSA id p7-20020a05600c468700b0040c420eda48sm17614854wmo.22.2023.12.14.02.53.00
+        by smtp.gmail.com with ESMTPSA id p7-20020a05600c468700b0040c420eda48sm17614854wmo.22.2023.12.14.02.53.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Dec 2023 02:53:00 -0800 (PST)
+        Thu, 14 Dec 2023 02:53:02 -0800 (PST)
 From: Tudor Ambarus <tudor.ambarus@linaro.org>
 To: peter.griffin@linaro.org,
 	robh+dt@kernel.org,
@@ -67,9 +67,9 @@ Cc: andre.draszik@linaro.org,
 	linux-i2c@vger.kernel.org,
 	linux-serial@vger.kernel.org,
 	Tudor Ambarus <tudor.ambarus@linaro.org>
-Subject: [PATCH 11/13] arm64: dts: exynos: gs101: enable eeprom on gs101-oriole
-Date: Thu, 14 Dec 2023 10:52:41 +0000
-Message-ID: <20231214105243.3707730-12-tudor.ambarus@linaro.org>
+Subject: [PATCH 13/13] arm64: defconfig: make at24 eeprom builtin
+Date: Thu, 14 Dec 2023 10:52:43 +0000
+Message-ID: <20231214105243.3707730-14-tudor.ambarus@linaro.org>
 X-Mailer: git-send-email 2.43.0.472.g3155946c3a-goog
 In-Reply-To: <20231214105243.3707730-1-tudor.ambarus@linaro.org>
 References: <20231214105243.3707730-1-tudor.ambarus@linaro.org>
@@ -81,49 +81,27 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Enable the eeprom found on the battery connector.
+gs101-oriole populates an at24 eeprom on the battery connector.
+Make EEPROM_AT24 builtin.
 
 Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 ---
- .../boot/dts/exynos/google/gs101-oriole.dts    | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ arch/arm64/configs/defconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
-index 4a71f752200d..11b299d21c5d 100644
---- a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
-+++ b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
-@@ -63,6 +63,19 @@ &ext_200m {
- 	clock-frequency = <200000000>;
- };
- 
-+&hsi2c_8 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&hsi2c8_bus>;
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	status = "okay";
-+
-+	eeprom: eeprom@50 {
-+		compatible = "atmel,24c08";
-+		reg = <0x50>;
-+	};
-+};
-+
- &pinctrl_far_alive {
- 	key_voldown: key-voldown-pins {
- 		samsung,pins = "gpa7-3";
-@@ -99,6 +112,11 @@ &usi_uart {
- 	status = "okay";
- };
- 
-+&usi8 {
-+	samsung,mode = <USI_V2_I2C>;
-+	status = "okay";
-+};
-+
- &watchdog_cl0 {
- 	timeout-sec = <30>;
- 	status = "okay";
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 09fb467303ba..19c1d61382f6 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -276,7 +276,7 @@ CONFIG_QCOM_COINCELL=m
+ CONFIG_QCOM_FASTRPC=m
+ CONFIG_SRAM=y
+ CONFIG_PCI_ENDPOINT_TEST=m
+-CONFIG_EEPROM_AT24=m
++CONFIG_EEPROM_AT24=y
+ CONFIG_EEPROM_AT25=m
+ CONFIG_UACCE=m
+ # CONFIG_SCSI_PROC_FS is not set
 -- 
 2.43.0.472.g3155946c3a-goog
 
