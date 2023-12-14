@@ -1,268 +1,127 @@
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9549710A;
-	Thu, 14 Dec 2023 01:07:07 -0800 (PST)
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-5c85e8fdd2dso76703387b3.2;
-        Thu, 14 Dec 2023 01:07:07 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bGCvINlD"
+Received: from mail-qk1-x730.google.com (mail-qk1-x730.google.com [IPv6:2607:f8b0:4864:20::730])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1BD6115
+	for <linux-clk@vger.kernel.org>; Thu, 14 Dec 2023 01:11:18 -0800 (PST)
+Received: by mail-qk1-x730.google.com with SMTP id af79cd13be357-77f3159d822so429287085a.2
+        for <linux-clk@vger.kernel.org>; Thu, 14 Dec 2023 01:11:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1702545078; x=1703149878; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fAhAJU5yP9YNumHSLe8ZpA4RAtCq2Rb2d15S/ucYWeo=;
+        b=bGCvINlDRccgTjBeFtLbI1oG/SrWWvDZpJ1mxXgCNBoXMItDgZb6FPXU07Jx/evJhV
+         7wfr3c7aYaccoynVOs7uMvVCeOyMovsDqPAGcSUbDWm8B/0nf76HkjwMTlCGDlJ/dNSy
+         E0T0XkgjmbVYL+24RuQ6DQQIZ5lYuOhoax43U6PR7taHJEKmesHzhaw6VxMWqoeDKFRv
+         yfXyYLv4e0VZl2wKLmLveEHtdZlonrGSbupgwZPzn1Jwd3zgDZcv+lzw0fLPIXyMIAxx
+         pqcXW40YOgxk1IyA8fOBHbsUbAExzT+6MSG/sXK2pUi8AUxgBTgJ+kLUGXgfXXujEvwm
+         XF0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702544826; x=1703149626;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K62UqS9GxhpYYA4mLJeDhLsQ+jlCTyGKCF6JM+FXF3A=;
-        b=HVPnM6AmuQuwlArAaADTvLr6eXfws9WDYnVqd0sBuVPAscKvNZlcYauW9lA4yaXtZz
-         MeOvGesji6lQrhxMN3/M1UZLhVhFl992cxWc9H3DEyCFW6Tpodoe2ZAmG/7KAWdmteAn
-         GNd3KUSyZGmUU5gf/Qk4/hLmbTkZGMQ0afyfU9efV4YUImkaTkYdPfh3j6QyJRMXh6Gy
-         /5elsiFpbuBOKh6SnfDJpr618Cwp6UFvwjI641aVg2lTRTcTtmcF6euY2HKaSu+6WsOw
-         EZiJL+4XGDBmdbl4XWc8CuBgEMszOJWU6aBY1Xai0z1NB09AGc3F3waPwDJZu4NTld2T
-         vU/A==
-X-Gm-Message-State: AOJu0YzEXByAFreqnl6fuGiwtqXjqA/DUQ2YJMNIUaZSikH6/EqhkCnj
-	8atShnE9Bk7yJdp0+CGH7bVg0cRZmLTAVw==
-X-Google-Smtp-Source: AGHT+IGmbZxoI9gOukxHwcTIG1wP06TzisZ2xtDzGluz9SQNH1lESYPBvdNwam2d5POI+YKw76c27g==
-X-Received: by 2002:a0d:eb51:0:b0:5e2:a7a7:b0cb with SMTP id u78-20020a0deb51000000b005e2a7a7b0cbmr2435002ywe.101.1702544826562;
-        Thu, 14 Dec 2023 01:07:06 -0800 (PST)
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com. [209.85.219.171])
-        by smtp.gmail.com with ESMTPSA id v7-20020a81a547000000b005869ca8da8esm5237677ywg.146.2023.12.14.01.07.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Dec 2023 01:07:06 -0800 (PST)
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-dbcdec51ed9so825784276.0;
-        Thu, 14 Dec 2023 01:07:06 -0800 (PST)
-X-Received: by 2002:a25:9cc3:0:b0:dbc:ddc8:e751 with SMTP id
- z3-20020a259cc3000000b00dbcddc8e751mr1067385ybo.117.1702544826078; Thu, 14
- Dec 2023 01:07:06 -0800 (PST)
+        d=1e100.net; s=20230601; t=1702545078; x=1703149878;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fAhAJU5yP9YNumHSLe8ZpA4RAtCq2Rb2d15S/ucYWeo=;
+        b=USeyYwYa4B+bd1qDFJjdxX1No4xVG60VaE0q/uf3CZHkFwmCXuEumlWL7hqr9YcZ3i
+         p00/3b86JuQPiXynC3uuZrbvKOfW7ca/jerOAvHP+C2KTy8cFIBPH7+RafeNQlUwIcZA
+         FCXsxd2WWZGi5aoFmJ02mCEjhqgYRT4EIG7ZoBHXgs6OJFxJx50T6BM3oXEFDEqW7yZB
+         JBxEuwyjxeFdllPQkKdZyoyWnMvDTYJs6ldIkxvsmvi+tquSiB2ed96AJ356H2YbVGNb
+         O/E/z8bcVl9YiWs/Y4sRU2jNK/lHYjP8EAMXl1CJ52NV8v1JaPHrX1N/yGutsex/I8wp
+         QjXg==
+X-Gm-Message-State: AOJu0YyN7iFDrH6wWbtDR2ihlC873IQ+E5XnHksYj/TYzWpiNvaXJ3XO
+	JSST/v/7aCkHanaL/L5JkOqusxKVvQejQyDNsw==
+X-Google-Smtp-Source: AGHT+IG/Re2qE2ey+m/qkbqpMLsYm5+OUKhCYWWHNlVIfYfzMWRf+NwwVM2BQnGRuNjT6j5kJqDtSQ==
+X-Received: by 2002:ae9:f810:0:b0:77f:55b6:7d00 with SMTP id x16-20020ae9f810000000b0077f55b67d00mr10371015qkh.46.1702545077885;
+        Thu, 14 Dec 2023 01:11:17 -0800 (PST)
+Received: from localhost.localdomain ([117.213.102.12])
+        by smtp.gmail.com with ESMTPSA id qt13-20020a05620a8a0d00b0077d75164ef9sm5144119qkn.124.2023.12.14.01.11.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Dec 2023 01:11:17 -0800 (PST)
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: andersson@kernel.org,
+	konrad.dybcio@linaro.org,
+	vkoul@kernel.org,
+	sboyd@kernel.org,
+	mturquette@baylibre.com,
+	robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 00/16] Fix Qcom UFS PHY clocks
+Date: Thu, 14 Dec 2023 14:40:45 +0530
+Message-Id: <20231214091101.45713-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <87wmtlo2zs.wl-kuninori.morimoto.gx@renesas.com> <87r0jto2yq.wl-kuninori.morimoto.gx@renesas.com>
-In-Reply-To: <87r0jto2yq.wl-kuninori.morimoto.gx@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 14 Dec 2023 10:06:53 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUx-nm6k9LXbUJAJ78ChFYHVcmGcoz0YhWyos7h99R4wg@mail.gmail.com>
-Message-ID: <CAMuHMdUx-nm6k9LXbUJAJ78ChFYHVcmGcoz0YhWyos7h99R4wg@mail.gmail.com>
-Subject: Re: [PATCH v4 4/4] drivers: clk: renesas: ignore all clocks which are
- assinged to non-Linux system
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Frank Rowand <frowand.list@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Aymeric Aillet <aymeric.aillet@iot.bzh>, 
-	Yusuke Goda <yusuke.goda.sx@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Morimoto-san,
+Hi,
 
-Thanks for the update!
+This series fixes the clocks supplied to QMP PHY IPs in the Qcom SoCs. All
+of the Qcom SoCs except MSM8996 require 3 clocks for QMP UFS:
 
-s/assinged/assigned/
+* ref - 19.2MHz reference clock from RPM/RPMh
+* ref_aux - Auxiliary reference clock from GCC
+* qref - QREF clock from GCC or TCSR (TCSR since SM8550)
 
-On Mon, Dec 11, 2023 at 4:03=E2=80=AFAM Kuninori Morimoto
-<kuninori.morimoto.gx@renesas.com> wrote:
-> Some boards might use Linux and another OS at the same time. In such
-> case, currently, during booting, Linux will stop necessary module clocks
-> which are not used on the Linux side, but are used by another OS.
->
-> To avoid such situation, renesas-cpg-mssr tries to find
-> status =3D "reserved" devices (A), and adds CLK_IGNORE_UNUSED flag to its
-> <&cgp CPG_MOD xxx> clock (B).
->
-> Table 2.4: Values for status property
-> https://github.com/devicetree-org/devicetree-specification/releases/downl=
-oad/v0.4/devicetree-specification-v0.4.pdf
->
-> "reserved"
->         Indicates that the device is operational, but should not be
->         used. Typically this is used for devices that are controlled
->         by another software component, such as platform firmware.
->
-> ex)
->         scif5: serial@e6f30000 {
->                 ...
-> (B)             clocks =3D <&cpg CPG_MOD 202>,
->                          <&cpg CPG_CORE R8A7795_CLK_S3D1>,
->                          <&scif_clk>;
->                 ...
-> (A)             status =3D "reserved";
->         };
->
-> Cc: Aymeric Aillet <aymeric.aillet@iot.bzh>
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> Tested-by: Yusuke Goda <yusuke.goda.sx@renesas.com>
+MSM8996 only requires 'ref' and 'qref' clocks.
 
-> @@ -949,6 +967,72 @@ static const struct dev_pm_ops cpg_mssr_pm =3D {
->  #define DEV_PM_OPS     NULL
->  #endif /* CONFIG_PM_SLEEP && CONFIG_ARM_PSCI_FW */
->
-> +static void __init cpg_mssr_reserved_exit(struct cpg_mssr_priv *priv)
-> +{
-> +       kfree(priv->reserved_ids);
-> +}
+Hence, this series fixes the binding, DT and GCC driver to reflect the
+actual clock topology.
 
-This function is called only once, so you might want to inline it manually.
+Testing
+=======
 
-> +
-> +static int __init cpg_mssr_reserved_init(struct cpg_mssr_priv *priv,
-> +                                        const struct cpg_mssr_info *info=
-)
-> +{
-> +       struct device_node *soc =3D of_find_node_by_path("/soc");
-> +       struct device_node *node;
-> +       uint32_t args[MAX_PHANDLE_ARGS];
-> +       unsigned int *ids =3D NULL;
-> +       unsigned int num =3D 0;
-> +
-> +       /*
-> +        * Because clk_disable_unused() will disable all unused clocks, t=
-he device which is assigned
-> +        * to a non-Linux system will be disabled when Linux is booted.
-> +        *
-> +        * To avoid such situation, renesas-cpg-mssr assumes the device w=
-hich has
-> +        * status =3D "reserved" is assigned to a non-Linux system, and a=
-dds CLK_IGNORE_UNUSED flag
-> +        * to its CPG_MOD clocks.
-> +        * see also
-> +        *      cpg_mssr_register_mod_clk()
-> +        *
-> +        *      scif5: serial@e6f30000 {
-> +        *              ...
-> +        * =3D>           clocks =3D <&cpg CPG_MOD 202>,
-> +        *                       <&cpg CPG_CORE R8A7795_CLK_S3D1>,
-> +        *                       <&scif_clk>;
-> +        *                       ...
-> +        *               status =3D "reserved";
-> +        *      };
-> +        */
-> +       for_each_reserved_child_of_node(soc, node) {
-> +               struct of_phandle_iterator it;
-> +               int rc;
-> +
-> +               of_for_each_phandle(&it, rc, node, "clocks", "#clock-cell=
-s", -1) {
-> +                       int idx;
-> +
-> +                       of_phandle_iterator_args(&it, args, MAX_PHANDLE_A=
-RGS);
-> +
-> +                       if (!(it.node =3D=3D priv->np && args[0] =3D=3D C=
-PG_MOD))
+Tested on Qualcomm RB5 development board based on SM8250 SoC. I don't
+expect this series to break other SoCs too.
 
-I think "(it.node !=3D priv->np || args[0] !=3D CPG_MOD)" is easier to read=
- ;-)
+- Mani
 
-However, I think it would make sense to split this in two separate
-checks, to avoid calling of_phandle_iterator_args() when it.node !=3D
-priv->np, and to validate the number of arguments:
+Manivannan Sadhasivam (16):
+  dt-bindings: phy: qmp-ufs: Fix PHY clocks
+  phy: qcom-qmp-ufs: Switch to devm_clk_bulk_get_all() API
+  dt-bindings: clock: qcom: Add missing UFS QREF clocks
+  clk: qcom: gcc-sc8180x: Add missing UFS QREF clocks
+  arm64: dts: qcom: msm8996: Fix UFS PHY clocks
+  arm64: dts: qcom: msm8998: Fix UFS PHY clocks
+  arm64: dts: qcom: sdm845: Fix UFS PHY clocks
+  arm64: dts: qcom: sm6115: Fix UFS PHY clocks
+  arm64: dts: qcom: sm6125: Fix UFS PHY clocks
+  arm64: dts: qcom: sm6350: Fix UFS PHY clocks
+  arm64: dts: qcom: sm8150: Fix UFS PHY clocks
+  arm64: dts: qcom: sm8250: Fix UFS PHY clocks
+  arm64: dts: qcom: sc8180x: Fix UFS PHY clocks
+  arm64: dts: qcom: sc8280xp: Fix UFS PHY clocks
+  arm64: dts: qcom: sm8350: Fix UFS PHY clocks
+  arm64: dts: qcom: sm8550: Fix UFS PHY clocks
 
-    if (it.node !=3D priv->np)
-            continue;
+ .../phy/qcom,sc8280xp-qmp-ufs-phy.yaml        | 47 +++++++-------
+ arch/arm64/boot/dts/qcom/msm8996.dtsi         |  4 +-
+ arch/arm64/boot/dts/qcom/msm8998.dtsi         | 12 ++--
+ arch/arm64/boot/dts/qcom/sc8180x.dtsi         |  6 +-
+ arch/arm64/boot/dts/qcom/sc8280xp.dtsi        | 18 ++++--
+ arch/arm64/boot/dts/qcom/sdm845.dtsi          |  8 ++-
+ arch/arm64/boot/dts/qcom/sm6115.dtsi          |  8 ++-
+ arch/arm64/boot/dts/qcom/sm6125.dtsi          |  8 ++-
+ arch/arm64/boot/dts/qcom/sm6350.dtsi          |  8 ++-
+ arch/arm64/boot/dts/qcom/sm8150.dtsi          |  8 ++-
+ arch/arm64/boot/dts/qcom/sm8250.dtsi          |  8 ++-
+ arch/arm64/boot/dts/qcom/sm8350.dtsi          |  8 ++-
+ arch/arm64/boot/dts/qcom/sm8550.dtsi          |  9 ++-
+ drivers/clk/qcom/gcc-sc8180x.c                | 28 +++++++++
+ drivers/phy/qualcomm/phy-qcom-qmp-ufs.c       | 61 +++----------------
+ include/dt-bindings/clock/qcom,gcc-sc8180x.h  |  2 +
+ 16 files changed, 124 insertions(+), 119 deletions(-)
 
-    if (of_phandle_iterator_args(&it, args, MAX_PHANDLE_ARGS) !=3D 2)
-            continue;
+-- 
+2.25.1
 
-    if (args[0] !=3D CPG_MOD)
-            continue;
-
-> +                               continue;
-> +
-> +                       ids =3D krealloc_array(ids, (num + 1), sizeof(*id=
-s), GFP_KERNEL);
-> +                       if (!ids)
-> +                               return -ENOMEM;
-
-Missing of_node_put(it.node) in the error path.
-
-> +
-> +                       if (priv->reg_layout =3D=3D CLK_REG_LAYOUT_RZ_A)
-> +                               idx =3D MOD_CLK_PACK_10(args[1]); /* for =
-DEF_MOD_STB() */
-> +                       else
-> +                               idx =3D MOD_CLK_PACK(args[1]);    /* for =
-DEF_MOD() */
-> +
-> +                       ids[num] =3D info->num_total_core_clks + idx;
-> +
-> +                       num++;
-> +               }
-> +       }
-> +
-> +       priv->num_reserved_ids  =3D num;
-> +       priv->reserved_ids      =3D ids;
-> +
-> +       return 0;
-> +}
-> +
->  static int __init cpg_mssr_common_init(struct device *dev,
->                                        struct device_node *np,
->                                        const struct cpg_mssr_info *info)
-> @@ -1007,6 +1091,10 @@ static int __init cpg_mssr_common_init(struct devi=
-ce *dev,
->         if (error)
->                 goto out_err;
->
-> +       error =3D cpg_mssr_reserved_init(priv, info);
-> +       if (error)
-> +               goto out_err;
-
-Missing of_clk_del_provider() in the error path.
-
-You may want to move the call to cpg_mssr_reserved_init() up, as
-reverting that just needs an unconditional call to kfree() (kfree
-works fine on NULL), while calling of_clk_del_provider() requires a
-new label to jump to.
-
-> +
->         cpg_mssr_priv =3D priv;
->
->         return 0;
-> @@ -1070,22 +1158,23 @@ static int __init cpg_mssr_probe(struct platform_=
-device *pdev)
->                                          cpg_mssr_del_clk_provider,
->                                          np);
->         if (error)
-> -               return error;
-> +               goto reserve_err;
->
->         error =3D cpg_mssr_add_clk_domain(dev, info->core_pm_clks,
->                                         info->num_core_pm_clks);
->         if (error)
-> -               return error;
-> +               goto reserve_err;
->
->         /* Reset Controller not supported for Standby Control SoCs */
->         if (priv->reg_layout =3D=3D CLK_REG_LAYOUT_RZ_A)
-> -               return 0;
-> +               goto reserve_err;
->
->         error =3D cpg_mssr_reset_controller_register(priv);
-> -       if (error)
-> -               return error;
->
-> -       return 0;
-> +reserve_err:
-
-Perhaps rename the label to "reserve_exit", as this is called on
-success, too?
-
-> +       cpg_mssr_reserved_exit(priv);
-> +
-> +       return error;
->  }
->
->  static struct platform_driver cpg_mssr_driver =3D {
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
