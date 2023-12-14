@@ -1,60 +1,132 @@
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68675B2;
-	Thu, 14 Dec 2023 09:20:54 -0800 (PST)
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3b9e2d50e61so5879696b6e.2;
-        Thu, 14 Dec 2023 09:20:54 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kAgstMJo"
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5108D116
+	for <linux-clk@vger.kernel.org>; Thu, 14 Dec 2023 10:18:24 -0800 (PST)
+Received: by mail-lf1-x135.google.com with SMTP id 2adb3069b0e04-50bf82f4409so930679e87.0
+        for <linux-clk@vger.kernel.org>; Thu, 14 Dec 2023 10:18:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1702577902; x=1703182702; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aUXxNIE0oyhaGNjYhqDm71JIvcw2/l7lxWAlHlBLujc=;
+        b=kAgstMJo59Uulo15INN4HDJUpYM5JnIK6OhLAqGBKXFXoFlG5KzO0OKnGvj4x4U1Bt
+         99U6Uvg4F/Zk1hRyp2EmW80qYBzV5GpZEbazT3cPB6GdhyfI2vcVP+4zQfavpPs0nE7M
+         U8V/ngLyCpW8C5xBQEv5+IExNEGawEBMITF0FyCrq919AnehwLZsPVTQVUUdGk7IOuTK
+         sAPpyuluR7T+QQxIqxbKHFT0N0boAPJXS83QT5uW5RDGvkZl2sRO3pNENlzq/BNMDq/Z
+         eiweJL7VX7z7LWsbTokpTJTJuaLxe6UQYEDWr7d4GJKkbUuBsI1XmZmhuatJ0aPW+SKA
+         mdLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702574453; x=1703179253;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5bRpMT8adyLjuk8v3m+Q7iMZxQW0r3mgWAJ3z5hKZNg=;
-        b=mdeiyd4ZDe2FlWjP/JQ6cadgInN4sJEUifOxPSTf43IT2GElxyu/KO8nYwLxHvHACz
-         PrusoF3mplullW7N32VHhw9+zlnRrcG955NRnGKhZCa9c7mLpseNDGGA9CeWuuUHPHdV
-         pgWvMW5V/i+uAiuz99Ti0SimMuIo0md4QI71enyl9hhTFhKpobLOMzKqa5LkebNRmvVS
-         fiDQbbQzZN7a7KluoTdIFslS+uvUAlqzUW4zh6lPcDeCy9FpcuqUbRB2xAp8AUBGz2Gu
-         Oq6S6mLWKlVIJyT4vPDz3QCtBPSec0DrUtOh8ZKp2Psz51Z7dFIdmgBSAM5zUuHAclbN
-         /QiA==
-X-Gm-Message-State: AOJu0YymwRzFgNoSZsAc11dgnMxZYglnvLTUqAhLIZasteL5LWK50b5t
-	JqW18Tl+lyGndJOMy/eTggU1Q+73+g==
-X-Google-Smtp-Source: AGHT+IFG1H7d5qx/OPE9NFJC6FAAQwsK89rA2Zqb4ztseS1evSpGKvGvToAZ/lZKGdOpICFILPvMYg==
-X-Received: by 2002:a05:6870:4209:b0:203:56f5:5a29 with SMTP id u9-20020a056870420900b0020356f55a29mr895478oac.16.1702574453615;
-        Thu, 14 Dec 2023 09:20:53 -0800 (PST)
-Received: from herring.priv ([2607:fb91:e6c7:a40:1c2d:b875:912d:c28])
-        by smtp.gmail.com with ESMTPSA id so10-20020a056871818a00b001fb1f2c424fsm4597941oab.45.2023.12.14.09.20.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Dec 2023 09:20:53 -0800 (PST)
-Received: (nullmailer pid 614807 invoked by uid 1000);
-	Thu, 14 Dec 2023 17:20:51 -0000
-Date: Thu, 14 Dec 2023 11:20:51 -0600
-From: Rob Herring <robh@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: andersson@kernel.org, konrad.dybcio@linaro.org, vkoul@kernel.org, sboyd@kernel.org, mturquette@baylibre.com, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 01/16] dt-bindings: phy: qmp-ufs: Fix PHY clocks
-Message-ID: <20231214172051.GA611674-robh@kernel.org>
-References: <20231214091101.45713-1-manivannan.sadhasivam@linaro.org>
- <20231214091101.45713-2-manivannan.sadhasivam@linaro.org>
+        d=1e100.net; s=20230601; t=1702577902; x=1703182702;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aUXxNIE0oyhaGNjYhqDm71JIvcw2/l7lxWAlHlBLujc=;
+        b=HD55jsPsPzlMMAwThrP++EkFlShLj62ZJTH3OGDrs5JdKKOvKqd4emzWISEMstFqZA
+         q8cJRdApKcCs7Gw9fYqHj90jBWt7SmdkYzq/mOvKu8n/tCiHEpqemxWjYVjxkCN6ItiS
+         DJXrGcLbjoyZO5cdw5QWq5O70KthmZuindgBAu/zbXKHtzN6G6+1EVe0atqs3E0sc/w4
+         dztcgB1VO11C8BzM1E7jYHbWTwQDazq8j9ma6HtZySOEH3c2BYfrDkDyGcuaCIXyUqca
+         Q0v0qsVrl6Din3IyigeOp3WvD9lU8GQokVEu5iVSPr6rWxHQLbea0SEAoeVIyx0s5P3P
+         /nwQ==
+X-Gm-Message-State: AOJu0YyGmdhK1WE2AZd+l5kYzB/tXA2U57pMRdrMJoiBQUZRrWSlUoMS
+	aYORLpsw6w/3NvOwWsbs6NQozQ==
+X-Google-Smtp-Source: AGHT+IHPvoFv9KvPlT+AD1GWaLtelWYGlfY72peH/oBCnqzIcbZPrWCVcWP96N2Eo12F9Pm8pvzRCA==
+X-Received: by 2002:a05:6512:398f:b0:50e:15de:9931 with SMTP id j15-20020a056512398f00b0050e15de9931mr1257549lfu.24.1702577902567;
+        Thu, 14 Dec 2023 10:18:22 -0800 (PST)
+Received: from [172.30.205.72] (UNUSED.212-182-62-129.lubman.net.pl. [212.182.62.129])
+        by smtp.gmail.com with ESMTPSA id c16-20020a056512105000b0050d1a0e7129sm1659686lfb.291.2023.12.14.10.18.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Dec 2023 10:18:22 -0800 (PST)
+Message-ID: <92e9039b-a0e3-4f93-aaa8-226ef9e8b613@linaro.org>
+Date: Thu, 14 Dec 2023 19:18:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231214091101.45713-2-manivannan.sadhasivam@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 7/8] arm64: dts: qcom: ipq5332: add support for the
+ NSSCC
+Content-Language: en-US
+To: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>,
+ Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Richard Cochran <richardcochran@gmail.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20231211-ipq5332-nsscc-v3-0-ad13bef9b137@quicinc.com>
+ <20231211-ipq5332-nsscc-v3-7-ad13bef9b137@quicinc.com>
+ <c4034715-53a5-468e-914a-3f19d0618c42@linaro.org>
+ <8cc2a8ec-632e-4e3b-b13b-d1523a61c136@quicinc.com>
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <8cc2a8ec-632e-4e3b-b13b-d1523a61c136@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: *
 
-On Thu, Dec 14, 2023 at 02:40:46PM +0530, Manivannan Sadhasivam wrote:
-> All QMP UFS PHYs except MSM8996 require 3 clocks:
+
+
+On 12/11/23 14:28, Kathiravan Thirumoorthy wrote:
 > 
-> * ref - 19.2MHz reference clock from RPMh
-> * ref_aux - Auxiliary reference clock from GCC
-> * qref - QREF clock from GCC or TCSR (since SM8550)
 > 
-> MSM8996 only requires 'ref' and 'qref' clocks. Hence, fix the binding to
-> reflect the actual clock topology.
+> On 12/11/2023 4:02 PM, Konrad Dybcio wrote:
+>> On 11.12.2023 04:37, Kathiravan Thirumoorthy wrote:
+>>> Describe the NSS clock controller node and it's relevant external
+>>> clocks.
+>>>
+>>> Signed-off-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+>>> ---
+>>>   arch/arm64/boot/dts/qcom/ipq5332.dtsi | 28 ++++++++++++++++++++++++++++
+>>>   1 file changed, 28 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/qcom/ipq5332.dtsi b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
+>>> index 42e2e48b2bc3..a1504f6c40c1 100644
+>>> --- a/arch/arm64/boot/dts/qcom/ipq5332.dtsi
+>>> +++ b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
+>>> @@ -15,6 +15,18 @@ / {
+>>>       #size-cells = <2>;
+>>>       clocks {
+>>> +        cmn_pll_nss_200m_clk: cmn-pll-nss-200m-clk {
+>>> +            compatible = "fixed-clock";
+>>> +            clock-frequency = <200000000>;
+>>> +            #clock-cells = <0>;
+>>> +        };
+>>> +
+>>> +        cmn_pll_nss_300m_clk: cmn-pll-nss-300m-clk {
+>>> +            compatible = "fixed-clock";
+>>> +            clock-frequency = <300000000>;
+>>> +            #clock-cells = <0>;
+>>> +        };
+>>> +
+>>>           sleep_clk: sleep-clk {
+>>>               compatible = "fixed-clock";
+>>>               #clock-cells = <0>;
+>>> @@ -473,6 +485,22 @@ frame@b128000 {
+>>>                   status = "disabled";
+>>>               };
+>>>           };
+>>> +
+>>> +        nsscc: clock-controller@39b00000{
+>> Missing space between the opening curly brace
+> 
+> My bad :( will fix it in next spin.
+> 
+>>
+>>> +            compatible = "qcom,ipq5332-nsscc";
+>>> +            reg = <0x39b00000 0x80000>;
+>> the regmap_config in the clk driver has .max_register = 0x800, is this
+>> correct?
+> 
+> As per the memory map, 512KB is the size of this block. However the last register in that region is at the offset 0x800. Shall I update the max_register also to 512KB to keep it consistency?
+No, it's fine, I just wanted to know if it's intentional :)
 
-Breaking the ABI is okay because...? Please explain in the commit msg.
+Thanks!
 
-Rob
-
+Konrad
