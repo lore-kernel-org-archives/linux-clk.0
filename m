@@ -1,121 +1,116 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63F00116
-	for <linux-clk@vger.kernel.org>; Thu, 14 Dec 2023 05:20:31 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1rDldH-0006qa-Ix; Thu, 14 Dec 2023 14:20:07 +0100
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1rDldF-00FoVx-W9; Thu, 14 Dec 2023 14:20:06 +0100
-Received: from pengutronix.de (unknown [172.20.34.65])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id E93BD26304B;
-	Thu, 14 Dec 2023 13:20:04 +0000 (UTC)
-Date: Thu, 14 Dec 2023 14:20:04 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Conor Dooley <conor@kernel.org>
-Cc: linux-riscv@lists.infradead.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Wolfgang Grandegger <wg@grandegger.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-can@vger.kernel.org,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH RESEND v1 2/7] dt-bindings: can: mpfs: add missing
- required clock
-Message-ID: <20231214-genetics-issue-b8f9c60c74b2-mkl@pengutronix.de>
-References: <20231208-reenter-ajar-b6223e5134b3@spud>
- <20231208-palpitate-passable-c79bacf2036c@spud>
- <20231212-unreeling-depose-8b6b2e032555-mkl@pengutronix.de>
- <20231213-waffle-grueling-3a5c3879395b@spud>
- <20231214-tinderbox-glitzy-60d1936ab85f-mkl@pengutronix.de>
- <20231214-tinderbox-paver-d1ff0fc5c428@spud>
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VdUHvjAY"
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2299C118
+	for <linux-clk@vger.kernel.org>; Thu, 14 Dec 2023 05:52:41 -0800 (PST)
+Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-40b5155e154so92730285e9.3
+        for <linux-clk@vger.kernel.org>; Thu, 14 Dec 2023 05:52:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1702561959; x=1703166759; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZG094W4dIVF1EKcUo638joyg5PWzf0NNJBExtH6MdeE=;
+        b=VdUHvjAYm17GgQFNbWiT9C3kGtSC9fO2fbnkgcUk0T5RTlCsREE0jyzWULmLPqhgU+
+         fh39Hl9h6gPHDiVJamBiga32l69U8+tFnhOyMP8+i6J2BwBpbdUFZpc7Bj8ZhhlqZRAy
+         ktzFT928Kc5GeINswMSOySga6WjiGa8en+pQpY2y7VvfA+ArANGXOQdtDsjHlV6C5xIA
+         ANHp5brvSSFkCEoAWHCKMq0wT2CUbeNOTOFgG1sW8l1tziYGx/O3J5gApIvi6w5gIZqZ
+         +qPWIE8a7xP3EhE9zJYtnUAWJIp8zDkm4q9zA39D2jwtVlgvCIZzdrNBfQMobhPk4spB
+         TQSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702561959; x=1703166759;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZG094W4dIVF1EKcUo638joyg5PWzf0NNJBExtH6MdeE=;
+        b=LMESPKuMbawJQJM7RFLhNhSBrlAKLotsYmBcdSsGiwGM42uV8611cu/0ZdVUnBJNsJ
+         R9rs0nWur1/UHCuhn2UN6eH8xo1cREw4FkLHXx/oxjm2q7YQcXEf0aBCUcTjOvxqfSaM
+         BQdza+j0zQQxpmlkA71gI4XaKtQkNpdPdWvQPrqE7iXiMyL5jjHDRcRGOfF8RV57T5Ma
+         qRb1CRNzqIDVVp3J1dP29M8wjGUj4qCy5GA1qDC3iZhFvAlSj7+hF9vX2/oDiGqBYYeN
+         Vpe6l9HSAPrw8gPWVVsCF0Kv9XDRj7YeQzuHoccaPENClU0sqUM+t0Rs/22ag35DOKfW
+         JUyw==
+X-Gm-Message-State: AOJu0YyUtp8p+QqxE8R/EBVDHwQS5+nu47qLnZHKDfMj8znyFxGzCHAs
+	aRohVbBq6Bz8ohIs+2Wt6Zg/yw==
+X-Google-Smtp-Source: AGHT+IHZrLMTXyNjcexxbVAiORtydhgsD0STmbd6hhxBV7J4JR7cRSScr8gTPzn4kfe/zjbQxtcR5g==
+X-Received: by 2002:a05:600c:4591:b0:40c:325a:545c with SMTP id r17-20020a05600c459100b0040c325a545cmr4356398wmo.221.1702561959544;
+        Thu, 14 Dec 2023 05:52:39 -0800 (PST)
+Received: from [192.168.2.107] ([79.115.63.202])
+        by smtp.gmail.com with ESMTPSA id tx17-20020a1709078e9100b00a1b75e0e061sm9483197ejc.130.2023.12.14.05.52.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Dec 2023 05:52:38 -0800 (PST)
+Message-ID: <8808ceeb-35dc-4094-aec4-f43c7acd6174@linaro.org>
+Date: Thu, 14 Dec 2023 13:52:35 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ingrkcbszpm5ox2g"
-Content-Disposition: inline
-In-Reply-To: <20231214-tinderbox-paver-d1ff0fc5c428@spud>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 05/13] tty: serial: samsung: add gs101 earlycon support
+Content-Language: en-US
+To: Arnd Bergmann <arnd@arndb.de>, Peter Griffin <peter.griffin@linaro.org>,
+ Rob Herring <robh+dt@kernel.org>, krzysztof.kozlowski+dt@linaro.org,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ andi.shyti@kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>,
+ Sam Protsenko <semen.protsenko@linaro.org>
+Cc: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ saravanak@google.com, William McVicker <willmcvicker@google.com>,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+ linux-serial@vger.kernel.org
+References: <20231214105243.3707730-1-tudor.ambarus@linaro.org>
+ <20231214105243.3707730-6-tudor.ambarus@linaro.org>
+ <1938fcf1-eb5d-4723-a6c6-d2fe2c6dd1c0@app.fastmail.com>
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <1938fcf1-eb5d-4723-a6c6-d2fe2c6dd1c0@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
---ingrkcbszpm5ox2g
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On 14.12.2023 13:16:55, Conor Dooley wrote:
-> > > > > --- a/Documentation/devicetree/bindings/net/can/microchip,mpfs-ca=
-n.yaml
-> > > > > +++ b/Documentation/devicetree/bindings/net/can/microchip,mpfs-ca=
-n.yaml
-> > > > > @@ -24,7 +24,10 @@ properties:
-> > > > >      maxItems: 1
-> > > > > =20
-> > > > >    clocks:
-> > > > > -    maxItems: 1
-> > > > > +    maxItems: 2
-> > > > > +    items:
-> > > > > +      - description: AHB peripheral clock
-> > > > > +      - description: CAN bus clock
-> > > >=20
-> > > > Do we we want to have a "clock-names" property, as we need the clock
-> > > > rate of the CAN bus clock.
-> > >=20
-> > > We should not need the clock-names property to be able to get both of
-> > > the clocks. clk_bulk_get_all() for example should be usable here.
-> >=20
-> > ACK, but we need the clock rate of CAN clock. Does this binding check
-> > that the CAN clock rate is the 2nd one?
->=20
-> The items list requires that the can clock be the second one, so drivers
-> etc can rely on that ordering.
+On 12/14/23 12:01, Arnd Bergmann wrote:
 
-Thanks for the clarification,
-Marc
+Hi, Arnd,
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+Thanks for the review!
 
---ingrkcbszpm5ox2g
-Content-Type: application/pgp-signature; name="signature.asc"
+> On Thu, Dec 14, 2023, at 11:52, Tudor Ambarus wrote:
+>> +static int __init gs101_early_console_setup(struct earlycon_device *device,
+>> +					    const char *opt)
+>> +{
+>> +	/* gs101 always expects MMIO32 register accesses. */
+>> +	device->port.iotype = UPIO_MEM32;
+>> +
+>> +	return s5pv210_early_console_setup(device, opt);
+>> +}
+>> +
+>> +OF_EARLYCON_DECLARE(gs101, "google,gs101-uart", gs101_early_console_setup);
+> 
+> It looks like this is already done by of_setup_earlycon() based on
+> the reg-io-width property. Any idea why it doesn't work with the
+> normal s5pv210_early_console_setup() function?
+> 
 
------BEGIN PGP SIGNATURE-----
+It works if in device tree one specifies the reg-io-width property and
+sets it to 4. If the reg-io-width is not specified, the iotype defaults
+to UPIO_MEM causing the SError interrupt on gs101 which makes the system
+unusable.
 
-iQEzBAABCgAdFiEEDs2BvajyNKlf9TJQvlAcSiqKBOgFAmV7AQAACgkQvlAcSiqK
-BOgXVQgAiYx/qmn+/n56qpOGHQ2TatWn/aI2UbU6V7+JDjHv+P8H3L5u5vHCT3vn
-KS93aR3iviTIzFdrnadB3oLNJ4YErKNuszF4zKAb0G24ze4X/ZoGGegGd6nzTzNL
-QBNZtOGrSAVZOIF/Kjf0hPUdZMjPDW4D8LG1P1P5T7Jke33m4dEtbYGMUFxJUWf/
-z3d8oqJO2H8wym5sTvzfC8rBKor9uJ1Cy+b7m1uXce9JCPqb2x4sHjD6cvO0GnsG
-QsqRWDTLt02gmQ/5Bi+yGPuBSRv4DQhukgXTkfHRtp7+VAmpU45p6mD7+iEjCqYn
-2zTEKmCfHq+OXBvLtGPaGCfFYkRpPw==
-=FXlj
------END PGP SIGNATURE-----
+Also, if the earlycon comes specified from the kernel params, the
+of_setup_earlycon() is no longer called and the earlycon will be set
+solely based on the kernel params buffer, thus allowing users to crash
+the kernel on wrong earlycon definitions.
 
---ingrkcbszpm5ox2g--
+If you think the change is fine, I can amend the commit message with the
+description from above.
+
+Cheers,
+ta
