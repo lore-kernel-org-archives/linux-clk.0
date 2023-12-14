@@ -1,178 +1,102 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yFuj6SdJ"
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B48EB127
-	for <linux-clk@vger.kernel.org>; Thu, 14 Dec 2023 08:43:16 -0800 (PST)
-Received: by mail-pj1-x102a.google.com with SMTP id 98e67ed59e1d1-28b0a265f92so692682a91.3
-        for <linux-clk@vger.kernel.org>; Thu, 14 Dec 2023 08:43:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702572196; x=1703176996; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AWHIEYa09hnCSRRLYxrxmRkCfuGY/Q51Trzc6SpnBLw=;
-        b=yFuj6SdJhzHQiVDRC7YNgxaqoxUnrBjeV+16dPdpLgUtcLBdemEBdVnTDOPVAxnp0Y
-         ALCJrqQ24A695tlJHWxa+HsguzzhxV0BXpi31XZ1E+FvQjIx1c8GRid1ypNgoPRn7HOo
-         JcKMlt+q07qr96uHxdho/0jpc7fB4eXywI31cMgl8LRt9uFnJt8Xs0/3gWVCRfoIDgCH
-         0Tht8BMAMNTXkO9/T1lGnSPd1t0R4U/G9kcE9nDof/lUU1HvKxUIYd2sr/YCfUypIuNf
-         GStywy2QIlsFhGOdldRt/wc+NZZwMIJJXuGFLcEhWfmC5C7H7RmivXxlkNAx+NXpXPJb
-         Qatg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702572196; x=1703176996;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AWHIEYa09hnCSRRLYxrxmRkCfuGY/Q51Trzc6SpnBLw=;
-        b=t4DqQtw2yy99wumaxbIrmC12M9WpEg6bYp2lXpSGqio+5XFzPfeZhnCo1VZHZoVZmq
-         IpwQVD4t9oTODmm20aRSv40QH2QQoYboWWwSwh7Pyi/eiB1cCiAaiNDwjLBxbd47Uuul
-         I6fhKVoRYpUyb4zDy54p2XkGyQ4chI+TCGx0fh3hNh2Xmp3/VFX7v3BcQDWK9tBO04C+
-         nKoDuwW15vjTpWt1z/gOqiz0/stdY4dGFPXRFxgU32t5DFM9dMwUHw7JuPjk678b+qrz
-         V8ypDzRzE6RTk82N0Teupod/JTuni03h21TuEYbh9lFupB0fpadeoF+1gLVuHFM3GYfb
-         USxA==
-X-Gm-Message-State: AOJu0YxdPjOfSCg9NTIMjdaeyY7YMLQi+MY0vk+rFf6nbu+HCPJ9t2NL
-	/vyipICJOYm08SOV1uhqa56fXx8x9Gkslu7L0urkbA==
-X-Google-Smtp-Source: AGHT+IE3sHyxROiMhjfefDzAoNruqBYfiJM6J3A7LkcGt1ZODtMjrMmf12UjnIx2lJL2ANOUXdxmTmRkKyRZD80Ekzk=
-X-Received: by 2002:a17:90b:3594:b0:28a:df4b:46cb with SMTP id
- mm20-20020a17090b359400b0028adf4b46cbmr2249609pjb.35.1702572196038; Thu, 14
- Dec 2023 08:43:16 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="ykNWUMcT"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DA5F8E;
+	Thu, 14 Dec 2023 08:49:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=jpEgcy8NN3HTStEB0Wx38X+kWFgy54/SSxE7weirF/E=; b=ykNWUMcT36CU8ETNnUBdAfU5Di
+	DdbbhgKydxhHANMjCciNJr98L8meROJk0TARR4eSpvc0QjNauXChKS9k/5RgLtTgmReaGbOzh/gQs
+	UB+HHTwT2uI5MnX919RNy3rtpS0rtfqnAU1OWGoy4D+JdqYWp4AFF+7z3jiTAXaCa8/IkY2WaZ5Kv
+	9a/3mNXm+y5GwXuFJVgTJvqJmi/S+p9PB0YwIa2mPnjLD5rdHkQB9TLOJAeT5d9m5Vqzk6aLmANKh
+	ANoL90HggfZf6QWBokdy6F/zsFD5mNiv6PdbmO9yG96k/zN3kwqFVaMdCwIvB5vFjK2kGNmGWOoEY
+	Ew0OAhsA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:49794)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1rDotX-0001hF-1F;
+	Thu, 14 Dec 2023 16:49:07 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1rDotX-0002h8-FN; Thu, 14 Dec 2023 16:49:07 +0000
+Date: Thu, 14 Dec 2023 16:49:07 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Romain Gantois <romain.gantois@bootlin.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>, Wei Fang <wei.fang@nxp.com>,
+	Marek Vasut <marex@denx.de>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andrew Lunn <andrew@lunn.ch>, Eric Dumazet <edumazet@google.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	kernel@pengutronix.de, linux-clk@vger.kernel.org,
+	Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH] net: phy: at803x: Improve hibernation support on start up
+Message-ID: <ZXsyA+2USrmIaF3u@shell.armlinux.org.uk>
+References: <20230804175842.209537-1-marex@denx.de>
+ <AM5PR04MB3139793206F9101A552FADA0880DA@AM5PR04MB3139.eurprd04.prod.outlook.com>
+ <45b1ee70-8330-0b18-2de1-c94ddd35d817@denx.de>
+ <AM5PR04MB31392C770BA3101BDFBA80318812A@AM5PR04MB3139.eurprd04.prod.outlook.com>
+ <20230809043626.GG5736@pengutronix.de>
+ <AM5PR04MB3139D8C0EBC9D2DFB0C778348812A@AM5PR04MB3139.eurprd04.prod.outlook.com>
+ <20230809060836.GA13300@pengutronix.de>
+ <ZNNRxY4z7HroDurv@shell.armlinux.org.uk>
+ <ZNS8LEiuwsv660EC@shell.armlinux.org.uk>
+ <7aabc198-9df5-5bce-2968-90d4cda3c244@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231214105243.3707730-1-tudor.ambarus@linaro.org>
- <20231214105243.3707730-8-tudor.ambarus@linaro.org> <CAPLW+4mNjCbJ+VbKR66DFSkiXHyxdjgvwjN7azxjJQ6UxQikEw@mail.gmail.com>
- <f3d61c49-1a46-476c-b7a5-6cc6a06a33ed@linaro.org> <CAPLW+4=tyr8Pcoe6Wm0Wtmkk4udDpuAiOKy7+C+Fwa6mvt3VoQ@mail.gmail.com>
- <5de5cddd-2bab-4408-b31f-f48bef98f14c@linaro.org>
-In-Reply-To: <5de5cddd-2bab-4408-b31f-f48bef98f14c@linaro.org>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Thu, 14 Dec 2023 10:43:04 -0600
-Message-ID: <CAPLW+4n-S2jaVPUwKTFC_iabnDd_qDV=ZubMqhz-X9XiZzzJow@mail.gmail.com>
-Subject: Re: [PATCH 07/13] clk: samsung: gs101: mark PERIC0 IP TOP gate clock
- as critical
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: peter.griffin@linaro.org, robh+dt@kernel.org, 
-	krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	conor+dt@kernel.org, andi.shyti@kernel.org, alim.akhtar@samsung.com, 
-	gregkh@linuxfoundation.org, jirislaby@kernel.org, catalin.marinas@arm.com, 
-	will@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com, 
-	cw00.choi@samsung.com, arnd@arndb.de, andre.draszik@linaro.org, 
-	saravanak@google.com, willmcvicker@google.com, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7aabc198-9df5-5bce-2968-90d4cda3c244@bootlin.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Thu, Dec 14, 2023 at 10:15=E2=80=AFAM Tudor Ambarus <tudor.ambarus@linar=
-o.org> wrote:
->
->
->
-> On 12/14/23 16:09, Sam Protsenko wrote:
-> > On Thu, Dec 14, 2023 at 10:01=E2=80=AFAM Tudor Ambarus <tudor.ambarus@l=
-inaro.org> wrote:
-> >>
-> >>
-> >>
-> >> On 12/14/23 15:37, Sam Protsenko wrote:
-> >>> On Thu, Dec 14, 2023 at 4:52=E2=80=AFAM Tudor Ambarus <tudor.ambarus@=
-linaro.org> wrote:
-> >>>>
-> >>>> Testing USI8 I2C with an eeprom revealed that when the USI8 leaf clo=
-ck
-> >>>> is disabled it leads to the CMU_TOP PERIC0 IP gate clock disablement=
-,
-> >>>> which then makes the system hang. To prevent this, mark
-> >>>> CLK_GOUT_CMU_PERIC0_IP as critical. Other clocks will be marked
-> >>>> accordingly when tested.
-> >>>>
-> >>>> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> >>>> ---
-> >>>>  drivers/clk/samsung/clk-gs101.c | 2 +-
-> >>>>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>>>
-> >>>> diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/c=
-lk-gs101.c
-> >>>> index 3d194520b05e..08d80fca9cd6 100644
-> >>>> --- a/drivers/clk/samsung/clk-gs101.c
-> >>>> +++ b/drivers/clk/samsung/clk-gs101.c
-> >>>> @@ -1402,7 +1402,7 @@ static const struct samsung_gate_clock cmu_top=
-_gate_clks[] __initconst =3D {
-> >>>>              "mout_cmu_peric0_bus", CLK_CON_GAT_GATE_CLKCMU_PERIC0_B=
-US,
-> >>>>              21, 0, 0),
-> >>>>         GATE(CLK_GOUT_CMU_PERIC0_IP, "gout_cmu_peric0_ip", "mout_cmu=
-_peric0_ip",
-> >>>> -            CLK_CON_GAT_GATE_CLKCMU_PERIC0_IP, 21, 0, 0),
-> >>>> +            CLK_CON_GAT_GATE_CLKCMU_PERIC0_IP, 21, CLK_IS_CRITICAL,=
- 0),
-> >>>
-> >>> This clock doesn't seem like a leaf clock. It's also not a bus clock.
-> >>> Leaving it always running makes the whole PERIC0 CMU clocked, which
-> >>> usually should be avoided. Is it possible that the system freezes
-> >>> because some other clock (which depends on peric0_ip) gets disabled a=
-s
-> >>> a consequence of disabling peric0_ip? Maybe it's some leaf clock whic=
-h
-> >>> is not implemented yet in the clock driver? Just looks weird to me
-> >>> that the system hangs because of CMU IP clock disablement. It's
-> >>> usually something much more specific.
-> >>
-> >> The system hang happened when I tested USI8 in I2C configuration with =
-an
-> >> eeprom. After the eeprom is read the leaf gate clock that gets disable=
-d
-> >> is the one on PERIC0 (CLK_GOUT_PERIC0_CLK_PERIC0_USI8_USI_CLK). I assu=
-me
-> >> this leads to the CMU_TOP gate (CLK_CON_GAT_GATE_CLKCMU_PERIC0_IP)
-> >> disablement which makes the system hang. Either marking the CMU_TOP ga=
-te
-> >> clock as critical (as I did in this patch) or marking the leaf PERIC0
-> >> gate clock as critical, gets rid of the system hang. Did I choose wron=
-g?
-> >>
-> >
-> > Did you already implement 100% of clocks in CMU_PERIC0? If no, there
->
-> yes.
+On Thu, Dec 14, 2023 at 09:13:58AM +0100, Romain Gantois wrote:
+> Hello Russell,
+> 
+> I've implemented and tested the general-case solution you proposed to this 
+> receive clock issue with stmmac drivers. The core of your suggestion is pretty 
+> much unchanged, I just added a phylink_pcs flag for standalone PCS drivers that 
+> also need to provide the receive clock.
 
-Ok. Are there any other CMUs (perhaps not implemented yet) which
-consume clocks from CMU_PERIC0, specifically PERIC0_IP clock or some
-clocks derived from it? If so, is there a chance some particular leaf
-clock in those CMUs actually renders the system frozen when disabled
-as a consequence of disabling PERIC0_IP, and would explain better why
-the freeze happens?
+So this affects the ability of PCS to operate correctly as well as MACs?
+Would you enlighten which PCS are affected, and what PCS <--> PHY link
+modes this is required for?
 
-For now I think it's ok to have that CLK_IS_CRITICAL flag here,
-because as you said you implemented all clocks in this CMU and neither
-of those looks like a critical one. But I'd advice to add a TODO
-comment saying it's probably a temporary solution before actual leaf
-clock which leads to freeze is identified (which probably resides in
-some other not implemented yet CMU).
+> I'd like to send a series for this upstream, which would allow solving this 
+> issue for both the DWMAC RZN1 case and the AT803x PHY suspend/hibernate case 
+> (and also potentially other cases with a similar bug).
+> 
+> I wanted to ask you how you would prefer to be credited in my patch series. I 
+> was considering putting you as author and first signer of the initial patch 
+> adding the phy_dev flag. Would that be okay or would you prefer something else?
 
->
-> > is a chance some other leaf clock (which is not implemented yet in
-> > your driver) gets disabled as a result of PERIC0_IP disablement, which
-> > might actually lead to that hang you observe. Usually it's some
-> > meaningful leaf clock, e.g. GIC or interconnect clocks. Please check
-> > clk-exynos850.c driver for CLK_IS_CRITICAL and CLK_IGNORE_UNUSED flags
-> > and the corresponding comments I left there, maybe it'll give you more
-> > particular idea about what to look for. Yes, making the whole CMU
-> > always running without understanding why (i.e. because of which
-> > particular leaf clock) might not be the best way of handling this
->
-> because of CLK_GOUT_PERIC0_CLK_PERIC0_USI8_USI_CLK
+It depends how big the changes are from my patches. If more than 50% of
+the patch remains my work, please retain my authorship. If you wish to
+also indicate your authorship, then there is a mechanism to do that -
+Co-developed-by: from submitting-patches.rst:
 
-That's not a root cause here. And I think PERIC0_IP is neither.
+Co-developed-by: states that the patch was co-created by multiple
+developers; it is used to give attribution to co-authors (in addition
+to the author attributed by the From: tag) when several people work on
+a single patch. Since Co-developed-by: denotes authorship, every
+Co-developed-by: must be immediately followed by a Signed-off-by: of
+the associated co-author.
 
->
-> > issue. I might be mistaken, but at least please check if you
-> > implemented all clocks for PERIC0 first and if making some meaningful
-> > leaf clock critical makes more sense.
-> >
->
-> Thanks,
-> ta
+See submitting-patches.rst for examples of the ordering of the
+attributations.
+
+Thanks for asking.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
