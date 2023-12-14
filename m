@@ -1,164 +1,125 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JlpUzm31"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A4261BB;
-	Wed, 13 Dec 2023 22:30:33 -0800 (PST)
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 3BE6RaTm011805;
-	Thu, 14 Dec 2023 06:30:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	from:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding:content-type; s=
-	qcppdkim1; bh=97iArE/7fSpUEFf1nWhOfrrjPwTNcjVGC7vrxk+Z5PY=; b=Jl
-	pUzm31S7Tc8NMcwNCtiSDsmK9h61Ll0sLrc8OuUF+mU6ZCEgB9S+ZEU8iGoSUvZC
-	4TzbOd/NTK64Q9tU7fYHrtBepBTTbMbMUYcusUTAm8EvA2xoqntHy/uNmkUhy3E8
-	/ajeO0Usc6n2SET0qhgcpnSUICW80iWVc9MczDGKrtPAtLXpzxGWyFlQxkJD9LOK
-	mUzdqhF20654njCEvVa7fWbQxKB+RZMa0uKA3bcVXdkq8K5AQR824qirfPbIRuBG
-	s7vEtZKH6Wx7m6Vw3Kk5v7GfqZbf9tZgzoUJqXP+1d/iYIJhDp9iQVYLVJEzDFcV
-	13G9HCtm8DnJGSAKnLHg==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3uyqgt0jeq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Dec 2023 06:30:24 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3BE6UNiV018007
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Dec 2023 06:30:23 GMT
-Received: from hu-ipkumar-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Wed, 13 Dec 2023 22:30:15 -0800
-From: Praveenkumar I <quic_ipkumar@quicinc.com>
-To: <agross@kernel.org>, <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
-        <vkoul@kernel.org>, <kishon@kernel.org>, <mani@kernel.org>,
-        <quic_nsekar@quicinc.com>, <quic_srichara@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <linux-phy@lists.infradead.org>
-CC: <quic_varada@quicinc.com>, <quic_devipriy@quicinc.com>,
-        <quic_kathirav@quicinc.com>, <quic_anusha@quicinc.com>
-Subject: [PATCH 10/10] arm64: dts: qcom: ipq5332: Enable PCIe phys and controllers
-Date: Thu, 14 Dec 2023 11:58:47 +0530
-Message-ID: <20231214062847.2215542-11-quic_ipkumar@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20231214062847.2215542-1-quic_ipkumar@quicinc.com>
-References: <20231214062847.2215542-1-quic_ipkumar@quicinc.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jrg0onkE"
+Received: from mail-yb1-xb2f.google.com (mail-yb1-xb2f.google.com [IPv6:2607:f8b0:4864:20::b2f])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CEB5BD
+	for <linux-clk@vger.kernel.org>; Wed, 13 Dec 2023 23:09:17 -0800 (PST)
+Received: by mail-yb1-xb2f.google.com with SMTP id 3f1490d57ef6-db5e5647c24so234422276.1
+        for <linux-clk@vger.kernel.org>; Wed, 13 Dec 2023 23:09:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1702537756; x=1703142556; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9O1GnUq4pw6hl4a/GhVKNLNjzNzEUMAMJcd0utEyLiE=;
+        b=Jrg0onkEW7cZmLkXpgpixdbps3bf+3816C8u1ryDdu8/S6ggiSXCSaFC6mMW8w0mRq
+         UCcapzzEQkiotnyscr46KOGVMADBNQB8Lk0O4I3sPvYR42qwV2NiiTCYUHIyDSOcTj5J
+         KX67eBXfhmTtxwdOYnl58EhYT6avc+qjXpC8Lc6lidtfiTh31pPeBoZSAeblwtB8ienX
+         D7n7IPRZXu3ERL9Ux/PnxTgMeiQKctPlssDqgCrNd80J91KRbtFFuEjbnPOEHugVglUe
+         SPoqk+sChWeCYtEb89exiKxuTfeNxPHlG/ZNy83rxHQUcsWUPgu+fbnKQtjyMoLrYAO/
+         cqWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702537756; x=1703142556;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9O1GnUq4pw6hl4a/GhVKNLNjzNzEUMAMJcd0utEyLiE=;
+        b=Qs9IZiHG3KFdtJ//MzWod5RlIYTkURUx9JC38NoWtO1UPnzspG45bUskSFseR0QqiL
+         US7P88oNvaK+ZESr5o7r1Ly4vY4DV7ukQIEA/ihktOiuvR/si+CTcFcj9kTk9B+p59ep
+         fvTnufjBXWbpayQ3vX9gUx18O+myH9TXi8pYQSU9uacJY5ws0hUxRr/Igls01J4ANc0j
+         vGCJNl9DAiZgAWp/We3vCsUxCSpqiqgiUy4lBVSM42a1BqmjuJPyera1a+7yr9D5N4sQ
+         nKay0aRkZ5wIHtfbvMckgcsalwtRn3cYhWtBiBnSdEzrISf5DqHcjP7YHiUdLCgPt1Wx
+         mKfw==
+X-Gm-Message-State: AOJu0YyPqa5Yk1IaOi7ZxiN+N/gBYz1UmPIJaxz6xmjFOgt9LqzC0OLS
+	oE5VZ4Tbh3q/wxzZ2AvIc0ecUZAUp4eisscSiT7fpQ==
+X-Google-Smtp-Source: AGHT+IG078aMdmbmisgdnRLiC9BHttQaRKTw1dmngc8Uzuyuor0vsPrA1eyS3c5KPIlT0ZUu4886PyAXYBHaW+v9aKM=
+X-Received: by 2002:a25:8041:0:b0:dbc:ddf4:4b14 with SMTP id
+ a1-20020a258041000000b00dbcddf44b14mr1157789ybn.50.1702537756642; Wed, 13 Dec
+ 2023 23:09:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 9xfHIffaGkkmrwGB9V7CzBTBrvmfquZJ
-X-Proofpoint-ORIG-GUID: 9xfHIffaGkkmrwGB9V7CzBTBrvmfquZJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-12-09_01,2023-12-07_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0
- impostorscore=0 malwarescore=0 mlxlogscore=827 mlxscore=0 clxscore=1015
- spamscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2311290000 definitions=main-2312140039
+References: <20231214062847.2215542-1-quic_ipkumar@quicinc.com> <20231214062847.2215542-3-quic_ipkumar@quicinc.com>
+In-Reply-To: <20231214062847.2215542-3-quic_ipkumar@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Thu, 14 Dec 2023 09:09:05 +0200
+Message-ID: <CAA8EJpr61JuznqfdMG96mjrqquf2Qbfe=potB5vzk43XexWj2w@mail.gmail.com>
+Subject: Re: [PATCH 02/10] clk: qcom: ipq5332: Add separate clocks for PCIe
+ and USB for Combo PHY
+To: Praveenkumar I <quic_ipkumar@quicinc.com>
+Cc: agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org, 
+	mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, bhelgaas@google.com, 
+	lpieralisi@kernel.org, kw@linux.com, vkoul@kernel.org, kishon@kernel.org, 
+	mani@kernel.org, quic_nsekar@quicinc.com, quic_srichara@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-phy@lists.infradead.org, 
+	quic_varada@quicinc.com, quic_devipriy@quicinc.com, quic_kathirav@quicinc.com, 
+	quic_anusha@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
 
-Enable the PCIe controller and PHY nodes for RDP 441.
+On Thu, 14 Dec 2023 at 08:29, Praveenkumar I <quic_ipkumar@quicinc.com> wrote:
+>
+> Qualcomm IPQ5332 has a combo PHY for PCIe and USB. Either one of the
+> interface (PCIe/USB) can use this combo PHY and the PHY drivers are
+> different for PCIe and USB. Hence separate the PCIe and USB pipe clock
+> source from DT, and individual driver node can be used as a clock source
+> separately in the gcc. Add separate enum for PCIe and USB pipe clock and
+> change the parent in corresponding structures.
+>
+> Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
 
-Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
----
- arch/arm64/boot/dts/qcom/ipq5332-rdp441.dts | 74 +++++++++++++++++++++
- 1 file changed, 74 insertions(+)
+Please use your full name for the git authorship and or the S-o-B
+tags. This applies to the whole series.
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq5332-rdp441.dts b/arch/arm64/boot/dts/qcom/ipq5332-rdp441.dts
-index 846413817e9a..83eca8435cff 100644
---- a/arch/arm64/boot/dts/qcom/ipq5332-rdp441.dts
-+++ b/arch/arm64/boot/dts/qcom/ipq5332-rdp441.dts
-@@ -62,4 +62,78 @@ data-pins {
- 			bias-pull-up;
- 		};
- 	};
-+
-+	pcie0_default: pcie0-default-state {
-+		clkreq-n-pins {
-+			pins = "gpio37";
-+			function = "pcie0_clk";
-+			drive-strength = <8>;
-+			bias-pull-up;
-+		};
-+
-+		perst-n-pins {
-+			pins = "gpio38";
-+			function = "gpio";
-+			drive-strength = <8>;
-+			bias-pull-up;
-+			output-low;
-+		};
-+
-+		wake-n-pins {
-+			pins = "gpio39";
-+			function = "pcie0_wake";
-+			drive-strength = <8>;
-+			bias-pull-up;
-+		};
-+	};
-+
-+	pcie1_default: pcie1-default-state {
-+		clkreq-n-pins {
-+			pins = "gpio46";
-+			function = "pcie1_clk";
-+			drive-strength = <8>;
-+			bias-pull-up;
-+		};
-+
-+		perst-n-pins {
-+			pins = "gpio47";
-+			function = "gpio";
-+			drive-strength = <8>;
-+			bias-pull-up;
-+			output-low;
-+		};
-+
-+		wake-n-pins {
-+			pins = "gpio48";
-+			function = "pcie1_wake";
-+			drive-strength = <8>;
-+			bias-pull-up;
-+		};
-+	};
-+};
-+
-+&pcie0_phy {
-+	status = "okay";
-+};
-+
-+&pcie0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pcie0_default>;
-+
-+	perst-gpios = <&tlmm 38 GPIO_ACTIVE_LOW>;
-+	wake-gpios = <&tlmm 39 GPIO_ACTIVE_LOW>;
-+	status = "okay";
-+};
-+
-+&pcie1_phy {
-+	status = "okay";
-+};
-+
-+&pcie1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pcie1_default>;
-+
-+	perst-gpios = <&tlmm 47 GPIO_ACTIVE_LOW>;
-+	wake-gpios = <&tlmm 48 GPIO_ACTIVE_LOW>;
-+	status = "okay";
- };
+Other than that:
+
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+> ---
+>  drivers/clk/qcom/gcc-ipq5332.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/clk/qcom/gcc-ipq5332.c b/drivers/clk/qcom/gcc-ipq5332.c
+> index f98591148a97..aa0f616c3b1b 100644
+> --- a/drivers/clk/qcom/gcc-ipq5332.c
+> +++ b/drivers/clk/qcom/gcc-ipq5332.c
+> @@ -25,7 +25,8 @@ enum {
+>         DT_SLEEP_CLK,
+>         DT_PCIE_2LANE_PHY_PIPE_CLK,
+>         DT_PCIE_2LANE_PHY_PIPE_CLK_X1,
+> -       DT_USB_PCIE_WRAPPER_PIPE_CLK,
+> +       DT_PCIE_WRAPPER_PIPE_CLK,
+> +       DT_USB_WRAPPER_PIPE_CLK,
+>  };
+>
+>  enum {
+> @@ -728,7 +729,7 @@ static struct clk_regmap_phy_mux gcc_pcie3x1_0_pipe_clk_src = {
+>                 .hw.init = &(struct clk_init_data) {
+>                         .name = "gcc_pcie3x1_0_pipe_clk_src",
+>                         .parent_data = &(const struct clk_parent_data) {
+> -                               .index = DT_USB_PCIE_WRAPPER_PIPE_CLK,
+> +                               .index = DT_PCIE_WRAPPER_PIPE_CLK,
+>                         },
+>                         .num_parents = 1,
+>                         .ops = &clk_regmap_phy_mux_ops,
+> @@ -1072,7 +1073,7 @@ static struct clk_regmap_phy_mux gcc_usb0_pipe_clk_src = {
+>                 .hw.init = &(struct clk_init_data) {
+>                         .name = "gcc_usb0_pipe_clk_src",
+>                         .parent_data = &(const struct clk_parent_data) {
+> -                               .index = DT_USB_PCIE_WRAPPER_PIPE_CLK,
+> +                               .index = DT_USB_WRAPPER_PIPE_CLK,
+>                         },
+>                         .num_parents = 1,
+>                         .ops = &clk_regmap_phy_mux_ops,
+> --
+> 2.34.1
+>
+>
+
+
 -- 
-2.34.1
-
+With best wishes
+Dmitry
