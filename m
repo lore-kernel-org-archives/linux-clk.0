@@ -1,52 +1,53 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QVOLhbu5"
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F13F1BEE
-	for <linux-clk@vger.kernel.org>; Thu, 14 Dec 2023 07:13:10 -0800 (PST)
-Received: by mail-pg1-x531.google.com with SMTP id 41be03b00d2f7-5c701bd98f3so2622124a12.1
-        for <linux-clk@vger.kernel.org>; Thu, 14 Dec 2023 07:13:10 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ltvDi11o"
+Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D8151733
+	for <linux-clk@vger.kernel.org>; Thu, 14 Dec 2023 07:14:37 -0800 (PST)
+Received: by mail-pg1-x52b.google.com with SMTP id 41be03b00d2f7-5cd54e5fbb2so190153a12.2
+        for <linux-clk@vger.kernel.org>; Thu, 14 Dec 2023 07:14:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702566790; x=1703171590; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1702566876; x=1703171676; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=etJ+/wYoAcvEaSoojHqnnim2gYjZh1zVJDqnc2kSXpQ=;
-        b=QVOLhbu5Qr7LsTyMe6GposwU9a//7P8AI8YTz2gIDYOAzbBvHGBX4ILfoweHvJk4rV
-         9HeeiUWpwpDgwlZEV7VfHFf4MSpgc5jQt4yISG48Qnn/wGouHI+JIZ60TLeO7SC8HYAl
-         zn3gND+PF/S3Gq32PnP6Q4t/UjsZNizhxuFfoP5HddnbgHeGGOgwP16NJt5xOfliu5bp
-         /KhHZK50OVgHv37IvobrrHNnCbfZrXaZMPLe7jdRkhMChG/4/wVPnBKU2ZXFd4MG1NZ1
-         KunmMzEVO9wsXOnlo7kyW5xsaVx7uM2JySchWwaoyF31fiZlCBTyEzLcgYkUeYSjnJQa
-         2jxA==
+        bh=ZWqMHpUSkAPDn3wm2z4jDOhMdXvzCuosczZCAgcr4kM=;
+        b=ltvDi11omEnn5qaqbSVvMf92ELR8bE6qNn/++dxsVNOur3z8xo7SAIKQJ/fL+IrpqW
+         +X7iCi5e3BoyXyokbX4BkYjJz8zPO3FPtbEyQGgS/DGcCbUw7bW4e1w4kdwTQutKWiCC
+         dmHh/sfjBe52v+3QEvGNV7jqM0OBjYaskaThRqMLsArR3TW5DDjHXazJfYkvhli7OgPk
+         3b+dcl/04RMP670Ur/uBVW5FlQXFwO5pzfIPifD8iLQMGBe03KWGhTDYrzzy3ATvOJje
+         IuixlPuB8/xBPIVcvKuMpLKxwruxCmshCgKVOt3Zl2r9ZcuGIkp+xPgYiD0BXUTF7k4h
+         lQLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702566790; x=1703171590;
+        d=1e100.net; s=20230601; t=1702566876; x=1703171676;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=etJ+/wYoAcvEaSoojHqnnim2gYjZh1zVJDqnc2kSXpQ=;
-        b=CJ/dm3Ne7xPEyxZyC45orXeh4m+XkZVMHK+B8/qF7bGs213jh5m6R0TUGa6Z9vO4It
-         sc3iiCCkM7kLJG3gDQ2IA3bROOifdOE/ykhgC+hlZ9CQgsvjvoAT8ylv+oOCzrGuIs/S
-         KgaOK8ysYyk10EN3kMnPUI4ArY+V8XiI0mVUUcQUf/tTMKhJOYuYrZPAu0Lo6bhGoSYu
-         UVzoXRTrTRVaXIHY0NOFFbnVAdWctzigYiUG5a6/Kfg5mScOYhMoF8vMSYRUWWTT36yv
-         W5Z9YSwZbleU7an7jC3o9grWLyQ9U/4X/uZ29V/Y/c55AYMF6b1DicqS89Z+ZBmqxN2d
-         ZQXQ==
-X-Gm-Message-State: AOJu0Ywz4gsRzVIKc0KFACs4RHwcE6/kc397GK4xuxcbilI/1W45ipAg
-	Bq9ycnHfYStGOd4zJd84r7VqVuV5LP7qWH/QmNb/Sw==
-X-Google-Smtp-Source: AGHT+IEFL6tnUHSNVnMcU+kCLIcfGx/R1ZUOTFN7/bZVIiGtPzpJjiJX8aWhelM2KXu+zN0404N10HK44v1+/oTJCzM=
-X-Received: by 2002:a17:90a:de94:b0:28b:1fbd:27de with SMTP id
- n20-20020a17090ade9400b0028b1fbd27demr197844pjv.29.1702566789746; Thu, 14 Dec
- 2023 07:13:09 -0800 (PST)
+        bh=ZWqMHpUSkAPDn3wm2z4jDOhMdXvzCuosczZCAgcr4kM=;
+        b=UMlqFzXBFUUdze/KIlr3Yl4d3h3DM+Zj7XPJyFp0hlx/96U3PginNb0kH+u614vX9T
+         PWTIJtlrQYjcpxTZaqvTAPBL7pJkjhFMhMpiTkTGFZwn89jZH1YTVeAFdNG9J2dNPIh7
+         IlDrt6iYTuWeXH7oMAtGv+tt2o9wXqy5h6zMqE8nOBAI8tOLwk6nLFp/quskepTjB2rj
+         jHfD3cVh2ro1Bzg54M1iPBYaXXBdY0LQTeFZvPMdVyaUhOiYmG7Q6EzSB7XESwXacs/m
+         +z9nW3pHBoJdJhOPif/o6moStTvMyXHWZpxEyJnxbkgburtVKMUrSMT0qUx0pm4yoG0f
+         yOSg==
+X-Gm-Message-State: AOJu0Yx4dd6fmzEZ9q6VbBSrsBCLqHpgXL1/IaR2MlBvZmlON76lsFFb
+	RKnyyB8A6M19Gs1UTY0W48Q8XVj/EqC1DVpEEB8h+Q==
+X-Google-Smtp-Source: AGHT+IEM9NOntXhLmCrjcoIuQ47Pfui0YztUJd6OSshayTkyxMrEa+wi5LDmzXV8P+FrMsH0LnE9quA35R9O9TaR7Z4=
+X-Received: by 2002:a17:90b:3697:b0:28b:d51:e7fe with SMTP id
+ mj23-20020a17090b369700b0028b0d51e7femr354699pjb.64.1702566876603; Thu, 14
+ Dec 2023 07:14:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231214105243.3707730-1-tudor.ambarus@linaro.org> <20231214105243.3707730-4-tudor.ambarus@linaro.org>
-In-Reply-To: <20231214105243.3707730-4-tudor.ambarus@linaro.org>
+References: <20231214105243.3707730-1-tudor.ambarus@linaro.org> <20231214105243.3707730-5-tudor.ambarus@linaro.org>
+In-Reply-To: <20231214105243.3707730-5-tudor.ambarus@linaro.org>
 From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Thu, 14 Dec 2023 09:12:58 -0600
-Message-ID: <CAPLW+4mBN1g0ojYiE_AVt7ZWO_1yEFpx58x4+1U9spxaS=abRA@mail.gmail.com>
-Subject: Re: [PATCH 03/13] dt-bindings: i2c: exynos5: add google,gs101-hsi2c compatible
+Date: Thu, 14 Dec 2023 09:14:25 -0600
+Message-ID: <CAPLW+4kBPj+f+aedr3yq_KTg7V7NFjK3RzFMypeYdQ-eos-NAA@mail.gmail.com>
+Subject: Re: [PATCH 04/13] dt-bindings: serial: samsung: gs101: make
+ reg-io-width required property
 To: Tudor Ambarus <tudor.ambarus@linaro.org>
 Cc: peter.griffin@linaro.org, robh+dt@kernel.org, 
 	krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com, sboyd@kernel.org, 
@@ -65,30 +66,36 @@ Content-Transfer-Encoding: quoted-printable
 On Thu, Dec 14, 2023 at 4:52=E2=80=AFAM Tudor Ambarus <tudor.ambarus@linaro=
 .org> wrote:
 >
-> Add google,gs101-hsi2c dedicated compatible for representing
-> I2C of Google GS101 SoC.
+> GS101 only allows 32-bit register accesses. When using 8-bit reg
+> accesses on gs101, a SError Interrupt is raised causing the system
+> unusable.
+>
+> Make reg-io-width a required property and expect for it a value of 4.
 >
 > Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 > ---
 
 Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
->  Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml | 1 +
->  1 file changed, 1 insertion(+)
+>  Documentation/devicetree/bindings/serial/samsung_uart.yaml | 4 ++++
+>  1 file changed, 4 insertions(+)
 >
-> diff --git a/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml b/Doc=
-umentation/devicetree/bindings/i2c/i2c-exynos5.yaml
-> index df9c57bca2a8..cc8bba5537b9 100644
-> --- a/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
-> +++ b/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
-> @@ -33,6 +33,7 @@ properties:
->            - const: samsung,exynos7-hsi2c
->        - items:
->            - enum:
-> +              - google,gs101-hsi2c
->                - samsung,exynos850-hsi2c
->            - const: samsung,exynosautov9-hsi2c
->        - const: samsung,exynos5-hsi2c    # Exynos5250 and Exynos5420
+> diff --git a/Documentation/devicetree/bindings/serial/samsung_uart.yaml b=
+/Documentation/devicetree/bindings/serial/samsung_uart.yaml
+> index 133259ed3a34..cc896d7e2a3d 100644
+> --- a/Documentation/devicetree/bindings/serial/samsung_uart.yaml
+> +++ b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
+> @@ -143,6 +143,10 @@ allOf:
+>      then:
+>        required:
+>          - samsung,uart-fifosize
+> +        - reg-io-width
+> +      properties:
+> +        reg-io-width:
+> +          const: 4
+>
+>  unevaluatedProperties: false
+>
 > --
 > 2.43.0.472.g3155946c3a-goog
 >
