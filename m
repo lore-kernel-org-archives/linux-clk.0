@@ -1,86 +1,133 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="iW27MZ1o"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::228])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08F19B9;
-	Thu, 14 Dec 2023 00:13:40 -0800 (PST)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 24D051BF208;
-	Thu, 14 Dec 2023 08:13:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1702541619;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=918QXmxDoYw2xE4vLcNGnBHlNQLb9uIGqiZk+0P2Gb4=;
-	b=iW27MZ1oF888oSOq0iGD14rEt/3CBitlyXCxys4w4DVwxopfO5TIwh+YLPKzS0BE3Ud+3e
-	J4TK5PvaDsuRIytZjvhydGvnW1/HaZmrhujSTlknOvYyQMkvIfXODO/TL2pQhwJcuq54DY
-	eLJSK1YmkjTbGEluoORg9o92kxQD9+sM2MRIZthSTG3GuCY3rAih88Snu6FIQRyTFRO1My
-	0ye/8jEVj7bRsl3o4JHaM9hy4ClTUZW08W7x8MBjnVWNW+jr/mZsp2LPpozdm03JkBRRFC
-	gHqSu6cYTNqCdBqwKBJ1fBbdlVM2ZcPxm6DD8m5dfdUyIkfY2nQc/XgaCB1FXg==
-Date: Thu, 14 Dec 2023 09:13:58 +0100 (CET)
-From: Romain Gantois <romain.gantois@bootlin.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-cc: Oleksij Rempel <o.rempel@pengutronix.de>, Wei Fang <wei.fang@nxp.com>, 
-    Marek Vasut <marex@denx.de>, 
-    "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
-    "David S. Miller" <davem@davemloft.net>, Andrew Lunn <andrew@lunn.ch>, 
-    Eric Dumazet <edumazet@google.com>, Heiner Kallweit <hkallweit1@gmail.com>, 
-    Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-    kernel@pengutronix.de, linux-clk@vger.kernel.org, 
-    Stephen Boyd <sboyd@kernel.org>, 
-    Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH] net: phy: at803x: Improve hibernation support on start
- up
-In-Reply-To: <ZNS8LEiuwsv660EC@shell.armlinux.org.uk>
-Message-ID: <7aabc198-9df5-5bce-2968-90d4cda3c244@bootlin.com>
-References: <20230804175842.209537-1-marex@denx.de> <AM5PR04MB3139793206F9101A552FADA0880DA@AM5PR04MB3139.eurprd04.prod.outlook.com> <45b1ee70-8330-0b18-2de1-c94ddd35d817@denx.de> <AM5PR04MB31392C770BA3101BDFBA80318812A@AM5PR04MB3139.eurprd04.prod.outlook.com>
- <20230809043626.GG5736@pengutronix.de> <AM5PR04MB3139D8C0EBC9D2DFB0C778348812A@AM5PR04MB3139.eurprd04.prod.outlook.com> <20230809060836.GA13300@pengutronix.de> <ZNNRxY4z7HroDurv@shell.armlinux.org.uk> <ZNS8LEiuwsv660EC@shell.armlinux.org.uk>
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="H+Tih2AC"
+X-Greylist: delayed 329 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 14 Dec 2023 00:49:05 PST
+Received: from mail-m12780.qiye.163.com (mail-m12780.qiye.163.com [115.236.127.80])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0C6910C;
+	Thu, 14 Dec 2023 00:49:05 -0800 (PST)
+DKIM-Signature: a=rsa-sha256;
+	b=H+Tih2AC1swsa5LpolLueaHwjGrZcQgYvOihmSPLeeLcpCcwbsfl7MzZ+JSwRBd74tlMZ7Fpt9bioIds7vQaYmqF5oGzOxy94LNRn4LQ5dnuTLiF8MxZf8s/VdbY8o7UZ/2PD2I+OBdlnugqv89YfjOOTW9XmUoBtzSDWg3BL3I=;
+	c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=WikvbsWmSBI7ys5pJkbGwLqwVnrtiIg2JwpTBdw98p0=;
+	h=date:mime-version:subject:message-id:from;
+Received: from [172.16.12.87] (unknown [58.22.7.114])
+	by mail-m12744.qiye.163.com (Hmail) with ESMTPA id CEE8B10052F;
+	Thu, 14 Dec 2023 16:42:35 +0800 (CST)
+Message-ID: <090a7670-6997-4be3-99d7-24f67430a16c@rock-chips.com>
+Date: Thu, 14 Dec 2023 16:42:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-GND-Sasl: romain.gantois@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 1/7] clk: rockchip: rk3588: fix CLK_NR_CLKS usage
+Content-Language: en-US
+To: Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: Kever Yang <kever.yang@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>,
+ Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, andy.yan@rock-chips.com,
+ devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ kernel@collabora.com, Elaine Zhang <zhangqing@rock-chips.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, linux-clk@vger.kernel.org
+References: <20231213185114.47565-1-sebastian.reichel@collabora.com>
+ <20231213185114.47565-2-sebastian.reichel@collabora.com>
+From: Tao Huang <huangtao@rock-chips.com>
+In-Reply-To: <20231213185114.47565-2-sebastian.reichel@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUNJSFZMTx8aShlIQkkfGBpVEwETFh
+	oSFyQUDg9ZV1kYEgtZQVlOQ1VJSVVMVUpKT1lXWRYaDxIVHRRZQVlPS0hVSk1PSU5JVUpLS1VKQl
+	kG
+X-HM-Tid: 0a8c677df184b217kuuucee8b10052f
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NSo6ITo*UTwzPzICCipNKRgC
+	DyhPCjVVSlVKTEtJTk9ISE5NQk5LVTMWGhIXVRMOGhUcDxoUOwkUGBBWGBMSCwhVGBQWRVlXWRIL
+	WUFZTkNVSUlVTFVKSk9ZV1kIAVlBTkhOSTcG
 
+On 2023/12/14 上午2:46, Sebastian Reichel wrote:
+> CLK_NR_CLKS is not part of the DT bindings and needs to be removed
+> from it, just like it recently happened for other platforms. This
+> takes care of it by introducing a new function identifying the
+> maximum used clock ID at runtime.
+>
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> ---
+>  drivers/clk/rockchip/clk-rk3588.c |  5 ++++-
+>  drivers/clk/rockchip/clk.c        | 17 +++++++++++++++++
+>  drivers/clk/rockchip/clk.h        |  2 ++
+>  3 files changed, 23 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/rockchip/clk-rk3588.c b/drivers/clk/rockchip/clk-rk3588.c
+> index 6994165e0395..0b60ae78f9d8 100644
+> --- a/drivers/clk/rockchip/clk-rk3588.c
+> +++ b/drivers/clk/rockchip/clk-rk3588.c
+> @@ -2458,15 +2458,18 @@ static struct rockchip_clk_branch rk3588_clk_branches[] __initdata = {
+>  static void __init rk3588_clk_init(struct device_node *np)
+>  {
+>  	struct rockchip_clk_provider *ctx;
+> +	unsigned long clk_nr_clks;
+>  	void __iomem *reg_base;
+>  
+> +	clk_nr_clks = rockchip_clk_find_max_clk_id(rk3588_clk_branches,
+> +					ARRAY_SIZE(rk3588_clk_branches)) + 1;
+>  	reg_base = of_iomap(np, 0);
+>  	if (!reg_base) {
+>  		pr_err("%s: could not map cru region\n", __func__);
+>  		return;
+>  	}
+>  
+> -	ctx = rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
+> +	ctx = rockchip_clk_init(np, reg_base, clk_nr_clks);
+>  	if (IS_ERR(ctx)) {
+>  		pr_err("%s: rockchip clk init failed\n", __func__);
+>  		iounmap(reg_base);
+> diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+> index 4059d9365ae6..043458b7c579 100644
+> --- a/drivers/clk/rockchip/clk.c
+> +++ b/drivers/clk/rockchip/clk.c
+> @@ -429,6 +429,23 @@ void rockchip_clk_register_plls(struct rockchip_clk_provider *ctx,
+>  }
+>  EXPORT_SYMBOL_GPL(rockchip_clk_register_plls);
+>  
+> +unsigned long rockchip_clk_find_max_clk_id(struct rockchip_clk_branch *list,
+> +					   unsigned int nr_clk)
+> +{
+> +	unsigned int idx;
+> +	unsigned long max;
 
-Hello Russell,
+smatch report warning: uninitialized symbol 'max'.
+And make sure this function return correct number, for example, when nr_clk == 0.
 
-On Thu, 10 Aug 2023, Russell King (Oracle) wrote:
+> +
+> +	for (idx = 0; idx < nr_clk; idx++, list++) {
+> +		if (list->id > max)
+> +			max = list->id;
+> +		if (list->child && list->child->id > max)
+> +			max = list->id;
+> +	}
+> +
+> +	return max;
+> +}
+> +EXPORT_SYMBOL_GPL(rockchip_clk_find_max_clk_id);
+> +
+>  void rockchip_clk_register_branches(struct rockchip_clk_provider *ctx,
+>  				    struct rockchip_clk_branch *list,
+>  				    unsigned int nr_clk)
+> diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+> index 758ebaf2236b..fd3b476dedda 100644
+> --- a/drivers/clk/rockchip/clk.h
+> +++ b/drivers/clk/rockchip/clk.h
+> @@ -973,6 +973,8 @@ struct rockchip_clk_provider *rockchip_clk_init(struct device_node *np,
+>  			void __iomem *base, unsigned long nr_clks);
+>  void rockchip_clk_of_add_provider(struct device_node *np,
+>  				struct rockchip_clk_provider *ctx);
+> +unsigned long rockchip_clk_find_max_clk_id(struct rockchip_clk_branch *list,
+> +					   unsigned int nr_clk);
+>  void rockchip_clk_register_branches(struct rockchip_clk_provider *ctx,
+>  				    struct rockchip_clk_branch *list,
+>  				    unsigned int nr_clk);
 
-> > We've had these issues before with stmmac, so this "stmmac needs the
-> > PHY receive clock" is nothing new - it's had problems with system
-> > suspend/resume in the past, and I've made suggestions... and when
-> > there's been two people trying to work on it, I've attempted to get
-> > them to talk to each other which resulted in nothing further
-> > happening.
-> > 
-> > Another solution could possibly be that we reserve bit 30 on the
-> > PHY dev_flags to indicate that the receive clock must always be
-> > provided. I suspect that would have an advantage in another
-> ...
-> 
-> Something like this for starters:
-> 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> ...
-
-I've implemented and tested the general-case solution you proposed to this 
-receive clock issue with stmmac drivers. The core of your suggestion is pretty 
-much unchanged, I just added a phylink_pcs flag for standalone PCS drivers that 
-also need to provide the receive clock.
-
-I'd like to send a series for this upstream, which would allow solving this 
-issue for both the DWMAC RZN1 case and the AT803x PHY suspend/hibernate case 
-(and also potentially other cases with a similar bug).
-
-I wanted to ask you how you would prefer to be credited in my patch series. I 
-was considering putting you as author and first signer of the initial patch 
-adding the phy_dev flag. Would that be okay or would you prefer something else?
-
-Best Regards,
-
--- 
-Romain Gantois, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
