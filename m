@@ -1,49 +1,31 @@
-Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8611241844
-	for <linux-clk@vger.kernel.org>; Fri, 15 Dec 2023 20:59:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4842630120;
+	Fri, 15 Dec 2023 21:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="KU5EIgtC"
-Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3ba4850f65dso80121b6e.2
-        for <linux-clk@vger.kernel.org>; Fri, 15 Dec 2023 12:59:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1702673959; x=1703278759; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lV7l2nTXRo6puPksf2Bwbtc+9l9srdKWeAOzTx3pqZU=;
-        b=KU5EIgtCK4hVTxEEZxXq7NbhYD5qiIM4WmTT5l+3tSK4lixfIwF2ZDhcGSqTqxYB29
-         JxFp3OD3Ee/JMVqO0SPmVVcv2Xdx7oUkqul746gfHgy2s6PdYlNaYOXF9fEMGASjrrwW
-         CT4LHPNMPhULbiNgC0+Ql741Fzj0YSqXxaUmSaAdraGzzvmBEQKHQf7x9YiakUMB2IuF
-         vXRUldbcwZQ5qmMSk72etRWkYG9SC1NJGqb8EwVai94+r8HdyLhILcg2H13xcFRt1KKp
-         a3R78jsr9K/DKgNVTug/BbkgvLtc50WR5jfir69Ce6NP/nbUWFQ1c2xywrKnqV53s0SV
-         x8VQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702673959; x=1703278759;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lV7l2nTXRo6puPksf2Bwbtc+9l9srdKWeAOzTx3pqZU=;
-        b=ezDlM5Zi7qvJ4rft0lmSgucF+JBQyfHT54Xqnv01HHgorpHGF/FX5uBI5kgleu7d0q
-         fZgHhZZuIo00GIeRYVfYNRh3bfbUTO2HafGM6ufKkbJZkYkpVezRABno855oZD9bnluv
-         qzJPBU01h1DgnHtO2WJwv4AqPPhRaGNT1OpNY5qUjdm94H9PiZJEwSsPmfDkqxcvf9vq
-         FhLVx3YFpoFcS3whriYoeyMuRMWIdtK4gLcKZ4deKjZbIZKoKH162ZfyrPVrrd77WlE2
-         flAqQwYVPUTONaagKzEAJvkkp+QVXa/ZV9Sm2V2GqsBXHgYZBPrp3Bn3ZTX8Maxq+fqJ
-         NjxQ==
-X-Gm-Message-State: AOJu0YzEoIwGP6nqVLIXXUaP6x5YzBSXZ031nGgVUKcitQvmqWzr951T
-	t6++++owJ7nELRKEKcm/nrkKXw==
-X-Google-Smtp-Source: AGHT+IEe4Kr9nZGM8rgYvZk36QtswTXFAg2l00r9jHu+UOaHWgP1pqPIoOBpVHQ2/argXUQTanExYw==
-X-Received: by 2002:a05:6808:1a0e:b0:3b9:da30:77fa with SMTP id bk14-20020a0568081a0e00b003b9da3077famr15925945oib.2.1702673959682;
-        Fri, 15 Dec 2023 12:59:19 -0800 (PST)
-Received: from ?IPV6:2600:1700:2000:b002:18ee:711a:b78b:5489? ([2600:1700:2000:b002:18ee:711a:b78b:5489])
-        by smtp.gmail.com with ESMTPSA id v16-20020a0cf910000000b0067a53aa6df2sm7151683qvn.46.2023.12.15.12.59.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Dec 2023 12:59:19 -0800 (PST)
-Message-ID: <65fd52f1-6861-42b0-9148-266766d054b1@sifive.com>
-Date: Fri, 15 Dec 2023 14:59:17 -0600
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="STVO7dLP"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1702674002;
+	bh=XmjdsnypmM0sVMOODNg7bU4x4gIm/6EultPACYo535g=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=STVO7dLPIsVi6rpyepTxq9ZaRTHmDDoUxqtPx0GKDDsoI6kKYuT5kVY9Ej1rdZ31z
+	 7skxZyTGnWDhXRx3ivcTrWcTn9pS4jn15bf5IuuHF7TKOhf7CjaCQAsFLUqgG+OQw3
+	 TmbB7SYbpCKErLSC8pj0EX7CX9QLnILzsRBE/ohiUJbIFE1IMg/cjGBGPtPajrXG4f
+	 sNECYsMCQOlfv1P7YiowMjwE7S+4WEgZ3Ta/BBENvi3lzY5/pUGpbmzJcRRt17LLTu
+	 pvJjE5GpakAoU7lTRzhh1ydC3vC2/ToA4s4IC0aoo60dOSNzUN2jT4plhHgrw2rMwr
+	 McF7U6Ymc8nDQ==
+Received: from [100.115.223.179] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 6EFBA3781FD5;
+	Fri, 15 Dec 2023 21:00:00 +0000 (UTC)
+Message-ID: <a9a3a7c5-7ee9-4b28-9abb-f1194054dfef@collabora.com>
+Date: Fri, 15 Dec 2023 23:00:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -54,8 +36,8 @@ User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v3 2/9] dt-bindings: net: starfive,jh7110-dwmac: Add
  JH7100 SoC compatible
 Content-Language: en-US
-To: Jessica Clarke <jrtc27@jrtc27.com>,
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+To: Jessica Clarke <jrtc27@jrtc27.com>
 Cc: "David S. Miller" <davem@davemloft.net>,
  Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
  Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
@@ -79,69 +61,75 @@ Cc: "David S. Miller" <davem@davemloft.net>,
 References: <20231215204050.2296404-1-cristian.ciocaltea@collabora.com>
  <20231215204050.2296404-3-cristian.ciocaltea@collabora.com>
  <A7C96942-07CB-40FD-AAAA-4A8947DEE7CA@jrtc27.com>
-From: Samuel Holland <samuel.holland@sifive.com>
-In-Reply-To: <A7C96942-07CB-40FD-AAAA-4A8947DEE7CA@jrtc27.com>
+ <491f1a89-aabd-4c38-b33a-a298add1bdb3@collabora.com>
+In-Reply-To: <491f1a89-aabd-4c38-b33a-a298add1bdb3@collabora.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 2023-12-15 2:47 PM, Jessica Clarke wrote:
-> On 15 Dec 2023, at 20:40, Cristian Ciocaltea <cristian.ciocaltea@collabora.com> wrote:
+On 12/15/23 22:56, Cristian Ciocaltea wrote:
+> On 12/15/23 22:47, Jessica Clarke wrote:
+>> On 15 Dec 2023, at 20:40, Cristian Ciocaltea <cristian.ciocaltea@collabora.com> wrote:
+>>>
+>>> The Synopsys DesignWare MAC found on StarFive JH7100 SoC is mostly
+>>> similar to the newer JH7110, but it requires only two interrupts and a
+>>> single reset line, which is 'ahb' instead of the commonly used
+>>> 'stmmaceth'.
+>>>
+>>> Since the common binding 'snps,dwmac' allows selecting 'ahb' only in
+>>> conjunction with 'stmmaceth', extend the logic to also permit exclusive
+>>> usage of the 'ahb' reset name.  This ensures the following use cases are
+>>> supported:
+>>>
+>>>  JH7110: reset-names = "stmmaceth", "ahb";
+>>>  JH7100: reset-names = "ahb";
+>>>  other:  reset-names = "stmmaceth";
+>>>
+>>> Also note the need to use a different dwmac fallback, as v5.20 applies
+>>> to JH7110 only, while JH7100 relies on v3.7x.
+>>>
+>>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+>>> ---
+>>> .../devicetree/bindings/net/snps,dwmac.yaml   |  3 +-
+>>> .../bindings/net/starfive,jh7110-dwmac.yaml   | 74 +++++++++++++------
+>>> 2 files changed, 55 insertions(+), 22 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+>>> index 5c2769dc689a..c1380ff1c054 100644
+>>> --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+>>> +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+>>> @@ -95,6 +95,7 @@ properties:
+>>>         - snps,dwmac-5.20
+>>>         - snps,dwxgmac
+>>>         - snps,dwxgmac-2.10
+>>> +        - starfive,jh7100-dwmac
+>>>         - starfive,jh7110-dwmac
+>>>
+>>>   reg:
+>>> @@ -146,7 +147,7 @@ properties:
+>>>   reset-names:
+>>>     minItems: 1
+>>>     items:
+>>> -      - const: stmmaceth
+>>> +      - enum: [stmmaceth, ahb]
+>>>       - const: ahb
 >>
->> The Synopsys DesignWare MAC found on StarFive JH7100 SoC is mostly
->> similar to the newer JH7110, but it requires only two interrupts and a
->> single reset line, which is 'ahb' instead of the commonly used
->> 'stmmaceth'.
->>
->> Since the common binding 'snps,dwmac' allows selecting 'ahb' only in
->> conjunction with 'stmmaceth', extend the logic to also permit exclusive
->> usage of the 'ahb' reset name.  This ensures the following use cases are
->> supported:
->>
->>  JH7110: reset-names = "stmmaceth", "ahb";
->>  JH7100: reset-names = "ahb";
->>  other:  reset-names = "stmmaceth";
->>
->> Also note the need to use a different dwmac fallback, as v5.20 applies
->> to JH7110 only, while JH7100 relies on v3.7x.
->>
->> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
->> ---
->> .../devicetree/bindings/net/snps,dwmac.yaml   |  3 +-
->> .../bindings/net/starfive,jh7110-dwmac.yaml   | 74 +++++++++++++------
->> 2 files changed, 55 insertions(+), 22 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
->> index 5c2769dc689a..c1380ff1c054 100644
->> --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
->> +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
->> @@ -95,6 +95,7 @@ properties:
->>         - snps,dwmac-5.20
->>         - snps,dwxgmac
->>         - snps,dwxgmac-2.10
->> +        - starfive,jh7100-dwmac
->>         - starfive,jh7110-dwmac
->>
->>   reg:
->> @@ -146,7 +147,7 @@ properties:
->>   reset-names:
->>     minItems: 1
->>     items:
->> -      - const: stmmaceth
->> +      - enum: [stmmaceth, ahb]
->>       - const: ahb
+>> I’m not so well-versed in the YAML bindings, but would this not allow
+>> reset-names = "ahb", "ahb"?
 > 
-> I’m not so well-versed in the YAML bindings, but would this not allow
-> reset-names = "ahb", "ahb"?
+> Yes, as I already pointed out in [1], I wasn't able to come up with a
+> proper solution to avoid that.
 
-Yes, it would. You need something like:
+Sorry, I've sent the previous email too early..
 
-reset-names:
-  oneOf:
-    - enum: [stmmaceth, ahb]
-    - items:
-        - const: stmmaceth
-        - const: ahb
+[1]: https://lore.kernel.org/lkml/564503dd-b779-4e9f-851d-f34d9ea5fa65@collabora.com/
 
-Regards,
-Samuel
-
+> Thanks,
+> Cristian
+> 
+>> Jess
+>>
+> 
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
