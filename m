@@ -1,49 +1,49 @@
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A42D12E58
-	for <linux-clk@vger.kernel.org>; Fri, 15 Dec 2023 08:35:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3E910A1A
+	for <linux-clk@vger.kernel.org>; Fri, 15 Dec 2023 08:36:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XmJgBdxE"
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a22f59c6af8so44541366b.0
-        for <linux-clk@vger.kernel.org>; Fri, 15 Dec 2023 00:35:58 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Leb/BHI7"
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-54c77e0835bso450573a12.2
+        for <linux-clk@vger.kernel.org>; Fri, 15 Dec 2023 00:36:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702629357; x=1703234157; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1702629408; x=1703234208; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=HOAW1HVvk1GxAfxcWrxidjzN4o1xofwL9MgUBg+y3is=;
-        b=XmJgBdxENi6g/+y/aWQ6ath7cO7MzwIOwDVnyIC6DFm1kUG9ZwEPfyNR6+srnPWaXo
-         k8/3/gT23wNQia0+dtDj9Ase+x5s11QuyeZgu0Yn+c2ZkOi5pYko0yHwIQV8m+h2wLdw
-         gK9Gwno3WYL86ePSXC/tffDs/ROD6IxoljijYmoTls/9mut+EGUAnqoWusyWVXXptBiM
-         ZVEf70dRvTiV+OMn8+5pWCYqLjb1HP7ynMOjT1KXgoBjGj4cYLDp8VowHJibU3xrS/Jf
-         jfNn3mYe2TldyfYX+FshebX16pJT3Ufdp5ahbFeCZwwoxxVsiP4TsG7Rkd+8iJMhIOk3
-         l5Iw==
+        bh=hYJTQeGviqxV0+wlbBbT+zL/h3oRcie5GyoUe3f4G08=;
+        b=Leb/BHI7VAeNSyVIyNrHG1HJfQ3nszVTHIPTcovUE25Il8fGLiJFAjGbnytOzpMvZH
+         INz3jvBB17MSTvOqtfAI2bmvDxjQoBpoY1R02JhgCRf1YdKd8GE3+9rAX11HbTc5GiBW
+         VbfiyfD+3TRQ/FwpmoX0cQJvtbjN38S8XSBh+iTEXoNKUr99d5l/O3FzKg6HHlq3nA0d
+         GHMOaKcQbHUP1QDvZV7Pm/dRSgopJ2I+yZJ0o79CTBnzoxbW2/TlPUVFSUdF92FoAia2
+         1CjZqQ+53MTLgIaUBlwYcaKfFJ0vNa0Bsp/54P7SCtUsc8/1i9689TzJKeFIzQOVPXIT
+         OXsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702629357; x=1703234157;
+        d=1e100.net; s=20230601; t=1702629408; x=1703234208;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HOAW1HVvk1GxAfxcWrxidjzN4o1xofwL9MgUBg+y3is=;
-        b=m0qlN6eD1EjUEffj8hGvpvQJQShNKRvHpkqPSlsJX81S44KND5ic1wKyemVm68hOQr
-         N6tCSklNLimyGdE4CSdXNGorMtCAQI8HC+1+c6cP3xjVxbAQ0FcmmSonKZj9kQfWiEnp
-         PadB44M7F83UDv4NFD6AO6IV4DDfYHkT3SnXKrtrpJhJo/lCvgvP82Oq7sZU9iy7eLpt
-         tK2OF13j3QyP3CRSRK67lXtH5OEpqPC2lGczDSnQRUN5NkzZVzwKycaI0DCPsMXKCmHz
-         DzWYcb3E2A5vgn4eYceyAkgFsTGHtjg/TiFMiBvlGLAzXeLKEKehvaXKUj2aMUzhNPJ9
-         uIKA==
-X-Gm-Message-State: AOJu0YwS0HwxXQXjg6Q2TpUGCNozHB1nzC7AGX/WoPHuPXZdBcDsmHKA
-	624e7SyM2F8jqJj4Jx+/HKp3TA==
-X-Google-Smtp-Source: AGHT+IEbveQeDr0Td/gQM77HaisfFMvtzt0tOiwUKZYkENMVc6LCzwMAZBGLHMpGzBDykXa4qC9kNQ==
-X-Received: by 2002:a17:906:c114:b0:a19:a19a:eab7 with SMTP id do20-20020a170906c11400b00a19a19aeab7mr6228284ejc.112.1702629357317;
-        Fri, 15 Dec 2023 00:35:57 -0800 (PST)
+        bh=hYJTQeGviqxV0+wlbBbT+zL/h3oRcie5GyoUe3f4G08=;
+        b=ZJvuagJvrUZN+R0bD1q8FmD9qtoPpRzpocHILTaHhv/lTCx5aHS5hZZRBBW0Kn8ziG
+         jji2yxYqxx0hgUZqBfiVRQLV0/BK3Ip+vbCt2hUzVAbpfsqimr+dZgcc9AeC2P49U5cS
+         /HrpZGpAfK4PGK4eYunxCDoN90N4N4Rr0evkGUfRlssQf+yEOAqrtVYiCOM56FxXDYIp
+         gq5z1z24mnnHrR/yB2UFemRdpHWcGZvCEwvNztzLXFiiVbM0uw9adfh4EeFsNFkgGaiy
+         iguq5vetGeoe0pDSHRKBxozcV+00WG8jTqnANyX6xL3f31HR8KY8XZeH0PlicDE8GIqA
+         zvHQ==
+X-Gm-Message-State: AOJu0Yzw3helHFrk7B/U4Di8UmTReIpWvMa/H+HlBfKVcfqPOb7l/jAF
+	sL3kOb5MnhH1YvYVigJt5tvIRw==
+X-Google-Smtp-Source: AGHT+IHcYAuFRklHIOXfO0mKpZIahGq1+K0wHuz4DnBlDmcJXYp4ADbUUkmYVUtrbHX97M0/67RBJg==
+X-Received: by 2002:a17:906:c7cf:b0:a00:772c:c879 with SMTP id dc15-20020a170906c7cf00b00a00772cc879mr5730276ejb.38.1702629408215;
+        Fri, 15 Dec 2023 00:36:48 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id mb8-20020a170906eb0800b00a1de512fa1fsm10401976ejb.186.2023.12.15.00.35.54
+        by smtp.gmail.com with ESMTPSA id mb8-20020a170906eb0800b00a1de512fa1fsm10401976ejb.186.2023.12.15.00.36.45
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Dec 2023 00:35:56 -0800 (PST)
-Message-ID: <fb540d91-0b1e-49e9-a1c9-b87e54ba9ba2@linaro.org>
-Date: Fri, 15 Dec 2023 09:35:52 +0100
+        Fri, 15 Dec 2023 00:36:47 -0800 (PST)
+Message-ID: <0f39e9b9-63f9-4267-a5f7-94bca9626964@linaro.org>
+Date: Fri, 15 Dec 2023 09:36:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,7 +51,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/10] dt-bindings: PCI: qcom: Add IPQ5332 SoC
+Subject: Re: [PATCH 09/10] arm64: dts: qcom: ipq5332: Add PCIe related nodes
 Content-Language: en-US
 To: Praveenkumar I <quic_ipkumar@quicinc.com>, agross@kernel.org,
  andersson@kernel.org, konrad.dybcio@linaro.org, mturquette@baylibre.com,
@@ -65,7 +65,7 @@ To: Praveenkumar I <quic_ipkumar@quicinc.com>, agross@kernel.org,
 Cc: quic_varada@quicinc.com, quic_devipriy@quicinc.com,
  quic_kathirav@quicinc.com, quic_anusha@quicinc.com
 References: <20231214062847.2215542-1-quic_ipkumar@quicinc.com>
- <20231214062847.2215542-8-quic_ipkumar@quicinc.com>
+ <20231214062847.2215542-10-quic_ipkumar@quicinc.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -111,73 +111,29 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231214062847.2215542-8-quic_ipkumar@quicinc.com>
+In-Reply-To: <20231214062847.2215542-10-quic_ipkumar@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 14/12/2023 07:28, Praveenkumar I wrote:
-> Add support for the PCIe controller on the Qualcomm
-> IPQ5332 SoC to the bindings.
+> Add phy and controller nodes for pcie0_x1 and pcie1_x2.
 > 
 > Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
 > ---
->  .../devicetree/bindings/pci/qcom,pcie.yaml    | 36 +++++++++++++++++++
->  1 file changed, 36 insertions(+)
+>  arch/arm64/boot/dts/qcom/ipq5332.dtsi | 189 +++++++++++++++++++++++++-
+>  1 file changed, 187 insertions(+), 2 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
-> index eadba38171e1..af5e67d2a984 100644
-> --- a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
-> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
-> @@ -21,6 +21,7 @@ properties:
->            - qcom,pcie-apq8064
->            - qcom,pcie-apq8084
->            - qcom,pcie-ipq4019
-> +          - qcom,pcie-ipq5332
->            - qcom,pcie-ipq6018
->            - qcom,pcie-ipq8064
->            - qcom,pcie-ipq8064-v2
-> @@ -170,6 +171,7 @@ allOf:
->          compatible:
->            contains:
->              enum:
-> +              - qcom,pcie-ipq5332
->                - qcom,pcie-ipq6018
->                - qcom,pcie-ipq8074-gen3
->      then:
-> @@ -332,6 +334,39 @@ allOf:
->              - const: ahb # AHB reset
->              - const: phy_ahb # PHY AHB reset
+> diff --git a/arch/arm64/boot/dts/qcom/ipq5332.dtsi b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
+> index f0d92effb783..367641ab4938 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq5332.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
+> @@ -166,6 +166,58 @@ usbphy0: phy@7b000 {
+>  			status = "disabled";
+>  		};
 >  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - qcom,pcie-ipq5332
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 6
-> +          maxItems: 6
-> +        clock-names:
-> +          items:
-> +            - const: ahb # AHB clock
-> +            - const: aux # Auxiliary clock
-> +            - const: axi_m # AXI Master clock
-> +            - const: axi_s # AXI Slave clock
-> +            - const: axi_bridge # AXI bridge clock
-> +            - const: rchng
-> +        resets:
-> +          minItems: 8
-> +          maxItems: 8
-> +        reset-names:
-> +          items:
-> +            - const: pipe # PIPE reset
+> +		pcie0_phy: phy@4b0000{
 
-No sleep reset? Otherwise it looks like some existing entry, so you
-should use the same order of resets.
-
-
+Nodes look like put in random place.
 
 Best regards,
 Krzysztof
