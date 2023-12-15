@@ -1,94 +1,131 @@
-Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92ED6171A6;
-	Fri, 15 Dec 2023 08:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F2C171BA
+	for <linux-clk@vger.kernel.org>; Fri, 15 Dec 2023 08:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="WBZ/+Db9"
-Received: from relay1-d.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::221])
-	by mslow1.mail.gandi.net (Postfix) with ESMTP id C67AAC32E2;
-	Fri, 15 Dec 2023 08:22:35 +0000 (UTC)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 20E65240002;
-	Fri, 15 Dec 2023 08:22:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1702628548;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=y2SdfyIEZV2kiNZwok/icKWjrI2x4IKlWemgzWowJp4=;
-	b=WBZ/+Db9t2eJNWxJ1hfsHkxb/71yPIwTtHuWahx9bMiYjGDkJwMCP1NsQ2QvhPz6emKehO
-	T5nGoke/sqhUo2tYlyUVwbMIuTu4Nxss9NxcKOoqB1pX4xWe+EMUQwQky7QcwBefJc1oDh
-	ptQkuJSKZxlTWGLRS782j8V0llrvQ0oZvnetUvmdbTC5XQNWj7EMya5MDDg4pZa/sSMv4L
-	BdCLIwDEiTmS5fmHb6ioUANOOD9KTgkndNId7nPIAas0MDBxsx/pUEeN1+lmZvplNTyeRS
-	7RTd/hRMDN7IFRypSndpAH/OG2vC+1xYMNAo/8SUXXTWn4soSbAJty1r8gBQag==
-Date: Fri, 15 Dec 2023 09:22:45 +0100 (CET)
-From: Romain Gantois <romain.gantois@bootlin.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-cc: Romain Gantois <romain.gantois@bootlin.com>, 
-    Oleksij Rempel <o.rempel@pengutronix.de>, Wei Fang <wei.fang@nxp.com>, 
-    Marek Vasut <marex@denx.de>, 
-    "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
-    "David S. Miller" <davem@davemloft.net>, Andrew Lunn <andrew@lunn.ch>, 
-    Eric Dumazet <edumazet@google.com>, Heiner Kallweit <hkallweit1@gmail.com>, 
-    Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-    kernel@pengutronix.de, linux-clk@vger.kernel.org, 
-    Stephen Boyd <sboyd@kernel.org>, 
-    Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH] net: phy: at803x: Improve hibernation support on start
- up
-In-Reply-To: <ZXsyA+2USrmIaF3u@shell.armlinux.org.uk>
-Message-ID: <4148e039-9c36-cea4-5787-3e4f254e1728@bootlin.com>
-References: <20230804175842.209537-1-marex@denx.de> <AM5PR04MB3139793206F9101A552FADA0880DA@AM5PR04MB3139.eurprd04.prod.outlook.com> <45b1ee70-8330-0b18-2de1-c94ddd35d817@denx.de> <AM5PR04MB31392C770BA3101BDFBA80318812A@AM5PR04MB3139.eurprd04.prod.outlook.com>
- <20230809043626.GG5736@pengutronix.de> <AM5PR04MB3139D8C0EBC9D2DFB0C778348812A@AM5PR04MB3139.eurprd04.prod.outlook.com> <20230809060836.GA13300@pengutronix.de> <ZNNRxY4z7HroDurv@shell.armlinux.org.uk> <ZNS8LEiuwsv660EC@shell.armlinux.org.uk>
- <7aabc198-9df5-5bce-2968-90d4cda3c244@bootlin.com> <ZXsyA+2USrmIaF3u@shell.armlinux.org.uk>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QXAZu0xS"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a1f37fd4b53so45700966b.1
+        for <linux-clk@vger.kernel.org>; Fri, 15 Dec 2023 00:28:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1702628908; x=1703233708; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FVAI74y3AeVAT/7kzguSGN788sS9SdF+TlBv/tBMWbU=;
+        b=QXAZu0xSonYnmqV91tLyk2rer9uGU7Pl6onkTLgYBmrJFcPixBRyDadDWbvYFdMAKW
+         FNNlYnitlFeJL9XpImxbIqvqhtoes2sk9bQJtAvBCRh9JJOoI8u1xZGMRXUk3N/NYWIH
+         s2VpZcA9FgO0HFCY3fkxfMOiclcV9xY/LTLNkD/6LNushAVRH/XJi0oG1kb1ZHcE6rMa
+         taKjXcFCSdvjLAqhQojyeGy4ucVLQ9LErw4/slzYDeyYFFRA0nz4BJUPEv/WApjY+X2D
+         OUwq2Dll5gZnu+q5dVYwzNft6I1HmESj96RVAUiIk6969lTKTE7clOLJPOe/IXBvhi3I
+         cUUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702628908; x=1703233708;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FVAI74y3AeVAT/7kzguSGN788sS9SdF+TlBv/tBMWbU=;
+        b=nSlsuHIPwC/MX7TWVj2u+nwsE4qtQSi2k3vJRFaVPujghH9yvWx9gjmEyfugIjpE6R
+         /7ThjqAKIw+l1xB+kpAmN4KTh9g50QnQS98Yb4+iDly42ayA1i69sMT2gmnvkiLQLpzA
+         NV5mq3n8Y3hX2Q4HICe0+jWqYMUucDVfakBMJpdZeKHB8dwEefgBYBmQ+XFTNmIZHHZS
+         CYJ08eu9lPRoehKPtBCsSefCrxZrNx3ZRJskmyZaffhMEoSR8xVwSR0F3xfbSKC5Ywqu
+         MYLyleRvtwIN8AbOU7igg22aT2Jb/G3uCtpndHgUfMQmkSjsJDFktNvA77WSNuJNdyWd
+         9IGA==
+X-Gm-Message-State: AOJu0Yxl4zRy8t1giJzUMBIH0RaY0+QgrgEYbe8IivVWgHqSqoVAbER6
+	hIzhqE0waZwK3j5LaTiivukb3A==
+X-Google-Smtp-Source: AGHT+IGHOYgJwQwPk7g2rSdYbdFSmnSiXp5a02gfinwGK9oB/egAQDiTk8sP4DQvR+Q2pgc6sFYJcw==
+X-Received: by 2002:a17:907:d25:b0:a1f:6b64:6a52 with SMTP id gn37-20020a1709070d2500b00a1f6b646a52mr7143130ejc.43.1702628907839;
+        Fri, 15 Dec 2023 00:28:27 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.218.27])
+        by smtp.gmail.com with ESMTPSA id vw12-20020a170907a70c00b00a1c904675cfsm10410578ejc.29.2023.12.15.00.28.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Dec 2023 00:28:27 -0800 (PST)
+Message-ID: <faf0e9a7-8436-47a1-bdf0-3edc26580a05@linaro.org>
+Date: Fri, 15 Dec 2023 09:28:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-GND-Sasl: romain.gantois@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/10] dt-bindings: clock: Add separate clocks for PCIe
+ and USB for Combo PHY
+Content-Language: en-US
+To: Praveenkumar I <quic_ipkumar@quicinc.com>, agross@kernel.org,
+ andersson@kernel.org, konrad.dybcio@linaro.org, mturquette@baylibre.com,
+ sboyd@kernel.org, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ conor+dt@kernel.org, bhelgaas@google.com, lpieralisi@kernel.org,
+ kw@linux.com, vkoul@kernel.org, kishon@kernel.org, mani@kernel.org,
+ quic_nsekar@quicinc.com, quic_srichara@quicinc.com,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-phy@lists.infradead.org
+Cc: quic_varada@quicinc.com, quic_devipriy@quicinc.com,
+ quic_kathirav@quicinc.com, quic_anusha@quicinc.com
+References: <20231214062847.2215542-1-quic_ipkumar@quicinc.com>
+ <20231214062847.2215542-2-quic_ipkumar@quicinc.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
+ m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
+ HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
+ XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
+ mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
+ v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
+ cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
+ rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
+ qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
+ aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
+ gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
+ dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
+ NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
+ hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
+ oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
+ H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
+ yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
+ 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
+ 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
+ +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
+ FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
+ 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
+ DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
+ oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
+ 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
+ Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
+ qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
+ /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
+ qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
+ EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
+ KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
+ fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20231214062847.2215542-2-quic_ipkumar@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 14/12/2023 07:28, Praveenkumar I wrote:
+> Qualcomm IPQ5332 has a combo PHY for PCIe and USB. Either one of the
+> interface (PCIe/USB) can use this combo PHY and the PHY drivers are
+> different for PCIe and USB. Hence separate the PCIe and USB pipe clock
+> source from DT, and individual driver node can be used as a clock source
+> separately in the gcc. Change the dt-bindings accordingly.
 
-On Thu, 14 Dec 2023, Russell King (Oracle) wrote:
+Adding required clock breaks the ABI and there is no explanation nor
+note about it in commit msg
 
-> On Thu, Dec 14, 2023 at 09:13:58AM +0100, Romain Gantois wrote:
-> > Hello Russell,
-> > 
-> > I've implemented and tested the general-case solution you proposed to this 
-> > receive clock issue with stmmac drivers. The core of your suggestion is pretty 
-> > much unchanged, I just added a phylink_pcs flag for standalone PCS drivers that 
-> > also need to provide the receive clock.
-> 
-> So this affects the ability of PCS to operate correctly as well as MACs?
-> Would you enlighten which PCS are affected, and what PCS <--> PHY link
-> modes this is required for?
+Best regards,
+Krzysztof
 
-The affected hardware is the RZN1 GMAC1 that is found in the r9a06g032 SoC from 
-Renesas. This MAC controller is internally connected to a custom PCS that
-functions as a RGMII converter. This converter is handled by a standalone PCS 
-driver that is already upstream, unlike the GMAC1 driver. So in hardware, the 
-MAC/PHY links are organised this way:
-
-    RZN1 GMAC1 <--[GMII]--> MII_CONV1 (internal) <--[RGMII]--> external PHY
-
-The issue is that the RX clock from the external PHY has to be transmitted by 
-the MII converter before it reaches GMAC1. Therefore, if the RZN1 PCS driver 
-isn't configured to let the clock through before the stmmac GMAC1 driver 
-initializes its hardware, then said initialization will fail with a vague DMA 
-error.
-
-To solve this, I added a flag to phylink_pcs and made the phylink core set it in 
-phylink_validate_mac_and_pcs(). This gives the PCS driver a chance to check the 
-flag in pcs_validate() and allow the clock through before the GMAC1 net device 
-is brought up.
-
-Regards,
-
--- 
-Romain Gantois, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
