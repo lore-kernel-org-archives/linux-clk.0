@@ -1,130 +1,261 @@
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD6437152
-	for <linux-clk@vger.kernel.org>; Fri, 15 Dec 2023 15:21:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N7MnxExP"
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a22f59c6ae6so105426666b.1
-        for <linux-clk@vger.kernel.org>; Fri, 15 Dec 2023 07:21:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702653713; x=1703258513; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nezvh8hPtz5l73mKgyOQA8Qv6NuzMEz41RxNqU6gR6A=;
-        b=N7MnxExP+5uSYW8yeJyVj8VWw8uQ4J3nE9qGeUVKwh1Gw/2riOxFo2qaabTSGb8VGS
-         qPMihVq+7ThVQKRsSMAdQbDoomPhvwHx/AVXjnpZkAp6wfFBxSqqu0b0zFh18BfWkpYC
-         3cUuELAwfpPxFS6UjTF7jrnt7agpHXdwR49BLun9K+xjW2Q9bFgLnQ/8sH47Mbn+7Xor
-         t2x2TII8VPKN9koLx5DCuPtWzwJSBxPojvPDNL9pFcLmCtMb/kw1NGB17bdEhsDEdw4H
-         2J1qGcXbQsiKlrQZ+1ObWcKHGotM58P4uV7jsX5nD7GIgh9rqB3nbb1vNptTGhkX4wsr
-         WW2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702653713; x=1703258513;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nezvh8hPtz5l73mKgyOQA8Qv6NuzMEz41RxNqU6gR6A=;
-        b=u9Xf5fBKpICGoVaqQCHnuJhtAkrtzJwf2xQDa/HS8x0yZnwC/5wtFclCZRSGp+Wz0F
-         zFpB7utuvQXmbxQDnvi5ELmKwvlj+uWLPd/R7vdUQOak3LddGF+ozy8IN6rd5dDjwzE+
-         9CDt3tclQVl0b8wLjPfkUm3feXt8fYzGF6zPDowiQwsNePJXBFiVxwDCD4NvmOoQOcef
-         bKH3/lkN24jmkkHaBKLFCVi2aT9gLNxZ+wNr3d28h8bg1eXT5ncyeApYtBhR5OMd1TDZ
-         KPU9ey0ijBbUdZLig9DEWRP0BR5wNcMZGt77nvfL0SpzLNcACwY5lf9qCNzWmaydZV0w
-         vlmA==
-X-Gm-Message-State: AOJu0Yx3HPlhWff0Ag6NbdW1D2s4+Ji8DUqcEAfWK5ljz+JBdxvPLaea
-	QYJaN0jD/cicxXAmWW0jnDyN8w==
-X-Google-Smtp-Source: AGHT+IFDwmtTu6fom2hTry2CjrImVu8byZ8jVJtxu7JlkNRbDTpH/4xOT0vXWP1fnMl4XVEfvuAIiw==
-X-Received: by 2002:a17:907:c2a:b0:a1c:695d:c936 with SMTP id ga42-20020a1709070c2a00b00a1c695dc936mr3717661ejc.73.1702653713095;
-        Fri, 15 Dec 2023 07:21:53 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id ig8-20020a1709072e0800b00a1d754b30a9sm10758631ejc.86.2023.12.15.07.21.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Dec 2023 07:21:52 -0800 (PST)
-Message-ID: <58f5c7c6-a8c5-4612-97a7-d798a7a51b33@linaro.org>
-Date: Fri, 15 Dec 2023 16:21:50 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B11E2D26A
+	for <linux-clk@vger.kernel.org>; Fri, 15 Dec 2023 18:49:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rEDFb-0001zZ-6T; Fri, 15 Dec 2023 19:49:31 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rEDFW-00G5Sf-UJ; Fri, 15 Dec 2023 19:49:26 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rEDFW-003l37-Jo; Fri, 15 Dec 2023 19:49:26 +0100
+Date: Fri, 15 Dec 2023 19:49:26 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Daniel Vetter <daniel@ffwll.ch>,
+	Michael Turquette <mturquette@baylibre.com>,
+	dri-devel@lists.freedesktop.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	David Airlie <airlied@gmail.com>, linux-clk@vger.kernel.org,
+	Jerome Brunet <jbrunet@baylibre.com>, Rob Herring <robh@kernel.org>,
+	Samuel Holland <samuel@sholland.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>, Chen-Yu Tsai <wens@csie.org>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Johan Hovold <johan+linaro@kernel.org>, linux-sunxi@lists.linux.dev,
+	kernel@pengutronix.de, linux-pm@vger.kernel.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Georgi Djakov <djakov@kernel.org>
+Subject: Re: [PATCH 0/5] clk: Make clk_rate_exclusive_get() return void
+Message-ID: <20231215184926.6l4otbltfxzwy3ep@pengutronix.de>
+References: <cover.1702400947.git.u.kleine-koenig@pengutronix.de>
+ <ki5n3rz5n4oxj2hhc3rj6xpn3e2tdi7fcp2q7exjbzilrlqflp@przautvhuy4g>
+ <20231213074300.4bq7wkfqd4jhhcr4@pengutronix.de>
+ <2nvbag657mlniqwq7fbilapc6vfw5qumab3yd6bqul25ot6wcn@wdlkh5az2fgs>
+ <20231213110829.bjaxjjiyy4ug7o67@pengutronix.de>
+ <6wnsxbi27xdxjtaqaaaq5wtwwilp4jfw4mg5y2ctdl7xrs44ry@ns6y36pf7hge>
+ <20231213155252.eq6cdzk2vuwllzdu@pengutronix.de>
+ <nsa54fwu4ewmcaehesuqefoo5r7z3tuvj76hjb4ngtkaygxwxx@h73ihjon5gby>
+ <20231215151547.y23fgs6hskng5izg@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 1/3] dt-bindings: reset: Add reset controller bindings
- for Unisoc's ums512
-Content-Language: en-US
-To: Zhifeng Tang <zhifeng.tang@unisoc.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Orson Zhai <orsonzhai@gmail.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Chunyan Zhang <zhang.lyra@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Zhifeng Tang <zhifeng.tang23@gmail.com>,
- Wenming Wu <wenming.wu@unisoc.com>
-References: <20231215115914.11588-1-zhifeng.tang@unisoc.com>
- <20231215115914.11588-2-zhifeng.tang@unisoc.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231215115914.11588-2-zhifeng.tang@unisoc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="rkioatefql2ulu6v"
+Content-Disposition: inline
+In-Reply-To: <20231215151547.y23fgs6hskng5izg@pengutronix.de>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-On 15/12/2023 12:59, Zhifeng Tang wrote:
-> From: "zhifeng.tang" <zhifeng.tang@unisoc.com>
-> 
-> Add reset controller bindings to clock bindings for Unisoc's ums512.
-> 
-> Signed-off-by: zhifeng.tang <zhifeng.tang@unisoc.com>
-> ---
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+--rkioatefql2ulu6v
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best regards,
-Krzysztof
+Hello again,
 
+On Fri, Dec 15, 2023 at 04:15:47PM +0100, Uwe Kleine-K=F6nig wrote:
+> On Fri, Dec 15, 2023 at 01:34:26PM +0100, Maxime Ripard wrote:
+> > On Wed, Dec 13, 2023 at 04:52:52PM +0100, Uwe Kleine-K=F6nig wrote:
+> > > On Wed, Dec 13, 2023 at 12:54:14PM +0100, Maxime Ripard wrote:
+> > > > On Wed, Dec 13, 2023 at 12:08:29PM +0100, Uwe Kleine-K=F6nig wrote:
+> > > > > On Wed, Dec 13, 2023 at 09:36:49AM +0100, Maxime Ripard wrote:
+> > > > > > On Wed, Dec 13, 2023 at 08:43:00AM +0100, Uwe Kleine-K=F6nig wr=
+ote:
+> > > > > > > On Wed, Dec 13, 2023 at 08:16:04AM +0100, Maxime Ripard wrote:
+> > > > > > > > On Tue, Dec 12, 2023 at 06:26:37PM +0100, Uwe Kleine-K=F6ni=
+g wrote:
+> > > > > > > > > clk_rate_exclusive_get() returns zero unconditionally. Mo=
+st users "know"
+> > > > > > > > > that and don't check the return value. This series fixes =
+the four users
+> > > > > > > > > that do error checking on the returned value and then mak=
+es function
+> > > > > > > > > return void.
+> > > > > > > > >=20
+> > > > > > > > > Given that the changes to the drivers are simple and so m=
+erge conflicts
+> > > > > > > > > (if any) should be easy to handle, I suggest to merge thi=
+s complete
+> > > > > > > > > series via the clk tree.
+> > > > > > > >=20
+> > > > > > > > I don't think it's the right way to go about it.
+> > > > > > > >=20
+> > > > > > > > clk_rate_exclusive_get() should be expected to fail. For ex=
+ample if
+> > > > > > > > there's another user getting an exclusive rate on the same =
+clock.
+> > > > > > > >=20
+> > > > > > > > If we're not checking for it right now, then it should prob=
+ably be
+> > > > > > > > fixed, but the callers checking for the error are right to =
+do so if they
+> > > > > > > > rely on an exclusive rate. It's the ones that don't that sh=
+ould be
+> > > > > > > > modified.
+> > > > > > >=20
+> > > > > > > If some other consumer has already "locked" a clock that I ca=
+ll
+> > > > > > > clk_rate_exclusive_get() for, this isn't an error. In my bubb=
+le I call
+> > > > > > > this function because I don't want the rate to change e.g. be=
+cause I
+> > > > > > > setup some registers in the consuming device to provide a fix=
+ed UART
+> > > > > > > baud rate or i2c bus frequency (and that works as expected).
+> > > > > >=20
+> > > > > > [a long text of mostly right things (Uwe's interpretation) that=
+ are
+> > > > > > however totally unrelated to the patches under discussion.]
+> > > >=20
+> > > > I'm glad you consider it "mostly" right.
+> > >=20
+> > > there was no offense intended. I didn't agree to all points, but didn=
+'t
+> > > think it was helpful to discuss that given that I considered them
+> > > orthogonal to my suggested modifications.
+> > > =20
+> > > > > The clk API works with and without my patches in exactly the same=
+ way.
+> > > > > It just makes more explicit that clk_rate_exclusive_get() cannot =
+fail
+> > > > > today and removes the error handling from consumers that is never=
+ used.
+> > > >=20
+> > > > Not really, no.
+> > >=20
+> > > What exactly do you oppose here? Both of my sentences are correct?!
+> >=20
+> > That the API works in the exact same way.
+>=20
+> Yeah ok, if you call clk_rate_exclusive_get() and want to check the
+> return code you always got 0 before and now you get a compiler error. So
+> there is a difference. What I meant is: Calling clk_rate_exclusive_get()
+> with my patches has the exact same effects as before (apart from setting
+> the register used to transport the return value to zero).
+> =20
+> > > > Can you fail to get the exclusivity? Yes. On a theoretical basis, y=
+ou
+> > > > can, and the function was explicitly documented as such.
+> > >=20
+> > > Sure, you could modify the clk internals such that
+> > > clk_rate_exclusive_get() needs to allocate memory. Or that it fails if
+> > > another consumer already has called it. At least the latter is a chan=
+ge
+> > > in semantics that requires to review (and maybe fix) all users. Also
+> > > note that calling clk_rate_exclusive_get() essentially locks all pare=
+nt
+> > > clocks up to the root clock. So if clk_rate_exclusive_get() fails in =
+the
+> > > presence of another locker, you can only have one locker per clock
+> > > hierarchy because it's impossible that both grab the lock on the root
+> > > clock.
+> >=20
+> > We're not discussing the same thing. You're talking about from a
+> > technical point of view, I'm talking about it from an abstraction point
+> > of view.
+>=20
+> In your abstract argumentation clk_rate_exclusive_get() has a
+> different and stronger semantic than it has today. This stronger
+> semantic indeed will make this function not succeed in every case. It
+> should return an error indication and users should check it.
+>=20
+> But as your clk_rate_exclusive_get() is a different function than
+> today's clk_rate_exclusive_get(), I still think our argument isn't
+> helpful. I want to do something with apples and you're arguing against
+> that by only talking about oranges.
+>=20
+> > Let's use another example: kmalloc cannot fail.
+>=20
+> Oh really?
+>=20
+> ... [a few greps later] ...
+>=20
+> While the memory allocation stuff is sufficiently complex that I don't
+> claim to have grokked it, I think it can (and should) fail. Either I
+> missed something, or I just burned some more time to convince myself
+> that kmalloc is just another orange :-\
+
+A colleague pointed me to https://lwn.net/Articles/627419/ which
+suggests that indeed kmalloc doesn't fail in most situations. The
+relevant difference to the clk_rate_exclusive_get() function is that
+making kmalloc fail would result in a better (more robust) kernel. And
+so I'm on your side that removing error codes probably isn't a smart
+move even if probably nobody will tackle the obvious improvement to
+kmalloc any time soon.
+
+If I understand your plans correctly, you intend to introduce a "give me
+exclusive control over the clk rate" function (let's call it
+clk_rate_lock_maxime() just to have a name for it). You would implement
+clk_rate_lock_maxime() in a way that it would fail for a second caller,
+right? And that's because the second caller wouldn't be able to call
+clk_set_rate() and/or it would stop the first caller from being able to
+change the rate. (Which one? Both?)
+
+What if a consumer installed a clock notifier that refuses any rate
+change. Would calling clk_rate_lock_maxime() by another consumer fail?
+A "yes" would be hard to implement, because you cannot reliably see for
+a given installed notifier if it refuses changing the clock. A "no"
+would be inconsistent, because the holder of clk_rate_lock_maxime()
+cannot change the rate then.
+
+After that destructive excursion, let me try being more constructive:
+
+Would you consider renaming clk_rate_exclusive_get() to clk_rate_lock()
+an improvement? Maybe also make the clk rate readonly for the caller
+then. (I wouldn't require that, but a colleague argued that would make
+the semantic of that function simpler.) As in my use case I don't want
+to modify the clock, that's good enough for me. Also that function can
+be implemented in a way that never fails, so it could return void.
+
+Is that a compromise that you would agree on?
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--rkioatefql2ulu6v
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmV8n7UACgkQj4D7WH0S
+/k5YVAgAqlIT2aVTclt4IB/dZ6SARAgnfzg5TqFbsFqHjzq24MvstiRq7jkr/Uw+
+cgzUiHVfBCrcZRH7QlP0LciL1mukzaLPz3ocxbLLeryHRFTrLxuUqkwy+IPcPEGa
+cwGlifDHAZEm+l/7tVpj0EBCoM7f6MW/DyWReldxADkcXpTU+xF3cS2AnE0ZrZ2D
+ZK43F4KLEny4fGn2gD4YPSVr5DNirAWdOQc0bSjA50pNEivo3WaQsHxKiEeOPHTQ
+F7sOs8FThR97aoUt2V27t1ImZzQ0ZOAUnhZ+XVx7uISWZCrresfg9/L80U6bdxVg
+oh1p1qCh+qO+/MV39OUBoAA1dXcVKQ==
+=L2Y7
+-----END PGP SIGNATURE-----
+
+--rkioatefql2ulu6v--
