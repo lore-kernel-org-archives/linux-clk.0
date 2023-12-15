@@ -1,20 +1,20 @@
 Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D00A25566
-	for <linux-clk@vger.kernel.org>; Fri, 15 Dec 2023 11:59:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE5825577
+	for <linux-clk@vger.kernel.org>; Fri, 15 Dec 2023 11:59:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
 Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 3BFBxHuL034461;
-	Fri, 15 Dec 2023 19:59:17 +0800 (+08)
+	by SHSQR01.spreadtrum.com with ESMTP id 3BFBxKlj034488;
+	Fri, 15 Dec 2023 19:59:20 +0800 (+08)
 	(envelope-from zhifeng.tang@unisoc.com)
 Received: from SHDLP.spreadtrum.com (shmbx04.spreadtrum.com [10.0.1.214])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4Ss6zq6fVXz2Q2knN;
-	Fri, 15 Dec 2023 19:53:11 +0800 (CST)
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4Ss6zt5G3Lz2Q2qhY;
+	Fri, 15 Dec 2023 19:53:14 +0800 (CST)
 Received: from xm9614pcu.spreadtrum.com (10.13.2.29) by shmbx04.spreadtrum.com
  (10.0.1.214) with Microsoft SMTP Server (TLS) id 15.0.1497.23; Fri, 15 Dec
- 2023 19:59:16 +0800
+ 2023 19:59:18 +0800
 From: Zhifeng Tang <zhifeng.tang@unisoc.com>
 To: Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd
@@ -30,10 +30,12 @@ CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         Zhifeng Tang <zhifeng.tang23@gmail.com>,
         Wenming Wu <wenming.wu@unisoc.com>
-Subject: [PATCH V3 0/3] Add reset controller driver for ums512
-Date: Fri, 15 Dec 2023 19:59:11 +0800
-Message-ID: <20231215115914.11588-1-zhifeng.tang@unisoc.com>
+Subject: [PATCH V3 3/3] arm64: dts: sprd: Add reset controller driver for UMS512
+Date: Fri, 15 Dec 2023 19:59:14 +0800
+Message-ID: <20231215115914.11588-4-zhifeng.tang@unisoc.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20231215115914.11588-1-zhifeng.tang@unisoc.com>
+References: <20231215115914.11588-1-zhifeng.tang@unisoc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -43,38 +45,93 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-ClientProxiedBy: SHCAS01.spreadtrum.com (10.0.1.201) To
  shmbx04.spreadtrum.com (10.0.1.214)
-X-MAIL:SHSQR01.spreadtrum.com 3BFBxHuL034461
+X-MAIL:SHSQR01.spreadtrum.com 3BFBxKlj034488
 
 From: "zhifeng.tang" <zhifeng.tang@unisoc.com>
 
-Add reset controller driver for ums512,The reset register has 
-the same base address as the gate register.
+The reset register has the same base address as the gate register.
 
-Changes in v3:
-  - Fix the driver patch is overwritten by cover letter
-  
-Changes in v2:
-  - The binding file is combined into one patch
+Signed-off-by: zhifeng.tang <zhifeng.tang@unisoc.com>
+---
+ arch/arm64/boot/dts/sprd/ums512.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-zhifeng.tang (3):
-  dt-bindings: reset: Add reset controller bindings for Unisoc's ums512
-  clk: sprd: Add reset controller driver for ums512
-  arm64: dts: sprd: Add reset controller driver for UMS512
-
- .../bindings/clock/sprd,ums512-clk.yaml       |   3 +
- arch/arm64/boot/dts/sprd/ums512.dtsi          |   9 +
- drivers/clk/sprd/Makefile                     |   1 +
- drivers/clk/sprd/common.c                     |   1 +
- drivers/clk/sprd/common.h                     |   2 +
- drivers/clk/sprd/reset.c                      |  78 ++++++
- drivers/clk/sprd/reset.h                      |  30 +++
- drivers/clk/sprd/ums512-clk.c                 | 240 ++++++++++++++++++
- include/dt-bindings/reset/sprd,ums512-reset.h | 203 +++++++++++++++
- 9 files changed, 567 insertions(+)
- create mode 100644 drivers/clk/sprd/reset.c
- create mode 100644 drivers/clk/sprd/reset.h
- create mode 100644 include/dt-bindings/reset/sprd,ums512-reset.h
-
+diff --git a/arch/arm64/boot/dts/sprd/ums512.dtsi b/arch/arm64/boot/dts/sprd/ums512.dtsi
+index 024be594c47d..08d0adf6624c 100644
+--- a/arch/arm64/boot/dts/sprd/ums512.dtsi
++++ b/arch/arm64/boot/dts/sprd/ums512.dtsi
+@@ -7,6 +7,7 @@
+ 
+ #include <dt-bindings/clock/sprd,ums512-clk.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/reset/sprd,ums512-reset.h>
+ 
+ / {
+ 	interrupt-parent = <&gic>;
+@@ -182,6 +183,7 @@
+ 				clocks = <&ext_26m>;
+ 				clock-names = "ext-26m";
+ 				#clock-cells = <1>;
++				#reset-cells = <1>;
+ 			};
+ 		};
+ 
+@@ -316,6 +318,7 @@
+ 				clocks = <&ext_26m>;
+ 				clock-names = "ext-26m";
+ 				#clock-cells = <1>;
++				#reset-cells = <1>;
+ 			};
+ 		};
+ 
+@@ -333,6 +336,7 @@
+ 				clocks = <&ext_26m>;
+ 				clock-names = "ext-26m";
+ 				#clock-cells = <1>;
++				#reset-cells = <1>;
+ 			};
+ 		};
+ 
+@@ -348,6 +352,7 @@
+ 				compatible = "sprd,ums512-audcpapb-gate";
+ 				reg = <0x0 0x300>;
+ 				#clock-cells = <1>;
++				#reset-cells = <1>;
+ 			};
+ 		};
+ 
+@@ -363,6 +368,7 @@
+ 				compatible = "sprd,ums512-audcpahb-gate";
+ 				reg = <0x0 0x300>;
+ 				#clock-cells = <1>;
++				#reset-cells = <1>;
+ 			};
+ 		};
+ 
+@@ -380,6 +386,7 @@
+ 				clock-names = "ext-26m";
+ 				reg = <0x0 0x100>;
+ 				#clock-cells = <1>;
++				#reset-cells = <1>;
+ 			};
+ 		};
+ 
+@@ -401,6 +408,7 @@
+ 				compatible = "sprd,ums512-mm-gate-clk";
+ 				reg = <0x0 0x3000>;
+ 				#clock-cells = <1>;
++				#reset-cells = <1>;
+ 			};
+ 		};
+ 
+@@ -416,6 +424,7 @@
+ 				compatible = "sprd,ums512-apapb-gate";
+ 				reg = <0x0 0x3000>;
+ 				#clock-cells = <1>;
++				#reset-cells = <1>;
+ 			};
+ 		};
+ 
 -- 
 2.17.1
 
