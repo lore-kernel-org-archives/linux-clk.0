@@ -1,124 +1,115 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.115])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCF4E2D791
-	for <linux-clk@vger.kernel.org>; Fri, 15 Dec 2023 12:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1DE52F86C;
+	Fri, 15 Dec 2023 12:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tCiA6SMa"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-40c517d0de5so6766305e9.0
-        for <linux-clk@vger.kernel.org>; Fri, 15 Dec 2023 04:45:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702644313; x=1703249113; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=M8qMxxO2sTgOsnMtfrSl6kmtLRCDScORkkwQtbVzK9A=;
-        b=tCiA6SMaMCpqjMpGTrE2NLWn+cejEX17ZWoG4oxpDDRfiCnZKBI0N8M5njiQI2Lvt/
-         J9Yx/LznOhEE8dBqGGeDF0kaCfJqOZ23Lp7y271p61x0PyOnv3/+xhBZ9w/d7eDET08s
-         uzk3HGgZJ/efvJSQFrKr0OBAj+zWrAq1Lj6i2LbjcaJ06unhHrWl8iY7KEjs4YGx87xz
-         6IyxZ1zqGTr8HXRgBS0j40bu1LCNoSArVEQTD7DC6jFbKly3ybC9OhJTBj0wXDnOVM53
-         SbQLC43Vaaemt1y3OvirlrpawqySzqAZz9TqcqHJcbEriRKAshhZi9Hdoyhp7DQxVxpa
-         cWUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702644313; x=1703249113;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M8qMxxO2sTgOsnMtfrSl6kmtLRCDScORkkwQtbVzK9A=;
-        b=p9lFpvRTFYMFcNm495uL/CUx5LablqRCWIH0m5IhPNwoEbrw+NMywSnI/1OgUVJWLq
-         JOhyXc1sj5Jc6cvbOCwXFIs6/zPnZsU+64nGecfRJGnBoB3vnnLkxPLI3oE3yT9dwjhp
-         0vP5Hp5DFajYaRcvZ0SzkUmYAWwKKtiauP/rw525l6IeQPRSrMMYz2FTYrBXac6xcupd
-         CfuuowVBKOlVRSz1TqYg6n3rYtXIB1uswmU5lzQgIeI/NJXGZJ8W53zWG4GDmL+IWQ7s
-         pOvPJ5BDHub3q8YfdXIGXIX/109bCNefCpMhThw6svC4ZSo0sQY3CPvT3JdMTBdMUcgs
-         ieDw==
-X-Gm-Message-State: AOJu0YympZIw9e412Luzdkptu3/j0ZAKkGpv/Xx/FduyNg5FUw14/61U
-	NxvET3mIaW2KfsDim6UyaObibQ==
-X-Google-Smtp-Source: AGHT+IGVZ5Ll48i4ZjJg6LkbXdr6ZbwNTBA6pOQht94m0MrCE+V3SKYwEW73wLOsIBF5OOHAxBk+gg==
-X-Received: by 2002:a05:600c:601f:b0:40c:33d9:6998 with SMTP id az31-20020a05600c601f00b0040c33d96998mr6284905wmb.132.1702644313109;
-        Fri, 15 Dec 2023 04:45:13 -0800 (PST)
-Received: from [192.168.100.102] ([37.228.218.3])
-        by smtp.gmail.com with ESMTPSA id f9-20020a05600c154900b0040c4be1af17sm17495803wmg.21.2023.12.15.04.45.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Dec 2023 04:45:12 -0800 (PST)
-Message-ID: <27cc9438-d31f-41af-b012-adb77dd4da5a@linaro.org>
-Date: Fri, 15 Dec 2023 12:45:11 +0000
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nBxA8qUn"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1702644713; x=1734180713;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=ZE7lfcTR0hQX2Pnx5bEqtJ1eBdLPAqkT9OH2B60IzVc=;
+  b=nBxA8qUnG3Lfg9BioNofwqRfxNl0b2KqYdNTmdMuUJr78U5lRJ8qeU5M
+   CyACDDlL1SSg+c+7zHeW6fgdRyNWEzqbm6DShNm+Ny3W02dGSKWUfeWgS
+   fFxUulUrY3aLthKrWI7Ch2pQWy161MW9Evz5X1i/O+cqE484dT3ugAkI/
+   8JkZ/gHAkjDKHlZp4HsCZ8tRrpPQYSYGU8WhSGhmMXG0rhBW/9AVAI6ZV
+   P9We2i6DejhJsgjfnaDbxKJpAUbXqxhREj7RXAZR5bCAUqQlopWqss21P
+   wHFNI5/xTDw/bTSrFPNIw5NLeoJxkaowLtehUyvxNo1vxVhWmSobZPCg/
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10924"; a="395015563"
+X-IronPort-AV: E=Sophos;i="6.04,278,1695711600"; 
+   d="scan'208";a="395015563"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2023 04:51:35 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10924"; a="803702215"
+X-IronPort-AV: E=Sophos;i="6.04,278,1695711600"; 
+   d="scan'208";a="803702215"
+Received: from lkp-server02.sh.intel.com (HELO b07ab15da5fe) ([10.239.97.151])
+  by orsmga008.jf.intel.com with ESMTP; 15 Dec 2023 04:51:23 -0800
+Received: from kbuild by b07ab15da5fe with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1rE7ey-0000DO-2n;
+	Fri, 15 Dec 2023 12:51:20 +0000
+Date: Fri, 15 Dec 2023 20:50:29 +0800
+From: kernel test robot <lkp@intel.com>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Russell King <linux@armlinux.org.uk>
+Cc: oe-kbuild-all@lists.linux.dev, linux-clk@vger.kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Rob Herring <robh@kernel.org>, linux-tegra@vger.kernel.org,
+	kernel@pengutronix.de
+Subject: Re: [PATCH 3/5] memory: tegra210-emc: Simplify usage of
+ clk_rate_exclusive_get()
+Message-ID: <202312152014.NrQUsmxR-lkp@intel.com>
+References: <1b4321a975ac1a903a0c816ef2cce80e7d75eae3.1702400947.git.u.kleine-koenig@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 07/10] clk: qcom: Add dispcc clock driver for x1e80100
-Content-Language: en-US
-To: Abel Vesa <abel.vesa@linaro.org>, Andy Gross <agross@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- Rajendra Nayak <quic_rjendra@quicinc.com>
-References: <20231214-x1e80100-clock-controllers-v2-0-2b0739bebd27@linaro.org>
- <20231214-x1e80100-clock-controllers-v2-7-2b0739bebd27@linaro.org>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20231214-x1e80100-clock-controllers-v2-7-2b0739bebd27@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1b4321a975ac1a903a0c816ef2cce80e7d75eae3.1702400947.git.u.kleine-koenig@pengutronix.de>
 
-On 14/12/2023 16:49, Abel Vesa wrote:
-> From: Rajendra Nayak <quic_rjendra@quicinc.com>
-> 
-> Add the dispcc clock driver for x1e80100.
-> 
-> Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
+Hi Uwe,
 
-> +static struct platform_driver disp_cc_x1e80100_driver = {
-> +	.probe = disp_cc_x1e80100_probe,
-> +	.driver = {
-> +		.name = "disp_cc-x1e80100",
-> +		.of_match_table = disp_cc_x1e80100_match_table,
-> +	},
-> +};
-> +
-> +static int __init disp_cc_x1e80100_init(void)
-> +{
-> +	return platform_driver_register(&disp_cc_x1e80100_driver);
-> +}
-> +subsys_initcall(disp_cc_x1e80100_init);
-> +
-> +static void __exit disp_cc_x1e80100_exit(void)
-> +{
-> +	platform_driver_unregister(&disp_cc_x1e80100_driver);
-> +}
-> +module_exit(disp_cc_x1e80100_exit);
-> +
-> +MODULE_DESCRIPTION("QTI DISPCC X1E80100 Driver");
-> +MODULE_LICENSE("GPL");
-> 
+kernel test robot noticed the following build warnings:
 
-And we don't even do the odd underscore insertion consistently. For 
-whatever reason "DISPCC" instead of "DISP_CC"
+[auto build test WARNING on bbd220ce4e29ed55ab079007cff0b550895258eb]
 
-Just to reiterate the underscores should be dropped from these clock 
-controller names and defines entirely, they just eat up bytes in databases.
+url:    https://github.com/intel-lab-lkp/linux/commits/Uwe-Kleine-K-nig/PM-devfreq-sun8i-a33-mbus-Simplify-usage-of-clk_rate_exclusive_get/20231213-012823
+base:   bbd220ce4e29ed55ab079007cff0b550895258eb
+patch link:    https://lore.kernel.org/r/1b4321a975ac1a903a0c816ef2cce80e7d75eae3.1702400947.git.u.kleine-koenig%40pengutronix.de
+patch subject: [PATCH 3/5] memory: tegra210-emc: Simplify usage of clk_rate_exclusive_get()
+config: s390-allyesconfig (https://download.01.org/0day-ci/archive/20231215/202312152014.NrQUsmxR-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231215/202312152014.NrQUsmxR-lkp@intel.com/reproduce)
 
-.name = "dispcc-x1e80100"
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202312152014.NrQUsmxR-lkp@intel.com/
 
-("QTI DISPCC X1E80100 Driver"); better but IMO we could just a complete 
-word here
+All warnings (new ones prefixed by >>):
 
-"Display Clock Controller" there's no need to abbreviate.
+   drivers/memory/tegra/tegra210-emc-core.c: In function 'tegra210_emc_suspend':
+>> drivers/memory/tegra/tegra210-emc-core.c:2002:13: warning: unused variable 'err' [-Wunused-variable]
+    2002 |         int err;
+         |             ^~~
 
----
-bod
+
+vim +/err +2002 drivers/memory/tegra/tegra210-emc-core.c
+
+10de21148f7d28 Joseph Lo        2019-05-29  1998  
+10de21148f7d28 Joseph Lo        2019-05-29  1999  static int __maybe_unused tegra210_emc_suspend(struct device *dev)
+10de21148f7d28 Joseph Lo        2019-05-29  2000  {
+10de21148f7d28 Joseph Lo        2019-05-29  2001  	struct tegra210_emc *emc = dev_get_drvdata(dev);
+10de21148f7d28 Joseph Lo        2019-05-29 @2002  	int err;
+10de21148f7d28 Joseph Lo        2019-05-29  2003  
+53a616302fe1b2 Uwe Kleine-König 2023-12-12  2004  	clk_rate_exclusive_get(emc->clk);
+10de21148f7d28 Joseph Lo        2019-05-29  2005  
+10de21148f7d28 Joseph Lo        2019-05-29  2006  	emc->resume_rate = clk_get_rate(emc->clk);
+10de21148f7d28 Joseph Lo        2019-05-29  2007  
+10de21148f7d28 Joseph Lo        2019-05-29  2008  	clk_set_rate(emc->clk, 204000000);
+10de21148f7d28 Joseph Lo        2019-05-29  2009  	tegra210_clk_emc_detach(emc->clk);
+10de21148f7d28 Joseph Lo        2019-05-29  2010  
+10de21148f7d28 Joseph Lo        2019-05-29  2011  	dev_dbg(dev, "suspending at %lu Hz\n", clk_get_rate(emc->clk));
+10de21148f7d28 Joseph Lo        2019-05-29  2012  
+10de21148f7d28 Joseph Lo        2019-05-29  2013  	return 0;
+10de21148f7d28 Joseph Lo        2019-05-29  2014  }
+10de21148f7d28 Joseph Lo        2019-05-29  2015  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
