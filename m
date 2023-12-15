@@ -1,140 +1,146 @@
-Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01on2108.outbound.protection.outlook.com [40.107.114.108])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3C5224DF;
-	Thu, 14 Dec 2023 23:07:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 712251C31;
+	Fri, 15 Dec 2023 05:44:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="m2d+qd37"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=bEdC9eEBRK+1FSOb8Sl6MJfpU4SUF/j81kTCwdhiJjMG7U5ybhPaLUN+GYIEx4Q5GqqwKoPG6iIkN3SXGxAAeMJEHy+9Npw5pPxNkcemF7T93ivHTOBU4VLcyDsjFzZWW/XPQgzVTAfENGjZ11UV6k8vhHo2wHugOzRsuTnQVfekDIUz12qhvwgueMa5Y2rCVX8VqxtypoloJREm4Jsn3Ok1dWlhJxQUdUkhMjTZRWddHWcoNPpbPn1i1wlaxOYgdoEfdbWDSMwtxUstT5tJWFf5/GbaUnNoUxS7r7EdvzHy8HWSJQbPqUDh0Oilyczt9BG3zJSEAzl4vy71AOGsNw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LP0T5GixPraMcgzK031XcBJ9qzFZ4O9KGF1Tlntxv2I=;
- b=QvW4Xo2JIUXHvJXdha2dxoiu1sQzlbyLD4mKBobJ9Yrheh1hchHkGgMkuiswq381GIZwX/7lRFjdyMVIxEDXMvWIsmPMfXtDMAVrjm8GS6Ykhd7twe9+h29+4eyJOO78f4eLOfqP3+PRg+2q5MiuJKwxTLkksYbyjaiZokqXHSYifWogLUZVhwQqJM6UGv+bjQfozaMh4y78qJsUsgp4BixGk5Tzio9J50qQ95cSNPYWKhhRUXQYqSom9wD2sPHEco7zBrn4BPQymVDw+DypJLECMaN6BY5vsXIONv6DqEuGvpQ8bEqesGxLFfwNINRt7yOrt2I1Que0gSFnSoh1nw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LP0T5GixPraMcgzK031XcBJ9qzFZ4O9KGF1Tlntxv2I=;
- b=m2d+qd37qNk+iyEYi6uvJJNbrjJHq4k9pCh9vtfqM2s9olDAo5QrAio4XKNUnS/cLs7+71JaNAv94brz/afQSmI6D3brBQ83DDBoW1DbDAeqr78da7CVIKew/7auCLfeAK4eXAX71wbOki/HPsj/mhD/9djTIRl7D/5NS2LF3Gk=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
- (2603:1096:400:3a9::11) by TYAPR01MB5660.jpnprd01.prod.outlook.com
- (2603:1096:404:8059::6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7113.10; Thu, 14 Dec
- 2023 23:07:49 +0000
-Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
- ([fe80::5732:673b:846c:ed92]) by TYCPR01MB10914.jpnprd01.prod.outlook.com
- ([fe80::5732:673b:846c:ed92%4]) with mapi id 15.20.7113.010; Thu, 14 Dec 2023
- 23:07:49 +0000
-Message-ID: <878r5wpem3.wl-kuninori.morimoto.gx@renesas.com>
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Frank Rowand <frowand.list@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Aymeric Aillet <aymeric.aillet@iot.bzh>,
-	Yusuke Goda <yusuke.goda.sx@renesas.com>
-Subject: Re: [PATCH v4 4/4] drivers: clk: renesas: ignore all clocks which are assinged to non-Linux system
-In-Reply-To: <CAMuHMdUx-nm6k9LXbUJAJ78ChFYHVcmGcoz0YhWyos7h99R4wg@mail.gmail.com>
-References: <87wmtlo2zs.wl-kuninori.morimoto.gx@renesas.com>
-	<87r0jto2yq.wl-kuninori.morimoto.gx@renesas.com>
-	<CAMuHMdUx-nm6k9LXbUJAJ78ChFYHVcmGcoz0YhWyos7h99R4wg@mail.gmail.com>
-User-Agent: Wanderlust/2.15.9 Emacs/27.1 Mule/6.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Thu, 14 Dec 2023 23:07:48 +0000
-X-ClientProxiedBy: TYCPR01CA0046.jpnprd01.prod.outlook.com
- (2603:1096:405:1::34) To TYCPR01MB10914.jpnprd01.prod.outlook.com
- (2603:1096:400:3a9::11)
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BbIWE6PJ"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 3BF3Ps0Y008016;
+	Fri, 15 Dec 2023 05:44:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=lNyS6XOOhGk9188CugqQXE0AbjhCg2iwozC+KlPC2+w=; b=Bb
+	IWE6PJ4v0UF1VzhXGTxDPmN+dqZgwR1Itiixv0Nidsubvgk3wJanouPAxQwXW2ch
+	nBqE+nvAj5RGsN0GbohXAHNdTrxJ1J8CjWQH80l2Gl2VqALLXmp9sDD/Z3mHKhvn
+	PjImWLYwZjSSV7wXBxeUwtsm/gw7Ymg1TijOHhhs1mbckxtI8Y1Xbi27GTCxM/Cd
+	LkrLLhiHJgXgB89q494P2CngIuDXEMwQtuq64IQHLDjBc9tdFJYNe/3y3GEHV34q
+	LUc3hz0i1OhrzEfCNPbDtlLDkAIgSExGJtCsAgASqC0BbRObbwgzIl+jPbV9Henl
+	/R0NwoNNuBGrnEashkWg==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3v0741j227-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 15 Dec 2023 05:44:18 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3BF5iHFe009359
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 15 Dec 2023 05:44:17 GMT
+Received: from [10.201.3.91] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Thu, 14 Dec
+ 2023 21:44:09 -0800
+Message-ID: <6a3895ad-7da3-49c0-a7a0-7dd1031e0544@quicinc.com>
+Date: Fri, 15 Dec 2023 11:14:07 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYCPR01MB10914:EE_|TYAPR01MB5660:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1e917c6c-04ab-4105-2bd1-08dbfcf97dbf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	miD7tj/trni0V/ReaMQ+17cqHYV5seM3+wmtX/jwUAe8pMhgC4UeFtW6jy+IRWBqLI7tnAMoKvzPTXGL2SEQa9/0JKEa0Mu/1UcteZuJJQeH4J0TmCCQxbIbVvU0Gki7pKZZy18/tFrck0xHYstGG1d9f/xBEYsV1ET+UrbiFH/U1cZXqv3wK3vRSwkell7Sk1QZoh/VSB+D1Z2bRbVD3uF7PvdAUjN/fX9x09nFsUjaYs+a9zxjfmgSWrRSTPHkq0xV2sKM4/3uVCVLKtoWKresh7bcURXYTTmxhldcGIXkl/ib6MmVsb+RQ33fCXGHO/mF+MNsuptJFHnNUIwzjZgjXzWfV9AKw0ihAFPqPe4lM5Vhqx1tUTa4V77I6AWCCNkUP/MimwPWzqjvHQ6LuBtz36Si9FF9kJymJRvPwW+gpLLSakor3SedUFcoGhgYNcy8bHcRryfs8igldZjD264+pdRPvO/MeC+M+Lnmo7Ux3CzskHdIPCKDBhpHgAhU3svgAzuYClIUnMWIUiK2Wn4Np/RKnE1LJjnxi8Use1xmbCQcT5c1PV9wbo6luN0jTxU/z7nfyFvilkrgmMS7S9HLj5uR4sx6V3ZG5xvts5+VKzj8fOtCa7mdclDV5LLq
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10914.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376002)(346002)(39860400002)(136003)(396003)(366004)(230922051799003)(64100799003)(186009)(1800799012)(451199024)(26005)(2616005)(107886003)(6506007)(52116002)(6512007)(5660300002)(7416002)(4326008)(41300700001)(2906002)(4744005)(478600001)(6486002)(8676002)(8936002)(66946007)(316002)(6916009)(54906003)(66476007)(66556008)(36756003)(86362001)(38100700002)(38350700005);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?/0RtO5jhlfjQJaCUO5M2pTtyrrNbOKjJL1kaVMFN7boN9iSMDztMgmwZfx/B?=
- =?us-ascii?Q?XgdMnQ21ni0jIN6oDAyfu9kVwJWWOjlcP+pzyTIsBvT1Z95DPmTfIduAHMrh?=
- =?us-ascii?Q?EzzefVOf6ozIwNyL3Jzp5bj0tNLlYMfte2U7N0/Ttzau7eCiigiBp8aq37zW?=
- =?us-ascii?Q?TCgCg1839t4cuYWi+N9z/JlvH+bGO9XLc6KkOPwRswbLQN+nnxg3q1caUbaC?=
- =?us-ascii?Q?/YZyqwQAfXAbS7BIQ3B53Hln/Bxuw1AEWcMh97snKrKe+OWxYXJJja1nZ7Ww?=
- =?us-ascii?Q?oc1qRtvhYSDFHTbeNyiuYhV/ZNADEQwH/ImJ2pmgwI9n4Kvf0Spe5lIhVly9?=
- =?us-ascii?Q?34uHynoXXeCFJYsOksXrdiO6heZYxm7qzTKwUlpFZYFqbCcalQMw5zRXweFx?=
- =?us-ascii?Q?KDVkIf0+TwFb5uJxsxQ2yWZseFvCzf9fBU+mFNyFpTY7hmhSj1HuRGC4YcVI?=
- =?us-ascii?Q?DSBlk5rKPXh/7PN0Wy99lkrbF1V46YHnP3sz4utXKlf3aKzJvxrI8eRofQa1?=
- =?us-ascii?Q?cxMvHlcA1A0/ASde5JWj7/2EN6C0Q+UkpfERksFHIRuJkGLgypi8Ly6c716d?=
- =?us-ascii?Q?EptxOgwigdIOoJS5o0fVc1Jqt87PziQmr26dT9wthHk4d19r4LKdnw2kThqj?=
- =?us-ascii?Q?4jaWM3F+kdS0RrfkYk0pRUN71PFHs+lRhm1zZfU1+BG/vbr/NI2TaoOgro+Q?=
- =?us-ascii?Q?UpBHoDbNiEYX6JRFp60tHAH4zdWTQJsMWXD825yEElcIejMkF8UqaQSBk49N?=
- =?us-ascii?Q?K3lYLw8sjIwRpoDspDi7fY2rg3h7hRQ665dtOUby/ARea4F4UBjmMYhkUpF6?=
- =?us-ascii?Q?MC8kPMhmMIt6WJKScIv5rmqsZcS5lM81ZrS4gZQZeji7CcccDmVuxzNYdsUj?=
- =?us-ascii?Q?kJbQOxqsy4KmG5Og9d64tvf/GShIWD144Ms/Uw/C9fT8eVgwOU9rgy6uyYoD?=
- =?us-ascii?Q?TfZbPJgVWLQxwlf2lFfLXYNLWx2b6p7t9urMoJ/kUbj9uSnSRk1WZgU0Ddc/?=
- =?us-ascii?Q?XbHI8uj7Pknr4cMARBRhj5diX/fHa/mx6Bx+4bOsREPpCTPJxquDQfujyn4s?=
- =?us-ascii?Q?oGnLiq8aecaD7y7pK/MnrNkKv0GCg7U7C4q8See/JcSjRxrF6rPXg1IHCWwf?=
- =?us-ascii?Q?h1ftqOC43GouoMZGSAI6aBishfZ1FiqBtpZ0XYvFKUJf7L0gxizv/FoHQxwL?=
- =?us-ascii?Q?vLGQMdnFDV/XicAAfMg8gpLBJlsjSkwGP5ad5AqOhelAD953upmPmG2H2OhR?=
- =?us-ascii?Q?gx2kVg1swSFSB98qZ87dUHYx3t1iqyZ8u1JEGJYskirJZEVzruNEiN3l+KfA?=
- =?us-ascii?Q?COTQivY1wgTpycC1ms2jpxZ+eLKSvbF/jAXaR/GxpZe8+leppkrsGe19v4Gz?=
- =?us-ascii?Q?ORCAoPTWrP6LfmR84ztQl2H3f+5lGf4QID3RDiKLBX8GubsmGVK4UjHuattP?=
- =?us-ascii?Q?UWn7ZcgWNNUvFC8iMOvYNnc1x8sm5h30vIbM1IubkQWP8GSmydXeXC5t+p40?=
- =?us-ascii?Q?KCbyTadovbb+vbwyQuNWIY0vBINmkeviH/VV73kLGWK2hq6JOtWjOzbUAMUH?=
- =?us-ascii?Q?AgwctVEzu+UHZm79Y17VuSOAROJkxYgfc4YHqOaJK2gNJvC9B1+RAgs99jlN?=
- =?us-ascii?Q?qPxWMJN3+0nUiTsjLDRfnT8=3D?=
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1e917c6c-04ab-4105-2bd1-08dbfcf97dbf
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB10914.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Dec 2023 23:07:49.0668
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qAUuBMdr2SXop8zA+ud0mzqgg9LQrU1YGNvXXGOxRtkvf5rgJYvEy5APOFTobmek8SMGwttPrhhxZGogGDbrECZkDuKAOSSOVweMeA+iNMb9ZUg0FC1aEjHcwsOZEnOn
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB5660
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/10] clk: qcom: ipq5332: Add separate clocks for PCIe
+ and USB for Combo PHY
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <agross@kernel.org>, <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
+        <vkoul@kernel.org>, <kishon@kernel.org>, <mani@kernel.org>,
+        <quic_nsekar@quicinc.com>, <quic_srichara@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <quic_varada@quicinc.com>, <quic_devipriy@quicinc.com>,
+        <quic_kathirav@quicinc.com>, <quic_anusha@quicinc.com>
+References: <20231214062847.2215542-1-quic_ipkumar@quicinc.com>
+ <20231214062847.2215542-3-quic_ipkumar@quicinc.com>
+ <CAA8EJpr61JuznqfdMG96mjrqquf2Qbfe=potB5vzk43XexWj2w@mail.gmail.com>
+Content-Language: en-US
+From: Praveenkumar I <quic_ipkumar@quicinc.com>
+In-Reply-To: <CAA8EJpr61JuznqfdMG96mjrqquf2Qbfe=potB5vzk43XexWj2w@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: p7j-yoodYOO4QQRr6l0cSrWkm_bl4Uet
+X-Proofpoint-GUID: p7j-yoodYOO4QQRr6l0cSrWkm_bl4Uet
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-12-09_02,2023-12-07_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
+ spamscore=0 phishscore=0 lowpriorityscore=0 impostorscore=0 mlxscore=0
+ suspectscore=0 adultscore=0 mlxlogscore=931 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2311290000
+ definitions=main-2312150033
 
 
-Hi Geert
 
-Thank you for your reveiw
+On 12/14/2023 12:39 PM, Dmitry Baryshkov wrote:
+> On Thu, 14 Dec 2023 at 08:29, Praveenkumar I <quic_ipkumar@quicinc.com> wrote:
+>> Qualcomm IPQ5332 has a combo PHY for PCIe and USB. Either one of the
+>> interface (PCIe/USB) can use this combo PHY and the PHY drivers are
+>> different for PCIe and USB. Hence separate the PCIe and USB pipe clock
+>> source from DT, and individual driver node can be used as a clock source
+>> separately in the gcc. Add separate enum for PCIe and USB pipe clock and
+>> change the parent in corresponding structures.
+>>
+>> Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
+> Please use your full name for the git authorship and or the S-o-B
+> tags. This applies to the whole series.
+My full name is "Praveenkumar I". In my region, we used to have only the 
+initial letter of surname.
 
-> > +static void __init cpg_mssr_reserved_exit(struct cpg_mssr_priv *priv)
-> > +{
-> > +       kfree(priv->reserved_ids);
-> > +}
-> 
-> This function is called only once, so you might want to inline it manually.
+--
+Thanks,
+Praveenkumar
+> Other than that:
+>
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>
+>> ---
+>>   drivers/clk/qcom/gcc-ipq5332.c | 7 ++++---
+>>   1 file changed, 4 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/clk/qcom/gcc-ipq5332.c b/drivers/clk/qcom/gcc-ipq5332.c
+>> index f98591148a97..aa0f616c3b1b 100644
+>> --- a/drivers/clk/qcom/gcc-ipq5332.c
+>> +++ b/drivers/clk/qcom/gcc-ipq5332.c
+>> @@ -25,7 +25,8 @@ enum {
+>>          DT_SLEEP_CLK,
+>>          DT_PCIE_2LANE_PHY_PIPE_CLK,
+>>          DT_PCIE_2LANE_PHY_PIPE_CLK_X1,
+>> -       DT_USB_PCIE_WRAPPER_PIPE_CLK,
+>> +       DT_PCIE_WRAPPER_PIPE_CLK,
+>> +       DT_USB_WRAPPER_PIPE_CLK,
+>>   };
+>>
+>>   enum {
+>> @@ -728,7 +729,7 @@ static struct clk_regmap_phy_mux gcc_pcie3x1_0_pipe_clk_src = {
+>>                  .hw.init = &(struct clk_init_data) {
+>>                          .name = "gcc_pcie3x1_0_pipe_clk_src",
+>>                          .parent_data = &(const struct clk_parent_data) {
+>> -                               .index = DT_USB_PCIE_WRAPPER_PIPE_CLK,
+>> +                               .index = DT_PCIE_WRAPPER_PIPE_CLK,
+>>                          },
+>>                          .num_parents = 1,
+>>                          .ops = &clk_regmap_phy_mux_ops,
+>> @@ -1072,7 +1073,7 @@ static struct clk_regmap_phy_mux gcc_usb0_pipe_clk_src = {
+>>                  .hw.init = &(struct clk_init_data) {
+>>                          .name = "gcc_usb0_pipe_clk_src",
+>>                          .parent_data = &(const struct clk_parent_data) {
+>> -                               .index = DT_USB_PCIE_WRAPPER_PIPE_CLK,
+>> +                               .index = DT_USB_WRAPPER_PIPE_CLK,
+>>                          },
+>>                          .num_parents = 1,
+>>                          .ops = &clk_regmap_phy_mux_ops,
+>> --
+>> 2.34.1
+>>
+>>
+>
 
-I want to keep init()/exit() pair because it is easy to understand.
-
-I will consider other comment and post v5 patch next week
-
-
-Thank you for your help !!
-
-Best regards
----
-Renesas Electronics
-Ph.D. Kuninori Morimoto
