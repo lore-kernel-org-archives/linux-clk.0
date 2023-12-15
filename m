@@ -1,135 +1,238 @@
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D14249FA
-	for <linux-clk@vger.kernel.org>; Fri, 15 Dec 2023 09:07:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9086224B31;
+	Fri, 15 Dec 2023 09:11:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WpueA605"
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-9fa2714e828so51226266b.1
-        for <linux-clk@vger.kernel.org>; Fri, 15 Dec 2023 01:07:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702631263; x=1703236063; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YLsL191ADbq1gos6rROKk26txGDLmzcZVAxQKpjzoHY=;
-        b=WpueA605B+LXeWhA5LxDWgY6M5/KdUUhZ3iQveVGNEF40ZPB0DYrvQIG/OjDZuLVsL
-         A/RRrANaJ6mODyft0A/847rAINMpLXkAVHZhFEF6e0BkXQyGqmzXf5l+L8gdmvxExrlI
-         SmKsmh5r11aNfuLZDKBUPQ659kboHdkOYTevJ3zsYctA3LM3bNKJgUkS3lHW/Nf/9KU7
-         hCzYxir50VlUvpt1RErFls7grMVsSXJZQP/6wXwZ/XHBHy5HBi25xnb5BPj//JUi+wjv
-         1Zkpn2Id0jtVjBnbJjPOP3b1RPcraz8wNyjNEWi4iArIg53eNTxBn8PIYuRTWBryngX/
-         1Evw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702631263; x=1703236063;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YLsL191ADbq1gos6rROKk26txGDLmzcZVAxQKpjzoHY=;
-        b=GHiMYFZzrAKqdbmmh7mwTEQEfjQsMA7eOk2vcl3d6GUJDqR8qf0VzhVWSQK7vQs4ah
-         dFtMo4HK5Xv83ZBVXRN6QvgFYnj+AAIw5NJ+orGPyq2hR16D6wHQIylMDxI/YCroPsRA
-         WVlq8Bcuveqg0E0y79C+FaNvqj2/EzrlbL/yMSSKYo+o9w3g1SIWnl1drmEYUzyfmx+C
-         b0XKEeb4EtVzfgMbCASsrbnRRWpAn/b2gGHrLNHWnYl8Qzhwb7TWxYdneyz6hGkOEaWY
-         bLa+vKqcMvlpzWCjx+bwf8eq77jDL5cL8vu4szQiAbFKqq1DnS9KT12uPqZIxy4M1UBn
-         MFYA==
-X-Gm-Message-State: AOJu0YxE57Y5l/tWb6lmivu4liXB6eFd0JeJoEakKwts03oocy+CLzmx
-	t27xSoJaW2jZjcWM3w+244+M5w==
-X-Google-Smtp-Source: AGHT+IE7rdpVYpVe9I6eLT0xhWdCOUUtzk9hAmOIfoRLUkgrPjSWwoMhrCqVes9sBUgz2GdiEJyZFg==
-X-Received: by 2002:a17:906:c1d6:b0:a02:bc2d:e026 with SMTP id bw22-20020a170906c1d600b00a02bc2de026mr4762782ejb.46.1702631262945;
-        Fri, 15 Dec 2023 01:07:42 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id rf22-20020a1709076a1600b00a1d0b15f634sm10441090ejc.76.2023.12.15.01.07.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Dec 2023 01:07:42 -0800 (PST)
-Message-ID: <c601e91c-676e-454e-89b1-ec19d567ab71@linaro.org>
-Date: Fri, 15 Dec 2023 10:07:39 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XTGFD5gA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81D68C433C7;
+	Fri, 15 Dec 2023 09:11:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1702631480;
+	bh=kKCmxtcl5MSg424p40e+BsGHD8SMbZdxG9H2LxbPPow=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XTGFD5gAci2HZRlK8c56c9BnKf6Ep9j4jkK4gWJd3uhtUhNjkdvBJaeKnDVnQjb5W
+	 8zrUmyeT0DDb5fiIcnTUtqaaEgZP55SBQeTDYGdtQqCex1xV5VquEoZweJY40uSBH7
+	 U9nu83bDyhpJTbyNG8h8n5zrZjER9j3Sy7DEeFfpsrgDZBw5htbt3r/UHng/Y9L0by
+	 eJ/NZwkX/jG9j6K2g6vav0cgDbhJp3m+AZRA4uVMcHq2afEU7bNrdcplQAk7n7qf1k
+	 7lD3ZH84PdJOvbuVfdwa+j2KUzFOrQvhPAg6TMTmzFKbjxC0pR9I372I0TnT+msS9z
+	 L5eYPk0My5cqg==
+Date: Fri, 15 Dec 2023 10:11:16 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
+	Michael Turquette <mturquette@baylibre.com>, dri-devel@lists.freedesktop.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	David Airlie <airlied@gmail.com>, linux-clk@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>, 
+	Rob Herring <robh@kernel.org>, Samuel Holland <samuel@sholland.org>, 
+	Kevin Hilman <khilman@baylibre.com>, Russell King <linux@armlinux.org.uk>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Chen-Yu Tsai <wens@csie.org>, 
+	MyungJoo Ham <myungjoo.ham@samsung.com>, Johan Hovold <johan+linaro@kernel.org>, 
+	linux-sunxi@lists.linux.dev, Thomas Zimmermann <tzimmermann@suse.de>, 
+	linux-pm@vger.kernel.org, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+	kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org, 
+	Stephen Boyd <sboyd@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Georgi Djakov <djakov@kernel.org>
+Subject: Re: [PATCH 0/5] clk: Make clk_rate_exclusive_get() return void
+Message-ID: <lpcmyqxmf24tuwt72uxb6vyk7y23ot5d3vtwhwe77uwonhynxu@khe2zzjjq7fg>
+References: <cover.1702400947.git.u.kleine-koenig@pengutronix.de>
+ <ki5n3rz5n4oxj2hhc3rj6xpn3e2tdi7fcp2q7exjbzilrlqflp@przautvhuy4g>
+ <20231213074300.4bq7wkfqd4jhhcr4@pengutronix.de>
+ <2nvbag657mlniqwq7fbilapc6vfw5qumab3yd6bqul25ot6wcn@wdlkh5az2fgs>
+ <212239ae-60ab-46f3-a838-39a4d61091fe@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/10] dt-bindings: clock: qcom: Document the X1E80100
- Display Clock Controller
-Content-Language: en-US
-To: Abel Vesa <abel.vesa@linaro.org>, Andy Gross <agross@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- Rajendra Nayak <quic_rjendra@quicinc.com>
-References: <20231214-x1e80100-clock-controllers-v2-0-2b0739bebd27@linaro.org>
- <20231214-x1e80100-clock-controllers-v2-2-2b0739bebd27@linaro.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231214-x1e80100-clock-controllers-v2-2-2b0739bebd27@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7garuxwpuj4i65vc"
+Content-Disposition: inline
+In-Reply-To: <212239ae-60ab-46f3-a838-39a4d61091fe@linaro.org>
 
-On 14/12/2023 17:49, Abel Vesa wrote:
-> From: Rajendra Nayak <quic_rjendra@quicinc.com>
-> 
-> Add bindings documentation for the X1E80100 Display Clock Controller.
-> 
-> Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 
-It seems I missed to review this one:
+--7garuxwpuj4i65vc
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Hi Neil,
 
-Best regards,
-Krzysztof
+On Wed, Dec 13, 2023 at 05:44:28PM +0100, Neil Armstrong wrote:
+> Le 13/12/2023 =E0 09:36, Maxime Ripard a =E9crit=A0:
+> > On Wed, Dec 13, 2023 at 08:43:00AM +0100, Uwe Kleine-K=F6nig wrote:
+> > > On Wed, Dec 13, 2023 at 08:16:04AM +0100, Maxime Ripard wrote:
+> > > > On Tue, Dec 12, 2023 at 06:26:37PM +0100, Uwe Kleine-K=F6nig wrote:
+> > > > > clk_rate_exclusive_get() returns zero unconditionally. Most users=
+ "know"
+> > > > > that and don't check the return value. This series fixes the four=
+ users
+> > > > > that do error checking on the returned value and then makes funct=
+ion
+> > > > > return void.
+> > > > >=20
+> > > > > Given that the changes to the drivers are simple and so merge con=
+flicts
+> > > > > (if any) should be easy to handle, I suggest to merge this comple=
+te
+> > > > > series via the clk tree.
+> > > >=20
+> > > > I don't think it's the right way to go about it.
+> > > >=20
+> > > > clk_rate_exclusive_get() should be expected to fail. For example if
+> > > > there's another user getting an exclusive rate on the same clock.
+> > > >=20
+> > > > If we're not checking for it right now, then it should probably be
+> > > > fixed, but the callers checking for the error are right to do so if=
+ they
+> > > > rely on an exclusive rate. It's the ones that don't that should be
+> > > > modified.
+> > >=20
+> > > If some other consumer has already "locked" a clock that I call
+> > > clk_rate_exclusive_get() for, this isn't an error. In my bubble I call
+> > > this function because I don't want the rate to change e.g. because I
+> > > setup some registers in the consuming device to provide a fixed UART
+> > > baud rate or i2c bus frequency (and that works as expected).
+> >=20
+> > I guess it's a larger conversation, but I don't see how that can
+> > possibly work.
+> >=20
+> > The way the API is designed, you have no guarantee (outside of
+> > clk_rate_exclusive_*) that the rate is going to change.
+> >=20
+> > And clk_rate_exclusive_get() doesn't allow the rate to change while in
+> > the "critical section".
+> >=20
+> > So the only possible thing to do is clk_set_rate() +
+> > clk_rate_exclusive_get().
+>=20
+> There's clk_set_rate_exclusive() for this purpose.
 
+Sure. But that assumes you'll never need to change the rate while in the
+critical section.
+
+> > So there's a window where the clock can indeed be changed, and the
+> > consumer that is about to lock its rate wouldn't be aware of it.
+> >=20
+> > I guess it would work if you don't care about the rate at all, you just
+> > want to make sure it doesn't change.
+> >=20
+> > Out of the 7 users of that function, 3 are in that situation, so I guess
+> > it's fair.
+> >=20
+> > 3 are open to that race condition I mentioned above.
+> >=20
+> > 1 is calling clk_set_rate while in the critical section, which works if
+> > there's a single user but not if there's multiple, so it should be
+> > discouraged.
+> >=20
+> > > In this case I won't be able to change the rate of the clock, but that
+> > > is signalled by clk_set_rate() failing (iff and when I need awother
+> > > rate) which also seems the right place to fail to me.
+> >=20
+> > Which is ignored by like half the callers, including the one odd case I
+> > mentioned above.
+> >=20
+> > And that's super confusing still: you can *always* get exclusivity, but
+> > not always do whatever you want with the rate when you have it? How are
+> > drivers supposed to recover from that? You can handle failing to get
+> > exclusivity, but certainly not working around variable guarantees.
+> >=20
+> > > It's like that since clk_rate_exclusive_get() was introduced in 2017
+> > > (commit 55e9b8b7b806ec3f9a8817e13596682a5981c19c).
+> >=20
+> > Right, but "it's always been that way" surely can't be an argument,
+> > otherwise you wouldn't have done that series in the first place.
+> >=20
+> > > BTW, I just noticed that my assertion "Most users \"know\" that
+> > > [clk_rate_exclusive_get() returns zero unconditionally]" is wrong. As=
+ of
+> > > next-20231213 there are 3 callers ignoring the return value of
+> > > clk_rate_exclusive_get() and 4 that handle (imaginary) returned error=
+s.
+> > > I expected this function to be used more extensively. (In fact I think
+> > > it should be used more as several drivers rely on the clk rate not
+> > > changing.)
+> >=20
+> > Yes, but also it's super difficult to use in practice, and most devices
+> > don't care.
+> >=20
+> > The current situation is something like this:
+> >=20
+> >    * Only a handful of devices really care about their clock rate, and
+> >      often only for one of their clock if they have several. You would
+> >      probably get all the devices that create an analog signal somehow
+> >      there, so audio, display, i2c, spi, uarts, etc. Plus the ones doing
+> >      frequency scaling so CPU and GPUs.
+> >=20
+> >    * CPUs and GPUs are very likely to have a dedicated clock, so we can
+> >      rule the "another user is going to mess with my clock" case.
+> >=20
+> >    * UARTs/i2c/etc. are usually taking their clock from the bus interfa=
+ce
+> >      directly which is pretty much never going to change (for good
+> >      reason). And the rate of the bus is not really likely to change.
+> >=20
+> >    * SPI/NAND/MMC usually have their dedicated clock too, and the bus
+> >      rate is not likely to change after the initial setup either.
+> >=20
+> > So, the only affected devices are the ones generating external signals,
+> > with the rate changing during the life of the system. Even for audio or
+> > video devices, that's fairly unlikely to happen. And you need to have
+> > multiple devices sharing the same clock tree for that issue to occur,
+> > which is further reducing the chances it happens.
+>=20
+> Well, thanks for HW designers, this exists and some SoCs has less PLLs th=
+an
+> needed, and they can't be dedicated for some hw blocks.
+>=20
+> >=20
+> > Realistically speaking, this only occurs with multi-head display outputs
+> > where it's somewhat likely to have all the display controllers feeding
+> > from the same clock, and the power up of the various output is done in
+> > sequence which creates that situation.
+> >=20
+> > And even then, the clk_rate_exclusive_* interface effectively locks the
+> > entire clock subtree to its current rate, so the effect on the rest of
+> > the devices can be significant.
+> >=20
+> > So... yeah. Even though you're right, it's trying to address a problem
+> > that is super unlikely to happen with a pretty big hammer that might be
+> > too much for most. So it's not really surprising it's not used more.
+>=20
+> Honestly I tried my best to find a smart way to set the DSI clock tree
+> with only 2 endpoints of the tree, but CCF will explore all possibilities
+> and since you cannot set constraints, locking a sub-tree is the smartest
+> way I found.
+> In this case, the PLL is common between the DSI controller and video gene=
+rator,
+> so to keep the expected clock ratio, the smart way is to set the freq on
+> one side, lock the subtree and set the rate on the other side.
+> An API permitting to set multiple rates to multiple clocks in a single ca=
+ll
+> would be the solution, but not sure if we could possibly write such algor=
+ithm.
+
+Sure, and it's working great for some SoCs, so it was a good solution
+for the problem you had at the time.
+
+For some other SoCs it's not working that well however, so we need to
+improve things for those.
+
+Maxime
+
+--7garuxwpuj4i65vc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZXwYNAAKCRDj7w1vZxhR
+xakLAP9GcHkCf7rMfdpKTVB0KahFy7/yq68gPTi4+2LCz/TXXAD/fsAdJUXHCeWp
+2Om50TZcBtUtxTuRDqmx0aUTY0ROFgE=
+=Z9RR
+-----END PGP SIGNATURE-----
+
+--7garuxwpuj4i65vc--
