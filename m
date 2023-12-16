@@ -1,313 +1,131 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F096613B14A;
-	Sat, 16 Dec 2023 12:40:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 609BD3011A
+	for <linux-clk@vger.kernel.org>; Sat, 16 Dec 2023 13:32:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T9LGEghT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FEDDC433C8;
-	Sat, 16 Dec 2023 12:40:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702730411;
-	bh=JkYgkHR4Jv7u5ghUD6ryKome0+0Mfjqczw1xRSTcJao=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T9LGEghTBZ7pKGbOU0wQ+ewSQXgb/Wv77CVbTCKop/xnN6c+g68JcXvXqtAjkO7Za
-	 5RtotOys422oTL1bd2boC5U1gATU7ZLny6RUDqaejP7l0mYq9soxbl3VAKfSkIJ5iz
-	 Kwn7yUDGz6lkZCsSLbfdjpWpIOjAb+WRSux161KOtajAs3sIuPi9S65shPNYGCoChe
-	 WyMbaHajjUeQqbE8xC23i0dK35h9Zo1xDanN5nGoFUyZzkTPVQ17TVjsFRVvJgqKVw
-	 pO5fMRVCtsJYGkbXuNUJ/uav2UEa9G0Qor+b5Uy+6CkMDuLJlPRAumqWgsCAANpt2e
-	 DnsEMlPwEVEhg==
-Date: Sat, 16 Dec 2023 12:40:06 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Zhifeng Tang <zhifeng.tang@unisoc.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Zhifeng Tang <zhifeng.tang23@gmail.com>,
-	Wenming Wu <wenming.wu@unisoc.com>
-Subject: Re: [PATCH V2 1/3] dt-bindings: reset: Add reset controller bindings
- for Unisoc's ums512
-Message-ID: <20231216-gigolo-atlantic-6027f6407202@spud>
-References: <20231215114129.11313-1-zhifeng.tang@unisoc.com>
- <20231215114129.11313-2-zhifeng.tang@unisoc.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KQJRwTNg"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3364a5ccbb1so1436144f8f.1
+        for <linux-clk@vger.kernel.org>; Sat, 16 Dec 2023 05:32:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1702733538; x=1703338338; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yxxYR+BwAfpSZFNN0hme7H+prlTbedvdtk9CwsDC85k=;
+        b=KQJRwTNggskdgRG9o/CnS17Ku6SSqF1DHhvwVMfbkDZxu9hlwlSY0wcDolXMEEo8Tx
+         q9J5YXpKTZUL/mIjx5p7tKyQG97DbSKQSNa8EgeYfi5byyX+JxnYs3bWtl0D5nyFq5ux
+         inMD6GtVrL3sIFfQQOZKioFLKJE2SXEGndvvqI+/cN63gycIXfBgLqgwqLuOIZ56p42C
+         Z1QoUhaU8ijbT3p9mlLAknaipzxZxFmoLh+xx6puko4F7f5BXh4zGuI3j1O1aBazN+2M
+         Rvc3z49e7ZWEzuGfTdbY3Mq7zgpfc4gFfOSzqLuA/dSDHQwCYqGOTCnc6ok/rOBZE8i+
+         aqXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702733538; x=1703338338;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yxxYR+BwAfpSZFNN0hme7H+prlTbedvdtk9CwsDC85k=;
+        b=XqWZGYajhOomCin/pW/FmVA6NxJ+nqo3r9I/dWKBevaG1QzQoS6EQHZKpEO1gle3Hf
+         UPuumvKH4le9yczaZg63enIhjHAayfJT+y44TQ8jowsXzOUqlG3O2okdfBUdGbfSqKU9
+         64zPefoxYgo8yFnAOgREypCXyEeJDLxkpUMR+VxqC7HwBolKxmizrl6Oon7Shm/EssYv
+         jSl6xFGXe7YSJ4wlGpQ0tyVUxkSmGC7A8mDveu+TxzzHtVYZ/qT4gZpOEflvqxa8cvVw
+         ksf8ReFFBq4uWekyD1eFburIkJInxzlU7pPplUnClPgLYDR1mGliUV/XEyEEhAMHew9f
+         UhlA==
+X-Gm-Message-State: AOJu0Yzb6/2GaqO1nPe3WUGqYjlm+hw+vAuV84oKe0BfO9wJ4A2kCxyH
+	6DbwN+72WskSnxv8Dqqz9TyWsT57yRI0Xi5gCVs=
+X-Google-Smtp-Source: AGHT+IHayXdhgw6MsCqKdUQgA63aacrE5pb1rYnNy+NusrMfTky7BJ9aFbGgRrvLv005fQWS/V0m/g==
+X-Received: by 2002:adf:f44b:0:b0:336:1035:b781 with SMTP id f11-20020adff44b000000b003361035b781mr7794019wrp.89.1702733538572;
+        Sat, 16 Dec 2023 05:32:18 -0800 (PST)
+Received: from [192.168.199.59] (178235179137.dynamic-4-waw-k-1-3-0.vectranet.pl. [178.235.179.137])
+        by smtp.gmail.com with ESMTPSA id rd7-20020a170907a28700b00a1f6c2c391dsm11418122ejc.121.2023.12.16.05.32.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 16 Dec 2023 05:32:18 -0800 (PST)
+Message-ID: <920f79ac-54db-486a-ae4e-c905e0fdfda5@linaro.org>
+Date: Sat, 16 Dec 2023 14:32:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="vCu9dFIB4kkxg34C"
-Content-Disposition: inline
-In-Reply-To: <20231215114129.11313-2-zhifeng.tang@unisoc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 07/10] clk: qcom: Add dispcc clock driver for x1e80100
+Content-Language: en-US
+To: Abel Vesa <abel.vesa@linaro.org>, Andy Gross <agross@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ Rajendra Nayak <quic_rjendra@quicinc.com>
+References: <20231214-x1e80100-clock-controllers-v2-0-2b0739bebd27@linaro.org>
+ <20231214-x1e80100-clock-controllers-v2-7-2b0739bebd27@linaro.org>
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20231214-x1e80100-clock-controllers-v2-7-2b0739bebd27@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
---vCu9dFIB4kkxg34C
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Dec 15, 2023 at 07:41:27PM +0800, Zhifeng Tang wrote:
-> From: "zhifeng.tang" <zhifeng.tang@unisoc.com>
->=20
-> Add reset controller bindings to clock bindings for Unisoc's ums512.
-
-I guess I replied to v1 and v2 was sent within the time period I am
-capable of clearing my queue. Same comments apply here.
-
->=20
-> Signed-off-by: zhifeng.tang <zhifeng.tang@unisoc.com>
+On 14.12.2023 17:49, Abel Vesa wrote:
+> From: Rajendra Nayak <quic_rjendra@quicinc.com>
+> 
+> Add the dispcc clock driver for x1e80100.
+> 
+> Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 > ---
->  .../bindings/clock/sprd,ums512-clk.yaml       |   3 +
->  include/dt-bindings/reset/sprd,ums512-reset.h | 203 ++++++++++++++++++
->  2 files changed, 206 insertions(+)
->  create mode 100644 include/dt-bindings/reset/sprd,ums512-reset.h
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml=
- b/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
-> index 43d2b6c31357..6b0892d637fe 100644
-> --- a/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
-> +++ b/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
-> @@ -34,6 +34,9 @@ properties:
->    "#clock-cells":
->      const: 1
-> =20
-> +  "#reset-cells":
-> +    const: 1
-> +
->    clocks:
->      minItems: 1
->      maxItems: 4
-> diff --git a/include/dt-bindings/reset/sprd,ums512-reset.h b/include/dt-b=
-indings/reset/sprd,ums512-reset.h
-> new file mode 100644
-> index 000000000000..d7ec3dd7c291
-> --- /dev/null
-> +++ b/include/dt-bindings/reset/sprd,ums512-reset.h
-> @@ -0,0 +1,203 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
-> +/*
-> + * Copyright (C) 2022, Unisoc Inc.
-> + */
-> +
-> +#ifndef __DT_BINDINGS_SPRD_UMS512_RESET_H
-> +#define __DT_BINDINGS_SPRD_UMS512_RESET_H
-> +
-> +/* PMU APB resets */
-> +#define RESET_PMU_APB_WTLCP_SOFT_RST			0
-> +#define RESET_PMU_APB_PUBCP_SOFT_RST			1
-> +#define RESET_PMU_APB_WTLCP_DSP_SOFT_RST		2
-> +#define RESET_PMU_APB_MM_SOFT_RST			3
-> +#define RESET_PMU_APB_GPU_SOFT_RST			4
-> +#define RESET_PMU_APB_AP_SOFT_RST			5
-> +#define RESET_PMU_APB_PUB_SOFT_RST			6
-> +#define RESET_PMU_APB_APCPU_SOFT_RST			7
-> +#define RESET_PMU_APB_SP_SYS_SOFT_RST			8
-> +#define RESET_PMU_APB_AUDCP_SYS_SOFT_RST		9
-> +#define RESET_PMU_APB_AUDCP_AUDDSP_SOFT_RST		10
-> +#define RESET_PMU_APB_CDMA_SOFT_RST			11
-> +#define RESET_PMU_APB_WTLCP_AON_SOFT_RST		12
-> +#define RESET_PMU_APB_WCDMA_AON_SOFT_RST		13
-> +#define RESET_PMU_APB_WTLCP_LDSP_SOFT_RST		14
-> +#define RESET_PMU_APB_WTLCP_TGDSP_SOFT_RST		15
-> +#define RESET_PMU_APB_AP_VSP_SOFT_RST			16
-> +#define RESET_PMU_APB_AP_VDSP_SOFT_RST			17
-> +#define RESET_PMU_APB_APCPU_CORE0_MODE_ST_SOFT_RST	18
-> +#define RESET_PMU_APB_APCPU_CORE1_MODE_ST_SOFT_RST	19
-> +#define RESET_PMU_APB_APCPU_CORE2_MODE_ST_SOFT_RST	20
-> +#define RESET_PMU_APB_APCPU_CORE3_MODE_ST_SOFT_RST	21
-> +#define RESET_PMU_APB_APCPU_CORE4_MODE_ST_SOFT_RST	22
-> +#define RESET_PMU_APB_APCPU_CORE5_MODE_ST_SOFT_RST	23
-> +#define RESET_PMU_APB_APCPU_CORE6_MODE_ST_SOFT_RST	24
-> +#define RESET_PMU_APB_APCPU_CORE7_MODE_ST_SOFT_RST	25
-> +#define RESET_PMU_APB_APCPU_CLUSTER_MODE_ST_SOFT_RST	26
-> +
-> +/* AP APB resets */
-> +#define RESET_AP_APB_SIM0_SOFT_RST		0
-> +#define RESET_AP_APB_IIS0_SOFT_RST		1
-> +#define RESET_AP_APB_IIS1_SOFT_RST		2
-> +#define RESET_AP_APB_IIS2_SOFT_RST		3
-> +#define RESET_AP_APB_SPI0_SOFT_RST		4
-> +#define RESET_AP_APB_SPI1_SOFT_RST		5
-> +#define RESET_AP_APB_SPI2_SOFT_RST		6
-> +#define RESET_AP_APB_SPI3_SOFT_RST		7
-> +#define RESET_AP_APB_I2C0_SOFT_RST		8
-> +#define RESET_AP_APB_I2C1_SOFT_RST		9
-> +#define RESET_AP_APB_I2C2_SOFT_RST		10
-> +#define RESET_AP_APB_I2C3_SOFT_RST		11
-> +#define RESET_AP_APB_I2C4_SOFT_RST		12
-> +#define RESET_AP_APB_UART0_SOFT_RST		13
-> +#define RESET_AP_APB_UART1_SOFT_RST		14
-> +#define RESET_AP_APB_UART2_SOFT_RST		15
-> +#define RESET_AP_APB_SDIO0_SOFT_RST		16
-> +#define RESET_AP_APB_SDIO1_SOFT_RST		17
-> +#define RESET_AP_APB_SDIO2_SOFT_RST		18
-> +#define RESET_AP_APB_EMMC_SOFT_RST		19
-> +#define RESET_AP_APB_CE_SEC_SOFT_RST		20
-> +#define RESET_AP_APB_CE_PUB_SOFT_RST		21
-> +#define RESET_AP_APB_AP_DVFS_SOFT_RST		22
-> +
-> +/* AP AHB resets */
-> +#define RESET_AP_AHB_DSI_SOFT_RST		0
-> +#define RESET_AP_AHB_DISPC_SOFT_RST		1
-> +#define RESET_AP_AHB_VDSP_IDMA_VAU_SOFT_RST	2
-> +#define RESET_AP_AHB_VDSP_MSTD_VAU_SOFT_RST	3
-> +#define RESET_AP_AHB_VDSP_MSTI_VAU_SOFT_RST	4
-> +#define RESET_AP_AHB_VDMA_VAU_SOFT_RST		5
-> +#define RESET_AP_AHB_IPI_SOFT_RST		6
-> +#define RESET_AP_AHB_VDMA_SOFT_RST		7
-> +#define RESET_AP_AHB_DMA_SOFT_RST		8
-> +#define RESET_AP_AHB_VDSP_SOFT_RST		9
-> +#define RESET_AP_AHB_VDSP_DEBUG_SOFT_RST	10
-> +#define RESET_AP_AHB_VSP_GLOBAL_SOFT_RST	11
-> +#define RESET_AP_AHB_VPP_SOFT_RST		12
-> +#define RESET_AP_AHB_VSP_SOFT_RST		13
-> +#define RESET_AP_AHB_DISPC_VAU_SOFT_RST		14
-> +
-> +/* AON APB resets */
-> +#define RESET_AON_APB_RC100M_CAL_SOFT_RST		0
-> +#define RESET_AON_APB_RFTI_SOFT_RST			1
-> +#define RESET_AON_APB_DCXO_LC_SOFT_RST			2
-> +#define RESET_AON_APB_BB_CAL_SOFT_RST			3
-> +#define RESET_AON_APB_MSPI0_SOFT_RST			4
-> +#define RESET_AON_APB_MSPI1_SOFT_RST			5
-> +#define RESET_AON_APB_DAP_MTX_SOFT_RST			6
-> +#define RESET_AON_APB_LVDSDIS_SOFT_RST			7
-> +#define RESET_AON_APB_SERDES_DPHY_SOFT_RST		8
-> +#define RESET_AON_APB_SERDES_DPHY_APB_SOFT_RST		9
-> +#define RESET_AON_APB_AP_EMMC_SOFT_RST			10
-> +#define RESET_AON_APB_AP_SDIO0_SOFT_RST			11
-> +#define RESET_AON_APB_AP_SDIO1_SOFT_RST			12
-> +#define RESET_AON_APB_AP_SDIO2_SOFT_RST			13
-> +#define RESET_AON_APB_PUBCP_SDIO0_SOFT_RST		14
-> +#define RESET_AON_APB_EFUSE_SOFT_RST			15
-> +#define RESET_AON_APB_GPIO_SOFT_RST			16
-> +#define RESET_AON_APB_MBOX_SOFT_RST			17
-> +#define RESET_AON_APB_KPD_SOFT_RST			18
-> +#define RESET_AON_APB_AON_SYST_SOFT_RST			19
-> +#define RESET_AON_APB_AP_SYST_SOFT_RST			20
-> +#define RESET_AON_APB_AON_TMR_SOFT_RST			21
-> +#define RESET_AON_APB_DVFS_TOP_SOFT_RST			22
-> +#define RESET_AON_APB_OTG_UTMI_SOFT_RST			23
-> +#define RESET_AON_APB_OTG_PHY_SOFT_RST			24
-> +#define RESET_AON_APB_SPLK_SOFT_RST			25
-> +#define RESET_AON_APB_PIN_SOFT_RST			26
-> +#define RESET_AON_APB_ANA_SOFT_RST			27
-> +#define RESET_AON_APB_CKG_SOFT_RST			28
-> +#define RESET_AON_APB_ETC_SOFT_RST			29
-> +#define RESET_AON_APB_APCPU_TS0_SOFT_RST		30
-> +#define RESET_AON_APB_APB_BUSMON_SOFT_RST		31
-> +#define RESET_AON_APB_AON_IIS_SOFT_RST			32
-> +#define RESET_AON_APB_SCC_SOFT_RST			33
-> +#define RESET_AON_APB_THM0_SOFT_RST			34
-> +#define RESET_AON_APB_THM1_SOFT_RST			35
-> +#define RESET_AON_APB_THM2_SOFT_RST			36
-> +#define RESET_AON_APB_AP_SIM_AON_TOP_SOFT_RST		37
-> +#define RESET_AON_APB_PUBCP_SIM0_AON_TOP_SOFT_RST	38
-> +#define RESET_AON_APB_PUBCP_SIM1_AON_TOP_SOFT_RST	39
-> +#define RESET_AON_APB_PUBCP_SIM2_AON_TOP_SOFT_RST	40
-> +#define RESET_AON_APB_I2C_SOFT_RST			41
-> +#define RESET_AON_APB_PMU_SOFT_RST			42
-> +#define RESET_AON_APB_ADI_SOFT_RST			43
-> +#define RESET_AON_APB_EIC_SOFT_RST			44
-> +#define RESET_AON_APB_AP_INTC0_SOFT_RST			45
-> +#define RESET_AON_APB_AP_INTC1_SOFT_RST			46
-> +#define RESET_AON_APB_AP_INTC2_SOFT_RST			47
-> +#define RESET_AON_APB_AP_INTC3_SOFT_RST			48
-> +#define RESET_AON_APB_AP_INTC4_SOFT_RST			49
-> +#define RESET_AON_APB_AP_INTC5_SOFT_RST			50
-> +#define RESET_AON_APB_AUDCP_INTC_SOFT_RST		51
-> +#define RESET_AON_APB_PUBCP_INTC_SOFT_RST		52
-> +#define RESET_AON_APB_WTLCP_TGDSP_INTC_SOFT_RST		53
-> +#define RESET_AON_APB_WTLCP_LDSP_INTC_SOFT_RST		54
-> +#define RESET_AON_APB_WTLCP_INTC_SOFT_RST		55
-> +#define RESET_AON_APB_AP_TMR0_SOFT_RST			56
-> +#define RESET_AON_APB_AP_TMR1_SOFT_RST			57
-> +#define RESET_AON_APB_AP_TMR2_SOFT_RST			58
-> +#define RESET_AON_APB_PWM0_SOFT_RST			59
-> +#define RESET_AON_APB_PWM1_SOFT_RST			60
-> +#define RESET_AON_APB_PWM2_SOFT_RST			61
-> +#define RESET_AON_APB_PWM3_SOFT_RST			62
-> +#define RESET_AON_APB_AP_WDG_SOFT_RST			63
-> +#define RESET_AON_APB_APCPU_WDG_SOFT_RST		64
-> +#define  RESET_AON_APB_SERDES_SOFT_RST			65
-> +#define RESET_AON_APB_DJTAG_SOFT_RST			66
-> +
-> +/* AUDCP APB  resets */
-> +#define RESET_AUDCP_APB_WDG_SOFT_RST		0
-> +#define RESET_AUDCP_APB_TMR0_SOFT_RST		1
-> +#define RESET_AUDCP_APB_TMR1_SOFT_RST		2
-> +
-> +/* AUDCP AHB resets */
-> +#define RESET_AUDCP_AHB_VBC_24M_SOFT_RST	0
-> +#define RESET_AUDCP_AHB_DMA_AP_SOFT_RST		1
-> +#define RESET_AUDCP_AHB_SRC48K_SOFT_RST		2
-> +#define RESET_AUDCP_AHB_MCDT_SOFT_RST		3
-> +#define RESET_AUDCP_AHB_VBCIFD_SOFT_RST		4
-> +#define RESET_AUDCP_AHB_VBC_SOFT_RST		5
-> +#define RESET_AUDCP_AHB_SPINLOCK_SOFT_RST	6
-> +#define RESET_AUDCP_AHB_DMA_CP_SOFT_RST		7
-> +#define RESET_AUDCP_AHB_IIS0_SOFT_RST		8
-> +#define RESET_AUDCP_AHB_IIS1_SOFT_RST		9
-> +#define RESET_AUDCP_AHB_IIS2_SOFT_RST		10
-> +#define RESET_AUDCP_AHB_UART_SOFT_RST		11
-> +#define RESET_AUDCP_AHB_AUD_SOFT_RST		12
-> +#define RESET_AUDCP_AHB_DVFS_SOFT_RST		13
-> +
-> +/* GPU APB resets */
-> +#define RESET_GPU_APB_GPU_CORE_SOFT_RST		0
-> +#define RESET_GPU_APB_SYS_SOFT_RST_REQ_CORE	1
-> +
-> +/* MM AHB resets */
-> +#define RESET_MM_AHB_CKG_SOFT_RST		0
-> +#define RESET_MM_AHB_JPG_SOFT_RST		1
-> +#define RESET_MM_AHB_DCAM_AXI_SOFT_RST		2
-> +#define RESET_MM_AHB_DCAM2_SOFT_RST		3
-> +#define RESET_MM_AHB_DCAM1_SOFT_RST		4
-> +#define RESET_MM_AHB_DCAM0_SOFT_RST		5
-> +#define RESET_MM_AHB_DCAM_VAU_SOFT_RST		6
-> +#define RESET_MM_AHB_MIPI_CSI2_SOFT_RST		7
-> +#define RESET_MM_AHB_MIPI_CSI1_SOFT_RST		8
-> +#define RESET_MM_AHB_MIPI_CSI0_SOFT_RST		9
-> +#define RESET_MM_AHB_ISP_SOFT_RST		10
-> +#define RESET_MM_AHB_ISP_VAU_SOFT_RST		11
-> +#define RESET_MM_AHB_ISP_AHB_SOFT_RST		12
-> +#define RESET_MM_AHB_CPP_DMA_SOFT_RST		13
-> +#define RESET_MM_AHB_CPP_PATH1_SOFT_RST		14
-> +#define RESET_MM_AHB_CPP_PATH0_SOFT_RST		15
-> +#define RESET_MM_AHB_CPP_SOFT_RST		16
-> +#define RESET_MM_AHB_MM_MAIN_SOFT_RST		17
-> +#define RESET_MM_AHB_CPP_SOFT_RST_MASK		18
-> +#define RESET_MM_AHB_JPG_SOFT_RST_MASK		19
-> +#define RESET_MM_AHB_JPG_VAU_SOFT_RST		20
-> +#define RESET_MM_AHB_CPP_VAU_SOFT_RST		21
-> +#define RESET_MM_AHB_FD_VAU_SOFT_RST		22
-> +#define RESET_MM_AHB_DCAM_ALL_SOFT_RST		23
-> +#define RESET_MM_AHB_DVFS_SOFT_RST		24
-> +#define RESET_MM_AHB_FD_SOFT_RST		25
-> +#define RESET_MM_AHB_FD_SOFT_RST_MASK		26
-> +
-> +#endif /* __DT_BINDINGS_SPRD_UMS512_RESET_H */
-> --=20
-> 2.17.1
->=20
->=20
+[...]
 
---vCu9dFIB4kkxg34C
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+> +
+> +static const struct parent_map disp_cc_parent_map_7[] = {
+> +	{ P_SLEEP_CLK, 0 },
+> +};
+> +
+> +static const struct clk_parent_data disp_cc_parent_data_7_ao[] = {
+> +	{ .index = DT_SLEEP_CLK },
+What's _ao about this?
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZX2apgAKCRB4tDGHoIJi
-0v5PAPoCUS/bbDJ06Q20X7NzPDxx3vNpIPLfekXBoPqrVBxzrAEA5wmpyinkf0ZB
-BggKhaDMX0LxdFPW+oCclaUHXZ3w4gM=
-=X7/q
------END PGP SIGNATURE-----
-
---vCu9dFIB4kkxg34C--
+Konrad
