@@ -1,111 +1,66 @@
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5192131A9C
-	for <linux-clk@vger.kernel.org>; Sat, 16 Dec 2023 19:39:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 829D21845
+	for <linux-clk@vger.kernel.org>; Sun, 17 Dec 2023 00:29:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="J6dUi0z8"
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id EBA873F184
-	for <linux-clk@vger.kernel.org>; Sat, 16 Dec 2023 19:39:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1702755555;
-	bh=2c7dacoDuG5K0tl+4E3IQI93Dvy5OouinIjtAewN7Os=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=J6dUi0z8RXb9y/LaMdfbLe1HW8+KwMBDyPBg/Pl61TOAlpig9gRbl2mos7D+3iWCb
-	 oSwRUWcyYkfmQBGZRZVu/ou+Ru0PMS1QGI1vrJMKGQxi9eHhJI+Q4o22M8Ou7+vMZF
-	 +J0Mh3g94WTd6+CSdvAuvc4nP02xbIpHg+hqbLwfOdPwmo2B/ChVQnD2CSUOR+3vZp
-	 aQYUiSTHvPUUmNDiD2LpAMRjx8kA8MQL+LcrslbkRq5EkPjrgLGfLaROvkI74xlEpp
-	 VSjCQf3yBC3gxWOlVfeFTwcY6RvVzDiyF+yFH8fryv1pQPt1sqaksvN8J50H9/YSWp
-	 IzMyjfoK0QGJw==
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4258a2540ceso29059801cf.1
-        for <linux-clk@vger.kernel.org>; Sat, 16 Dec 2023 11:39:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702755555; x=1703360355;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2c7dacoDuG5K0tl+4E3IQI93Dvy5OouinIjtAewN7Os=;
-        b=uuBq9fsk08cToeKKakGmnnbRNHXLiDQHOHib4CCwW28wllpWm/y02S+hqhSKOKKDEF
-         Mfi80WF17Z5EwqoGziJaicLobLiABIQDZBPIlGerYqwunWHPLuyh991lQd+/W8poQz0Y
-         PHi5fbwlJO9SBzZaZ8f9HsN+/OG7VbKslv75ijdFGLgyqsF1i6uVfVP2iPYc5fzK2oMN
-         SIDlFtw4rhqV8SsuJxtTouAJib5kBIiHozLvBW01kT0K2bSGpI6juH1w1zJIOwUzbIO5
-         tMTM32hWmX/FoRRIi3tRO5q+qaRbc+jgLvdseMIxW1rVZ7KjXCU0KSSWQr/9R++EHFHH
-         phSw==
-X-Gm-Message-State: AOJu0YztrsJF5U+7BQUYOEFZSS9FoCcEYIIL6TGRQ0vkC9dM0FLdEpmq
-	FHLvwe75+oVd1X5MbxAwauFLPISb1W2Vn6CWEfwuyblijUOumEJj0qQ+bZwFaN5fRPSi3Howx9k
-	Wu+SYRdPJsJi0ZHJKUAJiASG7PLzZwSjdhCgvLDU4nvhAIcQu2x+dTw==
-X-Received: by 2002:a05:622a:1c8:b0:425:4043:18bd with SMTP id t8-20020a05622a01c800b00425404318bdmr20333338qtw.112.1702755534007;
-        Sat, 16 Dec 2023 11:38:54 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFkdKr9ZA1ECc64gwyj30qjy4snj5vZUkODgrjSVIiFsMAP3aqvVWnQrSXJixVzRgLW2ZfvbY5zJh4SCWF268k=
-X-Received: by 2002:a05:622a:1c8:b0:425:4043:18bd with SMTP id
- t8-20020a05622a01c800b00425404318bdmr20333325qtw.112.1702755533644; Sat, 16
- Dec 2023 11:38:53 -0800 (PST)
-Received: from 348282803490 named unknown by gmailapi.google.com with
- HTTPREST; Sat, 16 Dec 2023 11:38:53 -0800
-From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-In-Reply-To: <20231215204050.2296404-6-cristian.ciocaltea@collabora.com>
-References: <20231215204050.2296404-1-cristian.ciocaltea@collabora.com> <20231215204050.2296404-6-cristian.ciocaltea@collabora.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FW2eHwxl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF14BC433C8;
+	Sun, 17 Dec 2023 00:29:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1702772971;
+	bh=kC6GR00udyVW29are37Ujeon3BqneaW9y+Kj6W4+K6Q=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=FW2eHwxl7on7116oYqRff8MRnFdL3wqWk+RPr9pZvj59ZbWc0EGi0SnLl4YACWb8H
+	 BpgNrDiMSjp6YpleSfbmqRgqmpcBvkBE+IuT50OQO2SUYOZLtzZm/PLyVD2amUGCrG
+	 h6X0TJnl+p9BOF+pAbb+5fvBMrvjIO9HTS1leDT6K+Softn1pq45wx1G08VBqvq3gK
+	 sOZrk2gMevojpInPs9TUnkZSB4eBrSJs6gNp35/b39vo69XCc09Nf/5FKHvc1/5M/v
+	 5mj4ORydJ7/A4TMof9m2zG7ysIOarn2s8F9NcFk1Tmj/jAV71dmaqW6ZuGAQfN7HtP
+	 Prry11yUbfHgQ==
+Message-ID: <efe5adf3b5ced447c8f5f09b8b845e32.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Sat, 16 Dec 2023 11:38:53 -0800
-Message-ID: <CAJM55Z-bg0EGPaLHtxcu2AzqN59zfuiT0eE7oCShrx7dG_QK1g@mail.gmail.com>
-Subject: Re: [PATCH v3 5/9] riscv: dts: starfive: jh7100-common: Setup pinmux
- and enable gmac
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Emil Renner Berthing <kernel@esmil.dk>, Samin Guo <samin.guo@starfivetech.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Hal Feng <hal.feng@starfivetech.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Richard Cochran <richardcochran@gmail.com>, 
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-clk@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, kernel@collabora.com, 
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <2913962.e9J7NaK4W3@phil>
+References: <2913962.e9J7NaK4W3@phil>
+Subject: Re: [GIT PULL] Rockchip clock changes for 6.8 #1
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+To: Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com
+Date: Sat, 16 Dec 2023 16:29:28 -0800
+User-Agent: alot/0.10
 
-Cristian Ciocaltea wrote:
-> Add pinmux configuration for DWMAC found on the JH7100 based boards and
-> enable the related DT node, providing a basic PHY configuration.
->
-> Co-developed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-> Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> ---
->  .../boot/dts/starfive/jh7100-common.dtsi      | 85 +++++++++++++++++++
->  1 file changed, 85 insertions(+)
->
-> diff --git a/arch/riscv/boot/dts/starfive/jh7100-common.dtsi b/arch/riscv/boot/dts/starfive/jh7100-common.dtsi
-> index 42fb61c36068..5cafe8f5c2e7 100644
-> --- a/arch/riscv/boot/dts/starfive/jh7100-common.dtsi
-> +++ b/arch/riscv/boot/dts/starfive/jh7100-common.dtsi
-> @@ -72,7 +72,92 @@ wifi_pwrseq: wifi-pwrseq {
->  	};
->  };
->
-> +&gmac {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&gmac_pins>;
-> +	phy-mode = "rgmii-id";
-> +	phy-handle = <&phy>;
+Quoting Heiko Stuebner (2023-12-12 13:04:58)
+> Hi Mike, Stephen,
+>=20
+> please find below a pull-request with some small Rockchip stuff.
+>=20
+> Please pull.
+>=20
+> Thanks
+> Heiko
+>=20
+>=20
+> The following changes since commit b85ea95d086471afb4ad062012a4d73cd328fa=
+86:
+>=20
+>   Linux 6.7-rc1 (2023-11-12 16:19:07 -0800)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git =
+tags/v6.8-rockchip-clk1
+>=20
+> for you to fetch changes up to 721bf080f249ab2adcc4337abe164230bfb8594f:
+>=20
+>   clk: rockchip: rk3568: Mark pclk_usb as critical (2023-12-05 10:45:55 +=
+0100)
+>=20
+> ----------------------------------------------------------------
 
-I'm not sure if it's a generic policy or not, but I don't really like adding a
-reference to a non-existant node here. I'd move this property to the board
-files where the phy node is actually defined.
-
-/Emil
+Thanks. Pulled into clk-next
