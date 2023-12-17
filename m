@@ -1,55 +1,79 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCB6947A4E;
-	Sun, 17 Dec 2023 17:38:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790C644C9A;
+	Sun, 17 Dec 2023 17:55:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VpJrpPz5"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 171D4C433C8;
-	Sun, 17 Dec 2023 17:38:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702834726;
-	bh=pSNSZB0sLTXjW5AP5Xr6P3187V1MXS1FkJVfdAbVRMU=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=VpJrpPz5TPZyTCi4v2QI3bo3AJXcex8gSRzYJRXDO9WAf/1HdTDiITJIyuWeX9VTQ
-	 jUfRMHXlJrflrcGnH77Uw5OVXc2+o5KMQ7OahyPj/KPgkMk1Pp4ySHJrhWHW6GNqf2
-	 DgslrhXG7Ra7Jz4UL1W9O10/7XM7GvJ7Y8nd0CpL9ro2r7YeSb1WerP7Lhov87ICjR
-	 ZO7ZoTOXUm/RSyakEa3jG6u2I/ONhGoOtJ68s4vpk3o0fZNor5rZoks5dso0ftm0Dk
-	 q2XrFJOdj1C3LkCjguTQbAZFYvZ7VVTthgx9TS52ibXWnbyhcbEGwI/hm0mq+YCznr
-	 IehajJ/si5yKw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 03731C04DD9;
-	Sun, 17 Dec 2023 17:38:46 +0000 (UTC)
-Subject: Re: [GIT PULL] clk fixes for v6.7-rc5
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20231217005450.3575417-1-sboyd@kernel.org>
-References: <20231217005450.3575417-1-sboyd@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20231217005450.3575417-1-sboyd@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-X-PR-Tracked-Commit-Id: 8defec031c40913ef10d2f654a5ccc8a2a9730c1
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: dde0672bfa3e5c5e8530ebb45518408acb91b083
-Message-Id: <170283472600.25242.7735305313063166858.pr-tracker-bot@kernel.org>
-Date: Sun, 17 Dec 2023 17:38:46 +0000
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="G2CLrRfK"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=1BS2BYxI0fjRhDPFU1muWML+fVQMCFHH/gSfWLLCKhQ=; b=G2CLrRfKFu0XcBhesoEsUYs2NU
+	fxQLK5S6970mi84T28XkFi+YuyqJFPT022Y931plnt/t9hTREG7bJHDkoTTpueHZrvzH0AXeKjvs4
+	1dg4PhWHBHJzsdJol+cswDkvxUHQBln5quFlcko9UOJOdTmZlClCwz2ZMsl45BJIVkeU=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1rEvM6-003AGP-QV; Sun, 17 Dec 2023 18:55:10 +0100
+Date: Sun, 17 Dec 2023 18:55:10 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Samin Guo <samin.guo@starfivetech.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Hal Feng <hal.feng@starfivetech.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, kernel@collabora.com,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Subject: Re: [PATCH v3 6/9] riscv: dts: starfive: visionfive-v1: Setup
+ ethernet phy
+Message-ID: <f8f9d454-6155-4b1c-b4b2-daf98267be14@lunn.ch>
+References: <20231215204050.2296404-1-cristian.ciocaltea@collabora.com>
+ <20231215204050.2296404-7-cristian.ciocaltea@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231215204050.2296404-7-cristian.ciocaltea@collabora.com>
 
-The pull request you sent on Sat, 16 Dec 2023 16:54:49 -0800:
+On Fri, Dec 15, 2023 at 10:40:45PM +0200, Cristian Ciocaltea wrote:
+> The StarFive VisionFive V1 SBC uses a Motorcomm YT8521 PHY supporting
+> RGMII-ID, but requires manual adjustment of the RX internal delay to
+> work properly.
+> 
+> The default RX delay provided by the driver is 1.95 ns, which proves to
+> be too high. Applying a 50% reduction seems to mitigate the issue.
+> 
+> Also note this adjustment is not necessary on BeagleV Starlight SBC,
+> which uses a Microchip PHY.  Hence, there is no indication of a
+> miss-behaviour on the GMAC side, but most likely the issue stems from
+> the Motorcomm PHY.
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+I suggest you make a similar comment in the .dts file, just to explain
+the odd setting.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/dde0672bfa3e5c5e8530ebb45518408acb91b083
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+	Andrew
