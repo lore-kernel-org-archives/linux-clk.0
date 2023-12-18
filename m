@@ -1,51 +1,51 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91C095BFB3
-	for <linux-clk@vger.kernel.org>; Mon, 18 Dec 2023 16:02:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D7F15D742
+	for <linux-clk@vger.kernel.org>; Mon, 18 Dec 2023 16:02:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aCVDHbyX"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3366005be7bso2075139f8f.1
-        for <linux-clk@vger.kernel.org>; Mon, 18 Dec 2023 08:02:28 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oyOsffEg"
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a234139b725so200879366b.3
+        for <linux-clk@vger.kernel.org>; Mon, 18 Dec 2023 08:02:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702915347; x=1703520147; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1702915349; x=1703520149; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=yeZetCZqAjDfSmYH46X1jjlV0+TjZufo6m3dLVzQ+S4=;
-        b=aCVDHbyXp8XIpxKCqBbIKLTaXbB4yNe3M/7nwZrIWprL6XYTg0vAEn7br2DpVsHsYd
-         5MWeWp9MOuUAcdX3BeXxuolkvVeYHsQwMkrOegXRKa2Dq8f+PB7uvhKgXl3eqvgNi7ol
-         ra2dD890cEwd7JpjHktH03XXzO/bj7+GZ6LPPAWAOX4hEKTVPw9ZzRhNouwoJ8Sa5DYM
-         HmBUtQBa01ZXP0hs8pvwye8rdB3k9kdXfozk4fJnzOALvnDSWLMqZnp3YokqVfeJjvnz
-         xY9DbB1RHHIKAcPI+M63NyLR1G1xPcHG+qWOLgsSHDjTV+NmcuIBzyOc3TeqGInZKYTy
-         Zk0A==
+        bh=QBViY7jkvTaAJEcKg65WBWL916aXSU5kT38QPvggLYk=;
+        b=oyOsffEgMf7yOSdABgPrdag8b5JyWuSClCL9lH+3oNFtknErE0uc/qIRVCpAonVZDC
+         XQHQlYHfRYcyWXQ2UA44AfTjBJpPX/lMhNOtP89qsJzhqbl/cglGU5f6DJNKwvG23ocQ
+         VWwchgo/FDJ/6J0LYdLkCezAdqoN2Wt0tS29grFnvF2CinG9KJ3KZPi6VC2CR4rmuaJH
+         cjsfYzFUwBLwKvoqQWHwwl8joerIqWKa//Aec/Ssd3WAUK4QyuWyjrdNc3AnNlZb5u23
+         hQ2bMhxmM2ImLCkC1a5gjpHsHmeRpeUuF4Huv9ONwWlrMzfT0PyjTgS1k1Ajh3yz3uDU
+         b3bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702915347; x=1703520147;
+        d=1e100.net; s=20230601; t=1702915349; x=1703520149;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yeZetCZqAjDfSmYH46X1jjlV0+TjZufo6m3dLVzQ+S4=;
-        b=cZ7IiKyAT8L9ExkZHo2GXkYF1PZHVaOGiSoEriGhsAkVNC2VhmvxCkzbv83+zRU+Jn
-         V9i4UU9xcWmP6kx7ILJDiZD9UxArkDJwJfkswqPiDNXLHErKgsGLZ24XPseKsWIi+GLa
-         D4xxlS9fRm/bNdM9jqUpiLl0LRK+gUSS9arOQC+KuBfJjDjS0w/KIyZb/c01JTd9lwdE
-         IOnQD1q8MN7aWaQyB7pydIKU9WkwwRcnp+AwFVx7WFaH4utIJTBAybSjMjXrDcbAWpsw
-         56xi/Ku1ypYwy7zpih7Io5FRwzCn6rJMzvYErLM3wFony4BDQ3IOJt7OSUG32nGnUawG
-         fb0g==
-X-Gm-Message-State: AOJu0YysLsK8C0o1Plemos54hEkz3WWQ5nKV75ST8Cza6wzd6OddaZwC
-	YPygAmWLh8a+ViqQ+ULz1mKJ5A==
-X-Google-Smtp-Source: AGHT+IEhH8Cm/7N1a2HGbuWE26iVjDxJr/RSPJj5TmO1nT/mLSPqnfvL2D5CLL3oKA1egQJFO8uxWQ==
-X-Received: by 2002:a05:600c:474d:b0:40c:708b:cf52 with SMTP id w13-20020a05600c474d00b0040c708bcf52mr2013391wmo.122.1702915346798;
-        Mon, 18 Dec 2023 08:02:26 -0800 (PST)
+        bh=QBViY7jkvTaAJEcKg65WBWL916aXSU5kT38QPvggLYk=;
+        b=FnvWMVrgHPdo3/Q3aljKMuh7SacDWZ2+CT3r/WN7bkrwrZhkyM4JeCAqw2RbumelEX
+         VPMmX4vTADGiGQ3dMkHV/mJNhrzomjrDYwWsaYAh10S6AtSOs4RJN8tHbdKF6v2wWCl+
+         2BH2h6nerl5+9iNgXtT37R7oQoeRxC76oB3rKkBrLuSHczgc5Vw5Zi7sfKCi06OkFeuQ
+         F3FCoXp6Gdrp08VdkRMjpRi3WGmlHIhtk+sC2+T4lNA1TRfO7opRX6DA0G+4HLVKBb2N
+         l6hlKt97d3NHnJE9WECWW14zQnbCc/7nydwA6QnL0kX6wAPbDCaP2ufcgamjdO5Pjuje
+         9QYg==
+X-Gm-Message-State: AOJu0YxW8TGoYo+RB/F/yT3rlZKDXq4oWDhOPXr0ykVWfogvUZTRxrQX
+	kbli5THdnojJzuZMW/IIQYCZ7Q==
+X-Google-Smtp-Source: AGHT+IFJhWEmmbDEyESgZdxhz1O6Q1Sy/KUK84afGg33sfnlZYQApXmygM5ynm4QiKEZen7vys93Tg==
+X-Received: by 2002:a17:906:5d:b0:a23:463c:16ba with SMTP id 29-20020a170906005d00b00a23463c16bamr862120ejg.167.1702915349290;
+        Mon, 18 Dec 2023 08:02:29 -0800 (PST)
 Received: from [10.167.154.1] (178235179137.dynamic-4-waw-k-1-3-0.vectranet.pl. [178.235.179.137])
-        by smtp.gmail.com with ESMTPSA id ts7-20020a170907c5c700b00a1dd58874b8sm14260693ejc.119.2023.12.18.08.02.24
+        by smtp.gmail.com with ESMTPSA id ts7-20020a170907c5c700b00a1dd58874b8sm14260693ejc.119.2023.12.18.08.02.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Dec 2023 08:02:26 -0800 (PST)
+        Mon, 18 Dec 2023 08:02:29 -0800 (PST)
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Date: Mon, 18 Dec 2023 17:02:06 +0100
-Subject: [PATCH 05/12] clk: qcom: gcc-sm8550: use collapse-voting for PCIe
- GDSCs
+Date: Mon, 18 Dec 2023 17:02:07 +0100
+Subject: [PATCH 06/12] clk: qcom: gcc-sm8550: Mark RCGs shared where
+ applicable
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -54,7 +54,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20231218-topic-8550_fixes-v1-5-ce1272d77540@linaro.org>
+Message-Id: <20231218-topic-8550_fixes-v1-6-ce1272d77540@linaro.org>
 References: <20231218-topic-8550_fixes-v1-0-ce1272d77540@linaro.org>
 In-Reply-To: <20231218-topic-8550_fixes-v1-0-ce1272d77540@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -72,69 +72,413 @@ Cc: Marijn Suijten <marijn.suijten@somainline.org>,
  linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
  devicetree@vger.kernel.org, Konrad Dybcio <konrad.dybcio@linaro.org>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1702915332; l=1720;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1702915332; l=12984;
  i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=N7ribrag25hwrEIJX+mk3d9ZiSp/Y74Ht6lzkGi4xcQ=;
- b=Q0hpQovWX3D9xySyJlu36S3vjYXNimLqsRXVvoDPkESrr0Tz8RPZbVIA4Ax+HmuuKblQEcaS4
- pRsrNl+94xoA7LlvekJOjpLRk0zNUJWxHmDqY9i9dLummXWEoXnZ6oJ
+ bh=kxYppAupL1OW96Z1TBPMeVxO9s3GwWa69r4L43R8nGc=;
+ b=X71IQrJiv8y995lHqBIDbRqHyxnH/WWyuznsnK11/1VAy3ZGGt3t+lScswtZNKgM7MboTn+1Z
+ e/0BAnHIGdLCEThN6NNP1fEDTr98mjEFI/G1cz2k+mmC/Hpdye+Rh7d
 X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
  pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-The PCIe GDSCs can be shared with other masters and should use the APCS
-collapse-vote register when updating the power state.
-
-This is specifically also needed to be able to disable power domains
-that have been enabled by boot firmware using the vote register.
-
-Following other recent Qualcomm platforms, describe this register and
-the corresponding mask for the PCIe (and _phy) GDSCs.
+The vast majority of shared RCGs were not marked as such. Fix it.
 
 Fixes: 955f2ea3b9e9 ("clk: qcom: Add GCC driver for SM8550")
 Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- drivers/clk/qcom/gcc-sm8550.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/clk/qcom/gcc-sm8550.c | 86 +++++++++++++++++++++----------------------
+ 1 file changed, 43 insertions(+), 43 deletions(-)
 
 diff --git a/drivers/clk/qcom/gcc-sm8550.c b/drivers/clk/qcom/gcc-sm8550.c
-index a16d07426b71..73bda0d03aa7 100644
+index 73bda0d03aa7..b883dffe5f7a 100644
 --- a/drivers/clk/qcom/gcc-sm8550.c
 +++ b/drivers/clk/qcom/gcc-sm8550.c
-@@ -2998,6 +2998,8 @@ static struct clk_branch gcc_video_axi1_clk = {
- 
- static struct gdsc pcie_0_gdsc = {
- 	.gdscr = 0x6b004,
-+	.collapse_ctrl = 0x52020,
-+	.collapse_mask = BIT(0),
- 	.pd = {
- 		.name = "pcie_0_gdsc",
+@@ -401,7 +401,7 @@ static struct clk_rcg2 gcc_gp1_clk_src = {
+ 		.parent_data = gcc_parent_data_1,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_1),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
  	},
-@@ -3007,6 +3009,8 @@ static struct gdsc pcie_0_gdsc = {
+ };
  
- static struct gdsc pcie_0_phy_gdsc = {
- 	.gdscr = 0x6c000,
-+	.collapse_ctrl = 0x52020,
-+	.collapse_mask = BIT(3),
- 	.pd = {
- 		.name = "pcie_0_phy_gdsc",
+@@ -416,7 +416,7 @@ static struct clk_rcg2 gcc_gp2_clk_src = {
+ 		.parent_data = gcc_parent_data_1,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_1),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
  	},
-@@ -3016,6 +3020,8 @@ static struct gdsc pcie_0_phy_gdsc = {
+ };
  
- static struct gdsc pcie_1_gdsc = {
- 	.gdscr = 0x8d004,
-+	.collapse_ctrl = 0x52020,
-+	.collapse_mask = BIT(1),
- 	.pd = {
- 		.name = "pcie_1_gdsc",
+@@ -431,7 +431,7 @@ static struct clk_rcg2 gcc_gp3_clk_src = {
+ 		.parent_data = gcc_parent_data_1,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_1),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
  	},
-@@ -3025,6 +3031,8 @@ static struct gdsc pcie_1_gdsc = {
+ };
  
- static struct gdsc pcie_1_phy_gdsc = {
- 	.gdscr = 0x8e000,
-+	.collapse_ctrl = 0x52020,
-+	.collapse_mask = BIT(4),
- 	.pd = {
- 		.name = "pcie_1_phy_gdsc",
+@@ -451,7 +451,7 @@ static struct clk_rcg2 gcc_pcie_0_aux_clk_src = {
+ 		.parent_data = gcc_parent_data_2,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_2),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
  	},
+ };
+ 
+@@ -471,7 +471,7 @@ static struct clk_rcg2 gcc_pcie_0_phy_rchng_clk_src = {
+ 		.parent_data = gcc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -486,7 +486,7 @@ static struct clk_rcg2 gcc_pcie_1_aux_clk_src = {
+ 		.parent_data = gcc_parent_data_2,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_2),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -501,7 +501,7 @@ static struct clk_rcg2 gcc_pcie_1_phy_rchng_clk_src = {
+ 		.parent_data = gcc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -521,7 +521,7 @@ static struct clk_rcg2 gcc_pdm2_clk_src = {
+ 		.parent_data = gcc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -536,7 +536,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s0_clk_src = {
+ 		.parent_data = gcc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -551,7 +551,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s1_clk_src = {
+ 		.parent_data = gcc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -566,7 +566,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s2_clk_src = {
+ 		.parent_data = gcc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -581,7 +581,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s3_clk_src = {
+ 		.parent_data = gcc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -596,7 +596,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s4_clk_src = {
+ 		.parent_data = gcc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -611,7 +611,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s5_clk_src = {
+ 		.parent_data = gcc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -626,7 +626,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s6_clk_src = {
+ 		.parent_data = gcc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -641,7 +641,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s7_clk_src = {
+ 		.parent_data = gcc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -656,7 +656,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s8_clk_src = {
+ 		.parent_data = gcc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -671,7 +671,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s9_clk_src = {
+ 		.parent_data = gcc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -700,7 +700,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s0_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_ops,
++	.ops = &clk_rcg2_shared_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap1_s0_clk_src = {
+@@ -717,7 +717,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s1_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_ops,
++	.ops = &clk_rcg2_shared_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap1_s1_clk_src = {
+@@ -750,7 +750,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s2_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_ops,
++	.ops = &clk_rcg2_shared_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap1_s2_clk_src = {
+@@ -767,7 +767,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s3_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_ops,
++	.ops = &clk_rcg2_shared_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap1_s3_clk_src = {
+@@ -784,7 +784,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s4_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_ops,
++	.ops = &clk_rcg2_shared_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap1_s4_clk_src = {
+@@ -801,7 +801,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s5_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_ops,
++	.ops = &clk_rcg2_shared_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap1_s5_clk_src = {
+@@ -818,7 +818,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s6_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_ops,
++	.ops = &clk_rcg2_shared_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap1_s6_clk_src = {
+@@ -835,7 +835,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s7_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_ops,
++	.ops = &clk_rcg2_shared_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap1_s7_clk_src = {
+@@ -852,7 +852,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s0_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_ops,
++	.ops = &clk_rcg2_shared_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap2_s0_clk_src = {
+@@ -869,7 +869,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s1_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_ops,
++	.ops = &clk_rcg2_shared_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap2_s1_clk_src = {
+@@ -886,7 +886,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s2_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_ops,
++	.ops = &clk_rcg2_shared_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap2_s2_clk_src = {
+@@ -903,7 +903,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s3_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_ops,
++	.ops = &clk_rcg2_shared_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap2_s3_clk_src = {
+@@ -920,7 +920,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s4_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_ops,
++	.ops = &clk_rcg2_shared_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap2_s4_clk_src = {
+@@ -937,7 +937,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s5_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_ops,
++	.ops = &clk_rcg2_shared_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap2_s5_clk_src = {
+@@ -975,7 +975,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s6_clk_src_init = {
+ 	.parent_data = gcc_parent_data_8,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_8),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_ops,
++	.ops = &clk_rcg2_shared_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap2_s6_clk_src = {
+@@ -992,7 +992,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s7_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_ops,
++	.ops = &clk_rcg2_shared_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap2_s7_clk_src = {
+@@ -1025,7 +1025,7 @@ static struct clk_rcg2 gcc_sdcc2_apps_clk_src = {
+ 		.parent_data = gcc_parent_data_9,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_9),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1048,7 +1048,7 @@ static struct clk_rcg2 gcc_sdcc4_apps_clk_src = {
+ 		.parent_data = gcc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1071,7 +1071,7 @@ static struct clk_rcg2 gcc_ufs_phy_axi_clk_src = {
+ 		.parent_data = gcc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1093,7 +1093,7 @@ static struct clk_rcg2 gcc_ufs_phy_ice_core_clk_src = {
+ 		.parent_data = gcc_parent_data_3,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_3),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1114,7 +1114,7 @@ static struct clk_rcg2 gcc_ufs_phy_phy_aux_clk_src = {
+ 		.parent_data = gcc_parent_data_4,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_4),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1136,7 +1136,7 @@ static struct clk_rcg2 gcc_ufs_phy_unipro_core_clk_src = {
+ 		.parent_data = gcc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1159,7 +1159,7 @@ static struct clk_rcg2 gcc_usb30_prim_master_clk_src = {
+ 		.parent_data = gcc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1174,7 +1174,7 @@ static struct clk_rcg2 gcc_usb30_prim_mock_utmi_clk_src = {
+ 		.parent_data = gcc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1189,7 +1189,7 @@ static struct clk_rcg2 gcc_usb3_prim_phy_aux_clk_src = {
+ 		.parent_data = gcc_parent_data_2,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_2),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
 
 -- 
 2.43.0
