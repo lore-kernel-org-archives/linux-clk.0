@@ -1,92 +1,150 @@
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A9D73714B
-	for <linux-clk@vger.kernel.org>; Mon, 18 Dec 2023 11:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8BAF19BCA;
+	Mon, 18 Dec 2023 12:02:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C80ZJkxi"
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-5cd870422c8so255868a12.0
-        for <linux-clk@vger.kernel.org>; Mon, 18 Dec 2023 03:49:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702900147; x=1703504947; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=WFiECuxQKf4bQHzOWrQB9O9iOx/6SZrLhJKr/Z2J67E=;
-        b=C80ZJkxiwR9Zm0ZsEKM8BmKcnvSLYCkhtK1dQvnDmoi9wbVvIeHxftsgmgH0afTE7u
-         tv86Bo8M8rIqdWJYLKfhlF5aJeO4RaxULPRK75GlvL7OpGIe7LDthzkcV6e73mekVU+K
-         eG0YxNCQ7FYoSsNsMCb41ntmlKlvGjbHxQM/W0tDIxGbG/wYPKt380CkOa1ZGzZkJu6P
-         yqa73Vg7lgWCGGbwj8f3fEOTg8Y8lEhhERQSkXuIB6xlzRlXrXNec9PpvtVmP9U7r6LO
-         EqEawO8Cry1p56dNMBPbO31C9vlWGCiOn/NA7T4Lid2Pi+4cJCeM0Q3VGXhWAqyPgGuw
-         pBLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702900147; x=1703504947;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WFiECuxQKf4bQHzOWrQB9O9iOx/6SZrLhJKr/Z2J67E=;
-        b=JoaRv8Sa56QKhqXP1Va3KdLkTSWZfLVQXKpP5Nt6v/Z5WAx+jhGLuvwv1Qi8KhHqTq
-         OpHBYWTwvdNco+01VpSuZoQ/fw3CLD9sNA7h+whQyG0IoyH6YcH7BGMSpx9uVkpGDbAK
-         FWCLWXOi+YTDxI3nVd4F1UrQQubXs8juzqU0Tz6VAW7Q9jqpo6jYm5EofdKdHEflTUSH
-         DEK/gP4zEtSuH1bNPqDwH83moiu60nm7rYsHVKvZ7EUIXbRZ/4EkpujxhX0vqBsYtu+E
-         2tKtIGW2Dj4Jb9AWNwR31pXn8w7outW41OzvOOXFMTGqgyWu0+T8TW2VpVbybjpihP4R
-         u0HQ==
-X-Gm-Message-State: AOJu0YwXVyvMXg2jC4Q2nrDsMHc1bEVv3hBksRkcwYpa8xYVWzz+KrXz
-	dNdjPQDMmBy/j3HaxY79DeoM
-X-Google-Smtp-Source: AGHT+IFNm7vnn6dj9ZJCS5JUQjewTTJwImMcXsK4yzYDnO65BIHPMtdEVIr3bR2Db4u/3gv4EFWJDQ==
-X-Received: by 2002:a05:6a20:3d81:b0:190:c314:35f8 with SMTP id s1-20020a056a203d8100b00190c31435f8mr7847690pzi.46.1702900147590;
-        Mon, 18 Dec 2023 03:49:07 -0800 (PST)
-Received: from thinkpad ([117.207.27.21])
-        by smtp.gmail.com with ESMTPSA id ha9-20020a17090af3c900b0028b8bb9e5cbsm1526025pjb.25.2023.12.18.03.49.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Dec 2023 03:49:07 -0800 (PST)
-Date: Mon, 18 Dec 2023 17:18:58 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Rob Herring <robh@kernel.org>
-Cc: andersson@kernel.org, konrad.dybcio@linaro.org, vkoul@kernel.org,
-	sboyd@kernel.org, mturquette@baylibre.com,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 01/16] dt-bindings: phy: qmp-ufs: Fix PHY clocks
-Message-ID: <20231218114858.GA2900@thinkpad>
-References: <20231214091101.45713-1-manivannan.sadhasivam@linaro.org>
- <20231214091101.45713-2-manivannan.sadhasivam@linaro.org>
- <20231214172051.GA611674-robh@kernel.org>
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="WAjo/lhL"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1702900929;
+	bh=3MhTuYEHVtxN6jKjyXhSlPpArK287YLadDQAYGZC2IM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WAjo/lhLjeb8QX9nhEkYkVMVLqUSZk0KhaW86DWjRscg1t1rqpDL6UgDyuXZBEib8
+	 Ci7E8H3tLkD70CRdGg0eSS1VnFEM0Nj/gvKAzDywOemmEZoeiH+Tjfp8tp/B27PTh3
+	 UUNdANTQxyo5PM3OQE9Aq9rE0oTMgaPislp6Kj24xvkuIv5TcCvWduUOpzJyAS0acS
+	 kY97/jAxbHDL/4N6YJ26aqmMKIzev+lxd494O0Ww4QohGj4VicDrZuqYGz/QCWR9jN
+	 4NyZbdlHkWHXxfj0Dq4SDadU+ddRs6Jtjw4A784SmPRLR65yeLVPQkrNx2Dw8wGxYh
+	 DqNxp7CNl0DPQ==
+Received: from [100.115.223.179] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 97C7037814A4;
+	Mon, 18 Dec 2023 12:02:07 +0000 (UTC)
+Message-ID: <fa4b9c1d-6033-4b35-b03c-e03419edb5dc@collabora.com>
+Date: Mon, 18 Dec 2023 14:02:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/9] dt-bindings: net: starfive,jh7110-dwmac: Add
+ JH7100 SoC compatible
+Content-Language: en-US
+To: Conor Dooley <conor@kernel.org>
+Cc: Samuel Holland <samuel.holland@sifive.com>,
+ Jessica Clarke <jrtc27@jrtc27.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Emil Renner Berthing <kernel@esmil.dk>,
+ Samin Guo <samin.guo@starfivetech.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Hal Feng <hal.feng@starfivetech.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Jose Abreu <joabreu@synopsys.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Richard Cochran <richardcochran@gmail.com>,
+ Giuseppe Cavallaro <peppe.cavallaro@st.com>, netdev@vger.kernel.org,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ linux-riscv <linux-riscv@lists.infradead.org>, linux-clk@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, kernel@collabora.com
+References: <20231215204050.2296404-1-cristian.ciocaltea@collabora.com>
+ <20231215204050.2296404-3-cristian.ciocaltea@collabora.com>
+ <A7C96942-07CB-40FD-AAAA-4A8947DEE7CA@jrtc27.com>
+ <65fd52f1-6861-42b0-9148-266766d054b1@sifive.com>
+ <6c62e3b2-acde-4580-9b67-56683289e45e@collabora.com>
+ <20231217-spray-livestock-a59d630b751e@spud>
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+In-Reply-To: <20231217-spray-livestock-a59d630b751e@spud>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20231214172051.GA611674-robh@kernel.org>
 
-On Thu, Dec 14, 2023 at 11:20:51AM -0600, Rob Herring wrote:
-> On Thu, Dec 14, 2023 at 02:40:46PM +0530, Manivannan Sadhasivam wrote:
-> > All QMP UFS PHYs except MSM8996 require 3 clocks:
-> > 
-> > * ref - 19.2MHz reference clock from RPMh
-> > * ref_aux - Auxiliary reference clock from GCC
-> > * qref - QREF clock from GCC or TCSR (since SM8550)
-> > 
-> > MSM8996 only requires 'ref' and 'qref' clocks. Hence, fix the binding to
-> > reflect the actual clock topology.
+On 12/17/23 23:09, Conor Dooley wrote:
+> On Fri, Dec 15, 2023 at 11:03:24PM +0200, Cristian Ciocaltea wrote:
+>> On 12/15/23 22:59, Samuel Holland wrote:
+>>> On 2023-12-15 2:47 PM, Jessica Clarke wrote:
+>>>> On 15 Dec 2023, at 20:40, Cristian Ciocaltea <cristian.ciocaltea@collabora.com> wrote:
+>>>>>
+>>>>> The Synopsys DesignWare MAC found on StarFive JH7100 SoC is mostly
+>>>>> similar to the newer JH7110, but it requires only two interrupts and a
+>>>>> single reset line, which is 'ahb' instead of the commonly used
+>>>>> 'stmmaceth'.
+>>>>>
+>>>>> Since the common binding 'snps,dwmac' allows selecting 'ahb' only in
+>>>>> conjunction with 'stmmaceth', extend the logic to also permit exclusive
+>>>>> usage of the 'ahb' reset name.  This ensures the following use cases are
+>>>>> supported:
+>>>>>
+>>>>>  JH7110: reset-names = "stmmaceth", "ahb";
+>>>>>  JH7100: reset-names = "ahb";
+>>>>>  other:  reset-names = "stmmaceth";
+>>>>>
+>>>>> Also note the need to use a different dwmac fallback, as v5.20 applies
+>>>>> to JH7110 only, while JH7100 relies on v3.7x.
+>>>>>
+>>>>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+>>>>> ---
+>>>>> .../devicetree/bindings/net/snps,dwmac.yaml   |  3 +-
+>>>>> .../bindings/net/starfive,jh7110-dwmac.yaml   | 74 +++++++++++++------
+>>>>> 2 files changed, 55 insertions(+), 22 deletions(-)
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+>>>>> index 5c2769dc689a..c1380ff1c054 100644
+>>>>> --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+>>>>> +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+>>>>> @@ -95,6 +95,7 @@ properties:
+>>>>>         - snps,dwmac-5.20
+>>>>>         - snps,dwxgmac
+>>>>>         - snps,dwxgmac-2.10
+>>>>> +        - starfive,jh7100-dwmac
+>>>>>         - starfive,jh7110-dwmac
+>>>>>
+>>>>>   reg:
+>>>>> @@ -146,7 +147,7 @@ properties:
+>>>>>   reset-names:
+>>>>>     minItems: 1
+>>>>>     items:
+>>>>> -      - const: stmmaceth
+>>>>> +      - enum: [stmmaceth, ahb]
+>>>>>       - const: ahb
+>>>>
+>>>> I’m not so well-versed in the YAML bindings, but would this not allow
+>>>> reset-names = "ahb", "ahb"?
+>>>
+>>> Yes, it would. You need something like:
+>>>
+>>> reset-names:
+>>>   oneOf:
+>>>     - enum: [stmmaceth, ahb]
+>>>     - items:
+>>>         - const: stmmaceth
+>>>         - const: ahb
+>>
+>> Oh yes, I always forget about the "oneOf" thing. Thanks!
 > 
-> Breaking the ABI is okay because...? Please explain in the commit msg.
-> 
+> Won't this also relax the naming for all devices that allow a single
+> reset, but expect the stmmaceth one? I'm not sure that that actually
+> matters, I think the consumer bindings have constraints themselves.
 
-I will update the commit message in v2.
+Before commit 843f603762a5 ("dt-bindings: net: snps,dwmac: Add 'ahb'
+reset/reset-name"), the 'stmmaceth' was the only possible option, hence
+there was no need for any constraints on the consumer bindings.  But
+afterwards it was allowed to use both resets, hence I think the bindings
+should have been updated at that time by adding 'maxItems: 1' to prevent
+using the 2nd reset.
 
-- Mani
+I could fix this in a separate series, if it's not something mandatory
+to be handled here.
 
-> Rob
-> 
-
--- 
-மணிவண்ணன் சதாசிவம்
+Thanks for reviewing,
+Cristian
